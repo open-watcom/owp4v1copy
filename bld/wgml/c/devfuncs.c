@@ -711,7 +711,7 @@ static void * df_flushpage( void )
     current_pages = (current_state.y_address + 1) / bin_device->page_depth;
 
     /* The value needed in desired_state.y_address must reflect the
-     * number of device pages included in currrent_state.y_address so
+     * number of device pages included in current_state.y_address so
      * that fb_newlines() will have comparable values to work with.
      */
 
@@ -751,8 +751,12 @@ static void * df_flushpage( void )
         at_start = false;
     }
 
-    /* The print head position is now the start of the line before the first. */
+    /* The print head position is now the start of the line before the first.
+     * In this case, desired_state.y_address does not depend on how the
+     * address was formed.
+     */
 
+    desired_state.y_address = current_pages * bin_device->page_depth;
     y_address = bin_device->y_start;
 
     instance--;

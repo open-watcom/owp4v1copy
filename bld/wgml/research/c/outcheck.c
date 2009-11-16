@@ -30,19 +30,31 @@
 *                   print_usage()
 *               as well as this #define macro:
 *                   TEXT_START
-*               and this struct:
+*               and these enums:
+*                   oc_types
+*                   tp_types
+*               and these structs:
+*                   tp_bx_block
+*                   test_element
+*                   test_page
 *                   text_phrase
-*               and these variables (the text arrays are ignored):
-*                   cur_h_start
-*                   cur_v_start
-*                   max_line_height
-*                   page_bottom
-*                   page_left
-*                   page_right
-*                   page_top
-*                   text_chars_pool
+*                   tp_bx_element
+*                   tp_fig_element
+*                   tp_text_element
+*               and these variables (the text arrays are not listed):
+*                   oc_h_start
+*                   oc_v_start
+*                   oc_font_number
+*                   oc_tab_char
+*                   oc_test_element_pool
+*                   oc_text_chars_pool
+*                   oc_text_line_pool
+*                   oc_test_page
 *               and these local functions:
-*                   emulate_text_output()
+*                   emulate_fill_text_lines()
+*                   emulate_input_source()
+*                   emulate_layout_page()
+*                   emulate_output_page()
 *                   emulate_wgml()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
@@ -71,27 +83,90 @@
 
 /* This is used with the text_chars struct to set the initial value of length. */
 
-#define TEXT_START 32    
+#define TEXT_START 32
 
-/* Struct definition. */
- 
+/* Enum definitions. */
+
+typedef enum {
+    oc_text,
+    oc_bx,
+    oc_fig,
+} oc_types;
+
+typedef enum {
+    tp_text,
+    tp_bx,
+    tp_fig,
+    tp_dbox,
+    tp_hline,
+    tp_vline,
+    tp_redundant_aa
+} tp_types;
+
+/* Struct definitions. */
+
+struct test_element; // Forward declaration.
+
 typedef struct {
-    uint8_t     font_number;
-    char    *   text;
+            uint32_t            v_position;
+            uint32_t            depth;
+    struct  test_element    *   first;
+} tp_bx_element;
+
+typedef struct {
+            uint32_t            v_position;
+            uint32_t            depth;
+    struct  test_element    *   first;
+} tp_fig_element;
+
+typedef struct {
+    uint32_t            count;
+    uint32_t            v_position;
+    uint32_t            depth;
+    text_line       *   first;
+} tp_text_element;
+
+typedef union {
+    tp_bx_element       tp_bx;
+    tp_fig_element      tp_fig;
+    tp_text_element     tp_text;
+} tp_element;
+
+typedef struct test_element {
+    struct  test_element    *   next;
+            uint32_t            v_position;
+            tp_types            type;
+            tp_element          element;
+} test_element;
+
+typedef struct {
+    uint32_t            cur_depth;
+    uint32_t            max_depth;
+    uint32_t            page_bottom;
+    uint32_t            page_left;
+    uint32_t            page_right;
+    uint32_t            page_top;
+    test_element    *   first;
+} test_page;
+
+typedef struct {
+    uint8_t             font_number;
+    bool                line_break;
+    char            *   text;
 } text_phrase;
  
 /* Local variables. */
  
 /* These are used by more than one function. */
- 
-static  text_chars      *   text_chars_pool = NULL;
-static  uint32_t            cur_h_start;
-static  uint32_t            cur_v_start;
-static  uint32_t            max_line_height;
-static  uint32_t            page_bottom;
-static  uint32_t            page_left;
-static  uint32_t            page_right;
-static  uint32_t            page_top;
+
+//static  char                tab_char = ' ';
+static  test_element    *   oc_test_element_pool    = NULL;
+static  test_page           oc_test_page;
+static  text_chars      *   oc_text_chars_pool      = NULL;
+static  text_line       *   oc_text_line_pool       = NULL;
+static  uint8_t             oc_font_number;
+static  uint32_t            oc_h_start;
+static  uint32_t            oc_v_start;
  
 /* Load the usage text array. */
  
@@ -105,450 +180,858 @@ NULL
 /* Load the document text arrays. */
  
 static  text_phrase         title[] = {
-    { 3, "OUTCHECK~ Document" },
-    { 0, NULL}
+    { 3, false, "OUTCHECK~ Document" },
+    { 0, false, NULL}
 };
  
-static  text_phrase         page1_para1[] = {
-    {0, "This document is copied and modified from the Wiki. The reason for " },
-    {0, "this is to make it less boring. Let's start with some tests: the " },
-    {0, "title was in available font 3; most of the text is in available " },
-    {0, "font 0; here is a phrase in " },
-    {1, "available font 1" },
-    {0, " and here is a phrase in " },
-    {2, "available font 2" },
-    {0, ", neither including spaces before or behind (the usual situation). " },
-    {0, "The rarer cases have the highlighted phrase include" },
-    {1, " the space before" },
-    {0, " or " },
-    {2, "the space behind " },
-    {0, "(which can affect layout if the space widths vary by font) " },
-    {0, "and, very rarely, perhaps, to start in the mid" },
-    {3, "dle" },
-    {0, " of a word." },
-    {0, NULL }
-};
- 
-static  text_phrase         page1_para2[] = {
-    {0, "Those function sequences involving literal parameters which are " },
-    {0, "discussed here behave as expected in all compiled function blocks. " },
-    {0, "The number of possible function sequences in this category is " },
-    {0, "infinite; these examples were tested:" },
-    {0, NULL }
+static  text_phrase         para1[] = {
+    {0, false, "Parts of this document were copied and modified from the Wiki. " },
+    {0, false, "The reason for this was to make it less self-referential. " },
+    {0, false, "Ironically, we start with some rather self-referential tests " },
+    {0, false, "of font switching: the title was in available font 3; most of " },
+    {0, false, "the text is in available font 0; here is a phrase in " },
+    {1, false, "available font 1" },
+    {0, false, " and here is a phrase in " },
+    {2, false, "available font 2" },
+    {0, false, ", neither including spaces before or behind (the usual " },
+    {0, false, "situation). The rarer cases have the highlighted phrase include" },
+    {1, false, " the space before" },
+    {0, false, " or " },
+    {2, false, "the space behind " },
+    {0, false, "(which can affect layout if the space widths vary by font) " },
+    {0, false, "and, very rarely, perhaps, to start in the mid" },
+    {3, false, "dle" },
+    {0, false, " of a word." },
+    {0, false, NULL }
 };
  
 #if 0 // Needed until the boxes are ready for testing
  
-static  text_phrase         page1_box[] = {
-    {0, "%binary(3)              the appropriate graphic appears" },
-    {0, "%binary1(4)             the appropriate graphic appears" },
-    {0, "%binary2(5)             the appropriate graphic appears" },
-    {0, "%binary4(6)             the appropriate graphic appears" },
-    {0, "%image('image test')    the string \"image test\" appears" },
-    {0, "%image(%decimal(53))    the digits \"53\" appear" },
-    {0, "%image(%hex(53))        the digits \"35\" appear" },
-    {0, "%image(%lower('SUZY'))  the string \"suzy\" appears" },
-    {0, "%text('text test')      the string \"text test\" appears" },
-    {0, "%text(%decimal(53))     the digits \"53\" appear" },
-    {0, "%text(%hex(53))         the digits \"35\" appear" },
-    {0, "%text(%lower('SUZY'))   the string \"suzy\" appears" },
-    {0, NULL }
+static  text_phrase         para2[] = {
+    {0, false, "This box was created using .bx (and several other control " },
+    {0, false, "words) and illustrates one of the many possibilites available: " },
+    {0, false, NULL }
 };
  
-#endif // #if 0
- 
-static  text_phrase         page2_para1[] = {
-    {0, "An interesting phenomenon became apparent during these tests: the " },
-    {0, "XP VDM window (at least) behaves as if the null characters generated " },
-    {0, "by %binary2(5) and %binary4(6) were CR+LF characters. Both the " },
-    {0, "binary file and a file containing the redirected screen output were " },
-    {0, "examined, and neither showed actual additional CR+LF characters, " },
-    {0, "extra compiled %recordbreak() functions, or blank lines in the output " },
-    {0, "file, so this pretty much has to be something the VDM is doing." },
-    {0, NULL }
+static  text_phrase         bx_box[] = {
+    {0, false, "%binary(3)>the appropriate graphic appears" },
+    {0, true, "%binary1(4)>the appropriate graphic appears" },
+    {0, true, "%binary2(5)>the appropriate graphic appears" },
+    {0, true, "%binary4(6)>the appropriate graphic appears" },
+    {0, false, NULL }
 };
  
-static  text_phrase         page2_para2[] = {
-    {0, "All other function sequences discussed which use literal parameters " },
-    {0, "output function sequences in which the parameters are encoded using " },
-    {0, "parameter blocks." },
-    {0, NULL }
+static  text_phrase         para3[] = {
+    {0, false, "This box was created using :FIG., which is in some ways less " },
+    {0, false, "flexible than .bx but which has its advantages: " },
+    {0, false, NULL }
 };
  
-static  text_phrase         page2_para3[] = {
-    {0, "These functions are presumed to work uniformly:" },
-    {0, NULL }
-};
- 
-#if 0 // Needed until the boxes are ready for testing
- 
-static  text_phrase         page2_box[] = {
-    {0, "%font_number()" },
-    {0, "%pages()" },
-    {0, "%tab_width()" },
-    {0, "%x_address()" },
-    {0, "%x_size()" },
-    {0, "%y_address()" },
-    {0, "%y_size()" },
-    {0, NULL }
+static  text_phrase         fig_box[] = {
+    {0, false, "%x_address() returns the current horizontal print position" },
+    {0, true, "%y_address() returns the current vertical print position" },
+    {0, false, NULL }
 };
  
 #endif // #if 0
  
 /* Local function definitions. */
 
-/* Function emulate_text_output()
- * This function does the final preparation of the text and outputs it.
+/* Function emulate_fill_text_lines()
+ * This function produces text_line instances from a single input buffer. This
+ * may be as simple as adding a few words to an existing text_line or finishing
+ * the current text_line and starting another to adding as many as are needed
+ * to reach the end of the buffer to the list.
  *
  * Parameters:
- *      text contains the text to be output
+ *      input_text contains a pointer to the input buffer.
+ *      tl_list contains a pointer to the linked list of text_lines to be used.
  *
  * Globals Used:
- *      cur_h_start contains the horizontal location of the first character.
- *      cur_v_start contains the vertical location of the first character.
+ *      oc_h_start contains the horizontal location of the first character.
+ *      oc_font contains the font number for input_text.
  *
  * Globals Changed:
- *      cur_h_start contains the horizontal location of the next character after
+ *      oc_h_start contains the horizontal location of the next character after
  *          the last character displayed.
- *      cur_v_start contains the vertical location of the last text_line
- *          output.
  *
  * Notes:
- *      This function is intended to provide some idea of what might be
- *          done between the point where the text is finalized except for
- *          input translation and the point where it is sent to be output.
- *      This function is the sort of thing that might be used to output the
- *          text used with a :P. tag or in similar situations. It might need
- *          some enhancement in order to work properly for wgml.
- *      The first text_line will be output starting at the location given by
- *          cur_h_start on entry. Subsequent lines will be output at the
- *          location given by page_left. This may or may not be acceptable
- *          in production code.
+ *      This function is intended to provide some idea of how input text 
+ *          which has been finalized except for input translation and tabbing
+ *          might be converted to a linked list of text_line instances. 
+ *      The first text_chars of the first text_line will be positioned at the
+ *          location given by oc_h_start on entry. The first text_chars of
+ *          subsequent text_lines will be positioned at the location given by
+ *          page_left. This may or may not be acceptable in production code.
  */
  
-void emulate_text_output( text_phrase * text )
+static void emulate_fill_text_lines( char * input_text, text_line * tl_list )
 {
-    char            the_char;
-    int             i;
-    int             j;
-    size_t          count;
-    size_t          increment;
-    size_t          spaces;
-    size_t          space_width;
-    text_chars  *   cur_chars;
-    text_chars  *   next_chars;
-    text_chars  *   pool_ptr;
-    text_chars  *   save_chars;
-    text_chars  *   save_empty;
-    text_line       the_line;
-    text_phrase *   cur_phrase;
-    uint8_t         font_number;
+    static  size_t          increment   = 0;
+    static  size_t          spaces      = 0;
+    static  text_chars  *   cur_chars   = NULL;
+    static  text_chars  *   next_chars  = NULL;
+    static  text_chars  *   old_chars   = NULL;
+    static  text_line   *   the_line    = NULL;
 
-    /* This looks right, but may turn out to be wrong in wgml. */
- 
-    if( text == NULL) return;
- 
-    /* Set up the_line and for the outer loop. */
+            char            the_char;
+            int             i;
+            int             j;
+            size_t          count;
+            size_t          space_width;
+            uint32_t        cur_height;
 
-    the_line.y_address = cur_v_start;
-    the_line.first = NULL;
-    cur_chars = NULL;
-    if( text_chars_pool == NULL ) {
-        next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + \
-                                                                TEXT_START );
-        next_chars->length = TEXT_START;
-    } else {
-        next_chars = text_chars_pool;
-        text_chars_pool = text_chars_pool->next;
-    }
-    cur_phrase = text;
-    font_number = cur_phrase->font_number;
-    if( font_number >= wgml_font_cnt ) font_number = 0;
-    next_chars->next = NULL;
-    next_chars->font_number = font_number;
-    next_chars->x_address = cur_h_start;
-    next_chars->width = 0;
-    next_chars->count = 0;
- 
-    /* The outer loop processes all the text_phrases in text. */
- 
-    while( cur_phrase->text != NULL ) {
-        count = strlen( cur_phrase->text );
- 
-        /* This loop processes a single text_phrase. */
- 
-        spaces = 0;
-        for( i = 0; i < count; i++ ) {
+    /* This seems reasonable, but may turn out to be wrong in wgml. */
 
-            /* Count any spaces. */
+    if( input_text == NULL) return;
+    if( tl_list == NULL) return;
 
-            for( j = i; j < count; j++ ) {
-                if( !isspace( cur_phrase->text[j] ) ) break;
-                spaces++;
-            }
-            i = j;
+    /* This depends on tl_list containing no text_char instances when, and
+     * only when, a break has occurred. In other words, the calling function
+     * must extract all of the text_line instances when a break occurs, and
+     * resume processing with a text_line instance with no text_char instances.
+     */
 
-            /* Compute space_width and adjust x_address and cur_h_start. */
+    cur_height = 0;
+    if( tl_list->first == NULL ) {
 
-            if( spaces == 0 ) {
-                space_width = 0;
-            } else {
-                space_width = spaces * \
-                                wgml_fonts[next_chars->font_number].spc_width;
-                cur_h_start += space_width;
-                next_chars->x_address = cur_h_start;
-            }
+        /* If there was a break, tl_list should consist of exactly one
+         * text_line instance. 
+         */
 
-            /* The remaining code in the loop has this effect:
-             *   When the end of the text_phrase has not been reached, then
-             * the next text_chars inserted into the_line will start at a
-             * position which includes the value of space_width.
-             *   When the end of the text_phrase has been reached, an empty
-             * text_chars, which includes the value of space_width, is
-             * inserted into the_line.
-             */
-
-            /* This loop processes a single text_chars. */
- 
-            for( j = i; j < count; j++ ) {
-
-                if( isspace( cur_phrase->text[j] ) ) break;
-
-                the_char = cur_phrase->text[j];
- 
-                if( ProcFlags.in_trans ) {
-                    if( in_esc == the_char ) {
-                        j++;
-                        the_char = cop_in_trans( cur_phrase->text[j], \
-                                                    cur_phrase->font_number );
-                    }
-                }
-                if( next_chars->count >= next_chars->length ) {
-                    next_chars->length *= 2;
-                    next_chars = (text_chars *) mem_realloc( next_chars, \
-                                sizeof( text_chars ) + next_chars->length );
-                }
-                next_chars->text[next_chars->count] = the_char;
-                next_chars->count++;
-            }
-
-            /* Ensure that, when the top of the loop is reached, i will have
-             * the correct value after it is incremented.
-             */
-
-            i = j - 1;
-
-            if( next_chars->count == 0 ) {
-                next_chars->width = 0;
-            } else {
-                next_chars->width = cop_text_width( next_chars->text, \
-                                next_chars->count, next_chars->font_number );
-            }
-            increment = next_chars->width;
-
-            /* Update text_line. */
-
-            if( (cur_h_start + increment) > page_right ) {
-
-                /* Find the last two text_chars in the_line. */
-
-                if( the_line.first != NULL ) {
-                    save_chars = NULL;
-                    save_empty = the_line.first;
-                    while( save_empty->next != NULL ) {
-                        save_chars = save_empty;
-                        save_empty = save_empty->next;
-                    }
-
-                    /* If save_empty is an empty text_chars, strip it out. */
-
-                    if( save_empty->count == 0 ) {
-                        if( save_chars->next == NULL ) {
-                            the_line.first = NULL;
-                        } else {
-                            save_chars->next = NULL;
-                        }
-                    } else {
-                        save_empty = NULL;
-                    }
-                }
-
-                /* The text_line is ready for output. */
- 
-                save_chars = next_chars;
-                fb_output_textline( &the_line );
- 
-                /* Reset cur_h_start and update the cur_v_start. */
-
-                cur_h_start = page_left;
-                if( bin_driver->y_positive == 0x00 ) {
-                    cur_v_start -= max_line_height;
-                } else {
-                    cur_v_start += max_line_height;
-                }
-                the_line.y_address = cur_v_start;
-
-                /* Return the text_chars in the_line to text_chars_pool. */
-
-                if( text_chars_pool == NULL ) {
-                    text_chars_pool = the_line.first;
-                } else {
-                    pool_ptr = text_chars_pool;
-                    while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
-                    pool_ptr->next = the_line.first;
-                }
-                the_line.first = NULL;
-
-                /* If save_empty is not NULL and does not have the same font
-                 * as save_chars, use it as the first text_chars in the_line.
-                 */
-
-                if( save_empty != NULL ) {
-                    if( save_empty->font_number == save_chars->font_number ) {
-                        the_line.first = save_empty;
-                        save_empty->x_address = cur_h_start;
-                    } else {
-                        save_empty->next = text_chars_pool;
-                        text_chars_pool = save_empty;
-                        save_empty = NULL;
-                    }
-                }
-
-                /* Now add save_chars. */
-
-                if( the_line.first == NULL ) {
-                    the_line.first = save_chars;
-                } else {
-                    save_empty->next = save_chars;
-                }
-                cur_chars = save_chars;
-                cur_chars->x_address = cur_h_start;
-
-            } else {
-
-                /* If next_chars is empty, exit the loop. */
-
-                if( next_chars->count == 0 ) break;
-
-                /* The text_chars belongs to this text_line. */
-
-                if( the_line.first == NULL ) {
-                    the_line.first = next_chars;
-                } else {
-                    cur_chars->next = next_chars;
-                }
-                cur_chars = next_chars;
-            }
- 
-            /* Update cur_h_start and get the next text_chars instance. */
-
-            cur_h_start += increment;
-            if( text_chars_pool == NULL ) {
-                next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + \
-                                                                TEXT_START );
-                next_chars->length = TEXT_START;
-            } else {
-                next_chars = text_chars_pool;
-                text_chars_pool = text_chars_pool->next;
-            }
-            next_chars->next = NULL;
-            next_chars->font_number = font_number;
-            next_chars->x_address = cur_h_start;
-            next_chars->width = 0;
-            next_chars->count = 0;
-
-            /* This ensures that spaces will be 0 if the loop is exited 
-             * because the current phrase ended without a space character.
-             * Genuinely-empty text_chars trigger a break above this and
-             * so will be processed properly.
-             */
-
-            spaces = 0;
+        if( tl_list->next != NULL ) {
+            out_msg( "Empty text_line has non-NULL next pointer\n" );
+            err_count++;
+            g_suicide();
         }
 
-        /* Go to the next text_phrase. */
- 
-        cur_phrase++;
+        /* If there was a break, initialize everything. */
 
-        /* This avoids adding an empty text_chars to the end of the final
-         * text_line.
-         */
+        the_line = tl_list;
+        the_line->line_height = 0;
 
-        if( cur_phrase->text == NULL) break;
+        cur_chars = NULL;
+        if( oc_text_chars_pool == NULL ) {
+            next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + \
+                                                                TEXT_START );
+            next_chars->length = TEXT_START;
+        } else {
+            next_chars = oc_text_chars_pool;
+            oc_text_chars_pool = oc_text_chars_pool->next;
+        }
+        next_chars->next = NULL;
+        next_chars->font_number = oc_font_number;
+        next_chars->x_address = oc_h_start;
+        next_chars->width = 0;
+        next_chars->count = 0;
+        old_chars = NULL;
 
-        /* Ensure font_number is within the allowed range. It is not clear
-         * where wgml 4.0 does this, so some adjustments may be needed
-         * when side-by-side testing of wgml 4.0 and our wgml are possible.
-         */
+    } else {
 
-        font_number = cur_phrase->font_number;
-        if( font_number >= wgml_font_cnt ) font_number = 0;
+        /* If there was no break, continue on with the prior state. */    
 
         /* If there were no spaces found at the end of the last cur_phrase,
-         * then this is not an empty text_chars.
+         * then next_chars is certainly not an empty text_chars.
          */
 
         if( spaces != 0 ) {
             if( next_chars->count == 0 ) {
-                if( next_chars->font_number != font_number ) {
+                if( next_chars->font_number != oc_font_number ) {
 
                     /* next_chars is empty and the new text_phrase has a new
                      * font_number: add next_chars to the_line.
                      */
 
-                    if( the_line.first == NULL ) {
-                        the_line.first = next_chars;
+                    the_line = tl_list;
+                    if( the_line->first == NULL ) {
+                        the_line->first = next_chars;
                     } else {
                         cur_chars->next = next_chars;
                     }
+                    old_chars = cur_chars;
                     cur_chars = next_chars;
 
-                    /* Update cur_h_start and get the next text_chars instance. */
+                    /* Adjust the line_height, if appropriate. */
 
-                    cur_h_start += increment;
-                    if( text_chars_pool == NULL ) {
+                    cur_height = wgml_fonts[cur_chars->font_number].line_height;
+                    if( the_line->line_height < cur_height ) \
+                                            the_line->line_height = cur_height;
+
+                    /* Update oc_h_start and get the next text_chars instance. */
+
+                    oc_h_start += increment;
+                    if( oc_text_chars_pool == NULL ) {
                         next_chars = (text_chars *) mem_alloc( \
                                         sizeof( text_chars ) + TEXT_START );
                         next_chars->length = TEXT_START;
                     } else {
-                        next_chars = text_chars_pool;
-                        text_chars_pool = text_chars_pool->next;
+                        next_chars = oc_text_chars_pool;
+                        oc_text_chars_pool = oc_text_chars_pool->next;
                     }
                     next_chars->next = NULL;
-                    next_chars->x_address = cur_h_start;
+                    next_chars->font_number = oc_font_number;
+                    next_chars->x_address = oc_h_start;
                     next_chars->width = 0;
                     next_chars->count = 0;
                 }
             }
         }
-
-        /* Ensure that next_chars has the correct font number. */
-
-        next_chars->font_number = font_number;
-
     }
 
-    /* Output the final text_line and return the text_chars to the pool.*/
+    /* Now process input_text. Note that the for-loop indexes are very
+     * useful, albeit not strictly necessary with a null-terminated string.
+     */
+
+    spaces = 0;
+    count = strlen( input_text );
+    for( i = 0; i < count; i++ ) {
+
+        /* Ensure that next_chars points to a text_chars instance. */
+
+        if( next_chars == NULL ) {
+            if( oc_text_chars_pool == NULL ) {
+                next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + \
+                                                                TEXT_START );
+                next_chars->length = TEXT_START;
+            } else {
+                next_chars = oc_text_chars_pool;
+                oc_text_chars_pool = oc_text_chars_pool->next;
+            }
+            next_chars->next = NULL;
+            next_chars->font_number = oc_font_number;
+            next_chars->x_address = oc_h_start;
+            next_chars->width = 0;
+            next_chars->count = 0;
+        }
+
+        /* Count any spaces. */
+
+        for( j = i; j < count; j++ ) {
+            if( !isspace( input_text[j] ) ) break;
+            spaces++;
+        }
+        i = j;
+
+        /* Compute space_width and adjust x_address and oc_h_start. */
+
+        if( spaces == 0 ) {
+            space_width = 0;
+        } else {
+            space_width = spaces * wgml_fonts[oc_font_number].spc_width;
+            oc_h_start += space_width;
+            next_chars->x_address = oc_h_start;
+        }
+
+        /* The remaining code in the loop has this effect:
+         *   When the end of the text_phrase has not been reached, then
+         * the next text_chars inserted into the_line will start at a
+         * position which includes the value of space_width.
+         *   When the end of the text_phrase has been reached, an empty
+         * text_chars, which includes the value of space_width, is
+         * inserted into the_line.
+         */
+
+        /* This loop processes a single text_chars. */
+
+        for( j = i; j < count; j++ ) {
+
+            if( isspace( input_text[j] ) ) break;
+
+            the_char = input_text[j];
  
-    fb_output_textline( &the_line );
- 
-    if( text_chars_pool == NULL ) {
-        text_chars_pool = the_line.first;
-    } else {
-        pool_ptr = text_chars_pool;
-        while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
-        pool_ptr->next = the_line.first;
+            if( ProcFlags.in_trans ) {
+                if( in_esc == the_char ) {
+                    j++;
+                    the_char = cop_in_trans( input_text[j], oc_font_number );
+                }
+            }
+            if( next_chars->count >= next_chars->length ) {
+                next_chars->length *= 2;
+                next_chars = (text_chars *) mem_realloc( next_chars, \
+                                sizeof( text_chars ) + next_chars->length );
+            }
+            next_chars->text[next_chars->count] = the_char;
+            next_chars->count++;
+        }
+
+        /* Ensure that, when the top of the loop is reached, i will have
+         * the correct value after it is incremented.
+         */
+
+        i = j - 1;
+
+        if( next_chars->count == 0 ) {
+            next_chars->width = 0;
+        } else {
+            next_chars->width = cop_text_width( next_chars->text, \
+                                next_chars->count, next_chars->font_number );
+        }
+        increment = next_chars->width;
+
+        /* Update text_line. */
+
+        if( (oc_h_start + increment) > oc_test_page.page_right ) {
+
+            /* The line is full: next_chars will start the next line. */
+
+            /* If cur_chars is an empty text_chars, strip it out. Otherwise,
+             * set it to NULL so it will not be altered below, as it is still
+             * the last text_chars in the current line.
+             */
+
+            if( cur_chars->count == 0 ) {
+                old_chars->next = NULL;
+            } else {
+                cur_chars = NULL;
+                old_chars = NULL;
+            }
+
+            /* The text_line is finished; add another to the list. */
+
+            if( oc_text_line_pool == NULL ) {
+                the_line->next = (text_line *) mem_alloc( sizeof( text_line ) );
+            } else {
+                the_line->next = oc_text_line_pool;
+                oc_text_line_pool = oc_text_line_pool->next;
+            }
+            the_line = the_line->next;
+            the_line->next = NULL;
+            the_line->line_height = 0;
+            the_line->y_address = 0;
+            the_line->first = NULL;
+
+            /* Reset oc_h_start. */
+
+            oc_h_start = oc_test_page.page_left;
+
+            /* If cur_chars is not NULL and does not have the same font
+             * as next_chars, use it as the first text_chars in the_line.
+             * Otherwise, return the text_chars to the pool, as it will
+             * not be used.
+             */
+
+            if( cur_chars != NULL ) {
+                if( cur_chars->font_number != next_chars->font_number ) {
+                    the_line->first = cur_chars;
+                    cur_chars->x_address = oc_h_start;
+
+                    /* Adjust the line_height, if appropriate. */
+
+                    cur_height = wgml_fonts[cur_chars->font_number].line_height;
+                    if( the_line->line_height < cur_height ) \
+                                            the_line->line_height = cur_height;
+                } else {
+                    cur_chars->next = oc_text_chars_pool;
+                    oc_text_chars_pool = cur_chars;
+                    cur_chars = NULL;
+                    old_chars = NULL;
+                }
+
+            }
+
+            /* Now add next_chars. */
+
+            if( the_line->first == NULL ) {
+                the_line->first = next_chars;
+            } else {
+                next_chars->next = next_chars;
+            }
+            old_chars = cur_chars;
+            cur_chars = next_chars;
+            cur_chars->x_address = oc_h_start;
+
+            /* Adjust the line_height, if appropriate. */
+
+            cur_height = wgml_fonts[cur_chars->font_number].line_height;
+            if( the_line->line_height < cur_height ) \
+                                            the_line->line_height = cur_height;
+        } else {
+
+            /* If next_chars is empty, exit the loop. */
+
+            if( next_chars->count == 0 ) break;
+
+            /* Ensure that the_line is not NULL. */
+
+            if( the_line == NULL ) {
+                if( oc_text_line_pool == NULL ) {
+                    the_line = (text_line *) mem_alloc( sizeof( text_line ) );
+                } else {
+                    the_line = oc_text_line_pool;
+                    oc_text_line_pool = oc_text_line_pool->next;
+                }
+                the_line->next = NULL;
+                the_line->line_height = 0;
+                the_line->y_address = 0;
+                the_line->first = NULL;
+            }
+
+            /* The text_chars belongs to this text_line. */
+
+            if( the_line->first == NULL ) {
+                the_line->first = next_chars;
+            } else {
+                cur_chars->next = next_chars;
+            }
+            old_chars = cur_chars;
+            cur_chars = next_chars;
+
+            /* Adjust the line_height, if appropriate. */
+
+            cur_height = wgml_fonts[cur_chars->font_number].line_height;
+            if( the_line->line_height < cur_height ) \
+                                            the_line->line_height = cur_height;
+        }
+
+        /* Update oc_h_start and get the next text_chars instance. */
+
+        oc_h_start += increment;
+        next_chars = NULL;
+#if 0
+        if( oc_text_chars_pool == NULL ) {
+            next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + \
+                                                                TEXT_START );
+            next_chars->length = TEXT_START;
+        } else {
+            next_chars = oc_text_chars_pool;
+            oc_text_chars_pool = oc_text_chars_pool->next;
+        }
+        next_chars->next = NULL;
+        next_chars->font_number = oc_font_number;
+        next_chars->x_address = oc_h_start;
+        next_chars->width = 0;
+        next_chars->count = 0;
+#endif
+        /* This ensures that spaces will be 0 if the loop is exited 
+         * because the current phrase ended without a space character.
+         * Genuinely-empty text_chars trigger a break above this and
+         * so will be processed properly.
+         */
+
+        spaces = 0;
     }
-    the_line.first = NULL;
- 
-    if( next_chars != NULL ) {
-        next_chars->next = text_chars_pool;
-        text_chars_pool = next_chars;
-    }
- 
+
     return;
 }
+
+/* Function emulate_input_source()
+ * This function prepares a tp_text_element instance containing the text
+ * from a text_phrase array.
+ *
+ * Parameters:
+ *      in_text points to the text_phrase array to be processed.
+ *      out_text points to the tp_text_element instance to use.
+ *
+ * Global Changed:
+ *      oc_font_number is set to the font_number of the last text_phrase
+ *          processed.
+ *
+ * Notes:
+ *      This function is intended to provide some idea of how function
+ *          emulate_fill_text_lines() might be used to capture text for use
+ *          in page layout.
+ *      This function only recognizes two types of input record ending
+ *          events: breaking and non-breaking. Unfortunately, the methods
+ *          used to recognize these events bear no relation to the methods
+ *          wgml will use.
+ *      The fields out_text->depth and out_text->count must have the correct
+ *          values for any existing content of out_text. Given that as a
+ *          prerequisite, these fields will be updated to reflect the new 
+ *          content added to out_text.
+ */
  
+static void emulate_input_source( text_phrase * in_text, \
+                                  tp_text_element * out_text )
+{
+    text_line   *   cur_lines   = NULL;
+    text_line   *   next_line   = NULL;
+    text_line   *   temp_line   = NULL;
+    text_phrase *   cur_phrase  = NULL;
+
+    /* Set up variables/fields. */
+
+    if( oc_text_line_pool == NULL ) {
+        cur_lines = (text_line *) mem_alloc( sizeof( text_line ) );
+    } else {
+        cur_lines = oc_text_line_pool;
+        oc_text_line_pool = oc_text_line_pool->next;
+    }
+    cur_lines->next = NULL;
+    cur_lines->line_height = 0;
+    cur_lines->y_address = 0;
+    cur_lines->first = NULL;
+    next_line = out_text->first;
+    if( next_line != NULL ) \
+                while( next_line->next != NULL) next_line = next_line->next;
+
+    /* Process all the text_phrases in in_text. */
+
+    cur_phrase = in_text;
+
+    /* A NULL text pointer indicates a break. */
+
+    while( cur_phrase->text != NULL ) {
+
+        /* Convert the current buffer. */
+
+        if( cur_phrase->font_number >= wgml_font_cnt ) cur_phrase->font_number = 0;
+        oc_font_number = cur_phrase->font_number;
+
+        emulate_fill_text_lines( cur_phrase->text, cur_lines);
+
+        /* Capture the whole lines, leaving the last (presumably partial)
+         * line in cur_lines for the next pass through the loop.
+         */
+
+        if( cur_lines != NULL ) {
+            while( cur_lines->next != NULL ) {
+                temp_line = cur_lines;
+                cur_lines = cur_lines->next;
+                temp_line->next = NULL;
+                if( next_line == NULL ) {
+                    out_text->first = temp_line;
+                    next_line = out_text->first;
+                } else {
+                    next_line->next = temp_line;
+                    next_line = next_line->next;
+                }
+                out_text->count++;
+                out_text->depth += next_line->line_height;
+            }
+        }
+
+        /* Go to the next text_phrase. This emulates a non-break input record
+         * terminator.
+         */
+ 
+        cur_phrase++;
+    }
+
+    /* Capture any remaining lines in cur_lines. */
+
+    while( cur_lines != NULL ) {
+        temp_line = cur_lines;
+        cur_lines = cur_lines->next;
+        temp_line->next = NULL;
+        if( next_line == NULL ) {
+            out_text->first = temp_line;
+            next_line = out_text->first;
+        } else {
+            next_line->next = temp_line;
+        }
+        out_text->count++;
+        out_text->depth += next_line->line_height;
+        next_line = next_line->next;
+        if( next_line != NULL ) next_line->next = NULL;
+    }
+
+    return;
+}
+
+/* Function emulate_output_page()
+ * This function sends the current page to the output device. It also returns
+ * the text_line and text_chars instances to their respective pools after they
+ * have been sent to the output device.
+ *
+ * Parameters:
+ *
+ * Globals Used:
+ *      oc_v_start, which must be set to the position of the first line.
+ *      oc_test_page is sent to the output device.
+ *
+ * Globals Changed:
+ *      oc_v_start will be set to the position of the last item printed. 
+ *      oc_test_page be set correctly for the next page.
+ *
+ * Notes:
+ *      This function is intended to provide some idea of how a page might
+ *          be output in wgml; the actual code would probably need to be more
+ *          complicated, since very little of wgml's capabilities are modeled
+ *          here.
+ */
+ 
+static void emulate_output_page( void )
+{
+    test_element    *   cur_elem    = NULL;
+    test_element    *   next_elem   = NULL;
+    test_element    *   save_elem   = NULL;
+    text_chars      *   pool_ptr    = NULL;
+    text_line       *   cur_line    = NULL;
+    text_line       *   last_line   = NULL;
+    text_line       *   next_line   = NULL;
+    uint32_t            cur_depth;
+    uint32_t            line_count;
+
+    /* Set the variables. */
+
+    cur_depth = 0;
+    cur_elem = oc_test_page.first;
+
+    while( cur_elem != NULL ) {
+        switch( cur_elem->type ) {
+        case tp_text:
+
+            if( (cur_depth + cur_elem->element.tp_text.depth) > \
+                                                    oc_test_page.max_depth ) {
+
+                /* Determine which line is the last to fit on this page. */
+
+                cur_line = cur_elem->element.tp_text.first;
+
+                /* This seems reasonable -- but is it? */
+
+                if( cur_line == NULL ) {
+                    out_msg( "No text_lines found in tp_text_element\n" );
+                    cur_elem = cur_elem->next;
+                    continue;
+                }
+
+                /* This would be a good place to check for "widows". The
+                 * thought is that line_count and cur_depth can adjusted as
+                 * needed to move lines to the next page to prevent a "widow".
+                 */
+
+                last_line = NULL;
+                line_count = 0;
+                while( cur_line != NULL ) {
+                    if( (cur_depth + cur_line->line_height) > \
+                                                oc_test_page.max_depth ) break;
+                    line_count++;
+                    cur_depth += cur_line->line_height;
+                    last_line = cur_line;
+                    cur_line = cur_line->next;
+                }
+
+                if( cur_line == NULL ) {
+                    
+                    /* If cur_line is NULL, then all lines will fit. While
+                     * not an error as such, it should still never happen.
+                     */
+
+                    out_msg( "All text_lines fit, unexpectedly. \n" );
+                } else {
+
+                    /* Split this element to fit part of it onto the page. */
+
+                    /* Initialize a new text_element. */
+
+                    if( oc_test_element_pool == NULL ) {
+                        save_elem = (test_element *) \
+                                        mem_alloc( sizeof( test_element ) );
+                    } else {
+                        save_elem = oc_test_element_pool;
+                        oc_test_element_pool = oc_test_element_pool->next;
+                    }
+                    save_elem->next = cur_elem->next;
+                    save_elem->v_position = 0;
+                    save_elem->type = tp_text;
+                    save_elem->element.tp_text.count = 0;
+                    save_elem->element.tp_text.v_position = 0;
+                    save_elem->element.tp_text.depth = 0;
+                    save_elem->element.tp_text.first = cur_line;
+
+                    cur_elem->next = NULL;
+                    last_line->next = NULL;
+
+                    /* Update cur_elem with to reflect its new contents. */
+
+                    cur_elem->element.tp_text.count = line_count;
+                    cur_elem->element.tp_text.depth = cur_depth;
+
+                    /* Update save_elem to reflect its contents. cur_line
+                     * still heads the linked list of text_line instances
+                     * in save_elem.
+                     */
+
+                    while( cur_line != NULL) {
+                        save_elem->element.tp_text.count++;
+                        save_elem->element.tp_text.depth += cur_line->line_height;
+                        cur_line = cur_line->next;
+                    }
+                }
+            }
+            cur_depth += cur_elem->element.tp_text.depth;
+
+            /* Now all lines in cur_elem will fit on the current page.*/
+
+            cur_line = cur_elem->element.tp_text.first;
+            while( cur_line != NULL ) {
+
+                if( bin_driver->y_positive == 0x00 ) {
+                    oc_v_start -= cur_line->line_height;
+                } else {
+                    oc_v_start += cur_line->line_height;
+                }
+                cur_line->y_address = oc_v_start;
+
+                fb_output_textline( cur_line );
+
+                /* Return the text_chars instances to the text_chars pool. */
+
+                if( oc_text_chars_pool == NULL ) {
+                    oc_text_chars_pool = cur_line->first;
+                } else {
+                    pool_ptr = oc_text_chars_pool;
+                    while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
+                    pool_ptr->next = cur_line->first;
+                }
+                cur_line->first = NULL;
+
+                /* Return the cur_line to oc_text_line_pool. */
+
+                next_line = cur_line->next;
+                if( oc_text_line_pool == NULL ) {
+                    oc_text_line_pool = cur_line;
+                    cur_line->next = NULL;
+                } else {
+                    cur_line->next = oc_text_line_pool;
+                    oc_text_line_pool = cur_line;
+                }
+                cur_line = next_line;
+                cur_elem->element.tp_text.first = cur_line;
+            }
+            break;
+        case tp_bx:
+            /* Implementation: to be done. */
+            break;
+        case tp_fig:
+            /* Implementation: to be done. */
+            break;
+        default:
+            out_msg( "outcheck internal error: incorrect test_element\n" );
+            err_count++;
+            g_suicide();
+        }
+
+        /* Return the cur_elem to oc_test_element_pool. */
+
+        next_elem = cur_elem->next;
+        if( oc_test_element_pool == NULL ) {
+            oc_test_element_pool = cur_elem;
+            cur_elem->next = NULL;
+        } else {
+            cur_elem->next = oc_test_element_pool;
+            oc_test_element_pool = cur_elem;
+        }
+        cur_elem = next_elem;
+        oc_test_page.first = cur_elem;
+    }
+
+    /* Reconfigure oc_test_page as the next page. */
+
+    oc_test_page.cur_depth = 0;
+    oc_test_page.first = save_elem;
+    oc_v_start = oc_test_page.page_top;
+    cur_elem = oc_test_page.first;
+    while( cur_elem != NULL ) {
+        switch( cur_elem->type ) {
+        case tp_text:
+            oc_test_page.cur_depth += cur_elem->element.tp_text.depth;
+            break;
+        case tp_bx:
+            oc_test_page.cur_depth += cur_elem->element.tp_bx.depth;
+            break;
+        case tp_fig:
+            oc_test_page.cur_depth  += cur_elem->element.tp_fig.depth;
+            break;
+        default:
+            out_msg( "outcheck internal error: incorrect test_element\n" );
+            err_count++;
+            g_suicide();
+        }
+        cur_elem = cur_elem->next;
+    }       
+
+    return;
+}
+
+/* Function emulate_layout_page()
+ * This function obtains and adds page elements to the current document page.
+ * If that page is ready for output, this function will also output it and
+ * do initialize a new page.
+ *
+ * Parameters:
+ *      el_type encodes the element type to be added to the page.
+ *      input_text points to the text_phrase array to be processed.
+ *
+ * Globals Used:
+ *      oc_test_page is the page being used.
+ *
+ * Globals Changed:
+ *      oc_test_page will have the new element added and may also have been
+ *          sent to the output device, leaving it with those elements
+ *          carried over to the next page to be output.
+ *
+ * Notes:
+ *      This function is intended to provide some idea of how a page might
+ *          be set up by wgml; however, the actual code would probably need
+ *          to be quite different, since it would be driven by control words
+ *          and tags. 
+ */
+ 
+static void emulate_layout_page( text_phrase * input_text, oc_types el_type )
+{
+    test_element    *   cur_elem    = NULL;
+    test_element    *   next_elem   = NULL;
+
+    next_elem = oc_test_page.first;
+    if( next_elem != NULL) {
+        while( next_elem->next != NULL) next_elem = next_elem->next;
+    }
+
+    switch( el_type ) {
+    case oc_text:
+
+        /* Initialize a new text_element. */
+
+        if( oc_test_element_pool == NULL ) {
+            cur_elem = (test_element *) mem_alloc( sizeof( test_element ) );
+        } else {
+            cur_elem = oc_test_element_pool;
+            oc_test_element_pool = oc_test_element_pool->next;
+        }
+        cur_elem->next = NULL;
+        cur_elem->v_position = 0;
+        cur_elem->type = tp_text;
+        cur_elem->element.tp_text.count = 0;
+        cur_elem->element.tp_text.v_position = 0;
+        cur_elem->element.tp_text.depth = 0;
+        cur_elem->element.tp_text.first = NULL;
+
+        /* Put input_text into cur_elem and add it to oc_test_page. */
+
+        emulate_input_source( input_text, &cur_elem->element.tp_text );
+        oc_test_page.cur_depth += cur_elem->element.tp_text.depth;
+        if( oc_test_page.first == NULL ) {
+            oc_test_page.first = cur_elem;
+            next_elem = oc_test_page.first;
+        } else {
+            next_elem->next = cur_elem;
+            next_elem = next_elem->next;
+        }
+        next_elem->next = NULL;
+
+        break;
+    case oc_bx:
+        /* Implementation: to be done. */
+        break;
+    case oc_fig:
+        /* Implementation: to be done. */
+        break;
+    default:
+        out_msg( "outcheck internal error: incorrect element type\n" );
+        err_count++;
+        g_suicide();
+    }
+
+    while( oc_test_page.cur_depth > oc_test_page.max_depth ) {
+        emulate_output_page();
+        fb_document_page();
+    }
+
+    return;
+}
+
 /* Function emulate_wgml().
  * This function loads the binary device library using the same code as wgml,
  * and then produces an text image output file using the device specified on
@@ -565,284 +1048,416 @@ void emulate_text_output( text_phrase * text )
 static void emulate_wgml( void )
 {
     int                 i;
-    text_chars      *   current;
-    text_chars      *   pool_ptr;
-    uint32_t            cur_h_len;
-    uint32_t            cur_v_len;
+    test_element    *   te_pool_ptr = NULL;
+    text_chars      *   tc_pool_ptr = NULL;
+    text_line       *   tl_pool_ptr = NULL;
+    uint32_t            oc_h_len;
+    uint32_t            oc_v_len;
+    uint32_t            line_height_zero;
     uint32_t            max_char_width;
     uint32_t            net_page_height;
     uint32_t            net_page_width;
- 
-    /* Set the file-level globals. */
- 
-    /* Initialize the text_chars pool. */
 
-    current = (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
-    current->next = NULL;
-    current->font_number = 0;
-    current->x_address = 0;
-    current->width = 0;
-    current->count = 0;
-    current->length = TEXT_START;
-    text_chars_pool = current;
- 
-    /* Now bring the number of instances to 20. */
- 
-    pool_ptr = text_chars_pool;
+    /* Set the file-level globals. */
+
+    /* Initialize the test_element pool to hold ten instances. These are
+     * tp_text_elements because that is the test_element used most often.
+     */
+
+    /* Initialize the text_chars pool to hold 20 instances. */
+
+    oc_text_chars_pool = \
+                (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
+    oc_text_chars_pool->next = NULL;
+    oc_text_chars_pool->font_number = 0;
+    oc_text_chars_pool->x_address = 0;
+    oc_text_chars_pool->width = 0;
+    oc_text_chars_pool->count = 0;
+    oc_text_chars_pool->length = TEXT_START;
+    tc_pool_ptr = oc_text_chars_pool;
     for( i = 0; i < 19; i++ ) {
-        current = (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
-        current->next = NULL;
-        current->font_number = 0;
-        current->x_address = 0;
-        current->width = 0;
-        current->count = 0;
-        current->length = TEXT_START;
-        pool_ptr->next = current;
-        pool_ptr = current;
+        tc_pool_ptr->next = \
+                (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
+        tc_pool_ptr = tc_pool_ptr->next;
+        tc_pool_ptr->next = NULL;
+        tc_pool_ptr->font_number = 0;
+        tc_pool_ptr->x_address = 0;
+        tc_pool_ptr->width = 0;
+        tc_pool_ptr->count = 0;
+        tc_pool_ptr->length = TEXT_START;
     }
- 
+
+    /* Initialize the text_line pool to hold ten instances. */
+
+    oc_text_line_pool = (text_line *) mem_alloc( sizeof( text_line ) );
+    oc_text_line_pool->next = NULL;
+    oc_text_line_pool->line_height = 0;
+    oc_text_line_pool->y_address = 0;
+    oc_text_line_pool->first = 0;
+    tl_pool_ptr = oc_text_line_pool;
+    for( i = 0; i < 9; i++ ) {
+        tl_pool_ptr->next = (text_line *) mem_alloc( sizeof( text_line ) );
+        tl_pool_ptr = tl_pool_ptr->next;
+        tl_pool_ptr->next = NULL;
+        tl_pool_ptr->line_height = 0;
+        tl_pool_ptr->y_address = 0;
+        tl_pool_ptr->first = NULL;
+    }
+
+    oc_test_element_pool = (test_element *) mem_alloc( sizeof( test_element ) );
+    oc_test_element_pool->next = NULL;
+    oc_test_element_pool->v_position = 0;
+    oc_test_element_pool->type = tp_text;
+    oc_test_element_pool->element.tp_text.count = 0;
+    oc_test_element_pool->element.tp_text.v_position = 0;
+    oc_test_element_pool->element.tp_text.depth = 0;
+    oc_test_element_pool->element.tp_text.first = NULL;
+    te_pool_ptr = oc_test_element_pool;
+    for( i = 0; i < 9; i++ ) {
+        te_pool_ptr->next = (test_element *) \
+                                        mem_alloc( sizeof( test_element ) );
+        te_pool_ptr = te_pool_ptr->next;
+        te_pool_ptr->next = NULL;
+        te_pool_ptr->v_position = 0;
+        te_pool_ptr->type = tp_text;
+        te_pool_ptr->element.tp_text.count = 0;
+        te_pool_ptr->element.tp_text.v_position = 0;
+        te_pool_ptr->element.tp_text.depth = 0;
+        te_pool_ptr->element.tp_text.first = NULL;
+    }
+
+    /* Set up oc_test_page. */
+
+    oc_test_page.cur_depth = 0;
+    oc_test_page.first = 0;
+
     /* These would normally be set per the :LAYOUT. Here, half-inch
      * top, bottom and right margins and a one-inch left margin are
      * applied to an 8-1/2" x 11" page.
      */
- 
+
     if( bin_driver->y_positive == 0 ) {
-        page_top = 10 * bin_device->vertical_base_units;
-        page_bottom = bin_device->vertical_base_units / 2;
+        oc_test_page.page_top = 10 * bin_device->vertical_base_units;
+        oc_test_page.page_bottom = bin_device->vertical_base_units / 2;
+        oc_test_page.max_depth = oc_test_page.page_top - oc_test_page.page_bottom;
     } else {
-        page_top = bin_device->vertical_base_units / 2;
-        page_bottom = 10 * bin_device->vertical_base_units;
+        oc_test_page.page_top = bin_device->vertical_base_units / 2;
+        oc_test_page.page_bottom = 10 * bin_device->vertical_base_units;
+        oc_test_page.max_depth = oc_test_page.page_bottom - oc_test_page.page_top;
     }
- 
-    page_left = bin_device->horizontal_base_units;
-    page_right = (8 * bin_device->horizontal_base_units) - \
+
+    oc_test_page.page_left = bin_device->horizontal_base_units;
+    oc_test_page.page_right = (8 * bin_device->horizontal_base_units) - \
                                     (bin_device->horizontal_base_units / 2);
- 
+
     /* Set the variables. */
- 
+
+    line_height_zero = wgml_fonts[0].line_height;
     max_char_width = 0;
-    max_line_height = 0;
- 
+
     for( i = 0; i < wgml_font_cnt; i++ ) {
         if( max_char_width < wgml_fonts[i].default_width ) \
             max_char_width = wgml_fonts[i].default_width;
-        if( max_line_height < wgml_fonts[i].line_height ) \
-            max_line_height = wgml_fonts[i].line_height;
     }
- 
+
     net_page_height = bin_device->page_depth;
     net_page_width = bin_device->page_width;
- 
+
     /* The OUTCHECK Test Document. */
- 
+
     /* Allow input translation tests. */
- 
+
     cop_ti_table( "set ~", 5 );
- 
+
     /* First pass processing. */
     /* START processing.*/
- 
+
     fb_start();
- 
+
     /* DOCUMENT processing.*/
- 
+
     fb_document();
- 
+
     /* Last pass processing. */
- 
+
     /* Title page. */ 
- 
+
     /* This centers the title horizontally. The horizontal title position
      * would normally be set per the :LAYOUT.
      */
- 
+
     {
         uint32_t    page_width;
         uint32_t    title_width;
- 
-        page_width = page_right - page_left;
+
+        page_width = oc_test_page.page_right - oc_test_page.page_left;
         title_width = cop_text_width( title[0].text, sizeof( title[0].text ), \
                                                         title[0].font_number );
-                                                        
-        cur_h_start = page_left + ((page_width - title_width) / 2);
+                                                       
+        oc_h_start = oc_test_page.page_left + ((page_width - title_width) / 2);
     }
- 
+
     /* This places the title part-way down the page, something
      * which would normally be set per the :LAYOUT. The computation is: 14
      * line gap from the top of the page, plus one line for the line the
      * text is to appear on. 
      */
-     
+    
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start = page_top - (15 * max_line_height);
+        oc_v_start = oc_test_page.page_top - (15 * line_height_zero);
     } else {
-        cur_v_start = page_top + (15 * max_line_height);
+        oc_v_start = oc_test_page.page_top + (15 * line_height_zero);
     }
- 
-    fb_position( cur_h_start, cur_v_start );
- 
-    /* Output the Title. */
- 
-    emulate_text_output( title );
- 
-    /* First page. */
- 
-    /* Margin/indent setup. */
- 
-    /* One-inch margin on line 1. */
- 
-    cur_h_start = page_left;
-    if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start = page_top - max_line_height;
-    } else {
-        cur_v_start = page_top + max_line_height;
-    }
- 
-    fb_new_section( cur_v_start );
- 
-    /* One-half inch paragraph indent. */
- 
-    cur_h_start += bin_device->horizontal_base_units / 2;
- 
-    /* Output the first paragraph. */
- 
-    emulate_text_output( page1_para1 );
 
+    fb_position( oc_h_start, oc_v_start );
+
+    /* Output the Title. */
+
+    emulate_layout_page( title, oc_text );
+
+    /* Force the final page out. */
+
+    emulate_output_page();
+
+    /* Document Section. */
+
+    /* Margin/indent setup. */
+
+    /* One-inch margin on line 1. */
+
+    oc_h_start = oc_test_page.page_left;
+    if( bin_driver->y_positive == 0x00 ) {
+        oc_v_start = oc_test_page.page_top - line_height_zero;
+    } else {
+        oc_v_start = oc_test_page.page_top + line_height_zero;
+    }
+
+    /* Do the new section processing. */
+
+    fb_new_section( oc_v_start );
+
+    /* One-half inch paragraph indent. */
+
+    oc_h_start += bin_device->horizontal_base_units / 2;
+
+    /* Output the first paragraph. */
+
+    emulate_layout_page( para1, oc_text );
+
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+    oc_h_start = oc_test_page.page_left + bin_device->horizontal_base_units / 2;
+    emulate_layout_page( para1, oc_text );
+
+#if 0 // restore when boxing is done again and blank-line-insertion is handled
     /* A blank line is placed between paragraphs. */
 
     /* Output the second paragraph. */
 
-    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
+    oc_h_start = oc_test_page.page_left + (bin_device->horizontal_base_units / 2);
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start -= 2 * max_line_height;
+        oc_v_start -= 2 * line_height_zero;
     } else {
-        cur_v_start += 2 * max_line_height;
+        oc_v_start += 2 * line_height_zero;
     }
-    emulate_text_output( page1_para2 );
-
+    emulate_layout_page( para2, oc_text );
+#endif
     /* First box. */
- 
-    cur_h_len = bin_device->horizontal_base_units;
-    cur_h_start = bin_device->horizontal_base_units;
-    cur_v_len = 2 * max_char_width;
+
+    oc_h_len = bin_device->horizontal_base_units;
+    oc_h_start = bin_device->horizontal_base_units;
+    oc_v_len = 2 * max_char_width;
+#if 0 // move to within the bx_element including the above three lines
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start -= 2 * max_line_height;
+        oc_v_start -= 2 * line_height_zero;
     } else {
-        cur_v_start += 2 * max_line_height;
+        oc_v_start += 2 * line_height_zero;
     }
- 
+
     if( has_aa_block ) {
         if( bin_driver->y_positive == 0x00 ) {
             if( bin_driver->hline.text != NULL ) {
-                fb_hline( cur_h_start, cur_v_start, cur_h_len );
-                fb_hline( cur_h_start, cur_v_start - cur_v_len, cur_h_len );
+                fb_hline( oc_h_start, oc_v_start, oc_h_len );
+                fb_hline( oc_h_start, oc_v_start - oc_v_len, oc_h_len );
             }
             if( bin_driver->vline.text != NULL ) {
-                cur_v_start -= cur_v_len;
-                fb_vline( cur_h_start, cur_v_start, cur_v_len );
-                fb_vline( cur_h_start + cur_h_len, cur_v_start, cur_v_len );
-                cur_v_start += cur_v_len;
+                oc_v_start -= oc_v_len;
+                fb_vline( oc_h_start, oc_v_start, oc_v_len );
+                fb_vline( oc_h_start + oc_h_len, oc_v_start, oc_v_len );
+                oc_v_start += oc_v_len;
             }
         } else {
             if( bin_driver->hline.text != NULL ) {
-                fb_hline( cur_h_start, cur_v_start, cur_h_len );
-                fb_hline( cur_h_start, cur_v_start + cur_v_len, cur_h_len );
+                fb_hline( oc_h_start, oc_v_start, oc_h_len );
+                fb_hline( oc_h_start, oc_v_start + oc_v_len, oc_h_len );
             }
             if( bin_driver->vline.text != NULL ) {
-                cur_v_start += cur_v_len;
-                fb_vline( cur_h_start, cur_v_start, cur_v_len );
-                fb_vline( cur_h_start + cur_h_len, cur_v_start, cur_v_len );
-                cur_v_start -= cur_v_len;
+                oc_v_start += oc_v_len;
+                fb_vline( oc_h_start, oc_v_start, oc_v_len );
+                fb_vline( oc_h_start + oc_h_len, oc_v_start, oc_v_len );
+                oc_v_start -= oc_v_len;
             }
         }
     }
- 
-    /* :NEWPAGE block. */
- 
-    fb_document_page();
- 
-    /* Second page. */
- 
-    /* Output the first paragraph. */
-
-    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
-    if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start = net_page_height - max_line_height;
-    } else {
-        cur_v_start = max_line_height;
-    }
-    emulate_text_output( page2_para1 );
- 
-    /* Output the second paragraph. */
-
-    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
-    if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start -= 2 * max_line_height;
-    } else {
-        cur_v_start += 2 * max_line_height;
-    }
-    emulate_text_output( page2_para2 );
- 
+#endif
     /* Output the third paragraph. */
 
-    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
+#if 0 // restore when boxing is done again
+    oc_h_start = oc_test_page.page_left + (bin_device->horizontal_base_units / 2);
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start -= 2 * max_line_height;
+        oc_v_start = net_page_height - line_height_zero;
     } else {
-        cur_v_start += 2 * max_line_height;
+        oc_v_start = line_height_zero;
     }
-    emulate_text_output( page2_para3 );
- 
+    emulate_layout_page( para3, oc_text );
+
     /* Second box. */
- 
+
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start -= 2 * max_line_height;
+        oc_v_start -= 2 * line_height_zero;
     } else {
-        cur_v_start += 2 * max_line_height;
+        oc_v_start += 2 * line_height_zero;
     }
 
-    cur_h_start = bin_device->horizontal_base_units;
+    oc_h_start = bin_device->horizontal_base_units;
     if( has_aa_block != NULL ) {
         if( bin_driver->y_positive == 0x00 ) {
             if( bin_driver->dbox.text != NULL ) {
-                fb_dbox( cur_h_start, cur_v_start - cur_v_len, cur_h_len, \
-                                                                cur_v_len );
+                fb_dbox( oc_h_start, oc_v_start - oc_v_len, oc_h_len, \
+                                                                oc_v_len );
             }
         } else {
             if( bin_driver->dbox.text != NULL ) {
-                fb_dbox( cur_h_start, cur_v_start + cur_v_len, cur_h_len, \
-                                                                cur_v_len );
+                fb_dbox( oc_h_start, oc_v_start + oc_v_len, oc_h_len, \
+                                                                oc_v_len );
             }
         }
     }
- 
+#endif
+    /* Force the final page out. */
+
+    emulate_output_page();
+
     /* :FINISH block. */
- 
+
     fb_finish();
- 
+
     /* Free allocated memory. */
- 
-    if( text_chars_pool != NULL ) {
-        while( text_chars_pool->next != NULL ) {
-            current = text_chars_pool;
-            text_chars_pool = text_chars_pool->next;
-            mem_free( current );
+
+    /* Free the memory held by the test_element pool. */
+
+    if( oc_test_element_pool != NULL ) {
+        while( oc_test_element_pool->next != NULL ) {
+            te_pool_ptr = oc_test_element_pool;
+            oc_test_element_pool = oc_test_element_pool->next;
+            switch( te_pool_ptr->type ) {
+            case tp_text:
+
+                if( te_pool_ptr->element.tp_text.first != NULL ) {
+
+                    /* Return any text_line instances to the text_line pool. */
+
+                    out_msg( "tp_text_element in pool not empty!\n" );
+                    if( oc_text_line_pool == NULL ) {
+                        oc_text_line_pool = te_pool_ptr->element.tp_text.first;
+                    } else {
+                        tl_pool_ptr = te_pool_ptr->element.tp_text.first;
+                        while( tl_pool_ptr->next != NULL ) {
+                            tl_pool_ptr = tl_pool_ptr->next;
+                        }
+                        tl_pool_ptr->next = oc_text_line_pool;
+                        oc_text_line_pool = te_pool_ptr->element.tp_text.first;
+                    }
+                    te_pool_ptr->element.tp_text.first = NULL;
+                }
+            case tp_bx:
+                /* Implementation: to be done. */
+                break;
+            case tp_fig:
+                /* Implementation: to be done. */
+                break;
+            default:
+                out_msg( "outcheck internal error: incorrect test_element\n" );
+                err_count++;
+                g_suicide();
+            }
+            mem_free( te_pool_ptr );
         }
-        current = text_chars_pool;
-        text_chars_pool = text_chars_pool->next;
-        mem_free( current );
-        current = NULL;
+        mem_free( oc_test_element_pool );
+        oc_test_element_pool = NULL;
+        te_pool_ptr = NULL;
     }
- 
+
+    /* Free the memory held by the text_line pool. */
+
+    if( oc_text_line_pool != NULL ) {
+        while( oc_text_line_pool->next != NULL ) {
+            tl_pool_ptr = oc_text_line_pool;
+            oc_text_line_pool = oc_text_line_pool->next;
+            if( tl_pool_ptr->first != NULL ) {
+
+                /* Return any text_chars instances to the text_chars pool. */
+
+                out_msg( "text_line in pool not empty!\n" );
+                if( oc_text_chars_pool == NULL ) {
+                    oc_text_chars_pool = tl_pool_ptr->first;
+                } else {
+                    tc_pool_ptr = tl_pool_ptr->first;
+                    while( tc_pool_ptr->next != NULL ) {
+                        tc_pool_ptr = tc_pool_ptr->next;
+                    }
+                    tc_pool_ptr->next = oc_text_chars_pool;
+                    oc_text_chars_pool = tl_pool_ptr->first;
+                }
+                tl_pool_ptr->first = NULL;
+            }
+            mem_free( tl_pool_ptr );
+        }
+        mem_free( oc_text_line_pool );
+        oc_text_line_pool = NULL;
+        tl_pool_ptr = NULL;
+    }
+
+    /* Free the memory held by the text_chars pool. */
+
+    if( oc_text_chars_pool != NULL ) {
+        while( oc_text_chars_pool->next != NULL ) {
+            tc_pool_ptr = oc_text_chars_pool;
+            oc_text_chars_pool = oc_text_chars_pool->next;
+            mem_free( tc_pool_ptr );
+        }
+        mem_free( oc_text_chars_pool );
+        oc_text_chars_pool = NULL;
+        tc_pool_ptr = NULL;
+    }
+
     return;
 }
- 
+
 /* Global function definitions. */
- 
+
 /* Function print_banner().
  * Print the banner to the screen.
  */
- 
+
 extern void print_banner( void )
 {
     puts( banner1w( "Document Output Test Program", _RESEARCH_VERSION_ ) );
@@ -850,22 +1465,22 @@ extern void print_banner( void )
     puts( banner3 );
     puts( banner3a );
 }
- 
+
 /* Function print_usage().
  * Print the usage information to the screen.
  */
- 
+
 extern void print_usage( void )
 {
     char const * *  list;
- 
+
     list = usage_text;
     while( *list ) {
         puts( *list );
         ++list;
     }
 }
- 
+
 /* Function main().
  * Given a valid defined name, verify that it is a valid .COP file and parse 
  * it if it is.
@@ -876,94 +1491,95 @@ extern void print_usage( void )
  * Returns:
  *      EXIT_FAILURE or EXIT_SUCCESS, as appropriate.
  */
- 
+
 int main()
 {
     char    *   cmdline = NULL;
     int         retval;
     jmp_buf     env;
     size_t      cmdlen  = 0;
- 
+
 null_buffer();
 start_heapcheck( "main" );
- 
+
     /* For compatibility with wgml modules. */
- 
+
     environment = &env;
     if( setjmp( env ) ) {               // if fatal error has occurred
         my_exit( 16 );
     }
- 
+
     /* Display the banner. */
- 
+
     print_banner();
- 
+
     /* Display the usage information if the command line is empty. */
- 
+
     cmdlen = _bgetcmd( NULL, 0 );
     if( cmdlen == 0 ) {
         print_usage();
         return( EXIT_FAILURE );
     }
- 
+
     /* Include space for the terminating null character. */
- 
+
     cmdlen++;
- 
+
     /* Get the command line. */
- 
+
     cmdline = malloc( cmdlen );
     if( cmdline == NULL ) {
         return( EXIT_FAILURE );
     }
- 
+
     cmdlen = _bgetcmd( cmdline, cmdlen );
- 
+
     /* Initialize the globals. */
- 
+
     initialize_globals();
     res_initialize_globals();
     init_global_vars();         // wgml globals
-    
+
     /* Parse the command line: allocates and sets tgt_path. */
- 
+
     retval = parse_cmdline( cmdline );
     if( retval == FAILURE ) {
         free( cmdline );
         return( EXIT_FAILURE );
     }
- 
+
     /* Free the memory held by cmdline and reset it. */
- 
+
     free( cmdline );
     cmdline = NULL;
- 
+
     dev_name = tgt_path;
     master_fname = "outcheck";
     out_file = NULL;
     out_file_attr = NULL;
- 
+
     /* Initialize the binary device library. */
- 
+
     ff_setup();
     cop_setup();
- 
+
     /* Create the output file. */
- 
+
     emulate_wgml();
- 
+
     /* Release the memory allocated. */
- 
+
     cop_teardown();
     ff_teardown();
- 
+
     mem_free(tgt_path);
     tgt_path = NULL;
- 
+
     free_some_mem();            // wgml globals
- 
+
 end_heapcheck( "main" );
- 
+//display_heap( "pre" );
+//display_heap( "post" );
     return( EXIT_SUCCESS );
 }
- 
+
