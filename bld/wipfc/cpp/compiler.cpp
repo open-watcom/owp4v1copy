@@ -208,10 +208,13 @@ void Compiler::printError( ErrCode c, const std::wstring* name, unsigned int row
 Lexer::Token Compiler::getNextToken()
 {
     Lexer::Token tok( lexer->lex( inFiles[inFiles.size() - 1] ));
-    if( parseContinuously && tok == Lexer::END ) {
-        popInput();
-        if( !inFiles.empty() )
+    if( parseContinuously ) {
+        while( tok == Lexer::END ) {
+            popInput();
+            if( inFiles.empty() )
+                break;
             tok = lexer->lex( inFiles[inFiles.size() - 1] );
+        }
     }
     return tok;
 }
