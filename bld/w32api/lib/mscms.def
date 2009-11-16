@@ -59,14 +59,15 @@ WcsCreateIccProfile@8
 WcsDisassociateColorProfileFromDevice@12
 WcsEnumColorProfiles@20
 WcsEnumColorProfilesSize@12
+WcsGetCalibrationManagementState@4
 WcsGetDefaultColorProfile@28
 WcsGetDefaultColorProfileSize@24
 WcsGetDefaultRenderingIntent@8
 WcsGetUsePerUserProfiles@12
 WcsOpenColorProfileA@28
 WcsOpenColorProfileW@28
+WcsSetCalibrationManagementState@4
 WcsSetDefaultColorProfile@24
 WcsSetDefaultRenderingIntent@8
 WcsSetUsePerUserProfiles@12
 WcsTranslateColors@40
-

@@ -121,6 +121,7 @@ typedef PVOID       LPDEVCHARACTER;
 #if (NTDDI_VERSION >= 0x06000000)
     #define PRESERVEBLACK           0x00100000L
     #define WCS_ALWAYS              0x00200000L
+    #define SEQUENTIAL_TRANSFORM    0x80800000L
 #endif
 
 /* GetPS2ColorSpaceArray() constants */
@@ -319,10 +320,13 @@ typedef COLORPROFILESUBTYPE *LPCOLORPROFILESUBTYPE;
 /* Color data types */
 #if (NTDDI_VERSION >= 0x06000000)
 typedef enum {
-    COLOR_BYTE          = 1,
-    COLOR_WORD          = 2,
-    COLOR_FLOAT         = 3,
-    COLOR_S2DOT13FIXED  = 4
+    COLOR_BYTE                  = 1,
+    COLOR_WORD                  = 2,
+    COLOR_FLOAT                 = 3,
+    COLOR_S2DOT13FIXED          = 4,
+    COLOR_10b_R10G10B10A2       = 5,
+    COLOR_10b_R10G10B10A2_XR    = 6,
+    COLOR_FLOAT16               = 7
 } COLORDATATYPE;
 typedef COLORDATATYPE   *PCOLORDATATYPE;
 typedef COLORDATATYPE   *LPCOLORDATATYPE;
@@ -367,7 +371,10 @@ typedef enum {
     BM_32b_scRGB            = 0x0601,
     BM_32b_scARGB           = 0x0602,
     BM_S2DOT13FIXED_scRGB   = 0x0603,
-    BM_S2DOT13FIXED_scARGB  = 0x0604
+    BM_S2DOT13FIXED_scARGB  = 0x0604,
+    BM_R10G10B10A2          = 0x0701,
+    BM_R10G10B10A2_XR       = 0x0702,
+    BM_R16G16B16A16_FLOAT   = 0x0703
 } BMFORMAT;
 typedef BMFORMAT    *PBMFORMAT;
 typedef BMFORMAT    *LPBMFORMAT;
@@ -610,6 +617,10 @@ BOOL WINAPI         WcsSetDefaultColorProfile( WCS_PROFILE_MANAGEMENT_SCOPE, PCW
 BOOL WINAPI         WcsSetDefaultRenderingIntent( WCS_PROFILE_MANAGEMENT_SCOPE, DWORD );
 BOOL WINAPI         WcsSetUsePerUserProfiles( LPCWSTR, DWORD, BOOL );
 BOOL WINAPI         WcsTranslateColors( HTRANSFORM, DWORD, DWORD, COLORDATATYPE, DWORD, PVOID, DWORD, COLORDATATYPE, DWORD, PVOID );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+BOOL WINAPI         WcsGetCalibrationManagementState( BOOL * );
+BOOL WINAPI         WcsSetCalibrationManagementState( BOOL );
 #endif
 
 /* Functions in ICMUI.DLL */
