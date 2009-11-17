@@ -362,12 +362,17 @@ typedef DWORD       KS_AM_Step;
 #endif
 
 /* Kernel streaming video flags */
-#define KS_VIDEO_FLAG_FRAME     0x00000000L
-#define KS_VIDEO_FLAG_FIELD1    0x00000001L
-#define KS_VIDEO_FLAG_FIELD2    0x00000002L
-#define KS_VIDEO_FLAG_I_FRAME   0x00000000L
-#define KS_VIDEO_FLAG_P_FRAME   0x00000010L
-#define KS_VIDEO_FLAG_B_FRAME   0x00000020L
+#define KS_VIDEO_FLAG_FIELD_MASK    0x00000003L
+#define KS_VIDEO_FLAG_FRAME         0x00000000L
+#define KS_VIDEO_FLAG_FIELD1        0x00000001L
+#define KS_VIDEO_FLAG_FIELD2        0x00000002L
+#define KS_VIDEO_FLAG_FIELD1FIRST   0x00000004L
+#define KS_VIDEO_FLAG_WEAVE         0x00000008L
+#define KS_VIDEO_FLAG_IPB_MASK      0x00000030L
+#define KS_VIDEO_FLAG_I_FRAME       0x00000000L
+#define KS_VIDEO_FLAG_P_FRAME       0x00000010L
+#define KS_VIDEO_FLAG_B_FRAME       0x00000020L
+#define KS_VIDEO_FLAG_REPEAT_FIELD  0x00000040L
 
 /* Kernel streaming VBI flags */
 #if (NTDDI_VERSION < 0x05010000)
@@ -418,6 +423,13 @@ typedef DWORD       KS_AM_Step;
 /* Kernel streaming ActiveMovie flags */
 #define KS_AM_UseNewCSSKey  0x00000001L
 
+/* Maximum sink description name length */
+#define MAX_SINK_DESCRIPTION_NAME_LENGTH    32
+
+/* Jack capabilities */
+#define JACKDESC2_PRESENCE_DETECT_CAPABILITY        0x00000001L
+#define JACKDESC2_DYNAMIC_FORMAT_CHANGE_CAPABILITY  0x00000002L
+
 /* Kernel streaming multiple data property */
 typedef struct {
     KSPROPERTY      Property;
@@ -454,6 +466,17 @@ typedef struct {
     GUID            SubFormat;
 } WAVEFORMATEXTENSIBLE;
 typedef WAVEFORMATEXTENSIBLE    *PWAVEFORMATEXTENSIBLE;
+#endif
+
+/* IEC61937 extensible wave format */
+#if defined( _INC_MMSYSTEM ) && !defined( _INC_MMREG )
+typedef struct {
+    WAVEFORMATEXTENSIBLE    FormatExt;
+    DWORD                   dwEncodedSamplesPerSec;
+    DWORD                   dwEncodedChannelCount;
+    DWORD                   dwAverageBytesPerSec;
+} WAVEFORMATEXTENSIBLE_IEC61937;
+typedef WAVEFORMATEXTENSIBLE_IEC61937   *PWAVEFORMATEXTENSIBLE_IEC61937;
 #endif
 
 /* Kernel streaming DirectSound buffer description */
@@ -790,7 +813,12 @@ typedef enum {
     KSPROPERTY_RTAUDIO_CLOCKREGISTER                    = 4,
     KSPROPERTY_RTAUDIO_BUFFER_WITH_NOTIFICATION         = 5,
     KSPROPERTY_RTAUDIO_REGISTER_NOTIFICATION_EVENT      = 6,
+#if (NTDDI_VERSION >= 0x06010000)
+    KSPROPERTY_RTAUDIO_UNREGISTER_NOTIFICATION_EVENT    = 7,
+    KSPROPERTY_RTAUDIO_QUERY_NOTIFICATION_SUPPORT       = 8
+#else
     KSPROPERTY_RTAUDIO_UNREGISTER_NOTIFICATION_EVENT    = 7
+#endif
 #else
     KSPROPERTY_RTAUDIO_GETPOSITIONFUNCTION              = 0
 #endif
@@ -927,6 +955,13 @@ typedef struct {
     ULONG       NotificationEvent;
 } KSRTAUDIO_NOTIFICATION_EVENT_PROPERTY32;
 typedef KSRTAUDIO_NOTIFICATION_EVENT_PROPERTY32 *PKSRTAUDIO_NOTIFICATION_EVENT_PROPERTY32;
+#endif
+
+/* Kernel streaming one-shot properties */
+#if (NTDDI_VERSION >= 0x06010000)
+enum {
+    KSPROPERTY_ONESHOT_RECONNECT    = 0
+};
 #endif
 
 /* Kernel streaming DRM audio stream properties */
@@ -1841,6 +1876,13 @@ typedef struct tagKS_DATAFORMAT_VIDEOINFOHEADER2 {
 } KS_DATAFORMAT_VIDEOINFOHEADER2;
 typedef KS_DATAFORMAT_VIDEOINFOHEADER2  *PKS_DATAFORMAT_VIDEOINFOHEADER2;
 
+/* Kernel streaming MPEG video information data format (version 2) */
+typedef struct tagKS_DATAFORMAT_MPEGVIDEOINFO2 {
+    KSDATAFORMAT        DataFormat;
+    KS_MPEGVIDEOINFO2   MpegVideoInfoHeader2;
+} KS_DATAFORMAT_MPEGVIDEOINFO2;
+typedef KS_DATAFORMAT_MPEGVIDEOINFO2    *PKS_DATAFORMAT_MPEGVIDEOINFO2;
+
 /* Kernel streaming video information palette data format */
 typedef struct tagKS_DATAFORMAT_VIDEOINFO_PALETTE {
     KSDATAFORMAT    DataFormat;
@@ -2250,6 +2292,16 @@ typedef struct {
 } VRAM_SURFACE_INFO_PROPERTY_S;
 typedef VRAM_SURFACE_INFO_PROPERTY_S    *PVRAM_SURFACE_INFO_PROPERTY_S;
 
+/* Kernel streaming property MPEG4 media type attributes */
+typedef enum {
+    KSPROPERTY_MPEG4_MEDIATYPE_SD_BOX   = 1
+} KSPROPERTY_MPEG4_MEDIATYPE_ATTRIBUTES;
+
+/* Kernel streaming dynamic format change events */
+enum {
+    KSEVENT_DYNAMIC_FORMAT_CHANGE   = 0
+};
+
 /* Kernel streaming frame information */
 typedef struct tagKS_FRAME_INFO {
     ULONG       ExtendedHeaderSize;
@@ -2259,7 +2311,10 @@ typedef struct tagKS_FRAME_INFO {
     HANDLE      hDirectDraw;
     HANDLE      hSurfaceHandle;
     RECT        DirectDrawRect;
-    DWORD       Reserved1;
+    union {
+        LONG    lSurfacePitch;
+        DWORD   Reserved1;
+    };
     DWORD       Reserved2;
     DWORD       Reserved3;
     DWORD       Reserved4;
@@ -3484,7 +3539,9 @@ typedef enum {
 
 /* Kernel streaming jack properties */
 typedef enum {
-    KSPROPERTY_JACK_DESCRIPTION = 1
+    KSPROPERTY_JACK_DESCRIPTION     = 1,
+    KSPROPERTY_JACK_DESCRIPTION2    = 2,
+    KSPROPERTY_JACK_SINK_INFO       = 3
 } KSPROPERTY_JACK;
 
 /* Connection types */
@@ -3500,32 +3557,34 @@ typedef enum {
     eConnTypeMultichannelAnalogDIN  = 8,
     eConnTypeXlrProfessional        = 9,
     eConnTypeRJ11Modem              = 10,
-    eConnTypeCombination            = 11
+    eConnTypeCombination            = 11,
 } EPcxConnectionType;
 
 /* Geographic locations */
 typedef enum {
-    eGeoLocRear             = 1,
-    eGeoLocFront            = 2,
-    eGeoLocLeft             = 3,
-    eGeoLocRight            = 4,
-    eGeoLocTop              = 5,
-    eGeoLocBottom           = 6,
-    eGeoLocRearPanel        = 7,
-    eGeoLocRiser            = 8,
-    eGeoLocInsideMobileLid  = 9,
-    eGeoLocDrivebay         = 10,
-    eGeoLocHDMI             = 11,
-    eGeoLocOutsideMobileLid = 12,
-    eGeoLocATAPI            = 13
+    eGeoLocRear                 = 1,
+    eGeoLocFront                = 2,
+    eGeoLocLeft                 = 3,
+    eGeoLocRight                = 4,
+    eGeoLocTop                  = 5,
+    eGeoLocBottom               = 6,
+    eGeoLocRearPanel            = 7,
+    eGeoLocRiser                = 8,
+    eGeoLocInsideMobileLid      = 9,
+    eGeoLocDrivebay             = 10,
+    eGeoLocHDMI                 = 11,
+    eGeoLocOutsideMobileLid     = 12,
+    eGeoLocATAPI                = 13,
+    EPcxGeoLocation_enum_count  = 16
 } EPcxGeoLocation;
 
 /* General locations */
 typedef enum {
-    eGenLocPrimaryBox   = 0,
-    eGenLocInternal     = 1,
-    eGenLocSeparate     = 2,
-    eGenLocOther        = 3
+    eGenLocPrimaryBox           = 0,
+    eGenLocInternal             = 1,
+    eGenLocSeparate             = 2,
+    eGenLocOther                = 3
+    EPcxGenLocation_enum_count  = 4
 } EPcxGenLocation;
 
 /* Port connections */
@@ -3547,6 +3606,33 @@ typedef struct {
     BOOL                IsConnected;
 } KSJACK_DESCRIPTION;
 typedef KSJACK_DESCRIPTION  *PKSJACK_DESCRIPTION;
+
+/* Kernel streaming jack sink connection types */
+typedef enum {
+    KSJACK_SINK_CONNECTIONTYPE_HDMI         = 0,
+    KSJACK_SINK_CONNECTIONTYPE_DISPLAYPORT  = 1
+} KSJACK_SINK_CONNECTIONTYPE;
+
+/* Kernel streaming jack sink information */
+typedef struct _tagKSJACK_SINK_INFORMATION {
+    KSJACK_SINK_CONNECTIONTYPE  ConnType;
+    WORD                        ManufacturerId;
+    WORD                        ProductId;
+    WORD                        AudioLatency;
+    BOOL                        HDCPCapable;
+    BOOL                        AICapable;
+    UCHAR                       SinkDescriptionLength;
+    WCHAR                       SinkDescription[MAX_SINK_DESCRIPTION_NAME_LENGTH];
+    LUID                        PortId;
+} KSJACK_SINK_INFORMATION;
+typedef KSJACK_SINK_INFORMATION *PKSJACK_SINK_INFORMATION;
+
+/* Kernel streaming jack description (version 2) */
+typedef struct _tagKSJACK_DESCRIPTION2 {
+    DWORD   DeviceStateInfo;
+    DWORD   JackCapabilities;
+} KSJACK_DESCRIPTION2;
+typedef KSJACK_DESCRIPTION2 *PKSJACK_DESCRIPTION2;
 
 :include cplusepi.sp
 
