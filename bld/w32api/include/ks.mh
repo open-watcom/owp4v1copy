@@ -786,6 +786,14 @@ typedef struct {
 } KSP_PIN;
 typedef KSP_PIN *PKSP_PIN;
 
+/* Kernel stream pin event */
+typedef struct {
+    KSEVENT Event;
+    ULONG   PinId;
+    ULONG   Reserved;
+} KSE_PIN;
+typedef KSE_PIN *PKSE_PIN;
+
 /* Kernel streaming pin instance count property */
 typedef struct {
     ULONG   PossibleCount;
@@ -867,6 +875,12 @@ typedef KSPIN_PHYSICALCONNECTION    *PKSPIN_PHYSICALCONNECTION;
 typedef NTSTATUS (NTAPI *PFNKSINTERSECTHANDLER)( PIRP, PKSP_PIN, PKSDATARANGE, PVOID );
 typedef NTSTATUS (NTAPI *PFNKSINTERSECTHANDLEREX)( PVOID, PIRP, PKSP_PIN, PKSDATARANGE, PKSDATARANGE, ULONG, PVOID, PULONG );
 #endif
+
+/* Kernel streaming pin capabilities change notifications */
+typedef enum {
+    KSEVENT_PINCAPS_FORMATCHANGE    = 0,
+    KSEVENT_PINCAPS_JACKINFOCHANGE  = 1
+} KSEVENT_PINCAPS_CHANGENOTIFICATIONS;
 
 /* Kernel streaming pin descriptor */
 #ifdef _NTDDK_
