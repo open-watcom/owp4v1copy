@@ -211,7 +211,10 @@ typedef ULONG   IFTYPE;
 #define IF_TYPE_ATM_VCI_ENDPT                       194
 #define IF_TYPE_OPTICAL_CHANNEL                     195
 #define IF_TYPE_OPTICAL_TRANSPORT                   196
-#define MAX_IF_TYPE                                 196
+#define IF_TYPE_IEEE80216_WANN                      237
+#define IF_TYPE_WWANPP                              243
+#define IF_TYPE_WWANPP2                             244
+#define MAX_IF_TYPE                                 244
 
 /* Interface capability flags */
 #define IF_CHECK_NONE   0x00
