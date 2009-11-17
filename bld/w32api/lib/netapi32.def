@@ -28,6 +28,7 @@ DsValidateSubnetNameW@4
 I_NetLogonControl@16
 I_NetLogonControl2@20
 NetAddAlternateComputerName@20
+NetAddServiceAccount@16
 NetAlertRaise@12
 NetAlertRaiseEx@16
 NetApiBufferAllocate@8
@@ -42,6 +43,7 @@ NetConfigGetAll@12
 NetConfigSet@28
 NetConnectionEnum@32
 NetEnumerateComputerNames@20
+NetEnumerateServiceAccounts@16
 NetEnumerateTrustedDomains@8
 NetErrorLogClear@12
 NetErrorLogRead@44
@@ -63,6 +65,7 @@ NetGroupGetInfo@16
 NetGroupGetUsers@32
 NetGroupSetInfo@20
 NetGroupSetUsers@20
+NetIsServiceAccount@12
 NetJoinDomain@24
 NetLocalGroupAdd@16
 NetLocalGroupAddMember@12
@@ -81,10 +84,12 @@ NetMessageNameDel@8
 NetMessageNameEnum@28
 NetMessageNameGetInfo@16
 NetQueryDisplayInformation@28
+NetQueryServiceAccount@16
 NetRegisterDomainNameChangeNotification@4
 NetRemoteComputerSupports@12
 NetRemoteTOD@8
 NetRemoveAlternateComputerName@20
+NetRemoveServiceAccount@12
 NetRenameMachineInDomain@20
 NetReplExportDirAdd@16
 NetReplExportDirDel@8
@@ -174,4 +179,3 @@ RxNetAccessGetInfo@16
 RxNetAccessGetUserPerms@16
 RxNetAccessSetInfo@20
 RxRemoteApi
-
