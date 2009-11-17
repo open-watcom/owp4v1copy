@@ -117,28 +117,26 @@ typedef struct icmp_echo_reply {
 typedef ICMP_ECHO_REPLY *PICMP_ECHO_REPLY;
 
 /* IPv6 address (extended version) */
+#if (NTDDI_VERSION >= 0x05010000)
 #include <packon.h>
-typedef struct _IPV6_ADDRESS_EX_LH {
+typedef struct _IPV6_ADDRESS_EX {
     USHORT  sin6_port;
     ULONG   sin6_flowinfo;
     USHORT  sin6_addr[8];
     ULONG   sin6_scope_id;
-} IPV6_ADDRESS_EX_LH;
-typedef IPV6_ADDRESS_EX_LH  *PIPV6_ADDRESS_EX_LH;
-#if (NTDDI_VERSION >= 0x06000000)
-typedef IPV6_ADDRESS_EX_LH  IPV6_ADDRESS_EX;
-typedef IPV6_ADDRESS_EX_LH  *PIPV6_ADDRESS_EX;
-#endif
+} IPV6_ADDRESS_EX;
+typedef IPV6_ADDRESS_EX *PIPV6_ADDRESS_EX;
 #include <packoff.h>
+#endif
 
 /* ICMPv6 echo reply */
+#if (NTDDI_VERSION >= 0x05010000)
 typedef struct icmpv6_echo_reply_lh {
-    IPV6_ADDRESS_EX_LH  Address;
-    ULONG               Status;
-    unsigned int        RoundTripTime;
+    IPV6_ADDRESS_EX Address;
+    ULONG           Status;
+    unsigned int    RoundTripTime;
 } ICMPV6_ECHO_REPLY_LH;
 typedef ICMPV6_ECHO_REPLY_LH    *PICMPV6_ECHO_REPLY_LH;
-#if (NTDDI_VERSION >= 0x06000000)
 typedef ICMPV6_ECHO_REPLY_LH    ICMPV6_ECHO_REPLY;
 typedef ICMPV6_ECHO_REPLY_LH    *PICMPV6_ECHO_REPLY;
 #endif
