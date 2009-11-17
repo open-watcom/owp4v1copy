@@ -87,6 +87,9 @@ typedef ULONG64 RVA64;
 
 /* Module load data types */
 #define DBHHEADER_DEBUGDIRS 0x00000001L
+#define DBHHEADER_CVMISC    0x00000002L
+#define DBHHEADER_PDBGUID   0x00000003L
+
 
 /* API version number */
 #define API_VERSION_NUMBER  11
@@ -123,38 +126,41 @@ typedef ULONG64 RVA64;
 #define CBA_EVENT                           0x00000010L
 #define CBA_DEFERRED_SYMBOL_LOAD_PARTIAL    0x00000020L
 #define CBA_DEBUG_INFO                      0x10000000L
+#define CBA_SRCSRV_INFO                     0x20000000L
+#define CBA_SRCSRV_EVENT                    0x40000000L
 
 /* Deferred symbol load flags */
 #define DSLFLAG_MISMATCHED_PDB  0x00000001L
 #define DSLFLAG_MISMATCHED_DBG  0x00000002L
 
 /* Symbol types */
-#define SYMOPT_CASE_INSENSITIVE         0x00000001L
-#define SYMOPT_UNDNAME                  0x00000002L
-#define SYMOPT_DEFERRED_LOADS           0x00000004L
-#define SYMOPT_NO_CPP                   0x00000008L
-#define SYMOPT_LOAD_LINES               0x00000010L
-#define SYMOPT_OMAP_FIND_NEAREST        0x00000020L
-#define SYMOPT_LOAD_ANYTHING            0x00000040L
-#define SYMOPT_IGNORE_CVREC             0x00000080L
-#define SYMOPT_NO_UNQUALIFIED_LOADS     0x00000100L
-#define SYMOPT_FAIL_CRITICAL_ERRORS     0x00000200L
-#define SYMOPT_EXACT_SYMBOLS            0x00000400L
-#define SYMOPT_ALLOW_ABSOLUTE_SYMBOLS   0x00000800L
-#define SYMOPT_IGNORE_NT_SYMPATH        0x00001000L
-#define SYMOPT_INCLUDE_32BIT_MODULES    0x00002000L
-#define SYMOPT_PUBLICS_ONLY             0x00004000L
-#define SYMOPT_NO_PUBLICS               0x00008000L
-#define SYMOPT_AUTO_PUBLICS             0x00010000L
-#define SYMOPT_NO_IMAGE_SEARCH          0x00020000L
-#define SYMOPT_SECURE                   0x00040000L
-#define SYMOPT_NO_PROMPTS               0x00080000L
-#define SYMOPT_OVERWRITE                0x00100000L
-#define SYMOPT_IGNORE_IMAGEDIR          0x00200000L
-#define SYMOPT_FLAT_DIRECTORY           0x00400000L
-#define SYMOPT_FAVOR_COMPRESSED         0x00800000L
-#define SYMOPT_ALLOW_ZERO_ADDRESS       0x01000000L
-#define SYMOPT_DEBUG                    0x80000000L
+#define SYMOPT_CASE_INSENSITIVE             0x00000001L
+#define SYMOPT_UNDNAME                      0x00000002L
+#define SYMOPT_DEFERRED_LOADS               0x00000004L
+#define SYMOPT_NO_CPP                       0x00000008L
+#define SYMOPT_LOAD_LINES                   0x00000010L
+#define SYMOPT_OMAP_FIND_NEAREST            0x00000020L
+#define SYMOPT_LOAD_ANYTHING                0x00000040L
+#define SYMOPT_IGNORE_CVREC                 0x00000080L
+#define SYMOPT_NO_UNQUALIFIED_LOADS         0x00000100L
+#define SYMOPT_FAIL_CRITICAL_ERRORS         0x00000200L
+#define SYMOPT_EXACT_SYMBOLS                0x00000400L
+#define SYMOPT_ALLOW_ABSOLUTE_SYMBOLS       0x00000800L
+#define SYMOPT_IGNORE_NT_SYMPATH            0x00001000L
+#define SYMOPT_INCLUDE_32BIT_MODULES        0x00002000L
+#define SYMOPT_PUBLICS_ONLY                 0x00004000L
+#define SYMOPT_NO_PUBLICS                   0x00008000L
+#define SYMOPT_AUTO_PUBLICS                 0x00010000L
+#define SYMOPT_NO_IMAGE_SEARCH              0x00020000L
+#define SYMOPT_SECURE                       0x00040000L
+#define SYMOPT_NO_PROMPTS                   0x00080000L
+#define SYMOPT_OVERWRITE                    0x00100000L
+#define SYMOPT_IGNORE_IMAGEDIR              0x00200000L
+#define SYMOPT_FLAT_DIRECTORY               0x00400000L
+#define SYMOPT_FAVOR_COMPRESSED             0x00800000L
+#define SYMOPT_ALLOW_ZERO_ADDRESS           0x01000000L
+#define SYMOPT_DISABLE_SYMSRV_AUTODETECT    0x02000000L
+#define SYMOPT_DEBUG                        0x80000000L
 
 /* SymEnumSourceLines() flags */
 #define ESLFLAG_FULLPATH    0x00000001L
@@ -171,6 +177,7 @@ typedef ULONG64 RVA64;
 #define SYMSEARCH_MASKOBJS      0x00000001L
 #define SYMSEARCH_RECURSE       0x00000002L
 #define SYMSEARCH_GLOBALSONLY   0x00000004L
+#define SYMSEARCH_ALLITEMS      0x00000008L
 
 /* SymGetTypeInfo() type identifiers */
 #define IMAGEHLP_GET_TYPE_INFO_UNCACHED 0x00000001L
@@ -203,7 +210,10 @@ typedef ULONG64 RVA64;
 #define SSRVOPT_MESSAGE             0x00080000L
 #define SSRVOPT_SERVICE             0x00100000L
 #define SSRVOPT_FAVOR_COMPRESSED    0x00200000L
-#define SSRVOPT_MAX                 0x00400000L
+#define SSRVOPT_STRING              0x00400000L
+#define SSRVOPT_WINHTTP             0x00800000L
+#define SSRVOPT_WININET             0x01000000L
+#define SSRVOPT_MAX                 0x01000000L
 #define SSRVOPT_RESET               ((ULONG_PTR)-1)
 #define NUM_SSRVOPTS                30
 
@@ -212,6 +222,7 @@ typedef ULONG64 RVA64;
 #define SSRVACTION_QUERYCANCEL  2
 #define SSRVACTION_EVENT        3
 #define SSRVACTION_EVENTW       4
+#define SSRVACTION_SIZE         5
 
 /* Symbol store options */
 #define SYMSTOREOPT_COMPRESS        0x00000001L
@@ -256,9 +267,13 @@ typedef ULONG64 RVA64;
 #define MINIDUMP_VERSION    42899
 
 /* Minidump miscellaneous information flags */
-#define MINIDUMP_MISC1_PROCESS_ID           0x00000001L
-#define MINIDUMP_MISC1_PROCESS_TIMES        0x00000002L
-#define MINIDUMP_MISC1_PROCESSOR_POWER_INFO 0x00000004L
+#define MINIDUMP_MISC1_PROCESS_ID               0x00000001L
+#define MINIDUMP_MISC1_PROCESS_TIMES            0x00000002L
+#define MINIDUMP_MISC1_PROCESSOR_POWER_INFO     0x00000004L
+#define MINIDUMP_MISC3_PROCESS_INTEGRITY        0x00000010L
+#define MINIDUMP_MISC3_PROCESS_EXECUTE_FLAGS    0x00000020L
+#define MINIDUMP_MISC3_TIMEZONE                 0x00000040L
+#define MINIDUMP_MISC3_PROTECTED_PROCESS        0x00000080L
 
 /* Minidump thread information flags */
 #define MINIDUMP_THREAD_INFO_ERROR_THREAD       0x00000001L
@@ -381,6 +396,24 @@ typedef struct _MODLOAD_DATA {
     DWORD   flags;
 } MODLOAD_DATA;
 typedef MODLOAD_DATA    *PMODLOAD_DATA;
+
+/* Module load CodeView miscellaneous data */
+typedef struct _MODLOAD_CVMISC {
+    DWORD   oCV;
+    size_t  cCV;
+    DWORD   oMisc;
+    size_t  cMisc;
+    DWORD   dtImage;
+    DWORD   cImage;
+} MODLOAD_CVMISC;
+typedef MODLOAD_CVMISC  *PMODLOAD_CVMISC;
+
+/* Module load PDB GUID data */
+typedef struct _MODLOAD_PDBGUID_PDBAGE {
+    GUID    PdbGuid;
+    DWORD   PdbAge;
+} MODLOAD_PDBGUID_PDBAGE;
+typedef MODLOAD_PDBGUID_PDBAGE  *PMODLOAD_PDBGUID_PDBAGE;
 
 /* Address modes */
 typedef enum {
@@ -914,6 +947,13 @@ enum {
     hdMax   = 3
 };
 
+/* Address map entry */
+typedef struct _OMAP {
+    ULONG   rva;
+    ULONG   rvaTo;
+} OMAP;
+typedef OMAP    *POMAP;
+
 /* Source code information */
 typedef struct _SRCCODEINFO {
     DWORD   SizeOfStruct;
@@ -944,6 +984,7 @@ typedef BOOL (CALLBACK *PSYM_ENUMSOURCEFILES_CALLBACKW)( PSOURCEFILEW, PVOID );
 typedef BOOL (CALLBACK *PSYM_ENUMLINES_CALLBACK)( PSRCCODEINFO, PVOID );
 typedef BOOL (CALLBACK *PSYM_ENUMLINES_CALLBACKW)( PSRCCODEINFOW, PVOID );
 typedef BOOL (CALLBACK *PSYM_ENUMPROCESSES_CALLBACK)( HANDLE, PVOID );
+typedef BOOL (CALLBACK *PENUMSOURCEFILETOKENSCALLBACK)( PVOID, size_t );
 typedef PSYM_ENUMSOURCEFILES_CALLBACK   PSYM_ENUMSOURCFILES_CALLBACK;
 
 /* Image helper symbol source */
@@ -1069,7 +1110,8 @@ typedef enum _IMAGEHLP_SYMBOL_TYPE_INFO {
     TI_GET_VIRTUALBASEOFFSET        = 29,
     TI_GET_VIRTUALBASEDISPINDEX     = 30,
     TI_GET_IS_REFERENCE             = 31,
-    IMAGEHLP_SYMBOL_TYPE_INFO_MAX   = 32
+    TI_GET_INDIRECTVIRTUALBASECLASS = 32,
+    IMAGEHLP_SYMBOL_TYPE_INFO_MAX   = 33
 } IMAGEHLP_SYMBOL_TYPE_INFO;
 
 /* TI_FINDCHILDREN parameters */
@@ -1250,6 +1292,7 @@ typedef enum _MINIDUMP_STREAM_TYPE {
     MemoryInfoListStream        = 16,
     ThreadInfoListStream        = 17,
     HandleOperationListStream   = 18,
+    TokenStream                 = 19,
     ceStreamNull                = 0x8000,
     ceStreamSystemInfo          = 0x8001,
     ceStreamException           = 0x8002,
@@ -1261,6 +1304,8 @@ typedef enum _MINIDUMP_STREAM_TYPE {
     ceStreamMemoryVirtualList   = 0x8008,
     ceStreamMemoryPhysicalList  = 0x8009,
     ceStreamBucketParameters    = 0x800A,
+    ceStreamProcessModuleMap    = 0x800B,
+    ceStreamDiagnosisList       = 0x800C,
     LastReservedStream          = 0xFFFF
 } MINIDUMP_STREAM_TYPE;
 
@@ -1549,7 +1594,28 @@ typedef struct _MINIDUMP_MISC_INFO_2 {
     ULONG32 ProcessorCurrentIdleState;
 } MINIDUMP_MISC_INFO_2;
 typedef MINIDUMP_MISC_INFO_2    *PMINIDUMP_MISC_INFO_2;
-typedef MINIDUMP_MISC_INFO_2    MINIDUMP_MISC_INFO_N;
+
+/* Minidump miscellaneous information (version 3) */
+typedef struct _MINIDUMP_MISC_INFO_3 {
+    ULONG32                 SizeOfInfo;
+    ULONG32                 Flags1;
+    ULONG32                 ProcessId;
+    ULONG32                 ProcessCreateTime;
+    ULONG32                 ProcessUserTime;
+    ULONG32                 ProcessKernelTime;
+    ULONG32                 ProcessorMaxMhz;
+    ULONG32                 ProcessorCurrentMhz;
+    ULONG32                 ProcessorMhzLimit;
+    ULONG32                 ProcessorMaxIdleState;
+    ULONG32                 ProcessorCurrentIdleState;
+    ULONG32                 ProcessIntegrityLevel;
+    ULONG32                 ProcessExecuteFlags;
+    ULONG32                 ProtectedProcess;
+    ULONG32                 TimeZoneId;
+    TIME_ZONE_INFORMATION   TimeZone;
+} MINIDUMP_MISC_INFO_3;
+typedef MINIDUMP_MISC_INFO_3    *PMINIDUMP_MISC_INFO_3;
+typedef MINIDUMP_MISC_INFO_3    MINIDUMP_MISC_INFO_N;
 typedef MINIDUMP_MISC_INFO_N    *PMINIDUMP_MISC_INFO_N;
 
 /* Minidump memory information */
@@ -1596,6 +1662,23 @@ typedef struct _MINIDUMP_THREAD_INFO_LIST {
     ULONG   NumberOfEntries;
 } MINIDUMP_THREAD_INFO_LIST;
 typedef MINIDUMP_THREAD_INFO_LIST   *PMINIDUMP_THREAD_INFO_LIST;
+
+/* Minidump token information header */
+typedef struct _MINIDUMP_TOKEN_INFO_HEADER {
+    ULONG   TokenSize;
+    ULONG   TokenId;
+    ULONG64 TokenHandle;
+} MINIDUMP_TOKEN_INFO_HEADER;
+typedef MINIDUMP_TOKEN_INFO_HEADER  *PMINIDUMP_TOKEN_INFO_HEADER;
+
+/* Minidump token information list */
+typedef struct _MINIDUMP_TOKEN_INFO_LIST {
+    ULONG   TokenListSize;
+    ULONG   TokenListEntries;
+    ULONG   ListHeaderSize;
+    ULONG   ElementHeaderSize;
+} MINIDUMP_TOKEN_INFO_LIST;
+typedef MINIDUMP_TOKEN_INFO_LIST    *PMINIDUMP_TOKEN_INFO_LIST;
 
 /* Minidump user record */
 typedef struct _MINIDUMP_USER_RECORD {
@@ -1791,7 +1874,10 @@ typedef enum _MINIDUMP_TYPE {
     MiniDumpWithCodeSegs                    = 0x00002000,
     MiniDumpWithoutAuxiliaryState           = 0x00004000,
     MiniDumpWithFullAuxiliaryState          = 0x00008000,
-    MiniDumpValidTypeFlags                  = 0x0000FFFF
+    MiniDumpWithPrivateWriteCopyMemory      = 0x00010000,
+    MiniDumpIgnoreInaccessibleMemory        = 0x00020000,
+    MiniDumpWithTokenInformation            = 0x00040000,
+    MiniDumpValidTypeFlags                  = 0x0007FFFF
 } MINIDUMP_TYPE;
 
 /* Minidump secondary flags */
@@ -1818,6 +1904,8 @@ BOOL IMAGEAPI               EnumDirTree( HANDLE, PCSTR, PCSTR, PSTR, PENUMDIRTRE
 BOOL IMAGEAPI               EnumDirTreeW( HANDLE, PCWSTR, PCWSTR, PWSTR, PENUMDIRTREE_CALLBACKW, PVOID );
 BOOL IMAGEAPI               EnumerateLoadedModules64( HANDLE, PENUMLOADED_MODULES_CALLBACK64, PVOID );
 BOOL IMAGEAPI               EnumerateLoadedModulesW64( HANDLE, PENUMLOADED_MODULES_CALLBACKW64, PVOID );
+BOOL IMAGEAPI               EnumerateLoadedModulesEx( HANDLE, PENUMLOADED_MODULES_CALLBACK64, PVOID );
+BOOL IMAGEAPI               EnumerateLoadedModulesExW( HANDLE, PENUMLOADED_MODULES_CALLBACKW64, PVOID );
 HANDLE IMAGEAPI             FindDebugInfoFile( PCSTR, PCSTR, PSTR );
 HANDLE IMAGEAPI             FindDebugInfoFileEx( PCSTR, PCSTR, PSTR, PFIND_DEBUG_FILE_CALLBACK, PVOID );
 HANDLE IMAGEAPI             FindDebugInfoFileExW( PCWSTR, PCWSTR, PWSTR, PFIND_DEBUG_FILE_CALLBACKW, PVOID );
@@ -1856,6 +1944,9 @@ BOOL IMAGEAPI               SearchTreeForFileW( PCWSTR, PCWSTR, PWSTR );
 BOOL IMAGEAPI               SetImageConfigInformation( PLOADED_IMAGE, PIMAGE_LOAD_CONFIG_DIRECTORY );
 BOOL IMAGEAPI               SplitSymbols( PSTR, PCSTR, PSTR, ULONG );
 BOOL IMAGEAPI               StackWalk64( DWORD, HANDLE, HANDLE, LPSTACKFRAME64, PVOID, PREAD_PROCESS_MEMORY_ROUTINE64, PFUNCTION_TABLE_ACCESS_ROUTINE64, PGET_MODULE_BASE_ROUTINE64, PTRANSLATE_ADDRESS_ROUTINE64 );
+BOOL IMAGEAPI               SymAddSourceStream( HANDLE, ULONG64, PCSTR, PBYTE, size_t );
+BOOL IMAGEAPI               SymAddSourceStreamA( HANDLE, ULONG64, PCSTR, PBYTE, size_t );
+BOOL IMAGEAPI               SymAddSourceStreamW( HANDLE, ULONG64, PCWSTR, PBYTE, size_t );
 BOOL IMAGEAPI               SymAddSymbol( HANDLE, ULONG64, PCSTR, DWORD64, DWORD, DWORD );
 BOOL IMAGEAPI               SymAddSymbolW( HANDLE, ULONG64, PCWSTR, DWORD64, DWORD, DWORD );
 BOOL IMAGEAPI               SymCleanup( HANDLE );
@@ -1864,6 +1955,7 @@ BOOL IMAGEAPI               SymDeleteSymbolW( HANDLE, ULONG64, PCWSTR, DWORD64, 
 BOOL IMAGEAPI               SymEnumLines( HANDLE, ULONG64, PCSTR, PCSTR, PSYM_ENUMLINES_CALLBACK, PVOID );
 BOOL IMAGEAPI               SymEnumLinesW( HANDLE, ULONG64, PCWSTR, PCWSTR, PSYM_ENUMLINES_CALLBACKW, PVOID );
 BOOL IMAGEAPI               SymEnumProcesses( PSYM_ENUMPROCESSES_CALLBACK, PVOID );
+BOOL IMAGEAPI               SymEnumSourceFileTokens( HANDLE, ULONG64, PENUMSOURCEFILETOKENSCALLBACK );
 BOOL IMAGEAPI               SymEnumSourceFiles( HANDLE, ULONG64, PCSTR, PSYM_ENUMSOURCEFILES_CALLBACK, PVOID );
 BOOL IMAGEAPI               SymEnumSourceFilesW( HANDLE, ULONG64, PCWSTR, PSYM_ENUMSOURCEFILES_CALLBACKW, PVOID );
 BOOL IMAGEAPI               SymEnumSourceLines( HANDLE, ULONG64, PCSTR, PCSTR, DWORD, DWORD, PSYM_ENUMLINES_CALLBACK, PVOID );
@@ -1874,6 +1966,8 @@ BOOL IMAGEAPI               SymEnumSymbolsForAddr( HANDLE, DWORD64, PSYM_ENUMERA
 BOOL IMAGEAPI               SymEnumSymbolsForAddrW( HANDLE, DWORD64, PSYM_ENUMERATESYMBOLS_CALLBACKW, PVOID );
 BOOL IMAGEAPI               SymEnumSymbolsW( HANDLE, ULONG64, PCWSTR, PSYM_ENUMERATESYMBOLS_CALLBACKW, PVOID );
 BOOL IMAGEAPI               SymEnumTypes( HANDLE, ULONG64, PSYM_ENUMERATESYMBOLS_CALLBACK, PVOID );
+BOOL IMAGEAPI               SymEnumTypesByName( HANDLE, ULONG64, PCSTR, PSYM_ENUMERATESYMBOLS_CALLBACK, PVOID );
+BOOL IMAGEAPI               SymEnumTypesByNameW( HANDLE, ULONG64, PCWSTR, PSYM_ENUMERATESYMBOLS_CALLBACK, PVOID );
 BOOL IMAGEAPI               SymEnumTypesW( HANDLE, ULONG64, PSYM_ENUMERATESYMBOLS_CALLBACKW, PVOID );
 BOOL IMAGEAPI               SymEnumerateModules64( HANDLE, PSYM_ENUMMODULES_CALLBACK64, PVOID );
 BOOL IMAGEAPI               SymEnumerateModulesW64( HANDLE, PSYM_ENUMMODULES_CALLBACKW64, PVOID );
@@ -1908,6 +2002,7 @@ BOOL IMAGEAPI               SymGetLinePrevW64( HANDLE, PIMAGEHLP_LINEW64 );
 DWORD64 IMAGEAPI            SymGetModuleBase64( HANDLE, DWORD64 );
 BOOL IMAGEAPI               SymGetModuleInfo64( HANDLE, DWORD64, PIMAGEHLP_MODULE64 );
 BOOL IMAGEAPI               SymGetModuleInfoW64( HANDLE, DWORD64, PIMAGEHLP_MODULE64 );
+BOOL IMAGEAPI               SymGetOmaps( HANDLE, DWORD64, POMAP *, PDWORD64, POMAP *, PDWORD64 );
 DWORD IMAGEAPI              SymGetOptions( VOID );
 BOOL IMAGEAPI               SymGetScope( HANDLE, ULONG64, DWORD, PSYMBOL_INFO );
 BOOL IMAGEAPI               SymGetScopeW( HANDLE, ULONG64, DWORD, PSYMBOL_INFOW );
@@ -1931,6 +2026,7 @@ BOOL IMAGEAPI               SymGetTypeFromName( HANDLE, ULONG64, PCSTR, PSYMBOL_
 BOOL IMAGEAPI               SymGetTypeFromNameW( HANDLE, ULONG64, PCWSTR, PSYMBOL_INFOW );
 BOOL IMAGEAPI               SymGetTypeInfo( HANDLE, DWORD64, ULONG, IMAGEHLP_SYMBOL_TYPE_INFO, PVOID );
 BOOL IMAGEAPI               SymGetTypeInfoEx( HANDLE, DWORD64, PIMAGEHLP_GET_TYPE_INFO_PARAMS );
+BOOL IMAGEAPI               SymGetUnwindInfo( HANDLE, DWORD64, PVOID, PULONG );
 BOOL IMAGEAPI               SymInitialize( HANDLE, PCSTR, BOOL );
 BOOL IMAGEAPI               SymInitializeW( HANDLE, PCWSTR, BOOL );
 DWORD64 IMAGEAPI            SymLoadModule64( HANDLE, HANDLE, PCSTR, PCSTR, DWORD64, DWORD );
@@ -1956,6 +2052,8 @@ PCHAR IMAGEAPI              SymSetHomeDirectory( HANDLE, PCSTR );
 PWSTR IMAGEAPI              SymSetHomeDirectoryW( HANDLE, PCWSTR );
 DWORD IMAGEAPI              SymSetOptions( DWORD );
 BOOL IMAGEAPI               SymSetParentWindow( HWND );
+BOOL IMAGEAPI               SymSetScopeFromAddr( HANDLE, ULONG64 );
+BOOL IMAGEAPI               SymSetScopeFromIndex( HANDLE, ULONG64, DWORD );
 BOOL IMAGEAPI               SymSetSearchPath( HANDLE, PCSTR );
 BOOL IMAGEAPI               SymSetSearchPathW( HANDLE, PCWSTR );
 PCSTR IMAGEAPI              SymSrvDeltaName( HANDLE, PCSTR, PCSTR, PCSTR, PCSTR );
@@ -2079,6 +2177,7 @@ BOOL WINAPI MiniDumpWriteDump( HANDLE, DWORD, HANDLE, MINIDUMP_TYPE, PMINIDUMP_E
 #ifdef DBGHELP_TRANSLATE_TCHAR
     #define EnumDirTree                 EnumDirTreeW
     #define EnumerateLoadedModules64    EnumerateLoadedModulesW64
+    #define EnumerateLoadedModulesEx    EnumerateLoadedModulesExW
     #define FindDebugInfoFileEx         FindDebugInfoFileExW
     #define FindExecutableImageEx       FindExecutableImageExW
     #define SearchTreeForFile           SearchTreeForFileW
@@ -2090,6 +2189,7 @@ BOOL WINAPI MiniDumpWriteDump( HANDLE, DWORD, HANDLE, MINIDUMP_TYPE, PMINIDUMP_E
     #define SymEnumSymbols              SymEnumSymbolsW
     #define SymEnumSymbolsForAddr       SymEnumSymbolsForAddrW
     #define SymEnumTypes                SymEnumTypesW
+    #define SymEnumTypesByName          SymEnumTypesByNameW
     #define SymEnumerateModules64       SymEnumerateModulesW64
     #define SymFindDebugInfoFile        SymFindDebugInfoFileW
     #define SymFindExecutableImage      SymFindExecutableImageW

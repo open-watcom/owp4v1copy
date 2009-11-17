@@ -5,6 +5,8 @@ DbgHelpCreateUserDumpW@12
 EnumDirTree@24
 EnumDirTreeW@24
 EnumerateLoadedModules@12
+EnumerateLoadedModulesEx@12
+EnumerateLoadedModulesExW@12
 EnumerateLoadedModules64@12
 EnumerateLoadedModulesW64@12
 FindDebugInfoFile@12
@@ -31,6 +33,9 @@ SearchTreeForFile@12
 SearchTreeForFileW@12
 StackWalk@36
 StackWalk64@36
+SymAddSourceStream@24
+SymAddSourceStreamA@24
+SymAddSourceStreamW@24
 SymAddSymbol@32
 SymAddSymbolW@32
 SymCleanup@4
@@ -39,6 +44,7 @@ SymDeleteSymbolW@28
 SymEnumLines@28
 SymEnumLinesW@28
 SymEnumProcesses@8
+SymEnumSourceFileTokens@16
 SymEnumSourceFiles@24
 SymEnumSourceFilesW@24
 SymEnumSourceLines@36
@@ -49,6 +55,8 @@ SymEnumSymbolsForAddr@20
 SymEnumSymbolsForAddrW@20
 SymEnumSymbolsW@24
 SymEnumTypes@20
+SymEnumTypesByName@24
+SymEnumTypesByNameW@24
 SymEnumTypesW@20
 SymEnumerateModules@12
 SymEnumerateModules64@12
@@ -94,6 +102,7 @@ SymGetModuleInfo@12
 SymGetModuleInfo64@16
 SymGetModuleInfoW@12
 SymGetModuleInfoW64@16
+SymGetOmaps@28
 SymGetOptions@0
 SymGetScope@20
 SymGetScopeW@20
@@ -121,6 +130,7 @@ SymGetTypeFromName@20
 SymGetTypeFromNameW@20
 SymGetTypeInfo@24
 SymGetTypeInfoEx@16
+SymGetUnwindInfo@20
 SymInitialize@12
 SymInitializeW@12
 SymLoadModule@24
@@ -149,6 +159,8 @@ SymSetHomeDirectory@8
 SymSetHomeDirectoryW@8
 SymSetOptions@4
 SymSetParentWindow@4
+SymSetScopeFromAddr@12
+SymSetScopeFromIndex@16
 SymSetSearchPath@8
 SymSetSearchPathW@8
 SymSrvDeltaName@20
@@ -174,4 +186,3 @@ SymUnloadModule64@12
 UnDecorateSymbolName@16
 UnDecorateSymbolNameW@16
 UnmapDebugInformation@4
-

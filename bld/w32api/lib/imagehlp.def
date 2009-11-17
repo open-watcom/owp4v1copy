@@ -5,6 +5,8 @@ BindImageEx@20
 CheckSumMappedFile@16
 EnumerateLoadedModules@12
 EnumerateLoadedModules64@12
+EnumerateLoadedModulesEx@12
+EnumerateLoadedModulesExW@12
 EnumerateLoadedModulesW64@12
 FindDebugInfoFile@12
 FindDebugInfoFileEx@20
@@ -47,6 +49,8 @@ SymEnumSym@20
 SymEnumSymbols@24
 SymEnumSymbolsForAddr@20
 SymEnumTypes@20
+SymEnumTypesByName@24
+SymEnumTypesByNameW@24
 SymEnumTypesW@20
 SymEnumerateModules@12
 SymEnumerateModules64@12
@@ -110,6 +114,8 @@ SymRegisterFunctionEntryCallback@12
 SymRegisterFunctionEntryCallback64@16
 SymSetContext@12
 SymSetOptions@4
+SymSetScopeFromAddr@12
+SymSetScopeFromIndex@16
 SymSetSearchPath@8
 SymSetSearchPathW@8
 SymSrvGetFileIndexString@24
@@ -126,4 +132,3 @@ UnMapAndLoad@4
 UnmapDebugInformation@4
 UpdateDebugInfoFile@16
 UpdateDebugInfoFileEx@20
-
