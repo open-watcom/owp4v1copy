@@ -203,6 +203,7 @@
 #define SV_DISABLEDOS_PARMNUM                       600
 #define SV_LOWDISKSPACEMINIMUM_PARMNUM              601
 #define SV_DISABLESTRICTNAMECHECKING_PARMNUM        602
+#define SV_ENABLEAUTHENTICATIONUSERSHARING_PARMNUM  603
 
 /* Server information levels */
 #define SV_COMMENT_INFOLEVEL \
@@ -393,6 +394,8 @@
     (PARMNUM_BASE_INFOLEVEL + SV_LOWDISKSPACEMINIMUM_PARMNUM)
 #define SV_DISABLESTRICTNAMECHECKING_INFOLEVEL \
     (PARMNUM_BASE_INFOLEVEL + SV_DISABLESTRICTNAMECHECKING_PARMNUM)
+#define SV_ENABLEAUTHENTICATEUSERSHARING_INFOLEVEL \
+    (PARMNUM_BASE_INFOLEVEL + SV_ENABLEAUTHENTICATEUSERSHARING_PARMNUM)
 
 /* Maximum command length */
 #define SV_MAX_CMD_LEN  PATHLEN
@@ -411,6 +414,10 @@
 #define SVTI2_REMAP_PIPE_NAMES  0x00000002L
 #define SVTI2_SCOPED_NAME       0x00000004L
 #define SVTI2_VALID_FLAGS       (SVTI2_REMAP_PIPE_NAMES | SVTI2_SCOPED_NAME)
+
+/* Server capability flags */
+#define SRV_SUPPORT_HASH_GENERATION 0x00000001L
+#define SRV_HASH_GENERATION_ACTIVE  0x00000002L
 
 /* Server information (level 100) */
 typedef struct _SERVER_INFO_100 {
@@ -450,6 +457,26 @@ typedef struct _SERVER_INFO_102 {
 } SERVER_INFO_102;
 typedef SERVER_INFO_102 *PSERVER_INFO_102;
 typedef SERVER_INFO_102 *LPSERVER_INFO_102;
+
+/* Server information (level 103) */
+typedef struct _SERVER_INFO_103 {
+    DWORD   sv103_platform_id;
+    LMSTR   sv103_name;
+    DWORD   sv103_version_major;
+    DWORD   sv103_version_minor;
+    DWORD   sv103_type;
+    LMSTR   sv103_comment;
+    DWORD   sv103_users;
+    LONG    sv103_disc;
+    BOOL    sv103_hidden;
+    DWORD   sv103_announce;
+    DWORD   sv103_anndelta;
+    DWORD   sv103_licenses;
+    LMSTR   sv103_userpath;
+    DWORD   sv103_capabilities;
+} SERVER_INFO_103;
+typedef SERVER_INFO_103 *PSERVER_INFO_103;
+typedef SERVER_INFO_103 *LPSERVER_INFO_103;
 
 /* Server information (level 402) */
 typedef struct _SERVER_INFO_402 {
@@ -644,6 +671,7 @@ typedef struct _SERVER_INFO_598 {
     BOOL    sv598_disabledos;
     DWORD   sv598_lowdiskspaceminimum;
     BOOL    sv598_disablestrictnamechecking;
+    BOOL    sv598_enableauthenticateusersharing;
 } SERVER_INFO_598;
 typedef SERVER_INFO_598 *PSERVER_INFO_598;
 typedef SERVER_INFO_598 *LPSERVER_INFO_598;
