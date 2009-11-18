@@ -324,6 +324,17 @@
 #define NERR_PasswordTooLong                (NERR_BASE + 603)
 #define NERR_PasswordNotComplexEnough       (NERR_BASE + 604)
 #define NERR_PasswordFilterError            (NERR_BASE + 605)
+#define NERR_NoOfflineJoinInfo              (NERR_BASE + 609)
+#define NERR_BadOfflineJoinInfo             (NERR_BASE + 610)
+#define NERR_CantCreateJoinInfo             (NERR_BASE + 611)
+#define NERR_BadDomainJoinInfo              (NERR_BASE + 612)
+#define NERR_JoinPerformedMustRestart       (NERR_BASE + 613)
+#define NERR_NoJoinPending                  (NERR_BASE + 614)
+#define NERR_ValuesNotSet                   (NERR_BASE + 615)
+#define NERR_CantVerifyHostname             (NERR_BASE + 616)
+#define NERR_CantLoadOfflineHive            (NERR_BASE + 617)
+#define NERR_ConnectionInsecure             (NERR_BASE + 618)
+#define NERR_ProvisioningBlobUnsupported    (NERR_BASE + 619)
 #define MAX_NERR                            (NERR_BASE + 899)
 
 :include cplusepi.sp
