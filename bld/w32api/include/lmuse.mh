@@ -87,6 +87,15 @@ typedef struct _USE_INFO_3 {
 typedef USE_INFO_3  *PUSE_INFO_3;
 typedef USE_INFO_3  *LPUSE_INFO_3;
 
+/* Use information (level 4) */
+typedef struct _USE_INFO_4 {
+    USE_INFO_3  ui4_ui3;
+    DWORD       ui4_auth_identity_length;
+    PBYTE       ui4_auth_identity;
+} USE_INFO_4;
+typedef USE_INFO_4  *PUSE_INFO_4;
+typedef USE_INFO_4  *LPUSE_INFO_4;
+
 /* Functions in NETAPI32.DLL */
 NET_API_STATUS NET_API_FUNCTION NetUseAdd( LMSTR, DWORD, LPBYTE, LPDWORD );
 NET_API_STATUS NET_API_FUNCTION NetUseDel( LMSTR, LMSTR, DWORD );
