@@ -83,6 +83,7 @@ NetMessageNameAdd@8
 NetMessageNameDel@8
 NetMessageNameEnum@28
 NetMessageNameGetInfo@16
+NetProvisionComputerAccount@32
 NetQueryDisplayInformation@28
 NetQueryServiceAccount@16
 NetRemoteComputerSupports@12
@@ -105,6 +106,7 @@ NetReplImportDirGetInfo@16
 NetReplImportDirLock@8
 NetReplImportDirUnlock@12
 NetReplSetInfo@16
+NetRequestOfflineDomainJoin@16
 NetScheduleJobAdd@12
 NetScheduleJobDel@12
 NetScheduleJobEnum@24
