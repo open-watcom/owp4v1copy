@@ -1968,6 +1968,8 @@
 #define RIFFINFO_ITCH   mmioFOURCC( 'I', 'T', 'C', 'H' )
 #define RIFFINFO_ISMP   mmioFOURCC( 'I', 'S', 'M', 'P' )
 #define RIFFINFO_IDIT   mmioFOURCC( 'I', 'D', 'I', 'T' )
+#define RIFFINFO_ITRK   mmioFOURCC( 'I', 'T', 'R', 'K' )
+#define RIFFINFO_ITOC   mmioFOURCC( 'I', 'T', 'O', 'C' )
 
 /* Wave format tags */
 #define WAVE_FORMAT_UNKNOWN                 0x0000
@@ -2058,6 +2060,7 @@
 #define WAVE_FORMAT_PHILIPS_LPCBB           0x0098
 #define WAVE_FORMAT_PACKED                  0x0099
 #define WAVE_FORMAT_MALDEN_PHONYTALK        0x00A0
+#define WAVE_FORMAT_RAW_AAC1                0x00FF
 #define WAVE_FORMAT_RHETOREX_ADPCM          0x0100
 #define WAVE_FORMAT_IRAT                    0x0101
 #define WAVE_FORMAT_VIVO_G723               0x0111
@@ -2111,11 +2114,14 @@
 #define WAVE_FORMAT_SOUNDSCAPE_MUSICOMPRESS 0x1500
 #define WAVE_FORMAT_MPEG_ADTS_AAC           0x1600
 #define WAVE_FORMAT_MPEG_RAW_AAC            0x1601
+#define WAVE_FORMAT_MPEG_LOAS               0x1602
 #define WAVE_FORMAT_NOKIA_MPEG_ADTS_AAC     0x1608
 #define WAVE_FORMAT_NOKIA_MPEG_RAW_AAC      0x1609
 #define WAVE_FORMAT_VODAFONE_MPEG_ADTS_AAC  0x160A
 #define WAVE_FORMAT_VODAFONE_MPEG_RAW_AAC   0x160B
+#define WAVE_FORMAT_MPEG_HEAAC              0x1610
 #define WAVE_FORMAT_DVM                     0x2000
+#define WAVE_FORMAT_DTS2                    0x2001
 #define WAVE_FORMAT_EXTENSIBLE              0xFFFE
 #define WAVE_FORMAT_DEVELOPMENT             0xFFFF
 
@@ -2586,6 +2592,28 @@ typedef struct mpeglayer3waveformat_tag {
 typedef MPEGLAYER3WAVEFORMAT    *PMPEGLAYER3WAVEFORMAT;
 typedef MPEGLAYER3WAVEFORMAT    *NPMPEGLAYER3WAVEFORMAT;
 typedef MPEGLAYER3WAVEFORMAT    *LPMPEGLAYER3WAVEFORMAT;
+
+/* HEAAC wave information */
+typedef struct heaacwaveinfo_tag {
+    WAVEFORMATEX    wfx;
+    WORD            wPayloadType;
+    WORD            wAudioProfileLevelIndication;
+    WORD            wStructType;
+    WORD            wReserved1;
+    DWORD           dwReserved2;
+} HEAACWAVEINFO;
+typedef HEAACWAVEINFO   *PHEACCWAVEINFO;
+typedef HEAACWAVEINFO   *NPHEACCWAVEINFO;
+typedef HEAACWAVEINFO   *LPHEACCWAVEINFO;
+
+/* HEAAC wave format */
+typedef struct heaacwaveformat_tag {
+    HEAACWAVEINFO   wfInfo;
+    BYTE            pbAudioSpecificConfig[1];
+} HEAACWAVEFORMAT;
+typedef HEAACWAVEFORMAT *PHEAACWAVEFORMAT;
+typedef HEAACWAVEFORMAT *NPHEAACWAVEFORMAT;
+typedef HEAACWAVEFORMAT *LPHEAACWAVEFORMAT;
 
 /* Windows Media Audio version 1 wave format */
 typedef struct msaudio1waveformat_tag {
