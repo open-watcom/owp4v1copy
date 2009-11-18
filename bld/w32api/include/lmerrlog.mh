@@ -235,6 +235,12 @@
 #define NELOG_NetlogonNoSiteForClients              (ERRLOG2_BASE + 107)
 #define NELOG_NetlogonDnsDeregAborted               (ERRLOG2_BASE + 108)
 #define NELOG_NetlogonRpcPortRequestFailure         (ERRLOG2_BASE + 109)
+#define NELOG_NetlogonPartialSiteMappingForClients  (ERRLOG2_BASE + 110)
+#define NELOG_NetlogonRemoteDynamicDnsRegisterFailure   (ERRLOG2_BASE + 111)
+#define NELOG_NetlogonRemoteDynamicDnsDeregisterFailure (ERRLOG2_BASE + 112)
+#define NELOG_NetlogonRejectedRemoteDynamicDnsRegister  (ERRLOG2_BASE + 113)
+#define NELOG_NetlogonRejectedRemoteDynamicDnsDeregister    (ERRLOG2_BASE + 114)
+#define NELOG_NetlogonRemoteDynamicDnsUpdateRequestFailure  (ERRLOG2_BASE + 115)
 
 /* Error log */
 typedef struct _ERROR_LOG {
