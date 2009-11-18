@@ -1089,7 +1089,7 @@ typedef enum _MSA_INFO_LEVEL {
 } MSA_INFO_LEVEL;
 
 /* MSA information states */
-typedef struct _MSA_INFO_STATE {
+typedef enum _MSA_INFO_STATE {
     MsaInfoNotExist         = 1,
     MsaInfoNotService       = 2,
     MsaInfoCannotInstall    = 3,
