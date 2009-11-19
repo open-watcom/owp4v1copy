@@ -3,7 +3,9 @@ EXPORTS
 MprAdminBufferFree@4
 MprAdminConnectionClearStatus@8
 MprAdminConnectionEnum@28
+MprAdminConnectionEnumEx@28
 MprAdminConnectionGetInfo@16
+MprAdminConnectionGetInfoEx@12
 MprAdminConnectionRemoveQuarantine@12
 MprAdminDeregisterConnectionNotification@8
 MprAdminDeviceEnum@16
@@ -31,6 +33,7 @@ MprAdminInterfaceTransportSetInfo@20
 MprAdminInterfaceUpdatePhonebookInfo@8
 MprAdminInterfaceUpdateRoutes@16
 MprAdminIsDomainRasServer@12
+MprAdminIsServiceInitialized@8
 MprAdminIsServiceRunning@4
 MprAdminMIBBufferFree@4
 MprAdminMIBEntryCreate@20
@@ -52,11 +55,14 @@ MprAdminServerConnect@8
 MprAdminServerDisconnect@4
 MprAdminServerGetCredentials@12
 MprAdminServerGetInfo@12
+MprAdminServerGetInfoEx@8
 MprAdminServerSetCredentials@12
 MprAdminServerSetInfo@12
+MprAdminServerSetInfoEx@8
 MprAdminTransportCreate@32
 MprAdminTransportGetInfo@24
 MprAdminTransportSetInfo@24
+MprAdminUpdateConnection@12
 MprAdminUserGetInfo@16
 MprAdminUserSetInfo@16
 MprConfigFilterGetInfo@12
@@ -80,10 +86,12 @@ MprConfigServerConnect@8
 MprConfigServerDisconnect@4
 MprConfigServerFree@12
 MprConfigServerGetInfo@12
+MprConfigServerGetInfoEx@8
 MprConfigServerInstall@8
 MprConfigServerRefresh@4
 MprConfigServerRestore@8
 MprConfigServerSetInfo@12
+MprConfigServerSetInfoEx@8
 MprConfigTransportCreate@36
 MprConfigTransportDelete@8
 MprConfigTransportEnum@28
@@ -103,4 +111,3 @@ MprSetupIpInIpInterfaceFriendlyNameCreate@8
 MprSetupIpInIpInterfaceFriendlyNameDelete@8
 MprSetupIpInIpInterfaceFriendlyNameEnum@12
 MprSetupIpInIpInterfaceFriendlyNameFree@4
-

@@ -11,6 +11,7 @@
 #include <lmcons.h>
 #include <ras.h>
 #include <in6addr.h>
+#include <wincrypt.h>
 
 :include cpluspro.sp
 
@@ -94,6 +95,9 @@ typedef HANDLE  MIB_SERVER_HANDLE;
     #define MPRNP_Ipx   RASNP_Ipx
     #define MPRNP_Ip    RASNP_Ip
 #endif
+#if (WINVER >= 0x0600)
+    #define MRPNP_IPv6  RASNP_Ipv6
+#endif
 
 /* MPR interface device types */
 #if (WINVER >= 0x0500)
@@ -159,7 +163,7 @@ typedef HANDLE  MIB_SERVER_HANDLE;
 #define IPADDRESSLEN    15
 #define IPXADDRESSLEN   22
 #define ATADDRESSLEN    32
-#define IPV6ADDRESSLEN  64
+#define MAXIPADRESSLEN  64
 
 /* PPP IPCP options */
 #define PPP_IPCP_VJ 0x00000001L
@@ -216,6 +220,9 @@ typedef HANDLE  MIB_SERVER_HANDLE;
     #define RAS_FLAGS_RAS_CONNECTION    0x00000004L
 #endif
 #define RAS_FLAGS_QUARANTINE_PRESENT    0x00000008L
+#if (WINVER >= 0x0601)
+    #define RAS_FLAGS_DORMANT           0x00000020L
+#endif
 
 /* RAS privileges */
 #define RASPRIV_NoCallback          0x01
@@ -228,6 +235,56 @@ typedef HANDLE  MIB_SERVER_HANDLE;
 /* RAS secondary privileges */
 #define RASPRIV2_DialinPolicy       0x01
 
+/* IKEv2 authentication types */
+#if (WINVER >= 0x0601)
+    #define MPRAPI_IKEV2_AUTH_USING_CERT    1L
+    #define MPRAPI_IKEV2_AUTH_USING_EAP     2L
+#endif
+
+/* Projection information types */
+#if (WINVER >= 0x0601)
+    #define MPRAPI_PPP_PROJECTION_INFO_TYPE     1
+    #define MPRAPI_IKEV2_PROJECTION_INFO_TYPE   2
+#endif
+
+/* MPRAPI object revision numbers */
+#if (WINVER >= 0x0601)
+    #define MPRAPI_RAS_CONNECTION_OBJECT_REVISION_1         0x01
+    #define MPRAPI_MPR_SERVER_OBJECT_REVISION_1             0x01
+    #define MPRAPI_MPR_SERVER_SET_CONFIG_OBJECT_REVISION_1  0x01
+    #define MPRAPI_RAS_UPDATE_CONNECTION_OBJECT_REVISION_1  0x01
+#endif
+
+/* Tunnel configuration parameter flags */
+#if (WINVER >= 0x0601)
+    #define MPRAPI_IKEV2_SET_TUNNEL_CONFIG_PARAMS   0x00000001L
+#endif
+
+/* Maximum SSTP hash size */
+#if (WINVER >= 0x0601)
+    #define MAX_SSTP_HASH_SIZE  32
+#endif
+
+/* Configuration protocol tunnel types */
+#if (WINVER >= 0x0601)
+    #define MPRAPI_SET_CONFIG_PROTOCOL_FOR_PPTP     0x00000001L
+    #define MPRAPI_SET_CONFIG_PROTOCOL_FOR_L2TP     0x00000002L
+    #define MPRAPI_SET_CONFIG_PROTOCOL_FOR_SSTP     0x00000004L
+    #define MPRAPI_SET_CONFIG_PROTOCOL_FOR_IKEV2    0x00000008L
+#endif
+
+/* Authentication constants */
+#if (WINVER >= 0x0601)
+    #define ALLOW_NO_AUTH           1
+    #define DO_NOT_ALLOW_NO_AUTH    2
+#endif
+
+/* MPRAPI administration DLL version numbers */
+#if (WINVER >= 0x0601)
+    #define MPRAPI_ADMIN_DLL_VERSION_1  0x00000001L
+    #define MPRAPI_ADMIN_DLL_VERSION_2  0x00000002L
+#endif
+
 /* Router interface types */
 typedef enum _ROUTER_INTERFACE_TYPE {
     ROUTER_IF_TYPE_CLIENT       = 0,
@@ -237,7 +294,8 @@ typedef enum _ROUTER_INTERFACE_TYPE {
     ROUTER_IF_TYPE_INTERNAL     = 4,
     ROUTER_IF_TYPE_LOOPBACK     = 5,
     ROUTER_IF_TYPE_TUNNEL1      = 6,
-    ROUTER_IF_TYPE_DIALOUT      = 7
+    ROUTER_IF_TYPE_DIALOUT      = 7,
+    ROUTER_IF_TYPE_MAX          = 8
 } ROUTER_INTERFACE_TYPE;
 
 /* Router connection states */
@@ -446,6 +504,19 @@ typedef struct _MPR_SERVER_1 {
     DWORD   dwL2tpPortFlags;
 } MPR_SERVER_1;
 typedef MPR_SERVER_1    *PMPR_SERVER_1;
+#endif
+
+/* MPR server (level 2) */
+#if (WINVER >= 0x0600)
+typedef struct _MPR_SERVER_2 {
+    DWORD   dwNumPptpPorts;
+    DWORD   dwPptpPortFlags;
+    DWORD   dwNumL2tpPorts;
+    DWORD   dwL2tpPortFlags;
+    DWORD   dwNumSstpPorts;
+    DWORD   dwSstpPortFlags;
+} MPR_SERVER_2;
+typedef MPR_SERVER_2    *PMPR_SERVER_2;
 #endif
 
 /* RAS port conditions */
@@ -703,6 +774,298 @@ typedef struct _MPR_FILTER_0 {
 typedef MPR_FILTER_0    *PMPR_FILTER_0;
 #endif
 
+/* MPRAPI object header */
+#if (WINVER >= 0x0601)
+typedef struct _MPRAPI_OBJECT_HEADER {
+    UCHAR   revision;
+    UCHAR   type;
+    USHORT  size;
+} MPRAPI_OBJECT_HEADER;
+typedef MPRAPI_OBJECT_HEADER    *PMPRAPI_OBJECT_HEADER;
+#endif
+
+/* MPRAPI object types */
+#if (WINVER >= 0x0601)
+typedef enum _MPRAPI_OBJECT_TYPE {
+    MPRAPI_OBJECT_TYPE_RAS_CONNECTION_OBJECT        = 1,
+    MPRAPI_OBJECT_TYPE_MPR_SERVER_OBJECT            = 2,
+    MPRAPI_OBJECT_TYPE_MPR_SERVER_SET_CONFIG_OBJECT = 3,
+    MPRAPI_OBJECT_TYPE_AUTH_VALIDATION_OBJECT       = 4,
+    MPRAPI_OBJECT_TYPE_UPDATE_CONNECTION_OBJECT     = 5
+} MPRAPI_OBJECT_TYPE;
+typedef MPRAPI_OBJECT_TYPE  *PMPRAPI_OBJECT_TYPE;
+#endif
+
+/* PPP projection information */
+#if (WINVER >= 0x0601)
+typedef struct _PPP_PROJECTION_INFO {
+    DWORD   dwIPv4NegotiationError;
+    WCHAR   wszAddress[IPADDRESSLEN + 1];
+    WCHAR   wszRemoteAddress[IPADDRESSLEN + 1];
+    DWORD   dwIPv4Options;
+    DWORD   dwIPv4RemoteOptions;
+    ULONG64 IPv4SubInterfaceIndex;
+    DWORD   dwIPv6NegotiationError;
+    BYTE    bInterfaceIdentifier[8];
+    BYTE    bRemoteInterfaceIdentifier[8];
+    BYTE    bPrefix[8];
+    DWORD   dwPrefixLength;
+    ULONG64 IPv6SubInterfaceIndex;
+    DWORD   dwLcpError;
+    DWORD   dwAuthenticationProtocol;
+    DWORD   dwAuthenticationData;
+    DWORD   dwRemoteAuthenticationProtocol;
+    DWORD   dwRemoteAuthenticationData;
+    DWORD   dwLcpTerminateReason;
+    DWORD   dwLcpRemoteTerminateReason;
+    DWORD   dwLcpOptions;
+    DWORD   dwLcpRemoteOptions;
+    DWORD   dwEapTypeId;
+    DWORD   dwRemoteEapTypeId;
+    DWORD   dwCcpError;
+    DWORD   dwCompressionAlgorithm;
+    DWORD   dwCcpOptions;
+    DWORD   dwRemoteCompressionAlgorithm;
+    DWORD   dwCcpRemoteOptions;
+} PPP_PROJECTION_INFO;
+typedef PPP_PROJECTION_INFO *PPPP_PROJECTION_INFO;
+#endif
+
+/* IKEv2 projection information */
+#if (WINVER >= 0x0601)
+typedef struct _IKEV2_PROJECTION_INFO {
+    DWORD   dwIPv4NegotiationError;
+    WCHAR   wszAddress[IPADDRESSLEN + 1];
+    WCHAR   wszRemoteAddress[IPADDRESSLEN + 1];
+    ULONG64 IPv4SubInterfaceIndex;
+    DWORD   dwIPv6NegotiationError;
+    BYTE    bInterfaceIdentifier[8];
+    BYTE    bRemoteInterfaceIdentifier[8];
+    BYTE    bPrefix[8];
+    DWORD   dwPrefixLength;
+    ULONG64 IPv6SubInterfaceIndex;
+    DWORD   dwOptions;
+    DWORD   dwAuthenticationProtocol;
+    DWORD   dwEapTypeId;
+    DWORD   dwCompressionAlgorithm;
+    DWORD   dwEncryptionMethod;
+} IKEV2_PROJECTION_INFO;
+typedef IKEV2_PROJECTION_INFO   *PIKEV2_PROJECTION_INFO;
+#endif
+
+/* Projection information */
+#if (WINVER >= 0x0601)
+typedef struct _PROJECTION_INFO {
+    UCHAR   projectionInfoType;
+    union {
+        PPP_PROJECTION_INFO     PppProjectionInfo;
+        IKEV2_PROJECTION_INFO   Ikev2ProjectionInfo;
+    };
+} PROJECTION_INFO;
+typedef PROJECTION_INFO *PPROJECTION_INFO;
+#endif
+
+/* RAS connection (extended version) */
+#if (WINVER >= 0x0601)
+typedef struct _RAS_CONNECTION_EX {
+    MPRAPI_OBJECT_HEADER    Header;
+    DWORD                   dwConnectDuration;
+    ROUTER_INTERFACE_TYPE   dwInterfaceType;
+    DWORD                   dwConnectionFlags;
+    WCHAR                   wszInterfaceName[MAX_INTERFACE_NAME_LEN + 1];
+    WCHAR                   wszUserName[UNLEN + 1];
+    WCHAR                   wszLogonDomain[DNLEN + 1];
+    WCHAR                   wszRemoteComputer[NETBIOS_NAME_LEN + 1];
+    GUID                    guid;
+    RAS_QUARANTINE_STATE    rasQuarState;
+    FILETIME                probationTime;
+    DWORD                   dwBytesXmited;
+    DWORD                   dwBytesRcved;
+    DWORD                   dwFramesXmited;
+    DWORD                   dwFramesRcved;
+    DWORD                   dwCrcErr;
+    DWORD                   dwTimeoutErr;
+    DWORD                   dwAlignmentErr;
+    DWORD                   dwHardwareOverrunErr;
+    DWORD                   dwFramingErr;
+    DWORD                   dwBufferOverrunErr;
+    DWORD                   dwCompressionRatioIn;
+    DWORD                   dwCompressionRatioOut;
+    DWORD                   dwNumSwitchOvers;
+    WCHAR                   wszRemoteEndpointAddress[MAXIPADRESSLEN + 1];
+    WCHAR                   wszLocalEndpointAddress[MAXIPADRESSLEN + 1];
+    PROJECTION_INFO         ProjectionInfo;
+    HANDLE                  hConnection;
+    HANDLE                  hInterface;
+} RAS_CONNECTION_EX;
+typedef RAS_CONNECTION_EX   *PRAS_CONNECTION_EX;
+#endif
+
+/* IKEv2 tunnel configuration parameters */
+#if (WINVER >= 0x0601)
+typedef struct _IKEV2_TUNNEL_CONFIG_PARAMS {
+    DWORD           dwIdleTimeout;
+    DWORD           dwNetworkBlackoutTime;
+    DWORD           dwSaLifeTime;
+    DWORD           dwSaDataSizeForRenegotiation;
+    DWORD           dwConfigOptions;
+    DWORD           dwTotalCertificates;
+    CERT_NAME_BLOB  *certificateNames;
+} IKEV2_TUNNEL_CONFIG_PARAMS;
+typedef IKEV2_TUNNEL_CONFIG_PARAMS  *PIKEV2_TUNNEL_CONFIG_PARAMS;
+#endif
+
+/* IKEv2 configuration parameters */
+#if (WINVER >= 0x0601)
+typedef struct _IKEV2_CONFIG_PARAMS {
+    DWORD                       dwNumPorts;
+    DWORD                       dwPortFlags;
+    DWORD                       dwTunnelConfigParamFlags;
+    IKEV2_TUNNEL_CONFIG_PARAMS  TunnelConfigParams;
+} IKEV2_CONFIG_PARAMS;
+typedef IKEV2_CONFIG_PARAMS *PIKEV2_CONFIG_PARAMS;
+#endif
+
+/* PPTP configuration parameters */
+#if (WINVER >= 0x0601)
+typedef struct _PPTP_CONFIG_PARAMS {
+    DWORD   dwNumPorts;
+    DWORD   dwPortFlags;
+} PPTP_CONFIG_PARAMS;
+typedef PPTP_CONFIG_PARAMS  *PPPTP_CONFIG_PARAMS;
+#endif
+
+/* L2TP configuration parameters */
+#if (WINVER >= 0x0601)
+typedef struct _L2TP_CONFIG_PARAMS {
+    DWORD   dwNumPorts;
+    DWORD   dwPortFlags;
+} L2TP_CONFIG_PARAMS;
+typedef L2TP_CONFIG_PARAMS  *PL2TP_CONFIG_PARAMS;
+#endif
+
+/* SSTP certificate information */
+#if (WINVER >= 0x0601)
+typedef struct _SSTP_CERT_INFO {
+    BOOL            isDefault;
+    CRYPT_HASH_BLOB certBlob;
+} SSTP_CERT_INFO;
+typedef SSTP_CERT_INFO  *PSSTP_CERT_INFO;
+#endif
+
+/* SSTP configuration parameters */
+#if (WINVER >= 0x0601)
+typedef struct _SSTP_CONFIG_PARAMS {
+    DWORD           dwNumPorts;
+    DWORD           dwPortFlags;
+    BOOL            isUseHttps;
+    DWORD           certAlgorithm;
+    SSTP_CERT_INFO  sstpCertDetails;
+} SSTP_CONFIG_PARAMS;
+typedef SSTP_CONFIG_PARAMS  *PSSTP_CONFIG_PARAMS;
+#endif
+
+/* MPRAPI tunnel configuration parameters */
+#if (WINVER >= 0x0601)
+typedef struct _MPRAPI_TUNNEL_CONFIG_PARAMS {
+    IKEV2_CONFIG_PARAMS IkeConfigParams;
+    PPTP_CONFIG_PARAMS  PptpConfigParams;
+    L2TP_CONFIG_PARAMS  L2tpConfigParams;
+    SSTP_CONFIG_PARAMS  SstpConfigParams;
+} MPRAPI_TUNNEL_CONFIG_PARAMS;
+typedef MPRAPI_TUNNEL_CONFIG_PARAMS *PMPRAPI_TUNNEL_CONFIG_PARAMS;
+#endif
+
+/* MPR server (extended version) */
+#if (WINVER >= 0x0601)
+typedef struct _MPR_SERVER_EX {
+    MPRAPI_OBJECT_HEADER        Header;
+    DWORD                       fLanOnlyMode;
+    DWORD                       dwUpTime;
+    DWORD                       dwTotalPorts;
+    DWORD                       dwPortsInUse;
+    DWORD                       Reserved;
+    MPRAPI_TUNNEL_CONFIG_PARAMS ConfigParams;
+} MPR_SERVER_EX;
+typedef MPR_SERVER_EX   *PMPR_SERVER_EX;
+#endif
+
+/* MPR server set configuration (extended version) */
+#if (WINVER >= 0x0601)
+typedef struct _MPR_SERVER_SET_CONFIG_EX {
+    MPRAPI_OBJECT_HEADER        Header;
+    DWORD                       setConfigForProtocols;
+    MPRAPI_TUNNEL_CONFIG_PARAMS ConfigParams;
+} MPR_SERVER_SET_CONFIG_EX;
+typedef MPR_SERVER_SET_CONFIG_EX    *PMPR_SERVER_SET_CONFIG_EX;
+#endif
+
+/* Authentication validation (extended version) */
+#if (WINVER >= 0x0601)
+typedef struct _AUTH_VALIDATION_EX {
+    MPRAPI_OBJECT_HEADER    Header;
+    HANDLE                  hRasConnection;
+    WCHAR                   wszUserName[UNLEN + 1];
+    WCHAR                   wszLogonDomain[DNLEN + 1];
+    DWORD                   AuthInfoSize;
+    BYTE                    AuthInfo[1];
+} AUTH_VALIDATION_EX;
+#endif
+
+/* RAS update connection */
+#if (WINVER >= 0x0601)
+typedef struct RAS_UPDATE_CONNECTION_ {
+    MPRAPI_OBJECT_HEADER    Header;
+    DWORD                   dwIfIndex;
+    WCHAR                   wszLocalEndpointAddress[MAXIPADRESSLEN + 1];
+    WCHAR                   wszRemoteEndpointAddress[MAXIPADRESSLEN + 1];
+} RAS_UPDATE_CONNECTION;
+typedef RAS_UPDATE_CONNECTION   *PRAS_UPDATE_CONNECTION;
+#endif
+
+/* MPRAPI administration DLL function templates */
+#if (WINVER >= 0x0601)
+typedef DWORD   (APIENTRY *PMPRADMINGETIPADDRESSFORUSER)( WCHAR *, WCHAR *, DWORD *, BOOL * );
+typedef VOID    (APIENTRY *PMPRADMINRELEASEIPADRESS)( WCHAR *, WCHAR *, DWORD * );
+typedef DWORD   (APIENTRY *PMPRADMINGETIPV6ADDRESSFORUSER)( WCHAR *, WCHAR *, IN6_ADDR *, BOOL * );
+typedef VOID    (APIENTRY *PMPRADMINRELEASEIPV6ADDRESSFORUSER)( WCHAR *, WCHAR *, IN6_ADDR * );
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTNEWCONNECTION)( RAS_CONNECTION_0 *, RAS_CONNECTION_1 * );
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTNEWCONNECTION2)( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 * );
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTNEWCONNECTION3)( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 *, RAS_CONNECTION_3 * );
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTNEWLINK)( RAS_PORT_0 *, RAS_PORT_1 * );
+typedef VOID    (APIENTRY *PMPRADMINCONNECTIONHANGUPNOTIFICATION)( RAS_CONNECTION_0 *, RAS_CONNECTION_1 * );
+typedef VOID    (APIENTRY *PMPRADMINCONNECTIONHANGUPNOTIFICATION2)( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 * );
+typedef VOID    (APIENTRY *PMPRADMINCONNECTIONHANGUPNOTIFICATION3)( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 *, RAS_CONNECTION_3 * );
+typedef VOID    (APIENTRY *PMPRADMINLINKHANGUPNOTIFICATION)( RAS_PORT_0 *, RAS_PORT_1 * );
+typedef DWORD   (APIENTRY *PMPRADMINTERMINATEDLL)();
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTREAUTHENTICATION)( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 *, RAS_CONNECTION_3 * );
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTNEWCONNECTIONEX)( RAS_CONNECTION_EX * );
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTREAUTHENTICATIONEX)( RAS_CONNECTION_EX * );
+typedef BOOL    (APIENTRY *PMPRADMINACCEPTTUNNELENDPOINTCHANGEEX)( RAS_CONNECTION_EX * );
+typedef VOID    (APIENTRY *PMPRADMINCONNECTIONHANGUPNOTIFICATIONEX)( RAS_CONNECTION_EX * );
+typedef DWORD   (APIENTRY *PMPRADMINRASVALIDATEPREAUTHENTICATEDCONNECTIONEX)( AUTH_VALIDATION_EX * );
+#endif
+
+/* MPRAPI administration DLL callbacks */
+#if (WINVER >= 0x0601)
+typedef struct _MPRAPI_ADMIN_DLL_CALLBACKS {
+    UCHAR                                   revision;
+    PMPRADMINGETIPADDRESSFORUSER            lpfnMprAdminGetIpAddressForUser;
+    PMPRADMINRELEASEIPADRESS                lpfnMprAdminReleaseIpAddress;
+    PMPRADMINGETIPV6ADDRESSFORUSER          lpfnMprAdminGetIpv6AddressForUser;
+    PMPRADMINRELEASEIPV6ADDRESSFORUSER      lpfnMprAdminReleaseIpv6AddressForUser;
+    PMPRADMINACCEPTNEWLINK                  lpfnRasAdminAcceptNewLink;
+    PMPRADMINLINKHANGUPNOTIFICATION         lpfnRasAdminLinkHangupNotification;
+    PMPRADMINTERMINATEDLL                   lpfnRasAdminTerminateDll;
+    PMPRADMINACCEPTNEWCONNECTIONEX          lpfnRasAdminAcceptNewConnectionEx;
+    PMPRADMINACCEPTTUNNELENDPOINTCHANGEEX   lpfnRasAdminAcceptEndpointChangeEx;
+    PMPRADMINACCEPTREAUTHENTICATIONEX       lpfnRasAdminAcceptReauthenticationEx;
+    PMPRADMINCONNECTIONHANGUPNOTIFICATIONEX lpfnRasAdminConnectionHangupNotificationEx;
+    PMPRADMINRASVALIDATEPREAUTHENTICATEDCONNECTIONEX    lpfnRASValidatePreAuthenticatedConnectionEx;
+} MPRAPI_ADMIN_DLL_CALLBACKS;
+typedef MPRAPI_ADMIN_DLL_CALLBACKS  *PMPRAPI_ADMIN_DLL_CALLBACKS;
+#endif
+
 /* Functions in MPRAPI.DLL */
 DWORD APIENTRY  MprAdminBufferFree( LPVOID );
 DWORD APIENTRY  MprAdminConnectionClearStatus( RAS_SERVER_HANDLE, HANDLE );
@@ -813,6 +1176,16 @@ DWORD APIENTRY  MprConfigServerSetInfo( MPR_SERVER_HANDLE, DWORD, LPBYTE );
 DWORD APIENTRY  MprConfigFilterGetInfo( HANDLE, DWORD, LPBYTE );
 DWORD APIENTRY  MprConfigFilterSetInfo( HANDLE, DWORD, LPBYTE );
 #endif
+#if (WINVER >= 0x0601)
+DWORD APIENTRY  MprAdminConnectionEnumEx( RAS_SERVER_HANDLE, PMPRAPI_OBJECT_HEADER, DWORD, LPDWORD, LPDWORD, PRAS_CONNECTION_EX *, LPDWORD );
+DWORD APIENTRY  MprAdminConnectionGetInfoEx( RAS_SERVER_HANDLE, HANDLE, PRAS_CONNECTION_EX );
+DWORD APIENTRY  MprAdminIsServiceInitialized( LPWSTR, BOOL * );
+DWORD APIENTRY  MprAdminServerGetInfoEx( MPR_SERVER_HANDLE, MPR_SERVER_EX * );
+DWORD APIENTRY  MprAdminServerSetInfoEx( MPR_SERVER_HANDLE, MPR_SERVER_SET_CONFIG_EX * );
+DWORD APIENTRY  MprAdminUpdateConnection( RAS_SERVER_HANDLE, HANDLE, PRAS_UPDATE_CONNECTION );
+DWORD APIENTRY  MprConfigServerGetInfoEx( HANDLE, MPR_SERVER_EX * );
+DWORD APIENTRY  MprConfigServerSetInfoEx( HANDLE, MPR_SERVER_SET_CONFIG_EX * );
+#endif
 
 /* Functions implemented by administration providers */
 BOOL APIENTRY   MprAdminAcceptNewConnection( RAS_CONNECTION_0 *, RAS_CONNECTION_1 * );
@@ -831,8 +1204,14 @@ DWORD APIENTRY  MprAdminTerminateDll( VOID );
 BOOL APIENTRY   MprAdminAcceptNewConnection3( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 *, RAS_CONNECTION_3 * );
 BOOL APIENTRY   MprAdminAcceptReauthentication( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 *, RAS_CONNECTION_3 * );
 VOID APIENTRY   MprAdminConnectionHangupNotification3( RAS_CONNECTION_0 *, RAS_CONNECTION_1 *, RAS_CONNECTION_2 *,  RAS_CONNECTION_3 * );
-DWORD APIENTRY  MprAdminGetIpAddressForUser2( WCHAR *, WCHAR *, DWORD *, IN6_ADDR [], BOOL * );
-VOID APIENTRY   MprAdminReleaseIpAddress2( WCHAR *, WCHAR *, DWORD *, IN6_ADDR );
+DWORD APIENTRY  MprAdminGetIpv6AddressForUser( WCHAR *, WCHAR *, IN6_ADDR *, BOOL * );
+VOID APIENTRY   MprAdminReleaseIpv6AddressForUser( WCHAR *, WCHAR *, IN6_ADDR * );
+#endif
+#if (WINVER >= 0x0601)
+BOOL APIENTRY   MprAdminAcceptNewConnectionEx( RAS_CONNECTION_EX * );
+BOOL APIENTRY   MprAdminAcceptReauthenticationEx( RAS_CONNECTION_EX * );
+void APIENTRY   MprAdminConnectionHangupNotificationEx( RAS_CONNECTION_EX * );
+DWORD APIENTRY  MprAdminInitializeDllEx( PMPRAPI_ADMIN_DLL_CALLBACKS );
 #endif
 
 /* Functions implemented as macros */
