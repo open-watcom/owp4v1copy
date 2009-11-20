@@ -504,11 +504,18 @@ static void output_uscores( text_chars * in_chars )
 
 static void post_text_output( void )
 {
-    char    shwd_suffix[] = ") shwd ";
-    char    sd_suffix[] = ") sd ";
+    char    shwd_suffix[] = " shwd ";
+    char    sd_suffix[] = " sd ";
     size_t  ps_suffix_size;
 
     if( ps_device ) {
+
+        /* If the ")" is combined with the suffix, then the space will be
+         * skipped when it should not be.
+         */
+
+        ob_insert_block( ")", 1, false, false, active_font );
+
         if( htab_done ) {
             ps_suffix_size = strlen( sd_suffix );
             ob_insert_block( sd_suffix, ps_suffix_size, false, false, \
