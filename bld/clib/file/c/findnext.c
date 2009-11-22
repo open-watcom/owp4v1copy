@@ -38,7 +38,7 @@
     #include "libwin32.h"
     #include "ntex.h"
 #elif defined( __OS2__ )
-    #include <os2.h>
+    #include <wos2.h>
 #endif
 #include "find.h"
 #include "seterrno.h"
@@ -83,9 +83,9 @@
     __F_NAME(__nt_finddata_cvt,__nt_wfinddata_cvt)( &ffb, fileinfo );
   #endif
 #elif defined( __OS2__ )
-    unsigned       rc;
+    APIRET          rc;
     FF_BUFFER       ffb;
-    FF_UINT         searchcount = 1;
+    OS_UINT         searchcount = 1;
 
     rc = DosFindNext( (HDIR)handle, &ffb, sizeof( ffb ), &searchcount );
     if( rc != 0 ) {

@@ -35,6 +35,12 @@
 #include "rtinit.h"
 #include "os2fil64.h"
 
+#define ORD_DosOpenL              981
+#define ORD_DosSetFileLocksL      986
+#define ORD_DosSetFilePtrL        988
+#define ORD_DosSetFileSizeL       989
+
+
 pfn_DosOpenL            __os2_DosOpenL = NULL;
 pfn_DosSetFilePtrL      __os2_DosSetFilePtrL = NULL;
 pfn_DosSetFileSizeL     __os2_DosSetFileSizeL = NULL;

@@ -38,6 +38,7 @@
 #elif defined( __OS2__ )
     #define INCL_LONGLONG
     #include "wos2.h"
+    #include "os2fil64.h"
 #elif defined( __DOS__ ) || defined( __WINDOWS__ )
     #include "tinyio.h"
 #endif
@@ -63,20 +64,35 @@ _WCRTLINK extern int _llseek( unsigned int, unsigned long, unsigned long, long l
 
 _WCRTLINK __int64 __lseeki64( int handle, __int64 offset, int origin )
 {
-#if defined( __NT__ ) || defined( __WARP__ ) || defined( __LINUX__ )
+#if defined( __NT__ ) || defined( __OS2__ ) || defined( __LINUX__ )
     __int64         pos;
 
     __handle_check( handle, -1 );
 
-  #if defined( __WARP__ )
+  #if defined( __OS2__ )
     {
+    #if !defined( _M_I86 )
         APIRET          rc;
-    
-        rc = DosSetFilePtrL( handle, offset, origin, &pos );
-        if( rc != 0 ) {
-            __set_errno_dos( rc );
-            pos = -1LL;
+
+        if( __os2_DosSetFilePtrL != NULL ) {
+            rc = __os2_DosSetFilePtrL( handle, offset, origin, &pos );
+            if( rc != 0 ) {
+                __set_errno_dos( rc );
+                pos = -1LL;
+            }
+        } else {
+    #endif
+            if( offset > LONG_MAX || offset < LONG_MIN ) {
+                __set_errno( EINVAL );
+                return( -1LL );
+            }
+            pos = (unsigned long)__lseek( handle, offset, origin );
+            if( pos == INVALID_SET_FILE_POINTER ) {
+                pos = -1LL;
+            }
+    #if !defined( _M_I86 )
         }
+    #endif
     }
   #elif defined( __NT__ )
     {
@@ -104,13 +120,9 @@ _WCRTLINK __int64 __lseeki64( int handle, __int64 offset, int origin )
 #else
     long            pos;
 
-    if( offset > LONG_MAX ) {
+    if( offset > LONG_MAX || offset < LONG_MIN ) {
         __set_errno( EINVAL );
-        return( -1LL );                 /* offset > LONG_MAX */
-    }
-    if( offset < LONG_MIN ) {
-        __set_errno( EINVAL );
-        return( -1LL );                 /* offset < LONG_MIN */
+        return( -1LL );
     }
     pos = __lseek( handle, offset, origin );
     if( pos == INVALID_SET_FILE_POINTER ) {

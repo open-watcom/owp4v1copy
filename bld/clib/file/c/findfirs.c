@@ -40,10 +40,12 @@
     #include "libwin32.h"
     #include "ntex.h"
 #elif defined( __OS2__ )
-    #include <os2.h>
+    #define INCL_LONGLONG
+    #include <wos2.h>
     #include <mbstring.h>
     #include "d2ttime.h"
     #include "mbwcconv.h"
+    #include "os2fil64.h"
 #else
     #include <dos.h>
     #include "liballoc.h"
@@ -92,26 +94,26 @@
   #endif
     return( (long)h );
 #elif defined( __OS2__ )
-    unsigned       rc;
-    HDIR            h = HDIR_SYSTEM;
+    APIRET          rc;
+    HDIR            h = HDIR_CREATE;
     FF_BUFFER       ffb;
-    FF_UINT         searchcount = 1;
-#ifdef __WIDECHAR__
+    OS_UINT         searchcount = 1;
+ #ifdef __WIDECHAR__
     char            mbFilespec[MB_CUR_MAX * _MAX_PATH];
 
     __filename_from_wide( mbFilespec, filespec );
-#endif
+ #endif
     rc = DosFindFirst( (char*)__F_NAME(filespec,mbFilespec), &h, FIND_ATTR,
                                 &ffb, sizeof( ffb ), &searchcount, FF_LEVEL );
     if( rc != 0 ) {
         return( -1L );
     }
     /*** Got one! ***/
-  #ifdef __INT64__
+ #ifdef __INT64__
     __F_NAME(__os2_finddatai64_cvt,__os2_wfinddatai64_cvt)( &ffb, fileinfo );
-  #else
+ #else
     __F_NAME(__os2_finddata_cvt,__os2_wfinddata_cvt)( &ffb, fileinfo );
-  #endif
+ #endif
     return( (long)h );
 #else   /* DOS */
     DOSFINDTYPE     *findbuf;
@@ -145,19 +147,19 @@
 #ifdef __NT__
 
 
-#ifdef __WIDECHAR__
- #ifdef __INT64__
-  void __nt_wfinddatai64_cvt( WIN32_FIND_DATA *ffb, struct _wfinddatai64_t *fileinfo )
+ #ifdef __WIDECHAR__
+  #ifdef __INT64__
+   void __nt_wfinddatai64_cvt( WIN32_FIND_DATA *ffb, struct _wfinddatai64_t *fileinfo )
+  #else
+   void __nt_wfinddata_cvt( WIN32_FIND_DATA *ffb, struct _wfinddata_t *fileinfo )
+  #endif
  #else
-  void __nt_wfinddata_cvt( WIN32_FIND_DATA *ffb, struct _wfinddata_t *fileinfo )
+  #ifdef __INT64__
+   void __nt_finddatai64_cvt( WIN32_FIND_DATA *ffb, struct _finddatai64_t *fileinfo )
+  #else
+   void __nt_finddata_cvt( WIN32_FIND_DATA *ffb, struct _finddata_t *fileinfo )
+  #endif
  #endif
-#else
- #ifdef __INT64__
-  void __nt_finddatai64_cvt( WIN32_FIND_DATA *ffb, struct _finddatai64_t *fileinfo )
- #else
-  void __nt_finddata_cvt( WIN32_FIND_DATA *ffb, struct _finddata_t *fileinfo )
- #endif
-#endif
 {
     /*** Convert attributes ***/
     fileinfo->attrib = 0;
@@ -200,23 +202,20 @@
 #elif defined( __OS2__ )
 
 
-#ifdef __WIDECHAR__
- #ifdef __INT64__
-  void __os2_wfinddatai64_cvt( FF_BUFFER *ffb, struct _wfinddatai64_t *fileinfo )
+ #ifdef __WIDECHAR__
+  #ifdef __INT64__
+   void __os2_wfinddatai64_cvt( FF_BUFFER *ffb, struct _wfinddatai64_t *fileinfo )
+  #else
+   void __os2_wfinddata_cvt( FF_BUFFER *ffb, struct _wfinddata_t *fileinfo )
+  #endif
  #else
-  void __os2_wfinddata_cvt( FF_BUFFER *ffb, struct _wfinddata_t *fileinfo )
+  #ifdef __INT64__
+   void __os2_finddatai64_cvt( FF_BUFFER *ffb, struct _finddatai64_t *fileinfo )
+  #else
+   void __os2_finddata_cvt( FF_BUFFER *ffb, struct _finddata_t *fileinfo )
+  #endif
  #endif
-#else
- #ifdef __INT64__
-  void __os2_finddatai64_cvt( FF_BUFFER *ffb, struct _finddatai64_t *fileinfo )
- #else
-  void __os2_finddata_cvt( FF_BUFFER *ffb, struct _finddata_t *fileinfo )
- #endif
-#endif
 {
-    /*** Handle attributes ***/
-    fileinfo->attrib = ffb->attrFile;
-
     /*** Handle the timestamps ***/
     fileinfo->time_create = _d2ttime( TODDATE( ffb->fdateCreation ),
                                         TODTIME( ffb->ftimeCreation ) );
@@ -225,18 +224,26 @@
     fileinfo->time_write  = _d2ttime( TODDATE( ffb->fdateLastWrite ),
                                         TODTIME( ffb->ftimeLastWrite ) );
 
-    /*** Handle the file size ***/
-  #if defined( __INT64__ ) && defined( __WARP__ )
-    U64Set( (unsigned_64 *)&fileinfo->size, ffb->cbFile.ulLo, ffb->cbFile.ulHi );
-  #else
-    fileinfo->size = ffb->cbFile;
+  #if defined( __INT64__ ) && !defined( _M_I86 )
+    if( _FILEAPI64() ) {
   #endif
-
-    /*** Handle the file name ***/
-  #ifdef __WIDECHAR__
-    mbstowcs( fileinfo->name, ffb->achName, _mbslen( ffb->achName ) + 1 );
-  #else
-    strcpy( fileinfo->name, ffb->achName );
+        fileinfo->attrib = ffb->attrFile;
+        fileinfo->size = ffb->cbFile;
+    #ifdef __WIDECHAR__
+        mbstowcs( fileinfo->name, ffb->achName, _mbslen( ffb->achName ) + 1 );
+    #else
+        strcpy( fileinfo->name, ffb->achName );
+    #endif
+  #if defined( __INT64__ ) && !defined( _M_I86 )
+    } else {
+        fileinfo->attrib = ((FF_BUFFER_32 *)ffb)->attrFile;
+        fileinfo->size = ((FF_BUFFER_32 *)ffb)->cbFile;
+    #ifdef __WIDECHAR__
+        mbstowcs( fileinfo->name, ((FF_BUFFER_32 *)ffb)->achName, _mbslen( ((FF_BUFFER_32 *)ffb)->achName ) + 1 );
+    #else
+        strcpy( fileinfo->name, ((FF_BUFFER_32 *)ffb)->achName );
+    #endif
+    }
   #endif
 }
 
@@ -244,19 +251,19 @@
 #else   /* DOS */
 
 
-#ifdef __WIDECHAR__
- #ifdef __INT64__
-  void __dos_wfinddatai64_cvt( struct _wfind_t *findbuf, struct _wfinddatai64_t *fileinfo )
+ #ifdef __WIDECHAR__
+  #ifdef __INT64__
+   void __dos_wfinddatai64_cvt( struct _wfind_t *findbuf, struct _wfinddatai64_t *fileinfo )
+  #else
+   void __dos_wfinddata_cvt( struct _wfind_t *findbuf, struct _wfinddata_t *fileinfo )
+  #endif
  #else
-  void __dos_wfinddata_cvt( struct _wfind_t *findbuf, struct _wfinddata_t *fileinfo )
+  #ifdef __INT64__
+   void __dos_finddatai64_cvt( struct find_t *findbuf, struct _finddatai64_t *fileinfo )
+  #else
+   void __dos_finddata_cvt( struct find_t *findbuf, struct _finddata_t *fileinfo )
+  #endif
  #endif
-#else
- #ifdef __INT64__
-  void __dos_finddatai64_cvt( struct find_t *findbuf, struct _finddatai64_t *fileinfo )
- #else
-  void __dos_finddata_cvt( struct find_t *findbuf, struct _finddata_t *fileinfo )
- #endif
-#endif
 {
     /*** Handle attributes ***/
     fileinfo->attrib = findbuf->attrib;

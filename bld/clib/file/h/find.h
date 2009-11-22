@@ -57,19 +57,16 @@
 
 #elif defined( __OS2__ )
 
-    #if defined( __WARP__ )
-        #define FF_UINT     ULONG
-      #if defined( __INT64__ )
-        #define FF_LEVEL    FIL_STANDARDL
-        #define FF_BUFFER   FILEFINDBUF3L
-      #else
-        #define FF_LEVEL    FIL_STANDARD
-        #define FF_BUFFER   FILEFINDBUF3
-      #endif
+    #if defined( _M_I86 )
+        #define FF_LEVEL    	0
+        #define FF_BUFFER   	FILEFINDBUF
+    #elif defined( __INT64__ )
+        #define FF_LEVEL    	(_FILEAPI64() ? FIL_STANDARDL : FIL_STANDARD)
+        #define FF_BUFFER   	FILEFINDBUF3L
+        #define FF_BUFFER_32	FILEFINDBUF3
     #else
-        #define FF_UINT     USHORT
-        #define FF_LEVEL    0
-        #define FF_BUFFER   FILEFINDBUF
+        #define FF_LEVEL    	FIL_STANDARD
+        #define FF_BUFFER   	FILEFINDBUF3
     #endif
 
     extern void     __os2_finddata_cvt( FF_BUFFER *ffb,

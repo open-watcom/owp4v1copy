@@ -43,6 +43,7 @@
 #include "dosfunc.h"
 #include <direct.h>
 #include "fileacc.h"
+#define INCL_LONGLONG
 #include <wos2.h>
 #include <string.h>
 #include "openmode.h"
@@ -54,6 +55,7 @@
     #include <mbstring.h>
     #include "mbwcconv.h"
 #endif
+#include "os2fil64.h"
 
 extern unsigned __NFiles;
 
@@ -117,12 +119,16 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shar
         fileattr = _A_NORMAL;
     }
 
-#ifdef __WIDECHAR__
-    error = DosOpen( (PSZ)mbName, &handle, &actiontaken, 0ul,
-                        fileattr, openflag, openmode, 0ul );
-#else
-    error = DosOpen( (PSZ)name, &handle, &actiontaken, 0ul,
-                        fileattr, openflag, openmode, 0ul );
+#ifndef _M_I86
+    if( __os2_DosOpenL != NULL ) {
+        error = __os2_DosOpenL( (PSZ)__F_NAME(name,mbName), &handle,
+                    &actiontaken, 0ULL, fileattr, openflag, openmode, 0ul );
+    } else {
+#endif
+        error = DosOpen( (PSZ)__F_NAME(name,mbName), &handle,
+                    &actiontaken, 0ul, fileattr, openflag, openmode, 0ul );
+#ifndef _M_I86
+    }
 #endif
     if( error ) {
         return( __set_errno_dos( error ) );
@@ -149,17 +155,10 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shar
     __SetIOMode( handle, iomode_flags );
 #ifdef DEFAULT_WINDOWING
     if( _WindowsNewWindow != 0 ) {
-    #ifdef __WIDECHAR__
-        if( ( _wcsicmp( name, L"con" ) == 0 ) ||
-            ( _wcsicmp( name, L"\\dev\\con" ) == 0 ) ) {
+        if( ( __F_NAME(stricmp,_wcsicmp)( name, STRING( "con" ) ) == 0 ) ||
+            ( __F_NAME(stricmp,_wcsicmp)( name, STRING( "\\dev\\con" ) ) == 0 ) ) {
             _WindowsNewWindow( NULL, handle, -1 );
         }
-    #else
-        if( ( stricmp( name, "con" ) == 0 ) ||
-            ( stricmp( name, "\\dev\\con" ) == 0 ) ) {
-            _WindowsNewWindow( NULL, handle, -1 );
-        }
-    #endif
     }
 #endif
     return( handle );

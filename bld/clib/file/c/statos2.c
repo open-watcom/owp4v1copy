@@ -42,6 +42,7 @@
 #include <string.h>
 #include <direct.h>
 
+#define INCL_LONGLONG
 #include <wos2.h>
 #include <dos.h>
 #include <mbstring.h>
@@ -56,8 +57,33 @@
 #endif
 #include "find.h"
 #include "d2ttime.h"
+#include "os2fil64.h"
 
-static  unsigned short      at2mode(FF_UINT,char *);
+
+static unsigned short at2mode( OS_UINT attr, char *fname ) {
+
+    register unsigned short mode;
+    register char           *ext;
+
+    if( attr & _A_SUBDIR ) {
+        mode = S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+    } else if( attr & 0x40 ) {
+        mode = S_IFCHR;
+    } else {
+        mode = S_IFREG;
+        /* determine if file is executable, very PC specific */
+        if( (ext = _mbschr( fname, '.' )) != NULL ) {
+            ++ext;
+            if( _mbscmp( ext, "EXE" ) == 0 ) {
+                mode |= S_IXUSR | S_IXGRP | S_IXOTH;
+            }
+        }
+    }
+    mode |= S_IRUSR | S_IRGRP | S_IROTH;
+    if( !(attr & _A_RDONLY) )                   /* if file is not read-only */
+        mode |= S_IWUSR | S_IWGRP | S_IWOTH;    /* - indicate writeable     */
+    return( mode );
+}
 
 
 #ifdef __INT64__
@@ -111,11 +137,7 @@ static  unsigned short      at2mode(FF_UINT,char *);
         buf->st_mtime = 0;
         buf->st_btime = 0;
         /* set size */
-#if defined( __INT64__ )
-        U64Set( (unsigned_64 *)&buf->st_size, 0, 0 );
-#else
         buf->st_size = 0;
-#endif
     } else {
         /* handle non-root directory */
         FF_BUFFER   dir_buff;
@@ -157,9 +179,6 @@ static  unsigned short      at2mode(FF_UINT,char *);
             __set_errno( ENOENT );
             return( -1 );
         }
-        /* set attributes */
-        buf->st_attr = dir_buff.attrFile;
-        buf->st_mode = at2mode( dir_buff.attrFile, dir_buff.achName );
         /* set timestamps */
         buf->st_ctime = _d2ttime( TODDATE( dir_buff.fdateCreation ),
                                   TODTIME( dir_buff.ftimeCreation ) );
@@ -168,11 +187,18 @@ static  unsigned short      at2mode(FF_UINT,char *);
         buf->st_mtime = _d2ttime( TODDATE( dir_buff.fdateLastWrite ),
                                   TODTIME( dir_buff.ftimeLastWrite ) );
         buf->st_btime = buf->st_mtime;
-        /* set size */
-#if defined( __INT64__ ) && defined( __WARP__ )
-        U64Set( (unsigned_64 *)&buf->st_size, dir_buff.cbFile.ulLo, dir_buff.cbFile.ulHi );
-#else
-        buf->st_size = dir_buff.cbFile;
+#if defined( __INT64__ ) && !defined( _M_I86 )
+        if( _FILEAPI64() ) {
+#endif
+            buf->st_attr = dir_buff.attrFile;
+            buf->st_mode = at2mode( dir_buff.attrFile, dir_buff.achName );
+            buf->st_size = dir_buff.cbFile;
+#if defined( __INT64__ ) && !defined( _M_I86 )
+        } else {
+            buf->st_attr = ((FF_BUFFER_32 *)&dir_buff)->attrFile;
+            buf->st_mode = at2mode( ((FF_BUFFER_32 *)&dir_buff)->attrFile, ((FF_BUFFER_32 *)&dir_buff)->achName );
+            buf->st_size = ((FF_BUFFER_32 *)&dir_buff)->cbFile;
+        }
 #endif
     }
 
@@ -194,30 +220,4 @@ static  unsigned short      at2mode(FF_UINT,char *);
     buf->st_originatingNameSpace = 0;
 
     return( 0 );
-}
-
-
-static unsigned short at2mode( FF_UINT attr, char *fname ) {
-
-    register unsigned short mode;
-    register char * ext;
-
-    if( attr & _A_SUBDIR ) {
-        mode = S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-    } else if( attr & 0x40 ) {
-        mode = S_IFCHR;
-    } else {
-        mode = S_IFREG;
-        /* determine if file is executable, very PC specific */
-        if( (ext = _mbschr( fname, '.' )) != NULL ) {
-            ++ext;
-            if( _mbscmp( ext, "EXE" ) == 0 ) {
-                mode |= S_IXUSR | S_IXGRP | S_IXOTH;
-            }
-        }
-    }
-    mode |= S_IRUSR | S_IRGRP | S_IROTH;
-    if( !(attr & _A_RDONLY) )                   /* if file is not read-only */
-        mode |= S_IWUSR | S_IWGRP | S_IWOTH;    /* - indicate writeable     */
-    return( mode );
 }

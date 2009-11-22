@@ -39,29 +39,28 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <direct.h>
+#define INCL_LONGLONG
 #include <wos2.h>
 #include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"
 #include "d2ttime.h"
+#include "os2fil64.h"
 
-#if defined( __WARP__ )
-    #define FF_UINT     ULONG
-  #if defined( __INT64__ )
-    #define FF_LEVEL    FIL_STANDARDL
-    #define FF_BUFFER   FILESTATUS3L
-  #else
-    #define FF_LEVEL    FIL_STANDARD
-    #define FF_BUFFER   FILESTATUS3
-  #endif
+#if defined( _M_I86 )
+    #define FF_LEVEL        1
+    #define FF_BUFFER       FILESTATUS
+#elif defined( __INT64__ )
+    #define FF_LEVEL        (_FILEAPI64() ? FIL_STANDARDL : FIL_STANDARD)
+    #define FF_BUFFER       FILESTATUS3L
+    #define FF_BUFFER_32    FILESTATUS3
 #else
-    #define FF_UINT     USHORT
-    #define FF_LEVEL    1
-    #define FF_BUFFER   FILESTATUS
+    #define FF_LEVEL        FIL_STANDARD
+    #define FF_BUFFER       FILESTATUS3
 #endif
 
 
-static unsigned short at2mode( FF_UINT attr )
+static unsigned short at2mode( OS_UINT attr )
 /*********************************************/
     {
         register unsigned short         mode;
@@ -112,9 +111,6 @@ _WCRTLINK int __F_NAME(fstat,_wfstat)( int handle, struct __F_NAME(stat,_stat) *
         if( error ) {
             return( __set_errno_dos( error ) );
         }
-        /* handle attributes */
-        buf->st_attr = info.attrFile;
-        buf->st_mode |= at2mode( info.attrFile );
         buf->st_dev = buf->st_rdev = 0;
         /* handle timestamps */
         buf->st_ctime = _d2ttime( TODDATE( info.fdateCreation ),
@@ -124,11 +120,18 @@ _WCRTLINK int __F_NAME(fstat,_wfstat)( int handle, struct __F_NAME(stat,_stat) *
         buf->st_mtime = _d2ttime( TODDATE( info.fdateLastWrite ),
                                   TODTIME( info.ftimeLastWrite ) );
         buf->st_btime = buf->st_mtime;
-        /* handle size */
-#if defined( __INT64__ ) && defined( __WARP__ )
-        U64Set( (unsigned_64 *)&buf->st_size, info.cbFile.ulLo, info.cbFile.ulHi );
-#else
-        buf->st_size = info.cbFile;
+#if defined( __INT64__ ) && !defined( _M_I86 )
+        if( _FILEAPI64() ) {
+#endif
+            buf->st_attr = info.attrFile;
+            buf->st_mode |= at2mode( info.attrFile );
+            buf->st_size = info.cbFile;
+#if defined( __INT64__ ) && !defined( _M_I86 )
+        } else {
+            buf->st_attr = ((FF_BUFFER_32 *)&info)->attrFile;
+            buf->st_mode |= at2mode( ((FF_BUFFER_32 *)&info)->attrFile );
+            buf->st_size = ((FF_BUFFER_32 *)&info)->cbFile;
+        }
 #endif
     } else {
         /* handle device */
@@ -159,4 +162,3 @@ _WCRTLINK int __F_NAME(fstat,_wfstat)( int handle, struct __F_NAME(stat,_stat) *
     buf->st_originatingNameSpace = 0;
     return( 0 );
 }
-

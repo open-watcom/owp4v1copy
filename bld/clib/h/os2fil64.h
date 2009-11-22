@@ -32,13 +32,9 @@
 #ifndef _OS2FIL64_H_INCLUDED
 #define _OS2FIL64_H_INCLUDED
 
-#ifdef __WARP__
-#define ORD_DosOpenL              981
-#define ORD_DosSetFileLocksL      986
-#define ORD_DosSetFilePtrL        988
-#define ORD_DosSetFileSizeL       989
+#if !defined( _M_I86 )
 
-#define _FILEAPI64          (__os2_DosOpenL != NULL)
+#define _FILEAPI64()        (__os2_DosOpenL != NULL)
 
 typedef APIRET APIENTRY     (*pfn_DosOpenL)(PCSZ,PHFILE,PULONG,LONGLONG,ULONG,ULONG,ULONG,PEAOP2);
 typedef APIRET APIENTRY     (*pfn_DosSetFileLocksL)(HFILE,PFILELOCKL,PFILELOCKL,ULONG,ULONG);
@@ -49,6 +45,7 @@ extern pfn_DosOpenL         __os2_DosOpenL;
 extern pfn_DosSetFileLocksL __os2_DosSetFileLocksL;
 extern pfn_DosSetFilePtrL   __os2_DosSetFilePtrL;
 extern pfn_DosSetFileSizeL  __os2_DosSetFileSizeL;
+
 #endif
 
 #endif
