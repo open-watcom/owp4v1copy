@@ -192,13 +192,15 @@ Lexer::Token UlLi::parse( Lexer* lexer )
         document->dataCol(), indent + 2 ) );
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC ) ) {
         if( parseInline( lexer, tok ) ) {
-            if( lexer->tagId() == Lexer::LP ) {
+            if( lexer->tagId() == Lexer::LI )
+                break;
+            else if( lexer->tagId() == Lexer::LP ) {
                 Element* elt( new P( document, this, document->dataName(),
                     document->dataLine(), document->dataCol() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }
-            else
+            else if( parseBlock( lexer, tok ) )
                 break;
         }
     }
