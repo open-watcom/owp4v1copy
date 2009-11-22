@@ -233,7 +233,7 @@ static void ob_insert_ps_text( uint8_t * in_block, size_t count, uint8_t font )
 }
 
 /* Function ob_insert_ps_cmd().
- * This function inserts PostScript language statements.  No output
+ * This function inserts PostScript language statements. No output
  * translation occurs.
  *
  * Parameter:
@@ -324,26 +324,35 @@ static void ob_insert_ps_cmd( uint8_t * in_block, size_t count )
 
         if( difference == 0 ) continue;
 
-        /* Copy up to the space character found. */
+        if( (current + difference + 1) >= count ) {
 
-        memcpy_s( &buffout.text[buffout.current], difference, \
-                                            &in_block[current], difference );
-        buffout.current += difference;
-        current+= difference;
-        text_count -= difference;
-
-        /* Skip the space character and copy any other space characters up to
-         * the size of the buffer.
+        /* The space following the current token was the last character in
+         * in_block and the token + space will not fit: the buffer is full.
          */
 
-        current++;
-        text_count--;
-        while( buffout.current < buffout.length ) {
-            if( in_block[current] != ' ' ) break;
-                buffout.text[buffout.current] = in_block[current];
-                buffout.current++;
-                current++;
-                text_count--;
+        } else {
+
+            /* Copy up to the space character found. */
+
+            memcpy_s( &buffout.text[buffout.current], difference, \
+                                            &in_block[current], difference );
+            buffout.current += difference;
+            current+= difference;
+            text_count -= difference;
+
+            /* Skip the space character and copy any other space characters
+             * up to the size of the buffer.
+             */
+
+            current++;
+            text_count--;
+            while( buffout.current < buffout.length ) {
+                if( in_block[current] != ' ' ) break;
+                    buffout.text[buffout.current] = in_block[current];
+                    buffout.current++;
+                    current++;
+                    text_count--;
+            }
         }
 
         /* Flush the buffer: full or not, it cannot hold the rest of
