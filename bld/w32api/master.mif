@@ -62,6 +62,7 @@ headers = &
         devprdef.h           &
         dhcpcsdk.h           &
         dimm.h               &
+        dispex.h             &
         dlgs.h               &
         docobj.h             &
         dsadmin.h            &
