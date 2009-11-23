@@ -385,6 +385,84 @@ ForwardIterator max_element( ForwardIterator first,
     return( tmp );
 }
 
+// next_permutation( Bidirectional, Bidirectional, Compare )
+// *********************************************************
+template< typename Bidirectional, typename Compare >
+bool next_permutation( Bidirectional first, Bidirectional last, Compare comp )
+{
+    if( first == last ) return false;
+    Bidirectional i = first;
+    ++i;
+    if( i == last ) return false;
+    i = last;
+    --i;
+
+    for( ;; ) {
+        Bidirectional ii = i;
+        --i;
+        if( comp( *i, *ii ) ) {
+            Bidirectional j = last;
+            while( !comp( *i, *--j ) ) /* null */ ;
+            swap( *i, *j );
+            reverse( ii, last );
+            return true;
+        }
+        if( i == first ) {
+            reverse( first, last );
+            return false;
+        }
+    }
+}
+
+// next_permutation( Bidirectional, Bidirectional )
+// ************************************************
+template< typename Bidirectional >
+bool next_permutation( Bidirectional first, Bidirectional last )
+{
+    return ( next_permutation( first, last,
+        std::less< typename iterator_traits< Bidirectional >::value_type >( )
+    ) );
+}
+
+// prev_permutation( Bidirectional, Bidirectional, Compare )
+// *********************************************************
+template< class Bidirectional, class Compare >
+bool prev_permutation( Bidirectional first, Bidirectional last, Compare comp )
+{
+    if( first == last ) return false;
+    Bidirectional i = first;
+    ++i;
+    if( i == last ) return false;
+    i = last;
+    --i;
+
+    for( ;; ) {
+        Bidirectional ii = i;
+        --i;
+        if( comp( *ii, *i ) ) {
+            Bidirectional j = last;
+            while( !comp( *--j, *i ) ) /* null */ ;
+            swap( *i, *j );
+            reverse( ii, last );
+            return true;
+        }
+        if( i == first ) {
+            reverse( first, last );
+            return false;
+        }
+    }
+}
+
+// prev_permutation( Bidirectional, Bidirectional )
+// ************************************************
+template< typename Bidirectional >
+bool prev_permutation( Bidirectional first, Bidirectional last )
+{
+    return ( prev_permutation( first, last,
+        std::less< typename iterator_traits< Bidirectional >::value_type >( )
+    ) );
+}
+
 } // namespace std
 
 #endif

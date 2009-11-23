@@ -29,6 +29,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <string>
 
 #include "sanity.cpp"
 
@@ -141,13 +142,13 @@ const int number_cases = sizeof(tests)/sizeof(test_case);
 
 bool heap_test( )
 {
-    // Since sorting a heap gives most of the other heap related code a
-    // good workout, I will "borrow" the sort test cases to do a quick and
-    // dirty heap test. At some point it might be nice to build a more
-    // heap- specific test.
+    // Since sorting a heap gives most of the other heap related code a good
+    // workout, I will "borrow" the sort test cases to do a quick and dirty
+    // heap test. At some point it might be nice to build a more heap-
+    // specific test.
 
-    // First I must copy the test cases.
-    // I don't want to leave them all sorted for the sort_test!
+    // First I must copy the test cases. I don't want to leave them all sorted
+    // for the sort_test!
     //
     test_case *tc = new test_case[number_cases];
     for( int i = 0; i < number_cases; ++i ) tc[i] = tests[i];
@@ -224,15 +225,57 @@ bool bsearch_test( )
 }
 
 
+bool permutation_test( )
+{
+    bool permutation_result;
+    std::string permutations[] = {
+        "abcd", "abdc", "acbd", "acdb", "adbc", "adcb",
+        "bacd", "badc", "bcad", "bcda", "bdac", "bdca",
+        "cabd", "cadb", "cbad", "cbda", "cdab", "cdba",
+        "dabc", "dacb", "dbac", "dbca", "dcab", "dcba"
+    };
+
+    // First try going forward through all possible permutations.
+    std::string workspace( permutations[0] );
+    for( int i = 1; i < 24; ++i ) {
+        permutation_result =
+            std::next_permutation( workspace.begin( ), workspace.end( ) );
+        if( !permutation_result ) FAIL;
+        if( workspace != permutations[i] ) FAIL;
+    }
+    // Check wrap-around behavior.
+    permutation_result =
+        std::next_permutation( workspace.begin( ), workspace.end( ) );
+    if( permutation_result ) FAIL;
+    if( workspace != permutations[0] ) FAIL;
+
+    // Now try going backward though those same permutations.
+    workspace = permutations[23];
+    for( int i = 22; i >= 0; --i ) {
+        permutation_result =
+            std::prev_permutation( workspace.begin( ), workspace.end( ) );
+        if( !permutation_result ) FAIL;
+        if( workspace != permutations[i] ) FAIL;
+    }
+    // Check wrap-around behavior.
+    permutation_result =
+        std::prev_permutation( workspace.begin( ), workspace.end( ) );
+    if( permutation_result ) FAIL;
+    if( workspace != permutations[23] ) FAIL;
+    return( true );
+}
+
+
 int main( )
 {
     int rc = 0;
     int original_count = heap_count( );
 
     try {
-        if( !heap_test( )    || !heap_ok( "t01" ) ) rc = 1;
-        if( !sort_test( )    || !heap_ok( "t02" ) ) rc = 1;
-        if( !bsearch_test( ) || !heap_ok( "t03" ) ) rc = 1;
+        if( !heap_test( )        || !heap_ok( "t01" ) ) rc = 1;
+        if( !sort_test( )        || !heap_ok( "t02" ) ) rc = 1;
+        if( !bsearch_test( )     || !heap_ok( "t03" ) ) rc = 1;
+        if( !permutation_test( ) || !heap_ok( "t03" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
