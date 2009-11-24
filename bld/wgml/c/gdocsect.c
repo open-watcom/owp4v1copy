@@ -160,7 +160,7 @@ void    finish_page( void )
 
 
 /***************************************************************************/
-/*    incomplete:only for :BODY                                       TBD  */
+/*    prepare_doc_sect true section start                             TBD  */
 /***************************************************************************/
 
 void    prepare_doc_sect( doc_section ds )
@@ -168,6 +168,10 @@ void    prepare_doc_sect( doc_section ds )
     int         ind;
     uint32_t    v_start;
     uint32_t    h_start;
+
+    if( ProcFlags.prep_section ) {
+        return;
+    }
 
     if( ds != doc_sect_body ) {
         out_msg( "prepare_doc_sect possibly incomplete\n" );
@@ -245,6 +249,9 @@ void    prepare_doc_sect( doc_section ds )
     } else {
         g_page_bottom = g_page_bottom_org;
     }
+
+    g_cur_h_start = g_page_left_org +
+                    conv_hor_unit( &layout_work.p.line_indent );// TBD
 }
 
 
@@ -294,20 +301,16 @@ static  void    gml_doc_xxx( doc_section ds, bool eject )
 extern  void    gml_abstract( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_abstract, layout_work.abstract.page_eject );
-//  prepare_doc_sect( doc_sect_abstract );
 }
 
 extern  void    gml_appendix( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_appendix, layout_work.appendix.page_eject );
-
-//  prepare_doc_sect( doc_sect_appendix );
 }
 
 extern  void    gml_backm( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_backm, layout_work.backm.page_eject );
-//  prepare_doc_sect( doc_sect_backm );
 }
 
 extern  void    gml_body( const gmltag * entry )
@@ -315,7 +318,6 @@ extern  void    gml_body( const gmltag * entry )
 
     gml_doc_xxx( doc_sect_body, layout_work.body.page_eject );
 
-//  prepare_doc_sect( doc_sect_body );
     ProcFlags.just_override = true;     // justify for first line ?? TBD
     g_cur_h_start = g_page_left
                     + conv_hor_unit( &layout_work.p.line_indent );
@@ -345,11 +347,14 @@ extern  void    gml_preface( const gmltag * entry )
 extern  void    gml_titlep( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_titlep, true );
+    pre_top_skip = 0;
+    post_top_skip = 0;
+    post_skip = 0;
+    spacing = layout_work.titlep.spacing;
 }
 
 extern  void    gml_etitlep( const gmltag * entry )
 {
-    titlep_output();                    // output of title page
     gml_doc_xxx( doc_sect_etitlep, false );
 }
 

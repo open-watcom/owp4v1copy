@@ -45,6 +45,7 @@
 #define pica( var, next, flag )    pick( var, next, flag )
 #define picc( var, next, flag )    pick( var, next, flag )
 #define picl( var, next, flag )    pick( var, next, flag )
+#define pics( var, next, flag )    pick( var, next, flag )
 
 /***************************************************************************/
 /*  declare dictionary entries for system variables                        */
@@ -60,12 +61,14 @@
 #undef pica
 #undef picc
 #undef picl
+#undef pics
 
 /***************************************************************************/
 /*  declare the access functions for system variables                      */
 /***************************************************************************/
 
 #define pica( var, next, flag )
+#define pics( var, next, flag )
 #define picc( var, next, flag )   picl( var, next, flag )
 #define pick( var, next, flag )   picl( var, next, flag )
 #define picl( var, next, flag )   \
@@ -75,6 +78,7 @@ static void sysf( var )( symvar * entry );
 #undef pica
 #undef picc
 #undef picl
+#undef pics
 
 /***************************************************************************/
 /*  define char strings to hold the values of some system variables        */
@@ -88,12 +92,16 @@ static char syss( var )[2];             // for single char values as string
 #define picl( var, next, flag )         \
 static char syss( var )[MAX_L_AS_STR];  // for long as string
 
+#define pics( var, next, flag )         \
+static char syss( var )[60];            // for special string $docnum
+                                        // arbitrary length
 #include "gsyssym.h"
 
 #undef pick
 #undef pica
 #undef picc
 #undef picl
+#undef pics
 
 /***************************************************************************/
 /*  define the dictionary for the system variables                         */
@@ -101,6 +109,7 @@ static char syss( var )[MAX_L_AS_STR];  // for long as string
 /*  pica:       no access function, no separate string value               */
 /*  picc:          access function,    separate string value 2 chars       */
 /*  picl:          access function,    separate string value 12 chars      */
+/*  pics:       no access function,    separate string value 60 chars      */
 /*  pick:          access function, no separate string value               */
 /*                                  or 2 predefined values  ON OFF         */
 /***************************************************************************/
@@ -116,6 +125,11 @@ static symvar sys( var ) = {        \
     &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), NULL, flag };\
 static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
 
+#define pics( var, next, flag )     \
+static symvar sys( var ) = {        \
+    &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), NULL, flag };\
+static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, &syss( var ) };
+
 #define pick( var, next, flag )     \
 static symvar sys( var ) = {        \
     &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), sysf( var ), flag };\
@@ -126,6 +140,7 @@ static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
 #undef pica
 #undef picc
 #undef picl
+#undef pics
 
 
 /***************************************************************************/
@@ -155,9 +170,9 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
 {
     static const struct {
         uint32_t    val;
-        uint32_t    val4;
+        uint32_t    val49;
         char        ch;
-        char        ch4;
+        char        ch49;
     } i_2_r[] =
                 {
                     { 1000, 900, 'm', 'c' },
@@ -174,7 +189,7 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
     char    * p = r;
 
     *p = '\0';
-    if( (n < 1) || (n > 3999) ) {       // invalid
+    if( (n < 1) || (n > 3999) ) {       // invalid out of range
         return( NULL );
     }
 
@@ -188,8 +203,8 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
             }
             n -= i_2_r[digit].val;
         }
-        if( n >= i_2_r[digit].val4 ) {
-            *p++ = i_2_r[digit].ch4;
+        if( n >= i_2_r[digit].val49 ) {
+            *p++ = i_2_r[digit].ch49;
             if( ++pos >= rsize ) {
                 return( NULL );         // result field overflow
             }
@@ -197,7 +212,7 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
             if( ++pos >= rsize ) {
                 return( NULL );         // result field overflow
             }
-            n -= i_2_r[digit].val4;
+            n -= i_2_r[digit].val49;
         }
         digit++;
     } while( n > 0 );
@@ -367,12 +382,6 @@ static void sysdfontsfun( symvar * e )
 };
 
 static void sysdhsetfun( symvar * e )
-{
-    var_wng( e->name );
-    return;
-};
-
-static void sysdocnumfun( symvar * e )
 {
     var_wng( e->name );
     return;
@@ -1176,7 +1185,7 @@ void    init_sys_dict( symvar * * dict )
     *(syscwstr + 1) = 0;
 //  *sysdfontsstr =
 //  *sysdhsetstr =
-//  *sysdocnumstr =
+    *sysdocnumstr = 0;
 //  *sysdpagestr =
     sysduplex0.value = str[ju_off];
     *sysfbstr = 'N';

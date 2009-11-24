@@ -194,7 +194,7 @@ static void content_reg( banner_lay_tag * ban )
                                             // isolate region parts
                 for( k = 0; k < 3; ++k ) {  // left, center, right
                     pl++;
-#if 0
+#if 1
                     if( k == 2 ) {// special hack for right part without success
                         while( *pl == ' ' ) {
                             pl++;       // remove leading spaces
@@ -606,7 +606,7 @@ static void content_reg( banner_lay_tag * ban )
 /*  output top / bottom banner      incomplete    TBD                      */
 /*  only the first banregion is output                                     */
 /***************************************************************************/
-void    out_ban_common( banner_lay_tag * ban, bool bottom )
+static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 {
     text_chars      *   curr_t;
     uint32_t            ban_left;

@@ -44,8 +44,12 @@ dev_objs =  &
 # gml tag related
 #
 gml_objs =  &
+        gaddress.obj &
+        gauthor.obj  &
         gbanner.obj  &
         gcmt.obj     &
+        gdate.obj    &
+        gdocnum.obj  &
         gdocsect.obj &
         ghpx.obj     &
         ginclude.obj &
@@ -53,7 +57,6 @@ gml_objs =  &
         gset.obj     &
         gtagdict.obj &
         gtitle.obj   &
-        gtitlepo.obj &
         gusertag.obj
 
 #

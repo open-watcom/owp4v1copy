@@ -102,6 +102,9 @@ pick( INF_PASS_2,               "  End of pass %s of %s ( %s mode )",
 pick( WNG_IGN_OPTION,           "Option ignored: %s",
                                 "Option ignored: %s" )
 
+pick( WNG_WNG_OPTION,           "Option ignored: %s, formatting may be different",
+                                "Option ignored: %s, formatting may be different" )
+
 pick( ERR_PU_NUM,               "Workfile number not 1 - 9 Line %s of %s '%s'",
                                 "Workfile number not 1 - 9 Line %s of %s '%s'" )
 
@@ -416,6 +419,9 @@ pick( ERR_VAR_NOT_IMPL,         "'%s' variable referenced but not yet implemente
 
 pick( ERR_TAG_EXPECTED,         "Expecting %s tag",
                                 "Expecting %s tag" )
+
+pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
+                                "Missing preceding %s tag" )
 
 pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
                                 "'%s' tag only allowed in %s" )

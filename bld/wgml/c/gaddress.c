@@ -24,80 +24,158 @@
 *
 *  ========================================================================
 *
-* Description:  WGML tags :TITLE processing
+* Description:  WGML tags :ADDRESS and :eADDRESS  and :ALINE
 *
 ****************************************************************************/
 #include    "wgml.h"
 #include    "findfile.h"
 #include    "gvars.h"
 
+static  bool    first_aline;            // special for first :ALINE
+
+
 
 /***************************************************************************/
-/*  calc title position   ( vertical )                                     */
+/*  error msgs for missing or duplicate :ADDRESS :eADDRESS tags            */
 /***************************************************************************/
 
-void    calc_title_pos( int8_t font, int8_t spacing, bool first )
+static void g_err_tag( char * tag )
+{
+    char            tagn[8];
+
+    sprintf_s( tagn, 8, "%c%s", GML_char, tag );
+    g_err( ERR_TAG_EXPECTED, tagn );
+    file_mac_info();
+    err_count++;
+    return;
+}
+
+static void g_err_tag_prec( char * tag )
+{
+    char            tagn[8];
+
+    sprintf_s( tagn, 8, "%c%s", GML_char, tag );
+    g_err( ERR_TAG_PRECEDING, tagn );
+    file_mac_info();
+    err_count++;
+    return;
+}
+
+
+/***************************************************************************/
+/*  :ADDRESS                                                               */
+/***************************************************************************/
+
+extern  void    gml_address( const gmltag * entry )
+{
+    if( ProcFlags.doc_sect != doc_sect_titlep ) {
+        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
+        err_count++;
+        show_include_stack();
+    }
+    if( ProcFlags.address_active ) {    // nested :ADDRESS tag
+        g_err_tag( "eADDRESS" );
+    }
+    ProcFlags.address_active = true;
+    first_aline = true;
+
+/*
+    pre_top_skip = 0;
+    post_top_skip = 0;
+    post_skip = 0;
+ */
+
+    spacing = layout_work.titlep.spacing;
+    scan_start = scan_stop + 1;
+    return;
+}
+
+
+/***************************************************************************/
+/*  :eADDRESS                                                              */
+/***************************************************************************/
+
+extern  void    gml_eaddress( const gmltag * entry )
+{
+    if( ProcFlags.doc_sect != doc_sect_titlep ) {
+        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
+        err_count++;
+        show_include_stack();
+    }
+    if( !ProcFlags.address_active ) {   // no preceding :ADDRESS tag
+        g_err_tag_prec( "ADDRESS" );
+    }
+    ProcFlags.address_active = false;
+    scan_start = scan_stop + 1;
+    return;
+}
+
+/***************************************************************************/
+/*  calc aline position   ( vertical )                                     */
+/***************************************************************************/
+
+void    calc_aline_pos( int8_t font, int8_t spacing, bool first )
 {
 
     if( first ) {
         if( !ProcFlags.page_started ) {
             if( bin_driver->y_positive == 0 ) {
                 g_cur_v_start = g_page_top
-                        - conv_vert_unit( &layout_work.title.pre_top_skip );
+                        - conv_vert_unit( &layout_work.address.pre_skip );
             } else {
                 g_cur_v_start = g_page_top
-                        + conv_vert_unit( &layout_work.title.pre_top_skip );
+                        + conv_vert_unit( &layout_work.address.pre_skip );
             }
         } else {
             if( bin_driver->y_positive == 0 ) {
                 g_cur_v_start -=
-                    conv_vert_unit( &layout_work.title.pre_top_skip );
+                    conv_vert_unit( &layout_work.address.pre_skip );
             } else {
                 g_cur_v_start +=
-                    conv_vert_unit( &layout_work.title.pre_top_skip );
+                    conv_vert_unit( &layout_work.address.pre_skip );
             }
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip );
+            g_cur_v_start -= conv_vert_unit( &layout_work.aline.skip );
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.title.skip );
+            g_cur_v_start += conv_vert_unit( &layout_work.aline.skip );
         }
     }
     if( bin_driver->y_positive == 0 ) {
         if( g_cur_v_start < g_page_bottom && ProcFlags.page_started ) {
             finish_page();
             document_new_page();
-            calc_title_pos( font, spacing, true );  // 1 recursion
+            calc_aline_pos( font, spacing, true );  // 1 recursion
         }
     } else {
         if( g_cur_v_start > g_page_bottom && ProcFlags.page_started ) {
             finish_page();
             document_new_page();
-            calc_title_pos( font, spacing, true );  // 1 recursion
+            calc_aline_pos( font, spacing, true );  // 1 recursion
         }
     }
     return;
 }
 
 /***************************************************************************/
-/*  prepare title line                                                     */
+/*  prepare address line                                                   */
 /***************************************************************************/
 
-static void prep_title_line( text_line * p_line, char * p )
+static void prep_aline( text_line * p_line, char * p )
 {
     text_chars  *   curr_t;
     uint32_t        h_left;
     uint32_t        h_right;
     uint32_t        curr_x;
 
-    h_left = g_page_left + conv_hor_unit( &layout_work.title.left_adjust );
-    h_right = g_page_right - conv_hor_unit( &layout_work.title.right_adjust );
+    h_left = g_page_left + conv_hor_unit( &layout_work.address.left_adjust );
+    h_right = g_page_right - conv_hor_unit( &layout_work.address.right_adjust );
 
     if( *p ) {
         curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
     } else {
-        curr_t = alloc_text_chars( "title", 6, g_curr_font_num );
+        curr_t = alloc_text_chars( "aline", 5, g_curr_font_num );
     }
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
@@ -111,11 +189,11 @@ static void prep_title_line( text_line * p_line, char * p )
     }
     p_line->first = curr_t;
     curr_x = h_left;
-    if( layout_work.title.page_position == pos_center ) {
+    if( layout_work.address.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
             curr_x = h_left + (h_right - h_left - curr_t->width) / 2;
         }
-    } else if( layout_work.title.page_position == pos_right ) {
+    } else if( layout_work.address.page_position == pos_right ) {
         curr_x = h_right - curr_t->width;
     }
     curr_t->x_address = curr_x;
@@ -123,12 +201,11 @@ static void prep_title_line( text_line * p_line, char * p )
 
     return;
 }
-
 /***************************************************************************/
-/*  :TITLE tag                                                             */
+/*  :ALINE tag                                                             */
 /***************************************************************************/
 
-void    gml_title( const gmltag * entry )
+void    gml_aline( const gmltag * entry )
 {
     char        *   p;
     text_line       p_line;
@@ -142,55 +219,11 @@ void    gml_title( const gmltag * entry )
         err_count++;
         show_include_stack();
     }
+    if( !ProcFlags.address_active ) {   // no preceding :ADDRESS tag
+        g_err_tag_prec( "ADDRESS" );
+    }
     p = scan_start;
-    if( *p && *p != '.' ) p++;
-
-    while( *p == ' ' ) {                // over WS to attribute
-        p++;
-    }
-    if( *p &&
-        ! (strnicmp( "stitle ", p, 7 ) &&   // look for stitle
-           strnicmp( "stitle=", p, 7 )) ) {
-        char        quote;
-        char    *   valstart;
-
-        p += 6;
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( *p == '=' ) {
-            p++;
-            while( *p == ' ' ) {
-                p++;
-            }
-        }
-        if( *p == '"' || *p == '\'' ) {
-            quote = *p;
-            ++p;
-        } else {
-            quote = ' ';
-        }
-        valstart = p;
-        while( *p && *p != quote ) {
-            ++p;
-        }
-        *p = '\0';
-        if( !ProcFlags.title_tag_seen ) {// first stitle goes into dictionary
-            add_symvar( &global_dict, "$stitle", valstart, no_subscript, 0 );
-        }
-        p++;
-    } else {
-        if( !ProcFlags.title_tag_seen ) {
-            add_symvar( &global_dict, "$stitle", "", no_subscript, 0 );// set nullstring
-        }
-    }
-
     if( *p == '.' ) p++;                // over '.'
-    if( !ProcFlags.title_tag_seen ) {
-        if( *p ) {                      // first title goes into dictionary
-            add_symvar( &global_dict, "$title", p, no_subscript, 0 );
-        }
-    }
 
     prepare_doc_sect( doc_sect_titlep );// if not already done
 
@@ -200,31 +233,27 @@ void    gml_title( const gmltag * entry )
 
     spacing = layout_work.titlep.spacing;
 
-    font = layout_work.title.font;
+    font = layout_work.address.font;
 
     if( font >= wgml_font_cnt ) font = 0;
     font_save = g_curr_font_num;
     g_curr_font_num = font;
 
-    calc_title_pos( font, spacing, !ProcFlags.title_tag_seen );
+    calc_aline_pos( font, spacing, first_aline );
     p_line.y_address = g_cur_v_start;
 
-    prep_title_line( &p_line, p );
+    prep_aline( &p_line, p );
 
     ProcFlags.page_started = true;
     y_save = g_cur_v_start;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-//  g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );
         p_line.first = NULL;
     }
     ProcFlags.page_started = true;
-
-
-
-    ProcFlags.title_tag_seen = true;
+    first_aline = false;
     scan_start = scan_stop + 1;
 }

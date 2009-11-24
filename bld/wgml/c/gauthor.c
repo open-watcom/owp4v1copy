@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WGML tags :TITLE processing
+* Description:  WGML tags :AUTHOR processing
 *
 ****************************************************************************/
 #include    "wgml.h"
@@ -33,71 +33,66 @@
 
 
 /***************************************************************************/
-/*  calc title position   ( vertical )                                     */
+/*  calc author position   ( vertical )                                    */
 /***************************************************************************/
 
-void    calc_title_pos( int8_t font, int8_t spacing, bool first )
+static  void    calc_author_pos( int8_t font, int8_t spacing, bool first )
 {
 
+//  if( !ProcFlags.page_started ) {
+//      g_cur_v_start = g_page_top;     // top of page ignore pre_skip
+//  } else if( first ) {
     if( first ) {
-        if( !ProcFlags.page_started ) {
-            if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start = g_page_top
-                        - conv_vert_unit( &layout_work.title.pre_top_skip );
-            } else {
-                g_cur_v_start = g_page_top
-                        + conv_vert_unit( &layout_work.title.pre_top_skip );
-            }
+        if( bin_driver->y_positive == 0 ) {
+            g_cur_v_start -= conv_vert_unit( &layout_work.author.pre_skip );
+//                          + wgml_fonts[font].line_height;
         } else {
-            if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start -=
-                    conv_vert_unit( &layout_work.title.pre_top_skip );
-            } else {
-                g_cur_v_start +=
-                    conv_vert_unit( &layout_work.title.pre_top_skip );
-            }
+            g_cur_v_start += conv_vert_unit( &layout_work.author.pre_skip );
+//                          + wgml_fonts[font].line_height;
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip );
+            g_cur_v_start -= conv_vert_unit( &layout_work.author.skip );
+//                          + wgml_fonts[font].line_height;
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.title.skip );
+            g_cur_v_start += conv_vert_unit( &layout_work.author.skip );
+//                          + wgml_fonts[font].line_height;
         }
     }
     if( bin_driver->y_positive == 0 ) {
         if( g_cur_v_start < g_page_bottom && ProcFlags.page_started ) {
             finish_page();
             document_new_page();
-            calc_title_pos( font, spacing, true );  // 1 recursion
+            calc_author_pos( font, spacing, true ); // 1 recursion
         }
     } else {
         if( g_cur_v_start > g_page_bottom && ProcFlags.page_started ) {
             finish_page();
             document_new_page();
-            calc_title_pos( font, spacing, true );  // 1 recursion
+            calc_author_pos( font, spacing, true ); // 1 recursion
         }
     }
     return;
 }
 
 /***************************************************************************/
-/*  prepare title line                                                     */
+/*  prepare author line                                                    */
 /***************************************************************************/
 
-static void prep_title_line( text_line * p_line, char * p )
+static void prep_author_line( text_line * p_line, char * p )
 {
     text_chars  *   curr_t;
     uint32_t        h_left;
     uint32_t        h_right;
     uint32_t        curr_x;
 
-    h_left = g_page_left + conv_hor_unit( &layout_work.title.left_adjust );
-    h_right = g_page_right - conv_hor_unit( &layout_work.title.right_adjust );
+    h_left = g_page_left + conv_hor_unit( &layout_work.author.left_adjust );
+    h_right = g_page_right - conv_hor_unit( &layout_work.author.right_adjust );
 
     if( *p ) {
         curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
     } else {
-        curr_t = alloc_text_chars( "title", 6, g_curr_font_num );
+        curr_t = alloc_text_chars( "author", 7, g_curr_font_num );
     }
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
@@ -111,11 +106,11 @@ static void prep_title_line( text_line * p_line, char * p )
     }
     p_line->first = curr_t;
     curr_x = h_left;
-    if( layout_work.title.page_position == pos_center ) {
+    if( layout_work.author.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
             curr_x = h_left + (h_right - h_left - curr_t->width) / 2;
         }
-    } else if( layout_work.title.page_position == pos_right ) {
+    } else if( layout_work.author.page_position == pos_right ) {
         curr_x = h_right - curr_t->width;
     }
     curr_t->x_address = curr_x;
@@ -125,10 +120,10 @@ static void prep_title_line( text_line * p_line, char * p )
 }
 
 /***************************************************************************/
-/*  :TITLE tag                                                             */
+/*  :author tag                                                             */
 /***************************************************************************/
 
-void    gml_title( const gmltag * entry )
+void    gml_author( const gmltag * entry )
 {
     char        *   p;
     text_line       p_line;
@@ -143,52 +138,13 @@ void    gml_title( const gmltag * entry )
         show_include_stack();
     }
     p = scan_start;
-    if( *p && *p != '.' ) p++;
-
-    while( *p == ' ' ) {                // over WS to attribute
-        p++;
+    if( *p && *p != '.' ) {
+        out_msg( "gauthor.c TBD\n" );
     }
-    if( *p &&
-        ! (strnicmp( "stitle ", p, 7 ) &&   // look for stitle
-           strnicmp( "stitle=", p, 7 )) ) {
-        char        quote;
-        char    *   valstart;
-
-        p += 6;
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( *p == '=' ) {
-            p++;
-            while( *p == ' ' ) {
-                p++;
-            }
-        }
-        if( *p == '"' || *p == '\'' ) {
-            quote = *p;
-            ++p;
-        } else {
-            quote = ' ';
-        }
-        valstart = p;
-        while( *p && *p != quote ) {
-            ++p;
-        }
-        *p = '\0';
-        if( !ProcFlags.title_tag_seen ) {// first stitle goes into dictionary
-            add_symvar( &global_dict, "$stitle", valstart, no_subscript, 0 );
-        }
-        p++;
-    } else {
-        if( !ProcFlags.title_tag_seen ) {
-            add_symvar( &global_dict, "$stitle", "", no_subscript, 0 );// set nullstring
-        }
-    }
-
-    if( *p == '.' ) p++;                // over '.'
-    if( !ProcFlags.title_tag_seen ) {
-        if( *p ) {                      // first title goes into dictionary
-            add_symvar( &global_dict, "$title", p, no_subscript, 0 );
+    p++;                                // over . to author name
+    if( !ProcFlags.author_tag_seen ) {
+        if( *p ) {                      // first author goes into dictionary
+            add_symvar( &global_dict, "$author", p, no_subscript, 0 );
         }
     }
 
@@ -200,16 +156,16 @@ void    gml_title( const gmltag * entry )
 
     spacing = layout_work.titlep.spacing;
 
-    font = layout_work.title.font;
+    font = layout_work.author.font;
 
     if( font >= wgml_font_cnt ) font = 0;
     font_save = g_curr_font_num;
     g_curr_font_num = font;
 
-    calc_title_pos( font, spacing, !ProcFlags.title_tag_seen );
+    calc_author_pos( font, spacing, !ProcFlags.author_tag_seen );
     p_line.y_address = g_cur_v_start;
 
-    prep_title_line( &p_line, p );
+    prep_author_line( &p_line, p );
 
     ProcFlags.page_started = true;
     y_save = g_cur_v_start;
@@ -223,8 +179,6 @@ void    gml_title( const gmltag * entry )
     }
     ProcFlags.page_started = true;
 
-
-
-    ProcFlags.title_tag_seen = true;
+    ProcFlags.author_tag_seen = true;
     scan_start = scan_stop + 1;
 }

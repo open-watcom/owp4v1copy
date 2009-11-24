@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  WGML predefined system symbols
-*
+*                   for the pic. macros see gsyssym.c
 ****************************************************************************/
 
 #ifndef pick
@@ -65,7 +65,7 @@
   pica( dayofy,  dfonts,  no_free+ro+predefined                     )
   pick( dfonts,  dhset,   no_free+ro+access_fun+predefined          )
   picl( dhset,   docnum,  no_free+ro+access_fun+predefined          )
-  pick( docnum,  dpage,   no_free+ro+access_fun+predefined          )
+  pics( docnum,  dpage,   no_free+ro+predefined                     )
   pick( dpage,   duplex,  no_free+ro+access_fun+predefined          )
   pick( duplex,  env,     no_free+ro+access_fun+predefined          )
   pick( env,     fb,      no_free+ro+access_fun+predefined          )

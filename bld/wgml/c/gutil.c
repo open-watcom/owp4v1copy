@@ -459,6 +459,8 @@ extern  uint32_t    conv_vert_unit( su * s )
 
     switch( s->su_u ) {
     case SU_chars_lines :
+        ds = spacing * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        break;
     case SU_dv :
     case SU_ems :
         ds = s->su_whole * wgml_fonts[g_curr_font_num].line_height;

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -24,59 +24,58 @@
 *
 *  ========================================================================
 *
-* Description: WGML implement processing for title page output
-*                                             incomplete            TBD
+* Description:  WGML tags :DOCNUM processing
+*
 ****************************************************************************/
-
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
-#include <stdarg.h>
-#include <errno.h>
-
-#include "wgml.h"
-#include "gvars.h"
+#include    "wgml.h"
+#include    "findfile.h"
+#include    "gvars.h"
 
 
 /***************************************************************************/
-/*  calc title position   ( vertical )                                     */
+/*  calc docnum position  ( vertical )                                     */
 /***************************************************************************/
 
-extern  void    calc_title_pos( int8_t font, int8_t spacing )
+static  void    calc_docnum_pos( int8_t font, int8_t spacing )
 {
+
     if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start = g_page_top
-                        - conv_vert_unit( &layout_work.title.pre_top_skip );
+        g_cur_v_start -= conv_vert_unit( &layout_work.docnum.pre_skip );
     } else {
-        g_cur_v_start = g_page_top
-                        + conv_vert_unit( &layout_work.title.pre_top_skip );
+        g_cur_v_start += conv_vert_unit( &layout_work.docnum.pre_skip );
     }
     return;
 }
 
-
 /***************************************************************************/
-/*  prepare 1 or more text_chars with region content                       */
+/*  prepare docnum line                                                    */
 /***************************************************************************/
 
-static void prep_title_line( text_line * p_line )
+static void prep_docnum_line( text_line * p_line, char * p )
 {
     text_chars  *   curr_t;
-    symsub      *   symsubval;
-    int             rc;
     uint32_t        h_left;
     uint32_t        h_right;
     uint32_t        curr_x;
 
-    h_left = g_page_left + conv_hor_unit( &layout_work.title.left_adjust );
-    h_right = g_page_right - conv_hor_unit( &layout_work.title.right_adjust );
+    h_left = g_page_left + conv_hor_unit( &layout_work.docnum.left_adjust );
+    h_right = g_page_right - conv_hor_unit( &layout_work.docnum.right_adjust );
 
-    rc = find_symvar( &global_dict, "$title", no_subscript, &symsubval );
-    if( rc == 2 ) {
-        curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ),
+    if( *p ) {
+        curr_t = alloc_text_chars( NULL,1 + strlen( p ) +
+                                   strlen( layout_work.docnum.string ),
                                    g_curr_font_num );
+
     } else {
-        curr_t = alloc_text_chars( "title", 6, g_curr_font_num );
+        curr_t = alloc_text_chars( NULL,
+                                   1 + strlen( layout_work.docnum.string ),
+                                   g_curr_font_num );
     }
+    strcpy_s( curr_t->text, curr_t->length, layout_work.docnum.string );
+    if( *p  ) {
+        strcat_s( curr_t->text, curr_t->length, p );
+    }
+    curr_t->count = strlen( curr_t->text );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
     while( curr_t->width > (h_right - h_left) ) {   // too long for line
@@ -89,12 +88,12 @@ static void prep_title_line( text_line * p_line )
     }
     p_line->first = curr_t;
     curr_x = 0;
-    if( layout_work.title.page_position == pos_center ) {
+    if( layout_work.docnum.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
             h_left += (h_right - h_left - curr_t->width) / 2;
             curr_x = h_left;
         }
-    } else if( layout_work.title.page_position == pos_right ) {
+    } else if( layout_work.docnum.page_position == pos_right ) {
         h_left = h_right - curr_t->width;
         curr_x = h_left;
     }
@@ -102,21 +101,45 @@ static void prep_title_line( text_line * p_line )
         curr_x = h_left;
     }
     curr_t->x_address = curr_x;
+    p_line->ju_x_start = curr_x;
 
     return;
 }
 
 /***************************************************************************/
-/*  output title page                                                      */
-/*  only the first title line is output so far                        TBD  */
+/*  :docnum.docnum   tag                                                       */
 /***************************************************************************/
 
-void    titlep_output( void )
+void    gml_docnum( const gmltag * entry )
 {
-    text_line   p_line;
-    int8_t      font;
-    int8_t      spacing;
-    int8_t      font_save;
+    char        *   p;
+    text_line       p_line;
+    int8_t          font;
+    int8_t          spacing;
+    int8_t          font_save;
+    uint32_t        y_save;
+    int32_t         rc;
+    symsub      *   docnumval;
+
+
+    if( ProcFlags.doc_sect != doc_sect_titlep ) {
+        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
+        err_count++;
+        show_include_stack();
+    }
+    p = scan_start;
+    if( *p && *p != '.' ) {
+        out_msg( "gdocnum.c TBD\n" );
+    }
+    p++;                                // over . to docnum
+    rc = find_symvar( &sys_dict, "$docnum", no_subscript, &docnumval );
+    if( *p ) {                          // docnum specified
+        strcpy_s( docnumval->value, 60, p );
+    } else {
+        *(docnumval->value) = 0;
+    }
+
+    prepare_doc_sect( doc_sect_titlep );// if not already done
 
     p_line.first = NULL;
     p_line.next  = NULL;
@@ -128,31 +151,25 @@ void    titlep_output( void )
 
     if( font >= wgml_font_cnt ) font = 0;
     font_save = g_curr_font_num;
-    g_curr_font_num = font;
 
-    if( ProcFlags.title_tag_seen ) {    // title was specified
+    calc_docnum_pos( font, spacing );
+    p_line.y_address = g_cur_v_start;
 
-        prepare_doc_sect( doc_sect_titlep );
+    prep_docnum_line( &p_line, docnumval->value );
 
-        calc_title_pos( font, spacing );
-        p_line.y_address = g_cur_v_start;
-
-        prep_title_line( &p_line );
-
-        ProcFlags.page_started = true;
-
-        process_line_full( &p_line, false );
-
-        if( p_line.first != NULL) {
-            add_text_chars_to_pool( &p_line );
-            p_line.first = NULL;
-        }
-        ProcFlags.page_started = true;
-        if( GlobalFlags.lastpass ) {
-            finish_page();
-        }
-
-    }
+    ProcFlags.page_started = true;
+    y_save = g_cur_v_start;
+    process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-}
+//  g_cur_v_start = y_save;             // TBD
 
+    if( p_line.first != NULL) {
+        add_text_chars_to_pool( &p_line );
+        p_line.first = NULL;
+    }
+    ProcFlags.page_started = true;
+
+
+
+    scan_start = scan_stop + 1;
+}

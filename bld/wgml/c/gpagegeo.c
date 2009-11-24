@@ -137,6 +137,7 @@ void    init_page_geometry( void )
         g_ll = g_net_page_width;        // line length
     }
     g_page_bottom_org = g_page_bottom; // save bottom for possible bot banner calculation
+    g_page_top_org = g_page_top;// save top for possible bot banner calculation
 
     g_cd = layout_work.defaults.columns;// no of columns   &syscd
     g_gutter = conv_hor_unit( &layout_work.defaults.gutter );   // &sysgutter
@@ -166,7 +167,7 @@ void    init_page_geometry( void )
                 // This is what wgml 4 does, even if in multi column mode TBD
 #endif
 
-//  if( GlobalFlags.firstpass && GlobalFlags.research ) {
+//  if( GlobalFlags.firstpass && GlobalFlags.research ) {  // show values TBD
     if( GlobalFlags.firstpass                         ) {
         out_msg( "\ntm:%d lm:%d rm:%d depth:%d\n\n", tm, lm, rm,
                  g_page_depth );
@@ -232,10 +233,10 @@ void    do_layout_end_processing( void )
      */
 
     if( GlobalFlags.firstpass == 1) {
+        out_msg( "Formatting document\n" );
+
         fb_document();                 // DOCUMENT :PAUSE & :INIT processing.
         ProcFlags.fb_document_done = true;
-
-        out_msg( "Formatting document\n" );
     }
 
     set_section_banners( doc_sect_body );   // set body default banners

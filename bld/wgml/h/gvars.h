@@ -181,8 +181,11 @@ global struct ProcFlags {
     unsigned        fb_position_done : 1;// 1. pos on new page done
     unsigned        prep_section    : 1;// need prep section call
     unsigned        title_tag_seen  : 1;// remember first :TITLE tag
+    unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
     unsigned        page_started    : 1;// we have something for the curr page
     unsigned        para_line1      : 1;// special processing for 1. line
+
+    unsigned        address_active  : 1;// within :ADDRESS tag
 
 } ProcFlags;                            // processing flags
 
@@ -231,6 +234,7 @@ global  uint32_t    g_page_left_org;
 global  uint32_t    g_page_right;
 global  uint32_t    g_page_right_org;
 global  uint32_t    g_page_top;
+global  uint32_t    g_page_top_org;
 global  uint32_t    g_page_depth;
 global  uint32_t    g_max_char_width;
 global  uint32_t    g_max_line_height;
@@ -248,11 +252,15 @@ global  uint32_t    g_gutter;           // space between columns
 global  uint32_t    g_offset[9];        // column start offset
 
 global  uint32_t    spacing;            // spacing between lines
+global  su      *   pre_skip;           // possible pre_skip
 global  su      *   post_skip;          // possible post_skip
 
 global  uint32_t    pre_space;          // for
 global  uint32_t    post_space;         // .. line
 global  uint32_t    post_space_save;    // .. formatting
+global  uint32_t    pre_top_skip;       // .. formatting
+global  uint32_t    post_top_skip;      // .. formatting
+
 
 
 global  banner_lay_tag  * sect_ban_top[2];// top even / odd banner for curr sect

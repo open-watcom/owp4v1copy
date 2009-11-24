@@ -380,6 +380,20 @@ bool    get_line( void )
     }
 
     buff2_lg = strnlen_s( buff2, buf_size );
+
+    if( !ProcFlags.concat ) {
+        if( !(input_cbs->fmflags & II_eof) ) {
+            if( (input_cbs->fmflags & II_sol) &&
+                (input_cbs->fmflags & II_eol) ) {
+
+                if( buff2_lg == 0 ) {
+                    buff2_lg++;         // with .co off process
+                    *buff2 = ' ';       // empty lines as space  TBD
+                }
+            }
+        }
+    }
+
     *(buff2 + buff2_lg) = '\0';
     *(buff2 + buff2_lg + 1) = '\0';
     if( input_cbs->fmflags & II_file ) {

@@ -274,6 +274,29 @@ static void ign_option( option * opt )
     return;
 }
 
+/***************************************************************************/
+/*  warning about using (no)script option                                  */
+/***************************************************************************/
+
+static void wng_option( option * opt )
+{
+
+    g_warn( wng_wng_option, opt->option );
+    wng_count++;
+    if( opt->parmcount > 0 ) {
+        int     k;
+
+        for( k = 0; k < opt->parmcount; k++ ) {
+            if( tokennext == NULL )  break;
+            if( tokennext->bol ) break;
+            if( tokennext->token[0] == '(' ) break;
+            if( is_option() == true ) break;
+            tokennext = tokennext->nxt;
+        }
+    }
+    return;
+}
+
 
 /***************************************************************************/
 /*  ( altext xxx    set alternate extension                                */
@@ -1274,7 +1297,7 @@ static option GML_old_Options[] =
     { "noindex",       6,  5,       0,       set_index,      0 },
     { "nopause",       6,  3,       0,       ign_option,     0 },
     { "noquiet",       6,  3,       0,       set_quiet,      0 },
-    { "noscript",      7,  5,       0,       ign_option,     0 },
+    { "noscript",      7,  5,       0,       wng_option,     0 },
     { "nostatistics",  11, 6,       0,       set_stats,      0 },
     { "nowait",        5,  6,       0,       ign_option,     0 },
     { "nowarning",     8,  6,       0,       ign_option,     0 },
@@ -1284,7 +1307,7 @@ static option GML_old_Options[] =
     { "process",       6,  4,       0,       ign_option,     1 },
     { "quiet",         4,  5,       1,       set_quiet,      0 },
     { "resetscreen",   10, 5,       1,       ign_option,     0 },
-    { "script",        5,  3,       1,       ign_option,     0 },// always set
+    { "script",        5,  3,       1,       wng_option,     0 },
     { "setsymbol",     8,  3,       0,       set_symbol,     2 },
     { "statistics",    9,  4,       1,       set_stats,      0 },
     { "terse",         4,  5,       1,       ign_option,     0 },
