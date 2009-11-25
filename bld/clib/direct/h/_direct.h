@@ -31,6 +31,17 @@
 
 #include "widechar.h"
 
+#define _DIR_ISFIRST            0
+#define _DIR_NOTFIRST           1
+#define _DIR_MAX_FOR_CLOSE_OK   2       /* dummy value used by closedir */
+#define _DIR_CLOSED             3
+
+#ifdef __WIDECHAR__
+typedef wchar_t     UINT_WC_TYPE;
+#else
+typedef unsigned    UINT_WC_TYPE;
+#endif
+
 extern char *__tmpdir( char *__buff );
 #ifdef __WIDECHAR__
 _WCRTLINK extern DIR_TYPE *_w_opendir( const wchar_t *__name, unsigned __attr );

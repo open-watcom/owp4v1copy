@@ -48,18 +48,13 @@
 #include "msdos.h"
 #include "_direct.h"
 
-#if defined(__WARP__)
-  #define FF_LEVEL      1
-  #define FF_BUFFER     FILEFINDBUF3
-#else
+#ifdef _M_I86
   #define FF_LEVEL      0
   #define FF_BUFFER     FILEFINDBUF
+#else
+  #define FF_LEVEL      FIL_STANDARD
+  #define FF_BUFFER     FILEFINDBUF3
 #endif
-
-#define _DIR_ISFIRST            0
-#define _DIR_NOTFIRST           1
-#define _DIR_MAX_FOR_CLOSE_OK   2       /* dummy value used by closedir */
-#define _DIR_CLOSED             3
 
 #define SEEK_ATTRIB (_A_SUBDIR | _A_HIDDEN | _A_SYSTEM | _A_RDONLY | _A_ARCH)
 
@@ -99,14 +94,8 @@ static void copydir( DIR_TYPE *dirp, FF_BUFFER *dir_buff )
 static int is_directory( const CHAR_TYPE *name )
 /**********************************************/
 {
-    /* 28-oct-98 */
-#ifndef __WIDECHAR__
-    unsigned    curr_ch;
-    unsigned    prev_ch;
-#else
-    CHAR_TYPE   curr_ch;
-    CHAR_TYPE   prev_ch;
-#endif
+    UINT_WC_TYPE    curr_ch;
+    UINT_WC_TYPE    prev_ch;
 
     curr_ch = NULLCHAR;
     for(;;) {
@@ -150,8 +139,8 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
         return( NULL );
 #endif
 
-#if defined(__OS2_286__)
-    if( _RWD_osmode == OS2_MODE )
+#ifdef _M_I86
+    if( _RWD_osmode == OS2_MODE )       /* protected mode */
 #endif
     {
         FF_BUFFER       dir_buff;
@@ -159,16 +148,10 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
         OS_UINT         rc;
         OS_UINT         searchcount;
 
-        handle = ~0;            /* we want our own handle */
-        searchcount = 1;        /* only one at a time */
-#ifndef __WIDECHAR__
-        rc = DosFindFirst( (PSZ)dirname, &handle, attr, (PVOID)&dir_buff,
+        handle = ~0;                    /* we want our own handle */
+        searchcount = 1;                /* only one at a time */
+        rc = DosFindFirst( (PSZ)__F_NAME(dirname,mbcsName), &handle, attr, (PVOID)&dir_buff,
                     sizeof( dir_buff ), &searchcount, FF_LEVEL );
-#else
-        rc = DosFindFirst( (PSZ)mbcsName, &handle, attr, (PVOID)&dir_buff,
-                    sizeof( dir_buff ), &searchcount, FF_LEVEL );
-#endif
-
         if( rc != 0 ) {
             __set_errno_dos( rc );
             return( NULL );
@@ -180,25 +163,20 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
         }
         HANDLE_OF( dirp ) = handle;     /* store our handle     */
         copydir( dirp, &dir_buff );     /* copy in other fields */
-    }
-#if defined(__OS2_286__)
-    else {                              /* real mode */
+#ifdef _M_I86
+    } else {                            /* real mode */
         DIR_TYPE        buf;
         tiny_ret_t      rc;
 
         TinySetDTA( buf.d_dta );        /* set our DTA */
-  #ifndef __WIDECHAR__
-        rc = TinyFindFirst( dirname, attr );
-  #else
-        rc = TinyFindFirst( mbcsName, attr );
-  #endif
+        rc = TinyFindFirst( __F_NAME(dirname,mbcsName), attr );
         if( TINY_ERROR( rc ) ) {
             __set_errno_dos( TINY_INFO( rc ) );
             return( NULL );
         }
         *dirp = buf;                    /* copy to new memory */
-    }
 #endif
+    }
 
     dirp->d_first = _DIR_ISFIRST;       /* indicate we have 1st name */
     return( dirp );
@@ -214,13 +192,8 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
     int             i;
     auto CHAR_TYPE  pathname[_MAX_PATH+6];
     const CHAR_TYPE *dirnameStart = dirname;
-#ifndef __WIDECHAR__
-    unsigned    curr_ch;
-    unsigned    prev_ch;
-#else
-    CHAR_TYPE   curr_ch;
-    CHAR_TYPE   prev_ch;
-#endif
+    UINT_WC_TYPE    curr_ch;
+    UINT_WC_TYPE    prev_ch;
 
     dirp = malloc( sizeof( DIR_TYPE ) );
     HANDLE_OF( dirp ) = 0;                  /* initialize handle    */
@@ -236,31 +209,25 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
     } else {
         dirp->d_attr = _A_SUBDIR;
     }
-    if( dirp->d_attr & _A_SUBDIR ) {                    /* 05-apr-91 */
-        prev_ch = NULLCHAR;                             /* 28-oct-98 */
+    if( dirp->d_attr & _A_SUBDIR ) {
+        prev_ch = NULLCHAR;
         for( i = 0; i < _MAX_PATH; i++ ) {
+            pathname[i] = *dirname;
 #ifdef __WIDECHAR__
             curr_ch = *dirname;
 #else
             curr_ch = _mbsnextc( dirname );
-#endif
-            pathname[i] = *dirname;
-#ifndef __WIDECHAR__
             if( curr_ch > 256 ) {
                 ++i;
                 ++dirname;
-                pathname[i] = *dirname;     /* copy double-byte */
+                pathname[i] = *dirname;     /* copy second byte */
             }
 #endif
             if( curr_ch == NULLCHAR ) {
                 if( i != 0  &&  prev_ch != '\\' && prev_ch != '/' ){
                     pathname[i++] = '\\';
                 }
-#ifndef __WIDECHAR__
-                strcpy( &pathname[i], "*.*" );
-#else
-                wcscpy( &pathname[i], L"*.*" );
-#endif
+                __F_NAME(strcpy,wcscpy)( &pathname[i], STRING( "*.*" ) );
                 if( HANDLE_OF( dirp ) != 0 ) {
                     DosFindClose( HANDLE_OF(dirp) );
                 }
@@ -305,7 +272,7 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
         return( dirp );
     }
 
-#if defined(__OS2_286__)
+#ifdef _M_I86
     if( _RWD_osmode == OS2_MODE )               /* protected mode */
 #endif
     {
@@ -328,9 +295,8 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
         }
         copydir( dirp, &dir_buff );
 
-    }
-#if defined(__OS2_286__)
-    else {              /* real mode */
+#ifdef _M_I86
+    } else {                                    /* real mode */
         tiny_ret_t      rc;
 
         TinySetDTA( dirp->d_dta );
@@ -341,8 +307,8 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
             }
             return( NULL );
         }
-    }
 #endif
+    }
     return( dirp );
 }
 
@@ -356,7 +322,7 @@ _WCRTLINK int __F_NAME(closedir,_wclosedir)( DIR_TYPE *dirp )
         return( -1 );
     }
 
-#if defined(__OS2_286__)
+#ifdef _M_I86
     if( _RWD_osmode == OS2_MODE )
 #endif
         DosFindClose( HANDLE_OF( dirp ) );

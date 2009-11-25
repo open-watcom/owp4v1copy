@@ -45,10 +45,6 @@
 
 #define SEEK_ATTRIB (TIO_HIDDEN | TIO_SYSTEM | TIO_SUBDIRECTORY)
 
-#define _DIR_ISFIRST            0
-#define _DIR_NOTFIRST           1
-#define _DIR_MAX_FOR_CLOSE_OK   2       /* dummy value used by closedir */
-#define _DIR_CLOSED             3
 
 /*
  * Copies a dirent struct to an LFN findfirst struct
@@ -91,14 +87,8 @@ static void copy_lfn_dirent( DIR_TYPE *dosblock, struct find_t *lfnblock )
 static int is_directory( const CHAR_TYPE *name )
 /**********************************************/
 {
-    /* 28-oct-98 */
-#ifndef __WIDECHAR__
-    unsigned    curr_ch;
-    unsigned    prev_ch;
-#else
-    CHAR_TYPE   curr_ch;
-    CHAR_TYPE   prev_ch;
-#endif
+    UINT_WC_TYPE    curr_ch;
+    UINT_WC_TYPE    prev_ch;
 
     curr_ch = NULLCHAR;
     for(;;) {
@@ -148,19 +138,14 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, unsign
 #ifdef __WATCOM_LFN__
     struct find_t   lfntemp;
 #endif
-    DIR_TYPE    tmp;
-    DIR_TYPE    *parent;
-    int         i;
-    tiny_ret_t  rc;
+    DIR_TYPE        tmp;
+    DIR_TYPE        *parent;
+    int             i;
+    tiny_ret_t      rc;
     auto CHAR_TYPE  pathname[ _MAX_PATH + 6 ];
     const CHAR_TYPE *dirnameStart = name;
-#ifndef __WIDECHAR__
-    unsigned    curr_ch;
-    unsigned    prev_ch;
-#else
-    CHAR_TYPE   curr_ch;
-    CHAR_TYPE   prev_ch;
-#endif
+    UINT_WC_TYPE    curr_ch;
+    UINT_WC_TYPE    prev_ch;
 
     /*** Convert a wide char string to a multibyte string ***/
 #ifdef __WIDECHAR__
@@ -173,23 +158,15 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, unsign
     parent = &tmp;
 #ifdef __WATCOM_LFN__
     if( !is_directory( name ) ) {
-#ifdef __WIDECHAR__
-        rc = _dos_findfirst( mbcsName, attr, &lfntemp );
-#else
-        rc = _dos_findfirst( name, attr, &lfntemp );
-#endif
+        rc = _dos_findfirst( __F_NAME(name,mbcsName), attr, &lfntemp );
         if( rc != 0 ) {
             __set_errno_dos( rc );
             return( NULL );
-    }
+        }
 #else
     TinySetDTA( &(tmp.d_dta) );
     if( !is_directory( name ) ) {
-#ifdef __WIDECHAR__
-        rc = TinyFindFirst( mbcsName, attr );
-#else
-        rc = TinyFindFirst( name, attr );
-#endif
+        rc = TinyFindFirst( __F_NAME(name,mbcsName), attr );
         if( TINY_ERROR( rc ) ) {
             __set_errno_dos( TINY_INFO( rc ) );
             return( NULL );
@@ -198,49 +175,37 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, unsign
     } else {
         parent->d_attr = _A_SUBDIR;
     }
-    if( parent->d_attr & _A_SUBDIR ) {                  /* 05-apr-91 */
-        prev_ch = NULLCHAR;                             /* 28-oct-98 */
+    if( parent->d_attr & _A_SUBDIR ) {
+        prev_ch = NULLCHAR;
         for( i = 0; i < _MAX_PATH; i++ ) {
+            pathname[i] = *name;
 #if defined( __WIDECHAR__ ) || defined( __UNIX__ )
             curr_ch = *name;
 #else
             curr_ch = _mbsnextc( name );
-#endif
-            pathname[i] = *name;
-#ifndef __WIDECHAR__
             if( curr_ch > 256 ) {
                 ++i;
                 ++name;
-                pathname[i] = *name;        /* copy double-byte */
+                pathname[i] = *name;        /* copy second byte */
             }
 #endif
             if( curr_ch == NULLCHAR ) {
                 if( i != 0  &&  prev_ch != '\\' && prev_ch != '/' ) {
                     pathname[i++] = '\\';
                 }
-#ifndef __WIDECHAR__
-                strcpy( &pathname[i], "*.*" );
-#ifdef __WATCOM_LFN__
-                rc = _dos_findfirst( pathname, attr, &lfntemp );
-#else
-                rc = TinyFindFirst( pathname, attr );
-#endif
-#else
-                wcscpy( &pathname[i], L"*.*" );
+                __F_NAME(strcpy,wcscpy)( &pathname[i], STRING( "*.*" ) );
+#ifdef __WIDECHAR__
                 if( wcstombs( mbcsName, pathname, sizeof( mbcsName ) ) == (size_t) - 1 )
                     return( NULL );
-#ifdef __WATCOM_LFN__
-                rc = _dos_findfirst( mbcsName, attr, &lfntemp );
-#else
-                rc = TinyFindFirst( mbcsName, attr );
-#endif
 #endif
 #ifdef __WATCOM_LFN__
+                rc = _dos_findfirst( __F_NAME(pathname,mbcsName), attr, &lfntemp );
                 if( rc != 0 ) {
                     __set_errno_dos( rc );
                     return( NULL );
                 }
 #else
+                rc = TinyFindFirst( __F_NAME(pathname,mbcsName), attr );
                 if( TINY_ERROR( rc ) ) {
                     __set_errno_dos( TINY_INFO( rc ) );
                     return( NULL );
@@ -304,7 +269,8 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *parent )
     copy_dirent_lfn( &lfntemp, parent );
     rc = _dos_findnext( &lfntemp );
     if( rc != 0 ) {
-        if( rc != E_nomore ) __set_errno_dos( rc );
+        if( rc != E_nomore )
+            __set_errno_dos( rc );
         return( NULL );
     }
     copy_lfn_dirent( parent, &lfntemp );
