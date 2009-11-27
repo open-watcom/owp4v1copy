@@ -847,8 +847,14 @@ EXTERN_C const CLSID    CLSID_CActiveIMM =
 #define MSHTML_SUFFIX   0x98B5, 0x11CF, { 0xBB, 0x82, 0x00, 0xAA, 0x00, 0xBD, 0xCE, 0x0B }
 EXTERN_C const IID      IID_IHTMLFiltersCollection =
     { 0x3050F3EE, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IIE70DispatchEx =
+    { 0x3051046B, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IIE80DispatchEx =
+    { 0x3051046C, MSHTML_SUFFIX };
 EXTERN_C const IID      LIBID_MSHTML =
     { 0x3050F1C5, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLDOMConstructor =
+    { 0x3051049B, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyle =
     { 0x3050F25E, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyle2 =
@@ -859,6 +865,8 @@ EXTERN_C const IID      IID_IHTMLStyle4 =
     { 0x3050F816, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyle5 =
     { 0x3050F33A, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLStyle6 =
+    { 0x30510480, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLRuleStyle =
     { 0x3050F3CF, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLRuleStyle2 =
@@ -869,6 +877,8 @@ EXTERN_C const IID      IID_IHTMLRuleStyle4 =
     { 0x3050F817, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLRuleStyle5 =
     { 0x3050F335, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLRuleStyle6 =
+    { 0x30510471, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLStyle =
     { 0x3050F55A, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyle =
@@ -891,6 +901,8 @@ EXTERN_C const IID      IID_IHTMLCurrentStyle3 =
     { 0x3050F818, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLCurrentStyle4 =
     { 0x3050F33B, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLCurrentStyle5 =
+    { 0x30510481, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLCurrentStyle =
     { 0x3050F557, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLCurrentStyle =
@@ -907,6 +919,8 @@ EXTERN_C const IID      IID_IHTMLDOMAttribute =
     { 0x3050F4B0, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDOMAttribute2 =
     { 0x3050F810, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLDOMAttribute3 =
+    { 0x30510468, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDOMTextNode =
     { 0x3050F4B1, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDOMTextNode2 =
@@ -929,16 +943,24 @@ EXTERN_C const IID      IID_IHTMLAttributeCollection =
     { 0x3050F4C3, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLAttributeCollection2 =
     { 0x3050F80A, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLAttributeCollection3 =
+    { 0x30510469, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDOMChildrenCollection =
     { 0x3050F5AB, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLDOMChildrenCollection =
     { 0x3050F56C, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLAttributeCollection =
     { 0x3050F4CC, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispStaticNodeList =
+    { 0x3050F59B, MSHTML_SUFFIX };
+EXTERN_C const CLSID    CLSID_StaticNodeList =
+    { 0x30510467, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispDOMChildrenCollection =
     { 0x3050F577, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_DOMChildrenCollection =
     { 0x3050F5AA, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_HTMLElementEvents3 =
+    { 0x3050F59F, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_HTMLElementEvents2 =
     { 0x3050F60F, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_HTMLElementEvents =
@@ -951,10 +973,14 @@ EXTERN_C const IID      IID_IHTMLElement3 =
     { 0x3050F673, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLElement4 =
     { 0x3050F80F, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IElementSelector =
+    { 0x30510463, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLElementRender =
     { 0x3050F669, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLUniqueName =
     { 0x3050F4D0, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLElement5 =
+    { 0x3051045D, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDatabinding =
     { 0x3050F3F2, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLElementDefaults =
@@ -1003,6 +1029,8 @@ EXTERN_C const CLSID    CLSID_HTCDescBehavior =
     { 0x3050F5DD, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLUrnCollection =
     { 0x3050F5E2, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLUrnCollection =
+    { 0x3050F551, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLUrnCollection =
     { 0x3050F580, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLGenericElement =
@@ -1015,28 +1043,40 @@ EXTERN_C const IID      IID_IHTMLStyleSheetRule =
     { 0x3050F357, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyleSheetRulesCollection =
     { 0x3050F2E5, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLStyleSheetRule =
+    { 0x3050F50E, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyleSheetRule =
     { 0x3050F3CE, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLStyleSheetRulesCollection =
+    { 0x3050F52F, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyleSheetRulesCollection =
     { 0x3050F3CD, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyleSheetPage =
     { 0x3050F7EE, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyleSheetPagesCollection =
     { 0x3050F7F0, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLStyleSheetPage =
+    { 0x3050F540, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyleSheetPage =
     { 0x3050F7EF, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLStyleSheetPagesCollection =
+    { 0x3050F543, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyleSheetPagesCollection =
     { 0x3050F7F1, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyleSheet =
     { 0x3050F2E3, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyleSheet2 =
     { 0x3050F3D1, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLStyleSheet3 =
+    { 0x30510496, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLStyleSheet =
     { 0x3050F58D, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyleSheet =
     { 0x3050F2E4, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLStyleSheetsCollection =
     { 0x3050F37E, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLStyleSheetsCollection =
+    { 0x3050F547, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyleSheetsCollection =
     { 0x3050F37F, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_HTMLLinkElementEvents2 =
@@ -1049,6 +1089,8 @@ EXTERN_C const IID      IID_IHTMLLinkElement2 =
     { 0x3050F4E5, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLLinkElement3 =
     { 0x3050F81E, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLLinkElement4 =
+    { 0x3051043A, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLLinkElement =
     { 0x3050E524, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLLinkElement =
@@ -1073,6 +1115,8 @@ EXTERN_C const IID      IID_IHTMLFormElement3 =
     { 0x3050F836, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLSubmitData =
     { 0x3050F645, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLFormElement4 =
+    { 0x3051042C, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLFormElement =
     { 0x3050F510, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLFormElement =
@@ -1107,6 +1151,8 @@ EXTERN_C const IID      IID_IHTMLImgElement =
     { 0x3050F240, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLImgElement2 =
     { 0x3050F826, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLImgElement3 =
+    { 0x30510434, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLImageElementFactory =
     { 0x3050F38E, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLImg =
@@ -1115,8 +1161,12 @@ EXTERN_C const CLSID    CLSID_HTMLImg =
     { 0x3050F241, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLImageElementFactory =
     { 0x3050F38F, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_HTMLXMLHttpRequestEvents =
+    { 0x30510498, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLXMLHttpRequest =
     { 0x3051040A, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLXMLHttpRequest2 =
+    { 0x30510482, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLXMLHttpRequestFactory =
     { 0x3051040C, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLXMLHttpRequest =
@@ -1129,6 +1179,8 @@ EXTERN_C const IID      IID_IHTMLBodyElement =
     { 0x3050F1D8, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLBodyElement2 =
     { 0x3050F5C5, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLBodyElement3 =
+    { 0x30510422, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLBody =
     { 0x3050F507, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLBody =
@@ -1147,6 +1199,8 @@ EXTERN_C const IID      IID_IHTMLAnchorElement =
     { 0x3050F1DA, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLAnchorElement2 =
     { 0x3050F825, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLAnchorElement3 =
+    { 0x3051041D, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLAnchorElement =
     { 0x3050F502, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLAnchorElement =
@@ -1193,6 +1247,8 @@ EXTERN_C const IID      IID_IHTMLBlockElement =
     { 0x3050F208, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLBlockElement2 =
     { 0x3050F823, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLBlockElement3 =
+    { 0x30510494, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLBlockElement =
     { 0x3050F506, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLBlockElement =
@@ -1245,6 +1301,8 @@ EXTERN_C const IID      IID_IHTMLElementCollection2 =
     { 0x3050F5EE, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLElementCollection3 =
     { 0x3050F835, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLElementCollection4 =
+    { 0x30510425, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLElementCollection =
     { 0x3050F56B, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLElementCollection =
@@ -1267,6 +1325,8 @@ EXTERN_C const IID      IID_IHTMLSelectElement2 =
     { 0x3050F5ED, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLSelectElement4 =
     { 0x3050F838, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLSelectElement5 =
+    { 0x3051049D, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLSelectElement =
     { 0x3050F531, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLSelectElement =
@@ -1319,6 +1379,8 @@ EXTERN_C const IID      IID_IHTMLInputElement =
     { 0x3050F5D2, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLInputElement2 =
     { 0x3050F821, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLInputElement3 =
+    { 0x30510435, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLInputButtonElement =
     { 0x3050F2B2, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLInputHiddenElement =
@@ -1365,14 +1427,20 @@ EXTERN_C const IID      IID_IHTMLHtmlElement =
     { 0x3050F81C, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLHeadElement =
     { 0x3050F81D, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLHeadElement2 =
+    { 0x3051042F, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLTitleElement =
     { 0x3050F322, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLMetaElement =
     { 0x3050F203, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLMetaElement2 =
     { 0x3050F81F, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLMetaElement3 =
+    { 0x30510495, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLBaseElement =
     { 0x3050F204, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLBaseElement2 =
+    { 0x30510420, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLIsIndexElement =
     { 0x3050F206, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLIsIndexElement2 =
@@ -1431,16 +1499,24 @@ EXTERN_C const IID      IID_IOmNavigator =
     { 0xFECEAAA5, 0x8405, 0x11CF, { 0x8B, 0xA1, 0x00, 0xAA, 0x00, 0x47, 0x6D, 0xA6 } };
 EXTERN_C const IID      IID_IHTMLLocation =
     { 0x163BB1E0, 0x6E00, 0x11CF, { 0x83, 0x7A, 0x48, 0xDC, 0x04, 0xC1, 0x00, 0x00 } };
+EXTERN_C const IID      DIID_DispHTMLHistory =
+    { 0x3050F549, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLHistory =
     { 0xFECEAAA3, 0x8405, 0x11CF, { 0x8B, 0xA1, 0x00, 0xAA, 0x00, 0x47, 0x6D, 0xA6 } };
 EXTERN_C const CLSID    CLSID_CMimeTypes =
     { 0x3050F3FE, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispCPlugins =
+    { 0x3050F54A, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_CPlugins =
     { 0x3050F3FF, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_COpsProfile =
     { 0x3050F402, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLNavigator =
+    { 0x3050F54C, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLNavigator =
     { 0xFECEAAA6, 0x8405, 0x11CF, { 0x8B, 0xA1, 0x00, 0xAA, 0x00, 0x47, 0x6D, 0xA6 } };
+EXTERN_C const IID      DIID_DispHTMLLocation =
+    { 0x3050F54E, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLLocation =
     { 0x163BB1E1, 0x6E00, 0x11CF, { 0x83, 0x7A, 0x48, 0xDC, 0x04, 0xC1, 0x00, 0x00 } };
 EXTERN_C const IID      IID_IHTMLBookmarkCollection =
@@ -1455,10 +1531,14 @@ EXTERN_C const IID      IID_IHTMLEventObj3 =
     { 0x3050F680, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLEventObj4 =
     { 0x3050F814, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLEventObj5 =
+    { 0x30510478, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispCEventObj =
     { 0x3050F558, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_CEventObj =
     { 0x3050F48A, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_HTMLWindowEvents3 =
+    { 0x3050F5A1, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_HTMLWindowEvents2 =
     { 0x3050F625, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_HTMLWindowEvents =
@@ -1469,6 +1549,8 @@ EXTERN_C const IID      IID_IHTMLScreen =
     { 0x3050F35C, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLScreen2 =
     { 0x3050F84A, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLScreen3 =
+    { 0x305104A1, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLWindow2 =
     { 0x332C4427, 0x26CB, 0x11D0, { 0xB4, 0x83, 0x00, 0xC0, 0x4F, 0xD9, 0x01, 0x19 } };
 EXTERN_C const IID      IID_IHTMLWindow3 =
@@ -1477,6 +1559,8 @@ EXTERN_C const IID      IID_IHTMLWindow4 =
     { 0x3050F6CF, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLWindow5 =
     { 0x3051040E, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLWindow6 =
+    { 0x30510453, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_FramesCollection =
     { 0x3050F7F6, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLScreen =
@@ -1491,6 +1575,20 @@ EXTERN_C const IID      DIID_DispHTMLWindowProxy =
     { 0x3050F55E, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLWindowProxy =
     { 0x3050F391, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLDocumentCompatibleInfo =
+    { 0x3051041A, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLDocumentCompatibleInfoCollection =
+    { 0x30510418, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLDocumentCompatibleInfo =
+    { 0x3050F53E, MSHTML_SUFFIX };
+EXTERN_C const CLSID    CLSID_HTMLDocumentCompatibleInfo =
+    { 0x3051041B, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLDocumentCompatibleInfoCollection =
+    { 0x3050F53F, MSHTML_SUFFIX };
+EXTERN_C const CLSID    CLSID_HTMLDocumentCompatibleInfoCollection =
+    { 0x30510419, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_HTMLDocumentEvents3 =
+    { 0x3050F5A0, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_HTMLDocumentEvents2 =
     { 0x3050F613, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_HTMLDocumentEvents =
@@ -1505,6 +1603,10 @@ EXTERN_C const IID      IID_IHTMLDocument4 =
     { 0x3050F69A, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDocument5 =
     { 0x3050F80C, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLDocument6 =
+    { 0x30510417, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IDocumentSelector =
+    { 0x30510462, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLDocument =
     { 0x3050F55F, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLDocument =
@@ -1519,6 +1621,8 @@ EXTERN_C const CLSID    CLSID_Scriptlet =
     { 0xAE24FDAE, 0x03C6, 0x11D1, { 0x8B, 0x76, 0x00, 0x80, 0xC7, 0x44, 0xF3, 0x89 } };
 EXTERN_C const IID      IID_IHTMLEmbedElement =
     { 0x3050F25F, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLEmbedElement2 =
+    { 0x30510493, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLEmbed =
     { 0x3050F52E, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLEmbed =
@@ -1533,6 +1637,8 @@ EXTERN_C const IID      IID_IHTMLAreasCollection2 =
     { 0x3050F5EC, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLAreasCollection3 =
     { 0x3050F837, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLAreasCollection4 =
+    { 0x30510492, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLMapElement =
     { 0x3050F266, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLAreasCollection =
@@ -1549,6 +1655,8 @@ EXTERN_C const IID      DIID_HTMLAreaEvents =
     { 0x3050F366, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLAreaElement =
     { 0x3050F265, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLAreaElement2 =
+    { 0x3051041F, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLAreaElement =
     { 0x3050F503, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLAreaElement =
@@ -1571,6 +1679,8 @@ EXTERN_C const IID      IID_IHTMLPhraseElement =
     { 0x3050F20A, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLPhraseElement2 =
     { 0x3050F824, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLPhraseElement3 =
+    { 0x3051043D, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLSpanElement =
     { 0x3050F3F3, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLPhraseElement =
@@ -1641,6 +1751,8 @@ EXTERN_C const IID      IID_IHTMLScriptElement =
     { 0x3050F28B, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLScriptElement2 =
     { 0x3050F828, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLScriptElement3 =
+    { 0x30510447, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLScriptElement =
     { 0x3050F530, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLScriptElement =
@@ -1661,8 +1773,12 @@ EXTERN_C const IID      IID_IHTMLObjectElement2 =
     { 0x3050F4CD, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLObjectElement3 =
     { 0x3050F827, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLObjectElement4 =
+    { 0x3051043E, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLParamElement =
     { 0x3050F83D, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLParamElement2 =
+    { 0x30510444, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLObjectElement =
     { 0x3050F529, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLObjectElement =
@@ -1689,6 +1805,8 @@ EXTERN_C const IID      IID_IHTMLFrameElement =
     { 0x3050F313, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLFrameElement2 =
     { 0x3050F7F5, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLFrameElement3 =
+    { 0x3051042D, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLFrameElement =
     { 0x3050F513, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLFrameElement =
@@ -1697,6 +1815,8 @@ EXTERN_C const IID      IID_IHTMLIFrameElement =
     { 0x3050F315, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLIFrameElement2 =
     { 0x3050F4E6, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLIFrameElement3 =
+    { 0x30510433, MSHTML_SUFFIX };
 EXTERN_C const IID      DIID_DispHTMLIFrame =
     { 0x3050F51B, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLIFrame =
@@ -1763,6 +1883,22 @@ EXTERN_C const IID      IID_IHTMLStyleFontFace =
     { 0x3050F3D5, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLStyleFontFace =
     { 0x3050F3D4, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLXDomainRequest =
+    { 0x30510454, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLXDomainRequestFactory =
+    { 0x30510456, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispXDomainRequest =
+    { 0x3050F599, MSHTML_SUFFIX };
+EXTERN_C const CLSID    CLSID_XDomainRequest =
+    { 0x30510455, MSHTML_SUFFIX };
+EXTERN_C const CLSID    CLSID_XDomainRequestFactory =
+    { 0x30510457, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLStorage =
+    { 0x30510474, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLStorage =
+    { 0x3050F59D, MSHTML_SUFFIX };
+EXTERN_C const CLSID    CLSID_HTMLStorage =
+    { 0x30510475, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_ICSSFilterSite =
     { 0x3050F3ED, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_ICSSFilter =
@@ -1849,8 +1985,12 @@ EXTERN_C const IID      IID_IHTMLNamespace =
     { 0x3050F6BB, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLNamespaceCollection =
     { 0x3050F6B8, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLNamespace =
+    { 0x3050F54F, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLNamespace =
     { 0x3050F6BC, MSHTML_SUFFIX };
+EXTERN_C const IID      DIID_DispHTMLNamespaceCollection =
+    { 0x3050F550, MSHTML_SUFFIX };
 EXTERN_C const CLSID    CLSID_HTMLNamespaceCollection =
     { 0x3050F6B9, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLPainter =
@@ -1867,6 +2007,8 @@ EXTERN_C const IID      IID_IEnumPrivacyRecords =
     { 0x3050F844, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IWPCBlockedUrls =
     { 0x30510413, MSHTML_SUFFIX };
+EXTERN_C const IID      IID_IHTMLDOMConstructorCollection =
+    { 0x3051049C, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDialog =
     { 0x3050F216, MSHTML_SUFFIX };
 EXTERN_C const IID      IID_IHTMLDialog2 =
