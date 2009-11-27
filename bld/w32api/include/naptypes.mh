@@ -73,6 +73,14 @@ typedef enum tagIsolationState {
     isolationStateRestrictedAccess  = 3
 } IsolationState;
 
+/* Extended isolation states */
+typedef enum tagExtendedIsolationState {
+    extendedIsolationStateNoData        = 0x00,
+    extendedIsolationStateTransition    = 0x01,
+    extendedIsolationStateInfected      = 0x02,
+    extendedIsolationStateUnknown       = 0x03
+} ExtendedIsolationState;
+
 /* NAP tracing levels */
 typedef enum tagNapTracingLevel {
     tracingLevelUndefined   = 0,
@@ -94,6 +102,14 @@ typedef struct tagIsolationInfo {
     ProbationTime   probEndTime;
     CountedString   failureUrl;
 } IsolationInfo;
+
+/* Isolation information (extended version) */
+typedef struct tagIsolationInfoEx {
+    IsolationState          isolationState;
+    ExtendedIsolationState  extendedIsolationState;
+    ProbationTime           probEndTime;
+    CountedString           failureUrl;
+} IsolationInfoEx;
 
 /* Failure categories */
 typedef enum tagFailureCategory {
@@ -203,6 +219,12 @@ typedef struct tagNapComponentRegistrationInfo {
     FILETIME        registrationDate;
     UINT32          componentType;
 } NapComponentRegistrationInfo;
+
+/* Remote configuration types */
+typedef enum tagRemoteConfigurationType {
+    remoteConfigTypeMachine     = 1,
+    remoteConfigTypeConfigBlob  = 2
+} RemoteConfigurationType;
 
 :include cplusepi.sp
 
