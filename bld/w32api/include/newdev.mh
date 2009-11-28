@@ -57,6 +57,9 @@ BOOL WINAPI DiInstallDriverW( HWND, LPCWSTR, DWORD, PBOOL );
 BOOL WINAPI DiRollbackDriver( HDEVINFO, PSP_DEVINFO_DATA, HWND, DWORD, PBOOL );
 BOOL WINAPI DiShowUpdateDevice( HWND, HDEVINFO, PSP_DEVINFO_DATA, DWORD, PBOOL );
 #endif
+#if (NTDDI_VERSION >= 0x06010000)
+BOOL WINAPI DiUninstallDevice( HWND, HDEVINFO, PSP_DEVINFO_DATA, DWORD, PBOOL );
+#endif
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
 #ifdef UNICODE
