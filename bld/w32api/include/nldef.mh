@@ -182,6 +182,16 @@ typedef struct _NL_PATH_BANDWIDTH_ROD {
 } NL_PATH_BANDWIDTH_ROD;
 typedef NL_PATH_BANDWIDTH_ROD   *PNL_PATH_BANDWIDTH_ROD;
 
+/* Network layer network categories */
+typedef enum _NL_NETWORK_CATEGORY {
+    NetworkCategoryPublic               = 0,
+    NetworkCategoryPrivate              = 1,
+    NetworkCategoryDomainAuthenticated  = 2,
+    NetworkCategoryUnchanged            = -1,
+    NetworkCategoryUnknown              = -1
+} NL_NETWORK_CATEGORY;
+typedef NL_NETWORK_CATEGORY *PNL_NETWORK_CATEGORY;
+
 :include cplusepi.sp
 
 #endif /* _NLDEF_ */
