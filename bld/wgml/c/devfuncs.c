@@ -3000,22 +3000,22 @@ static void fb_overprint_vertical_positioning( void )
         }
 
         df_interpret_driver_functions( current_block->text );
+
+        /* This is hypothetical and may need to be changed, if the condition
+         * is ever "true".
+         */
+
+        if( current_block->advance == 1 ) {
+            desired_state.y_address += wgml_fonts[font_number].line_height;
+            current_state.y_address = desired_state.y_address;
+            y_address = current_state.y_address;
+        }
     }
 
     /* Reset the appropriate values. */
 
     current_state.x_address = bin_device->x_start;
     x_address = current_state.x_address;
-
-    /* This is hypothetical and may need to be changed, if the condition
-     * is ever "true".
-     */
-
-    if( current_block->advance == 1 ) {
-        desired_state.y_address += wgml_fonts[font_number].line_height;
-        current_state.y_address = desired_state.y_address;
-        y_address = current_state.y_address;
-    }
 
     return;
 }
