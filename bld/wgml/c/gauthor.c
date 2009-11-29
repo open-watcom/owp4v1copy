@@ -131,6 +131,8 @@ void    gml_author( const gmltag * entry )
     int8_t          spacing;
     int8_t          font_save;
     uint32_t        y_save;
+    int32_t         rc;
+    symsub      *   authorval;
 
     if( ProcFlags.doc_sect != doc_sect_titlep ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
@@ -143,8 +145,11 @@ void    gml_author( const gmltag * entry )
     }
     p++;                                // over . to author name
     if( !ProcFlags.author_tag_seen ) {
-        if( *p ) {                      // first author goes into dictionary
-            add_symvar( &global_dict, "$author", p, no_subscript, 0 );
+        rc = find_symvar( &sys_dict, "$author", no_subscript, &authorval );
+        if( *p ) {                      // author specified
+            strcpy_s( authorval->value, 60, p );
+        } else {
+            *(authorval->value) = 0;
         }
     }
 

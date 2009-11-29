@@ -79,6 +79,10 @@ static void set_space( char * p )
 }
 
 
+/***************************************************************************/
+/*  :HPx common processing                                                 */
+/***************************************************************************/
+
 static bool gml_hpx_common( const gmltag * entry, int font )
 {
     char    *   p;
@@ -89,7 +93,9 @@ static bool gml_hpx_common( const gmltag * entry, int font )
         result = false;
         return( result );
     }
-
+    if( font >= wgml_font_cnt ) {       // invalid font use default
+        font = 0;
+    }
     if( (hpcount > -1) && (hp[hpcount] == font) ) {
         g_err_tag();                    // same hilighting already active
         result = false;

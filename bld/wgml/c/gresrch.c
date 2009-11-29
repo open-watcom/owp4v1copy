@@ -188,7 +188,7 @@ void    free_SCR_tags_research( void )
 }
 
 /***************************************************************************/
-/*  testoutput of words belonging to a line with positional info           */
+/*  testoutput of words belonging to an output line with positional info   */
 /***************************************************************************/
 
 void    test_out_t_line( text_line  * a_line )
@@ -196,15 +196,16 @@ void    test_out_t_line( text_line  * a_line )
     text_chars  *   tw;
     char            buf[BUF_SIZE];
 
-    if( a_line == NULL ) {
+    if( a_line == NULL || a_line->first == NULL) {
         return;
     }
 
     tw = a_line->first;
-    out_msg( "\n   y_address:%d\n", a_line->y_address );
+    out_msg( "\n   y_address:%d     ju_x_start:%d\n", a_line->y_address,
+             a_line->ju_x_start );
     while( tw != NULL ) {
         snprintf( buf, buf_size,
-                  "font:%d x:%d-%d width:%d count:%d text:'%.*s'\n",
+                  "font:%d x:%d-%d width:%d cnt:%d txt:'%.*s'\n",
                   tw->font_number, tw->x_address, tw->x_address + tw->width,
                   tw->width, tw->count, tw->count, tw->text );
         out_msg( buf );

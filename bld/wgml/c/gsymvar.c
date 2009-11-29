@@ -446,6 +446,7 @@ void    print_sym_dict( symvar * dict )
     int                 symsubcnt;
     int                 len;
     bool                saveflag;
+    char            *   lgs;
     static const char   fill[11] = "          ";
 
     symcnt      = 0;
@@ -454,7 +455,14 @@ void    print_sym_dict( symvar * dict )
     saveflag    = ProcFlags.no_var_impl_err;
     ProcFlags.no_var_impl_err = true;   // suppress err msg
 
-    out_msg( "\nList of symbolic variables:\n" );
+    if( dict == sys_dict ) {
+        lgs = "System";
+    } else if( dict == global_dict ) {
+        lgs = "Global";
+    } else {
+        lgs = "Local";
+    }
+    out_msg( "\n%s list of symbolic variables:\n", lgs );
     while( wk != NULL ) {
         len = strlen( wk->name );
         if( wk->subscript_used > 0 ) {

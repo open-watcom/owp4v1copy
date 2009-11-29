@@ -184,8 +184,8 @@ void    init_page_geometry( void )
                  bin_device->x_offset,
                  bin_device->y_offset
                );
-        out_msg( "default font number:%d\n", g_curr_font_num );
-        for( k = 0; k < 4; ++k ) {
+        out_msg( "default font number:%d font_count:%d\n", g_curr_font_num, wgml_font_cnt );
+        for( k = 0; k < wgml_font_cnt; ++k ) {
             out_msg( "font:%d def_width:%d dv:%d em:%d font_h:%d font_s:%d"
                      " line_h:%d line_s:%d spc_w:%d\n",
                      k,

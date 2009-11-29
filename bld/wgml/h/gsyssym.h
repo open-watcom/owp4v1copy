@@ -38,7 +38,7 @@
   picl( adodd,   amp,     no_free+ro+access_fun+predefined          )
   picc( amp,     apage,   no_free+ro+predefined+late_subst          )
   picl( apage,   author,  no_free+ro+access_fun+predefined          )
-  pick( author,  bc,      no_free+ro+access_fun+predefined          )
+  pics( author,  bc,      no_free+ro+predefined                     )
   picc( bc,      be,      no_free+ro+access_fun+predefined          )
   picl( be,      bfonts,  no_free+ro+access_fun+predefined          )
   pick( bfonts,  bm,      no_free+ro+access_fun+predefined          )

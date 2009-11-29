@@ -48,9 +48,17 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
     uint32_t            ban_depth;
     uint32_t            v_start;
     uint32_t            reg_off;
+    int32_t             skip;
 
     ban_depth = conv_vert_unit( &(ban->depth) );
     reg_off = conv_vert_unit( &(ban->region->voffset) );
+
+    skip = ban_depth - reg_off + g_max_line_height;
+    if( skip > 0 ) {               // if region is not in last line of banner
+        post_top_skip = skip;           // reserve space
+    } else {
+        post_top_skip = 0;
+    }
 
     if( bin_driver->y_positive == 0 ) {
         v_start = bin_device->y_start - g_max_line_height - reg_off;
@@ -190,7 +198,7 @@ static void content_reg( banner_lay_tag * ban )
                 ban->region->script_region[2].len == 0 ) {
 
                 pl = ban->region->contents.string;
-                sep = *pl;
+                sep = *pl;              // first char is separator
                                             // isolate region parts
                 for( k = 0; k < 3; ++k ) {  // left, center, right
                     pl++;
@@ -227,9 +235,16 @@ static void content_reg( banner_lay_tag * ban )
                     if( *pbuf ) {
                         curr_t = alloc_text_chars( pbuf, strlen( pbuf ),
                                                    ban->region->font );
+
+                        /***************************************************/
+                        /* use font 0 for width calculation                */
+                        /* even if another font is used for banregion      */
+                        /* to get the same result as wgml4            TBD  */
+                        /***************************************************/
                         curr_t->width = cop_text_width( curr_t->text,
                                                         curr_t->count,
-                                                        ban->region->font );
+                                                   //   ban->region->font );
+                                                        0 );// TBD
                         reg_text[k] = curr_t;
                     }
                 }
@@ -609,6 +624,7 @@ static void content_reg( banner_lay_tag * ban )
 static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 {
     text_chars      *   curr_t;
+    text_chars      *   curr_p;
     uint32_t            ban_left;
     uint32_t            h_left;
     uint32_t            ban_right;
@@ -682,14 +698,33 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         if( curr_x == 0 ) {
             curr_x = h_left;
         }
-        curr_t->x_address = curr_x;   // not checked for overlap of parts TBD
-        curr_x += curr_t->width;      // not checked for overlap of parts TBD
+        curr_t->x_address = curr_x;
+        curr_x += curr_t->width;
 
     }
     if( GlobalFlags.lastpass && b_line.first != NULL) {
         if( input_cbs->fmflags & II_research ) {
             test_out_t_line( &b_line );
         }
+
+        /*******************************************************************/
+        /*  truncate the left part(s) in case of overlap                   */
+        /*******************************************************************/
+        curr_p = b_line.first;
+        curr_t = curr_p->next;
+        while( curr_t != NULL ) {
+            while( (curr_p->x_address + curr_p->width) > curr_t->x_address ) {  // overlap
+                if( curr_p->count < 2) {    // sanity check
+                   break;
+                }
+                curr_p->count -= 1;         // truncate text
+                curr_p->width = cop_text_width( curr_p->text, curr_p->count,
+                                                0 );// font ??? TBD
+            }
+            curr_p = curr_t;
+            curr_t = curr_t->next;
+        }
+
         fb_output_textline( &b_line );
     }
 
@@ -697,10 +732,13 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         add_text_chars_to_pool( &b_line );
         b_line.first = NULL;
     }
-    if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= g_max_line_height;
-    } else {
-        g_cur_v_start += g_max_line_height;
+    if( !bottom ) {                    // for top banner calculate text start
+        if( bin_driver->y_positive == 0 ) {
+            g_cur_v_start -= g_max_line_height + post_top_skip;
+        } else {
+            g_cur_v_start += g_max_line_height + post_top_skip;
+        }
+        post_top_skip = 0;
     }
 }
 

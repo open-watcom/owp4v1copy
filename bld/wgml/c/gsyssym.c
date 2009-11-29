@@ -263,12 +263,6 @@ static void sysapagefun( symvar * e )   // absolute page
     return;
 };
 
-static void sysauthorfun( symvar * e )
-{
-    var_wng( e->name );
-    return;
-};
-
 static void sysbefun( symvar * e )
 {
     var_wng( e->name );

@@ -35,7 +35,7 @@
 //  control   routine    flags
 //     word    name
 
-  pick( "ad", scr_dummy, cw_break           )   // adjust
+  pick( "ad", scr_dummy, cw_break           )// adjust
   pick( "ap", scr_ap,    0                  )// append
   pick( "bc", scr_dummy, cw_o_t             )// balance columns
   pick( "bd", scr_dummy, cw_o_t             )// bold
@@ -44,8 +44,8 @@
   pick( "bl", scr_dummy, cw_break+cw_o_t    )// blank line
   pick( "bm", scr_dummy, cw_break+cw_o_t    )// bottom margin
   pick( "br", scr_br,    cw_break+cw_o_t    )// break
-  pick( "bs", scr_br,    cw_o_t             )// backspace
-  pick( "bt", scr_br,    0                  )// bottom title
+  pick( "bs", scr_dummy, cw_o_t             )// backspace
+  pick( "bt", scr_dummy, 0                  )// bottom title
   pick( "bx", scr_dummy, cw_break+cw_o_t    )// box
   pick( "cb", scr_dummy, cw_break+cw_o_t    )// column begin
   pick( "cc", scr_dummy, cw_break+cw_o_t    )// conditional column
@@ -53,7 +53,7 @@
   pick( "ce", scr_dummy, cw_break+cw_o_t    )// center
   pick( "ch", scr_dummy, 0                  )// change
   pick( "cl", scr_dummy, cw_break+cw_o_t    )// column length
-//pick( "cm", scr_dummy, cw_break           )// comment ----- handled differently
+//pick( "cm", scr_dummy, 0                  )// comment ----- handled differently
   pick( "co", scr_co,    cw_break+cw_o_t    )// concatenate
   pick( "cp", scr_dummy, cw_break+cw_o_t    )// conditional page
   pick( "cs", scr_dummy, cw_o_t             )// conditional section
