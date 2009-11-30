@@ -89,6 +89,7 @@ extern gui_colour_set WndColours[] = {
     { GUI_BRIGHT_WHITE, GUI_RED },              /* GUI_ICON    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_MENU_GRAYED_ACTIVE */
     { GUI_GREY,         GUI_CYAN },             /* GUI_FRAME_RESIZE    */
+    { GUI_GREY,         GUI_BLACK },            /* GUI_CONTROL_BACKGROUND */
     { GUI_BLACK,        GUI_BRIGHT_WHITE },     /* WND_PLAIN    */
     { GUI_BRIGHT_WHITE, GUI_BLACK },            /* WND_TABSTOP == ACTIVE  */
     { GUI_BRIGHT_WHITE, GUI_RED },              /* WND_SELECTED */
