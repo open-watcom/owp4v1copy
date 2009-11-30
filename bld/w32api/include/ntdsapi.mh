@@ -20,7 +20,10 @@
 #define DS_BEHAVIOR_WIN2000                     0
 #define DS_BEHAVIOR_WIN2003_WITH_MIXED_DOMAINS  1
 #define DS_BEHAVIOR_WIN2003                     2
-#define DS_BEHAVIOR_LONGHORN                    3
+#define DS_BEHAVIOR_WIN2008                     3
+#define DS_BEHAVIOR_WIN2008R2                   4
+#define DS_BEHAVIOR_LONGHORN                    DS_BEHAVIOR_WIN2008
+#define DS_BEHAVIOR_WIN7                        DS_BEHAVIOR_WIN2008R2
 
 /* Directory Service default NLS settings */
 #define DS_DEFAULT_LOCALE \
@@ -76,7 +79,7 @@
 #define DS_REPSYNC_CRITICAL                 0x00200000L
 #define DS_REPSYNC_FULL_IN_PROGRESS         0x00400000L
 #define DS_REPSYNC_PREEMPTED                0x00800000L
-#define DS_REPSYNC_FULL_REPLICA             0x01000000L
+#define DS_REPSYNC_NONGC_RO_REPLICA         0x01000000L
 
 /* Replica add flags */
 #define DS_REPADD_ASYNCHRONOUS_OPERATION    0x00000001L
@@ -92,7 +95,7 @@
 #define DS_REPADD_TWO_WAY                   0x00000400L
 #define DS_REPADD_CRITICAL                  0x00000800L
 #define DS_REPADD_SELECT_SECRETS            0x00001000L
-#define DS_REPADD_FULL_REPLICA              0x01000000L
+#define DS_REPADD_NONGC_RO_REPLICA          0x01000000L
 
 /* Replica delete flags */
 #define DS_REPDEL_ASYNCHRONOUS_OPERATION    0x00000001L
@@ -120,6 +123,7 @@
 #define DS_REPUPD_WRITEABLE                 0x00000002L
 #define DS_REPUPD_ADD_REFERENCE             0x00000004L
 #define DS_REPUPD_DELETE_REFERENCE          0x00000008L
+#define DS_REPUPD_REFERENCE_GCSPN           0x00000010L
 
 /* Directory Service instance types */
 #define DS_INSTANCETYPE_IS_NC_HEAD      0x00000001L
@@ -133,9 +137,7 @@
 #define NTDSDSA_OPT_DISABLE_OUTBOUND_REPL               (1 << 2)
 #define NTDSDSA_OPT_DISABLE_NTDSCONN_XLATE              (1 << 3)
 #define NTDSDSA_OPT_DISABLE_SPN_REGISTRATION            (1 << 4)
-#define NTDSDSA_OPT_DISABLE_OUTBOUND_SELECT_SECRET_NULL (1 << 5)
-#define NTDSDSA_OPT_DISABLE_OUTBOUND_REPL_OBJ           (1 << 6)
-#define NTDSDSA_OPT_DISABLE_OUTBOUND_REPL_SECRET        (1 << 7)
+#define NTDSDSA_OPT_GENERATE_OWN_TOPO                   (1 << 5)
 
 /* NTDS-Connection options */
 #define NTDSCONN_OPT_IS_GENERATED                   (1 << 0)
@@ -298,11 +300,12 @@
 #define DS_REPL_NBR_DO_SCHEDULED_SYNCS              0x00000040L
 #define DS_REPL_NBR_USE_ASYNC_INTERSITE_TRANSPORT   0x00000080L
 #define DS_REPL_NBR_TWO_WAY_SYNC                    0x00000200L
-#define DS_REPL_NBR_FULL_REPLICA                    0x00000400L
+#define DS_REPL_NBR_NONGC_RO_REPLICA                0x00000400L
 #define DS_REPL_NBR_RETURN_OBJECT_PARENTS           0x00000800L
 #define DS_REPL_NBR_SELECT_SECRETS                  0x00001000L
 #define DS_REPL_NBR_FULL_SYNC_IN_PROGRESS           0x00010000L
 #define DS_REPL_NBR_FULL_SYNC_NEXT_PACKET           0x00020000L
+#define DS_REPL_NBR_GCSPN                           0x00100000L
 #define DS_REPL_NBR_NEVER_SYNCED                    0x00200000L
 #define DS_REPL_NBR_PREEMPTED                       0x01000000L
 #define DS_REPL_NBR_IGNORE_CHANGE_NOTIFICATIONS     0x04000000L
@@ -334,6 +337,19 @@
 #define ADAM_REPL_AUTHENTICATION_MODE_NEGOTIATE_PASS_THROUGH    0
 #define ADAM_REPL_AUTHENTICATION_MODE_NEGOTIATE                 1
 #define ADAM_REPL_AUTHENTICATION_MODE_MUTUAL_AUTH_REQUIRED      2
+
+/* Optional feature flags */
+#define FLAG_FOREST_OPTIONAL_FEATURE        0x00000001L
+#define FLAG_DOMAIN_OPTIONAL_FEATURE        0x00000002L
+#define FLAG_DISABLABLE_OPTIONAL_FEATURE    0x00000004L
+
+/* Recycle bin GUID */
+#define GUID_RECYCLE_BIN_OPTIONAL_FEATURE_A \
+    "d8dc6d76d0ac5e44f3b9a7f9b6744f2a"
+#define GUID_RECYCLE_BIN_OPTIONAL_FEATURE_W \
+    L"d8dc6d76d0ac5e44f3b9a7f9b6744f2a"
+#define GUID_RECYCLE_BIN_OPTIONAL_FEATURE_BYTE \
+    "\xd8\xdc\x6d\x76\xd0\xac\x5e\x44\xf3\xb9\xa7\xf9\b6\x74\x4f\x2a"
 
 /* Directory Service name formats */
 typedef enum {
