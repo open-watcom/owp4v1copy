@@ -57,6 +57,9 @@ DEFINE_GUID( Audit_Ds_DetailedReplication, 0x0CCE923E, 0x69AE, 0x11D9, 0xBE, 0xD
 DEFINE_GUID( Audit_AccountLogon_CredentialValidation, 0x0CCE923F, 0x69AE, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
 DEFINE_GUID( Audit_AccountLogon_Kerberos, 0x0CCE9240, 0x69AE, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
 DEFINE_GUID( Audit_AccountLogon_Others, 0x0CCE9241, 0x69AE, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
+DEFINE_GUID( Audit_AccountLogin_KerbCredentialValidation, 0x0CCE9242, 0x69AE, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
+DEFINE_GUID( Audit_Logon_NPS, 0x0CCE9243, 0x69AE, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
+DEFINE_GUID( Audit_ObjectAccess_DetailedFileShare, 0x0CCE9244, 0x69AE, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
 DEFINE_GUID( Audit_System, 0x69979848, 0x797A, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
 DEFINE_GUID( Audit_Logon, 0x69979849, 0x797A, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
 DEFINE_GUID( Audit_ObjectAccess, 0x6997984A, 0x797A, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
@@ -556,8 +559,9 @@ typedef ULONG   *PLSA_ENUMERATION_HANDLE;
 
 /* Kerberos certificate S4U logon flags */
 #if (_WIN32_WINNT >= 0x0600)
-    #define KERB_CERTIFICATE_S4U_LOGON_FLAG_CHECK_DUPLICATES    0x00000001L
-    #define KERB_CERTIFICATE_S4U_LOGON_FLAG_CHECK_LOGONHOURS    0x00000002L
+    #define KERB_CERTIFICATE_S4U_LOGON_FLAG_CHECK_DUPLICATES                0x00000001L
+    #define KERB_CERTIFICATE_S4U_LOGON_FLAG_CHECK_LOGONHOURS                0x00000002L
+    #define KERB_CERTIFICATE_S4U_LOGON_FLAG_FAIL_IF_NT_AUTH_POLICY_REQUIRED 0x00000004L
 #endif
 
 /* Kerberos ticket logon flags */
@@ -586,6 +590,9 @@ typedef ULONG   *PLSA_ENUMERATION_HANDLE;
 #endif
 #if (_WIN32_WINNT >= 0x0600)
     #define KERB_RETRIEVE_TICKET_CACHE_TICKET   0x00000020L
+#endif
+#if (_WIN32_WINNT >= 0x0601)
+    #define KERB_RETRIEVE_TICKET_MAX_LIFETIME   0x00000040L
 #endif
 
 /* Kerberos encryption type options */
@@ -641,6 +648,14 @@ typedef ULONG   *PLSA_ENUMERATION_HANDLE;
     (STANDARD_RIGHTS_REQUIRED | AUDIT_SET_SYSTEM_POLICY | AUDIT_QUERY_SYSTEM_POLICY | \
     AUDIT_SET_USER_POLICY | AUDIT_QUERY_USER_POLICY | AUDIT_ENUMERATE_USERS | \
     AUDIT_SET_MISC_POLICY | AUDIT_QUERY_MISC_POLICY)
+
+/* PKU2U constants */
+#if (_WIN32_WINNT >= 0x0601)
+    #define PKU2U_PACKAGE_NAME_A            "pku2u"
+    #define PKU2U_PACKAGE_NAME              L"pku2u"
+    #define PKU2U_PACKAGE_NAME_W            PKU2U_PACKAGE_NAME
+    #define PKU2U_CREDUI_CONTEXT_VERSION    0x4154414454524543
+#endif
 
 /* Security logon types */
 typedef enum _SECURITY_LOGON_TYPE {
@@ -698,7 +713,8 @@ typedef enum _SE_ADT_PARAMETER_TYPE {
     SeAdtParmTypeLogonHours         = 25,
     SeAdtParmTypeLogonIdNoSid       = 26,
     SeAdtParmTypeUlongNoConv        = 27,
-    SeAdtParmTypeSockAddrNoPort     = 28
+    SeAdtParmTypeSockAddrNoPort     = 28,
+    SeAdtParmTypeAccessReason       = 29
 } SE_ADT_PARAMETER_TYPE;
 typedef SE_ADT_PARAMETER_TYPE   *PSE_ADT_PARAMETER_TYPE;
 
@@ -719,6 +735,16 @@ typedef struct _SE_ADT_PARAMETER_ARRAY_ENTRY {
     PVOID                   Address;
 } SE_ADT_PARAMETER_ARRAY_ENTRY;
 typedef SE_ADT_PARAMETER_ARRAY_ENTRY    *PSE_ADT_PARAMETER_ARRAY_ENTRY;
+
+/* Security audit access reason */
+typedef struct _SE_ADT_ACCESS_REASON {
+    ACCESS_MASK             AccessMask;
+    ULONG                   AccessReasons[32];
+    ULONG                   ObjectTypeIndex;
+    ULONG                   AccessGranted;
+    PSECURITY_DESCRIPTOR    SecurityDescriptor;
+} SE_ADT_ACCESS_REASON;
+typedef SE_ADT_ACCESS_REASON    *PSE_ADT_ACCESS_REASON;
 
 /* Security audit parameter array */
 typedef struct _SE_ADT_PARAMETER_ARRAY {
@@ -1017,7 +1043,9 @@ typedef enum _POLICY_NOTIFICATION_INFORMATION_CLASS {
     PolicyNotifyDnsDomainInformation                = 4,
     PolicyNotifyDomainEfsInformation                = 5,
     PolicyNotifyDomainKerberosTicketInformation     = 6,
-    PolicyNotifyMachineAccountPasswordInformation   = 7
+    PolicyNotifyMachineAccountPasswordInformation   = 7,
+    PolicyNotifyGlobalSaclInformation               = 8,
+    PolicyNotifyMax                                 = 9
 } POLICY_NOTIFICATION_INFORMATION_CLASS;
 typedef POLICY_NOTIFICATION_INFORMATION_CLASS   *PPOLICY_NOTIFICATION_INFORMATION_CLASS;
 
@@ -1313,7 +1341,8 @@ typedef enum _MSV1_0_LOGON_SUBMIT_TYPE {
     MsV1_0NetworkLogon              = 4,
     MsV1_0SubAuthLogon              = 5,
     MsV1_0WorkstationUnlockLogon    = 7,
-    MsV1_0S4ULogon                  = 12
+    MsV1_0S4ULogon                  = 12,
+    MsV1_0VirtualLogon              = 82
 } MSV1_0_LOGON_SUBMIT_TYPE;
 typedef MSV1_0_LOGON_SUBMIT_TYPE    *PMSV1_0_LOGON_SUBMIT_TYPE;
 
@@ -1442,7 +1471,9 @@ typedef enum {
 #if (_WIN32_WINNT >= 0x0600)
     MsvAvFlags              = 6,
     MsvAvTimestamp          = 7,
-    MsvAvRestrictions       = 8
+    MsvAvRestrictions       = 8,
+    MsvAvTargetName         = 9,
+    MsvAvChannelBindings    = 10
 #else
     MsvAvFlags              = 6
 #endif
@@ -1476,6 +1507,7 @@ typedef enum _MSV1_0_PROTOCOL_MESSAGE_TYPE {
 #if (_WIN32_WINNT >= 0x0600)
     MsV1_0SetProcessOption          = 12,
     MsV1_0ConfigLocalAliases        = 13,
+    MsV1_0ClearCachedCredentials    = 14
 #else
     MsV1_0SetProcessOption          = 12
 #endif
@@ -1753,6 +1785,7 @@ typedef enum _KERB_PROTOCOL_MESSAGE_TYPE {
     KerbTransferCredentialsMessage          = 19,
     KerbQueryTicketCacheEx2Message          = 20,
     KerbSubmitTicketMessage                 = 21,
+    KerbAddExtraCredentialsExMessage        = 22
 #else
     KerbQuerySupplementalCredentialsMessage = 18
 #endif
@@ -2043,6 +2076,16 @@ typedef struct _KERB_ADD_CREDENTIALS_REQUEST {
 typedef KERB_ADD_CREDENTIALS_REQUEST    *PKERB_ADD_CREDENTIALS_REQUEST;
 #endif
 
+/* Kerberos add credentials request (extended version) */
+#if (_WIN32_WINNT >= 0x0600)
+typedef struct _KERB_ADD_CREDENTIALS_REQUEST_EX {
+    KERB_ADD_CREDENTIALS_REQUEST    Credentials;
+    ULONG                           PrincipalNameCount;
+    UNICODE_STRING                  PrincipalNames[ANYSIZE_ARRAY];
+} KERB_ADD_CREDENTIALS_REQUEST_EX;
+typedef KERB_ADD_CREDENTIALS_REQUEST_EX *PKERB_ADD_CREDENTIALS_REQUEST_EX;
+#endif
+
 /* Kerberos transfer credentials request */
 typedef struct _KERB_TRANSFER_CRED_REQUEST {
     KERB_PROTOCOL_MESSAGE_TYPE  MessageType;
@@ -2068,6 +2111,48 @@ typedef struct _AUDIT_POLICY_INFORMATION {
 typedef AUDIT_POLICY_INFORMATION        *PAUDIT_POLICY_INFORMATION;
 typedef const AUDIT_POLICY_INFORMATION  *PCAUDIT_POLICY_INFORMATION;
 typedef const AUDIT_POLICY_INFORMATION  *LPCAUDIT_POLICY_INFORMATION;
+
+/* PKU2U certificate blob */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _PKU2U_CERT_BLOB {
+    ULONG   CertOffset;
+    USHORT  CertLength;
+} PKU2U_CERT_BLOB;
+typedef PKU2U_CERT_BLOB *PPKU2U_CERT_BLOB;
+#endif
+
+/* PKU2U credential UI context */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _PKU2U_CREDUI_CONTEXT {
+    ULONG64 Version;
+    USHORT  cbHeaderLength;
+    ULONG   cbStructureLength;
+    USHORT  CertArrayCount;
+    ULONG   CertArrayOffset;
+} PKU2U_CREDUI_CONTEXT;
+typedef PKU2U_CREDUI_CONTEXT    *PPKU2U_CREDUI_CONTEXT;
+#endif
+
+/* PKU2U logon submit types */
+#if (_WIN32_WINNT >= 0x0601)
+typedef enum _PKU2U_LOGON_SUBMIT_TYPE {
+    Pku2uCertificateS4ULogon    = 14
+} PKU2U_LOGON_SUBMIT_TYPE;
+typedef PKU2U_LOGON_SUBMIT_TYPE *PPKU2U_LOGON_SUBMIT_TYPE;
+#endif
+
+/* PKU2U certificate S4U logon */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _PKU2U_CERTIFICATE_S4U_LOGON {
+    PKU2U_LOGON_SUBMIT_TYPE MessageType;
+    ULONG                   Flags;
+    UNICODE_STRING          UserPrincipalName;
+    UNICODE_STRING          DomainName;
+    ULONG                   CertificateLength;
+    PUCHAR                  Certificate;
+} PKU2U_CERTIFICATE_S4U_LOGON;
+typedef PKU2U_CERTIFICATE_S4U_LOGON *PPKU2U_CERTIFICATE_S4U_LOGON;
+#endif
 
 /* Functions in SECUR32.DLL */
 NTSTATUS NTAPI  LsaCallAuthenticationPackage( HANDLE, ULONG, PVOID, ULONG, PVOID *, PULONG, PNTSTATUS );
@@ -2106,9 +2191,13 @@ BOOLEAN NTAPI   AuditLookupCategoryNameA( const GUID *, PSTR * );
 BOOLEAN NTAPI   AuditLookupCategoryNameW( const GUID *, PWSTR * );
 BOOLEAN NTAPI   AuditLookupSubCategoryNameA( const GUID *, PSTR * );
 BOOLEAN NTAPI   AuditLookupSubCategoryNameW( const GUID *, PWSTR * );
+BOOLEAN NTAPI   AuditQueryGlobalSaclA( PCSTR, PACL * );
+BOOLEAN NTAPI   AuditQueryGlobalSaclW( PCWSTR, PACL * );
 BOOLEAN NTAPI   AuditQueryPerUserPolicy( const PSID, const GUID *, ULONG, PAUDIT_POLICY_INFORMATION * );
 BOOLEAN NTAPI   AuditQuerySecurity( SECURITY_INFORMATION, PSECURITY_DESCRIPTOR * );
 BOOLEAN NTAPI   AuditQuerySystemPolicy( const GUID *, ULONG, PAUDIT_POLICY_INFORMATION * );
+BOOLEAN NTAPI   AuditSetGlobalSaclA( PCSTR, PACL );
+BOOLEAN NTAPI   AuditSetGlobalSaclW( PCWSTR, PACL );
 BOOLEAN NTAPI   AuditSetPerUserPolicy( const PSID, PCAUDIT_POLICY_INFORMATION, ULONG );
 BOOLEAN NTAPI   AuditSetSecurity( SECURITY_INFORMATION, PSECURITY_DESCRIPTOR );
 BOOLEAN NTAPI   AuditSetSystemPolicy( PCAUDIT_POLICY_INFORMATION, ULONG );
@@ -2150,9 +2239,13 @@ BOOLEAN NTAPI   RtlGenRandom( PVOID, ULONG );
 #ifdef UNICODE
     #define AuditLookupCategoryName     AuditLookupCategoryNameW
     #define AuditLookupSubCategoryName  AuditLookupSubCategoryNameW
+    #define AuditQueryGlobalSacl        AuditQueryGlobalSaclW
+    #define AuditSetGlobalSacl          AuditSetGlobalSaclW
 #else
     #define AuditLookupCategoryName     AuditLookupCategoryNameA
     #define AuditLookupSubCategoryName  AuditLookupSubCategoryNameA
+    #define AuditQueryGlobalSacl        AuditQueryGlobalSaclA
+    #define AuditSetGlobalSacl          AuditSetGlobalSaclA
 #endif
 
 :include cplusepi.sp
