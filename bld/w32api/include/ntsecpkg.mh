@@ -61,6 +61,16 @@ typedef LSA_SEC_HANDLE  *PLSA_SEC_HANDLE;
 #define SECPKG_CALL_NETWORK_ONLY    0x00000400L
 #define SECPKG_CALL_WINLOGON        0x00000800L
 #define SECPKG_CALL_ASYNC_UPDATE    0x00001000L
+#define SECPKG_CALL_SYSTEM_PROC     0x00002000L
+#define SECPKG_CALL_NEGO            0x00004000L
+#define SECPKG_CALL_NEGO_EXTENDER   0x00008000L
+#define SECPKG_CALL_BUFFER_MARSHAL  0x00010000L
+
+/* Security package credential version number */
+#define SECPKG_CREDENTIAL_VERSION   201
+
+/* Security package credential flags */
+#define SECPKG_CREDENTIAL_FLAGS_CALLER_HAS_TCB  0x00000001L
 
 /* Security buffer flags */
 #define SECBUFFER_UNMAPPED      0x40000000L
@@ -74,6 +84,7 @@ typedef LSA_SEC_HANDLE  *PLSA_SEC_HANDLE;
 #define PRIMARY_CRED_LOGON_NO_TCB                   0x00000010L
 #define PRIMARY_CRED_LOGON_LUA                      0x00000020L
 #define PRIMARY_CRED_INTERACTIVE_SMARTCARD_LOGON    0x00000040L
+#define PRIMARY_CRED_REFRESH_NEEDED                 0x00000080L
 #define PRIMARY_CRED_LOGON_PACKAGE_SHIFT            24
 #define PRIMARY_CRED_PACKAGE_MASK                   0xFF000000L
 
@@ -148,6 +159,8 @@ typedef LSA_SEC_HANDLE  *PLSA_SEC_HANDLE;
 #define SECPKG_INTERFACE_VERSION_2  0x00020000L
 #define SECPKG_INTERFACE_VERSION_3  0x00040000L
 #define SECPKG_INTERFACE_VERSION_4  0x00080000L
+#define SECPKG_INTERFACE_VERSION_5  0x00100000L
+#define SECPKG_INTERFACE_VERSION_6  0x00200000L
 
 /* LSA token information type */
 typedef enum _LSA_TOKEN_INFORMATION_TYPE {
@@ -286,6 +299,7 @@ typedef struct _SECPKG_CALL_INFO {
     ULONG   ThreadId;
     ULONG   Attributes;
     ULONG   CallCount;
+    PVOID   MechOid;
 } SECPKG_CALL_INFO;
 typedef SECPKG_CALL_INFO    *PSECPKG_CALL_INFO;
 
@@ -296,6 +310,50 @@ typedef struct _SECPKG_SUPPLEMENTAL_CRED {
     PUCHAR          Credentials;
 } SECPKG_SUPPLEMENTAL_CRED;
 typedef SECPKG_SUPPLEMENTAL_CRED    *PSECPKG_SUPPLEMENTAL_CRED;
+
+/* Security package byte vector */
+typedef struct _SECPKG_BYTE_VECTOR {
+    ULONG   ByteArrayOffset;
+    USHORT  ByteArrayLength;
+} SECPKG_BYTE_VECTOR;
+typedef SECPKG_BYTE_VECTOR  *PSECPKG_BYTE_VECTOR;
+
+/* Security package short vector */
+typedef struct _SECPKG_SHORT_VECTOR {
+    ULONG   ShortArrayOffset;
+    USHORT  ShortArrayCount;
+} SECPKG_SHORT_VECTOR;
+typedef SECPKG_SHORT_VECTOR *PSECPKG_SHORT_VECTOR;
+
+/* Security supplied credential */
+typedef struct _SECPKG_SUPPLIED_CREDENTIAL {
+    USHORT              cbHeaderLength;
+    USHORT              cbStructureLength;
+    SECPKG_SHORT_VECTOR UserName;
+    SECPKG_SHORT_VECTOR DomainName;
+    SECPKG_BYTE_VECTOR  PackedCredentials;
+    ULONG               CredFlags;
+} SECPKG_SUPPLIED_CREDENTIAL;
+typedef SECPKG_SUPPLIED_CREDENTIAL  *PSECPKG_SUPPLIED_CREDENTIAL;
+
+/* Security package credential */
+typedef struct _SECPKG_CREDENTIAL {
+    ULONG64             Version;
+    USHORT              cbHeaderLength;
+    ULONG               cbStructureLength;
+    ULONG               ClientProcess;
+    ULONG               ClientThread;
+    LUID                LogonId;
+    HANDLE              ClientToken;
+    ULONG               SessionId;
+    LUID                ModifiedId;
+    ULONG               fCredentials;
+    ULONG               Flags;
+    SECPKG_BYTE_VECTOR  PrincipalName;
+    SECPKG_BYTE_VECTOR  PackageList;
+    SECPKG_BYTE_VECTOR  MarshaledSuppliedCreds;
+} SECPKG_CREDENTIAL;
+typedef SECPKG_CREDENTIAL   *PSECPKG_CREDENTIAL;
 
 /* Security package supplemental credential array */
 typedef struct _SECPKG_SUPPLEMENTAL_CRED_ARRAY {
@@ -348,7 +406,8 @@ typedef enum _SECPKG_EXTENDED_INFORMATION_CLASS {
     SecpkgMutualAuthLevel   = 3,
     SecpkgWowClientDll      = 4,
     SecpkgExtraOids         = 5,
-    SecpkgMaxInfo           = 6
+    SecpkgMaxInfo           = 6,
+    SecpkgNego2Info         = 7
 } SECPKG_EXTENDED_INFORMATION_CLASS;
 
 /* Security package GSS information */
@@ -392,6 +451,13 @@ typedef struct _SECPKG_EXTRA_OIDS {
 } SECPKG_EXTRA_OIDS;
 typedef SECPKG_EXTRA_OIDS   *PSECPKG_EXTRA_OIDS;
 
+/* Security package Nego2 information */
+typedef struct _SECPKG_NEGO2_INFO {
+    UCHAR   AuthScheme[16];
+    ULONG   PackageFlags;
+} SECPKG_NEGO2_INFO;
+typedef SECPKG_NEGO2_INFO   *PSECPKG_NEGO2_INFO;
+
 /* Security package extended information */
 typedef struct _SECPKG_EXTENDED_INFORMATION {
     SECPKG_EXTENDED_INFORMATION_CLASS   Class;
@@ -401,9 +467,17 @@ typedef struct _SECPKG_EXTENDED_INFORMATION {
         SECPKG_MUTUAL_AUTH_LEVEL    MutualAuthLevel;
         SECPKG_WOW_CLIENT_DLL       WowClientDll;
         SECPKG_EXTRA_OIDS           ExtraOids;
+        SECPKG_NEGO2_INFO           Nego2Info;
     } Info;
 } SECPKG_EXTENDED_INFORMATION;
 typedef SECPKG_EXTENDED_INFORMATION *PSECPKG_EXTENDED_INFORMATION;
+
+/* Security package target information */
+typedef struct _SECPKG_TARGETINFO {
+    PSID    DomainSid;
+    PCWSTR  ComputerName;
+} SECPKG_TARGETINFO;
+typedef SECPKG_TARGETINFO   *PSECPKG_TARGETINFO;
 
 /* Security package context SASL context */
 typedef struct _SecPkgContext_SaslContext {
@@ -471,6 +545,7 @@ typedef NTSTATUS (NTAPI LSA_UPDATE_PRIMARY_CREDENTIALS)( PSECPKG_PRIMARY_CRED, P
 typedef VOID (NTAPI LSA_PROTECT_MEMORY)( PVOID, ULONG );
 typedef NTSTATUS (NTAPI LSA_OPEN_TOKEN_BY_LOGON_ID)( PLUID, HANDLE * );
 typedef NTSTATUS (NTAPI LSA_EXPAND_AUTH_DATA_FOR_DOMAIN)( PUCHAR, ULONG, PVOID, PUCHAR *, PULONG );
+typedef PVOID (NTAPI LSA_LOCATE_PKG_BY_ID)( ULONG );
 typedef LSA_IMPERSONATE_CLIENT              *PLSA_IMPERSONATE_CLIENT;
 typedef LSA_UNLOAD_PACKAGE                  *PLSA_UNLOAD_PACKAGE;
 typedef LSA_DUPLICATE_HANDLE                *PLSA_DUPLICATE_HANDLE;
@@ -505,6 +580,7 @@ typedef LSA_PROTECT_MEMORY                  *PLSA_PROTECT_MEMORY;
 typedef LSA_OPEN_TOKEN_BY_LOGON_ID          *PLSA_OPEN_TOKEN_BY_LOGON_ID;
 typedef LSA_EXPAND_AUTH_DATA_FOR_DOMAIN     *PLSA_EXPAND_AUTH_DATA_FOR_DOMAIN;
 typedef LSA_CREATE_TOKEN_EX                 *PLSA_CREATE_TOKEN_EX;
+typedef LSA_LOCATE_PKG_BY_ID                *PLSA_LOCATE_PKG_BY_ID;
 
 /* Security package event package change */
 typedef struct _SECPKG_EVENT_PACKAGE_CHANGE {
@@ -662,6 +738,7 @@ typedef struct _SECPKG_DLL_FUNCTIONS {
     PLSA_ALLOCATE_LSA_HEAP  AllocateHeap;
     PLSA_FREE_LSA_HEAP      FreeHeap;
     PLSA_REGISTER_CALLBACK  RegisterCallback;
+    PLSA_LOCATE_PKG_BY_ID   LocatePackageById;
 } SECPKG_DLL_FUNCTIONS;
 typedef SECPKG_DLL_FUNCTIONS    *PSECPKG_DLL_FUNCTIONS;
 
@@ -689,6 +766,11 @@ typedef NTSTATUS (NTAPI SpGetUserInfoFn)( PLUID, ULONG, PSecurityUserData * );
 typedef NTSTATUS (NTAPI SpQueryContextAttributesFn)( LSA_SEC_HANDLE, ULONG, PVOID );
 typedef NTSTATUS (NTAPI SpSetContextAttributesFn)( LSA_SEC_HANDLE, ULONG, PVOID, ULONG );
 typedef NTSTATUS (NTAPI SpChangeAccountPasswordFn)( PUNICODE_STRING, PUNICODE_STRING, PUNICODE_STRING, PUNICODE_STRING, BOOLEAN, PSecBufferDesc );
+typedef NTSTATUS (NTAPI SpQueryMetaDataFn)( LSA_SEC_HANDLE, PUNICODE_STRING, ULONG, PULONG, PUCHAR *, PLSA_SEC_HANDLE );
+typedef NTSTATUS (NTAPI SpExchangeMetaDataFn)( LSA_SEC_HANDLE, PUNICODE_STRING, ULONG, ULONG, PUCHAR, PLSA_SEC_HANDLE );
+typedef NTSTATUS (NTAPI SpGetCredUIContextFn)( LSA_SEC_HANDLE, GUID *, PULONG, PUCHAR * );
+typedef NTSTATUS (NTAPI SpUpdateCredentialsFn)( LSA_SEC_HANDLE, GUID *, ULONG, PUCHAR );
+typedef NTSTATUS (NTAPI SpValidateTargetInfoFn)( PLSA_CLIENT_REQUEST, PVOID, PVOID, ULONG, PSECPKG_TARGETINFO );
 typedef NTSTATUS (NTAPI SpInstanceInitFn)( ULONG, PSECPKG_DLL_FUNCTIONS, PVOID * );
 typedef NTSTATUS (NTAPI SpInitUserModeContextFn)( LSA_SEC_HANDLE, PSecBuffer );
 typedef NTSTATUS (NTAPI SpMakeSignatureFn)( LSA_SEC_HANDLE, ULONG, PSecBufferDesc, ULONG );
@@ -735,6 +817,11 @@ typedef struct _SECPKG_FUNCTION_TABLE {
     SpSetContextAttributesFn            *SetContextAttributes;
     SpSetCredentialsAttributesFn        *SetCredentialsAttributes;
     SpChangeAccountPasswordFn           *ChangeAccountPassword;
+    SpQueryMetaDataFn                   *QueryMetaData;
+    SpExchangeMetaDataFn                *ExchangeMetaData;
+    SpGetCredUIContextFn                *GetCredUIContext;
+    SpUpdateCredentialsFn               *UpdateCredentials;
+    SpValidateTargetInfoFn              *ValidateTargetInfo;
 } SECPKG_FUNCTION_TABLE;
 typedef SECPKG_FUNCTION_TABLE   *PSECPKG_FUNCTION_TABLE;
 
@@ -784,12 +871,14 @@ typedef NTSTATUS (SEC_ENTRY KSEC_REFERENCE_LIST_ENTRY)( PKSEC_LIST_ENTRY, ULONG,
 typedef VOID (SEC_ENTRY KSEC_DEREFERENCE_LIST_ENTRY)( PKSEC_LIST_ENTRY, BOOLEAN * );
 typedef NTSTATUS (SEC_ENTRY KSEC_SERIALIZE_WINNT_AUTH_DATA)( PVOID, PULONG, PVOID * );
 typedef NTSTATUS (SEC_ENTRY KSEC_SERIALIZE_SCHANNEL_AUTH_DATA)( PVOID, PULONG, PVOID * );
+typedef PVOID (SEC_ENTRY KSEC_LOCATE_PKG_BY_ID)( ULONG );
 typedef KSEC_CREATE_CONTEXT_LIST            *PKSEC_CREATE_CONTEXT_LIST;
 typedef KSEC_INSERT_LIST_ENTRY              *PKSEC_INSERT_LIST_ENTRY;
 typedef KSEC_REFERENCE_LIST_ENTRY           *PKSEC_REFERENCE_LIST_ENTRY;
 typedef KSEC_DEREFERENCE_LIST_ENTRY         *PKSEC_DEREFERENCE_LIST_ENTRY;
 typedef KSEC_SERIALIZE_WINNT_AUTH_DATA      *PKSEC_SERIALIZE_WINNT_AUTH_DATA;
 typedef KSEC_SERIALIZE_SCHANNEL_AUTH_DATA   *PKSEC_SERIALIZE_SCHANNEL_AUTH_DATA;
+typedef KSEC_LOCATE_PKG_BY_ID               *PKSEC_LOCATE_PKG_BY_ID;
 
 /* Security package kernel functions */
 typedef struct _SECPKG_KERNEL_FUNCTIONS {
@@ -801,6 +890,7 @@ typedef struct _SECPKG_KERNEL_FUNCTIONS {
     PKSEC_DEREFERENCE_LIST_ENTRY        DereferenceListEntry;
     PKSEC_SERIALIZE_WINNT_AUTH_DATA     SerializeWinntAuthData;
     PKSEC_SERIALIZE_SCHANNEL_AUTH_DATA  SerializeSchannelAuthData;
+    PKSEC_LOCATE_PKG_BY_ID              LocatePackageById;
 } SECPKG_KERNEL_FUNCTIONS;
 typedef SECPKG_KERNEL_FUNCTIONS *PSECPKG_KERNEL_FUNCTIONS;
 
