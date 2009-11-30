@@ -46,6 +46,18 @@ typedef NET_IF_MEDIA_DUPLEX_STATE   NDIS_MEDIA_DUPLEX_STATE;
 typedef NET_IF_MEDIA_DUPLEX_STATE   *PNDIS_MEDIA_DUPLEX_STATE;
 typedef ULONG                       NDIS_PORT_NUMBER;
 typedef ULONG                       *PNDIS_PORT_NUMBER;
+#if NDIS_SUPPORT_NDIS620
+typedef ULONG                       NDIS_RECEIVE_QUEUE_ID;
+typedef ULONG                       *PNDIS_RECEIVE_QUEUE_ID;
+typedef ULONG                       NDIS_RECEIVE_QUEUE_GROUP_ID;
+typedef ULONG                       *PNDIS_RECEIVE_QUEUE_GROUP_ID;
+typedef ULONG                       NDIS_RECEIVE_FILTER_ID;
+typedef ULONG                       *PNDIS_RECEIVE_FILTER_ID;
+typedef NDIS_IF_COUNTED_STRING      NDIS_QUEUE_NAME;
+typedef NDIS_IF_COUNTED_STRING      *PNDIS_QUEUE_NAME;
+typedef NDIS_IF_COUNTED_STRING      NDIS_VM_NAME;
+typedef NDIS_IF_COUNTED_STRING      *PNDIS_VM_NAME;
+#endif
 #endif
 
 /* NDIS device name */
@@ -109,9 +121,19 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
 #define NDIS_OBJECT_TYPE_OFFLOAD_ENCAPSULATION                              0xA8
 #define NDIS_OBJECT_TYPE_CONFIGURATION_OBJECT                               0xA9
 #define NDIS_OBJECT_TYPE_DRIVER_WRAPPER_OBJECT                              0xAA
+#if NDIS_SUPPORT_NDIS61
+    #define NDIS_OBJECT_TYPE_HD_SPLIT_ATTRIBUTES                            0xAB
+#endif
 #define NDIS_OBJECT_TYPE_NSI_NETWORK_RW_STRUCT                              0xAC
 #define NDIS_OBJECT_TYPE_NSI_COMPARTMENT_RW_STRUCT                          0xAD
 #define NDIS_OBJECT_TYPE_NSI_INTERFACE_PERSIST_RW_STRUCT                    0xAE
+#if NDIS_SUPPORT_NDIS61
+    #define NDIS_OBJECT_TYPE_MINIPORT_ADAPTER_HARDWARE_ASSIST_ATTRIBUTES    0xAF
+#endif
+#if NDIS_SUPPORT_NDIS620
+    #define NDIS_OBJECT_TYPE_SHARED_MEMORY_PROVIDER_CHARACTERISTICS         0xB0
+    #define NDIS_OBJECT_TYPE_RSS_PROCESSOR_INFO                             0xB1
+#endif
 
 /* NDIS object header revision number */
 #define NDIS_OBJECT_REVISION_1  1
@@ -163,6 +185,9 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
     #define NDIS_OBJECT_TYPE_PCI_DEVICE_CUSTOM_PROPERTIES_REVISION_1    1
 #endif
+#if (NTDDI_VERSION >= 0x06010000) || NDIS_SUPPORT_NDIS620
+    #define NDIS_OBJECT_TYPE_PCI_DEVICE_CUSTOM_PROPERTIES_REVISION_2    2
+#endif
 
 /* Object identifiers */
 #define OID_GEN_SUPPORTED_LIST                          0x00010101L
@@ -205,13 +230,20 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
     #define OID_GEN_PORT_AUTHENTICATION_PARAMETERS      0x0001020FL
     #define OID_GEN_TIMEOUT_DPC_REQUEST_CAPABILITIES    0x00010210L
     #define OID_GEN_PCI_DEVICE_CUSTOM_PROPERTIES        0x00010211L
+    #define OID_GEN_PHYSICAL_MEDIUM_EX                  0x00010213L
 #endif
 #define OID_GEN_MACHINE_NAME                            0x0001021AL
 #define OID_GEN_RNDIS_CONFIG_PARAMETER                  0x0001021BL
 #define OID_GEN_VLAN_ID                                 0x0001021CL
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
     #define OID_GEN_MINIPORT_RESTART_ATTRIBUTES         0x0001021DL
+    #if NDIS_SUPPORT_NDIS61
+        #define OID_GEN_HD_SPLIT_PARAMETERS             0x0001021EL
+    #endif
     #define OID_GEN_RECEIVE_HASH                        0x0001021FL
+    #if NDIS_SUPPORT_NDIS61
+        #define OID_GEN_HD_SPLIT_CURRENT_CONFIG         0x00010220L
+    #endif
     #define OID_GEN_PROMISCUOUS_MODE                    0x00010280L
     #define OID_GEN_LAST_CHANGE                         0x00010281L
     #define OID_GEN_DISCONTINUITY_TIME                  0x00010282L
@@ -225,6 +257,28 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
     #define OID_GEN_MEDIA_CONNECT_STATUS_EX             0x0001028AL
     #define OID_GEN_LINK_SPEED_EX                       0x0001028BL
     #define OID_GEN_MEDIA_DUPLEX_STATE                  0x0001028CL
+    #define OID_GEN_IP_OPER_STATUS                      0x0001028DL
+    #define OID_WWAN_DRIVER_CAPS                        0x0E010100L
+    #define OID_WWAN_DEVICE_CAPS                        0x0E010101L
+    #define OID_WWAN_READY_INFO                         0x0E010102L
+    #define OID_WWAN_RADIO_STATE                        0x0E010103L
+    #define OID_WWAN_PIN                                0x0E010104L
+    #define OID_WWAN_PIN_LIST                           0x0E010105L
+    #define OID_WWAN_HOME_PROVIDER                      0x0E010106L
+    #define OID_WWAN_PREFERRED_PROVIDERS                0x0E010107L
+    #define OID_WWAN_VISIBLE_PROVIDERS                  0x0E010108L
+    #define OID_WWAN_REGISTER_STATE                     0x0E010109L
+    #define OID_WWAN_PACKET_SERVICE                     0x0E01010AL
+    #define OID_WWAN_SIGNAL_STATE                       0x0E01010BL
+    #define OID_WWAN_CONNECT                            0x0E01010CL
+    #define OID_WWAN_PROVISIONED_CONTEXTS               0x0E01010DL
+    #define OID_WWAN_SERVICE_ACTIVATION                 0x0E01010EL
+    #define OID_WWAN_SMS_CONFIGURATION                  0x0E01010FL
+    #define OID_WWAN_SMS_READ                           0x0E010110L
+    #define OID_WWAN_SMS_SEND                           0x0E010111L
+    #define OID_WWAN_SMS_DELETE                         0x0E010112L
+    #define OID_WWAN_SMS_STATUS                         0x0E010113L
+    #define OID_WWAN_VENDOR_SPECIFIC                    0x0E010114L
 #endif
 #define OID_GEN_XMIT_OK                                 0x00020101L
 #define OID_GEN_RCV_OK                                  0x00020102L
@@ -663,6 +717,32 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
 #define OID_PNP_ENABLE_WAKE_UP                          0xFD010106L
 #define OID_PNP_WAKE_UP_OK                              0xFD020200L
 #define OID_PNP_WAKE_UP_ERROR                           0xFD020201L
+#if (NTDDI_VERSION >= 0x06010000) || NDIS_SUPPORT_NDIS620
+    #define OID_PM_CURRENT_CAPABILITIES                 0xFD010107L
+    #define OID_PM_HARDWARE_CAPABILITIES                0xFD010108L
+    #define OID_PM_PARAMETERS                           0xFD010109L
+    #define OID_PM_ADD_WOL_PATTERN                      0xFD01010AL
+    #define OID_PM_REMOVE_WOL_PATTERN                   0xFD01010BL
+    #define OID_PM_WOL_PATTERN_LIST                     0xFD01010CL
+    #define OID_PM_ADD_PROTOCOL_OFFLOAD                 0xFD01010DL
+    #define OID_PM_GET_PROTOCOL_OFFLOAD                 0xFD01010EL
+    #define OID_PM_REMOVE_PROTOCOL_OFFLOAD              0xFD01010FL
+    #define OID_PM_PROTOCOL_OFFLOAD_LIST                0xFD010110L
+    #define OID_RECEIVE_FILTER_HARDWARE_CAPABILITIES    0x00010221L
+    #define OID_RECEIVE_FILTER_GLOBAL_PARAMETERS        0x00010222L
+    #define OID_RECEIVE_FILTER_ALLOCATE_QUEUE           0x00010223L
+    #define OID_RECEIVE_FILTER_FREE_QUEUE               0x00010224L
+    #define OID_RECEIVE_FILTER_ENUM_QUEUES              0x00010225L
+    #define OID_RECEIVE_FILTER_QUEUE_PARAMETERS         0x00010226L
+    #define OID_RECEIVE_FILTER_SET_FILTER               0x00010227L
+    #define OID_RECEIVE_FILTER_CLEAR_FILTER             0x00010228L
+    #define OID_RECEIVE_FILTER_ENUM_FILTERS             0x00010229L
+    #define OID_RECEIVE_FILTER_PARAMETERS               0x0001022AL
+    #define OID_RECEIVE_FILTER_QUEUE_ALLOCATION_COMPLETE    0x0001022BL
+    #define OID_RECEIVE_FILTER_CURRENT_CAPABILITIES     0x0001022DL
+    #define OID_NIC_SWITCH_HARDWARE_CAPABILITIES        0x0001022EL
+    #define OID_NIC_SWITCH_CURRENT_CAPABILITIES         0x0001022FL
+#endif
 #define OID_TCP_TASK_OFFLOAD                            0xFC010201L
 #define OID_TCP_TASK_IPSEC_ADD_SA                       0xFC010202L
 #define OID_TCP_TASK_IPSEC_DELETE_SA                    0xFC010203L
@@ -679,6 +759,11 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
 #define OID_TCP_CONNECTION_OFFLOAD_CURRENT_CONFIG       0xFC01020EL
 #define OID_TCP_CONNECTION_OFFLOAD_HARDWARE_CAPABILITIES    0xFC01020FL
 #define OID_OFFLOAD_ENCAPSULATION                       0x0101010AL
+#if NDIS_SUPPORT_NDIS61
+    #define OID_TCP_TASK_IPSEC_OFFLOAD_V2_ADD_SA        0xFC030202L
+    #define OID_TCP_TASK_IPSEC_OFFLOAD_V2_DELETE_SA     0xFC030203L
+    #define OID_TCP_TASK_IPSEC_OFFLOAD_V2_UPDATE_SA     0xFC030204L
+#endif
 #define OID_FFP_SUPPORT                                 0xFC010210L
 #define OID_FFP_FLUSH                                   0xFC010211L
 #define OID_FFP_CONTROL                                 0xFC010212L
@@ -687,6 +772,10 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
 #define OID_FFP_DRIVER_STATS                            0xFC020210L
 #define OID_FFP_ADAPTER_STATS                           0xFC020211L
 #define OID_TCP_CONNECTION_OFFLOAD_PARAMETERS           0xFC030201L
+#if (NTDDI_VERSION >= 0x06010000) || NDIS_SUPPORT_NDIS620
+    #define OID_TUNNEL_INTERFACE_SET_OID                0x0F010106L
+    #define OID_TUNNEL_INTERFACE_RELEASE_OID            0x0F010107L
+#endif
 
 /* NDIS 802.3 MAC option flags */
 #define NDIS_802_3_MAC_OPTION_PRIORITY  0x00000001L
@@ -860,22 +949,43 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
     #define NDIS_OPER_STATE_REVISION_1  1
 #endif
 
+/* Maximum number of address families */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define MAXIMUM_IP_OPER_STATUS_ADDRESS_FAMILIES_SUPPORTED   32
+#endif
+
+/* NDIS IP operational status information revision number */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_IP_OPER_STATUS_INFO_REVISION_1 1
+#endif
+
+/* NDIS IP operational state revision number */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_IP_OPER_STATE_REVISION_1   1
+#endif
+
 /* NDIS offload parameter values */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
-    #define NDIS_OFFLOAD_PARAMETERS_TX_RX_DISABLED              1
-    #define NDIS_OFFLOAD_PARAMETERS_TX_ENABLED_RX_DISABLED      2
-    #define NDIS_OFFLOAD_PARAMETERS_RX_ENABLED_TX_DISABLED      3
-    #define NDIS_OFFLOAD_PARAMETERS_TX_RX_ENABLED               4
-    #define NDIS_OFFLOAD_PARAMETERS_LSOV1_DISABLED              1
-    #define NDIS_OFFLOAD_PARAMETERS_LSOV1_ENABLED               2
-    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_DISABLED            1
-    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_AH_ENABLED          2
-    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_ESP_ENABLED         3
-    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_AH_AND_ESP_ENABLED  4
-    #define NDIS_OFFLOAD_PARAMETERS_LSOV2_DISABLED              1
-    #define NDIS_OFFLOAD_PARAMETERS_LSOV2_ENABLED               2
-    #define NDIS_OFFLOAD_PARAMETERS_CONNECTION_OFFLOAD_DISABLED 1
-    #define NDIS_OFFLOAD_PARAMETERS_CONNECTION_OFFLOAD_ENABLED  2
+    #define NDIS_OFFLOAD_PARAMETERS_TX_RX_DISABLED                  1
+    #define NDIS_OFFLOAD_PARAMETERS_TX_ENABLED_RX_DISABLED          2
+    #define NDIS_OFFLOAD_PARAMETERS_RX_ENABLED_TX_DISABLED          3
+    #define NDIS_OFFLOAD_PARAMETERS_TX_RX_ENABLED                   4
+    #define NDIS_OFFLOAD_PARAMETERS_LSOV1_DISABLED                  1
+    #define NDIS_OFFLOAD_PARAMETERS_LSOV1_ENABLED                   2
+    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_DISABLED                1
+    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_AH_ENABLED              2
+    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_ESP_ENABLED             3
+    #define NDIS_OFFLOAD_PARAMETERS_IPSECV1_AH_AND_ESP_ENABLED      4
+    #define NDIS_OFFLOAD_PARAMETERS_LSOV2_DISABLED                  1
+    #define NDIS_OFFLOAD_PARAMETERS_LSOV2_ENABLED                   2
+    #if NDIS_SUPPORT_NDIS61
+        #define NDIS_OFFLOAD_PARAMETERS_IPSECV2_DISABLED            1
+        #define NDIS_OFFLOAD_PARAMETERS_IPSECV2_AH_ENABLED          2
+        #define NDIS_OFFLOAD_PARAMETERS_IPSECV2_ESP_ENABLED         3
+        #define NDIS_OFFLOAD_PARAMETERS_IPSECV2_AH_AND_ESP_ENABLED  4
+    #endif
+    #define NDIS_OFFLOAD_PARAMETERS_CONNECTION_OFFLOAD_DISABLED     1
+    #define NDIS_OFFLOAD_PARAMETERS_CONNECTION_OFFLOAD_ENABLED      2
 #endif
 
 /* NDIS offload values */
@@ -897,9 +1007,35 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
     #define NDIS_ENCAPSULATION_IEEE_LLC_SNAP_ROUTED         0x00000010L
 #endif
 
-/* NDIS offload parameters revision number */
+/* NDIS offload parameters revision numbers */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
-    #define NDIS_OFFLOAD_PARAMETERS_REVISION_1  1
+    #define NDIS_OFFLOAD_PARAMETERS_REVISION_1      1
+    #if NDIS_SUPPORT_NDIS61
+        #define NDIS_OFFLOAD_PARAMETERS_REVISION_2  2
+    #endif
+#endif
+
+/* IPsec offload authentication algorithm flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+    #define IPSEC_OFFLOAD_V2_AUTHENTICATION_MD5         0x00000001L
+    #define IPSEC_OFFLOAD_V2_AUTHENTICATION_SHA_1       0x00000002L
+    #define IPSEC_OFFLOAD_V2_AUTHENTICATION_SHA_256     0x00000004L
+    #define IPSEC_OFFLOAD_V2_AUTHENTICATION_AES_GCM_128 0x00000008L
+    #define IPSEC_OFFLOAD_V2_AUTHENTICATION_AES_GCM_192 0x00000010L
+    #define IPSEC_OFFLOAD_V2_AUTHENTICATION_AES_GCM_256 0x00000020L
+#endif
+
+/* IPsec offload encryption algorithm flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_NONE        0x00000001L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_DES_CBC     0x00000002L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_3_DES_CBC   0x00000004L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_AES_GCM_128 0x00000008L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_AES_GCM_192 0x00000010L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_AES_GCM_256 0x00000020L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_AES_CBC_128 0x00000040L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_AES_CBC_192 0x00000080L
+    #define IPSEC_OFFLOAD_V2_ENCRYPTION_AES_CBC_256 0x00000100L
 #endif
 
 /* NDIS offload flags */
@@ -907,14 +1043,20 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
     #define NDIS_OFFLOAD_FLAGS_GROUP_CHECKSUM_CAPABILITIES  0x00000001L
 #endif
 
-/* NDIS offload revision number */
+/* NDIS offload revision numbers */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
-    #define NDIS_OFFLOAD_REVISION_1 1
+    #define NDIS_OFFLOAD_REVISION_1     1
+    #if NDIS_SUPPORT_NDIS61
+        #define NDIS_OFFLOAD_REVISION_2 2
+    #endif
 #endif
 
 /* NDIS TCP connection offload revision number */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
-    #define NDIS_TCP_CONNECTION_OFFLOAD_REVISION_1  1
+    #define NDIS_TCP_CONNECTION_OFFLOAD_REVISION_1      1
+    #if NDIS_SUPPORT_NDIS61
+        #define NDIS_TCP_CONNECTION_OFFLOAD_REVISION_2  2
+    #endif
 #endif
 
 /* NDIS port constants */
@@ -970,6 +1112,392 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
 /* NDIS device types */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
     #define NDIS_DEVICE_TYPE_ENDPOINT   0x00000001L
+#endif
+
+/* NDIS HD split parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+    #define NDIS_HD_SPLIT_PARAMETERS_REVISION_1 1
+#endif
+
+/* NDIS HD split combine flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+    #define NDIS_HD_SPLIT_COMBINE_ALL_HEADERS   0x00000001L
+#endif
+
+/* NDIS HD split current configuration revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+    #define NDIS_HD_SPLIT_CURRENT_CONFIG_REVISION_1 1
+#endif
+
+/* NDIS HD split capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+    #define NDIS_HD_SPLIT_CAPS_SUPPORTS_HEADER_DATA_SPLIT       0x00000001L
+    #define NDIS_HD_SPLIT_CAPS_SUPPORTS_IPV4_OPTIONS            0x00000002L
+    #define NDIS_HD_SPLIT_CAPS_SUPPORTS_IPV6_EXTENSION_HEADERS  0x00000004L
+    #define NDIS_HD_SPLIT_CAPS_SUPPORTS_TCP_OPTIONS             0x00000008L
+#endif
+
+/* NDIS HD split flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+    #define NDIS_HD_SPLIT_ENABLE_HEADER_DATA_SPLIT  0x00000001L
+#endif
+
+/* NDIS power management WOL supported pattern capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_WOL_BITMAP_PATTERN_SUPPORTED            0x00000001L
+    #define NDIS_PM_WOL_MAGIC_PACKET_SUPPORTED              0x00000002L
+    #define NDIS_PM_WOL_IPV4_TCP_SYN_SUPPORTED              0x00000004L
+    #define NDIS_PM_WOL_IPV6_TCP_SYN_SUPPORTED              0x00000008L
+    #define NDIS_PM_WOL_IPV4_DEST_ADDR_WILDCARD_SUPPORTED   0x00000200L
+    #define NDIS_PM_WOL_IPV6_DEST_ADDR_WILDCARD_SUPPORTED   0x00000800L
+    #define NDIS_PM_WOL_EAPOL_REQUEST_ID_MESSAGE_SUPPORTED  0x00010000L
+#endif
+
+/* NDIS power management WOL enabled pattern capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_WOL_BITMAP_PATTERN_ENABLED              0x00000001L
+    #define NDIS_PM_WOL_MAGIC_PACKET_ENABLED                0x00000002L
+    #define NDIS_PM_WOL_IPV4_TCP_SYN_ENABLED                0x00000004L
+    #define NDIS_PM_WOL_IPV6_TCP_SYN_ENABLED                0x00000008L
+    #define NDIS_PM_WOL_IPV4_DEST_ADDR_WILDCARD_ENABLED     0x00000200L
+    #define NDIS_PM_WOL_IPV6_DEST_ADDR_WILDCARD_ENABLED     0x00000800L
+    #define NDIS_PM_WOL_EAPOL_REQUEST_ID_MESSAGE_ENABLED    0x00010000L
+#endif
+
+/* NDIS power management WOL priority values */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_WOL_PRIORITY_LOWEST     0xFFFFFFFFL
+    #define NDIS_PM_WOL_PRIORITY_NORMAL     0x10000000L
+    #define NDIS_PM_WOL_PRIORITY_HIGHEST    0x00000001L
+#endif
+
+/* NDIS power management protocol supported offload capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_PROTOCOL_OFFLOAD_ARP_SUPPORTED              0x00000001L
+    #define NDIS_PM_PROTOCOL_OFFLOAD_NS_SUPPORTED               0x00000002L
+    #define NDIS_PM_PROTOCOL_OFFLOAD_80211_RSN_REKEY_SUPPORTED  0x00000080L
+#endif
+
+/* NDIS power management protocol enabled offload capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_PROTOCOL_OFFLOAD_ARP_ENABLED                0x00000001L
+    #define NDIS_PM_PROTOCOL_OFFLOAD_NS_ENABLED                 0x00000002L
+    #define NDIS_PM_PROTOCOL_OFFLOAD_80211_RSN_REKEY_ENABLED    0x00000080L
+#endif
+
+/* NDIS power management protocol offload priority values */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_PROTOCOL_OFFLOAD_PRIORITY_LOWEST    0xFFFFFFFFL
+    #define NDIS_PM_PROTOCOL_OFFLOAD_PRIORITY_NORMAL    0x10000000L
+    #define NDIS_PM_PROTOCOL_OFFLOAD_PRIORITY_HIGHEST   0x00000001L
+#endif
+
+/* NDIS power management wakeup flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_WAKE_ON_LINK_CHANGE_ENABLED 0x00000001L
+#endif
+
+/* NDIS power management maximum string size */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_MAX_STRING_SIZE 64
+#endif
+
+/* NDIS power management capabilities revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_CAPABILITIES_REVISION_1 1
+#endif
+
+/* NDIS power management parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_PARAMETERS_REVISION_1   1
+#endif
+
+/* EAPOL request identifier WOL flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define EAPOL_REQUEST_ID_WOL_FLAG_MUST_ENCRYPT  0x00000001L
+#endif
+
+/* NDIS power management pattern identifier special values */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_MAX_PATTERN_ID      0x0000FFFFL
+    #define NDIS_PM_PRIVATE_PATTERN_ID  0x00000001L
+#endif
+
+/* NDIS power management WOL pattern revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_WOL_PATTERN_REVISION_1  1
+#endif
+
+/* 802.11 RSN handshake parameter lengths */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define DOT11_RSN_KEK_LENGTH    16
+    #define DOT11_RSN_KCK_LENGTH    16
+#endif
+
+/* NDIS power management protocol offload revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_PM_PROTOCOL_OFFLOAD_REVISION_1 1
+#endif
+
+/* NDIS WMI power management administrator configuration revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_WMI_PM_ADMIN_CONFIG_REVISION_1 1
+#endif
+
+/* NDIS WMI power management active capabilities revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_WMI_PM_ACTIVE_CAPABILITIES_REVISION_1  1
+#endif
+
+/* NDIS receive filter supported header flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_MAC_HEADER_SUPPORTED    0x00000001L
+#endif
+
+/* NDIS receive filter supported MAC header field flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_MAC_HEADER_DEST_ADDR_SUPPORTED      0x00000001L
+    #define NDIS_RECEIVE_FILTER_MAC_HEADER_SOURCE_ADDR_SUPPORTED    0x00000002L
+    #define NDIS_RECEIVE_FILTER_MAC_HEADER_PROTOCOL_SUPPORTED       0x00000004L
+    #define NDIS_RECEIVE_FILTER_MAC_HEADER_VLAN_ID_SUPPORTED        0x00000008L
+    #define NDIS_RECEIVE_FILTER_MAC_HEADER_PRIORITY_SUPPORTED       0x00000010L
+#endif
+
+/* NDIS receive filter supported filter test flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_EQUAL_SUPPORTED       0x00000001L
+    #define NDIS_RECEIVE_FILTER_TEST_HEADER_FIELD_MASK_EQUAL_SUPPORTED  0x00000002L
+#endif
+
+/* NDIS receive filter supported queue property flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_MSI_X_SUPPORTED             0x00000001L
+    #define NDIS_RECEIVE_FILTER_VM_QUEUE_SUPPORTED          0x00000002L
+    #define NDIS_RECEIVE_FILTER_LOOKAHEAD_SPLIT_SUPPORTED   0x00000004L
+#endif
+
+/* NDIS receive filter enabled filter type flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_VMQ_FILTERS_ENABLED 0x00000001L
+#endif
+
+/* NDIS receive filter enabled queue type flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_VM_QUEUES_ENABLED   0x00000001L
+#endif
+
+/* NDIS receive filter capabilities revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_CAPABILITIES_REVISION_1 1
+#endif
+
+/* NDIS NIC switch capabilities revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_NIC_SWITCH_CAPABILITIES_REVISION_1 1
+#endif
+
+/* NDIS receive filter global parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_GLOBAL_PARAMETERS_REVISION_1    1
+#endif
+
+/* NDIS identifier default values */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_DEFAULT_RECEIVE_QUEUE_ID       0L
+    #define NDIS_DEFAULT_RECEIVE_QUEUE_GROUP_ID 0L
+    #define NDIS_DEFAULT_RECEIVE_FILTER_ID      0L
+#endif
+
+/* NDIS receive filter field flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_MAC_HEADER_VLAN_UNTAGGED_OR_ZERO    0x00000001L
+#endif
+
+/* NDIS receive filter field parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_FIELD_PARAMETERS_REVISION_1 1
+#endif
+
+/* NDIS receive filter parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_PARAMETERS_REVISION_1   1
+#endif
+
+/* NDIS receive filter clear parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_CLEAR_PARAMETERS_REVISION_1 1
+#endif
+
+/* NDIS receive queue parameters flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_PER_QUEUE_RECEIVE_INDICATION  0x00000001L
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_LOOKAHEAD_SPLIT_REQUIRED      0x00000002L
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_FLAGS_CHANGED                 0x00010000L
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_PROCESSOR_AFFINITY_CHANGED    0x00020000L
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_SUGGESTED_RECV_BUFFER_NUMBERS_CHANGED 0x00040000L
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_NAME_CHANGED                  0x00080000L
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_CHANGE_MASK                   0xFFFF0000L
+#endif
+
+/* NDIS receive queue parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_PARAMETERS_REVISION_1    1
+#endif
+
+/* NDIS receive queue free parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_FREE_PARAMETERS_REVISION_1   1
+#endif
+
+/* NDIS receive queue information revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_INFO_REVISION_1  1
+#endif
+
+/* NDIS receive queue information array revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_INFO_ARRAY_REVISION_1    1
+#endif
+
+/* NDIS receive filter information revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_INFO_REVISION_1  1
+#endif
+
+/* NDIS receive filter information array revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_FILTER_INFO_ARRAY_REVISION_1   1
+#endif
+
+/* NDIS receive queue allocation complete parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_PARAMETERS_REVISION_1    1
+#endif
+
+/* NDIS receive queue allocation complete array revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY_REVISION_1 1
+#endif
+
+/* NDIS receive scale capabilities revision number */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RECEIVE_SCALE_CAPABILITIES_REVISION_1  1
+#endif
+
+/* NDIS receive scale capability flags */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RSS_CAPS_MESSAGE_SIGNALED_INTERRUPTS   0x01000000L
+    #define NDIS_RSS_CAPS_CLASSIFICATION_AT_ISR         0x02000000L
+    #define NDIS_RSS_CAPS_CLASSIFICATION_AT_DPC         0x04000000L
+    #if NDIS_SUPPORT_NDIS620
+        #define NDIS_RSS_CAPS_USING_MSI_X               0x08000000L
+    #endif
+    #define NDIS_RSS_CAPS_HASH_TYPE_TCP_IPV4            0x00000100L
+    #define NDIS_RSS_CAPS_HASH_TYPE_TCP_IPV6            0x00000200L
+    #define NDIS_RSS_CAPS_HASH_TYPE_TCP_IPV6_EX         0x00000400L
+#endif
+
+/* NDIS hash functions */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NdisHashFunctionToeplitz    0x00000001L
+    #define NDIS_HASH_FUNCTION_MASK     0x000000FFL
+    #define NDIS_HASH_TYPE_MASK         0x00FFFF00L
+#endif
+
+/* Macros to manipulate hash information */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RSS_HASH_FUNC_FROM_HASH_INFO( x ) \
+        ((x) & NDIS_HASH_FUNCTION_MASK)
+    #define NDIS_RSS_HASH_TYPE_FROM_HASH_INFO( x ) \
+        ((x) & NDIS_HASH_TYPE_MASK)
+    #define NDIS_RSS_HASH_INFO_FROM_TYPE_AND_FUNC( p1, p2 ) \
+        ((p1) | (p2))
+#endif
+
+/* NDIS hash types */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_HASH_IPV4          0x00000100L
+    #define NDIS_HASH_TCP_IPV4      0x00000200L
+    #define NDIS_HASH_IPV6          0x00000400L
+    #define NDIS_HASH_IPV6_EX       0x00000800L
+    #define NDIS_HASH_TCP_IPV6      0x00001000L
+    #define NDIS_HASH_TCP_IPV6_EX   0x00002000L
+#endif
+
+/* Unchanged parameter flags */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RSS_PARAM_FLAG_BASE_CPU_UNCHANGED  0x0001
+    #define NDIS_RSS_PARAM_FLAG_HASH_INFO_UNCHANGED 0x0002
+    #define NDIS_RSS_PARAM_FLAG_ITABLE_UNCHANGED    0x0004
+    #define NDIS_RSS_PARAM_FLAG_HASH_KEY_UNCHANGED  0x0008
+    #define NDIS_RSS_PARAM_FLAG_DISABLE_RSS         0x0010
+#endif
+
+/* Sizes */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RSS_INDIRECTION_TABLE_SIZE_REVISION_1  128
+    #define NDIS_RSS_HASH_SECRET_KEY_SIZE_REVISION_1    40
+#endif
+
+/* NDIS receive scale parameters revision numbers */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RECEIVE_SCALE_PARAMETERS_REVISION_1        1
+    #if NDIS_SUPPORT_NDIS620
+        #define NDIS_RECEIVE_SCALE_PARAMETERS_REVISION_2    2
+    #endif
+#endif
+
+/* Maximum sizes */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RSS_INDIRECTION_TABLE_MAX_SIZE_REVISION_1      128
+    #define NDIS_RSS_HASH_SECRET_KEY_MAX_SIZE_REVISION_1        40
+    #if NDIS_SUPPORT_NDIS620
+        #define NDIS_RSS_INDIRECTION_TABLE_MAX_SIZE_REVISION_2  \
+            (128 * sizeof( PROCESSOR_NUMBER ))
+        #define NDIS_RSS_HASH_SECRET_KEY_MAX_SIZE_REVISION_2    40
+    #endif
+#endif
+
+/* NDIS receive hash flags */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RECEIVE_HASH_FLAG_ENABLE_HASH          0x00000001L
+    #define NDIS_RECEIVE_HASH_FLAG_HASH_INFO_UNCHANGED  0x00000002L
+    #define NDIS_RECEIVE_HASH_FLAG_HASH_KEY_UNCHANGED   0x00000004L
+#endif
+
+/* NDIS receive hash parameters revision number */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+    #define NDIS_RECEIVE_HASH_PARAMETERS_REVISION_1 1
+#endif
+
+/* NDIS RSS processor information revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_RSS_PROCESSOR_INFO_REVISION_1  1
+#endif
+
+/* NDIS system processor information (extended version) revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_SYSTEM_PROCESSOR_INFO_EX_REVISION_1    1
+#endif
+
+/* NDIS hypervisor information flags */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_HYPERVISOR_INFO_FLAG_HYPERVISOR_PRESENT    0x00000001L
+#endif
+
+/* NDIS hypervisor information revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_HYPERVISOR_INFO_REVISION_1 1
+#endif
+
+/* NDIS WMI receive queue parameters revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_WMI_RECEIVE_QUEUE_PARAMETERS_REVISION_1    1
+#endif
+
+/* NDIS WMI receive queue information revision number */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+    #define NDIS_WMI_RECEIVE_QUEUE_INFO_REVISION_1  1
 #endif
 
 /* NDIS statistics value */
@@ -1079,6 +1607,11 @@ typedef struct _NDIS_PCI_DEVICE_CUSTOM_PROPERTIES {
     UINT32              CurrentLinkWidth;
     UINT32              MaxLinkSpeed;
     UINT32              MaxLinkWidth;
+#if (NTDDI_VERSION >= 0x06010000) || NDIS_SUPPORT_NDIS620
+    UINT32              PciExpressVersion;
+    UINT32              InterruptType;
+    UINT32              MaxInterruptMessages;
+#endif
 } NDIS_PCI_DEVICE_CUSTOM_PROPERTIES;
 typedef NDIS_PCI_DEVICE_CUSTOM_PROPERTIES   *PNDIS_PCI_DEVICE_CUSTOM_PROPERTIES;
 #endif
@@ -1626,7 +2159,13 @@ typedef enum _NDIS_MEDIUM {
     NdisMediumTunnel        = 15,
     NdisMediumNative802_11  = 16,
     NdisMediumLoopback      = 17,
+#if (NTDDI_VERSION >= 0x06010000)
+    NdisMediumWiMAX         = 18,
+    NdisMediumIP            = 19,
+    NdisMediumMax           = 20,
+#else
     NdisMediumMax           = 18
+#endif
 #else
     NdisMediumMax           = 15
 #endif
@@ -1818,7 +2357,13 @@ typedef enum _NDIS_WAN_MEDIUM_SUBTYPE {
     NdisWanMediumL2TP       = 9,
     NdisWanMediumIrda       = 10,
     NdisWanMediumParallel   = 11,
+#if (NTDDI_VERSION >= 0x06000000)
+    NdisWanMediumPppoe      = 12,
+    NdisWanMediumSSTP       = 13,
+    NdisWanMediumAgileVPN   = 14
+#else
     NdisWanMediumPppoe      = 12
+#endif
 } NDIS_WAN_MEDIUM_SUBTYPE;
 typedef NDIS_WAN_MEDIUM_SUBTYPE *PNDIS_WAN_MEDIUM_SUBTYPE;
 
@@ -1946,6 +2491,37 @@ typedef struct _NDIS_OPER_STATE {
 typedef NDIS_OPER_STATE *PNDIS_OPER_STATE;
 #endif
 
+/* NDIS IP operational status */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+typedef struct _NDIS_IP_OPER_STATUS {
+    ULONG               AddressFamily;
+    NET_IF_OPER_STATUS  OperationalStatus;
+    ULONG               OperationalStatusFlags;
+} NDIS_IP_OPER_STATUS;
+typedef NDIS_IP_OPER_STATUS *PNDIS_IP_OPER_STATUS;
+#endif
+
+/* NDIS IP operational status information */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+typedef struct _NDIS_IP_OPER_STATUS_INFO {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    ULONG               NumberofAddressFamiliesReturned;
+    NDIS_IP_OPER_STATUS IpOperationalStatus[MAXIMUM_IP_OPER_STATUS_ADDRESS_FAMILIES_SUPPORTED];
+} NDIS_IP_OPER_STATUS_INFO;
+typedef NDIS_IP_OPER_STATUS_INFO    *PNDIS_IP_OPER_STATUS_INFO;
+#endif
+
+/* NDIS IP operational state */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+typedef struct _NDIS_IP_OPER_STATE {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    NDIS_IP_OPER_STATUS IpOperationalStatus;
+} NDIS_IP_OPER_STATE;
+typedef NDIS_IP_OPER_STATE  *PNDIS_IP_OPER_STATE;
+#endif
+
 /* NDIS offload parameters */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
 typedef struct _NDIS_OFFLOAD_PARAMETERS {
@@ -1962,6 +2538,12 @@ typedef struct _NDIS_OFFLOAD_PARAMETERS {
     UCHAR               TcpConnectionIPv4;
     UCHAR               TcpConnectionIPv6;
     ULONG               Flags;
+#if NDIS_SUPPORT_NDIS61
+    UCHAR               IPsecV2;
+    UCHAR               IPsecV2IPv4;
+    UCHAR               Reserved1;
+    UCHAR               Reserved2;
+#endif
 } NDIS_OFFLOAD_PARAMETERS;
 typedef NDIS_OFFLOAD_PARAMETERS *PNDIS_OFFLOAD_PARAMETERS;
 #endif
@@ -2068,6 +2650,29 @@ typedef struct _NDIS_TCP_LARGE_SEND_OFFLOAD_V2 {
 typedef NDIS_TCP_LARGE_SEND_OFFLOAD_V2  *PNDIS_TCP_LARGE_SEND_OFFLOAD_V2;
 #endif
 
+/* NDIS IPsec offload (version 2) */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+typedef struct _NDIS_IPSEC_OFFLOAD_V2 {
+    ULONG   Encapsulation;
+    BOOLEAN IPv6Supported;
+    BOOLEAN IPv4Options;
+    BOOLEAN IPv6NonIPsecExtensionHeaders;
+    BOOLEAN Ah;
+    BOOLEAN Esp;
+    BOOLEAN AhEspCombined;
+    BOOLEAN Transport;
+    BOOLEAN Tunnel;
+    BOOLEAN TransportTunnelCombined;
+    BOOLEAN LsoSupported;
+    BOOLEAN ExtendedSequenceNumbers;
+    ULONG   UdpEsp;
+    ULONG   AuthenticationAlgorithms;
+    ULONG   EncryptionAlgorithms;
+    ULONG   SaOffloadCapacity;
+} NDIS_IPSEC_OFFLOAD_V2;
+typedef NDIS_IPSEC_OFFLOAD_V2   *PNDIS_IPSEC_OFFLOAD_V2;
+#endif
+
 /* NDIS offload */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
 typedef struct _NDIS_OFFLOAD {
@@ -2077,6 +2682,9 @@ typedef struct _NDIS_OFFLOAD {
     NDIS_IPSEC_OFFLOAD_V1           IPsecV1;
     NDIS_TCP_LARGE_SEND_OFFLOAD_V2  LsoV2;
     ULONG                           Flags;
+#if NDIS_SUPPORT_NDIS61
+    NDIS_IPSEC_OFFLOAD_V2           IPsecV2;
+#endif
 } NDIS_OFFLOAD;
 typedef NDIS_OFFLOAD    *PNDIS_OFFLOAD;
 #endif
@@ -2192,6 +2800,9 @@ typedef struct _NDIS_WMI_OFFLOAD {
     NDIS_WMI_IPSEC_OFFLOAD_V1           IPsecV1;
     NDIS_WMI_TCP_LARGE_SEND_OFFLOAD_V2  LsoV2;
     ULONG                               Flags;
+#if NDIS_SUPPORT_NDIS61
+    NDIS_IPSEC_OFFLOAD_V2               IPsecV2;
+#endif
 } NDIS_WMI_OFFLOAD;
 typedef NDIS_WMI_OFFLOAD    *PNDIS_WMI_OFFLOAD;
 #endif
@@ -2205,6 +2816,9 @@ typedef struct _NDIS_TCP_CONNECTION_OFFLOAD {
     ULONG               SupportIPv6                 : 2;
     ULONG               SupportIPv6ExtensionHeaders : 2;
     ULONG               SupportSack                 : 2;
+#if NDIS_SUPPORT_NDIS61
+    ULONG               CongestionAlgorithm         : 4;
+#endif
     ULONG               TcpConnectionOffloadCapacity;
     ULONG               Flags;
 } NDIS_TCP_CONNECTION_OFFLOAD;
@@ -2404,6 +3018,667 @@ typedef struct NDIS_WMI_OUTPUT_INFO {
     ULONG               DataOffset;
 } NDIS_WMI_OUTPUT_INFO;
 typedef NDIS_WMI_OUTPUT_INFO    *PNDIS_WMI_OUTPUT_INFO;
+#endif
+
+/* NDIS HD split parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+typedef struct _NDIS_HD_SPLIT_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               HDSplitCombineFlags;
+} NDIS_HD_SPLIT_PARAMETERS;
+typedef NDIS_HD_SPLIT_PARAMETERS    *PNDIS_HD_SPLIT_PARAMETERS;
+#endif
+
+/* NDIS HD split current configuration */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS61
+typedef struct _NDIS_HD_SPLIT_CURRENT_CONFIG {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               HardwareCapabilities;
+    ULONG               CurrentCapabilities;
+    ULONG               HDSplitFlags;
+    ULONG               HDSplitCombineFlags;
+    ULONG               BackfillSize;
+    ULONG               MaxHeaderSize;
+} NDIS_HD_SPLIT_CURRENT_CONFIG;
+typedef NDIS_HD_SPLIT_CURRENT_CONFIG    *PNDIS_HD_SPLIT_CURRENT_CONFIG;
+#endif
+
+/* NDIS power management WOL packet types */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_PM_WOL_PACKET {
+    NdisPMWoLPacketUnspecified              = 0,
+    NdisPMWoLPacketBitmapPattern            = 1,
+    NdisPMWoLPacketMagicPacket              = 2,
+    NdisPMWoLPacketIPv4TcpSyn               = 3,
+    NdisPMWoLPacketIPv6TcpSyn               = 4,
+    NdisPMWoLPacketEapolRequestIdMessage    = 5,
+    NdisPMWoLPacketMaximum                  = 6
+} NDIS_PM_WOL_PACKET;
+typedef NDIS_PM_WOL_PACKET  *PNDIS_PM_WOL_PACKET;
+#endif
+
+/* NDIS power management protocol offload types */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_PM_PROTOCOL_OFFLOAD_TYPE {
+    NdisPMProtocolOffloadIdUnspecified  = 0,
+    NdisPMProtocolOffloadIdIpv4ARP      = 1,
+    NdisPMProtocolOffloadIdIPv6Ns       = 2,
+    NdisPMProtocolOffload80211RSNRekey  = 3,
+    NdisPMProtocolOffloadIdMaximum      = 4
+} NDIS_PM_PROTOCOL_OFFLOAD_TYPE;
+typedef NDIS_PM_PROTOCOL_OFFLOAD_TYPE   *PNDIS_PM_PROTOCOL_OFFLOAD_TYPE;
+#endif
+
+/* NDIS power management counted string */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_PM_COUNTED_STRING {
+    USHORT  Length;
+    WCHAR   String[NDIS_PM_MAX_STRING_SIZE + 1];
+} NDIS_PM_COUNTED_STRING;
+typedef NDIS_PM_COUNTED_STRING  *PNDIS_PM_COUNTED_STRING;
+#endif
+
+/* NDIS power management capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_PM_CAPABILITIES {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   Flags;
+    ULONG                   SupportedWoLPacketPatterns;
+    ULONG                   NumTotalWoLPatterns;
+    ULONG                   MaxWoLPatternSize;
+    ULONG                   MaxWoLPatternOffset;
+    ULONG                   MaxWoLPacketSaveBuffer;
+    ULONG                   SupportedProtocolOffloads;
+    ULONG                   NumArpOffloadIPv4Addresses;
+    ULONG                   NumNSOffloadIPv6Addresses;
+    NDIS_DEVICE_POWER_STATE MinMagicPacketWakeUp;
+    NDIS_DEVICE_POWER_STATE MinPatternWakeUp;
+    NDIS_DEVICE_POWER_STATE MinLinkChangeWakeUp;
+} NDIS_PM_CAPABILITIES;
+typedef NDIS_PM_CAPABILITIES    *PNDIS_PM_CAPABILITIES;
+#endif
+
+/* NDIS power management parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_PM_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               EnabledWoLPacketPatterns;
+    ULONG               EnabledProtocolOffloads;
+    ULONG               WakeUpFlags;
+} NDIS_PM_PARAMETERS;
+typedef NDIS_PM_PARAMETERS  *PNDIS_PM_PARAMETERS;
+#endif
+
+/* NDIS power management WOL pattern */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_PM_WOL_PATTERN {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   Flags;
+    ULONG                   Priority;
+    NDIS_PM_WOL_PACKET      WoLPacketType;
+    NDIS_PM_COUNTED_STRING  FriendlyName;
+    ULONG                   PatternId;
+    ULONG                   NextWoLPatternOffset;
+    union _WOL_PATTERN {
+        struct _IPV4_TCP_SYN_WOL_PACKET_PARAMETERS {
+            ULONG   Flags;
+            UCHAR   IPv4SourceAddress[4];
+            UCHAR   IPv4DestAddress[4];
+            USHORT  TCPSourcePortNumber;
+            USHORT  TCPDestPortNumber;
+        } IPv4TcpSynParameters;
+        struct _IPV6_TCP_SYN_WOL_PACKET_PARAMETERS {
+            ULONG   Flags;
+            UCHAR   IPv6SourceAddress[16];
+            UCHAR   IPv6DestAddress[16];
+            USHORT  TCPSourcePortNumber;
+            USHORT  TCPDestPortNumber;
+        } IPv6TcpSynParameters;
+        struct _EAPOL_REQUEST_ID_MESSAGE_WOL_PACKET_PARAMETERS {
+            ULONG   Flags;
+        } EapolRequestIdMessageParameters;
+        struct _WOL_BITMAP_PATTERN {
+            ULONG   Flags;
+            ULONG   MaskOffset;
+            ULONG   MaskSize;
+            ULONG   PatternOffset;
+            ULONG   PatternSize;
+        } WoLBitMapPattern;
+    } WoLPattern;
+} NDIS_PM_WOL_PATTERN;
+typedef NDIS_PM_WOL_PATTERN *PNDIS_PM_WOL_PATTERN;
+#endif
+
+/* NDIS power management protocol offload */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_PM_PROTOCOL_OFFLOAD {
+    NDIS_OBJECT_HEADER              Header;
+    ULONG                           Flags;
+    ULONG                           Priority;
+    NDIS_PM_PROTOCOL_OFFLOAD_TYPE   ProtocolOffloadType;
+    NDIS_PM_COUNTED_STRING          FriendlyName;
+    ULONG                           ProtocolOffloadId;
+    ULONG                           NextProtocolOffloadOffset;
+    union _PROTOCOL_OFFLOAD_PARAMETERS {
+        struct _IPV4_ARP_PARAMETERS {
+            ULONG   Flags;
+            UCHAR   RemoteIPv4Address[4];
+            UCHAR   HostIPv4Address[4];
+            UCHAR   MacAddress[6];
+        } IPv4ARPParameters;
+        struct _IPV6_NS_PARAMETERS {
+            ULONG   Flags;
+            UCHAR   RemoteIPv6Address[16];
+            UCHAR   SolicitedNodeIPv6Address[16];
+            UCHAR   MacAddress[6];
+            UCHAR   TargetIPv6Addresses[2][16];
+        } IPv6NSParameters;
+        struct _DOT11_RSN_REKEY_PARAMETERS {
+            ULONG       Flags;
+            UCHAR       KCK[DOT11_RSN_KCK_LENGTH];
+            UCHAR       KEK[DOT11_RSN_KEK_LENGTH];
+            ULONGLONG   KeyReplayCounter;
+        } Dot11RSNRekeyParameters;
+    } ProtocolOffloadParameters;
+} NDIS_PM_PROTOCOL_OFFLOAD;
+typedef NDIS_PM_PROTOCOL_OFFLOAD    *PNDIS_PM_PROTOCOL_OFFLOAD;
+#endif
+
+/* NDIS power management administrator configuration states */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_PM_ADMIN_CONFIG_STATE {
+    NdisPMAdminConfigUnspecified    = 0,
+    NdisPMAdminConfigDisabled       = 1,
+    NdisPMAdminConfigEnabled        = 2
+} NDIS_PM_ADMIN_CONFIG_STATE;
+typedef NDIS_PM_ADMIN_CONFIG_STATE  *PNDIS_PM_ADMIN_CONFIG_STATE;
+#endif
+
+/* NDIS WMI power management administrator configuration */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_WMI_PM_ADMIN_CONFIG {
+    NDIS_OBJECT_HEADER          Header;
+    NDIS_PM_ADMIN_CONFIG_STATE  WakeOnPattern;
+    NDIS_PM_ADMIN_CONFIG_STATE  WakeOnMagicPacket;
+    NDIS_PM_ADMIN_CONFIG_STATE  DeviceSleepOnDisconnect;
+    NDIS_PM_ADMIN_CONFIG_STATE  PMARPOffload;
+    NDIS_PM_ADMIN_CONFIG_STATE  PMNSOffload;
+    NDIS_PM_ADMIN_CONFIG_STATE  PMWiFiRekeyOffload;
+} NDIS_WMI_PM_ADMIN_CONFIG;
+typedef NDIS_WMI_PM_ADMIN_CONFIG    *PNDIS_WMI_PM_ADMIN_CONFIG;
+#endif
+
+/* NDIS power management capability states */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_PM_CAPABILITY_STATE {
+    NdisPMAdminConfigUnsupported    = 0,
+    NdisPMAdminConfigInactive       = 1,
+    NdisPMAdminConfigActive         = 2
+} NDIS_PM_CAPABILITY_STATE;
+typedef NDIS_PM_CAPABILITY_STATE    *PNDIS_PM_CAPABILITY_STATE;
+#endif
+
+/* NDIS WMI power management active capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_WMI_PM_ACTIVE_CAPABILITIES {
+    NDIS_OBJECT_HEADER          Header;
+    NDIS_PM_CAPABILITY_STATE    WakeOnPattern;
+    NDIS_PM_CAPABILITY_STATE    WakeOnMagicPacket;
+    NDIS_PM_CAPABILITY_STATE    DeviceSleepOnDisconnect;
+    NDIS_PM_CAPABILITY_STATE    PMARPOffload;
+    NDIS_PM_CAPABILITY_STATE    PMNSOffload;
+    NDIS_PM_CAPABILITY_STATE    PMWiFiRekeyOffload;
+} NDIS_WMI_PM_ACTIVE_CAPABILITIES;
+typedef NDIS_WMI_PM_ACTIVE_CAPABILITIES *PNDIS_WMI_PM_ACTIVE_CAPABILITIES;
+#endif
+
+/* NDIS receive filter capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_FILTER_CAPABILITIES {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    ULONG               EnabledFilterTypes;
+    ULONG               EnabledQueueTypes;
+    ULONG               NumQueues;
+    ULONG               SupportedQueueProperties;
+    ULONG               SupportedFilterTests;
+    ULONG               SupportedHeaders;
+    ULONG               SupportedMacHeaderFields;
+    ULONG               MaxMacHeaderFilters;
+    ULONG               MaxQueueGroups;
+    ULONG               MaxQueuesPerQueueGroup;
+    ULONG               MinLookaheadSplitSize;
+    ULONG               MaxLookaheadSplitSize;
+} NDIS_RECEIVE_FILTER_CAPABILITIES;
+typedef NDIS_RECEIVE_FILTER_CAPABILITIES    *PNDIS_RECEIVE_FILTER_CAPABILITIES;
+#endif
+
+/* NDIS NIC switch capabilities */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_NIC_SWITCH_CAPABILITIES {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    ULONG               NdisReserved1;
+    ULONG               NumTotalMacAddresses;
+    ULONG               NumMacAddressesPerPort;
+    ULONG               NumVlansPerPort;
+    ULONG               NdisReserved2;
+    ULONG               NdisReserved3;
+} NDIS_NIC_SWITCH_CAPABILITIES;
+typedef NDIS_NIC_SWITCH_CAPABILITIES    *PNDIS_NIC_SWITCH_CAPABILITIES;
+#endif
+
+/* NDIS receive filter global parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_FILTER_GLOBAL_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    ULONG               EnabledFilterTypes;
+    ULONG               EnabledQueueTypes;
+} NDIS_RECEIVE_FILTER_GLOBAL_PARAMETERS;
+typedef NDIS_RECEIVE_FILTER_GLOBAL_PARAMETERS   *PNDIS_RECEIVE_FILTER_GLOBAL_PARAMETERS;
+#endif
+
+/* NDIS receive filter types */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_RECEIVE_FILTER_TYPE {
+    NdisReceiveFilterTypeUndefined  = 0,
+    NdisReceiveFilterTypeVMQueue    = 1,
+    NdisReceiveFilterTypeMaximum    = 2
+} NDIS_RECEIVE_FILTER_TYPE;
+typedef NDIS_RECEIVE_FILTER_TYPE    *PNDIS_RECEIVE_FILTER_TYPE;
+#endif
+
+/* NDIS frame header values */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_FRAME_HEADER {
+    NdisFrameHeaderUndefined    = 0,
+    NdisFrameHeaderMac          = 1,
+    NdisFrameHeaderMaximum      = 2
+} NDIS_FRAME_HEADER;
+typedef NDIS_FRAME_HEADER   *PNDIS_FRAME_HEADER;
+#endif
+
+/* NDIS MAC header fields */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_MAC_HEADER_FIELD {
+    NdisMacHeaderFieldUndefined             = 0,
+    NdisMacHeaderFieldDestinationAddress    = 1,
+    NdisMacHeaderFieldSourceAddress         = 2,
+    NdisMacHeaderFieldVlanId                = 3,
+    NdisMacHeaderFieldPriority              = 4,
+    NdisMacHeaderFieldMaximum               = 5
+} NDIS_MAC_HEADER_FIELD;
+typedef NDIS_MAC_HEADER_FIELD   *PNDIS_MAC_HEADER_FIELD;
+#endif
+
+/* NDIS receive filter test values */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_RECEIVE_FILTER_TEST {
+    NdisReceiveFilterTestUndefined  = 0,
+    NdisReceiveFilterTestEqual      = 1,
+    NdisReceiveFilterTestMaskEqual  = 2,
+    NdisReceiveFilterTestMaximum    = 3
+} NDIS_RECEIVE_FILTER_TEST;
+typedef NDIS_RECEIVE_FILTER_TEST    *PNDIS_RECEIVE_FILTER_TEST;
+#endif
+
+/* NDIS receive filter field parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_FILTER_FIELD_PARAMETERS {
+    NDIS_OBJECT_HEADER          Header;
+    ULONG                       Flags;
+    NDIS_FRAME_HEADER           FrameHeader;
+    NDIS_RECEIVE_FILTER_TEST    ReceiveFilterTest;
+    union _HEADER_FIELD {
+        NDIS_MAC_HEADER_FIELD   MacHeaderField;
+    } HeaderField;
+    union _FIELD_VALUE {
+        UCHAR   FieldByteValue;
+        USHORT  FieldShortValue;
+        ULONG   FieldLongValue;
+        ULONG64 FieldLong64Value;
+        UCHAR   FieldByteArrayValue[16];
+    } FieldValue;
+    union _RESULT_VALUE {
+        UCHAR   ResultByteValue;
+        USHORT  ResultShortValue;
+        ULONG   ResultLongValue;
+        ULONG64 ResultLong64Value;
+        UCHAR   ResultByteArrayValue[16];
+    } ResultValue;
+} NDIS_RECEIVE_FILTER_FIELD_PARAMETERS;
+typedef NDIS_RECEIVE_FILTER_FIELD_PARAMETERS    *PNDIS_RECEIVE_FILTER_FIELD_PARAMETERS;
+#endif
+
+/* NDIS receive filter parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_FILTER_PARAMETERS {
+    NDIS_OBJECT_HEADER          Header;
+    ULONG                       Flags;
+    NDIS_RECEIVE_FILTER_TYPE    FilterType;
+    NDIS_RECEIVE_QUEUE_ID       QueueId;
+    NDIS_RECEIVE_FILTER_ID      FilterId;
+    ULONG                       FieldParametersArrayOffset;
+    ULONG                       FieldParametersArrayNumElements;
+    ULONG                       FieldParametersArrayElementSize;
+    ULONG                       RequestedFilterIdBitCount;
+} NDIS_RECEIVE_FILTER_PARAMETERS;
+typedef NDIS_RECEIVE_FILTER_PARAMETERS  *PNDIS_RECEIVE_FILTER_PARAMETERS;
+#endif
+
+/* NDIS receive filter clear parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_FILTER_CLEAR_PARAMETERS {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   Flags;
+    NDIS_RECEIVE_QUEUE_ID   QueueId;
+    NDIS_RECEIVE_FILTER_ID  FilterId;
+} NDIS_RECEIVE_FILTER_CLEAR_PARAMETERS;
+typedef NDIS_RECEIVE_FILTER_CLEAR_PARAMETERS    *PNDIS_RECEIVE_FILTER_CLEAR_PARAMETERS;
+#endif
+
+/* NDIS receive queue types */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_RECEIVE_QUEUE_TYPE {
+    NdisReceiveQueueTypeUnspecified = 0,
+    NdisReceiveQueueTypeVMQueue     = 1,
+    NdisReceiveQueueTypeMaximum     = 2
+} NDIS_RECEIVE_QUEUE_TYPE;
+typedef NDIS_RECEIVE_QUEUE_TYPE *PNDIS_RECEIVE_QUEUE_TYPE;
+#endif
+
+/* NDIS receive queue parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_QUEUE_PARAMETERS {
+    NDIS_OBJECT_HEADER          Header;
+    ULONG                       Flags;
+    NDIS_RECEIVE_QUEUE_TYPE     QueueType;
+    NDIS_RECEIVE_QUEUE_ID       QueueId;
+    NDIS_RECEIVE_QUEUE_GROUP_ID QueueGroupId;
+    GROUP_AFFINITY              ProcessorAffinity;
+    ULONG                       NumSuggestedReceiveBuffers;
+    ULONG                       MSIXTableEntry;
+    ULONG                       LookaheadSize;
+    NDIS_VM_NAME                VmName;
+    NDIS_QUEUE_NAME             QueueName;
+} NDIS_RECEIVE_QUEUE_PARAMETERS;
+typedef NDIS_RECEIVE_QUEUE_PARAMETERS   *PNDIS_RECEIVE_QUEUE_PARAMETERS;
+#endif
+
+/* NDIS receive queue free parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_QUEUE_FREE_PARAMETERS {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   Flags;
+    NDIS_RECEIVE_QUEUE_ID   QueueId;
+} NDIS_RECEIVE_QUEUE_FREE_PARAMETERS;
+typedef NDIS_RECEIVE_QUEUE_FREE_PARAMETERS  *PNDIS_RECEIVE_QUEUE_FREE_PARAMETERS;
+#endif
+
+/* NDIS receive queue operational states */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_RECEIVE_QUEUE_OPERATIONAL_STATE {
+    NdisReceiveQueueOperationalStateUndefined   = 0,
+    NdisReceiveQueueOperationalStateRunning     = 1,
+    NdisReceiveQueueOperationalStatePaused      = 2,
+    NdisReceiveQueueOperationalStateDmaStopped  = 3,
+    NdisReceiveQueueOperationalStateMaximum     = 4
+} NDIS_RECEIVE_QUEUE_OPERATIONAL_STATE;
+typedef NDIS_RECEIVE_QUEUE_OPERATIONAL_STATE    *PNDIS_RECEIVE_QUEUE_OPERATIONAL_STATE;
+#endif
+
+/* NDIS receive queue information */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_QUEUE_INFO {
+    NDIS_OBJECT_HEADER                      Header;
+    ULONG                                   Flags;
+    NDIS_RECEIVE_QUEUE_TYPE                 QueueType;
+    NDIS_RECEIVE_QUEUE_ID                   QueueId;
+    NDIS_RECEIVE_QUEUE_GROUP_ID             QueueGroupId;
+    NDIS_RECEIVE_QUEUE_OPERATIONAL_STATE    QueueState;
+    GROUP_AFFINITY                          ProcessorAffinity;
+    ULONG                                   NumSuggestedReceiveBuffers;
+    ULONG                                   MSIXTableEntry;
+    ULONG                                   LookaheadSize;
+    NDIS_VM_NAME                            VmName;
+    NDIS_QUEUE_NAME                         QueueName;
+} NDIS_RECEIVE_QUEUE_INFO;
+typedef NDIS_RECEIVE_QUEUE_INFO *PNDIS_RECEIVE_QUEUE_INFO;
+#endif
+
+/* NDIS receive queue information array */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_QUEUE_INFO_ARRAY {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               FirstElementOffset;
+    ULONG               NumElements;
+    ULONG               ElementSize;
+} NDIS_RECEIVE_QUEUE_INFO_ARRAY;
+typedef NDIS_RECEIVE_QUEUE_INFO_ARRAY   *PNDIS_RECEIVE_QUEUE_INFO_ARRAY;
+#endif
+
+/* NDIS receive filter information */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_FILTER_INFO {
+    NDIS_OBJECT_HEADER          Header;
+    ULONG                       Flags;
+    NDIS_RECEIVE_FILTER_TYPE    FilterType;
+    NDIS_RECEIVE_FILTER_ID      FilterId;
+} NDIS_RECEIVE_FILTER_INFO;
+typedef NDIS_RECEIVE_FILTER_INFO    *PNDIS_RECEIVE_FILTER_INFO;
+#endif
+
+/* NDIS receive filter information array */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_FILTER_INFO_ARRAY {
+    NDIS_OBJECT_HEADER      Header;
+    NDIS_RECEIVE_QUEUE_ID   QueueId;
+    ULONG                   FirstElementOffset;
+    ULONG                   NumElements;
+    ULONG                   ElementSize;
+} NDIS_RECEIVE_FILTER_INFO_ARRAY;
+typedef NDIS_RECEIVE_FILTER_INFO_ARRAY  *PNDIS_RECEIVE_FILTER_INFO_ARRAY;
+#endif
+
+/* NDIS receive queue allocation complete parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_PARAMETERS {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   Flags;
+    NDIS_RECEIVE_QUEUE_ID   QueueId;
+    NDIS_STATUS             CompletionStatus;
+} NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_PARAMETERS;
+typedef NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_PARAMETERS   *PNDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_PARAMETERS;
+#endif
+
+/* NDIS receive queue allocation complete array */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    ULONG               FirstElementOffset;
+    ULONG               NumElements;
+    ULONG               ElementSize;
+} NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY;
+typedef NDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY    *PNDIS_RECEIVE_QUEUE_ALLOCATION_COMPLETE_ARRAY;
+#endif
+
+/* NDIS receive scale capabilities */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+typedef struct _NDIS_RECEIVE_SCALE_CAPABILITIES {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               CapabilitiesFlags;
+    ULONG               NumberOfInterruptMessages;
+    ULONG               NumberOfReceiveQueues;
+} NDIS_RECEIVE_SCALE_CAPABILITIES;
+typedef NDIS_RECEIVE_SCALE_CAPABILITIES *PNDIS_RECEIVE_SCALE_CAPABILITIES;
+#endif
+
+/* NDIS receive scale parameters */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+typedef struct _NDIS_RECEIVE_SCALE_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    USHORT              Flags;
+    USHORT              BaseCpuNumber;
+    ULONG               HashInformation;
+    USHORT              IndirectionTableSize;
+    ULONG               IndirectionTableOffset;
+    USHORT              HashSecretKeySize;
+    ULONG               HashSecretKeyOffset;
+#if NDIS_SUPPORT_NDIS620
+    ULONG               ProcessorMasksOffset;
+    ULONG               NumberOfProcessorMasks;
+    ULONG               ProcessorMasksEntrySize;
+#endif
+} NDIS_RECEIVE_SCALE_PARAMETERS;
+typedef NDIS_RECEIVE_SCALE_PARAMETERS   *PNDIS_RECEIVE_SCALE_PARAMETERS;
+#endif
+
+/* NDIS receive hash parameters */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+typedef struct _NDIS_RECEIVE_HASH_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    ULONG               HashInformation;
+    USHORT              HashSecretKeySize;
+    ULONG               HashSecretKeyOffset;
+} NDIS_RECEIVE_HASH_PARAMETERS;
+typedef NDIS_RECEIVE_HASH_PARAMETERS    *PNDIS_RECEIVE_HASH_PARAMETERS;
+#endif
+
+/* NDIS processor vendors */
+#if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
+typedef enum _NDIS_PROCESSOR_VENDOR {
+    NdisProcessorVendorUnknown      = 0,
+    NdisProcessorVendorGenuinIntel  = 1,
+    NdisProcessorVendorGenuineIntel = NdisProcessorVendorGenuinIntel,
+    NdisProcessorVendorAuthenticAMD = 2
+} NDIS_PROCESSOR_VENDOR;
+typedef NDIS_PROCESSOR_VENDOR   *PNDIS_PROCESSOR_VENDOR;
+#endif
+
+/* NDIS RSS processor */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RSS_PROCESSOR {
+    PROCESSOR_NUMBER    ProcNum;
+    USHORT              PreferenceIndex;
+    USHORT              Reserved;
+} NDIS_RSS_PROCESSOR;
+typedef NDIS_RSS_PROCESSOR  *PNDIS_RSS_PROCESSOR;
+#endif
+
+/* NDIS RSS processor information */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_RSS_PROCESSOR_INFO {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               Flags;
+    PROCESSOR_NUMBER    RssBaseProcessor;
+    ULONG               MaxNumRssProcessors;
+    USHORT              PreferredNumaNode;
+    ULONG               RssProcessorArrayOffset;
+    ULONG               RssProcessorCount;
+    ULONG               RssProcessorEntrySize;
+} NDIS_RSS_PROCESSOR_INFO;
+typedef NDIS_RSS_PROCESSOR_INFO *PNDIS_RSS_PROCESSOR_INFO;
+#endif
+
+/* NDIS processor information (extended version) */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_PROCESSOR_INFO_EX {
+    PROCESSOR_NUMBER    ProcNum;
+    ULONG               SocketId;
+    ULONG               CoreId;
+    ULONG               HyperThreadId;
+    USHORT              NodeId;
+    USHORT              NodeDistance;
+} NDIS_PROCESSOR_INFO_EX;
+typedef NDIS_PROCESSOR_INFO_EX  *PNDIS_PROCESSOR_INFO_EX;
+#endif
+
+/* NDIS system processor information (extended version) */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_SYSTEM_PROCESSOR_INFO_EX {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   Flags;
+    NDIS_PROCESSOR_VENDOR   ProcessorVendor;
+    ULONG                   NumSockets;
+    ULONG                   NumCores;
+    ULONG                   NumCoresPerSocket;
+    ULONG                   MaxHyperThreadingProcsPerCore;
+    ULONG                   ProcessorInfoOffset;
+    ULONG                   NumberOfProcessors;
+    ULONG                   ProcessorInfoEntrySize;
+} NDIS_SYSTEM_PROCESSOR_INFO_EX;
+typedef NDIS_SYSTEM_PROCESSOR_INFO_EX   *PNDIS_SYSTEM_PROCESSOR_INFO_EX;
+#endif
+
+/* NDIS hypervisor partition types */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef enum _NDIS_HYPERVISOR_PARTITION_TYPE {
+    NdisHypervisorPartitionTypeUnknown      = 0,
+    NdisHypervisorPartitionTypeMsHvParent   = 1,
+    NdisHypervisorPartitionMsHvChild        = 2,
+    NdisHypervisorPartitionTypeMax          = 3
+} NDIS_HYPERVISOR_PARTITION_TYPE;
+typedef NDIS_HYPERVISOR_PARTITION_TYPE  *PNDIS_HYPERVISOR_PARTITION_TYPE;
+#endif
+
+/* NDIS hypervisor information */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_HYPERVISOR_INFO {
+    NDIS_OBJECT_HEADER              Header;
+    ULONG                           Flags;
+    NDIS_HYPERVISOR_PARTITION_TYPE  PartitionType;
+} NDIS_HYPERVISOR_INFO;
+typedef NDIS_HYPERVISOR_INFO    *PNDIS_HYPERVISOR_INFO;
+#endif
+
+/* NDIS WMI group affinity */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_WMI_GROUP_AFFINITY {
+    ULONG64 Mask;
+    USHORT  Group;
+    USHORT  Reserved[3];
+} NDIS_WMI_GROUP_AFFINITY;
+typedef NDIS_WMI_GROUP_AFFINITY *PNDIS_WMI_GROUP_AFFINITY;
+#endif
+
+/* NDIS WMI receive queue parameters */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_WMI_RECEIVE_QUEUE_PARAMETERS {
+    NDIS_OBJECT_HEADER          Header;
+    ULONG                       Flags;
+    NDIS_RECEIVE_QUEUE_TYPE     QueueType;
+    NDIS_RECEIVE_QUEUE_ID       QueueId;
+    NDIS_RECEIVE_QUEUE_GROUP_ID QueueGroupId;
+    NDIS_WMI_GROUP_AFFINITY     ProcessorAffinity;
+    ULONG                       NumSuggestedReceiveBuffers;
+    ULONG                       MSIXTableEntry;
+    ULONG                       LookaheadSize;
+    NDIS_VM_NAME                VmName;
+    NDIS_QUEUE_NAME             QueueName;
+} NDIS_WMI_RECEIVE_QUEUE_PARAMETERS;
+typedef NDIS_WMI_RECEIVE_QUEUE_PARAMETERS   *PNDIS_WMI_RECEIVE_QUEUE_PARAMETERS;
+#endif
+
+/* NDIS WMI receive queue information */
+#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
+typedef struct _NDIS_WMI_RECEIVE_QUEUE_INFO {
+    NDIS_OBJECT_HEADER                      Header;
+    ULONG                                   Flags;
+    NDIS_RECEIVE_QUEUE_TYPE                 QueueType;
+    NDIS_RECEIVE_QUEUE_ID                   QueueId;
+    NDIS_RECEIVE_QUEUE_GROUP_ID             QueueGroupId;
+    NDIS_RECEIVE_QUEUE_OPERATIONAL_STATE    QueueState;
+    NDIS_WMI_GROUP_AFFINITY                 ProcessorAffinity;
+    ULONG                                   NumSuggestedReceiveBuffers;
+    ULONG                                   MSIXTableEntry;
+    ULONG                                   LookaheadSize;
+    NDIS_VM_NAME                            VmName;
+    NDIS_QUEUE_NAME                         QueueName;
+} NDIS_WMI_RECEIVE_QUEUE_INFO;
+typedef NDIS_WMI_RECEIVE_QUEUE_INFO *PNDIS_RECEIVE_QUEUE_INFO;
 #endif
 
 :include cplusepi.sp
