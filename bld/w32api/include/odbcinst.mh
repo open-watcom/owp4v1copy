@@ -73,6 +73,8 @@
     #define ODBC_ERROR_REMOVE_DSN_FAILED        20L
     #define ODBC_ERROR_OUT_OF_MEM               21L
     #define ODBC_ERROR_OUTPUT_STRING_TRUNCATED  22L
+    #define ODBC_ERROR_NOTRANINFO               23L
+    #define ODBC_ERROR_MAX                      ODBC_ERROR_NOTRANINFO
 #endif
 
 /* Functions in ODBCCP32.DLL */
