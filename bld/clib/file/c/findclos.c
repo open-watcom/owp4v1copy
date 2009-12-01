@@ -54,14 +54,8 @@ _WCRTLINK int _findclose( long handle )
     }
 #else   /* DOS */
     unsigned        rc;
-  #ifdef USING_LFN
-    struct find_t   *handlestuff = (struct find_t *)handle;
 
-    handlestuff->lfnax = (int)handle;
-    rc = _dos_findclose( handlestuff );
-  #else
     rc = _dos_findclose( (struct find_t *)handle );
-  #endif
     lib_free( (void *)handle );
     if( rc ) {
         return( -1 );

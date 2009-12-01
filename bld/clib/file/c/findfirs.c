@@ -53,6 +53,16 @@
 #include "find.h"
 #include "seterrno.h"
 
+#if defined( __NT__ )
+  #ifdef __WIDECHAR__
+    #define FIND_FIRST              __lib_FindFirstFileW
+    #define CHECK_FIND_NEXT_ATTR    _w__NTFindNextFileWithAttr
+  #else
+    #define FIND_FIRST              FindFirstFileA
+    #define CHECK_FIND_NEXT_ATTR    __NTFindNextFileWithAttr
+  #endif
+#endif
+
 
 #ifdef __WIDECHAR__
  #ifdef __INT64__
@@ -73,14 +83,14 @@
     HANDLE          h;
 
     /*** Initialize the find ***/
-    h = __F_NAME(FindFirstFileA,__lib_FindFirstFileW)( filespec, &ffb );
+    h = FIND_FIRST( filespec, &ffb );
     if( h == INVALID_HANDLE_VALUE ) {
         __set_errno_nt();
         return( -1 );
     }
 
     /*** Look for the first file ***/
-    if( !__NTFindNextFileWithAttr( h, FIND_ATTR, &ffb ) ) {
+    if( !CHECK_FIND_NEXT_ATTR( h, FIND_ATTR, &ffb ) ) {
         FindClose( h );
         __set_errno_dos( ERROR_FILE_NOT_FOUND );
         return( -1 );
@@ -133,11 +143,6 @@
     __F_NAME(__dos_finddatai64_cvt,__dos_wfinddatai64_cvt)( findbuf, fileinfo );
   #else
     __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf, fileinfo );
-  #endif
-  #ifdef __WATCOM_LFN__
-    if( findbuf->lfnsup ) {
-        return( (long)findbuf->lfnax );
-    }
   #endif
     return( (long)findbuf );
 #endif
@@ -273,10 +278,12 @@
     if( findbuf->cr_time ) {
         fileinfo->time_create = findbuf->cr_time | findbuf->cr_date;
         fileinfo->time_access = findbuf->ac_time | findbuf->ac_date;
+    } else {
+  #endif
+        fileinfo->time_create = -1L;
+        fileinfo->time_access = -1L;
+  #ifdef __WATCOM_LFN__
     }
-  #else
-    fileinfo->time_create = -1L;
-    fileinfo->time_access = -1L;
   #endif
     fileinfo->time_write = __dos_filetime_cvt( findbuf->wr_time,
                                                findbuf->wr_date );
