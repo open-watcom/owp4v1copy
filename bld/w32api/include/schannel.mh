@@ -45,27 +45,30 @@
 #define UNISP_RPC_ID    14
 
 /* Security package context attributes */
-#define SECPKG_ATTR_ISSUER_LIST         0x00000050L
-#define SECPKG_ATTR_REMOTE_CRED         0x00000051L
-#define SECPKG_ATTR_LOCAL_CRED          0x00000052L
-#define SECPKG_ATTR_REMOTE_CERT_CONTEXT 0x00000053L
-#define SECPKG_ATTR_LOCAL_CERT_CONTEXT  0x00000054L
-#define SECPKG_ATTR_ROOT_STORE          0x00000055L
-#define SECPKG_ATTR_SUPPORTED_ALGS      0x00000056L
-#define SECPKG_ATTR_CIPHER_STRENGTHS    0x00000057L
-#define SECPKG_ATTR_SUPPORTED_PROTOCOLS 0x00000058L
-#define SECPKG_ATTR_ISSUER_LIST_EX      0x00000059L
-#define SECPKG_ATTR_CONNECTION_INFO     0x0000005AL
-#define SECPKG_ATTR_EAP_KEY_BLOCK       0x0000005BL
-#define SECPKG_ATTR_MAPPED_CERT_ATTR    0x0000005CL
-#define SECPKG_ATTR_SESSION_INFO        0x0000005DL
-#define SECPKG_ATTR_APP_DATA            0x0000005EL
-#define SECPKG_ATTR_REMOTE_CERTIFICATES 0x0000005FL
-#define SECPKG_ATTR_CLIENT_CERT_POLICY  0x00000060L
-#define SECPKG_ATTR_CC_POLICY_RESULT    0x00000061L
-#define SECPKG_ATTR_USE_NCRYPT          0x00000062L
-#define SECPKG_ATTR_LOCAL_CERT_INFO     0x00000063L
-#define SECPKG_ATTR_CIPHER_INFO         0x00000064L
+#define SECPKG_ATTR_ISSUER_LIST             0x00000050L
+#define SECPKG_ATTR_REMOTE_CRED             0x00000051L
+#define SECPKG_ATTR_LOCAL_CRED              0x00000052L
+#define SECPKG_ATTR_REMOTE_CERT_CONTEXT     0x00000053L
+#define SECPKG_ATTR_LOCAL_CERT_CONTEXT      0x00000054L
+#define SECPKG_ATTR_ROOT_STORE              0x00000055L
+#define SECPKG_ATTR_SUPPORTED_ALGS          0x00000056L
+#define SECPKG_ATTR_CIPHER_STRENGTHS        0x00000057L
+#define SECPKG_ATTR_SUPPORTED_PROTOCOLS     0x00000058L
+#define SECPKG_ATTR_ISSUER_LIST_EX          0x00000059L
+#define SECPKG_ATTR_CONNECTION_INFO         0x0000005AL
+#define SECPKG_ATTR_EAP_KEY_BLOCK           0x0000005BL
+#define SECPKG_ATTR_MAPPED_CERT_ATTR        0x0000005CL
+#define SECPKG_ATTR_SESSION_INFO            0x0000005DL
+#define SECPKG_ATTR_APP_DATA                0x0000005EL
+#define SECPKG_ATTR_REMOTE_CERTIFICATES     0x0000005FL
+#define SECPKG_ATTR_CLIENT_CERT_POLICY      0x00000060L
+#define SECPKG_ATTR_CC_POLICY_RESULT        0x00000061L
+#define SECPKG_ATTR_USE_NCRYPT              0x00000062L
+#define SECPKG_ATTR_LOCAL_CERT_INFO         0x00000063L
+#define SECPKG_ATTR_CIPHER_INFO             0x00000064L
+#define SECPKG_ATTR_EAP_PRF_INFO            0x00000065L
+#define SECPKG_ATTR_SUPPORTED_SIGNATURES    0x00000066L
+
 
 /* Remote credential flags */
 #define RCRED_STATUS_NOCRED         0x00000000L
@@ -123,6 +126,7 @@
 #define SCH_CRED_CACHE_ONLY_URL_RETRIEVAL               0x00008000L
 #define SCH_CRED_MEMORY_STORE_CERT                      0x00010000L
 #define SCH_CRED_CACHE_ONLY_URL_RETRIEVAL_ON_CREATE     0x00020000L
+#define SCH_CRED_ROOT_CERT                              0x00040000L
 
 /* Package parameter types */
 #define SCHANNEL_RENEGOTIATE    0L
@@ -158,6 +162,7 @@
 #define TLS1_ALERT_INTERNAL_ERROR           80L
 #define TLS1_ALERT_USER_CANCELLED           90L
 #define TLS1_ALERT_NO_RENEGOTIATION         100L
+#define TLS1_ALERT_UNSUPPORTED_EXT          110L
 
 /* Session control flags */
 #define SSL_SESSION_ENABLE_RECONNECTS   1L
@@ -190,6 +195,29 @@
 #define SP_PROT_SERVERS \
     (SP_PROT_PCT1_SERVER | SP_PROT_SSL2_SERVER | SP_PROT_SSL3_SERVER | \
     SP_PROT_UNI_SERVER | SP_PROT_TLS1_SERVER)
+#define SP_PROT_TLS1_0_SERVER       SP_PROT_TLS1_SERVER
+#define SP_PROT_TLS1_0_CLIENT       SP_PROT_TLS1_CLIENT
+#define SP_PROT_TLS1_0              (SP_PROT_TLS1_0_SERVER | SP_PROT_TLS1_0_CLIENT)
+#define SP_PROT_TLS1_1_SERVER       0x00000100L
+#define SP_PROT_TLS1_1_CLIENT       0x00000200L
+#define SP_PROT_TLS1_1              (SP_PROT_TLS1_1_SERVER | SP_PROT_TLS1_1_CLIENT)
+#define SP_PROT_TLS1_2_SERVER       0x00000400L
+#define SP_PROT_TLS1_2_CLIENT       0x00000800L
+#define SP_PROT_TLS1_2              (SP_PROT_TLS1_2_SERVER | SP_PROT_TLS1_2_CLIENT)
+#define SP_PROT_TLS1_1PLUS_SERVER   (SP_PROT_TLS1_1_SERVER | SP_PROT_TLS1_2_SERVER)
+#define SP_PROT_TLS1_1PLUS_CLIENT   (SP_PROT_TLS1_1_CLIENT | SP_PROT_TLS1_1_CLIENT)
+#define SP_PROT_TLS1_1PLUS \
+    (SP_PROT_TLS1_1PLUS_SERVER | SP_PROT_TLS_1_1PLUS_CLIENT)
+#define SP_PROT_TLS1_X_SERVER \
+    (SP_PROT_TLS1_0_SERVER | SP_PROT_TLS1_1_SERVER | SP_PROT_TLS1_2_SERVER)
+#define SP_PROT_TLS1_X_CLIENT \
+    (SP_PROT_TLS1_0_CLIENT | SP_PROT_TLS1_1_CLIENT | SP_PROT_TLS1_2_CLIENT)
+#define SP_PROT_TLS1_X              (SP_PROT_TLS1_X_SERVER | SP_PROT_TLS1_X_CLIENT)
+#define SP_PROT_SSL3TLS1_X_CLIENTS  (SP_PROT_TLS1_X_CLIENT | SP_PROT_SSL3_CLIENT)
+#define SP_PROT_SSL3TLS1_X_SERVERS  (SP_PROT_TLS1_X_SERVER | SP_PROT_SSL3_SERVER)
+#define SP_PROT_SSL3TLS1_X          (SP_PROT_SSL3 | SP_PROT_TLS1_X)
+#define SP_PROT_X_CLIENTS           (SP_PROT_CLIENTS | SP_PROT_TLS1_X_CLIENT)
+#define SP_PROT_X_SERVERS           (SP_PROT_SERVERS | SP_PROT_TLS1_X_SERVER)
 
 /* Secure channel secret types */
 #define SCHANNEL_SECRET_TYPE_CAPI   0x00000001L
@@ -203,6 +231,25 @@
 /* SSL function names */
 #define SSL_CRACK_CERTIFICATE_NAME  TEXT( "SslCrackCertificate" )
 #define SSL_FREE_CERTIFICATE_NAME   TEXT( "SslFreeCertificate" )
+
+/* TLS signature algorithms */
+enum eTlsSignatureAlgorithm {
+    TlsSignatureAlgorithm_Anonymous = 0,
+    TlsSignatureAlgorithm_Rsa       = 1,
+    TlsSignatureAlgorithm_Dsa       = 2,
+    TlsSignatureAlgorithm_Ecdsa     = 3
+};
+
+/* TLS hash algorithms */
+enum eTlsHashAlgorithm {
+    TlsHashAlgorithm_None   = 0,
+    TlsHashAlgorithm_Md5    = 1,
+    TlsHashAlgorithm_Sha1   = 2,
+    TlsHashAlgorithm_Sha224 = 3,
+    TlsHashAlgorithm_Sha256 = 4,
+    TlsHashAlgorithm_Sha384 = 5,
+    TlsHashAlgorithm_Sha512 = 6
+};
 
 /* Security package context remote credential information */
 typedef struct _SecPkgContext_RemoteCredentialInfo {
@@ -337,6 +384,21 @@ typedef struct _SecPkgContext_SessionAppData {
     PBYTE   pbAppData;
 } SecPkgContext_SessionAppData;
 typedef SecPkgContext_SessionAppData    *PSecPkgContext_SessionAppData;
+
+/* Security package context EAP PRF information */
+typedef struct _SecPkgContext_EapPrfInfo {
+    DWORD   dwVersion;
+    DWORD   cbPrfData;
+    PBYTE   pbPrfData;
+} SecPkgContext_EapPrfInfo;
+typedef SecPkgContext_EapPrfInfo    *PSecPkgContext_EapPrfInfo;
+
+/* Security package context supported signatures */
+typedef struct _SecPkgContext_SupportedSignatures {
+    WORD    cSignatureAndHashAlgorithms;
+    WORD    *pSignatureAndHashAlgorithms;
+} SecPkgContext_SupportedSignatures;
+typedef SecPkgContext_SupportedSignatures   *PSecPkgContext_SupportedSignatures;
 
 /* Security package context certificates */
 typedef struct _SecPkgContext_Certificates {
