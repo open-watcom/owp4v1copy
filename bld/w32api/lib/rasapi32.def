@@ -52,6 +52,7 @@ RasGetErrorStringW@12
 RasGetLinkStatistics@12
 RasGetNapStatus@8
 RasGetProjectionInfoA@16
+RasGetProjectionInfoEx@12
 RasGetProjectionInfoW@16
 RasGetSubEntryHandleA@12
 RasGetSubEntryHandleW@12
@@ -80,6 +81,6 @@ RasSetEntryPropertiesA@24
 RasSetEntryPropertiesW@24
 RasSetSubEntryPropertiesA@28
 RasSetSubEntryPropertiesW@28
+RasUpdateConnection@8
 RasValidateEntryNameA@8
 RasValidateEntryNameW@8
-

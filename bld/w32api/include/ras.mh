@@ -9,6 +9,7 @@
 
 :include readonly.sp
 #include <lmcons.h>
+#include <inaddr.h>
 #include <in6addr.h>
 #ifdef USES_RAS_QUARANTINE_APIS
     #include <naptypes.h>
@@ -23,6 +24,13 @@ typedef HRASCONN    *LPHRASCONN;
 /* RAS NAP flags */
 #ifdef USES_RAS_QUARANTINE_APIS
     #define RASNAP_ProbationTime    0x00000001L
+#endif
+
+/* RAS tunnel endpoint types */
+#if (WINVER >= 0x0601)
+    #define RASTUNNELENDPOINT_UNKNOWN   0L
+    #define RASTUNNELENDPOINT_IPv4      1L
+    #define RASTUNNELENDPOINT_IPv6      2L
 #endif
 
 /* RAS maximum sizes */
@@ -67,6 +75,11 @@ typedef HRASCONN    *LPHRASCONN;
 /* RAS connection state flags */
 #define RASCS_PAUSED    0x00001000L
 #define RASCS_DONE      0x00002000L
+
+/* RAS connection substate flags */
+#if (WINVER >= 0x0601)
+    #define RASCSS_DONE 0x00002000L
+#endif
 
 /* RasDial() extended options */
 #define RDEOPT_UsePrefixSuffix              0x00000001L
@@ -140,6 +153,19 @@ typedef HRASCONN    *LPHRASCONN;
     #define RASCCPO_Encryption128bit    0x00000100L
 #endif
 
+/* RAS IKEv2 flags */
+#if (WINVER >= 0x0601)
+    #define RASIKEv2_FLAGS_MOBIKESUPPORTED  0x00000001L
+    #define RASIKEv2_FLAGS_BEHIND_NAT       0x00000002L
+    #define RASIKEv2_FLAGS_SERVERBEHIND_NAT 0x00000004L
+#endif
+
+/* RAS IKEv2 authentication protocols */
+#if (WINVER >= 0x0601)
+    #define RASIKEv2_AUTH_MACHINECERTIFICATES   1L
+    #define RASIKEv2_AUTH_EAP                   2L
+#endif
+
 /* RAS registered message */
 #define RASDIALEVENT    "RasDialEvent"
 
@@ -155,11 +181,22 @@ typedef HRASCONN    *LPHRASCONN;
 #endif
 
 /* VPN strategies */
-#define VS_Default      0L
-#define VS_PptpOnly     1L
-#define VS_PptpFirst    2L
-#define VS_L2tpOnly     3L
-#define VS_L2tpFirst    4L
+#define VS_Default          0L
+#define VS_PptpOnly         1L
+#define VS_PptpFirst        2L
+#define VS_L2tpOnly         3L
+#define VS_L2tpFirst        4L
+#if (WINVER >= 0x0600)
+    #define VS_SstpOnly     5L
+    #define VS_SstpFirst    6L
+#endif
+#if (WINVER >= 0x0601)
+    #define VS_Ikev2Only    7L
+    #define VS_Ikev2First   8L
+    #define VS_PptpSstp     12L
+    #define VS_L2tpSstp     13L
+    #define VS_Ikev2Sstp    14L
+#endif
 
 /* RAS entry options */
 #define RASEO_UseCountryAndAreaCodes    0x00000001L
@@ -222,6 +259,12 @@ typedef HRASCONN    *LPHRASCONN;
     #define RASEO2_IPv6ExplicitMetric           0x00020000L
     #define RASEO2_DisableIKENameEkuCheck       0x00040000L
 #endif
+#if (WINVER >= 0x0601)
+    #define RASEO2_DisableClassBasedStaticRoute 0x00080000L
+    #define RASEO2_SpecificIPv6Addr             0x00100000L
+    #define RASEO2_DisableMobility              0x00200000L
+    #define RASEO2_RequireMachineCertificates   0x00400000L
+#endif
 
 /* RAS entry protocols */
 #define RASNP_NetBEUI   0x00000001L
@@ -271,6 +314,8 @@ typedef HRASCONN    *LPHRASCONN;
     #define RASCN_Disconnection     0x00000002L
     #define RASCN_BandwidthAdded    0x00000004L
     #define RASCN_BandwidthRemoved  0x00000008L
+    #define RASCN_Dormant           0x00000010L
+    #define RASCN_ReConnection      0x00000020L
 #endif
 
 /* RAS entry dial modes */
@@ -336,6 +381,40 @@ typedef struct _tagRasNapState {
     ProbationTime   probationTime;
 } RASNAPSTATE;
 typedef RASNAPSTATE *LPRASNAPSTATE;
+#endif
+
+/* RAS API version numbers */
+typedef enum RASAPIVERSION {
+    RASAPIVERSION_500   = 1,
+    RASAPIVERSION_501   = 2,
+    RASAPIVERSION_600   = 3,
+    RASAPIVERSION_601   = 4
+} RASAPIVERSION;
+#define RASAPIVERSION_CURRENT   RASAPIVERSION_601
+
+/* RAS IP address */
+typedef struct RASIPADDR {
+    BYTE    a;
+    BYTE    b;
+    BYTE    c;
+    BYTE    d;
+} RASIPADDR;
+
+/* RAS IPv4 and IPv6 addresses */
+#if (WINVER >= 0x0600)
+typedef struct in_addr  RASIPV4ADDR;
+typedef struct in6_addr RASIPV6ADDR;
+#endif
+
+/* RAS tunnel endpoint */
+#if (WINVER >= 0x0601)
+typedef struct RASTUNNELENDPOINT {
+    DWORD   dwType;
+    union {
+        RASIPV4ADDR ipv4;
+        RASIPV6ADDR ipv6;
+    };
+} RASTUNNELENDPOINT;
 #endif
 
 /* RAS connection */
@@ -423,6 +502,9 @@ typedef enum tagRASCONNSTATE {
 #endif
     RASCS_SubEntryConnected,
     RASCS_SubEntryDisconnected,
+#if (WINVER >= 0x0601)
+    RASCS_ApplySettings,
+#endif
     RASCS_Interactive           = RASCS_PAUSED,
     RASCS_RetryAuthentication,
     RASCS_CallbackSetByCaller,
@@ -435,26 +517,47 @@ typedef enum tagRASCONNSTATE {
 } RASCONNSTATE;
 typedef RASCONNSTATE    *LPRASCONNSTATE;
 
+/* RAS connection substates */
+#if (WINVER >= 0x0601)
+typedef enum tagRASCONNSUBSTATE {
+    RASCSS_None         = 0,
+    RASCSS_Dormant      = 1,
+    RASCSS_Reconnecting = 2,
+    RASCSS_Reconnected  = RASCSS_DONE
+} RASCONNSUBSTATE;
+typedef RASCONNSUBSTATE *LPRASCONNSUBSTATE;
+#endif
+
 /* RAS connection status */
 typedef struct tagRASCONNSTATUSA {
-    DWORD           dwSize;
-    RASCONNSTATE    rasconnstate;
-    DWORD           dwError;
-    CHAR            szDeviceType[RAS_MaxDeviceType + 1];
-    CHAR            szDeviceName[RAS_MaxDeviceName + 1];
+    DWORD               dwSize;
+    RASCONNSTATE        rasconnstate;
+    DWORD               dwError;
+    CHAR                szDeviceType[RAS_MaxDeviceType + 1];
+    CHAR                szDeviceName[RAS_MaxDeviceName + 1];
 #if (WINVER >= 0x0401)
-    CHAR            szPhoneNumber[RAS_MaxPhoneNumber + 1];
+    CHAR                szPhoneNumber[RAS_MaxPhoneNumber + 1];
+#endif
+#if (WINVER >= 0x0601)
+    RASTUNNELENDPOINT   localEndPoint;
+    RASTUNNELENDPOINT   remoteEndPoint;
+    RASCONNSUBSTATE     rasconnsubstate;
 #endif
 } RASCONNSTATUSA;
 typedef RASCONNSTATUSA      *LPRASCONNSTATUSA;
 typedef struct tagRASCONNSTATUSW {
-    DWORD           dwSize;
-    RASCONNSTATE    rasconnstate;
-    DWORD           dwError;
-    WCHAR           szDeviceType[RAS_MaxDeviceType + 1];
-    WCHAR           szDeviceName[RAS_MaxDeviceName + 1];
+    DWORD               dwSize;
+    RASCONNSTATE        rasconnstate;
+    DWORD               dwError;
+    WCHAR               szDeviceType[RAS_MaxDeviceType + 1];
+    WCHAR               szDeviceName[RAS_MaxDeviceName + 1];
 #if (WINVER >= 0x0401)
-    WCHAR           szPhoneNumber[RAS_MaxPhoneNumber + 1];
+    WCHAR               szPhoneNumber[RAS_MaxPhoneNumber + 1];
+#endif
+#if (WINVER >= 0x0601)
+    RASTUNNELENDPOINT   localEndPoint;
+    RASTUNNELENDPOINT   remoteEndPoint;
+    RASCONNSUBSTATE     rasconnsubstate;
 #endif
 } RASCONNSTATUSW;
 typedef RASCONNSTATUSW      *LPRASCONNSTATUSW;
@@ -479,6 +582,9 @@ typedef struct tagRASDIALPARAMSA {
     DWORD       dwSubEntry;
     ULONG_PTR   dwCallbackId;
 #endif
+#if (WINVER >= 0x0601)
+    DWORD       dwIfIndex;
+#endif
 } RASDIALPARAMSA;
 typedef RASDIALPARAMSA      *LPRASDIALPARAMSA;
 typedef struct tagRASDIALPARAMSW {
@@ -492,6 +598,9 @@ typedef struct tagRASDIALPARAMSW {
 #if (WINVER >= 0x0401)
     DWORD       dwSubEntry;
     ULONG_PTR   dwCallbackId;
+#endif
+#if (WINVER >= 0x0601)
+    DWORD       dwIfIndex;
 #endif
 } RASDIALPARAMSW;
 typedef RASDIALPARAMSW      *LPRASDIALPARAMSW;
@@ -511,15 +620,28 @@ typedef struct tagRASEAPINFO {
 } RASEAPINFO;
 #endif
 
+/* RAS device-specific information */
+#if (WINVER >= 0x0601)
+typedef struct tagRASDEVSPECIFICINFO {
+    DWORD   dwSize;
+    BYTE    *pbDevSpecificInfo;
+} RASDEVSPECIFICINFO;
+typedef RASDEVSPECIFICINFO  *PRASDEVSPECIFICINFO;
+#endif
+
 /* RasDial() extensions */
 typedef struct tagRASDIALEXTENSIONS {
-    DWORD       dwSize;
-    DWORD       dwfOptions;
-    HWND        hwndParent;
-    ULONG_PTR   reserved;
+    DWORD               dwSize;
+    DWORD               dwfOptions;
+    HWND                hwndParent;
+    ULONG_PTR           reserved;
 #if (WINVER >= 0x0500)
-    ULONG_PTR   reserved1;
-    RASEAPINFO  RasEapInfo;
+    ULONG_PTR           reserved1;
+    RASEAPINFO          RasEapInfo;
+#endif
+#if (WINVER >= 0x0601)
+    BOOL                fSkipPppAuth;
+    RASDEVSPECIFICINFO  RasDevSpecificInfo;
 #endif
 } RASDIALEXTENSIONS;
 typedef RASDIALEXTENSIONS   *LPRASDIALEXTENSIONS;
@@ -773,6 +895,79 @@ typedef struct tagRASPPPCCP {
 typedef RASPPPCCP   *LPRASPPPCCP;
 #endif
 
+/* RAS PPP projection information */
+#if (WINVER >= 0x0601)
+typedef struct _RASPPP_PROJECTION_INFO {
+    DWORD       dwIPv4NegotiationError;
+    RASIPV4ADDR ipv4Address;
+    RASIPV4ADDR ipv4ServerAddress;
+    DWORD       dwIPv4Options;
+    DWORD       dwIPv4ServerOptions;
+    DWORD       dwIPv6NegotiationError;
+    BYTE        bInterfaceIdentifier[8];
+    BYTE        bServerInterfaceIdentifier[8];
+    BOOL        fBundled;
+    BOOL        fMultilink;
+    DWORD       dwAuthenticationProtocol;
+    DWORD       dwAuthenticationData;
+    DWORD       dwServerAuthenticationProtocol;
+    DWORD       dwServerAuthenticationData;
+    DWORD       dwEapTypeId;
+    DWORD       dwServerEapTypeId;
+    DWORD       dwLcpOptions;
+    DWORD       dwLcpServerOptions;
+    DWORD       dwCcpError;
+    DWORD       dwCcpCompressionAlgorithm;
+    DWORD       dwCcpServerCompressionAlgorithm;
+    DWORD       dwCcpOptions;
+    DWORD       dwCcpServerOptions;
+} RASPPP_PROJECTION_INFO;
+typedef RASPPP_PROJECTION_INFO  *PRASPPP_PROJECTION_INFO;
+#endif
+
+/* RAS IKEv2 projection information */
+#if (WINVER >= 0x0601)
+typedef struct _RASIKEV2_PROJECTION_INFO {
+    DWORD       dwIPv4NegotiationError;
+    RASIPV4ADDR ipv4Address;
+    RASIPV4ADDR ipv4ServerAddress;
+    DWORD       dwIPv6NegotiationError;
+    RASIPV6ADDR ipv6Address;
+    RASIPV6ADDR ipv6ServerAddress;
+    DWORD       dwPrefixLength;
+    DWORD       dwAuthenticationProtocol;
+    DWORD       dwEapTypeId;
+    DWORD       dwFlags;
+    DWORD       dwEncryptionMethod;
+    DWORD       numIPv4ServerAddresses;
+    RASIPV4ADDR *ipv4ServerAddresses;
+    DWORD       numIPv6ServerAddresses;
+    RASIPV6ADDR *ipv6ServerAddresses;
+} RASIKEV2_PROJECTION_INFO;
+typedef RASIKEV2_PROJECTION_INFO    *PRASIKEV2_PROJECTION_INFO;
+#endif
+
+/* RAS projection information types */
+#if (WINVER >= 0x0601)
+typedef enum _RASPROJECTION_INFO_TYPE {
+    PROJECTION_INFO_TYPE_PPP    = 1,
+    PROJECTION_INFO_TYPE_IKEv2  = 2
+} RASPROJECTION_INFO_TYPE;
+#endif
+
+/* RAS projection information */
+#if (WINVER >= 0x0601)
+typedef struct _RAS_PROJECTION_INFO {
+    RASAPIVERSION           verison;
+    RASPROJECTION_INFO_TYPE type;
+    union {
+        RASPPP_PROJECTION_INFO      ppp;
+        RASIKEV2_PROJECTION_INFO    ikev2;
+    };
+} RAS_PROJECTION_INFO;
+typedef RAS_PROJECTION_INFO *PRAS_PROJECTION_INFO;
+#endif
+
 /* RAS callbacks */
 typedef VOID (WINAPI *RASDIALFUNC)( UINT, RASCONNSTATE, DWORD );
 typedef VOID (WINAPI *RASDIALFUNC1)( HRASCONN, UINT, RASCONNSTATE, DWORD, DWORD );
@@ -812,19 +1007,6 @@ typedef RASCTRYINFO     RASCTRYINFOA;
 typedef RASCTRYINFO     RASCTRYINFOW;
 typedef RASCTRYINFOA    *LPRASCTRYINFOA;
 typedef RASCTRYINFOW    *LPRASCTRYINFOW;
-
-/* RAS IP address */
-typedef struct tagRASIPADDR {
-    BYTE    a;
-    BYTE    b;
-    BYTE    c;
-    BYTE    d;
-} RASIPADDR;
-
-/* RAS IPv6 address */
-#if (WINVER >= 0x0600)
-typedef struct in6_addr RASIPV6ADDR;
-#endif
 
 /* RAS entry */
 typedef struct tagRASENTRYA {
@@ -888,6 +1070,11 @@ typedef struct tagRASENTRYA {
     DWORD       dwIPv4InterfaceMetric;
     DWORD       dwIPv6InterfaceMetric;
 #endif
+#if (WINVER >= 0x0601)
+    RASIPV6ADDR ipv6addr;
+    DWORD       dwIPv6PrefixLength;
+    DWORD       dwNetworkOutageTime;
+#endif
 } RASENTRYA;
 typedef RASENTRYA   *LPRASENTRYA;
 typedef struct tagRASENTRYW {
@@ -950,6 +1137,11 @@ typedef struct tagRASENTRYW {
     RASIPV6ADDR ipv6addrDnsAlt;
     DWORD       dwIPv4InterfaceMetric;
     DWORD       dwIPv6InterfaceMetric;
+#endif
+#if (WINVER >= 0x0601)
+    RASIPV6ADDR ipv6addr;
+    DWORD       dwIPv6PrefixLength;
+    DWORD       dwNetworkOutageTime;
 #endif
 } RASENTRYW;
 typedef RASENTRYW   *LPRASENTRYW;
@@ -1158,6 +1350,19 @@ typedef DWORD (WINAPI *RasCustomDialFn)( HINSTANCE, LPRASDIALEXTENSIONS, LPCWSTR
 typedef DWORD (WINAPI *RasCustomDeleteEntryNotifyFn)( LPCWSTR, LPCWSTR, DWORD );
 #endif
 
+/* RasUpdateConnection() parameters */
+#if (WINVER >= 0x0601)
+typedef struct tagRASUPDATECONN {
+    RASAPIVERSION       version;
+    DWORD               dwSize;
+    DWORD               dwFlags;
+    DWORD               dwIfIndex;
+    RASTUNNELENDPOINT   localEndPoint;
+    RASTUNNELENDPOINT   remoteEndPoint;
+} RASUPDATECONN;
+typedef RASUPDATECONN   *LPRASUPDATECONN;
+#endif
+
 /* Functions in RASAPI32.DLL */
 DWORD APIENTRY  RasConnectionNotificationA( HRASCONN, HANDLE, DWORD );
 DWORD APIENTRY  RasConnectionNotificationW( HRASCONN, HANDLE, DWORD );
@@ -1248,6 +1453,10 @@ DWORD APIENTRY  RasDeleteSubEntryW( LPCWSTR, LPCWSTR, DWORD );
 #ifdef USES_RAS_QUARANTINE_APIS
 DWORD APIENTRY  RasGetNapStatus( HRASCONN, LPRASNAPSTATE );
 #endif
+#endif
+#if (WINVER >= 0x0601)
+DWORD APIENTRY  RasGetProjectionInfoEx( HRASCONN, PRAS_PROJECTION_INFO, LPDWORD );
+DWORD APIENTRY  RasUpdateConnection( HRASCONN, LPRASUPDATECONN );
 #endif
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
