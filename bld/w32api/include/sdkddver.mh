@@ -15,7 +15,11 @@
 #define _WIN32_WINNT_WIN2K      0x0500
 #define _WIN32_WINNT_WINXP      0x0501
 #define _WIN32_WINNT_WS03       0x0502
+#define _WIN32_WINNT_WIN6       0x0600
+#define _WIN32_WINNT_VISTA      0x0600
+#define _WIN32_WINNT_WS08       0x0600
 #define _WIN32_WINNT_LONGHORN   0x0600
+#define _WIN32_WINNT_WIN7       0x0601
 
 /* Internet Explorer version numbers */
 #define _WIN32_IE_IE20      0x0200
@@ -30,6 +34,7 @@
 #define _WIN32_IE_IE60SP1   0x0601
 #define _WIN32_IE_IE60SP2   0x0603
 #define _WIN32_IE_IE70      0x0700
+#define _WIN32_IE_IE80      0x0800
 #define _WIN32_IE_NT4       _WIN32_IE_IE20
 #define _WIN32_IE_NT4SP1    _WIN32_IE_IE20
 #define _WIN32_IE_NT4SP2    _WIN32_IE_IE20
@@ -50,7 +55,9 @@
 #define _WIN32_IE_XPSP2     _WIN32_IE_IE60SP2
 #define _WIN32_IE_WS03      0x0602
 #define _WIN32_IE_WS03SP1   _WIN32_IE_IE60SP2
+#define _WIN32_IE_WIN6      _WIN32_IE_IE70
 #define _WIN32_IE_LONGHORN  _WIN32_IE_IE70
+#define _WIN32_IE_WIN7      _WIN32_IE_IE80
 
 /* NT device driver interface version numbers */
 #define NTDDI_WIN2K     0x05000000
@@ -83,6 +90,7 @@
 #define NTDDI_WS08SP3   NTDDI_WIN6SP3
 #define NTDDI_WS08SP4   NTDDI_WIN6SP4
 #define NTDDI_LONGHORN  NTDDI_VISTA
+#define NTDDI_WIN7      0x06010000
 
 /* Masks to manipulate NT device driver interface version numbers */
 #define OSVERSION_MASK  0xFFFF0000
