@@ -24,6 +24,13 @@ goto DoneRUN286
 :NoRUN286
 echo ***NOTE: run286.exe not found, skipping...
 :DoneRUN286
+if [%NOCW%]==[NOCW] goto NoCW
+cw_3r
+cw_3s
+goto DoneCW
+:NoCW
+echo ***NOTE: skipping Causeway tests...
+:DoneCW
 if [%NODOS4GW%]==[NODOS4GW] goto NoDOS4GW
 set odos4g=%dos4g%
 set dos4g=quiet

@@ -9,6 +9,8 @@
 #                               dos_m
 #                               dos_l
 #                               dos_h
+# CW    Causeway                cw_3s
+#                               cw_3r
 # PLS   PharLap                 pls_3s
 #                               pls_3r
 # RSI   Rational Systems        rsi_3s
@@ -88,7 +90,7 @@ link_opts = NAME $^* OPTION quiet
 
 dosexes = &
     dos_s.exe dos_c.exe dos_m.exe dos_l.exe dos_h.exe &
-    rsi_3s.exe rsi_3r.exe
+    cw_3s.exe cw_3r.exe rsi_3s.exe rsi_3r.exe
 
 !ifdef %TEST_PLS
 dosexes += pls_3s.exe pls_3r.exe
@@ -204,6 +206,16 @@ dos_l.exe : $(srcfile)
 dos_h.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mh -bt=dos $(c_dbg_flags)
     wlink SYSTEM dos $(link_opts) $(link_i86) OPTION stack=5k FILE $^*.obj
+    @rm $^*.obj
+
+cw_3s.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__CAUSEWAY__ $(c_dbg_flags)
+    wlink SYSTEM causeway $(link_opts) $(link_i86) FILE $^*.obj
+    @rm $^*.obj
+
+cw_3r.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__CAUSEWAY__ $(c_dbg_flags)
+    wlink SYSTEM causeway $(link_opts) $(link_i86) FILE $^*.obj
     @rm $^*.obj
 
 pls_3s.exe : $(srcfile)

@@ -31,12 +31,24 @@ goto DONE_RUN286
 :NoRUN286
 echo ***NOTE: run286.exe not found, skipping...
 :DONE_RUN286
+if [%NOCW%]==[NOCW] goto NoCW
+cw_3r
+cw_3s
+goto DoneCW
+:NoCW
+echo ***NOTE: skipping Causeway tests...
+:DoneCW
+if [%NODOS4GW%]==[NODOS4GW] goto NoDOS4GW
 set odos4g=%dos4g%
 set dos4g=quiet
 rsi_3r
 rsi_3s
 set dos4g=%odos4g%
 set odos4g=
+goto DoneDOS4GW
+:NoDOS4GW
+echo ***NOTE: skipping dos4gw tests...
+:DoneDOS4GW
 which tnt.exe > nul
 if errorlevel 1 goto NoTNT
 if [%NOTNT%]==[NOTNT] goto NoTNT
