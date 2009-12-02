@@ -3483,6 +3483,7 @@ void fb_first_text_line_pass( text_line * out_line )
     /* Now do the remaining text_chars instances. */
 
     current = current->next;
+    x_address = desired_state.x_address;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
         if( current_state.font_number != current->font_number ) {
@@ -3764,6 +3765,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
 
     /* The "first text_chars instance" sequence. */
 
+    x_address = desired_state.x_address;
     fb_first_text_chars( current, cur_lineproc );
 
     /* Now do the remaining text_chars instances. */
@@ -3791,6 +3793,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
             if( current == NULL ) break;
 
             desired_state.x_address = current->x_address;
+            x_address = desired_state.x_address;
             if( cur_lineproc != NULL) {
                 if( current_state.font_number != current->font_number ) {
                     desired_state.font_number = current->font_number;
