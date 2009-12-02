@@ -376,30 +376,33 @@ typedef UINT    DI_FUNCTION;
 #define IDD_DYNAWIZ_SELECTCLASS_PAGE            10012
 
 /* Driver installation flags */
-#define DNF_DUPDESC                     0x00000001L
-#define DNF_OLDDRIVER                   0x00000002L
-#define DNF_EXCLUDEFROMLIST             0x00000004L
-#define DNF_NODRIVER                    0x00000008L
-#define DNF_LEGACYINF                   0x00000010L
-#define DNF_CLASS_DRIVER                0x00000020L
-#define DNF_COMPATIBLE_DRIVER           0x00000040L
-#define DNF_INET_DRIVER                 0x00000080L
-#define DNF_OLD_INET_DRIVER             0x00000400L
-#define DNF_BAD_DRIVER                  0x00000800L
-#define DNF_DUPPROVIDER                 0x00001000L
+#define DNF_DUPDESC                         0x00000001L
+#define DNF_OLDDRIVER                       0x00000002L
+#define DNF_EXCLUDEFROMLIST                 0x00000004L
+#define DNF_NODRIVER                        0x00000008L
+#define DNF_LEGACYINF                       0x00000010L
+#define DNF_CLASS_DRIVER                    0x00000020L
+#define DNF_COMPATIBLE_DRIVER               0x00000040L
+#define DNF_INET_DRIVER                     0x00000080L
+#define DNF_OLD_INET_DRIVER                 0x00000400L
+#define DNF_BAD_DRIVER                      0x00000800L
+#define DNF_DUPPROVIDER                     0x00001000L
 #if (_SETUPAPI_VER >= 0x0501)
-    #define DNF_INF_IS_SIGNED           0x00002000L
-    #define DNF_OEM_F6_INF              0x00004000L
-    #define DNF_DUPDRIVERVER            0x00008000L
-    #define DNF_BASIC_DRIVER            0x00010000L
+    #define DNF_INF_IS_SIGNED               0x00002000L
+    #define DNF_OEM_F6_INF                  0x00004000L
+    #define DNF_DUPDRIVERVER                0x00008000L
+    #define DNF_BASIC_DRIVER                0x00010000L
 #endif
 #if (_SETUPAPI_VER >= 0x0502)
-    #define DNF_AUTHENTICODE_SIGNED     0x00020000L
+    #define DNF_AUTHENTICODE_SIGNED         0x00020000L
 #endif
 #if (_SETUPAPI_VER >= 0x0600)
-    #define DNF_INSTALLEDDRIVER         0x00040000L
-    #define DNF_ALWAYSEXCLUDEFROMLIST   0x00080000L
-    #define DNF_INBOX_DRIVER            0x00100000L
+    #define DNF_INSTALLEDDRIVER             0x00040000L
+    #define DNF_ALWAYSEXCLUDEFROMLIST       0x00080000L
+    #define DNF_INBOX_DRIVER                0x00100000L
+#endif
+#if (_SETUPAPI_VER >= 0x0601)
+    #define DNF_REQUESTADDITIONALSOFTWARE   0x00200000L
 #endif
 
 /* Driver rank values */
@@ -697,6 +700,9 @@ typedef UINT    DI_FUNCTION;
     #define SP_COPY_IN_USE_TRY_RENAME   0x04000000L
     #define SP_COPY_INBOX_INF           0x08000000L
 #endif
+#if (_SETUPAPI_VER >= 0x0601)
+    #define SP_COPY_HARDLINK            0x10000000L
+#endif
 
 /* Setup backup notification flags */
 #if (_SETUPAPI_VER >= 0x0501)
@@ -860,21 +866,24 @@ typedef UINT    DI_FUNCTION;
 #endif
 
 /* SetupInstallServicesFromInfSection() flags */
-#define SPSVCINST_TAGTOFRONT                0x00000001L
-#define SPSVCINST_ASSOCSERVICE              0x00000002L
-#define SPSVCINST_DELETEEVENTLOGENTRY       0x00000004L
-#define SPSVCINST_NOCLOBBER_DISPLAYNAME     0x00000008L
-#define SPSVCINST_NOCLOBBER_STARTTYPE       0x00000010L
-#define SPSVCINST_NOCLOBBER_ERRORCONTROL    0x00000020L
-#define SPSVCINST_NOCLOBBER_LOADORDERGROUP  0x00000040L
-#define SPSVCINST_NOCLOBBER_DEPENDENCIES    0x00000080L
-#define SPSVCINST_NOCLOBBER_DESCRIPTION     0x00000100L
-#define SPSVCINST_STOPSERVICE               0x00000200L
+#define SPSVCINST_TAGTOFRONT                        0x00000001L
+#define SPSVCINST_ASSOCSERVICE                      0x00000002L
+#define SPSVCINST_DELETEEVENTLOGENTRY               0x00000004L
+#define SPSVCINST_NOCLOBBER_DISPLAYNAME             0x00000008L
+#define SPSVCINST_NOCLOBBER_STARTTYPE               0x00000010L
+#define SPSVCINST_NOCLOBBER_ERRORCONTROL            0x00000020L
+#define SPSVCINST_NOCLOBBER_LOADORDERGROUP          0x00000040L
+#define SPSVCINST_NOCLOBBER_DEPENDENCIES            0x00000080L
+#define SPSVCINST_NOCLOBBER_DESCRIPTION             0x00000100L
+#define SPSVCINST_STOPSERVICE                       0x00000200L
 #if (_SETUPAPI_VER >= 0x0501)
-    #define SPSVCINST_CLOBBER_SECURITY      0x00000400L
+    #define SPSVCINST_CLOBBER_SECURITY              0x00000400L
 #endif
 #if (_SETUPAPI_VER >= 0x0600)
-    #define SPSVCINST_STARTSERVICE          0x00000800L
+    #define SPSVCINST_STARTSERVICE                  0x00000800L
+#endif
+#if (_SETUPAPI_VER >= 0x0601)
+    #define SPSVCINST_NOCLOBBER_REQUIREDPRIVILEGES  0x00001000L
 #endif
 
 /* SetupInitializeFileLog() flags */
@@ -972,7 +981,8 @@ typedef UINT    DI_FUNCTION;
 #define SPDRP_REMOVAL_POLICY_OVERRIDE       0x00000021L
 #define SPDRP_INSTALL_STATE                 0x00000022L
 #define SPDRP_LOCATION_PATHS                0x00000023L
-#define SPDRP_MAXIMUM_PROPERTY              0x00000024L
+#define SPDRP_BASE_CONTAINERID              0x00000024L
+#define SPDRP_MAXIMUM_PROPERTY              0x00000025L
 
 /* Setup class registry property codes */
 #define SPCRP_UPPERFILTERS      0x00000011L
@@ -1947,8 +1957,6 @@ WINSETUPAPI BOOL WINAPI     SetupDiGetClassImageListExA( PSP_CLASSIMAGELIST_DATA
 WINSETUPAPI BOOL WINAPI     SetupDiGetClassImageListExW( PSP_CLASSIMAGELIST_DATA, PCWSTR, PVOID );
 WINSETUPAPI BOOL WINAPI     SetupDiGetClassInstallParamsA( HDEVINFO, PSP_DEVINFO_DATA, PSP_CLASSINSTALL_HEADER, DWORD, PDWORD );
 WINSETUPAPI BOOL WINAPI     SetupDiGetClassInstallParamsW( HDEVINFO, PSP_DEVINFO_DATA, PSP_CLASSINSTALL_HEADER, DWORD, PDWORD );
-WINSETUPAPI BOOL WINAPI     SetupDiGetClassRegistryPropertyA( CONST GUID *, DWORD, PDWORD, PBYTE, DWORD, PDWORD, PCSTR, PVOID );
-WINSETUPAPI BOOL WINAPI     SetupDiGetClassRegistryPropertyW( CONST GUID *, DWORD, PDWORD, PBYTE, DWORD, PDWORD, PCWSTR, PVOID );
 WINSETUPAPI BOOL WINAPI     SetupDiGetDeviceInfoListClass( HDEVINFO, LPGUID );
 WINSETUPAPI BOOL WINAPI     SetupDiGetDeviceInfoListDetailA( HDEVINFO, PSP_DEVINFO_LIST_DETAIL_DATA_A );
 WINSETUPAPI BOOL WINAPI     SetupDiGetDeviceInfoListDetailW( HDEVINFO, PSP_DEVINFO_LIST_DETAIL_DATA_W );
@@ -2004,8 +2012,6 @@ WINSETUPAPI BOOL WINAPI     SetupDiSelectDevice( HDEVINFO, PSP_DEVINFO_DATA );
 WINSETUPAPI BOOL WINAPI     SetupDiSelectOEMDrv( HWND, HDEVINFO, PSP_DEVINFO_DATA );
 WINSETUPAPI BOOL WINAPI     SetupDiSetClassInstallParamsA( HDEVINFO, PSP_DEVINFO_DATA, PSP_CLASSINSTALL_HEADER, DWORD );
 WINSETUPAPI BOOL WINAPI     SetupDiSetClassInstallParamsW( HDEVINFO, PSP_DEVINFO_DATA, PSP_CLASSINSTALL_HEADER, DWORD );
-WINSETUPAPI BOOL WINAPI     SetupDiSetClassRegistryPropertyA( CONST GUID *, DWORD, CONST BYTE *, DWORD, PCSTR, PVOID );
-WINSETUPAPI BOOL WINAPI     SetupDiSetClassRegistryPropertyW( CONST GUID *, DWORD, CONST BYTE *, DWORD, PCWSTR, PVOID );
 WINSETUPAPI BOOL WINAPI     SetupDiSetDeviceInstallParamsA( HDEVINFO, PSP_DEVINFO_DATA, PSP_DEVINSTALL_PARAMS_A );
 WINSETUPAPI BOOL WINAPI     SetupDiSetDeviceInstallParamsW( HDEVINFO, PSP_DEVINFO_DATA, PSP_DEVINSTALL_PARAMS_W );
 WINSETUPAPI BOOL WINAPI     SetupDiSetDeviceRegistryPropertyA( HDEVINFO, PSP_DEVINFO_DATA, DWORD, CONST BYTE *, DWORD );
@@ -2145,8 +2151,12 @@ WINSETUPAPI BOOL WINAPI     SetupTerminateFileLog( HSPFILELOG );
 #if (_SETUPAPI_VER >= 0x0501)
 WINSETUPAPI BOOL WINAPI     SetupDiGetActualSectionToInstallExA( HINF, PCSTR, PSP_ALTPLATFORM_INFO, PSTR, DWORD, PDWORD, PSTR *, PVOID );
 WINSETUPAPI BOOL WINAPI     SetupDiGetActualSectionToInstallExW( HINF, PCWSTR, PSP_ALTPLATFORM_INFO, PWSTR, DWORD, PDWORD, PWSTR *, PVOID );
+WINSETUPAPI BOOL WINAPI     SetupDiGetClassRegistryPropertyA( CONST GUID *, DWORD, PDWORD, PBYTE, DWORD, PDWORD, PCSTR, PVOID );
+WINSETUPAPI BOOL WINAPI     SetupDiGetClassRegistryPropertyW( CONST GUID *, DWORD, PDWORD, PBYTE, DWORD, PDWORD, PCWSTR, PVOID );
 WINSETUPAPI BOOL WINAPI     SetupDiGetCustomDevicePropertyA( HDEVINFO, PSP_DEVINFO_DATA, PCSTR, DWORD, PDWORD, PBYTE, DWORD, PDWORD );
 WINSETUPAPI BOOL WINAPI     SetupDiGetCustomDevicePropertyW( HDEVINFO, PSP_DEVINFO_DATA, PCWSTR, DWORD, PDWORD, PBYTE, DWORD, PDWORD );
+WINSETUPAPI BOOL WINAPI     SetupDiSetClassRegistryPropertyA( CONST GUID *, DWORD, CONST BYTE *, DWORD, PCSTR, PVOID );
+WINSETUPAPI BOOL WINAPI     SetupDiSetClassRegistryPropertyW( CONST GUID *, DWORD, CONST BYTE *, DWORD, PCWSTR, PVOID );
 WINSETUPAPI BOOL WINAPI     SetupDiSetDeviceInterfaceDefault( HDEVINFO, PSP_DEVICE_INTERFACE_DATA, DWORD, PVOID );
 WINSETUPAPI BOOL WINAPI     SetupEnumInfSectionsA( HINF, UINT, PSTR, UINT, UINT * );
 WINSETUPAPI BOOL WINAPI     SetupEnumInfSectionsW( HINF, UINT, PWSTR, UINT, UINT * );
@@ -2251,7 +2261,6 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
     #define SetupDiGetClassDevsEx               SetupDiGetClassDevsExW
     #define SetupDiGetClassImageListEx          SetupDiGetClassImageListExW
     #define SetupDiGetClassInstallParams        SetupDiGetClassInstallParamsW
-    #define SetupDiGetClassRegistryProperty     SetupDiGetClassRegistryPropertyW
     #define SetupDiGetDeviceInfoListDetail      SetupDiGetDeviceInfoListDetailW
     #define SetupDiGetDeviceInstallParams       SetupDiGetDeviceInstallParamsW
     #define SetupDiGetDeviceInstanceId          SetupDiGetDeviceInstanceIdW
@@ -2272,7 +2281,6 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
     #define SetupDiOpenDeviceInterface          SetupDiOpenDeviceInterfaceW
     #define SetupDiOpenInterfaceDevice          SetupDiOpenInterfaceDeviceW
     #define SetupDiSetClassInstallParams        SetupDiSetClassInstallParamsW
-    #define SetupDiSetClassRegistryProperty     SetupDiSetClassRegistryPropertyW
     #define SetupDiSetDeviceInstallParams       SetupDiSetDeviceInstallParamsW
     #define SetupDiSetDeviceRegistryProperty    SetupDiSetDeviceRegistryPropertyW
     #define SetupDiSetDriverInstallParams       SetupDiSetDriverInstallParamsW
@@ -2335,7 +2343,9 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
     #define SetupSetSourceList                  SetupSetSourceListW
     #if (_SETUPAPI_VER >= 0x0501)
         #define SetupDiGetActualSectionToInstallEx  SetupGetActualSectionToInstallExW
+        #define SetupDiGetClassRegistryProperty SetupDiGetClassRegistryPropertyW
         #define SetupDiGetCustomDeviceProperty  SetupDiGetCustomDevicePropertyW
+        #define SetupDiSetClassRegistryProperty SetupDiSetClassRegistryPropertyW
         #define SetupEnumInfSections            SetupEnumInfSectionsW
         #define SetupGetFileCompressionInfoEx   SetupGetFileCompressionInfoExW
         #define SetupPrepareQueueForRestore     SetupPrepareQueueForRestoreW
@@ -2395,7 +2405,6 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
     #define SetupDiGetClassDevsEx               SetupDiGetClassDevsExA
     #define SetupDiGetClassImageListEx          SetupDiGetClassImageListExA
     #define SetupDiGetClassInstallParams        SetupDiGetClassInstallParamsA
-    #define SetupDiGetClassRegistryProperty     SetupDiGetClassRegistryPropertyA
     #define SetupDiGetDeviceInfoListDetail      SetupDiGetDeviceInfoListDetailA
     #define SetupDiGetDeviceInstallParams       SetupDiGetDeviceInstallParamsA
     #define SetupDiGetDeviceInstanceId          SetupDiGetDeviceInstanceIdA
@@ -2416,7 +2425,6 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
     #define SetupDiOpenDeviceInterface          SetupDiOpenDeviceInterfaceA
     #define SetupDiOpenInterfaceDevice          SetupDiOpenInterfaceDeviceA
     #define SetupDiSetClassInstallParams        SetupDiSetClassInstallParamsA
-    #define SetupDiSetClassRegistryProperty     SetupDiSetClassRegistryPropertyA
     #define SetupDiSetDeviceInstallParams       SetupDiSetDeviceInstallParamsA
     #define SetupDiSetDeviceRegistryProperty    SetupDiSetDeviceRegistryPropertyA
     #define SetupDiSetDriverInstallParams       SetupDiSetDriverInstallParamsA
@@ -2479,7 +2487,9 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
     #define SetupSetSourceList                  SetupSetSourceListA
     #if (_SETUPAPI_VER >= 0x0501)
         #define SetupDiGetActualSectionToInstallEx  SetupDiGetActualSectionToInstallExA
+        #define SetupDiGetClassRegistryProperty SetupDiGetClassRegistryPropertyA
         #define SetupDiGetCustomDeviceProperty  SetupDiGetCustomDevicePropertyA
+        #define SetupDiSetClassRegistryProperty SetupDiSetClassRegistryPropertyA
         #define SetupEnumInfSections            SetupEnumInfSectionsA
         #define SetupGetFileCompressionInfoEx   SetupGetFileCompressionInfoExA
         #define SetupPrepareQueueForRestore     SetupPrepareQueueForRestoreA
