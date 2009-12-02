@@ -52,6 +52,7 @@
 #define __deref_inout_xcount_full( x )
 #define __deref_xcount_opt( x )
 #define __deref_in_opt
+#define __deref_in_opt_out
 #define __deref_in_ecount_opt( x )
 #define __deref_in_bcount_opt( x )
 #define __deref_in_xcount_opt( x )
@@ -90,6 +91,7 @@
 #define __class_code_content( x )
 #define __analysis_assert( x )
 #define __analysis_hint( x )
+#define __analysis_noreturn
 #define __inner_data_source( x )
 #define __inner_this_data_source( x )
 #define __inner_out_validated( x )
@@ -98,6 +100,16 @@
 #define __inner_assume_validated( x )
 #define __inner_transfer( x )
 #define __inner_encoded
+#define __inner_adt_prop( p1, p2 )
+#define __inner_adt_add_prop( p1, p2 )
+#define __inner_adt_remove_prop( p1, p2 )
+#define __inner_adt_transfer_prop( x )
+#define __inner_adt_type_props( x )
+#define __inner_volatile
+#define __inner_nonvolatile
+#define __inner_possibly_notnullterminated
+#define __inner_analysis_assume_nullterminated_dec
+#define __inner_analysis_assume_nullterminated( x )
 #define __field_ecount( x )
 #define __field_bcount( x )
 #define __field_xcount( x )
@@ -116,11 +128,15 @@
 #define __field_ecount_full_opt( x )
 #define __field_bcount_full_opt( x )
 #define __field_xcount_full_opt( x )
+#define __field_nullterminated
 #define __struct_bcount( x )
 #define __struct_xcount( x )
 #define __out_awcount( p1, p2 )
 #define __in_awcount( p1, p2 )
+#define __post_invalid
 #define __allocator
+#define __deallocate( x )
+#define __deallocate_opt( x )
 #define __bound
 #define __range( p1, p2 )
 #define __in_bound
@@ -130,8 +146,11 @@
 #define __out_range( p1, p2 )
 #define __deref_in_range( p1, p2 )
 #define __deref_out_range( p1, p2 )
+#define __deref_inout_range( p1, p2 )
 #define __field_range( p1, p2 )
 #define __field_data_source( x )
+#define __range_max( p1, p2 )
+#define __range_min( p1, p2 )
 #define __in_data_source( x )
 #define __out_data_source( x )
 #define __out_validated( x )
@@ -155,6 +174,7 @@
 #define __nonvolatile
 #define __deref_volatile
 #define __deref_nonvolatile
+#define __analysis_assume_nullterminated( x )
 #define __assume_validated( x )
 #define __assume_bound( x )
 
