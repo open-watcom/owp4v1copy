@@ -172,6 +172,7 @@ SHCreateStreamOnFileEx@24
 SHCreateStreamOnFileW@12
 SHCreateThread@16
 SHCreateThreadRef@8
+SHCreateThreadWithHandle@20
 SHDeleteEmptyKeyA@8
 SHDeleteEmptyKeyW@8
 SHDeleteKeyA@8
@@ -190,6 +191,9 @@ SHGetThreadRef@4
 SHGetValueA@24
 SHGetValueW@24
 SHGetViewStatePropertyBag@20
+SHGlobalCounterDecrement@4
+SHGlobalCounterGetValue@4
+SHGlobalCounterIncrement@4
 SHIsLowMemoryMachine@4
 SHLoadIndirectString@16
 SHLockShared@8
@@ -285,6 +289,7 @@ StrDupA@4
 StrDupW@4
 StrFormatByteSize64A@16
 StrFormatByteSizeA@12
+StrFormatByteSizeEx@20
 StrFormatByteSizeW@16
 StrFormatKBSizeA@16
 StrFormatKBSizeW@16
@@ -355,4 +360,3 @@ wnsprintfA
 wnsprintfW
 wvnsprintfA@16
 wvnsprintfW@16
-
