@@ -17,15 +17,18 @@
 #define SQL_DATA_AT_EXEC    (-2)
 
 /* ODBC return codes */
-#define SQL_SUCCESS             0L
-#define SQL_SUCCESS_WITH_INFO   1L
-#define SQL_STILL_EXECUTING     2L
-#define SQL_NEED_DATA           99L
+#define SQL_SUCCESS                     0L
+#define SQL_SUCCESS_WITH_INFO           1L
+#define SQL_STILL_EXECUTING             2L
+#define SQL_NEED_DATA                   99L
 #if (ODBCVER >= 0x0300)
-    #define SQL_NO_DATA         100L
+    #define SQL_NO_DATA                 100L
 #endif
-#define SQL_ERROR               (-1L)
-#define SQL_INVALID_HANDLE      (-2L)
+#if (ODBCVER >= 0x0380)
+    #define SQL_PARAM_DATA_AVAILABLE    101L
+#endif
+#define SQL_ERROR                       (-1L)
+#define SQL_INVALID_HANDLE              (-2L)
 
 /* Macro to test for success of ODBC functions */
 #define SQL_SUCCEEDED( x )  (((x) & 0xFFFFFFFEL) == 0x00000000L)
@@ -188,6 +191,9 @@
 #if (ODBCVER >= 0x0300)
     #define SQL_ARD_TYPE    (-99L)
 #endif
+#if (ODBCVER >= 0x0380)
+    #define SQL_APD_TYPE    (-100L)
+#endif
 
 /* ODBC date and time type subcodes */
 #if (ODBCVER >= 0x0300)
@@ -338,6 +344,9 @@
     #define SQL_API_SQLSETENVATTR       1019
     #define SQL_API_SQLSETSTMTATTR      1020
     #define SQL_API_SQLFETCHSCROLL      1021
+#endif
+#if (ODBCVER >= 0x0380)
+    #define SQL_API_SQLCANCELHANDLE     1022
 #endif
 
 /* SQLGetInfo() indices */
@@ -546,6 +555,9 @@ SQLRETURN SQL_API   SQLSetDescField( SQLHDESC, SQLSMALLINT, SQLSMALLINT, SQLPOIN
 SQLRETURN SQL_API   SQLSetDescRec( SQLHDESC, SQLSMALLINT, SQLSMALLINT, SQLSMALLINT, SQLLEN, SQLSMALLINT, SQLSMALLINT, SQLPOINTER, SQLLEN *, SQLLEN * );
 SQLRETURN SQL_API   SQLSetEnvAttr( SQLHENV, SQLINTEGER, SQLPOINTER, SQLINTEGER );
 SQLRETURN SQL_API   SQLSetStmtAttr( SQLHSTMT, SQLINTEGER, SQLPOINTER, SQLINTEGER );
+#endif
+#if (ODBCVER >= 0x0380)
+SQLRETURN SQL_API   SQLCancelHandle( SQLSMALLINT, SQLHANDLE );
 #endif
 
 :include cplusepi.sp

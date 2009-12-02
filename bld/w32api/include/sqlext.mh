@@ -14,8 +14,8 @@
 
 /* ODBC constants */
 #define SQL_SPEC_MAJOR                  3
-#define SQL_SPEC_MINOR                  52
-#define SQL_SPEC_STRING                 "03.52"
+#define SQL_SPEC_MINOR                  80
+#define SQL_SPEC_STRING                 "03.80"
 #define SQL_SQLSTATE_SIZE               5
 #define SQL_MAX_SDN_LENGTH              32
 #define SQL_MAX_OPTION_STRING_LENGTH    256
@@ -62,6 +62,9 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
     #define SQL_OV_ODBC2    2L
     #define SQL_OV_ODBC3    3L
 #endif
+#if (ODBCVER >= 0x0380)
+    #define SQL_OV_ODBC3_80 380L
+#endif
 
 /* ODBC connection attributes */
 #define SQL_ACCESS_MODE                     101L
@@ -97,6 +100,10 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
 #define SQL_ATTR_CONNECTION_DEAD            1209L
 #if (ODBCVER >= 0x0351)
     #define SQL_ATTR_ANSI_APP               115L
+#endif
+#if (ODBCVER >= 0x0380)
+    #define SQL_ATTR_RESET_CONNECTION       116L
+    #define SQL_ATTR_ASYNC_DBC_FUNCTIONS_ENABLE 117L
 #endif
 
 /* ODBC connection options */
@@ -151,6 +158,18 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
 #if (ODBCVER >= 0x0351)
     #define SQL_AA_TRUE     1L
     #define SQL_AA_FALSE    0L
+#endif
+
+/* ODBC reset connection values */
+#if (ODBCVER >= 0x0380)
+    #define SQL_RESET_CONNECTION_YES    1L
+#endif
+
+/* ODBC asynchronous DBC functions enable values */
+#if (ODBCVER >= 0x0380)
+    #define SQL_ASYNC_DBC_ENABLE_ON         1L
+    #define SQL_ASYNC_DBC_ENABLE_OFF        0L
+    #define SQL_ASYNC_DBC_ENABLE_DEFAULT    SQL_ASYNC_DBC_ENABLE_OFF
 #endif
 
 /* ODBC statement attributes */
@@ -473,6 +492,17 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
     #define SQL_TYPE_MAX    SQL_VARCHAR
 #endif
 
+/* ODBC special driver data type constants */
+#if (ODBCVER >= 0x0380)
+    #define SQL_DRIVER_C_TYPE_BASE      0x00004000L
+    #define SQL_DRIVER_SQL_TYPE_BASE    0x00004000L
+    #define SQL_DRIVER_DESC_FIELD_BASE  0x00004000L
+    #define SQL_DRIVER_DIAG_FIELD_BASE  0x00004000L
+    #define SQL_DRIVER_INFO_TYPE_BASE   0x00004000L
+    #define SQL_DRIVER_CONN_ATTR_BASE   0x00004000L
+    #define SQL_DRIVER_STMT_ATTR_BASE   0x00004000L
+#endif
+
 /* ODBC diagnostic row and column number special values */
 #if (ODBCVER >= 0x0300)
     #define SQL_NO_ROW_NUMBER           (-1L)
@@ -734,6 +764,9 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
     #define SQL_INSERT_STATEMENT                172
     #define SQL_CONVERT_GUID                    173
     #define SQL_UNION_STATEMENT                 SQL_UNION
+#endif
+#if (ODBCVER >= 0x0380)
+    #define SQL_ASYNC_DBC_FUNCTIONS             10023
 #endif
 #define SQL_DTC_TRANSITION_COST                 1750
 
@@ -1005,8 +1038,11 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
 #define SQL_FILE_CATALOG        SQL_FILE_QUALIFIER
 
 /* ODBC get data values */
-#define SQL_GD_BLOCK    0x00000004L
-#define SQL_GD_BOUND    0x00000008L
+#define SQL_GD_BLOCK                0x00000004L
+#define SQL_GD_BOUND                0x00000008L
+#if (ODBCVER >= 0x0380)
+    #define SQL_GD_OUTPUT_PARAMS    0x00000010L
+#endif
 
 /* ODBC positioned statements flags */
 #define SQL_PS_POSITIONED_DELETE    0x00000001L
@@ -1477,6 +1513,12 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
 #define SQL_DTC_ENLIST_EXPENSIVE    0x00000001L
 #define SQL_DTC_UNENLIST_EXPENSIVE  0x00000002L
 
+/* ODBC asynchronous DBC function flags */
+#if (ODBCVER >= 0x0380)
+    #define SQL_ASYNC_DBC_NOT_CAPABLE   0x00000000L
+    #define SQL_ASYNC_DBC_CAPABLE       0x00000001L
+#endif
+
 /* Fetch orientations */
 #if (ODBCVER >= 0x0300)
     #define SQL_FETCH_FIRST_USER    31L
@@ -1574,12 +1616,16 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
 #endif
 
 /* ODBC parameter types */
-#define SQL_PARAM_TYPE_UNKNOWN  0
-#define SQL_PARAM_INPUT         1
-#define SQL_PARAM_INPUT_OUTPUT  2
-#define SQL_RESULT_COL          3
-#define SQL_PARAM_OUTPUT        4
-#define SQL_RETURN_VALUE        5
+#define SQL_PARAM_TYPE_UNKNOWN              0
+#define SQL_PARAM_INPUT                     1
+#define SQL_PARAM_INPUT_OUTPUT              2
+#define SQL_RESULT_COL                      3
+#define SQL_PARAM_OUTPUT                    4
+#define SQL_RETURN_VALUE                    5
+#if (ODBCVER >= 0x0380)
+    #define SQL_PARAM_INPUT_OUTPUT_STREAM   8
+    #define SQL_PARAM_OUTPUT_STREAM         16
+#endif
 
 /* ODBC procedure types */
 #define SQL_PT_UNKNOWN      0

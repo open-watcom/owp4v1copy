@@ -15,6 +15,7 @@ SQLBrowseConnectA@24
 SQLBrowseConnectW@24
 SQLBulkOperations@8
 SQLCancel@4
+SqlCancelHandle@8
 SQLCloseCursor@4
 SQLColAttribute@28
 SQLColAttributeA@28
@@ -154,4 +155,3 @@ SQLTables@36
 SQLTablesA@36
 SQLTablesW@36
 SQLTransact@12
-
