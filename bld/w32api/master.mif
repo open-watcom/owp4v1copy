@@ -433,6 +433,7 @@ libs =                       &
         bcrypt.lib           &
         comctl32.lib         &
         comdlg32.lib         &
+        credui.lib           &
         crypt32.lib          &
         cryptnet.lib         &
         dbghelp.lib          &
