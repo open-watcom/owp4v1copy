@@ -236,7 +236,7 @@ enum tagAM_MEDIAEVENT_FLAGS {
 };
 
 /* Registered filter */
-typedef struct {
+typedef struct REGFILTER {
     CLSID   Clsid;
     LPWSTR  Name;
 } REGFILTER;
@@ -252,13 +252,13 @@ enum {
 };
 
 /* Registered pin types */
-typedef struct {
+typedef struct REGPINTYPES {
     const CLSID *clsMajorType;
     const CLSID *clsMinorType;
 } REGPINTYPES;
 
 /* Registered filter pins */
-typedef struct {
+typedef struct REGFILTERPINS {
     LPWSTR              strName;
     BOOL                bRendered;
     BOOL                bOutput;
@@ -271,7 +271,7 @@ typedef struct {
 } REGFILTERPINS;
 
 /* Registered pin medium */
-typedef struct {
+typedef struct REGPINMEDIUM {
     CLSID   clsMedium;
     DWORD   dw1;
     DWORD   dw2;
@@ -286,7 +286,7 @@ enum {
 };
 
 /* Registered filter pins (version 2) */
-typedef struct {
+typedef struct REGFILTERPINS2 {
     DWORD               dwFlags;
     UINT                cInstances;
     UINT                nMediaTypes;
@@ -297,7 +297,7 @@ typedef struct {
 } REGFILTERPINS2;
 
 /* Registered filter (version 2) */
-typedef struct {
+typedef struct REGFILTER2 {
     DWORD   dwVersion;
     DWORD   dwMerit;
     union {
@@ -356,7 +356,7 @@ enum {
     (ADVISE_ALL | ADVISE_DISPLAY_CHANGE)
 
 /* ActiveMovie file sink flags */
-typedef enum {
+typedef enum AM_FILESINK_FLAGS {
     AM_FILE_OVERWRITE   = 0x00000001
 } AM_FILESINK_FLAGS;
 
@@ -366,7 +366,7 @@ enum _AM_RENDEREXFLAGS {
 };
 
 /* ActiveMovie stream information flags */
-typedef enum {
+typedef enum AM_STREAM_INFO_FLAGS {
     AM_STREAM_INFO_START_DEFINED    = 0x00000001,
     AM_STREAM_INFO_STOP_DEFINED     = 0x00000002,
     AM_STREAM_INFO_DISCARDING       = 0x00000004,
@@ -374,7 +374,7 @@ typedef enum {
 } AM_STREAM_INFO_FLAGS;
 
 /* ActiveMovie stream information */
-typedef struct {
+typedef struct AM_STREAM_INFO {
     REFERENCE_TIME  tStart;
     REFERENCE_TIME  tStop;
     DWORD           dwStartCookie;
@@ -422,7 +422,7 @@ typedef struct _AUDIO_STREAM_CONFIG_CAPS {
 } AUDIO_STREAM_CONFIG_CAPS;
 
 /* Interleaving modes */
-typedef enum {
+typedef enum InterleavingMode {
     INTERLEAVE_NONE             = 0,
     INTERLEAVE_CAPTURE          = 1,
     INTERLEAVE_FULL             = 2,
@@ -430,7 +430,7 @@ typedef enum {
 } InterleavingMode;
 
 /* Compression capabilities */
-typedef enum {
+typedef enum CompressionCaps {
     CompressionCaps_CanQuality  = 0x00000001,
     CompressionCaps_CanCrunch   = 0x00000002,
     CompressionCaps_CanKeyFrame = 0x00000004,
@@ -439,14 +439,14 @@ typedef enum {
 } CompressionCaps;
 
 /* Video for Windows capture dialogs */
-typedef enum {
+typedef enum VfwCaptureDialogs {
     VfwCaptureDialog_Source     = 0x00000001,
     VfwCaptureDialog_Format     = 0x00000002,
     VfwCaptureDialog_Display    = 0x00000004
 } VfwCaptureDialogs;
 
 /* Video for Windows compression dialogs */
-typedef enum {
+typedef enum VfwCompressDialogs {
     VfwCompressDialog_Config        = 0x00000001,
     VfwCompressDialog_About         = 0x00000002,
     VfwCompressDialog_QueryConfig   = 0x00000004,
@@ -496,7 +496,7 @@ typedef enum tagTunerInputType {
 } TunerInputType;
 
 /* Video copy protection types */
-typedef enum {
+typedef enum VideoCopyProtectionType {
     VideoCopyProtectionMacrovisionBasic = 0,
     VideoCopyProtectionMacrovisionCBI   = 1
 } VideoCopyProtectionType;
@@ -621,7 +621,7 @@ typedef enum tagAMTVAudioEventType {
 } AMTVAudioEventType;
 
 /* ActiveMovie property pins */
-typedef enum {
+typedef enum AMPROPERTY_PIN {
     AMPROPERTY_PIN_CATEGORY = 0,
     AMPROPERTY_PIN_MEDIUM   = 1
 } AMPROPERTY_PIN;
@@ -671,7 +671,7 @@ enum _AM_PUSHSOURCE_FLAGS {
 };
 
 /* Digital video information */
-typedef struct {
+typedef struct DVINFO {
     DWORD   dwDVAAuxSrc;
     DWORD   dwDVAAuxCtl;
     DWORD   dwDVAAuxSrc1;
@@ -751,7 +751,7 @@ enum AMOVERLAYFX {
 };
 
 /* Stream identifier map */
-typedef struct {
+typedef struct STREAM_ID_MAP {
     ULONG   stream_id;
     DWORD   dwMediaSampleContent;
     ULONG   ulSubstreamFilterValue;
@@ -766,7 +766,7 @@ struct CodecAPIEventData {
 };
 
 /* Video encoder bit rate modes */
-typedef enum {
+typedef enum VIDEOENCODER_BITRATE_MODE {
     ConstantBitRate         = 0,
     VariableBitRateAverage  = 1,
     VariableBitRatePeak     = 2
@@ -866,6 +866,14 @@ typedef struct tagDVD_TIMECODE {
     ULONG   FrameRateCode   : 2;
 } DVD_TIMECODE;
 
+/* DVD navigation command types */
+typedef enum tagDVD_NavCmdType {
+    DVD_NavCmdType_Pre      = 1,
+    DVD_NavCmdType_Post     = 2,
+    DVD_NavCmdType_Cell     = 3,
+    DVD_NavCmdType_Button   = 4
+} DVD_NavCmdType;
+
 /* DVD time code flags */
 typedef enum tagDVD_TIMECODE_FLAGS {
     DVD_TC_FLAG_25fps           = 0x00000001,
@@ -945,7 +953,16 @@ typedef enum {
     DVD_EnableNonblockingAPIs           = 5,
     DVD_CacheSizeInMB                   = 6,
     DVD_EnablePortableBookmarks         = 7,
-    DVD_EnableExtendedCopyProtectErrors = 8
+    DVD_EnableExtendedCopyProtectErrors = 8,
+    DVD_NotifyPositionChange            = 9,
+    DVD_IncreaseOutputControl           = 10,
+    DVD_EnableStreaming                 = 11,
+    DVD_EnableESOutput                  = 12,
+    DVD_EnableTitleLength               = 13,
+    DVD_DisableStillThrottle            = 14,
+    DVD_EnableLoggingEvents             = 15,
+    DVD_MaxReadBurstInKB                = 16,
+    DVD_ReadBurstPeriodInMS             = 17
 } DVD_OPTION_FLAG;
 
 /* DVD relative button */
@@ -1154,7 +1171,10 @@ typedef enum tagDVD_TITLE_APPMODE {
 
 /* DVD title main attributes */
 typedef struct tagDVD_TitleMainAttributes {
-    DVD_TITLE_APPMODE               AppMode;
+    union {
+        DVD_TITLE_APPMODE   AppMode;
+        DVD_HMSF_TIMECODE   TitleLength;
+    };
     DVD_VideoAttributes             VideoAttributes;
     ULONG                           ulNumberOfAudioStreams;
     DVD_AudioAttributes             AudioAttributes[8];
@@ -1243,7 +1263,10 @@ typedef enum _AM_DVD_GRAPH_FLAGS {
     AM_DVD_NOVPE        = 0x00000100,
     AM_DVD_DO_NOT_CLEAR = 0x00000200,
     AM_DVD_VMR9_ONLY    = 0x00000800,
-    AM_DVD_EVR_ONLY     = 0x00001000
+    AM_DVD_EVR_ONLY     = 0x00001000,
+    AM_DVD_EVR_QOS      = 0x00002000,
+    AM_DVD_ADAPT_GRAPH  = 0x00004000,
+    AM_DVD_MASK         = 0x0000FFFF
 } AM_DVD_GRAPH_FLAGS;
 
 /* ActiveMovie DVD stream flags */
@@ -1295,7 +1318,7 @@ typedef enum _AM_FILTER_FLAGS {
 } AM_FILTER_FLAGS;
 
 /* VMR presentation flags */
-typedef enum {
+typedef enum VMRPresentationFlags {
     VMRSample_SyncPoint         = 0x00000001,
     VMRSample_Preroll           = 0x00000002,
     VMRSample_Discontinuity     = 0x00000004,
@@ -1317,7 +1340,7 @@ typedef struct tagVMRPRESENTATIONINFO {
 } VMRPRESENTATIONINFO;
 
 /* VMR surface allocation flags */
-typedef enum {
+typedef enum VMRSurfaceAllocationFlags {
     AMAP_PIXELFORMAT_VALID  = 0x00000001,
     AMAP_3D_TARGET          = 0x00000002,
     AMAP_ALLOW_SYSMEM       = 0x00000004,
@@ -1339,13 +1362,13 @@ typedef struct tagVMRALLOCATIONINFO {
 } VMRALLOCATIONINFO;
 
 /* VMR aspect ratio modes */
-typedef enum {
+typedef enum VMR_ASPECT_RATIO_MODE {
     VMR_ARMODE_NONE         = 0,
     VMR_ARMODE_LETTERBOX    = 1
 } VMR_ASPECT_RATIO_MODE;
 
 /* VMR mixer preferences */
-typedef enum {
+typedef enum VMRMixerPrefs {
     MixerPref_NoDecimation          = 0x00000001,
     MixerPref_DecimateOutput        = 0x00000002,
     MixerPref_ARAdjustXorY          = 0x00000004,
@@ -1395,7 +1418,7 @@ typedef struct tagVMRMONITORINFO {
 } VMRMONITORINFO;
 
 /* VMR render preferences */
-typedef enum {
+typedef enum VMRRenderPrefs {
     RenderPrefs_RestrictToInitialMonitor        = 0x00000000,
     RenderPrefs_ForceOffScreen                  = 0x00000001,
     RenderPrefs_ForceOverlays                   = 0x00000002,
@@ -1407,7 +1430,7 @@ typedef enum {
 } VMRRenderPrefs;
 
 /* VMR modes */
-typedef enum {
+typedef enum VMRMode {
     VMRMode_Windowed    = 0x00000001,
     VMRMode_Windowless  = 0x00000002,
     VMRMode_Renderless  = 0x00000004,
@@ -1420,7 +1443,7 @@ enum {
 };
 
 /* VMR deinterlace preferences */
-typedef enum {
+typedef enum VMRDeinterlacePrefs {
     DeinterlacePref_NextBest    = 0x00000001,
     DeinterlacePref_BOB         = 0x00000002,
     DeinterlacePref_Weave       = 0x00000004,
@@ -1428,7 +1451,7 @@ typedef enum {
 } VMRDeinterlacePrefs;
 
 /* VMR deinterlace technologies */
-typedef enum {
+typedef enum VMRDeinterlaceTech {
     DeinterlaceTech_Unknown             = 0x00000000,
     DeinterlaceTech_BOBLineReplicate    = 0x00000001,
     DeinterlaceTech_BOBVerticalStretch  = 0x00000002,
@@ -1598,6 +1621,8 @@ EXTERN_C const IID  IID_IEncoderAPI;
 EXTERN_C const IID  IID_IVideoEncoder;
 EXTERN_C const IID  IID_IAMDecoderCaps;
 EXTERN_C const IID  IID_IAMCertifiedOutputProtection;
+EXTERN_C const IID  IID_IAMAsyncReaderTimestampScaling;
+EXTERN_C const IID  IID_IAMPluginControl;
 EXTERN_C const IID  IID_IDvdControl;
 EXTERN_C const IID  IID_IDvdInfo;
 EXTERN_C const IID  IID_IDvdCmd;
@@ -3612,6 +3637,39 @@ DECLARE_INTERFACE_( IAMCertifiedOutputProtection, IUnknown ) {
     STDMETHOD( SessionSequenceStart )( THIS_ AMCOPPSignature * ) PURE;
     STDMETHOD( ProtectionCommandCommand )( THIS_ const AMCOPPCommand * ) PURE;
     STDMETHOD( ProtectionStatus )( THIS_ const AMCOPPStatusInput *, AMCOPPStatusOutput * ) PURE;
+};
+
+/* IAMAsyncReaderTimestampScaling interface */
+#undef INTERFACE
+#define INTERFACE   IAMAsyncReaderTimestampScaling
+DECLARE_INTERFACE_( IAMAsyncReaderTimestampScaling, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IAMAsyncReaderTimestampScaling methods */
+    STDMETHOD( GetTimestampMode )( THIS_ BOOL * ) PURE;
+    STDMETHOD( SetTimestampMode )( THIS_ BOOL ) PURE;
+};
+
+/* IAMPluginControl interface */
+#undef INTERFACE
+#define INTERFACE   IAMPluginControl
+DECLARE_INTERFACE_( IAMPluginControl, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IAMPluginControl methods */
+    STDMETHOD( GetPreferredClsid )( THIS_ REFGUID, CLSID * ) PURE;
+    STDMETHOD( GetPreferredClsidByIndex )( THIS_ DWORD, GUID *, CLSID * ) PURE;
+    STDMETHOD( SetPreferredClsid )( THIS_ REFGUID, const CLSID * ) PURE;
+    STDMETHOD( IsDisabled )( THIS_ REFCLSID ) PURE;
+    STDMETHOD( GetDisabledByIndex )( THIS_ DWORD, CLSID * ) PURE;
+    STDMETHOD( SetDisabled )( THIS_ REFCLSID, BOOL ) PURE;
+    STDMETHOD( IsLegacyDisabled )( THIS_ LPCWSTR ) PURE;
 };
 
 /* IDvdControl interface */
@@ -6096,6 +6154,36 @@ DECLARE_INTERFACE_( IVPManager, IUnknown ) {
         (x)->lpVtbl->ProtectionCommand( x, p )
     #define IAMCertifiedOutputProtection_ProtectionStatus( x, p1, p2 ) \
         (x)->lpVtbl->ProtectionStatus( x, p1, p2 )
+    #define IAMAsyncReaderTimestampScaling_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IAMAsyncReaderTimestampScaling_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IAMAsyncReaderTimestampScaling_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IAMAsyncReaderTimestampScaling_GetTimestampMode( x, p ) \
+        (x)->lpVtbl->GetTimestampMode( x, p )
+    #define IAMAsyncReaderTimestampScaling_SetTimestampMode( x, p ) \
+        (x)->lpVtbl->SetTimestampMode( x, p )
+    #define IAMPluginControl_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IAMPluginControl_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IAMPluginControl_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IAMPluginControl_GetPreferredClsid( x, p1, p2 ) \
+        (x)->lpVtbl->GetPreferredClsid( x, p1, p2 )
+    #define IAMPluginControl_GetPreferredClsidByIndex( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetPreferredClsidByIndex( x, p1, p2, p3 )
+    #define IAMPluginControl_SetPreferredClsid( x, p1, p2 ) \
+        (x)->lpVtbl->SetPreferredClsid( x, p1, p2 )
+    #define IAMPluginControl_IsDisabled( x, p ) \
+        (x)->lpVtbl->IsDisabled( x, p )
+    #define IAMPluginControl_GetDisabledByIndex( x, p1, p2 ) \
+        (x)->lpVtbl->GetDisabledByIndex( x, p1, p2 )
+    #define IAMPluginControl_SetDisabled( x, p1, p2 ) \
+        (x)->lpVtbl->SetDisabled( x, p1, p2 )
+    #define IAMPluginControl_IsLegacyDisabled( x, p ) \
+        (x)->lpVtbl->IsLegacyDisabled( x, p )
     #define IDvdControl_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IDvdControl_AddRef( x ) \
