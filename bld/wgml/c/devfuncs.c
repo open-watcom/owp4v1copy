@@ -3483,9 +3483,9 @@ void fb_first_text_line_pass( text_line * out_line )
     /* Now do the remaining text_chars instances. */
 
     current = current->next;
-    x_address = desired_state.x_address;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
+        x_address = desired_state.x_address;
         if( current_state.font_number != current->font_number ) {
             if( wgml_fonts[current->font_number].font_style != NULL ) {
                 if( wgml_fonts[current->font_number].font_style->lineprocs \
