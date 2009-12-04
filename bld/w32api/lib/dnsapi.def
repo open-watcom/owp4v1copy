@@ -5,6 +5,8 @@ DnsAcquireContextHandle_W@12
 DnsExtractRecordsFromMessage_UTF8@12
 DnsExtractRecordsFromMessage_W@12
 DnsFree@8
+DnsFreeProxyName@4
+DnsGetProxyInformation@20
 DnsModifyRecordsInSet_A@24
 DnsModifyRecordsInSet_UTF8@24
 DnsModifyRecordsInSet_W@24
@@ -27,6 +29,6 @@ DnsReplaceRecordSetW@20
 DnsValidateName_A@8
 DnsValidateName_UTF8@8
 DnsValidateName_W@8
+DnsValidateServerStatus@12
 DnsWriteQuestionToBuffer_UTF8@24
 DnsWriteQuestionToBuffer_W@24
-
