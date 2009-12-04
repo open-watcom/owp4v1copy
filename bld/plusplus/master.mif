@@ -54,8 +54,10 @@ inc_dirs += -I"$(fe_misc_dir)/h"
 inc_dirs += -I"$(brinfo_dir)/h"
  
 # final executable names
-ref_name = rpp$(target_cpu)
-!ifeq release 0
+!ifeq reference 1
+exe_name = rpp$(target_cpu)
+dll_name = rppd$(target_cpu)
+!else ifeq release 0
 exe_name = wcpp$(target_cpu)d
 dll_name = wppd$(target_cpu)d
 !else
@@ -196,23 +198,14 @@ depends_drv = $(pre_obj_deps) $(drv_objs)
 version_res_nt_386 = version.res
  
 #
-# create standard compiler
+# create compiler
 #
 target : .symbolic $(exe_name).exe
     @%null
  
 #
-# create reference compiler
-#
-reference : .symbolic $(ref_name).exe
-    @%null
- 
-#
 # output executables build rules
 #
-$(ref_name).exe : $(depends_exe) exe.lnk
-    $(linker) name $@ @exe.lnk
- 
 !ifdef plusplus_dll
  
 $(exe_name).exe : $(depends_drv) $(dll_name).lib drv.lnk

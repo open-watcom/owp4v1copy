@@ -158,7 +158,9 @@ reference : .symbolic $(target_lib)
 .EXTENSIONS:
 .EXTENSIONS: .exe .lnk .obj .xbj .c .cpp .asm
 
-!ifdef __UNIX__
+!ifdef __LOADDLL__
+comp_cpp = rpp$(host_cpu)
+!else ifdef __UNIX__
 comp_cpp = $(plusplus_dir)/rpp.$(host_cpu)/rpp$(host_cpu).exe
 !else
 comp_cpp = $(plusplus_dir:/=\)\rpp.$(host_cpu)\rpp$(host_cpu).exe

@@ -73,6 +73,10 @@ cpp_386         += $(bld_incs)
 !loaddll wpp    $(nlang_dll)\wppdi86.dll
 !loaddll wpp386 $(nlang_dll)\wppd386.dll
 !loaddll wppaxp $(nlang_dll)\wppdaxp.dll
+# C++ reference compiler
+!loaddll rppi86 $(plusplus_dir)\rpp.i86\rppdi86.dll
+!loaddll rpp386 $(plusplus_dir)\rpp.386\rppd386.dll
+!loaddll rppaxp $(plusplus_dir)\rpp.axp\rppdaxp.dll
 !endif
 
 !ifeq proj_name cc
