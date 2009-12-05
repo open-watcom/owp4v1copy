@@ -40,7 +40,7 @@
 /*   The page geometry and margins are set up here to match the wgml 4.0   */
 /*  behaviour. Some values are guesswork and some are hardcoded, if no     */
 /*  formula is found for computing the value                               */
-/*  The values used are from the device and the layout :page               */
+/*  The values used are from the device and the layout :page and :default  */
 /*                                                                         */
 /*  The system variables &SYSxxx show where the value is used              */
 /*                                                                         */
@@ -72,7 +72,7 @@ void    init_page_geometry( void )
     g_curr_font_num = layout_work.defaults.font;
 
 
-    tm = conv_vert_unit( &layout_work.page.top_margin );// top margin &systm
+    tm = conv_vert_unit( &layout_work.page.top_margin, 1 );// top margin &systm
 #if 0
     if( !strnicmp( bin_device->driver_name, "psdrv", 5 ) && tm == 0 ) {
         tm = g_resv;        // hack to get the same value as wgml 4       TBD
@@ -98,7 +98,7 @@ void    init_page_geometry( void )
     g_page_right_org = g_page_right;
 
     if( bin_driver->y_positive == 0 ) {
-        g_page_depth = conv_vert_unit( &layout_work.page.depth )
+        g_page_depth = conv_vert_unit( &layout_work.page.depth, 1 )
                        - bin_device->y_offset;  // &syspaged
         if( tm == 0 ) {                 // without top margin 1 line down
             g_page_top = bin_device->y_start
@@ -113,14 +113,14 @@ void    init_page_geometry( void )
 
         g_net_page_height = g_page_top - g_page_bottom;
 
-        lcmax = (g_net_page_height + bin_device->y_offset)
+        lcmax = 1 + (g_net_page_height + bin_device->y_offset)
                  / wgml_fonts[g_curr_font_num].line_height;   // usable no of lines
 
         g_ll = g_net_page_width * CPI
                / bin_device->horizontal_base_units; // &sysll
 
     } else {
-        g_page_depth = conv_vert_unit( &layout_work.page.depth )// &syspaged
+        g_page_depth = conv_vert_unit( &layout_work.page.depth, 1 )// &syspaged
                        - bin_device->y_offset + 1;// make the wgml 4 value TBD
 
         g_page_top = max( tm, bin_device->y_start );
@@ -200,13 +200,14 @@ void    init_page_geometry( void )
                    );
         }
 
-        out_msg( "\npage top:%d bottom:%d left:%d right:%d\n",
-                  g_page_top, g_page_bottom, g_page_left, g_page_right );
+        out_msg( "\npage top:%d bottom:%d left:%d right:%d lines:%d\n",
+                  g_page_top, g_page_bottom, g_page_left, g_page_right, lcmax );
         out_msg(
            "page net heigth:%d width:%d line height:%d char width:%d\n\n",
                   g_net_page_height, g_net_page_width, g_max_line_height,
                   g_max_char_width );
     }
+    spacing = layout_work.defaults.spacing;
 }
 
 

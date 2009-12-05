@@ -156,6 +156,7 @@ void    finish_page( void )
         out_ban_bot( sect_ban_bot[page & 1] );  // possible bottom banner
         ProcFlags.page_started = false;
     }
+    ProcFlags.top_ban_proc = false;
 }
 
 
@@ -240,11 +241,11 @@ void    prepare_doc_sect( doc_section ds )
     if( sect_ban_bot[ind] != NULL ) {
         if( bin_driver->y_positive == 0 ) {
             g_page_bottom = bin_device->y_start - g_page_depth
-                            + conv_vert_unit( &sect_ban_bot[ind]->depth );
+                            + conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
 //                    + wgml_fonts[sect_ban_bot[ind]->region->font].line_height;
         } else {
             g_page_bottom = g_page_bottom_org
-                            - conv_vert_unit( &sect_ban_bot[ind]->depth );
+                            - conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
         }
     } else {
         g_page_bottom = g_page_bottom_org;
@@ -275,6 +276,7 @@ static  void    gml_doc_xxx( doc_section ds, bool eject )
 
     ProcFlags.prep_section = false;     // do real section start later
 
+    spacing = layout_work.defaults.spacing;
     scan_start = scan_stop + 1;
     return;
 }
@@ -301,11 +303,13 @@ static  void    gml_doc_xxx( doc_section ds, bool eject )
 extern  void    gml_abstract( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_abstract, layout_work.abstract.page_eject );
+    spacing = layout_work.abstract.spacing;
 }
 
 extern  void    gml_appendix( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_appendix, layout_work.appendix.page_eject );
+    spacing = layout_work.appendix.spacing;
 }
 
 extern  void    gml_backm( const gmltag * entry )
@@ -321,27 +325,32 @@ extern  void    gml_body( const gmltag * entry )
     ProcFlags.just_override = true;     // justify for first line ?? TBD
     g_cur_h_start = g_page_left
                     + conv_hor_unit( &layout_work.p.line_indent );
+    spacing = layout_work.defaults.spacing;
 //  ProcFlags.para_line1 = true;        // simulate :P start  ?? TBD
 }
 
 extern  void    gml_figlist( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_figlist, false );
+    spacing = layout_work.figlist.spacing;
 }
 
 extern  void    gml_frontm( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_frontm, true );
+    spacing = layout_work.defaults.spacing;
 }
 
 extern  void    gml_index( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_index, layout_work.index.page_eject );
+    spacing = layout_work.index.spacing;
 }
 
 extern  void    gml_preface( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_preface, layout_work.preface.page_eject );
+    spacing = layout_work.preface.spacing;
 }
 
 extern  void    gml_titlep( const gmltag * entry )
@@ -361,6 +370,7 @@ extern  void    gml_etitlep( const gmltag * entry )
 extern  void    gml_toc( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_toc, true );
+    spacing = layout_work.toc.spacing;
 }
 
 extern  void    gml_egdoc( const gmltag * entry )

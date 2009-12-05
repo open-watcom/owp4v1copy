@@ -453,13 +453,19 @@ uint32_t    conv_hor_unit( su * s )
     return( ds );
 }
 
-extern  uint32_t    conv_vert_unit( su * s )
+extern  uint32_t    conv_vert_unit( su * s, uint8_t spc )
 {
     uint32_t    ds;
+    uint8_t space;
 
+    if( spc > 0 ) {                     // if valid use it
+        space = spc;
+    } else {
+        space = spacing;                // else default spacing
+    }
     switch( s->su_u ) {
     case SU_chars_lines :
-        ds = spacing * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        ds = space * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
         break;
     case SU_dv :
     case SU_ems :

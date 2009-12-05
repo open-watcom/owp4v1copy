@@ -43,25 +43,25 @@ void    calc_title_pos( int8_t font, int8_t spacing, bool first )
         if( !ProcFlags.page_started ) {
             if( bin_driver->y_positive == 0 ) {
                 g_cur_v_start = g_page_top
-                        - conv_vert_unit( &layout_work.title.pre_top_skip );
+                        - conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
             } else {
                 g_cur_v_start = g_page_top
-                        + conv_vert_unit( &layout_work.title.pre_top_skip );
+                        + conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
             }
         } else {
             if( bin_driver->y_positive == 0 ) {
                 g_cur_v_start -=
-                    conv_vert_unit( &layout_work.title.pre_top_skip );
+                    conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
             } else {
                 g_cur_v_start +=
-                    conv_vert_unit( &layout_work.title.pre_top_skip );
+                    conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
             }
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip );
+            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip, 0 );
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.title.skip );
+            g_cur_v_start += conv_vert_unit( &layout_work.title.skip, 0 );
         }
     }
     if( bin_driver->y_positive == 0 ) {

@@ -142,6 +142,8 @@ void init_global_vars( void )
     para_line.line_height = 0;
     para_line.y_address = 0;
 
+    g_skip_wgml4        = 0;
+
 }
 
 /***************************************************************************/

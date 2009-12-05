@@ -50,10 +50,10 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
     uint32_t            reg_off;
     int32_t             skip;
 
-    ban_depth = conv_vert_unit( &(ban->depth) );
-    reg_off = conv_vert_unit( &(ban->region->voffset) );
+    ban_depth = conv_vert_unit( &(ban->depth), 1 );
+    reg_off = conv_vert_unit( &(ban->region->voffset), 1 );
 
-    skip = ban_depth - reg_off + g_max_line_height;
+    skip = ban_depth - reg_off - g_max_line_height;
     if( skip > 0 ) {               // if region is not in last line of banner
         post_top_skip = skip;           // reserve space
     } else {
@@ -77,17 +77,17 @@ extern  uint32_t    ban_bot_pos( banner_lay_tag * ban )
     uint32_t    vpos;
     uint32_t    ban_depth;
 
-    ban_depth = conv_vert_unit( &ban->depth );
+    ban_depth = conv_vert_unit( &ban->depth, 1 );
 
     if( bin_driver->y_positive == 0 ) {
         vpos = bin_device->y_start - g_page_depth + ban_depth
-               - conv_vert_unit( &(ban->region->voffset) )
+               - conv_vert_unit( &(ban->region->voffset), 1 )
                - wgml_fonts[ban->region->font].line_height;
     } else {
 //        vpos = g_page_bottom_org - ban_depth; // TBD
 
         vpos = bin_device->y_start + g_page_depth - ban_depth
-               + conv_vert_unit( &(ban->region->voffset) );
+               + conv_vert_unit( &(ban->region->voffset), 1 );
 //               - wgml_fonts[ban->region->font].line_height;
     }
     return( vpos );
@@ -644,10 +644,11 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
     b_line.first = NULL;
 
     if( bottom ) {
-        b_line.y_address = ban_bot_pos( ban );
+        g_cur_v_start = ban_bot_pos( ban );
     } else {
-        b_line.y_address = ban_top_pos( ban );
+        g_cur_v_start = ban_top_pos( ban );
     }
+    b_line.y_address = g_cur_v_start;
 
     /* calc banner horizontal margins */
     ban_left  = g_page_left + conv_hor_unit( &(ban->left_adjust) );
@@ -749,10 +750,12 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 void    out_ban_top( banner_lay_tag * ban )
 {
     out_ban_common( ban, false );       // false for top banner
+    ProcFlags.top_ban_proc = true;
 }
 
 void    out_ban_bot( banner_lay_tag * ban )
 {
     out_ban_common( ban, true );        // true for bottom banner
+    ProcFlags.top_ban_proc = false;
 }
 

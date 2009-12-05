@@ -75,7 +75,7 @@
   pick( "fb", scr_dummy, cw_o_t             )// floating block
 //pick( "fi", scr_dummy, 0                  )// old
   pick( "fk", scr_dummy, cw_o_t             )// floating keep
-  pick( "fm", scr_dummy, cw_o_t             )// footing margin
+  pick( "fm", scr_dummy, cw_break+cw_o_t    )// footing margin
   pick( "fn", scr_dummy, cw_o_t             )// footnote
   pick( "fo", scr_fo,    cw_break+cw_o_t    )// format
   pick( "fs", scr_dummy, cw_break+cw_o_t    )// footing space
@@ -133,13 +133,13 @@
   pick( "rd", scr_dummy, 0                  )// read terminal
   pick( "re", scr_dummy, 0                  )// restore environment
   pick( "ri", scr_dummy, cw_break+cw_o_t    )// right adjust
-  pick( "rm", scr_dummy, cw_break+cw_o_t    )// remote
+  pick( "rm", scr_dummy, cw_o_t             )// remote
   pick( "rt", scr_dummy, cw_break           )// running title
   pick( "rv", scr_dummy, 0                  )// read variable
   pick( "sa", scr_dummy, 0                  )// save environment
   pick( "sc", scr_dummy, cw_break+cw_o_t    )// single column
   pick( "se", scr_se,    0                  )// set symbol
-  pick( "sk", scr_dummy, cw_break+cw_o_t    )// skip (generate blank line(s)
+  pick( "sk", scr_sk,    cw_break           )// skip (generate blank line(s)
   pick( "sl", scr_dummy, cw_break+cw_o_t    )// set leading
   pick( "sp", scr_dummy, cw_break+cw_o_t    )// space
   pick( "sr", scr_se,    0                  )// treat as .se as substitute is always on

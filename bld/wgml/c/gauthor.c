@@ -44,18 +44,18 @@ static  void    calc_author_pos( int8_t font, int8_t spacing, bool first )
 //  } else if( first ) {
     if( first ) {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.author.pre_skip );
+            g_cur_v_start -= conv_vert_unit( &layout_work.author.pre_skip, 0 );
 //                          + wgml_fonts[font].line_height;
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.author.pre_skip );
+            g_cur_v_start += conv_vert_unit( &layout_work.author.pre_skip, 0 );
 //                          + wgml_fonts[font].line_height;
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.author.skip );
+            g_cur_v_start -= conv_vert_unit( &layout_work.author.skip, 0 );
 //                          + wgml_fonts[font].line_height;
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.author.skip );
+            g_cur_v_start += conv_vert_unit( &layout_work.author.skip, 0 );
 //                          + wgml_fonts[font].line_height;
         }
     }

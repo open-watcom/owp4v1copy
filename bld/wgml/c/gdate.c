@@ -44,9 +44,9 @@ static  void    calc_date_pos( int8_t font, int8_t spacing )
 /***************************************************************************/
 
     if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= conv_vert_unit( &layout_work.date.pre_skip );
+        g_cur_v_start -= conv_vert_unit( &layout_work.date.pre_skip, spacing );
     } else {
-        g_cur_v_start += conv_vert_unit( &layout_work.date.pre_skip );
+        g_cur_v_start += conv_vert_unit( &layout_work.date.pre_skip, spacing );
     }
     return;
 }

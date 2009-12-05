@@ -45,20 +45,32 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
     scan_err = false;
     p = scan_start;
 
+    prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
+
     scr_process_break();
 
-    g_cur_h_start = g_page_left + conv_hor_unit( &(p_pc->line_indent) );// TBD
+    g_cur_h_start = g_page_left + conv_hor_unit( &(p_pc->line_indent) );
 
-    if( ProcFlags.page_started ) {
+    if( ProcFlags.page_started ) {      // TBD
         if( bin_driver->y_positive == 0x00 ) {  // TBD
-            g_cur_v_start -= conv_vert_unit( &(p_pc->pre_skip) );   // TBD
+            g_cur_v_start -= conv_vert_unit( &(p_pc->pre_skip), 0 );   // TBD
             if( post_skip != NULL ) {
-                g_cur_v_start -= conv_vert_unit( post_skip );
+                g_cur_v_start -= conv_vert_unit( post_skip, 0 );
             }
         } else {
-            g_cur_v_start += conv_vert_unit( &(p_pc->pre_skip) );   // TBD
+            g_cur_v_start += conv_vert_unit( &(p_pc->pre_skip), 0 );   // TBD
             if( post_skip != NULL ) {
-                g_cur_v_start += conv_vert_unit( post_skip );
+                g_cur_v_start += conv_vert_unit( post_skip, 0 );
+            }
+        }
+    } else {
+        if( bin_driver->y_positive == 0x00 ) {  // TBD
+            if( post_skip != NULL ) {
+                g_cur_v_start -= conv_vert_unit( post_skip, 0 );
+            }
+        } else {
+            if( post_skip != NULL ) {
+                g_cur_v_start += conv_vert_unit( post_skip, 0 );
             }
         }
     }

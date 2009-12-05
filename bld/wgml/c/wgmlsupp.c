@@ -386,9 +386,10 @@ bool    get_line( void )
             if( (input_cbs->fmflags & II_sol) &&
                 (input_cbs->fmflags & II_eol) ) {
 
-                if( buff2_lg == 0 ) {
-                    buff2_lg++;         // with .co off process
-                    *buff2 = ' ';       // empty lines as space  TBD
+                if( buff2_lg == 0 ) {   // empty line
+                    g_skip = 1;
+                    g_skip_wgml4 = 0;
+                    ProcFlags.sk_cond = true;   // prepare simulated .sk 1 C
                 }
             }
         }

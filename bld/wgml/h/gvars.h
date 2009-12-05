@@ -183,9 +183,12 @@ global struct ProcFlags {
     unsigned        title_tag_seen  : 1;// remember first :TITLE tag
     unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
     unsigned        page_started    : 1;// we have something for the curr page
-    unsigned        para_line1      : 1;// special processing for 1. line
+    unsigned        line_started    : 1;// we have something for current line
 
+    unsigned        top_ban_proc    : 1;// top_banner is processed
+    unsigned        para_line1      : 1;// special processing for 1. line
     unsigned        address_active  : 1;// within :ADDRESS tag
+    unsigned        sk_cond         : 1;// .sk n C found
 
 } ProcFlags;                            // processing flags
 
@@ -254,6 +257,8 @@ global  uint32_t    g_offset[9];        // column start offset
 global  uint32_t    spacing;            // spacing between lines
 global  su      *   pre_skip;           // possible pre_skip
 global  su      *   post_skip;          // possible post_skip
+global  int32_t     g_skip;             // .sk skip value
+global  int32_t     g_skip_wgml4;       // 0 or 1 for work around wgml4 bug
 
 global  uint32_t    pre_space;          // for
 global  uint32_t    post_space;         // .. line

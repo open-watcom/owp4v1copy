@@ -49,7 +49,40 @@
 #include "gvars.h"
 #include "outbuff.h"
 
-static void set_v_start( int8_t spacing );  // local prototype
+void set_v_start( int8_t spacing );
+
+
+/***************************************************************************/
+/*  .sk adjust                                                             */
+/*                                                                         */
+/*   g_skip_wgml4 contains  0 or 1                                    TBD  */
+/*    1 for  .sk n  with n > 0                                             */
+/***************************************************************************/
+static void calc_skip( void )
+{
+
+    if( g_skip == 0 ) {
+        ProcFlags.sk_cond = false;
+        return;
+    }
+    if( g_skip < 0 ) {                  // overprint
+       if( bin_driver->y_positive == 0x00 ) {
+           g_cur_v_start += g_max_line_height;
+       } else {
+           g_cur_v_start -= g_max_line_height;
+       }
+    } else {
+       if( bin_driver->y_positive == 0x00 ) {
+           g_cur_v_start -= g_skip * g_max_line_height - g_skip_wgml4;
+       } else {
+           g_cur_v_start += g_skip * g_max_line_height;
+       }
+    }
+
+    g_skip = 0;
+    g_skip_wgml4 = 0;
+    ProcFlags.sk_cond = false;
+}
 
 
 /***************************************************************************/
@@ -327,15 +360,24 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
 }
 
 
+/***************************************************************************/
+/*  start a new document page                                              */
+/***************************************************************************/
+
 void document_new_page( void )
 {
     if( GlobalFlags.lastpass ) {
        fb_document_page();
     }
     page++;
+    ProcFlags.page_started = false;     // ? TBD
     set_v_start( 1 );
 }
 
+
+/***************************************************************************/
+/*  output top banner                                                      */
+/***************************************************************************/
 
 void document_top_banner( void )
 {
@@ -353,7 +395,7 @@ void document_top_banner( void )
 
 /***************************************************************************/
 /*  if input translation is active                                         */
-/*      look for input escape char and translate the follwoing char,       */
+/*      look for input escape char and translate the following char,       */
 /*      delete the escape char                                             */
 /***************************************************************************/
 
@@ -450,7 +492,7 @@ void    add_text_chars_to_pool( text_line * a_line )
 /***************************************************************************/
 /*  set position                                                           */
 /***************************************************************************/
-static void set_v_start( int8_t spacing )
+void set_v_start( int8_t spacing )
 {
     if( bin_driver->y_positive == 0x00 ) {
         if( !ProcFlags.page_started ) {   // TBD
@@ -565,6 +607,20 @@ void    process_text( char * text, uint8_t font_num )
         prepare_doc_sect( ProcFlags.doc_sect );
     }
 
+    if( ProcFlags.page_started ) {
+        if( bin_driver->y_positive == 0x00 ) {
+            if( g_cur_v_start <= g_page_bottom ) {
+                finish_page();
+            }
+        } else {
+            if( g_cur_v_start >= g_page_bottom ) {
+                finish_page();
+            }
+        }
+    }
+
+
+
     p = text;
     if( ProcFlags.concat ) {            // experimental TBD
         while( *p == ' ' ) {
@@ -613,8 +669,7 @@ void    process_text( char * text, uint8_t font_num )
                                                 font_num );
                 if( pre_space + g_cur_h_start + n_char->width > g_page_right ) {
                     pre_space = 0;
-//                  process_line_full( &t_line, ProcFlags.just_override );
-                    process_line_full( &t_line, ProcFlags.concat ); // TBD
+                    process_line_full( &t_line, ProcFlags.concat );
                     if( !ProcFlags.page_started ) {
                         document_new_page();
                         document_top_banner();
@@ -622,10 +677,14 @@ void    process_text( char * text, uint8_t font_num )
                     set_h_start();
                     n_char->x_address = g_cur_h_start;
                 }
-                ProcFlags.page_started = true;
-                g_cur_h_start += n_char->width + pre_space;
 
                 if( t_line.first == NULL ) {
+                    pre_space = 0;
+                    if( !ProcFlags.top_ban_proc ) {
+                        document_new_page();
+                        document_top_banner();
+                    }
+                    calc_skip();
                     t_line.first = n_char;
                     t_line.y_address = g_cur_v_start;
                     t_line.ju_x_start = n_char->x_address;
@@ -633,6 +692,9 @@ void    process_text( char * text, uint8_t font_num )
                     p_char->next = n_char;
                 }
                 p_char = n_char;
+
+                g_cur_h_start = n_char->x_address + n_char->width + pre_space;
+                ProcFlags.page_started = true;
                 post_space = wgml_fonts[font_num].spc_width;
                 if( is_stop_char( n_char->text[n_char->count - 1] ) ) {
                      post_space += wgml_fonts[font_num].spc_width;
@@ -671,9 +733,15 @@ void    process_text( char * text, uint8_t font_num )
             }
         }
         if( t_line.first == NULL ) {
-            t_line.y_address = g_cur_v_start;
+            pre_space = 0;
             n_char->x_address = g_cur_h_start;
-            t_line.ju_x_start = g_cur_h_start;
+            if( !ProcFlags.top_ban_proc ) {
+                document_new_page();
+                document_top_banner();
+            }
+            calc_skip();
+            t_line.y_address = g_cur_v_start;
+            t_line.ju_x_start = n_char->x_address;
             pre_space = 0;
         } else {
             n_char->x_address = g_cur_h_start + pre_space;
@@ -683,7 +751,6 @@ void    process_text( char * text, uint8_t font_num )
                                         font_num );
         if( pre_space + g_cur_h_start + n_char->width > g_page_right ) {
             pre_space = 0;
-//            process_line_full( &t_line, ProcFlags.just_override );
             process_line_full( &t_line, ProcFlags.concat ); // TBD
             if( !ProcFlags.page_started ) {
                 document_new_page();
@@ -692,17 +759,24 @@ void    process_text( char * text, uint8_t font_num )
             set_h_start();
             n_char->x_address = g_cur_h_start;
         }
-        ProcFlags.page_started = true;
-        g_cur_h_start += n_char->width + pre_space;
 
         if( t_line.first == NULL ) {
-            t_line.first = n_char;
+            pre_space = 0;
+            if( !ProcFlags.top_ban_proc ) {
+                document_new_page();
+                document_top_banner();
+            }
+            calc_skip();
             t_line.y_address = g_cur_v_start;
+            t_line.first = n_char;
             t_line.ju_x_start = n_char->x_address;
         } else {
             p_char->next = n_char;
         }
         p_char = n_char;
+
+        g_cur_h_start = n_char->x_address + n_char->width + pre_space;
+        ProcFlags.page_started = true;
 
         post_space = wgml_fonts[font_num].spc_width;
         if( is_stop_char( n_char->text[n_char->count - 1])) {
@@ -721,7 +795,6 @@ void    process_text( char * text, uint8_t font_num )
             post_space = 0;
             post_space_save = 0;
             if( input_cbs->fmflags & II_eol ) {
-//              process_line_full( &t_line, ProcFlags.just_override );
                 process_line_full( &t_line, false );
                 if( !ProcFlags.page_started ) {
                     document_new_page();

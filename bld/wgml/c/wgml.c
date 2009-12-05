@@ -458,6 +458,9 @@ static  void    proc_input( char * filename )
 #endif
         if( inc_level == 1 ) {          // EOF for master file end
             scr_process_break();        // output last line if any
+            if( GlobalFlags.lastpass && ProcFlags.doc_sect != doc_sect_egdoc ) {
+                finish_page();
+            }
         }
         del_input_cb_entry();           // one level finished
         inc_level--;
@@ -645,7 +648,6 @@ int main( int argc, char * argv[] )
             proc_input( master_fname );
 
 //            g_trmem_prt_list();       // show allocated memory at pass end
-
 
             if( t_line.first != NULL ) {
 
