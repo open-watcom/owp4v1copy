@@ -46,6 +46,9 @@
 #ifndef _NTDDSTOR_H_
 #define _NTDDSTOR_H_
 
+/* Primitive data types */
+typedef DWORD   DEVICE_DATA_MANAGEMENT_SET_ACTION;
+
 /* Storage device I/O control codes */
 #define IOCTL_STORAGE_BASE  FILE_DEVICE_MASS_STORAGE
 #define IOCTL_STORAGE_CHECK_VERIFY \
@@ -100,6 +103,8 @@
     CTL_CODE( IOCTL_STORAGE_BASE, 0x0450, METHOD_BUFFERED, FILE_READ_ACCESS )
 #define IOCTL_STORAGE_QUERY_PROPERTY \
     CTL_CODE( IOCTL_STORAGE_BASE, 0x0500, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#define IOCTL_STORAGE_MANAGE_DATA_SET_ATTRIBUTES \
+    CTL_CODE( IOCTL_STORAGE_BASE, 0x0501, METHOD_BUFFERED, FILE_WRITE_ACCESS )
 #define IOCTL_STORAGE_GET_BC_PROPERTIES \
     CTL_CODE( IOCTL_STORAGE_BASE, 0x0600, METHOD_BUFFERED, FILE_READ_ACCESS )
 #define IOCTL_STORAGE_ALLOCATE_BC_STREAM \
@@ -137,6 +142,25 @@
 #define MEDIA_READ_WRITE        0x00000008L
 #define MEDIA_WRITE_PROTECTED   0x00000100L
 #define MEDIA_CURRENTLY_MOUNTED 0x80000000L
+
+/* Device data set management action flags */
+#define DeviceDsmActionFlag_NonDestructive  0x80000000L
+
+/* Macro to manipulate device data data set management action flags */
+#define IsDsmActionNonDestructive( x ) \
+    ((BOOLEAN)(((x) & DeviceDsmActionFlag_NonDestructive) != 0L))
+
+/* Device data set management actions */
+#define DeviceDsmAction_None            0L
+#define DeviceDsmAction_Trim            1L
+#define DeviceDsmAction_Notification    (2L | DeviceDsmActionFlag_NonDestructive)
+
+/* Device data set management flags */
+#define DEVICE_DSM_FLAG_ENTIRE_DATA_SET_RANGE   0x00000001L
+
+/* Device data set management notification flags */
+#define DEVICE_DSM_NOTIFY_FLAG_BEGIN    0x00000001L
+#define DEVICE_DSM_NOTIFY_FLAG_END      0x00000002L
 
 /* Storage BC version number */
 #define IOCTL_STORAGE_BC_VERSION    1L
@@ -284,22 +308,24 @@ typedef STORAGE_MEDIA_TYPE  *PSTORAGE_MEDIA_TYPE;
 
 /* Storage bus types */
 typedef enum _STORAGE_BUS_TYPE {
-    BusTypeUnknown      = 0x00,
-    BusTypeScsi         = 0x01,
-    BusTypeAtapi        = 0x02,
-    BusTypeAta          = 0x03,
-    BusType1394         = 0x04,
-    BusTypeSsa          = 0x05,
-    BusTypeFibre        = 0x06,
-    BusTypeUsb          = 0x07,
-    BusTypeRAID         = 0x08,
-    BusTypeiScsi        = 0x09,
-    BusTypeSas          = 0x0A,
-    BusTypeSata         = 0x0B,
-    BusTypeSd           = 0x0C,
-    BusTypeMmc          = 0x0D,
-    BusTypeMax          = 0x0E,
-    BusTypeMaxReserved  = 0x7F
+    BusTypeUnknown              = 0x00,
+    BusTypeScsi                 = 0x01,
+    BusTypeAtapi                = 0x02,
+    BusTypeAta                  = 0x03,
+    BusType1394                 = 0x04,
+    BusTypeSsa                  = 0x05,
+    BusTypeFibre                = 0x06,
+    BusTypeUsb                  = 0x07,
+    BusTypeRAID                 = 0x08,
+    BusTypeiScsi                = 0x09,
+    BusTypeSas                  = 0x0A,
+    BusTypeSata                 = 0x0B,
+    BusTypeSd                   = 0x0C,
+    BusTypeMmc                  = 0x0D,
+    BusTypeVirtual              = 0x0E,
+    BusTypeFileBackedVirtual    = 0x0F,
+    BusTypeMax                  = 0x10,
+    BusTypeMaxReserved          = 0x7F
 } STORAGE_BUS_TYPE;
 typedef STORAGE_BUS_TYPE    *PSTORAGE_BUS_TYPE;
 
@@ -366,13 +392,16 @@ typedef STORAGE_QUERY_TYPE  *PSTORAGE_QUERY_TYPE;
 
 /* Storage property identifiers */
 typedef enum _STORAGE_PROPERTY_ID {
-    StorageDeviceProperty           = 0,
-    StorageAdapterProperty          = 1,
-    StorageDeviceIdProperty         = 2,
-    StorageDeviceUniqueIdProperty   = 3,
-    StorageDeviceWriteCacheProperty = 4,
-    StorageMiniportProperty         = 5,
-    StorageAccessAlignmentProperty  = 6
+    StorageDeviceProperty                   = 0,
+    StorageAdapterProperty                  = 1,
+    StorageDeviceIdProperty                 = 2,
+    StorageDeviceUniqueIdProperty           = 3,
+    StorageDeviceWriteCacheProperty         = 4,
+    StorageMiniportProperty                 = 5,
+    StorageAccessAlignmentProperty          = 6,
+    StorageDeviceSeekPenaltyProperty        = 7,
+    StorageDeviceTrimProperty               = 8,
+    StorageDeviceWriteAggregationProperty   = 9
 } STORAGE_PROPERTY_ID;
 typedef STORAGE_PROPERTY_ID *PSTORAGE_PROPERTY_ID;
 
@@ -519,6 +548,58 @@ typedef struct _STORAGE_DEVICE_ID_DESCRIPTOR {
     BYTE    Identifiers[1];
 } STORAGE_DEVICE_ID_DESCRIPTOR;
 typedef STORAGE_DEVICE_ID_DESCRIPTOR    *PSTORAGE_DEVICE_ID_DESCRIPTOR;
+
+/* Device seek penalty descriptor */
+typedef struct _DEVICE_SEEK_PENALTY_DESCRIPTOR {
+    DWORD   Version;
+    DWORD   Size;
+    BOOLEAN IncursSeekPenalty;
+} DEVICE_SEEK_PENALTY_DESCRIPTOR;
+typedef DEVICE_SEEK_PENALTY_DESCRIPTOR  *PDEVICE_SEEK_PENALTY_DESCRIPTOR;
+
+/* Device write aggregation descriptor */
+typedef struct _DEVICE_WRITE_AGGREGATION_DESCRIPTOR {
+    DWORD   Version;
+    DWORD   Size;
+    BOOLEAN BenefitsFromWriteAggregation;
+} DEVICE_WRITE_AGGREGATION_DESCRIPTOR;
+typedef DEVICE_WRITE_AGGREGATION_DESCRIPTOR *PDEVICE_WRITE_AGGREGATION_DESCRIPTOR;
+
+/* Device trim descriptor */
+typedef struct _DEVICE_TRIM_DESCRIPTOR {
+    DWORD   Version;
+    DWORD   Size;
+    BOOLEAN TrimEnabled;
+} DEVICE_TRIM_DESCRIPTOR;
+typedef DEVICE_TRIM_DESCRIPTOR  *PDEVICE_TRIM_DESCRIPTOR;
+
+/* Device data set range */
+typedef struct _DEVICE_DATA_SET_RANGE {
+    LONGLONG    StartingOffset;
+    DWORDLONG   LengthInBytes;
+} DEVICE_DATA_SET_RANGE;
+typedef DEVICE_DATA_SET_RANGE   *PDEVICE_DATA_SET_RANGE;
+
+/* IOCTL_STORAGE_MANAGE_DATA_SET_ATTRIBUTES parameters */
+typedef struct _DEVICE_MANAGE_DATA_SET_ATTRIBUTES {
+    DWORD                               Size;
+    DEVICE_DATA_MANAGEMENT_SET_ACTION   Action;
+    DWORD                               Flags;
+    DWORD                               ParameterBlockOffset;
+    DWORD                               ParameterBlockLength;
+    DWORD                               DataSetRangesOffset;
+    DWORD                               DataSetRangesLength;
+} DEVICE_MANAGE_DATA_SET_ATTRIBUTES;
+typedef DEVICE_MANAGE_DATA_SET_ATTRIBUTES   *PDEVICE_MANAGE_DATA_SET_ATTRIBUTES;
+
+/* Device data set management notification parameters */
+typedef struct _DEVICE_DSM_NOTIFICATION_PARAMETERS {
+    DWORD   Size;
+    DWORD   Flags;
+    DWORD   NumFileTypeIDs;
+    GUID    FileTypeID[1];
+} DEVICE_DSM_NOTIFICATION_PARAMETERS;
+typedef DEVICE_DSM_NOTIFICATION_PARAMETERS  *PDEVICE_DSM_NOTIFICATION_PARAMETERS;
 
 /* IOCTL_STORAGE_GET_BC_PROPERTIES returned data */
 typedef struct _STORAGE_GET_BC_PROPERTIES_OUTPUT {
@@ -751,6 +832,11 @@ typedef WORD    *PBAD_TRACK_NUMBER;
         FILE_WRITE_ACCESS )
     #define IOCTL_DISK_UPDATE_PROPERTIES \
         CTL_CODE( IOCTL_DISK_BASE, 0x0050, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#endif
+#define IOCTL_DISK_RESET_SNAPSHOT_INFO \
+    CTL_CODE( IOCTL_DISK_BASE, 0x0084, METHOD_BUFFERED, FILE_READ_ACCESS | \
+    FILE_WRITE_ACCESS )
+#if (_WIN32_WINNT >= 0x0500)
     #define IOCTL_DISK_FORMAT_DRIVE \
         CTL_CODE( IOCTL_DISK_BASE, 0x00F3, METHOD_BUFFERED, FILE_READ_ACCESS | \
         FILE_WRITE_ACCESS )
@@ -1687,7 +1773,7 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
 #define FSCTL_SET_COMPRESSION \
     CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 16, METHOD_BUFFERED, FILE_READ_DATA | \
     FILE_WRITE_DATA )
-#define FSCTL_MARK_AS_SYSTEM_HIVE \
+#define FSCTL_SET_BOOTLOADER_ACCESSED \
     CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 19, METHOD_NEITHER, FILE_ANY_ACCESS )
 #define FSCTL_OPLOCK_BREAK_ACK_NO_2 \
     CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 20, METHOD_BUFFERED, FILE_ANY_ACCESS )
@@ -1775,12 +1861,6 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
     #define FSCTL_SIS_LINK_FILES \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 65, METHOD_BUFFERED, FILE_READ_DATA | \
         FILE_WRITE_DATA )
-    #define FSCTL_HSM_MSG \
-        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 66, METHOD_BUFFERED, FILE_READ_DATA | \
-        FILE_WRITE_DATA )
-    #define FSCTL_HSM_DATA \
-        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 68, METHOD_NEITHER, FILE_READ_DATA | \
-        FILE_WRITE_DATA )
     #define FSCTL_RECALL_FILE \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 69, METHOD_NEITHER, FILE_ANY_ACCESS )
     #define FSCTL_READ_FROM_PLEX \
@@ -1821,6 +1901,8 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 91, METHOD_BUFFERED, FILE_READ_DATA )
     #define FSCTL_TXFS_GET_TRANSACTED_VERSION \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 92, METHOD_BUFFERED, FILE_READ_DATA )
+    #define FSCTL_TXFS_SAVEPOINT_INFORMATION \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 94, METHOD_BUFFERED, FILE_WRITE_DATA )
     #define FSCTL_TXFS_CREATE_MINIVERSION \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 95, METHOD_BUFFERED, FILE_WRITE_DATA )
     #define FSCTL_TXFS_TRANSACTION_ACTIVE \
@@ -1849,7 +1931,52 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 121, METHOD_BUFFERED, FILE_READ_DATA )
     #define FSCTL_QUERY_PAGEFILE_ENCRYPTION \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 122, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_RESET_VOLUME_ALLOCATION_HINTS \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 123, METHOD_BUFFERED, FILE_ANY_ACCESS )
 #endif
+#if (_WIN32_WINNT >= 0x0601)
+    #define FSCTL_QUERY_DEPENDENT_VOLUME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 124, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_SD_GLOBAL_CHANGE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 125, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#endif
+#if (_WIN32_WINNT >= 0x0600)
+    #define FSCTL_TXFS_READ_BACKUP_INFORMATION2 \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 126, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#endif
+#if (_WIN32_WINNT >= 0x0601)
+    #define FSCTL_LOOKUP_STREAM_FROM_CLUSTER \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 127, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_TXFS_WRITE_BACKUP_INFORMATION2 \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 128, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_FILE_TYPE_NOTIFICATION \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 129, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_GET_BOOT_AREA_INFO \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 140, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_GET_RETRIEVAL_POINTER_BASE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 141, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_SET_PERSISTENT_VOLUME_STATE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 142, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_QUERY_PERSISTENT_VOLUME_STATE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 143, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_REQUEST_OPLOCK \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 144, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_TUNNEL_REQUEST \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 145, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_IS_CSV_FILE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 146, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_QUERY_FILE_SYSTEM_RECOGNITION \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 147, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_GET_VOLUME_PATH_NAME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 148, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_GET_VOLUME_NAME_FOR_VOLUME_MOUNT_POINT \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 149, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_GET_VOLUME_PATH_NAMES_FOR_VOLUME_NAME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 150, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_IS_FILE_ON_CSV_VOLUME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 151, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#endif
+#define FSCTL_MARK_AS_SYSTEM_HIVE   FSCTL_SET_BOOTLOADER_ACCESSED
 
 /* AVIO device I/O control codes */
 #define IOCTL_AVIO_ALLOCATE_STREAM \
@@ -1858,6 +1985,11 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
     CTL_CODE( FILE_DEVICE_AVIO, 2, METHOD_BUFFERED, FILE_SPECIAL_ACCESS )
 #define IOCTL_AVIO_MODIFY_STREAM \
     CTL_CODE( FILE_DEVICE_AVIO, 3, METHOD_BUFFERED, FILE_SPECIAL_ACCESS )
+
+/* CSV device number special values */
+#if (_WIN32_WINNT >= 0x0601)
+    #define CSV_INVALID_DEVICE_NUMBER   0xFFFFFFFFL
+#endif
 
 /* USN records */
 #if (_WIN32_WINNT >= 0x0500)
@@ -1905,6 +2037,21 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
     #define MARK_HANDLE_TXF_SYSTEM_LOG      0x00000004L
     #define MARK_HANDLE_NOT_TXF_SYSTEM_LOG  0x00000008L
 #endif
+#if (_WIN32_WINNT >= 0x0601)
+    #define MARK_HANDLE_REALTIME            0x00000020L
+    #define MARK_HANDLE_NOT_REALTIME        0x00000040L
+#endif
+
+/* 8.3 name flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define NO_8DOT3_NAME_PRESENT   0x00000001L
+    #define REMOVED_8DOT3_NAME      0x00000002L
+#endif
+
+/* Persistent volume flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define PERSISTENT_VOLUME_STATE_SHORT_NAME_CREATION_DISABLED    0x00000001L
+#endif
 
 /* FSCTL_IS_VOLUME_DIRTY returned flags */
 #if (_WIN32_WINNT >= 0x0500)
@@ -1914,15 +2061,18 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
 #endif
 
 /* File prefetch types */
-#define FILE_PREFETCH_TYPE_FOR_CREATE       0x00000001L
-#define FILE_PREFETCH_TYPE_FOR_DIRENUM      0x00000002L
-#define FILE_PREFETCH_TYPE_FOR_CREATE_EX    0x00000003L
-#define FILE_PREFETCH_TYPE_FOR_DIRENUM_EX   0x00000004L
-#define FILE_PREFETCH_TYPE_MAX              0x00000004L
+#if (_WIN32_WINNT >= 0x0500)
+    #define FILE_PREFETCH_TYPE_FOR_CREATE       0x00000001L
+    #define FILE_PREFETCH_TYPE_FOR_DIRENUM      0x00000002L
+    #define FILE_PREFETCH_TYPE_FOR_CREATE_EX    0x00000003L
+    #define FILE_PREFETCH_TYPE_FOR_DIRENUM_EX   0x00000004L
+    #define FILE_PREFETCH_TYPE_MAX              0x00000004L
+#endif
 
 /* File system types */
-#define FILESYSTEM_STATISTICS_TYPE_NTFS 1
-#define FILESYSTEM_STATISTICS_TYPE_FAT  2
+#define FILESYSTEM_STATISTICS_TYPE_NTFS     1
+#define FILESYSTEM_STATISTICS_TYPE_FAT      2
+#define FILESYSTEM_STATISTICS_TYPE_EXFAT    3
 
 /* Encryption operations */
 #if (_WIN32_WINNT >= 0x0500)
@@ -1947,16 +2097,12 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
 
 /* FSCTL_SET_REPAIR flags */
 #if (_WIN32_WINNT >= 0x0600)
-    #define SET_REPAIR_ENABLED              0x00000001L
-    #define SET_REPAIR_VOLUME_BITMAP_SCAN   0x00000002L
-    #define SET_REPAIR_DELETE_CROSSLINK     0x00000004L
-    #define SET_REPAIR_WARN_ABOUT_DATA_LOSS 0x00000008L
-    #define SET_REPAIR_VALID_MASK           0x0000000FL
-#endif
-
-/* FSCTL_SHRINK_VOLUME flags */
-#if (_WIN32_WINNT >= 0x0600)
-    #define SHRINK_VOLUME_FLAG_FAIL_ON_BAD_CLUSTERS 0x00000001L
+    #define SET_REPAIR_ENABLED                          0x00000001L
+    #define SET_REPAIR_VOLUME_BITMAP_SCAN               0x00000002L
+    #define SET_REPAIR_DELETE_CROSSLINK                 0x00000004L
+    #define SET_REPAIR_WARN_ABOUT_DATA_LOSS             0x00000008L
+    #define SET_REPAIR_DISABLED_AND_BUGCHECK_ON_CORRUPT 0x00000010L
+    #define SET_REPAIR_VALID_MASK                       0x0000000FL
 #endif
 
 /* TXFS flags */
@@ -1976,6 +2122,8 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
     #define TXFS_RM_FLAG_PRESERVE_CHANGES                       0x00002000L
     #define TXFS_RM_FLAG_RESET_RM_AT_NEXT_START                 0x00004000L
     #define TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START          0x00008000L
+    #define TXFS_RM_FLAG_PREFER_CONSISTENCY                     0x00010000L
+    #define TXFS_RM_FLAG_PREFER_AVAILABILITY                    0x00020000L
     #define TXFS_MODIFY_RM_VALID_FLAGS \
         (TXFS_RM_FLAG_LOGGING_MODE | TXFS_RM_FLAG_RENAME_RM | \
         TXFS_RM_FLAG_LOG_CONTAINER_COUNT_MAX | TXFS_RM_FLAG_LOG_CONTAINER_COUNT_MIN | \
@@ -1986,13 +2134,21 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
         TXFS_RM_FLAG_LOG_NO_CONTAINER_COUNT_MIN | TXFS_RM_FLAG_GROW_LOG | \
         TXFS_RM_FLAG_SHRINK_LOG | TXFS_RM_FLAG_ENFORCE_MINIMUM_SIZE | \
         TXFS_RM_FLAG_PRESERVE_CHANGES | TXFS_RM_FLAG_RESET_RM_AT_NEXT_START | \
-        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START)
+        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START | TMFX_RM_FLAG_PREFER_CONSISTENCY | \
+        TXFS_RM_FLAG_PREFER_AVAILABILITY)
     #define TXFS_QUERY_RM_INFORMATION_VALID_FLAGS \
         (TXFS_RM_FLAG_LOG_GROWTH_INCREMENT_NUM_CONTAINERS | \
         TXFS_RM_FLAG_LOG_GROWTH_INCREMENT_PERCENT | \
         TXFS_RM_FLAG_LOG_NO_CONTAINER_COUNT_MAX | \
-        TXFS_RM_FLAG_RESET_RM_AT_NEXT_START | \
-        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START )
+        TXFS_RM_FLAG_LOG_NO_CONTAINER_COUNT_MIN | TXFS_RM_FLAG_RESET_RM_AT_NEXT_START | \
+        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START | TXFM_RM_FLAG_PREFER_CONSISTENCY | \
+        TXFS_RM_FLAG_PREFER_AVAILABILITY)
+#endif
+
+/* FSCTL_TXFS_LIST_TRANSACTION_LOCKED_FILES flags */
+#if (_WIN32_WINNT >= 0x0600)
+    #define TXFS_LIST_TRANSACTION_LOCKED_FILES_ENTRY_FLAG_CREATED   0x00000001L
+    #define TXFS_LIST_TRANSACTION_LOCKED_FILES_ENTRY_FLAG_DELETED   0x00000002L
 #endif
 
 /* TXFS logging modes */
@@ -2039,6 +2195,8 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
     #define TXFS_START_RM_FLAG_RECOVER_BEST_EFFORT                  0x00000200L
     #define TXFS_START_RM_FLAG_LOGGING_MODE                         0x00000400L
     #define TXFS_START_RM_FLAG_PRESERVE_CHANGES                     0x00000800L
+    #define TXFS_START_RM_FLAG_PREFER_CONSISTENCY                   0x00001000L
+    #define TXFS_START_RM_FLAG_PREFER_AVAILABILITY                  0x00002000L
     #define TXFS_START_RM_VALID_FLAG \
         (TXFS_START_RM_FLAG_LOG_CONTAINER_COUNT_MAX | \
         TXFS_START_RM_FLAG_LOG_CONTAINER_COUNT_MIN | \
@@ -2049,7 +2207,8 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
         TXFS_START_RM_FLAG_LOG_NO_CONTAINER_COUNT_MAX | \
         TXFS_START_RM_FLAG_LOG_NO_CONTAINER_COUNT_MIN | \
         TXFS_START_RM_FLAG_RECOVER_BEST_EFFORT | \
-        TXFS_START_RM_FLAG_LOGGING_MODE | TXFS_START_RM_FLAG_PRESERVE_CHANGES)
+        TXFS_START_RM_FLAG_LOGGING_MODE | TXFS_START_RM_FLAG_PRESERVE_CHANGES | \
+        TXFS_START_RM_FLAG_PREFER_CONSISTENCY | TXFS_START_RM_FLAG_PREFER_AVAILABILITY)
 #endif
 
 /* FSCTL_TXFS_GET_TRANSACTED_VERSION special values */
@@ -2058,15 +2217,84 @@ typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
     #define TXFS_TRANSACTED_VERSION_UNCOMMITTED     0xFFFFFFFFL
 #endif
 
+/* FSCTL_TXFS_SAVEPOINT_INFORMATION flags */
+#if (_WIN32_WINNT >= 0x0600)
+    #define TXFS_SAVEPOINT_SET          0x00000001L
+    #define TXFS_SAVEPOINT_ROLLBACK     0x00000002L
+    #define TXFS_SAVEPOINT_CLEAR        0x00000004L
+    #define TXFS_SAVEPOINT_CLEAR_ALL    0x00000008L
+#endif
+
+/* Oplock levels */
+#if (_WIN32_WINNT >= 0x0601)
+    #define OPLOCK_LEVEL_CACHE_READ     0x00000001L
+    #define OPLOCK_LEVEL_CACHE_HANDLE   0x00000002L
+    #define OPLOCK_LEVEL_CACHE_WRITE    0x00000004L
+#endif
+
+/* FSCTL_REQUEST_OPLOCK input flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define REQUEST_OPLOCK_INPUT_FLAG_REQUEST               0x00000001L
+    #define REQUEST_OPLOCK_INPUT_FLAG_ACK                   0x00000002L
+    #define REQUEST_OPLOCK_INPUT_FLAG_COMPLETE_ACK_ON_CLOSE 0x00000004L
+#endif
+
+/* FSCTL_REQUEST_OPLOCK output flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define REQUEST_OPLOCK_OUTPUT_FLAG_ACK_REQUIRED     0x00000001L
+    #define REQUEST_OPLOCK_OUTPUT_FLAG_MODES_PROVIDED   0x00000002L
+#endif
+
+/* FSCTL_REQUEST_OPLOCK parameters revision number */
+#if (_WIN32_WINNT >= 0x0601)
+    #define REQUEST_OPLOCK_CURRENT_VERSION  1
+#endif
+
+/* FSCTL_SD_GLOBAL_CHANGE types */
+#if (_WIN32_WINNT >= 0x0601)
+    #define SD_GLOBAL_CHANGE_TYPE_MACHINE_SID   1L
+#endif
+
+/* Extended encrypted data information flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define ENCRYPTED_DATA_INFO_SPARSE_FILE 1L
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER entry flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_PAGE_FILE         0x00000001L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_DENY_DEFRAG_SET   0x00000002L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_FS_SYSTEM_FILE    0x00000004L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_TXF_SYSTEM_FILE   0x00000008L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_MASK         0xFF000000L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_DATA         0x01000000L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_INDEX        0x02000000L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_SYSTEM       0x03000000L
+#endif
+
+/* FSCTL_FILE_TYPE_NOTIFICATION flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define FILE_TYPE_NOTIFICATION_FLAG_USAGE_BEGIN 0x00000001L
+    #define FILE_TYPE_NOTIFICATION_FLAG_USAGE_END   0x00000002L
+#endif
+
 /* Volume device I/O control codes */
-#define IOCTL_VOLUME_BASE   ((DWORD)'V')
+#define IOCTL_VOLUME_BASE   0x00000056L
 #if (NTDDI_VERSION >= 0x05000000)
     #define IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS \
         CTL_CODE( IOCTL_VOLUME_BASE, 0, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define IOCTL_VOLUME_ONLINE \
+        CTL_CODE( IOCTL_VOLUME_BASE, 2, METHOD_BUFFERED, FILE_READ_ACCESS | \
+        FILE_WRITE_ACCESS )
+    #define IOCTL_VOLUME_OFFLINE \
+        CTL_CODE( IOCTL_VOLUME_BASE, 3, METHOD_BUFFERED, FILE_READ_ACCESS | \
+        FILE_WRITE_ACCESS )
 #endif
 #if (NTDDI_VERSION >= 0x05010000)
     #define IOCTL_VOLUME_IS_CLUSTERED \
         CTL_CODE( IOCTL_VOLUME_BASE, 12, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define IOCTL_VOLUME_GET_GPT_ATTRIBUTES \
+        CTL_CODE( IOCTL_VOLUME_BASE, 14, METHOD_BUFFERED, FILE_ANY_ACCESS )
 #endif
 
 /* Symbolic link flags */
@@ -2255,6 +2483,17 @@ typedef enum _CHANGER_DEVICE_PROBLEM_TYPE {
     DeviceProblemDriveError             = 13
 } CHANGER_DEVICE_PROBLEM_TYPE;
 typedef CHANGER_DEVICE_PROBLEM_TYPE *PCHANGER_DEVICE_PROBLEM_TYPE;
+
+/* FSCTL_IS_CSV_FILE parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _CSV_NAMESPACE_INFO {
+    DWORD           Version;
+    DWORD           DeviceNumber;
+    LARGE_INTEGER   StartingOffset;
+    DWORD           SectorSize;
+} CSV_NAMESPACE_INFO;
+typedef CSV_NAMESPACE_INFO  *PCSV_NAMESPACE_INFO;
+#endif
 
 /* Path name buffer */
 typedef struct _PATHNAME_BUFFER {
@@ -2494,14 +2733,17 @@ typedef BULK_SECURITY_TEST_DATA *PBULK_SECURITY_TEST_DATA;
 #endif
 
 /* FSCTL_FILE_PREFETCH parameters */
+#if (_WIN32_WINNT >= 0x0500)
 typedef struct _FILE_PREFETCH {
     DWORD       Type;
     DWORD       Count;
     DWORDLONG   Prefetch[1];
 } FILE_PREFETCH;
 typedef FILE_PREFETCH   *PFILE_PREFETCH;
+#endif
 
 /* FSCTL_FILE_PREFETCH parameters (extended version) */
+#if (_WIN32_WINNT >= 0x0500)
 typedef struct _FILE_PREFETCH_EX {
     DWORD       Type;
     DWORD       Count;
@@ -2509,12 +2751,7 @@ typedef struct _FILE_PREFETCH_EX {
     DWORDLONG   Prefetch[1];
 } FILE_PREFETCH_EX;
 typedef FILE_PREFETCH_EX    *PFILE_PREFETCH_EX;
-
-/* Volume compression state */
-typedef struct _VOLUME_COMPRESSION_STATE {
-    BOOLEAN CompressNewFiles;
-} VOLUME_COMPRESSION_STATE;
-typedef VOLUME_COMPRESSION_STATE    *PVOLUME_COMPRESSION_STATE;
+#endif
 
 /* File system statistics */
 typedef struct _FILESYSTEM_STATISTICS {
@@ -2549,6 +2786,20 @@ typedef struct _FAT_STATISTICS {
     DWORD   NonCachedDiskWrites;
 } FAT_STATISTICS;
 typedef FAT_STATISTICS  *PFAT_STATISTICS;
+
+/* Extended FAT statistics */
+typedef struct _EXFAT_STATISTICS {
+    DWORD   CreateHits;
+    DWORD   SuccessfulCreates;
+    DWORD   FailedCreates;
+    DWORD   NonCachedReads;
+    DWORD   NonCachedReadBytes;
+    DWORD   NonCachedWrites;
+    DWORD   NonCachedWriteBytes;
+    DWORD   NonCachedDiskReads;
+    DWORD   NonCachedDiskWrites;
+} EXFAT_STATISTICS;
+typedef EXFAT_STATISTICS    *PEXFAT_STATISTICS;
 
 /* NTFS statistics */
 typedef struct _NTFS_STATISTICS {
@@ -2898,7 +3149,7 @@ typedef TXFS_GET_METADATA_INFO_OUT  *PTXFS_GET_METADATA_INFO_OUT;
 #if (_WIN32_WINNT >= 0x0600)
 typedef struct _TXFS_LIST_TRANSACTION_LOCKED_FILES_ENTRY {
     DWORDLONG   Offset;
-    DWORD       UsnReason;
+    DWORD       NameFlags;
     LONGLONG    FileId;
     DWORD       Reserved1;
     DWORD       Reserved2;
@@ -2971,6 +3222,181 @@ typedef struct _TXFS_GET_TRANSACTED_VERSION {
 typedef TXFS_GET_TRANSACTED_VERSION *PTXFS_GET_TRANSACTED_VERSION;
 #endif
 
+/* FSCTL_TXFS_SAVEPOINT_INFORMATION parameters */
+#if (_WIN32_WINNT >= 0x0600)
+typedef struct _TXFS_SAVEPOINT_INFORMATION {
+    HANDLE  KtmTransaction;
+    DWORD   ActionCode;
+    DWORD   SavepointId;
+} TXFS_SAVEPOINT_INFORMATION;
+typedef TXFS_SAVEPOINT_INFORMATION  *PTXFS_SAVEPOINT_INFORMATION;
+#endif
+
+/* FSCTL_GET_BOOT_AREA_INFO returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _BOOT_AREA_INFO {
+    DWORD   BootSectorCount;
+    struct {
+        LARGE_INTEGER   Offset;
+    } BootSectors[2];
+} BOOT_AREA_INFO;
+typedef BOOT_AREA_INFO  *PBOOT_AREA_INFO;
+#endif
+
+/* FSCTL_GET_RETRIEVAL_POINTER_BASE returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _RETRIEVAL_POINTER_BASE {
+    LARGE_INTEGER   FileAreaOffset;
+} RETRIEVAL_POINTER_BASE;
+typedef RETRIEVAL_POINTER_BASE  *PRETRIEVAL_POINTER_BASE;
+#endif
+
+/* Persistent volume information */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _FILE_FS_PERSISTENT_VOLUME_INFORMATION {
+    DWORD   VolumeFlags;
+    DWORD   FlagMask;
+    DWORD   Version;
+    DWORD   Reserved;
+} FILE_FS_PERSISTENT_VOLUME_INFORMATION;
+typedef FILE_FS_PERSISTENT_VOLUME_INFORMATION   *PFILE_FS_PERSISTENT_VOLUME_INFORMATION;
+#endif
+
+/* FSCTL_QUERY_FILE_SYSTEM_RECOGNITION returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _FILE_SYSTEM_RECOGNITION_INFORMATION {
+    CHAR    FileSystem[9];
+} FILE_SYSTEM_RECOGNITION_INFORMATION;
+typedef FILE_SYSTEM_RECOGNITION_INFORMATION *PFILE_SYSTEM_RECOGNITION_INFORMATION;
+#endif
+
+/* FSCTL_REQUEST_OPLOCK parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _REQUEST_OPLOCK_INPUT_BUFFER {
+    WORD    StructureVersion;
+    WORD    StructureLength;
+    DWORD   RequestedOplockLevel;
+    DWORD   Flags;
+} REQUEST_OPLOCK_INPUT_BUFFER;
+typedef REQUEST_OPLOCK_INPUT_BUFFER *PREQUEST_OPLOCK_INPUT_BUFFER;
+#endif
+
+/* FSCTL_REQUEST_OPLOCK returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _REQUEST_OPLOCK_OUTPUT_BUFFER {
+    WORD        StructureVersion;
+    WORD        StructureLength;
+    DWORD       OriginalOplockLevel;
+    DWORD       NewOplockLevel;
+    DWORD       Flags;
+    ACCESS_MASK AccessMode;
+    WORD        ShareMode;
+} REQUEST_OPLOCK_OUTPUT_BUFFER;
+typedef REQUEST_OPLOCK_OUTPUT_BUFFER    *PREQUEST_OPLOCK_OUTPUT_BUFFER;
+#endif
+
+/* SD_GLOBAL_CHANGE_TYPE_MACHINE_SID parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_CHANGE_MACHINE_SID_INPUT {
+    WORD    CurrentMachineSIDOffset;
+    WORD    CurrentMachineSIDLength;
+    WORD    NewMachineSIDOffset;
+    WORD    NewMachineSIDLength;
+} SD_CHANGE_MACHINE_SID_INPUT;
+typedef SD_CHANGE_MACHINE_SID_INPUT *PSD_CHANGE_MACHINE_SID_INPUT;
+#endif
+
+/* SD_GLOBAL_CHANGE_TYPE_MACHINE_SID returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_CHANGE_MACHINE_SID_OUTPUT {
+    DWORDLONG   NumSDChangedSuccess;
+    DWORDLONG   NumSDChangedFail;
+    DWORDLONG   NumSDUnused;
+    DWORDLONG   NumSDTotal;
+    DWORDLONG   NumMftSDChangedSuccess;
+    DWORDLONG   NumMftSDChangedFail;
+    DWORDLONG   NumMftSDTotal;
+} SD_CHANGE_MACHINE_SID_OUTPUT;
+typedef SD_CHANGE_MACHINE_SID_OUTPUT    *PSD_CHANGE_MACHINE_SID_OUTPUT;
+#endif
+
+/* FSCTL_SD_GLOBAL_CHANGE parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_GLOBAL_CHANGE_INPUT {
+    DWORD   Flags;
+    DWORD   ChangeType;
+    union {
+        SD_CHANGE_MACHINE_SID_INPUT SdChange;
+    };
+} SD_GLOBAL_CHANGE_INPUT;
+typedef SD_GLOBAL_CHANGE_INPUT  *PSD_GLOBAL_CHANGE_INPUT;
+#endif
+
+/* FSCTL_SD_GLOBAL_CHANGE returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_GLOBAL_CHANGE_OUTPUT {
+    DWORD   Flags;
+    DWORD   ChangeType;
+    union {
+        SD_CHANGE_MACHINE_SID_OUTPUT    SdChange;
+    };
+} SD_GLOBAL_CHANGE_OUTPUT;
+typedef SD_GLOBAL_CHANGE_OUTPUT *PSD_GLOBAL_CHANGE_OUTPUT;
+#endif
+
+/* Extended encrypted data information */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _EXTENDED_ENCRYPTED_DATA_INFO {
+    DWORD   ExtendedCode;
+    DWORD   Length;
+    DWORD   Flags;
+    DWORD   Reserved;
+} EXTENDED_ENCRYPTED_DATA_INFO;
+typedef EXTENDED_ENCRYPTED_DATA_INFO    *PEXTENDED_ENCRYPTED_DATA_INFO;
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _LOOKUP_STREAM_FROM_CLUSTER_INPUT {
+    DWORD           Flags;
+    DWORD           NumberOfClusters;
+    LARGE_INTEGER   Cluster[1];
+} LOOKUP_STREAM_FROM_CLUSTER_INPUT;
+typedef LOOKUP_STREAM_FROM_CLUSTER_INPUT    *PLOOKUP_STREAM_FROM_CLUSTER_INPUT;
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _LOOKUP_STREAM_FROM_CLUSTER_OUTPUT {
+    DWORD   Offset;
+    DWORD   NumberOfMatches;
+    DWORD   BufferSizeRequired;
+} LOOKUP_STREAM_FROM_CLUSTER_OUTPUT;
+typedef LOOKUP_STREAM_FROM_CLUSTER_OUTPUT   *PLOOKUP_STREAM_FROM_CLUSTER_OUTPUT;
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER entry */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _LOOKUP_STREAM_FROM_CLUSTER_ENTRY {
+    DWORD           OffsetToNext;
+    DWORD           Flags;
+    LARGE_INTEGER   Reserved;
+    LARGE_INTEGER   Cluster;
+    WCHAR           FileName[1];
+} LOOKUP_STREAM_FROM_CLUSTER_ENTRY;
+typedef LOOKUP_STREAM_FROM_CLUSTER_ENTRY    *PLOOKUP_STREAM_FROM_CLUSTER_ENTRY;
+#endif
+
+/* FSCTL_FILE_TYPE_NOTIFICATION parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _FILE_TYPE_NOTIFICATION_INPUT {
+    DWORD   Flags;
+    DWORD   NumFileTypeIDs;
+    GUID    FileTypeID[1];
+} FILE_TYPE_NOTIFICATION_INPUT;
+typedef FILE_TYPE_NOTIFICATION_INPUT    *PFILE_TYPE_NOTIFICATION_INPUT;
+#endif
+
 /* FSCTL_TXFS_CREATE_MINIVERSION returned data */
 #if (_WIN32_WINNT >= 0x0600)
 typedef struct _TXFS_CREATE_MINIVERSION_INFO {
@@ -3004,9 +3430,17 @@ typedef DISK_EXTENT *PDISK_EXTENT;
 #if (NTDDI_VERSION >= 0x05000000)
 typedef struct _VOLUME_DISK_EXTENTS {
     DWORD       NumberOfDiskExtents;
-    DISK_EXTENT Extents[1];
+    DISK_EXTENT Extents[ANYSIZE_ARRAY];
 } VOLUME_DISK_EXTENTS;
 typedef VOLUME_DISK_EXTENTS *PVOLUME_DISK_EXTENTS;
+#endif
+
+/* IOCTL_VOLUME_GET_GPT_ATTRIBUTES returned data */
+#if (NTDDI_VERSION >= 0x05010000)
+typedef struct _VOLUME_GET_GPT_ATTRIBUTES_INFORMATION {
+    DWORDLONG   GptAttributes;
+} VOLUME_GET_GPT_ATTRIBUTES_INFORMATION;
+typedef VOLUME_GET_GPT_ATTRIBUTES_INFORMATION   *PVOLUME_GET_GPT_ATTRIBUTES_INFORMATION;
 #endif
 
 :include cplusepi.sp

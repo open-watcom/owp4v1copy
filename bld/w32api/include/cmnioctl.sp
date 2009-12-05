@@ -62,6 +62,10 @@
 #define FILE_DEVICE_CRYPT_PROVIDER      0x0000003FL
 #define FILE_DEVICE_WPD                 0x00000040L
 #define FILE_DEVICE_BLUETOOTH           0x00000041L
+#define FILE_DEVICE_MT_COMPOSITE        0x00000042L
+#define FILE_DEVICE_MT_TRANSPORT        0x00000043L
+#define FILE_DEVICE_BIOMETRIC           0x00000044L
+#define FILE_DEVICE_PMI                 0x00000045L
 
 /* Buffering methods */
 #define METHOD_BUFFERED             0L
