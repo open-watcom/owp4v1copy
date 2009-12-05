@@ -10,6 +10,7 @@ DeleteUrlCacheEntry@4
 DeleteUrlCacheEntryA@4
 DeleteUrlCacheEntryW@4
 DeleteUrlCacheGroup@16
+DeleteWpadCacheForNetworks@4
 DetectAutoProxyUrl@12
 FindCloseUrlCache@4
 FindFirstUrlCacheEntryA@12
@@ -159,6 +160,7 @@ InternetWriteFile@16
 PrivacyGetZonePreferenceW@20
 PrivacySetZonePreferenceW@16
 ReadUrlCacheEntryStream@20
+ReadUrlCacheEntryStreamEx@20
 ResumeSuspendedDownload@8
 RetrieveUrlCacheEntryFileA@16
 RetrieveUrlCacheEntryFileW@16
@@ -175,4 +177,3 @@ UnlockUrlCacheEntryFile@8
 UnlockUrlCacheEntryFileA@8
 UnlockUrlCacheEntryFileW@8
 UnlockUrlCacheEntryStream@8
-
