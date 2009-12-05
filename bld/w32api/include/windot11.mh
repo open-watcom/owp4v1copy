@@ -13,6 +13,12 @@
 
 :include cpluspro.sp
 
+/* ExtAP and Virtual WiFi are supported on Windows 7 and later. */
+#if (NTDDI_VERSION >= 0x06010000) || NDIS_SUPPORT_NDIS620
+    #define NWF_EXTAP_SUPPORTED
+    #define NWF_VWIFI_SUPPORTED
+#endif
+
 /* Primitive data types */
 #if (NTDDI_VERSION >= 0x06000000)
 typedef ULONG   DOT11_ASSOC_STATUS;
@@ -224,6 +230,7 @@ typedef ULONG   DOT11_ASSOC_STATUS;
     #define DOT11_OPERATION_MODE_STATION            0x00000001L
     #define DOT11_OPERATION_MODE_AP                 0x00000002L
     #define DOT11_OPERATION_MODE_EXTENSIBLE_STATION 0x00000004L
+    #define DOT11_OPERATION_MODE_EXTENSIBLE_AP      0x00000008L
     #define DOT11_OPERATION_MODE_NETWORK_MONITOR    0x80000000L
 #endif
 
@@ -393,6 +400,8 @@ typedef ULONG   DOT11_ASSOC_STATUS;
         NWF_DEFINE_OID( 157, NWF_OPERATIONAL_OID, NWF_MANDATORY_OID )
     #define OID_DOT11_HIDDEN_NETWORK_ENABLED \
         NWF_DEFINE_OID( 158, NWF_OPERATIONAL_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_ASSOCIATION_PARAMS \
+        NWF_DEFINE_OID( 159, NWF_OPERATIONAL_OID, NWF_MANDATORY_OID )
 #endif
 
 /* 802.11 autoconfiguration enabled flags */
@@ -529,9 +538,14 @@ typedef ULONG   DOT11_ASSOC_STATUS;
     #define DOT11_IBSS_PARAMS_REVISION_1    1
 #endif
 
-/* 802.11 QOS parameters */
+/* 802.11 QOS parameters revision number */
 #if (NTDDI_VERSION >= 0x06000000)
     #define DOT11_QOS_PARAMS_REVISION_1 1
+#endif
+
+/* 802.11 association parameters revision number */
+#if (NTDDI_VERSION >= 0x06000000)
+    #define DOT11_ASSOCIATION_PARAMS_REVISION_1 1
 #endif
 
 /* 802.11 QOS protocol flags */
@@ -575,9 +589,16 @@ typedef ULONG   DOT11_ASSOC_STATUS;
     #define DOT11_PHY_ATTRIBUTES_REVISION_1 1
 #endif
 
-/* 802.11 ExtSTA attributes revision number */
+/* 802.11 ExtSTA attributes */
+#if (NTDDI_VERSION >= 0x06000000)
+    #define DOT11_EXTSTA_ATTRIBUTES_SAFEMODE_OID_SUPPORTED  0x00000001L
+    #define DOT11_EXTSTA_ATTRIBUTES_SAFEMODE_CERTIFIED      0x00000002L
+#endif
+
+/* 802.11 ExtSTA attributes revision numbers */
 #if (NTDDI_VERSION >= 0x06000000) && defined( NDIS_SUPPORT_NDIS6 )
     #define DOT11_EXTSTA_ATTRIBUTES_REVISION_1  1
+    #define DOT11_EXTSTA_ATTRIBUTES_REVISION_2  2
 #endif
 
 /* 802.11 send context revision number */
@@ -713,12 +734,14 @@ typedef ULONG   DOT11_ASSOC_STATUS;
 
 /* 802.11 disassociation reasons */
 #if (NTDDI_VERSION >= 0x06000000)
-    #define DOT11_DISASSOC_REASON_OS            DOT11_ASSOC_STATUS_DISASSOCIATED_BY_OS
-    #define DOT11_DISASSOC_REASON_PEER_UNREACHABLE  DOT11_ASSOC_STATUS_UNREACHABLE
-    #define DOT11_DISASSOC_REASON_RADIO_OFF     DOT11_ASSOC_STATUS_RADIO_OFF
-    #define DOT11_DISASSOC_REASON_PHY_DISABLED  DOT11_ASSOC_STATUS_PHY_DISABLED
-    #define DOT11_DISASSOC_REASON_IHV_START     DOT11_ASSOC_STATUS_IHV_START
-    #define DOT11_DISASSOC_REASON_IHV_END       DOT11_ASSOC_STATUS_IHV_END
+    #define DOT11_DISASSOC_REASON_OS                    DOT11_ASSOC_STATUS_DISASSOCIATED_BY_OS
+    #define DOT11_DISASSOC_REASON_PEER_UNREACHABLE      DOT11_ASSOC_STATUS_UNREACHABLE
+    #define DOT11_DISASSOC_REASON_RADIO_OFF             DOT11_ASSOC_STATUS_RADIO_OFF
+    #define DOT11_DISASSOC_REASON_PHY_DISABLED          DOT11_ASSOC_STATUS_PHY_DISABLED
+    #define DOT11_DISASSOC_REASON_IHV_START             DOT11_ASSOC_STATUS_IHV_START
+    #define DOT11_DISASSOC_REASON_IHV_END               DOT11_ASSOC_STATUS_IHV_END
+    #define DOT11_DISASSOC_REASON_PEER_DEAUTHENTICATED  DOT11_ASSOC_STATUS_PEER_DEAUTHENTICATED
+    #define DOT11_DISASSOC_REASON_PEER_DISASSOCIATED    DOT11_ASSOC_STATUS_PEER_DISASSOCIATED
 #endif
 
 /* 802.11 disassociation parameters revision number */
@@ -777,6 +800,156 @@ typedef ULONG   DOT11_ASSOC_STATUS;
     #define OID_DOT11_MAXIMUM_LIST_SIZE     (OID_DOT11_PRIVATE_OIDS_START + 5)
 #endif
 
+/* 802.11 ExtAP attributes revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_EXTAP_ATTRIBUTES_REVISION_1   1
+#endif
+
+/* 802.11 incoming association started parameters revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_INCOMING_ASSOC_STARTED_PARAMETERS_REVISION_1  1
+#endif
+
+/* 802.11 incoming association request received parameters revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_INCOMING_ASSOC_REQUEST_RECEIVED_PARAMETERS_REVISION_1 1
+#endif
+
+/* 802.11 association error sources */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_ASSOC_ERROR_SOURCE_OS     0x00
+    #define DOT11_ASSOC_ERROR_SOURCE_REMOTE 0x01
+    #define DOT11_ASSOC_ERROR_SOURCE_OTHER  0xFF
+#endif
+
+/* 802.11 incoming association completion parameters revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_INCOMING_ASSOC_COMPLETION_PARAMETERS_REVISION_1   1
+#endif
+
+/* 802.11 stop AP parameters revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_STOP_AP_PARAMETERS_REVISION_1 1
+#endif
+
+/* 802.11 stop AP reason codes */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_STOP_AP_REASON_FREQUENCY_NOT_AVAILABLE    0x00000001L
+    #define DOT11_STOP_AP_REASON_CHANNEL_NOT_AVAILABLE      0x00000002L
+    #define DOT11_STOP_AP_REASON_AP_ACTIVE                  0x00000003L
+    #define DOT11_STOP_AP_REASON_IHV_START                  0xFF000000L
+    #define DOT11_STOP_AP_REASON_IHV_END                    0xFFFFFFFFL
+#endif
+
+/* 802.11 physical frequency adopted parameters revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_PHY_FREQUENCY_ADOPTED_PARAMETERS_REVISION_1   1
+#endif
+
+/* 802.11 can sustain AP parameters revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_CAN_SUSTAIN_AP_PARAMETERS_REVISION_1  1
+#endif
+
+/* 802.11 can sustain AP reason codes */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_CAN_SUSTAIN_AP_REASON_IHV_START   0xFF000000L
+    #define DOT11_CAN_SUSTAIN_AP_REASON_IHV_END     0xFFFFFFFFL
+#endif
+
+/* NWF ExtAP constants */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define NWF_EXTAP_OID   0x03
+#endif
+
+/* ExtAP object identifiers */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define OID_DOT11_WPS_ENABLED \
+        NWF_DEFINE_OID( 0x01, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_START_AP_REQUEST \
+        NWF_DEFINE_OID( 0x02, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_AVAILABLE_CHANNEL_LIST \
+        NWF_DEFINE_OID( 0x03, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_AVAILABLE_FREQUENCY_LIST \
+        NWF_DEFINE_OID( 0x04, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_DISASSOCIATE_PEER_REQUEST \
+        NWF_DEFINE_OID( 0x05, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_INCOMING_ASSOCIATION_DECISION \
+        NWF_DEFINE_OID( 0x06, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_ADDITIONAL_IE \
+        NWF_DEFINE_OID( 0x07, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_ENUM_PEER_INFO \
+        NWF_DEFINE_OID( 0x08, NWF_EXTAP_OID, NWF_MANDATORY_OID )
+#endif
+
+/* 802.11 available channel list revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_AVAILABLE_CHANNEL_LIST_REVISION_1 1
+#endif
+
+/* 802.11 available frequency list revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_AVAILABLE_FREQUENCY_LIST_REVISION_1   1
+#endif
+
+/* 802.11 disassociate peer request revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_DISASSOCIATE_PEER_REQUEST_REVISION_1  1
+#endif
+
+/* 802.11 incoming association decision revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_INCOMING_ASSOC_DECISION_REVISION_1    1
+#endif
+
+/* 802.11 additional information element revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_ADDITIONAL_IE_REVISION_1  1
+#endif
+
+/* 802.11 ExtAP send context revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_EXTAP_SEND_CONTEXT_REVISION_1 1
+#endif
+
+/* 802.11 ExtAP receive context revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_EXTAP_RECEIVE_CONTEXT_REVISION_1  1
+#endif
+
+/* 802.11 peer information list revision number */
+#ifdef NWF_EXTAP_SUPPORTED
+    #define DOT11_PEER_INFO_LIST_REVISION_1 1
+#endif
+
+/* 802.11 Virtual WiFi combination revision numbers */
+#ifdef NWF_VWIFI_SUPPORTED
+    #define DOT11_VWIFI_COMBINATION_REVISION_1  1
+    #define DOT11_VWIFI_COMBINATION_REVISION_2  2
+#endif
+
+/* 802.11 Virtual WiFi attributes revision number */
+#ifdef NWF_VWIFI_SUPPORTED
+    #define DOT11_VWIFI_ATTRIBUTES_REVISION_1   1
+#endif
+
+/* NWF Virtual WiFi constants */
+#ifdef NWF_VWIFI_SUPPORTED
+    #define NWF_VWIFI_OID   0x04
+#endif
+
+/* Virtual WiFi object identifiers */
+#ifdef NWF_VWIFI_SUPPORTED
+    #define OID_DOT11_CREATE_MAC \
+        NWF_DEFINE_OID( 0x01, NWF_VWIFI_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_DELETE_MAC \
+        NWF_DEFINE_OID( 0x02, NWF_VWIFI_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_PREFERRED_MAC \
+        NWF_DEFINE_OID( 0x03, NWF_VWIFI_OID, NWF_MANDATORY_OID )
+    #define OID_DOT11_VIRTUAL_STATION_CAPABILITY \
+        NWF_DEFINE_OID( 0x04, NWF_VWIFI_OID, NWF_MANDATORY_OID )
+#endif
+
 /* 802.11 MAC address */
 typedef UCHAR               DOT11_MAC_ADDRESS[6];
 typedef DOT11_MAC_ADDRESS   *PDOT11_MAC_ADDRESS;
@@ -800,6 +973,7 @@ typedef enum _DOT11_PHY_TYPE {
     dot11_phy_type_ofdm         = 4,
     dot11_phy_type_hrdsss       = 5,
     dot11_phy_type_erp          = 6,
+    dot11_phy_type_ht           = 7,
     dot11_phy_type_IHV_start    = 0x80000000,
     dot11_phy_type_IHV_end      = 0xFFFFFFFF
 } DOT11_PHY_TYPE;
@@ -1919,6 +2093,17 @@ typedef struct DOT11_QOS_PARAMS {
 typedef DOT11_QOS_PARAMS    *PDOT11_QOS_PARAMS;
 #endif
 
+/* 802.11 association parameters */
+#if (NTDDI_VERSION >= 0x06000000)
+typedef struct DOT11_ASSOCIATON_PARAMS {
+    NDIS_OBJECT_HEADER  Header;
+    DOT11_MAC_ADDRESS   BSSID;
+    ULONG               uAssocRequestIEsOffset;
+    ULONG               uAssocRequestIEsLength;
+} DOT11_ASSOCIATION_PARAMS;
+typedef DOT11_ASSOCIATION_PARAMS    *PDOT11_ASSOCIATION_PARAMS;
+#endif
+
 /* 802.11 fragment descriptor */
 #if (NTDDI_VERSION >= 0x06000000)
 typedef struct _DOT11_FRAGMENT_DESCRIPTOR {
@@ -2407,6 +2592,10 @@ typedef struct DOT11_EXTSTA_SEND_CONTEXT {
     ULONG               uSendFlags;
 } DOT11_EXTSTA_SEND_CONTEXT;
 typedef DOT11_EXTSTA_SEND_CONTEXT   *PDOT11_EXTSTA_SEND_CONTEXT;
+#ifdef NWF_SUPPORT_EXTAP
+typedef DOT11_EXTSTA_SEND_CONTEXT   DOT11_EXTAP_SEND_CONTEXT;
+typedef DOT11_EXTSTA_SEND_CONTEXT   *PDOT11_EXTAP_SEND_CONTEXT;
+#endif
 #endif
 
 /* 802.11 ExtSTA receive context */
@@ -2424,6 +2613,251 @@ typedef struct DOT11_EXTSTA_RECV_CONTEXT {
     ULONGLONG           ullTimestamp;
 } DOT11_EXTSTA_RECV_CONTEXT;
 typedef DOT11_EXTSTA_RECV_CONTEXT   *PDOT11_EXTSTA_RECV_CONTEXT;
+#ifdef NWF_SUPPORT_EXTAP
+typedef DOT11_EXTSTA_RECV_CONTEXT   DOT11_EXTAP_RECV_CONTEXT;
+typedef DOT11_EXTSTA_RECV_CONTEXT   *PDOT11_EXTAP_RECV_CONTEXT;
+#endif
+#endif
+
+/* 802.11 ExtAP attributes */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_EXTAP_ATTRIBUTES {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   uScanSSIDListSize;
+    ULONG                   uDesiredSSIDListSize;
+    ULONG                   uPrivacyExemptionListSize;
+    ULONG                   uAssociationTableSize;
+    ULONG                   uDefaultKeyTableSize;
+    ULONG                   uWEPKeyValueMaxLength;
+    BOOLEAN                 bStrictlyOrderedServiceClassImplemented;
+    ULONG                   uNumSupportedCountryOrRegionStrings;
+    PDOT11_COUNTRY_OR_REGION_STRING pSupportedCountryOrRegionStrings;
+    ULONG                   uInfraNumSupportedUcastAlgoPairs;
+    PDOT11_AUTH_CIPHER_PAIR pInfraSupportedUcastAlgoPairs;
+    ULONG                   uInfraNumSupportedMcastAlgoPairs;
+    PDOT11_AUTH_CIPHER_PAIR pInfraSupportedMcastAlgoPairs;
+} DOT11_EXTAP_ATTRIBUTES;
+typedef DOT11_EXTAP_ATTRIBUTES  *PDOT11_EXTAP_ATTRIBUTES;
+#endif
+
+/* 802.11 incoming association started parameters */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_INCOMING_ASSOC_STARTED_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    DOT11_MAC_ADDRESS   PeerMacAddr;
+} DOT11_INCOMING_ASSOC_STARTED_PARAMETERS;
+typedef DOT11_INCOMING_ASSOC_STARTED_PARAMETERS *PDOT11_INCOMING_ASSOC_STARTED_PARAMETERS;
+#endif
+
+/* 802.11 incoming association request received parameters */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_INCOMING_ASSOC_REQUEST_RECEIVED_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    DOT11_MAC_ADDRESS   PeerMacAddr;
+    BOOLEAN             bReAssocReq;
+    ULONG               uAssocReqOffset;
+    ULONG               uAssocReqSize;
+} DOT11_INCOMING_ASSOC_REQUEST_RECEIVED_PARAMETERS;
+typedef DOT11_INCOMING_ASSOC_REQUEST_RECEIVED_PARAMETERS    *PDOT11_INCOMING_ASSOC_REQUEST_RECEIVED_PARAMETERS;
+#endif
+
+/* 802.11 incoming association completion parameters */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_INCOMING_ASSOC_COMPLETION_PARAMETERS {
+    NDIS_OBJECT_HEADER      Header;
+    DOT11_MAC_ADDRESS       PeerMacAddr;
+    ULONG                   uStatus;
+    UCHAR                   ucErrorSource;
+    BOOLEAN                 bReAssocReq;
+    BOOLEAN                 bReAssocResp;
+    ULONG                   uAssocReqOffset;
+    ULONG                   uAssocReqSize;
+    ULONG                   uAssocRespOffset;
+    ULONG                   uAssocRespSize;
+    DOT11_AUTH_ALGORITHM    AuthAlgo;
+    DOT11_CIPHER_ALGORITHM  UnicastCipher;
+    DOT11_CIPHER_ALGORITHM  MulticastCipher;
+    ULONG                   uActivePhyListOffset;
+    ULONG                   uActivePhyListSize;
+    ULONG                   uBeaconOffset;
+    ULONG                   uBeaconSize;
+} DOT11_INCOMING_ASSOC_COMPLETION_PARAMETERS;
+typedef DOT11_INCOMING_ASSOC_COMPLETION_PARAMETERS  *PDOT11_INCOMING_ASSOC_COMPLETION_PARAMETERS;
+#endif
+
+/* 802.11 stop AP parameters */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_STOP_AP_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               ulReason;
+} DOT11_STOP_AP_PARAMETERS;
+typedef DOT11_STOP_AP_PARAMETERS    *PDOT11_STOP_AP_PARAMETERS;
+#endif
+
+/* 802.11 physical frequency adopted parameters */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_PHY_FREQUENCY_ADOPTED_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               ulPhyID;
+    union {
+        ULONG   ulChannel;
+        ULONG   ulFrequency;
+    };
+} DOT11_PHY_FREQUENCY_ADOPTED_PARAMETERS;
+typedef DOT11_PHY_FREQUENCY_ADOPTED_PARAMETERS  *PDOT11_PHY_FREQUENCY_ADOPTED_PARAMETERS;
+#endif
+
+/* 802.11 can sustain AP parameters */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_CAN_SUSTAIN_AP_PARAMETERS {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               ulReason;
+} DOT11_CAN_SUSTAIN_AP_PARAMETERS;
+typedef DOT11_CAN_SUSTAIN_AP_PARAMETERS *PDOT11_CAN_SUSTAIN_AP_PARAMETERS;
+#endif
+
+/* 802.11 available channel list */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_AVAILABLE_CHANNEL_LIST {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               uNumOfEntries;
+    ULONG               uTotalNumOfEntries;
+    ULONG               uChannelNumber[1];
+} DOT11_AVAILABLE_CHANNEL_LIST;
+typedef DOT11_AVAILABLE_CHANNEL_LIST    *PDOT11_AVAILABLE_CHANNEL_LIST;
+#endif
+
+/* 802.11 available frequency list */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_AVAILABLE_FREQUENCY_LIST {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               uNumOfEntries;
+    ULONG               uTotalNumOfEntries;
+    ULONG               uFrequencyValue[1];
+} DOT11_AVAILABLE_FREQUENCY_LIST;
+typedef DOT11_AVAILABLE_FREQUENCY_LIST  *PDOT11_AVAILABLE_FREQUENCY_LIST;
+#endif
+
+/* 802.11 disassociate peer request */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_DISASSOCIATE_PEER_REQUEST {
+    NDIS_OBJECT_HEADER  Header;
+    DOT11_MAC_ADDRESS   PeerMacAddr;
+    USHORT              usReason;
+} DOT11_DISASSOCIATE_PEER_REQUEST;
+typedef DOT11_DISASSOCIATE_PEER_REQUEST *PDOT11_DISASSOCIATE_PEER_REQUEST;
+#endif
+
+/* 802.11 incoming association decision */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_INCOMING_ASSOC_DECISION {
+    NDIS_OBJECT_HEADER  Header;
+    DOT11_MAC_ADDRESS   PeerMacAddr;
+    BOOLEAN             bAccept;
+    USHORT              usReasonCode;
+    ULONG               uAssocResponseIEsOffset;
+    ULONG               uAssocResponseIEsLength;
+} DOT11_INCOMING_ASSOC_DECISION;
+typedef DOT11_INCOMING_ASSOC_DECISION   *PDOT11_INCOMING_ASSOC_DECISION;
+#endif
+
+/* 802.11 additional information element */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_ADDITIONAL_IE {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               uBeaconIEsOffset;
+    ULONG               uBeaconIEsLength;
+    ULONG               uResponseIEsOffset;
+    ULONG               uResponseIEsLength;
+} DOT11_ADDITIONAL_IE;
+typedef DOT11_ADDITIONAL_IE *PDOT11_ADDITIONAL_IE;
+#endif
+
+/* 802.11 peer statistics */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_PEER_STATISTICS {
+    ULONGLONG   ullDecryptSuccessCount;
+    ULONGLONG   ullDecryptFailureCount;
+    ULONGLONG   ullTxPacketSuccessCount;
+    ULONGLONG   ullTxPacketFailureCount;
+    ULONGLONG   ullRxPacketSuccessCount;
+    ULONGLONG   ullRxPacketFailureCount;
+} DOT11_PEER_STATISTICS;
+typedef DOT11_PEER_STATISTICS   *PDOT11_PEER_STATISTICS;
+#endif
+
+/* 802.11 peer information */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_PEER_INFO {
+    DOT11_MAC_ADDRESS       MacAddress;
+    USHORT                  usCapabilityInformation;
+    DOT11_AUTH_ALGORITHM    AuthAlgo;
+    DOT11_CIPHER_ALGORITHM  UnicastCipherAlgo;
+    DOT11_CIPHER_ALGORITHM  MulticastCipherAlgo;
+    BOOLEAN                 bWpsEnabled;
+    USHORT                  usListenInterval;
+    UCHAR                   ucSupportedRates[MAX_NUM_SUPPORTED_RATES_V2];
+    USHORT                  usAssociationID;
+    DOT11_ASSOCIATION_STATE AssociationState;
+    DOT11_POWER_MODE        PowerMode;
+    LARGE_INTEGER           liAssociationUpTime;
+    DOT11_PEER_STATISTICS   Statistics;
+} DOT11_PEER_INFO;
+typedef DOT11_PEER_INFO *PDOT11_PEER_INFO;
+#endif
+
+/* 802.11 peer information list */
+#ifdef NWF_EXTAP_SUPPORTED
+typedef struct _DOT11_PEER_INFO_LIST {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               uNumOfEntries;
+    ULONG               uTotalNumOfEntries;
+    DOT11_PEER_INFO     PeerInfo[1];
+} DOT11_PEER_INFO_LIST;
+typedef DOT11_PEER_INFO_LIST    *PDOT11_PEER_INFO_LIST;
+#endif
+
+/* 802.11 Virtual WiFi combination */
+#ifdef NWF_VWIFI_SUPPORTED
+typedef struct _DOT11_VWIFI_COMBINATION {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               uNumInfrastructure;
+    ULONG               uNumAdhoc;
+    ULONG               uNumSoftAP;
+} DOT11_VWIFI_COMBINATION;
+typedef DOT11_VWIFI_COMBINATION *PDOT11_VWIFI_COMBINATION;
+#endif
+
+/* 802.11 Virtual WiFi combination (version 2) */
+#ifdef NWF_VWIFI_SUPPORTED
+typedef struct _DOT11_VWIFI_COMBINATION_V2 {
+    NDIS_OBJECT_HEADER  Header;
+    ULONG               uNumInfrastructure;
+    ULONG               uNumAdhoc;
+    ULONG               uNumSoftAP;
+    ULONG               uNumVirtualStation;
+} DOT11_VWIFI_COMBINATION_V2;
+typedef DOT11_VWIFI_COMBINATION_V2  *PDOT11_VWIFI_COMBINATION_V2;
+#endif
+
+/* 802.11 Virtual WiFi attributes */
+#ifdef NWF_VWIFI_SUPPORTED
+typedef struct _DOT11_VWIFI_ATTRIBUTES {
+    NDIS_OBJECT_HEADER      Header;
+    ULONG                   uTotalNumOfEntries;
+    DOT11_VWIFI_COMBINATION Combinations[1];
+} DOT11_VWIFI_ATTRIBUTES;
+typedef DOT11_VWIFI_ATTRIBUTES  *PDOT11_VWIFI_ATTRIBUTES;
+#endif
+
+/* 802.11 MAC information */
+#ifdef NWF_VWIFI_SUPPORTED
+typedef struct _DOT11_MAC_INFO {
+    ULONG               uReserved;
+    ULONG               uNdisPortNumber;
+    DOT11_MAC_ADDRESS   MacAddr;
+} DOT11_MAC_INFO;
+typedef DOT11_MAC_INFO  *PDOT11_MAC_INFO;
 #endif
 
 :include cplusepi.sp
