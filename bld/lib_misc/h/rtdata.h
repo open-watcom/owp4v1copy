@@ -131,9 +131,9 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
 #endif
 
 #ifdef __DOS__
-extern unsigned char        _nolfn;      /* NOLFN environment var defined */
+extern unsigned char        _uselfn;      /* NOLFN environment var defined */
 #ifdef __WATCOMC__
-    #pragma aux             _nolfn "_*";
+    #pragma aux             _uselfn "_*";
 #endif
 #endif
 
@@ -224,7 +224,7 @@ extern unsigned char        _nolfn;      /* NOLFN environment var defined */
 #define _RWD_ModuleInit         _ModuleInit
 
 #ifdef __DOS__
-    #define _RWD_nolfn          _nolfn
+    #define _RWD_uselfn         _uselfn
 #endif
 
 /*
