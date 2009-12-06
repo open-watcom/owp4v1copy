@@ -28,75 +28,71 @@
 
 :include wchar_t.sp
 
+:include doslfn.sp
+
 /* dosexterror struct */
 
 struct _DOSERROR {
-        int exterror;
-        char errclass;
-        char action;
-        char locus;
+    int     exterror;
+    char    errclass;
+    char    action;
+    char    locus;
 };
 :: 'class' is a keyword in C++
 #ifndef __cplusplus
 struct DOSERROR {
-        int exterror;
-        char class;
-        char action;
-        char locus;
+    int     exterror;
+    char    class;
+    char    action;
+    char    locus;
 };
 #endif
 
 struct dosdate_t {
-        unsigned char day;      /* 1-31 */
-        unsigned char month;    /* 1-12 */
-        unsigned short year;    /* 1980-2099 */
-        unsigned char dayofweek;/* 0-6 (0=Sunday) */
+    unsigned char   day;        /* 1-31 */
+    unsigned char   month;      /* 1-12 */
+    unsigned short  year;       /* 1980-2099 */
+    unsigned char   dayofweek;  /* 0-6 (0=Sunday) */
 };
 #define _dosdate_t dosdate_t
 
 struct dostime_t {
-        unsigned char hour;     /* 0-23 */
-        unsigned char minute;   /* 0-59 */
-        unsigned char second;   /* 0-59 */
-        unsigned char hsecond;  /* 1/100 second; 0-99 */
+    unsigned char   hour;       /* 0-23 */
+    unsigned char   minute;     /* 0-59 */
+    unsigned char   second;     /* 0-59 */
+    unsigned char   hsecond;    /* 1/100 second; 0-99 */
 };
 #define _dostime_t dostime_t
 
 struct find_t {
-        unsigned short cr_time; /* time of file creation      */
-        unsigned short cr_date; /* date of file creation      */
-        unsigned short ac_time; /* time of last file access   */
-        unsigned short ac_date; /* date of last file access   */
-        unsigned short lfnax;   /* DOS LFN search handle      */
-        unsigned char  lfnsup;  /* DOS LFN support status     */
-        char reserved[10];      /* reserved for use by DOS    */
-        char attrib;            /* attribute byte for file    */
-        unsigned short wr_time; /* time of last write to file */
-        unsigned short wr_date; /* date of last write to file */
-        unsigned long  size;    /* length of file in bytes    */
-#if defined(__OS2__) || defined(__NT__) || defined(__WATCOM_LFN__)
-        char name[256];         /* null-terminated filename   */
-#else
-        char name[13];          /* null-terminated filename   */
-#endif
+    char            reserved[2];        /* reserved for use by DOS    */
+    unsigned short  cr_time;            /* time of file creation      */
+    unsigned short  cr_date;            /* date of file creation      */
+    unsigned short  ac_time;            /* time of last file access   */
+    unsigned short  ac_date;            /* date of last file access   */
+    unsigned short  lfnax;              /* DOS LFN search handle      */
+    unsigned long   lfnsup;             /* DOS LFN support status     */
+    char            reserved2[5];       /* reserved for use by DOS    */
+    char            attrib;             /* attribute byte for file    */
+    unsigned short  wr_time;            /* time of last write to file */
+    unsigned short  wr_date;            /* date of last write to file */
+    unsigned long   size;               /* length of file in bytes    */
+    char            name[NAME_MAX+1];   /* null-terminated filename   */
 };
 struct _wfind_t {
-        unsigned short cr_time; /* time of file creation      */
-        unsigned short cr_date; /* date of file creation      */
-        unsigned short ac_time; /* time of last file access   */
-        unsigned short ac_date; /* date of last file access   */
-        unsigned short lfnax;   /* DOS LFN search handle      */
-        unsigned char  lfnsup;  /* DOS LFN support status     */
-        char reserved[10];      /* reserved for use by DOS    */
-        char attrib;            /* attribute byte for file    */
-        unsigned short wr_time; /* time of last write to file */
-        unsigned short wr_date; /* date of last write to file */
-        unsigned long  size;    /* length of file in bytes    */
-#if defined(__OS2__) || defined(__NT__) || defined(__WATCOM_LFN__)
-        wchar_t name[256];      /* null-terminated filename   */
-#else
-        wchar_t name[13];       /* null-terminated filename   */
-#endif
+    char            reserved[2];        /* reserved for use by DOS    */
+    unsigned short  cr_time;            /* time of file creation      */
+    unsigned short  cr_date;            /* date of file creation      */
+    unsigned short  ac_time;            /* time of last file access   */
+    unsigned short  ac_date;            /* date of last file access   */
+    unsigned short  lfnax;              /* DOS LFN search handle      */
+    unsigned long   lfnsup;             /* DOS LFN support status     */
+    char            reserved2[5];       /* reserved for use by DOS    */
+    char            attrib;             /* attribute byte for file    */
+    unsigned short  wr_time;            /* time of last write to file */
+    unsigned short  wr_date;            /* date of last write to file */
+    unsigned long   size;               /* length of file in bytes    */
+    wchar_t         name[NAME_MAX+1];   /* null-terminated filename   */
 };
 #define _find_t find_t
 

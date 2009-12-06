@@ -157,8 +157,8 @@ complex.h       : $(complex_deps)
 conio.h         : ../watcom/conio.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) ../valist.sp
 crtdbg.h        : ../watcom/crtdbg.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus)
 ctype.h         : $(ctype_deps)
-direct.h        : ../watcom/direct.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../dskfreet.sp
-dos.h           : ../watcom/dos.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../dskfreet.sp
+direct.h        : ../watcom/direct.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../doslfn.sp ../dskfreet.sp
+dos.h           : ../watcom/dos.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../doslfn.sp ../dskfreet.sp
 dosfunc.h       : ../watcom/dosfunc.mh ../crwat.sp ../readonly.sp
 eh.h            : ../watcom/eh.mh ../crwat.sp ../readonly.sp ../cpponly.sp
 env.h           : ../watcom/env.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) ../wchar_t.sp $(posixext)

@@ -111,7 +111,7 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
      * LFN block into the non-lfn block
      */
     buf->lfnax = r.w.ax;              /* The find handle for findnext */
-    buf->lfnsup = 1;
+    buf->lfnsup = _LFN_SIGN;
     convert_to_find_t( buf, &lfnblock );
     /*
      * 0 is always returned because we've already checked cflag; the
@@ -131,7 +131,7 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *buf )
      * function first, buf->lfnsup will tell us if LFN was supported with the
      * previous call to findfirst.
      */
-    if( !buf->lfnsup ) {
+    if( buf->lfnsup != _LFN_SIGN ) {
         return( _old_dos_findnext( buf ) );
     }
 
@@ -157,7 +157,8 @@ _WCRTLINK unsigned _dos_findclose( struct find_t *buf )
     union REGS  r;
 
     /* Let's check if LFN was used; if not, there is no need for findclose */
-    if( !buf->lfnsup ) return( 0 );
+    if( buf->lfnsup != _LFN_SIGN )
+        return( 0 );
 
     r.w.ax = 0x71A1;            /* LFN findclose */
     r.w.bx = buf->lfnax;        /* Findfirst handle */

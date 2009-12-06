@@ -52,17 +52,7 @@
 #ifdef __WATCOM_LFN__
 static void copy_dirent_lfn( struct find_t *lfnblock, DIR_TYPE *dosblock )
 {
-    lfnblock->cr_time = dosblock->d_ctime;
-    lfnblock->cr_date = dosblock->d_cdate;
-    lfnblock->ac_time = dosblock->d_atime;
-    lfnblock->ac_date = dosblock->d_adate;
-    lfnblock->lfnax   = dosblock->d_lfnax;
-    lfnblock->lfnsup  = dosblock->d_lfnsup;
-    lfnblock->attrib  = dosblock->d_attr;
-    lfnblock->wr_time = dosblock->d_time;
-    lfnblock->wr_date = dosblock->d_date;
-    lfnblock->size    = dosblock->d_size;
-    memcpy( lfnblock->name, dosblock->d_name, 260 );
+    memcpy( lfnblock, dosblock, sizeof( *lfnblock ) );
 }
 
 /*
@@ -70,17 +60,7 @@ static void copy_dirent_lfn( struct find_t *lfnblock, DIR_TYPE *dosblock )
  */
 static void copy_lfn_dirent( DIR_TYPE *dosblock, struct find_t *lfnblock )
 {
-    dosblock->d_ctime  = lfnblock->cr_time;
-    dosblock->d_cdate  = lfnblock->cr_date;
-    dosblock->d_atime  = lfnblock->ac_time;
-    dosblock->d_adate  = lfnblock->ac_date;
-    dosblock->d_lfnax  = lfnblock->lfnax;
-    dosblock->d_lfnsup = lfnblock->lfnsup;
-    dosblock->d_attr   = lfnblock->attrib;
-    dosblock->d_time   = lfnblock->wr_time;
-    dosblock->d_date   = lfnblock->wr_date;
-    dosblock->d_size   = lfnblock->size;
-    memcpy( dosblock->d_name, lfnblock->name, 260 );
+    memcpy( dosblock, lfnblock, sizeof( *lfnblock ) );
 }
 #endif //__WATCOM_LFN__
 
