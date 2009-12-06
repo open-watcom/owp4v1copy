@@ -21,63 +21,22 @@ typedef int socklen_t;
 #define UDP_CHECKSUM_COVERAGE   20
 
 /* Error codes for getaddrinfo() */
-#define EAI_AGAIN       WSATRY_AGAIN
-#define EAI_BADFLAGS    WSAEINVAL
-#define EAI_FAIL        WSANO_RECOVERY
-#define EAI_FAMILY      WSAEAFNOSUPPORT
-#define EAI_MEMORY      WSA_NOT_ENOUGH_MEMORY
-#define EAI_NONAME      WSAHOST_NOT_FOUND
-#define EAI_SERVICE     WSATYPE_NOT_FOUND
-#define EAI_SOCKTYPE    WSAESOCKTNOSUPPORT
-#define EAI_NODATA      EAI_NONAME
-
-/* Address information flags */
-#define AI_PASSIVE                  0x00000001
-#define AI_CANONNAME                0x00000002
-#define AI_NUMERICHOST              0x00000004
-#define AI_NUMERICSERV              0x00000008
-#define AI_ALL                      0x00000100
-#define AI_ADDRCONFIG               0x00000400
-#define AI_V4MAPPED                 0x00000800
-#define AI_NON_AUTHORITATIVE        LUP_NON_AUTHORITATIVE
-#define AI_SECURE                   LUP_SECURE
-#define AI_RETURN_PREFERRED_NAMES   LUP_RETURN_PREFERRED_NAMES
+#define EAI_AGAIN           WSATRY_AGAIN
+#define EAI_BADFLAGS        WSAEINVAL
+#define EAI_FAIL            WSANO_RECOVERY
+#define EAI_FAMILY          WSAEAFNOSUPPORT
+#define EAI_MEMORY          WSA_NOT_ENOUGH_MEMORY
+#define EAI_NOSECURENAME    WSA_SECURE_HOST_NOT_FOUND
+#define EAI_NONAME          WSAHOST_NOT_FOUND
+#define EAI_SERVICE         WSATYPE_NOT_FOUND
+#define EAI_SOCKTYPE        WSAESOCKTNOSUPPORT
+#define EAI_IPSECPOLICY     WSA_IPSEC_NAME_POLICY_ERROR
+#define EAI_NODATA          EAI_NONAME
 
 /* Maximum sizes */
 #define GAI_STRERROR_BUFFER_SIZE    1024
-#define NI_MAXHOST                  1025
-#define NI_MAXSERV                  32
 
-/* Flags for getnameinfo() */
-#define NI_NOFQDN       0x00000001
-#define NI_NUMERICHOST  0x00000002
-#define NI_NAMEREQD     0x00000004
-#define NI_NUMERICSERV  0x00000008
-#define NI_DGRAM        0x00000010
-
-/* Address information */
-typedef struct addrinfo {
-    int             ai_flags;
-    int             ai_family;
-    int             ai_socktype;
-    int             ai_protocol;
-    size_t          ai_addrlen;
-    char            *ai_canonname;
-    struct sockaddr *ai_addr;
-    struct addrinfo *ai_next;
-} ADDRINFOA;
-typedef ADDRINFOA   *PADDRINFOA;
-typedef struct addrinfoW {
-    int                 ai_flags;
-    int                 ai_family;
-    int                 ai_socktype;
-    int                 ai_protocol;
-    size_t              ai_addrlen;
-    PWSTR               ai_canonname;
-    struct sockaddr     *ai_addr;
-    struct addrinfoW    *ai_next;
-} ADDRINFOW;
-typedef ADDRINFOW   *PADDRINFOW;
+/* Address information (structure defined in ws2def.h) */
 #ifdef UNICODE
 typedef ADDRINFOW   ADDRINFOT;
 typedef ADDRINFOW   *PADDRINFOT;
@@ -88,38 +47,8 @@ typedef ADDRINFOA   *PADDRINFOT;
 typedef ADDRINFOA   ADDRINFO;
 typedef ADDRINFOA   *LPADDRINFO;
 
-/* Address information (extended version) */
+/* Address information (extended version) (structure defined in ws2def.h) */
 #if (_WIN32_WINNT >= 0x0600)
-typedef struct addrinfoexA {
-    int                 ai_flags;
-    int                 ai_family;
-    int                 ai_socktype;
-    int                 ai_protocol;
-    size_t              ai_addrlen;
-    char                *ai_canonname;
-    struct sockaddr     *ai_addr;
-    void                *ai_blob;
-    size_t              ai_bloblen;
-    LPGUID              ai_provider;
-    struct addrinfoexA  *ai_next;
-} ADDRINFOEXA;
-typedef ADDRINFOEXA     *PADDRINFOEXA;
-typedef ADDRINFOEXA     *LPADDRINFOEXA;
-typedef struct addrinfoexW {
-    int                 ai_flags;
-    int                 ai_family;
-    int                 ai_socktype;
-    int                 ai_protocol;
-    size_t              ai_addrlen;
-    PWSTR               ai_canonname;
-    struct sockaddr     *ai_addr;
-    void                *ai_blob;
-    size_t              ai_bloblen;
-    LPGUID              ai_provider;
-    struct addrinfoexW  *ai_next;
-} ADDRINFOEXW;
-typedef ADDRINFOEXW     *PADDRINFOEXW;
-typedef ADDRINFOEXW     *LPADDRINFOEXW;
 #ifdef UNICODE
 typedef ADDRINFOEXW     ADDRINFOEX;
 typedef ADDRINFOEXW     *PADDRINFOEX;
@@ -138,11 +67,6 @@ typedef void (CALLBACK *LPLOOKUPSERVICE_COMPLETION_ROUTINE)( DWORD, DWORD, LPWSA
 WINSOCK_API_LINKAGE VOID WSAAPI     freeaddrinfo( PADDRINFOA );
 WINSOCK_API_LINKAGE INT WSAAPI      getaddrinfo( PCSTR, PCSTR, const ADDRINFOA *, PADDRINFOA * );
 WINSOCK_API_LINKAGE INT WSAAPI      getnameinfo( const SOCKADDR *, socklen_t, PCHAR, DWORD, PCHAR, DWORD, INT );
-#if (_WIN32_WINNT >= 0x0502)
-WINSOCK_API_LINKAGE VOID WSAAPI     FreeAddrInfoW( PADDRINFOW );
-WINSOCK_API_LINKAGE INT WSAAPI      GetAddrInfoW( PCWSTR, PCWSTR, const ADDRINFOW *, PADDRINFOW * );
-WINSOCK_API_LINKAGE INT WSAAPI      GetNameInfoW( const SOCKADDR *, socklen_t, PWCHAR, DWORD, PWCHAR, DWORD, INT );
-#endif
 #if (_WIN32_WINNT >= 0x0600)
 WINSOCK_API_LINKAGE void WSAAPI     FreeAddrInfoEx( PADDRINFOEXA );
 WINSOCK_API_LINKAGE void WSAAPI     FreeAddrInfoExW( PADDRINFOEXW );
@@ -150,6 +74,11 @@ WINSOCK_API_LINKAGE INT WSAAPI      GetAddrInfoExA( PCSTR, PCSTR, DWORD, LPGUID,
 WINSOCK_API_LINKAGE INT WSAAPI      GetAddrInfoExW( PCWSTR, PCWSTR, DWORD, LPGUID, const ADDRINFOEXW *, PADDRINFOEXW *, struct timeval *, LPOVERLAPPED, LPLOOKUPSERVICE_COMPLETION_ROUTINE, LPHANDLE );
 WINSOCK_API_LINKAGE INT WSAAPI      SetAddrInfoExA( PCSTR, PCSTR, SOCKET_ADDRESS *, DWORD, LPBLOB, DWORD, DWORD, LPGUID, struct timeval *, LPOVERLAPPED, LPLOOKUPSERVICE_COMPLETION_ROUTINE, LPHANDLE );
 WINSOCK_API_LINKAGE INT WSAAPI      SetAddrInfoExW( PCWSTR, PCWSTR, SOCKET_ADDRESS *, DWORD, LPBLOB, DWORD, DWORD, LPGUID, struct timeval *, LPOVERLAPPED, LPLOOKUPSERVICE_COMPLETION_ROUTINE, LPHANDLE );
+#endif
+#if (NTDDI_VERSION >= 0x05010200) || (_WIN32_WINNT >= 0x0502)
+WINSOCK_API_LINKAGE VOID WSAAPI     FreeAddrInfoW( PADDRINFOW );
+WINSOCK_API_LINKAGE INT WSAAPI      GetAddrInfoW( PCWSTR, PCWSTR, const ADDRINFOW *, PADDRINFOW * );
+WINSOCK_API_LINKAGE INT WSAAPI      GetNameInfoW( const SOCKADDR *, socklen_t, PWCHAR, DWORD, PWCHAR, DWORD, INT );
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
 WINSOCK_API_LINKAGE PCWSTR WSAAPI   InetNtopW( INT, PVOID, PWSTR, size_t );
@@ -159,13 +88,13 @@ WINSOCK_API_LINKAGE INT WSAAPI      inet_pton( INT, PCSTR, PVOID );
 #endif
 
 /* Aliases */
-#if (_WIN32_WINNT >= 0x0502)
+#if (_WIN32_WINNT >= 0x0600)
+    #define FreeAddrInfoExA FreeAddrInfoEx
+#endif
+#if (NTDDI_VERSION >= 0x05010200) || (_WIN32_WINNT >= 0x0502)
     #define FreeAddrInfoA   freeaddrinfo
     #define GetAddrInfoA    getaddrinfo
     #define GetNameInfoA    getnameinfo
-#endif
-#if (_WIN32_WINNT >= 0x0600)
-    #define FreeAddrInfoExA FreeAddrInfoEx
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
     #define InetNtopA       inet_ntop
@@ -174,29 +103,29 @@ WINSOCK_API_LINKAGE INT WSAAPI      inet_pton( INT, PCSTR, PVOID );
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
 #ifdef UNICODE
-    #if (_WIN32_WINNT >= 0x0502)
-        #define FreeAddrInfo    FreeAddrInfoW
-        #define GetAddrInfo     GetAddrInfoW
-        #define GetNameInfo     GetNameInfoW
-    #endif
     #if (_WIN32_WINNT >= 0x0600)
         #define FreeAddrInfoEx  FreeAddrInfoExW
         #define GetAddrInfoEx   GetAddrInfoExW
         #define SetAddrInfoEx   SetAddrInfoExW
+    #endif
+    #if (NTDDI_VERSION >= 0x05010200) || (_WIN32_WINNT >= 0x0502)
+        #define FreeAddrInfo    FreeAddrInfoW
+        #define GetAddrInfo     GetAddrInfoW
+        #define GetNameInfo     GetNameInfoW
     #endif
     #if (NTDDI_VERSION >= 0x06000000)
         #define InetNtop        InetNtopW
         #define InetPton        InetPtonW
     #endif
 #else
-    #if (_WIN32_WINNT >= 0x0502)
-        #define FreeAddrInfo    FreeAddrInfoA
-        #define GetAddrInfo     GetAddrInfoA
-        #define GetNameInfo     GetNameInfoA
-    #endif
     #if (_WIN32_WINNT >= 0x0600)
         #define GetAddrInfoEx   GetAddrInfoExA
         #define SetAddrInfoEx   SetAddrInfoExW
+    #endif
+    #if (NTDDI_VERSION >= 0x05010200) || (_WIN32_WINNT >= 0x0502)
+        #define FreeAddrInfo    FreeAddrInfoA
+        #define GetAddrInfo     GetAddrInfoW
+        #define GetNameInfo     GetNameInfoA
     #endif
     #if (NTDDI_VERSION >= 0x06000000)
         #define InetNtop        InetNtopA
