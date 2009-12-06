@@ -123,6 +123,7 @@ typedef BYTE                BOOLEAN;
 typedef BOOLEAN*            PBOOLEAN;
 typedef DWORD               ACCESS_MASK;
 typedef ACCESS_MASK         *PACCESS_MASK;
+typedef DWORD               ACCESS_REASON;
 typedef ULONG_PTR           SID_HASH_ENTRY;
 typedef ULONG_PTR           *PSID_HASH_ENTRY;
 typedef WORD                SECURITY_DESCRIPTOR_CONTROL;
@@ -132,6 +133,7 @@ typedef BOOLEAN             *PSECURITY_CONTEXT_TRACKING_MODE;
 typedef DWORD               SECURITY_INFORMATION;
 typedef DWORD               *PSECURITY_INFORMATION;
 typedef DWORD               EXECUTION_STATE;
+typedef DWORD               *PEXECUTION_STATE;
 typedef DWORD               TP_VERSION;
 typedef DWORD               *PTP_VERSION;
 typedef DWORD               TP_WAIT_RESULT;
@@ -316,161 +318,208 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define VER_SUITE_SECURITY_APPLIANCE        0x00001000
 #define VER_SUITE_STORAGE_SERVER            0x00002000
 #define VER_SUITE_COMPUTE_SERVER            0x00004000
+#define VER_SUITE_WH_SERVER                 0x00008000
 
 /* Product types */
-#define PRODUCT_UNDEFINED                       0x00000000
-#define PRODUCT_ULTIMATE                        0x00000001
-#define PRODUCT_HOME_BASIC                      0x00000002
-#define PRODUCT_HOME_PREMIUM                    0x00000003
-#define PRODUCT_ENTERPRISE                      0x00000004
-#define PRODUCT_HOME_BASIC_N                    0x00000005
-#define PRODUCT_BUSINESS                        0x00000006
-#define PRODUCT_STANDARD_SERVER                 0x00000007
-#define PRODUCT_DATACENTER_SERVER               0x00000008
-#define PRODUCT_SMALLBUSINESS_SERVER            0x00000009
-#define PRODUCT_ENTERPRISE_SERVER               0x0000000A
-#define PRODUCT_STARTER                         0x0000000B
-#define PRODUCT_DATACENTER_SERVER_CORE          0x0000000C
-#define PRODUCT_STANDARD_SERVER_CORE            0x0000000D
-#define PRODUCT_ENTERPRISE_SERVER_CORE          0x0000000E
-#define PRODUCT_ENTERPRISE_SERVER_IA64          0x0000000F
-#define PRODUCT_BUSINESS_N                      0x00000010
-#define PRODUCT_WEB_SERVER                      0x00000011
-#define PRODUCT_CLUSTER_SERVER                  0x00000012
-#define PRODUCT_HOME_SERVER                     0x00000013
-#define PRODUCT_STORAGE_EXPRESS_SERVER          0x00000014
-#define PRODUCT_STORAGE_STANDARD_SERVER         0x00000015
-#define PRODUCT_STORAGE_WORKGROUP_SERVER        0x00000016
-#define PRODUCT_STORAGE_ENTERPRISE_SERVER       0x00000017
-#define PRODUCT_SERVER_FOR_SMALLBUSINESS        0x00000018
-#define PRODUCT_SMALLBUSINESS_SERVER_PREMIUM    0x00000019
-#define PRODUCT_UNLICENSED                      0xABCDABCD
+#define PRODUCT_UNDEFINED                           0x00000000
+#define PRODUCT_ULTIMATE                            0x00000001
+#define PRODUCT_HOME_BASIC                          0x00000002
+#define PRODUCT_HOME_PREMIUM                        0x00000003
+#define PRODUCT_ENTERPRISE                          0x00000004
+#define PRODUCT_HOME_BASIC_N                        0x00000005
+#define PRODUCT_BUSINESS                            0x00000006
+#define PRODUCT_STANDARD_SERVER                     0x00000007
+#define PRODUCT_DATACENTER_SERVER                   0x00000008
+#define PRODUCT_SMALLBUSINESS_SERVER                0x00000009
+#define PRODUCT_ENTERPRISE_SERVER                   0x0000000A
+#define PRODUCT_STARTER                             0x0000000B
+#define PRODUCT_DATACENTER_SERVER_CORE              0x0000000C
+#define PRODUCT_STANDARD_SERVER_CORE                0x0000000D
+#define PRODUCT_ENTERPRISE_SERVER_CORE              0x0000000E
+#define PRODUCT_ENTERPRISE_SERVER_IA64              0x0000000F
+#define PRODUCT_BUSINESS_N                          0x00000010
+#define PRODUCT_WEB_SERVER                          0x00000011
+#define PRODUCT_CLUSTER_SERVER                      0x00000012
+#define PRODUCT_HOME_SERVER                         0x00000013
+#define PRODUCT_STORAGE_EXPRESS_SERVER              0x00000014
+#define PRODUCT_STORAGE_STANDARD_SERVER             0x00000015
+#define PRODUCT_STORAGE_WORKGROUP_SERVER            0x00000016
+#define PRODUCT_STORAGE_ENTERPRISE_SERVER           0x00000017
+#define PRODUCT_SERVER_FOR_SMALLBUSINESS            0x00000018
+#define PRODUCT_SMALLBUSINESS_SERVER_PREMIUM        0x00000019
+#define PRODUCT_HOME_PREMIUM_N                      0x0000001A
+#define PRODUCT_ENTERPRISE_N                        0x0000001B
+#define PRODUCT_ULTIMATE_N                          0x0000001C
+#define PRODUCT_WEB_SERVER_CORE                     0x0000001D
+#define PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT    0x0000001E
+#define PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY      0x0000001F
+#define PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING     0x00000020
+#define PRODUCT_SERVER_FOUNDATION                   0x00000021
+#define PRODUCT_HOME_PREMIUM_SERVER                 0x00000022
+#define PRODUCT_SERVER_FOR_SMALLBUSINESS_V          0x00000023
+#define PRODUCT_STANDARD_SERVER_V                   0x00000024
+#define PRODUCT_DATACENTER_SERVER_V                 0x00000025
+#define PRODUCT_ENTERPRISE_SERVER_V                 0x00000026
+#define PRODUCT_DATACENTER_SERVER_CORE_V            0x00000027
+#define PRODUCT_STANDARD_SERVER_CORE_V              0x00000028
+#define PRODUCT_ENTERPRISE_SERVER_CORE_V            0x00000029
+#define PRODUCT_HYPERV                              0x0000002A
+#define PRODUCT_STORAGE_EXPRESS_SERVER_CORE         0x0000002B
+#define PRODUCT_STORAGE_STANDARD_SERVER_CORE        0x0000002C
+#define PRODUCT_STORAGE_WORKGROUP_SERVER_CORE       0x0000002D
+#define PRODUCT_STORAGE_ENTERPRISE_SERVER_CORE      0x0000002E
+#define PRODUCT_STARTER_N                           0x0000002F
+#define PRODUCT_PROFESSIONAL                        0x00000030
+#define PRODUCT_PROFESSIONAL_N                      0x00000031
+#define PRODUCT_SB_SOLUTION_SERVER                  0x00000032
+#define PRODUCT_SERVER_FOR_SB_SOLUTIONS             0x00000033
+#define PRODUCT_STANDARD_SERVER_SOLUTIONS           0x00000034
+#define PRODUCT_STANDARD_SERVER_SOLUTIONS_CORE      0x00000035
+#define PRODUCT_SB_SOLUTION_SERVER_EM               0x00000036
+#define PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM          0x00000037
+#define PRODUCT_SOLUTION_EMBEDDEDSERVER             0x00000038
+#define PRODUCT_SOLUTION_EMBEDDEDSERVER_CORE        0x00000039
+#define PRODUCT_ESSENTIALBUSINESS_SERVER_MGMT       0x0000003B
+#define PRODUCT_ESSENTIALBUSINESS_SERVER_ADDL       0x0000003C
+#define PRODUCT_ESSENTIALBUSINESS_SERVER_MGMTSVC    0x0000003D
+#define PRODUCT_ESSENTIALBUSINESS_SERVER_ADDLSVC    0x0000003E
+#define PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE   0x0000003F
+#define PRODUCT_CLUSTER_SERVER_V                    0x00000040
+#define PRODUCT_EMBEDDED                            0x00000041
+#define PRODUCT_STARTER_E                           0x00000042
+#define PRODUCT_HOME_BASIC_E                        0x00000043
+#define PRODUCT_HOME_PREMIUM_E                      0x00000044
+#define PRODUCT_PROFESSIONAL_E                      0x00000045
+#define PRODUCT_ENTERPRISE_E                        0x00000046
+#define PRODUCT_ULTIMATE_E                          0x00000047
+#define PRODUCT_UNLICENSED                          0xABCDABCD
 
 :endsegment
 /* Language identifiers */
-#define LANG_NEUTRAL        0x00
-#define LANG_INVARIANT      0x7F
-#define LANG_AFRIKAANS      0x36
-#define LANG_ALBANIAN       0x1C
-#define LANG_ALSATIAN       0x84
-#define LANG_AMHARIC        0x5E
-#define LANG_ARABIC         0x01
-#define LANG_ARMENIAN       0x2B
-#define LANG_ASSAMESE       0x4D
-#define LANG_AZERI          0x2C
-#define LANG_BASHKIR        0x6D
-#define LANG_BASQUE         0x2D
-#define LANG_BELARUSIAN     0x23
-#define LANG_BENGALI        0x45
-#define LANG_BRETON         0x7E
-#define LANG_BULGARIAN      0x02
-#define LANG_CATALAN        0x03
-#define LANG_CHINESE        0x04
-#define LANG_CORSICAN       0x83
-#define LANG_CROATIAN       0x1A
-#define LANG_CZECH          0x05
-#define LANG_DANISH         0x06
-#define LANG_DARI           0x8C
-#define LANG_DIVEHI         0x65
-#define LANG_DUTCH          0x13
-#define LANG_ENGLISH        0x09
-#define LANG_ESTONIAN       0x25
-#define LANG_FAEROESE       0x38
-#define LANG_FARSI          0x29
-#define LANG_FILIPINO       0x64
-#define LANG_FINNISH        0x0B
-#define LANG_FRENCH         0x0C
-#define LANG_FRISIAN        0x62
-#define LANG_GALICIAN       0x56
-#define LANG_GEORGIAN       0x37
-#define LANG_GERMAN         0x07
-#define LANG_GREEK          0x08
-#define LANG_GREENLANDIC    0x6F
-#define LANG_GUJARATI       0x47
-#define LANG_HAUSA          0x68
-#define LANG_HEBREW         0x0D
-#define LANG_HINDI          0x39
-#define LANG_HUNGARIAN      0x0E
-#define LANG_ICELANDIC      0x0F
-#define LANG_IGBO           0x70
-#define LANG_INDONESIAN     0x21
-#define LANG_INUKTITUT      0x5D
-#define LANG_IRISH          0x3C
-#define LANG_ITALIAN        0x10
-#define LANG_JAPANESE       0x11
-#define LANG_KANNADA        0x4B
-#define LANG_KASHMIRI       0x60
-#define LANG_KAZAK          0x3F
-#define LANG_KHMER          0x53
-#define LANG_KICHE          0x86
-#define LANG_KINYARWANDA    0x87
-#define LANG_KONKANI        0x57
-#define LANG_KOREAN         0x12
-#define LANG_KYRGYZ         0x40
-#define LANG_LAO            0x54
-#define LANG_LATVIAN        0x26
-#define LANG_LITHUANIAN     0x27
-#define LANG_LOWER_SORBIAN  0x2E
-#define LANG_LUXEMBOURGISH  0x6E
-#define LANG_MACEDONIAN     0x2F
-#define LANG_MALAY          0x3E
-#define LANG_MALAYALAM      0x4C
-#define LANG_MALTESE        0x3A
-#define LANG_MANIPURI       0x58
-#define LANG_MAORI          0x81
-#define LANG_MAPUDUNGUN     0x7A
-#define LANG_MARATHI        0x4E
-#define LANG_MOHAWK         0x7C
-#define LANG_MONGOLIAN      0x50
-#define LANG_NEPALI         0x61
-#define LANG_NORWEGIAN      0x14
-#define LANG_OCCITAN        0x82
-#define LANG_ORIYA          0x48
-#define LANG_PASHTO         0x63
-#define LANG_PERSIAN        0x29
-#define LANG_POLISH         0x15
-#define LANG_PORTUGUESE     0x16
-#define LANG_PUNJABI        0x46
-#define LANG_QUECHUA        0x6B
-#define LANG_ROMANIAN       0x18
-#define LANG_ROMANSH        0x17
-#define LANG_RUSSIAN        0x19
-#define LANG_SAMI           0x3B
-#define LANG_SANSKRIT       0x4F
-#define LANG_SERBIAN        0x1A
-#define LANG_SINDHI         0x59
-#define LANG_SINHALESE      0x5B
-#define LANG_SLOVAK         0x1B
-#define LANG_SLOVENIAN      0x24
-#define LANG_SOTHO          0x6C
-#define LANG_SPANISH        0x0A
-#define LANG_SWAHILI        0x41
-#define LANG_SWEDISH        0x1D
-#define LANG_SYRIAC         0x5A
-#define LANG_TAJIK          0x28
-#define LANG_TAMAZIGHT      0x5F
-#define LANG_TAMIL          0x49
-#define LANG_TATAR          0x44
-#define LANG_TELUGU         0x4A
-#define LANG_THAI           0x1E
-#define LANG_TIBETAN        0x51
-#define LANG_TIGRIGNA       0x73
-#define LANG_TSWANA         0x32
-#define LANG_TURKISH        0x1F
-#define LANG_TURKMEN        0x42
-#define LANG_UIGHUR         0x80
-#define LANG_UKRAINIAN      0x22
-#define LANG_UPPER_SORBIAN  0x2E
-#define LANG_URDU           0x20
-#define LANG_UZBEK          0x43
-#define LANG_VIETNAMESE     0x2A
-#define LANG_WELSH          0x52
-#define LANG_WOLOF          0x88
-#define LANG_XHOSA          0x34
-#define LANG_YAKUT          0x85
-#define LANG_YI             0x78
-#define LANG_YORUBA         0x6A
-#define LANG_ZULU           0x35
+#define LANG_NEUTRAL            0x00
+#define LANG_INVARIANT          0x7F
+#define LANG_AFRIKAANS          0x36
+#define LANG_ALBANIAN           0x1C
+#define LANG_ALSATIAN           0x84
+#define LANG_AMHARIC            0x5E
+#define LANG_ARABIC             0x01
+#define LANG_ARMENIAN           0x2B
+#define LANG_ASSAMESE           0x4D
+#define LANG_AZERI              0x2C
+#define LANG_BASHKIR            0x6D
+#define LANG_BASQUE             0x2D
+#define LANG_BELARUSIAN         0x23
+#define LANG_BENGALI            0x45
+#define LANG_BRETON             0x7E
+#define LANG_BULGARIAN          0x02
+#define LANG_CATALAN            0x03
+#define LANG_CHINESE            0x04
+#define LANG_CORSICAN           0x83
+#define LANG_CROATIAN           0x1A
+#define LANG_CZECH              0x05
+#define LANG_DANISH             0x06
+#define LANG_DARI               0x8C
+#define LANG_DIVEHI             0x65
+#define LANG_DUTCH              0x13
+#define LANG_ENGLISH            0x09
+#define LANG_ESTONIAN           0x25
+#define LANG_FAEROESE           0x38
+#define LANG_FARSI              0x29
+#define LANG_FILIPINO           0x64
+#define LANG_FINNISH            0x0B
+#define LANG_FRENCH             0x0C
+#define LANG_FRISIAN            0x62
+#define LANG_GALICIAN           0x56
+#define LANG_GEORGIAN           0x37
+#define LANG_GERMAN             0x07
+#define LANG_GREEK              0x08
+#define LANG_GREENLANDIC        0x6F
+#define LANG_GUJARATI           0x47
+#define LANG_HAUSA              0x68
+#define LANG_HEBREW             0x0D
+#define LANG_HINDI              0x39
+#define LANG_HUNGARIAN          0x0E
+#define LANG_ICELANDIC          0x0F
+#define LANG_IGBO               0x70
+#define LANG_INDONESIAN         0x21
+#define LANG_INUKTITUT          0x5D
+#define LANG_IRISH              0x3C
+#define LANG_ITALIAN            0x10
+#define LANG_JAPANESE           0x11
+#define LANG_KANNADA            0x4B
+#define LANG_KASHMIRI           0x60
+#define LANG_KAZAK              0x3F
+#define LANG_KHMER              0x53
+#define LANG_KICHE              0x86
+#define LANG_KINYARWANDA        0x87
+#define LANG_KONKANI            0x57
+#define LANG_KOREAN             0x12
+#define LANG_KYRGYZ             0x40
+#define LANG_LAO                0x54
+#define LANG_LATVIAN            0x26
+#define LANG_LITHUANIAN         0x27
+#define LANG_LOWER_SORBIAN      0x2E
+#define LANG_LUXEMBOURGISH      0x6E
+#define LANG_MACEDONIAN         0x2F
+#define LANG_MALAY              0x3E
+#define LANG_MALAYALAM          0x4C
+#define LANG_MALTESE            0x3A
+#define LANG_MANIPURI           0x58
+#define LANG_MAORI              0x81
+#define LANG_MAPUDUNGUN         0x7A
+#define LANG_MARATHI            0x4E
+#define LANG_MOHAWK             0x7C
+#define LANG_MONGOLIAN          0x50
+#define LANG_NEPALI             0x61
+#define LANG_NORWEGIAN          0x14
+#define LANG_OCCITAN            0x82
+#define LANG_ORIYA              0x48
+#define LANG_PASHTO             0x63
+#define LANG_PERSIAN            0x29
+#define LANG_POLISH             0x15
+#define LANG_PORTUGUESE         0x16
+#define LANG_PUNJABI            0x46
+#define LANG_QUECHUA            0x6B
+#define LANG_ROMANIAN           0x18
+#define LANG_ROMANSH            0x17
+#define LANG_RUSSIAN            0x19
+#define LANG_SAMI               0x3B
+#define LANG_SANSKRIT           0x4F
+#define LANG_SCOTTISH_GAELIC    0x91
+#define LANG_SERBIAN            0x1A
+#define LANG_SINDHI             0x59
+#define LANG_SINHALESE          0x5B
+#define LANG_SLOVAK             0x1B
+#define LANG_SLOVENIAN          0x24
+#define LANG_SOTHO              0x6C
+#define LANG_SPANISH            0x0A
+#define LANG_SWAHILI            0x41
+#define LANG_SWEDISH            0x1D
+#define LANG_SYRIAC             0x5A
+#define LANG_TAJIK              0x28
+#define LANG_TAMAZIGHT          0x5F
+#define LANG_TAMIL              0x49
+#define LANG_TATAR              0x44
+#define LANG_TELUGU             0x4A
+#define LANG_THAI               0x1E
+#define LANG_TIBETAN            0x51
+#define LANG_TIGRIGNA           0x73
+#define LANG_TSWANA             0x32
+#define LANG_TURKISH            0x1F
+#define LANG_TURKMEN            0x42
+#define LANG_UIGHUR             0x80
+#define LANG_UKRAINIAN          0x22
+#define LANG_UPPER_SORBIAN      0x2E
+#define LANG_URDU               0x20
+#define LANG_UZBEK              0x43
+#define LANG_VIETNAMESE         0x2A
+#define LANG_WELSH              0x52
+#define LANG_WOLOF              0x88
+#define LANG_XHOSA              0x34
+#define LANG_YAKUT              0x85
+#define LANG_YI                 0x78
+#define LANG_YORUBA             0x6A
+#define LANG_ZULU               0x35
 
 /* Sublanguage identifiers */
 #define SUBLANG_NEUTRAL                             0x00
@@ -631,8 +680,13 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define SUBLANG_SAMI_SKOLT_FINLAND                  0x08
 #define SUBLANG_SAMI_INARI_FINLAND                  0x09
 #define SUBLANG_SANSKRIT_INDIA                      0x01
+#define SUBLANG_SCOTTISH_GAELIC                     0x01
 #define SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_LATIN    0x06
 #define SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_CYRILLIC 0x07
+#define SUBLANG_SERBIAN_MONTENEGRO_LATIN            0x0B
+#define SUBLANG_SERBIAN_MONTENEGRO_CYRILLIC         0x0C
+#define SUBLANG_SERBIAN_SERBIA_LATIN                0x09
+#define SUBLANG_SERBIAN_SERBIA_CYRILLIC             0x0A
 #define SUBLANG_SERBIAN_CROATIA                     0x01
 #define SUBLANG_SERBIAN_LATIN                       0x02
 #define SUBLANG_SERBIAN_CYRILLIC                    0x03
@@ -706,6 +760,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define SORT_CHINESE_UNICODE        0x1
 #define SORT_CHINESE_PRC            0x2
 #define SORT_CHINESE_BOPOMOFO       0x3
+#define SORT_CHINESE_RADICALSTROKE  0x4
 #define SORT_KOREAN_KSC             0x0
 #define SORT_KOREAN_UNICODE         0x1
 #define SORT_GERMAN_PHONE_BOOK      0x1
@@ -748,49 +803,61 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define DBG_UNREFERENCED_LOCAL_VARIABLE( x )    (x)
 
 /* Status codes */
-#define STATUS_WAIT_0                   0x00000000L
-#define STATUS_ABANDONED_WAIT_0         0x00000080L
-#define STATUS_USER_APC                 0x000000C0L
-#define STATUS_TIMEOUT                  0x00000102L
-#define STATUS_PENDING                  0x00000103L
-#define DBG_EXCEPTION_HANDLED           0x00010001L
-#define DBG_CONTINUE                    0x00010002L
-#define STATUS_SEGMENT_NOTIFICATION     0x40000005L
-#define DBG_TERMINATE_THREAD            0x40010003L
-#define DBG_TERMINATE_PROCESS           0x40010004L
-#define DBG_CONTROL_C                   0x40010005L
-#define DBG_CONTROL_BREAK               0x40010008L
-#define DBG_COMMAND_EXCEPTION           0x40010009L
-#define STATUS_GUARD_PAGE_VIOLATION     0x80000001L
-#define STATUS_DATATYPE_MISALIGNMENT    0x80000002L
-#define STATUS_BREAKPOINT               0x80000003L
-#define STATUS_SINGLE_STEP              0x80000004L
-#define DBG_EXCEPTION_NOT_HANDLED       0x80010001L
-#define STATUS_ACCESS_VIOLATION         0xC0000005L
-#define STATUS_IN_PAGE_ERROR            0xC0000006L
-#define STATUS_INVALID_HANDLE           0xC0000008L
-#define STATUS_NO_MEMORY                0xC0000017L
-#define STATUS_ILLEGAL_INSTRUCTION      0xC000001DL
-#define STATUS_NONCONTINUABLE_EXCEPTION 0xC0000025L
-#define STATUS_INVALID_DISPOSITION      0xC0000026L
-#define STATUS_ARRAY_BOUNDS_EXCEEDED    0xC000008CL
-#define STATUS_FLOAT_DENORMAL_OPERAND   0xC000008DL
-#define STATUS_FLOAT_DIVIDE_BY_ZERO     0xC000008EL
-#define STATUS_FLOAT_INEXACT_RESULT     0xC000008FL
-#define STATUS_FLOAT_INVALID_OPERATION  0xC0000090L
-#define STATUS_FLOAT_OVERFLOW           0xC0000091L
-#define STATUS_FLOAT_STACK_CHECK        0xC0000092L
-#define STATUS_FLOAT_UNDERFLOW          0xC0000093L
-#define STATUS_INTEGER_DIVIDE_BY_ZERO   0xC0000094L
-#define STATUS_INTEGER_OVERFLOW         0xC0000095L
-#define STATUS_PRIVILEGED_INSTRUCTION   0xC0000096L
-#define STATUS_STACK_OVERFLOW           0xC00000FDL
-#define STATUS_CONTROL_C_EXIT           0xC000013AL
-#define STATUS_FLOAT_MULTIPLE_FAULTS    0xC00002B4L
-#define STATUS_FLOAT_MULTIPLE_TRAPS     0xC00002B5L
-#define STATUS_REG_NAT_CONSUMPTION      0xC00002C9L
-#define STATUS_SXS_EARLY_DEACTIVATION   0xC015000FL
-#define STATUS_SXS_INVALID_DEACTIVATION 0xC0150010L
+#define STATUS_WAIT_0                       0x00000000L
+#define STATUS_ABANDONED_WAIT_0             0x00000080L
+#define STATUS_USER_APC                     0x000000C0L
+#define STATUS_TIMEOUT                      0x00000102L
+#define STATUS_PENDING                      0x00000103L
+#define DBG_EXCEPTION_HANDLED               0x00010001L
+#define DBG_CONTINUE                        0x00010002L
+#define STATUS_SEGMENT_NOTIFICATION         0x40000005L
+#define DBG_TERMINATE_THREAD                0x40010003L
+#define DBG_TERMINATE_PROCESS               0x40010004L
+#define DBG_CONTROL_C                       0x40010005L
+#define DBG_PRINTEXCEPTION_C                0x40010006L
+#define DBG_RIPEXCEPTION                    0x40010007L
+#define DBG_CONTROL_BREAK                   0x40010008L
+#define DBG_COMMAND_EXCEPTION               0x40010009L
+#define STATUS_GUARD_PAGE_VIOLATION         0x80000001L
+#define STATUS_DATATYPE_MISALIGNMENT        0x80000002L
+#define STATUS_BREAKPOINT                   0x80000003L
+#define STATUS_SINGLE_STEP                  0x80000004L
+#define STATUS_LONGJMP                      0x80000026L
+#define STATUS_UNWIND_CONSOLIDATE           0x80000029L
+#define DBG_EXCEPTION_NOT_HANDLED           0x80010001L
+#define STATUS_ACCESS_VIOLATION             0xC0000005L
+#define STATUS_IN_PAGE_ERROR                0xC0000006L
+#define STATUS_INVALID_HANDLE               0xC0000008L
+#define STATUS_INVALID_PARAMETER            0xC000000DL
+#define STATUS_NO_MEMORY                    0xC0000017L
+#define STATUS_ILLEGAL_INSTRUCTION          0xC000001DL
+#define STATUS_NONCONTINUABLE_EXCEPTION     0xC0000025L
+#define STATUS_INVALID_DISPOSITION          0xC0000026L
+#define STATUS_ARRAY_BOUNDS_EXCEEDED        0xC000008CL
+#define STATUS_FLOAT_DENORMAL_OPERAND       0xC000008DL
+#define STATUS_FLOAT_DIVIDE_BY_ZERO         0xC000008EL
+#define STATUS_FLOAT_INEXACT_RESULT         0xC000008FL
+#define STATUS_FLOAT_INVALID_OPERATION      0xC0000090L
+#define STATUS_FLOAT_OVERFLOW               0xC0000091L
+#define STATUS_FLOAT_STACK_CHECK            0xC0000092L
+#define STATUS_FLOAT_UNDERFLOW              0xC0000093L
+#define STATUS_INTEGER_DIVIDE_BY_ZERO       0xC0000094L
+#define STATUS_INTEGER_OVERFLOW             0xC0000095L
+#define STATUS_PRIVILEGED_INSTRUCTION       0xC0000096L
+#define STATUS_STACK_OVERFLOW               0xC00000FDL
+#define STATUS_DLL_NOT_FOUND                0xC0000135L
+#define STATUS_ORDINAL_NOT_FOUND            0xC0000138L
+#define STATUS_ENTRYPOINT_NOT_FOUND         0xC0000139L
+#define STATUS_CONTROL_C_EXIT               0xC000013AL
+#define STATUS_DLL_INIT_FAILED              0xC0000142L
+#define STATUS_FLOAT_MULTIPLE_FAULTS        0xC00002B4L
+#define STATUS_FLOAT_MULTIPLE_TRAPS         0xC00002B5L
+#define STATUS_REG_NAT_CONSUMPTION          0xC00002C9L
+#define STATUS_STACK_BUFFER_OVERRUN         0xC0000409L
+#define STATUS_INVALID_CRUNTIME_PARAMETER   0xC0000417L
+#define STATUS_ASSERTION_FAILURE            0xC0000420L
+#define STATUS_SXS_EARLY_DEACTIVATION       0xC015000FL
+#define STATUS_SXS_INVALID_DEACTIVATION     0xC0150010L
 
 /* Maximum values */
 #define MAXIMUM_WAIT_OBJECTS    64
@@ -803,14 +870,15 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 
 /* Context flags for the x86 processor */
 #ifdef _X86_
-    #define CONTEXT_i386               0x00010000L
-    #define CONTEXT_i486               0x00010000L
-    #define CONTEXT_CONTROL            (CONTEXT_i386 | 0x00000001L)
-    #define CONTEXT_INTEGER            (CONTEXT_i386 | 0x00000002L)
-    #define CONTEXT_SEGMENTS           (CONTEXT_i386 | 0x00000004L)
-    #define CONTEXT_FLOATING_POINT     (CONTEXT_i386 | 0x00000008L)
-    #define CONTEXT_DEBUG_REGISTERS    (CONTEXT_i386 | 0x00000010L)
-    #define CONTEXT_EXTENDED_REGISTERS (CONTEXT_i386 | 0x00000020L)
+    #define CONTEXT_i386                0x00010000L
+    #define CONTEXT_i486                0x00010000L
+    #define CONTEXT_CONTROL             (CONTEXT_i386 | 0x00000001L)
+    #define CONTEXT_INTEGER             (CONTEXT_i386 | 0x00000002L)
+    #define CONTEXT_SEGMENTS            (CONTEXT_i386 | 0x00000004L)
+    #define CONTEXT_FLOATING_POINT      (CONTEXT_i386 | 0x00000008L)
+    #define CONTEXT_DEBUG_REGISTERS     (CONTEXT_i386 | 0x00000010L)
+    #define CONTEXT_EXTENDED_REGISTERS  (CONTEXT_i386 | 0x00000020L)
+    #define CONTEXT_XSTATE              (CONTEXT_i386 | 0x00000040L)
     #define CONTEXT_FULL \
         (CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_SEGMENTS)
     #define CONTEXT_ALL  \
@@ -844,6 +912,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define WOW64_CONTEXT_FLOATING_POINT        (WOW64_CONTEXT_i386 | 0x00000008L)
 #define WOW64_CONTEXT_DEBUG_REGISTERS       (WOW64_CONTEXT_i386 | 0x00000010L)
 #define WOW64_CONTEXT_EXTENDED_REGISTERS    (WOW64_CONTEXT_i386 | 0x00000020L)
+#define WOW64_CONTEXT_XSTATE                (WOW64_CONTEXT_i386 | 0x00000040L)
 #define WOW64_CONTEXT_FULL \
     (WOW64_CONTEXT_CONTROL | WOW64_CONTEXT_INTEGER | WOW64_CONTEXT_SEGMENTS)
 #define WOW64_CONTEXT_ALL \
@@ -906,6 +975,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define SECURITY_NULL_RID                               0x00000000L
 #define SECURITY_WORLD_RID                              0x00000000L
 #define SECURITY_LOCAL_RID                              0x00000000L
+#define SECURITY_LOCAL_LOGON_RID                        0x00000001L
 #define SECURITY_CREATOR_OWNER_RID                      0x00000000L
 #define SECURITY_CREATOR_GROUP_RID                      0x00000001L
 #define SECURITY_CREATOR_OWNER_SERVER_RID               0x00000002L
@@ -940,19 +1010,47 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define SECURITY_PACKAGE_NTLM_RID                       0x0000000AL
 #define SECURITY_PACKAGE_SCHANNEL_RID                   0x0000000EL
 #define SECURITY_PACKAGE_DIGEST_RID                     0x00000015L
+#define SECURITY_CRED_TYPE_BASE_RID                     0x00000041L
+#define SECURITY_CRED_TYPE_THIS_ORG_CERT_RID            0x00000001L
+#define SECURITY_MIN_BASE_RID                           0x00000050L
 #define SECURITY_SERVICE_ID_BASE_RID                    0x00000050L
 #define SECURITY_RESERVED_ID_BASE_RID                   0x00000051L
+#define SECURITY_APPPOOL_ID_BASE_RID                    0x00000052L
+#define SECURITY_VIRTUALSERVER_ID_BASE_RID              0x00000053L
+#define SECURITY_USERMODEDRIVERHOST_ID_BASE_RID         0x00000054L
+#define SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_BASE_RID  0x00000055L
+#define SECURITY_WMIHOST_ID_BASE_RID                    0x00000056L
+#define SECURITY_TASK_ID_BASE_RID                       0x00000057L
+#define SECURITY_NFS_ID_BASE_RID                        0x00000058L
+#define SECURITY_COM_ID_BASE_RID                        0x00000059L
+#define SECURITY_MAX_BASE_RID                           0x0000006FL
 #define SECURITY_MAX_ALWAYS_FITLERED                    0x000003E7L
 #define SECURITY_MIN_NEVER_FILTERED                     0x000003E8L
 #define SECURITY_OTHER_ORGANIZATION_RID                 0x000003E8L
+#define SECURITY_WINDOWSMOBILE_ID_BASE_RID              0x00000070L
 #define SECURITY_MANDATORY_UNTRUSTED_RID                0x00000000L
 #define SECURITY_MANDATORY_LOW_RID                      0x00001000L
 #define SECURITY_MANDATORY_MEDIUM_RID                   0x00002000L
+#define SECURITY_MANDATORY_MEDIUM_PLUS_RID \
+    (SECURITY_MANDATORY_MEDIUM_RID + 0x00000100L)
 #define SECURITY_MANDATORY_HIGH_RID                     0x00003000L
 #define SECURITY_MANDATORY_SYSTEM_RID                   0x00004000L
 #define SECURITY_MANDATORY_PROTECTED_PROCESS_RID        0x00005000L
 #define SECURITY_MANDATORY_MAXIMUM_USER_RID \
     SECURITY_MANDATORY_SYSTEM_RID
+
+/* Relative identifier counts */
+#define SECURITY_LOGON_IDS_RID_COUNT                        3L
+#define SECURITY_NT_NON_UNIQUE_SUB_AUTH_COUNT               3L
+#define SECURITY_PACKAGE_RID_COUNT                          2L
+#define SECURITY_CRED_TYPE_RID_COUNT                        2L
+#define SECURITY_SERVICE_ID_RID_COUNT                       6L
+#define SECURITY_APPPOOL_ID_RID_COUNT                       6L
+#define SECURITY_VIRTUALSERVER_ID_RID_COUNT                 6L
+#define SECURITY_USERMODEDRIVERHOST_ID_RID_COUNT            6L
+#define SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_RID_COUNT 6L
+#define SECURITY_WMIHOST_ID_RID_COUNT                       6L
+#define SECURITY_VIRTUALACCOUNT_ID_RID_COUNT                6L
 
 /* Well-known users */
 #define FOREST_USER_RID_MAX     0x000001F3L
@@ -972,6 +1070,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define DOMAIN_GROUP_RID_ENTERPRISE_ADMINS      0x00000207L
 #define DOMAIN_GROUP_RID_POLICY_ADMINS          0x00000208L
 #define DOMAIN_GROUP_RID_READONLY_CONTROLLERS   0x00000209L
+#define DOMAIN_GROUP_RID_ENTERPRISE_READONLY_DOMAIN_CONTROLLERS 0x000001F2L
 
 /* Well-known aliases */
 #define DOMAIN_ALIAS_RID_ADMINS                         0x00000220L
@@ -998,6 +1097,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define DOMAIN_ALIAS_RID_CACHEABLE_PRINCIPALS_GROUP     0x0000023BL
 #define DOMAIN_ALIAS_RID_NON_CACHEABLE_PRINCIPALS_GROUP 0x0000023CL
 #define DOMAIN_ALIAS_RID_EVENT_LOG_READERS_GROUP        0x0000023DL
+#define DOMAIN_ALIAS_RID_CERTSVC_DCOM_ACCESS_GROUP      0x0000023EL
 
 /* Predefined system LUID values */
 #define SYSTEM_LUID             { 0x000003E7, 0x00000000 }
@@ -1127,6 +1227,15 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 /* Privilege set control flags */
 #define PRIVILEGE_SET_ALL_NECESSARY 1
 
+/* Access reason masks */
+#define ACCESS_REASON_TYPE_MASK 0xFFFF0000
+#define ACCESS_REASON_DATA_MASK 0x0000FFFF
+
+/* Security descriptor flags */
+#define SE_SECURITY_DESCRIPTOR_FLAG_NO_OWNER_ACE    0x00000001L
+#define SE_SECURITY_DESCRIPTOR_FLAG_NO_LABEL_ACE    0x00000002L
+#define SE_SECURITY_DESCRIPTOR_VALID_FLAGS          0x00000003L
+
 /* Privilege names */
 #define SE_CREATE_TOKEN_NAME            TEXT( "SeCreateTokenPrivilege" )
 #define SE_ASSIGNPRIMARYTOKEN_NAME      TEXT( "SeAssignPrimaryTokenPrivilege" )
@@ -1185,7 +1294,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define TOKEN_EXECUTE           (STANDARD_RIGHTS_EXECUTE)
 
 /* Number of token audit policy subcategories */
-#define POLICY_AUDIT_SUBCATEGORY_COUNT  50
+#define POLICY_AUDIT_SUBCATEGORY_COUNT  53
 
 /* Length of a token source name */
 #define TOKEN_SOURCE_LENGTH 8
@@ -1241,7 +1350,8 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #endif
 
 /* Maximum number of processors */
-#define MAXIMUM_PROCESSORS  32
+#define MAXIMUM_PROC_PER_GROUP  32
+#define MAXIMUM_PROCESSORS      MAXIMUM_PROC_PER_GROUP
 
 /* Thread access rights */
 #define THREAD_TERMINATE                    0x0001L
@@ -1297,10 +1407,6 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 /* Thread profiling flags */
 #define THREAD_PROFILING_FLAG_DISPATCH  0x00000001L
 
-/* Rate phrase constants */
-#define PS_RATE_PHASE_BITS  4
-#define PS_RATE_PHASE_MASK  ((1UL << PS_RATE_PHASE_BITS) - 1)
-
 /* End of job actions */
 #define JOB_OBJECT_TERMINATE_AT_END_OF_JOB  0
 #define JOB_OBJECT_POST_AT_END_OF_JOB       1
@@ -1331,9 +1437,10 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define JOB_OBJECT_LIMIT_BREAKAWAY_OK               0x00000800L
 #define JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK        0x00001000L
 #define JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE          0x00002000L
+#define JOB_OBJECT_LIMIT_SUBSET_AFFINITY            0x00004000L
 #define JOB_OBJECT_LIMIT_VALID_FLAGS                0x0007FFFFL
 #define JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS          0x000000FFL
-#define JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS       0x00003FFFL
+#define JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS       0x00007FFFL
 #define JOB_OBJECT_RESERVED_LIMIT_VALID_FLAGS       0x0007FFFFL
 
 /* Job object UI restrictions */
@@ -1438,6 +1545,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define PF_COMPARE_EXCHANGE128              14L
 #define PF_COMPARE64_EXCHANGE128            15L
 #define PF_CHANNELS_ENABLED                 16L
+#define PF_XSAVE_ENABLED                    17L
 
 /* Extended state features */
 #define XSTATE_LEGACY_FLOATING_POINT    0
@@ -1574,27 +1682,34 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define MAILSLOT_WAIT_FOREVER   0xFFFFFFFFL
 
 /* File system flags */
-#define FILE_CASE_SENSITIVE_SEARCH      0x00000001L
-#define FILE_CASE_PRESERVED_NAMES       0x00000002L
-#define FILE_UNICODE_ON_DISK            0x00000004L
-#define FILE_PERSISTENT_ACLS            0x00000008L
-#define FILE_FILE_COMPRESSION           0x00000010L
-#define FILE_VOLUME_QUOTAS              0x00000020L
-#define FILE_SUPPORTS_SPARSE_FILES      0x00000040L
-#define FILE_SUPPORTS_REPARSE_POINTS    0x00000080L
-#define FILE_SUPPORTS_REMOTE_STORAGE    0x00000100L
-#define FILE_VOLUME_IS_COMPRESSED       0x00008000L
-#define FILE_SUPPORTS_OBJECT_IDS        0x00010000L
-#define FILE_SUPPORTS_ENCRYPTION        0x00020000L
-#define FILE_NAMED_STREAMS              0x00040000L
-#define FILE_READ_ONLY_VOLUME           0x00080000L
-#define FILE_SEQUENTIAL_WRITE_ONCE      0x00100000L
-#define FILE_SUPPORTS_TRANSACTIONS      0x00200000L
+#define FILE_CASE_SENSITIVE_SEARCH          0x00000001L
+#define FILE_CASE_PRESERVED_NAMES           0x00000002L
+#define FILE_UNICODE_ON_DISK                0x00000004L
+#define FILE_PERSISTENT_ACLS                0x00000008L
+#define FILE_FILE_COMPRESSION               0x00000010L
+#define FILE_VOLUME_QUOTAS                  0x00000020L
+#define FILE_SUPPORTS_SPARSE_FILES          0x00000040L
+#define FILE_SUPPORTS_REPARSE_POINTS        0x00000080L
+#define FILE_SUPPORTS_REMOTE_STORAGE        0x00000100L
+#define FILE_VOLUME_IS_COMPRESSED           0x00008000L
+#define FILE_SUPPORTS_OBJECT_IDS            0x00010000L
+#define FILE_SUPPORTS_ENCRYPTION            0x00020000L
+#define FILE_NAMED_STREAMS                  0x00040000L
+#define FILE_READ_ONLY_VOLUME               0x00080000L
+#define FILE_SEQUENTIAL_WRITE_ONCE          0x00100000L
+#define FILE_SUPPORTS_TRANSACTIONS          0x00200000L
+#define FILE_SUPPORTS_HARD_LINKS            0x00400000L
+#define FILE_SUPPORTS_EXTENDED_ATTRIBUTES   0x00800000L
+#define FILE_SUPPORTS_OPEN_BY_FILE_ID       0x01000000L
+#define FILE_SUPPORTS_USN_JOURNAL           0x02000000L
 
 /* Reparse tags */
 #define IO_REPARSE_TAG_MOUNT_POINT      0xA0000003L
 #define IO_REPARSE_TAG_HSM              0xC0000004L
+#define IO_REPARSE_TAG_HSM2             0x80000006L
 #define IO_REPARSE_TAG_SIS              0x80000007L
+#define IO_REPARSE_TAG_WIM              0x80000008L
+#define IO_REPARSE_TAG_CSV              0x80000009L
 #define IO_REPARSE_TAG_DFS              0x8000000AL
 #define IO_REPARSE_TAG_SYMLINK          0x8000000CL
 #define IO_REPARSE_TAG_DFSR             0x80000012L
@@ -1617,6 +1732,18 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ES_AWAYMODE_REQUIRED    0x00000040L
 #define ES_CONTINUOUS           0x80000000L
 
+/* Diagnostic reason version number */
+#if (_WIN32_WINNT >= 0x0601)
+    #define DIAGNOSTIC_REASON_VERSION   0L
+#endif
+
+/* Diagnostic reason flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define DIAGNOSTIC_REASON_SIMPLE_STRING     0x00000001L
+    #define DIAGNOSTIC_REASON_DETAILED_STRING   0x00000002L
+    #define DIAGNOSTIC_REASON_NOT_SPECIFIED     0x80000000L
+#endif
+
 /* Power request context version number */
 #define POWER_REQUEST_CONTEXT_VERSION   0L
 
@@ -1637,17 +1764,12 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
     #define PDCAP_WARM_EJECT_SUPPORTED      0x00000100L
 #endif
 
-/* Power transition veto types */
-#define PO_TRANSITION_VETO_TYPE_WINDOW  0x00000001L
-#define PO_TRANSITION_VETO_TYPE_SERVICE 0x00000002L
-#define PO_TRANSITION_VETO_TYPE_ALL \
-    (PO_TRANSITION_VETO_TYPE_WINDOW | PO_TRANSITION_VETO_TYPE_SERVICE)
-
 /* Version of the SET_POWER_SETTING_VALUE structure */
 #define POWER_SETTING_VALUE_VERSION 0x00000001L
 
 /* Number of idle buckets */
-#define PROC_IDLE_BUCKET_COUNT  6
+#define PROC_IDLE_BUCKET_COUNT      6
+#define PROC_IDLE_BUCKET_COUNT_EX   16
 
 /* Coordination types */
 #define ACPI_PPM_SOFTWARE_ALL   0xFC
@@ -1655,22 +1777,42 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ACPI_PPM_HARDWARE_ALL   0xFE
 #define MS_PPM_SOFTWARE_ALL     0x01
 
+/* Firmware features */
+#define PPM_FIRMWARE_ACPI1C2        0x00000001L
+#define PPM_FIRMWARE_ACPI1C3        0x00000002L
+#define PPM_FIRMWARE_ACPI1TSTATES   0x00000004L
+#define PPM_FIRMWARE_CST            0x00000008L
+#define PPM_FIRMWARE_CSD            0x00000010L
+#define PPM_FIRMWARE_PCT            0x00000020L
+#define PPM_FIRMWARE_PSS            0x00000040L
+#define PPM_FIRMWARE_XPSS           0x00000080L
+#define PPM_FIRMWARE_PPC            0x00000100L
+#define PPM_FIRMWARE_PSD            0x00000200L
+#define PPM_FIRMWARE_PTC            0x00000400L
+#define PPM_FIRMWARE_TSS            0x00000800L
+#define PPM_FIRMWARE_TPC            0x00001000L
+#define PPM_FIRMWARE_TSD            0x00002000L
+#define PPM_FIRMWARE_PCCH           0x00004000L
+#define PPM_FIRMWARE_PCCP           0x00008000L
+
 /* Power action policy flags */
-#define POWER_ACTION_QUERY_ALLOWED  0x00000001L
-#define POWER_ACTION_UI_ALLOWED     0x00000002L
-#define POWER_ACTION_OVERRIDE_APPS  0x00000004L
-#define POWER_ACTION_LIGHTEST_FIRST 0x10000000L
-#define POWER_ACTION_LOCK_CONSOLE   0x20000000L
-#define POWER_ACTION_DISABLE_WAKES  0x40000000L
-#define POWER_ACTION_CRITICAL       0x80000000L
+#define POWER_ACTION_QUERY_ALLOWED      0x00000001L
+#define POWER_ACTION_UI_ALLOWED         0x00000002L
+#define POWER_ACTION_OVERRIDE_APPS      0x00000004L
+#define POWER_ACTION_PSEUDO_TRANSITION  0x08000000L
+#define POWER_ACTION_LIGHTEST_FIRST     0x10000000L
+#define POWER_ACTION_LOCK_CONSOLE       0x20000000L
+#define POWER_ACTION_DISABLE_WAKES      0x40000000L
+#define POWER_ACTION_CRITICAL           0x80000000L
 
 /* Power action policy event code flags */
-#define POWER_LEVEL_USER_NOTIFY_TEXT    0x00000001L
-#define POWER_LEVEL_USER_NOTIFY_SOUND   0x00000002L
-#define POWER_LEVEL_USER_NOTIFY_EXEC    0x00000004L
-#define POWER_USER_NOTIFY_BUTTON        0x00000008L
-#define POWER_USER_NOTIFY_SHUTDOWN      0x00000010L
-#define POWER_FORCE_TRIGGER_RESET       0x80000000L
+#define POWER_LEVEL_USER_NOTIFY_TEXT        0x00000001L
+#define POWER_LEVEL_USER_NOTIFY_SOUND       0x00000002L
+#define POWER_LEVEL_USER_NOTIFY_EXEC        0x00000004L
+#define POWER_USER_NOTIFY_BUTTON            0x00000008L
+#define POWER_USER_NOTIFY_SHUTDOWN          0x00000010L
+#define POWER_USER_NOTIFY_FORCED_SHUTDOWN   0x00000020L
+#define POWER_FORCE_TRIGGER_RESET           0x80000000L
 
 /* Battery discharge flags */
 #define BATTERY_DISCHARGE_FLAGS_EVENTCODE_MASK  0x00000007
@@ -1692,12 +1834,6 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define PO_THROTTLE_DEGRADE     2
 #define PO_THROTTLE_ADAPTIVE    3
 #define PO_THROTTLE_MAXIMUM     4
-
-/* Processor performance state policy flags */
-#define PERFSTATE_POLICY_CHANGE_IDEAL   0x00
-#define PERFSTATE_POLICY_CHANGE_SINGLE  0x01
-#define PERFSTATE_POLICY_CHANGE_ROCKET  0x02
-#define PERFSTATE_POLICY_CHANGE_MAX     PERFSTATE_POLICY_CHANGE_ROCKET
 
 /* Image file signatures */
 #define IMAGE_DOS_SIGNATURE     0x5A4D
@@ -1867,10 +2003,11 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define IMAGE_SIZEOF_SYMBOL 18
 
 /* Special image symbol section number values */
-#define IMAGE_SYM_UNDEFINED     0x0000
-#define IMAGE_SYM_ABSOLUTE      0xFFFF
-#define IMAGE_SYM_DEBUG         0xFFFE
-#define IMAGE_SYM_SECTION_MAX   0xFEFF
+#define IMAGE_SYM_UNDEFINED         0x0000
+#define IMAGE_SYM_ABSOLUTE          0xFFFF
+#define IMAGE_SYM_DEBUG             0xFFFE
+#define IMAGE_SYM_SECTION_MAX       0xFEFF
+#define IMAGE_SYM_SECTION_MAX_EX    MAXLONG
 
 /* Image symbol data types */
 #define IMAGE_SYM_TYPE_NULL     0x0000
@@ -2251,11 +2388,12 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define IMPORT_OBJECT_HDR_SIG2  0xFFFF
 
 /* Common Language Runtime header flags */
-#define COMIMAGE_FLAGS_ILONLY           0x00000001L
-#define COMIMAGE_FLAGS_32BITREQUIRED    0x00000002L
-#define COMIMAGE_FLAGS_IL_LIBRARY       0x00000004L
-#define COMIMAGE_FLAGS_STRONGNAMESIGNED 0x00000008L
-#define COMIMAGE_FLAGS_TRACKDEBUGDATA   0x00010000L
+#define COMIMAGE_FLAGS_ILONLY               0x00000001L
+#define COMIMAGE_FLAGS_32BITREQUIRED        0x00000002L
+#define COMIMAGE_FLAGS_IL_LIBRARY           0x00000004L
+#define COMIMAGE_FLAGS_STRONGNAMESIGNED     0x00000008L
+#define COMIMAGE_FLAGS_NATIVE_ENTRYPOINT    0x00000010L
+#define COMIMAGE_FLAGS_TRACKDEBUGDATA       0x00010000L
 
 /* Common Language Runtime header version numbers */
 #define COR_VERSION_MAJOR_V2    2
@@ -2404,6 +2542,12 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ACTIVATION_CONTEXT_PATH_TYPE_URL            3L
 #define ACTIVATION_CONTEXT_PATH_TYPE_ASSEMBLYREF    4L
 
+/* Maximum number of supported operating systems */
+#define MAX_SUPPORTED_OS_NUM    4
+
+/* Operating system count special value */
+#define INVALID_OS_COUNT    0xFFFF
+
 /* Performance data version number */
 #define PERFORMANCE_DATA_VERSION    1
 
@@ -2458,6 +2602,8 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define REG_LEGAL_OPTION \
     (REG_OPTION_RESERVED | REG_OPTION_NON_VOLATILE | REG_OPTION_VOLATILE | \
     REG_OPTION_CREATE_LINK | REG_OPTION_BACKUP_RESTORE | REG_OPTION_OPEN_LINK)
+#define REG_OPEN_LEGAL_OPTION \
+    (REG_OPTION_RESERVED | REG_OPTION_BACKUP_RESTORE | REG_OPTION_OPEN_LINK)
 
 /* Registry key open/create dispositions */
 #define REG_CREATED_NEW_KEY     0x00000001L
@@ -2479,6 +2625,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define REG_HIVE_EXACT_FILE_GROWTH  0x00000080L
 #define REG_HIVE_NO_RM              0x00000100L
 #define REG_HIVE_SINGLE_LOG         0x00000200L
+#define REG_BOOT_HIVE               0x00000400L
 
 /* Registry key change notification flags */
 #define REG_NOTIFY_CHANGE_NAME          0x00000001L
@@ -2532,6 +2679,14 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define SERVICE_ERROR_NORMAL    0x00000001L
 #define SERVICE_ERROR_SEVERE    0x00000002L
 #define SERVICE_ERROR_CRITICAL  0x00000003L
+
+/* Service node flags */
+#define CM_SERVICE_NETWORK_BOOT_LOAD        0x00000001L
+#define CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD   0x00000002L
+#define CM_SERVICE_USB_DISK_BOOT_LOAD       0x00000004L
+#define CM_SERVICE_VALID_PROMOTION_MASK \
+    (CM_SERVICE_NETWORK_BOOT_LOAD | CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD | \
+    CM_SERVICE_USB_DISK_BOOT_LOAD)
 
 /* Tape erase modes */
 #define TAPE_ERASE_SHORT    0L
@@ -2649,6 +2804,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ACTIVATION_CONTEXT_SECTION_GLOBAL_OBJECT_RENAME_TABLE   8L
 #define ACTIVATION_CONTEXT_SECTION_CLR_SURROGATES               9L
 #define ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS         10L
+#define ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO           11L
 
 /* Processor number */
 typedef struct _PROCESSOR_NUMBER {
@@ -2967,6 +3123,13 @@ typedef struct _WOW64_LDT_ENTRY {
 } WOW64_LDT_ENTRY;
 typedef WOW64_LDT_ENTRY *PWOW64_LDT_ENTRY;
 
+/* WOW64 descriptor table entry */
+typedef struct _WOW64_DESCRIPTOR_TABLE_ENTRY {
+    DWORD           Selector;
+    WOW64_LDT_ENTRY Descriptor;
+} WOW64_DESCRIPTOR_TABLE_ENTRY;
+typedef WOW64_DESCRIPTOR_TABLE_ENTRY    *PWOW64_DESCRIPTOR_TABLE_ENTRY;
+
 /* Exception record */
 typedef struct _EXCEPTION_RECORD {
     DWORD                       ExceptionCode;
@@ -3158,7 +3321,13 @@ typedef enum {
     WinNonCacheablePrincipalsGroupSid           = 73,
     WinEnterpriseReadonlyControllersSid         = 74,
     WinAccountReadonlyControllersSid            = 75,
-    WinBuiltinEventLogReadersGroup              = 76
+    WinBuiltinEventLogReadersGroup              = 76,
+    WinNewEnterpriseReadonlyControllersSid      = 77,
+    WinBuiltinCertSvcDComAccessGroup            = 78,
+    WinMediumPlusLabelSid                       = 79,
+    WinLocalLogonSid                            = 80,
+    WinConsoleLogonSid                          = 81,
+    WinThisOrganizationCertificateSid           = 82
 } WELL_KNOWN_SID_TYPE;
 
 /* Access control list */
@@ -3408,6 +3577,61 @@ typedef struct _PRIVILEGE_SET {
 } PRIVILEGE_SET;
 typedef PRIVILEGE_SET   *PPRIVILEGE_SET;
 
+/* Access reason types */
+typedef enum _ACCESS_REASON_TYPE {
+    AccessReasonNone                = 0x00000000,
+    AccessReasonAllowedAce          = 0x00010000,
+    AccessReasonDeniedAce           = 0x00020000,
+    AccessReasonAllowedParentAce    = 0x00030000,
+    AccessReasonDeniedParentAce     = 0x00040000,
+    AccessReasonMissingPrivilege    = 0x00100000,
+    AccessReasonFromPrivilege       = 0x00200000,
+    AccessReasonIntegrityLevel      = 0x00300000,
+    AccessReasonOwnership           = 0x00400000,
+    AccessReasonNullDacl            = 0x00500000,
+    AccessReasonEmptyDacl           = 0x00600000,
+    AccessReasonNoSD                = 0x00700000,
+    AccessReasonNoGrant             = 0x00800000
+} ACCESS_REASON_TYPE;
+
+/* Access reasons */
+typedef struct _ACCESS_REASONS {
+    ACCESS_REASON   Data[32];
+} ACCESS_REASONS;
+typedef ACCESS_REASONS  *PACCESS_REASONS;
+
+/* Security descriptor */
+typedef struct _SE_SECURITY_DESCRIPTOR {
+    DWORD                   Size;
+    DWORD                   Flags;
+    PSECURITY_DESCRIPTOR    SecurityDescriptor;
+} SE_SECURITY_DESCRIPTOR;
+typedef SE_SECURITY_DESCRIPTOR  *PSE_SECURITY_DESCRIPTOR;
+
+/* Security access request */
+typedef struct _SE_ACCESS_REQUEST {
+    DWORD                   Size;
+    PSE_SECURITY_DESCRIPTOR SeSecurityDescriptor;
+    ACCESS_MASK             DesiredAccess;
+    ACCESS_MASK             PreviouslyGrantedAccess;
+    PSID                    PrincipalSelfSid;
+    PGENERIC_MAPPING        GenericMapping;
+    DWORD                   ObjectTypeListCount;
+    POBJECT_TYPE_LIST       ObjectTypeList;
+} SE_ACCESS_REQUEST;
+typedef SE_ACCESS_REQUEST   *PSE_ACCESS_REQUEST;
+
+/* Security access reply */
+typedef struct _SE_ACCESS_REPLY {
+    DWORD           Size;
+    DWORD           ResultListCount;
+    PACCESS_MASK    GrantedAccess;
+    PDWORD          AccessStatus;
+    PACCESS_REASONS AccessReason;
+    PPRIVILEGE_SET  *Privileges;
+} SE_ACCESS_REPLY;
+typedef SE_ACCESS_REPLY *PSE_ACCESS_REPLY;
+
 /* Security impersonation levels */
 typedef enum _SECURITY_IMPERSONATION_LEVEL {
     SecurityAnonymous,
@@ -3648,20 +3872,12 @@ typedef struct _QUOTA_LIMITS {
 } QUOTA_LIMITS;
 typedef QUOTA_LIMITS    *PQUOTA_LIMITS;
 
-/* Rate phases */
-typedef enum _PS_RATE_PHASE {
-    PsRateOneSecond     = 0,
-    PsRateTwoSecond     = 1,
-    PsRateThreeSecond   = 2,
-    PsRateMaxPhase      = 3,
-} PS_RATE_PHASE;
-
 /* Rate quota limit */
 typedef union _RATE_QUOTA_LIMIT {
     DWORD   RateData;
     struct {
-        DWORD   RatePhase   : PS_RATE_PHASE_BITS;
-        DWORD   RatePercent : 28;
+        DWORD   RatePercent : 7;
+        DWORD   Reserved0   : 25;
     };
 } RATE_QUOTA_LIMIT;
 typedef RATE_QUOTA_LIMIT    *PRATE_QUOTA_LIMIT;
@@ -3801,7 +4017,8 @@ typedef enum _JOBOBJECTINFOCLASS {
     JobObjectBasicAndIoAccountingInformation    = 8,
     JobObjectExtendedLimitInformation           = 9,
     JobObjectJobSetInformation                  = 10,
-    MaxJobObjectInfoClass                       = 11
+    JobObjectGroupInformation                   = 11,
+    MaxJobObjectInfoClass                       = 12
 } JOBOBJECTINFOCLASS;
 
 /* Logical processor relationships */
@@ -3915,6 +4132,22 @@ typedef struct _SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION {
 } SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION;
 typedef SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION *PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION;
 
+/* Extended state feature */
+typedef struct _XSTATE_FEATURE {
+    DWORD   Offset;
+    DWORD   Size;
+} XSTATE_FEATURE;
+typedef XSTATE_FEATURE  *PXSTATE_FEATURE;
+
+/* Extended state configuration */
+typedef struct _XSTATE_CONFIGURATION {
+    DWORD64         EnabledFeatures;
+    DWORD           Size;
+    DWORD           OptimizedSave   : 1;
+    XSTATE_FEATURE  Features[MAXIMUM_XSTATE_FEATURES];
+} XSTATE_CONFIGURATION;
+typedef XSTATE_CONFIGURATION    *PXSTATE_CONFIGURATION;
+
 /* Memory basic information */
 typedef struct _MEMORY_BASIC_INFORMATION {
     PVOID   BaseAddress;
@@ -4018,6 +4251,14 @@ typedef enum _DEVICE_POWER_STATE {
 } DEVICE_POWER_STATE;
 typedef DEVICE_POWER_STATE  *PDEVICE_POWER_STATE;
 
+/* Monitor display states */
+typedef enum _MONITOR_DISPLAY_STATE {
+    PowerMonitorOff = 0,
+    PowerMonitorOn  = 1,
+    PowerMonitorDim = 2
+} MONITOR_DISPLAY_STATE;
+typedef MONITOR_DISPLAY_STATE   *PMONITOR_DISPLAY_STATE;
+
 /* Latency time values */
 typedef enum {
     LT_DONT_CARE,
@@ -4049,85 +4290,58 @@ typedef CM_POWER_DATA   *PCM_POWER_DATA;
 
 /* Power information levels */
 typedef enum {
-    SystemPowerPolicyAc,
-    SystemPowerPolicyDc,
-    VerifySystemPolicyAc,
-    VerifySystemPolicyDc,
-    SystemPowerCapabilities,
-    SystemBatteryState,
-    SystemPowerStateHandler,
-    ProcessorStateHandler,
-    SystemPowerPolicyCurrent,
-    AdministratorPowerPolicy,
-    SystemReserveHiberFile,
-    ProcessorInformation,
-    SystemPowerInformation,
-    ProcessorStateHandler2,
-    LastWakeTime,
-    LastSleepTime,
-    SystemExecutionState,
-    SystemPowerStateNotifyHandler,
-    ProcessorPowerPolicyAc,
-    ProcessorPowerPolicyDc,
-    VerifyProcessorPowerPolicyAc,
-    VerifyProcessorPowerPolicyDc,
-    ProcessorPowerPolicyCurrent,
-    SystemPowerStateLogging,
-    SystemPowerLoggingEntry,
-    SetPowerSettingValue,
-    NotifyUserPowerSetting,
-    GetPowerTransitionVetoes,
-    SetPowerTransitionVeto,
-    SystemVideoState,
-    TraceApplicationPowerMessage,
-    TraceApplicationPowerMessageEnd,
-    ProcessorPerfStates,
-    ProcessorIdleStates,
-    ProcessorThrottleStates,
-    SystemWakeSource,
-    SystemHiberFileInformation,
-    TraceServicePowerMessage,
-    ProcessorLoad,
-    PowerShutdownNotification
+    SystemPowerPolicyAc             = 0,
+    SystemPowerPolicyDc             = 1,
+    VerifySystemPolicyAc            = 2,
+    VerifySystemPolicyDc            = 3,
+    SystemPowerCapabilities         = 4,
+    SystemBatteryState              = 5,
+    SystemPowerStateHandler         = 6,
+    ProcessorStateHandler           = 7,
+    SystemPowerPolicyCurrent        = 8,
+    AdministratorPowerPolicy        = 9,
+    SystemReserveHiberFile          = 10,
+    ProcessorInformation            = 11,
+    SystemPowerInformation          = 12,
+    ProcessorStateHandler2          = 13,
+    LastWakeTime                    = 14,
+    LastSleepTime                   = 15,
+    SystemExecutionState            = 16,
+    SystemPowerStateNotifyHandler   = 17,
+    ProcessorPowerPolicyAc          = 18,
+    ProcessorPowerPolicyDc          = 19,
+    VerifyProcessorPowerPolicyAc    = 20,
+    VerifyProcessorPowerPolicyDc    = 21,
+    ProcessorPowerPolicyCurrent     = 22,
+    SystemPowerStateLogging         = 23,
+    SystemPowerLoggingEntry         = 24,
+    SetPowerSettingValue            = 25,
+    NotifyUserPowerSetting          = 26,
+    SystemVideoState                = 29,
+    TraceApplicationPowerMessage    = 30,
+    TraceApplicationPowerMessageEnd = 31,
+    ProcessorPerfStates             = 32,
+    ProcessorIdleStates             = 33,
+    ProcessorCap                    = 34,
+    SystemWakeSource                = 35,
+    SystemHiberFileInformation      = 36,
+    TraceServicePowerMessage        = 37,
+    ProcessorLoad                   = 38,
+    PowerShutdownNotification       = 39,
+    MonitorCapabilities             = 40,
+    SessionPowerInit                = 41,
+    SessionDisplayState             = 42,
+    PowerRequestCreate              = 43,
+    PowerRequestAction              = 44,
+    GetPowerRequestList             = 45,
+    ProcessorInformationEx          = 46,
+    NotifyUserModeLegacyPowerEvent  = 47,
+    GroupPark                       = 48,
+    ProcessorIdleDomains            = 49,
+    WakeTimerList                   = 50,
+    SystemHiberFileSize             = 51,
+    PowerInformationLevelMaximum    = 52
 } POWER_INFORMATION_LEVEL;
-
-/* Power transition veto reason */
-typedef struct _PO_TRANSITION_VETO_REASON {
-    DWORD   ResourceId;
-    DWORD   ModuleNameOffset;
-} PO_TRANSITION_VETO_REASON;
-typedef PO_TRANSITION_VETO_REASON   *PPO_TRANSITION_VETO_REASON;
-
-/* Power transition veto window */
-typedef struct _PO_TRANSITION_VETO_WINDOW {
-    HANDLE  Handle;
-} PO_TRANSITION_VETO_WINDOW;
-typedef PO_TRANSITION_VETO_WINDOW   *PPO_TRANSITION_VETO_WINDOW;
-
-/* Power transition veto service */
-typedef struct _PO_TRANSITION_VETO_SERVICE {
-    DWORD   ServiceNameOffset;
-} PO_TRANSITION_VETO_SERVICE;
-typedef PO_TRANSITION_VETO_SERVICE  *PPO_TRANSITION_VETO_SERVICE;
-
-/* Power transition veto */
-typedef struct _PO_TRANSITION_VETO {
-    DWORD                       Type;
-    PO_TRANSITION_VETO_REASON   Reason;
-    DWORD                       ProcessId;
-    union {
-        PO_TRANSITION_VETO_WINDOW   Window;
-        PO_TRANSITION_VETO_SERVICE  Service;
-    };
-} PO_TRANSITION_VETO;
-typedef PO_TRANSITION_VETO  *PPO_TRANSITION_VETO;
-
-/* Power transition veto array */
-typedef struct _PO_TRANSITION_VETOES {
-    DWORD               Count;
-    PO_TRANSITION_VETO  Vetoes[ANYSIZE_ARRAY];
-} PO_TRANSITION_VETOES;
-typedef PO_TRANSITION_VETOES    *PPO_TRANSITION_VETOES;
 
 /* System power conditions */
 typedef enum {
@@ -4174,56 +4388,6 @@ typedef enum {
     PlatformRoleMaximum             = 8
 } POWER_PLATFORM_ROLE;
 
-/* Power wake source types */
-typedef enum {
-    DeviceWakeSourceType,
-    FixedWakeSourceType
-} PO_WAKE_SOURCE_TYPE;
-typedef PO_WAKE_SOURCE_TYPE *PPO_WAKE_SOURCE_TYPE;
-
-/* Power fixed wake source types */
-typedef enum {
-    FixedWakeSourcePowerButton,
-    FixedWakeSourceSleepButton,
-    FixedWakeSourceRtc
-} PO_FIXED_WAKE_SOURCE_TYPE;
-typedef PO_FIXED_WAKE_SOURCE_TYPE   *PPO_FIXED_WAKE_SOURCE_TYPE;
-
-/* Power wake source header */
-typedef struct _PO_WAKE_SOURCE_HEADER {
-    PO_WAKE_SOURCE_TYPE Type;
-    DWORD               Size;
-} PO_WAKE_SOURCE_HEADER;
-typedef PO_WAKE_SOURCE_HEADER   *PPO_WAKE_SOURCE_HEADER;
-
-/* Power wake source device information */
-typedef struct _PO_WAKE_SOURCE_DEVICE {
-    PO_WAKE_SOURCE_HEADER   Header;
-    WCHAR                   InstancePath[ANYSIZE_ARRAY];
-} PO_WAKE_SOURCE_DEVICE;
-typedef PO_WAKE_SOURCE_DEVICE   *PPO_WAKE_SOURCE_DEVICE;
-
-/* Power fixed wake source device information */
-typedef struct _PO_WAKE_SOURCE_FIXED {
-    PO_WAKE_SOURCE_HEADER       Header;
-    PO_FIXED_WAKE_SOURCE_TYPE   FixedWakeSourceType;
-} PO_WAKE_SOURCE_FIXED;
-typedef PO_WAKE_SOURCE_FIXED    *PPO_WAKE_SOURCE_FIXED;
-
-/* Power wake source information */
-typedef struct _PO_WAKE_SOURCE_INFO {
-    DWORD   Count;
-    DWORD   Offsets[ANYSIZE_ARRAY];
-} PO_WAKE_SOURCE_INFO;
-typedef PO_WAKE_SOURCE_INFO *PPO_WAKE_SOURCE_INFO;
-
-/* Power wake source history */
-typedef struct _PO_WAKE_SOURCE_HISTORY {
-    DWORD   Count;
-    DWORD   Offsets[ANYSIZE_ARRAY];
-} PO_WAKE_SOURCE_HISTORY;
-typedef PO_WAKE_SOURCE_HISTORY  *PPO_WAKE_SOURCE_HISTORY;
-
 /* Battery reporting scale */
 #if (NTDDI_VERSION >= 0x05010000) || !defined( _BATCLASS_ )
 typedef struct {
@@ -4232,13 +4396,6 @@ typedef struct {
 } BATTERY_REPORTING_SCALE;
 typedef BATTERY_REPORTING_SCALE *PBATTERY_REPORTING_SCALE;
 #endif
-
-/* Simulated processor load information */
-typedef struct {
-    BOOLEAN Enabled;
-    BYTE    PercentBusy[MAXIMUM_PROCESSORS];
-} PPM_SIMULATED_PROCESSOR_LOAD;
-typedef PPM_SIMULATED_PROCESSOR_LOAD    *PPPM_SIMULATED_PROCESSOR_LOAD;
 
 /* WMI legacy performance state */
 typedef struct {
@@ -4274,6 +4431,17 @@ typedef struct {
     PPM_WMI_IDLE_STATE  State[ANYSIZE_ARRAY];
 } PPM_WMI_IDLE_STATES;
 typedef PPM_WMI_IDLE_STATES *PPPM_WMI_IDLE_STATES;
+
+/* WMI idle state array (extended version) */
+typedef struct {
+    DWORD               Type;
+    DWORD               Count;
+    DWORD               TargetState;
+    DWORD               OldState;
+    PVOID               TargetProcessors;
+    PPM_WMI_IDLE_STATE  State[ANYSIZE_ARRAY];
+} PPM_WMI_IDLE_STATES_EX;
+typedef PPM_WMI_IDLE_STATES_EX  *PPPM_WMI_IDLE_STATES_EX;
 
 /* WMI performance state */
 typedef struct {
@@ -4320,6 +4488,32 @@ typedef struct {
 } PPM_WMI_PERF_STATES;
 typedef PPM_WMI_PERF_STATES *PPPM_WMI_PERF_STATES;
 
+/* WMI performance state array (extended version) */
+typedef struct {
+    DWORD               Count;
+    DWORD               MaxFrequency;
+    DWORD               CurrentState;
+    DWORD               MaxPerfState;
+    DWORD               MinPerfState;
+    DWORD               LowestPerfState;
+    DWORD               ThermalConstraint;
+    BYTE                BusyAdjThreshold;
+    BYTE                PolicyType;
+    BYTE                Type;
+    BYTE                Reserved;
+    DWORD               TimerInterval;
+    PVOID               TargetProcessors;
+    DWORD               PStateHandler;
+    DWORD               PStateContext;
+    DWORD               TStateHandler;
+    DWORD               TStateContext;
+    DWORD               FeedbackHandler;
+    DWORD               Reserved1;
+    DWORD64             Reserved2;
+    PPM_WMI_PERF_STATE  State[ANYSIZE_ARRAY];
+} PPM_WMI_PERF_STATES_EX;
+typedef PPM_WMI_PERF_STATES_EX  *PPPM_WMI_PERF_STATES_EX;
+
 /* Idle state accounting information */
 typedef struct {
     DWORD   IdleTransitions;
@@ -4339,6 +4533,37 @@ typedef struct {
     PPM_IDLE_STATE_ACCOUNTING   State[ANYSIZE_ARRAY];
 } PPM_IDLE_ACCOUNTING;
 typedef PPM_IDLE_ACCOUNTING *PPPM_IDLE_ACCOUNTING;
+
+/* Idle state bucket (extended version) */
+typedef struct {
+    DWORD64 TotalTimeUs;
+    DWORD   MinTimeUs;
+    DWORD   MaxTimeUs;
+    DWORD   Count;
+} PPM_IDLE_STATE_BUCKET_EX;
+typedef PPM_IDLE_STATE_BUCKET_EX    *PPPM_IDLE_STATE_BUCKET_EX;
+
+/* Idle state accounting (extended version) */
+typedef struct {
+    DWORD64                     TotalTime;
+    DWORD                       IdleTransitions;
+    DWORD                       FailedTransitions;
+    DWORD                       InvalidBucketIndex;
+    DWORD                       MinTimeUs;
+    DWORD                       MaxTimeUs;
+    PPM_IDLE_STATE_BUCKET_EX    IdleTimeBuckets[PROC_IDLE_BUCKET_COUNT_EX];
+} PPM_IDLE_STATE_ACCOUNTING_EX;
+typedef PPM_IDLE_STATE_ACCOUNTING_EX    *PPPM_IDLE_STATE_ACCOUNTING_EX;
+
+/* Idle accounting (extended version) */
+typedef struct {
+    DWORD                           StateCount;
+    DWORD                           TotalTransitions;
+    DWORD                           ResetCount;
+    DWORD64                         StartTime;
+    PPM_IDLE_STATE_ACCOUNTING_EX    State[ANYSIZE_ARRAY];
+} PPM_IDLE_ACCOUNTING_EX;
+typedef PPM_IDLE_ACCOUNTING_EX  *PPPM_IDLE_ACCOUNTING_EX;
 
 /* Performance state event */
 typedef struct {
@@ -4865,6 +5090,23 @@ typedef struct ANON_OBJECT_HEADER_V2 {
     DWORD   MetaDataOffset;
 } ANON_OBJECT_HEADER_V2;
 
+/* Header for non-COFF object files (big object) */
+typedef struct ANON_OBJECT_HEADER_BIGOBJ {
+    WORD    Sig1;
+    WORD    Sig2;
+    WORD    Version;
+    WORD    Machine;
+    DWORD   TimeDateStamp;
+    CLSID   ClassID;
+    DWORD   SizeOfData;
+    DWORD   Flags;
+    DWORD   MetaDataSize;
+    DWORD   MetaDataOffset;
+    DWORD   NumberOfSections;
+    DWORD   PointerToSymbolTable;
+    DWORD   NumberOfSymbols;
+} ANON_OBJECT_HEADER_BIGOBJ;
+
 /* Image section header */
 typedef struct _IMAGE_SECTION_HEADER {
     BYTE    Name[IMAGE_SIZEOF_SHORT_NAME];
@@ -4904,6 +5146,33 @@ typedef struct _IMAGE_SYMBOL {
 } IMAGE_SYMBOL;
 typedef IMAGE_SYMBOL UNALIGNED  *PIMAGE_SYMBOL;
 
+/* Image symbol (extended version) */
+typedef struct _IMAGE_SYMBOL_EX {
+    union {
+        BYTE    ShortName[8];
+        struct {
+            DWORD   Short;
+            DWORD   Long;
+        } Name;
+        DWORD   LongName[2];
+    } N;
+    DWORD   Value;
+    LONG    SectionNumber;
+    WORD    Type;
+    BYTE    StorageClass;
+    BYTE    NumberOfAuxSymbols;
+} IMAGE_SYMBOL_EX;
+typedef IMAGE_SYMBOL_EX UNALIGNED   *PIMAGE_SYMBOL_EX;
+
+/* Image auxiliary symbol token definition */
+typedef struct IMAGE_AUX_SYMBOL_TOKEN_DEF {
+    BYTE    bAuxType;
+    BYTE    bReserved;
+    DWORD   SymbolTableIndex;
+    BYTE    rgbReserved[12];
+} IMAGE_AUX_SYMBOL_TOKEN_DEF;
+typedef IMAGE_AUX_SYMBOL_TOKEN_DEF UNALIGNED    *PIMAGE_AUX_SYMBOL_TOKEN_DEF;
+
 /* Image auxiliary symbol */
 typedef union _IMAGE_AUX_SYMBOL {
     struct {
@@ -4936,23 +5205,53 @@ typedef union _IMAGE_AUX_SYMBOL {
         DWORD   CheckSum;
         SHORT   Number;
         BYTE    Selection;
+        BYTE    bReserved;
+        SHORT   HighNumber;
     } Section;
+    IMAGE_AUX_SYMBOL_TOKEN_DEF  TokenDef;
+    struct {
+        DWORD   crc;
+        BYTE    rgbReserved[14];
+    } CRC;
 } IMAGE_AUX_SYMBOL;
 typedef IMAGE_AUX_SYMBOL UNALIGNED  *PIMAGE_AUX_SYMBOL;
+
+/* Image auxiliary symbol (extended version) */
+typedef union _IMAGE_AUX_SYMBOL_EX {
+    struct {
+        DWORD   WeakDefaultSymIndex;
+        DWORD   WeakSearchType;
+        BYTE    rgbReserved[12];
+    } Sym;
+    struct {
+        BYTE    Name[20];
+    } File;
+    struct {
+        DWORD   Length;
+        WORD    NumberOfRelocations;
+        WORD    NumberOfLinenumbers;
+        DWORD   CheckSum;
+        SHORT   Number;
+        BYTE    Selection;
+        BYTE    bReserved;
+        SHORT   HighNumber;
+        BYTE    rgbReserved[2];
+    } Section;
+    struct {
+        IMAGE_AUX_SYMBOL_TOKEN_DEF  TokenDef;
+        BYTE                        rgbReserved[2];
+    };
+    struct {
+        DWORD   crc;
+        BYTE    rgbReserved[16];
+    } CRC;
+} IMAGE_AUX_SYMBOL_EX;
+typedef IMAGE_AUX_SYMBOL_EX UNALIGNED   *PIMAGE_AUX_SYMBOL_EX;
 
 /* Image auxiliary symbol types */
 typedef enum IMAGE_AUX_SYMBOL_TYPE {
     IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF = 1
 } IMAGE_AUX_SYMBOL_TYPE;
-
-/* Image auxiliary symbol token definition */
-typedef struct IMAGE_AUX_SYMBOL_TOKEN_DEF {
-    BYTE    bAuxType;
-    BYTE    bReserved;
-    DWORD   SymbolTableIndex;
-    BYTE    rgbReserved[12];
-} IMAGE_AUX_SYMBOL_TOKEN_DEF;
-typedef IMAGE_AUX_SYMBOL_TOKEN_DEF UNALIGNED    *PIMAGE_AUX_SYMBOL_TOKEN_DEF;
 
 /* Image relocation */
 typedef struct _IMAGE_RELOCATION {
@@ -5419,7 +5718,10 @@ typedef struct IMAGE_COR20_HEADER {
     WORD                    MinorRuntimeVersion;
     IMAGE_DATA_DIRECTORY    MetaData;
     DWORD                   Flags;
-    DWORD                   EntryPointToken;
+    union {
+        DWORD   EntryPointToken;
+        DWORD   EntryPointRVA;
+    };
     IMAGE_DATA_DIRECTORY    Resources;
     IMAGE_DATA_DIRECTORY    StrongNameSignature;
     IMAGE_DATA_DIRECTORY    CodeManagerTable;
@@ -5434,6 +5736,8 @@ typedef struct _SLIST_ENTRY {
     struct _SLIST_ENTRY *Next;
 } SLIST_ENTRY;
 typedef SLIST_ENTRY *PSLIST_ENTRY;
+typedef SLIST_ENTRY SLIST_ENTRY32;
+typedef SLIST_ENTRY *PSLIST_ENTRY32;
 
 /* Interlocked singly linked list header */
 typedef union _SLIST_HEADER {
@@ -5445,6 +5749,8 @@ typedef union _SLIST_HEADER {
     };
 } SLIST_HEADER;
 typedef SLIST_HEADER    *PSLIST_HEADER;
+typedef SLIST_HEADER    SLIST_HEADER32;
+typedef SLIST_HEADER    *PSLIST_HEADER32;
 
 /* Run once */
 typedef struct _RTL_RUN_ONCE {
@@ -5595,7 +5901,9 @@ typedef enum _ACTIVATION_CONTEXT_INFO_CLASS {
     AssemblyDetailedInformationInActivationContext          = 3,
     FileInformationInAssemblyOfAssemblyInActivationContext  = 4,
     RunlevelInformationInActivationContext                  = 5,
-    MaxActivationContextInfoClass                           = 6,
+    CompatibilityInformationInActivationContext             = 6,
+    ActivationContextManifestResourceName                   = 7,
+    MaxActivationContextInfoClass                           = 8,
     AssemblyDetailedInformationInActivationContxt           = 3,
     FileInformationInAssemblyOfAssemblyInActivationContxt   = 4
 } ACTIVATION_CONTEXT_INFO_CLASS;
@@ -5686,6 +5994,37 @@ typedef struct _ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION {
 } ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION;
 typedef ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION        *PACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION;
 typedef const ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION  *PCACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION;
+
+/* Activation context compatibility element types */
+typedef enum {
+    ACTCTX_COMPATIBILITY_ELEMENT_TYPE_UNKNOWN       = 0,
+    ACTCTX_COMPATIBILITY_ELEMENT_TYPE_OS            = 1,
+    ACTCTX_COMPATIBILITY_ELEMENT_TYPE_MITIGATION    = 2
+} ACTCTX_COMPATIBILITY_ELEMENT_TYPE;
+
+/* Compatibility context element */
+typedef struct _COMPATIBILITY_CONTEXT_ELEMENT {
+    GUID                                Id;
+    ACTCTX_COMPATIBILITY_ELEMENT_TYPE   Type;
+} COMPATIBILITY_CONTEXT_ELEMENT;
+typedef COMPATIBILITY_CONTEXT_ELEMENT       *PCOMPATIBILITY_CONTEXT_ELEMENT;
+typedef const COMPATIBILITY_CONTEXT_ELEMENT *PCCOMPATIBILITY_CONTEXT_ELEMENT;
+
+/* Activation context compatibility information */
+typedef struct _ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION {
+    DWORD                           ElementCount;
+    COMPATIBILITY_CONTEXT_ELEMENT   Elements[];
+} ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION;
+typedef ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION        *PACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION;
+typedef const ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION  *PCACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION;
+
+/* Supported operating system information */
+typedef struct _SUPPORTED_OS_INFO {
+    WORD    OsCount;
+    WORD    MitigationExist;
+    WORD    OsList[MAX_SUPPORTED_OS_NUM];
+} SUPPORTED_OS_INFO;
+typedef SUPPORTED_OS_INFO   *PSUPPORTED_OS_INFO;
 
 /* Hardware counter data */
 typedef struct _HARDWARE_COUNTER_DATA {
@@ -5940,7 +6279,7 @@ typedef struct _TP_CALLBACK_ENVIRON {
             DWORD   Private         : 30;
         } s;
     } u;
-#if (_WIN32_WINNT >= 0x0600)
+#if (_WIN32_WINNT >= 0x0601)
     TP_CALLBACK_PRIORITY                CallbackPriority;
     DWORD                               Size;
 #endif
@@ -5948,6 +6287,7 @@ typedef struct _TP_CALLBACK_ENVIRON {
 typedef TP_CALLBACK_ENVIRON *PTP_CALLBACK_ENVIRON;
 
 /* Functions in NTDLL.DLL accessed through aliases in KERNEL32.DLL */
+NTSYSAPI VOID NTAPI         RtlUnwind( PVOID, PVOID, PEXCEPTION_RECORD, PVOID );
 #if (NTDDI_VERSION >= 0x05000000)
 NTSYSAPI ULONGLONG NTAPI    VerSetConditionMask( ULONGLONG, DWORD, BYTE );
 #endif
@@ -5986,17 +6326,33 @@ PVOID   GetFiberData( void );
 #define RtlCopyMemory( p1, p2, p3 )     memcpy( p1, p2, p3 )
 #define RtlFillMemory( p1, p2, p3 )     memset( p1, p3, p2 )
 #define RtlZeroMemory( p1, p2 )         memset( p1, 0, p2 )
-#define TpInitializeCallbackEnviron( x ) \
-    { \
-        (x)->Version = 1; \
-        (x)->Pool = NULL; \
-        (x)->CleanupGroup = NULL; \
-        (x)->CleanupGroupCancelCallback = NULL; \
-        (x)->RaceDll = NULL; \
-        (x)->ActivationContext = NULL; \
-        (x)->FinalizationCallback = NULL; \
-        (x)->u.Flags = 0; \
-    }
+#if (_WIN32_WINNT >= 0x0601)
+    #define TpInitializeCallbackEnviron( x ) \
+        { \
+            (x)->Version = 3; \
+            (x)->Pool = NULL; \
+            (x)->CleanupGroup = NULL; \
+            (x)->CleanupGroupCancelCallback = NULL; \
+            (x)->RaceDll = NULL; \
+            (x)->ActivationContext = NULL; \
+            (x)->FinalizationCallback = NULL; \
+            (x)->u.Flags = 0; \
+            (x)->CallbackPriority = TP_CALLBACK_PRIORITY_NORMAL; \
+            (x)->Size = sizeof( TP_CALLBACK_ENVIRON ); \
+        }
+#else
+    #define TpInitializeCallbackEnviron( x ) \
+        { \
+            (x)->Version = 1; \
+            (x)->Pool = NULL; \
+            (x)->CleanupGroup = NULL; \
+            (x)->CleanupGroupCancelCallback = NULL; \
+            (x)->RaceDll = NULL; \
+            (x)->ActivationContext = NULL; \
+            (x)->FinalizationCallback = NULL; \
+            (x)->u.Flags = 0; \
+        }
+#endif
 #define TpSetCallbackThreadpool( x, p ) \
     { (x)->Pool = p; }
 #define TpSetCallbackCleanupGroup( x, p1, p2 ) \
