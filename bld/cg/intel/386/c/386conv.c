@@ -181,6 +181,7 @@ _Un( ANY,  R,    NONE ),   V_NO,         R_CLRHIGH_R,    RG_CWD,    FU_NO,
 _Un( R|M,  R,    NONE ),   V_GOOD_CLR,   R_CLRHIGH_R,    RG_WORD_DBL,FU_NO,
 _Un( C,    ANY,  NONE ),   V_OP1RELOC,   R_MOVOP1TEMP,   RG_,       FU_NO,
 _Un( R|M,  R,    NONE ),   V_NO,         G_MOVZX,        RG_WORD_DBL,FU_ALU1,
+_Un( R,    R,    NONE ),   V_NO,         G_RS,           RG_SEG_DBL,FU_ALUX,
 _Un( U|C,  R,    NONE ),   V_NO,         G_UNKNOWN,      RG_WORD_DBL,FU_NO,
 _Un( ANY,  M,    NONE ),   V_NO,         R_MOVRESREG,    RG_WORD_DBL,FU_NO,
 _Un( ANY,  ANY,  NONE ),   V_NO,         G_UNKNOWN,      RG_WORD_DBL_NEED_DBL,FU_NO

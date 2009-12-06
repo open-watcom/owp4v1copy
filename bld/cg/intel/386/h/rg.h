@@ -102,6 +102,7 @@ RG( RL_WS,     RL_WS,     RL_WS,     RL_,    RL_WORD,  RG_ANYWORD_NEED ),
 RG( RL_DOUBLE, RL_,       RL_DOUBLE, RL_,    RL_,      RG_LEA ),
 
 RG( RL_SEG,    RL_,       RL_WORD,   RL_,    RL_,      RG_SEG_WORD ),
+RG( RL_SEG,    RL_,       RL_DOUBLE, RL_,    RL_,      RG_SEG_DBL ),
 RG( RL_WORD,   RL_,       RL_SEG,    RL_,    RL_,      RG_WORD_SEG ),
 RG( RL_SEG,    RL_SEG,    RL_SEG,    RL_,    RL_,      RG_SEG_SEG ),
 

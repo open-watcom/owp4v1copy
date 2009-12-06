@@ -21,9 +21,16 @@ void set_vec( void ( __interrupt *p )( void ) )
 }
 
 void __far *Ptr;
+long long Llp;
 
 // verify that far pointer <-> long long conversions can generate code
 // and test other fun pointer <-> integer conversions
+
+long long llptr( void )
+{
+    return( (long long)&Ptr );  // should generate 'mov edx,ds'
+}
+
 void ptr_cvt( int __near *np )
 {
 #ifdef _M_I86
@@ -70,7 +77,12 @@ void ptr_cvt( int __near *np )
 
     if( n_ptr < (void __near *)~0x0f ) fail( __LINE__ );
     if( (void __far *)0x10000 > np ) fail( __LINE__ );
+    if( (void __far *)0x10000 > np ) fail( __LINE__ );
 #endif
+
+    f_ptr = &Ptr;
+    Llp = f_ptr;
+    if( Llp != llptr() ) fail( __LINE__ );
 }
 
 #else
