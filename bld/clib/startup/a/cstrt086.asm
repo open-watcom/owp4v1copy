@@ -153,7 +153,8 @@ _DATA   segment word public 'DATA'
         extrn   "C",_STACKTOP           : word
         extrn   "C",_cbyte              : word
         extrn   "C",_child              : word
-        extrn   __no87                  : word
+        extrn   __no87                  : byte
+        extrn   __uselfn                : byte
         extrn   "C",__FPE_handler       : dword
         extrn   "C",_LpCmdLine          : dword
         extrn   "C",_LpPgmName          : dword
@@ -394,7 +395,9 @@ nopgmname:                              ; endif
         mov     word ptr _LpPgmName+0,si ; stash LpPgmName pointer
         mov     word ptr _LpPgmName+2,es ; ...
         mov     bx,sp                   ; end of stack in data segment
-        mov     __no87,bp               ; set state of "NO87" environment var
+        mov     ax,bp
+        or      __no87,al               ; set state of "NO87" environment var
+        or      __uselfn,ah             ; set state of "LFN" environment var
         mov     _STACKLOW,di            ; save low address of stack
 
         mov     cx,offset DGROUP:_end   ; end of _BSS segment (start of STACK)

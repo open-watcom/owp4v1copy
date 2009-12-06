@@ -186,7 +186,8 @@ __D16Infoseg   dw       0020h   ; DOS/4G kernel segment
         extrn   "C",__FPE_handler       : dword
         extrn   "C",_Envseg             : word
         extrn   "C",_Envptr             : dword
-        extrn   __no87                  : word
+        extrn   __no87                  : byte
+        extrn   __uselfn                : byte
         extrn   "C",_Extender           : byte
         extrn   "C",_child              : dword
         extrn   "C",_STACKTOP           : dword
@@ -289,14 +290,14 @@ noparm: sub     al,al
         lds     esi,fword ptr _Envptr   ; load pointer to environment
         dec     edi                     ; back up pointer 1
         push    edi                     ; save pointer to pgm name
-        sub     ebp,ebp                 ; assume "no87" env. var. not present
+        sub     ebp,ebp                 ; assume "NO87" env. var. not present
 L1:     mov     eax,[esi]               ; get first 4 characters
         or      eax,20202020h           ; map to lower case
         cmp     eax,'78on'              ; check for "no87"
         jne     short L2                ; skip if not "no87"
         cmp     byte ptr 4[esi],'='     ; make sure next char is "="
         jne     short L2                ; no
-        inc     ebp                     ; - indicate "no87" was present
+        inc     ebp                     ; - indicate "NO87" was present
 L2:     cmp     byte ptr [esi],0        ; end of string ?
         lodsb
         jne     L2                      ; until end of string
@@ -316,7 +317,9 @@ L3:     cmp     byte ptr [esi],0        ; end of pgm name ?
         pop     ds
         pop     esi                     ; restore address of pgm name
 
-        mov     __no87,bp               ; set state of "no87" enironment var
+        mov     eax,ebp
+        or      __no87,al               ; set state of "NO87" enironment var
+        or      __uselfn,ah             ; set state of "LFN" enironment var
 
         mov     ecx,offset DGROUP:_end  ; end of _BSS segment (start of STACK)
         mov     _dynend,ecx             ; top of dynamic memory allocation

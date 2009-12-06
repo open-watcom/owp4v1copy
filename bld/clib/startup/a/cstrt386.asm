@@ -65,7 +65,8 @@ include xinit.inc
         extrn   "C",_STACKLOW           : dword
         extrn   "C",_STACKTOP           : dword
         extrn   "C",_child              : dword
-        extrn   __no87                  : word
+        extrn   __no87                  : byte
+        extrn   __uselfn                : byte
         extrn   "C",_Extender           : byte
         extrn   "C",_ExtenderSubtype    : byte
         extrn   "C",_Envptr             : dword
@@ -339,7 +340,9 @@ L3:     cmp     byte ptr [esi],0        ; end of pgm name ?
         mov     ebx,esp                 ; end of stack in data segment
 
         assume  ds:DGROUP
-        mov     __no87,bp               ; set state of "no87" enironment var
+        mov     eax,ebp
+        or      __no87,al               ; set state of "NO87" enironment var
+        or      __uselfn,ah             ; set state of "LFN" enironment var
         mov     _STACKLOW,edi           ; save low address of stack
         mov     _dynend,ebx             ; set top of dynamic memory area
 

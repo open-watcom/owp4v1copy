@@ -144,6 +144,7 @@
 !inject stubwep.obj                                                                 w16
 !inject tnkcdo32.obj                                                    o32
 !inject tnksto32.obj                                                    o32
+!inject uselfn.obj   d16 d32 dpm
 !inject wargcv.obj                       nt nta ntp                     o32
 !inject wep.obj                                                                     w16 w32
 !inject wmainwnt.obj                     nt nta ntp

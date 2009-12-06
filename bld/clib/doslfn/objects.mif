@@ -1,51 +1,48 @@
+base_libname =doslfn
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 #==========================================================================================
+!inject findlfn.obj  d16 d32 dpm
+!inject laccss.obj   d16 d32 dpm
 !inject lattr086.obj d16     dpm
 !inject lattr386.obj     d32
-!inject lfind086.obj d16     dpm
-!inject lfind386.obj     d32
-!inject laccss.obj   d16 d32 dpm
-!inject luaccss.obj  d16 d32 dpm
 !inject lchdir.obj   d16 d32 dpm
-!inject luchdr.obj   d16 d32 dpm
 !inject lchmod.obj   d16 d32 dpm
-!inject luchmd.obj   d16 d32 dpm
-!inject lfndir.obj   d16 d32 dpm
-!inject lfnudir.obj  d16 d32 dpm
 !inject ldosopen.obj d16 d32 dpm
 !inject lfindcls.obj d16 d32 dpm
 !inject lfindfrs.obj d16 d32 dpm
-!inject lufndfrs.obj d16 d32 dpm
 !inject lfindnxt.obj d16 d32 dpm
-!inject lufndnxt.obj d16 d32 dpm
+!inject lfndir.obj   d16 d32 dpm
+!inject lfnstat.obj  d16 d32 dpm
+!inject lfnudir.obj  d16 d32 dpm
+!inject lfnustat.obj d16 d32 dpm
 !inject lgtcwd.obj   d16 d32 dpm
-!inject lugtcd.obj   d16 d32 dpm
 !inject llfntsfn.obj d16 d32 dpm
 !inject lmkdir.obj   d16 d32 dpm
-!inject lumkdr.obj   d16 d32 dpm
 !inject lopen.obj    d16 d32 dpm
-!inject luopen.obj   d16 d32 dpm
 !inject lrenam.obj   d16 d32 dpm
-!inject lurenam.obj  d16 d32 dpm
 !inject lrmdir.obj   d16 d32 dpm
-!inject lurmdr.obj   d16 d32 dpm
-!inject lfnstat.obj  d16 d32 dpm
-!inject lfnustat.obj d16 d32 dpm
+!inject luaccss.obj  d16 d32 dpm
+!inject luchdr.obj   d16 d32 dpm
+!inject luchmd.obj   d16 d32 dpm
+!inject lufndfrs.obj d16 d32 dpm
+!inject lufndnxt.obj d16 d32 dpm
+!inject lugtcd.obj   d16 d32 dpm
+!inject lumkdr.obj   d16 d32 dpm
 !inject lunlnk.obj   d16 d32 dpm
+!inject luopen.obj   d16 d32 dpm
+!inject lurenam.obj  d16 d32 dpm
+!inject lurmdr.obj   d16 d32 dpm
+!inject luselfn.obj  d16 d32 dpm
 !inject luunln.obj   d16 d32 dpm
-!inject findlfn.obj  d16 d32 dpm
 
 !include ../../../../objlist.mif
 
 lfindfrs_opts = -I"$(clib_dir)/file/h"
 lfindnxt_opts = -I"$(clib_dir)/file/h"
-lfnstat_opts  = -I"$(clib_dir)/file/h"
+lfndir_opts   = -I"$(clib_dir)/handleio/h" -I"$(clib_dir)/direct/h"
+lfnstat_opts  = -I"$(clib_dir)/file/h" -I"$(clib_dir)/handleio/h"
+lfnudir_opts  = -I"$(clib_dir)/direct/h"
+lfnustat_opts = -I"$(clib_dir)/file/h" -I"$(clib_dir)/handleio/h"
+lfnwdir_opts  = -I"$(clib_dir)/handleio/h"
 lufndfrs_opts = -I"$(clib_dir)/file/h"
 lufndnxt_opts = -I"$(clib_dir)/file/h"
-lfnustat_opts = -I"$(clib_dir)/file/h" -I"$(clib_dir)/handleio/h"
-lfndir_opts   = -I"$(clib_dir)/handleio/h" -I"$(clib_dir)/direct/h"
-lfnudir_opts  = -I"$(clib_dir)/direct/h"
-lfnwdir_opts  = -I"$(clib_dir)/handleio/h"
-lfnstat_opts  = -I"$(clib_dir)/file/h" -I"$(clib_dir)/handleio/h"
-lfndir_opts = -I"$(clib_dir)/direct/h"
-lfnudir_opts = -I"$(clib_dir)/direct/h"
