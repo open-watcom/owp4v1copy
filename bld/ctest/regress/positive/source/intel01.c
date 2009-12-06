@@ -82,7 +82,19 @@ void ptr_cvt( int __near *np )
 
     f_ptr = &Ptr;
     Llp = f_ptr;
+#ifdef __FLAT__
+    /* In flat model, we want (long long)&foo to be equivalent to (long)&foo. 
+     * However, explicit __near/__far keywords still apply. In other models, 
+     * (long long)&foo will convert to far pointer first.
+     */
+    if( Llp == llptr() ) fail( __LINE__ );
+    if( (long)&Ptr != llptr() ) fail( __LINE__ );
+#else
     if( Llp != llptr() ) fail( __LINE__ );
+#ifdef __386__  /* In 16-bit mode, long already contains the full address. */
+    if( (long)&Ptr == llptr() ) fail( __LINE__ );
+#endif
+#endif
 }
 
 #else
