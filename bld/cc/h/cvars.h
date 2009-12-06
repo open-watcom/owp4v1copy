@@ -667,6 +667,7 @@ extern  TYPEPTR TernType(TREEPTR,TREEPTR);
 extern  TYPEPTR TypeOf(TREEPTR);
 extern  TREEPTR UComplement(TREEPTR);
 extern  TREEPTR UMinus(TREEPTR);
+extern  DATA_TYPE BinExprType(TYPEPTR,TYPEPTR);
 extern  DATA_TYPE DataTypeOf(TYPEPTR);
 extern  int     FuncPtr(TYPEPTR);
 extern  TREEPTR FixupAss( TREEPTR opnd, TYPEPTR newtyp );

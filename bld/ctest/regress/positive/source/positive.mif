@@ -109,6 +109,7 @@ positive_tests = &
     expr02.$(exe) &
     far1601.$(exe) &
     float01.$(exe) &
+    float02.$(exe) &
     float03.$(exe) &
     float04.$(exe) &
     i64cmp.$(exe) &

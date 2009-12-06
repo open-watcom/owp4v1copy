@@ -423,6 +423,22 @@ opr_code TokenToOperator( TOKEN token )
     return( Operator[ token ] );
 }
 
+static DATA_TYPE BinExprTypeDT( DATA_TYPE typ1, DATA_TYPE typ2 )
+{
+    DATA_TYPE   data_type;
+
+    data_type = BinResult[ typ1 ][ typ2 ];
+    return( data_type );
+}
+
+DATA_TYPE BinExprType( TYPEPTR typ_op1, TYPEPTR typ_op2 )
+{
+    DATA_TYPE   data_type;
+
+    data_type = BinExprTypeDT( DataTypeOf( typ_op1 ), DataTypeOf( typ_op2 ) );
+    return( data_type );
+}
+
 TYPEPTR TypeOf( TREEPTR node )
 {
     TYPEPTR     typ;
@@ -574,7 +590,7 @@ static cmp_result IsMeaninglessCompare( signed_64 val, TYPEPTR typ_op1, TYPEPTR 
     if( op1_size == 0 ) {
         return( CMP_VOID );
     }
-    result_size = NumSize( BinResult[ DataTypeOf( typ_op1 ) ][ DataTypeOf( typ_op2 ) ] );
+    result_size = NumSize( BinExprType( typ_op1, typ_op2 ) );
     if( result_size == 0 ) {
         return( CMP_VOID );
     }
@@ -838,7 +854,7 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
             CErr1( ERR_INVALID_RELOP_FOR_STRUCT_OR_UNION );
             result_type = ERR;
     } else {
-        result_type = BinResult[ op1_type ][ op2_type ];
+        result_type = BinExprTypeDT( op1_type, op2_type );
         if( result_type == ERR ) {                      /* 12-sep-89 */
             CErr1( ERR_TYPE_MISMATCH );
         } else {
@@ -1281,7 +1297,7 @@ TREEPTR BinOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
                op2_type == TYPE_STRUCT ) {
         result_type = ERR;
     } else {
-        result_type = BinResult[ op1_type ][ op2_type ];
+        result_type = BinExprTypeDT( op1_type, op2_type );
         if( opr == T_PERCENT  &&  result_type >= TYPE_FLOAT ) {
             CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
         }

@@ -658,22 +658,28 @@ int FltCmp( long_double near *ld1, long_double near *ld2 )
 }
 
 
-int DoFloatOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
-/*****************************************************/
+static int DoFloatOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
+/************************************************************/
 {
     int         value;
     int         cond;
     long_double ld1;
     long_double ld2;
     long_double result;
+    TYPEPTR     typ1;
+    TYPEPTR     typ2;
 
     // load ld1 and ld2 from op1 and op2
+    MakeBinaryFloat( op2 );
+    ld2 = op2->op.float_value->ld;
+    typ2 = TypeOf( op2 );
     if( op1 != NULL ) {                 // if not unary op
         MakeBinaryFloat( op1 );
         ld1 = op1->op.float_value->ld;
+        typ1 = TypeOf( op1 );
+    } else {
+        typ1 = TypeOf( op2 );           // default to same type
     }
-    MakeBinaryFloat( op2 );
-    ld2 = op2->op.float_value->ld;
 
     switch( tree->op.opr ) {
     case OPR_CMP:
@@ -766,12 +772,12 @@ int DoFloatOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     default:
         return( 0 );
     }
-    // should the result be forced into a double or float?
+    /* The expression type must obey the usual arithmetic conversions. */
     tree->op.opr = OPR_PUSHFLOAT;
     tree->op.float_value = op2->op.float_value;
     tree->op.float_value->ld = result;
     tree->op.const_type = TYPE_DOUBLE;
-    tree->expr_type = GetType( TYPE_DOUBLE );
+    tree->expr_type = GetType( BinExprType( typ1, typ2 ) );
     tree->left = NULL;
     tree->right = NULL;
     FreeExprNode( op1 );
