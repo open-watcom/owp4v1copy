@@ -471,7 +471,9 @@ typedef uint_32 __based( __segname( "_STACK" ) )    *u32_stk_ptr;
 #define TinyFarFindFirst        _fTinyFindFirst
 #define TinyFindNext            _TinyFindNext
 #define TinyFindNextDTA         _TinyFindNextDTA
+#define TinyFindNextLFN         _TinyFindNextLFN
 #define TinyFindCloseDTA        _TinyFindCloseDTA
+#define TinyFindCloseLFN        _TinyFindCloseLFN
 #define TinyGetFileStamp        _TinyGetFileStamp
 #define TinySetFileStamp        _TinySetFileStamp
 #define TinyGetVect             _TinyGetVect
@@ -535,6 +537,7 @@ typedef uint_32 __based( __segname( "_STACK" ) )    *u32_stk_ptr;
 #define TinySetDTA              _nTinySetDTA
 #define TinyFindFirst           _nTinyFindFirst
 #define TinyFindFirstDTA        _nTinyFindFirstDTA
+#define TinyFindFirstLFN        _nTinyFindFirstLFN
 #define TinyGetFileAttr         _nTinyGetFileAttr
 #define TinySetFileAttr         _nTinySetFileAttr
 #define TinyGetCountry          _nTinyGetCountry
@@ -570,6 +573,7 @@ typedef uint_32 __based( __segname( "_STACK" ) )    *u32_stk_ptr;
 #define TinyGetCWDir            _fTinyGetCWDir
 #define TinySetDTA              _fTinySetDTA
 #define TinyFindFirst           _fTinyFindFirst
+#define TinyFindFirstLFN        _fTinyFindFirstLFN
 #define TinyGetFileAttr         _fTinyGetFileAttr
 #define TinySetFileAttr         _fTinySetFileAttr
 #define TinyGetCountry          _fTinyGetCountry
@@ -651,12 +655,18 @@ void                    _fTinySetDTA( void __far * );
 void        tiny_call   _nTinySetDTA( void __near * );
 tiny_ret_t              _fTinyFindFirst( const char __far *__pattern,
                                 create_attr __attr);
+tiny_ret_t              _fTinyFindFirstLFN( const char __far *__pattern,
+                                create_attr __attr, void __far * );
 tiny_ret_t  tiny_call   _nTinyFindFirst( const char __near *, create_attr );
 tiny_ret_t  tiny_call   _nTinyFindFirstDTA( const char __near *, create_attr,
                                 void * );
+tiny_ret_t              _nTinyFindFirstLFN( const char __near *__pattern,
+                                create_attr __attr, void __far * );
 tiny_ret_t  tiny_call   _TinyFindNext( void );
 tiny_ret_t  tiny_call   _TinyFindNextDTA( void * );
+tiny_ret_t  tiny_call   _TinyFindNextLFN( tiny_handle_t, void __far * );
 tiny_ret_t  tiny_call   _TinyFindCloseDTA( void * );
+tiny_ret_t  tiny_call   _TinyFindCloseLFN( tiny_handle_t );
 tiny_ret_t  tiny_call   _TinyGetFileStamp( tiny_handle_t );
 #ifdef _OLD_TINYIO_
 tiny_ret_t  tiny_call   _TinySetFileStamp( tiny_handle_t, uint __p_hms,
@@ -1780,6 +1790,17 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx] [cx] [ebx] \
         value           [eax];
 
+#pragma aux             _nTinyFindFirstLFN = \
+        "mov  ax,714Eh" \
+        "mov  si,1"     \
+        "stc"           \
+        "int  21h"      \
+        "rcl eax,1"     \
+        "ror eax,1"     \
+        parm caller     [edx] [cx] [es edi] \
+        value           [eax] \
+        modify          [cx si];
+
 #pragma aux             _TinyFindNext = \
         _MOV_AH DOS_FIND_NEXT \
         _INT_21         \
@@ -1796,6 +1817,17 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx] \
         value           [eax];
 
+#pragma aux             _TinyFindNextLFN = \
+        "mov  ax,714fh" \
+        "mov  si,1"     \
+        "stc"           \
+        "int  21h"      \
+        "rcl eax,1"     \
+        "ror eax,1"     \
+        parm caller     [bx] [es edi] \
+        value           [eax] \
+        modify          [cx si];
+
 #pragma aux             _TinyFindCloseDTA = \
         _MOV_AH DOS_FIND_NEXT \
         "mov al,1"      \
@@ -1803,6 +1835,15 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [edx] \
+        value           [eax];
+
+#pragma aux             _TinyFindCloseLFN = \
+        "mov  ax,71A1h" \
+        "stc"           \
+        "int  21h"      \
+        "rcl eax,1"     \
+        "ror eax,1"     \
+        parm caller     [bx] \
         value           [eax];
 
 #pragma aux             _TinyGetFileStamp = \
@@ -2847,6 +2888,18 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [dx ax] \
         modify exact    [ax cx dx];
 
+#pragma aux             _nTinyFindFirstLFN = \
+        _SET_DS_DGROUP  \
+        "mov  ax,714Eh" \
+        "mov  si,1"     \
+        "stc"           \
+        "int  21h"      \
+        "sbb  dx,dx"    \
+        _RST_DS_DGROUP  \
+        parm caller     [dx] [cx] [es di] \
+        value           [dx ax] \
+        modify          [cx si];
+
 #pragma aux             _fTinySetDTA = \
         _SET_DS_SREG    \
         _MOV_AH DOS_SET_DTA \
@@ -2865,12 +2918,40 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
 
+#pragma aux             _fTinyFindFirstLFN = \
+        "mov  ax,714Eh" \
+        "mov  si,1"     \
+        "stc"           \
+        "int  21h"      \
+        "sbb  dx,dx"    \
+        parm caller     [ds dx] [cx] [es di]\
+        value           [dx ax] \
+        modify          [cx si];
+
 #pragma aux             _TinyFindNext = \
         _MOV_AH DOS_FIND_NEXT \
         _INT_21         \
         _SBB_DX_DX      \
         value           [dx ax] \
         modify exact    [ax dx];
+
+#pragma aux             _TinyFindNextLFN = \
+        "mov  ax,714fh" \
+        "mov  si,1"     \
+        "stc"           \
+        "int  21h"      \
+        "sbb  dx,dx"    \
+        parm caller     [bx] [es di] \
+        value           [dx ax] \
+        modify          [cx si];
+
+#pragma aux             _TinyFindCloseLFN = \
+        "mov  ax,71A1h" \
+        "stc"           \
+        "int  21h"      \
+        "sbb  dx,dx"    \
+        parm caller     [bx] \
+        value           [dx ax];
 
 #pragma aux             _TinyGetFileStamp = \
         _MOV_AX _GET_ DOS_FILE_DATE \
