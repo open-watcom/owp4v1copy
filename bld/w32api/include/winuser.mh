@@ -2154,11 +2154,6 @@ DECLARE_HANDLE( HGESTUREINFO );
 #define DCX_LOCKWINDOWUPDATE    0x00000400L
 #define DCX_VALIDATE            0x00200000L
 
-/* Maximum number of monitors */
-#if (WINVER >= 0x0600)
-    #define MONITORS_MAX    10
-#endif
-
 /* RedrawWindow() flags */
 #define RDW_INVALIDATE      0x0001
 #define RDW_INTERNALPAINT   0x0002
@@ -3451,7 +3446,6 @@ DECLARE_HANDLE( HGESTUREINFO );
 #if (WINVER >= 0x0500) && (_WIN32_WINNT >= 0x0501)
     #define FE_FONTSMOOTHINGSTANDARD    0x0001
     #define FE_FONTSMOOTHINGCLEARTYPE   0x0002
-    #define FE_FONTSMOOTHINGDOCKING     0x8000
 #endif
 
 /* Font smoothing orientations */

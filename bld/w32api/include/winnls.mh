@@ -623,7 +623,6 @@ typedef DWORD   GEOCLASS;
     #define MUI_LANG_NEUTRAL_PE_FILE            0x00000100L
     #define MUI_NON_LANG_NEUTRAL_FILE           0x00000200L
     #define MUI_MACHINE_LANGUAGE_SETTINGS       0x00000400L
-    #define MUI_BYPASS_SESSION_BEHAVIOR         0x00000080L
     #define MUI_FILETYPE_NOT_LANGUAGE_NEUTRAL   0x00000001L
     #define MUI_FILETYPE_LANGUAGE_NEUTRAL_MAIN  0x00000002L
     #define MUI_FILETYPE_LANGUAGE_NEUTRAL_MUI   0x00000004L
@@ -632,13 +631,11 @@ typedef DWORD   GEOCLASS;
     #define MUI_QUERY_LANGUAGE_NAME             0x00000004L
     #define MUI_QUERY_RESOURCE_TYPES            0x00000008L
     #define MUI_FILEINFO_VERSION                0x00000001L
-    #define MUI_SXS_FALLBACK                    0x00010000L
     #define MUI_FULL_LANGUAGE                   0x00000001L
     #define MUI_PARTIAL_LANGUAGE                0x00000002L
     #define MUI_LIP_LANGUAGE                    0x00000004L
     #define MUI_LANGUAGE_INSTALLED              0x00000020L
     #define MUI_LANGUAGE_LICENSED               0x00000040L
-    #define MUI_PUBLIC_LANGUAGE_TYPE_FLAGS_MASK 0x00000067L
 #endif
 
 /* Special value returned by GetUserGeoID() */
