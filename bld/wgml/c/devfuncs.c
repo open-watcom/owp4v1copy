@@ -638,6 +638,7 @@ static void * df_dotab( void )
      * produces output when positive horizontal spacing is needed.
      */
 
+    x_address = desired_state.x_address;
     if( desired_state.x_address > current_state.x_address ) {
         if( has_aa_block ) {
             fb_absoluteaddress();
@@ -2540,6 +2541,7 @@ static void fb_initial_horizontal_positioning( void )
 {
     uint32_t    spaces;
 
+    x_address = desired_state.x_address;
     if( has_aa_block ) {
         fb_absoluteaddress();
     } else {
@@ -2596,6 +2598,7 @@ static void fb_internal_horizontal_positioning( void )
 
     /* Use :HTAB if tab_width is not an integral number of spaces. */
 
+    x_address = desired_state.x_address;
     tab_width = desired_state.x_address - current_state.x_address;
     if( has_htab && (tab_width % wgml_fonts[active_font].spc_width > 0) ) {
         fb_htab();
@@ -2959,8 +2962,6 @@ static void fb_normal_vertical_positioning( void )
 
         if( !has_aa_block ) fb_newline();
     }
-
-    return;
 }
 
 /* Function fb_overprint_vertical_positioning().
@@ -3485,7 +3486,7 @@ void fb_first_text_line_pass( text_line * out_line )
     current = current->next;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
-        x_address = desired_state.x_address;
+//        x_address = desired_state.x_address;
         if( current_state.font_number != current->font_number ) {
             if( wgml_fonts[current->font_number].font_style != NULL ) {
                 if( wgml_fonts[current->font_number].font_style->lineprocs \
@@ -3765,7 +3766,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
 
     /* The "first text_chars instance" sequence. */
 
-    x_address = desired_state.x_address;
+//    x_address = desired_state.x_address;
     fb_first_text_chars( current, cur_lineproc );
 
     /* Now do the remaining text_chars instances. */
@@ -3793,7 +3794,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
             if( current == NULL ) break;
 
             desired_state.x_address = current->x_address;
-            x_address = desired_state.x_address;
+//            x_address = desired_state.x_address;
             if( cur_lineproc != NULL) {
                 if( current_state.font_number != current->font_number ) {
                     desired_state.font_number = current->font_number;
