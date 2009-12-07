@@ -37,23 +37,25 @@
 
 _WCRTLINK int _islfn( const char *path )
 {
-    char *buff = strrchr( path, '\\' );
+    const char *buff;
+    
+    buff = strrchr( path, '\\' );
     if( buff == NULL ) {
-        if( strlen( path ) > 12 || strrchr( path, ' ' ) != NULL )
-            return( 1 );
+        buff = path;
+        if( buff[0] != '\0' && buff[1] == ':' ) {
+            buff += 2;
+        }
+    } else {
+        ++buff;
     }
-    if( strlen( buff ) > 12 || strrchr( path, ' ' ) != NULL )
+    if( strlen( buff ) > 12 || strchr( buff, ' ' ) != NULL )
         return( 1 );
-
     return( 0 );
 }
 
 _WCRTLINK char *_lfntosfn( char *orgname, char *shortname )
 {
-#ifndef __WATCOM_LFN__
-    strcpy( shortname, orgname );
-    return( orgname );
-#else
+#ifdef __WATCOM_LFN__
     union  REGS     r;
     struct SREGS    s;
 
@@ -73,12 +75,14 @@ _WCRTLINK char *_lfntosfn( char *orgname, char *shortname )
      * original path/name.  Also if the function fails, it could be because of
      * no LFN TSR so fall back to the original name.
      */
-    if( r.w.ax == 0x7100 || r.w.cflag ) {
+    if( r.w.cflag || r.w.ax == 0x7100 ) {
         strcpy( shortname, orgname );
         return( NULL );
     }
 
     /* If there was no failure, return the new short filename */
     return( shortname );
+#else
+    return( strcpy( shortname, orgname ) );
 #endif
 }
