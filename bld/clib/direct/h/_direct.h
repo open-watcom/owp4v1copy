@@ -33,7 +33,7 @@
 
 #define _DIR_ISFIRST            0
 #define _DIR_NOTFIRST           1
-#define _DIR_MAX_FOR_CLOSE_OK   2       /* dummy value used by closedir */
+#define _DIR_INVALID            2
 #define _DIR_CLOSED             3
 
 #ifdef __WIDECHAR__
@@ -44,9 +44,9 @@ typedef unsigned    UINT_WC_TYPE;
 
 extern char *__tmpdir( char *__buff );
 #ifdef __WIDECHAR__
-_WCRTLINK extern DIR_TYPE *_w_opendir( const wchar_t *__name, unsigned __attr );
+_WCRTLINK extern DIR_TYPE *_w_opendir( const wchar_t *__name, unsigned __attr, DIR_TYPE *__dirp );
 _WCRTLINK extern DIR_TYPE *_w__opendir( const wchar_t *__name, unsigned __attr, DIR_TYPE *__dirp );
 #else
-_WCRTLINK extern DIR_TYPE *_opendir( const char *__name, unsigned __attr );
+_WCRTLINK extern DIR_TYPE *_opendir( const char *__name, unsigned __attr, DIR_TYPE *__dirp );
 _WCRTLINK extern DIR_TYPE *__opendir( const char *__name, unsigned __attr, DIR_TYPE *__dirp );
 #endif

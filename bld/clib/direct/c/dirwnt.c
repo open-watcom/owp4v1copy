@@ -46,6 +46,7 @@
 #include "ntex.h"
 #include "seterrno.h"
 #include "_direct.h"
+#include "liballoc.h"
 
 #define SEEK_ATTRIB (~_A_VOLID)
 
@@ -94,21 +95,16 @@ static int is_directory( const CHAR_TYPE *name )
         }
     }
     return( 0 );
-
-/*  old logic
-    if( name[0] == '\0' )return( 0 );
-    while( name[1] != '\0' ){
-        if( name[0] == '*' || name[0] == '?' ) {
-            return( 0 );
-        }
-        ++name;
-    }
-    if( name[0] == '\\' || name[0] == '/' || name[0] == '.' ){
-        return( 1 );
-    }
-    return( 0 );
-*/
 }
+
+static BOOL __find_close( DIR_TYPE *dirp )
+/****************************************/
+{
+    if( HANDLE_OF( dirp ) )
+        return( FindClose( HANDLE_OF( dirp ) ) );
+    return( TRUE );
+}
+
 
 _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
                                                unsigned attr, DIR_TYPE *dirp )
@@ -117,8 +113,8 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
     WIN32_FIND_DATA     ffb;
     HANDLE              h;
 
+    __find_close( dirp );
     h = FIND_FIRST( dirname, &ffb );
-
     if( h == (HANDLE)-1 ) {
         __set_errno_nt();
         return( NULL );
@@ -131,49 +127,42 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
     ATTR_OF( dirp ) = attr;
     GET_DIR_INFO( dirp, &ffb );
     dirp->d_first = _DIR_ISFIRST;
-
     return( dirp );
 }
 
 _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
-                                                             unsigned attr )
+                                            unsigned attr, DIR_TYPE *dirp )
 /**************************************************************************/
 {
 
-    DIR_TYPE        *dirp;
+    DIR_TYPE        tmp;
     int             i;
     CHAR_TYPE       pathname[MAX_PATH+6];
-    const CHAR_TYPE *dirnameStart = dirname;
+    const CHAR_TYPE *p;
     UINT_WC_TYPE    curr_ch;
     UINT_WC_TYPE    prev_ch;
+    int             flag_opendir = ( dirp == NULL );
 
-    dirp = malloc( sizeof( DIR_TYPE ) );
-    HANDLE_OF( dirp ) = 0;
-    if( dirp == NULL ) {
-        __set_errno_dos( ERROR_NOT_ENOUGH_MEMORY );
-        return( NULL );
-    }
-    dirp->d_attr = _A_SUBDIR;               /* assume sub-directory */
+    HANDLE_OF( &tmp ) = 0;
+    tmp.d_attr = _A_SUBDIR;               /* assume sub-directory */
     if( !is_directory( dirname ) ) {
-        if( __F_NAME(__opendir,_w__opendir)( dirname, attr, dirp ) == NULL ) {
-            free( dirp );
+        if( __F_NAME(__opendir,_w__opendir)( dirname, attr, &tmp ) == NULL ) {
             return( NULL );
         }
-    } else {
-        dirp->d_attr = _A_SUBDIR;
     }
-    if( dirp->d_attr & _A_SUBDIR ) {
+    if( tmp.d_attr & _A_SUBDIR ) {
         prev_ch = NULLCHAR;
+        p = dirname;
         for( i = 0; i < MAX_PATH; i++ ) {
-            pathname[i] = *dirname;
+            pathname[i] = *p;
 #ifdef __WIDECHAR__
-            curr_ch = *dirname;
+            curr_ch = *p;
 #else
-            curr_ch = _mbsnextc( dirname );
+            curr_ch = _mbsnextc( p );
             if( curr_ch > 256 ) {
                 ++i;
-                ++dirname;
-                pathname[i] = *dirname;     /* copy second byte */
+                ++p;
+                pathname[i] = *p;     /* copy second byte */
             }
 #endif
             if( curr_ch == NULLCHAR ) {
@@ -181,59 +170,39 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
                     pathname[i++] = '\\';
                 }
                 __F_NAME(strcpy,wcscpy)( &pathname[i], STRING( "*.*" ) );
-                if( HANDLE_OF( dirp ) != 0 ) {
-                    FindClose( HANDLE_OF( dirp ) );
-                }
-                if( __F_NAME(__opendir,_w__opendir)( pathname, attr, dirp ) == NULL ) {
-                    free( dirp );
+                if( __F_NAME(__opendir,_w__opendir)( pathname, attr, &tmp ) == NULL ) {
                     return( NULL );
                 }
                 break;
             }
-            if( *dirname == '*' )
+            if( curr_ch == '*' )
                 break;
-            if( *dirname == '?' )
+            if( curr_ch == '?' )
                 break;
-            ++dirname;
+            ++p;
             prev_ch = curr_ch;
         }
-
-/* old logic
-        for( i = 0; i < MAX_PATH; i++ ) {
-            pathname[i] = *dirname;
-            if( *dirname == '\0' ) {
-                if( i != 0  &&   pathname[i-1] != '\\' && pathname[i-1] != '/' ){
-                    pathname[i++] = '\\';
-                }
-                #ifndef __WIDECHAR__
-                    strcpy( &pathname[i], "*.*" );
-                #else
-                    wcscpy( &pathname[i], L"*.*" );
-                #endif
-                if( HANDLE_OF( dirp ) != 0 ) {
-                    FindClose( HANDLE_OF( dirp ) );
-                }
-                if( __F_NAME(__opendir,_w__opendir)( pathname, attr, dirp ) == NULL ) {
-                    free( dirp );
-                    return( NULL );
-                }
-                break;
-            }
-            if( *dirname == '*' ) break;
-            if( *dirname == '?' ) break;
-            ++dirname;
-        }
-*/
     }
-    if( dirp != NULL )
-        dirp->d_openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirnameStart );
+    if( flag_opendir ) {
+        dirp = lib_malloc( sizeof( DIR_TYPE ) );
+        if( dirp == NULL ) {
+            __find_close( &tmp );
+            __set_errno_dos( ERROR_NOT_ENOUGH_MEMORY );
+            return( NULL );
+        }
+        tmp.d_openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirname );
+    } else {
+        __find_close( dirp );
+        tmp.d_openpath = dirp->d_openpath;
+    }
+    *dirp = tmp;
     return( dirp );
 }
 
 _WCRTLINK DIR_TYPE *__F_NAME(opendir,_wopendir)( const CHAR_TYPE *dirname )
 /*************************************************************************/
 {
-    return( __F_NAME(_opendir,_w_opendir)( dirname, SEEK_ATTRIB ) );
+    return( __F_NAME(_opendir,_w_opendir)( dirname, SEEK_ATTRIB, NULL ) );
 }
 
 _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
@@ -242,28 +211,24 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
     WIN32_FIND_DATA     ffd;
     DWORD               err;
 
-    if( dirp == NULL ) {
-        return( NULL );
-    }
-    if( dirp->d_first == _DIR_CLOSED )
+    if( dirp == NULL || dirp->d_first >= _DIR_INVALID )
         return( NULL );
     if( dirp->d_first == _DIR_ISFIRST ) {
         dirp->d_first = _DIR_NOTFIRST;
-        return( dirp );
-    }
-
-    if( !FIND_NEXT( HANDLE_OF( dirp ), &ffd ) ) {
-        err = GetLastError();
-        if( err != ERROR_NO_MORE_FILES ) {
-            __set_errno_dos( err );
+    } else {
+        if( !FIND_NEXT( HANDLE_OF( dirp ), &ffd ) ) {
+            err = GetLastError();
+            if( err != ERROR_NO_MORE_FILES ) {
+                __set_errno_dos( err );
+            }
+            return( NULL );
         }
-        return( NULL );
+        if( !CHECK_FIND_NEXT_ATTR( HANDLE_OF( dirp ), ATTR_OF( dirp ), &ffd ) ) {
+            __set_errno_dos( ERROR_NO_MORE_FILES );
+            return( NULL );
+        }
+        GET_DIR_INFO( dirp, &ffd );
     }
-    if( !CHECK_FIND_NEXT_ATTR( HANDLE_OF( dirp ), ATTR_OF( dirp ), &ffd ) ) {
-        __set_errno_dos( ERROR_NO_MORE_FILES );
-        return( NULL );
-    }
-    GET_DIR_INFO( dirp, &ffd );
     return( dirp );
 
 }
@@ -272,45 +237,26 @@ _WCRTLINK int __F_NAME(closedir,_wclosedir)( DIR_TYPE *dirp )
 /***********************************************************/
 {
 
-    if( dirp == NULL || dirp->d_first > _DIR_MAX_FOR_CLOSE_OK ) {
+    if( dirp == NULL || dirp->d_first == _DIR_CLOSED ) {
         return( __set_errno_dos( ERROR_INVALID_HANDLE ) );
     }
-
-    if( !FindClose( HANDLE_OF( dirp ) ) ) {
+    if( __find_close( dirp ) == FALSE ) {
         return( __set_errno_nt() );
     }
     dirp->d_first = _DIR_CLOSED;
     if( dirp->d_openpath != NULL )
         free( dirp->d_openpath );
     free( dirp );
-
     return( 0 );
 }
 
 _WCRTLINK void __F_NAME(rewinddir,_wrewinddir)( DIR_TYPE *dirp )
 /**************************************************************/
 {
-    CHAR_TYPE *         openpath;
-    DIR_TYPE *          newDirp;
-
-    /*** Get the name of the directory before closing it ***/
-    if( dirp->d_openpath == NULL )
-        return;                         /* can't continue if NULL */
-    openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirp->d_openpath ); /* store path */
-    if( openpath == NULL ) {
-        dirp->d_first = _DIR_CLOSED;    /* so reads won't work any more */
+    if( dirp == NULL || dirp->d_openpath == NULL )
         return;
+    if( __F_NAME(_opendir,_w_opendir)( dirp->d_openpath, SEEK_ATTRIB, dirp ) == NULL ) {
+        dirp->d_first = _DIR_INVALID;    /* so reads won't work any more */
     }
-
-    /*** Reopen the directory ***/
-    __F_NAME(closedir,_wclosedir)( dirp );              /* close directory */
-    newDirp = __F_NAME(opendir,_wopendir)( openpath );  /* open it again */
-    if( newDirp == NULL ) {
-        dirp->d_first = _DIR_CLOSED;    /* so reads won't work any more */
-        return;
-    }
-
-    /*** Clean up and go home ***/
-    free( openpath );                       /* don't need this any more */
-    memcpy( dirp, newDirp, sizeof(DIR_TYPE) );   /* copy into user buffer */
 }
+
