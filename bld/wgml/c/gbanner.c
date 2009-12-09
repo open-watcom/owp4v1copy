@@ -734,6 +734,12 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         b_line.first = NULL;
     }
     if( !bottom ) {                    // for top banner calculate text start
+        if( post_skip != NULL ) {           // TBD
+            post_top_skip = conv_vert_unit( post_skip, 1 );
+            post_skip = NULL;
+        } else {
+            post_top_skip = 0;
+        }
         if( bin_driver->y_positive == 0 ) {
             g_cur_v_start -= g_max_line_height + post_top_skip;
         } else {

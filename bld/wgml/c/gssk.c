@@ -1,4 +1,4 @@
- 
+
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -29,17 +29,17 @@
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include <stdarg.h>
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
 #include "copfiles.h"
- 
- 
+
+
 /**************************************************************************/
 /* SKIP generates the specified number of blank lines.                    */
 /*                                                                        */
@@ -92,28 +92,28 @@
 /* pagination purposes.                                                   */
 /*                                                                        */
 /**************************************************************************/
- 
- 
+
+
 void    scr_sk( void )
 {
     char        *   p;
     int             skip;
     int             sign;
     int             spc;
- 
+
 #if 0
     char            cwcurr[4];          // if errmsg is neccessary
- 
+
     cwcurr[0] = SCR_char;
     cwcurr[1] = 's';
     cwcurr[2] = 'k';
     cwcurr[3] = '\0';
 #endif
- 
+
     skip = -1;
     sign = 1;                           // default +
     spc =  spacing;
- 
+
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
         p++;
@@ -125,13 +125,13 @@ void    scr_sk( void )
             p++;
         }
         while( isdigit( *p ) ) {
-            if( skip < 0 ) {            // first digit init value
-                skip = 0;
+            if( skip < 0 ) {            // first digit
+                skip = 0;               // .. init value
             }
-            skip = skip*10 + *p - '0';
+            skip = skip * 10 + *p - '0';
             p++;
         }
-        if( *p == ' ' ) {
+        while( *p == ' ' ) {
             p++;
         }
         if( toupper( *p ) == 'A' ) {
@@ -140,12 +140,12 @@ void    scr_sk( void )
                 p++;
             }
         }
-        if( *p == ' ' ) {
+        while( *p == ' ' ) {
             p++;
         }
         if( toupper( *p ) == 'C' ) {
             if( skip > 0 ) {
-                ProcFlags.sk_cond = true;
+                ProcFlags.sk_cond = true;   // conditional skip
             }
         }
     }
@@ -155,26 +155,24 @@ void    scr_sk( void )
         skip = sign * skip;             // apply sign
     }
     skip = skip * spc;                  // apply spacing
-    if( skip < -1 ) {
-        skip = -1;                    // only overprint current line possible
+    if( skip < -1 ) {                   // overprint
+        skip = -1;                      // .. only current line possible
     }
 
-    scr_process_break();
-
     g_skip = skip;
- 
+
     /***********************************************************************/
     /*  hack to mimick wgml4: for every .sk with positive value            */
-    /*  wgml4 positions 1 less than g_max_line_height                      */
+    /*  wgml4 positions 2 less than g_max_line_height for dev PS     TBD   */
     /***********************************************************************/
- 
+
     if( skip > 0 ) {
-        g_skip_wgml4 = 1;
+        g_skip_wgml4 = 2;
     } else {
         g_skip_wgml4 = 0;
     }
- 
+
     scan_restart = scan_stop + 1;
     return;
 }
- 
+

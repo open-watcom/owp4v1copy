@@ -42,21 +42,6 @@ static  int hp[20] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 
 
 /***************************************************************************/
-/*  common routines for :HPx and :eHPx                                     */
-/***************************************************************************/
-
-static void g_err_tag( void )
-{
-    char            tagn[8];
-
-    sprintf_s( tagn, 8, "%ceHP%d", GML_char, hp[hpcount] );
-    g_err( ERR_TAG_EXPECTED, tagn );
-    file_mac_info();
-    err_count++;
-    return;
-}
-
-/***************************************************************************/
 /*  set_space possibly suppress space if tag follows                       */
 /***************************************************************************/
 
@@ -87,20 +72,24 @@ static bool gml_hpx_common( const gmltag * entry, int font )
 {
     char    *   p;
     bool        result = true;
+    char        tagn[TAG_NAME_LENGTH + 1];
 
     if( hpcount >= HPMAXIND ) {
-        g_err_tag();                    // all levels active
+        strcpy_s( tagn, sizeof( tagn ), entry->tagname );
+        g_err_tag( tagn );              // all levels active
         result = false;
         return( result );
     }
     if( font >= wgml_font_cnt ) {       // invalid font use default
         font = 0;
     }
+#if 0
     if( (hpcount > -1) && (hp[hpcount] == font) ) {
-        g_err_tag();                    // same hilighting already active
+        g_err_tag( " no :HPx" );        // same hilighting already active
         result = false;
         return( result );
     }
+#endif
     hpcount++;
     hp[hpcount] = font;
     g_curr_font_num = font;
@@ -149,9 +138,7 @@ void    gml_ehpx( const gmltag * entry )
     char    *   p;
 
     if( hpcount < 0 ) {
-        g_err( ERR_TAG_EXPECTED, "no :eHPx" );
-        file_mac_info();
-        err_count++;
+        g_err_tag( " no :eHPx" );
     } else {
         if( hpcount > 0 ) {
            g_curr_font_num = hp[hpcount - 1];

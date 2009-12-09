@@ -265,6 +265,7 @@ global  uint32_t    post_space;         // .. line
 global  uint32_t    post_space_save;    // .. formatting
 global  uint32_t    pre_top_skip;       // .. formatting
 global  uint32_t    post_top_skip;      // .. formatting
+global  uint32_t    ju_x_start;         // .. formatting
 
 
 

@@ -74,6 +74,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
             }
         }
     }
+    post_skip = NULL;
 
 //  ProcFlags.just_override = false;// perhaps no justify for first para line
 //  ProcFlags.para_line1 = true;        // remember first paragraph line TBD

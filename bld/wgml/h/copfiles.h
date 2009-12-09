@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Declares the items needed to parse and interpret the 
+* Description:  Declares the items needed to parse and interpret the
 *               information from .COP files:
 *               the structs:
 *                   cop_device
@@ -92,7 +92,7 @@
 *                   fb_start()
 *                   fb_vline()
 *
-* Note:         The field names are intended to correspond to the field names 
+* Note:         The field names are intended to correspond to the field names
 *               shown in the Wiki. The Wiki structs are named when the structs
 *               defined here are defined; they are not identical.
 ****************************************************************************/
@@ -112,7 +112,7 @@
  *      outtrans_block is used by both cop_device and cop_font
  *      code_text is used by both cop_device and cop_driver
  */
- 
+
 /* To hold the data extracted from an IntransBlock struct.
  * intrans_block is a struct for consistency with outtrans_block.
  */
@@ -197,7 +197,7 @@ typedef struct {
     char *              font_name;
     char *              font_style;
     uint16_t            font_height;
-    uint16_t            font_space;    
+    uint16_t            font_space;
 } default_font;
 
 /* To hold the data from the DefaultfontBlock struct. */
@@ -278,7 +278,7 @@ typedef struct {
  * of the fact that there can be at most two :FINISH blocks, that wgml will
  * only use the first :VALUE block in a :FINISH block, so that only that one
  * needs to be presented here, and that they must be distinguished because
- * wgml processes at most one of them. 
+ * wgml processes at most one of them.
  */
 
 typedef struct {
@@ -349,7 +349,7 @@ typedef struct {
     code_text *         endvalue;
 } line_proc;
 
-/* To hold the data extracted from a ShortFontstyleBlock struct. 
+/* To hold the data extracted from a ShortFontstyleBlock struct.
  * Only the first two fields are found in the Wiki struct. The next three take
  * advantage of the fact that a :FONTSTYLE block directly defines at most one of
  * each of two sub-blocks, plus any number of :LINEPROC blocks. The number of
@@ -364,7 +364,7 @@ typedef struct {
     line_proc *         lineprocs;
 } fontstyle_block;
 
-/* To hold the data extracted from a FontstyleGroup struct. 
+/* To hold the data extracted from a FontstyleGroup struct.
  * This struct bears only a functional relationship to the struct in the Wiki,
  * which must be seen to be believed.
  */
@@ -375,7 +375,7 @@ typedef struct {
 } fontstyle_group;
 
 /* To hold the data extracted from an HlineBlock, a VlineBlock, or a DboxBlock
- * struct. 
+ * struct.
  * This differs from the structs in the Wiki because each of them can contain at
  * most one CodeBlock, as well as the thickness.
  */
@@ -399,7 +399,7 @@ typedef struct {
 /* These are the top-level structs. These are the only structs intended to
  * be created and passed around independently.
  *
- * The comments within the structs refer to the blocks discussed in the Wiki. 
+ * The comments within the structs refer to the blocks discussed in the Wiki.
  *
  * The first two fields are used internally and were used for sizing during
  * development
@@ -408,7 +408,7 @@ typedef struct {
  * freed in one statement.
  */
 
-/* This struct embodies the binary form of the :DEVICE block. 
+/* This struct embodies the binary form of the :DEVICE block.
  *
  * Note that the "FunctionsBlock" is not mentioned. The various "CodeBlock"s
  * are instead provided as part of PauseBlock and DevicefontBlock.
@@ -535,7 +535,6 @@ typedef struct text_chars {
 
 typedef struct text_line {
     struct  text_line   *   next;
-            uint32_t        ju_x_start;
             uint32_t        line_height;
             uint32_t        y_address;
             text_chars  *   first;
@@ -554,7 +553,7 @@ typedef struct {
     uint32_t                dv_base;
     uint32_t                em_base;
     uint32_t                font_height;
-    uint32_t                font_space;    
+    uint32_t                font_space;
     uint32_t                line_height;
     uint32_t                line_space;
     uint32_t                spc_width;

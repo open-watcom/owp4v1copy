@@ -131,6 +131,8 @@ extern  void    tag_text_err( char * tagname );
 extern  void    tag_text_req_err( char * tagname );
 extern  void    xx_err( const msg_ids errid );
 extern  void    xx_opt_err( char *cw, char *pa );
+extern  void    g_err_tag( char *tagname );
+extern  void    g_err_tag_prec( char *tagname );
 
 
 /* getnum.c                             */
@@ -196,6 +198,7 @@ extern  void    document_new_page( void );
 extern  void    process_line_full( text_line * a_line, bool justify );
 extern  void    process_text( char * text, uint8_t font_num );
 extern  void    set_h_start( void );
+extern  void    set_v_start( int8_t spacing );
 
 
 /* gresrch.c                          */

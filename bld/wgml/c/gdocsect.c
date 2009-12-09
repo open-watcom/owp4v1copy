@@ -326,6 +326,13 @@ extern  void    gml_body( const gmltag * entry )
     g_cur_h_start = g_page_left
                     + conv_hor_unit( &layout_work.p.line_indent );
     spacing = layout_work.defaults.spacing;
+
+
+    /***********************************************************************/
+    /*  for 1. body page try H0   skip                                     */
+    /***********************************************************************/
+
+    post_skip = &layout_work.hx[0].pre_top_skip;// TBD
 //  ProcFlags.para_line1 = true;        // simulate :P start  ?? TBD
 }
 

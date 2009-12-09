@@ -184,3 +184,29 @@ void    xx_err( const msg_ids errid )
     return;
 }
 
+/***************************************************************************/
+/*  error msgs for missing or duplicate :XXX :eXXX tags                    */
+/***************************************************************************/
+
+void    g_err_tag( char * tag )
+{
+    char    tagn[TAG_NAME_LENGTH + 1];
+
+    sprintf_s( tagn, TAG_NAME_LENGTH * 1, "%c%s", GML_char, tag );
+    g_err( err_tag_expected, tagn );
+    file_mac_info();
+    err_count++;
+    return;
+}
+
+void    g_err_tag_prec( char * tag )
+{
+    char    tagn[TAG_NAME_LENGTH + 1];
+
+    sprintf_s( tagn, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag );
+    g_err( err_tag_preceding, tagn );
+    file_mac_info();
+    err_count++;
+    return;
+}
+

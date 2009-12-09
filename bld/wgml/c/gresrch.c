@@ -201,8 +201,7 @@ void    test_out_t_line( text_line  * a_line )
     }
 
     tw = a_line->first;
-    out_msg( "\n   y_address:%d     ju_x_start:%d\n", a_line->y_address,
-             a_line->ju_x_start );
+    out_msg( "\n   y_address:%d\n", a_line->y_address );
     while( tw != NULL ) {
         snprintf( buf, buf_size,
                   "font:%d x:%d-%d width:%d cnt:%d txt:'%.*s'\n",

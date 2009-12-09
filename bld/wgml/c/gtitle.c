@@ -119,7 +119,7 @@ static void prep_title_line( text_line * p_line, char * p )
         curr_x = h_right - curr_t->width;
     }
     curr_t->x_address = curr_x;
-    p_line->ju_x_start = curr_x;
+    ju_x_start = curr_x;
 
     return;
 }

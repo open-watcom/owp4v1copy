@@ -1,20 +1,39 @@
-.* test for a not quite simple GML document
+.* test for a not quite simple GML document this is work in progress
 .im tsimplei.lay
 .gt 123 add willi
 .dm willi /:p/
 :gdoc sec='top secret'
 :frontm
 :titlep
-:title stitle='simple doc'.My Simple Document
+:title stitle='simple doc'.Simple Document
+:title stitle='simple doc2'.Simple Document Title 2
+:docnum.SIMPLE 7
+:date.Date was 11.11.2009
+:author.First Author
+:author.My Second Personality
+:address.
+:aline.address 1 1
+:aline.address 1 2
+:eaddress.
+:address.
+:aline.address 2 1
+:aline.address 2 2
+:eaddress.
+:address.
+:eaddress.
 :etitlep
 :body
 .se syshtext0='SYSHTEXT0 Dummy'
 .ty in body sysenv &$env
 .*im tgeov
 .*:123
+:p
+This :HP2.test:eHP2. fragment. :hp1.111.:hp1.xxx:ehp1.:ehp1.
+.br
 Here we have some text to fill the line. Let it overflow, just to see
-how wgml 4.0 and our new wgml handle line overflow to see the differences
-in the output.
+whether wgml 4.0 and our new wgml handle line overflow and to see the
+differences in the output.
+.co on
 :p
 Hopefully no differences! :12345 test for undefined user tag. More text
 to make a true line overflow for a 2 line paragraph.
@@ -26,8 +45,13 @@ with colon
 and :HP3.hi3:EHP3. without colon
  A :HP1.p:EHP1.aragraph with text. And some more for line overflow.
 .br
+.co off
+test line one
+
+test line two
+
 ============================ 11:43:59 H:\ow\bld =============================
-.br
+.br .co on
 Languages Build: rel2
 .br
 WATCOM points to: H:\ow\rel2
@@ -37,8 +61,11 @@ WATCOM points to: H:\ow\rel2
 01====================== 11:43:59 H:\ow\bld\builder =========================
 02====================== 11:43:59 H:\ow\bld\builder =========================
 03=================== 11:43:59 H:\ow\bld\builder\os2386 =====================
+.sk 5
 04====================== 11:43:59 H:\ow\bld\builder =========================
+.sk 5
 05====================== 11:43:59 H:\ow\bld\builder =========================
+.sk 5
 06** REL2 rule
 07======================= 11:43:59 H:\ow\bld\pmake ==========================
 08=================== 11:43:59 H:\ow\bld\pmake\prebuild =====================
