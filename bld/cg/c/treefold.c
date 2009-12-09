@@ -1463,9 +1463,9 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
                     return( FoldCompare( op, IntToType( 1, TypeInteger ), IntToType( 0, TypeInteger ), TypeInteger ) );
                 }
             }
-            if( base_l != left ) {
+            if( ( base_l != left ) && !( tipe->attr & TYPE_FLOAT ) ) {
                 // If we couldn't fold the comparison, get rid of some lame converts
-                // the C++ compiler likes to emit.
+                // the C++ compiler likes to emit. Careful with floats!
                 BurnToBase( left, base_l );
                 return( TGNode( TN_COMPARE, op, base_l, rite, TypeBoolean ) );
             }
