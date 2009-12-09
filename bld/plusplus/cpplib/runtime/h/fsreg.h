@@ -79,8 +79,8 @@ struct FsExcRec;
     #define EXC_HAND_CATCH      ExceptionContinueExecution
     #define EXC_HAND_UNWOUND    ExceptionContinueExecution
 
-    void __stdcall RtlUnwind            // can't find def'n
-                    ( CONTEXT *
+    extern "C" void __stdcall RtlUnwind // can't find def'n
+                    ( void *
                     , void *
                     , EXCEPTION_RECORD *
                     , void * );
