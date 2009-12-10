@@ -340,8 +340,8 @@ static void fb_newline( void )
 
     /* lines might equal 0, in which case no action is needed. */
 
-    max_advance = 0;
     while( desired_lines > 0 ) {
+        max_advance = 0;
         for( i = 0; i < bin_driver->newlines.count; i++ ) {
             if( bin_driver->newlines.newlineblocks[i].advance <= desired_lines ) {
                 if( max_advance < \
@@ -3486,7 +3486,6 @@ void fb_first_text_line_pass( text_line * out_line )
     current = current->next;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
-//        x_address = desired_state.x_address;
         if( current_state.font_number != current->font_number ) {
             if( wgml_fonts[current->font_number].font_style != NULL ) {
                 if( wgml_fonts[current->font_number].font_style->lineprocs \
@@ -3766,7 +3765,6 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
 
     /* The "first text_chars instance" sequence. */
 
-//    x_address = desired_state.x_address;
     fb_first_text_chars( current, cur_lineproc );
 
     /* Now do the remaining text_chars instances. */
@@ -3794,7 +3792,6 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
             if( current == NULL ) break;
 
             desired_state.x_address = current->x_address;
-//            x_address = desired_state.x_address;
             if( cur_lineproc != NULL) {
                 if( current_state.font_number != current->font_number ) {
                     desired_state.font_number = current->font_number;
