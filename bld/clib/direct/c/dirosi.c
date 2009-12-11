@@ -40,6 +40,8 @@
 #include "tinyio.h"
 #include "seterrno.h"
 #include "msdos.h"
+#include "_direct.h"
+#include "strdup.h"
 
 #define SEEK_ATTRIB (TIO_HIDDEN | TIO_SYSTEM | TIO_SUBDIRECTORY)
 
@@ -79,7 +81,7 @@ _WCRTLINK DIR_TYPE *_opendir( const char *dirname, unsigned attr, DIR_TYPE *dirp
     int         i;
     tiny_ret_t  rc;
     char        pathname[_MAX_PATH+6];
-    char        *p;
+    const char  *p;
     int         flag_opendir = ( dirp == NULL );
     int         opened;
 
@@ -124,7 +126,7 @@ _WCRTLINK DIR_TYPE *_opendir( const char *dirname, unsigned attr, DIR_TYPE *dirp
         dirp = lib_malloc( sizeof( DIR_TYPE ) );
         if( dirp == NULL ) {
             __find_close( &tmp );
-            __set_errno_dos( ERROR_NOT_ENOUGH_MEMORY );
+            __set_errno_dos( E_nomem );
             return( NULL );
         }
         tmp.d_openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirname );
