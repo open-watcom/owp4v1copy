@@ -37,42 +37,57 @@ include struct.inc
 include int21.inc
 
         xref    __doserror_
-        modstart dosfile
+        modstart dosopen
 
-        defp    _dos_close
-        xdefp   "C",_dos_close
+        defp    _dos_open
+        xdefp   "C",_dos_open
 ;
-;       unsigned _dos_close( int handle );
+;       unsigned _dos_open( char *path, unsigned mode, int *handle )
 ;
 ifdef __STACK__
-        mov     EAX,4[ESP]      ; get handle
+        push    EBX
+        push    EDX
+        mov     EAX,12[ESP]     ; get path
+        mov     EDX,16[ESP]     ; mode
+        mov     EBX,20[ESP]     ; handle
 endif
-        push    EBX             ; save BX
-        mov     BX,AX           ; get file handle
-        mov     AH,3Eh          ; close file
+ifdef __WATCOM_LFN__
+        push    EBX
+        push    ESI
+endif
+        xchg    EAX,EDX         ; AX = mode, EDX = path
+ifdef __WATCOM_LFN__
+        mov     ESI,EDX         ; DS:ESI for lfn
+        mov     EBX,EAX         ; BX=attribs for lfn
+        mov     DX,0            ; open
+        push    EBX             ; save mode
+        mov     AX,716Ch        ; create/open file
         int21h                  ; ...
+        pop     EBX             ; restore mode
+        jc      nonlfn          ; if error use non-lfn
+        cmp     AX,7100h        ; test for lfn support
+        jnz     finishandret    ; finish
+nonlfn:
+        mov     EDX,ESI         ; DS:EDX for sfn version
+        mov     EAX,EBX         ; EAX=mode for sfn version
+endif
+        mov     AH,3Dh          ; open the file
+        int21h                  ; ...
+finishandret:
+        _if     nc              ; if no error
+          mov   [EBX],EAX       ; - store handle
+        _endif                  ; endif
         call    __doserror_     ; set return code
-        pop     EBX             ; restore BX
-        ret                     ; return to caller
-        endproc _dos_close
-
-        defp    _dos_commit
-        xdefp   "C",_dos_commit
-;
-;       unsigned _dos_commit( int handle );
-;
+ifdef __WATCOM_LFN__
+        pop     ESI
+        pop     EBX
+endif
 ifdef __STACK__
-        mov     EAX,4[ESP]      ; get handle
+        pop     EDX
+        pop     EBX
 endif
-        push    EBX             ; save BX
-        mov     BX,AX           ; get file handle
-        mov     AH,68h          ; commit file
-        clc
-        int21h                  ; ...
-        call    __doserror_     ; set return code
-        pop     EBX             ; restore BX
         ret                     ; return to caller
-        endproc _dos_commit
+        endproc _dos_open
 
         endmod
         end

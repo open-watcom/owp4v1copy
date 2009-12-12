@@ -58,6 +58,8 @@
 !inject iow32.obj                                                               w32
 !inject mem086.obj   d16     dpm
 !inject mem386.obj       d32
+!inject open086.obj  d16     dpm                                            w16
+!inject open386.obj      d32                                                    w32 osi
 !inject reados2.obj                                         o16 o32
 !inject readwnt.obj                      nt nta ntp
 !inject sdateos2.obj                                        o16 o32
