@@ -512,6 +512,7 @@ IoSetCompletionRoutineEx@28
 IoSetDeviceInterfaceState@8
 IoSetDevicePropertyData@28
 IoSetDeviceToVerify@8
+IoSetFileObjectIgnoreSharing@4
 IoSetFileOrigin@8
 IoSetHardErrorOrVerifyDevice@8
 IoSetInformation@16
@@ -625,6 +626,7 @@ KeQueryActiveProcessorCountEx@4
 KeQueryActiveProcessors@0
 KeQueryDpcWatchdogInformation@4
 KeQueryGroupAffinity@4
+KeQueryHardwareCounterConfiguration@12
 KeQueryHighestNodeNumber@0
 KeQueryInterruptTime@0
 KeQueryLogicalProcessorRelationship@16
@@ -670,6 +672,7 @@ KeSaveFloatingPointState@4
 KeSetBasePriorityThread@8
 KeSetCoalescableTimer@24
 KeSetEvent@12
+KeSetHardwareCounterConfiguration@8
 KeSetIdealProcessorThread@8
 KeSetImportanceDpc@8
 KeSetKernelStackSwapEnable@4
@@ -874,10 +877,14 @@ PsDereferencePrimaryToken@4
 PsDisableImpersonation@8
 PsGetCurrentProcessId@0
 PsGetCurrentThreadId@0
+PsGetProcessCreateTimeQuadPart@4
 PsGetProcessExitTime@0
 PsGetProcessId@4
+PsGetThreadId@4
+PsGetThreadProcessId@4
 PsGetVersion@16
 PsImpersonateClient@20
+PsInitialSystemProcess
 PsIsCurrentThreadPrefetching@0
 PsIsSystemThread@4
 PsIsThreadTerminating@4
@@ -892,6 +899,7 @@ PsRestoreImpersonation@8
 PsReturnPoolQuota@12
 PsRevertToSelf@0
 PsSetCreateProcessNotifyRoutine@8
+PsSetCreateProcessNotifyRoutineEx@8
 PsSetCreateThreadNotifyRoutine@4
 PsSetCurrentThreadPrefetching@4
 PsSetLoadImageNotifyRoutine@4
@@ -931,11 +939,13 @@ RtlCompareString@12
 RtlCompareUnicodeString@12
 RtlCompressBuffer@32
 RtlCompressChunks@28
+RtlContractHashTable@4
 RtlCopyLuid@8
 RtlCopySid@12
 RtlCopyString@8
 RtlCopyUnicodeString@8
 RtlCreateAcl@12
+RtlCreateHashTable@12
 RtlCreateHeap@24
 RtlCreateRegistryKey@8
 RtlCreateSecurityDescriptor@8
@@ -949,12 +959,16 @@ RtlDelete@4
 RtlDeleteAce@8
 RtlDeleteElementGenericTable@8
 RtlDeleteElementGenericTableAvl@8
+RtlDeleteHashTable@4
 RtlDeleteNoSplay@8
 RtlDeleteRegistryValue@12
 RtlDescribeChunk@20
 RtlDestroyHeap@4
 RtlDowncaseUnicodeString@12
 RtlDuplicateUnicodeString@12
+RtlEndEnumerationHashTable@8
+RtlEndWeakEnumerationHashTable@8
+RtlEnumerateEntryHashTable@8
 RtlEnumerateGenericTable@8
 RtlEnumerateGenericTableAvl@8
 RtlEnumerateGenericTableLikeADictionary@28
@@ -963,6 +977,7 @@ RtlEnumerateGenericTableWithoutSplayingAvl@8
 RtlEqualSid@8
 RtlEqualString@12
 RtlEqualUnicodeString@12
+RtlExpandHashTable@4
 RtlExtendedIntegerMultiply@12
 RtlExtendedLargeIntegerDivide@16
 RtlExtendedMagicDivide@20
@@ -994,6 +1009,7 @@ RtlGetElementGenericTable@8
 RtlGetElementGenericTableAvl@8
 RtlGetEnabledExtendedFeatures@8
 RtlGetGroupSecurityDescriptor@12
+RtlGetNextEntryHashTable@8
 RtlGetOwnerSecurityDescriptor@12
 RtlGetProductInfo@20
 RtlGetSaclSecurityDescriptor@16
@@ -1005,9 +1021,11 @@ RtlIdnToUnicode@20
 RtlInitAnsiString@8
 RtlInitAnsiStringEx@8
 RtlInitCodePageTable@8
+RtlInitEnumerationHashTable@8
 RtlInitString@8
 RtlInitUnicodeString@8
 RtlInitUnicodeStringEx@8
+RtlInitWeakEnumerationHashTable@8
 RtlInitializeBitMap@12
 RtlInitializeGenericTable@20
 RtlInitializeGenericTableAvl@20
@@ -1017,6 +1035,7 @@ RtlInsertElementGenericTable@16
 RtlInsertElementGenericTableAvl@16
 RtlInsertElementGenericTableFull@24
 RtlInsertElementGenericTableFullAvl@24
+RtlInsertEntryHashTable@16
 RtlInsertUnicodePrefix@12
 RtlInt64ToUnicodeString@16
 RtlIntegerToUnicodeString@12
@@ -1037,6 +1056,7 @@ RtlLookupElementGenericTable@8
 RtlLookupElementGenericTableAvl@8
 RtlLookupElementGenericTableFull@16
 RtlLookupElementGenericTableFullAvl@16
+RtlLookupEntryHashTable@12
 RtlLookupFirstMatchingElementGenericTableAvl@12
 RtlMapGenericMask@8
 RtlMultiByteToUnicodeN@20
@@ -1059,6 +1079,7 @@ RtlRandom@4
 RtlRandomEx@4
 RtlRealPredecessor@4
 RtlRealSuccessor@4
+RtlRemoveEntryHashTable@12
 RtlRemoveUnicodePrefix@8
 RtlReserveChunk@20
 RtlRunOnceBeginInitialize@12
@@ -1111,6 +1132,7 @@ RtlValidateUnicodeString@8
 RtlVerifyVersionInfo@16
 RtlVolumeDeviceToDosName@8
 RtlWalkFrameChain@12
+RtlWeaklyEnumerateEntryHashTable@8
 RtlWriteRegistryValue@24
 RtlxAnsiStringToUnicodeSize@4
 RtlxOemStringToUnicodeSize@4
@@ -1221,8 +1243,6 @@ WRITE_REGISTER_BUFFER_USHORT@12
 WRITE_REGISTER_UCHAR@8
 WRITE_REGISTER_ULONG@8
 WRITE_REGISTER_USHORT@8
-WheaRegisterErrSrcInitializer@8
-WheaReportHwError@4
 WmiQueryTraceInformation@20
 WmiTraceMessage
 WmiTraceMessageVa@24
@@ -1248,6 +1268,7 @@ ZwDeleteFile@4
 ZwDeleteKey@4
 ZwDeleteValueKey@8
 ZwDeviceIoControlFile@40
+ZwDisplayString@4
 ZwDuplicateObject@28
 ZwEnumerateKey@24
 ZwEnumerateTransactionObject@20
@@ -1279,6 +1300,7 @@ ZwOpenThreadTokenEx@20
 ZwOpenTimer@12
 ZwOpenTransaction@20
 ZwOpenTransactionManager@24
+ZwPowerInformation@20
 ZwPrePrepareEnlistment@8
 ZwPrepareComplete@8
 ZwPrepareEnlistment@8
@@ -1313,6 +1335,7 @@ ZwSetInformationTransaction@16
 ZwSetInformationTransactionManager
 ZwSetSecurityObject@12
 ZwSetTimer@28
+ZwSetTimerEx@16
 ZwSetValueKey@24
 ZwSetVolumeInformationFile@20
 ZwTerminateProcess@8

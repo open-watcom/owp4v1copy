@@ -138,11 +138,13 @@ RtlCompareString@12
 RtlCompareUnicodeString@12
 RtlCompareUnicodeStrings@20
 RtlCompressBuffer@32
+RtlContractHashTable@4
 RtlCopyLuid@8
 RtlCopySid@12
 RtlCopyString@8
 RtlCopyUnicodeString@8
 RtlCreateAcl@12
+RtlCreateHashTable@12
 RtlCreateHeap@24
 RtlCreateRegistryKey@8
 RtlCreateSecurityDescriptor@8
@@ -156,12 +158,16 @@ RtlDelete@4
 RtlDeleteAce@8
 RtlDeleteElementGenericTable@8
 RtlDeleteElementGenericTableAvl@8
+RtlDeleteHashTable@4
 RtlDeleteNoSplay@8
 RtlDeleteRegistryValue@12
 RtlDestroyHeap@4
 RtlDowncaseUnicodeChar@4
 RtlDowncaseUnicodeString@12
 RtlDuplicateUnicodeString@12
+RtlEndEnumerationHashTable@8
+RtlEndWeakEnumerationHashTable@8
+RtlEnumerateEntryHashTable@8
 RtlEnumerateGenericTable@8
 RtlEnumerateGenericTableAvl@8
 RtlEnumerateGenericTableLikeADictionary@28
@@ -171,6 +177,7 @@ RtlEqualPrefixSid@8
 RtlEqualSid@8
 RtlEqualString@12
 RtlEqualUnicodeString@12
+RtlExpandHashTable@4
 RtlExtendedIntegerMultiply@12
 RtlExtendedLargeIntegerDivide@16
 RtlExtendedMagicDivide@20
@@ -200,6 +207,7 @@ RtlGetElementGenericTable@8
 RtlGetElementGenericTableAvl@8
 RtlGetEnabledExtendedFeatures@8
 RtlGetGroupSecurityDescriptor@12
+RtlGetNextEntryHashTable@8
 RtlGetOwnerSecurityDescriptor@12
 RtlGetProductInfo@20
 RtlGetSaclSecurityDescriptor@16
@@ -212,9 +220,11 @@ RtlIdnToUnicode@20
 RtlInitAnsiString@8
 RtlInitAnsiStringEx@8
 RtlInitCodePageTable@8
+RtlInitEnumerationHashTable@8
 RtlInitString@8
 RtlInitUnicodeString@8
 RtlInitUnicodeStringEx@8
+RtlInitWeakEnumerationHashTable@8
 RtlInitializeBitMap@12
 RtlInitializeGenericTable@20
 RtlInitializeGenericTableAvl@20
@@ -223,6 +233,7 @@ RtlInsertElementGenericTable@16
 RtlInsertElementGenericTableAvl@16
 RtlInsertElementGenericTableFull@24
 RtlInsertElementGenericTableFullAvl@24
+RtlInsertEntryHashTable@16
 RtlInt64ToUnicodeString@16
 RtlIntegerToUnicodeString@12
 RtlIoDecodeMemIoResource@16
@@ -239,6 +250,7 @@ RtlLookupElementGenericTable@8
 RtlLookupElementGenericTableAvl@8
 RtlLookupElementGenericTableFull@16
 RtlLookupElementGenericTableFullAvl@16
+RtlLookupEntryHashTable@12
 RtlMapGenericMask@8
 RtlMultiByteToUnicodeN@20
 RtlMultiByteToUnicodeSize@12
@@ -257,6 +269,7 @@ RtlRandom@4
 RtlRandomEx@4
 RtlRealPredecessor@4
 RtlRealSuccessor@4
+RtlRemoveEntryHashTable@12
 RtlRunOnceBeginInitialize@12
 RtlRunOnceComplete@12
 RtlRunOnceExecuteOnce@16
@@ -305,6 +318,7 @@ RtlValidSid@4
 RtlValidateUnicodeString@8
 RtlVerifyVersionInfo@16
 RtlWalkFrameChain@12
+RtlWeaklyEnumerateEntryHashTable@8
 RtlWriteRegistryValue@24
 RtlxAnsiStringToUnicodeSize@4
 RtlxOemStringToUnicodeSize@4
@@ -334,6 +348,7 @@ ZwDeleteFile@4
 ZwDeleteKey@4
 ZwDeleteValueKey@8
 ZwDeviceIoControlFile@40
+ZwDisplayString@4
 ZwDuplicateObject@28
 ZwEnumerateKey@24
 ZwEnumerateTransactionObject@20
@@ -367,6 +382,7 @@ ZwOpenThreadTokenEx@20
 ZwOpenTimer@12
 ZwOpenTransaction@20
 ZwOpenTransactionManager@24
+ZwPowerInformation@20
 ZwPrePrepareComplete@8
 ZwPrePrepareEnlistment@8
 ZwPrepareComplete@8
@@ -412,6 +428,7 @@ ZwSetInformationTransactionManager@16
 ZwSetQuotaInformationFile@16
 ZwSetSecurityObject@12
 ZwSetTimer@28
+ZwSetTimerEx@16
 ZwSetValueKey@24
 ZwSetVolumeInformationFile@20
 ZwSinglePhaseReject@8

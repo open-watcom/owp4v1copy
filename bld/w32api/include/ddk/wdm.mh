@@ -234,6 +234,11 @@ typedef PVOID               *PCLFS_MGMT_CLIENT;
 /* Extended save alignment */
 #define XSAVE_ALIGN 64
 
+/* Size of the extended registers in the x86 context record */
+#ifdef _X86_
+    #define MAXIMUM_SUPPORTED_EXTENSION 512
+#endif
+
 /* Lock queue flags */
 #define LOCK_QUEUE_WAIT                 1
 #define LOCK_QUEUE_WAIT_BIT             0
@@ -8472,10 +8477,10 @@ NTKERNELAPI NTSTATUS NTAPI          IoRegisterContainerNotification( IO_CONTAINE
 NTKERNELAPI NTSTATUS NTAPI          IoReplacePartitionUnit( PDEVICE_OBJECT, PDEVICE_OBJECT, ULONG );
 NTKERNELAPI VOID NTAPI              IoUnregisterContainerNotification( PVOID );
 NTKERNELAPI NTSTATUS NTAPI          IoUnregisterPlugPlayNotificationEx( PVOID );
+NTKERNELAPI USHORT NTAPI            KeGetCurrentNodeNumber( VOID );
 NTKERNELAPI ULONG NTAPI             KeGetCurrentProcessorNumberEx( PPROCESSOR_NUMBER );
 NTKERNELAPI USHORT NTAPI            KeQueryActiveGroupCount( VOID );
 NTKERNELAPI ULONG NTAPI             KeQueryActiveProcessorCountEx( USHORT );
-NTKERNELAPI USHORT NTAPI            KeGetCurrentNodeNumber( VOID );
 NTKERNELAPI KAFFINITY NTAPI         KeQueryGroupAffinity( USHORT );
 NTKERNELAPI USHORT NTAPI            KeQueryHighestNodeNumber( VOID );
 NTKERNELAPI NTSTATUS NTAPI          KeQueryLogicalProcessorRelationship( PPROCESSOR_NUMBER, LOGICAL_PROCESSOR_RELATIONSHIP, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX, PULONG );

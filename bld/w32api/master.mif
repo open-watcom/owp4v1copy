@@ -540,6 +540,7 @@ libs =                       &
         ddk/ndis.lib         &
         ddk/ntdll.lib        &
         ddk/ntoskrnl.lib     &
+        ddk/pshed.lib        &
         ddk/rtlver.lib       &
         ddk/scsiport.lib     &
         ddk/storport.lib     &

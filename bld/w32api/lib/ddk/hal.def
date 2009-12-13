@@ -17,9 +17,11 @@ HalAcquireDisplayOwnership@4
 HalAllocateAdapterChannel@16
 HalAllocateCommonBuffer@16
 HalAllocateCrashDumpRegisters@8
+HalAllocateHardwareCounters@16
 HalAssignSlotResources@32
-HalBugCheckSystem@4
+HalBugCheckSystem@8
 HalFreeCommonBuffer@24
+HalFreeHardwareCounters@4
 HalGetAdapter@8
 HalGetBusData@20
 HalGetBusDataByOffset@24
