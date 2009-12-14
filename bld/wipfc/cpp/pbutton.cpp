@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include <algorithm>
+#include <cwctype>
 #include "pbutton.hpp"
 #include "controls.hpp"
 #include "document.hpp"

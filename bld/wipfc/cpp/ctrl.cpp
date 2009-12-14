@@ -36,6 +36,7 @@
 ****************************************************************************/
 
 #include <algorithm>
+#include <cwctype>
 #include "ctrl.hpp"
 #include "controls.hpp"
 #include "document.hpp"
