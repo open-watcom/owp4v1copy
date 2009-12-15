@@ -446,6 +446,7 @@ typedef struct {
 #define R_386_RELATIVE          8
 #define R_386_GOTOFF            9
 #define R_386_GOTPC             10
+#define R_386_32PLT             11
 
 //X86_64
 #define R_X86_64_NONE           0
@@ -559,11 +560,28 @@ typedef struct {
 #define R_SPARC_PCPLT10         29
 #define R_SPARC_10              30
 #define R_SPARC_11              31
+#define R_SPARC_64              32
+#define R_SPARC_OLO10           33
 #define R_SPARC_WDISP16         40
 #define R_SPARC_WDISP19         41
 #define R_SPARC_7               43
 #define R_SPARC_5               44
 #define R_SPARC_6               45
+#define R_SPARC_DISP64              46
+#define R_SPARC_PLT64               47
+#define R_SPARC_HIX22               48
+#define R_SPARC_LOX10               49
+#define R_SPARC_H44                 50
+#define R_SPARC_M44                 51
+#define R_SPARC_L44                 52
+#define R_SPARC_REGISTER            53
+#define R_SPARC_UA64                54
+#define R_SPARC_UA16                55
+#define R_SPARC_GOTDATA_HIX22       80
+#define R_SPARC_GOTDATA_LOX22       81
+#define R_SPARC_GOTDATA_OP_HIX22    82
+#define R_SPARC_GOTDATA_OP_LOX22    83
+#define R_SPARC_GOTDATA_OP          84
 
 // MIPS
 #define R_MIPS_NONE             0

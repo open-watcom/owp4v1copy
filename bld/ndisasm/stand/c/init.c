@@ -707,6 +707,7 @@ static return_val initORL( void )
                 }
                 break;
             case ORL_MACHINE_TYPE_SPARC:
+            case ORL_MACHINE_TYPE_SPARCPLUS:
                 if( DisInit( DISCPU_sparc, &DHnd, byte_swap ) != DR_OK ) {
                     ORLFini( ORLHnd );
                     PrintErrorMsg( OKAY, WHERE_UNSUPPORTED_PROC );

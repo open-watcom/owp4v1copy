@@ -363,6 +363,31 @@ static orl_reloc_type convertAMD64Reloc( elf_reloc_type elf_type )
 }
 
 
+static orl_reloc_type convertSPARCReloc( elf_reloc_type elf_type )
+{
+    switch( elf_type ) {
+    case R_SPARC_NONE:
+    case R_SPARC_COPY:
+        return( ORL_RELOC_TYPE_ABSOLUTE );
+    case R_SPARC_8:
+        return( ORL_RELOC_TYPE_WORD_8 );
+    case R_SPARC_16:
+        return( ORL_RELOC_TYPE_WORD_16 );
+    case R_SPARC_32:
+        return( ORL_RELOC_TYPE_WORD_32 );
+    case R_SPARC_DISP8:
+        return( ORL_RELOC_TYPE_REL_8 );
+    case R_SPARC_DISP16:
+        return( ORL_RELOC_TYPE_REL_16 );
+    case R_SPARC_DISP32:
+        return( ORL_RELOC_TYPE_REL_32 );
+    default:
+        assert( 0 );
+    }
+    return( ORL_RELOC_TYPE_NONE );
+}
+
+
 static orl_reloc_type convertMIPSReloc( elf_reloc_type elf_type )
 {
     switch( elf_type ) {
@@ -424,6 +449,9 @@ orl_reloc_type ElfConvertRelocType( elf_file_handle elf_file_hnd, elf_reloc_type
         return( convert386Reloc( elf_type ) );
     case ORL_MACHINE_TYPE_AMD64:
         return( convertAMD64Reloc( elf_type ) );
+    case ORL_MACHINE_TYPE_SPARC:
+    case ORL_MACHINE_TYPE_SPARCPLUS:
+        return( convertSPARCReloc( elf_type ) );
     case ORL_MACHINE_TYPE_R3000:
     case ORL_MACHINE_TYPE_R4000:
         return( convertMIPSReloc( elf_type ) );

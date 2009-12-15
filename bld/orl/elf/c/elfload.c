@@ -198,6 +198,9 @@ static void determine_file_specs( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hd
     case EM_SPARC:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_SPARC;
         break;
+    case EM_SPARC32PLUS:
+        elf_file_hnd->machine_type = ORL_MACHINE_TYPE_SPARCPLUS;
+        break;
     case EM_386:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_I386;
         break;

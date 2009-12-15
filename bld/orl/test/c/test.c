@@ -73,9 +73,10 @@ static char *machType[] = {
     "DEC Alpha",
     "MIPS R3000",
     "MIPS R4000",
-    "PPC601",
+    "PowerPC 601",
     "Intel 8086",
-    "AMD64"
+    "AMD64",
+    "SPARC V8+"
 };
 
 orl_return PrintSymbolInfo( orl_symbol_handle symbol )
