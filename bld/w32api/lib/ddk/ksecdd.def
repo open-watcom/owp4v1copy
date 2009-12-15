@@ -28,4 +28,14 @@ SecLookupWellKnownSid@16
 SecMakeSPN@32
 SecMakeSPNEx@36
 SecMakeSPNEx2@40
+SspiCompareAuthIdentities@16
+SspiCopyAuthIdentity@8
+SspiEncodeAuthIdentityAsStrings@16
+SspiEncodeStringsAsAuthIdentity@16
+SspiFreeAuthIdentity@4
+SspiLocalFree@4
+SspiMarshalAuthIdentity@12
+SspiUnmarshalAuthIdentity@12
+SspiValidateAuthIdentity@4
+SspiZeroAuthIdentity@4
 VerifySignature@16

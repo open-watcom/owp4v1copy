@@ -25,7 +25,6 @@ NtCloseObjectAuditAlarm@12
 NtCommitComplete@8
 NtCommitEnlistment@8
 NtCommitTransaction@8
-NtConnectPort@32
 NtCreateEnlistment@32
 NtCreateFile@44
 NtCreateResourceManager@28
@@ -74,6 +73,7 @@ NtQueryInformationResourceManager@20
 NtQueryInformationToken@20
 NtQueryInformationTransaction@20
 NtQueryInformationTransactionManager@20
+NtQueryObject@20
 NtQueryQuotaInformationFile@36
 NtQuerySecurityObject@20
 NtQueryVolumeInformationFile@20
@@ -85,13 +85,11 @@ NtRecoverTransactionManager@4
 NtRegisterProtocolAddressInformation@20
 NtRenameTransactionManager@8
 NtRequestDeviceWakeup@4
-NtRequestWaitReplyPort@8
 NtRequestWakeupLatency@4
 NtRollbackComplete@8
 NtRollbackEnlistment@8
 NtRollbackTransaction@8
 NtRollforwardTransactionManager@8
-NtSecureConnectPort@36
 NtSetInformationEnlistment@16
 NtSetInformationFile@20
 NtSetInformationResourceManager@16
@@ -113,6 +111,7 @@ PfxInsertPrefix@12
 PfxRemovePrefix@8
 RtlAbsoluteToSelfRelativeSD@12
 RtlAddAccessAllowedAce@16
+RtlAddAccessAllowedAceEx@20
 RtlAddAce@20
 RtlAllocateAndInitializeSid@44
 RtlAllocateHeap@12
@@ -139,6 +138,7 @@ RtlCompareUnicodeString@12
 RtlCompareUnicodeStrings@20
 RtlCompressBuffer@32
 RtlContractHashTable@4
+RtlConvertSidToUnicodeString@12
 RtlCopyLuid@8
 RtlCopySid@12
 RtlCopyString@8
@@ -151,6 +151,7 @@ RtlCreateSecurityDescriptor@8
 RtlCreateServiceSid@12
 RtlCreateSystemVolumeInformationFolder@4
 RtlCreateUnicodeString@8
+RtlCreateVirtualAccountSid@16
 RtlCustomCPToUnicodeN@24
 RtlDecompressBuffer@24
 RtlDecompressFragment@32
@@ -270,6 +271,7 @@ RtlRandomEx@4
 RtlRealPredecessor@4
 RtlRealSuccessor@4
 RtlRemoveEntryHashTable@12
+RtlReplaceSidInSd@16
 RtlRunOnceBeginInitialize@12
 RtlRunOnceComplete@12
 RtlRunOnceExecuteOnce@16
@@ -332,7 +334,6 @@ ZwClose@4
 ZwCommitComplete@8
 ZwCommitEnlistment@8
 ZwCommitTransaction@8
-ZwConnectPort@32
 ZwCreateDirectoryObject@12
 ZwCreateEnlistment@32
 ZwCreateEvent@20
@@ -350,6 +351,7 @@ ZwDeleteValueKey@8
 ZwDeviceIoControlFile@40
 ZwDisplayString@4
 ZwDuplicateObject@28
+ZwDuplicateToken@24
 ZwEnumerateKey@24
 ZwEnumerateTransactionObject@20
 ZwEnumerateValueKey@24
@@ -398,6 +400,7 @@ ZwQueryInformationTransaction@20
 ZwQueryInformationTransactionManager@20
 ZwQueryKey@20
 ZwQueryMultipleValueKey@24
+ZwQueryObject@20
 ZwQueryQuotaInformationFile@36
 ZwQuerySecurityObject@20
 ZwQuerySymbolicLinkObject@12
@@ -409,12 +412,10 @@ ZwRecoverEnlistment@8
 ZwRecoverResourceManager@4
 ZwRecoverTransactionManager@4
 ZwRenameKey@8
-ZwRequestWaitReplyPort@12
 ZwRollbackComplete@8
 ZwRollbackEnlistment@8
 ZwRollbackTransaction@8
 ZwRollforwardTransactionManager@8
-ZwSecureConnectPort@36
 ZwSetEaFile@16
 ZwSetEvent@8
 ZwSetInformationEnlistment@16

@@ -26,6 +26,7 @@ typedef STRING              LSA_STRING;
 typedef STRING              *PLSA_STRING;
 typedef OBJECT_ATTRIBUTES   LSA_OBJECT_ATTRIBUTES;
 typedef OBJECT_ATTRIBUTES   *PLSA_OBJECT_ATTRIBUTES;
+typedef ULONG               ACCESS_REASON;
 typedef ULONG               LBN;
 typedef LBN                 *PLBN;
 typedef ULONG               VBN;
@@ -33,11 +34,6 @@ typedef VBN                 *PVBN;
 typedef PVOID               OPLOCK;
 typedef PVOID               *POPLOCK;
 typedef PVOID               PNOTIFY_SYNC;
-typedef GUID                *PGUID;
-typedef ULONG               KSAVEPOINT;
-typedef ULONG               *PKSAVEPOINT;
-typedef ULONG               KCRM_PROTOCOL_ID;
-typedef ULONG               *PKCRM_PROTOCOL_ID;
 #if (NTDDI_VERSION >= 0x06000000)
 typedef ULONG               FSRTL_ALLOCATE_ECPLIST_FLAGS;
 typedef ULONG               FSRTL_ALLOCATE_ECP_FLAGS;
@@ -45,10 +41,6 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #endif
 
 /* Data type aliases */
-#define LPC_CLIENT_ID   CLIENT_ID
-#define LPC_SIZE_T      SIZE_T
-#define LPC_PVOID       PVOID
-#define LPC_HANDLE      HANDLE
 #define EX_PUSH_LOCK    ULONG_PTR
 #define PEX_PUSH_LOCK   PULONG_PTR
 
@@ -86,6 +78,7 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define SECURITY_NULL_RID                               0x00000000L
 #define SECURITY_WORLD_RID                              0x00000000L
 #define SECURITY_LOCAL_RID                              0x00000000L
+#define SECURITY_LOCAL_LOGON_RID                        0x00000001L
 #define SECURITY_CREATOR_OWNER_RID                      0x00000000L
 #define SECURITY_CREATOR_GROUP_RID                      0x00000001L
 #define SECURITY_CREATOR_OWNER_SERVER_RID               0x00000002L
@@ -120,11 +113,24 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define SECURITY_PACKAGE_NTLM_RID                       0x0000000AL
 #define SECURITY_PACKAGE_SCHANNEL_RID                   0x0000000EL
 #define SECURITY_PACKAGE_DIGEST_RID                     0x00000015L
+#define SECURITY_CRED_TYPE_BASE_RID                     0x00000041L
+#define SECURITY_CRED_TYPE_THIS_ORG_CERT_RID            0x00000001L
+#define SECURITY_MIN_BASE_RID                           0x00000050L
 #define SECURITY_SERVICE_ID_BASE_RID                    0x00000050L
 #define SECURITY_RESERVED_ID_BASE_RID                   0x00000051L
+#define SECURITY_APPPOOL_ID_BASE_RID                    0x00000052L
+#define SECURITY_VIRTUALSERVER_ID_BASE_RID              0x00000053L
+#define SECURITY_USERMODEDRIVERHOST_ID_BASE_RID         0x00000054L
+#define SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_BASE_RID  0x00000055L
+#define SECURITY_WMIHOST_ID_BASE_RID                    0x00000056L
+#define SECURITY_TASK_ID_BASE_RID                       0x00000057L
+#define SECURITY_NFS_ID_BASE_RID                        0x00000058L
+#define SECURITY_COM_ID_BASE_RID                        0x00000059L
+#define SECURITY_MAX_BASE_RID                           0x0000006FL
 #define SECURITY_MAX_ALWAYS_FITLERED                    0x000003E7L
 #define SECURITY_MIN_NEVER_FILTERED                     0x000003E8L
 #define SECURITY_OTHER_ORGANIZATION_RID                 0x000003E8L
+#define SECURITY_WINDOWSMOBILE_ID_BASE_RID              0x00000070L
 #define SECURITY_MANDATORY_UNTRUSTED_RID                0x00000000L
 #define SECURITY_MANDATORY_LOW_RID                      0x00001000L
 #define SECURITY_MANDATORY_MEDIUM_RID                   0x00002000L
@@ -133,6 +139,19 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define SECURITY_MANDATORY_PROTECTED_PROCESS_RID        0x00005000L
 #define SECURITY_MANDATORY_MAXIMUM_USER_RID \
     SECURITY_MANDATORY_SYSTEM_RID
+
+/* Relative identifier counts */
+#define SECURITY_LOGON_IDS_RID_COUNT                        3L
+#define SECURITY_NT_NON_UNIQUE_SUB_AUTH_COUNT               3L
+#define SECURITY_PACKAGE_RID_COUNT                          2L
+#define SECURITY_CRED_TYPE_RID_COUNT                        2L
+#define SECURITY_SERVICE_ID_RID_COUNT                       6L
+#define SECURITY_APPPOOL_ID_RID_COUNT                       6L
+#define SECURITY_VIRTUALSERVER_ID_RID_COUNT                 6L
+#define SECURITY_USERMODEDRIVERHOST_ID_RID_COUNT            6L
+#define SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_RID_COUNT 6L
+#define SECURITY_WMIHOST_ID_RID_COUNT                       6L
+#define SECURITY_VIRTUALACCOUNT_ID_RID_COUNT                6L
 
 /* ACE types */
 #define ACCESS_ALLOWED_ACE_TYPE                 0x00
@@ -213,6 +232,15 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define ACCESS_DS_OBJECT_TYPE_NAME_A    "Directory Service Object"
 #define ACCESS_DS_OBJECT_TYPE_NAME_W    L"Directory Service Object"
 
+/* Access reason masks */
+#define ACCESS_REASON_TYPE_MASK 0xFFFF0000
+#define ACCESS_REASON_DATA_MASK 0x0000FFFF
+
+/* Security descriptor flags */
+#define SE_SECURITY_DESCRIPTOR_FLAG_NO_OWNER_ACE    0x00000001L
+#define SE_SECURITY_DESCRIPTOR_FLAG_NO_LABEL_ACE    0x00000002L
+#define SE_SECURITY_DESCRIPTOR_VALID_FLAGS          0x00000003L
+
 /* Token access rights */
 #define TOKEN_ASSIGN_PRIMARY    0x0001L
 #define TOKEN_DUPLICATE         0x0002L
@@ -241,7 +269,7 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     (TOKEN_MANDATORY_POLICY_NO_WRITE_UP | TOKEN_MANDATORY_POLICY_NEW_PROCESS_MIN)
 
 /* Number of token audit policy subcategories */
-#define POLICY_AUDIT_SUBCATEGORY_COUNT  50
+#define POLICY_AUDIT_SUBCATEGORY_COUNT  53
 
 /* Length of a token source name */
 #define TOKEN_SOURCE_LENGTH 8
@@ -474,22 +502,26 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define FILE_PIPE_SERVER_END    0x00000001L
 
 /* File system flags */
-#define FILE_CASE_SENSITIVE_SEARCH      0x00000001L
-#define FILE_CASE_PRESERVED_NAMES       0x00000002L
-#define FILE_UNICODE_ON_DISK            0x00000004L
-#define FILE_PERSISTENT_ACLS            0x00000008L
-#define FILE_FILE_COMPRESSION           0x00000010L
-#define FILE_VOLUME_QUOTAS              0x00000020L
-#define FILE_SUPPORTS_SPARSE_FILES      0x00000040L
-#define FILE_SUPPORTS_REPARSE_POINTS    0x00000080L
-#define FILE_SUPPORTS_REMOTE_STORAGE    0x00000100L
-#define FILE_VOLUME_IS_COMPRESSED       0x00008000L
-#define FILE_SUPPORTS_OBJECT_IDS        0x00010000L
-#define FILE_SUPPORTS_ENCRYPTION        0x00020000L
-#define FILE_NAMED_STREAMS              0x00040000L
-#define FILE_READ_ONLY_VOLUME           0x00080000L
-#define FILE_SEQUENTIAL_WRITE_ONCE      0x00100000L
-#define FILE_SUPPORTS_TRANSACTIONS      0x00200000L
+#define FILE_CASE_SENSITIVE_SEARCH          0x00000001L
+#define FILE_CASE_PRESERVED_NAMES           0x00000002L
+#define FILE_UNICODE_ON_DISK                0x00000004L
+#define FILE_PERSISTENT_ACLS                0x00000008L
+#define FILE_FILE_COMPRESSION               0x00000010L
+#define FILE_VOLUME_QUOTAS                  0x00000020L
+#define FILE_SUPPORTS_SPARSE_FILES          0x00000040L
+#define FILE_SUPPORTS_REPARSE_POINTS        0x00000080L
+#define FILE_SUPPORTS_REMOTE_STORAGE        0x00000100L
+#define FILE_VOLUME_IS_COMPRESSED           0x00008000L
+#define FILE_SUPPORTS_OBJECT_IDS            0x00010000L
+#define FILE_SUPPORTS_ENCRYPTION            0x00020000L
+#define FILE_NAMED_STREAMS                  0x00040000L
+#define FILE_READ_ONLY_VOLUME               0x00080000L
+#define FILE_SEQUENTIAL_WRITE_ONCE          0x00100000L
+#define FILE_SUPPORTS_TRANSACTIONS          0x00200000L
+#define FILE_SUPPORTS_HARD_LINKS            0x00400000L
+#define FILE_SUPPORTS_EXTENDED_ATTRIBUTES   0x00800000L
+#define FILE_SUPPORTS_OPEN_BY_FILE_ID       0x01000000L
+#define FILE_SUPPORTS_USN_JOURNAL           0x02000000L
 
 /* File extended attribute flags */
 #define FILE_NEED_EA    0x00000080L
@@ -506,6 +538,11 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define FILE_EA_TYPE_ASN1       0xFFDD
 #define FILE_EA_TYPE_FAMILY_IDS 0xFF01
 
+/* File identifier global transaction directory information flags */
+#define FILE_ID_GLOBAL_TX_DIR_INFO_FLAG_WRITELOCKED         0x00000001L
+#define FILE_ID_GLOBAL_TX_DIR_INFO_FLAG_VISIBLE_TO_TX       0x00000002L
+#define FILE_ID_GLOBAL_TX_DIR_INFO_FLAG_VISIBLE_OUTSIDE_TX  0x00000004L
+
 /* DOS wildcard characters */
 #define ANSI_DOS_STAR   '<'
 #define ANSI_DOS_QM     '>'
@@ -513,6 +550,10 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define DOS_START       L'<'
 #define DOS_QM          L'>'
 #define DOS_DOT         L'"'
+
+/* Remote protocol flags */
+#define REMOTE_PROTOCOL_FLAG_LOOPBACK   0x00000001L
+#define REMOTE_PROTOCOL_FLAG_OFFLINE    0x00000002L
 
 /* File system volume control flags */
 #define FILE_VC_QUOTA_NONE              0x00000000L
@@ -560,7 +601,7 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define FSCTL_SET_COMPRESSION \
     CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 16, METHOD_BUFFERED, FILE_READ_DATA | \
     FILE_WRITE_DATA )
-#define FSCTL_MARK_AS_SYSTEM_HIVE \
+#define FSCTL_SET_BOOTLOADER_ACCESSED \
     CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 19, METHOD_NEITHER, FILE_ANY_ACCESS )
 #define FSCTL_OPLOCK_BREAK_ACK_NO_2 \
     CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 20, METHOD_BUFFERED, FILE_ANY_ACCESS )
@@ -648,12 +689,6 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     #define FSCTL_SIS_LINK_FILES \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 65, METHOD_BUFFERED, FILE_READ_DATA | \
         FILE_WRITE_DATA )
-    #define FSCTL_HSM_MSG \
-        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 66, METHOD_BUFFERED, FILE_READ_DATA | \
-        FILE_WRITE_DATA )
-    #define FSCTL_HSM_DATA \
-        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 68, METHOD_NEITHER, FILE_READ_DATA | \
-        FILE_WRITE_DATA )
     #define FSCTL_RECALL_FILE \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 69, METHOD_NEITHER, FILE_ANY_ACCESS )
     #define FSCTL_READ_FROM_PLEX \
@@ -694,6 +729,8 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 91, METHOD_BUFFERED, FILE_READ_DATA )
     #define FSCTL_TXFS_GET_TRANSACTED_VERSION \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 92, METHOD_BUFFERED, FILE_READ_DATA )
+    #define FSCTL_TXFS_SAVEPOINT_INFORMATION \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 94, METHOD_BUFFERED, FILE_WRITE_DATA )
     #define FSCTL_TXFS_CREATE_MINIVERSION \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 95, METHOD_BUFFERED, FILE_WRITE_DATA )
     #define FSCTL_TXFS_TRANSACTION_ACTIVE \
@@ -722,7 +759,52 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 121, METHOD_BUFFERED, FILE_READ_DATA )
     #define FSCTL_QUERY_PAGEFILE_ENCRYPTION \
         CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 122, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_RESET_VOLUME_ALLOCATION_HINTS \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 123, METHOD_BUFFERED, FILE_ANY_ACCESS )
 #endif
+#if (_WIN32_WINNT >= 0x0601)
+    #define FSCTL_QUERY_DEPENDENT_VOLUME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 124, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_SD_GLOBAL_CHANGE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 125, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#endif
+#if (_WIN32_WINNT >= 0x0600)
+    #define FSCTL_TXFS_READ_BACKUP_INFORMATION2 \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 126, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#endif
+#if (_WIN32_WINNT >= 0x0601)
+    #define FSCTL_LOOKUP_STREAM_FROM_CLUSTER \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 127, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_TXFS_WRITE_BACKUP_INFORMATION2 \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 128, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_FILE_TYPE_NOTIFICATION \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 129, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_GET_BOOT_AREA_INFO \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 140, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_GET_RETRIEVAL_POINTER_BASE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 141, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_SET_PERSISTENT_VOLUME_STATE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 142, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_QUERY_PERSISTENT_VOLUME_STATE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 143, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_REQUEST_OPLOCK \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 144, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_TUNNEL_REQUEST \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 145, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_IS_CSV_FILE \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 146, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_QUERY_FILE_SYSTEM_RECOGNITION \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 147, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_GET_VOLUME_PATH_NAME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 148, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_GET_VOLUME_NAME_FOR_VOLUME_MOUNT_POINT \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 149, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_CSV_GET_VOLUME_PATH_NAMES_FOR_VOLUME_NAME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 150, METHOD_BUFFERED, FILE_ANY_ACCESS )
+    #define FSCTL_IS_FILE_ON_CSV_VOLUME \
+        CTL_CODE( FILE_DEVICE_FILE_SYSTEM, 151, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#endif
+#define FSCTL_MARK_AS_SYSTEM_HIVE   FSCTL_SET_BOOTLOADER_ACCESSED
 
 /* USN reasons */
 #if (_WIN32_WINNT >= 0x0500)
@@ -770,6 +852,21 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     #define MARK_HANDLE_TXF_SYSTEM_LOG      0x00000004L
     #define MARK_HANDLE_NOT_TXF_SYSTEM_LOG  0x00000008L
 #endif
+#if (_WIN32_WINNT >= 0x0601)
+    #define MARK_HANDLE_REALTIME            0x00000020L
+    #define MARK_HANDLE_NOT_REALTIME        0x00000040L
+#endif
+
+/* 8.3 name flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define NO_8DOT3_NAME_PRESENT   0x00000001L
+    #define REMOVED_8DOT3_NAME      0x00000002L
+#endif
+
+/* Persistent volume states */
+#if (_WIN32_WINNT >= 0x0601)
+    #define PERSISTENT_VOLUME_STATE_SHORT_NAME_CREATION_DISABLED    0x00000001L
+#endif
 
 /* FSCTL_IS_VOLUME_DIRTY returned flags */
 #if (_WIN32_WINNT >= 0x0500)
@@ -779,15 +876,18 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #endif
 
 /* File prefetch types */
-#define FILE_PREFETCH_TYPE_FOR_CREATE       0x00000001L
-#define FILE_PREFETCH_TYPE_FOR_DIRENUM      0x00000002L
-#define FILE_PREFETCH_TYPE_FOR_CREATE_EX    0x00000003L
-#define FILE_PREFETCH_TYPE_FOR_DIRENUM_EX   0x00000004L
-#define FILE_PREFETCH_TYPE_MAX              0x00000004L
+#if (_WIN32_WINNT >= 0x0500)
+    #define FILE_PREFETCH_TYPE_FOR_CREATE       0x00000001L
+    #define FILE_PREFETCH_TYPE_FOR_DIRENUM      0x00000002L
+    #define FILE_PREFETCH_TYPE_FOR_CREATE_EX    0x00000003L
+    #define FILE_PREFETCH_TYPE_FOR_DIRENUM_EX   0x00000004L
+    #define FILE_PREFETCH_TYPE_MAX              0x00000004L
+#endif
 
 /* File system types */
-#define FILESYSTEM_STATISTICS_TYPE_NTFS 1
-#define FILESYSTEM_STATISTICS_TYPE_FAT  2
+#define FILESYSTEM_STATISTICS_TYPE_NTFS     1
+#define FILESYSTEM_STATISTICS_TYPE_FAT      2
+#define FILESYSTEM_STATISTICS_TYPE_EXFAT    3
 
 /* Encryption operations */
 #if (_WIN32_WINNT >= 0x0500)
@@ -812,16 +912,12 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 
 /* FSCTL_SET_REPAIR flags */
 #if (_WIN32_WINNT >= 0x0600)
-    #define SET_REPAIR_ENABLED              0x00000001L
-    #define SET_REPAIR_VOLUME_BITMAP_SCAN   0x00000002L
-    #define SET_REPAIR_DELETE_CROSSLINK     0x00000004L
-    #define SET_REPAIR_WARN_ABOUT_DATA_LOSS 0x00000008L
-    #define SET_REPAIR_VALID_MASK           0x0000000FL
-#endif
-
-/* FSCTL_SHRINK_VOLUME flags */
-#if (_WIN32_WINNT >= 0x0600)
-    #define SHRINK_VOLUME_FLAG_FAIL_ON_BAD_CLUSTERS 0x00000001L
+    #define SET_REPAIR_ENABLED                          0x00000001L
+    #define SET_REPAIR_VOLUME_BITMAP_SCAN               0x00000002L
+    #define SET_REPAIR_DELETE_CROSSLINK                 0x00000004L
+    #define SET_REPAIR_WARN_ABOUT_DATA_LOSS             0x00000008L
+    #define SET_REPAIR_DISABLED_AND_BUGCHECK_ON_CORRUPT 0x00000010L
+    #define SET_REPAIR_VALID_MASK                       0x0000000FL
 #endif
 
 /* TXFS flags */
@@ -841,6 +937,8 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     #define TXFS_RM_FLAG_PRESERVE_CHANGES                       0x00002000L
     #define TXFS_RM_FLAG_RESET_RM_AT_NEXT_START                 0x00004000L
     #define TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START          0x00008000L
+    #define TXFS_RM_FLAG_PREFER_CONSISTENCY                     0x00010000L
+    #define TXFS_RM_FLAG_PREFER_AVAILABILITY                    0x00020000L
     #define TXFS_MODIFY_RM_VALID_FLAGS \
         (TXFS_RM_FLAG_LOGGING_MODE | TXFS_RM_FLAG_RENAME_RM | \
         TXFS_RM_FLAG_LOG_CONTAINER_COUNT_MAX | TXFS_RM_FLAG_LOG_CONTAINER_COUNT_MIN | \
@@ -851,13 +949,16 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
         TXFS_RM_FLAG_LOG_NO_CONTAINER_COUNT_MIN | TXFS_RM_FLAG_GROW_LOG | \
         TXFS_RM_FLAG_SHRINK_LOG | TXFS_RM_FLAG_ENFORCE_MINIMUM_SIZE | \
         TXFS_RM_FLAG_PRESERVE_CHANGES | TXFS_RM_FLAG_RESET_RM_AT_NEXT_START | \
-        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START)
+        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START | TXFS_RM_FLAG_PREFER_CONSISTENCY | \
+        TXFS_RM_FLAG_PREFER_AVAILABILITY)
     #define TXFS_QUERY_RM_INFORMATION_VALID_FLAGS \
         (TXFS_RM_FLAG_LOG_GROWTH_INCREMENT_NUM_CONTAINERS | \
         TXFS_RM_FLAG_LOG_GROWTH_INCREMENT_PERCENT | \
         TXFS_RM_FLAG_LOG_NO_CONTAINER_COUNT_MAX | \
+        TXFS_RM_FLAG_LOG_NO_CONTAINER_COUNT_MIN | \
         TXFS_RM_FLAG_RESET_RM_AT_NEXT_START | \
-        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START )
+        TXFS_RM_FLAG_DO_NOT_RESET_RM_AT_NEXT_START | TXFS_RM_FLAG_PREFER_CONSISTENCY | \
+        TXFS_RM_FLAG_PREFER_AVAILABILITY)
 #endif
 
 /* TXFS logging modes */
@@ -904,6 +1005,8 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     #define TXFS_START_RM_FLAG_RECOVER_BEST_EFFORT                  0x00000200L
     #define TXFS_START_RM_FLAG_LOGGING_MODE                         0x00000400L
     #define TXFS_START_RM_FLAG_PRESERVE_CHANGES                     0x00000800L
+    #define TXFS_START_RM_FLAG_PREFER_CONSISTENCY                   0x00001000L
+    #define TXFS_START_RM_FLAG_PREFER_AVAILABILITY                  0x00002000L
     #define TXFS_START_RM_VALID_FLAG \
         (TXFS_START_RM_FLAG_LOG_CONTAINER_COUNT_MAX | \
         TXFS_START_RM_FLAG_LOG_CONTAINER_COUNT_MIN | \
@@ -914,7 +1017,14 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
         TXFS_START_RM_FLAG_LOG_NO_CONTAINER_COUNT_MAX | \
         TXFS_START_RM_FLAG_LOG_NO_CONTAINER_COUNT_MIN | \
         TXFS_START_RM_FLAG_RECOVER_BEST_EFFORT | \
-        TXFS_START_RM_FLAG_LOGGING_MODE | TXFS_START_RM_FLAG_PRESERVE_CHANGES)
+        TXFS_START_RM_FLAG_LOGGING_MODE | TXFS_START_RM_FLAG_PRESERVE_CHANGES | \
+        TXFS_START_RM_FLAG_PREFER_CONSISTENCY | TXFS_START_RM_FLAG_PREFER_AVAILABILITY)
+#endif
+
+/* FSCTL_TXFS_LIST_TRANSACTION_LOCKED_FILES entry flags */
+#if (_WIN32_WINNT >= 0x0600)
+    #define TXFS_LIST_TRANSACTION_LOCKED_FILES_ENTRY_FLAG_CREATED   0x00000001L
+    #define TXFS_LIST_TRANSACTION_LOCKED_FILES_ENTRY_FLAG_DELETED   0x00000002L
 #endif
 
 /* FSCTL_TXFS_GET_TRANSACTED_VERSION special values */
@@ -923,13 +1033,78 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     #define TXFS_TRANSACTED_VERSION_UNCOMMITTED     0xFFFFFFFFL
 #endif
 
+/* TXFS savepoint flags */
+#if (_WIN32_WINNT >= 0x0600)
+    #define TXFS_SAVEPOINT_SET          0x00000001L
+    #define TXFS_SAVEPOINT_ROLLBACK     0x00000002L
+    #define TXFS_SAVEPOINT_CLEAR        0x00000004L
+    #define TXFS_SAVEPOINT_CLEAR_ALL    0x00000010L
+#endif
+
+/* Oplock levels */
+#if (_WIN32_WINNT >= 0x0601)
+    #define OPLOCK_LEVEL_CACHE_READ     0x00000001L
+    #define OPLOCK_LEVEL_CACHE_HANDLE   0x00000002L
+    #define OPLOCK_LEVEL_CACHE_WRITE    0x00000004L
+#endif
+
+/* FSCTL_REQUEST_OPLOCK input flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define REQUEST_OPLOCK_INPUT_FLAG_REQUEST               0x00000001L
+    #define REQUEST_OPLOCK_INPUT_FLAG_ACK                   0x00000002L
+    #define REQUEST_OPLOCK_INPUT_FLAG_COMPLETE_ACK_ON_CLOSE 0x00000004L
+#endif
+
+/* FSCTL_REQUEST_OPLOCK output flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define REQUEST_OPLOCK_OUTPUT_FLAG_ACK_REQUIRED     0x00000001L
+    #define REQUEST_OPLOCK_OUTPUT_FLAG_MODES_PROVIDED   0x00000002L
+#endif
+
+/* FSCTL_REQUEST_OPLOCK parameters revision number */
+#if (_WIN32_WINNT >= 0x0601)
+    #define REQUEST_OPLOCK_CURRENT_VERSION  1
+#endif
+
+/* FSCTL_SD_GLOBAL_CHANGE types */
+#if (_WIN32_WINNT >= 0x0601)
+    #define SD_GLOBAL_CHANGE_TYPE_MACHINE_SID   1L
+#endif
+
+/* Extended encrypted data information flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define ENCRYPTED_DATA_INFO_SPARSE_FILE 1L
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER entry flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_PAGE_FILE         0x00000001L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_DENY_DEFRAG_SET   0x00000002L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_FS_SYSTEM_FILE    0x00000004L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_FLAG_TXF_SYSTEM_FILE   0x00000008L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_MASK         0xFF000000L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_DATA         0x01000000L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_INDEX        0x02000000L
+    #define LOOKUP_STREAM_FROM_CLUSTER_ENTRY_ATTRIBUTE_SYSTEM       0x03000000L
+#endif
+
+/* FSCTL_FILE_TYPE_NOTIFICATION flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define FILE_TYPE_NOTIFICATION_FLAG_USAGE_BEGIN 0x00000001L
+    #define FILE_TYPE_NOTIFICATION_FLAG_USAGE_END   0x00000002L
+#endif
+
 /* Symbolic link flags */
 #define SYMLINK_FLAG_RELATIVE   1L
 
 /* Reparse tags */
 #define IO_REPARSE_TAG_MOUNT_POINT                  0xA0000003L
 #define IO_REPARSE_TAG_HSM                          0xC0000004L
+#define IO_REPARSE_TAG_DRIVE_EXTENDER               0x80000005L
+#define IO_REPARSE_TAG_HSM2                         0x80000006L
 #define IO_REPARSE_TAG_SIS                          0x80000007L
+#define IO_REPARSE_TAG_WIM                          0x80000008L
+#define IO_REPARSE_TAG_CSV                          0x80000009L
 #define IO_REPARSE_TAG_DFS                          0x8000000AL
 #define IO_REPARSE_TAG_SYMLINK                      0x8000000CL
 #define IO_REPARSE_TAG_DFSR                         0x80000012L
@@ -940,7 +1115,7 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define IO_REPARSE_TAG_SOLUTIONSOFT                 0x2000000DL
 #define IO_REPARSE_TAG_COMMVAULT                    0x0000000EL
 #define IO_REPARSE_TAG_OVERTONE                     0x0000000FL
-#define IO_REPARSE_TAG_WISDATA_HSM                  0x00000010L
+#define IO_REPARSE_TAG_SYMANTEC_HSM2                0x00000010L
 #define IO_REPARSE_TAG_ENIGMA_HSM                   0x00000011L
 #define IO_REPARSE_TAG_SYMANTEC_HSM                 0x00000012L
 #define IO_REPARSE_TAG_INTERCOPE_HSM                0x00000013L
@@ -950,6 +1125,30 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define IO_REPARSE_TAG_OSR_SAMPLE                   0x20000017L
 #define IO_REPARSE_TAG_GLOBAL360_HSM                0x00000018L
 #define IO_REPARSE_TAG_ALTIRIS_HSM                  0x00000019L
+#define IO_REPARSE_TAG_HERMES_HSM                   0x0000001AL
+#define IO_REPARSE_TAG_POINTSOFT_HSM                0x0000001BL
+#define IO_REPARSE_TAG_GRAU_DATASTORAGE_HSM         0x0000001CL
+#define IO_REPARSE_TAG_COMMVAULT_HSM                0x0000001DL
+#define IO_REPARSE_TAG_DATASTOR_SIS                 0x0000001EL
+#define IO_REPARSE_TAG_TAG_EDSI_HSM                 0x0000001FL
+#define IO_REPARSE_TAG_HP_HSM                       0x00000020L
+#define IO_REPARSE_TAG_SER_HSM                      0x00000021L
+#define IO_REPARSE_TAG_DOUBLE_TAKE_HSM              0x00000022L
+#define IO_REPARSE_TAG_WISDATA_HSM                  0x00000023L
+#define IO_REPARSE_TAG_MIMOSA_HSM                   0x00000024L
+#define IO_REPARSE_TAG_HSAG_HSM                     0x00000025L
+#define IO_REPARSE_TAG_ADA_HSM                      0x00000026L
+#define IO_REPARSE_TAG_AUTN_HSM                     0x00000027L
+#define IO_REPARSE_TAG_NEXSAN_HSM                   0x00000028L
+#define IO_REPARSE_TAG_DOUBLE_TAKE_SIS              0x00000029L
+#define IO_REPARSE_TAG_SONY_HSM                     0x0000002AL
+#define IO_REPARSE_TAG_ELTAN_HSM                    0x0000002BL
+#define IO_REPARSE_TAG_UTIXO_HSM                    0x0000002CL
+#define IO_REPARSE_TAG_QUEST_HSM                    0x0000002DL
+#define IO_REPARSE_TAG_DATAGLOBAL_HSM               0x0000002EL
+#define IO_REPARSE_TAG_QI_TECH_HSM                  0x0000002FL
+#define IO_REPARSE_TAG_DATAFIRST_HSM                0x00000030L
+#define IO_REPARSE_TAG_C2CSYSTEMS_HSM               0x00000031L
 
 /* Network file system control codes */
 #define FSCTL_LMR_GET_LINK_TRACKING_INFORMATION \
@@ -993,6 +1192,8 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     CTL_CODE( FILE_DEVICE_NAMED_PIPE, 14, METHOD_BUFFERED, FILE_ANY_ACCESS )
 #define FSCTL_PIPE_SET_HANDLE_ATTRIBUTE \
     CTL_CODE( FILE_DEVICE_NAMED_PIPE, 15, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#define FSCTL_PIPE_FLUSH \
+    CTL_CODE( FILE_DEVICE_NAMED_PIPE, 16, METHOD_BUFFERED, FILE_WRITE_DATA )
 #define FSCTL_PIPE_INTERNAL_READ \
     CTL_CODE( FILE_DEVICE_NAMED_PIPE, 2045, METHOD_BUFFERED, FILE_READ_DATA )
 #define FSCTL_PIPE_INTERNAL_WRITE \
@@ -1003,6 +1204,9 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define FSCTL_PIPE_INTERNAL_READ_OVFLOW \
     CTL_CODE( FILE_DEVICE_NAMED_PIPE, 2048, METHOD_BUFFERED, FILE_READ_DATA )
 
+/* Device number special value */
+#define CSV_INVALID_DEVICE_NUMBER   0xFFFFFFFFL
+
 /* Named pipe entry types */
 #define FILE_PIPE_READ_DATA     0x00000000L
 #define FILE_PIPE_WRITE_SPACE   0x00000001L
@@ -1010,15 +1214,15 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 /* Named pipe computer name length */
 #define FILE_PIPE_COMPUTER_NAME_LENGTH  15
 
+/* FSCTL_QUERY_DEPENDENT_VOLUME request flags */
+#if (_WIN32_WINNT >= 0x0601)
+    #define QUERY_DEPENDENT_VOLUME_REQUEST_FLAG_HOST_VOLUMES    0x00000001L
+    #define QUERY_DEPENDENT_VOLUME_REQUEST_FLAG_GUEST_VOLUMES   0x00000002L
+#endif
+
 /* Mailslot file system control codes */
 #define FSCTL_MAILSLOT_PEEK \
     CTL_CODE( FILE_DEVICE_MAILSLOT, 0, METHOD_NEITHER, FILE_READ_DATA )
-
-/* Message type special value */
-#define LPC_KERNELMODE_MESSAGE  0x8000
-
-/* Memory protection and allocation flags */
-#define SEC_COMMIT  0x08000000L
 
 /* System page priority constants */
 #define SYSTEM_PAGE_PRIORITY_BITS   3
@@ -1038,15 +1242,13 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define TOKEN_VIRTUALIZE_ENABLED        0x0400
 #define TOKEN_IS_FILTERED               0x0800
 #define TOKEN_UIACCESS                  0x1000
+#define TOKEN_NOT_LOW                   0x2000
 
 /* I/O flags */
 #define IO_OPEN_PAGING_FILE             0x0002
 #define IO_OPEN_TARGET_DIRECTORY        0x0004
 #define IO_STOP_ON_SYMLINK              0x0008
 #define IO_MM_PAGING_FILE               0x0010
-#define IO_CHECK_CREATE_PARAMETERS      0x0200
-#define IO_ATTACH_DEVICE                0x0400
-#define IO_IGNORE_SHARE_ACCESS_CHECK    0x0800
 
 /* File system filter operations */
 #define FS_FILTER_ACQUIRE_FOR_SECTION_SYNCHRONIZATION   0xFF
@@ -1055,14 +1257,6 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define FS_FILTER_RELEASE_FOR_MOD_WRITE                 0xFC
 #define FS_FILTER_ACQUIRE_FOR_CC_FLUSH                  0xFB
 #define FS_FILTER_RELEASE_FOR_CC_FLUSH                  0xFA
-
-/* Device object flags */
-#define DO_SYSTEM_BOOT_PARTITION    0x00000100L
-#define DO_LONG_TERM_REQUESTS       0x00000200L
-#define DO_NEVER_LAST_DEVICE        0x00000400L
-#define DO_LOW_PRIORITY_FILESYSTEM  0x00010000L
-#define DO_SUPPORTS_TRANSACTIONS    0x00040000L
-#define DO_FORCE_NEITHER_IO         0x00080000L
 
 /* I/O file object pool charge constants */
 #define IO_FILE_OBJECT_NON_PAGED_POOL_CHARGE    64
@@ -1116,6 +1310,21 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 /* MCB flags */
 #define MCB_FLAG_RAISE_ON_ALLOCATION_FAILURE    1
 
+/* FsRtlCheckOplockEx() flags */
+#if (NTDDI_VERSION >= 0x06000100)
+    #define OPLOCK_FLAG_COMPLETE_IF_OPLOCKED    0x00000001L
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define OPLOCK_FLAG_OPLOCK_KEY_CHECK_ONLY   0x00000002L
+    #define OPLOCK_FLAG_BACK_OUT_ATOMIC_OPLOCK  0x00000004L
+    #define OPLOCK_FLAG_IGNORE_OPLOCK_KEYS      0x00000008L
+#endif
+
+/* FsRtlOplockFsctrlEx() flags */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define OPLOCK_FSCTRL_FLAG_ALL_KEYS_MATCH   0x00000001L
+#endif
+
 /* Volume operations */
 #define FSRTL_VOLUME_DISMOUNT           1
 #define FSRTL_VOLUME_DISMOUNT_FAILED    2
@@ -1130,11 +1339,13 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define FSRTL_VOLUME_INFO_MAKE_COMPAT   11
 #define FSRTL_VOLUME_PREPARING_EJECT    12
 #define FSRTL_VOLUME_CHANGE_SIZE        13
+#define FSRTL_VOLUME_BACKGROUND_FORMAT  14
 
 /* FsRtlRegisterUncRegisterEx() flags */
 #if (NTDDI_VERSION >= 0x06000000)
     #define FSRTL_UNC_PROVIDER_FLAGS_MAILSLOTS_SUPPORTED    0x00000001L
     #define FSRTL_UNC_PROVIDER_FLAGS_CSC_ENABLED            0x00000002L
+    #define FSRTL_UNC_PROVIDER_FLAGS_DOMAIN_SVC_AWARE       0x00000004L
 #endif
  
 /* Extra create parameter list allocation flags */
@@ -1153,6 +1364,19 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
     #define FSRTL_ECP_LOOKASIDE_FLAG_NONPAGED_POOL  0x00000002L
 #endif
 
+/* Network open extra create parameter flags */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define NETWORK_OPEN_ECP_IN_FLAG_DISABLE_HANDLE_COLLAPSING          0x00000001L
+    #define NETWORK_OPEN_ECP_IN_FLAG_DISABLE_HANDLE_DURABILITY          0x00000002L
+    #define NETWORK_OPEN_ECP_IN_FLAG_FORCE_BUFFERED_SYNCHRONOUS_IO_HACK 0x80000000L
+#endif
+
+/* Virtual disk nesting flags */
+#if (NTDDI_VERSION >= 0x06000000)
+    #define FSRTL_VIRTDISK_FULLY_ALLOCATED  0x00000001L
+    #define FSRTL_VIRTDISK_NO_DRIVE_LETTER  0x00000002L
+#endif
+
 /* FsRtlLogCcFlushError() flags */
 #define FSRTL_CC_FLUSH_ERROR_FLAG_NO_HARD_ERROR 0x00000001L
 #define FSRTL_CC_FLUSH_ERROR_FLAG_NO_LOG_ENTRY  0x00000002L
@@ -1162,8 +1386,12 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define VACB_OFFSET_SHIFT           18
 
 /* CcPurgeCacheSection() flags */
-#define UNINITIALIZE_CACHE_MAPS 1L
-#define DO_NOT_RETRY_PURGE      2L
+#define UNINITIALIZE_CACHE_MAPS     0x00000001L
+#define DO_NOT_RETRY_PURGE          0x00000002L
+#define DO_NOT_PURGE_DIRTY_PAGES    0x00000004L
+
+/* CcCoherencyFlushAndPurgeCache() flags */
+#define CC_FLUSH_AND_PURGE_NO_PURGE 0x00000001L
 
 /* Pin flags */
 #define PIN_WAIT                        1L
@@ -1200,20 +1428,14 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 /* Opaque data types */
 typedef struct _KPROCESS            *PKPROCESS;
 typedef struct _KPROCESS            *PRKPROCESS;
-typedef struct _KTRANSACTION        KTRANSACTION;
-typedef struct _KTRANSACTION        *PKTRANSACTION;
-typedef struct _KTRANSACTION        *PRKTRANSACTION;
-typedef struct _KENLISTMENT         KENLISTMENT;
-typedef struct _KENLISTMENT         *PKENLISTMENT;
-typedef struct _KENLISTMENT         *PRKENLISTMENT;
-typedef struct _KRESOURCEMANAGER    KRESOURCEMANAGER;
-typedef struct _KRESOURCEMANAGER    *PKRESOURCEMANAGER;
-typedef struct _KRESOURCEMANAGER    *PRKRESOURCEMANAGER;
-typedef struct _KTM                 KTM;
-typedef struct _KTM                 *PKTM;
-typedef struct _KTM                 *PRKTM;
 #if (NTDDI_VERSION >= 0x06000000)
+typedef struct _ECP_LIST            ECP_LIST;
 typedef struct _ECP_LIST            *PECP_LIST;
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _ECP_HEADER          ECP_HEADER;
+typedef struct _ECP_HEADER          *PECP_HEADER;
+typedef struct sockaddr_storage     *PSOCKADDR_STORAGE_NFS;
 #endif
 
 /* SID identifier authority */
@@ -1346,6 +1568,96 @@ typedef enum _AUDIT_EVENT_TYPE {
     AuditEventObjectAccess,
     AuditEventDirectoryServiceAccess
 } AUDIT_EVENT_TYPE;
+
+/* Access reason types */
+typedef enum _ACCESS_REASON_TYPE {
+    AccessReasonNone                = 0x00000000,
+    AccessReasonAllowedAce          = 0x00010000,
+    AccessReasonDeniedAce           = 0x00020000,
+    AccessReasonAllowedParentAce    = 0x00030000,
+    AccessReasonDeniedParentAce     = 0x00040000,
+    AccessReasonMissingPrivilege    = 0x00100000,
+    AccessReasonFromPrivilege       = 0x00200000,
+    AccessReasonIntegrityLevel      = 0x00300000,
+    AccessReasonOwnership           = 0x00400000,
+    AccessReasonNullDacl            = 0x00500000,
+    AccessReasonEmptyDacl           = 0x00600000,
+    AccessReasonNoSD                = 0x00700000,
+    AccessReasonNoGrant             = 0x00800000
+} ACCESS_REASON_TYPE;
+
+/* Access reasons */
+typedef struct _ACCESS_REASONS {
+    ACCESS_REASON   Data[32];
+} ACCESS_REASONS;
+typedef ACCESS_REASONS  *PACCESS_REASONS;
+
+/* Security descriptor */
+typedef struct _SE_SECURITY_DESCRIPTOR {
+    ULONG                   Size;
+    ULONG                   Flags;
+    PSECURITY_DESCRIPTOR    SecurityDescriptor;
+} SE_SECURITY_DESCRIPTOR;
+typedef SE_SECURITY_DESCRIPTOR  *PSE_SECURITY_DESCRIPTOR;
+
+/* Security access request */
+typedef struct _SE_ACCESS_REQUEST {
+    ULONG                   Size;
+    PSE_SECURITY_DESCRIPTOR SeSecurityDescriptor;
+    ACCESS_MASK             DesiredAccess;
+    ACCESS_MASK             PreviouslyGrantedAccess;
+    PSID                    PrincipalSelfSid;
+    PGENERIC_MAPPING        GenericMapping;
+    ULONG                   ObjectTypeListCount;
+    POBJECT_TYPE_LIST       ObjectTypeList;
+} SE_ACCESS_REQUEST;
+typedef SE_ACCESS_REQUEST   *PSE_ACCESS_REQUEST;
+
+/* Security access reply */
+typedef struct _SE_ACCESS_REPLY {
+    ULONG           Size;
+    ULONG           ResultListCount;
+    PACCESS_MASK    GrantedAccess;
+    PULONG          AccessStatus;
+    PACCESS_REASONS AccessReason;
+    PPRIVILEGE_SET  *Privileges;
+} SE_ACCESS_REPLY;
+typedef SE_ACCESS_REPLY *PSE_ACCESS_REPLY;
+
+/* Security audit operations */
+typedef enum _SE_AUDIT_OPERATION {
+    AuditPrivilegeObject                    = 0,
+    AuditPrivilegeService                   = 1,
+    AuditAccessCheck                        = 2,
+    AuditOpenObject                         = 3,
+    AuditOpenObjectWithTransaction          = 4,
+    AuditCloseObject                        = 5,
+    AuditDeleteObject                       = 6,
+    AuditOpenObjectForDelete                = 7,
+    AuditOpenObjectForDeleteWithTransaction = 8,
+    AuditCloseNonObject                     = 9,
+    AuditOpenNonObject                      = 10,
+    AuditObjectReference                    = 11,
+    AuditHandleCreation                     = 12
+} SE_AUDIT_OPERATION;
+typedef SE_AUDIT_OPERATION  *PSE_AUDIT_OPERATION;
+
+/* Security audit information */
+typedef struct _SE_AUDIT_INFO {
+    ULONG               Size;
+    AUDIT_EVENT_TYPE    AuditType;
+    SE_AUDIT_OPERATION  AuditOperation;
+    ULONG               AuditFlags;
+    UNICODE_STRING      SubsystemName;
+    UNICODE_STRING      ObjectTypeName;
+    UNICODE_STRING      ObjectName;
+    PVOID               HandleId;
+    GUID                *TransactionId;
+    LUID                *OperationId;
+    BOOLEAN             ObjectCreation;
+    BOOLEAN             GenerateOnClose;
+} SE_AUDIT_INFO;
+typedef SE_AUDIT_INFO   *PSE_AUDIT_INFO;
 
 /* Token types */
 typedef enum _TOKEN_TYPE {
@@ -1541,95 +1853,9 @@ typedef enum _MANDATORY_LEVEL {
 } MANDATORY_LEVEL;
 typedef MANDATORY_LEVEL *PMANDATORY_LEVEL;
 
-/* Table search results */
-typedef enum _TABLE_SEARCH_RESULT {
-    TableEmptyTree      = 0,
-    TableFoundNode      = 1,
-    TableInsertAsLeft   = 2,
-    TableInsertAsRight  = 3
-} TABLE_SEARCH_RESULT;
-
-/* Generic compare results */
-typedef enum _RTL_GENERIC_COMPARE_RESULTS {
-    GenericLessThan     = 0,
-    GenericGreaterThan  = 1,
-    GenericEqual        = 2
-} RTL_GENERIC_COMPARE_RESULTS;
-
-/* AVL callbacks */
-typedef RTL_GENERIC_COMPARE_RESULTS (NTAPI *PRTL_AVL_COMPARE_ROUTINE)( struct _RTL_AVL_TABLE *, PVOID, PVOID );
-typedef PVOID (NTAPI *PRTL_AVL_ALLOCATE_ROUTINE)( struct _RTL_AVL_TABLE *, CLONG );
-typedef VOID (NTAPI *PRTL_AVL_FREE_ROUTINE)( struct _RTL_AVL_TABLE *, PVOID );
-typedef NTSTATUS (NTAPI *PRTL_AVL_MATCH_FUNCTION)( struct _RTL_AVL_TABLE *, PVOID, PVOID );
-#ifdef RTL_USE_AVL_TABLES
-    #define PRTL_GENERIC_COMPARE_ROUTINE    PRTL_AVL_COMPARE_ROUTINE
-    #define PRTL_GENERIC_ALLOCATE_ROUTINE   PRTL_AVL_ALLOCATE_ROUTINE
-    #define PRTL_GENERIC_FREE_ROUTINE       PRTL_AVL_FREE_ROUTINE
-#endif
-
-/* Balanced links */
-typedef struct _RTL_BALANCED_LINKS {
-    struct _RTL_BALANCED_LINKS  *Parent;
-    struct _RTL_BALANCED_LINKS  *LeftChild;
-    struct _RTL_BALANCED_LINKS  *RightChild;
-    CHAR                        Balance;
-    UCHAR                       Reserved[3];
-} RTL_BALANCED_LINKS;
-typedef RTL_BALANCED_LINKS  *PRTL_BALANCED_LINKS;
-
-/* AVL table */
-typedef struct _RTL_AVL_TABLE {
-    RTL_BALANCED_LINKS          BalancedRoot;
-    PVOID                       OrderedPointer;
-    ULONG                       WhichOrderedElement;
-    ULONG                       NumberGenericTableElements;
-    ULONG                       DepthOfTree;
-    PRTL_BALANCED_LINKS         RestartKey;
-    ULONG                       DeleteCount;
-    PRTL_AVL_COMPARE_ROUTINE    CompareRoutine;
-    PRTL_AVL_ALLOCATE_ROUTINE   AllocateRoutine;
-    PRTL_AVL_FREE_ROUTINE       FreeRoutine;
-    PVOID                       TableContext;
-} RTL_AVL_TABLE;
-typedef RTL_AVL_TABLE   *PRTL_AVL_TABLE;
-#ifdef RTL_USE_AVL_TABLES
-    #define RTL_GENERIC_TABLE   RTL_AVL_TABLE
-    #define PRTL_GENERIC_TABLE  PRTL_AVL_TABLE
-#endif
-
-/* Splay links */
-typedef struct _RTL_SPLAY_LINKS {
-    struct _RTL_SPLAY_LINKS *Parent;
-    struct _RTL_SPLAY_LINKS *LeftChild;
-    struct _RTL_SPLAY_LINKS *RightChild;
-} RTL_SPLAY_LINKS;
-typedef RTL_SPLAY_LINKS *PRTL_SPLAY_LINKS;
-
-/* Generic table callbacks */
-#ifndef RTL_USE_AVL_TABLES
-typedef RTL_GENERIC_COMPARE_RESULTS (NTAPI *PRTL_GENERIC_COMPARE_ROUTINE)( struct _RTL_GENERIC_TABLE *, PVOID, PVOID );
-typedef PVOID (NTAPI *PRTL_GENERIC_ALLOCATE_ROUTINE)( struct _RTL_GENERIC_TABLE *, CLONG );
-typedef VOID (NTAPI *PRTL_GENERIC_FREE_ROUTINE)( struct _RTL_GENERIC_TABLE *, PVOID );
-#endif
-
-/* Generic table */
-#ifndef RTL_USE_AVL_TABLES
-typedef struct _RTL_GENERIC_TABLE {
-    PRTL_SPLAY_LINKS                TableRoots;
-    LIST_ENTRY                      InsertOrderList;
-    PLIST_ENTRY                     OrderedPointer;
-    ULONG                           WhichOrderedElement;
-    ULONG                           NumberGenericTableElements;
-    PRTL_GENERIC_COMPARE_ROUTINE    CompareRoutine;
-    PRTL_GENERIC_ALLOCATE_ROUTINE   AllocateRoutine;
-    PRTL_GENERIC_FREE_ROUTINE       FreeRoutine;
-    PVOID                           TableContext;
-} RTL_GENERIC_TABLE;
-typedef RTL_GENERIC_TABLE   *PRTL_GENERIC_TABLE;
-#endif
-
 /* Heap commit routine */
-typedef NTSTATUS (NTAPI *PRTL_HEAP_COMMIT_ROUTINE)( PVOID, PVOID *, PSIZE_T );
+typedef NTSTATUS (NTAPI RTL_HEAP_COMMIT_ROUTINE)( PVOID, PVOID *, PSIZE_T );
+typedef RTL_HEAP_COMMIT_ROUTINE *PRTL_HEAP_COMMIT_ROUTINE;
 
 /* Heap parameters */
 typedef struct _RTL_HEAP_PARAMETERS {
@@ -1648,11 +1874,16 @@ typedef struct _RTL_HEAP_PARAMETERS {
 typedef RTL_HEAP_PARAMETERS *PRTL_HEAP_PARAMETERS;
 
 /* String callbacks */
-typedef PVOID (NTAPI *PRTL_ALLOCATE_STRING_ROUTINE)( SIZE_T );
+typedef PVOID (NTAPI RTL_ALLOCATE_STRING_ROUTINE)( SIZE_T );
 #if (_WIN32_WINNT >= 0x0600)
-typedef PVOID (NTAPI *PRTL_REALLOCATE_STRING_ROUTINE)( SIZE_T, PVOID );
+typedef PVOID (NTAPI RTL_REALLOCATE_STRING_ROUTINE)( SIZE_T, PVOID );
 #endif
-typedef VOID (NTAPI *PRTL_FREE_STRING_ROUTINE)( PVOID );
+typedef VOID (NTAPI RTL_FREE_STRING_ROUTINE)( PVOID );
+typedef RTL_ALLOCATE_STRING_ROUTINE     *PRTL_ALLOCATE_STRING_ROUTINE;
+#if (_WIN32_WINNT >= 0x0600)
+typedef RTL_REALLOCATE_STRING_ROUTINE   *PRTL_REALLOCATE_STRING_ROUTINE;
+#endif
+typedef RTL_FREE_STRING_ROUTINE         *PRTL_FREE_STRING_ROUTINE;
 
 /* Generate name context */
 typedef struct _GENERATE_NAME_CONTEXT {
@@ -1749,7 +1980,8 @@ typedef enum _MSV1_0_LOGON_SUBMIT_TYPE {
     MsV1_0NetworkLogon              = 4,
     MsV1_0SubAuthLogon              = 5,
     MsV1_0WorkstationUnlockLogon    = 7,
-    MsV1_0S4ULogon                  = 12
+    MsV1_0S4ULogon                  = 12,
+    MsV1_0VirtualLogon              = 82
 } MSV1_0_LOGON_SUBMIT_TYPE;
 typedef MSV1_0_LOGON_SUBMIT_TYPE    *PMSV1_0_LOGON_SUBMIT_TYPE;
 
@@ -1872,18 +2104,16 @@ typedef enum {
     MsvAvNbComputerName     = 1,
     MsvAvNbDomainName       = 2,
     MsvAvDnsComputerName    = 3,
-#if (_WIN32_WINNT >= 0x0501)
     MsvAvDnsDomainName      = 4,
+#if (_WIN32_WINNT >= 0x0501)
     MsvAvDnsTreeName        = 5,
-#if (_WIN32_WINNT >= 0x0600)
     MsvAvFlags              = 6,
-    MsvAvTimestamp          = 7,
-    MsvAvRestrictions       = 8
-#else
-    MsvAvFlags              = 6
 #endif
-#else
-    MsvAvDomainName         = 4
+#if (_WIN32_WINNT >= 0x0600)
+    MsvAvTimestamp          = 7,
+    MsvAvRestrictions       = 8,
+    MsvAvTargetName         = 9,
+    MsvAvChannelBindings    = 10
 #endif
 } MSV1_0_AVID;
 
@@ -1907,16 +2137,13 @@ typedef enum _MSV1_0_PROTOCOL_MESSAGE_TYPE {
     MsV1_0CacheLogon                = 8,
     MsV1_0SubAuth                   = 9,
     MsV1_0DeriveCredential          = 10,
-#if (_WIN32_WINNT >= 0x0501)
     MsV1_0CacheLookup               = 11,
-#if (_WIN32_WINNT >= 0x0600)
+#if (_WIN32_WINNT >= 0x0501)
     MsV1_0SetProcessOption          = 12,
-    MsV1_0ConfigLocalAliases        = 13,
-#else
-    MsV1_0SetProcessOption          = 12
 #endif
-#else
-    MsV1_0CacheLookup               = 11
+#if (_WIN32_WINNT >= 0x0600)
+    MsV1_0ConfigLocalAliases        = 13,
+    MsV1_0ClearCachedCredentials    = 14
 #endif
 } MSV1_0_PROTOCOL_MESSAGE_TYPE;
 
@@ -2108,6 +2335,25 @@ typedef struct _FILE_NAMES_INFORMATION {
     WCHAR   FileName[1];
 } FILE_NAMES_INFORMATION;
 typedef FILE_NAMES_INFORMATION  *PFILE_NAMES_INFORMATION;
+
+/* File identifier global transaction directory information */
+typedef struct _FILE_ID_GLOBAL_TX_DIR_INFORMATION {
+    ULONG           NextEntryOffset;
+    ULONG           FileIndex;
+    LARGE_INTEGER   CreationTime;
+    LARGE_INTEGER   LastAccessTime;
+    LARGE_INTEGER   LastWriteTime;
+    LARGE_INTEGER   ChangeTime;
+    LARGE_INTEGER   EndOfFile;
+    LARGE_INTEGER   AllocationSize;
+    ULONG           FileAttributes;
+    ULONG           FileNameLength;
+    LARGE_INTEGER   FileId;
+    GUID            LockingTransactionId;
+    ULONG           TxInfoFlags;
+    WCHAR           FileName[1];
+} FILE_ID_GLOBAL_TX_DIR_INFORMATION;
+typedef FILE_ID_GLOBAL_TX_DIR_INFORMATION   *PFILE_ID_GLOBAL_TX_DIR_INFORMATION;
 
 /* File object identifier information */
 typedef struct _FILE_OBJECTID_INFORMATION {
@@ -2307,6 +2553,15 @@ typedef struct _FILE_NETWORK_PHYSICAL_NAME_INFORMATION {
 } FILE_NETWORK_PHYSICAL_NAME_INFORMATION;
 typedef FILE_NETWORK_PHYSICAL_NAME_INFORMATION  *PFILE_NETWORK_PHYSICAL_NAME_INFORMATION;
 
+/* File standard link information */
+typedef struct _FILE_STANDARD_LINK_INFORMATION {
+    ULONG   NumberOfAccessibleLinks;
+    ULONG   TotalNumberOfLinks;
+    BOOLEAN DeletePending;
+    BOOLEAN Directory;
+} FILE_STANDARD_LINK_INFORMATION;
+typedef FILE_STANDARD_LINK_INFORMATION  *PFILE_STANDARD_LINK_INFORMATION;
+
 /* File get extended attributes information */
 typedef struct _FILE_GET_EA_INFORMATION {
     ULONG   NextEntryOffset;
@@ -2314,6 +2569,25 @@ typedef struct _FILE_GET_EA_INFORMATION {
     CHAR    EaName[1];
 } FILE_GET_EA_INFORMATION;
 typedef FILE_GET_EA_INFORMATION *PFILE_GET_EA_INFORMATION;
+
+/* File remote protocol information */
+typedef struct _FILE_REMOTE_PROTOCOL_INFORMATION {
+    USHORT  SignatureVersion;
+    USHORT  SignatureSize;
+    ULONG   Protocol;
+    USHORT  ProtocolMajorVersion;
+    USHORT  ProtocolMinorVersion;
+    USHORT  ProtocolRevision;
+    USHORT  Reserved;
+    ULONG   Flags;
+    struct {
+        ULONG   Reserved[8];
+    } GenericReserved;
+    struct {
+        ULONG   Reserved[16];
+    } ProtocolSpecificReserved;
+} FILE_REMOTE_PROTOCOL_INFORMATION;
+typedef FILE_REMOTE_PROTOCOL_INFORMATION    *PFILE_REMOTE_PROTOCOL_INFORMATION;
 
 /* File get quota information */
 typedef struct _FILE_GET_QUOTA_INFORMATION {
@@ -2334,49 +2608,6 @@ typedef struct _FILE_QUOTA_INFORMATION {
     SID             Sid;
 } FILE_QUOTA_INFORMATION;
 typedef FILE_QUOTA_INFORMATION  *PFILE_QUOTA_INFORMATION;
-
-/* File system label information */
-typedef struct _FILE_FS_LABEL_INFORMATION {
-    ULONG   VolumeLabelLength;
-    WCHAR   VolumeLabel[1];
-} FILE_FS_LABEL_INFORMATION;
-typedef FILE_FS_LABEL_INFORMATION   *PFILE_FS_LABEL_INFORMATION;
-
-/* File system volume information */
-typedef struct _FILE_FS_VOLUME_INFORMATION {
-    LARGE_INTEGER   VolumeCreationTime;
-    ULONG           VolumeSerialNumber;
-    ULONG           VolumeLabelLength;
-    BOOLEAN         SupportsObjects;
-    WCHAR           VolumeLabel[1];
-} FILE_FS_VOLUME_INFORMATION;
-typedef FILE_FS_VOLUME_INFORMATION  *PFILE_FS_VOLUME_INFORMATION;
-
-/* File system size information */
-typedef struct _FILE_FS_SIZE_INFORMATION {
-    LARGE_INTEGER   TotalAllocationUnits;
-    LARGE_INTEGER   AvailableAllocationUnits;
-    ULONG           SectorsPerAllocationUnit;
-    ULONG           BytesPerSector;
-} FILE_FS_SIZE_INFORMATION;
-typedef FILE_FS_SIZE_INFORMATION    *PFILE_FS_SIZE_INFORMATION;
-
-/* File system full size information */
-typedef struct _FILE_FS_FULL_SIZE_INFORMATION {
-    LARGE_INTEGER   TotalAllocationUnits;
-    LARGE_INTEGER   CallerAvailableAllocationUnits;
-    LARGE_INTEGER   ActualAvailableAllocationUnits;
-    ULONG           SectorsPerAllocationUnit;
-    ULONG           BytesPerSector;
-} FILE_FS_FULL_SIZE_INFORMATION;
-typedef FILE_FS_FULL_SIZE_INFORMATION   *PFILE_FS_FULL_SIZE_INFORMATION;
-
-/* File system object identifier information */
-typedef struct _FILE_FS_OBJECTID_INFORMATION {
-    UCHAR   ObjectId[16];
-    UCHAR   ExtendedInfo[48];
-} FILE_FS_OBJECTID_INFORMATION;
-typedef FILE_FS_OBJECTID_INFORMATION    *PFILE_FS_OBJECTID_INFORMATION;
 
 /* File system attribute information */
 typedef struct _FILE_FS_ATTRIBUTE_INFORMATION {
@@ -2400,6 +2631,17 @@ typedef struct _FILE_FS_VOLUME_FLAGS_INFORMATION {
     ULONG   Flags;
 } FILE_FS_VOLUME_FLAGS_INFORMATION;
 typedef FILE_FS_VOLUME_FLAGS_INFORMATION    *PFILE_FS_VOLUME_FLAGS_INFORMATION;
+
+/* FSCTL_IS_CSV_FILE parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _CSV_NAMESPACE_INFO {
+    ULONG           Version;
+    ULONG           DeviceNumber;
+    LARGE_INTEGER   StartingOffset;
+    ULONG           SectorSize;
+} CSV_NAMESPACE_INFO;
+typedef CSV_NAMESPACE_INFO  *PCSV_NAMESPACE_INFO;
+#endif
 
 /* File system control information */
 typedef struct _FILE_FS_CONTROL_INFORMATION {
@@ -2650,14 +2892,17 @@ typedef BULK_SECURITY_TEST_DATA *PBULK_SECURITY_TEST_DATA;
 #endif
 
 /* FSCTL_FILE_PREFETCH parameters */
+#if (_WIN32_WINNT >= 0x0500)
 typedef struct _FILE_PREFETCH {
     ULONG       Type;
     ULONG       Count;
     ULONGLONG   Prefetch[1];
 } FILE_PREFETCH;
 typedef FILE_PREFETCH   *PFILE_PREFETCH;
+#endif
 
 /* FSCTL_FILE_PREFETCH parameters (extended version) */
+#if (_WIN32_WINNT >= 0x0500)
 typedef struct _FILE_PREFETCH_EX {
     ULONG       Type;
     ULONG       Count;
@@ -2665,12 +2910,7 @@ typedef struct _FILE_PREFETCH_EX {
     ULONGLONG   Prefetch[1];
 } FILE_PREFETCH_EX;
 typedef FILE_PREFETCH_EX    *PFILE_PREFETCH_EX;
-
-/* Volume compression state */
-typedef struct _VOLUME_COMPRESSION_STATE {
-    BOOLEAN CompressNewFiles;
-} VOLUME_COMPRESSION_STATE;
-typedef VOLUME_COMPRESSION_STATE    *PVOLUME_COMPRESSION_STATE;
+#endif
 
 /* File system statistics */
 typedef struct _FILESYSTEM_STATISTICS {
@@ -2705,6 +2945,20 @@ typedef struct _FAT_STATISTICS {
     ULONG   NonCachedDiskWrites;
 } FAT_STATISTICS;
 typedef FAT_STATISTICS  *PFAT_STATISTICS;
+
+/* Extended FAT statistics */
+typedef struct _EXFAT_STATISTICS {
+    ULONG   CreateHits;
+    ULONG   SuccessfulCreates;
+    ULONG   FailedCreates;
+    ULONG   NonCachedReads;
+    ULONG   NonCachedReadBytes;
+    ULONG   NonCachedWrites;
+    ULONG   NonCachedWriteBytes;
+    ULONG   NonCachedDiskReads;
+    ULONG   NonCachedDiskWrites;
+} EXFAT_STATISTICS;
+typedef EXFAT_STATISTICS    *PEXFAT_STATISTICS;
 
 /* NTFS statistics */
 typedef struct _NTFS_STATISTICS {
@@ -3054,7 +3308,7 @@ typedef TXFS_GET_METADATA_INFO_OUT  *PTXFS_GET_METADATA_INFO_OUT;
 #if (_WIN32_WINNT >= 0x0600)
 typedef struct _TXFS_LIST_TRANSACTION_LOCKED_FILES_ENTRY {
     ULONGLONG   Offset;
-    ULONG       UsnReason;
+    ULONG       NameFlags;
     LONGLONG    FileId;
     ULONG       Reserved1;
     ULONG       Reserved2;
@@ -3127,6 +3381,16 @@ typedef struct _TXFS_GET_TRANSACTED_VERSION {
 typedef TXFS_GET_TRANSACTED_VERSION *PTXFS_GET_TRANSACTED_VERSION;
 #endif
 
+/* FSCTL_TXFS_SAVEPOINT_INFORMATION parameters */
+#if (_WIN32_WINNT >= 0x0600)
+typedef struct _TXFS_SAVEPOINT_INFORMATION {
+    HANDLE  KtmTransaction;
+    ULONG   ActionCode;
+    ULONG   SavepointId;
+} TXFS_SAVEPOINT_INFORMATION;
+typedef TXFS_SAVEPOINT_INFORMATION  *PTXFS_SAVEPOINT_INFORMATION;
+#endif
+
 /* FSCTL_TXFS_CREATE_MINIVERSION returned data */
 #if (_WIN32_WINNT >= 0x0600)
 typedef struct _TXFS_CREATE_MINIVERSION_INFO {
@@ -3144,6 +3408,171 @@ typedef struct _TXFS_TRANSACTION_ACTIVE_INFO {
     BOOLEAN TransactionsActiveAtSnapshot;
 } TXFS_TRANSACTION_ACTIVE_INFO;
 typedef TXFS_TRANSACTION_ACTIVE_INFO    *PTXFS_TRANSACTION_ACTIVE_INFO;
+#endif
+
+/* FSCTL_GET_BOOT_AREA_INFO returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _BOOT_AREA_INFO {
+    ULONG   BootSectorCount;
+    struct {
+        LARGE_INTEGER   Offset;
+    } BootSectors[2];
+} BOOT_AREA_INFO;
+typedef BOOT_AREA_INFO  *PBOOT_AREA_INFO;
+#endif
+
+/* FSCTL_GET_RETRIEVAL_POINTER_BASE returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _RETRIEVAL_POINTER_BASE {
+    LARGE_INTEGER   FileAreaOffset;
+} RETRIEVAL_POINTER_BASE;
+typedef RETRIEVAL_POINTER_BASE  *PRETRIEVAL_POINTER_BASE;
+#endif
+
+/* File system persistent volume information */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _FILE_FS_PERSISTENT_VOLUME_INFORMATION {
+    ULONG   VolumeFlags;
+    ULONG   FlagMask;
+    ULONG   Version;
+    ULONG   Reserved;
+} FILE_FS_PERSISTENT_VOLUME_INFORMATION;
+typedef FILE_FS_PERSISTENT_VOLUME_INFORMATION   *PFILE_FS_PERSISTENT_VOLUME_INFORMATION;
+#endif
+
+/* File system recognition information */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _FILE_SYSTEM_RECOGNITION_INFORMATION {
+    CHAR    FileSystem[9];
+} FILE_SYSTEM_RECOGNITION_INFORMATION;
+typedef FILE_SYSTEM_RECOGNITION_INFORMATION *PFILE_SYSTEM_RECOGNITION_INFORMATION;
+#endif
+
+/* FSCTL_REQUEST_OPLOCK parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _REQUEST_OPLOCK_INPUT_BUFFER {
+    USHORT  StructureVersion;
+    USHORT  StructureLength;
+    ULONG   RequestedOplockLevel;
+    ULONG   Flags;
+} REQUEST_OPLOCK_INPUT_BUFFER;
+typedef REQUEST_OPLOCK_INPUT_BUFFER *PREQUEST_OPLOCK_INPUT_BUFFER;
+#endif
+
+/* FSCTL_REQUEST_OPLOCK returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _REQUEST_OPLOCK_OUTPUT_BUFFER {
+    USHORT      StructureVersion;
+    USHORT      StructureLength;
+    ULONG       OriginalOplockLevel;
+    ULONG       NewOplockLevel;
+    ULONG       Flags;
+    ACCESS_MASK AccessMode;
+    USHORT      ShareMode;
+} REQUEST_OPLOCK_OUTPUT_BUFFER;
+typedef REQUEST_OPLOCK_OUTPUT_BUFFER    *PREQUEST_OPLOCK_OUTPUT_BUFFER;
+#endif
+
+/* SD_GLOBAL_CHANGE_TYPE_MACHINE_SID parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_CHANGE_MACHINE_SID_INPUT {
+    USHORT  CurrentMachineSIDOffset;
+    USHORT  CurrentMachineSIDLength;
+    USHORT  NewMachineSIDOffset;
+    USHORT  NewMachineSIDLength;
+} SD_CHANGE_MACHINE_SID_INPUT;
+typedef SD_CHANGE_MACHINE_SID_INPUT *PSD_CHANGE_MACHINE_SID_INPUT;
+#endif
+
+/* SD_GLOBAL_CHANGE_TYPE_MACHINE_SID returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_CHANGE_MACHINE_SID_OUTPUT {
+    ULONGLONG   NumSDChangedSuccess;
+    ULONGLONG   NumSDChangedFail;
+    ULONGLONG   NumSDUnused;
+    ULONGLONG   NumSDTotal;
+    ULONGLONG   NumMftSDChangedSuccess;
+    ULONGLONG   NumMftSDChangedFail;
+    ULONGLONG   NumMftSDTotal;
+} SD_CHANGE_MACHINE_SID_OUTPUT;
+typedef SD_CHANGE_MACHINE_SID_OUTPUT    *PSD_CHANGE_MACHINE_SID_OUTPUT;
+#endif
+
+/* FSCTL_SD_GLOBAL_CHANGE parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_GLOBAL_CHANGE_INPUT {
+    ULONG   Flags;
+    ULONG   ChangeType;
+    union {
+        SD_CHANGE_MACHINE_SID_INPUT SdChange;
+    };
+} SD_GLOBAL_CHANGE_INPUT;
+typedef SD_GLOBAL_CHANGE_INPUT  *PSD_GLOBAL_CHANGE_INPUT;
+#endif
+
+/* FSCTL_SD_GLOBAL_CHANGE returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _SD_GLOBAL_CHANGE_OUTPUT {
+    ULONG   Flags;
+    ULONG   ChangeType;
+    union {
+        SD_CHANGE_MACHINE_SID_OUTPUT    SdChange;
+    };
+} SD_GLOBAL_CHANGE_OUTPUT;
+typedef SD_GLOBAL_CHANGE_OUTPUT *PSD_GLOBAL_CHANGE_OUTPUT;
+#endif
+
+/* Extended encrypted data information */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _EXTENDED_ENCRYPTED_DATA_INFO {
+    ULONG   ExtendedCode;
+    ULONG   Length;
+    ULONG   Flags;
+    ULONG   Reserved;
+} EXTENDED_ENCRYPTED_DATA_INFO;
+typedef EXTENDED_ENCRYPTED_DATA_INFO    *PEXTENDED_ENCRYPTED_DATA_INFO;
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _LOOKUP_STREAM_FROM_CLUSTER_INPUT {
+    ULONG           Flags;
+    ULONG           NumberOfClusters;
+    LARGE_INTEGER   Cluster[1];
+} LOOKUP_STREAM_FROM_CLUSTER_INPUT;
+typedef LOOKUP_STREAM_FROM_CLUSTER_INPUT    *PLOOKUP_STREAM_FROM_CLUSTER_INPUT;
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _LOOKUP_STREAM_FROM_CLUSTER_OUTPUT {
+    ULONG   Offset;
+    ULONG   NumberOfMatches;
+    ULONG   BufferSizeRequired;
+} LOOKUP_STREAM_FROM_CLUSTER_OUTPUT;
+typedef LOOKUP_STREAM_FROM_CLUSTER_OUTPUT   *PLOOKUP_STREAM_FROM_CLUSTER_OUTPUT;
+#endif
+
+/* FSCTL_LOOKUP_STREAM_FROM_CLUSTER entry */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _LOOKUP_STREAM_FROM_CLUSTER_ENTRY {
+    ULONG           OffsetToNext;
+    ULONG           Flags;
+    LARGE_INTEGER   Reserved;
+    LARGE_INTEGER   Cluster;
+    WCHAR           FileName[1];
+} LOOKUP_STREAM_FROM_CLUSTER_ENTRY;
+typedef LOOKUP_STREAM_FROM_CLUSTER_ENTRY    *PLOOKUP_STREAM_FROM_CLUSTER_ENTRY;
+#endif
+
+/* FSCTL_FILE_TYPE_NOTIFICATION parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _FILE_TYPE_NOTIFICATION_INPUT {
+    ULONG   Flags;
+    ULONG   NumFileTypeIDs;
+    GUID    FileTypeID[1];
+} FILE_TYPE_NOTIFICATION_INPUT;
+typedef FILE_TYPE_NOTIFICATION_INPUT    *PFILE_TYPE_NOTIFICATION_INPUT;
 #endif
 
 /* Reparse data buffer */
@@ -3269,52 +3698,90 @@ typedef struct _REMOTE_LINK_TRACKING_INFORMATION_ {
 } REMOTE_LINK_TRACKING_INFORMATION;
 typedef REMOTE_LINK_TRACKING_INFORMATION    *PREMOTE_LINK_TRACKING_INFORMATION;
 
-/* Port message */
-typedef struct _PORT_MESSAGE {
-    union {
-        struct {
-            CSHORT  DataLength;
-            CSHORT  TotalLength;
-        } s1;
-        ULONG   Length;
-    } u1;
-    union {
-        struct {
-            CSHORT  Type;
-            CSHORT  DataInfoOffset;
-        } s2;
-        ULONG   ZeroInit;
-    } u2;
-    union {
-        LPC_CLIENT_ID   ClientId;
-        double          DoNotUseThisField;
-    };
-    ULONG   MessageId;
-    union {
-        LPC_SIZE_T  ClientViewSize;
-        ULONG       CallbackId;
-    };
-} PORT_MESSAGE;
-typedef PORT_MESSAGE    *PPORT_MESSAGE;
+/* Virtual storage type */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _VIRTUAL_STORAGE_TYPE {
+    ULONG   DeviceId;
+    GUID    VendorId;
+} VIRTUAL_STORAGE_TYPE;
+typedef VIRTUAL_STORAGE_TYPE    *PVIRTUAL_STORAGE_TYPE;
+#endif
 
-/* Port view */
-typedef struct _PORT_VIEW {
-    ULONG       Length;
-    LPC_HANDLE  SectionHandle;
-    ULONG       SectionOffset;
-    LPC_SIZE_T  ViewSize;
-    LPC_PVOID   ViewBase;
-    LPC_PVOID   ViewRemoteBase;
-} PORT_VIEW;
-typedef PORT_VIEW   *PPORT_VIEW;
+/* FSCTL_QUERY_DEPENDENT_VOLUME parameters */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _STORAGE_QUERY_DEPENDENT_VOLUME_REQUEST {
+    ULONG   RequestLevel;
+    ULONG   RequestFlags;
+} STORAGE_QUERY_DEPENDENT_VOLUME_REQUEST;
+typedef STORAGE_QUERY_DEPENDENT_VOLUME_REQUEST  *PSTORAGE_QUERY_DEPENDENT_VOLUME_REQUEST;
+#endif
 
-/* Remote port view */
-typedef struct _REMOTE_PORT_VIEW {
-    ULONG       Length;
-    LPC_SIZE_T  ViewSize;
-    LPC_PVOID   ViewBase;
-} REMOTE_PORT_VIEW;
-typedef REMOTE_PORT_VIEW    *PREMOTE_PORT_VIEW;
+/* FSCTL_QUERY_DEPENDENT_VOLUME level 1 entry */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _STORAGE_QUERY_DEPENDENT_VOLUME_LEV1_ENTRY {
+    ULONG                   EntryLength;
+    ULONG                   DependencyTypeFlags;
+    ULONG                   ProviderSpecificFlags;
+    VIRTUAL_STORAGE_TYPE    VirtualStorageType;
+} STORAGE_QUERY_DEPENDENT_VOLUME_LEV1_ENTRY;
+typedef STORAGE_QUERY_DEPENDENT_VOLUME_LEV1_ENTRY   *PSTORAGE_QUERY_DEPENDENT_VOLUME_LEV1_ENTRY;
+#endif
+
+/* FSCTL_QUERY_DEPENDENT_VOLUME level 2 entry */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _STORAGE_QUERY_DEPENDENT_VOLUME_LEV2_ENTRY {
+    ULONG                   EntryLength;
+    ULONG                   DependencyTypeFlags;
+    ULONG                   ProviderSpecificFlags;
+    VIRTUAL_STORAGE_TYPE    VirtualStorageType;
+    ULONG                   AncestorLevel;
+    ULONG                   HostVolumeNameOffset;
+    ULONG                   HostVolumeNameSize;
+    ULONG                   DependentVolumeNameOffset;
+    ULONG                   DependentVolumeNameSize;
+    ULONG                   RelativePathOffset;
+    ULONG                   RelativePathSize;
+    ULONG                   DependentDeviceNameOffset;
+    ULONG                   DependentDeviceNameSize;
+} STORAGE_QUERY_DEPENDENT_VOLUME_LEV2_ENTRY;
+typedef STORAGE_QUERY_DEPENDENT_VOLUME_LEV2_ENTRY   *PSTORAGE_QUERY_DEPENDENT_VOLUME_LEV2_ENTRY;
+#endif
+
+/* FSCTL_QUERY_DEPENDENT_VOLUME returned data */
+#if (_WIN32_WINNT >= 0x0601)
+typedef struct _STORAGE_QUERY_DEPENDENT_VOLUME_RESPONSE {
+    ULONG   ResponseLevel;
+    ULONG   NumberEntries;
+    union {
+        STORAGE_QUERY_DEPENDENT_VOLUME_LEV1_ENTRY   Lev1Depends[1];
+        STORAGE_QUERY_DEPENDENT_VOLUME_LEV2_ENTRY   Lev2Depends[1];
+    };
+} STORAGE_QUERY_DEPENDENT_VOLUME_RESPONSE;
+typedef STORAGE_QUERY_DEPENDENT_VOLUME_RESPONSE *PSTORAGE_QUERY_DEPENDENT_VOLUME_RESPONSE;
+#endif
+
+/* Object information classes */
+typedef enum _OBJECT_INFORMATION_CLASS {
+    ObjectBasicInformation  = 0,
+    ObjectTypeInformation   = 2
+} OBJECT_INFORMATION_CLASS;
+
+/* Public object basic information */
+typedef struct _PUBLIC_OBJECT_BASIC_INFORMATION {
+    ULONG       Attributes;
+    ACCESS_MASK GrantedAccess;
+    ULONG       HandleCount;
+    ULONG       PointerCount;
+    ULONG       Reserved[10];
+} PUBLIC_OBJECT_BASIC_INFORMATION;
+typedef PUBLIC_OBJECT_BASIC_INFORMATION *PPUBLIC_OBJECT_BASIC_INFORMATION;
+
+/* Public object type information */
+typedef struct _PUBLIC_OBJECT_TYPE_INFORMATION {
+    UNICODE_STRING  TypeName;
+    ULONG           Reserved[22];
+} PUBLIC_OBJECT_TYPE_INFORMATION;
+typedef PUBLIC_OBJECT_TYPE_INFORMATION  *PPUBLIC_OBJECT_TYPE_INFORMATION;
 
 /* Security client context */
 typedef struct _SECURITY_CLIENT_CONTEXT {
@@ -3342,7 +3809,7 @@ typedef KAPC_STATE  *PRKAPC_STATE;
 typedef struct _KQUEUE {
     DISPATCHER_HEADER   Header;
     LIST_ENTRY          EntryListHead;
-    ULONG               CurrentCount;
+    volatile ULONG      CurrentCount;
     ULONG               MaximumCount;
     LIST_ENTRY          ThreadListHead;
 } KQUEUE;
@@ -3499,23 +3966,6 @@ typedef struct _FS_FILTER_CALLBACKS {
 } FS_FILTER_CALLBACKS;
 typedef FS_FILTER_CALLBACKS *PFS_FILTER_CALLBACKS;
 
-/* Transaction parameter block */
-typedef struct _TXN_PARAMETER_BLOCK {
-    USHORT  Length;
-    USHORT  TxFsContext;
-    PVOID   TransactionObject;
-} TXN_PARAMETER_BLOCK;
-typedef TXN_PARAMETER_BLOCK *PTXN_PARAMETER_BLOCK;
-
-/* I/O driver create context */
-typedef struct _IO_DRIVER_CREATE_CONTEXT {
-    CSHORT                  Size;
-    struct _ECP_LIST        *ExtraCreateParameter;
-    PVOID                   DeviceObjectHint;
-    PTXN_PARAMETER_BLOCK    TxnParameters;
-} IO_DRIVER_CREATE_CONTEXT;
-typedef IO_DRIVER_CREATE_CONTEXT    *PIO_DRIVER_CREATE_CONTEXT;
-
 /* I/O priority information */
 #if (NTDDI_VERSION >= 0x06000000)
 typedef struct _IO_PRIORITY_INFO {
@@ -3587,8 +4037,10 @@ typedef struct _FSRTL_ADVANCED_FCB_HEADER {
 #endif
     PFAST_MUTEX     FastMutex;
     LIST_ENTRY      FilterContexts;
+#if (NTDDI_VERSION >= 0x06000000)
     EX_PUSH_LOCK    PushLock;
     PVOID           *FileContextSupportPointer;
+#endif
 } FSRTL_ADVANCED_FCB_HEADER;
 typedef FSRTL_ADVANCED_FCB_HEADER   *PFSRTL_ADVANCED_FCB_HEADER;
 
@@ -3617,6 +4069,7 @@ typedef struct _FILE_LOCK_INFO {
     PFILE_OBJECT    FileObject;
     PVOID           ProcessId;
     LARGE_INTEGER   EndingByte;
+    LONG volatile   LockRequestsInProgress;
 } FILE_LOCK_INFO;
 typedef FILE_LOCK_INFO  *PFILE_LOCK_INFO;
 
@@ -3678,6 +4131,15 @@ typedef MCB *PMCB;
 /* Oplock callbacks */
 typedef VOID (NTAPI *POPLOCK_WAIT_COMPLETE_ROUTINE)( PVOID, PIRP );
 typedef VOID (NTAPI *POPLOCK_FS_PREPOST_IRP)( PVOID, PIRP );
+
+/* Oplock key extra create parameter context */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _OPLOCK_KEY_ECP_CONTEXT {
+    GUID    OplockKey;
+    ULONG   Reserved;
+} OPLOCK_KEY_ECP_CONTEXT;
+typedef OPLOCK_KEY_ECP_CONTEXT  *POPLOCK_KEY_ECP_CONTEXT;
+#endif
 
 /* Change notification callbacks */
 typedef BOOLEAN (NTAPI *PCHECK_FOR_TRAVERSE_ACCESS)( PVOID, PVOID, PSECURITY_SUBJECT_CONTEXT );
@@ -3768,14 +4230,39 @@ typedef struct _NETWORK_OPEN_ECP_CONTEXT {
         struct {
             NETWORK_OPEN_LOCATION_QUALIFIER     Location;
             NETWORK_OPEN_INTEGRITY_QUALIFIER    Integrity;
+#if (NTDDI_VERSION >= 0x06010000)
+            ULONG                               Flags;
+#endif
+        } in;
+        struct {
+            NETWORK_OPEN_LOCATION_QUALIFIER     Location;
+            NETWORK_OPEN_INTEGRITY_QUALIFIER    Integrity;
+#if (NTDDI_VERSION >= 0x06010000)
+            ULONG                               Flags;
+#endif
+        } out;
+    };
+} NETWORK_OPEN_ECP_CONTEXT;
+typedef NETWORK_OPEN_ECP_CONTEXT    *PNETWORK_OPEN_ECP_CONTEXT;
+#endif
+
+/* Network open extra create parameter context (version 0) */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _NETWORK_OPEN_ECP_CONTEXT_V0 {
+    USHORT  Size;
+    USHORT  Reserved;
+    struct {
+        struct {
+            NETWORK_OPEN_LOCATION_QUALIFIER     Location;
+            NETWORK_OPEN_INTEGRITY_QUALIFIER    Integrity;
         } in;
         struct {
             NETWORK_OPEN_LOCATION_QUALIFIER     Location;
             NETWORK_OPEN_INTEGRITY_QUALIFIER    Integrity;
         } out;
     };
-} NETWORK_OPEN_ECP_CONTEXT;
-typedef NETWORK_OPEN_ECP_CONTEXT    *PNETWORK_OPEN_ECP_CONTEXT;
+} NETWORK_OPEN_ECP_CONTEXT_V0;
+typedef NETWORK_OPEN_ECP_CONTEXT_V0 *PNETWORK_OPEN_ECP_CONTEXT_V0;
 #endif
 
 /* Prefetch open extra create parameter context */
@@ -3784,6 +4271,28 @@ typedef struct _PREFETCH_OPEN_ECP_CONTEXT {
     PVOID   Context;
 } PREFETCH_OPEN_ECP_CONTEXT;
 typedef PREFETCH_OPEN_ECP_CONTEXT   *PPREFETCH_OPEN_ECP_CONTEXT;
+#endif
+
+/* NFS open extra create parameter context */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _NFS_OPEN_ECP_CONTEXT {
+    PUNICODE_STRING         ExportAlias;
+    PSOCKADDR_STORAGE_NFS   ClientSocketAddress;
+} NFS_OPEN_ECP_CONTEXT;
+typedef NFS_OPEN_ECP_CONTEXT    *PNFS_OPEN_ECP_CONTEXT;
+typedef NFS_OPEN_ECP_CONTEXT    **PPNFS_OPEN_ECP_CONTEXT;
+#endif
+
+/* SRV open extra create parameter context */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _SRV_OPEN_ECP_CONTEXT {
+    PUNICODE_STRING         ShareName;
+    PSOCKADDR_STORAGE_NFS   SocketAddress;
+    BOOLEAN                 OplockBlockState;
+    BOOLEAN                 OplockAppState;
+    BOOLEAN                 OplockFinalState;
+} SRV_OPEN_ECP_CONTEXT;
+typedef SRV_OPEN_ECP_CONTEXT    *PSRV_OPEN_ECP_CONTEXT;
 #endif
 
 /* Change backing types */
@@ -3874,7 +4383,8 @@ typedef struct _QUERY_PATH_REQUEST_EX {
     ULONG                   EaLength;
     PVOID                   pEaBuffer;
     UNICODE_STRING          PathName;
-    ULONG_PTR               Reserved[5];
+    UNICODE_STRING          DomainServiceName;
+    ULONG_PTR               Reserved[3];
 } QUERY_PATH_REQUEST_EX;
 typedef QUERY_PATH_REQUEST_EX   *PQUERY_PATH_REQUEST_EX;
 
@@ -3883,10 +4393,6 @@ typedef struct _QUERY_PATH_RESPONSE {
     ULONG   LengthAccepted;
 } QUERY_PATH_RESPONSE;
 typedef QUERY_PATH_RESPONSE *PQUERY_PATH_RESPONSE;
-
-/* Transaction manager callbacks */
-typedef NTSTATUS (NTAPI *PTM_RM_NOTIFICATION)( PKENLISTMENT, PVOID, PVOID, ULONG, PLARGE_INTEGER, ULONG, PVOID );
-typedef NTSTATUS (NTAPI *PTM_PROPAGATE_ROUTINE)( PVOID, PVOID, NTSTATUS, GUID );
 
 /* Global variables in NTOSKRNL.EXE */
 extern NTKERNELAPI ULONG                CcFastMdlReadWait;
@@ -3900,6 +4406,7 @@ extern NTKERNELAPI PUSHORT              *NlsOemLeadByteInfo;
 extern NTKERNELAPI PSE_EXPORTS          SeExports;
 
 /* Functions in NTOSKRNL.EXE and NTDLL.DLL */
+NTSYSAPI NTSTATUS NTAPI         ZwDuplicateToken( HANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, BOOLEAN, TOKEN_TYPE, PHANDLE );
 NTSYSAPI NTSTATUS NTAPI         ZwQueryEaFile( HANDLE, PIO_STATUS_BLOCK, PVOID, ULONG, BOOLEAN, PVOID, ULONG, PULONG, BOOLEAN );
 NTSYSAPI NTSTATUS NTAPI         ZwSetEaFile( HANDLE, PIO_STATUS_BLOCK, PVOID, ULONG );
 #if (NTDDI_VERSION >= 0x05000000)
@@ -3908,20 +4415,20 @@ NTSYSAPI VOID NTAPI             PfxInitialize( PPREFIX_TABLE );
 NTSYSAPI BOOLEAN NTAPI          PfxInsertPrefix( PPREFIX_TABLE, PSTRING, PPREFIX_TABLE_ENTRY );
 NTSYSAPI VOID NTAPI             PfxRemovePrefix( PPREFIX_TABLE, PPREFIX_TABLE_ENTRY );
 NTSYSAPI NTSTATUS NTAPI         RtlAddAccessAllowedAce( PACL, ULONG, ACCESS_MASK, PSID );
+NTSYSAPI NTSTATUS NTAPI         RtlAddAccessAllowedAceEx( PACL, ULONG, ULONG, ACCESS_MASK, PSID );
 NTSYSAPI NTSTATUS NTAPI         RtlAddAce( PACL, ULONG, ULONG, PVOID, ULONG );
 NTSYSAPI NTSTATUS NTAPI         RtlAllocateAndInitializeSid( PSID_IDENTIFIER_AUTHORITY, UCHAR, ULONG, ULONG, ULONG, ULONG, ULONG, ULONG, ULONG, ULONG, PSID * );
 NTSYSAPI PVOID NTAPI            RtlAllocateHeap( PVOID, ULONG, SIZE_T );
 NTSYSAPI NTSTATUS NTAPI         RtlAppendStringToString( PSTRING, const STRING * );
 NTSYSAPI VOID NTAPI             RtlCaptureContext( PCONTEXT );
 NTSYSAPI SIZE_T NTAPI           RtlCompareMemoryUlong( PVOID, SIZE_T, ULONG );
+NTSYSAPI NTSTATUS NTAPI         RtlConvertSidToUnicodeString( PUNICODE_STRING, PSID, BOOLEAN );
 NTSYSAPI VOID NTAPI             RtlCopyLuid( PLUID, PLUID );
 NTSYSAPI NTSTATUS NTAPI         RtlCopySid( ULONG, PSID, PSID );
 NTSYSAPI NTSTATUS NTAPI         RtlCreateAcl( PACL, ULONG, ULONG );
 NTSYSAPI BOOLEAN NTAPI          RtlCreateUnicodeString( PUNICODE_STRING, PCWSTR );
 NTSYSAPI NTSTATUS NTAPI         RtlCustomCPToUnicodeN( PCPTABLEINFO, PWCH, ULONG, PULONG, PCH, ULONG );
-NTSYSAPI PRTL_SPLAY_LINKS NTAPI RtlDelete( PRTL_SPLAY_LINKS );
 NTSYSAPI NTSTATUS NTAPI         RtlDeleteAce( PACL, ULONG );
-NTSYSAPI VOID NTAPI             RtlDeleteNoSplay( PRTL_SPLAY_LINKS, PRTL_SPLAY_LINKS * );
 NTSYSAPI NTSTATUS NTAPI         RtlDowncaseUnicodeString( PUNICODE_STRING, PCUNICODE_STRING, BOOLEAN );
 NTSYSAPI BOOLEAN NTAPI          RtlEqualPrefixSid( PSID, PSID );
 NTSYSAPI BOOLEAN NTAPI          RtlEqualSid( PSID, PSID );
@@ -3929,7 +4436,6 @@ NTSYSAPI PUNICODE_PREFIX_TABLE_ENTRY NTAPI  RtlFindUnicodePrefix( PUNICODE_PREFI
 NTSYSAPI BOOLEAN NTAPI          RtlFreeHeap( PVOID, ULONG, PVOID );
 NTSYSAPI VOID NTAPI             RtlFreeOemString( POEM_STRING );
 NTSYSAPI PVOID NTAPI            RtlFreeSid( PSID );
-NTSYSAPI VOID NTAPI             RtlGenerate8dot3Name( PCUNICODE_STRING, BOOLEAN, PGENERATE_NAME_CONTEXT, PUNICODE_STRING );
 NTSYSAPI NTSTATUS NTAPI         RtlGetAce( PACL, ULONG, PVOID * );
 NTSYSAPI NTSTATUS NTAPI         RtlGetDaclSecurityDescriptor( PSECURITY_DESCRIPTOR, PBOOLEAN, PACL *, PBOOLEAN );
 NTSYSAPI NTSTATUS NTAPI         RtlGetOwnerSecurityDescriptor( PSECURITY_DESCRIPTOR, PSID *, PBOOLEAN );
@@ -3949,16 +4455,11 @@ NTSYSAPI NTSTATUS NTAPI         RtlOemStringToCountedUnicodeString( PUNICODE_STR
 NTSYSAPI NTSTATUS NTAPI         RtlOemStringToUnicodeString( PUNICODE_STRING, PCOEM_STRING, BOOLEAN );
 NTSYSAPI NTSTATUS NTAPI         RtlOemToUnicodeN( PWSTR, ULONG, PULONG, PCH, ULONG );
 NTSYSAPI ULONG NTAPI            RtlRandom( PULONG );
-NTSYSAPI PRTL_SPLAY_LINKS NTAPI RtlRealPredeccesor( PRTL_SPLAY_LINKS );
-NTSYSAPI PRTL_SPLAY_LINKS NTAPI RtlRealSuccessor( PRTL_SPLAY_LINKS );
 NTSYSAPI VOID NTAPI             RtlRemoveUnicodePrefix( PUNICODE_PREFIX_TABLE, PUNICODE_PREFIX_TABLE_ENTRY );
 NTSYSAPI VOID NTAPI             RtlSecondsSince1970ToTime( ULONG, PLARGE_INTEGER );
 NTSYSAPI VOID NTAPI             RtlSecondsSince1980ToTime( ULONG, PLARGE_INTEGER );
 NTSYSAPI NTSTATUS NTAPI         RtlSetOwnerSecurityDescriptor( PSECURITY_DESCRIPTOR, PSID, BOOLEAN );
-NTSYSAPI PRTL_SPLAY_LINKS NTAPI RtlSplay( PRTL_SPLAY_LINKS );
 NTSYSAPI PULONG NTAPI           RtlSubAuthoritySid( PSID, ULONG );
-NTSYSAPI PRTL_SPLAY_LINKS NTAPI RtlSubtreePredecessor( PRTL_SPLAY_LINKS );
-NTSYSAPI PRTL_SPLAY_LINKS NTAPI RtlSubtreeSuccessor( PRTL_SPLAY_LINKS );
 NTSYSAPI BOOLEAN NTAPI          RtlTimeToSecondsSince1970( PLARGE_INTEGER, PULONG );
 NTSYSAPI BOOLEAN NTAPI          RtlTimeToSecondsSince1980( PLARGE_INTEGER, PULONG );
 NTSYSAPI NTSTATUS NTAPI         RtlUnicodeStringToCountedOemString( POEM_STRING, PCUNICODE_STRING, BOOLEAN );
@@ -3989,24 +4490,10 @@ NTSYSAPI NTSTATUS NTAPI         ZwQueryDirectoryFile( HANDLE, HANDLE, PIO_APC_RO
 NTSYSAPI NTSTATUS NTAPI         ZwQueryInformationToken( HANDLE, TOKEN_INFORMATION_CLASS, PVOID, ULONG, PULONG );
 NTSYSAPI NTSTATUS NTAPI         ZwQuerySecurityObject( HANDLE, SECURITY_INFORMATION, PSECURITY_DESCRIPTOR, ULONG, PULONG );
 NTSYSAPI NTSTATUS NTAPI         ZwQueryVolumeInformationFile( HANDLE, PIO_STATUS_BLOCK, PVOID, ULONG, FS_INFORMATION_CLASS );
-NTSYSAPI NTSTATUS NTAPI         ZwRequestWaitReplyPort( HANDLE, PPORT_MESSAGE, PPORT_MESSAGE );
 NTSYSAPI NTSTATUS NTAPI         ZwSetEvent( HANDLE, PLONG );
 NTSYSAPI NTSTATUS NTAPI         ZwSetSecurityObject( HANDLE, SECURITY_INFORMATION, PSECURITY_DESCRIPTOR );
 NTSYSAPI NTSTATUS NTAPI         ZwSetVolumeInformationFile( HANDLE, PIO_STATUS_BLOCK, PVOID, ULONG, FS_INFORMATION_CLASS );
 NTSYSAPI NTSTATUS NTAPI         ZwWaitForSingleObject( HANDLE, BOOLEAN, PLARGE_INTEGER );
-#ifndef RTL_USE_AVL_TABLES
-NTSYSAPI BOOLEAN NTAPI          RtlDeleteElementGenericTable( PRTL_GENERIC_TABLE, PVOID );
-NTSYSAPI PVOID NTAPI            RtlEnumerateGenericTable( PRTL_GENERIC_TABLE, BOOLEAN );
-NTSYSAPI PVOID NTAPI            RtlEnumerateGenericTableWithoutSplaying( PRTL_GENERIC_TABLE, PVOID * );
-NTSYSAPI PVOID NTAPI            RtlGetElementGenericTable( PRTL_GENERIC_TABLE, ULONG );
-NTSYSAPI VOID NTAPI             RtlInitializeGenericTable( PRTL_GENERIC_TABLE, PRTL_GENERIC_COMPARE_ROUTINE, PRTL_GENERIC_ALLOCATE_ROUTINE, PRTL_GENERIC_FREE_ROUTINE, PVOID );
-NTSYSAPI PVOID NTAPI            RtlInsertElementGenericTable( PRTL_GENERIC_TABLE, PVOID, CLONG, PBOOLEAN );
-NTSYSAPI PVOID NTAPI            RtlInsertElementGenericTableFull( PRTL_GENERIC_TABLE, PVOID, CLONG, PBOOLEAN, PVOID, TABLE_SEARCH_RESULT );
-NTSYSAPI BOOLEAN NTAPI          RtlIsGenericTableEmpty( PRTL_GENERIC_TABLE );
-NTSYSAPI PVOID NTAPI            RtlLookupElementGenericTable( PRTL_GENERIC_TABLE, PVOID );
-NTSYSAPI PVOID NTAPI            RtlLookupElementGenericTableFull( PRTL_GENERIC_TABLE, PVOID, PVOID *, TABLE_SEARCH_RESULT * );
-NTSYSAPI ULONG NTAPI            RtlNumberGenericTableElements( PRTL_GENERIC_TABLE );
-#endif
 #endif
 #if (NTDDI_VERSION >= 0x05010000)
 NTSYSAPI USHORT NTAPI           RtlCaptureStackBackTrace( ULONG, ULONG, PVOID *, PULONG );
@@ -4017,33 +4504,21 @@ NTSYSAPI NTSTATUS NTAPI         RtlCreateSystemVolumeInformationFolder( PUNICODE
 NTSYSAPI NTSTATUS NTAPI         RtlDecompressBuffer( USHORT, PUCHAR, ULONG, PUCHAR, ULONG, PULONG );
 NTSYSAPI NTSTATUS NTAPI         RtlDecompressChunks( PUCHAR, ULONG, PUCHAR, ULONG, PUCHAR, ULONG, PCOMPRESSED_DATA_INFO );
 NTSYSAPI NTSTATUS NTAPI         RtlDecompressFragment( USHORT, PUCHAR, ULONG, PUCHAR, ULONG, ULONG, PULONG, PVOID );
-NTSYSAPI BOOLEAN NTAPI          RtlDeleteElementGenericTableAvl( PRTL_AVL_TABLE, PVOID );
 NTSYSAPI NTSTATUS NTAPI         RtlDescribeChunk( USHORT, PUCHAR *, PUCHAR, PUCHAR *, PULONG );
 NTSYSAPI PVOID NTAPI            RtlDestroyHeap( PVOID );
 NTSYSAPI NTSTATUS NTAPI         RtlDuplicateUnicodeString( ULONG, const UNICODE_STRING *, UNICODE_STRING * );
-NTSYSAPI PVOID NTAPI            RtlEnumerateGenericTableAvl( PRTL_AVL_TABLE, BOOLEAN );
-NTSYSAPI PVOID NTAPI            RtlEnumerateGenericTableLikeADictionary( PRTL_AVL_TABLE, PRTL_AVL_MATCH_FUNCTION, PVOID, ULONG, PVOID *, PULONG, PVOID );
-NTSYSAPI PVOID NTAPI            RtlEnumerateGenericTableWithoutSplayingAvl( PRTL_AVL_TABLE, PVOID * );
 NTSYSAPI VOID NTAPI             RtlFillMemoryUlong( PVOID, SIZE_T, ULONG );
 NTSYSAPI NTSTATUS NTAPI         RtlGetCompressionWorkSpaceSize( USHORT, PULONG, PULONG );
-NTSYSAPI PVOID NTAPI            RtlGetElementGenericTableAvl( PRTL_AVL_TABLE, ULONG );
 NTSYSAPI PSID_IDENTIFIER_AUTHORITY NTAPI    RtlIdentifierAuthoritySid( PSID );
 NTSYSAPI NTSTATUS NTAPI         RtlInitUnicodeStringEx( PUNICODE_STRING, PCWSTR );
-NTSYSAPI VOID NTAPI             RtlInitializeGenericTableAvl( PRTL_AVL_TABLE, PRTL_AVL_COMPARE_ROUTINE, PRTL_AVL_ALLOCATE_ROUTINE, PRTL_AVL_FREE_ROUTINE, PVOID );
-NTSYSAPI PVOID NTAPI            RtlInsertElementGenericTableAvl( PRTL_AVL_TABLE, PVOID, CLONG, PBOOLEAN );
-NTSYSAPI PVOID NTAPI            RtlInsertElementGenericTableFullAvl( PRTL_AVL_TABLE, PVOID, CLONG, PBOOLEAN, PVOID, TABLE_SEARCH_RESULT );
-NTSYSAPI BOOLEAN NTAPI          RtlIsGenericTableEmptyAvl( PRTL_AVL_TABLE );
-NTSYSAPI PVOID NTAPI            RtlLookupElementGenericTableAvl( PRTL_AVL_TABLE, PVOID );
-NTSYSAPI PVOID NTAPI            RtlLookupElementGenericTableFullAvl( PRTL_AVL_TABLE, PVOID, PVOID *, TABLE_SEARCH_RESULT );
-NTSYSAPI PVOID NTAPI            RtlLookupFirstMatchingElementGenericTableAvl( PRTL_AVL_TABLE, PVOID, PVOID * );
 NTSYSAPI ULONG NTAPI            RtlNtStatusToDosErrorNoTeb( NTSTATUS );
-NTSYSAPI ULONG NTAPI            RtlNumberGenericTableElementsAvl( PRTL_AVL_TABLE );
 NTSYSAPI ULONG NTAPI            RtlRandomEx( PULONG );
 NTSYSAPI NTSTATUS NTAPI         RtlReserveChunk( USHORT, PUCHAR *, PUCHAR, PUCHAR *, ULONG );
 NTSYSAPI PUCHAR NTAPI           RtlSubAuthorityCountSid( PSID );
 NTSYSAPI NTSTATUS NTAPI         RtlValidateUnicodeString( ULONG, const UNICODE_STRING * );
 NTSYSAPI NTSTATUS NTAPI         ZwOpenProcessTokenEx( HANDLE, ACCESS_MASK, ULONG, PHANDLE );
 NTSYSAPI NTSTATUS NTAPI         ZwOpenThreadTokenEx( HANDLE, ACCESS_MASK, BOOLEAN, ULONG, PHANDLE );
+NTSYSAPI NTSTATUS NTAPI         ZwQueryObject( HANDLE, OBJECT_INFORMATION_CLASS, PVOID, ULONG, PULONG );
 #endif
 #if (NTDDI_VERSION >= 0x05020000)
 NTSYSAPI NTSTATUS NTAPI         RtlInitAnsiStringEx( PANSI_STRING, PCSZ );
@@ -4054,7 +4529,6 @@ NTSYSAPI NTSTATUS NTAPI         RtlGetGroupSecurityDescriptor( PSECURITY_DESCRIP
 NTSYSAPI NTSTATUS NTAPI         RtlGetSaclSecurityDescriptor( PSECURITY_DESCRIPTOR, PBOOLEAN, PACL *, PBOOLEAN );
 NTSYSAPI NTSTATUS NTAPI         RtlSelfRelativeToAbsoluteSD( PSECURITY_DESCRIPTOR, PSECURITY_DESCRIPTOR, PULONG, PACL, PULONG, PACL, PULONG, PSID, PULONG, PSID, PULONG );
 NTSYSAPI NTSTATUS NTAPI         RtlSetGroupSecurityDescriptor( PSECURITY_DESCRIPTOR, PSID, BOOLEAN );
-NTSYSAPI NTSTATUS NTAPI         ZwSecureConnectPort( PHANDLE, PUNICODE_STRING, PSECURITY_QUALITY_OF_SERVICE, PPORT_VIEW, PSID, PREMOTE_PORT_VIEW, PULONG, PVOID, PULONG );
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
 NTSYSAPI LONG NTAPI             RtlCompareAltitudes( PCUNICODE_STRING, PCUNICODE_STRING );
@@ -4064,13 +4538,25 @@ NTSYSAPI NTSTATUS NTAPI         RtlIdnToNameprepUnicode( ULONG, PCWSTR, LONG, PW
 NTSYSAPI NTSTATUS NTAPI         RtlIdnToUnicode( ULONG, PCWSTR, LONG, PWSTR, PLONG );
 NTSYSAPI NTSTATUS NTAPI         RtlIsNormalizedString( ULONG, PCWSTR, LONG, PBOOLEAN );
 NTSYSAPI NTSTATUS NTAPI         RtlNormalizeString( ULONG, PCWSTR, LONG, PWSTR, PLONG );
-NTSYSAPI NTSTATUS NTAPI         ZwConnectPort( PHANDLE, PUNICODE_STRING, PSECURITY_QUALITY_OF_SERVICE, PPORT_VIEW, PREMOTE_PORT_VIEW, PULONG, PVOID, PULONG );
 NTSYSAPI NTSTATUS NTAPI         ZwFlushBuffersFile( HANDLE, PIO_STATUS_BLOCK );
 NTSYSAPI NTSTATUS NTAPI         ZwLockFile( HANDLE, HANDLE, PIO_APC_ROUTINE, PVOID, PIO_STATUS_BLOCK, PLARGE_INTEGER, PLARGE_INTEGER, ULONG, BOOLEAN, BOOLEAN );
 NTSYSAPI NTSTATUS NTAPI         ZwQueryQuotaInformationFile( HANDLE, PIO_STATUS_BLOCK, PVOID, ULONG, BOOLEAN, PVOID, ULONG, PSID, BOOLEAN );
-NTSYSAPI NTSTATUS NTAPI         ZwSetInformationToken( HANDLE, TOKEN_INFORMATION_CLASS, PVOID, ULONG );
 NTSYSAPI NTSTATUS NTAPI         ZwSetQuotaInformationFile( HANDLE, PIO_STATUS_BLOCK, PVOID, ULONG );
 NTSYSAPI NTSTATUS NTAPI         ZwUnlockFile( HANDLE, PIO_STATUS_BLOCK, PLARGE_INTEGER, PLARGE_INTEGER, ULONG );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+NTSYSAPI NTSTATUS NTAPI         RtlCreateVirtualAccount( PCUNICODE_STRING, ULONG, PSID, PULONG );
+NTSYSAPI NTSTATUS NTAPI         RtlReplaceSidInSd( PSECURITY_DESCRIPTOR, PSID, PSID, ULONG * );
+NTSYSAPI NTSTATUS NTAPI         ZwSetInformationToken( HANDLE, TOKEN_INFORMATION_CLASS, PVOID, ULONG );
+#endif
+
+/* Functions in NTOSKRNL.EXE and NTDLL.DLL that are defined differently on different
+ * versions of Windows.
+ */
+#if (NTDDI_VERSION >= 0x06000100)
+NTSYSAPI NTSTATUS NTAPI RtlGenerate8dot3Name( PCUNICODE_STRING, BOOLEAN, PGENERATE_NAME_CONTEXT, PUNICODE_STRING );
+#elif (NTDDI_VERSION >= 0x05000000)
+NTSYSAPI NTSTATUS NTAPI RtlGenerate8dot3Name( PCUNICODE_STRING, BOOLEAN, PGENERATE_NAME_CONTEXT, PUNICODE_STRING );
 #endif
 
 /* System call functions in NTOSKRNL.EXE and NTDLL.DLL */
@@ -4107,7 +4593,6 @@ NTSYSCALLAPI NTSTATUS NTAPI NtAccessCheckByTypeResultListAndAuditAlarm( PUNICODE
 NTSYSCALLAPI NTSTATUS NTAPI NtAccessCheckByTypeResultListAndAuditAlarmByHandle( PUNICODE_STRING, PVOID, HANDLE, PUNICODE_STRING, PUNICODE_STRING, PSECURITY_DESCRIPTOR, PSID, ACCESS_MASK, AUDIT_EVENT_TYPE, ULONG, POBJECT_TYPE_LIST, ULONG, PGENERIC_MAPPING, BOOLEAN, PACCESS_MASK, PNTSTATUS, PBOOLEAN );
 NTSYSCALLAPI NTSTATUS NTAPI NtAdjustGroupsToken( HANDLE, BOOLEAN, PTOKEN_GROUPS, ULONG, PTOKEN_GROUPS, PULONG );
 NTSYSCALLAPI NTSTATUS NTAPI NtCloseObjectAuditAlarm( PUNICODE_STRING, PVOID, BOOLEAN );
-NTSYSCALLAPI NTSTATUS NTAPI NtConnectPort( PHANDLE, PUNICODE_STRING, PSECURITY_QUALITY_OF_SERVICE, PPORT_VIEW, PREMOTE_PORT_VIEW, PULONG, PVOID, PULONG );
 NTSYSCALLAPI NTSTATUS NTAPI NtCreateSection( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PLARGE_INTEGER, ULONG, ULONG, HANDLE );
 NTSYSCALLAPI NTSTATUS NTAPI NtDeleteObjectAuditAlarm( PUNICODE_STRING, PVOID, BOOLEAN );
 NTSYSCALLAPI NTSTATUS NTAPI NtDuplicateToken( HANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, BOOLEAN, TOKEN_TYPE, PHANDLE );
@@ -4119,8 +4604,6 @@ NTSYSCALLAPI NTSTATUS NTAPI NtOpenThreadTokenEx( HANDLE, ACCESS_MASK, BOOLEAN, U
 NTSYSCALLAPI NTSTATUS NTAPI NtPrivilegeCheck( HANDLE, PPRIVILEGE_SET, PBOOLEAN );
 NTSYSCALLAPI NTSTATUS NTAPI NtPrivilegeObjectAuditAlarm( PUNICODE_STRING, PVOID, HANDLE, ACCESS_MASK, PPRIVILEGE_SET, BOOLEAN );
 NTSYSCALLAPI NTSTATUS NTAPI NtPrivilegedServiceAuditAlarm( PUNICODE_STRING, PUNICODE_STRING, HANDLE, PPRIVILEGE_SET, BOOLEAN );
-NTSYSCALLAPI NTSTATUS NTAPI NtRequestWaitReplyPort( HANDLE, PPORT_MESSAGE, PPORT_MESSAGE );
-NTSYSCALLAPI NTSTATUS NTAPI NtSecureConnectPort( PHANDLE, PUNICODE_STRING, PSECURITY_QUALITY_OF_SERVICE, PPORT_VIEW, PSID, PREMOTE_PORT_VIEW, PULONG, PVOID, PULONG );
 NTSYSCALLAPI NTSTATUS NTAPI NtSetInformationThread( HANDLE, THREADINFOCLASS, PVOID, ULONG );
 NTSYSCALLAPI NTSTATUS NTAPI NtSetInformationToken( HANDLE, TOKEN_INFORMATION_CLASS, PVOID, ULONG );
 #endif
@@ -4142,44 +4625,6 @@ NTKERNELAPI NTSTATUS NTAPI      PsLookupThreadByThreadId( HANDLE, PETHREAD * );
 NTKERNELAPI NTSTATUS NTAPI      SeAccessCheckFromState( PSECURITY_DESCRIPTOR, PTOKEN_ACCESS_INFORMATION, PTOKEN_ACCESS_INFORMATION, ACCESS_MASK, ACCESS_MASK, PPRIVILEGE_SET *, PGENERIC_MAPPING, KPROCESSOR_MODE, PACCESS_MASK, PNTSTATUS );
 NTKERNELAPI NTSTATUS NTAPI      SeLocateProcessImageName( PEPROCESS, PUNICODE_STRING * );
 NTKERNELAPI NTSTATUS NTAPI      SeReportSecurityEventWithSubCategory( ULONG, PUNICODE_STRING, PSID, PSE_ADT_PARAMETER_ARRAY, ULONG );
-NTKERNELAPI NTSTATUS NTAPI      TmCancelPropagationRequest( PVOID );
-NTKERNELAPI NTSTATUS NTAPI      TmCommitComplete( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmCommitEnlistment( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmCommitTransaction( PKTRANSACTION, BOOLEAN );
-NTKERNELAPI NTSTATUS NTAPI      TmCreateEnlistment( PHANDLE, KPROCESSOR_MODE, ACCESS_MASK, POBJECT_ATTRIBUTES, PRKRESOURCEMANAGER, PKTRANSACTION, ULONG, NOTIFICATION_MASK, PVOID );
-NTKERNELAPI NTSTATUS NTAPI      TmCurrentTransaction( PHANDLE );
-NTKERNELAPI NTSTATUS NTAPI      TmDefaultTmOpenFileCount( PULONG );
-NTKERNELAPI NTSTATUS NTAPI      TmEnableCallbacks( PKRESOURCEMANAGER, PTM_RM_NOTIFICATION, PVOID );
-NTKERNELAPI NTSTATUS NTAPI      TmEndPropagationRequest( PVOID );
-NTKERNELAPI NTSTATUS NTAPI      TmFreezeTransactions( PLARGE_INTEGER, PLARGE_INTEGER, KPROCESSOR_MODE );
-NTKERNELAPI VOID NTAPI          TmGetTransactionId( PKTRANSACTION, PUOW );
-NTKERNELAPI NTSTATUS NTAPI      TmInitDefaultTemporaryTm( PDEVICE_OBJECT, ULONG );
-NTKERNELAPI BOOLEAN NTAPI       TmInitSystem( VOID );
-NTKERNELAPI VOID NTAPI          TmInitSystemPhase2( VOID );
-NTKERNELAPI BOOLEAN NTAPI       TmIsTransactionActive( PKTRANSACTION );
-NTKERNELAPI NTSTATUS NTAPI      TmMarshallTransaction( PKTRANSACTION, ULONG, PKCRM_PROTOCOL_ID, ULONG, PVOID, PULONG );
-NTKERNELAPI NTSTATUS NTAPI      TmPrePrepareComplete( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmPrePrepareEnlistment( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmPrepareComplete( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmPrepareEnlistment( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmPropagationComplete( PKRESOURCEMANAGER, ULONG, ULONG, PVOID );
-NTKERNELAPI NTSTATUS NTAPI      TmPropagationFailed( PKRESOURCEMANAGER, ULONG, NTSTATUS );
-NTKERNELAPI NTSTATUS NTAPI      TmPullTransaction( LPGUID, PVOID *, ULONG, PKCRM_PROTOCOL_ID, ULONG, PVOID, PTM_PROPAGATE_ROUTINE, PVOID );
-NTKERNELAPI NTSTATUS NTAPI      TmReadOnlyEnlistment( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmRecoverEnlistment( PKENLISTMENT, PVOID );
-NTKERNELAPI NTSTATUS NTAPI      TmRecoverResourceManager( PKRESOURCEMANAGER );
-NTKERNELAPI NTSTATUS NTAPI      TmRecoverTransactionManager( PKTM, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmReferenceEnlistmentKey( PKENLISTMENT, PVOID * );
-NTKERNELAPI NTSTATUS NTAPI      TmRequestOutcomeEnlistment( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI BOOLEAN NTAPI       TmRmIsNotificationQueueEmpty_Temporary( PKRESOURCEMANAGER );
-NTKERNELAPI NTSTATUS NTAPI      TmRollbackComplete( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmRollbackEnlistment( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmRollbackTransaction( PKTRANSACTION, BOOLEAN );
-NTKERNELAPI NTSTATUS NTAPI      TmSavepointComplete( PKENLISTMENT, PLARGE_INTEGER );
-NTKERNELAPI NTSTATUS NTAPI      TmSavepointTransaction( PKTRANSACTION, BOOLEAN, PKSAVEPOINT );
-NTKERNELAPI NTSTATUS NTAPI      TmSetCurrentTransaction( HANDLE );
-NTKERNELAPI NTSTATUS NTAPI      TmSetPreviousModeToKernel( VOID );
-NTKERNELAPI NTSTATUS NTAPI      TmThawTransactions();
 #if (NTDDI_VERSION >= 0x05000000)
 NTKERNELAPI BOOLEAN NTAPI       CcCanIWrite( PFILE_OBJECT, ULONG, BOOLEAN, UCHAR );
 NTKERNELAPI BOOLEAN NTAPI       CcCopyRead( PFILE_OBJECT, PLARGE_INTEGER, ULONG, BOOLEAN, PVOID, PIO_STATUS_BLOCK );
@@ -4395,8 +4840,6 @@ NTKERNELAPI TOKEN_TYPE NTAPI    SeTokenType( PACCESS_TOKEN );
 NTKERNELAPI NTSTATUS NTAPI      SeUnregisterLogonSessionTerminatedRoutine( PSE_LOGON_SESSION_TERMINATED_ROUTINE );
 #endif
 #if (NTDDI_VERSION >= 0x05000300)
-NTKERNELAPI BOOLEAN NTAPI       IoIsFileOriginRemote( PFILE_OBJECT );
-NTKERNELAPI NTSTATUS NTAPI      IoSetFileOrigin( PFILE_OBJECT, BOOLEAN );
 NTKERNELAPI BOOLEAN NTAPI       SeAuditingHardLinkEvents( BOOLEAN, PSECURITY_DESCRIPTOR );
 #endif
 #if (NTDDI_VERSION >= 0x05010000)
@@ -4412,8 +4855,6 @@ NTKERNELAPI PFSRTL_PER_STREAM_CONTEXT NTAPI FsRtlLookupPerStreamContextInternal(
 NTKERNELAPI VOID NTAPI          FsRtlNotifyFilterChangeDirectory( PNOTIFY_SYNC, PLIST_ENTRY, PVOID, PSTRING, BOOLEAN, BOOLEAN, ULONG, PIRP, PCHECK_FOR_TRAVERSE_ACCESS, PSECURITY_SUBJECT_CONTEXT, PFILTER_REPORT_CHANGE );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlRegisterFileSystemFilterCallbacks( struct _DRIVER_OBJECT *, PFS_FILTER_CALLBACKS );
 NTKERNELAPI PFSRTL_PER_STREAM_CONTEXT NTAPI FsRtlRemovePerStreamContext( PFSRTL_ADVANCED_FCB_HEADER, PVOID, PVOID );
-NTKERNELAPI NTSTATUS NTAPI      IoAttachDeviceToDeviceStackSafe( PDEVICE_OBJECT, PDEVICE_OBJECT, PDEVICE_OBJECT * );
-NTKERNELAPI NTSTATUS NTAPI      IoCreateFileSpecifyDeviceObjectHint( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PIO_STATUS_BLOCK, PLARGE_INTEGER, ULONG, ULONG, ULONG, ULONG, PVOID, ULONG, CREATE_FILE_TYPE, PVOID, ULONG, PVOID );
 NTKERNELAPI PFILE_OBJECT NTAPI  IoCreateStreamFileObjectEx( PFILE_OBJECT, PDEVICE_OBJECT, PHANDLE );
 NTKERNELAPI NTSTATUS NTAPI      IoEnumerateDeviceObjectList( PDRIVER_OBJECT, PDEVICE_OBJECT *, ULONG, PULONG );
 NTKERNELAPI PDEVICE_OBJECT NTAPI    IoGetDeviceAttachmentBaseRef( PDEVICE_OBJECT );
@@ -4451,7 +4892,6 @@ NTKERNELAPI VOID NTAPI          FsRtlResetBaseMcb( PBASE_MCB );
 NTKERNELAPI BOOLEAN NTAPI       FsRtlSplitBaseMcb( PBASE_MCB, LONGLONG, LONGLONG );
 NTKERNELAPI VOID NTAPI          FsRtlTruncateBaseMcb( PBASE_MCB, LONGLONG );
 NTKERNELAPI VOID NTAPI          FsRtlUninitializeBaseMcb( PBASE_MCB );
-NTKERNELAPI VOID NTAPI          KeInitializeThreadedDpc( PRKDPC, PKDEFERRED_ROUTINE, PVOID );
 #endif
 #if (NTDDI_VERSION >= 0x05020100)
 NTKERNELAPI NTSTATUS NTAPI      IoEnumerateRegisteredFiltersList( PDRIVER_OBJECT *, ULONG, PULONG );
@@ -4476,6 +4916,7 @@ NTKERNELAPI VOID NTAPI          FsRtlFreeExtraCreateParameter( PVOID );
 NTKERNELAPI VOID NTAPI          FsRtlFreeExtraCreateParameterList( PECP_LIST );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlGetEcpListFromIrp( PIRP, PECP_LIST * );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlGetNextExtraCreateParameter( PECP_LIST, PVOID, LPGUID, PVOID *, ULONG * );
+NTKERNELAPI NTSTATUS NTAPI      FsRtlGetVirtualDiskNestingLevel( PDEVICE_OBJECT, PULONG, PULONG );
 NTKERNELAPI VOID NTAPI          FsRtlIncrementCcFastMdlReadWait( VOID );
 NTKERNELAPI VOID NTAPI          FsRtlInitExtraCreateParameterLookasideList( PVOID, FSRTL_ECP_LOOKASIDE_FLAGS, SIZE_T, ULONG );
 NTKERNELAPI BOOLEAN NTAPI       FsRtlInitializeBaseMcbEx( PBASE_MCB, POOL_TYPE, USHORT );
@@ -4488,18 +4929,13 @@ NTKERNELAPI NTSTATUS NTAPI      FsRtlMupGetProviderIdFromName( PUNICODE_STRING, 
 NTKERNELAPI NTSTATUS NTAPI      FsRtlMupGetProviderInfoFromFileObject( PFILE_OBJECT, ULONG, PVOID, PULONG );
 NTKERNELAPI VOID NTAPI          FsRtlNotifyCleanupAll( PNOTIFY_SYNC, PLIST_ENTRY );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlNotifyVolumeEventEx( PFILE_OBJECT, ULONG, PTARGET_DEVICE_CUSTOM_NOTIFICATION );
+NTKERNELAPI ULONG NTAPI         FsRtlQueryMaximumVirtualDiskNestingLevel( VOID );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlRegisterUncProviderEx( PHANDLE, PUNICODE_STRING, PDEVICE_OBJECT, ULONG );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlRemoveDotsFromPath( PWSTR, USHORT, USHORT * );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlRemoveExtraCreateParameter( PECP_LIST, LPCGUID, PVOID *, ULONG * );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlSetEcpListIntoIrp( PIRP, PECP_LIST );
 NTKERNELAPI NTSTATUS NTAPI      FsRtlValidateReparsePointBuffer( ULONG, PREPARSE_DATA_BUFFER );
-NTKERNELAPI VOID NTAPI          IoClearIrpExtraCreateParameter( PIRP );
-NTKERNELAPI NTSTATUS NTAPI      IoCreateFileEx( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PIO_STATUS_BLOCK, PLARGE_INTEGER, ULONG, ULONG, ULONG, ULONG, PVOID, ULONG, CREATE_FILE_TYPE, PVOID, ULONG, PIO_DRIVER_CREATE_CONTEXT );
-NTKERNELAPI NTSTATUS NTAPI      IoGetIrpExtraCreateParameter( PIRP, struct _ECP_LIST ** );
-NTKERNELAPI PTXN_PARAMETER_BLOCK NTAPI  IoGetTransactionParameterBlock( PFILE_OBJECT );
-NTKERNELAPI BOOLEAN NTAPI       IoIsFileObjectIgnoringSharing( PFILE_OBJECT );
-NTKERNELAPI NTSTATUS NTAPI      IoSetIrpExtraCreateParameter( PIRP, struct _ECP_LIST * );
-NTKERNELAPI VOID NTAPI          ObDereferenceObjectDeferDelete( PVOID );
+NTKERNELAPI ULONG NTAPI         MmDoesFileHaveUserWritableReferences( PSECTION_OBJECT_POINTERS );
 NTKERNELAPI BOOLEAN NTAPI       ObIsKernelHandle( HANDLE );
 NTKERNELAPI VOID NTAPI          SeAuditHardLinkCreationWithTransaction( PUNICODE_STRING, PUNICODE_STRING, BOOLEAN, GUID * );
 NTKERNELAPI VOID NTAPI          SeAuditTransactionStateChange( GUID *, GUID *, ULONG );
@@ -4507,6 +4943,26 @@ NTKERNELAPI VOID NTAPI          SeDeleteObjectAuditAlarmWithTransaction( PVOID, 
 NTKERNELAPI VOID NTAPI          SeExamineSacl( PACL, PACCESS_TOKEN, ACCESS_MASK, BOOLEAN, PBOOLEAN, PBOOLEAN );
 NTKERNELAPI VOID NTAPI          SeOpenObjectAuditAlarmWithTransaction( PUNICODE_STRING, PVOID, PUNICODE_STRING, PSECURITY_DESCRIPTOR, PACCESS_STATE, BOOLEAN, BOOLEAN, KPROCESSOR_MODE, GUID *, PBOOLEAN );
 NTKERNELAPI VOID NTAPI          SeOpenObjectForDeleteAuditAlarmWithTransaction( PUNICODE_STRING, PVOID, PUNICODE_STRING, PSECURITY_DESCRIPTOR, PACCESS_STATE, BOOLEAN, BOOLEAN, KPROCESSOR_MODE, GUID *, PBOOLEAN );
+#endif
+#if (NTDDI_VERSION >= 0x06000100)
+NTKERNELAPI NTSTATUS NTAPI      FsRtlCheckOplockEx( POPLOCK, PIRP, ULONG, PVOID, POPLOCK_WAIT_COMPLETE_ROUTINE, POPLOCK_FS_PREPOST_IRP );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+NTKERNELAPI VOID NTAPI          CcCoherencyFlushAndPurgeCache( PSECTION_OBJECT_POINTERS, PLARGE_INTEGER, ULONG, PIO_STATUS_BLOCK, ULONG );
+NTKERNELAPI BOOLEAN NTAPI       CcCopyWriteWontFlush( PFILE_OBJECT, PLARGE_INTEGER, ULONG );
+NTKERNELAPI BOOLEAN NTAPI       FsRtlAreThereCurrentOrInProgressFileLocks( PFILE_LOCK );
+NTKERNELAPI BOOLEAN NTAPI       FsRtlCurrentOplockH( POPLOCK );
+NTKERNELAPI NTSTATUS NTAPI      FsRtlInitializeExtraCreateParameter( PECP_HEADER, ULONG, PFSRTL_EXTRA_CREATE_PARAMETER_CLEANUP_CALLBACK, ULONG, LPCGUID, PVOID );
+NTKERNELAPI NTSTATUS NTAPI      FsRtlInitializeExtraCreateParameterList( PECP_LIST );
+NTKERNELAPI NTSTATUS NTAPI      FsRtlOplockBreakH( POPLOCK, PIRP, ULONG, PVOID, POPLOCK_WAIT_COMPLETE_ROUTINE, POPLOCK_FS_PREPOST_IRP );
+NTKERNELAPI NTSTATUS NTAPI      FsRtlOplockBreakToNoneEx( POPLOCK, PIRP, ULONG, PVOID, POPLOCK_WAIT_COMPLETE_ROUTINE, POPLOCK_FS_PREPOST_IRP );
+NTKERNELAPI NTSTATUS NTAPI      FsRtlOplockFsctrlEx( POPLOCK, PIRP, ULONG, ULONG );
+NTKERNELAPI BOOLEAN NTAPI       FsRtlOplockIsSharedRequest( PIRP );
+NTKERNELAPI BOOLEAN NTAPI       FsRtlOplockKeysEqual( PFILE_OBJECT, PFILE_OBJECT );
+NTKERNELAPI NTSTATUS NTAPI      IoRegisterFsRegistrationChangeMountAware( PDRIVER_OBJECT, PDRIVER_FS_NOTIFICATION, BOOLEAN );
+NTKERNELAPI NTSTATUS NTAPI      IoReplaceFileObjectName( PFILE_OBJECT, PWSTR, USHORT );
+NTKERNELAPI NTSTATUS NTAPI      ObOpenObjectByPointerWithTag( PVOID, ULONG, PACCESS_STATE, ACCESS_MASK, POBJECT_TYPE, KPROCESSOR_MODE, ULONG, PHANDLE );
+NTKERNELAPI BOOLEAN NTAPI       SeAuditingAnyFileEventsWithContext( PSECURITY_DESCRIPTOR, PSECURITY_SUBJECT_CONTEXT );
 #endif
 
 /* Functions in NTOSKRNL.EXE with different signatures on different versions */
@@ -4525,7 +4981,6 @@ NTKERNELAPI BOOLEAN NTAPI       CcPurgeCacheSection( PSECTION_OBJECT_POINTERS, P
 #if (NTDDI_VERSION >= 0x05000000)
 #ifdef _X86_
 NTHALAPI KIRQL FASTCALL     KeAcquireSpinLockRaiseToSynch( PKSPIN_LOCK );
-NTHALAPI KIRQL NTAPI        KeRaiseIrqlToSynchLevel( VOID );
 #endif
 #endif
 #if (NTDDI_VERSION >= 0x05010000)
@@ -4541,40 +4996,6 @@ KSECDDDECLSPEC HRESULT SEC_ENTRY            GetSecurityUserInfo( PLUID, ULONG, P
 KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
 
 /* Functions implemented as macros */
-#define RtlInitializeSplayLinks( x ) \
-    { \
-        PRTL_SPLAY_LINKS    v; \
-        v = (PRTL_SPLAY_LINKS)(x); \
-        v->Parent = v; \
-        v->LeftChild = NULL; \
-        v->RightChild = NULL; \
-    }
-#define RtlParent( x )                  ((PRTL_SPLAY_LINKS)(x)->Parent)
-#define RtlLeftChild( x )               ((PRTL_SPLAY_LINKS)(x)->LeftChild)
-#define RtlRightChild( x )              ((PRTL_SPLAY_LINKS)(x)->RightChild)
-#define RtlIsRoot( x )                  (RtlParent( x ) == (PRTL_SPLAY_LINKS)(x))
-#define RtlIsLeftChild( x ) \
-    (RtlLeftChild( RtlParent( x ) ) == (PRTL_SPLAY_LINKS)(x))
-#define RtlIsRightChild( x ) \
-    (RtlRightChild( RtlParent( x ) ) == (PRTL_SPLAY_LINKS)(x))
-#define RtlInsertAsLeftChild( x, p ) \
-    { \
-        PRTL_SPLAY_LINKS    v1; \
-        PRTL_SPLAY_LINKS    v2; \
-        v1 = (PRTL_SPLAY_LINKS)(x); \
-        v2 = (PRTL_SPLAY_LINKS)(p); \
-        v1->LeftChild = v2; \
-        v2->Parent = v1; \
-    }
-#define RtlInsertAsRightChild( x, p ) \
-    { \
-        PRTL_SPLAY_LINKS    v1; \
-        PRTL_SPLAY_LINKS    v2; \
-        v1 = (PRTL_SPLAY_LINKS)(x); \
-        v2 = (PRTL_SPLAY_LINKS)(p); \
-        v1->RightChild = v2; \
-        v2->Parent = v1; \
-    }
 #define RtlUnicodeStringToOemSize( x ) \
     ((*NlsMbOemCodePageTag) ? RtlxUnicodeStringToOemSize( x ) : \
     ((x)->Length + sizeof( UNICODE_NULL )) / sizeof( WCHAR ))
@@ -4597,14 +5018,22 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
     (((PSECURITY_SUBJECT_CONTEXT)(x))->ClientToken != NULL ? \
     ((PSECURITY_SUBJECT_CONTEXT)(x))->ClientToken : \
     ((PSECURITY_SUBJECT_CONTEXT)(x))->PrimaryToken)
-#define IoInitializeThreadedDpcRequest( p1, p2 ) \
-    KeInitializeThreadedDpc( &(p1)->Dpc, (PKDEFERRED_ROUTINE)(p2), p2 )
 #define IoIsFileOpenedExclusively( x ) \
     ((BOOLEAN)!((x)->SharedRead || (x)->SharedWrite || (x)->SharedDelete))
 #define FsRtlFastLock( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 ) \
     FsRtlPrivateLock( p1, p2, p3, p4, p5, p6, p7, p8, p9, NULL, p10, p11 )
 #define FsRtlAreThereCurrentFileLocks( x ) \
     ((x)->FastIoIsQuestionable)
+#define FsRtlIncrementLockRequestsInProgress( x ) \
+    { \
+        ASSERT( (x)->LockRequestsInProgress >= 0 ); \
+        InterlockedIncrement( (LONG volatile *)&((x)->LockRequestsInProgress) ); \
+    }
+#define FsRtlDecrementLockRequestsInProgress( x ) \
+    { \
+        ASSERT( (x)->LockRequestsInProgress > 0 ); \
+        InterlockedDecrement( (LONG volatile *)&((x)->LockRequestsInProgress) ); \
+    }
 #define FsRtlTestAnsiCharacter( x, p1, p2, p3 ) \
     (((SCHAR)(x) < 0) ? p1 : ((*FsRtlLegalAnsiCharacterArray)[(x)] & \
     (p3) | ((p2) ? FSRTL_WILD_CHARACTER : 0)))
@@ -4641,18 +5070,6 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
 #define FsRtlGetPerFileContextPointer( x ) \
     (FsRtlSupportsPerFileContexts( x ) ? \
     FsRtlGetPerStreamContextPointer( x )->FileContextSupportPointer : NULL)
-#define FsRtlSetupAdvancedHeader( x, p ) \
-    { \
-        (x)->Flags |= FSRTL_FLAG_ADVANCED_HEADER; \
-        (x)->Flags2 |= FSRTL_FLAG2_SUPPORTS_FILTER_CONTEXTS; \
-        (x)->Version = FSRTL_FCB_HEADER_V1; \
-        InitializeListHead( &(x)->FilterContexts ); \
-        if( (p) != NULL ) { \
-            (x)->FastMutex = (p); \
-        } \
-        *((PULONG_PTR)&(x)->PushLock) = 0; \
-        (x)->FileContextSupportPointer = NULL; \
-    }
 #define FsRtlSetupAdvancedHeaderEx( x, p1, p2 ) \
     { \
         FsRtlSetupAdvancedHeader( x, p1 ); \
@@ -4686,7 +5103,9 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
     (((PSECTION_OBJECT_POINTERS)(x)->SectionObjectPointer)->SharedCacheMap != NULL))
 #define CcGetFileSizePointer( x ) \
     ((PLARGE_INTEGER)((x)->SectionObjectPointer->SharedCacheMap) + 1)
-#define CcCopyWriteWontFlush( p1, p2, p3 ) ((p3) <= 0x00010000)
+#if (NTDDI_VERSION < 0x06010000)
+    #define CcCopyWriteWontFlush( p1, p2, p3 ) ((p3) <= 0x00010000)
+#endif
 #define CcReadAhead( p1, p2, p3 ) \
     { \
         if( (p3) >= 256 ) { \
@@ -4694,29 +5113,28 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
         } \
     }
 
-/* Aliases */
-#ifdef RTL_USE_AVL_TABLES
-    #define RtlInitializeGenericTable               RtlInitializeGenericTableAvl
-    #define RtlInsertElementGenericTable            RtlInsertElementGenericTableAvl
-    #define RtlInsertElementGenericTableFull        RtlInsertElementGenericTableFullAvl
-    #define RtlDeleteElementGenericTable            RtlDeleteElementGenericTableAvl
-    #define RtlLookupElementGenericTable            RtlLookupElementGenericTableAvl
-    #define RtlLookupElementGenericTableFull        RtlLookupElementGenericTableFullAvl
-    #define RtlEnumerateGenericTable                RtlEnumerateGenericTableAvl
-    #define RtlEnumerateGenericTableWithoutSplaying RtlEnumerateGenericTableWithoutSplayingAvl
-    #define RtlGetElementGenericTable               RtlGetElementGenericTableAvl
-    #define RtlNumberGenericTableElements           RtlNumberGenericTableElementsAvl
-    #define RtlIsGenericTableEmpty                  RtlIsGenericTableEmptyAvl
-#endif
-
 /* Other macros */
 #define LEGAL_ANSI_CHARACTER_ARRAY  (*FsRtlLegalAnsiCharacterArray)
 #define NLS_OEM_LEAD_BYTE_INFO      (*NlsOemLeadByteInfo)
 
-__inline VOID IoInitializeDriverCreateContext( PIO_DRIVER_CREATE_CONTEXT x )
+__inline void FsRtlSetupAdvancedHeader( PVOID x, PFAST_MUTEX p )
 {
-    RtlZeroMemory( x, sizeof( IO_DRIVER_CREATE_CONTEXT ) );
-    x->Size = sizeof( IO_DRIVER_CREATE_CONTEXT );
+    PFSRTL_ADVANCED_FCB_HEADER v = (PFSRTL_ADVANCED_FCB_HEADER)x;
+    v->Flags |= FSRTL_FLAG_ADVANCED_HEADER;
+    v->Flags2 |= FSRTL_FLAG2_SUPPORTS_FILTER_CONTEXTS;
+#if (NTDDI_VERSION >= 0x06000000)
+    v->Version = FSRTL_FCB_HEADER_V1;
+#else
+    v->Version = FSRTL_FCB_HEADER_V0;
+#endif
+    InitializeListHead( &v->FilterContexts );
+    if( p != NULL ) {
+        v->FastMutex = p;
+    }
+#if (NTDDI_VERSION >= 0x06000000)
+        *((PULONG_PTR)&v->PushLock) = 0;
+        v->FileContextSupportPointer = NULL;
+#endif
 }
 
 #if (NTDDI_VERSION >= 0x06000000)
