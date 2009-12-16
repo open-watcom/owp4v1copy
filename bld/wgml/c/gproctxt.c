@@ -38,6 +38,7 @@
 *               puncadj                 insert spaces after .:?
 *               set_h_start             set horizontal start postion
 *               set_v_start             set vertical start position
+*               test_page_full          test if page_bottom reached
 *
 ****************************************************************************/
 
@@ -54,11 +55,12 @@
 /***************************************************************************/
 /*  .sk adjust                                                             */
 /*                                                                         */
-/*   g_skip_wgml4 contains  0 or 1                                    TBD  */
-/*    1 for  .sk n  with n > 0                                             */
+/*   g_skip_wgml4 contains  0 or 2                                    TBD  */
+/*    2 for  .sk n  with n > 0  for device PS                              */
 /***************************************************************************/
 static void calc_skip( void )
 {
+    int32_t     skip_value;
 
     if( g_skip == 0 ) {
         g_skip_wgml4 = 0;
@@ -66,17 +68,22 @@ static void calc_skip( void )
         return;
     }
     if( g_skip < 0 ) {                  // overprint
-       if( bin_driver->y_positive == 0x00 ) {
-           g_cur_v_start += g_max_line_height;
-       } else {
-           g_cur_v_start -= g_max_line_height;
-       }
+        if( bin_driver->y_positive == 0x00 ) {
+            g_cur_v_start += g_max_line_height;
+        } else {
+            g_cur_v_start -= g_max_line_height;
+        }
     } else {
-       if( bin_driver->y_positive == 0x00 ) {
-           g_cur_v_start -= g_skip * g_max_line_height - g_skip_wgml4;
-       } else {
-           g_cur_v_start += g_skip * g_max_line_height;
-       }
+        if( bin_driver->y_positive == 0x00 ) {
+            skip_value = g_skip * g_max_line_height - g_skip_wgml4;
+            if( skip_value >= g_cur_v_start - g_page_bottom ) {
+                g_cur_v_start = g_page_bottom - 1;  // force new page
+            } else {
+                g_cur_v_start -= skip_value;
+            }
+        } else {
+            g_cur_v_start += g_skip * g_max_line_height;
+        }
     }
 
     g_skip = 0;
@@ -393,13 +400,13 @@ void document_new_page( void )
 void document_top_banner( void )
 {
     int     ind = page & 1;
-
+#if 0
     if( sect_ban_top[ind] != NULL ) {
         g_cur_v_start = ban_top_pos( sect_ban_top[ind] );
     } else {
         g_cur_v_start = g_page_top;
     }
-
+#endif
     g_cur_h_start = g_page_left_org;
     out_ban_top( sect_ban_top[ind] );
 }
@@ -560,11 +567,12 @@ void    process_line_full( text_line * a_line, bool justify )
             if( input_cbs->fmflags & II_research ) {
                 test_out_t_line( a_line );
             }
-            if( justify && !ProcFlags.literal && ProcFlags.justify > ju_off ) {
-
-                do_justify( ju_x_start, g_page_right, a_line->first );
-                if( input_cbs->fmflags & II_research ) {
-                    test_out_t_line( a_line );
+            if( !ProcFlags.literal && ProcFlags.justify > ju_off ) {
+                if( justify || ProcFlags.justify > ju_on ) {
+                    do_justify( ju_x_start, g_page_right, a_line->first );
+                    if( input_cbs->fmflags & II_research ) {
+                        test_out_t_line( a_line );
+                    }
                 }
             }
             fb_output_textline( a_line );
@@ -593,6 +601,27 @@ void    process_line_full( text_line * a_line, bool justify )
     }
 }
 
+/***************************************************************************/
+/*  test whether page is full and finish page                              */
+/***************************************************************************/
+
+static  void    test_page_full( void )
+{
+    if( ProcFlags.page_started ) {
+        if( bin_driver->y_positive == 0x00 ) {
+            if( g_cur_v_start <= g_page_bottom ) {
+                finish_page();
+                p_char = NULL;
+            }
+        } else {
+            if( g_cur_v_start >= g_page_bottom ) {
+                finish_page();
+                p_char = NULL;
+            }
+        }
+    }
+}
+
 
 /***************************************************************************/
 /*  process text  (input line or part thereof)                             */
@@ -616,21 +645,7 @@ void    process_text( char * text, uint8_t font_num )
         prepare_doc_sect( ProcFlags.doc_sect );
     }
 
-    if( ProcFlags.page_started ) {
-        if( bin_driver->y_positive == 0x00 ) {
-            if( g_cur_v_start <= g_page_bottom ) {
-                finish_page();
-                p_char = NULL;
-            }
-        } else {
-            if( g_cur_v_start >= g_page_bottom ) {
-                finish_page();
-                p_char = NULL;
-            }
-        }
-    }
-
-
+    test_page_full();
 
     p = text;
     if( ProcFlags.concat ) {            // experimental TBD
@@ -678,6 +693,10 @@ void    process_text( char * text, uint8_t font_num )
                 n_char->width = cop_text_width( n_char->text,
                                                 n_char->count,
                                                 font_num );
+                /***********************************************************/
+                /*  Test if word hits right margin                         */
+                /***********************************************************/
+
                 if( n_char->x_address + n_char->width > g_page_right ) {
                     pre_space = 0;
                     process_line_full( &t_line, ProcFlags.concat );
@@ -690,13 +709,14 @@ void    process_text( char * text, uint8_t font_num )
                     n_char->x_address = g_cur_h_start;
                 }
 
-                if( t_line.first == NULL ) {
+                if( t_line.first == NULL ) {// 1. word for line
                     pre_space = 0;
+                    calc_skip();
+                    test_page_full();
                     if( !ProcFlags.top_ban_proc ) {
                         document_new_page();
                         document_top_banner();
                     }
-                    calc_skip();
                     t_line.first = n_char;
                     t_line.y_address = g_cur_v_start;
                     ju_x_start = n_char->x_address;
@@ -747,11 +767,12 @@ void    process_text( char * text, uint8_t font_num )
         if( t_line.first == NULL ) {
             pre_space = 0;
             n_char->x_address = g_cur_h_start;
+            calc_skip();
+            test_page_full();
             if( !ProcFlags.top_ban_proc ) {
                 document_new_page();
                 document_top_banner();
             }
-            calc_skip();
             t_line.y_address = g_cur_v_start;
             ju_x_start = n_char->x_address;
         } else {
@@ -774,11 +795,12 @@ void    process_text( char * text, uint8_t font_num )
 
         if( t_line.first == NULL ) {
             pre_space = 0;
+            calc_skip();
+            test_page_full();
             if( !ProcFlags.top_ban_proc ) {
                 document_new_page();
                 document_top_banner();
             }
-            calc_skip();
             t_line.y_address = g_cur_v_start;
             t_line.first = n_char;
             ju_x_start = n_char->x_address;

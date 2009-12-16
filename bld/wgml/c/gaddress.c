@@ -34,6 +34,7 @@
 static  bool            first_aline;    // special for first :ALINE
 static  text_line   *   adr_lines = NULL;   // collect :ALINEs
 static  int8_t          a_spacing;      // spacing between adr lines
+static  int8_t          font_save;      // save for font
 
 
 /***************************************************************************/
@@ -63,10 +64,10 @@ static void calc_aline_pos( int8_t font, int8_t spacing, bool first, bool onemor
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= onemore * g_max_line_height +
+            g_cur_v_start -= onemore * wgml_fonts[font].line_height +
                              conv_vert_unit( &layout_work.aline.skip, 0 );
         } else {
-            g_cur_v_start += onemore * g_max_line_height +
+            g_cur_v_start += onemore * wgml_fonts[font].line_height +
                              conv_vert_unit( &layout_work.aline.skip, 0 );
         }
     }
@@ -132,6 +133,8 @@ extern  void    gml_address( const gmltag * entry )
     ProcFlags.address_active = true;
     first_aline = true;
     adr_lines = NULL;
+    font_save = g_curr_font_num;
+    g_curr_font_num = layout_work.address.font;
 
 //    spacing = layout_work.titlep.spacing;
     scan_start = scan_stop + 1;
@@ -152,6 +155,7 @@ extern  void    gml_eaddress( const gmltag * entry )
 
     output_addresslines( false );
 
+    g_curr_font_num = font_save;
     ProcFlags.address_active = false;
     scan_start = scan_stop + 1;
     return;
@@ -213,7 +217,7 @@ static void add_aline( text_line * ad_line )
 
     ProcFlags.page_started = true;
 
-    if( first_aline ) {
+    if( adr_lines == NULL ) {
         adr_lines = ad_line;
     } else {
         p_line = adr_lines;
@@ -237,7 +241,6 @@ void    gml_aline( const gmltag * entry )
     char        *   p;
     text_line   *   ad_line;
     static  int8_t  font;
-    int8_t          font_save;
 
     if( ProcFlags.doc_sect != doc_sect_titlep ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
@@ -260,9 +263,6 @@ void    gml_aline( const gmltag * entry )
         font = layout_work.address.font;
         if( font >= wgml_font_cnt ) font = 0;
     }
-
-    font_save = g_curr_font_num;
-    g_curr_font_num = font;
 
     calc_aline_pos( font, a_spacing, first_aline, false );
 

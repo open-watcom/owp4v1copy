@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  WGML tags for document sections :GDOC, :FRONTM, :BODY, ...
-*
+*               mostly tested :BODY so far
 ****************************************************************************/
 #include    "wgml.h"
 #include    "findfile.h"
@@ -258,7 +258,7 @@ void    prepare_doc_sect( doc_section ds )
 
 
 /***************************************************************************/
-/*          routine to process document section change               TBD   */
+/*          routine to process document section change                     */
 /***************************************************************************/
 static  void    gml_doc_xxx( doc_section ds, bool eject )
 {
@@ -319,6 +319,7 @@ extern  void    gml_backm( const gmltag * entry )
 
 extern  void    gml_body( const gmltag * entry )
 {
+//  static su skip_TBD = { "1", 1, 0, 0, 0, false, SU_chars_lines };
 
     gml_doc_xxx( doc_sect_body, layout_work.body.page_eject );
 
@@ -327,12 +328,14 @@ extern  void    gml_body( const gmltag * entry )
                     + conv_hor_unit( &layout_work.p.line_indent );
     spacing = layout_work.defaults.spacing;
 
-
     /***********************************************************************/
-    /*  for 1. body page try H0   skip                                     */
+    /*  for 1. body page try H0   skip or others                           */
     /***********************************************************************/
 
-    post_skip = &layout_work.hx[0].pre_top_skip;// TBD
+//  post_skip = &layout_work.hx[0].pre_top_skip;// TBD
+//  post_skip = &layout_work.p.pre_skip;// TBD
+//  post_skip = &skip_TBD;              // TBD
+
 //  ProcFlags.para_line1 = true;        // simulate :P start  ?? TBD
 }
 

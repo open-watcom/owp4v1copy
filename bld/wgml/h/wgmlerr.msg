@@ -93,8 +93,8 @@ pick( INF_CMDLINE,              "cmdline=%s",
 pick( INF_CMDLINE_TOK_CNT,      "Token count cmdline=%s",
                                 "Token count cmdline=%s" )
 
-pick( INF_PASS_1,               "Starting pass %s of %s ( %s mode )",
-                                "Starting pass %s of %s ( %s mode )" )
+pick( INF_PASS_1,               "\n\nStarting pass %s of %s ( %s mode )",
+                                "\n\nStarting pass %s of %s ( %s mode )" )
 
 pick( INF_PASS_2,               "  End of pass %s of %s ( %s mode )",
                                 "  End of pass %s of %s ( %s mode )" )

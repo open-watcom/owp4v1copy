@@ -1,5 +1,5 @@
 .* test for a not quite simple GML document this is work in progress
-.im tsimplei.lay
+.* will be included from the tsimpl00.gml - tsimpl99.gml files
 .gt 123 add willi
 .dm willi /:p/
 :gdoc sec='top secret'
@@ -33,7 +33,7 @@ This :HP2.test:eHP2. fragment. :hp1.111.:hp1.xxx:ehp1.:ehp1.
 Here we have some text to fill the line. Let it overflow, just to see
 whether wgml 4.0 and our new wgml handle line overflow and to see the
 differences in the output.
-.co on
+.*co on
 :p
 Hopefully no differences! :12345 test for undefined user tag. More text
 to make a true line overflow for a 2 line paragraph.
@@ -61,11 +61,11 @@ WATCOM points to: H:\ow\rel2
 01====================== 11:43:59 H:\ow\bld\builder =========================
 02====================== 11:43:59 H:\ow\bld\builder =========================
 03=================== 11:43:59 H:\ow\bld\builder\os2386 =====================
-.sk 5
+.sk 10
 04====================== 11:43:59 H:\ow\bld\builder =========================
-.sk 5
+.sk 10
 05====================== 11:43:59 H:\ow\bld\builder =========================
-.sk 5
+.sk 10
 06** REL2 rule
 07======================= 11:43:59 H:\ow\bld\pmake ==========================
 08=================== 11:43:59 H:\ow\bld\pmake\prebuild =====================
@@ -151,7 +151,7 @@ WATCOM points to: H:\ow\rel2
 88** REL2 rule last text record
 .se $apage=100
 .ty sysapage  &SYSAPAGE
-.im ts.gml
+.if $passno = $passof .im ts.gml
 :p
 :appendix
 .ty in appendix sysenv &$env
