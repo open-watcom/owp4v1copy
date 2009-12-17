@@ -43,6 +43,9 @@ DECLARE_HANDLE( DHSURF );
 DECLARE_HANDLE( DHPDEV );
 DECLARE_HANDLE( HDRVOBJ );
 DECLARE_HANDLE( HSEMAPHORE );
+#if (NTDDI_VERSION >= 0x06000000)
+DECLARE_HANDLE( HFASTMUTEX );
+#endif
 
 /* Handle special values */
 #define HGLYPH_INVALID  ((HGLYPH)-1)
@@ -146,92 +149,105 @@ DECLARE_HANDLE( HSEMAPHORE );
 #define GDI_DRIVER_VERSION  0x4000
 
 /* Driver function indices */
-#define INDEX_DrvEnablePDEV             0L
-#define INDEX_DrvCompletePDEV           1L
-#define INDEX_DrvDisablePDEV            2L
-#define INDEX_DrvEnableSurface          3L
-#define INDEX_DrvDisableSurface         4L
-#define INDEX_DrvAssertMode             5L
-#define INDEX_DrvOffset                 6L
-#define INDEX_DrvResetPDEV              7L
-#define INDEX_DrvDisableDriver          8L
-#define INDEX_DrvCreateDeviceBitmap     10L
-#define INDEX_DrvDeleteDeviceBitmap     11L
-#define INDEX_DrvRealizeBrush           12L
-#define INDEX_DrvDitherColor            13L
-#define INDEX_DrvStrokePath             14L
-#define INDEX_DrvFillPath               15L
-#define INDEX_DrvStrokeAndFillPath      16L
-#define INDEX_DrvPaint                  17L
-#define INDEX_DrvBitBlt                 18L
-#define INDEX_DrvCopyBits               19L
-#define INDEX_DrvStretchBlt             20L
-#define INDEX_DrvSetPalette             22L
-#define INDEX_DrvTextOut                23L
-#define INDEX_DrvEscape                 24L
-#define INDEX_DrvDrawEscape             25L
-#define INDEX_DrvQueryFont              26L
-#define INDEX_DrvQueryFontTree          27L
-#define INDEX_DrvQueryFontData          28L
-#define INDEX_DrvSetPointerShape        29L
-#define INDEX_DrvMovePointer            30L
-#define INDEX_DrvLineTo                 31L
-#define INDEX_DrvSendPage               32L
-#define INDEX_DrvStartPage              33L
-#define INDEX_DrvEndDoc                 34L
-#define INDEX_DrvStartDoc               35L
-#define INDEX_DrvGetGlyphMode           37L
-#define INDEX_DrvSynchronize            38L
-#define INDEX_DrvSaveScreenBits         40L
-#define INDEX_DrvGetModes               41L
-#define INDEX_DrvFree                   42L
-#define INDEX_DrvDestroyFont            43L
-#define INDEX_DrvQueryFontCaps          44L
-#define INDEX_DrvLoadFontFile           45L
-#define INDEX_DrvUnloadFontFile         46L
-#define INDEX_DrvFontManagement         47L
-#define INDEX_DrvQueryTrueTypeTable     48L
-#define INDEX_DrvQueryTrueTypeOutline   49L
-#define INDEX_DrvGetTrueTypeFile        50L
-#define INDEX_DrvQueryFontFile          51L
-#define INDEX_DrvMovePanning            52L
-#define INDEX_DrvQueryAdvanceWidths     53L
-#define INDEX_DrvSetPixelFormat         54L
-#define INDEX_DrvDescribePixelFormat    55L
-#define INDEX_DrvSwapBuffers            56L
-#define INDEX_DrvStartBending           57L
-#define INDEX_DrvNextBand               58L
-#define INDEX_DrvGetDirectDrawInfo      59L
-#define INDEX_DrvEnableDirectDraw       60L
-#define INDEX_DrvDisableDirectDraw      61L
-#define INDEX_DrvQuerySpoolType         62L
+#define INDEX_DrvEnablePDEV                 0L
+#define INDEX_DrvCompletePDEV               1L
+#define INDEX_DrvDisablePDEV                2L
+#define INDEX_DrvEnableSurface              3L
+#define INDEX_DrvDisableSurface             4L
+#define INDEX_DrvAssertMode                 5L
+#define INDEX_DrvOffset                     6L
+#define INDEX_DrvResetPDEV                  7L
+#define INDEX_DrvDisableDriver              8L
+#define INDEX_DrvCreateDeviceBitmap         10L
+#define INDEX_DrvDeleteDeviceBitmap         11L
+#define INDEX_DrvRealizeBrush               12L
+#define INDEX_DrvDitherColor                13L
+#define INDEX_DrvStrokePath                 14L
+#define INDEX_DrvFillPath                   15L
+#define INDEX_DrvStrokeAndFillPath          16L
+#define INDEX_DrvPaint                      17L
+#define INDEX_DrvBitBlt                     18L
+#define INDEX_DrvCopyBits                   19L
+#define INDEX_DrvStretchBlt                 20L
+#define INDEX_DrvSetPalette                 22L
+#define INDEX_DrvTextOut                    23L
+#define INDEX_DrvEscape                     24L
+#define INDEX_DrvDrawEscape                 25L
+#define INDEX_DrvQueryFont                  26L
+#define INDEX_DrvQueryFontTree              27L
+#define INDEX_DrvQueryFontData              28L
+#define INDEX_DrvSetPointerShape            29L
+#define INDEX_DrvMovePointer                30L
+#define INDEX_DrvLineTo                     31L
+#define INDEX_DrvSendPage                   32L
+#define INDEX_DrvStartPage                  33L
+#define INDEX_DrvEndDoc                     34L
+#define INDEX_DrvStartDoc                   35L
+#define INDEX_DrvGetGlyphMode               37L
+#define INDEX_DrvSynchronize                38L
+#define INDEX_DrvSaveScreenBits             40L
+#define INDEX_DrvGetModes                   41L
+#define INDEX_DrvFree                       42L
+#define INDEX_DrvDestroyFont                43L
+#define INDEX_DrvQueryFontCaps              44L
+#define INDEX_DrvLoadFontFile               45L
+#define INDEX_DrvUnloadFontFile             46L
+#define INDEX_DrvFontManagement             47L
+#define INDEX_DrvQueryTrueTypeTable         48L
+#define INDEX_DrvQueryTrueTypeOutline       49L
+#define INDEX_DrvGetTrueTypeFile            50L
+#define INDEX_DrvQueryFontFile              51L
+#define INDEX_DrvMovePanning                52L
+#define INDEX_DrvQueryAdvanceWidths         53L
+#define INDEX_DrvSetPixelFormat             54L
+#define INDEX_DrvDescribePixelFormat        55L
+#define INDEX_DrvSwapBuffers                56L
+#define INDEX_DrvStartBending               57L
+#define INDEX_DrvNextBand                   58L
+#define INDEX_DrvGetDirectDrawInfo          59L
+#define INDEX_DrvEnableDirectDraw           60L
+#define INDEX_DrvDisableDirectDraw          61L
+#define INDEX_DrvQuerySpoolType             62L
 #define INDEX_DrvIcmCreateColorTransform    64L
 #define INDEX_DrvIcmDeleteColorTransform    65L
-#define INDEX_DrvIcmCheckBitmapBits     66L
-#define INDEX_DrvIcmSetDeviceGammaRamp  67L
-#define INDEX_DrvGradientFill           68L
-#define INDEX_DrvStretchBltROP          69L
-#define INDEX_DrvPlgBlt                 70L
-#define INDEX_DrvAlphaBlend             71L
-#define INDEX_DrvSynthesizeFont         72L
+#define INDEX_DrvIcmCheckBitmapBits         66L
+#define INDEX_DrvIcmSetDeviceGammaRamp      67L
+#define INDEX_DrvGradientFill               68L
+#define INDEX_DrvStretchBltROP              69L
+#define INDEX_DrvPlgBlt                     70L
+#define INDEX_DrvAlphaBlend                 71L
+#define INDEX_DrvSynthesizeFont             72L
 #define INDEX_DrvGetSynthesizedFontFiles    73L
-#define INDEX_DrvTransparentBlt         74L
-#define INDEX_DrvQueryPerBandInfo       75L
-#define INDEX_DrvQueryDeviceSupport     76L
-#define INDEX_DrvDeriveSurface          85L
-#define INDEX_DrvQueryGlyphAttrs        86L
-#define INDEX_DrvNotify                 87L
-#define INDEX_DrvSynchronizeSurface     88L
+#define INDEX_DrvTransparentBlt             74L
+#define INDEX_DrvQueryPerBandInfo           75L
+#define INDEX_DrvQueryDeviceSupport         76L
+#define INDEX_DrvDeriveSurface              85L
+#define INDEX_DrvQueryGlyphAttrs            86L
+#define INDEX_DrvNotify                     87L
+#define INDEX_DrvSynchronizeSurface         88L
 #if (NTDDI_VERSION >= 0x05010000)
-    #define INDEX_DrvResetDevice        89L
+    #define INDEX_DrvResetDevice            89L
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
-    #define INDEX_DrvRenderHint         93L
-    #define INDEX_LAST                  94L
+    #define INDEX_DrvRenderHint             93L
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define INDEX_DrvCreateDeviceBitmapEx   94L
+    #define INDEX_DrvDeleteDeviceBitmapEx   95L
+    #define INDEX_DrvAssociateSharedSurface 96L
+    #define INDEX_DrvSynchronizeRedirectionBitmaps  97L
+    #define INDEX_DrvAccumulateD3DDirtyRect 98L
+    #define INDEX_DrvStartDxInterop         99L
+    #define INDEX_DrvEndDxInterop           100L
+    #define INDEX_DrvLockDisplayArea        101L
+    #define INDEX_DrvUnlockDisplayArea      102L
+    #define INDEX_LAST                      103L
+#elif (NTDDI_VERSION >= 0x06000000)
+    #define INDEX_LAST                      94L
 #elif (NTDDI_VERSION >= 0x05010000)
-    #define INDEX_LAST                  93L
+    #define INDEX_LAST                      93L
 #else
-    #define INDEX_LAST                  89L
+    #define INDEX_LAST                      89L
 #endif
 
 /* Graphics capabilities */
@@ -281,6 +297,9 @@ DECLARE_HANDLE( HSEMAPHORE );
     #define GCAPS2_EXCLUDELAYERED       0x00000800L
     #define GCAPS2_INCLUDEAPIBITMAPS    0x00001000L
     #define GCAPS2_SHOWHIDDENPOINTER    0x00002000L
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define GCAPS2_CLEARTYPE            0x00004000L
 #endif
 
 /* Line attribute flags */
@@ -414,7 +433,6 @@ DECLARE_HANDLE( HSEMAPHORE );
 #define FO_TYPE_RASTER              RASTER_FONTTYPE
 #define FO_TYPE_DEVICE              DEVICE_FONTTYPE
 #define FO_TYPE_TRUETYPE            TRUETYPE_FONTTYPE
-#define FO_TYPE_OPENTYPE            OPENTYPE_FONTTYPE
 #define FO_SIM_BOLD                 0x00002000L
 #define FO_SIM_ITALIC               0x00004000L
 #define FO_EM_HEIGHT                0x00008000L
@@ -503,6 +521,9 @@ DECLARE_HANDLE( HSEMAPHORE );
 #define PO_ELLIPSE          0x00000002L
 #define PO_ALL_INTEGERS     0x00000004L
 #define PO_ENUM_AS_INTEGERS 0x00000008L
+#if (NTDDI_VERSION >= 0x06010000)
+    #define PO_WIDENED      0x00000010L
+#endif
 
 /* Path data flags */
 #define PD_BEGINSUBPATH 0x00000001L
@@ -531,15 +552,18 @@ DECLARE_HANDLE( HSEMAPHORE );
 #define BMF_PNG     10L
 
 /* Bitmap flags */
-#define BMF_TOPDOWN     0x0001
-#define BMF_NOZEROINIT  0x0002
-#define BMF_DONTCACHE   0x0004
-#define BMF_USERMEM     0x0008
-#define BMF_KMSECTION   0x0010
-#define BMF_NOTSYSMEM   0x0020
-#define BMF_WINDOW_BLT  0x0040
+#define BMF_TOPDOWN         0x0001
+#define BMF_NOZEROINIT      0x0002
+#define BMF_DONTCACHE       0x0004
+#define BMF_USERMEM         0x0008
+#define BMF_KMSECTION       0x0010
+#define BMF_NOTSYSMEM       0x0020
+#define BMF_WINDOW_BLT      0x0040
 #if (NTDDI_VERSION >= 0x05010000)
-    #define BMF_UMPDMEM 0x0080
+    #define BMF_UMPDMEM     0x0080
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define BMF_TEMP_ALPHA  0x0100
 #endif
 
 /* XFORMOBJ_iGetXform() return values */
@@ -614,9 +638,19 @@ DECLARE_HANDLE( HSEMAPHORE );
 #define SS_RESTORE  1L
 #define SS_FREE     2L
 
+/* DrvCreateDeviceBitmapEx() flags */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define CDBEX_REDIRECTION   0x00000001L
+    #define CDBEX_DXINTEROP     0x00000002L
+#endif
+
 /* DrvDitherColor() modes */
 #define DM_DEFAULT      0x00000001L
 #define DM_MONOCHROME   0x00000002L
+
+/* DrvSetPalette() maximum values */
+#define WINDDI_MAXSETPALETTECOLORS      256L
+#define WINDDI_MAXSETPALETTECOLORINDEX  255L
 
 /* DrvDitherColor() return values */
 #define DCR_SOLID       0L
@@ -683,6 +717,7 @@ DECLARE_HANDLE( HSEMAPHORE );
 #define SPS_ANIMATEUPDATE   0x00000008L
 #define SPS_ALPHA           0x00000010L
 #if (NTDDI_VERSION >= 0x05010000)
+    #define SPS_FLAGSMASK   0x000000FFL
     #define SPS_LENGTHMASK  0x00000F00L
     #define SPS_FREQMASK    0x000FF000L
 #endif
@@ -755,12 +790,20 @@ DECLARE_HANDLE( HSEMAPHORE );
 #if (NTDDI_VERSION >= 0x05010000)
     #define FL_NONPAGED_MEMORY  0x00000002L
 #endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define FL_NON_SESSION      0x00000004L
+#endif
 
 /* EngQuerySystemAttribute() flags */
 #define QSA_MMX         0x00000100L
 #if (NTDDI_VERSION >= 0x05010000)
     #define QSA_SSE     0x00002000L
     #define QSA_3DNOW   0x00004000L
+#endif
+#if (NTDDI_VERSION >= 0x06000000)
+    #define QSA_SSE1    QSA_SSE
+    #define QSA_SSE2    0x00010000L
+    #define QSA_SSE3    0x00020000L
 #endif
 
 /* EngFntCacheFault() modes */
@@ -1658,20 +1701,34 @@ ENGAPI VOID APIENTRY            EngBugCheckEx( ULONG, ULONG_PTR, ULONG_PTR, ULON
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
 ENGAPI HANDLE APIENTRY          CLIPOBJ_GetRgn( CLIPOBJ * );
+ENGAPI VOID APIENTRY            EngAcquireFastMutex( HFASTMUTEX );
+ENGAPI BOOL APIENTRY            EngAcquireSemaphoreNoWait( HSEMAPHORE );
+ENGAPI VOID APIENTRY            EngAcquireSemaphoreShared( HSEMAPHORE );
+ENGAPI BOOL APIENTRY            EngAcquireSemaphoreSharedNoWait( HSEMAPHORE );
 ENGAPI INT APIENTRY             EngCombineRgn( HANDLE, HANDLE, HANDLE, int );
 ENGAPI INT APIENTRY             EngCopyRgn( HANDLE, HANDLE );
+ENGAPI HFASTMUTEX APIENTRY      EngCreateFastMutex();
 ENGAPI HANDLE APIENTRY          EngCreateRectRgn( INT, INT, INT, INT );
+ENGAPI VOID APIENTRY            EngDeleteFastMutex( HFASTMUTEX );
 ENGAPI VOID APIENTRY            EngDeleteRgn( HANDLE );
 ENGAPI BOOL APIENTRY            EngEqualRgn( HANDLE, HANDLE );
 ENGAPI INT APIENTRY             EngGetRgnBox( HANDLE, LPRECT );
 ENGAPI DWORD APIENTRY           EngGetRgnData( HANDLE, DWORD, LPRGNDATA );
 ENGAPI INT APIENTRY             EngIntersectRgn( HANDLE, HANDLE, HANDLE );
+ENGAPI BOOL APIENTRY            EngIsSemaphoreSharedByCurrentThread( HSEMAPHORE );
 ENGAPI INT APIENTRY             EngOffsetRgn( HANDLE, INT, INT );
 ENGAPI BOOL APIENTRY            EngRectInRgn( HANDLE, LPRECT );
+ENGAPI VOID APIENTRY            EngReleaseFastMutex( HFASTMUTEX );
 ENGAPI BOOL APIENTRY            EngSetRectRgn( HANDLE, INT, INT, INT, INT );
 ENGAPI INT APIENTRY             EngSubtractRgn( HANDLE, HANDLE, HANDLE );
 ENGAPI INT APIENTRY             EngUnionRgn( HANDLE, HANDLE, HANDLE );
+ENGAPI BOOL APIENTRY            EngUpdateDeviceSurface( SURFOBJ *, CLIPOBJ ** );
 ENGAPI INT APIENTRY             EngXorRgn( HANDLE, HANDLE, HANDLE );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+ENGAPI ULONG APIENTRY           EngCTGetCurrentGamma( HDEV );
+ENGAPI VOID APIENTRY            EngCTGetGammaTable( ULONG, CONST BYTE **, CONST BYTE ** );
+ENGAPI HBITMAP APIENTRY         EngCreateRedirectionDeviceBitmap( DHSURF, SIZEL, ULONG );
 #endif
 
 /* Functions in WIN32K.SYS and GDI32.DLL with different signatures on different versions */
@@ -1680,7 +1737,7 @@ ENGAPI VOID APIENTRY    EngProbeForRead( PVOID, SIZE_T, ULONG );
 ENGAPI VOID APIENTRY    EngProbeForReadAndWrite( PVOID, SIZE_T, ULONG );
 #else
 ENGAPI VOID APIENTRY    EngProbeForRead( PVOID, ULONG, ULONG );
-ENGAPI VODI APIENTRY    EngProbeForReadAndWrite( PVOID, ULONG, ULONG );
+ENGAPI VOID APIENTRY    EngProbeForReadAndWrite( PVOID, ULONG, ULONG );
 #endif
 
 /* Functions exported by drivers */
@@ -1760,6 +1817,17 @@ ULONG APIENTRY      DrvResetDevice( DHPDEV, PVOID );
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
 LONG APIENTRY       DrvRenderHint( DHPDEV, ULONG, SIZE_T, PVOID );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+BOOL APIENTRY       DrvAccumulateD3DDirtyRect( SURFOBJ *, RECTL * );
+BOOL APIENTRY       DrvAssociateSharedSurface( SURFOBJ *, HANDLE, HANDLE, SIZEL );
+HBITMAP APIENTRY    DrvCreateDeviceBitmapEx( DHPDEV, SIZEL, ULONG, DWORD, DHSURF, DWORD, HANDLE * );
+VOID APIENTRY       DrvDeleteDeviceBitmapEx( DHSURF );
+BOOL APIENTRY       DrvEndDxInterop( SURFOBJ *, BOOL, BOOL * );
+VOID APIENTRY       DrvLockDisplayArea( DHPDEV, RECTL * );
+BOOL APIENTRY       DrvStartDxInterop( SURFOBJ *, BOOL );
+LONG APIENTRY       DrvSynchronizeRedirectionBitmaps( DHPDEV, UINT64 * );
+VOID APIENTRY       DrvUnlockDisplayArea( DHPDEV, RECTL * );
 #endif
 
 /* Functions exported by drivers with different signatures on different versions */
