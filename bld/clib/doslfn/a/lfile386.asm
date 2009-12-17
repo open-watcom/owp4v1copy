@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  LFN functions to open and close files (32-bit).
+;* Description:  DOS LFN functions to close / commit files (32-bit).
 ;*
 ;*****************************************************************************
 

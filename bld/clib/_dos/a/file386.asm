@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  DOS functions to close / commit files (32-bit).
 ;*
 ;*****************************************************************************
 
