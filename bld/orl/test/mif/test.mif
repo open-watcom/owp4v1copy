@@ -20,9 +20,6 @@ extra_c_flags_trmem     = -dTRMEM -of+
 
 extra_l_flags           = library $(orl_lib)
 
-.before:
-        set include=$(inc_path)
-
 test_objs       =   test$(obj) &
                     trmemcvr$(obj)
 !ifeq release 0
