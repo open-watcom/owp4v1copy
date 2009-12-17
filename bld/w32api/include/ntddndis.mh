@@ -1359,11 +1359,6 @@ typedef NDIS_IF_COUNTED_STRING      *PNDIS_VM_NAME;
     #define NDIS_RECEIVE_QUEUE_INFO_ARRAY_REVISION_1    1
 #endif
 
-/* NDIS receive filter information revision number */
-#if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
-    #define NDIS_RECEIVE_QUEUE_INFO_REVISION_1  1
-#endif
-
 /* NDIS receive filter information array revision number */
 #if ((NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6) && NDIS_SUPPORT_NDIS620
     #define NDIS_RECEIVE_FILTER_INFO_ARRAY_REVISION_1   1
@@ -3678,7 +3673,7 @@ typedef struct _NDIS_WMI_RECEIVE_QUEUE_INFO {
     NDIS_VM_NAME                            VmName;
     NDIS_QUEUE_NAME                         QueueName;
 } NDIS_WMI_RECEIVE_QUEUE_INFO;
-typedef NDIS_WMI_RECEIVE_QUEUE_INFO *PNDIS_RECEIVE_QUEUE_INFO;
+typedef NDIS_WMI_RECEIVE_QUEUE_INFO *PNDIS_WMI_RECEIVE_QUEUE_INFO;
 #endif
 
 :include cplusepi.sp

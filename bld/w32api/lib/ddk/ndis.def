@@ -1,6 +1,9 @@
 LIBRARY NDIS.SYS
 EXPORTS
+NdisAcquireRWLockRead@12
+NdisAcquireRWLockWrite@12
 NdisAcquireReadWriteLock@12
+NdisActiveGroupCount@0
 NdisAdjustNetBufferCurrentMdl@4
 NdisAdvanceNetBufferDataStart@16
 NdisAdvanceNetBufferListDataStart@16
@@ -25,8 +28,12 @@ NdisAllocateNetBufferPool@8
 NdisAllocatePacket@12
 NdisAllocatePacketPool@16
 NdisAllocatePacketPoolEx@20
+NdisAllocateRWLock@4
 NdisAllocateReassembledNetBufferList@24
+NdisAllocateSharedMemory@12
 NdisAllocateTimerObject@12
+NdisBuildScatterGatherList@8
+NdisCancelDirectOidRequest@8
 NdisCancelOidRequest@8
 NdisCancelSendNetBufferLists@8
 NdisCancelSendPackets@8
@@ -91,10 +98,13 @@ NdisCopyFromPacketToPacket@24
 NdisCopyFromPacketToPacketSafe@28
 NdisCopyReceiveNetBufferListInfo@8
 NdisCopySendNetBufferListInfo@8
+NdisCurrentGroupAndProcessor@0
+NdisCurrentProcessorIndex@0
 NdisDeregisterDeviceEx@4
 NdisDeregisterProtocol@8
 NdisDeregisterProtocolDriver@4
 NdisDeregisterTdiCallBack@0
+NdisDirectOidRequest@8
 NdisDprAcquireReadWriteLock@12
 NdisDprAllocatePacket@12
 NdisDprAllocatePacketNonInterlocked@12
@@ -102,10 +112,13 @@ NdisDprFreePacket@4
 NdisDprFreePacketNonInterlocked@4
 NdisDprReleaseReadWriteLock@8
 NdisEnumerateFilterModules@20
+NdisFCancelDirectOidRequest@8
 NdisFCancelOidRequest@8
 NdisFCancelSendNetBufferLists@8
 NdisFDeregisterFilterDriver@4
 NdisFDevicePnPEventNotify@8
+NdisFDirectOidRequest@8
+NdisFDirectOidRequestComplete@12
 NdisFIndicateReceiveNetBufferLists@20
 NdisFIndicateStatus@8
 NdisFNetPnPEvent@8
@@ -126,6 +139,8 @@ NdisFreeGenericObject@4
 NdisFreeIoWorkItem@4
 NdisFreeMdl@4
 NdisFreeMemory@12
+NdisFreeMemoryWithTag@8
+NdisFreeMemoryWithTagPriority@12
 NdisFreeNetBuffer@4
 NdisFreeNetBufferList@4
 NdisFreeNetBufferListContext@8
@@ -133,7 +148,10 @@ NdisFreeNetBufferListPool@4
 NdisFreeNetBufferPool@4
 NdisFreePacket@4
 NdisFreePacketPool@4
+NdisFreeRWLock@4
 NdisFreeReassembledNetBufferList@12
+NdisFreeScatterGatherList@12
+NdisFreeSharedMemory@8
 NdisFreeTimerObject@4
 NdisGeneratePartialCancelId@0
 NdisGetCurrentProcessorCounts@12
@@ -141,17 +159,23 @@ NdisGetCurrentProcessorCpuUsage@4
 NdisGetDataBuffer@20
 NdisGetDeviceReservedExtension@4
 NdisGetDriverHandle@8
+NdisGetHypervisorInfo@4
 NdisGetNetBufferListProtocolId@4
 NdisGetPoolFromNetBuffer@4
 NdisGetPoolFromNetBufferList@4
 NdisGetPoolFromPacket@4
 NdisGetProcessorInformation@4
+NdisGetProcessorInformationEx@12
 NdisGetReceivedPacket@8
 NdisGetRoutineAddress@4
+NdisGetRssProcessorInformation@12
 NdisGetSharedDataAlignment@0
 NdisGetSystemUpTime@4
 NdisGetSystemUpTimeEx@4
 NdisGetVersion@0
+NdisGroupActiveProcessorCount@4
+NdisGroupActiveProcessorMask@4
+NdisGroupMaxProcessorCount@4
 NdisIMAssociateMiniport@8
 NdisIMCancelInitializeDeviceInstance@8
 NdisIMCopySendCompletePerPacketInfo@8
@@ -207,6 +231,7 @@ NdisMCoRequestComplete@12
 NdisMCoSendComplete@12
 NdisMCoSendNetBufferListsComplete@12
 NdisMCompleteBufferPhysicalMapping@12
+NdisMConfigMSIXTableEntry@8
 NdisMCreateLog@12
 NdisMDeregisterAdapterShutdownHandler@4
 NdisMDeregisterDevice@4
@@ -216,6 +241,7 @@ NdisMDeregisterInterruptEx@4
 NdisMDeregisterIoPortRange@16
 NdisMDeregisterMiniportDriver@4
 NdisMDeregisterScatterGatherDma@4
+NdisMDirectOidRequestComplete@12
 NdisMFlushLog@4
 NdisMFreeMapRegisters@4
 NdisMFreeNetBufferSGList@12
@@ -239,6 +265,7 @@ NdisMPromoteMiniport@4
 NdisMQueryAdapterInstanceName@8
 NdisMQueryAdapterResources@16
 NdisMQueueDpc@16
+NdisMQueueDpcEx@16
 NdisMReadDmaCounter@4
 NdisMRegisterAdapterShutdownHandler@12
 NdisMRegisterDevice@24
@@ -266,6 +293,7 @@ NdisMSynchronizeWithInterruptEx@16
 NdisMUnmapIoSpace@12
 NdisMWriteLogData@12
 NdisMapFile@12
+NdisMaxGroupCount@0
 NdisOidRequest@8
 NdisOpenAdapter@44
 NdisOpenAdapterEx@20
@@ -277,6 +305,8 @@ NdisOpenFile@24
 NdisOpenProtocolConfiguration@12
 NdisPacketPoolUsage@4
 NdisPacketSize@4
+NdisProcessorIndexToNumber@8
+NdisProcessorNumberToIndex@4
 NdisQueryAdapterInstanceName@8
 NdisQueryBindInstanceName@8
 NdisQueryNetBufferPhysicalCount@4
@@ -291,6 +321,7 @@ NdisRegisterDeviceEx@16
 NdisRegisterProtocol@16
 NdisRegisterProtocolDriver@12
 NdisRegisterTdiCallBack@8
+NdisReleaseRWLock@8
 NdisReleaseReadWriteLock@8
 NdisRequest@12
 NdisReset@8
@@ -301,6 +332,7 @@ NdisReturnNetBufferLists@12
 NdisReturnPackets@8
 NdisScheduleWorkItem@4
 NdisSendNetBufferLists@16
+NdisSetCoalescableTimerObject@24
 NdisSetEvent@4
 NdisSetOptionalHandlers@8
 NdisSetPacketPoolProtocolId@8
@@ -311,6 +343,7 @@ NdisSetTimer@8
 NdisSetTimerEx@12
 NdisSetTimerObject@20
 NdisSetupDmaTransfer@24
+NdisSystemActiveProcessorCount@4
 NdisSystemProcessorCount@0
 NdisTerminateWrapper@8
 NdisUnbindAdapter@4
