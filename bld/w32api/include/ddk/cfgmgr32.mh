@@ -230,8 +230,8 @@ typedef DEVINSTID_A DEVINSTID;
 #define ResType_IRQ             0x00000004L
 #define ResType_DoNotUse        0x00000005L
 #define ResType_BusNumber       0x00000006L
-#define ResType_MAX             0x00000006L
 #define ResType_MemLarge        0x00000007L
+#define ResType_MAX             0x00000007L
 #define ResType_Ignored_Bit     0x00008000L
 #define ResType_ClassSpecific   0x0000FFFFL
 #define ResType_DevicePrivate   0x00008001L
@@ -303,15 +303,22 @@ typedef DEVINSTID_A DEVINSTID;
 #define CM_DISABLE_BITS             0x00000007L
 
 /* CM_Get_Device_ID_List() flags */
-#define CM_GETIDLIST_FILTER_NONE                0x00000000L
-#define CM_GETIDLIST_FILTER_ENUMERATOR          0x00000001L
-#define CM_GETIDLIST_FILTER_SERVICE             0x00000002L
-#define CM_GETIDLIST_FILTER_EJECTRELATIONS      0x00000004L
-#define CM_GETIDLIST_FILTER_REMOVALRELATIONS    0x00000008L
-#define CM_GETIDLIST_FILTER_POWERRELATIONS      0x00000010L
-#define CM_GETIDLIST_FILTER_BUSRELATIONS        0x00000020L
-#define CM_GETIDLIST_DONOTGENERATE              0x10000040L
-#define CM_GETIDLIST_FILTER_BITS                0x1000007FL
+#define CM_GETIDLIST_FILTER_NONE                    0x00000000L
+#define CM_GETIDLIST_FILTER_ENUMERATOR              0x00000001L
+#define CM_GETIDLIST_FILTER_SERVICE                 0x00000002L
+#define CM_GETIDLIST_FILTER_EJECTRELATIONS          0x00000004L
+#define CM_GETIDLIST_FILTER_REMOVALRELATIONS        0x00000008L
+#define CM_GETIDLIST_FILTER_POWERRELATIONS          0x00000010L
+#define CM_GETIDLIST_FILTER_BUSRELATIONS            0x00000020L
+#define CM_GETIDLIST_DONOTGENERATE                  0x10000040L
+#if (WINVER >= 0x0601)
+    #define CM_GETIDLIST_FILTER_TRANSPORTRELATIONS  0x00000080L
+    #define CM_GETIDLIST_FILTER_PRESENT             0x00000100L
+    #define CM_GETIDLIST_FILTER_CLASS               0x00000200L
+    #define CM_GETIDLIST_FILTER_BITS                0x100003FFL
+#else
+    #define CM_GETIDLIST_FILTER_BITS                0x1000007FL
+#endif
 
 /* CM_Get_Device_Interface_List() flags */
 #define CM_GET_DEVICE_INTERFACE_LIST_PRESENT        0x00000000L
@@ -356,8 +363,11 @@ typedef DEVINSTID_A DEVINSTID;
 #if (WINVER >= 0x0502)
     #define CM_DRP_LOCATION_PATHS               0x00000024L
 #endif
+#if (WINVER >= 0x0601)
+    #define CM_DRP_BASE_CONTAINERID             0x00000025L
+#endif
 #define CM_DRP_MIN                              0x00000001L
-#define CM_DRP_MAX                              0x00000024L
+#define CM_DRP_MAX                              0x00000025L
 
 /* CM_Get_Class_Registry_Property() flags */
 #if (_WIN32_WINNT >= 0x0600)
@@ -480,6 +490,20 @@ typedef DEVINSTID_A DEVINSTID;
 #if (WINVER >= 0x0501)
     #define CM_CUSTOMDEVPROP_MERGE_MULTISZ  0x00000001L
     #define CM_CUSTOMDEVPROP_BITS           0x00000001L
+#endif
+
+/* Name attributes */
+#define CM_NAME_ATTRIBUTE_NAME_RETRIEVED_FROM_DEVICE    0x00000001L
+#define CM_NAME_ATTRIBUTE_USER_ASSIGNED_NAME            0x00000002L
+
+/* Global states */
+#define CM_GLOBAL_STATE_CAN_DO_UI           0x00000001L
+#define CM_GLOBAL_STATE_ON_BIG_STACK        0x00000002L
+#define CM_GLOBAL_STATE_SERVICES_AVAILABLE  0x00000004L
+#define CM_GLOBAL_STATE_SHUTTING_DOWN       0x00000008L
+#define CM_GLOBAL_STATE_DETECTION_PENDING   0x00000010L
+#if (WINVER >= 0x0601)
+    #define CM_GLOBAL_STATE_REBOOT_REQUIRED 0x00000020L
 #endif
 
 /* Configuration manager return codes */
@@ -608,6 +632,35 @@ typedef struct Mem_Resource_s {
 } MEM_RESOURCE;
 typedef MEM_RESOURCE    *PMEM_RESOURCE;
 
+/* Memory large range */
+typedef struct Mem_Large_Range_s {
+    DWORDLONG   MLR_Align;
+    ULONGLONG   MLR_nBytes;
+    DWORDLONG   MLR_Min;
+    DWORDLONG   MLR_Max;
+    DWORD       MLR_Flags;
+    DWORD       MLR_Reserved;
+} MEM_LARGE_RANGE;
+typedef MEM_LARGE_RANGE *PMEM_LARGE_RANGE;
+
+/* Memory large descriptor */
+typedef struct Mem_Large_Des_s {
+    DWORD       MLD_Count;
+    DWORD       MLD_Type;
+    DWORDLONG   MLD_Alloc_Base;
+    DWORDLONG   MLD_Alloc_End;
+    DWORD       MLD_Flags;
+    DWORD       MLD_Reserved;
+} MEM_LARGE_DES;
+typedef MEM_LARGE_DES   *PMEM_LARGE_DES;
+
+/* Memory large resource */
+typedef struct Mem_Large_Resource_s {
+    MEM_LARGE_DES   MEM_LARGE_Header;
+    MEM_LARGE_RANGE MEM_LARGE_Data[ANYSIZE_ARRAY];
+} MEM_LARGE_RESOURCE;
+typedef MEM_LARGE_RESOURCE  *PMEM_LARGE_RESOURCE;
+
 /* I/O range */
 typedef struct IO_Range_s {
     DWORDLONG   IOR_Align;
@@ -664,7 +717,12 @@ typedef DMA_RESOURCE    *PDMA_RESOURCE;
 typedef struct IRQ_Range_s {
     ULONG   IRQR_Min;
     ULONG   IRQR_Max;
+#ifdef NT_PROCESSOR_GROUPS
+    USHORT  IRQR_Flags;
+    USHORT  IRQR_Rsvdz;
+#else
     ULONG   IRQR_Flags;
+#endif
 } IRQ_RANGE;
 typedef IRQ_RANGE   *PIRQ_RANGE;
 
@@ -672,7 +730,12 @@ typedef IRQ_RANGE   *PIRQ_RANGE;
 typedef struct IRQ_Des_32_s {
     DWORD   IRQD_Count;
     DWORD   IRQD_Type;
+#ifdef NT_PROCESSOR_GROUPS
+    USHORT  IRQD_Flags;
+    USHORT  IRQD_Group;
+#else
     DWORD   IRQD_Flags;
+#endif
     ULONG   IRQD_Alloc_Num;
     ULONG32 IRQD_Affinity;
 } IRQ_DES_32;
@@ -682,7 +745,12 @@ typedef IRQ_DES_32  *PIRQ_DES_32;
 typedef struct IRQ_Des_64_s {
     DWORD   IRQD_Count;
     DWORD   IRQD_Type;
+#ifdef NT_PROCESSOR_GROUPS
+    USHORT  IRQD_Flags;
+    USHORT  IRQD_Group;
+#else
     DWORD   IRQD_Flags;
+#endif
     ULONG   IRQD_Alloc_Num;
     ULONG64 IRQD_Affinity;
 } IRQ_DES_64;
@@ -1039,8 +1107,10 @@ CMAPI CONFIGRET WINAPI  CM_Unregister_Device_InterfaceA( LPCSTR, ULONG );
 CMAPI CONFIGRET WINAPI  CM_Unregister_Device_InterfaceW( LPCWSTR, ULONG );
 CMAPI CONFIGRET WINAPI  CM_Unregister_Device_Interface_ExA( LPCSTR, ULONG, HMACHINE );
 CMAPI CONFIGRET WINAPI  CM_Unregister_Device_Interface_ExW( LPCWSTR, ULONG, HMACHINE );
-#if (WINVER >= 0x0501)
+#if (WINVER >= 0x0500)
 CMAPI DWORD WINAPI      CMP_WaitNoPendingInstallEvents( DWORD );
+#endif
+#if (WINVER >= 0x0501)
 CMAPI CONFIGRET WINAPI  CM_Get_DevNode_Custom_PropertyA( DEVINST, PCSTR, PULONG, PVOID, PULONG, ULONG );
 CMAPI CONFIGRET WINAPI  CM_Get_DevNode_Custom_PropertyW( DEVINST, PCWSTR, PULONG, PVOID, PULONG, ULONG );
 CMAPI CONFIGRET WINAPI  CM_Get_DevNode_Custom_Property_ExA( DEVINST, PCSTR, PULONG, PVOID, PULONG, ULONG, HMACHINE );
@@ -1097,12 +1167,14 @@ CMAPI CONFIGRET WINAPI  CM_Write_UserPowerKey( CONST GUID *, CONST GUID *, CONST
 #define CM_Setup_DevInst_Ex                     CM_Setup_DevNode_Ex
 #define CM_Uninstall_DevInst                    CM_Uninstall_DevNode
 #define CM_Uninstall_DevInst_Ex                 CM_Uninstall_DevNode_Ex
+#if (WINVER >= 0x0500)
+    #define CM_WaitNoPendingInstallEvents       CMP_WaitNoPendingInstallEvents
+#endif
 #if (WINVER >= 0x0501)
     #define CM_Get_DevInst_Custom_PropertyA     CM_Get_DevNode_Custom_PropertyA
     #define CM_Get_DevInst_Custom_PropertyW     CM_Get_DevNode_Custom_PropertyW
     #define CM_Get_DevInst_Custom_Property_ExA  CM_Get_DevNode_Custom_Property_ExA
     #define CM_Get_DevInst_Custom_Property_ExW  CM_Get_DevNode_Custom_Property_ExW
-    #define CM_WaitNoPendingInstallEvents       CMP_WaitNoPendingInstallEvents
 #endif
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
