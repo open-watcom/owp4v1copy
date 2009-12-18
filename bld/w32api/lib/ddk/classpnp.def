@@ -5,7 +5,6 @@ ClassAcquireRemoveLockEx@16
 ClassAsynchronousCompletion@12
 ClassBuildRequest@8
 ClassCheckMediaState@4
-ClassCheckVerifyComplete
 ClassClaimDevice@8
 ClassCleanupMediaChangeDetection@4
 ClassCompleteRequest@12
