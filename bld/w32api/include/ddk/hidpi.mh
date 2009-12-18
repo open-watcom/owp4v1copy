@@ -282,16 +282,10 @@ NTSTATUS __stdcall  HidP_UsageAndPageListDifference( PUSAGE_AND_PAGE, PUSAGE_AND
 NTSTATUS __stdcall  HidP_UsageListDifference( PUSAGE, PUSAGE, PUSAGE, PUSAGE, ULONG );
 
 /* Functions implemented as macros */
-#define HidP_GetButtonCaps( p1, p2, p3, p4 ) \
-    HidP_GetSpecificButtonCaps( p1, 0, 0, 0, p2, p3, p4 )
-#define HidP_GetButtonListLength( p1, p2, p3 ) \
-    HidP_GetButtonListLength( p1, p2, p3 )
 #define HidP_GetButtons( p1, p2, p3, p4, p5, p6, p7, p8 ) \
     HidP_GetUsages( p1, p2, p3, p4, p5, p6, p7, p8 )
 #define HidP_GetButtonsEx( p1, p2, p3, p4, p5, p6, p7 ) \
     HidP_GetUsagesEx( p1, p2, p3, p4, p5, p6, p7 )
-#define HidP_GetValueCaps( p1, p2, p3, p4 ) \
-    HidP_GetSpecificValueCaps( p1, 0, 0, 0, p2, p3, p4 )
 #define HidP_IsSameUsageAndPage( p1, p2 )   ((*(PULONG)&p1) == (*(PULONG)&p2))
 #define HidP_SetButtons( p1, p2, p3, p4, p5, p6, p7, p8 ) \
     HidP_SetUsages( p1, p2, p3, p4, p5, p6, p7, p8 )
