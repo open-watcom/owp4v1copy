@@ -11,68 +11,74 @@
 :include cpluspro.sp
 
 /* CM_Get_DevInst_Status() flags */
-#define CM_PROB_NOT_CONFIGURED                  0x00000001L
-#define CM_PROB_DEVLOADER_FAILED                0x00000002L
-#define CM_PROB_OUT_OF_MEMORY                   0x00000003L
-#define CM_PROB_ENTRY_IS_WRONG_TYPE             0x00000004L
-#define CM_PROB_LACKED_ARBITRATOR               0x00000005L
-#define CM_PROB_BOOT_CONFIG_CONFLICT            0x00000006L
-#define CM_PROB_FAILED_FILTER                   0x00000007L
-#define CM_PROB_DEVLOADER_NOT_FOUND             0x00000008L
-#define CM_PROB_INVALID_DATA                    0x00000009L
-#define CM_PROB_FAILED_START                    0x0000000AL
-#define CM_PROB_LIAR                            0x0000000BL
-#define CM_PROB_NORMAL_CONFLICT                 0x0000000CL
-#define CM_PROB_NOT_VERIFIED                    0x0000000DL
-#define CM_PROB_NEED_RESTART                    0x0000000EL
-#define CM_PROB_REENUMERATION                   0x0000000FL
-#define CM_PROB_PARTIAL_LOG_CONF                0x00000010L
-#define CM_PROB_UNKNOWN_RESOURCE                0x00000011L
-#define CM_PROB_REINSTALL                       0x00000012L
-#define CM_PROB_REGISTRY                        0x00000013L
-#define CM_PROB_VXDLDR                          0x00000014L
-#define CM_PROB_WILL_BE_REMOVED                 0x00000015L
-#define CM_PROB_DISABLED                        0x00000016L
-#define CM_PROB_DEVLOADER_NOT_READY             0x00000017L
-#define CM_PROB_DEVICE_NOT_THERE                0x00000018L
-#define CM_PROB_MOVED                           0x00000019L
-#define CM_PROB_TOO_EARLY                       0x0000001AL
-#define CM_PROB_NO_VALID_LOG_CONF               0x0000001BL
-#define CM_PROB_FAILED_INSTALL                  0x0000001CL
-#define CM_PROB_HARDWARE_DISABLED               0x0000001DL
-#define CM_PROB_CANT_SHARE_IRQ                  0x0000001EL
-#define CM_PROB_FAILED_ADD                      0x0000001FL
-#define CM_PROB_DISABLED_SERVICE                0x00000020L
-#define CM_PROB_TRANSLATION_FAILED              0x00000021L
-#define CM_PROB_NO_SOFTCONFIG                   0x00000022L
-#define CM_PROB_BIOS_TABLE                      0x00000023L
-#define CM_PROB_IRQ_TRANSLATION_FAILED          0x00000024L
-#if (NTDDI_VERSION >= 0x05010000)
-    #define CM_PROB_FAILED_DRIVER_ENTRY         0x00000025L
-    #define CM_PROB_DRIVER_FAILED_PRIOR_UNLOAD  0x00000026L
-    #define CM_PROB_DRIVER_FAILED_LOAD          0x00000027L
-    #define CM_PROB_DRIVER_SERVICE_KEY_INVALID  0x00000028L
-    #define CM_PROB_LEGACY_SERIVCE_NO_DEVICES   0x00000029L
-    #define CM_PROB_DUPLICATE_DEVICE            0x0000002AL
-    #define CM_PROB_FAILED_POST_START           0x0000002BL
-    #define CM_PROB_HALTED                      0x0000002CL
-    #define CM_PROB_PHANTOM                     0x0000002DL
-    #define CM_PROB_SYSTEM_SHUTDOWN             0x0000002EL
-    #define CM_PROB_HELD_FOR_EJECT              0x0000002FL
-    #define CM_PROB_DRIVER_BLOCKED              0x00000030L
-    #define CM_PROB_REGISTRY_TOO_LARGE          0x00000031L
-    #define CM_PROB_SETPROPERTIES_FAILED        0x00000032L
-    #define NUM_CM_PROB                         0x00000033L
+#define CM_PROB_NOT_CONFIGURED              0x00000001L
+#define CM_PROB_DEVLOADER_FAILED            0x00000002L
+#define CM_PROB_OUT_OF_MEMORY               0x00000003L
+#define CM_PROB_ENTRY_IS_WRONG_TYPE         0x00000004L
+#define CM_PROB_LACKED_ARBITRATOR           0x00000005L
+#define CM_PROB_BOOT_CONFIG_CONFLICT        0x00000006L
+#define CM_PROB_FAILED_FILTER               0x00000007L
+#define CM_PROB_DEVLOADER_NOT_FOUND         0x00000008L
+#define CM_PROB_INVALID_DATA                0x00000009L
+#define CM_PROB_FAILED_START                0x0000000AL
+#define CM_PROB_LIAR                        0x0000000BL
+#define CM_PROB_NORMAL_CONFLICT             0x0000000CL
+#define CM_PROB_NOT_VERIFIED                0x0000000DL
+#define CM_PROB_NEED_RESTART                0x0000000EL
+#define CM_PROB_REENUMERATION               0x0000000FL
+#define CM_PROB_PARTIAL_LOG_CONF            0x00000010L
+#define CM_PROB_UNKNOWN_RESOURCE            0x00000011L
+#define CM_PROB_REINSTALL                   0x00000012L
+#define CM_PROB_REGISTRY                    0x00000013L
+#define CM_PROB_VXDLDR                      0x00000014L
+#define CM_PROB_WILL_BE_REMOVED             0x00000015L
+#define CM_PROB_DISABLED                    0x00000016L
+#define CM_PROB_DEVLOADER_NOT_READY         0x00000017L
+#define CM_PROB_DEVICE_NOT_THERE            0x00000018L
+#define CM_PROB_MOVED                       0x00000019L
+#define CM_PROB_TOO_EARLY                   0x0000001AL
+#define CM_PROB_NO_VALID_LOG_CONF           0x0000001BL
+#define CM_PROB_FAILED_INSTALL              0x0000001CL
+#define CM_PROB_HARDWARE_DISABLED           0x0000001DL
+#define CM_PROB_CANT_SHARE_IRQ              0x0000001EL
+#define CM_PROB_FAILED_ADD                  0x0000001FL
+#define CM_PROB_DISABLED_SERVICE            0x00000020L
+#define CM_PROB_TRANSLATION_FAILED          0x00000021L
+#define CM_PROB_NO_SOFTCONFIG               0x00000022L
+#define CM_PROB_BIOS_TABLE                  0x00000023L
+#define CM_PROB_IRQ_TRANSLATION_FAILED      0x00000024L
+#define CM_PROB_FAILED_DRIVER_ENTRY         0x00000025L
+#define CM_PROB_DRIVER_FAILED_PRIOR_UNLOAD  0x00000026L
+#define CM_PROB_DRIVER_FAILED_LOAD          0x00000027L
+#define CM_PROB_DRIVER_SERVICE_KEY_INVALID  0x00000028L
+#define CM_PROB_LEGACY_SERIVCE_NO_DEVICES   0x00000029L
+#define CM_PROB_DUPLICATE_DEVICE            0x0000002AL
+#define CM_PROB_FAILED_POST_START           0x0000002BL
+#define CM_PROB_HALTED                      0x0000002CL
+#define CM_PROB_PHANTOM                     0x0000002DL
+#define CM_PROB_SYSTEM_SHUTDOWN             0x0000002EL
+#define CM_PROB_HELD_FOR_EJECT              0x0000002FL
+#define CM_PROB_DRIVER_BLOCKED              0x00000030L
+#define CM_PROB_REGISTRY_TOO_LARGE          0x00000031L
+#define CM_PROB_SETPROPERTIES_FAILED        0x00000032L
+#define CM_PROB_WAITING_ON_DEPENDENCY       0x00000033L
+#define CM_PROB_UNSIGNED_DRIVER             0x00000034L
+#define NUM_CM_PROB_V1                      0x00000025L
+#define NUM_CM_PROB_V2                      0x00000032L
+#define NUM_CM_PROB_V3                      0x00000033L
+#define NUM_CM_PROB_V4                      0x00000034L
+#define NUM_CM_PROB_V5                      0x00000035L
+#if (NTDDI_VERSION >= 0x06010000)
+    #define NUM_CM_PROB                     NUM_CM_PROB_V5
+#elif (NTDDI_VERSION >= 0x06000100)
+    #define NUM_CM_PROB                     NUM_CM_PROB_V4
+#elif (NTDDI_VERSION >= 0x05020000)
+    #define NUM_CM_PROB                     NUM_CM_PROB_V3
 #elif (NTDDI_VERSION >= 0x05010000)
-    #define NUM_CM_PROB                         0x00000025L
+    #define NUM_CM_PROB                     NUM_CM_PROB_V2
+#elif (NTDDI_VERSION >= 0x05000000)
+    #define NUM_CM_PROB                     NUM_CM_PROB_V1
 #endif
-
-/* Configuration manager global state flags */
-#define CM_GLOBAL_STATE_CAN_DO_UI           0x00000001L
-#define CM_GLOBAL_STATE_ON_BIG_STACK        0x00000002L
-#define CM_GLOBAL_STATE_SERVICES_AVAILABLE  0x00000004L
-#define CM_GLOBAL_STATE_SHUTTING_DOWN       0x00000008L
-#define CM_GLOBAL_STATE_DETECTION_PENDING   0x00000010L
 
 /* Device instance status flags */
 #define DN_ROOT_ENUMERATED              0x00000001L
