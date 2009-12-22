@@ -44,7 +44,7 @@
     extern unsigned __NFiles;
 
     #define __handle_check( __h, __r )                          \
-                    if( (__h) < 0  ||  (__h) > __NFiles ) {     \
+                    if( (__h) < 0  ||  (__h) >= __NFiles ) {     \
                         __set_errno( EBADF );                   \
                         return( __r );                          \
                     }
