@@ -2815,6 +2815,63 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
     return;
 }
 
+/* Function fb_overprint_vertical_positioning().
+ * Performs the overprint vertical positioning as described in the Wiki. 
+ */
+
+static void fb_overprint_vertical_positioning( void )
+{
+    int                 i;
+    newline_block   *   current_block   = NULL;
+
+    /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
+
+    if( !has_aa_block ) {
+
+        /* Use the :NEWLINE block with an advance of "0", if one exists. */
+
+        for( i = 0; i < bin_driver->newlines.count; i++ ) {
+            if( bin_driver->newlines.newlineblocks[i].advance == 0 ) {
+                current_block = &bin_driver->newlines.newlineblocks[i];
+                break;
+            }
+        }
+
+        /* If no :NEWLINE block with an advance of "0" exists, then use the
+         * required (since there is no :ABSOLUTEADDRESS block) :NEWLINE block
+         * with an advance of "1".
+         */
+
+        if( current_block == NULL ) {
+            for( i = 0; i < bin_driver->newlines.count; i++ ) {
+                if( bin_driver->newlines.newlineblocks[i].advance == 1 ) {
+                    current_block = &bin_driver->newlines.newlineblocks[i];
+                    break;
+                }
+            }
+        }
+
+        df_interpret_driver_functions( current_block->text );
+
+        /* This is hypothetical and may need to be changed, if the condition
+         * is ever "true".
+         */
+
+        if( current_block->advance == 1 ) {
+            desired_state.y_address += wgml_fonts[font_number].line_height;
+            current_state.y_address = desired_state.y_address;
+            y_address = current_state.y_address;
+        }
+    }
+
+    /* Reset the appropriate values. */
+
+    current_state.x_address = bin_device->x_start;
+    x_address = current_state.x_address;
+
+    return;
+}
+
 /* Function fb_normal_vertical_positioning().
  * Performs the normal vertical positioning as described in the Wiki. 
  */
@@ -2851,9 +2908,15 @@ static void fb_normal_vertical_positioning( void )
         }
     }
 
-    /* If there is no difference, there is nothing to do. */
-
     if( current_state.y_address != desired_state.y_address ) {
+
+        /* If there is no difference, reset to start of current line. */
+
+        current_state.x_address = bin_device->x_start;
+        x_address = current_state.x_address;
+        fb_overprint_vertical_positioning();
+
+    } else {
 
         /* Detect and process device pages. */
 
@@ -2962,63 +3025,6 @@ static void fb_normal_vertical_positioning( void )
 
         if( !has_aa_block ) fb_newline();
     }
-}
-
-/* Function fb_overprint_vertical_positioning().
- * Performs the overprint vertical positioning as described in the Wiki. 
- */
-
-static void fb_overprint_vertical_positioning( void )
-{
-    int                 i;
-    newline_block   *   current_block   = NULL;
-
-    /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
-
-    if( !has_aa_block ) {
-
-        /* Use the :NEWLINE block with an advance of "0", if one exists. */
-
-        for( i = 0; i < bin_driver->newlines.count; i++ ) {
-            if( bin_driver->newlines.newlineblocks[i].advance == 0 ) {
-                current_block = &bin_driver->newlines.newlineblocks[i];
-                break;
-            }
-        }
-
-        /* If no :NEWLINE block with an advance of "0" exists, then use the
-         * required (since there is no :ABSOLUTEADDRESS block) :NEWLINE block
-         * with an advance of "1".
-         */
-
-        if( current_block == NULL ) {
-            for( i = 0; i < bin_driver->newlines.count; i++ ) {
-                if( bin_driver->newlines.newlineblocks[i].advance == 0 ) {
-                    current_block = &bin_driver->newlines.newlineblocks[i];
-                    break;
-                }
-            }
-        }
-
-        df_interpret_driver_functions( current_block->text );
-
-        /* This is hypothetical and may need to be changed, if the condition
-         * is ever "true".
-         */
-
-        if( current_block->advance == 1 ) {
-            desired_state.y_address += wgml_fonts[font_number].line_height;
-            current_state.y_address = desired_state.y_address;
-            y_address = current_state.y_address;
-        }
-    }
-
-    /* Reset the appropriate values. */
-
-    current_state.x_address = bin_device->x_start;
-    x_address = current_state.x_address;
-
-    return;
 }
 
 /* Function fb_subsequent_text_chars().
