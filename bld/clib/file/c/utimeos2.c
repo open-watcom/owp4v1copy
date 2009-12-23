@@ -53,7 +53,7 @@
 _WCRTLINK int __F_NAME(utime,_wutime)( CHAR_TYPE const *fn, struct utimbuf const *times )
 /***************************************************************************************/
 {
-    APIRET      error;
+    APIRET      rc;
     OS_UINT     actiontaken;
     FILESTATUS  stat;
     HFILE       handle;
@@ -65,13 +65,12 @@ _WCRTLINK int __F_NAME(utime,_wutime)( CHAR_TYPE const *fn, struct utimbuf const
     __filename_from_wide( mbPath, fn );
 #endif
 
-    error = DosOpen( (PSZ)__F_NAME(fn,mbPath), &handle, &actiontaken, 0ul, _A_NORMAL,
+    rc = DosOpen( (PSZ)__F_NAME(fn,mbPath), &handle, &actiontaken, 0ul, _A_NORMAL,
                      OPENFLAG_FAIL_IF_NOT_EXISTS | OPENFLAG_OPEN_IF_EXISTS,
                      OPENMODE_DENY_NONE | OPENMODE_ACCESS_RDWR,
                      0ul );
-    if( error != 0 ) {
-        __set_errno_dos( error );
-        return( -1 );
+    if( rc != 0 ) {
+        return( __set_errno_dos( rc ) );
     }
     if( DosQFileInfo( handle, 1, (PBYTE)&stat, sizeof( FILESTATUS ) ) != 0 ) {
         DosClose( handle );

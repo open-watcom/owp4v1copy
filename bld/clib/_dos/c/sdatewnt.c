@@ -48,9 +48,7 @@ _WCRTLINK unsigned _dos_setdate( struct dosdate_t *date )
         if( !OpenProcessToken( GetCurrentProcess(),
                                TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
                                &htoken ) ) {
-            error = GetLastError();
-            __set_errno_dos( error );
-            return( error );
+            return( __set_errno_nt_reterr() );
         }
         LookupPrivilegeValue( NULL, SE_SYSTEMTIME_NAME,
                               &tp.Privileges[0].Luid );
@@ -66,8 +64,7 @@ _WCRTLINK unsigned _dos_setdate( struct dosdate_t *date )
     st.wYear = date->year;
     st.wDayOfWeek = date->dayofweek;
     if( !SetLocalTime( &st ) ) {
-        error = GetLastError();
-        __set_errno_dos( error );
+        error = __set_errno_nt_reterr();
     }
 
     if( WIN32_IS_NT ) {

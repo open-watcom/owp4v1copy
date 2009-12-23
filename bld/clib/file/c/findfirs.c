@@ -85,15 +85,13 @@
     /*** Initialize the find ***/
     h = FIND_FIRST( filespec, &ffb );
     if( h == INVALID_HANDLE_VALUE ) {
-        __set_errno_nt();
-        return( -1 );
+        return( __set_errno_nt() );
     }
 
     /*** Look for the first file ***/
     if( !CHECK_FIND_NEXT_ATTR( h, FIND_ATTR, &ffb ) ) {
         FindClose( h );
-        __set_errno_dos( ERROR_FILE_NOT_FOUND );
-        return( -1 );
+        return( __set_errno_dos( ERROR_FILE_NOT_FOUND ) );
     }
 
     /*** Got one! ***/

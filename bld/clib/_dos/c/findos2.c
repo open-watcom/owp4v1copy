@@ -90,8 +90,7 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
 
         if( rc != 0 && rc != ERROR_EAS_DIDNT_FIT ) {
             HANDLE_OF( buf ) = BAD_HANDLE;
-            __set_errno_dos( rc );
-            return( rc );
+            return( __set_errno_dos_reterr( rc ) );
         }
         HANDLE_OF( buf ) = handle;
         copydir( buf, &dir_buff );      /* copy in other fields */
@@ -103,8 +102,7 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
         TinySetDTA( buf );      /* set our DTA */
         rc = TinyFindFirst( path, attr );
         if( TINY_ERROR( rc ) ) {
-            __set_errno_dos( TINY_INFO( rc ) );
-            return( TINY_INFO( rc ) );
+            return( __set_errno_dos_reterr( TINY_INFO( rc ) ) );
         }
     }
 #endif
@@ -126,8 +124,7 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *buf ) {
         rc = DosFindNext( HANDLE_OF( buf ), (PVOID)&dir_buff,
                     sizeof( dir_buff ), &searchcount );
         if( rc != 0 ) {
-            __set_errno_dos( rc );
-            return( rc );
+            return( __set_errno_dos_reterr( rc ) );
         }
 
         copydir( buf, &dir_buff );
@@ -139,8 +136,7 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *buf ) {
         TinySetDTA( buf );
         rc = TinyFindNext();
         if( TINY_ERROR( rc ) ) {
-            __set_errno_dos( TINY_INFO( rc ) );
-            return( TINY_INFO( rc ) );
+            return( __set_errno_dos_reterr( TINY_INFO( rc ) ) );
         }
     }
 #endif
@@ -159,8 +155,7 @@ _WCRTLINK unsigned _dos_findclose( struct find_t *buf ) {
         if( HANDLE_OF( buf ) != BAD_HANDLE ) {
             rc = DosFindClose( HANDLE_OF( buf ) );
             if( rc != 0 ) {
-                __set_errno_dos( rc );
-                return( rc );
+                return( __set_errno_dos_reterr( rc ) );
             }
         }
 #if defined(__OS2_286__)

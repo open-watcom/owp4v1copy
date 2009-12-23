@@ -119,8 +119,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
         use_exec_pgm = 0;
         rc = DosQueryAppType( pgm, &app_type );
         if( rc != 0 ) {
-            __set_errno_dos( rc );
-            return( -1 );
+            return( __set_errno_dos( rc ) );
         }
         if( (app_type & FAPPTYP_EXETYPE) == FAPPTYP_NOTSPEC && !( app_type & FAPPTYP_DOS ) ) {
             /* type of program not specified in executable file */
@@ -128,8 +127,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
         } else {
             rc = DosGetInfoBlocks( &ptib, &ppib );
             if( rc != 0 ) {
-                __set_errno_dos( rc );
-                return( -1 );
+                return( __set_errno_dos( rc ) );
             }
             if( !( app_type & FAPPTYP_DOS ) ) {
                 app_type &= FAPPTYP_EXETYPE;
@@ -153,8 +151,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
             if( mode == P_WAIT ) {
                 rc = DosCreateQueue( &termq, QUE_FIFO, queuename );
                 if( rc != 0 ) {
-                    __set_errno_dos( rc );
-                    return( -1 );
+                    return( __set_errno_dos( rc ) );
                 }
                 related = SSF_RELATED_CHILD;
             }
@@ -218,8 +215,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
         } else {
             rc = DosGetInfoSeg( &sglobal, &slocal );
             if( rc != 0 ) {
-                __set_errno_dos( rc );
-                return( -1 );
+                return( __set_errno_dos( rc ) );
             }
             local = (LINFOSEG _WCFAR *) (slocal:>0);
             if( !( app_type & 0x20 ) ) {
@@ -249,8 +245,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
                 if( np == NULL ) {
                     np = (char *)alloca( len );
                     if( np == NULL ) {
-                        __set_errno_dos( ERROR_NOT_ENOUGH_MEMORY );
-                        return( -1 );
+                        return( __set_errno_dos( ERROR_NOT_ENOUGH_MEMORY ) );
                     }
                 }
                 strcpy( np, "cmd /c " );
@@ -275,8 +270,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
             if( mode == P_WAIT ) {
                 rc = DosCreateQueue( &termq, 0, queuename );
                 if( rc != 0 ) {
-                    __set_errno_dos( rc );
-                    return( -1 );
+                    return( __set_errno_dos( rc ) );
                 }
                 related = 1; //SSF_RELATED_CHILD;
             }
@@ -314,8 +308,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
     #error platform not supported
 #endif
     if( rc != 0 ) {
-        __set_errno_dos( rc );
-        return( -1 );
+        return( __set_errno_dos( rc ) );
     }
     if( mode == P_WAIT ) {
         return( returncodes.codeResult );

@@ -97,25 +97,25 @@ _WCRTLINK unsigned _dos_open( const char *path, unsigned mode, int *handle )
 {
     *handle = CTinyOpen( path, mode );
     if( TINY_ERROR( *handle ) ) {
-        __set_errno_dos( TINY_INFO( *handle ) );
-        return( TINY_INFO( *handle ) );
-    } else return( 0 );
+        return( __set_errno_dos_reterr( TINY_INFO( *handle ) ) );
+    }
+    return( 0 );
 }
 
 _WCRTLINK unsigned _dos_creat( const char *path, unsigned attr, int *handle)
 {
     *handle = CTinyCreate( path, attr, 0x12 );
     if( TINY_ERROR( *handle ) ) {
-        __set_errno_dos( TINY_INFO( *handle ) );
-        return( TINY_INFO( *handle ) );
-    } else return( 0 );
+        return( __set_errno_dos_reterr( TINY_INFO( *handle ) ) );
+    }
+    return( 0 );
 }
 
 _WCRTLINK unsigned _dos_creatnew( const char *path, unsigned attr, int *handle)
 {
     *handle = CTinyCreate( path, attr, 0x10 );
     if( TINY_ERROR( *handle ) ) {
-        __set_errno_dos( TINY_INFO( *handle ) );
-        return( TINY_INFO( *handle ) );
-    } else return( 0 );
+        return( __set_errno_dos_reterr( TINY_INFO( *handle ) ) );
+    }
+    return( 0 );
 }

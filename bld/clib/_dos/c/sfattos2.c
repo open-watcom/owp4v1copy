@@ -43,17 +43,15 @@ _WCRTLINK unsigned _dos_setfileattr( const char *path, unsigned attribute )
     FILESTATUS3     fs;
 
     rc = DosQueryPathInfo( (PSZ)path, FIL_STANDARD, &fs, sizeof( fs ) );
-    if( rc != 0 ) {
-        __set_errno_dos( rc );
-        return( rc );
+    if( rc == 0 ) {
+        fs.attrFile = attribute;
+        rc = DosSetPathInfo( (PSZ)path, FIL_STANDARD, &fs, sizeof( fs ), 0 );
     }
-    fs.attrFile = attribute;
-    rc = DosSetPathInfo( (PSZ)path, FIL_STANDARD, &fs, sizeof( fs ), 0 );
 #else
     rc = DosSetFileMode( (PSZ)path, attribute, 0ul );
 #endif
-    if( rc != 0 ) {
-        __set_errno_dos( rc );
+    if( rc ) {
+        return( __set_errno_dos_reterr( rc ) );
     }
-    return( rc );
+    return( 0 );
 }

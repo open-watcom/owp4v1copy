@@ -77,8 +77,7 @@ _WCRTLINK __int64 __lseeki64( int handle, __int64 offset, int origin )
         if( __os2_DosSetFilePtrL != NULL ) {
             rc = __os2_DosSetFilePtrL( handle, offset, origin, &pos );
             if( rc != 0 ) {
-                __set_errno_dos( rc );
-                pos = -1LL;
+                return( __set_errno_dos( rc ) );
             }
         } else {
     #endif
@@ -105,8 +104,7 @@ _WCRTLINK __int64 __lseeki64( int handle, __int64 offset, int origin )
         if( rc == INVALID_SET_FILE_POINTER ) {  // this might be OK so
             error = GetLastError();             // check for sure JBS 04-nov-99
             if( error != NO_ERROR ) {
-                __set_errno_dos( error );
-                return( -1LL );
+                return( __set_errno_dos( error ) );
             }
         }
         U64Set( (unsigned_64 *)&pos, rc, offset_hi );
@@ -146,24 +144,21 @@ _WCRTLINK long __lseek( int handle, long offset, int origin )
 
         rc = DosChgFilePtr( handle, offset, origin, (PULONG)&pos );
         if( rc != 0 ) {
-            __set_errno_dos( rc );
-            pos = -1L;
+            return( __set_errno_dos( rc ) );
         }
     }
 #elif defined( __NT__ )
     pos = SetFilePointer( __getOSHandle( handle ), offset, 0, origin );
     if( pos == INVALID_SET_FILE_POINTER ) {
-        __set_errno_nt();
-        return( -1L );
+        return( __set_errno_nt() );
     }
 #elif defined( __DOS__ ) || defined( __WINDOWS__ )
     {
         tiny_ret_t      rc;
-    
+
         rc = TinyLSeek( handle, offset, origin, (u32_stk_ptr)&pos );
         if( TINY_ERROR( rc ) ) {
-            __set_errno_dos( TINY_INFO( rc ) );
-            return( -1L );
+            return( __set_errno_dos( TINY_INFO( rc ) ) );
         }
     }
 #endif

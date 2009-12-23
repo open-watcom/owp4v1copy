@@ -46,8 +46,7 @@ _WCRTLINK unsigned _dos_getfileattr( const char *path, unsigned *attribute )
 
     rc = DosQueryPathInfo( (PSZ)path, FIL_STANDARD, &fs, sizeof( fs ) );
     if( rc != 0 ) {
-        __set_errno_dos( rc );
-        return( rc );
+        return( __set_errno_dos_reterr( rc ) );
     }
     *attribute = fs.attrFile;
     return( 0 );

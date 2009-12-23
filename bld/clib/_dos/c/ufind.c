@@ -50,12 +50,12 @@ _WCRTLINK unsigned _wdos_findfirst( const wchar_t *path, unsigned attr, struct _
     /*** Find using MBCS buffer ***/
     __filename_from_wide( mbPath, path );
     rc = _dos_findfirst( mbPath, attr, &mbBuf );
-
     if( rc == 0 ) {
         /*** Transfer returned info to _wfind_t buffer ***/
         memcpy( buf, &mbBuf, sizeof(struct find_t) );
-        if( mbstowcs( buf->name, mbBuf.name, sizeof( buf->name ) / sizeof( wchar_t ) )  ==  -1 )
-            rc = __set_errno_dos( ERROR_FILE_NOT_FOUND );
+        if( mbstowcs( buf->name, mbBuf.name, sizeof( buf->name ) / sizeof( wchar_t ) ) == -1 ) {
+            return( __set_errno_dos( ERROR_FILE_NOT_FOUND ) );
+        }
     }
     return( rc );
 }
@@ -68,15 +68,16 @@ _WCRTLINK unsigned _wdos_findnext( struct _wfind_t *buf )
 
     /*** Find using MBCS buffer ***/
     memcpy( &mbBuf, buf, sizeof(struct find_t) );
-    if( wcstombs( mbBuf.name, buf->name, sizeof( mbBuf.name ) )  ==  -1 )
+    if( wcstombs( mbBuf.name, buf->name, sizeof( mbBuf.name ) ) == -1 )
         return( __set_errno_dos( ERROR_FILE_NOT_FOUND ) );
 
     rc = _dos_findnext( &mbBuf );
     if( rc == 0 ) {
         /*** Transfer returned info to _wfind_t buffer ***/
         memcpy( buf, &mbBuf, sizeof(struct find_t) );
-        if( mbstowcs( buf->name, mbBuf.name, sizeof( buf->name ) / sizeof( wchar_t ) )  ==  -1 )
-            rc = __set_errno_dos( ERROR_FILE_NOT_FOUND );
+        if( mbstowcs( buf->name, mbBuf.name, sizeof( buf->name ) / sizeof( wchar_t ) ) == -1 ) {
+            return( __set_errno_dos( ERROR_FILE_NOT_FOUND ) );
+        }
     }
     return( rc );
 }

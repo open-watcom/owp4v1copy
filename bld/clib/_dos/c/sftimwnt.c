@@ -39,21 +39,15 @@
 
 _WCRTLINK unsigned _dos_setftime( int hid, unsigned date, unsigned time )
 {
-    int         error;
     HANDLE      h;
     FILETIME    ctime, atime, wtime;
 
-    error = 0;
     h = __getOSHandle( hid );
     if( GetFileTime( h, &ctime, &atime, &wtime ) ) {
         __FromDOSDT( date, time, &wtime );
-        if( !SetFileTime( h, &ctime, &wtime, &wtime ) ) {
-            error = GetLastError();
-            __set_errno_dos( error );
+        if( SetFileTime( h, &ctime, &wtime, &wtime ) ) {
+            return( 0 );
         }
-    } else {
-        error = GetLastError();
-        __set_errno_dos( error );
     }
-    return( error );
+    return( __set_errno_nt_reterr() );
 }

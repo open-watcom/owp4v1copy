@@ -75,12 +75,10 @@
     /*** Try to find another matching file ***/
     rc = FIND_NEXT( (HANDLE)handle, &ffb );
     if( rc == FALSE ) {
-        __set_errno_nt();
-        return( -1 );
+        return( __set_errno_nt() );
     }
     if( !CHECK_FIND_NEXT_ATTR( (HANDLE)handle, FIND_ATTR, &ffb ) ) {
-        __set_errno_dos( ERROR_FILE_NOT_FOUND );
-        return( -1 );
+        return( __set_errno_dos( ERROR_FILE_NOT_FOUND ) );
     }
     /*** Got one! ***/
   #ifdef __INT64__
@@ -95,8 +93,7 @@
 
     rc = DosFindNext( (HDIR)handle, &ffb, sizeof( ffb ), &searchcount );
     if( rc != 0 ) {
-        __set_errno_dos( rc );
-        return( -1 );
+        return( __set_errno_dos( rc ) );
     }
     /*** Got one! ***/
   #ifdef __INT64__

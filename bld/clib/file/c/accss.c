@@ -34,6 +34,7 @@
 #include <io.h>
 #include <dos.h>
 #include "tinyio.h"
+#include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>
     #include <stdlib.h>
@@ -45,45 +46,34 @@ static int CTinyAccess( const char *path, int mode )
 {
     unsigned    attrs;
 
-    if( _dos_getfileattr( path, &attrs ) != 0 ) return( -1 );
+    if( _dos_getfileattr( path, &attrs ) != 0 )
+        return( -1 );
     return( ( attrs & _A_RDONLY && mode == W_OK ) ? -1 : 0 );
 }
 
 #undef  TinyAccess
 #define TinyAccess   CTinyAccess
-#else
-
-extern  int           _dosret0(unsigned,unsigned);
 #endif
 
 
 _WCRTLINK int __F_NAME(access,_waccess)( const CHAR_TYPE *pathname, int pmode )
 {
 #ifndef __WATCOM_LFN__
-    unsigned long   rc;
-    unsigned        ax, dx;
+    tiny_ret_t      rc;
 #endif
 #ifdef __WIDECHAR__
     char            mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
+
+    __filename_from_wide( mbPath, pathname );
 #endif
 
 #ifdef __WATCOM_LFN__
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, pathname );
-        return( TinyAccess( mbPath, pmode ) );
-    #else
-        return( TinyAccess( pathname, pmode ) );
-    #endif
+    return( TinyAccess( __F_NAME(pathname,mbPath), pmode ) );
 #else
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, pathname );
-        rc = TinyAccess( mbPath, pmode );
-    #else
-        rc = TinyAccess( pathname, pmode );
-    #endif
-
-    ax = rc & 0xffff;
-    dx = rc >> 16;
-    return( _dosret0( ax, dx ) );
+    rc = TinyAccess( __F_NAME(pathname,mbPath), pmode );
+    if( TINY_ERROR( rc ) ) {
+        return( __set_errno_dos( TINY_INFO( rc ) ) );
+    }
+    return( 0 );
 #endif
 }

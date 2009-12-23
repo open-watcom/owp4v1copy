@@ -37,32 +37,27 @@
 
 _WCRTLINK unsigned _dos_setftime( int handle, unsigned date, unsigned time )
 {
-    APIRET          error;
+    APIRET          rc;
     OS_UINT         hand_type;
     OS_UINT         device_attr;
     FILESTATUS      info;
     USHORT          *p;
 
-    error = DosQHandType( handle, &hand_type, &device_attr );
-    if( error ) {
-        __set_errno_dos( error );
-        return( error );
+    rc = DosQHandType( handle, &hand_type, &device_attr );
+    if( rc == 0 ) {
+        if( ( hand_type & ~HANDTYPE_NETWORK ) == HANDTYPE_FILE ) {
+            rc = DosQFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
+            if( rc == 0 ) {
+                p = (USHORT *)(&info.fdateLastWrite);
+                *p = date;
+                p = (USHORT *)(&info.ftimeLastWrite);
+                *p = time;
+                rc = DosSetFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
+            }
+        }
     }
-    if( ( hand_type & ~HANDTYPE_NETWORK ) == HANDTYPE_FILE ) {
-        error = DosQFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
-        if( error ) {
-            __set_errno_dos( error );
-            return( error );
-        }
-        p = (USHORT *)(&info.fdateLastWrite);
-        *p = date;
-        p = (USHORT *)(&info.ftimeLastWrite);
-        *p = time;
-        error = DosSetFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
-        if( error ) {
-            __set_errno_dos( error );
-            return( error );
-        }
+    if( rc ) {
+        return( __set_errno_dos_reterr( rc ) );
     }
     return( 0 );
 }

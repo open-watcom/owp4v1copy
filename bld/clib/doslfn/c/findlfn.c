@@ -145,8 +145,7 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *buf )
 
     /* Check for errors */
     if( r.w.cflag ) {
-        __set_errno_dos( r.w.ax );
-        return( r.w.ax );
+        return( __set_errno_dos_reterr( r.w.ax ) );
     }
     convert_to_find_t( buf, &lfnblock );
     return( 0 );
@@ -168,8 +167,7 @@ _WCRTLINK unsigned _dos_findclose( struct find_t *buf )
      * except for bad code)
      */
     if( r.w.cflag ) {
-        __set_errno_dos( r.w.ax );
-        return( r.w.ax );
+        return( __set_errno_dos_reterr( r.w.ax ) );
     }
     return( 0 );
 }
