@@ -694,6 +694,7 @@ static void * df_flushpage( void )
 {
     static  int         instance    = 0;
             uint16_t    current_pages;
+            uint32_t    save_desired_y;
 
     /* Recursion is an error. */
 
@@ -705,6 +706,10 @@ static void * df_flushpage( void )
     }
 
     if( current_df_data.parameter_type != 0x00 ) format_error();
+
+    /* Save the value of desired_state.y_address. */
+
+    save_desired_y = desired_state.y_address;
 
     /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
 
@@ -759,12 +764,13 @@ static void * df_flushpage( void )
         at_start = false;
     }
 
-    /* The print head position is now the start of the line before the first.
-     * In this case, desired_state.y_address does not depend on how the
-     * address was formed.
+    /* current_state.y_address must be the start of the line before the first.
+     * desired_state.y_address must have the same value that it had on entry.
+     * y_address must have the line before the first line on the page. 
      */
 
-    desired_state.y_address = current_pages * bin_device->page_depth;
+    current_state.y_address = current_pages * bin_device->page_depth;
+    desired_state.y_address = save_desired_y;
     y_address = bin_device->y_start;
 
     instance--;
@@ -2908,7 +2914,7 @@ static void fb_normal_vertical_positioning( void )
         }
     }
 
-    if( current_state.y_address != desired_state.y_address ) {
+    if( current_state.y_address == desired_state.y_address ) {
 
         /* If there is no difference, reset to start of current line. */
 
