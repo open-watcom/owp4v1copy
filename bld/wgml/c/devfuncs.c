@@ -236,7 +236,7 @@ static bool             set_margin              = false;
 static page_state       current_state           = { 0, 0, 0 };
 static page_state       desired_state           = { 0, 0, 0 };
 static uint32_t         line_pass_number        = 0;
-static uint32_t         v_start                = 0;
+static uint32_t         v_start                 = 0;
 
 /* These are used to hold values returned by device functions. */
 
@@ -3283,20 +3283,34 @@ void df_set_horizontal( uint32_t h_start )
  * fb_position(). 
  *
  * Parameter:
- *      v_start contains the new value for current_state.y_address.
+ *      in_v_start contains the new value for current_state.y_address.
+ *
+ * Globals Modified:
+ *      current_state.y_address is set to bin_device->y_start.
+ *      desired_state.y_address is set to v_start.
+ *      y_address is set to bin_device->y_start.
  *
  * Note:
- *      if the second call to fb_position() occurs, the value of v_start
- *      should be the same as it was on the first call, in which case
- *      nothing happens. This avoids resetting the value returned by
- *      %x_address() to bin_device->x_start on the second call.
+ *      if the second call to fb_position() occurs nothing happens. This
+ *      avoids resetting the value returned by %x_address() to
+ *      bin_device->x_start on the second call. This also effectively forces
+ *      in_v_start to be the same on both calls.
  */
 
-void df_set_vertical( uint32_t v_start )
+void df_set_vertical( uint32_t in_v_start )
 {
-    if( desired_state.y_address != v_start ) {
-        desired_state.y_address = v_start;
-        fb_normal_vertical_positioning();
+    static  uint8_t count   = 0;
+
+    count++;
+    if( count == 1 ) {
+        current_state.y_address = bin_device->y_start;
+        desired_state.y_address = in_v_start;
+        y_address = current_state.y_address;
+        if( in_v_start == v_start ) {
+            set_margin = true;
+        } else {
+            fb_normal_vertical_positioning();
+        }
     }
     return;
 }
