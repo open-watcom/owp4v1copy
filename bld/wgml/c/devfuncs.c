@@ -757,9 +757,10 @@ static void * df_flushpage( void )
 
     if( at_start ) {
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) \
+            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
                 df_interpret_driver_functions( \
                     wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+            }
         }
         at_start = false;
     }
@@ -2974,8 +2975,10 @@ static void fb_normal_vertical_positioning( void )
                             y_address = current_state.y_address;
 
                             if( wgml_fonts[0].font_style->lineprocs[0].endvalue \
-                                != NULL ) df_interpret_driver_functions( \
+                                                                    != NULL ) {
+                                df_interpret_driver_functions( \
                         wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+                            }
                         }
                         at_start = false;
                     }
@@ -3251,8 +3254,10 @@ void df_set_horizontal( uint32_t h_start )
 
     /* If the :FONTSTYLE block exists, interpret the :ENDVALUE block. */
 
-    if( fontstyle ) df_interpret_driver_functions( \
+    if( fontstyle ) {
+        df_interpret_driver_functions( \
                         wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+    }
 
     /* Set the variables whether the :FONTSTYLE block exists or not. */
 
@@ -3641,10 +3646,11 @@ void fb_lineproc_endvalue( void )
         if( text_out_open ) post_text_output();
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[font_number].font_style->\
-                                    lineprocs[line_pass_number].endvalue != NULL ) \
+                                lineprocs[line_pass_number].endvalue != NULL ) {
                 df_interpret_driver_functions( \
                     wgml_fonts[font_number].font_style->lineprocs[line_pass_number].\
                                                             endvalue->text );
+            }
         }
     }
     textpass = false;
