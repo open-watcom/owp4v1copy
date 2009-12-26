@@ -6,8 +6,7 @@
 !inject attr386.obj      d32                                                    w32 osi
 !inject bdos.obj     d16 d32 dpm                                            w16 w32 osi
 !inject break.obj    d16 d32                                                w16 w32 osi
-!inject creat086.obj d16     dpm                                            w16
-!inject creat386.obj     d32                                                    w32 osi
+!inject creatdos.obj d16 d32 dpm                                            w16 w32 osi
 !inject creatos2.obj                                        o16 o32
 !inject creatwnt.obj                     nt nta ntp
 !inject crtnwos2.obj                                        o16 o32
@@ -24,12 +23,10 @@
 !inject drive386.obj     d32                                                    w32 osi
 !inject error086.obj d16     dpm                                            w16
 !inject error386.obj     d32                                                    w32 osi
-!inject file086.obj  d16     dpm                                            w16
-!inject file386.obj      d32                                                    w32 osi
+!inject filedos.obj  d16 d32 dpm                                            w16 w32 osi
 !inject fileos2.obj                                         o16 o32
 !inject filewnt.obj                      nt nta ntp
-!inject find086.obj  d16     dpm                                            w16
-!inject find386.obj      d32                                                    w32 osi
+!inject finddos.obj  d16 d32 dpm                                            w16 w32 osi
 !inject findos2.obj                                         o16 o32
 !inject findwnt.obj                      nt nta ntp
 !inject ftime086.obj d16     dpm                                            w16
@@ -58,8 +55,7 @@
 !inject iow32.obj                                                               w32
 !inject mem086.obj   d16     dpm
 !inject mem386.obj       d32
-!inject open086.obj  d16     dpm                                            w16
-!inject open386.obj      d32                                                    w32 osi
+!inject opendos.obj  d16 d32 dpm                                            w16 w32 osi
 !inject reados2.obj                                         o16 o32
 !inject readwnt.obj                      nt nta ntp
 !inject sdateos2.obj                                        o16 o32
