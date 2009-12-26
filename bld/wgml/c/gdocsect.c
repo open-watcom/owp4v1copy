@@ -368,7 +368,7 @@ extern  void    gml_titlep( const gmltag * entry )
     gml_doc_xxx( doc_sect_titlep, true );
     pre_top_skip = 0;
     post_top_skip = 0;
-    post_skip = 0;
+    post_skip = NULL;
     spacing = layout_work.titlep.spacing;
 }
 

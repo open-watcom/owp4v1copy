@@ -120,7 +120,7 @@ static  bool    su_layout_special( char * * scanp, su * converted )
 /*                                                                         */
 /*    the absolute units (the last 5) will be stored                       */
 /*    in 0.0001 millimeter units and 0.0001 inch units,                    */
-/*    the relative ones will not be converted.                             */
+/*    the relative ones (the first 3) will not be converted.               */
 /*                                                                         */
 /* extension for layout :BANREGION indent, hoffset and width attributes:   */
 /*      symbolic units without a numeric value                             */
@@ -425,11 +425,12 @@ bool    to_internal_SU( char * * scanp, su * converted )
 /***************************************************************************/
 /*  convert internal space units to device space units                     */
 /*   use font 0 or current font???                              TBD        */
+/*  return value is signed as space unit can be relative (+ -)             */
 /***************************************************************************/
 
-uint32_t    conv_hor_unit( su * s )
+int32_t conv_hor_unit( su * s )
 {
-    uint32_t    ds;
+    int32_t    ds;
 
     switch( s->su_u ) {
     case SU_chars_lines :
@@ -444,7 +445,7 @@ uint32_t    conv_hor_unit( su * s )
     case SU_mm :
     case SU_cicero :
     case SU_pica :
-        ds = s->su_inch * bin_device->horizontal_base_units / 10000;
+        ds = (int64_t)s->su_inch * bin_device->horizontal_base_units / 10000L;
         break;
     default:
         ds = 0;
@@ -453,15 +454,15 @@ uint32_t    conv_hor_unit( su * s )
     return( ds );
 }
 
-extern  uint32_t    conv_vert_unit( su * s, uint8_t spc )
+int32_t conv_vert_unit( su * s, uint8_t spc )
 {
-    uint32_t    ds;
+    int32_t    ds;
     uint8_t space;
 
-    if( spc > 0 ) {                     // if valid use it
+    if( spc > 0 ) {                     // if spacing valid use it
         space = spc;
     } else {
-        space = spacing;                // else default spacing
+        space = spacing;                // else default
     }
     switch( s->su_u ) {
     case SU_chars_lines :
@@ -476,7 +477,7 @@ extern  uint32_t    conv_vert_unit( su * s, uint8_t spc )
     case SU_mm :
     case SU_cicero :
     case SU_pica :
-        ds = s->su_inch * bin_device->vertical_base_units / 10000;
+        ds = (int64_t)s->su_inch * bin_device->vertical_base_units / 10000L;
         break;
     default:
         ds = 0;

@@ -102,7 +102,7 @@ void    scr_sk( void )
     int             spc;
 
 #if 0
-    char            cwcurr[4];          // if errmsg is neccessary
+    char            cwcurr[4];          // if errmsg becomes neccessary
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 's';
@@ -111,7 +111,7 @@ void    scr_sk( void )
 #endif
 
     skip = -1;
-    sign = 1;                           // default +
+    sign = 1;                           // default sign +
     spc =  spacing;
 
     p = scan_start;
@@ -135,7 +135,7 @@ void    scr_sk( void )
             p++;
         }
         if( toupper( *p ) == 'A' ) {
-            spc = 1;
+            spc = 1;                    // with abs always single spacing
             while( isalpha( *p ) ) {
                 p++;
             }
@@ -162,12 +162,15 @@ void    scr_sk( void )
     g_skip = skip;
 
     /***********************************************************************/
-    /*  hack to mimick wgml4: for every .sk with positive value            */
-    /*  wgml4 positions 2 less than g_max_line_height for dev PS     TBD   */
+    /*  hack to mimick wgml4: for .sk N with a positive value              */
+    /*  wgml4 skips less than N * line_height for device PS                */
+    /*  difference is -1 for .sk  1 - 3                                    */
+    /*                -2          4 - 6                                    */
+    /*                -3          7 - 9                                    */
+    /*                 ...                                                 */
     /***********************************************************************/
-
     if( skip > 0 ) {
-        g_skip_wgml4 = 2;
+        g_skip_wgml4 = 1 + (skip - 1) / 3;
     } else {
         g_skip_wgml4 = 0;
     }

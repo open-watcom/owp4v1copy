@@ -50,7 +50,7 @@
 void    init_page_geometry( void )
 {
     int         k;
-#if 0                                   // activate for multi column
+#if 0                                   // activate for multi column TBD
     uint32_t    offset;
 #endif
 
@@ -93,9 +93,10 @@ void    init_page_geometry( void )
     g_page_left_org = g_page_left;
 
     g_page_right = min( rm + bin_device->x_offset, bin_device->page_width );
+    g_page_right_org = g_page_right;
 
     g_net_page_width = rm - lm;
-    g_page_right_org = g_page_right;
+    g_ll = g_net_page_width * CPI / bin_device->horizontal_base_units; // &sysll
 
     if( bin_driver->y_positive == 0 ) {
         g_page_depth = conv_vert_unit( &layout_work.page.depth, 1 )
@@ -115,10 +116,6 @@ void    init_page_geometry( void )
 
         lcmax = 1 + (g_net_page_height + bin_device->y_offset)
                  / wgml_fonts[g_curr_font_num].line_height;   // usable no of lines
-
-        g_ll = g_net_page_width * CPI
-               / bin_device->horizontal_base_units; // &sysll
-
     } else {
         g_page_depth = conv_vert_unit( &layout_work.page.depth, 1 )// &syspaged
                        - bin_device->y_offset + 1;// make the wgml 4 value TBD
@@ -133,16 +130,15 @@ void    init_page_geometry( void )
 
         g_net_page_height = g_page_bottom - g_page_top;
         lcmax = g_net_page_height;
-
-        g_ll = g_net_page_width;        // line length
     }
+
     g_page_bottom_org = g_page_bottom; // save bottom for possible bot banner calculation
     g_page_top_org = g_page_top;// save top for possible bot banner calculation
 
     g_cd = layout_work.defaults.columns;// no of columns   &syscd
     g_gutter = conv_hor_unit( &layout_work.defaults.gutter );   // &sysgutter
 
-#if 0                                   // activate for multi column
+#if 0                                   // activate for multi column TBD
     if( g_cd > 1 ) {                    // multi column layout
         if( g_cd > 9 ) {
                                         // no more than 9 columns
@@ -208,6 +204,8 @@ void    init_page_geometry( void )
                   g_max_char_width );
     }
     spacing = layout_work.defaults.spacing;
+    g_indent = 0;
+    g_indentr = 0;
 }
 
 

@@ -1,12 +1,15 @@
 .* test for a not quite simple GML document this is work in progress
-.* will be included from the tsimpl00.gml - tsimpl99.gml files
+.* will be included from the tsimp00.gml - tsimp99.gml files
 .gt 123 add willi
 .dm willi /:p/
+.* the following .ty will crash because &sysresh has not yet a value assigned
+.*ty sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 :gdoc sec='top secret'
 :frontm
 :titlep
 :title stitle='simple doc'.Simple Document
 :title stitle='simple doc2'.Simple Document Title 2
+.ty title sysin=&$in  sysinr=&$inr sysir=&$ir sysll=&$ll lm=&$pagelm rm=&$pagerm
 :docnum.SIMPLE 7
 :date.Date was 11.11.2009
 :author.First Author
@@ -25,6 +28,7 @@
 :body
 .se syshtext0='SYSHTEXT0 Dummy'
 .ty in body sysenv &$env
+.ty sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 .*im tgeov
 .*:123
 :p
@@ -53,12 +57,13 @@ test line two
 ============================ 11:43:59 H:\ow\bld =============================
 .br .co on
 Languages Build: rel2
-.br
+.sk 0
 WATCOM points to: H:\ow\rel2
 .br
 **** REL2 rule
 .br
 01====================== 11:43:59 H:\ow\bld\builder =========================
+.sk -1
 02====================== 11:43:59 H:\ow\bld\builder =========================
 03=================== 11:43:59 H:\ow\bld\builder\os2386 =====================
 .sk 10
@@ -67,13 +72,22 @@ WATCOM points to: H:\ow\rel2
 05====================== 11:43:59 H:\ow\bld\builder =========================
 .sk 10
 06** REL2 rule
+.sk
 07======================= 11:43:59 H:\ow\bld\pmake ==========================
+.in 0.15i -2.8cm
 08=================== 11:43:59 H:\ow\bld\pmake\prebuild =====================
 09======================= 11:43:59 H:\ow\bld\pmake ==========================
+.ty 09 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
+.in +1 0
+.ty 10 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 10** REL2 rule
+
 11======================= 11:43:59 H:\ow\bld\cc\wcl =========================
+.in * 15
+.ty 12 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 12================== 11:43:59 H:\ow\bld\cc\wcl\prebuild =====================
 13======================= 11:43:59 H:\ow\bld\cc\wcl =========================
+.in 0 0
 14** REL2 rule
 15====================== 11:43:59 H:\ow\bld\w32loadr ========================
 16====================== 11:43:59 H:\ow\bld\w32loadr ========================
@@ -151,7 +165,8 @@ WATCOM points to: H:\ow\rel2
 88** REL2 rule last text record
 .se $apage=100
 .ty sysapage  &SYSAPAGE
-.if $passno = $passof .im ts.gml
+.ty sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
+.if &$passno = &$passof .im ts.gml
 :p
 :appendix
 .ty in appendix sysenv &$env

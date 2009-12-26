@@ -244,8 +244,8 @@ global  uint32_t    g_max_line_height;
 global  uint32_t    g_net_page_height;
 global  uint32_t    g_net_page_width;
 
-global  uint32_t    g_resh;             // horiz base units
-global  uint32_t    g_resv;             // vert base units
+global  int32_t     g_resh;             // horiz base units
+global  int32_t     g_resv;             // vert base units
 
 global  uint8_t     g_curr_font_num;    // the font to use for current line
 global  uint32_t    g_cl;               // column length
@@ -255,10 +255,10 @@ global  uint32_t    g_gutter;           // space between columns
 global  uint32_t    g_offset[9];        // column start offset
 
 global  uint32_t    spacing;            // spacing between lines
-global  su      *   pre_skip;           // possible pre_skip
+// global  su      *   pre_skip;        // possible pre_skip
 global  su      *   post_skip;          // possible post_skip
-global  int32_t     g_skip;             // .sk skip value
-global  int32_t     g_skip_wgml4;       // 0 or 1 for work around wgml4 bug
+global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
+global  int32_t     g_skip_wgml4;       // >0 for work around wgml4 .sk bug
 
 global  uint32_t    pre_space;          // for
 global  uint32_t    post_space;         // .. line
@@ -266,6 +266,9 @@ global  uint32_t    post_space_save;    // .. formatting
 global  uint32_t    pre_top_skip;       // .. formatting
 global  uint32_t    post_top_skip;      // .. formatting
 global  uint32_t    ju_x_start;         // .. formatting
+
+global  uint32_t    g_indent;           // .in 1. value (left) default 0
+global  int32_t     g_indentr;          // .in 2. value (right) default 0
 
 
 

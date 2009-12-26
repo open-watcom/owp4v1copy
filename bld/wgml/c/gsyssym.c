@@ -571,15 +571,15 @@ static void syshyphfun( symvar * e )
     return;
 };
 
-static void sysinfun( symvar * e )
+static void sysinfun( symvar * e )      // .in indent value
 {
-    var_wng( e->name );
+    ultoa( g_indent * CPI / g_resh, sysinstr, 10 ); // in chars
     return;
 };
 
-static void sysinrfun( symvar * e )
+static void sysinrfun( symvar * e )     // .in indentr indent right value
 {
-    var_wng( e->name );
+    ltoa( g_ll + g_indentr * CPI / g_resh, sysinrstr, 10 );
     return;
 };
 

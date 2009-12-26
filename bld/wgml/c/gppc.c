@@ -49,7 +49,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
 
     scr_process_break();
 
-    g_cur_h_start = g_page_left + conv_hor_unit( &(p_pc->line_indent) );
+    g_cur_h_start = g_page_left + g_indent + conv_hor_unit( &(p_pc->line_indent) );
 
     if( ProcFlags.page_started ) {      // TBD
         if( bin_driver->y_positive == 0x00 ) {  // TBD

@@ -55,8 +55,8 @@
 /***************************************************************************/
 /*  .sk adjust                                                             */
 /*                                                                         */
-/*   g_skip_wgml4 contains  0 or 2                                    TBD  */
-/*    2 for  .sk n  with n > 0  for device PS                              */
+/*   g_skip_wgml4 contains  correction to mimick wgml4                TBD  */
+/*                                                                         */
 /***************************************************************************/
 static void calc_skip( void )
 {
@@ -69,20 +69,21 @@ static void calc_skip( void )
     }
     if( g_skip < 0 ) {                  // overprint
         if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start += g_max_line_height;
+            g_cur_v_start += wgml_fonts[g_curr_font_num].line_height;
         } else {
-            g_cur_v_start -= g_max_line_height;
+            g_cur_v_start -= wgml_fonts[g_curr_font_num].line_height;
         }
     } else {
         if( bin_driver->y_positive == 0x00 ) {
-            skip_value = g_skip * g_max_line_height - g_skip_wgml4;
+            skip_value = g_skip * wgml_fonts[g_curr_font_num].line_height
+                       - g_skip_wgml4;
             if( skip_value >= g_cur_v_start - g_page_bottom ) {
                 g_cur_v_start = g_page_bottom - 1;  // force new page
             } else {
                 g_cur_v_start -= skip_value;
             }
         } else {
-            g_cur_v_start += g_skip * g_max_line_height;
+            g_cur_v_start += g_skip * wgml_fonts[g_curr_font_num].line_height;
         }
     }
 
@@ -93,8 +94,8 @@ static void calc_skip( void )
 
 
 /***************************************************************************/
-/*  puncadj modelled after the host ASM sources to get the same spacing    */
-/*  as wgml4, but still no luck                                       TBD  */
+/*  puncadj modelled after the host ASM sources to get the same horizontal */
+/*  spacing as wgml4, but still no luck                               TBD  */
 /***************************************************************************/
 
 static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t cnt )
@@ -113,6 +114,10 @@ static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t
     char            ch;
     bool            changed;
 
+    if( ps_device ) {
+        space /= 2;                     // TBD
+    }
+
     changed = false;
     tp_ind = tp_max;
     tw = tc;
@@ -124,7 +129,7 @@ static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t
     tp_start = tp_ind + 2;
     delta = *delta0;
     loop_cnt = 3;                       // 3 passes
-    while( loop_cnt > 2 && delta >= space ) {   // TBD  only 1 pass
+    while( loop_cnt > 2 && delta >= space ) {  // only 1 pass TBD
         tp_ind = tp_start;
         while( tp_ind < tp_max ) {
             tw = tp[tp_ind++];
@@ -139,33 +144,30 @@ static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t
                         remw--;
                     }
                     changed = true;
-                    tn->x_address += spacew;
                     delta -= spacew;
-                    while( tn->next != NULL ) {
-                        tn = tn->next;
+                    while( tn != NULL ) {
                         tn->x_address += spacew;
+                        tn = tn->next;
                     }
                 }
                 break;
             case   2:                   // test half stop
                 if( ch == ':' || ch == ';' ) {
                     changed = true;
-                    tn->x_address += space;
                     delta -= space;
-                    while( tn->next != NULL ) {
-                        tn = tn->next;
+                    while( tn != NULL ) {
                         tn->x_address += space;
+                        tn = tn->next;
                     }
                 }
                 break;
             case   1:
                 if( ch == ',' || ch == ')' ) {
                     changed = true;
-                    tn->x_address += space;
                     delta -= space;
-                    while( tn->next != NULL ) {
-                        tn = tn->next;
+                    while( tn != NULL ) {
                         tn->x_address += space;
+                        tn = tn->next;
                     }
                 }
                 break;
@@ -186,6 +188,7 @@ static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t
 void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
 {
     text_chars  *tw;
+    text_chars  *tl;
     int32_t     sum_w;
     int32_t     hor_end;
     int32_t     cnt;
@@ -206,7 +209,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
     /*  for PS device remainder decrement is treated differently      TBD  */
     /***********************************************************************/
     if( ps_device ) {
-        deltarem = 2;
+        deltarem = 1;                   // TBD was 2
     } else {
         deltarem = 1;
     }
@@ -224,6 +227,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
             sum_w += tw->width;         // sum of 'words' widths
         }
         if( tw->next == NULL ) {        // last element
+            tl = tw;
             hor_end = tw->x_address + tw->width;// hor end position
             break;
         }
@@ -235,7 +239,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
     if( (sum_w <= 0) || (hor_end >= rm) || (line_width < 1) ) {
         return;                         // no justify needed / possible
     }
-    delta0 = rm - hor_end;
+    delta0 = rm - hor_end - 1;          // -1 experimental TBD
     if( ProcFlags.justify == ju_on ) {
         if( cnt < 2 ) {      // one text_chars only, no full justify possible
             return;
@@ -292,15 +296,9 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
             break;                      // left of left margin no justify
         }
 
-        puncadj( tc, &delta0, rem, cnt - 1 );   // TBD
-        tw = tc;
-        do {
-            if( tw->next == NULL ) {    // last element
-                hor_end = tw->x_address + tw->width;// hor end position
-                break;
-            }
-            tw = tw->next;
-        } while( tw != NULL );
+        puncadj( tc, &delta0, rem, cnt - 1 );
+
+        hor_end = tl->x_address + tl->width;// hor end position
         delta0 = rm - hor_end;          // TBD
         if( cnt < 2 ) {
             delta = delta0;             // one text_chars gets all space
@@ -311,7 +309,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
         }
 
         if( input_cbs->fmflags & II_research && GlobalFlags.lastpass ) {
-            find_symvar( &sys_dict, "$ju", no_subscript, &symjusub);
+//          find_symvar( &sys_dict, "$ju", no_subscript, &symjusub);
             out_msg( "\n  ju_%s lm:%d rm:%d line_width:%d sum_w:%d hor_end:%d"
                      " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
                      lm, rm, line_width, sum_w, hor_end, delta, rem, delta0,
@@ -328,9 +326,9 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
             if( rem > 0 ) {             // distribute remainder, too
                 tw->x_address += delta + deltarem;
                 delta += delta1 + deltarem;
-                if( !ps_device ) {
+//              if( !ps_device ) { // TBD
                     rem -= deltarem;
-                }
+//              }
             } else {
                 tw->x_address += delta;
                 delta += delta1;
@@ -514,22 +512,25 @@ void    set_v_start( int8_t spacing )
 {
     if( bin_driver->y_positive == 0x00 ) {
         if( !ProcFlags.page_started ) {   // TBD
-            g_cur_v_start = bin_device->y_start - g_max_line_height;
+            g_cur_v_start = bin_device->y_start
+                          - wgml_fonts[g_curr_font_num].line_height;
         } else {
-            g_cur_v_start -= spacing * g_max_line_height;
+            g_cur_v_start -= spacing * wgml_fonts[g_curr_font_num].line_height;
         }
     } else {
         if( !ProcFlags.page_started ) {
-            g_cur_v_start = bin_device->y_start + g_max_line_height;
+            g_cur_v_start  = bin_device->y_start
+                           + wgml_fonts[g_curr_font_num].line_height;
         } else {
-            g_cur_v_start += (spacing * g_max_line_height);
+            g_cur_v_start += spacing
+                           * wgml_fonts[g_curr_font_num].line_height;
         }
     }
 }
 
 void set_h_start( void )
 {
-    g_cur_h_start = g_page_left = g_page_left_org;
+    g_cur_h_start = g_page_left + g_indent;
 }
 
 /***************************************************************************/
@@ -543,8 +544,7 @@ void    process_line_full( text_line * a_line, bool justify )
     }
     if( para_line.first != NULL ) {     // buffered first line of paragraph
         if( justify && ProcFlags.justify > ju_off ) {
-            do_justify( ju_x_start, g_page_right,
-                        para_line.first );
+            do_justify( ju_x_start, g_page_right, para_line.first );
             if( input_cbs->fmflags & II_research ) {
                 test_out_t_line( &para_line );
             }
@@ -719,6 +719,7 @@ void    process_text( char * text, uint8_t font_num )
                     }
                     t_line.first = n_char;
                     t_line.y_address = g_cur_v_start;
+                    t_line.line_height = wgml_fonts[font_num].line_height;
                     ju_x_start = n_char->x_address;
                 } else {
                     p_char->next = n_char;
@@ -750,7 +751,7 @@ void    process_text( char * text, uint8_t font_num )
         count = p - pword;              // no of bytes
         n_char = alloc_text_chars( pword, count, font_num );
 
-        intrans( n_char->text, &n_char->count, g_curr_font_num );
+        intrans( n_char->text, &n_char->count, font_num );
         if( pword != text ) {           // last is not only word
             pre_space = post_space;
             post_space = 0;
@@ -774,6 +775,7 @@ void    process_text( char * text, uint8_t font_num )
                 document_top_banner();
             }
             t_line.y_address = g_cur_v_start;
+            t_line.line_height = wgml_fonts[font_num].line_height;
             ju_x_start = n_char->x_address;
         } else {
             n_char->x_address = g_cur_h_start + pre_space;
@@ -802,6 +804,7 @@ void    process_text( char * text, uint8_t font_num )
                 document_top_banner();
             }
             t_line.y_address = g_cur_v_start;
+            t_line.line_height = wgml_fonts[font_num].line_height;
             t_line.first = n_char;
             ju_x_start = n_char->x_address;
         } else {

@@ -135,6 +135,7 @@ scr_objs =  &
         gsgt.obj     &
         gsifdoel.obj &
         gsimbed.obj  &
+        gsin.obj     &
         gsix.obj     &
         gsli.obj     &
         gsmacro.obj  &
