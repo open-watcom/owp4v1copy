@@ -47,48 +47,6 @@
 #define SEEK_ATTRIB (TIO_HIDDEN | TIO_SYSTEM | TIO_SUBDIRECTORY)
 
 
-#ifdef __WATCOM_LFN__
-
-/* The find block for the LFN find */
-typedef struct {
-    long    attributes;
-    long    creattime;
-    long    creatdate;
-    long    accesstime;
-    long    accessdate;
-    long    wrtime;
-    long    wrdate;
-    long    hfilesize;
-    long    lfilesize;
-    char    reserved[8];
-    char    lfn[NAME_MAX + 1];
-    char    sfn[14];
-} lfnfind_t;
-
-static void convert_to_dir( DIR_TYPE *dirp, lfnfind_t *lfnblock )
-/***************************************************************/
-{
-    dirp->d_attr  = lfnblock->attributes;
-    dirp->d_ctime = lfnblock->creattime;
-    dirp->d_cdate = lfnblock->creatdate;
-    dirp->d_atime = lfnblock->accesstime;
-    dirp->d_adate = lfnblock->accessdate;
-    dirp->d_time  = lfnblock->wrtime;
-    dirp->d_date  = lfnblock->wrdate;
-    dirp->d_size  = lfnblock->lfilesize;
-    strcpy( (char *)dirp->d_name, ( *lfnblock->lfn != '\0' ) ? lfnblock->lfn : lfnblock->sfn );
-}
-
-static tiny_ret_t __find_close( DIR_TYPE *dirp )
-/**********************************************/
-{
-    if( _RWD_uselfn && dirp->d_lfnsup == _LFN_SIGN && dirp->d_lfnax )
-        return( TinyFindCloseLFN( dirp->d_lfnax ) );
-    return( 0 );
-}
-
-#endif //__WATCOM_LFN__
-
 static int is_directory( const CHAR_TYPE *name )
 /**********************************************/
 {
@@ -123,30 +81,6 @@ static int is_directory( const CHAR_TYPE *name )
     return( 0 );
 }
 
-static tiny_ret_t __find_first( const char *name, unsigned attr, DIR_TYPE *dirp )
-/*******************************************************************************/
-{
-#ifdef __WATCOM_LFN__
-    lfnfind_t       fdta;
-#endif
-    tiny_ret_t      rc;
-
-#ifdef __WATCOM_LFN__
-    __find_close( dirp );
-    if( _RWD_uselfn && TINY_OK( rc = TinyFindFirstLFN( name, attr, &fdta ) ) ) {
-        convert_to_dir( dirp, &fdta );
-        dirp->d_lfnsup = _LFN_SIGN;
-        dirp->d_lfnax = TINY_INFO( rc );
-    } else {
-#endif
-        TinySetDTA( dirp->d_dta );
-        rc = TinyFindFirst( name, attr );
-#ifdef __WATCOM_LFN__
-    }
-#endif
-    return( rc );
-}
-
 
 #ifdef __WIDECHAR__
 static void filenameToWide( DIR_TYPE *dir )
@@ -168,12 +102,12 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
 {
     DIR_TYPE        tmp;
     int             i;
-    tiny_ret_t      rc;
     CHAR_TYPE       pathname[ _MAX_PATH + 6 ];
     const CHAR_TYPE *p;
     UINT_WC_TYPE    curr_ch;
     UINT_WC_TYPE    prev_ch;
     int             flag_opendir = ( dirp == NULL );
+    int             opened;
 
     /*** Convert a wide char string to a multibyte string ***/
 #ifdef __WIDECHAR__
@@ -187,12 +121,12 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
     tmp.d_attr = _A_SUBDIR;
     tmp.d_lfnsup = 0;
     tmp.d_lfnax = 0;
+    opened = 0;
     if( !is_directory( dirname ) ) {
-        rc = __find_first( __F_NAME(dirname,mbcsName), attr, &tmp );
-        if( TINY_ERROR( rc ) ) {
-            __set_errno_dos( TINY_INFO( rc ) );
+        if( _dos_findfirst( __F_NAME(dirname,mbcsName), attr, (struct _find_t *)tmp.d_dta ) ) {
             return( NULL );
         }
+        opened = 1;
     }
     if( tmp.d_attr & _A_SUBDIR ) {
         prev_ch = NULLCHAR;
@@ -218,11 +152,13 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
                 if( wcstombs( mbcsName, pathname, sizeof( mbcsName ) ) == (size_t)-1 )
                     return( NULL );
 #endif
-                rc = __find_first( __F_NAME(pathname,mbcsName), attr, &tmp );
-                if( TINY_ERROR( rc ) ) {
-                    __set_errno_dos( TINY_INFO( rc ) );
+                if( opened ) {
+                    _dos_findclose( (struct _find_t *)tmp.d_dta );
+                }
+                if( _dos_findfirst( __F_NAME(dirname,mbcsName), attr, (struct _find_t *)tmp.d_dta ) ) {
                     return( NULL );
                 }
+                opened = 1;
                 break;
             }
             if( curr_ch == '*' )
@@ -236,17 +172,15 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
     if( flag_opendir ) {
         dirp = lib_malloc( sizeof( *dirp ) );
         if( dirp == NULL ) {
-#ifdef __WATCOM_LFN__
-            __find_close( &tmp );
-#endif
+            if( opened ) {
+                _dos_findclose( (struct _find_t *)tmp.d_dta );
+            }
             __set_errno_dos( E_nomem );
             return( NULL );
         }
         tmp.d_openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirname );
     } else {
-#ifdef __WATCOM_LFN__
-        __find_close( dirp );
-#endif
+        _dos_findclose( (struct _find_t *)dirp->d_dta );
         tmp.d_openpath = dirp->d_openpath;
     }
     tmp.d_first = _DIR_ISFIRST;
@@ -263,32 +197,12 @@ _WCRTLINK DIR_TYPE *__F_NAME(opendir,_wopendir)( const CHAR_TYPE *dirname )
 
 _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
 {
-#ifdef __WATCOM_LFN__
-    lfnfind_t       fdta;
-#endif
-    tiny_ret_t      rc;
-
     if( dirp == NULL || dirp->d_first >= _DIR_INVALID )
         return( NULL );
     if( dirp->d_first == _DIR_ISFIRST ) {
         dirp->d_first = _DIR_NOTFIRST;
     } else {
-#ifdef __WATCOM_LFN__
-        if( _RWD_uselfn && dirp->d_lfnsup == _LFN_SIGN && dirp->d_lfnax ) {
-            rc = TinyFindNextLFN( dirp->d_lfnax, &fdta );
-            if( TINY_OK( rc ) ) {
-                convert_to_dir( dirp, &fdta );
-            }
-        } else {
-#endif
-            TinySetDTA( dirp->d_dta );
-            rc = TinyFindNext();
-#ifdef __WATCOM_LFN__
-        }
-#endif
-        if( TINY_ERROR( rc ) ) {
-            if( TINY_INFO( rc ) != E_nomore )
-                __set_errno_dos( TINY_INFO( rc ) );
+        if( _dos_findnext( (struct _find_t *)dirp->d_dta ) ) {
             return( NULL );
         }
     }
@@ -301,19 +215,15 @@ _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )
 
 _WCRTLINK int __F_NAME(closedir,_wclosedir)( DIR_TYPE *dirp )
 {
-#ifdef __WATCOM_LFN__
-    tiny_ret_t  rc;
-#endif
+    unsigned    rc;
 
     if( dirp == NULL || dirp->d_first == _DIR_CLOSED ) {
         return( __set_errno_dos( E_ihandle ) );
     }
-#ifdef __WATCOM_LFN__
-    rc = __find_close( dirp );
-    if( TINY_ERROR( rc ) ) {
-        return( __set_errno_dos( TINY_INFO( rc ) ) );
+    rc = _dos_findclose( (struct _find_t *)dirp->d_dta );
+    if( rc ) {
+        return( rc );
     }
-#endif
     dirp->d_first = _DIR_CLOSED;
     if( dirp->d_openpath != NULL )
         free( dirp->d_openpath );
@@ -330,4 +240,3 @@ _WCRTLINK void __F_NAME(rewinddir,_wrewinddir)( DIR_TYPE *dirp )
         dirp->d_first = _DIR_INVALID;    /* so reads won't work any more */
     }
 }
-

@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <direct.h>
+#include <dos.h>
 #include "liballoc.h"
 #include "tinyio.h"
 #include "seterrno.h"
@@ -62,24 +63,11 @@ static  int     is_directory( const char *name )
     return( 0 );
 }
 
-static tiny_ret_t __find_close( DIR_TYPE *dirp )
-/**********************************************/
-{
-    return( TinyFindCloseDTA( dirp->d_dta ) );
-}
-
-static tiny_ret_t __find_first( const char *name, unsigned attr, DIR_TYPE *dirp )
-/*******************************************************************************/
-{
-    return( TinyFindFirstDTA( name, attr, dirp->d_dta ) );
-}
-
 _WCRTLINK DIR_TYPE *_opendir( const char *dirname, unsigned attr, DIR_TYPE *dirp )
 /********************************************************************************/
 {
     DIR_TYPE    tmp;
     int         i;
-    tiny_ret_t  rc;
     char        pathname[_MAX_PATH+6];
     const char  *p;
     int         flag_opendir = ( dirp == NULL );
@@ -88,9 +76,7 @@ _WCRTLINK DIR_TYPE *_opendir( const char *dirname, unsigned attr, DIR_TYPE *dirp
     tmp.d_attr = _A_SUBDIR;
     opened = 0;
     if( !is_directory( dirname ) ) {
-        rc = __find_first( dirname, attr, &tmp );
-        if( TINY_ERROR( rc ) ) {
-            __set_errno_dos( TINY_INFO( rc ) );
+        if( _dos_findfirst( dirname, attr, (struct _find_t *)tmp.d_dta ) ) {
             return( NULL );
         }
         opened = 1;
@@ -105,11 +91,9 @@ _WCRTLINK DIR_TYPE *_opendir( const char *dirname, unsigned attr, DIR_TYPE *dirp
                 }
                 strcpy( &pathname[i], "*.*" );
                 if( opened ) {
-                    __find_close( &tmp );
+                    _dos_findclose( (struct _find_t *)tmp.d_dta );
                 }
-                rc = __find_first( pathname, attr, &tmp );
-                if( TINY_ERROR( rc ) ) {
-                    __set_errno_dos( TINY_INFO( rc ) );
+                if( _dos_findfirst( pathname, attr, (struct _find_t *)tmp.d_dta ) ) {
                     return( NULL );
                 }
                 opened = 1;
@@ -125,13 +109,15 @@ _WCRTLINK DIR_TYPE *_opendir( const char *dirname, unsigned attr, DIR_TYPE *dirp
     if( flag_opendir ) {
         dirp = lib_malloc( sizeof( DIR_TYPE ) );
         if( dirp == NULL ) {
-            __find_close( &tmp );
+            if( opened ) {
+                _dos_findclose( (struct _find_t *)tmp.d_dta );
+            }
             __set_errno_dos( E_nomem );
             return( NULL );
         }
-        tmp.d_openpath = __F_NAME(__clib_strdup,__clib_wcsdup)( dirname );
+        tmp.d_openpath = __clib_strdup( dirname );
     } else {
-        __find_close( dirp );
+        _dos_findclose( (struct _find_t *)dirp->d_dta );
         tmp.d_openpath = dirp->d_openpath;
     }
     tmp.d_first = _DIR_ISFIRST;
@@ -148,18 +134,12 @@ _WCRTLINK DIR_TYPE *opendir( const char *dirname )
 
 _WCRTLINK DIR_TYPE *readdir( DIR_TYPE *dirp )
 {
-    tiny_ret_t rc;
-
     if( dirp == NULL || dirp->d_first >= _DIR_INVALID )
         return( NULL );
     if( dirp->d_first == _DIR_ISFIRST ) {
         dirp->d_first = _DIR_NOTFIRST;
     } else {
-        rc = TinyFindNextDTA( dirp->d_dta );
-        if( TINY_ERROR( rc ) ) {
-            if( TINY_INFO( rc ) != E_nomore ) {
-                __set_errno_dos( TINY_INFO( rc ) );
-            }
+        if( _dos_findnext( (struct _find_t *)dirp->d_dta ) ) {
             return( NULL );
         }
     }
@@ -172,7 +152,7 @@ _WCRTLINK int closedir( DIR_TYPE *dirp )
     if( dirp == NULL || dirp->d_first == _DIR_CLOSED ) {
         return( __set_errno_dos( E_ihandle ) );
     }
-    __find_close( dirp );
+    _dos_findclose( (struct _find_t *)dirp->d_dta );
     dirp->d_first = _DIR_CLOSED;
     if( dirp->d_openpath != NULL )
         free( dirp->d_openpath );
@@ -181,12 +161,11 @@ _WCRTLINK int closedir( DIR_TYPE *dirp )
 }
 
 
-_WCRTLINK void __F_NAME(rewinddir,_wrewinddir)( DIR_TYPE *dirp )
+_WCRTLINK void rewinddir( DIR_TYPE *dirp )
 {
     if( dirp == NULL || dirp->d_openpath == NULL )
         return;
-    if( __F_NAME(_opendir,_w_opendir)( dirp->d_openpath, SEEK_ATTRIB, dirp ) == NULL ) {
+    if( _opendir( dirp->d_openpath, SEEK_ATTRIB, dirp ) == NULL ) {
         dirp->d_first = _DIR_INVALID;    /* so reads won't work any more */
     }
 }
-
