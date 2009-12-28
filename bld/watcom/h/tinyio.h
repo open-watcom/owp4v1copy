@@ -856,6 +856,8 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #if defined(__386__)
 
+ #define _MOV_AX_W      _USE16 _MOV_AX
+
  #define _SET_DS_DGROUP
  #define _SET_DS_DGROUP_SAFE
  #define _RST_DS_DGROUP
@@ -865,6 +867,8 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
  #define _SREG
 
 #elif defined( _M_I86 )
+
+ #define _MOV_AX_W      _MOV_AX
 
  #if defined( M_I86SM ) || defined( M_I86MM ) || defined( ZDP ) || defined( __WINDOWS__ )
   #define _SET_DS_DGROUP
@@ -930,7 +934,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [eax ebx];
 
 #pragma aux             _TinyMemAlloc = \
-        "mov ah,48h"    \
+        _MOV_AH DOS_ALLOC_SEG \
         _INT_21         \
         "sbb ebx,ebx"   \
         "not ebx"       \
@@ -1272,16 +1276,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [eax ebx ecx edx];
 
 #pragma aux             _nTinyAccess = \
-        _MOV_AL _GET_   \
-        _MOV_AH DOS_CHMOD \
+        _MOV_AX_W _GET_ DOS_CHMOD \
         _INT_21         \
         "jc short finish" \
         _TEST_BL 0x02  \
         "jz short finish" \
         _TEST_CL 0x01  \
         "jz short finish" \
-        _MOV_AL 0x00    \
-        _MOV_AH EACCES  \
+        _MOV_AX_W 0x00 EACCES \
         _STC            \
 "finish: "              \
         "sbb ecx,ecx"   \
@@ -1623,7 +1625,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #endif
 
 #pragma aux             _TinyDup = \
-        "mov ah,45h"    \
+        _MOV_AH DOS_DUP \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1631,7 +1633,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinyDup2 = \
-        "mov ah,46h"    \
+        _MOV_AH DOS_DUP2 \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1639,7 +1641,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinyAllocBlock = \
-        "mov ah,48h"    \
+        _MOV_AH DOS_ALLOC_SEG \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1647,7 +1649,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinyTestAllocBlock = \
-        "mov ah,48h"    \
+        _MOV_AH DOS_ALLOC_SEG \
         _INT_21         \
         "jnc short finish" \
         "mov eax,ebx"   \
@@ -1660,7 +1662,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _TinyMaxAlloc = \
         "xor ebx,ebx"   \
         "dec ebx"       \
-        "mov ah,48h"    \
+        _MOV_AH DOS_ALLOC_SEG \
         _INT_21         \
         parm caller     [] \
         value           [ebx] \
@@ -1669,7 +1671,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _TinyFreeBlock = \
         "push es"       \
         "mov es,ax"     \
-        "mov ah,49h"    \
+        _MOV_AH DOS_FREE_SEG \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1678,7 +1680,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinySetBlock = \
-        "mov ah,4Ah"    \
+        _MOV_AH DOS_MODIFY_SEG \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1688,15 +1690,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _TinyMaxSet = \
         "xor ebx,ebx"   \
         "dec ebx"       \
-        "mov ah,4Ah"    \
+        _MOV_AH DOS_MODIFY_SEG \
         _INT_21         \
         parm caller     [es] \
         value           [ebx] \
         modify          [eax];
 
 #pragma aux             _TinyGetDeviceInfo = \
-        "mov al,0"      \
-        "mov ah,44h"    \
+        _MOV_AX_W _GET_ DOS_IOCTL \
         _INT_21         \
         "rcl edx,1"     \
         "ror edx,1"     \
@@ -1706,8 +1707,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _TinySetDeviceInfo = \
         "mov dh,0"      \
-        "mov al,1"      \
-        "mov ah,44h"    \
+        _MOV_AX_W _SET_ DOS_IOCTL \
         _INT_21         \
         "rcl edx,1"     \
         "ror edx,1"     \
@@ -1716,28 +1716,26 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify          [eax ebx ecx edx];
 
 #pragma aux             _TinyGetCtrlBreak = \
-        "mov al,0"      \
-        "mov ah,33h"    \
+        _MOV_AX_W _GET_ DOS_CTRL_BREAK \
         _INT_21         \
         parm caller     [] \
         value           [dl] \
         modify          [eax dl];
 
 #pragma aux             _TinySetCtrlBreak = \
-        "mov al,1"      \
-        "mov ah,33h"    \
+        _MOV_AX_W _SET_ DOS_CTRL_BREAK \
         _INT_21         \
         parm caller     [dl] \
         modify          [eax dl];
 
 #pragma aux             _TinyTerminateProcess = \
-        "mov ah,4Ch"    \
+        _MOV_AH DOS_EXIT \
         _INT_21         \
         parm caller     [al] \
         aborts;
 
 #pragma aux             _TinyGetDate = \
-        "mov ah,2Ah"    \
+        _MOV_AH DOS_GET_DATE \
         _INT_21         \
         "sub cx,1900"   \
         "mov ch,al"     \
@@ -1748,7 +1746,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify          [eax ecx edx];
 
 #pragma aux             _TinyGetTime = \
-        "mov ah,2Ch"    \
+        _MOV_AH DOS_GET_TIME \
         _INT_21         \
         "shl ecx,16"    \
         "mov cx,dx"     \
@@ -1757,7 +1755,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify          [eax ecx edx];
 
 #pragma aux             _TinyGetCurrDrive = \
-        "mov ah,19h"    \
+        _MOV_AH DOS_CUR_DISK \
         _INT_21         \
         parm caller     [] \
         value           [al] \
@@ -1770,7 +1768,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify          [eax];
 
 #pragma aux             _nTinySetDTA = \
-        "mov ah,1Ah"    \
+        _MOV_AH DOS_SET_DTA \
         _INT_21         \
         parm caller     [edx];
 
@@ -1809,8 +1807,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinyFindNextDTA = \
-        _MOV_AH DOS_FIND_NEXT \
-        "mov al,0"      \
+        _MOV_AX_W 0 DOS_FIND_NEXT \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1829,8 +1826,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify          [cx si];
 
 #pragma aux             _TinyFindCloseDTA = \
-        _MOV_AH DOS_FIND_NEXT \
-        "mov al,1"      \
+        _MOV_AX_W 1 DOS_FIND_NEXT \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1847,8 +1843,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinyGetFileStamp = \
-        "mov al,0"      \
-        "mov ah,57h"    \
+        _MOV_AX_W _GET_ DOS_FILE_DATE \
         _INT_21         \
         "rcl dx,1"      \
         "ror dx,1"      \
@@ -1859,8 +1854,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify          [eax ebx ecx edx];
 
 #pragma aux             _TinySetFileStamp = \
-        "mov al,1"      \
-        "mov ah,57h"    \
+        _MOV_AX_W _SET_ DOS_FILE_DATE \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1873,8 +1867,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "shr ecx,16"    \
         "mov edi,esi"   \
         "shr esi,16"    \
-        "mov al,0"      \
-        "mov ah,5Ch"    \
+        "mov ax,5C00h"  \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1887,8 +1880,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "shr ecx,16"    \
         "mov edi,esi"   \
         "shr esi,16"    \
-        "mov al,1"      \
-        "mov ah,5Ch"    \
+        "mov ax,5C01h"  \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1911,7 +1903,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "jz short finish" \
         _TEST_CL 0x01   \
         "jz short finish" \
-        _MOV_AX 0x00 EACCES\
+        _MOV_AX 0x00 EACCES \
         _STC            \
 "finish: "              \
         _SBB_DX_DX      \
@@ -2836,7 +2828,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [ax dx];
 
 #pragma aux             _TinyTerminateProcess = \
-        _MOV_AH DOS_EXIT        \
+        _MOV_AH DOS_EXIT \
         _INT_21         \
         parm caller     [al] \
         aborts;
