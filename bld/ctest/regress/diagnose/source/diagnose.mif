@@ -25,6 +25,7 @@ diags_0099_defn = &
     diag0017$(err_sin) &
     diag0018$(err_sin) &
     diag0019$(err_sin) &
+    diag0020$(err_sin) &
 
     
 err_sin = .err

@@ -1046,7 +1046,7 @@ local unsigned long GetFields( TYPEPTR decl )
                 if( width == 0  &&      field != NULL ) {
                     CErr1( ERR_WIDTH_0 );
                 }
-                if( width > TARGET_BITS ) {
+                if( width > TARGET_BITS || width > bits_total ) {
                     CErr1( ERR_FIELD_TOO_WIDE );
                     width = TARGET_BITS;
                 } else if( width < 0 ) {

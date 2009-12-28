@@ -254,3 +254,5 @@ source\diag0019.c(9): Warning! W124: Comparison result always 0
 source\diag0019.c(14): Warning! W124: Comparison result always 1
 source\diag0019.c(19): Warning! W124: Comparison result always 0
 source\diag0019.c(25): Warning! W126: Constant must be zero for pointer compare
+source\diag0020.c(4): Error! E1040: Field width too large
+source\diag0020.c(9): Error! E1040: Field width too large
