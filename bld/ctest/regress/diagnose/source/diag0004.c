@@ -16,7 +16,6 @@ int main( int argc, char **argv )
         unsigned short          us  : 2;
         unsigned int            ui  : 2;
         unsigned long           ul  : 2;
-        unsigned long long      ull : 2;
     } st;
 
     ret = 0;
@@ -87,7 +86,7 @@ int main( int argc, char **argv )
         ret = 1;
 
     st.ret = 0;
-    st.uc = st.us = st.ui = st.ul = st.ull = argc;
+    st.uc = st.us = st.ui = st.ul = argc;
     if( st.ret < -2 )  // always 0
         st.ret = 1;
     if( st.ret > 1 )   // always 0
@@ -155,21 +154,6 @@ int main( int argc, char **argv )
     if( st.ul == 0 )   // no problem here
         st.ret = 1;
     if( st.ul != 0 )   // no problem here
-        st.ret = 1;
-
-    if( st.ull < 0 )   // always 0
-        st.ret = 1;
-    if( st.ull <= 0 )  // equivalent to uc == 0
-        st.ret = 1;
-    if( st.ull >= 0 )  // always 1
-        st.ret = 1;
-    if( st.ull > 3 )   // always 0
-        st.ret = 1;
-    if( st.ull > 0 )   // no problem here
-        st.ret = 1;
-    if( st.ull == 0 )  // no problem here
-        st.ret = 1;
-    if( st.ull != 0 )  // no problem here
         st.ret = 1;
 
     return( ui );

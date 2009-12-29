@@ -25,45 +25,41 @@ source\diag0003.c(34): Warning! W139: Divisor for modulo or division operation i
 source\diag0003.c(35): Warning! W139: Divisor for modulo or division operation is zero
 source\diag0003.c(36): Warning! W139: Divisor for modulo or division operation is zero
 source\diag0003.c(37): Warning! W139: Divisor for modulo or division operation is zero
-source\diag0004.c(24): Warning! W124: Comparison result always 0
-source\diag0004.c(26): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(28): Warning! W124: Comparison result always 1
-source\diag0004.c(37): Warning! W124: Comparison result always 0
-source\diag0004.c(39): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(41): Warning! W124: Comparison result always 1
-source\diag0004.c(50): Warning! W124: Comparison result always 0
-source\diag0004.c(52): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(54): Warning! W124: Comparison result always 1
-source\diag0004.c(63): Warning! W124: Comparison result always 0
-source\diag0004.c(65): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(67): Warning! W124: Comparison result always 1
-source\diag0004.c(76): Warning! W124: Comparison result always 0
-source\diag0004.c(78): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(80): Warning! W124: Comparison result always 1
-source\diag0004.c(91): Warning! W124: Comparison result always 0
-source\diag0004.c(93): Warning! W124: Comparison result always 0
-source\diag0004.c(95): Warning! W124: Comparison result always 1
-source\diag0004.c(97): Warning! W124: Comparison result always 1
-source\diag0004.c(100): Warning! W124: Comparison result always 0
-source\diag0004.c(102): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(104): Warning! W124: Comparison result always 1
-source\diag0004.c(106): Warning! W124: Comparison result always 0
-source\diag0004.c(115): Warning! W124: Comparison result always 0
-source\diag0004.c(117): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(119): Warning! W124: Comparison result always 1
-source\diag0004.c(121): Warning! W124: Comparison result always 0
-source\diag0004.c(130): Warning! W124: Comparison result always 0
-source\diag0004.c(132): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(134): Warning! W124: Comparison result always 1
-source\diag0004.c(136): Warning! W124: Comparison result always 0
-source\diag0004.c(145): Warning! W124: Comparison result always 0
-source\diag0004.c(147): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(149): Warning! W124: Comparison result always 1
-source\diag0004.c(151): Warning! W124: Comparison result always 0
-source\diag0004.c(160): Warning! W124: Comparison result always 0
-source\diag0004.c(162): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(164): Warning! W124: Comparison result always 1
-source\diag0004.c(166): Warning! W124: Comparison result always 0
+source\diag0004.c(23): Warning! W124: Comparison result always 0
+source\diag0004.c(25): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(27): Warning! W124: Comparison result always 1
+source\diag0004.c(36): Warning! W124: Comparison result always 0
+source\diag0004.c(38): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(40): Warning! W124: Comparison result always 1
+source\diag0004.c(49): Warning! W124: Comparison result always 0
+source\diag0004.c(51): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(53): Warning! W124: Comparison result always 1
+source\diag0004.c(62): Warning! W124: Comparison result always 0
+source\diag0004.c(64): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(66): Warning! W124: Comparison result always 1
+source\diag0004.c(75): Warning! W124: Comparison result always 0
+source\diag0004.c(77): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(79): Warning! W124: Comparison result always 1
+source\diag0004.c(90): Warning! W124: Comparison result always 0
+source\diag0004.c(92): Warning! W124: Comparison result always 0
+source\diag0004.c(94): Warning! W124: Comparison result always 1
+source\diag0004.c(96): Warning! W124: Comparison result always 1
+source\diag0004.c(99): Warning! W124: Comparison result always 0
+source\diag0004.c(101): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(103): Warning! W124: Comparison result always 1
+source\diag0004.c(105): Warning! W124: Comparison result always 0
+source\diag0004.c(114): Warning! W124: Comparison result always 0
+source\diag0004.c(116): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(118): Warning! W124: Comparison result always 1
+source\diag0004.c(120): Warning! W124: Comparison result always 0
+source\diag0004.c(129): Warning! W124: Comparison result always 0
+source\diag0004.c(131): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(133): Warning! W124: Comparison result always 1
+source\diag0004.c(135): Warning! W124: Comparison result always 0
+source\diag0004.c(144): Warning! W124: Comparison result always 0
+source\diag0004.c(146): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(148): Warning! W124: Comparison result always 1
+source\diag0004.c(150): Warning! W124: Comparison result always 0
 source\diag0005.c(7): Warning! W137: Extern function 'fn2' redeclared as static
 source\diag0005.c(7): Note! I2002: 'fn2' defined in: source\diag0005.c(6)
 source\diag0005.c(10): Warning! W137: Extern function 'fn3' redeclared as static
@@ -256,3 +252,6 @@ source\diag0019.c(19): Warning! W124: Comparison result always 0
 source\diag0019.c(25): Warning! W126: Constant must be zero for pointer compare
 source\diag0020.c(4): Error! E1040: Field width too large
 source\diag0020.c(9): Error! E1040: Field width too large
+source\diag0020.c(13): Error! E1043: Invalid type specified for bit field
+source\diag0020.c(17): Error! E1043: Invalid type specified for bit field
+source\diag0020.c(25): Error! E1043: Invalid type specified for bit field
