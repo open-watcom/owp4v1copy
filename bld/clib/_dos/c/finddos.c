@@ -35,179 +35,150 @@
 #include "tinyio.h"
 #include "rtdata.h"
 #include "seterrno.h"
-
-#define DOS_GET_DTA     0x2F
-
-#define HANDLE_OF(x)    ((x)->lfnax)
-
-#define SET_DTA         \
-        _MOV_AH DOS_SET_DTA \
-        _INT_21
-
-#define GET_DTA         \
-        _MOV_AH DOS_GET_DTA \
-        _INT_21
-
-#define FIND_FIRST      \
-        _MOV_AH DOS_FIND_FIRST \
-        _INT_21
-
-#define FIND_NEXT       \
-        _MOV_AH DOS_FIND_NEXT \
-        _INT_21
-
-#define FIND_FIRST_LFN  \
-        "mov  ax,714Eh" \
-        "mov  si,1"     \
-        "stc"           \
-        "int  21h"
-
-#define FIND_NEXT_LFN   \
-        "mov  ax,714fh" \
-        "mov  si,1"     \
-        "stc"           \
-        "int  21h"
-
-#define FIND_CLOSE_LFN  \
-        "mov  ax,71A1h" \
-        "stc"           \
-        "int  21h"
-
-#define MOV_DTA         \
-        "mov  ecx,43"   \
-        "rep movsb"
-
-#define MOV_DATA_TO_DTA \
-        "mov  esi,edx"  \
-        "mov  edi,ebx"  \
-        MOV_DTA
-
-#define MOV_DATA_FROM_DTA \
-        "mov  esi,ebx"  \
-        "mov  edi,edx"  \
-        "mov  ebx,ds"   \
-        "push es"       \
-        "pop  ds"       \
-        "mov  es,ebx"   \
-        MOV_DTA         \
-        "mov  ds,ebx"
+#include "_doslfn.h"
 
 extern unsigned __doserror_( unsigned );
 #pragma aux __doserror_ "*"
+
+extern unsigned char _Extender;
 
 extern unsigned __dos_find_first_dta( const char *path, unsigned attr, struct find_t *fdta );
 extern unsigned __dos_find_next_dta( struct find_t *fdta );
 extern unsigned __dos_find_close_dta( struct find_t *fdta );
 
-#if defined( _M_I86 )   // 16-bit
-  #ifdef __SMALL_DATA__   // near data
+#if defined( _M_I86 )
+  #ifdef __BIG_DATA__   // 16-bit far data
     #pragma aux __dos_find_first_dta = \
-        "xchg bx,dx"    \
-        SET_DTA         \
-        "xchg bx,dx"    \
-        FIND_FIRST      \
-        "call __doserror_" \
-        parm caller     [dx] [cx] [bx] \
-        modify exact    [];
-
-    #pragma aux __dos_find_next_dta = \
-        SET_DTA         \
-        FIND_NEXT       \
-        "call __doserror_" \
-        parm caller     [dx] \
-        modify exact    [];
-
-    #pragma aux __dos_find_close_dta = \
-        "xor  ax,ax"    \
-        parm caller     [dx] \
-        modify exact    [];
-
-  #else                   // far data
-    #pragma aux __dos_find_first_dta = \
-        "push ds"       \
-        "mov  ds,ax"    \
+        _SET_DSDX       \
         "push es"       \
         "push bx"       \
-        SET_DTA         \
+        _MOV_AH DOS_SET_DTA \
+        _INT_21         \
         "pop  dx"       \
         "pop  ds"       \
-        FIND_FIRST      \
+        _MOV_AH DOS_FIND_FIRST \
+        _INT_21         \
+        _RST_DS         \
         "call __doserror_" \
-        "pop  ds"       \
-        parm caller     [es bx] [cx] [ax dx] \
-        modify exact    [dx];
+        parm caller     [es bx] [cx] [dx ax] \
+        modify exact    [ax dx];
 
     #pragma aux __dos_find_next_dta = \
-        "push ds"       \
-        "mov  ds,ax"    \
-        SET_DTA         \
-        "pop  ds"       \
-        FIND_NEXT       \
+        _SET_DSDX       \
+        _MOV_AH DOS_SET_DTA \
+        _INT_21         \
+        _RST_DS         \
+        _MOV_AH DOS_FIND_NEXT \
+        _INT_21         \
         "call __doserror_" \
-        parm caller     [ax dx] \
-        modify exact    [];
+        parm caller     [dx ax] \
+        modify exact    [ax dx];
 
     #pragma aux __dos_find_close_dta = \
         "xor  ax,ax"    \
-        parm caller     [ax dx] \
-        modify exact    [];
+        parm caller     [dx ax] \
+        modify exact    [ax dx];
 
-  #endif
-#elif defined( __OSI__ )
+  #else                 // 16-bit near data
     #pragma aux __dos_find_first_dta = \
-        FIND_FIRST      \
+        "xchg bx,dx"    \
+        _MOV_AH DOS_SET_DTA \
+        _INT_21         \
+        "xchg bx,dx"    \
+        _MOV_AH DOS_FIND_FIRST \
+        _INT_21         \
         "call __doserror_" \
-        parm caller     [edx] [cx] [ebx] \
-        modify exact    [];
+        parm caller     [dx] [cx] [bx] \
+        modify exact    [ax];
 
     #pragma aux __dos_find_next_dta = \
-        "mov  al,0"     \
-        FIND_NEXT       \
+        _MOV_AH DOS_SET_DTA \
+        _INT_21         \
+        _MOV_AH DOS_FIND_NEXT \
+        _INT_21         \
         "call __doserror_" \
-        parm caller     [edx] \
-        modify exact    [];
+        parm caller     [dx] \
+        modify exact    [ax];
 
     #pragma aux __dos_find_close_dta = \
-        "mov  al,1"     \
-        FIND_NEXT       \
+        "xor  ax,ax"    \
+        parm caller     [dx] \
+        modify exact    [ax];
+
+  #endif
+#elif defined( __OSI__ )    // 32-bit near data
+    #pragma aux __dos_find_first_dta = \
+        _MOV_AH DOS_FIND_FIRST \
+        _INT_21         \
+        "call __doserror_" \
+        parm caller     [edx] [ecx] [ebx] \
+        modify exact    [eax];
+
+    #pragma aux __dos_find_next_dta = \
+        _MOV_AX_W 0 DOS_FIND_NEXT \
+        _INT_21         \
+        "call __doserror_" \
+        parm caller     [edx] \
+        modify exact    [eax];
+
+    #pragma aux __dos_find_close_dta = \
+        _MOV_AX_W 1 DOS_FIND_NEXT \
+        _INT_21         \
         "call __doserror_" \
         "xor  eax,eax"  \
         parm caller     [edx] \
-        modify exact    [];
+        modify exact    [eax];
 
-#else                   // 32-bit
+#else                   // 32-bit near data
     #pragma aux __dos_find_first_dta = \
-        FIND_FIRST      \
+        "push edx"      \
+        _MOV_AH DOS_SET_DTA \
+        _INT_21         \
+        "mov  edx,ebx"  \
+        _MOV_AH DOS_FIND_FIRST \
+        _INT_21         \
+        "pop  edx"      \
         "call __doserror_" \
         "test eax,eax"  \
         "jnz  L1"       \
+        "cmp  _Extender,9" \
+        "jnz  L1"       \
         "push es"       \
-        "mov  edx,ebx"  \
-        GET_DTA         \
+        _MOV_AH DOS_GET_DTA \
+        _INT_21         \
         MOV_DATA_FROM_DTA \
         "pop  es"       \
         "xor  eax,eax"  \
     "L1:"                   \
-        parm caller     [edx] [cx] [ebx] \
-        modify exact    [ebx ecx edx edi esi];
+        parm caller     [ebx] [ecx] [edx] \
+        modify exact    [eax ebx ecx edi esi];
 
     #pragma aux __dos_find_next_dta = \
         "push es"       \
-        GET_DTA         \
+        _MOV_AH DOS_SET_DTA \
+        _INT_21         \
+        "cmp  _Extender,9" \
+        "jnz  L1"       \
+        _MOV_AH DOS_GET_DTA \
+        _INT_21         \
         MOV_DATA_TO_DTA \
-        FIND_NEXT       \
+    "L1:"               \
+        _MOV_AH DOS_FIND_NEXT \
+        _INT_21         \
         "call __doserror_" \
         "test eax,eax"  \
-        "jnz  L1"       \
+        "jnz  L2"       \
+        "cmp  _Extender,9" \
+        "jnz  L2"       \
         MOV_DATA_FROM_DTA \
-    "L1: pop  es"       \
+    "L2: pop  es"       \
         parm caller     [edx] \
-        modify exact    [ebx ecx edi esi];
+        modify exact    [eax ebx ecx edi esi];
 
     #pragma aux __dos_find_close_dta = \
         "xor  eax,eax"  \
         parm caller     [edx] \
-        modify exact    [];
+        modify exact    [eax];
 
 #endif
 
@@ -228,50 +199,61 @@ typedef struct {
     char    sfn[14];
 } lfnfind_t;
 
-extern unsigned __dos_find_first_LFN( const char *path, unsigned attr, lfnfind_t __far *lfndta );
-extern unsigned __dos_find_next_LFN( unsigned handle, lfnfind_t __far *lfndta );
-extern unsigned __dos_find_close_LFN( unsigned handle );
+extern tiny_ret_t __dos_find_first_lfn( const char *path, unsigned attr, lfnfind_t __far *lfndta );
+extern unsigned __dos_find_next_lfn( unsigned handle, lfnfind_t __far *lfndta );
+extern unsigned __dos_find_close_lfn( unsigned handle );
 
-#if defined( _M_I86 )   // 16-bit
-  #ifdef __SMALL_DATA__   // near data
-    #pragma aux __dos_find_first_LFN = \
-        FIND_FIRST_LFN  \
-        "call __doserror_" \
+#if defined( _M_I86 )
+  #ifdef __BIG_DATA__   // 16-bit far data
+    #pragma aux __dos_find_first_lfn = \
+        _SET_DSDX       \
+        LFN_FIND_FIRST  \
+        _SBB_DX_DX      \
+        _RST_DS         \
+        parm caller     [dx ax] [cx] [es di] \
+        value           [dx ax] \
+        modify exact    [ax cx dx];
+  #else                 // 16-bit near data
+    #pragma aux __dos_find_first_lfn = \
+        LFN_FIND_FIRST  \
+        _SBB_DX_DX      \
         parm caller     [dx] [cx] [es di] \
-        modify exact    [cx si];
-  #else                   // far data
-    #pragma aux __dos_find_first_LFN = \
-        FIND_FIRST_LFN  \
-        "call __doserror_" \
-        parm caller     [ds dx] [cx] [es di]\
-        modify exact    [cx si];
+        value           [dx ax] \
+        modify exact    [ax cx dx];
   #endif
-    #pragma aux __dos_find_next_LFN = \
-        FIND_NEXT_LFN  \
+    #pragma aux __dos_find_next_lfn = \
+        LFN_FIND_NEXT   \
         "call __doserror_" \
         parm caller     [bx] [es di] \
-        modify exact    [cx si];
+        modify exact    [ax cx];
 
-#else                   // 32-bit
-    #pragma aux __dos_find_first_LFN = \
-        FIND_FIRST_LFN  \
-        "call __doserror_" \
-        parm caller     [edx] [cx] [es edi] \
-        modify exact    [cx si];
-
-    #pragma aux __dos_find_next_LFN = \
-        FIND_NEXT_LFN  \
-        "call __doserror_" \
-        parm caller     [bx] [es edi] \
-        modify exact    [ecx esi];
-
-#endif
-
-#pragma aux __dos_find_close_LFN = \
-        FIND_CLOSE_LFN  \
+    #pragma aux __dos_find_close_lfn = \
+        LFN_FIND_CLOSE  \
         "call __doserror_" \
         parm caller     [bx] \
-        modify exact    [];
+        modify exact    [ax];
+
+#else                   // 32-bit near data
+    #pragma aux __dos_find_first_lfn = \
+        LFN_FIND_FIRST  \
+        "rcl eax,1"     \
+        "ror eax,1"     \
+        parm caller     [edx] [ecx] [es edi] \
+        modify exact    [eax ecx];
+
+    #pragma aux __dos_find_next_lfn = \
+        LFN_FIND_NEXT   \
+        "call __doserror_" \
+        parm caller     [ebx] [es edi] \
+        modify exact    [eax ecx];
+
+    #pragma aux __dos_find_close_lfn = \
+        LFN_FIND_CLOSE  \
+        "call __doserror_" \
+        parm caller     [ebx] \
+        modify exact    [eax];
+
+#endif
 
 
 static void convert_to_find_t( struct find_t *fdta, lfnfind_t *lfnblock )
@@ -295,21 +277,19 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
 {
 #ifdef __WATCOM_LFN__
     lfnfind_t       lfndta;
-    unsigned        rc = 0;
+    tiny_ret_t      rc = 0;
 
-    if( _RWD_uselfn && (rc = __dos_find_first_LFN( path, attr, &lfndta )) == 0 ) {
+    if( _RWD_uselfn && TINY_OK( rc = __dos_find_first_lfn( path, attr, &lfndta ) ) ) {
         convert_to_find_t( fdta, &lfndta );
         fdta->lfnsup = _LFN_SIGN;
-        HANDLE_OF( fdta ) = rc;
+        HANDLE_OF( fdta ) = TINY_INFO( rc );
         return( 0 );
-    } else if( rc && rc != 0x7100 ) {
-        return( rc );
-    } else {
-#endif
-        return( __dos_find_first_dta( path, attr, fdta ) );
-#ifdef __WATCOM_LFN__
+    }
+    if( TINY_ERROR( rc ) && TINY_INFO( rc ) != 0x7100 ) {
+        return( __set_errno_dos_reterr( TINY_INFO( rc ) ) );
     }
 #endif
+    return( __dos_find_first_dta( path, attr, fdta ) );
 }
 
 
@@ -321,18 +301,14 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *fdta )
     unsigned        rc;
 
     if( _RWD_uselfn && fdta->lfnsup == _LFN_SIGN && HANDLE_OF( fdta ) ) {
-        rc = __dos_find_next_LFN( HANDLE_OF( fdta ), &lfndta );
-        if( rc ) {
-            return( rc );
+        rc = __dos_find_next_lfn( HANDLE_OF( fdta ), &lfndta );
+        if( rc == 0 ) {
+            convert_to_find_t( fdta, &lfndta );
         }
-        convert_to_find_t( fdta, &lfndta );
-        return( 0 );
-    } else {
-#endif
-        return( __dos_find_next_dta( fdta ) );
-#ifdef __WATCOM_LFN__
+        return( rc );
     }
 #endif
+    return( __dos_find_next_dta( fdta ) );
 }
 
 
@@ -341,15 +317,12 @@ _WCRTLINK unsigned _dos_findclose( struct find_t *fdta )
 {
 #if defined( __WATCOM_LFN__ )
     if( _RWD_uselfn && fdta->lfnsup == _LFN_SIGN && HANDLE_OF( fdta ) ) {
-        return( __dos_find_close_LFN( HANDLE_OF( fdta ) ) );
-    } else {
+        return( __dos_find_close_lfn( HANDLE_OF( fdta ) ) );
+    }
 #endif
 #ifdef __OSI__
-        return( __dos_find_close_dta( fdta ) );
+    return( __dos_find_close_dta( fdta ) );
 #else
-        return( 0 );
-#endif
-#if defined( __WATCOM_LFN__ )
-    }
+    return( 0 );
 #endif
 }

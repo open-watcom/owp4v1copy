@@ -35,134 +35,78 @@
 #include "seterrno.h"
 #include "tinyio.h"
 #include "rtdata.h"
-
-#define DOS_CREATNEW        0x5B
-
-#define EX_LFN_CREATE       0x12
-#define EX_LFN_CREATE_NEW   0x10
-
-#define CREATE_EX_LFN   \
-        "mov ax,716Ch"  \
-        "stc"           \
-        "int 21h"
-
-#define CREATE_FILE     \
-        _MOV_AH DOS_CREAT \
-        _INT_21
-
-#define CREATE_NEW_FILE \
-        _MOV_AH DOS_CREATNEW \
-        _INT_21
+#include "_doslfn.h"
 
 #ifdef _M_I86
-  #ifdef __SMALL_DATA__ // 16-bit near data
-    #define SAVE_HANDLE    "mov [bx],ax"
-    #define SAVE_HANDLE_EX "mov [di],ax"
-  #else
-    #define SAVE_HANDLE    "mov es:[bx],ax"
-    #define SAVE_HANDLE_EX "mov es:[di],ax"
+  #ifdef __BIG_DATA__   // 16-bit far data
+    #define INIT_VALUE
+    #define SAVE_VALUE      "mov es:[bx],ax"
+    #define SAVE_VALUE_EX   "mov es:[di],ax"
+    #define AUX_INFO    \
+        parm caller     [dx ax] [cx] [es bx] \
+        modify exact    [ax dx];
+    #define AUX_INFO_EX \
+        parm caller     [si ax] [bx] [cx] [dx] [es di] \
+        modify exact    [ax cx si];
+  #else                 // 16-bit near data
+    #define INIT_VALUE
+    #define SAVE_VALUE      "mov [bx],ax"
+    #define SAVE_VALUE_EX   "mov [di],ax"
+    #define AUX_INFO    \
+        parm caller     [dx] [cx] [bx] \
+        modify exact    [ax];
+    #define AUX_INFO_EX \
+        parm caller     [si] [bx] [cx] [dx] [di] \
+        modify exact    [ax cx];
   #endif
-#else
-    #define SAVE_HANDLE    "mov [ebx],eax"
-    #define SAVE_HANDLE_EX "mov [edi],eax"
+#else                   // 32-bit near data
+    #define INIT_VALUE      "xor eax,eax"
+    #define SAVE_VALUE      "mov [ebx],eax"
+    #define SAVE_VALUE_EX   "mov [edi],eax"
+    #define AUX_INFO    \
+        parm caller     [edx] [ecx] [ebx] \
+        modify exact    [eax];
+    #define AUX_INFO_EX \
+        parm caller     [esi] [ebx] [ecx] [edx] [edi] \
+        modify exact    [eax ecx];
 #endif
-
-#define RETURN_HANDLE   \
-        "jc short L1"   \
-        SAVE_HANDLE     \
-"L1:"
-
-#define RETURN_HANDLE_EX \
-        "jc short L1"   \
-        SAVE_HANDLE_EX  \
-"L1:"
 
 extern unsigned __doserror_( unsigned );
 #pragma aux __doserror_ "*"
 
 extern unsigned __dos_create_ex_lfn( const char *name, unsigned oattr, unsigned cattr, unsigned action, int *handle );
+#pragma aux __dos_create_ex_lfn = \
+        _SET_DSSI       \
+        INIT_VALUE      \
+        LFN_CREATE_EX   \
+        _RST_DS         \
+        RETURN_VALUE_EX \
+        "call __doserror_" \
+        AUX_INFO_EX
+
 extern unsigned __dos_create_sfn( const char *name, unsigned cattr, int *handle );
+#pragma aux __dos_create_sfn = \
+        _SET_DSDX       \
+        INIT_VALUE      \
+        _MOV_AH DOS_CREAT \
+        _INT_21         \
+        _RST_DS         \
+        RETURN_VALUE    \
+        "call __doserror_" \
+        AUX_INFO
+
 extern unsigned __dos_create_new_sfn( const char *name, unsigned cattr, int *handle );
-
-#ifdef _M_I86
-  #ifdef __SMALL_DATA__ // 16-bit near data
-    #pragma aux __dos_create_ex_lfn = \
-        CREATE_EX_LFN   \
-        RETURN_HANDLE_EX \
-        "call __doserror_" \
-        parm caller     [si] [bx] [cx] [dx] [di] \
-        modify exact    [cx];
-
-    #pragma aux __dos_create_sfn = \
-        CREATE_FILE     \
-        RETURN_HANDLE   \
-        "call __doserror_" \
-        parm caller     [dx] [cx] [bx] \
-        modify exact    [];
-
-    #pragma aux __dos_create_new_sfn = \
-        CREATE_NEW_FILE \
-        RETURN_HANDLE   \
-        "call __doserror_" \
-        parm caller     [dx] [cx] [bx] \
-        modify exact    [];
-
-  #else                 // 16-bit far data
-    #pragma aux __dos_create_ex_lfn = \
-        "push ds"       \
-        "mov  ds,ax"    \
-        CREATE_EX_LFN   \
-        "pop  ds"       \
-        RETURN_HANDLE_EX \
-        "call __doserror_" \
-        parm caller     [ax si] [bx] [cx] [dx] [es di] \
-        modify exact    [cx];
-
-    #pragma aux __dos_create_sfn = \
-        "push ds"       \
-        "mov  ds,ax"    \
-        CREATE_FILE     \
-        "pop  ds"       \
-        RETURN_HANDLE   \
-        "call __doserror_" \
-        parm caller     [ax dx] [cx] [es bx] \
-        modify exact    [];
-
-    #pragma aux __dos_create_new_sfn = \
-        "push ds"       \
-        "mov  ds,ax"    \
-        CREATE_NEW_FILE \
-        "pop  ds"       \
-        RETURN_HANDLE   \
+#pragma aux __dos_create_new_sfn = \
+        _SET_DSDX       \
+        INIT_VALUE      \
+        _MOV_AH DOS_CREATE_NEW \
+        _INT_21         \
+        _RST_DS         \
+        RETURN_VALUE    \
         "call __doserror_" \
         "nop"           \
-        parm caller     [ax dx] [cx] [es bx] \
-        modify exact    [];
+        AUX_INFO
 
-  #endif
-#else                   // 32-bit
-    #pragma aux __dos_create_ex_lfn = \
-        CREATE_EX_LFN   \
-        RETURN_HANDLE_EX \
-        "call __doserror_" \
-        parm caller     [esi] [ebx] [ecx] [edx] [edi] \
-        modify exact    [ecx];
-
-    #pragma aux __dos_create_sfn = \
-        CREATE_FILE     \
-        RETURN_HANDLE   \
-        "call __doserror_" \
-        parm caller     [edx] [ecx] [ebx] \
-        modify exact    [];
-
-    #pragma aux __dos_create_new_sfn = \
-        CREATE_NEW_FILE \
-        RETURN_HANDLE   \
-        "call __doserror_" \
-        parm caller     [edx] [ecx] [ebx] \
-        modify exact    [];
-
-#endif
 
 #ifdef __WATCOM_LFN__
 static unsigned _dos_create_ex_lfn( const char *path, unsigned mode, unsigned attrib, unsigned style, int *handle )
@@ -178,14 +122,12 @@ _WCRTLINK unsigned _dos_creat( const char *path, unsigned attrib, int *handle )
 
     if( _RWD_uselfn && (rc = _dos_create_ex_lfn( path, O_WRONLY, attrib, EX_LFN_CREATE, handle )) == 0 ) {
         return( rc );
-    } else if( rc && rc != 0x7100 ) {
+    }
+    if( IS_LFN_ERROR( rc ) ) {
         return( rc );
-    } else {
-#endif
-        return( __dos_create_sfn( path, attrib, handle ) );
-#ifdef __WATCOM_LFN__
     }
 #endif
+    return( __dos_create_sfn( path, attrib, handle ) );
 }
 
 _WCRTLINK unsigned _dos_creatnew( const char *path, unsigned attrib, int *handle )
@@ -195,12 +137,10 @@ _WCRTLINK unsigned _dos_creatnew( const char *path, unsigned attrib, int *handle
 
     if( _RWD_uselfn && (rc = _dos_create_ex_lfn( path, O_WRONLY, attrib, EX_LFN_CREATE_NEW, handle )) == 0 ) {
         return( rc );
-    } else if( rc && rc != 0x7100 ) {
+    }
+    if( IS_LFN_ERROR( rc ) ) {
         return( rc );
-    } else {
-#endif
-        return( __dos_create_new_sfn( path, attrib, handle ) );
-#ifdef __WATCOM_LFN__
     }
 #endif
+    return( __dos_create_new_sfn( path, attrib, handle ) );
 }

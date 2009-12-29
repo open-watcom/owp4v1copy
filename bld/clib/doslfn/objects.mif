@@ -1,14 +1,10 @@
 base_libname =doslfn
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 #==========================================================================================
-#!inject findlfn.obj  d16 d32 dpm
 !inject laccss.obj   d16 d32 dpm
-!inject lattr086.obj d16     dpm
-!inject lattr386.obj     d32
 !inject lchdir.obj   d16 d32 dpm
 !inject lchmod.obj   d16 d32 dpm
 !inject lcreados.obj d16 d32 dpm
-#!inject ldosopen.obj d16 d32 dpm
 !inject lfindcls.obj d16 d32 dpm
 !inject lfinddos.obj d16 d32 dpm
 !inject lfindfrs.obj d16 d32 dpm
@@ -17,6 +13,7 @@ base_libname =doslfn
 !inject lfnstat.obj  d16 d32 dpm
 !inject lfnudir.obj  d16 d32 dpm
 !inject lfnustat.obj d16 d32 dpm
+!inject lgattdos.obj d16 d32 dpm
 !inject lgtcwd.obj   d16 d32 dpm
 !inject llfntsfn.obj d16 d32 dpm
 !inject lmkdir.obj   d16 d32 dpm
@@ -24,6 +21,7 @@ base_libname =doslfn
 !inject lopendos.obj d16 d32 dpm
 !inject lrenam.obj   d16 d32 dpm
 !inject lrmdir.obj   d16 d32 dpm
+!inject lsattdos.obj d16 d32 dpm
 !inject luaccss.obj  d16 d32 dpm
 !inject luchdr.obj   d16 d32 dpm
 !inject luchmd.obj   d16 d32 dpm

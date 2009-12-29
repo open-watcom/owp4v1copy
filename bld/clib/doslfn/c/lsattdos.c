@@ -24,52 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  DOS implementation of close / commit files functions.
+* Description:  DOS LFN implementation of set file attributes
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include <dos.h>
-#include "tinyio.h"
-#include "rtdata.h"
-#include "seterrno.h"
-
-#ifdef _M_I86
-    #define AUX_INFO    \
-        parm caller     [bx] \
-        modify exact    [ax];
-#else
-    #define AUX_INFO    \
-        parm caller     [ebx] \
-        modify exact    [eax];
-#endif
-
-extern unsigned __doserror_( unsigned );
-#pragma aux __doserror_ "*"
-
-extern unsigned __dos_close( unsigned handle );
-#pragma aux __dos_close = \
-        _MOV_AH DOS_CLOSE \
-        _INT_21         \
-        "call __doserror_" \
-        AUX_INFO
-
-extern unsigned __dos_commit( unsigned handle );
-#pragma aux __dos_commit = \
-        _MOV_AH DOS_COMMIT_FILE \
-        "clc"           \
-        _INT_21         \
-        "call __doserror_" \
-        "nop"           \
-        AUX_INFO
-
-_WCRTLINK unsigned _dos_close( int handle )
-{
-    return( __dos_close( handle ) );
-}
-
-_WCRTLINK unsigned _dos_commit( int handle )
-{
-    return( __dos_commit( handle ) );
-}
+#define __WATCOM_LFN__
+#include "../../_dos/c/sfattdos.c"
