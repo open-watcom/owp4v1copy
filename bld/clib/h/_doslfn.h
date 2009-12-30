@@ -96,6 +96,19 @@
         "int  21h"      \
         POP_BX
 
+#define LFN_DOS_RENAME  \
+        "mov  ax,7156h" \
+        "stc"           \
+        "int  21h"
+
+#define LFN_DOS_UNLINK  \
+        PUSH_SI         \
+        "mov  si,0"     \
+        "mov  ax,7141h" \
+        "stc"           \
+        "int  21h"      \
+        POP_SI
+
 #define MOV_DTA         \
         "mov  ecx,43"   \
         "rep movsb"

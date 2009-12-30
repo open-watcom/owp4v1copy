@@ -35,31 +35,70 @@
 #include <stdio.h>
 #include "tinyio.h"
 #include "seterrno.h"
+#include "rtdata.h"
+#include "_doslfn.h"
 #ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include <stdlib.h>
     #include "mbwcconv.h"
 #endif
 
-
-_WCRTLINK int __F_NAME(rename,_wrename)( const CHAR_TYPE *old, const CHAR_TYPE *new )
-    {
-        tiny_ret_t  rc;
-#ifdef __WIDECHAR__
-        char        mbOld[MB_CUR_MAX*_MAX_PATH];    /* single-byte char */
-        char        mbNew[MB_CUR_MAX*_MAX_PATH];    /* single-byte char */
+#ifdef _M_I86
+  #ifdef __BIG_DATA__   // 16-bit far data
+    #define AUX_INFO    \
+        parm caller     [dx ax] [es di]\
+        modify exact    [ax];
+  #else                 // 16-bit near data
+    #define AUX_INFO    \
+        parm caller     [dx] [es di]\
+        modify exact    [ax];
+  #endif
+#else                   // 32-bit near data
+    #define AUX_INFO    \
+        parm caller     [edx] [edi]\
+        modify exact    [eax];
 #endif
 
-        #ifdef __WIDECHAR__
-            __filename_from_wide( mbOld, old );
-            __filename_from_wide( mbNew, new );
-            rc = TinyRename( mbOld, mbNew );
-        #else
-            rc = TinyRename( old, new );
-        #endif
+extern unsigned __doserror_( unsigned );
+#pragma aux __doserror_ "*"
 
-        if( TINY_ERROR(rc) ) {
-            return( __set_errno_dos( TINY_INFO(rc) ) );
-        }
-        return( 0 );            /* indicate no error */
+extern int __dos_rename_sfn( const char *old, const char _WCI86FAR *new );
+#pragma aux __dos_rename_sfn = \
+        _SET_DSDX       \
+        _MOV_AH DOS_RENAME \
+        _INT_21         \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+extern int __dos_rename_lfn( const char *old, const char _WCI86FAR *new );
+#pragma aux __dos_rename_lfn = \
+        _SET_DSDX       \
+        LFN_DOS_RENAME  \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+
+_WCRTLINK int __F_NAME(rename,_wrename)( const CHAR_TYPE *old, const CHAR_TYPE *new )
+{
+#ifdef __WIDECHAR__
+    char        mbOld[MB_CUR_MAX*_MAX_PATH];    /* single-byte char */
+    char        mbNew[MB_CUR_MAX*_MAX_PATH];    /* single-byte char */
+
+    __filename_from_wide( mbOld, old );
+    __filename_from_wide( mbNew, new );
+    return( rename( mbOld, mbNew ) );
+#else
+  #if defined( __WATCOM_LFN__ )
+    unsigned    rc = 0;
+
+    if( _RWD_uselfn && (rc = __dos_rename_lfn( old, new )) == 0 ) {
+        return( rc );
     }
+    if( IS_LFN_ERROR( rc ) ) {
+        return( rc );
+    }
+  #endif
+    return( __dos_rename_sfn( old, new ) );
+#endif
+}
+

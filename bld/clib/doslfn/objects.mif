@@ -27,10 +27,8 @@ base_libname =doslfn
 !inject lumkdr.obj   d16 d32 dpm
 !inject lunlnk.obj   d16 d32 dpm
 !inject luopen.obj   d16 d32 dpm
-!inject lurenam.obj  d16 d32 dpm
 !inject lurmdr.obj   d16 d32 dpm
 !inject luselfn.obj  d16 d32 dpm
-!inject luunln.obj   d16 d32 dpm
 
 !include ../../../../objlist.mif
 
@@ -43,3 +41,4 @@ lfnustat_opts = -I"$(clib_dir)/file/h" -I"$(clib_dir)/handleio/h"
 lfnwdir_opts  = -I"$(clib_dir)/handleio/h"
 lufndfrs_opts = -I"$(clib_dir)/file/h"
 lufndnxt_opts = -I"$(clib_dir)/file/h"
+#lunlnk_opts   = -pcl -fo=.i

@@ -32,31 +32,72 @@
 
 #include "variety.h"
 #include "widechar.h"
-#include "mbwcconv.h"
-#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "tinyio.h"
 #include "seterrno.h"
-#include <unistd.h>
+#include "rtdata.h"
+#include "_doslfn.h"
 #ifdef __WIDECHAR__
-    #include <mbstring.h>
+    #include "mbwcconv.h"
 #endif
 
-
-_WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename ) {
-    tiny_ret_t  rc;
-#ifdef __WIDECHAR__
-    char        mbFilename[MB_CUR_MAX*_MAX_PATH];   /* single-byte char */
+#ifdef _M_I86
+  #ifdef __BIG_DATA__   // 16-bit far data
+    #define AUX_INFO    \
+        parm caller     [dx ax] \
+        modify exact    [ax];
+  #else                 // 16-bit near data
+    #define AUX_INFO    \
+        parm caller     [dx] \
+        modify exact    [ax];
+  #endif
+#else                   // 32-bit near data
+    #define AUX_INFO    \
+        parm caller     [edx] \
+        modify exact    [eax];
 #endif
 
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbFilename, filename );
-        rc = TinyDelete( mbFilename );
-    #else
-        rc = TinyDelete( filename );
-    #endif
+extern unsigned __doserror_( unsigned );
+#pragma aux __doserror_ "*"
 
-    if( TINY_ERROR(rc) ) {
-        return( __set_errno_dos( TINY_INFO(rc) ) );
+extern unsigned __dos_unlink_sfn( const char *filename );
+#pragma aux __dos_unlink_sfn = \
+        _SET_DSDX       \
+        _MOV_AH DOS_UNLINK \
+        _INT_21         \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+extern unsigned __dos_unlink_lfn( const char *filename );
+#pragma aux __dos_unlink_lfn = \
+        _SET_DSDX       \
+        LFN_DOS_UNLINK  \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+
+_WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename )
+{
+#ifdef __WIDECHAR__
+    char    mbFilename[MB_CUR_MAX * _MAX_PATH]; /* single-byte char */
+
+    __filename_from_wide( mbFilename, filename );
+    return( unlink( mbFilename ) );
+#else
+  #if defined( __WATCOM_LFN__ )
+    unsigned    rc = 0;
+
+    if( _RWD_uselfn && (rc = __dos_unlink_lfn( filename )) == 0 ) {
+        return( rc );
     }
-    return( 0 );            /* indicate no error */
+    if( IS_LFN_ERROR( rc ) ) {
+        return( rc );
+    }
+  #endif
+    return( __dos_unlink_sfn( filename ) );
+#endif
 }
+
