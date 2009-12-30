@@ -42,6 +42,7 @@
     #define INIT_VALUE
     #define SAVE_VALUE      "mov es:[bx],ax"
     #define SAVE_VALUE_EX   "mov es:[di],ax"
+    #define RETURN_CY       "sbb ax,ax"
     #define AUX_INFO    \
         parm caller     [dx ax] [cx] [es bx] \
         modify exact    [ax dx];
@@ -52,6 +53,7 @@
     #define INIT_VALUE
     #define SAVE_VALUE      "mov [bx],ax"
     #define SAVE_VALUE_EX   "mov [di],ax"
+    #define RETURN_CY       "sbb ax,ax"
     #define AUX_INFO    \
         parm caller     [dx] [cx] [bx] \
         modify exact    [ax dx];
@@ -63,6 +65,7 @@
     #define INIT_VALUE      "xor eax,eax"
     #define SAVE_VALUE      "mov [ebx],eax"
     #define SAVE_VALUE_EX   "mov [edi],eax"
+    #define RETURN_CY       "sbb eax,eax"
     #define AUX_INFO    \
         parm caller     [edx] [ecx] [ebx] \
         modify exact    [eax edx];
@@ -74,19 +77,6 @@
 extern unsigned __doserror_( unsigned );
 #pragma aux __doserror_ "*"
 
-extern unsigned __doserror_chk( unsigned );
-#ifdef _M_I86
-#pragma aux __doserror_chk = \
-        "sbb ax,ax"     \
-        parm caller     [ax] \
-        modify exact    [ax];
-#else
-#pragma aux __doserror_chk = \
-        "sbb eax,eax"   \
-        parm caller     [eax] \
-        modify exact    [eax];
-#endif
-
 extern unsigned __dos_create_ex_lfn( const char *name, unsigned oattr, unsigned cattr, unsigned action, int *handle );
 #pragma aux __dos_create_ex_lfn = \
         _SET_DSSI       \
@@ -97,15 +87,25 @@ extern unsigned __dos_create_ex_lfn( const char *name, unsigned oattr, unsigned 
         "call __doserror_" \
         AUX_INFO_EX
 
-extern unsigned __dos_open_sfn( const char *name, unsigned cattr, int *handle );
-#pragma aux __dos_open_sfn = \
+#define __DOS_OPEN_SFN  \
         _SET_DSDX       \
         INIT_VALUE      \
         "mov  al,cl"    \
         _MOV_AH DOS_OPEN \
         _INT_21         \
         _RST_DS         \
-        RETURN_VALUE    \
+        RETURN_VALUE
+
+extern unsigned __dos_open_sfn_chk( const char *name, unsigned cattr, int *handle );
+#pragma aux __dos_open_sfn_chk = \
+        __DOS_OPEN_SFN  \
+        RETURN_CY       \
+        AUX_INFO
+
+extern unsigned __dos_open_sfn_err( const char *name, unsigned cattr, int *handle );
+#pragma aux __dos_open_sfn_err = \
+        __DOS_OPEN_SFN  \
+        "call __doserror_" \
         AUX_INFO
 
 #ifdef __WATCOM_LFN__
@@ -116,7 +116,7 @@ static unsigned __dos_open_lfn( const char *path, unsigned mode, int *handle )
     // try to open with SFN
     if( _lfntosfn( ( char * )path, short_name ) != NULL ) {
         if( short_name[0] != '\0' ) {
-            if( __doserror_chk( __dos_open_sfn( short_name, mode, handle ) ) == 0 ) {
+            if( __dos_open_sfn_chk( short_name, mode, handle ) == 0 ) {
                 return( 0 );
             }
         }
@@ -137,5 +137,5 @@ _WCRTLINK unsigned _dos_open( const char *path, unsigned mode, int *handle )
         return( rc );
     }
 #endif
-    return( __doserror_( __dos_open_sfn( path, mode, handle ) ) );
+    return( __dos_open_sfn_err( path, mode, handle ) );
 }
