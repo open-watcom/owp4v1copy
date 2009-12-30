@@ -31,48 +31,30 @@
 
 #include "variety.h"
 #include "widechar.h"
-#include <io.h>
+#include <unistd.h>
 #include <dos.h>
 #include "tinyio.h"
 #include "seterrno.h"
 #ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include <stdlib.h>
     #include "mbwcconv.h"
 #endif
-
-#ifdef __WATCOM_LFN__
-static int CTinyAccess( const char *path, int mode )
-{
-    unsigned    attrs;
-
-    if( _dos_getfileattr( path, &attrs ) != 0 )
-        return( -1 );
-    return( ( attrs & _A_RDONLY && mode == W_OK ) ? -1 : 0 );
-}
-
-#undef  TinyAccess
-#define TinyAccess   CTinyAccess
-#endif
-
+#include "msdos.h"
 
 _WCRTLINK int __F_NAME(access,_waccess)( const CHAR_TYPE *pathname, int pmode )
 {
-#ifndef __WATCOM_LFN__
-    tiny_ret_t      rc;
-#endif
 #ifdef __WIDECHAR__
-    char            mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
+    char            mbPath[MB_CUR_MAX * _MAX_PATH];
 
     __filename_from_wide( mbPath, pathname );
-#endif
-
-#ifdef __WATCOM_LFN__
-    return( TinyAccess( __F_NAME(pathname,mbPath), pmode ) );
+    return( access( mbPath, pmode ) );
 #else
-    rc = TinyAccess( __F_NAME(pathname,mbPath), pmode );
-    if( TINY_ERROR( rc ) ) {
-        return( __set_errno_dos( TINY_INFO( rc ) ) );
+    unsigned    attrs;
+
+    if( _dos_getfileattr( __F_NAME(pathname,mbPath), &attrs ) ) {
+        return( -1 );
+    }
+    if( (attrs & _A_RDONLY) && pmode == W_OK ) {
+        return( __set_errno_dos( EACCES << 8 ) );
     }
     return( 0 );
 #endif
