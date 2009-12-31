@@ -44,7 +44,7 @@ static int fileHandle;
 /*
  * writeRange - write a range of lines in an fcb to current file
  */
-static vi_rc writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt )
+static vi_rc writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt, int last )
 {
     line        *cline;
     int         i, len = 0;
@@ -73,12 +73,14 @@ static vi_rc writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt )
             data++;
         }
         len += cline->len;
-        if( EditFlags.WriteCRLF ) {
-            *buff++ = 13;
+        if( s != e || !last ) {
+            if( EditFlags.WriteCRLF ) {
+                *buff++ = 13;
+                len++;
+            }
+            *buff++ = 10;
             len++;
         }
-        *buff++ = 10;
-        len++;
         cline = cline->next;
         s++;
 
@@ -276,7 +278,7 @@ vi_rc SaveFile( char *name, linenum start, linenum end, int dammit )
     cfcb = sfcb;
     while( cfcb != efcb ) {
 
-        rc = writeRange( s, cfcb->end_line, cfcb, &bc );
+        rc = writeRange( s, cfcb->end_line, cfcb, &bc, FALSE );
         if( rc != ERR_NO_ERR ) {
 #ifdef __WIN__
             ToggleHourglass( FALSE );
@@ -292,7 +294,7 @@ vi_rc SaveFile( char *name, linenum start, linenum end, int dammit )
     /*
      * last bit
      */
-    rc = writeRange( s, e, efcb, &bc );
+    rc = writeRange( s, e, efcb, &bc, TRUE );
 #ifdef __WIN__
     ToggleHourglass( FALSE );
 #endif

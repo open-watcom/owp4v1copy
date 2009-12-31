@@ -125,6 +125,11 @@ bool CreateLinesFromBuffer( int cnt, line **head, line **tail, int *used,
          * check if we are past the end of the buffer
          */
         if( curr >= cnt ) {
+            if( curr > 0 && (ReadBuffer[curr - 1] == CR ||
+                             ReadBuffer[curr - 1] == LF) ) {
+                InsertNewLine( *tail, head, tail, tmpbuff, 0, INSERT_AFTER );
+                llcnt++;
+            }
             StaticFree( tmpbuff );
             *used = curr;
             *bytecnt = bcnt;
