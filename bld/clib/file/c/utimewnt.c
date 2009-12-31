@@ -46,8 +46,6 @@
 #include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>
-    #include <stdlib.h>
-    #include "mbwcconv.h"
 #endif
 
 _WCRTLINK int __F_NAME(utime,_wutime)( CHAR_TYPE const *fn, struct utimbuf const *times )
