@@ -15,7 +15,6 @@
 !inject findclos.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi
 !inject findfirs.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi
 !inject findnext.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi
-!inject __fn2mbs.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mkstemp.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi l32 lpc lmp
 !inject mktemp.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject remove.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp

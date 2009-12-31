@@ -43,11 +43,6 @@
 #include "openmode.h"
 #include "rtdata.h"
 #include "seterrno.h"
-#ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include <stdlib.h>
-    #include "mbwcconv.h"
-#endif
 
 
 _WCRTLINK int __F_NAME(utime,_wutime)( CHAR_TYPE const *fn, struct utimbuf const *times )
@@ -61,10 +56,12 @@ _WCRTLINK int __F_NAME(utime,_wutime)( CHAR_TYPE const *fn, struct utimbuf const
     time_t      curr_time;
     struct      utimbuf time_buf;
 #ifdef __WIDECHAR__
-    char    mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
-    __filename_from_wide( mbPath, fn );
-#endif
+    char        mbPath[MB_CUR_MAX * _MAX_PATH]; /* single-byte char */
 
+    if( wcstombs( mbPath, fn, sizeof( mbPath ) ) == -1 ) {
+        mbPath[0] = '\0';
+    }
+#endif
     rc = DosOpen( (PSZ)__F_NAME(fn,mbPath), &handle, &actiontaken, 0ul, _A_NORMAL,
                      OPENFLAG_FAIL_IF_NOT_EXISTS | OPENFLAG_OPEN_IF_EXISTS,
                      OPENMODE_DENY_NONE | OPENMODE_ACCESS_RDWR,

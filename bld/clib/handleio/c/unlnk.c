@@ -38,9 +38,6 @@
 #include "seterrno.h"
 #include "rtdata.h"
 #include "_doslfn.h"
-#ifdef __WIDECHAR__
-    #include "mbwcconv.h"
-#endif
 
 #ifdef _M_I86
   #ifdef __BIG_DATA__   // 16-bit far data
@@ -84,7 +81,9 @@ _WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename )
 #ifdef __WIDECHAR__
     char    mbFilename[MB_CUR_MAX * _MAX_PATH]; /* single-byte char */
 
-    __filename_from_wide( mbFilename, filename );
+    if( wcstombs( mbFilename, filename, sizeof( mbFilename ) ) == -1 ) {
+        mbFilename[0] = '\0';
+    }
     return( unlink( mbFilename ) );
 #else
   #if defined( __WATCOM_LFN__ )
@@ -100,4 +99,3 @@ _WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename )
     return( __dos_unlink_sfn( filename ) );
 #endif
 }
-

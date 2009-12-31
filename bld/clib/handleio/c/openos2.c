@@ -51,10 +51,6 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "defwin.h"
-#ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include "mbwcconv.h"
-#endif
 #include "os2fil64.h"
 
 extern unsigned __NFiles;
@@ -74,16 +70,17 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shar
     int         perm = S_IREAD | S_IWRITE;
     unsigned    iomode_flags;
 #ifdef __WIDECHAR__
-    char        mbName[MB_CUR_MAX*_MAX_PATH];   /* single-byte char */
+    char        mbName[MB_CUR_MAX * _MAX_PATH];     /* single-byte char */
 #endif
 
-    while( *name == ' ' ) ++name;
-
-    /*** If necessary, convert the wide filename to multibyte form ***/
+    while( *name == ' ' )
+        ++name;
 #ifdef __WIDECHAR__
-    __filename_from_wide( mbName, name );
+    /*** If necessary, convert the wide filename to multibyte form ***/
+    if( wcstombs( mbName, name, sizeof( mbName ) ) == -1 ) {
+        mbName[0] = '\0';
+    }
 #endif
-                                                    /* 05-sep-91 */
     if( mode & O_CREAT ) {
         perm = va_arg( args, int );
         va_end( args );
@@ -100,7 +97,7 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shar
         openflag = OPENFLAG_OPEN_IF_EXISTS;
     }
     rwmode = mode & OPENMODE_ACCESS_MASK;
-#if defined( _M_I86 )
+#ifdef _M_I86
     if( rwmode == OPENMODE_ACCESS_WRONLY && !_RWD_osmode ) {
         /* Can't open WRONLY file in bound application under DOS */
         rwmode = OPENMODE_ACCESS_RDWR;

@@ -44,7 +44,6 @@
     #include <wos2.h>
     #include <mbstring.h>
     #include "d2ttime.h"
-    #include "mbwcconv.h"
     #include "os2fil64.h"
 #else
     #include <dos.h>
@@ -109,7 +108,9 @@
  #ifdef __WIDECHAR__
     char            mbFilespec[MB_CUR_MAX * _MAX_PATH];
 
-    __filename_from_wide( mbFilespec, filespec );
+    if( wcstombs( mbFilespec, filespec, sizeof( mbFilespec ) ) == -1 ) {
+        mbFilespec[0] = '\0';
+    }
  #endif
     rc = DosFindFirst( (char*)__F_NAME(filespec,mbFilespec), &h, FIND_ATTR,
                                 &ffb, sizeof( ffb ), &searchcount, FF_LEVEL );

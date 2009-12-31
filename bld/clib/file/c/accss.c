@@ -35,17 +35,16 @@
 #include <dos.h>
 #include "tinyio.h"
 #include "seterrno.h"
-#ifdef __WIDECHAR__
-    #include "mbwcconv.h"
-#endif
 #include "msdos.h"
 
 _WCRTLINK int __F_NAME(access,_waccess)( const CHAR_TYPE *pathname, int pmode )
 {
 #ifdef __WIDECHAR__
-    char            mbPath[MB_CUR_MAX * _MAX_PATH];
+    char        mbPath[MB_CUR_MAX * _MAX_PATH];
 
-    __filename_from_wide( mbPath, pathname );
+    if( wcstombs( mbPath, pathname, sizeof( mbPath ) ) == -1 ) {
+        mbPath[0] = '\0';
+    }
     return( access( mbPath, pmode ) );
 #else
     unsigned    attrs;

@@ -33,9 +33,6 @@
 #include "widechar.h"
 #include <unistd.h>
 #include <dos.h>
-#ifdef __WIDECHAR__
-    #include "mbwcconv.h"
-#endif
 
 
 _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
@@ -43,7 +40,9 @@ _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
 #ifdef __WIDECHAR__
     char        mbPath[MB_CUR_MAX * _MAX_PATH];
 
-    __filename_from_wide( mbPath, pathname );
+    if( wcstombs( mbPath, pathname, sizeof( mbPath ) ) == -1 ) {
+        mbPath[0] = '\0';
+    }
     return( chmod( mbPath, pmode ) );
 #else
     unsigned    rc;

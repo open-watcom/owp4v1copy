@@ -51,7 +51,6 @@
 #ifdef __WIDECHAR__
     #include <stdlib.h>
     #include <wctype.h>
-    #include "mbwcconv.h"
 #else
     #include <ctype.h>
 #endif
@@ -146,7 +145,10 @@ static unsigned short at2mode( OS_UINT attr, char *fname ) {
 
 #ifdef __WIDECHAR__
         char        mbPath[MB_CUR_MAX * _MAX_PATH];
-        __filename_from_wide( mbPath, path );
+
+        if( wcstombs( mbPath, path, sizeof( mbPath ) ) == -1 ) {
+            mbPath[0] = '\0';
+        }
 #endif
         rc = DosFindFirst( (char*)__F_NAME(path,mbPath), &handle, FIND_ATTR,
                     &dir_buff, sizeof( dir_buff ), &searchcount, FF_LEVEL );

@@ -48,72 +48,11 @@
 #include "seterrno.h"
 #include "defwin.h"
 #include "extender.h"
-#ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include "mbwcconv.h"
-#endif
+#include "msdos.h"
 
 /* file attributes */
 
-_WCRTLINK extern char   *_lfntosfn( char *orgname, char *shortname );
-_WCRTLINK extern int    _islfn( const char *path );
-
 #define _A_RDONLY       0x01
-
-#ifdef __WATCOM_LFN__
-static int CTinyOpen( const char *path, int mode )
-{
-    char    short_name[128];
-    union   REGS      r;
-    struct  SREGS     s;
-
-    if( _lfntosfn( ( char * )path, short_name ) == NULL ) {
-        return( -2 );
-    }
-
-    r.w.ax = ( short_name[0] != '\0' ) ?
-        TinyOpen( short_name, mode ) : -1;
-
-    if( TINY_OK( r.w.ax ) ) return ( r.w.ax );
-
-    s.ds   = FP_SEG( path );
-    r.w.si = FP_OFF( path );
-    r.w.bx = mode;
-    r.w.dx = 0;
-    r.w.ax = 0x716C;
-
-    intdosx( &r, &r, &s );
-
-    if( r.x.cflag || r.w.ax == 0x7100 ) return ( TinyOpen( path, mode ) );
-    return ( ( r.w.ax < 5 ) ? -1 : r.w.ax );
-}
-
-static int CTinyCreate( const char *path, int attribs )
-{
-    union REGS      r;
-    struct SREGS    s;
-
-    s.ds   = FP_SEG( path );
-    r.w.si = FP_OFF( path );
-    r.w.bx = O_WRONLY;
-    r.w.cx = attribs;
-    r.w.dx = 0x12;
-    r.w.ax = 0x716C;
-
-    intdosx( &r, &r, &s );
-
-    if( ( r.x.cflag || r.w.ax == 0x7100 ) && !_islfn( path ) )
-        return ( TinyCreate( path, attribs ) );
-    else if( _islfn( path ) && ( r.x.cflag || r.w.ax == 0x7100 ) )
-        return -r.w.ax;
-    return ( ( r.w.ax < 5 ) ? CTinyOpen( path, O_WRONLY ) : r.w.ax );
-}
-
-#undef   TinyOpen
-#undef   TinyCreate
-#define  TinyOpen    CTinyOpen
-#define  TinyCreate  CTinyCreate
-#endif
 
 extern unsigned __NFiles;
 
@@ -128,30 +67,25 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode,
     tiny_ret_t  rc;
     char        dummy;
 #ifdef __WIDECHAR__
-    char        mbName[MB_CUR_MAX*_MAX_PATH];   /* single-byte char */
+    char        mbName[MB_CUR_MAX * _MAX_PATH];     /* single-byte char */
 #endif
 
-    while( *name == ' ' ) ++name;
     handle = -1;
-
+    rc = 0;
+    while( *name == STRING( ' ' ) )
+        ++name;
+#ifdef __WIDECHAR__
     /*** If necessary, convert the wide filename to multibyte form ***/
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbName, name );
-    #endif
-                                                    /* 05-sep-91 */
+    if( wcstombs( mbName, name, sizeof( mbName ) ) == -1 ) {
+        mbName[0] = '\0';
+    }
+#endif
     rwmode = mode & ( O_RDONLY | O_WRONLY | O_RDWR | O_NOINHERIT );
-
-    #ifdef __WIDECHAR__
-        rc = TinyOpen( mbName, rwmode | shflag );
-    #else
-        rc = TinyOpen( name, rwmode | shflag );
-    #endif
-    if( TINY_OK( rc ) ) {
-        handle = TINY_INFO( rc );
-        if (handle >= __NFiles) {
+    if( _dos_open( __F_NAME(name,mbName), rwmode | shflag, &handle ) == 0 ) {
+        if( handle >= __NFiles ) {
             TinyClose( handle );
-            __set_errno(EMFILE);
-            return -1;
+            __set_errno( EMFILE );
+            return( -1 );
         }
     }
                                         /* 17-apr-90   05-sep-91 */
@@ -173,7 +107,7 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode,
     will fail on (e.g. named pipes).
     */
                 /* must not exist if O_CREAT specified */
-                if( mode & O_EXCL && mode & O_CREAT ) {
+                if( (mode & O_EXCL) && (mode & O_CREAT) ) {
 #endif
                     TinyClose( handle );
                     __set_errno( EEXIST );
@@ -182,25 +116,25 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode,
                     rc = TinyWrite( handle, &dummy, 0 );
                     if( TINY_ERROR( rc ) ) {
                         TinyClose( handle );
-                        return( __set_errno_dos( TINY_INFO(rc) ) );
+                        return( __set_errno_dos( TINY_INFO( rc ) ) );
                     }
                 }
             }
         }
     }
     if( handle == -1 ) {                    /* could not open */
-        if(( mode & O_CREAT ) == 0
-            || ( TINY_INFO( rc ) != TIO_FILE_NOT_FOUND
-            && ( TINY_INFO( rc ) != TINY_INFO( -TIO_FILE_NOT_FOUND ) ) ) ) {
-            return( __set_errno_dos( TINY_INFO( rc ) ) );
+        if( (mode & O_CREAT) == 0 || _RWD_doserrno != E_nofile ) {
+            return( -1 );
         }
         /* creating the file */
         permission = va_arg( args, int );
         va_end( args );
-        if( permission == 0 ) permission = S_IWRITE | S_IREAD;
+        if( permission == 0 )
+            permission = S_IWRITE | S_IREAD;
         permission &= ~_RWD_umaskval;               /* 05-jan-95 */
         attr = 0;
-        if(( permission & S_IWRITE) == 0 ) attr = _A_RDONLY;
+        if(( permission & S_IWRITE) == 0 )
+            attr = _A_RDONLY;
         #if 0
             /* remove this support because it is not consistently available */
             if( _RWD_osmajor >= 5
@@ -226,21 +160,13 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode,
         #endif
         {
             /* do it the old way */
-            #ifdef __WIDECHAR__
-                rc = TinyCreate( mbName, attr );
-            #else
-                rc = TinyCreate( name, attr );
-            #endif
-            if( TINY_ERROR( rc ) ) {
-                return( __set_errno_dos( TINY_INFO( rc ) ) );
+            if( _dos_creat( __F_NAME(name,mbName), attr, &handle ) ) {
+                return( -1 );
             }
-
-             handle = TINY_INFO( rc );
-            if (handle >= __NFiles)
-            {
-                    TinyClose(handle);
-                    __set_errno(EMFILE);
-                    return -1;
+            if( handle >= __NFiles ) {
+                TinyClose( handle );
+                __set_errno( EMFILE );
+                return( -1 );
             }
 
             /* 21-nov-90 AFS: the file is created so now the file must be */
@@ -250,51 +176,34 @@ static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode,
                 if( TINY_ERROR( rc ) ) {
                     return( __set_errno_dos( TINY_INFO( rc ) ) );
                 }
-                #ifdef __WIDECHAR__
-                    rc = TinyOpen( mbName, rwmode | shflag );
-                #else
-                    rc = TinyOpen( name, rwmode | shflag );
-                #endif
-                if( TINY_ERROR( rc ) ) {
-                    return( __set_errno_dos( TINY_INFO( rc ) ) );
+                if( _dos_open( __F_NAME(name,mbName), rwmode | shflag, &handle ) ) {
+                    return( -1 );
                 }
-                handle = TINY_INFO( rc );
                 /* handle does not equal -1 now */
             }
         }
     }
     iomode_flags = __GetIOMode( handle );
     iomode_flags &= ~(_READ|_WRITE|_APPEND|_BINARY);     /* 11-aug-88 */
-    if( isatty( handle ) )  iomode_flags |= _ISTTY;
+    if( isatty( handle ) )              iomode_flags |= _ISTTY;
     rwmode &= ~O_NOINHERIT;
-    if( rwmode == O_RDWR )  iomode_flags |= _READ | _WRITE;
-    if( rwmode == O_RDONLY) iomode_flags |= _READ;
-    if( rwmode == O_WRONLY) iomode_flags |= _WRITE;
-    if( mode & O_APPEND )   iomode_flags |= _APPEND;
+    if( rwmode == O_RDWR )              iomode_flags |= _READ | _WRITE;
+    if( rwmode == O_RDONLY)             iomode_flags |= _READ;
+    if( rwmode == O_WRONLY)             iomode_flags |= _WRITE;
+    if( mode & O_APPEND )               iomode_flags |= _APPEND;
     if( mode & (O_BINARY|O_TEXT) ) {
-        if( mode & O_BINARY ) {
-           iomode_flags |= _BINARY;
-        }
+        if( mode & O_BINARY )           iomode_flags |= _BINARY;
     } else {
-        if( _RWD_fmode == O_BINARY ) {
-           iomode_flags |= _BINARY;
-        }
+        if( _RWD_fmode == O_BINARY )    iomode_flags |= _BINARY;
     }
     __SetIOMode( handle, iomode_flags );
-    #ifdef DEFAULT_WINDOWING
-        if( _WindowsNewWindow != 0 ) {
-            #ifdef __WIDECHAR__
-                if( !wcscmp( name, L"con" ) ) {
-                    _WindowsNewWindow( NULL, handle, -1 );
-                }
-            #else
-                if( !stricmp( name, "con" ) ) {
-                    _WindowsNewWindow( NULL, handle, -1 );
-                }
-            #endif
+#ifdef DEFAULT_WINDOWING
+    if( _WindowsNewWindow != 0 ) {
+        if( !__F_NAME(stricmp,wcscmp)( name, STRING( "con" ) ) ) {
+            _WindowsNewWindow( NULL, handle, -1 );
         }
-    #endif
-
+    }
+#endif
     return( handle );
 }
 
@@ -329,8 +238,8 @@ int __set_binary( int handle )
 
 _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
 {
-    int permission;
-    va_list args;
+    int         permission;
+    va_list     args;
 
     va_start( args, mode );
     permission = va_arg( args, int );
@@ -341,7 +250,7 @@ _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
 
 _WCRTLINK int __F_NAME(sopen,_wsopen)( const CHAR_TYPE *name, int mode, int shflag, ... )
 {
-    va_list             args;
+    va_list     args;
 
     va_start( args, shflag );
     return( __F_NAME(__sopen,__wsopen)( name, mode, shflag, args ) );

@@ -38,45 +38,34 @@
 #include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>
-    #include <stdlib.h>
-    #include "mbwcconv.h"
 #endif
 
 
 _WCRTLINK int __F_NAME(access,_waccess)( const CHAR_TYPE *path, int pmode )
 {
-    USHORT          attr;
-#ifdef __WIDECHAR__
-    char            mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
-#endif
-
-#if defined(__WARP__)
-    FILESTATUS3     fs;
     APIRET          rc;
-
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, path );
-        rc = DosQueryPathInfo( (PSZ)mbPath, FIL_STANDARD, &fs, sizeof( fs ) );
-    #else
-        rc = DosQueryPathInfo( (PSZ)path, FIL_STANDARD, &fs, sizeof( fs ) );
-    #endif
-    attr = fs.attrFile;
-#else
-    USHORT          rc;
-
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, path );
-        rc = DosQFileMode( mbPath, &attr, 0 );
-    #else
-        rc = DosQFileMode( (PSZ)path, &attr, 0 );
-    #endif
+    OS_UINT         attr;
+#ifndef _M_I86
+    FILESTATUS3     fs;
 #endif
+#ifdef __WIDECHAR__
+    char            mbPath[MB_CUR_MAX * _MAX_PATH]; /* single-byte char */
 
+    if( wcstombs( mbPath, path, sizeof( mbPath ) ) == -1 ) {
+        mbPath[0] = '\0';
+    }
+#endif
+#ifdef _M_I86
+    rc = DosQFileMode( (PSZ)__F_NAME(path,mbPath), &attr, 0 );
+#else
+    rc = DosQueryPathInfo( (PSZ)__F_NAME(path,mbPath), FIL_STANDARD, &fs, sizeof( fs ) );
+    attr = fs.attrFile;
+#endif
     if( rc ) {
         __set_errno_dos( rc );
         return( -1 );
     }
-    if( ( pmode & ACCESS_WR ) && ( attr & _A_RDONLY ) ) {
+    if( (pmode & ACCESS_WR) && (attr & _A_RDONLY) ) {
         __set_errno_dos( ERROR_ACCESS_DENIED ); /* invalid access mode */
         return( -1 );
     }

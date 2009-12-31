@@ -35,33 +35,28 @@
 #include <direct.h>
 #include <wos2.h>
 #include "seterrno.h"
-#ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include <stdlib.h>
-    #include "mbwcconv.h"
-#endif
 
 
 _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
 {
-    APIRET  rc;
-    USHORT  attr;
-#if defined(__WARP__)
-    FILESTATUS3     fs;
+    APIRET      rc;
+    OS_UINT     attr;
+#ifndef _M_I86
+    FILESTATUS3 fs;
+#endif
+#ifdef __WIDECHAR__
+    char        mbPath[MB_CUR_MAX * _MAX_PATH];
 
-    #ifdef __WIDECHAR__
-        char        mbPath[MB_CUR_MAX*_MAX_PATH];
-        __filename_from_wide( mbPath, pathname );
-    #endif
+    if( wcstombs( mbPath, pathname, sizeof( mbPath ) ) == -1 ) {
+        mbPath[0] = '\0';
+    }
+#endif
+#ifdef _M_I86
+    rc = DosQFileMode( (PSZ)__F_NAME(pathname,mbPath), &attr, 0 );
+#else
     rc = DosQueryPathInfo( (PSZ)__F_NAME(pathname,mbPath), FIL_STANDARD,
                            &fs, sizeof( fs ) );
     attr = fs.attrFile;
-#else
-    #ifdef __WIDECHAR__
-        char        mbPath[MB_CUR_MAX*_MAX_PATH];
-        __filename_from_wide( mbPath, pathname );
-    #endif
-    rc = DosQFileMode( (PSZ)__F_NAME(pathname,mbPath), &attr, 0 );
 #endif
     if( rc != 0 ) {
         return( __set_errno_dos( rc ) );
@@ -70,12 +65,12 @@ _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
     if( !( pmode & S_IWRITE ) ) {
         attr |= _A_RDONLY;
     }
-#if defined(__WARP__)
+#ifdef _M_I86
+    rc = DosSetFileMode( (PSZ)__F_NAME(pathname,mbPath), attr, 0 );
+#else
     fs.attrFile = attr;
     rc = DosSetPathInfo( (PSZ)__F_NAME(pathname,mbPath), FIL_STANDARD,
                            &fs, sizeof( fs ), 0 );
-#else
-    rc = DosSetFileMode( (PSZ)__F_NAME(pathname,mbPath), attr, 0 );
 #endif
     if( rc != 0 ) {
         return( __set_errno_dos( rc ) );

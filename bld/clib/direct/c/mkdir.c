@@ -43,26 +43,20 @@
 
 _WCRTLINK int __F_NAME(mkdir,_wmkdir)( const CHAR_TYPE *path )
 {
-#ifndef __WIDECHAR__
     tiny_ret_t          rc;
-
-    rc = TinyMakeDir( path );
-#else
-    tiny_ret_t          rc;
+#ifdef __WIDECHAR__
     size_t              rcConvert;
-    char                mbcsPath[ MB_CUR_MAX * _MAX_PATH ];
+    char                mbcsPath[MB_CUR_MAX * _MAX_PATH];
     char *              p;
 
     /*** Convert the wide character string to a multibyte string ***/
     rcConvert = wcstombs( mbcsPath, path, sizeof( mbcsPath ) );
     p = _mbsninc( mbcsPath, rcConvert );
     *p = '\0';
-
-    rc = TinyMakeDir( mbcsPath );
 #endif
-
-    if( TINY_ERROR(rc) ) {
-        return( __set_errno_dos( TINY_INFO(rc) ) );
+    rc = TinyMakeDir( __F_NAME(path,mbcsPath) );
+    if( TINY_ERROR( rc ) ) {
+        return( __set_errno_dos( TINY_INFO( rc ) ) );
     }
     return( 0 );                            /* indicate no error */
 }

@@ -54,55 +54,64 @@
 #ifdef __WIDECHAR__
     #include <stdlib.h>
     #include <wctype.h>
-    #include "mbwcconv.h"
 #else
     #include <ctype.h>
 #endif
 #include "d2ttime.h"
 
-static unsigned short at2mode();
+
+static unsigned short at2mode( int attr, char *fname )
+{
+    unsigned short  mode;
+    char            *ext;
+
+    if( attr & _A_SUBDIR ) {
+        mode = S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+    } else if( attr & AT_ISCHR ) {
+        mode = S_IFCHR;
+    } else {
+        mode = S_IFREG;
+        /* determine if file is executable, very PC specific */
+        if( (ext = _mbschr( fname, '.' )) != NULL ) {
+            ++ext;
+            if( _mbscmp( ext, "EXE" ) == 0 || _mbscmp( ext, "COM" ) == 0 ) {
+                mode |= S_IXUSR | S_IXGRP | S_IXOTH;
+            }
+        }
+    }
+    mode |= S_IRUSR | S_IRGRP | S_IROTH;
+    if( !(attr & _A_RDONLY) )                   /* if file is not read-only */
+        mode |= S_IWUSR | S_IWGRP | S_IWOTH;    /* - indicate writeable     */
+    return( mode );
+}
 
 _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat,_stat) *buf )
 {
     struct find_t       dta;
-    const CHAR_TYPE *   ptr;
+    const CHAR_TYPE     *ptr;
     unsigned            rc;
     CHAR_TYPE           fullpath[_MAX_PATH];
     int                 isrootdir = 0;
 
     /* reject null string and names that has wildcard */
-#ifdef __WIDECHAR__
-    if( *path == L'\0' || wcspbrk( path, L"*?" ) != NULL )
-#else
-    if( *path == '\0' || _mbspbrk( path, "*?" ) != NULL )
-#endif
-    {
+    if( *path == NULLCHAR || __F_NAME(_mbspbrk,wcspbrk)( path, STRING( "*?" ) ) != NULL ) {
         __set_errno( ENOENT );
         return( -1 );
     }
 
     /*** Determine if 'path' refers to a root directory ***/
     if( __F_NAME(_fullpath,_wfullpath)( fullpath, path, _MAX_PATH ) != NULL ) {
-#ifdef __WIDECHAR__
-        if( iswalpha( fullpath[0] )  &&  fullpath[1] == L':'  &&
-            fullpath[2] == L'\\'  &&  fullpath[3] == L'\0' )
-#else
-        if( isalpha( fullpath[0] )  &&  fullpath[1] == ':'  &&
-            fullpath[2] == '\\'  &&  fullpath[3] == '\0' )
-#endif
+        if( __F_NAME(isalpha,iswalpha)( fullpath[0] ) && fullpath[1] == STRING( ':' ) &&
+            fullpath[2] == STRING( '\\' ) && fullpath[3] == NULLCHAR )
         {
             isrootdir = 1;
         }
     }
 
     ptr = path;
-    if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') )  ptr += 2;
-#ifdef __WIDECHAR__
-    if( ( (ptr[0] == L'\\' || ptr[0] == L'/') && ptr[1] == L'\0' )  ||  isrootdir )
-#else
-    if( ( (ptr[0] == '\\' || ptr[0] == '/') && ptr[1] == '\0' )  ||  isrootdir )
-#endif
-    {
+    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) )
+        ptr += 2;
+    if( ( ptr[0] == STRING( '\\' ) || ptr[0] == STRING( '/' ) ) && ptr[1] == NULLCHAR || isrootdir ) {
         /* handle root directory */
         CHAR_TYPE       cwd[_MAX_PATH];
 
@@ -110,7 +119,8 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         __F_NAME(getcwd,_wgetcwd)( cwd, _MAX_PATH );
 
         /* try to change to specified root */
-        if( __F_NAME(chdir,_wchdir)( path ) != 0 )  return( -1 );
+        if( __F_NAME(chdir,_wchdir)( path ) != 0 )
+            return( -1 );
 
         /* restore current directory */
         __F_NAME(chdir,_wchdir)( cwd );
@@ -121,34 +131,22 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         dta.size      = 0;
         dta.name[0] = NULLCHAR;
     } else {                            /* not a root directory */
-#if defined(__OSI__) || defined(__WATCOM_LFN__)
-    #if defined(__WIDECHAR__) && defined(__WATCOM_LFN__)
-        char    mbPath[MB_CUR_MAX*_MAX_PATH];
-        __filename_from_wide( mbPath, path );
-        rc = _dos_findfirst( mbPath,
-                _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
-    #else
-        rc = _dos_findfirst( path,
-                _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
-    #endif
-#else
-    #ifdef __WIDECHAR__
-        char    mbPath[MB_CUR_MAX*_MAX_PATH];
-        __filename_from_wide( mbPath, path );
-    #endif
-        TinySetDTA( &dta );
-        rc = TINY_ERROR( TinyFindFirst( __F_NAME(path,mbPath),
-                            _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                            _A_SYSTEM | _A_SUBDIR | _A_ARCH ) );
+#if defined(__WIDECHAR__)
+        char    mbPath[MB_CUR_MAX * _MAX_PATH];
+
+        if( wcstombs( mbPath, path, sizeof( mbPath ) ) == -1 ) {
+            mbPath[0] = '\0';
+        }
 #endif
-        if( rc != 0 ) { // Try getting information another way.
+        if( _dos_findfirst( __F_NAME(path,mbPath),
+                _A_NORMAL | _A_RDONLY | _A_HIDDEN |
+                _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta ) != 0 ) {
             int         handle;
             int         canread = 0;
             int         canwrite = 0;
             int         fstatok = 0;
 
+            // Try getting information another way.
             rc = 0;
             handle = __F_NAME(open,_wopen)( path, O_WRONLY );
             if( handle != -1 ) {
@@ -186,14 +184,12 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
             }
             return( 0 );
         }
-#if defined(__OSI__)
         _dos_findclose( &dta );
-#endif
     }
 
     /* process drive number */
-    if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') ) {
-        buf->st_dev = __F_NAME(tolower,towlower)( *path ) - __F_NAME('a',L'a');
+    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) ) {
+        buf->st_dev = __F_NAME(tolower,towlower)( *path ) - STRING( 'a' );
     } else {
         buf->st_dev = TinyGetCurrDrive();
     }
@@ -215,30 +211,4 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     buf->st_originatingNameSpace = 0;
 
     return( 0 );
-}
-
-
-static unsigned short at2mode( int attr, char *fname )
-{
-    register unsigned short mode;
-    register char *         ext;
-
-    if( attr & _A_SUBDIR )
-        mode = S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-    else if( attr & AT_ISCHR )
-        mode = S_IFCHR;
-    else {
-        mode = S_IFREG;
-        /* determine if file is executable, very PC specific */
-        if( (ext = _mbschr( fname, '.' )) != NULL ) {
-            ++ext;
-            if( _mbscmp( ext, "EXE" ) == 0 || _mbscmp( ext, "COM" ) == 0 ) {
-                mode |= S_IXUSR | S_IXGRP | S_IXOTH;
-            }
-        }
-    }
-    mode |= S_IRUSR | S_IRGRP | S_IROTH;
-    if( !(attr & _A_RDONLY) )                   /* if file is not read-only */
-        mode |= S_IWUSR | S_IWGRP | S_IWOTH;    /* - indicate writeable     */
-    return( mode );
 }

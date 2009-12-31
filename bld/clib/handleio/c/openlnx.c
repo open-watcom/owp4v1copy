@@ -36,9 +36,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include "linuxsys.h"
-#ifdef __WIDECHAR__
-    #include "mbwcconv.h"
-#endif
 
 
 /* open() and sopen() are identical under Linux, since the extra share
@@ -52,18 +49,16 @@ _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int oflag, ... )
     int         mode;
     va_list     args;
 #ifdef __WIDECHAR__
-    char        mbName[MB_CUR_MAX*_MAX_PATH];   /* single-byte char */
-#endif
+    char        mbName[MB_CUR_MAX * _MAX_PATH]; /* single-byte char */
 
+    if( wcstombs( mbName, name, sizeof( mbName ) ) == -1 ) {
+        mbName[0] = '\0';
+    }
+#endif
     va_start( args, oflag );
     mode = va_arg( args, int );
     va_end( args );
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbName, name );
-        return sys_open( mbName, oflag, mode );
-    #else
-        return sys_open( name, oflag, mode );
-    #endif
+    return sys_open( __F_NAME(name,mbName), oflag, mode );
 }
 
 
@@ -72,17 +67,14 @@ _WCRTLINK int __F_NAME(sopen,_wsopen)( const CHAR_TYPE *name, int oflag, int shf
     int         mode;
     va_list     args;
 #ifdef __WIDECHAR__
-    char        mbName[MB_CUR_MAX*_MAX_PATH];   /* single-byte char */
-#endif
+    char        mbName[MB_CUR_MAX * _MAX_PATH]; /* single-byte char */
 
+    if( wcstombs( mbName, name, sizeof( mbName ) ) == -1 ) {
+        mbName[0] = '\0';
+    }
+#endif
     va_start( args, shflag );
     mode = va_arg( args, int );
     va_end( args );
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbName, name );
-        return sys_open( mbName, oflag, mode );
-    #else
-        return sys_open( name, oflag, mode );
-    #endif
+    return sys_open( __F_NAME(name,mbName), oflag, mode );
 }
-
