@@ -32,18 +32,54 @@
 
 #include "variety.h"
 #include "widechar.h"
-#include <stdlib.h>
 #include <direct.h>
-#include "tinyio.h"
-#include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>
 #endif
+#include "tinyio.h"
+#include "seterrno.h"
+#include "rtdata.h"
+#include "_doslfn.h"
+
+#ifdef _M_I86
+  #ifdef __BIG_DATA__
+    #define AUX_INFO    \
+        parm caller     [dx ax] \
+        modify exact    [ax dx];
+  #else
+    #define AUX_INFO    \
+        parm caller     [dx] \
+        modify exact    [ax];
+  #endif
+#else
+    #define AUX_INFO    \
+        parm caller     [edx] \
+        modify exact    [eax];
+#endif
+
+extern unsigned __doserror_( unsigned );
+#pragma aux __doserror_ "*"
+
+extern int __mkdir_sfn( const char *path );
+#pragma aux __mkdir_sfn = \
+        _SET_DSDX       \
+        _MOV_AH DOS_MKDIR \
+        _INT_21         \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+extern int __mkdir_lfn( const char *path );
+#pragma aux __mkdir_lfn = \
+        _SET_DSDX       \
+        LFN_DOS_MKDIR   \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
 
 
 _WCRTLINK int __F_NAME(mkdir,_wmkdir)( const CHAR_TYPE *path )
 {
-    tiny_ret_t          rc;
 #ifdef __WIDECHAR__
     size_t              rcConvert;
     char                mbcsPath[MB_CUR_MAX * _MAX_PATH];
@@ -53,10 +89,18 @@ _WCRTLINK int __F_NAME(mkdir,_wmkdir)( const CHAR_TYPE *path )
     rcConvert = wcstombs( mbcsPath, path, sizeof( mbcsPath ) );
     p = _mbsninc( mbcsPath, rcConvert );
     *p = '\0';
-#endif
-    rc = TinyMakeDir( __F_NAME(path,mbcsPath) );
-    if( TINY_ERROR( rc ) ) {
-        return( __set_errno_dos( TINY_INFO( rc ) ) );
+    return( mkdir( mbcsPath ) );
+#else
+  #ifdef __WATCOM_LFN__
+    unsigned        rc = 0;
+
+    if( _RWD_uselfn && (rc = __mkdir_lfn( __F_NAME(path,mbcsPath) )) == 0 ) {
+        return( rc );
     }
-    return( 0 );                            /* indicate no error */
+    if( IS_LFN_ERROR( rc ) ) {
+        return( rc );
+    }
+  #endif
+    return( __mkdir_sfn( __F_NAME(path,mbcsPath) ) );
+#endif
 }

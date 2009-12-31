@@ -32,31 +32,75 @@
 
 #include "variety.h"
 #include "widechar.h"
-#include <stdlib.h>
 #include <direct.h>
-#include "tinyio.h"
-#include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>
 #endif
+#include "tinyio.h"
+#include "seterrno.h"
+#include "rtdata.h"
+#include "_doslfn.h"
+
+#ifdef _M_I86
+  #ifdef __BIG_DATA__
+    #define AUX_INFO    \
+        parm caller     [dx ax] \
+        modify exact    [ax dx];
+  #else
+    #define AUX_INFO    \
+        parm caller     [dx] \
+        modify exact    [ax];
+  #endif
+#else
+    #define AUX_INFO    \
+        parm caller     [edx] \
+        modify exact    [eax];
+#endif
+
+extern unsigned __doserror_( unsigned );
+#pragma aux __doserror_ "*"
+
+extern int __rmdir_sfn( const char *path );
+#pragma aux __rmdir_sfn = \
+        _SET_DSDX       \
+        _MOV_AH DOS_RMDIR \
+        _INT_21         \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+extern int __rmdir_lfn( const char *path );
+#pragma aux __rmdir_lfn = \
+        _SET_DSDX       \
+        LFN_DOS_RMDIR   \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
 
 
 _WCRTLINK int __F_NAME(rmdir,_wrmdir)( const CHAR_TYPE *path )
 {
-    tiny_ret_t          rc;
 #ifdef __WIDECHAR__
     size_t              rcConvert;
-    char                mbcsPath[ MB_CUR_MAX * _MAX_PATH ];
+    char                mbcsPath[MB_CUR_MAX * _MAX_PATH];
     char *              p;
 
     /*** Convert the wide character string to a multibyte string ***/
     rcConvert = wcstombs( mbcsPath, path, sizeof( mbcsPath ) );
     p = _mbsninc( mbcsPath, rcConvert );
     *p = '\0';
-#endif
-    rc = TinyRemoveDir( __F_NAME(path,mbcsPath) );
-    if( TINY_ERROR( rc ) ) {
-        return( __set_errno_dos( TINY_INFO( rc ) ) );
+    return( rmdir( mbcsPath ) );
+#else
+  #ifdef __WATCOM_LFN__
+    unsigned        rc = 0;
+
+    if( _RWD_uselfn && (rc = __rmdir_lfn( __F_NAME(path,mbcsPath) )) == 0 ) {
+        return( rc );
     }
-    return( 0 );                            /* indicate no error */
+    if( IS_LFN_ERROR( rc ) ) {
+        return( rc );
+    }
+  #endif
+    return( __rmdir_sfn( __F_NAME(path,mbcsPath) ) );
+#endif
 }

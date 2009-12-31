@@ -109,6 +109,26 @@
         "int  21h"      \
         POP_SI
 
+#define LFN_DOS_MKDIR   \
+        "mov ax,7139h"  \
+        "stc"           \
+        "int  21h"
+
+#define LFN_DOS_RMDIR   \
+        "mov ax,713Ah"  \
+        "stc"           \
+        "int  21h"
+
+#define LFN_DOS_CHDIR   \
+        "mov ax,713Bh"  \
+        "stc"           \
+        "int  21h"
+
+#define LFN_DOS_GET_CWD \
+        "mov ax,7147h"  \
+        "stc"           \
+        "int  21h"
+
 #define MOV_DTA         \
         "mov  ecx,43"   \
         "rep movsb"

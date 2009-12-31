@@ -32,37 +32,80 @@
 
 #include "variety.h"
 #include "widechar.h"
-#include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
-#include <errno.h>
-#include <dos.h>
-#include <dosfunc.h>
-#include "tinyio.h"
-#include "liballoc.h"
-#include "rtdata.h"
-#include "seterrno.h"
-#include "variety.h"
-#include <direct.h>
 #ifdef __WIDECHAR__
     #include <mbstring.h>
 #endif
+#include "tinyio.h"
+#include "liballoc.h"
+#include "seterrno.h"
+#include "rtdata.h"
+#include "_doslfn.h"
+
+#ifdef _M_I86
+  #ifdef __BIG_DATA__
+    #define AUX_INFO    \
+        parm caller     [si ax] [dl] \
+        modify exact    [ax si];
+  #else
+    #define AUX_INFO    \
+        parm caller     [si] [dl] \
+        modify exact    [ax];
+  #endif
+#else
+    #define AUX_INFO    \
+        parm caller     [esi] [dl] \
+        modify exact    [eax];
+#endif
+
+extern unsigned __doserror_( unsigned );
+#pragma aux __doserror_ "*"
+
+extern int __getcwd_sfn( const char *buff, unsigned char drv );
+#pragma aux __getcwd_sfn = \
+        _SET_DSSI       \
+        _MOV_AH DOS_GETCWD \
+        _INT_21         \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+extern int __getcwd_lfn( const char *path, unsigned char drv );
+#pragma aux __getcwd_lfn = \
+        _SET_DSSI       \
+        LFN_DOS_GET_CWD \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+static int __getcwd( const char *buff, unsigned char drv )
+{
+#ifdef __WATCOM_LFN__
+    unsigned        rc = 0;
+
+    if( _RWD_uselfn && (rc = __getcwd_lfn( buff, drv )) == 0 ) {
+        return( rc );
+    }
+    if( IS_LFN_ERROR( rc ) ) {
+        return( rc );
+    }
+#endif
+    return( __getcwd_sfn( buff, drv ) );
+}
 
 
 _WCRTLINK CHAR_TYPE *__F_NAME(getcwd,_wgetcwd)( CHAR_TYPE *buf, size_t size )
 {
-    int len;
-    tiny_ret_t rc;
-#ifndef __WIDECHAR__
-    char cwd[_MAX_PATH];                    /* single-byte chars */
+    int         len;
+#ifdef __WIDECHAR__
+    char        cwd[MB_CUR_MAX * _MAX_PATH];       /* multi-byte chars */
 #else
-    char cwd[MB_CUR_MAX*_MAX_PATH];         /* multi-byte chars */
+    char        cwd[_MAX_PATH];                    /* single-byte chars */
 #endif
 
     __null_check( buf, 1 );
-    rc = TinyGetCWDir( &cwd[3], 0 );        /* leave space for 'x:\' */
-    if( TINY_ERROR( rc ) ) {
-        __set_errno( ENOENT );       /* noent? */
+    if( __getcwd( &cwd[3], 0 ) ) {
+        __set_errno( ENOENT );      /* noent? */
         return( NULL );
     }
 
@@ -72,7 +115,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(getcwd,_wgetcwd)( CHAR_TYPE *buf, size_t size )
     cwd[2] = '\\';
     len = __F_NAME(strlen,_mbslen)( cwd ) + 1;
     if( buf == NULL ) {
-        if( (buf = lib_malloc( max(size,len)*CHARSIZE )) == NULL ) {
+        if( (buf = lib_malloc( max( size, len ) * CHARSIZE )) == NULL ) {
             __set_errno( ENOMEM );
             return( NULL );
         }
@@ -80,12 +123,12 @@ _WCRTLINK CHAR_TYPE *__F_NAME(getcwd,_wgetcwd)( CHAR_TYPE *buf, size_t size )
     }
 
     /*** Copy the pathname into a buffer and quit ***/
-    #ifndef __WIDECHAR__
-        return( strncpy( buf, cwd, size ) );
-    #else
-        if( mbstowcs( buf, cwd, size ) != (size_t)-1 )
-            return( buf );
-        else
-            return( NULL );
-    #endif
+#ifdef __WIDECHAR__
+    if( mbstowcs( buf, cwd, size ) == -1 ) {
+        return( NULL );
+    }
+    return( buf );
+#else
+    return( strncpy( buf, cwd, size ) );
+#endif
 }
