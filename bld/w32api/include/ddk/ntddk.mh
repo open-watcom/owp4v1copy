@@ -3511,15 +3511,15 @@ typedef WHEA_ERROR_SEVERITY *PWHEA_ERROR_SEVERITY;
 /* Windows Hardware Error Architecture timestamp */
 typedef union _WHEA_TIMESTAMP {
     struct {
-        ULONGLONG   Seconds     : 8;
-        ULONGLONG   Minutes     : 8;
-        ULONGLONG   Hours       : 8;
-        ULONGLONG   Precise     : 1;
-        ULONGLONG   Reserved    : 7;
-        ULONGLONG   Day         : 8;
-        ULONGLONG   Month       : 8;
-        ULONGLONG   Year        : 8;
-        ULONGLONG   Century     : 8;
+        ULONG   Seconds     : 8;
+        ULONG   Minutes     : 8;
+        ULONG   Hours       : 8;
+        ULONG   Precise     : 1;
+        ULONG   Reserved    : 7;
+        ULONG   Day         : 8;
+        ULONG   Month       : 8;
+        ULONG   Year        : 8;
+        ULONG   Century     : 8;
     };
     LARGE_INTEGER   AsLARGE_INTEGER;
 } WHEA_TIMESTAMP;
@@ -3527,6 +3527,7 @@ typedef WHEA_TIMESTAMP  *PWHEA_TIMESTAMP;
 
 /* Windows Hardware Error Architecture persistence information */
 typedef union _WHEA_PERSISTENCE_INFO {
+#if 0
     struct {
         ULONGLONG   Signature   : 16;
         ULONGLONG   Length      : 24;
@@ -3535,6 +3536,7 @@ typedef union _WHEA_PERSISTENCE_INFO {
         ULONGLONG   DoNotLog    : 1;
         ULONGLONG   Reserved    : 5;
     };
+#endif
     ULONGLONG   AsULONGLONG;
 } WHEA_PERSISTENCE_INFO;
 typedef WHEA_PERSISTENCE_INFO   *PWHEA_PERSISTENCE_INFO;
@@ -3543,17 +3545,17 @@ typedef WHEA_PERSISTENCE_INFO   *PWHEA_PERSISTENCE_INFO;
 typedef union _WHEA_ERROR_STATUS {
     ULONGLONG   ErrorStatus;
     struct {
-        ULONGLONG   Reserved1   : 8;
-        ULONGLONG   ErrorType   : 8;
-        ULONGLONG   Address     : 1;
-        ULONGLONG   Control     : 1;
-        ULONGLONG   Data        : 1;
-        ULONGLONG   Responder   : 1;
-        ULONGLONG   Requester   : 1;
-        ULONGLONG   FirstError  : 1;
-        ULONGLONG   Overflow    : 1;
-        ULONGLONG   Reserved2   : 9;
-        ULONGLONG   Reserved3   : 32;
+        ULONG   Reserved1   : 8;
+        ULONG   ErrorType   : 8;
+        ULONG   Address     : 1;
+        ULONG   Control     : 1;
+        ULONG   Data        : 1;
+        ULONG   Responder   : 1;
+        ULONG   Requester   : 1;
+        ULONG   FirstError  : 1;
+        ULONG   Overflow    : 1;
+        ULONG   Reserved2   : 9;
+        ULONG   Reserved3   : 32;
     };
 } WHEA_ERROR_STATUS;
 typedef WHEA_ERROR_STATUS   *PWHEA_ERROR_STATUS;
@@ -3671,21 +3673,21 @@ typedef WHEA_PROCESSOR_FAMILY_INFO  *PWHEA_PROCESSOR_FAMILY_INFO;
 /* Windows Hardware Error Architecture processor generic error section valid bits */
 typedef union _WHEA_PROCESSOR_GENERIC_ERROR_SECTION_VALIDBITS {
     struct {
-        ULONGLONG   ProcessorType       : 1;
-        ULONGLONG   InstructionSet      : 1;
-        ULONGLONG   ErrorType           : 1;
-        ULONGLONG   Operation           : 1;
-        ULONGLONG   Flags               : 1;
-        ULONGLONG   Level               : 1;
-        ULONGLONG   CPUVersion          : 1;
-        ULONGLONG   CPUBrandString      : 1;
-        ULONGLONG   ProcessorId         : 1;
-        ULONGLONG   TargetAddress       : 1;
-        ULONGLONG   RequesterId         : 1;
-        ULONGLONG   ResponderId         : 1;
-        ULONGLONG   InstructionPointer  : 1;
-        ULONGLONG   Reserved            : 19;
-        ULONGLONG   Reserved2           : 32;
+        ULONG   ProcessorType       : 1;
+        ULONG   InstructionSet      : 1;
+        ULONG   ErrorType           : 1;
+        ULONG   Operation           : 1;
+        ULONG   Flags               : 1;
+        ULONG   Level               : 1;
+        ULONG   CPUVersion          : 1;
+        ULONG   CPUBrandString      : 1;
+        ULONG   ProcessorId         : 1;
+        ULONG   TargetAddress       : 1;
+        ULONG   RequesterId         : 1;
+        ULONG   ResponderId         : 1;
+        ULONG   InstructionPointer  : 1;
+        ULONG   Reserved            : 19;
+        ULONG   Reserved2           : 32;
     };
     ULONGLONG   ValidBits;
 } WHEA_PROCESSOR_GENERIC_ERROR_SECTION_VALIDBITS;
@@ -3722,25 +3724,25 @@ typedef WHEA_PROCESSOR_GENERIC_ERROR_SECTION    *PWHEA_GENERIC_PROCESSOR_ERROR;
 /* Windows Hardware Error Architecture XPF cache check */
 typedef union _WHEA_XPF_CACHE_CHECK {
     struct {
-        ULONGLONG   TransactionTypeValid            : 1;
-        ULONGLONG   OperationValid                  : 1;
-        ULONGLONG   LevelValid                      : 1;
-        ULONGLONG   ProcessorContextCorruptValid    : 1;
-        ULONGLONG   UncorrectedValid                : 1;
-        ULONGLONG   PreciseIPValid                  : 1;
-        ULONGLONG   RestartableIPValid              : 1;
-        ULONGLONG   OverflowValid                   : 1;
-        ULONGLONG   ReservedValid                   : 8;
-        ULONGLONG   TransactionType                 : 2;
-        ULONGLONG   Operation                       : 4;
-        ULONGLONG   Level                           : 3;
-        ULONGLONG   ProcessorContextCorrupt         : 1;
-        ULONGLONG   Uncorrected                     : 1;
-        ULONGLONG   PreciseIP                       : 1;
-        ULONGLONG   RestartableIP                   : 1;
-        ULONGLONG   Overflow                        : 1;
-        ULONGLONG   Reserved                        : 2;
-        ULONGLONG   Reserved2                       : 32;
+        ULONG   TransactionTypeValid            : 1;
+        ULONG   OperationValid                  : 1;
+        ULONG   LevelValid                      : 1;
+        ULONG   ProcessorContextCorruptValid    : 1;
+        ULONG   UncorrectedValid                : 1;
+        ULONG   PreciseIPValid                  : 1;
+        ULONG   RestartableIPValid              : 1;
+        ULONG   OverflowValid                   : 1;
+        ULONG   ReservedValid                   : 8;
+        ULONG   TransactionType                 : 2;
+        ULONG   Operation                       : 4;
+        ULONG   Level                           : 3;
+        ULONG   ProcessorContextCorrupt         : 1;
+        ULONG   Uncorrected                     : 1;
+        ULONG   PreciseIP                       : 1;
+        ULONG   RestartableIP                   : 1;
+        ULONG   Overflow                        : 1;
+        ULONG   Reserved                        : 2;
+        ULONG   Reserved2;
     };
     ULONGLONG   XpfCacheCheck;
 } WHEA_XPF_CACHE_CHECK;
@@ -3749,25 +3751,25 @@ typedef WHEA_XPF_CACHE_CHECK    *PWHEA_XPF_CACHE_CHECK;
 /* Windows Hardware Error Architecture XPF TLB check */
 typedef union _WHEA_XPF_TLB_CHECK {
     struct {
-        ULONGLONG   TransactionTypeValid            : 1;
-        ULONGLONG   OperationValid                  : 1;
-        ULONGLONG   LevelValid                      : 1;
-        ULONGLONG   ProcessorContextCorruptValid    : 1;
-        ULONGLONG   UncorrectedValid                : 1;
-        ULONGLONG   PreciseIPValid                  : 1;
-        ULONGLONG   RestartableIPValid              : 1;
-        ULONGLONG   OverflowValid                   : 1;
-        ULONGLONG   ReservedValid                   : 8;
-        ULONGLONG   TransactionType                 : 2;
-        ULONGLONG   Operation                       : 4;
-        ULONGLONG   Level                           : 3;
-        ULONGLONG   ProcessorContextCorrupt         : 1;
-        ULONGLONG   Uncorrected                     : 1;
-        ULONGLONG   PreciseIP                       : 1;
-        ULONGLONG   RestartableIP                   : 1;
-        ULONGLONG   Overflow                        : 1;
-        ULONGLONG   Reserved                        : 2;
-        ULONGLONG   Reserved2                       : 32;
+        ULONG   TransactionTypeValid            : 1;
+        ULONG   OperationValid                  : 1;
+        ULONG   LevelValid                      : 1;
+        ULONG   ProcessorContextCorruptValid    : 1;
+        ULONG   UncorrectedValid                : 1;
+        ULONG   PreciseIPValid                  : 1;
+        ULONG   RestartableIPValid              : 1;
+        ULONG   OverflowValid                   : 1;
+        ULONG   ReservedValid                   : 8;
+        ULONG   TransactionType                 : 2;
+        ULONG   Operation                       : 4;
+        ULONG   Level                           : 3;
+        ULONG   ProcessorContextCorrupt         : 1;
+        ULONG   Uncorrected                     : 1;
+        ULONG   PreciseIP                       : 1;
+        ULONG   RestartableIP                   : 1;
+        ULONG   Overflow                        : 1;
+        ULONG   Reserved                        : 2;
+        ULONG   Reserved2;
     };
     ULONGLONG   XpfTLBCheck;
 } WHEA_XPF_TLB_CHECK;
@@ -3776,30 +3778,30 @@ typedef WHEA_XPF_TLB_CHECK  *PWHEA_XPF_TLB_CHECK;
 /* Windows Hardware Error Architecture XPF bus check */
 typedef union _WHEA_XPF_BUS_CHECK {
     struct {
-        ULONGLONG   TransactionTypeValid            : 1;
-        ULONGLONG   OperationValid                  : 1;
-        ULONGLONG   LevelValid                      : 1;
-        ULONGLONG   ProcessorContextCorruptValid    : 1;
-        ULONGLONG   UncorrectedValid                : 1;
-        ULONGLONG   PreciseIPValid                  : 1;
-        ULONGLONG   RestartableIPValid              : 1;
-        ULONGLONG   OverflowValid                   : 1;
-        ULONGLONG   ParticipationValid              : 1;
-        ULONGLONG   TimeoutValid                    : 1;
-        ULONGLONG   AddressSpaceValid               : 1;
-        ULONGLONG   ReservedValid                   : 5;
-        ULONGLONG   TransactionType                 : 2;
-        ULONGLONG   Operation                       : 4;
-        ULONGLONG   Level                           : 3;
-        ULONGLONG   ProcessorContextCorrupt         : 1;
-        ULONGLONG   Uncorrected                     : 1;
-        ULONGLONG   PreciseIP                       : 1;
-        ULONGLONG   RestartableIP                   : 1;
-        ULONGLONG   Overflow                        : 1;
-        ULONGLONG   Participation                   : 2;
-        ULONGLONG   Timeout                         : 1;
-        ULONGLONG   AddressSpace                    : 2;
-        ULONGLONG   Reserved                        : 29;
+        ULONG   TransactionTypeValid            : 1;
+        ULONG   OperationValid                  : 1;
+        ULONG   LevelValid                      : 1;
+        ULONG   ProcessorContextCorruptValid    : 1;
+        ULONG   UncorrectedValid                : 1;
+        ULONG   PreciseIPValid                  : 1;
+        ULONG   RestartableIPValid              : 1;
+        ULONG   OverflowValid                   : 1;
+        ULONG   ParticipationValid              : 1;
+        ULONG   TimeoutValid                    : 1;
+        ULONG   AddressSpaceValid               : 1;
+        ULONG   ReservedValid                   : 5;
+        ULONG   TransactionType                 : 2;
+        ULONG   Operation                       : 4;
+        ULONG   Level                           : 3;
+        ULONG   ProcessorContextCorrupt         : 1;
+        ULONG   Uncorrected                     : 1;
+        ULONG   PreciseIP                       : 1;
+        ULONG   RestartableIP                   : 1;
+        ULONG   Overflow                        : 1;
+        ULONG   Participation                   : 2;
+        ULONG   Timeout                         : 1;
+        ULONG   AddressSpace                    : 2;
+        ULONG   Reserved                        : 29;
     };
     ULONGLONG   XpfBusCheck;
 } WHEA_XPF_BUS_CHECK;
@@ -3808,21 +3810,21 @@ typedef WHEA_XPF_BUS_CHECK  *PWHEA_XPF_BUS_CHECK;
 /* Windows Hardware Error Architecture XPF micro-architecture specific check */
 typedef union _WHEA_XPF_MS_CHECK {
     struct {
-        ULONGLONG   ErrorTypeValid                  : 1;
-        ULONGLONG   ProcessorContextCorruptValid    : 1;
-        ULONGLONG   UncorrectedValid                : 1;
-        ULONGLONG   PreciseIPValid                  : 1;
-        ULONGLONG   RestartableIPValid              : 1;
-        ULONGLONG   OverflowValid                   : 1;
-        ULONGLONG   ReservedValue                   : 10;
-        ULONGLONG   ErrorType                       : 3;
-        ULONGLONG   ProcessorContextCorrupt         : 1;
-        ULONGLONG   Uncorrected                     : 1;
-        ULONGLONG   PreciseIP                       : 1;
-        ULONGLONG   RestartableIP                   : 1;
-        ULONGLONG   Overflow                        : 1;
-        ULONGLONG   Reserved                        : 8;
-        ULONGLONG   Reserved2                       : 32;
+        ULONG   ErrorTypeValid                  : 1;
+        ULONG   ProcessorContextCorruptValid    : 1;
+        ULONG   UncorrectedValid                : 1;
+        ULONG   PreciseIPValid                  : 1;
+        ULONG   RestartableIPValid              : 1;
+        ULONG   OverflowValid                   : 1;
+        ULONG   ReservedValue                   : 10;
+        ULONG   ErrorType                       : 3;
+        ULONG   ProcessorContextCorrupt         : 1;
+        ULONG   Uncorrected                     : 1;
+        ULONG   PreciseIP                       : 1;
+        ULONG   RestartableIP                   : 1;
+        ULONG   Overflow                        : 1;
+        ULONG   Reserved                        : 8;
+        ULONG   Reserved2;
     };
     ULONGLONG   XpfMsCheck;
 } WHEA_XPF_MS_CHECK;
@@ -3831,13 +3833,13 @@ typedef WHEA_XPF_MS_CHECK   *PWHEA_XPF_MS_CHECK;
 /* Windows Hardware Error Architecture XPF processor information valid bits */
 typedef union _WHEA_XPF_PROCINFO_VALIDBITS {
     struct {
-        ULONGLONG   CheckInfo           : 1;
-        ULONGLONG   TargetId            : 1;
-        ULONGLONG   RequesterId         : 1;
-        ULONGLONG   ResponderId         : 1;
-        ULONGLONG   InstructionPointer  : 1;
-        ULONGLONG   Reserved            : 27;
-        ULONGLONG   Reserved2           : 32;
+        ULONG   CheckInfo           : 1;
+        ULONG   TargetId            : 1;
+        ULONG   RequesterId         : 1;
+        ULONG   ResponderId         : 1;
+        ULONG   InstructionPointer  : 1;
+        ULONG   Reserved            : 27;
+        ULONG   Reserved2;
     };
     ULONGLONG   ValidBits;
 } WHEA_XPF_PROCINFO_VALIDBITS;
@@ -3950,12 +3952,12 @@ typedef WHEA_XPF_CONTEXT_INFO   *PWHEA_XPF_CONTEXT_INFO;
 /* Windows Hardware Error Architecture XPF processor error section valid bits */
 typedef union _WHEA_XPF_PROCESSOR_ERROR_SECTION_VALIDBITS {
     struct {
-        ULONGLONG   LocalAPICId         : 1;
-        ULONGLONG   CpuId               : 1;
-        ULONGLONG   ProcInfoCount       : 6;
-        ULONGLONG   ContextInfoCount    : 6;
-        ULONGLONG   Reserved            : 18;
-        ULONGLONG   Reserved2           : 32;
+        ULONG   LocalAPICId         : 1;
+        ULONG   CpuId               : 1;
+        ULONG   ProcInfoCount       : 6;
+        ULONG   ContextInfoCount    : 6;
+        ULONG   Reserved            : 18;
+        ULONG   Reserved2;
     };
     ULONGLONG   ValidBits;
 } WHEA_XPF_PROCESSOR_ERROR_SECTION_VALIDBITS;
@@ -3981,23 +3983,23 @@ typedef WHEA_XPF_PROCESSOR_ERROR_SECTION    *PWHEA_XPF_PROCESSOR_ERROR;
 /* Windows Hardware Error Architecture memory error section valid bits */
 typedef union _WHEA_MEMORY_ERROR_SECTION_VALIDBITS {
     struct {
-        ULONGLONG   ErrorStatus         : 1;
-        ULONGLONG   PhysicalAddress     : 1;
-        ULONGLONG   PhysicalAddressMask : 1;
-        ULONGLONG   Node                : 1;
-        ULONGLONG   Card                : 1;
-        ULONGLONG   Module              : 1;
-        ULONGLONG   Bank                : 1;
-        ULONGLONG   Device              : 1;
-        ULONGLONG   Row                 : 1;
-        ULONGLONG   Column              : 1;
-        ULONGLONG   BitPosition         : 1;
-        ULONGLONG   RequesterId         : 1;
-        ULONGLONG   ResponderId         : 1;
-        ULONGLONG   TargetId            : 1;
-        ULONGLONG   ErrorType           : 1;
-        ULONGLONG   Reserved            : 17;
-        ULONGLONG   Reserved2           : 32;
+        ULONG   ErrorStatus         : 1;
+        ULONG   PhysicalAddress     : 1;
+        ULONG   PhysicalAddressMask : 1;
+        ULONG   Node                : 1;
+        ULONG   Card                : 1;
+        ULONG   Module              : 1;
+        ULONG   Bank                : 1;
+        ULONG   Device              : 1;
+        ULONG   Row                 : 1;
+        ULONG   Column              : 1;
+        ULONG   BitPosition         : 1;
+        ULONG   RequesterId         : 1;
+        ULONG   ResponderId         : 1;
+        ULONG   TargetId            : 1;
+        ULONG   ErrorType           : 1;
+        ULONG   Reserved            : 17;
+        ULONG   Reserved2;
     };
     ULONGLONG   ValidBits;
 } WHEA_MEMORY_ERROR_SECTION_VALIDBITS;
@@ -4035,16 +4037,16 @@ typedef WHEA_MEMORY_ERROR_SECTION   *PWHEA_MEMORY_ERROR;
 /* Windows Hardware Error Architecture PCI express error section valid bits */
 typedef union _WHEA_PCIEXPRESS_ERROR_SECTION_VALIDBITS {
     struct {
-        ULONGLONG   PortType            : 1;
-        ULONGLONG   Version             : 1;
-        ULONGLONG   CommandStatus       : 1;
-        ULONGLONG   DeviceId            : 1;
-        ULONGLONG   DeviceSerialNumber  : 1;
-        ULONGLONG   BridgeControlStatus : 1;
-        ULONGLONG   ExpressCapability   : 1;
-        ULONGLONG   AerInfo             : 1;
-        ULONGLONG   Reserved            : 24;
-        ULONGLONG   Reserved2           : 32;
+        ULONG   PortType            : 1;
+        ULONG   Version             : 1;
+        ULONG   CommandStatus       : 1;
+        ULONG   DeviceId            : 1;
+        ULONG   DeviceSerialNumber  : 1;
+        ULONG   BridgeControlStatus : 1;
+        ULONG   ExpressCapability   : 1;
+        ULONG   AerInfo             : 1;
+        ULONG   Reserved            : 24;
+        ULONG   Reserved2;
     };
     ULONGLONG   ValidBits;
 } WHEA_PCIEXPRESS_ERROR_SECTION_VALIDBITS;
@@ -4136,17 +4138,17 @@ typedef WHEA_PCIEXPRESS_ERROR_SECTION   *PWHEA_PCIEXPRESS_ERROR;
 /* Windows Hardware Error Architecture PCIX bus error section valid bits */
 typedef union _WHEA_PCIXBUS_ERROR_SECTION_VALIDBITS {
     struct {
-        ULONGLONG   ErrorStatus : 1;
-        ULONGLONG   ErrorType   : 1;
-        ULONGLONG   BusId       : 1;
-        ULONGLONG   BusAddress  : 1;
-        ULONGLONG   BusData     : 1;
-        ULONGLONG   BusCommand  : 1;
-        ULONGLONG   RequesterId : 1;
-        ULONGLONG   CompleterId : 1;
-        ULONGLONG   TargetId    : 1;
-        ULONGLONG   Reserved    : 23;
-        ULONGLONG   Reserved2   : 32;
+        ULONG   ErrorStatus : 1;
+        ULONG   ErrorType   : 1;
+        ULONG   BusId       : 1;
+        ULONG   BusAddress  : 1;
+        ULONG   BusData     : 1;
+        ULONG   BusCommand  : 1;
+        ULONG   RequesterId : 1;
+        ULONG   CompleterId : 1;
+        ULONG   TargetId    : 1;
+        ULONG   Reserved    : 23;
+        ULONG   Reserved2;
     };
     ULONGLONG   ValidBits;
 } WHEA_PCIXBUS_ERROR_SECTION_VALIDBITS;
@@ -4202,13 +4204,13 @@ typedef WHEA_PCIXBUS_ERROR_SECTION  *PWHEA_PCIXBUS_ERROR;
 /* Windows Hardware Error Architecture PCIX device error section valid bits */
 typedef union _WHEA_PCIXDEVICE_ERROR_SECTION_VALIDBITS {
     struct {
-        ULONGLONG   ErrorStatus         : 1;
-        ULONGLONG   IdInfo              : 1;
-        ULONGLONG   MemoryNumber        : 1;
-        ULONGLONG   IdNumber            : 1;
-        ULONGLONG   RegisterDataPairs   : 1;
-        ULONGLONG   Reserved            : 27;
-        ULONGLONG   Reserved2           : 32;
+        ULONG   ErrorStatus         : 1;
+        ULONG   IdInfo              : 1;
+        ULONG   MemoryNumber        : 1;
+        ULONG   IdNumber            : 1;
+        ULONG   RegisterDataPairs   : 1;
+        ULONG   Reserved            : 27;
+        ULONG   Reserved2;
     };
     ULONGLONG   ValidBits;
 } WHEA_PCIXDEVICE_ERROR_SECTION_VALIDBITS;
