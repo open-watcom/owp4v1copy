@@ -133,6 +133,7 @@ _WCRTLINK extern void   _WCNEAR *sbrk(int incr);
 #endif
 :endsegment
 _WCRTLINK extern int    chdir( const char *__path );
+_WCRTLINK extern pid_t  clone( int __flags, void *__child_stack );
 _WCRTLINK extern int    close( int __fildes );
 _WCRTLINK extern int    dup( int __fildes );
 _WCRTLINK extern char   *getcwd( char *__buf, size_t __size );

@@ -7,6 +7,7 @@
 !inject chdir.obj                                                                               l32 lpc lmp
 !inject chmod.obj                                                                               l32 lpc lmp
 !inject chown.obj                                                                               l32 lpc lmp
+!inject clone.obj                                                                               l32 lpc lmp
 !inject close.obj                                                                               l32 lpc lmp
 !inject dup.obj                                                                                 l32 lpc lmp
 !inject dup2.obj                                                                                l32 lpc lmp

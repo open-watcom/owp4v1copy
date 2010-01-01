@@ -45,25 +45,29 @@
 #include "mthread.h"
 #include "seterrno.h"
 #include "cthread.h"
-
-// TODO: Implement this for Linux!
-//static int begin_thread_helper( void *ptr )
-///*****************************************/
-//{
-//    return( 0 );
-//}
+#include "linuxsys.h"
 
 int __CBeginThread( thread_fn *start_addr, void *stack_bottom,
                     unsigned stack_size, void *arglist )
 /******************************************************/
 {
-    // TODO: Implement this for Linux!
-    return( 0 );
+	pid_t pid;
+
+	if( start_addr == NULL || stack_bottom == NULL || stack_size == 0 ) {
+		return( -1L );
+	}
+    pid = clone( CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND, (void*)((int)stack_bottom + stack_size) );
+	if( pid ) {
+	    return( (int)pid );
+	} else {
+		start_addr(arglist);
+		_endthread();
+		return 0;
+	}
 }
 
 void __CEndThread( void )
 /***********************/
 {
-    // TODO: Implement this for Linux!
+	sys_exit(0);
 }
-
