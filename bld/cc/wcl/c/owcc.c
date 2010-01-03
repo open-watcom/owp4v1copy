@@ -198,8 +198,8 @@ option_mapping mappings[] = {
     { "Wall", "w4" },
     { "Wextra", "wx" },
     { "Werror", "we" },
+    { "Wno-n:", "wcd=" }, /* NOTE: this needs to be listed before -Wn to work */
     { "Wn:", "wce=" },
-    { "Wno-n:", "wcd=" },
     { "Woverlay", "wo" },
     { "Wpadded", "zpw" },
     { "Wc,-:", "" },
