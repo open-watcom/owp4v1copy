@@ -201,7 +201,6 @@ static void prep_aline( text_line * p_line, char * p )
         curr_x = h_right - curr_t->width;
     }
     curr_t->x_address = curr_x;
-    ju_x_start = curr_x;
 
     return;
 }
@@ -219,6 +218,7 @@ static void add_aline( text_line * ad_line )
 
     if( adr_lines == NULL ) {
         adr_lines = ad_line;
+        ju_x_start = ad_line->first->x_address;
     } else {
         p_line = adr_lines;
         while( p_line->next != NULL ) {

@@ -669,8 +669,8 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
     b_line.y_address = g_cur_v_start;
 
     /* calc banner horizontal margins */
-    ban_left  = g_page_left + conv_hor_unit( &(ban->left_adjust) );
-    ban_right = g_page_right - conv_hor_unit( &(ban->right_adjust) );
+    ban_left  = g_page_left_org + conv_hor_unit( &(ban->left_adjust) );
+    ban_right = g_page_right_org - conv_hor_unit( &(ban->right_adjust) );
 
     content_reg( ban );
     curr_x = 0;
@@ -766,7 +766,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 
         if( post_top_skip == 0 ) {
             if( post_skip != NULL ) {
-                uint32_t pskip = conv_vert_unit( post_skip, 1 );
+                uint32_t pskip = conv_vert_unit( post_skip, 0 );
 
                 if( pskip > 0 ) {
                     post_top_skip += pskip;

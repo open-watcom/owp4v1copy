@@ -70,8 +70,12 @@ WATCOM points to: H:\ow\rel2
 04====================== 11:43:59 H:\ow\bld\builder =========================
 .sk 10
 05====================== 11:43:59 H:\ow\bld\builder =========================
-.sk 10
-06** REL2 rule
+.sk 3
+:p
+0601 REL2 rule 0602 REL2 rule 0603 REL2 rule 0604 REL2 rule 0605 REL2 rule
+0611 REL2 rule 0612 REL2 rule 0613 REL2 rule 0614 REL2 rule 0615 REL2 rule
+0621 REL2 rule 0622 REL2 rule 0623 REL2 rule 0624 REL2 rule 0625 REL2 rule
+0631 REL2 rule 0632 REL2 rule 0633 REL2 rule 0634 REL2 rule
 .sk
 07======================= 11:43:59 H:\ow\bld\pmake ==========================
 .in 0.15i -2.8cm

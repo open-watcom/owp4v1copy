@@ -30,6 +30,7 @@
 *               process_text            control routine
 *               add_text_chars_to_pool  prepare reuse of a text_chars instance
 *               alloc_text_chars        create a text_chars instance
+*               calc_skip               calculate .sk skip amount
 *               document_new_page       start a new page
 *               document_top_banner     output top banner
 *               do_justify              insert spaces between words
@@ -50,47 +51,6 @@
 #include "wgml.h"
 #include "gvars.h"
 #include "outbuff.h"
-
-
-/***************************************************************************/
-/*  .sk adjust                                                             */
-/*                                                                         */
-/*   g_skip_wgml4 contains  correction to mimick wgml4                TBD  */
-/*                                                                         */
-/***************************************************************************/
-static void calc_skip( void )
-{
-    int32_t     skip_value;
-
-    if( g_skip == 0 ) {
-        g_skip_wgml4 = 0;
-        ProcFlags.sk_cond = false;
-        return;
-    }
-    if( g_skip < 0 ) {                  // overprint
-        if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start += wgml_fonts[g_curr_font_num].line_height;
-        } else {
-            g_cur_v_start -= wgml_fonts[g_curr_font_num].line_height;
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            skip_value = g_skip * wgml_fonts[g_curr_font_num].line_height
-                       - g_skip_wgml4;
-            if( skip_value >= g_cur_v_start - g_page_bottom ) {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            } else {
-                g_cur_v_start -= skip_value;
-            }
-        } else {
-            g_cur_v_start += g_skip * wgml_fonts[g_curr_font_num].line_height;
-        }
-    }
-
-    g_skip = 0;
-    g_skip_wgml4 = 0;
-    ProcFlags.sk_cond = false;
-}
 
 
 /***************************************************************************/
@@ -397,16 +357,8 @@ void document_new_page( void )
 
 void document_top_banner( void )
 {
-    int     ind = page & 1;
-#if 0
-    if( sect_ban_top[ind] != NULL ) {
-        g_cur_v_start = ban_top_pos( sect_ban_top[ind] );
-    } else {
-        g_cur_v_start = g_page_top;
-    }
-#endif
     g_cur_h_start = g_page_left_org;
-    out_ban_top( sect_ban_top[ind] );
+    out_ban_top( sect_ban_top[page & 1] );
 }
 
 /***************************************************************************/
@@ -494,6 +446,10 @@ void    add_text_chars_to_pool( text_line * a_line )
 {
     text_chars      *   tw;
 
+    if( a_line == NULL ) {
+        return;
+    }
+
     if( text_pool == NULL ) {
         text_pool = a_line->first;
     } else {
@@ -533,73 +489,6 @@ void set_h_start( void )
     g_cur_h_start = g_page_left + g_indent;
 }
 
-/***************************************************************************/
-/*                                                                         */
-/***************************************************************************/
-
-void    process_line_full( text_line * a_line, bool justify )
-{
-    if( a_line->first == NULL ) {       // why are we called?
-        return;
-    }
-    if( para_line.first != NULL ) {     // buffered first line of paragraph
-        if( justify && ProcFlags.justify > ju_off ) {
-            do_justify( ju_x_start, g_page_right, para_line.first );
-            if( input_cbs->fmflags & II_research ) {
-                test_out_t_line( &para_line );
-            }
-        }
-        if( GlobalFlags.lastpass ) {
-            fb_output_textline( &para_line );
-        }
-        add_text_chars_to_pool( &para_line );
-        para_line.first = NULL;
-    }
-
-    if( GlobalFlags.lastpass ) {
-        if( ProcFlags.para_line1 ) { // first line of paragraph
-//          para_line.next        = a_line->next;   // TBD
-            para_line.line_height = a_line->line_height;
-            para_line.y_address   = a_line->y_address;
-            para_line.first       = a_line->first;
-            a_line->first = NULL;
-        } else {
-            if( input_cbs->fmflags & II_research ) {
-                test_out_t_line( a_line );
-            }
-            if( !ProcFlags.literal && ProcFlags.justify > ju_off ) {
-                if( justify || ProcFlags.justify > ju_on ) {
-                    do_justify( ju_x_start, g_page_right, a_line->first );
-                    if( input_cbs->fmflags & II_research ) {
-                        test_out_t_line( a_line );
-                    }
-                }
-            }
-            fb_output_textline( a_line );
-        }
-    } else {
-        ProcFlags.para_line1 = false;
-    }
-    if( ProcFlags.para_line1 ) {        // first line of paragraph
-        ProcFlags.para_line1 = false;
-    } else {
-       add_text_chars_to_pool( a_line );
-       a_line->first = NULL;
-    }
-    ProcFlags.just_override = true;     // justify for following lines
-    set_v_start( spacing );             // not always OK TBD
-    set_h_start();
-
-    if( bin_driver->y_positive == 0 ) {
-        if( g_cur_v_start <= g_page_bottom ) {
-            finish_page();
-        }
-    } else {
-        if( g_cur_v_start >= g_page_bottom ) {
-            finish_page();
-        }
-    }
-}
 
 /***************************************************************************/
 /*  test whether page is full and finish page                              */
@@ -607,10 +496,25 @@ void    process_line_full( text_line * a_line, bool justify )
 
 static  void    test_page_full( void )
 {
+
     if( ProcFlags.page_started ) {
         if( bin_driver->y_positive == 0x00 ) {
+            bool newpage = false;
+
             if( g_cur_v_start <= g_page_bottom ) {
-                finish_page();
+                if( buf_lines_cnt <= layout_work.widow.threshold ) {
+                    newpage = true;
+                }
+                if( buf_lines != NULL ) {
+                    out_buf_lines( &buf_lines, newpage );
+                    buf_lines_cnt = 0;
+
+                    if( !newpage ) {
+                        finish_page();
+                    }
+                } else {
+                    finish_page();
+                }
                 p_char = NULL;
             }
         } else {
@@ -624,13 +528,92 @@ static  void    test_page_full( void )
 
 
 /***************************************************************************/
+/*                                                                         */
+/***************************************************************************/
+
+void    process_line_full( text_line * a_line, bool justify )
+{
+    int32_t     widow;
+
+    if( a_line->first == NULL ) {       // why are we called?
+        return;
+    }
+    if( ProcFlags.test_widow ) {
+        if( buf_lines == NULL ) {
+            // if outside of widow area, reset widow test
+
+            widow = layout_work.widow.threshold
+                  * wgml_fonts[g_curr_font_num].line_height;
+
+            if( bin_driver->y_positive == 0x00 ) {
+                if( g_cur_v_start > g_page_bottom + widow ) {
+                    ProcFlags.test_widow = false;
+                }
+            } else {
+                if( g_cur_v_start < g_page_bottom + widow ) {
+                    ProcFlags.test_widow = false;
+                }
+            }
+        }
+        if( ProcFlags.test_widow ) {    // inside widow area, buffer line
+            if( GlobalFlags.lastpass && !ProcFlags.literal
+                                     && ProcFlags.justify > ju_off ) {
+                if( justify || ProcFlags.justify > ju_on ) {
+                    do_justify( ju_x_start, g_page_right, a_line->first );
+                    if( input_cbs->fmflags & II_research ) {
+                        test_out_t_line( a_line );
+                    }
+                }
+            }
+            add_line_to_buf_lines( &buf_lines, a_line );
+            buf_lines_cnt++;
+        }
+    }
+    if( GlobalFlags.lastpass && !ProcFlags.test_widow ) {
+        if( input_cbs->fmflags & II_research ) {
+            test_out_t_line( a_line );
+        }
+        if( !ProcFlags.literal && ProcFlags.justify > ju_off ) {
+            if( justify || ProcFlags.justify > ju_on ) {
+                do_justify( ju_x_start, g_page_right, a_line->first );
+                if( input_cbs->fmflags & II_research ) {
+                    test_out_t_line( a_line );
+                }
+            }
+        }
+        fb_output_textline( a_line );
+    }
+    if( !ProcFlags.test_widow  ) {
+        add_text_chars_to_pool( a_line );
+    }
+    a_line->first = NULL;
+    ProcFlags.line_started = false;     // line is empty
+    ProcFlags.just_override = true;     // justify for following lines
+    set_v_start( spacing );             // not always OK TBD
+    set_h_start();
+#if 0
+    if( bin_driver->y_positive == 0 ) {
+        if( g_cur_v_start <= g_page_bottom ) {
+            finish_page();
+        }
+    } else {
+        if( g_cur_v_start >= g_page_bottom ) {
+            finish_page();
+        }
+    }
+#else
+    test_page_full();
+#endif
+}
+
+/***************************************************************************/
 /*  process text  (input line or part thereof)                             */
 /*      if section start processing not yet done do it now                 */
 /*      split into 'words'                                                 */
 /*      translate if input translation active                              */
 /*      calculate width with current font                                  */
 /*      add text to output line                                            */
-/*      handle line and page overflow condition                            */
+/*      handle line and page overflow conditions                           */
 /***************************************************************************/
 
 void    process_text( char * text, uint8_t font_num )
@@ -721,6 +704,7 @@ void    process_text( char * text, uint8_t font_num )
                     t_line.y_address = g_cur_v_start;
                     t_line.line_height = wgml_fonts[font_num].line_height;
                     ju_x_start = n_char->x_address;
+                    ProcFlags.line_started = true;
                 } else {
                     p_char->next = n_char;
                 }
@@ -777,6 +761,7 @@ void    process_text( char * text, uint8_t font_num )
             t_line.y_address = g_cur_v_start;
             t_line.line_height = wgml_fonts[font_num].line_height;
             ju_x_start = n_char->x_address;
+            ProcFlags.line_started = true;
         } else {
             n_char->x_address = g_cur_h_start + pre_space;
         }
@@ -807,6 +792,7 @@ void    process_text( char * text, uint8_t font_num )
             t_line.line_height = wgml_fonts[font_num].line_height;
             t_line.first = n_char;
             ju_x_start = n_char->x_address;
+            ProcFlags.line_started = true;
         } else {
             p_char->next = n_char;
         }
@@ -820,7 +806,7 @@ void    process_text( char * text, uint8_t font_num )
              post_space += wgml_fonts[font_num].spc_width;
         }
     } else {
-        if( p_char != NULL ) {
+        if( ProcFlags.line_started ) {
             post_space_save = post_space;
         }
     }

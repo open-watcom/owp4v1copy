@@ -49,7 +49,7 @@ static void set_space( char * p )
 {
     char    c;
 
-    if( p_char != NULL ) {
+    if( ProcFlags.line_started) {
         if( !(input_cbs->fmflags & II_sol) ) {
             c = p_char->text[p_char->count - 1];
             if( !(is_stop_char( c ) | (*p == ' ')) ) {

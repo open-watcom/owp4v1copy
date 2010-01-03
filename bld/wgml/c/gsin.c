@@ -37,6 +37,15 @@
 #include "wgml.h"
 #include "gvars.h"
 
+/***************************************************************************/
+/*  round indent to get whole characters                                   */
+/*  can be relative i.e. negative                                          */
+/***************************************************************************/
+
+static  int32_t round_indent( su * work )
+{
+    return( conv_hor_unit( work ) * CPI / g_resh * g_resh / CPI );
+}
 
 /***************************************************************************/
 /* INDENT causes  text to  be indented  with respect  to the  left and/or  */
@@ -126,8 +135,7 @@ void    scr_in( void )
                 err_count++;
                 show_include_stack();
             } else {
-                newindent = conv_hor_unit( &indentwork ) * CPI / g_resh
-                                                         * g_resh / CPI;
+                newindent = round_indent( &indentwork );
                 if( indentwork.su_relative ) {
                     newindent += g_indent;
                 }
@@ -155,8 +163,7 @@ void    scr_in( void )
             /***************************************************************/
 
                 if( indentwork.su_whole + indentwork.su_dec != 0) {
-                    newindentr = g_indentr + conv_hor_unit( &indentwork )
-                                           * CPI / g_resh * g_resh / CPI;
+                    newindentr = g_indentr + round_indent( &indentwork );
                 } else {
                     newindentr = 0;
                 }
@@ -165,8 +172,13 @@ void    scr_in( void )
         g_indent = newindent;
         g_indentr = newindentr;
 
+        g_page_right = g_page_right_org + g_indentr;
     }
     set_h_start();                      // apply new values
+    ProcFlags.test_widow = true;        // activate widow test
+//  if( post_skip == NULL ) {
+        post_skip = &layout_work.p.pre_skip;// use :p pre_skip??? TBD
+//  }
 
     scan_restart = p;
     return;

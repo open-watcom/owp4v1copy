@@ -137,10 +137,8 @@ void init_global_vars( void )
     post_space          = 0;            // experimental
     post_space_save     = 0;            // experimental
 
-    para_line.next      = NULL;         // no buffered paragraph line(s)
-    para_line.first     = NULL;
-    para_line.line_height = 0;
-    para_line.y_address = 0;
+    buf_lines           = NULL;         // no buffered widow line(s)
+    buf_lines_cnt       = 0;
 
     g_skip_wgml4        = 0;
 

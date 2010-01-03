@@ -32,15 +32,14 @@
 #include    "gvars.h"
 
 
-
-
-
 /***************************************************************************/
 /*  :P.perhaps paragraph elements                                          */
 /***************************************************************************/
 static  void    proc_p_pc( p_lay_tag * p_pc )
 {
     char        *   p;
+    uint32_t        skippre;
+    uint32_t        skippost;
 
     scan_err = false;
     p = scan_start;
@@ -49,22 +48,38 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
 
     scr_process_break();
 
+    if( ProcFlags.test_widow ) {
+        out_buf_lines( &buf_lines, false );  // lines are no widows
+        buf_lines_cnt = 0;
+    }
+
     g_cur_h_start = g_page_left + g_indent + conv_hor_unit( &(p_pc->line_indent) );
 
     if( ProcFlags.page_started ) {      // TBD
-        if( bin_driver->y_positive == 0x00 ) {  // TBD
-            g_cur_v_start -= conv_vert_unit( &(p_pc->pre_skip), 0 );   // TBD
-            if( post_skip != NULL ) {
-                g_cur_v_start -= conv_vert_unit( post_skip, 0 );
+        skippre = conv_vert_unit( &(p_pc->pre_skip), 0 );
+        if( post_skip != NULL ) {
+            skippost = conv_vert_unit( post_skip, 0 );
+        } else {
+            skippost = 0;
+        }
+        if( skippost > skippre ) {
+            skippre = skippost;         // take maximum skip amount
+        }
+        skippost = calc_skip_value();
+        if( skippost > skippre ) {
+            skippre = skippost;         // take maximum skip amount
+        }
+        if( bin_driver->y_positive == 0x00 ) {
+            if( skippre < g_cur_v_start ) {
+                g_cur_v_start -= skippre;
+            } else {
+                g_cur_v_start = g_page_bottom - 1;  // force new page
             }
         } else {
-            g_cur_v_start += conv_vert_unit( &(p_pc->pre_skip), 0 );   // TBD
-            if( post_skip != NULL ) {
-                g_cur_v_start += conv_vert_unit( post_skip, 0 );
-            }
+            g_cur_v_start += skippre;
         }
     } else {
-        if( bin_driver->y_positive == 0x00 ) {  // TBD
+        if( bin_driver->y_positive == 0x00 ) {
             if( post_skip != NULL ) {
                 g_cur_v_start -= conv_vert_unit( post_skip, 0 );
             }
@@ -76,9 +91,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
     }
     post_skip = NULL;
 
-//  ProcFlags.just_override = false;// perhaps no justify for first para line
-//  ProcFlags.para_line1 = true;        // remember first paragraph line TBD
-
+    ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
     post_space_save = 0;
     p_char = NULL;
@@ -99,11 +112,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
 /***************************************************************************/
 extern  void    gml_p( const gmltag * entry )
 {
-    p_lay_tag   *   p_pc;
-
-    p_pc = &layout_work.p;
-    proc_p_pc( p_pc );
-    return;
+    proc_p_pc( &layout_work.p );
 }
 
 /***************************************************************************/
@@ -111,10 +120,6 @@ extern  void    gml_p( const gmltag * entry )
 /***************************************************************************/
 extern  void    gml_pc( const gmltag * entry )
 {
-    p_lay_tag   *   p_pc;
-
-    p_pc = &layout_work.pc;
-    proc_p_pc( p_pc );
-    return;
+    proc_p_pc( &layout_work.pc );
 }
 

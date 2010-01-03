@@ -186,9 +186,9 @@ global struct ProcFlags {
     unsigned        line_started    : 1;// we have something for current line
 
     unsigned        top_ban_proc    : 1;// top_banner is processed
-    unsigned        para_line1      : 1;// special processing for 1. line
     unsigned        address_active  : 1;// within :ADDRESS tag
     unsigned        sk_cond         : 1;// .sk n C found
+    unsigned        test_widow      : 1;// for preventing widow lines
 
 } ProcFlags;                            // processing flags
 
@@ -221,7 +221,8 @@ global text_line    t_line;             // for constructing output line
 global text_chars * p_char;             // previous text char   "
 global text_chars * text_pool;          // for reuse of text_chars structs
 
-global text_line    para_line;          // for buffering first paragraph line
+global text_line  * buf_lines;          // buffering paragraph / widow lines
+global int32_t      buf_lines_cnt;      // line count for buf_lines
 
 /***************************************************************************/
 /*  some globals which are to be redesigned when the :LAYOUT tag is coded. */

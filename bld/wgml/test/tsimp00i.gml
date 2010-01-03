@@ -14,7 +14,7 @@
         gutter = '0.5i'
         binding = 0
 :WIDOW
-        threshold = 2
+        threshold = 7
 :FN
         line_indent = 0
         align = '0.4i'
@@ -30,7 +30,7 @@
         number_style = hp
 :P
         line_indent = 5
-        pre_skip = 0
+        pre_skip = 2
         post_skip = 0
 :PC
         line_indent = 0

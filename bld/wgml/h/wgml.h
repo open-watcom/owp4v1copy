@@ -249,9 +249,9 @@ extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 
 
 /* gsmacro.c                          */
-extern  void        add_macro_cb_entry( mac_entry * me, gtentry * ge );
-extern  void        add_macro_parms( char * p );
-extern  void        free_lines( inp_line * line );
+extern  void    add_macro_cb_entry( mac_entry * me, gtentry * ge );
+extern  void    add_macro_parms( char * p );
+extern  void    free_lines( inp_line * line );
 
 
 /* gspe.c                             */
@@ -261,6 +261,11 @@ extern  void    reset_pe_cb( void );
 /* gspu.c                             */
 extern  void    close_pu_file( int numb );
 extern  void    close_all_pu_files( void );
+
+
+/* gssk.c                             */
+extern  void    calc_skip( void );
+extern  int32_t calc_skip_value( void );
 
 
 /* gsymvar.c                          */
@@ -301,6 +306,11 @@ extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
+
+
+/* gwidowut.c                         */
+extern  void        add_line_to_buf_lines( text_line * * lines, text_line * a_line );
+extern  void        out_buf_lines( text_line * * lines, bool newpage );
 
 
 /* wgmlmsg.c                          */

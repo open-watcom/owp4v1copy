@@ -24,6 +24,7 @@ common_objs =  &
         gsymvar.obj  &
         gsyssym.obj  &
         gutil.obj    &
+        gwidowut.obj &
         wgmlmsg.obj
 
 #

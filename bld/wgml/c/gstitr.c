@@ -154,7 +154,7 @@ void    scr_ti( void )
     char        *   p;
     int             len;
 #if 0
-    char            cwcurr[4];          // if errmsg is neccessary
+    char            cwcurr[4];          // if errmsg becomes neccessary
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 't';
@@ -187,7 +187,7 @@ void    scr_tr( void )
     char        *   p;
     int             len;
 #if 0
-    char            cwcurr[4];          // if errmsg is neccessary
+    char            cwcurr[4];          // if errmsg becomes neccessary
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 't';

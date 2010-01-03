@@ -414,10 +414,11 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
                         strupr( stringval );
                     }
                  } else {
+#if 1
                     xx_err( err_att_val_inv );  // only short string allowed
-                    cc = neg;           // this is restriction from wgml 4.0
-                    break;
-#if 0
+                    cc = neg;           // this is a restriction from wgml 4.0
+                    break;              // can be removed if neccessary
+#else
                     *val_flags |= val_valptr;
                     valptr = mem_alloc( arg_flen + 1 );
                     strncpy_s( valptr, arg_flen + 1, tok_start, arg_flen );

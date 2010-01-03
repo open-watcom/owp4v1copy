@@ -254,12 +254,6 @@ static void scan_gml( void )
                             gml_tags[k].tagflags & tag_out_txt ) {
 
                             do_layout_end_processing();
-#if 0
-                            if( !ProcFlags.fb_position_done ) {
-                                ProcFlags.fb_position_done = true;
-                                set_page_position( ProcFlags.doc_sect );
-                            }
-#endif
                         }
                         *p = csave;
 
@@ -469,12 +463,6 @@ static void     scan_script( void )
                         /* set page geometry and margins from layout       */
                         /***************************************************/
                         do_layout_end_processing();
-#if 0
-                        if( !ProcFlags.fb_position_done ) {
-                            ProcFlags.fb_position_done = true;
-                            set_page_position( ProcFlags.doc_sect );
-                        }
-#endif
                     }
                     if( ProcFlags.literal  ) {  // .li active
                         if( !stricmp( token_buf, "li" ) ) { // .li

@@ -157,6 +157,7 @@ void    finish_page( void )
         ProcFlags.page_started = false;
     }
     ProcFlags.top_ban_proc = false;
+    ProcFlags.test_widow = false;
 }
 
 
