@@ -41,9 +41,11 @@
 #ifdef __WIDECHAR__
     #define CHAR_TYPE           wchar_t
     #define __F_NAME(n1,n2)     n2
+    #define STRING(a)           L##a
 #else
     #define CHAR_TYPE           char
     #define __F_NAME(n1,n2)     n1
+    #define STRING(a)           a
 #endif
 
 
@@ -52,8 +54,8 @@
     #define TMPDIR              TmpDir
     #define TMPDIRNAME          "_TMP""\x90\x92\x90\x90"
     #define TMPFILEPREFIX       TmpFilePrefix
-    wchar_t             TmpDir[256];
-    wchar_t             TmpFilePrefix[256];
+    wchar_t                     TmpDir[256];
+    wchar_t                     TmpFilePrefix[256];
     #define MBYTE_NAMES
 #else
     #define _tDIR               struct dirent
@@ -80,21 +82,18 @@
 
 void main( int argc, char *argv[] )
 {
-    CHAR_TYPE *         cwd;
+    CHAR_TYPE           *cwd;
     CHAR_TYPE           buffer[256], buffer2[256];
     int                 ctr;
-    FILE *              fp;
-    _tDIR *             dirp;
-    _tDIR *             direntp;
+    FILE                *fp;
+    _tDIR               *dirp;
+    _tDIR               *direntp;
     unsigned            checkbits = 0;
+    unsigned            save_checkbits;
 
     #ifdef __SW_BW
         FILE *my_stdout;
-        #ifdef __WIDECHAR__
-            my_stdout = _wfreopen( L"tmp.log", L"a", stdout );
-        #else
-            my_stdout = freopen( "tmp.log", "a", stdout );
-        #endif
+        my_stdout = __F_NAME(freopen,_wfreopen)( STRING( "tmp.log" ), STRING( "a" ), stdout );
         VERIFY( my_stdout != NULL );
     #endif
 
@@ -112,11 +111,7 @@ void main( int argc, char *argv[] )
     VERIFY( __F_NAME(chdir,_wchdir)( TMPDIR ) == 0 );
     VERIFY( ( cwd = __F_NAME(getcwd,_wgetcwd)( NULL, 0 ) ) != NULL );
     if( buffer[__F_NAME(strlen,wcslen)(buffer)-1] != '\\' ) {
-        #ifdef __WIDECHAR__
-            wcscat( buffer, L"\\" );
-        #else
-            strcat( buffer, "\\" );
-        #endif
+        __F_NAME(strcat,wcscat)( buffer, STRING( "\\" ) );
     }
     __F_NAME(strcat,wcscat)( buffer, TMPDIR );
     VERIFY( __F_NAME(strcmp,wcscmp)( buffer, cwd ) == 0 );
@@ -124,55 +119,49 @@ void main( int argc, char *argv[] )
 
     for( ctr = 0; ctr < NUM_OPEN; ++ctr ) {
         __F_NAME(strcpy,wcscpy)( buffer, TMPFILEPREFIX );
-        #ifdef __WIDECHAR__
-            wcscat( buffer, L"." );
-        #else
-            strcat( buffer, "." );
-        #endif
+        __F_NAME(strcat,wcscat)( buffer, STRING( "." ) );
         __F_NAME(itoa,_witoa)( ctr, buffer2, 10 );
         __F_NAME(strcat,wcscat)( buffer, buffer2 );
-        #ifdef __WIDECHAR__
-            fp = _wfopen( buffer, L"w" );
-        #else
-            fp = fopen( buffer, "w" );
-        #endif
+        fp = __F_NAME(fopen,_wfopen)( buffer, STRING( "w" ) );
         if( fp == NULL ) {
-            #ifdef __WIDECHAR__
-                wprintf( L"INTERNAL: fopen failed\n" );
-            #else
-                printf( "INTERNAL: fopen failed\n" );
-            #endif
+            __F_NAME(printf,wprintf)( STRING( "INTERNAL: fopen failed\n" ) );
             abort();
         }
         checkbits |= ( 1 << ctr );
         fclose( fp );
     }
 
-    #ifdef __WIDECHAR__
-        VERIFY( _wchdir( L".." ) == 0 );
-        wcscpy( buffer, TMPDIR );
-        wcscat( buffer, L"\\" );
-        wcscat( buffer, TMPFILEPREFIX );
-        wcscat( buffer, L".*" );
-        VERIFY( ( dirp = _wopendir( buffer ) ) != NULL );
-    #else
-        VERIFY( chdir( ".." ) == 0 );
-        strcpy( buffer, TMPDIR );
-        strcat( buffer, "\\" );
-        strcat( buffer, TMPFILEPREFIX );
-        strcat( buffer, ".*" );
-        VERIFY( ( dirp = opendir( buffer ) ) != NULL );
-    #endif
+    VERIFY( __F_NAME(chdir,_wchdir)( STRING( ".." ) ) == 0 );
+    __F_NAME(strcpy,wcscpy)( buffer, TMPDIR );
+    __F_NAME(strcat,wcscat)( buffer, "\\" );
+    __F_NAME(strcat,wcscat)( buffer, TMPFILEPREFIX );
+    __F_NAME(strcat,wcscat)( buffer, ".*" );
+    save_checkbits = checkbits;
+    VERIFY( ( dirp = __F_NAME(opendir,_wopendir)( buffer ) ) != NULL );
 
     for( ctr = 0;; ++ctr ) {
         direntp = __F_NAME(readdir,_wreaddir)( dirp );
-        if( direntp == NULL )  break;
+        if( direntp == NULL )
+            break;
         __F_NAME(strcpy,wcscpy)( buffer, TMPFILEPREFIX );
-        #ifdef __WIDECHAR__
-            wcscat( buffer, L"." );
-        #else
-            strcat( buffer, "." );
-        #endif
+        __F_NAME(strcat,wcscat)( buffer, STRING( "." ) );
+        __F_NAME(itoa,_witoa)( ctr, buffer2, 10 );
+        __F_NAME(strcat,wcscat)( buffer, buffer2 );
+        VERIFY( __F_NAME(strcmp,wcscmp)(buffer,direntp->d_name) == 0 );
+        checkbits &= ~( 1 << ctr );
+    }
+
+    VERIFY( checkbits == 0 );   // If not, readdir() didn't report all files
+
+    __F_NAME(rewinddir,_wrewinddir)( dirp );
+    checkbits = save_checkbits;
+
+    for( ctr = 0;; ++ctr ) {
+        direntp = __F_NAME(readdir,_wreaddir)( dirp );
+        if( direntp == NULL )
+            break;
+        __F_NAME(strcpy,wcscpy)( buffer, TMPFILEPREFIX );
+        __F_NAME(strcat,wcscat)( buffer, STRING( "." ) );
         __F_NAME(itoa,_witoa)( ctr, buffer2, 10 );
         __F_NAME(strcat,wcscat)( buffer, buffer2 );
         VERIFY( __F_NAME(strcmp,wcscmp)(buffer,direntp->d_name) == 0 );
@@ -186,28 +175,16 @@ void main( int argc, char *argv[] )
 
     for( ctr = 0; ctr < NUM_OPEN; ++ctr ) {
         __F_NAME(strcpy,wcscpy)( buffer, TMPFILEPREFIX );
-        #ifdef __WIDECHAR__
-            wcscat( buffer, L"." );
-        #else
-            strcat( buffer, "." );
-        #endif
+        __F_NAME(strcat,wcscat)( buffer, STRING( "." ) );
         __F_NAME(itoa,_witoa)( ctr, buffer2, 10 );
         __F_NAME(strcat,wcscat)( buffer, buffer2 );
         if( __F_NAME(remove,_wremove)( buffer ) != 0 ) {
-            #ifdef __WIDECHAR__
-                wprintf( L"INTERNAL: remove() failed\n" );
-            #else
-                printf( "INTERNAL: remove() failed\n" );
-            #endif
+            __F_NAME(printf,wprintf)( STRING( "INTERNAL: remove() failed\n" ) );
             abort();
         }
     }
 
-    #ifdef __WIDECHAR__
-        VERIFY( _wchdir( L".." ) == 0 );
-    #else
-        VERIFY( chdir( ".." ) == 0 );
-    #endif
+    VERIFY( __F_NAME(chdir,_wchdir)( STRING( ".." ) ) == 0 );
     VERIFY( __F_NAME(rmdir,_wrmdir)( TMPDIR ) == 0 );
     VERIFY( __F_NAME(chdir,_wchdir)( TMPDIR ) != 0 );
     printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
