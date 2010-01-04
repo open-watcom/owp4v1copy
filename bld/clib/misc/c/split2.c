@@ -39,10 +39,9 @@
 #endif
 
 #if defined(__UNIX__)
-  #define PC '/'
+  #define IS_PC(x) (x=='/')
 #else   /* DOS, OS/2, Windows */
-  #define PC '\\'
-  #define ALT_PC '/'
+  #define IS_PC(x) (x=='\\'||x=='/')
 #endif
 
 /* split full Unix path name into its components */
@@ -65,21 +64,15 @@ static CHAR_TYPE *pcopy( CHAR_TYPE **pdst, CHAR_TYPE *dst, const CHAR_TYPE *b_sr
     if( len >= _MAX_PATH2 ) {
         len = _MAX_PATH2 - 1;
     }
-#ifdef __WIDECHAR__
+#if defined( __WIDECHAR__ ) || defined( __UNIX__ )
     memcpy( dst, b_src, len * CHARSIZE );
     dst[ len ] = NULLCHAR;
     return( dst + len + 1 );
 #else
-  #ifdef __UNIX__
-    memcpy( dst, b_src, len * CHARSIZE );
-    dst[ len ] = NULLCHAR;
-    return( dst + len + 1 );
-  #else
     len = _mbsnccnt( b_src, len );          /* # chars in len bytes */
     _mbsncpy( dst, b_src, len );            /* copy the chars */
     dst[ _mbsnbcnt( dst,len ) ] = NULLCHAR;
     return( dst + _mbsnbcnt( dst, len ) + 1 );
-  #endif
 #endif
 }
 
@@ -90,10 +83,10 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
     CHAR_TYPE const *dotp;
     CHAR_TYPE const *fnamep;
     CHAR_TYPE const *startp;
-#ifndef __WIDECHAR__
-    unsigned        ch;
-#else
+#ifdef __WIDECHAR__
     CHAR_TYPE       ch;
+#else
+    unsigned int    ch;
 #endif
 
     /* take apart specification like -> //0/hd/user/fred/filename.ext for QNX */
@@ -102,33 +95,20 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
 
     /* process node/drive/UNC specification */
     startp = inp;
-#ifdef __UNIX__
-    if( inp[ 0 ] == PC && inp[ 1 ] == PC )
-#else
-    if( ( inp[ 0 ] == PC || inp[ 0 ] == ALT_PC )
-         && ( inp[ 1 ] == PC || inp[ 1 ] == ALT_PC ) )
-#endif
+    if( IS_PC( inp[ 0 ] ) && IS_PC( inp[ 1 ] ) )
     {
         inp += 2;
         for( ;; ) {
             if( *inp == NULLCHAR )
                 break;
-            if( *inp == PC )
+            if( IS_PC( *inp ) )
                 break;
-#ifndef __UNIX__
-                if( *inp == ALT_PC )
-                    break;
-#endif
             if( *inp == '.' )
                 break;
-#ifdef __WIDECHAR__
-                ++inp;
+#if defined( __WIDECHAR__ ) || defined( __UNIX__ )
+            ++inp;
 #else
-  #ifdef __UNIX__
-                    inp++;
-  #else
-                    inp = _mbsinc( inp );
-  #endif
+            inp = _mbsinc( inp );
 #endif
         }
         outp = pcopy( drive, outp, startp, inp );
@@ -158,14 +138,10 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
     startp = inp;
 
     for( ;; ) {
-#ifdef __WIDECHAR__
+#if defined( __WIDECHAR__ ) || defined( __UNIX__ )
         ch = *inp;
 #else
-  #ifdef __UNIX__
-        ch = *inp;
-  #else
         ch = _mbsnextc( inp );
-  #endif
 #endif
         if( ch == 0 )
             break;
@@ -174,20 +150,12 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
             ++inp;
             continue;
         }
-#ifdef __WIDECHAR__
+#if defined( __WIDECHAR__ ) || defined( __UNIX__ )
         inp++;
 #else
-  #ifdef __UNIX__
-        inp++;
-  #else
         inp = _mbsinc( inp );
-  #endif
 #endif
-#if defined(__UNIX__)
-        if( ch == PC ) {
-#else /* DOS, OS/2, Windows */
-        if( ch == PC || ch == ALT_PC ) {
-#endif
+        if( IS_PC( ch ) ) {
             fnamep = inp;
             dotp = NULL;
         }
