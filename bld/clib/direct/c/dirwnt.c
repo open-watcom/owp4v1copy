@@ -246,7 +246,7 @@ _WCRTLINK int __F_NAME(closedir,_wclosedir)( DIR_TYPE *dirp )
     dirp->d_first = _DIR_CLOSED;
     if( dirp->d_openpath != NULL )
         free( dirp->d_openpath );
-    free( dirp );
+    lib_free( dirp );
     return( 0 );
 }
 

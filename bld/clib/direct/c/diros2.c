@@ -159,7 +159,7 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
     {
         FF_BUFFER       dir_buff;
         HDIR            handle;
-        OS_UINT         rc;
+        APIRET          rc;
         OS_UINT         searchcount;
 
         handle = HDIR_CREATE;           /* we want our own handle */
@@ -334,7 +334,7 @@ _WCRTLINK int __F_NAME(closedir,_wclosedir)( DIR_TYPE *dirp )
     dirp->d_first = _DIR_CLOSED;
     if( dirp->d_openpath != NULL )
         free( dirp->d_openpath );
-    free( dirp );
+    lib_free( dirp );
     return( 0 );
 }
 
