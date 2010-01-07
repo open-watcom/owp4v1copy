@@ -50,7 +50,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(fgets,fgetws)( CHAR_TYPE *s, int n, FILE *fp )
 
     /* don't use macro version of getc: multi-threading issues */
     while( (--n > 0) && (c = __F_NAME(fgetc,fgetwc)( fp )) != __F_NAME(EOF,WEOF) ) {
-        if( (*cs++ = c) == __F_NAME('\n',L'\n') )
+        if( (*cs++ = c) == STRING( '\n' ) )
             break;
     }
 

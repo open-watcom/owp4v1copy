@@ -56,16 +56,16 @@ _WCRTLINK int __F_NAME(spawnvpe,_wspawnvpe)( int mode, const CHAR_TYPE *file, co
     retval = __F_NAME(spawnve,_wspawnve)( mode, file, argv, envp );
     if( retval != -1  || (_RWD_errno != ENOENT && _RWD_errno != EINVAL) )
         return( retval );
-    if( *file == '\\' || *file == '\0' || file[1] == ':' )
+    if( *file == STRING( '\\' ) || *file == NULLCHAR || file[1] == STRING( ':' ) )
         return( retval );
-    p = __F_NAME(getenv,_wgetenv)( __F_NAME("PATH",L"PATH") );
+    p = __F_NAME(getenv,_wgetenv)( STRING( "PATH" ) );
     if( p == NULL )
         return( retval );
     file_len = __F_NAME(strlen,wcslen)( file ) + 1;
     for( ;; ) {
-        if( *p == '\0' )
+        if( *p == NULLCHAR )
             break;
-        end = __F_NAME(strchr,wcschr)( p, ';' );
+        end = __F_NAME(strchr,wcschr)( p, STRING( ';' ) );
         if( end == NULL ) {
             end = p + __F_NAME(strlen,wcslen)( p ); /* find null-terminator */
         }
@@ -76,8 +76,8 @@ _WCRTLINK int __F_NAME(spawnvpe,_wspawnvpe)( int mode, const CHAR_TYPE *file, co
         }
         memcpy( buffer, p, (end - p) * sizeof( CHAR_TYPE ) );
         p2 = buffer + (end - p);
-        if( p2[-1] != '\\' ) {
-            *p2++ = '\\';
+        if( p2[-1] != STRING( '\\' ) ) {
+            *p2++ = STRING( '\\' );
         }
         memcpy( p2, file, file_len * sizeof( CHAR_TYPE ) );
         retval = __F_NAME(spawnve,_wspawnve)( mode, buffer, argv, envp );
@@ -85,7 +85,7 @@ _WCRTLINK int __F_NAME(spawnvpe,_wspawnvpe)( int mode, const CHAR_TYPE *file, co
             break;
         if(_RWD_errno != ENOENT && _RWD_errno != EINVAL)
             break;
-        if( *end != ';' )
+        if( *end != STRING( ';' ) )
             break;
         p = end + 1;
     }

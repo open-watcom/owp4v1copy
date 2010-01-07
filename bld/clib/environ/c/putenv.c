@@ -85,7 +85,7 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
     /*** Update the process environment if using Win32 ***/
 #ifdef __NT__
     /*** Validate the input string ***/
-    p = __F_NAME(_mbschr,wcschr)( env_string, __F_NAME('=',L'=') );
+    p = __F_NAME(_mbschr,wcschr)( env_string, STRING( '=' ) );
     if( p == NULL ) return( -1 );           /* must have form name=value */
     if( p == env_string ) return( -1 );     /* must have form name=value */
 
@@ -183,7 +183,7 @@ static int findenv( const CHAR_TYPE *env_string, int delete_var )
                 if( toupper( *p1 ) != toupper( *p2 ) ) break;
             #endif
 #endif
-            if( *p1 == __F_NAME('=',L'=') ) {
+            if( *p1 == STRING( '=' ) ) {
                 index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
                 if( delete_var ) {
                     env_str = *envp;
@@ -234,13 +234,13 @@ int __F_NAME(__putenv,__wputenv)( const CHAR_TYPE *env_string )
     int                 delete_var;
 
     if( env_string == NULL ) return( -1 );
-    if( *env_string != __F_NAME('\0',L'\0') ) { // handle =NAME=STRING
+    if( *env_string != NULLCHAR ) { // handle =NAME=STRING
         for( p = env_string + 1; *p; ++p ) {    // (used under NT)
-            if( *p == __F_NAME('=',L'=') ) break;
+            if( *p == STRING( '=' ) ) break;
         }
     }
-    if( *p == __F_NAME('\0',L'\0') )  return( -1 ); /* <name> with no '=' is illegal */
-    delete_var = p[ 1 ] == __F_NAME('\0',L'\0');
+    if( *p == NULLCHAR )  return( -1 ); /* <name> with no '=' is illegal */
+    delete_var = ( p[ 1 ] == NULLCHAR );
     envp = (const CHAR_TYPE **)__F_NAME(_RWD_environ,_RWD_wenviron);
     if( envp == NULL ) {
         if( delete_var ) return( 0 );

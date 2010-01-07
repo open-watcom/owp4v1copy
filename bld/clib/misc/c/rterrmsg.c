@@ -80,7 +80,7 @@ void __F_NAME(__rterr_msg,__wrterr_msg)( const CHAR_TYPE *hdr, const CHAR_TYPE *
     int     rc;
 
     rc = __F_NAME(fputs,fputws)( hdr, stderr );
-    rc = __F_NAME(fputs,fputws)( STRING(": "), stderr );
+    rc = __F_NAME(fputs,fputws)( STRING( ": " ), stderr );
     rc = __F_NAME(fputs,fputws)( msg, stderr );
     if( (rc == EOF) && (errno == EBADF) ) {
         MessageBox( NULL, msg, hdr, MB_OK | MB_TASKMODAL );
@@ -114,12 +114,12 @@ void __F_NAME(__rterr_msg,__wrterr_msg)( const CHAR_TYPE *hdr, const CHAR_TYPE *
         DosFreeModule( hmodPMWIN );
     } else {
         __F_NAME(fputs,fputws)( hdr, stderr );
-        __F_NAME(fputs,fputws)( STRING(": "), stderr );
+        __F_NAME(fputs,fputws)( STRING( ": " ), stderr );
         __F_NAME(fputs,fputws)( msg, stderr );
     }
 #else
     __F_NAME(fputs,fputws)( hdr, stderr );
-    __F_NAME(fputs,fputws)( STRING(": "), stderr );
+    __F_NAME(fputs,fputws)( STRING( ": " ), stderr );
     __F_NAME(fputs,fputws)( msg, stderr );
 #endif
 }

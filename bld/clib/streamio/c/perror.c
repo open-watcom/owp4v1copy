@@ -42,10 +42,10 @@
 _WCRTLINK void __F_NAME(perror,_wperror)( const CHAR_TYPE *s )
 {
     __null_check( s, 0 );
-    if( s != NULL && *s != '\0' ) {
+    if( s != NULL && *s != NULLCHAR ) {
         __F_NAME(fputs,fputws)( s, stderr );
-        __F_NAME(fputs,fputws)( __F_NAME(": ",L": "), stderr );
+        __F_NAME(fputs,fputws)( STRING( ": " ), stderr );
     }
     __F_NAME(fputs,fputws)( __F_NAME(strerror,wcserror)( _RWD_errno ), stderr );
-    __F_NAME(fputc,fputwc)( '\n', stderr );
+    __F_NAME(fputc,fputwc)( STRING( '\n' ), stderr );
 }

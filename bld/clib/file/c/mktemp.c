@@ -54,15 +54,12 @@ static int is_valid_template( CHAR_TYPE *template, CHAR_TYPE **xs )
     }
 #ifdef __WIDECHAR__
     p = template + len - 6;
-    if( wcscmp( p, L"XXXXXX" ) ) {
-        return( 0 );
-    }
 #else
     p = _mbsninc( template, len - 6 );
-    if( _mbscmp( p, "XXXXXX" ) ) {
+#endif
+    if( __F_NAME(_mbscmp,wcscmp)( p, STRING( "XXXXXX" ) ) ) {
         return( 0 );
     }
-#endif
     *xs = p;
 
     return( 1 );
@@ -82,23 +79,19 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_mktemp,_wmktemp)( CHAR_TYPE *template )
 
     /*** Get the process/thread ID ***/
 #ifdef __NT__
-    #ifdef __SW_BM
-        pid = GetCurrentThreadId();     /* thread ID for multi-thread */
-    #else
-        pid = GetCurrentProcessId();    /* process ID for single-thread */
-    #endif
+  #ifdef __SW_BM
+    pid = GetCurrentThreadId();     /* thread ID for multi-thread */
+  #else
+    pid = GetCurrentProcessId();    /* process ID for single-thread */
+  #endif
 #else
     pid = getpid();
 #endif
     pid %= 100000;      /* first few digits tend to be repeated under 95 */
 
     /*** Try to build a unique filename ***/
-    for( letter = 'a'; letter <= 'z'; letter++ ) {
-#ifdef __WIDECHAR__
-        _bwprintf( xs, wcslen( xs ) + 1, L"%c%05u", letter, pid );
-#else
-        _bprintf( xs, strlen( xs ) + 1, "%c%05u", letter, pid );
-#endif
+    for( letter = STRING( 'a' ); letter <= STRING( 'z' ); letter++ ) {
+        __F_NAME(_bprintf,_bwprintf)( xs, __F_NAME(strlen,wcslen)( xs ) + 1, STRING( "%c%05u" ), letter, pid );
         if( __F_NAME(access,_waccess)( template, F_OK ) != 0 ) {
             return( template );
         }

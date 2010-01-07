@@ -66,31 +66,16 @@
 #endif
 
     if( WIN32_IS_NT && _osmajor >= 4 ) {
-#ifdef __WIDECHAR__
-        return( GetFileAttributesW( lpFileName ) );
-#else
-        return( GetFileAttributesA( lpFileName ) );
-#endif
+        return( __F_NAME(GetFileAttributesA,GetFileAttributesW)( lpFileName ) );
     }
     /*** Fail if the filename contains a wildcard ***/
-#ifdef __WIDECHAR__
-    if( wcschr( lpFileName, L'*' ) != NULL  ||
-        wcschr( lpFileName, L'?' ) != NULL ) {
+    if( __F_NAME(strchr,wcschr)( lpFileName, STRING( '*' ) ) != NULL ||
+        __F_NAME(strchr,wcschr)( lpFileName, STRING( '?' ) ) != NULL ) {
         return( INVALID_FILE_ATTRIBUTES );
     }
-#else
-    if( strchr( lpFileName, '*' ) != NULL  ||
-        strchr( lpFileName, '?' ) != NULL ) {
-        return( INVALID_FILE_ATTRIBUTES );
-    }
-#endif
 
     /*** Ok, use FindFirstFile to get the file attribute ***/
-#ifdef __WIDECHAR__
-    handle = __lib_FindFirstFileW( lpFileName, &finddata );
-#else
-    handle = FindFirstFileA( lpFileName, &finddata );
-#endif
+    handle = __F_NAME(FindFirstFileA,__lib_FindFirstFileW)( lpFileName, &finddata );
     if( handle == INVALID_HANDLE_VALUE ) {
         return( INVALID_FILE_ATTRIBUTES );
     } else {

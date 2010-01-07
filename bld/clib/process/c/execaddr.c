@@ -31,7 +31,6 @@
 
 
 #include "variety.h"
-//#include <process.h>
 #include "_process.h"
 
 execveaddr_type  __Exec_addr = 0;

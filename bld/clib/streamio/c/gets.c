@@ -44,7 +44,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(gets,getws)( CHAR_TYPE *s )
     stdin->_flag &= ~(_SFERR | _EOF);
     cs = s;
     while( (c = __F_NAME((getc),(getwc))( stdin )) != __F_NAME(EOF,WEOF)
-        && (c != __F_NAME('\n',L'\n')) ) {
+        && c != STRING( '\n' ) ) {
         *cs++ = c;
     }
     if( c == __F_NAME(EOF,WEOF)  &&  (cs == s || ferror( stdin )) ) {

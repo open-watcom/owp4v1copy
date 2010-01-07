@@ -77,7 +77,7 @@
 #ifdef __UNIX__
 #define _IS_SLASH( c )  ((c) == '/')
 #else
-#define _IS_SLASH( c )  (( (c) == '/' ) || ( (c) == '\\' ))
+#define _IS_SLASH( c )  ((c) == STRING('/') || (c) == STRING('\\'))
 #endif
 
 #if !defined( __NT__ ) && !defined( __NETWARE__ ) && !defined( __UNIX__ )
@@ -119,17 +119,13 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     CHAR_TYPE       *filepart;
     DWORD           rc;
 
-    if( __F_NAME(stricmp,_wcsicmp)( path, __F_NAME("con",L"con") ) == 0 ) {
+    if( __F_NAME(stricmp,_wcsicmp)( path, STRING( "con" ) ) == 0 ) {
         _WILL_FIT( 3 );
-        return( __F_NAME(strcpy,wcscpy)( buff, __F_NAME("con",L"con") ) );
+        return( __F_NAME(strcpy,wcscpy)( buff, STRING( "con" ) ) );
     }
 
     /*** Get the full pathname ***/
-  #ifdef __WIDECHAR__
-    rc = __lib_GetFullPathNameW( path, size, buff, &filepart );
-  #else
-    rc = GetFullPathNameA( path, size, buff, &filepart );
-  #endif
+    rc = __F_NAME(GetFullPathNameA,__lib_GetFullPathNameW)( path, size, buff, &filepart );
     // If the buffer is too small, the return value is the size of
     // the buffer, in TCHARs, required to hold the path.
     // If the function fails, the return value is zero. To get extended error
@@ -148,7 +144,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     char        mbPath[ _MAX_PATH * MB_CUR_MAX ];
   #endif
 
-    if( __F_NAME(isalpha,iswalpha)( path[ 0 ] ) && ( path[ 1 ] == ':' ) && ( path[ 2 ] == '\\' ) ) {
+    if( __F_NAME(isalpha,iswalpha)( path[ 0 ] ) && ( path[ 1 ] == STRING( ':' ) ) && ( path[ 2 ] == STRING( '\\' ) ) ) {
         int i;
         i = __F_NAME(strlen,wcslen)( path );
         _WILL_FIT( i );
@@ -161,19 +157,19 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
      * case, return x:\filename.ext, not NULL, to be consistent with
      * MS and with the NT version of _fullpath.
      */
-    if( __F_NAME(isalpha,iswalpha)( path[ 0 ] ) && path[ 1 ] == ':' ) {
+    if( __F_NAME(isalpha,iswalpha)( path[ 0 ] ) && path[ 1 ] == STRING( ':' ) ) {
         /*** We got this far, so path can't start with letter:\ ***/
         root[ 0 ] = (char)path[ 0 ];
         root[ 1 ] = ':';
         root[ 2 ] = '\\';
-        root[ 3 ] = NULLCHAR;
+        root[ 3 ] = '\0';
         rc = DosQueryPathInfo( root, FIL_QUERYFULLNAME, buff, size );
         if( rc != NO_ERROR ) {
             /*** Drive does not exist; return x:\filename.ext ***/
             _WILL_FIT( __F_NAME(strlen,wcslen)( &path[ 2 ] ) + 3 );
             buff[ 0 ] = root[ 0 ];
-            buff[ 1 ] = ':';
-            buff[ 2 ] = '\\';
+            buff[ 1 ] = STRING( ':' );
+            buff[ 2 ] = STRING( '\\' );
             __F_NAME(strcpy,wcscpy)( &buff[ 3 ], &path[ 2 ] );
             return( buff );
         }
@@ -298,8 +294,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     p = path;
     q = buff;
     _WILL_FIT( 2 );
-    if( __F_NAME(isalpha,iswalpha)( p[ 0 ] ) && p[ 1 ] == ':' ) {
-        path_drive_idx = ( __F_NAME(tolower,towlower)( p[ 0 ] ) - 'a' ) + 1;
+    if( __F_NAME(isalpha,iswalpha)( p[ 0 ] ) && p[ 1 ] == STRING( ':' ) ) {
+        path_drive_idx = ( __F_NAME(tolower,towlower)( p[ 0 ] ) - STRING( 'a' ) ) + 1;
         q[ 0 ] = p[ 0 ];
         q[ 1 ] = p[ 1 ];
         p += 2;
@@ -316,8 +312,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
   #else
         path_drive_idx = TinyGetCurrDrive() + 1;
   #endif
-        q[ 0 ] = 'A' + ( path_drive_idx - 1 );
-        q[ 1 ] = ':';
+        q[ 0 ] = STRING( 'A' ) + ( path_drive_idx - 1 );
+        q[ 1 ] = STRING( ':' );
     }
     q += 2;
     if( ! _IS_SLASH( p[ 0 ] ) ) {
@@ -340,7 +336,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         len = strlen( curr_dir );
         if( curr_dir[ 0 ] != '\\' ) {
             _WILL_FIT( 1 );
-            *(q++) = '\\';
+            *(q++) = STRING( '\\' );
         }
         _WILL_FIT( len );
   #ifdef __WIDECHAR__
@@ -351,14 +347,14 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         strcpy( q, curr_dir );
   #endif
         q += len;
-        if( q[ -1 ] != '\\' ) {
+        if( q[ -1 ] != STRING( '\\' ) ) {
             _WILL_FIT( 1 );
-            *(q++) = '\\';
+            *(q++) = STRING( '\\' );
         }
         for( ;; ) {
-            if( p[ 0 ] == '\0' )
+            if( p[ 0 ] == NULLCHAR )
                 break;
-            if( p[ 0 ] != '.' ) {
+            if( p[ 0 ] != STRING( '.' ) ) {
                 _WILL_FIT( 1 );
                 *(q++) = *(p++);
                 continue;
@@ -366,15 +362,15 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
             ++p;     // at least '.'
             if( _IS_SLASH( p[ 0 ] ) ) {
                 /* ignore "./" in directory specs */
-                if( ! _IS_SLASH( q[ -1 ] ) ) {            /* 14-jan-93 */
-                    *q++ = '\\';
+                if( ! _IS_SLASH( q[ -1 ] ) ) {
+                    *q++ = STRING( '\\' );
                 }
                 ++p;
                 continue;
             }
-            if( p[ 0 ] == '\0' )
+            if( p[ 0 ] == NULLCHAR )
                 break;
-            if( p[ 0 ] == '.' ) {  /* .. */
+            if( p[ 0 ] == STRING( '.' ) ) {  /* .. */
                 ++p;
                 if( _IS_SLASH( p[ 0 ] ) ) {   /* "../" */
                     ++p;
@@ -389,21 +385,21 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
                     }
                     if( _IS_SLASH( *q ) )
                         break;
-                    if( *q == ':' ) {
+                    if( *q == STRING( ':' ) ) {
                         ++q;
-                        *q = '\\';
+                        *q = STRING( '\\' );
                         break;
                     }
                     --q;
                 }
                 ++q;
-                *q = '\0';
+                *q = NULLCHAR;
                 continue;
             }
             _WILL_FIT( 1 );
-            *(q++) = '.';
+            *(q++) = STRING( '.' );
         }
-        *q = '\0';
+        *q = NULLCHAR;
     } else {
         len = __F_NAME(strlen,wcslen)( p );
         _WILL_FIT( len );
@@ -411,8 +407,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     }
     /* force to all backslashes */
     for( q = buff; *q != NULLCHAR; ++q ) {
-        if( *q == '/' ) {
-            *q = '\\';
+        if( *q == STRING( '/' ) ) {
+            *q = STRING( '\\' );
         }
     }
     return( buff );
@@ -433,8 +429,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_fullpath,_wfullpath)
         buff = ptr;
     }
     if( buff != NULL ) {
-        buff[ 0 ] = '\0';
-        if( path == NULL || path[ 0 ] == '\0' ) {
+        buff[ 0 ] = NULLCHAR;
+        if( path == NULL || path[ 0 ] == NULLCHAR ) {
             buff = __F_NAME(getcwd,_wgetcwd)( buff, size );
         } else {
             buff = __F_NAME(_sys_fullpath,_sys_wfullpath)( buff, path, size );

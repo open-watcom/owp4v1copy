@@ -115,9 +115,9 @@ _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE 
     }
 
     /*** Update the other environment ***/
-    #ifndef __WIDECHAR__
-        if( _RWD_wenviron == NULL ) return( 0 );    // _wenviron uninitialized
-    #endif
+  #ifndef __WIDECHAR__
+    if( _RWD_wenviron == NULL ) return( 0 );    // _wenviron uninitialized
+  #endif
     otherNameLen = __F_NAME(_mbslen,wcslen)( name ) + 1;
     otherName = lib_malloc( otherNameLen * charsize );
     if( otherName == NULL ) {
@@ -165,14 +165,14 @@ static int findenv( const CHAR_TYPE *name, const CHAR_TYPE *newvalue )
     CHAR_TYPE           **envp, **tmp_envp;
     const CHAR_TYPE     *p1, *p2, *env_str;
     int                 index1;
-#ifndef __WIDECHAR__
+  #ifndef __WIDECHAR__
     int                 index2;
     char                *envm;
-#endif
+  #endif
 
     for( envp = __F_NAME(_RWD_environ,_RWD_wenviron); p1 = *envp; ++envp ) {
         for( p2 = name; ; ++p1, ++p2 ) {
-            if( (*p1 == __F_NAME('=',L'=')) && (*p2 == __F_NAME('\0',L'\0')) ) {
+            if( *p1 == STRING( '=' ) && *p2 == NULLCHAR ) {
                 index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
                 if( newvalue == NULL ) {
                     env_str = *envp;
@@ -180,39 +180,35 @@ static int findenv( const CHAR_TYPE *name, const CHAR_TYPE *newvalue )
                     for( ; *tmp_envp; ++tmp_envp ) {
                         *tmp_envp = *(tmp_envp+1);
                     }
-                    #ifdef __WIDECHAR__
-                        lib_free( (void *)env_str );
-                    #else
-                        if( _RWD_env_mask != NULL ) {
-                            if( _RWD_env_mask[ index1 ] != 0 ) {
-                                lib_free( (void *)env_str );
-                            }
-                            envm = (char *)(tmp_envp);
-                            index2 = tmp_envp - _RWD_environ;
-                            memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
-                            _RWD_env_mask = envm;
-                            for( ; index1 < index2; index1++ ) {
-                                envm[ index1 ] = envm[ index1 + 1 ];
-                            }
+  #ifdef __WIDECHAR__
+                    lib_free( (void *)env_str );
+  #else
+                    if( _RWD_env_mask != NULL ) {
+                        if( _RWD_env_mask[ index1 ] != 0 ) {
+                            lib_free( (void *)env_str );
                         }
-                    #endif
+                        envm = (char *)(tmp_envp);
+                        index2 = tmp_envp - _RWD_environ;
+                        memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
+                        _RWD_env_mask = envm;
+                        for( ; index1 < index2; index1++ ) {
+                            envm[ index1 ] = envm[ index1 + 1 ];
+                        }
+                    }
+  #endif
                                             /* delete more entries */
                 } else {
                     return( index1 + 1 );   /* return index origin 1 */
                 }
             }
-#if defined(__UNIX__)
+  #if defined(__UNIX__)
             if( *p1 != *p2 ) break;
-#else
+  #else
             /* case independent search */
-            #ifdef __WIDECHAR__
-                if( towupper( *p1 ) != towupper( *p2 ) ) break;
-            #else
-                if( toupper( *p1 ) != toupper( *p2 ) ) break;
-            #endif
-#endif
+            if( __F_NAME(toupper,towupper)( *p1 ) != __F_NAME(toupper,towupper)( *p2 ) ) break;
+  #endif
             /* QNX can have just NAME in env list instead of NAME=value */
-            if( *p2 == __F_NAME('\0',L'\0') ) break;
+            if( *p2 == NULLCHAR ) break;
         }
     }
     return( __F_NAME(_RWD_environ,_RWD_wenviron) - envp );  /* not found */
@@ -234,57 +230,59 @@ _WCRTLINK int __F_NAME(_setenv,__wsetenv)( const CHAR_TYPE *name,
     const CHAR_TYPE     *old_val;
 
     if( name == NULL ) return( -1 );
-    if( *name == __F_NAME('\0',L'\0') ) return( -1 );
+    if( *name == NULLCHAR ) return( -1 );
 
-    #ifdef __WIDECHAR__
-        if( _RWD_wenviron == NULL )  __create_wide_environment();
-    #endif
+  #ifdef __WIDECHAR__
+    if( _RWD_wenviron == NULL ) {
+        __create_wide_environment();
+    }
+  #endif
 
     envp = (const CHAR_TYPE **)__F_NAME(_RWD_environ,_RWD_wenviron);
     if( envp == NULL ) {
         if( newvalue == NULL ) return( 0 ); /* nothing to do */
-        #ifdef __WIDECHAR__
-            /* wide environment doesn't use alloc'd mask */
-            envp = lib_malloc( 2 * sizeof(CHAR_TYPE *) );
-        #else
-            envp = lib_malloc( 2 * sizeof(CHAR_TYPE *) + sizeof(char) );
-        #endif
+  #ifdef __WIDECHAR__
+        /* wide environment doesn't use alloc'd mask */
+        envp = lib_malloc( 2 * sizeof(CHAR_TYPE *) );
+  #else
+        envp = lib_malloc( 2 * sizeof(CHAR_TYPE *) + sizeof(char) );
+  #endif
         if( envp == NULL ) return( -1 );
         envp[ 0 ] = NULL;                   /* fill in below */
         envp[ 1 ] = NULL;
         __F_NAME(_RWD_environ,_RWD_wenviron) = (CHAR_TYPE **)envp;
-        #ifndef __WIDECHAR__
-            _RWD_env_mask = (char *)&envp[ 2 ];
-        #endif
+  #ifndef __WIDECHAR__
+        _RWD_env_mask = (char *)&envp[ 2 ];
+  #endif
         index = 0;
     } else {
         index = findenv( name, newvalue );
         if( newvalue == NULL ) return( 0 );
         if( index <= 0 ) {                  /* name not found */
             index = - index;
-            #ifdef __WIDECHAR__
-                envp = lib_realloc( envp, (index + 2) * sizeof(CHAR_TYPE *) );
+  #ifdef __WIDECHAR__
+            envp = lib_realloc( envp, (index + 2) * sizeof(CHAR_TYPE *) );
+            if( envp == NULL ) return( -1 );
+            memcpy( envp, _RWD_wenviron, index * sizeof(CHAR_TYPE *) );
+  #else
+            if( _RWD_env_mask == NULL ) {
+                envp = lib_malloc( (index+2) * sizeof(CHAR_TYPE *) +
+                                    (index+1) * sizeof(char) );
                 if( envp == NULL ) return( -1 );
-                memcpy( envp, _RWD_wenviron, index * sizeof(CHAR_TYPE *) );
-            #else
-                if( _RWD_env_mask == NULL ) {
-                    envp = lib_malloc( (index+2) * sizeof(CHAR_TYPE *) +
-                                       (index+1) * sizeof(char) );
-                    if( envp == NULL ) return( -1 );
-                    memcpy( envp, __F_NAME(_RWD_environ,_RWD_wenviron),
-                            index * sizeof(CHAR_TYPE*) );
-                    _RWD_env_mask = (char *)&envp[ index + 2 ];
-                    memset( _RWD_env_mask, 0, (index + 1) * sizeof(char) );
-                } else {
-                    envp = lib_realloc( envp, (index + 2) * sizeof(CHAR_TYPE *) +
-                                              (index + 1) * sizeof(char) );
-                    if( envp == NULL ) return( -1 );
-                    memmove( &envp[ index + 2 ], _RWD_env_mask,
-                                index * sizeof(char) );
-                    _RWD_env_mask = (char *)&envp[ index + 2 ];
-                }
-                _RWD_env_mask[ index ] = 0;     /* indicate string not alloc'd */
-            #endif
+                memcpy( envp, __F_NAME(_RWD_environ,_RWD_wenviron),
+                        index * sizeof(CHAR_TYPE*) );
+                _RWD_env_mask = (char *)&envp[ index + 2 ];
+                memset( _RWD_env_mask, 0, (index + 1) * sizeof(char) );
+            } else {
+                envp = lib_realloc( envp, (index + 2) * sizeof(CHAR_TYPE *) +
+                                            (index + 1) * sizeof(char) );
+                if( envp == NULL ) return( -1 );
+                memmove( &envp[ index + 2 ], _RWD_env_mask,
+                            index * sizeof(char) );
+                _RWD_env_mask = (char *)&envp[ index + 2 ];
+            }
+            _RWD_env_mask[ index ] = 0;     /* indicate string not alloc'd */
+  #endif
             envp[ index + 1 ] = NULL;
             __F_NAME(_RWD_environ,_RWD_wenviron) = (CHAR_TYPE **) envp;
         } else {                            /* name found */
@@ -299,13 +297,13 @@ _WCRTLINK int __F_NAME(_setenv,__wsetenv)( const CHAR_TYPE *name,
                            * sizeof(CHAR_TYPE) );
     if( env_str == NULL ) return( -1 );
     memcpy( env_str, name, len*sizeof(CHAR_TYPE) );
-    env_str[ len ] = __F_NAME('=',L'=');
+    env_str[ len ] = STRING( '=' );
     __F_NAME(strcpy,wcscpy)( &env_str[ len+1 ], newvalue );
 
     envp[ index ] = env_str;
-    #ifndef __WIDECHAR__
-        _RWD_env_mask[ index ] = 1;     /* indicate string alloc'd */
-    #endif
+  #ifndef __WIDECHAR__
+    _RWD_env_mask[ index ] = 1;     /* indicate string alloc'd */
+  #endif
     return( 0 );
 #endif
 }

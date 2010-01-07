@@ -34,12 +34,6 @@
 #include "widechar.h"
 #include <windows.h>
 #undef __INLINE_FUNCTIONS__
-/* gross hack for building 11.0 libraries with 10.6 compiler */
-#ifndef __WATCOM_INT64__
-    #include <limits.h>         /* a gross hack to make a gross hack work */
-    #define __WATCOM_INT64__
-    #define __int64             double
-#endif
 /* most includes should go after this line */
 #include <stddef.h>
 #include <sys/types.h>
@@ -92,10 +86,11 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
         /*
          * NT likes to refer to CON as CONIN$ or CONOUT$.
          */
-        if( !__F_NAME(stricmp,_wcsicmp)( fname, __F_NAME("con",L"con") ) )
-            tmp = __F_NAME("conin$",L"conin$");
-        else
+        if( !__F_NAME(stricmp,_wcsicmp)( fname, STRING( "con" ) ) ) {
+            tmp = STRING( "conin$" );
+        } else {
             tmp = orig_path;  /* Need full name with path for CreateFile */
+        }
 
         #ifdef __WIDECHAR__
             h = __lib_CreateFileW( tmp, 0, 0, NULL, OPEN_EXISTING, 0, NULL );
@@ -135,9 +130,9 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
         /* name can't be a FIFO or character device and a regular file */
         mode |= S_IFREG;
         /* determine if file is executable, very PC specific */
-        if( (ext = __F_NAME(strchr,wcschr)( fname, __F_NAME('.',L'.') )) != NULL ) {
+        if( (ext = __F_NAME(strchr,wcschr)( fname, STRING( '.' ) )) != NULL ) {
             ++ext;
-            if( __F_NAME(strcmp,wcscmp)( ext, __F_NAME("EXE",L"EXE") ) == 0 ) {
+            if( __F_NAME(strcmp,wcscmp)( ext, STRING( "EXE" ) ) == 0 ) {
                 mode |= S_IXUSR | S_IXGRP | S_IXOTH;
             }
         }
@@ -150,22 +145,14 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
 }
 
 
-#ifdef __WIDECHAR__
  #ifdef __INT64__
-  _WCRTLINK int _wstati64( wchar_t const *path, struct _stati64 *buf )
+  _WCRTLINK int __F_NAME(_stati64,_wstati64)( const CHAR_TYPE *path, struct _stati64 *buf )
  #else
-  _WCRTLINK int _wstat( wchar_t const *path, struct _stat *buf )
+  _WCRTLINK int __F_NAME(stat,_wstat)( const CHAR_TYPE *path, struct __F_NAME(stat,_stat) *buf )
  #endif
-#else
- #ifdef __INT64__
-  _WCRTLINK int _stati64( char const *path, struct _stati64 *buf )
- #else
-  _WCRTLINK int stat( char const *path, struct stat *buf )
- #endif
-#endif
 {
     WIN32_FIND_DATA     ffb;
-    CHAR_TYPE const *   ptr;
+    const CHAR_TYPE     *ptr;
     CHAR_TYPE           cwd[_MAX_PATH];
     WORD                d,t;
     WORD                md,mt;
@@ -174,12 +161,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
     int                 isrootdir = 0;
 
     /* reject null string and names that has wildcard */
-    #ifdef __WIDECHAR__
-    if( *path == L'\0' || wcspbrk( path, L"*?" ) != NULL )
-    #else
-    if( *path == '\0' || _mbspbrk( path, "*?" ) != NULL )
-    #endif
-    {
+    if( *path == NULLCHAR || __F_NAME(_mbspbrk,wcspbrk)( path, STRING( "*?" ) ) != NULL ) {
         __set_errno( ENOENT );
         return( -1 );
     }
@@ -189,26 +171,17 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
     /*** Determine if 'path' refers to a root directory ***/
     /* FindFirstFile can not be used on root directories! */
     if( __F_NAME(_fullpath,_wfullpath)( fullpath, path, _MAX_PATH ) != NULL ) {
-        #ifdef __WIDECHAR__
-        if( iswalpha( fullpath[0] )  &&  fullpath[1] == L':'  &&
-            fullpath[2] == L'\\'  &&  fullpath[3] == L'\0' )
-        #else
-        if( isalpha( fullpath[0] )  &&  fullpath[1] == ':'  &&
-            fullpath[2] == '\\'  &&  fullpath[3] == '\0' )
-        #endif
+        if( __F_NAME(isalpha,iswalpha)( fullpath[0] ) && fullpath[1] == STRING( ':' ) &&
+            fullpath[2] == STRING( '\\' ) && fullpath[3] == NULLCHAR )
         {
             isrootdir = 1;
         }
     }
 
     ptr = path;
-    if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') )  ptr += 2;
-    #ifdef __WIDECHAR__
-    if( ( (ptr[0] == L'\\' || ptr[0] == L'/') && ptr[1] == L'\0' )  ||  isrootdir )
-    #else
-    if( ( (ptr[0] == '\\' || ptr[0] == '/') && ptr[1] == '\0' )  ||  isrootdir )
-    #endif
-    {
+    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) )
+        ptr += 2;
+    if( ( ptr[0] == STRING( '\\' ) || ptr[0] == STRING( '/' ) ) && ptr[1] == NULLCHAR || isrootdir ) {
         /* check validity of specified root */
         if( __F_NAME(GetDriveTypeA,__lib_GetDriveTypeW)( fullpath ) == DRIVE_UNKNOWN ) {
             __set_errno( ENOENT );
@@ -227,10 +200,10 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
     }
 
     /* process drive number */
-    if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') ) {
-        buf->st_dev = __F_NAME(tolower,towlower)( *path ) - __F_NAME('a',L'a');
+    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) ) {
+        buf->st_dev = __F_NAME(tolower,towlower)( *path ) - STRING( 'a' );
     } else {
-        buf->st_dev = __F_NAME(tolower,towlower)( cwd[0] ) - __F_NAME('a',L'a');
+        buf->st_dev = __F_NAME(tolower,towlower)( cwd[0] ) - STRING( 'a' );
     }
     buf->st_rdev = buf->st_dev;
 

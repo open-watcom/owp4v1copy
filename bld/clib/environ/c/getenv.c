@@ -82,16 +82,18 @@ _WCRTLINK char *getenv( const char *name )
 
 _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
 {
-#ifdef __NETWARE__
+  #ifdef __NETWARE__
     name = name;
-#else
+  #else
     CHAR_TYPE       **envp;
     CHAR_TYPE       *p;
     int             len;
 
-    #ifdef __WIDECHAR__
-        if( _RWD_wenviron == NULL )  __create_wide_environment();
-    #endif
+  #ifdef __WIDECHAR__
+    if( _RWD_wenviron == NULL ) {
+        __create_wide_environment();
+    }
+  #endif
 
     /*** Find the environment string ***/
     __ptr_check( name, 0 );
@@ -100,11 +102,13 @@ _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
         len = __F_NAME(strlen,wcslen)( name );
         for( ; p = *envp; ++envp ) {
             if( CMP_FUNC( p, name, len ) == 0 ) {
-                if( p[len] == __F_NAME('=',L'=') )  return( &p[len+1] );
+                if( p[len] == STRING( '=' ) ) {
+                    return( &p[len+1] );
+                }
             }
         }
     }
-#endif
+  #endif
     return( NULL );                 /* not found */
 }
 

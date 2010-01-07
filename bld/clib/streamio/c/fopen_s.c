@@ -66,10 +66,10 @@ _WCRTLINK errno_t __F_NAME(fopen_s,_wfopen_s)( FILE * __restrict * __restrict st
         __check_constraint_nullptr_msg( msg, mode ) ) {
 
         /* ua.. and uw.. are treated as a.. and w.. */
-        if( (*mode == __F_NAME('u',L'u')) &&
-            ( (*(mode + 1) == __F_NAME('r',L'r')) ||
-              (*(mode + 1) == __F_NAME('w',L'w')) ||
-              (*(mode + 1) == __F_NAME('a',L'a'))) ) {
+        if( *mode == STRING( 'u' ) &&
+            ( *(mode + 1) == STRING( 'r' ) ||
+              *(mode + 1) == STRING( 'w' ) ||
+              *(mode + 1) == STRING( 'a' ) ) ) {
             mode++;                         /* ignore u for now */
         }
         *streamptr = __F_NAME(_fsopen,_wfsopen)( filename, mode, OPENMODE_DENY_COMPAT );
