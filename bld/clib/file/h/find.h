@@ -53,20 +53,19 @@
                                           struct _finddatai64_t *fileinfo );
     extern void     __nt_wfinddatai64_cvt( WIN32_FIND_DATA *ffb,
                                            struct _wfinddatai64_t *fileinfo );
-    extern time_t   __nt_filetime_cvt( FILETIME *ft );
 
 #elif defined( __OS2__ )
 
     #if defined( _M_I86 )
-        #define FF_LEVEL    	0
-        #define FF_BUFFER   	FILEFINDBUF
+        #define FF_LEVEL        0
+        #define FF_BUFFER       FILEFINDBUF
     #elif defined( __INT64__ )
-        #define FF_LEVEL    	(_FILEAPI64() ? FIL_STANDARDL : FIL_STANDARD)
-        #define FF_BUFFER   	FILEFINDBUF3L
-        #define FF_BUFFER_32	FILEFINDBUF3
+        #define FF_LEVEL        (_FILEAPI64() ? FIL_STANDARDL : FIL_STANDARD)
+        #define FF_BUFFER       FILEFINDBUF3L
+        #define FF_BUFFER_32    FILEFINDBUF3
     #else
-        #define FF_LEVEL    	FIL_STANDARD
-        #define FF_BUFFER   	FILEFINDBUF3
+        #define FF_LEVEL        FIL_STANDARD
+        #define FF_BUFFER       FILEFINDBUF3
     #endif
 
     extern void     __os2_finddata_cvt( FF_BUFFER *ffb,
@@ -93,8 +92,6 @@
                                            struct _finddatai64_t *fileinfo );
     extern void     __dos_wfinddatai64_cvt( struct _wfind_t *findbuf,
                                             struct _wfinddatai64_t *fileinfo );
-    extern time_t   __dos_filetime_cvt( unsigned short ftime,
-                                        unsigned short fdate );
 
 #endif
 

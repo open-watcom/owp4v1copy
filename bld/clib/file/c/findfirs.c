@@ -43,12 +43,12 @@
     #define INCL_LONGLONG
     #include <wos2.h>
     #include <mbstring.h>
-    #include "d2ttime.h"
     #include "os2fil64.h"
 #else
     #include <dos.h>
     #include "liballoc.h"
 #endif
+#include "d2ttime.h"
 #include "find.h"
 #include "seterrno.h"
 
@@ -165,6 +165,9 @@
   #endif
  #endif
 {
+    WORD        d;
+    WORD        t;
+
     /*** Convert attributes ***/
     fileinfo->attrib = 0;
     if( ffb->dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE ) {
@@ -187,9 +190,12 @@
     }
 
     /*** Handle the timestamps ***/
-    fileinfo->time_create = __nt_filetime_cvt( &ffb->ftCreationTime );
-    fileinfo->time_access = __nt_filetime_cvt( &ffb->ftLastAccessTime );
-    fileinfo->time_write = __nt_filetime_cvt( &ffb->ftLastWriteTime );
+    __MakeDOSDT( &ffb->ftCreationTime, &d, &t );
+    fileinfo->time_create = _d2ttime( d, t );
+    __MakeDOSDT( &ffb->ftLastAccessTime, &d, &t );
+    fileinfo->time_access = _d2ttime( d, t );
+    __MakeDOSDT( &ffb->ftLastWriteTime, &d, &t );
+    fileinfo->time_write = _d2ttime( d, t );
 
     /*** Handle the file size ***/
   #ifdef __INT64__
@@ -275,8 +281,8 @@
     /*** Handle the timestamps ***/
   #ifdef __WATCOM_LFN__
     if( findbuf->cr_time ) {
-        fileinfo->time_create = findbuf->cr_time | findbuf->cr_date;
-        fileinfo->time_access = findbuf->ac_time | findbuf->ac_date;
+        fileinfo->time_create = _d2ttime( findbuf->cr_date, findbuf->cr_time );
+        fileinfo->time_access = _d2ttime( findbuf->ac_date, findbuf->ac_time );
     } else {
   #endif
         fileinfo->time_create = -1L;
@@ -284,8 +290,7 @@
   #ifdef __WATCOM_LFN__
     }
   #endif
-    fileinfo->time_write = __dos_filetime_cvt( findbuf->wr_time,
-                                               findbuf->wr_date );
+    fileinfo->time_write = _d2ttime( findbuf->wr_date, findbuf->wr_time );
     /*** Handle the file size ***/
   #ifdef __INT64__
     U64Set( (unsigned_64 *)&fileinfo->size, findbuf->size, 0 );
@@ -299,3 +304,4 @@
 
 
 #endif
+

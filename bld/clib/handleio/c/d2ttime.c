@@ -53,6 +53,8 @@ time_t _d2ttime( unsigned short date, unsigned short time )
     t.tm_hour = hour( time );
     t.tm_min  = min( time );
     t.tm_sec  = sec2( time ) * 2;
+    t.tm_wday = -1;
+    t.tm_yday = -1;
     t.tm_isdst = -1;
     return( mktime( &t ) );
 }

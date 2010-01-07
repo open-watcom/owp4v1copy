@@ -246,18 +246,19 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
     #endif
     buf->st_mode = at2mode( ffb.dwFileAttributes, ffb.cFileName, path );
     __MakeDOSDT( &ffb.ftLastWriteTime, &md, &mt );
-    buf->st_mtime = _d2ttime( TODDATE( md ), TODTIME( mt ) );
+    buf->st_mtime = _d2ttime( md, mt );
+    buf->st_btime = buf->st_mtime;
     __MakeDOSDT( &ffb.ftCreationTime, &d, &t );
     if( d == md && t == mt ) {
         buf->st_ctime = buf->st_mtime;
     } else {
-        buf->st_ctime = _d2ttime( TODDATE( d ), TODTIME( t ) );
+        buf->st_ctime = _d2ttime( d, t );
     }
     __MakeDOSDT( &ffb.ftLastAccessTime, &d, &t );
     if( d == md && t == mt ) {
         buf->st_atime = buf->st_mtime;
     } else {
-        buf->st_atime = _d2ttime( TODDATE( d ), TODTIME( t ) );
+        buf->st_atime = _d2ttime( d, t );
     }
     buf->st_nlink = 1;
     buf->st_ino = buf->st_uid = buf->st_gid = 0;

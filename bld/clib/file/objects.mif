@@ -11,7 +11,6 @@
 !inject chmod.obj    d16 d32                                                w16 w32 osi
 !inject chmodos2.obj                                        o16 o32
 !inject chmodwnt.obj                     nt nta ntp
-!inject filtmcvt.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi
 !inject findclos.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi
 !inject findfirs.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi
 !inject findnext.obj d16 d32 dpm         nt nta ntp         o16 o32         w16 w32 osi

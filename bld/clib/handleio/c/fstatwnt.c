@@ -188,7 +188,7 @@
             return( __set_errno_nt() );
         }
         __MakeDOSDT( &mtime, &md, &mt );
-        buf->st_mtime = _d2ttime( TODDATE( md ), TODTIME( mt ) );
+        buf->st_mtime = _d2ttime( md, mt );
         if(( ctime.dwLowDateTime == mtime.dwLowDateTime ) &&
            ( ctime.dwHighDateTime == mtime.dwHighDateTime )) {
             buf->st_ctime = buf->st_mtime;
@@ -197,7 +197,7 @@
             if( d == md && t == mt ) {
                 buf->st_ctime = buf->st_mtime;
             } else {
-                buf->st_ctime = _d2ttime( TODDATE( d ), TODTIME( t ) );
+                buf->st_ctime = _d2ttime( d, t );
             }
         }
         if(( atime.dwLowDateTime == mtime.dwLowDateTime ) &&
@@ -208,7 +208,7 @@
             if( d == md && t == mt ) {
                 buf->st_atime = buf->st_mtime;
             } else {
-                buf->st_atime = _d2ttime( TODDATE( d ), TODTIME( t ) );
+                buf->st_atime = _d2ttime( d, t );
             }
         }
 

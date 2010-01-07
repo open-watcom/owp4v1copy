@@ -198,7 +198,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     buf->st_size = dta.size;
     buf->st_mode = at2mode( dta.attrib, dta.name );
 
-    buf->st_mtime = _d2ttime( TODDATE( dta.wr_date ), TODTIME( dta.wr_time ) );
+    buf->st_mtime = _d2ttime( dta.wr_date, dta.wr_time );
     buf->st_atime = buf->st_ctime = buf->st_btime = buf->st_mtime;
 
     buf->st_nlink = 1;
