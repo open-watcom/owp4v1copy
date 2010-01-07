@@ -525,6 +525,10 @@ static file_offset OmfProc( libfile io, sym_file *sfile, omf_oper oper )
                     if( Options.strip_dependency )
                         continue;
                     break;
+                case CMT_DEFAULT_LIBRARY:
+                    if( Options.strip_library )
+                        continue;
+                    break;
                 }
                 break;
             case CMD_MODEND:

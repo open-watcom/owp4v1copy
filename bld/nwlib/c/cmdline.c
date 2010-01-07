@@ -257,6 +257,13 @@ static char *ParseOption( char *c, char *buff )
             }
             Options.strip_dependency = 1; //(strip dependency info)
             break;
+        } else if( ( my_tolower( *c ) == 'l' ) && ( my_tolower( *(c + 1) ) == 'l' ) ) {
+            c += 2;
+            if( Options.strip_library ) {
+                DuplicateOption( start );
+            }
+            Options.strip_library = 1;  //(strip library info)
+            break;
         } else if( Options.strip_expdef ) {
             DuplicateOption( start );
         }

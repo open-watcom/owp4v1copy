@@ -135,7 +135,7 @@ graph.lib : $(clibdir) tmp.lib
   # put all modules together into new library
     @%create $^&.lbc
     @for %i in (*.obj) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) @$^&.lbc
+    $(librarian) -zll $(libflags) @$^&.lbc
     @rm -f *.obj
 
 graphics_prefix = ../

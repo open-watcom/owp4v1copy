@@ -80,6 +80,7 @@ typedef struct {
     unsigned        strip_line       :1;
     unsigned        strip_expdef     :1;
     unsigned        strip_dependency :1;
+    unsigned        strip_library    :1;
     unsigned        verbose          :1;
     unsigned        update           :1; //update older files only
     unsigned        no_c_warn        :1; //no create lib warning
