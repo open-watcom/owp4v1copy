@@ -20,17 +20,10 @@
 
 :include wchar_t.sp
 
-:include doslfn.sp
+:include namemax.sp
 
 struct _wdirent {
-    char                d_dta[2];           /* disk transfer area */
-    unsigned short int  d_ctime;            /* file's creation time */
-    unsigned short int  d_cdate;            /* file's creation date */
-    unsigned short int  d_atime;            /* file's last access time */
-    unsigned short int  d_adate;            /* file's last access date */
-    unsigned short      d_lfnax;            /* DOS LFN search handle */
-    unsigned long       d_lfnsup;           /* DOS LFN support status */
-    char                d_reserved[5];      /* disk transfer area */
+    char                d_dta[21];          /* disk transfer area */
     char                d_attr;             /* file's attribute */
     unsigned short int  d_time;             /* file's modification time */
     unsigned short int  d_date;             /* file's modification date */
@@ -46,14 +39,7 @@ struct _wdirent {
 };
 
 struct dirent {
-    char                d_dta[2];           /* disk transfer area */
-    unsigned short int  d_ctime;            /* file's creation time */
-    unsigned short int  d_cdate;            /* file's creation date */
-    unsigned short int  d_atime;            /* file's last access time */
-    unsigned short int  d_adate;            /* file's last access date */
-    unsigned short      d_lfnax;            /* DOS LFN search handle */
-    unsigned long       d_lfnsup;           /* DOS LFN support status */
-    char                d_reserved[5];      /* disk transfer area */
+    char                d_dta[21];          /* disk transfer area */
     char                d_attr;             /* file's attribute */
     unsigned short int  d_time;             /* file's time */
     unsigned short int  d_date;             /* file's date */

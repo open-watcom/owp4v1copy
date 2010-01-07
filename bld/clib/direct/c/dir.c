@@ -119,8 +119,6 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
 #endif
 
     tmp.d_attr = _A_SUBDIR;
-    tmp.d_lfnsup = 0;
-    tmp.d_lfnax = 0;
     opened = 0;
     if( !is_directory( dirname ) ) {
         if( _dos_findfirst( __F_NAME(dirname,mbcsName), attr, (struct _find_t *)tmp.d_dta ) ) {

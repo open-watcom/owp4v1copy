@@ -47,6 +47,7 @@
 #else
     #include <dos.h>
     #include "liballoc.h"
+    #include "_doslfn.h"
 #endif
 #include "d2ttime.h"
 #include "find.h"
@@ -280,9 +281,9 @@
 
     /*** Handle the timestamps ***/
   #ifdef __WATCOM_LFN__
-    if( findbuf->cr_time ) {
-        fileinfo->time_create = _d2ttime( findbuf->cr_date, findbuf->cr_time );
-        fileinfo->time_access = _d2ttime( findbuf->ac_date, findbuf->ac_time );
+    if( IS_LFN( findbuf ) && CRTIME_OF( findbuf ) ) {
+        fileinfo->time_create = _d2ttime( CRDATE_OF( findbuf ), CRTIME_OF( findbuf ) );
+        fileinfo->time_access = _d2ttime( ACDATE_OF( findbuf ), ACTIME_OF( findbuf ) );
     } else {
   #endif
         fileinfo->time_create = -1L;

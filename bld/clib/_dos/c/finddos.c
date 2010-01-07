@@ -259,14 +259,14 @@ extern unsigned __dos_find_close_lfn( unsigned handle );
 static void convert_to_find_t( struct find_t *fdta, lfnfind_t *lfnblock )
 /***********************************************************************/
 {
-    fdta->attrib  = lfnblock->attributes;
-    fdta->cr_time = lfnblock->creattime;
-    fdta->cr_date = lfnblock->creatdate;
-    fdta->ac_time = lfnblock->accesstime;
-    fdta->ac_date = lfnblock->accessdate;
-    fdta->wr_time = lfnblock->wrtime;
-    fdta->wr_date = lfnblock->wrdate;
-    fdta->size    = lfnblock->lfilesize;
+    fdta->attrib      = lfnblock->attributes;
+    CRTIME_OF( fdta ) = lfnblock->creattime;
+    CRDATE_OF( fdta ) = lfnblock->creatdate;
+    ACTIME_OF( fdta ) = lfnblock->accesstime;
+    ACDATE_OF( fdta ) = lfnblock->accessdate;
+    fdta->wr_time     = lfnblock->wrtime;
+    fdta->wr_date     = lfnblock->wrdate;
+    fdta->size        = lfnblock->lfilesize;
     strcpy( fdta->name, ( *lfnblock->lfn != '\0' ) ? lfnblock->lfn : lfnblock->sfn );
 }
 #endif //__WATCOM_LFN__
@@ -278,10 +278,14 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
 #ifdef __WATCOM_LFN__
     lfnfind_t       lfndta;
     tiny_ret_t      rc = 0;
+#endif
 
+    SIGN_OF( fdta )   = 0;
+    HANDLE_OF( fdta ) = 0;
+#ifdef __WATCOM_LFN__
     if( _RWD_uselfn && TINY_OK( rc = __dos_find_first_lfn( path, attr, &lfndta ) ) ) {
         convert_to_find_t( fdta, &lfndta );
-        fdta->lfnsup = _LFN_SIGN;
+        SIGN_OF( fdta )   = _LFN_SIGN;
         HANDLE_OF( fdta ) = TINY_INFO( rc );
         return( 0 );
     }
@@ -300,7 +304,7 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *fdta )
     lfnfind_t       lfndta;
     unsigned        rc;
 
-    if( _RWD_uselfn && fdta->lfnsup == _LFN_SIGN && HANDLE_OF( fdta ) ) {
+    if( _RWD_uselfn && IS_LFN( fdta ) ) {
         rc = __dos_find_next_lfn( HANDLE_OF( fdta ), &lfndta );
         if( rc == 0 ) {
             convert_to_find_t( fdta, &lfndta );
@@ -316,7 +320,7 @@ _WCRTLINK unsigned _dos_findclose( struct find_t *fdta )
 /******************************************************/
 {
 #if defined( __WATCOM_LFN__ )
-    if( _RWD_uselfn && fdta->lfnsup == _LFN_SIGN && HANDLE_OF( fdta ) ) {
+    if( _RWD_uselfn && IS_LFN( fdta ) ) {
         return( __dos_find_close_lfn( HANDLE_OF( fdta ) ) );
     }
 #endif

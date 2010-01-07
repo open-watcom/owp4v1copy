@@ -36,10 +36,10 @@
 #define EX_LFN_CREATE       0x12
 #define EX_LFN_CREATE_NEW   0x10
 
-#define PUSH_BX             0x53
-#define PUSH_SI             0x56
-#define POP_BX              0x5B
-#define POP_SI              0x5E
+#define _PUSH_BX            0x53
+#define _PUSH_SI            0x56
+#define _POP_BX             0x5B
+#define _POP_SI             0x5E
 
 #define _XCHG_AX_DX         0x92
 #define _XCHG_AX_SI         0x96
@@ -60,20 +60,20 @@
         "int  21h"
 
 #define LFN_FIND_FIRST  \
-        PUSH_SI         \
+        _PUSH_SI        \
         "mov  si,1"     \
         "mov  ax,714Eh" \
         "stc"           \
         "int 21h"       \
-        POP_SI
+        _POP_SI
 
 #define LFN_FIND_NEXT   \
-        PUSH_SI         \
+        _PUSH_SI        \
         "mov  si,1"     \
         "mov  ax,714fh" \
         "stc"           \
         "int 21h"       \
-        POP_SI
+        _POP_SI
 
 #define LFN_FIND_CLOSE  \
         "mov  ax,71A1h" \
@@ -81,20 +81,20 @@
         "int  21h"
 
 #define LFN_GET_FILE_ATTR \
-        PUSH_BX         \
+        _PUSH_BX        \
         "mov  bl,0"     \
         "mov  ax,7143h" \
         "stc"           \
         "int  21h"      \
-        POP_BX
+        _POP_BX
 
 #define LFN_SET_FILE_ATTR \
-        PUSH_BX         \
+        _PUSH_BX        \
         "mov  bl,1"     \
         "mov  ax,7143h" \
         "stc"           \
         "int  21h"      \
-        POP_BX
+        _POP_BX
 
 #define LFN_DOS_RENAME  \
         "mov  ax,7156h" \
@@ -102,12 +102,12 @@
         "int  21h"
 
 #define LFN_DOS_UNLINK  \
-        PUSH_SI         \
+        _PUSH_SI        \
         "mov  si,0"     \
         "mov  ax,7141h" \
         "stc"           \
         "int  21h"      \
-        POP_SI
+        _POP_SI
 
 #define LFN_DOS_MKDIR   \
         "mov ax,7139h"  \
@@ -160,6 +160,22 @@
 
 #define IS_LFN_ERROR(x)     ((x)!=0&&(x)!= 0x7100)
 
-#define HANDLE_OF(x)        ((x)->lfnax)
+typedef struct {
+    unsigned short  cr_time;
+    unsigned short  cr_date;
+    unsigned short  ac_time;
+    unsigned short  ac_date;
+    unsigned long   sign;
+    unsigned short  handle;
+} __lfndta;
 
+#define CRTIME_OF(x)    (((__lfndta *)(x))->cr_time)
+#define CRDATE_OF(x)    (((__lfndta *)(x))->cr_date)
+#define ACTIME_OF(x)    (((__lfndta *)(x))->ac_time)
+#define ACDATE_OF(x)    (((__lfndta *)(x))->ac_date)
+#define HANDLE_OF(x)    (((__lfndta *)(x))->handle)
+#define SIGN_OF(x)      (((__lfndta *)(x))->sign)
 
+#define _LFN_SIGN       0x004e464cUL    // "LFN"
+
+#define IS_LFN(x)       (((__lfndta *)(x))->sign==_LFN_SIGN&&((__lfndta *)(x))->handle)

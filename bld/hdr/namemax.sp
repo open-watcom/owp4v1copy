@@ -5,5 +5,3 @@
 #else
  #define NAME_MAX   12      /* 8 chars + '.' +  3 chars */
 #endif
-
-#define _LFN_SIGN   0x004e464cUL    // "LFN"

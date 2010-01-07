@@ -28,7 +28,7 @@
 
 :include wchar_t.sp
 
-:include doslfn.sp
+:include namemax.sp
 
 /* dosexterror struct */
 
@@ -65,14 +65,7 @@ struct dostime_t {
 #define _dostime_t dostime_t
 
 struct find_t {
-    char            reserved[2];        /* reserved for use by DOS    */
-    unsigned short  cr_time;            /* time of file creation      */
-    unsigned short  cr_date;            /* date of file creation      */
-    unsigned short  ac_time;            /* time of last file access   */
-    unsigned short  ac_date;            /* date of last file access   */
-    unsigned short  lfnax;              /* DOS LFN search handle      */
-    unsigned long   lfnsup;             /* DOS LFN support status     */
-    char            reserved2[5];       /* reserved for use by DOS    */
+    char            reserved[21];       /* reserved for use by DOS    */
     char            attrib;             /* attribute byte for file    */
     unsigned short  wr_time;            /* time of last write to file */
     unsigned short  wr_date;            /* date of last write to file */
@@ -80,14 +73,7 @@ struct find_t {
     char            name[NAME_MAX+1];   /* null-terminated filename   */
 };
 struct _wfind_t {
-    char            reserved[2];        /* reserved for use by DOS    */
-    unsigned short  cr_time;            /* time of file creation      */
-    unsigned short  cr_date;            /* date of file creation      */
-    unsigned short  ac_time;            /* time of last file access   */
-    unsigned short  ac_date;            /* date of last file access   */
-    unsigned short  lfnax;              /* DOS LFN search handle      */
-    unsigned long   lfnsup;             /* DOS LFN support status     */
-    char            reserved2[5];       /* reserved for use by DOS    */
+    char            reserved[21];       /* reserved for use by DOS    */
     char            attrib;             /* attribute byte for file    */
     unsigned short  wr_time;            /* time of last write to file */
     unsigned short  wr_date;            /* date of last write to file */
