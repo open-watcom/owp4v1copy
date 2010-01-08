@@ -6,23 +6,38 @@ w16api_distrib_lib = 1
 !include cproj.mif
 !include defrule.mif
 
-splice = wsplice -i$(hdr_dir) $[@ $^@
+splice = wsplice -i$(hdr_dir) -i../include $[@ $^@
 
 .EXTENSIONS : .lbc .def .mh
 
 headers =            &
         _win386.h    &
         cderr.h      &
+        cobjps.h     &
+        coguid.h     &
         commdlg.h    &
+        compobj.h    &
         custcntl.h   &
         dde.h        &
         ddeml.h      &
+        dispatch.h   &
         dlgs.h       &
         drivinit.h   &
+        dvobj.h      &
+        initguid.h   &
         mmsystem.h   &
+        moniker.h    &
+        ole2.h       &
+        ole2dbg.h    &
+        ole2ver.h    &
+        oleguid.h    &
+        olenls.h     &
+        scode.h      &
         shellapi.h   &
+        storage.h    &
         stress.h     &
         toolhelp.h   &
+        variant.h    &
         ver.h        &
         win16.h      &
         win386.h     &
@@ -31,12 +46,18 @@ headers =            &
 
 libs =               &
         commdlg.lib  &
+        compobj.lib  &
         ctl3d.lib    &
         ctl3dv2.lib  &
         ddeml.lib    &
+        ole2.lib     &
+        ole2disp.lib &
+        ole2nls.lib  &
         shell.lib    &
+        storage.lib  &
         stress.lib   &
         toolhelp.lib &
+        typelib.lib  &
 	ver.lib      &
         windows.lib  &
         winsock.lib
