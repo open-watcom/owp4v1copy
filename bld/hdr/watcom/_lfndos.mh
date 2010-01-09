@@ -1,0 +1,30 @@
+/*
+ *  _lfndos.h    DOS Long File Name (LFN) support definition.
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef __LFNDOS_H_INCLUDED
+#define __LFNDOS_H_INCLUDED
+
+#if defined(__WATCOM_LFN__) && defined(__DOS__)
+ #if defined(_M_I86)
+  #if defined(__MEDIUM__)
+   #pragma library ( "doslfnm.lib" )
+  #elif defined(__COMPACT__)
+   #pragma library ( "doslfnc.lib" )
+  #elif defined(__LARGE__)
+   #pragma library ( "doslfnl.lib" )
+  #elif defined(__HUGE__)
+   #pragma library ( "doslfnh.lib" )
+  #else
+   #pragma library ( "doslfns.lib" )
+  #endif
+ #elif defined(__SW_3S)
+  #pragma library ( "doslfn3s.lib" )
+ #else
+  #pragma library ( "doslfn3r.lib" )
+ #endif
+#endif
+
+#endif
