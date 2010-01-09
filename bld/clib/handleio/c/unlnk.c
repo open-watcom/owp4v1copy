@@ -41,7 +41,7 @@
   #ifdef __BIG_DATA__
     #define AUX_INFO    \
         parm caller     [dx ax] \
-        modify exact    [ax];
+        modify exact    [ax dx];
   #else
     #define AUX_INFO    \
         parm caller     [dx] \
