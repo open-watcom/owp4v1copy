@@ -10,6 +10,10 @@
 
 :include owrtlink.sp
 
+:segment DOS
+:include lfndos.sp
+
+:endsegment
 :segment QNX | LINUX
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>

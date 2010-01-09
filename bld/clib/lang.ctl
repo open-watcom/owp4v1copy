@@ -27,6 +27,13 @@ cdsay .
     <CPCMD> library/msdos.086/mm/clibm.lib                  <RELROOT>/lib286/dos/clibm.lib
     <CPCMD> library/msdos.086/mm_ov/clibm.lib               <RELROOT>/lib286/dos/clibom.lib
     <CPCMD> library/msdos.086/ms/clibs.lib                  <RELROOT>/lib286/dos/clibs.lib
+    <CPCMD> doslfn/library/msdos.086/mc/doslfnc.lib         <RELROOT>/lib286/dos/doslfnc.lib
+    <CPCMD> doslfn/library/msdos.086/mh/doslfnh.lib         <RELROOT>/lib286/dos/doslfnh.lib
+    <CPCMD> doslfn/library/msdos.086/ml/doslfnl.lib         <RELROOT>/lib286/dos/doslfnl.lib
+    <CPCMD> doslfn/library/msdos.086/ml_ov/doslfnl.lib      <RELROOT>/lib286/dos/doslfnol.lib
+    <CPCMD> doslfn/library/msdos.086/mm/doslfnm.lib         <RELROOT>/lib286/dos/doslfnm.lib
+    <CPCMD> doslfn/library/msdos.086/mm_ov/doslfnm.lib      <RELROOT>/lib286/dos/doslfnom.lib
+    <CPCMD> doslfn/library/msdos.086/ms/doslfns.lib         <RELROOT>/lib286/dos/doslfns.lib
     <CPCMD> startup/library/msdos.086/ml/d16msels.obj       <RELROOT>/lib286/dos/d16msels.obj
     <CPCMD> startup/library/msdos.086/ml/dos16m.obj         <RELROOT>/lib286/dos/dos16m.obj
     <CPCMD> startup/library/msdos.086/ms/binmode.obj        <RELROOT>/lib286/dos/binmode.obj
@@ -35,6 +42,8 @@ cdsay .
 
     <CPCMD> library/msdos.386/ms_r/clib3r.lib               <RELROOT>/lib386/dos/clib3r.lib
     <CPCMD> library/msdos.386/ms_s/clib3s.lib               <RELROOT>/lib386/dos/clib3s.lib
+    <CPCMD> doslfn/library/msdos.386/ms_r/doslfn3r.lib      <RELROOT>/lib386/dos/doslfn3r.lib
+    <CPCMD> doslfn/library/msdos.386/ms_s/doslfn3s.lib      <RELROOT>/lib386/dos/doslfn3s.lib
     <CPCMD> startup/library/msdos.386/ms_r/binmode.obj      <RELROOT>/lib386/dos/binmode.obj
     <CPCMD> startup/library/msdos.386/ms_r/commode.obj      <RELROOT>/lib386/dos/commode.obj
     <CPCMD> startup/library/msdos.386/ms_r/cstrtx32.obj     <RELROOT>/lib386/dos/cstrtx3r.obj

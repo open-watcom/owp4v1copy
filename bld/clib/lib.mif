@@ -15,10 +15,15 @@ libname_386_ms =$(libname_$(convention))
 libname_386_mf =$(libname_$(convention))
 libname_387_ms =$(libname_$(convention))
 libname_387_mf =$(libname_$(convention))
-libname_   =clib
-libname =clib$(libname_$(processor)_$(model))
+libname_ =
 
-lib_flags  = -b-c-n-pa
+!ifdef base_libname
+libname = $(base_libname)$(libname_$(processor)_$(model))
+!else
+libname = clib$(libname_$(processor)_$(model))
+!endif
+
+lib_flags  = -b-c-n-pa$(extra_libflags)
 !ifeq release 1
 lib_flags += -s-t-zld
 !endif

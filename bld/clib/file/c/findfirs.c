@@ -45,7 +45,6 @@
     #include <mbstring.h>
     #include "os2fil64.h"
 #else
-    #include <dos.h>
     #include "liballoc.h"
     #include "_doslfn.h"
 #endif
@@ -77,6 +76,7 @@
   _WCRTLINK long _findfirst( const char *filespec, struct _finddata_t *fileinfo )
  #endif
 #endif
+/******************************************************************************/
 {
 #if defined( __NT__ )
     WIN32_FIND_DATA ffb;
@@ -165,6 +165,7 @@
    void __nt_finddata_cvt( WIN32_FIND_DATA *ffb, struct _finddata_t *fileinfo )
   #endif
  #endif
+/******************************************************************************/
 {
     WORD        d;
     WORD        t;
@@ -226,6 +227,7 @@
    void __os2_finddata_cvt( FF_BUFFER *ffb, struct _finddata_t *fileinfo )
   #endif
  #endif
+/******************************************************************************/
 {
     /*** Handle the timestamps ***/
     fileinfo->time_create = _d2ttime( TODDATE( ffb->fdateCreation ),
@@ -275,6 +277,7 @@
    void __dos_finddata_cvt( struct find_t *findbuf, struct _finddata_t *fileinfo )
   #endif
  #endif
+/******************************************************************************/
 {
     /*** Handle attributes ***/
     fileinfo->attrib = findbuf->attrib;
@@ -302,7 +305,6 @@
     /*** Handle the file name ***/
     __F_NAME(strcpy,wcscpy)( fileinfo->name, findbuf->name );
 }
-
 
 #endif
 

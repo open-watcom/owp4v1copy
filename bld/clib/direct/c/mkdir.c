@@ -32,13 +32,12 @@
 
 #include "variety.h"
 #include "widechar.h"
+#include <string.h>
 #include <direct.h>
 #ifdef __WIDECHAR__
     #include <mbstring.h>
 #endif
-#include "tinyio.h"
 #include "seterrno.h"
-#include "rtdata.h"
 #include "_doslfn.h"
 
 #ifdef _M_I86
@@ -57,10 +56,7 @@
         modify exact    [eax];
 #endif
 
-extern unsigned __doserror_( unsigned );
-#pragma aux __doserror_ "*"
-
-extern int __mkdir_sfn( const char *path );
+extern unsigned __mkdir_sfn( const char *path );
 #pragma aux __mkdir_sfn = \
         _SET_DSDX       \
         _MOV_AH DOS_MKDIR \
@@ -69,16 +65,34 @@ extern int __mkdir_sfn( const char *path );
         "call __doserror_" \
         AUX_INFO
 
-extern int __mkdir_lfn( const char *path );
-#pragma aux __mkdir_lfn = \
-        _SET_DSDX       \
-        LFN_DOS_MKDIR   \
-        _RST_DS         \
-        "call __doserror_" \
-        AUX_INFO
+#if defined( __WATCOM_LFN__ ) && !defined( __WIDECHAR__ )
+static unsigned _mkdir_lfn( const char *path )
+/********************************************/
+{
+#ifdef _M_I86
+    return( __mkdir_lfn( path ) );
+#else
+    call_struct     dpmi_rm;
 
+    strcpy( RM_TB_PARM1_LINEAR, path );
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.ds  = RM_TB_PARM1_SEGM;
+    dpmi_rm.edx = RM_TB_PARM1_OFFS;
+    dpmi_rm.eax = 0x7139;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( __set_errno_dos_reterr( (unsigned short)dpmi_rm.eax ) );
+    }
+    return( 0 );
+#endif
+}
+#endif
 
 _WCRTLINK int __F_NAME(mkdir,_wmkdir)( const CHAR_TYPE *path )
+/************************************************************/
 {
 #ifdef __WIDECHAR__
     size_t              rcConvert;
@@ -92,15 +106,18 @@ _WCRTLINK int __F_NAME(mkdir,_wmkdir)( const CHAR_TYPE *path )
     return( mkdir( mbcsPath ) );
 #else
   #ifdef __WATCOM_LFN__
-    unsigned        rc = 0;
+    unsigned    rc = 0;
 
-    if( _RWD_uselfn && (rc = __mkdir_lfn( __F_NAME(path,mbcsPath) )) == 0 ) {
-        return( rc );
+    if( _RWD_uselfn && (rc = _mkdir_lfn( path )) == 0 ) {
+        return( 0 );
     }
     if( IS_LFN_ERROR( rc ) ) {
-        return( rc );
+        return( -1 );
     }
   #endif
-    return( __mkdir_sfn( __F_NAME(path,mbcsPath) ) );
+    if( __mkdir_sfn( path ) ) {
+        return( -1 );
+    }
+    return( 0 );
 #endif
 }

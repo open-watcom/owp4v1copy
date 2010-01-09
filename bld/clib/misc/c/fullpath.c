@@ -90,6 +90,7 @@ extern char *ConvertNameToFullPath( const char *, char * );
 
 #if defined(__QNX__)
 static char *__qnx_fullpath( char *fullpath, const char *path )
+/*************************************************************/
 {
     struct {
             struct _io_open _io_open;
@@ -288,7 +289,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     const CHAR_TYPE     *p;
     CHAR_TYPE           *q;
     size_t              len;
-    unsigned            path_drive_idx;
+    int                 path_drive_idx;
     char                curr_dir[ _MAX_PATH ];
 
     p = path;
@@ -325,10 +326,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
             return( NULL );
         }
   #else
-        tiny_ret_t rc;
-
-        rc = TinyGetCWDir( curr_dir, path_drive_idx );
-        if( TINY_ERROR( rc ) ) {
+        if( _getdcwd( path_drive_idx, curr_dir, sizeof( curr_dir ) ) == NULL ) {
             __set_errno( ENOENT );
             return( NULL );
         }
@@ -417,7 +415,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
 
 _WCRTLINK CHAR_TYPE *__F_NAME(_fullpath,_wfullpath)
                 ( CHAR_TYPE *buff, const CHAR_TYPE *path, size_t size )
-/*******************************************************************/
+/*********************************************************************/
 {
     CHAR_TYPE *ptr = NULL;
 

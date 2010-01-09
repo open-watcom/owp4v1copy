@@ -47,6 +47,9 @@ MEMTOP      equ 2
 ENVIRON     equ 2Ch
 CMDLDATA    equ 81h
 
+FLG_NO87    equ 1
+FLG_LFN     equ 100h
+
 .286p
 
         name    cstart
@@ -154,7 +157,7 @@ _DATA   segment word public 'DATA'
         extrn   "C",_cbyte              : word
         extrn   "C",_child              : word
         extrn   __no87                  : byte
-        extrn   __uselfn                : byte
+        extrn   "C",__uselfn            : byte
         extrn   "C",__FPE_handler       : dword
         extrn   "C",_LpCmdLine          : dword
         extrn   "C",_LpPgmName          : dword
@@ -366,26 +369,40 @@ noparm: sub     al,al
 ;
         mov     ds,ds:[ENVIRON]         ; get segment addr of environment area
         sub     si,si                   ; offset 0
-        xor     bp,bp                   ; no87 not present!
-L0:     mov     ax,[si]                 ; get first part of environment var
+        mov     bp,FLG_LFN              ; NO87 not present and LFN=N not present!
+L1:     mov     ax,[si]                 ; get first part of environment var
         or      ax,2020H                ; lower case
         cmp     ax,"on"                 ; if first part is 'NO'
-        jne     L1                      ; - then
-        mov     ax,2[si]                ; - get second part
-        cmp     ax,"78"                 ; - if second part is '87'
-        jne     L1                      ; - then
-        inc     bp                      ; - - set bp to indicate NO87
-L1:     cmp     byte ptr [si],0         ; end of string ?
+        jne     L2                      ; then
+        cmp     word ptr [si+2],"78"    ; if second part is '87'
+        jne     L3                      ; then
+        cmp     byte ptr [si+4],"="     ; if third part is '='
+        jne     L3                      ; then
+        or      bp,FLG_NO87             ; set bp to indicate NO87
+        jmp     L3                      ; -
+L2:     cmp     ax,"fl"                 ; if first part is 'LF'
+        jne     L4                      ; then
+        mov     ax,2[si]                ; get second part
+        or      al,20h                  ; lower case
+        cmp     ax,"=n"                 ; if second part is 'N='
+        jne     L4                      ; then
+        mov     al,4[si]                ; get third part
+        or      al,20h                  ; lower case
+        cmp     al,"n"                  ; if third part is 'N'
+        jne     L4                      ; then
+        and     bp,not FLG_LFN          ; set bp to indicate no LFN
+L3:     add     si,5                    ; skip 'NO87=' or 'LFN=N'
+L4:     cmp     byte ptr [si],0         ; end of string ?
         lodsb
-        jne     L1                      ; until end of string
+        jne     L4                      ; until end of string
         cmp     byte ptr [si],0         ; end of all strings ?
-        jne     L0                      ; if not, then skip next string
+        jne     L1                      ; if not, then skip next string
         lodsb
         inc     si                      ; - point to program name
         inc     si                      ; - . . .
-L2:     cmp     byte ptr [si],0         ; - end of pgm name ?
+L5:     cmp     byte ptr [si],0         ; - end of pgm name ?
         movsb                           ; - copy a byte
-        jne     L2                      ; - until end of pgm name
+        jne     L5                      ; - until end of pgm name
 nopgmname:                              ; endif
 
         assume  ds:DGROUP
@@ -396,8 +413,8 @@ nopgmname:                              ; endif
         mov     word ptr _LpPgmName+2,es ; ...
         mov     bx,sp                   ; end of stack in data segment
         mov     ax,bp
-        or      __no87,al               ; set state of "NO87" environment var
-        or      __uselfn,ah             ; set state of "LFN" environment var
+        mov     __no87,al               ; set state of "NO87" environment var
+        and     __uselfn,ah             ; set "LFN" support status
         mov     _STACKLOW,di            ; save low address of stack
 
         mov     cx,offset DGROUP:_end   ; end of _BSS segment (start of STACK)
@@ -477,9 +494,9 @@ __do_exit_with_msg__:
         pop     dx                      ; . . .
         mov     si,dx                   ; get address of msg
         cld                             ; make sure direction forward
-L3:     lodsb                           ; get char
+L6:     lodsb                           ; get char
         cmp     al,0                    ; end of string?
-        jne     L3                      ; no
+        jne     L6                      ; no
         mov     cx,si                   ; calc length of string
         sub     cx,dx                   ; . . .
         dec     cx                      ; . . .

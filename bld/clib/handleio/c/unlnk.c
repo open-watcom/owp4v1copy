@@ -32,34 +32,29 @@
 
 #include "variety.h"
 #include "widechar.h"
-#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
-#include "tinyio.h"
 #include "seterrno.h"
-#include "rtdata.h"
 #include "_doslfn.h"
 
 #ifdef _M_I86
-  #ifdef __BIG_DATA__   // 16-bit far data
+  #ifdef __BIG_DATA__
     #define AUX_INFO    \
         parm caller     [dx ax] \
         modify exact    [ax];
-  #else                 // 16-bit near data
+  #else
     #define AUX_INFO    \
         parm caller     [dx] \
         modify exact    [ax];
   #endif
-#else                   // 32-bit near data
+#else
     #define AUX_INFO    \
         parm caller     [edx] \
         modify exact    [eax];
 #endif
 
-extern unsigned __doserror_( unsigned );
-#pragma aux __doserror_ "*"
-
-extern unsigned __dos_unlink_sfn( const char *filename );
-#pragma aux __dos_unlink_sfn = \
+extern unsigned __unlink_sfn( const char *filename );
+#pragma aux __unlink_sfn = \
         _SET_DSDX       \
         _MOV_AH DOS_UNLINK \
         _INT_21         \
@@ -67,16 +62,35 @@ extern unsigned __dos_unlink_sfn( const char *filename );
         "call __doserror_" \
         AUX_INFO
 
-extern unsigned __dos_unlink_lfn( const char *filename );
-#pragma aux __dos_unlink_lfn = \
-        _SET_DSDX       \
-        LFN_DOS_UNLINK  \
-        _RST_DS         \
-        "call __doserror_" \
-        AUX_INFO
+#if defined( __WATCOM_LFN__ ) && !defined( __WIDECHAR__ )
+static unsigned _unlink_lfn( const char *filename )
+/*************************************************/
+{
+#ifdef _M_I86
+    return( __unlink_lfn( filename ) );
+#else
+    call_struct     dpmi_rm;
 
+    strcpy( RM_TB_PARM1_LINEAR, filename );
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.ds  = RM_TB_PARM1_SEGM;
+    dpmi_rm.edx = RM_TB_PARM1_OFFS;
+    dpmi_rm.esi = 0;
+    dpmi_rm.eax = 0x7141;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( __set_errno_dos_reterr( (unsigned short)dpmi_rm.eax ) );
+    }
+    return( 0 );
+#endif
+}
+#endif
 
 _WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename )
+/******************************************************************/
 {
 #ifdef __WIDECHAR__
     char    mbFilename[MB_CUR_MAX * _MAX_PATH]; /* single-byte char */
@@ -86,16 +100,19 @@ _WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename )
     }
     return( unlink( mbFilename ) );
 #else
-  #if defined( __WATCOM_LFN__ )
+  #ifdef __WATCOM_LFN__
     unsigned    rc = 0;
 
-    if( _RWD_uselfn && (rc = __dos_unlink_lfn( filename )) == 0 ) {
-        return( rc );
+    if( _RWD_uselfn && (rc = _unlink_lfn( filename )) == 0 ) {
+        return( 0 );
     }
     if( IS_LFN_ERROR( rc ) ) {
-        return( rc );
+        return( -1 );
     }
   #endif
-    return( __dos_unlink_sfn( filename ) );
+    if( __unlink_sfn( filename ) ) {
+        return( -1 );
+    }
+    return( 0 );
 #endif
 }

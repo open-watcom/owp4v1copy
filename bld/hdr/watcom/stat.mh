@@ -13,6 +13,10 @@
 
 :include owrtlink.sp
 
+:segment DOS
+:include lfndos.sp
+
+:endsegment
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif

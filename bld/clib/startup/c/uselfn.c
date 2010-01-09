@@ -32,5 +32,8 @@
 #include "variety.h"
 #include "rtdata.h"
 
-
-unsigned char	_uselfn = 0;
+#if defined( _M_I86 ) || defined( __DOS__ ) || defined( __WINDOWS__ )
+unsigned char   __uselfn = 0;
+#else
+unsigned char   __uselfn = 1;
+#endif

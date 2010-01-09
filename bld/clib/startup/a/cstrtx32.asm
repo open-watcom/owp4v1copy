@@ -187,7 +187,7 @@ __D16Infoseg   dw       0020h   ; DOS/4G kernel segment
         extrn   "C",_Envseg             : word
         extrn   "C",_Envptr             : dword
         extrn   __no87                  : byte
-        extrn   __uselfn                : byte
+        extrn   "C",__uselfn            : byte
         extrn   "C",_Extender           : byte
         extrn   "C",_child              : dword
         extrn   "C",_STACKTOP           : dword
@@ -292,8 +292,8 @@ noparm: sub     al,al
         push    edi                     ; save pointer to pgm name
         sub     ebp,ebp                 ; assume "NO87" env. var. not present
 L1:     mov     eax,[esi]               ; get first 4 characters
-        or      eax,20202020h           ; map to lower case
-        cmp     eax,'78on'              ; check for "no87"
+        or      eax,2020h               ; map to lower case
+        cmp     eax,37386f6eh           ; check for 'no87'
         jne     short L2                ; skip if not "no87"
         cmp     byte ptr 4[esi],'='     ; make sure next char is "="
         jne     short L2                ; no
@@ -318,8 +318,8 @@ L3:     cmp     byte ptr [esi],0        ; end of pgm name ?
         pop     esi                     ; restore address of pgm name
 
         mov     eax,ebp
-        or      __no87,al               ; set state of "NO87" enironment var
-        or      __uselfn,ah             ; set state of "LFN" enironment var
+        mov     __no87,al               ; set state of "NO87" enironment var
+        and     __uselfn,ah             ; set "LFN" support status
 
         mov     ecx,offset DGROUP:_end  ; end of _BSS segment (start of STACK)
         mov     _dynend,ecx             ; top of dynamic memory allocation

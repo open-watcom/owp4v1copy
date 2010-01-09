@@ -29,105 +29,361 @@
 ****************************************************************************/
 
 
+#ifndef __DOSLFN_H_INCLUDED
+#define __DOSLFN_H_INCLUDED
+
+#include <dos.h>
+#include "tinyio.h"
+#include "rtdata.h"
+
 #define DOS_GET_DTA         0x2F
 #define DOS_CREATE_NEW      0x5B
 
-#define EX_LFN_OPEN         0x00
+#define EX_LFN_OPEN         0x01
 #define EX_LFN_CREATE       0x12
 #define EX_LFN_CREATE_NEW   0x10
-
-#define _PUSH_BX            0x53
-#define _PUSH_SI            0x56
-#define _POP_BX             0x5B
-#define _POP_SI             0x5E
 
 #define _XCHG_AX_DX         0x92
 #define _XCHG_AX_SI         0x96
 
+#ifdef _M_I86
 #ifdef __BIG_DATA__
-    #define _RST_DS     _POP_DS
-    #define _SET_DSDX   _PUSH_DS _XCHG_AX_DX _MOV_DS_AX
-    #define _SET_DSSI   _PUSH_DS _XCHG_AX_SI _MOV_DS_AX
+    #define _SET_DSDX       _PUSH_DS _XCHG_AX_DX _MOV_DS_AX
+    #define _SET_DSSI       _PUSH_DS _XCHG_AX_SI _MOV_DS_AX
+    #define _SET_ESDI
+    #define _RST_DS         _POP_DS
+    #define _RST_ES
 #else
-    #define _RST_DS
     #define _SET_DSDX
     #define _SET_DSSI
+    #define _SET_ESDI       _PUSH_ES _PUSH_DS _POP_ES
+    #define _RST_DS
+    #define _RST_ES         _POP_ES
+  #endif
+#else
+    #define _SET_DSDX
+    #define _SET_DSSI
+    #define _SET_ESDI
+    #define _RST_DS
+    #define _RST_ES
 #endif
 
-#define LFN_CREATE_EX   \
-        "mov ax,716Ch"  \
-        "stc"           \
-        "int  21h"
+/* The find block for the LFN find */
+typedef struct {
+    long    attributes;
+    long    creattime;
+    long    creatdate;
+    long    accesstime;
+    long    accessdate;
+    long    wrtime;
+    long    wrdate;
+    long    hfilesize;
+    long    lfilesize;
+    long    reserved[2];
+    char    lfn[NAME_MAX + 1];
+    char    sfn[14];
+} lfnfind_t;
 
-#define LFN_FIND_FIRST  \
-        _PUSH_SI        \
+extern unsigned __doserror_( unsigned );
+#pragma aux __doserror_ "*" parm caller;
+
+#ifdef _M_I86
+
+extern unsigned __dos_create_ex_lfn( const char *name, unsigned mode, unsigned attrib, unsigned action, int *handle );
+  #ifdef __BIG_DATA__
+    #pragma aux __dos_create_ex_lfn = \
+        "push ds"       \
+        "xchg ax,si"    \
+        "mov  ds,ax"    \
+        "mov  ax,716Ch" \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "jc short L1"   \
+        "mov  es:[di],ax" \
+    "L1: call __doserror_" \
+        parm caller     [si ax] [bx] [cx] [dx] [es di] \
+        modify exact    [ax cx si];
+  #else
+    #pragma aux __dos_create_ex_lfn = \
+        "mov  ax,716Ch" \
+        "stc"           \
+        "int  21h"      \
+        "jc short L1"   \
+        "mov  [di],ax"  \
+    "L1: call __doserror_" \
+        parm caller     [si] [bx] [cx] [dx] [di] \
+        modify exact    [ax cx];
+  #endif
+
+extern tiny_ret_t __dos_find_first_lfn( const char *path, unsigned attr, lfnfind_t __far *lfndta );
+  #ifdef __BIG_DATA__
+    #pragma aux __dos_find_first_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
         "mov  si,1"     \
         "mov  ax,714Eh" \
         "stc"           \
         "int 21h"       \
-        _POP_SI
+        "pop  ds"       \
+        "sbb  dx,dx"    \
+        parm caller     [dx ax] [cx] [es di] \
+        value           [dx ax] \
+        modify exact    [ax cx dx si];
+  #else
+    #pragma aux __dos_find_first_lfn = \
+        "mov  si,1"     \
+        "mov  ax,714Eh" \
+        "stc"           \
+        "int  21h"      \
+        "sbb  dx,dx"    \
+        parm caller     [dx] [cx] [es di] \
+        value           [dx ax] \
+        modify exact    [ax cx dx si];
+  #endif
 
-#define LFN_FIND_NEXT   \
-        _PUSH_SI        \
+extern unsigned __dos_find_next_lfn( unsigned handle, lfnfind_t __far *lfndta );
+#pragma aux __dos_find_next_lfn = \
         "mov  si,1"     \
         "mov  ax,714fh" \
         "stc"           \
-        "int 21h"       \
-        _POP_SI
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [bx] [es di] \
+        modify exact    [ax cx si];
 
-#define LFN_FIND_CLOSE  \
+extern unsigned __dos_find_close_lfn( unsigned handle );
+#pragma aux __dos_find_close_lfn = \
         "mov  ax,71A1h" \
         "stc"           \
-        "int  21h"
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [bx] \
+        modify exact    [ax];
 
-#define LFN_GET_FILE_ATTR \
-        _PUSH_BX        \
+extern unsigned __dos_getfileattr_lfn( const char *path, unsigned *attr );
+  #ifdef __BIG_DATA__
+    #pragma aux __dos_getfileattr_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
         "mov  bl,0"     \
         "mov  ax,7143h" \
         "stc"           \
         "int  21h"      \
-        _POP_BX
+        "pop  ds"       \
+        "jc short L1"   \
+        "mov  es:[di],cx" \
+    "L1: call __doserror_" \
+        parm caller     [dx ax] [es di] \
+        modify exact    [ax bl cx dx];
+  #else
+    #pragma aux __dos_getfileattr_lfn = \
+        "mov  bl,0"     \
+        "mov  ax,7143h" \
+        "stc"           \
+        "int  21h"      \
+        "jc short L1"   \
+        "mov  [di],cx"  \
+    "L1: call __doserror_" \
+        parm caller     [dx] [di] \
+        modify exact    [ax bl cx];
+  #endif
 
-#define LFN_SET_FILE_ATTR \
-        _PUSH_BX        \
+extern unsigned __dos_setfileattr_lfn( const char *path, unsigned attr );
+  #ifdef __BIG_DATA__
+    #pragma aux __dos_setfileattr_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
         "mov  bl,1"     \
         "mov  ax,7143h" \
         "stc"           \
         "int  21h"      \
-        _POP_BX
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [dx ax] [cx] \
+        modify exact    [ax bl dx];
+  #else
+    #pragma aux __dos_setfileattr_lfn = \
+        "mov  bl,1"     \
+        "mov  ax,7143h" \
+        "stc"           \
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [dx] [cx] \
+        modify exact    [ax bl];
+  #endif
 
-#define LFN_DOS_RENAME  \
+extern unsigned __getdcwd_lfn( const char *path, unsigned char drv );
+  #ifdef __BIG_DATA__
+    #pragma aux __getdcwd_lfn = \
+        "push ds"       \
+        "xchg ax,si"    \
+        "mov  ds,ax"    \
+        "mov ax,7147h"  \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [si ax] [dl] \
+        modify exact    [ax si];
+  #else
+    #pragma aux __getdcwd_lfn = \
+        "mov ax,7147h"  \
+        "stc"           \
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [si] [dl] \
+        modify exact    [ax];
+  #endif
+
+extern unsigned __chdir_lfn( const char *path );
+  #ifdef __BIG_DATA__
+    #pragma aux __chdir_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
+        "mov  ax,713Bh" \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [dx ax] \
+        modify exact    [ax dx];
+  #else
+    #pragma aux __chdir_lfn = \
+        "mov  ax,713Bh" \
+        "stc"           \
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [dx] \
+        modify exact    [ax];
+  #endif
+
+extern unsigned __mkdir_lfn( const char *path );
+  #ifdef __BIG_DATA__
+    #pragma aux __mkdir_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
+        "mov  ax,7139h" \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [dx ax] \
+        modify exact    [ax dx];
+  #else
+    #pragma aux __mkdir_lfn = \
+        "mov  ax,7139h" \
+        "stc"           \
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [dx] \
+        modify exact    [ax];
+  #endif
+
+extern unsigned __rmdir_lfn( const char *path );
+  #ifdef __BIG_DATA__
+#pragma aux __rmdir_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
+        "mov  ax,713Ah" \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [dx ax] \
+        modify exact    [ax dx];
+  #else
+#pragma aux __rmdir_lfn = \
+        "mov  ax,713Ah" \
+        "stc"           \
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [dx] \
+        modify exact    [ax];
+  #endif
+
+extern unsigned __rename_lfn( const char *old, const char *new );
+  #ifdef __BIG_DATA__
+    #pragma aux __rename_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
         "mov  ax,7156h" \
         "stc"           \
-        "int  21h"
+        "int  21h"      \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [dx ax] [es di] \
+        modify exact    [ax dx];
+  #else
+    #pragma aux __rename_lfn = \
+        "push es"       \
+        "mov  ax,ds"    \
+        "mov  es,ax"    \
+        "mov  ax,7156h" \
+        "stc"           \
+        "int  21h"      \
+        "pop  es"       \
+        "call __doserror_" \
+        parm caller     [dx] [di] \
+        modify exact    [ax];
+  #endif
 
-#define LFN_DOS_UNLINK  \
-        _PUSH_SI        \
+extern unsigned __dos_utime_lfn( const char *path, unsigned time, unsigned date, unsigned mode );
+  #ifdef __BIG_DATA__
+    #pragma aux __dos_utime_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
+        "mov  ax,7143h" \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [dx ax] [cx] [di] [bx] \
+        modify exact    [ax dx];
+  #else
+    #pragma aux __dos_utime_lfn = \
+        "mov  ax,7143h" \
+        "stc"           \
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [dx] [cx] [di] [bx] \
+        modify exact    [ax];
+  #endif
+
+extern unsigned __unlink_lfn( const char *filename );
+  #ifdef __BIG_DATA__
+    #pragma aux __unlink_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
         "mov  si,0"     \
         "mov  ax,7141h" \
         "stc"           \
         "int  21h"      \
-        _POP_SI
-
-#define LFN_DOS_MKDIR   \
-        "mov ax,7139h"  \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [dx ax] \
+        modify exact    [ax dx si];
+  #else
+    #pragma aux __unlink_lfn = \
+        "mov  si,0"     \
+        "mov  ax,7141h" \
         "stc"           \
-        "int  21h"
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [dx] \
+        modify exact    [ax si];
+  #endif
 
-#define LFN_DOS_RMDIR   \
-        "mov ax,713Ah"  \
-        "stc"           \
-        "int  21h"
-
-#define LFN_DOS_CHDIR   \
-        "mov ax,713Bh"  \
-        "stc"           \
-        "int  21h"
-
-#define LFN_DOS_GET_CWD \
-        "mov ax,7147h"  \
-        "stc"           \
-        "int  21h"
+#endif
 
 #define MOV_DTA         \
         "mov  ecx,43"   \
@@ -153,12 +409,6 @@
         SAVE_VALUE      \
 "L1:"
 
-#define RETURN_VALUE_EX \
-        "jc short L1"   \
-        SAVE_VALUE_EX   \
-"L1:"
-
-#define IS_LFN_ERROR(x)     ((x)!=0&&(x)!= 0x7100)
 
 typedef struct {
     unsigned short  cr_time;
@@ -176,6 +426,39 @@ typedef struct {
 #define HANDLE_OF(x)    (((__lfndta *)(x))->handle)
 #define SIGN_OF(x)      (((__lfndta *)(x))->sign)
 
-#define _LFN_SIGN       0x004e464cUL    // "LFN"
+#define _LFN_SIGN           0x004e464cUL    // "LFN"
 
-#define IS_LFN(x)       (((__lfndta *)(x))->sign==_LFN_SIGN&&((__lfndta *)(x))->handle)
+#define IS_LFN_ERROR(x)     ((x)!=0&&(x)!= 0x7100)
+
+#define IS_LFN(x)           (_RWD_uselfn && ((__lfndta *)(x))->sign == _LFN_SIGN && ((__lfndta *)(x))->handle)
+
+#if defined( __WATCOM_LFN__ ) && !defined( _M_I86 )
+
+extern char             * const __lfn_rm_tb_linear;
+extern unsigned short   const __lfn_rm_tb_segment;
+
+#define RM_TB_PARM1_SIZE    ( MB_CUR_MAX * _MAX_PATH )
+#define RM_TB_PARM2_SIZE    ( MB_CUR_MAX * _MAX_PATH )
+#define RM_TB_PARM1_SEGM    __lfn_rm_tb_segment
+#define RM_TB_PARM1_OFFS    0
+#define RM_TB_PARM1_LINEAR  __lfn_rm_tb_linear
+#define RM_TB_PARM2_SEGM    __lfn_rm_tb_segment
+#define RM_TB_PARM2_OFFS    RM_TB_PARM1_SIZE
+#define RM_TB_PARM2_LINEAR  (__lfn_rm_tb_linear + RM_TB_PARM1_SIZE)
+
+extern unsigned __dpmi_dos_call( call_struct *cs );
+#pragma aux __dpmi_dos_call = \
+        "push es"       \
+        "mov  es,dx"    \
+        "xor  cx,cx"    \
+        "mov  bx,21h"   \
+        "mov  ax,300h"  \
+        "int  31h"      \
+        "pop  es"       \
+        "sbb  eax,eax"  \
+        parm caller     [dx edi] \
+        modify exact    [eax bx cx];
+
+#endif
+
+#endif

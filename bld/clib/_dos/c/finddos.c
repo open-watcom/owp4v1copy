@@ -30,24 +30,20 @@
 
 
 #include "variety.h"
+#include <stdlib.h>
 #include <string.h>
-#include <dos.h>
-#include "tinyio.h"
-#include "rtdata.h"
+#include <mbstring.h>
 #include "seterrno.h"
 #include "_doslfn.h"
 
-extern unsigned __doserror_( unsigned );
-#pragma aux __doserror_ "*"
-
 extern unsigned char _Extender;
 
-extern unsigned __dos_find_first_dta( const char *path, unsigned attr, struct find_t *fdta );
+extern unsigned __dos_find_first_dta( const char *path, unsigned attrib, struct find_t *fdta );
 extern unsigned __dos_find_next_dta( struct find_t *fdta );
 extern unsigned __dos_find_close_dta( struct find_t *fdta );
 
 #if defined( _M_I86 )
-  #ifdef __BIG_DATA__   // 16-bit far data
+  #ifdef __BIG_DATA__
     #pragma aux __dos_find_first_dta = \
         _SET_DSDX       \
         "push es"       \
@@ -81,14 +77,13 @@ extern unsigned __dos_find_close_dta( struct find_t *fdta );
 
   #else                 // 16-bit near data
     #pragma aux __dos_find_first_dta = \
-        "xchg bx,dx"    \
         _MOV_AH DOS_SET_DTA \
         _INT_21         \
-        "xchg bx,dx"    \
+        "mov  dx,bx"    \
         _MOV_AH DOS_FIND_FIRST \
         _INT_21         \
         "call __doserror_" \
-        parm caller     [dx] [cx] [bx] \
+        parm caller     [bx] [cx] [dx] \
         modify exact    [ax];
 
     #pragma aux __dos_find_next_dta = \
@@ -183,107 +178,110 @@ extern unsigned __dos_find_close_dta( struct find_t *fdta );
 #endif
 
 #ifdef __WATCOM_LFN__
-/* The find block for the LFN find */
-typedef struct {
-    long    attributes;
-    long    creattime;
-    long    creatdate;
-    long    accesstime;
-    long    accessdate;
-    long    wrtime;
-    long    wrdate;
-    long    hfilesize;
-    long    lfilesize;
-    char    reserved[8];
-    char    lfn[NAME_MAX + 1];
-    char    sfn[14];
-} lfnfind_t;
-
-extern tiny_ret_t __dos_find_first_lfn( const char *path, unsigned attr, lfnfind_t __far *lfndta );
-extern unsigned __dos_find_next_lfn( unsigned handle, lfnfind_t __far *lfndta );
-extern unsigned __dos_find_close_lfn( unsigned handle );
-
-#if defined( _M_I86 )
-  #ifdef __BIG_DATA__   // 16-bit far data
-    #pragma aux __dos_find_first_lfn = \
-        _SET_DSDX       \
-        LFN_FIND_FIRST  \
-        _SBB_DX_DX      \
-        _RST_DS         \
-        parm caller     [dx ax] [cx] [es di] \
-        value           [dx ax] \
-        modify exact    [ax cx dx];
-  #else                 // 16-bit near data
-    #pragma aux __dos_find_first_lfn = \
-        LFN_FIND_FIRST  \
-        _SBB_DX_DX      \
-        parm caller     [dx] [cx] [es di] \
-        value           [dx ax] \
-        modify exact    [ax cx dx];
-  #endif
-    #pragma aux __dos_find_next_lfn = \
-        LFN_FIND_NEXT   \
-        "call __doserror_" \
-        parm caller     [bx] [es di] \
-        modify exact    [ax cx];
-
-    #pragma aux __dos_find_close_lfn = \
-        LFN_FIND_CLOSE  \
-        "call __doserror_" \
-        parm caller     [bx] \
-        modify exact    [ax];
-
-#else                   // 32-bit near data
-    #pragma aux __dos_find_first_lfn = \
-        LFN_FIND_FIRST  \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [edx] [ecx] [es edi] \
-        modify exact    [eax ecx];
-
-    #pragma aux __dos_find_next_lfn = \
-        LFN_FIND_NEXT   \
-        "call __doserror_" \
-        parm caller     [ebx] [es edi] \
-        modify exact    [eax ecx];
-
-    #pragma aux __dos_find_close_lfn = \
-        LFN_FIND_CLOSE  \
-        "call __doserror_" \
-        parm caller     [ebx] \
-        modify exact    [eax];
-
-#endif
-
-
-static void convert_to_find_t( struct find_t *fdta, lfnfind_t *lfnblock )
-/***********************************************************************/
+static void convert_to_find_t( struct find_t *fdta, lfnfind_t *lfndta )
+/*********************************************************************/
 {
-    fdta->attrib      = lfnblock->attributes;
-    CRTIME_OF( fdta ) = lfnblock->creattime;
-    CRDATE_OF( fdta ) = lfnblock->creatdate;
-    ACTIME_OF( fdta ) = lfnblock->accesstime;
-    ACDATE_OF( fdta ) = lfnblock->accessdate;
-    fdta->wr_time     = lfnblock->wrtime;
-    fdta->wr_date     = lfnblock->wrdate;
-    fdta->size        = lfnblock->lfilesize;
-    strcpy( fdta->name, ( *lfnblock->lfn != '\0' ) ? lfnblock->lfn : lfnblock->sfn );
+    fdta->attrib  = lfndta->attributes;
+    CRTIME_OF( fdta ) = lfndta->creattime;
+    CRDATE_OF( fdta ) = lfndta->creatdate;
+    ACTIME_OF( fdta ) = lfndta->accesstime;
+    ACDATE_OF( fdta ) = lfndta->accessdate;
+    fdta->wr_time = lfndta->wrtime;
+    fdta->wr_date = lfndta->wrdate;
+    fdta->size    = lfndta->lfilesize;
+    strcpy( fdta->name, ( *lfndta->lfn != '\0' ) ? lfndta->lfn : lfndta->sfn );
+}
+
+static tiny_ret_t _dos_find_first_lfn( const char *path, unsigned attrib, 
+                                                             lfnfind_t *lfndta )
+/******************************************************************************/
+{
+#ifdef _M_I86
+    return( __dos_find_first_lfn( path, attrib, lfndta ) );
+#else
+    call_struct     dpmi_rm;
+
+    strcpy( RM_TB_PARM1_LINEAR, path );
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.ds  = RM_TB_PARM1_SEGM;
+    dpmi_rm.edx = RM_TB_PARM1_OFFS;
+    dpmi_rm.es  = RM_TB_PARM2_SEGM;
+    dpmi_rm.edi = RM_TB_PARM2_OFFS;
+    dpmi_rm.ecx = attrib;
+    dpmi_rm.esi = 1;
+    dpmi_rm.eax = 0x714E;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( dpmi_rm.eax | ~ 0xFFFF );
+    }
+    memcpy( lfndta, RM_TB_PARM2_LINEAR, sizeof( *lfndta ) );
+    return( (unsigned short)dpmi_rm.eax );
+#endif
+}
+
+static unsigned _dos_find_next_lfn( unsigned handle, lfnfind_t *lfndta )
+/**********************************************************************/
+{
+#ifdef _M_I86
+    return( __dos_find_next_lfn( handle, lfndta ) );
+#else
+    call_struct     dpmi_rm;
+
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.es  = RM_TB_PARM1_SEGM;
+    dpmi_rm.edi = RM_TB_PARM1_OFFS;
+    dpmi_rm.ebx = handle;
+    dpmi_rm.esi = 1;
+    dpmi_rm.eax = 0x714F;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( __set_errno_dos_reterr( (unsigned short)dpmi_rm.eax ) );
+    }
+    memcpy( lfndta, RM_TB_PARM1_LINEAR, sizeof( *lfndta ) );
+    return( 0 );
+#endif
+}
+
+static unsigned _dos_find_close_lfn( unsigned handle )
+/****************************************************/
+{
+#ifdef _M_I86
+    return( __dos_find_close_lfn( handle ) );
+#else
+    call_struct     dpmi_rm;
+
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.ebx = handle;
+    dpmi_rm.eax = 0x71A1;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( __set_errno_dos_reterr( (unsigned short)dpmi_rm.eax ) );
+    }
+    return( 0 );
+#endif
 }
 #endif //__WATCOM_LFN__
 
-_WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
-                                  struct find_t *fdta )
-/******************************************************/
+_WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attrib,
+                                                           struct find_t *fdta )
+/******************************************************************************/
 {
 #ifdef __WATCOM_LFN__
     lfnfind_t       lfndta;
     tiny_ret_t      rc = 0;
-#endif
 
     SIGN_OF( fdta )   = 0;
     HANDLE_OF( fdta ) = 0;
-#ifdef __WATCOM_LFN__
-    if( _RWD_uselfn && TINY_OK( rc = __dos_find_first_lfn( path, attr, &lfndta ) ) ) {
+    if( _RWD_uselfn && TINY_OK( rc = _dos_find_first_lfn( path, attrib, &lfndta ) ) ) {
         convert_to_find_t( fdta, &lfndta );
         SIGN_OF( fdta )   = _LFN_SIGN;
         HANDLE_OF( fdta ) = TINY_INFO( rc );
@@ -293,7 +291,7 @@ _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr,
         return( __set_errno_dos_reterr( TINY_INFO( rc ) ) );
     }
 #endif
-    return( __dos_find_first_dta( path, attr, fdta ) );
+    return( __dos_find_first_dta( path, attrib, fdta ) );
 }
 
 
@@ -304,8 +302,8 @@ _WCRTLINK unsigned _dos_findnext( struct find_t *fdta )
     lfnfind_t       lfndta;
     unsigned        rc;
 
-    if( _RWD_uselfn && IS_LFN( fdta ) ) {
-        rc = __dos_find_next_lfn( HANDLE_OF( fdta ), &lfndta );
+    if( IS_LFN( fdta ) ) {
+        rc = _dos_find_next_lfn( HANDLE_OF( fdta ), &lfndta );
         if( rc == 0 ) {
             convert_to_find_t( fdta, &lfndta );
         }
@@ -320,8 +318,8 @@ _WCRTLINK unsigned _dos_findclose( struct find_t *fdta )
 /******************************************************/
 {
 #if defined( __WATCOM_LFN__ )
-    if( _RWD_uselfn && IS_LFN( fdta ) ) {
-        return( __dos_find_close_lfn( HANDLE_OF( fdta ) ) );
+    if( IS_LFN( fdta ) ) {
+        return( _dos_find_close_lfn( HANDLE_OF( fdta ) ) );
     }
 #endif
 #ifdef __OSI__

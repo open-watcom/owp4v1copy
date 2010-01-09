@@ -12,6 +12,10 @@
 
 :include owrtlink.sp
 
+:segment DOS
+:include lfndos.sp
+
+:endsegment
 #if defined(_M_IX86) && !defined(_I86_H_INCLUDED)
  #include <i86.h>
 #endif

@@ -134,6 +134,10 @@ using std::wscanf;
 
 :include owrtlink.sp
 
+:segment DOS
+:include lfndos.sp
+
+:endsegment
 :: Only need extern "C" in cstdio
 :segment CNAME
 :include cpluspro.sp

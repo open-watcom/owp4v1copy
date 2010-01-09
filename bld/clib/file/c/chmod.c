@@ -36,6 +36,7 @@
 
 
 _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
+/***************************************************************************/
 {
 #ifdef __WIDECHAR__
     char        mbPath[MB_CUR_MAX * _MAX_PATH];
@@ -45,17 +46,18 @@ _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
     }
     return( chmod( mbPath, pmode ) );
 #else
-    unsigned    rc;
     unsigned    attr;
 
-    rc = _dos_getfileattr( __F_NAME(pathname,mbPath), &attr );
-    if( rc == 0 ) {
-        attr &= ~_A_RDONLY;
-        if( !( pmode & S_IWRITE ) ) {
-            attr |= _A_RDONLY;
-        }
-        rc = _dos_setfileattr( __F_NAME(pathname,mbPath), attr );
+    if( _dos_getfileattr( __F_NAME(pathname,mbPath), &attr ) ) {
+        return( -1 );
     }
-    return( rc );
+    attr &= ~_A_RDONLY;
+    if( !( pmode & S_IWRITE ) ) {
+        attr |= _A_RDONLY;
+    }
+    if( _dos_setfileattr( __F_NAME(pathname,mbPath), attr ) ) {
+        return( -1 );
+    }
+    return( 0 );
 #endif
 }

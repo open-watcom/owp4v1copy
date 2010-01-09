@@ -39,7 +39,7 @@ include mdef.inc
 datasegment
         public  __8087
         public  __real87
-        extrn   __no87 :word
+        extrn   __no87 :byte
 __8087          db  0   ; 0 => no 8087 and no EMU, otherwise 8087 or EMU present
 __real87        db  0   ; 0 => no real 8087 is used, otherwise real 8087 is used
 enddata

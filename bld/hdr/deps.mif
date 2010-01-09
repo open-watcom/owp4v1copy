@@ -26,8 +26,8 @@ signal_deps = ../watcom/signal.mh ../crwatqnx.sp ../readonly.sp ../cpponly.sp ..
 stdarg_deps = ../watcom/stdarg.mh ../crwat.sp ../readonly.sp ../cpponly.sp ../owrtlink.sp $(cplus) ../valist.sp $(extension)
 stddef_deps = ../watcom/stddef.mh ../crwat.sp ../readonly.sp ../cpponly.sp ../owrtlink.sp $(cplus) ../sizet.sp ../wchar_t.sp ../null.sp ../ptrdiff.sp $(saferc) $(extension)
 stdint_deps = ../watcom/stdint.mh ../crwat.sp ../readonly.sp ../cpponly.sp $(saferc) ../exactint.sp
-stdio_deps  = ../watcom/stdio.mh ../crwatqnx.sp ../readonly.sp ../cpponly.sp ../ext.sp $(unixext) ../owrtlink.sp $(cplus) $(packll) ../sizet.sp ../null.sp ../valist.sp ../wchar_t.sp ../wctypet.sp $(saferc)
-stdlib_deps = ../watcom/stdlib.mh ../crwatqnx.sp ../readonly.sp ../cpponly.sp ../ext.sp $(unixext) ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../sizet.sp $(saferc) ../null.sp ../mbmax.sp ../maxpath.sp ../errno.sp ../alloca.sp
+stdio_deps  = ../watcom/stdio.mh ../crwatqnx.sp ../readonly.sp ../cpponly.sp ../ext.sp $(unixext) ../owrtlink.sp ../lfndos.sp $(cplus) $(packll) ../sizet.sp ../null.sp ../valist.sp ../wchar_t.sp ../wctypet.sp $(saferc)
+stdlib_deps = ../watcom/stdlib.mh ../crwatqnx.sp ../readonly.sp ../cpponly.sp ../ext.sp $(unixext) ../owrtlink.sp ../lfndos.sp $(cplus) $(packll) ../wchar_t.sp ../sizet.sp $(saferc) ../null.sp ../mbmax.sp ../maxpath.sp ../errno.sp ../alloca.sp
 string_deps = ../watcom/string.mh ../crwat.sp ../crwatcnt.sp ../readonly.sp ../cpponly.sp $(extension) ../owrtlink.sp $(cplus) ../wchar_t.sp ../wctypet.sp ../sizet.sp $(saferc) ../null.sp ../nlserror.sp ../namwat.sp
 time_deps   = ../watcom/time.mh ../crwat.sp ../readonly.sp ../cpponly.sp ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../sizet.sp ../null.sp ../timet.sp ../clockt.sp $(saferc) ../unixext.sp $(extension)
 wchar_deps  = ../watcom/wchar.mh ../crwat.sp ../readonly.sp ../cpponly.sp $(extension) ../owrtlink.sp $(cplus) ../wchar_t.sp ../wctypet.sp ../sizet.sp $(saferc) ../null.sp ../mbmax.sp 
@@ -157,8 +157,8 @@ complex.h       : $(complex_deps)
 conio.h         : ../watcom/conio.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) ../valist.sp
 crtdbg.h        : ../watcom/crtdbg.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus)
 ctype.h         : $(ctype_deps)
-direct.h        : ../watcom/direct.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../namemax.sp ../dskfreet.sp
-dos.h           : ../watcom/dos.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll) ../wchar_t.sp ../namemax.sp ../dskfreet.sp
+direct.h        : ../watcom/direct.mh ../crwat.sp ../readonly.sp ../owrtlink.sp ../lfndos.sp $(cplus) $(packll) ../wchar_t.sp ../namemax.sp ../dskfreet.sp
+dos.h           : ../watcom/dos.mh ../crwat.sp ../readonly.sp ../owrtlink.sp ../lfndos.sp $(cplus) $(packll) ../wchar_t.sp ../namemax.sp ../dskfreet.sp
 dosfunc.h       : ../watcom/dosfunc.mh ../crwat.sp ../readonly.sp
 eh.h            : ../watcom/eh.mh ../crwat.sp ../readonly.sp ../cpponly.sp
 env.h           : ../watcom/env.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) ../wchar_t.sp $(posixext)
@@ -174,7 +174,7 @@ generic.h       : ../watcom/generic.mh ../crwat.sp ../readonly.sp ../cpponly.sp
 graph.h         : $(graph_deps)
 i86.h           : ../watcom/i86.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll)
 inttypes.h      : ../watcom/inttypes.mh ../crwatqnx.sp ../readonly.sp ../owrtlink.sp $(cplus) ../wchar_t.sp
-io.h            : ../watcom/io.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) $(packll) ../timet.sp ../wchar_t.sp ../maxpath.sp $(extension)
+io.h            : ../watcom/io.mh ../crwat.sp ../readonly.sp ../owrtlink.sp ../lfndos.sp $(cplus) $(packll) ../timet.sp ../wchar_t.sp ../maxpath.sp $(extension)
 iomanip.h       : $(iomanip_deps)
 ios.h           : $(ios_deps)
 iosfwd.h        : $(iosfwd_deps)
@@ -197,7 +197,7 @@ mmintrin.h      : ../watcom/mmintrin.mh ../crwat.sp ../readonly.sp $(cplus)
 new.h           : $(new_deps)
 ostream.h       : $(ostream_deps)
 pgchart.h       : $(pgchart_deps)
-process.h       : ../watcom/process.mh ../crwatqnx.sp ../readonly.sp ../owrtlink.sp $(cplus) ../wchar_t.sp $(extension)
+process.h       : ../watcom/process.mh ../crwatqnx.sp ../readonly.sp ../owrtlink.sp ../lfndos.sp $(cplus) ../wchar_t.sp $(extension)
 search.h        : ../watcom/search.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus)
 setjmp.h        : $(setjmp_deps)
 setjmpex.h      : ../watcom/setjmpex.mh ../crwatqnx.sp ../readonly.sp ../owrtlink.sp $(cplus)
@@ -258,7 +258,7 @@ wsample.h       : ../watcom/wsample.mh ../crwat.sp ../readonly.sp $(cplus)
 !ifeq system dos
 
 fcntl.h         : ../watcom/fcntl.mh ../crwatqnx.sp ../readonly.sp ../owrtlink.sp $(cplus) ../wchar_t.sp $(packll)
-sys/stat.h      : ../watcom/stat.mh ../crwat.sp ../readonly.sp ../owrtlink.sp $(cplus) ../wchar_t.sp $(packll) $(extension)
+sys/stat.h      : ../watcom/stat.mh ../crwat.sp ../readonly.sp ../owrtlink.sp ../lfndos.sp $(cplus) ../wchar_t.sp $(packll) $(extension)
 
 !else ifeq system linux
 

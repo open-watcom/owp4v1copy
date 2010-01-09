@@ -47,6 +47,9 @@
 
 include xinit.inc
 
+FLG_NO87    equ 1
+FLG_LFN     equ 100h
+
         assume  nothing
 
         extrn   __CMain                 : near
@@ -66,7 +69,7 @@ include xinit.inc
         extrn   "C",_STACKTOP           : dword
         extrn   "C",_child              : dword
         extrn   __no87                  : byte
-        extrn   __uselfn                : byte
+        extrn   "C",__uselfn            : byte
         extrn   "C",_Extender           : byte
         extrn   "C",_ExtenderSubtype    : byte
         extrn   "C",_Envptr             : dword
@@ -307,23 +310,28 @@ noparm: sub     al,al
         dec     edi                     ; back up pointer 1
         push    edi                     ; save pointer to pgm name
         push    edx                     ; save ds(stored in dx)
-        ;fixme-start
-        ;mov    ds,es:_Envseg           ; get segment addr of environment area
-        db      26h                     ; force ES segment override
-        mov     ds,_Envseg              ; get segment addr of environment area
-        ;fixme-end
-        sub     ebp,ebp                 ; assume "no87" env. var. not present
+        mov     ds,es:_Envseg           ; get segment addr of environment area
+        mov     ebp,FLG_LFN             ; assume 'no87=' and 'lfn=n' env. var. not present
 L1:     mov     eax,[esi]               ; get first 4 characters
-        or      eax,20202020h           ; map to lower case
-        ;cmp    eax,'78on'              ; check for "no87"
-        cmp     eax,37386f6eh           ; check for "no87"
-        jne     short L2                ; skip if not "no87"
-        cmp     byte ptr 4[esi],'='     ; make sure next char is "="
-        jne     short L2                ; no
-        inc     ebp                     ; - indicate "no87" was present
-L2:     cmp     byte ptr [esi],0        ; end of string ?
+        or      eax,2020h               ; map to lower case
+        cmp     eax,37386f6eh           ; check for 'no87'
+        jne     short L2                ; skip to next test if not 'no87'
+        cmp     byte ptr 4[esi],'='     ; make sure next char is '='
+        jne     short L4                ; no
+        or      ebp,FLG_NO87            ; - indicate 'no87' was present
+        jmp     L3
+L2:     or      eax,202020h             ; map to lower case
+        cmp     eax,3d6e666ch           ; check for 'lfn='
+        jne     short L4                ; skip if not 'lfn='
+        mov     al,byte ptr 4[esi]      ; get next character
+        or      al,20h                  ; map to lower case
+        cmp     al,'n'                  ; make sure next char is 'n'
+        jne     short L4                ; no
+        and     ebp,not FLG_LFN         ; indicate no 'lfn=n' present
+L3:     add     esi,5                   ; skip after env.var. name
+L4:     cmp     byte ptr [esi],0        ; end of string ?
         lodsb
-        jne     L2                      ; until end of string
+        jne     L4                      ; until end of string
         cmp     byte ptr [esi],0        ; end of all strings ?
         jne     L1                      ; if not, then skip next string
         lodsb
@@ -332,17 +340,17 @@ L2:     cmp     byte ptr [esi],0        ; end of string ?
 ;
 ;       copy the program name into bottom of stack
 ;
-L3:     cmp     byte ptr [esi],0        ; end of pgm name ?
+L5:     cmp     byte ptr [esi],0        ; end of pgm name ?
         movsb                           ; copy a byte
-        jne     L3                      ; until end of pgm name
+        jne     L5                      ; until end of pgm name
         pop     ds                      ; restore ds
         pop     esi                     ; restore address of pgm name
         mov     ebx,esp                 ; end of stack in data segment
 
         assume  ds:DGROUP
         mov     eax,ebp
-        or      __no87,al               ; set state of "NO87" enironment var
-        or      __uselfn,ah             ; set state of "LFN" enironment var
+        mov     __no87,al               ; set state of "NO87" enironment var
+        and     __uselfn,ah             ; set "LFN" support status
         mov     _STACKLOW,edi           ; save low address of stack
         mov     _dynend,ebx             ; set top of dynamic memory area
 
@@ -397,9 +405,9 @@ __do_exit_with_msg__:
         pop     edx                     ; restore address of msg
         mov     esi,edx                 ; get address of msg
         cld                             ; make sure direction forward
-L4:     lodsb                           ; get char
+L6:     lodsb                           ; get char
         cmp     al,0                    ; end of string?
-        jne     L4                      ; no
+        jne     L6                      ; no
         mov     ecx,esi                 ; calc length of string
         sub     ecx,edx                 ; . . .
         dec     ecx                     ; . . .

@@ -32,54 +32,72 @@
 
 #include "variety.h"
 #include "widechar.h"
-#include <stdio.h>
-#include "tinyio.h"
+#include <string.h>
 #include "seterrno.h"
-#include "rtdata.h"
 #include "_doslfn.h"
 
 #ifdef _M_I86
-  #ifdef __BIG_DATA__   // 16-bit far data
+  #ifdef __BIG_DATA__
     #define AUX_INFO    \
-        parm caller     [dx ax] [es di]\
-        modify exact    [ax];
-  #else                 // 16-bit near data
+        parm caller     [dx ax] [es di] \
+        modify exact    [ax dx];
+  #else
     #define AUX_INFO    \
-        parm caller     [dx] [es di]\
+        parm caller     [dx] [di] \
         modify exact    [ax];
   #endif
-#else                   // 32-bit near data
+#else
     #define AUX_INFO    \
-        parm caller     [edx] [edi]\
+        parm caller     [edx] [edi] \
         modify exact    [eax];
 #endif
 
-extern unsigned __doserror_( unsigned );
-#pragma aux __doserror_ "*"
-
-extern int __dos_rename_sfn( const char *old, const char _WCI86FAR *new );
-#pragma aux __dos_rename_sfn = \
+extern unsigned __rename_sfn( const char *old, const char *new );
+#pragma aux __rename_sfn = \
+        _SET_ESDI       \
         _SET_DSDX       \
         _MOV_AH DOS_RENAME \
         _INT_21         \
         _RST_DS         \
+        _RST_ES         \
         "call __doserror_" \
         AUX_INFO
 
-extern int __dos_rename_lfn( const char *old, const char _WCI86FAR *new );
-#pragma aux __dos_rename_lfn = \
-        _SET_DSDX       \
-        LFN_DOS_RENAME  \
-        _RST_DS         \
-        "call __doserror_" \
-        AUX_INFO
+#if !defined( __WIDECHAR__ ) && defined( __WATCOM_LFN__ )
+static unsigned _rename_lfn( const char *old, const char *new )
+/*************************************************************/
+{
+#ifdef _M_I86
+    return( __rename_lfn( old, new ) );
+#else
+    call_struct     dpmi_rm;
 
+    strcpy( RM_TB_PARM1_LINEAR, old );
+    strcpy( RM_TB_PARM2_LINEAR, new );
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.ds  = RM_TB_PARM1_SEGM;
+    dpmi_rm.edx = RM_TB_PARM1_OFFS;
+    dpmi_rm.es  = RM_TB_PARM2_SEGM;
+    dpmi_rm.edi = RM_TB_PARM2_OFFS;
+    dpmi_rm.eax = 0x7156;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( __set_errno_dos_reterr( (unsigned short)dpmi_rm.eax ) );
+    }
+    return( 0 );
+#endif
+}
+#endif
 
 _WCRTLINK int __F_NAME(rename,_wrename)( const CHAR_TYPE *old, const CHAR_TYPE *new )
+/***********************************************************************************/
 {
 #ifdef __WIDECHAR__
-    char        mbOld[MB_CUR_MAX*_MAX_PATH];    /* single-byte char */
-    char        mbNew[MB_CUR_MAX*_MAX_PATH];    /* single-byte char */
+    char        mbOld[MB_CUR_MAX * _MAX_PATH];      /* single-byte char */
+    char        mbNew[MB_CUR_MAX * _MAX_PATH];      /* single-byte char */
 
     if( wcstombs( mbOld, old, sizeof( mbOld ) ) == -1 ) {
         mbOld[0] = '\0';
@@ -92,14 +110,17 @@ _WCRTLINK int __F_NAME(rename,_wrename)( const CHAR_TYPE *old, const CHAR_TYPE *
   #if defined( __WATCOM_LFN__ )
     unsigned    rc = 0;
 
-    if( _RWD_uselfn && (rc = __dos_rename_lfn( old, new )) == 0 ) {
-        return( rc );
+    if( _RWD_uselfn && (rc = _rename_lfn( old, new )) == 0 ) {
+        return( 0 );
     }
     if( IS_LFN_ERROR( rc ) ) {
-        return( rc );
+        return( -1 );
     }
   #endif
-    return( __dos_rename_sfn( old, new ) );
+    if( __rename_sfn( old, new ) ) {
+        return( -1 );
+    }
+    return( 0 );
 #endif
 }
 

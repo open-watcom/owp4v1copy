@@ -30,11 +30,9 @@
 
 
 #include "variety.h"
-#include <dos.h>
+#include <string.h>
 #include <fcntl.h>
 #include "seterrno.h"
-#include "tinyio.h"
-#include "rtdata.h"
 #include "_doslfn.h"
 
 #ifdef _M_I86
@@ -59,11 +57,8 @@
         modify exact    [eax ecx];
 #endif
 
-extern unsigned __doserror_( unsigned );
-#pragma aux __doserror_ "*"
-
-extern unsigned __dos_get_file_attr_sfn( const char *path, unsigned *attr );
-#pragma aux __dos_get_file_attr_sfn = \
+extern unsigned __dos_getfileattr_sfn( const char *path, unsigned *attrib );
+#pragma aux __dos_getfileattr_sfn = \
         _SET_DSDX       \
         INIT_VALUE      \
         _MOV_AX_W _GET_ DOS_CHMOD \
@@ -73,27 +68,47 @@ extern unsigned __dos_get_file_attr_sfn( const char *path, unsigned *attr );
         "call __doserror_" \
         AUX_INFO
 
-extern unsigned __dos_get_file_attr_lfn( const char *path, unsigned *attr );
-#pragma aux __dos_get_file_attr_lfn = \
-        _SET_DSDX       \
-        INIT_VALUE      \
-        LFN_GET_FILE_ATTR \
-        _RST_DS         \
-        RETURN_VALUE    \
-        "call __doserror_" \
-        AUX_INFO
+#ifdef __WATCOM_LFN__
+static unsigned _dos_getfileattr_lfn( const char *path, unsigned *attrib )
+/************************************************************************/
+{
+  #ifdef _M_I86
+    return( __dos_getfileattr_lfn( path, attrib ) );
+  #else
+    call_struct     dpmi_rm;
+
+    strcpy( RM_TB_PARM1_LINEAR, path );
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.ds  = RM_TB_PARM1_SEGM;
+    dpmi_rm.edx = RM_TB_PARM1_OFFS;
+    dpmi_rm.ecx = 0;
+    dpmi_rm.ebx = 0;
+    dpmi_rm.eax = 0x7143;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( __set_errno_dos_reterr( (unsigned short)dpmi_rm.eax ) );
+    }
+    *attrib = dpmi_rm.ecx;
+    return( 0 );
+  #endif
+}
+#endif
 
 _WCRTLINK unsigned _dos_getfileattr( const char *path, unsigned *attrib )
+/***********************************************************************/
 {
 #ifdef __WATCOM_LFN__
     unsigned    rc = 0;
 
-    if( _RWD_uselfn && (rc = __dos_get_file_attr_lfn( path, attrib )) == 0 ) {
+    if( _RWD_uselfn && (rc = _dos_getfileattr_lfn( path, attrib )) == 0 ) {
         return( rc );
     }
     if( IS_LFN_ERROR( rc ) ) {
         return( rc );
     }
 #endif
-    return( __dos_get_file_attr_sfn( path, attrib ) );
+    return( __dos_getfileattr_sfn( path, attrib ) );
 }

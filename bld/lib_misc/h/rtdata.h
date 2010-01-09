@@ -129,13 +129,7 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
     #pragma aux             _8087 "_*";
     #pragma aux             _real87 "_*";
 #endif
-
-#ifdef __DOS__
-extern unsigned char        _uselfn;      /* NOLFN environment var defined */
-#ifdef __WATCOMC__
-    #pragma aux             _uselfn "_*";
-#endif
-#endif
+extern unsigned char        __uselfn;   /* LFN support available flag */
 
 #define _RWD_ostream            __OpenStreams
 #define _RWD_cstream            __ClosedStreams
@@ -189,7 +183,7 @@ extern unsigned char        _uselfn;      /* NOLFN environment var defined */
 #endif
 #define _RWD_tmpfnext           __tmpfnext
 #if !defined(_RWD_errno)
-    #define _RWD_errno              _ERRNO
+    #define _RWD_errno          _ERRNO
 #endif
 #define _RWD_nexttok            _NEXTTOK
 #define _RWD_nextftok           _NEXTFTOK
@@ -223,9 +217,7 @@ extern unsigned char        _uselfn;      /* NOLFN environment var defined */
 #define _RWD_UndefVfunFlag      _UndefVfunFlag
 #define _RWD_ModuleInit         _ModuleInit
 
-#ifdef __DOS__
-    #define _RWD_uselfn         _uselfn
-#endif
+#define _RWD_uselfn             __uselfn
 
 /*
     For the sake of efficiency, tell the compiler

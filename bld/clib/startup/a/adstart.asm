@@ -133,7 +133,7 @@ endif   ; ACAD
         extrn   "C",_STACKTOP       : dword
         extrn   "C",_child          : dword
         extrn   __no87              : byte
-        extrn   __uselfn            : byte
+        extrn   "C",__uselfn        : byte
         extrn   "C",_Extender       : byte
         extrn   "C",_ExtenderSubtype: byte
         extrn   "C",_Envptr         : dword
@@ -390,8 +390,7 @@ haveenv:                                ; endif
         sub     esi,esi                 ; offset 0
         mov     es: _Envptr,esi         ; save offset of environment area
 L1:     mov     eax,[esi]               ; get first 4 characters
-        or      eax,20202020h           ; map to lower case
-        ;cmp    eax,'78on'              ; check for "no87"
+        or      eax,2020h               ; map to lower case
         cmp     eax,37386f6eh           ; check for "no87"
         jne     short L2                ; skip if not "no87"
         cmp     byte ptr 4[esi],'='     ; make sure next char is "="
@@ -423,10 +422,10 @@ if      ACAD
  endif
 endif   ; ACAD
         mov     eax,ebp
-        or      __no87,al               ; set state of "NO87" environment var
-        or      __uselfn,ah             ; set state of "LFN" environment var
+        mov     __no87,al               ; set state of "NO87" environment var
+        and     __uselfn,ah             ; set "LFN" support status
 
-        mov      _STACKLOW,edi          ; save low address of stack
+        mov     _STACKLOW,edi           ; save low address of stack
 
 if      ACAD
 

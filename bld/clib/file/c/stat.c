@@ -44,12 +44,10 @@
 #include <string.h>
 #include <direct.h>
 
-#include <dos.h>
 #include <dosfunc.h>
 #include <mbstring.h>
+#include "_doslfn.h"
 #include "dosdir.h"
-#include "tinyio.h"
-#include "rtdata.h"
 #include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <stdlib.h>
@@ -61,6 +59,7 @@
 
 
 static unsigned short at2mode( int attr, char *fname )
+/****************************************************/
 {
     unsigned short  mode;
     char            *ext;
@@ -85,7 +84,9 @@ static unsigned short at2mode( int attr, char *fname )
     return( mode );
 }
 
-_WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat,_stat) *buf )
+_WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path,
+                                              struct __F_NAME(stat,_stat) *buf )
+/******************************************************************************/
 {
     struct find_t       dta;
     const CHAR_TYPE     *ptr;
@@ -129,7 +130,11 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         dta.wr_time   = 0;
         dta.wr_date   = 0;
         dta.size      = 0;
-        dta.name[0] = NULLCHAR;
+        dta.name[0]   = NULLCHAR;
+#ifdef __WATCOM_LFN__
+        SIGN_OF( &dta )   = 0;
+        HANDLE_OF( &dta ) = 0;
+#endif
     } else {                            /* not a root directory */
 #if defined(__WIDECHAR__)
         char    mbPath[MB_CUR_MAX * _MAX_PATH];
@@ -199,8 +204,18 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     buf->st_mode = at2mode( dta.attrib, dta.name );
 
     buf->st_mtime = _d2ttime( dta.wr_date, dta.wr_time );
-    buf->st_atime = buf->st_ctime = buf->st_btime = buf->st_mtime;
-
+    buf->st_btime = buf->st_mtime;
+#ifdef __WATCOM_LFN__
+    if( IS_LFN( &dta ) && CRTIME_OF( &dta ) ) {
+        buf->st_atime = _d2ttime( ACDATE_OF( &dta ), ACTIME_OF( &dta ) );
+        buf->st_ctime = _d2ttime( CRDATE_OF( &dta ), CRTIME_OF( &dta ) );
+    } else {
+#endif
+        buf->st_atime = buf->st_mtime;
+        buf->st_ctime = buf->st_mtime;
+#ifdef __WATCOM_LFN__
+    }
+#endif
     buf->st_nlink = 1;
     buf->st_ino = buf->st_uid = buf->st_gid = 0;
 
