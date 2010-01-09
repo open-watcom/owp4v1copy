@@ -2,6 +2,7 @@
 # Win16 headers
 #
 [ DEFAULT type="s" dir="h/win" where="c f77 ac" cond="wintarg" ]
+usr="_win386.h"
 usr="cderr.h"
 usr="cobjps.h"
 usr="coguid.h"
@@ -29,6 +30,9 @@ usr="stress.h"
 usr="toolhelp.h"
 usr="variant.h"
 usr="ver.h"
+usr="win16.h"
+usr="win386.h"
+usr="windows.h"
 usr="winsock.h"
 
 #

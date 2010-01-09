@@ -189,12 +189,6 @@ usr="timeb.h"
 usr="types.h"
 usr="utime.h"
 
-[ DEFAULT type="s" dir="h/win" where="c jc f77 jf77 ac" cond="wintarg" ]
-usr="_win386.h"
-usr="win16.h"
-usr="windows.h"
-usr="win386.h"
-
 #
 # Headers for Linux
 #
