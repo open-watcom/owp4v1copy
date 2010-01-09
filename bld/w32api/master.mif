@@ -51,6 +51,7 @@ headers = &
         control.h            &
         cpl.h                &
         cplext.h             &
+        ctl3d.h              &
         custcntl.h           &
         dbt.h                &
         dde.h                &
@@ -436,6 +437,7 @@ libs =                       &
         credui.lib           &
         crypt32.lib          &
         cryptnet.lib         &
+        ctl3d32.lib          &
         dbghelp.lib          &
         ddraw.lib            &
         dflayout.lib         &

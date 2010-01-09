@@ -17,6 +17,7 @@ headers =            &
         coguid.h     &
         commdlg.h    &
         compobj.h    &
+        ctl3d.h      &
         custcntl.h   &
         dde.h        &
         ddeml.h      &

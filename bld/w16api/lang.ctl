@@ -22,7 +22,6 @@ cdsay .
     <CPCMD> wini86/*.lib                <RELROOT>/lib286/win/
   [ ENDIF ]
     <CPCMD> wini86/*.h                  <RELROOT>/h/win/
-    <CPCMD> <DEVDIR>/sdk/misc/ctl3d.h   <RELROOT>/h/win/
 
 [ BLOCK <1> clean ]
 #==================

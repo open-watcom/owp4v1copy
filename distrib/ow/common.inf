@@ -278,7 +278,6 @@ deletefile=%DstDir%\h\nt\directx\dxerr9.h
 deletefile=%DstDir%\h\nt\gl\glext.h
 deletefile=%DstDir%\h\nt\gl\wglext.h
 deletefile=%DstDir%\lib386\nt\cap.lib
-deletefile=%DstDir%\lib386\nt\ctl3d32.lib
 deletefile=%DstDir%\lib386\nt\dlcapi.lib
 deletefile=%DstDir%\lib386\nt\dmoguids.lib
 deletefile=%DstDir%\lib386\nt\glaux.lib
