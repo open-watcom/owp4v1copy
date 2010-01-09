@@ -48,6 +48,7 @@ headers = &
         commctrl.h           &
         commctrl.rh          &
         commdlg.h            &
+        compobj.h            &
         control.h            &
         cpl.h                &
         cplext.h             &
@@ -63,6 +64,7 @@ headers = &
         devprdef.h           &
         dhcpcsdk.h           &
         dimm.h               &
+        dispatch.h           &
         dispex.h             &
         dlgs.h               &
         docobj.h             &
@@ -148,6 +150,7 @@ headers = &
         mmreg.h              &
         mmstream.h           &
         mmsystem.h           &
+        moniker.h            &
         mpegtype.h           &
         mprapi.h             &
         mq.h                 &
@@ -227,6 +230,7 @@ headers = &
         schedule.h           &
         schemdef.h           &
         schnlsp.h            &
+        scode.h              &
         sddl.h               &
         sdkddver.h           &
         secext.h             &
@@ -250,6 +254,7 @@ headers = &
         sqlucode.h           &
         sspi.h               &
         stm.h                &
+        storage.h            &
         stralign.h           &
         strmif.h             &
         strqcond.h           &
