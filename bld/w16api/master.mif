@@ -26,6 +26,7 @@ headers =            &
         drivinit.h   &
         dvobj.h      &
         initguid.h   &
+        lzexpand.h   &
         mmsystem.h   &
         moniker.h    &
         ole2.h       &
@@ -51,6 +52,7 @@ libs =               &
         ctl3d.lib    &
         ctl3dv2.lib  &
         ddeml.lib    &
+        lzexpand.lib &
         ole2.lib     &
         ole2disp.lib &
         ole2nls.lib  &
@@ -67,7 +69,6 @@ winlibs =            &
         gdi.lbc      &
         kernel.lbc   &
         keyboard.lbc &
-#        lzexpand.lbc &
         sound.lbc    &
         user.lbc     &
         win87em.lbc
