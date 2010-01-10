@@ -73,7 +73,7 @@ extern unsigned __dos_find_close_dta( struct find_t *fdta );
     #pragma aux __dos_find_close_dta = \
         "xor  ax,ax"    \
         parm caller     [dx ax] \
-        modify exact    [ax dx];
+        modify exact    [ax];
 
   #else                 // 16-bit near data
     #pragma aux __dos_find_first_dta = \
