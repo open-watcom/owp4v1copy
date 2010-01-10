@@ -147,6 +147,8 @@ tell__          tell            _tell           d16 d32 nt  nta ntp         o16 
 tolowe          tolower         _tolower        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 touppe          toupper         _toupper        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 tzset_          tzset           _tzset          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+ufst64          _fstati64       _wfstati64      d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+ufstat          fstat           _wfstat         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 umask_          umask           _umask          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 unlink          unlink          _unlink         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 utime_          utime           _utime          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi

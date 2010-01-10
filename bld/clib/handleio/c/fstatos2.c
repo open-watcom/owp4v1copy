@@ -30,7 +30,6 @@
 
 
 #include "variety.h"
-#include "widechar.h"
 #include "i64.h"
 #include <stddef.h>
 #include <stdio.h>
@@ -79,9 +78,9 @@ static unsigned short at2mode( OS_UINT attr )
 
 
 #ifdef __INT64__
-_WCRTLINK int __F_NAME(_fstati64,_wfstati64)( int handle, struct _stati64 *buf )
+_WCRTLINK int _fstati64( int handle, struct _stati64 *buf )
 #else
-_WCRTLINK int __F_NAME(fstat,_wfstat)( int handle, struct __F_NAME(stat,_stat) *buf )
+_WCRTLINK int fstat( int handle, struct stat *buf )
 #endif
 {
     APIRET          error;

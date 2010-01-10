@@ -63,13 +63,7 @@
 !inject setmdunx.obj                                                        q16 q32             l32 lpc lmp
 !inject stiomode.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 !inject tell.obj     d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-!inject u64fstat.obj d16 d32                                                        w16 w32 osi
-!inject u64fsos2.obj                                                o16 o32
-!inject u64fswnt.obj                     nt nta ntp
 !inject ucreat.obj   d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
-!inject ufsta.obj    d16 d32
-!inject ufstaos2.obj                                                o16 o32
-!inject ufstawnt.obj                     nt nta ntp
 !inject umask.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32
 !inject umaskval.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 !inject umkfilst.obj                     nt nta ntp
