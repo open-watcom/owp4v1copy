@@ -20,6 +20,9 @@
 :include readonly.sp
 :include cpluspro.sp
 
+/* Primitive data types */
+typedef ULONG   DEVICE_DATA_MANAGEMENT_SET_ACTION;
+
 /* Storage device I/O control codes */
 #define IOCTL_STORAGE_BASE  FILE_DEVICE_MASS_STORAGE
 #define IOCTL_STORAGE_CHECK_VERIFY \
@@ -74,6 +77,8 @@
     CTL_CODE( IOCTL_STORAGE_BASE, 0x0450, METHOD_BUFFERED, FILE_READ_ACCESS )
 #define IOCTL_STORAGE_QUERY_PROPERTY \
     CTL_CODE( IOCTL_STORAGE_BASE, 0x0500, METHOD_BUFFERED, FILE_ANY_ACCESS )
+#define IOCTL_STORAGE_MANAGE_DATA_SET_PROPERTIES \
+    CTL_CODE( IOCTL_STORAGE_BASE, 0x0501, METHOD_BUFFERED, FILE_WRITE_ACCESS )
 #define IOCTL_STORAGE_GET_BC_PROPERTIES \
     CTL_CODE( IOCTL_STORAGE_BASE, 0x0600, METHOD_BUFFERED, FILE_READ_ACCESS )
 #define IOCTL_STORAGE_ALLOCATE_BC_STREAM \
@@ -111,6 +116,25 @@
 #define MEDIA_READ_WRITE        0x00000008L
 #define MEDIA_WRITE_PROTECTED   0x00000100L
 #define MEDIA_CURRENTLY_MOUNTED 0x80000000L
+
+/* Device data set management action flags */
+#define DeviceDsmActionFlag_NonDestructive  0x80000000L
+
+/* Macro to manipulate device data data set management action flags */
+#define IsDsmActionNonDestructive( x ) \
+    ((BOOLEAN)(((x) & DeviceDsmActionFlag_NonDestructive) != 0L))
+
+/* Device data set management actions */
+#define DeviceDsmAction_None            0L
+#define DeviceDsmAction_Trim            1L
+#define DeviceDsmAction_Notification    (2L | DeviceDsmActionFlag_NonDestructive)
+
+/* Device data set management flags */
+#define DEVICE_DSM_FLAG_ENTIRE_DATA_SET_RANGE   0x00000001L
+
+/* Device data set management notification flags */
+#define DEVICE_DSM_NOTIFY_FLAG_BEGIN    0x00000001L
+#define DEVICE_DSM_NOTIFY_FLAG_END      0x00000002L
 
 /* Storage BC version number */
 #define IOCTL_STORAGE_BC_VERSION    1L
@@ -258,22 +282,24 @@ typedef STORAGE_MEDIA_TYPE  *PSTORAGE_MEDIA_TYPE;
 
 /* Storage bus types */
 typedef enum _STORAGE_BUS_TYPE {
-    BusTypeUnknown      = 0x00,
-    BusTypeScsi         = 0x01,
-    BusTypeAtapi        = 0x02,
-    BusTypeAta          = 0x03,
-    BusType1394         = 0x04,
-    BusTypeSsa          = 0x05,
-    BusTypeFibre        = 0x06,
-    BusTypeUsb          = 0x07,
-    BusTypeRAID         = 0x08,
-    BusTypeiScsi        = 0x09,
-    BusTypeSas          = 0x0A,
-    BusTypeSata         = 0x0B,
-    BusTypeSd           = 0x0C,
-    BusTypeMmc          = 0x0D,
-    BusTypeMax          = 0x0E,
-    BusTypeMaxReserved  = 0x7F
+    BusTypeUnknown              = 0x00,
+    BusTypeScsi                 = 0x01,
+    BusTypeAtapi                = 0x02,
+    BusTypeAta                  = 0x03,
+    BusType1394                 = 0x04,
+    BusTypeSsa                  = 0x05,
+    BusTypeFibre                = 0x06,
+    BusTypeUsb                  = 0x07,
+    BusTypeRAID                 = 0x08,
+    BusTypeiScsi                = 0x09,
+    BusTypeSas                  = 0x0A,
+    BusTypeSata                 = 0x0B,
+    BusTypeSd                   = 0x0C,
+    BusTypeMmc                  = 0x0D,
+    BusTypeVirtual              = 0x0E,
+    BusTypeFileBackedVirtual    = 0x0F,
+    BusTypeMax                  = 0x10,
+    BusTypeMaxReserved          = 0x7F
 } STORAGE_BUS_TYPE;
 typedef STORAGE_BUS_TYPE    *PSTORAGE_BUS_TYPE;
 
@@ -340,13 +366,16 @@ typedef STORAGE_QUERY_TYPE  *PSTORAGE_QUERY_TYPE;
 
 /* Storage property identifiers */
 typedef enum _STORAGE_PROPERTY_ID {
-    StorageDeviceProperty           = 0,
-    StorageAdapterProperty          = 1,
-    StorageDeviceIdProperty         = 2,
-    StorageDeviceUniqueIdProperty   = 3,
-    StorageDeviceWriteCacheProperty = 4,
-    StorageMiniportProperty         = 5,
-    StorageAccessAlignmentProperty  = 6
+    StorageDeviceProperty                   = 0,
+    StorageAdapterProperty                  = 1,
+    StorageDeviceIdProperty                 = 2,
+    StorageDeviceUniqueIdProperty           = 3,
+    StorageDeviceWriteCacheProperty         = 4,
+    StorageMiniportProperty                 = 5,
+    StorageAccessAlignmentProperty          = 6,
+    StorageDeviceSeekPenaltyProperty        = 7,
+    StorageDeviceTrimProperty               = 8,
+    StorageDeviceWriteAggregationProperty   = 9
 } STORAGE_PROPERTY_ID;
 typedef STORAGE_PROPERTY_ID *PSTORAGE_PROPERTY_ID;
 
@@ -493,6 +522,58 @@ typedef struct _STORAGE_DEVICE_ID_DESCRIPTOR {
     UCHAR   Identifiers[1];
 } STORAGE_DEVICE_ID_DESCRIPTOR;
 typedef STORAGE_DEVICE_ID_DESCRIPTOR    *PSTORAGE_DEVICE_ID_DESCRIPTOR;
+
+/* Device seek penalty descriptor */
+typedef struct _DEVICE_SEEK_PENALTY_DESCRIPTOR {
+    ULONG   Version;
+    ULONG   Size;
+    BOOLEAN IncursSeekPenalty;
+} DEVICE_SEEK_PENALTY_DESCRIPTOR;
+typedef DEVICE_SEEK_PENALTY_DESCRIPTOR  *PDEVICE_SEEK_PENALTY_DESCRIPTOR;
+
+/* Device write aggregation descriptor */
+typedef struct _DEVICE_WRITE_AGGREGATION_DESCRIPTOR {
+    ULONG   Version;
+    ULONG   Size;
+    BOOLEAN BenefitsFromWriteAggregation;
+} DEVICE_WRITE_AGGREGATION_DESCRIPTOR;
+typedef DEVICE_WRITE_AGGREGATION_DESCRIPTOR *PDEVICE_WRITE_AGGREGATION_DESCRIPTOR;
+
+/* Device trim descriptor */
+typedef struct _DEVICE_TRIM_DESCRIPTOR {
+    ULONG   Version;
+    ULONG   Size;
+    BOOLEAN TrimEnabled;
+} DEVICE_TRIM_DESCRIPTOR;
+typedef DEVICE_TRIM_DESCRIPTOR  *PDEVICE_TRIM_DESCRIPTOR;
+
+/* Device data set range */
+typedef struct _DEVICE_DATA_SET_RANGE {
+    LONGLONG    StartingOffset;
+    ULONGLONG   LengthInBytes;
+} DEVICE_DATA_SET_RANGE;
+typedef DEVICE_DATA_SET_RANGE   *PDEVICE_DATA_SET_RANGE;
+
+/* IOCTL_STORAGE_MANAGE_DATA_SET_ATTRIBUTES parameters */
+typedef struct _DEVICE_MANAGE_DATA_SET_ATTRIBUTES {
+    ULONG                               Size;
+    DEVICE_DATA_MANAGEMENT_SET_ACTION   Action;
+    ULONG                               Flags;
+    ULONG                               ParameterBlockOffset;
+    ULONG                               ParameterBlockLength;
+    ULONG                               DataSetRangesOffset;
+    ULONG                               DataSetRangesLength;
+} DEVICE_MANAGE_DATA_SET_ATTRIBUTES;
+typedef DEVICE_MANAGE_DATA_SET_ATTRIBUTES   *PDEVICE_MANAGE_DATA_SET_ATTRIBUTES;
+
+/* Device data set management notification parameters */
+typedef struct _DEVICE_DSM_NOTIFICATION_PARAMETERS {
+    ULONG   Size;
+    ULONG   Flags;
+    ULONG   NumFileTypeIDs;
+    GUID    FileTypeID[1];
+} DEVICE_DSM_NOTIFICATION_PARAMETERS;
+typedef DEVICE_DSM_NOTIFICATION_PARAMETERS  *PDEVICE_DSM_NOTIFICATION_PARAMETERS;
 
 /* IOCTL_STORAGE_GET_BC_PROPERTIES returned data */
 typedef struct _STORAGE_GET_BC_PROPERTIES_OUTPUT {
