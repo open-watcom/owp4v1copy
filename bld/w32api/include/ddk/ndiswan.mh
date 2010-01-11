@@ -41,8 +41,8 @@
 #define LLC_ENCAPSULATION               0x00800000L
 #define SHIVA_FRAMING                   0x01000000L
 #define NBF_PRESERVE_MAC_ADDRESS        0x01000000L
+#define PASS_THROUGH_MODE               0x10000000L
 #ifndef _WAN50_
-    #define PASS_THROUGH_MODE           0x10000000L
     #define RAW_PASS_THROUGH_MODE       0x20000000L
 #endif
 #define TAPI_PROVIDER                   0x80000000L
@@ -213,6 +213,21 @@ typedef struct _NDIS_WAN_GET_STATS_INFO {
     ULONG       BytesReceivedUncompressed;
     ULONG       BytesTransmittedCompressed;
     ULONG       BytesReceivedCompressed;
+    ULONG       TunnelPacketsReceived;
+    ULONG       TunnelReceivePacketsPending;
+    ULONG       TunnelPacketsIndicatedUp;
+    ULONG       TunnelReceivePacketsRejected;
+    ULONG       TunnelPacketsSent;
+    ULONG       TunnelPacketsSentComplete;
+    ULONG       TunnelTransmitPacketsPending;
+    ULONG       TunnelPacketsTransmitError;
+    ULONG       TunnelPacketsSentError;
+    ULONG       TunnelTransmitPacketsRejected;
+    ULONG       TunnelAcksSent;
+    ULONG       TunnelAcksSentComplete;
+    ULONG       TunnelGeneric1;
+    ULONG       TunnelGeneric2;
+    ULONG       TunnelGeneric3;
 } NDIS_WAN_GET_STATS_INFO;
 typedef NDIS_WAN_GET_STATS_INFO *PNDIS_WAN_GET_STATS_INFO;
 
@@ -305,6 +320,21 @@ typedef struct _NDIS_WAN_CO_GET_STATS_INFO {
     ULONG   BytesReceivedUncompressed;
     ULONG   BytesTransmittedCompressed;
     ULONG   BytesReceivedCompressed;
+    ULONG   TunnelPacketsReceived;
+    ULONG   TunnelReceivePacketsPending;
+    ULONG   TunnelPacketsIndicatedUp;
+    ULONG   TunnelReceivePacketsRejected;
+    ULONG   TunnelPacketsSent;
+    ULONG   TunnelPacketsSentComplete;
+    ULONG   TunnelTransmitPacketsPending;
+    ULONG   TunnelPacketsTransmitError;
+    ULONG   TunnelPacketsSentError;
+    ULONG   TunnelTransmitPacketsRejected;
+    ULONG   TunnelAcksSent;
+    ULONG   TunnelAcksSentComplete;
+    ULONG   TunnelGeneric1;
+    ULONG   TunnelGeneric2;
+    ULONG   TunnelGeneric3;
 } NDIS_WAN_CO_GET_STATS_INFO;
 typedef NDIS_WAN_CO_GET_STATS_INFO  *PNDIS_WAN_CO_GET_STATS_INFO;
 
@@ -321,6 +351,16 @@ typedef struct _WAN_CO_LINKPARAMS {
     ULONG   SendWindow;
 } WAN_CO_LINKPARAMS;
 typedef WAN_CO_LINKPARAMS   *PWAN_CO_LINKPARAMS;
+
+/* WAN CO MTU link parameters */
+typedef struct _WAN_CO_MTULINKPARAMS {
+    ULONG   Version;
+    ULONG   TransmitSpeed;
+    ULONG   ReceiveSpeed;
+    ULONG   SendWindow;
+    ULONG   MTU;
+} WAN_CO_MTULINKPARAMS;
+typedef WAN_CO_MTULINKPARAMS    *PWAN_CO_MTULINKPARAMS;
 
 /* Functions implemented as macros */
 #define NdisMWanInitializeWrapper( x, p1, p2, p3 ) \
