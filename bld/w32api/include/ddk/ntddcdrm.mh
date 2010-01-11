@@ -62,6 +62,13 @@
     CTL_CODE( IOCTL_CDROM_BASE, 0x0018, METHOD_BUFFERED, FILE_READ_ACCESS )
 #define IOCTL_CDROM_GET_INQUIRY_DATA \
     CTL_CODE( IOCTL_CDROM_BASE, 0x0019, METHOD_BUFFERED, FILE_READ_ACCESS )
+#define IOCTL_CDROM_ENABLE_STREAMING \
+    CTL_CODE( IOCTL_CDROM_BASE, 0x001A, METHOD_BUFFERED, FILE_READ_ACCESS )
+#define IOCTL_CDROM_SEND_OPC_INFORMATION \
+    CTL_CODE( IOCTL_CDROM_BASE, 0x001B, METHOD_BUFFERED, FILE_READ_ACCESS | \
+    FILE_WRITE_ACCESS )
+#define IOCTL_CDROM_GET_PERFORMANCE \
+    CTL_CODE( IOCTL_CDROM_BASE, 0x001C, METHOD_BUFFERED, FILE_READ_ACCESS )
 #define IOCTL_CDROM_CHECK_VERIFY \
     CTL_CODE( IOCTL_CDROM_BASE, 0x0200, METHOD_BUFFERED, FILE_READ_ACCESS )
 #define IOCTL_CDROM_MEDIA_REMOVAL \
@@ -149,7 +156,8 @@
 #define CDROM_EXCLUSIVE_CALLER_LENGTH   64
 
 /* CD-ROM lock flags */
-#define CDROM_LOCK_IGNORE_VOLUME    1
+#define CDROM_LOCK_IGNORE_VOLUME        (1 << 0)
+#define CDROM_NO_MEDIA_NOTIFICATIONS    (1 << 1)
 
 /* CD-ROM exclusive access modes */
 #define CDROM_NOT_IN_EXCLUSIVE_MODE 0
@@ -489,6 +497,120 @@ typedef struct _CDROM_SET_STREAMING {
     BOOLEAN             Persistent;
 } CDROM_SET_STREAMING;
 typedef CDROM_SET_STREAMING *PCDROM_SET_STREAMING;
+
+/* Streaming control request types */
+typedef enum _STREAMING_CONTROL_REQUEST_TYPE {
+    CdromStreamingDisable               = 1,
+    CdromStreamingEnableForReadOnly     = 2,
+    CdromStreamingEnableForWriteOnly    = 3,
+    CdromStreamingEnableForReadWrite    = 4
+} STREAMING_CONTROL_REQUEST_TYPE;
+typedef STREAMING_CONTROL_REQUEST_TYPE  *PSTREAMING_CONTROL_REQUEST_TYPE;
+
+/* CD-ROM streaming control */
+typedef struct _CDROM_STREAMING_CONTROL {
+    STREAMING_CONTROL_REQUEST_TYPE  RequestType;
+} CDROM_STREAMING_CONTROL;
+typedef CDROM_STREAMING_CONTROL *PCDROM_STREAMING_CONTROL;
+
+/* CD-ROM OPC information types */
+typedef enum _CDROM_OPC_INFO_TYPE {
+    SimpleOpcInfo   = 1
+} CDROM_OPC_INFO_TYPE;
+typedef CDROM_OPC_INFO_TYPE *PCDROM_OPC_INFO_TYPE;
+
+/* CD-ROM simple OPC information */
+typedef struct _CDROM_SIMPLE_OPC_INFO {
+    CDROM_OPC_INFO_TYPE RequestType;
+    BOOLEAN             Exclude0;
+    BOOLEAN             Exclude1;
+} CDROM_SIMPLE_OPC_INFO;
+typedef CDROM_SIMPLE_OPC_INFO   *PCDROM_SIMPLE_OPC_INFO;
+
+/* CD-ROM performance request types */
+typedef enum _CDROM_PERFORMANCE_REQUEST_TYPE {
+    CdromPerformanceRequest = 1,
+    CdromWriteSpeedRequest  = 2
+} CDROM_PERFORMANCE_REQUEST_TYPE;
+typedef CDROM_PERFORMANCE_REQUEST_TYPE  *PCDROM_PERFORMANCE_REQUEST_TYPE;
+
+/* CD-ROM performance types */
+typedef enum _CDROM_PERFORMANCE_TYPE {
+    CdromReadPerformance    = 1,
+    CdromWritePerformance   = 2
+} CDROM_PERFORMANCE_TYPE;
+typedef CDROM_PERFORMANCE_TYPE  *PCDROM_PERFORMANCE_TYPE;
+
+/* CD-ROM performance exception types */
+typedef enum _CDROM_PERFORMANCE_EXCEPTION_TYPE {
+    CdromNominalPerformance         = 1,
+    CdromEntirePerformanceList      = 2,
+    CdromPerformanceExceptionsOnly  = 3
+} CDROM_PERFORMANCE_EXCEPTION_TYPE;
+typedef CDROM_PERFORMANCE_EXCEPTION_TYPE    *PCDROM_PERFORMANCE_EXCEPTION_TYPE;
+
+/* CD-ROM performance tolerance types */
+typedef enum _CDROM_PERFORMANCE_TOLERANCE_TYPE {
+    Cdrom10Nominal20Exceptions  = 1
+} CDROM_PERFORMANCE_TOLERANCE_TYPE;
+typedef CDROM_PERFORMANCE_TOLERANCE_TYPE    *PCDROM_PERFORMANCE_TOLERANCE_TYPE;
+
+/* CD-ROM performance request */
+typedef struct _CDROM_PERFORMANCE_REQUEST {
+    CDROM_PERFORMANCE_REQUEST_TYPE      RequestType;
+    CDROM_PERFORMANCE_TYPE              PerformanceType;
+    CDROM_PERFORMANCE_EXCEPTION_TYPE    Exceptions;
+    CDROM_PERFORMANCE_TOLERANCE_TYPE    Tolerance;
+    ULONG                               StartingLba;
+} CDROM_PERFORMANCE_REQUEST;
+typedef CDROM_PERFORMANCE_REQUEST   *PCDROM_PERFORMANCE_REQUEST;
+
+/* CD-ROM write speed request */
+typedef struct _CDROM_WRITE_SPEED_REQUEST {
+    CDROM_PERFORMANCE_REQUEST_TYPE  RequestType;
+} CDROM_WRITE_SPEED_REQUEST;
+typedef CDROM_WRITE_SPEED_REQUEST   *PCDROM_WRITE_SPEED_REQUEST;
+
+/* CD-ROM performance header */
+typedef struct _CDROM_PERFORMANCE_HEADER {
+    UCHAR   DataLength[4];
+    UCHAR   Except      : 1;
+    UCHAR   Write       : 1;
+    UCHAR   Reserved1   : 6;
+    UCHAR   Reserved2[3];
+    UCHAR   Data[1];
+} CDROM_PERFORMANCE_HEADER;
+typedef CDROM_PERFORMANCE_HEADER    *PCDROM_PERFORMANCE_HEADER;
+
+/* CD-ROM nominal performance descriptor */
+typedef struct _CDROM_NOMINAL_PERFORMANCE_DESCRIPTOR {
+    UCHAR   StartLba[4];
+    UCHAR   StartPerformance[4];
+    UCHAR   EndLba[4];
+    UCHAR   EndPerformance[4];
+} CDROM_NOMINAL_PERFORMANCE_DESCRIPTOR;
+typedef CDROM_NOMINAL_PERFORMANCE_DESCRIPTOR    *PCDROM_NOMINAL_PERFORMANCE_DESCRIPTOR;
+
+/* CD-ROM exception performance descriptor */
+typedef struct _CDROM_EXCEPTION_PERFORMANCE_DESCRIPTOR {
+    UCHAR   Lba[4];
+    UCHAR   Time[2];
+} CDROM_EXCEPTION_PERFORMANCE_DESCRIPTOR;
+typedef CDROM_EXCEPTION_PERFORMANCE_DESCRIPTOR  *PCDROM_EXCEPTION_PERFORMANCE_DESCRIPTOR;
+
+/* CD-ROM write speed descriptor */
+typedef struct _CDROM_WRITE_SPEED_DESCRIPTOR {
+    UCHAR   MixedReadWrite          : 1;
+    UCHAR   Exact                   : 1;
+    UCHAR   Reserved1               : 1;
+    UCHAR   WriteRotationControl    : 2;
+    UCHAR   Reserved2               : 3;
+    UCHAR   Reserved3[3];
+    UCHAR   EndLba[4];
+    UCHAR   ReadSpeed[4];
+    UCHAR   WriteSpeed[4];
+} CDROM_WRITE_SPEED_DESCRIPTOR;
+typedef CDROM_WRITE_SPEED_DESCRIPTOR    *PCDROM_WRITE_SPEED_DESCRIPTOR;
 
 :include cplusepi.sp
 
