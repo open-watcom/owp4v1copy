@@ -1658,6 +1658,13 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
         tipeu = TypeAddress( T_UINT_4 );
         tipes = TypeAddress( T_INT_4 );
         break;
+    case 8:
+        tipeu = TypeAddress( T_UINT_8 );
+        tipes = TypeAddress( T_INT_8 );
+        break;
+    default:
+        _Zoiks( ZOIKS_092 );
+        break;
     }
     mask = Mask64( node );
 #ifdef JUST_USE_SHIFTS
