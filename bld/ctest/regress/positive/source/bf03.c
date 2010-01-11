@@ -195,8 +195,8 @@ void check_X5( struct X5 x5 )
 };
 
 struct X6 {
-    long    f0 : 20;
-    long    f1 : 20;
+    sbase   f0 : 20;
+    sbase   f1 : 20;
 //    sbase   f2 : 40;  TODO - some other day
 //    sbase   f3 : 40;
 };
@@ -213,6 +213,64 @@ void check_X6( struct X6 x6 )
     if( op_x6( x6 ) != 0xFFF80000 ) fail(__LINE__);
 }
 
+struct X7 {
+    slbase f0 : 1;
+    slbase f1 : 9;
+    slbase f2 : 20;
+    slbase f3 : 9;   // crosses 32-bit boundary
+    slbase f4 : 1;
+    slbase f5 : 8;
+    slbase f6 : 1;
+    slbase f7 : 1;
+    int m;
+};
+
+/* As a side effect, check that unsigned integers are properly
+ * converted into signed values.
+ */
+struct X7 x7 = { 0, 256, 755, 511, 0, 100, 0, 1, -1 };
+struct X7 x7a;
+
+void check_X7( struct X7 x7 )
+{
+    if( x7.f0 != 0   )  fail(__LINE__);
+    if( x7.f1 != -256 ) fail(__LINE__);
+    if( x7.f2 != 755 )  fail(__LINE__);
+    if( x7.f3 != -1 )   fail(__LINE__);
+    if( x7.f4 != 0   )  fail(__LINE__);
+    if( x7.f5 != 100 )  fail(__LINE__);
+    if( x7.f6 != 0   )  fail(__LINE__);
+    if( x7.f7 != -1  )  fail(__LINE__);
+    if( x7.m != -1   )  fail(__LINE__);
+};
+
+void set_X7a( void )
+{
+    x7a.f0 = 0;
+    x7a.f1 = 256;
+    x7a.f2 = 755;
+    x7a.f3 = 511;
+    x7a.f4 = 0;
+    x7a.f5 = 100;
+    x7a.f6 = 0;
+    x7a.f7 = 1;
+    x7a.m = -1;
+}
+
+void check_X7a( void )
+{
+    set_X7a();
+    if( x7a.f0 != 0   )  fail(__LINE__);
+    if( x7a.f1 != -256 ) fail(__LINE__);
+    if( x7a.f2 != 755 )  fail(__LINE__);
+    if( x7a.f3 != -1 )   fail(__LINE__);
+    if( x7a.f4 != 0   )  fail(__LINE__);
+    if( x7a.f5 != 100 )  fail(__LINE__);
+    if( x7a.f6 != 0   )  fail(__LINE__);
+    if( x7a.f7 != -1  )  fail(__LINE__);
+    if( x7a.m != -1   )  fail(__LINE__);
+};
+
 int main( void )
 {
     check_X1( x1 );
@@ -222,5 +280,7 @@ int main( void )
     check_X4( x4 );
     check_X5( x5 );
     check_X6( x6 );
+    check_X7( x7 );
+    check_X7a();
     _PASS;
 }
