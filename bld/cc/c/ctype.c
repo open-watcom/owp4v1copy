@@ -1039,10 +1039,8 @@ local unsigned long GetFields( TYPEPTR decl )
                 if( field != NULL ) {
                     next_offset = FieldAlign( next_offset, field,
                                               &worst_alignment );
-                    CheckBitfieldType( field->field_type );
-                } else {
-                    CheckBitfieldType( typ );
                 }
+                CheckBitfieldType( typ );
                 NextToken();
                 width = ConstExpr();
                 if( width == 0  &&      field != NULL ) {
@@ -1301,6 +1299,8 @@ local void CheckBitfieldType( TYPEPTR typ )
     case TYPE_USHORT:
     case TYPE_LONG:                     /* + AFS 05-mar-91 */
     case TYPE_ULONG:
+    case TYPE_LONG64:
+    case TYPE_ULONG64:
         if( CompFlags.extensions_enabled ) {
             return;
         }

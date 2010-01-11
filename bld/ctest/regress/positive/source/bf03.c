@@ -6,7 +6,6 @@ typedef signed long sbase;
 typedef unsigned long long lbase;
 typedef signed long long slbase;
 
-#if 0
 struct X1 {
     lbase  f0 : 1;
     lbase  f1 : 9;
@@ -61,7 +60,6 @@ void check_X1a( void )
     if( x1a.f7 != 1   ) fail(__LINE__);
     if( x1a.m != -1   ) fail(__LINE__);
 };
-#endif
 
 struct X2 {
     sbase  f0 : 15;
@@ -164,18 +162,14 @@ struct X5 {
     base f7 : 1;
     int n;
     base f8 : 1;
-#if 0
     struct X1 x1;
-#endif
     struct X2 x2;
     struct X3 x3;
     struct X4 x4;
 };
 
 struct X5 x5 = { 0, 1, 0, 1, -1, 0, 1, 0, 1, -1, 1,
-#if 0
     { 0, 256, 755, 511, 0, 100, 0, 1, -1 },
-#endif
     { 0, 1, 0, 1, 0, 1, 0, 1, 1, -1 },
     { 0, 1, 0, 1, 0, 1, 0, 1, 1, -1 },
     { 0, 1, 0, 1, -1, 0, 1, 0, 1, -1, 1 },
@@ -194,9 +188,7 @@ void check_X5( struct X5 x5 )
     if( x5.f7 != 1 ) fail(__LINE__);
     if( x5.n != -1 ) fail(__LINE__);
     if( x5.f8 != 1 ) fail(__LINE__);
-#if 0
     check_X1( x5.x1 );
-#endif
     check_X2( x5.x2 );
     check_X3( x5.x3 );
     check_X4( x5.x4 );
@@ -223,10 +215,8 @@ void check_X6( struct X6 x6 )
 
 int main( void )
 {
-#if 0
     check_X1( x1 );
     check_X1a();
-#endif
     check_X2( x2 );
     check_X3( x3 );
     check_X4( x4 );
