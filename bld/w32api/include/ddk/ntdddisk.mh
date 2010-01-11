@@ -181,6 +181,9 @@ typedef USHORT  *PBAD_TRACK_NUMBER;
     #define IOCTL_DISK_SET_SNAPSHOT_INFO \
         CTL_CODE( IOCTL_DISK_BASE, 0x0083, METHOD_BUFFERED, FILE_READ_ACCESS | \
         FILE_WRITE_ACCESS )
+    #define IOCTL_DISK_RESET_SNAPSHOT_INFO \
+        CTL_CODE( IOCTL_DISK_BASE, 0x0084, METHOD_BUFFERED, FILE_READ_ACCESS | \
+        FILE_WRITE_ACCESS )
 #endif
 #define IOCTL_DISK_SIMBAD \
     CTL_CODE( IOCTL_DISK_BASE, 0x0400, METHOD_BUFFERED, FILE_READ_ACCESS | \
@@ -927,7 +930,8 @@ typedef enum _DISK_SAN_POLICY {
     DiskSanPolicyUnknown        = 0,
     DiskSanPolicyOnline         = 1,
     DiskSanPolicyOfflineShared  = 2,
-    DiskSanPolicyOffline        = 3
+    DiskSanPolicyOffline        = 3,
+    DiskSanPolicyMax            = 4
 } DISK_SAN_POLICY;
 typedef DISK_SAN_POLICY *PDISK_SAN_POLICY;
 #endif
