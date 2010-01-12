@@ -20,10 +20,6 @@
 /* Maximum power state handler type */
 #define POWER_STATE_HANDLER_TYPE_MAX    8
 
-/* Idle states */
-#define IDLE_STATES_LINEAR  0
-#define IDLE_STATES_DYNAMIC 1
-
 /* Idle handler flags */
 #define IDLE_HANDLER_USING_HYPERVISOR   0x00000001L
 
@@ -37,11 +33,9 @@
 #define PROCESSOR_STATE_TYPE_PERFORMANCE    0x01
 #define PROCESSOR_STATE_TYPE_THROTTLE       0x02
 
-/* Performance state special value */
-#define INVALID_PERF_STATE  0xFFFFFFFFL
-
 /* Number of idle buckets */
-#define PROC_IDLE_BUCKET_COUNT  6
+#define PROC_IDLE_BUCKET_COUNT      6
+#define PROC_IDLE_BUCKET_COUNT_EX   16
 
 /* Coordination types */
 #define ACPI_PPM_SOFTWARE_ALL   0xFC
@@ -50,21 +44,23 @@
 #define MS_PPM_SOFTWARE_ALL     0x01
 
 /* Power action policy flags */
-#define POWER_ACTION_QUERY_ALLOWED  0x00000001L
-#define POWER_ACTION_UI_ALLOWED     0x00000002L
-#define POWER_ACTION_OVERRIDE_APPS  0x00000004L
-#define POWER_ACTION_LIGHTEST_FIRST 0x10000000L
-#define POWER_ACTION_LOCK_CONSOLE   0x20000000L
-#define POWER_ACTION_DISABLE_WAKES  0x40000000L
-#define POWER_ACTION_CRITICAL       0x80000000L
+#define POWER_ACTION_QUERY_ALLOWED      0x00000001L
+#define POWER_ACTION_UI_ALLOWED         0x00000002L
+#define POWER_ACTION_OVERRIDE_APPS      0x00000004L
+#define POWER_ACTION_PSEUDO_TRANSITION  0x08000000L
+#define POWER_ACTION_LIGHTEST_FIRST     0x10000000L
+#define POWER_ACTION_LOCK_CONSOLE       0x20000000L
+#define POWER_ACTION_DISABLE_WAKES      0x40000000L
+#define POWER_ACTION_CRITICAL           0x80000000L
 
 /* Power action policy event code flags */
-#define POWER_LEVEL_USER_NOTIFY_TEXT    0x00000001L
-#define POWER_LEVEL_USER_NOTIFY_SOUND   0x00000002L
-#define POWER_LEVEL_USER_NOTIFY_EXEC    0x00000004L
-#define POWER_USER_NOTIFY_BUTTON        0x00000008L
-#define POWER_USER_NOTIFY_SHUTDOWN      0x00000010L
-#define POWER_FORCE_TRIGGER_RESET       0x80000000L
+#define POWER_LEVEL_USER_NOTIFY_TEXT        0x00000001L
+#define POWER_LEVEL_USER_NOTIFY_SOUND       0x00000002L
+#define POWER_LEVEL_USER_NOTIFY_EXEC        0x00000004L
+#define POWER_USER_NOTIFY_BUTTON            0x00000008L
+#define POWER_USER_NOTIFY_SHUTDOWN          0x00000010L
+#define POWER_USER_NOTIFY_FORCED_SHUTDOWN   0x00000020L
+#define POWER_FORCE_TRIGGER_RESET           0x80000000L
 
 /* Battery discharge flags */
 #define BATTERY_DISCHARGE_FLAGS_EVENTCODE_MASK  0x00000007
@@ -88,9 +84,9 @@
 #define PO_THROTTLE_MAXIMUM     4
 
 /* Processor performance state policy flags */
-#define PERFSTATE_POLICY_CHANGE_IDEAL   0x00
-#define PERFSTATE_POLICY_CHANGE_SINGLE  0x01
-#define PERFSTATE_POLICY_CHANGE_ROCKET  0x02
+#define PERFSTATE_POLICY_CHANGE_IDEAL   0
+#define PERFSTATE_POLICY_CHANGE_SINGLE  1
+#define PERFSTATE_POLICY_CHANGE_ROCKET  2
 #define PERFSTATE_POLICY_CHANGE_MAX     PERFSTATE_POLICY_CHANGE_ROCKET
 
 /* Winlogon flags */
@@ -112,6 +108,7 @@
 #define SPSD_REASON_UNKNOWN                 0x0000000CL
 #define SPSD_REASON_INTERNALLYDISABLED      0x0000000DL
 #define SPSD_REASON_DISABLEDBYPOLICY        0x0000000EL
+#define SPSD_REASON_UPGRADEINPROGRESS       0x0000000FL
 
 /* Logging types */
 #define LOGGING_TYPE_SPSD               0x00000001L
@@ -131,10 +128,13 @@ typedef enum {
 typedef POWER_STATE_HANDLER_TYPE    *PPOWER_STATE_HANDLER_TYPE;
 
 /* Enter state handlers */
-typedef NTSTATUS (NTAPI *PENTER_STATE_SYSTEM_HANDLER)( PVOID );
-typedef NTSTATUS (NTAPI *PENTER_STATE_HANDLER)( PVOID, PENTER_STATE_SYSTEM_HANDLER, PVOID, LONG, LONG volatile * );
+typedef NTSTATUS (NTAPI ENTER_STATE_SYSTEM_HANDLER)( PVOID );
+typedef ENTER_STATE_SYSTEM_HANDLER  *PENTER_STATE_SYSTEM_HANDLER;
+typedef NTSTATUS (NTAPI ENTER_STATE_HANDLER)( PVOID, PENTER_STATE_SYSTEM_HANDLER, PVOID, LONG, LONG volatile * );
+typedef ENTER_STATE_HANDLER         *PENTER_STATE_HANDLER;
 #if (NTDDI_VERSION >= 0x05010000)
-typedef NTSTATUS (NTAPI *PENTER_STATE_NOTIFY_HANDLER)( POWER_STATE_HANDLER_TYPE, PVOID, BOOLEAN );
+typedef NTSTATUS (NTAPI ENTER_STATE_NOTIFY_HANDLER)( POWER_STATE_HANDLER_TYPE, PVOID, BOOLEAN );
+typedef ENTER_STATE_NOTIFY_HANDLER  *PENTER_STATE_NOTIFY_HANDLER;
 #endif
 
 /* Power state handler */
@@ -165,8 +165,9 @@ typedef struct {
 typedef PROCESSOR_IDLE_TIMES    *PPROCESSOR_IDLE_TIMES;
 
 /* Processor idle handler */
-typedef NTSTATUS (FASTCALL *PPROCESSOR_IDLE_HANDLER)( ULONG_PTR, PPROCESSOR_IDLE_TIMES );
+typedef NTSTATUS (FASTCALL PROCESSOR_IDLE_HANDLER)( ULONG_PTR, PPROCESSOR_IDLE_TIMES );
 typedef NTSTATUS (FASTCALL *PPROCESSOR_IDLE_HANDLER_EX)( PVOID, ULONG );
+typedef PROCESSOR_IDLE_HANDLER  *PPROCESSOR_IDLE_HANDLER;
 
 /* Processor idle state */
 typedef struct _PROCESSOR_IDLE_STATE {
@@ -212,48 +213,6 @@ typedef struct _PROCESSOR_IDLE_STATES_EX {
 } PROCESSOR_IDLE_STATES_EX;
 typedef PROCESSOR_IDLE_STATES_EX    *PPROCESSOR_IDLE_STATES_EX;
 
-/* Processor performance and feedback handlers */
-typedef NTSTATUS (FASTCALL *PPROCESSOR_PERF_HANDLER)( ULONG_PTR, ULONG64, ULONG64 );
-typedef ULONG (FASTCALL *PPROCESSOR_FEEDBACK_HANDLER)( BOOLEAN );
-
-/* Processor performance state */
-typedef struct {
-    ULONG   Frequency;
-    ULONG   Power;
-    USHORT  Latency;
-    UCHAR   Type;
-    UCHAR   Spare;
-    ULONG64 Control;
-    ULONG64 Status;
-} PROCESSOR_PERF_STATE;
-typedef PROCESSOR_PERF_STATE    *PPROCESSOR_PERF_STATE;
-
-/* Processor performance states */
-typedef struct {
-    ULONG                       Size;
-    USHORT                      Revision;
-    USHORT                      Type;
-    ULONG                       Count;
-    ULONG                       MaxFrequency;
-    KAFFINITY                   TargetProcessors;
-    PPROCESSOR_PERF_HANDLER     PStateHandler;
-    ULONG_PTR                   PStateContext;
-    ULONG                       PStateCap;
-    PPROCESSOR_PERF_HANDLER     TStateHandler;
-    ULONG_PTR                   TStateContext;
-    ULONG                       TStateCap;
-    PPROCESSOR_FEEDBACK_HANDLER FeedbackHandler;
-    PROCESSOR_PERF_STATE        State[ANYSIZE_ARRAY];
-} PROCESSOR_PERF_STATES;
-typedef PROCESSOR_PERF_STATES   *PPROCESSOR_PERF_STATES;
-
-/* Simulated processor load information */
-typedef struct {
-    BOOLEAN Enabled;
-    UCHAR   PercentBusy[MAXIMUM_PROCESSORS];
-} PPM_SIMULATED_PROCESSOR_LOAD;
-typedef PPM_SIMULATED_PROCESSOR_LOAD    *PPPM_SIMULATED_PROCESSOR_LOAD;
-
 /* WMI legacy performance state */
 typedef struct {
     ULONG   Frequency;
@@ -288,6 +247,17 @@ typedef struct {
     PPM_WMI_IDLE_STATE  State[ANYSIZE_ARRAY];
 } PPM_WMI_IDLE_STATES;
 typedef PPM_WMI_IDLE_STATES *PPPM_WMI_IDLE_STATES;
+
+/* WMI idle state array (extended version) */
+typedef struct {
+    ULONG               Type;
+    ULONG               Count;
+    ULONG               TargetState;
+    ULONG               OldState;
+    PVOID               TargetProcessors;
+    PPM_WMI_IDLE_STATE  State[ANYSIZE_ARRAY];
+} PPM_WMI_IDLE_STATES_EX;
+typedef PPM_WMI_IDLE_STATES_EX  *PPPM_WMI_IDLE_STATES_EX;
 
 /* WMI performance state */
 typedef struct {
@@ -334,6 +304,32 @@ typedef struct {
 } PPM_WMI_PERF_STATES;
 typedef PPM_WMI_PERF_STATES *PPPM_WMI_PERF_STATES;
 
+/* WMI performance state array (extended version) */
+typedef struct {
+    ULONG               Count;
+    ULONG               MaxFrequency;
+    ULONG               CurrentState;
+    ULONG               MaxPerfState;
+    ULONG               MinPerfState;
+    ULONG               LowestPerfState;
+    ULONG               ThermalConstraint;
+    UCHAR               BusyAdjThreshold;
+    UCHAR               PolicyType;
+    UCHAR               Type;
+    UCHAR               Reserved;
+    ULONG               TimerInterval;
+    PVOID               TargetProcessors;
+    ULONG               PStateHandler;
+    ULONG               PStateContext;
+    ULONG               TStateHandler;
+    ULONG               TStateContext;
+    ULONG               FeedbackHandler;
+    ULONG               Reserved1;
+    ULONG64             Reserved2;
+    PPM_WMI_PERF_STATE  State[ANYSIZE_ARRAY];
+} PPM_WMI_PERF_STATES_EX;
+typedef PPM_WMI_PERF_STATES_EX  *PPPM_WMI_PERF_STATES_EX;
+
 /* Idle state accounting information */
 typedef struct {
     ULONG   IdleTransitions;
@@ -353,6 +349,37 @@ typedef struct {
     PPM_IDLE_STATE_ACCOUNTING   State[ANYSIZE_ARRAY];
 } PPM_IDLE_ACCOUNTING;
 typedef PPM_IDLE_ACCOUNTING *PPPM_IDLE_ACCOUNTING;
+
+/* Idle state bucket (extended version) */
+typedef struct {
+    ULONG64 TotalTimeUs;
+    ULONG   MinTimeUs;
+    ULONG   MaxTimeUs;
+    ULONG   Count;
+} PPM_IDLE_STATE_BUCKET_EX;
+typedef PPM_IDLE_STATE_BUCKET_EX    *PPPM_IDLE_STATE_BUCKET_EX;
+
+/* Idle state accounting information (extended version) */
+typedef struct {
+    ULONG64                     TotalTime;
+    ULONG                       IdleTransitions;
+    ULONG                       FailedTransitions;
+    ULONG                       InvalidBucketIndex;
+    ULONG                       MinTimeUs;
+    ULONG                       MaxTimeUs;
+    PPM_IDLE_STATE_BUCKET_EX    IdleTimeBuckets[PROC_IDLE_BUCKET_COUNT_EX];
+} PPM_IDLE_STATE_ACCOUNTING_EX;
+typedef PPM_IDLE_STATE_ACCOUNTING_EX    *PPPM_IDLE_STATE_ACCOUNTING_EX;
+
+/* Idle accounting information (extended version) */
+typedef struct {
+    ULONG                           StateCount;
+    ULONG                           TotalTransitions;
+    ULONG                           ResetCount;
+    ULONG64                         StartTime;
+    PPM_IDLE_STATE_ACCOUNTING_EX    State[ANYSIZE_ARRAY];
+} PPM_IDLE_ACCOUNTING_EX;
+typedef PPM_IDLE_ACCOUNTING_EX  *PPPM_IDLE_ACCOUNTING_EX;
 
 /* Performance state event */
 typedef struct {
@@ -606,7 +633,8 @@ typedef SYSTEM_POWER_LOGGING_ENTRY  *PSYSTEM_POWER_LOGGING_ENTRY;
 
 /* Processor idle function */
 #if (NTDDI_VERSION < 0x05010000)
-typedef VOID (FASTCALL *PPROCESSOR_IDLE_FUNCTION)( struct _PROCESSOR_POWER_STATE * );
+typedef VOID (FASTCALL PROCESSOR_IDLE_FUNCTION)( struct _PROCESSOR_POWER_STATE * );
+typedef PROCESSOR_IDLE_FUNCTION *PPROCESSOR_IDLE_FUNCTION;
 #endif
 
 /* Processor power state */
@@ -661,16 +689,133 @@ typedef struct _SYSTEM_HIBERFILE_INFORMATION {
 } SYSTEM_HIBERFILE_INFORMATION;
 typedef SYSTEM_HIBERFILE_INFORMATION    *PSYSTEM_HIBERFILE_INFORMATION;
 
+/* Requester types */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef enum _REQUESTER_TYPE {
+    KernelRequester             = 0,
+    UserProcessRequester        = 1,
+    UserSharedServiceRequester  = 2
+} REQUESTER_TYPE;
+typedef REQUESTER_TYPE  *PREQUESTER_TYPE;
+#endif
+
+/* Reason buffer */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _REASON_BUFFER {
+    ULONG   Flags;
+    union {
+        struct {
+            SIZE_T  ResourceFileNameOffset;
+            USHORT  ResourceReasonId;
+            ULONG   StringCount;
+            SIZE_T  SubstitutionStringsOffset;
+        };
+        SIZE_T  SimpleStringOffset;
+    };
+} REASON_BUFFER;
+typedef REASON_BUFFER   *PREASON_BUFFER;
+#endif
+
+/* Diagnostic buffer */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _DIAGNOSTIC_BUFFER {
+    SIZE_T          Size;
+    REQUESTER_TYPE  CallerType;
+    union {
+        struct {
+            SIZE_T  ProcessImageNameOffset;
+            ULONG   ProcessId;
+            ULONG   ServiceTag;
+        };
+        struct {
+            SIZE_T  DeviceDescriptionOffset;
+            SIZE_T  DevicePathOffset;
+        };
+    };
+    SIZE_T          ReasonOffset;
+} DIAGNOSTIC_BUFFER;
+typedef DIAGNOSTIC_BUFFER   *PDIAGNOSTIC_BUFFER;
+#endif
+
+/* Wake timer information */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _WAKE_TIMER_INFO {
+    SIZE_T              OffsetToNext;
+    ULARGE_INTEGER      DueTime;
+    ULONG               Period;
+    DIAGNOSTIC_BUFFER   ReasonContext;
+} WAKE_TIMER_INFO;
+typedef WAKE_TIMER_INFO *PWAKE_TIMER_INFO;
+#endif
+
+/* Power wake source types */
+typedef enum {
+    DeviceWakeSourceType    = 0,
+    FixedWakeSourceType     = 1,
+    TimerWakeSourceType     = 2
+} PO_WAKE_SOURCE_TYPE;
+typedef PO_WAKE_SOURCE_TYPE *PPO_WAKE_SOURCE_TYPE;
+
+/* Power fixed wake source types */
+typedef enum {
+    FixedWakeSourcePowerButton      = 0,
+    FixedWakeSourceSleepButton      = 1,
+    FixedWakeSourceRtc              = 2,
+    FixedWakeSourceDozeToHibernate  = 3
+} PO_FIXED_WAKE_SOURCE_TYPE;
+typedef PO_FIXED_WAKE_SOURCE_TYPE   *PPO_FIXED_WAKE_SOURCE_TYPE;
+
+/* Power wake source handler */
+typedef struct _PO_WAKE_SOURCE_HEADER {
+    PO_WAKE_SOURCE_TYPE Type;
+    ULONG               Size;
+} PO_WAKE_SOURCE_HEADER;
+typedef PO_WAKE_SOURCE_HEADER   *PPO_WAKE_SOURCE_HEADER;
+
+/* Power wake source device */
+typedef struct _PO_WAKE_SOURCE_DEVICE {
+    PO_WAKE_SOURCE_HEADER   Header;
+    WCHAR                   InstancePath[ANYSIZE_ARRAY];
+} PO_WAKE_SOURCE_DEVICE;
+typedef PO_WAKE_SOURCE_DEVICE   *PPO_WAKE_SOURCE_DEVICE;
+
+/* Power wake source fixed */
+typedef struct _PO_WAKE_SOURCE_FIXED {
+    PO_WAKE_SOURCE_HEADER       Header;
+    PO_FIXED_WAKE_SOURCE_TYPE   FixedWakeSourceType;
+} PO_WAKE_SOURCE_FIXED;
+typedef PO_WAKE_SOURCE_FIXED    *PPO_WAKE_SOURCE_FIXED;
+
+/* Power wake source timer */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _PO_WAKE_SOURCE_TIMER {
+    PO_WAKE_SOURCE_HEADER   Header;
+    DIAGNOSTIC_BUFFER       Reason;
+} PO_WAKE_SOURCE_TIMER;
+typedef PO_WAKE_SOURCE_TIMER    *PPO_WAKE_SOURCE_TIMER;
+#endif
+
+/* Power wake source information */
+typedef struct _PO_WAKE_SOURCE_INFO {
+    ULONG   Count;
+    ULONG   Offsets[ANYSIZE_ARRAY];
+} PO_WAKE_SOURCE_INFO;
+typedef PO_WAKE_SOURCE_INFO *PPO_WAKE_SOURCE_INFO;
+
+/* Power wake source history */
+typedef struct _PO_WAKE_SOURCE_HISTORY {
+    ULONG   Count;
+    ULONG   Offsets[ANYSIZE_ARRAY];
+} PO_WAKE_SOURCE_HISTORY;
+typedef PO_WAKE_SOURCE_HISTORY  *PPO_WAKE_SOURCE_HISTORY;
+
 /* System call functions in NTDLL.DLL */
-NTSYSCALLAPI NTSTATUS NTAPI NtCancelDeviceWakeupRequest( HANDLE );
 NTSYSCALLAPI NTSTATUS NTAPI NtGetDevicePowerState( HANDLE, DEVICE_POWER_STATE * );
 NTSYSCALLAPI NTSTATUS NTAPI NtInitiatePowerAction( POWER_ACTION, SYSTEM_POWER_STATE, ULONG, BOOLEAN );
 NTSYSCALLAPI NTSTATUS NTAPI NtIsSystemResumeAutomatic( VOID );
 NTSYSCALLAPI NTSTATUS NTAPI NtPowerInformation( POWER_INFORMATION_LEVEL, PVOID, ULONG, PVOID, ULONG );
-NTSYSCALLAPI NTSTATUS NTAPI NtRequestDeviceWakeup( HANDLE );
-NTSYSCALLAPI NTSTATUS NTAPI NtRequestWakeupLatency( LATENCY_TIME );
 NTSYSCALLAPI NTSTATUS NTAPI NtSetSystemPowerState( POWER_ACTION, SYSTEM_POWER_STATE, ULONG );
-NTSYSCALLAPI NTSTATUS NTAPI NtSetThreadExecutionState( EXECUTION_STATE, EXECUTION_STATE * );
+NTSYSCALLAPI NTSTATUS NTAPI NtSetThreadExecutionState( EXECUTION_STATE, PEXECUTION_STATE );
 
 :include cplusepi.sp
 

@@ -19,7 +19,6 @@ NtAccessCheckByTypeResultListAndAuditAlarmByHandle@68
 NtAdjustGroupsToken@24
 NtAdjustPrivilegesToken@24
 NtAllocateVirtualMemory@24
-NtCancelDeviceWakeupRequest@4
 NtClose@4
 NtCloseObjectAuditAlarm@12
 NtCommitComplete@8
@@ -84,8 +83,6 @@ NtRecoverResourceManager@4
 NtRecoverTransactionManager@4
 NtRegisterProtocolAddressInformation@20
 NtRenameTransactionManager@8
-NtRequestDeviceWakeup@4
-NtRequestWakeupLatency@4
 NtRollbackComplete@8
 NtRollbackEnlistment@8
 NtRollbackTransaction@8
