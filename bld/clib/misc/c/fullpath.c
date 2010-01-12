@@ -57,6 +57,8 @@
     #elif defined(__NT__)
         #include <windows.h>
         #include "libwin32.h"
+    #elif defined(__DOS__)
+        #include "_doslfn.h"
     #elif !defined(__NETWARE__)
         #include "tinyio.h"
     #endif
@@ -89,6 +91,7 @@ extern char *ConvertNameToFullPath( const char *, char * );
 #endif
 
 #if defined(__QNX__)
+
 static char *__qnx_fullpath( char *fullpath, const char *path )
 /*************************************************************/
 {
@@ -109,6 +112,77 @@ static char *__qnx_fullpath( char *fullpath, const char *path )
     }
     return( fullpath );
 }
+
+#elif defined( __DOS__ )
+
+#ifdef _M_I86
+  #ifdef __BIG_DATA__
+    #define AUX_INFO    \
+        parm caller     [si ax] [dl] \
+        modify exact    [ax si];
+  #else
+    #define AUX_INFO    \
+        parm caller     [si] [dl] \
+        modify exact    [ax];
+  #endif
+#else
+    #define AUX_INFO    \
+        parm caller     [esi] [dl] \
+        modify exact    [eax];
+#endif
+
+extern unsigned __getdcwd_sfn( const char *buff, unsigned char drv );
+#pragma aux __getdcwd_sfn = \
+        _SET_DSSI       \
+        _MOV_AH DOS_GETCWD \
+        _INT_21         \
+        _RST_DS         \
+        "call __doserror_" \
+        AUX_INFO
+
+#if defined( __WATCOM_LFN__ )
+static unsigned _getdcwd_lfn( const char *buff, unsigned char drv )
+/*****************************************************************/
+{
+  #ifdef _M_I86
+    return( __getdcwd_lfn( buff, drv ) );
+  #else
+    call_struct     dpmi_rm;
+
+    memset( &dpmi_rm, 0, sizeof( dpmi_rm ) );
+    dpmi_rm.ds  = RM_TB_PARM1_SEGM;
+    dpmi_rm.esi = RM_TB_PARM1_OFFS;
+    dpmi_rm.edx = drv;
+    dpmi_rm.eax = 0x7147;
+    dpmi_rm.flags = 1;
+    if( __dpmi_dos_call( &dpmi_rm ) ) {
+        return( -1 );
+    }
+    if( dpmi_rm.flags & 1 ) {
+        return( __set_errno_dos_reterr( (unsigned short)dpmi_rm.eax ) );
+    }
+    strcpy( (char *)buff, RM_TB_PARM1_LINEAR );
+    return( 0 );
+  #endif
+}
+#endif
+
+static unsigned __getdcwd( const char *buff, unsigned char drv )
+/**************************************************************/
+{
+#if defined( __WATCOM_LFN__ )
+    unsigned        rc = 0;
+
+    if( _RWD_uselfn && (rc = _getdcwd_lfn( buff, drv )) == 0 ) {
+        return( rc );
+    }
+    if( IS_LFN_ERROR( rc ) ) {
+        return( rc );
+    }
+#endif
+    return( __getdcwd_sfn( buff, drv ) );
+}
+
 #endif
 
 _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
@@ -325,8 +399,16 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
             __set_errno( ENOENT );
             return( NULL );
         }
+  #elif defined(__DOS__)
+        if( __getdcwd( curr_dir, path_drive_idx ) ) {
+            __set_errno( ENOENT );
+            return( NULL );
+        }
   #else
-        if( _getdcwd( path_drive_idx, curr_dir, sizeof( curr_dir ) ) == NULL ) {
+        tiny_ret_t rc;
+
+        rc = TinyGetCWDir( curr_dir, path_drive_idx );
+        if( TINY_ERROR( rc ) ) {
             __set_errno( ENOENT );
             return( NULL );
         }

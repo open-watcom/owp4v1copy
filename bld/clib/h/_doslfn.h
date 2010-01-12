@@ -68,6 +68,7 @@
     #define _RST_ES
 #endif
 
+#include "pushpck1.h"
 /* The find block for the LFN find */
 typedef struct {
     long    attributes;
@@ -83,6 +84,17 @@ typedef struct {
     char    lfn[NAME_MAX + 1];
     char    sfn[14];
 } lfnfind_t;
+
+typedef struct {
+    unsigned short  cr_time;
+    unsigned short  cr_date;
+    unsigned short  ac_time;
+    unsigned short  ac_date;
+    unsigned long   sign;
+    unsigned short  handle;
+} __lfndta;
+
+#include "poppck.h"
 
 extern unsigned __doserror_( unsigned );
 #pragma aux __doserror_ "*" parm caller;
@@ -222,7 +234,7 @@ extern unsigned __getdcwd_lfn( const char *path, unsigned char drv );
         "push ds"       \
         "xchg ax,si"    \
         "mov  ds,ax"    \
-        "mov ax,7147h"  \
+        "mov  ax,7147h" \
         "stc"           \
         "int  21h"      \
         "pop  ds"       \
@@ -231,7 +243,7 @@ extern unsigned __getdcwd_lfn( const char *path, unsigned char drv );
         modify exact    [ax si];
   #else
     #pragma aux __getdcwd_lfn = \
-        "mov ax,7147h"  \
+        "mov  ax,7147h" \
         "stc"           \
         "int  21h"      \
         "call __doserror_" \
@@ -409,16 +421,6 @@ extern unsigned __unlink_lfn( const char *filename );
         SAVE_VALUE      \
 "L1:"
 
-
-typedef struct {
-    unsigned short  cr_time;
-    unsigned short  cr_date;
-    unsigned short  ac_time;
-    unsigned short  ac_date;
-    unsigned long   sign;
-    unsigned short  handle;
-} __lfndta;
-
 #define CRTIME_OF(x)    (((__lfndta *)(x))->cr_time)
 #define CRDATE_OF(x)    (((__lfndta *)(x))->cr_date)
 #define ACTIME_OF(x)    (((__lfndta *)(x))->ac_time)
@@ -446,10 +448,10 @@ extern unsigned short   const __lfn_rm_tb_segment;
 #define RM_TB_PARM2_OFFS    RM_TB_PARM1_SIZE
 #define RM_TB_PARM2_LINEAR  (__lfn_rm_tb_linear + RM_TB_PARM1_SIZE)
 
-extern unsigned __dpmi_dos_call( call_struct *cs );
+extern unsigned __dpmi_dos_call( call_struct __far *cs );
 #pragma aux __dpmi_dos_call = \
         "push es"       \
-        "mov  es,dx"    \
+        "mov  es,edx"   \
         "xor  cx,cx"    \
         "mov  bx,21h"   \
         "mov  ax,300h"  \
