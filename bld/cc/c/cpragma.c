@@ -45,6 +45,7 @@ struct enums_info {
 } *EnumInfo;
 
 extern struct aux_info *GetLangInfo( type_modifiers flags );
+extern bool             PrintWhiteSpace;  //ppc printing   (from ccmain.c)
 
 // local variables
 static struct toggle ToggleNames[] = {
@@ -1152,7 +1153,8 @@ void CPragma( void )
         CppPrtf( "#pragma" );
         CppPrtf( " " );
         PreProcPrintToken();    /* PragRecogAhead sneaked a token */
-        CompFlags.pre_processing = 1;               /* 28-feb-89 */
+        PrintWhiteSpace = TRUE;
+        CompFlags.pre_processing = 1;
         CompFlags.in_pragma = 1;
         for( ; ; ) {
             GetNextToken();

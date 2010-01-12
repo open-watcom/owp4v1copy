@@ -62,7 +62,7 @@ static  char    IsStdIn;
 static  int     IncFileDepth;
 static  char    *FNameBuf = NULL;
 
-int PrintWhiteSpace;     // also refered from cmac2.c
+bool    PrintWhiteSpace;     // also refered from cmac2.c
 
 // local function prototypes
 static  void        DoCCompile( char **cmdline );
