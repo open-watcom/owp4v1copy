@@ -1408,7 +1408,7 @@ void CppPrtToken( void )
         case T_NULL:
             break;
         case T_WHITE_SPACE:
-            if( PrintWhiteSpace ) {
+            if( PrintWhiteSpace || CompFlags.in_pragma ) {
                 CppPrtf( "%s", Tokens[ CurToken ] );
             } else {
                 PrintWhiteSpace = TRUE; //Toggle
