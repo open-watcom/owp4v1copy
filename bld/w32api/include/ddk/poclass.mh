@@ -96,6 +96,17 @@
 #define SYS_BUTTON_LID_INITIAL      0x00040000L
 #define SYS_BUTTON_LID_CHANGED      0x00080000L
 
+/* Processor PCC commands */
+#ifndef _WINDOWS_
+    #define PROCESSOR_PCC_COMMAND_GET_AVERAGE_FREQUENCY 0x00
+    #define PROCESSOR_PCC_COMMAND_SET_DESIRED_FREQUENCY 0x01
+#endif
+
+/* Processor PCC interface standard version number */
+#ifndef _WINDOWS_
+    #define PROCESSOR_PCC_INTERFACE_STANDARD_VERSION    1
+#endif
+
 /* Battery query information level */
 typedef enum {
     BatteryInformation              = 0,
@@ -185,12 +196,24 @@ typedef BATTERY_NOTIFY  *PBATTERY_NOTIFY;
 
 /* Battery class callbacks */
 #ifndef _WINDOWS_
-typedef NTSTATUS (NTAPI *BCLASS_QUERY_TAG)( PVOID, PULONG );
-typedef NTSTATUS (NTAPI *BCLASS_QUERY_INFORMATION)( PVOID, ULONG, BATTERY_QUERY_INFORMATION_LEVEL, ULONG, PVOID, ULONG, PULONG );
-typedef NTSTATUS (NTAPI *BCLASS_QUERY_STATUS)( PVOID, ULONG, PBATTERY_STATUS );
-typedef NTSTATUS (NTAPI *BCLASS_SET_STATUS_NOTIFY)( PVOID, ULONG, PBATTERY_NOTIFY );
-typedef NTSTATUS (NTAPI *BCLASS_SET_INFORMATION)( PVOID, ULONG, BATTERY_SET_INFORMATION_LEVEL, PVOID );
-typedef NTSTATUS (NTAPI *BCLASS_DISABLE_STATUS_NOTIFY)( PVOID );
+typedef NTSTATUS (NTAPI BCLASS_QUERY_TAG_CALLBACK)( PVOID, PULONG );
+typedef NTSTATUS (NTAPI BCLASS_QUERY_INFORMATION_CALLBACK)( PVOID, ULONG, BATTERY_QUERY_INFORMATION_LEVEL, ULONG, PVOID, ULONG, PULONG );
+typedef NTSTATUS (NTAPI BCLASS_QUERY_STATUS_CALLBACK)( PVOID, ULONG, PBATTERY_STATUS );
+typedef NTSTATUS (NTAPI BCLASS_SET_STATUS_NOTIFY_CALLBACK)( PVOID, ULONG, PBATTERY_NOTIFY );
+typedef NTSTATUS (NTAPI BCLASS_SET_INFORMATION_CALLBACK)( PVOID, ULONG, BATTERY_SET_INFORMATION_LEVEL, PVOID );
+typedef NTSTATUS (NTAPI BCLASS_DISABLE_STATUS_NOTIFY_CALLBACK)( PVOID );
+typedef BCLASS_QUERY_TAG_CALLBACK               *PBCLASS_QUERY_TAG_CALLBACK;
+typedef BCLASS_QUERY_INFORMATION_CALLBACK       *PBCLASS_QUERY_INFORMATION_CALLBACK;
+typedef BCLASS_QUERY_STATUS_CALLBACK            *PBCLASS_QUERY_STATUS_CALLBACK;
+typedef BCLASS_SET_STATUS_NOTIFY_CALLBACK       *PBCLASS_SET_STATUS_NOTIFY_CALLBACK;
+typedef BCLASS_SET_INFORMATION_CALLBACK         *PBCLASS_SET_INFORMATION_CALLBACK;
+typedef BCLASS_DISABLE_STATUS_NOTIFY_CALLBACK   *PBCLASS_DISABLE_STATUS_NOTIFY_CALLBACK;
+typedef PBCLASS_QUERY_TAG_CALLBACK              BCLASS_QUERY_TAG;
+typedef PBCLASS_QUERY_INFORMATION_CALLBACK      BCLASS_QUERY_INFORMATION;
+typedef PBCLASS_QUERY_STATUS_CALLBACK           BCLASS_QUERY_STATUS;
+typedef PBCLASS_SET_STATUS_NOTIFY_CALLBACK      BCLASS_SET_STATUS_NOTIFY;
+typedef PBCLASS_SET_INFORMATION_CALLBACK        BCLASS_SET_INFORMATION;
+typedef PBCLASS_DISABLE_STATUS_NOTIFY_CALLBACK  BCLASS_DISABLE_STATUS_NOTIFY;
 #endif
 
 /* Battery miniport information */
@@ -226,24 +249,6 @@ typedef struct _THERMAL_INFORMATION {
 } THERMAL_INFORMATION;
 typedef THERMAL_INFORMATION *PTHERMAL_INFORMATION;
 
-/* Thermal information (extended version) */
-#if (NTDDI_VERSION >= 0x06000000)
-typedef struct _THERMAL_INFORMATION_EX {
-    ULONG       ThermalStamp;
-    ULONG       ThermalConstant1;
-    ULONG       ThermalConstant2;
-    KAFFINITY   Processors;
-    ULONG       SamplingPeriod;
-    ULONG       CurrentTemperature;
-    ULONG       PassiveTripPoint;
-    ULONG       CriticalTripPoint;
-    UCHAR       ActiveTripPointCount;
-    ULONG       ActiveTripPoint[MAX_ACTIVE_COOLING_LEVELS];
-    ULONG       S4TransitionTripPoint;
-} THERMAL_INFORMATION_EX;
-typedef THERMAL_INFORMATION_EX  *PTHERMAL_INFORMATION_EX;
-#endif
-
 /* Processor object information */
 typedef struct {
     ULONG   PhysicalID;
@@ -257,10 +262,105 @@ typedef struct {
     ULONG   PhysicalID;
     ULONG   PBlkAddress;
     UCHAR   PBlkLength;
-    ULONG   ApicId;
-    ULONG   NumaId;
+    ULONG   InitialApicId;
 } PROCESSOR_OBJECT_INFO_EX;
 typedef PROCESSOR_OBJECT_INFO_EX    *PPROCESSOR_OBJECT_INFO_EX;
+
+/* PCC header */
+#ifndef _WINDOWS_
+typedef struct _PCC_HEADER {
+    ULONG   Signature;
+    USHORT  HeaderLength;
+    UCHAR   MajorVersion;
+    UCHAR   MinorVersion;
+    union {
+        struct {
+            ULONG   SciDoorbell : 1;
+            ULONG   Reserved    : 31;
+        };
+        ULONG   AsULong;
+    } SupportedFeatures;
+    union {
+        struct {
+            USHORT  CommandCode : 8;
+            USHORT  ReservedZ   : 7;
+            USHORT  SciDoorbell : 1;
+        };
+        USHORT  AsUShort;
+    } Command;
+    union {
+        struct {
+            USHORT  CommandComplete : 1;
+            USHORT  SciReceived     : 1;
+            USHORT  Error           : 1;
+            USHORT  Reserved        : 13;
+        };
+        USHORT  AsUShort;
+    } Status;
+    ULONG   Latency;
+    ULONG   MinimumCommandInterval;
+    ULONG   MaximumCommandInterval;
+    ULONG   NominalFrequency;
+    ULONG   MinimumFrequency;
+    ULONG   MinimumUnthrottledFrequency;
+} PCC_HEADER;
+typedef PCC_HEADER  *PPCC_HEADER;
+#endif
+
+/* PCC input buffer */
+#ifndef _WINDOWS_
+typedef struct _PCC_INPUT_BUFFER {
+    UCHAR   ControlEnabled;
+    union {
+        struct {
+            UCHAR   ReservedZ[3];
+        } GetAverageFrequency;
+        struct {
+            UCHAR   DesiredFrequency;
+            UCHAR   ReservedZ[2];
+        } SetDesiredFrequency;
+    };
+} PCC_INPUT_BUFFER;
+typedef PCC_INPUT_BUFFER    *PPCC_INPUT_BUFFER;
+#endif
+
+/* PCC output buffer */
+#ifndef _WINDOWS_
+typedef union _PCC_OUTPUT_BUFFER {
+    struct {
+        UCHAR   AverageFrequency;
+        UCHAR   FrequencyLimit;
+        UCHAR   Reserved[2];
+    } GetAverageFrequency;
+    struct {
+        UCHAR   Reserved[4];
+    } SetDesiredFrequency;
+} PCC_OUTPUT_BUFFER;
+typedef PCC_OUTPUT_BUFFER   *PPCC_OUTPUT_BUFFER;
+#endif
+
+/* PCC callbacks */
+#ifndef _WINDOWS_
+typedef VOID (NTAPI PROCESSOR_PCC_DOORBELL_CALLBACK)( ULONG, ULONG_PTR );
+typedef PROCESSOR_PCC_DOORBELL_CALLBACK *PPROCESSOR_PCC_DOORBELL_CALLBACK;
+typedef NTSTATUS (NTAPI PROCESSOR_PCC_RING_DOORBELL)( UCHAR, PPROCESSOR_PCC_DOORBELL_CALLBACK, ULONG_PTR );
+typedef PROCESSOR_PCC_RING_DOORBELL     *PPROCESSOR_PCC_RING_DOORBELL;
+#endif
+
+/* Processor PCC interface standard */
+#ifndef _WINDOWS_
+typedef struct _PROCESSOR_PCC_INTERFACE_STANDARD {
+    USHORT                          Size;
+    USHORT                          Version;
+    PVOID                           Context;
+    PINTERFACE_REFERENCE            InterfaceReference;
+    PINTERFACE_DEREFERENCE          InterfaceDereference;
+    PPROCESSOR_PCC_RING_DOORBELL    PccRingDoorbell;
+    PPCC_HEADER                     PccHeader;
+    ULONG                           PccHeaderLength;
+} PROCESSOR_PCC_INTERFACE_STANDARD;
+typedef PROCESSOR_PCC_INTERFACE_STANDARD    *PPROCESSOR_PCC_INTERFACE_STANDARD;
+#endif
 
 /* Functions in BATTC.SYS */
 #ifndef _WINDOWS_
