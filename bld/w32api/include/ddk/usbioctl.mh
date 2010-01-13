@@ -444,17 +444,34 @@ typedef USB_ID_STRING   *PUSB_ID_STRING;
 #endif
 #endif
 
+/* USB hub device UXD settings */
+#ifndef USB_KERNEL_IOCTL
+#if (_WIN32_WINNT >= 0x0600)
+typedef struct _USB_HUB_DEVICE_UXD_SETTINGS {
+    ULONG   Version;
+    GUID    PnpGuid;
+    GUID    OwnerGuid;
+    ULONG   DeleteOnShutdown;
+    ULONG   DeleteOnReload;
+    ULONG   DeleteOnDisconnect;
+    ULONG   Reserved[5];
+} USB_HUB_DEVICE_UXD_SETTINGS;
+typedef USB_HUB_DEVICE_UXD_SETTINGS *PUSB_HUB_DEVICE_UXD_SETTINGS;
+#endif
+#endif
+
 /* Hub device configuration information (version 1) */
 #ifndef USB_KERNEL_IOCTL
 #if (_WIN32_WINNT >= 0x0600)
 typedef struct _HUB_DEVICE_CONFIG_INFO_V1 {
-    ULONG               Version;
-    ULONG               Length;
-    USB_HUB_CAP_FLAGS   HubFlags;
-    USB_ID_STRING       HardwareIds;
-    USB_ID_STRING       CompatibleIds;
-    USB_ID_STRING       DeviceDescription;
-    ULONG               Reserved[36];
+    ULONG                       Version;
+    ULONG                       Length;
+    USB_HUB_CAP_FLAGS           HubFlags;
+    USB_ID_STRING               HardwareIds;
+    USB_ID_STRING               CompatibleIds;
+    USB_ID_STRING               DeviceDescription;
+    ULONG                       Reserved[19];
+    USB_HUB_DEVICE_UXD_SETTINGS UxdSettings;
 } HUB_DEVICE_CONFIG_INFO;
 typedef HUB_DEVICE_CONFIG_INFO  *PHUB_DEVICE_CONFIG_INFO;
 #endif
