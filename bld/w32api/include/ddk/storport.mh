@@ -70,12 +70,14 @@ typedef BOOLEAN (NTAPI *PHW_BUILDIO)( PVOID, struct SCSI_REQUEST_BLOCK * );
 #endif
 
 /* Storage performance flags */
-#define STOR_PERF_DPC_REDIRECTION           0x00000001L
-#define STOR_PERF_CONCURRENT_CHANNELS       0x00000002L
-#define STOR_PERF_INTERRUPT_MESSAGE_RANGES  0x00000004L
+#define STOR_PERF_DPC_REDIRECTION                           0x00000001L
+#define STOR_PERF_CONCURRENT_CHANNELS                       0x00000002L
+#define STOR_PERF_INTERRUPT_MESSAGE_RANGES                  0x00000004L
+#define STOR_PERF_ADV_CONFIG_LOCALITY                       0x00000008L
+#define STOR_PERF_OPTIMIZE_FOR_COMPLETION_DURING_STARTIO    0x00000010L
 
 /* Storage performance version number */
-#define STOR_PERF_VERSION   0x00000002L
+#define STOR_PERF_VERSION   0x00000003L
 
 /* Storage status codes */
 #define STOR_STATUS_SUCCESS                 0x00000000L
@@ -88,10 +90,16 @@ typedef BOOLEAN (NTAPI *PHW_BUILDIO)( PVOID, struct SCSI_REQUEST_BLOCK * );
 #define STOR_STATUS_INVALID_DEVICE_REQUEST  0xC1000007L
 #define STOR_STATUS_INVALID_IRQL            0xC1000008L
 #define STOR_STATUS_INVALID_DEVICE_STATE    0xC1000009L
+#define STOR_STATUS_INVALID_BUFFER_SIZE     0xC100000AL
+#define STOR_STATUS_UNSUPPORTED_VERSION     0xC100000BL
 
 /* Miniport dump constants */
 #define DUMP_MINIPORT_VERSION_1     0x0100
+#define DUMP_MINIPORT_VERSION       0x0200
 #define DUMP_MINIPORT_NAME_LENGTH   15
+
+/* Storage current log interface revision number */
+#define STOR_CURRENT_LOG_INTERFACE_REVISION 0x0100
 
 /* Miniport registry value types */
 #define MINIPORT_REG_SZ     1
@@ -251,7 +259,17 @@ typedef enum _STORPORT_FUNCTION_CODE {
     ExtFunctionReleaseMSISpinLock                   = 12,
     ExtFunctionGetMessageInterruptInformation       = 13,
     ExtFunctionInitializePerformanceOptimizations   = 14,
-    ExtFunctionGetStartIoPerformanceParameters      = 15
+    ExtFunctionGetStartIoPerformanceParameters      = 15,
+    ExtFunctionLogSystemEvent                       = 16,
+    ExtFunctionGetCurrentProcessorNumber            = 17,
+    ExtFunctionGetActiveGroupCount                  = 18,
+    ExtFunctionGetGroupAffinity                     = 19,
+    ExtFunctionGetActiveNodeCount                   = 20,
+    ExtFunctionGetNodeAffinity                      = 21,
+    ExtFunctionGetHighestNodeNumber                 = 22,
+    ExtFunctionGetLogicalProcessorRelationship      = 23,
+    ExtFunctionAllocateContiguousMemorySpecifyCacheNode = 24,
+    ExtFunctionFreeContiguousMemorySpecifyCache     = 25
 } STORPORT_FUNCTION_CODE;
 typedef STORPORT_FUNCTION_CODE  *PSTORPORT_FUNCTION_CODE;
 
@@ -301,6 +319,8 @@ typedef struct _MINIPORT_MAPPINGS {
     PVOID   IBFTable;
     PVOID   Nic0Map;
     PVOID   Nic1Map;
+    ULONG   NumberOfAdditionalNic;
+    PVOID   NicMap[];
 } MINIPORT_MAPPINGS;
 typedef MINIPORT_MAPPINGS   *PMINIPORT_MAPPINGS;
 
@@ -326,6 +346,33 @@ typedef struct _MINIPORT_DUMP_POINTERS {
     UCHAR                   MaximumNumberOfTargets;
 } MINIPORT_DUMP_POINTERS;
 typedef MINIPORT_DUMP_POINTERS  *PMINIPORT_DUMP_POINTERS;
+
+/* Storage event association enumeration */
+typedef enum _STOR_EVENT_ASSOCIATION_ENUM {
+    StorEventAdapterAssociation     = 0,
+    StorEventLunAssociation         = 1,
+    StorEventTargetAssociation      = 2,
+    StorEventInvalidAssociation     = 3
+} STOR_EVENT_ASSOCIATION_ENUM;
+
+/* Storage log event details */
+typedef struct _STOR_LOG_EVENT_DETAILS {
+    ULONG                       InterfaceRevision;
+    ULONG                       Size;
+    ULONG                       Flags;
+    STOR_EVENT_ASSOCIATION_ENUM EventAssociation;
+    ULONG                       PathId;
+    ULONG                       TargetId;
+    ULONG                       LunId;
+    BOOLEAN                     StorportSpecificErrorCode;
+    ULONG                       ErrorCode;
+    ULONG                       UniqueId;
+    ULONG                       DumpDataSize;
+    PVOID                       DumpData;
+    ULONG                       StringCount;
+    PWSTR                       *StringList;
+} STOR_LOG_EVENT_DETAILS;
+typedef STOR_LOG_EVENT_DETAILS  *PSTOR_LOG_EVENT_DETAILS;
 
 /* Storage callbacks */
 typedef BOOLEAN (NTAPI *PSTOR_SYNCHRONIZED_ACCESS)( PVOID, PVOID );
@@ -592,6 +639,64 @@ __inline ULONG StorPortGetStartIoPerfParams( PVOID p1, PSCSI_REQUEST_BLOCK p2,
 {
     return( StorPortExtendedFunction( ExtFunctionGetStartIoPerformanceParameters, p1, p2,
                                       p3 ) );
+}
+
+__inline ULONG StorPortLogSystemEvent( PVOID p1, PSTOR_LOG_EVENT_DETAILS p2, PULONG p3 )
+{
+    return( StorPortExtendedFunction( ExtFunctionLogSystemEvent, p1, p2, p3 ) );
+}
+
+__inline ULONG StorPortGetCurrentProcessorNumber( PVOID p1, PPROCESSOR_NUMBER p2 )
+{
+    return( StorPortExtendedFunction( ExtFunctionGetCurrentProcessorNumber, p1, p2 ) );
+}
+
+__inline ULONG StorPortGetGroupAffinity( PVOID p1, USHORT p2, PKAFFINITY p3 )
+{
+    return( StorPortExtendedFunction( ExtFunctionGetGroupAffinity, p1, p2, p3 ) );
+}
+
+__inline ULONG StorPortGetActiveGroupCount( PVOID p1, PUSHORT p2 )
+{
+    return( StorPortExtendedFunction( ExtFunctionGetActiveGroupCount, p1, p2 ) );
+}
+
+__inline ULONG StorPortGetNodeAffinity( PVOID p1, ULONG p2, PGROUP_AFFINITY p3 )
+{
+    return( StorPortExtendedFunction( ExtFunctionGetNodeAffinity, p1, p2, p3 ) );
+}
+
+__inline ULONG StorPortGetActiveNodeCount( PVOID p1, PULONG p2 )
+{
+    return( StorPortExtendedFunction( ExtFunctionGetActiveNodeCount, p1, p2 ) );
+}
+
+__inline ULONG StorPortGetHighestNodeNumber( PVOID p1, PULONG p2 )
+{
+    return( StorPortExtendedFunction( ExtFunctionGetHighestNodeNumber, p1, p2 ) );
+}
+
+__inline ULONG StorPortGetLogicalProcessorRelationship( PVOID p1, PPROCESSOR_NUMBER p2,
+    LOGICAL_PROCESSOR_RELATIONSHIP p3, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX p4,
+    PULONG p5 )
+{
+    return( StorPortExtendedFunction( ExtFunctionGetLogicalProcessorRelationship, p1, p2,
+                                      p3, p4, p5 ) );
+}
+
+__inline ULONG StorPortAllocateContiguousMemorySpecifyCacheNode( PVOID p1, SIZE_T p2,
+    PHYSICAL_ADDRESS p3, PHYSICAL_ADDRESS p4, PHYSICAL_ADDRESS p5,
+    MEMORY_CACHING_TYPE p6, NODE_REQUIREMENT p7, PVOID *p8 )
+{
+    return( StorPortExtendedFunction( ExtFunctionAllocateContiguousMemorySpecifyCacheNode,
+                                      p1, p2, p3, p4, p5, p6, p7, p8 ) );
+}
+
+__inline ULONG StorPortFreeContiguousMemorySpecifyCache( PVOID p1, PVOID p2, SIZE_T p3,
+                                                         MEMORY_CACHING_TYPE p4 )
+{
+    return( StorPortExtendedFunction( ExtFunctionFreeContiguousMemorySpecifyCache, p1,
+                                      p2, p3, p4 ) );
 }
 
 :include cplusepi.sp
