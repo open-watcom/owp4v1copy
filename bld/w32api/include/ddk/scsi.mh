@@ -154,6 +154,7 @@
 #define DISK_STATUS_EMPTY       0x00
 #define DISK_STATUS_INCOMPLETE  0x01
 #define DISK_STATUS_COMPLETE    0x02
+#define DISK_STATUS_OTHERS      0x03
 
 /* Last session values */
 #define LAST_SESSION_EMPTY              0x00
@@ -904,10 +905,13 @@ typedef union _CDB {
     struct _SEND_OPC_INFORMATION {
         UCHAR   OperationCode;
         UCHAR   DoOpc       : 1;
-        UCHAR   Reserved    : 7;
-        UCHAR   Reserved1[5];
+        UCHAR   Reserved1   : 7;
+        UCHAR   Exclude0    : 1;
+        UCHAR   Exclude1    : 1;
+        UCHAR   Reserved2   : 6;
+        UCHAR   Reserved3[4];
         UCHAR   ParameterListLength[2];
-        UCHAR   Reserved2;
+        UCHAR   Reserved4;
     } SEND_OPC_INFORMATION;
     struct _REPAIR_TRACK {
         UCHAR   OperationCode;
@@ -1814,11 +1818,37 @@ typedef struct _CDVD_TITLE_KEY_HEADER {
 } CDVD_TITLE_KEY_HEADER;
 typedef CDVD_TITLE_KEY_HEADER   *PCDVD_TITLE_KEY_HEADER;
 
+/* Format descriptor */
+typedef struct _FORMAT_DESCRIPTOR {
+    UCHAR   NumberOfBlocks[4];
+    UCHAR   FormatSubType   : 2;
+    UCHAR   FormatType      : 6;
+    UCHAR   BlockLength[3];
+} FORMAT_DESCRIPTOR;
+typedef FORMAT_DESCRIPTOR   *PFORMAT_DESCRIPTOR;
+
+/* Format list header */
+typedef struct _FORMAT_LIST_HEADER {
+    UCHAR               Reserved;
+    UCHAR               VendorSpecific  : 1;
+    UCHAR               Immediate       : 1;
+    UCHAR               TryOut          : 1;
+    UCHAR               IP              : 1;
+    UCHAR               STPF            : 1;
+    UCHAR               DCRT            : 1;
+    UCHAR               DPRY            : 1;
+    UCHAR               FOV             : 1;
+    UCHAR               FormatDescriptorLength[2];
+    FORMAT_DESCRIPTOR   Descriptors[1];
+} FORMAT_LIST_HEADER;
+typedef FORMAT_LIST_HEADER  *PFORMAT_LIST_HEADER;
+
 /* Formatted capacity descriptor */
 typedef struct _FORMATTED_CAPACITY_DESCRIPTOR {
     UCHAR   NumberOfBlocks[4];
-    UCHAR   Maximum : 1;
-    UCHAR   Valid   : 1;
+    UCHAR   Maximum     : 1;
+    UCHAR   Valid       : 1;
+    UCHAR   FormatType  : 6;
     UCHAR   BlockLength[3];
 } FORMATTED_CAPACITY_DESCRIPTOR;
 typedef FORMATTED_CAPACITY_DESCRIPTOR   *PFORMATTED_CAPACITY_DESCRIPTOR;
