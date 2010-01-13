@@ -94,8 +94,6 @@ typedef PVOID   USBD_INTERFACE_HANDLE;
 #endif
 #if (_WIN32_WINNT >= 0x0600)
     #define URB_FUNCTION_CONTROL_TRANSFER_EX        0x0032
-    #define URB_FUNCTION_SET_PIPE_IO_POLICY         0x0033
-    #define URB_FUNCTION_GET_PIPE_IO_POLICY         0x0034
 #endif
 #define URB_FUNCTION_RESET_PIPE \
     URB_FUNCTION_SYNC_RESET_PIPE_AND_CLEAR_STALL
@@ -215,6 +213,11 @@ typedef PVOID   USBD_INTERFACE_HANDLE;
 /* Microsoft OS string signature */
 #if (_WIN32_WINNT >= 0x0501)
     #define MS_OS_STRING_SIGNATURE  L"MSFT100"
+#endif
+
+/* Microsoft OS flags */
+#if (_WIN32_WINNT >= 0x0501)
+    #define MS_OS_FLAGS_CONTAINERID 0x02
 #endif
 
 /* USB controller flavors */
@@ -454,7 +457,10 @@ typedef struct _OS_STRING {
     UCHAR   bDescriptorType;
     WCHAR   MicrosoftString[7];
     UCHAR   bVendorCode;
-    UCHAR   bPad;
+    union {
+        UCHAR   bPad;
+        UCHAR   bFlags;
+    };
 } OS_STRING;
 typedef OS_STRING   *POS_STRING;
 #endif
@@ -508,34 +514,6 @@ struct _URB_CONTROL_TRANSFER_EX {
 };
 #endif
 
-/* USB I/O priority values */
-#if (_WIN32_WINNT >= 0x0600)
-typedef enum _USB_IO_PRIORITY {
-    UsbIoPriorty_Normal     = 0,
-    UsbIoPriority_High      = 8,
-    UsbIoPriority_VeryHigh  = 16
-} USB_IO_PRIORITY;
-#endif
-
-/* USB I/O parameters */
-#if (_WIN32_WINNT >= 0x0600)
-typedef struct _USB_IO_PARAMETERS {
-    USB_IO_PRIORITY UsbIoPriority;
-    ULONG           UsbMaxPendingIrps;
-    ULONG           UsbMaxControllerTransfer;
-} USB_IO_PARAMETERS;
-typedef USB_IO_PARAMETERS   *PUSB_IO_PARAMETERS;
-#endif
-
-/* URB pipe I/O policy */
-#if (_WIN32_WINNT >= 0x0600)
-struct _URB_PIPE_IO_POLICY {
-    struct _URB_HEADER  Hdr;
-    USBD_PIPE_HANDLE    PipeHandle;
-    USB_IO_PARAMETERS   UsbIoParameters;
-};
-#endif
-
 /* URB bulk or interrupt transfer */
 struct _URB_BULK_OR_INTERRUPT_TRANSFER {
     struct _URB_HEADER      Hdr;
@@ -586,7 +564,6 @@ typedef struct _URB {
         struct _URB_CONTROL_TRANSFER                UrbControlTransfer;
 #if (_WIN32_WINNT >= 0x0600)
         struct _URB_CONTROL_TRANSFER_EX             UrbControlTransferEx;
-        struct _URB_PIPE_IO_POLICY                  UrbPipeIoPolicy;
 #endif
         struct _URB_BULK_OR_INTERRUPT_TRANSFER      UrbBulkOrInterruptTransfer;
         struct _URB_ISOCH_TRANSFER                  UrbIsochronousTransfer;
