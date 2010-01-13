@@ -382,7 +382,9 @@ typedef enum {
     StorRemoveDevice                = 0x02,
     StorStopDevice                  = 0x04,
     StorQueryCapabilities           = 0x09,
-    StorFilterResourceRequirements  = 0x0B
+    StorQueryResourceRequirements   = 0x0B,
+    StorFilterResourceRequirements  = 0x0D,
+    StorSurpriseRemoval             = 0x17
 } STOR_PNP_ACTION;
 typedef STOR_PNP_ACTION *PSTOR_PNP_ACTION;
 
