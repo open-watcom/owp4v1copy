@@ -86,6 +86,19 @@ typedef struct {
 } lfnfind_t;
 
 typedef struct {
+    long        attributes;
+    long long   creattimestamp;
+    long long   accesstimestamp;
+    long long   writetimestamp;
+    long        volid;
+    long        hfilesize;
+    long        lfilesize;
+    long        linksno;
+    long        hfileid;
+    long        lfileid;
+} lfninfo_t;
+
+typedef struct {
     unsigned short  cr_time;
     unsigned short  cr_date;
     unsigned short  ac_time;
@@ -234,7 +247,7 @@ extern unsigned __getdcwd_lfn( const char *path, unsigned char drv );
         "push ds"       \
         "xchg ax,si"    \
         "mov  ds,ax"    \
-        "mov  ax,7147h" \
+        "mov ax,7147h"  \
         "stc"           \
         "int  21h"      \
         "pop  ds"       \
@@ -243,7 +256,7 @@ extern unsigned __getdcwd_lfn( const char *path, unsigned char drv );
         modify exact    [ax si];
   #else
     #pragma aux __getdcwd_lfn = \
-        "mov  ax,7147h" \
+        "mov ax,7147h"  \
         "stc"           \
         "int  21h"      \
         "call __doserror_" \
@@ -395,6 +408,64 @@ extern unsigned __unlink_lfn( const char *filename );
         modify exact    [ax si];
   #endif
 
+extern unsigned __getfileinfo_lfn( int handle, lfninfo_t *lfninfo );
+  #ifdef __BIG_DATA__
+    #pragma aux __getfileinfo_lfn = \
+        "push ds"       \
+        "xchg ax,dx"    \
+        "mov  ds,ax"    \
+        "mov  ax,71A6h" \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "call __doserror_" \
+        parm caller     [bx] [dx ax] \
+        modify exact    [ax dx];
+  #else
+    #pragma aux __getfileinfo_lfn = \
+        "mov  ax,71A6h" \
+        "stc"           \
+        "int  21h"      \
+        "call __doserror_" \
+        parm caller     [bx] [dx] \
+        modify exact    [ax];
+  #endif
+
+extern long __cvt_stamp2dos_lfn( long long *timestamp );
+  #ifdef __BIG_DATA__
+    #pragma aux __cvt_stamp2dos_lfn = \
+        "push ds"       \
+        "xchg ax,si"    \
+        "mov  ds,ax"    \
+        "xor  bx,bx"    \
+        "mov  ax,71A7h" \
+        "stc"           \
+        "int  21h"      \
+        "pop  ds"       \
+        "jnc short L1"  \
+        "call __doserror_" \
+        "mov  cx,-1"    \
+        "mov  dx,cx"    \
+    "L1: mov  ax,cx"    \
+        parm caller     [si ax] \
+        value           [dx ax] \
+        modify exact    [ax bx cx dx si];
+  #else
+    #pragma aux __cvt_stamp2dos_lfn = \
+        "xor  bx,bx"    \
+        "mov  ax,71A7h" \
+        "stc"           \
+        "int  21h"      \
+        "jnc short L1"  \
+        "call __doserror_" \
+        "mov  cx,-1"    \
+        "mov  dx,cx"    \
+    "L1: mov  ax,cx"    \
+        parm caller     [si] \
+        value           [dx ax] \
+        modify exact    [ax bx cx dx];
+  #endif
+
 #endif
 
 #define MOV_DTA         \
@@ -452,14 +523,14 @@ extern unsigned __dpmi_dos_call( call_struct __far *cs );
 #pragma aux __dpmi_dos_call = \
         "push es"       \
         "mov  es,edx"   \
-        "xor  cx,cx"    \
+        "xor  ecx,ecx"  \
         "mov  bx,21h"   \
         "mov  ax,300h"  \
         "int  31h"      \
         "pop  es"       \
         "sbb  eax,eax"  \
         parm caller     [dx edi] \
-        modify exact    [eax bx cx];
+        modify exact    [eax bx ecx];
 
 #endif
 

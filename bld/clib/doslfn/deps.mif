@@ -7,6 +7,7 @@ findclos.obj : ../../../c/findclos.c ../../../../file/c/findclos.c
 finddos.obj  : ../../../c/finddos.c  ../../../../_dos/c/finddos.c
 findfirs.obj : ../../../c/findfirs.c ../../../../file/c/findfirs.c
 findnext.obj : ../../../c/findnext.c ../../../../file/c/findnext.c
+fstat.obj    : ../../../c/fstat.c    ../../../../handleio/c/fstat.c
 fullpath.obj : ../../../c/fullpath.c ../../../../misc/c/fullpath.c
 gfattdos.obj : ../../../c/gfattdos.c ../../../../_dos/c/gfattdos.c
 gtcwd.obj    : ../../../c/gtcwd.c    ../../../../direct/c/gtcwd.c

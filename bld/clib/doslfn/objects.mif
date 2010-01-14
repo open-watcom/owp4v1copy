@@ -7,6 +7,7 @@
 !inject finddos.obj  d16 d32 dpm
 !inject findfirs.obj d16 d32 dpm
 !inject findnext.obj d16 d32 dpm
+!inject fstat.obj    d16 d32 dpm
 !inject fullpath.obj d16 d32 dpm
 !inject gfattdos.obj d16 d32 dpm
 !inject gtcwd.obj    d16 d32 dpm
