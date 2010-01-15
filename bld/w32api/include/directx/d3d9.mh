@@ -14,23 +14,27 @@
 :include cpluspro.sp
 
 /* Forward declarations */
-typedef interface IDirect3DDevice9              IDirect3DDevice9;
-typedef interface IDirect3DDevice9Ex            IDirect3DDevice9Ex;
-typedef interface IDirect3DSwapChain9           IDirect3DSwapChain9;
-typedef interface IDirect3DSurface9             IDirect3DSurface9;
-typedef interface IDirect3DTexture9             IDirect3DTexture9;
-typedef interface IDirect3DVolumeTexture9       IDirect3DVolumeTexture9;
-typedef interface IDirect3DCubeTexture9         IDirect3DCubeTexture9;
-typedef interface IDirect3DVertexBuffer9        IDirect3DVertexBuffer9;
-typedef interface IDirect3DIndexBuffer9         IDirect3DIndexBuffer9;
-typedef interface IDirect3DBaseTexture9         IDirect3DBaseTexture9;
-typedef interface IDirect3DStateBlock9          IDirect3DStateBlock9;
-typedef interface IDirect3DVertexDeclaration9   IDirect3DVertexDeclaration9;
-typedef interface IDirect3DVertexShader9        IDirect3DVertexShader9;
-typedef interface IDirect3DPixelShader9         IDirect3DPixelShader9;
-typedef interface IDirect3DQuery9               IDirect3DQuery9;
-typedef interface IDirect3DResource9            IDirect3DResource9;
-typedef interface IDirect3DVolume9              IDirect3DVolume9;
+typedef interface IDirect3DDevice9                  IDirect3DDevice9;
+typedef interface IDirect3DSwapChain9               IDirect3DSwapChain9;
+typedef interface IDirect3DSurface9                 IDirect3DSurface9;
+typedef interface IDirect3DTexture9                 IDirect3DTexture9;
+typedef interface IDirect3DVolumeTexture9           IDirect3DVolumeTexture9;
+typedef interface IDirect3DCubeTexture9             IDirect3DCubeTexture9;
+typedef interface IDirect3DVertexBuffer9            IDirect3DVertexBuffer9;
+typedef interface IDirect3DIndexBuffer9             IDirect3DIndexBuffer9;
+typedef interface IDirect3DBaseTexture9             IDirect3DBaseTexture9;
+typedef interface IDirect3DStateBlock9              IDirect3DStateBlock9;
+typedef interface IDirect3DVertexDeclaration9       IDirect3DVertexDeclaration9;
+typedef interface IDirect3DVertexShader9            IDirect3DVertexShader9;
+typedef interface IDirect3DPixelShader9             IDirect3DPixelShader9;
+typedef interface IDirect3DQuery9                   IDirect3DQuery9;
+typedef interface IDirect3DResource9                IDirect3DResource9;
+typedef interface IDirect3DVolume9                  IDirect3DVolume9;
+#ifndef D3D_DISABLE_9EX
+typedef interface IDirect3DDevice9Ex                IDirect3DDevice9Ex;
+typedef interface IDirect3DAuthenticatedChannel9    IDirect3DAuthenticatedChannel9;
+typedef interface IDirect3DCryptoSession9           IDirect3DCryptoSession9;
+#endif
 
 /* Direct3D calling convention */
 #define D3DAPI  WINAPI
@@ -54,20 +58,27 @@ DECLARE_HANDLE( HMONITOR );
 #define D3DCREATE_ADAPTERGROUP_DEVICE           0x00000200L
 #define D3DCREATE_DISABLE_DRIVER_MANAGEMENT_EX  0x00000400L
 #define D3DCREATE_NOWINDOWCHANGES               0x00000800L
-#define D3DCREATE_DISABLE_PSGP_THREADING        0x00002000L
-#define D3DCREATE_ENABLE_PRESENTSTATS           0x00004000L
-#define D3DCREATE_DISABLE_PRINTSCREEN           0x00008000L
-#define D3DCREATE_SCREENSAVER                   0x10000000L
+#ifndef D3D_DISABLE_9EX
+    #define D3DCREATE_DISABLE_PSGP_THREADING    0x00002000L
+    #define D3DCREATE_ENABLE_PRESENTSTATS       0x00004000L
+    #define D3DCREATE_DISABLE_PRINTSCREEN       0x00008000L
+    #define D3DCREATE_SCREENSAVER               0x10000000L
+#endif
 
 /* IDirect3D9::CreateDevice() adapter special value */
 #define D3DADAPTER_DEFAULT  0
 
 /* IDirect3D9::EnumAdapters() flags */
-#define D3DENUM_NO_DRIVERVERSION    0x00000004L
+#define D3DENUM_WHQL_LEVEL              0x00000002L
+#ifndef D3D_DISABLE_9EX
+    #define D3DENUM_NO_DRIVERVERSION    0x00000004L
+#endif
 
 /* Maximum number of back buffers */
-#define D3DPRESENT_BACK_BUFFERS_MAX     3
-#define D3DPRESENT_BACK_BUFFERS_MAX_EX  30
+#define D3DPRESENT_BACK_BUFFERS_MAX         3
+#ifndef D3D_DISABLE_9EX
+    #define D3DPRESENT_BACK_BUFFERS_MAX_EX  30
+#endif
 
 /* IDirect3DDevice9::SetGammaRamp() flags */
 #define D3DSGR_NO_CALIBRATION   0x00000000L
@@ -77,11 +88,17 @@ DECLARE_HANDLE( HMONITOR );
 #define D3DCURSOR_IMMEDIATE_UPDATE  0x00000001L
 
 /* IDirect3DSwapChain9::Present() flags */
-#define D3DPRESENT_DONOTWAIT                    0x00000001L
-#define D3DPRESENT_LINEAR_CONTENT               0x00000002L
-#define D3DPRESENT_DONOTFLIP                    0x00000004L
-#define D3DPRESENT_FLIPRESTART                  0x00000008L
-#define D3DPRESENT_VIDEO_RESTRICT_TO_MONITOR    0x00000010L
+#define D3DPRESENT_DONOTWAIT                        0x00000001L
+#define D3DPRESENT_LINEAR_CONTENT                   0x00000002L
+#ifndef D3D_DISABLE_9EX
+    #define D3DPRESENT_DONOTFLIP                    0x00000004L
+    #define D3DPRESENT_FLIPRESTART                  0x00000008L
+    #define D3DPRESENT_VIDEO_RESTRICT_TO_MONITOR    0x00000010L
+    #define D3DPRESENT_UPDATEOVERLAYONLY            0x00000020L
+    #define D3DPRESENT_HIDEOVERLAY                  0x00000040L
+    #define D3DPRESENT_UPDATECOLORKEY               0x00000080L
+    #define D3DPRESENT_FORCEIMMEDIATE               0x00000100L
+#endif
 
 /* Direct3D facility code */
 #define _FACD3D 0x0876
@@ -114,22 +131,26 @@ DECLARE_HANDLE( HMONITOR );
 #define D3DERR_INVALIDDEVICE                MAKE_D3DHRESULT( 2155 )
 #define D3DERR_INVALIDCALL                  MAKE_D3DHRESULT( 2156 )
 #define D3DERR_DRIVERINVALIDCALL            MAKE_D3DHRESULT( 2157 )
-#define D3DERR_DEVICEREMOVED                MAKE_D3DHRESULT( 2160 )
-#define D3DERR_DEVICEHUNG                   MAKE_D3DHRESULT( 2164 )
 #define D3DOK_NOAUTOGEN                     MAKE_D3DSTATUS( 2159 )
-#define S_NOT_RESIDENT                      MAKE_D3DSTATUS( 2165 )
-#define S_RESIDENT_IN_SHARED_MEMORY         MAKE_D3DSTATUS( 2166 )
-#define S_PRESENT_MODE_CHANGED              MAKE_D3DSTATUS( 2167 )
-#define S_PRESENT_OCCLUDED                  MAKE_D3DSTATUS( 2168 )
+#ifndef D3D_DISABLE_9EX
+    #define D3DERR_DEVICEREMOVED            MAKE_D3DHRESULT( 2160 )
+    #define S_NOT_RESIDENT                  MAKE_D3DSTATUS( 2165 )
+    #define S_RESIDENT_IN_SHARED_MEMORY     MAKE_D3DSTATUS( 2166 )
+    #define S_PRESENT_MODE_CHANGED          MAKE_D3DSTATUS( 2167 )
+    #define S_PRESENT_OCCLUDED              MAKE_D3DSTATUS( 2168 )
+    #define D3DERR_DEVICEHUNG               MAKE_D3DHRESULT( 2164 )
+    #define D3DERR_UNSUPPORTEDOVERLAY       MAKE_D3DHRESULT( 2171 )
+    #define D3DERR_UNSUPPORTEDOVERLAYFORMAT MAKE_D3DHRESULT( 2172 )
+    #define D3DERR_CANNOTPROTECTCONTENT     MAKE_D3DHRESULT( 2173 )
+    #define D3DERR_UNSUPPORTEDCRYPTO        MAKE_D3DHRESULT( 2174 )
+    #define D3DERR_PRESENT_STATISTICS_DISJOINT  MAKE_D3DHRESULT( 2180 )
+#endif
 
 /* GUIDs */
 EXTERN_C const IID  IID_IDirect3D9;
-EXTERN_C const IID  IID_IDirect3D9Ex;
 EXTERN_C const IID  IID_IDirect3DDevice9;
-EXTERN_C const IID  IID_IDirect3DDevice9Ex;
 EXTERN_C const IID  IID_IDirect3DStateBlock9;
 EXTERN_C const IID  IID_IDirect3DSwapChain9;
-EXTERN_C const IID  IID_IDirect3DSwapChain9Ex;
 EXTERN_C const IID  IID_IDirect3DResource9;
 EXTERN_C const IID  IID_IDirect3DVertexDeclaration9;
 EXTERN_C const IID  IID_IDirect3DVertexShader9;
@@ -143,6 +164,15 @@ EXTERN_C const IID  IID_IDirect3DIndexBuffer9;
 EXTERN_C const IID  IID_IDirect3DSurface9;
 EXTERN_C const IID  IID_IDirect3DVolume9;
 EXTERN_C const IID  IID_IDirect3DQuery9;
+#ifndef D3D_DISABLE_9EX
+EXTERN_C const IID  IID_IDirect3D9Ex;
+EXTERN_C const IID  IID_IDirect3DDevice9Ex;
+EXTERN_C const IID  IID_IDirect3DSwapChain9Ex;
+EXTERN_C const IID  IID_IDirect3D9ExOverlayExtension;
+EXTERN_C const IID  IID_IDirect3DDevice9Video;
+EXTERN_C const IID  IID_IDirect3DAuthenticatedChannel9;
+EXTERN_C const IID  IID_IDirect3DCryptoSession9;
+#endif
 
 /* IDirect3D9 interface */
 #undef INTERFACE
@@ -171,41 +201,6 @@ DECLARE_INTERFACE_( IDirect3D9, IUnknown ) {
 };
 typedef IDirect3D9  *LPDIRECT3D9;
 typedef IDirect3D9  *PDIRECT3D9;
-
-/* IDirect3D9Ex interface */
-#undef INTERFACE
-#define INTERFACE   IDirect3D9Ex
-DECLARE_INTERFACE_( IDirect3D9Ex, IDirect3D9 ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-
-    /* IDirect3D9 methods */
-    STDMETHOD( RegisterSoftwareDevice )( THIS_ void * ) PURE;
-    STDMETHOD_( UINT, GetAdapterCount )( THIS ) PURE;
-    STDMETHOD( GetAdapterIdentifier )( THIS_ UINT, DWORD, D3DADAPTER_IDENTIFIER9 * ) PURE;
-    STDMETHOD_( UINT, GetAdapterModeCount )( THIS_ UINT, D3DFORMAT ) PURE;
-    STDMETHOD( EnumAdapterModes )( THIS_ UINT, D3DFORMAT, UINT, D3DDISPLAYMODE * ) PURE;
-    STDMETHOD( GetAdapterDisplayMode )( THIS_ UINT, D3DDISPLAYMODE * ) PURE;
-    STDMETHOD( CheckDeviceType )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, D3DFORMAT, BOOL ) PURE;
-    STDMETHOD( CheckDeviceFormat )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, DWORD, D3DRESOURCETYPE, D3DFORMAT ) PURE;
-    STDMETHOD( CheckDeviceMultisampleType )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, BOOL, D3DMULTISAMPLE_TYPE, DWORD * ) PURE;
-    STDMETHOD( CheckDepthStencilMatch )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, D3DFORMAT, D3DFORMAT ) PURE;
-    STDMETHOD( CheckDeviceFormatConversion )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, D3DFORMAT ) PURE;
-    STDMETHOD( GetDeviceCaps )( THIS_ UINT, D3DDEVTYPE, D3DCAPS9 * ) PURE;
-    STDMETHOD_( HMONITOR, GetAdapterMonitor )( THIS_ UINT ) PURE;
-    STDMETHOD( CreateDevice )( THIS_ UINT, D3DDEVTYPE, HWND, DWORD, D3DPRESENT_PARAMETERS *, IDirect3DDevice9 ** ) PURE;
-
-    /* IDirect3D9Ex methods */
-    STDMETHOD_( UINT, GetAdapterModeCountEx )( THIS_ UINT, CONST D3DDISPLAYMODEFILTER * ) PURE;
-    STDMETHOD( EnumAdapterModesEx )( THIS_ UINT, CONST D3DDISPLAYMODEFILTER *, UINT, D3DDISPLAYMODEEX * ) PURE;
-    STDMETHOD( GetAdapterDisplayModeEx )( THIS_ UINT, D3DDISPLAYMODEEX *, D3DDISPLAYROTATION * ) PURE;
-    STDMETHOD( CreateDeviceEx )( THIS_ UINT, D3DDEVTYPE, HWND, DWORD, D3DPRESENT_PARAMETERS *, D3DDISPLAYMODEEX *, IDirect3DDevice9Ex ** ) PURE;
-    STDMETHOD( GetAdapterLUID )( THIS_ UINT, LUID * ) PURE;
-};
-typedef IDirect3D9Ex    *LPDIRECT3D9EX;
-typedef IDirect3D9Ex    *PDIRECT3D9EX;
 
 /* IDirect3DDevice9 interface */
 #undef INTERFACE
@@ -337,153 +332,6 @@ DECLARE_INTERFACE_( IDirect3DDevice9, IUnknown ) {
 typedef IDirect3DDevice9    *LPDIRECT3DDEVICE9;
 typedef IDirect3DDevice9    *PDIRECT3DDEVICE9;
 
-/* IDirect3DDevice9Ex interface */
-#undef INTERFACE
-#define INTERFACE   IDirect3DDevice9Ex
-DECLARE_INTERFACE_( IDirect3DDevice9Ex, IDirect3DDevice9 ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-
-    /* IDirect3DDevice9 methods */
-    STDMETHOD( TestCooperativeLevel )( THIS ) PURE;
-    STDMETHOD_( UINT, GetAvailableTextureMem )( THIS ) PURE;
-    STDMETHOD( EvictManagedResources )( THIS ) PURE;
-    STDMETHOD( GetDirect3D )( THIS_ IDirect3D9 ** ) PURE;
-    STDMETHOD( GetDeviceCaps )( THIS_ D3DCAPS9 * ) PURE;
-    STDMETHOD( GetDisplayMode )( THIS_ UINT, D3DDISPLAYMODE * ) PURE;
-    STDMETHOD( GetCreationParameters )( THIS_ D3DDEVICE_CREATION_PARAMETERS * ) PURE;
-    STDMETHOD( SetCursorProperties )( THIS_ UINT, UINT, IDirect3DSurface9 * ) PURE;
-    STDMETHOD_( void, SetCursorPosition )( THIS_ int, int, DWORD ) PURE;
-    STDMETHOD_( BOOL, ShowCursor )( THIS_ BOOL ) PURE;
-    STDMETHOD( CreateAdditionalSwapChain )( THIS_ D3DPRESENT_PARAMETERS *, IDirect3DSwapChain9 ** ) PURE;
-    STDMETHOD( GetSwapChain )( THIS_ UINT, IDirect3DSwapChain9 ** ) PURE;
-    STDMETHOD_( UINT, GetNumberOfSwapChains )( THIS ) PURE;
-    STDMETHOD( Reset )( THIS_ D3DPRESENT_PARAMETERS * ) PURE;
-    STDMETHOD( Present )( THIS_ CONST RECT *, CONST RECT *, HWND, CONST RGNDATA * ) PURE;
-    STDMETHOD( GetBackBuffer )( THIS_ UINT, UINT, D3DBACKBUFFER_TYPE, IDirect3DSurface9 ** ) PURE;
-    STDMETHOD( GetRasterStatus )( THIS_ UINT, D3DRASTER_STATUS * ) PURE;
-    STDMETHOD( SetDialogBoxMode )( THIS_ BOOL ) PURE;
-    STDMETHOD_( void, SetGammaRamp )( THIS_ UINT, DWORD, CONST D3DGAMMARAMP * ) PURE;
-    STDMETHOD_( void, GetGammaRamp )( THIS_ UINT, D3DGAMMARAMP * ) PURE;
-    STDMETHOD( CreateTexture )( THIS_ UINT, UINT, UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DTexture9 **, HANDLE * ) PURE;
-    STDMETHOD( CreateVolumeTexture )( THIS_ UINT, UINT, UINT, UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DVolumeTexture9 **, HANDLE * ) PURE;
-    STDMETHOD( CreateCubeTexture )( THIS_ UINT, UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DCubeTexture9 **, HANDLE * ) PURE;
-    STDMETHOD( CreateVertexBuffer )( THIS_ UINT, DWORD, DWORD, D3DPOOL, IDirect3DVertexBuffer9 **, HANDLE * ) PURE;
-    STDMETHOD( CreateIndexBuffer )( THIS_ UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DIndexBuffer9 **, HANDLE * ) PURE;
-    STDMETHOD( CreateRenderTarget )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE * ) PURE;
-    STDMETHOD( CreateDepthStencilSurface )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE * ) PURE;
-    STDMETHOD( UpdateSurface )( THIS_ IDirect3DSurface9 *, CONST RECT *, IDirect3DSurface9 *, CONST POINT * ) PURE;
-    STDMETHOD( UpdateTexture )( THIS_ IDirect3DBaseTexture9 *, IDirect3DBaseTexture9 * ) PURE;
-    STDMETHOD( GetRenderTargetData )( THIS_ IDirect3DSurface9 *, IDirect3DSurface9 * ) PURE;
-    STDMETHOD( GetFrontBufferData )( THIS_ UINT, IDirect3DSurface9 * ) PURE;
-    STDMETHOD( StretchRect )( THIS_ IDirect3DSurface9 *, CONST RECT *, IDirect3DSurface9 *, CONST RECT *, D3DTEXTUREFILTERTYPE ) PURE;
-    STDMETHOD( ColorFill )( THIS_ IDirect3DSurface9 *, CONST RECT *, D3DCOLOR ) PURE;
-    STDMETHOD( CreateOffscreenPlainSurface )( THIS_ UINT, UINT, D3DFORMAT, D3DPOOL, IDirect3DSurface9 **, HANDLE * ) PURE;
-    STDMETHOD( SetRenderTarget )( THIS_ DWORD, IDirect3DSurface9 * ) PURE;
-    STDMETHOD( GetRenderTarget )( THIS_ DWORD, IDirect3DSurface9 ** ) PURE;
-    STDMETHOD( SetDepthStencilSurface )( THIS_ IDirect3DSurface9 * ) PURE;
-    STDMETHOD( GetDepthStencilSurface )( THIS_ IDirect3DSurface9 ** ) PURE;
-    STDMETHOD( BeginScene )( THIS ) PURE;
-    STDMETHOD( EndScene )( THIS ) PURE;
-    STDMETHOD( Clear )( THIS_ DWORD, CONST D3DRECT *, DWORD, D3DCOLOR, float, DWORD ) PURE;
-    STDMETHOD( SetTransform )( THIS_ D3DTRANSFORMSTATETYPE, CONST D3DMATRIX * ) PURE;
-    STDMETHOD( GetTransform )( THIS_ D3DTRANSFORMSTATETYPE, D3DMATRIX * ) PURE;
-    STDMETHOD( MultiplyTransform )( THIS_ D3DTRANSFORMSTATETYPE, CONST D3DMATRIX * ) PURE;
-    STDMETHOD( SetViewport )( THIS_ CONST D3DVIEWPORT9 * ) PURE;
-    STDMETHOD( GetViewport )( THIS_ D3DVIEWPORT9 * ) PURE;
-    STDMETHOD( SetMaterial )( THIS_ CONST D3DMATERIAL9 * ) PURE;
-    STDMETHOD( GetMaterial )( THIS_ D3DMATERIAL9 * ) PURE;
-    STDMETHOD( SetLight )( THIS_ DWORD, CONST D3DLIGHT9 * ) PURE;
-    STDMETHOD( GetLight )( THIS_ DWORD, D3DLIGHT9 * ) PURE;
-    STDMETHOD( LightEnable )( THIS_ DWORD, BOOL ) PURE;
-    STDMETHOD( GetLightEnable )( THIS_ DWORD, BOOL * ) PURE;
-    STDMETHOD( SetClipPlane )( THIS_ DWORD, CONST float * ) PURE;
-    STDMETHOD( GetClipPlane )( THIS_ DWORD, float * ) PURE;
-    STDMETHOD( SetRenderState )( THIS_ D3DRENDERSTATETYPE, DWORD ) PURE;
-    STDMETHOD( GetRenderState )( THIS_ D3DRENDERSTATETYPE, DWORD * ) PURE;
-    STDMETHOD( CreateStateBlock )( THIS_ D3DSTATEBLOCKTYPE, IDirect3DStateBlock9 ** ) PURE;
-    STDMETHOD( BeginStateBlock )( THIS ) PURE;
-    STDMETHOD( EndStateBlock )( THIS_ IDirect3DStateBlock9 ** ) PURE;
-    STDMETHOD( SetClipStatus )( THIS_ CONST D3DCLIPSTATUS9 * ) PURE;
-    STDMETHOD( GetClipStatus )( THIS_ D3DCLIPSTATUS9 * ) PURE;
-    STDMETHOD( GetTexture )( THIS_ DWORD, IDirect3DBaseTexture9 ** ) PURE;
-    STDMETHOD( SetTexture )( THIS_ DWORD, IDirect3DBaseTexture9 * ) PURE;
-    STDMETHOD( GetTextureStageState )( THIS_ DWORD, D3DTEXTURESTAGESTATETYPE, DWORD * ) PURE;
-    STDMETHOD( SetTextureStageState )( THIS_ DWORD, D3DTEXTURESTAGESTATETYPE, DWORD ) PURE;
-    STDMETHOD( GetSamplerState )( THIS_ DWORD, D3DSAMPLERSTATETYPE, DWORD * ) PURE;
-    STDMETHOD( SetSamplerState )( THIS_ DWORD, D3DSAMPLERSTATETYPE, DWORD ) PURE;
-    STDMETHOD( ValidateDevice )( THIS_ DWORD * ) PURE;
-    STDMETHOD( SetPaletteEntries )( THIS_ UINT, CONST PALETTEENTRY * ) PURE;
-    STDMETHOD( GetPaletteEntries )( THIS_ UINT, PALETTEENTRY * ) PURE;
-    STDMETHOD( SetCurrentTexturePalette )( THIS_ UINT ) PURE;
-    STDMETHOD( GetCurrentTexturePalette )( THIS_ UINT * ) PURE;
-    STDMETHOD( SetScissorRect )( THIS_ CONST RECT * ) PURE;
-    STDMETHOD( GetScissorRect )( THIS_ RECT * ) PURE;
-    STDMETHOD( SetSoftwareVertexProcessing )( THIS_ BOOL ) PURE;
-    STDMETHOD_( BOOL, GetSoftwareVertexProcessing )( THIS ) PURE;
-    STDMETHOD( SetNPatchMode )( THIS_ float ) PURE;
-    STDMETHOD_( float, GetNPatchMode )( THIS ) PURE;
-    STDMETHOD( DrawPrimitive )( THIS_ D3DPRIMITIVETYPE, UINT, UINT ) PURE;
-    STDMETHOD( DrawIndexedPrimitive )( THIS_ D3DPRIMITIVETYPE, INT, UINT, UINT, UINT, UINT ) PURE;
-    STDMETHOD( DrawPrimitiveUP )( THIS_ D3DPRIMITIVETYPE, UINT, CONST void *, UINT ) PURE;
-    STDMETHOD( DrawIndexedPrimitiveUP )( THIS_ D3DPRIMITIVETYPE, UINT, UINT, UINT, CONST void *, D3DFORMAT, CONST void *, UINT ) PURE;
-    STDMETHOD( ProcessVertices )( THIS_ UINT, UINT, UINT, IDirect3DVertexBuffer9 *, IDirect3DVertexDeclaration9 *, DWORD ) PURE;
-    STDMETHOD( CreateVertexDeclaration )( THIS_ CONST D3DVERTEXELEMENT9 *, IDirect3DVertexDeclaration9 ** ) PURE;
-    STDMETHOD( SetVertexDeclaration )( THIS_ IDirect3DVertexDeclaration9 * ) PURE;
-    STDMETHOD( GetVertexDeclaration )( THIS_ IDirect3DVertexDeclaration9 ** ) PURE;
-    STDMETHOD( SetFVF )( THIS_ DWORD ) PURE;
-    STDMETHOD( GetFVF )( THIS_ DWORD * ) PURE;
-    STDMETHOD( CreateVertexShader )( THIS_ CONST DWORD *, IDirect3DVertexShader9 ** ) PURE;
-    STDMETHOD( SetVertexShader )( THIS_ IDirect3DVertexShader9 * ) PURE;
-    STDMETHOD( GetVertexShader )( THIS_ IDirect3DVertexShader9 ** ) PURE;
-    STDMETHOD( SetVertexShaderConstantF )( THIS_ UINT, CONST float *, UINT ) PURE;
-    STDMETHOD( GetVertexShaderConstantF )( THIS_ UINT, float *, UINT ) PURE;
-    STDMETHOD( SetVertexShaderConstantI )( THIS_ UINT, CONST int *, UINT ) PURE;
-    STDMETHOD( GetVertexShaderConstantI )( THIS_ UINT, int *, UINT ) PURE;
-    STDMETHOD( SetVertexShaderConstantB )( THIS_ UINT, CONST BOOL *, UINT ) PURE;
-    STDMETHOD( GetVertexShaderConstantB )( THIS_ UINT, BOOL *, UINT ) PURE;
-    STDMETHOD( SetStreamSource )( THIS_ UINT, IDirect3DVertexBuffer9 *, UINT, UINT ) PURE;
-    STDMETHOD( GetStreamSource )( THIS_ UINT, IDirect3DVertexBuffer9 **, UINT *, UINT * ) PURE;
-    STDMETHOD( SetStreamSourceFreq )( THIS_ UINT, UINT ) PURE;
-    STDMETHOD( GetStreamSourceFreq )( THIS_ UINT, UINT * ) PURE;
-    STDMETHOD( SetIndices )( THIS_ IDirect3DIndexBuffer9 * ) PURE;
-    STDMETHOD( GetIndices )( THIS_ IDirect3DIndexBuffer9 ** ) PURE;
-    STDMETHOD( CreatePixelShader )( THIS_ CONST DWORD *, IDirect3DPixelShader9 ** ) PURE;
-    STDMETHOD( SetPixelShader )( THIS_ IDirect3DPixelShader9 * ) PURE;
-    STDMETHOD( GetPixelShader )( THIS_ IDirect3DPixelShader9 ** ) PURE;
-    STDMETHOD( SetPixelShaderConstantF )( THIS_ UINT, CONST float *, UINT ) PURE;
-    STDMETHOD( GetPixelShaderConstantF )( THIS_ UINT, float *, UINT ) PURE;
-    STDMETHOD( SetPixelShaderConstantI )( THIS_ UINT, CONST int *, UINT ) PURE;
-    STDMETHOD( GetPixelShaderConstantI )( THIS_ UINT, int *, UINT ) PURE;
-    STDMETHOD( SetPixelShaderConstantB )( THIS_ UINT, CONST BOOL *, UINT ) PURE;
-    STDMETHOD( GetPixelShaderConstantB )( THIS_ UINT, BOOL *, UINT ) PURE;
-    STDMETHOD( DrawRectPatch )( THIS_ UINT, CONST float *, CONST D3DRECTPATCH_INFO * ) PURE;
-    STDMETHOD( DrawTriPatch )( THIS_ UINT, CONST float *, CONST D3DTRIPATCH_INFO * ) PURE;
-    STDMETHOD( DeletePatch )( THIS_ UINT ) PURE;
-    STDMETHOD( CreateQuery )( THIS_ D3DQUERYTYPE, IDirect3DQuery9 ** ) PURE;
-
-    /* IDirect3DDevice9Ex methods */
-    STDMETHOD( SetConvolutionMonoKernel )( THIS_ UINT, UINT, float *, float * ) PURE;
-    STDMETHOD( ComposeRects )( THIS_ IDirect3DSurface9 *, IDirect3DSurface9 *, IDirect3DVertexBuffer9 *, UINT, IDirect3DVertexBuffer9 *, D3DCOMPOSERECTSOP, int, int ) PURE;
-    STDMETHOD( PresentEx )( THIS_ CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *, DWORD ) PURE;
-    STDMETHOD( GetGPUThreadPriority )( THIS_ INT * ) PURE;
-    STDMETHOD( SetGPUThreadPriority )( THIS_ INT ) PURE;
-    STDMETHOD( WaitForVBlank )( THIS_ UINT ) PURE;
-    STDMETHOD( CheckResourceResidency )( THIS_ IDirect3DResource9 **, UINT32 ) PURE;
-    STDMETHOD( SetMaximumFrameLatency )( THIS_ UINT ) PURE;
-    STDMETHOD( GetMaximumFrameLatency )( THIS_ UINT * ) PURE;
-    STDMETHOD( CheckDeviceState )( THIS_ HWND ) PURE;
-    STDMETHOD( CreateRenderTargetEx )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE *, DWORD ) PURE;
-    STDMETHOD( CreateOffscreenPlainSurfaceEx )( THIS_ UINT, UINT, D3DFORMAT, D3DPOOL, IDirect3DSurface9 **, HANDLE *, DWORD ) PURE;
-    STDMETHOD( CreateDepthStencilSurfaceEx )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE *, DWORD ) PURE;
-    STDMETHOD( ResetEx )( THIS_ D3DPRESENT_PARAMETERS *, D3DDISPLAYMODEEX * ) PURE;
-    STDMETHOD( GetDisplayModeEx )( THIS_ UINT, D3DDISPLAYMODEEX *, D3DDISPLAYROTATION * ) PURE;
-};
-typedef IDirect3DDevice9Ex  *LPDIRECT3DDEVICE9EX;
-typedef IDirect3DDevice9Ex  *PDIRECT3DDEVICE9EX;
-
 /* IDirect3DStateBlock9 interface */
 #undef INTERFACE
 #define INTERFACE   IDirect3DStateBlock9
@@ -521,32 +369,6 @@ DECLARE_INTERFACE_( IDirect3DSwapChain9, IUnknown ) {
 };
 typedef IDirect3DSwapChain9 *LPDIRECT3DSWAPCHAIN9;
 typedef IDirect3DSwapChain9 *PDIRECT3DSWAPCHAIN9;
-
-/* IDirect3DSwapChain9Ex interface */
-#undef INTERFACE
-#define INTERFACE   IDirect3DSwapChain9Ex
-DECLARE_INTERFACE_( IDirect3DSwapChain9Ex, IDirect3DSwapChain ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-
-    /* IDirect3DSwapChain9 methods */
-    STDMETHOD( Present )( THIS_ CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *, DWORD ) PURE;
-    STDMETHOD( GetFrontBufferData )( THIS_ IDirect3DSurface9 * ) PURE;
-    STDMETHOD( GetBackBuffer )( THIS_ UINT, D3DBACKBUFFER_TYPE, IDirect3DSurface9 ** ) PURE;
-    STDMETHOD( GetRasterStatus )( THIS_ D3DRASTER_STATUS * ) PURE;
-    STDMETHOD( GetDisplayMode )( THIS_ D3DDISPLAYMODE * ) PURE;
-    STDMETHOD( GetDevice )( THIS_ IDirect3DDevice9 ** ) PURE;
-    STDMETHOD( GetPresentParameters )( THIS_ D3DPRESENT_PARAMETERS * ) PURE;
-
-    /* IDirect3DSwapChain9Ex methods */
-    STDMETHOD( GetLastPresentCount )( THIS_ UINT * ) PURE;
-    STDMETHOD( GetPresentStats )( THIS_ D3DPRESENTSTATS * ) PURE;
-    STDMETHOD( GetDisplayModeEx )( THIS_ D3DDISPLAYMODEEX *, D3DDISPLAYROTATION * ) PURE;
-};
-typedef IDirect3DSwapChain9Ex   *LPDIRECT3DSWAPCHAIN9EX;
-typedef IDirect3DSwapChain9Ex   *PDIRECT3DSWAPCHAIN9EX;
 
 /* IDirect3DResource9 interface */
 #undef INTERFACE
@@ -884,6 +706,302 @@ DECLARE_INTERFACE_( IDirect3DQuery9, IUnknown ) {
 typedef IDirect3DQuery9 *LPDIRECT3DQUERY9;
 typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
 
+/* IDirect3D9Ex interface */
+#ifndef D3D_DISABLE_9EX
+#undef INTERFACE
+#define INTERFACE   IDirect3D9Ex
+DECLARE_INTERFACE_( IDirect3D9Ex, IDirect3D9 ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDirect3D9 methods */
+    STDMETHOD( RegisterSoftwareDevice )( THIS_ void * ) PURE;
+    STDMETHOD_( UINT, GetAdapterCount )( THIS ) PURE;
+    STDMETHOD( GetAdapterIdentifier )( THIS_ UINT, DWORD, D3DADAPTER_IDENTIFIER9 * ) PURE;
+    STDMETHOD_( UINT, GetAdapterModeCount )( THIS_ UINT, D3DFORMAT ) PURE;
+    STDMETHOD( EnumAdapterModes )( THIS_ UINT, D3DFORMAT, UINT, D3DDISPLAYMODE * ) PURE;
+    STDMETHOD( GetAdapterDisplayMode )( THIS_ UINT, D3DDISPLAYMODE * ) PURE;
+    STDMETHOD( CheckDeviceType )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, D3DFORMAT, BOOL ) PURE;
+    STDMETHOD( CheckDeviceFormat )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, DWORD, D3DRESOURCETYPE, D3DFORMAT ) PURE;
+    STDMETHOD( CheckDeviceMultisampleType )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, BOOL, D3DMULTISAMPLE_TYPE, DWORD * ) PURE;
+    STDMETHOD( CheckDepthStencilMatch )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, D3DFORMAT, D3DFORMAT ) PURE;
+    STDMETHOD( CheckDeviceFormatConversion )( THIS_ UINT, D3DDEVTYPE, D3DFORMAT, D3DFORMAT ) PURE;
+    STDMETHOD( GetDeviceCaps )( THIS_ UINT, D3DDEVTYPE, D3DCAPS9 * ) PURE;
+    STDMETHOD_( HMONITOR, GetAdapterMonitor )( THIS_ UINT ) PURE;
+    STDMETHOD( CreateDevice )( THIS_ UINT, D3DDEVTYPE, HWND, DWORD, D3DPRESENT_PARAMETERS *, IDirect3DDevice9 ** ) PURE;
+
+    /* IDirect3D9Ex methods */
+    STDMETHOD_( UINT, GetAdapterModeCountEx )( THIS_ UINT, CONST D3DDISPLAYMODEFILTER * ) PURE;
+    STDMETHOD( EnumAdapterModesEx )( THIS_ UINT, CONST D3DDISPLAYMODEFILTER *, UINT, D3DDISPLAYMODEEX * ) PURE;
+    STDMETHOD( GetAdapterDisplayModeEx )( THIS_ UINT, D3DDISPLAYMODEEX *, D3DDISPLAYROTATION * ) PURE;
+    STDMETHOD( CreateDeviceEx )( THIS_ UINT, D3DDEVTYPE, HWND, DWORD, D3DPRESENT_PARAMETERS *, D3DDISPLAYMODEEX *, IDirect3DDevice9Ex ** ) PURE;
+    STDMETHOD( GetAdapterLUID )( THIS_ UINT, LUID * ) PURE;
+};
+typedef IDirect3D9Ex    *LPDIRECT3D9EX;
+typedef IDirect3D9Ex    *PDIRECT3D9EX;
+#endif
+
+/* IDirect3DDevice9Ex interface */
+#ifndef D3D_DISABLE_9EX
+#undef INTERFACE
+#define INTERFACE   IDirect3DDevice9Ex
+DECLARE_INTERFACE_( IDirect3DDevice9Ex, IDirect3DDevice9 ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDirect3DDevice9 methods */
+    STDMETHOD( TestCooperativeLevel )( THIS ) PURE;
+    STDMETHOD_( UINT, GetAvailableTextureMem )( THIS ) PURE;
+    STDMETHOD( EvictManagedResources )( THIS ) PURE;
+    STDMETHOD( GetDirect3D )( THIS_ IDirect3D9 ** ) PURE;
+    STDMETHOD( GetDeviceCaps )( THIS_ D3DCAPS9 * ) PURE;
+    STDMETHOD( GetDisplayMode )( THIS_ UINT, D3DDISPLAYMODE * ) PURE;
+    STDMETHOD( GetCreationParameters )( THIS_ D3DDEVICE_CREATION_PARAMETERS * ) PURE;
+    STDMETHOD( SetCursorProperties )( THIS_ UINT, UINT, IDirect3DSurface9 * ) PURE;
+    STDMETHOD_( void, SetCursorPosition )( THIS_ int, int, DWORD ) PURE;
+    STDMETHOD_( BOOL, ShowCursor )( THIS_ BOOL ) PURE;
+    STDMETHOD( CreateAdditionalSwapChain )( THIS_ D3DPRESENT_PARAMETERS *, IDirect3DSwapChain9 ** ) PURE;
+    STDMETHOD( GetSwapChain )( THIS_ UINT, IDirect3DSwapChain9 ** ) PURE;
+    STDMETHOD_( UINT, GetNumberOfSwapChains )( THIS ) PURE;
+    STDMETHOD( Reset )( THIS_ D3DPRESENT_PARAMETERS * ) PURE;
+    STDMETHOD( Present )( THIS_ CONST RECT *, CONST RECT *, HWND, CONST RGNDATA * ) PURE;
+    STDMETHOD( GetBackBuffer )( THIS_ UINT, UINT, D3DBACKBUFFER_TYPE, IDirect3DSurface9 ** ) PURE;
+    STDMETHOD( GetRasterStatus )( THIS_ UINT, D3DRASTER_STATUS * ) PURE;
+    STDMETHOD( SetDialogBoxMode )( THIS_ BOOL ) PURE;
+    STDMETHOD_( void, SetGammaRamp )( THIS_ UINT, DWORD, CONST D3DGAMMARAMP * ) PURE;
+    STDMETHOD_( void, GetGammaRamp )( THIS_ UINT, D3DGAMMARAMP * ) PURE;
+    STDMETHOD( CreateTexture )( THIS_ UINT, UINT, UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DTexture9 **, HANDLE * ) PURE;
+    STDMETHOD( CreateVolumeTexture )( THIS_ UINT, UINT, UINT, UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DVolumeTexture9 **, HANDLE * ) PURE;
+    STDMETHOD( CreateCubeTexture )( THIS_ UINT, UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DCubeTexture9 **, HANDLE * ) PURE;
+    STDMETHOD( CreateVertexBuffer )( THIS_ UINT, DWORD, DWORD, D3DPOOL, IDirect3DVertexBuffer9 **, HANDLE * ) PURE;
+    STDMETHOD( CreateIndexBuffer )( THIS_ UINT, DWORD, D3DFORMAT, D3DPOOL, IDirect3DIndexBuffer9 **, HANDLE * ) PURE;
+    STDMETHOD( CreateRenderTarget )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE * ) PURE;
+    STDMETHOD( CreateDepthStencilSurface )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE * ) PURE;
+    STDMETHOD( UpdateSurface )( THIS_ IDirect3DSurface9 *, CONST RECT *, IDirect3DSurface9 *, CONST POINT * ) PURE;
+    STDMETHOD( UpdateTexture )( THIS_ IDirect3DBaseTexture9 *, IDirect3DBaseTexture9 * ) PURE;
+    STDMETHOD( GetRenderTargetData )( THIS_ IDirect3DSurface9 *, IDirect3DSurface9 * ) PURE;
+    STDMETHOD( GetFrontBufferData )( THIS_ UINT, IDirect3DSurface9 * ) PURE;
+    STDMETHOD( StretchRect )( THIS_ IDirect3DSurface9 *, CONST RECT *, IDirect3DSurface9 *, CONST RECT *, D3DTEXTUREFILTERTYPE ) PURE;
+    STDMETHOD( ColorFill )( THIS_ IDirect3DSurface9 *, CONST RECT *, D3DCOLOR ) PURE;
+    STDMETHOD( CreateOffscreenPlainSurface )( THIS_ UINT, UINT, D3DFORMAT, D3DPOOL, IDirect3DSurface9 **, HANDLE * ) PURE;
+    STDMETHOD( SetRenderTarget )( THIS_ DWORD, IDirect3DSurface9 * ) PURE;
+    STDMETHOD( GetRenderTarget )( THIS_ DWORD, IDirect3DSurface9 ** ) PURE;
+    STDMETHOD( SetDepthStencilSurface )( THIS_ IDirect3DSurface9 * ) PURE;
+    STDMETHOD( GetDepthStencilSurface )( THIS_ IDirect3DSurface9 ** ) PURE;
+    STDMETHOD( BeginScene )( THIS ) PURE;
+    STDMETHOD( EndScene )( THIS ) PURE;
+    STDMETHOD( Clear )( THIS_ DWORD, CONST D3DRECT *, DWORD, D3DCOLOR, float, DWORD ) PURE;
+    STDMETHOD( SetTransform )( THIS_ D3DTRANSFORMSTATETYPE, CONST D3DMATRIX * ) PURE;
+    STDMETHOD( GetTransform )( THIS_ D3DTRANSFORMSTATETYPE, D3DMATRIX * ) PURE;
+    STDMETHOD( MultiplyTransform )( THIS_ D3DTRANSFORMSTATETYPE, CONST D3DMATRIX * ) PURE;
+    STDMETHOD( SetViewport )( THIS_ CONST D3DVIEWPORT9 * ) PURE;
+    STDMETHOD( GetViewport )( THIS_ D3DVIEWPORT9 * ) PURE;
+    STDMETHOD( SetMaterial )( THIS_ CONST D3DMATERIAL9 * ) PURE;
+    STDMETHOD( GetMaterial )( THIS_ D3DMATERIAL9 * ) PURE;
+    STDMETHOD( SetLight )( THIS_ DWORD, CONST D3DLIGHT9 * ) PURE;
+    STDMETHOD( GetLight )( THIS_ DWORD, D3DLIGHT9 * ) PURE;
+    STDMETHOD( LightEnable )( THIS_ DWORD, BOOL ) PURE;
+    STDMETHOD( GetLightEnable )( THIS_ DWORD, BOOL * ) PURE;
+    STDMETHOD( SetClipPlane )( THIS_ DWORD, CONST float * ) PURE;
+    STDMETHOD( GetClipPlane )( THIS_ DWORD, float * ) PURE;
+    STDMETHOD( SetRenderState )( THIS_ D3DRENDERSTATETYPE, DWORD ) PURE;
+    STDMETHOD( GetRenderState )( THIS_ D3DRENDERSTATETYPE, DWORD * ) PURE;
+    STDMETHOD( CreateStateBlock )( THIS_ D3DSTATEBLOCKTYPE, IDirect3DStateBlock9 ** ) PURE;
+    STDMETHOD( BeginStateBlock )( THIS ) PURE;
+    STDMETHOD( EndStateBlock )( THIS_ IDirect3DStateBlock9 ** ) PURE;
+    STDMETHOD( SetClipStatus )( THIS_ CONST D3DCLIPSTATUS9 * ) PURE;
+    STDMETHOD( GetClipStatus )( THIS_ D3DCLIPSTATUS9 * ) PURE;
+    STDMETHOD( GetTexture )( THIS_ DWORD, IDirect3DBaseTexture9 ** ) PURE;
+    STDMETHOD( SetTexture )( THIS_ DWORD, IDirect3DBaseTexture9 * ) PURE;
+    STDMETHOD( GetTextureStageState )( THIS_ DWORD, D3DTEXTURESTAGESTATETYPE, DWORD * ) PURE;
+    STDMETHOD( SetTextureStageState )( THIS_ DWORD, D3DTEXTURESTAGESTATETYPE, DWORD ) PURE;
+    STDMETHOD( GetSamplerState )( THIS_ DWORD, D3DSAMPLERSTATETYPE, DWORD * ) PURE;
+    STDMETHOD( SetSamplerState )( THIS_ DWORD, D3DSAMPLERSTATETYPE, DWORD ) PURE;
+    STDMETHOD( ValidateDevice )( THIS_ DWORD * ) PURE;
+    STDMETHOD( SetPaletteEntries )( THIS_ UINT, CONST PALETTEENTRY * ) PURE;
+    STDMETHOD( GetPaletteEntries )( THIS_ UINT, PALETTEENTRY * ) PURE;
+    STDMETHOD( SetCurrentTexturePalette )( THIS_ UINT ) PURE;
+    STDMETHOD( GetCurrentTexturePalette )( THIS_ UINT * ) PURE;
+    STDMETHOD( SetScissorRect )( THIS_ CONST RECT * ) PURE;
+    STDMETHOD( GetScissorRect )( THIS_ RECT * ) PURE;
+    STDMETHOD( SetSoftwareVertexProcessing )( THIS_ BOOL ) PURE;
+    STDMETHOD_( BOOL, GetSoftwareVertexProcessing )( THIS ) PURE;
+    STDMETHOD( SetNPatchMode )( THIS_ float ) PURE;
+    STDMETHOD_( float, GetNPatchMode )( THIS ) PURE;
+    STDMETHOD( DrawPrimitive )( THIS_ D3DPRIMITIVETYPE, UINT, UINT ) PURE;
+    STDMETHOD( DrawIndexedPrimitive )( THIS_ D3DPRIMITIVETYPE, INT, UINT, UINT, UINT, UINT ) PURE;
+    STDMETHOD( DrawPrimitiveUP )( THIS_ D3DPRIMITIVETYPE, UINT, CONST void *, UINT ) PURE;
+    STDMETHOD( DrawIndexedPrimitiveUP )( THIS_ D3DPRIMITIVETYPE, UINT, UINT, UINT, CONST void *, D3DFORMAT, CONST void *, UINT ) PURE;
+    STDMETHOD( ProcessVertices )( THIS_ UINT, UINT, UINT, IDirect3DVertexBuffer9 *, IDirect3DVertexDeclaration9 *, DWORD ) PURE;
+    STDMETHOD( CreateVertexDeclaration )( THIS_ CONST D3DVERTEXELEMENT9 *, IDirect3DVertexDeclaration9 ** ) PURE;
+    STDMETHOD( SetVertexDeclaration )( THIS_ IDirect3DVertexDeclaration9 * ) PURE;
+    STDMETHOD( GetVertexDeclaration )( THIS_ IDirect3DVertexDeclaration9 ** ) PURE;
+    STDMETHOD( SetFVF )( THIS_ DWORD ) PURE;
+    STDMETHOD( GetFVF )( THIS_ DWORD * ) PURE;
+    STDMETHOD( CreateVertexShader )( THIS_ CONST DWORD *, IDirect3DVertexShader9 ** ) PURE;
+    STDMETHOD( SetVertexShader )( THIS_ IDirect3DVertexShader9 * ) PURE;
+    STDMETHOD( GetVertexShader )( THIS_ IDirect3DVertexShader9 ** ) PURE;
+    STDMETHOD( SetVertexShaderConstantF )( THIS_ UINT, CONST float *, UINT ) PURE;
+    STDMETHOD( GetVertexShaderConstantF )( THIS_ UINT, float *, UINT ) PURE;
+    STDMETHOD( SetVertexShaderConstantI )( THIS_ UINT, CONST int *, UINT ) PURE;
+    STDMETHOD( GetVertexShaderConstantI )( THIS_ UINT, int *, UINT ) PURE;
+    STDMETHOD( SetVertexShaderConstantB )( THIS_ UINT, CONST BOOL *, UINT ) PURE;
+    STDMETHOD( GetVertexShaderConstantB )( THIS_ UINT, BOOL *, UINT ) PURE;
+    STDMETHOD( SetStreamSource )( THIS_ UINT, IDirect3DVertexBuffer9 *, UINT, UINT ) PURE;
+    STDMETHOD( GetStreamSource )( THIS_ UINT, IDirect3DVertexBuffer9 **, UINT *, UINT * ) PURE;
+    STDMETHOD( SetStreamSourceFreq )( THIS_ UINT, UINT ) PURE;
+    STDMETHOD( GetStreamSourceFreq )( THIS_ UINT, UINT * ) PURE;
+    STDMETHOD( SetIndices )( THIS_ IDirect3DIndexBuffer9 * ) PURE;
+    STDMETHOD( GetIndices )( THIS_ IDirect3DIndexBuffer9 ** ) PURE;
+    STDMETHOD( CreatePixelShader )( THIS_ CONST DWORD *, IDirect3DPixelShader9 ** ) PURE;
+    STDMETHOD( SetPixelShader )( THIS_ IDirect3DPixelShader9 * ) PURE;
+    STDMETHOD( GetPixelShader )( THIS_ IDirect3DPixelShader9 ** ) PURE;
+    STDMETHOD( SetPixelShaderConstantF )( THIS_ UINT, CONST float *, UINT ) PURE;
+    STDMETHOD( GetPixelShaderConstantF )( THIS_ UINT, float *, UINT ) PURE;
+    STDMETHOD( SetPixelShaderConstantI )( THIS_ UINT, CONST int *, UINT ) PURE;
+    STDMETHOD( GetPixelShaderConstantI )( THIS_ UINT, int *, UINT ) PURE;
+    STDMETHOD( SetPixelShaderConstantB )( THIS_ UINT, CONST BOOL *, UINT ) PURE;
+    STDMETHOD( GetPixelShaderConstantB )( THIS_ UINT, BOOL *, UINT ) PURE;
+    STDMETHOD( DrawRectPatch )( THIS_ UINT, CONST float *, CONST D3DRECTPATCH_INFO * ) PURE;
+    STDMETHOD( DrawTriPatch )( THIS_ UINT, CONST float *, CONST D3DTRIPATCH_INFO * ) PURE;
+    STDMETHOD( DeletePatch )( THIS_ UINT ) PURE;
+    STDMETHOD( CreateQuery )( THIS_ D3DQUERYTYPE, IDirect3DQuery9 ** ) PURE;
+
+    /* IDirect3DDevice9Ex methods */
+    STDMETHOD( SetConvolutionMonoKernel )( THIS_ UINT, UINT, float *, float * ) PURE;
+    STDMETHOD( ComposeRects )( THIS_ IDirect3DSurface9 *, IDirect3DSurface9 *, IDirect3DVertexBuffer9 *, UINT, IDirect3DVertexBuffer9 *, D3DCOMPOSERECTSOP, int, int ) PURE;
+    STDMETHOD( PresentEx )( THIS_ CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *, DWORD ) PURE;
+    STDMETHOD( GetGPUThreadPriority )( THIS_ INT * ) PURE;
+    STDMETHOD( SetGPUThreadPriority )( THIS_ INT ) PURE;
+    STDMETHOD( WaitForVBlank )( THIS_ UINT ) PURE;
+    STDMETHOD( CheckResourceResidency )( THIS_ IDirect3DResource9 **, UINT32 ) PURE;
+    STDMETHOD( SetMaximumFrameLatency )( THIS_ UINT ) PURE;
+    STDMETHOD( GetMaximumFrameLatency )( THIS_ UINT * ) PURE;
+    STDMETHOD( CheckDeviceState )( THIS_ HWND ) PURE;
+    STDMETHOD( CreateRenderTargetEx )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE *, DWORD ) PURE;
+    STDMETHOD( CreateOffscreenPlainSurfaceEx )( THIS_ UINT, UINT, D3DFORMAT, D3DPOOL, IDirect3DSurface9 **, HANDLE *, DWORD ) PURE;
+    STDMETHOD( CreateDepthStencilSurfaceEx )( THIS_ UINT, UINT, D3DFORMAT, D3DMULTISAMPLE_TYPE, DWORD, BOOL, IDirect3DSurface9 **, HANDLE *, DWORD ) PURE;
+    STDMETHOD( ResetEx )( THIS_ D3DPRESENT_PARAMETERS *, D3DDISPLAYMODEEX * ) PURE;
+    STDMETHOD( GetDisplayModeEx )( THIS_ UINT, D3DDISPLAYMODEEX *, D3DDISPLAYROTATION * ) PURE;
+};
+typedef IDirect3DDevice9Ex  *LPDIRECT3DDEVICE9EX;
+typedef IDirect3DDevice9Ex  *PDIRECT3DDEVICE9EX;
+#endif
+
+/* IDirect3DSwapChain9Ex interface */
+#ifndef D3D_DISABLE_9EX
+#undef INTERFACE
+#define INTERFACE   IDirect3DSwapChain9Ex
+DECLARE_INTERFACE_( IDirect3DSwapChain9Ex, IDirect3DSwapChain ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDirect3DSwapChain9 methods */
+    STDMETHOD( Present )( THIS_ CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *, DWORD ) PURE;
+    STDMETHOD( GetFrontBufferData )( THIS_ IDirect3DSurface9 * ) PURE;
+    STDMETHOD( GetBackBuffer )( THIS_ UINT, D3DBACKBUFFER_TYPE, IDirect3DSurface9 ** ) PURE;
+    STDMETHOD( GetRasterStatus )( THIS_ D3DRASTER_STATUS * ) PURE;
+    STDMETHOD( GetDisplayMode )( THIS_ D3DDISPLAYMODE * ) PURE;
+    STDMETHOD( GetDevice )( THIS_ IDirect3DDevice9 ** ) PURE;
+    STDMETHOD( GetPresentParameters )( THIS_ D3DPRESENT_PARAMETERS * ) PURE;
+
+    /* IDirect3DSwapChain9Ex methods */
+    STDMETHOD( GetLastPresentCount )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetPresentStats )( THIS_ D3DPRESENTSTATS * ) PURE;
+    STDMETHOD( GetDisplayModeEx )( THIS_ D3DDISPLAYMODEEX *, D3DDISPLAYROTATION * ) PURE;
+};
+typedef IDirect3DSwapChain9Ex   *LPDIRECT3DSWAPCHAIN9EX;
+typedef IDirect3DSwapChain9Ex   *PDIRECT3DSWAPCHAIN9EX;
+#endif
+
+/* IDirect3D9ExOverlayExtension interface */
+#ifndef D3D_DISABLE_9EX
+#undef INTERFACE
+#define INTERFACE   IDirect3D9ExOverlayExtension
+DECLARE_INTERFACE_( IDirect3D9ExOverlayExtension, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDirect3D9ExOverlayExtension methods */
+    STDMETHOD( CheckDeviceOverlayType )( THIS_ UINT, D3DDEVTYPE, UINT, UINT, D3DFORMAT, D3DDISPLAYMODEEX *, D3DDISPLAYROTATION, D3DOVERLAYCAPS * ) PURE;
+};
+typedef IDirect3D9ExOverlayExtension    *LPDIRECT3D9EXOVERLAYEXTENSION;
+typedef IDirect3D9ExOverlayExtension    *PDIRECT3D9EXOVERLAYEXTENSION;
+#endif
+
+/* IDirect3DDevice9Video interface */
+#ifndef D3D_DISABLE_9EX
+#undef INTERFACE
+#define INTERFACE   IDirect3DDevice9Video
+DECLARE_INTERFACE_( IDirect3DDevice9Video, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDirect3DDevice9Video methods */
+    STDMETHOD( GetContentProtectionCaps )( THIS_ CONST GUID *, CONST GUID *, D3DCONTENTPROTECTIONCAPS * ) PURE;
+    STDMETHOD( CreateAuthenticatedChannel )( THIS_ D3DAUTHENTICATEDCHANNELTYPE, IDirect3DAuthenticatedChannel9 **, HANDLE * ) PURE;
+    STDMETHOD( CreateCryptoSession )( THIS_ CONST GUID *, CONST GUID *, IDirect3DCryptoSession9 **, HANDLE * ) PURE;
+};
+typedef IDirect3DDevice9Video   *LPDIRECT3DDEVICE9VIDEO;
+typedef IDirect3DDevice9Video   *PDIRECT3DDEVICE9VIDEO;
+#endif
+
+/* IDirect3DAuthenticatedChannel9 interface */
+#ifndef D3D_DISABLE_9EX
+#undef INTERFACE
+#define INTERFACE   IDirect3DAuthenticatedChannel9
+DECLARE_INTERFACE_( IDirect3DAuthenticatedChannel9, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDirect3DAuthenticatedChannel9 methods */
+    STDMETHOD( GetCertificateSize )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetCertificate )( THIS_ UINT, BYTE * ) PURE;
+    STDMETHOD( NegotiateKeyExchange )( THIS_ UINT, VOID * ) PURE;
+    STDMETHOD( Query )( THIS_ UINT, CONST VOID *, UINT, VOID * ) PURE;
+    STDMETHOD( Configure )( THIS_ UINT, CONST VOID *, D3DAUTHENTICATEDCHANNEL_CONFIGURE_OUTPUT * ) PURE;
+};
+typedef IDirect3DAuthenticatedChannel9  *LPDIRECT3DAUTHENTICATEDCHANNEL9;
+typedef IDirect3DAuthenticatedChannel9  *PDIRECT3DAUTHENTICATEDCHANNEL9;
+#endif
+
+/* IDirect3DCryptoSession9 interface */
+#ifndef D3D_DISABLE_9EX
+#undef INTERFACE
+#define INTERFACE   IDirect3DCryptoSession9
+DECLARE_INTERFACE_( IDirect3DCryptoSession9, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDirect3DCryptoSession9 methods */
+    STDMETHOD( GetCertificateSize )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetCertificate )( THIS_ UINT, BYTE * ) PURE;
+    STDMETHOD( NegotiateKeyExchange )( THIS_ UINT, VOID * ) PURE;
+    STDMETHOD( EncryptionBlt )( THIS_ IDirect3DSurface9 *, IDirect3DSurface9 *, UINT, VOID * ) PURE;
+    STDMETHOD( DecryptionBlt )( THIS_ IDirect3DSurface9 *, IDirect3DSurface9 *, UINT, D3DENCRYPTED_BLOCK_INFO *, VOID *, VOID * ) PURE;
+    STDMETHOD( GetSurfacePitch )( THIS_ IDirect3DSurface9 *, UINT * ) PURE;
+    STDMETHOD( StartSessionKeyRefresh )( THIS_ VOID *, UINT ) PURE;
+    STDMETHOD( FinishSessionKeyRefresh )( THIS ) PURE;
+    STDMETHOD( GetEncryptionBltKey )( THIS_ VOID *, UINT ) PURE;
+};
+typedef IDirect3DCryptoSession9 *LPDIRECT3DCRYPTOSESSION;
+typedef IDirect3DCryptoSession9 *PDIRECT3DCRYPTOSESSION;
+#endif
+
 /* C/C++ object macros */
 #if !defined( __cplusplus ) || defined( CINTERFACE )
     #define IDirect3D9_QueryInterface( x, p1, p2 ) \
@@ -920,50 +1038,6 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->lpVtbl->GetAdapterMonitor( x, p )
     #define IDirect3D9_CreateDevice( x, p1, p2, p3, p4, p5, p6 ) \
         (x)->lpVtbl->CreateDevice( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_QueryInterface( x, p1, p2 ) \
-        (x)->lpVtbl->QueryInterface( x, p1, p2 )
-    #define IDirect3D9Ex_AddRef( x ) \
-        (x)->lpVtbl->AddRef( x )
-    #define IDirect3D9Ex_Release( x ) \
-        (x)->lpVtbl->Release( x )
-    #define IDirect3D9Ex_RegisterSoftwareDevice( x, p ) \
-        (x)->lpVtbl->RegisterSoftwareDevice( x, p )
-    #define IDirect3D9Ex_GetAdapterCount( x ) \
-        (x)->lpVtbl->GetAdapterCount( x )
-    #define IDirect3D9Ex_GetAdapterIdentifier( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetAdapterIdentifier( x, p1, p2, p3 )
-    #define IDirect3D9Ex_GetAdapterModeCount( x, p1, p2 ) \
-        (x)->lpVtbl->GetAdapterModeCount( x, p1, p2 )
-    #define IDirect3D9Ex_EnumAdapterModes( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->EnumAdapterModes( x, p1, p2, p3, p4 )
-    #define IDirect3D9Ex_GetAdapterDisplayMode( x, p1, p2 ) \
-        (x)->lpVtbl->GetAdapterDisplayMode( x, p1, p2 )
-    #define IDirect3D9Ex_CheckDeviceType( x, p1, p2, p3, p4, p5 ) \
-        (x)->lpVtbl->CheckDeviceType( x, p1, p2, p3, p4, p5 )
-    #define IDirect3D9Ex_CheckDeviceFormat( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->CheckDeviceFormat( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_CheckDeviceMultisampleType( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->CheckDeviceMultisampleType( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_CheckDepthStencilMatch( x, p1, p2, p3, p4, p5 ) \
-        (x)->lpVtbl->CheckDepthStencilMatch( x, p1, p2, p3, p4, p5 )
-    #define IDirect3D9Ex_CheckDeviceFormatConversion( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->CheckDeviceFormatConversion( x, p1, p2, p3, p4 )
-    #define IDirect3D9Ex_GetDeviceCaps( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetDeviceCaps( x, p1, p2, p3 )
-    #define IDirect3D9Ex_GetAdapterMonitor( x, p ) \
-        (x)->lpVtbl->GetAdapterMonitor( x, p )
-    #define IDirect3D9Ex_CreateDevice( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->CreateDevice( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_GetAdapterModeCountEx( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->GetAdapterModeCountEx( x, p1, p2, p3, p4 )
-    #define IDirect3D9Ex_EnumAdapterModesEx( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->EnumAdapterModesEx( x, p1, p2, p3, p4 )
-    #define IDirect3D9Ex_GetAdapterDisplayModeEx( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetAdapterDisplayModeEx( x, p1, p2, p3 )
-    #define IDirect3D9Ex_CreateDeviceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
-        (x)->lpVtbl->CreateDeviceEx( x, p1, p2, p3, p4, p5, p6, p7 )
-    #define IDirect3D9Ex_GetAdapterLUID( x, p1, p2 ) \
-        (x)->lpVtbl->GetAdapterLUID( x, p1, p2 )
     #define IDirect3DDevice9_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IDirect3DDevice9_AddRef( x ) \
@@ -1202,274 +1276,6 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->lpVtbl->DeletePatch( x, p )
     #define IDirect3DDevice9_CreateQuery( x, p1, p2 ) \
         (x)->lpVtbl->CreateQuery( x, p1, p2 )
-    #define IDirect3DDevice9Ex_QueryInterface( x, p1, p2 ) \
-        (x)->lpVtbl->QueryInterface( x, p1, p2 )
-    #define IDirect3DDevice9Ex_AddRef( x ) \
-        (x)->lpVtbl->AddRef( x )
-    #define IDirect3DDevice9Ex_Release( x ) \
-        (x)->lpVtbl->Release( x )
-    #define IDirect3DDevice9Ex_TestCooperativeLevel( x ) \
-        (x)->lpVtbl->TestCooperativeLevel( x )
-    #define IDirect3DDevice9Ex_GetAvailableTextureMem( x ) \
-        (x)->lpVtbl->GetAvailableTextureMem( x )
-    #define IDirect3DDevice9Ex_EvictManagedResources( x ) \
-        (x)->lpVtbl->EvictManagedResources( x )
-    #define IDirect3DDevice9Ex_GetDirect3D( x, p ) \
-        (x)->lpVtbl->GetDirect3D( x, p )
-    #define IDirect3DDevice9Ex_GetDeviceCaps( x, p ) \
-        (x)->lpVtbl->GetDeviceCaps( x, p )
-    #define IDirect3DDevice9Ex_GetDisplayMode( x, p1, p2 ) \
-        (x)->lpVtbl->GetDisplayMode( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetCreationParameters( x, p ) \
-        (x)->lpVtbl->GetCreationParameters( x, p )
-    #define IDirect3DDevice9Ex_SetCursorProperties( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetCursorProperties( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetCursorPosition( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetCursorPosition( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_ShowCursor( x, p ) \
-        (x)->lpVtbl->ShowCursor( x, p )
-    #define IDirect3DDevice9Ex_CreateAdditionalSwapChain( x, p1, p2 ) \
-        (x)->lpVtbl->CreateAdditionalSwapChain( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetSwapChain( x, p1, p2 ) \
-        (x)->lpVtbl->GetSwapChain( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetNumberOfSwapChains( x ) \
-        (x)->lpVtbl->GetNumberOfSwapChains( x )
-    #define IDirect3DDevice9Ex_Reset( x, p ) \
-        (x)->lpVtbl->Reset( x, p )
-    #define IDirect3DDevice9Ex_Present( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->Present( x, p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_GetBackBuffer( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->GetBackBuffer( x, p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_GetRasterStatus( x, p1, p2 ) \
-        (x)->lpVtbl->GetRasterStatus( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetDialogBoxMode( x, p ) \
-        (x)->lpVtbl->SetDialogBoxMode( x, p )
-    #define IDirect3DDevice9Ex_SetGammaRamp( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetGammaRamp( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetGammaRamp( x, p1, p2 ) \
-        (x)->lpVtbl->GetGammaRamp( x, p1, p2 )
-    #define IDirect3DDevice9Ex_CreateTexture( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->lpVtbl->CreateTexture( x, p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_CreateVolumeTexture( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
-        (x)->lpVtbl->CreateVolumeTexture( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-    #define IDirect3DDevice9Ex_CreateCubeTexture( x, p1, p2, p3, p4, p5, p6, p7 ) \
-        (x)->lpVtbl->CreateCubeTexture( x, p1, p2, p3, p4, p5, p6, p7 )
-    #define IDirect3DDevice9Ex_CreateVertexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->CreateVertexBuffer( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_CreateIndexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->CreateIndexBuffer( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_CreateRenderTarget( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->lpVtbl->CreateRenderTarget( x, p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_CreateDepthStencilSurface( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->lpVtbl->CreateDepthStencilSurface( x, p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_UpdateSurface( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->UpdateSurface( x, p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_UpdateTexture( x, p1, p2 ) \
-        (x)->lpVtbl->UpdateTexture( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetRenderTargetData( x, p1, p2 ) \
-        (x)->lpVtbl->GetRenderTargetData( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetFrontBufferData( x, p1, p2 ) \
-        (x)->lpVtbl->GetFrontBufferData( x, p1, p2 )
-    #define IDirect3DDevice9Ex_StretchRect( x, p1, p2, p3, p4, p5 ) \
-        (x)->lpVtbl->StretchRect( x, p1, p2, p3, p4, p5 )
-    #define IDirect3DDevice9Ex_ColorFill( x, p1, p2, p3 ) \
-        (x)->lpVtbl->ColorFill( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_CreateOffscreenPlainSurface( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->CreateOffscreenPlainSurface( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_SetRenderTarget( x, p1, p2 ) \
-        (x)->lpVtbl->SetRenderTarget( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetRenderTarget( x, p1, p2 ) \
-        (x)->lpVtbl->GetRenderTarget( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetDepthStencilSurface( x, p ) \
-        (x)->lpVtbl->SetDepthStencilSurface( x, p )
-    #define IDirect3DDevice9Ex_GetDepthStencilSurface( x, p ) \
-        (x)->lpVtbl->GetDepthStencilSurface( x, p )
-    #define IDirect3DDevice9Ex_BeginScene( x ) \
-        (x)->lpVtbl->BeginScene( x )
-    #define IDirect3DDevice9Ex_EndScene( x ) \
-        (x)->lpVtbl->EndScene( x )
-    #define IDirect3DDevice9Ex_Clear( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->Clear( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_SetTransform( x, p1, p2 ) \
-        (x)->lpVtbl->SetTransform( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetTransform( x, p1, p2 ) \
-        (x)->lpVtbl->GetTransform( x, p1, p2 )
-    #define IDirect3DDevice9Ex_MultiplyTransform( x, p1, p2 ) \
-        (x)->lpVtbl->MultiplyTransform( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetViewport( x, p ) \
-        (x)->lpVtbl->SetViewport( x, p )
-    #define IDirect3DDevice9Ex_GetViewport( x, p ) \
-        (x)->lpVtbl->GetViewport( x, p )
-    #define IDirect3DDevice9Ex_SetMaterial( x, p ) \
-        (x)->lpVtbl->SetMaterial( x, p )
-    #define IDirect3DDevice9Ex_GetMaterial( x, p ) \
-        (x)->lpVtbl->GetMaterial( x, p )
-    #define IDirect3DDevice9Ex_SetLight( x, p1, p2 ) \
-        (x)->lpVtbl->SetLight( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetLight( x, p1, p2 ) \
-        (x)->lpVtbl->GetLight( x, p1, p2 )
-    #define IDirect3DDevice9Ex_LightEnable( x, p1, p2 ) \
-        (x)->lpVtbl->LightEnable( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetLightEnable( x, p1, p2 ) \
-        (x)->lpVtbl->GetLightEnable( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetClipPlane( x, p1, p2 ) \
-        (x)->lpVtbl->SetClipPlane( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetClipPlane( x, p1, p2 ) \
-        (x)->lpVtbl->GetClipPlane( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetRenderState( x, p1, p2 ) \
-        (x)->lpVtbl->SetRenderState( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetRenderState( x, p1, p2 ) \
-        (x)->lpVtbl->GetRenderState( x, p1, p2 )
-    #define IDirect3DDevice9Ex_CreateStateBlock( x, p1, p2 ) \
-        (x)->lpVtbl->CreateStateBlock( x, p1, p2 )
-    #define IDirect3DDevice9Ex_BeginStateBlock( x ) \
-        (x)->lpVtbl->BeginStateBlock( x )
-    #define IDirect3DDevice9Ex_EndStateBlock( x, p ) \
-        (x)->lpVtbl->EndStateBlock( x, p )
-    #define IDirect3DDevice9Ex_SetClipStatus( x, p ) \
-        (x)->lpVtbl->SetClipStatus( x, p )
-    #define IDirect3DDevice9Ex_GetClipStatus( x, p ) \
-        (x)->lpVtbl->GetClipStatus( x, p )
-    #define IDirect3DDevice9Ex_GetTexture( x, p1, p2 ) \
-        (x)->lpVtbl->GetTexture( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetTexture( x, p1, p2 ) \
-        (x)->lpVtbl->SetTexture( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetTextureStageState( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetTextureStageState( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetTextureStageState( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetTextureStageState( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetSamplerState( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetSamplerState( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetSamplerState( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetSamplerState( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_ValidateDevice( x, p ) \
-        (x)->lpVtbl->ValidateDevice( x, p )
-    #define IDirect3DDevice9Ex_SetPaletteEntries( x, p1, p2 ) \
-        (x)->lpVtbl->SetPaletteEntries( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetPaletteEntries( x, p1, p2 ) \
-        (x)->lpVtbl->GetPaletteEntries( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetCurrentTexturePalette( x, p ) \
-        (x)->lpVtbl->SetCurrentTexturePalette( x, p )
-    #define IDirect3DDevice9Ex_GetCurrentTexturePalette( x, p ) \
-        (x)->lpVtbl->GetCurrentTexturePalette( x, p )
-    #define IDirect3DDevice9Ex_SetScissorRect( x, p ) \
-        (x)->lpVtbl->SetScissorRect( x, p )
-    #define IDirect3DDevice9Ex_GetScissorRect( x, p ) \
-        (x)->lpVtbl->GetScissorRect( x, p )
-    #define IDirect3DDevice9Ex_SetSoftwareVertexProcessing( x, p ) \
-        (x)->lpVtbl->SetSoftwareVertexProcessing( x, p )
-    #define IDirect3DDevice9Ex_GetSoftwareVertexProcessing( x ) \
-        (x)->lpVtbl->GetSoftwareVertexProcessing( x )
-    #define IDirect3DDevice9Ex_SetNPatchMode( x, p ) \
-        (x)->lpVtbl->SetNPatchMode( x, p )
-    #define IDirect3DDevice9Ex_GetNPatchMode( x ) \
-        (x)->lpVtbl->GetNPatchMode( x )
-    #define IDirect3DDevice9Ex_DrawPrimitive( x, p1, p2, p3 ) \
-        (x)->lpVtbl->DrawPrimitive( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DrawIndexedPrimitive( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->DrawIndexedPrimitive( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_DrawPrimitiveUP( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->DrawPrimitiveUP( x, p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_DrawIndexedPrimitiveUP( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->lpVtbl->DrawIndexedPrimitiveUP( x, p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_ProcessVertices( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->ProcessVertices( x, p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_CreateVertexDeclaration( x, p1, p2 ) \
-        (x)->lpVtbl->CreateVertexDeclaration( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetVertexDeclaration( x, p ) \
-        (x)->lpVtbl->SetVertexDeclaration( x, p )
-    #define IDirect3DDevice9Ex_GetVertexDeclaration( x, p ) \
-        (x)->lpVtbl->GetVertexDeclaration( x, p )
-    #define IDirect3DDevice9Ex_SetFVF( x, p ) \
-        (x)->lpVtbl->SetFVF( x, p )
-    #define IDirect3DDevice9Ex_GetFVF( x, p ) \
-        (x)->lpVtbl->GetFVF( x, p )
-    #define IDirect3DDevice9Ex_CreateVertexShader( x, p1, p2 ) \
-        (x)->lpVtbl->CreateVertexShader( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetVertexShader( x, p ) \
-        (x)->lpVtbl->SetVertexShader( x, p )
-    #define IDirect3DDevice9Ex_GetVertexShader( x, p ) \
-        (x)->lpVtbl->GetVertexShader( x, p )
-    #define IDirect3DDevice9Ex_SetVertexShaderConstantF( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetVertexShaderConstantF( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetVertexShaderConstantF( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetVertexShaderConstantF( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetVertexShaderConstantI( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetVertexShaderConstantI( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetVertexShaderConstantI( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetVertexShaderConstantI( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetVertexShaderConstantB( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetVertexShaderConstantB( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetVertexShaderConstantB( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetVertexShaderConstantB( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetStreamSource( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->SetStreamSource( x, p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_GetStreamSource( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->GetStreamSource( x, p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_SetStreamSourceFreq( x, p1, p2 ) \
-        (x)->lpVtbl->SetStreamSourceFreq( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetStreamSourceFreq( x, p1, p2 ) \
-        (x)->lpVtbl->GetStreamSourceFreq( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetIndices( x, p ) \
-        (x)->lpVtbl->SetIndices( x, p )
-    #define IDirect3DDevice9Ex_GetIndices( x, p ) \
-        (x)->lpVtbl->GetIndices( x, p )
-    #define IDirect3DDevice9Ex_CreatePixelShader( x, p1, p2 ) \
-        (x)->lpVtbl->CreatePixelShader( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetPixelShader( x, p ) \
-        (x)->lpVtbl->SetPixelShader( x, p )
-    #define IDirect3DDevice9Ex_GetPixelShader( x, p ) \
-        (x)->lpVtbl->GetPixelShader( x, p )
-    #define IDirect3DDevice9Ex_SetPixelShaderConstantF( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetPixelShaderConstantF( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetPixelShaderConstantF( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetPixelShaderConstantF( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetPixelShaderConstantI( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetPixelShaderConstantI( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetPixelShaderConstantI( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetPixelShaderConstantI( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetPixelShaderConstantB( x, p1, p2, p3 ) \
-        (x)->lpVtbl->SetPixelShaderConstantB( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetPixelShaderConstantB( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetPixelShaderConstantB( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DrawRectPatch( x, p1, p2, p3 ) \
-        (x)->lpVtbl->DrawRectPatch( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DrawTriPatch( x, p1, p2, p3 ) \
-        (x)->lpVtbl->DrawTriPatch( x, p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DeletePatch( x, p ) \
-        (x)->lpVtbl->DeletePatch( x, p )
-    #define IDirect3DDevice9Ex_CreateQuery( x, p1, p2 ) \
-        (x)->lpVtbl->CreateQuery( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetConvolutionMonoKernel( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->SetConvolutionMonoKernel( x, p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_ComposeRects( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->lpVtbl->ComposeRects( x, p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_PresentEx( x, p1, p2, p3, p4, p5 ) \
-        (x)->lpVtbl->PresentEx( x, p1, p2, p3, p4, p5 )
-    #define IDirect3DDevice9Ex_GetGPUThreadPriority( x, p ) \
-        (x)->lpVtbl->GetGPUThreadPriority( x, p )
-    #define IDirect3DDevice9Ex_SetGPUThreadPriority( x, p ) \
-        (x)->lpVtbl->SetGPUThreadPriority( x, p )
-    #define IDirect3DDevice9Ex_WaitForVBlank( x, p ) \
-        (x)->lpVtbl->WaitForVBlank( x, p )
-    #define IDirect3DDevice9Ex_CheckResourceResidency( x, p1, p2 ) \
-        (x)->lpVtbl->CheckResourceResidency( x, p1, p2 )
-    #define IDirect3DDevice9Ex_SetMaximumFrameLatency( x, p ) \
-        (x)->lpVtbl->SetMaximumFrameLatency( x, p )
-    #define IDirect3DDevice9Ex_GetMaximumFrameLatency( x, p ) \
-        (x)->lpVtbl->GetMaximumFrameLatency( x, p )
-    #define IDirect3DDevice9Ex_CheckDeviceState( x, p ) \
-        (x)->lpVtbl->CheckDeviceState( x, p )
-    #define IDirect3DDevice9Ex_CreateRenderTargetEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
-        (x)->lpVtbl->CreateRenderTargetEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-    #define IDirect3DDevice9Ex_CreateOffscreenPlainSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
-        (x)->lpVtbl->CreateOffscreenPlainSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7 )
-    #define IDirect3DDevice9Ex_CreateDepthStencilSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
-        (x)->lpVtbl->CreateDepthStencilSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-    #define IDirect3DDevice9Ex_ResetEx( x, p1, p2 ) \
-        (x)->lpVtbl->ResetEx( x, p1, p2 )
-    #define IDirect3DDevice9Ex_GetDisplayModeEx( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetDisplayModeEx( x, p1, p2, p3 )
     #define IDirect3DStateBlock9_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IDirect3DStateBlock9_AddRef( x ) \
@@ -1502,32 +1308,6 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->lpVtbl->GetDevice( x, p )
     #define IDirect3DSwapChain9_GetPresentParameters( x, p ) \
         (x)->lpVtbl->GetPresentParameters( x, p )
-    #define IDirect3DSwapChain9Ex_QueryInterface( x, p1, p2 ) \
-        (x)->lpVtbl->QueryInterface( x, p1, p2 )
-    #define IDirect3DSwapChain9Ex_AddRef( x ) \
-        (x)->lpVtbl->AddRef( x )
-    #define IDirect3DSwapChain9Ex_Release( x ) \
-        (x)->lpVtbl->Release( x )
-    #define IDirect3DSwapChain9Ex_Present( x, p1, p2, p3, p4, p5 ) \
-        (x)->lpVtbl->Present( x, p1, p2, p3, p4, p5 )
-    #define IDirect3DSwapChain9Ex_GetFrontBufferData( x, p ) \
-        (x)->lpVtbl->GetFrontBufferData( x, p )
-    #define IDirect3DSwapChain9Ex_GetBackBuffer( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetBackBuffer( x, p1, p2, p3 )
-    #define IDirect3DSwapChain9Ex_GetRasterStatus( x, p ) \
-        (x)->lpVtbl->GetRasterStatus( x, p )
-    #define IDirect3DSwapChain9Ex_GetDisplayMode( x, p ) \
-        (x)->lpVtbl->GetDisplayMode( x, p )
-    #define IDirect3DSwapChain9Ex_GetDevice( x, p ) \
-        (x)->lpVtbl->GetDevice( x, p )
-    #define IDirect3DSwapChain9Ex_GetPresentParameters( x, p ) \
-        (x)->lpVtbl->GetPresentParameters( x, p )
-    #define IDirect3DSwapChain9Ex_GetLastPresentCount( x, p ) \
-        (x)->lpVtbl->GetLastPresentCount( x, p )
-    #define IDirect3DSwapChain9Ex_GetPresentStats( x, p ) \
-        (x)->lpVtbl->GetPresentStats( x, p )
-    #define IDirect3DSwapChain9Ex_GetDisplayModeEx( x, p1, p2 ) \
-        (x)->lpVtbl->GetDisplayModeEx( x, p1, p2 )
     #define IDirect3DResource9_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IDirect3DResource9_AddRef( x ) \
@@ -1874,6 +1654,406 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->lpVtbl->Issue( x, p )
     #define IDirect3DQuery9_GetData( x, p1, p2, p3 ) \
         (x)->lpVtbl->GetData( x, p1, p2, p3 )
+    #ifndef D3D_DISABLE_9EX
+        #define IDirect3D9Ex_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDirect3D9Ex_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDirect3D9Ex_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDirect3D9Ex_RegisterSoftwareDevice( x, p ) \
+            (x)->lpVtbl->RegisterSoftwareDevice( x, p )
+        #define IDirect3D9Ex_GetAdapterCount( x ) \
+            (x)->lpVtbl->GetAdapterCount( x )
+        #define IDirect3D9Ex_GetAdapterIdentifier( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetAdapterIdentifier( x, p1, p2, p3 )
+        #define IDirect3D9Ex_GetAdapterModeCount( x, p1, p2 ) \
+            (x)->lpVtbl->GetAdapterModeCount( x, p1, p2 )
+        #define IDirect3D9Ex_EnumAdapterModes( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->EnumAdapterModes( x, p1, p2, p3, p4 )
+        #define IDirect3D9Ex_GetAdapterDisplayMode( x, p1, p2 ) \
+            (x)->lpVtbl->GetAdapterDisplayMode( x, p1, p2 )
+        #define IDirect3D9Ex_CheckDeviceType( x, p1, p2, p3, p4, p5 ) \
+            (x)->lpVtbl->CheckDeviceType( x, p1, p2, p3, p4, p5 )
+        #define IDirect3D9Ex_CheckDeviceFormat( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->CheckDeviceFormat( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3D9Ex_CheckDeviceMultisampleType( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->CheckDeviceMultisampleType( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3D9Ex_CheckDepthStencilMatch( x, p1, p2, p3, p4, p5 ) \
+            (x)->lpVtbl->CheckDepthStencilMatch( x, p1, p2, p3, p4, p5 )
+        #define IDirect3D9Ex_CheckDeviceFormatConversion( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->CheckDeviceFormatConversion( x, p1, p2, p3, p4 )
+        #define IDirect3D9Ex_GetDeviceCaps( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetDeviceCaps( x, p1, p2, p3 )
+        #define IDirect3D9Ex_GetAdapterMonitor( x, p ) \
+            (x)->lpVtbl->GetAdapterMonitor( x, p )
+        #define IDirect3D9Ex_CreateDevice( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->CreateDevice( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3D9Ex_GetAdapterModeCountEx( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->GetAdapterModeCountEx( x, p1, p2, p3, p4 )
+        #define IDirect3D9Ex_EnumAdapterModesEx( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->EnumAdapterModesEx( x, p1, p2, p3, p4 )
+        #define IDirect3D9Ex_GetAdapterDisplayModeEx( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetAdapterDisplayModeEx( x, p1, p2, p3 )
+        #define IDirect3D9Ex_CreateDeviceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
+            (x)->lpVtbl->CreateDeviceEx( x, p1, p2, p3, p4, p5, p6, p7 )
+        #define IDirect3D9Ex_GetAdapterLUID( x, p1, p2 ) \
+            (x)->lpVtbl->GetAdapterLUID( x, p1, p2 )
+        #define IDirect3DDevice9Ex_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDirect3DDevice9Ex_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDirect3DDevice9Ex_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDirect3DDevice9Ex_TestCooperativeLevel( x ) \
+            (x)->lpVtbl->TestCooperativeLevel( x )
+        #define IDirect3DDevice9Ex_GetAvailableTextureMem( x ) \
+            (x)->lpVtbl->GetAvailableTextureMem( x )
+        #define IDirect3DDevice9Ex_EvictManagedResources( x ) \
+            (x)->lpVtbl->EvictManagedResources( x )
+        #define IDirect3DDevice9Ex_GetDirect3D( x, p ) \
+            (x)->lpVtbl->GetDirect3D( x, p )
+        #define IDirect3DDevice9Ex_GetDeviceCaps( x, p ) \
+            (x)->lpVtbl->GetDeviceCaps( x, p )
+        #define IDirect3DDevice9Ex_GetDisplayMode( x, p1, p2 ) \
+            (x)->lpVtbl->GetDisplayMode( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetCreationParameters( x, p ) \
+            (x)->lpVtbl->GetCreationParameters( x, p )
+        #define IDirect3DDevice9Ex_SetCursorProperties( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetCursorProperties( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetCursorPosition( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetCursorPosition( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_ShowCursor( x, p ) \
+            (x)->lpVtbl->ShowCursor( x, p )
+        #define IDirect3DDevice9Ex_CreateAdditionalSwapChain( x, p1, p2 ) \
+            (x)->lpVtbl->CreateAdditionalSwapChain( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetSwapChain( x, p1, p2 ) \
+            (x)->lpVtbl->GetSwapChain( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetNumberOfSwapChains( x ) \
+            (x)->lpVtbl->GetNumberOfSwapChains( x )
+        #define IDirect3DDevice9Ex_Reset( x, p ) \
+            (x)->lpVtbl->Reset( x, p )
+        #define IDirect3DDevice9Ex_Present( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->Present( x, p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_GetBackBuffer( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->GetBackBuffer( x, p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_GetRasterStatus( x, p1, p2 ) \
+            (x)->lpVtbl->GetRasterStatus( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetDialogBoxMode( x, p ) \
+            (x)->lpVtbl->SetDialogBoxMode( x, p )
+        #define IDirect3DDevice9Ex_SetGammaRamp( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetGammaRamp( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetGammaRamp( x, p1, p2 ) \
+            (x)->lpVtbl->GetGammaRamp( x, p1, p2 )
+        #define IDirect3DDevice9Ex_CreateTexture( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->lpVtbl->CreateTexture( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_CreateVolumeTexture( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
+            (x)->lpVtbl->CreateVolumeTexture( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+        #define IDirect3DDevice9Ex_CreateCubeTexture( x, p1, p2, p3, p4, p5, p6, p7 ) \
+            (x)->lpVtbl->CreateCubeTexture( x, p1, p2, p3, p4, p5, p6, p7 )
+        #define IDirect3DDevice9Ex_CreateVertexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->CreateVertexBuffer( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_CreateIndexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->CreateIndexBuffer( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_CreateRenderTarget( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->lpVtbl->CreateRenderTarget( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_CreateDepthStencilSurface( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->lpVtbl->CreateDepthStencilSurface( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_UpdateSurface( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->UpdateSurface( x, p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_UpdateTexture( x, p1, p2 ) \
+            (x)->lpVtbl->UpdateTexture( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetRenderTargetData( x, p1, p2 ) \
+            (x)->lpVtbl->GetRenderTargetData( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetFrontBufferData( x, p1, p2 ) \
+            (x)->lpVtbl->GetFrontBufferData( x, p1, p2 )
+        #define IDirect3DDevice9Ex_StretchRect( x, p1, p2, p3, p4, p5 ) \
+            (x)->lpVtbl->StretchRect( x, p1, p2, p3, p4, p5 )
+        #define IDirect3DDevice9Ex_ColorFill( x, p1, p2, p3 ) \
+            (x)->lpVtbl->ColorFill( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_CreateOffscreenPlainSurface( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->CreateOffscreenPlainSurface( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_SetRenderTarget( x, p1, p2 ) \
+            (x)->lpVtbl->SetRenderTarget( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetRenderTarget( x, p1, p2 ) \
+            (x)->lpVtbl->GetRenderTarget( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetDepthStencilSurface( x, p ) \
+            (x)->lpVtbl->SetDepthStencilSurface( x, p )
+        #define IDirect3DDevice9Ex_GetDepthStencilSurface( x, p ) \
+            (x)->lpVtbl->GetDepthStencilSurface( x, p )
+        #define IDirect3DDevice9Ex_BeginScene( x ) \
+            (x)->lpVtbl->BeginScene( x )
+        #define IDirect3DDevice9Ex_EndScene( x ) \
+            (x)->lpVtbl->EndScene( x )
+        #define IDirect3DDevice9Ex_Clear( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->Clear( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_SetTransform( x, p1, p2 ) \
+            (x)->lpVtbl->SetTransform( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetTransform( x, p1, p2 ) \
+            (x)->lpVtbl->GetTransform( x, p1, p2 )
+        #define IDirect3DDevice9Ex_MultiplyTransform( x, p1, p2 ) \
+            (x)->lpVtbl->MultiplyTransform( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetViewport( x, p ) \
+            (x)->lpVtbl->SetViewport( x, p )
+        #define IDirect3DDevice9Ex_GetViewport( x, p ) \
+            (x)->lpVtbl->GetViewport( x, p )
+        #define IDirect3DDevice9Ex_SetMaterial( x, p ) \
+            (x)->lpVtbl->SetMaterial( x, p )
+        #define IDirect3DDevice9Ex_GetMaterial( x, p ) \
+            (x)->lpVtbl->GetMaterial( x, p )
+        #define IDirect3DDevice9Ex_SetLight( x, p1, p2 ) \
+            (x)->lpVtbl->SetLight( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetLight( x, p1, p2 ) \
+            (x)->lpVtbl->GetLight( x, p1, p2 )
+        #define IDirect3DDevice9Ex_LightEnable( x, p1, p2 ) \
+            (x)->lpVtbl->LightEnable( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetLightEnable( x, p1, p2 ) \
+            (x)->lpVtbl->GetLightEnable( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetClipPlane( x, p1, p2 ) \
+            (x)->lpVtbl->SetClipPlane( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetClipPlane( x, p1, p2 ) \
+            (x)->lpVtbl->GetClipPlane( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetRenderState( x, p1, p2 ) \
+            (x)->lpVtbl->SetRenderState( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetRenderState( x, p1, p2 ) \
+            (x)->lpVtbl->GetRenderState( x, p1, p2 )
+        #define IDirect3DDevice9Ex_CreateStateBlock( x, p1, p2 ) \
+            (x)->lpVtbl->CreateStateBlock( x, p1, p2 )
+        #define IDirect3DDevice9Ex_BeginStateBlock( x ) \
+            (x)->lpVtbl->BeginStateBlock( x )
+        #define IDirect3DDevice9Ex_EndStateBlock( x, p ) \
+            (x)->lpVtbl->EndStateBlock( x, p )
+        #define IDirect3DDevice9Ex_SetClipStatus( x, p ) \
+            (x)->lpVtbl->SetClipStatus( x, p )
+        #define IDirect3DDevice9Ex_GetClipStatus( x, p ) \
+            (x)->lpVtbl->GetClipStatus( x, p )
+        #define IDirect3DDevice9Ex_GetTexture( x, p1, p2 ) \
+            (x)->lpVtbl->GetTexture( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetTexture( x, p1, p2 ) \
+            (x)->lpVtbl->SetTexture( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetTextureStageState( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetTextureStageState( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetTextureStageState( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetTextureStageState( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetSamplerState( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetSamplerState( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetSamplerState( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetSamplerState( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_ValidateDevice( x, p ) \
+            (x)->lpVtbl->ValidateDevice( x, p )
+        #define IDirect3DDevice9Ex_SetPaletteEntries( x, p1, p2 ) \
+            (x)->lpVtbl->SetPaletteEntries( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetPaletteEntries( x, p1, p2 ) \
+            (x)->lpVtbl->GetPaletteEntries( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetCurrentTexturePalette( x, p ) \
+            (x)->lpVtbl->SetCurrentTexturePalette( x, p )
+        #define IDirect3DDevice9Ex_GetCurrentTexturePalette( x, p ) \
+            (x)->lpVtbl->GetCurrentTexturePalette( x, p )
+        #define IDirect3DDevice9Ex_SetScissorRect( x, p ) \
+            (x)->lpVtbl->SetScissorRect( x, p )
+        #define IDirect3DDevice9Ex_GetScissorRect( x, p ) \
+            (x)->lpVtbl->GetScissorRect( x, p )
+        #define IDirect3DDevice9Ex_SetSoftwareVertexProcessing( x, p ) \
+            (x)->lpVtbl->SetSoftwareVertexProcessing( x, p )
+        #define IDirect3DDevice9Ex_GetSoftwareVertexProcessing( x ) \
+            (x)->lpVtbl->GetSoftwareVertexProcessing( x )
+        #define IDirect3DDevice9Ex_SetNPatchMode( x, p ) \
+            (x)->lpVtbl->SetNPatchMode( x, p )
+        #define IDirect3DDevice9Ex_GetNPatchMode( x ) \
+            (x)->lpVtbl->GetNPatchMode( x )
+        #define IDirect3DDevice9Ex_DrawPrimitive( x, p1, p2, p3 ) \
+            (x)->lpVtbl->DrawPrimitive( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DrawIndexedPrimitive( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->DrawIndexedPrimitive( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_DrawPrimitiveUP( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->DrawPrimitiveUP( x, p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_DrawIndexedPrimitiveUP( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->lpVtbl->DrawIndexedPrimitiveUP( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_ProcessVertices( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->ProcessVertices( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_CreateVertexDeclaration( x, p1, p2 ) \
+            (x)->lpVtbl->CreateVertexDeclaration( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetVertexDeclaration( x, p ) \
+            (x)->lpVtbl->SetVertexDeclaration( x, p )
+        #define IDirect3DDevice9Ex_GetVertexDeclaration( x, p ) \
+            (x)->lpVtbl->GetVertexDeclaration( x, p )
+        #define IDirect3DDevice9Ex_SetFVF( x, p ) \
+            (x)->lpVtbl->SetFVF( x, p )
+        #define IDirect3DDevice9Ex_GetFVF( x, p ) \
+            (x)->lpVtbl->GetFVF( x, p )
+        #define IDirect3DDevice9Ex_CreateVertexShader( x, p1, p2 ) \
+            (x)->lpVtbl->CreateVertexShader( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetVertexShader( x, p ) \
+            (x)->lpVtbl->SetVertexShader( x, p )
+        #define IDirect3DDevice9Ex_GetVertexShader( x, p ) \
+            (x)->lpVtbl->GetVertexShader( x, p )
+        #define IDirect3DDevice9Ex_SetVertexShaderConstantF( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetVertexShaderConstantF( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetVertexShaderConstantF( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetVertexShaderConstantF( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetVertexShaderConstantI( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetVertexShaderConstantI( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetVertexShaderConstantI( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetVertexShaderConstantI( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetVertexShaderConstantB( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetVertexShaderConstantB( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetVertexShaderConstantB( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetVertexShaderConstantB( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetStreamSource( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->SetStreamSource( x, p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_GetStreamSource( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->GetStreamSource( x, p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_SetStreamSourceFreq( x, p1, p2 ) \
+            (x)->lpVtbl->SetStreamSourceFreq( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetStreamSourceFreq( x, p1, p2 ) \
+            (x)->lpVtbl->GetStreamSourceFreq( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetIndices( x, p ) \
+            (x)->lpVtbl->SetIndices( x, p )
+        #define IDirect3DDevice9Ex_GetIndices( x, p ) \
+            (x)->lpVtbl->GetIndices( x, p )
+        #define IDirect3DDevice9Ex_CreatePixelShader( x, p1, p2 ) \
+            (x)->lpVtbl->CreatePixelShader( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetPixelShader( x, p ) \
+            (x)->lpVtbl->SetPixelShader( x, p )
+        #define IDirect3DDevice9Ex_GetPixelShader( x, p ) \
+            (x)->lpVtbl->GetPixelShader( x, p )
+        #define IDirect3DDevice9Ex_SetPixelShaderConstantF( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetPixelShaderConstantF( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetPixelShaderConstantF( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetPixelShaderConstantF( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetPixelShaderConstantI( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetPixelShaderConstantI( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetPixelShaderConstantI( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetPixelShaderConstantI( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetPixelShaderConstantB( x, p1, p2, p3 ) \
+            (x)->lpVtbl->SetPixelShaderConstantB( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetPixelShaderConstantB( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetPixelShaderConstantB( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DrawRectPatch( x, p1, p2, p3 ) \
+            (x)->lpVtbl->DrawRectPatch( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DrawTriPatch( x, p1, p2, p3 ) \
+            (x)->lpVtbl->DrawTriPatch( x, p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DeletePatch( x, p ) \
+            (x)->lpVtbl->DeletePatch( x, p )
+        #define IDirect3DDevice9Ex_CreateQuery( x, p1, p2 ) \
+            (x)->lpVtbl->CreateQuery( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetConvolutionMonoKernel( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->SetConvolutionMonoKernel( x, p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_ComposeRects( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->lpVtbl->ComposeRects( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_PresentEx( x, p1, p2, p3, p4, p5 ) \
+            (x)->lpVtbl->PresentEx( x, p1, p2, p3, p4, p5 )
+        #define IDirect3DDevice9Ex_GetGPUThreadPriority( x, p ) \
+            (x)->lpVtbl->GetGPUThreadPriority( x, p )
+        #define IDirect3DDevice9Ex_SetGPUThreadPriority( x, p ) \
+            (x)->lpVtbl->SetGPUThreadPriority( x, p )
+        #define IDirect3DDevice9Ex_WaitForVBlank( x, p ) \
+            (x)->lpVtbl->WaitForVBlank( x, p )
+        #define IDirect3DDevice9Ex_CheckResourceResidency( x, p1, p2 ) \
+            (x)->lpVtbl->CheckResourceResidency( x, p1, p2 )
+        #define IDirect3DDevice9Ex_SetMaximumFrameLatency( x, p ) \
+            (x)->lpVtbl->SetMaximumFrameLatency( x, p )
+        #define IDirect3DDevice9Ex_GetMaximumFrameLatency( x, p ) \
+            (x)->lpVtbl->GetMaximumFrameLatency( x, p )
+        #define IDirect3DDevice9Ex_CheckDeviceState( x, p ) \
+            (x)->lpVtbl->CheckDeviceState( x, p )
+        #define IDirect3DDevice9Ex_CreateRenderTargetEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
+            (x)->lpVtbl->CreateRenderTargetEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+        #define IDirect3DDevice9Ex_CreateOffscreenPlainSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
+            (x)->lpVtbl->CreateOffscreenPlainSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7 )
+        #define IDirect3DDevice9Ex_CreateDepthStencilSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
+            (x)->lpVtbl->CreateDepthStencilSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+        #define IDirect3DDevice9Ex_ResetEx( x, p1, p2 ) \
+            (x)->lpVtbl->ResetEx( x, p1, p2 )
+        #define IDirect3DDevice9Ex_GetDisplayModeEx( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetDisplayModeEx( x, p1, p2, p3 )
+        #define IDirect3DSwapChain9Ex_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDirect3DSwapChain9Ex_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDirect3DSwapChain9Ex_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDirect3DSwapChain9Ex_Present( x, p1, p2, p3, p4, p5 ) \
+            (x)->lpVtbl->Present( x, p1, p2, p3, p4, p5 )
+        #define IDirect3DSwapChain9Ex_GetFrontBufferData( x, p ) \
+            (x)->lpVtbl->GetFrontBufferData( x, p )
+        #define IDirect3DSwapChain9Ex_GetBackBuffer( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetBackBuffer( x, p1, p2, p3 )
+        #define IDirect3DSwapChain9Ex_GetRasterStatus( x, p ) \
+            (x)->lpVtbl->GetRasterStatus( x, p )
+        #define IDirect3DSwapChain9Ex_GetDisplayMode( x, p ) \
+            (x)->lpVtbl->GetDisplayMode( x, p )
+        #define IDirect3DSwapChain9Ex_GetDevice( x, p ) \
+            (x)->lpVtbl->GetDevice( x, p )
+        #define IDirect3DSwapChain9Ex_GetPresentParameters( x, p ) \
+            (x)->lpVtbl->GetPresentParameters( x, p )
+        #define IDirect3DSwapChain9Ex_GetLastPresentCount( x, p ) \
+            (x)->lpVtbl->GetLastPresentCount( x, p )
+        #define IDirect3DSwapChain9Ex_GetPresentStats( x, p ) \
+            (x)->lpVtbl->GetPresentStats( x, p )
+        #define IDirect3DSwapChain9Ex_GetDisplayModeEx( x, p1, p2 ) \
+            (x)->lpVtbl->GetDisplayModeEx( x, p1, p2 )
+        #define IDirect3D9ExOverlayExtension_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDirect3D9ExOverlayExtension_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDirect3D9ExOverlayExtension_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDirect3D9ExOverlayExtension_CheckDeviceOverlayType( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->lpVtbl->CheckDeviceOverlayType( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Video_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDirect3DDevice9Video_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDirect3DDevice9Video_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDirect3DDevice9Video_GetContentProtectionCaps( x, p1, p2, p3 ) \
+            (x)->lpVtbl->GetContentProtectionCaps( x, p1, p2, p3 )
+        #define IDirect3DDevice9Video_CreateAuthenticatedChannel( x, p1, p2, p3 ) \
+            (x)->lpVtbl->CreateAuthenticatedChannel( x, p1, p2, p3 )
+        #define IDirect3DDevice9Video_CreateCryptoSession( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->CreateCryptoSession( x, p1, p2, p3, p4 )
+        #define IDirect3DAuthenticatedChannel9_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDirect3DAuthenticatedChannel9_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDirect3DAuthenticatedChannel9_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDirect3DAuthenticatedChannel9_GetCertificateSize( x, p ) \
+            (x)->lpVtbl->GetCertificateSize( x, p )
+        #define IDirect3DAuthenticatedChannel9_GetCertificate( x, p1, p2 ) \
+            (x)->lpVtbl->GetCertificate( x, p1, p2 )
+        #define IDirect3DAuthenticatedChannel9_NegotiateKeyExchange( x, p1, p2 ) \
+            (x)->lpVtbl->NegotiateKeyExchange( x, p1, p2 )
+        #define IDirect3DAuthenticatedChannel9_Query( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->Query( x, p1, p2, p3, p4 )
+        #define IDirect3DAuthenticatedChannel9_Configure( x, p1, p2, p3 ) \
+            (x)->lpVtbl->Configure( x, p1, p2, p3 )
+        #define IDirect3DCryptoSession9_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDirect3DCryptoSession9_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDirect3DCryptoSession9_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDirect3DCryptoSession9_GetCertificateSize( x, p ) \
+            (x)->lpVtbl->GetCertificateSize( x, p )
+        #define IDirect3DCryptoSession9_GetCertificate( x, p1, p2 ) \
+            (x)->lpVtbl->GetCertificate( x, p1, p2 )
+        #define IDirect3DCryptoSession9_NegotiateKeyExchange( x, p1, p2 ) \
+            (x)->lpVtbl->NegotiateKeyExchange( x, p1, p2 )
+        #define IDirect3DCryptoSession9_EncryptionBlt( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->EncryptionBlt( x, p1, p2, p3, p4 )
+        #define IDirect3DCryptoSession9_DecryptionBlt( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->lpVtbl->DecryptionBlt( x, p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DCryptoSession9_GetSurfacePitch( x, p1, p2 ) \
+            (x)->lpVtbl->GetSurfacePitch( x, p1, p2 )
+        #define IDirect3DCryptoSession9_StartSessionKeyRefresh( x, p1, p2 ) \
+            (x)->lpVtbl->StartSessionKeyRefresh( x, p1, p2 )
+        #define IDirect3DCryptoSession9_FinishSessionKeyRefresh( x ) \
+            (x)->lpVtbl->FinishSessionKeyRefresh( x )
+        #define IDirect3DCryptoSession9_GetEncryptionBltKey( x, p1, p2 ) \
+            (x)->lpVtbl->GetEncryptionBltKey( x, p1, p2 )
+    #endif
 #else
     #define IDirect3D9_QueryInterface( x, p1, p2 ) \
         (x)->QueryInterface( p1, p2 )
@@ -1909,50 +2089,6 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->GetAdapterMonitor( p )
     #define IDirect3D9_CreateDevice( x, p1, p2, p3, p4, p5, p6 ) \
         (x)->CreateDevice( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_QueryInterface( x, p1, p2 ) \
-        (x)->QueryInterface( p1, p2 )
-    #define IDirect3D9Ex_AddRef( x ) \
-        (x)->AddRef()
-    #define IDirect3D9Ex_Release( x ) \
-        (x)->Release()
-    #define IDirect3D9Ex_RegisterSoftwareDevice( x, p ) \
-        (x)->RegisterSoftwareDevice( p )
-    #define IDirect3D9Ex_GetAdapterCount( x ) \
-        (x)->GetAdapterCount()
-    #define IDirect3D9Ex_GetAdapterIdentifier( x, p1, p2, p3 ) \
-        (x)->GetAdapterIdentifier( p1, p2, p3 )
-    #define IDirect3D9Ex_GetAdapterModeCount( x, p1, p2 ) \
-        (x)->GetAdapterModeCount( p1, p2 )
-    #define IDirect3D9Ex_EnumAdapterModes( x, p1, p2, p3, p4 ) \
-        (x)->EnumAdapterModes( p1, p2, p3, p4 )
-    #define IDirect3D9Ex_GetAdapterDisplayMode( x, p1, p2 ) \
-        (x)->GetAdapterDisplayMode( p1, p2 )
-    #define IDirect3D9Ex_CheckDeviceType( x, p1, p2, p3, p4, p5 ) \
-        (x)->CheckDeviceType( p1, p2, p3, p4, p5 )
-    #define IDirect3D9Ex_CheckDeviceFormat( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->CheckDeviceFormat( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_CheckDeviceMultisampleType( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->CheckDeviceMultisampleType( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_CheckDepthStencilMatch( x, p1, p2, p3, p4, p5 ) \
-        (x)->CheckDepthStencilMatch( p1, p2, p3, p4, p5 )
-    #define IDirect3D9Ex_CheckDeviceFormatConversion( x, p1, p2, p3, p4 ) \
-        (x)->CheckDeviceFormatConversion( p1, p2, p3, p4 )
-    #define IDirect3D9Ex_GetDeviceCaps( x, p1, p2, p3 ) \
-        (x)->GetDeviceCaps( p1, p2, p3 )
-    #define IDirect3D9Ex_GetAdapterMonitor( x, p ) \
-        (x)->GetAdapterMonitor( p )
-    #define IDirect3D9Ex_CreateDevice( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->CreateDevice( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3D9Ex_GetAdapterModeCountEx( x, p1, p2, p3, p4 ) \
-        (x)->GetAdapterModeCountEx( p1, p2, p3, p4 )
-    #define IDirect3D9Ex_EnumAdapterModesEx( x, p1, p2, p3, p4 ) \
-        (x)->EnumAdapterModesEx( p1, p2, p3, p4 )
-    #define IDirect3D9Ex_GetAdapterDisplayModeEx( x, p1, p2, p3 ) \
-        (x)->GetAdapterDisplayModeEx( p1, p2, p3 )
-    #define IDirect3D9Ex_CreateDeviceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
-        (x)->CreateDeviceEx( p1, p2, p3, p4, p5, p6, p7 )
-    #define IDirect3D9Ex_GetAdapterLUID( x, p1, p2 ) \
-        (x)->GetAdapterLUID( p1, p2 )
     #define IDirect3DDevice9_QueryInterface( x, p1, p2 ) \
         (x)->QueryInterface( p1, p2 )
     #define IDirect3DDevice9_AddRef( x ) \
@@ -2191,274 +2327,6 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->DeletePatch( p )
     #define IDirect3DDevice9_CreateQuery( x, p1, p2 ) \
         (x)->CreateQuery( p1, p2 )
-    #define IDirect3DDevice9Ex_QueryInterface( x, p1, p2 ) \
-        (x)->QueryInterface( p1, p2 )
-    #define IDirect3DDevice9Ex_AddRef( x ) \
-        (x)->AddRef()
-    #define IDirect3DDevice9Ex_Release( x ) \
-        (x)->Release()
-    #define IDirect3DDevice9Ex_TestCooperativeLevel( x ) \
-        (x)->TestCooperativeLevel()
-    #define IDirect3DDevice9Ex_GetAvailableTextureMem( x ) \
-        (x)->GetAvailableTextureMem()
-    #define IDirect3DDevice9Ex_EvictManagedResources( x ) \
-        (x)->EvictManagedResources()
-    #define IDirect3DDevice9Ex_GetDirect3D( x, p ) \
-        (x)->GetDirect3D( p )
-    #define IDirect3DDevice9Ex_GetDeviceCaps( x, p ) \
-        (x)->GetDeviceCaps( p )
-    #define IDirect3DDevice9Ex_GetDisplayMode( x, p1, p2 ) \
-        (x)->GetDisplayMode( p1, p2 )
-    #define IDirect3DDevice9Ex_GetCreationParameters( x, p ) \
-        (x)->GetCreationParameters( p )
-    #define IDirect3DDevice9Ex_SetCursorProperties( x, p1, p2, p3 ) \
-        (x)->SetCursorProperties( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetCursorPosition( x, p1, p2, p3 ) \
-        (x)->SetCursorPosition( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_ShowCursor( x, p ) \
-        (x)->ShowCursor( p )
-    #define IDirect3DDevice9Ex_CreateAdditionalSwapChain( x, p1, p2 ) \
-        (x)->CreateAdditionalSwapChain( p1, p2 )
-    #define IDirect3DDevice9Ex_GetSwapChain( x, p1, p2 ) \
-        (x)->GetSwapChain( p1, p2 )
-    #define IDirect3DDevice9Ex_GetNumberOfSwapChains( x ) \
-        (x)->GetNumberOfSwapChains()
-    #define IDirect3DDevice9Ex_Reset( x, p ) \
-        (x)->Reset( p )
-    #define IDirect3DDevice9Ex_Present( x, p1, p2, p3, p4 ) \
-        (x)->Present( p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_GetBackBuffer( x, p1, p2, p3, p4 ) \
-        (x)->GetBackBuffer( p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_GetRasterStatus( x, p1, p2 ) \
-        (x)->GetRasterStatus( p1, p2 )
-    #define IDirect3DDevice9Ex_SetDialogBoxMode( x, p ) \
-        (x)->SetDialogBoxMode( p )
-    #define IDirect3DDevice9Ex_SetGammaRamp( x, p1, p2, p3 ) \
-        (x)->SetGammaRamp( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetGammaRamp( x, p1, p2 ) \
-        (x)->GetGammaRamp( p1, p2 )
-    #define IDirect3DDevice9Ex_CreateTexture( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->CreateTexture( p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_CreateVolumeTexture( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
-        (x)->CreateVolumeTexture( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-    #define IDirect3DDevice9Ex_CreateCubeTexture( x, p1, p2, p3, p4, p5, p6, p7 ) \
-        (x)->CreateCubeTexture( p1, p2, p3, p4, p5, p6, p7 )
-    #define IDirect3DDevice9Ex_CreateVertexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->CreateVertexBuffer( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_CreateIndexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->CreateIndexBuffer( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_CreateRenderTarget( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->CreateRenderTarget( p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_CreateDepthStencilSurface( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->CreateDepthStencilSurface( p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_UpdateSurface( x, p1, p2, p3, p4 ) \
-        (x)->UpdateSurface( p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_UpdateTexture( x, p1, p2 ) \
-        (x)->UpdateTexture( p1, p2 )
-    #define IDirect3DDevice9Ex_GetRenderTargetData( x, p1, p2 ) \
-        (x)->GetRenderTargetData( p1, p2 )
-    #define IDirect3DDevice9Ex_GetFrontBufferData( x, p1, p2 ) \
-        (x)->GetFrontBufferData( p1, p2 )
-    #define IDirect3DDevice9Ex_StretchRect( x, p1, p2, p3, p4, p5 ) \
-        (x)->StretchRect( p1, p2, p3, p4, p5 )
-    #define IDirect3DDevice9Ex_ColorFill( x, p1, p2, p3 ) \
-        (x)->ColorFill( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_CreateOffscreenPlainSurface( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->CreateOffscreenPlainSurface( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_SetRenderTarget( x, p1, p2 ) \
-        (x)->SetRenderTarget( p1, p2 )
-    #define IDirect3DDevice9Ex_GetRenderTarget( x, p1, p2 ) \
-        (x)->GetRenderTarget( p1, p2 )
-    #define IDirect3DDevice9Ex_SetDepthStencilSurface( x, p ) \
-        (x)->SetDepthStencilSurface( p )
-    #define IDirect3DDevice9Ex_GetDepthStencilSurface( x, p ) \
-        (x)->GetDepthStencilSurface( p )
-    #define IDirect3DDevice9Ex_BeginScene( x ) \
-        (x)->BeginScene()
-    #define IDirect3DDevice9Ex_EndScene( x ) \
-        (x)->EndScene()
-    #define IDirect3DDevice9Ex_Clear( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->Clear( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_SetTransform( x, p1, p2 ) \
-        (x)->SetTransform( p1, p2 )
-    #define IDirect3DDevice9Ex_GetTransform( x, p1, p2 ) \
-        (x)->GetTransform( p1, p2 )
-    #define IDirect3DDevice9Ex_MultiplyTransform( x, p1, p2 ) \
-        (x)->MultiplyTransform( p1, p2 )
-    #define IDirect3DDevice9Ex_SetViewport( x, p ) \
-        (x)->SetViewport( p )
-    #define IDirect3DDevice9Ex_GetViewport( x, p ) \
-        (x)->GetViewport( p )
-    #define IDirect3DDevice9Ex_SetMaterial( x, p ) \
-        (x)->SetMaterial( p )
-    #define IDirect3DDevice9Ex_GetMaterial( x, p ) \
-        (x)->GetMaterial( p )
-    #define IDirect3DDevice9Ex_SetLight( x, p1, p2 ) \
-        (x)->SetLight( p1, p2 )
-    #define IDirect3DDevice9Ex_GetLight( x, p1, p2 ) \
-        (x)->GetLight( p1, p2 )
-    #define IDirect3DDevice9Ex_LightEnable( x, p1, p2 ) \
-        (x)->LightEnable( p1, p2 )
-    #define IDirect3DDevice9Ex_GetLightEnable( x, p1, p2 ) \
-        (x)->GetLightEnable( p1, p2 )
-    #define IDirect3DDevice9Ex_SetClipPlane( x, p1, p2 ) \
-        (x)->SetClipPlane( p1, p2 )
-    #define IDirect3DDevice9Ex_GetClipPlane( x, p1, p2 ) \
-        (x)->GetClipPlane( p1, p2 )
-    #define IDirect3DDevice9Ex_SetRenderState( x, p1, p2 ) \
-        (x)->SetRenderState( p1, p2 )
-    #define IDirect3DDevice9Ex_GetRenderState( x, p1, p2 ) \
-        (x)->GetRenderState( p1, p2 )
-    #define IDirect3DDevice9Ex_CreateStateBlock( x, p1, p2 ) \
-        (x)->CreateStateBlock( p1, p2 )
-    #define IDirect3DDevice9Ex_BeginStateBlock( x ) \
-        (x)->BeginStateBlock()
-    #define IDirect3DDevice9Ex_EndStateBlock( x, p ) \
-        (x)->EndStateBlock( p )
-    #define IDirect3DDevice9Ex_SetClipStatus( x, p ) \
-        (x)->SetClipStatus( p )
-    #define IDirect3DDevice9Ex_GetClipStatus( x, p ) \
-        (x)->GetClipStatus( p )
-    #define IDirect3DDevice9Ex_GetTexture( x, p1, p2 ) \
-        (x)->GetTexture( p1, p2 )
-    #define IDirect3DDevice9Ex_SetTexture( x, p1, p2 ) \
-        (x)->SetTexture( p1, p2 )
-    #define IDirect3DDevice9Ex_GetTextureStageState( x, p1, p2, p3 ) \
-        (x)->GetTextureStageState( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetTextureStageState( x, p1, p2, p3 ) \
-        (x)->SetTextureStageState( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetSamplerState( x, p1, p2, p3 ) \
-        (x)->GetSamplerState( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetSamplerState( x, p1, p2, p3 ) \
-        (x)->SetSamplerState( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_ValidateDevice( x, p ) \
-        (x)->ValidateDevice( p )
-    #define IDirect3DDevice9Ex_SetPaletteEntries( x, p1, p2 ) \
-        (x)->SetPaletteEntries( p1, p2 )
-    #define IDirect3DDevice9Ex_GetPaletteEntries( x, p1, p2 ) \
-        (x)->GetPaletteEntries( p1, p2 )
-    #define IDirect3DDevice9Ex_SetCurrentTexturePalette( x, p ) \
-        (x)->SetCurrentTexturePalette( p )
-    #define IDirect3DDevice9Ex_GetCurrentTexturePalette( x, p ) \
-        (x)->GetCurrentTexturePalette( p )
-    #define IDirect3DDevice9Ex_SetScissorRect( x, p ) \
-        (x)->SetScissorRect( p )
-    #define IDirect3DDevice9Ex_GetScissorRect( x, p ) \
-        (x)->GetScissorRect( p )
-    #define IDirect3DDevice9Ex_SetSoftwareVertexProcessing( x, p ) \
-        (x)->SetSoftwareVertexProcessing( p )
-    #define IDirect3DDevice9Ex_GetSoftwareVertexProcessing( x ) \
-        (x)->GetSoftwareVertexProcessing()
-    #define IDirect3DDevice9Ex_SetNPatchMode( x, p ) \
-        (x)->SetNPatchMode( p )
-    #define IDirect3DDevice9Ex_GetNPatchMode( x ) \
-        (x)->GetNPatchMode()
-    #define IDirect3DDevice9Ex_DrawPrimitive( x, p1, p2, p3 ) \
-        (x)->DrawPrimitive( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DrawIndexedPrimitive( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->DrawIndexedPrimitive( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_DrawPrimitiveUP( x, p1, p2, p3, p4 ) \
-        (x)->DrawPrimitiveUP( p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_DrawIndexedPrimitiveUP( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->DrawIndexedPrimitiveUP( p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_ProcessVertices( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->ProcessVertices( p1, p2, p3, p4, p5, p6 )
-    #define IDirect3DDevice9Ex_CreateVertexDeclaration( x, p1, p2 ) \
-        (x)->CreateVertexDeclaration( p1, p2 )
-    #define IDirect3DDevice9Ex_SetVertexDeclaration( x, p ) \
-        (x)->SetVertexDeclaration( p )
-    #define IDirect3DDevice9Ex_GetVertexDeclaration( x, p ) \
-        (x)->GetVertexDeclaration( p )
-    #define IDirect3DDevice9Ex_SetFVF( x, p ) \
-        (x)->SetFVF( p )
-    #define IDirect3DDevice9Ex_GetFVF( x, p ) \
-        (x)->GetFVF( p )
-    #define IDirect3DDevice9Ex_CreateVertexShader( x, p1, p2 ) \
-        (x)->CreateVertexShader( p1, p2 )
-    #define IDirect3DDevice9Ex_SetVertexShader( x, p ) \
-        (x)->SetVertexShader( p )
-    #define IDirect3DDevice9Ex_GetVertexShader( x, p ) \
-        (x)->GetVertexShader( p )
-    #define IDirect3DDevice9Ex_SetVertexShaderConstantF( x, p1, p2, p3 ) \
-        (x)->SetVertexShaderConstantF( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetVertexShaderConstantF( x, p1, p2, p3 ) \
-        (x)->GetVertexShaderConstantF( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetVertexShaderConstantI( x, p1, p2, p3 ) \
-        (x)->SetVertexShaderConstantI( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetVertexShaderConstantI( x, p1, p2, p3 ) \
-        (x)->GetVertexShaderConstantI( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetVertexShaderConstantB( x, p1, p2, p3 ) \
-        (x)->SetVertexShaderConstantB( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetVertexShaderConstantB( x, p1, p2, p3 ) \
-        (x)->GetVertexShaderConstantB( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetStreamSource( x, p1, p2, p3, p4 ) \
-        (x)->SetStreamSource( p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_GetStreamSource( x, p1, p2, p3, p4 ) \
-        (x)->GetStreamSource( p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_SetStreamSourceFreq( x, p1, p2 ) \
-        (x)->SetStreamSourceFreq( p1, p2 )
-    #define IDirect3DDevice9Ex_GetStreamSourceFreq( x, p1, p2 ) \
-        (x)->GetStreamSourceFreq( p1, p2 )
-    #define IDirect3DDevice9Ex_SetIndices( x, p ) \
-        (x)->SetIndices( p )
-    #define IDirect3DDevice9Ex_GetIndices( x, p ) \
-        (x)->GetIndices( p )
-    #define IDirect3DDevice9Ex_CreatePixelShader( x, p1, p2 ) \
-        (x)->CreatePixelShader( p1, p2 )
-    #define IDirect3DDevice9Ex_SetPixelShader( x, p ) \
-        (x)->SetPixelShader( p )
-    #define IDirect3DDevice9Ex_GetPixelShader( x, p ) \
-        (x)->GetPixelShader( p )
-    #define IDirect3DDevice9Ex_SetPixelShaderConstantF( x, p1, p2, p3 ) \
-        (x)->SetPixelShaderConstantF( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetPixelShaderConstantF( x, p1, p2, p3 ) \
-        (x)->GetPixelShaderConstantF( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetPixelShaderConstantI( x, p1, p2, p3 ) \
-        (x)->SetPixelShaderConstantI( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetPixelShaderConstantI( x, p1, p2, p3 ) \
-        (x)->GetPixelShaderConstantI( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_SetPixelShaderConstantB( x, p1, p2, p3 ) \
-        (x)->SetPixelShaderConstantB( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_GetPixelShaderConstantB( x, p1, p2, p3 ) \
-        (x)->GetPixelShaderConstantB( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DrawRectPatch( x, p1, p2, p3 ) \
-        (x)->DrawRectPatch( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DrawTriPatch( x, p1, p2, p3 ) \
-        (x)->DrawTriPatch( p1, p2, p3 )
-    #define IDirect3DDevice9Ex_DeletePatch( x, p ) \
-        (x)->DeletePatch( p )
-    #define IDirect3DDevice9Ex_CreateQuery( x, p1, p2 ) \
-        (x)->CreateQuery( p1, p2 )
-    #define IDirect3DDevice9Ex_SetConvolutionMonoKernel( x, p1, p2, p3, p4 ) \
-        (x)->SetConvolutionMonoKernel( p1, p2, p3, p4 )
-    #define IDirect3DDevice9Ex_ComposeRects( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->ComposeRects( p1, p2, p3, p4, p5, p6, p7, p8 )
-    #define IDirect3DDevice9Ex_PresentEx( x, p1, p2, p3, p4, p5 ) \
-        (x)->PresentEx( p1, p2, p3, p4, p5 )
-    #define IDirect3DDevice9Ex_GetGPUThreadPriority( x, p ) \
-        (x)->GetGPUThreadPriority( p )
-    #define IDirect3DDevice9Ex_SetGPUThreadPriority( x, p ) \
-        (x)->SetGPUThreadPriority( p )
-    #define IDirect3DDevice9Ex_WaitForVBlank( x, p ) \
-        (x)->WaitForVBlank( p )
-    #define IDirect3DDevice9Ex_CheckResourceResidency( x, p1, p2 ) \
-        (x)->CheckResourceResidency( p1, p2 )
-    #define IDirect3DDevice9Ex_SetMaximumFrameLatency( x, p ) \
-        (x)->SetMaximumFrameLatency( p )
-    #define IDirect3DDevice9Ex_GetMaximumFrameLatency( x, p ) \
-        (x)->GetMaximumFrameLatency( p )
-    #define IDirect3DDevice9Ex_CheckDeviceState( x, p ) \
-        (x)->CheckDeviceState( p )
-    #define IDirect3DDevice9Ex_CreateRenderTargetEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
-        (x)->CreateRenderTargetEx( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-    #define IDirect3DDevice9Ex_CreateOffscreenPlainSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
-        (x)->CreateOffscreenPlainSurfaceEx( p1, p2, p3, p4, p5, p6, p7 )
-    #define IDirect3DDevice9Ex_CreateDepthStencilSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
-        (x)->CreateDepthStencilSurfaceEx( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
-    #define IDirect3DDevice9Ex_ResetEx( x, p1, p2 ) \
-        (x)->ResetEx( p1, p2 )
-    #define IDirect3DDevice9Ex_GetDisplayModeEx( x, p1, p2, p3 ) \
-        (x)->GetDisplayModeEx( p1, p2, p3 )
     #define IDirect3DStateBlock9_QueryInterface( x, p1, p2 ) \
         (x)->QueryInterface( p1, p2 )
     #define IDirect3DStateBlock9_AddRef( x ) \
@@ -2491,32 +2359,6 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->GetDevice( p )
     #define IDirect3DSwapChain9_GetPresentParameters( x, p ) \
         (x)->GetPresentParameters( p )
-    #define IDirect3DSwapChain9Ex_QueryInterface( x, p1, p2 ) \
-        (x)->QueryInterface( p1, p2 )
-    #define IDirect3DSwapChain9Ex_AddRef( x ) \
-        (x)->AddRef()
-    #define IDirect3DSwapChain9Ex_Release( x ) \
-        (x)->Release()
-    #define IDirect3DSwapChain9Ex_Present( x, p1, p2, p3, p4, p5 ) \
-        (x)->Present( p1, p2, p3, p4, p5 )
-    #define IDirect3DSwapChain9Ex_GetFrontBufferData( x, p ) \
-        (x)->GetFrontBufferData( p )
-    #define IDirect3DSwapChain9Ex_GetBackBuffer( x, p1, p2, p3 ) \
-        (x)->GetBackBuffer( p1, p2, p3 )
-    #define IDirect3DSwapChain9Ex_GetRasterStatus( x, p ) \
-        (x)->GetRasterStatus( p )
-    #define IDirect3DSwapChain9Ex_GetDisplayMode( x, p ) \
-        (x)->GetDisplayMode( p )
-    #define IDirect3DSwapChain9Ex_GetDevice( x, p ) \
-        (x)->GetDevice( p )
-    #define IDirect3DSwapChain9Ex_GetPresentParameters( x, p ) \
-        (x)->GetPresentParameters( p )
-    #define IDirect3DSwapChain9Ex_GetLastPresentCount( x, p ) \
-        (x)->GetLastPresentCount( p )
-    #define IDirect3DSwapChain9Ex_GetPresentStats( x, p ) \
-        (x)->GetPresentStats( p )
-    #define IDirect3DSwapChain9Ex_GetDisplayModeEx( x, p1, p2 ) \
-        (x)->GetDisplayModeEx( p1, p2 )
     #define IDirect3DResource9_QueryInterface( x, p1, p2 ) \
         (x)->QueryInterface( p1, p2 )
     #define IDirect3DResource9_AddRef( x ) \
@@ -2863,6 +2705,406 @@ typedef IDirect3DQuery9 *PDIRECT3DQUERY9;
         (x)->Issue( p )
     #define IDirect3DQuery9_GetData( x, p1, p2, p3 ) \
         (x)->GetData( p1, p2, p3 )
+    #ifndef D3D_DISABLE_9EX
+        #define IDirect3D9Ex_QueryInterface( x, p1, p2 ) \
+            (x)->QueryInterface( p1, p2 )
+        #define IDirect3D9Ex_AddRef( x ) \
+            (x)->AddRef()
+        #define IDirect3D9Ex_Release( x ) \
+            (x)->Release()
+        #define IDirect3D9Ex_RegisterSoftwareDevice( x, p ) \
+            (x)->RegisterSoftwareDevice( p )
+        #define IDirect3D9Ex_GetAdapterCount( x ) \
+            (x)->GetAdapterCount()
+        #define IDirect3D9Ex_GetAdapterIdentifier( x, p1, p2, p3 ) \
+            (x)->GetAdapterIdentifier( p1, p2, p3 )
+        #define IDirect3D9Ex_GetAdapterModeCount( x, p1, p2 ) \
+            (x)->GetAdapterModeCount( p1, p2 )
+        #define IDirect3D9Ex_EnumAdapterModes( x, p1, p2, p3, p4 ) \
+            (x)->EnumAdapterModes( p1, p2, p3, p4 )
+        #define IDirect3D9Ex_GetAdapterDisplayMode( x, p1, p2 ) \
+            (x)->GetAdapterDisplayMode( p1, p2 )
+        #define IDirect3D9Ex_CheckDeviceType( x, p1, p2, p3, p4, p5 ) \
+            (x)->CheckDeviceType( p1, p2, p3, p4, p5 )
+        #define IDirect3D9Ex_CheckDeviceFormat( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->CheckDeviceFormat( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3D9Ex_CheckDeviceMultisampleType( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->CheckDeviceMultisampleType( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3D9Ex_CheckDepthStencilMatch( x, p1, p2, p3, p4, p5 ) \
+            (x)->CheckDepthStencilMatch( p1, p2, p3, p4, p5 )
+        #define IDirect3D9Ex_CheckDeviceFormatConversion( x, p1, p2, p3, p4 ) \
+            (x)->CheckDeviceFormatConversion( p1, p2, p3, p4 )
+        #define IDirect3D9Ex_GetDeviceCaps( x, p1, p2, p3 ) \
+            (x)->GetDeviceCaps( p1, p2, p3 )
+        #define IDirect3D9Ex_GetAdapterMonitor( x, p ) \
+            (x)->GetAdapterMonitor( p )
+        #define IDirect3D9Ex_CreateDevice( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->CreateDevice( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3D9Ex_GetAdapterModeCountEx( x, p1, p2, p3, p4 ) \
+            (x)->GetAdapterModeCountEx( p1, p2, p3, p4 )
+        #define IDirect3D9Ex_EnumAdapterModesEx( x, p1, p2, p3, p4 ) \
+            (x)->EnumAdapterModesEx( p1, p2, p3, p4 )
+        #define IDirect3D9Ex_GetAdapterDisplayModeEx( x, p1, p2, p3 ) \
+            (x)->GetAdapterDisplayModeEx( p1, p2, p3 )
+        #define IDirect3D9Ex_CreateDeviceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
+            (x)->CreateDeviceEx( p1, p2, p3, p4, p5, p6, p7 )
+        #define IDirect3D9Ex_GetAdapterLUID( x, p1, p2 ) \
+            (x)->GetAdapterLUID( p1, p2 )
+        #define IDirect3DDevice9Ex_QueryInterface( x, p1, p2 ) \
+            (x)->QueryInterface( p1, p2 )
+        #define IDirect3DDevice9Ex_AddRef( x ) \
+            (x)->AddRef()
+        #define IDirect3DDevice9Ex_Release( x ) \
+            (x)->Release()
+        #define IDirect3DDevice9Ex_TestCooperativeLevel( x ) \
+            (x)->TestCooperativeLevel()
+        #define IDirect3DDevice9Ex_GetAvailableTextureMem( x ) \
+            (x)->GetAvailableTextureMem()
+        #define IDirect3DDevice9Ex_EvictManagedResources( x ) \
+            (x)->EvictManagedResources()
+        #define IDirect3DDevice9Ex_GetDirect3D( x, p ) \
+            (x)->GetDirect3D( p )
+        #define IDirect3DDevice9Ex_GetDeviceCaps( x, p ) \
+            (x)->GetDeviceCaps( p )
+        #define IDirect3DDevice9Ex_GetDisplayMode( x, p1, p2 ) \
+            (x)->GetDisplayMode( p1, p2 )
+        #define IDirect3DDevice9Ex_GetCreationParameters( x, p ) \
+            (x)->GetCreationParameters( p )
+        #define IDirect3DDevice9Ex_SetCursorProperties( x, p1, p2, p3 ) \
+            (x)->SetCursorProperties( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetCursorPosition( x, p1, p2, p3 ) \
+            (x)->SetCursorPosition( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_ShowCursor( x, p ) \
+            (x)->ShowCursor( p )
+        #define IDirect3DDevice9Ex_CreateAdditionalSwapChain( x, p1, p2 ) \
+            (x)->CreateAdditionalSwapChain( p1, p2 )
+        #define IDirect3DDevice9Ex_GetSwapChain( x, p1, p2 ) \
+            (x)->GetSwapChain( p1, p2 )
+        #define IDirect3DDevice9Ex_GetNumberOfSwapChains( x ) \
+            (x)->GetNumberOfSwapChains()
+        #define IDirect3DDevice9Ex_Reset( x, p ) \
+            (x)->Reset( p )
+        #define IDirect3DDevice9Ex_Present( x, p1, p2, p3, p4 ) \
+            (x)->Present( p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_GetBackBuffer( x, p1, p2, p3, p4 ) \
+            (x)->GetBackBuffer( p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_GetRasterStatus( x, p1, p2 ) \
+            (x)->GetRasterStatus( p1, p2 )
+        #define IDirect3DDevice9Ex_SetDialogBoxMode( x, p ) \
+            (x)->SetDialogBoxMode( p )
+        #define IDirect3DDevice9Ex_SetGammaRamp( x, p1, p2, p3 ) \
+            (x)->SetGammaRamp( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetGammaRamp( x, p1, p2 ) \
+            (x)->GetGammaRamp( p1, p2 )
+        #define IDirect3DDevice9Ex_CreateTexture( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->CreateTexture( p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_CreateVolumeTexture( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
+            (x)->CreateVolumeTexture( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+        #define IDirect3DDevice9Ex_CreateCubeTexture( x, p1, p2, p3, p4, p5, p6, p7 ) \
+            (x)->CreateCubeTexture( p1, p2, p3, p4, p5, p6, p7 )
+        #define IDirect3DDevice9Ex_CreateVertexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->CreateVertexBuffer( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_CreateIndexBuffer( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->CreateIndexBuffer( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_CreateRenderTarget( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->CreateRenderTarget( p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_CreateDepthStencilSurface( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->CreateDepthStencilSurface( p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_UpdateSurface( x, p1, p2, p3, p4 ) \
+            (x)->UpdateSurface( p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_UpdateTexture( x, p1, p2 ) \
+            (x)->UpdateTexture( p1, p2 )
+        #define IDirect3DDevice9Ex_GetRenderTargetData( x, p1, p2 ) \
+            (x)->GetRenderTargetData( p1, p2 )
+        #define IDirect3DDevice9Ex_GetFrontBufferData( x, p1, p2 ) \
+            (x)->GetFrontBufferData( p1, p2 )
+        #define IDirect3DDevice9Ex_StretchRect( x, p1, p2, p3, p4, p5 ) \
+            (x)->StretchRect( p1, p2, p3, p4, p5 )
+        #define IDirect3DDevice9Ex_ColorFill( x, p1, p2, p3 ) \
+            (x)->ColorFill( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_CreateOffscreenPlainSurface( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->CreateOffscreenPlainSurface( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_SetRenderTarget( x, p1, p2 ) \
+            (x)->SetRenderTarget( p1, p2 )
+        #define IDirect3DDevice9Ex_GetRenderTarget( x, p1, p2 ) \
+            (x)->GetRenderTarget( p1, p2 )
+        #define IDirect3DDevice9Ex_SetDepthStencilSurface( x, p ) \
+            (x)->SetDepthStencilSurface( p )
+        #define IDirect3DDevice9Ex_GetDepthStencilSurface( x, p ) \
+            (x)->GetDepthStencilSurface( p )
+        #define IDirect3DDevice9Ex_BeginScene( x ) \
+            (x)->BeginScene()
+        #define IDirect3DDevice9Ex_EndScene( x ) \
+            (x)->EndScene()
+        #define IDirect3DDevice9Ex_Clear( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->Clear( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_SetTransform( x, p1, p2 ) \
+            (x)->SetTransform( p1, p2 )
+        #define IDirect3DDevice9Ex_GetTransform( x, p1, p2 ) \
+            (x)->GetTransform( p1, p2 )
+        #define IDirect3DDevice9Ex_MultiplyTransform( x, p1, p2 ) \
+            (x)->MultiplyTransform( p1, p2 )
+        #define IDirect3DDevice9Ex_SetViewport( x, p ) \
+            (x)->SetViewport( p )
+        #define IDirect3DDevice9Ex_GetViewport( x, p ) \
+            (x)->GetViewport( p )
+        #define IDirect3DDevice9Ex_SetMaterial( x, p ) \
+            (x)->SetMaterial( p )
+        #define IDirect3DDevice9Ex_GetMaterial( x, p ) \
+            (x)->GetMaterial( p )
+        #define IDirect3DDevice9Ex_SetLight( x, p1, p2 ) \
+            (x)->SetLight( p1, p2 )
+        #define IDirect3DDevice9Ex_GetLight( x, p1, p2 ) \
+            (x)->GetLight( p1, p2 )
+        #define IDirect3DDevice9Ex_LightEnable( x, p1, p2 ) \
+            (x)->LightEnable( p1, p2 )
+        #define IDirect3DDevice9Ex_GetLightEnable( x, p1, p2 ) \
+            (x)->GetLightEnable( p1, p2 )
+        #define IDirect3DDevice9Ex_SetClipPlane( x, p1, p2 ) \
+            (x)->SetClipPlane( p1, p2 )
+        #define IDirect3DDevice9Ex_GetClipPlane( x, p1, p2 ) \
+            (x)->GetClipPlane( p1, p2 )
+        #define IDirect3DDevice9Ex_SetRenderState( x, p1, p2 ) \
+            (x)->SetRenderState( p1, p2 )
+        #define IDirect3DDevice9Ex_GetRenderState( x, p1, p2 ) \
+            (x)->GetRenderState( p1, p2 )
+        #define IDirect3DDevice9Ex_CreateStateBlock( x, p1, p2 ) \
+            (x)->CreateStateBlock( p1, p2 )
+        #define IDirect3DDevice9Ex_BeginStateBlock( x ) \
+            (x)->BeginStateBlock()
+        #define IDirect3DDevice9Ex_EndStateBlock( x, p ) \
+            (x)->EndStateBlock( p )
+        #define IDirect3DDevice9Ex_SetClipStatus( x, p ) \
+            (x)->SetClipStatus( p )
+        #define IDirect3DDevice9Ex_GetClipStatus( x, p ) \
+            (x)->GetClipStatus( p )
+        #define IDirect3DDevice9Ex_GetTexture( x, p1, p2 ) \
+            (x)->GetTexture( p1, p2 )
+        #define IDirect3DDevice9Ex_SetTexture( x, p1, p2 ) \
+            (x)->SetTexture( p1, p2 )
+        #define IDirect3DDevice9Ex_GetTextureStageState( x, p1, p2, p3 ) \
+            (x)->GetTextureStageState( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetTextureStageState( x, p1, p2, p3 ) \
+            (x)->SetTextureStageState( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetSamplerState( x, p1, p2, p3 ) \
+            (x)->GetSamplerState( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetSamplerState( x, p1, p2, p3 ) \
+            (x)->SetSamplerState( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_ValidateDevice( x, p ) \
+            (x)->ValidateDevice( p )
+        #define IDirect3DDevice9Ex_SetPaletteEntries( x, p1, p2 ) \
+            (x)->SetPaletteEntries( p1, p2 )
+        #define IDirect3DDevice9Ex_GetPaletteEntries( x, p1, p2 ) \
+            (x)->GetPaletteEntries( p1, p2 )
+        #define IDirect3DDevice9Ex_SetCurrentTexturePalette( x, p ) \
+            (x)->SetCurrentTexturePalette( p )
+        #define IDirect3DDevice9Ex_GetCurrentTexturePalette( x, p ) \
+            (x)->GetCurrentTexturePalette( p )
+        #define IDirect3DDevice9Ex_SetScissorRect( x, p ) \
+            (x)->SetScissorRect( p )
+        #define IDirect3DDevice9Ex_GetScissorRect( x, p ) \
+            (x)->GetScissorRect( p )
+        #define IDirect3DDevice9Ex_SetSoftwareVertexProcessing( x, p ) \
+            (x)->SetSoftwareVertexProcessing( p )
+        #define IDirect3DDevice9Ex_GetSoftwareVertexProcessing( x ) \
+            (x)->GetSoftwareVertexProcessing()
+        #define IDirect3DDevice9Ex_SetNPatchMode( x, p ) \
+            (x)->SetNPatchMode( p )
+        #define IDirect3DDevice9Ex_GetNPatchMode( x ) \
+            (x)->GetNPatchMode()
+        #define IDirect3DDevice9Ex_DrawPrimitive( x, p1, p2, p3 ) \
+            (x)->DrawPrimitive( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DrawIndexedPrimitive( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->DrawIndexedPrimitive( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_DrawPrimitiveUP( x, p1, p2, p3, p4 ) \
+            (x)->DrawPrimitiveUP( p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_DrawIndexedPrimitiveUP( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->DrawIndexedPrimitiveUP( p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_ProcessVertices( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->ProcessVertices( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DDevice9Ex_CreateVertexDeclaration( x, p1, p2 ) \
+            (x)->CreateVertexDeclaration( p1, p2 )
+        #define IDirect3DDevice9Ex_SetVertexDeclaration( x, p ) \
+            (x)->SetVertexDeclaration( p )
+        #define IDirect3DDevice9Ex_GetVertexDeclaration( x, p ) \
+            (x)->GetVertexDeclaration( p )
+        #define IDirect3DDevice9Ex_SetFVF( x, p ) \
+            (x)->SetFVF( p )
+        #define IDirect3DDevice9Ex_GetFVF( x, p ) \
+            (x)->GetFVF( p )
+        #define IDirect3DDevice9Ex_CreateVertexShader( x, p1, p2 ) \
+            (x)->CreateVertexShader( p1, p2 )
+        #define IDirect3DDevice9Ex_SetVertexShader( x, p ) \
+            (x)->SetVertexShader( p )
+        #define IDirect3DDevice9Ex_GetVertexShader( x, p ) \
+            (x)->GetVertexShader( p )
+        #define IDirect3DDevice9Ex_SetVertexShaderConstantF( x, p1, p2, p3 ) \
+            (x)->SetVertexShaderConstantF( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetVertexShaderConstantF( x, p1, p2, p3 ) \
+            (x)->GetVertexShaderConstantF( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetVertexShaderConstantI( x, p1, p2, p3 ) \
+            (x)->SetVertexShaderConstantI( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetVertexShaderConstantI( x, p1, p2, p3 ) \
+            (x)->GetVertexShaderConstantI( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetVertexShaderConstantB( x, p1, p2, p3 ) \
+            (x)->SetVertexShaderConstantB( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetVertexShaderConstantB( x, p1, p2, p3 ) \
+            (x)->GetVertexShaderConstantB( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetStreamSource( x, p1, p2, p3, p4 ) \
+            (x)->SetStreamSource( p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_GetStreamSource( x, p1, p2, p3, p4 ) \
+            (x)->GetStreamSource( p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_SetStreamSourceFreq( x, p1, p2 ) \
+            (x)->SetStreamSourceFreq( p1, p2 )
+        #define IDirect3DDevice9Ex_GetStreamSourceFreq( x, p1, p2 ) \
+            (x)->GetStreamSourceFreq( p1, p2 )
+        #define IDirect3DDevice9Ex_SetIndices( x, p ) \
+            (x)->SetIndices( p )
+        #define IDirect3DDevice9Ex_GetIndices( x, p ) \
+            (x)->GetIndices( p )
+        #define IDirect3DDevice9Ex_CreatePixelShader( x, p1, p2 ) \
+            (x)->CreatePixelShader( p1, p2 )
+        #define IDirect3DDevice9Ex_SetPixelShader( x, p ) \
+            (x)->SetPixelShader( p )
+        #define IDirect3DDevice9Ex_GetPixelShader( x, p ) \
+            (x)->GetPixelShader( p )
+        #define IDirect3DDevice9Ex_SetPixelShaderConstantF( x, p1, p2, p3 ) \
+            (x)->SetPixelShaderConstantF( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetPixelShaderConstantF( x, p1, p2, p3 ) \
+            (x)->GetPixelShaderConstantF( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetPixelShaderConstantI( x, p1, p2, p3 ) \
+            (x)->SetPixelShaderConstantI( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetPixelShaderConstantI( x, p1, p2, p3 ) \
+            (x)->GetPixelShaderConstantI( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_SetPixelShaderConstantB( x, p1, p2, p3 ) \
+            (x)->SetPixelShaderConstantB( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_GetPixelShaderConstantB( x, p1, p2, p3 ) \
+            (x)->GetPixelShaderConstantB( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DrawRectPatch( x, p1, p2, p3 ) \
+            (x)->DrawRectPatch( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DrawTriPatch( x, p1, p2, p3 ) \
+            (x)->DrawTriPatch( p1, p2, p3 )
+        #define IDirect3DDevice9Ex_DeletePatch( x, p ) \
+            (x)->DeletePatch( p )
+        #define IDirect3DDevice9Ex_CreateQuery( x, p1, p2 ) \
+            (x)->CreateQuery( p1, p2 )
+        #define IDirect3DDevice9Ex_SetConvolutionMonoKernel( x, p1, p2, p3, p4 ) \
+            (x)->SetConvolutionMonoKernel( p1, p2, p3, p4 )
+        #define IDirect3DDevice9Ex_ComposeRects( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->ComposeRects( p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Ex_PresentEx( x, p1, p2, p3, p4, p5 ) \
+            (x)->PresentEx( p1, p2, p3, p4, p5 )
+        #define IDirect3DDevice9Ex_GetGPUThreadPriority( x, p ) \
+            (x)->GetGPUThreadPriority( p )
+        #define IDirect3DDevice9Ex_SetGPUThreadPriority( x, p ) \
+            (x)->SetGPUThreadPriority( p )
+        #define IDirect3DDevice9Ex_WaitForVBlank( x, p ) \
+            (x)->WaitForVBlank( p )
+        #define IDirect3DDevice9Ex_CheckResourceResidency( x, p1, p2 ) \
+            (x)->CheckResourceResidency( p1, p2 )
+        #define IDirect3DDevice9Ex_SetMaximumFrameLatency( x, p ) \
+            (x)->SetMaximumFrameLatency( p )
+        #define IDirect3DDevice9Ex_GetMaximumFrameLatency( x, p ) \
+            (x)->GetMaximumFrameLatency( p )
+        #define IDirect3DDevice9Ex_CheckDeviceState( x, p ) \
+            (x)->CheckDeviceState( p )
+        #define IDirect3DDevice9Ex_CreateRenderTargetEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
+            (x)->CreateRenderTargetEx( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+        #define IDirect3DDevice9Ex_CreateOffscreenPlainSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7 ) \
+            (x)->CreateOffscreenPlainSurfaceEx( p1, p2, p3, p4, p5, p6, p7 )
+        #define IDirect3DDevice9Ex_CreateDepthStencilSurfaceEx( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
+            (x)->CreateDepthStencilSurfaceEx( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+        #define IDirect3DDevice9Ex_ResetEx( x, p1, p2 ) \
+            (x)->ResetEx( p1, p2 )
+        #define IDirect3DDevice9Ex_GetDisplayModeEx( x, p1, p2, p3 ) \
+            (x)->GetDisplayModeEx( p1, p2, p3 )
+        #define IDirect3DSwapChain9Ex_QueryInterface( x, p1, p2 ) \
+            (x)->QueryInterface( p1, p2 )
+        #define IDirect3DSwapChain9Ex_AddRef( x ) \
+            (x)->AddRef()
+        #define IDirect3DSwapChain9Ex_Release( x ) \
+            (x)->Release()
+        #define IDirect3DSwapChain9Ex_Present( x, p1, p2, p3, p4, p5 ) \
+            (x)->Present( p1, p2, p3, p4, p5 )
+        #define IDirect3DSwapChain9Ex_GetFrontBufferData( x, p ) \
+            (x)->GetFrontBufferData( p )
+        #define IDirect3DSwapChain9Ex_GetBackBuffer( x, p1, p2, p3 ) \
+            (x)->GetBackBuffer( p1, p2, p3 )
+        #define IDirect3DSwapChain9Ex_GetRasterStatus( x, p ) \
+            (x)->GetRasterStatus( p )
+        #define IDirect3DSwapChain9Ex_GetDisplayMode( x, p ) \
+            (x)->GetDisplayMode( p )
+        #define IDirect3DSwapChain9Ex_GetDevice( x, p ) \
+            (x)->GetDevice( p )
+        #define IDirect3DSwapChain9Ex_GetPresentParameters( x, p ) \
+            (x)->GetPresentParameters( p )
+        #define IDirect3DSwapChain9Ex_GetLastPresentCount( x, p ) \
+            (x)->GetLastPresentCount( p )
+        #define IDirect3DSwapChain9Ex_GetPresentStats( x, p ) \
+            (x)->GetPresentStats( p )
+        #define IDirect3DSwapChain9Ex_GetDisplayModeEx( x, p1, p2 ) \
+            (x)->GetDisplayModeEx( p1, p2 )
+        #define IDirect3D9ExOverlayExtension_QueryInterface( x, p1, p2 ) \
+            (x)->QueryInterface( p1, p2 )
+        #define IDirect3D9ExOverlayExtension_AddRef( x ) \
+            (x)->AddRef()
+        #define IDirect3D9ExOverlayExtension_Release( x ) \
+            (x)->Release()
+        #define IDirect3D9ExOverlayExtension_CheckDeviceOverlayType( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+            (x)->CheckDeviceOverlayType( p1, p2, p3, p4, p5, p6, p7, p8 )
+        #define IDirect3DDevice9Video_QueryInterface( x, p1, p2 ) \
+            (x)->QueryInterface( p1, p2 )
+        #define IDirect3DDevice9Video_AddRef( x ) \
+            (x)->AddRef()
+        #define IDirect3DDevice9Video_Release( x ) \
+            (x)->Release()
+        #define IDirect3DDevice9Video_GetContentProtectionCaps( x, p1, p2, p3 ) \
+            (x)->GetContentProtectionCaps( p1, p2, p3 )
+        #define IDirect3DDevice9Video_CreateAuthenticatedChannel( x, p1, p2, p3 ) \
+            (x)->CreateAuthenticatedChannel( p1, p2, p3 )
+        #define IDirect3DDevice9Video_CreateCryptoSession( x, p1, p2, p3, p4 ) \
+            (x)->CreateCryptoSession( p1, p2, p3, p4 )
+        #define IDirect3DAuthenticatedChannel9_QueryInterface( x, p1, p2 ) \
+            (x)->QueryInterface( p1, p2 )
+        #define IDirect3DAuthenticatedChannel9_AddRef( x ) \
+            (x)->AddRef()
+        #define IDirect3DAuthenticatedChannel9_Release( x ) \
+            (x)->Release()
+        #define IDirect3DAuthenticatedChannel9_GetCertificateSize( x, p ) \
+            (x)->GetCertificateSize( p )
+        #define IDirect3DAuthenticatedChannel9_GetCertificate( x, p1, p2 ) \
+            (x)->GetCertificate( p1, p2 )
+        #define IDirect3DAuthenticatedChannel9_NegotiateKeyExchange( x, p1, p2 ) \
+            (x)->NegotiateKeyExchange( p1, p2 )
+        #define IDirect3DAuthenticatedChannel9_Query( x, p1, p2, p3, p4 ) \
+            (x)->Query( p1, p2, p3, p4 )
+        #define IDirect3DAuthenticatedChannel9_Configure( x, p1, p2, p3 ) \
+            (x)->Configure( p1, p2, p3 )
+        #define IDirect3DCryptoSession9_QueryInterface( x, p1, p2 ) \
+            (x)->QueryInterface( p1, p2 )
+        #define IDirect3DCryptoSession9_AddRef( x ) \
+            (x)->AddRef()
+        #define IDirect3DCryptoSession9_Release( x ) \
+            (x)->Release()
+        #define IDirect3DCryptoSession9_GetCertificateSize( x, p ) \
+            (x)->GetCertificateSize( p )
+        #define IDirect3DCryptoSession9_GetCertificate( x, p1, p2 ) \
+            (x)->GetCertificate( p1, p2 )
+        #define IDirect3DCryptoSession9_NegotiateKeyExchange( x, p1, p2 ) \
+            (x)->NegotiateKeyExchange( p1, p2 )
+        #define IDirect3DCryptoSession9_EncryptionBlt( x, p1, p2, p3, p4 ) \
+            (x)->EncryptionBlt( p1, p2, p3, p4 )
+        #define IDirect3DCryptoSession9_DecryptionBlt( x, p1, p2, p3, p4, p5, p6 ) \
+            (x)->DecryptionBlt( p1, p2, p3, p4, p5, p6 )
+        #define IDirect3DCryptoSession9_GetSurfacePitch( x, p1, p2 ) \
+            (x)->GetSurfacePitch( p1, p2 )
+        #define IDirect3DCryptoSession9_StartSessionKeyRefresh( x, p1, p2 ) \
+            (x)->StartSessionKeyRefresh( p1, p2 )
+        #define IDirect3DCryptoSession9_FinishSessionKeyRefresh( x ) \
+            (x)->FinishSessionKeyRefresh()
+        #define IDirect3DCryptoSession9_GetEncryptionBltKey( x, p1, p2 ) \
+            (x)->GetEncryptionBltKey( p1, p2 )
+    #endif
 #endif
 
 /* Functions in D3D9.DLL */
@@ -2874,7 +3116,9 @@ void WINAPI         D3DPERF_SetMarker( D3DCOLOR, LPCWSTR );
 void WINAPI         D3DPERF_SetOptions( DWORD );
 void WINAPI         D3DPERF_SetRegion( D3DCOLOR, LPCWSTR );
 IDirect3D9 * WINAPI Direct3DCreate9( UINT );
+#ifndef D3D_DISABLE_9EX
 HRESULT WINAPI      Direct3DCreate9Ex( UINT, IDirect3D9Ex ** );
+#endif
 
 :include cpluspro.sp
 

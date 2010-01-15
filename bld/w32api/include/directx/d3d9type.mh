@@ -269,34 +269,48 @@ typedef DWORD   D3DCOLOR;
 #define D3DPRESENT_RATE_DEFAULT 0x00000000L
 
 /* Direct3D present flags */
-#define D3DPRESENTFLAG_LOCKABLE_BACKBUFFER  0x00000001L
-#define D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL 0x00000002L
-#define D3DPRESENTFLAG_DEVICECLIP           0x00000004L
-#define D3DPRESENTFLAG_VIDEO                0x00000010L
-#define D3DPRESENTFLAG_NOAUTOROTATE         0x00000020L
-#define D3DPRESENTFLAG_UNPRUNEDMODE         0x00000040L
+#define D3DPRESENTFLAG_LOCKABLE_BACKBUFFER                  0x00000001L
+#define D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL                 0x00000002L
+#define D3DPRESENTFLAG_DEVICECLIP                           0x00000004L
+#define D3DPRESENTFLAG_VIDEO                                0x00000010L
+#ifndef D3D_DISABLE_9EX
+    #define D3DPRESENTFLAG_NOAUTOROTATE                     0x00000020L
+    #define D3DPRESENTFLAG_UNPRUNEDMODE                     0x00000040L
+    #define D3DPRESENTFLAG_OVERLAY_LIMITEDRGB               0x00000080L
+    #define D3DPRESENTFLAG_OVERLAY_YCbCr_BT709              0x00000100L
+    #define D3DPRESENTFLAG_OVERLAY_YCbCr_xvYCC              0x00000200L
+    #define D3DPRESENTFLAG_RESTRICTED_CONTENT               0x00000400L
+    #define D3DPRESENTFLAG_RESTRICT_SHARED_RESOURCE_DRIVER  0x00000800L
+#endif
 
 /* Direct3D usages */
-#define D3DUSAGE_RENDERTARGET           0x00000001L
-#define D3DUSAGE_DEPTHSTENCIL           0x00000002L
-#define D3DUSAGE_WRITEONLY              0x00000008L
-#define D3DUSAGE_SOFTWAREPROCESSING     0x00000010L
-#define D3DUSAGE_DONOTCLIP              0x00000020L
-#define D3DUSAGE_POINTS                 0x00000040L
-#define D3DUSAGE_RTPATCHES              0x00000080L
-#define D3DUSAGE_NPATCHES               0x00000100L
-#define D3DUSAGE_DYNAMIC                0x00000200L
-#define D3DUSAGE_AUTOGENMIPMAP          0x00000400L
-#define D3DUSAGE_DMAP                   0x00004000L
-#define D3DUSAGE_QUERY_LEGACYBUMPMAP    0x00008000L
-#define D3DUSAGE_QUERY_SRGBREAD         0x00010000L
-#define D3DUSAGE_QUERY_FILTER           0x00020000L
-#define D3DUSAGE_QUERY_SRGBWRITE        0x00040000L
+#define D3DUSAGE_RENDERTARGET                   0x00000001L
+#define D3DUSAGE_DEPTHSTENCIL                   0x00000002L
+#define D3DUSAGE_WRITEONLY                      0x00000008L
+#define D3DUSAGE_SOFTWAREPROCESSING             0x00000010L
+#define D3DUSAGE_DONOTCLIP                      0x00000020L
+#define D3DUSAGE_POINTS                         0x00000040L
+#define D3DUSAGE_RTPATCHES                      0x00000080L
+#define D3DUSAGE_NPATCHES                       0x00000100L
+#define D3DUSAGE_DYNAMIC                        0x00000200L
+#define D3DUSAGE_AUTOGENMIPMAP                  0x00000400L
+#ifndef D3D_DISABLE_9EX
+    #define D3DUSAGE_RESTRICTED_CONTENT         0x00000800L
+    #define D3DUSAGE_RESTRICT_SHARED_RESOURCE_DRIVER    0x00002000L
+    #define D3DUSAGE_RESTRICT_SHARED_RESOURCE   0x00001000L
+#endif
+#define D3DUSAGE_DMAP                           0x00004000L
+#define D3DUSAGE_QUERY_LEGACYBUMPMAP            0x00008000L
+#define D3DUSAGE_QUERY_SRGBREAD                 0x00010000L
+#define D3DUSAGE_QUERY_FILTER                   0x00020000L
+#define D3DUSAGE_QUERY_SRGBWRITE                0x00040000L
 #define D3DUSAGE_QUERY_POSTPIXELSHADER_BLENDING 0x00080000L
-#define D3DUSAGE_QUERY_VERTEXTEXTURE    0x00100000L
-#define D3DUSAGE_QUERY_WRAPANDMIP       0x00200000L
-#define D3DUSAGE_NONSECURE              0x00800000L
-#define D3DUSAGE_TEXTAPI                0x10000000L
+#define D3DUSAGE_QUERY_VERTEXTEXTURE            0x00100000L
+#define D3DUSAGE_QUERY_WRAPANDMIP               0x00200000L
+#ifndef D3D_DISABLE_9EX
+    #define D3DUSAGE_NONSECURE                  0x00800000L
+    #define D3DUSAGE_TEXTAPI                    0x10000000L
+#endif
 
 /* Direct3D lock flags */
 #define D3DLOCK_READONLY        0x00000010L
@@ -317,18 +331,27 @@ typedef DWORD   D3DCOLOR;
 #define D3DGETDATA_FLUSH    0x00000001L
 
 /* Direct3D maximum values */
-#define D3DCOMPOSERECTS_MAXNUMRECT      0xFFFF
-#define D3DCONVOLUTIONMONO_MAXWIDTH     7
-#define D3DCONVOLUTIONMONO_MAXHEIGHT    D3DCONVOLUTIONMONO_MAXWIDTH
-#define D3DFMT_A1_SURFACE_MAXWIDTH      8192
-#define D3DFMT_A1_SURFACE_MAXHEIGHT     2048
+#ifndef D3D_DISABLE_9EX
+    #define D3DCOMPOSERECTS_MAXNUMRECT      0xFFFF
+    #define D3DCONVOLUTIONMONO_MAXWIDTH     7
+    #define D3DCONVOLUTIONMONO_MAXHEIGHT    D3DCONVOLUTIONMONO_MAXWIDTH
+    #define D3DFMT_A1_SURFACE_MAXWIDTH      8192
+    #define D3DFMT_A1_SURFACE_MAXHEIGHT     2048
+#endif
 
 /* Direct3D resource priorities */
-#define D3D9_RESOURCE_PRIORITY_MINIMUM  0x28000000L
-#define D3D9_RESOURCE_PRIORITY_LOW      0x50000000L
-#define D3D9_RESOURCE_PRIORITY_NORMAL   0x78000000L
-#define D3D9_RESOURCE_PRIORITY_HIGH     0xA0000000L
-#define D3D9_RESOURCE_PRIORITY_MAXIMUM  0xC8000000L
+#ifndef D3D_DISABLE_9EX
+    #define D3D9_RESOURCE_PRIORITY_MINIMUM  0x28000000L
+    #define D3D9_RESOURCE_PRIORITY_LOW      0x50000000L
+    #define D3D9_RESOURCE_PRIORITY_NORMAL   0x78000000L
+    #define D3D9_RESOURCE_PRIORITY_HIGH     0xA0000000L
+    #define D3D9_RESOURCE_PRIORITY_MAXIMUM  0xC8000000L
+#endif
+
+/* Direct3D OMAC size */
+#ifndef D3D_DISABLE_9EX
+    #define D3D_OMAC_SIZE   16
+#endif
 
 /* Direct3D vector */
 typedef struct _D3DVECTOR {
@@ -461,8 +484,10 @@ typedef enum _D3DBLEND {
     D3DBLEND_BOTHINVSRCALPHA    = 13,
     D3DBLEND_BLENDFACTOR        = 14,
     D3DBLEND_INVBLENDFACTORY    = 15,
+#ifndef D3D_DISABLE_9EX
     D3DBLEND_SRCCOLOR2          = 16,
     D3DBLEND_INVSRCCOLOR2       = 17,
+#endif
     D3DBLEND_FORCE_DWORD        = 0x7FFFFFFF
 } D3DBLEND;
 
@@ -768,7 +793,9 @@ typedef enum _D3DTEXTUREFILTERTYPE {
     D3DTEXF_ANISOTROPIC     = 3,
     D3DTEXF_PYRAMIDALQUAD   = 6,
     D3DTEXF_GAUSSIANQUAD    = 7,
+#ifndef D3D_DISABLE_9EX
     D3DTEXF_CONVOLUTIONMONO = 8,
+#endif
     D3DTEXF_FORCE_DWORD     = 0x7FFFFFFF
 } D3DTEXTUREFILTERTYPE;
 
@@ -1108,71 +1135,76 @@ typedef enum _D3DMULTISAMPLE_TYPE {
 
 /* Direct3D formats */
 typedef enum _D3DFORMAT {
-    D3DFMT_UNKNOWN          = 0,
-    D3DFMT_R8G8B8           = 20,
-    D3DFMT_A8R8G8B8         = 21,
-    D3DFMT_X8R8G8B8         = 22,
-    D3DFMT_R5G6B5           = 23,
-    D3DFMT_X1R5G5B5         = 24,
-    D3DFMT_A1R5G5B5         = 25,
-    D3DFMT_A4R4G4B4         = 26,
-    D3DFMT_R3G3B2           = 27,
-    D3DFMT_A8               = 28,
-    D3DFMT_A8R3G3B2         = 29,
-    D3DFMT_X4R4G4B4         = 30,
-    D3DFMT_A2B10G10R10      = 31,
-    D3DFMT_A8B8G8R8         = 32,
-    D3DFMT_X8B8G8R8         = 33,
-    D3DFMT_G16R16           = 34,
-    D3DFMT_A2R10G10B10      = 35,
-    D3DFMT_A16B16G16R16     = 36,
-    D3DFMT_A8P8             = 40,
-    D3DFMT_P8               = 41,
-    D3DFMT_L8               = 50,
-    D3DFMT_A8L8             = 51,
-    D3DFMT_A4L4             = 52,
-    D3DFMT_V8U8             = 60,
-    D3DFMT_L6V5U5           = 61,
-    D3DFMT_X8L8V8U8         = 62,
-    D3DFMT_Q8W8V8U8         = 63,
-    D3DFMT_V16U16           = 64,
-    D3DFMT_A2W10V10U10      = 67,
-    D3DFMT_UYVY             = MAKEFOURCC( 'U', 'Y', 'V', 'Y' ),
-    D3DFMT_R8G8_B8G8        = MAKEFOURCC( 'R', 'G', 'B', 'G' ),
-    D3DFMT_YUY2             = MAKEFOURCC( 'Y', 'U', 'Y', '2' ),
-    D3DFMT_G8R8_G8B8        = MAKEFOURCC( 'G', 'R', 'G', 'B' ),
-    D3DFMT_DXT1             = MAKEFOURCC( 'D', 'X', 'T', '1' ),
-    D3DFMT_DXT2             = MAKEFOURCC( 'D', 'X', 'T', '2' ),
-    D3DFMT_DXT3             = MAKEFOURCC( 'D', 'X', 'T', '3' ),
-    D3DFMT_DXT4             = MAKEFOURCC( 'D', 'X', 'T', '4' ),
-    D3DFMT_DXT5             = MAKEFOURCC( 'D', 'X', 'T', '5' ),
-    D3DFMT_D16_LOCKABLE     = 70,
-    D3DFMT_D32              = 71,
-    D3DFMT_D15S1            = 73,
-    D3DFMT_D24S8            = 75,
-    D3DFMT_D24X8            = 77,
-    D3DFMT_D24X4S4          = 79,
-    D3DFMT_D16              = 80,
-    D3DFMT_D32F_LOCKABLE    = 82,
-    D3DFMT_D24FS8           = 83,
-    D3DFMT_D32_LOCKABLE     = 84,
-    D3DFMT_S8_LOCKABLE      = 85,
-    D3DFMT_L16              = 81,
-    D3DFMT_VERTEXDATA       = 100,
-    D3DFMT_INDEX16          = 101,
-    D3DFMT_INDEX32          = 102,
-    D3DFMT_Q16W16V16U16     = 110,
-    D3DFMT_MULTI2_ARGB8     = MAKEFOURCC( 'M', 'E', 'T', '1' ),
-    D3DFMT_R16F             = 111,
-    D3DFMT_G16R16F          = 112,
-    D3DFMT_A16B16G16R16F    = 113,
-    D3DFMT_R23F             = 114,
-    D3DFMT_G32R32F          = 115,
-    D3DFMT_A32B32G32R32F    = 116,
-    D3DFMT_CxV8U8           = 117,
-    D3DFMT_A1               = 118,
-    D3DFMT_BINARYBUFFER     = 199,
-    D3DFMT_FORCE_DWORD      = 0x7FFFFFFF
+    D3DFMT_UNKNOWN              = 0,
+    D3DFMT_R8G8B8               = 20,
+    D3DFMT_A8R8G8B8             = 21,
+    D3DFMT_X8R8G8B8             = 22,
+    D3DFMT_R5G6B5               = 23,
+    D3DFMT_X1R5G5B5             = 24,
+    D3DFMT_A1R5G5B5             = 25,
+    D3DFMT_A4R4G4B4             = 26,
+    D3DFMT_R3G3B2               = 27,
+    D3DFMT_A8                   = 28,
+    D3DFMT_A8R3G3B2             = 29,
+    D3DFMT_X4R4G4B4             = 30,
+    D3DFMT_A2B10G10R10          = 31,
+    D3DFMT_A8B8G8R8             = 32,
+    D3DFMT_X8B8G8R8             = 33,
+    D3DFMT_G16R16               = 34,
+    D3DFMT_A2R10G10B10          = 35,
+    D3DFMT_A16B16G16R16         = 36,
+    D3DFMT_A8P8                 = 40,
+    D3DFMT_P8                   = 41,
+    D3DFMT_L8                   = 50,
+    D3DFMT_A8L8                 = 51,
+    D3DFMT_A4L4                 = 52,
+    D3DFMT_V8U8                 = 60,
+    D3DFMT_L6V5U5               = 61,
+    D3DFMT_X8L8V8U8             = 62,
+    D3DFMT_Q8W8V8U8             = 63,
+    D3DFMT_V16U16               = 64,
+    D3DFMT_A2W10V10U10          = 67,
+    D3DFMT_UYVY                 = MAKEFOURCC( 'U', 'Y', 'V', 'Y' ),
+    D3DFMT_R8G8_B8G8            = MAKEFOURCC( 'R', 'G', 'B', 'G' ),
+    D3DFMT_YUY2                 = MAKEFOURCC( 'Y', 'U', 'Y', '2' ),
+    D3DFMT_G8R8_G8B8            = MAKEFOURCC( 'G', 'R', 'G', 'B' ),
+    D3DFMT_DXT1                 = MAKEFOURCC( 'D', 'X', 'T', '1' ),
+    D3DFMT_DXT2                 = MAKEFOURCC( 'D', 'X', 'T', '2' ),
+    D3DFMT_DXT3                 = MAKEFOURCC( 'D', 'X', 'T', '3' ),
+    D3DFMT_DXT4                 = MAKEFOURCC( 'D', 'X', 'T', '4' ),
+    D3DFMT_DXT5                 = MAKEFOURCC( 'D', 'X', 'T', '5' ),
+    D3DFMT_D16_LOCKABLE         = 70,
+    D3DFMT_D32                  = 71,
+    D3DFMT_D15S1                = 73,
+    D3DFMT_D24S8                = 75,
+    D3DFMT_D24X8                = 77,
+    D3DFMT_D24X4S4              = 79,
+    D3DFMT_D16                  = 80,
+    D3DFMT_D32F_LOCKABLE        = 82,
+    D3DFMT_D24FS8               = 83,
+#ifndef D3D_DISABLE_9EX
+    D3DFMT_D32_LOCKABLE         = 84,
+    D3DFMT_S8_LOCKABLE          = 85,
+#endif
+    D3DFMT_L16                  = 81,
+    D3DFMT_VERTEXDATA           = 100,
+    D3DFMT_INDEX16              = 101,
+    D3DFMT_INDEX32              = 102,
+    D3DFMT_Q16W16V16U16         = 110,
+    D3DFMT_MULTI2_ARGB8         = MAKEFOURCC( 'M', 'E', 'T', '1' ),
+    D3DFMT_R16F                 = 111,
+    D3DFMT_G16R16F              = 112,
+    D3DFMT_A16B16G16R16F        = 113,
+    D3DFMT_R23F                 = 114,
+    D3DFMT_G32R32F              = 115,
+    D3DFMT_A32B32G32R32F        = 116,
+    D3DFMT_CxV8U8               = 117,
+#ifndef D3D_DISABLE_9EX
+    D3DFMT_A1                   = 118,
+    D3DFMT_A2B10G10R10_XR_BIAS  = 119,
+    D3DFMT_BINARYBUFFER         = 199,
+#endif
+    D3DFMT_FORCE_DWORD          = 0x7FFFFFFF
 } D3DFORMAT;
 
 /* Direct3D display mode */
@@ -1196,6 +1228,8 @@ typedef enum _D3DSWAPEFFECT {
     D3DSWAPEFFECT_DISCARD       = 1,
     D3DSWAPEFFECT_FLIP          = 2,
     D3DSWAPEFFECT_COPY          = 3,
+    D3DSWAPEFFECT_OVERLAY       = 4,
+    D3DSWAPEFFECT_FLIPEX        = 5,
     D3DSWAPEFFECT_FORCE_DWORD   = 0x7FFFFFFF
 } D3DSWAPEFFECT;
 
@@ -1397,7 +1431,10 @@ typedef enum _D3DQUERYTYPE {
     D3DQUERYTYPE_VERTEXTIMINGS      = 15,
     D3DQUERYTYPE_PIXELTIMINGS       = 16,
     D3DQUERYTYPE_BANDWIDTHTIMINGS   = 17,
-    D3DQUERYTYPE_CACHEUTILIZATION   = 18
+    D3DQUERYTYPE_CACHEUTILIZATION   = 18,
+#ifndef D3D_DISABLE_9EX
+    D3DQUERYTYPE_MEMORYPRESSURE     = 19
+#endif
 } D3DQUERYTYPE;
 
 /* Direct3D resource statistics */
@@ -1475,7 +1512,17 @@ typedef struct _D3DDEVINFO_D3D9CACHEUTILIZATION {
     FLOAT   PostTransformVertexCacheHitRate;
 } D3DDEVINFO_D3D9CACHEUTILIZATION;
 
+/* Direct3D memory pressure */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DMEMORYPRESSURE {
+    UINT64  BytesEvictedFromProcess;
+    UINT64  SizeOfInefficientAllocation;
+    DWORD   LevelOfEfficiency;
+} D3DMEMORYPRESSURE;
+#endif
+
 /* Direct3D compose rectangles operations */
+#ifndef D3D_DISABLE_9EX
 typedef enum _D3DCOMPOSERECTSOP {
     D3DCOMPOSERECTS_COPY        = 1,
     D3DCOMPOSERECTS_OR          = 2,
@@ -1483,24 +1530,30 @@ typedef enum _D3DCOMPOSERECTSOP {
     D3DCOMPOSERECTS_NEG         = 4,
     D3DCOMPOSERECTS_FORCE_DWORD = 0x7FFFFFFF
 } D3DCOMPOSERECTSOP;
+#endif
 
 /* Direct3D compose rectangle description */
+#ifndef D3D_DISABLE_9EX
 typedef struct _D3DCOMPOSERECTDESC {
     USHORT  X;
     USHORT  Y;
     USHORT  Width;
     USHORT  Height;
 } D3DCOMPOSERECTDESC;
+#endif
 
 /* Direct3D compose rectangle destination */
+#ifndef D3D_DISABLE_9EX
 typedef struct _D3DCOMPOSERECTDESTINATION {
     USHORT  SrcRectIndex;
     USHORT  Reserved;
     SHORT   X;
     SHORT   Y;
 } D3DCOMPOSERECTDESTINATION;
+#endif
 
 /* Direct3D present statistics */
+#ifndef D3D_DISABLE_9EX
 typedef struct _D3DPRESENTSTATS {
     UINT            PresentCount;
     UINT            PresentRefreshCount;
@@ -1508,15 +1561,19 @@ typedef struct _D3DPRESENTSTATS {
     LARGE_INTEGER   SyncQPCTime;
     LARGE_INTEGER   SyncGPUTime;
 } D3DPRESENTSTATS;
+#endif
 
 /* Direct3D scan line orderings */
+#ifndef D3D_DISABLE_9EX
 typedef enum D3DSCANLINEORDERING {
     D3DSCANLINEORDERING_UNKNOWN     = 0,
     D3DSCANLINEORDERING_PROGRESSIVE = 1,
     D3DSCANLINEORDERING_INTERLACED  = 2
 } D3DSCANLINEORDERING;
+#endif
 
 /* Direct3D display mode (extended version) */
+#ifndef D3D_DISABLE_9EX
 typedef struct D3DDISPLAYMODEEX {
     UINT                Size;
     UINT                Width;
@@ -1525,21 +1582,368 @@ typedef struct D3DDISPLAYMODEEX {
     D3DFORMAT           Format;
     D3DSCANLINEORDERING ScanLineOrdering;
 } D3DDISPLAYMODEEX;
+#endif
 
 /* Direct3D display mode filter */
+#ifndef D3D_DISABLE_9EX
 typedef struct D3DDISPLAYMODEFILTER {
     UINT                Size;
     D3DFORMAT           Format;
     D3DSCANLINEORDERING ScanLineOrdering;
 } D3DDISPLAYMODEFILTER;
+#endif
 
 /* Direct3D display rotation values */
+#ifndef D3D_DISABLE_9EX
 typedef enum D3DDISPLAYROTATION {
     D3DDISPLAYROTATION_IDENTITY = 1,
     D3DDISPLAYROTATION_90       = 2,
     D3DDISPLAYROTATION_180      = 3,
     D3DDISPLAYROTATION_270      = 4
 } D3DDISPLAYROTATION;
+#endif
+
+/* Direct3D OMAC */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3D_OMAC {
+    BYTE    Omac[D3D_OMAC_SIZE];
+} D3D_OMAC;
+#endif
+
+/* Direct3D authenticated channel types */
+#ifndef D3D_DISABLE_9EX
+typedef enum _D3DAUTHENTICATEDCHANNELTYPE {
+    D3DAUTHENTICATEDCHANNEL_D3D9            = 1,
+    D3DAUTHENTICATEDCHANNEL_DRIVER_SOFTWARE = 2,
+    D3DAUTHENTICATEDCHANNEL_DRIVER_HARDWARE = 3
+} D3DAUTHENTICATEDCHANNELTYPE;
+#endif
+
+/* Direct3D authenticated channel query input */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERY_INPUT {
+    GUID    QueryType;
+    HANDLE  hChannel;
+    UINT    SequenceNumber;
+} D3DAUTHENTICATEDCHANNEL_QUERY_INPUT;
+#endif
+
+/* Direct3D authenticated channel query output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT {
+    D3D_OMAC    omac;
+    GUID        QueryType;
+    HANDLE      hChannel;
+    UINT        SequenceNumber;
+    HRESULT     ReturnCode;
+} D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel protection flags */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_PROTECTION_FLAGS {
+    union {
+        struct {
+            UINT    ProtectionEnabled           : 1;
+            UINT    OverlayOrFullscreenRequired : 1;
+            UINT    Reserved                    : 30;
+        };
+        UINT    Value;
+    };
+} D3DAUTHENTICATEDCHANNEL_PROTECTION_FLAGS;
+#endif
+
+/* Direct3D authenticated channel query protection output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYPROTECTION_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT        Output;
+    D3DAUTHENTICATEDCHANNEL_PROTECTION_FLAGS    ProtectionFlags;
+} D3DAUTHENTICATEDCHANNEL_QUERYPROTECTION_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query channel type output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYCHANNELTYPE_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    D3DAUTHENTICATEDCHANNELTYPE             ChannelType;
+} D3DAUTHENTICATEDCHANNEL_QUERYCHANNELTYPE_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query channel handle output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYCHANNELHANDLE_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    HANDLE                                  DeviceHandle;
+} D3DAUTHENTICATEDCHANNEL_QUERYCHANNELHANDLE_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query cryptographic session input */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYCRYPTOSESSION_INPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_INPUT Input;
+    HANDLE                              DXVA2DecodeHandle;
+} D3DAUTHENTICATEDCHANNEL_QUERYCRYPTOSESSION_INPUT;
+#endif
+
+/* Direct3D authenticated channel query cryptographic session output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYCRYPTOSESSION_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    HANDLE                                  DXVA2DecodeHandle;
+    HANDLE                                  CryptoSessionHandle;
+    HANDLE                                  DeviceHandle;
+} D3DAUTHENTICATEDCHANNEL_QUERYCRYPTOSESSION_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query restricted shared resource process count
+ * output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYRESTRICTEDSHAREDRESOURCEPROCESSCOUNT_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    UINT                                    NumRestrictedSharedResourceProcesses;
+} D3DAUTHENTICATEDCHANNEL_QUERYRESTRICTEDSHAREDRESOURCEPROCESSCOUNT_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query restricted shared resource process input */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYRESTRICTEDSHAREDRESOURCEPROCESS_INPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_INPUT Input;
+    UINT                                ProcessIndex;
+} D3DAUTHENTICATEDCHANNEL_QUERYRESTRICTEDSHAREDRESOURCEPROCESS_INPUT;
+#endif
+
+/* Direct3D authenticated channel process identifier types */
+#ifndef D3D_DISABLE_9EX
+typedef enum _D3DAUTHENTICATEDCHANNEL_PROCESSIDENTIFIERTYPE {
+    PROCESSIDTYPE_UNKNOWN   = 0,
+    PROCESSIDTYPE_DWM       = 1,
+    PROCESSIDTYPE_HANDLE    = 2
+} D3DAUTHENTICATEDCHANNEL_PROCESSIDENTIFIERTYPE;
+#endif
+
+/* Direct3D authenticated channel query restricted shared resource process output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYRESTRICTEDSHAREDRESOURCEPROCESS_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT            Output;
+    UINT                                            ProcessIndex;
+    D3DAUTHENTICATEDCHANNEL_PROCESSIDENTIFIERTYPE   ProcessIdentifier;
+    HANDLE                                          ProcessHandle;
+} D3DAUTHENTICATEDCHANNEL_QUERYRESTRICTEDSHAREDRESOURCEPROCESS_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query unrestricted protected shared resource count
+ * output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYUNRESTRICTEDPROTECTEDSHAREDRESOURCECOUNT_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    UINT                                    NumUnrestrictedProtectedSharedResources;
+} D3DAUTHENTICATEDCHANNEL_QUERYUNRESTRICTEDPROTECTEDSHAREDRESOURCECOUNT_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query output identifier count input */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTIDCOUNT_INPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_INPUT Input;
+    HANDLE                              DeviceHandle;
+    HANDLE                              CryptoSessionHandle;
+} D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTIDCOUNT_INPUT;
+#endif
+
+/* Direct3D authenticated channel query output identifier count output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTIDCOUNT_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    HANDLE                                  DeviceHandle;
+    HANDLE                                  CryptoSessionHandle;
+    UINT                                    NumOutputIDs;
+} D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTIDCOUNT_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query output identifier input */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTID_INPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_INPUT Input;
+    HANDLE                              DeviceHandle;
+    HANDLE                              CryptoSessionHandle;
+    UINT                                OutputIDIndex;
+} D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTID_INPUT;
+#endif
+
+/* Direct3D authenticated channel query output identifier output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTID_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    HANDLE                                  DeviceHandle;
+    HANDLE                                  CryptoSessionHandle;
+    UINT                                    OutputIDIndex;
+    UINT64                                  OutputID;
+} D3DAUTHENTICATEDCHANNEL_QUERYOUTPUTID_OUTPUT;
+#endif
+
+/* Direct3D bus types */
+#ifndef D3D_DISABLE_9EX
+typedef enum _D3DBUSTYPE {
+    D3DBUSTYPE_OTHER                                            = 0x00000000,
+    D3DBUSTYPE_PCI                                              = 0x00000001,
+    D3DBUSTYPE_PCIX                                             = 0x00000002,
+    D3DBUSTYPE_PCIEXPRESS                                       = 0x00000003,
+    D3DBUSTYPE_AGP                                              = 0x00000004,
+    D3DBUSIMPL_MODIFIER_INSIDE_OF_CHIPSET                       = 0x00010000,
+    D3DBUSIMPL_MODIFIER_TRACKS_ON_MOTHER_BOARD_TO_CHIP          = 0x00020000,
+    D3DBUSIMPL_MODIFIER_TRACKS_ON_MOTHER_BOARD_TO_SOCKET        = 0x00030000,
+    D3DBUSIMPL_MODIFIER_DAUGHTER_BOARD_CONNECTOR                = 0x00040000,
+    D3DBUSIMPL_MODIFIER_DAUGHTER_BOARD_CONNECTOR_INSIDE_OF_NUAE = 0x00050000,
+    D3DBUSIMPL_MODIFIER_NON_STANDARD                            = 0x80000000
+} D3DBUSTYPE;
+#endif
+
+/* Direct3D authenticated channel query information bus type output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYINFOBUSTYPE_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    D3DBUSTYPE                              BusType;
+    BOOL                                    bAccessibleInContiguousBlocks;
+    BOOL                                    bAccessibleInNonContiguousBlocks;
+} D3DAUTHENTICATEDCHANNEL_QUERYINFOBUSTYPE_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query eviction encryption GUID count output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYEVICTIONENCRYPTIONGUIDCOUNT_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    UINT                                    NumEncryptionGuids;
+} D3DAUTHENTICATEDCHANNEL_QUERYEVICTIONENCRYPTIONGUIDCOUNT_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query eviction encryption GUID input */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYEVICTIONENCRYPTIONGUID_INPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_INPUT Input;
+    UINT                                EncryptionGuidIndex;
+} D3DAUTHENTICATEDCHANNEL_QUERYEVICTIONENCRYPTIONGUID_INPUT;
+#endif
+
+/* Direct3D authenticated channel query eviction encryption GUID output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYEVICTIONENCRYPTIONGUID_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    UINT                                    EncryptionGuidIndex;
+    GUID                                    EncryptionGuid;
+} D3DAUTHENTICATEDCHANNEL_QUERYEVICTIONENCRYPTIONGUID_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel query uncompressed encryption level output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_QUERYUNCOMPRESSEDENCRYPTIONLEVEL_OUTPUT {
+    D3DAUTHENTICATEDCHANNEL_QUERY_OUTPUT    Output;
+    GUID                                    EncryptionGuid;
+} D3DAUTHENTICATEDCHANNEL_QUERYUNCOMPRESSEDENCRYPTIONLEVEL_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel configure input */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_CONFIGURE_INPUT {
+    D3D_OMAC    omac;
+    GUID        ConfigureType;
+    HANDLE      hChannel;
+    UINT        SequenceNumber;
+} D3DAUTHENTICATEDCHANNEL_CONFIGURE_INPUT;
+#endif
+
+/* Direct3D authenticated channel configure output */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_CONFIGURE_OUTPUT {
+    D3D_OMAC    omac;
+    GUID        ConfigureType;
+    HANDLE      hChannel;
+    UINT        SequenceNumber;
+    HRESULT     ReturnCode;
+} D3DAUTHENTICATEDCHANNEL_CONFIGURE_OUTPUT;
+#endif
+
+/* Direct3D authenticated channel configure initialize */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_CONFIGUREINITIALIZE {
+    D3DAUTHENTICATEDCHANNEL_CONFIGURE_INPUT Parameters;
+    UINT                                    StartSequenceQuery;
+    UINT                                    StartSequenceConfigure;
+} D3DAUTHENTICATEDCHANNEL_CONFIGUREINITIALIZE;
+#endif
+
+/* Direct3D authenticated channel configure protection */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_CONFIGUREPROTECTION {
+    D3DAUTHENTICATEDCHANNEL_CONFIGURE_INPUT     Parameters;
+    D3DAUTHENTICATEDCHANNEL_PROTECTION_FLAGS    Protections;
+} D3DAUTHENTICATEDCHANNEL_CONFIGUREPROTECTION;
+#endif
+
+/* Direct3D authenticated channel configure cryptographic session */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_CONFIGURECRYPTOSESSION {
+    D3DAUTHENTICATEDCHANNEL_CONFIGURE_INPUT Parameters;
+    HANDLE                                  DXVA2DecodeHandle;
+    HANDLE                                  CryptoSessionHandle;
+    HANDLE                                  DeviceHandle;
+} D3DAUTHENTICATEDCHANNEL_CONFIGURECRYPTOSESSION;
+#endif
+
+/* Direct3D authenticated channel configure shared resource */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_CONFIGURESHAREDRESOURCE {
+    D3DAUTHENTICATEDCHANNEL_CONFIGURE_INPUT         Parameters;
+    D3DAUTHENTICATEDCHANNEL_PROCESSIDENTIFIERTYPE   ProcessIdentifierType;
+    HANDLE                                          ProcessHandle;
+    BOOL                                            AllowAccess;
+} D3DAUTHENTICATEDCHANNEL_CONFIGURESHAREDRESOURCE;
+#endif
+
+/* Direct3D authenticated channel configure uncompressed encryption */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAUTHENTICATEDCHANNEL_CONFIGUREUNCOMPRESSEDENCRYPTION {
+    D3DAUTHENTICATEDCHANNEL_CONFIGURE_INPUT Parameters;
+    GUID                                    EncryptionGuid;
+} D3DAUTHENTICATEDCHANNEL_CONFIGUREUNCOMPRESSEDENCRYPTION;
+#endif
+
+/* Direct3D encrypted block information */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DENCRYPTED_BLOCK_INFO {
+    UINT    NumEncryptedBytesAtBeginning;
+    UINT    NumBytesInSkipPattern;
+    UINT    NumBytesInEncryptPattern;
+} D3DENCRYPTED_BLOCK_INFO;
+#endif
+
+/* Direct3D AES CTR IV */
+#ifndef D3D_DISABLE_9EX
+typedef struct _D3DAES_CTR_IV {
+    UINT64  IV;
+    UINT64  Count;
+} D3DAES_CTR_IV;
+#endif
+
+/* GUIDs */
+#ifndef D3D_DISABLE_9EX
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_PROTECTION;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_CHANNELTYPE;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_DEVICEHANDLE;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_CRYPTOSESSION;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_RESTRICTEDSHAREDRESOURCEPROCESSCOUNT;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_RESTRICTEDSHAREDRESOURCEPROCESS;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_UNRESTRICTEDPROTECTEDSHAREDRESOURCECOUNT;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_OUTPUTIDCOUNT;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_OUTPUTID;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_ACCESSIBILITYATTRIBUTES;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_ENCRYPTIONWHENACCESSIBLEGUIDCOUNT;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_ENCRYPTIONWHENACCESSIBLEGUID;
+EXTERN_C const GUID D3DAUTHENTICATEDQUERY_CURRENTENCRYPTIONWHENACCESSIBLE;
+EXTERN_C const GUID D3DAUTHENTICATEDCONFIGURE_INITIALIZE;
+EXTERN_C const GUID D3DAUTHENTICATEDCONFIGURE_PROTECTION;
+EXTERN_C const GUID D3DAUTHENTICATEDCONFIGURE_CRYPTOSESSION;
+EXTERN_C const GUID D3DAUTHENTICATEDCONFIGURE_SHAREDRESOURCE;
+EXTERN_C const GUID D3DAUTHENTICATEDCONFIGURE_ENCRYPTIONWHENACCESSIBLE;
+#endif
 
 :include cplusepi.sp
 
