@@ -1184,7 +1184,6 @@ void SetCurrSeg( segdata *seg, offset obj_offset, unsigned_8 *data )
 /******************************************************************/
 /* register a segment for the purposes of storing relocations */
 {
-    ObjFormat &= ~FMT_IS_LIDATA;
     CurrRec.seg = seg;
     CurrRec.obj_offset = obj_offset;
     CurrRec.data = data;
@@ -1198,7 +1197,7 @@ bool SeenDLLRecord( void )
         LnkMsg( LOC+WRN+MSG_DLL_WITH_386, NULL );
         return( FALSE );    /* Not OK to process import/export records. */
     } else {
-	return( TRUE );
+        return( TRUE );
     }
 }
 

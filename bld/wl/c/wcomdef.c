@@ -527,7 +527,7 @@ void ProcComdat( void )
     if( info->flags & SYM_DEAD && !(LinkFlags & INC_LINK_FLAG) ) {
         ObjFormat |= FMT_IGNORE_FIXUPP;
     } else {
-        ObjFormat &= ~FMT_IGNORE_FIXUPP;
+        ObjFormat &= ~(FMT_IGNORE_FIXUPP | FMT_IS_LIDATA);
     }
     SetCurrSeg( info->sdata, dataoff, piece->data );
 }
