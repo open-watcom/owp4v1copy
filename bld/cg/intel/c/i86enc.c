@@ -103,7 +103,7 @@ extern  type_length     TmpLoc(name*,name*);
 extern  name            *DeAlias(name*);
 extern  seg_id          AskBackSeg( void );
 extern  seg_id          AskCodeSeg( void );
-extern  void            DoLblRef(label_handle,seg_id,offset,byte);
+extern  void            DoLblRef(label_handle,seg_id,offset,escape_class);
 extern  void            AddWData(signed_32,type_class_def );
 extern  label_handle    AskForNewLabel( void );
 extern  name            *LowPart(name *,type_class_def);
@@ -834,7 +834,7 @@ static  void    DoP5Divide( instruction *ins ) {
     LayOpword( 0x06f6 );        // test byte ptr L1,1
 #endif
     ILen += WORD_SIZE;
-    DoLblRef( RTLabel( RT_BUGLIST - BEG_RTNS ), AskBackSeg(), 0, F_OFFSET );
+    DoLblRef( RTLabel( RT_BUGLIST - BEG_RTNS ), AskBackSeg(), 0, OFST );
     AddWData( 1, U1 );
     _Emit;
     if( used_ds ) {
@@ -1194,7 +1194,7 @@ extern  void    GenObjCode( instruction *ins ) {
                 _Code;
                 LayOpword( 0xc4f7 ); // test esp, offset L1
                 ILen += WORD_SIZE;
-                DoLblRef( lbl, seg, 0, F_OFFSET );
+                DoLblRef( lbl, seg, 0, OFST );
                 _Emit;
             }
             return;
@@ -1219,7 +1219,7 @@ extern  void    GenObjCode( instruction *ins ) {
                 _Code;
                 LayOpword( 0xc5f7 ); // test ebp, offset L1
                 ILen += WORD_SIZE;
-                DoLblRef( lbl, seg, 0, F_OFFSET );
+                DoLblRef( lbl, seg, 0, OFST );
                 _Emit;
             }
             return;

@@ -74,7 +74,7 @@ extern  void            AddByte(byte);
 extern  int             OptInsSize(oc_class,oc_dest_attr);
 extern  type_def        *TypeAddress(cg_type);
 extern  void            AddToTemp(byte);
-extern  void            DoFESymRef( sym_handle, cg_class, offset, int);
+extern  void            DoFESymRef( sym_handle, cg_class, offset, fe_fixup_types);
 extern  void            FlipCond(instruction*);
 extern  name            *DeAlias(name*);
 extern  name            *AllocUserTemp(pointer,type_class_def);
@@ -268,55 +268,39 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
     offset      off = 0;
     fe_attr     attr = 0;
     name        *temp;
+    bool        emit_data;
 
     endp = p + len;
-    while( p != endp ) {
+    while( p < endp ) {
         _Code;
-        if( p[0] == FLOATING_FIXUP_BYTE
-                && p[1] != FLOATING_FIXUP_BYTE
-                && p[1] != FIX_SYM_OFFSET
-                && p[1] != FIX_SYM_SEGMENT
-                && p[1] != FIX_SYM_RELOFF ) {
-            /* floating point fixup */
-            ++p;
-            if( _IsEmulation() ) {
-                if( ( p[0] == 0x90 ) && ( p[1] == 0x9B ) ) { // inline FWAIT
-                    FPPatchType = FPP_WAIT;
-                } else {
-                    FPPatchType = FPP_NORMAL;
-                }
-                Used87 = TRUE;
-            }
-        }
         first = TRUE;
+        emit_data = 1;
         startp = p;
-        for( ;; ) {
-            if( p == endp )
-                break;
+        for( ; p < endp && emit_data; ) {
             if( ( p - startp ) >= ( INSSIZE - 5 ) )
                 break;
             if( p[0] == FLOATING_FIXUP_BYTE ) {
                 type = p[1];
-                if( type != FLOATING_FIXUP_BYTE ) {
-                    switch( type ) {
-                    case FIX_SYM_OFFSET:
-                    case FIX_SYM_SEGMENT:
-                    case FIX_SYM_RELOFF:
-                        p += 2;
-                        sym = (sym_handle)*(unsigned long *)p;
-                        p += sizeof( unsigned long );
-                        off = (offset)*(unsigned long *)p;
-                        p += sizeof( unsigned long );
-                        attr = FEAttr( sym );
-                    }
+                switch( type ) {
+                case FLOATING_FIXUP_BYTE:
+                    ++p;
+                    break;
+                case FIX_SYM_OFFSET:
+                case FIX_SYM_SEGMENT:
+                case FIX_SYM_RELOFF:
+                    p += 2;
+                    sym = (sym_handle)*(unsigned long *)p;
+                    p += sizeof( unsigned long );
+                    off = (offset)*(unsigned long *)p;
+                    p += sizeof( unsigned long );
+                    attr = FEAttr( sym );
                     switch( type ) {
                     case FIX_SYM_SEGMENT:
                         ILen += 2;
                         if( attr & (FE_STATIC | FE_GLOBAL) ) {
                             DoFESymRef( sym, CG_FE, off, FE_FIX_BASE );
                         } else {
-                            FEMessage( MSG_ERROR,
-                                        "aux seg used with local symbol" );
+                            FEMessage( MSG_ERROR, "aux seg used with local symbol" );
                         }
                         break;
                     case FIX_SYM_OFFSET:
@@ -326,11 +310,9 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
                         } else {
                             temp = DeAlias( AllocUserTemp( sym, U1 ) );
                             if( temp->t.location != NO_LOCATION ) {
-                                EmitOffset( NewBase( temp )
-                                                - temp->v.offset + off );
+                                EmitOffset( NewBase( temp ) - temp->v.offset + off );
                             } else {
-                                FEMessage( MSG_ERROR,
-                                    "aux offset used with register symbol" );
+                                FEMessage( MSG_ERROR, "aux offset used with register symbol" );
                             }
                         }
                         break;
@@ -339,14 +321,27 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
                         if( attr & FE_PROC ) {
                             DoFESymRef( sym, CG_FE, off, FE_FIX_SELF );
                         } else {
-                            FEMessage( MSG_ERROR,
-                                        "aux reloff used with data symbol" );
+                            FEMessage( MSG_ERROR, "aux reloff used with data symbol" );
                         }
                         break;
                     }
-                    break; /* back to top of while for floating fixup */
-                } else {
+                    continue;
+                default:
+                    if( !first ) {
+                        emit_data = 0;
+                        continue;
+                    }
+                    /* floating point fixup */
                     ++p;
+                    if( _IsEmulation() ) {
+                        if( ( p[0] == 0x90 ) && ( p[1] == 0x9B ) ) { // inline FWAIT
+                            FPPatchType = FPP_WAIT;
+                        } else {
+                            FPPatchType = FPP_NORMAL;
+                        }
+                        Used87 = TRUE;
+                    }
+                    break;
                 }
             }
             if( first ) {

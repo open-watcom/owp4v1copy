@@ -90,13 +90,13 @@ extern bool             UseImportForm(fe_attr);
 extern bool             AskIfCommonLabel(label_handle);
 extern void             OutSpecialCommon(int,fix_class,bool);
 
-extern void             DoLblRef( label_handle lbl, seg_id seg,
-                                  offset val, byte kind );
-static void             DoRelocRef( sym_handle sym, cg_class class,
-                                    seg_id seg, offset val, byte kind );
+extern void             DoLblRef( label_handle lbl, seg_id seg, offset val,
+                                                            escape_class kind );
+static void             DoRelocRef( sym_handle sym, cg_class class, seg_id seg,
+                                                offset val, escape_class kind );
 static  void            OutShortDisp( label_handle lbl );
-static  void            OutCodeDisp( label_handle lbl, fix_class f,
-                                     bool rel, oc_class class );
+static  void            OutCodeDisp( label_handle lbl, fix_class f, bool rel,
+                                                            oc_class class );
 
 extern byte             *NopLists[];
 
@@ -163,11 +163,11 @@ extern  void    DoFunnyRef( int segover ) {
 
 
 extern  void  DoFESymRef( sym_handle sym, cg_class class, offset val,
-                                int fixup ) {
+                                fe_fixup_types fixup ) {
 /*******************************************************************/
 
     fe_attr             attr;
-    byte                kind;
+    escape_class        kind;
 
     kind = 0;
     switch( fixup ) {
@@ -225,9 +225,9 @@ extern  void    DoSegRef( seg_id seg ) {
 }
 
 static  void    DoRelocRef( sym_handle sym, cg_class class,
-                            seg_id seg, offset val, byte kind ) {
+                      seg_id seg, offset val, escape_class kind )
 /***************************************************************/
-
+{
     offset              addr;
     label_handle        lbl;
 
@@ -259,9 +259,9 @@ static  void    DoRelocRef( sym_handle sym, cg_class class,
 }
 
 extern  void    DoLblRef( label_handle lbl, seg_id seg,
-                          offset val, byte kind ) {
-/*************************************************/
-
+                        offset val, escape_class kind )
+/*****************************************************/
+{
     EmitByte( ESC );
     EmitByte( LBL | kind );
     EmitSegId( seg );
@@ -271,9 +271,9 @@ extern  void    DoLblRef( label_handle lbl, seg_id seg,
     }
 }
 
-static void SendBytes( byte *ptr, unsigned len ) {
-/************************************************/
-
+static void SendBytes( byte *ptr, unsigned len )
+/**********************************************/
+{
     if( len != 0 ) {
         OutDBytes( len, ptr );
     }
