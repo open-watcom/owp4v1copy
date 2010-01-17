@@ -29,6 +29,7 @@ headers =            &
         lzexpand.h   &
         mmsystem.h   &
         moniker.h    &
+        ole.h        &
         ole2.h       &
         ole2dbg.h    &
         ole2ver.h    &
@@ -56,6 +57,8 @@ libs =               &
         ole2.lib     &
         ole2disp.lib &
         ole2nls.lib  &
+        olecli.lib   &
+        olesvr.lib   &
         shell.lib    &
         storage.lib  &
         stress.lib   &
