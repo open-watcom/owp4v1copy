@@ -24,36 +24,24 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Pick file for OC class items definition.
 *
 ****************************************************************************/
 
 
-/*  Beginning of any escape sequence */
-
-#define ESC     0x6b    /*  NOT the same as the 8086/8 ESCape instruction */
-
-typedef enum {
-        SYM,
-        IMP,
-        REL,
-        LBL,
-        ABS,
-        FUN,
-        NOC,
-        /*  bit flags */
-        OFST = 0x10,
-        BASE = 0x20,
-        LDOF = 0x40,
-        SELF = 0x80
-} escape_class;
-
-#define MASK    (OFST|BASE|LDOF|SELF)
-
-
-typedef enum {
-        FE_FIX_BASE,
-        FE_FIX_OFF,
-        FE_FIX_SELF
-} fe_fixup_types;
+pick_class( OC_DEAD )            // 0x00
+pick_class( OC_INFO )            // 0x01
+pick_class( OC_CODE )            // 0x02
+pick_class( OC_DATA )            // 0x03
+pick_class( OC_RCODE )           // 0x04
+pick_class( OC_BDATA )           // 0x05
+pick_class( OC_LABEL )           // 0x06
+pick_class( OC_LREF )            // 0x07
+pick_class( OC_CALL )            // 0x08
+pick_class( OC_CALLI )           // 0x09
+pick_class( OC_JCOND )           // 0x0A
+pick_class( OC_JCONDI )          // 0x0B unused
+pick_class( OC_JMP )             // 0x0C
+pick_class( OC_JMPI )            // 0x0D
+pick_class( OC_RET )             // 0x0E
+pick_class( OC_IDATA )           // 0x0F unused

@@ -165,23 +165,27 @@ extern unsigned DepthAlign( unsigned depth )
         Copy( FEAuxInfo( NULL, CODE_LABEL_ALIGNMENT ), AlignArray,
                     sizeof( AlignArray ) );
     }
-    if( OptForSize ) return( 1 );
+    if( OptForSize )
+        return( 1 );
     if( _CPULevel( CPU_486 ) ) {
-        if( depth == PROC_ALIGN || depth == DEEP_LOOP_ALIGN ) return( 16 );
+        if( depth == PROC_ALIGN || depth == DEEP_LOOP_ALIGN )
+            return( 16 );
         return( 1 );
     }
     if( _CPULevel( CPU_386 ) ) {
-        if( depth == PROC_ALIGN || depth == DEEP_LOOP_ALIGN ) return( 4 );
+        if( depth == PROC_ALIGN || depth == DEEP_LOOP_ALIGN )
+            return( 4 );
         return( 1 );
     }
     if( depth == PROC_ALIGN ) {
         return( AlignArray[1] );
     }
-    if( depth == 0 ) depth = 1;
+    if( depth == 0 )
+        depth = 1;
     if( depth >= AlignArray[0] ) {
         depth = AlignArray[0] - 1;
     }
-    return( AlignArray[depth+1] );
+    return( AlignArray[depth + 1] );
 }
 
 extern  byte    CondCode( instruction *cond ) {
@@ -196,10 +200,10 @@ extern  byte    CondCode( instruction *cond ) {
     } else {
         is_signed = SIGNED_86;
     }
-    if( is_signed & Signed[  cond->type_class  ] ) {
-        return( SCondTable[ cond->head.opcode-FIRST_CONDITION ] );
+    if( is_signed & Signed[cond->type_class] ) {
+        return( SCondTable[cond->head.opcode - FIRST_CONDITION] );
     } else {
-        return( UCondTable[ cond->head.opcode-FIRST_CONDITION ] );
+        return( UCondTable[cond->head.opcode - FIRST_CONDITION] );
     }
 }
 
@@ -224,7 +228,7 @@ extern  byte    ReverseCondition( byte cond ) {
     reverse the sense of a conditional jump (already encoded)
 */
 
-    return( RevCond[  cond  ] );
+    return( RevCond[cond] );
 }
 
 extern  void    DoCall( label_handle lbl, bool imported,
@@ -287,8 +291,10 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
         first = TRUE;
         startp = p;
         for( ;; ) {
-            if( p == endp ) break;
-            if( ( p - startp ) >= ( INSSIZE - 5 ) ) break;
+            if( p == endp )
+                break;
+            if( ( p - startp ) >= ( INSSIZE - 5 ) )
+                break;
             if( p[0] == FLOATING_FIXUP_BYTE ) {
                 type = p[1];
                 if( type != FLOATING_FIXUP_BYTE ) {
@@ -372,7 +378,7 @@ extern  void    GenCall( instruction *ins ) {
     if( ins->flags.call_flags & CALL_INTERRUPT ) {
         Pushf();
     }
-    op = ins->operands[ CALL_OP_ADDR ];
+    op = ins->operands[CALL_OP_ADDR];
     class = *(call_class *)FindAuxInfo( op, CALL_CLASS );
     code = FindAuxInfo( op, CALL_BYTES );
     if( code != NULL ) {
@@ -405,7 +411,7 @@ extern  void    GenCall( instruction *ins ) {
         sym = op->v.symbol;
         if( op->m.memory_type == CG_FE ) {
             DoCall( FEBack( sym )->lbl,
-                  (FEAttr(sym) & (FE_COMMON|FE_IMPORT)) != 0, big, pop_bit );
+                  (FEAttr( sym ) & (FE_COMMON | FE_IMPORT)) != 0, big, pop_bit );
         } else {
             DoCall( sym, TRUE, big, pop_bit );
         }
@@ -433,8 +439,8 @@ extern  void    GenICall( instruction *ins ) {
     } else {
         entry |= OC_CALLI;
     }
-    if( ins->operands[ CALL_OP_ADDR ]->n.name_class == PT
-     || ins->operands[ CALL_OP_ADDR ]->n.name_class == CP ) {
+    if( ins->operands[CALL_OP_ADDR]->n.name_class == PT
+     || ins->operands[CALL_OP_ADDR]->n.name_class == CP ) {
         entry |= ATTR_FAR;
         opcode = M_CJILONG;
     } else {
@@ -442,7 +448,7 @@ extern  void    GenICall( instruction *ins ) {
     }
     ReFormat( entry );
     LayOpword( opcode );
-    LayModRM( ins->operands[ CALL_OP_ADDR ] );
+    LayModRM( ins->operands[CALL_OP_ADDR] );
     _Emit;
 }
 
@@ -465,7 +471,7 @@ extern  void    GenRCall( instruction *ins ) {
     }
     ReFormat( OC_CALLI | pop_bit );
     LayOpword( M_CJINEAR );
-    op = ins->operands[ CALL_OP_ADDR ];
+    op = ins->operands[CALL_OP_ADDR];
     LayRegRM( op->r.reg );
     _Emit;
 }
@@ -598,10 +604,10 @@ extern  void    GenMJmp( instruction *ins ) {
         ReFormat( OC_JMPI );
         LayOpword( M_CJINEAR );
     }
-    LayModRM( ins->operands[ 0 ] );
+    LayModRM( ins->operands[0] );
     if( ins->head.opcode == OP_SELECT &&
-        ins->operands[ 0 ]->n.class == N_INDEXED ) {
-        base = ins->operands[ 0 ]->i.base;
+        ins->operands[0]->n.class == N_INDEXED ) {
+        base = ins->operands[0]->i.base;
         if( base != NULL ) {
             lbl = AskForSymLabel( base->v.symbol, CG_TBL );
             if( AskAddress( lbl ) != ADDR_UNKNOWN ) {
@@ -616,7 +622,7 @@ extern  void    GenRJmp( instruction *ins ) {
     Generate a jump to register instruction (eg: jmp eax)
 */
 
-    JumpReg( ins, ins->operands[ 0 ] );
+    JumpReg( ins, ins->operands[0] );
 }
 
 
@@ -660,15 +666,15 @@ static  void    DoCodeBytes( byte *src, byte_seq_len len, oc_class class ) {
     temp->reclen = sizeof( oc_header ) + len;
     while( len > MAX_OBJ_LEN ) {
         temp->objlen = MAX_OBJ_LEN;
-        temp->reclen = sizeof( oc_header  )+ MAX_OBJ_LEN;
-        Copy( src, &temp->data[ 0 ], MAX_OBJ_LEN );
+        temp->reclen = sizeof( oc_header ) + MAX_OBJ_LEN;
+        Copy( src, &temp->data[0], MAX_OBJ_LEN );
         InputOC( (any_oc *)temp );
         src += MAX_OBJ_LEN;
         len -= MAX_OBJ_LEN;
     }
     temp->objlen = len;
     temp->reclen = sizeof( oc_header ) + len;
-    Copy( src, &temp->data[ 0 ], len );
+    Copy( src, &temp->data[0], len );
     InputOC( (any_oc *)temp );
     CGFree( temp );
 }

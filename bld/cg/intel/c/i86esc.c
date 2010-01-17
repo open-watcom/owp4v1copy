@@ -122,11 +122,13 @@ extern  bool    CodeHasAbsPatch( oc_entry *code ) {
     byte        *curr;
     byte        *final;
 
-    curr = &code->data[ 0 ];
+    curr = &code->data[0];
     final = curr + code->reclen - sizeof( oc_header );
     while( curr < final ) {
         if( *curr++ == ESC ) {
-            if( *curr++ == ABS ) return( TRUE );
+            if( *curr++ == ABS ) {
+                return( TRUE );
+            }
         }
     }
     return( FALSE );
@@ -272,7 +274,9 @@ extern  void    DoLblRef( label_handle lbl, seg_id seg,
 static void SendBytes( byte *ptr, unsigned len ) {
 /************************************************/
 
-    if( len != 0 ) OutDBytes( len, ptr );
+    if( len != 0 ) {
+        OutDBytes( len, ptr );
+    }
 }
 
 #define INFO_NOT_DEBUG      INFO_SELECT
@@ -352,7 +356,7 @@ static  void    ExpandCJ( any_oc *oc ) {
             f = F_PTR;
             rel = FALSE;
             if( ( class & GET_BASE ) == OC_CALL ) {
-                if( oc->oc_entry.objlen == OptInsSize(OC_CALL, OC_DEST_CHEAP) ){
+                if( oc->oc_entry.objlen == OptInsSize(OC_CALL, OC_DEST_CHEAP) ) {
                     f = F_OFFSET;
                     rel = TRUE;
                     class &= ~ ATTR_FAR;
@@ -455,12 +459,16 @@ static  label_handle    ExpandObj( byte *cur, int explen ) {
         len = 0;
         while( cur[len] != ESC ) {
             ++len;
-            if( cur + len >= fini ) break;
+            if( cur + len >= fini ) {
+                break;
+            }
         }
         if( len != 0 ) {
             OutDBytes( len, cur );
             cur += len;
-            if( cur >= fini ) break;
+            if( cur >= fini ) {
+                break;
+            }
         }
         cur++;
         key = *cur++;
@@ -580,7 +588,7 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
     switch( base ) {
     case OC_CODE:
     case OC_DATA:
-        ExpandObj( oc->oc_entry.data, oc->oc_entry.reclen-sizeof(oc_header) );
+        ExpandObj( oc->oc_entry.data, oc->oc_entry.reclen - sizeof( oc_header ) );
         break;
     case OC_IDATA:
         if( next_lbl != NULL ) { /* cause next_lbl to need no alignment */
@@ -589,11 +597,11 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
             DoAlignment( len );
         }
         OutSelect( TRUE );
-        SendBytes( &oc->oc_entry.data[ 0 ], oc->oc_entry.objlen );
+        SendBytes( &oc->oc_entry.data[0], oc->oc_entry.objlen );
         OutSelect( FALSE );
         break;
     case OC_BDATA:
-        SendBytes( &oc->oc_entry.data[ 0 ], oc->oc_entry.objlen );
+        SendBytes( &oc->oc_entry.data[0], oc->oc_entry.objlen );
         break;
     case OC_LABEL:
         /* figure out number of bytes to pad */
@@ -658,7 +666,7 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
             *ptr |= B_IND_RMR_JMP;
         }
         OutDataByte( *ptr++ );
-        lbl = ExpandObj( ptr, oc->oc_entry.reclen - sizeof(oc_header) - 1 - len );
+        lbl = ExpandObj( ptr, oc->oc_entry.reclen - sizeof( oc_header ) - 1 - len );
         if( lbl != NULL && base == OC_JMPI ) {
             TellKeepLabel( lbl ); /* make sure label comes out*/
             GenKillLabel( lbl );  /* but kill it when it does*/

@@ -56,7 +56,6 @@ extern  hw_reg_set      CalcSegment( sym_handle, cg_class );
 extern  name            *DeAlias( name * );
 extern  void            AddByte( byte );
 extern  void            LayRMRegOp( name * );
-extern  void            EjectInst( void );
 extern  void            LayOpbyte( opcode );
 extern  void            LayRegRM( hw_reg_set );
 extern  void            DoSegRef( seg_id );
@@ -71,7 +70,6 @@ extern  void            DoAbsPatch( abspatch_handle *, int );
 extern  type_class_def  OpndSize( hw_reg_set );
 extern  void            LayReg( hw_reg_set );
 extern  void            GCondFwait( void );
-extern  void            Finalize( void );
 extern  type_length     NewBase( name * );
 extern  int             GetLog2( unsigned_32 );
 extern  unsigned        UseRepForm( unsigned );
@@ -120,7 +118,8 @@ static  byte    DoIndex( hw_reg_set regs )
 
     i = 0;
     while( i < INDICES ) {
-        if( HW_Equal( regs, IndexTab[i] ) ) break;
+        if( HW_Equal( regs, IndexTab[i] ) )
+            break;
         i++;
     }
     if( i >= INDICES ) {
@@ -135,7 +134,8 @@ static  byte    Displacement( signed_32 val, hw_reg_set regs )
 /************************************************************/
 {
     HW_CTurnOff( regs, HW_SEGS );
-    if( val == 0 && !HW_CEqual( regs, HW_BP ) ) return( D0 );
+    if( val == 0 && !HW_CEqual( regs, HW_BP ) )
+        return( D0 );
     if( val <= 127 && val >= -128 ) {
         AddByte( val & 0xff );
         return( D8 );
@@ -204,7 +204,7 @@ extern  void    DoRepOp( instruction *ins )
                 AddByte( M_MOVSB );
             }
         } else {
-            if( ins->operands[ 1 ]->n.size & 1 ) {
+            if( ins->operands[1]->n.size & 1 ) {
                 AddByte( M_CMPSB );
             } else {
                 AddByte( M_CMPSW );
@@ -221,9 +221,9 @@ extern  void    Do4CXShift( instruction *ins, void (*rtn)(instruction *) )
     hw_reg_set  lreg;
     unsigned    shift;
 
-    if( ins->operands[ 1 ]->n.class == N_CONSTANT ) {
-        shift = ins->operands[ 1 ]->c.int_value;
-        if( shift<16 && OptForSize<50 && ins->result->n.class==N_REGISTER ) {
+    if( ins->operands[1]->n.class == N_CONSTANT ) {
+        shift = ins->operands[1]->c.int_value;
+        if( shift < 16 && OptForSize < 50 && ins->result->n.class == N_REGISTER ) {
             hreg = ins->result->r.reg;
             lreg = Low32Reg( hreg );
             hreg = High32Reg( hreg );
@@ -277,12 +277,12 @@ extern  void    Do4CXShift( instruction *ins, void (*rtn)(instruction *) )
         }
         LayOpbyte( 0xb8 );   /* Move register immediate (word)*/
         LayRegAC( HW_CX );
-        AddWCons( ins->operands[ 1 ], U2 );
+        AddWCons( ins->operands[1], U2 );
         _Next;
         rtn( ins );
         _Next;
         LayOpword( M_LOOP );
-        Inst[ DATALO ] = - ( -3 + 2 + Temp.oc.objlen );
+        Inst[DATALO] = - ( -3 + 2 + Temp.oc.objlen );
     } else {
         LayOpbyte( 0xe3 );    /* JCXZ*/
         AddByte( 0 );        /* to be patched*/
@@ -290,8 +290,8 @@ extern  void    Do4CXShift( instruction *ins, void (*rtn)(instruction *) )
         rtn( ins );
         _Next;
         LayOpword( M_LOOP );
-        Inst[ DATALO ] = - (-2 + 2 + Temp.oc.objlen );
-        Temp.data[ 1 ] = -Inst[ DATALO ];
+        Inst[DATALO] = - ( -2 + 2 + Temp.oc.objlen );
+        Temp.data[1] = -Inst[DATALO];
     }
 }
 
@@ -302,20 +302,20 @@ extern  void    LayLeaRegOp( instruction *ins )
     name        *left;
     name        *right;
 
-    left = ins->operands[ 0 ];
-    right = ins->operands[ 1 ];
-    Inst[ RMR ] |= DoIndex( left->r.reg );
+    left = ins->operands[0];
+    right = ins->operands[1];
+    Inst[RMR] |= DoIndex( left->r.reg );
     if( ins->head.opcode == OP_ADD ) {
         if( right->c.const_type == CONS_ABSOLUTE ) {
-            Inst[ RMR ] |=
+            Inst[RMR] |=
                       Displacement( right->c.int_value,
                                     left->r.reg );
         } else {
-            Inst[ RMR ] |= D16;
+            Inst[RMR] |= D16;
             DoRelocConst( right, U2 );
         }
     } else {
-        Inst[ RMR ] |= Displacement( -right->c.int_value,
+        Inst[RMR] |= Displacement( -right->c.int_value,
                                     left->r.reg );
     }
 }
@@ -390,7 +390,7 @@ extern  void    LayModRM( name *op )
     switch( op->n.class ) {
     case N_MEMORY:
         CheckSize();
-        Inst[ RMR ] |= DoMDisp( op, TRUE );
+        Inst[RMR] |= DoMDisp( op, TRUE );
         break;
     case N_TEMP:
         CheckSize();
@@ -398,7 +398,7 @@ extern  void    LayModRM( name *op )
         if( base->t.location == NO_LOCATION ) {
             _Zoiks( ZOIKS_030 );
         }
-        Inst[ RMR ] |= Displacement( NewBase( base ) + op->v.offset
+        Inst[RMR] |= Displacement( NewBase( base ) + op->v.offset
                                         - base->v.offset, HW_BP )
                          + ( BP_INDEX << S_RMR_RM );
         break;
@@ -441,7 +441,7 @@ extern  void    LayModRM( name *op )
                 HW_CTurnOff( regs, HW_SEGS );
             }
         }
-        Inst[ RMR ] |= DoDisp( op, regs ) + DoIndex( regs );
+        Inst[RMR] |= DoDisp( op, regs ) + DoIndex( regs );
         break;
     case N_REGISTER:
         LayRMRegOp( op );
@@ -489,7 +489,7 @@ extern  void    Do4Shift( instruction *ins )
         SetOff( op,  2 );
         LayOpword( M_SHR1 | B_KEY_W );
         if( ins->type_class == I4 ) {
-            Inst[ RMR ] |= B_RMR_SHR_SAR;
+            Inst[RMR] |= B_RMR_SHR_SAR;
         }
         LayModRM( op );
         _Next;
@@ -515,7 +515,7 @@ extern  void    Do4RShift( instruction *ins )
     } else {
         LayOpword( M_SHR1 | B_KEY_W );
         if( ins->type_class == I4 ) {
-            Inst[ RMR ] |= B_RMR_SHR_SAR;
+            Inst[RMR] |= B_RMR_SHR_SAR;
         }
         LayRegRM( High32Reg( regs ) );
         _Next;
@@ -685,10 +685,10 @@ extern  void    GenUnkLea( pointer value )
     LayOpword( M_LEA );
     OpndSize( HW_SP );
     LayReg( HW_SP );
-    Inst[ RMR ] |= D16;
+    Inst[RMR] |= D16;
     ILen += 2;
     DoAbsPatch( value, 2 );
-    Inst[ RMR ] |= DoIndex( HW_BP );
+    Inst[RMR] |= DoIndex( HW_BP );
 }
 
 extern  void    GenLeaSP( long offset )
@@ -700,8 +700,8 @@ extern  void    GenLeaSP( long offset )
     LayOpword( M_LEA );
     OpndSize( HW_SP );
     LayReg( HW_SP );
-    Inst[ RMR ] |= Displacement( offset, HW_BP );
-    Inst[ RMR ] |= DoIndex( HW_BP );
+    Inst[RMR] |= Displacement( offset, HW_BP );
+    Inst[RMR] |= DoIndex( HW_BP );
     _Emit;
 }
 
@@ -710,7 +710,7 @@ extern  void    GFstp10( type_length where )
 {
     GCondFwait();
     LayOpword( 0x3edb );
-    Inst[ RMR ] |= Displacement( -where, HW_BP );
+    Inst[RMR] |= Displacement( -where, HW_BP );
     _Emit;
 }
 
@@ -720,7 +720,7 @@ extern  void    GFld10( type_length where )
 {
     GCondFwait();
     LayOpword( 0x2edb );
-    Inst[ RMR ] |= Displacement( -where, HW_BP );
+    Inst[RMR] |= Displacement( -where, HW_BP );
     _Emit;
 }
 

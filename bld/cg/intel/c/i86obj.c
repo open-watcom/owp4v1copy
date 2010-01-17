@@ -2357,12 +2357,12 @@ extern  void    OutLineNum( cg_linenum  line, bool label_line ) {
 }
 
 
-#include <cgnoalgn.h>
+#include "cgnoalgn.h"
 typedef struct line_num_entry {
     unsigned_16     line;
     offset          off;
 } line_num_entry;
-#include <cgrealgn.h>
+#include "cgrealgn.h"
 
 static  void    ChangeObjSrc( char *fname ) {
     array_control       *names; /* for LNAMES*/
@@ -2538,7 +2538,7 @@ static void     EjectLEData( void ) {
         unsigned_16     cmt_type;
         unsigned_8      lnk_dir;
     }           cmt;
-#include "cgnoalgn.h"
+#include "cgrealgn.h"
 
     EjectImports();
     obj = CurrSeg->obj;
