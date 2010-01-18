@@ -296,7 +296,7 @@ static void getPreprocessor( ss_block *ss_new, char *start )
             text++;
         }
         // and then the keyword
-        while( *text && !isspace( *text ) ) {
+        while( *text && !isspace( *text ) && !issymbol( *text ) ) {
             text++;
         }
         ss_new->len = text - start;
