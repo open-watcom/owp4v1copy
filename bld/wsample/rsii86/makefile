@@ -5,4 +5,6 @@ host_cpu = i86
 
 target = rsi
 
+rsi_glu = 1
+
 !include ../master.mif
