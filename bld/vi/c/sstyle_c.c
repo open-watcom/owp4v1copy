@@ -208,6 +208,11 @@ static void getNumber( ss_block *ss_new, char *start, char top )
         // correctly handle something like 09.3
         getFloat( ss_new, start, text - start + 1, AFTER_ZERO );
         return;
+    } else if( *text == 'f' || *text == 'F' ) {
+        text++;
+        ss_new->type = SE_FLOAT;
+        ss_new->len = text - start;
+        return;
     }
 
     ss_new->len = text - start;
