@@ -107,6 +107,8 @@ c_objs = &
 bug31.lst &
 extprocf.lst &
 extprocn.lst &
+filedos.lst &
+fixup.lst &
 tokens.lst
 
 init_3dnow = K3D
@@ -117,6 +119,10 @@ init_sse3 = XMM3
 
 opt_extprocf = -ms
 opt_extprocn = -ml
+opt_filedos  = -ml
+opt_fixup    = -3
+
+extra_sed_filedos = -f $(wasmtest_dir)/fixlst4.sed
 
 386_inline_objs = $(asm_objs) $(c_objs)
 i86_inline_objs = $(asm_objs) $(c_objs)

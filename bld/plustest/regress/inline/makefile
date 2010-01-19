@@ -58,7 +58,7 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
     @set error_msg=failure to decode $[@
     @set ESM_CHECK=@%null
     @if exist $(inline_dir)/$^&.esm @set ESM_CHECK=diff -i -b $^&.dis $(inline_dir)/$^&.esm
-    -wdis -a $[@ | $(sed) -f $(wasmtest_dir)/fixlst2.sed >$^&.dis
+    -wdis -a $[@ | $(sed) -f $(wasmtest_dir)/fixlst2.sed $(extra_sed_$^*) >$^&.dis
     $(%ESM_CHECK)
     @set EMP_CHECK=@%null
     @if exist $(inline_dir)/$^&.emp @set EMP_CHECK=diff -i -b $^&.lst $(inline_dir)/$^&.emp

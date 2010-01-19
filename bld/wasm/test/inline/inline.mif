@@ -113,6 +113,8 @@ c_objs = &
 bug31.lst &
 extprocf.lst &
 extprocn.lst &
+filedos.lst &
+fixup.lst &
 tokens.lst
 
 init_3dnow = K3D
@@ -123,6 +125,10 @@ init_sse3 = XMM3
 
 opt_extprocf = -ms
 opt_extprocn = -ml
+opt_filedos = -ml
+opt_fxup = -3
+
+extra_sed_filedos = -f $(wasmtest_dir)/fixlst4.sed
 
 !ifndef testcomp
 testcomp=wcc386
@@ -162,7 +168,7 @@ test_cflags=-wx -we -s -os -zq
     @set error_msg=failure to decode $^&
     @set ESM_CHECK=%null
     @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
-    -wdis -a $[@ | sed -f ../fixlst2.sed >$^&.dis
+    -wdis -a $[@ | sed -f ../fixlst2.sed $(extra_sed_$^*) >$^&.dis
     @$(%ESM_CHECK)
     @set EMP_CHECK=%null
     @if exist $^&.emp @set EMP_CHECK=diff -i -b $^&.lst $^&.emp
