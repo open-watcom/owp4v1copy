@@ -13,7 +13,7 @@
 :set symbol="pcompany"  value="Sybase".
 :set symbol="spcompany" value="Sybase, Inc.".
 .do end
-:set symbol="cpyyear"   value="2009".
+:set symbol="cpyyear"   value="2010".
 .dm cpyrit begin
 Copyright (c) &cpyyear. the Open Watcom Contributors. All Rights Reserved.
 Portions Copyright (c) &*, 2002 Sybase, Inc. All Rights Reserved.
