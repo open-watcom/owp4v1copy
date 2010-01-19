@@ -145,6 +145,9 @@ static void getFloat( ss_block *ss_new, char *start, int skip, int command )
                     getFloat( ss_new, start, text - start + 1, AFTER_EXP );
                     return;
                 }
+                if( *text == 'f' || *text == 'F' || *text == 'l' || *text == 'L' ) {
+                    break;
+                }
                 if( *text && !isspace( *text ) && !issymbol( *text ) ) {
                     if( *text ) {
                         text++;
@@ -207,11 +210,6 @@ static void getNumber( ss_block *ss_new, char *start, char top )
     } else if( isdigit( *text ) ) {
         // correctly handle something like 09.3
         getFloat( ss_new, start, text - start + 1, AFTER_ZERO );
-        return;
-    } else if( *text == 'f' || *text == 'F' ) {
-        text++;
-        ss_new->type = SE_FLOAT;
-        ss_new->len = text - start;
         return;
     }
 
