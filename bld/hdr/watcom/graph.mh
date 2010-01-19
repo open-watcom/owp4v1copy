@@ -20,6 +20,7 @@
 
 :include pshpackl.sp
 
+:segment !INTERNAL
 :segment QNX
 #if !defined(__386__)
  #pragma library (graph);
@@ -32,6 +33,7 @@
 #pragma library (graph);
 :endsegment
 
+:endsegment
 struct xycoord {                /* structure for pixel position */
         short   xcoord;
         short   ycoord;
