@@ -24,13 +24,12 @@ is not defined.  These errors will also occur when compiling such code with
 the Microsoft headers.  They can be eliminated by defining WIN32_LEAN_AND_MEAN
 to suppress inclusion of winsock.h by windows.h
 
-The function Wow64Win32ApiEntry() was included in the version of winreg.h and
-advapi32.lib that were included with Open Watcom 1.8.  This undocumented
-function was present in Windows XP but has since been removed from the
-operating system.  Any code that uses this function will not compile with
-current versions of Windows.  It is therefore not available in current versions
-of Open Watcom.  Please rewrite any code that uses this function to avoid using
-it or access it through GetProcAddress() on platforms where it is available.
+There are several instances in which the headers that shipped with previous
+version of Open Watcom contained undocumented functions that are no longer
+available in current versions of Windows.  These functions have been removed
+from the headers.  Any code that used these functions should be rewritten to
+avoid using them or to access them through GetProcAddress() or those platforms
+where they are available.
 
 Documentation for the Win32 API is available over the Internet from Microsoft
 at http://msdn.microsoft.com/en-us/library/default.aspx.
