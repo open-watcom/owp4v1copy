@@ -8,6 +8,7 @@
 #define _NTPOAPI_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Power performance scale */
@@ -820,4 +821,3 @@ NTSYSCALLAPI NTSTATUS NTAPI NtSetThreadExecutionState( EXECUTION_STATE, PEXECUTI
 :include cplusepi.sp
 
 #endif /* _NTPOAPI_ */
-

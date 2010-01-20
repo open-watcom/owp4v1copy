@@ -8,6 +8,7 @@
 #define __ROUTING_STM_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Supported functionality flags */
@@ -99,4 +100,3 @@ typedef MPR_SERVICE_CHARACTERISTICS     *PMPR_SERVICE_CHARACTERISTICS;
 :include cplusepi.sp
 
 #endif /* __ROUTING_STM_H__ */
-

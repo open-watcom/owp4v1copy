@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 /* This header is obsolete.  The Microsoft versions of tmschema.h and vssym32.h
  * preprocess to virtually identical code.  Therefore, just include vssym32.h.
  */
@@ -12,4 +13,3 @@
     #include <schemadef.h>
 #endif
 #include <vssym32.h>
-

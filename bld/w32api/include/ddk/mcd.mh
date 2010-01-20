@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #include <scsi.h>
 #include <ntddchgr.h>
 #include <classpnp.h>
@@ -225,4 +226,3 @@ NTSTATUS NTAPI  ChangerPerformDiagnostics( PDEVICE_OBJECT, PWMI_CHANGER_PROBLEM_
 #endif
 
 :include cplusepi.sp
-

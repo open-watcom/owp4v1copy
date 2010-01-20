@@ -8,6 +8,7 @@
 #define _WS2DEF_
 
 :include readonly.sp
+
 #include <inaddr.h>
 
 :include cpluspro.sp
@@ -584,4 +585,3 @@ typedef ADDRINFOEXW     *LPADDRINFOEXW;
 :include cplusepi.sp
 
 #endif /* _WS2DEF_ */
-

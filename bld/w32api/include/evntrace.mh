@@ -8,6 +8,7 @@
 #define _EVNTRACE_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify WMI functions */
@@ -786,4 +787,3 @@ EXTERN_C ULONG WMIAPI   TraceSetInformation( TRACEHANDLE, TRACE_INFO_CLASS, PVOI
 :include cplusepi.sp
 
 #endif /* _EVNTRACE_ */
-

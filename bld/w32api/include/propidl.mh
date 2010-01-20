@@ -15,6 +15,7 @@
 #define __propidl_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -477,4 +478,3 @@ EXTERN_C BOOLEAN __stdcall                      StgConvertPropertyToVariant( con
 :include cplusepi.sp
 
 #endif /* __propidl_h__ */
-

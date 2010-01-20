@@ -8,6 +8,7 @@
 #define _INC_CPL
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Old control panel messages for compatibility */
@@ -95,4 +96,3 @@ typedef LPNEWCPLINFOA   LPNEWCPLINFO;
 :include cplusepi.sp
 
 #endif /* _INC_CPL */
-

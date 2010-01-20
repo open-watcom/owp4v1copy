@@ -8,6 +8,7 @@
 #define __SQLUCODE
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ODBC Unicode data types */
@@ -147,4 +148,3 @@ SQLRETURN SQL_API   SQLSetDescFieldW( SQLHDESC, SQLSMALLINT, SQLSMALLINT, SQLPOI
 :include cplusepi.sp
 
 #endif /* __SQLUCODE */
-

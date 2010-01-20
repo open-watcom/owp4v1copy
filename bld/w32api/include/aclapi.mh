@@ -8,6 +8,7 @@
 #define __ACCESS_CONTROL_API__
 
 :include readonly.sp
+
 #include <windows.h>
 #include <accctrl.h>
 
@@ -126,4 +127,3 @@ WINADVAPI DWORD WINAPI          TreeSetNamedSecurityInfoW( LPWSTR, SE_OBJECT_TYP
 :include cplusepi.sp
 
 #endif /* __ACCESS_CONTROL_API__ */
-

@@ -44,4 +44,3 @@ MCIWndCreateW
 MCIWndRegisterClass
 StretchDIB@48
 VideoForWindowsVersion@0
-

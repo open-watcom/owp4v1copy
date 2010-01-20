@@ -8,6 +8,7 @@
 #define _d3d9CAPS_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Direct3D version number */
@@ -437,4 +438,3 @@ EXTERN_C const GUID D3DKEYEXCHANGE_DXVA;
 :include cplusepi.sp
 
 #endif /* _d3d9CAPS_H */
-

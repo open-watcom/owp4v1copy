@@ -191,4 +191,3 @@ LARGE_INTEGER WINAPI LargeIntegerSubtract( LARGE_INTEGER li1, LARGE_INTEGER li2 
     liReturn.QuadPart = li1.QuadPart - li2.QuadPart;
     return liReturn;
 }
-

@@ -8,6 +8,7 @@
 #define _LMCONFIG_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Configuration information (level 0) */
@@ -26,4 +27,3 @@ NET_API_STATUS NET_API_FUNCTION NetConfigSet( LPCWSTR, LPCWSTR, LPCWSTR, DWORD, 
 :include cplusepi.sp
 
 #endif /* _LMCONFIG_ */
-

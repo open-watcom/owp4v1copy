@@ -11,6 +11,7 @@
 #define __gl_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* OpenGL primitive types */
@@ -1092,4 +1093,3 @@ WINGDIAPI void APIENTRY         glViewport( GLint, GLint, GLsizei, GLsizei );
 #endif /* __gl_h__ */
 
 #endif /* __GL_H__ */
-

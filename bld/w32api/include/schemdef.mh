@@ -8,6 +8,7 @@
 #define SCHEMADEF_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Schema definition version */
@@ -48,4 +49,3 @@ struct TMSCHEMAINFO {
 :include cplusepi.sp
 
 #endif /* SCHEMADEF_H */
-

@@ -8,6 +8,7 @@
 #define _NTDDTDI_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Transport driver interface device name */
@@ -34,4 +35,3 @@
 :include cplusepi.sp
 
 #endif /* _NTDDTDI_ */
-

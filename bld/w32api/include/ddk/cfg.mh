@@ -8,6 +8,7 @@
 #define _CFG_INCLUDED_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* CM_Get_DevInst_Status() flags */
@@ -165,4 +166,3 @@ typedef PNP_VETO_TYPE   *PPNP_VETO_TYPE;
 :include cplusepi.sp
 
 #endif /* _CFG_INCLUDED_ */
-

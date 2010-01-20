@@ -8,6 +8,7 @@
 #define _D3DCAPS_H
 
 :include readonly.sp
+
 #include <ddraw.h>
 
 :include cpluspro.sp
@@ -495,4 +496,3 @@ typedef D3DDEVINFO_TEXTURING    *LPD3DDEVINFO_TEXTURING;
 :include cplusepi.sp
 
 #endif /* _D3DCAPS_H */
-

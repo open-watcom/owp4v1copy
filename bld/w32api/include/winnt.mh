@@ -14,6 +14,7 @@
 #define _WINNT_
 
 :include readonly.sp
+
 #include <ctype.h>
 #include <string.h>
 #include <basetsd.h>
@@ -6388,4 +6389,3 @@ PVOID   GetFiberData( void );
 
 #endif /* _WINNT_ */
 :endsegment
-

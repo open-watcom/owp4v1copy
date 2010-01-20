@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 /* Directory Service object flags */
 #define DSOBJECT_ISCONTAINER    0x00000001L
 #define DSOBJECT_READONLYPAGES  0x80000000L
@@ -322,4 +323,3 @@ STDAPI_( HICON )    DsGetIcon( DWORD, LPCWSTR, INT, INT );
 #else
     #define DsBrowseForContainer    DsBrowseForContainerA
 #endif
-

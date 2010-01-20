@@ -8,6 +8,7 @@
 #define _OLE2VER_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* OLE 2.0 version numbers */
@@ -17,4 +18,3 @@
 :include cplusepi.sp
 
 #endif /* _OLE2VER_H_ */
-

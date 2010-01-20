@@ -8,6 +8,7 @@
 #define _IMAGEHLP_
 
 :include readonly.sp
+
 #include <wintrust.h>
 
 :include cpluspro.sp
@@ -2270,4 +2271,3 @@ BOOL WINAPI MiniDumpWriteDump( HANDLE, DWORD, HANDLE, MINIDUMP_TYPE, PMINIDUMP_E
 :include cplusepi.sp
 
 #endif /* _IMAGEHLP_ */
-

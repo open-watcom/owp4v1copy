@@ -8,6 +8,7 @@
 #define _TDI_KRNL_
 
 :include readonly.sp
+
 #include <tdi.h>
 #include <netpnp.h>
 
@@ -635,4 +636,3 @@ __inline VOID TdiCopyBufferToMdlWithReservedMapping( PVOID p1, PMDL p2, ULONG p3
 :include cplusepi.sp
 
 #endif /* _TDI_KRNL_ */
-

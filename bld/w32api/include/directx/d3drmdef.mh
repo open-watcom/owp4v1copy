@@ -8,6 +8,7 @@
 #define __D3DRMDEFS_H__
 
 :include readonly.sp
+
 #include <d3dtypes.h>
 
 :include cpluspro.sp
@@ -534,4 +535,3 @@ extern LPD3DVECTOR D3DRMAPI D3DRMVectorSubtract( LPD3DVECTOR, LPD3DVECTOR, LPD3D
 :include cplusepi.sp
 
 #endif /* __D3DRMDEFS_H__ */
-

@@ -8,6 +8,7 @@
 #define _NDIS_WAN_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Special value for NdisRegisterMiniport() and NdisRegisterSpecial() */
@@ -369,4 +370,3 @@ typedef WAN_CO_MTULINKPARAMS    *PWAN_CO_MTULINKPARAMS;
 :include cplusepi.sp
 
 #endif /* _NDIS_WAN_ */
-

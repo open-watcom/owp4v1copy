@@ -8,6 +8,7 @@
 #define __HIDPI_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -295,4 +296,3 @@ NTSTATUS __stdcall  HidP_UsageListDifference( PUSAGE, PUSAGE, PUSAGE, PUSAGE, UL
 :include cplusepi.sp
 
 #endif /* __HIDPI_H__ */
-

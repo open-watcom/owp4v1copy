@@ -8,6 +8,7 @@
 #define _WINDDI_
 
 :include readonly.sp
+
 #include <ddrawint.h>
 
 :include cpluspro.sp
@@ -1904,4 +1905,3 @@ ULONG APIENTRY          DrvLoadFontFile( ULONG, ULONG_PTR *, PVOID *, ULONG *, U
 :include cplusepi.sp
 
 #endif /* _WINDDI_ */
-

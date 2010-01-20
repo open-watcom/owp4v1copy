@@ -8,6 +8,7 @@
 #define _NTDDSCSIH_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* SCSI device type */
@@ -349,4 +350,3 @@ typedef DUMP_DRIVER *PDUMP_DRIVER;
 :include cplusepi.sp
 
 #endif /* _NTDDSCSIH_ */
-

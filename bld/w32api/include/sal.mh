@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #define __null
 #define __notnull
 #define __maybenull
@@ -245,4 +246,3 @@
 #ifndef __analysis_assume
     #define __analysis_assume( x )
 #endif
-

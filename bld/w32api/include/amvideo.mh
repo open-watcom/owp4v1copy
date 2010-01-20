@@ -8,6 +8,7 @@
 #define __AMVIDEO__
 
 :include readonly.sp
+
 #include <ddraw.h>
 
 :include cpluspro.sp
@@ -278,4 +279,3 @@ DECLARE_INTERFACE_( IBaseVideoMixer, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __AMVIDEO__ */
-

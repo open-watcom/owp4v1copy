@@ -8,6 +8,7 @@
 #define __AMAUDIO__
 
 :include readonly.sp
+
 #include <mmsystem.h>
 #include <dsound.h>
 
@@ -58,4 +59,3 @@ __inline HRESULT AMValidateAndFixWaveFormatEx( WAVEFORMATEX *p1, DWORD p2 )
 :include cplusepi.sp
 
 #endif /* __AMAUDIO__ */
-

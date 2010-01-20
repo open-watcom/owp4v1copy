@@ -8,6 +8,7 @@
 #define __NET_PNP__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Network Plug and Play event codes */
@@ -55,4 +56,3 @@ typedef NET_DEVICE_POWER_STATE  *PNET_DEVICE_POWER_STATE;
 :include cplusepi.sp
 
 #endif /* __NET_PNP__ */
-

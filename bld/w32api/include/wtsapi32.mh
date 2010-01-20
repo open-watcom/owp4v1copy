@@ -8,6 +8,7 @@
 #define _INC_WTSAPI
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Special values */
@@ -870,4 +871,3 @@ BOOL WINAPI     WTSWaitSystemEvent( HANDLE, DWORD, DWORD * );
 :include cplusepi.sp
 
 #endif /* _INC_WTSAPI */
-

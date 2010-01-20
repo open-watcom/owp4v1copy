@@ -2,4 +2,3 @@ LIBRARY QOSNAME.DLL
 EXPORTS
 WSCInstallQOSTemplate@12
 WSCRemoveQOSTemplate@8
-

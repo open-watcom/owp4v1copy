@@ -8,6 +8,7 @@
 #define _WINSCARD_H_
 
 :include readonly.sp
+
 #include <wtypes.h>
 #include <winioctl.h>
 #include <winsmcrd.h>

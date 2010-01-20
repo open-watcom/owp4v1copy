@@ -8,6 +8,7 @@
 #define __D3DRM_H__
 
 :include readonly.sp
+
 #include <ddraw.h>
 #include <d3drmobj.h>
 
@@ -195,4 +196,3 @@ STDAPI  Direct3DRMCreate( LPDIRECT3DRM * );
 :include cplusepi.sp
 
 #endif /* __D3DRM_H__ */
-

@@ -8,6 +8,7 @@
 #define _WINDNS_INCLUDED_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* DNS primitive data types */
@@ -1318,4 +1319,3 @@ VOID WINAPI         DnsRecordListFree( PDNS_RECORD, DNS_FREE_TYPE );
 :include cplusepi.sp
 
 #endif /* _WINDNS_INCLUDED_ */
-

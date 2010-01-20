@@ -8,6 +8,7 @@
 #define _KS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify kernel streaming functions */
@@ -2347,4 +2348,3 @@ KSDDKAPI DWORD WINAPI   KsCreateTopologyNode( HANDLE, PKSNODE_CREATE, ACCESS_MAS
 :include cplusepi.sp
 
 #endif /* _KS_ */
-

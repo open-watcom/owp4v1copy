@@ -8,6 +8,7 @@
 #define _MCX_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Dial options */
@@ -410,4 +411,3 @@ typedef MODEMSETTINGS   *LPMODEMSETTINGS;
 :include cplusepi.sp
 
 #endif /* _MCX_H_ */
-

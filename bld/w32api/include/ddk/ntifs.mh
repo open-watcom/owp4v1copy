@@ -8,6 +8,7 @@
 #define _NTIFS_
 
 :include readonly.sp
+
 #include <ntddk.h>
 #include <ntnls.h>
 
@@ -5152,4 +5153,3 @@ __inline VOID IoInitializePriorityInfo( PIO_PRIORITY_INFO x )
 :include cplusepi.sp
 
 #endif /* _NTIFS_ */
-

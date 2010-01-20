@@ -14,6 +14,7 @@
 #define _DDEHEADER_INCLUDED_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :endsegment
@@ -99,4 +100,3 @@ WINUSERAPI BOOL WINAPI      UnpackDDElParam( UINT, LPARAM, PUINT_PTR, PUINT_PTR 
 
 #endif /* _DDEHEADER_INCLUDED_ */
 :endsegment
-

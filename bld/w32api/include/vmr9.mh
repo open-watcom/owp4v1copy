@@ -15,6 +15,7 @@
 #define __vmr9_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -785,4 +786,3 @@ DECLARE_INTERFACE_( IVMRImageCompositor9, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __vmr9_h__ */
-

@@ -8,6 +8,7 @@
 #define _WS2SAN_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Socket options */
@@ -93,4 +94,3 @@ int WSPAPI      WSPMemoryRegistrationCacheCallback( LPVOID, SIZE_T, LPINT );
 :include cplusepi.sp
 
 #endif /* _WS2SAN_H_ */
-

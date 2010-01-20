@@ -8,6 +8,7 @@
 #define SENTINEL_Reason
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Shutdown reason flags */
@@ -97,4 +98,3 @@
 :include cplusepi.sp
 
 #endif /* SENTINEL_Reason */
-

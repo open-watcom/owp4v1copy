@@ -8,6 +8,7 @@
 #define _wmidata_h_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* This implementation of wmidata.h exists solely to get mcd.h and minitape.h to build.
@@ -108,4 +109,3 @@ typedef WMI_CHANGER_PROBLEM_DEVICE_ERROR    *PWMI_CHANGER_PROBLEM_DEVICE_ERROR;
 :include cplusepi.sp
 
 #endif /* _wmidata_h_ */
-

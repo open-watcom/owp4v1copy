@@ -8,6 +8,7 @@
 #define _HIDSDI_H
 
 :include readonly.sp
+
 #include <hidusage.h>
 #include <hidpi.h>
 
@@ -62,4 +63,3 @@ BOOLEAN __stdcall   HidD_SetOutputReport( HANDLE, PVOID, ULONG );
 :include cplusepi.sp
 
 #endif /* _HIDSDI_H */
-

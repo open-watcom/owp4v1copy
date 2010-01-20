@@ -8,6 +8,7 @@
 #define __USBCAMDI_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Pipe flags */
@@ -147,4 +148,3 @@ VOID NTAPI      USBCAMD_Debug_LogEntry( CHAR *, ULONG, ULONG, ULONG );
 :include cplusepi.sp
 
 #endif /* __USBCAMDI_H__ */
-

@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 /* Macro used to specify extern "C" */
 #ifdef __cplusplus
     #define EXTERN_C    extern "C"
@@ -115,4 +116,3 @@ __inline int operator!=( REFGUID p1, REFGUID p2 )
 #endif /* __cplusplus */
 
 #endif /* _GUIDDEF_H_ */
-

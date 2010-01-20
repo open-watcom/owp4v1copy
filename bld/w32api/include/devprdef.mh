@@ -8,6 +8,7 @@
 #define _DEVPROPDEF_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Device property primitive data types */
@@ -88,4 +89,3 @@ typedef DEVPROPKEY  *PDEVPROPKEY;
     #define DEFINE_DEVPROPKEY( x, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 ) \
         EXTERN_C const DEVPROPKEY x
 #endif
-

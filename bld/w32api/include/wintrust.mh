@@ -8,6 +8,7 @@
 #define WINTRUST_H
 
 :include readonly.sp
+
 #include <wincrypt.h>
 
 :include cpluspro.sp
@@ -724,4 +725,3 @@ extern BOOL WINAPI                      WintrustSetRegPolicyFlags( DWORD );
 :include cplusepi.sp
 
 #endif /* WINTRUST_H */
-

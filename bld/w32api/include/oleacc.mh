@@ -15,6 +15,7 @@
 #define __oleacc_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -459,4 +460,3 @@ STDAPI              WindowFromAccessibleObject( IAccessible *, HWND * );
 :include cplusepi.sp
 
 #endif /* __oleacc_h__ */
-

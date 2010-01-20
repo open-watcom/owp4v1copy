@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Functions in LARGEINT.LIB */
@@ -60,4 +61,3 @@ LARGE_INTEGER WINAPI    LargeIntegerSubtract( LARGE_INTEGER, LARGE_INTEGER );
     ((x).LowPart | (x).HighPart)
 
 :include cplusepi.sp
-

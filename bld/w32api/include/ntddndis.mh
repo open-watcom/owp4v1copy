@@ -8,6 +8,7 @@
 #define _NTDDNDIS_
 
 :include readonly.sp
+
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
     #include <ifdef.h>
 #endif
@@ -3679,4 +3680,3 @@ typedef NDIS_WMI_RECEIVE_QUEUE_INFO *PNDIS_WMI_RECEIVE_QUEUE_INFO;
 :include cplusepi.sp
 
 #endif /* _NTDDNDIS_ */
-

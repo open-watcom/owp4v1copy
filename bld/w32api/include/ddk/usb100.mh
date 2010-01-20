@@ -8,6 +8,7 @@
 #define __USB100_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Request directions */
@@ -234,4 +235,3 @@ typedef USB_INTERFACE_POWER_DESCRIPTOR  *PUSB_INTERFACE_POWER_DESCRIPTOR;
 :include cplusepi.sp
 
 #endif /* __USB100_H__ */
-

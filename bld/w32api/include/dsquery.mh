@@ -8,6 +8,7 @@
 #define __dsquery_h
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Directory Service query initialization parameter flags */
@@ -90,4 +91,3 @@ EXTERN_C const CLSID    CLSID_DsFindFrsMembers;
 :include cplusepi.sp
 
 #endif /* __dsquery_h */
-

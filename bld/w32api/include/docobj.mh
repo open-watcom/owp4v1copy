@@ -15,6 +15,7 @@
 #define __docobj_h__
 
 :include readonly.sp
+
 #include <ocidl.h>
 #include <objidl.h>
 #include <oleidl.h>
@@ -678,4 +679,3 @@ DECLARE_INTERFACE_( IProtectedModeMenuServices, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __docobj_h__ */
-

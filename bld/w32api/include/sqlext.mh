@@ -8,6 +8,7 @@
 #define __SQLEXT
 
 :include readonly.sp
+
 #include <sql.h>
 
 :include cpluspro.sp
@@ -1745,4 +1746,3 @@ SQLRETURN SQL_API   SQLBulkOperations( SQLHSTMT, SQLSMALLINT );
 #include <sqlucode.h>
 
 #endif /* __SQLEXT */
-

@@ -8,6 +8,7 @@
 #define _LMWKSTA_
 
 :include readonly.sp
+
 #include <lmcons.h>
 #include <lmuseflg.h>
 
@@ -476,4 +477,3 @@ NET_API_STATUS NET_API_FUNCTION NetWkstaUserSetInfo( LMSTR, DWORD, LPBYTE, LPDWO
 :include cplusepi.sp
 
 #endif /* _LMWKSTA_ */
-

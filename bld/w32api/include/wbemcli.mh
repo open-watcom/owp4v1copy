@@ -15,6 +15,7 @@
 #define __wbemcli_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -1279,4 +1280,3 @@ DECLARE_INTERFACE_( IWbemConfigureRefresher, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __wbemcli_h__ */
-

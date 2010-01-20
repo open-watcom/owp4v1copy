@@ -8,6 +8,7 @@
 #define __SQL
 
 :include readonly.sp
+
 #include <sqltypes.h>
 
 :include cpluspro.sp
@@ -563,4 +564,3 @@ SQLRETURN SQL_API   SQLCancelHandle( SQLSMALLINT, SQLHANDLE );
 :include cplusepi.sp
 
 #endif /* __SQL */
-

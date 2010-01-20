@@ -8,6 +8,7 @@
 #define _NTDDDISK_H_
 
 :include readonly.sp
+
 #include <ntddstor.h>
 
 :include cpluspro.sp
@@ -1022,4 +1023,3 @@ typedef MAPPED_ADDRESS  *PMAPPED_ADDRESS;
 :include cplusepi.sp
 
 #endif /* _NTDDDISK_H_ */
-

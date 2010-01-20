@@ -5,5 +5,5 @@
  */
 
 :include readonly.sp
-#pragma pack()
 
+#pragma pack()

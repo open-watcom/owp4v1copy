@@ -8,6 +8,7 @@
 #define __cmnquery_h
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -148,4 +149,3 @@ DECLARE_INTERFACE_( ICommonQuery, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __cmnquery_h */
-

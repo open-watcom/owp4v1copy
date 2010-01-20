@@ -15,6 +15,7 @@
 #define __oleidl_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -1110,4 +1111,3 @@ typedef IEnumOLEVERB    *LPENUMOLEVERB;
 :include cplusepi.sp
 
 #endif /* __oleidl_h__ */
-

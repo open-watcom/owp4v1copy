@@ -15,6 +15,7 @@
 #define __dxtrans_h__
 
 :include readonly.sp
+
 #include <oaidl.h>
 #include <ocidl.h>
 #include <comcat.h>
@@ -1186,4 +1187,3 @@ DECLARE_INTERFACE_( ICSSFilterDispatch, IDispatch ) {
 :include cplusepi.sp
 
 #endif /* __dxtrans_h__ */
-

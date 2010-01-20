@@ -8,6 +8,7 @@
 #define _LMUSEFLG_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Deletion force levels */
@@ -18,4 +19,3 @@
 :include cplusepi.sp
 
 #endif /* _LMUSEFLG_ */
-

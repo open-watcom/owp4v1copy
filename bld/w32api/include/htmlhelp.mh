@@ -8,6 +8,7 @@
 #define __HTMLHELP_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* HTML Help primitive data types */
@@ -376,4 +377,3 @@ HWND WINAPI HtmlHelpW( HWND, LPCWSTR, UINT, DWORD_PTR );
 :include cplusepi.sp
 
 #endif /* __HTMLHELP_H__ */
-

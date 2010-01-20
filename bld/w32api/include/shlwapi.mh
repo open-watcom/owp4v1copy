@@ -8,6 +8,7 @@
 #define _INC_SHLWAPI
 
 :include readonly.sp
+
 #include <objbase.h>
 #include <shtypes.h>
 
@@ -1371,4 +1372,3 @@ LWSTDAPI                PathMatchSpecExW( LPCWSTR, LPCWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* _INC_SHLWAPI */
-

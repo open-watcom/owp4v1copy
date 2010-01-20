@@ -8,6 +8,7 @@
 #define __USBIOCTL_H__
 
 :include readonly.sp
+
 #include <usb200.h>
 #include <usbiodef.h>
 
@@ -790,4 +791,3 @@ typedef USB_DEVICE_PERFORMANCE_INFO *PUSB_DEVICE_PERFORMANCE_INFO;
 :include cplusepi.sp
 
 #endif /* __USBIOCTL_H__ */
-

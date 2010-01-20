@@ -15,6 +15,7 @@
 #define __comcat_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Category identifier data type */
@@ -207,4 +208,3 @@ typedef ICatInformation *LPCATINFORMATION;
 :include cplusepi.sp
 
 #endif /* __comcat_h__ */
-

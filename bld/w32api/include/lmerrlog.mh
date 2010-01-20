@@ -8,6 +8,7 @@
 #define _LMERRLOG_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :include hlog.sp
@@ -265,4 +266,3 @@ NET_API_STATUS NET_API_FUNCTION NetErrorLogWrite( LPBYTE, DWORD, LPCWSTR, LPBYTE
 :include cplusepi.sp
 
 #endif /* _LMERRLOG_ */
-

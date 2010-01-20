@@ -8,6 +8,7 @@
 #define SPECSTRINGS_H
 
 :include readonly.sp
+
 #include <sal.h>
 
 :include cpluspro.sp
@@ -181,4 +182,3 @@
 :include cplusepi.sp
 
 #endif /* SPECSTRINGS_H */
-

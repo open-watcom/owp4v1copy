@@ -8,6 +8,7 @@
 #define _WS2IPDEF_
 
 :include readonly.sp
+
 #include <in6addr.h>
 
 :include cpluspro.sp
@@ -450,4 +451,3 @@ typedef IN6_PKTINFO *PIN6_PKTINFO;
 :include cplusepi.sp
 
 #endif /* _WS2IPDEF_ */
-

@@ -8,6 +8,7 @@
 #define __control_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ActiveMovie primitive data types */
@@ -1080,4 +1081,3 @@ DECLARE_INTERFACE_( IAMStats, IDispatch ) {
 :include cplusepi.sp
 
 #endif /* __control_h__ */
-

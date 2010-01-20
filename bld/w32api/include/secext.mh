@@ -8,6 +8,7 @@
 #define __SECEXT_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Extended name formats */
@@ -47,4 +48,3 @@ BOOLEAN SEC_ENTRY   TranslateNameW( LPCWSTR, EXTENDED_NAME_FORMAT, EXTENDED_NAME
 :include cplusepi.sp
 
 #endif /* __SECEXT_H__ */
-

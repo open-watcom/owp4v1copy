@@ -8,6 +8,7 @@
 #define _ROUTPROT_H_
 
 :include readonly.sp
+
 #include <stm.h>
 #include <nldef.h>
 #include <in6addr.h>
@@ -310,4 +311,3 @@ typedef DWORD (WINAPI *PREGISTER_PROTOCOL)( PMPR_ROUTING_CHARACTERISTICS, PMPR_S
 :include cplusepi.sp
 
 #endif /* _ROUTPROT_H_ */
-

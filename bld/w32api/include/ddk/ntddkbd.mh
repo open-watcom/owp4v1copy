@@ -8,6 +8,7 @@
 #define _NTDDKBD_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Keyboard device name */
@@ -137,4 +138,3 @@ typedef KEYBOARD_IME_STATUS *PKEYBOARD_IME_STATUS;
 :include cplusepi.sp
 
 #endif /* _NTDDKBD_ */
-

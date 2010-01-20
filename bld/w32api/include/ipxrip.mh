@@ -8,6 +8,7 @@
 #define _IPXRIP_
 
 :include readonly.sp
+
 #include <ipxconst.h>
 
 :include cpluspro.sp
@@ -99,4 +100,3 @@ typedef RIP_MIB_SET_INPUT_DATA  *PRIP_MIB_SET_INPUT_DATA;
 :include cplusepi.sp
 
 #endif /* _IPXRIP_ */
-

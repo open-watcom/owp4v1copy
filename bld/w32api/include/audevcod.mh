@@ -8,6 +8,7 @@
 #define __AUDEVCOD__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Sound device error event codes */
@@ -36,4 +37,3 @@ typedef enum _tagSND_DEVICE_ERROR {
 :include cplusepi.sp
 
 #endif /* __AUDEVCOD__ */
-

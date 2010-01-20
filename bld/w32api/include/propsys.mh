@@ -15,6 +15,7 @@
 #define __propsys_h__
 
 :include readonly.sp
+
 #include <objidl.h>
 #include <oleidl.h>
 #include <ocidl.h>
@@ -1370,4 +1371,3 @@ PSSTDAPI    PSUnregisterPropertySchema( PCWSTR );
 :include cplusepi.sp
 
 #endif /* __propsys_h__ */
-

@@ -8,6 +8,7 @@
 #define _NTDDCDRM_
 
 :include readonly.sp
+
 #include <ntddstor.h>
 
 :include cpluspro.sp
@@ -615,4 +616,3 @@ typedef CDROM_WRITE_SPEED_DESCRIPTOR    *PCDROM_WRITE_SPEED_DESCRIPTOR;
 :include cplusepi.sp
 
 #endif /* _NTDDCDRM_ */
-

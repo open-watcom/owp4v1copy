@@ -8,6 +8,7 @@
 #define NETCONS_INCLUDED
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* LAN Manager string data types */
@@ -90,4 +91,3 @@
 :include cplusepi.sp
 
 #endif /* NETCONS_INCLUDED */
-

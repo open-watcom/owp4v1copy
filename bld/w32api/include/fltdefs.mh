@@ -8,6 +8,7 @@
 #define _FLTDEFS_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify filter functions */
@@ -180,4 +181,3 @@ PFAPIENTRY  PfUnBindInterface( INTERFACE_HANDLE );
 :include cplusepi.sp
 
 #endif /* _FLTDEFS_H */
-

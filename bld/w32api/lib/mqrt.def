@@ -34,4 +34,3 @@ MQRegisterCertificate@12
 MQSendMessage@12
 MQSetQueueProperties@8
 MQSetQueueSecurity@12
-

@@ -8,6 +8,7 @@
 #define _LMSVC_
 
 :include readonly.sp
+
 #include <lmsname.h>
 
 :include cpluspro.sp
@@ -175,4 +176,3 @@ NET_API_STATUS NET_API_FUNCTION NetServiceInstall( LPCWSTR, LPCWSTR, DWORD, LPCW
 :include cplusepi.sp
 
 #endif /* _LMSVC_ */
-

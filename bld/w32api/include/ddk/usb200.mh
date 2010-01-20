@@ -8,6 +8,7 @@
 #define __USB200_H__
 
 :include readonly.sp
+
 #include <usb100.h>
 
 :include cpluspro.sp
@@ -121,4 +122,3 @@ typedef USB_INTERFACE_ASSOCIATION_DESCRIPTOR    *PUSB_INTERFACE_ASSOCIATION_DESC
 :include cplusepi.sp
 
 #endif /* __USB200_H__ */
-

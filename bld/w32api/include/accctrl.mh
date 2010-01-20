@@ -8,6 +8,7 @@
 #define __ACCESS_CONTROL__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Access control primitive data types */
@@ -548,4 +549,3 @@ typedef PINHERITED_FROMA    PINHERITED_FROM;
 :include cplusepi.sp
 
 #endif /* __ACCESS_CONTROL__ */
-

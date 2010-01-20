@@ -8,6 +8,7 @@
 #define _INC_MMREG 158
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Multimedia manufacturers */
@@ -2788,4 +2789,3 @@ typedef struct tagJPEGINFOHEADER {
 :include cplusepi.sp
 
 #endif /* _INC_MMREG */
-

@@ -8,6 +8,7 @@
 #define _OLE2_H_
 
 :include readonly.sp
+
 #include <objbase.h>
 #include <oleauto.h>
 #include <oleidl.h>
@@ -123,4 +124,3 @@ WINOLEAPI               WriteFmtUserTypeStg( LPSTORAGE, CLIPFORMAT, LPOLESTR );
 :include cplusepi.sp
 
 #endif /* _OLE2_H_ */
-

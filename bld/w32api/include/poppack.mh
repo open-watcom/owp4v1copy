@@ -4,6 +4,6 @@
 :include crwatcnt.sp
  */
 
-:include readonly.sp 
-#pragma pack( pop )
+:include readonly.sp
 
+#pragma pack( pop )

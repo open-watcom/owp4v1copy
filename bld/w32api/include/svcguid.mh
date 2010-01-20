@@ -8,6 +8,7 @@
 #define _SVCGUID_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Service GUIDs */
@@ -305,4 +306,3 @@
 :include cplusepi.sp
 
 #endif /* _SVCGUID_ */
-

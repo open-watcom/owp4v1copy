@@ -8,6 +8,7 @@
 #define _SHERROR_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Shell error codes */
@@ -95,4 +96,3 @@
 :include cplusepi.sp
 
 #endif /* _SHERROR_ */
-

@@ -8,6 +8,7 @@
 #define _SCSISCAN_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* SCSI request block flags */
@@ -108,4 +109,3 @@ typedef SCSISCAN_INFO   *PSCSISCAN_INFO;
 :include cplusepi.sp
 
 #endif /* _SCSISCAN_H_ */
-

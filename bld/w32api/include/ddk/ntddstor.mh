@@ -18,6 +18,7 @@
 #define _NTDDSTOR_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -697,4 +698,3 @@ typedef PERSISTENT_RESERVE_COMMAND  *PPERSISTENT_RESERVE_COMMAND;
 :include cplusepi.sp
 
 #endif /* _NTDDSTOR_H_ */
-

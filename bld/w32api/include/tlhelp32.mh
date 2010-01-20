@@ -8,6 +8,7 @@
 #define _INC_TOOLHELP32
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Maximum string lengths */
@@ -173,4 +174,3 @@ BOOL WINAPI     Toolhelp32ReadProcessMemory( DWORD, LPCVOID, LPVOID, SIZE_T, SIZ
 :include cplusepi.sp
 
 #endif /* _INC_TOOLHELP32 */
-

@@ -8,6 +8,7 @@
 #define __ROUTING_IPRTRMIB_H__
 
 :include readonly.sp
+
 #include <mprapi.h>
 #include <ipifcons.h>
 #include <ipmib.h>
@@ -235,4 +236,3 @@ typedef MIB_OPAQUE_INFO *PMIB_OPAQUE_INFO;
 :include cplusepi.sp
 
 #endif /* __ROUTING_IPRTRMIB_H__ */
-

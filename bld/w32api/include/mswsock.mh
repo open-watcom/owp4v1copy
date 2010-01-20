@@ -8,6 +8,7 @@
 #define _MSWSOCK_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Socket options */
@@ -268,4 +269,3 @@ int PASCAL  WSARecvEx( SOCKET, char *, int, int * );
 :include cplusepi.sp
 
 #endif /* _MSWSOCK_ */
-

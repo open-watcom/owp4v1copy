@@ -50,4 +50,3 @@ typedef long    RPC_STATUS;
 #include <rpcasync.h>
 
 #endif /* __RPC_H__ */
-

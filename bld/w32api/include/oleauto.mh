@@ -8,6 +8,7 @@
 #define _OLEAUTO_H_
 
 :include readonly.sp
+
 #include <oaidl.h>
 
 :include cpluspro.sp
@@ -674,4 +675,3 @@ WINOLEAUTAPI_( void )           OaEnablePerUserTLibRegistration( void );
 :include cplusepi.sp
 
 #endif /* _OLEAUTO_H_ */
-

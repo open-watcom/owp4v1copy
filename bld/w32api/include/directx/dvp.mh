@@ -8,6 +8,7 @@
 #define __DVP_INCLUDED__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* DirectDraw video port interface pointers */
@@ -421,4 +422,3 @@ DECLARE_INTERFACE_( IDirectDrawVideoPortNotify, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __DVP_INCLUDED__ */
-

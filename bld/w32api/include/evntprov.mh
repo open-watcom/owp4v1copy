@@ -8,6 +8,7 @@
 #define _EVNTPROV_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify event functions */
@@ -208,4 +209,3 @@ __inline PEVENT_DESCRIPTOR EventDescOrKeyword( PEVENT_DESCRIPTOR x, ULONGLONG p 
 :include cplusepi.sp
 
 #endif /* _EVNTPROV_H_ */
-

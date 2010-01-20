@@ -8,6 +8,7 @@
 #define _PRSHT_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :include ccapi.sp
@@ -688,4 +689,3 @@ WINCOMMCTRLAPI INT_PTR WINAPI           PropertySheetW( LPCPROPSHEETHEADERW );
 :include cplusepi.sp
 
 #endif /* _PRSHT_H_ */
-

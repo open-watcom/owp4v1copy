@@ -8,6 +8,7 @@
 #define __USBDI_H__
 
 :include readonly.sp
+
 #include <usb.h>
 #include <usbioctl.h>
 
@@ -51,4 +52,3 @@
 :include cplusepi.sp
 
 #endif /* __USBDI_H__ */
-

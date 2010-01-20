@@ -8,6 +8,7 @@
 #define __DDKMAPI_INCLUDED__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* DirectX API version numbers */
@@ -344,4 +345,3 @@ DWORD PASCAL    DxApi( DWORD, LPVOID, DWORD, LPVOID, DWORD );
 :include cplusepi.sp
 
 #endif /* __DDKMAPI_INCLUDED__ */
-

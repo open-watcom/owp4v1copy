@@ -8,6 +8,7 @@
 #define _WINDEF_
 
 :include readonly.sp
+
 #include <_w32ials.h>
 
 :include cpluspro.sp
@@ -259,4 +260,3 @@ typedef FILETIME    *LPFILETIME;
 :include cplusepi.sp
 
 #endif /* _WINDEF_ */
-

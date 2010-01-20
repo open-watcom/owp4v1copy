@@ -8,6 +8,7 @@
 #define __usp10__
 
 :include readonly.sp
+
 #include <windows.h>
 
 :include cpluspro.sp
@@ -289,4 +290,3 @@ HRESULT WINAPI      ScriptSubstituteSingleGlyph( HDC, SCRIPT_CACHE *, SCRIPT_ANA
 :include cplusepi.sp
 
 #endif /* __usp10__ */
-

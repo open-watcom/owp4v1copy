@@ -8,6 +8,7 @@
 #define _INC_SDKDDKVER
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Windows NT version numbers */
@@ -123,4 +124,3 @@
 :include cplusepi.sp
 
 #endif /* _INC_SDKDDKVER */
-

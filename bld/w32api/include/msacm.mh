@@ -8,6 +8,7 @@
 #define _INC_ACM
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ACM calling convention */
@@ -690,4 +691,3 @@ MMRESULT ACMAPI acmStreamUnprepareHeader( HACMSTREAM, LPACMSTREAMHEADER, DWORD )
 :include cplusepi.sp
 
 #endif /* _INC_ACM */
-

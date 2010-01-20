@@ -8,6 +8,7 @@
 #define _IFMIB_
 
 :include readonly.sp
+
 #include <ifdef.h>
 
 :include cpluspro.sp
@@ -64,4 +65,3 @@ typedef MIB_IFTABLE *PMIB_IFTABLE;
 :include cplusepi.sp
 
 #endif /* _IFMIB_ */
-

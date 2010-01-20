@@ -8,6 +8,7 @@
 #define _DOT4_IFACE_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -59,4 +60,3 @@ typedef DOT4_ACTIVITY   *PDOT4_ACTIVITY;
 :include cplusepi.sp
 
 #endif /* _DOT4_IFACE_H */
-

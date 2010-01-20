@@ -16,4 +16,3 @@ SetServiceA@24
 SetServiceW@24
 TransmitFile@28
 WSARecvEx@16
-

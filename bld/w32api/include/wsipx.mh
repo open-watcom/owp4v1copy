@@ -8,6 +8,7 @@
 #define _WSIPX_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* IPX/SPX protocol families */
@@ -28,4 +29,3 @@ typedef SOCKADDR_IPX    *LPSOCKADDR_IPX;
 :include cplusepi.sp
 
 #endif /* _WSIPX_ */
-

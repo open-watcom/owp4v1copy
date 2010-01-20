@@ -8,6 +8,7 @@
 #define __ERRORS__
 
 :include readonly.sp
+
 #include <vfwmsgs.h>
 
 :include cpluspro.sp
@@ -38,4 +39,3 @@ AMOVIEAPI DWORD WINAPI  AMGetErrorTextW( HRESULT, LPWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* __ERRORS__ */
-

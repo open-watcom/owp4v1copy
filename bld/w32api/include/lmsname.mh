@@ -8,6 +8,7 @@
 #define _LMSNAME_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* LAN Manager service names */
@@ -84,4 +85,3 @@
 :include cplusepi.sp
 
 #endif /* _LMSNAME_ */
-

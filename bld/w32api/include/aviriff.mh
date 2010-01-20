@@ -8,6 +8,7 @@
 #define AVIRIFF_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to count the elements in an array */
@@ -322,4 +323,3 @@ typedef AVIFIELDINDEX   *PAVIFIELDINDEX;
 :include cplusepi.sp
 
 #endif /* AVIRIFF_H */
-

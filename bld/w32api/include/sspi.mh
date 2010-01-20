@@ -8,6 +8,7 @@
 #define __SSPI_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Calling convention for security functions */
@@ -1293,4 +1294,3 @@ BOOLEAN SEC_ENTRY           SspiIsPromptingNeeded( unsigned long );
 :include cplusepi.sp
 
 #endif /* __SSPI_H__ */
-

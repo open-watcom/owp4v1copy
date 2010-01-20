@@ -14,6 +14,7 @@
 #define _WINUSER_
 
 :include readonly.sp
+
 #include <tvout.h>
 
 :include cpluspro.sp
@@ -6759,4 +6760,3 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
 
 #endif /* _WINUSER_ */
 :endsegment
-

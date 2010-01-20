@@ -8,6 +8,7 @@
 #define _WDMDDK_
 
 :include readonly.sp
+
 #define _ETW_KM_
 #include <excpt.h>
 #include <ntdef.h>
@@ -9399,4 +9400,3 @@ inline BOOLEAN operator>=( const CLFS_LSN &p1, const CLFS_LSN &p2 )
 :include cplusepi.sp
 
 #endif /* _WDMDDK_ */
-

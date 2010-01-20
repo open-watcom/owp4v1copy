@@ -9,4 +9,3 @@ SnmpMgrOpen@16
 SnmpMgrRequest@20
 SnmpMgrStrToOid@8
 SnmpMgrTrapListen@4
-

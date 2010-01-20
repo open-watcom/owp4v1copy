@@ -8,6 +8,7 @@
 #define _WINBASE_
 
 :include readonly.sp
+
 #include <winerror.h>
 
 :include cpluspro.sp
@@ -3582,4 +3583,3 @@ WINBASEAPI LPCH WINAPI  GetEnvironmentStrings( VOID );
 :include cplusepi.sp
 
 #endif /* _WINBASE_ */
-

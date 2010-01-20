@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Transport driver interface status codes */
@@ -91,4 +92,3 @@
 #define TDI_ADDRESS_OPTION_RAW      3
 
 :include cplusepi.sp
-

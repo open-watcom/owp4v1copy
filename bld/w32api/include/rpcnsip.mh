@@ -8,6 +8,7 @@
 #define __RPCNSIP_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* RPC import context */
@@ -27,4 +28,3 @@ RPCNSAPI RPC_STATUS RPC_ENTRY   I_RpcReBindBuffer( PRPC_MESSAGE );
 :include cplusepi.sp
 
 #endif /* __RPCNSIP_H__ */
-

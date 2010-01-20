@@ -8,6 +8,7 @@
 #define _WINSPOOL_
 
 :include readonly.sp
+
 #include <prsht.h>
 
 :include cpluspro.sp
@@ -2327,4 +2328,3 @@ WINSPOOLAPI BOOL WINAPI     GetPrintExecutionData( PRINT_EXECUTION_DATA * );
 :include cplusepi.sp
 
 #endif /* _WINSPOOL_ */
-

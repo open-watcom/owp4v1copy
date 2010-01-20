@@ -8,6 +8,7 @@
 #define _BUGCODES_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Bug check (stop error) codes */
@@ -335,4 +336,3 @@
 :include cplusepi.sp
 
 #endif /* _BUGCODES_ */
-

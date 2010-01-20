@@ -8,6 +8,7 @@
 #define _SCHEDULE_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Schedule types */
@@ -37,4 +38,3 @@ typedef SCHEDULE    *PSCHEDULE;
 :include cplusepi.sp
 
 #endif /* _SCHEDULE_H_ */
-

@@ -8,6 +8,7 @@
 #define __SCHANNEL_H__
 
 :include readonly.sp
+
 #include <wincrypt.h>
 
 :include cpluspro.sp
@@ -558,4 +559,3 @@ typedef VOID (WINAPI *SSL_FREE_CERTIFICATE_FN)( PX509Certificate );
 :include cplusepi.sp
 
 #endif /* __SCHANNEL_H__ */
-

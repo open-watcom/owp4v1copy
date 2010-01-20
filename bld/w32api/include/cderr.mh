@@ -8,6 +8,7 @@
 #define _INC_CDERR
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* General common dialog error codes */
@@ -62,4 +63,3 @@
 :include cplusepi.sp
 
 #endif /* _INC_CDERR */
-

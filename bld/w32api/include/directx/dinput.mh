@@ -8,6 +8,7 @@
 #define __DINPUT_INCLUDED__
 
 :include readonly.sp
+
 #define COM_NO_WINDOWS_H
 #include <objbase.h>
 
@@ -4044,4 +4045,3 @@ extern HRESULT WINAPI   DirectInput8Create( HINSTANCE, DWORD, REFIID, LPVOID *, 
 :include cplusepi.sp
 
 #endif /* __DINPUT_INCLUDED__ */
-

@@ -8,6 +8,7 @@
 #define _RASDLG_H_
 
 :include readonly.sp
+
 #include <ras.h>
 
 :include cpluspro.sp
@@ -169,4 +170,3 @@ BOOL APIENTRY   RasPhonebookDlgW( LPWSTR, LPWSTR, LPRASPBDLGW );
 :include cplusepi.sp
 
 #endif /* _RASDLG_H_ */
-

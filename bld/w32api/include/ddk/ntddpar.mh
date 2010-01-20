@@ -8,6 +8,7 @@
 #define _NTDDPAR_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Paralle port device I/O control codes */
@@ -105,4 +106,3 @@ typedef PARCLASS_NEGOTIATION_MASK   *PPARCLASS_NEGOTIATION_MASK;
 :include cplusepi.sp
 
 #endif /* _NTDDPAR_ */
-

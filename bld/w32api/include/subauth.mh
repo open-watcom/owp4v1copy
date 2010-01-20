@@ -8,6 +8,7 @@
 #define _NTSUBAUTH_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :include ntstatus.sp
@@ -296,4 +297,3 @@ NTSTATUS NTAPI  Msv1_0SubAuthenticationRoutineGeneric( PVOID, ULONG, PULONG, PVO
 :include cplusepi.sp
 
 #endif /* _NTSUBAUTH_ */
-

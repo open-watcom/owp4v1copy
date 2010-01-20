@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ActiveMovie event codes */
@@ -101,4 +102,3 @@ typedef struct {
 } AM_WMT_EVENT_DATA;
 
 :include cplusepi.sp
-

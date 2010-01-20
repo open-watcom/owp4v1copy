@@ -11,6 +11,7 @@
 #define __wtypes_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* OLE string data types */
@@ -364,4 +365,3 @@ typedef union {
 :include cplusepi.sp
 
 #endif /* __wtypes_h__ */
-

@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Additional ambient property dispatch identifiers */
@@ -12,4 +13,3 @@
 #define DISPID_AMBIENT_SILENT                   (-5502)
 
 :include cplusepi.sp
-

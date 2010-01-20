@@ -24,4 +24,3 @@ NCryptSetProperty@20
 NCryptSignHash@32
 NCryptTranslateHandle@24
 NCryptVerifySignature@28
-

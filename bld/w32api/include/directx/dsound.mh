@@ -17,6 +17,7 @@
 #define __DSOUND_INCLUDED__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :include dxshared.sp
@@ -2348,4 +2349,3 @@ HRESULT WINAPI  GetDeviceID( LPCGUID, LPCGUID );
 :include cplusepi.sp
 
 #endif /* __DSOUND_INCLUDED__ */
-

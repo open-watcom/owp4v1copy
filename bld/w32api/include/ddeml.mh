@@ -8,6 +8,7 @@
 #define _INC_DDEMLH
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* DDEML callback calling convention */
@@ -409,4 +410,3 @@ WINUSERAPI BOOL WINAPI      DdeUninitialize( DWORD );
 :include cplusepi.sp
 
 #endif /* _INC_DDEMLH */
-

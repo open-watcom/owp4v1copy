@@ -8,7 +8,7 @@
 #define __SCHNLSP_H__
 
 :include readonly.sp
+
 #include <schannel.h>
 
 #endif /* __SCHNLSP_H__ */
-

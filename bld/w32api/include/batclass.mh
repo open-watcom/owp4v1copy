@@ -8,6 +8,7 @@
 #define _BATCLASS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify battery class functions */
@@ -302,4 +303,3 @@ BATTERYCLASSAPI NTSTATUS NTAPI  BatteryClassSystemControl( PVOID, PVOID, PDEVICE
 :include cplusepi.sp
 
 #endif /* _BATCLASS_ */
-

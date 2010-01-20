@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify SMBus functions */
@@ -120,4 +121,3 @@ typedef NTSTATUS (NTAPI *PSMB_INITIALIZE_MINIPORT)( PSMB_CLASS, PVOID, PVOID );
 #endif
 
 :include cplusepi.sp
-

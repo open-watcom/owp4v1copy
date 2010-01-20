@@ -8,6 +8,7 @@
 #define _WINSVC_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Service handles */
@@ -707,4 +708,3 @@ WINADVAPI DWORD WINAPI      NotifyServiceStatusChangeW( SC_HANDLE, DWORD, PSERVI
 :include cplusepi.sp
 
 #endif /* _WINSVC_ */
-

@@ -19,6 +19,7 @@
 :endsegment
 
 :include readonly.sp
+
 :segment WINSOCK2
 #define _WINSOCKAPI_
 :endsegment
@@ -1353,4 +1354,3 @@ WINSOCK_API_LINKAGE int WSAAPI      WSAPoll( LPWSAPOLLFD, ULONG, INT );
 :segment WINSOCK2
 #endif /* _WINSOCK2API_ */
 :endsegment
-

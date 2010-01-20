@@ -8,6 +8,7 @@
 #define _INC_SPAPIDEF
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Setup log token data type */
@@ -64,4 +65,3 @@ typedef DWORDLONG   *PSP_LOG_TOKEN;
 :include cplusepi.sp
 
 #endif /* _INC_SPAPIDEF */
-

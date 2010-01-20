@@ -8,6 +8,7 @@
 #define __NCRYPT_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifndef __BCRYPT_H__
@@ -295,4 +296,3 @@ SECURITY_STATUS WINAPI  NCryptVerifySignature( NCRYPT_KEY_HANDLE, VOID *, PBYTE,
 :include cplusepi.sp
 
 #endif /* __NCRYPT_H__ */
-

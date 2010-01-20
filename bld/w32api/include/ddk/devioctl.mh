@@ -8,6 +8,7 @@
 #define _DEVIOCTL_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Device type data type */
@@ -24,4 +25,3 @@
 :include cplusepi.sp
 
 #endif /* _DEVIOCTL_ */
-

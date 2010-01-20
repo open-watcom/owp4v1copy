@@ -8,6 +8,7 @@
 #define __LMJOIN_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Network setup join flags */
@@ -109,4 +110,3 @@ NET_API_STATUS NET_API_FUNCTION NetRequestOfflineDomainJoin( BYTE *, DWORD, DWOR
 :include cplusepi.sp
 
 #endif /* __LMJOIN_H__ */
-

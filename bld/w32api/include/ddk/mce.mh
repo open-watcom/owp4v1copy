@@ -8,6 +8,7 @@
 #define _MCE_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Maximum number of MCA extended registers */
@@ -92,4 +93,3 @@ typedef MCA_EXCEPTION   *PCPE_EXCEPTION;
 :include cplusepi.sp
 
 #endif /* _MCE_ */
-

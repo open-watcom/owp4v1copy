@@ -15,6 +15,7 @@
 #define __vidcap_h__
 
 :include readonly.sp
+
 #include <unknwn.h>
 #include <strmif.h>
 #include <ks.h>
@@ -427,4 +428,3 @@ DECLARE_INTERFACE_( IKsNodeControl, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __vidcap_h__ */
-

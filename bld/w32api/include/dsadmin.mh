@@ -16,6 +16,7 @@ DEFINE_GUID( IID_IDsAdminNotifyHandler, 0xE4A2B8B3, 0x5A18, 0x11D2, 0x97, 0xC1, 
 #define _DSADMIN_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* IDsAdminNewObjExt::Initialize() parameters */
@@ -124,4 +125,3 @@ DECLARE_INTERFACE_( IDsAdminNotifyHandler, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* _DSADMIN_H */
-

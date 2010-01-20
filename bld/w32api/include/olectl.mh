@@ -8,6 +8,7 @@
 #define _OLECTL_H_
 
 :include readonly.sp
+
 #include <ocidl.h>
 
 :include cpluspro.sp
@@ -410,4 +411,3 @@ WINOLECTLAPI                OleTranslateColor( OLE_COLOR, HPALETTE, COLORREF * )
 :include cplusepi.sp
 
 #endif /* _OLECTL_H_ */
-

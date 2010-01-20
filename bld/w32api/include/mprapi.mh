@@ -8,6 +8,7 @@
 #define __ROUTING_MPRADMIN_H__
 
 :include readonly.sp
+
 #include <lmcons.h>
 #include <ras.h>
 #include <in6addr.h>
@@ -1221,4 +1222,3 @@ DWORD APIENTRY  MprAdminInitializeDllEx( PMPRAPI_ADMIN_DLL_CALLBACKS );
 :include cplusepi.sp
 
 #endif /* __ROUTING_MPRADMIN_H__ */
-

@@ -8,6 +8,7 @@
 #define _NTDDBEEP_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Beep device name */
@@ -32,4 +33,3 @@ typedef BEEP_SET_PARAMETERS *PBEEP_SET_PARAMETERS;
 :include cplusepi.sp
 
 #endif /* _NTDDBEEP_ */
-

@@ -27,4 +27,3 @@ DsSetAuthIdentityA@12
 DsSetAuthIdentityW@12
 DsSetCurrentBackupLogA@8
 DsSetCurrentBackupLogW@8
-

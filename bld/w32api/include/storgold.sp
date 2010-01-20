@@ -9,4 +9,3 @@
 #define CdChangerClassGuid          GUID_DEVINTERFACE_CDCHANGER
 #define StoragePortClassGuid        GUID_DEVINTERFACE_STORAGEPORT
 #define HiddenVolumeClassGuid       GUID_DEVINTERFACE_HIDDEN_VOLUME
-

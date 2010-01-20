@@ -8,6 +8,7 @@
 #define _WINGDI_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macros to specify GDI and spooler functions */
@@ -5156,4 +5157,3 @@ WINSPOOLAPI int WINAPI  DeviceCapabilitiesW( LPCWSTR, LPCWSTR, WORD, LPWSTR, CON
 :include cplusepi.sp
 
 #endif /* _WINGDI_ */
-

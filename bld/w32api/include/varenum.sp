@@ -52,4 +52,3 @@ enum VARENUM {
     VT_ILLEGALMASKED    = 0x0FFF,
     VT_TYPEMASK         = 0x0FFF
 };
-

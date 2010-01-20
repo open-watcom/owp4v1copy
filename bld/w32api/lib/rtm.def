@@ -16,4 +16,3 @@ MgmGroupEnumerationStart@12
 MgmRegisterMProtocol@16
 MgmReleaseInterfaceOwnership@12
 MgmTakeInterfaceOwnership@12
-

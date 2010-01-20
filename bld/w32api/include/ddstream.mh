@@ -15,6 +15,7 @@
 #define __ddstream_h__
 
 :include readonly.sp
+
 #include <mmstream.h>
 #include <ddraw.h>
 
@@ -136,4 +137,3 @@ DECLARE_INTERFACE_( IDirectDrawStreamSample, IStreamSample ) {
 :include cplusepi.sp
 
 #endif /* __ddstream_h__ */
-

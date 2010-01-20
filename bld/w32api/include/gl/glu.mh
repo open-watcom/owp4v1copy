@@ -11,6 +11,7 @@
 #define __glu_h__
 
 :include readonly.sp
+
 #include <gl/gl.h>
 
 :include cpluspro.sp
@@ -260,4 +261,3 @@ int APIENTRY                gluUnProject( GLdouble, GLdouble, GLdouble, const GL
 #endif /* __glu_h__ */
 
 #endif /* __GLU_H__ */
-

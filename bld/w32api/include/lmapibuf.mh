@@ -8,6 +8,7 @@
 #define _LMAPIBUF_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Functions in NETAPI32.DLL */
@@ -20,4 +21,3 @@ NET_API_STATUS NET_API_FUNCTION NetapipBufferAllocate( DWORD, LPVOID * );
 :include cplusepi.sp
 
 #endif /* _LMAPIBUF_ */
-

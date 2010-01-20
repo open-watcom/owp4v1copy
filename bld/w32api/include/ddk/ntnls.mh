@@ -8,6 +8,7 @@
 #define _NTNLS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Maximum lead bytes */
@@ -42,4 +43,3 @@ typedef NLSTABLEINFO    *PNLSTABLEINFO;
 :include cplusepi.sp
 
 #endif /* _NTNLS_ */
-

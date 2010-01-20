@@ -81,4 +81,3 @@ BOOLEAN NTAPI WdmlibRtlIsServicePackVersionInstalled( ULONG ulVersion )
     return( ulVersion <= ((ulMajorVersion << 24) | (ulMinorVersion << 16) | 
         (usServicePack << 8)) );
 }
-

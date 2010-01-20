@@ -8,6 +8,7 @@
 #define _BASETSD_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Pointer types */
@@ -105,4 +106,3 @@ typedef KAFFINITY   *PKAFFINITY;
 :include cplusepi.sp
 
 #endif /* _BASETSD_H_ */
-

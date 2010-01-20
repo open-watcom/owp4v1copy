@@ -8,6 +8,7 @@
 #define _INC_OLE
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* OLE data type macros */
@@ -343,4 +344,3 @@ OLESTATUS WINAPI            OleUnblockServer( LHSERVER, BOOL * );
 :include cplusepi.sp
 
 #endif /* _INC_OLE */
-

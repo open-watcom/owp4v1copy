@@ -8,6 +8,7 @@
 #define _NTSECPKG_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* LSA client request data type */
@@ -957,4 +958,3 @@ SECURITY_STATUS SEC_ENTRY   KSecRegisterSecurityProvider( PSECURITY_STRING, PSEC
 :include cplusepi.sp
 
 #endif /* _NTSECPKG_ */
-

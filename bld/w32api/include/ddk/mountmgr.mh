@@ -8,6 +8,7 @@
 #define _MOUNTMGR_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Mount point manager device names */
@@ -241,4 +242,3 @@ typedef MOUNTMGR_SET_AUTO_MOUNT *PMOUNTMGR_SET_AUTO_MOUNT;
 :include cplusepi.sp
 
 #endif /* _MOUNTMGR_ */
-

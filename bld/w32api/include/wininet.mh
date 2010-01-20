@@ -8,6 +8,7 @@
 #define _WININET_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macros to specify Internet functions */
@@ -1818,4 +1819,3 @@ URLCACHEAPI_( BOOL )        SetUrlCacheGroupAttributeW( GROUPID, DWORD, DWORD, L
 :include cplusepi.sp
 
 #endif /* _WININET_ */
-

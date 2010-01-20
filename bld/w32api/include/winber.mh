@@ -8,6 +8,7 @@
 #define _WINBER_DEFINED_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify BER functions */
@@ -45,4 +46,3 @@ WINBERAPI ULONG BERAPI          ber_skip_tag( BerElement *, ULONG * );
 :include cplusepi.sp
 
 #endif /* _WINBER_DEFINED_ */
-

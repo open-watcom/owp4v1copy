@@ -2,4 +2,3 @@ LIBRARY QUARTZ.DLL
 EXPORTS
 AMGetErrorTextA@12
 AMGetErrorTextW@12
-

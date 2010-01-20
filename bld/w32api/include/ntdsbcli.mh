@@ -8,6 +8,7 @@
 #define _NTDSBCLI_H_
 
 :include readonly.sp
+
 #include <ntdsbmsg.h>
 
 :include cpluspro.sp
@@ -140,4 +141,3 @@ HRESULT NTDSBCLI_API    DsSetCurrentBackupLogW( LPCWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* _NTDSBCLI_H_ */
-

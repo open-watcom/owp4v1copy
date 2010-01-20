@@ -8,6 +8,7 @@
 #define __WINCRYPT_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macros to specify cryptographic functions */
@@ -6009,4 +6010,3 @@ WINCRYPT32API BOOL WINAPI   CryptRetrieveObjectByUrlW( LPCWSTR, LPCWSTR, DWORD, 
 :include cplusepi.sp
 
 #endif /* __WINCRYPT_H__ */
-

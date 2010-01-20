@@ -8,6 +8,7 @@
 #define __ipxfltdf_h
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* IPX traffic filter actions */
@@ -72,4 +73,3 @@ typedef FLT_PACKET_LOG  *PFLT_PACKET_LOG;
 :include cplusepi.sp
 
 #endif /* __ipxfltdf_h */
-

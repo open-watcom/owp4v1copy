@@ -8,6 +8,7 @@
 #define _MGM_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Group manipulation flags */
@@ -89,4 +90,3 @@ DWORD WINAPI    MgmTakeInterfaceOwnership( HANDLE, DWORD, DWORD );
 :include cplusepi.sp
 
 #endif /* _MGM_H_ */
-

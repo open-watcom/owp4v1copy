@@ -8,6 +8,7 @@
 #define _MINITAPE_
 
 :include readonly.sp
+
 /* The Microsoft version of minitape.h is mostly a lot of the same stuff that's in
  * other headers.  To save space, include those headers and just define those constants
  * and structures that are unique to this header.
@@ -388,4 +389,3 @@ SCSIPORT_API VOID __cdecl           TapeDebugPrint( ULONG, PCCHAR, ... );
 :include cplusepi.sp
 
 #endif /* _MINITAPE_ */
-

@@ -8,6 +8,7 @@
 #define _SHLOBJ_H_
 
 :include readonly.sp
+
 #include <ole2.h>
 #include <prsht.h>
 #include <commctrl.h>
@@ -3277,4 +3278,3 @@ SHFOLDERAPI SHGetFolderPathW( HWND, int, HANDLE, DWORD, LPWSTR );
 :include cplusepi.sp
 
 #endif /* _SHLOBJ_H_ */
-

@@ -8,6 +8,7 @@
 #define _D3D_H_
 
 :include readonly.sp
+
 #include <d3dtypes.h>
 #include <d3dcaps.h>
 
@@ -1947,4 +1948,3 @@ DECLARE_INTERFACE_( IDirect3DVertexBuffer7, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* _D3D_H_ */
-

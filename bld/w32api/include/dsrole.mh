@@ -8,6 +8,7 @@
 #define __DSROLE_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Directory Service primary domain information flags */
@@ -80,4 +81,3 @@ DWORD WINAPI    DsRoleGetPrimaryDomainInformation( LPCWSTR, DSROLE_PRIMARY_DOMAI
 :include cplusepi.sp
 
 #endif /* __DSROLE_H__ */
-

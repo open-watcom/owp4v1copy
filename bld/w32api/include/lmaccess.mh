@@ -8,6 +8,7 @@
 #define _LMUSER_
 
 :include readonly.sp
+
 #include <lmcons.h>
 
 :include cpluspro.sp
@@ -1168,4 +1169,3 @@ NET_API_STATUS NET_API_FUNCTION RxNetAccessSetInfo( LPCWSTR, LPCWSTR, DWORD, LPB
 :include cplusepi.sp
 
 #endif /* _LMUSER_ */
-

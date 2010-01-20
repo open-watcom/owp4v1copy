@@ -8,6 +8,7 @@
 #define __IPIFCONS_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Interface type data type */
@@ -274,4 +275,3 @@ typedef enum _INTERNAL_IF_OPER_STATUS {
 :include cplusepi.sp
 
 #endif /* __IPIFCONS_H__ */
-

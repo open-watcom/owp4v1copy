@@ -8,6 +8,7 @@
 #define _IPXSAP_
 
 :include readonly.sp
+
 #include <ipxconst.h>
 
 :include cpluspro.sp
@@ -103,4 +104,3 @@ typedef SAP_MIB_SET_INPUT_DATA  *PSAP_MIB_SET_INPUT_DATA;
 :include cplusepi.sp
 
 #endif /* _IPXSAP_ */
-

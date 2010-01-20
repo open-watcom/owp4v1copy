@@ -8,6 +8,7 @@
 #define _INC_WINDOWSX
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :include sndmsg.sp
@@ -1021,4 +1022,3 @@
 :include cplusepi.sp
 
 #endif /* _INC_WINDOWSX */
-

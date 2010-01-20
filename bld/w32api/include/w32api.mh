@@ -10,6 +10,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* These constants specify the version of the w32api package from MinGW with which these
@@ -48,4 +49,3 @@
 #define IE7             0x0700
 
 :include cplusepi.sp
-

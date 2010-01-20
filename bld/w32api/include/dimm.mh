@@ -15,6 +15,7 @@
 #define __dimm_h__
 
 :include readonly.sp
+
 #include <imm.h>
 
 :include cpluspro.sp
@@ -906,4 +907,3 @@ DECLARE_INTERFACE_( IActiveIME2, IActiveIME ) {
 :include cplusepi.sp
 
 #endif /* __dimm_h__ */
-

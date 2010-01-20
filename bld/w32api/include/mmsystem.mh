@@ -8,6 +8,7 @@
 #define _INC_MMSYSTEM
 
 :include readonly.sp
+
 #include <pshpack1.h>
 
 :include cpluspro.sp
@@ -3192,4 +3193,3 @@ WINMMAPI MMRESULT WINAPI    waveOutSetVolume( HWAVEOUT, DWORD );
 #include <poppack.h>
 
 #endif /* _INC_MMSYSTEM */
-

@@ -8,6 +8,7 @@
 #define _D3DTYPES_H_
 
 :include readonly.sp
+
 #include <ddraw.h>
 
 :include cpluspro.sp
@@ -1690,4 +1691,3 @@ typedef enum _D3DTEXTURETRANSFORMFLAGS {
 :include cplusepi.sp
 
 #endif /* _D3DTYPES_H_ */
-

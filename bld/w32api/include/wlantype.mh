@@ -8,6 +8,7 @@
 #define __WLANTYPES_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* 802.11 SSID maximum length */
@@ -76,4 +77,3 @@ typedef DOT11_AUTH_CIPHER_PAIR  *PDOT11_AUTH_CIPHER_PAIR;
 :include cplusepi.sp
 
 #endif /* __WLANTYPES_H__ */
-

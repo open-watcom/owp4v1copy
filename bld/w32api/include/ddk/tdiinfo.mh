@@ -8,6 +8,7 @@
 #define TDI_INFO_INCLUDED
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -138,4 +139,3 @@ typedef TDI_TL_IO_CONTROL_ENDPOINT  *PTDI_TL_IO_CONTROL_ENDPOINT;
 :include cplusepi.sp
 
 #endif /* TDI_INFO_INCLUDED */
-

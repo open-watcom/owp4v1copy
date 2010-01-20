@@ -15,6 +15,7 @@
 #define __mshtml_h__
 
 :include readonly.sp
+
 #include <ocidl.h>
 #include <dimm.h>
 #include <shtypes.h>
@@ -27704,4 +27705,3 @@ DECLARE_INTERFACE_( IHostBehaviorInit, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __mshtml_h__ */
-

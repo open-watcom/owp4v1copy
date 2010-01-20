@@ -15,6 +15,7 @@
 #define __ocidl_h__
 
 :include readonly.sp
+
 #include <oleidl.h>
 #include <oaidl.h>
 #include <servprov.h>
@@ -1958,4 +1959,3 @@ typedef IQuickActivate  *LPQUICKACTIVATE;
 :include cplusepi.sp
 
 #endif /* __ocidl_h__ */
-

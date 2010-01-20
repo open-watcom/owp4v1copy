@@ -8,6 +8,7 @@
 #define _LMSERVER_
 
 :include readonly.sp
+
 #include <winsvc.h>
 #include <lmcons.h>
 
@@ -1466,4 +1467,3 @@ WINADVAPI BOOL WINAPI   SetServiceBits( SERVICE_STATUS_HANDLE, DWORD, BOOL, BOOL
 :include cplusepi.sp
 
 #endif /* _LMSERVER_ */
-

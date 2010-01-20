@@ -8,6 +8,7 @@
 #define __VSSTYLE_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Visual style classes */
@@ -1579,4 +1580,3 @@ enum CLOSEBUTTONSTATES {
 :include cplusepi.sp
 
 #endif /* __VSSTYLE_H__ */
-

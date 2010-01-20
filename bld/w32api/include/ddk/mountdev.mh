@@ -8,6 +8,7 @@
 #define _MOUNTDEV_
 
 :include readonly.sp
+
 #include <mountmgr.h>
 
 :include cpluspro.sp
@@ -60,4 +61,3 @@ typedef MOUNTDEV_STABLE_GUID    *PMOUNTDEV_STABLE_GUID;
 :include cplusepi.sp
 
 #endif /* _MOUNTDEV_ */
-

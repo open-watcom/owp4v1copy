@@ -8,6 +8,7 @@
 #define _INC_PROFINFO
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Profile information */
@@ -44,4 +45,3 @@ typedef LPPROFILEINFOA  LPPROFILEINFO;
 :include cplusepi.sp
 
 #endif /* _INC_PROFINFO */
-

@@ -8,6 +8,7 @@
 #define _ADSPROP_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ADS property sheet messages */
@@ -54,4 +55,3 @@ STDAPI_( BOOL ) ADsPropShowErrorDialog( HWND, HWND );
 :include cplusepi.sp
 
 #endif /* _ADSPROP_H_ */
-

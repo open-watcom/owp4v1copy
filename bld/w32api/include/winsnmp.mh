@@ -8,6 +8,7 @@
 #define _INC_WINSNMP
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* SNMP calling convention */
@@ -281,4 +282,3 @@ SNMPAPI_STATUS SNMPAPI_CALL SnmpStrToOid( LPCSTR, smiLPOID );
 :include cplusepi.sp
 
 #endif /* _INC_WINSNMP */
-

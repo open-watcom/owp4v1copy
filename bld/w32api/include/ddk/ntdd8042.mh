@@ -8,6 +8,7 @@
 #define _NTDD8042_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* I8042 internal device I/O control codes */
@@ -151,4 +152,3 @@ typedef INTERNAL_I8042_START_INFORMATION    *PINTERNAL_I8042_START_INFORMATION;
 :include cplusepi.sp
 
 #endif /* _NTDD8042_ */
-

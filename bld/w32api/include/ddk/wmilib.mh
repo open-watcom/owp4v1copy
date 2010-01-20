@@ -8,6 +8,7 @@
 #define _WMILIB_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* WMI GUID registration information */
@@ -71,4 +72,3 @@ NTSTATUS NTAPI  WmiSystemControl( PWMILIB_CONTEXT, PDEVICE_OBJECT, PIRP, PSYSCTL
 :include cplusepi.sp
 
 #endif /* _WMILIB_ */
-

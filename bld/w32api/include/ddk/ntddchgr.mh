@@ -8,6 +8,7 @@
 #define _NTDDCHGR_H_
 
 :include readonly.sp
+
 #include <ntddstor.h>
 
 :include cpluspro.sp
@@ -337,4 +338,3 @@ typedef CHANGER_DEVICE_PROBLEM_TYPE *PCHANGER_DEVICE_PROBLEM_TYPE;
 :include cplusepi.sp
 
 #endif /* _NTDDCHGR_H_ */
-

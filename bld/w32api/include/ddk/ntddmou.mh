@@ -8,6 +8,7 @@
 #define _NTDDMOU_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Mouse device name */
@@ -101,4 +102,3 @@ typedef MOUSE_UNIT_ID_PARAMETER *PMOUSE_UNIT_ID_PARAMETER;
 :include cplusepi.sp
 
 #endif /* _NTDDMOU_ */
-

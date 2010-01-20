@@ -8,6 +8,7 @@
 #define __DD_INCLUDED__
 
 :include readonly.sp
+
 #include <ddraw.h>
 #include <dvp.h>
 
@@ -1423,4 +1424,3 @@ typedef DD_DESTROYDDLOCALDATA   *PDD_DESTROYDDLOCALDATA;
 :include cplusepi.sp
 
 #endif /* __DD_INCLUDED__ */
-

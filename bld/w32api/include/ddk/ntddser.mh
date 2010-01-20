@@ -18,6 +18,7 @@
 #define _NTDDSER_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Physical address data type alias */
@@ -468,4 +469,3 @@ typedef SERENUM_PORT_PARAMETERS *PSERENUM_PORT_PARAMETERS;
 :include cplusepi.sp
 
 #endif /* _NTDDSER_ */
-

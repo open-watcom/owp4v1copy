@@ -8,6 +8,7 @@
 #define _d3d9TYPES_H_
 
 :include readonly.sp
+
 #include <float.h>
 
 :include cpluspro.sp
@@ -1948,4 +1949,3 @@ EXTERN_C const GUID D3DAUTHENTICATEDCONFIGURE_ENCRYPTIONWHENACCESSIBLE;
 :include cplusepi.sp
 
 #endif /* _d3d9TYPES_H_ */
-

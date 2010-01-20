@@ -15,6 +15,7 @@
 #define __objidl_h__
 
 :include readonly.sp
+
 #include <unknwn.h>
 #include <wtypes.h>
 
@@ -3060,4 +3061,3 @@ typedef IInitializeSpy  *LPINITIALIZESPY;
 :include cplusepi.sp
 
 #endif /* __objidl_h__ */
-

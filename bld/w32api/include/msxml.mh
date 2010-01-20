@@ -15,6 +15,7 @@
 #define __msxml_h__
 
 :include readonly.sp
+
 #include <oaidl.h>
 
 :include cpluspro.sp
@@ -3284,4 +3285,3 @@ DECLARE_INTERFACE_( IXMLError, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __msxml_h__ */
-

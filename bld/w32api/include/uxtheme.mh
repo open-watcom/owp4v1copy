@@ -8,6 +8,7 @@
 #define _UXTHEME_H_
 
 :include readonly.sp
+
 #include <commctrl.h>
 
 :include cpluspro.sp
@@ -351,4 +352,3 @@ THEMEAPI            SetWindowThemeAttribute( HWND, enum WINDOWTHEMEATTRIBUTETYPE
 :include cplusepi.sp
 
 #endif /* _UXTHEME_H_ */
-

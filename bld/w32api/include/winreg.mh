@@ -8,6 +8,7 @@
 #define _WINREG_
 
 :include readonly.sp
+
 #include <reason.h>
 
 :include cpluspro.sp
@@ -357,4 +358,3 @@ WINADVAPI LSTATUS APIENTRY  RegSetKeyValueW( HKEY, LPCWSTR, LPCWSTR, DWORD, LPCV
 :include cplusepi.sp
 
 #endif /* _WINREG_ */
-

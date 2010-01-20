@@ -8,6 +8,7 @@
 #define __VIDEOAGP_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Video AGP rates */
@@ -54,4 +55,3 @@ BOOLEAN STDAPICALLTYPE  VideoPortGetAgpServices( PVOID, PVIDEO_PORT_AGP_SERVICES
 :include cplusepi.sp
 
 #endif /* __VIDEOAGP_H__ */
-

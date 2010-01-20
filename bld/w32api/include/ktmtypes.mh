@@ -8,6 +8,7 @@
 #define _KTMTYPES_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -191,4 +192,3 @@ typedef KCRM_PROTOCOL_BLOB  *PRKCRM_PROTOCOL_BLOB;
 :include cplusepi.sp
 
 #endif /* _KTMTYPES_ */
-

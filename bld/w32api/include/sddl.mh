@@ -8,6 +8,7 @@
 #define __SDDL_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* SDDL version numbers */
@@ -201,4 +202,3 @@ WINADVAPI BOOL WINAPI   ConvertStringSidToSidW( LPCWSTR, PSID * );
 :include cplusepi.sp
 
 #endif /* __SDDL_H__ */
-

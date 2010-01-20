@@ -8,6 +8,7 @@
 #define _LMAT_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Scheduling flags */
@@ -53,4 +54,3 @@ NET_API_STATUS NET_API_FUNCTION NetScheduleJobGetInfo( LPCWSTR, DWORD, LPBYTE * 
 :include cplusepi.sp
 
 #endif /* _LMAT_ */
-

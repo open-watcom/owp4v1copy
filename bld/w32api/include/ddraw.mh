@@ -8,6 +8,7 @@
 #define __DDRAW_INCLUDED__
 
 :include readonly.sp
+
 #define COM_NO_WINDOWS_H
 #include <objbase.h>
 
@@ -3223,4 +3224,3 @@ extern HRESULT WINAPI   DirectDrawEnumerateW( LPDDENUMCALLBACKW, LPVOID );
 :include cplusepi.sp
 
 #endif /* __DDRAW_INCLUDED__ */
-

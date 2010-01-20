@@ -8,6 +8,7 @@
 #define _DHCPCSDK_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* DHCP options */
@@ -133,4 +134,3 @@ DWORD APIENTRY  DhcpUndoRequestParams( DWORD, LPVOID, LPWSTR, LPWSTR );
 :include cplusepi.sp
 
 #endif /* _DHCPCSDK_ */
-

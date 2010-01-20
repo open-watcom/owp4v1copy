@@ -8,6 +8,7 @@
 #define _LZEXPAND_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* LZ error codes */
@@ -46,4 +47,3 @@ INT APIENTRY    LZStart( VOID );
 :include cplusepi.sp
 
 #endif /* _LZEXPAND_ */
-

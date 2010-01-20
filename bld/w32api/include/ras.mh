@@ -8,6 +8,7 @@
 #define _RAS_H_
 
 :include readonly.sp
+
 #include <lmcons.h>
 #include <inaddr.h>
 #include <in6addr.h>
@@ -1555,4 +1556,3 @@ DWORD APIENTRY  RasUpdateConnection( HRASCONN, LPRASUPDATECONN );
 :include cplusepi.sp
 
 #endif /* _RAS_H_ */
-

@@ -13,6 +13,7 @@
 #define _WINABLE_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify accessibility functions */
@@ -223,4 +224,3 @@ WINABLEAPI UINT WINAPI  SendInput( UINT, LPINPUT, int );
 :include cplusepi.sp
 
 #endif /* _WINABLE_ */
-

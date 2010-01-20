@@ -14,6 +14,7 @@
 #define _INC_COMMCTRL
 
 :include readonly.sp
+
 #include <prsht.h>
 
 :include cpluspro.sp
@@ -7181,4 +7182,3 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
 
 #endif /* _INC_COMMCTRL */
 :endsegment
-

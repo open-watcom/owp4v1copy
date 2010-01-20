@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to define a known folder identifier */
@@ -115,4 +116,3 @@ EXTERN_C const GUID FOLDERID_UserPinned;
 EXTERN_C const GUID FOLDERID_ImplicitAppShortcuts;
 
 :include cplusepi.sp
-

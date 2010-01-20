@@ -10,6 +10,7 @@
 #define __HIDCLASS_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* GUID class input string */
@@ -137,4 +138,3 @@ typedef HID_DRIVER_CONFIG   *PHID_DRIVER_CONFIG;
 :include cplusepi.sp
 
 #endif /* __HIDCLASS_H__ */
-

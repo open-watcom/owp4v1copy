@@ -30,4 +30,3 @@ typedef struct _D3DVECTOR {
 typedef D3DVECTOR   *LPD3DVECTOR;
 
 #endif /* DX_SHARED_DEFINES */
-

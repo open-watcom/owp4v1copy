@@ -8,6 +8,7 @@
 #define __EDEVDEFS__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Device ports */
@@ -390,4 +391,3 @@
 :include cplusepi.sp
 
 #endif /* __EDEVDEFS__ */
-

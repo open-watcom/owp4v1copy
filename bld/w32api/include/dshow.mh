@@ -8,6 +8,7 @@
 #define __DSHOW_INCLUDED__
 
 :include readonly.sp
+
 #include <windows.h>
 #include <windowsx.h>
 #include <olectl.h>
@@ -25,4 +26,3 @@
 #include <dvdevcod.h>
 
 #endif /* __DSHOW_INCLUDED__ */
-

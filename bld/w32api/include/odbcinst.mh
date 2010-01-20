@@ -8,6 +8,7 @@
 #define __ODBCINST_H
 
 :include readonly.sp
+
 #include <sql.h>
 
 :include cpluspro.sp
@@ -175,4 +176,3 @@ BOOL INSTAPI    ConfigDriverW( HWND, WORD, LPCWSTR, LPCWSTR, LPWSTR, WORD, WORD 
 :include cplusepi.sp
 
 #endif /* __ODBCINST_H */
-

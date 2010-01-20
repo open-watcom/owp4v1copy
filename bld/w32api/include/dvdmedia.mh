@@ -8,6 +8,7 @@
 #define __DVDMEDIA_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ActiveMovie primitive data types */
@@ -414,4 +415,3 @@ typedef enum {
 :include cplusepi.sp
 
 #endif /* __DVDMEDIA_H__ */
-

@@ -8,6 +8,7 @@
 #define _OLEDLG_H_
 
 :include readonly.sp
+
 #include <prsht.h>
 
 :include cpluspro.sp
@@ -1110,4 +1111,3 @@ STDAPI_( BOOL ) OleUIUpdateLinksW( LPOLEUILINKCONTAINERW, HWND, LPWSTR, int );
 :include cplusepi.sp
 
 #endif /* _OLEDLG_H_ */
-

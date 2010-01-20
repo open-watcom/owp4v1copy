@@ -8,6 +8,7 @@
 #define _NTDSBMSG_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Facility codes */
@@ -213,4 +214,3 @@
 :include cplusepi.sp
 
 #endif /* _NTDSBMSG_ */
-

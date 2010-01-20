@@ -15,6 +15,7 @@
 #define __unknwn_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* GUIDs */
@@ -66,4 +67,3 @@ typedef IClassFactory   *LPCLASSFACTORY;
 :include cplusepi.sp
 
 #endif /* __unknwn_h__ */
-

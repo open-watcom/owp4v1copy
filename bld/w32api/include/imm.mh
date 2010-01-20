@@ -8,6 +8,7 @@
 #define _IMM_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* IMM handle data types */
@@ -638,4 +639,3 @@ DWORD WINAPI    ImmGetImeMenuItemsW( HIMC, DWORD, DWORD, LPIMEMENUITEMINFOW, LPI
 :include cplusepi.sp
 
 #endif /* _IMM_ */
-

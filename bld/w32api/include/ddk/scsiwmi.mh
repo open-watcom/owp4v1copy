@@ -8,6 +8,7 @@
 #define _SCSIWMI_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* WMI registration flags */
@@ -69,4 +70,3 @@ typedef SCSI_WMILIB_CONTEXT *PSCSI_WMILIB_CONTEXT;
 :include cplusepi.sp
 
 #endif /* _SCSIWMI_ */
-

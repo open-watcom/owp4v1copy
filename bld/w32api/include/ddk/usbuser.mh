@@ -8,6 +8,7 @@
 #define __USBUSER_H__
 
 :include readonly.sp
+
 #if (_WIN32_WINNT >= 0x0501)
     #include <usbiodef.h>
 #endif
@@ -479,4 +480,3 @@ typedef USBUSER_REFRESH_HCT_REG *PUSBUSER_REFRESH_HCT_REG;
 :include cplusepi.sp
 
 #endif /* __USBUSER_H__ */
-

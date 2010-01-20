@@ -15,6 +15,7 @@
 #define __qedit_h__
 
 :include readonly.sp
+
 #include <oaidl.h>
 #include <ocidl.h>
 #include <dxtrans.h>
@@ -1816,4 +1817,3 @@ DECLARE_INTERFACE_( IResize, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __qedit_h__ */
-

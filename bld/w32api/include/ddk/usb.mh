@@ -8,6 +8,7 @@
 #define __USB_H__
 
 :include readonly.sp
+
 #include <usb200.h>
 
 :include cpluspro.sp
@@ -583,4 +584,3 @@ typedef URB *PURB;
 :include cplusepi.sp
 
 #endif /* __USB_H__ */
-

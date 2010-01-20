@@ -8,6 +8,7 @@
 #define _NTSCSI_
 
 :include readonly.sp
+
 #ifndef _NTSCSI_USER_MODE_
     #include <srb.h>
 #endif
@@ -2937,4 +2938,3 @@ typedef TWO_BYTE    *PTWO_BYTE;
 :include cplusepi.sp
 
 #endif /* _NTSCSI_ */
-

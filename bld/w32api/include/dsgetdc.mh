@@ -8,6 +8,7 @@
 #define _DSGETDC_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Domain to specify domain controller functions */
@@ -223,4 +224,3 @@ DSGETDCAPI DWORD WINAPI DsGetDcOpenW( LPCWSTR, ULONG, LPCWSTR, GUID *, LPCWSTR, 
 :include cplusepi.sp
 
 #endif /* _DSGETDC_ */
-

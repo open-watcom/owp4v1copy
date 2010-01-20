@@ -15,6 +15,7 @@
 #define __objsafe_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Interface safety option flags */
@@ -58,4 +59,3 @@ typedef IObjectSafety   *LPOBJECTSAFETY;
 :include cplusepi.sp
 
 #endif /* __objsafe_h__ */
-

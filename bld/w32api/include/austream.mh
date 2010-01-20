@@ -15,6 +15,7 @@
 #define __austream_h__
 
 :include readonly.sp
+
 #include <mmstream.h>
 
 :include cpluspro.sp
@@ -183,4 +184,3 @@ DECLARE_INTERFACE_( IAudioData, IMemoryData ) {
 :include cplusepi.sp
 
 #endif /* __austream_h__ */
-

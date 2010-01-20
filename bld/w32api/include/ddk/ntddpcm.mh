@@ -8,6 +8,7 @@
 #define _NTDDPCMH_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -160,4 +161,3 @@ typedef PCMCIA_BUS_INTERFACE_STANDARD   *PPCMCIA_BUS_INTERFACE_STANDARD;
 :include cplusepi.sp
 
 #endif /* _NTDDPCMH_ */
-

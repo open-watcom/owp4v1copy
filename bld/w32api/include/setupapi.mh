@@ -8,6 +8,7 @@
 #define _INC_SETUPAPI
 
 :include readonly.sp
+
 #include <spapidef.h>
 #include <commctrl.h>
 #include <devpropdef.h>
@@ -2508,4 +2509,3 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
 :include cplusepi.sp
 
 #endif /* _INC_SETUPAPI */
-

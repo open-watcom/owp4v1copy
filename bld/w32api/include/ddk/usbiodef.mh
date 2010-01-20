@@ -8,6 +8,7 @@
 #define __USBIODEF_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* USB I/O control indices */
@@ -85,4 +86,3 @@ typedef USB_IDLE_CALLBACK_INFO  *PUSB_IDLE_CALLBACK_INFO;
 :include cplusepi.sp
 
 #endif /* __USBIODEF_H__ */
-

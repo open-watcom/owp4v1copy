@@ -18,4 +18,3 @@ WintrustLoadFunctionPointers@8
 WintrustRemoveActionID@4
 WintrustSetDefaultIncludePEPageHashes@4
 WintrustSetRegPolicyFlags@4
-

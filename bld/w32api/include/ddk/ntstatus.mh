@@ -8,6 +8,7 @@
 #define _NTSTATUS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Facility codes */
@@ -2074,4 +2075,3 @@
 :include cplusepi.sp
 
 #endif /* _NTSTATUS_ */
-

@@ -8,6 +8,7 @@
 #define _IPMIB_
 
 :include readonly.sp
+
 #include <ifmib.h>
 #include <nldef.h>
 
@@ -518,4 +519,3 @@ typedef MIB_IPMCAST_IF_TABLE    *PMIB_IPMCAST_IF_TABLE;
 :include cplusepi.sp
 
 #endif /* _IPMIB_ */
-

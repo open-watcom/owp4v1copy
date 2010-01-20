@@ -15,6 +15,7 @@
 #define __naptypes_h__
 
 :include readonly.sp
+
 #include <oaidl.h>
 #include <ocidl.h>
 
@@ -229,4 +230,3 @@ typedef enum tagRemoteConfigurationType {
 :include cplusepi.sp
 
 #endif /* __naptypes_h__ */
-

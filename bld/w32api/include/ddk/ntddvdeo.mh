@@ -8,6 +8,7 @@
 #define _NTDDVDEO_
 
 :include readonly.sp
+
 #include <tvout.h>
 
 :include cpluspro.sp
@@ -795,4 +796,3 @@ typedef VIDEO_QUERY_PERFORMANCE_COUNTER *PVIDEO_QUERY_PERFORMANCE_COUNTER;
 :include cplusepi.sp
 
 #endif /* _NTDDVDEO_ */
-

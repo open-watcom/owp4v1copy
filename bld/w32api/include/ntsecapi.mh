@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 /* LSA GUIDs */
 #if !defined( INITGUID ) || !defined( _LSA_GUIDS_DEFINED )
 DEFINE_GUID( Audit_System_SecurityStateChange, 0x0CCE9210, 0x69AE, 0x11D9, 0xBE, 0xD3, 0x50, 0x50, 0x54, 0x50, 0x30, 0x30 );
@@ -2251,4 +2252,3 @@ BOOLEAN NTAPI   RtlGenRandom( PVOID, ULONG );
 :include cplusepi.sp
 
 #endif /* _NTSECAPI_ */
-

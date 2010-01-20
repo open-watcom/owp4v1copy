@@ -17,4 +17,3 @@ typedef HLOG    *PHLOG;
 typedef HLOG    *LPHLOG;
 
 #endif /* _LMHLOGDEFINED_ */
-

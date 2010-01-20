@@ -8,6 +8,7 @@
 #define _NTDDK_
 
 :include readonly.sp
+
 #include <wdm.h>
 #include <mce.h>
 
@@ -5055,4 +5056,3 @@ __inline ULONG RtlActiveEnumeratorsHashTable( PRTL_DYNAMIC_HASH_TABLE x )
 :include cplusepi.sp
 
 #endif /* _NTDDK_ */
-

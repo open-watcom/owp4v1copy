@@ -4,4 +4,3 @@ capCreateCaptureWindowA@32
 capCreateCaptureWindowW@32
 capGetDriverDescriptionA@20
 capGetDriverDescriptionW@20
-

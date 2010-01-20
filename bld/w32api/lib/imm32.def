@@ -63,4 +63,3 @@ ImmSetStatusWindowPos@8
 ImmSimulateHotKey@8
 ImmUnregisterWordA@16
 ImmUnregisterWordW@16
-

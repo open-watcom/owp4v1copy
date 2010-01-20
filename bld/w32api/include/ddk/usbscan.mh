@@ -8,6 +8,7 @@
 #define _USBSCAN_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Maximum number of pipes */
@@ -194,4 +195,3 @@ typedef USBSCAN_TIMEOUT *PUSBSCAN_TIMEOUT;
 :include cplusepi.sp
 
 #endif /* _USBSCAN_H_ */
-

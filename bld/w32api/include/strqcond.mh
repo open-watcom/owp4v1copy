@@ -15,6 +15,7 @@
 #define __structuredquerycondition_h__
 
 :include readonly.sp
+
 #include <oaidl.h>
 #include <ocidl.h>
 #include <objidl.h>
@@ -202,4 +203,3 @@ DECLARE_INTERFACE_( ICondition2, ICondition ) {
 #endif
 
 #endif /* __structuredquerycondition_h__ */
-

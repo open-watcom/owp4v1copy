@@ -8,6 +8,7 @@
 #define __HIDUSAGE_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -200,4 +201,3 @@ typedef USHORT  *PUSAGE;
 :include cplusepi.sp
 
 #endif /* __HIDUSAGE_H__ */
-

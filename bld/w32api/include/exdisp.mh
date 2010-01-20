@@ -15,6 +15,7 @@
 #define __exdisp_h__
 
 :include readonly.sp
+
 #include <ocidl.h>
 #include <docobj.h>
 
@@ -1568,4 +1569,3 @@ DECLARE_INTERFACE_( IScriptErrorList, IDispatch ) {
 :include cplusepi.sp
 
 #endif /* __exdisp_h__ */
-

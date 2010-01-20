@@ -4,4 +4,3 @@
 typedef LONG    NTSTATUS;
 typedef LONG    *PNTSTATUS;
 #endif
-

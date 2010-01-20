@@ -8,6 +8,7 @@
 #define _INC_CUSTCNTL
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* String lengths */
@@ -134,4 +135,3 @@ typedef UINT    (CALLBACK *LPFNCCINFOW)( LPCCINFOW );
 :include cplusepi.sp
 
 #endif /* _INC_CUSTCNTL */
-

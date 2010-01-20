@@ -8,6 +8,7 @@
 #define _RICHOLE_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Rich edit object interface flags */
@@ -120,4 +121,3 @@ typedef IRichEditOleCallback    *LPRICHEDITOLECALLBACK;
 :include cplusepi.sp
 
 #endif /* _RICHOLE_ */
-

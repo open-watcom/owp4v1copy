@@ -8,6 +8,7 @@
 #define _RASSAPI_H_
 
 :include readonly.sp
+
 #include <lmcons.h>
 
 :include cpluspro.sp
@@ -229,4 +230,3 @@ VOID APIENTRY   RasAdminReleaseIpAddress( WCHAR *, WCHAR *, IPADDR * );
 :include cplusepi.sp
 
 #endif /* _RASSAPI_H_ */
-

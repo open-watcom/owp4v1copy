@@ -8,6 +8,7 @@
 #define _INC_UPS_DRIVER_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* UPS system states */
@@ -43,4 +44,3 @@ void NTAPI  UPSWaitForStateChange( DWORD, DWORD );
 :include cplusepi.sp
 
 #endif /* _INC_UPS_DRIVER_H_ */
-

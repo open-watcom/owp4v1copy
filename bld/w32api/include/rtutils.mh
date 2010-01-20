@@ -8,6 +8,7 @@
 #define __ROUTING_RTUTILS_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* TraceRegisterEx() flags */
@@ -214,4 +215,3 @@ DWORD APIENTRY  TraceVprintfExW( DWORD, DWORD, LPCWSTR, va_list );
 :include cplusepi.sp
 
 #endif /* __ROUTING_RTUTILS_H__ */
-

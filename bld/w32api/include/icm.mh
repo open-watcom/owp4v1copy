@@ -8,6 +8,7 @@
 #define _ICM_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -692,4 +693,3 @@ BOOL WINAPI         CMTranslateRGBsExt( HCMTRANSFORM, LPVOID, BMFORMAT, DWORD, D
 :include cplusepi.sp
 
 #endif /* _ICM_H_ */
-

@@ -15,6 +15,7 @@
 #define __mlang_h__
 
 :include readonly.sp
+
 #include <unknwn.h>
 
 :include cpluspro.sp
@@ -1010,4 +1011,3 @@ typedef IMultiLanguage3 *LPMULTILANGUAGE3;
 :include cplusepi.sp
 
 #endif /* __mlang_h__ */
-

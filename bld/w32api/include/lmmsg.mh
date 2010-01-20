@@ -8,6 +8,7 @@
 #define _LMMSG_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Message forward flags */
@@ -41,4 +42,3 @@ NET_API_STATUS NET_API_FUNCTION NetMessageNameGetInfo( LPCWSTR, LPCWSTR, DWORD, 
 :include cplusepi.sp
 
 #endif /* _LMMSG_ */
-

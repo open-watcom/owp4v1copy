@@ -8,6 +8,7 @@
 #define _LMREMUTL_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Description character */
@@ -58,4 +59,3 @@ NET_API_STATUS __cdecl          RxRemoteApi( DWORD, LPCWSTR, LPDESC, LPDESC, LPD
 :include cplusepi.sp
 
 #endif /* _LMREMUTL_ */
-

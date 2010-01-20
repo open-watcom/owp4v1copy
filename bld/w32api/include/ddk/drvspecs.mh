@@ -8,6 +8,7 @@
 #define DRIVERSPECS_H
 
 :include readonly.sp
+
 #include <specstrings.h>
 
 :include cpluspro.sp
@@ -118,4 +119,3 @@
 :include cplusepi.sp
 
 #endif /* DRIVERSPECS_H */
-

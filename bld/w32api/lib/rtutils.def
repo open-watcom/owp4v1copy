@@ -41,4 +41,3 @@ TraceRegisterExA@8
 TraceRegisterExW@8
 TraceVprintfExA@16
 TraceVprintfExW@16
-

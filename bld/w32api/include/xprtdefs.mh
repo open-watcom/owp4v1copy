@@ -8,6 +8,7 @@
 #define __XPRTDEFS__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Device ports */
@@ -458,4 +459,3 @@
 :include cplusepi.sp
 
 #endif /* __XPRTDEFS__ */
-

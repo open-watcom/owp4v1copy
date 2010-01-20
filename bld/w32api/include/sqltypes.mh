@@ -8,6 +8,7 @@
 #define __SQLTYPES
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Define default ODBC version number. */
@@ -211,4 +212,3 @@ typedef struct tagSQL_NUMERIC_STRUCT {
 :include cplusepi.sp
 
 #endif /* __SQLTYPES */
-

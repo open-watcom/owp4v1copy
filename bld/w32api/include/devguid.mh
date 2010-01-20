@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* GUIDs */
@@ -89,4 +90,3 @@ EXTERN_C const GUID GUID_DEVCLASS_FSFILTER_SYSTEM;
 EXTERN_C const GUID GUID_DEVCLASS_FSFILTER_INFRASTRUCTURE;
 
 :include cplusepi.sp
-

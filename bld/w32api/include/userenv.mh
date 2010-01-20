@@ -8,6 +8,7 @@
 #define _INC_USERENV
 
 :include readonly.sp
+
 #include <wbemcli.h>
 #include <profinfo.h>
 
@@ -291,4 +292,3 @@ USERENVAPI HRESULT WINAPI   CreateProfile( LPCWSTR, LPCWSTR, LPWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* _INC_USERENV */
-

@@ -8,6 +8,7 @@
 #define _IFDEF_
 
 :include readonly.sp
+
 #include <ipifcons.h>
 
 :include cpluspro.sp
@@ -300,4 +301,3 @@ typedef NDIS_INTERFACE_INFORMATION  *PNDIS_INTERFACE_INFORMATION;
 :include cplusepi.sp
 
 #endif /* _IFDEF_ */
-

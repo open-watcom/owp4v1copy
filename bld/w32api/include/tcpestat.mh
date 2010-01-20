@@ -8,6 +8,7 @@
 #define _TCPESTATS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* TCP extended statistics types */
@@ -238,4 +239,3 @@ typedef TCP_ESTATS_FINE_RTT_ROD_v0  *PTCP_ESTATS_FINE_RTT_ROD_v0;
 :include cplusepi.sp
 
 #endif /* _TCPESTATS_ */
-

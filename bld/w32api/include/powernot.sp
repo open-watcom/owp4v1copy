@@ -3,4 +3,3 @@
 typedef PVOID           HPOWERNOTIFY;
 typedef HPOWERNOTIFY    *PHPOWERNOTIFY;
 #endif
-

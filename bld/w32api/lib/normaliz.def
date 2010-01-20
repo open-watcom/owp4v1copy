@@ -2,4 +2,3 @@ LIBRARY NORMALIZ.DLL
 EXPORTS
 IsNormalizedString@12
 NormalizeString@20
-

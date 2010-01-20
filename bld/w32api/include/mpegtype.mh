@@ -8,6 +8,7 @@
 #define __MPEGTYPE__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ActiveMovie MPEG audio dual modes */
@@ -58,4 +59,3 @@ DECLARE_INTERFACE_( IMpegAudioDecoder, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __MPEGTYPE__ */
-

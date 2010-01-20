@@ -15,6 +15,7 @@
 #define __urlmon_h__
 
 :include readonly.sp
+
 #include <oleidl.h>
 #include <servprov.h>
 #include <msxml.h>
@@ -3045,4 +3046,3 @@ BOOL WINAPI WriteHitLogging( LPHIT_LOGGING_INFO );
 :include cplusepi.sp
 
 #endif /* __urlmon_h__ */
-

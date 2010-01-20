@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* AVI play flags */
@@ -34,4 +35,3 @@
 #define MCIERR_AVI_BADPALETTE           (MCIERR_CUSTOM_DRIVER_BASE + 108)
 
 :include cplusepi.sp
-

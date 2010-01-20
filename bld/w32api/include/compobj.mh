@@ -7,4 +7,3 @@
 :include readonly.sp
 
 #include <objbase.h>
-

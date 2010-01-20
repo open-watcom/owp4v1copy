@@ -8,6 +8,7 @@
 #define _PF_EXTEND_DEFS_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Packet filter hook constants */
@@ -43,4 +44,3 @@ typedef PF_SET_EXTENSION_HOOK_INFO  *PPF_SET_EXTENSION_HOOK_INFO;
 :include cplusepi.sp
 
 #endif /* _PF_EXTEND_DEFS_H_ */
-

@@ -8,6 +8,7 @@
 #define __RPCASYNC_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* RPC asynchronous state flags */
@@ -369,4 +370,3 @@ RPCRTAPI RPC_STATUS RPC_ENTRY   RpcServerUnsubscribeForNotification( RPC_BINDING
 :include cplusepi.sp
 
 #endif /* __RPCASYNC_H__ */
-

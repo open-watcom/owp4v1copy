@@ -8,6 +8,7 @@
 #define _ALERT_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Alerter mailslot name */
@@ -92,4 +93,3 @@ NET_API_STATUS NET_API_FUNCTION NetAlertRaiseEx( LPCWSTR, LPVOID, DWORD, LPCWSTR
 :include cplusepi.sp
 
 #endif /* _ALERT_ */
-

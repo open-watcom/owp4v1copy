@@ -15,6 +15,7 @@
 #define __dispex_h__
 
 :include readonly.sp
+
 #include <ocidl.h>
 #include <oleidl.h>
 #include <oaidl.h>
@@ -235,4 +236,3 @@ DECLARE_INTERFACE_( IProvideRuntimeContext, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __dispex_h__ */
-

@@ -5,4 +5,3 @@
     #define MAPI_CC     2L
     #define MAPI_BCC    3L
 #endif
-

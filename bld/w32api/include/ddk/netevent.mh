@@ -8,6 +8,7 @@
 #define _NETEVENT_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Network event codes */
@@ -611,4 +612,3 @@
 :include cplusepi.sp
 
 #endif /* _NETEVENT_ */
-

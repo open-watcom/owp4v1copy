@@ -8,6 +8,7 @@
 #define __RPCPROXY_H__
 
 :include readonly.sp
+
 #include <basetsd.h>
 #include <guiddef.h>
 #include <rpc.h>
@@ -313,4 +314,3 @@ ULONG STDMETHODCALLTYPE     NdrCStdStubBuffer_Release( IRpcStubBuffer *, IPSFact
 :include cplusepi.sp
 
 #endif /* __RPCPROXY_H__ */
-

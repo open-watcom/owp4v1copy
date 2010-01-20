@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 /* Define default version number */
 #ifndef WINVER
     #define WINVER  0x0500
@@ -20,4 +21,3 @@
 #define CB_ADDSTRING    (WM_USER + 3)
 
 :include static.sp
-

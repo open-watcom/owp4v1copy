@@ -8,6 +8,7 @@
 #define __VIDEO_H__
 
 :include readonly.sp
+
 #include <videoagp.h>
 
 :include cpluspro.sp
@@ -728,4 +729,3 @@ VIDEOPORT_API VOID NTAPI        VideoPortZeroMemory( PVOID, ULONG );
 :include cplusepi.sp
 
 #endif /* __VIDEO_H__ */
-

@@ -8,6 +8,7 @@
 #define NETERR_INCLUDED
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Network error codes */
@@ -340,4 +341,3 @@
 :include cplusepi.sp
 
 #endif /* NETERR_INCLUDED */
-

@@ -73,4 +73,3 @@ BOOL WINAPI     Ctl3dUnsubclassCtl( HWND );
 VOID WINAPI     Ctl3dWinIniChange( void );
 
 :include cplusepi.sp
-

@@ -8,6 +8,7 @@
 #define _INC_NEWDEV
 
 :include readonly.sp
+
 #include <setupapi.h>
 
 :include cpluspro.sp
@@ -81,4 +82,3 @@ BOOL WINAPI DiUninstallDevice( HWND, HDEVINFO, PSP_DEVINFO_DATA, DWORD, PBOOL );
 :include cplusepi.sp
 
 #endif /* _INC_NEWDEV */
-

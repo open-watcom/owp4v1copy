@@ -8,6 +8,7 @@
 #define _LMSHARE_
 
 :include readonly.sp
+
 #include <lmcons.h>
 
 :include cpluspro.sp
@@ -310,4 +311,3 @@ NET_API_STATUS NET_API_FUNCTION NetShareSetInfo( LMSTR, LMSTR, DWORD, LPBYTE, LP
 :include cplusepi.sp
 
 #endif /* _LMSHARE_ */
-

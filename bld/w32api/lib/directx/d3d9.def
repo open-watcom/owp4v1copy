@@ -9,4 +9,3 @@ D3DPERF_SetOptions@4
 D3DPERF_SetRegion@8
 Direct3DCreate9@4
 Direct3DCreate9Ex@8
-

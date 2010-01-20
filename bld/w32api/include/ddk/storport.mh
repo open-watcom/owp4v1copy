@@ -8,6 +8,7 @@
 #define _NTSTORPORT_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify storage port functions */
@@ -702,4 +703,3 @@ __inline ULONG StorPortFreeContiguousMemorySpecifyCache( PVOID p1, PVOID p2, SIZ
 :include cplusepi.sp
 
 #endif /* _NTSTORPORT_ */
-

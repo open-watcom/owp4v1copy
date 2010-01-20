@@ -8,6 +8,7 @@
 #define _RASERROR_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* RAS error codes */
@@ -343,4 +344,3 @@
 :include cplusepi.sp
 
 #endif /* _RASERROR_H_ */
-

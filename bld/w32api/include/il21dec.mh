@@ -8,6 +8,7 @@
 #define __IL21DEC__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* ActiveMovie Line 21 levels */
@@ -80,4 +81,3 @@ DECLARE_INTERFACE_( IAMLine21Decoder, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __IL21DEC__ */
-

@@ -8,6 +8,7 @@
 #define __ROUTING_IPINFOID_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* IP router manager version number */
@@ -40,4 +41,3 @@
 :include cplusepi.sp
 
 #endif /* __ROUTING_IPINFOID_H__ */
-

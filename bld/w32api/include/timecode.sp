@@ -22,4 +22,3 @@ typedef struct tagTIMECODE_SAMPLE {
 typedef TIMECODE_SAMPLE *PTIMECODE_SAMPLE;
 
 #endif /* TIMECODE_DEFINED */
-

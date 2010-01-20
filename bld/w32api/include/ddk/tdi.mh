@@ -8,6 +8,7 @@
 #define _TDI_USER_
 
 :include readonly.sp
+
 #include <netevent.h>
 #include <ntddtdi.h>
 
@@ -698,4 +699,3 @@ NTSTATUS NTAPI  TdiOpenNetbiosAddress( PHANDLE, PUCHAR, PVOID, PVOID );
 :include cplusepi.sp
 
 #endif /* _TDI_USER_ */
-

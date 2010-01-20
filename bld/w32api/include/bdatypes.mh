@@ -8,6 +8,7 @@
 #define _BDATYPES_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* PBDA result data type */
@@ -867,4 +868,3 @@ typedef enum BDA_DISCOVERY_STATE {
 :include cplusepi.sp
 
 #endif /* _BDATYPES_ */
-

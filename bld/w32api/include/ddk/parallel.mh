@@ -8,6 +8,7 @@
 #define _PARALLEL_
 
 :include readonly.sp
+
 #include <parallel.h>
 
 :include cpluspro.sp
@@ -481,4 +482,3 @@ static UCHAR    LegacyZipModeQualifier[LEGACYZIP_MODE_LEN] =
 :include cplusepi.sp
 
 #endif /* _PARALLEL_ */
-

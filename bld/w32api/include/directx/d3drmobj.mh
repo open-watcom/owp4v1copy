@@ -8,6 +8,7 @@
 #define _D3DRMOBJ_H_
 
 :include readonly.sp
+
 #include <d3drmdef.h>
 #include <d3d.h>
 
@@ -1402,4 +1403,3 @@ DECLARE_INTERFACE_( IDirect3DRMClippedVisual, IDirect3DRMVisual ) {
 :include cplusepi.sp
 
 #endif /* _D3DRMOBJ_H_ */
-

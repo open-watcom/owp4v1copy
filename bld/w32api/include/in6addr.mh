@@ -7,6 +7,7 @@
 #ifndef s6_addr
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Internet address (version 6) */
@@ -28,4 +29,3 @@ typedef IN6_ADDR    *LPIN6_ADDR;
 :include cplusepi.sp
 
 #endif /* s6_addr */
-

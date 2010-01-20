@@ -8,6 +8,7 @@
 #define _CLASS_
 
 :include readonly.sp
+
 #include <ntdddisk.h>
 #include <ntddcdrm.h>
 #include <ntddtape.h>
@@ -701,4 +702,3 @@ __inline VOID FREE_PORT_ALLOCATED_SENSE_BUFFER( PFUNCTIONAL_DEVICE_EXTENSION p1,
 :include cplusepi.sp
 
 #endif /* _CLASS_ */
-

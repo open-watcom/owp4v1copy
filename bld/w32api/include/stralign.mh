@@ -8,6 +8,7 @@
 #define __STRALIGN_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Aliases */
@@ -58,4 +59,3 @@
 :include cplusepi.sp
 
 #endif /* __STRALIGN_H_ */
-

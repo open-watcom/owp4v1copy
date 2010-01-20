@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #include <isguids.h>
 #include <exdisp.h>
 #include <shldisp.h>
@@ -401,4 +402,3 @@ EXTERN_C const GUID     EP_AdvQueryPane;
 #endif
 
 :include cplusepi.sp
-

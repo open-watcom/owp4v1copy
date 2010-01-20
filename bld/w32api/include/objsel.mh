@@ -8,6 +8,7 @@
 #define __OBJSEL_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Selection list clipboard format */
@@ -182,4 +183,3 @@ DECLARE_INTERFACE_( IDsObjectPickerCredentials, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __OBJSEL_H_ */
-

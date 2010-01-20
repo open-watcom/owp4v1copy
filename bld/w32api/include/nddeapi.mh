@@ -8,6 +8,7 @@
 #define _INC_NDDEAPI
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Separator and bar characters */
@@ -149,4 +150,3 @@ UINT WINAPI NDdeTrustedShareEnumW( LPWSTR, UINT, LPBYTE, DWORD, LPDWORD, LPDWORD
 :include cplusepi.sp
 
 #endif /* _INC_NDDEAPI */
-

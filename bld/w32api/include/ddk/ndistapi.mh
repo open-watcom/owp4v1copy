@@ -8,6 +8,7 @@
 #define _NDIS_TAPI_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -1471,4 +1472,3 @@ typedef CO_AF_TAPI_SAP  *PCO_AF_TAPI_SAP;
 :include cplusepi.sp
 
 #endif /* _NDIS_TAPI_ */
-

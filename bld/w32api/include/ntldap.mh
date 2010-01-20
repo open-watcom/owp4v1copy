@@ -8,6 +8,7 @@
 #define NT_LDAP_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* LDAP object identifiers */
@@ -158,4 +159,3 @@
 :include cplusepi.sp
 
 #endif /* NT_LDAP_H */
-

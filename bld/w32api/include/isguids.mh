@@ -8,6 +8,7 @@
 #define _ISGUIDS_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* UUIDs */
@@ -23,4 +24,3 @@ EXTERN_C const IID      IID_IUniformResourceLocatorW;
 :include cplusepi.sp
 
 #endif /* _ISGUIDS_H_ */
-

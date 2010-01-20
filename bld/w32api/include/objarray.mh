@@ -15,6 +15,7 @@
 #define __objectarray_h__
 
 :include readonly.sp
+
 #include <oaidl.h>
 #include <ocidl.h>
 
@@ -81,4 +82,3 @@ DECLARE_INTERFACE_( IObjectCollection, IUnknown ) {
 #endif
 
 #endif /* __objectarray_h__ */
-

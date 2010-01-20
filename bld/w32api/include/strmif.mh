@@ -15,6 +15,7 @@
 #define __strmif_h__
 
 :include readonly.sp
+
 #include <ddraw.h>
 
 :include cpluspro.sp
@@ -6879,4 +6880,3 @@ DECLARE_INTERFACE_( IVPManager, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __strmif_h__ */
-

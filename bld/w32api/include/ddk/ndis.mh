@@ -8,6 +8,7 @@
 #define _NDIS_
 
 :include readonly.sp
+
 #include <ntddk.h>
 #include <ntstatus.h>
 #include <netevent.h>
@@ -5317,4 +5318,3 @@ __inline VOID NdisQueryPacket( PNDIS_PACKET x, PUINT p1, PUINT p2, PNDIS_BUFFER 
 :include cplusepi.sp
 
 #endif /* _NDIS_ */
-

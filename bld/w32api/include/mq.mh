@@ -8,6 +8,7 @@
 #define __MQ_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -733,4 +734,3 @@ HRESULT APIENTRY    MQReceiveMessageByLookupId( QUEUEHANDLE, ULONGLONG, DWORD, M
 :include cplusepi.sp
 
 #endif /* __MQ_H__ */
-

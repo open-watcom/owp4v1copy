@@ -8,6 +8,7 @@
 #define _LMUSE_
 
 :include readonly.sp
+
 #include <lmcons.h>
 #include <lmuseflg.h>
 
@@ -105,4 +106,3 @@ NET_API_STATUS NET_API_FUNCTION NetUseGetInfo( LMSTR, LMSTR, DWORD, LPBYTE * );
 :include cplusepi.sp
 
 #endif /* _LMUSE_ */
-

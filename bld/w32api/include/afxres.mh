@@ -1,5 +1,5 @@
 /*
- *  afxres.h    Application framework resource definitions
+ *  afxres.h    Application Framework resource definitions
  *
 :include crwatcnt.sp
  */
@@ -8,6 +8,7 @@
 #define __AFXRES_H__
 
 :include readonly.sp
+
 #ifdef RC_INVOKED
     #ifndef _INC_WINDOWS
         #define _INC_WINDOWS
@@ -619,4 +620,3 @@
 :include static.sp
 
 #endif /* __AFXRES_H__ */
-

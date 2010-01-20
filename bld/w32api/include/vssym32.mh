@@ -8,6 +8,7 @@
 #define __VSSYM32_H__
 
 :include readonly.sp
+
 #include <vsstyle.h>
 
 :include cpluspro.sp
@@ -625,4 +626,3 @@ enum MENUBANDSTATES {
 :include cplusepi.sp
 
 #endif /* __VSSYM32_H__ */
-

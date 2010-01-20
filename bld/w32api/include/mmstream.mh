@@ -15,6 +15,7 @@
 #define __mmstream_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -213,4 +214,3 @@ DECLARE_INTERFACE_( IStreamSample, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __mmstream_h__ */
-

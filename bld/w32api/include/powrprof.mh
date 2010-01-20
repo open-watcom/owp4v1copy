@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :include ntstatus.sp
@@ -268,4 +269,3 @@ STDAPI_( DWORD )    PowerSettingUnregisterNotification( HPOWERNOTIFY );
 #endif
 
 :include cplusepi.sp
-

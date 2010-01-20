@@ -8,6 +8,7 @@
 #define _CFGMGR32_H_
 
 :include readonly.sp
+
 #include <cfg.h>
 
 :include cpluspro.sp
@@ -1319,4 +1320,3 @@ CMAPI CONFIGRET WINAPI  CM_Write_UserPowerKey( CONST GUID *, CONST GUID *, CONST
 :include cplusepi.sp
 
 #endif /* _CFGMGR32_H_ */
-

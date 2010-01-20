@@ -3,4 +3,3 @@
 #define __SECSTATUS_DEFINED__
 typedef LONG    SECURITY_STATUS;
 #endif
-

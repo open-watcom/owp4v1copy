@@ -8,6 +8,7 @@
 #define _X_FILTER_DEFS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Primitive data types */
@@ -110,4 +111,3 @@ typedef ULONG   TR_GROUP_ADDRESS;
 :include cplusepi.sp
 
 #endif /* _X_FILTER_DEFS_ */
-

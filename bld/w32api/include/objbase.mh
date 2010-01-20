@@ -11,6 +11,7 @@
 #define _OBJBASE_H_
 
 :include readonly.sp
+
 #include <stdlib.h>
 
 /* Macros to specify OLE functions */
@@ -342,4 +343,3 @@ WINOLEAPI   StgOpenLayoutDocfile( OLECHAR const *, DWORD, DWORD, IStorage ** );
     ((x).HighPart = 0, (x).LowPart = (p))
 
 #endif /* _OBJBASE_H_ */
-

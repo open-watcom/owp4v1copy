@@ -8,6 +8,7 @@
 #define VER_H
 
 :include readonly.sp
+
 #include <verrsrc.h>
 
 /* The rest of the file should be ignored when resources are being compiled. */
@@ -53,4 +54,3 @@ BOOL APIENTRY   VerQueryValueW( const LPVOID, LPWSTR, LPVOID *, PUINT );
 #endif /* RC_INVOKED */
 
 #endif /* VER_H */
-

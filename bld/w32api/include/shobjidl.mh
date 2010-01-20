@@ -15,6 +15,7 @@
 #define __shobjidl_h__
 
 :include readonly.sp
+
 #include <objidl.h>
 #include <oleidl.h>
 #include <oaidl.h>
@@ -10074,4 +10075,3 @@ __inline void FreeKnownFolderDefinitionFields( KNOWNFOLDER_DEFINITION *x )
 :include cplusepi.sp
 
 #endif /* __shobjidl_h__ */
-

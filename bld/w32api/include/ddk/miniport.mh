@@ -8,6 +8,7 @@
 #define _MINIPORT_
 
 :include readonly.sp
+
 /* The Microsoft version of miniport.h is mostly a lot of the same stuff that's in
  * ntddk.h and wdm.h.  To save space, include ntddk.h and just define those constants
  * and structures that are unique to this header.
@@ -45,4 +46,3 @@ typedef VOID (NTAPI *PBANKED_SECTION_ROUTINE)( ULONG, ULONG, PVOID );
 :include cplusepi.sp
 
 #endif /* _MINIPORT */
-

@@ -8,6 +8,7 @@
 #define _NTDDVOL_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifndef IOCTL_VOLUME_BASE
@@ -281,4 +282,3 @@ typedef VOLUME_SHRINK_INFO  *PVOLUME_SHRINK_INFO;
 :include cplusepi.sp
 
 #endif /* _NTDDVOL_ */
-

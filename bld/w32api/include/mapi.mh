@@ -8,6 +8,7 @@
 #define MAPI_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* MAPI primitive data types */
@@ -155,4 +156,3 @@ ULONG PASCAL    MAPISendMail( LHANDLE, ULONG_PTR, lpMapiMessage, FLAGS, ULONG );
 :include cplusepi.sp
 
 #endif /* MAPI_H */
-

@@ -8,6 +8,7 @@
 #define __INTSHCUT_H__
 
 :include readonly.sp
+
 #include <isguids.h>
 
 :include cpluspro.sp
@@ -144,4 +145,3 @@ INTSHCUTAPI HRESULT WINAPI  URLAssociationDialogW( HWND, DWORD, PCWSTR, PCWSTR, 
 :include cplusepi.sp
 
 #endif /* __INTSHCUT_H__ */
-

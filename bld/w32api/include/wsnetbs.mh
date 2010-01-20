@@ -8,6 +8,7 @@
 #define _WSNETBS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Netbios name length */
@@ -46,4 +47,3 @@ typedef SOCKADDR_NB *LPSOCKADDR_NB;
 :include cplusepi.sp
 
 #endif /* _WSNETBS_ */
-

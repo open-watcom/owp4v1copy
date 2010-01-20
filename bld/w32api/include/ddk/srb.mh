@@ -8,6 +8,7 @@
 #define _NTSRB_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify SCSI port functions */
@@ -565,4 +566,3 @@ SCSIPORT_API VOID NTAPI     ScsiPortWriteRegisterUshort( PUSHORT, USHORT );
 :include cplusepi.sp
 
 #endif /* _NTSRB_ */
-

@@ -8,6 +8,7 @@
 #define _KBDMOU_
 
 :include readonly.sp
+
 #include <ntddkbd.h>
 #include <ntddmou.h>
 
@@ -74,4 +75,3 @@ typedef VOID (NTAPI *PSERVICE_CALLBACK_ROUTINE)( PVOID, PVOID, PVOID, PVOID );
 :include cplusepi.sp
 
 #endif /* _KBDMOU_ */
-

@@ -8,6 +8,7 @@
 #define _NTDDTAPE_
 
 :include readonly.sp
+
 #include <ntddstor.h>
 
 :include cpluspro.sp
@@ -285,4 +286,3 @@ typedef enum _TAPE_DRIVE_PROBLEM_TYPE {
 :include cplusepi.sp
 
 #endif /* _NTDDTAPE_ */
-

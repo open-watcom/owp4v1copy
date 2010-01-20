@@ -8,6 +8,7 @@
 #define _WINPERF_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #include <pshpack8.h>
@@ -272,4 +273,3 @@ typedef DWORD (APIENTRY PM_QUERY_PROC)( LPDWORD, LPVOID *, LPDWORD, LPDWORD );
 :include cplusepi.sp
 
 #endif /* _WINPERF_ */
-

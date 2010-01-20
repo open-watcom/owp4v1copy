@@ -563,4 +563,3 @@ const DIDATAFORMAT c_dfDIMouse = { 24L, 16L, 2L, 16L, 7L, &mouse_data };
 const DIDATAFORMAT c_dfDIJoystick = { 24L, 16L, 1L, 80L, 44L, &joystick_data };
 const DIDATAFORMAT c_dfDIJoystick2 = { 24L, 16L, 1L, 272L, 164L, &joystick2_data };
 const DIDATAFORMAT c_dfDIMouse2 = { 24L, 16L, 2L, 20L, 11L, &mouse2_data };
-

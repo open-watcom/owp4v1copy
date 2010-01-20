@@ -8,6 +8,7 @@
 #define _KSMEDIA_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Kernel streaming primitive data types */
@@ -3637,4 +3638,3 @@ typedef KSJACK_DESCRIPTION2 *PKSJACK_DESCRIPTION2;
 :include cplusepi.sp
 
 #endif /* _KSMEDIA_ */
-

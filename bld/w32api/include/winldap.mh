@@ -8,6 +8,7 @@
 #define LDAP_CLIENT_DEFINED
 
 :include readonly.sp
+
 #include <schnlsp.h>
 
 :include cpluspro.sp
@@ -843,4 +844,3 @@ WINLDAPAPI ULONG LDAPAPI    ldap_value_free_len( struct berval ** );
 :include cplusepi.sp
 
 #endif /* LDAP_CLIENT_DEFINED */
-

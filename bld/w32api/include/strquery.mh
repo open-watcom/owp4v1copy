@@ -15,6 +15,7 @@
 #define __structuredquery_h__
 
 :include readonly.sp
+
 #include <structuredquerycondition.h>
 #include <objectarray.h>
 #include <propkeydef.h>
@@ -640,4 +641,3 @@ DECLARE_INTERFACE_( IQueryParserManager, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __structuredquery_h__ */
-

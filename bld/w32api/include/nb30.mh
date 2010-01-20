@@ -8,6 +8,7 @@
 #define NCB_INCLUDED
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to define callback functions */
@@ -228,4 +229,3 @@ UCHAR APIENTRY  Netbios( PNCB );
 :include cplusepi.sp
 
 #endif /* NCB_INCLUDED */
-

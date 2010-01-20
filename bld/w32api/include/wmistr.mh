@@ -8,6 +8,7 @@
 #define _WMISTR_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* WMI node header flags */
@@ -234,4 +235,3 @@ typedef enum {
 :include cplusepi.sp
 
 #endif /* _WMISTR_ */
-

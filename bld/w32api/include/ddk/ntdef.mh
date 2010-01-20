@@ -8,6 +8,7 @@
 #define _NTDEF_
 
 :include readonly.sp
+
 #include <_w32ials.h>
 #include <ctype.h>
 #include <basetsd.h>
@@ -1142,4 +1143,3 @@ typedef enum _SUITE_TYPE {
 :include cplusepi.sp
 
 #endif /* _NTDEF_ */
-

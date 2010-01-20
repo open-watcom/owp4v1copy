@@ -11,6 +11,7 @@
 #define __shtypes_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Perceived flag data type */
@@ -202,4 +203,3 @@ typedef enum tagSHCOLSTATE {
 :include cplusepi.sp
 
 #endif /* __shtypes_h__ */
-

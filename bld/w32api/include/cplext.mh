@@ -8,6 +8,7 @@
 #define _INC_CPLEXT
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Property page identifiers */
@@ -20,4 +21,3 @@
 :include cplusepi.sp
 
 #endif /* _INC_CPLEXT */
-

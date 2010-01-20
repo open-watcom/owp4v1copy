@@ -8,6 +8,7 @@
 #define _D3D9_H_
 
 :include readonly.sp
+
 #include <d3d9types.h>
 #include <d3d9caps.h>
 
@@ -3123,4 +3124,3 @@ HRESULT WINAPI      Direct3DCreate9Ex( UINT, IDirect3D9Ex ** );
 :include cpluspro.sp
 
 #endif /* _D3D9_H_ */
-

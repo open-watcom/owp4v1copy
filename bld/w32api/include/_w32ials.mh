@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #pragma include_alias( <d3d9types.h>,                   <d3d9type.h> )
 #pragma include_alias( <devpropdef.h>,                  <devprdef.h> )
 #pragma include_alias( <driverspecs.h>,                 <drvspecs.h> )
@@ -18,4 +19,3 @@
 #pragma include_alias( <structuredquerycondition.h>,    <strqcond.h> )
 #pragma include_alias( <tcpestats.h>,                   <tcpestat.h> )
 #pragma include_alias( <wlantypes.h>,                   <wlantype.h> )
-

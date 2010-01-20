@@ -8,6 +8,7 @@
 #define _NLDEF_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Network layer maximum metric component */
@@ -195,4 +196,3 @@ typedef NL_NETWORK_CATEGORY *PNL_NETWORK_CATEGORY;
 :include cplusepi.sp
 
 #endif /* _NLDEF_ */
-

@@ -80,4 +80,3 @@
 #define WNNC_NET_LANMAN         WNNC_NET_SMB
 
 #endif /* _WNNC_ */
-

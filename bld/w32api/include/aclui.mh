@@ -8,6 +8,7 @@
 #define _ACLUI_H_
 
 :include readonly.sp
+
 #include <objbase.h>
 #include <commctrl.h>
 #include <accctrl.h>
@@ -219,4 +220,3 @@ HRESULT ACLUIAPI        EditSecurityAdvanced( HWND, LPSECURITYINFO, SI_PAGE_TYPE
 :include cplusepi.sp
 
 #endif /* _ACLUI_H_ */
-

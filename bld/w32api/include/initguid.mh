@@ -5,6 +5,6 @@
  */
 
 :include readonly.sp
+
 #define INITGUID
 #include <guiddef.h>
-

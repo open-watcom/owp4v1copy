@@ -8,6 +8,7 @@
 #define _IPXCONST_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Administrative states */
@@ -56,4 +57,3 @@
 :include cplusepi.sp
 
 #endif /* _IPXCONST_ */
-

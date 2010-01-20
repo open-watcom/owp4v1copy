@@ -8,6 +8,7 @@
 #define __IVPType__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Videoport format selection types */
@@ -64,4 +65,3 @@ typedef AMVPDATAINFO    *LPAMVPDATAINFO;
 :include cplusepi.sp
 
 #endif /* __IVPType__ */
-

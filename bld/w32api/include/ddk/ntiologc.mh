@@ -8,6 +8,7 @@
 #define _NTIOLOGC_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Facility codes */
@@ -166,4 +167,3 @@
 :include cplusepi.sp
 
 #endif /* _NTIOLOGC_ */
-

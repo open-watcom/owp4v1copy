@@ -8,6 +8,7 @@
 #define __TVOUT__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Video parameter commands */
@@ -92,4 +93,3 @@ typedef VIDEOPARAMETERS *LPVIDEOPARAMETERS;
 :include cplusepi.sp
 
 #endif /* __TVOUT__ */
-

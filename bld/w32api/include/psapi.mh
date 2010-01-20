@@ -8,6 +8,7 @@
 #define _PSAPI_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* PSAPI version number */
@@ -245,4 +246,3 @@ BOOL WINAPI     QueryWokringSetEx( HANDLE, PVOID, DWORD );
 :include cplusepi.sp
 
 #endif /* _PSAPI_H_ */
-

@@ -8,6 +8,7 @@
 #define _WINCON_
 
 :include readonly.sp
+
 #include <wingdi.h>
 
 :include cpluspro.sp
@@ -432,4 +433,3 @@ WINBASEAPI DWORD WINAPI     GetConsoleOriginalTitleW( LPWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* _WINCON_ */
-

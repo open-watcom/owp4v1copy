@@ -8,6 +8,7 @@
 #define _INC_VFW
 
 :include readonly.sp
+
 #include <mmsystem.h>
 #include <mmreg.h>
 #include <ole2.h>
@@ -1954,4 +1955,3 @@ __inline DWORD ICGetDefaultKeyFrameRate( HIC x )
 :include cplusepi.sp
 
 #endif /* _INC_VFW */
-

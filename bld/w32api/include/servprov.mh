@@ -15,6 +15,7 @@
 #define __servprov_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* GUIDs */
@@ -49,4 +50,3 @@ typedef IServiceProvider    *LPSERVICEPROVIDER;
 :include cplusepi.sp
 
 #endif /* __servprov_h__ */
-

@@ -15,6 +15,7 @@
 #define __oaidl_h__
 
 :include readonly.sp
+
 #include <objidl.h>
 
 :include cpluspro.sp
@@ -1546,4 +1547,3 @@ typedef IPropertyBag    *LPPROPERTYBAG;
 :include cplusepi.sp
 
 #endif /* __oaidl_h__ */
-

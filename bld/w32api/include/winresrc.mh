@@ -8,6 +8,7 @@
 #define _WINRESRC_
 
 :include readonly.sp
+
 #include <winuser.rh>
 #include <commctrl.rh>
 #include <dde.rh>
@@ -16,4 +17,3 @@
 #include <winver.h>
 
 #endif /* _WINRESRC_ */
-

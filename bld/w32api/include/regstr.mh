@@ -8,6 +8,7 @@
 #define _INC_REGSTR
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Registry key names */
@@ -1175,4 +1176,3 @@ typedef DSKTLSYSTEMTIME *LPDSKTLSYSTEMTIME;
 :include cplusepi.sp
 
 #endif /* _INC_REGSTR */
-

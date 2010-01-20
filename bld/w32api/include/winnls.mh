@@ -8,6 +8,7 @@
 #define _WINNLS_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Macro to specify normalization functions */
@@ -1112,4 +1113,3 @@ WINNORMALIZEAPI int WINAPI  NormalizeString( NORM_FORM, LPCWSTR, int, LPWSTR, in
 :include cplusepi.sp
 
 #endif /* _WINNLS_ */
-

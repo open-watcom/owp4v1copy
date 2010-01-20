@@ -15,6 +15,7 @@
 #define __shldisp_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Forward declarations */
@@ -2263,4 +2264,3 @@ typedef IAsyncOperation *LPASYNCOPERATION;
 :include cplusepi.sp
 
 #endif /* __shldisp_h__ */
-

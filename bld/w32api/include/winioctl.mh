@@ -20,6 +20,7 @@
 #define _WINIOCTL_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* This header contains a substantial number of constants and structures that overlap
@@ -3446,4 +3447,3 @@ typedef VOLUME_GET_GPT_ATTRIBUTES_INFORMATION   *PVOLUME_GET_GPT_ATTRIBUTES_INFO
 :include cplusepi.sp
 
 #endif /* _WINIOCTL_ */
-

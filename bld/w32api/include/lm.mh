@@ -8,6 +8,7 @@
 #define _LM_
 
 :include readonly.sp
+
 #include <lmcons.h>
 #include <lmerr.h>
 #include <lmaccess.h>
@@ -27,4 +28,3 @@
 #include <lmjoin.h>
 
 #endif /* _LM_ */
-

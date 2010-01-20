@@ -8,6 +8,7 @@
 #define __DVDECVOD__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* DVD event codes */
@@ -96,4 +97,3 @@ typedef enum _tagDVD_PB_STOPPED {
 :include cplusepi.sp
 
 #endif /* __DVDEVCOD__ */
-

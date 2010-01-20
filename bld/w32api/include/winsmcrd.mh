@@ -8,6 +8,7 @@
 #define _NTDDSCRD_H2_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Smart card protocol flags */
@@ -239,4 +240,3 @@ typedef SCARD_T1_REQUEST    *LPSCARD_T1_REQUEST;
 :include cplusepi.sp
 
 #endif /* _NTDDSCRD_H2_ */
-

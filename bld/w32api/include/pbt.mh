@@ -8,6 +8,7 @@
 #define _INC_PBT
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Power broadcast window message */
@@ -34,4 +35,3 @@
 :include cplusepi.sp
 
 #endif /* _INC_PBT */
-

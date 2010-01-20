@@ -8,6 +8,7 @@
 #define __RPCDCEP_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* Private RPC primitive data types */
@@ -351,4 +352,3 @@ RPCRTAPI RPC_STATUS RPC_ENTRY   I_RpcProxyNewConnection( unsigned long, unsigned
 :include cplusepi.sp
 
 #endif /* __RPCDCEP_H__ */
-

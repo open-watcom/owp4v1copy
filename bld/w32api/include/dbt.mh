@@ -8,6 +8,7 @@
 #define _DBT_H
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* BroadcastSystemMessage() flags not defined in winuser.h */
@@ -293,4 +294,3 @@ struct _DEV_BROADCAST_USERDEFINED {
 :include cplusepi.sp
 
 #endif /* _DBT_H */
-

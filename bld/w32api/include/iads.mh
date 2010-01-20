@@ -11,6 +11,7 @@
 #define __iads_h__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /* String data types */
@@ -5633,4 +5634,3 @@ DECLARE_INTERFACE_( IADsSecurityUtility, IDispatch ) {
 :include cplusepi.sp
 
 #endif /* __iads_h__ */
-
