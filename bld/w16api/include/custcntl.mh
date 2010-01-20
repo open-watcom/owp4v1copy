@@ -3,61 +3,63 @@
  *
 :include crwatcnt.sp
  */
-#ifndef	_INC_CUSTCNTL
-#define	_INC_CUSTCNTL
+
+#ifndef _INC_CUSTCNTL
+#define _INC_CUSTCNTL
 
 :include readonly.sp
-#ifndef	_INC_WINDOWS
+
+#ifndef _INC_WINDOWS
 #include <windows.h>
 #endif
 
-#pragma	pack(push,1)
+#pragma pack(push,1)
 
 :include cpluspro.sp
 
-#define	CCINFOORD	2
-#define	CCSTYLEORD	3
-#define	CCFLAGSORD	4
-#define	CTLTYPES	12
-#define	CTLDESCR	22
-#define	CTLCLASS	20
-#define	CTLTITLE	94
+#define CCINFOORD       2
+#define CCSTYLEORD      3
+#define CCFLAGSORD      4
+#define CTLTYPES        12
+#define CTLDESCR        22
+#define CTLCLASS        20
+#define CTLTITLE        94
 
-typedef	struct tagCTLSTYLE {
-	UINT	wX;
-	UINT	wY;
-	UINT	wCx;
-	UINT	wCy;
-	UINT	wId;
-	DWORD	dwStyle;
-	char	szClass[CTLCLASS];
-	char	szTitle[CTLTITLE];
+typedef struct tagCTLSTYLE {
+        UINT    wX;
+        UINT    wY;
+        UINT    wCx;
+        UINT    wCy;
+        UINT    wId;
+        DWORD   dwStyle;
+        char    szClass[CTLCLASS];
+        char    szTitle[CTLTITLE];
 } CTLSTYLE,*PCTLSTYLE,FAR *LPCTLSTYLE;
-typedef	struct tagCTLTYPE {
-	UINT	wType;
-	UINT	wWidth;
-	UINT	wHeight;
-	DWORD	dwStyle;
-	char	szDescr[CTLDESCR];
+typedef struct tagCTLTYPE {
+        UINT    wType;
+        UINT    wWidth;
+        UINT    wHeight;
+        DWORD   dwStyle;
+        char    szDescr[CTLDESCR];
 } CTLTYPE;
-typedef	struct tagCTLINFO {
-	UINT	wVersion;
-	UINT	wCtlTypes;
-	char	szClass[CTLCLASS];
-	char	szTitle[CTLTITLE];
-	char	szReserved[10];
-	CTLTYPE	Type[CTLTYPES];
+typedef struct tagCTLINFO {
+        UINT    wVersion;
+        UINT    wCtlTypes;
+        char    szClass[CTLCLASS];
+        char    szTitle[CTLTITLE];
+        char    szReserved[10];
+        CTLTYPE Type[CTLTYPES];
 } CTLINFO,*PCTLINFO,FAR *LPCTLINFO;
 
 #ifdef STRICT
-typedef	DWORD (CALLBACK *LPFNSTRTOID)(LPCSTR);
+typedef DWORD (CALLBACK *LPFNSTRTOID)(LPCSTR);
 #else
-typedef	DWORD (CALLBACK *LPFNSTRTOID)(LPSTR);
+typedef DWORD (CALLBACK *LPFNSTRTOID)(LPSTR);
 #endif
-typedef	UINT (CALLBACK *LPFNIDTOSTR)(UINT,LPSTR,UINT);
+typedef UINT (CALLBACK *LPFNIDTOSTR)(UINT,LPSTR,UINT);
 
 :include cplusepi.sp
 
-#pragma	pack(pop)
+#pragma pack(pop)
 
 #endif

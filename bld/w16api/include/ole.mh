@@ -348,4 +348,3 @@ OLESTATUS WINAPI    OleUnblockServer( LHSERVER, BOOL FAR * );
 :include cplusepi.sp
 
 #endif /* _INC_OLE */
-

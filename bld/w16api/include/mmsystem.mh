@@ -8,6 +8,7 @@
 #define _INC_MMSYSTEM
 
 :include readonly.sp
+
 #ifndef _INC_WINDOWS
 #include <windows.h>
 #endif
@@ -1145,4 +1146,3 @@ YIELDPROC       WINAPI mciGetYieldProc(UINT,DWORD FAR*);
 :include cplusepi.sp
 
 #endif
-

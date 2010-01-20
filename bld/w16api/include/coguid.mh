@@ -34,4 +34,3 @@ EXTERN_C const GUID CDECL FAR   IID_IMessageFilter;
 EXTERN_C const GUID CDECL FAR   CLSID_StdMarshal;
 EXTERN_C const GUID CDECL FAR   IID_IStdMarshalInfo;
 EXTERN_C const GUID CDECL FAR   IID_IExternalConnection;
-

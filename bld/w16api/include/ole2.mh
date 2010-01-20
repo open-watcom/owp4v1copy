@@ -818,4 +818,3 @@ STDAPI              WriteFmtUserTypeStg( LPSTORAGE, CLIPFORMAT, LPSTR );
 #endif
 
 #endif /* _OLE2_H_ */
-

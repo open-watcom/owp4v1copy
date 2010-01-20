@@ -4,11 +4,12 @@
 :include crwatcnt.sp
  */
 
-#ifndef	_INC_DRIVINIT
-#define	_INC_DRIVINIT
+#ifndef _INC_DRIVINIT
+#define _INC_DRIVINIT
 
 :include readonly.sp
-#ifndef	_INC_WINDOWS
+
+#ifndef _INC_WINDOWS
 #include <windows.h>
 #endif
 
@@ -59,4 +60,3 @@ typedef struct tagDEVMODE
 :include cplusepi.sp
 
 #endif
-

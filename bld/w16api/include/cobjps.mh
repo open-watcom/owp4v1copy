@@ -71,4 +71,3 @@ DECLARE_INTERFACE_( IPSFactory, IUnknown ) {
 };
 
 #endif /* _COBJPS_H_ */
-

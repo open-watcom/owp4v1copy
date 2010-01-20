@@ -188,4 +188,3 @@ STDAPI  MonikerCommonPrefixWith( LPMONIKER, LPMONIKER, LPMONIKER FAR * );
 STDAPI  MonikerRelativePathTo( LPMONIKER, LPMONIKER, LPMONIKER FAR *, BOOL );
 
 #endif
-

@@ -4,11 +4,12 @@
 :include crwatcnt.sp
  */
 
-#ifndef	_INC_DDEML
-#define	_INC_DDEML
+#ifndef _INC_DDEML
+#define _INC_DDEML
 
 :include readonly.sp
-#ifndef	_INC_WINDOWS
+
+#ifndef _INC_WINDOWS
 #include <windows.h>
 #endif
 
@@ -16,148 +17,148 @@
 
 #pragma pack(push,1)
 
-#define	EXPENTRY	WINAPI
-#define	CP_WINANSI	1004
-#define	CP_WINUNICODE	1200
-#define	XTYPF_NOBLOCK	2
-#define	XTYPF_NODATA	4
-#define	XTYPF_ACKREQ	8
-#define	XCLASS_MASK	0xFC00
-#define	XCLASS_BOOL	0x1000
-#define	XCLASS_DATA	0x2000
-#define	XCLASS_FLAGS	0x4000
-#define	XCLASS_NOTIFICATION	0x8000
-#define	XST_NULL	0
-#define	XST_INCOMPLETE	1
-#define	XST_CONNECTED	2
-#define	XST_INIT1	3
-#define	XST_INIT2	4
-#define	XST_REQSENT	5
-#define	XST_DATARCVD	6
-#define	XST_POKESENT	7
-#define	XST_POKEACKRCVD	8
-#define	XST_EXECSENT	9
-#define	XST_EXECACKRCVD	10
-#define	XST_ADVSENT	11
-#define	XST_UNADVSENT	12
-#define	XST_ADVACKRCVD	13
-#define	XST_UNADVACKRCVD	14
-#define	XST_ADVDATASENT	15
-#define	XST_ADVDATAACKRCVD	16
-#define	XTYP_ERROR	(0x00|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
-#define	XTYP_ADVDATA	(0x10|XCLASS_FLAGS)
-#define	XTYP_ADVREQ	(0x20|XCLASS_DATA|XTYPF_NOBLOCK)
-#define	XTYP_ADVSTART	(0x30|XCLASS_BOOL)
-#define	XTYP_ADVSTOP	(0x40|XCLASS_NOTIFICATION)
-#define	XTYP_EXECUTE	(0x50|XCLASS_FLAGS)
-#define	XTYP_CONNECT	(0x60|XCLASS_BOOL|XTYPF_NOBLOCK)
-#define	XTYP_CONNECT_CONFIRM	(0x70|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
-#define	XTYP_XACT_COMPLETE	(0x80|XCLASS_NOTIFICATION)
-#define	XTYP_POKE	(0x90|XCLASS_FLAGS)
-#define	XTYP_REGISTER	(0xA0|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
-#define	XTYP_REQUEST	(0xB0|XCLASS_DATA)
-#define	XTYP_DISCONNECT	(0xC0|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
-#define	XTYP_UNREGISTER	(0xD0|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
-#define	XTYP_WILDCONNECT	(0xE0|XCLASS_DATA|XTYPF_NOBLOCK)
-#define	XTYP_MASK	0xF0
-#define	XTYP_SHIFT	4
-#define	TIMEOUT_ASYNC	0xFFFFFFFF
-#define	QID_SYNC	0xFFFFFFFF
-#define	ST_CONNECTED	1
-#define	ST_ADVISE	2
-#define	ST_ISLOCAL	4
-#define	ST_BLOCKED	8
-#define	ST_CLIENT	16
-#define	ST_TERMINATED	32
-#define	ST_INLIST	64
-#define	ST_BLOCKNEXT	128
-#define	ST_ISSELF	256
-#define	CADV_LATEACK	0xFFFF
-#define	DMLERR_NO_ERROR	0
-#define	DMLERR_FIRST	0x4000
-#define	DMLERR_ADVACKTIMEOUT	0x4000
-#define	DMLERR_BUSY	0x4001
-#define	DMLERR_DATAACKTIMEOUT	0x4002
-#define	DMLERR_DLL_NOT_INITIALIZED	0x4003
-#define	DMLERR_DLL_USAGE	0x4004
-#define	DMLERR_EXECACKTIMEOUT	0x4005
-#define	DMLERR_INVALIDPARAMETER	0x4006
-#define	DMLERR_LOW_MEMORY	0x4007
-#define	DMLERR_MEMORY_ERROR	0x4008
-#define	DMLERR_NOTPROCESSED	0x4009
-#define	DMLERR_NO_CONV_ESTABLISHED	0x400a
-#define	DMLERR_POKEACKTIMEOUT	0x400b
-#define	DMLERR_POSTMSG_FAILED	0x400c
-#define	DMLERR_REENTRANCY	0x400d
-#define	DMLERR_SERVER_DIED	0x400e
-#define	DMLERR_SYS_ERROR	0x400f
-#define	DMLERR_UNADVACKTIMEOUT	0x4010
-#define	DMLERR_UNFOUND_QUEUE_ID	0x4011
-#define	DMLERR_LAST	0x4011
-#define	DDE_FACK	0x8000
-#define	DDE_FBUSY	0x4000
-#define	DDE_FDEFERUPD	0x4000
-#define	DDE_FACKREQ	0x8000
-#define	DDE_FRELEASE	0x2000
-#define	DDE_FREQUESTED	0x1000
-#define	DDE_FAPPSTATUS	0x00ff
-#define	DDE_FNOTPROCESSED	0
-#define	DDE_FACKRESERVED	(~(DDE_FACK|DDE_FBUSY|DDE_FAPPSTATUS))
-#define	DDE_FADVRESERVED	(~(DDE_FACKREQ|DDE_FDEFERUPD))
-#define	DDE_FDATRESERVED	(~(DDE_FACKREQ|DDE_FRELEASE|DDE_FREQUESTED))
-#define	DDE_FPOKRESERVED	(~DDE_FRELEASE)
-#define	MSGF_DDEMGR	0x8001
-#define	CBR_BLOCK	((HDDEDATA)0xffffffff)
-#define	CBF_FAIL_SELFCONNECTIONS	0x1000
-#define	CBF_FAIL_CONNECTIONS	0x2000
-#define	CBF_FAIL_ADVISES	0x4000
-#define	CBF_FAIL_EXECUTES	0x8000
-#define	CBF_FAIL_POKES	0x10000
-#define	CBF_FAIL_REQUESTS	0x20000
-#define	CBF_FAIL_ALLSVRXACTIONS	0x3f000
-#define	CBF_SKIP_CONNECT_CONFIRMS	0x40000
-#define	CBF_SKIP_REGISTRATIONS	0x80000
-#define	CBF_SKIP_UNREGISTRATIONS	0x100000
-#define	CBF_SKIP_DISCONNECTS	0x200000
-#define	CBF_SKIP_ALLNOTIFICATIONS	0x3c0000
-#define	APPCMD_CLIENTONLY	0x10L
-#define	APPCMD_FILTERINITS	0x20L
-#define	APPCMD_MASK	0xFF0L
-#define	APPCLASS_STANDARD	0
-#define	APPCLASS_MASK	0xFL
-#define	EC_ENABLEALL	0
-#define	EC_ENABLEONE	ST_BLOCKNEXT
-#define	EC_DISABLE	ST_BLOCKED
-#define	EC_QUERYWAITING	2
-#define	DNS_REGISTER	1
-#define	DNS_UNREGISTER	2
-#define	DNS_FILTERON	4
-#define	DNS_FILTEROFF	8
-#define	HDATA_APPOWNED	1
-#define	MAX_MONITORS	4
-#define	APPCLASS_MONITOR	1L
-#define	XTYP_MONITOR	(XCLASS_NOTIFICATION|XTYPF_NOBLOCK|0xF0)
-#define	MF_HSZ_INFO	0x1000000
-#define	MF_SENDMSGS	0x2000000
-#define	MF_POSTMSGS	0x4000000
-#define	MF_CALLBACKS	0x8000000
-#define	MF_ERRORS	0x10000000
-#define	MF_LINKS	0x20000000
-#define	MF_CONV	0x40000000
-#define	MF_MASK	0xFF000000
-#define	MH_CREATE	1
-#define	MH_KEEP	2
-#define	MH_DELETE	3
-#define	MH_CLEANUP	4
+#define EXPENTRY        WINAPI
+#define CP_WINANSI      1004
+#define CP_WINUNICODE   1200
+#define XTYPF_NOBLOCK   2
+#define XTYPF_NODATA    4
+#define XTYPF_ACKREQ    8
+#define XCLASS_MASK     0xFC00
+#define XCLASS_BOOL     0x1000
+#define XCLASS_DATA     0x2000
+#define XCLASS_FLAGS    0x4000
+#define XCLASS_NOTIFICATION     0x8000
+#define XST_NULL        0
+#define XST_INCOMPLETE  1
+#define XST_CONNECTED   2
+#define XST_INIT1       3
+#define XST_INIT2       4
+#define XST_REQSENT     5
+#define XST_DATARCVD    6
+#define XST_POKESENT    7
+#define XST_POKEACKRCVD 8
+#define XST_EXECSENT    9
+#define XST_EXECACKRCVD 10
+#define XST_ADVSENT     11
+#define XST_UNADVSENT   12
+#define XST_ADVACKRCVD  13
+#define XST_UNADVACKRCVD        14
+#define XST_ADVDATASENT 15
+#define XST_ADVDATAACKRCVD      16
+#define XTYP_ERROR      (0x00|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
+#define XTYP_ADVDATA    (0x10|XCLASS_FLAGS)
+#define XTYP_ADVREQ     (0x20|XCLASS_DATA|XTYPF_NOBLOCK)
+#define XTYP_ADVSTART   (0x30|XCLASS_BOOL)
+#define XTYP_ADVSTOP    (0x40|XCLASS_NOTIFICATION)
+#define XTYP_EXECUTE    (0x50|XCLASS_FLAGS)
+#define XTYP_CONNECT    (0x60|XCLASS_BOOL|XTYPF_NOBLOCK)
+#define XTYP_CONNECT_CONFIRM    (0x70|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
+#define XTYP_XACT_COMPLETE      (0x80|XCLASS_NOTIFICATION)
+#define XTYP_POKE       (0x90|XCLASS_FLAGS)
+#define XTYP_REGISTER   (0xA0|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
+#define XTYP_REQUEST    (0xB0|XCLASS_DATA)
+#define XTYP_DISCONNECT (0xC0|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
+#define XTYP_UNREGISTER (0xD0|XCLASS_NOTIFICATION|XTYPF_NOBLOCK)
+#define XTYP_WILDCONNECT        (0xE0|XCLASS_DATA|XTYPF_NOBLOCK)
+#define XTYP_MASK       0xF0
+#define XTYP_SHIFT      4
+#define TIMEOUT_ASYNC   0xFFFFFFFF
+#define QID_SYNC        0xFFFFFFFF
+#define ST_CONNECTED    1
+#define ST_ADVISE       2
+#define ST_ISLOCAL      4
+#define ST_BLOCKED      8
+#define ST_CLIENT       16
+#define ST_TERMINATED   32
+#define ST_INLIST       64
+#define ST_BLOCKNEXT    128
+#define ST_ISSELF       256
+#define CADV_LATEACK    0xFFFF
+#define DMLERR_NO_ERROR 0
+#define DMLERR_FIRST    0x4000
+#define DMLERR_ADVACKTIMEOUT    0x4000
+#define DMLERR_BUSY     0x4001
+#define DMLERR_DATAACKTIMEOUT   0x4002
+#define DMLERR_DLL_NOT_INITIALIZED      0x4003
+#define DMLERR_DLL_USAGE        0x4004
+#define DMLERR_EXECACKTIMEOUT   0x4005
+#define DMLERR_INVALIDPARAMETER 0x4006
+#define DMLERR_LOW_MEMORY       0x4007
+#define DMLERR_MEMORY_ERROR     0x4008
+#define DMLERR_NOTPROCESSED     0x4009
+#define DMLERR_NO_CONV_ESTABLISHED      0x400a
+#define DMLERR_POKEACKTIMEOUT   0x400b
+#define DMLERR_POSTMSG_FAILED   0x400c
+#define DMLERR_REENTRANCY       0x400d
+#define DMLERR_SERVER_DIED      0x400e
+#define DMLERR_SYS_ERROR        0x400f
+#define DMLERR_UNADVACKTIMEOUT  0x4010
+#define DMLERR_UNFOUND_QUEUE_ID 0x4011
+#define DMLERR_LAST     0x4011
+#define DDE_FACK        0x8000
+#define DDE_FBUSY       0x4000
+#define DDE_FDEFERUPD   0x4000
+#define DDE_FACKREQ     0x8000
+#define DDE_FRELEASE    0x2000
+#define DDE_FREQUESTED  0x1000
+#define DDE_FAPPSTATUS  0x00ff
+#define DDE_FNOTPROCESSED       0
+#define DDE_FACKRESERVED        (~(DDE_FACK|DDE_FBUSY|DDE_FAPPSTATUS))
+#define DDE_FADVRESERVED        (~(DDE_FACKREQ|DDE_FDEFERUPD))
+#define DDE_FDATRESERVED        (~(DDE_FACKREQ|DDE_FRELEASE|DDE_FREQUESTED))
+#define DDE_FPOKRESERVED        (~DDE_FRELEASE)
+#define MSGF_DDEMGR     0x8001
+#define CBR_BLOCK       ((HDDEDATA)0xffffffff)
+#define CBF_FAIL_SELFCONNECTIONS        0x1000
+#define CBF_FAIL_CONNECTIONS    0x2000
+#define CBF_FAIL_ADVISES        0x4000
+#define CBF_FAIL_EXECUTES       0x8000
+#define CBF_FAIL_POKES  0x10000
+#define CBF_FAIL_REQUESTS       0x20000
+#define CBF_FAIL_ALLSVRXACTIONS 0x3f000
+#define CBF_SKIP_CONNECT_CONFIRMS       0x40000
+#define CBF_SKIP_REGISTRATIONS  0x80000
+#define CBF_SKIP_UNREGISTRATIONS        0x100000
+#define CBF_SKIP_DISCONNECTS    0x200000
+#define CBF_SKIP_ALLNOTIFICATIONS       0x3c0000
+#define APPCMD_CLIENTONLY       0x10L
+#define APPCMD_FILTERINITS      0x20L
+#define APPCMD_MASK     0xFF0L
+#define APPCLASS_STANDARD       0
+#define APPCLASS_MASK   0xFL
+#define EC_ENABLEALL    0
+#define EC_ENABLEONE    ST_BLOCKNEXT
+#define EC_DISABLE      ST_BLOCKED
+#define EC_QUERYWAITING 2
+#define DNS_REGISTER    1
+#define DNS_UNREGISTER  2
+#define DNS_FILTERON    4
+#define DNS_FILTEROFF   8
+#define HDATA_APPOWNED  1
+#define MAX_MONITORS    4
+#define APPCLASS_MONITOR        1L
+#define XTYP_MONITOR    (XCLASS_NOTIFICATION|XTYPF_NOBLOCK|0xF0)
+#define MF_HSZ_INFO     0x1000000
+#define MF_SENDMSGS     0x2000000
+#define MF_POSTMSGS     0x4000000
+#define MF_CALLBACKS    0x8000000
+#define MF_ERRORS       0x10000000
+#define MF_LINKS        0x20000000
+#define MF_CONV 0x40000000
+#define MF_MASK 0xFF000000
+#define MH_CREATE       1
+#define MH_KEEP 2
+#define MH_DELETE       3
+#define MH_CLEANUP      4
 
-#define	SZDDESYS_TOPIC	"System"
-#define	SZDDESYS_ITEM_TOPICS	"Topics"
-#define	SZDDESYS_ITEM_SYSITEMS	"SysItems"
-#define	SZDDESYS_ITEM_RTNMSG	"ReturnMessage"
-#define	SZDDESYS_ITEM_STATUS	"Status"
-#define	SZDDESYS_ITEM_FORMATS	"Formats"
-#define	SZDDESYS_ITEM_HELP	"Help"
-#define	SZDDE_ITEM_ITEMLIST	"TopicItemList"
+#define SZDDESYS_TOPIC  "System"
+#define SZDDESYS_ITEM_TOPICS    "Topics"
+#define SZDDESYS_ITEM_SYSITEMS  "SysItems"
+#define SZDDESYS_ITEM_RTNMSG    "ReturnMessage"
+#define SZDDESYS_ITEM_STATUS    "Status"
+#define SZDDESYS_ITEM_FORMATS   "Formats"
+#define SZDDESYS_ITEM_HELP      "Help"
+#define SZDDE_ITEM_ITEMLIST     "TopicItemList"
 
 DECLARE_HANDLE32(HCONVLIST);
 DECLARE_HANDLE32(HCONV);
@@ -165,127 +166,127 @@ DECLARE_HANDLE32(HSZ);
 DECLARE_HANDLE32(HDDEDATA);
 
 #ifndef RC_INVOKED
-typedef	HDDEDATA CALLBACK FNCALLBACK(UINT,UINT,HCONV,HSZ,HSZ,HDDEDATA,DWORD,DWORD);
-typedef	FNCALLBACK *PFNCALLBACK;
-typedef	struct tagHSZPAIR {
-	HSZ	hszSvc;
-	HSZ	hszTopic;
+typedef HDDEDATA CALLBACK FNCALLBACK(UINT,UINT,HCONV,HSZ,HSZ,HDDEDATA,DWORD,DWORD);
+typedef FNCALLBACK *PFNCALLBACK;
+typedef struct tagHSZPAIR {
+        HSZ     hszSvc;
+        HSZ     hszTopic;
 } HSZPAIR,FAR *PHSZPAIR;
-typedef	struct tagCONVCONTEXT {
-	UINT	cb;
-	UINT	wFlags;
-	UINT	wCountryID;
-	int	iCodePage;
-	DWORD	dwLangID;
-	DWORD	dwSecurity;
+typedef struct tagCONVCONTEXT {
+        UINT    cb;
+        UINT    wFlags;
+        UINT    wCountryID;
+        int     iCodePage;
+        DWORD   dwLangID;
+        DWORD   dwSecurity;
 } CONVCONTEXT,FAR *PCONVCONTEXT;
-typedef	struct tagCONVINFO {
-	DWORD	cb;
-	DWORD	hUser;
-	HCONV	hConvPartner;
-	HSZ	hszSvcPartner;
-	HSZ	hszServiceReq;
-	HSZ	hszTopic;
-	HSZ	hszItem;
-	UINT	wFmt;
-	UINT	wType;
-	UINT	wStatus;
-	UINT	wConvst;
-	UINT	wLastError;
-	HCONVLIST	hConvList;
-	CONVCONTEXT	ConvCtxt;
+typedef struct tagCONVINFO {
+        DWORD   cb;
+        DWORD   hUser;
+        HCONV   hConvPartner;
+        HSZ     hszSvcPartner;
+        HSZ     hszServiceReq;
+        HSZ     hszTopic;
+        HSZ     hszItem;
+        UINT    wFmt;
+        UINT    wType;
+        UINT    wStatus;
+        UINT    wConvst;
+        UINT    wLastError;
+        HCONVLIST       hConvList;
+        CONVCONTEXT     ConvCtxt;
 } CONVINFO,FAR *PCONVINFO;
-typedef	struct tagMONHSZSTRUCT {
-	UINT	cb;
-	BOOL	fsAction;
-	DWORD	dwTime;
-	HSZ	hsz;
-	HANDLE	hTask;
-	WORD	wReserved;
-	char	str[1];
+typedef struct tagMONHSZSTRUCT {
+        UINT    cb;
+        BOOL    fsAction;
+        DWORD   dwTime;
+        HSZ     hsz;
+        HANDLE  hTask;
+        WORD    wReserved;
+        char    str[1];
 } MONHSZSTRUCT;
-typedef	struct tagMONLINKSTRUCT {
-	UINT	cb;
-	DWORD	dwTime;
-	HANDLE	hTask;
-	BOOL	fEstablished;
-	BOOL	fNoData;
-	HSZ	hszSvc;
-	HSZ	hszTopic;
-	HSZ	hszItem;
-	UINT	wFmt;
-	BOOL	fServer;
-	HCONV	hConvServer;
-	HCONV	hConvClient;
+typedef struct tagMONLINKSTRUCT {
+        UINT    cb;
+        DWORD   dwTime;
+        HANDLE  hTask;
+        BOOL    fEstablished;
+        BOOL    fNoData;
+        HSZ     hszSvc;
+        HSZ     hszTopic;
+        HSZ     hszItem;
+        UINT    wFmt;
+        BOOL    fServer;
+        HCONV   hConvServer;
+        HCONV   hConvClient;
 } MONLINKSTRUCT;
-typedef	struct tagMONCONVSTRUCT {
-	UINT	cb;
-	BOOL	fConnect;
-	DWORD	dwTime;
-	HANDLE	hTask;
-	HSZ	hszSvc;
-	HSZ	hszTopic;
-	HCONV	hConvClient;
-	HCONV	hConvServer;
+typedef struct tagMONCONVSTRUCT {
+        UINT    cb;
+        BOOL    fConnect;
+        DWORD   dwTime;
+        HANDLE  hTask;
+        HSZ     hszSvc;
+        HSZ     hszTopic;
+        HCONV   hConvClient;
+        HCONV   hConvServer;
 } MONCONVSTRUCT;
-typedef	struct tagMONCBSTRUCT {
-	UINT	cb;
-	WORD	wReserved;
-	DWORD	dwTime;
-	HANDLE	hTask;
-	DWORD	dwRet;
-	UINT	wType;
-	UINT	wFmt;
-	HCONV	hConv;
-	HSZ	hsz1;
-	HSZ	hsz2;
-	HDDEDATA	hData;
-	DWORD	dwData1;
-	DWORD	dwData2;
+typedef struct tagMONCBSTRUCT {
+        UINT    cb;
+        WORD    wReserved;
+        DWORD   dwTime;
+        HANDLE  hTask;
+        DWORD   dwRet;
+        UINT    wType;
+        UINT    wFmt;
+        HCONV   hConv;
+        HSZ     hsz1;
+        HSZ     hsz2;
+        HDDEDATA        hData;
+        DWORD   dwData1;
+        DWORD   dwData2;
 } MONCBSTRUCT;
-typedef	struct tagMONERRSTRUCT {
-	UINT	cb;
-	UINT	wLastError;
-	DWORD	dwTime;
-	HANDLE	hTask;
+typedef struct tagMONERRSTRUCT {
+        UINT    cb;
+        UINT    wLastError;
+        DWORD   dwTime;
+        HANDLE  hTask;
 } MONERRSTRUCT;
-typedef	struct tagMONMSGSTRUCT {
-	UINT	cb;
-	HWND	hwndTo;
-	DWORD	dwTime;
-	HANDLE	hTask;
-	UINT	wMsg;
-	WPARAM	wParam;
-	LPARAM	lParam;
+typedef struct tagMONMSGSTRUCT {
+        UINT    cb;
+        HWND    hwndTo;
+        DWORD   dwTime;
+        HANDLE  hTask;
+        UINT    wMsg;
+        WPARAM  wParam;
+        LPARAM  lParam;
 } MONMSGSTRUCT;
 
-UINT	WINAPI	DdeInitialize(LPDWORD,PFNCALLBACK,DWORD,DWORD);
-BOOL	WINAPI	DdeUninitialize(DWORD);
-HCONVLIST	WINAPI	DdeConnectList(DWORD,HSZ,HSZ,HCONVLIST,PCONVCONTEXT);
-HCONV	WINAPI	DdeQueryNextServer(HCONVLIST,HCONV);
-BOOL	WINAPI	DdeDisconnectList(HCONVLIST);
-HCONV	WINAPI	DdeConnect(DWORD,HSZ,HSZ,PCONVCONTEXT);
-BOOL	WINAPI	DdeDisconnect(HCONV);
-HCONV	WINAPI	DdeReconnect(HCONV);
-UINT	WINAPI	DdeQueryConvInfo(HCONV,DWORD,PCONVINFO);
-BOOL	WINAPI	DdeSetUserHandle(HCONV,DWORD,DWORD);
-BOOL	WINAPI	DdeAbandonTransaction(DWORD,HCONV,DWORD);
-BOOL	WINAPI	DdePostAdvise(DWORD,HSZ,HSZ);
-BOOL	WINAPI	DdeEnableCallback(DWORD,HCONV,UINT);
-HDDEDATA	WINAPI	DdeNameService(DWORD,HSZ,HSZ,UINT);
-HDDEDATA	WINAPI	DdeClientTransaction(LPVOID,DWORD,HCONV,HSZ,UINT,UINT,DWORD,LPDWORD);
-HDDEDATA	WINAPI	DdeCreateDataHandle(DWORD,LPVOID,DWORD,DWORD,HSZ,UINT,UINT);
-HDDEDATA	WINAPI	DdeAddData(HDDEDATA,LPVOID,DWORD,DWORD);
-DWORD	WINAPI	DdeGetData(HDDEDATA,LPVOID,DWORD,DWORD);
-PBYTE	WINAPI	DdeAccessData(HDDEDATA,LPDWORD);
-BOOL	WINAPI	DdeUnaccessData(HDDEDATA);
-BOOL	WINAPI	DdeFreeDataHandle(HDDEDATA);
-UINT	WINAPI	DdeGetLastError(DWORD);
-HSZ	WINAPI	DdeCreateStringHandle(DWORD,LPSTR,int);
-DWORD	WINAPI	DdeQueryString(DWORD,HSZ,LPCSTR,DWORD,int);
-BOOL	WINAPI	DdeFreeStringHandle(DWORD,HSZ);
-BOOL	WINAPI	DdeKeepStringHandle(DWORD,HSZ);
-int	WINAPI	DdeCmpStringHandles(HSZ,HSZ);
+UINT    WINAPI  DdeInitialize(LPDWORD,PFNCALLBACK,DWORD,DWORD);
+BOOL    WINAPI  DdeUninitialize(DWORD);
+HCONVLIST       WINAPI  DdeConnectList(DWORD,HSZ,HSZ,HCONVLIST,PCONVCONTEXT);
+HCONV   WINAPI  DdeQueryNextServer(HCONVLIST,HCONV);
+BOOL    WINAPI  DdeDisconnectList(HCONVLIST);
+HCONV   WINAPI  DdeConnect(DWORD,HSZ,HSZ,PCONVCONTEXT);
+BOOL    WINAPI  DdeDisconnect(HCONV);
+HCONV   WINAPI  DdeReconnect(HCONV);
+UINT    WINAPI  DdeQueryConvInfo(HCONV,DWORD,PCONVINFO);
+BOOL    WINAPI  DdeSetUserHandle(HCONV,DWORD,DWORD);
+BOOL    WINAPI  DdeAbandonTransaction(DWORD,HCONV,DWORD);
+BOOL    WINAPI  DdePostAdvise(DWORD,HSZ,HSZ);
+BOOL    WINAPI  DdeEnableCallback(DWORD,HCONV,UINT);
+HDDEDATA        WINAPI  DdeNameService(DWORD,HSZ,HSZ,UINT);
+HDDEDATA        WINAPI  DdeClientTransaction(LPVOID,DWORD,HCONV,HSZ,UINT,UINT,DWORD,LPDWORD);
+HDDEDATA        WINAPI  DdeCreateDataHandle(DWORD,LPVOID,DWORD,DWORD,HSZ,UINT,UINT);
+HDDEDATA        WINAPI  DdeAddData(HDDEDATA,LPVOID,DWORD,DWORD);
+DWORD   WINAPI  DdeGetData(HDDEDATA,LPVOID,DWORD,DWORD);
+PBYTE   WINAPI  DdeAccessData(HDDEDATA,LPDWORD);
+BOOL    WINAPI  DdeUnaccessData(HDDEDATA);
+BOOL    WINAPI  DdeFreeDataHandle(HDDEDATA);
+UINT    WINAPI  DdeGetLastError(DWORD);
+HSZ     WINAPI  DdeCreateStringHandle(DWORD,LPSTR,int);
+DWORD   WINAPI  DdeQueryString(DWORD,HSZ,LPCSTR,DWORD,int);
+BOOL    WINAPI  DdeFreeStringHandle(DWORD,HSZ);
+BOOL    WINAPI  DdeKeepStringHandle(DWORD,HSZ);
+int     WINAPI  DdeCmpStringHandles(HSZ,HSZ);
 #endif /* RC_INVOKED */
 
 #pragma pack(pop)

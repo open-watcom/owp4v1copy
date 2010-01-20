@@ -209,4 +209,3 @@ typedef VARIANT FAR *LPVARIANTARG;
 #define V_NONE( x )         V_I2( x )
 
 #endif /* _VARIANT_H_ */
-

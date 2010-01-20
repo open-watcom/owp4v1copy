@@ -16,4 +16,3 @@ STDAPI_( void ) DbgDumpObject( IUnknown FAR *, DWORD );
 STDAPI_( BOOL ) DbgIsObjectValid( IUnknown FAR * );
 
 #endif /* __OLE2DBG_H */
-

@@ -156,4 +156,3 @@ STDAPI  PropagateResult( HRESULT, SCODE );
 #define ResultFromScode( x )    ((HRESULT)((SCODE)(x) & 0x800FFFFF))
 
 #endif /* __SCODE_H__ */
-

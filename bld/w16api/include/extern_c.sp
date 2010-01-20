@@ -4,4 +4,3 @@
 #else
     #define EXTERN_C    extern
 #endif
-

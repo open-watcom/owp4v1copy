@@ -51,4 +51,3 @@ EXTERN_C const GUID CDECL FAR   IID_IOleCache2;
 EXTERN_C const GUID CDECL FAR   IID_IOleCacheControl;
 EXTERN_C const GUID CDECL FAR   CLSID_Picture_Metafile;
 EXTERN_C const GUID CDECL FAR   CLSID_Picture_Dib;
-

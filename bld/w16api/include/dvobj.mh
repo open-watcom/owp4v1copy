@@ -347,4 +347,3 @@ STDAPI  CreateDataAdviseHolder( LPDATAADVISEHOLDER FAR * );
 STDAPI  CreateDataCache( LPUNKNOWN, REFCLSID, REFIID, LPVOID FAR * );
 
 #endif /* _DVOBJ_H_ */
-

@@ -477,4 +477,3 @@ STDAPI              StringFromIID( REFIID, LPSTR FAR * );
 #endif
 
 #endif /* _COMPOBJ_H_ */
-

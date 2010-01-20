@@ -765,4 +765,3 @@ STDAPI                      RegisterTypeLib( ITypeLib FAR *, OLECHAR FAR *, OLEC
     ((BOOL)(((p1) & 0x00FF0000L) == ((p2) & 0x00FF0000L)))
 
 #endif /* _DISPATCH_H_ */
-

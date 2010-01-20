@@ -315,4 +315,3 @@ NLSAPI_( int )      LCMapStringA( LCID, unsigned long, const char FAR *, int, ch
 :include cplusepi.sp
 
 #endif /* _OLENLS_ */
-

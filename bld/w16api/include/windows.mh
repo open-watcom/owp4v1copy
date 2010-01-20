@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #ifdef _WINDOWS_16_
 #include <win16.h>
 #else
