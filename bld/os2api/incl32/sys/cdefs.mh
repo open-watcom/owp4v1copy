@@ -38,6 +38,7 @@
 #define _SYS_CDEFS_H_
 
 :include readonly.sp
+
 #define __TCPIP_HEADERS
 
 #if defined(__cplusplus)
@@ -65,4 +66,3 @@
 #endif
 
 #endif
-

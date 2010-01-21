@@ -19,6 +19,7 @@
 #define _SYS_IOCTLOS2_H_
 
 :include readonly.sp
+
 #define ioc(x,y) ((x<<8)|y)
 
 #define FIONSTATUS        _IOR('f', 120, double)
@@ -106,4 +107,3 @@ struct bndreq {
 };
 
 #endif
-

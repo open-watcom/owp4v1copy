@@ -35,6 +35,7 @@
 #define _NETINET_ICMP_VAR_H_
 
 :include readonly.sp
+
 #define ICMPCTL_MASKREPL 1
 #define ICMPCTL_STATS    2
 #define ICMPCTL_ECHOREPL 3
@@ -90,4 +91,3 @@ struct  icmpstat {
 };
 
 #endif
-

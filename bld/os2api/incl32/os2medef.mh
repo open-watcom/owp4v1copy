@@ -8,6 +8,7 @@
 #define  __OS2MEDEF_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifndef __WORDBYTEDWORD__
@@ -194,4 +195,3 @@ typedef struct _MMTRACKINFO {
 :include cplusepi.sp
 
 #endif
-

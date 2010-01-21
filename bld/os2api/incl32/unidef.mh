@@ -15,6 +15,7 @@
 #include <callconv.h>
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define UNI_TOKEN_POINTER      1
@@ -283,4 +284,3 @@ int       CALLCONV UniQueryNumericValue(UniChar);
 :include cplusepi.sp
 
 #endif
-

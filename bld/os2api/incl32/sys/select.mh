@@ -35,6 +35,7 @@
 #define _SYS_SELECT_H_
 
 :include readonly.sp
+
 #define SI_COLL 0x0001
 
 #pragma pack(1)
@@ -45,4 +46,3 @@ struct selinfo {
 #pragma pack()
 
 #endif
-

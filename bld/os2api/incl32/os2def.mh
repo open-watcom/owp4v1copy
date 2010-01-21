@@ -9,6 +9,7 @@
 #define OS2DEF_INCLUDED
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 :include null.sp
@@ -310,4 +311,3 @@ typedef unsigned long long ULONGLONG, *PULONGLONG;
 :include cplusepi.sp
 
 #endif
-

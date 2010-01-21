@@ -57,6 +57,7 @@
 #define _ARPA_INET_H_
 
 :include readonly.sp
+
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/cdefs.h>
@@ -79,4 +80,3 @@ char *         _System inet_nsap_ntoa __TCPPROTO((int, const u_char *, char *asc
 __END_DECLS
 
 #endif
-

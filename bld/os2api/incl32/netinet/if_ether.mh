@@ -35,6 +35,7 @@
 #define _NETINET_IF_ETHER_H_
 
 :include readonly.sp
+
 #define RTF_USETRAILERS RTF_PROTO1
 #define RTF_ANNOUNCE    RTF_PROTO2
 
@@ -65,4 +66,3 @@ struct  oarptab {
 #pragma pack()
 
 #endif
-

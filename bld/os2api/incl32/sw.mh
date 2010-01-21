@@ -8,6 +8,7 @@
 #define __SW_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifdef INCL_SECONDARYWINDOW
@@ -123,4 +124,3 @@ BOOL EXPENTRY WinRegisterGraphicButton(VOID);
 :include cplusepi.sp
 
 #endif
-

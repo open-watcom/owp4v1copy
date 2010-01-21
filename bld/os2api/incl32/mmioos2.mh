@@ -8,6 +8,7 @@
 #define __MMIO_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define HPSTR PSZ
@@ -697,4 +698,3 @@ USHORT APIENTRY mmioGetData(HMMIO,PMMIOINFO,USHORT);
 :include cplusepi.sp
 
 #endif
-

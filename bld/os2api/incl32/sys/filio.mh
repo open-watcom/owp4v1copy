@@ -40,6 +40,7 @@
 #define _SYS_FILIO_H_
 
 :include readonly.sp
+
 #include <sys/ioccom.h>
 
 #define FIONREAD _IOR('f', 127, int)
@@ -47,4 +48,3 @@
 #define FIOASYNC _IOW('f', 125, int)
 
 #endif
-

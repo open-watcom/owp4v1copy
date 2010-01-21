@@ -8,6 +8,7 @@
 #define _ULS_ERRNO
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define ULS_API_ERROR_BASE 0x00020400
@@ -42,4 +43,3 @@ typedef enum _uls_return_codes {
 :include cplusepi.sp
 
 #endif
-

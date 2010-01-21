@@ -8,6 +8,7 @@
 #define __REXXSAA_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifndef OS2_INCLUDED
@@ -317,4 +318,3 @@ APIRET APIENTRY RexxVariablePool(PSHVBLOCK);
 :include cplusepi.sp
 
 #endif
-

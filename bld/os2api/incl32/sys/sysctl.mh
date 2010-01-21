@@ -38,6 +38,7 @@
 #define _SYS_SYSCTL_H_
 
 :include readonly.sp
+
 #define CTL_MAXNAME 12
 
 #define CTLTYPE_NODE    1
@@ -116,4 +117,3 @@ int _System sysctl __TCPPROTO((int *, u_int, void *, size_t *, void *, size_t));
 __END_DECLS
 
 #endif
-

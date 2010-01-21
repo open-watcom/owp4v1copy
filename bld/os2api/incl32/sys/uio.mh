@@ -35,6 +35,7 @@
 #define _SYS_UIO_H_
 
 :include readonly.sp
+
 struct iovec {
     char   *iov_base;
     size_t iov_len;
@@ -56,4 +57,3 @@ ssize_t _System writev __TCPPROTO((int, const struct iovec *, int));
 __END_DECLS
 
 #endif
-

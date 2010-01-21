@@ -35,6 +35,7 @@
 #define _PROTOCOL_ROUTED_H_
 
 :include readonly.sp
+
 #define RIPVERSION      1
 
 #define RIPCMD_REQUEST  1
@@ -80,4 +81,3 @@ struct rip {
 #pragma pack()
 
 #endif
-

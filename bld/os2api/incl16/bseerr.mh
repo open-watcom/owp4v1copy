@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #ifdef INCL_DOSERRORS
 
 #define NO_ERROR                        0

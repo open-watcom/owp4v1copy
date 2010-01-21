@@ -17,6 +17,7 @@
 #endif
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define DosPrintDestControl       SplControlDevice
@@ -529,4 +530,3 @@ SPLERR APIENTRY SplSetQueue(PCSZ,PCSZ,ULONG,PVOID,ULONG,ULONG);
 :include cplusepi.sp
 
 #endif
-

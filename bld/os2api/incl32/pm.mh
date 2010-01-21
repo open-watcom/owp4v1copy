@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 #ifdef INCL_PM
   #define INCL_AVIO
   #define INCL_DEV
@@ -28,4 +29,3 @@
 #ifdef INCL_SPL
   #include <pmspl.h>
 #endif
-

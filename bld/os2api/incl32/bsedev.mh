@@ -8,6 +8,7 @@
 #define __BSEDEV__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define BSEDEV_INCLUDED
@@ -663,4 +664,3 @@ typedef _Packed struct _OEMHLPDISKINFO {
 :include cplusepi.sp
 
 #endif
-

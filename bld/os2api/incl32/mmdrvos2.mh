@@ -8,6 +8,7 @@
 #define __MMDRVOS2_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifndef __SSM_H__
@@ -189,4 +190,3 @@ ULONG APIENTRY mdmDriverNotify(USHORT,HWND,USHORT,USHORT,ULONG);
 :include cplusepi.sp
 
 #endif
-

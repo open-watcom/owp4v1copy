@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #if defined(INCL_DEV) || !defined(INCL_NOCOMMON)
@@ -265,4 +266,3 @@ LONG   APIENTRY DevQueryHardcopyCaps(HDC,LONG,LONG,PHCINFO);
 #endif
 
 :include cplusepi.sp
-

@@ -35,6 +35,7 @@
 #define _NETINET_IP_VAR_H_
 
 :include readonly.sp
+
 #define IPCTL_FORWARDING     1
 #define IPCTL_SENDREDIRECTS  2
 #define IPCTL_INETCFG        40
@@ -121,4 +122,3 @@ struct  ipstat {
 };
 
 #endif
-

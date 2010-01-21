@@ -8,6 +8,7 @@
 #define __BASEMID__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define MSG_RESPONSE_DATA               0
@@ -719,4 +720,3 @@
 :include cplusepi.sp
 
 #endif
-

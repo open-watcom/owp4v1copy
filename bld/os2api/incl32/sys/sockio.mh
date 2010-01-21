@@ -35,6 +35,7 @@
 #define _SYS_SOCKIO_H_
 
 :include readonly.sp
+
 #include <sys/ioccom.h>
 
 #define SIOCATMARK       _IOR('s',  7, int)
@@ -69,4 +70,3 @@
 #define SIOCDELMULTI     _IOW('i', 52, struct ifreq)
 
 #endif
-

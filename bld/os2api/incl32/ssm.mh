@@ -8,6 +8,7 @@
 #define __SSM_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define MAX_SPI_NAME  9
@@ -517,4 +518,3 @@ ULONG APIENTRY SpiStopStream(HSTREAM,ULONG);
 :include cplusepi.sp
 
 #endif
-

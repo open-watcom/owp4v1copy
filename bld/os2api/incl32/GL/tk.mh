@@ -9,6 +9,7 @@
 #include <GL/glu.h>
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #if defined(__WATCOMC__)
@@ -211,4 +212,3 @@ extern GLenum APIENTRY tkInitDisplayModeID(GLint);
 void APIENTRY tkClipBoard(void);
 
 :include cplusepi.sp
-

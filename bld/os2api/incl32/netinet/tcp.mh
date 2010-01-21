@@ -35,6 +35,7 @@
 #define _NETINET_TCP_H_
 
 :include readonly.sp
+
 #define TCPOPT_EOL               0
 #define TCPOPT_NOP               1
 #define TCPOPT_MAXSEG            2
@@ -103,4 +104,3 @@ struct tcphdr {
 #pragma pack()
 
 #endif
-

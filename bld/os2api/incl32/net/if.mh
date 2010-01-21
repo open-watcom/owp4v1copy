@@ -257,4 +257,3 @@ struct ifstat {
 };
 
 #endif
-

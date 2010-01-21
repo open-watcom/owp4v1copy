@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define INCL_WININCLUDED
@@ -2848,4 +2849,3 @@ LONG APIENTRY WinQueryWindowModel(HWND);
 #endif
 
 :include cplusepi.sp
-

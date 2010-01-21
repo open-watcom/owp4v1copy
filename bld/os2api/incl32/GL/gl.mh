@@ -36,6 +36,7 @@
 #define __gl_h_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #if defined(__IBMC__) || defined(__WATCOMC__)
@@ -1060,4 +1061,3 @@ GLAPI void APIENTRY glInterleavedArrays( GLenum format, GLsizei stride, const GL
 :include cplusepi.sp
 
 #endif /* __gl_h_ */
-

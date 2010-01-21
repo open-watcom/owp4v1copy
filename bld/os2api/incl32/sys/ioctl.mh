@@ -40,6 +40,7 @@
 #define _SYS_IOCTL_H_
 
 :include readonly.sp
+
 #ifndef _SYS_IOCTL50_H_
 #define _SYS_IOCTL50_H_
 
@@ -63,4 +64,3 @@ __END_DECLS
 #include <sys/ioctlos2.h>
 
 #endif
-

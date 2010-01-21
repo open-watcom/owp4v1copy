@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define INCL_GPIINCLUDED
@@ -1189,4 +1190,3 @@ BOOL   APIENTRY GpiSetSegmentPriority(HPS,LONG,LONG,LONG);
 #endif
 
 :include cplusepi.sp
-

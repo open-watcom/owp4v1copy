@@ -35,6 +35,7 @@
 #define _SYS_TIME_H_
 
 :include readonly.sp
+
 #include <sys/types.h>
 
 #define TIMEVAL_TO_TIMESPEC(tv, ts) { \
@@ -112,4 +113,3 @@ __END_DECLS
 #endif
 
 #endif
-

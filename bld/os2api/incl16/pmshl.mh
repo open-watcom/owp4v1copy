@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define MAXNAMEL 60
@@ -232,4 +233,3 @@ BOOL   APIENTRY PrfWriteProfileString(HINI,PSZ,PSZ,PSZ);
 #ifdef INCL_SHLERRORS
     #include <pmerr.h>
 #endif
-

@@ -9,6 +9,7 @@
 #define PMWP_INCLUDED
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define INCL_WPERRORS
@@ -118,4 +119,3 @@ BOOL     APIENTRY WinSetFileIconN(PCSZ,PICONINFO,ULONG);
 :include cplusepi.sp
 
 #endif
-

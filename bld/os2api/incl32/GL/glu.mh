@@ -43,6 +43,7 @@
 #include <GL/gl.h>
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 /*************************************************************/
@@ -277,4 +278,3 @@ extern GLint APIENTRY gluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ,
 :include cplusepi.sp
 
 #endif /* __glu_h__ */
-

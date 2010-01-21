@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #define EVENT_SYNC 1
 #define EVENT_RESERVED 2
 #define EVENT_IMPLICIT_TYPE 3
@@ -130,4 +131,3 @@ typedef struct _STATUS_LEVEL_EVCB {
 } STATUS_LEVEL_EVCB, FAR *PSTATUS_EVCB;
 
 #pragma pack()
-

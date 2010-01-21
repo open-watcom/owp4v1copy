@@ -8,6 +8,7 @@
 #define __PGL_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define INCL_DOSPROCESS
@@ -85,4 +86,3 @@ extern BOOL APIENTRY pglUseFont(HAB,HPS,FATTRS *,long,int,int,int);
 :include cplusepi.sp
 
 #endif
-

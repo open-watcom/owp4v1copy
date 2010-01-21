@@ -53,6 +53,7 @@
 #define _NETDB_H_
 
 :include readonly.sp
+
 #include <sys/param.h>
 #include <sys/cdefs.h>
 
@@ -131,4 +132,3 @@ struct hostent * _System Rgethostbyname __TCPPROTO((const char *));
 __END_DECLS
 
 #endif
-

@@ -8,6 +8,7 @@
 #define _NERRNO_H_
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifdef KERNEL
@@ -296,4 +297,3 @@
 :include cplusepi.sp
 
 #endif
-

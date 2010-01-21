@@ -9,6 +9,7 @@
 #define __PMAVIO_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define VioAssociate           VIO16ASSOCIATE
@@ -47,4 +48,3 @@ MRESULT APIENTRY16 WinDefAVioWindowProc(HWND hwnd, USHORT msg, ULONG mp1, ULONG 
 :include cplusepi.sp
 
 #endif
-

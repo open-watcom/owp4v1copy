@@ -8,6 +8,7 @@
 #define __CODEC_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #pragma pack(4)
@@ -304,4 +305,3 @@ typedef struct _MMVIDEOHEADER {
 :include cplusepi.sp
 
 #endif
-

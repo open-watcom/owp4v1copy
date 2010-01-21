@@ -11,6 +11,7 @@
 #include <os2def.h>
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define LSFAR
@@ -124,4 +125,3 @@ LSINT APIENTRY U32EGETP(PUCHAR,PUCHAR,ULONG,PULONG,PULONG,ULONG);
 :include cplusepi.sp
 
 #endif
-

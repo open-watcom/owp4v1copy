@@ -35,6 +35,7 @@
 #define _NETINET_IN_H_
 
 :include readonly.sp
+
 #define IPPROTO_IP    0
 #define IPPROTO_ICMP  1
 #define IPPROTO_IGMP  2
@@ -166,4 +167,3 @@ struct ip_mreq {
 #pragma pack()
 
 #endif
-

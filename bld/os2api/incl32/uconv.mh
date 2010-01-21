@@ -10,6 +10,7 @@
 #include <unidef.h>
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #ifndef _ULS_UCONVP
@@ -130,4 +131,3 @@ int CALLCONV UniUconvFromUcs(UconvObject,UniChar**,size_t*,void**,size_t*,size_t
 :include cplusepi.sp
 
 #endif
-

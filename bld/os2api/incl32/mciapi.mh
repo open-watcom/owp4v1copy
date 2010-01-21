@@ -8,6 +8,7 @@
 #define __MCIAPI_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define MMIO_FE_FINDFIRST   1
@@ -35,4 +36,3 @@ ULONG EXPENTRY mmioRemoveElement(PSZ,ULONG);
 :include cplusepi.sp
 
 #endif
-

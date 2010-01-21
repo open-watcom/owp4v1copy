@@ -5,5 +5,5 @@
  */
 
 :include readonly.sp
-#define CALLCONV _System
 
+#define CALLCONV _System

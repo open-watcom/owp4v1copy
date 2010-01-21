@@ -8,6 +8,7 @@
 #define __MIDIOS2_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define STATUS_BIT 0x80
@@ -50,4 +51,3 @@ typedef struct _MMMIDIHEADER {
 :include cplusepi.sp
 
 #endif
-

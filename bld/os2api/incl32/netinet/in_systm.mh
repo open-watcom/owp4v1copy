@@ -35,9 +35,9 @@
 #define _NETINET_IN_SYSTM_H_
 
 :include readonly.sp
+
 typedef u_short n_short;
 typedef u_long  n_long;
 typedef u_long  n_time;
 
 #endif
-

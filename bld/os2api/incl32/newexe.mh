@@ -8,6 +8,7 @@
 #define __NEWEXE__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define EMAGIC      0x5A4D
@@ -332,4 +333,3 @@ struct new_rsrc {
 :include cplusepi.sp
 
 #endif
-

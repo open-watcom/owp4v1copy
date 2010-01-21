@@ -8,6 +8,7 @@
 #define __MIDIDLL_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define MIDI_NAME_LENGTH 32
@@ -141,4 +142,3 @@ ULONG APIENTRY TimerGetPointer(PPULONG,ULONG);
 :include cplusepi.sp
 
 #endif
-

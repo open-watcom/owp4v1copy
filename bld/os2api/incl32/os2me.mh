@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define OS2ME_INCLUDED
@@ -56,4 +57,3 @@
 #endif
 
 :include cplusepi.sp
-

@@ -8,6 +8,7 @@
 #define __BSEORD_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define ORD_ANSIINJECT 1
@@ -1937,4 +1938,3 @@
 :include cplusepi.sp
 
 #endif
-

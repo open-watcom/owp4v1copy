@@ -35,6 +35,7 @@
 #define _SYS_SOCKET_H_
 
 :include readonly.sp
+
 #define SOCK_STREAM     1
 #define SOCK_DGRAM      2
 #define SOCK_RAW        3
@@ -333,4 +334,3 @@ int _System Rlisten __TCPPROTO((int, int));
 __END_DECLS
 
 #endif
-

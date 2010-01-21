@@ -8,6 +8,7 @@
 #define __FTPAPI_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #if (defined(__IBMC__) || defined(__WATCOMC__)) && !defined(TCP_NODEFLIB)

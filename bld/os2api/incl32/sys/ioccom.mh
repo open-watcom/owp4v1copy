@@ -35,6 +35,7 @@
 #define _SYS_IOCCOM_H_
 
 :include readonly.sp
+
 #define IOCPARM_MASK    0x1fff          /* parameter length, at most 13 bits */
 #define IOCPARM_LEN(x)  (((x) >> 16) & IOCPARM_MASK)
 #define IOCBASECMD(x)   ((x) & ~(IOCPARM_MASK << 16))
@@ -56,4 +57,3 @@
 #define _IOWR(g,n,t)    _IOC(IOC_INOUT, (g), (n), sizeof(t))
 
 #endif
-

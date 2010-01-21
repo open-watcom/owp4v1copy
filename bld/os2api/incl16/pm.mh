@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 #ifdef INCL_PM
     #define INCL_BITMAPFILEFORMAT
     #define INCL_DEV
@@ -21,4 +22,3 @@
 #ifdef INCL_BITMAPFILEFORMAT
 #include <pmbitmap.h>
 #endif
-

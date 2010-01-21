@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 #define MLS_WORDWRAP  0x00000001L
 #define MLS_BORDER    0x00000002L
 #define MLS_VSCROLL   0x00000004L

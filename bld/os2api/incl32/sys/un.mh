@@ -35,6 +35,7 @@
 #define _SYS_UN_H_
 
 :include readonly.sp
+
 struct  sockaddr_un {
     u_char sun_len;
     u_char sun_family;
@@ -44,4 +45,3 @@ struct  sockaddr_un {
 #define SUN_LEN(su) (sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
 
 #endif
-

@@ -9,6 +9,7 @@
 #define PMHELP_INCLUDED
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define HM_RESOURCEID 0
@@ -170,4 +171,3 @@ HWND APIENTRY WinQueryHelpInstance(HWND);
 :include cplusepi.sp
 
 #endif
-

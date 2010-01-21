@@ -8,6 +8,7 @@
 #define __BDCALLS_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define NlsConvertBidiNumerics Nls16ConvertBidiNumerics
@@ -94,4 +95,3 @@ APIRET16 APIENTRY16 NlsShapeBidiString(ULONG,ULONG,PCHAR16,PCHAR16,ULONG,ULONG);
 :include cplusepi.sp
 
 #endif
-

@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #define INCL_BASEINCLUDED
 
 #ifdef INCL_BASE
@@ -22,4 +23,3 @@
 #if (defined(INCL_DOSDEVICES) || defined(INCL_DOSDEVIOCTL))
   #include <bsedev.h>
 #endif
-

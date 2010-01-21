@@ -52,4 +52,3 @@ struct sockaddr_dl {
 #include <sys/cdefs.h>
 
 #endif
-

@@ -40,6 +40,7 @@
 #define _TYPES_H_
 
 :include readonly.sp
+
 #include <machine/ansi.h>
 #include <machine/types.h>
 
@@ -117,4 +118,3 @@ __END_DECLS
 #endif
 
 #endif
-

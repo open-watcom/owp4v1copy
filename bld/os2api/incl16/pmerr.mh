@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 #ifdef INCL_WINERRORS
 
 #ifndef INCL_WINERRORS_INCL

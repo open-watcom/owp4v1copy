@@ -35,6 +35,7 @@
 #define _PROTOCOL_RWHOD_H_
 
 :include readonly.sp
+
 #define WHODVERSION     1
 #define WHODTYPE_STATUS 1
 
@@ -64,4 +65,3 @@ struct  whod {
 #pragma pack()
 
 #endif
-

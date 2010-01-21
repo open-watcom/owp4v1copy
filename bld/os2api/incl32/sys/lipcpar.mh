@@ -8,6 +8,7 @@
 #define _SYS_LIPCPAR_H
 
 :include readonly.sp
+
 #define LIPCCTL_INETCFG      60
 #define LIPCCTL_INETVER      61
 #define LIPCCTL_ST_SENDSPACE 62
@@ -16,4 +17,3 @@
 #define LIPCCTL_DG_RECVSPACE 65
 
 #endif
-

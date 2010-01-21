@@ -38,6 +38,7 @@
 #include <sys/types.h>
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 __BEGIN_DECLS
@@ -59,4 +60,3 @@ __END_DECLS
 :include cplusepi.sp
 
 #endif
-

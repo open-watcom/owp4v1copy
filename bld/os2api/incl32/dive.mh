@@ -8,6 +8,7 @@
 #define __DIVE_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define MAX_DIVE_INSTANCES 64
@@ -123,4 +124,3 @@ ULONG APIENTRY DiveSetTransparentBlitMode(HDIVE,ULONG,ULONG,ULONG);
 :include cplusepi.sp
 
 #endif
-

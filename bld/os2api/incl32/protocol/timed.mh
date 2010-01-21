@@ -35,6 +35,7 @@
 #define _PROTOCOL_TIMED_H_
 
 :include readonly.sp
+
 #define TSPVERSION      1
 #define ANYADDR         NULL
 
@@ -91,4 +92,3 @@ char *tsptype[TSPTYPENUMBER] =
 #endif
 
 #endif
-

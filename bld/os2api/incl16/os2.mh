@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 #define OS2_INCLUDED
 
 #include <os2def.h>

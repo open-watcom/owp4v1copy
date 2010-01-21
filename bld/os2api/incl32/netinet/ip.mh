@@ -35,6 +35,7 @@
 #define _NETINET_IP_H_
 
 :include readonly.sp
+
 #define IPVERSION       4
 
 #define IP_DF      0x4000
@@ -131,4 +132,3 @@ struct  ip_timestamp {
 #pragma pack()
 
 #endif
-

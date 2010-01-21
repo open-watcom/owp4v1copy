@@ -8,6 +8,7 @@
 #define __FOURCC_H__
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define FOURCC_SCRN 0
@@ -37,4 +38,3 @@
 :include cplusepi.sp
 
 #endif
-

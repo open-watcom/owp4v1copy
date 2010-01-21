@@ -35,6 +35,7 @@
 #define _NETINET_UDP_VAR_H_
 
 :include readonly.sp
+
 #define UDPCTL_CHECKSUM 1
 #define UDPCTL_STATS    2
 #define UDPCTL_INETCFG  31
@@ -80,4 +81,3 @@ struct  udpstat {
 };
 
 #endif
-

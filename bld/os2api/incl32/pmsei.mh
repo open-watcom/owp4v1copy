@@ -6,6 +6,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define SEI_INCLUDED
@@ -25,4 +26,3 @@
 ERRORID APIENTRY WinSetErrorInfo(ERRORID,ULONG,...);
 
 :include cplusepi.sp
-

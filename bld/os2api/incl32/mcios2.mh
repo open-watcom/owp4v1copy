@@ -9,6 +9,7 @@
 #define MCIOS2
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define MCI_TRUE 1
@@ -1549,4 +1550,3 @@ ULONG APIENTRY mciGetDeviceID(PSZ);
 :include cplusepi.sp
 
 #endif
-

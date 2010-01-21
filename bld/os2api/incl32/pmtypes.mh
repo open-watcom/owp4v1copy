@@ -5,6 +5,7 @@
  */
 
 :include readonly.sp
+
 :include cpluspro.sp
 
 #define TYPES_INCLUDED
@@ -254,4 +255,3 @@
 #define DTYP_PXYWINSIZE         (-52)
 
 :include cplusepi.sp
-
