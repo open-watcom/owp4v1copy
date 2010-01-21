@@ -48,4 +48,3 @@ int pclose( FILE *f )
     return( _pclose( f ) );
 #endif
 }
-
