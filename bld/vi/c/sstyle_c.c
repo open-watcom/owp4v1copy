@@ -40,9 +40,10 @@ static  ss_flags_c  flags;
 static  long        lenCComment = 0;
 static  char        *firstNonWS;
 
-#define DIRECTIVE_ERROR "error"
-#define DIRECTIVE_IF    "if"
-#define KEYWORD_DEFINED "defined"
+#define DIRECTIVE_ERROR     "error"
+#define DIRECTIVE_IF        "if"
+#define DIRECTIVE_PRAGMA    "pragma"
+#define KEYWORD_DEFINED     "defined"
 
 enum getFloatCommands {
     AFTER_ZERO,
@@ -265,16 +266,20 @@ static void getText( ss_block *ss_new, char *start )
     char    *text = start + 1;
     char    save_char;
     bool    isKeyword;
+    bool    isPragma;
     while( isalnum( *text ) || ( *text == '_' ) ) {
         text++;
     }
     save_char = *text;
     *text = '\0';
     isKeyword = IsKeyword( start, FALSE );
+    isPragma = flags.inPragmaDir && IsPragma( start );
     *text = save_char;
 
     ss_new->type = SE_IDENTIFIER;
-    if( isKeyword ) {
+    if( isPragma ) {
+        ss_new->type = SE_PREPROCESSOR;
+    } else if( isKeyword ) {
         ss_new->type = SE_KEYWORD;
     } else if( flags.inIfDir && isdirective( start, KEYWORD_DEFINED ) ) {
         ss_new->type = SE_PREPROCESSOR;
@@ -320,6 +325,8 @@ static void getPreprocessor( ss_block *ss_new, char *start )
             flags.inErrorDir = TRUE;
         } else if( isdirective( directive, DIRECTIVE_IF ) ) {
             flags.inIfDir = TRUE;
+        } else if( isdirective( directive, DIRECTIVE_PRAGMA ) ) {
+            flags.inPragmaDir = TRUE;
         }
         ss_new->len = text - start;
         flags.inPreprocessor = FALSE;
@@ -520,6 +527,7 @@ void InitCFlags( linenum line_no )
     flags.inPreprocessor = FALSE;
     flags.inErrorDir = FALSE;
     flags.inIfDir = FALSE;
+    flags.inPragmaDir = FALSE;
 
     CGimmeLinePtr( line_no, &fcb, &thisline );
     line = thisline;
@@ -664,7 +672,7 @@ void GetCBlock( ss_block *ss_new, char *start, line *line, linenum line_no )
     line_no = line_no;
 
     if( start[0] == '\0' ) {
-        flags.inIfDir = FALSE;
+        flags.inIfDir = flags.inPragmaDir = FALSE;
         if( firstNonWS == start ) {
             // line is empty -
             // do not flag following line as having anything to do

@@ -66,6 +66,7 @@ typedef struct tag_lang_info {
 } lang_info;
 
 bool    IsKeyword( char *keyword, bool case_ignore );
+bool    IsPragma( char *pragma );
 void    LangInit( int );
 void    LangFini( int );
 void    LangFiniAll( void );

@@ -53,10 +53,14 @@ static lang_info    langInfo[LANG_MAX] = {
     { NULL,        0,          0,    NULL }   // user-defined 15
 };
 
+static hash_entry   *pragma_table           = NULL;
+static int          pragma_table_entries    = 0;
+static char         *pragma_read_buf        = NULL;
+
 /*
  * hashpjw - taken from red dragon book, pg 436
  */
-int hashpjw( char *s )
+static int hashpjw( char *s, int entries )
 {
     unsigned long   h = 0, g;
     
@@ -68,7 +72,7 @@ int hashpjw( char *s )
         }
         s++;
     }
-    return( h % langInfo[CurrentInfo->Language].table_entries );
+    return( h % entries );
 }
 
 bool IsKeyword( char *keyword, bool case_ignore )
@@ -77,23 +81,41 @@ bool IsKeyword( char *keyword, bool case_ignore )
 
     assert( langInfo[CurrentInfo->Language].ref_count > 0 );
 
-    entry = langInfo[CurrentInfo->Language].keyword_table + hashpjw( keyword );
-    if( entry->real == FALSE ) {
+    entry = langInfo[CurrentInfo->Language].keyword_table +
+        hashpjw( keyword, langInfo[CurrentInfo->Language].table_entries );
+    if( !entry->real ) {
         return( FALSE );
     }
     if( case_ignore ) {
         while( entry != NULL && stricmp( entry->keyword, keyword ) != 0 ) {
             entry = entry->next;
             if( entry ) {
-                assert( entry->real == FALSE );
+                assert( !entry->real );
             }
         }
     } else {
         while( entry != NULL && strcmp( entry->keyword, keyword ) != 0 ) {
             entry = entry->next;
             if( entry ) {
-                assert( entry->real == FALSE );
+                assert( !entry->real );
             }
+        }
+    }
+    return( entry != NULL );
+}
+
+bool IsPragma( char *pragma )
+{
+    hash_entry  *entry;
+
+    entry = pragma_table + hashpjw( pragma, pragma_table_entries );
+    if( !entry->real ) {
+        return( FALSE );
+    }
+    while( entry != NULL && strcmp( entry->keyword, pragma ) != 0 ) {
+        entry = entry->next;
+        if( entry ) {
+            assert( !entry->real );
         }
     }
     return( entry != NULL );
@@ -117,7 +139,7 @@ char *nextKeyword( char *keyword )
     return( keyword + 1 );
 }
 
-void addTable( hash_entry *table, char *Keyword, int NumKeyword )
+void addTable( hash_entry *table, char *Keyword, int NumKeyword, int entries )
 {
     int         i;
     hash_entry  *entry, *empty;
@@ -131,7 +153,7 @@ void addTable( hash_entry *table, char *Keyword, int NumKeyword )
     tmpValue = tmpIndex = MemAlloc( NumKeyword * sizeof( TmpValue ) );
     keyword = Keyword;
     for( i = 0; i < NumKeyword; i++ ) {
-        tmpIndex->hashValue = hashpjw( keyword );
+        tmpIndex->hashValue = hashpjw( keyword, entries );
         tmpIndex->keyword = keyword;
         table[tmpIndex->hashValue].real = TRUE;
         keyword = nextKeyword( keyword );
@@ -205,12 +227,22 @@ void LangInit( int newLanguage )
         langInfo[newLanguage].table_entries = nkeywords;
         langInfo[newLanguage].keyword_table =
             createTable( NextBiggestPrime( nkeywords ) );
-        addTable( langInfo[newLanguage].keyword_table, buff, nkeywords );
+        addTable( langInfo[newLanguage].keyword_table, buff, nkeywords,
+                  langInfo[newLanguage].table_entries );
         langInfo[newLanguage].read_buf = buff;
     }
     langInfo[newLanguage].ref_count++;
 
-    return;
+    if( (newLanguage == LANG_C || newLanguage == LANG_CPP) && pragma_table == NULL ) {
+        rc = ReadDataFile( "pragma.dat", &pragma_read_buf, lang_alloc, lang_save );
+        if( rc != ERR_NO_ERR ) {
+            Error( GetErrorMsg( rc ) );
+            return;
+        }
+        pragma_table_entries = nkeywords;
+        pragma_table = createTable( NextBiggestPrime( nkeywords ) );
+        addTable( pragma_table, pragma_read_buf, nkeywords, pragma_table_entries );
+    }
 
 } /* LangInit */
 
@@ -228,6 +260,16 @@ void LangFini( int language )
         MemFree( langInfo[language].read_buf );
         langInfo[language].keyword_table = NULL;
         langInfo[language].table_entries = 0;
+        langInfo[language].read_buf = NULL;
+    }
+    if( language == LANG_C || language == LANG_CPP ) {
+        if( langInfo[LANG_C].ref_count == 0 && langInfo[LANG_CPP].ref_count == 0 ) {
+            MemFree( pragma_table );
+            MemFree( pragma_read_buf );
+            pragma_table = NULL;
+            pragma_table_entries = 0;
+            pragma_read_buf = NULL;
+        }
     }
 
 } /* LangFini */
