@@ -41,6 +41,8 @@ static  long        lenCComment = 0;
 static  char        *firstNonWS;
 
 #define DIRECTIVE_ERROR "error"
+#define DIRECTIVE_IF    "if"
+#define KEYWORD_DEFINED "defined"
 
 enum getFloatCommands {
     AFTER_ZERO,
@@ -70,6 +72,13 @@ static int issymbol( int c )
     } else {
         return( 0 );
     }
+}
+
+static bool isdirective( char *text, char *directive )
+{
+    int len = strlen( directive );
+    return( strncmp( text, directive, len ) == 0 && !isalnum( *(text + len) ) &&
+            *(text + len) != '_' );
 }
 
 void InitCLine( char *text )
@@ -267,9 +276,10 @@ static void getText( ss_block *ss_new, char *start )
     ss_new->type = SE_IDENTIFIER;
     if( isKeyword ) {
         ss_new->type = SE_KEYWORD;
-    } else
-    if( *text == ':' && firstNonWS == start &&
-        *(text + 1) != ':' && *(text + 1) != '>' ) {
+    } else if( flags.inIfDir && isdirective( start, KEYWORD_DEFINED ) ) {
+        ss_new->type = SE_PREPROCESSOR;
+    } else if( *text == ':' && firstNonWS == start &&
+               *(text + 1) != ':' && *(text + 1) != '>' ) {
         // : and > checked as it may be :: (CPP) operator or :> (base op.)
         text++;
         ss_new->type = SE_JUMPLABEL;
@@ -306,9 +316,10 @@ static void getPreprocessor( ss_block *ss_new, char *start )
         while( *text && !isspace( *text ) && !issymbol( *text ) ) {
             text++;
         }
-        if( strncmp( directive, DIRECTIVE_ERROR,
-                     sizeof( DIRECTIVE_ERROR ) / sizeof( char ) - 1 ) == 0 ) {
-            flags.inErrorDir = 1;
+        if( isdirective( directive, DIRECTIVE_ERROR ) ) {
+            flags.inErrorDir = TRUE;
+        } else if( isdirective( directive, DIRECTIVE_IF ) ) {
+            flags.inIfDir = TRUE;
         }
         ss_new->len = text - start;
         flags.inPreprocessor = FALSE;
@@ -475,7 +486,7 @@ static void getErrorMsg( ss_block *ss_new, char *start )
         text++;
     }
     ss_new->len = text - start;
-    flags.inErrorDir = 0;
+    flags.inErrorDir = FALSE;
 }
 
 void InitCFlagsGivenValues( ss_flags_c *newFlags )
@@ -503,11 +514,12 @@ void InitCFlags( linenum line_no )
     line    *line;
     bool    inBlock = FALSE;
 
-    flags.inCComment = 0;
-    flags.inCPPComment = 0;
-    flags.inString = 0;
-    flags.inPreprocessor = 0;
-    flags.inErrorDir = 0;
+    flags.inCComment = FALSE;
+    flags.inCPPComment = FALSE;
+    flags.inString = FALSE;
+    flags.inPreprocessor = FALSE;
+    flags.inErrorDir = FALSE;
+    flags.inIfDir = FALSE;
 
     CGimmeLinePtr( line_no, &fcb, &thisline );
     line = thisline;
@@ -652,6 +664,7 @@ void GetCBlock( ss_block *ss_new, char *start, line *line, linenum line_no )
     line_no = line_no;
 
     if( start[0] == '\0' ) {
+        flags.inIfDir = FALSE;
         if( firstNonWS == start ) {
             // line is empty -
             // do not flag following line as having anything to do
