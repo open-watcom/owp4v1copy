@@ -40,6 +40,7 @@ static  ss_flags_c  flags;
 static  long        lenCComment = 0;
 static  char        *firstNonWS;
 
+#define DIRECTIVE_ERROR "error"
 
 enum getFloatCommands {
     AFTER_ZERO,
@@ -290,8 +291,10 @@ static void getPreprocessor( ss_block *ss_new, char *start )
     ss_new->type = SE_PREPROCESSOR;
 
     if( EditFlags.PPKeywordOnly ) {
+        char *directive;
+        
         // just grab the #xxx bit & go
-
+        
         // skip the #
         text++;
         // take any spaces present
@@ -299,8 +302,13 @@ static void getPreprocessor( ss_block *ss_new, char *start )
             text++;
         }
         // and then the keyword
+        directive = text;
         while( *text && !isspace( *text ) && !issymbol( *text ) ) {
             text++;
+        }
+        if( strncmp( directive, DIRECTIVE_ERROR,
+                     sizeof( DIRECTIVE_ERROR ) / sizeof( char ) - 1 ) == 0 ) {
+            flags.inErrorDir = 1;
         }
         ss_new->len = text - start;
         flags.inPreprocessor = FALSE;
@@ -458,6 +466,18 @@ again:
     ss_new->len = text - start;
 }
 
+static void getErrorMsg( ss_block *ss_new, char *start )
+{
+    char    *text = start;
+
+    ss_new->type = SE_IDENTIFIER;
+    while( *text ) {
+        text++;
+    }
+    ss_new->len = text - start;
+    flags.inErrorDir = 0;
+}
+
 void InitCFlagsGivenValues( ss_flags_c *newFlags )
 {
     flags = *newFlags;
@@ -487,6 +507,7 @@ void InitCFlags( linenum line_no )
     flags.inCPPComment = 0;
     flags.inString = 0;
     flags.inPreprocessor = 0;
+    flags.inErrorDir = 0;
 
     CGimmeLinePtr( line_no, &fcb, &thisline );
     line = thisline;
@@ -655,6 +676,10 @@ void GetCBlock( ss_block *ss_new, char *start, line *line, linenum line_no )
     }
     if( flags.inString ) {
         getString( ss_new, start, 0 );
+        return;
+    }
+    if( flags.inErrorDir ) {
+        getErrorMsg( ss_new, start );
         return;
     }
 

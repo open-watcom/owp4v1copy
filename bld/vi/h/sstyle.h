@@ -82,7 +82,8 @@ typedef struct ss_flags_c {
     unsigned char   inCPPComment    : 1;
     unsigned char   inString        : 1;
     unsigned char   inPreprocessor  : 1;
-    unsigned char   spare           : 4;
+    unsigned char   inErrorDir      : 1;
+    unsigned char   spare           : 3;
 } ss_flags_c;
 
 typedef struct ss_flags_f {
