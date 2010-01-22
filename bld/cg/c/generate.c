@@ -838,7 +838,7 @@ extern  void    Generate( bool routine_done )
     }
     FreeProc();
     HaveLiveInfo = FALSE;
-#if _TARGET & _TARG_IAPX86
+#if _TARGET & _TARG_INTEL
     if( _IsModel( NEW_P5_PROFILING ) ) {
         FlushQueue();
     }
