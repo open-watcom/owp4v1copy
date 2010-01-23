@@ -34,17 +34,6 @@ inc_dirs += -I. $(inc_dirs_targ) -I"$(dwarf_dir)/dw/h" $(mem_include)
 .h: $(include_path)
 .asm: $(asm_path)
 
-libfile: .PROCEDURE
-    rm -f $^&.lbc
-!ifdef bootstrap
-# to be fixed: wlib -fa now produces a library that gnu ld can't read
-# can be a bug in wlib or in gnu ld, I don't know right now...
-    ar crs $^. $<
-!else
-    @for %i in ($<) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) @$^&.lbc
-!endif
-
 ./bitset.exe : $(watcom_dir)/c/bitset.c
     $(bld_cl) $< $(wcl_util_opts)
 

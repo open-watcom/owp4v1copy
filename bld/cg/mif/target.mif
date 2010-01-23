@@ -27,14 +27,14 @@ $(bin_path) : cgdmain.obj $(libs)
         $(linker) $(lflags) name $@ op map file $[@ lib {$(libs)}
 
 cgdllcli.lib : cgdllcli.obj i64.obj
-        @%make libfile
+        $(librarian) $(libflags) $<
 
 !endif
 
 !include $(cg_dir)/mif/rules.mif
 
 cg$(target_name).lib : $(target_objs) $(mem_objs) $(cg_dump_objs)
-        @%make libfile
+        $(librarian) $(libflags) $<
 
 $(hostcglibname) : $($(host_OS)_objs)
-        @%make libfile
+        $(librarian) $(libflags) $<
