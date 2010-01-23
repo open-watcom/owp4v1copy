@@ -85,6 +85,10 @@ bool IsKeyword( char *keyword, bool case_ignore )
 
     assert( langInfo[CurrentInfo->Language].ref_count > 0 );
 
+    if( langInfo[CurrentInfo->Language].keyword_table == NULL ) {
+        return( FALSE );
+    }
+
     entry = langInfo[CurrentInfo->Language].keyword_table +
         hashpjw( keyword, langInfo[CurrentInfo->Language].table_entries );
     if( !entry->real ) {
@@ -112,6 +116,10 @@ bool IsPragma( char *pragma )
 {
     hash_entry  *entry;
 
+    if( pragma_table == NULL ) {
+        return( FALSE );
+    }
+
     entry = pragma_table + hashpjw( pragma, pragma_table_entries );
     if( !entry->real ) {
         return( FALSE );
@@ -128,6 +136,10 @@ bool IsPragma( char *pragma )
 bool IsDeclspec( char *keyword )
 {
     hash_entry  *entry;
+
+    if( declspec_table == NULL ) {
+        return( FALSE );
+    }
 
     entry = declspec_table + hashpjw( keyword, declspec_table_entries );
     if( !entry->real ) {
