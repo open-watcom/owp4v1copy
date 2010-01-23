@@ -78,42 +78,44 @@ typedef struct ss_block {
 } ss_block;
 
 typedef struct ss_flags_c {
-    unsigned char   inCComment      : 1;
-    unsigned char   inCPPComment    : 1;
-    unsigned char   inString        : 1;
-    unsigned char   inPreprocessor  : 1;
-    unsigned char   inErrorDir      : 1;
-    unsigned char   inIfDir         : 1;
-    unsigned char   inPragmaDir     : 1;
-    unsigned char   spare           : 1;
+    unsigned short  inCComment      : 1;
+    unsigned short  inCPPComment    : 1;
+    unsigned short  inString        : 1;
+    unsigned short  inPreprocessor  : 1;
+    unsigned short  inErrorDir      : 1;
+    unsigned short  inIfDir         : 1;
+    unsigned short  inPragmaDir     : 1;
+    unsigned short  inDeclspec      : 1;
+    unsigned short  inDeclspec2     : 1;
+    unsigned short  spare           : 7;
 } ss_flags_c;
 
 typedef struct ss_flags_f {
-    unsigned char   inString    : 1;
-    unsigned char   spare       : 7;
+    unsigned short  inString    : 1;
+    unsigned short  spare       : 15;
 } ss_flags_f;
 
 typedef struct ss_flags_h {
-    unsigned char   inHTMLComment       : 1;
-    unsigned char   inHTMLKeyword       : 1;
-    unsigned char   inAltHTMLKeyword    : 1;
-    unsigned char   inString            : 1;
-    unsigned char   spare               : 4;
+    unsigned short  inHTMLComment       : 1;
+    unsigned short  inHTMLKeyword       : 1;
+    unsigned short  inAltHTMLKeyword    : 1;
+    unsigned short  inString            : 1;
+    unsigned short  spare               : 12;
 } ss_flags_h;
 
 typedef struct ss_flags_g {
-    unsigned char   inGMLComment    : 1;
-    unsigned char   inGMLKeyword    : 1;
-    unsigned char   inAltGMLKeyword : 1;
-    unsigned char   inString        : 1;
-    unsigned char   spare           : 4;
+    unsigned short  inGMLComment    : 1;
+    unsigned short  inGMLKeyword    : 1;
+    unsigned short  inAltGMLKeyword : 1;
+    unsigned short  inString        : 1;
+    unsigned short  spare           : 12;
 } ss_flags_g;
 
 typedef struct ss_flags_m {
-    unsigned char   inPreproc       : 1;
-    unsigned char   inInlineFile    : 1;
-    unsigned char   inMacro         : 1;
-    unsigned char   spare           : 5;
+    unsigned short  inPreproc       : 1;
+    unsigned short  inInlineFile    : 1;
+    unsigned short  inMacro         : 1;
+    unsigned short  spare           : 13;
 } ss_flags_m;
 
 typedef union ss_flags {

@@ -57,6 +57,10 @@ static hash_entry   *pragma_table           = NULL;
 static int          pragma_table_entries    = 0;
 static char         *pragma_read_buf        = NULL;
 
+static hash_entry   *declspec_table         = NULL;
+static int          declspec_table_entries  = 0;
+static char         *declspec_read_buf      = NULL;
+
 /*
  * hashpjw - taken from red dragon book, pg 436
  */
@@ -113,6 +117,23 @@ bool IsPragma( char *pragma )
         return( FALSE );
     }
     while( entry != NULL && strcmp( entry->keyword, pragma ) != 0 ) {
+        entry = entry->next;
+        if( entry ) {
+            assert( !entry->real );
+        }
+    }
+    return( entry != NULL );
+}
+
+bool IsDeclspec( char *keyword )
+{
+    hash_entry  *entry;
+
+    entry = declspec_table + hashpjw( keyword, declspec_table_entries );
+    if( !entry->real ) {
+        return( FALSE );
+    }
+    while( entry != NULL && strcmp( entry->keyword, keyword ) != 0 ) {
         entry = entry->next;
         if( entry ) {
             assert( !entry->real );
@@ -242,6 +263,15 @@ void LangInit( int newLanguage )
         pragma_table_entries = nkeywords;
         pragma_table = createTable( NextBiggestPrime( nkeywords ) );
         addTable( pragma_table, pragma_read_buf, nkeywords, pragma_table_entries );
+
+        rc = ReadDataFile( "declspec.dat", &declspec_read_buf, lang_alloc, lang_save );
+        if( rc != ERR_NO_ERR ) {
+            Error( GetErrorMsg( rc ) );
+            return;
+        }
+        declspec_table_entries = nkeywords;
+        declspec_table = createTable( NextBiggestPrime( nkeywords ) );
+        addTable( declspec_table, declspec_read_buf, nkeywords, declspec_table_entries );
     }
 
 } /* LangInit */

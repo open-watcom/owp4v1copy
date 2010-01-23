@@ -43,6 +43,7 @@ static  char        *firstNonWS;
 #define DIRECTIVE_ERROR     "error"
 #define DIRECTIVE_IF        "if"
 #define DIRECTIVE_PRAGMA    "pragma"
+#define KEYWORD_DECLSPEC    "__declspec"
 #define KEYWORD_DEFINED     "defined"
 
 enum getFloatCommands {
@@ -123,6 +124,7 @@ static void getHex( ss_block *ss_new, char *start )
         }
     }
     ss_new->len = text - start;
+    flags.inDeclspec = flags.inDeclspec2 = FALSE;
 }
 
 static void getFloat( ss_block *ss_new, char *start, int skip, int command )
@@ -202,6 +204,7 @@ static void getFloat( ss_block *ss_new, char *start, int skip, int command )
         text++;
     }
     ss_new->len = text - start;
+    flags.inDeclspec = flags.inDeclspec2 = FALSE;
 }
 
 static void getNumber( ss_block *ss_new, char *start, char top )
@@ -249,6 +252,7 @@ static void getNumber( ss_block *ss_new, char *start, char top )
             ss_new->len++;
         }
     }
+    flags.inDeclspec = flags.inDeclspec2 = FALSE;
 }
 
 static void getWhiteSpace( ss_block *ss_new, char *start )
@@ -267,6 +271,7 @@ static void getText( ss_block *ss_new, char *start )
     char    save_char;
     bool    isKeyword;
     bool    isPragma;
+    bool    isDeclspec;
     while( isalnum( *text ) || ( *text == '_' ) ) {
         text++;
     }
@@ -274,12 +279,19 @@ static void getText( ss_block *ss_new, char *start )
     *text = '\0';
     isKeyword = IsKeyword( start, FALSE );
     isPragma = flags.inPragmaDir && IsPragma( start );
+    isDeclspec = flags.inDeclspec2 && IsDeclspec( start );
     *text = save_char;
 
     ss_new->type = SE_IDENTIFIER;
+    flags.inDeclspec = flags.inDeclspec2 = FALSE;
     if( isPragma ) {
         ss_new->type = SE_PREPROCESSOR;
     } else if( isKeyword ) {
+        ss_new->type = SE_KEYWORD;
+        if( isdirective( start, KEYWORD_DECLSPEC ) ) {
+            flags.inDeclspec = TRUE;
+        }
+    } else if( isDeclspec ) {
         ss_new->type = SE_KEYWORD;
     } else if( flags.inIfDir && isdirective( start, KEYWORD_DEFINED ) ) {
         ss_new->type = SE_PREPROCESSOR;
@@ -292,8 +304,10 @@ static void getText( ss_block *ss_new, char *start )
     ss_new->len = text - start;
 }
 
-static void getSymbol( ss_block *ss_new )
+static void getSymbol( ss_block *ss_new, char *start )
 {
+    flags.inDeclspec2 = flags.inDeclspec && *start == '(';
+    flags.inDeclspec = FALSE;
     ss_new->type = SE_SYMBOL;
     ss_new->len = 1;
 }
@@ -395,6 +409,7 @@ embedded:
         // 0 length char constants not allowed
         ss_new->type = SE_INVALIDTEXT;
     }
+    flags.inDeclspec = flags.inDeclspec2 = FALSE;
 }
 
 static void getBeyondText( ss_block *ss_new )
@@ -407,6 +422,7 @@ static void getInvalidChar( ss_block *ss_new )
 {
     ss_new->type = SE_INVALIDTEXT;
     ss_new->len = 1;
+    flags.inDeclspec = flags.inDeclspec2 = FALSE;
 }
 
 static void getCComment( ss_block *ss_new, char *start, int skip )
@@ -482,6 +498,7 @@ again:
         flags.inString = FALSE;
     }
     ss_new->len = text - start;
+    flags.inDeclspec = flags.inDeclspec2 = FALSE;
 }
 
 static void getErrorMsg( ss_block *ss_new, char *start )
@@ -528,6 +545,8 @@ void InitCFlags( linenum line_no )
     flags.inErrorDir = FALSE;
     flags.inIfDir = FALSE;
     flags.inPragmaDir = FALSE;
+    flags.inDeclspec = FALSE;
+    flags.inDeclspec2 = FALSE;
 
     CGimmeLinePtr( line_no, &fcb, &thisline );
     line = thisline;
@@ -756,7 +775,7 @@ void GetCBlock( ss_block *ss_new, char *start, line *line, linenum line_no )
     }
 
     if( issymbol( start[0] ) ) {
-        getSymbol( ss_new );
+        getSymbol( ss_new, start );
         return;
     }
 
