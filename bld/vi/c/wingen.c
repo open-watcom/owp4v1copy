@@ -94,6 +94,31 @@ void Message1( char *str, ... )
 } /* Message1 */
 
 /*
+ * Message1Box - display message on line 1 (differs from Message1 only on Windows)
+ */
+void Message1Box( char *str, ... )
+{
+    va_list     al;
+    char        tmp[MAX_STR];
+
+    if( !EditFlags.EchoOn || MessageWindow < 0 ) {
+        return;
+    }
+    ClearWindow( MessageWindow );
+    va_start( al, str );
+    MyVSprintf( tmp, str, al );
+    va_end( al );
+    tmp[WindMaxWidth - 1] = 0;
+
+    if( !EditFlags.LineDisplay ) {
+        DisplayLineInWindow( MessageWindow, 1, tmp );
+    } else {
+        MyPrintf( "%s\n", tmp );
+    }
+
+} /* Message1 */
+
+/*
  * Message2 - display message on line 2
  */
 void Message2( char *str, ... )

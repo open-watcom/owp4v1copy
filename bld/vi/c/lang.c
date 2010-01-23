@@ -61,6 +61,9 @@ static hash_entry   *declspec_table         = NULL;
 static int          declspec_table_entries  = 0;
 static char         *declspec_read_buf      = NULL;
 
+#define PRAGMA_DATFILE      "pragma.dat"
+#define DECLSPEC_DATFILE    "declspec.dat"
+
 /*
  * hashpjw - taken from red dragon book, pg 436
  */
@@ -252,7 +255,12 @@ void LangInit( int newLanguage )
     if( langInfo[newLanguage].ref_count == 0 ) {
         rc = ReadDataFile( fname[newLanguage], &buff, lang_alloc, lang_save );
         if( rc != ERR_NO_ERR ) {
-            Error( GetErrorMsg( rc ) );
+            if( rc == ERR_FILE_NOT_FOUND ) {
+                ErrorBox( GetErrorMsg( ERR_SPECIFIC_FILE_NOT_FOUND ),
+                          fname[newLanguage] );
+            } else {
+                ErrorBox( GetErrorMsg( rc ) );
+            }
             CurrentInfo->Language = LANG_NONE;
             return;
         }
@@ -267,18 +275,24 @@ void LangInit( int newLanguage )
     langInfo[newLanguage].ref_count++;
 
     if( (newLanguage == LANG_C || newLanguage == LANG_CPP) && pragma_table == NULL ) {
-        rc = ReadDataFile( "pragma.dat", &pragma_read_buf, lang_alloc, lang_save );
-        if( rc != ERR_NO_ERR ) {
-            Error( GetErrorMsg( rc ) );
+        rc = ReadDataFile( PRAGMA_DATFILE, &pragma_read_buf, lang_alloc, lang_save );
+        if( rc == ERR_FILE_NOT_FOUND ) {
+            ErrorBox( GetErrorMsg( ERR_SPECIFIC_FILE_NOT_FOUND ), PRAGMA_DATFILE );
+            return;
+        } else if( rc != ERR_NO_ERR ) {
+            ErrorBox( GetErrorMsg( rc ) );
             return;
         }
         pragma_table_entries = nkeywords;
         pragma_table = createTable( NextBiggestPrime( nkeywords ) );
         addTable( pragma_table, pragma_read_buf, nkeywords, pragma_table_entries );
 
-        rc = ReadDataFile( "declspec.dat", &declspec_read_buf, lang_alloc, lang_save );
-        if( rc != ERR_NO_ERR ) {
-            Error( GetErrorMsg( rc ) );
+        rc = ReadDataFile( DECLSPEC_DATFILE, &declspec_read_buf, lang_alloc, lang_save );
+        if( rc == ERR_FILE_NOT_FOUND ) {
+            ErrorBox( GetErrorMsg( ERR_SPECIFIC_FILE_NOT_FOUND ), DECLSPEC_DATFILE );
+            return;
+        } else if( rc != ERR_NO_ERR ) {
+            ErrorBox( GetErrorMsg( rc ) );
             return;
         }
         declspec_table_entries = nkeywords;

@@ -141,6 +141,41 @@ void Error( char *str, ... )
 
 } /* Error */
 
+/*
+ * ErrorBox - show an error message in a dialog box
+ */
+void ErrorBox( char *str, ... )
+{
+    va_list     al;
+    char        tmp[MAX_STR];
+
+    if( MessageWindow != NO_WINDOW ) {
+        WindowAuxUpdate( MessageWindow, WIND_INFO_TEXT_COLOR,
+                            messagew_info.hilight.foreground );
+        WindowAuxUpdate( MessageWindow, WIND_INFO_BACKGROUND_COLOR,
+                            messagew_info.hilight.background );
+        va_start( al, str );
+        MyVSprintf( tmp, str, al );
+        va_end( al );
+
+        SourceError( tmp );
+        Message1Box( "%s", tmp );
+
+        WindowAuxUpdate( MessageWindow, WIND_INFO_TEXT_COLOR,
+                            messagew_info.text.foreground );
+        WindowAuxUpdate( MessageWindow, WIND_INFO_BACKGROUND_COLOR,
+                            messagew_info.text.background );
+        MyBeep();
+    } else {
+        va_start( al, str );
+#ifndef __WIN__
+        MyVPrintf( str, al );
+        MyPrintf( "\n" );
+#endif
+        va_end( al );
+    }
+
+} /* Error */
 
 static bool errmsg_alloc( int cnt )
 {

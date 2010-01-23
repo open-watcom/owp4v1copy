@@ -147,7 +147,7 @@ static void msgString( int line_no, char *str )
     TextReleaseDC( MessageWindow, hdc );
     WriteString( MessageWindow, 0, rect.top, WIN_STYLE( &MessageBar ), str );
 }
-
+   
 void Message1( char *fmt, ... )
 {
     va_list     args;
@@ -159,6 +159,18 @@ void Message1( char *fmt, ... )
     va_end( args );
     strcpy( msgString1, tmp );
     msgString( 1, tmp );
+}
+
+void Message1Box( char *fmt, ... )
+{
+    va_list     args;
+    char        tmp[MAX_STR];
+
+    va_start( args, fmt );
+    MyVSprintf( tmp, fmt, args );
+    va_end( args );
+    strcpy( msgString1, tmp );
+    MessageBox( Root, tmp, NULL, MB_OK );
 }
 
 void Message2( char *fmt, ... )

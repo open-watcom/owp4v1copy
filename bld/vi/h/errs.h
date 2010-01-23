@@ -193,6 +193,7 @@ typedef enum vi_rc {
     ERR_INVALID_LOCATE,
     ERR_NO_MORE_REDOS,
     ERR_SAVE_CANCELED,
+    ERR_SPECIFIC_FILE_NOT_FOUND
 } vi_rc;
 
 #endif

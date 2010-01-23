@@ -262,6 +262,7 @@ void    FatalError( vi_rc );
 void    Die( const char *, ... );
 char    *GetErrorMsg( vi_rc );
 void    Error( char *, ... );
+void    ErrorBox( char *, ... );
 void    FreeErrorMsgData( void );
 void    ErrorFini( void );
 
@@ -839,6 +840,7 @@ vi_rc   DisplayExtraInfo( window_info *, window_id *, char  _NEAR * _NEAR *, int
 vi_rc   NewMessageWindow( void );
 vi_rc   NewWindow2( window_id *, window_info * );
 void    Message1( char *, ... );
+void    Message1Box( char *, ... );
 void    Message2( char *, ... );
 vi_rc   WPrintfLine( window_id, int, char *, ... );
 bool    ColumnInWindow( int, int * );
