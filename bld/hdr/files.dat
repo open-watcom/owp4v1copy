@@ -183,6 +183,7 @@ usr="stdexcep.h"
 usr="typeinfo.h"
 
 [ DEFAULT type="s" dir="h/sys" where="c jc ac" ]
+usr="_lfndos.h"
 usr="locking.h"
 usr="stat.h"
 usr="timeb.h"
