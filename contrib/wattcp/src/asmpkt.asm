@@ -13,7 +13,7 @@ endif
 ; an alternate version that does the same as this.
 ;
 
-PUBLIC pkt_receiver_rm, pkt_receiver_rm_
+PUBLIC pkt_receiver_rm, _pkt_receiver_rm
 
 extrn _pkt_enque_ptr : far
 
@@ -31,7 +31,7 @@ rx_stk_end     label word
                dw 0
 
 pkt_receiver_rm:
-pkt_receiver_rm_:
+_pkt_receiver_rm:
         pushf
         cli                        ; no interruptions now
         or   al, al                ; AL = 0 if 1st call from pkt-driver

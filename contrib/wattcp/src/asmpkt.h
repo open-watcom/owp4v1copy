@@ -2,7 +2,7 @@
 #define __ASMPKT_H
 
 #if (DOSX == 0)                                  /* for real-mode targets   */
-  extern void far pkt_receiver_rm (void);        /* in asmpkt.asm/asmpkt2.s */
+  extern void cdecl far pkt_receiver_rm(void);   /* in asmpkt.asm/asmpkt2.s */
 
 #elif defined(__WATCOMC__) && (DOSX & DOS4GW) || /* in asmpkt4.asm */ \
       defined(__BORLAND386__) && (DOSX == WDOSX)
