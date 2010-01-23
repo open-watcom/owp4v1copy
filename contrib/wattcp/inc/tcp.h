@@ -213,7 +213,7 @@ extern int    cmp_timers   (DWORD t1, DWORD t2);
 extern int    set_timediff (long msec);
 extern DWORD  get_timediff (DWORD now, DWORD t);
 extern void   hires_timer  (int on);
-extern double timeval_diff (const struct timeval *a, const struct timeval *b);
+extern struct timeval timeval_diff (const struct timeval *a, const struct timeval *b);
 
 extern void   ip_timer_init   (void *s , WORD delayseconds);
 extern WORD   ip_timer_expired(void *s);

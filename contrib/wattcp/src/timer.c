@@ -269,13 +269,24 @@ DWORD get_timediff (DWORD now, DWORD tim)
 /*
  * Return difference (in micro-sec) between timevals `*a' and `*b'
  */
-double timeval_diff (const struct timeval *a, const struct timeval *b)
+struct timeval timeval_diff (const struct timeval *a, const struct timeval *b)
 {
-  long d_sec, d_usec;
+  struct timeval d;
 
-  d_sec  = (long)(a->tv_sec - b->tv_sec);
-  d_usec = a->tv_usec - b->tv_usec;
-  return (1E6 * (double)d_sec + (double)d_usec);
+  d.tv_sec  = (long)(a->tv_sec - b->tv_sec);
+  d.tv_usec = a->tv_usec - b->tv_usec;
+  if( d.tv_sec < 0 ) {
+    if( d.tv_usec > 0 ) {
+      d.tv_sec++;
+      d.tv_usec -= 1000000L;
+    }
+  } else {
+    if( d.tv_usec < 0 ) {
+      d.tv_sec--;
+      d.tv_usec += 1000000L;
+    }
+  }
+  return (d);
 }
 
 

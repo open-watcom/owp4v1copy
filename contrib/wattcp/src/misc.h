@@ -66,7 +66,7 @@ extern int    cmp_timers   (DWORD t1, DWORD t2);
 extern void   hires_timer  (int on);
 extern int    set_timediff (long msec);
 extern DWORD  get_timediff (DWORD now, DWORD t);
-extern double timeval_diff (const struct timeval *a, const struct timeval *b);
+extern struct timeval timeval_diff (const struct timeval *a, const struct timeval *b);
 
 extern const char *time_str  (DWORD val);
 extern const char *dword_str (DWORD val);

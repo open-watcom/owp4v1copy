@@ -259,18 +259,16 @@ int select_s (int nfds, fd_set *readfds, fd_set *writefds,
        */
       if (timeout)
       {
-        double remaining = timeval_diff (&now, &expiry);
-
-        timeout->tv_sec  = (long)(remaining / 1E6);
-        timeout->tv_usec = (long)remaining % 1000000UL;
+        *timeout = timeval_diff (&now, &expiry);
       }
       goto select_ok;
     }
 
     if (expired)
     {
-      SOCK_DEBUGF ((NULL, ", timeout!: %.6fs",
-                   timeval_diff(&now, &starttime)/1E6));
+      expiry = timeval_diff(&now, &starttime);
+      SOCK_DEBUGF ((NULL, ", timeout!: %u.%06lus",
+                   expiry.tv_secs, expiry.tv_usecs ));
 
       for (s = 0; s < num_fd; s++)
       {

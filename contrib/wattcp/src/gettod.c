@@ -188,7 +188,8 @@ int gettimeofday2 (struct timeval *tv, struct timezone *tz)
 
 int main (void)
 {
-  DWORD loops = 0;
+  DWORD          loops = 0;
+  struct timeval delta = { 0, 0 };
 
   init_misc();
 
@@ -196,18 +197,16 @@ int main (void)
   {
     struct timeval tv;
     struct timeval last;
-    double delta;
 
     gettimeofday2 (&tv, NULL);
 
     if (loops > 0)
-         delta = timeval_diff (&tv, &last);
-    else delta = 0.0;
+         delta = timeval_diff(&tv, &last);
     last.tv_sec  = tv.tv_sec;
     last.tv_usec = tv.tv_usec;
 
-    printf ("%10u.%06lu, %.6f, (%.19s)\n",
-            tv.tv_sec, tv.tv_usec, delta/1E6, ctime(&tv.tv_sec));
+    printf ("%10u.%06lu, %u.%06lu, (%.19s)\n",
+            tv.tv_sec, tv.tv_usec, delta.tv_sec, delta.tv_usec, ctime(&tv.tv_sec));
     usleep (100000);
     loops++;
   }
