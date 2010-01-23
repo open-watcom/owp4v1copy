@@ -7,6 +7,8 @@
 #ifndef __LFNDOS_H_INCLUDED
 #define __LFNDOS_H_INCLUDED
 
+:include readonly.sp
+
 #if defined(__WATCOM_LFN__) && defined(__DOS__)
  #if defined(_M_I86)
   #if defined(__MEDIUM__)
