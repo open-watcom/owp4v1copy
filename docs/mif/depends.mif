@@ -1017,6 +1017,7 @@ $(docsrc_dir)$(SL)lg$(SL)ldoutput.gml &
 $(docsrc_dir)$(SL)lg$(SL)ldoverla.gml &
 $(docsrc_dir)$(SL)lg$(SL)ldpath.gml &
 $(docsrc_dir)$(SL)lg$(SL)ldrefere.gml &
+$(docsrc_dir)$(SL)lg$(SL)ldresour.gml &
 $(docsrc_dir)$(SL)lg$(SL)ldruntim.gml &
 $(docsrc_dir)$(SL)lg$(SL)ldsectio.gml &
 $(docsrc_dir)$(SL)lg$(SL)ldsegmen.gml &

@@ -1,6 +1,12 @@
 .*
 .*
-.option RESOURCE
+.section The RESOURCE Option
+.if '&target' ne 'QNX' .do begin
+.np
+:SF font=9.Formats: &suppsys:eSF.
+.do end
+.ix 'RESOURCE option'
+.ix 'options' 'RESOURCE'
 .*
 .np
 For 16-bit OS/2 executable files and Win16 or Win32 executable files,

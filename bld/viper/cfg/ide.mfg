@@ -1570,7 +1570,7 @@ Rule NEXE, WINLINK, n??e?
   Command " @%append $*.lk1 LIBR $'.imp"
   Command "!endif"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " @%append $*.lk1 op resource=$<RES!>"
+  Command " @%append $*.lk1 $<RES,>"
   Command "!endif"
   Command " *$<#WLINK> @$'.lk1"
 
@@ -1665,7 +1665,11 @@ Rule WPBDLL, WLINK, wp6d?
   Command " @%append $*.lk1 LIBR $'.imp"
   Command "!endif"
   Command "!ifneq BLANK \"$<RES!>\""
+:segment FOR_NT
+  Command " @%append $*.lk1 $<RES,>"
+:elsesegment
   Command " @%append $*.lk1 op resource=$<RES!>"
+:endsegment
   Command "!endif"
   Command " *$<#> @$'.lk1"
 :segment FOR_NT
@@ -1755,7 +1759,7 @@ Rule NDLL, WLINK, n??d?
   Command " @%append $*.lk1 LIBR $'.imp"
   Command "!endif"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " @%append $*.lk1 op resource=$<RES!>"
+  Command " @%append $*.lk1 $<RES,>"
   Command "!endif"
   Command " *$<#> @$'.lk1"
   Command " wlib -q -n -b $*.lib +$*.dll"

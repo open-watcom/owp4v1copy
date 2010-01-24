@@ -214,6 +214,7 @@
 .dir redefsok           opredefs.gml    all
 .dir reentrant          opreentr.gml    netware
 .dir reference          ldrefere.gml    all
+.dir resource           ldresour.gml    win32
 .dir resource           opresour.gml    os2 qnx win16 win32
 .dir runtime            ldruntim.gml    pharlap win32 elf
 .dir rwreloccheck       oprwrelo.gml    win16
