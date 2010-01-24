@@ -1,22 +1,24 @@
 #pmake: build serv lcl os_dos dsx cpu_386 x86
 
-host_os  = dos
+host_os = dos
 host_cpu = 386
 
-os  = cw
+os = cw
 srv = cw
 cpu = x86
 name = cwhelp
 which = SERVER
 
-extra_c_flags = -DCAUSEWAY
-extra_a_flags_cwhelp = -fpi87
+extra_objs = &
+    autolock.obj &
+    cwacc.obj &
+    cwintr.obj
 
-inc_dirs = -I"$(cw_dir)/inc"
+extra_c_flags = -ms -DCAUSEWAY
 
-extra_libs = ../lib/system.lib
+extra_a_flags = -ms -DCAUSEWAY
 
-extra_objs =  cwhelp.obj c2asm.obj
+inc_dirs = -I"$(cw_dir)/inc" -I"$(comp_cfg_dir)/h"
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
 !include $(trap_dir)/master.mif

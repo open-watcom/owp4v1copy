@@ -1,12 +1,15 @@
 !ifeq which SERVER
 extra_c_flags += -DDOSXHELP
-#extra_objs    += $(dosx_serv_objs)
+extra_objs    += $(dosx_serv_objs)
 !else
 extra_c_flags += -DDOSXTRAP
 extra_objs    += $(dosx_trap_objs)
 !endif
 
 !include $(trap_dir)/lcl/dos/dos.mif
+
+dosx_serv_objs_i86 = misc7086.obj
+dosx_serv_objs_386 = misc7386.obj
 
 dosx_trap_objs = &
         $(dos_objs) &
@@ -21,14 +24,11 @@ dosx_serv_objs = &
         dosxserv.obj &
         dosxtrio.obj &
         dosxstub.obj &
+        dosxrmod.obj &
         core.obj &
         supp.obj &
         packet.obj &
         dosexc.obj &
-        x86cpu.obj
-
-!ifeq host_cpu i86
-dosx_serv_objs += misc7086.obj
-!else
-dosx_serv_objs += misc7386.obj
-!endif
+        dosredir.obj &
+        x86cpu.obj &
+        $(dosx_serv_objs_$(host_cpu))

@@ -25,11 +25,8 @@ extra_a_flags = -dPHARLAP -ms
 inc_dirs = -I"../h"
 
 extra_objs = &
-    $(dosx_serv_objs) &
-    dosredir.obj &
     plsacc.obj &
     plsintr.obj &
-    dosxrmod.obj &
     dilglue.obj
 
 extra_srcs = $(plsdir)

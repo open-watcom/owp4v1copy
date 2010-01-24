@@ -10,9 +10,6 @@ name = rsihelp
 which = SERVER
 
 extra_objs = &
-        $(dosx_serv_objs) &
-        dosredir.obj &
-        dosxrmod.obj &
         rsiacc.obj &
         dbglib.obj &
         dbgliba.obj &
