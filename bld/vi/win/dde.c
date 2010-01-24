@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#define INCLUDE_DDEML_H
 #include "vi.h"
 #include "source.h"
 #include "ddedef.h"

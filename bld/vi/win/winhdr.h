@@ -44,6 +44,10 @@
     #include "os2win.h"
 #else
     #define HAS_HWND
+    #define INCLUDE_COMMDLG_H
+    #define INCLUDE_DDEML_H
+    #define INCLUDE_SHELLAPI_H
+    #define INCLUDE_TOOLHELP_H
     #include <windows.h>
     #include "win1632.h"
 #endif

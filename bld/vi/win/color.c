@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-#define INCLUDE_COMMDLG_H
 #include "vi.h"
 
 typedef struct color {

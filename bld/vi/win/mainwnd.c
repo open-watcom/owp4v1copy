@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-#define INCLUDE_SHELLAPI_H
 #include "vi.h"
 #include <malloc.h>
 #include "window.h"
