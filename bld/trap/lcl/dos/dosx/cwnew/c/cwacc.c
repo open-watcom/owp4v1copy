@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <i86.h>
 #include "trpimp.h"
 #include "trperr.h"
 #include "madregs.h"
@@ -198,6 +199,15 @@ extern unsigned short GetPSP( void );
     "int  21h" \
     modify [ax] value [bx];
 
+extern int GetExecCount( unsigned_32 * );
+#pragma aux GetExecCount = \
+    "push  es" \
+    "les   bx,[eax]" \
+    "cmp   byte ptr es:[bx],1" \
+    "sbb   eax,eax" \
+    "pop   es" \
+    parm [eax] modify [ebx];
+
 extern unsigned     MemoryCheck( unsigned_32, unsigned, unsigned );
 extern unsigned     MemoryRead( unsigned_32, unsigned, void *, unsigned );
 extern unsigned     MemoryWrite( unsigned_32, unsigned, void *, unsigned );
@@ -324,6 +334,15 @@ int CheckWatchPoints( void )
         }
     }
     return( FALSE );
+}
+
+int CheckTerminate( void )
+/************************/
+{
+    if( (epsp_t *)GetModuleHandle( GetPSP() ) == ModHandles[0].epsp ) {
+        return( GetExecCount( &ModHandles[0].epsp->ExecCount ) );
+    }
+    return( 0 );
 }
 
 static int MapStateToCond( unsigned state )
@@ -1058,6 +1077,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 /*******************************************************************/
 {
     trap_version    ver;
+    char            ver_msg[] = "CauseWay API version = 0.00\r\n$";
 
     err[0] = '\0'; /* all ok */
     ver.major = TRAP_MAJOR_VERSION;
@@ -1069,7 +1089,10 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     WatchCount = 0;
     FakeBreak = FALSE;
     XVersion = GrabVectors();
-    _DBG( "CauseWay API version = %d.%02d\r\n", XVersion / 256, XVersion % 256 );
+    ver_msg[23] = XVersion / 256 + '0';
+    ver_msg[25] = ( XVersion % 256 ) / 10 + '0';
+    ver_msg[26] = XVersion % 256 % 10 + '0';
+    dos_print( ver_msg );
     return( ver );
 }
 

@@ -211,6 +211,7 @@ extern          "C", IsHardBreak:proc
 extern          "C", CheckWatchPoints:proc
 extern          "C", SetHBRK:proc
 extern          "C", ResetHBRK:proc
+extern          "C", CheckTerminate:proc
 
 cLockStart      label byte
 
@@ -533,17 +534,13 @@ Int21Handler    proc    near
         jnz     @@Oldi21
 ;
         push    ds
+        mov     ds,dgroup_seg
         push    eax
-        push    ebx
-        mov     ah,62h
-        int     21h
-        mov     ds,bx
-        lds     bx,ds:[EPSP_ExecCount]
-        cmp     b[bx],0
-        pop     ebx
+        call    CheckTerminate
+        or      eax,eax
         pop     eax
         pop     ds
-        jnz     @@Oldi21
+        jz      @@Oldi21
 ;
         assume ds:DGROUP
         popfd
