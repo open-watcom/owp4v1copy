@@ -134,7 +134,7 @@ typedef struct RMBuff {
     extern short        DbgPSP( void );
     extern short        GetPSP( void );
     extern void         SetPSP( short );
-    extern int          _fork(char *,char *);
+    extern int          _fork( char far *pgm, char far *cmdl );
 
     extern void doskludge( void );
     #pragma aux doskludge = \
@@ -301,15 +301,13 @@ static char *CheckPath( const char far *path, char *fullpath, char **endname )
     const char  *namep;
     char        *name;
 
-    namep = EXTENDER_NAMES;
-    for( ;; ) {
+    for( namep = EXTENDER_NAMES; *namep != '\0'; ) {
         name = SearchPath( path, namep, fullpath, endname );
         if( *name != '\0' )
             return( name );
-        if( *namep == '\0' )
-            return( NULL );
-        namep += strlen( namep ) + 1;
+        while( *namep++ != '\0' ) {}    // skip to next extender name
     }
+    return( NULL );
 }
 
 static char *FindExtender( char *fullpath, char **endname )
@@ -332,8 +330,7 @@ _DBG_Writeln(">");
                 && LOW( ext[2] ) == 'x'
                 && LOW( ext[3] ) == 'e' ) {
 _DBG_Writeln( "is exe\r\n" );
-                CopyStr( d4gname, fullpath );
-                *endname = &fullpath[strlen(fullpath)];
+                *endname = CopyStr( d4gname, fullpath );
                 return( fullpath );
             }
         }
@@ -445,6 +442,10 @@ char *RemoteLink( char *parm, char server )
     char            *endparm;
     void            far *link[4];
     void            far * far * link_ptr;
+    unsigned        len;
+  #if defined(PHARLAP)
+    char            *exe_name;
+  #endif
 
     _DBG_EnterFunc( "RemoteLink()" );
     BackFromFork = 0;
@@ -483,7 +484,7 @@ char *RemoteLink( char *parm, char server )
         }
         _DBG_Write( "Extender name: " );
         _DBG_NoTabWriteln( name );
-        endname += strlen( endname )+1;
+        while( *endname++ != '\0' ) {}      // skip after extender name + '\0'
   #if defined(ACAD)
         buffp = buff;
         buff[ 0 ] = '\0';
@@ -493,31 +494,36 @@ char *RemoteLink( char *parm, char server )
             const char      *help_name;
 
     #if defined(PHARLAP)
-            help_name = GetHelpName( parm + strlen( parm ) + 1 );
+            exe_name = parm;
+            while( *exe_name++ != '\0' ) {}
+            help_name = GetHelpName( exe_name );
     #else
             help_name = HELPNAME;
     #endif
             buffp = SearchPath( DOSEnvFind( "PATH" ), help_name, buff, &endhelp );
             if( !*buffp ) {
-                _DBG_ExitFunc( "RemoteLink(), unable to find extender "
-                            "help file" );
+                _DBG_ExitFunc( "RemoteLink(), unable to find extender help file" );
                 return( TRP_ERR_no_extender );
             }
         }
   #endif
         _DBG_Write( "Extender help name: " );
         _DBG_NoTabWriteln( buffp );
-        endparm = CopyStr( parm, endname+1 );
+        endparm = CopyStr( parm, endname + 1 );     // reserve length byte
         endparm = CopyStr( buffp, CopyStr( " ", endparm ) );
   #if defined(PHARLAP)
         endparm = CopyStr( " ", endparm );
-        endparm = CopyStr( parm + strlen( parm ) + 1, endparm );
+        endparm = CopyStr( exe_name, endparm );     // add extra executable name
   #endif
-        *endname = endparm - endname - 1;
-        *endparm = '\r';
-        endparm[ 1 ] = '\0';
+        len = endparm - ( endname + 1 );
+        if( len > 126 )
+            len = 126;
+        *endname = len;       // setup length byte
+        endparm = endname + len + 1;
+        endparm[0] = '\r';
+        endparm[1] = '\0';
         _DBG_Write( "Extender Cmd line: " );
-        _DBG_NoTabWriteln( endname );
+        _DBG_NoTabWriteln( endname + 1 );
         _DBG_Writeln( "calling _fork() to start extender/debugee" );
         if( _fork( name, endname ) != 0 ) {
             _DBG_ExitFunc( "RemoteLink(), unable to start extender" );
