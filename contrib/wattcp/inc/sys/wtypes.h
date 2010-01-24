@@ -12,8 +12,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *      This product includes software developed by the University of
+ *      California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -30,7 +30,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)types.h	7.17 (Berkeley) 5/6/91
+ *      @(#)types.h     7.17 (Berkeley) 5/6/91
  *      @(#)wtypes.h    Waterloo TCP/IP
  */
 
@@ -44,7 +44,7 @@
 #ifndef __SYS_WTYPES_H
 #define __SYS_WTYPES_H
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__WATCOMC__)
 #include <sys/types.h>
 #endif
 
@@ -63,8 +63,10 @@ typedef unsigned long   caddr_t;
 typedef unsigned char   u_int8_t;
 typedef unsigned short  u_int16_t;
 typedef unsigned long   u_int32_t;
+#ifndef __WATCOMC__
 typedef short           int16_t;
 typedef long            int32_t;
+#endif
 
 #define __BIT_TYPES_DEFINED__
 
