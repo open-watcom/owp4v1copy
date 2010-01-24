@@ -252,7 +252,6 @@ static int ScanDFA( ScanValue * value )
             case ';':           do_transition( S_COMMENT );
             case '\\':
                 newstring = VarStringStart();
-                VarStringAddChar( newstring, '\\' );
                 VarStringAddChar( newstring, LookAhead );
                 do_transition( S_DOS_FILENAME );
             default:
