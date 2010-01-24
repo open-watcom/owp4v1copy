@@ -36,6 +36,7 @@
 
 static lang_info    langInfo[LANG_MAX] = {
     //table,  entries, ref_count, read_buf
+    { NULL,        0,          0,    NULL },  // None         0
     { NULL,        0,          0,    NULL },  // C            1
     { NULL,        0,          0,    NULL },  // C++          2
     { NULL,        0,          0,    NULL },  // Fortran      3
@@ -157,7 +158,7 @@ bool IsDeclspec( char *keyword )
     return( entry != NULL );
 }
 
-hash_entry *createTable( int entries )
+static hash_entry *createTable( int entries )
 {
     hash_entry  *table;
 
@@ -167,7 +168,7 @@ hash_entry *createTable( int entries )
     return( table );
 }
 
-char *nextKeyword( char *keyword )
+static char *nextKeyword( char *keyword )
 {
     while( *keyword ) {
         keyword++;
@@ -175,7 +176,7 @@ char *nextKeyword( char *keyword )
     return( keyword + 1 );
 }
 
-void addTable( hash_entry *table, char *Keyword, int NumKeyword, int entries )
+static void addTable( hash_entry *table, char *Keyword, int NumKeyword, int entries )
 {
     int         i;
     hash_entry  *entry, *empty;
