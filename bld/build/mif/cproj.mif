@@ -130,6 +130,7 @@ default_memory_model_386_os2   = f
 default_memory_model_386_nt    = f
 default_memory_model_386_linux = f
 default_memory_model_386_nto   = f
+default_memory_model_386_rdos  = f
 default_memory_model_386_      = f
 
 !ifndef memory_model_386
@@ -165,6 +166,7 @@ cflags_qnx      = -bt=qnx
 cflags_osi      = -bt=osi
 cflags_dos      = -bt=dos
 cflags_zdos     = -bt=zdos
+cflags_rdos     = -bt=rdos -bm
 cflags_nov      = -bt=netware
 cflags_linux    = -bt=linux
 
@@ -236,6 +238,8 @@ def_fpu_flags_zdos_386  = -fpc
   ######
 def_fpu_flags_nto_386   = -fpi
 
+def_fpu_flags_rdos_386  = -fpi
+
 !ifdef fpu_flags_$(host_os)_$(host_cpu)
 fpu_flags = $(fpu_flags_$(host_os)_$(host_cpu))
 !else
@@ -254,6 +258,7 @@ clflags_osi_386    = -l=osi
 clflags_dos_i86    = -l=dos
 clflags_dos_386    = -l=dos4g
 clflags_zdos_386   = -l=zdos
+clflags_rdos_386   = -l=rdos
 clflags_nov_386    = -l=netware
 clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linuxppc
@@ -295,6 +300,7 @@ aflags_qnx      = -bt=qnx
 aflags_osi      = -bt=osi
 aflags_dos      = -bt=dos
 aflags_zdos     = -bt=zdos
+aflags_rdos     = -bt=rdos
 aflags_nov      = -bt=netware
 aflags_linux    = -bt=linux
 
@@ -308,6 +314,7 @@ lflags_os2_386   = sys os2v2
 lflags_os2_i86   = sys os2 pmc
 lflags_dos_386   = sys dos4g
 lflags_zdos_386  = sys zdos
+lflags_rdos_386  = sys rdos_pe
 lflags_qnx_386   = sys qnx386 flat
 lflags_qnx_i86   = sys qnx
 lflags_win_386   = sys win386
@@ -372,6 +379,7 @@ inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 inc_dirs_sys_nto   =
 inc_dirs_sys_zdos  = -I$(hdr_dir)/dos/zdos
+inc_dirs_sys_rdos  =
 
 inc_dirs_lang_osi     = -I$(hdr_dir)/dos
 inc_dirs_lang_qnx     = -I$(hdr_dir)/qnx
@@ -383,6 +391,7 @@ inc_dirs_lang_nto     = -I$(hdr_dir)/nto
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 !else
 inc_dirs_lang   = -I$(hdr_dir)/dos
+
 !endif
 
 !else
@@ -398,6 +407,7 @@ inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 inc_dirs_sys_nto   =
 inc_dirs_sys_zdos  = -I$(lang_root)/h/zdos
+inc_dirs_sys_rdos  =
 
 inc_dirs_lang_qnx     = -I$(lang_root)/qh
 inc_dirs_lang_linux   = -I$(lang_root)/lh
@@ -428,6 +438,7 @@ inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 inc_dirs_sys_nto   =
 inc_dirs_sys_zdos  = -I$(lang_root)\h\zdos
+inc_dirs_sys_rdos  =
 
 inc_dirs_lang_qnx     = -I$(lang_root)\qh
 inc_dirs_lang_linux   = -I$(lang_root)\lh
