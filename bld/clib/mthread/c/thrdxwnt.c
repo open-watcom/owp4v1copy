@@ -73,8 +73,10 @@ static DWORD WINAPI begin_thread_helper( thread_args *td )
     arg = td->argument;
     free( td );
 
-    if( !__Is_DLL ) {                                   /* 15-feb-93 */
-        if (NULL==(tdata = alloca( __ThreadDataSize )))  return( 0 );
+    if( !__Is_DLL ) {
+        tdata = __alloca( __ThreadDataSize );
+        if( tdata == NULL )
+            return( 0 );
         memset( tdata, 0, __ThreadDataSize );
         // tdata->__allocated = 0;
         tdata->__data_size = __ThreadDataSize;

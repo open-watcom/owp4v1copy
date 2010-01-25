@@ -38,7 +38,6 @@
 thread_data *__AllocInitThreadData( thread_data *tdata )
 /******************************************************/
 {
-    thread_data *tdata;
     if( tdata == NULL ) {
         tdata = lib_calloc( 1, __ThreadDataSize );
         if( tdata != NULL ) {

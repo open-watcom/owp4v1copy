@@ -79,8 +79,7 @@ static DWORD WINAPI begin_thread_helper( thread_args *td )
     // in DLL_THREAD_ATTACH processing.
     if( !__Is_DLL ) {
         // allocate thread_data structure on stack
-        tdata = (thread_data *)alloca( __ThreadDataSize );
-
+        tdata = __alloca( __ThreadDataSize );
         if ( tdata ) {
             memset( tdata, 0, __ThreadDataSize );
             // tdata->__allocated = 0;
