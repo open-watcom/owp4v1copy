@@ -303,6 +303,7 @@ extern  void    OptPush( void )
         }
     }
   optend
+}
 
 
 extern  void    OptPull( void )
@@ -381,3 +382,4 @@ extern  void    OptPull( void )
         break;
     }
   optend
+}

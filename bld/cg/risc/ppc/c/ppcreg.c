@@ -52,8 +52,7 @@ extern  void            FEMessage(msg_class,pointer);
 extern  pointer         FEAuxInfo(pointer*,aux_class);
 extern  hw_reg_set      ReturnAddrReg(void);
 extern  void            InitPPCParmState( call_state * );
-extern  void            UpdateReturn( call_state *state, type_def *tipe,
-                                        type_class_def class, aux_handle aux );
+extern  void            UpdateReturn( call_state *, type_def *, type_class_def, aux_handle );
 
 
 extern hw_reg_set SavedRegs( void )

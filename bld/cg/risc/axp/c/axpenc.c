@@ -60,6 +60,7 @@ extern void DumpInt( int );
 extern void DumpNL(void);
 extern void DumpGen(struct opcode_entry*);
 extern void DumpPtr( void *ptr );
+extern void GenMEMINS( uint_8, uint_8, uint_8, signed_16 );
 
 extern void             ObjBytes( char *buffer, int size );
 extern uint_8           RegTrans( hw_reg_set );

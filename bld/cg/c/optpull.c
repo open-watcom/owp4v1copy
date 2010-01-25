@@ -249,6 +249,7 @@ extern  void            CheckStraightenCode( ins_entry  *lbl_ins ) {
         }
     }
   optend
+}
 
 
 extern  void    CallRet( ins_entry *instr ) {
@@ -264,6 +265,7 @@ extern  void    CallRet( ins_entry *instr ) {
     _Savings( OPT_CALLTORET, _ObjLen( instr ) );
     DelInstr( instr );
   optend
+}
 
 
 extern  void    JmpRet( ins_entry *instr ) {
@@ -280,3 +282,4 @@ extern  void    JmpRet( ins_entry *instr ) {
     if( _Class( ret ) != OC_RET ) optreturnvoid;
     JmpToRet( instr, ret );
   optend
+}

@@ -53,6 +53,8 @@ extern  int             SizeDisplayReg( void );
 extern  hw_reg_set      ReturnAddrReg( void );
 extern  hw_reg_set      VarargsHomePtr( void );
 extern  sym_handle      AskForLblSym( label_handle );
+extern  void            UpdateReturn( call_state *, type_def *, type_class_def, aux_handle );
+
 
 extern hw_reg_set SavedRegs( void )
 /*********************************/

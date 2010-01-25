@@ -66,8 +66,8 @@ typedef struct track_entry {
 
 #ifdef _SYS_CHKS
 
-extern  char    MemOk(void *,int);
-extern  void    *MemOtherOk();
+extern  char            MemOk( void *, int );
+extern  void            *MemOtherOk( void );
 
 #endif
 
@@ -132,6 +132,10 @@ static TRPTR    TrkBeg;
 #endif
 
 #define TR_NO_ROUTINE       ((void (*)())0)
+
+extern  int     TrValidate( void *, void (*ra)( void ), tracker * );
+extern  int     TrFree( void *, tracker * );
+extern  int     TrFreeSize( void *, unsigned, tracker * );
 
 static char *CopyStr( char *src, char *dest )
 {

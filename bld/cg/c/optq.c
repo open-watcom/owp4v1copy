@@ -67,6 +67,7 @@ extern  void    InsertQueue( ins_entry *old, ins_entry *new ) {
     }
     ++QCount;
   optend
+}
 
 
 extern  void    DeleteQueue( ins_entry *old ) {
@@ -89,3 +90,4 @@ extern  void    DeleteQueue( ins_entry *old ) {
     }
     --QCount;
   optend
+}

@@ -57,7 +57,7 @@ extern  void            TellByPassOver( void );
 extern  bool            AskSegBlank( seg_id );
 extern  void            IncLocation( offset );
 extern  seg_id          AskOP( void );
-extern  void           IterBytes( offset len, byte pat );
+extern  void            IterBytes( offset, byte );
 
 extern  type_length     TypeClassSize[];
 

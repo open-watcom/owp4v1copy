@@ -119,6 +119,7 @@ static  void    TransformJumps( ins_entry *ins, ins_entry *first ) {
     InsertQueue( first, next );
     Untangle( NextIns( first ) );
   optend
+}
 
 
 
@@ -188,6 +189,7 @@ static  void    FindCommon( common_info *c, ins_entry *p1, ins_entry *p2 ) {
         if( p2 == NULL ) break;
     }
   optend
+}
 
 extern  bool    ComTail( ins_entry *list, ins_entry *ins ) {
 /**********************************************************/

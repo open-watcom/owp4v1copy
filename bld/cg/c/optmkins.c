@@ -119,3 +119,4 @@ extern  void    AddNewJump( ins_entry *new, code_lbl *lbl )
     jmp_oc.oc_handle.handle = lbl;
     AddInstr( NewInstr( &jmp_oc ), new );
   optend
+}

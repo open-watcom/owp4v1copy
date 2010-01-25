@@ -56,6 +56,7 @@ extern void DumpInt( int );
 extern void DumpNL( void );
 extern void DumpGen( struct opcode_entry * );
 extern void DumpPtr( void *ptr );
+extern void GenCondJump( instruction * );
 
 extern void             ObjBytes( char *buffer, int size );
 extern uint_8           RegTrans( hw_reg_set );

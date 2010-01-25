@@ -158,6 +158,7 @@ extern  void    AddInstr( ins_entry *instr, ins_entry *insert ) {
         break;
     }
   optend
+}
 
 
 extern  void    DelRef(  ins_entry **owner, ins_entry *instr  ) {
@@ -173,6 +174,7 @@ extern  void    DelRef(  ins_entry **owner, ins_entry *instr  ) {
     }
     *owner = _LblRef( curr );
   optend
+}
 
 
 extern  void    UnLinkInstr( ins_entry *old ) {
@@ -184,6 +186,7 @@ extern  void    UnLinkInstr( ins_entry *old ) {
     old->ins.prev = PendingDeletes;
     PendingDeletes = old;
   optend
+}
 
 
 static  pointer DelInstr_Helper( pointer olde ) {
@@ -256,3 +259,4 @@ extern  void    FreePendingDeletes() {
         PendingDeletes = temp;
     }
   optend
+}

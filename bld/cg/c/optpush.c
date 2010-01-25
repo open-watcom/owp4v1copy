@@ -82,6 +82,7 @@ extern  void    RetAftrCall( ins_entry *ret_instr ) {
     IsolatedCode( call_instr );
     Untangle( PrevIns( call_instr ) );
   optend
+}
 
 
 extern  void    JmpToRet( ins_entry *instr, ins_entry *ret ) {
@@ -94,6 +95,7 @@ extern  void    JmpToRet( ins_entry *instr, ins_entry *ret ) {
     DelInstr( instr );
     RetAftrCall( ret );
   optend
+}
 
 
 extern  bool    RetAftrLbl( ins_entry *ret ) {
@@ -150,3 +152,4 @@ extern  void    MultiLineNums( ins_entry *ins ) {
         }
     }
   optend
+}

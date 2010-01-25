@@ -127,6 +127,7 @@ static  void    PullQueue( void )
         if( FirstIns == NULL ) break;
     }
   optend
+}
 
 
 static  bool    LDone( any_oc *oc )
@@ -174,6 +175,7 @@ extern  void    InputOC( any_oc *oc )
         OptPush();
     }
   optend
+}
 
 
 extern  bool    ShrinkQueue( pointer_int size )
@@ -211,6 +213,7 @@ extern  void    InitQueue( void )
         Savings = 0;
     #endif
   optend
+}
 
 
 extern  void    EmptyQueue( void )
@@ -221,6 +224,7 @@ extern  void    EmptyQueue( void )
         PullQueue();
     }
   optend
+}
 
 extern  void    FlushQueue( void )
 /********************************/
@@ -232,6 +236,7 @@ extern  void    FlushQueue( void )
     EmptyQueue();
     SetOP( old );
   optend
+}
 
 extern  void    FiniQueue( void )
 /*******************************/
@@ -241,6 +246,7 @@ extern  void    FiniQueue( void )
     EmptyQueue();
     _DumpSavings();
   optend
+}
 
 
 extern  void    AbortQueue( void )
@@ -255,3 +261,4 @@ extern  void    AbortQueue( void )
         FreeInstr( instr );
     }
   optend
+}
