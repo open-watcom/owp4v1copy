@@ -67,6 +67,7 @@
 *                   htab_done
 *                   line_pass_number
 *                   pages
+*                   page_start
 *                   set_margin
 *                   space_chars
 *                   tab_width
@@ -232,6 +233,7 @@ static bool             uline                   = false;
 
 static bool             at_start                = true;
 static bool             htab_done               = false;
+static bool             page_start              = false;
 static bool             set_margin              = false;
 static page_state       current_state           = { 0, 0, 0 };
 static page_state       desired_state           = { 0, 0, 0 };
@@ -716,12 +718,16 @@ static void * df_flushpage( void )
     fb_lineproc_endvalue();
 
     /* current_pages contains the number of device pages needed to reach
-     * current_state.y_address; however, current_state.y_address is 0-based
-     * and must be 1-based for the correct value to be obtained if it
-     * designates the last line of the page.
+     * current_state.y_address; side-by-side camparisons with wgml 4.0
+     * showed that current_state.y_address must be decremented to produce
+     * the correct value. The effect, for TERM, is to map [1,20] on to [0,19].
      */
 
-    current_pages = (current_state.y_address + 1) / bin_device->page_depth;
+    if( current_state.y_address == 0 ) {
+        current_pages = 0;
+    } else {
+        current_pages = (current_state.y_address - 1) / bin_device->page_depth;
+    }
 
     /* The value needed in desired_state.y_address must reflect the
      * number of device pages included in current_state.y_address so
@@ -2860,15 +2866,16 @@ static void fb_overprint_vertical_positioning( void )
 
         df_interpret_driver_functions( current_block->text );
 
-        /* This is hypothetical and may need to be changed, if the condition
-         * is ever "true".
+        /* This code: 
+         *  if( current_block->advance == 1 ) {
+         *      desired_state.y_address += wgml_fonts[font_number].line_height;
+         *      current_state.y_address = desired_state.y_address;
+         *      y_address = current_state.y_address;
+         *  }
+         * caused synchronization problems when triggered by HELP.
+         * As discussed in the Wiki, it should not be restored except as
+         * part of a much more elaborate system. 
          */
-
-        if( current_block->advance == 1 ) {
-            desired_state.y_address += wgml_fonts[font_number].line_height;
-            current_state.y_address = desired_state.y_address;
-            y_address = current_state.y_address;
-        }
     }
 
     /* Reset the appropriate values. */
@@ -2885,10 +2892,10 @@ static void fb_overprint_vertical_positioning( void )
 
 static void fb_normal_vertical_positioning( void )
 {
+    int         i;
     uint32_t    current_pages;
     uint32_t    desired_pages;
     uint32_t    device_pages;
-    int         i;
 
     /* A device using :ABSOLUTEADDRESS may be able to move upwards on a given
      * device page, but it cannot go back to a prior device page. A device
@@ -2917,18 +2924,39 @@ static void fb_normal_vertical_positioning( void )
 
     if( current_state.y_address == desired_state.y_address ) {
 
-        /* If there is no difference, reset to start of current line. */
+        /* If there is no difference, reset to start of current line, except
+         * for the first output line on each document page, including the
+         * first document page in a section and the very first in the document.
+         * This matches wgml 4.0's behavior.
+         */
 
-        current_state.x_address = bin_device->x_start;
-        x_address = current_state.x_address;
-        fb_overprint_vertical_positioning();
-
+        if( page_start ) {
+            page_start = false;
+        } else {
+            current_state.x_address = bin_device->x_start;
+            x_address = current_state.x_address;
+            fb_overprint_vertical_positioning();
+        }
     } else {
 
-        /* Detect and process device pages. */
+        /* Detect and process device pages. The need for the decrements was
+         * determined by side-by-side testing with wgml 4.0. The effect, for
+         * device TERM, is to map [1,20] to [0,19].
+         * NOTE: checking desired_state.y_address to ensure that it is not "0"
+         * should be unnecessary, unless fb_setup() is used with an initial
+         * vertical position of "0".
+         */
 
-        current_pages = current_state.y_address / bin_device->page_depth;
-        desired_pages = desired_state.y_address / bin_device->page_depth;
+        if( current_state.y_address == 0 ) {
+            current_pages = 0;
+        } else {
+            current_pages = (current_state.y_address - 1 ) / bin_device->page_depth;
+        }
+        if( desired_state.y_address == 0 ) {
+            desired_pages = 0;
+        } else {
+            desired_pages = (desired_state.y_address - 1 ) / bin_device->page_depth;
+        }
         device_pages = desired_pages - current_pages;
 
         /* Ensure that (current_pages + i) will contain the number of
@@ -3009,15 +3037,18 @@ static void fb_normal_vertical_positioning( void )
             if( bin_driver->y_positive == 0x00 ) {
 
                 /* y_address is formed by subtraction. */
+                /* This should not be possible, but leave it for now. */
 
                 current_state.y_address = (v_start + 1) - (desired_pages * \
                                                     bin_device->page_depth);
             } else {
 
-                /* y_address is formed by addition. */
+                /* y_address is formed by addition. This has been confirmed
+                 * in side-by-side comparison with wgml 4.0.
+                 */
 
-                current_state.y_address = desired_pages * \
-                                                        bin_device->page_depth;
+                current_state.y_address = (desired_pages * \
+                                                    bin_device->page_depth) + 1;
             }
 
             y_address = desired_state.y_address % bin_device->page_depth;
@@ -3129,7 +3160,6 @@ void df_initialize_pages( uint32_t in_v_start )
     return;
 }
 
-
 /* Function df_increment_pages().
  * Increments pages and sets the state variables to the top of a new
  * document page.
@@ -3142,6 +3172,8 @@ void df_increment_pages( void )
     desired_state.y_address = v_start;
     current_state.x_address = bin_device->x_start;
     current_state.y_address = v_start;
+    page_start = true;
+    y_address = v_start;
     apage = pages;  // Update wgml system symbol sysapage.
     return;
 }
@@ -3656,6 +3688,15 @@ void fb_line_block( line_block * in_line_block, uint32_t h_start, \
 
 void fb_lineproc_endvalue( void )
 {
+    static  bool    local_start = true;
+
+    /* Suppress the first call. This matches wgml 4.0's behavior. */
+
+    if( local_start ) {
+        local_start = false;
+        return;
+    }
+
     if( textpass || uline ) {
         if( text_out_open ) post_text_output();
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
@@ -3713,10 +3754,15 @@ void fb_new_section( uint32_t v_start )
 
     df_increment_pages();
 
-    /* Do the initial vertical positioning for the section. */
+    /* Do the initial vertical positioning for the section. Now that .sk -1
+     * is supported, this must not be done if a :NEWLINE with advance 0
+     * would be interpreted.
+     */
 
     desired_state.y_address = v_start;
-    fb_normal_vertical_positioning();
+    if( current_state.y_address != desired_state.y_address ) {
+        fb_normal_vertical_positioning();
+    }
 
     /* Restore the value of active_font. This ensures that the next font
      * switch decision and font switch, if any, will be done using the
