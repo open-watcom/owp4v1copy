@@ -18,7 +18,7 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-  [ IFDEF (os_osi os_dos os_win os_os2 os_nt os_linux os_nov "") <2*> ]
+  [ IFDEF (os_osi os_dos os_win os_os2 os_nt os_linux os_nov os_rdos "") <2*> ]
     <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/lib386/noemu387.lib
     <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/lib386/osi/emu387.lib
 
@@ -35,10 +35,14 @@ cdsay .
     <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/lib386/nt/emu387.lib
 
   [ IFDEF (os_linux "") <2*> ]
-     <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/lib386/linux/emu387.lib
+    <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/lib386/linux/emu387.lib
 
   [ IFDEF (os_nov "") <2*> ]
     <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/lib386/netware/emu387.lib
+
+  [ IFDEF (os_rdos "") <2*> ]
+    <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/lib386/rdos/emu387.lib
+
   [ ENDIF ]
 
 # Libs not built by default

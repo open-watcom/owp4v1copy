@@ -6,6 +6,7 @@ dir="lib386/os2"	usr="emu387.lib" cond="os2targ"
 dir="lib386/win"	usr="emu387.lib" cond="wintarg"
 dir="lib386/nt"		usr="emu387.lib" cond="wnttarg"	where="c jc f77 jf77 ac"
 dir="lib386/linux"	usr="emu387.lib" cond="lnxtarg"
+dir="lib386/rdos"	usr="emu387.lib" cond="rdostarg"
 dir="lib386"		usr="noemu387.lib" 		where="c jc f77 jf77 ac"
 
 #dir="lib386/osi"	usr="emu387.lib"
