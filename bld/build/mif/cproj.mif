@@ -314,7 +314,7 @@ lflags_os2_386   = sys os2v2
 lflags_os2_i86   = sys os2 pmc
 lflags_dos_386   = sys dos4g
 lflags_zdos_386  = sys zdos
-lflags_rdos_386  = sys rdos_pe
+lflags_rdos_386  = sys rdos
 lflags_qnx_386   = sys qnx386 flat
 lflags_qnx_i86   = sys qnx
 lflags_win_386   = sys win386
@@ -326,6 +326,7 @@ lflags_linux_ppc = sys linuxppc
 lflags_linux_mps = sys linuxmips
 
 lflags_dll_dos_386   = sys cwdllr
+lflags_dll_rdos_386  = sys rdos dll
 lflags_dll_nt_axp    = sys ntaxp dll
 lflags_dll_nt_386    = sys nt dll
 lflags_dll_os2_386   = sys os2v2 dll
