@@ -1,3 +1,15 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*  Copyright (c) 2009-2010 The Open Watcom Contributors. All Rights Reserved.
+*
+*  ========================================================================
+*
+* Description:  RDOS API Call in-line assembly code definition
+*
+****************************************************************************/
+
 
 #define CallGate_allocate_dos_mem 0x9a 0 0 0 0 2 0
 #define CallGate_allocate_local_mem 0x9a 1 0 0 0 2 0
