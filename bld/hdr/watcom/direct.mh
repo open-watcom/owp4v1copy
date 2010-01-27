@@ -26,6 +26,21 @@
 
 :include namemax.sp
 
+#if defined( __RDOS__ )
+
+struct dirent {
+    int                d_handle;                  /* directory handle */
+    char               d_match_mask[NAME_MAX+1];  /* mask for matching files */
+    int                d_entry_nr;                /* current entry number (first = 0) */
+    int                d_attr;                    /* file's attribute */
+    unsigned long      d_msb_time;
+    unsigned long      d_lsb_time;                /* timestamp, rdos formatted */
+    long               d_size;                    /* file's size */
+    char               d_name[NAME_MAX+1];        /* file's name */
+};
+typedef struct dirent   DIR;
+
+#else
 struct _wdirent {
     char                d_dta[21];          /* disk transfer area */
     char                d_attr;             /* file's attribute */
@@ -58,6 +73,8 @@ struct dirent {
     char                *d_openpath;        /* path specified to opendir */
 };
 typedef struct dirent   DIR;
+
+#endif
 
 /* File attribute constants for d_attr field */
 

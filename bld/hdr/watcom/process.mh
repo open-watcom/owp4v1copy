@@ -107,6 +107,11 @@ _WCRTLINK extern int execvpe( const char *__file, const char *const __argv[],
   #pragma intrinsic(_beginthread,_beginthreadex);
   _WCRTLINK extern void _endthreadex( unsigned __retval );
   _WCRTLINK extern unsigned long __threadhandle( void );
+ #elif defined(__RDOS__)
+  _WCRTLINK extern int _beginthread(
+                void (*__start_address)(void *),
+                const char *thread_name,
+                unsigned __stack_size, void *__arglist );
  #else
   _WCRTLINK extern int _beginthread( void (*__start_address)(void *),
       void *__stack_bottom, unsigned __stack_size, void *__arglist );
