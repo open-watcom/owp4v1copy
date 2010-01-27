@@ -1,4 +1,4 @@
-#pmake:all large 16bit os2 environ iX86 static build os_os2 cpu_i86
+#pmake: build large 16bit os2 environ iX86 static os_os2 cpu_i86
 processor=286
 model=ml
 system=os2

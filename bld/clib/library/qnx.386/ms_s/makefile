@@ -1,4 +1,4 @@
-#pmake:all small stack 32bit qnx threading merge iX86 static os_qnx cpu_386
+#pmake: build small stack 32bit qnx threading merge iX86 static os_qnx cpu_386
 processor=386
 model=ms
 subdir=ms_s

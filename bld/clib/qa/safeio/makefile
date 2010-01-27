@@ -1,3 +1,3 @@
-#pmake:all clibqa file
+#pmake: build clibqa file
 srcfile = $(clib_dir)/streamio/c/safeio.c
 !include ../mif/master.mif

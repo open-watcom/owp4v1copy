@@ -1,4 +1,4 @@
-#pmake:all medium 16bit windows environ iX86 static build os_win cpu_i86
+#pmake: build medium 16bit windows environ iX86 static os_win cpu_i86
 processor=086
 model=mm
 system=windows

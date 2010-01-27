@@ -1,4 +1,4 @@
-#pmake:all huge 16bit msdos merge iX86 static build os_dos cpu_i86 os_os2
+#pmake: build huge 16bit msdos merge iX86 static os_dos cpu_i86 os_os2
 processor=286
 model=mh
 subdir=mh

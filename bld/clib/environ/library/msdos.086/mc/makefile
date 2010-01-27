@@ -1,4 +1,4 @@
-#pmake:all compact 16bit msdos environ iX86 static build os_dos cpu_i86
+#pmake: build compact 16bit msdos environ iX86 static os_dos cpu_i86
 processor=086
 model=mc
 system=msdos

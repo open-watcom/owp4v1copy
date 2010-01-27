@@ -1,3 +1,3 @@
-#pmake:all clibqa file safe
+#pmake: build clibqa file safe
 srcfile = $(clib_dir)/file/c/safefile.c
 !include ../mif/master.mif

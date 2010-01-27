@@ -1,4 +1,4 @@
-#pmake:all small stack 32bit netware conio iX86 static build os_nov cpu_386
+#pmake: build small stack 32bit netware conio iX86 static os_nov cpu_386
 processor=386
 model=ms
 system=nw_clib

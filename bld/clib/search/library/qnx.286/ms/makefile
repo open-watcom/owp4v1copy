@@ -1,4 +1,4 @@
-#pmake:all small 16bit qnx search iX86 static os_qnx cpu_i86
+#pmake: build small 16bit qnx search iX86 static os_qnx cpu_i86
 processor=286
 model=ms
 system=qnx

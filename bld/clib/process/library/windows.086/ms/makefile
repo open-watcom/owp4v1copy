@@ -1,4 +1,4 @@
-#pmake:all small 16bit windows process iX86 static build os_win cpu_i86
+#pmake: build small 16bit windows process iX86 static os_win cpu_i86
 processor=086
 model=ms
 system=windows

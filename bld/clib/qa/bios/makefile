@@ -1,3 +1,3 @@
-#pmake:all clibqa bios
+#pmake: build clibqa bios
 srcfile = $(clib_dir)/bios/c/biostest.c
 !include ../mif/master.mif

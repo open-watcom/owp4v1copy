@@ -1,4 +1,4 @@
-#pmake:all small stack 32bit netware merge iX86 static build os_nov cpu_386
+#pmake: build small stack 32bit netware merge iX86 static os_nov cpu_386
 processor=386
 model=ms
 subdir=ms_s

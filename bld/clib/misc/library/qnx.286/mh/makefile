@@ -1,4 +1,4 @@
-#pmake:all huge 16bit qnx misc iX86 static os_qnx cpu_i86
+#pmake: build huge 16bit qnx misc iX86 static os_qnx cpu_i86
 processor=286
 model=mh
 system=qnx
