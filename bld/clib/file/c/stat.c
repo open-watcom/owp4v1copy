@@ -56,7 +56,48 @@
     #include <ctype.h>
 #endif
 #include "d2ttime.h"
+#ifdef __INT64__
+#include "int64.h"
+#endif
 
+#define HAS_DRIVE(x)    (__F_NAME(isalpha,iswalpha)(x[0]) && x[1]==STRING(':'))
+#define ALL_ATTRIB      (_A_NORMAL | _A_RDONLY | _A_HIDDEN | _A_SYSTEM | _A_SUBDIR | _A_ARCH)
+
+#ifdef __INT64__
+
+ _WCRTLINK int __F_NAME(_stati64,_wstati64)( CHAR_TYPE const *path, struct _stati64 *buf )
+{
+    struct _stat        buf32;
+    int                 rc;
+    INT_TYPE            tmp;
+
+    /*** Get the info using non-64bit version ***/
+    rc = __F_NAME(stat,_wstat)( path, &buf32 );
+    if( rc != -1 ) {
+        /*** Convert the info to 64-bit equivalent ***/
+        buf->st_dev = buf32.st_dev;
+        buf->st_ino = buf32.st_ino;
+        buf->st_mode = buf32.st_mode;
+        buf->st_nlink = buf32.st_nlink;
+        buf->st_uid = buf32.st_uid;
+        buf->st_gid = buf32.st_gid;
+        buf->st_rdev = buf32.st_rdev;
+        _clib_U32ToU64( buf32.st_size, tmp );
+        buf->st_size = GET_REALINT64(tmp);
+        buf->st_atime = buf32.st_atime;
+        buf->st_mtime = buf32.st_mtime;
+        buf->st_ctime = buf32.st_ctime;
+        buf->st_btime = buf32.st_btime;
+        buf->st_attr = buf32.st_attr;
+        buf->st_archivedID = buf32.st_archivedID;
+        buf->st_updatedID = buf32.st_updatedID;
+        buf->st_inheritedRightsMask = buf32.st_inheritedRightsMask;
+        buf->st_originatingNameSpace = buf32.st_originatingNameSpace;
+    }
+    return( rc );
+}
+
+#else
 
 static unsigned short at2mode( int attr, char *fname )
 /****************************************************/
@@ -102,7 +143,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path,
 
     /*** Determine if 'path' refers to a root directory ***/
     if( __F_NAME(_fullpath,_wfullpath)( fullpath, path, _MAX_PATH ) != NULL ) {
-        if( __F_NAME(isalpha,iswalpha)( fullpath[0] ) && fullpath[1] == STRING( ':' ) &&
+        if( HAS_DRIVE( fullpath ) &&
             fullpath[2] == STRING( '\\' ) && fullpath[3] == NULLCHAR )
         {
             isrootdir = 1;
@@ -110,7 +151,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path,
     }
 
     ptr = path;
-    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) )
+    if( HAS_DRIVE( path ) )
         ptr += 2;
     if( ( ptr[0] == STRING( '\\' ) || ptr[0] == STRING( '/' ) ) && ptr[1] == NULLCHAR || isrootdir ) {
         /* handle root directory */
@@ -143,9 +184,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path,
             mbPath[0] = '\0';
         }
 #endif
-        if( _dos_findfirst( __F_NAME(path,mbPath),
-                _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta ) != 0 ) {
+        if( _dos_findfirst( __F_NAME(path,mbPath), ALL_ATTRIB, &dta ) != 0 ) {
             int         handle;
             int         canread = 0;
             int         canwrite = 0;
@@ -193,7 +232,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path,
     }
 
     /* process drive number */
-    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) ) {
+    if( HAS_DRIVE( path ) ) {
         buf->st_dev = __F_NAME(tolower,towlower)( *path ) - STRING( 'a' );
     } else {
         buf->st_dev = TinyGetCurrDrive();
@@ -227,3 +266,5 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path,
 
     return( 0 );
 }
+
+#endif

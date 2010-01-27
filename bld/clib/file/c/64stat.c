@@ -24,64 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  64-bit stat().
+* Description:  64-bit DOS stat().
 *
 ****************************************************************************/
 
 
-/*
- * This file is not indirected with an #include so we can compile this code
- * for multiple platforms without duplicating it in multiple files.
- */
-
-#include "variety.h"
+// this file should remain an indirected file
+// it is done this way to support the reuse of the source file
 #define __INT64__
-#include "int64.h"
-#include "widechar.h"
-/* gross hack for building 11.0 libraries with 10.6 compiler */
-#ifndef __WATCOM_INT64__
-    #include <limits.h>         /* a gross hack to make a gross hack work */
-    #define __WATCOM_INT64__
-    #define __int64             double
-#endif
-/* most includes should go after this line */
-#include <string.h>
-#include <sys/stat.h>
-
-
-#ifdef __WIDECHAR__
- _WCRTLINK int _wstati64( wchar_t const *path, struct _stati64 *buf )
-#else
- _WCRTLINK int _stati64( char const *path, struct _stati64 *buf )
-#endif
-{
-    struct _stat        buf32;
-    int                 rc;
-    INT_TYPE            tmp;
-
-    /*** Get the info using non-64bit version ***/
-    rc = __F_NAME(stat,_wstat)( path, &buf32 );
-    if( rc == -1 )  return( -1 );
-
-    /*** Convert the info to 64-bit equivalent ***/
-    buf->st_dev = buf32.st_dev;
-    buf->st_ino = buf32.st_ino;
-    buf->st_mode = buf32.st_mode;
-    buf->st_nlink = buf32.st_nlink;
-    buf->st_uid = buf32.st_uid;
-    buf->st_gid = buf32.st_gid;
-    buf->st_rdev = buf32.st_rdev;
-    _clib_U32ToU64( buf32.st_size, tmp );
-    buf->st_size = GET_REALINT64(tmp);
-    buf->st_atime = buf32.st_atime;
-    buf->st_mtime = buf32.st_mtime;
-    buf->st_ctime = buf32.st_ctime;
-    buf->st_btime = buf32.st_btime;
-    buf->st_attr = buf32.st_attr;
-    buf->st_archivedID = buf32.st_archivedID;
-    buf->st_updatedID = buf32.st_updatedID;
-    buf->st_inheritedRightsMask = buf32.st_inheritedRightsMask;
-    buf->st_originatingNameSpace = buf32.st_originatingNameSpace;
-
-    return( rc );
-}
+#include "stat.c"
