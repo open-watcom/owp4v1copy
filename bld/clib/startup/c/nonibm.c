@@ -63,7 +63,7 @@
 
 int __is_nonIBM( void )
 {
-#if defined(__WARP__) || defined(__NT__)
+#if defined(__WARP__) || defined(__NT__) || defined(__RDOS__)
     return( 0 );
 #elif defined(__WINDOWS_386__)
     extern      unsigned short  __F000;

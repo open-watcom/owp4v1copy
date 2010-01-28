@@ -42,7 +42,7 @@ void                    **__ThreadIDs;
 #endif
 
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-    #if !defined(__NT__) && !defined(__UNIX__) && !defined(_NETWARE_LIBC)
+    #if !defined(__NT__) && !defined(__UNIX__) && !defined(_NETWARE_LIBC) && !defined(__RDOS__)
         thread_data_vector      *__ThreadData;
     #endif
 #else
@@ -50,7 +50,7 @@ void                    **__ThreadIDs;
 #endif
 
 
-#if !defined(__NT__) && !defined(__UNIX__) && !defined(_NETWARE_LIBC)
+#if !defined(__NT__) && !defined(__UNIX__) && !defined(_NETWARE_LIBC) && !defined(__RDOS__)
 void *__InitThreadProcessing( void )
 /**********************************/
 {
@@ -99,7 +99,7 @@ void __FiniThreadProcessing( void )
             lib_free( __ThreadIDs );
         }
     #endif
-    #if !defined(__NT__) && !defined(__UNIX__) && !defined(_NETWARE_LIBC)
+    #if !defined(__NT__) && !defined(__UNIX__) && !defined(_NETWARE_LIBC) && !defined(__RDOS__)
         if( __ThreadData != NULL ) {
             unsigned    i;
             thread_data *tdata;

@@ -50,6 +50,9 @@
 #if defined(__OS2__)
  #include <wos2.h>
 #endif
+#if defined(__RDOS__)
+ #include <rdos.h>
+#endif
 #if defined(__WINDOWS_386__)
  extern void * pascal DPMIAlloc( unsigned long );
 #endif
@@ -354,7 +357,8 @@ static int __AdjustAmount( unsigned *amount )
         defined(__WARP__)        || \
         defined(__NT__)          || \
         defined(__CALL21__)      || \
-        defined(__DOS_EXT__)
+        defined(__DOS_EXT__)     || \
+        defined(__RDOS__)
         /* make sure amount is a multiple of 4k */
         *amount = amt;
         amt += 0x0fff;
@@ -370,7 +374,8 @@ static int __AdjustAmount( unsigned *amount )
     defined(__WARP__)        || \
     defined(__NT__)          || \
     defined(__CALL21__)      || \
-    defined(__DOS_EXT__)
+    defined(__DOS_EXT__)     || \
+    defined(__RDOS__)
 static int __CreateNewNHeap( unsigned amount )
 {
     mheapptr        p1;
@@ -437,6 +442,11 @@ static int __CreateNewNHeap( unsigned amount )
         brk_value = (unsigned) tmp_tag;
     }
     // Pharlap, RSI/non-zero can never call this function
+#elif defined(__RDOS__)
+    brk_value = (unsigned) RdosAllocateMem( amount );
+    if( brk_value == 0 ) {
+        return( 0 );
+    }
 #endif
     if( amount - TAG_SIZE > amount ) {
         return( 0 );
@@ -469,7 +479,8 @@ int __ExpandDGROUP( unsigned amount )
         defined(__WINDOWS_386__) || \
         defined(__WARP__)        || \
         defined(__NT__)          || \
-        defined(__CALL21__)
+        defined(__CALL21__)      || \
+        defined(__RDOS__)
         // first try to free any available storage
         _nheapshrink();
         return( __CreateNewNHeap( amount ) );

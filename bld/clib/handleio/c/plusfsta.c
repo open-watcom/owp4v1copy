@@ -78,6 +78,9 @@ _WCRTLINK int __plusplus_fstat( int handle, int *pios_mode )
     } else {
         ios_mode |= __in|__out;
     }
+#elif __RDOS__
+    flags = 0;
+    ios_mode |= __in | __out | __text;
 #else
     flags = __GetIOMode( handle );
     if( flags & _APPEND ) {

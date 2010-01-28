@@ -67,6 +67,8 @@ void __InitThreadData( thread_data *tdata )
         tdata->thread_id = GetCurrentThreadId();
     #elif defined( __LINUX__ )
         // TODO: Add thread id code for Linux!
+    #elif defined( __RDOS__ )
+        tdata->thread_id = GetCurrentThreadId();
     #endif
     }
 }

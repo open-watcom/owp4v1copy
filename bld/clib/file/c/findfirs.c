@@ -44,6 +44,9 @@
     #include <wos2.h>
     #include <mbstring.h>
     #include "os2fil64.h"
+#elif defined( __RDOS__ )
+    #include <rdos.h>
+    #include "liballoc.h"
 #else
     #include "liballoc.h"
     #include "_doslfn.h"
@@ -125,6 +128,21 @@
     __F_NAME(__os2_finddata_cvt,__os2_wfinddata_cvt)( &ffb, fileinfo );
  #endif
     return( (long)h );
+#elif defined( __RDOS__ )
+    RDOSFINDTYPE *  findbuf;
+
+    findbuf = (RDOSFINDTYPE*) lib_malloc( sizeof( RDOSFINDTYPE ) );
+    if( findbuf == NULL )  return( -1L );
+
+    findbuf->handle = RdosOpenDir( filespec );
+    findbuf->entry = 0;
+
+    if( __rdos_finddata_get( findbuf, fileinfo ) )
+        return( (long) findbuf );
+    else {
+        lib_free( findbuf );        
+        return( -1 );
+    }            
 #else   /* DOS */
     DOSFINDTYPE     *findbuf;
     unsigned       rc;
@@ -210,7 +228,6 @@
     __F_NAME(strcpy,wcscpy)( fileinfo->name, ffb->cFileName );
 }
 
-
 #elif defined( __OS2__ )
 
 
@@ -260,6 +277,53 @@
   #endif
 }
 
+#elif __RDOS__
+
+int __rdos_finddata_get( RDOSFINDTYPE *findbuf, struct _finddata_t *fileinfo )
+{
+    long            FileSize;
+    int             Attribute;
+    unsigned long   MsbTime;
+    unsigned long   LsbTime;
+    int             stat;
+
+    stat = RdosReadDir( findbuf->handle, 
+                        findbuf->entry, 
+                        _MAX_PATH, 
+                        fileinfo->name, 
+                        &FileSize, 
+                        &Attribute, 
+                        &MsbTime, 
+                        &LsbTime );
+
+    if( stat ) {
+        fileinfo->time_create = -1L;
+        fileinfo->time_access = -1L;
+        fileinfo->time_write = __rdos_filetime_cvt( MsbTime, LsbTime );
+        fileinfo->size = FileSize;
+
+        fileinfo->attrib = 0;
+        if( Attribute & FILE_ATTRIBUTE_ARCHIVE ) {
+            fileinfo->attrib |= _A_ARCH;
+        }
+        if( Attribute & FILE_ATTRIBUTE_DIRECTORY ) {
+            fileinfo->attrib |= _A_SUBDIR;
+        }
+        if( Attribute & FILE_ATTRIBUTE_HIDDEN ) {
+            fileinfo->attrib |= _A_HIDDEN;
+        }
+        if( Attribute & FILE_ATTRIBUTE_NORMAL ) {
+            fileinfo->attrib |= _A_NORMAL;
+        }
+        if( Attribute & FILE_ATTRIBUTE_READONLY ) {
+            fileinfo->attrib |= _A_RDONLY;
+        }
+        if( Attribute & FILE_ATTRIBUTE_SYSTEM ) {
+            fileinfo->attrib |= _A_SYSTEM;
+        }
+    }
+    return( stat );
+}
 
 #else   /* DOS */
 

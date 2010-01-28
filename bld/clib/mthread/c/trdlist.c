@@ -114,6 +114,11 @@ thread_data *__GetThreadData( void )
             if(0 != NXKeyGetValue(__NXSlotID, (void **) &tdata))
                 tdata = NULL;
         }
+    #elif defined(__RDOS__)
+        if( __RdosAddThread( tdata ) ) 
+        {
+            tdata = (thread_data *)__tls_get_value( __TlsIndex );
+        }
     #endif
     if( tdata == NULL ) {
         __fatal_runtime_error( "Thread has no thread-specific data", 1 );

@@ -36,6 +36,8 @@
 #if defined( __NT__ )
     #include <windows.h>
 #elif defined( __OS2__ )
+#elif defined( __RDOS__ )
+    #include <rdos.h>
 #else
     #include <dos.h>
 #endif
@@ -76,6 +78,21 @@
                                           struct _finddatai64_t *fileinfo );
     extern void     __os2_wfinddatai64_cvt( FF_BUFFER *ffb,
                                            struct _wfinddatai64_t *fileinfo );
+#elif defined( __RDOS__ )
+
+    struct _rdos_find_t {
+        int handle;
+        int entry;
+    };
+
+    #define RDOSFINDTYPE        struct _rdos_find_t
+
+    extern time_t   __rdos_filetime_cvt( unsigned long msb,
+                                         unsigned long lsb );
+
+    extern int      __rdos_finddata_get( RDOSFINDTYPE *findbuf,
+                                         struct _finddata_t *fileinfo );
+
 #else   /* DOS */
 
     #ifdef __WIDECHAR__

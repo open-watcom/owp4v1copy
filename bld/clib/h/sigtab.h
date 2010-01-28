@@ -44,6 +44,12 @@
     _WCRTLINK extern void       (*__sig_fini_rtn)( void );
 #elif defined(__NETWARE__)
     #define __SIGNALTABLE       (__THREADDATAPTR->signal_table)
+#elif defined(__RDOS__)
+    #include "osthread.h"
+    #define __SIGNALTABLE   (__THREADDATAPTR->signal_table)
+    #define __XCPTHANDLER   (__THREADDATAPTR->xcpt_handler)
+    _WCRTLINK extern void       (*__sig_init_rtn)( void );
+    _WCRTLINK extern void       (*__sig_fini_rtn)( void );
 #else
     #define __SIGNALTABLE       _SignalTable
 #endif

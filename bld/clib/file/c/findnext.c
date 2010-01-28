@@ -101,6 +101,17 @@
   #else
     __F_NAME(__os2_finddata_cvt,__os2_wfinddata_cvt)( &ffb, fileinfo );
   #endif
+
+#elif defined( __RDOS__ )
+    RDOSFINDTYPE *   findbuf = (RDOSFINDTYPE*) handle;
+
+    findbuf->entry++;
+
+    if( __rdos_finddata_get( findbuf, fileinfo ) )
+        return( 0 );
+    else
+        return( -1 );
+
 #else   /* DOS */
     if( __F_NAME(_dos_findnext,_wdos_findnext)( (DOSFINDTYPE *)handle ) ) {
         return( -1 );

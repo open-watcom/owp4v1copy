@@ -183,6 +183,9 @@ _WCRTLINK void __CloseSemaphore( semaphore_object *obj )
                     __qsem_destroy( &obj->semaphore );
                 #elif defined( __LINUX__ )
                     // TODO: Close the semaphore for Linux!
+                #elif defined( __RDOS__ )
+                    RdosDeleteSection( obj->semaphore );
+                    obj->semaphore = 0;
                 #else
                     DosCloseMutexSem( obj->semaphore );
                 #endif
@@ -223,6 +226,8 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                             __qsem_init( &obj->semaphore, 1, 1 );
                         #elif defined( __LINUX__ )
                             // TODO: Access semaphore under Linux!
+                        #elif defined( __RDOS__ )
+                            obj->semaphore = RdosCreateSection();
                         #else
                             DosCreateMutexSem( NULL, &obj->semaphore, 0, FALSE );
                         #endif
@@ -248,6 +253,8 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                 __qsem_wait( &obj->semaphore );
             #elif defined( __LINUX__ )
                 // TODO: Wait for semaphore under Linux!
+            #elif defined( __RDOS__ )
+                RdosEnterSection( obj->semaphore );
             #else
                 DosRequestMutexSem( obj->semaphore, SEM_INDEFINITE_WAIT );
             #endif
@@ -282,6 +289,8 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object *obj )
                     __qsem_post( &obj->semaphore );
                 #elif defined( __LINUX__ )
                     // TODO: Relase semaphore under Linux!
+                #elif defined( __RDOS__ )
+                    RdosLeaveSection( obj->semaphore );
                 #else
                     DosReleaseMutexSem( obj->semaphore );
                 #endif
@@ -443,6 +452,12 @@ struct thread_data *__MultipleThread( void )
     #elif defined( __LINUX__ )
         // TODO: Init multiple threads for Linux!
         return( NULL );
+    #elif defined( __RDOS__ )
+        thread_data *tdata;
+        tdata = (thread_data *)__tls_get_value( __TlsIndex );
+        if( tdata == NULL )
+            tdata = __GetThreadData();
+        return( tdata );
     #else
         return( __ThreadData[GetCurrentThreadId()].data );
     #endif
@@ -643,6 +658,57 @@ void __LinuxRemoveThread( void )
     // TODO: Implement this for Linux!
 }
 
+#elif defined( __RDOS__ )
+
+int __RdosThreadInit( void )
+/*************************/
+{
+    if( __TlsIndex == NO_INDEX ) {
+        __TlsIndex = __tls_alloc();
+    }
+    if( __TlsIndex == NO_INDEX ) {
+        return( 0 );
+    }
+    __tls_set_value( __TlsIndex, NULL );
+    return( 1 );
+}
+
+
+int __RdosAddThread( thread_data *tdata )
+/**************************************/
+{
+    if( __TlsIndex == NO_INDEX ) {
+        return( 0 );
+    }
+
+    tdata = __AllocInitThreadData( tdata );
+    if( tdata == NULL ) {
+        return( 0 );
+    }
+    if( !__AddThreadData( tdata->thread_id, tdata ) ) {
+        lib_free( tdata );
+        return( 0 );
+    }
+    __tls_set_value( __TlsIndex, tdata );
+
+    return( 1 );
+}
+
+
+void __RdosRemoveThread( int close_handle )
+/***************************************/
+{
+    thread_data *tdata;
+    int thread_handle;
+
+    if( __TlsIndex != NO_INDEX ) {
+        tdata = __tls_get_value( __TlsIndex );
+        if( tdata == NULL ) return;
+        __RemoveThreadData( tdata->thread_id );
+        __tls_set_value( __TlsIndex, NULL );
+    }
+}
+
 #endif
 
 void __InitMultipleThread( void )
@@ -715,6 +781,11 @@ void __InitMultipleThread( void )
             // first thread data already in magic memory
         #elif defined( __LINUX__ )
             // TODO: Init semaphores for Linux
+        #elif defined( __RDOS__ )
+            InitSemaphore.semaphore = RdosCreateSection();
+            InitSemaphore.initialized = 1;
+            __AddThreadData( __FirstThreadData->thread_id, __FirstThreadData );
+            __tls_set_value( __TlsIndex, __FirstThreadData );
         #else
             DosCreateMutexSem( NULL, &InitSemaphore.semaphore, 0, FALSE );
             InitSemaphore.initialized = 1;

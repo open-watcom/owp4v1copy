@@ -33,7 +33,9 @@
 #define _LSEEK_H_INCLUDED
 
 _WCRTLINK extern long long  __lseeki64( int handle, long long offset, int origin );
-#if !defined(__UNIX__) || defined(__LINUX__)
+#if defined( __RDOS__ )
+#define __lseek lseek
+#elif !defined(__UNIX__) || defined(__LINUX__)
 _WCRTLINK extern long       __lseek( int handle, long offset, int origin );
 #else
 #define __lseek lseek

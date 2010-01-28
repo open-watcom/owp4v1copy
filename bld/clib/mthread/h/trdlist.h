@@ -61,6 +61,23 @@
   #include <unistd.h>
   #define TID                   size_t
   #define GetCurrentThreadId()  (0)
+#elif defined( __RDOS__ )
+  #include <rdos.h>
+  #define TID int
+  extern int __TlsIndex;
+  #define GetCurrentThreadId() (RdosGetThreadHandle())
+  extern int __tls_alloc();
+  extern void __tls_free(int index);
+  extern void *__tls_get_value(int index);
+  extern void __tls_set_value(int index, void *data);
+  extern void __create_thread(void (*Start)(void *Param), const char *Name, void *Param, int StackSize);
+
+  #pragma aux __tls_alloc "*" modify [ecx] value [eax];
+  #pragma aux __tls_free "*" parm [ecx] modify [eax];
+  #pragma aux __tls_get_value "*" parm [ecx] modify [edx] value [eax];
+  #pragma aux __tls_set_value "*" parm [ecx] [eax] modify [edx];
+  #pragma aux __create_thread "*" parm [edx] [edi] [eax] [ecx];
+
 #else
   #define INCL_DOSSEMAPHORES
   #define INCL_DOSPROCESS

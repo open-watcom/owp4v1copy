@@ -47,6 +47,9 @@
     #include "wenviron.h"
     #include <wctype.h>
 #endif
+#ifdef __RDOS__
+    #include <rdos.h>
+#endif
 
 
 extern _WCRTLINK int _setenv( const char *name, const char *newvalue, int overwrite );
@@ -59,7 +62,7 @@ extern _WCRTLINK int __wsetenv( const wchar_t *name, const wchar_t *newvalue, in
 // the wide and MBCS environments consistent.
 _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE *newvalue, int overwrite )
 {
-#ifndef __UNIX__
+#if !defined(__UNIX__) && !defined(__RDOS__)
 #ifdef __WIDECHAR__
     char                *otherName;
     char                *otherNewval;
@@ -100,12 +103,25 @@ _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE 
     }
 #endif
 
+    /*** Update the process environment if using RDOS ***/
+#ifdef __RDOS__
+    if( overwrite  ||  __F_NAME(getenv,_wgetenv)( name ) == NULL ) {
+        int handle;
+
+        handle = RdosOpenProcessEnv();
+        RdosDeleteEnvVar( handle, name );
+        if( *newvalue != NULLCHAR )
+            RdosAddEnvVar( handle, name, newvalue );
+        RdosCloseEnv( handle );        
+    }
+#endif
+
     /*** Update the (__WIDECHAR__ ? wide : MBCS) environment ***/
 #ifdef __WIDECHAR__
     if( _RWD_wenviron == NULL )  __create_wide_environment();
 #endif
 
-#ifdef __UNIX__
+#if defined(__UNIX__) || defined(__RDOS__)
 
     rc = __F_NAME(_setenv,__wsetenv)( name, newvalue, overwrite );
 

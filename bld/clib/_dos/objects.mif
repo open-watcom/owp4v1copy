@@ -1,5 +1,5 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-#==========================================================================================
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 rdu
+#==============================================================================================
 !inject allocos2.obj                                        o16 o32
 !inject allocwnt.obj                     nt nta ntp
 !inject bdos.obj     d16 d32 dpm                                            w16 w32 osi
@@ -62,6 +62,7 @@
 !inject sdrveos2.obj                                        o16 o32
 !inject sdrvewnt.obj                     nt nta ntp
 !inject sfattdos.obj d16 d32 dpm                                            w16 w32 osi
+!inject sdrverdu.obj                                                                        rdu
 !inject sfattos2.obj                                        o16 o32
 !inject sfattwnt.obj                     nt nta ntp
 !inject sftimos2.obj                                        o16 o32

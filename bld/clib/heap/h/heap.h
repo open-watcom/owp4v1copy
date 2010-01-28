@@ -42,7 +42,8 @@
    !defined(__OS2__) &&                 \
    !defined(__NT__) &&                  \
    !defined(__OSI__) &&                 \
-   !defined(__UNIX__)
+   !defined(__UNIX__) &&                \
+   !defined(__RDOS__)
 #define __DOS_EXT__
 #endif
 #endif
@@ -171,7 +172,8 @@ _WCRTLINK extern void _WCNEAR *__brk( unsigned );
 #if defined(__WARP__) ||        \
     defined(__NT__) ||          \
     defined(__WINDOWS_386__) || \
-    defined(__WINDOWS_286__)
+    defined(__WINDOWS_286__) || \
+    defined(__RDOS__)
  #define __IsCtsNHeap() 0
 #elif defined(__DOS_EXT__)
  #define __IsCtsNHeap() ((_IsRationalZeroBase() || _IsCodeBuilder()) ? 0 : 1)

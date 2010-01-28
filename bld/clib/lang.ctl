@@ -135,7 +135,12 @@ cdsay .
     <CPCMD> library/qnx.386/ms_r/clib3r.lib                 <RELROOT>/lib386/qnx/clib3r.lib
     <CPCMD> library/qnx.386/ms_s/clib3s.lib                 <RELROOT>/lib386/qnx/clib3s.lib
     <CPCMD> startup/library/qnx.386/ms_r/commode.obj        <RELROOT>/lib386/qnx/commode.obj
+
+  [ IFDEF (os_rdos "") <2*> ]
+    <CPCMD> library/rdos.386/mf_r/clib3r.lib                <RELROOT>/lib386/rdos/clib3r.lib
+    <CPCMD> library/rdos.386/mf_s/clib3s.lib                <RELROOT>/lib386/rdos/clib3s.lib
   [ ENDIF]
+
 
 # Libraries not built by default
 
