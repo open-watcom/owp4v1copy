@@ -1,4 +1,4 @@
-#pmake: build winnt threading dll heap axp static os_nt cpu_axp
+#pmake: nobuild winnt threading dll heap axp static os_nt cpu_axp
 processor=axp
 system=winnt
 linkage=static

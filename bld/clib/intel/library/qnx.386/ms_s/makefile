@@ -1,4 +1,4 @@
-#pmake: build small stack 32bit qnx threading intel iX86 static os_qnx cpu_386
+#pmake: nobuild small stack 32bit qnx threading intel iX86 static os_qnx cpu_386
 processor=386
 model=ms
 system=qnx
