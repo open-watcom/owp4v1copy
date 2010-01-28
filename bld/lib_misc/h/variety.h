@@ -171,6 +171,8 @@
     #else
         #error unrecognized processor for NETWARE
     #endif
+#elif defined(__RDOS__)
+    #define __PROTECT_MODE__
 #else
     #error unable to configure operating system and processor
 #endif

@@ -24,43 +24,25 @@
 *
 *  ========================================================================
 *
-* Description:  Signal table definitions.
+* Description:  Exception handling for RDOS.
 *
 ****************************************************************************/
 
 
-#ifndef _SIGDEFN_H_INCLUDED
-#define _SIGDEFN_H_INCLUDED
-
-#if !defined(__NT__) && !defined(__OS2__) && !defined(__NETWARE__) && !defined(__GENERIC__) && !defined(__SNAP__) && !defined(__RDOS__)
-#error Must be bt=NT or bt=OS2 or bt=NETWARE or bt=GENERIC of bt=SNAP or bt=RDOS
-#endif
+#ifndef __RDOSEX_INCLUDED__
+#define __RDOSEX_INCLUDED__
 
 #include "variety.h"
-#include <signal.h>
 
-#define __SIGLAST       _SIGMAX
+typedef struct _REGISTRATION_RECORD {
+    struct _REGISTRATION_RECORD *RegistrationRecordPrev;
+    void                        *RegistrationRecordFilter;
+} REGISTRATION_RECORD;
 
-// note that __NT__, __NETWARE__ and __SNAP__ are always 32bit
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-    #if defined(__NETWARE__)
-        typedef __sig_func sigtab;
-    #else
-        typedef struct sigtab {
-            __sig_func  func;           /* user signal handler */
-            int         os_sig_code;    /* OS signal code */
-        } sigtab;
-    #endif
-#else
-    // 16 bit OS/2 1.x
-    #define INCL_DOSEXCEPTIONS
-    #include <wos2.h>
+#define __EXCEPTION_RECORD struct _REGISTRATION_RECORD
 
-    typedef struct      sigtab {
-        __sig_func      func;     /* user signal handler */
-        VOID (_WCI86FAR PASCAL *os_func)(USHORT, USHORT);
-        USHORT  prev_action;      /* previous action */
-        int     os_sig_code;      /* OS/2 1.x signal code */
-    } sigtab;
-#endif
+_WCRTLINK void __DefaultExceptionHandler( void );
+_WCRTLINK void __NewExceptionFilter( REGISTRATION_RECORD * );
+_WCRTLINK void __DoneExceptionFilter( void );
+
 #endif
