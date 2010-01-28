@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#if defined(__OS2__) || defined(__NT__)
+#if defined(__OS2__) || defined(__NT__) || defined(__RDOS__)
     #if defined(__SW_BM)
 
         #include "thread.h"
