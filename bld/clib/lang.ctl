@@ -139,6 +139,9 @@ cdsay .
   [ IFDEF (os_rdos "") <2*> ]
     <CPCMD> library/rdos.386/mf_r/clib3r.lib                <RELROOT>/lib386/rdos/clib3r.lib
     <CPCMD> library/rdos.386/mf_s/clib3s.lib                <RELROOT>/lib386/rdos/clib3s.lib
+
+    <CPCMD> startup/library/rdos.386/mf_r/binmode.obj       <RELROOT>/lib386/rdos/binmode.obj
+    <CPCMD> startup/library/rdos.386/mf_r/commode.obj       <RELROOT>/lib386/rdos/commode.obj
   [ ENDIF]
 
 
