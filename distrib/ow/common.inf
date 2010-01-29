@@ -99,6 +99,12 @@ env=++INCLUDE=%CDDir%\H\WIN,                    IsWin MinimalInstall
 env=++INCLUDE=%DstDir%\H\WIN,                   IsWin
 env=++INCLUDE=%CDDir%\H\NT,                     IsWin95 IsWinNT | MinimalInstall
 env=++INCLUDE=%DstDir%\H\NT,                    IsWin95 IsWinNT |
+env=++INCLUDE=%CDDir%\H\NT,                     IsWin95 IsWinNT | MinimalInstall
+env=++INCLUDE=%DstDir%\H\NT,                    IsWin95 IsWinNT |
+env=+INCLUDE=%CDDir%\H\NT\DIRECTX,              IsWin95 IsWinNT | MinimalInstall
+env=+INCLUDE=%DstDir%\H\NT\DIRECTX,             IsWin95 IsWinNT |
+env=+INCLUDE=%CDDir%\H\NT\DDK,                  IsWin95 IsWinNT | MinimalInstall
+env=+INCLUDE=%DstDir%\H\NT\DDK,                 IsWin95 IsWinNT |
 env=++INCLUDE=%CDDir%\H,                        IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | MinimalInstall
 env=++INCLUDE=%DstDir%\H,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
 env=++INCLUDE=%DstDir%/lh,                      IsLinux

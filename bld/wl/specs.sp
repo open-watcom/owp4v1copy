@@ -400,6 +400,8 @@ system begin nt
     option osname='Windows NT character-mode'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/nt
+    libpath %WATCOM%/lib386/nt/directx
+    libpath %WATCOM%/lib386/nt/ddk
     library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
     format windows nt ^
     runtime console=4.0
@@ -412,6 +414,8 @@ system begin nt_win
     option osname='Windows NT windowed'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/nt
+    libpath %WATCOM%/lib386/nt/directx
+    libpath %WATCOM%/lib386/nt/ddk
     library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
     format windows nt ^
     runtime windows=4.0
@@ -424,6 +428,8 @@ system begin nt_dll
     option osname='Windows NT'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/nt
+    libpath %WATCOM%/lib386/nt/directx
+    libpath %WATCOM%/lib386/nt/ddk
     library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
     format windows nt dll ^
     runtime windows=4.0
@@ -436,6 +442,8 @@ system begin win95
     option osname='Windows 95'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/nt
+    libpath %WATCOM%/lib386/nt/directx
+    libpath %WATCOM%/lib386/nt/ddk
     library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
     format windows nt ^
     runtime windows=4.0
@@ -448,6 +456,8 @@ system begin win32
     option osname='Win32'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/nt
+    libpath %WATCOM%/lib386/nt/directx
+    libpath %WATCOM%/lib386/nt/ddk
     library kernel32,user32,gdi32,advapi32,comdlg32,ole32,oleaut32,winspool,shell32,uuid,comctl32
     format windows nt ^
     runtime windows=4.0
