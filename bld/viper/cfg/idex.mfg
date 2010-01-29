@@ -20,6 +20,7 @@ IncludeFile idelnx.cfg
 :endsegment
 IncludeFile idedos.cfg
 IncludeFile idedos32.cfg
+IncludeFile iderdos.cfg
 :segment !FOR_WIN
 IncludeFile idewin.cfg
 IncludeFile idew386.cfg
