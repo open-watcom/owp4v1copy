@@ -8,12 +8,19 @@ proj_name = wlink
 !ifndef wlink_autodepends
 wlink_autodepends = .AUTODEPEND
 !endif
+!ifdef prebuild
+!ifdef wlink_dll
+!undef wlink_dll
+!endif
+!endif
 
 # get rid of the -zc
 suppress_zc = 1
 
 !ifndef bootstrap
+!ifndef prebuild
 !include idedlls.mif
+!endif
 !endif
 !include cproj.mif
 !include defrule.mif
