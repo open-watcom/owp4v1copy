@@ -641,13 +641,13 @@ vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
     @for %i in ($(vfw32_lbcs)) do @%append $@ @ %i
     @%append $@ +vfwuuid.obj
 
-ddk/dinput.lbc: ddk/dinput.def ddk/dinpstat.obj
+directx/dinput.lbc: directx/dinput.def directx/dinpstat.obj
     $(awk) -v cpu=$(host_cpu) -f $(root_dir)/def2lbc.awk $[@ > $@
-    @%append $@ +dinpstat.obj
+    @%append $@ +directx/dinpstat.obj
 
-ddk/dinput8.lbc: ddk/dinput8.def ddk/dinpstat.obj
+directx/dinput8.lbc: directx/dinput8.def directx/dinpstat.obj
     $(awk) -v cpu=$(host_cpu) -f $(root_dir)/def2lbc.awk $[@ > $@
-    @%append $@ +dinpstat.obj
+    @%append $@ +directx/dinpstat.obj
 
 ddk/rtlver.obj: ddk/rtlver.c
 !ifeq verbose 1
@@ -658,6 +658,14 @@ ddk/rtlver.obj: ddk/rtlver.c
 !endif
 
 ddk/wdmguid.obj: ddk/wdmguid.c
+!ifeq verbose 1
+    $(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[@
+!else
+    @echo cc $@
+    @$(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[@
+!endif
+
+directx/dinpstat.obj: directx/dinpstat.c
 !ifeq verbose 1
     $(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[@
 !else

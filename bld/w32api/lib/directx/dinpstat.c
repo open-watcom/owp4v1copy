@@ -30,36 +30,7 @@
 **************************************************************************/
 
 #include <windows.h>
-#if 0
 #include <dinput.h>
-#else
-
-/* Temporary stuff to get this file to compile with MinGW headers */
-typedef struct _DIOBJECTDATAFORMAT {
-    const GUID  *pguid;
-    DWORD       dwOfs;
-    DWORD       dwType;
-    DWORD       dwFlags;
-} DIOBJECTDATAFORMAT;
-typedef struct _DIDATAFORMAT {
-    DWORD               dwSize;
-    DWORD               dwObjSize;
-    DWORD               dwFlags;
-    DWORD               dwDataSize;
-    DWORD               dwNumObjs;
-    DIOBJECTDATAFORMAT  *rgodf;
-} DIDATAFORMAT;
-EXTERN_C const GUID GUID_Key;
-EXTERN_C const GUID GUID_XAxis;
-EXTERN_C const GUID GUID_YAxis;
-EXTERN_C const GUID GUID_ZAxis;
-EXTERN_C const GUID GUID_RxAxis;
-EXTERN_C const GUID GUID_RyAxis;
-EXTERN_C const GUID GUID_RzAxis;
-EXTERN_C const GUID GUID_Slider;
-EXTERN_C const GUID GUID_POV;
-
-#endif /* 0 */
 
 static DIOBJECTDATAFORMAT keyboard_data[256] = {
     { &GUID_Key, 0L, 0x8000000CL, 0L },

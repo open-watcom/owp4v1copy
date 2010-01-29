@@ -28,30 +28,9 @@
 *
 **************************************************************************/
 
-#if 0
+
 #include <windows.h>
 #include <largeint.h>
-#else
-
-/* Temporary stuff to get this file to compile with MinGW headers */
-typedef char                CCHAR;
-typedef long                LONG;
-typedef unsigned long       ULONG;
-typedef ULONG               *PULONG;
-typedef __int64             LONGLONG;
-typedef unsigned __int64    ULONGLONG;
-typedef ULONGLONG           *PULONGLONG;
-#define WINAPI              __stdcall
-#define NULL                0
-typedef union _LARGE_INTEGER {
-    LONGLONG    QuadPart;
-} LARGE_INTEGER;
-typedef LARGE_INTEGER       *PLARGE_INTEGER;
-typedef union _ULARGE_INTEGER {
-    ULONGLONG   QuadPart;
-} ULARGE_INTEGER;
-
-#endif /* 0 */
 
 LARGE_INTEGER WINAPI ConvertLongToLargeInteger( LONG l )
 {
