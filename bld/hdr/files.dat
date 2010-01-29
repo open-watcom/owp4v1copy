@@ -72,12 +72,14 @@ usr="wdefwin.h"
 usr="wsample.h"
 
 [ DEFAULT type="s" dir="h/sys" where="c jc ac" cond="dostarg wintarg os2targ wnttarg nlmtarg rdostarg |||||" ]
-usr="_lfndos.h"
 usr="locking.h"
 usr="stat.h"
 usr="timeb.h"
 usr="types.h"
 usr="utime.h"
+
+[ DEFAULT type="s" dir="h/sys" where="c jc ac" cond="dostarg" ]
+usr="_lfndos.h"
 
 [ DEFAULT type="s" dir="h" where="c jc f77 jf77 ac" cond="dostarg wintarg os2targ wnttarg nlmtarg rdostarg ||||| cplusplus" ]
 #
