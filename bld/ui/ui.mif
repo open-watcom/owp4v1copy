@@ -41,9 +41,9 @@ objfiles = &
         uivline.obj  uivmove.obj  uivopen.obj  uivscrn.obj  &
         uivstr.obj   uivutil.obj  uiwin.obj    uiyield.obj
 
-# system type         dos  nlm  nt   os2  qnx  unix  win
-# builder builds      yes  no   yes  yes  no   yes   yes
-#=======================================================
+# system type         dos  nlm  nt   os2  qnx  unix  win  rdos
+# builder builds      yes  no   yes  yes  no   yes   yes  yes
+#=============================================================
 !inject cdisp.obj                         qnx
 !inject cmouse.obj                        qnx
 !inject charmap.obj   dos
@@ -56,10 +56,10 @@ objfiles = &
 !inject tixsupp.obj                       qnx  unix
 !inject tmouse.obj                        qnx  unix
 !inject trie.obj                          qnx  unix
-!inject uibmous.obj   dos  nlm  nt  os2   qnx  unix  win
+!inject uibmous.obj   dos  nlm  nt  os2   qnx  unix  win  rdos
 !inject uichlen.obj        nlm  nt  os2   qnx  unix  win
 !inject uicurshk.obj  dos
-!inject uievent.obj             nt
+!inject uievent.obj             nt                        rdos
 !inject uimous.obj    dos  nlm      os2   qnx  unix  win
 !inject uiextrn.obj                       qnx  unix
 !inject uihook.obj    dos                 qnx  unix

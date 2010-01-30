@@ -399,6 +399,14 @@ enum {
 
 typedef unsigned int    ORD;
 
+#elif __RDOS__
+
+/*      This needs to be fixed so scaling for a mouse also need a larger range!!
+        An improper reference to __GUI__ is used. Fixed for now so it works for RDOS. 
+*/
+        
+typedef int    ORD;
+
 #else
 
 typedef unsigned char   ORD;
@@ -434,6 +442,13 @@ typedef unsigned char   ATTR;
     #define __FAR
     #undef HAVE_FAR
 #elif defined(__UNIX__)
+    typedef struct pixel {
+            unsigned char   ch;
+            ATTR            attr;
+    } PIXEL;
+    #define __FAR
+    #undef HAVE_FAR
+#elif defined(__RDOS__)
     typedef struct pixel {
             unsigned char   ch;
             ATTR            attr;
