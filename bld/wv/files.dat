@@ -16,6 +16,9 @@ type="e" dir="binnt"	usr="wdw.exe"		cond="wnthost"					where="c jc f77 jf77 ac"	
 type="e" dir="axpnt"	usr="wd.exe"		cond="alphahost"				where="ac"			descr="Character mode debugger"
 type="e" dir="axpnt"	usr="wdw.exe"		cond="alphahost"				where="ac"			descr="GUI debugger"
 
+# RDOS
+type="e" dir="rdos"	usr="wd.exe"		cond="rdoshost"					where="c jc f77 jf77"		descr="Character mode debugger"			old="bin"
+
 # Linux - 386
 # OS/2
 type="e" dir="binl"	usr="wd"		cond="lnxhost"					where="c jc f77 jf77"		descr="Character-mode debugger"
