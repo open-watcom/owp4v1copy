@@ -28,6 +28,7 @@ autoset=os2host=IsOS2
 autoset=dostarg=IsDOS
 autoset=os2targ=IsOS2
 autoset=nlmtarg=false
+autoset=rdoshost=false
 autoset=rdostarg=false
 autoset=lnxhost=IsLinux
 autoset=lnxtarg=IsLinux

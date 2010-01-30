@@ -56,6 +56,8 @@ dostarg             - DOS target
 nlmtarg             - Netware target
 lnxhost             - Linux host
 lnxtarg             - Linux target
+rdoshost            - RDOS host
+rdostarg            - RDOS target
 tools16             - 16-bit development tools
 cplusplus           - C++ compiler and libs
 ms                  - 16-bit small memory model

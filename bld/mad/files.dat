@@ -32,4 +32,4 @@ type="d" dir="binnt"	usr="madaxp.dll" cond="wnthost wnttarg |"  	where="c f77 ac
 type="d" dir="binnt"	usr="madppc.dll" cond="wnthost wnttarg |"  	where="c f77 ac"
 type="d" dir="binnt"	usr="madmips.dll" cond="wnthost wnttarg |"  	where="c f77 ac"
 
-type="d" dir="rdos"	usr="madx86.dll" cond="rdostarg"	where="c f77"
+type="d" dir="rdos"	usr="madx86.dll" cond="rdoshost rdostarg |"	where="c f77"
