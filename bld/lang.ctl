@@ -125,7 +125,6 @@ echo Bootstrapping compiler using GNU tools...
 #        FORTRAN 77 libraries
 [ INCLUDE <DEVDIR>/f77/f77lib/lang.ctl ]
 [ INCLUDE <DEVDIR>/f77/samples/lang.ctl ]
-[ INCLUDE <DEVDIR>/wl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wl/lang.ctl ]
 #
 #        Now we can build the C++ libraries - must be done after C library
