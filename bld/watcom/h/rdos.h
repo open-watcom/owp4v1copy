@@ -1171,10 +1171,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     value [eax];
 
 #pragma aux RdosSpawn = \
+    "xor edx,edx"   \
     "push fs"   \
     "mov ax,ds" \
     "mov fs,ax" \
-    "xor edx,edx"   \
     CallGate_spawn_exe  \
     "pop fs"    \
     "movzx eax,ax"  \
@@ -1185,10 +1185,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     modify [edx];
 
 #pragma aux RdosSpawnDebug = \
+    "mov edx,fs:[0x24]"  \
     "push fs"   \
     "mov ax,ds" \
     "mov fs,ax" \
-    "mov edx,fs:[0x24]"  \
     CallGate_spawn_exe  \
     "pop fs"    \
     "movzx eax,ax"  \
@@ -3061,10 +3061,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     value [eax];
 
 #pragma aux RdosSpawn = \
+    "xor edx,edx"   \
     "push fs"   \
     "mov ax,ds" \
     "mov fs,ax" \
-    "xor edx,edx"   \
     CallGate_spawn_exe  \
     "pop fs"    \
     "movzx eax,ax"  \
@@ -3075,10 +3075,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     modify [edx];
 
 #pragma aux RdosSpawnDebug = \
+    "mov edx,fs:[0x24]"  \
     "push fs"   \
     "mov ax,ds" \
     "mov fs,ax" \
-    "mov edx,fs:[0x24]"  \
     CallGate_spawn_exe  \
     "pop fs"    \
     "movzx eax,ax"  \
