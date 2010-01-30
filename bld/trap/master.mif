@@ -60,6 +60,7 @@ fpu_flags_os2_386   = -fpc
 fpu_flags_win_i86   = -fpc
 fpu_flags_nt_386    = -fpc
 fpu_flags_linux_386 = -fpc
+fpu_flags_rdos_386  = -fpc
 
 additional_cleanup = *.d32 *.trp
 
@@ -230,6 +231,16 @@ $(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__
         @for %i in ($(objs)) do @%append $^&.lnk file %i
         @for %i in ($(libs_$(cpu)_$(os)) $(extra_libs)) do @%append $^&.lnk library %i
         @%append $^&.lnk $(extra_linker)
+!ifeq __VERSION__ 1280
+!ifeq host_os rdos
+        set WLINK_LNK=$(wlink_dir)/prebuild/wlsystem.lnk
+!ifdef __UNIX__
+linker = *$(wlink_dir)/prebuild/wl.exe op quiet
+!else
+linker = *$(wlink_dir)\prebuild\wl.exe op quiet
+!endif
+!endif
+!endif
         $(linker) @$^&.lnk 
 !ifdef resource_file
         $(rc) $(resource_file) $^@

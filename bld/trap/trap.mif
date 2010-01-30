@@ -87,7 +87,8 @@ sys_x86_rdos = sys rdos_dll &
                export TrapInit_ &
                export TrapFini_ &
                export TrapRequest_ &
-               op offset=0xdb000000
+               op offset=0xdb000000 &
+               libpath $(clib_dir)/library/rdos.386/mf_r
 
 sys_x86_qnx  = sys pharlap rex disable 1014, 1023
 
