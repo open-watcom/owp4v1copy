@@ -33,6 +33,7 @@ usr="idenlm.cfg"    cond="doshost winhost wnthost os2host alphahost | | | | nlmt
 usr="idelnx.cfg"    cond="doshost winhost wnthost os2host alphahost | | | | lnxtarg"      where="c f77 jc jf77"
 usr="idew32.cfg"    cond="doshost winhost wnthost os2host alphahost | | | | wnttarg"      where="c f77 jc jf77 ac"
 usr="ideaxp.cfg"    cond="doshost winhost wnthost os2host alphahost | | | | alphatarg"    where="ac"
+usr="iderdos.cfg"   cond="doshost winhost wnthost os2host alphahost | | | | rdostarg"     where="c f77 jc jf77"
 
 [ DEFAULT dir="binl" type="s" ]
 usr="ide.cfg"       cond="lnxhost"              where="c f77 jc jf77"
