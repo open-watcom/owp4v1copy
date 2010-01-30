@@ -74,6 +74,10 @@ cdsay .
     <CPCMD> <DEVDIR>/mad/mips/linux386/madmips.mad  <RELROOT>/binl/
     <CPCMD> <DEVDIR>/mad/mips/linux386/madmips.sym  <RELROOT>/binl/
 
+  [ IFDEF (os_rdos "") <2*> ]
+    <CPCMD> <DEVDIR>/mad/x86/rdos386/madx86.dll    <RELROOT>/rdos/
+    <CPCMD> <DEVDIR>/mad/x86/rdos386/madx86.sym    <RELROOT>/rdos/
+
 
 [ BLOCK <1> clean ]
 #==================
