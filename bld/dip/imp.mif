@@ -17,6 +17,7 @@ fpu_flags_qnx_386   = -fpc
 fpu_flags_nt_386    = -fpc
 fpu_flags_linux_386 = -fpc
 fpu_flags_win_i86   = -fpc
+fpu_flags_rdos_386  = -fpc
 
 ext_os2_i86     = .dll
 ext_os2_386     = .d32
@@ -27,6 +28,7 @@ ext_win_i86     = .dll
 ext_dos_386     = .dip
 ext_nt_386      = .dll
 ext_nt_axp      = .dll
+ext_rdos_386    = .dll
 
 !ifdef bootstrap
 lib_name = $(name).so
@@ -68,15 +70,33 @@ extra_l_flags_dll_nt_386_codeview = op offset=0x6ed00000
 extra_l_flags_dll_nt_386_watcom   = op offset=0x6ee00000
 extra_l_flags_dll_nt_386_dwarf    = op offset=0x6ef00000
 
+extra_l_flags_dll_rdos_386_watcom = op offset=0xda000000
+extra_l_flags_dll_rdos_386_dwarf  = op offset=0xda100000
+extra_l_flags_dll_rdos_386_mapsym = op offset=0xda200000
+
 extra_l_flags_dll_nt      = export DIPLOAD op modname=$(name) $(lflags_nt_$(host_cpu)_$(name))
 extra_l_flags_dll_os2     = export DIPLOAD op modname=$(name)
 extra_l_flags_dll_win     = op modname=$(name)
+extra_l_flags_dll_rdos    = export DIPLOAD op modname=$(name) $(lflags_rdos_386_$(name))
+!ifeq __VERSION__ 1280
+extra_l_flags_dll_rdos    += libpath $(clib_dir)/library/rdos.386/mf_r
+!endif
 
 !ifdef bootstrap
 $(lib_name) : $(objs) $(imp_libs) $(cl_libs) $(__MAKEFILES__)
         $(cl) -shared $(clflags) $(objs) $(imp_libs) $(cl_libs)
 !else
 $(lib_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
+!ifeq __VERSION__ 1280
+!ifeq host_os rdos
+        set WLINK_LNK=$(wlink_dir)/prebuild/wlsystem.lnk
+!ifdef __UNIX__
+linker = *$(wlink_dir)/prebuild/wl.exe op quiet
+!else
+linker = *$(wlink_dir)\prebuild\wl.exe op quiet
+!endif
+!endif
+!endif
 !ifdef imp_libs
         $(linker) name $^@ $(lflags_dll) file {$(objs)} library {$(imp_libs)}
 !else

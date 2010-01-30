@@ -110,6 +110,14 @@ cdsay .
 #        <CPCMD> <DEVDIR>/dip/watcom/qnx386/watcom.dip       <RELROOT>/qnx/watcom/wd/
 #        <CPCMD> <DEVDIR>/dip/watcom/qnx386/watcom.sym       <RELROOT>/qnx/sym/
 
+  [ IFDEF (os_rdos "") <2*> ]
+        <CPCMD> <DEVDIR>/dip/dwarf/rdos386/dwarf.dll        <RELROOT>/rdos/
+        <CPCMD> <DEVDIR>/dip/dwarf/rdos386/dwarf.sym        <RELROOT>/rdos/
+        <CPCMD> <DEVDIR>/dip/watcom/rdos386/watcom.dll      <RELROOT>/rdos/
+        <CPCMD> <DEVDIR>/dip/watcom/rdos386/watcom.sym      <RELROOT>/rdos/
+        <CPCMD> <DEVDIR>/dip/mapsym/rdos386/mapsym.dll      <RELROOT>/rdos/
+        <CPCMD> <DEVDIR>/dip/mapsym/rdos386/mapsym.sym      <RELROOT>/rdos/
+
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean

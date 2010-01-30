@@ -37,3 +37,7 @@ type="s" usr="dwarf.dip"		dir="binl"	cond="lnxhost"			where="c jc f77 jf77"
 type="s" usr="export.dip"	dir="binl"	cond="lnxhost"			where="c jc f77 jf77"
 type="s" usr="mapsym.dip"	dir="binl"	cond="lnxhost"			where="c jc f77 jf77"
 type="s" usr="watcom.dip"	dir="binl"	cond="lnxhost"			where="c jc f77 jf77"
+#	RDOS 
+type="d" usr="dwarf.dll"	dir="rdos"	cond="rdostarg"	where="c jc f77 jf77 ac"
+type="d" usr="mapsym.dll"	dir="rdos"	cond="rdostarg"	where="c jc f77 jf77 ac"
+type="d" usr="watcom.dll"	dir="rdos"	cond="rdostarg"	where="c jc f77 jf77 ac"
