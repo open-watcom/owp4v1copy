@@ -78,6 +78,11 @@ echo Bootstrapping compiler using GNU tools...
 #        DWARF must be done early so that DWARF library users are up-to-date
 [ INCLUDE <DEVDIR>/dwarf/lang.ctl ]
 #
+# Hack for build OW 1.9 by OW 1.8 
+# build new linker which is able to create executable 
+# format not available in OW 1.8 linker (RDOS target)
+[ INCLUDE <DEVDIR>/wl/prereq.ctl ]
+#
 #        Now build Open Watcom libraries
 #
 #        emu libraries must be made before C libraries
@@ -120,6 +125,7 @@ echo Bootstrapping compiler using GNU tools...
 #        FORTRAN 77 libraries
 [ INCLUDE <DEVDIR>/f77/f77lib/lang.ctl ]
 [ INCLUDE <DEVDIR>/f77/samples/lang.ctl ]
+[ INCLUDE <DEVDIR>/wl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wl/lang.ctl ]
 #
 #        Now we can build the C++ libraries - must be done after C library
