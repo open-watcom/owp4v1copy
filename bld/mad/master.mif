@@ -53,38 +53,25 @@ extra_c_flags += -fPIC
 extra_c_flags += -s
 extra_c_flags_i86 = -zu
 extra_c_flags_win = -zc
+
+extra_c_flags_madimp = -zlf
 !endif
 
 # lflags stuff
 ###############
-lflags_qnx_386  = sys pharlap rex disable 1023,1014
-lflags_linux_386= sys pharlap rex disable 1023,1014
-lflags_dos_386  = sys pharlap rex disable 1023,1014
-lflags_os2_i86  = sys os2 dll
-lflags_os2_386  = sys os2v2 dll
-lflags_win_i86  = sys windows op rwr
-lflags_nt_386   = sys nt_dll op offset=0x6eb00000
-lflags_nt_axp   = sys ntaxp_dll op dosseg
+lflags_dll_dos_386  = sys pharlap rex disable 1023,1014
+lflags_dll_linux_386= sys pharlap rex disable 1023,1014
+lflags_dll_qnx_386  = sys pharlap rex disable 1023,1014
+lflags_dll_win_i86  = sys windows op rwr
 
-extra_l_flags  = op map
+extra_l_flags_dll = op map
 
-extra_l_flags_os2  = export MADLOAD op modname=$(name)
-extra_l_flags_nt   = export MADLOAD op modname=$(name)
-extra_l_flags_win  = op modname=$(name)
+extra_l_flags_dll_nt_386 = op offset=0x6eb00000
+extra_l_flags_dll_nt_axp = op dosseg
 
-!ifndef bootstrap
-libs = clib3r
-!ifeq host_os linux
-!ifdef __LINUX__
-libs = $(clib_dir)/library/linux.386/mf_r/clib3r.lib
-!endif
-!else ifeq host_cpu i86
-libs = clib$(memory_model_i86)
-!else ifneq host_cpu 386
-libs = clib
-!endif
-libs += $(imp_libs)
-!endif
+extra_l_flags_dll_os2  = export MADLOAD op modname=$(name)
+extra_l_flags_dll_nt   = export MADLOAD op modname=$(name) $(extra_l_flags_dll_nt_$(host_cpu))
+extra_l_flags_dll_win  = op modname=$(name)
 
 ##################
 
@@ -97,9 +84,9 @@ objs =  madimp.obj $(dis_objs) $(imp_objs)
 # explicit rules
 ##################
 !ifdef bootstrap
-$(lib_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
+$(lib_name) : $(dis_prereq) $(objs) $(cl_libs) $(__MAKEFILES__)
         $(cl) -shared -fPIC $(clflags) $(objs) $(cl_libs)
 !else
 $(lib_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
-        $(linker) $(lflags) name $^@ file {$(objs)} library {$(libs)}
+        $(linker) name $^@ $(lflags_dll) file {$(objs)}
 !endif

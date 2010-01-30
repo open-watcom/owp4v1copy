@@ -16,26 +16,7 @@ fpu_flags_qnx_i86   = -fpc
 fpu_flags_qnx_386   = -fpc
 fpu_flags_nt_386    = -fpc
 fpu_flags_linux_386 = -fpc
-
-!include cproj.mif
-!include deftarg.mif
-!include defrule.mif
-
-sys_nt_386_javavm       = op offset=0x6e800000
-sys_nt_386_export       = op offset=0x6ec00000
-sys_nt_386_codeview     = op offset=0x6ed00000
-sys_nt_386_watcom       = op offset=0x6ee00000
-sys_nt_386_dwarf        = op offset=0x6ef00000
-
-sys_os2_i86     = os2 dll export DIPLOAD
-sys_os2_386     = os2v2 dll export DIPLOAD
-sys_qnx_i86     = qnx disable 1023
-sys_qnx_386     = pharlap rex disable 1023,1014
-sys_linux_386   = pharlap rex disable 1023,1014
-sys_win_i86     = windows op modname=$(name),rwr
-sys_dos_386     = pharlap rex disable 1023,1014
-sys_nt_386      = nt_dll export DIPLOAD op modname=$(name) $(sys_nt_386_$(name))
-sys_nt_axp      = ntaxp_dll export DIPLOAD op modname=$(name)
+fpu_flags_win_i86   = -fpc
 
 ext_os2_i86     = .dll
 ext_os2_386     = .d32
@@ -53,20 +34,13 @@ lib_name = $(name).so
 lib_name = $(name)$(ext_$(host_os)_$(host_cpu))
 !endif
 
-clib_os2_i86    = clibl
-clib_os2_386    = clib3r
-clib_qnx_i86    = clibl
-clib_qnx_386    = clib3r
-!ifdef __LINUX__
-clib_linux_386  = $(clib_dir)/library/linux.386/mf_r/clib3r.lib &
-$(mathlib_dir)/library/msdos.386/mf_r/math3r.lib
-!else
-clib_linux_386  = clib3r
-!endif
-clib_win_i86    = clibl
-clib_dos_386    = clib3r
-clib_nt_386     = clib3r
-clib_nt_axp     = clib
+objs = dipimp.obj $(imp_objs)
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+.c: ../c;../../c;$(extra_srcs)
 
 extra_c_flags   = -s -D__DIP__ $(extra_cflags)
 !ifdef bootstrap
@@ -74,22 +48,38 @@ extra_c_flags += -fPIC
 !else
 extra_c_flags += -s
 extra_c_flags_i86 = -zc -zu
+
+extra_c_flags_dipimp = -zlf
 !endif
 
 inc_dirs = -I"../h" $(extra_incs) -I"$(dig_dir)/h"
 
-.c: ../c;../../c;$(extra_srcs)
+lflags_dll_dos_386     = sys pharlap rex disable 1023,1014
+lflags_dll_linux_386   = sys pharlap rex disable 1023,1014
+lflags_dll_qnx_i86     = sys qnx disable 1023
+lflags_dll_qnx_386     = sys pharlap rex disable 1023,1014
+lflags_dll_win_i86     = sys windows op rwr
 
-objs = dipimp.obj $(imp_objs)
+extra_l_flags_dll = op map
+
+extra_l_flags_dll_nt_386_javavm   = op offset=0x6e800000
+extra_l_flags_dll_nt_386_export   = op offset=0x6ec00000
+extra_l_flags_dll_nt_386_codeview = op offset=0x6ed00000
+extra_l_flags_dll_nt_386_watcom   = op offset=0x6ee00000
+extra_l_flags_dll_nt_386_dwarf    = op offset=0x6ef00000
+
+extra_l_flags_dll_nt      = export DIPLOAD op modname=$(name) $(lflags_nt_$(host_cpu)_$(name))
+extra_l_flags_dll_os2     = export DIPLOAD op modname=$(name)
+extra_l_flags_dll_win     = op modname=$(name)
 
 !ifdef bootstrap
-$(lib_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
+$(lib_name) : $(objs) $(imp_libs) $(cl_libs) $(__MAKEFILES__)
         $(cl) -shared $(clflags) $(objs) $(imp_libs) $(cl_libs)
 !else
 $(lib_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
-        $(linker) op map, symfile debug all &
-                sys $(sys_$(host_os)_$(host_cpu)) &
-                name $^@ &
-                file {$(objs)} &
-                library {$(clib_$(host_os)_$(host_cpu)) $(imp_libs)}
+!ifdef imp_libs
+        $(linker) name $^@ $(lflags_dll) file {$(objs)} library {$(imp_libs)}
+!else
+        $(linker) name $^@ $(lflags_dll) file {$(objs)}
+!endif
 !endif
