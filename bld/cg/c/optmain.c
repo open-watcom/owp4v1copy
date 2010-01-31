@@ -37,28 +37,28 @@
 extern    ins_entry     *FirstIns;
 extern    ins_entry     *LastIns;
 extern    ins_entry     *RetList;
-extern    uint  QCount;
+extern    uint          QCount;
 extern    ins_entry     *PendingDeletes;
 extern    pointer       Handles;
 extern    pointer       *InstrFrl;
 
-extern  seg_id          SetOP(seg_id);
-extern  seg_id          AskCodeSeg(void);
-extern  void            FreePendingDeletes(void);
-extern  ins_entry       *DelInstr(ins_entry*);
-extern  void            OutputOC(any_oc*,any_oc*);
-extern  void            OptPull(void);
-extern  void            PLBlip(void);
-extern  void            OptPush(void);
-extern  void            AddInstr(ins_entry*,ins_entry*);
-extern  ins_entry       *NewInstr(any_oc*);
-extern  oc_class        PrevClass(ins_entry*);
-extern  void            TryScrapLabel(code_lbl*);
-extern  void            PSBlip(void);
-extern  void            FreeInstr(ins_entry*);
-extern  pointer_int     MemInUse(void);
-extern  ins_entry       *NextIns(ins_entry*);
-extern  bool            UniqueLabel(code_lbl*);
+extern  seg_id          SetOP( seg_id );
+extern  seg_id          AskCodeSeg( void );
+extern  void            FreePendingDeletes( void );
+extern  ins_entry       *DelInstr( ins_entry * );
+extern  void            OutputOC( any_oc *, any_oc * );
+extern  void            OptPull( void );
+extern  void            PLBlip( void );
+extern  void            OptPush( void );
+extern  void            AddInstr( ins_entry *, ins_entry * );
+extern  ins_entry       *NewInstr( any_oc * );
+extern  oc_class        PrevClass( ins_entry * );
+extern  void            TryScrapLabel( code_lbl * );
+extern  void            PSBlip( void );
+extern  void            FreeInstr( ins_entry * );
+extern  pointer_int     MemInUse( void );
+extern  ins_entry       *NextIns( ins_entry * );
+extern  bool            UniqueLabel( code_lbl * );
 
 
 static  void    PullQueue( void )
@@ -75,7 +75,8 @@ static  void    PullQueue( void )
     for( ;; ) {
         PLBlip();
         OptPull();
-        if( FirstIns == NULL ) break;
+        if( FirstIns == NULL )
+            break;
         if( _Class( FirstIns ) == OC_LABEL ) {
             if( UniqueLabel( _Label( FirstIns ) ) ) {
                 /* take off extra byte added when the ins went into queue */
@@ -99,7 +100,7 @@ static  void    PullQueue( void )
             }
             *owner = be_lbls;
         }
-        for(;;) {
+        for( ;; ) {
             next_ins = NextIns( FirstIns );
             if( next_ins != NULL && _Class( next_ins ) == OC_LABEL ) {
                 OutputOC( &FirstIns->oc, &next_ins->oc );
@@ -107,11 +108,13 @@ static  void    PullQueue( void )
                 OutputOC( &FirstIns->oc, NULL );
             }
             cl = _Class( FirstIns );
-            if( cl != OC_LABEL ) break;
+            if( cl != OC_LABEL )
+                break;
             lbl = _Label( FirstIns );
             lbl->ins = NULL;
             next = lbl->alias;
-            if( next == NULL ) break;
+            if( next == NULL )
+                break;
             lbl->alias = NULL;
             TryScrapLabel( lbl );
             _Label( FirstIns ) = next;
@@ -123,8 +126,11 @@ static  void    PullQueue( void )
            flow instruction since things may be bypassing the control
            flow optimizer.
         */
-        if( _TransferClass( cl ) ) break;
-        if( FirstIns == NULL ) break;
+        if( _TransferClass( cl ) )
+            break;
+        if( FirstIns == NULL ) {
+            break;
+        }
     }
   optend
 }
@@ -136,10 +142,12 @@ static  bool    LDone( any_oc *oc )
     code_lbl    *lbl;
 
   optbegin
-    if( oc->oc_entry.class != OC_LDONE ) optreturn( FALSE );
+    if( oc->oc_entry.class != OC_LDONE )
+        optreturn( FALSE );
     lbl = oc->oc_handle.handle;
     _ValidLbl( lbl );
-    if( _TstStatus( lbl, CODELABEL ) == FALSE ) optreturn( FALSE );
+    if( _TstStatus( lbl, CODELABEL ) == FALSE )
+        optreturn( FALSE );
     _SetStatus( lbl, DYINGLABEL );
     TryScrapLabel( lbl );
     optreturn( TRUE );
@@ -153,7 +161,8 @@ extern  void    InputOC( any_oc *oc )
     if( LDone( oc ) == FALSE ) {
         if( (oc->oc_entry.class & GET_BASE) != OC_INFO
          && (oc->oc_entry.class & GET_BASE) != OC_LABEL
-         && _TransferClass( PrevClass( NULL ) ) ) optreturnvoid; /*dead code*/
+         && _TransferClass( PrevClass( NULL ) ) )
+            optreturnvoid; /*dead code*/
         while( QCount >= Q_MAX ) {
             PullQueue();
         }
@@ -187,9 +196,11 @@ extern  bool    ShrinkQueue( pointer_int size )
   optbegin
     need = size;
     freed = 0;
-    for(;;) {
-        if( freed >= need ) break;
-        if( QCount <= Q_MIN ) break;
+    for( ;; ) {
+        if( freed >= need )
+            break;
+        if( QCount <= Q_MIN )
+            break;
         freed += MemInUse();
         PullQueue();
         freed -= MemInUse();
@@ -209,9 +220,9 @@ extern  void    InitQueue( void )
     PendingDeletes = NULL;
     Handles = NULL;
     InitFrl( &InstrFrl );
-    #if( OPTIONS & SAVINGS )
-        Savings = 0;
-    #endif
+#if( OPTIONS & SAVINGS )
+    Savings = 0;
+#endif
   optend
 }
 

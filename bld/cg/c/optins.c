@@ -37,30 +37,30 @@ extern    ins_entry     *LastIns;
 extern    ins_entry     *RetList;
 extern    bool          InsDelete;
 
-extern  ins_entry       *ValidIns(ins_entry*);
-extern  ins_entry       *AliasLabels(ins_entry*,ins_entry*);
-extern  oc_class        PrevClass(ins_entry*);
-extern  oc_class        NextClass(ins_entry*);
-extern  void            ChgLblRef(ins_entry*,code_lbl*);
-extern  byte            ReverseCondition(byte);
-extern  ins_entry       *DelInstr(ins_entry*);
-extern  void            SetBranches(void);
-extern  ins_entry       *NextIns(ins_entry*);
-extern  bool            StraightenCode(ins_entry*);
-extern  void            CheckStraightenCode(ins_entry*);
-extern  ins_entry       *IsolatedCode(ins_entry*);
-extern  void            FreePendingDeletes(void);
-extern  bool            ComTail(ins_entry*,ins_entry*);
-extern  void            RetAftrCall(ins_entry*);
-extern  bool            RetAftrLbl(ins_entry*);
-extern  void            JmpRet(ins_entry*);
-extern  bool            ComCode(ins_entry*);
-extern  ins_entry       *PrevIns(ins_entry*);
-extern  void            CallRet(ins_entry*);
-extern  void            TraceCommon(ins_entry*);
-extern  void            MultiLineNums(ins_entry*);
-extern  void            CloneCode(code_lbl*);
-extern  bool            UniqueLabel(code_lbl*);
+extern  ins_entry       *ValidIns( ins_entry * );
+extern  ins_entry       *AliasLabels( ins_entry *, ins_entry * );
+extern  oc_class        PrevClass( ins_entry * );
+extern  oc_class        NextClass( ins_entry * );
+extern  void            ChgLblRef( ins_entry *, code_lbl * );
+extern  byte            ReverseCondition( byte );
+extern  ins_entry       *DelInstr( ins_entry * );
+extern  void            SetBranches( void );
+extern  ins_entry       *NextIns( ins_entry * );
+extern  bool            StraightenCode( ins_entry * );
+extern  void            CheckStraightenCode( ins_entry * );
+extern  ins_entry       *IsolatedCode( ins_entry * );
+extern  void            FreePendingDeletes( void );
+extern  bool            ComTail( ins_entry *, ins_entry * );
+extern  void            RetAftrCall( ins_entry * );
+extern  bool            RetAftrLbl( ins_entry * );
+extern  void            JmpRet( ins_entry * );
+extern  bool            ComCode( ins_entry * );
+extern  ins_entry       *PrevIns( ins_entry * );
+extern  void            CallRet( ins_entry * );
+extern  void            TraceCommon( ins_entry * );
+extern  void            MultiLineNums( ins_entry * );
+extern  void            CloneCode( code_lbl* );
+extern  bool            UniqueLabel( code_lbl* );
 
 static  ins_entry       *Redirect( ins_entry *, ins_entry * );
 
@@ -88,20 +88,30 @@ static  bool    CompressLabels( ins_entry *label )
   optbegin
     lbl_unique = UniqueLabel( _Label( label ) );
     for( ;; ) {
-        if( PrevClass( label ) != OC_LABEL ) break;
+        if( PrevClass( label ) != OC_LABEL )
+            break;
         other_label = PrevIns( label );
-        if( lbl_unique && UniqueLabel( _Label( other_label ) ) ) break;
-        if( LineLabel( label ) && LineLabel( other_label ) ) break;
+        if( lbl_unique && UniqueLabel( _Label( other_label ) ) )
+            break;
+        if( LineLabel( label ) && LineLabel( other_label ) )
+            break;
         AliasLabels( other_label, label );
-        if( _Class( label ) == OC_DEAD ) optreturn( FALSE );
+        if( _Class( label ) == OC_DEAD ) {
+            optreturn( FALSE );
+        }
     }
     for( ;; ) {
-        if( NextClass( label ) != OC_LABEL ) break;
+        if( NextClass( label ) != OC_LABEL )
+            break;
         other_label = NextIns( label );
-        if( lbl_unique && UniqueLabel( _Label( other_label ) ) ) break;
-        if( LineLabel( label ) && LineLabel( other_label ) ) break;
+        if( lbl_unique && UniqueLabel( _Label( other_label ) ) )
+            break;
+        if( LineLabel( label ) && LineLabel( other_label ) )
+            break;
         AliasLabels( other_label, label );
-        if( _Class( label ) == OC_DEAD ) optreturn( FALSE );
+        if( _Class( label ) == OC_DEAD ) {
+            optreturn( FALSE );
+        }
     }
     optreturn( TRUE );
 }
@@ -113,23 +123,28 @@ static  bool    UnTangle1( ins_entry *jmp, ins_entry **instr )
     ins_entry   *c_jmp;
     oc_class    cl;
 
-    if( jmp == NULL ) return( FALSE );
+    if( jmp == NULL )
+        return( FALSE );
     cl = _Class( jmp );
-    if( (cl != OC_JCOND) && (cl != OC_JMP) ) return( FALSE );
+    if( (cl != OC_JCOND) && (cl != OC_JMP) )
+        return( FALSE );
     if( _Label( jmp ) == _Label( *instr ) ) {
         /* jump next*/
         *instr = DelInstr( jmp );
         return( TRUE );
     }
-    if( cl != OC_JMP ) return( FALSE );
+    if( cl != OC_JMP )
+        return( FALSE );
     c_jmp = PrevIns( jmp );
-    if( c_jmp == NULL ) return( FALSE );
-    if( _Class( c_jmp ) != OC_JCOND ) return( FALSE );
-    if( _Label( c_jmp ) == _Label( *instr )
-        #if( OPTIONS & SEGMENTED )
-     && ( _Attr( jmp ) & ATTR_FAR ) == 0
-        #endif
-                                          ) {
+    if( c_jmp == NULL )
+        return( FALSE );
+    if( _Class( c_jmp ) != OC_JCOND )
+        return( FALSE );
+#if( OPTIONS & SEGMENTED )
+    if( _Label( c_jmp ) == _Label( *instr ) && ( _Attr( jmp ) & ATTR_FAR ) == 0 ) {
+#else
+    if( _Label( c_jmp ) == _Label( *instr ) ) {
+#endif
         /* conditional jump around a jump*/
         _JmpCond( c_jmp ) = ReverseCondition( _JmpCond( c_jmp ) );
         cl = jmp->oc.oc_entry.class;
@@ -147,36 +162,47 @@ static  bool    UnTangle1( ins_entry *jmp, ins_entry **instr )
 }
 
 
-static  bool    UnTangle2( ins_entry *jmp, ins_entry **instr ) {
-/*************************************************************/
-
+static  bool    UnTangle2( ins_entry *jmp, ins_entry **instr )
+/************************************************************/
+{
     oc_class    cl;
     ins_entry   *ins;
 
-    if( _IsModel( NO_OPTIMIZATION ) ) return( FALSE );
-    if( jmp == NULL ) return( FALSE );
+    if( _IsModel( NO_OPTIMIZATION ) )
+        return( FALSE );
+    if( jmp == NULL )
+        return( FALSE );
     cl = _Class( jmp );
     if( cl == OC_RET ) {
         /* label followed by a return*/
         return( RetAftrLbl( jmp ) );
     }
-    if( cl != OC_JMP ) return( FALSE );
-    #if( OPTIONS & SEGMENTED )
-        if( _Attr( jmp ) & ATTR_FAR ) return( FALSE );
-    #endif
-    if( _Label( *instr )->ins == NULL ) return( FALSE );
-    if( _Label( jmp )->redirect == _Label( *instr ) ) return( FALSE );
-    if( _Label( jmp ) == _Label( *instr ) ) return( FALSE );
+    if( cl != OC_JMP )
+        return( FALSE );
+#if( OPTIONS & SEGMENTED )
+    if( _Attr( jmp ) & ATTR_FAR )
+        return( FALSE );
+#endif
+    if( _Label( *instr )->ins == NULL )
+        return( FALSE );
+    if( _Label( jmp )->redirect == _Label( *instr ) )
+        return( FALSE );
+    if( _Label( jmp ) == _Label( *instr ) )
+        return( FALSE );
     /* jump to jump*/
     *instr = Redirect( *instr, jmp );
-    if( *instr == NULL ) return( FALSE );
+    if( *instr == NULL )
+        return( FALSE );
     cl = PrevClass( *instr );
-    if( !_TransferClass( cl ) ) return( TRUE );
+    if( !_TransferClass( cl ) )
+        return( TRUE );
     /* dead code*/
     ins = *instr;
     for(;;) {
-        if( ins == NULL ) break;
-        if( _Class( ins ) == OC_LABEL ) break;
+        if( ins == NULL )
+            break;
+        if( _Class( ins ) == OC_LABEL )
+            break;
         if( _Class( ins ) == OC_INFO ) {
             ins = ins->ins.next;
         } else {
@@ -195,18 +221,26 @@ extern  ins_entry       *Untangle( ins_entry *instr )
 
   optbegin
     for( ;; ) {
-        if( instr == NULL ) break;
-        if( _Class( instr ) != OC_LABEL ) break;
-        if( !CompressLabels( instr ) ) break;
+        if( instr == NULL )
+            break;
+        if( _Class( instr ) != OC_LABEL )
+            break;
+        if( !CompressLabels( instr ) )
+            break;
         change = FALSE;
         jmp = PrevIns( instr );
         change |= UnTangle1( jmp, &instr );
-        if( instr == NULL ) break;
-        if( _Class( instr ) != OC_LABEL ) break;
-        if( !CompressLabels( instr ) ) break;
+        if( instr == NULL )
+            break;
+        if( _Class( instr ) != OC_LABEL )
+            break;
+        if( !CompressLabels( instr ) )
+            break;
         jmp = NextIns( instr );
         change |= UnTangle2( jmp, &instr );
-        if( !change ) break;
+        if( !change ) {
+            break;
+        }
     }
     optreturn( instr );
 }
@@ -292,13 +326,16 @@ extern  void    OptPush( void )
             }
             break;
         }
-        if( !InsDelete ) break;      /* nothing happened*/
+        if( !InsDelete )
+            break;      /* nothing happened*/
         FreePendingDeletes();
         /* find the last interesting queue entry and try some more*/
         ins = LastIns;
         for(;;) {
-            if( ins == NULL ) optreturnvoid;
-            if( _Class( ins ) != OC_INFO ) break;
+            if( ins == NULL )
+                optreturnvoid;
+            if( _Class( ins ) != OC_INFO )
+                break;
             ins = ins->ins.prev;
         }
     }
@@ -363,8 +400,11 @@ extern  void    OptPull( void )
             break;
         }
         FreePendingDeletes();
-        if( FirstIns == NULL ) optreturnvoid;
-        if( !InsDelete ) break;
+        if( FirstIns == NULL )
+            optreturnvoid;
+        if( !InsDelete ) {
+            break;
+        }
     }
     switch( ins_class ) {
     case OC_LREF:
@@ -373,11 +413,11 @@ extern  void    OptPull( void )
         break;
     case OC_JCOND:
     case OC_JMP:
-        #if( OPTIONS & SHORT_JUMPS )
-            if( !(_Attr( FirstIns ) & ATTR_FAR) ) {
-                SetBranches();
-            }
-        #endif
+#if( OPTIONS & SHORT_JUMPS )
+        if( !(_Attr( FirstIns ) & ATTR_FAR) ) {
+            SetBranches();
+        }
+#endif
         _SetStatus( _Label( FirstIns ), KEEPLABEL );
         break;
     }
