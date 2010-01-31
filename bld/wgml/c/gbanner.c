@@ -36,7 +36,7 @@
 #include "wgml.h"
 #include "gvars.h"
 
-static  text_line       b_line;         // for constructing banner line
+static  text_line       ban_line;       // for constructing banner line
 static  text_chars  *   reg_text[3];    // 3 possible ban region parts
 
 /***************************************************************************/
@@ -58,7 +58,8 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
     if( skip > 0 ) {               // if region start is not last banner line
         post_top_skip = skip;           // reserve space
     } else {
-        post_top_skip = wgml_fonts[ban->region->font].line_height;
+//        post_top_skip = wgml_fonts[ban->region->font].line_height; // TBD
+        post_top_skip = 0;
     }
 
     if( bin_driver->y_positive == 0 ) {
@@ -172,6 +173,9 @@ static void substitute_vars( char * pbuf, char * pin, size_t length )
 
 /***************************************************************************/
 /*  prepare 1 or more text_chars with region content                       */
+/*                                                                         */
+/*  More than 1 ban_region may be specified for a banner in :LAYOUT        */
+/*  but only the first is processed                                   TBD  */
 /***************************************************************************/
 
 static void content_reg( banner_lay_tag * ban )
@@ -254,7 +258,7 @@ static void content_reg( banner_lay_tag * ban )
                     }
                 }
             }
-        } else {    // not script format only normal string with perhaps vars
+        } else {    // no script format only normal string with perhaps vars
             substitute_vars( pbuf, ban->region->contents.string,
                              strlen( ban->region->contents.string ) );
             if( *pbuf ) {
@@ -659,14 +663,14 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
     reg_text[1] = NULL;
     reg_text[2] = NULL;
 
-    b_line.first = NULL;
+    ban_line.first = NULL;
 
     if( bottom ) {
         g_cur_v_start = ban_bot_pos( ban );
     } else {
         g_cur_v_start = ban_top_pos( ban );
     }
-    b_line.y_address = g_cur_v_start;
+    ban_line.y_address = g_cur_v_start;
 
     /* calc banner horizontal margins */
     ban_left  = g_page_left_org + conv_hor_unit( &(ban->left_adjust) );
@@ -679,11 +683,11 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         if( reg_text[k] == NULL ) {
             continue;                   // skip empty part
         }
-        if( b_line.first == NULL ) {
-            b_line.first = reg_text[k];
-            b_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
+        if( ban_line.first == NULL ) {
+            ban_line.first = reg_text[k];
+            ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
         } else {
-            curr_t = b_line.first;
+            curr_t = ban_line.first;
             while( curr_t->next != NULL ) {
                 curr_t = curr_t->next;
             }
@@ -722,40 +726,40 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         curr_x += curr_t->width;
 
     }
-    if( GlobalFlags.lastpass && b_line.first != NULL) {
+    if( GlobalFlags.lastpass && ban_line.first != NULL) {
         if( input_cbs->fmflags & II_research ) {
-            test_out_t_line( &b_line );
+            test_out_t_line( &ban_line );
         }
 
         /*******************************************************************/
         /*  truncate the left part(s) in case of overlap                   */
         /*******************************************************************/
-        curr_p = b_line.first;
+        curr_p = ban_line.first;
         curr_t = curr_p->next;
         while( curr_t != NULL ) {
             while( (curr_p->x_address + curr_p->width) > curr_t->x_address ) {
-                if( curr_p->count < 2) {    // sanity check
+                if( curr_p->count < 2) {// sanity check
                    break;
                 }
-                curr_p->count -= 1;         // truncate text
-                curr_p->width = cop_text_width( curr_p->text, curr_p->count,
-                                                0 );// font ??? TBD
+                curr_p->count -= 1;     // truncate text
+                curr_p->width -= wgml_fonts[curr_p->font_number].width_table
+                                                 [curr_p->text[curr_p->count]];
             }
             curr_p = curr_t;
             curr_t = curr_t->next;
         }
 
-        fb_output_textline( &b_line );
+        fb_output_textline( &ban_line );
     }
 
     if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= b_line.line_height;
+        g_cur_v_start -= ban_line.line_height;
     } else {
-        g_cur_v_start += b_line.line_height;
+        g_cur_v_start += ban_line.line_height;
     }
-    if( b_line.first != NULL) {
-        add_text_chars_to_pool( &b_line );
-        b_line.first = NULL;
+    if( ban_line.first != NULL) {
+        add_text_chars_to_pool( &ban_line );
+        ban_line.first = NULL;
     }
     if( !bottom ) {                    // for top banner calculate text start
 
@@ -771,9 +775,9 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
                 if( pskip > 0 ) {
                     post_top_skip += pskip;
                 } else {
-                    if( page > 1 ) {
-                         post_top_skip = 0;
-                    }
+//                  if( page > 1 ) {
+//                       post_top_skip = 0; // TBD
+//                  }
                 }
                 post_skip = NULL;
             } else {
@@ -795,12 +799,11 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 
 /***************************************************************************/
 /*  output top or bottom  banner                                           */
-/*  only the first banregion is output      TBD                            */
 /***************************************************************************/
 void    out_ban_top( banner_lay_tag * ban )
 {
     out_ban_common( ban, false );       // false for top banner
-    ProcFlags.page_started = true;
+//    ProcFlags.page_started = true; // TBD
     ProcFlags.top_ban_proc = true;
 }
 

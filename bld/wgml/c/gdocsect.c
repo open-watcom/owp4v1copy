@@ -172,8 +172,9 @@ void    prepare_doc_sect( doc_section ds )
     uint32_t    h_start;
 
     if( ProcFlags.prep_section ) {
-        return;
+        return;                         // once is enough
     }
+    ProcFlags.prep_section = true;
 
     if( ds != doc_sect_body ) {
         out_msg( "prepare_doc_sect possibly incomplete\n" );
@@ -181,7 +182,6 @@ void    prepare_doc_sect( doc_section ds )
     if( ds == doc_sect_none ) {
         ds = doc_sect_body;      // if text without section start assume body
     }
-    ProcFlags.prep_section = true;
 
     switch( ds ) {
     case   doc_sect_body:
@@ -241,7 +241,7 @@ void    prepare_doc_sect( doc_section ds )
 
     if( sect_ban_bot[ind] != NULL ) {
         if( bin_driver->y_positive == 0 ) {
-            g_page_bottom = bin_device->y_start - g_page_depth
+            g_page_bottom = g_page_bottom_org
                             + conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
 //                    + wgml_fonts[sect_ban_bot[ind]->region->font].line_height;
         } else {
@@ -328,6 +328,10 @@ extern  void    gml_body( const gmltag * entry )
     g_cur_h_start = g_page_left
                     + conv_hor_unit( &layout_work.p.line_indent );
     spacing = layout_work.defaults.spacing;
+
+    pre_top_skip = 0;
+    post_top_skip = 0;
+    post_skip = NULL;
 
     /***********************************************************************/
     /*  for 1. body page try H0   skip or others                           */

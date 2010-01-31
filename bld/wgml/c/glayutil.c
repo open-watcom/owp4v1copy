@@ -49,79 +49,79 @@ static char  const      strno[]  =  { "no" };
 /***************************************************************************/
 
 typedef struct  ban_sections {
-    ban_docsect     type;
     char            name[12];
     size_t          len;
+    ban_docsect     type;
 } ban_sections;
 
 static  const   ban_sections    doc_sections[max_ban] = {
-    { no_ban,       "???",      3  },
-    { abstract_ban, "abstract", 8  },
-    { appendix_ban, "appendix", 8  },
-    { backm_ban,    "backm",    5  },
-    { body_ban,     "body",     4  },
-    { figlist_ban,  "figlist",  7  },
-    { head0_ban,    "head0",    5  },
-    { head1_ban,    "head1",    5  },
-    { head2_ban,    "head2",    5  },
-    { head3_ban,    "head3",    5  },
-    { head4_ban,    "head4",    5  },
-    { head5_ban,    "head5",    5  },
-    { head6_ban,    "head6",    5  },
-    { letfirst_ban, "letfirst", 8  },
-    { letlast_ban,  "letlast",  7  },
-    { letter_ban,   "letter",   6  },
-    { index_ban,    "index",    5  },
-    { preface_ban,  "preface",  7  },
-    { toc_ban,      "toc",      3  }
+    { "???",      3, no_ban        },
+    { "abstract", 8, abstract_ban  },
+    { "appendix", 8, appendix_ban  },
+    { "backm",    5, backm_ban     },
+    { "body",     4, body_ban      },
+    { "figlist",  7, figlist_ban   },
+    { "head0",    5, head0_ban     },
+    { "head1",    5, head1_ban     },
+    { "head2",    5, head2_ban     },
+    { "head3",    5, head3_ban     },
+    { "head4",    5, head4_ban     },
+    { "head5",    5, head5_ban     },
+    { "head6",    5, head6_ban     },
+    { "letfirst", 8, letfirst_ban  },
+    { "letlast",  7, letlast_ban   },
+    { "letter",   6, letter_ban    },
+    { "index",    5, index_ban     },
+    { "preface",  7, preface_ban   },
+    { "toc",      3, toc_ban       }
 };
 
 typedef struct  content_names {
-    content_enum        type;
     char                name[12];
     size_t              len;
+    content_enum        type;
 } content_names;
 
 static  const   content_names   content_text[max_content] =  {
-    { no_content,         "none",      4 },
-    { author_content,     "author",    6 },
-    { bothead_content,    "bothead",   7 },
-    { date_content,       "date",      4 },
-    { docnum_content,     "docnum",    6 },
-    { head0_content,      "head0",     5 },
-    { head1_content,      "head1",     5 },
-    { head2_content,      "head2",     5 },
-    { head3_content,      "head3",     5 },
-    { head4_content,      "head4",     5 },
-    { head5_content,      "head5",     5 },
-    { head6_content,      "head6",     5 },
-    { headnum0_content,   "headnum0",  8 },
-    { headnum1_content,   "headnum1",  8 },
-    { headnum2_content,   "headnum2",  8 },
-    { headnum3_content,   "headnum3",  8 },
-    { headnum4_content,   "headnum4",  8 },
-    { headnum5_content,   "headnum5",  8 },
-    { headnum6_content,   "headnum6",  8 },
-    { headtext0_content,  "headtext0", 9 },
-    { headtext1_content,  "headtext1", 9 },
-    { headtext2_content,  "headtext2", 9 },
-    { headtext3_content,  "headtext3", 9 },
-    { headtext4_content,  "headtext4", 9 },
-    { headtext5_content,  "headtext5", 9 },
-    { headtext6_content,  "headtext6", 9 },
-    { pgnuma_content,     "pgnuma",    6 },
-    { pgnumad_content,    "pgnumad",   7 },
-    { pgnumr_content,     "pgnumr",    6 },
-    { pgnumrd_content,    "pgnumrd",   7 },
-    { pgnumc_content,     "pgnumc",    6 },
-    { pgnumcd_content,    "pgnumcd",   7 },
-    { rule_content,       "rule",      4 },
-    { sec_content,        "sec",       3 },
-    { stitle_content,     "stitle",    6 },
-    { title_content,      "title",     5 },
-    { string_content,     "",          0 }, // special
-    { time_content,       "time",      4 },
-    { tophead_content,    "tophead",   7 }
+    { "none",      4, no_content        },
+    { "author",    6, author_content    },
+    { "bothead",   7, bothead_content   },
+    { "date",      4, date_content      },
+    { "docnum",    6, docnum_content    },
+    { "head0",     5, head0_content     },
+    { "head1",     5, head1_content     },
+    { "head2",     5, head2_content     },
+    { "head3",     5, head3_content     },
+    { "head4",     5, head4_content     },
+    { "head5",     5, head5_content     },
+    { "head6",     5, head6_content     },
+    { "headnum0",  8, headnum0_content  },
+    { "headnum1",  8, headnum1_content  },
+    { "headnum2",  8, headnum2_content  },
+    { "headnum3",  8, headnum3_content  },
+    { "headnum4",  8, headnum4_content  },
+    { "headnum5",  8, headnum5_content  },
+    { "headnum6",  8, headnum6_content  },
+    { "headtext0", 9, headtext0_content },
+    { "headtext1", 9, headtext1_content },
+    { "headtext2", 9, headtext2_content },
+    { "headtext3", 9, headtext3_content },
+    { "headtext4", 9, headtext4_content },
+    { "headtext5", 9, headtext5_content },
+    { "headtext6", 9, headtext6_content },
+    { "pgnuma",    6, pgnuma_content    },
+    { "pgnumad",   7, pgnumad_content   },
+    { "pgnumr",    6, pgnumr_content    },
+    { "pgnumrd",   7, pgnumrd_content   },
+    { "pgnumc",    6, pgnumc_content    },
+    { "pgnumcd",   7, pgnumcd_content   },
+    { "rule",      4, rule_content      },
+    { "sec",       3, sec_content       },
+    { "stitle",    6, stitle_content    },
+    { "title",     5, title_content     },
+    { "",          0, string_content    },  // special
+    { "time",      4, time_content      },
+    { "tophead",   7, tophead_content   }
 };
 
 

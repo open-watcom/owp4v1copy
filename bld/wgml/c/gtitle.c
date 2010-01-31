@@ -36,32 +36,32 @@
 /*  calc title position   ( vertical )                                     */
 /***************************************************************************/
 
-void    calc_title_pos( int8_t font, int8_t spacing, bool first )
+void    calc_title_pos( int8_t font, int8_t t_spacing, bool first )
 {
 
     if( first ) {
         if( !ProcFlags.page_started ) {
             if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start = g_page_top
-                        - conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
+                g_cur_v_start = g_page_top - wgml_fonts[font].line_height
+                    - conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
             } else {
-                g_cur_v_start = g_page_top
-                        + conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
+                g_cur_v_start = g_page_top + wgml_fonts[font].line_height
+                    + conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
             }
         } else {
             if( bin_driver->y_positive == 0 ) {
                 g_cur_v_start -=
-                    conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
+                    conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
             } else {
                 g_cur_v_start +=
-                    conv_vert_unit( &layout_work.title.pre_top_skip, 0 );
+                    conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
             }
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip, 0 );
+            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip, t_spacing );
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.title.skip, 0 );
+            g_cur_v_start += conv_vert_unit( &layout_work.title.skip, t_spacing );
         }
     }
     if( bin_driver->y_positive == 0 ) {
@@ -99,6 +99,7 @@ static void prep_title_line( text_line * p_line, char * p )
     } else {
         curr_t = alloc_text_chars( "title", 6, g_curr_font_num );
     }
+    intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
     while( curr_t->width > (h_right - h_left) ) {   // too long for line
@@ -113,7 +114,7 @@ static void prep_title_line( text_line * p_line, char * p )
     curr_x = h_left;
     if( layout_work.title.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
-            curr_x = h_left + (h_right - h_left - curr_t->width) / 2;
+            curr_x += (h_right - h_left - curr_t->width) / 2;
         }
     } else if( layout_work.title.page_position == pos_right ) {
         curr_x = h_right - curr_t->width;
@@ -133,7 +134,7 @@ void    gml_title( const gmltag * entry )
     char        *   p;
     text_line       p_line;
     int8_t          font;
-    int8_t          spacing;
+    int8_t          t_spacing;
     int8_t          font_save;
     uint32_t        y_save;
 
@@ -196,9 +197,8 @@ void    gml_title( const gmltag * entry )
 
     p_line.first = NULL;
     p_line.next  = NULL;
-    p_line.line_height = g_max_line_height;
 
-    spacing = layout_work.titlep.spacing;
+    t_spacing = layout_work.titlep.spacing;
 
     font = layout_work.title.font;
 
@@ -206,7 +206,9 @@ void    gml_title( const gmltag * entry )
     font_save = g_curr_font_num;
     g_curr_font_num = font;
 
-    calc_title_pos( font, spacing, !ProcFlags.title_tag_seen );
+    p_line.line_height = wgml_fonts[font].line_height;
+
+    calc_title_pos( font, t_spacing, !ProcFlags.title_tag_seen );
     p_line.y_address = g_cur_v_start;
 
     prep_title_line( &p_line, p );

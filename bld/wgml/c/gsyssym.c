@@ -861,9 +861,9 @@ static void sysrbfun( symvar * e )
     return;
 };
 
-static void sysrecnofun( symvar * e )
-{
-    var_wng( e->name );
+static void sysrecnofun( symvar * e )   // recno current input file / macro
+{                                       // make it the same as &syslnum
+    syslnumfun( e );                    // TBD
     return;
 };
 
@@ -903,9 +903,20 @@ static void sysscreenfun( symvar * e )
     return;
 };
 
-static void sysseqnofun( symvar * e )
-{
-    var_wng( e->name );
+static void sysseqnofun( symvar * e )   // seqno current input record
+{                                       // take &syslnum
+    ulong   l;                          // TBD
+
+    if( input_cbs == NULL ) {
+        l = 0;
+    } else {
+        if( input_cbs->fmflags & II_file ) {
+            l = input_cbs->s.f->lineno;
+        } else {
+            l = input_cbs->s.m->lineno;
+        }
+    }
+    sprintf_s( e->sub_0->value, MAX_L_AS_STR, "%.8lu", l );
     return;
 };
 
@@ -1125,7 +1136,23 @@ static  void    init_predefined_symbols( void )
 
 void    init_sysparm( char * cmdline, char * banner )
 {
-    sysparm0.value = cmdline;
+    char    *   p;
+
+    p = strchr( cmdline, '(' ) + 1;     // find parm start
+    while( *p == ' ' ) {                // over leading blanks
+        p++;
+    }
+    strupr( p );                        // uppercase as wgml4 does
+    sysparm0.value = p;
+
+    p += strlen( p ) - 1;
+    if( *p == ' ' ) {                   // delete trailing blanks
+        while( *p == ' ' ) {
+            p--;
+        }
+        *++p = 0;                       // terminate string
+    }
+
     syspdev0.value = dev_name;
     sysversion0.value = banner;
 }

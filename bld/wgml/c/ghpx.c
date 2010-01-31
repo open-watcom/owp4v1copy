@@ -35,7 +35,6 @@
 /*  allow 20 active hilighting levels                                      */
 /***************************************************************************/
 
-static  int hpcount = -1;               // no hilighting active
 static  int hp[20] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 #define HPMAXIND  (int)(sizeof( hp ) / sizeof( hp[0] ) - 1)

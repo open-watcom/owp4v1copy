@@ -144,6 +144,7 @@ global  struct GlobalFlags {
 } GlobalFlags;                          // Global flags
 
 
+#pragma disable_message( 128 );
 global struct ProcFlags {
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
@@ -191,6 +192,7 @@ global struct ProcFlags {
     unsigned        test_widow      : 1;// for preventing widow lines
 
 } ProcFlags;                            // processing flags
+#pragma enable_message( 128 );
 
 
 global  size_t          buf_size;       // default buffer size
@@ -220,6 +222,7 @@ global  uint8_t     in_esc;             // input char for .ti processing
 global text_line    t_line;             // for constructing output line
 global text_chars * p_char;             // previous text char   "
 global text_chars * text_pool;          // for reuse of text_chars structs
+global text_line  * line_pool;          // for reuse of text_line structs
 
 global text_line  * buf_lines;          // buffering paragraph / widow lines
 global int32_t      buf_lines_cnt;      // line count for buf_lines
@@ -230,6 +233,7 @@ global int32_t      buf_lines_cnt;      // line count for buf_lines
 /***************************************************************************/
 
 global  uint32_t    g_cur_h_start;
+global  uint32_t    g_cur_left;
 global  uint32_t    g_cur_v_start;
 global  uint32_t    g_page_bottom;
 global  uint32_t    g_page_bottom_org;
@@ -255,11 +259,14 @@ global  uint32_t    g_cd;               // no of columns
 global  uint32_t    g_gutter;           // space between columns
 global  uint32_t    g_offset[9];        // column start offset
 
+global  uint32_t    g_line_skip;        // skip for current line
+global  uint32_t    g_line_top;         // top of current line
+
 global  uint32_t    spacing;            // spacing between lines
 // global  su      *   pre_skip;        // possible pre_skip
 global  su      *   post_skip;          // possible post_skip
 global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
-global  int32_t     g_skip_wgml4;       // >0 for work around wgml4 .sk bug
+global  int32_t     g_skip_wgml4;       // >0 for work around wgml4 .sk bug ?
 
 global  uint32_t    pre_space;          // for
 global  uint32_t    post_space;         // .. line
@@ -271,18 +278,20 @@ global  uint32_t    ju_x_start;         // .. formatting
 global  uint32_t    g_indent;           // .in 1. value (left) default 0
 global  int32_t     g_indentr;          // .in 2. value (right) default 0
 
+global  int32_t     g_cur_threshold;    // current widow threshold value
+                                        // from layout (widow or heading)
 
+global  int         hpcount;            // :HPx nesting level
 
 global  banner_lay_tag  * sect_ban_top[2];// top even / odd banner for curr sect
 global  banner_lay_tag  * sect_ban_bot[2];// bot even / odd banner for curr sect
 
 
 /***************************************************************************/
-/*  :LAYOUT  data                     incomplete  TBD                      */
+/*  :LAYOUT  data                                                          */
 /***************************************************************************/
 
 global  int32_t         lay_ind;// index into lay_tab for attribute processing
-global  layout_data     layout_save;    // layout used at pass start
 global  layout_data     layout_work;    // layout used for formatting
 global  char        *   lay_file;       // layout file specified on cmdline
 

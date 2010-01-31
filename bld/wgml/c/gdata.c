@@ -84,8 +84,8 @@ void init_global_vars( void )
     LPI                 = 6;            // lines per inch
     LPI_units           = SU_lines;
 
-    g_resh              = 0;
-    g_resv              = 0;
+    g_resh              = 1;            // dummy value to prevent divide by zero
+    g_resv              = 1;            // dummy value to prevent divide by zero
 
     memset( &bind_odd, 0, sizeof( bind_odd ) ); // bind value odd pages
     bind_odd.su_u       = SU_chars_lines;
@@ -109,6 +109,7 @@ void init_global_vars( void )
     t_line.y_address    = 0;
     text_pool           = NULL;
     p_char              = NULL;
+    line_pool           = NULL;
 
 
     lay_file            = NULL;         // filename from ( LAYout option
@@ -148,7 +149,7 @@ void init_global_vars( void )
 /*  ProcFlags are initialized at each document pass start                  */
 /***************************************************************************/
 
-void init_proc_flags( void )
+void init_pass_data( void )
 {
     bool    flag_save = ProcFlags.fb_document_done;
 
@@ -160,4 +161,6 @@ void init_proc_flags( void )
     ProcFlags.concat    = true;         // .co on default
     ProcFlags.justify   = ju_on;        // .ju on default
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
+
+    hpcount             = -1;           // no :HPx nesting active
 }

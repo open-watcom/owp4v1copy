@@ -117,7 +117,7 @@
   pick( "LIREF",    5,      gml_dummy,      tag_out_txt )
   pick( "LP",       2,      gml_dummy,      tag_out_txt )
   pick( "LQ",       2,      gml_dummy,      tag_out_txt )
-  pick( "NOTE",     4,      gml_dummy,      tag_out_txt )
+  pick( "NOTE",     4,      gml_note,       tag_out_txt )
   pick( "OL",       2,      gml_dummy,      tag_out_txt )
   pick( "P",        1,      gml_p,          tag_out_txt )
   pick( "PC",       2,      gml_pc,         tag_out_txt )

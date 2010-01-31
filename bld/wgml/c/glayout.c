@@ -108,7 +108,7 @@ void    gml_layout( const gmltag * entry )
 
 
 /***************************************************************************/
-/*  lay_elayout     end of layout processing save layout for next pass     */
+/*  lay_elayout     end of layout processing                               */
 /***************************************************************************/
 
 void    lay_elayout( const gmltag * entry )
@@ -129,11 +129,6 @@ void    lay_elayout( const gmltag * entry )
             g_err( err_no_lay, &(entry->tagname[1]), entry->tagname );
             file_mac_info();
             return;
-        } else {
-
-            // What to do with layout at pass end next pass start???       TBD
-//          memcpy_s( &layout_save, sizeof( layout_save),
-//                    &layout_work, sizeof( layout_work) );
         }
         ProcFlags.layout = false;
         ProcFlags.lay_xxx = el_zero;

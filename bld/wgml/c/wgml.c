@@ -524,7 +524,7 @@ static  void    print_stats( clock_t duration_ticks )
 static  void    init_pass( void )
 {
 
-    init_proc_flags();                  // (re)set processing flags
+    init_pass_data();                   // (re)set processing flags + vars
 
     if( GlobalFlags.research && (research_to > 0) ) {
         if( research_file_name[0] == '\0' ) {
@@ -612,7 +612,7 @@ int main( int argc, char * argv[] )
 
     tok_count = proc_options( cmdline );
     init_sysparm( cmdline, banner1w( "WGML Script/GML", _WGML_VERSION_ ) );
-    /* don't mem_free cmdline it is used for sysparm variable */
+    /* don't mem_free cmdline now it is used for sysparm variable */
     g_banner();
     if( tok_count < 4 ) {               // file ( device xyz   is minimum
         usage();                        // display usage and exit
@@ -628,7 +628,7 @@ int main( int argc, char * argv[] )
 
         rc = find_symvar( &sys_dict, "$passof", no_subscript, &passofval );
         rc = find_symvar( &sys_dict, "$passno", no_subscript, &passnoval );
-        utoa( passes, passofval->value, 10 );
+        utoa( passes, passofval->value, 10 );   // fill no of passes
 
         set_default_extension( master_fname );// make this extension first choice
 
@@ -639,7 +639,7 @@ int main( int argc, char * argv[] )
         for( pass = 1; pass <= passes; pass++ ) {
 
             init_pass();
-            utoa( pass, passnoval->value, 10 );
+            utoa( pass, passnoval->value, 10 ); // fill current passno
 
 //            g_trmem_prt_list();  // all memory freed if no output from call
             g_info( INF_PASS_1, passnoval->value, passofval->value,
@@ -649,7 +649,7 @@ int main( int argc, char * argv[] )
 
 //            g_trmem_prt_list();       // show allocated memory at pass end
 
-            if( t_line.first != NULL ) {
+            if( t_line.first != NULL ) {// output last line (if any)
 
                 process_line_full( &t_line, false );
 
@@ -703,7 +703,7 @@ int main( int argc, char * argv[] )
     print_stats( end_time - start_time );
 
     fini_msgs();                        // end of msg resources
-                /* no more msgs built from resources after this point */
+              /* no more msgs built from resources possible after this point */
 
     g_trmem_prt_list();            // all memory freed if no output from call
     g_trmem_close();

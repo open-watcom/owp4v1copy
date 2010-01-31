@@ -175,7 +175,7 @@ typedef struct symsub {
 /***************************************************************************/
 typedef struct symvar {
     struct symvar   *   next;           // next base entry
-    char                name[SYM_NAME_LENGTH + 1];
+    char                name[SYM_NAME_LENGTH + 2];
     long                last_auto_inc;// last autoincremented subscript value
     long                subscript_used; // count of used subscripts
     symsub          *   subscripts;     // subscript entries
@@ -224,10 +224,10 @@ typedef struct labelcb {
 /***************************************************************************/
 typedef struct mac_entry {
     struct mac_entry    *   next;
-    char                    name[MAC_NAME_LENGTH + 1];
     inp_line            *   macline;    // macro definition lines
     ulong                   lineno;     // lineno start of macro definition
     labelcb             *   label_cb;   // controlling label definitions
+    char                    name[MAC_NAME_LENGTH + 1];  // macro name
     char                    mac_file_name[1];   // file name macro definition
                                             // var length
 } mac_entry;
@@ -238,7 +238,6 @@ typedef struct mac_entry {
 /***************************************************************************/
 
 typedef struct filecb {
-    fflags          flags;
     FILE        *   fp;                 // FILE ptr
     ulong           lineno;             // current line number
     ulong           linemin;            // first line number to process
@@ -246,6 +245,7 @@ typedef struct filecb {
     size_t          usedlen;            // used data of filebuf
     fpos_t          pos;                // position for reopen
     labelcb     *   label_cb;           // controlling label definitions
+    fflags          flags;
     char            fileattr[MAX_FILE_ATTR + 1];// T:xxxx
     char            filename[1];        // full filename var length
 } filecb;
@@ -265,11 +265,11 @@ typedef struct mac_parms {
 /***************************************************************************/
 
 typedef struct  macrocb {
-    fflags              flags;
     ulong               lineno;         // current macro line number
     inp_line        *   macline;        // list of macro lines
     mac_entry       *   mac;            // macro definition entry
     struct gtentry  *   tag;            // tag entry if macro called via tag
+    fflags              flags;
 } macrocb;
 
 
@@ -304,7 +304,7 @@ typedef struct ifcb {
 /***************************************************************************/
 typedef struct pecb {                   // for .pe control
     char *  line;                       // line to perform n times
-    int     ll;                         // lenght of line
+    int     ll;                         // length of line
     int     count;                      // value of .pe n  active if > 0
 } pecb;
 
@@ -329,7 +329,6 @@ typedef enum {
 /***************************************************************************/
 typedef struct  inputcb {
     struct inputcb  *   prev;
-    i_flags             fmflags;
     inp_line        *   hidden_head;    // manage lines split at ; or :
     inp_line        *   hidden_tail;    // manage lines split at ; or :
     symvar          *   local_dict;     // local symbol dictionary
@@ -339,6 +338,7 @@ typedef struct  inputcb {
         filecb      *   f;              // used if input is from file
         macrocb     *   m;              // used if input is from macro/tag
     } s;
+    i_flags             fmflags;
 } inputcb;
 
 
@@ -351,7 +351,7 @@ typedef enum {
 } scrflags;
 
 typedef struct scrtag {
-    char            tagname[SCR_KW_LENGTH + 1];
+    char            tagname[SCR_KW_LENGTH + 2];
     void            (*tagproc)( void );
     scrflags        cwflags;
 } scrtag;
@@ -405,13 +405,13 @@ typedef enum gavalflags {
 
 typedef struct gavalentry {
     struct gavalentry   *   next;
-    gavalflags              valflags;
     union a {
        size_t   length;           // possible max length of (character) value
        long     range[4]; // min, max, default omitted, default without value
        char     value[VAL_LENGTH + 1];  // string value if short enough
        char *   valptr;                 // ... else allocated
     } a;
+    gavalflags              valflags;
 } gavalentry;
 
 
@@ -480,7 +480,7 @@ typedef struct gtentry {
     ulong               usecount;
     size_t              namelen;        // actual length of name
     char                name[TAG_NAME_LENGTH + 1];
-    char                macname[MAC_NAME_LENGTH + 1];   // macro to call
+    char                macname[MAC_NAME_LENGTH + 2];   // macro to call
     gtflags             tagflags;
 } gtentry;
 
@@ -539,7 +539,6 @@ typedef enum {
 } getnumrc;
 
 typedef struct getnum_block {
-    condcode    cc;
     int         ignore_blanks;          // 1 if blanks are ignored
     char    *   argstart;
     char    *   argstop;
@@ -550,6 +549,7 @@ typedef struct getnum_block {
     char        resultstr[12];          // result in char format
     getnumrc    error;
     char        num_sign;              // remember absolute or relative value
+    condcode    cc;
 } getnum_block;
 
 /***************************************************************************/
@@ -558,11 +558,11 @@ typedef struct getnum_block {
 
 typedef struct opt_font {
     struct opt_font *   nxt;
-    uint8_t             font;
     char *              name;
     char *              style;
     uint32_t            space;
     uint32_t            height;
+    uint8_t             font;
 } opt_font;
 
 /***************************************************************************/

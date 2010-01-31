@@ -166,21 +166,6 @@ void    free_layout_banner( void )
         mem_free( ban );
         ban = ban1;
     }
-
-#if 0
-    ban = layout_save.banner;         // don't free layout_save for now TBD
-    while( ban != NULL ) {
-        reg = ban->region;
-        while( reg != NULL ) {
-            ban->region = reg->next;
-            mem_free( reg );
-            reg = ban->region;
-        }
-        ban1 = ban->next;
-        mem_free( ban );
-        ban = ban1;
-    }
-#endif
 }
 
 /***************************************************************************/
@@ -235,6 +220,8 @@ void    free_some_mem( void )
     free_layout_banner();
 
     {
+        text_line   *lwk;
+        text_line   *lw = line_pool;
         text_chars  *wk;
         text_chars  *w = text_pool;
 
@@ -249,6 +236,12 @@ void    free_some_mem( void )
            wk = w->next;
            mem_free( w );
            w = wk;
+        }
+
+        while( lw != NULL ) {
+           lwk = lw->next;
+           mem_free( lw );
+           lw = lwk;
         }
     }
 }

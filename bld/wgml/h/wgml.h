@@ -95,7 +95,7 @@ extern  void        out_ban_top( banner_lay_tag * ban );
 
 /* gdata.c                              */
 extern  void    init_global_vars( void );
-extern  void    init_proc_flags( void );
+extern  void    init_pass_data( void );
 
 
 /* gdeflay.c                            */
@@ -195,8 +195,11 @@ extern  void    add_text_chars_to_pool( text_line * a_line );
 extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
 extern  void    do_justify( uint32_t left_m, uint32_t right_m, text_chars * tc );
 extern  void    document_new_page( void );
+extern  void    document_top_banner( void );
+extern  void    intrans( char * data, uint16_t * len, uint8_t font );
 extern  void    process_line_full( text_line * a_line, bool justify );
 extern  void    process_text( char * text, uint8_t font_num );
+extern  text_chars * process_word( char * text, size_t count, uint8_t font_num );
 extern  void    set_h_start( void );
 extern  void    set_v_start( int8_t spacing );
 
@@ -293,6 +296,13 @@ extern  void        print_tag_entry( gtentry * entry );
 extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 
 
+/* gtxtpool.c                         */
+extern  void        add_text_chars_to_pool( text_line * a_line );
+extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
+extern  void        add_text_line_to_pool( text_line * a_line );
+extern  text_line * alloc_text_line( void );
+
+
 /* gtitlepo.c                         */
 extern  void        titlep_output( void );
 
@@ -311,6 +321,7 @@ extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 /* gwidowut.c                         */
 extern  void        add_line_to_buf_lines( text_line * * lines, text_line * a_line );
 extern  void        out_buf_lines( text_line * * lines, bool newpage );
+extern  bool        widow_check( void );
 
 
 /* wgmlmsg.c                          */
@@ -344,12 +355,13 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
  * prototypes for the layout tag attribute processing routines
  */
 
+/*          for input scanning              */
 #define pick( name, funci, funco, restype ) \
     extern  bool    funci( char * buf, lay_att attr, restype * result );
 
 #include "glayutil.h"
 
-
+/*          for output via :convert tag     */
 #define pick( name, funci, funco, restype ) \
     extern  void    funco( FILE * f, lay_att attr, restype * in );
 

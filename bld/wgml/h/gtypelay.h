@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  wgml type definitions for layout data
+* Description:  wgml type definitions for layout data   :LAYOUT ... :eLAYOUT
 *
 ****************************************************************************/
 
@@ -107,7 +107,7 @@ typedef enum ban_docsect {
 /*  definitions for frame   :FIG tag and others                            */
 /***************************************************************************/
 #define xx_str      char
-#define str_size    60                  // max string length in layout
+#define str_size    60                  // max string length in layout TBD
                                         // no value found in documentation
 typedef enum def_frame_type {
     none,
@@ -205,13 +205,13 @@ typedef struct page_lay_tag {
 /***************************************************************************/
 
 typedef struct default_lay_tag {
+    su              gutter;             // horizontal space unit
+    su              binding;            // horizontal space unit
     int8_t          spacing;            // positive integer
     int8_t          columns;            // positive integer
     int8_t          font;               // non-negative integer
     bool            justify;            // yes / no  -> bool
     uint8_t         input_esc;          // none or quoted char
-    su              gutter;             // horizontal space unit
-    su              binding;            // horizontal space unit
 } default_lay_tag;
 
 /***************************************************************************/
@@ -235,8 +235,8 @@ typedef struct fn_lay_tag {
     int8_t          spacing;            // positive integer
     int8_t          font;               // non-negative integer
     int8_t          number_font;        // non-negative integer
-    num_style       number_style;       // special enum
     bool            frame;              // rule=1  none=0 bool
+    num_style       number_style;       // special enum
 } fn_lay_tag;
 
 
@@ -245,8 +245,8 @@ typedef struct fn_lay_tag {
 /***************************************************************************/
 
 typedef struct fnref_lay_tag {
-    int8_t          font;               // non-negative integer
     num_style       number_style;       // special enum
+    int8_t          font;               // non-negative integer
 } fnref_lay_tag;
 
 
@@ -320,8 +320,8 @@ typedef struct appendix_lay_tag {
     int8_t          number_font;        // non-negative integer
     num_form        number_form;        // special enum ( none, prop, new )
     page_pos        page_position;      // special enum (left, right, center)
-    num_style       number_style;       // special enum
     page_ej         page_eject;         // enum for yes, no, odd, even
+    num_style       number_style;       // special enum
     bool            line_break;         // yes, no -> bool
     bool            display_heading;    // yes, no -> bool
     bool            number_reset;       // yes, no -> bool
@@ -339,7 +339,6 @@ typedef struct appendix_lay_tag {
 /***************************************************************************/
 
 typedef struct hx_lay_tag {
-    int8_t          group;              // 0 - 9
     su              indent;             // horizontal space unit
     su              pre_top_skip;       // vertical space unit
     su              pre_skip;           // vertical space unit
@@ -350,6 +349,7 @@ typedef struct hx_lay_tag {
     int8_t          number_font;        // non-negative integer
     num_form        number_form;        // special enum ( none, prop, new )
     page_pos        page_position;      // special enum (left, right, center)
+    int8_t          group;              // 0 - 9
     num_style       number_style;       // special enum
     page_ej         page_eject;         // enum for yes, no, odd, even
     bool            line_break;         // yes, no -> bool
@@ -466,10 +466,10 @@ typedef struct date_lay_tag {
 typedef struct docnum_lay_tag {
     su              left_adjust;        // horizontal space unit
     su              right_adjust;       // horizontal space unit
-    page_pos        page_position;      // special enum (left, right, center)
     su              pre_skip;           // vertical space unit
-    int8_t          font;               // non-negative integer
     xx_str          string[str_size];   // special string
+    page_pos        page_position;      // special enum (left, right, center)
+    int8_t          font;               // non-negative integer
 } docnum_lay_tag;
 
 /***************************************************************************/
@@ -614,7 +614,6 @@ typedef struct tocpgnum_lay_tag {
 /***************************************************************************/
 
 typedef struct tochx_lay_tag {
-    int8_t          group;              // 0 - 9
     su              indent;             // horizontal space unit
     su              skip;               // vertical space unit
     su              pre_skip;           // vertical space unit
@@ -622,6 +621,7 @@ typedef struct tochx_lay_tag {
     su              align;              // horizontal space unit
     int8_t          font;               // non-negative integer
     bool            display_in_toc;     // yes, no -> bool
+    int8_t          group;              // 0 - 9
 } tochx_lay_tag;
 
 /***************************************************************************/
@@ -792,9 +792,10 @@ typedef struct region_lay_tag {
     int8_t          refnum;             // positive integer
     page_pos        region_position;    // special enum
     reg_pour        pouring;            // special enum
-    bool            script_format;      // yes no -> bool
-    content         contents;           // what is in the region
     script_ban_reg  script_region[3];   // speed up processing if script_format
+                                        // will be constructed from contents
+    content         contents;           // what is in the region
+    bool            script_format;      // yes no -> bool
 } region_lay_tag;
 
 /***************************************************************************/
@@ -819,7 +820,7 @@ typedef struct banner_lay_tag {
 /*  Layout data                                             TBD            */
 /*  sequence of definitions as seen by :CONVERT output                     */
 /***************************************************************************/
-
+#pragma disable_message( 128 );
 typedef struct layout_data {
     page_lay_tag        page;
     default_lay_tag     defaults;
@@ -891,6 +892,7 @@ typedef struct layout_data {
 
 } layout_data;
 
+#pragma enable_message( 128 );
 
 
 

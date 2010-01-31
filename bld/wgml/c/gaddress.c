@@ -26,9 +26,9 @@
 *
 * Description:  WGML tags :ADDRESS and :eADDRESS and :ALINE
 *                    with helper functions
+*
 ****************************************************************************/
 #include    "wgml.h"
-#include    "findfile.h"
 #include    "gvars.h"
 
 static  bool            first_aline;    // special for first :ALINE
@@ -41,34 +41,34 @@ static  int8_t          font_save;      // save for font
 /*  calc aline position   ( vertical )                                     */
 /***************************************************************************/
 
-static void calc_aline_pos( int8_t font, int8_t spacing, bool first, bool onemore )
+static void calc_aline_pos( int8_t font, int8_t line_spc, bool first, bool onemore )
 {
 
     if( first ) {                       // first aline of current :ADDRESS
         if( !ProcFlags.page_started ) {
             if( bin_driver->y_positive == 0 ) {
                 g_cur_v_start = g_page_top
-                        - conv_vert_unit( &layout_work.address.pre_skip, 0 );
+                        - conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             } else {
                 g_cur_v_start = g_page_top
-                        + conv_vert_unit( &layout_work.address.pre_skip, 0 );
+                        + conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             }
         } else {
             if( bin_driver->y_positive == 0 ) {
                 g_cur_v_start -=
-                    conv_vert_unit( &layout_work.address.pre_skip, 0 );
+                    conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             } else {
                 g_cur_v_start += onemore +
-                    conv_vert_unit( &layout_work.address.pre_skip, 0 );
+                    conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             }
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
             g_cur_v_start -= onemore * wgml_fonts[font].line_height +
-                             conv_vert_unit( &layout_work.aline.skip, 0 );
+                             conv_vert_unit( &layout_work.aline.skip, line_spc );
         } else {
             g_cur_v_start += onemore * wgml_fonts[font].line_height +
-                             conv_vert_unit( &layout_work.aline.skip, 0 );
+                             conv_vert_unit( &layout_work.aline.skip, line_spc );
         }
     }
     return;
@@ -107,11 +107,11 @@ static  void    output_addresslines( bool newpage )
             tline = tline->next;
         }
     }
-    while( adr_lines != NULL ) {        // free / reuse memory
+    while( adr_lines != NULL ) {        // reuse memory
         tline = adr_lines;
         adr_lines = adr_lines->next;
         add_text_chars_to_pool( tline );
-        mem_free( tline );
+        add_text_line_to_pool( tline );
     }
 }
 
@@ -181,6 +181,7 @@ static void prep_aline( text_line * p_line, char * p )
     } else {
         curr_t = alloc_text_chars( "aline", 5, g_curr_font_num );   // dummy
     }
+    intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
     while( curr_t->width > (h_right - h_left) ) {   // too long for line
@@ -240,7 +241,6 @@ void    gml_aline( const gmltag * entry )
 {
     char        *   p;
     text_line   *   ad_line;
-    static  int8_t  font;
 
     if( ProcFlags.doc_sect != doc_sect_titlep ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
@@ -253,28 +253,26 @@ void    gml_aline( const gmltag * entry )
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
 
-    ad_line = mem_alloc( sizeof( text_line ) );
-    ad_line->first = NULL;
-    ad_line->next  = NULL;
+    ad_line = alloc_text_line();
 
     if( first_aline ) {
         prepare_doc_sect( doc_sect_titlep );// if not already done
         a_spacing = layout_work.titlep.spacing;
-        font = layout_work.address.font;
-        if( font >= wgml_font_cnt ) font = 0;
+        g_curr_font_num = layout_work.address.font;
+        if( g_curr_font_num >= wgml_font_cnt ) g_curr_font_num = 0;
     }
 
-    calc_aline_pos( font, a_spacing, first_aline, false );
+    calc_aline_pos( g_curr_font_num, a_spacing, first_aline, false );
 
     if( bin_driver->y_positive == 0 ) {
         if( g_cur_v_start < g_page_bottom ) {
             output_addresslines( true );
-            calc_aline_pos( font, a_spacing, first_aline, true );
+            calc_aline_pos( g_curr_font_num, a_spacing, first_aline, true );
         }
     } else {
         if( g_cur_v_start > g_page_bottom ) {
             output_addresslines( true );
-            calc_aline_pos( font, a_spacing, first_aline, true );
+            calc_aline_pos( g_curr_font_num, a_spacing, first_aline, true );
         }
     }
     ad_line->y_address = g_cur_v_start;

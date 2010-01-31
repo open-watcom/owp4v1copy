@@ -36,26 +36,26 @@
 /*  calc author position   ( vertical )                                    */
 /***************************************************************************/
 
-static  void    calc_author_pos( int8_t font, int8_t spacing, bool first )
+static  void    calc_author_pos( int8_t font, int8_t line_spc, bool first )
 {
 
 //  if( !ProcFlags.page_started ) {
-//      g_cur_v_start = g_page_top;     // top of page ignore pre_skip
+//      g_cur_v_start = g_page_top;     // top of page ignore pre_skip  TBD
 //  } else if( first ) {
     if( first ) {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.author.pre_skip, 0 );
+            g_cur_v_start -= conv_vert_unit( &layout_work.author.pre_skip, line_spc );
 //                          + wgml_fonts[font].line_height;
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.author.pre_skip, 0 );
+            g_cur_v_start += conv_vert_unit( &layout_work.author.pre_skip, line_spc );
 //                          + wgml_fonts[font].line_height;
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.author.skip, 0 );
+            g_cur_v_start -= conv_vert_unit( &layout_work.author.skip, line_spc );
 //                          + wgml_fonts[font].line_height;
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.author.skip, 0 );
+            g_cur_v_start += conv_vert_unit( &layout_work.author.skip, line_spc );
 //                          + wgml_fonts[font].line_height;
         }
     }

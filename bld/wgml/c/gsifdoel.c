@@ -43,10 +43,10 @@
 /***************************************************************************/
 
 typedef struct termcb {
-    bool        numeric;                // term  is numeric
     long        term_number;            // value only if numeric
     char    *   term_string;            // value as string
     size_t      term_length;            // length of string
+    bool        numeric;                // term  is numeric
 } termcb;
 
 

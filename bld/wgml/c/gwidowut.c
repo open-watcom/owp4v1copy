@@ -25,45 +25,43 @@
 *  ========================================================================
 *
 * Description:  WGML helper functions for widow processing
+*
 ****************************************************************************/
 #include    "wgml.h"
-//#include    "findfile.h"
 #include    "gvars.h"
-
-extern  void    document_top_banner( void );
 
 
 /***************************************************************************/
 /*  buffer output line                                                     */
 /***************************************************************************/
 
-void    add_line_to_buf_lines( text_line * * b_lines, text_line * a_line )
+void    add_line_to_buf_lines( text_line * * buf_lines, text_line * a_line )
 {
     text_line   *   tline;
     text_line   *   wline;
 
-    wline = *b_lines;
-    tline = mem_alloc( sizeof( *tline ) );
+    tline = alloc_text_line();
 
+    tline->next        = NULL;
+    tline->first       = a_line->first;
+    tline->y_address   = a_line->y_address;
+    tline->line_height = a_line->line_height;
+
+    wline = *buf_lines;
     if( wline == NULL ) {
-        *b_lines = tline;
-         wline  = tline;
+        *buf_lines = tline;
     } else {
         while( wline->next != NULL ) {
             wline = wline->next;
         }
         wline->next = tline;
     }
-    tline->next        = NULL;
-    tline->first       = a_line->first;
-    tline->y_address   = a_line->y_address;
-    tline->line_height = a_line->line_height;
 }
 
 
 /***************************************************************************/
 /*  output buffered lines                                                  */
-/*  either on current page or next                                         */
+/*  either on current page or next  (as requested)                         */
 /***************************************************************************/
 
 void    out_buf_lines( text_line * * b_lines, bool newpage )
@@ -76,7 +74,7 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
         return;
     }
 
-    if( newpage ) {                  // not enough space on page  put on next
+    if( newpage ) {                   // not enough space on page put on next
         finish_page();
         document_new_page();
         document_top_banner();
@@ -95,6 +93,9 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
 
     if( GlobalFlags.lastpass ) {        // now really output the lines
         tline = *b_lines;
+        if( input_cbs->fmflags & II_research ) {
+            out_msg( "\noutput buffered lines\n" );
+        }
         while( tline != NULL ) {
             if( input_cbs->fmflags & II_research ) {
                 test_out_t_line( tline );
@@ -111,12 +112,32 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
         }
     }
     wline = *b_lines;
-    while( wline != NULL ) {            // free / reuse memory
+    while( wline != NULL ) {            // reuse memory
         tline = wline;
         wline = wline->next;
         add_text_chars_to_pool( tline );
-        mem_free( tline );
+        add_text_line_to_pool( tline );
     }
-    *b_lines = NULL;
+    *b_lines = NULL;                    // no buffered lines
+}
+
+
+/***************************************************************************/
+/*  widow_check  returns true if widow lines are output on new page        */
+/***************************************************************************/
+
+bool    widow_check( void )
+{
+    bool newpage = false;
+
+    if( buf_lines != NULL ) {           // lines buffered
+        if( buf_lines_cnt <= g_cur_threshold ) {
+            newpage = true;             // prevent widow, new page
+        }
+        out_buf_lines( &buf_lines, newpage );
+        buf_lines_cnt = 0;
+        ProcFlags.page_started |= newpage;  // page no longer empty
+    }
+    return( newpage );
 }
 

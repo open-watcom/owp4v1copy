@@ -176,9 +176,7 @@ void    scr_in( void )
     }
     set_h_start();                      // apply new values
     ProcFlags.test_widow = true;        // activate widow test
-//  if( post_skip == NULL ) {
-        post_skip = &layout_work.p.pre_skip;// use :p pre_skip??? TBD
-//  }
+    post_skip = &layout_work.p.pre_skip;// use :p pre_skip??? TBD
 
     scan_restart = p;
     return;
