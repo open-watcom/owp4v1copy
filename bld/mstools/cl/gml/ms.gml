@@ -402,10 +402,20 @@
 :internal.
 :usage. change debug info from -d2 to -d1
 
+:option. \T\C
+:target. any
+:special. parse_Tc <file>
+:usage. force compilation of <file> as C
+
 :option. \T\c
 :target. any
 :special. parse_Tc <file>
 :usage. force compilation of <file> as C
+
+:option. \T\P
+:target. any
+:special. parse_Tp <file>
+:usage. force compilation of <file> as C++
 
 :option. \T\p
 :target. any
