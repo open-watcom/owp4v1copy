@@ -42,15 +42,11 @@
 
 #define UNSUPPORTED_STR_SIZE    512
 
-#define FORCE_C_COMPILE         1
-#define FORCE_CPP_COMPILE       2
-
 
 /*
  * Various flags to keep in mind while translating options.
  */
 static struct XlatStatus {
-    int     forcedLanguage;             /* can force C or C++ compile */
     int     debugLevel;                 /* value for -d<num> switch */
     int     warnLevel;                  /* value for -w<num> switch */
     int     charTypeUnsigned    : 1;    /* char = signed char by default */
@@ -293,13 +289,6 @@ static void misc_opts( struct XlatStatus *status, OPT_STORAGE *cmdOpts,
 {
     if( cmdOpts->J ) {
         status->charTypeUnsigned = 1;
-    }
-
-    if( cmdOpts->Tc ) {
-        status->forcedLanguage = FORCE_C_COMPILE;
-    }
-    if( cmdOpts->Tp ) {
-        status->forcedLanguage = FORCE_CPP_COMPILE;
     }
 
     switch( cmdOpts->warn_level ) {
@@ -629,7 +618,7 @@ static void linker_opts( struct XlatStatus *status, OPT_STORAGE *cmdOpts,
     if( cmdOpts->o_value != NULL ) {
         newpath = PathConvert( optStr->data, '"' );
         AppendFmtCmdLine( linkCmdLine, CL_L_OPTS_SECTION, "/OUT:%s",
-	newpath );
+        newpath );
     }
 
     if( cmdOpts->Fm ) {

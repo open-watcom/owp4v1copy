@@ -404,8 +404,8 @@
 
 :option. \T\C
 :target. any
-:special. parse_Tc <file>
-:usage. force compilation of <file> as C
+:immediate. handle_TC
+:usage. force compilation of all files as C
 
 :option. \T\c
 :target. any
@@ -414,8 +414,8 @@
 
 :option. \T\P
 :target. any
-:special. parse_Tp <file>
-:usage. force compilation of <file> as C++
+:immediate. handle_TP
+:usage. force compilation of all files as C++
 
 :option. \T\p
 :target. any

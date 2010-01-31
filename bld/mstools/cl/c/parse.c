@@ -1072,6 +1072,30 @@ static void handle_QIfdiv( OPT_STORAGE *cmdOpts, int x )
 
 
 /*
+ * Parse the /TC option.
+ */
+static void handle_TC( OPT_STORAGE *cmdOpts, int x )
+/**************************************************/
+{
+    cmdOpts = cmdOpts;
+    x = x;
+    ForceLanguage( FORCE_C_COMPILE );
+}
+
+
+/*
+ * Parse the /TP option.
+ */
+static void handle_TP( OPT_STORAGE *cmdOpts, int x )
+/**************************************************/
+{
+    cmdOpts = cmdOpts;
+    x = x;
+    ForceLanguage( FORCE_CPP_COMPILE );
+}
+
+
+/*
  * Return the next character and advance to the next one.
  */
 static int OPT_GET_LOWER( void )

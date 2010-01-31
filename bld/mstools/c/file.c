@@ -33,6 +33,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "error.h"
 #include "file.h"
 #include "memory.h"
@@ -63,6 +64,8 @@ static int              allowRES = 0;
 static int              allowRBJ = 0;
 static int              allowRS = 0;
 static int              allowEXP = 0;
+
+static int              languageToForce = FORCE_NONE;
 
 /*
  * Examine a file's extension to determine what type of file it is.  If the
@@ -115,10 +118,19 @@ static int file_type( const char *filename )
     } else if( allowEXP  &&  !stricmp( ext, ".exp" ) ) {
         type = TYPE_EXP_FILE;
     } else {
-        if( defaultType == TYPE_INVALID_FILE )  Zoinks();
-        Warning( "Unrecognized file type '%s' -- %s file assumed",
-                 filename, defaultName );
+        if( defaultType == TYPE_INVALID_FILE ) {
+            Zoinks();
+        }
+        if( languageToForce == FORCE_NONE ) {
+            Warning( "Unrecognized file type '%s' -- %s file assumed",
+                     filename, defaultName );
+        }
         type = defaultType;
+    }
+    if( type == TYPE_C_FILE && languageToForce == FORCE_CPP_COMPILE ) {
+        type = TYPE_CPP_FILE;
+    } else if( type == TYPE_CPP_FILE && languageToForce == FORCE_C_COMPILE ) {
+        type = TYPE_C_FILE;
     }
     FreeMem( newfilename );
     return( type );
@@ -298,4 +310,18 @@ void AllowTypeFile( int type, ... )
         }
     }
     va_end( args );
+}
+
+
+/*
+ * Force compilation using the specified language.
+ */
+void ForceLanguage( int language )
+{
+    languageToForce = language;
+    if( language == FORCE_C_COMPILE ) {
+        defaultType = TYPE_C_FILE;
+    } else if( language == FORCE_CPP_COMPILE ) {
+        defaultType = TYPE_CPP_FILE;
+    }
 }
