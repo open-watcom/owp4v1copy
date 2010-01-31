@@ -443,8 +443,8 @@ static  void    OutCodeDisp( label_handle lbl, fix_class f,
 static  label_handle    ExpandObj( byte *cur, int explen ) {
 /**********************************************************/
 
-    byte               *fini;
-    byte                key;
+    byte                *fini;
+    escape_class        key;
     label_handle        lbl;
     sym_handle          sym;
     offset              val = 0;
