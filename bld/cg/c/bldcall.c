@@ -71,7 +71,7 @@ extern  type_class_def  InitCallState(type_def*);
 extern  type_class_def  TypeClass(type_def*);
 extern  void            DbgParmLoc(name_def*, sym_handle);
 extern  void            DbgRetLoc(void);
-extern  void            GenBlock(int,int);
+extern  void            GenBlock( block_class, int );
 extern  void            Generate(bool);
 extern  void            PGBlip(char*);
 extern  void            EnLink(label_handle,bool);

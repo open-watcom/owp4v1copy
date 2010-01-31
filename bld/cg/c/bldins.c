@@ -53,7 +53,7 @@ extern  uint            Length(char*);
 extern  an              MakeAddrName(cg_class,sym_handle,type_def*);
 extern  an              MakeTypeTempAddr(name*,type_def*);
 extern  void            GenKillLabel(pointer);
-extern  void            GenBlock(int,int);
+extern  void            GenBlock( block_class, int );
 extern  void            AddTarget(label_handle,bool);
 extern  void            Generate(bool);
 extern  void            EnLink(label_handle,bool);

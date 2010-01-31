@@ -184,8 +184,8 @@ extern  void    AddIns( instruction *ins )
 }
 
 
-extern  void    GenBlock( int class, int targets )
-/************************************************/
+extern  void    GenBlock( block_class class, int targets )
+/********************************************************/
 {
     block       *new;
     block_edge  *edge;

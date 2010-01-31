@@ -46,7 +46,7 @@ extern  void            EnLink(label_handle,bool);
 extern  void            AddIns(instruction*);
 extern  type_class_def  TypeClass(type_def*);
 extern  void            AddTarget(label_handle,bool);
-extern  void            GenBlock(int,int);
+extern  void            GenBlock( block_class, int );
 extern  an              MakeTempAddr(name*,type_def*);
 extern  name            *BGNewTemp(type_def*);
 extern  void            BGDone(an);
