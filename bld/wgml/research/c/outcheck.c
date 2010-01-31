@@ -230,7 +230,7 @@ static  text_phrase         title[] = {
     { 0, false, NULL}
 };
 
-static  text_phrase         para1[] = {
+static  text_phrase         para_font[] = {
     {0, true, "Parts of this document were copied and modified from the Wiki. " },
     {0, false, "The reason for this was to make it less self-referential. " },
     {0, false, "Ironically, we start with some rather self-referential tests " },
@@ -247,7 +247,22 @@ static  text_phrase         para1[] = {
     {0, false, "(which can affect layout if the space widths vary by font) " },
     {0, false, "and, very rarely, perhaps, to start in the mid" },
     {3, false, "dle" },
-    {0, false, " of a word." },
+    {0, false, " of a word. " },
+    {0, false, NULL }
+};
+ 
+static  text_phrase         para_stop[] = {
+    {0, true, "Now we get to the test of the stops. Research suggests that " },
+    {0, false, "there are four: '.', '!', '?' and '.', at least when the " },
+    {0, false, "criterion is that wgml 4.0 puts two spaces after them when " },
+    {0, false, "they are used with wscript/noscript in effect! This is surely " },
+    {0, false, "worth examining, is it not? It is a bit surprising, however, " },
+    {0, false, "to find that neither ',' nor ';' is a stop; still, what " },
+    {0, false, "matters here is what wgml 4.0 does. And putting the stop before " },
+    {0, false, "a ')' appears to cancel the effect. (Thus, this will be " },
+    {0, false, "not be followed by two spaces.) (Nor will this example!) (And " },
+    {0, false, "this won't either, will it?) (This one is, of course, rather " },
+    {0, false, "unlikely:) in practice. " },
     {0, false, NULL }
 };
  
@@ -291,14 +306,14 @@ static  text_phrase         fig_box[] = {
  *
  * Notes:
  *      This function is currently a lightly-adapted version of function
- *          add_text_chars_to_pool() in gproctxt.c. Further adaptation will
- *          happen because the context in which these functions are used
- *          differs significantly: in gproctxt.c, one line is output and
- *          processed at a time, in outcheck.c entire pages of lines are
- *          output and processed at the same time. In the first case, the
- *          number of text_chars instances in the pool is likely to be less
- *          than the number in the line; in the second case, the opposite
- *          is more likely.
+ *          add_text_chars_to_pool() in gproctxt.c.
+ *      The original version of this algorithm was based on only one
+ *          text_line existing at a time. In that case, most of the
+ *          text_chars instances would be in the text_line, so appending the
+ *          text_chars from the text_line to the end of the pool made sense.
+ *          But now multiple text_lines are in use, and it is more efficient
+ *          to prepend each text_line's set of text_chars instances to the
+ *          pool. 
  *      This version requires the calling function to set in_line->first to
  *          NULL. It is not entirely clear that this is either good or
  *          necessary.
@@ -308,15 +323,16 @@ void oc_add_text_chars_to_pool( text_line * in_line )
 {
     text_chars      *   cur_chars;
 
-    if( oc_text_chars_pool == NULL ) {
-        oc_text_chars_pool = in_line->first;
-    } else {
-        cur_chars = oc_text_chars_pool;
-        while( cur_chars->next != NULL ) {
-            cur_chars = cur_chars->next;
-        }
-        cur_chars->next = in_line->first;
+    if( in_line->first == NULL ) return;
+
+    cur_chars = in_line->first;
+    while( cur_chars->next != NULL ) {
+        cur_chars = cur_chars->next;
     }
+    cur_chars->next = oc_text_chars_pool;
+
+    oc_text_chars_pool = in_line->first;
+
     return;
 }
 
@@ -338,15 +354,17 @@ void oc_add_text_line_to_pool( text_line * in_line )
 {
     text_line      *   cur_line;
 
+    if( in_line == NULL ) return;
+
     cur_line = in_line;
     while( cur_line->next != NULL ) {
         oc_add_text_chars_to_pool( cur_line );
         cur_line->first = NULL;
         cur_line = cur_line->next;
     }
-
     oc_add_text_chars_to_pool( cur_line );
     cur_line->first = NULL;
+
     cur_line->next = oc_text_line_pool;
     oc_text_line_pool = in_line;
 
@@ -421,15 +439,24 @@ static oc_element * oc_alloc_oc_element( oc_element_type el_type )
 static text_chars * oc_alloc_text_chars(  char * in_text, size_t count,
                                            uint8_t font_number )
 {
+    uint32_t        size    = TEXT_START;
     text_chars  *   retval  = NULL;
 
     if( oc_text_chars_pool == NULL ) {
-        retval = (text_chars *) mem_alloc( \
-                                        sizeof( text_chars ) + TEXT_START );
-        retval ->length = TEXT_START;
+        if( count > TEXT_START ) {
+            size = (( count / TEXT_START ) + 1) * TEXT_START;
+        }
+        retval = (text_chars *) mem_alloc( sizeof( text_chars ) + size );
+        retval->length = size;
     } else {
         retval  = oc_text_chars_pool;
         oc_text_chars_pool = oc_text_chars_pool->next;
+        if( count > retval->length ) {
+            size = (( count / TEXT_START ) + 1) * TEXT_START;
+            retval = (text_chars *) mem_realloc( retval, \
+                                                sizeof( text_chars ) + size );
+            retval->length = size;
+        }
     }
     retval->next = NULL;
     retval->font_number = font_number;
@@ -1148,6 +1175,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
     static  text_chars  *   pre_chars       = NULL;
     static  text_line   *   the_line        = NULL;
 
+            char            ch;
             char        *   token_start     = 0;
             size_t          count           = 0;
             size_t          space_width     = 0;
@@ -1440,34 +1468,60 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             /* Update cur_h_address to the width of the token added. */
 
             cur_h_address += cur_chars->width;
+
+            /* Reset spaces (and, eventually, tabs). */
+
+            spaces = 0;
         }
 
         /* Count any spaces before the next token. */
 
-        spaces = 0; // and tabs, eventually.
         while( *input_text != '\0' ) {
             if( !isspace( *input_text ) ) break;
             spaces++;
             input_text++;
         }
 
-        /* Compute space_width and adjust x_address and cur_h_address. */
+        /* Compute space_width and adjust cur_h_address. */
 
         if( spaces == 0 ) {
             space_width = 0;
         } else {
+
+            if( !oc_script ) { 
+
+                /* If "script" was not specified, then either "wscript" was
+                 * specified, "noscript" was specified, or nothing was specified
+                 * (which is the same as "noscript") and the space count must be
+                 * reduced to "1" ("2" after a stop or half stop) at this point.
+                 * NOTE: the list of stops is per actual test with wgml 4.0, but
+                 * will be tested further. There is no indication (so far) that
+                 * a stop followed by a ")" is also a stop. Note that the text,
+                 * at this point, is not being justified; justification may
+                 * change things a bit.
+                 */
+
+                ch = cur_chars->text[cur_chars->count - 1];
+                if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
+                    spaces = 2;
+                } else {
+                    spaces = 1;
+                }
+            }
+
             space_width = spaces * wgml_fonts[font_number].spc_width;
             cur_h_address += space_width;
+
+            /* Reset spaces (and, eventually, tabs). */
+
+            spaces = 0;
         }
 
-        if( !oc_script ) { 
+        /* If the end of the phrase is next, then the phrase ended with
+         * spaces and/or tabs. Phrase processing is done.
+         */
 
-            /* If "script" was not specified, then either "wscript" was
-             * specified, "noscript" was specified, or nothing was specified
-             * (which is the same as "noscript") and the space count must will
-             * be reduced to "1" ("2" after a stop or half stop) at this point.
-             */
-        }
+        if( *input_text == '\0' ) break;
 
         /* At this point, next_chars will be NULL. It is time to get the
          * next token.
@@ -1485,10 +1539,6 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             input_text++;
         }
         count = input_text - token_start;
-
-        /* If there was no token, loop back to the top. */
-
-        if( count == 0 ) continue;
 
         /* Initialize next_chars to contain the token. */
 
@@ -1825,7 +1875,7 @@ static void emulate_wgml( void )
 
     /* The OUTCHECK Test Document. */
 
-    /* For now, all processing is in "script" mode. */
+    /* Start in "script" mode. */
 
     oc_script = true;
 
@@ -1861,22 +1911,16 @@ static void emulate_wgml( void )
 
     oc_new_section = true;
 
-    /* Output the first paragraph. */
+    /* Output the text paragraphs. */
 
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
-    emulate_layout_page( para1, oc_paragraph );
+    emulate_layout_page( para_font, oc_paragraph );
+    emulate_layout_page( para_stop, oc_paragraph );
+
+    /* Now switch to "wscript/noscript" mode. */
+
+    oc_script = false;
+    emulate_layout_page( para_font, oc_paragraph );
+    emulate_layout_page( para_stop, oc_paragraph );
 
 #if 0 // restore when boxing is done again and blank-line-insertion is handled
     /* A blank line is placed between paragraphs. */
