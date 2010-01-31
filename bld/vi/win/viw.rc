@@ -39,6 +39,7 @@ IDI_TXTFILE     ICON    txtfile.ico
 IDI_OBJFILE     ICON    objfile.ico
 IDI_RCFILE      ICON    rcfile.ico
 IDI_RHFILE      ICON    rhfile.ico
+IDI_LIBFILE     ICON    libfile.ico
 BUTTONPATTERN   BITMAP  button.bmp
 SAVE            BITMAP  save.bmp
 COPY            BITMAP  copy.bmp

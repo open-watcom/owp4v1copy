@@ -255,10 +255,12 @@ assoc=fi=fifile, %DstDir%\binnt\viw.exe, FORTRAN Include File, 7, 0
 assoc=mak=makfile, %DstDir%\binnt\viw.exe, Makefile, 8, 0
 assoc=mk=mkfile, %DstDir%\binnt\viw.exe, Makefile, 8, 0
 assoc=mif=miffile, %DstDir%\binnt\viw.exe, Make Include File, 8, 0
+assoc=def=deffile, %DstDir%\binnt\viw.exe, Module Definition File, 9, 0
 assoc=obj=objfile, %DstDir%\binnt\viw.exe, Object File, 10, 1
 assoc=pch=pchfile, %DstDir%\binnt\viw.exe, Precompiled Header File, 10, 1
 assoc=rc=rcfile, %DstDir%\binnt\viw.exe, Resource Source File, 11, 0
 assoc=rh=rhfile, %DstDir%\binnt\viw.exe, Resource Header File, 12, 0
+assoc=lib=libfile, %DstDir%\binnt\viw.exe, Static Library, 13, 1
 assoc=dlg=dlgfile, %DstDir%\binnt\wde.exe, Dialog File, 2, 0
 assoc=res=resfile, %DstDir%\binnt\wre.exe, Resource File, 1, 0
 assoc=wpj=wpjfile, %DstDir%\binnt\ide.exe, Open Watcom Project File, 0, 0
