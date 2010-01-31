@@ -35,12 +35,12 @@
 extern    ins_entry     *FirstIns;
 extern    pointer       *InstrFrl;
 
-extern  void            AddInstr(ins_entry*,ins_entry*);
-extern  label_handle    AskForNewLabel(void);
-extern  ins_entry       *NextIns(ins_entry*);
-extern  oc_class        NextClass(ins_entry*);
-extern  pointer         Copy(pointer,pointer,uint);
-extern  int             OptInsSize(oc_class,oc_dest_attr);
+extern  void            AddInstr( ins_entry *, ins_entry * );
+extern  label_handle    AskForNewLabel( void );
+extern  ins_entry       *NextIns( ins_entry * );
+extern  oc_class        NextClass( ins_entry * );
+extern  pointer         Copy( pointer, pointer, uint );
+extern  int             OptInsSize( oc_class, oc_dest_attr );
 
 
 extern  ins_entry       *NewInstr( any_oc *oc )
@@ -91,8 +91,10 @@ extern  code_lbl        *AddNewLabel( ins_entry *new, int align )
     any_oc      lbl_oc;
 
   optbegin
-    if( NextClass( new ) == OC_LABEL ) optreturn( _Label( NextIns( new ) ) );
-    if( new != NULL && _Class( new ) == OC_LABEL ) optreturn( _Label( new ) );
+    if( NextClass( new ) == OC_LABEL )
+        optreturn( _Label( NextIns( new ) ) );
+    if( new != NULL && _Class( new ) == OC_LABEL )
+        optreturn( _Label( new ) );
     lbl_oc.oc_entry.class = OC_LABEL;
     lbl_oc.oc_entry.objlen = align;
     lbl_oc.oc_entry.reclen = sizeof( oc_handle );
