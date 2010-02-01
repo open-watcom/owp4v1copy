@@ -66,6 +66,7 @@ void BannerMessage( void )
         banner2( "1995" ) "\n"
         banner3 "\n"
         banner3a "\n"
+        "Compatible with CL Version " _MS_CL_VERSION_ "\n"
     };
 
     if( !alreadyPrinted && !quietMode ) {
