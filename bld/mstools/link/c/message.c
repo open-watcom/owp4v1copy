@@ -62,7 +62,7 @@ void BannerMessage( void )
     };
 
     if( !alreadyPrinted && !quietMode ) {
-        fprintf( stderr, helpMsg );
+        printf( helpMsg );
         alreadyPrinted = 1;
     }
 }
