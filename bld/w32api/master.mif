@@ -326,6 +326,7 @@ headers = &
         ws2ipdef.h           &
         ws2spi.h             &
         ws2tcpip.h           &
+        wsdkver.h            &
         wsipx.h              &
         wsnetbs.h            &
         wtsapi32.h           &
