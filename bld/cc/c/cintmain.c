@@ -113,6 +113,13 @@ extern void ConsErrMsg( cmsg_info  *info ){
     fflush( errout );
 }
 
+extern void ConsErrMsgVerbatim( char const  *line ){
+// C compiler call back to do a print to stderr
+    fputs( line, errout );
+    fputc( '\n', errout );
+    fflush( errout );
+}
+
 extern void ConsMsg( char const  *line ){
 // C compiler call back to do a print to stdout
     fputs( line, stdout );

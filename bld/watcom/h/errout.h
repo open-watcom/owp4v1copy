@@ -32,10 +32,10 @@
 #ifndef _ERROUT_H_INCLUDED
 #define _ERROUT_H_INCLUDED
 
-#if defined(__UNIX__)
-#define errout  stderr
+#if defined( __UNIX__ ) || defined( __NT__ )
+    #define errout  stderr
 #else
-#define errout  stdout
+    #define errout  stdout
 #endif
 
 #endif

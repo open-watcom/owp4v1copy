@@ -453,7 +453,7 @@ local void CantOpenFile( char *name )
 
     CGetMsg( msgtxt, ERR_CANT_OPEN_FILE );
     sprintf( msgbuf, msgtxt, name );
-    BannerMsg( msgbuf );
+    ConsErrMsgVerbatim( msgbuf );
 }
 
 static int OpenPgmFile( void )

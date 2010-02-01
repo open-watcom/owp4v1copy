@@ -616,8 +616,9 @@ extern  hw_reg_set *SegPeggedReg(unsigned);
 extern  void    SetSegment(SYMPTR);
 extern  void    SetSegAlign(SYMPTR);
 extern  void    AssignSeg(SYMPTR);
-// cintmain
+// cintmain.c
 extern void     ConsErrMsg( cmsg_info  *info );
+extern void     ConsErrMsgVerbatim( char const  *line );
 extern void     ConsMsg( char const  *line );
 extern void     BannerMsg( char const  *line );
 extern void     DebugMsg( char const  *line );

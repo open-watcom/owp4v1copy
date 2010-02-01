@@ -95,6 +95,15 @@ extern void ConsErrMsg( cmsg_info  *cinfo ){
     // we are ignoring return for now
 }
 
+extern void ConsErrMsgVerbatim( char const  *line ){
+// C compiler call back to a console print to stderr
+
+    IDEMsgInfo info;
+    IdeMsgInit( &info, IDEMSGSEV_ERROR, line );
+    (*Cbs->PrintWithInfo)( Hdl, &info );
+    // we are ignoring return for now
+}
+
 extern void BannerMsg( char const  *line ){
 // C compiler call back to print a banner type msg
 
