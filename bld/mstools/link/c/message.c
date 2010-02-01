@@ -58,6 +58,7 @@ void BannerMessage( void )
         banner2( "1995" ) "\n"
         banner3 "\n"
         banner3a "\n"
+        "Compatible with LINK Version " _MS_LINK_VERSION_ "\n"
     };
 
     if( !alreadyPrinted && !quietMode ) {

@@ -170,3 +170,4 @@
  * Versions of Microsoft tools with OW clones are compatible
  */
 #define _MS_CL_VERSION_         "13.0.0"
+#define _MS_LINK_VERSION_       "7.0.0"
