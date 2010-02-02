@@ -38,6 +38,7 @@
 
 static char *   got_char( char *buf, size_t *bufsize, size_t offset, char ch );
 
+int Quoted = 0;
 
 /*
  * Skip all whitespace characters, such that the next read will retrieve the
@@ -99,16 +100,16 @@ char *CmdScanString( void )
 {
     const char          quotechar = '"';
     int                 ch;
-    int                 inQuote = 0;    /* true if inside a quoted string */
-    int                 backslash = 0;  /* true if last char was a '\\' */
-    int                 start;          /* context offset of string start */
+    int                 inQuote = Quoted;   /* true if inside a quoted string */
+    int                 backslash = 0;      /* true if last char was a '\\' */
+    int                 start;              /* context offset of string start */
     char *              buf = DupStrMem( "" );
     size_t              bufsize = 0;
     size_t              offset = 0;
 
     /*** Return NULL if there's leading whitespace or no more data ***/
     ch = GetCharContext();
-    if( isspace( ch ) ) {
+    if( !Quoted && isspace( ch ) ) {
         UngetCharContext();
         return( NULL );
     } else if( ch != '\0' ) {
@@ -124,34 +125,29 @@ char *CmdScanString( void )
         if( ch == 0 )  break;
         if( !inQuote && isspace( ch ) )  break;
         if( ch == quotechar ) {
-            if( inQuote ) {
-                if( backslash ) {
-                    backslash = 0;      /* handle \" within a string */
-//                    buf = got_char( buf, &bufsize, offset, ch );
-//                    offset++;
-                } else {
-                    inQuote = 0;        /* end of a quoted portion */
+            if( backslash ) {
+                backslash = 0;          /* handle \" within a string */
+            } else if( inQuote ) {
+                if( Quoted ) {
+                    Quoted = 0;
+                    return( buf );
                 }
+                inQuote = 0;            /* end of a quoted portion */
             } else {
                 inQuote = 1;            /* start of a quoted portion */
             }
             buf = got_char( buf, &bufsize, offset, ch );
             offset++;
         } else if( ch == '\\' ) {
-            if( inQuote ) {
-                if( backslash ) {
-                    buf = got_char( buf, &bufsize, offset, ch );
-                    offset++;
-                    backslash = 0;      /* second '\\' of a pair */
-                    if( GetCharContext() == quotechar )
-                        buf = got_char( buf, &bufsize, offset++, '\\' );
-                    UngetCharContext();
-                } else {
-                    backslash = 1;      /* first '\\' of a pair */
-                }
-            } else {
+            if( backslash ) {
                 buf = got_char( buf, &bufsize, offset, ch );
                 offset++;
+                backslash = 0;      /* second '\\' of a pair */
+                if( GetCharContext() == quotechar )
+                    buf = got_char( buf, &bufsize, offset++, '\\' );
+                UngetCharContext();
+            } else {
+                backslash = 1;      /* first '\\' of a pair */
             }
         } else {
             if( backslash ) {
