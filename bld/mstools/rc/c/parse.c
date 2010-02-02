@@ -111,6 +111,20 @@ void CmdStringParse( OPT_STORAGE *cmdOpts, int *itemsParsed )
                     break;
                 }
             }
+        } else if( ch == '"' ) {                /* quoted option or file name */
+            ch = GetCharContext();
+            if( ch == '-' ) {
+                Quoted = 1;
+                if( OPT_PROCESS( cmdOpts ) != 0 ) {
+                    cmd_line_error();
+                }
+            } else {
+                UngetCharContext();
+                UngetCharContext();
+                filename = CmdScanFileName();
+                AddFile( TYPE_DEFAULT_FILE, filename );
+                FreeMem( filename );
+            }
         } else {                                /* input file */
             UngetCharContext();
             filename = CmdScanFileName();
