@@ -56,7 +56,7 @@ int __CBeginThread( thread_fn *start_addr, void *stack_bottom,
 	if( start_addr == NULL || stack_bottom == NULL || stack_size == 0 ) {
 		return( -1L );
 	}
-    pid = clone( CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND, (void*)((int)stack_bottom + stack_size) );
+    pid = clone( CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | SIGCHLD, (void*)((int)stack_bottom + stack_size) );
 	if( pid ) {
 	    return( (int)pid );
 	} else {
