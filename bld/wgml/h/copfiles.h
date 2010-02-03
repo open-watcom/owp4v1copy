@@ -26,6 +26,8 @@
 *
 * Description:  Declares the items needed to parse and interpret the
 *               information from .COP files:
+*               an enum:
+*                   text_type
 *               the structs:
 *                   cop_device
 *                       box_block
@@ -104,6 +106,14 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+
+/* enum definition. */
+
+typedef enum {
+    norm = 0,
+    sup,
+    sub
+} text_type;
 
 /* struct declarations. */
 
@@ -523,11 +533,13 @@ typedef struct {
 
 typedef struct text_chars {
     struct  text_chars  *   next;
-            uint8_t         font_number;
+    struct  text_chars  *   prev;
             uint32_t        x_address;
             uint32_t        width;
             uint16_t        count;
             uint16_t        length;
+            text_type       type;
+            uint8_t         font_number;
             uint8_t         text[1];
 } text_chars;
 
@@ -538,6 +550,7 @@ typedef struct text_line {
             uint32_t        line_height;
             uint32_t        y_address;
             text_chars  *   first;
+            text_chars  *   last;
 } text_line;
 
 /* This struct implements the wgml_font struct in the Wiki. */
@@ -548,7 +561,6 @@ typedef struct {
     code_text           *   font_pause;
     fontstyle_block     *   font_style;
     outtrans_block      *   outtrans;
-    uint8_t                 font_resident;
     uint32_t                default_width;
     uint32_t                dv_base;
     uint32_t                em_base;
@@ -556,8 +568,10 @@ typedef struct {
     uint32_t                font_space;
     uint32_t                line_height;
     uint32_t                line_space;
+    uint32_t                shift_height;
     uint32_t                spc_width;
     uint32_t                width_table[0x100];
+    uint8_t                 font_resident;
 } wgml_font;
 
 /* Variable declarations. */
