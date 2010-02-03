@@ -342,7 +342,10 @@ void TestMove_s( void )
 
     VERIFY( (t = wcstok_s( NULL, &max1, L"#,", &ptr1 )) != NULL  );  /* points to the token "c" */
     VERIFY( wcscmp( t, L"c" ) == 0 );
-    VERIFY( ptr1 == NULL );
+    VERIFY( ptr1 != NULL );
+    VERIFY( NumViolations == violations );
+
+    VERIFY( NULL == wcstok_s( NULL, &max1, L"#,", &ptr1 ) );  /* at the end */
 
     wcscpy( str1, str3 );
     max1 = ARRAYCOUNT( str1 );
@@ -350,6 +353,7 @@ void TestMove_s( void )
 
 //  printf( "Test wcstok rtc   (%s).\n", ProgramName );
     /* Test runtime-constraint violations */
+    ptr1 = NULL;
     VERIFY( NULL == wcstok_s( NULL, &max1, L"?", &ptr1 ) );          /* null pointer */
     VERIFY( NumViolations == ++violations );
 

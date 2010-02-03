@@ -120,7 +120,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
                 *p1 = NULLCHAR;                         /* terminate the token  */
                 p1++;                                   /* start of next token  */
                 *ptr = p1;
-                *s1max = m;
+                *s1max = m - 1;                      /* adjust remaining length */
                 return( str );
             }
         }
@@ -129,9 +129,9 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
         /* Now call the handler */
         __rtct_fail( __func__, msg, NULL );
         return( NULL );
-    } else {
-        *ptr = NULL;                                    /* last token reached */
-        *s1max = 0;
+    } else {                            /* last token reached */
+        *ptr = p1;                      /* point to end of last token */
+        *s1max = 0;                     /* remaining length 0 */
     }
     return( str );
 }

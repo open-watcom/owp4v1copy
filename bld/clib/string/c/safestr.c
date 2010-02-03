@@ -331,13 +331,18 @@ void TestMove_s( void )
 
     VERIFY( (t = strtok_s( NULL, &max1, "#,", &ptr1 )) != NULL  );  /* points to the token "c" */
     VERIFY( strcmp( t, "c" ) == 0 );
-    VERIFY( ptr1 == NULL );
+    VERIFY( ptr1 != NULL );
+    VERIFY( NumViolations == violations );
+
+
+    VERIFY( NULL == strtok_s( NULL, &max1, "#,", &ptr1 ) );  /* at the end */
 
     strcpy( str1, str3 );
     max1 = sizeof( str1 );
     VERIFY( NULL == strtok_s( str1, &max1, str3, &ptr3 ) );         /* only delimiter chars */
 
     /* Test runtime-constraint violations */
+    ptr1 = NULL;
     VERIFY( NULL == strtok_s( NULL, &max1, "?", &ptr1 ) );          /* null pointer */
     VERIFY( NumViolations == ++violations );
 
