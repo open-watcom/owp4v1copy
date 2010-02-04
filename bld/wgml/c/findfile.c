@@ -75,8 +75,8 @@
 /* The count contains the number of entries in directories. */
 
 typedef struct {
-    uint16_t count;
     char * * directories;
+    uint16_t count;
 } directory_list;
 
 /* Local data. */
