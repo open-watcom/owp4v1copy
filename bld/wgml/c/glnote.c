@@ -154,6 +154,9 @@ void    lay_note( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.note.font );
+                    if( layout_work.note.font >= wgml_font_cnt ) {
+                        layout_work.note.font = 0;
+                    }
                     break;
                 case   e_spacing:
                     cvterr = i_int8( p, curr, &layout_work.note.spacing );

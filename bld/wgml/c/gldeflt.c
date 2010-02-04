@@ -140,6 +140,9 @@ void    lay_default( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.defaults.font );
+                    if( layout_work.defaults.font >= wgml_font_cnt ) {
+                        layout_work.defaults.font = 0;
+                    }
                     break;
                 case   e_justify:
                     cvterr = i_yes_no( p, curr, &layout_work.defaults.justify );

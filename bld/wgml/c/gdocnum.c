@@ -36,13 +36,15 @@
 /*  calc docnum position  ( vertical )                                     */
 /***************************************************************************/
 
-static  void    calc_docnum_pos( int8_t font, int8_t spacing )
+static  void    calc_docnum_pos( int8_t font, int8_t d_spacing )
 {
 
     if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= conv_vert_unit( &layout_work.docnum.pre_skip, spacing );
+        g_cur_v_start -= wgml_fonts[font].line_height +
+            conv_vert_unit( &layout_work.docnum.pre_skip, d_spacing );
     } else {
-        g_cur_v_start += conv_vert_unit( &layout_work.docnum.pre_skip, spacing );
+        g_cur_v_start += wgml_fonts[font].line_height +
+            conv_vert_unit( &layout_work.docnum.pre_skip, d_spacing );
     }
     return;
 }
@@ -115,7 +117,7 @@ void    gml_docnum( const gmltag * entry )
     char        *   p;
     text_line       p_line;
     int8_t          font;
-    int8_t          spacing;
+    int8_t          d_spacing;
     int8_t          font_save;
     uint32_t        y_save;
     int32_t         rc;
@@ -145,14 +147,13 @@ void    gml_docnum( const gmltag * entry )
     p_line.next  = NULL;
     p_line.line_height = g_max_line_height;
 
-    spacing = layout_work.titlep.spacing;
+    d_spacing = layout_work.titlep.spacing;
 
-    font = layout_work.title.font;
+    font = layout_work.docnum.font;
 
-    if( font >= wgml_font_cnt ) font = 0;
     font_save = g_curr_font_num;
 
-    calc_docnum_pos( font, spacing );
+    calc_docnum_pos( font, d_spacing );
     p_line.y_address = g_cur_v_start;
 
     prep_docnum_line( &p_line, docnumval->value );
@@ -161,7 +162,7 @@ void    gml_docnum( const gmltag * entry )
     y_save = g_cur_v_start;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-//  g_cur_v_start = y_save;             // TBD
+    g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );

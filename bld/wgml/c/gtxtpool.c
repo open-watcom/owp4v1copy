@@ -69,7 +69,9 @@ text_chars  * alloc_text_chars( char * p, size_t cnt, uint8_t font_num )
         curr->length = cnt;             // set max text size
     }
 
+    curr->prev = NULL;
     curr->next = NULL;
+    curr->type = norm;
     curr->font_number = font_num;
     curr->width = 0;
     if( p != NULL ) {                   // text supplied
@@ -96,7 +98,7 @@ void    add_text_chars_to_pool( text_line * a_line )
     if( a_line == NULL ) {
         return;
     }
-
+    // free text_chars in pool don't have a valid prev ptr
     if( text_pool == NULL ) {
         text_pool = a_line->first;
     } else {

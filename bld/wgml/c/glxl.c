@@ -771,6 +771,9 @@ void    lay_ol( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.ol.font );
+                    if( layout_work.ol.font >= wgml_font_cnt ) {
+                        layout_work.ol.font = 0;
+                    }
                     break;
                 case   e_align:
                     cvterr = i_space_unit( p, curr, &layout_work.ol.align );
@@ -781,6 +784,9 @@ void    lay_ol( const gmltag * entry )
                     break;
                 case   e_number_font:
                     cvterr = i_int8( p, curr, &layout_work.ol.number_font );
+                    if( layout_work.ol.number_font >= wgml_font_cnt ) {
+                        layout_work.ol.number_font = 0;
+                    }
                     break;
                 default:
                     out_msg( "WGML logic error.\n");
@@ -868,6 +874,9 @@ void    lay_sl( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.sl.font );
+                    if( layout_work.sl.font >= wgml_font_cnt ) {
+                        layout_work.sl.font = 0;
+                    }
                     break;
                 default:
                     out_msg( "WGML logic error.\n");
@@ -955,6 +964,9 @@ void    lay_ul( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.ul.font );
+                    if( layout_work.ul.font >= wgml_font_cnt ) {
+                        layout_work.ul.font = 0;
+                    }
                     break;
                 case   e_align:
                     cvterr = i_space_unit( p, curr, &layout_work.ul.align );
@@ -969,6 +981,9 @@ void    lay_ul( const gmltag * entry )
                     break;
                 case   e_bullet_font:
                     cvterr = i_int8( p, curr, &layout_work.ul.bullet_font );
+                    if( layout_work.ul.bullet_font >= wgml_font_cnt ) {
+                        layout_work.ul.bullet_font = 0;
+                    }
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

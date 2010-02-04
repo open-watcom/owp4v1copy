@@ -181,6 +181,9 @@ void    lay_ix( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.ix[ix_l].font );
+                    if( layout_work.ix[ix_l].font >= wgml_font_cnt ) {
+                        layout_work.ix[ix_l].font = 0;
+                    }
                     break;
                 case   e_indent:
                     cvterr = i_space_unit( p, curr,
@@ -197,7 +200,10 @@ void    lay_ix( const gmltag * entry )
                 case   e_string_font:
                     if( ix_l < 2 ) {
                         cvterr = i_int8( p, curr,
-                                               &layout_work.ix[ix_l].string_font );
+                                         &layout_work.ix[ix_l].string_font );
+                    if( layout_work.ix[ix_l].string_font >= wgml_font_cnt ) {
+                        layout_work.ix[ix_l].string_font = 0;
+                    }
                     }
                     break;
                 default:

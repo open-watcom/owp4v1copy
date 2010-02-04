@@ -131,6 +131,8 @@ typedef struct {
     uint8_t         table[0x100];
 } intrans_block;
 
+#pragma disable_message( 128 ); // suppress: Warning! W128: 3 padding byte(s) added
+
 /* To hold the data extracted from an OuttransData struct. */
 
 typedef struct {
@@ -492,6 +494,8 @@ typedef struct {
     line_block          dbox;
 } cop_driver;
 
+#pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
+
 /* This struct embodies the binary form of the :FONT block.
  * Only the fonts need to be treated as a linked list.
  */
@@ -573,6 +577,7 @@ typedef struct {
     uint32_t                width_table[0x100];
     uint8_t                 font_resident;
 } wgml_font;
+
 
 /* Variable declarations. */
 

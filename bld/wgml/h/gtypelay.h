@@ -820,7 +820,8 @@ typedef struct banner_lay_tag {
 /*  Layout data                                             TBD            */
 /*  sequence of definitions as seen by :CONVERT output                     */
 /***************************************************************************/
-#pragma disable_message( 128 );
+
+#pragma disable_message( 128 ); // suppress: Warning! W128: 3 padding byte(s) added
 typedef struct layout_data {
     page_lay_tag        page;
     default_lay_tag     defaults;
@@ -892,7 +893,7 @@ typedef struct layout_data {
 
 } layout_data;
 
-#pragma enable_message( 128 );
+#pragma enable_message( 128 );// reenable: Warning! W128: 3 padding byte(s) added
 
 
 

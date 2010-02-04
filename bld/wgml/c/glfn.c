@@ -193,9 +193,15 @@ void    lay_fn( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.fn.font );
+                    if( layout_work.fn.font >= wgml_font_cnt ) {
+                        layout_work.fn.font = 0;
+                    }
                     break;
                 case   e_number_font:
                     cvterr = i_int8( p, curr, &layout_work.fn.number_font );
+                    if( layout_work.fn.number_font >= wgml_font_cnt ) {
+                        layout_work.fn.number_font = 0;
+                    }
                     break;
                 case   e_number_style:
                     cvterr = i_number_style( p, curr,
@@ -257,6 +263,9 @@ void    lay_fnref( const gmltag * entry )
                 switch( curr ) {
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.fnref.font );
+                    if( layout_work.fnref.font >= wgml_font_cnt ) {
+                        layout_work.fnref.font = 0;
+                    }
                     break;
                 case   e_number_style:
                     cvterr = i_number_style( p, curr,

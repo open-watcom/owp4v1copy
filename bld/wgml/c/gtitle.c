@@ -59,9 +59,11 @@ void    calc_title_pos( int8_t font, int8_t t_spacing, bool first )
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip, t_spacing );
+            g_cur_v_start -= wgml_fonts[font].line_height
+                + conv_vert_unit( &layout_work.title.skip, t_spacing );
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.title.skip, t_spacing );
+            g_cur_v_start += wgml_fonts[font].line_height
+                + conv_vert_unit( &layout_work.title.skip, t_spacing );
         }
     }
     if( bin_driver->y_positive == 0 ) {
@@ -133,7 +135,6 @@ void    gml_title( const gmltag * entry )
 {
     char        *   p;
     text_line       p_line;
-    int8_t          font;
     int8_t          t_spacing;
     int8_t          font_save;
     uint32_t        y_save;
@@ -200,15 +201,12 @@ void    gml_title( const gmltag * entry )
 
     t_spacing = layout_work.titlep.spacing;
 
-    font = layout_work.title.font;
-
-    if( font >= wgml_font_cnt ) font = 0;
     font_save = g_curr_font_num;
-    g_curr_font_num = font;
+    g_curr_font_num = layout_work.title.font;
 
-    p_line.line_height = wgml_fonts[font].line_height;
+    p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
 
-    calc_title_pos( font, t_spacing, !ProcFlags.title_tag_seen );
+    calc_title_pos( g_curr_font_num, t_spacing, !ProcFlags.title_tag_seen );
     p_line.y_address = g_cur_v_start;
 
     prep_title_line( &p_line, p );
@@ -217,15 +215,13 @@ void    gml_title( const gmltag * entry )
     y_save = g_cur_v_start;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-//  g_cur_v_start = y_save;             // TBD
+    g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );
         p_line.first = NULL;
     }
     ProcFlags.page_started = true;
-
-
 
     ProcFlags.title_tag_seen = true;
     scan_start = scan_stop + 1;

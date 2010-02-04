@@ -185,6 +185,9 @@ void    lay_backbod( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &(ap->font) );
+                    if( ap->font >= wgml_font_cnt ) {
+                        ap->font = 0;
+                    }
                     break;
                 case   e_columns:
                     if( x_tag == el_backm ) {

@@ -676,6 +676,7 @@ void    process_text( char * text, uint8_t font_num )
                     ProcFlags.line_started = true;
                 } else {
                     p_char->next = n_char;
+                    n_char->prev = p_char;
                 }
                 p_char = n_char;
 
@@ -752,6 +753,7 @@ void    process_text( char * text, uint8_t font_num )
             ProcFlags.line_started = true;
         } else {
             p_char->next = n_char;
+            n_char->prev = p_char;
         }
         p_char = n_char;
 

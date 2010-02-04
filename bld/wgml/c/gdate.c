@@ -24,11 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WGML tags :DATE processing
+* Description:  WGML processing :DATE tag
 *
 ****************************************************************************/
 #include    "wgml.h"
-#include    "findfile.h"
+//#include    "findfile.h"
 #include    "gvars.h"
 
 
@@ -36,7 +36,7 @@
 /*  calc date position   ( vertical )                                      */
 /***************************************************************************/
 
-static  void    calc_date_pos( int8_t font, int8_t spacing )
+static  void    calc_date_pos( int8_t font, int8_t d_spacing )
 {
 
 /***************************************************************************/
@@ -44,9 +44,11 @@ static  void    calc_date_pos( int8_t font, int8_t spacing )
 /***************************************************************************/
 
     if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= conv_vert_unit( &layout_work.date.pre_skip, spacing );
+        g_cur_v_start -= wgml_fonts[font].line_height +
+                conv_vert_unit( &layout_work.date.pre_skip, d_spacing );
     } else {
-        g_cur_v_start += conv_vert_unit( &layout_work.date.pre_skip, spacing );
+        g_cur_v_start += wgml_fonts[font].line_height +
+                conv_vert_unit( &layout_work.date.pre_skip, d_spacing );
     }
     return;
 }
@@ -60,7 +62,6 @@ static void prep_date_line( text_line * p_line, char * p )
     text_chars  *   curr_t;
     uint32_t        h_left;
     uint32_t        h_right;
-    uint32_t        curr_x;
     symsub      *   subdate;
     int             rc;
 
@@ -74,6 +75,7 @@ static void prep_date_line( text_line * p_line, char * p )
         curr_t = alloc_text_chars( subdate->value, strlen( subdate->value ),
                                    g_curr_font_num );
     }
+    intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
     while( curr_t->width > (h_right - h_left) ) {   // too long for line
@@ -85,21 +87,15 @@ static void prep_date_line( text_line * p_line, char * p )
                                         g_curr_font_num );
     }
     p_line->first = curr_t;
-    curr_x = 0;
+    curr_t->x_address = h_left;
     if( layout_work.date.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
-            h_left += (h_right - h_left - curr_t->width) / 2;
-            curr_x = h_left;
+            curr_t->x_address += (h_right - h_left - curr_t->width) / 2;
         }
     } else if( layout_work.date.page_position == pos_right ) {
-        h_left = h_right - curr_t->width;
-        curr_x = h_left;
+        curr_t->x_address = h_right - curr_t->width;
     }
-    if( curr_x == 0 ) {
-        curr_x = h_left;
-    }
-    curr_t->x_address = curr_x;
-    ju_x_start = curr_x;
+    ju_x_start = curr_t->x_address;
 
     return;
 }
@@ -113,7 +109,7 @@ void    gml_date( const gmltag * entry )
     char        *   p;
     text_line       p_line;
     int8_t          font;
-    int8_t          spacing;
+    int8_t          d_spacing;
     int8_t          font_save;
     uint32_t        y_save;
 
@@ -137,11 +133,10 @@ void    gml_date( const gmltag * entry )
     p_line.next  = NULL;
     p_line.line_height = g_max_line_height;
 
-    spacing = layout_work.titlep.spacing;
+    d_spacing = layout_work.titlep.spacing;
 
-    font = layout_work.title.font;
+    font = layout_work.date.font;
 
-    if( font >= wgml_font_cnt ) font = 0;
     font_save = g_curr_font_num;
 
     calc_date_pos( font, spacing );
@@ -153,15 +148,13 @@ void    gml_date( const gmltag * entry )
     y_save = g_cur_v_start;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-//  g_cur_v_start = y_save;             // TBD
+    g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );
         p_line.first = NULL;
     }
     ProcFlags.page_started = true;
-
-
 
     scan_start = scan_stop + 1;
 }

@@ -28,7 +28,7 @@
 *
 ****************************************************************************/
 #include    "wgml.h"
-#include    "findfile.h"
+//nclude    "findfile.h"
 #include    "gvars.h"
 
 
@@ -39,37 +39,39 @@
 static  void    calc_author_pos( int8_t font, int8_t line_spc, bool first )
 {
 
-//  if( !ProcFlags.page_started ) {
-//      g_cur_v_start = g_page_top;     // top of page ignore pre_skip  TBD
-//  } else if( first ) {
+    if( !ProcFlags.page_started ) {
+        g_cur_v_start = g_page_top;
+    }
     if( first ) {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.author.pre_skip, line_spc );
-//                          + wgml_fonts[font].line_height;
+            g_cur_v_start -= wgml_fonts[font].line_height +
+                    conv_vert_unit( &layout_work.author.pre_skip, line_spc );
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.author.pre_skip, line_spc );
-//                          + wgml_fonts[font].line_height;
+            g_cur_v_start += wgml_fonts[font].line_height +
+                    conv_vert_unit( &layout_work.author.pre_skip, line_spc );
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.author.skip, line_spc );
-//                          + wgml_fonts[font].line_height;
+            g_cur_v_start -= wgml_fonts[font].line_height +
+                    conv_vert_unit( &layout_work.author.skip, line_spc );
         } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.author.skip, line_spc );
-//                          + wgml_fonts[font].line_height;
+            g_cur_v_start += wgml_fonts[font].line_height +
+                    conv_vert_unit( &layout_work.author.skip, line_spc );
         }
     }
     if( bin_driver->y_positive == 0 ) {
         if( g_cur_v_start < g_page_bottom && ProcFlags.page_started ) {
             finish_page();
             document_new_page();
-            calc_author_pos( font, spacing, true ); // 1 recursion
+            calc_author_pos( font, line_spc,
+                    !ProcFlags.author_tag_seen & first );   // 1 recursion
         }
     } else {
         if( g_cur_v_start > g_page_bottom && ProcFlags.page_started ) {
             finish_page();
             document_new_page();
-            calc_author_pos( font, spacing, true ); // 1 recursion
+            calc_author_pos( font, line_spc,
+                    !ProcFlags.author_tag_seen & first );   // 1 recursion
         }
     }
     return;
@@ -94,6 +96,7 @@ static void prep_author_line( text_line * p_line, char * p )
     } else {
         curr_t = alloc_text_chars( "author", 7, g_curr_font_num );
     }
+    intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
     while( curr_t->width > (h_right - h_left) ) {   // too long for line
@@ -127,7 +130,6 @@ void    gml_author( const gmltag * entry )
 {
     char        *   p;
     text_line       p_line;
-    int8_t          font;
     int8_t          spacing;
     int8_t          font_save;
     uint32_t        y_save;
@@ -157,18 +159,15 @@ void    gml_author( const gmltag * entry )
 
     p_line.first = NULL;
     p_line.next  = NULL;
-    p_line.line_height = g_max_line_height;
 
     spacing = layout_work.titlep.spacing;
 
-    font = layout_work.author.font;
-
-    if( font >= wgml_font_cnt ) font = 0;
     font_save = g_curr_font_num;
-    g_curr_font_num = font;
+    g_curr_font_num = layout_work.author.font;
 
-    calc_author_pos( font, spacing, !ProcFlags.author_tag_seen );
+    calc_author_pos( g_curr_font_num, spacing, !ProcFlags.author_tag_seen );
     p_line.y_address = g_cur_v_start;
+    p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
 
     prep_author_line( &p_line, p );
 
@@ -176,7 +175,7 @@ void    gml_author( const gmltag * entry )
     y_save = g_cur_v_start;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-//  g_cur_v_start = y_save;             // TBD
+    g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );

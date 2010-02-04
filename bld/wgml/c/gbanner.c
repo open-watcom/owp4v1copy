@@ -665,12 +665,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 
     ban_line.first = NULL;
 
-    if( bottom ) {
-        g_cur_v_start = ban_bot_pos( ban );
-    } else {
-        g_cur_v_start = ban_top_pos( ban );
-    }
-    ban_line.y_address = g_cur_v_start;
 
     /* calc banner horizontal margins */
     ban_left  = g_page_left_org + conv_hor_unit( &(ban->left_adjust) );
@@ -686,6 +680,13 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         if( ban_line.first == NULL ) {
             ban_line.first = reg_text[k];
             ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
+            g_curr_font_num = reg_text[k]->font_number;
+            if( bottom ) {
+                g_cur_v_start = ban_bot_pos( ban );
+            } else {
+                g_cur_v_start = ban_top_pos( ban );
+            }
+            ban_line.y_address = g_cur_v_start;
         } else {
             curr_t = ban_line.first;
             while( curr_t->next != NULL ) {
@@ -761,6 +762,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         add_text_chars_to_pool( &ban_line );
         ban_line.first = NULL;
     }
+    g_curr_font_num = layout_work.defaults.font;
     if( !bottom ) {                    // for top banner calculate text start
 
     /***********************************************************************/

@@ -221,6 +221,9 @@ void    lay_index( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.index.font );
+                    if( layout_work.index.font >= wgml_font_cnt ) {
+                        layout_work.index.font = 0;
+                    }
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

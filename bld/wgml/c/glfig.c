@@ -161,6 +161,9 @@ void    lay_fig( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.fig.font );
+                    if( layout_work.fig.font >= wgml_font_cnt ) {
+                        layout_work.fig.font = 0;
+                    }
                     break;
                 case   e_default_place:
                     cvterr = i_place( p, curr,

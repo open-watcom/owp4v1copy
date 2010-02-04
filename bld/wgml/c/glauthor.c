@@ -27,22 +27,22 @@
 * Description: WGML implement :AUTHOR tag for LAYOUT processing
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <errno.h>
 #include <stdarg.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
+ 
 /***************************************************************************/
 /*   :AUTHOR   attributes                                                  */
 /***************************************************************************/
 const   lay_att     author_att[7] =
     { e_left_adjust, e_right_adjust, e_page_position, e_font, e_pre_skip,
       e_skip, e_dummy_zero };
-
+ 
 /**********************************************************************************/
 /*Define the characteristics of the author entity.                                */
 /*:AUTHOR                                                                         */
@@ -91,11 +91,11 @@ const   lay_att     author_att[7] =
 /*more information). The resulting amount of space is skipped                     */
 /*between author lines.                                                           */
 /**********************************************************************************/
-
+ 
 /***************************************************************************/
 /*  lay_author                                                             */
 /***************************************************************************/
-
+ 
 void    lay_author( const gmltag * entry )
 {
     char            *   p;
@@ -104,10 +104,10 @@ void    lay_author( const gmltag * entry )
     lay_att             curr;
     att_args            l_args;
     int                 cvterr;
-
+ 
     p = scan_start;
     cvterr = false;
-
+ 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -120,10 +120,10 @@ void    lay_author( const gmltag * entry )
     while( cc == pos ) {
         cvterr = -1;
         for( k = 0, curr = author_att[k]; curr > 0; k++, curr = author_att[k] ) {
-
+ 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
-
+ 
                 switch( curr ) {
                 case   e_left_adjust:
                     cvterr = i_space_unit( p, curr,
@@ -139,6 +139,9 @@ void    lay_author( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.author.font );
+                    if( layout_work.author.font >= wgml_font_cnt ) {
+                        layout_work.author.font = 0;
+                    }
                     break;
                 case   e_pre_skip:
                     cvterr = i_space_unit( p, curr,
@@ -171,4 +174,4 @@ void    lay_author( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
-
+ 

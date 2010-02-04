@@ -47,27 +47,27 @@ static void calc_aline_pos( int8_t font, int8_t line_spc, bool first, bool onemo
     if( first ) {                       // first aline of current :ADDRESS
         if( !ProcFlags.page_started ) {
             if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start = g_page_top
+                g_cur_v_start = g_page_top - wgml_fonts[font].line_height
                         - conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             } else {
-                g_cur_v_start = g_page_top
+                g_cur_v_start = g_page_top + wgml_fonts[font].line_height
                         + conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             }
         } else {
             if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start -=
+                g_cur_v_start -= wgml_fonts[font].line_height +
                     conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             } else {
-                g_cur_v_start += onemore +
+                g_cur_v_start += onemore +  // TBD
                     conv_vert_unit( &layout_work.address.pre_skip, line_spc );
             }
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= onemore * wgml_fonts[font].line_height +
+            g_cur_v_start -= wgml_fonts[font].line_height +
                              conv_vert_unit( &layout_work.aline.skip, line_spc );
         } else {
-            g_cur_v_start += onemore * wgml_fonts[font].line_height +
+            g_cur_v_start += onemore * wgml_fonts[font].line_height +  // TBD
                              conv_vert_unit( &layout_work.aline.skip, line_spc );
         }
     }
@@ -88,7 +88,7 @@ static  void    output_addresslines( bool newpage )
 
         first_aline = true;
         tline = adr_lines;
-        while( tline != NULL ) {        // calc y_addr on new page
+        while( tline != NULL ) {        // recalc y_addr on new page
             calc_aline_pos( tline->first->font_number, a_spacing, first_aline,
                             newpage );
             first_aline = false;
@@ -171,7 +171,6 @@ static void prep_aline( text_line * p_line, char * p )
     text_chars  *   curr_t;
     uint32_t        h_left;
     uint32_t        h_right;
-    uint32_t        curr_x;
 
     h_left = g_page_left + conv_hor_unit( &layout_work.address.left_adjust );
     h_right = g_page_right - conv_hor_unit( &layout_work.address.right_adjust );
@@ -193,15 +192,14 @@ static void prep_aline( text_line * p_line, char * p )
                                         g_curr_font_num );
     }
     p_line->first = curr_t;
-    curr_x = h_left;
+    curr_t->x_address = h_left;
     if( layout_work.address.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
-            curr_x = h_left + (h_right - h_left - curr_t->width) / 2;
+            curr_t->x_address = h_left + (h_right - h_left - curr_t->width) / 2;
         }
     } else if( layout_work.address.page_position == pos_right ) {
-        curr_x = h_right - curr_t->width;
+        curr_t->x_address = h_right - curr_t->width;
     }
-    curr_t->x_address = curr_x;
 
     return;
 }
@@ -228,7 +226,7 @@ static void add_aline( text_line * ad_line )
         p_line->next = ad_line;
     }
 
-    set_v_start( a_spacing );
+//  set_v_start( a_spacing );
     set_h_start();
     return;
 }

@@ -179,6 +179,7 @@ void    lay_abspref( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &(ap->font) );
+                    if( ap->font >= wgml_font_cnt ) ap->font = 0;
                     break;
                 case   e_spacing:
                     cvterr = i_int8( p, curr, &(ap->spacing) );

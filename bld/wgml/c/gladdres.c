@@ -152,6 +152,9 @@ void    lay_address( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.address.font );
+                    if( layout_work.address.font >= wgml_font_cnt ) {
+                        layout_work.address.font = 0;
+                    }
                     break;
                 case   e_pre_skip:
                     cvterr = i_space_unit( p, curr,

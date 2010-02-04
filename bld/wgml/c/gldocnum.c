@@ -91,6 +91,9 @@ void    lay_docnum( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.docnum.font );
+                    if( layout_work.docnum.font >= wgml_font_cnt ) {
+                        layout_work.docnum.font = 0;
+                    }
                     break;
                 case   e_pre_skip:
                     cvterr = i_space_unit( p, curr,

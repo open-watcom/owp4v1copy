@@ -149,6 +149,9 @@ void    lay_lq( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.lq.font );
+                    if( layout_work.lq.font >= wgml_font_cnt ) {
+                        layout_work.lq.font = 0;
+                    }
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

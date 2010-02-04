@@ -33,7 +33,7 @@
 *                   get_p_buffer()
 *                   parse_functions_block()
 *
-* Note:         The field names are intended to correspond to the field names 
+* Note:         The field names are intended to correspond to the field names
 *               shown in the Wiki. The Wiki structs are named when the structs
 *               defined here are defined; they are not identical.
 *
@@ -46,6 +46,8 @@
 #include <stdio.h>
 
 /* Struct declarations. */
+
+#pragma disable_message( 128 ); // suppress: Warning! W128: 3 padding byte(s) added
 
 /* This holds the raw contents of one or more contiguous P-buffers. The
  * buffer is to be interpreted as an array of count uint8_t value. The
@@ -76,6 +78,8 @@ typedef struct {
     uint16_t        count;
     code_block *    code_blocks;
 } functions_block;
+
+#pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
 
 /* Function declarations. */
 

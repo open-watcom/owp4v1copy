@@ -82,6 +82,9 @@ void    lay_tocpgnum( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.tocpgnum.font );
+                    if( layout_work.tocpgnum.font >= wgml_font_cnt ) {
+                        layout_work.tocpgnum.font = 0;
+                    }
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

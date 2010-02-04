@@ -275,9 +275,15 @@ void    lay_hx( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.hx[hx_l].font );
+                    if( layout_work.hx[hx_l].font >= wgml_font_cnt ) {
+                        layout_work.hx[hx_l].font = 0;
+                    }
                     break;
                 case   e_number_font:
                     cvterr = i_int8( p, curr, &layout_work.hx[hx_l].number_font );
+                    if( layout_work.hx[hx_l].number_font >= wgml_font_cnt ) {
+                        layout_work.hx[hx_l].number_font = 0;
+                    }
                     break;
                 case   e_number_form:
                     cvterr = i_number_form( p, curr, &layout_work.hx[hx_l].number_form );

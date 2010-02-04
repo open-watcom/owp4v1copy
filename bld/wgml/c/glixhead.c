@@ -141,6 +141,9 @@ void    lay_ixhead( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_int8( p, curr, &layout_work.ixhead.font );
+                    if( layout_work.ixhead.font >= wgml_font_cnt ) {
+                        layout_work.ixhead.font = 0;
+                    }
                     break;
                 case   e_indent:
                     cvterr = i_space_unit( p, curr,

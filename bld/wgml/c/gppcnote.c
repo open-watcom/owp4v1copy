@@ -40,8 +40,8 @@ extern void shift_spaces( void );
 static  void    proc_p_pc( p_lay_tag * p_pc )
 {
     char        *   p;
-    uint32_t        skippre;
-    uint32_t        skippost;
+    int32_t         skippre;
+    int32_t         skippost;
 
     scan_err = false;
     p = scan_start;

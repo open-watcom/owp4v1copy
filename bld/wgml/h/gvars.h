@@ -144,7 +144,7 @@ global  struct GlobalFlags {
 } GlobalFlags;                          // Global flags
 
 
-#pragma disable_message( 128 );
+#pragma disable_message( 128 ); // suppress: Warning! W128: 3 padding byte(s) added
 global struct ProcFlags {
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
@@ -192,7 +192,7 @@ global struct ProcFlags {
     unsigned        test_widow      : 1;// for preventing widow lines
 
 } ProcFlags;                            // processing flags
-#pragma enable_message( 128 );
+#pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
 
 
 global  size_t          buf_size;       // default buffer size
