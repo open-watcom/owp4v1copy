@@ -54,24 +54,13 @@ static struct toggle ToggleNames[] = {
         { NULL, 0 }
     };
 
-static void PreProcPrintToken()
-{
-    TOKEN lastToken;
-    if( CppPrinting() ) {
-        lastToken = CurToken;
-        CurToken = T_ID;
-        CppPrtToken();
-        CurToken = lastToken;
-    }
-}
-
 
 void CPragmaInit( void ) {
 //********************************//
 // Init any general pragma things //
 //********************************//
     TextSegList = NULL;
-    
+
 /* Pragma Pack init */
     PackInfo = NULL;
 
@@ -136,6 +125,44 @@ extern int SetToggleFlag( char const *name, int const value )
     }
     return( ret );
 }
+
+static int PragIdCurToken( void )
+/*******************************/
+{
+    TOKEN   t = CurToken;
+
+    return( t == T_ID || t >= FIRST_KEYWORD && t <= LAST_KEYWORD );
+}
+
+
+static int PragIdRecog( char *what )
+/**********************************/
+{
+    char    *p = Buffer;
+
+    if( *p == '_' ) {
+        ++p;
+        if( *p == '_' ) {
+            ++p;
+        }
+    }
+    if( stricmp( what, p ) == 0 ) {
+        NextToken();
+        return( 1 );
+    }
+    return( 0 );
+}
+
+
+int PragRecog( char *what )
+/*************************/
+{
+    if( PragIdCurToken() ) {
+        return( PragIdRecog( what ) );
+    }
+    return( 0 );
+}
+
 
 local void PragFlag( int value )
 /******************************/
@@ -305,7 +332,7 @@ void SetCurrInfo( char *name )
     SYM_HANDLE      sym_handle;
     SYM_ENTRY       sym;
     type_modifiers  sym_attrib = FLAG_NONE;
-    
+
     CurrInfo = MagicKeyword( name );
     if( CurrInfo == NULL ) {
         if( CurrAlias == NULL ) {
@@ -327,7 +354,7 @@ void PragCurrAlias( char *name )
 /******************************/
 {
     struct aux_entry *search;
-    
+
     search = NULL;
     CurrAlias = MagicKeyword( name );
     if( CurrAlias == NULL ) {
@@ -460,65 +487,22 @@ void PragEnding( void )
         CurrInfo->use = 1;
         CurrEntry->info = CurrInfo;
     }
-    
+
     /* If this pragma defines code, check to see if we already have a function body */   
     if( CurrEntry->name != NULL && CurrEntry->info != NULL && CurrEntry->info->code != NULL ) {
         SYM_HANDLE  sym_handle;
         SYM_ENTRY   sym;
-            
+
         if( 0 != (sym_handle = SymLook( CalcHash( CurrEntry->name, strlen( CurrEntry->name ) ), CurrEntry->name )) ) {
             SymGet( &sym, sym_handle );
             if( ( sym.flags & SYM_DEFINED ) && ( sym.flags & SYM_FUNCTION ) ) {
                 CErr2p( ERR_SYM_ALREADY_DEFINED, CurrEntry->name );
             }
         }
-    }   
-    
+    }
+
     CurrEntry->next = AuxList;
     AuxList = CurrEntry;
-}
-
-
-int PragRecog( char *what )
-/*************************/
-{
-    char        *p;
-
-    if( !( CurToken == T_ID || ( CurToken >= FIRST_KEYWORD && CurToken < T_MACRO_PARM ) ) ) {
-        return( 0 );
-    }
-    p = Buffer;
-    if( *p == '_' )
-        ++p;
-    if( *p == '_' )
-        ++p;
-    if( stricmp( what, p ) == 0 ) {
-        NextToken();
-        return( 1 );
-    }
-    return( 0 );
-}
-
-
-static int PragRecogAhead( const char *what )
-/*******************************************/
-{
-    char        *p;
-
-    LookAhead();
-    if( !( LAToken == T_ID || ( LAToken >= FIRST_KEYWORD && LAToken < T_MACRO_PARM ) ) ) {
-        return( 0 );
-    }
-    p = Buffer;
-    if( *p == '_' )
-        ++p;
-    if( *p == '_' )
-        ++p;
-    if( stricmp( what, p ) == 0 ) {
-        NextToken();
-        return( 1 );
-    }
-    return( 0 );
 }
 
 
@@ -1135,83 +1119,77 @@ static void PragAlias( void )
 void CPragma( void )
 /******************/
 {
+    int     check_end = TRUE;
+
     /* Note that the include_alias pragma must always be processed
      * because it's intended for the preprocessor, not the compiler.
      */
-    if( CompFlags.cpp_output ) {                    /* 29-sep-90 */
-        if( PragRecogAhead( "include_alias" ) ) {
-            CompFlags.pre_processing = 1;
-            CompFlags.in_pragma = 1;
-            PragIncludeAlias();
-            CompFlags.in_pragma = 0;
-            EndOfPragma();
-            return;
-        }
-        if( ! CppPrinting() )
-            return;
-        CppPrtf( "#pragma" );
-        CppPrtf( " " );
-        PreProcPrintToken();    /* PragRecogAhead sneaked a token */
+    CompFlags.in_pragma = 1;
+    NextToken();
+    if( PragRecog( "include_alias" ) ) {
+        PragIncludeAlias();
+    } else if( CompFlags.cpp_output ) {
         CompFlags.pre_processing = 1;
-        CompFlags.in_pragma = 1;
-        for( ; ; ) {
-            GetNextToken();
-            if( CurToken == T_NULL )
-                break;
+        CppPrtf( "#pragma " );
+        for( ; CurToken != T_NULL; ) {
             CppPrtToken();
+            GetNextToken();
         }
-        CompFlags.in_pragma = 0;
-    } else {
-        NextToken();
-        if( PragRecog( "on" ) ) {
+        CompFlags.pre_processing = 2;
+    } else if( PragIdCurToken() ) {
+        if( PragIdRecog( "on" ) ) {
             PragFlag( 1 );
-        } else if( PragRecog( "off" ) ) {
+        } else if( PragIdRecog( "off" ) ) {
             PragFlag( 0 );
-        } else if( PragRecog( "aux" ) || PragRecog( "linkage" ) ) {
+        } else if( PragIdRecog( "aux" ) || PragIdRecog( "linkage" ) ) {
             PragAux();
-        } else if( PragRecog( "library" ) ) {
+        } else if( PragIdRecog( "library" ) ) {
             PragLibs();
-        } else if( PragRecog( "comment" ) ) {
+        } else if( PragIdRecog( "comment" ) ) {
             PragComment();
-        } else if( PragRecog( "pack" ) ) {
+        } else if( PragIdRecog( "pack" ) ) {
             PragPack();
-        } else if( PragRecog( "alloc_text" ) ) {    /* 26-oct-91 */
+        } else if( PragIdRecog( "alloc_text" ) ) {
             PragAllocText();
-        } else if( PragRecog( "code_seg" ) ) {      /* 22-oct-92 */
+        } else if( PragIdRecog( "code_seg" ) ) {
             PragCodeSeg();
-        } else if( PragRecog( "data_seg" ) ) {      /* 22-oct-92 */
+        } else if( PragIdRecog( "data_seg" ) ) {
             PragDataSeg();
-        } else if( PragRecog( "disable_message" ) ) {/* 18-jun-92 */
+        } else if( PragIdRecog( "disable_message" ) ) {
             PragEnableDisableMessage( 0 );
-        } else if( PragRecog( "enable_message" ) ) {/* 18-jun-92 */
+        } else if( PragIdRecog( "enable_message" ) ) {
             PragEnableDisableMessage( 1 );
-        } else if( PragRecog( "include_alias" ) ) {
+        } else if( PragIdRecog( "include_alias" ) ) {
             PragIncludeAlias();
-        } else if( PragRecog( "message" ) ) {   /* 13-oct-94 */
+        } else if( PragIdRecog( "message" ) ) {
             PragMessage();
-        } else if( PragRecog( "intrinsic" ) ) { /* 09-oct-92 */
+        } else if( PragIdRecog( "intrinsic" ) ) {
             PragIntrinsic( 1 );
-        } else if( PragRecog( "function" ) ) {
+        } else if( PragIdRecog( "function" ) ) {
             PragIntrinsic( 0 );
-        } else if( PragRecog( "enum" ) ) {
+        } else if( PragIdRecog( "enum" ) ) {
             PragEnum();
-        } else if( PragRecog( "read_only_file" ) ) {
+        } else if( PragIdRecog( "read_only_file" ) ) {
             PragReadOnlyFile();
-        } else if( PragRecog( "read_only_directory" ) ) {
+        } else if( PragIdRecog( "read_only_directory" ) ) {
             PragReadOnlyDir();
-        } else if( PragRecog( "once" ) ) {
+        } else if( PragIdRecog( "once" ) ) {
             PragOnce();
-        } else if( PragRecog( "unroll" ) ) {
+        } else if( PragIdRecog( "unroll" ) ) {
             PragUnroll();
-        } else if( PragRecog( "STDC" ) ) {
+        } else if( PragIdRecog( "STDC" ) ) {
             PragSTDC();
-        } else if( PragRecog( "extref" ) ) {
+        } else if( PragIdRecog( "extref" ) ) {
             PragExtRef();
-        } else if( PragRecog( "alias" ) ) {
+        } else if( PragIdRecog( "alias" ) ) {
             PragAlias();
         } else {
-            return;                     /* don't recognize anything */
+            check_end = FALSE;
         }
-        EndOfPragma();
+    } else {
+        check_end = FALSE;
     }
+    if( check_end )
+        EndOfPragma();
+    CompFlags.in_pragma = 0;
 }
