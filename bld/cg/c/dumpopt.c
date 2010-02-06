@@ -48,8 +48,6 @@ static  void            DoData( oc_entry *instr );
 static  void            DoLabel( oc_handle *instr );
 static  void            DoRef( oc_handle *instr );
 
-extern  ins_entry       *FirstIns;
-
 static char * Names[] = {
 #define pick_class(x) #x ,
 #include "occlasss.h"

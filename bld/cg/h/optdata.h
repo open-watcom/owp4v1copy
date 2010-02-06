@@ -24,38 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Optimizer global data declaration
 *
 ****************************************************************************/
 
 
-#include "optwif.h"
-#include "zoiks.h"
-
-extern  bool    ValidLbl( code_lbl *lbl ) {
-/*****************************************/
-
-    lbl=lbl;
-    return( TRUE );
-#if 0
-
-    code_lbl    *chk;
-    static code_lbl     *last = 0;
-
-    chk = Handles;
-    if( last != NULL && last == lbl ) return( TRUE );
-    for(;;) {
-        if( chk == NULL ) break;
-        if( chk == lbl ) {
-            last = lbl;
-            return( TRUE );
-        }
-        chk = chk->lbl.link;
-    }
-    _Zoiks( ZOIKS_042 );
-    return( FALSE );
-
+extern  ins_entry       *FirstIns;
+extern  ins_entry       *LastIns;
+extern  ins_entry       *PendingDeletes;
+extern  bool            InsDelete;
+extern  uint            QCount;
+extern  code_lbl        *Handles;
+extern  ins_entry       *RetList;
+extern  pointer         *InstrFrl;
+//      pointer         *CodeLblFrl;
+#if( OPTIONS & SAVINGS )
+extern  uint            Savings;
 #endif
 
-}

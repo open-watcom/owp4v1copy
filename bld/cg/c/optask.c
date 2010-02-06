@@ -35,8 +35,6 @@
 #include "targsys.h"
 #include "feprotos.h"
 
-extern    code_lbl      *Handles;
-
 extern  array_control   *InitPatch( void );
 
 static  label_handle    DoAskForLabel( sym_handle sym )

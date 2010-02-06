@@ -31,7 +31,6 @@
 
 #include "optwif.h"
 
-extern    ins_entry     *FirstIns;
 extern    byte          OptForSize;
 
 extern  void            TryScrapLabel(code_lbl*);

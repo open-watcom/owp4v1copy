@@ -34,14 +34,6 @@
 #include "ptrint.h"
 #include "freelist.h"
 
-extern    ins_entry     *FirstIns;
-extern    ins_entry     *LastIns;
-extern    ins_entry     *RetList;
-extern    uint          QCount;
-extern    ins_entry     *PendingDeletes;
-extern    pointer       Handles;
-extern    pointer       *InstrFrl;
-
 extern  seg_id          SetOP( seg_id );
 extern  seg_id          AskCodeSeg( void );
 extern  void            FreePendingDeletes( void );

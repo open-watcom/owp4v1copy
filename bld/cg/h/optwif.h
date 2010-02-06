@@ -41,4 +41,5 @@
 #include "optlbl.h"
 #include "optsave.h"
 #include "optmac.h"
+#include "optdata.h"
 #include "model.h"

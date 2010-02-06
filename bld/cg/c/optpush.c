@@ -32,9 +32,6 @@
 
 #include "optwif.h"
 
-extern    ins_entry     *LastIns;
-extern    bool          InsDelete;
-
 extern  ins_entry       *IsolatedCode(ins_entry*);
 extern  void            AddInstr(ins_entry*,ins_entry*);
 extern  ins_entry       *NewInstr(any_oc*);

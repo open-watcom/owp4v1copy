@@ -43,12 +43,6 @@ extern  void            AddLblDef(ins_entry*);
 extern  void            InsertQueue(ins_entry*,ins_entry*);
 extern  void            FreeInstr(ins_entry*);
 
-extern    ins_entry     *FirstIns;
-extern    ins_entry     *LastIns;
-extern    ins_entry     *RetList;
-extern    ins_entry     *PendingDeletes;
-extern    bool          InsDelete;
-
 
 extern  ins_entry       *ValidIns( ins_entry *instr ) {
 /****************************************************/

@@ -32,11 +32,6 @@
 
 #include "optwif.h"
 
-extern    ins_entry     *FirstIns;
-extern    ins_entry     *LastIns;
-extern    ins_entry     *RetList;
-extern    bool          InsDelete;
-
 extern  ins_entry       *ValidIns( ins_entry * );
 extern  ins_entry       *AliasLabels( ins_entry *, ins_entry * );
 extern  oc_class        PrevClass( ins_entry * );

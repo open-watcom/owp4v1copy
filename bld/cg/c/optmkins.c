@@ -32,9 +32,6 @@
 #include "optwif.h"
 #include "freelist.h"
 
-extern    ins_entry     *FirstIns;
-extern    pointer       *InstrFrl;
-
 extern  void            AddInstr( ins_entry *, ins_entry * );
 extern  label_handle    AskForNewLabel( void );
 extern  ins_entry       *NextIns( ins_entry * );

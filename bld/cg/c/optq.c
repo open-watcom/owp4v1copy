@@ -32,13 +32,6 @@
 
 #include "optwif.h"
 
-extern    ins_entry   *RetList;
-extern    ins_entry   *FirstIns;
-extern    ins_entry   *LastIns;
-extern    uint        QCount;
-#if( OPTIONS & SAVINGS )
-extern    uint        Savings;
-#endif
 
 extern  void    InsertQueue( ins_entry *old, ins_entry *new ) {
 /***********************************************************/

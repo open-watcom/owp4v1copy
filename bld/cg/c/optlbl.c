@@ -35,8 +35,6 @@
 extern  ins_entry       *DelInstr(ins_entry*);
 extern  void            DelRef(ins_entry**,ins_entry*);
 
-extern    code_lbl      *Handles;
-
 extern  void    TryScrapLabel( code_lbl *old );
 static  void    ScrapCodeLabel( code_lbl *lbl );
 
