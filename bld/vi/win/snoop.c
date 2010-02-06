@@ -38,7 +38,7 @@
 #endif
 
 static fancy_find       snoopData =
-    { TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, 0, NULL, 0, NULL, 0, NULL, 0 };
+    { TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, 0, -1, -1, NULL, 0, NULL, 0, NULL, 0 };
 #ifdef __NT__
 static HINSTANCE        hInstShell = NULL;
 

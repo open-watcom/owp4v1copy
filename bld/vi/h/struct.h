@@ -53,6 +53,8 @@ typedef struct {
     unsigned char   prompt          : 1;
     unsigned char   selection       : 1;
     unsigned char   spare           : 2;
+    int             posx;
+    int             posy;
     char            *find;
     int             findlen;
     char            *replace;

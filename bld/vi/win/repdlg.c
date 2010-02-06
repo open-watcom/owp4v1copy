@@ -34,7 +34,7 @@
 #include "repdlg.h"
 
 static fancy_find findData =
-    { TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, 0, NULL, 0, NULL, 0 };
+    { TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, 0, -1, -1, NULL, 0, NULL, 0 };
 
 /*
  * RepDlgProc - callback routine for find & replace dialog
@@ -48,11 +48,17 @@ BOOL WINEXP RepDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     char                find[MAX_INPUT_LINE];
     history_data        *h;
     char                *ptr;
+    RECT                pos;
 
     lparam = lparam;
     switch( msg ) {
     case WM_INITDIALOG:
-        CenterWindowInRoot( hwnd );
+        if( findData.posx == -1 && findData.posy == -1 ) {
+            CenterWindowInRoot( hwnd );
+        } else {
+            SetWindowPos( hwnd, (HWND)NULLHANDLE, findData.posx, findData.posy, 
+                0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOREDRAW | SWP_NOZORDER );
+        }
         EditSubClass( hwnd, REP_FIND, &FindHist );
         CheckDlgButton( hwnd, REP_IGNORE_CASE, findData.case_ignore );
         CheckDlgButton( hwnd, REP_REGULAR_EXPRESSIONS, findData.use_regexp );
@@ -75,6 +81,9 @@ BOOL WINEXP RepDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         }
         return( TRUE );
     case WM_CLOSE:
+        GetWindowRect( hwnd, &pos );
+        findData.posx = pos.left;
+        findData.posy = pos.top;
         PostMessage( hwnd, WM_COMMAND, GET_WM_COMMAND_MPS( IDCANCEL, 0, 0 ) );
         return( TRUE );
     case WM_COMMAND:
@@ -94,6 +103,9 @@ BOOL WINEXP RepDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             }
             break;
         case IDCANCEL:
+            GetWindowRect( hwnd, &pos );
+            findData.posx = pos.left;
+            findData.posy = pos.top;
             RemoveEditSubClass( hwnd, REP_FIND );
             EndDialog( hwnd, FALSE );
             break;
@@ -116,6 +128,9 @@ BOOL WINEXP RepDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
                 AddString2( &(h->data[h->curr % h->max]), findData.find );
                 h->curr += 1;
             }
+            GetWindowRect( hwnd, &pos );
+            findData.posx = pos.left;
+            findData.posy = pos.top;
             RemoveEditSubClass( hwnd, REP_FIND );
             EndDialog( hwnd, TRUE );
             break;
