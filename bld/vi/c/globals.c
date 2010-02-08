@@ -337,7 +337,7 @@ char            _NEAR SpawnPrompt[MAX_STR];
 int             CurrentStatusColumn = 56;
 int             ClockX = 74, ClockY = 0;
 int             SpinX = 68, SpinY = 0;
-char            *TileColors;
+type_style      *TileColors;
 int             MaxTileColors = 10;
 int             MaxWindowTileX = 3;
 int             MaxWindowTileY = 1;

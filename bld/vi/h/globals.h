@@ -189,19 +189,19 @@ extern int              TotalEMSBlocks, MaxEMSBlocks, EMSBlocksInUse;
 extern int              TotalXMSBlocks, MaxXMSBlocks, XMSBlocksInUse;
 
 /* windowing globals */
-extern char     *TileColors;
-extern int      MaxTileColors;
-extern int      MaxWindowTileX, MaxWindowTileY;
-extern vi_color MoveColor, ResizeColor;
-extern vi_color SelectColor;
-extern vi_color InactiveWindowColor;
-extern char     ScrollBarChar;
-extern int      ScrollBarCharColor;
-extern int      ClockX, ClockY;
-extern int      SpinX, SpinY;
-extern short    WindMaxWidth, WindMaxHeight;
-extern int      CurrentStatusColumn;
-extern char     EndOfLineChar;
+extern type_style   *TileColors;
+extern int          MaxTileColors;
+extern int          MaxWindowTileX, MaxWindowTileY;
+extern vi_color     MoveColor, ResizeColor;
+extern vi_color     SelectColor;
+extern vi_color     InactiveWindowColor;
+extern char         ScrollBarChar;
+extern int          ScrollBarCharColor;
+extern int          ClockX, ClockY;
+extern int          SpinX, SpinY;
+extern short        WindMaxWidth, WindMaxHeight;
+extern int          CurrentStatusColumn;
+extern char         EndOfLineChar;
 
 /* parse constants */
 extern int          MaxColorTokens, ColorTokensSize;
