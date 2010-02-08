@@ -38,7 +38,7 @@
  */
 vi_rc WindowTile( int maxx, int maxy )
 {
-    int         cnt = 0, max = maxx * maxy, xdiv, ydiv, tc = 0, tcc;
+    int         cnt = 0, max = maxx * maxy, xdiv, ydiv, tc = 0, i;
     int         xstart = editw_info.x1;
     int         xend = editw_info.x2;
     int         ystart = editw_info.y1;
@@ -134,17 +134,17 @@ vi_rc WindowTile( int maxx, int maxy )
              */
             BringUpFile( cinfo, FALSE );
             if( TileColors != NULL ) {
-                tcc = TileColors[tc++];
-                if( tcc == 0 ) {
-                    tc = 0;
-                    tcc = TileColors[tc++];
-                }
-                if( tcc != 0 ) {
-                    WindowAuxUpdate( CurrentWindow, WIND_INFO_TEXT_COLOR, tcc & 0x0f );
-                    WindowAuxUpdate( CurrentWindow, WIND_INFO_BACKGROUND_COLOR,
-                                     tcc >> 4 );
-                    /* tile fonts? Nah... sounds real stupid... */
-                    WindowAuxUpdate( CurrentWindow, WIND_INFO_BORDER_COLOR2, tcc >> 4 );
+                for( i = 0; i < MaxTileColors; i++, tc++ ) {
+                    if( tc > MaxTileColors )
+                        tc = 0;
+                    if( TileColors[tc].foreground != -1 && TileColors[tc].background != -1 ) {
+                        WindowAuxUpdate( CurrentWindow, WIND_INFO_TEXT_COLOR, TileColors[tc].foreground );
+                        WindowAuxUpdate( CurrentWindow, WIND_INFO_BACKGROUND_COLOR, TileColors[tc].background );
+                        /* tile fonts? Nah... sounds real stupid... */
+                        WindowAuxUpdate( CurrentWindow, WIND_INFO_BORDER_COLOR2, TileColors[tc].background );
+                        tc++;
+                        break;
+                    }
                 }
             }
 

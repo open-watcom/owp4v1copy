@@ -336,27 +336,6 @@ extern vi_rc GetNewValueDialog( char * );
 #endif
 
 /*
- * getAColor - get an fg/bg color
- */
-static vi_rc getAColor( char *name, int *cval )
-{
-    char        fn[MAX_STR];
-    int         fg, bg;
-
-    if( NextWord1( name, fn ) <= 0 ) {
-        return( ERR_INVALID_SET_COMMAND );
-    }
-    fg = atoi( fn );
-    if( NextWord1( name, fn ) <= 0 ) {
-        return( ERR_INVALID_SET_COMMAND );
-    }
-    bg = atoi( fn );
-    (*cval) = (fg + bg * 16);
-    return( ERR_NO_ERR );
-
-} /* getAColor */
-
-/*
  * processSetToken - set value for set token
  */
 static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
@@ -365,7 +344,7 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
     char        tokstr[MAX_STR];
     char        save[MAX_STR];
     vi_rc       rc = ERR_NO_ERR;
-    int         i, clr, cval, k;
+    int         i, clr, k;
     bool        newset;
     bool        set1, toggle, *ptr;
     jmp_buf     jmpaddr;
@@ -657,22 +636,30 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
             break;
         case SET1_T_TILECOLOR:
             if( TileColors == NULL ) {
-                TileColors = (char *) MemAlloc( MaxTileColors + 1 );
+                TileColors = (type_style *) MemAlloc( sizeof( type_style ) * ( MaxTileColors + 1 ) );
+                for( i = 0; i <= MaxTileColors; ++i ) {
+                    TileColors[i].foreground = -1;
+                    TileColors[i].background = -1;
+                    TileColors[i].font = -1;
+                }
             }
             clr = atoi( fn );
             if( clr > MaxTileColors ) {
                 return( ERR_INVALID_SET_COMMAND );
             }
-            rc = getAColor( value, &cval );
-            if( rc != ERR_NO_ERR ) {
-                return( rc );
+            if( NextWord1( name, fn ) <= 0 ) {
+                return( ERR_INVALID_SET_COMMAND );
             }
-            TileColors[clr] = (char) cval;
+            TileColors[clr].foreground = atoi( fn );
+            if( NextWord1( name, fn ) <= 0 ) {
+                return( ERR_INVALID_SET_COMMAND );
+            }
+            TileColors[clr].background = atoi( fn );
+            TileColors[clr].font = FONT_DEFAULT;
             if( msgFlag ) {
                 MySprintf( fn, "tilecolor %d set", clr );
             }
             break;
-
         case SET1_T_GADGETSTRING:
             SetGadgetString( fn );
             if( msgFlag ) {
@@ -909,8 +896,14 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 FindHistInit( i );
                 break;
             case SET1_T_MAXTILECOLORS:
+                k = (TileColors == NULL) ? 0 : MaxTileColors + 1;
                 MaxTileColors = i;
-                TileColors = MemReAlloc( TileColors, MaxTileColors + 1 );
+                TileColors = MemReAlloc( TileColors, sizeof( type_style ) * ( MaxTileColors + 1 ) );
+                for( ; k <= MaxTileColors; ++k ) {
+                    TileColors[k].foreground = -1;
+                    TileColors[k].background = -1;
+                    TileColors[k].font = -1;
+                }
                 break;
             case SET1_T_CLOCKX:
                 ClockX = i;
