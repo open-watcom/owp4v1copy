@@ -40,6 +40,56 @@ int LastSubstituteCancelled;
 int LastChangeCount;
 int LastLineCount;
 
+
+#ifdef __WIN__
+static HHOOK    hhookMB = 0;
+static int      MB_posx = -1;
+static int      MB_posy = -1;
+
+LRESULT CALLBACK MyMessageBoxWndFunc( int ncode, WPARAM wparam, LPARAM lparam )
+{
+    char        className[10];
+    HWND        hWnd;
+
+    if( ncode == HCBT_ACTIVATE || ncode == HCBT_MOVESIZE ) {
+        hWnd = (HWND)wparam;
+        GetClassName( hWnd, className, 10 );
+        if( strcmp( className, "#32770" ) == 0 ) {
+            if( ncode == HCBT_MOVESIZE ) {
+                LPRECT  pos = (LPRECT)lparam;
+
+                MB_posx = pos->left;
+                MB_posy = pos->top;
+            } else {
+                if( MB_posx != -1 || MB_posy != -1 ) {
+                    SetWindowPos( hWnd, (HWND)NULLHANDLE, MB_posx, MB_posy, 0, 0,
+                        SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOREDRAW | SWP_NOZORDER );
+                }
+            }
+        }
+    }
+    return( CallNextHookEx( hhookMB, ncode, wparam, lparam ) );
+}
+
+static int MyMessageBox( window_id hWnd, char _FAR *lpText, char _FAR *lpCaption, unsigned uType )
+{
+    HOOKPROC    lpfn;
+    int         rc;
+
+    lpfn = (HOOKPROC)MakeProcInstance( (FARPROC)MyMessageBoxWndFunc, InstanceHandle );
+#if defined(__NT__)
+    hhookMB = SetWindowsHookEx( WH_CBT, lpfn, 0, GetCurrentThreadId() );
+#else
+    hhookMB = SetWindowsHookEx( WH_CBT, lpfn, InstanceHandle, GetCurrentTask() );
+#endif
+    rc = MessageBox( hWnd, lpText, lpCaption, uType );
+    UnhookWindowsHookEx( hhookMB );
+    FreeProcInstance( (FARPROC)lpfn );
+    return( rc );
+}
+#endif
+
+
 /* TwoPartSubstitute - goes from current line to current line minus 1
  *                     doing substitute in 2 parts if it has to, that
  *                     appear as 1
@@ -88,12 +138,13 @@ vi_rc Substitute( linenum n1, linenum n2, char *data )
     char        flag[20], *linedata;
     bool        iflag = FALSE, gflag = FALSE, undoflag = FALSE, restline = FALSE;
     bool        splitpending = FALSE, undoline = FALSE;
-    int         i, rlen, slen, key;
+    int         i, rlen, slen;
     int         splitme;
     long        changecnt = 0, linecnt = 0;
     linenum     llineno, ll, lastline = 0, extra;
     i_mark      pos;
     vi_rc       rc;
+    vi_key      key;
 
     LastSubstituteCancelled = 0;
     LastChangeCount = 0;
@@ -214,9 +265,9 @@ vi_rc Substitute( linenum n1, linenum n2, char *data )
             }
             HilightSearchString( &pos, slen );
 #ifdef __WIN__
-            key = MessageBox( Root, "Change this occurence?", "Replace Text",
+            i = MyMessageBox( Root, "Change this occurence?", "Replace Text",
                               MB_ICONQUESTION | MB_YESNOCANCEL );
-            switch( key ) {
+            switch( i ) {
             case IDNO:
                 ResetDisplayLine();
                 rlen = 1;
@@ -226,22 +277,22 @@ vi_rc Substitute( linenum n1, linenum n2, char *data )
                 LastSubstituteCancelled = 1;
                 goto DONEALLREPLACEMENTS;
             }
-            if( key == 0 ) {
+            if( i == 0 ) {
 #endif
                 Message1( "Change? (y)es/(n)o/(a)ll/(q)uit" );
                 key = 0;
-                while( key != 'y' ) {
+                while( key != VI_KEY( y ) ) {
                     key = GetNextEvent( FALSE );
                     switch( key ) {
-                    case 'a':
+                    case VI_KEY( a ):
                             ResetDisplayLine();
                             iflag = FALSE;
-                            key = 'y';
+                            key = VI_KEY( y );
                             break;
-                    case 'q':
+                    case VI_KEY( q ):
                             ResetDisplayLine();
                             goto DONEALLREPLACEMENTS;
-                    case 'n':
+                    case VI_KEY( n ):
                             ResetDisplayLine();
                             rlen = 1;
                             goto TRYNEXTMATCH;
