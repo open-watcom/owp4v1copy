@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 #include    "wgml.h"
-//#include    "findfile.h"
 #include    "gvars.h"
 
 
@@ -44,10 +43,10 @@ static  void    calc_date_pos( int8_t font, int8_t d_spacing )
 /***************************************************************************/
 
     if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= wgml_fonts[font].line_height +
+        g_cur_v_start -=
                 conv_vert_unit( &layout_work.date.pre_skip, d_spacing );
     } else {
-        g_cur_v_start += wgml_fonts[font].line_height +
+        g_cur_v_start +=
                 conv_vert_unit( &layout_work.date.pre_skip, d_spacing );
     }
     return;
@@ -87,6 +86,7 @@ static void prep_date_line( text_line * p_line, char * p )
                                         g_curr_font_num );
     }
     p_line->first = curr_t;
+    p_line->last  = curr_t;
     curr_t->x_address = h_left;
     if( layout_work.date.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
@@ -111,7 +111,6 @@ void    gml_date( const gmltag * entry )
     int8_t          font;
     int8_t          d_spacing;
     int8_t          font_save;
-    uint32_t        y_save;
 
     if( ProcFlags.doc_sect != doc_sect_titlep ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
@@ -131,28 +130,27 @@ void    gml_date( const gmltag * entry )
 
     p_line.first = NULL;
     p_line.next  = NULL;
-    p_line.line_height = g_max_line_height;
+    p_line.last  = NULL;
 
     d_spacing = layout_work.titlep.spacing;
 
     font = layout_work.date.font;
 
     font_save = g_curr_font_num;
+    g_curr_font_num = font;
+    p_line.line_height = wgml_fonts[font].line_height;
 
-    calc_date_pos( font, spacing );
+    calc_date_pos( font, d_spacing );
     p_line.y_address = g_cur_v_start;
 
     prep_date_line( &p_line, p );
 
     ProcFlags.page_started = true;
-    y_save = g_cur_v_start;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-    g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );
-        p_line.first = NULL;
     }
     ProcFlags.page_started = true;
 

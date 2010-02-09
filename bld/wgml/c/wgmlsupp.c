@@ -254,7 +254,7 @@ static  void    get_macro_line( void )
 {
     macrocb *   cb;
 
-    if( input_cbs->fmflags & II_file ) {
+    if( input_cbs->fmflags & II_file ) {// current input is file not macro
         g_err( err_logic_mac );
         show_include_stack();
         err_count++;
@@ -431,6 +431,12 @@ void    show_include_stack( void )
     char        linestr[MAX_L_AS_STR];
     char        linemac[MAX_L_AS_STR];
 
+    if( (input_cbs != NULL) && input_cbs->fmflags & II_macro  ) {
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        utoa( input_cbs->s.m->mac->lineno, linemac, 10 );
+        g_info( err_inf_mac_def, linestr, input_cbs->s.m->mac->name,
+                linemac, input_cbs->s.m->mac->mac_file_name);
+    }
     if( inc_level > 1 ) {
         ip = input_cbs->prev;
         while( ip != NULL ) {

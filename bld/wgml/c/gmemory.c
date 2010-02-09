@@ -73,6 +73,17 @@ void g_trmem_init( void )
 #endif
 }
 
+/***************************************************************************/
+/*  get peak storage as recorded by trmem                                  */
+/***************************************************************************/
+
+unsigned long g_trmem_peak_usage( void )
+{
+#ifdef TRMEM
+    return( _trmem_get_peak_usage( handle ) );
+#endif
+    return( 0 );
+}
 
 /***************************************************************************/
 /*  memorytracker list allocated storage                                   */

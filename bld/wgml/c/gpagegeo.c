@@ -131,7 +131,7 @@ void    init_page_geometry( void )
         lcmax = g_net_page_height;
     }
 
-    g_page_bottom_org = g_page_bottom; // save bottom for possible bot banner calculation
+    g_page_bottom_org = g_page_bottom;// save for possible bot banner calculation
     g_page_top_org = g_page_top;// save top for possible bot banner calculation
 
     g_cd = layout_work.defaults.columns;// no of columns   &syscd

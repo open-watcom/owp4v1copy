@@ -55,7 +55,7 @@
 /*  spacing as wgml4, but still no luck                               TBD  */
 /***************************************************************************/
 
-static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t cnt )
+static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem, int32_t cnt )
 {
     text_chars  *   tn;
     text_chars  *   tw;
@@ -65,7 +65,7 @@ static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t
     int32_t         tp_start;
     int32_t         delta;
     int32_t         loop_cnt;
-    int32_t         space = wgml_fonts[0].spc_width;
+    int32_t         space = wgml_fonts[0].spc_width;// TBD
     int32_t         spacew;
     int32_t         remw = rem - rem;   // TBD
     char            ch;
@@ -78,7 +78,7 @@ static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t
 
     changed = false;
     tp_ind = tp_max;
-    tw = tc;
+    tw = line->first;
     while( tw != NULL && tp_ind >= 0) { // construct back chain
         tp[tp_ind] = tw;                // perhaps struct text_chars should
         tp_ind--;                       // get a prev ptr TBD
@@ -173,8 +173,9 @@ static  void    puncadj( text_chars * tc, int32_t * delta0, int32_t rem, int32_t
 /*  justification  experimental    treat half as left               TBD    */
 /***************************************************************************/
 
-void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
+void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 {
+    text_chars  *   tc;
     text_chars  *   tw;
     text_chars  *   tl;                 // last text_chars in line
     int32_t         sum_w;              // sum of words widths
@@ -189,7 +190,8 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
     ju_enum         just;
     symsub  *       symjusub;         // for debug output string value of .ju
 
-    if( ProcFlags.justify == ju_off || ProcFlags.literal || tc == NULL ) {
+    if( ProcFlags.justify == ju_off || ProcFlags.literal || line == NULL
+        || line->first == NULL) {
         return;
     }
 
@@ -205,7 +207,11 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
     sum_w = 0;
     hor_end = 0;
     cnt = 0;
-    tw = tc;
+    tw = line->first;
+    tl = line->last;
+
+    hor_end = tl->x_address + tl->width;// hor end position
+
     do {                                // calculate used width
         if( tw->x_address >= lm ) {  // no justify for words left of ju start
             if( cnt == 0 ) {
@@ -213,11 +219,6 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
             }
             cnt++;                      // number of 'words'
             sum_w += tw->width;         // sum of 'words' widths
-        }
-        if( tw->next == NULL ) {        // last element
-            tl = tw;
-            hor_end = tw->x_address + tw->width;// hor end position
-            break;
         }
         tw = tw->next;
     } while( tw != NULL );
@@ -284,7 +285,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
             break;                      // left of left margin no justify
         }
 
-        puncadj( tc, &delta0, rem, cnt - 1 );
+        puncadj( line, &delta0, rem, cnt - 1 );
 
         hor_end = tl->x_address + tl->width;// hor end position
         delta0 = rm - hor_end;          // TBD
@@ -301,7 +302,6 @@ void    do_justify( uint32_t lm, uint32_t rm, text_chars * tc )
 
             dummy.first = tc;
             test_out_t_line( &dummy );
-//          find_symvar( &sys_dict, "$ju", no_subscript, &symjusub);// already done
             out_msg( "\n  ju_%s lm:%d rm:%d line_width:%d sum_w:%d hor_end:%d"
                      " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
                      lm, rm, line_width, sum_w, hor_end, delta, rem, delta0,
@@ -380,7 +380,7 @@ void document_new_page( void )
     page++;
     ProcFlags.page_started = false;     // ? TBD
     post_skip = NULL;                   // TBD
-    set_v_start( 1 );
+    g_cur_v_start = g_page_top_org;
 }
 
 
@@ -434,32 +434,11 @@ void    intrans( char * data, uint16_t * len, uint8_t font )
 /***************************************************************************/
 /*  set position                                                           */
 /***************************************************************************/
-void    set_v_start( int8_t spacing )
-{
-    g_line_skip = wgml_fonts[g_curr_font_num].line_height;
-
-    if( bin_driver->y_positive == 0x00 ) {
-        if( !ProcFlags.page_started ) {   // TBD
-            g_line_top = bin_device->y_start;
-            g_cur_v_start = g_line_top - g_line_skip;
-        } else {
-            g_line_top = g_cur_v_start;
-            g_cur_v_start -= spacing * g_line_skip;
-        }
-    } else {
-        if( !ProcFlags.page_started ) {
-            g_line_top = bin_device->y_start;
-            g_cur_v_start  = g_line_top + g_line_skip;
-        } else {
-            g_line_top = g_cur_v_start;
-            g_cur_v_start += spacing * g_line_skip;
-        }
-    }
-}
-
 void set_h_start( void )
 {
-    g_cur_left = g_page_left + g_indent;
+    if( !ProcFlags.keep_left_margin ) {
+        g_cur_left = g_page_left + g_indent;
+    }
     g_cur_h_start = g_cur_left;
 
 }
@@ -475,7 +454,8 @@ void    test_page_full( void )
     if( ProcFlags.page_started ) {
         if( bin_driver->y_positive == 0x00 ) {
 
-            if( g_cur_v_start <= g_page_bottom ) {
+            if( g_cur_v_start - wgml_fonts[g_curr_font_num].line_height
+                    <= g_page_bottom ) {
                 newpage = widow_check();
                 if( !newpage ) {
                     finish_page();
@@ -483,7 +463,8 @@ void    test_page_full( void )
                 p_char = NULL;
             }
         } else {
-            if( g_cur_v_start >= g_page_bottom ) {
+            if( g_cur_v_start + wgml_fonts[g_curr_font_num].line_height
+                    >= g_page_bottom ) {
                 newpage = widow_check();
                 if( !newpage ) {
                     finish_page();
@@ -510,6 +491,16 @@ void    process_line_full( text_line * a_line, bool justify )
         prepare_doc_sect( ProcFlags.doc_sect );
     }
 
+    /***********************************************************************/
+    /*  adjust vertical position from upper to lower border of line        */
+    /***********************************************************************/
+    if( bin_driver->y_positive == 0x00 ) {
+        a_line->y_address -= a_line->line_height;
+    } else {
+        a_line->y_address += a_line->line_height;
+    }
+    g_cur_v_start = a_line->y_address;
+
     if( ProcFlags.test_widow ) {
         if( buf_lines == NULL ) {       // no buffered lines
             // if outside of widow area, reset widow test
@@ -529,7 +520,7 @@ void    process_line_full( text_line * a_line, bool justify )
         if( ProcFlags.test_widow ) {    // inside widow area, buffer line
             if( justify && GlobalFlags.lastpass && !ProcFlags.literal
                                      && ProcFlags.justify > ju_off ) {
-                do_justify( ju_x_start, g_page_right, a_line->first );
+                do_justify( ju_x_start, g_page_right, a_line );
 //              if( input_cbs->fmflags & II_research ) {// TBD
 //                  test_out_t_line( a_line );
 //              }
@@ -538,26 +529,25 @@ void    process_line_full( text_line * a_line, bool justify )
             buf_lines_cnt++;
         }
     }
-    if( GlobalFlags.lastpass && !ProcFlags.test_widow ) {
-        if( input_cbs->fmflags & II_research ) {
-            test_out_t_line( a_line );
-        }
-        if( justify && !ProcFlags.literal && ProcFlags.justify > ju_off ) {
-            do_justify( ju_x_start, g_page_right, a_line->first );
+    if( !ProcFlags.test_widow ) {
+        if( GlobalFlags.lastpass ) {
             if( input_cbs->fmflags & II_research ) {
                 test_out_t_line( a_line );
             }
+            if( justify && !ProcFlags.literal && ProcFlags.justify > ju_off ) {
+                do_justify( ju_x_start, g_page_right, a_line );
+                if( input_cbs->fmflags & II_research ) {
+                    test_out_t_line( a_line );
+                }
+            }
+            fb_output_textline( a_line );
         }
-        fb_output_textline( a_line );
-    }
-    if( !ProcFlags.test_widow  ) {
         add_text_chars_to_pool( a_line );
     }
     a_line->first = NULL;
     ProcFlags.line_started = false;     // line is now empty
     ProcFlags.just_override = true;     // justify for following lines
 
-    set_v_start( spacing );             // not always OK TBD
     set_h_start();
 
     test_page_full();
@@ -572,12 +562,11 @@ void    shift_spaces( void )
 {
     if( post_space_save > 0 ) {
         pre_space  = post_space_save;
-        post_space = 0;
         post_space_save = 0;
     } else {
         pre_space = post_space;
-        post_space = 0;
     }
+    post_space = 0;
 }
 
 /***************************************************************************/
@@ -643,7 +632,7 @@ void    process_text( char * text, uint8_t font_num )
                     pre_space = 0;
                 }
                 n_char->x_address = g_cur_h_start + pre_space;
-                input_cbs->fmflags &= ~II_sol;  // no longer start of line
+                input_cbs->fmflags &= ~II_sol;  // no longer at start of line
 
                 /***********************************************************/
                 /*  Test if word exceeds right margin                      */
@@ -677,7 +666,11 @@ void    process_text( char * text, uint8_t font_num )
                 } else {
                     p_char->next = n_char;
                     n_char->prev = p_char;
+                    if( t_line.line_height < wgml_fonts[font_num].line_height ) {
+                        t_line.line_height = wgml_fonts[font_num].line_height;
+                    }
                 }
+                t_line.last  = n_char;
                 p_char = n_char;
 
                 g_cur_h_start = n_char->x_address + n_char->width;
@@ -704,9 +697,6 @@ void    process_text( char * text, uint8_t font_num )
     if( p > pword ) {                   // last word
         count = p - pword;              // no of bytes
 
-//      if( pword != text ) {           // last is not only word
-//          post_space_save = 0;
-//      }
         n_char = process_word( pword, count, font_num );
 
         if( t_line.first == NULL ) {    // first element in output line
@@ -724,7 +714,11 @@ void    process_text( char * text, uint8_t font_num )
             ProcFlags.line_started = true;
         } else {
             n_char->x_address = g_cur_h_start + pre_space;
+            if( t_line.line_height < wgml_fonts[font_num].line_height ) {
+                t_line.line_height = wgml_fonts[font_num].line_height;
+            }
         }
+        t_line.last  = n_char;
         input_cbs->fmflags &= ~II_sol;
         if( n_char->x_address + n_char->width > g_page_right ) {
             pre_space = 0;
@@ -754,7 +748,11 @@ void    process_text( char * text, uint8_t font_num )
         } else {
             p_char->next = n_char;
             n_char->prev = p_char;
+            if( t_line.line_height < wgml_fonts[font_num].line_height ) {
+                t_line.line_height = wgml_fonts[font_num].line_height;
+            }
         }
+        t_line.last  = n_char;
         p_char = n_char;
 
         g_cur_h_start = n_char->x_address + n_char->width;

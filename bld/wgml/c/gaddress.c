@@ -226,7 +226,6 @@ static void add_aline( text_line * ad_line )
         p_line->next = ad_line;
     }
 
-//  set_v_start( a_spacing );
     set_h_start();
     return;
 }
@@ -283,3 +282,4 @@ void    gml_aline( const gmltag * entry )
     first_aline = false;
     scan_start = scan_stop + 1;
 }
+

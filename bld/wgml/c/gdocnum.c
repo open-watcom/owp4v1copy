@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 #include    "wgml.h"
-#include    "findfile.h"
 #include    "gvars.h"
 
 
@@ -40,10 +39,10 @@ static  void    calc_docnum_pos( int8_t font, int8_t d_spacing )
 {
 
     if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= wgml_fonts[font].line_height +
+        g_cur_v_start -=
             conv_vert_unit( &layout_work.docnum.pre_skip, d_spacing );
     } else {
-        g_cur_v_start += wgml_fonts[font].line_height +
+        g_cur_v_start +=
             conv_vert_unit( &layout_work.docnum.pre_skip, d_spacing );
     }
     return;
@@ -58,26 +57,24 @@ static void prep_docnum_line( text_line * p_line, char * p )
     text_chars  *   curr_t;
     uint32_t        h_left;
     uint32_t        h_right;
-    uint32_t        curr_x;
 
     h_left = g_page_left + conv_hor_unit( &layout_work.docnum.left_adjust );
     h_right = g_page_right - conv_hor_unit( &layout_work.docnum.right_adjust );
 
     if( *p ) {
-        curr_t = alloc_text_chars( NULL,1 + strlen( p ) +
+        curr_t = alloc_text_chars( layout_work.docnum.string, 1 + strlen( p ) +
                                    strlen( layout_work.docnum.string ),
                                    g_curr_font_num );
-
     } else {
-        curr_t = alloc_text_chars( NULL,
+        curr_t = alloc_text_chars( layout_work.docnum.string,
                                    1 + strlen( layout_work.docnum.string ),
                                    g_curr_font_num );
     }
-    strcpy_s( curr_t->text, curr_t->length, layout_work.docnum.string );
     if( *p  ) {
         strcat_s( curr_t->text, curr_t->length, p );
     }
     curr_t->count = strlen( curr_t->text );
+    intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
     while( curr_t->width > (h_right - h_left) ) {   // too long for line
@@ -89,21 +86,17 @@ static void prep_docnum_line( text_line * p_line, char * p )
                                         g_curr_font_num );
     }
     p_line->first = curr_t;
-    curr_x = 0;
+    p_line->last = curr_t;
+    p_line->line_height = wgml_fonts[g_curr_font_num].line_height;
+    curr_t->x_address = h_left;
     if( layout_work.docnum.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
-            h_left += (h_right - h_left - curr_t->width) / 2;
-            curr_x = h_left;
+            curr_t->x_address += (h_right - h_left - curr_t->width) / 2;
         }
     } else if( layout_work.docnum.page_position == pos_right ) {
-        h_left = h_right - curr_t->width;
-        curr_x = h_left;
+        curr_t->x_address = h_right - curr_t->width;
     }
-    if( curr_x == 0 ) {
-        curr_x = h_left;
-    }
-    curr_t->x_address = curr_x;
-    ju_x_start = curr_x;
+    ju_x_start = curr_t->x_address;
 
     return;
 }
@@ -116,10 +109,8 @@ void    gml_docnum( const gmltag * entry )
 {
     char        *   p;
     text_line       p_line;
-    int8_t          font;
     int8_t          d_spacing;
     int8_t          font_save;
-    uint32_t        y_save;
     int32_t         rc;
     symsub      *   docnumval;
 
@@ -145,32 +136,29 @@ void    gml_docnum( const gmltag * entry )
 
     p_line.first = NULL;
     p_line.next  = NULL;
-    p_line.line_height = g_max_line_height;
+    p_line.last  = NULL;
+    p_line.line_height = wgml_fonts[layout_work.docnum.font].line_height;
 
     d_spacing = layout_work.titlep.spacing;
 
-    font = layout_work.docnum.font;
-
     font_save = g_curr_font_num;
+    g_curr_font_num = layout_work.docnum.font;
 
-    calc_docnum_pos( font, d_spacing );
+    calc_docnum_pos( g_curr_font_num, d_spacing );
     p_line.y_address = g_cur_v_start;
 
     prep_docnum_line( &p_line, docnumval->value );
 
     ProcFlags.page_started = true;
-    y_save = g_cur_v_start;
+
     process_line_full( &p_line, false );
+
     g_curr_font_num = font_save;
-    g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );
-        p_line.first = NULL;
     }
     ProcFlags.page_started = true;
-
-
 
     scan_start = scan_stop + 1;
 }

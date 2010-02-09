@@ -44,6 +44,7 @@ void    add_line_to_buf_lines( text_line * * buf_lines, text_line * a_line )
 
     tline->next        = NULL;
     tline->first       = a_line->first;
+    tline->last        = a_line->last;
     tline->y_address   = a_line->y_address;
     tline->line_height = a_line->line_height;
 
@@ -80,7 +81,7 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
         document_top_banner();
 
         tline = *b_lines;
-        delta = g_page_top - tline->y_address;  // vertical adjust value
+        delta = g_page_top - tline->y_address - tline->line_height;// vertical adjust value
 
         while( tline != NULL ) {        // set y_addr(s) on new page
             tline->y_address += delta;
@@ -106,9 +107,9 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
     }
     if( newpage ) {                     // correction for vertical position
         if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start = wline->y_address - wline->line_height;
+            g_cur_v_start = wline->y_address;
         } else {
-            g_cur_v_start = wline->y_address + wline->line_height;
+            g_cur_v_start = wline->y_address;
         }
     }
     wline = *b_lines;

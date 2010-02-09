@@ -84,7 +84,10 @@ pick( INF_STAT_4,               "  Warning count:   %6s",
 pick( INF_STAT_5,               "     Returncode:   %6s",
                                 "     Returncode:   %6s" )
 
-pick( INF_STAT_6,               "Time to process: %s",
+pick( INF_STAT_6,               "   Memory usage:   %6s",
+                                "   Memory usage:   %6s" )
+
+pick( INF_STAT_7,               "Time to process: %s",
                                 "Time to process: %s" )
 
 pick( INF_CMDLINE,              "cmdline=%s",

@@ -38,14 +38,15 @@
 
 void    calc_title_pos( int8_t font, int8_t t_spacing, bool first )
 {
+    int32_t height  = wgml_fonts[font].line_height;
 
     if( first ) {
         if( !ProcFlags.page_started ) {
             if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start = g_page_top - wgml_fonts[font].line_height
+                g_cur_v_start = g_page_top
                     - conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
             } else {
-                g_cur_v_start = g_page_top + wgml_fonts[font].line_height
+                g_cur_v_start = g_page_top
                     + conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
             }
         } else {
@@ -59,24 +60,24 @@ void    calc_title_pos( int8_t font, int8_t t_spacing, bool first )
         }
     } else {
         if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= wgml_fonts[font].line_height
-                + conv_vert_unit( &layout_work.title.skip, t_spacing );
+            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip, t_spacing );
         } else {
-            g_cur_v_start += wgml_fonts[font].line_height
-                + conv_vert_unit( &layout_work.title.skip, t_spacing );
+            g_cur_v_start += conv_vert_unit( &layout_work.title.skip, t_spacing );
         }
     }
-    if( bin_driver->y_positive == 0 ) {
-        if( g_cur_v_start < g_page_bottom && ProcFlags.page_started ) {
-            finish_page();
-            document_new_page();
-            calc_title_pos( font, spacing, true );  // 1 recursion
-        }
-    } else {
-        if( g_cur_v_start > g_page_bottom && ProcFlags.page_started ) {
-            finish_page();
-            document_new_page();
-            calc_title_pos( font, spacing, true );  // 1 recursion
+    if( ProcFlags.page_started ) {
+        if( bin_driver->y_positive == 0 ) {
+            if( g_cur_v_start - height < g_page_bottom ) {
+                finish_page();
+                document_new_page();
+                calc_title_pos( font, t_spacing, true );// 1 recursion
+            }
+        } else {
+            if( g_cur_v_start + height > g_page_bottom ) {
+                finish_page();
+                document_new_page();
+                calc_title_pos( font, t_spacing, true );// 1 recursion
+            }
         }
     }
     return;
@@ -113,6 +114,7 @@ static void prep_title_line( text_line * p_line, char * p )
                                         g_curr_font_num );
     }
     p_line->first = curr_t;
+    p_line->last  = curr_t;
     curr_x = h_left;
     if( layout_work.title.page_position == pos_center ) {
         if( h_left + curr_t->width < h_right ) {
@@ -137,7 +139,6 @@ void    gml_title( const gmltag * entry )
     text_line       p_line;
     int8_t          t_spacing;
     int8_t          font_save;
-    uint32_t        y_save;
 
     if( ProcFlags.doc_sect != doc_sect_titlep ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
@@ -198,6 +199,7 @@ void    gml_title( const gmltag * entry )
 
     p_line.first = NULL;
     p_line.next  = NULL;
+    p_line.last  = NULL;
 
     t_spacing = layout_work.titlep.spacing;
 
@@ -212,14 +214,11 @@ void    gml_title( const gmltag * entry )
     prep_title_line( &p_line, p );
 
     ProcFlags.page_started = true;
-    y_save = g_cur_v_start;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-    g_cur_v_start = y_save;             // TBD
 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );
-        p_line.first = NULL;
     }
     ProcFlags.page_started = true;
 

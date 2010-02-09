@@ -28,7 +28,6 @@
 *               mostly tested :BODY so far
 ****************************************************************************/
 #include    "wgml.h"
-#include    "findfile.h"
 #include    "gvars.h"
 
 
@@ -175,6 +174,7 @@ void    prepare_doc_sect( doc_section ds )
         return;                         // once is enough
     }
     ProcFlags.prep_section = true;
+    ProcFlags.keep_left_margin = false;
 
     if( ds != doc_sect_body ) {
         out_msg( "prepare_doc_sect possibly incomplete\n" );
@@ -243,7 +243,6 @@ void    prepare_doc_sect( doc_section ds )
         if( bin_driver->y_positive == 0 ) {
             g_page_bottom = g_page_bottom_org
                             + conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
-//                    + wgml_fonts[sect_ban_bot[ind]->region->font].line_height;
         } else {
             g_page_bottom = g_page_bottom_org
                             - conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
@@ -278,6 +277,7 @@ static  void    gml_doc_xxx( doc_section ds, bool eject )
     ProcFlags.prep_section = false;     // do real section start later
 
     spacing = layout_work.defaults.spacing;
+    g_curr_font_num = layout_work.defaults.font;
     scan_start = scan_stop + 1;
     return;
 }

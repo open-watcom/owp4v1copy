@@ -95,10 +95,10 @@ void    add_text_chars_to_pool( text_line * a_line )
 {
     text_chars      *   tw;
 
-    if( a_line == NULL ) {
+    if( (a_line == NULL) || (a_line->first == NULL) ) {
         return;
     }
-    // free text_chars in pool don't have a valid prev ptr
+    // free text_chars in pool only have a valid next ptr
     if( text_pool == NULL ) {
         text_pool = a_line->first;
     } else {
@@ -128,6 +128,7 @@ text_line   * alloc_text_line( void )
 
     curr->next = NULL;
     curr->first = NULL;
+    curr->last = NULL;
 
     return( curr );
 }

@@ -41,10 +41,14 @@
 void    file_mac_info( void )
 {
     char        linestr[MAX_L_AS_STR];
+    char        linemac[MAX_L_AS_STR];
+
     if( input_cbs != NULL ) {
         if( input_cbs->fmflags & II_macro ) {
-//            utoa( input_cbs->s.m->lineno, linestr, 10 );
-//            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            utoa( input_cbs->s.m->mac->lineno, linemac, 10 );
+            g_info( err_inf_mac_def, linestr, input_cbs->s.m->mac->name,
+                    linemac, input_cbs->s.m->mac->mac_file_name);
         } else {
             utoa( input_cbs->s.f->lineno, linestr, 10 );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );

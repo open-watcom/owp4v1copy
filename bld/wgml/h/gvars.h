@@ -143,8 +143,6 @@ global  struct GlobalFlags {
     unsigned        research      : 1;  // -r option research mode output
 } GlobalFlags;                          // Global flags
 
-
-#pragma disable_message( 128 ); // suppress: Warning! W128: 3 padding byte(s) added
 global struct ProcFlags {
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
@@ -163,12 +161,6 @@ global struct ProcFlags {
     unsigned        reprocess_line  : 1;// unget for current input line
     unsigned        concat          : 1;// .co ON if set
     unsigned        just_override   : 1;// current line is to be justified
-
-    doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
-
-    ju_enum         justify         : 8;// .ju on half off ...
-
-    lay_sub         lay_xxx         : 8;// active :layout sub tag
 
     unsigned        layout          : 1;// within :layout tag and sub tags
     unsigned        lay_specified   : 1;// LAYOUT option or :LAYOUT tag seen
@@ -190,6 +182,12 @@ global struct ProcFlags {
     unsigned        address_active  : 1;// within :ADDRESS tag
     unsigned        sk_cond         : 1;// .sk n C found
     unsigned        test_widow      : 1;// for preventing widow lines
+
+    unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
+
+    doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
+    lay_sub         lay_xxx         : 8;// active :layout sub tag
+    ju_enum         justify         : 8;// .ju on half off ...
 
 } ProcFlags;                            // processing flags
 #pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
@@ -216,8 +214,6 @@ global gaentry  *   att_entry;          // ... entry in tag_dict
 global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input char for .ti processing
-
-
 
 global text_line    t_line;             // for constructing output line
 global text_chars * p_char;             // previous text char   "

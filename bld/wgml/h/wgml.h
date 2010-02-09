@@ -169,6 +169,7 @@ extern  void    *   mem_realloc( void * p, size_t size );
 extern  void        g_trmem_init( void );
 extern  void        g_trmem_prt_list( void );
 extern  void        g_trmem_close( void );
+extern  unsigned long   g_trmem_peak_usage( void );
 
 
 /* goptions.c                         */
@@ -193,7 +194,7 @@ extern  void    split_input_LIFO( char * buf, char * split_pos );
 /* gproctxt.c              TBD        */
 extern  void    add_text_chars_to_pool( text_line * a_line );
 extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
-extern  void    do_justify( uint32_t left_m, uint32_t right_m, text_chars * tc );
+extern  void    do_justify( uint32_t left_m, uint32_t right_m, text_line * line );
 extern  void    document_new_page( void );
 extern  void    document_top_banner( void );
 extern  void    intrans( char * data, uint16_t * len, uint8_t font );
@@ -201,7 +202,8 @@ extern  void    process_line_full( text_line * a_line, bool justify );
 extern  void    process_text( char * text, uint8_t font_num );
 extern  text_chars * process_word( char * text, size_t count, uint8_t font_num );
 extern  void    set_h_start( void );
-extern  void    set_v_start( int8_t spacing );
+extern  void    shift_spaces( void );
+extern  void    test_page_full( void );
 
 
 /* gresrch.c                          */

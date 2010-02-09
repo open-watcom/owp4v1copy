@@ -28,11 +28,8 @@
 *
 ****************************************************************************/
 #include    "wgml.h"
-//#include    "findfile.h"
 #include    "gvars.h"
 
-extern void test_page_full( void );
-extern void shift_spaces( void );
 
 /***************************************************************************/
 /*  :P.perhaps paragraph elements                                          */
@@ -46,12 +43,13 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
     scan_err = false;
     p = scan_start;
 
+    ProcFlags.keep_left_margin = false; // no special Note indent
     prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
 
     scr_process_break();
 
     if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false );  // lines are no widows
+        out_buf_lines( &buf_lines, false ); // lines are no widows
         buf_lines_cnt = 0;
     }
 
@@ -61,17 +59,19 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
 
+    if( post_skip != NULL ) {
+        skippost = conv_vert_unit( post_skip, spacing );
+        post_skip = NULL;
+    } else {
+        skippost = 0;
+    }
+
     if( ProcFlags.page_started ) {      // TBD
         skippre = conv_vert_unit( &(p_pc->pre_skip), spacing );
-        if( post_skip != NULL ) {
-            skippost = conv_vert_unit( post_skip, spacing );
-        } else {
-            skippost = 0;
-        }
         if( skippost > skippre ) {
             skippre = skippost;         // take maximum skip amount
         }
-        skippost = calc_skip_value();
+        skippost = calc_skip_value();   // pending .sk value?
         if( skippost > skippre ) {
             skippre = skippost;         // take maximum skip amount
         }
@@ -86,16 +86,15 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
         }
     } else {
         if( bin_driver->y_positive == 0x00 ) {
-            if( post_skip != NULL ) {
-                g_cur_v_start -= conv_vert_unit( post_skip, spacing );
+            if( skippost > 0 ) {
+                g_cur_v_start -= skippost;
             }
         } else {
-            if( post_skip != NULL ) {
-                g_cur_v_start += conv_vert_unit( post_skip, spacing );
+            if( skippost > 0 ) {
+                g_cur_v_start += skippost;
             }
         }
     }
-    post_skip = NULL;
 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
@@ -129,6 +128,12 @@ extern  void    gml_pc( const gmltag * entry )
     proc_p_pc( &layout_work.pc );
 }
 
+/***************************************************************************/
+/* special for :NOTE tag                                                   */
+/* trailing spaces are stripped                                            */
+/* influencing the left margin for the NOTE paragraph                      */
+/***************************************************************************/
+
 void    start_line_with_string( char * text, uint8_t font_num )
 {
     text_chars          *   n_char;     // new text char
@@ -138,16 +143,17 @@ void    start_line_with_string( char * text, uint8_t font_num )
     if( count == 0 ) {
         return;
     }
-
-    if( !ProcFlags.prep_section ) {
-        prepare_doc_sect( ProcFlags.doc_sect );
+    post_space = 0;
+    while( *(text + count - 1) == ' ' ) {   // strip trailing spaces
+        post_space++;
+        if( --count == 0 ) {
+            break;
+        }
     }
 
     test_page_full();
 
     n_char = alloc_text_chars( text, count, font_num );
-
-    shift_spaces();
 
     n_char->x_address = g_cur_h_start;
     ju_x_start = g_cur_h_start;
@@ -186,12 +192,14 @@ void    start_line_with_string( char * text, uint8_t font_num )
         ProcFlags.line_started = true;
     } else {
         p_char->next = n_char;
+        n_char->prev = p_char;
     }
+    t_line.last  = n_char;
     p_char = n_char;
 
     g_cur_h_start = n_char->x_address + n_char->width;
     ProcFlags.page_started = true;
-    post_space = 0;
+    post_space = post_space * wgml_fonts[layout_work.defaults.font].spc_width;
     post_space_save = 0;
 }
 
@@ -201,8 +209,9 @@ void    start_line_with_string( char * text, uint8_t font_num )
 extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
-    uint32_t        skippre;
-    uint32_t        skippost;
+    int32_t        skippre;
+    int32_t        skippost;
+    int32_t        skipsk;
 
     scan_err = false;
     p = scan_start;
@@ -216,23 +225,20 @@ extern  void    gml_note( const gmltag * entry )
         buf_lines_cnt = 0;
     }
 
+    if( post_skip != NULL ) {
+        skippost = conv_vert_unit( post_skip, spacing );
+    } else {
+        skippost = 0;
+    }
+    skipsk = calc_skip_value();   // pending .sk value?
+    g_curr_font_num = layout_work.note.font;
     if( ProcFlags.page_started ) {
         skippre = conv_vert_unit( &(layout_work.note.pre_skip), spacing );
-        if( skippre > 0 ) {
-            skippre -= wgml_fonts[layout_work.note.font].line_height; // TBD
-        }
-        if( post_skip != NULL ) {
-            skippost = conv_vert_unit( post_skip, spacing );
-        } else {
-            skippost = 0;
-        }
         if( skippost > skippre ) {
             skippre = skippost;         // take maximum skip amount
         }
-
-        skippost = calc_skip_value();
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
+        if( skipsk > skippre ) {
+            skippre = skipsk;           // take maximum skip amount
         }
         if( bin_driver->y_positive == 0x00 ) {
             if( skippre < g_cur_v_start ) {
@@ -245,12 +251,12 @@ extern  void    gml_note( const gmltag * entry )
         }
     } else {
         if( bin_driver->y_positive == 0x00 ) {
-            if( post_skip != NULL ) {
-                g_cur_v_start -= conv_vert_unit( post_skip, spacing );
+            if( skippost > 0 ) {
+                g_cur_v_start -= skippost;
             }
         } else {
-            if( post_skip != NULL ) {
-                g_cur_v_start += conv_vert_unit( post_skip, spacing );
+            if( skippost > 0 ) {
+                g_cur_v_start += skippost;
             }
         }
     }
@@ -265,15 +271,17 @@ extern  void    gml_note( const gmltag * entry )
     g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent );
     g_cur_h_start = g_cur_left;
 
+    ProcFlags.keep_left_margin = true;  // keep special Note indent
     start_line_with_string( layout_work.note.string, layout_work.note.font );
-    g_cur_left = g_page_left + p_char->width;
     if( p_char != NULL ) {
-        g_cur_left += p_char->width;
+        g_cur_left += p_char->width + post_space;
     }
-
+    post_space = 0;
     g_cur_h_start = g_cur_left;
     ju_x_start = g_cur_h_start;
 
+    spacing = layout_work.note.spacing;
+    g_curr_font_num = layout_work.defaults.font;
     if( *p == '.' ) p++;                // over '.'
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows

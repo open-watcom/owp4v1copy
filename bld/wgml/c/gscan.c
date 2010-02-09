@@ -761,7 +761,7 @@ void    scan_line( void )
                     /* do body section start as default section        */
                     /***************************************************/
                     do_layout_end_processing();
-                    prepare_doc_sect( doc_sect_body );
+// TBD              prepare_doc_sect( doc_sect_body );
                 }
                 // processs (remaining) text
                 process_text( scan_start, g_curr_font_num );

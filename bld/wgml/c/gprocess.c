@@ -134,14 +134,21 @@ static  void    split_input_var( char * buf, char * split_pos, char * part2 )
 /*  look for GML tag start character and split line if valid GML tag       */
 /*  don't split if blank follows gml_char                                  */
 /*  special for  xxx::::TAG construct                                      */
+/*  don't split if line starts with :CMT.                                  */
 /***************************************************************************/
 static void split_at_GML_tag( void )
 {
     char    *   p2;
     char    *   pchar;
 
+    if( *buff2 == GML_char ) {
+        if( !strnicmp( (buff2 + 1), "CMT", 3 ) &&
+            ((*(buff2 + 4) == '.') || (*(buff2 + 4) == ' ')) ) {
+            return;                     // no split for :cmt. line
+        }
+    }
     pchar = strchr( buff2 + 1, GML_char );  // look for GML tag start
-    if( (pchar != NULL) && (buff2 < pchar) ) {
+    if( pchar != NULL ) {
         while( *(pchar + 1) == GML_char ) {
             pchar++;                    // handle repeated GML_chars
         }

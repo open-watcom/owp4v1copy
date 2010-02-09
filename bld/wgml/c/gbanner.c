@@ -54,17 +54,14 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
     reg_off = conv_vert_unit( &(ban->region->voffset), 1 );
 
     skip = ban_depth - reg_off - wgml_fonts[ban->region->font].line_height;
-//  skip = ban_depth - reg_off;         // TBD
     if( skip > 0 ) {               // if region start is not last banner line
         post_top_skip = skip;           // reserve space
     } else {
-//        post_top_skip = wgml_fonts[ban->region->font].line_height; // TBD
         post_top_skip = 0;
     }
 
     if( bin_driver->y_positive == 0 ) {
-        v_pos = bin_device->y_start - reg_off
-                - wgml_fonts[ban->region->font].line_height;
+        v_pos = bin_device->y_start - reg_off;
     } else {
         v_pos = bin_device->y_start + reg_off;
     }
@@ -84,12 +81,10 @@ extern  uint32_t    ban_bot_pos( banner_lay_tag * ban )
 
     if( bin_driver->y_positive == 0 ) {
         vpos = bin_device->y_start - g_page_depth + ban_depth
-               - conv_vert_unit( &(ban->region->voffset), 1 )
-               - wgml_fonts[ban->region->font].line_height;
+               - conv_vert_unit( &(ban->region->voffset), 1 );
     } else {
         vpos = bin_device->y_start + g_page_depth - ban_depth
                + conv_vert_unit( &(ban->region->voffset), 1 );
-//               - wgml_fonts[ban->region->font].line_height;
     }
     return( vpos );
 }
@@ -677,10 +672,10 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         if( reg_text[k] == NULL ) {
             continue;                   // skip empty part
         }
+        g_curr_font_num = reg_text[k]->font_number;
         if( ban_line.first == NULL ) {
             ban_line.first = reg_text[k];
             ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
-            g_curr_font_num = reg_text[k]->font_number;
             if( bottom ) {
                 g_cur_v_start = ban_bot_pos( ban );
             } else {
@@ -688,13 +683,14 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
             }
             ban_line.y_address = g_cur_v_start;
         } else {
-            curr_t = ban_line.first;
-            while( curr_t->next != NULL ) {
-                curr_t = curr_t->next;
-            }
-            curr_t->next = reg_text[k];
+            ban_line.last->next = reg_text[k];
+            reg_text[k]->prev = ban_line.last;
+        }
+        if( ban_line.line_height < wgml_fonts[reg_text[k]->font_number].line_height ) {
+            ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
         }
         curr_t = reg_text[k];
+        ban_line.last  = reg_text[k];
 
         h_left  = ban_left;
         h_right = ban_right;
@@ -727,6 +723,16 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         curr_x += curr_t->width;
 
     }
+    /*******************************************************************/
+    /*  adjust vertical position from upper to lower border of line    */
+    /*******************************************************************/
+    if( bin_driver->y_positive == 0x00 ) {
+        ban_line.y_address -= ban_line.line_height;
+        g_cur_v_start -= ban_line.line_height;
+    } else {
+        ban_line.y_address += ban_line.line_height;
+        g_cur_v_start += ban_line.line_height;
+    }
     if( GlobalFlags.lastpass && ban_line.first != NULL) {
         if( input_cbs->fmflags & II_research ) {
             test_out_t_line( &ban_line );
@@ -749,15 +755,9 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
             curr_p = curr_t;
             curr_t = curr_t->next;
         }
-
         fb_output_textline( &ban_line );
     }
 
-    if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= ban_line.line_height;
-    } else {
-        g_cur_v_start += ban_line.line_height;
-    }
     if( ban_line.first != NULL) {
         add_text_chars_to_pool( &ban_line );
         ban_line.first = NULL;
@@ -776,10 +776,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 
                 if( pskip > 0 ) {
                     post_top_skip += pskip;
-                } else {
-//                  if( page > 1 ) {
-//                       post_top_skip = 0; // TBD
-//                  }
                 }
                 post_skip = NULL;
             } else {
@@ -805,7 +801,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 void    out_ban_top( banner_lay_tag * ban )
 {
     out_ban_common( ban, false );       // false for top banner
-//    ProcFlags.page_started = true; // TBD
     ProcFlags.top_ban_proc = true;
 }
 

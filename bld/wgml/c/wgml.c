@@ -508,13 +508,17 @@ static  void    print_stats( clock_t duration_ticks )
     utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
     g_info( inf_stat_5, linestr );
 
+    #ifdef TRMEM
+        utoa( g_trmem_peak_usage(), linestr, 10 );
+        g_info( inf_stat_6, linestr );
+    #endif
+
     // convert duration from clock ticks to HH:MM:SS.hh
     hour_min = ldiv( duration_ticks / CLOCKS_PER_SEC / 60L, 60L );
     sec_frac  = ldiv( duration_ticks, CLOCKS_PER_SEC );
     sprintf_s( linestr, sizeof( linestr ), "%02lu:%02lu:%02lu.%02lu\0",
         hour_min.quot, hour_min.rem, sec_frac.quot % 60, sec_frac.rem / 10 );
-    g_info( inf_stat_6, linestr );
-
+    g_info( inf_stat_7, linestr );
 }
 
 
