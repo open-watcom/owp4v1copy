@@ -1,11 +1,14 @@
 !ifdef sys_windowed
+
+special = rcstr.gh
+
 $(proj_name).res : $(vi_dir)/win/viw.rc .AUTODEPEND
         $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@
 
 rcstr.gh : rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-rcstrmsg.gh : $(vi_dir)/vi.msg $(vi_dir)/tooltips.msg $(msgfiles)
+rcstrmsg.gh : $(vi_dir)/vi.msg $(vi_dir)/tooltips.msg ../h/langdef.h $(msgfiles)
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" -fo=$^@
 
 setfs.obj : setfs.c setfs.ch setfs.dh

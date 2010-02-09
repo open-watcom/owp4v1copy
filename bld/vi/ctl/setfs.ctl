@@ -1,10 +1,6 @@
-ctl_check SETFS_LANGUAGE
-    offsetof( dlg_data, LanguageBool )
-    *
-    
 ctl_combo SETFS_LANGUAGESELECT
     offsetof( dlg_data, Language )
-    1, VI_LANG_FIRST, VI_LANG_LAST
+    0, VI_LANG_FIRST, VI_LANG_LAST
 
 ctl_check SETFS_PPKEYWORDONLY
     offsetof( dlg_data, PPKeywordOnly )

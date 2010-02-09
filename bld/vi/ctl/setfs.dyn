@@ -1,2 +1,2 @@
-DYN_TPL_DIM dynGetLanguageButton dynIsLanguageButton
+DYN_TPL_DIM dynGetLanguage dynIsLanguage
     0, SETFS_PPKEYWORDONLY, 0

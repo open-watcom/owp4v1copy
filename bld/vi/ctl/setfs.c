@@ -39,7 +39,7 @@
 #include "rcstr.gh"
 #include <assert.h>
 
-#define VI_LANG_FIRST   VI_LANG_LANG1
+#define VI_LANG_FIRST   VI_LANG_LANG0
 #define VI_LANG_LAST    VI_LANG_LANG14
 
 #define TAGFILENAMEWIDTH        129
@@ -49,7 +49,6 @@
 
 
 typedef struct {
-    BOOL        LanguageBool;
     lang_t      Language;
     BOOL        PPKeywordOnly;
     BOOL        CMode;
@@ -75,20 +74,21 @@ static dlg_data     dlg_dataArray[MAX_FT_ENTRIES];
 
 static dlg_data     cancelData;
 
-static dyn_dim_type dynGetLanguageButton( HWND hwndDlg, BOOL initial )
+static dyn_dim_type dynGetLanguage( HWND hwndDlg, BOOL initial )
 {
     int sel;
     
     initial = initial;
     sel = (int)SendDlgItemMessage( hwndDlg, SETFS_LANGUAGESELECT, CB_GETCURSEL, 0, 0L );
-    if( IsDlgButtonChecked( hwndDlg, SETFS_LANGUAGE ) &&
-        (sel + 1 == LANG_C || sel + 1 == LANG_CPP) ) {
-        return( DYN_VISIBLE );
+    switch( sel ) {
+    case LANG_NONE:
+    case LANG_USER:
+        return( DYN_DIM );
     }
-    return( DYN_DIM );
+    return( DYN_VISIBLE );
 }
 
-static BOOL dynIsLanguageButton( UINT wParam, LONG lParam, HWND hwndDlg )
+static BOOL dynIsLanguage( UINT wParam, LONG lParam, HWND hwndDlg )
 {
     WORD        id;
     WORD        cmd;
@@ -97,8 +97,7 @@ static BOOL dynIsLanguageButton( UINT wParam, LONG lParam, HWND hwndDlg )
     lParam = lParam;
     id = LOWORD( wParam );
     cmd = GET_WM_COMMAND_CMD( wParam, lParam );
-    if( (id == SETFS_LANGUAGE && cmd == BN_CLICKED) ||
-        (id == SETFS_LANGUAGESELECT && cmd == CBN_SELCHANGE) ) {
+    if( id == SETFS_LANGUAGESELECT && cmd == CBN_SELCHANGE ) {
         return( TRUE );
     }
     return( FALSE );
@@ -111,7 +110,6 @@ static void globalTodlg_data( dlg_data *data, info *envInfo )
 {
     if( envInfo ) {
         data->Language = envInfo->Language;
-        data->LanguageBool = (envInfo->Language > 0) ? TRUE : FALSE;
         data->PPKeywordOnly = EditFlags.PPKeywordOnly;
         data->CMode = EditFlags.CMode;
         data->ReadEntireFile = EditFlags.ReadEntireFile;
@@ -137,8 +135,7 @@ static void globalTodlg_data( dlg_data *data, info *envInfo )
 
 static void dlg_dataDefault( dlg_data *data )
 {
-    data->Language = LANG_C;
-    data->LanguageBool = FALSE;
+    data->Language = LANG_NONE;
     data->PPKeywordOnly = FALSE;
     data->CMode = FALSE;
     data->ReadEntireFile = FALSE;
@@ -267,11 +264,8 @@ void dumpCommands( int i )
     FTSAddBoolean( dlg_dataArray[i].ShowMatch, "showmatch" );
     FTSAddBoolean( dlg_dataArray[i].PPKeywordOnly, "ppkeywordonly" );
 
-    if( !dlg_dataArray[i].LanguageBool ) {
-        FTSAddInt( 0, "language" );
-    } else {
-        FTSAddInt( dlg_dataArray[i].Language, "language" );
-    }
+    FTSAddInt( dlg_dataArray[i].Language, "language" );
+
     FTSAddInt( dlg_dataArray[i].TabAmount, "tabamount" );
 
     FTSAddInt( dlg_dataArray[i].HardTab, "hardtab" );
@@ -447,7 +441,6 @@ BOOL WINEXP SetFSProc( HWND hwndDlg, unsigned msg, UINT wParam, LONG lParam )
 
     switch( msg ) {
     case WM_INITDIALOG:
-        EditFlags.Quiet = TRUE;
         globalTodlg_data( &cancelData, CurrentInfo );
         CenterWindowInRoot( hwndDlg );
         fillFileType( hwndDlg );
@@ -508,7 +501,6 @@ BOOL WINEXP SetFSProc( HWND hwndDlg, unsigned msg, UINT wParam, LONG lParam )
         ctl_dlg_process( &Ctl_setfs, wParam, lParam );
         dyn_tpl_process( &Dyn_setfs, hwndDlg, wParam, lParam );
     }
-
     return( FALSE );
 }
 
