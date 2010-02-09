@@ -32,7 +32,6 @@
 #include "vi.h"
 #include "sstyle.h"
 #include "sstyle_m.h"
-#include "lang.h"
 
 
 /* Note: We're cheating and only have a single list of keywords.

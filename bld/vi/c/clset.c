@@ -39,7 +39,6 @@
 #include "win.h"
 #include "menu.h"
 #include "source.h"
-#include "lang.h"
 
 static bool msgFlag;
 static bool needsRedisplay = FALSE;

@@ -31,7 +31,6 @@
 
 #include "vi.h"
 #include "sstyle.h"
-#include "lang.h"
 #include "sstyle_c.h"
 #include "sstyle_f.h"
 #include "sstyle_h.h"

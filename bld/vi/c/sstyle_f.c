@@ -32,7 +32,6 @@
 
 #include "vi.h"
 #include "sstyle.h"
-#include "lang.h"
 
 
 /*----- LOCALS -----*/

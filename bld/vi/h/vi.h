@@ -69,6 +69,7 @@ void            *_inline_memset( void *__s, int __c, unsigned int __n );
 
 #include "const.h"
 #include "errs.h"
+#include "lang.h"
 #include "struct.h"
 #include "mouse.h"
 #include "globals.h"

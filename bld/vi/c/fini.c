@@ -39,7 +39,6 @@
 #include "win.h"
 #include "fcbmem.h"
 #include "sstyle.h"
-#include "lang.h"
 #include "fts.h"
 #include "rxsupp.h"
 #include "rcs.h"

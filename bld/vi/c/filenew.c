@@ -34,7 +34,6 @@
 #include "posix.h"
 #include "source.h"
 #include "win.h"
-#include "lang.h"
 #include "fts.h"
 
 /*
