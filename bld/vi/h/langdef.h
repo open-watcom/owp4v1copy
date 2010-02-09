@@ -24,39 +24,24 @@
 *
 *  ========================================================================
 *
-* Description:  Languages defined for syntax highlighting.
+* Description:  Definition of source language constants.
 *
 ****************************************************************************/
 
-
-#ifndef _LANG_INCLUDED
-#define _LANG_INCLUDED
-
-typedef enum {
-#define pick_lang(enum,enumrc,name,namej,fname) enum,
-#include "langdef.h"
-#undef pick_lang
-    LANG_MAX
-} lang_t;
-
-typedef struct tag_hash_entry {
-    bool                    real;
-    char                    *keyword;
-    struct tag_hash_entry   *next;
-} hash_entry;
-
-typedef struct tag_lang_info {
-    hash_entry          *keyword_table;
-    int                 table_entries;
-    int                 ref_count;
-    char                *read_buf;
-} lang_info;
-
-bool    IsKeyword( char *keyword, bool case_ignore );
-bool    IsPragma( char *pragma );
-bool    IsDeclspec( char *keyword );
-void    LangInit( lang_t );
-void    LangFini( lang_t );
-void    LangFiniAll( void );
-
-#endif
+/*         enum           enumrc          name        namej       fname */
+pick_lang( LANG_NONE,     VI_LANG_LANG0,  "None",     "None",     "" )
+pick_lang( LANG_C,        VI_LANG_LANG1,  "C",        "C",        "c.dat" )
+pick_lang( LANG_CPP,      VI_LANG_LANG2,  "C++",      "C++",      "cpp.dat" )
+pick_lang( LANG_FORTRAN,  VI_LANG_LANG3,  "Fortran",  "Fortran",  "fortran.dat" )
+pick_lang( LANG_JAVA,     VI_LANG_LANG4,  "Java",     "Java",     "java.dat" )
+pick_lang( LANG_SQL,      VI_LANG_LANG5,  "SQL",      "SQL",      "sql.dat" )
+pick_lang( LANG_BAT,      VI_LANG_LANG6,  "Batch",    "Batch",    "bat.dat" )
+pick_lang( LANG_BASIC,    VI_LANG_LANG7,  "Basic",    "Basic",    "basic.dat" )
+pick_lang( LANG_PERL,     VI_LANG_LANG8,  "Perl",     "Perl",     "perl.dat" )
+pick_lang( LANG_HTML,     VI_LANG_LANG9,  "HTML",     "HTML",     "html.dat" )
+pick_lang( LANG_WML,      VI_LANG_LANG10, "WML",      "WML",      "wml.dat" )
+pick_lang( LANG_GML,      VI_LANG_LANG11, "GML",      "GML",      "gml.dat" )
+pick_lang( LANG_DBTEST,   VI_LANG_LANG12, "DBTest",   "DBTest",   "dbtest.dat" )
+pick_lang( LANG_MAKEFILE, VI_LANG_LANG13, "Makefile", "Makefile", "mif.dat" )
+pick_lang( LANG_RC,       VI_LANG_LANG14, "Resource", "Resource", "rc.dat" )
+pick_lang( LANG_USER,     VI_LANG_LANG15, "User",     "User",     "user.dat" )

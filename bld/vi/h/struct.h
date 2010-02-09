@@ -434,7 +434,7 @@ typedef struct info {
     vi_ushort   DuplicateID;
     void        *dc;
     int         dc_size;
-    int         Language;
+    lang_t      Language;
     bool        RealTabs;
     bool        ReadEntireFile;
     bool        ReadOnlyCheck;

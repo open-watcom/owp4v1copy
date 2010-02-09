@@ -36,9 +36,11 @@
 #include "ctltype.h"
 #include "dyntpl.h"
 #include "fts.h"
-#include "lang.h"
 #include "rcstr.gh"
 #include <assert.h>
+
+#define VI_LANG_FIRST   VI_LANG_LANG1
+#define VI_LANG_LAST    VI_LANG_LANG14
 
 #define TAGFILENAMEWIDTH        129
 #define GREPDEFAULTWIDTH        20
@@ -48,7 +50,7 @@
 
 typedef struct {
     BOOL        LanguageBool;
-    int         Language;
+    lang_t      Language;
     BOOL        PPKeywordOnly;
     BOOL        CMode;
     BOOL        ReadEntireFile;
@@ -135,7 +137,7 @@ static void globalTodlg_data( dlg_data *data, info *envInfo )
 
 static void dlg_dataDefault( dlg_data *data )
 {
-    data->Language = 1;
+    data->Language = LANG_C;
     data->LanguageBool = FALSE;
     data->PPKeywordOnly = FALSE;
     data->CMode = FALSE;

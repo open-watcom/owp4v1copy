@@ -74,7 +74,7 @@ extern int          Radix;
 extern char         *WordDefn;
 extern char         *WordAltDefn;
 extern int          AutoSaveInterval;
-extern int          Language;
+extern lang_t       Language;
 extern long         NextAutoSave;
 extern int          HalfPageLines;
 extern int          PageLinesExposed;

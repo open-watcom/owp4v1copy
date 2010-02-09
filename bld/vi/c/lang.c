@@ -31,27 +31,12 @@
 
 #include "vi.h"
 #include "sstyle.h"
-#include "lang.h"
 #include <assert.h>
 
-static lang_info    langInfo[LANG_MAX] = {
-    //table,  entries, ref_count, read_buf
-    { NULL,        0,          0,    NULL },  // None         0
-    { NULL,        0,          0,    NULL },  // C            1
-    { NULL,        0,          0,    NULL },  // C++          2
-    { NULL,        0,          0,    NULL },  // Fortran      3
-    { NULL,        0,          0,    NULL },  // Java         4
-    { NULL,        0,          0,    NULL },  // SQL          5
-    { NULL,        0,          0,    NULL },  // BAT          6
-    { NULL,        0,          0,    NULL },  // Basic        7
-    { NULL,        0,          0,    NULL },  // Perl         8
-    { NULL,        0,          0,    NULL },  // HTML         9
-    { NULL,        0,          0,    NULL },  // WML          10
-    { NULL,        0,          0,    NULL },  // GML          11
-    { NULL,        0,          0,    NULL },  // DBTest       12
-    { NULL,        0,          0,    NULL },  // Makefile     13
-    { NULL,        0,          0,    NULL },  // Resource     14
-    { NULL,        0,          0,    NULL }   // user-defined 15
+static lang_info    langInfo[] = {
+#define pick_lang(enum,enumrc,name,namej,fname) { NULL, 0, 0, NULL },
+#include "langdef.h"
+#undef pick_lang
 };
 
 static hash_entry   *pragma_table           = NULL;
@@ -238,13 +223,15 @@ static bool lang_save( int i, char *buff )
 /*
  * LangInit - build hash table based on current language
  */
-void LangInit( int newLanguage )
+void LangInit( lang_t newLanguage )
 {
     vi_rc       rc;
     char        *buff;
-    char        *fname[] = { NULL, "c.dat", "cpp.dat", "fortran.dat", "java.dat", "sql.dat",
-                             "bat.dat", "basic.dat", "perl.dat", "html.dat", "wml.dat",
-                             "gml.dat", "dbtest.dat", "mif.dat", "rc.dat", "user.dat" };
+    char        *fname[] = {
+        #define pick_lang(enum,enumrc,name,namej,fname) fname,
+        #include "langdef.h"
+        #undef pick_lang
+    };
 
     assert( CurrentInfo != NULL );
     CurrentInfo->Language = newLanguage;
@@ -306,7 +293,7 @@ void LangInit( int newLanguage )
 /*
  * LangFini
  */
-void LangFini( int language )
+void LangFini( lang_t language )
 {
     if( language == LANG_NONE || langInfo[language].ref_count == 0 ) {
         return;
@@ -336,7 +323,8 @@ void LangFini( int language )
  */
 void LangFiniAll( void )
 {
-    int i;
+    lang_t  i;
+
     for( i = LANG_NONE; i < LANG_MAX; i++ ) {
         while( langInfo[i].ref_count ) {
             LangFini( i );
