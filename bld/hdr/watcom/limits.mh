@@ -231,6 +231,20 @@
 :: <cstddef> is needed for wchar_t. Once wchar_t is built-in this include
 :: can be removed.
 
+#ifdef min
+#undef min
+template< class Type >
+inline Type min( Type a, Type b )
+{ return a < b ? a : b; }
+#endif
+
+#ifdef max
+#undef max
+template< class Type >
+inline Type max( Type a, Type b )
+{ return a > b ? a : b; }
+#endif
+
 namespace std {
 
   enum float_round_style {
