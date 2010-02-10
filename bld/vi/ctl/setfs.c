@@ -165,7 +165,7 @@ static void filldlg_dataArray( int index, char *match, info *useInfo )
     globalTodlg_data( &(dlg_dataArray[index]), useInfo );
 }
 
-void fillFileType( HWND hwndDlg )
+static void fillFileType( HWND hwndDlg )
 {
     HWND        hwndCB;
     ft_src      *fts;
@@ -208,7 +208,7 @@ void fillFileType( HWND hwndDlg )
     CurrentInfo = oldCurrentInfo;
 }
 
-void fillLanguage( HWND hwndDlg )
+static void fillLanguage( HWND hwndDlg )
 {
     HWND    hwndCB;
     char    str[_MAX_PATH];
@@ -221,7 +221,7 @@ void fillLanguage( HWND hwndDlg )
     }
 }
 
-void updateDialogSettings( HWND hwndDlg, BOOL title )
+static void updateDialogSettings( HWND hwndDlg, BOOL title )
 {
     HWND    hwndCB;
     int     index;
@@ -249,7 +249,7 @@ void updateDialogSettings( HWND hwndDlg, BOOL title )
     dyn_tpl_init( &Dyn_setfs, hwndDlg );
 }
 
-void dumpCommands( int i )
+static void dumpCommands( int i )
 {
     FTSAddBoolean( dlg_dataArray[i].ReadEntireFile, "readentirefile" );
     FTSAddBoolean( dlg_dataArray[i].ReadOnlyCheck, "readonlycheck" );
@@ -276,7 +276,7 @@ void dumpCommands( int i )
     FTSAddStr( dlg_dataArray[i].GrepDefault, "grepdefault" );
 }
 
-void writeSettings( HWND hwndDlg )
+static void writeSettings( HWND hwndDlg )
 {
     // dump our little structure back into source line for fts
     HWND    hwndCB;
@@ -305,7 +305,7 @@ void writeSettings( HWND hwndDlg )
     }
 }
 
-long deleteSelectedFT( HWND hwndDlg )
+static long deleteSelectedFT( HWND hwndDlg )
 {
     HWND    hwndCB;
     int     i, len, rc;
@@ -352,7 +352,7 @@ long deleteSelectedFT( HWND hwndDlg )
     return( 1L );
 }
 
-long insertFT( HWND hwndDlg )
+static long insertFT( HWND hwndDlg )
 {
     HWND    hwndCB;
     char    *text;
@@ -391,19 +391,6 @@ long insertFT( HWND hwndDlg )
 
     return( 1L );
 }
-
-BOOL WINEXP EnumChildProc( HWND hwndChild, DWORD lParam )
-{
-    char    szClass[5];
-    lParam = lParam;
-    GetClassName( hwndChild, szClass, 5 );
-    if( !strcmp( szClass, "Edit" ) ) {
-        //hwndEdit = hwndChild;
-        return( FALSE );
-    }
-    return( TRUE );
-}
-
 
 static void cancelSettings( void )
 {
@@ -445,9 +432,7 @@ BOOL WINEXP SetFSProc( HWND hwndDlg, unsigned msg, UINT wParam, LONG lParam )
         globalTodlg_data( &cancelData, CurrentInfo );
         CenterWindowInRoot( hwndDlg );
         fillFileType( hwndDlg );
-        if( !msg ) {
-            fillLanguage( hwndDlg );
-        }
+        fillLanguage( hwndDlg );
         updateDialogSettings( hwndDlg, TRUE );
         return( TRUE );
 
@@ -488,14 +473,12 @@ BOOL WINEXP SetFSProc( HWND hwndDlg, unsigned msg, UINT wParam, LONG lParam )
             }
             writeSettings( hwndDlg );
             EndDialog( hwndDlg, TRUE );
-            EditFlags.Quiet = FALSE;
             return( TRUE );
         case IDCANCEL:
             if( CurrentInfo ) {
                 cancelSettings();
             }
             EndDialog( hwndDlg, TRUE );
-            EditFlags.Quiet = FALSE;
             return( TRUE );
         }
 
