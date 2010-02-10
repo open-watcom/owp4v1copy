@@ -176,15 +176,11 @@ void fillFileType( HWND hwndDlg )
     info        envInfo, *oldCurrentInfo;
 
     oldCurrentInfo = CurrentInfo;
-    if( CurrentInfo == NULL ) {
-        memset( &envInfo, 0, sizeof( envInfo ) );
-        CurrentInfo = &envInfo;
-    }
+    memset( &envInfo, 0, sizeof( envInfo ) );
+    CurrentInfo = &envInfo;
 
     hwndCB = GetDlgItem( hwndDlg, SETFS_FILETYPE );
-    fts = FTSGetFirst();
-    index = 0;
-    while( fts ) {
+    for( index = 0, fts = FTSGetFirst(); fts != NULL; fts = FTSGetNext( fts ), ++index ) {
         template1 = template = FTSGetFirstTemplate( fts );
         str[0] = '\0';
         strLen = 0;
@@ -199,10 +195,15 @@ void fillFileType( HWND hwndDlg )
         }
         filldlg_dataArray( index, template1->data, CurrentInfo );
         SendMessage( hwndCB, CB_INSERTSTRING, index, (LPARAM)(str + 1) );
-        index++;
-        fts = FTSGetNext( fts );
     }
-    SendMessage( hwndCB, CB_SETCURSEL, 0, 0L );
+    index = 0;
+    if( oldCurrentInfo != NULL && oldCurrentInfo->CurrentFile != NULL ) {
+        index = FTSSearchFileType( oldCurrentInfo->CurrentFile->name );
+        if( index == -1 ) {
+            index = 0;
+        }
+    }
+    SendMessage( hwndCB, CB_SETCURSEL, index, 0L );
 
     CurrentInfo = oldCurrentInfo;
 }

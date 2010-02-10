@@ -58,6 +58,7 @@ extern vi_rc        FTSAddChar( char, char * );
 extern vi_rc        FTSAddInt( int, char * );
 extern vi_rc        FTSAddStr( char *, char * );
 extern vi_rc        FTSRunCmds( char * );
+extern int          FTSSearchFileType( char * );
 extern vi_rc        FTSEnd( void );
 extern void         FTSBarfData( FILE * );
 extern ft_src       *FTSGetFirst( void );
