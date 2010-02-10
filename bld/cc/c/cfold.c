@@ -1091,6 +1091,11 @@ static bool FoldableTree( TREEPTR tree )
             }
         }
         break;
+#if _CPU == 8086
+    /* The :> operator is currently only folded for 16-bit targets. The
+     * folding itself can handle 16:32 pointers, but other places in cfe
+     * and cg don't understand larger than 32-bit pointer constants.
+     */
     case OPR_FARPTR:
         if( IsConstLeaf( tree->left ) && IsConstLeaf( tree->right ) ) {
             uint64      seg_val;
@@ -1111,6 +1116,7 @@ static bool FoldableTree( TREEPTR tree )
             FreeExprNode( tree->right );
         }
         break;
+#endif
     default:
         break;
     }
