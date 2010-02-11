@@ -154,52 +154,61 @@ vi_rc FTSEnd( void )
 
 } /* FTSEnd */
 
-static int FTSSearchIndex( char *name )
+static ft_src *searchFT( char *name )
+{
+    template_ll *template;
+    ft_src      *fts;
+
+    name = StripPath( name );
+    if( name != NULL ) {
+        for( fts = ftsHead; fts != NULL; fts = fts->next ) {
+            for( template = fts->template_head; template != NULL; template = template->next ) {
+                if( FileTemplateMatch( name, template->data ) ) {
+                    return( fts );
+                }
+            }
+        }
+    }
+    return( NULL );
+}
+
+/*
+ * FTSSearchFTIndex - search if 'name' has a registered file type
+ */
+int FTSSearchFTIndex( char *name )
 {
     template_ll *template;
     ft_src      *fts;
     int         index;
 
-    for( index = 0, fts = ftsHead; fts != NULL; fts = fts->next, ++index ) {
-        for( template = fts->template_head; template != NULL; template = template->next ) {
-            if( FileTemplateMatch( name, template->data ) ) {
-                return( index );
+    name = StripPath( name );
+    if( name != NULL ) {
+        for( index = 0, fts = ftsHead; fts != NULL; fts = fts->next, ++index ) {
+            for( template = fts->template_head; template != NULL; template = template->next ) {
+                if( FileTemplateMatch( name, template->data ) ) {
+                    return( index );
+                }
             }
         }
     }
     return( -1 );
-}
 
-/*
- * FTSSearchFileType - search if 'name' has a registered file type
- */
-int FTSSearchFileType( char *name )
-{
-    bool        oldScript, oldQuiet, oldHold;
-    int         rc;
+} /* FTSSearchFTIndex */
 
-    oldScript = EditFlags.ScriptIsCompiled;
-    oldQuiet = EditFlags.Quiet;
-    oldHold = EditFlags.DisplayHold;
-    EditFlags.ScriptIsCompiled = FALSE;
-    EditFlags.Quiet = TRUE;
-    EditFlags.DisplayHold = TRUE;
-
-    rc = FTSSearchIndex( StripPath( name ) );
-
-    EditFlags.ScriptIsCompiled = oldScript;
-    EditFlags.Quiet = oldQuiet;
-    EditFlags.DisplayHold = oldHold;
-
-    return( rc );
-
-} /* FTSSearchFileType */
-
-vi_rc runCmds( ft_src *fts )
+static vi_rc runCmds( ft_src *fts )
 {
     char    cmd_data[MAX_STR];
     vi_rc   rc;
     cmd_ll  *cmd;
+    bool    oldScript, oldQuiet, oldHold;
+
+    oldScript = EditFlags.ScriptIsCompiled;
+    oldQuiet = EditFlags.Quiet;
+    oldHold = EditFlags.DisplayHold;
+
+    EditFlags.ScriptIsCompiled = FALSE;
+    EditFlags.Quiet = TRUE;
+    EditFlags.DisplayHold = TRUE;
 
     cmd = fts->cmd_head;
     while( cmd ) {
@@ -212,6 +221,10 @@ vi_rc runCmds( ft_src *fts )
 #endif
         cmd = cmd->next;
     }
+    EditFlags.ScriptIsCompiled = oldScript;
+    EditFlags.Quiet = oldQuiet;
+    EditFlags.DisplayHold = oldHold;
+
     return( rc );
 }
 
@@ -220,41 +233,12 @@ vi_rc runCmds( ft_src *fts )
  */
 vi_rc FTSRunCmds( char *name )
 {
-    template_ll *template;
     ft_src      *fts;
-    bool        oldScript, oldQuiet, oldHold;
 
-    oldScript = EditFlags.ScriptIsCompiled;
-    oldQuiet = EditFlags.Quiet;
-    oldHold = EditFlags.DisplayHold;
-    EditFlags.ScriptIsCompiled = FALSE;
-    EditFlags.Quiet = TRUE;
-    EditFlags.DisplayHold = TRUE;
-
-    name = StripPath( name );
-
-    if( name != NULL ) {
-        fts = ftsHead;
-        while( fts ) {
-            template = fts->template_head;
-            while( template ) {
-                if( FileTemplateMatch( name, template->data ) ) {
-                    runCmds( fts );
-                    fts = NULL;
-                    break;
-                }
-                template = template->next;
-            }
-            if( fts ) {
-                fts = fts->next;
-            }
-        }
+    fts = searchFT( name );
+    if( fts != NULL ) {
+        runCmds( fts );
     }
-
-    EditFlags.ScriptIsCompiled = oldScript;
-    EditFlags.Quiet = oldQuiet;
-    EditFlags.DisplayHold = oldHold;
-
     return( ERR_NO_ERR );
 
 } /* FTSRunCmds */

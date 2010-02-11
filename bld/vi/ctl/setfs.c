@@ -198,7 +198,7 @@ static void fillFileType( HWND hwndDlg )
     }
     index = 0;
     if( oldCurrentInfo != NULL && oldCurrentInfo->CurrentFile != NULL ) {
-        index = FTSSearchFileType( oldCurrentInfo->CurrentFile->name );
+        index = FTSSearchFTIndex( oldCurrentInfo->CurrentFile->name );
         if( index == -1 ) {
             index = 0;
         }
