@@ -54,7 +54,7 @@ void __RdosMain()
     REGISTRATION_RECORD     rr;
  
     __InitRtns( INIT_PRIORITY_THREAD );
-    tdata = __alloca( __ThreadDataSize );
+    tdata = ( thread_data* )RdosAllocateMem( __ThreadDataSize );
     memset( tdata, 0, __ThreadDataSize );
     tdata->__data_size = __ThreadDataSize;
 

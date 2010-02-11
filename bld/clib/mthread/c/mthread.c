@@ -673,6 +673,16 @@ int __RdosThreadInit( void )
     return( 1 );
 }
 
+#if 0
+static void __RdosThreadFini( void )
+/**********************************/
+{
+    if( __TlsIndex != NO_INDEX ) {
+        __tls_free( __TlsIndex );
+        __TlsIndex = NO_INDEX;
+    }
+}
+#endif
 
 int __RdosAddThread( thread_data *tdata )
 /**************************************/
@@ -695,8 +705,8 @@ int __RdosAddThread( thread_data *tdata )
 }
 
 
-void __RdosRemoveThread( int close_handle )
-/***************************************/
+void __RdosRemoveThread( void )
+/*****************************/
 {
     thread_data *tdata;
     int thread_handle;

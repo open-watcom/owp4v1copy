@@ -70,7 +70,7 @@
   #elif defined( __RDOS__ )
     extern int          __RdosThreadInit( void );
     extern int          __RdosAddThread( thread_data * );
-    extern void         __RdosRemoveThread( int );
+    extern void         __RdosRemoveThread( void );
   #endif
 
     extern thread_data  *__FirstThreadData;
