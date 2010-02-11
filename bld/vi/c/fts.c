@@ -154,6 +154,47 @@ vi_rc FTSEnd( void )
 
 } /* FTSEnd */
 
+static int FTSSearchIndex( char *name )
+{
+    template_ll *template;
+    ft_src      *fts;
+    int         index;
+
+    for( index = 0, fts = ftsHead; fts != NULL; fts = fts->next, ++index ) {
+        for( template = fts->template_head; template != NULL; template = template->next ) {
+            if( FileTemplateMatch( name, template->data ) ) {
+                return( index );
+            }
+        }
+    }
+    return( -1 );
+}
+
+/*
+ * FTSSearchFileType - search if 'name' has a registered file type
+ */
+int FTSSearchFileType( char *name )
+{
+    bool        oldScript, oldQuiet, oldHold;
+    int         rc;
+
+    oldScript = EditFlags.ScriptIsCompiled;
+    oldQuiet = EditFlags.Quiet;
+    oldHold = EditFlags.DisplayHold;
+    EditFlags.ScriptIsCompiled = FALSE;
+    EditFlags.Quiet = TRUE;
+    EditFlags.DisplayHold = TRUE;
+
+    rc = FTSSearchIndex( StripPath( name ) );
+
+    EditFlags.ScriptIsCompiled = oldScript;
+    EditFlags.Quiet = oldQuiet;
+    EditFlags.DisplayHold = oldHold;
+
+    return( rc );
+
+} /* FTSSearchFileType */
+
 vi_rc runCmds( ft_src *fts )
 {
     char    cmd_data[MAX_STR];
@@ -217,47 +258,6 @@ vi_rc FTSRunCmds( char *name )
     return( ERR_NO_ERR );
 
 } /* FTSRunCmds */
-
-static int FTSSearchIndex( char *name )
-{
-    template_ll *template;
-    ft_src      *fts;
-    int         index;
-
-    for( index = 0, fts = ftsHead; fts != NULL; fts = fts->next, ++index ) {
-        for( template = fts->template_head; template != NULL; template = template->next ) {
-            if( FileTemplateMatch( name, template->data ) ) {
-                return( index );
-            }
-        }
-    }
-    return( -1 );
-}
-
-/*
- * FTSSearchFileType - search if 'name' has a registered file type
- */
-int FTSSearchFileType( char *name )
-{
-    bool        oldScript, oldQuiet, oldHold;
-    int         rc;
-
-    oldScript = EditFlags.ScriptIsCompiled;
-    oldQuiet = EditFlags.Quiet;
-    oldHold = EditFlags.DisplayHold;
-    EditFlags.ScriptIsCompiled = FALSE;
-    EditFlags.Quiet = TRUE;
-    EditFlags.DisplayHold = TRUE;
-
-    rc = FTSSearchIndex( StripPath( name ) );
-
-    EditFlags.ScriptIsCompiled = oldScript;
-    EditFlags.Quiet = oldQuiet;
-    EditFlags.DisplayHold = oldHold;
-
-    return( rc );
-
-} /* FTSSearchFileType */
 
 /*
  * FTSGetFirst - return first fts entry
