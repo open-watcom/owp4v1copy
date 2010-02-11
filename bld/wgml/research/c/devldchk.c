@@ -111,6 +111,12 @@ static void display_binary_device_library( void )
         out_msg( "  Line height:        %i\n", wgml_fonts[i].line_height );
         out_msg( "  Line space:         %i\n", wgml_fonts[i].line_space );
         out_msg( "  Space char width:   %i\n", wgml_fonts[i].spc_width );
+        out_msg( "  Font resident:      %c\n", wgml_fonts[i].font_resident );
+        if( wgml_fonts[i].shift_count == 0 ) {
+            out_msg( "  Shift height:       0\n" );
+        } else {
+            out_msg( "  Shift height:       %s\n", wgml_fonts[i].shift_height );
+        }
     }
 }
 

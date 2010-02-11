@@ -69,6 +69,7 @@
 *                   pages
 *                   page_start
 *                   set_margin
+*                   shift_done
 *                   space_chars
 *                   tab_width
 *                   text_out_open
@@ -194,9 +195,9 @@
 /* This keeps track of where we are in the compiled function block. */
 
 typedef struct {
-    bool        last_function_done;
     uint8_t *   base;
     uint8_t *   current;
+    bool        last_function_done;
     uint8_t     parameter_type;
     uint8_t     df_code;
 } df_data;
@@ -204,9 +205,10 @@ typedef struct {
 /* This is used to record the state of the current page. */
 
 typedef struct {
-    uint32_t         font_number;
-    uint32_t         x_address;
-    uint32_t         y_address;
+    uint32_t    x_address;
+    uint32_t    y_address;
+    uint8_t     font_number;
+    text_type   type;
 } page_state;
 
 /* Holds the offsets to the parameter(s). */
@@ -235,6 +237,7 @@ static bool             at_start                = true;
 static bool             htab_done               = false;
 static bool             page_start              = false;
 static bool             set_margin              = false;
+static bool             shift_done              = false;
 static page_state       current_state           = { 0, 0, 0 };
 static page_state       desired_state           = { 0, 0, 0 };
 static uint32_t         line_pass_number        = 0;
@@ -506,9 +509,12 @@ static void output_uscores( text_chars * in_chars )
 
 static void post_text_output( void )
 {
-    char    shwd_suffix[] = " shwd ";
-    char    sd_suffix[] = " sd ";
-    size_t  ps_suffix_size;
+    char    shift_neg[]     = "neg ";
+    char    shift_rmoveto[] = "0 exch rmoveto ";
+    char    shift_scale[]   = " 1 .7 div dup scale ";
+    char    shwd_suffix[]   = " shwd ";
+    char    sd_suffix[]     = " sd ";
+    size_t  ps_size;
 
     if( ps_device ) {
 
@@ -519,17 +525,49 @@ static void post_text_output( void )
         ob_insert_block( ")", 1, false, false, active_font );
 
         if( htab_done ) {
-            ps_suffix_size = strlen( sd_suffix );
-            ob_insert_block( sd_suffix, ps_suffix_size, false, false, \
-                                                                active_font );
+            ps_size = strlen( sd_suffix );
+            ob_insert_block( sd_suffix, ps_size, false, false, active_font );
         } else {
-            ps_suffix_size = strlen( shwd_suffix );
-            ob_insert_block( shwd_suffix, ps_suffix_size, false, false, \
-                                                                active_font );
+            ps_size = strlen( shwd_suffix );
+            ob_insert_block( shwd_suffix, ps_size, false, false, active_font );
         }
+
+        if( shift_done ) {
+
+            /* Emit the appropriate post-subscript/superscript sequence. */
+
+            switch( current_state.type ) {
+            case sub:
+                ps_size = strlen( shift_scale );
+                ob_insert_block( shift_scale, ps_size, false, false, active_font );
+
+                ps_size = strlen( shift_rmoveto );
+                ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
+                break;                
+            case sup:
+                ps_size = strlen( shift_scale );
+                ob_insert_block( shift_scale, ps_size, false, false, active_font );
+
+                ps_size = strlen( shift_neg );
+                ob_insert_block( shift_neg, ps_size, false, false, active_font );
+
+                ps_size = strlen( shift_rmoveto );
+                ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
+                break;                
+            case norm:
+                /* Since shift_done was true, norm is not allowed. */
+            default:
+                out_msg("wgml internal error: incorrect processing type.\n");
+                err_count++;
+                g_suicide();
+            }
+            current_state.type = norm;
+        }
+
     }
 
     htab_done = false;
+    shift_done = false;
     text_out_open = false;
 
     return;
@@ -544,7 +582,87 @@ static void post_text_output( void )
 
 static void pre_text_output( void )
 {
-    if( ps_device ) ob_insert_ps_text_start();
+    char    shift_neg[]     = " neg";
+    char    shift_rmoveto[] = " rmoveto";
+    char    shift_scale[]   = " .7 .7 scale ";
+    size_t  ps_size;
+
+    if( ps_device ) {
+
+        if( current_state.type != desired_state.type ) {
+
+            /* Emit the appropriate post-subscript/superscript sequence. */
+
+            switch( desired_state.type ) {
+            case norm:
+                shift_done = false;
+                break;
+            case sub:
+                ob_insert_block( " ", 1, false, false, active_font );
+
+                ps_size = wgml_fonts[active_font].shift_count;
+                ob_insert_block( wgml_fonts[active_font].shift_height, \
+                                        ps_size, false, false, active_font );
+
+                ob_insert_block( " ", 1, false, false, active_font );
+
+                ob_insert_block( "0 ", 2, false, false, active_font );
+
+                ps_size = wgml_fonts[active_font].shift_count;
+                ob_insert_block( wgml_fonts[active_font].shift_height, \
+                                        ps_size, false, false, active_font );
+
+                ps_size = strlen( shift_neg );
+                ob_insert_block( shift_neg, ps_size, false, false, \
+                                                                active_font );
+
+                ps_size = strlen( shift_rmoveto );
+                ob_insert_block( shift_rmoveto, ps_size, false, false, \
+                                                                active_font );
+
+                ps_size = strlen( shift_scale );
+                ob_insert_block( shift_scale, ps_size, false, false, \
+                                                                active_font );
+
+                shift_done = true;
+                break;                
+            case sup:
+                ob_insert_block( " ", 1, false, false, active_font );
+
+                ps_size = wgml_fonts[active_font].shift_count;
+                ob_insert_block( wgml_fonts[active_font].shift_height, \
+                                        ps_size, false, false, active_font );
+
+                ob_insert_block( " ", 1, false, false, active_font );
+
+                ob_insert_block( "0 ", 2, false, false, active_font );
+
+                ps_size = wgml_fonts[active_font].shift_count;
+                ob_insert_block( wgml_fonts[active_font].shift_height, \
+                                        ps_size, false, false, active_font );
+
+                ps_size = strlen( shift_rmoveto );
+                ob_insert_block( shift_rmoveto, ps_size, false, false, \
+                                                                active_font );
+
+                ps_size = strlen( shift_scale );
+                ob_insert_block( shift_scale, ps_size, false, false, \
+                                                                active_font );
+
+                shift_done = true;
+                break;                
+            default:
+                out_msg("wgml internal error: incorrect processing type.\n");
+                err_count++;
+                g_suicide();
+            }
+        }
+
+        /* Emit the initial "(" */
+
+        ob_insert_ps_text_start();
+    }
+    current_state.type = desired_state.type;
     text_out_open = true;
 
     return;
@@ -2650,7 +2768,8 @@ static void fb_internal_horizontal_positioning( void )
 static void fb_first_text_chars( text_chars * in_chars, \
                                  line_proc * in_lineproc )
 {
-    bool            font_switch_needed  = true;
+    bool    font_switch_needed  = true;
+    bool    undo_shift          = false;        
 
     /* Set font_number and initialize the locals. */
 
@@ -2705,6 +2824,19 @@ static void fb_first_text_chars( text_chars * in_chars, \
      * textpass and uline will be "true".
      */
 
+    /* post_text_output() must be done if this text_chars was subscripted
+     * or superscripted and the next text_chars either doesn't exist or
+     * has a different type.
+     */
+
+    if( in_chars->next == NULL ) {
+        undo_shift = true;
+    } else if( in_chars->type != in_chars->next->type ) {
+        undo_shift = true;
+    } else {
+        undo_shift = false;
+    }
+
     /* If textpass is "true", output the text. The value of textpass is not
      * changed here: it will be used by fb_subsequent_text_chars().
      */
@@ -2714,7 +2846,9 @@ static void fb_first_text_chars( text_chars * in_chars, \
         if( !text_out_open ) pre_text_output();
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
-        if( htab_done && text_out_open ) post_text_output();
+
+        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
+///        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -2724,7 +2858,8 @@ static void fb_first_text_chars( text_chars * in_chars, \
     if( uline ) {
         if( !text_out_open ) pre_text_output();
         output_uscores( in_chars );
-        if( htab_done && text_out_open ) post_text_output();
+        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
+///        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2757,6 +2892,8 @@ static void fb_first_text_chars( text_chars * in_chars, \
 static void fb_new_font_text_chars( text_chars * in_chars, \
                                     line_proc * in_lineproc )
 {
+    bool    undo_shift  = false;
+
     /* Interpret the pre-font switch function block. */
 
     fb_lineproc_endvalue();
@@ -2791,6 +2928,19 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
      * textpass and uline will be "true".
      */
 
+    /* post_text_output() must be done if this text_chars was subscripted
+     * or superscripted and the next text_chars either doesn't exist or
+     * has a different type.
+     */
+
+    if( in_chars->next == NULL ) {
+        undo_shift = true;
+    } else if( in_chars->type != in_chars->next->type ) {
+        undo_shift = true;
+    } else {
+        undo_shift = false;
+    }
+
     /* If textpass is "true", output the text. The value of textpass is not
      * changed here: it will be used by fb_subsequent_text_chars().
      */
@@ -2800,7 +2950,8 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
         if( !text_out_open ) pre_text_output();
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
-        if( htab_done && text_out_open ) post_text_output();
+        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
+///        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -2810,7 +2961,8 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
     if( uline ) {
         if( !text_out_open ) pre_text_output();
         output_uscores( in_chars );
-        if( htab_done && text_out_open ) post_text_output();
+        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
+///        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -3082,6 +3234,8 @@ static void fb_normal_vertical_positioning( void )
 static void fb_subsequent_text_chars( text_chars * in_chars, \
                                       line_proc * in_lineproc )
 {
+    bool    undo_shift  = false;
+
     /* Initialize desired_state.x_address. */
 
     desired_state.x_address = in_chars->x_address;
@@ -3104,6 +3258,19 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
      * textpass and uline will be "true".
      */
 
+    /* post_text_output() must be done if this text_chars was subscripted
+     * or superscripted and the next text_chars either doesn't exist or
+     * has a different type.
+     */
+
+    if( in_chars->next == NULL ) {
+        undo_shift = true;
+    } else if( in_chars->type != in_chars->next->type ) {
+        undo_shift = true;
+    } else {
+        undo_shift = false;
+    }
+
     /* If textpass is "true", output the text. The value of textpass is not
      * changed here: it will be used by fb_subsequent_text_chars().
      */
@@ -3113,7 +3280,8 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
         if( !text_out_open ) pre_text_output();
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
-        if( htab_done && text_out_open ) post_text_output();
+        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
+///        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -3123,7 +3291,8 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
     if( uline ) {
         if( !text_out_open ) pre_text_output();
         output_uscores( in_chars );
-        if( htab_done && text_out_open ) post_text_output();
+        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
+///        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -3519,9 +3688,10 @@ void fb_first_text_line_pass( text_line * out_line )
     /* Update the internal state for the new text_line. */
 
     current = out_line->first;
+    desired_state.x_address = current->x_address;
+    desired_state.y_address = out_line->y_address;
     desired_state.font_number = current->font_number;
-    desired_state.x_address   = current->x_address;
-    desired_state.y_address   = out_line->y_address;
+    desired_state.type = current->type;
     line_pass_number = 0;
 
     /* Perform the Normal Vertical Positioning. */
@@ -3549,6 +3719,7 @@ void fb_first_text_line_pass( text_line * out_line )
     current = current->next;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
+        desired_state.type = current->type;
         if( current_state.font_number != current->font_number ) {
             if( wgml_fonts[current->font_number].font_style != NULL ) {
                 if( wgml_fonts[current->font_number].font_style->lineprocs \
@@ -3827,8 +3998,9 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
         return;
     }
 
-    desired_state.font_number = current->font_number;
     desired_state.x_address = current->x_address;
+    desired_state.font_number = current->font_number;
+    desired_state.type = current->type;
 
     /* Perform the Overprint Vertical Positioning. */
 
@@ -3870,6 +4042,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
             if( current == NULL ) break;
 
             desired_state.x_address = current->x_address;
+            desired_state.type = current->type;
             if( cur_lineproc != NULL) {
                 if( current_state.font_number != current->font_number ) {
                     desired_state.font_number = current->font_number;

@@ -96,7 +96,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- 
+
 #include "banner.h"
 #include "common.h"
 #include "copfiles.h"
@@ -265,6 +265,40 @@ static  text_phrase         para_stop[] = {
     {0, false, "unlikely:) in practice. " },
     {0, false, NULL }
 };
+
+static  text_phrase         para_subsup[] = {
+    {0, true, "Next we test subscripts and superscripts. First we try some " },
+    {0, false, "tricks with the single-letter functions: " },
+    {0, false, "\xfe\x01subscript\xfe\xff should be subscripted, " },
+    {0, false, "\xfe\x02superscript\xfe\xff should be superscripted. These " },
+    {0, false, "should produce an interesting effect: " },
+    {0, false, "\xfe\x01subscript\xfe\xff\xfe\x02superscript\xfe\xff. These " },
+    {0, false, "should not work: \xfe\x01\xfe\xff"},
+    {1, false, "subscript" },
+    {0, false, " and \xfe\x02\xfe\xff"},
+    {1, false, "superscript" },
+    {0, false, " but these should: " },
+    {1, false, "\xfe\x01subscript\xfe\xff" },
+    {0, false, " and " },
+    {1, false, "\xfe\x02superscript\xfe\xff" },
+    {0, false, ". The functions should do no better: \xfe\x01" },
+    {1, false, "subscript text" },
+    {0, false, "\xfe\xff, \xfe\x02" },
+    {1, false, "superscript text" },
+    {0, false, "\xfe\xff, \xfe\x01" },
+    {1, false, "subscript" },
+    {0, false, " text\xfe\xff, \xfe\x02" },
+    {1, false, "superscript" },
+    {0, false, " text\xfe\xff, \xfe\x01subscript " },
+    {1, false, "text" },
+    {0, false, "\xfe\xff, and \xfe\x02superscript " },
+    {1, false, "text"},
+    {0, false, "\xfe\xff. These should work as intended, however:" },
+    {1, false, " \xfe\x01subscript text\xfe\xff" },
+    {0, false, " and " },
+    {1, false, "\xfe\x02superscript text\xfe\xff" },
+    {0, false, NULL }
+};
  
 #if 0 // Needed until the boxes are ready for testing
  
@@ -307,30 +341,21 @@ static  text_phrase         fig_box[] = {
  * Notes:
  *      This function is currently a lightly-adapted version of function
  *          add_text_chars_to_pool() in gproctxt.c.
- *      The original version of this algorithm was based on only one
- *          text_line existing at a time. In that case, most of the
- *          text_chars instances would be in the text_line, so appending the
- *          text_chars from the text_line to the end of the pool made sense.
- *          But now multiple text_lines are in use, and it is more efficient
- *          to prepend each text_line's set of text_chars instances to the
- *          pool. 
- *      This version requires the calling function to set in_line->first to
- *          NULL. It is not entirely clear that this is either good or
- *          necessary.
+ *      This version requires the calling function to set in_line->first and
+ *          in_line->last to NULL. It is not entirely clear that this is
+ *          either good or necessary.
  */
 
 void oc_add_text_chars_to_pool( text_line * in_line )
 {
-    text_chars      *   cur_chars;
+    /* Ensure in_line->last is not NULL when it is used below. */
 
     if( in_line->first == NULL ) return;
+    if( in_line->last == NULL ) in_line->last = in_line->first;
 
-    cur_chars = in_line->first;
-    while( cur_chars->next != NULL ) {
-        cur_chars = cur_chars->next;
-    }
-    cur_chars->next = oc_text_chars_pool;
+    /* Return the text_chars instances to the pool */
 
+    in_line->last->next = oc_text_chars_pool;
     oc_text_chars_pool = in_line->first;
 
     return;
@@ -360,10 +385,12 @@ void oc_add_text_line_to_pool( text_line * in_line )
     while( cur_line->next != NULL ) {
         oc_add_text_chars_to_pool( cur_line );
         cur_line->first = NULL;
+        cur_line->last = NULL;
         cur_line = cur_line->next;
     }
     oc_add_text_chars_to_pool( cur_line );
     cur_line->first = NULL;
+    cur_line->last = NULL;
 
     cur_line->next = oc_text_line_pool;
     oc_text_line_pool = in_line;
@@ -431,13 +458,14 @@ static oc_element * oc_alloc_oc_element( oc_element_type el_type )
  *      in_text points to the text to be controlled by the new instance
  *      count contains the number of characters in in_text
  *      font_number contains the font number for the text_chars
+ *      type contains the type of processing for the text_chars
  *
  * Returns:
  *      A pointer to the text_chars instance.
  */
 
 static text_chars * oc_alloc_text_chars(  char * in_text, size_t count,
-                                           uint8_t font_number )
+                                           uint8_t font_number, text_type type )
 {
     uint32_t        size    = TEXT_START;
     text_chars  *   retval  = NULL;
@@ -459,7 +487,9 @@ static text_chars * oc_alloc_text_chars(  char * in_text, size_t count,
         }
     }
     retval->next = NULL;
+    retval->prev = NULL;
     retval->font_number = font_number;
+    retval->type = type;
     retval->x_address = 0;
     retval->width = 0;
 
@@ -496,6 +526,7 @@ static text_line * oc_alloc_text_line( void )
     retval->line_height = 0;
     retval->y_address = 0;
     retval->first = NULL;
+    retval->last = NULL;
 
     return( retval);
 }
@@ -1145,6 +1176,7 @@ static void oc_process_line_full( text_line * in_line, bool justify )
  * Parameters:
  *      input_text contains a pointer to the input buffer.
  *      font_number contains the font number to be used.
+ *      type contains the processing type for the phrase.
  *
  * Globals Used:
  *      oc_break indicates whether or not a break occurred before the current
@@ -1169,10 +1201,9 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 {
     static  size_t          increment       = 0;
     static  size_t          spaces          = 0;
+    static  text_type       cur_type        = norm;
     static  uint8_t         old_font        = 0;
     static  uint32_t        cur_h_address   = 0;
-    static  text_chars  *   cur_chars       = NULL;
-    static  text_chars  *   pre_chars       = NULL;
     static  text_line   *   the_line        = NULL;
 
             char            ch;
@@ -1180,23 +1211,23 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             size_t          count           = 0;
             size_t          space_width     = 0;
             text_chars  *   next_chars      = NULL;
+            text_chars  *   save_chars      = NULL;
             uint32_t        cur_height      = 0;
 
     /* These invariants should hold on entry:
      * If oc_new_section is true:
      *      It is the start of new document section.
-     *      cur_chars should be NULL.
-     *      pre_chars should be NULL.
+     *      the_line->last should be NULL.
      *      spaces should be 0.
      *      When we start counting tabs, tabs should be 0.
      *      increment should be 0.
      * otherwise, this is the start of a new phrase:
      *      the_line->first points to a linked list of text_chars instances.
-     *      cur_chars points to the last text_chars instance in the_line.
-     *      pre_chars is null if cur_chars points to the first (and only)
-     *          text_chars instance in the_line; otherwise, it points to
-     *          the text_chars instance such that pre_chars->next points to
-     *          the same text_chars instance as cur_chars.
+     *      the_line->last points to the last text_chars instance in the_line.
+     *      for each text_chars which is part of the_line, prev is null if
+     *          it is the first text_chars instance in the_line; otherwise, it
+     *          points to the text_chars instance such that prev->next points
+     *          to that text_chars.
      *      spaces contains the number of spaces (if any) before this phrase.
      *      tabs, when counted, will do the same for tab characters.
      *      increment should contain the width of next_chars.
@@ -1219,8 +1250,6 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         /* Ensure proper starting values for the new section. */
 
-        cur_chars = NULL;
-        pre_chars = NULL;
         cur_h_address = oc_page_left + oc_indent;
         spaces = 0; // when tabs are counted, set tabs to 0 also
         increment = 0;
@@ -1295,8 +1324,6 @@ static void oc_process_text( char * input_text, uint8_t font_number )
          * as a new section will be starting.
          */
 
-        cur_chars = NULL;
-        pre_chars = NULL;
         cur_h_address = oc_page_left + oc_cur_page.column.last->indent;
         spaces = 0; // when tabs are counted, set tabs to 0 also
         increment = 0;
@@ -1380,11 +1407,12 @@ static void oc_process_text( char * input_text, uint8_t font_number )
          *      increment should be 0.
          * If the_line->first is not NULL but next_chars is NULL:
          *      It is the start of a new phrase, but not of a new line.
-         *      cur_chars points to the last text_chars instance in the_line.
-         *      pre_chars is null if cur_chars points to the first (and only)
-         *          text_chars instance in the_line; otherwise, it points to
-         *          the text_chars instance such that pre_chars->next points to
-         *          the same text_chars instance as cur_chars.
+         *      the_line->last points to the last text_chars instance in
+         *          the_line.
+         *      for each text_chars which is part of the_line, prev is null if
+         *          it is the first text_chars instance in the_line; otherwise,
+         *          it points to the text_chars instance such that prev->next
+         *          points to that text_chars.
          *      spaces may be 0 or may be > 0.
          *      When we start counting tabs, tabs may be 0 or may be > 0.
          *      increment should be 0.
@@ -1408,13 +1436,14 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                         /* An empty text_chars at the start of the line is
                          * used for the spacing that establishes the left
                          * margin plus any indent. For now, it uses
-                         * oc_page_left.
+                         * oc_page_left plus any indent.
+                         * NOTE: it is not at all clear that this code is
+                         * ever executed.
                          */
 
                         the_line->first = \
-                                    oc_alloc_text_chars( NULL, 0, old_font );
-                        cur_chars = the_line->first;
-                        pre_chars = NULL;
+                            oc_alloc_text_chars( NULL, 0, old_font, cur_type );
+                        the_line->last = the_line->first;
                         cur_h_address = oc_page_left + \
                                                 oc_cur_page.column.last->indent;
                     } else {
@@ -1424,12 +1453,12 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                          * to the start of the new phrase.
                          */
 
-                        pre_chars = cur_chars;
-                        cur_chars->next = \
-                                    oc_alloc_text_chars( NULL, 0, old_font );
-                        cur_chars = cur_chars->next;
+                        the_line->last->next = \
+                            oc_alloc_text_chars( NULL, 0, old_font, cur_type );
+                        the_line->last->next->prev = the_line->last;
+                        the_line->last = the_line->last->next;
                     }
-                    cur_chars->x_address = cur_h_address;
+                    the_line->last->x_address = cur_h_address;
 
                     /* Reset spaces (and, eventually, tabs), and adjust the
                      * line_height if necessary.
@@ -1451,11 +1480,12 @@ static void oc_process_text( char * input_text, uint8_t font_number )
         if( next_chars != NULL ) {
             if( the_line->first == NULL ) {
                 the_line->first = next_chars;
+                the_line->last = the_line->first;
             } else {
-                pre_chars = cur_chars;
-                cur_chars->next = next_chars;
+                next_chars->prev = the_line->last;
+                the_line->last->next = next_chars;
+                the_line->last =  next_chars;
             }
-            cur_chars = next_chars;
             next_chars = NULL;
 
             /* Adjust the line_height, if appropriate. */
@@ -1467,7 +1497,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
             /* Update cur_h_address to the width of the token added. */
 
-            cur_h_address += cur_chars->width;
+            cur_h_address += the_line->last->width;
 
             /* Reset spaces (and, eventually, tabs). */
 
@@ -1501,7 +1531,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                  * change things a bit.
                  */
 
-                ch = cur_chars->text[cur_chars->count - 1];
+                ch = the_line->last->text[the_line->last->count - 1];
                 if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
                     spaces = 2;
                 } else {
@@ -1523,6 +1553,40 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         if( *input_text == '\0' ) break;
 
+        /* Process any escape sequences. */
+
+        while( *input_text == 0xFE ) {
+            input_text++;
+            switch( *input_text ) {
+            case 0xff:
+                cur_type = norm;
+                break;
+            case 0x01:
+                cur_type = sub;
+                break;
+            case 0x02:
+                cur_type = sup;
+                break;
+            default:
+                out_msg( "outcheck internal error: incorrect text_type\n" );
+                err_count++;
+                g_suicide();
+            }
+            input_text++;
+        }
+
+        /* If a space is next, go back to the top to count spaces.
+         * Note: tabs will probably need to be included when tabbing is done.
+         */
+
+        if( *input_text == ' ' ) continue;
+
+        /* If the end of the phrase is next, then the phrase ended with
+         * an initial escape sequence. Phrase processing is done.
+         */
+
+        if( *input_text == '\0' ) break;
+
         /* At this point, next_chars will be NULL. It is time to get the
          * next token.
          */
@@ -1535,6 +1599,10 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                         break;
                     }
                 }
+            } else {
+                if( *input_text == 0xFE ) {
+                    break;
+                }
             }
             input_text++;
         }
@@ -1542,7 +1610,8 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         /* Initialize next_chars to contain the token. */
 
-        next_chars = oc_alloc_text_chars( token_start, count, font_number );
+        next_chars = oc_alloc_text_chars( token_start, count, font_number, \
+                                                                    cur_type );
         next_chars->x_address = cur_h_address;
         oc_intrans( next_chars->text, &next_chars->count, font_number );
 
@@ -1558,12 +1627,14 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         if( (cur_h_address + increment) > oc_page_right ) {
 
-            /* Detach cur_chars, if it is empty.
-             * Note that cur_chars is now the only pointer to this text_chars.
+            /* Detach the last text_chars instance, if it is empty.
+             * Note: save_chars will always be NULL at this point.
              */
 
-            if( cur_chars->count == 0 ) {
-                pre_chars->next = NULL;
+            if( the_line->last->count == 0 ) {
+                save_chars = the_line->last;
+                the_line->last = the_line->last->prev;
+                the_line->last->next = NULL;
             }
 
             /* Process the full text_line and get a new one. */
@@ -1582,14 +1653,13 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
             next_chars->x_address = cur_h_address;
 
-            /* Attach cur_chars to the_line if it was empty, using the same
-             * horizontal position as just given to next_chars.
-             */
+            /* Attach save_chars to the_line if it is not NULL. */
 
-            if( cur_chars->count == 0 ) {
-                cur_chars->x_address = cur_h_address;
-                the_line->first = cur_chars;
-                pre_chars = NULL;
+            if( save_chars != NULL ) {
+                save_chars->x_address = cur_h_address;
+                the_line->first = save_chars;
+                the_line->last = the_line->first;
+                save_chars = NULL;
             }
         }
     }
@@ -1597,17 +1667,20 @@ static void oc_process_text( char * input_text, uint8_t font_number )
     /* At this point, if next_chars is not NULL, then these invariants hold: 
      *      the_line is not NULL.
      *      next_chars is guaranteed to fit into the_line.
+     * Note: it seems unlikely that the_line->first will ever be NULL; this
+     * is something to check in the future.
      */
 
     if( next_chars != NULL ) {
         if( the_line->first == NULL ) {
             the_line->first = next_chars;
+            the_line->last = next_chars;
         } else {
-            cur_chars->next = next_chars;
+            next_chars->prev = the_line->last;
+            the_line->last->next = next_chars;
+            the_line->last = next_chars;
         }
-        cur_chars = next_chars;
         next_chars = NULL;
-        spaces = 0;
 
         /* Update cur_h_address to the width of the token added. */
 
@@ -1619,6 +1692,10 @@ static void oc_process_text( char * input_text, uint8_t font_number )
         if( the_line->line_height < cur_height ) {
             the_line->line_height = cur_height;
         }
+
+        /* Reset spaces (and, eventually, tabs). */
+
+        spaces = 0;
     }
 
     return;
@@ -1915,12 +1992,14 @@ static void emulate_wgml( void )
 
     emulate_layout_page( para_font, oc_paragraph );
     emulate_layout_page( para_stop, oc_paragraph );
+    emulate_layout_page( para_subsup, oc_paragraph );
 
     /* Now switch to "wscript/noscript" mode. */
 
     oc_script = false;
     emulate_layout_page( para_font, oc_paragraph );
     emulate_layout_page( para_stop, oc_paragraph );
+    emulate_layout_page( para_subsup, oc_paragraph );
 
 #if 0 // restore when boxing is done again and blank-line-insertion is handled
     /* A blank line is placed between paragraphs. */
@@ -2068,6 +2147,7 @@ static void emulate_wgml( void )
                 out_msg( "text_line in pool not empty!\n" );
                 oc_add_text_chars_to_pool( tl_pool_ptr );
                 tl_pool_ptr->first = NULL;
+                tl_pool_ptr->last = NULL;
             }
             mem_free( tl_pool_ptr );
         }
@@ -2220,6 +2300,7 @@ start_heapcheck( "main" );
 end_heapcheck( "main" );
 //display_heap( "pre" );
 //display_heap( "post" );
+
     return( EXIT_SUCCESS );
 }
 

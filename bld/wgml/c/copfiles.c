@@ -153,6 +153,7 @@ static void compute_metrics( wgml_font * in_font )
 {
     uint32_t    glyph_height;
     uint32_t    height;
+    uint32_t    shift_height;
 
     /* Compute the default character width. */
 
@@ -227,6 +228,30 @@ static void compute_metrics( wgml_font * in_font )
 
             in_font->line_space = in_font->line_height - glyph_height;
         }
+    }
+
+    /* Compute the shift_height. This is only done for a PS device, as the
+     * fields are already correct for a non-PS device.
+     */
+
+    if( ps_device ) {
+
+        /* The formula is: (font height * 3) / 10, rounded down.
+         * The font height is in vertical base units, computed as above.
+         * Since the maximum font height is 72 points or 1 inch, and the
+         * number of vertical base units per inch is 1000 for device PS,
+         * the maximum value is 300. Thus, a four-character array is
+         * large enough in this case.
+         */
+
+        height = (in_font->font_height ) * bin_device->vertical_base_units;
+
+        shift_height = height / 7200;
+        if( (height % 7200) > 0 ) shift_height++;
+
+        height = (shift_height * 3 ) / 10;
+        utoa( height, in_font->shift_height, 10 );
+        in_font->shift_count = strnlen_s( in_font->shift_height, 4 );
     }
 
     return;
@@ -972,8 +997,22 @@ void cop_setup( void )
         wgml_fonts[i].font_pause = NULL;
         wgml_fonts[i].font_style = NULL;
         wgml_fonts[i].outtrans = NULL;
+        wgml_fonts[i].default_width = 0;
+        wgml_fonts[i].dv_base = 0;
+        wgml_fonts[i].em_base = 0;
         wgml_fonts[i].font_height = 0;
         wgml_fonts[i].font_space = 0;
+        wgml_fonts[i].line_height = 0;
+        wgml_fonts[i].line_space = 0;
+        wgml_fonts[i].spc_width = 0;
+        for( j = 0; j < 0x100; j++ ) { 
+            wgml_fonts[i].width_table[j] = 0;
+        }
+        wgml_fonts[i].font_resident = 'n';
+        wgml_fonts[i].shift_count = 0;
+        for( j = 0; j < 0x04; j++ ) { 
+            wgml_fonts[i].shift_height[j] = '\0';
+        }
     }
 
     /* Process the :DEFAULTFONT Blocks. */
@@ -1091,10 +1130,10 @@ void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
-            wgml_fonts[i].font_resident = 'n';
             wgml_fonts[i].default_width = 1;
             wgml_fonts[i].line_height = 1;
             wgml_fonts[i].line_space = 0;
+            wgml_fonts[i].font_resident = 'n';
 
             /* The font used with the :UNDERSCORE block cannot be scaled. */
 
@@ -1122,10 +1161,10 @@ void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
-            wgml_fonts[i].font_resident = 'n';
             wgml_fonts[i].default_width = 1;
             wgml_fonts[i].line_height = 1;
             wgml_fonts[i].line_space = 0;
+            wgml_fonts[i].font_resident = 'n';
 
             /* The font used with the :BOX block cannot be scaled. */
 
@@ -1155,10 +1194,10 @@ void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
-            wgml_fonts[i].font_resident = 'n';
             wgml_fonts[i].default_width = 1;
             wgml_fonts[i].line_height = 1;
             wgml_fonts[i].line_space = 0;
+            wgml_fonts[i].font_resident = 'n';
 
             /* The font used with the :UNDERSCORE block cannot be scaled. */
 
@@ -1186,10 +1225,10 @@ void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
-            wgml_fonts[i].font_resident = 'n';
             wgml_fonts[i].default_width = 1;
             wgml_fonts[i].line_height = 1;
             wgml_fonts[i].line_space = 0;
+            wgml_fonts[i].font_resident = 'n';
 
             /* The font used with the :BOX block cannot be scaled. */
 
@@ -1221,12 +1260,12 @@ void cop_setup( void )
     def_font.font_switch = wgml_fonts[0].font_switch;
     def_font.font_pause = wgml_fonts[0].font_pause;
     def_font.font_style = wgml_fonts[0].font_style;
-    def_font.font_resident = wgml_fonts[0].font_resident;
     def_font.font_height = wgml_fonts[0].font_height;
     def_font.font_space = wgml_fonts[0].font_space;
     def_font.default_width = wgml_fonts[0].default_width;
     def_font.line_height = wgml_fonts[0].line_height;
     def_font.line_space = wgml_fonts[0].line_space;
+    def_font.font_resident = wgml_fonts[0].font_resident;
 
     for( i = 0; i < wgml_font_cnt; i++ ) {
         if( wgml_fonts[i].bin_font == NULL ) {
@@ -1234,12 +1273,12 @@ void cop_setup( void )
             wgml_fonts[i].font_switch = def_font.font_switch;
             wgml_fonts[i].font_pause = def_font.font_pause;
             wgml_fonts[i].font_style = def_font.font_style;
-            wgml_fonts[i].font_resident = def_font.font_resident;
             wgml_fonts[i].font_height = def_font.font_height;
             wgml_fonts[i].font_space = def_font.font_space;
             wgml_fonts[i].default_width = def_font.default_width;
             wgml_fonts[i].line_height = def_font.line_height;
             wgml_fonts[i].line_space = def_font.line_space;
+            wgml_fonts[i].font_resident = def_font.font_resident;
         }
     }
 
