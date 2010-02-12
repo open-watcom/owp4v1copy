@@ -121,6 +121,7 @@ extern  void    att_val_err( char * attname );
 extern  void    auto_att_err( void );
 extern  void    cw_err( void );
 extern  void    dc_opt_err( char * pa );
+extern  void    dc_opt_warn( char * pa );
 extern  void    file_mac_info( void );
 extern  void    nottag_err( void );
 extern  void    numb_err( void );

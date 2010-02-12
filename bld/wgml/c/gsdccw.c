@@ -357,7 +357,7 @@ void    scr_cw( void )
 
 /***************************************************************************/
 /*  scr_dc    implement .dc define character control word                  */
-/*              not all options are implemented                            */
+/*              not all options are implemented                      TBD   */
 /***************************************************************************/
 
 void    scr_dc( void )
@@ -396,7 +396,7 @@ void    scr_dc( void )
     }
     if( opt == 0 ) {                   // omitted / unknown / not implemented
         *p = '\0';
-        dc_opt_err( pa );
+        dc_opt_warn( pa );
         return;
     }
     while( *p && *p == ' ' ) {          // next word start = option value
@@ -473,7 +473,7 @@ void    scr_dc( void )
         break;
     default:                            // unknown / unimplemented option
         *p = '\0';
-        dc_opt_err( pa );
+        dc_opt_warn( pa );
         break;
     }
     return;

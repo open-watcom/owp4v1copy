@@ -727,4 +727,21 @@ typedef enum lay_sub {
     el_ebanregion
 } lay_sub;
 
+/***************************************************************************/
+/*  definitions for functioncodes inserted into input buffer               */
+/*  incomplete will probably change                             TBD        */
+/***************************************************************************/
+
+typedef enum functs {
+    function_escape         = 0xfe,
+    function_end            = 0x01,
+
+    function_subscript      = 0x02,
+    function_sub_end        = 0x03,
+    function_superscript    = 0x04,
+    function_super_end      = 0x05
+} functs;
+
+
+
 #endif                                  // GTYPE_H_INCLUDED

@@ -317,6 +317,12 @@ static void syscdfun( symvar * e )      // column count
     return;
 };
 
+static void syscdcountfun( symvar * e )
+{
+    var_wng( e->name );
+    return;
+};
+
 static void syscharsfun( symvar * e )
 {
     var_wng( e->name );
@@ -1138,20 +1144,25 @@ void    init_sysparm( char * cmdline, char * banner )
 {
     char    *   p;
 
-    p = strchr( cmdline, '(' ) + 1;     // find parm start
-    while( *p == ' ' ) {                // over leading blanks
+    p = strchr( cmdline, '(' );         // find parm start
+    if( p == NULL ) {
+        sysparm0.value = cmdline;       // empty cmdline
+    } else {
         p++;
-    }
-    strupr( p );                        // uppercase as wgml4 does
-    sysparm0.value = p;
-
-    p += strlen( p ) - 1;
-    if( *p == ' ' ) {                   // delete trailing blanks
-        while( *p == ' ' ) {
-            p--;
+        while( *p == ' ' ) {            // over leading blanks
+            p++;
         }
-        *++p = 0;                       // terminate string
+        sysparm0.value = p;
+
+        p += strlen( p ) - 1;
+        if( *p == ' ' ) {               // delete trailing blanks
+            while( *p == ' ' ) {
+                p--;
+            }
+            *++p = 0;                   // terminate string
+        }
     }
+    strupr( sysparm0.value );           // uppercase as wgml4 does
 
     syspdev0.value = dev_name;
     sysversion0.value = banner;

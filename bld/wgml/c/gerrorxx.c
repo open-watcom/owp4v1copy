@@ -98,6 +98,15 @@ void    dc_opt_err( char *pa )
 }
 
 
+void    dc_opt_warn( char *pa )
+{
+    err_count++;
+    g_warn( err_dc_opt, pa );
+    file_mac_info();
+    return;
+}
+
+
 void    parm_miss_err( char *pa )
 {
     err_count++;

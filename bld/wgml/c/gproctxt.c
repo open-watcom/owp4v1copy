@@ -209,7 +209,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
     cnt = 0;
     tw = line->first;
     tl = line->last;
-
+    tc = tw;
     hor_end = tl->x_address + tl->width;// hor end position
 
     do {                                // calculate used width
@@ -601,6 +601,8 @@ void    process_text( char * text, uint8_t font_num )
     size_t                  count;
     char                *   pword;
     char                *   p;
+    static      text_type   typ = norm;
+    static      text_type   typn = norm;
 
     p = text;
     if( ProcFlags.concat ) {            // experimental TBD
@@ -610,6 +612,28 @@ void    process_text( char * text, uint8_t font_num )
     }
     pword = p;                          // remember word start
     while( *p ) {
+        if( *p == function_escape ) {   // special sub/superscript...
+            if( p == pword ) {
+                pword = p + 2;          // over function escape codes
+            }
+            p++;
+            switch( *p ) {
+            case   function_subscript :
+                typ = sub;
+                break;
+            case   function_superscript :
+                typ = sup;
+                break;
+            case   function_end:
+            default:
+                typn = norm;
+                *p = ' ';               // force word end
+                p--;
+                *p = ' ';               // replacing function esc codes
+                p--;
+                break;
+            }
+        }
         p++;
         if( *p != ' ' ) {               // no space no word end
             continue;
@@ -626,7 +650,8 @@ void    process_text( char * text, uint8_t font_num )
                 count = p - pword;      // no of bytes
 
                 n_char = process_word( pword, count, font_num );
-
+                n_char->type = typ;
+                typ = typn;
                 if( t_line.first == NULL ) {// first element in output line
                     ju_x_start = g_cur_h_start;
                     pre_space = 0;
@@ -698,6 +723,8 @@ void    process_text( char * text, uint8_t font_num )
         count = p - pword;              // no of bytes
 
         n_char = process_word( pword, count, font_num );
+        n_char->type = typ;
+        typ = typn;
 
         if( t_line.first == NULL ) {    // first element in output line
             pre_space = 0;
