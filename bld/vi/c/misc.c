@@ -98,10 +98,8 @@ static void preSpawn( void )
      * after a system command, all files could potentially have their
      * read/write attributes changed
      */
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         cinfo->CurrentFile->check_readonly = TRUE;
-        cinfo = cinfo->next;
     }
     setPrompt();
 }
@@ -465,11 +463,9 @@ void ExitWithVerify( void )
         return;
     }
     entered = TRUE;
-    cinfo = InfoHead;
     modified = FALSE;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         modified |= cinfo->CurrentFile->modified;
-        cinfo = cinfo->next;
         num++;
     }
     if( modified ) {

@@ -341,10 +341,8 @@ void SetUpFont( LOGFONT *l, font_type index )
     f = &Fonts[index];
 
     customFont( f, l );
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         DCResize( cinfo );
-        cinfo = cinfo->next;
     }
     ResizeRoot();
     ResetExtraRects();

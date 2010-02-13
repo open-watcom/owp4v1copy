@@ -115,13 +115,11 @@ vi_rc HandleMouseEvent( void )
             /*
              * swap to another window
              */
-            cinfo = InfoHead;
-            while( cinfo != NULL ) {
+            for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
                 if( id == cinfo->CurrentWindow ) {
                     BringUpFile( cinfo, TRUE );
                     break;
                 }
-                cinfo = cinfo->next;
             }
         }
         if( id == CurrentWindow ) {

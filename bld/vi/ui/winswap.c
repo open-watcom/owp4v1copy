@@ -115,13 +115,11 @@ void SwapAllWindows( void )
     if( EditFlags.Verbose ) {
         Message1( "Swapping window data" );
     }
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         w = Windows[cinfo->CurrentWindow];
         if( !TestVisible( w ) && !w->isswapped && w->accessed == 0 ) {
             windowSwap( w );
         }
-        cinfo = cinfo->next;
     }
 
 } /* SwapAllWindows */

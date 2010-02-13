@@ -514,14 +514,10 @@ static void addFileList( menu *cmenu )
     buff[0] = 0;
     MenuItem( buff );
 
-    cinfo = InfoHead;
-    cnt = 1;
-    while( cinfo != NULL && cnt < 10 ) {
+    for( cnt = 1, cinfo = InfoHead; cinfo != NULL && cnt < 10; cinfo = cinfo->next, ++cnt ) {
         MySprintf( buff, "\"&%d %s\" edit %s", cnt,
                    cinfo->CurrentFile->name, cinfo->CurrentFile->name );
         MenuItem( buff );
-        cinfo = cinfo->next;
-        cnt++;
     }
     if( cinfo != NULL ) {
         strcpy( buff, "\"&More Windows ...\" files" );

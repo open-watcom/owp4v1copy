@@ -262,10 +262,8 @@ bool TossUndos( void )
     info        *least;
     undo_stack  *stack;
 
-    cinfo = InfoHead;
-
     least = NULL;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         stack = cinfo->UndoStack;
         if( stack->current >=0 ) {
             if( least == NULL ) {
@@ -288,7 +286,6 @@ bool TossUndos( void )
                 }
             }
         }
-        cinfo = cinfo->next;
     }
     if( least != NULL ) {
         if( doTossUndo( least->UndoUndoStack ) ) {

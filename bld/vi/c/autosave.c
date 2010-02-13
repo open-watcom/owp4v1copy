@@ -427,13 +427,11 @@ void AutoSaveFini( void )
         MakeTmpPath( path, lockFileName );
         remove( path );
     }
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         if( cinfo->CurrentFile->been_autosaved ) {
             MakeTmpPath( path, cinfo->CurrentFile->as_name );
             remove( path );
         }
-        cinfo = cinfo->next;
     }
 
 } /* AutoSaveFini */

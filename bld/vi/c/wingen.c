@@ -363,14 +363,11 @@ void ResetAllWindows( void )
     info        *cinfo;
     info        *oldcurr;
 
-    cinfo = InfoHead;
     oldcurr = CurrentInfo;
-
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         SaveCurrentInfo();
         BringUpFile( cinfo, FALSE );
         ResetWindow( &CurrentWindow );
-        cinfo = cinfo->next;
     }
 
     if( oldcurr != NULL ) {

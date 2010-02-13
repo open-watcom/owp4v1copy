@@ -376,12 +376,10 @@ static void finiSource( labels *lab, vlist *vl, sfile *sf, undo_stack *atomic )
      * make sure this undo stack is still around
      */
     if( atomic != NULL ) {
-        cinfo = InfoHead;
-        while( cinfo != NULL ) {
+        for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
             if( atomic == cinfo->UndoStack ) {
                 break;
             }
-            cinfo = cinfo->next;
         }
         if( cinfo != NULL ) {
             EndUndoGroup( atomic );

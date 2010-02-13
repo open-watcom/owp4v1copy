@@ -426,9 +426,10 @@ dc DCFindLine( int c_line_no, window_id id )
     info    *info;
     dc      dc;
 
-    info = InfoHead;
-    while( info && info->CurrentWindow != id ) {
-        info = info->next;
+    for( info = InfoHead; info != NULL; info = info->next ) {
+        if( info->CurrentWindow == id ) {
+            break;
+        }
     }
     assert( info );
     assert( c_line_no >= 0 && c_line_no < info->dc_size );

@@ -700,15 +700,13 @@ vi_rc RunCommandLine( char *cl )
     case PCL_T_TILE:
         if( NextWord1( dataBuff, st ) > 0 ) {
             if( st[0] == 'v' ) {
-                x = y = 1;
-                cinfo = InfoHead;
-                while( (cinfo = cinfo->next) != NULL ) {
+                y = 1;
+                for( x = 0, cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
                     x++;
                 }
             } else if( st[0] == 'h' ) {
-                x = y = 1;
-                cinfo = InfoHead;
-                while( (cinfo = cinfo->next) != NULL ) {
+                x = 1;
+                for( y = 0, cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
                     y++;
                 }
             } else {

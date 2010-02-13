@@ -56,8 +56,7 @@ vi_rc WindowTile( int maxx, int maxy )
     SaveCurrentInfo();
     cwinfo = CurrentInfo;
     if( maxx == 1 && maxy == 1 ) {
-        cinfo = InfoHead;
-        while( cinfo != NULL ) {
+        for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
             BringUpFile( cinfo, FALSE );
             WindowAuxUpdate( CurrentWindow, WIND_INFO_TEXT_COLOR,
                              editw_info.text.foreground );
@@ -69,7 +68,6 @@ vi_rc WindowTile( int maxx, int maxy )
                              editw_info.border_color2 );
             CurrentWindowResize( editw_info.x1, editw_info.y1, editw_info.x2,
                                  editw_info.y2 );
-            cinfo = cinfo->next;
         }
         BringUpFile( cwinfo, FALSE );
         return( ERR_NO_ERR );

@@ -58,12 +58,10 @@ static vi_rc createNewFile( char *name, bool same_file )
         if( name == NULL ) {
             tmp = CurrentInfo;
         } else {
-            tmp = InfoHead;
-            while( tmp != NULL ) {
+            for( tmp = InfoHead; tmp != NULL; tmp = tmp->next ) {
                 if( !strcmp( tmp->CurrentFile->name, name ) ) {
                     break;
                 }
-                tmp = tmp->next;
             }
         }
         if( tmp == NULL )  {

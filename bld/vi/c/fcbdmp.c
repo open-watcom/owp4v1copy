@@ -212,8 +212,7 @@ vi_rc SanityCheck( void )
         return( rc );
     }
     lc = 1;
-    inf = InfoHead;
-    while( inf != NULL ) {
+    for( inf = InfoHead; inf != NULL; inf = inf->next ) {
 
         WPrintfLine( fw, lc++, "File name: %s", inf->CurrentFile->name );
         cfcb = inf->CurrentFile->fcb_head;
@@ -273,7 +272,6 @@ vi_rc SanityCheck( void )
         if( EditFlags.BreakPressed ) {
             break;
         }
-        inf = inf->next;
     }
     EditFlags.WatchForBreak = EditFlags.BreakPressed = FALSE;
 

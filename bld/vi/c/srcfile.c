@@ -83,12 +83,10 @@ vi_rc SrcOpen( sfile *curr, vlist *vl, files *fi, char *data )
         if( !stricmp( &name[1], "." ) ) {
             cinfo = CurrentInfo;
         } else {
-            cinfo = InfoHead;
-            while( cinfo != NULL ) {
+            for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
                 if( !strcmp( cinfo->CurrentFile->name, &name[1] ) ) {
                     break;
                 }
-                cinfo = cinfo->next;
             }
             if( cinfo == NULL ) {
                 return( ERR_FILE_NOT_FOUND );

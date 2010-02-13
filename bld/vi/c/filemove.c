@@ -70,8 +70,7 @@ vi_rc NextFileDammit( void )
         FreeMarkList();
         if( CurrentFile->dup_count > 0 ) {
             CurrentFile->dup_count--;
-            tinfo = InfoHead;
-            while( tinfo != NULL ) {
+            for( tinfo = InfoHead; tinfo != NULL; tinfo = tinfo->next ) {
                 if( tinfo->CurrentFile == CurrentFile ) {
                     if( tinfo->DuplicateID > lastid ) {
                         tinfo->DuplicateID--;
@@ -80,7 +79,6 @@ vi_rc NextFileDammit( void )
                         SetFileWindowTitle( tinfo->CurrentWindow, tinfo, FALSE );
                     }
                 }
-                tinfo = tinfo->next;
             }
         } else {
             FreeUndoStacks();
@@ -211,9 +209,10 @@ vi_rc GotoFile( window_id id )
         return( ERR_NO_ERR );
     }
 
-    cinfo = InfoHead;
-    while( (cinfo->CurrentWindow != id) && (cinfo->next != NULL) ) {
-        cinfo = cinfo->next;
+    for( cinfo = InfoHead; cinfo->next != NULL; cinfo = cinfo->next ) {
+        if( cinfo->CurrentWindow == id ) {
+            break;
+        }
     }
     assert( cinfo != NULL );
 

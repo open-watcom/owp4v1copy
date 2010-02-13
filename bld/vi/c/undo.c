@@ -392,13 +392,11 @@ void TryEndUndoGroup( undo_stack *cstack )
 {
     info        *cinfo;
 
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         if( cstack == cinfo->UndoStack ) {
             EndUndoGroup( cstack );
             break;
         }
-        cinfo = cinfo->next;
     }
 
 } /* TryEndUndoGroup */

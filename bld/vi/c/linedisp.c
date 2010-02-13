@@ -78,14 +78,12 @@ vi_rc ReDisplayBuffers( bool runFts )
 
     SaveCurrentInfo();
     ocurrinfo = CurrentInfo;
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         if( cinfo != ocurrinfo ) {
             if( WindowIsVisible( cinfo->CurrentWindow ) ) {
                 BringUpFile( cinfo, runFts );
             }
         }
-        cinfo = cinfo->next;
     }
     BringUpFile( ocurrinfo, runFts );
 

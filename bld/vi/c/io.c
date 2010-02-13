@@ -178,14 +178,12 @@ static int closeAFile( void )
 {
     info    *cinfo;
 
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         if( cinfo->CurrentFile->handle >= 0 ) {
             close( cinfo->CurrentFile->handle );
             cinfo->CurrentFile->handle = -1;
             return( ERR_NO_ERR );
         }
-        cinfo = cinfo->next;
     }
     return( ERR_FILE_CLOSE );
 

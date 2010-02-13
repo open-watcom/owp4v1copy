@@ -241,7 +241,6 @@ vi_rc EditFile( char *name, int dammit )
          */
         index = 1;
         while( cnt > 0 ) {
-
             cnt--;
             /*
              * quit current file if ! specified, else just save current state
@@ -274,8 +273,7 @@ vi_rc EditFile( char *name, int dammit )
              * see if new file is already being edited
              */
             SaveCurrentInfo();
-            il = InfoHead;
-            while( il != NULL ) {
+            for( il = InfoHead; il != NULL; il = il->next ) {
                 if( SameFile( il->CurrentFile->name, currfn ) ) {
                     BringUpFile( il, TRUE );
                     goto EVIL_CONTINUE;
@@ -309,8 +307,6 @@ vi_rc EditFile( char *name, int dammit )
                         goto EVIL_CONTINUE;
                     }
                 }
-
-                il = il->next;
             }
 
             /*
@@ -418,17 +414,14 @@ vi_rc EditFileFromList( void )
          * allocate a buffer for strings, add strings
          */
         list = (char **) MemAlloc( GimmeFileCount() * sizeof( char * ) );
-        j = 0;
-        cinfo = InfoHead;
-        while( cinfo != NULL ) {
+        for( j = 0, cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next, ++j ) {
             list[j] = MemAlloc( strlen( cinfo->CurrentFile->name ) + 3 );
             if( cinfo->CurrentFile->modified ) {
                 modchar = '*';
+            } else {
+                modchar = ' ';
             }
-            else modchar = ' ';
             MySprintf( list[j], "%c %s", modchar, cinfo->CurrentFile->name );
-            j++;
-            cinfo = cinfo->next;
         }
         fcnt = j;
         tmp = filelistw_info.y2;
@@ -462,10 +455,8 @@ vi_rc EditFileFromList( void )
         n = si.num;
         if( rc == ERR_NO_ERR ) {
             if( n >= 0 ) {
-                j = 0;
                 cinfo = InfoHead;
-                while( n != j ) {
-                    j++;
+                for( j = 0; j < n; ++j ) {
                     cinfo = cinfo->next;
                 }
                 BringUpFile( cinfo, TRUE );

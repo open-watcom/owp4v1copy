@@ -423,10 +423,8 @@ int GimmeFileCount( void )
     info        *cinfo;
     int         cnt = 0;
 
-    cinfo = InfoHead;
-    while( cinfo != NULL ) {
+    for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         cnt++;
-        cinfo = cinfo->next;
     }
     return( cnt );
 
