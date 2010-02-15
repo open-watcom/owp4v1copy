@@ -12185,3 +12185,17 @@ template< class T >
 A< int >::A( )
 { }
 :eerrbad.
+
+:MSGSYM. ERR_PRAG_ENABLE_MESSAGE
+:MSGTXT. form is '#pragma enable_message( msgnum )'
+:MSGJTXT. ‘®‚ÍC'#pragma enable_message( msgnum )'
+This
+.kw pragma
+enables the specified warning message.
+
+:MSGSYM. ERR_PRAG_DISABLE_MESSAGE
+:MSGTXT. form is '#pragma disable_message( msgnum )'
+:MSGJTXT. ‘®‚ÍC'#pragma disable_message( msgnum )'
+This
+.kw pragma
+disables the specified warning message.

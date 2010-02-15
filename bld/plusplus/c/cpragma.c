@@ -368,6 +368,67 @@ static boolean pragWarning(     // PROCESS #PRAGMA WARNING
 }
 
 
+// #pragma enable_message( # )
+
+static void pragEnableMessage(  // ENABLE WARNING MESSAGE
+    void )
+{
+    unsigned msgnum;
+    boolean error_occurred;
+
+    error_occurred = FALSE;
+    MustRecog( T_LEFT_PAREN );
+    for( ;; ) {
+        if( !grabNum( &msgnum ) ) {
+            CErr1( ERR_PRAG_ENABLE_MESSAGE );
+            error_occurred = TRUE;
+        }
+
+        // Enable message by setting its level to the lowest possible value.
+        if( !error_occurred ) {
+            WarnChangeLevel( 0x01, msgnum );
+        }
+
+        if( CurToken != T_COMMA ) {
+            break;
+        }
+        NextToken();
+    }
+    MustRecog( T_RIGHT_PAREN );
+
+}
+
+
+// #pragma disable_message( # )
+
+static void pragDisableMessage( // DISABLE WARNING MESSAGE
+    void )
+{
+    unsigned msgnum;
+    boolean error_occurred;
+
+    error_occurred = FALSE;
+    MustRecog( T_LEFT_PAREN );
+    for( ;; ) {
+        if( !grabNum( &msgnum ) ) {
+            CErr1( ERR_PRAG_DISABLE_MESSAGE );
+            error_occurred = TRUE;
+        }
+
+        // Disable message by setting its level to the highest possible value.
+        if( !error_occurred ) {
+            WarnChangeLevel( 0x0F, msgnum );
+        }
+
+        if( CurToken != T_COMMA ) {
+            break;
+        }
+        NextToken();
+    }
+    MustRecog( T_RIGHT_PAREN );
+
+}
+
 static void endOfPragma(
     void )
 {
@@ -1087,6 +1148,10 @@ void CPragma( void )                  // PROCESS A PRAGMA
                 /* ignore #pragma warning */
                 check_end = FALSE;  /* skip rest of line */
             }
+        } else if( PragRecog( "enable_message" ) ) {
+            pragEnableMessage();
+        } else if( PragRecog( "disable_message" ) ) {
+            pragDisableMessage();
         } else if( PragRecog( "code_seg" ) ) {
             pragCodeSeg();
         } else if( PragRecog( "data_seg" ) ) {

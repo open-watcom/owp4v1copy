@@ -707,7 +707,7 @@ the opening and closing parenthesis.
 #pragma data_seg ();
 .millust end
 .*
-.section *refid=&pragdsbl. The DISABLE_MESSAGE Pragma (C Only)
+.section *refid=&pragdsbl. The DISABLE_MESSAGE Pragma
 .*
 .np
 .ix 'pragmas' 'disable_message'
@@ -772,7 +772,7 @@ The general form of the "dump_object_model" pragma is as follows.
 .np
 This pragma is designed to be used for information purposes only.
 .*
-.section *refid=&pragenbl. The ENABLE_MESSAGE Pragma (C Only)
+.section *refid=&pragenbl. The ENABLE_MESSAGE Pragma
 .*
 .np
 .ix 'pragmas' 'enable_message'
