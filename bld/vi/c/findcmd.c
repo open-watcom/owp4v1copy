@@ -51,7 +51,8 @@ static info     *lastPosInfo = NULL;
 static vi_rc    setLineCol( char *, i_mark *, find_type );
 static vi_rc    processFind( range *, char *, vi_rc (*)( char *, i_mark *, int * ) );
 
-void FindCmdFini( void ){
+void FindCmdFini( void )
+{
     MemFree( lastFind );
     MemFree( sStr );
 #ifdef __WIN__
@@ -101,7 +102,7 @@ void ResetLastFind( info *inf )
  */
 vi_rc GetFindForward( char *st, i_mark *pos1, int *len1 )
 {
-    return( GetFind( st, pos1, len1, FINDFL_FORWARD ) );
+    return( GetFind( st, pos1, len1, FINDFL_FORWARD, FALSE ) );
 
 } /* GetFindForward */
 
@@ -110,7 +111,7 @@ vi_rc GetFindForward( char *st, i_mark *pos1, int *len1 )
  */
 vi_rc GetFindBackwards( char *st, i_mark *pos1, int *len1 )
 {
-    return( GetFind( st, pos1, len1, FINDFL_BACKWARDS ) );
+    return( GetFind( st, pos1, len1, FINDFL_BACKWARDS, FALSE ) );
 
 } /* GetFindBackwards */
 
@@ -422,7 +423,7 @@ static vi_rc processFind( range *r, char *st, vi_rc (*rtn)( char *, i_mark *, in
 /*
  * GetFind - get a find location
  */
-vi_rc GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
+vi_rc GetFind( char *st, i_mark *pos1, int *len1, find_type flag, bool silent )
 {
     int         len;
     char        *linedata;
@@ -439,10 +440,10 @@ vi_rc GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
     if( rc == ERR_NO_ERR ) {
         if( flag & FINDFL_FORWARD ) {
             rc = FindRegularExpression( sStr, &pos2,
-                &linedata, MAX_LONG, EditFlags.SearchWrap );
+                &linedata, MAX_LONG, EditFlags.SearchWrap, silent );
         } else {
             rc = FindRegularExpressionBackwards( sStr, &pos2,
-                &linedata, -1, EditFlags.SearchWrap );
+                &linedata, -1, EditFlags.SearchWrap, silent );
         }
     }
     lastPosInfo = CurrentInfo;
@@ -596,7 +597,7 @@ vi_rc ColorFind( char *data, find_type findfl )
      */
     EditFlags.LastSearchWasForward = TRUE;
     GoToLineNoRelCurs( 1 );
-    rc = GetFind( buff, &pos, &len, FINDFL_FORWARD | findfl );
+    rc = GetFind( buff, &pos, &len, FINDFL_FORWARD | findfl, FALSE );
     if( rc == ERR_NO_ERR ) {
         pos.column += 1;
         JumpTo( &pos );

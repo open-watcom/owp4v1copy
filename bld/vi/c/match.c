@@ -81,7 +81,7 @@ vi_rc FindMatch( i_mark *pos1 )
     pos2.column -= 1;
 
     oldmagic = SetMagicFlag( TRUE );
-    rc = FindRegularExpression( matchd, &pos2, &linedata, pos2.line, FALSE );
+    rc = FindRegularExpression( matchd, &pos2, &linedata, pos2.line, FALSE, TRUE );
     if( rc != ERR_NO_ERR ) {
         SetMagicFlag( oldmagic );
         return( ERR_NOTHING_TO_MATCH );
@@ -118,10 +118,10 @@ vi_rc FindMatch( i_mark *pos1 )
     while( TRUE ) {
         if( m2 ) {
             pos2.column--;
-            rc = FindRegularExpressionBackwards( NULL, &pos2, &linedata, -1L, FALSE );
+            rc = FindRegularExpressionBackwards( NULL, &pos2, &linedata, -1L, FALSE, TRUE );
         } else {
             pos2.column++;
-            rc = FindRegularExpression( NULL, &pos2, &linedata, MAX_LONG, FALSE );
+            rc = FindRegularExpression( NULL, &pos2, &linedata, MAX_LONG, FALSE, TRUE );
         }
         if( rc != ERR_NO_ERR ) {
             break;

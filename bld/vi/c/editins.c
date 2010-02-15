@@ -791,7 +791,7 @@ static vi_rc getBracketLoc( i_mark *pos )
     tmp[2] = 0;
     lne = CurrentPos.line;
     oldmagic = SetMagicFlag( TRUE );
-    rc = GetFind( tmp, pos, &len, FINDFL_BACKWARDS | FINDFL_NOERROR);
+    rc = GetFind( tmp, pos, &len, FINDFL_BACKWARDS | FINDFL_NOERROR, TRUE );
     SetMagicFlag( oldmagic );
     if( pos->line != CurrentPos.line ) {
         return( ERR_FIND_NOT_FOUND );

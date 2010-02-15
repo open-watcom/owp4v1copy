@@ -38,8 +38,8 @@
 extern regexp *CurrentRegularExpression;
 
 /* findrx.c */
-extern vi_rc    FindRegularExpression( char *, i_mark *, char **, linenum, int );
-extern vi_rc    FindRegularExpressionBackwards( char *, i_mark *, char **, linenum, int );
+extern vi_rc    FindRegularExpression( char *, i_mark *, char **, linenum, bool, bool );
+extern vi_rc    FindRegularExpressionBackwards( char *, i_mark *, char **, linenum, bool, bool );
 
 /* rxsupp.c */
 extern int      CurrentRegComp( char * );

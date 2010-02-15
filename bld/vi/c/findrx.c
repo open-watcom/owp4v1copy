@@ -35,13 +35,13 @@
 #include "rxsupp.h"
 
 static char wrapMsg[] = "Wrapped past %s of file";
-static bool wrapMsgPrinted;
+static bool wrapMsgPrinted = FALSE;
 
 /*
  * FindRegularExpression - do a forward search for a regular expression
  */
 vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
-                                                    linenum termline, int sw )
+                             linenum termline, bool sw, bool silent )
 {
     vi_rc       rc;
     int         found;
@@ -56,7 +56,7 @@ vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
     /*
      * initialize for search
      */
-    if( wrapMsgPrinted ) {
+    if( !silent && wrapMsgPrinted ) {
         wrapMsgPrinted = FALSE;
         ClearWindow( MessageWindow );
     }
@@ -93,7 +93,7 @@ vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
         } else if( rc == ERR_NO_MORE_LINES ) {
             if( !sw ) {
                 return( ERR_FIND_END_OF_FILE );
-            } else {
+            } else if( !silent ) {
                 Message1( wrapMsg, "bottom" );
                 MyBeep();
                 wrapMsgPrinted = TRUE;
@@ -132,7 +132,7 @@ vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
  * FindRegularExpressionBackwards - do a reverse search for a regular expression
  */
 vi_rc FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
-                                                             linenum termline, int sw )
+                                      linenum termline, bool sw, bool silent )
 {
     vi_rc       rc;
     char        *data;
@@ -149,7 +149,7 @@ vi_rc FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
     /*
      * initialize for search
      */
-    if( wrapMsgPrinted ) {
+    if( !silent && wrapMsgPrinted ) {
         wrapMsgPrinted = FALSE;
         ClearWindow( MessageWindow );
     }
@@ -209,7 +209,7 @@ vi_rc FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
         } else if( rc == ERR_NO_MORE_LINES ) {
             if( !sw ) {
                 return( ERR_FIND_TOP_OF_FILE );
-            } else {
+            } else if( !silent ) {
                 Message1( wrapMsg, "top" );
                 MyBeep();
                 wrapMsgPrinted = TRUE;

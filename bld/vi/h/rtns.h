@@ -370,7 +370,7 @@ vi_rc DoGenericFilter( linenum, linenum, char * );
 void    HilightSearchString( i_mark *, int );
 void    ResetLastFind( info * );
 vi_rc   FindForwardWithString( char * );
-vi_rc   GetFind( char *, i_mark *, int *, find_type );
+vi_rc   GetFind( char *, i_mark *, int *, find_type, bool );
 vi_rc   FindBackwardsWithString( char * );
 void    SaveFindRowColumn( void );
 vi_rc   ColorFind( char *, find_type );
