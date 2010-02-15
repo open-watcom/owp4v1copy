@@ -187,8 +187,8 @@ void RestoreCurrentFilePos( void )
     if( CurrentFile != NULL ) {
         rc = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
         if( rc == ERR_NO_SUCH_LINE ) {
-            if( CurrentFile->fcb_tail != NULL ) {
-                CurrentPos.line = CurrentFile->fcb_tail->end_line;
+            if( CurrentFile->fcbs.tail != NULL ) {
+                CurrentPos.line = CurrentFile->fcbs.tail->end_line;
                 CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
             }
         }

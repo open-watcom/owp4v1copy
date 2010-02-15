@@ -670,13 +670,7 @@ static vi_rc eSearch( char *fn, char *res )
      * read lines from the file, and search through them
      */
     buff = StaticAlloc();
-    while( TRUE ) {
-
-        if( fgets( buff, MaxLine, f ) == NULL ) {
-            fclose( f );
-            StaticFree( buff );
-            return( ERR_NO_ERR );
-        }
+    while( fgets( buff, MaxLine, f ) != NULL ) {
         for( i = strlen( buff ); i && isEOL( buff[i - 1] ); --i ) {
             buff[i - 1] = 0;
         }
@@ -694,8 +688,10 @@ static vi_rc eSearch( char *fn, char *res )
             StaticFree( buff );
             return( FGREP_FOUND_STRING );
         }
-
     }
+    fclose( f );
+    StaticFree( buff );
+    return( ERR_NO_ERR );
 
 } /* eSearch */
 
@@ -729,11 +725,9 @@ static vi_rc fSearch( char *fn, char *r )
      */
     strloc = sString; // don't reset at start of new block - could span blocks
     while( 1 ) {
-
         bcnt = bytes = read( handle, buff, bytecnt );
         buffloc = buff;
         while( bytes ) {
-
             if( *strloc == cTable[*(unsigned char *)buffloc] ) {
                 buffloc++;
                 bytes--;
@@ -806,7 +800,6 @@ static vi_rc fSearch( char *fn, char *r )
             // partial match -- keep the last bunch of text as context
             strncpy( context_display, buffloc - MAX_DISP, MAX_DISP );
         }
-
     }
     close( handle );
     MemFree( buff );

@@ -116,10 +116,7 @@ vi_rc FcbDump( void )
     WPrintfLine( fw, 4, "Bytes_pending: %d", (int) CurrentFile->bytes_pending );
     WPrintfLine( fw, 5, "Modified: %d", (int) CurrentFile->modified );
     lc = 7;
-    cfcb = CurrentFile->fcb_head;
-
-    while( cfcb != NULL ) {
-
+    for( cfcb = CurrentFile->fcbs.head; cfcb != NULL; cfcb = cfcb->next ) {
         fcbcnt++;
         WPrintfLine( fw, lc++, "%d) %W - (%l,%l) bytes:%d offset:%l lstswp:%l xaddr:%W", fcbcnt,
             cfcb, cfcb->start_line, cfcb->end_line, cfcb->byte_cnt, cfcb->offset,
@@ -136,8 +133,6 @@ vi_rc FcbDump( void )
             ClearWindow( fw );
             lc = 1;
         }
-        cfcb = cfcb->next;
-
     }
 
     CloseAWindow( fw );
@@ -215,12 +210,9 @@ vi_rc SanityCheck( void )
     for( inf = InfoHead; inf != NULL; inf = inf->next ) {
 
         WPrintfLine( fw, lc++, "File name: %s", inf->CurrentFile->name );
-        cfcb = inf->CurrentFile->fcb_head;
         fcbcnt = 0;
         cl = 1;
-
-        while( cfcb != NULL ) {
-
+        for( cfcb = inf->CurrentFile->fcbs.head; cfcb != NULL; cfcb = cfcb->next ) {
             fcbcnt++;
             tfcbcnt++;
             WPrintfLine( fw, lc, "At fcb %d", fcbcnt );
@@ -263,11 +255,9 @@ vi_rc SanityCheck( void )
                 lc = 1;
             }
             cl = cfcb->end_line + 1;
-            cfcb = cfcb->next;
             if( EditFlags.BreakPressed ) {
                 break;
             }
-
         }
         if( EditFlags.BreakPressed ) {
             break;
@@ -288,10 +278,8 @@ vi_rc LineInfo( void )
     int         bcnt;
     linenum     lcnt;
 
-    cfcb = CurrentFile->fcb_head;
-    while( cfcb != CurrentFcb ) {
+    for( cfcb = CurrentFile->fcbs.head; cfcb != CurrentFcb; cfcb = cfcb->next ) {
         fcbcnt++;
-        cfcb = cfcb->next;
     }
     CheckFcb( CurrentFcb, &bcnt, &lcnt );
     Message1( "Length=%d, Allocated=%d.  Line->prev=%W, Line->next=%W",
@@ -350,14 +338,12 @@ vi_rc WalkUndo( void )
         case UNDO_DELETE_FCBS:
             lcnt = 0;
             fcbcnt = 0;
-            cfcb = cundo->data.fcbs.fcb_head;
-            while( cfcb != NULL ) {
-                lcnt += cfcb->end_line-cfcb->start_line + 1;
-                cfcb = cfcb->next;
+            for( cfcb = cundo->data.fcbs.head; cfcb != NULL; cfcb = cfcb->next ) {
+                lcnt += cfcb->end_line - cfcb->start_line + 1;
                 fcbcnt++;
             }
             WPrintfLine( fw, ln++, "UNDO_DELETE_FCBS: start=%l lines=%l fcbs=%d",
-                cundo->data.fcbs.fcb_head->start_line, lcnt, fcbcnt );
+                cundo->data.fcbs.head->start_line, lcnt, fcbcnt );
             break;
         }
         cundo = cundo->next;

@@ -99,7 +99,7 @@ void SwapFcb( fcb *fb )
     }
 #endif
     if( rc == ERR_NO_ERR ) {
-        fb->line_head = fb->line_tail = NULL;
+        fb->lines.head = fb->lines.tail = NULL;
         fb->in_memory = FALSE;
     }
 
@@ -129,18 +129,15 @@ vi_rc RestoreToNormalMemory( fcb *fb, int len )
     /*
      * restore buffer
      */
-    CreateLinesFromBuffer( len, &(fb->line_head), &(fb->line_tail),
-                   &used, &linecnt, &(fb->byte_cnt) );
+    CreateLinesFromBuffer( len, &fb->lines, &used, &linecnt, &(fb->byte_cnt) );
 
     /*
      * restore line data
      */
     *buff = savech;
-    cline = fb->line_head;
-    while( cline != NULL ) {
+    for( cline = fb->lines.head; cline != NULL; cline = cline->next ) {
         cline->inf.word = *(short *)buff;
         buff += 2;
-        cline = cline->next;
     }
 
     /*

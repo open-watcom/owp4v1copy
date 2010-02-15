@@ -45,8 +45,8 @@ void AddNewLineAroundCurrent( char *data, int copylen, insert_dir dir )
     FetchFcb( CurrentFcb );
     wasnull = CurrentFcb->nullfcb;
     if( wasnull ) {
-        MemFree( CurrentFcb->line_head );
-        CurrentFcb->line_head = CurrentFcb->line_tail = NULL;
+        MemFree( CurrentFcb->lines.head );
+        CurrentFcb->lines.head = CurrentFcb->lines.tail = NULL;
         CurrentFcb->nullfcb = FALSE;
         CurrentFcb->byte_cnt = 0;
         CurrentFcb->end_line = 0;
@@ -55,8 +55,7 @@ void AddNewLineAroundCurrent( char *data, int copylen, insert_dir dir )
     /*
      * add the line
      */
-    InsertNewLine( CurrentLine, &(CurrentFcb->line_head),
-                   &(CurrentFcb->line_tail), data, copylen,dir );
+    InsertNewLine( CurrentLine, &CurrentFcb->lines, data, copylen,dir );
     CurrentFcb->byte_cnt += copylen + 1;
     CurrentFcb->end_line += 1;
 
@@ -64,7 +63,7 @@ void AddNewLineAroundCurrent( char *data, int copylen, insert_dir dir )
      * update line info
      */
     if( wasnull ) {
-        CurrentLine = CurrentFcb->line_head;
+        CurrentLine = CurrentFcb->lines.head;
         SetCurrentLineNumber( 1 );
     } else {
         if( dir == INSERT_BEFORE ) {
@@ -79,7 +78,7 @@ void AddNewLineAroundCurrent( char *data, int copylen, insert_dir dir )
 /*
  * InsertNewLine - do just that
  */
-void InsertNewLine( line *who, line **head, line **tail, char *data, int copylen,
+void InsertNewLine( line *who, line_list *linelist, char *data, int copylen,
                     insert_dir dir )
 {
     line        *cl;
@@ -89,13 +88,13 @@ void InsertNewLine( line *who, line **head, line **tail, char *data, int copylen
         copylen = 0;
     }
     cl = LineAlloc( data, copylen );
-    if( *head == NULL ) {
-        AddLLItemAtEnd( (ss **)head, (ss **)tail, (ss *)cl );
+    if( linelist->head == NULL ) {
+        AddLLItemAtEnd( (ss **)&linelist->head, (ss **)&linelist->tail, (ss *)cl );
     } else {
         if( dir == INSERT_AFTER ) {
-            InsertLLItemAfter( (ss **)tail, (ss *)who, (ss *)cl );
+            InsertLLItemAfter( (ss **)&linelist->tail, (ss *)who, (ss *)cl );
         } else {
-            InsertLLItemBefore( (ss **)head, (ss *)who, (ss *)cl );
+            InsertLLItemBefore( (ss **)&linelist->head, (ss *)who, (ss *)cl );
         }
     }
 
@@ -128,7 +127,7 @@ void CreateNullLine( fcb *cfcb )
 
     cline = LineAlloc( NULL, 0 );
     FetchFcb( cfcb );
-    AddLLItemAtEnd( (ss **)&(cfcb->line_head), (ss **)&(cfcb->line_tail), (ss *)cline );
+    AddLLItemAtEnd( (ss **)&(cfcb->lines.head), (ss **)&(cfcb->lines.tail), (ss *)cline );
     cfcb->byte_cnt = 1;
     cfcb->start_line = cfcb->end_line = 1;
     cfcb->nullfcb = TRUE;

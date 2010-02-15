@@ -197,6 +197,10 @@ typedef struct line {
 } line;
 #define LINE_SIZE sizeof( line )
 
+typedef struct {
+    line    *head, *tail;
+} line_list;
+
 /*
  * info for a file control block in a file
  */
@@ -205,7 +209,7 @@ typedef struct fcb {
     struct fcb  *next, *prev;               // links fcbs in a file
     struct fcb  *thread_next, *thread_prev; // links all fcbs created
     struct file *f;                         // file associated with fcb
-    line        *line_head, *line_tail;     // linked list of lines
+    line_list   lines;                      // linked list of lines
     linenum     start_line, end_line;       // starting/ending line number
     short       byte_cnt;                   // number of bytes in lines
     long        offset;                     // offset in swap file
@@ -233,13 +237,17 @@ typedef struct fcb {
 } fcb;
 #define FCB_SIZE sizeof( fcb )
 
+typedef struct {
+    fcb         *head, *tail;
+} fcb_list;
+
 /*
  * info for an entire file
  */
 typedef struct file {
     char        *name;                  // file name
     char        *home;                  // home directory of file
-    fcb         *fcb_head, *fcb_tail;   // linked list of fcbs
+    fcb_list    fcbs;                   // linked list of fcbs
     long        curr_pos;               // current offset in file on disk
     vi_ushort   modified        : 1;    // file has been modified
     vi_ushort   bytes_pending   : 1;    // there are still bytes to be read
@@ -369,9 +377,7 @@ typedef struct {
     linenum     start, end;
 } undo_insert;
 
-typedef struct {
-    fcb *fcb_head, *fcb_tail;
-} undo_delete;
+typedef fcb_list undo_delete;
 
 typedef struct {
     i_mark      p;
@@ -456,10 +462,9 @@ typedef struct info {
 typedef struct savebuf {
     char        type;
     union {
-        char    *data;
-        fcb     *fcb_head;
-    } first;
-    fcb         *fcb_tail;
+        char        *data;
+        fcb_list    fcbs;
+    } u;
 } savebuf;
 #define SAVEBUF_SIZE sizeof( savebuf )
 

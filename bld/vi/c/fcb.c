@@ -54,7 +54,7 @@ vi_rc ReadFcbData( file *f )
      */
     f->bytes_pending = FALSE;
     cfcb = FcbAlloc( f );
-    AddLLItemAtEnd( (ss **)&(f->fcb_head), (ss **)&(f->fcb_tail), (ss *)cfcb );
+    AddLLItemAtEnd( (ss **)&(f->fcbs.head), (ss **)&(f->fcbs.tail), (ss *)cfcb );
 
     /*
      * open file handle if we need to
@@ -120,9 +120,7 @@ vi_rc ReadFcbData( file *f )
     /*
      * create lines from buffer info
      */
-    eofflag = CreateLinesFromBuffer( cnt, &(cfcb->line_head),
-                &(cfcb->line_tail), &used, &linecnt,
-                &(cfcb->byte_cnt) );
+    eofflag = CreateLinesFromBuffer( cnt, &cfcb->lines, &used, &linecnt, &(cfcb->byte_cnt) );
 
     if( used == 0 ) {
         CreateNullLine( cfcb );
@@ -148,10 +146,10 @@ vi_rc ReadFcbData( file *f )
             memcpy( extraData, ReadBuffer + used, extraDataSize );
         }
     }
-    if( f->fcb_tail->prev == NULL ) {
+    if( f->fcbs.tail->prev == NULL ) {
         cfcb->start_line = 1;
     } else {
-        cfcb->start_line = f->fcb_tail->prev->end_line + 1;
+        cfcb->start_line = f->fcbs.tail->prev->end_line + 1;
     }
     cfcb->end_line = cfcb->start_line + linecnt - 1;
     cfcb->non_swappable = FALSE;
@@ -194,7 +192,7 @@ vi_rc FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
     /*
      * run through all possible fcb's
      */
-    tfcb = cfile->fcb_head;
+    tfcb = cfile->fcbs.head;
     if( tfcb == NULL ) {
         return( ERR_NO_SUCH_LINE );
     }
@@ -222,7 +220,7 @@ vi_rc FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
             if( (rc = ReadFcbData( cfile )) > 0 ) {
                 return( rc );
             }
-            tfcb = cfile->fcb_tail;
+            tfcb = cfile->fcbs.tail;
         }
 
     }
@@ -241,21 +239,20 @@ void CreateFcbData( file *f, int cnt )
      * get new fcb
      */
     cfcb = FcbAlloc( f );
-    AddLLItemAtEnd( (ss **)&(f->fcb_head), (ss **)&(f->fcb_tail), (ss *)cfcb );
+    AddLLItemAtEnd( (ss **)&(f->fcbs.head), (ss **)&(f->fcbs.tail), (ss *)cfcb );
 
     /*
      * create lines from buffer info
      */
-    CreateLinesFromBuffer( cnt, &(cfcb->line_head), &(cfcb->line_tail),
-                           &used, &linecnt, &(cfcb->byte_cnt) );
+    CreateLinesFromBuffer( cnt, &cfcb->lines, &used, &linecnt, &(cfcb->byte_cnt) );
 
     /*
      * update position and line numbers
      */
-    if( f->fcb_tail->prev == NULL ) {
+    if( f->fcbs.tail->prev == NULL ) {
         cfcb->start_line = 1;
     } else {
-        cfcb->start_line = f->fcb_tail->prev->end_line + 1;
+        cfcb->start_line = f->fcbs.tail->prev->end_line + 1;
     }
     cfcb->end_line = cfcb->start_line + linecnt - 1;
     cfcb->non_swappable = FALSE;

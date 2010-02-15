@@ -65,7 +65,7 @@ vi_rc ReplaceCurrentLine( void )
      */
     tmp = LineAlloc( WorkLine->data, WorkLine->len );
     tmp->inf.ld.mark = CurrentLine->inf.ld.mark;
-    ReplaceLLItem( (ss **)&CurrentFcb->line_head, (ss **)&CurrentFcb->line_tail,
+    ReplaceLLItem( (ss **)&CurrentFcb->lines.head, (ss **)&CurrentFcb->lines.tail,
                    (ss *)CurrentLine, (ss *)tmp );
     MemFree( CurrentLine );
     CurrentLine = tmp;

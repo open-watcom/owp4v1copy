@@ -278,9 +278,8 @@ int     FcbSize( fcb * );
 vi_rc FindFcbWithLine( linenum, file *, fcb ** );
 
 /* fcb3.c */
-vi_rc CMergeFcbs( fcb *, fcb * );
-vi_rc CMergeAllFcbs( void );
-vi_rc JoinFcbs( fcb *, fcb * );
+vi_rc MergeFcbs( fcb_list *, fcb *, fcb * );
+vi_rc MergeAllFcbs( fcb_list * );
 
 /* fcbdmp.c */
 vi_rc WalkUndo( void );
@@ -291,7 +290,7 @@ vi_rc LineInfo( void );
 vi_rc SanityCheck( void );
 
 /* fcbdup.c */
-void    CreateDuplicateFcbList( fcb *, fcb **, fcb ** );
+void    CreateDuplicateFcbList( fcb *, fcb_list * );
 
 /* fcbmem.c */
 fcb     *FcbAlloc( file * );
@@ -478,7 +477,7 @@ void    KeyAddString( char *str );
 void    AddCurrentMouseEvent( void );
 
 /* linecfb.c */
-bool    CreateLinesFromBuffer( int, line **, line **, int *, int *, short * );
+bool    CreateLinesFromBuffer( int, line_list *, int *, int *, short * );
 
 /* linedel.c */
 void    UpdateLineNumbers( linenum amt, fcb *cfcb  );
@@ -505,8 +504,8 @@ vi_rc   FindCharOnCurrentLine( bool, int, int *, int );
 vi_rc   FancyGotoLine( void );
 
 /* lineins.c */
-vi_rc InsertLines( linenum, fcb *, fcb *, undo_stack * );
-vi_rc InsertLinesAtCursor( fcb *, fcb *, undo_stack * );
+vi_rc InsertLines( linenum, fcb_list *, undo_stack * );
+vi_rc InsertLinesAtCursor( fcb_list *, undo_stack * );
 
 /* linemisc.c */
 int     FindStartOfCurrentLine( void );
@@ -531,7 +530,7 @@ vi_rc ValidateCurrentLine( void );
 
 /* linenew.c */
 void    AddNewLineAroundCurrent( char *, int, insert_dir );
-void    InsertNewLine( line *, line **, line **, char *, int, insert_dir );
+void    InsertNewLine( line *, line_list *, char *, int, insert_dir );
 void    CreateNullLine( fcb * );
 line    *LineAlloc( char *, int );
 
@@ -545,7 +544,7 @@ void    DisplayWorkLine( bool );
 
 /* lineyank.c */
 vi_rc   YankLineRange( linenum, linenum );
-vi_rc   GetCopyOfLineRange( linenum, linenum, fcb **, fcb ** );
+vi_rc   GetCopyOfLineRange( linenum, linenum, fcb_list * );
 void    LineYankMessage( linenum, linenum );
 
 /* llrtns.c */
@@ -710,7 +709,7 @@ void    InitSavebufs( void );
 void    AddLineToSavebuf( char *, int, int );
 vi_rc   AddSelRgnToSavebuf( void );
 vi_rc   AddSelRgnToSavebufAndDelete( void );
-void    AddFcbsToSavebuf( fcb *, fcb *, int );
+void    AddFcbsToSavebuf( fcb_list *, int );
 vi_rc   SwitchSavebuf( void );
 vi_rc   DoSavebufNumber( void );
 vi_rc   SetSavebufNumber( char * );
@@ -807,7 +806,7 @@ void    GetDateTimeString( char *st );
 void    StartUndoGroup( undo_stack * );
 void    StartUndoGroupWithPosition( undo_stack *stack, linenum lne, linenum top, int col );
 vi_rc   UndoReplaceLines( linenum, linenum );
-void    UndoDeleteFcbs( linenum, fcb *, fcb *, undo_stack * );
+void    UndoDeleteFcbs( linenum, fcb_list *, undo_stack * );
 void    UndoInsert( linenum, linenum, undo_stack * );
 void    PatchDeleteUndo( undo_stack * );
 void    EndUndoGroup( undo_stack * );

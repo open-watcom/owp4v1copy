@@ -107,8 +107,9 @@ vi_rc ProcessEx( linenum n1, linenum n2, bool n2f, int dmt, int tkn,
     vi_rc       rc = ERR_INVALID_COMMAND, i;
     char        word[MAX_STR], wordback[MAX_STR];
     linenum     addr, tlines;
-    fcb         *cfcb, *s1fcb, *s2fcb;
+    fcb         *cfcb;
     line        *cline;
+    fcb_list    fcblist;
 
     NextWord1( data, word );
     strcpy( wordback, word );
@@ -146,11 +147,11 @@ vi_rc ProcessEx( linenum n1, linenum n2, bool n2f, int dmt, int tkn,
         if( addr < 0 || IsPastLastLine( addr ) ) {
             return( ERR_INVALID_ADDRESS );
         }
-        i = GetCopyOfLineRange( n1, n2, &s1fcb, &s2fcb );
+        i = GetCopyOfLineRange( n1, n2, &fcblist );
         if( i ) {
             break;
         }
-        rc = InsertLines( addr, s1fcb, s2fcb, UndoStack );
+        rc = InsertLines( addr, &fcblist, UndoStack );
         GoToLineNoRelCurs( addr );
         if( rc == ERR_NO_ERR ) {
             Message1( strCmmsg, tlines, "copied", addr );
@@ -227,8 +228,7 @@ vi_rc ProcessEx( linenum n1, linenum n2, bool n2f, int dmt, int tkn,
         } else if( addr >= n1 && addr <= n2 ) {
             addr = n1;
         }
-        rc = InsertLines( addr, WorkSavebuf->first.fcb_head,
-                          WorkSavebuf->fcb_tail, UndoStack );
+        rc = InsertLines( addr, &WorkSavebuf->u.fcbs, UndoStack );
         EndUndoGroup( UndoStack );
         GoToLineNoRelCurs( addr );
         if( rc == ERR_NO_ERR ) {

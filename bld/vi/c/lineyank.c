@@ -37,14 +37,14 @@
  */
 vi_rc YankLineRange( linenum s, linenum e )
 {
-    vi_rc   rc;
-    fcb     *s1fcb, *e1fcb;
+    vi_rc       rc;
+    fcb_list    fcblist;
 
-    rc = GetCopyOfLineRange( s, e, &s1fcb, &e1fcb );
+    rc = GetCopyOfLineRange( s, e, &fcblist );
     if( rc != ERR_NO_ERR ) {
         return( rc );
     }
-    AddFcbsToSavebuf( s1fcb, e1fcb, FALSE );
+    AddFcbsToSavebuf( &fcblist, FALSE );
     LineYankMessage( s, e );
     return( ERR_NO_ERR );
 
@@ -53,12 +53,11 @@ vi_rc YankLineRange( linenum s, linenum e )
 /*
  * GetCopyOfLineRange - yank a specified line range in current file
  */
-vi_rc GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
+vi_rc GetCopyOfLineRange( linenum s, linenum e, fcb_list *fcblist )
 {
     file        *cfile;
     linenum     ll;
     fcb         *sfcb, *efcb;
-    fcb         *head = NULL, *tail = NULL;
     vi_rc       rc;
     vi_rc       rc1;
     vi_rc       rc2;
@@ -102,18 +101,18 @@ vi_rc GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
     /*
      * duplicate this list
      */
-    *e1fcb = efcb->next;
+    fcblist->tail = efcb->next;
     efcb->next = NULL;
-    CreateDuplicateFcbList( sfcb, &head, &tail );
-    efcb->next = *e1fcb;
     cfile = FileAlloc( NULL );
-    cfile->fcb_head = head;
-    cfile->fcb_tail = tail;
+    cfile->fcbs.head = NULL;
+    cfile->fcbs.tail = NULL;
+    CreateDuplicateFcbList( sfcb, &cfile->fcbs );
+    efcb->next = fcblist->tail;
 
     /*
      * split head and tail fcbs
      */
-    rc1 = SplitFcbAtLine( s, cfile, head );
+    rc1 = SplitFcbAtLine( s, cfile, cfile->fcbs.head );
     if( rc1 > 0 ) {
         return( rc1 );
     }
@@ -136,27 +135,27 @@ vi_rc GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
      * select appropriate part of split fcbs
      */
     if( rc1 == NO_SPLIT_CREATED_AT_START_LINE ) {
-        *s1fcb = head;
+        fcblist->head = cfile->fcbs.head;
     } else {
-        *s1fcb = head->next;
-        FreeEntireFcb( head );
+        fcblist->head = cfile->fcbs.head->next;
+        FreeEntireFcb( cfile->fcbs.head );
     }
     if( rc2 != NO_SPLIT_CREATED_AT_START_LINE ) {
-        *e1fcb = efcb;
+        fcblist->tail = efcb;
     } else {
-        *e1fcb = efcb->prev;
+        fcblist->tail = efcb->prev;
         FreeEntireFcb( efcb );
-        (*e1fcb)->next = NULL;
+        fcblist->tail->next = NULL;
     }
 
     /*
      * tidy up and return
      */
-    if( (*e1fcb)->next != NULL ) {
-        FreeEntireFcb( (*e1fcb)->next );
+    if( fcblist->tail->next != NULL ) {
+        FreeEntireFcb( fcblist->tail->next );
     }
-    (*s1fcb)->prev = (*e1fcb)->next = NULL;
-    sfcb = *s1fcb;
+    fcblist->head->prev = fcblist->tail->next = NULL;
+    sfcb = fcblist->head;
     while( sfcb != NULL ) {
         sfcb->f = NULL;
         sfcb = sfcb->next;

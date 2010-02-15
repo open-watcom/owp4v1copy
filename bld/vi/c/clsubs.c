@@ -107,7 +107,7 @@ vi_rc TwoPartSubstitute( char *find, char *replace, int prompt, int wrap )
     // search from current position forward to end of doc
     sprintf( cmd, "/%s/%s/g%c", find, replace, ( prompt == TRUE ) ? 'i' : '\0' );
 
-    end_line = CurrentFile->fcb_tail->end_line;
+    end_line = CurrentFile->fcbs.tail->end_line;
     rc = Substitute( CurrentPos.line, end_line, cmd );
     changecnt = LastChangeCount;
     linecnt = LastLineCount;
@@ -189,7 +189,7 @@ vi_rc Substitute( linenum n1, linenum n2, char *data )
     /*
      * verify last line
      */
-    if( n2 > CurrentFile->fcb_tail->end_line ) {
+    if( n2 > CurrentFile->fcbs.tail->end_line ) {
         rc = CFindLastLine( &ll );
         if( rc != ERR_NO_ERR ) {
             return( rc );

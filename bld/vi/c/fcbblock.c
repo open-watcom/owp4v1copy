@@ -114,28 +114,22 @@ int MakeWriteBlock( fcb *fb )
      * build a block
      */
     buff = WriteBuffer;
-    cline = fb->line_head;
-    while( cline != NULL ) {
-
+    for( cline = fb->lines.head; cline != NULL; cline = cline->next ) {
         memcpy( buff, cline->data, cline->len );
         buff += cline->len;
         *buff++ = 13;
         *buff++ = 10;
         len += cline->len;
-        cline = cline->next;
-
     }
 
     /*
      * swap line data
      */
-    cline = fb->line_head;
-    while( cline != NULL ) {
+    for( cline = fb->lines.head; cline != NULL; cline = tline ) {
         *(U_INT *)buff = cline->inf.word;
         buff += 2;
-        tline = cline;
-        cline = cline->next;
-        MemFree( tline );
+        tline = cline->next;
+        MemFree( cline );
         len += 4; /* 2 for these and 2 for c/r l/f */
     }
 

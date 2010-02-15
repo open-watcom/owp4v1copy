@@ -159,7 +159,7 @@ int AddLineToClipboard( char *data, int scol, int ecol )
 /*
  * AddFcbsToClipboard - add all lines in a given set of fcbs to the clipboard
  */
-int AddFcbsToClipboard( fcb *head, fcb *tail )
+int AddFcbsToClipboard( fcb_list *fcblist )
 {
     fcb                 *cfcb;
     line                *cline;
@@ -176,15 +176,13 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
     /*
      * compute the number of bytes in total
      */
-    cfcb = head;
     size = 1;   // for trailing null char
-    while( 1 ) {
+    for( cfcb = fcblist->head; cfcb != NULL; cfcb = cfcb->next ) {
         size += (long)cfcb->byte_cnt +
                 (long)(cfcb->end_line-cfcb->start_line + 1);
-        if( cfcb == tail ) {
+        if( cfcb == fcblist->tail ) {
             break;
         }
-        cfcb = cfcb->next;
     }
 
     /*
@@ -205,14 +203,11 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
     /*
      * copy all lines into this pointer
      */
-    cfcb = head;
-    while( 1 ) {
+    for( cfcb = fcblist->head; cfcb != NULL; cfcb = cfcb->next ) {
         FetchFcb( cfcb );
-        cline = cfcb->line_head;
-        while( cline != NULL ) {
+        for( cline = cfcb->lines.head; cline != NULL; cline = cline->next ) {
             // one CRLF left to write?
-            if( crlf_left_to_write )
-            {
+            if( crlf_left_to_write ) {
                 // yes: write it
                 crlf_left_to_write = 0;
                 *ptr = CR;
@@ -226,12 +221,10 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
             }
             // remember to write one CRLF next time
             crlf_left_to_write = 1;
-            cline = cline->next;
         }
-        if( cfcb == tail ) {
+        if( cfcb == fcblist->tail ) {
             break;
         }
-        cfcb = cfcb->next;
     }
     // the last CRLF is omitted
     *ptr = 0;
@@ -246,21 +239,19 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
 /*
  * addAnFcb - add a new fcb and its data
  */
-static int addAnFcb( fcb **head, fcb **tail, int numbytes )
+static int addAnFcb( fcb_list *fcblist, int numbytes )
 {
     fcb         *cfcb;
     int         linecnt;
     int         used;
 
     cfcb = FcbAlloc( NULL );
-    AddLLItemAtEnd( (ss **)head, (ss **)tail, (ss *)cfcb );
-    CreateLinesFromBuffer( numbytes, &(cfcb->line_head),
-            &(cfcb->line_tail), &used, &linecnt,
-            &(cfcb->byte_cnt) );
-    if( (*tail)->prev == NULL ) {
+    AddLLItemAtEnd( (ss **)&fcblist->head, (ss **)&fcblist->tail, (ss *)cfcb );
+    CreateLinesFromBuffer( numbytes, &cfcb->lines, &used, &linecnt, &(cfcb->byte_cnt) );
+    if( fcblist->tail->prev == NULL ) {
         cfcb->start_line = 1;
     } else {
-        cfcb->start_line = (*tail)->prev->end_line + 1;
+        cfcb->start_line = fcblist->tail->prev->end_line + 1;
     }
     cfcb->end_line = cfcb->start_line + linecnt - 1;
     return( used );
@@ -276,7 +267,7 @@ int GetClipboardSavebuf( savebuf *clip )
     GLOBALHANDLE        hglob;
     char                _HUGE_ *ptr;
     char                _HUGE_ *cpos;
-    fcb                 *head, *tail;
+    fcb_list            fcblist;
     int                 i;
     bool                is_flushed;
     bool                has_lf;
@@ -296,19 +287,15 @@ int GetClipboardSavebuf( savebuf *clip )
     i = 0;
     is_flushed = FALSE;
     has_lf = FALSE;
-    head = NULL;
-    tail = NULL;
+    fcblist.head = NULL;
+    fcblist.tail = NULL;
     record_done = FALSE;
 
     /*
      * add all characters to ReadBuffer.  Each time this fills,
      * create a new FCB
      */
-    while( 1 ) {
-        ch = *ptr;
-        if( ch == 0 ) {
-            break;
-        }
+    while( (ch = *ptr) != '\0' ) {
         INC_POINTER( ptr );
         ReadBuffer[i++] = ch;
         if( ch == LF ) {
@@ -316,7 +303,7 @@ int GetClipboardSavebuf( savebuf *clip )
         }
         if( i >= MAX_IO_BUFFER ) {
             is_flushed = TRUE;
-            used = addAnFcb( &head, &tail, i );
+            used = addAnFcb( &fcblist, i );
             ptr = GET_POINTER( cpos, used );
             cpos = ptr;
             i = 0;
@@ -333,19 +320,18 @@ int GetClipboardSavebuf( savebuf *clip )
         if( !is_flushed && !has_lf ) {
             clip->type = SAVEBUF_LINE;
             ReadBuffer[i] = 0;
-            clip->first.data = MemAlloc( i + 1 );
-            strcpy( clip->first.data, ReadBuffer );
+            clip->u.data = MemAlloc( i + 1 );
+            strcpy( clip->u.data, ReadBuffer );
             record_done = TRUE;
         } else {
             // add CRLF to end of buffer
-            if( i >= MAX_IO_BUFFER - 2 )
-            {
-                addAnFcb( &head, &tail, i );
+            if( i >= MAX_IO_BUFFER - 2 ) {
+                addAnFcb( &fcblist, i );
                 i = 0;
             }
             ReadBuffer[i++] = CR;
             ReadBuffer[i++] = LF;
-            addAnFcb( &head, &tail, i );
+            addAnFcb( &fcblist, i );
         }
     } else if( !is_flushed ) {
         clip->type = SAVEBUF_NOP;
@@ -354,8 +340,8 @@ int GetClipboardSavebuf( savebuf *clip )
 
     if( !record_done ) {
         clip->type = SAVEBUF_FCBS;
-        clip->first.fcb_head = head;
-        clip->fcb_tail = tail;
+        clip->u.fcbs.head = fcblist.head;
+        clip->u.fcbs.tail = fcblist.tail;
     }
 
     GlobalUnlock( hglob );

@@ -327,7 +327,7 @@ vi_rc CurrentWindowResize( int x1, int y1, int x2, int y2 )
         }
     }
     PositionVerticalScrollThumb( CurrentWindow, LeftTopPos.line,
-                                 CurrentFile->fcb_tail->end_line );
+                                 CurrentFile->fcbs.tail->end_line );
 
     return( ERR_NO_ERR );
 

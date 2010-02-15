@@ -44,7 +44,7 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
     vi_rc       rc;
     vi_rc       rc1;
     long        changecnt = 0;
-    linenum     llineno, ll;
+    linenum     ll;
     fcb         *cfcb;
     line        *cline;
     regexp      crx;
@@ -72,7 +72,7 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
     /*
      * verify last line
      */
-    if( n2 > CurrentFile->fcb_tail->end_line ) {
+    if( n2 > CurrentFile->fcbs.tail->end_line ) {
         rc = CFindLastLine( &ll );
         if( rc != ERR_NO_ERR ) {
             return( rc );
@@ -93,9 +93,6 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
         return( rc );
     }
     SaveCurrentFilePos();
-    llineno = n1 - 1;
-    pos.line = n1;
-    pos.column = 0;
     StartUndoGroup( UndoStack );
     EditFlags.DisplayHold = TRUE;
     strcpy( sstr, data );
@@ -103,11 +100,12 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
     /*
      * pass one - find all matches
      */
-    while( TRUE ) {
+    for( pos.line = n1; pos.line <= n2; pos.line++ ) {
 
         /*
          * go thorugh file, marking global lines
          */
+        pos.column = 0;
         rc = FindRegularExpression( NULL, &pos, &linedata, n2, FALSE );
         if( rc != ERR_NO_ERR ) {
             if( rc == ERR_FIND_PAST_TERM_LINE || rc == ERR_FIND_NOT_FOUND ||
@@ -141,13 +139,6 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
             // WPrintfLine( MessageWindow,1,"Match on line %l",clineno );
             Message1( "Match on line %l", pos.line );
         }
-
-        pos.line++;
-        if( pos.line > n2 ) {
-            break;
-        }
-        pos.column = 0;
-
     }
 
 
@@ -159,28 +150,23 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
          * run through each line, flipping globmatch flag on lines
          */
         CGimmeLinePtr( n1, &CurrentFcb, &CurrentLine );
-        CurrentPos.line = n1;
-        while( TRUE ) {
-            i = FALSE;
-            while( CurrentLine != NULL && CurrentPos.line <= n2 ) {
-                if( CurrentLine->inf.ld.globmatch ) {
-                    CurrentLine->inf.ld.globmatch = FALSE;
-                } else {
-                    i = TRUE;
-                    CurrentLine->inf.ld.globmatch = TRUE;
-                }
-                CurrentLine = CurrentLine->next;
-                CurrentPos.line++;
+        i = FALSE;
+        for( CurrentPos.line = n1; CurrentPos.line <= n2; CurrentPos.line++ ) {
+            if( CurrentLine->inf.ld.globmatch ) {
+                CurrentLine->inf.ld.globmatch = FALSE;
+            } else {
+                i = TRUE;
+                CurrentLine->inf.ld.globmatch = TRUE;
             }
-            CurrentFcb->globalmatch = i;
-            if( CurrentPos.line > n2 ) {
-                break;
+            CurrentLine = CurrentLine->next;
+            if( CurrentLine == NULL ) {
+                CurrentFcb->globalmatch = i;
+                CurrentFcb = CurrentFcb->next;
+                FetchFcb( CurrentFcb );
+                CurrentLine = CurrentFcb->line_head;
+                i = FALSE;
             }
-            CurrentFcb = CurrentFcb->next;
-            FetchFcb( CurrentFcb );
-            CurrentLine = CurrentFcb->line_head;
         }
-
     }
 
     /*
@@ -189,87 +175,48 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
     rc = ERR_NO_ERR;
     EditFlags.GlobalInProgress = TRUE;
     memcpy( &crx, CurrentRegularExpression, sizeof( crx ) );
-    while( TRUE ) {
 
-        /*
-         * get fcb with a change to do
-         */
-        todo = FALSE;
-        CurrentFcb = CurrentFile->fcb_head;
-        while( CurrentFcb != NULL ) {
+    for( CurrentFcb = CurrentFile->fcbs.head; CurrentFcb != NULL; CurrentFcb = CurrentFcb->next ) {
+        if( !CurrentFcb->globalmatch )
+            continue;
+        FetchFcb( CurrentFcb );
+        CurrentPos.line = CurrentFcb->start_line;
+        for( CurrentLine = CurrentFcb->lines.head; CurrentLine != NULL; CurrentLine = CurrentLine->next, CurrentPos.line++ ) {
+            if( !CurrentLine->inf.ld.globmatch )
+                continue;
+            CurrentLine->inf.ld.globmatch = FALSE;
+            changecnt++;
 
-            if( CurrentFcb->globalmatch ) {
-
-                /*
-                 * find a line
-                 */
-                FetchFcb( CurrentFcb );
-                CurrentPos.line = CurrentFcb->start_line;
-                CurrentLine = CurrentFcb->line_head;
-                while( CurrentLine != NULL ) {
-                    if( CurrentLine->inf.ld.globmatch ) {
-                        todo = TRUE;
-                        break;
-                    }
-                    CurrentPos.line++;
-                    CurrentLine = CurrentLine->next;
-                }
-
-                if( !todo ) {
-                    CurrentFcb->globalmatch = FALSE;
-                } else {
-                    break;
-                }
-
+            CurrentPos.column = 1;
+            ProcessingMessage( CurrentPos.line );
+            /*
+            * build command line
+            */
+            strcpy( cmd, sstr );
+            rc = RunCommandLine( cmd );
+            if( rc > ERR_NO_ERR ) {
+                break;
             }
-            CurrentFcb = CurrentFcb->next;
-
         }
-
-        if( !todo ) {
-            break;
-        }
-
-        /*
-         * reset info
-         */
-        CurrentLine->inf.ld.globmatch = FALSE;
-        cfcb = CurrentFcb;
-        CurrentPos.column = 1;
-
-        /*
-         * build command line
-         */
-        changecnt++;
-        strcpy( cmd, sstr );
-        ProcessingMessage( CurrentPos.line );
-
-        rc = RunCommandLine( cmd );
         if( rc > ERR_NO_ERR ) {
             break;
         }
-
+        CurrentFcb->globalmatch = FALSE;
     }
 
     /*
      * we have an error, so fix up fcbs
      */
     if( rc > ERR_NO_ERR ) {
-
-        cfcb = CurrentFile->fcb_head;
-        while( cfcb != NULL ) {
+        for( cfcb = CurrentFile->fcbs.head; cfcb != NULL; cfcb = cfcb->next ) {
             if( cfcb->globalmatch ) {
                 cfcb->globalmatch = FALSE;
                 cfcb->non_swappable = FALSE;
-                cline = cfcb->line_head;
-                while( cline != NULL ) {
+                for( cline = cfcb->lines.head; cline != NULL; cline = cline->next ) {
                     cline->inf.ld.globmatch = FALSE;
-                    cline = cline->next;
                 }
             }
-            cfcb = cfcb->next;
         }
-
     }
 
     /*

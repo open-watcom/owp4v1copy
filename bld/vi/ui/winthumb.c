@@ -124,7 +124,7 @@ vi_rc PositionToNewThumbPosition( wind *w, int win_y )
     if( height <= 0 ) {
         return( ERR_NO_ERR );
     }
-    lne = CurrentFile->fcb_tail->end_line;
+    lne = CurrentFile->fcbs.tail->end_line;
     clne = (win_y * lne) / height;
     if( clne == 0L ) {
         clne = 1L;

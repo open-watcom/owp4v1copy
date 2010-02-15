@@ -102,7 +102,7 @@ static int createLine( char *res )
 /*
  * CreateLinesFromBuffer - create a set of lines from specified buffer
  */
-bool CreateLinesFromBuffer( int cnt, line **head, line **tail, int *used,
+bool CreateLinesFromBuffer( int cnt, line_list *linelist, int *used,
                             int *lcnt, short *bytecnt )
 {
     int         curr, copylen, total, tmpmio;
@@ -110,7 +110,7 @@ bool CreateLinesFromBuffer( int cnt, line **head, line **tail, int *used,
     char        *tmpbuff;
 
     total = bcnt = copylen = llcnt = curr = 0;
-    *tail = *head = NULL;
+    linelist->tail = linelist->head = NULL;
     tmpmio = MAX_IO_BUFFER - 2;
     tmpbuff = StaticAlloc();
 
@@ -161,7 +161,7 @@ bool CreateLinesFromBuffer( int cnt, line **head, line **tail, int *used,
             /*
              * update line counts and buffer pointer
              */
-            InsertNewLine( *tail, head, tail, tmpbuff, copylen, INSERT_AFTER );
+            InsertNewLine( linelist->tail, linelist, tmpbuff, copylen, INSERT_AFTER );
             llcnt++;
             bcnt += copylen + 1;
             curr = (int) (buffPtr - ReadBuffer);

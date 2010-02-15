@@ -183,10 +183,8 @@ static vi_rc displayGenericLines( file *f, linenum pagetop, int leftcol,
     /*
      * mark all fcb's as being not in display
      */
-    tfcb = f->fcb_head;
-    while( tfcb != NULL ) {
+    for( tfcb = f->fcbs.head; tfcb != NULL; tfcb = tfcb->next ) {
         tfcb->on_display = FALSE;
-        tfcb=tfcb->next;
     }
     cfcb->on_display = TRUE;
 
@@ -456,7 +454,7 @@ vi_rc SelectLineInFile( selflinedata *sfd )
      * create the window
      */
     cln = sfd->cln;
-    endline = sfd->f->fcb_tail->end_line;
+    endline = sfd->f->fcbs.tail->end_line;
     farx = sfd->wi->x2;
     if( sfd->show_lineno ) {
         farx++;

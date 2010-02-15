@@ -36,7 +36,7 @@
 /*
  * InsertLinesAtCursor - insert a set of lines at current pos. in file
  */
-vi_rc InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
+vi_rc InsertLinesAtCursor( fcb_list *fcblist, undo_stack *us )
 {
     fcb         *cfcb;
     linenum     e;
@@ -52,54 +52,52 @@ vi_rc InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     /*
      * find the number of lines inserted
      */
-    cfcb = fcbhead;
     e = 0;
-    while( cfcb != NULL ) {
+    for( cfcb = fcblist->head; cfcb != NULL; cfcb = cfcb->next ) {
         e += (cfcb->end_line - cfcb->start_line + 1);
-        cfcb = cfcb->next;
     }
 
     // add chars from right of cursor to end of last line of buffer
     source = CurrentLine->data + CurrentPos.column - 1;
-    lastLineLen = fcbtail->line_tail->len;
-    fcbtail->line_tail->len += CurrentLine->len - CurrentPos.column + 1;
+    lastLineLen = fcblist->tail->lines.tail->len;
+    fcblist->tail->lines.tail->len += CurrentLine->len - CurrentPos.column + 1;
 
-    fcbtail->byte_cnt += CurrentLine->len - CurrentPos.column + 1;
+    fcblist->tail->byte_cnt += CurrentLine->len - CurrentPos.column + 1;
 
-    tLine = fcbtail->line_tail->prev;
-    fcbtail->line_tail = MemReAlloc( fcbtail->line_tail, LINE_SIZE +
-                                     fcbtail->line_tail->len + 1 );
+    tLine = fcblist->tail->lines.tail->prev;
+    fcblist->tail->lines.tail = MemReAlloc( fcblist->tail->lines.tail, LINE_SIZE +
+                                     fcblist->tail->lines.tail->len + 1 );
     if( tLine ){
-        tLine->next = fcbtail->line_tail;
+        tLine->next = fcblist->tail->lines.tail;
     }
-    strcpy( fcbtail->line_tail->data + lastLineLen, source );
+    strcpy( fcblist->tail->lines.tail->data + lastLineLen, source );
 
     StartUndoGroup( us );
 
     // create new current line in work line
     CurrentLineReplaceUndoStart();
     GetCurrentLine();
-    WorkLine->len = CurrentPos.column + fcbhead->line_head->len - 1;
-    strcpy( WorkLine->data + CurrentPos.column - 1, fcbhead->line_head->data );
+    WorkLine->len = CurrentPos.column + fcblist->head->lines.head->len - 1;
+    strcpy( WorkLine->data + CurrentPos.column - 1, fcblist->head->lines.head->data );
 
     // replace current line
     ReplaceCurrentLine();
     CurrentLineReplaceUndoEnd( TRUE );
 
     // remove first line of buffer
-    FetchFcb( fcbhead );
-    fcbhead->non_swappable = TRUE;
-    fcbhead->start_line++;
-    fcbhead->byte_cnt -= fcbhead->line_head->len + 1;
-    tLine = fcbhead->line_head;
-    fcbhead->line_head = fcbhead->line_head->next;
-    fcbhead->line_head->prev = NULL;
+    FetchFcb( fcblist->head );
+    fcblist->head->non_swappable = TRUE;
+    fcblist->head->start_line++;
+    fcblist->head->byte_cnt -= fcblist->head->lines.head->len + 1;
+    tLine = fcblist->head->lines.head;
+    fcblist->head->lines.head = fcblist->head->lines.head->next;
+    fcblist->head->lines.head->prev = NULL;
     MemFree( tLine );
-    fcbhead->non_swappable = FALSE;
+    fcblist->head->non_swappable = FALSE;
 
     // add rest of lines of buffer & done
-    if( fcbhead->line_head) {
-        InsertLines( CurrentPos.line, fcbhead, fcbtail, us );
+    if( fcblist->head->lines.head) {
+        InsertLines( CurrentPos.line, fcblist, us );
     }
     EndUndoGroup( us );
 
@@ -116,7 +114,7 @@ vi_rc InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
 /*
  * InsertLines - insert a set of lines after specified number in current file
  */
-vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
+vi_rc InsertLines( linenum s, fcb_list *fcblist, undo_stack *us )
 {
     fcb         *sfcb, *cfcb;
     linenum     l, e;
@@ -132,11 +130,9 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     /*
      * find the number of lines inserted
      */
-    cfcb = fcbhead;
     e = 0;
-    while( cfcb != NULL ) {
+    for( cfcb = fcblist->head; cfcb != NULL; cfcb = cfcb->next ) {
         e += cfcb->end_line - cfcb->start_line + 1;
-        cfcb = cfcb->next;
     }
     e += s;
 
@@ -144,10 +140,9 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
      * see if there is a null fcb at the head; if so, ditch
      * the null fcb and then reset line ranges
      */
-    if( CurrentFile->fcb_head->nullfcb ) {
-        FreeEntireFcb( CurrentFile->fcb_head );
-        CurrentFile->fcb_head = fcbhead;
-        CurrentFile->fcb_tail = fcbtail;
+    if( CurrentFile->fcbs.head->nullfcb ) {
+        FreeEntireFcb( CurrentFile->fcbs.head );
+        CurrentFile->fcbs = *fcblist;
         e = e - s;
         s = 0;
     /*
@@ -155,9 +150,9 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
      * fcbs the first set in the text
      */
     } else if( s == 0 ) {
-        fcbtail->next = CurrentFile->fcb_head;
-        CurrentFile->fcb_head->prev = fcbtail;
-        CurrentFile->fcb_head = fcbhead;
+        fcblist->tail->next = CurrentFile->fcbs.head;
+        CurrentFile->fcbs.head->prev = fcblist->tail;
+        CurrentFile->fcbs.head = fcblist->head;
     } else {
         /*
          * if we are inserting after the last fcb in the file,
@@ -168,9 +163,9 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
             if( rc != ERR_NO_SUCH_LINE ) {
                 return( rc );
             }
-            fcbhead->prev = CurrentFile->fcb_tail;
-            CurrentFile->fcb_tail->next = fcbhead;
-            CurrentFile->fcb_tail = fcbtail;
+            fcblist->head->prev = CurrentFile->fcbs.tail;
+            CurrentFile->fcbs.tail->next = fcblist->head;
+            CurrentFile->fcbs.tail = fcblist->tail;
         /*
          * put the lines after the line to be have text inserted
          * into a new fcb, then insert the block of fcb's after
@@ -188,11 +183,11 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
              */
             if( rc == NO_SPLIT_CREATED_AT_START_LINE ) {
                 if( sfcb->prev != NULL ) {
-                    sfcb->prev->next = fcbhead;
+                    sfcb->prev->next = fcblist->head;
                 }
-                fcbhead->prev = sfcb->prev;
-                sfcb->prev = fcbtail;
-                fcbtail->next = sfcb;
+                fcblist->head->prev = sfcb->prev;
+                sfcb->prev = fcblist->tail;
+                fcblist->tail->next = sfcb;
             /*
              * chain the new fcb block after the fcb that used
              * to containing the line we wanted to split at, and
@@ -204,11 +199,11 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
 //                  Die( "Impossible, can't be past last line");
                 }
                 if( sfcb->next != NULL ) {
-                    sfcb->next->prev = fcbtail;
+                    sfcb->next->prev = fcblist->tail;
                 }
-                fcbtail->next = sfcb->next;
-                sfcb->next = fcbhead;
-                fcbhead->prev = sfcb;
+                fcblist->tail->next = sfcb->next;
+                sfcb->next = fcblist->head;
+                fcblist->head->prev = sfcb;
             }
         }
     }
@@ -216,9 +211,7 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     /*
      * now, resequence line numbers and set proper file ptr
      */
-    cfcb = fcbhead;
-    while( cfcb != NULL ) {
-
+    for( cfcb = fcblist->head; cfcb != NULL; cfcb = cfcb->next ) {
         cfcb->f = CurrentFile;
         l = cfcb->end_line - cfcb->start_line;
         if( cfcb->prev != NULL ) {
@@ -227,15 +220,13 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
             cfcb->start_line = 1;
         }
         cfcb->end_line = cfcb->start_line + l;
-        cfcb = cfcb->next;
-
     }
 
     /*
      * finish up: collect fcbs, point to corrent line, and
      * build undo for operation
      */
-    rc = CMergeAllFcbs();
+    rc = MergeAllFcbs( &CurrentFile->fcbs );
     if( rc != ERR_NO_ERR ) {
         return( rc );
     }

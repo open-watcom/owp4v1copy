@@ -153,10 +153,10 @@ void FormatDirToFile( file *cfile, bool add_drives )
     char        str[MAX_STR];
     direct_ent  *de;
 
-    if( cfile->fcb_head != NULL ) {
-        if( cfile->fcb_head->nullfcb ) {
-            FreeEntireFcb( cfile->fcb_head );
-            cfile->fcb_head = cfile->fcb_tail = NULL;
+    if( cfile->fcbs.head != NULL ) {
+        if( cfile->fcbs.head->nullfcb ) {
+            FreeEntireFcb( cfile->fcbs.head );
+            cfile->fcbs.head = cfile->fcbs.tail = NULL;
         }
     }
     currOff = 0;

@@ -93,16 +93,13 @@ static void cRestoreFileDisplayBits( void )
 {
     fcb *tfcb;
 
-    if( CurrentFile == NULL ) {
-        return;
-    }
-    tfcb = CurrentFile->fcb_head;
-    while( tfcb != NULL ) {
-        tfcb->on_display = tfcb->was_on_display;
-        if( tfcb->on_display && !tfcb->in_memory ) {
-            FetchFcb( tfcb );
+    if( CurrentFile != NULL ) {
+        for( tfcb = CurrentFile->fcbs.head; tfcb != NULL; tfcb = tfcb->next ) {
+            tfcb->on_display = tfcb->was_on_display;
+            if( tfcb->on_display && !tfcb->in_memory ) {
+                FetchFcb( tfcb );
+            }
         }
-        tfcb = tfcb->next;
     }
 
 } /* cRestoreFileDisplayBits */
@@ -216,9 +213,9 @@ static int getFileInfoString( char *st, int is_small )
             strcat( st, " [lf]" );
         }
 #endif
-        pc = (CurrentPos.line * 100L) / CurrentFile->fcb_tail->end_line;
+        pc = (CurrentPos.line * 100L) / CurrentFile->fcbs.tail->end_line;
         MySprintf( st + strlen( st ), " line %l of %l  -- %l%%%% --",
-            CurrentPos.line, CurrentFile->fcb_tail->end_line, pc );
+            CurrentPos.line, CurrentFile->fcbs.tail->end_line, pc );
         if( EditFlags.ColumnInFileStatus ) {
             MySprintf( st + strlen( st  ), " (col %d)", VirtualCursorPosition() );
         }
@@ -251,7 +248,7 @@ static int getFileInfoString( char *st, int is_small )
         }
 #endif
         MySprintf( st + strlen( st ), " line %l of %l",
-            CurrentPos.line, CurrentFile->fcb_tail->end_line );
+            CurrentPos.line, CurrentFile->fcbs.tail->end_line );
         if( EditFlags.ColumnInFileStatus ) {
             MySprintf( st + strlen( st ), " (col %d)", VirtualCursorPosition() );
         }
@@ -342,14 +339,11 @@ void CTurnOffFileDisplayBits( void )
 {
     fcb *tfcb;
 
-    if( !CurrentFile ) {
-        return;
-    }
-    tfcb = CurrentFile->fcb_head;
-    while( tfcb != NULL ) {
-        tfcb->was_on_display = tfcb->on_display;
-        tfcb->on_display = FALSE;
-        tfcb = tfcb->next;
+    if( CurrentFile != NULL ) {
+        for( tfcb = CurrentFile->fcbs.head; tfcb != NULL; tfcb = tfcb->next ) {
+            tfcb->was_on_display = tfcb->on_display;
+            tfcb->on_display = FALSE;
+        }
     }
 
 } /* CTurnOffFileDisplayBits */

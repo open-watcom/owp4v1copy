@@ -34,7 +34,7 @@
 
 #ifdef __WIN__
 extern int  AddLineToClipboard( char *data, int scol, int ecol );
-extern int  AddFcbsToClipboard( fcb *head, fcb *tail );
+extern int  AddFcbsToClipboard( fcb_list *fcbs );
 extern int  GetClipboardSavebuf( savebuf *clip );
 extern bool IsClipboardEmpty( void );
 #endif
@@ -44,20 +44,18 @@ extern bool IsClipboardEmpty( void );
  */
 static void freeSavebuf( savebuf *tmp )
 {
-    fcb *cfcb, *tfcb;
+    fcb     *cfcb, *tfcb;
 
     switch( tmp->type ) {
     case SAVEBUF_NOP:
         break;
     case SAVEBUF_LINE:
-        MemFree( tmp->first.data );
+        MemFree( tmp->u.data );
         break;
     case SAVEBUF_FCBS:
-        cfcb = tmp->first.fcb_head;
-        while( cfcb != NULL ) {
+        for( cfcb = tmp->u.fcbs.head; cfcb != NULL; cfcb = tfcb ) {
             tfcb = cfcb->next;
             FreeEntireFcb( cfcb );
-            cfcb = tfcb;
         }
         break;
     }
@@ -91,7 +89,8 @@ static vi_rc insertGenericSavebuf( int buf, int afterflag )
     savebuf     clip;
 #endif
     savebuf     *tmp;
-    fcb         *head = NULL, *tail = NULL, *end;
+    fcb_list    fcblist;
+    fcb         *end;
     int         i, scol, len;
     int         maxCursor;
     vi_rc       rc;
@@ -127,7 +126,7 @@ static vi_rc insertGenericSavebuf( int buf, int afterflag )
         /*
          * get starting data
          */
-        len = strlen( tmp->first.data );
+        len = strlen( tmp->u.data );
         if( len + CurrentLine->len >= MaxLine ) {
             rc = ERR_LINE_FULL;
             break;
@@ -150,7 +149,7 @@ static vi_rc insertGenericSavebuf( int buf, int afterflag )
             WorkLine->data[i + len] = WorkLine->data[i];
         }
         for( i = 0; i < len; i++ ) {
-            WorkLine->data[i + scol] = tmp->first.data[i];
+            WorkLine->data[i + scol] = tmp->u.data[i];
         }
         WorkLine->len += len;
         DisplayWorkLine( TRUE );
@@ -169,18 +168,20 @@ static vi_rc insertGenericSavebuf( int buf, int afterflag )
         break;
 
     case SAVEBUF_FCBS:
-        end = tmp->fcb_tail->next;
-        tmp->fcb_tail->next = NULL;
-        CreateDuplicateFcbList( tmp->first.fcb_head, &head, &tail );
-        tmp->fcb_tail->next = end;
+        fcblist.head = NULL;
+        fcblist.tail = NULL;
+        end = tmp->u.fcbs.tail->next;
+        tmp->u.fcbs.tail->next = NULL;
+        CreateDuplicateFcbList( tmp->u.fcbs.head, &fcblist );
+        tmp->u.fcbs.tail->next = end;
 
         if( !EditFlags.LineBased ) {
-            rc = InsertLinesAtCursor( head, tail, UndoStack );
+            rc = InsertLinesAtCursor( &fcblist, UndoStack );
         } else {
             if( afterflag) {
-                rc = InsertLines( CurrentPos.line, head, tail, UndoStack );
+                rc = InsertLines( CurrentPos.line, &fcblist, UndoStack );
             } else {
-                rc = InsertLines( CurrentPos.line - 1, head, tail, UndoStack );
+                rc = InsertLines( CurrentPos.line - 1, &fcblist, UndoStack );
             }
         }
         break;
@@ -304,14 +305,12 @@ vi_rc GetSavebufString( char **data )
     case SAVEBUF_NOP:
         return( ERR_EMPTY_SAVEBUF );
     case SAVEBUF_LINE:
-        len = strlen( tmp->first.data );
+        len = strlen( tmp->u.data );
         break;
     case SAVEBUF_FCBS:
-        cfcb = tmp->first.fcb_head;
         len = 0L;
-        while( cfcb != NULL ) {
+        for( cfcb = tmp->u.fcbs.head; cfcb != NULL; cfcb = cfcb->next ) {
             len += FcbSize( cfcb );
-            cfcb = cfcb->next;
         }
         break;
     }
@@ -322,20 +321,16 @@ vi_rc GetSavebufString( char **data )
         *data = MemAlloc( len );
         switch( tmp->type ) {
         case SAVEBUF_LINE:
-            strcpy( *data, tmp->first.data );
+            strcpy( *data, tmp->u.data );
             break;
         case SAVEBUF_FCBS:
-            cfcb = tmp->first.fcb_head;
             **data = 0;
-            while( cfcb != NULL ) {
+            for( cfcb = tmp->u.fcbs.head; cfcb != NULL; cfcb = cfcb->next ) {
                 FetchFcb( cfcb );
-                cline = cfcb->line_head;
-                while( cline != NULL ) {
+                for( cline = cfcb->lines.head; cline != NULL; cline = cline->next ) {
                     strcat( *data, cline->data );
                     strcat( *data, "\\n" );
-                    cline = cline->next;
                 }
-                cfcb = cfcb->next;
             }
             break;
         }
@@ -358,8 +353,8 @@ void InitSavebufs( void )
 
     for( i = MAX_SAVEBUFS - 1; i >= 0; i-- ) {
         Savebufs[i].type = SAVEBUF_NOP;
-        Savebufs[i].first.data = NULL;
-        Savebufs[i].fcb_tail = NULL;
+        Savebufs[i].u.fcbs.head = NULL;
+        Savebufs[i].u.fcbs.tail = NULL;
     }
 
 } /* InitSavebufs */
@@ -423,11 +418,11 @@ void AddLineToSavebuf( char *data, int scol, int ecol )
     /*
      * get and copy buffer
      */
-    tmp->first.data = MemAlloc( len + 1 );
+    tmp->u.data = MemAlloc( len + 1 );
     for( i = scol; i <= ecol; i++ ) {
-        tmp->first.data[i - scol] = data[i];
+        tmp->u.data[i - scol] = data[i];
     }
-    tmp->first.data[len] = 0;
+    tmp->u.data[len] = 0;
 
 } /* AddLineToSavebuf */
 
@@ -462,18 +457,18 @@ vi_rc AddSelRgnToSavebufAndDelete( void )
 /*
  * AddFcbsToSavebuf - add fcb block to save buffer
  */
-void AddFcbsToSavebuf( fcb *head, fcb *tail, int duplflag )
+void AddFcbsToSavebuf( fcb_list *fcblist, int duplflag )
 {
     int         j;
     savebuf     *tmp;
-    fcb         *cfcb, *nhead = NULL, *ntail = NULL;
+    fcb         *cfcb;
 
     /*
      * set to appropriate savebuf and rotate others forward
      */
 #ifdef __WIN__
     if( SavebufNumber == CLIPBOARD_SAVEBUF ) {
-        AddFcbsToClipboard( head, tail );
+        AddFcbsToClipboard( fcblist );
         LastSavebuf = 0;
         return;
     } else {
@@ -497,15 +492,14 @@ void AddFcbsToSavebuf( fcb *head, fcb *tail, int duplflag )
 
     tmp->type = SAVEBUF_FCBS;
     if( duplflag ) {
-        cfcb = tail->next;
-        tail->next = NULL;
-        CreateDuplicateFcbList( head, &nhead, &ntail );
-        tail->next = cfcb;
-        tmp->first.fcb_head = nhead;
-        tmp->fcb_tail = ntail;
+        tmp->u.fcbs.head = NULL;
+        tmp->u.fcbs.tail = NULL;
+        cfcb = fcblist->tail->next;
+        fcblist->tail->next = NULL;
+        CreateDuplicateFcbList( fcblist->head, &tmp->u.fcbs );
+        fcblist->tail->next = cfcb;
     } else {
-        tmp->first.fcb_head = head;
-        tmp->fcb_tail = tail;
+        tmp->u.fcbs = *fcblist;
     }
 
 } /* AddFcbsToSavebuf */
@@ -541,18 +535,17 @@ vi_rc SwitchSavebuf( void )
         Message1( "Buffer %d now active. (empty buffer)", buf + 1 );
         return( DO_NOT_CLEAR_MESSAGE_WINDOW );
     case SAVEBUF_LINE:
-        data = tmp->first.data;
+        data = tmp->u.data;
         Message1( "Buffer %d active, %d characters:", buf + 1,
-                  strlen( tmp->first.data ) );
+                  strlen( tmp->u.data ) );
         break;
     case SAVEBUF_FCBS:
-        cfcb = tmp->first.fcb_head;
+        cfcb = tmp->u.fcbs.head;
         FetchFcb( cfcb );
-        data = cfcb->line_head->data;
+        data = cfcb->lines.head->data;
         lcnt = 0;
-        while( cfcb != NULL ) {
+        for( ; cfcb != NULL; cfcb = cfcb->next ) {
             lcnt += cfcb->end_line - cfcb->start_line + 1;
-            cfcb = cfcb->next;
         }
         Message1( "Buffer %d active, %l lines:", buf + 1, lcnt );
         break;

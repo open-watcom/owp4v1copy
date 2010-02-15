@@ -124,17 +124,15 @@ void UndoFree( undo *cundo, int freefcbs )
     undo    *tundo;
 
     while( cundo != NULL ) {
-
         /*
          * release any fcbs
          */
         if( freefcbs && cundo->type == UNDO_DELETE_FCBS ) {
-            FreeFcbList( cundo->data.fcbs.fcb_head );
+            FreeFcbList( cundo->data.fcbs.head );
         }
         tundo = cundo->next;
         MemFree( cundo );
         cundo = tundo;
-
     }
 
 } /* UndoFree */

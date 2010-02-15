@@ -58,7 +58,7 @@ static void tempFileSetup( file **cfile, char *list[], int maxlist, int indent,
         k = strlen( dd );
         if( k + 2 + indent + boff > MAX_IO_BUFFER ) {
             CreateFcbData( *cfile, boff );
-            (*cfile)->fcb_tail->non_swappable = TRUE;
+            (*cfile)->fcbs.tail->non_swappable = TRUE;
             boff = 0;
         }
         if( indent ) {
@@ -80,7 +80,7 @@ static void tempFileSetup( file **cfile, char *list[], int maxlist, int indent,
     }
 
     CreateFcbData( *cfile, boff );
-    (*cfile)->fcb_tail->non_swappable = TRUE;
+    (*cfile)->fcbs.tail->non_swappable = TRUE;
 
 } /* tempFileSetup */
 

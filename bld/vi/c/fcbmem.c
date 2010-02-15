@@ -141,11 +141,9 @@ void FreeEntireFcb( fcb *cfcb )
     line        *cline, *tline;
 
     if( cfcb->in_memory ) {
-        cline = cfcb->line_head;
-        while( cline != NULL ) {
+        for( cline = cfcb->lines.head; cline != NULL; cline = tline ) {
             tline = cline->next;
             MemFree( cline );
-            cline = tline;
         }
     }
     FcbFree( cfcb );
@@ -155,15 +153,13 @@ void FreeEntireFcb( fcb *cfcb )
 /*
  * FreeFcbList - free up a list of fcbs
  */
-void FreeFcbList( fcb *fcbhead )
+void FreeFcbList( fcb *cfcb )
 {
-    fcb *cfcb, *tfcb;
+    fcb     *tfcb;
 
-    cfcb = fcbhead;
-    while( cfcb != NULL ) {
+    for( ; cfcb != NULL; cfcb = tfcb ) {
         tfcb = cfcb->next;
         FreeEntireFcb( cfcb );
-        cfcb = tfcb;
     }
 
 } /* FreeFcbList */

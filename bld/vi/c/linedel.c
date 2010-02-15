@@ -52,11 +52,12 @@ void UpdateLineNumbers( linenum amt, fcb *cfcb  )
 vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
 {
     linenum     diff, ll;
-    fcb         *s1fcb, *sfcb, *e1fcb, *efcb, *cfcb;
+    fcb         *sfcb, *efcb, *cfcb;
     undo_stack  *us;
     vi_rc       rc;
     vi_rc       rc1;
     vi_rc       rc2;
+    fcb_list    fcblist;
 
     /*
      * check line range
@@ -118,14 +119,14 @@ vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
      * and undos).
      */
     if( rc1 == NO_SPLIT_CREATED_AT_START_LINE ) {
-        s1fcb = sfcb;
+        fcblist.head = sfcb;
     } else {
-        s1fcb = sfcb->next;
+        fcblist.head = sfcb->next;
     }
     if( rc2 != NO_SPLIT_CREATED_AT_START_LINE ) {
-        e1fcb = efcb;
+        fcblist.tail = efcb;
     } else {
-        e1fcb = efcb->prev;
+        fcblist.tail = efcb->prev;
     }
 
     /*
@@ -155,20 +156,20 @@ vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
         cfcb = FcbAlloc( CurrentFile );
         CreateNullLine( cfcb );
         cfcb->non_swappable = FALSE;
-        CurrentFile->fcb_head = CurrentFile->fcb_tail = cfcb;
+        CurrentFile->fcbs.head = CurrentFile->fcbs.tail = cfcb;
     /*
      * when this happens, we have lost the head elements, so
      * reset the head ptr and renumber
      */
     } else if( sfcb == NULL ) {
-        CurrentFile->fcb_head = efcb;
+        CurrentFile->fcbs.head = efcb;
         UpdateLineNumbers( diff, efcb );
     /*
      * when this happens, we have lost the tail elements,
      * so reset the tail ptr. no renumbering required
      */
     } else if( efcb == NULL ) {
-        CurrentFile->fcb_tail = sfcb;
+        CurrentFile->fcbs.tail = sfcb;
     /*
      * deleted somewhere inside, so update line numbers
      * from fcb at end of range on; then try to merge fcb at start
@@ -176,7 +177,7 @@ vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
      */
     } else {
         UpdateLineNumbers( diff, efcb );
-        rc = CMergeFcbs( sfcb,efcb );
+        rc = MergeFcbs( &CurrentFile->fcbs, sfcb,efcb );
         if( rc > ERR_NO_ERR ) {
             return( rc );
         }
@@ -186,7 +187,7 @@ vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
      * check if we need to duplicate these fcbs to a save buffer
      */
     if( (flags & SAVEBUF_FLAG) && !EditFlags.GlobalInProgress ) {
-        AddFcbsToSavebuf( s1fcb, e1fcb, TRUE );
+        AddFcbsToSavebuf( &fcblist, TRUE );
     }
 
     /*
@@ -217,13 +218,13 @@ vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
         }
     }
     Modified( TRUE );
-    s1fcb->prev = e1fcb->next = NULL;
+    fcblist.head->prev = fcblist.tail->next = NULL;
     if( EditFlags.GlobalInProgress ) {
-        for( cfcb = s1fcb; cfcb != NULL; cfcb = cfcb->next ) {
+        for( cfcb = fcblist.head; cfcb != NULL; cfcb = cfcb->next ) {
             cfcb->globalmatch = FALSE;
         }
     }
-    UndoDeleteFcbs( s - 1, s1fcb, e1fcb, us );
+    UndoDeleteFcbs( s - 1, &fcblist, us );
     EndUndoGroup( us );
     PatchDeleteUndo( us );
 

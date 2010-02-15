@@ -592,7 +592,7 @@ void EditDrawScrollBars( HWND hwnd )
     wd = DATA_FROM_ID( hwnd );
     if( wd->info != NULL ) {
         PositionVerticalScrollThumb( hwnd, wd->info->LeftTopPos.line,
-                                     wd->info->CurrentFile->fcb_tail->end_line );
+                                     wd->info->CurrentFile->fcbs.tail->end_line );
         PositionHorizontalScrollThumb( hwnd, wd->info->LeftTopPos.column );
     }
 

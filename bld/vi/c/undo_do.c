@@ -146,8 +146,8 @@ static vi_rc realUndo( undo_stack *stack, undo_stack *us )
             break;
 
         case UNDO_DELETE_FCBS:
-            rc = InsertLines( cundo->data.fcbs.fcb_head->start_line,
-                              cundo->data.fcbs.fcb_head,cundo->data.fcbs.fcb_tail, us );
+            rc = InsertLines( cundo->data.fcbs.head->start_line,
+                              &cundo->data.fcbs, us );
             break;
         }
         if( rc > ERR_NO_ERR ) {
@@ -168,7 +168,7 @@ static vi_rc realUndo( undo_stack *stack, undo_stack *us )
     EndUndoGroup( us );
     UndoFree( tundo, FALSE );
 
-    CMergeAllFcbs();
+    MergeAllFcbs( &CurrentFile->fcbs );
     EditFlags.DisplayHold = FALSE;
     LeftTopPos.line = top;
     SetCurrentLineNumber( lne );

@@ -64,7 +64,7 @@ static fcb *singleLineFcb( void )
     if( cfcb == NULL ) {
         return( NULL );
     }
-    cfcb->line_head = cfcb->line_tail = lineSave;
+    cfcb->lines.head = cfcb->lines.tail = lineSave;
     cfcb->byte_cnt = lineSave->len + 1;
     return( cfcb );
 
@@ -90,6 +90,7 @@ void CurrentLineReplaceUndoEnd( int endgrp )
 {
     fcb         *cfcb, *nfcb;
     undo        *top, *delrec;
+    fcb_list    fcblist;
 
     if( !EditFlags.Undo || UndoStack == NULL ) {
         return;
@@ -117,7 +118,7 @@ void CurrentLineReplaceUndoEnd( int endgrp )
                     delrec = top;
                     top = top->next;
                     if( top != NULL && top->type == UNDO_DELETE_FCBS ) {
-                        cfcb = top->data.fcbs.fcb_tail;
+                        cfcb = top->data.fcbs.tail;
                         if( cfcb->end_line == CurrentPos.line - 2 ) {
                             /*
                              * FINALLY, we can add it. either
@@ -127,14 +128,14 @@ void CurrentLineReplaceUndoEnd( int endgrp )
                             if( (FcbSize( cfcb ) + lineSave->len + 4) <=
                                 MAX_IO_BUFFER ) {
                                 FetchFcb( cfcb );
-                                InsertLLItemAfter( (ss **)&cfcb->line_tail,
-                                    (ss *)cfcb->line_tail, (ss *)lineSave );
+                                InsertLLItemAfter( (ss **)&cfcb->lines.tail,
+                                    (ss *)cfcb->lines.tail, (ss *)lineSave );
                                 cfcb->byte_cnt += lineSave->len + 1;
                                 cfcb->end_line++;
                             } else {
                                 nfcb = singleLineFcb();
                                 nfcb->start_line = nfcb->end_line = cfcb->end_line + 1;
-                                InsertLLItemAfter( (ss **)&(top->data.fcbs.fcb_tail),
+                                InsertLLItemAfter( (ss **)&(top->data.fcbs.tail),
                                     (ss *)cfcb, (ss *)nfcb );
                                 nfcb->non_swappable = FALSE;
                             }
@@ -157,8 +158,10 @@ void CurrentLineReplaceUndoEnd( int endgrp )
     /*
      * build undo action
      */
+    fcblist.head = cfcb;
+    fcblist.tail = cfcb;
     StartUndoGroupWithPosition( UndoStack, cLine, pageTop, cCol );
-    UndoDeleteFcbs( CurrentPos.line - 1, cfcb, cfcb, UndoStack );
+    UndoDeleteFcbs( CurrentPos.line - 1, &fcblist, UndoStack );
     UndoInsert( CurrentPos.line, CurrentPos.line, UndoStack );
     if( endgrp ) {
         EndUndoGroup( UndoStack );

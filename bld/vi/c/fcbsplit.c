@@ -70,12 +70,10 @@ vi_rc SplitFcbAtLine( linenum lne, file *f, fcb *fb )
     /*
      * get position
      */
-    sline = fb->start_line;
-    cl = fb->line_head;
-    while( sline != lne ) {
+    cl = fb->lines.head;
+    for( sline = fb->start_line; sline != lne; sline++ ) {
         bytecnt += cl->len + 1;
         cl = cl->next;
-        sline++;
     }
 
     /*
@@ -83,24 +81,24 @@ vi_rc SplitFcbAtLine( linenum lne, file *f, fcb *fb )
      */
     pl = cl->prev;
     cfcb = FcbAlloc( f );
-    InsertLLItemAfter( (ss **)&(f->fcb_tail), (ss *)fb, (ss *)cfcb );
+    InsertLLItemAfter( (ss **)&(f->fcbs.tail), (ss *)fb, (ss *)cfcb );
 
     /*
      * reset line data for new fcb
      */
     cfcb->start_line = lne;
     cfcb->end_line = fb->end_line;
-    cfcb->line_head = cl;
-    cfcb->line_head->prev = NULL;
-    cfcb->line_tail = fb->line_tail;
+    cfcb->lines.head = cl;
+    cfcb->lines.head->prev = NULL;
+    cfcb->lines.tail = fb->lines.tail;
     cfcb->byte_cnt = fb->byte_cnt - bytecnt;
 
     /*
      * reset line data for original fcb
      */
     fb->end_line = lne - 1;
-    fb->line_tail = pl;
-    fb->line_tail->next = NULL;
+    fb->lines.tail = pl;
+    fb->lines.tail->next = NULL;
     fb->byte_cnt = bytecnt;
 
     /*
@@ -111,24 +109,20 @@ vi_rc SplitFcbAtLine( linenum lne, file *f, fcb *fb )
          * make sure original one should stay locked
          */
         fb->globalmatch = FALSE;
-        cl = fb->line_head;
-        while( cl != NULL ) {
+        for( cl = fb->lines.head; cl != NULL; cl = cl->next ) {
             if( cl->inf.ld.globmatch ) {
                 fb->globalmatch = TRUE;
                 break;
             }
-            cl = cl->next;
         }
         /*
          * see if new one needs to be locked
          */
-        cl = cfcb->line_head;
-        while( cl != NULL ) {
+        for( cl = cfcb->lines.head; cl != NULL; cl = cl->next ) {
             if( cl->inf.ld.globmatch ) {
                 cfcb->globalmatch = TRUE;
                 break;
             }
-            cl = cl->next;
         }
     }
 
@@ -163,14 +157,12 @@ vi_rc CheckCurrentFcbCapacity( void )
     /*
      * can't take it, so split it
      */
-    cl = CurrentFcb->line_head;
+    cl = CurrentFcb->lines.head;
     bl = CurrentFcb->byte_cnt / 2;
-    bc = cl->len + 1;
     l = CurrentFcb->start_line;
-    while( bc < bl ) {
+    for( bc = cl->len + 1; bc < bl; bc += cl->len + 1 ) {
         cl = cl->next;
         l++;
-        bc += cl->len + 1;
     }
     rc = SplitFcbAtLine( l, CurrentFile, CurrentFcb );
     if( rc != ERR_NO_ERR ) {

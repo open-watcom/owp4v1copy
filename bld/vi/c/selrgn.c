@@ -204,8 +204,8 @@ void UpdateDrag( window_id id, int win_x, int win_y )
     if( id == CurrentWindow && InsideWindow( id, win_x, win_y ) ) {
 #endif
         ny = LeftTopPos.line + win_y - 1;
-        if( ny > CurrentFile->fcb_tail->end_line ) {
-            ny = CurrentFile->fcb_tail->end_line;
+        if( ny > CurrentFile->fcbs.tail->end_line ) {
+            ny = CurrentFile->fcbs.tail->end_line;
             moveCursor = 1;
         } else if( ny < 1 ) {
             ny = 1;
@@ -234,8 +234,8 @@ void UpdateDrag( window_id id, int win_x, int win_y )
             GetClientRect( CurrentWindow, &rect );
             if( MouseY > rect.bottom ) {
                 ny = LeftTopPos.line + height;
-                if( ny > CurrentFile->fcb_tail->end_line ) {
-                    ny = CurrentFile->fcb_tail->end_line;
+                if( ny > CurrentFile->fcbs.tail->end_line ) {
+                    ny = CurrentFile->fcbs.tail->end_line;
                     moveCursor = 1;
                 }
                 GoToLineRelCurs( ny );
@@ -264,7 +264,7 @@ void UpdateDrag( window_id id, int win_x, int win_y )
     if( moveCursor == -1 ) {
         GoToColumnOnCurrentLine( 1 );
     } else if( moveCursor == 1 ) {
-        GoToColumnOnCurrentLine( CurrentFile->fcb_tail->line_tail->len + 1 );
+        GoToColumnOnCurrentLine( CurrentFile->fcbs.tail->lines.tail->len + 1 );
     }
 
 } /* UpdateDrag */

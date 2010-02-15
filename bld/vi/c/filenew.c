@@ -117,7 +117,7 @@ static vi_rc createNewFile( char *name, bool same_file )
             }
             if( !CurrentFile->is_stdio ) {
                 if( EditFlags.BreakPressed || !EditFlags.ReadEntireFile ) {
-                    if( CurrentFile->fcb_tail->end_line > height ) {
+                    if( CurrentFile->fcbs.tail->end_line > height ) {
                         break;
                     }
                 }
@@ -183,8 +183,8 @@ static vi_rc createNewFile( char *name, bool same_file )
     /*
      * set current file info
      */
-    CurrentFcb = CurrentFile->fcb_head;
-    CurrentLine = CurrentFcb->line_head;
+    CurrentFcb = CurrentFile->fcbs.head;
+    CurrentLine = CurrentFcb->lines.head;
 
     if( EditFlags.LineNumbers ) {
         LineNumbersSetup();
@@ -325,14 +325,7 @@ void FileFree( file *f )
  */
 void FreeEntireFile( file *cfile  )
 {
-    fcb *cfcb, *tfcb;
-
-    cfcb = cfile->fcb_head;
-    while( cfcb != NULL ) {
-        tfcb = cfcb->next;
-        FreeEntireFcb( cfcb );
-        cfcb = tfcb;
-    }
+    FreeFcbList( cfile->fcbs.head );
     FileFree( cfile );
 
 } /* FreeEntireFile */

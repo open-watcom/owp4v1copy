@@ -39,12 +39,13 @@
  */
 vi_rc DoGenericFilter( linenum s, linenum e, char *cmd )
 {
-    fcb         *cfcb, *s1fcb, *e1fcb, *tfcb;
+    fcb         *cfcb, *tfcb;
     line        *cline;
     FILE        *f;
     vi_rc       rc;
     char        realcmd[MAX_STR];
     char        filtin[L_tmpnam], filtout[L_tmpnam];
+    fcb_list    fcblist;
 
     rc = ModificationTest();
     if( rc != ERR_NO_ERR ) {
@@ -64,7 +65,7 @@ vi_rc DoGenericFilter( linenum s, linenum e, char *cmd )
     /*
      * filter on a line
      */
-    rc = GetCopyOfLineRange( s, e, &s1fcb, &e1fcb );
+    rc = GetCopyOfLineRange( s, e, &fcblist );
     if( rc != ERR_NO_ERR ) {
         fclose( f );
         return( rc );
@@ -73,17 +74,13 @@ vi_rc DoGenericFilter( linenum s, linenum e, char *cmd )
     /*
      * now, dump this crap to a tmp file
      */
-    cfcb = s1fcb;
-    while( cfcb != NULL ) {
+    for( cfcb = fcblist.head; cfcb != NULL; cfcb = tfcb ) {
         FetchFcb( cfcb );
-        cline = cfcb->line_head;
-        while( cline != NULL ) {
+        for( cline = cfcb->lines.head; cline != NULL; cline = cline->next ) {
             MyFprintf( f, "%s\n", cline->data );
-            cline = cline->next;
         }
-        tfcb = cfcb;
-        cfcb = cfcb->next;
-        FcbFree( tfcb );
+        tfcb = cfcb->next;
+        FcbFree( cfcb );
     }
     fclose( f );
 

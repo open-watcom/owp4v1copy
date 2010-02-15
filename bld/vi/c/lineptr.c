@@ -107,7 +107,7 @@ vi_rc GimmeNextLinePtr( file *cfile, fcb **cfcb, line **cline )
     *cfcb = (*cfcb)->next;
     if( *cfcb != NULL ) {
         FetchFcb( *cfcb );
-        *cline = (*cfcb)->line_head;
+        *cline = (*cfcb)->lines.head;
         return( ERR_NO_ERR );
     }
 
@@ -115,19 +115,19 @@ vi_rc GimmeNextLinePtr( file *cfile, fcb **cfcb, line **cline )
      * get next fcb if can; then get first line and go back
      */
     if( cfile->bytes_pending ) {
-        ofcb = cfile->fcb_tail;
+        ofcb = cfile->fcbs.tail;
         rc = ReadFcbData( cfile );
         if( rc > ERR_NO_ERR ) {
             return( rc );
         }
-        *cfcb = cfile->fcb_tail;
+        *cfcb = cfile->fcbs.tail;
         if( *cfcb != ofcb ) {
             while( (*cfcb)->prev != ofcb ) {
                 *cfcb = (*cfcb)->prev;
             }
         }
         FetchFcb( *cfcb );
-        *cline = (*cfcb)->line_head;
+        *cline = (*cfcb)->lines.head;
         return( ERR_NO_ERR );
     }
 
@@ -160,7 +160,7 @@ vi_rc GimmePrevLinePtr( fcb **cfcb, line **cline )
     *cfcb = (*cfcb)->prev;
     if( *cfcb != NULL ) {
         FetchFcb( *cfcb );
-        *cline = (*cfcb)->line_tail;
+        *cline = (*cfcb)->lines.tail;
         return( ERR_NO_ERR );
     }
 
@@ -186,7 +186,7 @@ vi_rc GimmeLinePtrFromFcb( linenum lineno, fcb *cfcb , line **res )
     }
     FetchFcb( cfcb );
     linecnt = cfcb->start_line;
-    tmp = cfcb->line_head;
+    tmp = cfcb->lines.head;
 
     while( linecnt != lineno ) {
         linecnt++;
@@ -212,7 +212,7 @@ vi_rc CFindLastLine( linenum *ll )
     }
 
     if( !CurrentFile->bytes_pending ) {
-        *ll = CurrentFile->fcb_tail->end_line;
+        *ll = CurrentFile->fcbs.tail->end_line;
         return( ERR_NO_ERR );
     }
 
@@ -236,7 +236,7 @@ bool IsPastLastLine( linenum l )
         return( TRUE );
     }
 
-    ll = CurrentFile->fcb_tail->end_line;
+    ll = CurrentFile->fcbs.tail->end_line;
     if( l <= ll ) {
         return( FALSE );
     }
@@ -258,7 +258,7 @@ vi_rc ValidateCurrentLine( void )
     if( CurrentPos.line < 1 ) {
         return( SetCurrentLine( 1 ) );
     }
-    if( CurrentPos.line > CurrentFile->fcb_tail->end_line ) {
+    if( CurrentPos.line > CurrentFile->fcbs.tail->end_line ) {
         rc = CFindLastLine( &CurrentPos.line );
         if( rc != ERR_NO_ERR ) {
             return( rc );

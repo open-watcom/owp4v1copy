@@ -99,8 +99,8 @@ vi_rc ReadAFile( linenum afterwhich, char *name )
 #endif
         while( TRUE ) {
             rc = ReadFcbData( cfile );
-            lnecnt += cfile->fcb_tail->end_line - cfile->fcb_tail->start_line + 1L;
-            bytecnt += (long) cfile->fcb_tail->byte_cnt;
+            lnecnt += cfile->fcbs.tail->end_line - cfile->fcbs.tail->start_line + 1L;
+            bytecnt += (long) cfile->fcbs.tail->byte_cnt;
             if( rc != ERR_NO_ERR ) {
                 break;
             }
@@ -120,7 +120,7 @@ vi_rc ReadAFile( linenum afterwhich, char *name )
     /*
      * add lines to current file
      */
-    rc = InsertLines( afterwhich, cfile->fcb_head, cfile->fcb_tail, UndoStack );
+    rc = InsertLines( afterwhich, &cfile->fcbs, UndoStack );
     FileFree( cfile );
     if( rc != ERR_NO_ERR ) {
         MemFree( fn );
