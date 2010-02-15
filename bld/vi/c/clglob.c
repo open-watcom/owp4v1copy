@@ -163,7 +163,7 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
                 CurrentFcb->globalmatch = i;
                 CurrentFcb = CurrentFcb->next;
                 FetchFcb( CurrentFcb );
-                CurrentLine = CurrentFcb->line_head;
+                CurrentLine = CurrentFcb->lines.head;
                 i = FALSE;
             }
         }
