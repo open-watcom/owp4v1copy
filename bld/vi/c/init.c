@@ -289,10 +289,7 @@ static void doInitializeEditor( int argc, char *argv[] )
     SetMajickString( NULL );
     FileEndString = MemStrDup( "[END_OF_FILE]" );
 
-    MatchData[0] = MemStrDup( "{" );
-    MatchData[1] = MemStrDup( "}" );
-    MatchData[2] = MemStrDup( "\\(" );
-    MatchData[3] = MemStrDup( "\\)" );
+    MatchInit();
 
     if( cfgFN[0] != 0 ) {
         c[0] = 0;

@@ -168,6 +168,14 @@ vi_rc AddMatchString( char *data )
 
 } /* AddMatchString */
 
+void MatchInit( void )
+{
+    MatchData[0] = MemStrDup( "{" );
+    MatchData[1] = MemStrDup( "}" );
+    MatchData[2] = MemStrDup( "\\(" );
+    MatchData[3] = MemStrDup( "\\)" );
+}
+
 void MatchFini( void )
 {
     int i;

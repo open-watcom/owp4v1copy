@@ -584,6 +584,7 @@ void    SetMarkContext( void );
 vi_rc   DoMatching( range *, long count );
 vi_rc   FindMatch( i_mark * );
 vi_rc   AddMatchString( char * );
+void    MatchInit( void );
 void    MatchFini( void );
 
 /* mem.c */
