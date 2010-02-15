@@ -186,10 +186,12 @@ typedef enum {
  * find types
  */
 typedef enum {
-    FINDFL_FORWARD   = 1,
-    FINDFL_BACKWARDS = 2,
-    FINDFL_NEXTLINE  = 4,
-    FINDFL_NOERROR   = 8
+    FINDFL_FORWARD   = 0x01,
+    FINDFL_BACKWARDS = 0x02,
+    FINDFL_NEXTLINE  = 0x04,
+    FINDFL_NOERROR   = 0x08,
+    FINDFL_WRAP      = 0x10,
+    FINDFL_NOCHANGE  = 0x20
 } find_type;
 
 /*

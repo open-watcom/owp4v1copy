@@ -247,7 +247,7 @@ vi_rc GetAddress( char *buff, linenum *num  )
                     } else {
                         fl = FINDFL_FORWARD | FINDFL_NEXTLINE;
                     }
-                    rc = GetFind( tmp, &pos, &len, fl, FALSE );
+                    rc = GetFind( tmp, &pos, &len, fl );
                     numstack[nument] = pos.line;
                     stopnum = TRUE;
                     StaticFree( tmp );

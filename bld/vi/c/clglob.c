@@ -106,7 +106,7 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
          * go thorugh file, marking global lines
          */
         pos.column = 0;
-        rc = FindRegularExpression( NULL, &pos, &linedata, n2, FALSE, FALSE );
+        rc = FindRegularExpression( NULL, &pos, &linedata, n2, 0 );
         if( rc != ERR_NO_ERR ) {
             if( rc == ERR_FIND_PAST_TERM_LINE || rc == ERR_FIND_NOT_FOUND ||
                 rc == ERR_FIND_END_OF_FILE ) {

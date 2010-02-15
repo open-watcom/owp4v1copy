@@ -217,7 +217,7 @@ vi_rc Substitute( linenum n1, linenum n2, char *data )
         /*
          * get regular expression, and build replacement string
          */
-        rc = FindRegularExpression( NULL, &pos, &linedata, n2, FALSE, FALSE );
+        rc = FindRegularExpression( NULL, &pos, &linedata, n2, 0 );
         if( rc == ERR_NO_ERR ) {
             slen = GetCurrRegExpLength();
         } else {
