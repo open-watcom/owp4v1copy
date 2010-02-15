@@ -247,8 +247,11 @@ icon=view.exe, %HDir%\binp\help\f77graph.inf, F77 Graphics Library,,, IsOS2 DoCr
 icon=view.exe, %HDir%\binp\help\f77lr.inf, F77 Language Reference,,, IsOS2 DoCreateHelpIcons  os2_helpfiles ?%HDir%\binp\help\f77lr.inf IsFortranInstall
 assoc=c=cfile, %DstDir%\binnt\viw.exe, C Source File, 2, 0
 assoc=cpp=cppfile, %DstDir%\binnt\viw.exe, C++ Source File, 3, 0
+assoc=cxx=cxxfile, %DstDir%\binnt\viw.exe, C++ Source File, 3, 0
 assoc=h=hfile, %DstDir%\binnt\viw.exe, C/C++ Header File, 4, 0
 assoc=hpp=hppfile, %DstDir%\binnt\viw.exe, C++ Header File, 5, 0
+assoc=hxx=hxxfile, %DstDir%\binnt\viw.exe, C++ Header File, 5, 0
+assoc=inl=inlfile, %DstDir%\binnt\viw.exe, Inline Function File, 9, 0
 assoc=for=forfile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 6, 0
 assoc=f=ffile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 6, 0
 assoc=fi=fifile, %DstDir%\binnt\viw.exe, FORTRAN Include File, 7, 0
