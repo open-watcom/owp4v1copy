@@ -43,9 +43,7 @@ static vi_rc getBracketLoc( i_mark *pos )
     int         len;
     linenum     lne;
     bool        oldmagic;
-    bool        oldnrss = EditFlags.NoReplaceSearchString;
 
-    EditFlags.NoReplaceSearchString = TRUE;
     tmp[0] = '\\';
     tmp[1] = ')';
     tmp[2] = 0;
@@ -53,7 +51,6 @@ static vi_rc getBracketLoc( i_mark *pos )
     oldmagic = SetMagicFlag( TRUE );
     rc = GetFind( tmp, pos, &len, FINDFL_BACKWARDS | FINDFL_NOERROR | FINDFL_NOCHANGE );
     SetMagicFlag( oldmagic );
-    EditFlags.NoReplaceSearchString = oldnrss;
     if( pos->line != CurrentPos.line ) {
         return( ERR_FIND_NOT_FOUND );
     }
