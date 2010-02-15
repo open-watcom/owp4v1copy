@@ -40,7 +40,7 @@
 vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
 {
     char        *sstr, *cmd, *linedata;
-    int         i, todo;
+    int         i;
     vi_rc       rc;
     vi_rc       rc1;
     long        changecnt = 0;
