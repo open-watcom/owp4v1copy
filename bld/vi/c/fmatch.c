@@ -50,12 +50,6 @@ bool FileMatch( char *name )
 
 } /* FileMatch */
 
-extern char *Majick;
-
-static char magicFlag;
-static char caseignFlag;
-static char *majickStr;
-
 /*
  * FileMatchInit - start file matching
  */
@@ -64,11 +58,7 @@ vi_rc FileMatchInit( char *wild )
     char        *tomatch;
     int         i, j, len;
 
-    magicFlag = SetMagicFlag( FALSE );
-    caseignFlag = EditFlags.CaseIgnore;
-    EditFlags.CaseIgnore = TRUE;
-    majickStr = Majick;
-    Majick = ".";
+    RegExpAttrSave( TRUE, "." );
 
     /*
      * compute required size
@@ -121,9 +111,7 @@ vi_rc FileMatchInit( char *wild )
  */
 void FileMatchFini( void )
 {
-    SetMagicFlag( magicFlag );
-    EditFlags.CaseIgnore = caseignFlag;
-    Majick = majickStr;
+    RegExpAttrRestore();
     MemFree( cRx );
 
 } /* FileMatchFini */

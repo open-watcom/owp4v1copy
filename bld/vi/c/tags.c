@@ -36,6 +36,8 @@
     #include "winrtns.h"
 #endif
 
+extern char _NEAR   META[];
+
 /*
  * GetCurrentTag - get current tag word and hunt for it
  */
@@ -98,19 +100,11 @@ vi_rc TagHunt( char *str )
  */
 vi_rc FindTag( char *tag )
 {
-    extern char _NEAR   META[];
-    bool                oldmagic;
-    char                *oldms;
     vi_rc               rc;
 
-    oldms = Majick;
-    Majick = &META[3];
-
-    oldmagic = SetMagicFlag( FALSE );
+    RegExpAttrSave( -1, &META[3] );
     rc = ColorFind( tag, 0 );
-    SetMagicFlag( oldmagic );
-
-    Majick = oldms;
+    RegExpAttrRestore();
     return( rc );
 
 } /* FindTag */

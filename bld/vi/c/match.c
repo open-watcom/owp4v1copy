@@ -60,7 +60,6 @@ vi_rc FindMatch( i_mark *pos1 )
     char        *linedata;
     i_mark      pos2;
     vi_rc       rc;
-    bool        oldmagic;
 
     /*
      * build match command
@@ -79,67 +78,63 @@ vi_rc FindMatch( i_mark *pos1 )
      */
     pos2 = CurrentPos;
     pos2.column -= 1;
-
-    oldmagic = SetMagicFlag( TRUE );
+    RegExpAttrSave( -1, NULL );
     rc = FindRegularExpression( matchd, &pos2, &linedata, pos2.line, 0 );
-    if( rc != ERR_NO_ERR ) {
-        SetMagicFlag( oldmagic );
-        return( ERR_NOTHING_TO_MATCH );
-    }
-
-    /*
-     * find out which matched
-     */
-    for( i = 1; i < NSUBEXP; i++ ) {
-        if( CurrentRegularExpression->startp[i] != NULL ) {
-            which = i - 1;
-            break;
-        }
-    }
-
-    /*
-     * get appropriate array entry
-     */
-    m1 = 2 * (which >> 1);
-    m2 = which % 2;
-    match[0] = MatchData[m1];
-    match[1] = MatchData[m1 + 1];
-    matchcnt = 1;
-    MySprintf( matchd, "(%s)|(%s)", match[0], match[1] );
-    rc = CurrentRegComp( matchd );
-    SetMagicFlag( oldmagic );
-    if( rc != ERR_NO_ERR ) {
-        return( rc );
-    }
-
-    /*
-     * matched the first of a pair, so look for the closing element
-     */
-    while( TRUE ) {
-        if( m2 ) {
-            pos2.column--;
-            rc = FindRegularExpressionBackwards( NULL, &pos2, &linedata, -1L, 0 );
-        } else {
-            pos2.column++;
-            rc = FindRegularExpression( NULL, &pos2, &linedata, MAX_LONG, 0 );
-        }
-        if( rc != ERR_NO_ERR ) {
-            break;
-        }
-        if( CurrentRegularExpression->startp[m2 + 1] != NULL ) {
-            matchcnt++;
-        } else {
-            matchcnt--;
-            if( matchcnt == 0 ) {
-                *pos1 = pos2;
-                pos1->column += 1;
-                return( ERR_NO_ERR );
+    if( rc == ERR_NO_ERR ) {
+        /*
+         * find out which matched
+         */
+        for( i = 1; i < NSUBEXP; i++ ) {
+            if( CurrentRegularExpression->startp[i] != NULL ) {
+                which = i - 1;
+                break;
             }
         }
+    
+        /*
+         * get appropriate array entry
+         */
+        m1 = 2 * (which >> 1);
+        m2 = which % 2;
+        match[0] = MatchData[m1];
+        match[1] = MatchData[m1 + 1];
+        matchcnt = 1;
+        MySprintf( matchd, "(%s)|(%s)", match[0], match[1] );
+        rc = CurrentRegComp( matchd );
+        if( rc == ERR_NO_ERR ) {
+            /*
+             * matched the first of a pair, so look for the closing element
+             */
+            while( TRUE ) {
+                if( m2 ) {
+                    pos2.column--;
+                    rc = FindRegularExpressionBackwards( NULL, &pos2, &linedata, -1L, 0 );
+                } else {
+                    pos2.column++;
+                    rc = FindRegularExpression( NULL, &pos2, &linedata, MAX_LONG, 0 );
+                }
+                if( rc != ERR_NO_ERR ) {
+                    Error( GetErrorMsg( ERR_MATCH_NOT_FOUND ), match[(m2 == 0)] );
+                    rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
+                    break;
+                }
+                if( CurrentRegularExpression->startp[m2 + 1] != NULL ) {
+                    matchcnt++;
+                } else {
+                    matchcnt--;
+                    if( matchcnt == 0 ) {
+                        *pos1 = pos2;
+                        pos1->column += 1;
+                        break;
+                    }
+                }
+            }
+        }
+    } else {
+        rc = ERR_NOTHING_TO_MATCH;
     }
-
-    Error( GetErrorMsg( ERR_MATCH_NOT_FOUND ), match[(m2 == 0)] );
-    return( DO_NOT_CLEAR_MESSAGE_WINDOW );
+    RegExpAttrRestore();
+    return( rc );
 
 } /* FindMatch */
 

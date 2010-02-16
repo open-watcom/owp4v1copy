@@ -114,16 +114,31 @@ void MakeExpressionNonRegular( char *str )
 
 } /* MakeExpressionNonRegular */
 
-/*
- * SetMagicFlag - set up the Magic flag
- */
-bool SetMagicFlag( bool new )
+
+static bool old_CaseIgnore = FALSE;
+static bool old_Magic      = TRUE;
+static char *old_Majick    = NULL;
+
+void RegExpAttrSave( int caseignore, char *majick )
 {
-    bool    old;
+    old_CaseIgnore  = EditFlags.CaseIgnore;
+    old_Magic       = EditFlags.Magic;
+    old_Majick      = Majick;
 
-    old = EditFlags.Magic;
-    EditFlags.Magic = new;
-    return( old );
+    if( caseignore != -1 ) {
+        EditFlags.CaseIgnore = caseignore;
+    }
+    if( majick == NULL ) {
+        EditFlags.Magic      = TRUE;
+    } else {
+        EditFlags.Magic      = FALSE;
+        Majick               = majick;
+    }
+}
 
-} /* SetMagicFlag */
-
+void RegExpAttrRestore( void )
+{
+    EditFlags.CaseIgnore = old_CaseIgnore;
+    EditFlags.Magic      = old_Magic;
+    Majick               = old_Majick;
+}
