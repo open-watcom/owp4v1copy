@@ -103,7 +103,7 @@
 .   :ZHDREF refid='&*id'.
 .do end
 .el .do begin
-:SF font=2.&*:eSF.
+:SF font=2.&*1:eSF.
 .do end
 .dm keyref end
 
