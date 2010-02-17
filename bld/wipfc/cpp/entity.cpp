@@ -37,39 +37,28 @@
 
 Lexer::Token Entity::parse( Lexer* lexer )
 {
-    const std::wstring* txt( document->nameit( lexer->text() ) ); //lookup nameit
-    if( txt ) {
+    Lexer::Token tok;
+    const std::wstring* nameitTxt( document->nameit( lexer->text() ) ); //lookup nameit
+    if( nameitTxt ) {
         std::wstring* name( document->prepNameitName( lexer->text() ) );
-        IpfBuffer* buffer( new IpfBuffer( name, document->dataLine(), document->dataCol(), *txt ) );
+        IpfBuffer* buffer( new IpfBuffer( name, document->dataLine(), document->dataCol(), *nameitTxt ) );
         document->pushInput( buffer );
         return document->getNextToken();
     }
-    wchar_t entity( 0 );
     try {
-        entity = document->entity( lexer->text() ); //lookup entity
-    }
-    catch( Class2Error& e ) {
-        document->printError( e.code );
-    }
-    Lexer::Token tok( document->getNextToken() );
-    if( entity ) {
-        std::wstring txt( 1, entity );
+        wchar_t entity( document->entity( lexer->text() ) );    //lookup entity
+        std::wstring txt(1, entity );
+        tok = document->getNextToken();
         if( !std::iswpunct( entity ) ) {
             while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC) ) {
                 if( tok == Lexer::WORD )
                     txt += lexer->text();       //part of a compound ...-word-entity-word-...
                 else if( tok == Lexer::ENTITY ) {
-                    try {
-                        wchar_t entity( document->entity( lexer->text() ) );
-                        if ( std::iswpunct( entity ) )
-                            break;
-                        else
-                            txt += entity;
-                    }
-                    catch( Class2Error& e ) {
-                        document->printError( e.code );
+                    entity = document->entity( lexer->text() );
+                    if ( std::iswpunct( entity ) )
                         break;
-                    }
+                    else
+                        txt+= entity;
                 }
                 else
                     break;
@@ -86,8 +75,11 @@ Lexer::Token Entity::parse( Lexer* lexer )
         GlobalDictionaryWord* word( new GlobalDictionaryWord( txt ) );
         text = document->addWord( word );   //insert into global dictionary
     }
+    catch( Class2Error& e ) {
+        document->printError( e.code );
+        tok = document->getNextToken();
+    }
     document->setLastPrintable( Lexer::ENTITY, this );
     return tok;
 }
-
 
