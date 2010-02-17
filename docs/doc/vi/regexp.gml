@@ -344,7 +344,7 @@ it must be escaped:
 However, it is possible to change this using the
 .keyref magic 1
 setting and the
-.keyref magic 1string
+.keyref magicstring
 setting.
 If
 .keyref magic 1
@@ -352,7 +352,7 @@ is set, then all special characters are magical.
 If
 .keyref magic 1
 is NOT set, then any special characters listed in
-.keyref magic 1string
+.keyref magicstring
 lose their special meaning, and are treated as regular characters.
 For example, the following &cmdline commands
 .millust begin

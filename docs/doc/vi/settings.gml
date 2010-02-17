@@ -630,7 +630,7 @@ are 0 to 100 (0=full size, 100=thin).
 .begdescr
 If
 .keyref magic 1
-is not set, then the characters specified in &parm1 are NOT treated
+is not set, then the characters specified in &cmd_parm are NOT treated
 as magic characters by the regular expression handler, and must be
 escaped to have special meaning.
 .np
@@ -682,7 +682,7 @@ are broken up into multiple lines.
 .setsyntx
 .begdescr
 Controls the number of pushed file positions that will be remembered.
-Once more than &parm1
+Once more than &cmd_parm
 .keyref push
 or
 .keyref tag
