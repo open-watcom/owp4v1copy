@@ -139,11 +139,9 @@ static vi_rc getFile( char *fname )
         MakeExpressionNonRegular( dirptr );
         dirptr--;
         *dirptr = ch;
-        if( !EditFlags.Magic ) {
-            if( strchr( Majick, ch ) != NULL ) {
-                dirptr--;
-                *dirptr = '\\';
-            }
+        if( IsMagicCharRegular( ch ) ) {
+            dirptr--;
+            *dirptr = '\\';
         }
     } else {
         strcpy( dir, origString );

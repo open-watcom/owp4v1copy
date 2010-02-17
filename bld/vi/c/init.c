@@ -286,9 +286,8 @@ static void doInitializeEditor( int argc, char *argv[] )
     /*
      * initial configuration
      */
-    SetMajickString( NULL );
+    Majick = MemStrDup( "()~@" );
     FileEndString = MemStrDup( "[END_OF_FILE]" );
-
     MatchInit();
 
     if( cfgFN[0] != 0 ) {

@@ -737,7 +737,7 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
             }
             break;
         case SET1_T_MAGICSTRING:
-            SetMajickString( fn );
+            AddString2( &Majick, fn );
             if( msgFlag ) {
                 MySprintf( fn, "magicstring set to %s", Majick );
             }
