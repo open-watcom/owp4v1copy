@@ -72,7 +72,7 @@ _WMRTLINK FAR_STRING _EFG_Format( char *buffer, my_va_list *args, SPECS __SLIB *
     if( specs->_flags & SPF_ALT ) {
         cvt.flags |= F_DOT;
     }
-    if( (specs->_flags & SPF_LONG_DOUBLE) && sizeof( long_double ) > sizeof( double ) ) {
+    if( (specs->_flags & SPF_LONG_DOUBLE) && sizeof( long double ) > sizeof( double ) ) {
         ld = va_arg( args->v, long_double );
         cvt.flags |= LONG_DOUBLE;
     } else {
