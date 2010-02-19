@@ -36,5 +36,8 @@
 
 _WCRTLINK int isatty( int handle )
 {
-    return( 0 );
+    if( handle < 2 )
+        return( 1 );
+    else
+        return( 0 );
 }

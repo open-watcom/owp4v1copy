@@ -295,9 +295,17 @@ int __qread( int handle, void *buffer, unsigned len )
         return( RdosReadFile( handle, buffer, len ) );
     else {
         if( handle == 0) {
-            for( i = 0; i < len && RdosPollKeyboard( ); i++ ) {
+            for( i = 2; i < len; i++ ) {
                 *ptr = ( char )RdosReadKeyboard( );    
-                ptr++;
+                RdosWriteChar( *ptr );
+                if( *ptr == 0xd ) {
+                    ptr++;
+                    *ptr = 0xa;
+                    RdosWriteChar( *ptr );
+                    break;
+                }
+                else
+                    ptr++;
             }
             return( i );
         }
