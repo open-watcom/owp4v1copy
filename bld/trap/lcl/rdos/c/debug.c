@@ -44,6 +44,7 @@
 #define EVENT_TERMINATE_THREAD  4
 #define EVENT_TERMINATE_PROCESS 5
 #define EVENT_LOAD_DLL          6
+#define EVENT_FREE_DLL          7
 
 // Exception events from RDOS
 
@@ -261,6 +262,7 @@ static void SetupGo( struct TDebugThread *obj )
     Tss tss;
     unsigned char ch = 0;
 
+    obj->FDebug = FALSE;
     obj->FWasTrace = FALSE;
 
     RdosGetThreadTss( obj->ThreadID, &tss );
@@ -287,6 +289,7 @@ static void SetupTrace( struct TDebugThread *obj )
     Tss tss;
     unsigned char ch = 0;
 
+    obj->FDebug = FALSE;
     obj->FWasTrace = TRUE;
 
     RdosGetThreadTss( obj->ThreadID, &tss );
@@ -619,6 +622,75 @@ static void InsertModule( struct TDebug *obj, struct TDebugModule *mod )
     RdosLeaveSection( obj->FSection );
 }
 
+static void RemoveThread( struct TDebug *obj, int thread )
+{
+    struct TDebugThread *p;
+    struct TDebugThread *t;
+
+    RdosEnterSection( obj->FSection );
+
+    p = 0;
+    t = obj->ThreadList;
+
+    while( t ) {
+        if( t->ThreadID == thread ) {
+            if( p )
+                p->Next = t->Next;
+            else
+                obj->ThreadList = t->Next;
+            break;            
+        }
+        else {
+            p = t;
+            t = t->Next;
+        }
+    }
+
+    if( t ) {
+        if( t == obj->CurrentThread ) {
+            obj->CurrentThread = 0;
+            RdosLeaveSection( obj->FSection );
+
+            RdosWaitMilli( 25 );
+
+            RdosEnterSection( obj->FSection );
+        }
+        free( t );
+    }
+
+    RdosLeaveSection( obj->FSection );
+}
+
+static void RemoveModule( struct TDebug *obj, int module )
+{
+    struct TDebugModule *p;
+    struct TDebugModule *m;
+
+    RdosEnterSection( obj->FSection );
+
+    p = 0;
+    m = obj->ModuleList;
+
+    while( m ) {
+        if( m->Handle == module ) {
+            if( p )
+                p->Next = m->Next;
+            else
+                obj->ModuleList = m->Next;
+            break;            
+        }
+        else {
+            p = m;
+            m = m->Next;
+        }
+    }
+
+    if( m )
+        free( m );
+
+    RdosLeaveSection( obj->FSection );
+}
+
 static void HandleCreateProcess( struct TDebug *obj, struct TCreateProcessEvent *event )
 {
     struct TDebugThread *dt;
@@ -633,13 +705,18 @@ static void HandleCreateProcess( struct TDebug *obj, struct TCreateProcessEvent 
     InsertModule( obj, dm);       
 }
 
-static void HandleCreateThread( struct TDebug *obj, struct TCreateThreadEvent *event)
+static void HandleCreateThread( struct TDebug *obj, struct TCreateThreadEvent *event )
 {
     struct TDebugThread *dt;
 
     dt = (struct TDebugThread *)malloc( sizeof( struct TDebugThread ) );
     InitThreadDebugThread( dt, event );
     InsertThread( obj, dt );
+}
+
+static void HandleTerminateThread( struct TDebug *obj, int thread )
+{
+    RemoveThread( obj, thread );
 }
 
 static void HandleLoadDll( struct TDebug *obj, struct TLoadDllEvent *event )
@@ -649,6 +726,11 @@ static void HandleLoadDll( struct TDebug *obj, struct TLoadDllEvent *event )
     dm = (struct TDebugModule *)malloc( sizeof( struct TDebugModule ) );
     InitDllDebugModule( dm, event );
     InsertModule( obj, dm);       
+}
+
+static void HandleFreeDll( struct TDebug *obj, int module )
+{
+    RemoveModule( obj, module );
 }
 
 static void HandleTerminateProcess( struct TDebug *obj, int exitcode )
@@ -741,6 +823,7 @@ static void SignalDebugData( struct TDebug *obj )
     struct TLoadDllEvent lde;
     struct TExceptionEvent ee;
     int ExitCode;
+    int handle;
     struct TDebugThread *newt;
 
     RdosWaitMilli( 5 );
@@ -765,7 +848,16 @@ static void SignalDebugData( struct TDebug *obj )
             break;
 
         case EVENT_TERMINATE_THREAD:
+            HandleTerminateThread( obj, thread );
             obj->FThreadChanged = TRUE;
+            if( !obj->CurrentThread ) {
+                obj->CurrentThread = obj->ThreadList;
+                while( obj->CurrentThread && !IsDebug( obj->CurrentThread ) )
+                    obj->CurrentThread = obj->CurrentThread->Next;
+
+                if (!obj->CurrentThread)
+                    obj->CurrentThread = obj->ThreadList;
+            }
             break;
 
         case EVENT_TERMINATE_PROCESS:
@@ -778,6 +870,12 @@ static void SignalDebugData( struct TDebug *obj )
         case EVENT_LOAD_DLL:
             RdosGetDebugEventData( obj->FHandle, &lde );
             HandleLoadDll( obj, &lde );
+            obj->FModuleChanged = TRUE;
+            break;
+
+        case EVENT_FREE_DLL:
+            RdosGetDebugEventData( obj->FHandle, &handle );
+            HandleFreeDll( obj, handle );
             obj->FModuleChanged = TRUE;
             break;
     }
