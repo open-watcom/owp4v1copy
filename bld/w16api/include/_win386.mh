@@ -81,6 +81,23 @@ int CALLBACK    WEP(int);
 #define API WINAPI
 
 #ifndef NOKERNEL
+
+/* Replace Windows functions with C library functions. */
+#ifdef __WINDOWS_386__
+    #ifndef NOLSTRING
+        #undef lstrcmp
+        #undef lstrcmpi
+        #undef lstrcpy
+        #undef lstrcat
+        #undef lstrlen
+        #define lstrcmp     strcmp
+        #define lstrcmpi    strcmpi
+        #define lstrcpy     strcpy
+        #define lstrcat     strcat
+        #define lstrlen     strlen
+    #endif /* NOLSTRING */
+#endif /* __WINDOWS_386__ */
+
 LPSTR API   _16AnsiLower( LPSTR );
 WORD API    _16AnsiLowerBuff( LPSTR, WORD );
 LPSTR API   _16AnsiNext( LPSTR );
@@ -101,9 +118,11 @@ FARPROC API _16GetProcAddress( HANDLE, LPSTR );
 WORD API    _16GetProfileInt( LPSTR, LPSTR, int );
 int API     _16GetProfileString( LPSTR, LPSTR, LPSTR, LPSTR, int );
 WORD API    _16GetSystemDirectory( LPSTR, WORD );
+int API     _16GetTempFileName( BYTE, LPSTR, WORD, LPSTR );
 WORD API    _16GetWindowsDirectory( LPSTR, WORD );
 HANDLE API  _16LoadLibrary( LPSTR );
 HANDLE API  _16LoadModule( LPSTR, LPVOID );
+int API     _16LoadString( HANDLE, WORD, LPSTR, int );
 FARPROC API _16MakeProcInstance( FARPROC, HINSTANCE );
 BOOL API    _16OemToAnsi( LPSTR, LPSTR );
 void API    _16OemToAnsiBuff( LPSTR, LPSTR, int );
@@ -118,7 +137,6 @@ FARPROC API _Cover_SetResourceHandler( HANDLE, LPSTR, FARPROC );
 FARPROC API _Cover_MakeProcInstance( REALFARPROC, HINSTANCE );
 #endif
 #ifndef NOOPENFILE
-int API     _16GetTempFileName( BYTE, LPSTR, WORD, LPSTR );
 int API     _16OpenFile( LPSTR, LPOFSTRUCT, WORD );
 #endif /* NOOPENFILE */
 #ifndef NOATOM
@@ -137,11 +155,19 @@ int API     _16ToAscii( WORD, WORD, LPSTR, LPVOID, WORD );
 VOID API    _16GlobalNotify( FARPROC );
 VOID API    _Cover_GlobalNotify( FARPROC );
 #endif /* NOMEMMGR */
+#ifndef NOLFILEIO
+HFILE API   _16_lcreat( LPCSTR, int );
+HFILE API   _16_lopen( LPCSTR, int );
+WORD API    _16_lread( int, LPSTR, int );
+WORD API    _16_lwrite( int, LPSTR, int );
+#endif /* NOLFILEIO */
+
 #endif /* NOKERNEL */
 
 #ifndef NOGDI
+
+int API     _16AddFontResource( LPSTR );
 void API    _16AnimatePalette( HPALETTE, WORD, WORD, LPPALETTEENTRY );
-HANDLE API  _16CopyMetaFile( HANDLE, LPSTR );
 HBITMAP API _16CreateBitmap( int, int, UINT, UINT, LPSTR );
 HBITMAP API _16CreateBitmapIndirect( LPBITMAP );
 HBRUSH API  _16CreateBrushIndirect( LPLOGBRUSH );
@@ -151,7 +177,6 @@ HRGN API    _16CreateEllipticRgnIndirect( LPRECT );
 HFONT API   _16CreateFont( int, int, int, int, int, BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, LPSTR );
 HFONT API   _16CreateFontIndirect( LPLOGFONT );
 HDC API     _16CreateIC( LPSTR, LPSTR, LPSTR, LPSTR );
-HANDLE API  _16CreateMetaFile( LPSTR );
 HPALETTE API    _16CreatePalette ( LPLOGPALETTE );
 HPEN API    _16CreatePenIndirect( LPLOGPEN );
 HRGN API    _16CreatePolyPolygonRgn( LPPOINT, LPINT, int, int );
@@ -167,7 +192,6 @@ BOOL API    _16GetCharWidth( HDC, WORD, WORD, LPINT );
 int API     _16GetClipBox( HDC, LPRECT );
 int API     _16GetDIBits( HDC, HANDLE, WORD, WORD, LPSTR, LPBITMAPINFO, WORD );
 int API     _16GetEnvironment( LPSTR, LPSTR, WORD );
-HANDLE API  _16GetMetaFile( LPSTR );
 int API     _16GetObject( HANDLE, int, LPSTR );
 WORD API    _16GetPaletteEntries( HPALETTE, WORD, WORD, LPPALETTEENTRY );
 int API     _16GetRgnBox( HRGN, LPRECT );
@@ -175,11 +199,16 @@ WORD API    _16GetSystemPaletteEntries( HDC, WORD, WORD, LPPALETTEENTRY );
 DWORD API   _16GetTabbedTextExtent( HDC, LPSTR, int, int, LPINT );
 DWORD API   _16GetTextExtent( HDC, LPSTR, int );
 int API     _16GetTextFace( HDC, int, LPSTR );
+BOOL API    _16GrayString( HDC, HBRUSH, FARPROC, DWORD, int, int, int, int, int );
 BOOL API    _16LPtoDP( HDC, LPPOINT, int );
 void API    _16LineDDA( int, int, int, int, LINEDDAPROC, LPARAM );
+HBITMAP API _16LoadBitmap( HANDLE, LPSTR );
 BOOL API    _16PolyPolygon( HDC, LPPOINT, LPINT, int );
 BOOL API    _16Polygon( HDC, LPPOINT, int );
 BOOL API    _16Polyline( HDC, LPPOINT, int );
+BOOL API    _16RectInRegion( HRGN, LPRECT );
+BOOL API    _16RectVisible( HDC, LPRECT );
+BOOL API    _16RemoveFontResource( LPSTR );
 LONG API    _16SetBitmapBits( HBITMAP, DWORD, LPSTR );
 int API     _16SetDIBits( HDC, HANDLE, WORD, WORD, LPSTR, LPBITMAPINFO, WORD );
 int API     _16SetDIBitsToDevice( HDC, WORD, WORD, WORD, WORD, WORD, WORD, WORD, WORD, LPSTR, LPBITMAPINFO, WORD );
@@ -191,6 +220,7 @@ BOOL API    _16TextOut( HDC, int, int, LPSTR, int );
 int API     _Cover_EnumFonts( HDC, LPSTR, FONTENUMPROC, LPARAM );
 int API     _Cover_EnumObjects( HDC, int, FARPROC, LPSTR );
 int API     _Cover_Escape( HDC, int, int, LPSTR, LPSTR );
+BOOL API    _Cover_GrayString( HDC, HBRUSH, FARPROC, DWORD, int, int, int, int, int );
 void API    _Cover_LineDDA( int, int, int, int, LINEDDAPROC, LPARAM );
 #ifdef STRICT
 int API     _Cover_EnumFontFamilies( HDC, LPSTR, FONTENUMPROC, LPARAM );
@@ -201,13 +231,20 @@ int API     _Cover_EnumFontFamilies( HDC, LPSTR, FONTENUMPROC, LPSTR );
 int API     _16DrawText( HDC, LPSTR, int, LPRECT, WORD );
 #endif /* NODRAWTEXT */
 #ifndef NOMETAFILE
+HANDLE API  _16CopyMetaFile( HANDLE, LPSTR );
+HANDLE API  _16CreateMetaFile( LPSTR );
 BOOL API    _16EnumMetaFile( HDC, LOCALHANDLE, FARPROC, LPSTR );
+HANDLE API  _16GetMetaFile( LPSTR );
 void API    _16PlayMetaFileRecord( HDC, LPHANDLETABLE, LPMETARECORD, WORD );
 BOOL API    _Cover_EnumMetaFile( HDC, LOCALHANDLE, FARPROC, LPSTR );
 #endif
 #ifndef NOTEXTMETRIC
 BOOL API    _16GetTextMetrics( HDC, LPTEXTMETRIC );
 #endif /* NOTEXTMETRIC */
+#ifndef NOCOLOR
+void API    _16SetSysColors( int, LPINT, LONG * );
+#endif /* NOCOLOR */
+
 #endif /* NOGDI */
 
 #ifndef NOUSER
@@ -216,23 +253,10 @@ BOOL API    _16GetTextMetrics( HDC, LPTEXTMETRIC );
 #ifdef __WINDOWS_386__
     #undef wsprintf
     #undef wvsprintf
-    #define wsprintf        sprintf
-    #define wvsprintf       vsprintf
-    #ifndef NOLSTRING
-        #undef lstrcmp
-        #undef lstrcmpi
-        #undef lstrcpy
-        #undef lstrcat
-        #undef lstrlen
-        #define lstrcmp     strcmp
-        #define lstrcmpi    strcmpi
-        #define lstrcpy     strcpy
-        #define lstrcat     strcat
-        #define lstrlen     strlen
-    #endif /* NOLSTRING */
+    #define wsprintf    sprintf
+    #define wvsprintf   vsprintf
 #endif /* __WINDOWS_386__ */
 
-int API     _16AddFontResource( LPSTR );
 void API    _16AdjustWindowRect( LPRECT, LONG, BOOL );
 void API    _16AdjustWindowRectEx( LPRECT, LONG, BOOL, DWORD );
 void API    _16ClientToScreen( HWND, LPPOINT );
@@ -260,22 +284,16 @@ HANDLE API  _16GetProp( HWND, LPSTR );
 BOOL API    _16GetUpdateRect( HWND, LPRECT, BOOL );
 void API    _16GetWindowRect( HWND, LPRECT );
 int API     _16GetWindowText( HWND, LPSTR, int );
-BOOL API    _16GrayString( HDC, HBRUSH, FARPROC, DWORD, int, int, int, int, int );
 void API    _16InflateRect( LPRECT, int, int );
 int API     _16IntersectRect( LPRECT, LPRECT, LPRECT );
 void API    _16InvalidateRect( HWND, LPRECT, BOOL );
 void API    _16InvertRect( HDC, LPRECT );
 BOOL API    _16IsRectEmpty( LPRECT );
 HANDLE API  _16LoadAccelerators( HANDLE, LPSTR );
-HBITMAP API _16LoadBitmap( HANDLE, LPSTR );
 HCURSOR API _16LoadCursor( HANDLE, LPSTR );
 HICON API   _16LoadIcon( HANDLE, LPSTR );
-int API     _16LoadString( HANDLE, WORD, LPSTR, int );
 void API    _16OffsetRect( LPRECT, int, int );
 BOOL API    _16PtInRect( LPRECT, POINT );
-BOOL API    _16RectInRegion( HRGN, LPRECT );
-BOOL API    _16RectVisible( HDC, LPRECT );
-BOOL API    _16RemoveFontResource( LPSTR );
 HANDLE API  _16RemoveProp( HWND, LPSTR );
 void API    _16ScreenToClient( HWND, LPPOINT );
 BOOL API    _16ScrollDC( HDC, int, int, LPRECT, LPRECT, HRGN, LPRECT );
@@ -292,7 +310,6 @@ BOOL API    _16UnregisterClass( LPSTR, HANDLE );
 void API    _16ValidateRect( HWND, LPRECT );
 int API     _Cover_EnumProps( HWND, FARPROC );
 BOOL API    _Cover_EnumTaskWindows( HANDLE, FARPROC, LONG );
-BOOL API    _Cover_GrayString( HDC, HBRUSH, FARPROC, DWORD, int, int, int, int, int );
 BOOL API    _Cover_RegisterClass( LPWNDCLASS );
 LONG API    _Cover_SendMessage( HWND, WORD, WORD, LONG );
 WORD API    _Cover_SetTimer( HWND, int, WORD, FARPROC );
@@ -369,9 +386,6 @@ void API    _16GetScrollRange( HWND, int, LPINT, LPINT );
 #ifndef NOMB
 int API     _16MessageBox( HWND, LPSTR, LPSTR, WORD );
 #endif /* NOMB */
-#ifndef NOCOLOR
-void API    _16SetSysColors( int, LPINT, LONG * );
-#endif /* NOCOLOR */
 #ifndef NOWINOFFSETS
 LONG API    _16SetClassLong( HWND, int, LONG );
 LONG API    _16SetWindowLong( HWND, int, LONG );
@@ -409,12 +423,6 @@ int API     _16WriteComm( int, LPSTR, int );
 BOOL API    _16TranslateMDISysAccel( HWND, LPMSG );
 #endif /* NOMSG */
 #endif /* NOMDI */
-#ifndef NOLFILEIO
-HFILE API   _16_lcreat( LPCSTR, int );
-HFILE API   _16_lopen( LPCSTR, int );
-WORD API    _16_lread( int, LPSTR, int );
-WORD API    _16_lwrite( int, LPSTR, int );
-#endif /* NOLFILEIO */
 #if (WINVER >= 0x030A)
 #ifndef NOWH
 HHOOK API   _Cover_SetWindowsHookEx( int, HOOKPROC, HINSTANCE, HTASK );
@@ -847,9 +855,11 @@ typedef void        *HINDIR;
     #define _16GetProfileInt                GetProfileInt
     #define _16GetProfileString             GetProfileString
     #define _16GetSystemDirectory           GetSystemDirectory
+    #define _16GetTempFileName              GetTempFileName
     #define _16GetWindowsDirectory          GetWindowsDirectory
     #define _16LoadLibrary                  LoadLibrary
     #define _16LoadModule                   LoadModule
+    #define _16LoadString                   LoadString
     #define _16MakeProcInstance             MakeProcInstance
     #define _16OemToAnsi                    OemToAnsi
     #define _16OemToAnsiBuff                OemToAnsiBuff
@@ -859,7 +869,6 @@ typedef void        *HINDIR;
     #define _16WritePrivateProfileString    WritePrivateProfileString
     #define _16WriteProfileString           WriteProfileString
     #ifndef NOOPENFILE
-        #define _16GetTempFileName          GetTempFileName
         #define _16OpenFile                 OpenFile
     #endif /* NOOPENFILE */
     #ifndef NOATOM
@@ -877,11 +886,17 @@ typedef void        *HINDIR;
     #ifndef NOMEMMGR
         #define _16GlobalNotify             GlobalNotify
     #endif /* NOMEMMGR */
+    #ifndef NOLFILEIO
+        #define _16_lcreat                  _lcreat
+        #define _16_lopen                   _lopen
+        #define _16_lread                   _lread
+        #define _16_lwrite                  _lwrite
+    #endif /* NOLFILEIO */
 #endif /* NOKERNEL */
 
 #ifndef NOGDI
+    #define _16AddFontResource              AddFontResource
     #define _16AnimatePalette               AnimatePalette
-    #define _16CopyMetaFile                 CopyMetaFile
     #define _16CreateBitmap                 CreateBitmap
     #define _16CreateBitmapIndirect         CreateBitmapIndirect
     #define _16CreateBrushIndirect          CreateBrushIndirect
@@ -890,7 +905,6 @@ typedef void        *HINDIR;
     #define _16CreateFont                   CreateFont
     #define _16CreateFontIndirect           CreateFontIndirect
     #define _16CreateIC                     CreateIC
-    #define _16CreateMetaFile               CreateMetaFile
     #define _16CreatePalette                CreatePalette
     #define _16CreatePenIndirect            CreatePenIndirect
     #define _16CreatePolyPolygonRgn         CreatePolyPolygonRgn
@@ -906,7 +920,6 @@ typedef void        *HINDIR;
     #define _16GetClipBox                   GetClipBox
     #define _16GetDIBits                    GetDIBits
     #define _16GetEnvironment               GetEnvironment
-    #define _16GetMetaFile                  GetMetaFile
     #define _16GetObject                    GetObject
     #define _16GetPaletteEntries            GetPaletteEntries
     #define _16GetRgnBox                    GetRgnBox
@@ -914,11 +927,14 @@ typedef void        *HINDIR;
     #define _16GetTabbedTextExtent          GetTabbedTextExtent
     #define _16GetTextExtent                GetTextExtent
     #define _16GetTextFace                  GetTextFace
+    #define _16GrayString                   GrayString
     #define _16LPtoDP                       LPtoDP
     #define _16LineDDA                      LineDDA
+    #define _16LoadBitmap                   LoadBitmap
     #define _16PolyPolygon                  PolyPolygon
     #define _16Polygon                      Polygon
     #define _16Polyline                     Polyline
+    #define _16RemoveFontResource           RemoveFontResource
     #define _16SetBitmapBits                SetBitmapBits
     #define _16SetDIBits                    SetDIBits
     #define _16SetDIBitsToDevice            SetDIBitsToDevice
@@ -931,16 +947,21 @@ typedef void        *HINDIR;
         #define _16DrawText                 DrawText
     #endif /* NODRAWTEXT */
     #ifndef NOMETAFILE
+        #define _16CopyMetaFile             CopyMetaFile
+        #define _16CreateMetaFile           CreateMetaFile
         #define _16EnumMetaFile             EnumMetaFile
+        #define _16GetMetaFile              GetMetaFile
         #define _16PlayMetaFileRecord       PlayMetaFileRecord
     #endif
     #ifndef NOTEXTMETRIC
         #define _16GetTextMetrics           GetTextMetrics
     #endif /* NOTEXTMETRIC */
+    #ifndef NOCOLOR
+        #define _16SetSysColors             SetSysColors
+    #endif /* NOCOLOR */
 #endif /* NOGDI */
 
 #ifndef NOUSER
-    #define _16AddFontResource              AddFontResource
     #define _16AdjustWindowRect             AdjustWindowRect
     #define _16AdjustWindowRectEx           AdjustWindowRectEx
     #define _16ClientToScreen               ClientToScreen
@@ -970,20 +991,16 @@ typedef void        *HINDIR;
     #define _16GetUpdateRect                GetUpdateRect
     #define _16GetWindowRect                GetWindowRect
     #define _16GetWindowText                GetWindowText
-    #define _16GrayString                   GrayString
     #define _16InflateRect                  InflateRect
     #define _16IntersectRect                IntersectRect
     #define _16InvalidateRect               InvalidateRect
     #define _16InvertRect                   InvertRect
     #define _16IsRectEmpty                  IsRectEmpty
     #define _16LoadAccelerators             LoadAccelerators
-    #define _16LoadBitmap                   LoadBitmap
     #define _16LoadCursor                   LoadCursor
     #define _16LoadIcon                     LoadIcon
-    #define _16LoadString                   LoadString
     #define _16OffsetRect                   OffsetRect
     #define _16PtInRect                     PtInRect
-    #define _16RemoveFontResource           RemoveFontResource
     #define _16RemoveProp                   RemoveProp
     #define _16ScreenToClient               ScreenToClient
     #define _16ScrollDC                     ScrollDC
@@ -1045,9 +1062,6 @@ typedef void        *HINDIR;
     #ifndef NOMB
         #define _16MessageBox               MessageBox
     #endif /* NOMB */
-    #ifndef NOCOLOR
-        #define _16SetSysColors             SetSysColors
-    #endif /* NOCOLOR */
     #ifndef NOWH
         #define _16SetWindowsHook           SetWindowsHook
         #define _16UnhookWindowsHook        UnhookWindowsHook
@@ -1066,12 +1080,6 @@ typedef void        *HINDIR;
             #define _16TranslateMDISysAccel TranslateMDISysAccel
         #endif /* NOMSG */
     #endif /* NOMDI */
-    #ifndef NOLFILEIO
-        #define _16_lcreat                  _lcreat
-        #define _16_lopen                   _lopen
-        #define _16_lread                   _lread
-        #define _16_lwrite                  _lwrite
-    #endif /* NOLFILEIO */
 #endif /* NOUSER */
 
 #ifndef NOHELP
@@ -1101,6 +1109,12 @@ typedef void        *HINDIR;
     #define _16DdeInitialize            DdeInitialize
     #define _16DdeQueryConvInfo         DdeQueryConvInfo
     #define _16DdeQueryString           DdeQueryString
+#endif
+
+#ifdef INCLUDE_MMSYSTEM_H
+    #define _16waveOutPrepareHeader     waveOutPrepareHeader
+    #define _16waveOutUnprepareHeader   waveOutUnprepareHeader
+    #define _16waveOutWrite             waveOutWrite
 #endif
 
 #endif /* __WINDOWS_386__ */
