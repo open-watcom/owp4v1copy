@@ -4314,7 +4314,7 @@ typedef struct tagCBT_CREATEWND {
 } CBT_CREATEWND;
 typedef CBT_CREATEWND FAR   *LPCBT_CREATEWND;
 #endif
-#endif /* (WINVER >= 0x030A)
+#endif /* (WINVER >= 0x030A) */
 
 /* Parameters to HCBT_ACTIVATE */
 #if (WINVER >= 0x030A)
@@ -4336,7 +4336,7 @@ typedef struct tagHARDWAREHOOKSTRUCT {
     LPARAM  lParam;
 } HARDWAREHOOKSTRUCT;
 #endif
-#endif /* (WINVER >= 0x030A)
+#endif /* (WINVER >= 0x030A) */
 
 /* Event message */
 #ifndef NOWH
@@ -4817,7 +4817,7 @@ HDRVR WINAPI    GetNextDriver( HDRVR, DWORD );
 HDRVR WINAPI    OpenDriver( LPCSTR, LPCSTR, LPARAM );
 LRESULT WINAPI  SendDriverMessage( HDRVR, UINT, LPARAM, LPARAM );
 #endif
-#endif /* (WINVER >= 0x030A)
+#endif /* (WINVER >= 0x030A) */
 
 /* Functins in SOUND.DRV */
 #ifndef NOSOUND
