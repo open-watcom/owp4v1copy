@@ -606,12 +606,12 @@ local void FreeAsmFixups( void )
 
 
 local int GetByteSeq( byte_seq **code )
-/**************************/
+/*************************************/
 {
     unsigned char       buff[ MAXIMUM_BYTESEQ + 32 ];
     char                *name;
     unsigned long       offset;
-    unsigned            fixword;
+    fix_words           fixword;
     int                 uses_auto;
     char                too_many_bytes;
 
