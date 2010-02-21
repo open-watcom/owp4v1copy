@@ -1198,7 +1198,7 @@ typedef HWAVEOUT    *LPHWAVEOUT;
 /* MCI_OPEN flags for animation */
 #define MCI_ANIM_OPEN_WS        0x00010000L
 #define MCI_ANIM_OPEN_PARENT    0x00020000L
-#define MCI_ANIM_OEPN_NOSTATIC  0x00040000L
+#define MCI_ANIM_OPEN_NOSTATIC  0x00040000L
 
 /* MCI_PLAY flags for animation */
 #define MCI_ANIM_PLAY_SPEED     0x00010000L
