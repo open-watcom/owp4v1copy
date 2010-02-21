@@ -78,7 +78,7 @@
 /* VerFindFile() flags */
 #define VFFF_ISSHAREDFILE   0x00000001L
 
-/* VerFineFile() return flags */
+/* VerFindFile() return flags */
 #define VFF_CURNEDEST       0x00000001L
 #define VFF_FILEINUSE       0x00000002L
 #define VFF_BUFFTOOSMALL    0x00000004L
