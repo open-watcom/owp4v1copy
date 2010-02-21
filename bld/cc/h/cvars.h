@@ -357,6 +357,11 @@ struct user_seg;
 
 global struct user_seg  *UserSegments;
 
+global  struct extref_info {
+    struct  extref_info *next;
+    SYM_HANDLE          symbol;
+} *ExtrefInfo;
+
 #if defined(__386__) && defined(__FLAT__) && defined(__WATCOMC__)
 
 extern  int     far_strcmp( char *, char *, int );

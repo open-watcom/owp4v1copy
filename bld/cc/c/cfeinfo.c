@@ -1027,10 +1027,24 @@ static VOIDPTR NextImport( int index, aux_class request )
 
 static VOIDPTR NextImportS( int index, aux_class request )
 {
-    if( request == IMPORT_NAME_S ) {
-        return( NULL );
+    void                *symbol;
+    int                 i;
+    struct extref_info  *extref;
+
+    symbol = NULL;
+    if( request == NEXT_IMPORT_S )
+        ++index;
+
+    for( i = 1, extref = ExtrefInfo; extref != NULL; extref = extref->next, ++i ) {
+        if( i == index ) {
+            symbol = extref->symbol;
+            break;
+        }
+    }
+    if( request == IMPORT_NAME_S || symbol == NULL ) {
+        return( symbol );
     } else {
-        return( NULL );
+        return( (char *)index );
     }
 }
 
@@ -1292,10 +1306,24 @@ static VOIDPTR NextImport( int index, aux_class request )
 
 static VOIDPTR NextImportS( int index, aux_class request )
 {
-    if( request == IMPORT_NAME_S ) {
-        return( NULL );
+    void                *symbol;
+    int                 i;
+    struct extref_info  *extref;
+
+    symbol = NULL;
+    if( request == NEXT_IMPORT_S )
+        ++index;
+
+    for( i = 1, extref = ExtrefInfo; extref != NULL; extref = extref->next, ++i ) {
+        if( i == index ) {
+            symbol = extref->symbol;
+            break;
+        }
+    }
+    if( request == IMPORT_NAME_S || symbol == NULL ) {
+        return( symbol );
     } else {
-        return( NULL );
+        return( (char *)index );
     }
 }
 

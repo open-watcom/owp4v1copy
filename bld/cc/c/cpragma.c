@@ -62,6 +62,7 @@ void CPragmaInit( void )
     EnumInfo = NULL;
     AliasHead = NULL;
     HeadLibs = NULL;
+    ExtrefInfo = NULL;
 
     PragmaAuxInit();
 
@@ -104,6 +105,12 @@ void CPragmaFini( void )
     while( AliasHead != NULL ) {
         junk = AliasHead;
         AliasHead = AliasHead->next;
+        CMemFree( junk );
+    }
+
+    while( ExtrefInfo != NULL ) {
+        junk = ExtrefInfo;
+        ExtrefInfo = ExtrefInfo->next;
         CMemFree( junk );
     }
 }
@@ -1044,10 +1051,25 @@ static void PragSTDC( void )
     }
 }
 
-local void PragAddExtRef ( char *symbol )
-/***************************************/
+static int parseExtRef ( void )
+/*****************************/
 {
-    SpcSymbol( symbol, SC_EXTERN  );
+    SYM_HANDLE          extref_sym;
+    struct extref_info  **extref;
+    struct extref_info  *new_extref;
+
+    extref_sym = SymLook( HashValue, Buffer );
+    if( extref_sym == 0 ) {
+       CErr2p( ERR_UNDECLARED_SYM, Buffer );
+       return( 1 );
+    }
+    for( extref = &ExtrefInfo; *extref != NULL; extref = &(*extref)->next )
+        ; /* nothing to do */
+    new_extref = CMemAlloc( sizeof( struct extref_info ) );
+    new_extref->next = NULL;
+    new_extref->symbol = extref_sym;
+    *extref = new_extref;
+    return( 0 );
 }
 
 // #pragma extref symbolname
@@ -1055,12 +1077,26 @@ local void PragAddExtRef ( char *symbol )
 static void PragExtRef( void )
 /****************************/
 {
-    while( CurToken == T_ID ) {
-        PragAddExtRef( Buffer );
-        NextToken();
-        if( CurToken == T_SEMI_COLON ) {
+    if( CurToken == T_LEFT_PAREN ) {
+        do {
+            CompFlags.pre_processing = 1;
             NextToken();
-        }
+            CompFlags.pre_processing = 2;
+            if( CurToken != T_ID )
+                break;
+            if( parseExtRef() )
+                break;
+            NextToken();
+        } while( CurToken == T_COMMA );
+        MustRecog( T_RIGHT_PAREN );
+    } else {
+        do {
+            if( CurToken != T_ID )
+                break;
+            if( parseExtRef() )
+                break;
+            NextToken();
+        } while( CurToken == T_COMMA );
     }
 }
 
