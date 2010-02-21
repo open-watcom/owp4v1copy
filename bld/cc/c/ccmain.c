@@ -318,7 +318,7 @@ static void DoCCompile( char **cmdline )
     Environment = &env;
     if( setjmp( env ) ) {       /* if fatal error has occurred */
         EmitAbort();                /* abort code generator */
-        PragmaFini();
+        CPragmaFini();
         CloseFiles();
         FreeFNames();
         FreeRDir();
@@ -389,7 +389,7 @@ static void DoCCompile( char **cmdline )
         }
 
         SymFini();
-        PragmaFini();
+        CPragmaFini();
     } else {
         ErrCount = 1;
     }

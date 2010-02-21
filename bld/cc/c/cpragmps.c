@@ -41,7 +41,7 @@
 extern void *AsmAlloc( unsigned amount );
 extern void AsmFree( void *ptr );
 
-extern  TREEPTR     CurFuncNode;
+extern  TREEPTR         CurFuncNode;
 
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
@@ -201,6 +201,12 @@ void PragmaInit( void )
 /*********************/
 {
     AsmFuncNum = 0;
+}
+
+
+void PragmaFini( void )
+/*********************/
+{
 }
 
 

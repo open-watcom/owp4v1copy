@@ -414,7 +414,8 @@ global struct  undef_names {
 extern  void    SetDBChar(int);                 /* casian */
 
 extern  struct aux_entry *AuxLookup( char * );  /* caux.c */
-extern  void    PragmaFini( void );             /* caux.c */
+extern  void    PragmaAuxInit( void );          /* caux.c */
+extern  void    PragmaAuxFini( void );          /* caux.c */
 
 extern  int     ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck ); /*ccheck*/
 extern  int     ChkCompatibleLanguage( type_modifiers typ1, type_modifiers typ2 ); /*ccheck*/
@@ -698,6 +699,7 @@ extern  void    GenCOptions(char **);           /* coptions */
 extern  void    MergeInclude(void);             /* coptions */
 
 extern  void    CPragmaInit( void );            /* cpragma */
+extern  void    CPragmaFini( void );            /* cpragma */
 extern  int     SetToggleFlag( char const *name, int const value ); /* cpragma */
 extern  void    CPragma(void);                  /* cpragma */
 extern  struct textsegment *LkSegName(char *,char *);   /* cpragma */

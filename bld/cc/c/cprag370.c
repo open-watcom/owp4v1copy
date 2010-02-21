@@ -61,10 +61,16 @@ hw_reg_set PragRegName( char * buffer )
     }
 
 
-void PragmaInit()
-    {
-        Offset = 0;
-    }
+void PragmaInit( void )
+{
+    Offset = 0;
+}
+
+
+void PragmaFini( void )
+/*********************/
+{
+}
 
 
 static call_class PragLinkage()

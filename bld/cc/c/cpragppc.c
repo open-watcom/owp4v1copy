@@ -65,6 +65,11 @@ void PragmaInit( void )
     AsmFuncNum = 0;
 }
 
+void PragmaFini( void )
+/*********************/
+{
+}
+
 static void InitAuxInfo( void )
 {
     CurrAlias   = NULL;

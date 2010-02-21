@@ -40,8 +40,8 @@ extern struct aux_info  *GetLangInfo( type_modifiers flags );
 
 extern  TREEPTR         CurFuncNode;
 
-static  int             AsmFuncNum;
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
+static  int             AsmFuncNum;
 static  struct aux_info AuxInfo;
 
 #if _CPU == 386
@@ -58,11 +58,9 @@ static struct {
     unsigned    f_8087_returns : 1;
 } AuxInfoFlg;
 
-void PragmaAuxInit( void )
-/************************/
+static void pragmaAuxInfoInit( void )
+/***********************************/
 {
-    PragmaAuxInfoInit( CompFlags.use_stdcall_at_number );
-
 #if _CPU == 386
     HW_CTurnOff( AsmRegsSaved, HW_EAX );
     HW_CTurnOff( AsmRegsSaved, HW_EBX );
@@ -98,6 +96,8 @@ void PragmaInit( void )
     int         fpu;
     int         use32;
 
+    pragmaAuxInfoInit();
+
 #if _CPU == 386
     use32 = 1;
     cpu = 3;
@@ -121,9 +121,14 @@ void PragmaInit( void )
     }
 
     AsmInit( cpu, fpu, use32, 1 );
-
-    HeadLibs = NULL;
 }
+
+
+void PragmaFini( void )
+/*********************/
+{
+}
+
 
 static void InitAuxInfo( void )
 /*****************************/

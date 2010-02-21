@@ -39,13 +39,15 @@ struct aux_entry *AuxLookup( char *name )
     struct aux_entry    *ent;
 
     for( ent = AuxList; ent; ent = ent->next ) {
-        if( strcmp( ent->name, name ) == 0 ) break;
+        if( strcmp( ent->name, name ) == 0 ) {
+            break;
+        }
     }
     return( ent );
 }
 
 
-local void FreeInfo( struct aux_info *info )            /* 18-aug-90 */
+static void FreeAuxInfo( struct aux_info *info )
 {
     if( info->code != NULL ) {
         CMemFree( info->code );
@@ -69,50 +71,56 @@ local void FreeInfo( struct aux_info *info )            /* 18-aug-90 */
     }
 }
 
-
-void PragmaFini( void )
+void PragmaAuxInit( void )
 {
-    struct aux_entry    *next;
-    void                *junk;
+    WatcallInfo.use = 2;        /* so they don't get freed */
 
-    next = AuxList;
-    while( next != NULL ) {
-        junk = next;
-        if( next->info != NULL ) {
-            if( next->info->use != 1 ) {
-                next->info->use--;
+    CdeclInfo   = WatcallInfo;
+    PascalInfo  = WatcallInfo;
+    SyscallInfo = WatcallInfo;
+    StdcallInfo = WatcallInfo;
+    OptlinkInfo = WatcallInfo;
+    FortranInfo = WatcallInfo;
+    FastcallInfo= WatcallInfo;
+
+#if _INTEL_CPU
+    PragmaAuxInfoInit( CompFlags.use_stdcall_at_number );
+#endif
+
+    SetAuxDefaultInfo();
+}
+
+void PragmaAuxFini( void )
+{
+    void    *junk;
+
+    while( AuxList != NULL ) {
+        junk = AuxList;
+        if( AuxList->info != NULL ) {
+            if( AuxList->info->use != 1 ) {
+                AuxList->info->use--;
             } else {
-                FreeInfo( next->info );
-                if( !IsAuxInfoBuiltIn( next->info ) ) {
-                    CMemFree( next->info );
+                FreeAuxInfo( AuxList->info );
+                if( !IsAuxInfoBuiltIn( AuxList->info ) ) {
+                    CMemFree( AuxList->info );
                 }
             }
         }
-        next = next->next;
+        AuxList = AuxList->next;
         CMemFree( junk );
     }
-    FreeInfo( &DefaultInfo );
-    FreeInfo( &WatcallInfo );
-    FreeInfo( &CdeclInfo );
-    FreeInfo( &PascalInfo );
-    FreeInfo( &SyscallInfo );
-    FreeInfo( &OptlinkInfo );
-    FreeInfo( &FortranInfo );
-    FreeInfo( &StdcallInfo );
-    FreeInfo( &FastcallInfo );
+
+    FreeAuxInfo( &DefaultInfo );
+    FreeAuxInfo( &WatcallInfo );
+    FreeAuxInfo( &CdeclInfo );
+    FreeAuxInfo( &PascalInfo );
+    FreeAuxInfo( &SyscallInfo );
+    FreeAuxInfo( &OptlinkInfo );
+    FreeAuxInfo( &FortranInfo );
+    FreeAuxInfo( &StdcallInfo );
+    FreeAuxInfo( &FastcallInfo );
 #if _CPU == 386
-    FreeInfo( &Far16CdeclInfo );
-    FreeInfo( &Far16PascalInfo );
+    FreeAuxInfo( &Far16CdeclInfo );
+    FreeAuxInfo( &Far16PascalInfo );
 #endif
-    AuxList = NULL;
-    while( HeadLibs != NULL ) {
-        junk = HeadLibs;
-        HeadLibs = HeadLibs->next;
-        CMemFree( junk );
-    }
-    while( AliasHead != NULL ) {
-        junk = AliasHead;
-        AliasHead = AliasHead->next;
-        CMemFree( junk );
-    }
 }

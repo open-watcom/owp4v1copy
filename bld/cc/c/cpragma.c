@@ -55,40 +55,57 @@ static struct toggle ToggleNames[] = {
     };
 
 
-void CPragmaInit( void ) {
-//********************************//
-// Init any general pragma things //
-//********************************//
+void CPragmaInit( void )
+{
     TextSegList = NULL;
-
-/* Pragma Pack init */
     PackInfo = NULL;
-
-/* Pragma Enum init */
     EnumInfo = NULL;
-
-/* Pragma Aux init */
-    WatcallInfo.use = 2;        /* so they don't get freed */
-
-    CdeclInfo   = WatcallInfo;
-    PascalInfo  = WatcallInfo;
-    SyscallInfo = WatcallInfo;
-    StdcallInfo = WatcallInfo;
-    OptlinkInfo = WatcallInfo;
-    FortranInfo = WatcallInfo;
-    FastcallInfo= WatcallInfo;
-
-#if _INTEL_CPU
-    PragmaAuxInit();
-#endif
-
-/* Pragma Alias init */
     AliasHead = NULL;
+    HeadLibs = NULL;
 
-    SetAuxDefaultInfo();
+    PragmaAuxInit();
 
-/* call target specific init */
     PragmaInit();
+}
+
+void CPragmaFini( void )
+/**********************/
+{
+    void    *junk;
+
+    PragmaFini();
+
+    PragmaAuxFini();
+
+    while( TextSegList != NULL ) {
+        junk = TextSegList;
+        TextSegList = TextSegList->next;
+        CMemFree( junk );
+    }
+
+    while( PackInfo != NULL ) {
+        junk = PackInfo;
+        PackInfo = PackInfo->next;
+        CMemFree( junk );
+    }
+
+    while( EnumInfo != NULL ) {
+        junk = EnumInfo;
+        EnumInfo = EnumInfo->next;
+        CMemFree( junk );
+    }
+
+    while( HeadLibs != NULL ) {
+        junk = HeadLibs;
+        HeadLibs = HeadLibs->next;
+        CMemFree( junk );
+    }
+
+    while( AliasHead != NULL ) {
+        junk = AliasHead;
+        AliasHead = AliasHead->next;
+        CMemFree( junk );
+    }
 }
 
 local void EndOfPragma( void )
