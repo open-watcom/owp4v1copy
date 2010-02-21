@@ -1,5 +1,5 @@
 /*
- *  win386.h    Compatibility header.
+ *  win386.h    Compatibility header
  *
 :include crwatcnt.sp
  */

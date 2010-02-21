@@ -10,31 +10,32 @@
 :include readonly.sp
 
 #ifndef _INC_WINDOWS
-#include <windows.h>
+    #include <windows.h>
 #endif
 
 :include cpluspro.sp
 
-#pragma pack(push,1)
+#pragma pack( push, 1 )
 
-#define EDS_WIN 1
-#define EDS_CUR 2
-#define EDS_TEMP        3
+/* Partition identifiers */
+#define EDS_WIN     1
+#define EDS_CUR     2
+#define EDS_TEMP    3
 
-BOOL    WINAPI  AllocMem(DWORD);
-void    WINAPI  FreeAllMem(void);
-int     WINAPI  AllocFileHandles(int);
-void    WINAPI  UnAllocFileHandles(void);
-int     WINAPI  GetFreeFileHandles(void);
-int     WINAPI  AllocDiskSpace(long,UINT);
-void    WINAPI  UnAllocDiskSpace(UINT);
-BOOL    WINAPI  AllocUserMem(UINT);
-void    WINAPI  FreeAllUserMem(void);
-BOOL    WINAPI  AllocGDIMem(UINT);
-void    WINAPI  FreeAllGDIMem(void);
+int WINAPI  AllocDiskSpace( long, UINT );
+int WINAPI  AllocFileHandles( int );
+BOOL WINAPI AllocGDIMem( UINT );
+BOOL WINAPI AllocMem( DWORD );
+BOOL WINAPI AllocUserMem( UINT );
+void WINAPI FreeAllMem( void );
+void WINAPI FreeAllGDIMem( void );
+void WINAPI FreeAllUserMem( void );
+int WINAPI  GetFreeFileHandles( void );
+void WINAPI UnAllocDiskSpace( UINT );
+void WINAPI UnAllocFileHandles( void );
 
-#pragma pack(pop)
+#pragma pack( pop )
 
 :include cplusepi.sp
 
-#endif
+#endif /* _INC_STRESS */

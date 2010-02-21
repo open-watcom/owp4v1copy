@@ -10,56 +10,88 @@
 :include readonly.sp
 
 #ifndef _INC_WINDOWS
-#include <windows.h>
+    #include <windows.h>
 #endif
 
 :include cpluspro.sp
 
-#pragma pack(push,1)
+#pragma pack( push, 1 )
 
-#define WM_DDE_FIRST    0x03E0
-#define WM_DDE_INITIATE (WM_DDE_FIRST)
-#define WM_DDE_TERMINATE        (WM_DDE_FIRST+1)
-#define WM_DDE_ADVISE   (WM_DDE_FIRST+2)
-#define WM_DDE_UNADVISE (WM_DDE_FIRST+3)
-#define WM_DDE_ACK      (WM_DDE_FIRST+4)
-#define WM_DDE_DATA     (WM_DDE_FIRST+5)
-#define WM_DDE_REQUEST  (WM_DDE_FIRST+6)
-#define WM_DDE_POKE     (WM_DDE_FIRST+7)
-#define WM_DDE_EXECUTE  (WM_DDE_FIRST+8)
-#define WM_DDE_LAST     (WM_DDE_FIRST+8)
+/* DDE messages */
+#define WM_DDE_FIRST        0x03E0
+#define WM_DDE_INITIATE     (WM_DDE_FIRST + 0)
+#define WM_DDE_TERMINATE    (WM_DDE_FIRST + 1)
+#define WM_DDE_ADVISE       (WM_DDE_FIRST + 2)
+#define WM_DDE_UNADVISE     (WM_DDE_FIRST + 3)
+#define WM_DDE_ACK          (WM_DDE_FIRST + 4)
+#define WM_DDE_DATA         (WM_DDE_FIRST + 5)
+#define WM_DDE_REQUEST      (WM_DDE_FIRST + 6)
+#define WM_DDE_POKE         (WM_DDE_FIRST + 7)
+#define WM_DDE_EXECUTE      (WM_DDE_FIRST + 8)
+#define WM_DDE_LAST         (WM_DDE_FIRST + 8)
 
 #ifndef RC_INVOKED
-typedef struct tagDDEACK {
-        unsigned short  bAppReturnCode:8,reserved:6,fBusy:1,fAck:1;
-} DDEACK;
-typedef struct tagDDEADVISE {
-        unsigned short  reserved:14,fDeferUpd:1,fAckReq:1;
-        short   cfFormat;
-} DDEADVISE;
-typedef struct tagDDEDATA {
-        unsigned short  unused:12,fResponse:1,fRelease:1,reserved:1,fAckReq:1;
-        short   cfFormat;
-        BYTE    Value[1];
-} DDEDATA;
-typedef struct tagDDEPOKE {
-        unsigned short  unused:13,fRelease:1,fReserved:2;
-        short   cfFormat;
-        BYTE    Value[1];
-} DDEPOKE;
-typedef struct tagDDELN {
-        unsigned short  unused:13,fRelease:1,fDeferUpd:1,fAckReq:1;
-        short   cfFormat;
-} DDELN;
-typedef struct tagDDEUP {
-        unsigned short  unused:12,fAck:1,fRelease:1,fReserved:1,fAckReq:1;
-        short   cfFormat;
-        BYTE    rgb[1];
-} DDEUP;
-#endif
 
-#pragma pack(pop)
+/* Structure used with WM_DDE_ACK */
+typedef struct tagDDEACK {
+    unsigned short  bAppReturnCode  : 8;
+    unsigned short  reserved        : 6;
+    unsigned short  fBusy           : 1;
+    unsigned short  fAck            : 1;
+} DDEACK;
+
+/* Structure used with WM_DDE_ADVISE */
+typedef struct tagDDEADVISE {
+    unsigned short  reserved    : 14;
+    unsigned short  fDeferUpd   : 1;
+    unsigned short  fAckReq     : 1;
+    short           cfFormat;
+} DDEADVISE;
+
+/* Structure used with WM_DDE_DATA */
+typedef struct tagDDEDATA {
+    unsigned short  unused      : 12;
+    unsigned short  fResponse   : 1;
+    unsigned short  fRelease    : 1;
+    unsigned short  reserved    : 1;
+    unsigned short  fAckReq     : 1;
+    short           cfFormat;
+    BYTE            Value[1];
+} DDEDATA;
+
+/* Structure used with WM_DDE_POKE */
+typedef struct tagDDEPOKE {
+    unsigned short  unused      : 13;
+    unsigned short  fRelease    : 1;
+    unsigned short  fReserved   : 2;
+    short           cfFormat;
+    BYTE            Value[1];
+} DDEPOKE;
+
+/* Structure retained for compatibility */
+typedef struct tagDDELN {
+    unsigned short  unused      : 13;
+    unsigned short  fRelease    : 1;
+    unsigned short  fDeferUpd   : 1;
+    unsigned short  fAckReq     : 1;
+    short           cfFormat;
+} DDELN;
+
+/* Another structure retained for compatibility */
+typedef struct tagDDEUP {
+    unsigned short  unused      : 12;
+    unsigned short  fAck        : 1;
+    unsigned short  fRelease    : 1;
+    unsigned short  fReserved   : 1;
+    unsigned short  fAckReq     : 1;
+    short           cfFormat;
+    BYTE            rgb[1];
+} DDEUP;
+
+#endif /* RC_INVOKED */
+
+#pragma pack( pop )
 
 :include cplusepi.sp
 
-#endif
+#endif /* _INC_DDE */
