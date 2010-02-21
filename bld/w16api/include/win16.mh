@@ -4294,7 +4294,7 @@ typedef COMPAREITEMSTRUCT FAR   *LPCOMPAREITEMSTRUCT;
 #ifndef NOCTLMGR
 typedef int (CALLBACK *EDITWORDBREAKPROC)( LPSTR, int, int, int );
 #endif
-#endif /* (WINVER >= 0x030A)
+#endif /* (WINVER >= 0x030A) */
 
 /* Hook procedure */
 #ifndef NOWH
