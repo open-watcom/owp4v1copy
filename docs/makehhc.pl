@@ -25,41 +25,45 @@
 #
 #  ========================================================================
 #
-#  Description: This script is used to generate an HTML Help project file
+#  Description: This script is used to generate an HTML Help contents file
 #               from an HTML file containing help topics.
 #
 ###########################################################################
 
 $htmlfile = $ARGV[0];
 $hhcfile = $ARGV[1];
-$hhpfile = $ARGV[2];
 open( HTMLFILE, "<", $htmlfile ) or die( "Cannot open $htmlfile" );
-$fileopen = 0;
+open( HHCFILE, ">", $hhcfile ) or die( "Cannot open $hhcfile" );
+print HHCFILE "<HTML>\n";
+print HHCFILE "<BODY>\n";
+print HHCFILE "<OBJECT TYPE=\"text/site properties\">\n";
+print HHCFILE "<PARAM NAME=\"ImageType\" VALUE=\"Folder\">\n";
+print HHCFILE "</OBJECT>\n";
+print HHCFILE "<UL>\n";
+
+$level = 1;
 while( $line = <HTMLFILE> ) {
-    if( $line =~ /<TITLE>(.*)<\/TITLE>/ ) {
-        $title = $1;
-        last;
+    if( $line =~ /<H(.) ID=\"(.*)\"> (.*) <\/H.>/ ) {
+        if( $1 < $level ) {
+	    while( $level > $1 ) {
+                print HHCFILE "</UL>\n";
+                $level--;
+            }
+	} elsif( $1 > $level ) {
+            print HHCFILE "<UL>\n";
+            $level = $1;
+        }
+        print HHCFILE "<LI><OBJECT TYPE=\"text/sitemap\">\n";
+        print HHCFILE "<PARAM NAME=\"Name\" VALUE=\"$3\">\n";
+        print HHCFILE "<PARAM NAME=\"Local\" VALUE=\"$2.htm\">\n";
+        print HHCFILE "</OBJECT>\n";
     }
 }
-
-open( HHPFILE, ">", $hhpfile ) or die( "Cannot open $hhpfile" );
-print HHPFILE "[OPTIONS]\n";
-print HHPFILE "Compatibility=1.1 or later\n";
-print HHPFILE "Contents file=$hhcfile\n";
-print HHPFILE "Create CHI file=Yes\n";
-print HHPFILE "Default Window=Main\n";
-print HHPFILE "Language=0x409 English (United States)\n";
-print HHPFILE "Title=$title\n";
-print HHPFILE "\n";
-print HHPFILE "[WINDOWS]\n";
-print HHPFILE "Main=\"$title\",\"$hhcfile\",,,,,,,,0x2020,,0x300e,,,,,,,,0\n";
-print HHPFILE "\n";
-print HHPFILE "[FILES]\n";
-
-while( $line = <HTMLFILE> ) {
-    if( $line =~ /<H. ID=\"(.*)\"> (.*) <\/H.>/ ) {
-	print HHPFILE "$1.htm\n";
-    }
+while( $level > 0 ) {
+    print HHCFILE "</UL>\n";
+    $level--;
 }
-close HHPFILE;
+print HHCFILE "</BODY>\n";
+print HHCFILE "</HTML>\n";
+close HHCFILE;
 close HTMLFILE;
