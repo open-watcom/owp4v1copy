@@ -94,7 +94,15 @@ _WCRTLINK int sopen( const CHAR_TYPE *name, int mode, int shflag, ... )
     int                 handle;
 
     va_start( args, shflag );
-    handle = RdosOpenFile( name, 0 );    
+
+    if( mode & O_CREAT )
+        handle = RdosCreateFile( name, 0 );    
+    else
+        handle = RdosOpenFile( name, 0 );    
+
+    if( handle )
+        if( mode & O_TRUNC )
+            RdosSetFileSize( handle, 0 );
     
     if( handle )
         return( FILE_HANDLE | handle );

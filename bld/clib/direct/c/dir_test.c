@@ -59,9 +59,15 @@
     #define MBYTE_NAMES
 #else
     #define _tDIR               struct dirent
+#ifdef __RDOS__
+    #define TMPDIR              "tmpdir"
+    #define TMPDIRNAME          "tmpdir"
+    #define TMPFILEPREFIX       "tmpfile"
+#else    
     #define TMPDIR              "_T_M_P_"
     #define TMPDIRNAME          "_T_M_P_"
     #define TMPFILEPREFIX       "_TMPFILE"
+#endif    
 #endif
 
 #define NUM_OPEN        5

@@ -47,10 +47,15 @@ _WCRTLINK int chdir( const CHAR_TYPE *path )
 _WCRTLINK CHAR_TYPE *getcwd( CHAR_TYPE *buf, size_t size )
 {
     int drive;
+    char *p;
     char cwd[256];
 
-    if( buf == NULL )
-        return( NULL );
+    if( buf == NULL ) {
+        size = 256;
+        p = lib_malloc( size );
+    }
+    else
+        p = buf;
 
     drive = RdosGetCurDrive();
 
@@ -59,7 +64,7 @@ _WCRTLINK CHAR_TYPE *getcwd( CHAR_TYPE *buf, size_t size )
     cwd[2] = '\\';
 
     if( RdosGetCurDir( drive, &cwd[3] ) )
-        return( strncpy( buf, cwd, size ) );
+        return( strncpy( p, cwd, size ) );
     else
         return( NULL );
 }
@@ -298,6 +303,12 @@ _WCRTLINK struct dirent *readdir( struct dirent *parent )
         return( NULL );
 }
 
+_WCRTLINK void rewinddir( struct dirent *dirp )
+{
+    if( dirp )
+        dirp->d_entry_nr = -1;
+}
+
 
 _WCRTLINK int closedir( struct dirent *dirp )
 {
@@ -314,7 +325,7 @@ _WCRTLINK int mkdir( const CHAR_TYPE *path )
     if( RdosMakeDir( path ))
         return 0;
     else
-        return 1;
+        return -1;
 }
 
 _WCRTLINK int rmdir( const CHAR_TYPE *path )
@@ -322,5 +333,5 @@ _WCRTLINK int rmdir( const CHAR_TYPE *path )
     if( RdosRemoveDir( path ))
         return 0;
     else
-        return 1;
+        return -1;
 }
