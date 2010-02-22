@@ -151,7 +151,7 @@ _WCRTLINK int stat( CHAR_TYPE const *path, struct stat *buf )
 
     /* process drive number */
     if( *_mbsinc(path) ) {
-        buf->st_dev = tolower(  ) - 'a';
+        buf->st_dev = tolower( fullpath[0] ) - 'a';
     } else {
         buf->st_dev = RdosGetCurDrive();
     }
