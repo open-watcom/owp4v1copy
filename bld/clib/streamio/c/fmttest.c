@@ -217,7 +217,8 @@ int Test_scan_std_xmp( void )
 int Test_print_float( void )
 /**************************/
 {
-    char    buf[128];
+    char        buf[128];
+    long double dval;
 
     VERIFY( sprintf( buf, "%+#22.14e", 123456789.0 ) == 22 );
     VERIFY( !strcmp( buf, " +1.23456789000000e+08" ) );
@@ -234,10 +235,21 @@ int Test_print_float( void )
     VERIFY( sprintf( buf, "%.0f", 0.8 ) == 1 );
     VERIFY( !strcmp( buf, "1" ) );
 
+    dval = 4.5123;
+    VERIFY( sprintf( buf, "%2.4Lf", dval ) == 6 );
+    VERIFY( !strcmp( buf, "4.5123" ) );
+
+    VERIFY( sprintf( buf, "%05.2Lf", dval ) == 5 );
+    VERIFY( !strcmp( buf, "04.51" ) );
+
     VERIFY( sprintf( buf, "%2.4e", 4.5 ) == 10 );
     VERIFY( !strcmp( buf, "4.5000e+00" ) );
 
     VERIFY( sprintf( buf, "%2.4g", 4.5 ) == 3 );
+    VERIFY( !strcmp( buf, "4.5" ) );
+
+    dval = 4.5;
+    VERIFY( sprintf( buf, "%2.4Lg", dval ) == 3 );
     VERIFY( !strcmp( buf, "4.5" ) );
 
     /* Test rounding */
