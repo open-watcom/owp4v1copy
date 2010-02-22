@@ -116,7 +116,7 @@ void main( int argc, char *argv[] )
     // filename[1] is now read-only
     VERIFY( access( filename[1], W_OK ) == -1 );
     EXPECT( errno == EACCES );
-#ifndef __UNIX__    // remove would succeed
+#if !defined( __UNIX__ ) && !defined( __RDOS__ )    // remove would succeed
     VERIFY( remove( filename[1] ) != 0 );
     EXPECT( errno == EACCES );
 #endif

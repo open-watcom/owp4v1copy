@@ -49,6 +49,7 @@ _WCRTLINK int stat( CHAR_TYPE const *path, struct stat *buf )
 {
     const CHAR_TYPE *   ptr;
     CHAR_TYPE           fullpath[_MAX_PATH];
+    CHAR_TYPE       *   fullp;
     int                 isrootdir = 0;
     int                 handle;
     int                 RdosAttrib;
@@ -61,6 +62,7 @@ _WCRTLINK int stat( CHAR_TYPE const *path, struct stat *buf )
     int                 ms;
     int                 us;
     struct tm           tm;
+    int                 i;
 
     /* reject null string and names that has wildcard */
     if( *path == '\0' || _mbspbrk( path, "*?" ) != NULL )
@@ -74,6 +76,8 @@ _WCRTLINK int stat( CHAR_TYPE const *path, struct stat *buf )
             isrootdir = 1;
         }
     }
+    else
+        return( -1 );
 
     ptr = path;
     if( *_mbsinc(path ) )  ptr += 2;
@@ -97,8 +101,28 @@ _WCRTLINK int stat( CHAR_TYPE const *path, struct stat *buf )
         size     = 0;
         name[0] = NULLCHAR;
     } else {                            /* not a root directory */
-        handle = RdosOpenDir( path );
-        ok = RdosReadDir( handle, 0, _MAX_PATH, name, &size, &RdosAttrib, &wr_msb, &wr_lsb );
+        fullp = fullpath + strlen( fullpath ) - 1;
+        while( *fullp != '\\' && *fullp != '/' && fullp != fullpath )
+            fullp--;
+        *fullp = 0;
+        fullp++;
+        if( strlen( fullpath ) == 0 )
+            strcpy( fullpath, "*" );
+                        
+        handle = RdosOpenDir( fullpath );
+
+        ok = 0;
+        i = 0;
+        strlwr( fullp );
+        while( RdosReadDir( handle, i, _MAX_PATH, name, &size, &RdosAttrib, &wr_msb, &wr_lsb ) ) {
+            strlwr( name );        
+            if( !strcmp( name, fullp ) ) {
+                ok = 1;
+                break;
+            }
+            i++;
+        }
+
         RdosCloseDir( handle );
 
         if( !ok )
@@ -127,7 +151,7 @@ _WCRTLINK int stat( CHAR_TYPE const *path, struct stat *buf )
 
     /* process drive number */
     if( *_mbsinc(path) ) {
-        buf->st_dev = tolower( *path ) - 'a';
+        buf->st_dev = tolower(  ) - 'a';
     } else {
         buf->st_dev = RdosGetCurDrive();
     }

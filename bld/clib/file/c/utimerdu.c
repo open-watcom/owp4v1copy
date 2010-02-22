@@ -24,74 +24,65 @@
 *
 *  ========================================================================
 *
-* Description:  rename function for RDOS
+* Description:  RDOS implementation of utime().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "widechar.h"
-#include <stdio.h>
+#include <stddef.h>
+#include <sys/types.h>
+#include <time.h>
+#include <dos.h>
 #include <rdos.h>
+#include <sys/stat.h>
 #include <errno.h>
-#include "liballoc.h"
+#include <direct.h>
+#include <sys/utime.h>
+#include "rtdata.h"
+#include "seterrno.h"
 
-_WCRTLINK int rename( const CHAR_TYPE *old, const CHAR_TYPE *new )
+_WCRTLINK int __F_NAME(utime,_wutime)( CHAR_TYPE const *fn, struct utimbuf const *times )
+/**********************************************************************************/
 {
-    int src;
-    int dst;
-    int attrib;
-    unsigned long msb;
-    unsigned long lsb;
-    int ok;
-    char *buf;
-    int rdsize;
-    int wrsize;
+    int                 handle;
+    unsigned long       msb, lsb;
+    struct tm          *tmptime;
+    time_t              curr_time;
+    struct utimbuf      time_buf;
 
-    dst = RdosOpenFile( new, 0 );
-    if ( dst ) {
-        __set_errno( EEXIST );
-        RdosCloseFile( dst );
+    handle = RdosOpenFile( fn, 0 );
+
+    if( handle == 0 )
         return( -1 );
+
+
+    if( times == NULL ) {
+        curr_time = time( NULL );
+        time_buf.modtime = curr_time;
+        time_buf.actime = curr_time;
+        times = &time_buf;
     }
 
-    if( RdosGetFileAttribute( old, &attrib ) )
-    {
-        src = RdosOpenFile( old, 0 );
-        dst = RdosCreateFile( new, attrib );
+    tmptime = localtime( &time_buf.actime );
 
-        ok = 1;    
-        buf = (char*) lib_malloc( sizeof( 0x1000 ) );
+    tmptime->tm_year += 1900;
+    tmptime->tm_mon++;
 
-        rdsize = RdosReadFile( src, buf, 0x1000 );
+    msb = RdosCodeMsbTics(
+                       tmptime->tm_year + 1900, 
+                       tmptime->tm_mon + 1,
+                       tmptime->tm_mday,
+                       tmptime->tm_hour );
 
-        while( ok && rdsize ) {
-            wrsize = RdosWriteFile( dst, buf, 0x1000 );
-
-            if( rdsize == wrsize )
-                rdsize = RdosReadFile( src, buf, 0x1000 );
-            else
-                ok = 0;
-        }
-
-        if( ok ) {
-            RdosGetFileTime( src, &msb, &lsb );
-            RdosSetFileTime( dst, msb, lsb );
-            RdosCloseFile( src );
-            RdosCloseFile( dst );
-            RdosDeleteFile( old );
-        }
-        else {
-            RdosCloseFile( src );
-            RdosCloseFile( dst );
-        }
-        
-        lib_free( buf );        
-
-        if( ok )
-            return( 0 );
-    }
-
-    __set_errno( ENOENT );
-    return( -1 );
+    lsb = RdosCodeLsbTics(
+                       tmptime->tm_min,
+                       tmptime->tm_sec,
+                       0,
+                       0 );
+                           
+    RdosSetFileTime( handle, msb, lsb );
+    RdosCloseFile( handle );
+    return( 0 );
 }
