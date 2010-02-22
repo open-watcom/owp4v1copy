@@ -179,7 +179,11 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
         __set_errno( ERANGE );
         return( -1 );
     }
+#ifdef __RDOS__
+    rc = 0;
+#else    
     rc = __F_NAME(__wputenv,__putenv)( otherStr );
+#endif    
     return( rc );
 #endif
 }
