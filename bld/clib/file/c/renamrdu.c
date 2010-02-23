@@ -35,6 +35,7 @@
 #include <rdos.h>
 #include <errno.h>
 #include "liballoc.h"
+#include "seterrno.h"
 
 _WCRTLINK int rename( const CHAR_TYPE *old, const CHAR_TYPE *new )
 {

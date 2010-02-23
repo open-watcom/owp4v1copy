@@ -36,6 +36,7 @@
 #include <direct.h>
 #include <errno.h>
 #include <rdos.h>
+#include "seterrno.h"
 
 
 _WCRTLINK int remove( CHAR_TYPE const *filename )
