@@ -69,12 +69,6 @@ struct EquipBits {
 };
 
 
-#if defined( __X86__ )
-extern int      __NonIBM;
-#else
-int __NonIBM = 0;
-#endif
-
 char    ProgramName[128];                       /* executable filename */
 int     NumErrors = 0;                          /* number of errors */
 
@@ -96,19 +90,14 @@ void TestDisk( void )
     di.head = di.track = di.sector = 0;
     di.nsectors = 1;
     di.buffer = NULL;
-    if( !__NonIBM ) {
-        rc = _bios_disk( _DISK_RESET, &di );
-        VERIFY( rc == 0 );
+    rc = _bios_disk( _DISK_RESET, &di );
+    VERIFY( rc == 0 );
 
-        rc = _bios_disk( _DISK_STATUS, &di );
-        VERIFY( rc == 0 );
+    rc = _bios_disk( _DISK_STATUS, &di );
+    VERIFY( rc == 0 );
 
-        rc = _bios_disk( _DISK_VERIFY, &di );
-        VERIFY( rc == 0 );
-    } else {
-        rc = _bios_disk( _DISK_VERIFY, &di );
-        VERIFY( rc == 0x01 );
-    }
+    rc = _bios_disk( _DISK_VERIFY, &di );
+    VERIFY( rc == 0 );
 }
 
 
@@ -259,7 +248,6 @@ int main( int argc, char *argv[] )
 {
     /*** Initialize ***/
     strcpy( ProgramName, strlwr(argv[0]) );
-    printf( "%s: Machine type is %s.\n", ProgramName, __NonIBM ? "NEC" : "IBM" );
 
     /*** Test stuff ***/
     #ifdef DO_TESTING
