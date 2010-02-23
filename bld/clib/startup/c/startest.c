@@ -35,6 +35,11 @@
 #include <string.h>             /* For strcmp */
 #include <setjmp.h>
 
+#ifdef __SW_BW
+    #include <wdefwin.h>
+#endif
+
+
 /*
  * The following is abstracted from "widechar.h".
  * The makefile does not support -I directory
@@ -88,9 +93,6 @@ CHAR_TYPE ProgramName[128];                     // executable filename
 char SrcFILE[128];                              // Lowered __FILE__
 int NumErrors = 0;                              // number of errors
 
-static void tryanalysis( int line, int hist, const CHAR_TYPE *pgm, const CHAR_TYPE *args,
-        int argc, ... );
-
 static void jump_fn( jmp_buf env )
 {
     longjmp( env, 7 );
@@ -112,87 +114,6 @@ static void test_long_jump( int line )
         VERIFY( rc == 7 );
     }
     VERIFY( rc == 7 );
-}
-
-int __F_NAME( main, wmain )( int argc, const CHAR_TYPE * const * const argv )
-{
-    // Initialize
-    (void) __F_NAME( strcpy, wcscpy )( ProgramName, argv[0] );     // store filename
-    (void) __F_NAME( strlwr, _wcslwr )( ProgramName );             // and lower case it
-    (void) strcpy( SrcFILE, __FILE__ ), (void) strlwr( SrcFILE );  // lowered __FILE__
-
-    (void) argc; // Unused
-
-//  This was causing a crash in the multi-threaded 16-bit OS/2 runtime.
-//  This test program relies far too much on clib internals but probably
-//  isn't worth "fixing" properly.
-//    __F_NAME( __Fini_Argv, __wFini_Argv )(); // Release allocated data
-
-    // tryanalysis( __LINE__, 0, 0, 0 ); // Fails as _Lp* can't be NULL
-
-        // Program name and no arguments
-    tryanalysis( __LINE__, 0, TAGSTR( "hello" ), TAGSTR( "" ), 1);
-
-        // one argument
-    tryanalysis( __LINE__, 0, TAGSTR( "hello" ), TAGSTR( "world" ),
-        2, TAGSTR( "world" ) );
-
-        // argument-enclosing whitespace is ignored
-    tryanalysis( __LINE__, 0, TAGSTR( "2 params" ), TAGSTR( " \thello \tworld \t" ),
-        3, TAGSTR( "hello" ), TAGSTR( "world" ) );
-
-        // quotes at both ends
-    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "\"hello world\"" ),
-        2, TAGSTR( "hello world" ) );
-
-        // Lost closing quote ignored
-    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "\"hello world" ),
-        2, TAGSTR( "hello world" ) );
-
-        // opening quote not at start
-    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "hell\"o world" ),
-        2, TAGSTR( "hello world" ) );
-
-        // quotes away from both ends
-    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "hell\"o w\"orld" ),
-        2, TAGSTR( "hello world" ) );
-
-    // Check historical behaviour
-        // quotes at both ends
-    tryanalysis( __LINE__, 1, TAGSTR( "1 arg" ), TAGSTR( "\"hello world\"" ),
-        2, TAGSTR( "hello world" ) );
-
-        // Lost closing quote ignored
-    tryanalysis( __LINE__, 1, TAGSTR( "1 arg" ), TAGSTR( "\"hello world" ),
-        2, TAGSTR( "hello world" ) );
-
-        // opening quote not at start
-    tryanalysis( __LINE__, 1, TAGSTR( "1 arg" ), TAGSTR( "hell\"o world" ),
-        3, TAGSTR( "hell\"o" ), TAGSTR( "world" ) );
-
-        // quotes away from both ends
-    tryanalysis( __LINE__, 1, TAGSTR( "2 args" ), TAGSTR( "hell\"o w\"orld" ),
-        3, TAGSTR( "hell\"o" ), TAGSTR( "w\"orld" ) );
-
-        // backslash usage
-    tryanalysis( __LINE__, 0, TAGSTR( "2 args" ), TAGSTR( "hell\\\"o w\\o\"rld wars" ),
-        3, TAGSTR( "hell\"o" ), TAGSTR( "w\\orld wars" ) );
-
-    tryanalysis( __LINE__, 1, TAGSTR( "3 args" ), TAGSTR( "hell\\\"o w\\o\"rld wars" ),
-        4, TAGSTR( "hell\"o" ), TAGSTR( "w\\o\"rld" ), TAGSTR( "wars" ) );
-
-    test_long_jump( __LINE__ );
-
-    // Print a pass/fail message and quit
-    if( NumErrors != 0 ) {
-        printf( __F_NAME( "%s: FAILURE (%d errors).\n", "%ls: FAILURE (%d errors).\n" ),
-            ProgramName, NumErrors );
-
-        return( EXIT_FAILURE );
-    }
-    printf( __F_NAME( "Tests completed (%s).\n", "Tests completed (%ls).\n" ),
-        ProgramName );
-    return 0;
 }
 
 static void tryanalysis( int line, int hist, const CHAR_TYPE *pgm, const CHAR_TYPE *args,
@@ -271,4 +192,98 @@ static void tryanalysis( int line, int hist, const CHAR_TYPE *pgm, const CHAR_TY
     }
 
     __F_NAME( __Fini_Argv, __wFini_Argv )(); // Throw away data
+}
+
+int __F_NAME( main, wmain )( int argc, const CHAR_TYPE * const * const argv )
+{
+#ifdef __SW_BW
+    FILE    *my_stdout;
+
+    my_stdout = freopen( "tmp.log", "a", stdout );
+    if( my_stdout == NULL ) {
+        fprintf( stderr, "Unable to redirect stdout\n" );
+        return( EXIT_FAILURE );
+    }
+#endif
+
+    // Initialize
+    (void) __F_NAME( strcpy, wcscpy )( ProgramName, argv[0] );     // store filename
+    (void) __F_NAME( strlwr, _wcslwr )( ProgramName );             // and lower case it
+    (void) strcpy( SrcFILE, __FILE__ ), (void) strlwr( SrcFILE );  // lowered __FILE__
+
+    (void) argc; // Unused
+
+//  This was causing a crash in the multi-threaded 16-bit OS/2 runtime.
+//  This test program relies far too much on clib internals but probably
+//  isn't worth "fixing" properly.
+//    __F_NAME( __Fini_Argv, __wFini_Argv )(); // Release allocated data
+
+    // tryanalysis( __LINE__, 0, 0, 0 ); // Fails as _Lp* can't be NULL
+
+        // Program name and no arguments
+    tryanalysis( __LINE__, 0, TAGSTR( "hello" ), TAGSTR( "" ), 1);
+
+        // one argument
+    tryanalysis( __LINE__, 0, TAGSTR( "hello" ), TAGSTR( "world" ),
+        2, TAGSTR( "world" ) );
+
+        // argument-enclosing whitespace is ignored
+    tryanalysis( __LINE__, 0, TAGSTR( "2 params" ), TAGSTR( " \thello \tworld \t" ),
+        3, TAGSTR( "hello" ), TAGSTR( "world" ) );
+
+        // quotes at both ends
+    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "\"hello world\"" ),
+        2, TAGSTR( "hello world" ) );
+
+        // Lost closing quote ignored
+    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "\"hello world" ),
+        2, TAGSTR( "hello world" ) );
+
+        // opening quote not at start
+    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "hell\"o world" ),
+        2, TAGSTR( "hello world" ) );
+
+        // quotes away from both ends
+    tryanalysis( __LINE__, 0, TAGSTR( "1 arg" ), TAGSTR( "hell\"o w\"orld" ),
+        2, TAGSTR( "hello world" ) );
+
+    // Check historical behaviour
+        // quotes at both ends
+    tryanalysis( __LINE__, 1, TAGSTR( "1 arg" ), TAGSTR( "\"hello world\"" ),
+        2, TAGSTR( "hello world" ) );
+
+        // Lost closing quote ignored
+    tryanalysis( __LINE__, 1, TAGSTR( "1 arg" ), TAGSTR( "\"hello world" ),
+        2, TAGSTR( "hello world" ) );
+
+        // opening quote not at start
+    tryanalysis( __LINE__, 1, TAGSTR( "1 arg" ), TAGSTR( "hell\"o world" ),
+        3, TAGSTR( "hell\"o" ), TAGSTR( "world" ) );
+
+        // quotes away from both ends
+    tryanalysis( __LINE__, 1, TAGSTR( "2 args" ), TAGSTR( "hell\"o w\"orld" ),
+        3, TAGSTR( "hell\"o" ), TAGSTR( "w\"orld" ) );
+
+        // backslash usage
+    tryanalysis( __LINE__, 0, TAGSTR( "2 args" ), TAGSTR( "hell\\\"o w\\o\"rld wars" ),
+        3, TAGSTR( "hell\"o" ), TAGSTR( "w\\orld wars" ) );
+
+    tryanalysis( __LINE__, 1, TAGSTR( "3 args" ), TAGSTR( "hell\\\"o w\\o\"rld wars" ),
+        4, TAGSTR( "hell\"o" ), TAGSTR( "w\\o\"rld" ), TAGSTR( "wars" ) );
+
+    test_long_jump( __LINE__ );
+
+    /*** Print a pass/fail message and quit ***/
+    if( NumErrors != 0 ) {
+        printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
+        return( EXIT_FAILURE );
+    }
+    printf( "Tests completed (%s).\n", ProgramName );
+#ifdef __SW_BW
+    fprintf( stderr, "Tests completed (%s).\n", ProgramName );
+    fclose( my_stdout );
+    _dwShutDown();
+#endif
+
+    return( EXIT_SUCCESS );
 }

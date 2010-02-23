@@ -36,6 +36,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __SW_BW
+    #include <wdefwin.h>
+#endif
+
 
 #define VERIFY( exp )   if( !(exp) ) {                                      \
                             printf( "%s: ***FAILURE*** at line %d of %s.\n",\
@@ -349,10 +353,19 @@ void TestWideConversion( void )
 int main( int argc, char *argv[] )
 /********************************/
 {
+#ifdef __SW_BW
+    FILE    *my_stdout;
+
+    my_stdout = freopen( "tmp.log", "a", stdout );
+    if( my_stdout == NULL ) {
+        fprintf( stderr, "Unable to redirect stdout\n" );
+        return( EXIT_FAILURE );
+    }
+#endif
     far_data++; // set ds outside DGROUP
 
     /*** Initialize ***/
-    strcpy( ProgramName, strlwr(argv[0]) );
+    strcpy( ProgramName, strlwr( argv[0] ) );
 
     /*** Test stuff ***/
     TestClassifyMacro();
@@ -364,11 +377,16 @@ int main( int argc, char *argv[] )
     TestWideConversion();
 
     /*** Print a pass/fail message and quit ***/
-    if( NumErrors == 0 ) {
-        printf( "%s: SUCCESS.\n", ProgramName );
-        return( EXIT_SUCCESS );
-    } else {
+    if( NumErrors != 0 ) {
         printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
         return( EXIT_FAILURE );
     }
+    printf( "Tests completed (%s).\n", ProgramName );
+#ifdef __SW_BW
+    fprintf( stderr, "Tests completed (%s).\n", ProgramName );
+    fclose( my_stdout );
+    _dwShutDown();
+#endif
+
+    return( EXIT_SUCCESS );
 }
