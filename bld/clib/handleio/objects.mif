@@ -65,8 +65,8 @@
 !inject stiomode.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi              rdu
 !inject tell.obj     d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject ucreat.obj   d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
-!inject umask.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32
-!inject umaskval.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
+!inject umask.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32                  rdu
+!inject umaskval.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi              rdu
 !inject umkfilst.obj                     nt nta ntp
 !inject unlck.obj    d16 d32                                        o16 o32         w16 w32
 !inject unlckqnx.obj                                                        q16 q32

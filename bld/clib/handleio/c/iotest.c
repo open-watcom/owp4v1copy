@@ -91,7 +91,7 @@ int main( int argc, char *argv[] )
     TestSize();                                 /* file size stuff */
     TestFileno();                               /* fileno() */
     TestDup();                                  /* handle duplication */
-#ifndef __UNIX__
+#if !defined( __UNIX__ ) && !defined( __RDOS__ )
     TestLocking();                              /* file locking */
     TestOsHandle();                             /* OS <--> POSIX handles */
 #endif
@@ -300,6 +300,7 @@ void TestDup( void )
     status = close( handle2 );
     VERIFY( status == 0 );
 
+#if !defined( __RDOS__ )    /* RDOS does not support dup2 */
     handle2 = handle1 + 1;
     status = dup2( handle1, handle2 );
     // NB: the return value of dup2() differs between POSIX and traditional
@@ -314,13 +315,14 @@ void TestDup( void )
 
     status = close( handle2 );
     VERIFY( status == 0 );
+#endif
 
     status = close( handle1 );
     VERIFY( status == 0 );
 }
 
 
-#ifndef __UNIX__
+#if !defined( __UNIX__ ) && !defined( __RDOS__ )
 
 /****
 ***** Test lock(), locking(), and unlock().
