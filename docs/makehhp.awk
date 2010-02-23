@@ -6,6 +6,9 @@ BEGIN {
     }
     print "Create CHI file=Yes";
     print "Default Window=Main";
+    if( length( hhkfile ) > 0 ) {
+        print "Index file=" hhkfile;
+    }
     print "Language=0x409 English (United States)";
 }
 
@@ -17,10 +20,12 @@ BEGIN {
     print "";
     print "[WINDOWS]";
     if( length( hhcfile ) > 0 ) {
-        print "Main=\"" title "\",\"" hhcfile "\",,,,,,,,0x2020,,0x300e,,,,,,,,0";
-    } else {
-        print "Main=\"" title "\",,,,,,,,,0x2020,,0x300e,,,,,,,,0";
+        hhcfile = "\"" hhcfile "\"";
     }
+    if( length( hhkfile ) > 0 ) {
+        hhkfile = "\"" hhkfile "\"";
+    }
+    print "Main=\"" title "\"," hhcfile "," hhkfile ",,,,,,,0x2020,,0x300e,,,,,,,,0";
     print "";
     print "[FILES]";
 }
