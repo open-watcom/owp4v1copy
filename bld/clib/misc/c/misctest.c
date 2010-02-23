@@ -201,9 +201,15 @@ int main( int argc, char *argv[] )
     TestAssert1( 1 );
     TestAssert2( 1 );
     TestAssert3( 1 );
+
+#ifdef __RDOS__ /* RDOS does not support signals! */
+    printf( "Tests completed (%s).\n", ProgramName );
+    return( 0 );
+#else    
     signal( SIGABRT, abort_handler );           /* will be called via abort() */
     TestAssert( 1 );
 
     VERIFY( 0 );                                /* should never get here! */
     return( -1 );
+#endif    
 }
