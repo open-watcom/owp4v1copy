@@ -65,6 +65,8 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
     char *ep;
     int ok;
 
+    __F_NAME(__ccmdline,__wccmdline)( pgmname, argv, cmdline, 0 );
+
     ok = 0;
 
     len = strlen( pgmname ) + 7 + _MAX_PATH2;
