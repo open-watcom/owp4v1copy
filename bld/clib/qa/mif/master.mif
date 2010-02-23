@@ -36,6 +36,8 @@
 # WNT   Windows NT Window(AXP)  wntw_axp
 # LNX   Linux (386)             lnx_3r
 #                               lnx_3s
+# RDOS  RDOS (32-bit app)       rdos_3r
+# RDOS                          rdos_3s
 
 !include cproj.mif
 
@@ -58,6 +60,7 @@ a_dbg_flags = -d1
     @set WATCOM=$(%RELROOT)
     @set INCLUDE=
     @set DOS_INCLUDE=$(%WATCOM)/h
+    @set RDOS_INCLUDE=$(%WATCOM)/h
     @set NT_INCLUDE=$(%WATCOM)/h
     @set OS2_INCLUDE=$(%WATCOM)/h
     @set QNX_INCLUDE=$(%WATCOM)/qh
@@ -68,6 +71,7 @@ a_dbg_flags = -d1
     @set WATCOM=$(%RELROOT)
     @set INCLUDE=
     @set DOS_INCLUDE=$(%WATCOM)\h
+    @set RDOS_INCLUDE=$(%WATCOM)\h
     @set NT_INCLUDE=$(%WATCOM)\h
     @set OS2_INCLUDE=$(%WATCOM)\h
     @set QNX_INCLUDE=$(%WATCOM)\qh
@@ -99,6 +103,9 @@ dosexes += pls_3s.exe pls_3r.exe
 dosexes += x32_3s.exe x32_3r.exe
 !endif
 
+rdosexes = &
+    rdos_3r.exe rdos_3s.exe
+
 winexes = &
     win_s.exe win_c.exe win_m.exe win_l.exe &
     win32_3s.exe win32_3r.exe
@@ -122,7 +129,7 @@ lnx386exes = &
     lnx_3r lnx_3s
 
 exes = &
-    $(dosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntaxpexes) # $(wntwexes)
+    $(dosexes) $(rdosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntaxpexes) # $(wntwexes)
 
 all : .symbolic $(exes)
 
@@ -231,6 +238,16 @@ pls_3r.exe : $(srcfile)
     $(pharlap)bind386 $(pharlap)run386b $^*.exp -exe $^*.exe>nul
     @rm $^*.exp
     @rm $^*.obj
+
+rdos_3r.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=rdos $(c_dbg_flags)
+    wlink SYSTEM rdos $(link_opts) $(link_i86) FILE $^*.obj
+    @rm *.obj
+
+rdos_3s.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=rdos $(c_dbg_flags)
+    wlink SYSTEM rdos $(link_opts) $(link_i86) FILE $^*.obj
+    @rm *.obj
 
 rsi_3s.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__DOS4G__ $(c_dbg_flags)
