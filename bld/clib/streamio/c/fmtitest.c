@@ -303,6 +303,7 @@ int Test_print_character( void )
     VERIFY( sprintf( buf, "tst" ) == 3 );
     VERIFY( !strcmp( buf, "tst" ) );
 
+#ifndef __RDOS__
     VERIFY( sprintf( buf, "%S", L"Test" ) == 4 );
     VERIFY( !strcmp( buf, "Test" ) );
 
@@ -326,6 +327,7 @@ int Test_print_character( void )
 
     VERIFY( sprintf( buf, "%Ls", "Test" ) == 4 );
     VERIFY( !strcmp( buf, "Test" ) );
+#endif
 
     VERIFY( sprintf( buf, "%3h", 33 ) == 0 );
     VERIFY( !strcmp( buf, "" ) );
