@@ -27,6 +27,7 @@ static_objs = $+ &
     $(pfx__)/startup$(__ifx__)ddgrpo32.obj &
     $(pfx__)/startup$(__ifx__)dstrt386.obj &
     $(pfx__)/startup$(__ifx__)fltused.obj &
+    $(pfx__)/startup$(__ifx__)fltuse80.obj &
     $(pfx__)/startup$(__ifx__)getdsint.obj &
     $(pfx__)/startup$(__ifx__)initrtns.obj &
     $(pfx__)/startup$(__ifx__)libmno32.obj &

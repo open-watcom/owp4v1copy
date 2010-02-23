@@ -67,6 +67,7 @@
 !inject _exit.obj    d16 d32             nt nta ntp                 o16 o32 q16 q32     w32 osi l32 lpc lmp rdu
 !inject exit.obj     d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
 !inject fltused.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
+!inject fltuse80.obj d16 d32             nt         nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32         rdu
 !inject fpexcept.obj d16 d32 dpm         nt         nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32         rdu
 !inject _getds.obj                                                  o16
 !inject getds.obj                                                           q16 q32             l32
@@ -119,6 +120,7 @@
 !inject prelude.obj                                 nvc ncl
 !inject pspptr.obj   d16 d32                                                        w16     osi
 !inject rdllmwnt.obj                     nt nta ntp
+!inject rtcntrl.obj  d16 d32 dpm         nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
 !inject seg086.obj   d16                                            o16             w16
 !inject seg16.obj                                                       o32
 !inject seg386.obj       d32             nt                             o32             w32 osi l32         rdu

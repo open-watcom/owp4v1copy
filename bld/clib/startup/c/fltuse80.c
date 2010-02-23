@@ -24,13 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Module to invoke floating-point support initialiation.
+* Description:  80-bit long double size initialization.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "rtinit.h"
+#include "rtcntrl.h"
 
 #ifdef _M_I86
 unsigned _fltused_ = 1;
@@ -42,6 +43,10 @@ unsigned _fltused_ = 0;
   #pragma aux _fltused_ "*";
 #endif
 
-extern void __setEFGfmt( void );
+#pragma alias ( "_fltused_80bit_" , "_fltused_" )
 
+extern void __setEFGfmt( void );
+extern void _SetLD80bit( void );
+
+AXI( _SetLD80bit, INIT_PRIORITY_LIBRARY )
 AXI( __setEFGfmt, INIT_PRIORITY_LIBRARY )

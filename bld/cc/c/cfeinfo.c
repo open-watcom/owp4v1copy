@@ -897,6 +897,9 @@ static VOIDPTR NextImport( int index, aux_class request )
     case 2:
         /* floating point used */
         name = "_fltused_";
+        if( CompFlags.use_long_double ) {
+            name = "_fltused_80bit_";
+        }
         if( CompFlags.emit_library_with_main    /* emit default library info? */
           || CompFlags.emit_library_any ) {     /* -zlf emit all library info? */
                     /* 12-mar-90 */
@@ -1001,6 +1004,7 @@ static VOIDPTR NextImport( int index, aux_class request )
         if( TargetSwitches & P5_PROFILING ) {
             break;
         }
+        ++index;
 
     /* handle 'new' profiling */
     case 10:
@@ -1031,10 +1035,13 @@ static VOIDPTR NextImportS( int index, aux_class request )
     int                 i;
     struct extref_info  *extref;
 
-    symbol = NULL;
+    if(!CompFlags.emit_targimp_symbols)
+        return (NULL);
+
     if( request == NEXT_IMPORT_S )
         ++index;
 
+    symbol = NULL;
     for( i = 1, extref = ExtrefInfo; extref != NULL; extref = extref->next, ++i ) {
         if( i == index ) {
             symbol = extref->symbol;

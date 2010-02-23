@@ -24,24 +24,31 @@
 *
 *  ========================================================================
 *
-* Description:  Module to invoke floating-point support initialiation.
+* Description:  Definition of internal feature flags and manipulation functions.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include "rtinit.h"
+#include "rtcntrl.h"
 
-#ifdef _M_I86
-unsigned _fltused_ = 1;
-#else
-unsigned _fltused_ = 0;
+static __rt_flag    __rt_control = RTFLG_NONE;
+
+#ifdef _M_IX86
+
+_WCRTLINK void _SetLD64bit( void )
+{
+    __rt_control &= ~RTFLG_LD_80BIT;
+}
+
+_WCRTLINK void _SetLD80bit( void )
+{
+    __rt_control |= RTFLG_LD_80BIT;
+}
+
 #endif
 
-#if defined(_M_IX86)
-  #pragma aux _fltused_ "*";
-#endif
-
-extern void __setEFGfmt( void );
-
-AXI( __setEFGfmt, INIT_PRIORITY_LIBRARY )
+_WCRTLINK int _LDisDouble( void )
+{
+    return( (__rt_control & RTFLG_LD_80BIT) == 0 );
+}

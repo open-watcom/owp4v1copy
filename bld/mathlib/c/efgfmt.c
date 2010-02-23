@@ -38,6 +38,7 @@
 #include "myvalist.h"
 #include "xfloat.h"
 #include "farsupp.h"
+#include "rtcntrl.h"
 
 
 /* NB: This code assumes ASCII character encoding. Probably not unreasonable. */
@@ -72,7 +73,7 @@ _WMRTLINK FAR_STRING _EFG_Format( char *buffer, my_va_list *args, SPECS __SLIB *
     if( specs->_flags & SPF_ALT ) {
         cvt.flags |= F_DOT;
     }
-    if( (specs->_flags & SPF_LONG_DOUBLE) && sizeof( long double ) > sizeof( double ) ) {
+    if( (specs->_flags & SPF_LONG_DOUBLE) && !_LDisDouble() ) {
         ld = va_arg( args->v, long_double );
         cvt.flags |= LONG_DOUBLE;
     } else {

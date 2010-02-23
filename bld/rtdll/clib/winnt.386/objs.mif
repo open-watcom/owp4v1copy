@@ -59,6 +59,7 @@ static_objs = $+ &
     $(pfx__)/startup$(__ifx__)dmndwnt.obj &
     $(pfx__)/startup$(__ifx__)dstrt386.obj &
     $(pfx__)/startup$(__ifx__)fltused.obj &
+    $(pfx__)/startup$(__ifx__)fltuse80.obj &
     $(pfx__)/startup$(__ifx__)getdsint.obj &
     $(pfx__)/startup$(__ifx__)histsplt.obj &
     $(pfx__)/startup$(__ifx__)initrtns.obj &

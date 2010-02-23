@@ -24,24 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  Module to invoke floating-point support initialiation.
+* Description:  Declaration of internal feature flags and manipulation functions.
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "rtinit.h"
+typedef enum {
+    RTFLG_NONE      = 0x0000,
+    RTFLG_LD_80BIT  = 0x0001,     // 80-bit long double supported
+} __rt_flag;
 
-#ifdef _M_I86
-unsigned _fltused_ = 1;
-#else
-unsigned _fltused_ = 0;
+#ifdef _M_IX86
+extern void _SetLD64bit( void );
+extern void _SetLD80bit( void );
 #endif
-
-#if defined(_M_IX86)
-  #pragma aux _fltused_ "*";
-#endif
-
-extern void __setEFGfmt( void );
-
-AXI( __setEFGfmt, INIT_PRIORITY_LIBRARY )
+extern int  _LDisDouble( void );
