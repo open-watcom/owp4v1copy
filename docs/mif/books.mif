@@ -22,7 +22,7 @@
 !inject drnt                             nt                win
 !inject drwatcom                         nt                win
 !inject ebooks                           nt
-!inject editor                           nt                win
+!inject editor           html  htmlhelp  nt                win
 !inject f77graph    dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject f77lr       dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject f_readme    dos  html  htmlhelp  nt  os2  pdf  ps  win

@@ -73,6 +73,7 @@ vi_rc DoHelpOnContext( void )
 vi_rc DoHelp( char *data )
 {
     // Use the windows help till we get one of our own
+    LPSTR vi_chmfile = "editor.chm";
     LPSTR vi_helpfile = "editor.hlp";
 #ifdef __NT__
     //LPSTR win_helpfile = "api32wh.hlp";
@@ -83,13 +84,17 @@ vi_rc DoHelp( char *data )
 
     RemoveLeadingSpaces( data );
     if( !strcmp( data, "OnHelp" ) ) {
-       WWinHelp( Root, NULL, HELP_HELPONHELP, 0L );
+        WWinHelp( Root, NULL, HELP_HELPONHELP, 0L );
     } else if( !strcmp( data, "Contents" ) ) {
-       WWinHelp( Root, vi_helpfile, HELP_CONTENTS, 0L );
+        if( !WHtmlHelp( Root, vi_chmfile, HELP_CONTENTS, 0L ) ) {
+            WWinHelp( Root, vi_helpfile, HELP_CONTENTS, 0L );
+        }
     } else if( !strcmp( data, "Search" ) ) {
-       WWinHelp( Root, vi_helpfile, HELP_PARTIALKEY, (DWORD)(LPSTR)"" );
+        if( !WHtmlHelp( Root, vi_chmfile, HELP_PARTIALKEY, (DWORD)(LPSTR)"" ) ) {
+            WWinHelp( Root, vi_helpfile, HELP_PARTIALKEY, (DWORD)(LPSTR)"" );
+        }
     } else {
-       WWinHelp( Root, win_helpfile, HELP_KEY, (DWORD)(LPSTR)data );
+        WWinHelp( Root, win_helpfile, HELP_KEY, (DWORD)(LPSTR)data );
     }
     return ( ERR_NO_ERR );
 }

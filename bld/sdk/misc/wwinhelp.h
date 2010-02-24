@@ -30,3 +30,4 @@
 
 
 BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data );
+BOOL WHtmlHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data );

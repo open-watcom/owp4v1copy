@@ -34,7 +34,16 @@
 #include <string.h>
 #include "mbstring.h"
 #include "wwinhelp.h"
+#ifdef __NT__
+    #include <htmlhelp.h>
+#endif
 
+
+#ifdef __NT__
+typedef HWND (WINAPI *PFNHH)( HWND, LPCSTR, UINT, DWORD_PTR );
+
+static PFNHH    pfnHtmlHelp = NULL;
+#endif
 
 BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
 {
@@ -82,4 +91,42 @@ BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
         if( buff[0] != '\0' ) helpFile = buff;
     }
     return( WinHelp( hwnd, helpFile, fuCommand, data ) );
+}
+
+BOOL WHtmlHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
+{
+#ifdef __NT__
+    char    buff[_MAX_PATH];
+    if( pfnHtmlHelp == NULL ) {
+        HINSTANCE hInstance = LoadLibrary( "HHCTRL.OCX" );
+        if( hInstance == NULL ) {
+            return( FALSE );
+        }
+        pfnHtmlHelp = (PFNHH)GetProcAddress( hInstance, "HtmlHelpA" );
+        if( pfnHtmlHelp == NULL ) {
+            return( FALSE );
+        }
+    }
+    switch( fuCommand ) {
+    case HELP_CONTENTS:
+        fuCommand = HH_DISPLAY_TOC;
+        break;
+    case HELP_PARTIALKEY:
+    case HELP_KEY:
+        fuCommand = HH_DISPLAY_INDEX;
+        break;
+    default:
+        return( FALSE );
+    }
+    _searchenv( helpFile, "WHTMLHELP", buff );
+    if( buff[0] != '\0' ) {
+        helpFile = buff;
+    }
+    return( pfnHtmlHelp( hwnd, helpFile, fuCommand, data ) != NULL );
+#else
+    hwnd = hwnd;
+    helpFile = helpFile;
+    fuCommand = fuCommand;
+    data = data;
+#endif
 }
