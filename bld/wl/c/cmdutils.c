@@ -1034,7 +1034,11 @@ char *FileName( char *buff, unsigned len, file_defext etype, bool force )
         }
         _ChkAlloc( ptr, len + strlen( DefExt[etype] ) + 1 );
         memcpy( ptr, buff, len );
-        strcpy( ptr + len, DefExt[etype] );
+        if( len && ptr[len-1] == '.' ) { //Omit extension
+            ptr[len-1] = 0;
+        } else {                         //Add extension
+	        strcpy( ptr + len, DefExt[etype] );
+		}
     } else {
         ptr = ChkToString( buff, len );
     }
