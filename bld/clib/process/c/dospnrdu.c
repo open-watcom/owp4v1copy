@@ -50,7 +50,9 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
                                   CHAR_TYPE *envpar, const CHAR_TYPE * const argv[] )
 {
     int tid;
-    int pid;
+    int handle;
+    int wait;
+    int rc = -1;
     int fh;
     int len;
     char *p;
@@ -106,14 +108,32 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
     if( ok ) {
         startdir = lib_malloc( _MAX_PATH );
         curdrive = RdosGetCurDrive();
-        RdosGetCurDir( curdrive, startdir );
-        pid = RdosSpawn( pgmname, cmdline, startdir, &tid );
+        startdir[0] = 'a' + ( char )curdrive;
+        startdir[1] = ':';
+        startdir[2] = '\\';
+        RdosGetCurDir( curdrive, &startdir[3] );
+        handle = RdosSpawn( pgmname, cmdline, startdir, &tid );
         lib_free( startdir );
+
+        if( !handle )
+            ok = 0;
     }
-    else
-        pid = 0;
+
+    if( ok ) {
+        if( mode == P_WAIT ) {
+            wait = RdosCreateWait();
+            RdosAddWaitForProcessEnd( wait, handle, 0 );
+            RdosWaitForever( wait );
+            rc = RdosGetProcessExitCode( handle );
+            RdosCloseWait( wait );
+        } 
+        else
+            rc = tid;
+            
+        RdosFreeProcessHandle( handle );                        
+    }
 
     lib_free( p );
 
-    return( pid );
+    return( rc );
 }

@@ -10,7 +10,6 @@
 *
 ****************************************************************************/
 
-
 #ifndef _RDOS_H
 #define _RDOS_H
 
@@ -320,6 +319,9 @@ int RDOSAPI RdosExec(const char *prog, const char *param);
 int RDOSAPI RdosSpawn(const char *prog, const char *param, const char *startdir, int *thread);
 int RDOSAPI RdosSpawnDebug(const char *prog, const char *param, const char *startdir, int *thread);
 void RDOSAPI RdosUnloadExe(int ExitCode);
+void RDOSAPI RdosFreeProcessHandle(int handle);
+int RDOSAPI RdosGetProcessExitCode(int handle);
+void RDOSAPI RdosAddWaitForProcessEnd(int Handle, int ProcessHandle, void *ID);
 int RDOSAPI RdosShowExceptionText();
 void RDOSAPI RdosWaitMilli(int ms);
 void RDOSAPI RdosWaitMicro(int us);
@@ -479,7 +481,7 @@ int RDOSAPI RdosReadBinaryResource(int handle, int ID, char *Buf, int Size);
 void * RDOSAPI RdosGetModuleProc(int handle, const char *ProcName);
 char RDOSAPI RdosGetModuleFocusKey(int handle);
 
-void RDOSAPI RdosAddWaitForDebugEvent(int Handle, int ModuleHandle, void *ID);
+void RDOSAPI RdosAddWaitForDebugEvent(int Handle, int ProcessHandle, void *ID);
 char RDOSAPI RdosGetDebugEvent(int handle, int *thread);
 void RDOSAPI RdosGetDebugEventData(int handle, void *buf);
 void RDOSAPI RdosClearDebugEvent(int handle);
@@ -1201,6 +1203,20 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosUnloadExe = \
     CallGate_unload_exe  \
     parm [eax];
+
+#pragma aux RdosFreeProcessHandle = \
+    CallGate_free_proc_handle  \
+    parm [ebx];
+
+#pragma aux RdosAddWaitForProcessEnd = \
+    CallGate_add_wait_for_proc_end  \
+    parm [ebx] [eax] [ecx];
+
+#pragma aux RdosGetProcessExitCode = \
+    CallGate_get_proc_exit_code  \
+    "movsx eax,ax" \
+    parm [ebx]  \
+    value [eax];
 
 #pragma aux RdosShowExceptionText = \
     CallGate_show_exception_text  \
@@ -2384,38 +2400,111 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetMasterVolume = \
     CallGate_get_master_volume \
-    "movzx ebx,al" \
-    "mov [esi],ebx" \
-    "movzx ebx,ah" \
-    "mov [edi],ebx" \    
+    "mov cx,ax" \
+    "mov dl,0x7F" \
+    "sub dl,al" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov [esi],eax" \    
+    "mov dl,0x7F" \
+    "sub dl,ch" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov [edi],eax" \    
     parm [esi] [edi] \
-    modify [eax ebx];
+    modify [eax cx edx];
 
 #pragma aux RdosSetMasterVolume = \
-    "mov ah,dl" \
+    "mov ecx,edx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bl,0x7F" \
+    "sub bl,al" \
+    "adc bl,0" \
+    "mov eax,ecx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bh,0x7F" \
+    "sub bh,al" \
+    "adc bh,0" \
+    "mov ax,bx" \
     CallGate_set_master_volume \
     parm [eax] [edx] \
-    modify [eax];
+    modify [eax ebx ecx edx esi];
 
 #pragma aux RdosGetLineOutVolume = \
     CallGate_get_line_out_volume \
-    "movzx ebx,al" \
-    "mov [esi],ebx" \
-    "movzx ebx,ah" \
-    "mov [edi],ebx" \    
+    "mov cx,ax" \
+    "mov dl,0x7F" \
+    "sub dl,al" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov [esi],eax" \    
+    "mov dl,0x7F" \
+    "sub dl,ch" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov [edi],eax" \    
     parm [esi] [edi] \
-    modify [eax ebx];
+    modify [eax cx edx];
 
 #pragma aux RdosSetLineOutVolume = \
-    "mov ah,dl" \
+    "mov ecx,edx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bl,0x7F" \
+    "sub bl,al" \
+    "adc bl,0" \
+    "mov eax,ecx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bh,0x7F" \
+    "sub bh,al" \
+    "adc bh,0" \
+    "mov ax,bx" \
     CallGate_set_line_out_volume \
     parm [eax] [edx] \
-    modify [eax];
+    modify [eax ebx ecx edx esi];
 
 #pragma aux RdosCreateAudioOutChannel = \
+    "push eax" \
+    "mov eax,edx" \
+    "shl eax,16" \
+    "xor edx,edx" \
+    "mov ebx,100" \
+    "div ebx" \
+    "sub eax,1" \
+    "adc eax,0" \
+    "mov dx,ax" \
+    "pop eax" \
     CallGate_create_audio_out_channel \
     ValidateHandle \
     parm [eax] [ecx] [edx] \
+    modify [ebx] \
     value [ebx];
 
 #pragma aux RdosCloseAudioOutChannel = \
@@ -3091,6 +3180,19 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosUnloadExe = \
     CallGate_unload_exe  \
     parm [eax];
+
+#pragma aux RdosFreeProcessHandle = \
+    CallGate_free_proc_handle  \
+    parm [bx];
+
+#pragma aux RdosAddWaitForProcessEnd = \
+    CallGate_add_wait_for_proc_end  \
+    parm [bx] [ax] [ecx];
+
+#pragma aux RdosGetProcessExitCode = \
+    CallGate_get_proc_exit_code  \
+    parm [bx]  \
+    value [ax];
 
 #pragma aux RdosShowExceptionText = \
     CallGate_show_exception_text  \
