@@ -230,6 +230,9 @@ $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 
 $(hbook)/$(hbook).chm $(hbook)/$(hbook).chi : ../html/$(hbook).htm
     @if not exist $(hbook) mkdir $(hbook)
+!ifdef book_bmroot
+    $(CPYCMD) $(book_bmroot)$(SL)*.bmp $(hbook) > $(nulldevice)
+!endif
     awk -f ../splithtm.awk -v dir=$(hbook) ../html/$(hbook).htm
     awk -f ../makehhc.awk ../html/$(hbook).htm >$(hbook)/$(hbook).hhc
     awk -f ../makehhk.awk ../html/$(hbook).mix >$(hbook)/$(hbook).hhk

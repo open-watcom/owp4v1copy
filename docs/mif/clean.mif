@@ -38,6 +38,7 @@ clean : .procedure
  @if exist *.bat rm -f *.bat
 
 !ifeq dotarget htmlhelp
+ @for %f in ($(books)) do @rm -f %f/*.bmp
  @for %f in ($(books)) do @rm -f %f/*.htm
  @for %f in ($(books)) do @rm -f %f/*.hh?
  @for %f in ($(books)) do @rm -f %f/*.ch?
