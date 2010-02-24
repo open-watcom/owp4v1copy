@@ -75,7 +75,7 @@ dep_os2 = $(hbook).h
 dep_os2 = $(hbook).h $(hbook).inf $(hbook).hlp
 !endif
 dep_dos = $(hbook).h $(hbook).ihp
-dep_html = $(hbook).html
+dep_html = $(hbook).htm
 dep_htmlhelp = $(hbook)/$(hbook).chm $(hbook)/$(hbook).chi
 dep_ps = $(hbook).ps
 !ifdef hc_pdf
@@ -210,9 +210,9 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
 ####################################################
 !else ifeq dotarget html
 
-.EXTENSIONS: .html
+.EXTENSIONS: .htm
 
-$(hbook).html $(hbook).h : $(book_objs) $(proj_objs)
+$(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 !ifdef book_bmroot
     $(CPYCMD) $(book_bmroot)$(SL)*.bmp $^:. > $(nulldevice)
 !endif
@@ -228,12 +228,12 @@ $(hbook).html $(hbook).h : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .chm .chi
 
-$(hbook)/$(hbook).chm $(hbook)/$(hbook).chi : ../html/$(hbook).html
+$(hbook)/$(hbook).chm $(hbook)/$(hbook).chi : ../html/$(hbook).htm
     @if not exist $(hbook) mkdir $(hbook)
-    awk -f ../splithtm.awk -v dir=$(hbook) ../html/$(hbook).html
-    awk -f ../makehhc.awk ../html/$(hbook).html >$(hbook)/$(hbook).hhc
+    awk -f ../splithtm.awk -v dir=$(hbook) ../html/$(hbook).htm
+    awk -f ../makehhc.awk ../html/$(hbook).htm >$(hbook)/$(hbook).hhc
     awk -f ../makehhk.awk ../html/$(hbook).mix >$(hbook)/$(hbook).hhk
-    awk -f ../makehhp.awk -v hhcfile=$(hbook).hhc -v hhkfile=$(hbook).hhk ../html/$(hbook).html >$(hbook)/$(hbook).hhp
+    awk -f ../makehhp.awk -v hhcfile=$(hbook).hhc -v hhkfile=$(hbook).hhk ../html/$(hbook).htm >$(hbook)/$(hbook).hhp
     -hhc $(hbook)/$(hbook).hhp
 
 ####################################################

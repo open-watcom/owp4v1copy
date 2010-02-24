@@ -170,24 +170,23 @@ typedef struct link_def {
 #define IB_BRACE_R_CHAR         '>'
 
 /**** various file extensions ****/
-#define EXT_INPUT_FILE  ".whp"
-#define EXT_OUTRTF_FILE ".rtf"
-#define EXT_OUTIPF_FILE ".ipf"
+#define EXT_INPUT_FILE      ".whp"
+#define EXT_OUTRTF_FILE     ".rtf"
+#define EXT_OUTIPF_FILE     ".ipf"
+#define EXT_OUTHTML_FILE    ".htm"
 #ifdef __DOS__
-  #define EXT_OUTHTML_FILE ".htm"
-  #define EXT_OUTWIKI_FILE ".wik"
+  #define EXT_OUTWIKI_FILE  ".wik"
 #else
-  #define EXT_OUTHTML_FILE ".html"
-  #define EXT_OUTWIKI_FILE ".wiki"
+  #define EXT_OUTWIKI_FILE  ".wiki"
 #endif
-#define EXT_OUTIB_FILE  ".ib"
-#define EXT_IDX_FILE    ".idx"
-#define EXT_KW_FILE     ".kw"
-#define EXT_BLIST_FILE  ".blt"
-#define EXT_DEF_FILE    ".h"
-#define EXT_HDEF_FILE   ".hh"
-#define EXT_HLP_FILE    ".hlp"
-#define EXT_TBL_FILE    ".tbl"
+#define EXT_OUTIB_FILE      ".ib"
+#define EXT_IDX_FILE        ".idx"
+#define EXT_KW_FILE         ".kw"
+#define EXT_BLIST_FILE      ".blt"
+#define EXT_DEF_FILE        ".h"
+#define EXT_HDEF_FILE       ".hh"
+#define EXT_HLP_FILE        ".hlp"
+#define EXT_TBL_FILE        ".tbl"
 
 /**** Globals ****/
 #ifndef WHPCVT_GBL
