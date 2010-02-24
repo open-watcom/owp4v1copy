@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Manage subroutines and lexical blocks.
 *
 ****************************************************************************/
 
@@ -451,7 +450,7 @@ dw_handle DWENTRY DWFormalParameter(
     dw_size_t                   len;
 
     new = LabelNewHandle( cli );
-    _Validate( parm_type !=NULL );
+    _Validate( parm_type != 0 );
     va_start( args, default_value_type );
     abbrev = default_value_type == DW_DEFAULT_NONE ? AB_FORMAL_PARAMETER
         : AB_FORMAL_PARAMETER_WITH_DEFAULT;
@@ -559,7 +558,7 @@ dw_handle DWENTRY DWVariable(
     abbrev_code                 abbrev;
 
     start_scope = start_scope;
-    _Validate( type !=NULL );
+    _Validate( type != 0 );
     _Validate( name !=NULL );
     new = LabelNewHandle( cli );
     abbrev = AB_VARIABLE;
@@ -611,7 +610,7 @@ dw_handle DWENTRY DWConstant(
     abbrev_code                 abbrev;
 
     start_scope = start_scope;
-    _Validate( type != NULL );
+    _Validate( type != 0 );
     _Validate( name != NULL );
     new = LabelNewHandle( cli );
     abbrev = AB_CONSTANT;
