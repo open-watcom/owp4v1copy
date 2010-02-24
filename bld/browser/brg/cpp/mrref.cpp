@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Merge references.
 *
 ****************************************************************************/
 
@@ -136,7 +135,7 @@ void MergeRefSection::scanFile( MergeFile * file, uint_8 indx,
     uint_32     unitLength;     // length of ref info for this compunit
     uint_32     user;           // referencing die
     uint_32     dependant;      // referenced die
-    uint_16     fileIdx;        // containing file
+    uint_32     fileIdx;        // containing file
     int_32      linecoldelta;   // line / column delta
     uint_32     linecol;        // absolute line / column
     uint_8      opcode;         // state-machine op-code
@@ -179,7 +178,7 @@ void MergeRefSection::scanFile( MergeFile * file, uint_8 indx,
 
         case REF_SET_FILE:
             _outFile->writeByte( opcode );
-            fileIdx = (uint_16) file->readULEB128( DR_DEBUG_REF, offset );
+            fileIdx = file->readULEB128( DR_DEBUG_REF, offset );
             fileIdx = _line.getNewFileIdx( indx, fileIdx );
             _outFile->writeULEB128( fileIdx );
             break;

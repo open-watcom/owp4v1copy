@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Merge DIEs.
 *
 ****************************************************************************/
 
@@ -313,7 +312,7 @@ bool MergeDIE::writeSpecialAttribs( MergeInfoSection * sect,
 {
     MergeFile *     in( inFiles[ _offset.fileIdx ] );
     MergeOffset     ref;
-    uint_8          fileIdx;
+    uint32_t        fileIdx;
 
     switch( att.attrib() ) {
     case DW_AT_sibling:
@@ -322,7 +321,7 @@ bool MergeDIE::writeSpecialAttribs( MergeInfoSection * sect,
         return TRUE;
 
     case DW_AT_decl_file:
-        fileIdx = (uint_8) in->readForm( DR_DEBUG_INFO, offset, att.form(), sect->getAddrSize() );
+        fileIdx = in->readForm( DR_DEBUG_INFO, offset, att.form(), sect->getAddrSize() );
         outFile.writeForm( att.form(),
                             sect->getNewFileIdx( _offset.fileIdx, fileIdx ),
                             sect->getAddrSize() );
