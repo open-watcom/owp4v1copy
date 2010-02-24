@@ -76,6 +76,7 @@ dep_os2 = $(hbook).h $(hbook).inf $(hbook).hlp
 !endif
 dep_dos = $(hbook).h $(hbook).ihp
 dep_html = $(hbook).html
+dep_htmlhelp = $(hbook)/$(hbook).chm $(hbook)/$(hbook).chi
 dep_ps = $(hbook).ps
 !ifdef hc_pdf
 dep_pdf = $(hbook).pdf
@@ -204,7 +205,7 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
 
 ####################################################
 #
-# make html help files
+# make HTML files
 #
 ####################################################
 !else ifeq dotarget html
@@ -217,6 +218,23 @@ $(hbook).html $(hbook).h : $(book_objs) $(proj_objs)
 !endif
     @%make compile_gml_to_xxx
 
+
+####################################################
+#
+# make HTML Help files
+#
+####################################################
+!else ifeq dotarget htmlhelp
+
+.EXTENSIONS: .chm .chi
+
+$(hbook)/$(hbook).chm $(hbook)/$(hbook).chi : ../html/$(hbook).html
+    @if not exist $(hbook) mkdir $(hbook)
+    awk -f ../splithtm.awk -v dir=$(hbook) ../html/$(hbook).html
+    awk -f ../makehhc.awk ../html/$(hbook).html >$(hbook)/$(hbook).hhc
+    awk -f ../makehhk.awk ../html/$(hbook).mix >$(hbook)/$(hbook).hhk
+    awk -f ../makehhp.awk -v hhcfile=$(hbook).hhc -v hhkfile=$(hbook).hhk ../html/$(hbook).html >$(hbook)/$(hbook).hhp
+    -hhc $(hbook)/$(hbook).hhp
 
 ####################################################
 #

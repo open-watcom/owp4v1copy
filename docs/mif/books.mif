@@ -1,75 +1,75 @@
-# help type         dos  html  nt  os2  pdf  ps  win
-# distributed       yes  no    yes yes  no   no  yes
+# help type         dos  html  htmlhelp  nt  os2  pdf  ps  win
+# distributed       yes  no              yes yes  no   no  yes
 #===================================================
-!inject c_readme    dos  html  nt  os2  pdf  ps  win
-!inject cbooks                 nt
+!inject c_readme    dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject cbooks                           nt
 !inject cgdoc
-!inject cguide      dos  html  nt  os2  pdf  ps  win
-!inject cguideq          html           pdf  ps
+!inject cguide      dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject cguideq          html                     pdf  ps
 !inject clbtst
-!inject clib        dos  html  nt  os2  pdf  ps  win
+!inject clib        dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject clib_fox
 !inject clib_nec
 !inject clib_pp
 !inject clibnt
-!inject clibqnx          html           pdf  ps
-!inject clr         dos  html  nt  os2  pdf  ps  win
+!inject clibqnx          html                     pdf  ps
+!inject clr         dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject clslib
-!inject cpplib      dos  html  nt  os2  pdf  ps  win
-!inject cw          dos  html  nt  os2  pdf  ps
-!inject ddespy                 nt                win
+!inject cpplib      dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject cw          dos  html  htmlhelp  nt  os2  pdf  ps
+!inject ddespy                           nt                win
 !inject devguide
-!inject drnt                   nt                win
-!inject drwatcom               nt                win
-!inject ebooks                 nt
-!inject editor                 nt                win
-!inject f77graph    dos  html  nt  os2  pdf  ps  win
-!inject f77lr       dos  html  nt  os2  pdf  ps  win
-!inject f_readme    dos  html  nt  os2  pdf  ps  win
-!inject fbooks                 nt
-!inject fpguide     dos  html  nt  os2  pdf  ps  win
-!inject ftools      dos  html  nt  os2  pdf  ps  win
-!inject fuguide     dos  html  nt  os2  pdf  ps  win
-!inject guitool          html           pdf  ps
-!inject heapwalk               nt                win
-!inject ide                    nt  os2           win
-!inject lguide      dos  html  nt  os2  pdf  ps  win
-!inject pguide      dos  html  nt  os2  pdf  ps  win
-!inject resacc                 nt                win
-!inject rescomp     dos        nt  os2           win
-!inject resdlg                 nt                win
-!inject resedt                 nt                win
-!inject resimg                 nt                win
-!inject resmnu                 nt                win
-!inject resstr                 nt                win
-!inject spy                    nt                win
-!inject tools       dos  html  nt  os2  pdf  ps  win
-!inject trap                            pdf  ps
-!inject vi          dos  html  nt  os2  pdf  ps  win
+!inject drnt                             nt                win
+!inject drwatcom                         nt                win
+!inject ebooks                           nt
+!inject editor                           nt                win
+!inject f77graph    dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject f77lr       dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject f_readme    dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject fbooks                 htmlhelp  nt
+!inject fpguide     dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject ftools      dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject fuguide     dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject guitool          html                     pdf  ps
+!inject heapwalk                         nt                win
+!inject ide                              nt  os2           win
+!inject lguide      dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject pguide      dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject resacc                           nt                win
+!inject rescomp     dos        htmlhelp  nt  os2           win
+!inject resdlg                           nt                win
+!inject resedt                           nt                win
+!inject resimg                           nt                win
+!inject resmnu                           nt                win
+!inject resstr                           nt                win
+!inject spy                              nt                win
+!inject tools       dos  html  htmlhelp  nt  os2  pdf  ps  win
+!inject trap                                      pdf  ps
+!inject vi          dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject wasaxp
-!inject wbrw                   nt  os2           win
-!inject wccerrs     dos  html  nt  os2           win
-!inject wd          dos  html  nt  os2  pdf  ps  win
+!inject wbrw                             nt  os2           win
+!inject wccerrs     dos  html  htmlhelp  nt  os2           win
+!inject wd          dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject wddoc
-!inject wfcerrs     dos        nt  os2           win
+!inject wfcerrs     dos                  nt  os2           win
 !inject wjcerrs
-!inject wlnkerrs               nt                win
-!inject wpperrs     dos  html  nt  os2           win
-!inject wprof       dos        nt  os2           win
-!inject wrcerrs                nt                win
-!inject zoom                   nt                win
-!inject cmix        dos            os2           win # depends on zoom, etc.
-!inject fmix        dos            os2           win # depends on zoom, etc.
-!inject wgmlref                              ps
+!inject wlnkerrs                         nt                win
+!inject wpperrs     dos  html  htmlhelp  nt  os2           win
+!inject wprof       dos                  nt  os2           win
+!inject wrcerrs                          nt                win
+!inject zoom                             nt                win
+!inject cmix        dos                      os2           win # depends on zoom, etc.
+!inject fmix        dos                      os2           win # depends on zoom, etc.
+!inject wgmlref                                        ps
 
 !ifndef dotarget
-!error $$(dotarget) unset for documentation. Must be dos, html, nt, os2, pdf, ps or win.
+!error $$(dotarget) unset for documentation. Must be dos, html, htmlhelp, nt, os2, pdf, ps or win.
 !else
 books=$($(dotarget))
 !endif
 
 !ifeq books
-!error Unsuported dotarget ($(dotarget)) for documentation. Must be dos, html, nt, os2, pdf, ps or win.
+!error Unsuported dotarget ($(dotarget)) for documentation. Must be dos, html, htmlhelp, nt, os2, pdf, ps or win.
 !endif
 
 !ifdef hbook

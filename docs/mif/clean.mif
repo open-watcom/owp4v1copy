@@ -36,3 +36,10 @@ clean : .procedure
  
 # delete generated DOSEMU batch file
  @if exist *.bat rm -f *.bat
+
+!ifeq dotarget htmlhelp
+ @for %f in ($(books)) do @rm -f %f/*.htm
+ @for %f in ($(books)) do @rm -f %f/*.hh?
+ @for %f in ($(books)) do @rm -f %f/*.ch?
+ @for %f in ($(books)) do @if exist %f rmdir %f
+!endif
