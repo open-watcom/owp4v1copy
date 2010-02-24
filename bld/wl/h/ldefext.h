@@ -58,7 +58,11 @@ pick1(  E_QNX,      ".qnx"  )
 #endif
 pick1(  E_SYM,      ".sym"  )
 pick1(  E_LBC,      ".lbc"  )
+#if defined( __UNIX__ )
 pick1(  E_ELF,      ""      )
+#else
+pick1(  E_ELF,      ".elf"  )
+#endif
 pick1(  E_ILK,      ".ilk"  )
 pick1(  E_HEX,      ".hex"  )
 pick1(  E_BIN,      ".bin"  )
