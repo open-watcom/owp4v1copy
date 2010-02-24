@@ -146,7 +146,6 @@ void MergeInfoSection::scanFile( MergeFile * file, uint_8 indx )
 {
     uint_32     len;
     MergeOffset moff( indx, 0 );
-    MergeOffset startOff;
 
     len = file->getDRSizes()[ DR_DEBUG_INFO ];
 
@@ -184,7 +183,7 @@ void MergeInfoSection::readCompUnitHdr( MergeFile * file, MergeOffset& moff )
     }
 }
 
-void MergeInfoSection::readDIE( MergeFile * file, MergeOffset& startOff,
+void MergeInfoSection::readDIE( MergeFile * file, MergeOffset startOff,
                                 MergeDIE * prt, MergeOffset& moff,
                                 uint_32 abbCode )
 //-------------------------------------------------------------------
