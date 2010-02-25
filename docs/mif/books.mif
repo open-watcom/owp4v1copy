@@ -1,5 +1,5 @@
 # help type         dos  html  htmlhelp  nt  os2  pdf  ps  win
-# distributed       yes  no              yes yes  no   no  yes
+# distributed       yes  no    yes       yes yes  no   no  yes
 #===================================================
 !inject c_readme    dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject cbooks                           nt
@@ -17,9 +17,9 @@
 !inject clslib
 !inject cpplib      dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject cw          dos  html  htmlhelp  nt  os2  pdf  ps
-!inject ddespy                           nt                win
+!inject ddespy           html  htmlhelp  nt                win
 !inject devguide
-!inject drnt                             nt                win
+!inject drnt             html  htmlhelp  nt                win
 !inject drwatcom                         nt                win
 !inject ebooks                           nt
 !inject editor           html  htmlhelp  nt                win
@@ -35,14 +35,14 @@
 !inject ide                              nt  os2           win
 !inject lguide      dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject pguide      dos  html  htmlhelp  nt  os2  pdf  ps  win
-!inject resacc                           nt                win
-!inject rescomp     dos        htmlhelp  nt  os2           win
-!inject resdlg                           nt                win
-!inject resedt                           nt                win
-!inject resimg                           nt                win
+!inject resacc           html  htmlhelp  nt                win
+!inject rescomp     dos  html  htmlhelp  nt  os2           win
+!inject resdlg           html  htmlhelp  nt                win
+!inject resedt           html  htmlhelp  nt                win
+!inject resimg           html  htmlhelp  nt                win
 !inject resmnu                           nt                win
 !inject resstr                           nt                win
-!inject spy                              nt                win
+!inject spy              html  htmlhelp  nt                win
 !inject tools       dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject trap                                      pdf  ps
 !inject vi          dos  html  htmlhelp  nt  os2  pdf  ps  win
@@ -57,7 +57,7 @@
 !inject wpperrs     dos  html  htmlhelp  nt  os2           win
 !inject wprof       dos                  nt  os2           win
 !inject wrcerrs                          nt                win
-!inject zoom                             nt                win
+!inject zoom             html  htmlhelp  nt                win
 !inject cmix        dos                      os2           win # depends on zoom, etc.
 !inject fmix        dos                      os2           win # depends on zoom, etc.
 !inject wgmlref                                        ps

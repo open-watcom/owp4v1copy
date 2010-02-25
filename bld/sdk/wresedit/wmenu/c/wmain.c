@@ -1325,7 +1325,9 @@ void CALLBACK WMenuHelpRoutine( void )
 
     einfo = WGetCurrentEditInfo();
     if( einfo ) {
-        WWinHelp( einfo->win, "resmnu.hlp", HELP_CONTENTS, 0 );
+        if( !WHtmlHelp( einfo->win, "resmnu.chm", HELP_CONTENTS, 0 ) ) {
+            WWinHelp( einfo->win, "resmnu.hlp", HELP_CONTENTS, 0 );
+        }
     }
 }
 

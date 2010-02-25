@@ -1465,6 +1465,8 @@ Bool WINEXPORT WdeSplash( HWND hDlg, WORD message,
 
 void CALLBACK WdeHelpRoutine( void )
 {
-    WWinHelp( hWinWdeMain, "resdlg.hlp", HELP_CONTENTS, 0 );
+    if( !WHtmlHelp( hWinWdeMain, "resdlg.chm", HELP_CONTENTS, 0 ) ) {
+        WWinHelp( hWinWdeMain, "resdlg.hlp", HELP_CONTENTS, 0 );
+    }
 }
 

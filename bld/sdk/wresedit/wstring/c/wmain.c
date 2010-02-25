@@ -1150,7 +1150,9 @@ void CALLBACK WStrHelpRoutine( void )
 
     einfo = WGetCurrentEditInfo();
     if( einfo ) {
-        WWinHelp( einfo->win, "resstr.hlp", HELP_CONTENTS, 0 );
+        if( !WHtmlHelp( einfo->win, "resstr.chm", HELP_CONTENTS, 0 ) ) {
+            WWinHelp( einfo->win, "resstr.hlp", HELP_CONTENTS, 0 );
+        }
     }
 }
 

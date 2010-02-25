@@ -391,10 +391,14 @@ BOOL __export FAR PASCAL DDEMainWndProc( HWND hwnd, UINT msg, WPARAM wparam,
             FreeRCString( ai.title );
             break;
         case DDEMENU_HELP_CONTENTS:
-            WWinHelp( hwnd, DDE_HELP_FILE, HELP_CONTENTS, 0 );
+            if( !WHtmlHelp( hwnd, DDE_CHM_FILE, HELP_CONTENTS, 0 ) ) {
+                WWinHelp( hwnd, DDE_HELP_FILE, HELP_CONTENTS, 0 );
+            }
             break;
         case DDEMENU_HELP_SRCH:
-            WWinHelp( hwnd, DDE_HELP_FILE, HELP_PARTIALKEY, (DWORD)"" );
+            if( !WHtmlHelp( hwnd, DDE_CHM_FILE, HELP_PARTIALKEY, (DWORD)"" ) ) {
+                WWinHelp( hwnd, DDE_HELP_FILE, HELP_PARTIALKEY, (DWORD)"" );
+            }
             break;
         case DDEMENU_HELP_ON_HELP:
             WWinHelp( hwnd, HELP_HELP_FILE, HELP_HELPONHELP, 0 );

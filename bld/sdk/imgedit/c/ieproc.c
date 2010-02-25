@@ -718,7 +718,9 @@ MRESULT CALLBACK ClientProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 mp1,
 void IEHelpRoutine( void )
 {
 #ifndef __OS2_PM__
-    WWinHelp( HMainWindow, "resimg.hlp", HELP_CONTENTS, 0 );
+    if( !WHtmlHelp( HMainWindow, "resimg.chm", HELP_CONTENTS, 0 ) ) {
+        WWinHelp( HMainWindow, "resimg.hlp", HELP_CONTENTS, 0 );
+    }
 #endif
 }
 

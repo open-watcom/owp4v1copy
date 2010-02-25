@@ -1184,6 +1184,8 @@ Bool WINEXPORT WRESplash( HWND hDlg, WORD message,
 
 void CALLBACK WREHelpRoutine( void )
 {
-    WWinHelp( WREMainWin, "resedt.hlp", HELP_CONTENTS, 0 );
+    if( !WHtmlHelp( WREMainWin, "resedt.chm", HELP_CONTENTS, 0 ) ) {
+        WWinHelp( WREMainWin, "resedt.hlp", HELP_CONTENTS, 0 );
+    }
 }
 

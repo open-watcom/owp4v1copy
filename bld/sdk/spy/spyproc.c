@@ -401,10 +401,14 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             }
             break;
         case SPY_HELP_CONTENTS:
-            WWinHelp( hwnd, "spy.hlp", HELP_CONTENTS, 0 );
+            if( !WHtmlHelp( hwnd, "spy.chm", HELP_CONTENTS, 0 ) ) {
+                WWinHelp( hwnd, "spy.hlp", HELP_CONTENTS, 0 );
+            }
             break;
         case SPY_HELP_SRCH:
-            WWinHelp( hwnd, "spy.hlp", HELP_PARTIALKEY, (DWORD)"" );
+            if( !WHtmlHelp( hwnd, "spy.chm", HELP_PARTIALKEY, (DWORD)"" ) ) {
+                WWinHelp( hwnd, "spy.hlp", HELP_PARTIALKEY, (DWORD)"" );
+            }
             break;
         case SPY_HELP_ON_HELP:
             WWinHelp( hwnd, "winhelp.hlp", HELP_HELPONHELP, 0 );

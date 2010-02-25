@@ -1194,7 +1194,9 @@ void CALLBACK WAccHelpRoutine( void )
 
     einfo = WGetCurrentEditInfo();
     if( einfo ) {
-        WWinHelp( einfo->win, "resacc.hlp", HELP_CONTENTS, 0 );
+        if( !WHtmlHelp( einfo->win, "resacc.chm", HELP_CONTENTS, 0 ) ) {
+            WWinHelp( einfo->win, "resacc.hlp", HELP_CONTENTS, 0 );
+        }
     }
 }
 
