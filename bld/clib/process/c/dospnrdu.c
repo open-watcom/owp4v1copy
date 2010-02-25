@@ -56,8 +56,6 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
     int fh;
     int len;
     char *p;
-    int curdrive;
-    char *startdir;
     char *drive;
     char *dir;
     char *fname;
@@ -106,14 +104,7 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
     }
 
     if( ok ) {
-        startdir = lib_malloc( _MAX_PATH );
-        curdrive = RdosGetCurDrive();
-        startdir[0] = 'a' + ( char )curdrive;
-        startdir[1] = ':';
-        startdir[2] = '\\';
-        RdosGetCurDir( curdrive, &startdir[3] );
-        handle = RdosSpawn( pgmname, cmdline, startdir, &tid );
-        lib_free( startdir );
+        handle = RdosSpawn( pgmname, cmdline, 0, envpar, &tid );
 
         if( !handle )
             ok = 0;

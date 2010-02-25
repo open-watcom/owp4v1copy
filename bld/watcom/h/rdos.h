@@ -10,6 +10,7 @@
 *
 ****************************************************************************/
 
+
 #ifndef _RDOS_H
 #define _RDOS_H
 
@@ -184,6 +185,7 @@ typedef struct _EXCEPTION_POINTERS {
     CONTEXT *ContextRecord;
 } EXCEPTION_POINTERS;
 
+
 // API functions
 
 void RDOSAPI RdosDebug();
@@ -316,8 +318,8 @@ void RDOSAPI RdosCreatePrioThread(void (*Start)(void *Param), int Prio, const ch
 void RDOSAPI RdosTerminateThread();
 int RDOSAPI RdosGetThreadHandle();
 int RDOSAPI RdosExec(const char *prog, const char *param);
-int RDOSAPI RdosSpawn(const char *prog, const char *param, const char *startdir, int *thread);
-int RDOSAPI RdosSpawnDebug(const char *prog, const char *param, const char *startdir, int *thread);
+int RDOSAPI RdosSpawn(const char *prog, const char *param, const char *startdir, const char *env, int *thread);
+int RDOSAPI RdosSpawnDebug(const char *prog, const char *param, const char *startdir, const char *env, int *thread);
 void RDOSAPI RdosUnloadExe(int ExitCode);
 void RDOSAPI RdosFreeProcessHandle(int handle);
 int RDOSAPI RdosGetProcessExitCode(int handle);
@@ -1171,34 +1173,6 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "movzx eax,ax"  \
     parm [esi] [edi] \
     value [eax];
-
-#pragma aux RdosSpawn = \
-    "xor edx,edx"   \
-    "push fs"   \
-    "mov ax,ds" \
-    "mov fs,ax" \
-    CallGate_spawn_exe  \
-    "pop fs"    \
-    "movzx eax,ax"  \
-    "mov [ecx],eax" \
-    "movzx eax,dx"  \
-    parm [esi] [edi] [ebx] [ecx] \
-    value [eax] \
-    modify [edx];
-
-#pragma aux RdosSpawnDebug = \
-    "mov edx,fs:[0x24]"  \
-    "push fs"   \
-    "mov ax,ds" \
-    "mov fs,ax" \
-    CallGate_spawn_exe  \
-    "pop fs"    \
-    "movzx eax,ax"  \
-    "mov [ecx],eax" \
-    "movzx eax,dx"  \
-    parm [esi] [edi] [ebx] [ecx] \
-    value [eax] \
-    modify [edx];
 
 #pragma aux RdosUnloadExe = \
     CallGate_unload_exe  \
@@ -3148,34 +3122,6 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "movzx eax,ax"  \
     parm [esi] [edi] \
     value [eax];
-
-#pragma aux RdosSpawn = \
-    "xor edx,edx"   \
-    "push fs"   \
-    "mov ax,ds" \
-    "mov fs,ax" \
-    CallGate_spawn_exe  \
-    "pop fs"    \
-    "movzx eax,ax"  \
-    "mov [ecx],eax" \
-    "movzx eax,dx"  \
-    parm [esi] [edi] [ebx] [ecx] \
-    value [eax] \
-    modify [edx];
-
-#pragma aux RdosSpawnDebug = \
-    "mov edx,fs:[0x24]"  \
-    "push fs"   \
-    "mov ax,ds" \
-    "mov fs,ax" \
-    CallGate_spawn_exe  \
-    "pop fs"    \
-    "movzx eax,ax"  \
-    "mov [ecx],eax" \
-    "movzx eax,dx"  \
-    parm [esi] [edi] [ebx] [ecx] \
-    value [eax] \
-    modify [edx];
 
 #pragma aux RdosUnloadExe = \
     CallGate_unload_exe  \

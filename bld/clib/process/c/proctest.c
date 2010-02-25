@@ -131,11 +131,8 @@ int main( int argc, char * const argv[] )
 
         /* Verify expected environment contents */
         env_var = getenv( VAR_NAME );
-
-#ifndef __RDOS__   /* RDOS doesn't support passing environment to child-process yet! */
         VERIFY( env_var );
         VERIFY( !strcmp( env_var, VAR_TEXT ) );
-#endif        
 
         if( NumErrors != 0 ) {
             return( EXIT_FAILURE );

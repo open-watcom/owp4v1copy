@@ -34,6 +34,19 @@
 
 #define FALSE 0
 
+typedef struct RdosPtr48
+{
+    const char *offset;
+    int         sel;
+} TRdosPtr48;
+
+typedef struct RdosSpawnParam
+{
+    TRdosPtr48 param;
+    TRdosPtr48 startdir;
+    TRdosPtr48 env;
+} TRdosSpawnParam;
+
 int RdosCarryToBool();
 
 #pragma aux RdosCarryToBool = \
@@ -74,6 +87,11 @@ void RdosCreatePrioThread( void (*Start)(void *Param), int Prio, const char *Nam
 {
     _beginthread( Start, Name, StackSize, Param );
 }
+
+void RdosSpawnBase();
+
+#pragma aux RdosSpawnBase = \
+    CallGate_spawn_exe;
 
 void RdosBlit( int SrcHandle, int DestHandle, int width, int height, int SrcX, int SrcY, int DestX, int DestY )
 {
@@ -253,4 +271,139 @@ int RdosReadBinaryResource( int handle, int ID, char *Buf, int Size )
     return( RcSize );
 }
 
+int RdosSpawn( const char *prog, const char *param, const char *startdir, const char *env, int *thread )
+{
+    TRdosSpawnParam p;
+    TRdosSpawnParam *pp;    
+    int flatdata = 0;
+    int ok = 0;
+    int threadid = 0;
+    int handle = 0;
+
+    _asm {
+        mov eax,ds
+        mov flatdata,eax
+    }
+
+    if( param ) {
+        p.param.offset = param;
+        p.param.sel = flatdata;
+    }
+    else {
+        p.param.offset = 0;
+        p.param.sel = 0;
+    }
+
+    if( startdir ) {
+        p.startdir.offset = startdir;
+        p.startdir.sel = flatdata;
+    }
+    else {
+        p.startdir.offset = 0;
+        p.startdir.sel = 0;
+    }
+
+    if( env ) {
+        p.env.offset = env;
+        p.env.sel = flatdata;
+    }
+    else {
+        p.env.offset = 0;
+        p.env.sel = 0;
+    }
+
+    pp = &p; 
+
+    _asm {
+        mov esi,prog
+        mov edi,pp
+        xor edx,edx
+    }
+    RdosSpawnBase();
+    _asm {
+        movzx eax,ax
+        mov threadid,eax
+        movzx edx,dx
+        mov handle,edx
+    }
+    RdosCarryToBool();
+    _asm {
+        mov ok,eax
+    }    
+
+    if( ok ) {
+        *thread = threadid;
+        return( handle );
+    }        
+    else
+        return( 0 );
+}
+
+int RdosSpawnDebug( const char *prog, const char *param, const char *startdir, const char *env, int *thread )
+{
+    TRdosSpawnParam p;
+    TRdosSpawnParam *pp;    
+    int flatdata = 0;
+    int ok = 0;
+    int threadid = 0;
+    int handle = 0;
+
+    _asm {
+        mov eax,ds
+        mov flatdata,eax
+    }
+
+    if( param ) {
+        p.param.offset = param;
+        p.param.sel = flatdata;
+    }
+    else {
+        p.param.offset = 0;
+        p.param.sel = 0;
+    }
+
+    if( startdir ) {
+        p.startdir.offset = startdir;
+        p.startdir.sel = flatdata;
+    }
+    else {
+        p.startdir.offset = 0;
+        p.startdir.sel = 0;
+    }
+
+    if( env ) {
+        p.env.offset = env;
+        p.env.sel = flatdata;
+    }
+    else {
+        p.env.offset = 0;
+        p.env.sel = 0;
+    }
+
+    pp = &p; 
+
+    _asm {
+        mov esi,prog
+        mov edi,pp
+        mov edx,fs:[0x24]
+    }
+    RdosSpawnBase();
+    _asm {
+        movzx eax,ax
+        mov threadid,eax
+        movzx edx,dx
+        mov handle,edx
+    }
+    RdosCarryToBool();
+    _asm {
+        mov ok,eax
+    }    
+
+    if( ok ) {
+        *thread = threadid;
+        return( handle );
+    }        
+    else
+        return( 0 );
+}
 
