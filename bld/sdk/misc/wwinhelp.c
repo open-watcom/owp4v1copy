@@ -128,5 +128,6 @@ BOOL WHtmlHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
     helpFile = helpFile;
     fuCommand = fuCommand;
     data = data;
+    return( FALSE );
 #endif
 }
