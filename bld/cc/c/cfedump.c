@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-// dump routines
 #include "cvars.h"
 #include "cgdefs.h"
 
@@ -298,5 +297,184 @@ void DumpProgram( void )
         }
         DumpStmt( tree );
         tree = tree->left;
+    }
+}
+
+static void DumpDQuad( DATA_QUAD *dq, unsigned long *psize )
+{
+    cg_type             data_type;
+    int                 size_of_item;
+    unsigned long       amount;
+    SYM_ENTRY           sym;
+
+    if( dq->flags & Q_NEAR_POINTER ) {
+        data_type = T_NEAR_POINTER;
+        size_of_item = TARGET_NEAR_POINTER;
+    } else if( dq->flags & Q_FAR_POINTER ) {
+        data_type = T_LONG_POINTER;
+        size_of_item = TARGET_FAR_POINTER;
+    } else if( dq->flags & Q_CODE_POINTER ) {
+        data_type = T_CODE_PTR;
+        size_of_item = TARGET_POINTER;
+#if _CPU == 8086
+        if( TargetSwitches & BIG_CODE ) {
+            size_of_item = TARGET_FAR_POINTER;
+        }
+#endif
+    } else {
+        data_type = T_POINTER;
+        size_of_item = TARGET_POINTER;
+#if _CPU == 8086
+        if( TargetSwitches & BIG_DATA ) {
+            size_of_item = TARGET_FAR_POINTER;
+        }
+#endif
+    }
+    switch( dq->type ) {
+    case QDT_STATIC:
+        printf( "%6lu bytes (QDT_STATIC): segment %d\n",
+                0, sym.u.var.segment );
+        *psize = 0;
+        break;
+    case QDT_CHAR:
+    case QDT_UCHAR:
+    case QDT_BOOL:
+        amount = sizeof( char );
+        printf( "%6lu byte char (%s): %d\n",
+                amount, dq->type == QDT_CHAR ? "QDT_CHAR" :
+                dq->type == QDT_UCHAR ? "QDT_UCHAR" : "QDT_BOOL",
+                dq->u.long_values[0] );
+        *psize += amount;
+        if( dq->flags & Q_2_INTS_IN_ONE ) {
+            printf( "%6lu byte second char: %d\n",
+                    dq->u.long_values[1] );
+            *psize += amount;
+        }
+        break;
+    case QDT_SHORT:
+    case QDT_USHORT:
+        amount = sizeof( target_short );
+        printf( "%6lu byte short (%s): %d\n",
+                amount, dq->type == QDT_SHORT ? "QDT_SHORT" :
+                "QDT_UINT", dq->u.long_values[0] );
+        *psize += amount;
+        if( dq->flags & Q_2_INTS_IN_ONE ) {
+            printf( "%6lu byte second short: %d\n",
+                    dq->u.long_values[1] );
+            *psize += amount;
+        }
+        break;
+    case QDT_INT:
+    case QDT_UINT:
+        amount = sizeof( target_int );
+        printf( "%6lu byte int (%s): %d\n",
+                amount, dq->type == QDT_INT ? "QDT_INT" :
+                "QDT_UINT", dq->u.long_values[0] );
+        *psize += amount;
+        if( dq->flags & Q_2_INTS_IN_ONE ) {
+            printf( "%6lu byte second int: %d\n",
+                    dq->u.long_values[1] );
+            *psize += amount;
+        }
+        break;
+    case QDT_LONG:
+    case QDT_ULONG:
+        amount = sizeof( target_long );
+        printf( "%6lu byte long (%s): %d\n",
+                amount, dq->type == QDT_LONG ? "QDT_LONG" :
+                "QDT_ULONG", dq->u.long_values[0] );
+        *psize += amount;
+        if( dq->flags & Q_2_INTS_IN_ONE ) {
+            printf( "%6lu byte second long: %d\n",
+                    dq->u.long_values[1] );
+            *psize += amount;
+        }
+        break;
+    case QDT_LONG64:
+    case QDT_ULONG64:
+        amount = sizeof( int64 );
+        printf( "%6lu byte long long (%s)\n",
+                amount, dq->type == QDT_LONG64 ? "QDT_LONG64" :
+                "QDT_ULONG64" );
+        *psize += amount;
+        break;
+    case QDT_FLOAT:
+    case QDT_FIMAGINARY:
+        amount = sizeof( float );
+        printf( "%6lu byte float (%s): %f\n",
+                amount, dq->type == QDT_FLOAT ? "QDT_FLOAT" :
+                "QDT_IMAGINARY", dq->u.double_value );
+        *psize += amount;
+        break;
+    case QDT_DOUBLE:
+    case QDT_DIMAGINARY:
+        amount = sizeof( double );
+        printf( "%6lu byte double (%s): %f\n",
+                amount, dq->type == QDT_DOUBLE ? "QDT_DOUBLE" :
+                "QDT_DIMAGINARY", dq->u.double_value );
+        *psize += amount;
+        break;
+    case QDT_LONG_DOUBLE:
+    case QDT_LDIMAGINARY:
+        amount = sizeof( long_double );
+        printf( "%6lu byte long double (%s)\n",
+                amount, dq->type == QDT_DOUBLE ? "QDT_LONG_DOUBLE" :
+                "QDT_LDIMAGINARY" );
+        *psize += amount;
+        break;
+    case QDT_STRING:
+        amount = size_of_item;
+        printf( "%6lu byte string (QDT_STRING): \"%s\"\n", amount,
+                dq->u.string_leaf->literal );
+        *psize += amount;
+        break;
+    case QDT_POINTER:
+    case QDT_ID:
+        amount = size_of_item;
+        printf( "%6lu byte pointer (%s): offset %x\n",
+                amount, dq->type == QDT_POINTER ? "QDT_POINTER" :
+                "QDT_ID", dq->u.var.offset );
+        *psize += amount;
+        break;
+    case QDT_CONST:
+        amount = dq->u.string_leaf->length;
+        printf( "%6lu byte long literal (QDT_CONST): \"%s\"\n", amount,
+                dq->u.string_leaf->literal );
+        *psize += amount;
+        break;
+    case QDT_CONSTANT:
+        amount = dq->u.long_values[0];
+        printf( "%6lu zero bytes (QDT_CONSTANT)\n", amount );
+        *psize += amount;
+        break;
+    default:
+        assert( 0 );
+    }
+}
+
+void DumpDataQuads( void )
+{
+    DATA_QUAD       *dq;
+    void            *cookie;
+    unsigned long   size;
+
+    cookie = StartDataQuadAccess();
+    if( cookie != NULL ) {
+        size = 0;
+        printf( "=== Data Quads ===\n" );
+        for( ;; ) {
+            dq = NextDataQuad();
+            if( dq == NULL )
+                break;
+            for( ;; ) {
+                DumpDQuad( dq, &size );
+                if( ! (dq->flags & Q_REPEATED_DATA) )
+                    break;
+                dq->u.long_values[1]--;
+                if( dq->u.long_values[1] == 0 )
+                    break;
+            }
+        }
+        EndDataQuadAccess( cookie );
     }
 }

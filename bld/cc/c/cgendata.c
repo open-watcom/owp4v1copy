@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include "cvars.h"
 #include "cg.h"
 #include "cgdefs.h"
@@ -66,7 +67,7 @@ void EmitDataQuads( void )
 {
     DATA_QUAD   *dq;
 
-    if( StartDataQuadAccess() != 0 ) {
+    if( StartDataQuadAccess() != NULL ) {
         for(;;) {
             dq = NextDataQuad();
             if( dq == NULL ) break;

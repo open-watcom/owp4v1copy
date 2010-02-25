@@ -124,13 +124,21 @@ void FreeDataQuads( void )
     InitDataQuads();
 }
 
-int StartDataQuadAccess( void )
+void *StartDataQuadAccess( void )
 {
+    void    *cur_dqp;
+
     if( DataQuadsAvailable() ) {
+        cur_dqp = CurDataQuad;
         CurDataQuad = DataQuadSegs[ 0 ]->next;
-        return( 1 );                    // indicate data quads exist
+        return( cur_dqp );              // indicate data quads exist
     }
-    return( 0 );                        // indicate no data quads
+    return( NULL );                     // indicate no data quads
+}
+
+void EndDataQuadAccess( void *p )
+{
+    CurDataQuad = p;
 }
 
 DATA_QUAD *NextDataQuad( void )

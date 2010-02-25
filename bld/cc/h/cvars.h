@@ -504,7 +504,8 @@ extern  void    SetSegSymHandle( SYM_HANDLE sym_handle, int segment );
 extern  void    InitDataQuads(void);            /* cdinit */
 extern  void    FreeDataQuads(void);            /* cdinit */
 extern  int     DataQuadsAvailable(void);       /* cdinit */
-extern  int     StartDataQuadAccess(void);      /* cdinit */
+extern  void *  StartDataQuadAccess( void );    /* cdinit */
+extern  void    EndDataQuadAccess( void * );    /* cdinit */
 extern  DATA_QUAD *NextDataQuad(void);          /* cdinit */
 extern  void    InitSymData(TYPEPTR,TYPEPTR,int);       /* cdinit */
 extern  void    StaticInit(SYMPTR,SYM_HANDLE);  /* cdinit */
