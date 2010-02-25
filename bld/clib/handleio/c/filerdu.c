@@ -43,8 +43,156 @@
 #include <sys/stat.h>
 #include <share.h>
 #include <time.h>
+#include "liballoc.h"
+#include "rtdata.h"
+#include "rtinit.h"
 
 #define FILE_HANDLE 0x3AB60000
+
+/* values for type */
+#define HANDLE_TYPE_FILE    0
+#define HANDLE_TYPE_INPUT   1
+#define HANDLE_TYPE_OUTPUT  2
+
+typedef struct rdos_handle_type
+{
+    int rdos_handle;
+    int access;
+    int ref_count;
+    char type;
+} rdos_handle_type;
+
+rdos_handle_type **handle_ptr;
+int handle_count;
+int handle_section;
+
+rdos_handle_type *AllocHandleObj( void )
+{
+    rdos_handle_type *h;
+
+    h = ( rdos_handle_type * )lib_malloc( sizeof( rdos_handle_type ) );
+    h->rdos_handle = HANDLE_TYPE_FILE;
+    h->access = 0;
+    h->type = 0;
+    h->ref_count = 1;
+    return( h );
+}
+
+void FreeHandleObj( rdos_handle_type *h)
+{
+    h->ref_count--;
+
+    if( h->ref_count == 0 ) {
+        if( h->rdos_handle )
+            RdosCloseFile( h->rdos_handle );
+        lib_free( h );
+    }
+}
+
+void GrowHandleArr( void )
+{
+    int                 i;
+    int                 new_count;
+    rdos_handle_type  **new_ptr;
+
+    new_count = 1 + handle_count / 2;
+    new_ptr = ( rdos_handle_type ** )lib_malloc( new_count * sizeof( rdos_handle_type * ) );
+
+    for( i = 0; i < handle_count; i++ )
+        new_ptr[i] = handle_ptr[i];
+    
+    for( i = handle_count; i < new_count; i++ )
+        new_ptr[i] = 0;
+
+    lib_free( handle_ptr );
+    handle_ptr = new_ptr;
+    handle_count = new_count;
+}
+    
+int AllocHandleEntry( void )
+{
+    int i;
+
+    RdosEnterSection( handle_section );
+
+    for( i = 0; i < handle_count; i++)
+        if( handle_ptr[i] == 0 )
+            break;
+
+    if( i == handle_count )
+        GrowHandleArr();
+
+    RdosLeaveSection( handle_section );
+
+    return( i );
+}
+    
+void FreeHandleEntry( int handle )
+{
+    RdosEnterSection( handle_section );
+
+    if( handle >= 0 && handle < handle_count ) {
+        if( handle_ptr[handle] ) {
+            FreeHandleObj( handle_ptr[handle]);
+            handle_ptr[handle] = 0;
+        }
+    }
+
+    RdosLeaveSection( handle_section );
+}
+    
+rdos_handle_type *LockHandle( int handle )
+{
+    RdosEnterSection( handle_section );
+
+    if( handle >= 0 && handle < handle_count )
+        return( handle_ptr[handle] );
+    else
+        return( 0 );
+}
+
+void UnlockHandle( void ) 
+{
+    RdosLeaveSection( handle_section );
+}
+
+void InitHandle( void )
+{
+    int i;
+    rdos_handle_type *h;
+
+    handle_section = RdosCreateSection();    
+    handle_count = 5;
+    handle_ptr = ( rdos_handle_type ** )lib_malloc( handle_count * sizeof( rdos_handle_type * ) );
+
+    for( i = 0; i < handle_count; i++ )
+        handle_ptr[i] = 0;
+
+    h = AllocHandleObj();
+    h->type = HANDLE_TYPE_INPUT;
+    handle_ptr[0] = h;
+
+    h = AllocHandleObj();
+    h->type = HANDLE_TYPE_OUTPUT;
+    handle_ptr[1] = h;
+
+    h = AllocHandleObj();
+    h->type = HANDLE_TYPE_OUTPUT;
+    handle_ptr[2] = h;        
+}
+
+void FiniHandle( void )
+{
+    int i;
+
+    for( i = 0; i < handle_count; i++ )
+        if( handle_ptr[i] )
+            FreeHandleObj( handle_ptr[i] );
+
+    lib_free( handle_ptr );
+
+    RdosDeleteSection( handle_section );
+}
 
 _WCRTLINK int unlink( const CHAR_TYPE *filename ) 
 {
@@ -345,3 +493,6 @@ _WCRTLINK int write( int handle, const void *buffer, unsigned len )
 {
     return( RdosWriteFile( handle, buffer, len ) );
 }
+
+AXI(InitHandle,INIT_PRIORITY_LIBRARY);
+AYI(FiniHandle,INIT_PRIORITY_LIBRARY);
