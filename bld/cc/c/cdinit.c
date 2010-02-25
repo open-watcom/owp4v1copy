@@ -211,6 +211,7 @@ local void SplitDataQuad( DATA_QUAD_LIST *dql, unsigned long size )
     }
     if( size != 0 ) {
         /* can't happen ! */
+        CErr2p( ERR_FATAL_ERROR, "Bad initializer quad" );
         CSuicide();
     }
 }
