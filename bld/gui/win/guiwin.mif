@@ -90,7 +90,8 @@ sysobjs = guixscal.obj &
           wmdisim.obj  &
           wptoolbr.obj &
           guiclen.obj  &
-          ctl3d32.obj
+          ctl3d32.obj  &
+	  wwinhelp.obj
 
 !ifeq host_OS os2
 sysobjs +=             &

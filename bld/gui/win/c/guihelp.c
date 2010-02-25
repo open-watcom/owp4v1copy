@@ -34,6 +34,9 @@
 #include <string.h>
 #include "mbstring.h"
 #include "guiwind.h"
+#ifndef __OS2_PM__
+    #include "wwinhelp.h"
+#endif
 
 extern  WPI_INST        GUIMainHInst;
 
@@ -120,56 +123,6 @@ bool DisplayHelpContext( gui_help_instance inst, HWND hwnd, char *file, char *to
 }
 
 #else
-
-
-BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
-{
-    char        buff[_MAX_PATH];
-    static char open=FALSE;
-
-    if( fuCommand == HELP_QUIT && !open ) return( FALSE );
-    open = TRUE;
-
-    if( helpFile != NULL ) {
-        if( __IsDBCS ) {
-            /* Look for Japanese version of help file first */
-
-            char        drive[_MAX_DRIVE];
-            char        dir[_MAX_DIR];
-            char        fname[_MAX_FNAME];
-            char        ext[_MAX_EXT];
-            char    new_filename[_MAX_PATH];
-
-            _splitpath( helpFile, drive, dir, fname, ext );
-            if( strlen( fname ) < 8 ) {
-                strcat( fname, "j" );
-            } else {
-                fname[7] = 'j';
-            }
-            _makepath( new_filename, drive, dir, fname, ext );
-
-            if( new_filename != NULL ) {
-                _searchenv( new_filename, "WWINHELP", buff );
-                if( buff[0] != '\0' ) {
-                    helpFile = buff;
-                    return( WinHelp( hwnd, helpFile, fuCommand, data ) );
-                }
-                _searchenv( new_filename, "PATH", buff );
-                if( buff[0] != '\0' ) {
-                    helpFile = buff;
-                    return( WinHelp( hwnd, helpFile, fuCommand, data ) );
-                }
-            }
-        }
-
-        /* Can't find the Japanese version, just look for the english one */
-
-        _searchenv( helpFile, "WWINHELP", buff );
-        if( buff[0] != '\0' ) helpFile = buff;
-    }
-    return( WinHelp( hwnd, helpFile, fuCommand, data ) );
-}
-
 
 static gui_help_instance InitHelp( HWND hwnd, WPI_INST inst, char *title, char *help_file )
 {
