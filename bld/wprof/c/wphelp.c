@@ -46,8 +46,8 @@ STATIC gui_help_instance    helpHandle;
 extern a_window             *WndMain;
 extern path_list            *HelpPathList;
 
-#define HELPNAME "wprof.hlp"
-
+#define HELPNAME        "wprof.hlp"
+#define HTMLHELPNAME    "wprof.chm"
 
 
 void WPInitHelp( void )
@@ -75,6 +75,11 @@ void WPProcHelp( gui_help_actions action )
     char *      filename;
 #endif
 
+#ifdef __NT__
+    if( GUIShowHtmlHelp( helpHandle, WndGui( WndMain ), action, HTMLHELPNAME, "" ) ) {
+        return;
+    }
+#endif
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || defined( __OS2_PM__ )
     strcpy( help_name, HELPNAME );
 #else
@@ -84,5 +89,5 @@ void WPProcHelp( gui_help_actions action )
         return;
     }
 #endif
-    GUIShowHelp( helpHandle, WndGui( WndMain ), action, help_name, "Contents" );
+    GUIShowHelp( helpHandle, WndGui( WndMain ), action, help_name, "" );
 }

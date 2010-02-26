@@ -97,7 +97,10 @@ void DoProcHelp( gui_help_actions action )
 #else
     LocateHelpFile();
 #endif
-    if( Handle == 0 || !GUIShowHelp( Handle, WndGui( WndMain ), action, TxtBuff, "Contents" ) ) {
+    if( GUIShowHtmlHelp( Handle, WndGui( WndMain ), action, HELPNAME ".chm", "" ) ) {
+        return;
+    }
+    if( Handle == 0 || !GUIShowHelp( Handle, WndGui( WndMain ), action, TxtBuff, "" ) ) {
         Error( ERR_NONE, LIT( ERR_FILE_NOT_OPEN ), TxtBuff );
     }
 }

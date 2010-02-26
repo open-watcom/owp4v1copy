@@ -97,13 +97,14 @@ static gui_menu_struct helpMenu[] = {
     { "&Contents", MENU_HELP_CONTENTS, GUI_ENABLED,
                             "Show help contents" },
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || defined( __OS2_PM__ )
-    { "&On Help", MENU_HELP_ONHELP, GUI_ENABLED,
-                            "Show Help about Help" },
-    { "&Search", MENU_HELP_SEARCH, GUI_ENABLED,
+    { "&Search for Help on...", MENU_HELP_SEARCH, GUI_ENABLED,
                             "Search help for a topic" },
+    { "", 0, GUI_SEPARATOR },
+    { "&How to Use Help", MENU_HELP_ONHELP, GUI_ENABLED,
+                            "Show Help about Help" },
 #endif
     { "", 0, GUI_SEPARATOR },
-    { "&About", MENU_ABOUT, GUI_ENABLED, "Display program information" },
+    { "&About...", MENU_ABOUT, GUI_ENABLED, "Display program information" },
 };
 
 

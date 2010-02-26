@@ -166,6 +166,15 @@ bool DisplayHelpSearch( gui_help_instance inst, HWND hwnd, char *file, char *top
     return( WWinHelp( hwnd, file, (UINT)HELP_PARTIALKEY, (DWORD)(LPCSTR)topic ) );
 }
 
+bool DisplayHelpSearchHH( gui_help_instance inst, HWND hwnd, char *file, char *topic )
+{
+    inst = inst;
+    if( topic == NULL ) {
+        topic = "";
+    }
+    return( WHtmlHelp( hwnd, file, (UINT)HELP_PARTIALKEY, (DWORD)(LPCTSTR)topic ) );
+}
+
 bool DisplayHelpContext( gui_help_instance inst, HWND hwnd, char *file, char *topic )
 {
     inst=inst;
@@ -236,6 +245,9 @@ bool GUIShowHtmlHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions 
     switch( act ) {
     case GUI_HELP_CONTENTS:
         ret = DisplayContentsHH( inst, wnd->hwnd, file );
+        break;
+    case GUI_HELP_SEARCH:
+        ret = DisplayHelpSearchHH( inst, wnd->hwnd, file, topic );
         break;
     case GUI_HELP_KEY:
         ret = DisplayHelpKeyHH( inst, wnd->hwnd, file, topic );

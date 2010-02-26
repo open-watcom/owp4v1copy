@@ -20,8 +20,8 @@
 !inject ddespy           html  htmlhelp  nt                win
 !inject devguide
 !inject drnt             html  htmlhelp  nt                win
-!inject drwatcom                         nt                win
-!inject ebooks                           nt
+!inject drwatcom         html  htmlhelp  nt                win
+!inject ebooks           html  htmlhelp  nt
 !inject editor           html  htmlhelp  nt                win
 !inject f77graph    dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject f77lr       dos  html  htmlhelp  nt  os2  pdf  ps  win
@@ -31,8 +31,8 @@
 !inject ftools      dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject fuguide     dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject guitool          html                     pdf  ps
-!inject heapwalk                         nt                win
-!inject ide                              nt  os2           win
+!inject heapwalk         html  htmlhelp  nt                win
+!inject ide              html  htmlhelp  nt  os2           win
 !inject lguide      dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject pguide      dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject resacc           html  htmlhelp  nt                win
@@ -40,23 +40,23 @@
 !inject resdlg           html  htmlhelp  nt                win
 !inject resedt           html  htmlhelp  nt                win
 !inject resimg           html  htmlhelp  nt                win
-!inject resmnu                           nt                win
-!inject resstr                           nt                win
+!inject resmnu           html  htmlhelp  nt                win
+!inject resstr           html  htmlhelp  nt                win
 !inject spy              html  htmlhelp  nt                win
 !inject tools       dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject trap                                      pdf  ps
 !inject vi          dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject wasaxp
-!inject wbrw                             nt  os2           win
+!inject wbrw             html  htmlhelp  nt  os2           win
 !inject wccerrs     dos  html  htmlhelp  nt  os2           win
 !inject wd          dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject wddoc
-!inject wfcerrs     dos                  nt  os2           win
+!inject wfcerrs     dos  html  htmlhelp  nt  os2           win
 !inject wjcerrs
-!inject wlnkerrs                         nt                win
+!inject wlnkerrs         html  htmlhelp  nt                win
 !inject wpperrs     dos  html  htmlhelp  nt  os2           win
-!inject wprof       dos                  nt  os2           win
-!inject wrcerrs                          nt                win
+!inject wprof       dos  html  htmlhelp  nt  os2           win
+!inject wrcerrs          html  htmlhelp  nt                win
 !inject zoom             html  htmlhelp  nt                win
 !inject cmix        dos                      os2           win # depends on zoom, etc.
 !inject fmix        dos                      os2           win # depends on zoom, etc.

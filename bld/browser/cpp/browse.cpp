@@ -77,7 +77,8 @@ static MIMenuID BrowseMenus[] = {
     MIMenuID( MMHelp, HMAbout ),
 };
 
-#define _BrowseHelpFile "wbrw.hlp"
+#define _BrowseHelpFile     "wbrw.hlp"
+#define _BrowseHtmlHelpFile "wbrw.chm"
 
 #define NumBrowseMenus ( sizeof( BrowseMenus ) / sizeof( MIMenuID ) )
 
@@ -125,7 +126,8 @@ Browse::Browse( char * cmdLine )
 
     browseTop = this;
     topWindow = browseTop;
-    _helpInfo = new WSystemHelp( this, BrowseTitle, _BrowseHelpFile );
+    _helpInfo = new WSystemHelp( this, BrowseTitle, _BrowseHelpFile,
+                                 _BrowseHtmlHelpFile );
 
     setIcon( WBRWIcon );
     setupMenus();

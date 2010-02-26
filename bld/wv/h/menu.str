@@ -420,16 +420,16 @@ MENU_STR( XContents,
         "j&Contents",
           "Show help contents",
           "jShow help contents" )
-MENU_STR( XOn_Help,
-        "&On Help",
-        "j&On Help",
-          "Show Help about Help",
-          "jShow Help about Help" )
 MENU_STR( XSearch,
-        "&Search",
-        "j&Search",
+        "&Search for Help on...",
+        "j&Search for Help on...",
           "Search help for a topic",
           "jSearch help for a topic" )
+MENU_STR( XOn_Help,
+        "&How to Use Help",
+        "j&How to Use Help",
+          "Show Help about Help",
+          "jShow Help about Help" )
 MENU_STR( XAbout_,
         "&About...",
         "j&About...",

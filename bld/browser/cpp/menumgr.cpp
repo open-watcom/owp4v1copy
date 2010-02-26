@@ -172,7 +172,7 @@ static SubMenuInfo OptionsMenuInfo[ OMNumOptionsMenus ] = {
 #define _HelpMenuInformation            "&Product Information"
 #else
 #define _HelpMenuContents               "&Contents"
-#define _HelpMenuIndex                  "&Search for Help On..."
+#define _HelpMenuIndex                  "&Search for Help on..."
 #define _HelpMenuIndexHint              "Search for topic"
 #define _HelpMenuUsing                  "&How to Use Help"
 #define _HelpMenuInformation            "&About..."
@@ -181,8 +181,9 @@ static SubMenuInfo OptionsMenuInfo[ OMNumOptionsMenus ] = {
 static SubMenuInfo HelpMenuInfo[ HMNumHelpMenus ] = {
     { MMHelp, HMContents,       _HelpMenuContents,      "View table of contents" },
     { MMHelp, HMSearch,         _HelpMenuIndex,         _HelpMenuIndexHint },
-    { MMHelp, HMUsingHelp,      _HelpMenuUsing,         "View help on using help" },
     { MMHelp, HMSep0,           NULL,                   NULL },
+    { MMHelp, HMUsingHelp,      _HelpMenuUsing,         "View help on using help" },
+    { MMHelp, HMSep1,           NULL,                   NULL },
     { MMHelp, HMAbout,          _HelpMenuInformation,   "View product information for the source browser" },
 };
 
