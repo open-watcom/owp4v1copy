@@ -90,8 +90,7 @@ sysobjs = guixscal.obj &
           wmdisim.obj  &
           wptoolbr.obj &
           guiclen.obj  &
-          ctl3d32.obj  &
-	  wwinhelp.obj
+          ctl3d32.obj
 
 !ifeq host_OS os2
 sysobjs +=             &
@@ -100,7 +99,8 @@ sysobjs +=             &
 !else
 sysobjs +=             &
           fontstr.obj  &
-          windlg.obj
+          windlg.obj   &
+	  wwinhelp.obj
 !endif
 
 # memory tracker cover routines

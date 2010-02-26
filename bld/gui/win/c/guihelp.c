@@ -232,6 +232,7 @@ bool GUIShowHtmlHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions 
 
     ret = FALSE;
 
+#ifndef __OS2_PM__
     switch( act ) {
     case GUI_HELP_CONTENTS:
         ret = DisplayContentsHH( inst, wnd->hwnd, file );
@@ -240,6 +241,7 @@ bool GUIShowHtmlHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions 
         ret = DisplayHelpKeyHH( inst, wnd->hwnd, file, topic );
         break;
     }
+#endif
 
     return( ret );
 }
