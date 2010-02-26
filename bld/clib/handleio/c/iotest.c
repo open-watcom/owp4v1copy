@@ -300,7 +300,6 @@ void TestDup( void )
     status = close( handle2 );
     VERIFY( status == 0 );
 
-#if !defined( __RDOS__ )    /* RDOS does not support dup2 */
     handle2 = handle1 + 1;
     status = dup2( handle1, handle2 );
     // NB: the return value of dup2() differs between POSIX and traditional
@@ -315,7 +314,6 @@ void TestDup( void )
 
     status = close( handle2 );
     VERIFY( status == 0 );
-#endif
 
     status = close( handle1 );
     VERIFY( status == 0 );
@@ -398,7 +396,7 @@ void TestUnlink( void )
     status = close( handle );
     VERIFY( status == 0 );
 
-#ifndef __UNIX__ // This call would succeed
+#if !defined( __UNIX__ ) && !defined( __RDOS__ ) // This call would succeed
     status = unlink( "test.fil" );
     VERIFY( status != 0 );
 #endif

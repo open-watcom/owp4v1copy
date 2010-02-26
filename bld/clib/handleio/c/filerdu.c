@@ -49,10 +49,13 @@
 
 #define FILE_HANDLE 0x3AB60000
 
+#define CONSOLE "CON"
+
 /* values for type */
-#define HANDLE_TYPE_FILE    0
+#define HANDLE_TYPE_INVALID 0
 #define HANDLE_TYPE_INPUT   1
 #define HANDLE_TYPE_OUTPUT  2
+#define HANDLE_TYPE_FILE    3
 
 typedef struct rdos_handle_type
 {
@@ -62,6 +65,8 @@ typedef struct rdos_handle_type
     char type;
 } rdos_handle_type;
 
+rdos_handle_type *console_in;
+rdos_handle_type *console_out;
 rdos_handle_type **handle_ptr;
 int handle_count;
 int handle_section;
@@ -109,7 +114,7 @@ void GrowHandleArr( void )
     handle_count = new_count;
 }
     
-int AllocHandleEntry( void )
+int AllocHandleEntry( rdos_handle_type *obj )
 {
     int i;
 
@@ -122,38 +127,75 @@ int AllocHandleEntry( void )
     if( i == handle_count )
         GrowHandleArr();
 
+    handle_ptr[i] = obj;
+
     RdosLeaveSection( handle_section );
 
     return( i );
 }
     
-void FreeHandleEntry( int handle )
+rdos_handle_type *FreeHandleEntry( int handle )
 {
+    rdos_handle_type *obj = 0;
+    
     RdosEnterSection( handle_section );
 
     if( handle >= 0 && handle < handle_count ) {
         if( handle_ptr[handle] ) {
-            FreeHandleObj( handle_ptr[handle]);
+            obj = handle_ptr[handle];
             handle_ptr[handle] = 0;
         }
     }
 
     RdosLeaveSection( handle_section );
+
+    return( obj );
 }
     
-rdos_handle_type *LockHandle( int handle )
+int ReplaceHandleEntry( int handle, rdos_handle_type *new_obj )
 {
+    int                 ok = 0;
+    rdos_handle_type   *obj = 0;
+    
     RdosEnterSection( handle_section );
 
-    if( handle >= 0 && handle < handle_count )
-        return( handle_ptr[handle] );
-    else
-        return( 0 );
-}
+    if( handle >= 0 && handle < handle_count ) {
+        if( handle_ptr[handle] )
+            obj = handle_ptr[handle];
+            
+        handle_ptr[handle] = new_obj;
+        ok = 1;
+    }
 
-void UnlockHandle( void ) 
-{
     RdosLeaveSection( handle_section );
+
+    if( obj )
+        FreeHandleObj( obj );
+
+    return ( ok );
+}
+    
+char GetHandle( int handle, int *rdos_handle, int *access )
+{
+    char type;
+
+    RdosEnterSection( handle_section );
+
+    type = 0;
+    *rdos_handle = 0;
+    *access = 0;
+    
+    if( handle >= 0 && handle < handle_count ) {
+        if( handle_ptr[handle] ) {
+            *rdos_handle = handle_ptr[handle]->rdos_handle;
+            *access = handle_ptr[handle]->access;
+            type = handle_ptr[handle]->type;
+        }
+    }
+    
+    RdosLeaveSection( handle_section );
+
+    return( type );
 }
 
 void InitHandle( void )
@@ -172,13 +214,18 @@ void InitHandle( void )
     h->type = HANDLE_TYPE_INPUT;
     handle_ptr[0] = h;
 
+    h->ref_count++;
+    console_in = h;
+
     h = AllocHandleObj();
     h->type = HANDLE_TYPE_OUTPUT;
     handle_ptr[1] = h;
 
-    h = AllocHandleObj();
-    h->type = HANDLE_TYPE_OUTPUT;
-    handle_ptr[2] = h;        
+    h->ref_count++;
+    console_out = h;
+
+    h->ref_count++;
+    handle_ptr[2] = h;
 }
 
 void FiniHandle( void )
@@ -206,33 +253,86 @@ _WCRTLINK int unlink( const CHAR_TYPE *filename )
 
 _WCRTLINK int creat( const CHAR_TYPE *name, mode_t pmode )
 {
-    int handle;
+    int                 handle;
+    rdos_handle_type   *obj;
+    int                 rdos_handle = 0;
     
     __ptr_check( name, 0 );
 
-    handle = RdosCreateFile( name, 0 );
+    if( !strcmp( name, CONSOLE ) ) {
+        obj = console_out;
+        obj->ref_count++;
+        handle = AllocHandleEntry( obj );
+        return( handle );
+    }
+    else {
+        rdos_handle = RdosCreateFile( name, 0 );
 
-    if( handle )
-        return( FILE_HANDLE | handle );
-    else
-        return( -1 );
+        if( rdos_handle ) {
+            obj = AllocHandleObj();
+            if( obj ) {
+                obj->rdos_handle = rdos_handle;
+                obj->access = 0;
+                obj->type = HANDLE_TYPE_FILE;
+                handle = AllocHandleEntry( obj );
+                return( handle );
+            }
+        }
+    }
+    return( -1 );
 }
 
 _WCRTLINK int open( const CHAR_TYPE *name, int mode, ... )
 {
-    int     permission;
-    va_list args;
-    int     handle;
+    int                 permission;
+    va_list             args;
+    int                 handle;
+    rdos_handle_type   *obj;
+    int                 rdos_handle;
     
     va_start( args, mode );
     permission = va_arg( args, int );
     va_end( args );
-    handle = RdosOpenFile( name, 0 );    
+
+    if( !strcmp( name, CONSOLE ) ) {
+        if( mode & O_CREAT )
+            obj = console_out;
+        else
+            obj = console_in;
+        obj->ref_count++;
+        handle = AllocHandleEntry( obj );
+        return( handle );
+    }
+    else {
+        if( mode & O_CREAT ) {
+            if( mode & O_EXCL ) {
+                rdos_handle = RdosOpenFile( name, 0 );
+                if( rdos_handle ) {
+                    RdosCloseFile( rdos_handle );
+                    return( -1 );
+                }
+            }
+            rdos_handle = RdosCreateFile( name, 0 );    
+        }
+        else
+            rdos_handle = RdosOpenFile( name, 0 );    
+
+        if( rdos_handle )
+            if( mode & O_TRUNC )
+                RdosSetFileSize( rdos_handle, 0 );
     
-    if( handle )
-        return( FILE_HANDLE | handle );
-    else
-        return( -1 );
+        if( rdos_handle ) {
+            obj = AllocHandleObj();
+            if( obj ) {
+                obj->rdos_handle = rdos_handle;
+                obj->access = 0;
+                obj->type = HANDLE_TYPE_FILE;
+                handle = AllocHandleEntry( obj );
+                return( handle );
+            }
+        }
+    }
+    return( -1 );
 }
 
 
@@ -240,82 +340,211 @@ _WCRTLINK int sopen( const CHAR_TYPE *name, int mode, int shflag, ... )
 {
     va_list             args;
     int                 handle;
+    rdos_handle_type   *obj;
+    int                 rdos_handle;
 
     va_start( args, shflag );
 
-    if( mode & O_CREAT )
-        handle = RdosCreateFile( name, 0 );    
-    else
-        handle = RdosOpenFile( name, 0 );    
+    if( !strcmp( name, CONSOLE ) ) {
+        if( mode & O_CREAT )
+            obj = console_out;
+        else
+            obj = console_in;
+        obj->ref_count++;
+        handle = AllocHandleEntry( obj );
+        return( handle );
+    }
+    else {
+        if( mode & O_CREAT ) {
+            if( mode & O_EXCL ) {
+                rdos_handle = RdosOpenFile( name, 0 );
+                if( rdos_handle ) {
+                    RdosCloseFile( rdos_handle );
+                    return( -1 );
+                }
+            }
+            rdos_handle = RdosCreateFile( name, 0 );    
+        }
+        else
+            rdos_handle = RdosOpenFile( name, 0 );    
 
-    if( handle )
-        if( mode & O_TRUNC )
-            RdosSetFileSize( handle, 0 );
-    
-    if( handle )
-        return( FILE_HANDLE | handle );
-    else
-        return( -1 );
+        if( rdos_handle )
+            if( mode & O_TRUNC )
+                RdosSetFileSize( rdos_handle, 0 );
+
+        if( rdos_handle ) {
+            obj = AllocHandleObj();
+            if( obj ) {
+                obj->rdos_handle = rdos_handle;
+                obj->access = 0;
+                obj->type = HANDLE_TYPE_FILE;
+                handle = AllocHandleEntry( obj );
+                return( handle );
+            }
+        }
+    }
+    return( -1 );
 }
 
 _WCRTLINK int close( int handle )
 {
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE) {
-        RdosCloseFile( handle );
+    rdos_handle_type   *obj;
+
+    obj = FreeHandleEntry( handle );
+
+    if( obj ) {
+        FreeHandleObj( obj );
         return( 0 );
     }
-    else
-        return( -1 );
+
+    return( -1 );
 }
 
 _WCRTLINK int dup( int handle )
 {
-    int newhandle;
-    
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE) {
-        newhandle = RdosDuplFile( handle );
+    rdos_handle_type   *obj = 0;
 
-        if( newhandle )
-            return( FILE_HANDLE | newhandle );
-        else
-            return( -1 );
-    }
+    RdosEnterSection( handle_section );
+
+    if( handle >= 0 && handle < handle_count )
+        if( handle_ptr[handle] )
+            obj = handle_ptr[handle];
+
+    if( obj )
+        obj->ref_count++;
+    
+    RdosLeaveSection( handle_section );
+
+    if( obj )
+        return( AllocHandleEntry( obj ) );
     else
-        return( handle );
+        return( -1 );
+}
+
+_WCRTLINK int dup2( int handle1, int handle2 )
+{
+    rdos_handle_type   *obj = 0;
+
+    if( handle1 == handle2 )
+        return( handle2 );
+
+    if( handle2 < 0 || handle2 >= handle_count )
+        return( -1 );
+        
+    RdosEnterSection( handle_section );
+
+    if( handle1 >= 0 && handle1 < handle_count )
+        if( handle_ptr[handle1] )
+            obj = handle_ptr[handle1];
+
+    if( obj )
+        obj->ref_count++;
+    
+    RdosLeaveSection( handle_section );
+
+    if( obj ) {
+        if( ReplaceHandleEntry( handle2, obj ) )
+            return( handle2 );
+        else
+            obj->ref_count--;
+    }
+
+    return( -1 );
 }
 
 _WCRTLINK int eof( int handle )
 {
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE) {
-        if( RdosGetFileSize( handle ) == RdosGetFilePos( handle ) )
+    char type;
+    int  rdos_handle;
+    int  access;
+
+    type = GetHandle( handle, &rdos_handle, &access );
+
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
+        if( RdosGetFileSize( rdos_handle ) == RdosGetFilePos( rdos_handle ) )
             return( 1 );
         else
             return( 0 );        
-    }
-    else {
-        if( handle == 0)
-            return( !RdosPollKeyboard( ) );
-        else
-            return( 1 );
+
+    case HANDLE_TYPE_INPUT:
+        return( !RdosPollKeyboard( ) );
+
+    case HANDLE_TYPE_OUTPUT:
+        return( 1 );
+
+    default:
+        return( -1 );
     }
 }
 
 _WCRTLINK long filelength( int handle )
 {
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE)
-        return( RdosGetFileSize( handle ) );
-    else
+    char type;
+    int  rdos_handle;
+    int  access;
+
+    type = GetHandle( handle, &rdos_handle, &access );
+
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
+        return( RdosGetFileSize( rdos_handle ) );
+
+    case HANDLE_TYPE_INPUT:
+    case HANDLE_TYPE_OUTPUT:
         return( 0 );
+
+    default:
+        return( -1 );
+    }
+}
+
+void GrowRdosFile( int rdos_handle, long diff )
+{
+    char *buf;
+    int wr_size;
+    long curr_pos;
+    long curr_size;
+
+    buf = lib_malloc( 0x1000 );
+    memset( buf, 0, 0x1000 );
+
+    curr_pos = RdosGetFilePos( rdos_handle );
+    curr_size = RdosGetFileSize( rdos_handle );
+    RdosSetFilePos( rdos_handle, curr_size );
+    while( diff ) {
+        wr_size = diff;
+        if( diff > 0x1000 ) 
+            wr_size = 0x1000;
+ 
+        RdosWriteFile( rdos_handle, buf, wr_size );
+        diff -= wr_size;
+    }
+    RdosSetFilePos( rdos_handle, curr_pos );            
+    lib_free( buf );
 }
 
 _WCRTLINK int chsize( int handle, long size )
 {
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE) {
-        RdosSetFileSize( handle, size );
+    char type;
+    int  rdos_handle;
+    int  access;
+    long curr_size;
+
+    type = GetHandle( handle, &rdos_handle, &access );
+
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
+        curr_size = RdosGetFileSize( rdos_handle );
+        if( size > curr_size )
+            GrowRdosFile( rdos_handle, size - curr_size );
+        else
+            RdosSetFileSize( rdos_handle, size );
         return( 0 );
-    }
-    else
+
+    default:
         return( -1 );
+    }
 }
 
 _WCRTLINK int fstat( int handle, struct stat *buf )
@@ -325,6 +554,11 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
     int                 ms;
     int                 us;
     struct tm           tm;
+    char                type;
+    int                 rdos_handle;
+    int                 access;
+
+    type = GetHandle( handle, &rdos_handle, &access );
 
     buf->st_attr = 0;
     buf->st_archivedID = 0;
@@ -337,8 +571,9 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
     buf->st_mode = 0;
     buf->st_mode |= S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH;
 
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE) {
-        buf->st_dev = RdosIsDevice( handle );
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
+        buf->st_dev = RdosIsDevice( rdos_handle );
         buf->st_rdev = buf->st_dev;
 
         if( buf->st_dev ) {
@@ -346,7 +581,7 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
             buf->st_atime = buf->st_ctime = buf->st_mtime = 0;
             buf->st_mode |= S_IFCHR;
         } else {                /* file */
-            RdosGetFileTime( handle, &msb, &lsb );
+            RdosGetFileTime( rdos_handle, &msb, &lsb );
             RdosDecodeMsbTics( msb, 
                                &tm.tm_year, 
                                &tm.tm_mon,
@@ -372,12 +607,17 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
         }
         buf->st_btime = buf->st_mtime;
         return( 0 );
-    } else {
+
+    case HANDLE_TYPE_INPUT:
+    case HANDLE_TYPE_OUTPUT:
         buf->st_rdev = buf->st_dev = 1;
         buf->st_size = 0;
         buf->st_atime = buf->st_btime = buf->st_ctime = buf->st_mtime = 0;
         buf->st_mode |= S_IFCHR;
         return( 0 );
+
+    default:
+        return( -1 );
     }    
 }
 
@@ -408,90 +648,131 @@ _WCRTLINK int (locking)( int handle, int mode, unsigned long nbytes )
 
 _WCRTLINK off_t lseek( int handle, off_t offset, int origin )
 {
-    off_t pos;
+    off_t   pos;
+    char    type;
+    int     rdos_handle;
+    int     access;
 
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE) {
+    type = GetHandle( handle, &rdos_handle, &access );
+
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
         switch( origin ) {
-            case SEEK_SET:
-                RdosSetFilePos( handle, offset );
-                break;
+        case SEEK_SET:
+            RdosSetFilePos( rdos_handle, offset );
+            break;
             
-            case SEEK_CUR:
-                pos = RdosGetFilePos( handle );
-                pos += offset;
-                RdosSetFilePos( handle, pos );
-                break;
+        case SEEK_CUR:
+            pos = RdosGetFilePos( rdos_handle );
+            pos += offset;
+            RdosSetFilePos( rdos_handle, pos );
+            break;
 
-            case SEEK_END:
-                pos = RdosGetFileSize( handle );
-                pos += offset;
-                RdosSetFilePos( handle, pos );
-                break;
+        case SEEK_END:
+            pos = RdosGetFileSize( rdos_handle );
+            pos += offset;
+            RdosSetFilePos( rdos_handle, pos );
+            break;
         }
-        return( RdosGetFilePos( handle ) );            
-    }
-    else
+        return( RdosGetFilePos( rdos_handle ) );            
+
+    default:
         return( -1 );
+    }
 }
 
 _WCRTLINK off_t tell( int handle )
 {
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE)
-        return( RdosGetFilePos( handle ) );
-    else
+    char type;
+    int  rdos_handle;
+    int  access;
+
+    type = GetHandle( handle, &rdos_handle, &access );
+
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
+        return( RdosGetFilePos( rdos_handle ) );
+
+    default:
         return( -1 );
+    }
 }
 
 int __qread( int handle, void *buffer, unsigned len )
 {
-    int i;
+    int  i;
     char *ptr = (char *)buffer;
-    
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE)
-        return( RdosReadFile( handle, buffer, len ) );
-    else {
-        if( handle == 0) {
-            for( i = 2; i < len; i++ ) {
-                *ptr = ( char )RdosReadKeyboard( );    
+    char type;
+    int  rdos_handle;
+    int  access;
+
+    type = GetHandle( handle, &rdos_handle, &access );
+
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
+        return( RdosReadFile( rdos_handle, buffer, len ) );
+
+    case HANDLE_TYPE_INPUT:
+        for( i = 2; i < len; i++ ) {
+            *ptr = ( char )RdosReadKeyboard( );    
+            RdosWriteChar( *ptr );
+            if( *ptr == 0xd ) {
+                ptr++;
+                *ptr = 0xa;
                 RdosWriteChar( *ptr );
-                if( *ptr == 0xd ) {
-                    ptr++;
-                    *ptr = 0xa;
-                    RdosWriteChar( *ptr );
-                    break;
-                }
-                else
-                    ptr++;
+                break;
             }
-            return( i );
+            else
+                ptr++;
         }
-        else
-            return( 0 );            
+        return( i );
+
+    case HANDLE_TYPE_OUTPUT:
+        return( 0 );            
+
+    default:
+        return( -1 );
     }
 }
 
 int __qwrite( int handle, const void *buffer, unsigned len )
 {
-    if( ( handle & FILE_HANDLE ) == FILE_HANDLE)
-        return( RdosWriteFile( handle, buffer, len ) );
-    else {
-        if( handle == 1 || handle == 2 ) {
-            RdosWriteSizeString( ( const char * )buffer, len );
-            return( len );
-        }
-        else
-            return( 0 );
-    }    
+    char type;
+    int  rdos_handle;
+    int  access;
+    int pos;
+    int size;
+
+    type = GetHandle( handle, &rdos_handle, &access );
+
+    switch ( type ) {
+    case HANDLE_TYPE_FILE:
+        pos = RdosGetFilePos( rdos_handle );
+        size = RdosGetFileSize( rdos_handle );
+        if (pos > size )
+            GrowRdosFile( rdos_handle, pos - size );
+        return( RdosWriteFile( rdos_handle, buffer, len ) );
+
+    case HANDLE_TYPE_OUTPUT:
+        RdosWriteSizeString( ( const char * )buffer, len );
+        return( len );
+
+    case HANDLE_TYPE_INPUT:
+        return( 0 );
+
+    default:
+        return( -1 );
+    }
 }
 
 _WCRTLINK int read( int handle, void *buffer, unsigned len )
 {
-    return( RdosReadFile( handle, buffer, len ) );
+    return( __qread( handle, buffer, len ) );
 }
 
 _WCRTLINK int write( int handle, const void *buffer, unsigned len )
 {
-    return( RdosWriteFile( handle, buffer, len ) );
+    return( __qwrite( handle, buffer, len ) );
 }
 
 AXI(InitHandle,INIT_PRIORITY_LIBRARY);
