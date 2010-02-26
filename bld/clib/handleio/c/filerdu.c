@@ -46,6 +46,7 @@
 #include "liballoc.h"
 #include "rtdata.h"
 #include "rtinit.h"
+#include "openmode.h"
 
 #define CONSOLE "CON"
 
@@ -57,10 +58,10 @@
 
 typedef struct rdos_handle_type
 {
-    int rdos_handle;
-    int access;
-    int ref_count;
-    char type;
+    int         rdos_handle;
+    unsigned    mode;
+    int         ref_count;
+    char        type;
 } rdos_handle_type;
 
 rdos_handle_type *console_in;
@@ -75,7 +76,7 @@ static rdos_handle_type *AllocHandleObj( void )
 
     h = ( rdos_handle_type * )lib_malloc( sizeof( rdos_handle_type ) );
     h->rdos_handle = HANDLE_TYPE_FILE;
-    h->access = 0;
+    h->mode = 0;
     h->type = 0;
     h->ref_count = 1;
     return( h );
@@ -98,7 +99,7 @@ static void GrowHandleArr( void )
     int                 new_count;
     rdos_handle_type  **new_ptr;
 
-    new_count = 1 + handle_count / 2;
+    new_count = 1 + 3 * handle_count / 2;
     new_ptr = ( rdos_handle_type ** )lib_malloc( new_count * sizeof( rdos_handle_type * ) );
 
     for( i = 0; i < handle_count; i++ )
@@ -173,7 +174,7 @@ static int ReplaceHandleEntry( int handle, rdos_handle_type *new_obj )
     return ( ok );
 }
     
-static char GetHandle( int handle, int *rdos_handle, int *access )
+static char GetHandle( int handle, int *rdos_handle, unsigned *mode )
 {
     char type;
 
@@ -181,12 +182,12 @@ static char GetHandle( int handle, int *rdos_handle, int *access )
 
     type = 0;
     *rdos_handle = 0;
-    *access = 0;
+    *mode = 0;
     
     if( handle >= 0 && handle < handle_count ) {
         if( handle_ptr[handle] ) {
             *rdos_handle = handle_ptr[handle]->rdos_handle;
-            *access = handle_ptr[handle]->access;
+            *mode = handle_ptr[handle]->mode;
             type = handle_ptr[handle]->type;
         }
     }
@@ -210,6 +211,7 @@ void InitHandle( void )
 
     h = AllocHandleObj();
     h->type = HANDLE_TYPE_INPUT;
+    h->mode = _READ;
     handle_ptr[0] = h;
 
     h->ref_count++;
@@ -217,6 +219,7 @@ void InitHandle( void )
 
     h = AllocHandleObj();
     h->type = HANDLE_TYPE_OUTPUT;
+    h->mode = _WRITE;
     handle_ptr[1] = h;
 
     h->ref_count++;
@@ -249,35 +252,47 @@ _WCRTLINK int unlink( const CHAR_TYPE *filename )
         return( -1 );  
 }
 
-_WCRTLINK int creat( const CHAR_TYPE *name, mode_t pmode )
+unsigned __GetIOMode( int handle )
 {
-    int                 handle;
-    rdos_handle_type   *obj;
-    int                 rdos_handle = 0;
+    unsigned mode = 0;
     
-    __ptr_check( name, 0 );
+    RdosEnterSection( handle_section );
 
-    if( !strcmp( name, CONSOLE ) ) {
-        obj = console_out;
-        obj->ref_count++;
-        handle = AllocHandleEntry( obj );
-        return( handle );
-    }
-    else {
-        rdos_handle = RdosCreateFile( name, 0 );
+    if( handle >= 0 && handle < handle_count )
+        if( handle_ptr[handle] )
+            mode = handle_ptr[handle]->mode;
 
-        if( rdos_handle ) {
-            obj = AllocHandleObj();
-            if( obj ) {
-                obj->rdos_handle = rdos_handle;
-                obj->access = 0;
-                obj->type = HANDLE_TYPE_FILE;
-                handle = AllocHandleEntry( obj );
-                return( handle );
-            }
+    RdosLeaveSection( handle_section );
+
+    return( mode );
+}
+
+void __SetIOMode_nogrow( int handle, unsigned value )
+{
+    RdosEnterSection( handle_section );
+
+    if( handle >= 0 && handle < handle_count )
+        if( handle_ptr[handle] )
+            handle_ptr[handle]->mode = value;
+
+    RdosLeaveSection( handle_section );
+}
+
+signed __SetIOMode( int handle, unsigned value )
+{
+    signed ret = -1;
+
+    RdosEnterSection( handle_section );
+
+    if( handle >= 0 && handle < handle_count )
+        if( handle_ptr[handle] ) {
+            handle_ptr[handle]->mode = value;
+            ret = handle;
         }
-    }
-    return( -1 );
+
+    RdosLeaveSection( handle_section );
+
+    return( ret );
 }
 
 static int open_base( const CHAR_TYPE *name, int mode )
@@ -285,6 +300,17 @@ static int open_base( const CHAR_TYPE *name, int mode )
     int                 handle;
     rdos_handle_type   *obj;
     int                 rdos_handle;
+    int                 rwmode;
+    unsigned            iomode_flags;
+
+    rwmode = mode & OPENMODE_ACCESS_MASK;
+    iomode_flags = 0;
+    if( mode == O_RDWR )                iomode_flags |= _READ | _WRITE;
+    if( rwmode == O_RDONLY)             iomode_flags |= _READ;
+    if( rwmode == O_WRONLY)             iomode_flags |= _WRITE;
+    if( mode & O_APPEND )               iomode_flags |= _APPEND;
+    if( mode & (O_BINARY|O_TEXT) )
+        if( mode & O_BINARY )           iomode_flags |= _BINARY;
 
     if( !strcmp( name, CONSOLE ) ) {
         if( mode & O_CREAT )
@@ -317,7 +343,7 @@ static int open_base( const CHAR_TYPE *name, int mode )
             obj = AllocHandleObj();
             if( obj ) {
                 obj->rdos_handle = rdos_handle;
-                obj->access = 0;
+                obj->mode = iomode_flags;
                 obj->type = HANDLE_TYPE_FILE;
                 handle = AllocHandleEntry( obj );
                 return( handle );
@@ -325,6 +351,24 @@ static int open_base( const CHAR_TYPE *name, int mode )
         }
     }
     return( -1 );
+}
+
+_WCRTLINK int creat( const CHAR_TYPE *name, mode_t pmode )
+{
+    unsigned mode;
+    
+    mode = O_CREAT | O_TRUNC;
+    if( (pmode & S_IWRITE) && (pmode & S_IREAD) ) {
+        mode |= O_RDWR;
+    } else if( pmode & S_IWRITE ) {
+        mode |= O_WRONLY;
+    } else if( pmode & S_IREAD ) {
+        mode |= O_RDONLY;
+    } else if( !pmode ) {
+        mode |= O_RDWR;
+    }
+
+    return( open_base( name, mode ) );
 }
 
 _WCRTLINK int open( const CHAR_TYPE *name, int mode, ... )
@@ -418,11 +462,11 @@ _WCRTLINK int dup2( int handle1, int handle2 )
 
 _WCRTLINK int eof( int handle )
 {
-    char type;
-    int  rdos_handle;
-    int  access;
+    char        type;
+    int         rdos_handle;
+    unsigned    mode;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     switch ( type ) {
     case HANDLE_TYPE_FILE:
@@ -444,11 +488,11 @@ _WCRTLINK int eof( int handle )
 
 _WCRTLINK long filelength( int handle )
 {
-    char type;
-    int  rdos_handle;
-    int  access;
+    char        type;
+    int         rdos_handle;
+    unsigned    mode;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     switch ( type ) {
     case HANDLE_TYPE_FILE:
@@ -490,12 +534,12 @@ void GrowRdosFile( int rdos_handle, long diff )
 
 _WCRTLINK int chsize( int handle, long size )
 {
-    char type;
-    int  rdos_handle;
-    int  access;
-    long curr_size;
+    char        type;
+    int         rdos_handle;
+    unsigned    mode;
+    long        curr_size;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     switch ( type ) {
     case HANDLE_TYPE_FILE:
@@ -520,9 +564,9 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
     struct tm           tm;
     char                type;
     int                 rdos_handle;
-    int                 access;
+    unsigned            mode;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     buf->st_attr = 0;
     buf->st_archivedID = 0;
@@ -612,12 +656,12 @@ _WCRTLINK int (locking)( int handle, int mode, unsigned long nbytes )
 
 _WCRTLINK off_t lseek( int handle, off_t offset, int origin )
 {
-    off_t   pos;
-    char    type;
-    int     rdos_handle;
-    int     access;
+    off_t       pos;
+    char        type;
+    int         rdos_handle;
+    unsigned    mode;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     switch ( type ) {
     case HANDLE_TYPE_FILE:
@@ -647,11 +691,11 @@ _WCRTLINK off_t lseek( int handle, off_t offset, int origin )
 
 _WCRTLINK off_t tell( int handle )
 {
-    char type;
-    int  rdos_handle;
-    int  access;
+    char        type;
+    int         rdos_handle;
+    unsigned    mode;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     switch ( type ) {
     case HANDLE_TYPE_FILE:
@@ -664,13 +708,13 @@ _WCRTLINK off_t tell( int handle )
 
 int __qread( int handle, void *buffer, unsigned len )
 {
-    int  i;
-    char *ptr = (char *)buffer;
-    char type;
-    int  rdos_handle;
-    int  access;
+    int         i;
+    char       *ptr = (char *)buffer;
+    char        type;
+    int         rdos_handle;
+    unsigned    mode;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     switch ( type ) {
     case HANDLE_TYPE_FILE:
@@ -701,20 +745,26 @@ int __qread( int handle, void *buffer, unsigned len )
 
 int __qwrite( int handle, const void *buffer, unsigned len )
 {
-    char type;
-    int  rdos_handle;
-    int  access;
-    int pos;
-    int size;
+    char        type;
+    int         rdos_handle;
+    unsigned    mode;
+    int         pos;
+    int         size;
 
-    type = GetHandle( handle, &rdos_handle, &access );
+    type = GetHandle( handle, &rdos_handle, &mode );
 
     switch ( type ) {
     case HANDLE_TYPE_FILE:
-        pos = RdosGetFilePos( rdos_handle );
-        size = RdosGetFileSize( rdos_handle );
-        if (pos > size )
-            GrowRdosFile( rdos_handle, pos - size );
+        if( mode & _APPEND ) {
+            size = RdosGetFileSize( rdos_handle );
+            RdosSetFilePos( rdos_handle, size );
+        }
+        else {
+            pos = RdosGetFilePos( rdos_handle );
+            size = RdosGetFileSize( rdos_handle );
+            if (pos > size )
+                GrowRdosFile( rdos_handle, pos - size );
+        }
         return( RdosWriteFile( rdos_handle, buffer, len ) );
 
     case HANDLE_TYPE_OUTPUT:
