@@ -248,8 +248,14 @@ void Table::rowRule()
         wchar_t      ch( L' ' );
         try {
             if( frame == BOX ) {
-                txt1.push_back( document->entity( L"&bxlj." ) );
-                txt3.push_back( document->entity( L"&bxrj." ) );
+                if( rules & HORIZONTAL ) {
+                    txt1.push_back( document->entity( L"&bxlj." ) );
+                    txt3.push_back( document->entity( L"&bxrj." ) );
+                }
+                else {
+                    txt1.push_back( document->entity( L"&bxv." ) );
+                    txt3.push_back( document->entity( L"&bxv." ) );
+                }
             }
             else {
                 txt1.push_back( L' ' );
