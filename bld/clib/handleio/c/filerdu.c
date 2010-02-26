@@ -47,8 +47,6 @@
 #include "rtdata.h"
 #include "rtinit.h"
 
-#define FILE_HANDLE 0x3AB60000
-
 #define CONSOLE "CON"
 
 /* values for type */
@@ -71,7 +69,7 @@ rdos_handle_type **handle_ptr;
 int handle_count;
 int handle_section;
 
-rdos_handle_type *AllocHandleObj( void )
+static rdos_handle_type *AllocHandleObj( void )
 {
     rdos_handle_type *h;
 
@@ -83,7 +81,7 @@ rdos_handle_type *AllocHandleObj( void )
     return( h );
 }
 
-void FreeHandleObj( rdos_handle_type *h)
+static void FreeHandleObj( rdos_handle_type *h)
 {
     h->ref_count--;
 
@@ -94,7 +92,7 @@ void FreeHandleObj( rdos_handle_type *h)
     }
 }
 
-void GrowHandleArr( void )
+static void GrowHandleArr( void )
 {
     int                 i;
     int                 new_count;
@@ -114,7 +112,7 @@ void GrowHandleArr( void )
     handle_count = new_count;
 }
     
-int AllocHandleEntry( rdos_handle_type *obj )
+static int AllocHandleEntry( rdos_handle_type *obj )
 {
     int i;
 
@@ -134,7 +132,7 @@ int AllocHandleEntry( rdos_handle_type *obj )
     return( i );
 }
     
-rdos_handle_type *FreeHandleEntry( int handle )
+static rdos_handle_type *FreeHandleEntry( int handle )
 {
     rdos_handle_type *obj = 0;
     
@@ -152,7 +150,7 @@ rdos_handle_type *FreeHandleEntry( int handle )
     return( obj );
 }
     
-int ReplaceHandleEntry( int handle, rdos_handle_type *new_obj )
+static int ReplaceHandleEntry( int handle, rdos_handle_type *new_obj )
 {
     int                 ok = 0;
     rdos_handle_type   *obj = 0;
@@ -175,7 +173,7 @@ int ReplaceHandleEntry( int handle, rdos_handle_type *new_obj )
     return ( ok );
 }
     
-char GetHandle( int handle, int *rdos_handle, int *access )
+static char GetHandle( int handle, int *rdos_handle, int *access )
 {
     char type;
 
@@ -282,17 +280,11 @@ _WCRTLINK int creat( const CHAR_TYPE *name, mode_t pmode )
     return( -1 );
 }
 
-_WCRTLINK int open( const CHAR_TYPE *name, int mode, ... )
+static int open_base( const CHAR_TYPE *name, int mode )
 {
-    int                 permission;
-    va_list             args;
     int                 handle;
     rdos_handle_type   *obj;
     int                 rdos_handle;
-    
-    va_start( args, mode );
-    permission = va_arg( args, int );
-    va_end( args );
 
     if( !strcmp( name, CONSOLE ) ) {
         if( mode & O_CREAT )
@@ -335,55 +327,27 @@ _WCRTLINK int open( const CHAR_TYPE *name, int mode, ... )
     return( -1 );
 }
 
+_WCRTLINK int open( const CHAR_TYPE *name, int mode, ... )
+{
+    int                 permission;
+    va_list             args;
+    
+    va_start( args, mode );
+    permission = va_arg( args, int );
+    va_end( args );
+
+    return( open_base( name, mode ) );
+}
+
 
 _WCRTLINK int sopen( const CHAR_TYPE *name, int mode, int shflag, ... )
 {
     va_list             args;
-    int                 handle;
-    rdos_handle_type   *obj;
-    int                 rdos_handle;
 
     va_start( args, shflag );
+    va_end( args );
 
-    if( !strcmp( name, CONSOLE ) ) {
-        if( mode & O_CREAT )
-            obj = console_out;
-        else
-            obj = console_in;
-        obj->ref_count++;
-        handle = AllocHandleEntry( obj );
-        return( handle );
-    }
-    else {
-        if( mode & O_CREAT ) {
-            if( mode & O_EXCL ) {
-                rdos_handle = RdosOpenFile( name, 0 );
-                if( rdos_handle ) {
-                    RdosCloseFile( rdos_handle );
-                    return( -1 );
-                }
-            }
-            rdos_handle = RdosCreateFile( name, 0 );    
-        }
-        else
-            rdos_handle = RdosOpenFile( name, 0 );    
-
-        if( rdos_handle )
-            if( mode & O_TRUNC )
-                RdosSetFileSize( rdos_handle, 0 );
-
-        if( rdos_handle ) {
-            obj = AllocHandleObj();
-            if( obj ) {
-                obj->rdos_handle = rdos_handle;
-                obj->access = 0;
-                obj->type = HANDLE_TYPE_FILE;
-                handle = AllocHandleEntry( obj );
-                return( handle );
-            }
-        }
-    }
-    return( -1 );
+    return( open_base( name, mode ) );
 }
 
 _WCRTLINK int close( int handle )
