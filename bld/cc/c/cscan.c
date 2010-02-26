@@ -63,7 +63,7 @@ enum scan_class {
     SCAN_EOF            // end-of-file
 };
 
-static  unsigned char   *ReScanPtr;
+static  FCB             rescan_tmp_file;
 static  int             SavedCurrChar;          // used when get tokens from macro
 static  unsigned char   ClassTable[ 260 ];
 
@@ -114,15 +114,15 @@ static  void    ScanComment( void );
 
 void ReScanInit( char *ptr )                            /* 28-oct-92 */
 {
-    ReScanPtr = (unsigned char *)ptr;
+    rescan_tmp_file.src_ptr = (unsigned char *)ptr;
 }
 
 char *ReScanPos( void )
 {
-    return( (char *)ReScanPtr );
+    return( (char *)rescan_tmp_file.src_ptr );
 }
 
-int ReScanBuffer( void )
+static int ReScanBuffer( void )
 {
     CurrChar = *SrcFile->src_ptr++;
     if( CurrChar == '\0' ) {
@@ -131,6 +131,10 @@ int ReScanBuffer( void )
     return( CurrChar );
 }
 
+int InReScanMode( void )
+{
+    return( NextChar == ReScanBuffer );
+}
 
 static int SaveNextChar( void )
 {
@@ -1674,14 +1678,14 @@ TOKEN PPNextToken( void )                     // called from macro pre-processor
 
 int ReScanToken( void )
 {
+    FCB             *oldSrcFile;
     int             saved_currchar;
-    unsigned char   *saved_ScanCharPtr;
     int             (*saved_nextchar)( void );
 
     saved_currchar = CurrChar;
     saved_nextchar = NextChar;
-    saved_ScanCharPtr = SrcFile->src_ptr;
-    SrcFile->src_ptr = ReScanPtr;
+    oldSrcFile = SrcFile;
+    SrcFile = &rescan_tmp_file;
     CompFlags.rescan_buffer_done = 0;
     NextChar = ReScanBuffer;
     CurrChar = ReScanBuffer();
@@ -1692,8 +1696,7 @@ int ReScanToken( void )
         CurToken = T_LSTRING;                   /* 12-nov-92 */
     }
     --SrcFile->src_ptr;
-    ReScanPtr = SrcFile->src_ptr;
-    SrcFile->src_ptr = saved_ScanCharPtr;
+    SrcFile = oldSrcFile;
     CurrChar = saved_currchar;
     NextChar = saved_nextchar;
     if( CompFlags.rescan_buffer_done == 0 ) {

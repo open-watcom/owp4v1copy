@@ -743,7 +743,7 @@ extern  int     ESCChar( int, const unsigned char **, bool * );  /* cscan */
 extern  void    SkipAhead( void );              /* cscan */
 extern  TOKEN   ScanToken( void );              /* cscan */
 extern  void    ReScanInit( char * );           /* cscan */
-extern  int     ReScanBuffer( void );           /* cscan */
+extern  int     InReScanMode( void );           /* cscan */
 extern  int     ReScanToken( void );            /* cscan */
 extern  char    *ReScanPos( void );             /* cscan */
 extern  TOKEN   KwLookup( const char *, int );  /* cscan */

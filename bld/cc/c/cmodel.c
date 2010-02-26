@@ -85,8 +85,6 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, macro_flags mflag
 {
     int         i;
     MEPTR       mentry;
-    FCB         tmp_file;
-    FCB         *old_file;
     TOKEN       *p_token;
 
     str = copy_eq( Buffer, str);
@@ -109,8 +107,6 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, macro_flags mflag
         int ppscan_mode;
 
         ppscan_mode = InitPPScan();
-        old_file = SrcFile;
-        SrcFile = &tmp_file; /* to keep scanner happy */
         ReScanInit( ++str );
         for(;;) {
             if( *str == '\0' ) break;
@@ -144,7 +140,6 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, macro_flags mflag
             if( !multiple_tokens ) break;
         }
         FiniPPScan( ppscan_mode );
-        SrcFile = old_file;
     }
     *(TOKEN *)&TokenBuf[i] = T_NULL;
     if( strcmp( mentry->macro_name, "defined" ) != 0 ){

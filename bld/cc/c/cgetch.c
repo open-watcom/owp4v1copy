@@ -290,7 +290,7 @@ int GetCharCheck( int c )
     int nc;
     int nnc;
 
-    if( NextChar == ReScanBuffer ) {
+    if( InReScanMode() ) {
         if( c == '\0' ) {
             CompFlags.rescan_buffer_done = 1;
         }
