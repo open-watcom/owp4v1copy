@@ -80,6 +80,7 @@ Project
     Command "wddespy"
     Hint "Invoke WDDESPY utility"
   Help ide.hlp
+  HtmlHelp ide.chm
 :endsegment
 
 MsgLog
@@ -95,4 +96,7 @@ MsgLog
   Help .c, wccerrs.hlp, 1
   Help .cpp, wpperrs.hlp, 1
   Help .for, wfcerrs.hlp, 0
+  HtmlHelp .c, wccerrs.chm, 1
+  HtmlHelp .cpp, wpperrs.chm, 1
+  HtmlHelp .for, wfcerrs.chm, 0
 :endsegment

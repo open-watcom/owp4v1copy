@@ -145,6 +145,12 @@ bool DisplayContents( gui_help_instance inst, HWND hwnd, char *file )
     return( WWinHelp( hwnd, file, (UINT)HELP_CONTENTS, 0 ) );
 }
 
+bool DisplayContentsHH( gui_help_instance inst, HWND hwnd, char *file )
+{
+    inst = inst;
+    return( WHtmlHelp( hwnd, file, (UINT)HELP_CONTENTS, 0 ) );
+}
+
 bool DisplayHelpOnHelp( gui_help_instance inst, HWND hwnd, char *file )
 {
     inst=inst;
@@ -172,6 +178,12 @@ bool DisplayHelpKey( gui_help_instance inst, HWND hwnd, char *file, char *topic 
     return( WWinHelp( hwnd, file, (UINT)HELP_KEY, (DWORD)topic ) );
 }
 
+bool DisplayHelpKeyHH( gui_help_instance inst, HWND hwnd, char *file, char *topic )
+{
+    inst = inst;
+    return( WHtmlHelp( hwnd, file, (UINT)HELP_KEY, (DWORD)topic ) );
+}
+
 #endif
 
 
@@ -185,28 +197,48 @@ void GUIHelpFini( gui_help_instance inst, gui_window *wnd, char *file )
     FiniHelp( inst, wnd->hwnd, file );
 }
 
-bool GUIShowHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions act, char *file, char *topic )
+bool GUIShowHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions act,
+                  char *file, char *topic )
 {
     bool        ret;
 
     ret = FALSE;
 
     switch( act ) {
-        case GUI_HELP_CONTENTS:
-            ret = DisplayContents( inst, wnd->hwnd, file );
-            break;
-        case GUI_HELP_ON_HELP:
-            ret = DisplayHelpOnHelp( inst, wnd->hwnd, file );
-            break;
-        case GUI_HELP_SEARCH:
-            ret = DisplayHelpSearch( inst, wnd->hwnd, file, topic );
-            break;
-        case GUI_HELP_CONTEXT:
-            ret = DisplayHelpContext( inst, wnd->hwnd, file, topic );
-            break;
-        case GUI_HELP_KEY:
-            ret = DisplayHelpKey( inst, wnd->hwnd, file, topic );
-            break;
+    case GUI_HELP_CONTENTS:
+        ret = DisplayContents( inst, wnd->hwnd, file );
+        break;
+    case GUI_HELP_ON_HELP:
+        ret = DisplayHelpOnHelp( inst, wnd->hwnd, file );
+        break;
+    case GUI_HELP_SEARCH:
+        ret = DisplayHelpSearch( inst, wnd->hwnd, file, topic );
+        break;
+    case GUI_HELP_CONTEXT:
+        ret = DisplayHelpContext( inst, wnd->hwnd, file, topic );
+        break;
+    case GUI_HELP_KEY:
+        ret = DisplayHelpKey( inst, wnd->hwnd, file, topic );
+        break;
+    }
+
+    return( ret );
+}
+
+bool GUIShowHtmlHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions act,
+                      char *file, char *topic )
+{
+    bool        ret;
+
+    ret = FALSE;
+
+    switch( act ) {
+    case GUI_HELP_CONTENTS:
+        ret = DisplayContentsHH( inst, wnd->hwnd, file );
+        break;
+    case GUI_HELP_KEY:
+        ret = DisplayHelpKeyHH( inst, wnd->hwnd, file, topic );
+        break;
     }
 
     return( ret );

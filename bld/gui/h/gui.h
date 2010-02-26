@@ -826,6 +826,7 @@ extern bool GUIResizeStatusWindow( gui_window *wnd, gui_ord x, gui_ord height );
 extern gui_help_instance GUIHelpInit( gui_window *wnd, char *file, char *title );
 extern void GUIHelpFini( gui_help_instance inst, gui_window *wnd, char *file );
 extern bool GUIShowHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions act, char *file, char *topic );
+extern bool GUIShowHtmlHelp( gui_help_instance inst, gui_window *wnd, gui_help_actions act, char *file, char *topic );
 
 // the obsolete, crotchety old guard
 // please use the above functions instead

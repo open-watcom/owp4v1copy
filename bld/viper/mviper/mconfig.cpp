@@ -267,6 +267,7 @@ MConfig::~MConfig()
     _helpactions.deleteContents();
     _logScanPatterns.deleteContents();
     _logHelpFiles.deleteContents();
+    _logHtmlHelpFiles.deleteContents();
     _targetOSs.deleteContents();
     FREE( _fileFilters );
 }
@@ -317,6 +318,15 @@ void MConfig::configMsgLog( WTokenFile& fil, WString& tok )
                 _logHelpFiles.add( new WString( fil.token( tok ) ) );
             } else {
                 _logHelpFiles.add( new WString( "0" ) );
+            }
+            fil.token( tok );
+        } else if( tok == "HtmlHelp" ) {
+            _logHtmlHelpFiles.add( new WString( fil.token( tok ) ) );
+            _logHtmlHelpFiles.add( new WString( fil.token( tok ) ) );
+            if( !fil.eol() ) {
+                _logHtmlHelpFiles.add( new WString( fil.token( tok ) ) );
+            } else {
+                _logHtmlHelpFiles.add( new WString( "0" ) );
             }
             fil.token( tok );
         } else if( tok == "rem" ) {
@@ -377,6 +387,9 @@ void MConfig::configProject( WTokenFile& fil, WString& tok )
             fil.token( tok );
         } else if( tok == "Help" ) {
             fil.token( _helpFile );
+            fil.token( tok );
+        } else if( tok == "HtmlHelp" ) {
+            fil.token( _htmlHelpFile );
             fil.token( tok );
         } else if( tok == "TargetGroup" ) {
             fil.token( target_os );

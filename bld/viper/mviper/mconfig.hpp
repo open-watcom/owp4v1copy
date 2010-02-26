@@ -84,6 +84,7 @@ WCLASS MConfig : public WObject
         WFileName& browseMerge() { return _browseMerge; }
         WFileName& batserv() { return _batserv; }
         WFileName& helpFile() { return _helpFile; }
+        WFileName& htmlHelpFile() { return _htmlHelpFile; }
         const char* fileFilters() { return _fileFilters; }
         const MCommand& before() const { return _before; }
         const MCommand& after() const { return _after; }
@@ -92,6 +93,7 @@ WCLASS MConfig : public WObject
         bool debug() { return _debug; }
         WVList& logScanPatterns() { return _logScanPatterns; }
         WVList& logHelpFiles() { return _logHelpFiles; }
+        WVList& logHtmlHelpFiles() { return _logHtmlHelpFiles; }
         int version() { return _version; }
         void setKludge( int k ) { _kludge = k; }
         void kludgeString( WString& str );
@@ -119,6 +121,7 @@ WCLASS MConfig : public WObject
         WFileName       _browseMerge;
         WFileName       _batserv;
         WFileName       _helpFile;
+        WFileName       _htmlHelpFile;
         MCommand        _before;
         MCommand        _after;
         char*           _fileFilters;
@@ -128,6 +131,7 @@ WCLASS MConfig : public WObject
         void configMsgLog( WTokenFile& fil, WString& tok );
         WVList          _logScanPatterns;
         WVList          _logHelpFiles;
+        WVList          _logHtmlHelpFiles;
         void configProject( WTokenFile& fil, WString& tok );
         void addRules( WFileName& srcMask, WFileName& tgtMask, WVList& list, WString& tagMask );
         bool readFile( const WFileName& filename, bool reqd=TRUE );
