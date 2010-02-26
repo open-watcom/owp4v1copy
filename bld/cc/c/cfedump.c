@@ -31,6 +31,7 @@
 
 #include "cvars.h"
 #include "cgdefs.h"
+#include "cgswitch.h"
 
 static char *_Ops[] = {
 #undef pick1
