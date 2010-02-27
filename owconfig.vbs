@@ -56,6 +56,9 @@ Else
     WScript.StdOut.Write "Checking for ipfc... "
     IpfcPath = FindFile("ipfc.exe")
     WScript.StdOut.WriteLine IpfcPath
+    WScript.StdOut.Write "Checking for hhc... "
+    HhcPath = FindFile("hhc.exe")
+    WScript.StdOut.WriteLine HhcPath
     
     ' Output a batch file to set the environment.
     Set FSO = CreateObject("Scripting.FileSystemObject")
@@ -104,6 +107,12 @@ Else
         OutFile.WriteLine "set PATH=%PATH%;" + IpfcPath
     Else
         OutFile.WriteLine "set OS2HC="
+    End If
+    If Len(HhcPath) > 0 Then
+        OutFile.WriteLine "set HHC=hhc"
+        OutFile.WriteLine "set PATH=%PATH%;" + HhcPath
+    Else
+        OutFile.WriteLine "set HHC="
     End If
     OutFile.WriteLine
     OutFile.WriteLine "REM Subdirectory to be used for bootstrapping"

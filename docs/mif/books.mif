@@ -21,12 +21,12 @@
 !inject devguide
 !inject drnt             html  htmlhelp  nt                win
 !inject drwatcom         html  htmlhelp  nt                win
-!inject ebooks           html  htmlhelp  nt
+!inject ebooks                           nt
 !inject editor           html  htmlhelp  nt                win
 !inject f77graph    dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject f77lr       dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject f_readme    dos  html  htmlhelp  nt  os2  pdf  ps  win
-!inject fbooks                 htmlhelp  nt
+!inject fbooks                           nt
 !inject fpguide     dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject ftools      dos  html  htmlhelp  nt  os2  pdf  ps  win
 !inject fuguide     dos  html  htmlhelp  nt  os2  pdf  ps  win

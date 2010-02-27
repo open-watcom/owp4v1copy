@@ -46,6 +46,7 @@ dosemu_wgml_batch=wgml.bat
 # define target and platform help compilers
 #
 hc_nt = $(%WIN95HC)
+hc_hh = $(%HHC)
 hc_win = whc
 hc_os2 = $(%OS2HC)
 hc_dos = hcdos
@@ -76,7 +77,9 @@ dep_os2 = $(hbook).h $(hbook).inf $(hbook).hlp
 !endif
 dep_dos = $(hbook).h $(hbook).ihp
 dep_html = $(hbook).htm
+!ifneq hc_hh
 dep_htmlhelp = $(hbook)/$(hbook).chm $(hbook)/$(hbook).chi
+!endif
 dep_ps = $(hbook).ps
 !ifdef hc_pdf
 dep_pdf = $(hbook).pdf
@@ -237,7 +240,7 @@ $(hbook)/$(hbook).chm $(hbook)/$(hbook).chi : ../html/$(hbook).htm
     awk -f ../makehhc.awk ../html/$(hbook).htm >$(hbook)/$(hbook).hhc
     awk -f ../makehhk.awk ../html/$(hbook).mix >$(hbook)/$(hbook).hhk
     awk -f ../makehhp.awk -v hhcfile=$(hbook).hhc -v hhkfile=$(hbook).hhk ../html/$(hbook).htm >$(hbook)/$(hbook).hhp
-    -hhc $(hbook)/$(hbook).hhp
+    -$(hc_hh) $(hbook)/$(hbook).hhp
 
 ####################################################
 #
