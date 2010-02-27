@@ -346,6 +346,11 @@ extern void SetDefaultGlobalVarList( void )
             SetVariableByName( "IsWin95", "1" );
             SetVariableByName( "IsWin32", "1" );
         }
+        if( LOBYTE( LOWORD( version ) ) >= 5 ) {
+            SetVariableByName( "IsWin98", "1" );
+        } else {
+            SetVariableByName( "IsWin98", "0" );
+        }
     }
 #else
     SetVariableByName( "IsWinNT", "0" );

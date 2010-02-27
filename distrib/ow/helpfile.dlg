@@ -5,12 +5,16 @@ static_text=\
         //0
 static_text=
 check_box=win16_helpfiles,,\
-        //1"&Windows 3.x Hosted Help Files"\
-        //2"&Windows 3.x ホスト・ヘルプファイル"\
+        //1"Win1&6 Hosted Help Files"\
+        //2"Win1&6 ホスト・ヘルプファイル"\
         //0
 check_box=win32_helpfiles,,\
-        //1"Windows 9x / Windows &NT Hosted Help files"\
-        //2"Windows 9x / Windows &NT ホスト・ヘルプファイル"\
+        //1"Win&32 Hosted Help Files"\
+        //2"Win&32 ホスト・ヘルプファイル"\
+        //0
+check_box=htmlhelp_helpfiles,,\
+        //1"Win32 Hosted &HTML Help Files"\
+        //2"Win32 Hosted &HTML Help Files"\
         //0
 check_box=os2_helpfiles,,\
         //1"&OS/2 Hosted Help Files"\
