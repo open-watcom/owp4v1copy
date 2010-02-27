@@ -172,7 +172,7 @@ bool DisplayHelpSearchHH( gui_help_instance inst, HWND hwnd, char *file, char *t
     if( topic == NULL ) {
         topic = "";
     }
-    return( WHtmlHelp( hwnd, file, (UINT)HELP_PARTIALKEY, (DWORD)(LPCTSTR)topic ) );
+    return( WHtmlHelp( hwnd, file, (UINT)HELP_PARTIALKEY, (DWORD)(LPCSTR)topic ) );
 }
 
 bool DisplayHelpContext( gui_help_instance inst, HWND hwnd, char *file, char *topic )
