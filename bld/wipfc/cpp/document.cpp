@@ -539,19 +539,19 @@ void Document::makeBitmaps()
         //get IPFCARTWORK from env
         std::string env( Environment.value( "IPFCARTWORK" ) );
         std::vector< std::string > paths;
-#ifndef __UNIX__
-        char separator( ';' );
-        char slash( '\\' );
-#else
-        char separator( ':' );
+#ifdef __UNIX__
+        std::string separators( ":;" );
         char slash( '/' );
+#else
+        std::string separators( ";" );
+        char slash( '\\' );
 #endif
         std::string::size_type idx1( 0 );
-        std::string::size_type idx2( env.find( separator, idx1 ) );
+        std::string::size_type idx2( env.find_first_of( separators, idx1 ) );
         paths.push_back( env.substr( idx1, idx2 - idx1 ) );
         while( idx2 != std::string::npos ) {
             idx1 = idx2 + 1;
-            idx2 = env.find( separator, idx1 );
+            idx2 = env.find_first_of( separators, idx1 );
             paths.push_back( env.substr( idx1, idx2 - idx1 ) );
         }
         try {
@@ -807,21 +807,21 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
     else if( lexer->cmdId() == Lexer::IMBED ) {
         std::string env( Environment.value( "IPFCIMBED" ) );
         std::vector< std::wstring > paths;
-#ifndef __UNIX__
-        char separator( ';' );
-        wchar_t slash( L'\\' );
+#ifdef __UNIX__
+        std::string separators( ":;" );
+        char slash( '/' );
 #else
-        char separator( ':' );
-        wchar_t slash( L'/' );
+        std::string separators( ";" );
+        char slash( '\\' );
 #endif
         std::string::size_type idx1( 0 );
-        std::string::size_type idx2( env.find( separator, idx1 ) );
+        std::string::size_type idx2( env.find_first_of( separators, idx1 ) );
         std::wstring fbuffer;
         mbtowstring( env.substr( idx1, idx2 - idx1 ), fbuffer );
         paths.push_back( fbuffer );
         while( idx2 != std::string::npos ) {
             idx1 = idx2 + 1;
-            idx2 = env.find( separator, idx1 );
+            idx2 = env.find_first_of( separators, idx1 );
             fbuffer.clear();
             mbtowstring( env.substr( idx1, idx2 - idx1 ), fbuffer );
             paths.push_back( fbuffer );
