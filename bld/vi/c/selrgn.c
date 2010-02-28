@@ -724,3 +724,25 @@ void NormalizeRange( range *r )
     r->end.column -= 1;
 
 } /* NormalizeRange */
+
+/*
+ * SelectAll - select the entire contents of the file
+ */
+vi_rc SelectAll( void )
+{
+    range   r;
+    vi_rc   rc;
+    r.line_based = TRUE;
+    r.start.line = 1;
+    CFindLastLine( &r.end.line );
+    rc = SetSelectedRegion( &r );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
+    }
+    rc = GoToLineNoRelCurs( r.end.line );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
+    }
+    return( GoToColumnOK( LineLength( r.end.line ) + 1 ) );
+
+} /* SelectAll */

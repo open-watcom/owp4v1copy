@@ -752,6 +752,7 @@ void    SelRgnInit( void );
 void    SelRgnFini( void );
 void    GetFixedSelectedRegion( select_rgn *);
 void    NormalizeRange( range * );
+vi_rc   SelectAll( void );
 
 /* shove.c */
 vi_rc Shift( linenum, linenum, char, bool );

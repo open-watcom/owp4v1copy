@@ -38,7 +38,7 @@
 /*       /------------\       /------------------\ /--------------------------------------------\ /---------------------------------\ /----------------------------------\ */
 /*            enum                  modeless             insert               command                   nm_bits                             bits                           */
 vi_pick( VI_KEY( NULL ),         InvalidKey,          InvalidKey,           InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
-vi_pick( VI_KEY( CTRL_A ),       InvalidKey,          InvalidKey,           LineInfo,                BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
+vi_pick( VI_KEY( CTRL_A ),       SelectAll,           InvalidKey,           LineInfo,                BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( CTRL_B ),       InvalidKey,          InvalidKey,           MovePageUp,              BITS(EVENT_MISC,     0, 0, 0, 0, 1, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( CTRL_C ),       AddSelRgnToSavebuf,  InvalidKey,           AddSelRgnToSavebuf,      BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( CTRL_D ),       DoUndoUndo,          IMTabs,               MoveHalfPageDown,        BITS(EVENT_MISC,     0, 0, 0, 0, 1, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
