@@ -630,13 +630,16 @@ STD1::uint32_t Document::writeBitmaps( std::FILE* out )
         }
         catch( FatalError& e ) {
             std::fclose( tmp );
+            std::remove( tmpName.c_str() );
             throw e;
         }
         catch( FatalIOError& e ) {
             std::fclose( tmp );
+            std::remove( tmpName.c_str() );
             throw e;
         }
         std::fclose( tmp );
+        std::remove( tmpName.c_str() );
     }
     return offset;
 }
