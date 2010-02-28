@@ -2,7 +2,7 @@ proj_name = docs
 
 !ifdef __UNIX__
 SL=/
-CPYCMD=cp
+CPYCMD=cp -f
 RENCMD=mv
 LOWERC=echo
 !else
@@ -237,9 +237,9 @@ $(hbook).chm $(hbook).chi : ../html/$(hbook).htm
     $(CPYCMD) $(book_bmroot)$(SL)*.bmp $(hbook) > $(nulldevice)
 !endif
     awk -f ../splithtm.awk -v dir=$(hbook) ../html/$(hbook).htm
-    awk -f ../makehhc.awk ../html/$(hbook).htm > $(hbook)/$(hbook).hhc
-    awk -f ../makehhk.awk ../html/$(hbook).mix > $(hbook)/$(hbook).hhk
-    awk -f ../makehhp.awk -v hhcfile=$(hbook).hhc -v hhkfile=$(hbook).hhk ../html/$(hbook).htm > $(hbook)/$(hbook).hhp
+    awk -f ../makehhc.awk ../html/$(hbook).htm >$(hbook)/$(hbook).hhc
+    awk -f ../makehhk.awk ../html/$(hbook).mix >$(hbook)/$(hbook).hhk
+    awk -f ../makehhp.awk -v hhcfile=$(hbook).hhc -v hhkfile=$(hbook).hhk ../html/$(hbook).htm >$(hbook)/$(hbook).hhp
     -$(hc_hh) $(hbook)/$(hbook).hhp
     $(CPYCMD) $(hbook)\$(hbook).chm $^:. > $(nulldevice)
     $(CPYCMD) $(hbook)\$(hbook).chi $^:. > $(nulldevice)
@@ -253,17 +253,22 @@ $(hbook).chm $(hbook).chi : ../html/$(hbook).htm
 
 .EXTENSIONS: .ps .bmp
 
-$(hbook).ps : $(book_objs) $(book_objs_ps) $(proj_objs)
-    @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
+$(hbook).ps : make_tmp $(book_objs) $(book_objs_ps) $(proj_objs)
+    @set GMLINC=tmp;$(book_incs);$(whelp_incs);$(gml_incs)
 !ifeq docs_verbose 1
-    @echo GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
+    @echo GMLINC=tmp;$(book_incs);$(whelp_incs);$(gml_incs)
 !endif
     %make prepare_wgml_opts
     -$(wgml) "$(book_src) ( file $(optfile_wgml)"
 
+make_tmp: .symbolic
+    @if not exist tmp mkdir tmp
+
 .bmp: $(book_bmroot)
+.ps: tmp
+
 .bmp.ps:
-    bmp2eps -c $< $^@
+    bmp2eps -c $< tmp$(SL)$^@
 
 ####################################################
 #
