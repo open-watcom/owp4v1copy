@@ -305,7 +305,7 @@ $(hbook).pdf : $(hbook).ps
 
 $(hbook).inf : $(hbook).ipf
     set IPFCARTWORK=$(book_incs)
-    $(hc_os2) $(hbook).ipf /inf
+    $(hc_os2) -inf $(hbook).ipf
     $(LOWERC) $@ $@        # change case to lower
 
 !ifdef book_os2_help
