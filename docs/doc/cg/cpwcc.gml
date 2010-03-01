@@ -1979,6 +1979,39 @@ fixed foo()
 See the chapters entitled :HDREF refid='prg86'. and
 :HDREF refid='prg386'. for more information on pragmas.
 .*
+.note __int8
+.ix 'keywords' '__int8'
+&product supports the
+.kwm __int8
+keyword to define 8-bit integer data objects.
+.exam begin
+static __int8 smallInt;
+.exam end
+.np
+Also supported are signed and unsigned 8-bit integer constants.
+.*
+.note __int16
+.ix 'keywords' '__int16'
+&product supports the
+.kwm __int16
+keyword to define 16-bit integer data objects.
+.exam begin
+static __int16 shortInt;
+.exam end
+.np
+Also supported are signed and unsigned 16-bit integer constants.
+.*
+.note __int32
+.ix 'keywords' '__int32'
+&product supports the
+.kwm __int32
+keyword to define 32-bit integer data objects.
+.exam begin
+static __int32 longInt;
+.exam end
+.np
+Also supported are signed and unsigned 32-bit integer constants.
+.*
 .note __int64
 .ix 'keywords' '__int64'
 &product supports the

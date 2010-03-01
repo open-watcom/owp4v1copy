@@ -310,6 +310,9 @@ Modified        By              Reason
 %token Y___FORTRAN
 %token Y___HUGE
 %token Y___INLINE
+%token Y___INT8
+%token Y___INT16
+%token Y___INT32
 %token Y___INT64
 %token Y___INTERRUPT
 %token Y___LOADDS
@@ -3421,6 +3424,12 @@ basic-type-specifier
     /* extension */
     | Y___SEGMENT
     { $$ = PTypeScalar( STM_SEGMENT ); }
+    | Y___INT8
+    { $$ = PTypeScalar( STM_CHAR ); }
+    | Y___INT16
+    { $$ = PTypeScalar( STM_SHORT ); }
+    | Y___INT32
+    { $$ = PTypeScalar( STM_LONG ); }
     | Y___INT64
     { $$ = PTypeScalar( STM_INT64 ); }
     ;

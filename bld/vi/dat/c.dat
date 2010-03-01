@@ -1,4 +1,4 @@
-74
+77
 auto
 break
 case
@@ -62,6 +62,9 @@ __export
 __asm
 __declspec
 __inline
+__int8
+__int16
+__int32
 __int64
 __restrict
 _Cdecl

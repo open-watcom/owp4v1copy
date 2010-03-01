@@ -438,6 +438,9 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
         case T_INT:       bit = M_INT;          break;
         case T_SHORT:     bit = M_SHORT;        break;
         case T_LONG:      bit = M_LONG;         break;
+        case T___INT8:    bit = M_CHAR;         break;
+        case T___INT16:   bit = M_SHORT;        break;
+        case T___INT32:   bit = M_LONG;         break;
         case T___INT64:   bit = M_LONG_LONG;    break;
         case T_SIGNED:    bit = M_SIGNED;       break;
         case T_UNSIGNED:  bit = M_UNSIGNED;     break;

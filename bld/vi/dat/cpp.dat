@@ -1,4 +1,4 @@
-104
+107
 _Packed
 _Seg16
 __asm
@@ -13,6 +13,9 @@ __fastcall
 __fortran
 __huge
 __inline
+__int8
+__int16
+__int32
 __int64
 __interrupt
 __loadds
