@@ -506,6 +506,7 @@ positive_tests = &
     inline04.$(ext) &
     inline05.$(ext) &
     inline06.$(ext) &
+    int01.$(ext) &
     intel01.$(ext) &
     io01.$(ext) &
     io02.$(ext) &

@@ -1988,7 +1988,9 @@ keyword to define 8-bit integer data objects.
 static __int8 smallInt;
 .exam end
 .np
-Also supported are signed and unsigned 8-bit integer constants.
+Also supported are signed and unsigned 8-bit integer constants.  The
+.kwm __int8
+data type will be unsigned by default if the compiler is invoked with the -j switch.
 .*
 .note __int16
 .ix 'keywords' '__int16'
