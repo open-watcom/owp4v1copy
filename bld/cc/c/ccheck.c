@@ -293,8 +293,8 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
     typ2_flags = FLAG_NONE;
     ret_val = OK;
     for( ;; ) {   // * [] loop
-        SKIP_TYPEDEFS( typ1 );  // skip typedefs (don't go into enums base)
-        SKIP_TYPEDEFS( typ2 );
+        typ1 = SkipTypeFluff( typ1 ); // skip typedefs, go into enum base
+        typ2 = SkipTypeFluff( typ2 );
         if( typ1 == typ2 )
             break;
         if( typ1->decl_type != typ2->decl_type )
@@ -1032,8 +1032,8 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
         ptr_mask = ~(FLAG_NEAR | FLAG_WAS_ARRAY | FLAG_LANGUAGES);
     }
     for( ;; ) {
-        SKIP_TYPEDEFS( typ1 );
-        SKIP_TYPEDEFS( typ2 );
+        typ1 = SkipTypeFluff( typ1 ); // skip typedefs, go into enum base
+        typ2 = SkipTypeFluff( typ2 );
         /* this compare was moved here 20-sep-88 */
         /* ptr to typedef struct failed when this was before typedef skips */
         if( typ1 == typ2 )
