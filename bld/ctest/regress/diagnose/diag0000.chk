@@ -243,7 +243,7 @@ source\diag0018.c(7): Note! I2002: 'foo' defined in: source\diag0018.c(4)
 source\diag0018.c(13): Warning! W113: Pointer type mismatch
 source\diag0018.c(13): Note! I2003: source conversion type is 'enum foo_enum *'
 source\diag0018.c(13): Note! I2004: target conversion type is 'char *'
-source\diag0018.c(14): Warning! W113: Pointer type mismatch
+source\diag0018.c(14): Error! E1010: Type mismatch
 source\diag0018.c(14): Note! I2003: source conversion type is 'enum foo_enum *'
 source\diag0018.c(14): Note! I2004: target conversion type is 'char *'
 source\diag0018.c(16): Warning! W113: Pointer type mismatch
