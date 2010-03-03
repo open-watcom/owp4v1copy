@@ -35,8 +35,9 @@
 #include <cderr.h>
 #include <assert.h>
 
-static char *filterList = "C Files (*.c;*.h)\0*.c;*.h\0"
-                          "C++ Files (*.cpp;*.hpp)\0*.cpp;*.hpp\0"
+static char *filterList = "C/C++ Files (*.c;*.h;*.cpp;*.hpp;*.cxx;*.hxx;*.inl)\0*.c;*.h;*.cpp;*.hpp;*.cxx;*.hxx;*.inl\0"
+                          "C Files (*.c;*.h)\0*.c;*.h\0"
+                          "C++ Files (*.cpp;*.hpp;*.cxx;*.hxx;*.inl)\0*.cpp;*.hpp;*.cxx;*.hxx;*.inl\0"
                           "Fortran Files (*.for;*.fi;*.f;*.inc)\0*.for;*.fi;*.f;*.inc\0"
                           "Java(Script) Files (*.java;*.js)\0*.java;*.js\0"
                           "SQL Files (*.sql)\0*.sql\0"
@@ -48,7 +49,9 @@ static char *filterList = "C Files (*.c;*.h)\0*.c;*.h\0"
                           "GML Files (*.gml)\0*.gml\0"
                           "DBTest (*.tst)\0*.tst\0"
                           "Makefiles (makefile;*.mk;*.mif;*.mak)\0makefile;*.mk;*.mif;*.mak\0"
-                          "Asm Files (*.asm;*.inc)\0*.asm;*.inc\0"
+                          "Assembly Files (*.asm;*.inc)\0*.asm;*.inc\0"
+                          "Resource Files (*.rc;*.rh;*.dlg)\0*.rc;*.rh;*.dlg\0"
+                          "AWK Files (*.awk)\0*.awk\0"
                           "All Files (*.*)\0*.*\0"
                           "\0";
 static char *FileNameList;
