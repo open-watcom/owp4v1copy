@@ -48,16 +48,18 @@ int NumErrors = 0;                              /* number of errors */
 
 #include <wdefwin.h>
 
-int main( void )
+int main( int argc, char **argv )
 {
     FILE                *my_stdout;
 
+    strcpy( ProgramName, strlwr( argv[0] ) );   /* store filename */
     my_stdout = freopen( "tmp.log", "a", stdout );
     if( my_stdout == NULL ) {
         fprintf( stderr, "Unable to redirect stdout\n" );
         exit( EXIT_FAILURE );
     }
 
+    printf( "Tests completed (%s).\n", ProgramName );
     fprintf( stderr, "Tests completed (%s).\n", ProgramName );
     fclose( my_stdout );
     _dwShutDown();
