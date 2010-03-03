@@ -46,6 +46,8 @@
 #include "seterrno.h"
 #include "_process.h"
 
+extern char * __CreateInheritString( void );
+
 int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
                                   CHAR_TYPE *envpar, const CHAR_TYPE * const argv[] )
 {
@@ -63,7 +65,10 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
     char *envdata;
     char *envp;
     char *ep;
+    char *inherit;
     int ok;
+
+    inherit = __CreateInheritString();
 
     __F_NAME(__ccmdline,__wccmdline)( pgmname, argv, cmdline, 0 );
 
@@ -124,6 +129,7 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
         RdosFreeProcessHandle( handle );                        
     }
 
+    lib_free( inherit );
     lib_free( p );
 
     return( rc );

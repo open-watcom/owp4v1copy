@@ -50,6 +50,8 @@
 
 #define CONSOLE "CON"
 
+#define MAX_INHERIT_SPACE   0x4000
+
 /* values for type */
 #define HANDLE_TYPE_INVALID 0
 #define HANDLE_TYPE_INPUT   1
@@ -62,6 +64,7 @@ typedef struct rdos_handle_type
     unsigned    mode;
     int         ref_count;
     char        type;
+    char       *file_name;
 } rdos_handle_type;
 
 rdos_handle_type *console_in;
@@ -70,15 +73,20 @@ rdos_handle_type **handle_ptr;
 int handle_count;
 int handle_section;
 
-static rdos_handle_type *AllocHandleObj( void )
+static rdos_handle_type *AllocHandleObj( const char *file_name )
 {
     rdos_handle_type *h;
+    char *buf = 0;
+
+    if( file_name )
+        buf = _fullpath( 0, file_name, 0 );
 
     h = ( rdos_handle_type * )lib_malloc( sizeof( rdos_handle_type ) );
     h->rdos_handle = HANDLE_TYPE_FILE;
     h->mode = 0;
     h->type = 0;
     h->ref_count = 1;
+    h->file_name = buf;
     return( h );
 }
 
@@ -87,6 +95,8 @@ static void FreeHandleObj( rdos_handle_type *h)
     h->ref_count--;
 
     if( h->ref_count == 0 ) {
+        if( h->file_name )
+            lib_free( h->file_name );
         if( h->rdos_handle )
             RdosCloseFile( h->rdos_handle );
         lib_free( h );
@@ -209,7 +219,7 @@ void InitHandle( void )
     for( i = 0; i < handle_count; i++ )
         handle_ptr[i] = 0;
 
-    h = AllocHandleObj();
+    h = AllocHandleObj( 0 );
     h->type = HANDLE_TYPE_INPUT;
     h->mode = _READ;
     handle_ptr[0] = h;
@@ -217,7 +227,7 @@ void InitHandle( void )
     h->ref_count++;
     console_in = h;
 
-    h = AllocHandleObj();
+    h = AllocHandleObj( 0 );
     h->type = HANDLE_TYPE_OUTPUT;
     h->mode = _WRITE;
     handle_ptr[1] = h;
@@ -240,6 +250,71 @@ void FiniHandle( void )
     lib_free( handle_ptr );
 
     RdosDeleteSection( handle_section );
+}
+
+static char *AddInherit( char *ptr, int handle, rdos_handle_type *obj, int *remain )
+{
+    char str[40];
+    int len;
+
+    if( !obj->rdos_handle )
+        return( ptr );
+
+    if (!obj->file_name )
+        return( ptr );
+
+    if( *remain ) {
+        *ptr = 0;
+        (*remain)--;
+    }
+    else
+        return( ptr );
+
+    sprintf( str, "=%d,%d", handle, obj->mode );
+    len = strlen( obj->file_name );
+    len += strlen( str );
+
+    if( len <= *remain ) {
+        strcpy( ptr, obj->file_name );
+        ptr += strlen( obj->file_name );
+        strcpy( ptr, str );
+        ptr += strlen( str );
+        ptr++;
+        (*remain) -= len;
+    }    
+    return( ptr );    
+}                
+
+_WCRTLINK char * __CreateInheritString( void ) 
+{
+    char               *str;
+    char               *ptr;
+    int                 handle;
+    int                 remain;
+    rdos_handle_type   *obj;
+
+    str = lib_malloc( MAX_INHERIT_SPACE );
+
+    remain = MAX_INHERIT_SPACE - 2;
+    ptr = str;
+
+    RdosEnterSection( handle_section );
+
+    for( handle = 0; handle < handle_count; handle++ ) {
+        obj = handle_ptr[handle];
+        if( obj ) {
+            if( obj->file_name )
+                ptr = AddInherit( ptr, handle, obj, &remain );                 
+        }
+    }
+
+    *ptr = 0;
+    ptr++;
+    *ptr = 0;
+    
+    RdosLeaveSection( handle_section );
+
+    return( str );
 }
 
 _WCRTLINK int unlink( const CHAR_TYPE *filename ) 
@@ -340,7 +415,7 @@ static int open_base( const CHAR_TYPE *name, int mode )
                 RdosSetFileSize( rdos_handle, 0 );
     
         if( rdos_handle ) {
-            obj = AllocHandleObj();
+            obj = AllocHandleObj( name );
             if( obj ) {
                 obj->rdos_handle = rdos_handle;
                 obj->mode = iomode_flags;
