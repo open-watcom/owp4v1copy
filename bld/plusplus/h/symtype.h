@@ -126,6 +126,11 @@ typedef enum {
     STM_BOOL            = 0x0400,
     STM_INT64           = 0x0800,
     STM_WCHAR           = 0x1000,
+#if _CPU == 8086
+    STM_INT32           = STM_LONG,
+#else
+    STM_INT32           = STM_INT,
+#endif
     STM_NULL            = 0x0000
 } scalar_t;
 

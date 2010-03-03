@@ -3429,7 +3429,7 @@ basic-type-specifier
     | Y___INT16
     { $$ = PTypeScalar( STM_SHORT ); }
     | Y___INT32
-    { $$ = PTypeScalar( STM_INT ); }
+    { $$ = PTypeScalar( STM_INT32 ); }
     | Y___INT64
     { $$ = PTypeScalar( STM_INT64 ); }
     ;

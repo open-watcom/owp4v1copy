@@ -10,8 +10,8 @@ int main() {
     ch = i8;
     s = i16;
     i = i32;
-    if( sizeof( char ) != sizeof( __int8 ) ) fail(__LINE__);
-    if( sizeof( short ) != sizeof( __int16 ) ) fail(__LINE__);
-    if( sizeof( int ) != sizeof( __int32 ) ) fail(__LINE__);
+    if( sizeof( __int8 ) != 1 ) fail(__LINE__);
+    if( sizeof( __int16 ) != 2 ) fail(__LINE__);
+    if( sizeof( __int32 ) != 4 ) fail(__LINE__);
     _PASS;
 }

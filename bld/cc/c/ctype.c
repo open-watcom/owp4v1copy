@@ -63,21 +63,26 @@ TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 FIELDPTR FieldHash[FIELD_HASH_SIZE];
 
 enum {
-        M_CHAR          = 0x0001,
-        M_INT           = 0x0002,
-        M_SHORT         = 0x0004,
-        M_LONG          = 0x0008,
-        M_SIGNED        = 0x0010,
-        M_UNSIGNED      = 0x0020,
-        M_FLOAT         = 0x0040,
-        M_DOUBLE        = 0x0080,
-        M_LONG_LONG     = 0x0100,
-        M_VOID          = 0x0200,
-        M_COMPLEX       = 0x0400,
-        M_IMAGINARY     = 0x0800,
-        M_BOOL          = 0x1000,
-        M___LAST        = 0
- };
+    M_CHAR          = 0x0001,
+    M_INT           = 0x0002,
+    M_SHORT         = 0x0004,
+    M_LONG          = 0x0008,
+    M_SIGNED        = 0x0010,
+    M_UNSIGNED      = 0x0020,
+    M_FLOAT         = 0x0040,
+    M_DOUBLE        = 0x0080,
+    M_LONG_LONG     = 0x0100,
+    M_VOID          = 0x0200,
+    M_COMPLEX       = 0x0400,
+    M_IMAGINARY     = 0x0800,
+    M_BOOL          = 0x1000,
+#if _CPU == 8086
+    M_INT32         = M_LONG,
+#else
+    M_INT32         = M_INT,
+#endif
+    M___LAST        = 0
+};
 
 #define TYPE_PLAIN_INT  TYPE_UFIELD                     /* 19-mar-91 */
 
@@ -440,7 +445,7 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
         case T_LONG:      bit = M_LONG;         break;
         case T___INT8:    bit = M_CHAR;         break;
         case T___INT16:   bit = M_SHORT;        break;
-        case T___INT32:   bit = M_INT;          break;
+        case T___INT32:   bit = M_INT32;        break;
         case T___INT64:   bit = M_LONG_LONG;    break;
         case T_SIGNED:    bit = M_SIGNED;       break;
         case T_UNSIGNED:  bit = M_UNSIGNED;     break;

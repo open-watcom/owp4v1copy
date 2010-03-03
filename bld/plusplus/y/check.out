@@ -2108,7 +2108,7 @@ Y_SEMI_COLON Y_TYPENAME Y_SCOPED_TYPE_NAME
 
 unit reduction states removed:             110
 unit reduction optimizations:             5756
-actions combined:                          133
+actions combined:                          132
 parser states:                             966
 # states (1 reduce only):                  440
 reduce/reduce conflicts:                   115
