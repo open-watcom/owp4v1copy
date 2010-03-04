@@ -118,12 +118,18 @@ typedef struct ss_flags_m {
     unsigned short  spare           : 13;
 } ss_flags_m;
 
+typedef struct ss_flags_p {
+    unsigned short  inString        : 1;
+    unsigned short  spare           : 15;
+} ss_flags_p;
+
 typedef union ss_flags {
     ss_flags_c  c;
     ss_flags_f  f;
     ss_flags_h  h;
     ss_flags_g  g;
     ss_flags_m  m;
+    ss_flags_p  p;
 } ss_flags;
 
 /*----- EXPORTS -----*/

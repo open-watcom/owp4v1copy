@@ -16,7 +16,7 @@ objtime = fcbems.obj fcbxms.obj fcbdisk.obj fcbxmem.obj &
         srcgen.obj fmatch.obj &
         status.obj expr.obj op.obj &
         lang.obj sstyle.obj sstyle_f.obj sstyle_c.obj &
-        sstyle_h.obj sstyle_g.obj sstyle_m.obj
+        sstyle_h.obj sstyle_g.obj sstyle_m.obj sstyle_p.obj
 
 objtime += rcs.obj
 

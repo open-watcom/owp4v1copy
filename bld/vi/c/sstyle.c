@@ -36,6 +36,7 @@
 #include "sstyle_h.h"
 #include "sstyle_g.h"
 #include "sstyle_m.h"
+#include "sstyle_p.h"
 #include <assert.h>
 
 
@@ -104,16 +105,18 @@ static void getNextBlock( ss_block *ss_new, char *text, int text_col,
     case LANG_FORTRAN:
         GetFORTRANBlock( ss_new, text + text_col, text_col );
         break;
+    case LANG_PERL:
+    case LANG_AWK:
+        GetPerlBlock( ss_new, text + text_col, line, line_no );
+        break;
     case LANG_C:
     case LANG_CPP:
     case LANG_JAVA:
     case LANG_SQL:
     case LANG_BAT:
     case LANG_BASIC:
-    case LANG_PERL:
     case LANG_DBTEST:
     case LANG_RC:
-    case LANG_AWK:
     case LANG_USER:
     default:
         GetCBlock( ss_new, text + text_col, line, line_no );
@@ -324,10 +327,8 @@ void SSDifBlock( ss_block *ss_old, char *text, int start_col,
     case LANG_SQL:
     case LANG_BAT:
     case LANG_BASIC:
-    case LANG_PERL:
     case LANG_DBTEST:
     case LANG_RC:
-    case LANG_AWK:
     case LANG_USER:
         InitCLine( text );
         break;
@@ -343,6 +344,10 @@ void SSDifBlock( ss_block *ss_old, char *text, int start_col,
         break;
     case LANG_MAKEFILE:
         InitMkLine( text );
+        break;
+    case LANG_PERL:
+    case LANG_AWK:
+        InitPerlLine( text );
         break;
     }
     ss_inc = ss_old;
@@ -452,10 +457,8 @@ void SSInitLanguageFlags( linenum line_no )
         case LANG_SQL:
         case LANG_BAT:
         case LANG_BASIC:
-        case LANG_PERL:
         case LANG_DBTEST:
         case LANG_RC:
-        case LANG_AWK:
         case LANG_USER:
             InitCFlags( line_no );
             break;
@@ -472,6 +475,10 @@ void SSInitLanguageFlags( linenum line_no )
         case LANG_MAKEFILE:
             InitMkFlags( line_no );
             break;
+        case LANG_PERL:
+        case LANG_AWK:
+            InitPerlFlags( line_no );
+            break;
         }
     }
 }
@@ -486,25 +493,27 @@ void SSInitLanguageFlagsGivenValues( ss_flags *flags )
         case LANG_SQL:
         case LANG_BAT:
         case LANG_BASIC:
-        case LANG_PERL:
         case LANG_DBTEST:
         case LANG_RC:
-        case LANG_AWK:
         case LANG_USER:
-            InitCFlagsGivenValues( &( flags->c ) );
+            InitCFlagsGivenValues( &flags->c );
             break;
         case LANG_FORTRAN:
-            InitFORTRANFlagsGivenValues( &( flags->f ) );
+            InitFORTRANFlagsGivenValues( &flags->f );
             break;
         case LANG_HTML:
         case LANG_WML:
-            InitHTMLFlagsGivenValues( &( flags->h ) );
+            InitHTMLFlagsGivenValues( &flags->h );
             break;
         case LANG_GML:
-            InitGMLFlagsGivenValues( &( flags->g ) );
+            InitGMLFlagsGivenValues( &flags->g );
             break;
         case LANG_MAKEFILE:
-            InitMkFlagsGivenValues( &( flags->m ) );
+            InitMkFlagsGivenValues( &flags->m );
+            break;
+        case LANG_PERL:
+        case LANG_AWK:
+            InitPerlFlagsGivenValues( &flags->p );
             break;
         }
     }
@@ -520,25 +529,27 @@ void SSGetLanguageFlags( ss_flags *flags )
         case LANG_SQL:
         case LANG_BAT:
         case LANG_BASIC:
-        case LANG_PERL:
         case LANG_DBTEST:
         case LANG_RC:
-        case LANG_AWK:
         case LANG_USER:
-            GetCFlags( &(flags->c) );
+            GetCFlags( &flags->c );
             break;
         case LANG_FORTRAN:
-            GetFORTRANFlags( &(flags->f) );
+            GetFORTRANFlags( &flags->f );
             break;
         case LANG_HTML:
         case LANG_WML:
-            GetHTMLFlags( &(flags->h) );
+            GetHTMLFlags( &flags->h );
             break;
         case LANG_GML:
-            GetGMLFlags( &(flags->g) );
+            GetGMLFlags( &flags->g );
             break;
         case LANG_MAKEFILE:
-            GetMkFlags( &(flags->m) );
+            GetMkFlags( &flags->m );
+            break;
+        case LANG_PERL:
+        case LANG_AWK:
+            GetPerlFlags( &flags->p );
             break;
         }
     }
