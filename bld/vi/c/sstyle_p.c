@@ -253,7 +253,7 @@ static void getText( ss_block *ss_new, char *start )
     char    *text = start + 1;
     char    save_char;
     bool    isKeyword;
-    while( isalnum( *text ) || ( *text == '_' ) ) {
+    while( isalnum( *text ) || (*text == '_') ) {
         text++;
     }
     save_char = *text;
@@ -270,6 +270,23 @@ static void getText( ss_block *ss_new, char *start )
         text++;
         ss_new->type = SE_JUMPLABEL;
     }
+    ss_new->len = text - start;
+}
+
+static void getVariable( ss_block *ss_new, char *start )
+{
+    char    *text = start + 1;
+    if( *text == '#' ) {
+        text++;
+    }
+    while( isalnum( *text ) || (*text == '_') ) {
+        text++;
+        if( text[0] == ':' && text[1] == ':' ) {
+            // Allow scope resolution operator in variable names.
+            text += 2;
+        }
+    }
+    ss_new->type = SE_VARIABLE;
     ss_new->len = text - start;
 }
 
@@ -467,6 +484,14 @@ void GetPerlBlock( ss_block *ss_new, char *start, line *line, linenum line_no )
         case '"':
             getString( ss_new, start, 1 );
             return;
+        case '$':
+        case '@':
+        case '%':
+            if( isalpha( start[1] ) || (start[0] == '$' && start[1] == '#') ) {
+                getVariable( ss_new, start );
+                return;
+            }
+            break;
         case '\'':
             getChar( ss_new, start, 1 );
             return;

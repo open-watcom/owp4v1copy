@@ -445,6 +445,7 @@ vi_rc PreProcess( char *fn, sfile **sf, labels *lab )
             case PCL_T_COMMENT:
             case PCL_T_FLOAT:
             case PCL_T_STRING:
+            case PCL_T_VARIABLE:
             case PCL_T_FILETYPESOURCE:
             case PCL_T_ENDFILETYPESOURCE:
             case PCL_T_LOCATE:

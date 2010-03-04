@@ -1107,6 +1107,9 @@ vi_rc ProcessWindow( int tkn, char *data )
     case PCL_T_STRING:
         rc = setSyntaxStyle( SE_STRING, data );
         break;
+    case PCL_T_VARIABLE:
+        rc = setSyntaxStyle( SE_VARIABLE, data );
+        break;
     case PCL_T_FLOAT:
         rc = setSyntaxStyle( SE_FLOAT, data );
         break;

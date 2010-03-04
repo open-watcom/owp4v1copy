@@ -62,6 +62,7 @@ typedef enum syntax_element {
     SE_COMMENT,
     SE_FLOAT,
     SE_STRING,
+    SE_VARIABLE,
     SE_NUMTYPES,        // always last
 } syntax_element;
 

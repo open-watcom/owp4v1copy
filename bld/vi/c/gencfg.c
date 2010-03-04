@@ -154,6 +154,8 @@ static void doWindow( FILE *f, int id, window_info *wi, bool colour_only )
                    SEType[SE_FLOAT].background, SEType[SE_FLOAT].font );
         MyFprintf( f, "    string %d %d %d\n", SEType[SE_STRING].foreground,
                    SEType[SE_STRING].background, SEType[SE_STRING].font );
+        MyFprintf( f, "    variable %d %d %d\n", SEType[SE_VARIABLE].foreground,
+                   SEType[SE_VARIABLE].background, SEType[SE_VARIABLE].font );
     }
     MyFprintf( f, "endwindow\n" );
 
