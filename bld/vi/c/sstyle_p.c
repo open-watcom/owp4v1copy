@@ -69,6 +69,38 @@ static int issymbol( int c )
     }
 }
 
+static int isspecvar( int c )
+{
+    switch( c ) {
+    case '|':
+    case '%':
+    case '=':
+    case '-':
+    case '~':
+    case '^':
+    case '&':
+    case '`':
+    case '\'':
+    case '+':
+    case '_':
+    case '/':
+    case '\\':
+    case ',':
+    case '\"':
+    case '$':
+    case '?':
+    case '*':
+    case '[':
+    case ']':
+    case ';':
+    case '!':
+    case '@':
+        return( 1 );
+    default:
+        return( 0 );
+    }
+}
+
 void InitPerlLine( char *text )
 {
     while( *text && isspace( *text ) ) {
@@ -290,6 +322,21 @@ static void getVariable( ss_block *ss_new, char *start )
     ss_new->len = text - start;
 }
 
+static void getSpecialVariable( ss_block *ss_new, char *start )
+{
+    char    *text = start + 1;
+    if( isdigit( *text ) ) {
+        text++;
+        while( isdigit( *text ) ) {
+            text++;
+        }
+    } else {
+        text++;
+    }
+    ss_new->type = SE_VARIABLE;
+    ss_new->len = text - start;
+}
+
 static void getSymbol( ss_block *ss_new, char *start )
 {
     ss_new->type = SE_SYMBOL;
@@ -489,6 +536,10 @@ void GetPerlBlock( ss_block *ss_new, char *start, line *line, linenum line_no )
         case '%':
             if( isalpha( start[1] ) || (start[0] == '$' && start[1] == '#') ) {
                 getVariable( ss_new, start );
+                return;
+            } else if( start[0] == '$' &&
+                       (isdigit( start[1] ) || isspecvar( start[1] )) ) {
+                getSpecialVariable( ss_new, start );
                 return;
             }
             break;
