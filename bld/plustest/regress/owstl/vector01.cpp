@@ -39,21 +39,40 @@
 
 bool construction_test( )
 {
+    int array[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     std::vector< int > v1;
-    std::vector< int > v2(10);
-    std::vector< int > v3(v1);
-    std::vector< int > v4(v2);
-    std::vector< int > v5(10, 1);
+    std::vector< int > v2( 10 );
+    std::vector< int > v3( v1 );
+    std::vector< int > v4( v2 );
+    std::vector< int > v5(  10, 1 );  // This one will instantiate the template constructor.
+    std::vector< int > v6( 10U, 1 );  // This one should call the non-template constructor.
+    InpIt<int> p1( array );
+    InpIt<int> p2( array + 10 );
+    std::vector< int > v7( p1, p2 );  // Use the template constructor in a natural way.
+
+    // The following is a syntax error (OW v1.9). A compiler bug or something to do with
+    // the parsing of '<' and '>'? Perhaps the compiler thinks the first '>' is really a
+    // greater than symbol.
+    //
+    // std::vector< int > v7( InpIt<int>( array ), InpIt<int>( array + 10 ) );
 
     if( v1.size( ) !=  0 || !v1.empty( ) || INSANE( v1 ) ) FAIL;
     if( v2.size( ) != 10 ||  v2.empty( ) || INSANE( v2 ) ) FAIL;
     if( v3.size( ) !=  0 || !v3.empty( ) || INSANE( v3 ) ) FAIL;
     if( v4.size( ) != 10 ||  v4.empty( ) || INSANE( v4 ) ) FAIL;
     if( v5.size( ) != 10 ||  v5.empty( ) || INSANE( v5 ) ) FAIL;
+    if( v6.size( ) != 10 ||  v6.empty( ) || INSANE( v6 ) ) FAIL;
+    if( v7.size( ) != 10 ||  v7.empty( ) || INSANE( v7 ) ) FAIL;
 
     // Use checked access so that we get an exception if something's wrong.
     for( std::vector< int >::size_type i = 0; i < v5.size( ); ++i ) {
         if( v5.at( i ) != 1 ) FAIL;
+    }
+    for( std::vector< int >::size_type i = 0; i < v6.size( ); ++i ) {
+        if( v6.at( i ) != 1 ) FAIL;
+    }
+    for( std::vector< int >::size_type i = 0; i < v7.size( ); ++i ) {
+        if( v7.at( i ) != i ) FAIL;
     }
 
     return( true );

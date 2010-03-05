@@ -103,6 +103,15 @@ public:
 :: the syntax of non-inline template member declarations.
 
     template< class InputIterator >
+    explicit vector( InputIterator first, InputIterator last, const Allocator &a = Allocator() )
+        : mem( a )
+    {
+        buffer = alloc( 1, buf_length );
+        vec_length = 0;
+        helper_assign( first, last, tr1::is_integral<InputIterator>::type() );
+    }
+
+    template< class InputIterator >
     void assign( InputIterator first, InputIterator last )
     {
         helper_assign( first, last, tr1::is_integral<InputIterator>::type() );
