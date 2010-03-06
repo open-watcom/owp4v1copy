@@ -107,6 +107,31 @@ string in that you can specify one or more directories separated by
 &psword.s ("&ps").
 .do end
 .************************************************************************
+.* LFN
+.if '&target' ne 'QNX' .do begin
+.section LFN
+.np
+The
+.ev LFN
+environment variable is checked by the
+&company run-time C libraries and it is used to control DOS LFN (DOS Long File Name) support.
+Normally, these libraries will use DOS LFN support if it is available on host OS.
+If you don't wish to use DOS LFN support, you can define the
+.ev LFN
+environment variable and setup it's value to 'N'.
+Using the "&setcmdup." command, define the environment
+variable as follows:
+.millust begin
+&setcmdup. &setdelim.LFN=N&setdelim.
+.millust end
+.pc
+Now, when you run your application, the DOS LFN support will be ignored.
+To undefine the environment variable, enter the command:
+.millust begin
+&setcmdup. &setdelim.LFN=&setdelim.
+.millust end
+.do end
+.************************************************************************
 .* LIB
 .section &libvarup
 .np

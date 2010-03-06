@@ -169,11 +169,11 @@ creating an OS/2 Dynamic Link Library.
 .mnote 3R
 denotes a version of the &product libraries that will be used by
 programs which have been compiled for the "flat/small" memory models
-using the "3r", "4r" or "5r" option.
+using the "3r", "4r", "5r" or "6r" option.
 .mnote 3S
 denotes a version of the &product libraries that will be used by
 programs which have been compiled for the "flat/small" memory models
-using the "3s", "4s" or "5s" option.
+using the "3s", "4s", "5s" or "6s" option.
 .endnote
 .* WCC ---------------------------------------------------------
 .np
@@ -189,6 +189,11 @@ The &product 16-bit libraries are listed below by directory.
 .ix 'CLIBL.LIB'
 .ix 'CLIBH.LIB'
 .ix 'GRAPH.LIB'
+.ix 'DOSLFNS.LIB'
+.ix 'DOSLFNM.LIB'
+.ix 'DOSLFNC.LIB'
+.ix 'DOSLFNL.LIB'
+.ix 'DOSLFNH.LIB'
 .millust begin
 CLIBS.LIB    (DOS small model support)
 CLIBM.LIB    (DOS medium model support)
@@ -196,6 +201,11 @@ CLIBC.LIB    (DOS compact model support)
 CLIBL.LIB    (DOS large model support)
 CLIBH.LIB    (DOS huge model support)
 GRAPH.LIB    (model independent, DOS graphics support)
+DOSLFNS.LIB  (DOS LFN small model support)
+DOSLFNM.LIB  (DOS LFN medium model support)
+DOSLFNC.LIB  (DOS LFN compact model support)
+DOSLFNL.LIB  (DOS LFN large model support)
+DOSLFNH.LIB  (DOS LFN huge model support)
 .millust end
 .np
 .cp 13
@@ -261,8 +271,8 @@ The &product 32-bit libraries are listed below.
 .ix 'clib3r.lib'
 .ix 'clib3s.lib'
 .millust begin
-clib3r.lib   (flat/small models, "3r", "4r" or "5r" option)
-clib3s.lib   (flat/small models, "3s", "4s" or "5s" option)
+clib3r.lib   (flat/small models, "3r", "4r", "5r" or "6r" option)
+clib3s.lib   (flat/small models, "3s", "4s", "5s" or "6s" option)
 .millust end
 .do end
 .el .if '&target' eq 'DOS' .do begin
@@ -274,10 +284,16 @@ The &product 32-bit libraries are listed below by directory.
 .ix 'CLIB3R.LIB'
 .ix 'CLIB3S.LIB'
 .ix 'GRAPH.LIB'
+.ix 'DOSLFN3R.LIB'
+.ix 'DOSLFN3S.LIB'
 .millust begin
-CLIB3R.LIB   (flat/small models, "3r", "4r" or "5r" option)
-CLIB3S.LIB   (flat/small models, "3s", "4s" or "5s" option)
+CLIB3R.LIB   (flat/small models, "3r", "4r", "5r" or "6r" option)
+CLIB3S.LIB   (flat/small models, "3s", "4s", "5s" or "6s" option)
 GRAPH.LIB    (flat/small models, DOS graphics support)
+DOSLFN3R.LIB (flat/small models, DOS LFN support,
+                                 "3r", "4r", "5r" or "6r" option)
+DOSLFN3S.LIB (flat/small models, DOS LFN support,
+                                 "3s", "4s", "5s" or "6s" option)
 .millust end
 .pc
 The graphics library
@@ -290,8 +306,8 @@ is independent of the argument passing conventions.
 .ix 'CLIB3R.LIB'
 .ix 'CLIB3S.LIB'
 .millust begin
-CLIB3R.LIB   (flat/small models, "3r", "4r" or "5r" option)
-CLIB3S.LIB   (flat/small models, "3s", "4s" or "5s" option)
+CLIB3R.LIB   (flat/small models, "3r", "4r", "5r" or "6r" option)
+CLIB3S.LIB   (flat/small models, "3s", "4s", "5s" or "6s" option)
 .millust end
 .np
 .cp 8
@@ -302,8 +318,8 @@ CLIB3S.LIB   (flat/small models, "3s", "4s" or "5s" option)
 .ix 'WIN386.LIB'
 .ix 'Windows SDK' 'Microsoft'
 .millust begin
-CLIB3R.LIB   (flat/small models, "3r", "4r" or "5r" option)
-CLIB3S.LIB   (flat/small models, "3s", "4s" or "5s" option)
+CLIB3R.LIB   (flat/small models, "3r", "4r", "5r" or "6r" option)
+CLIB3S.LIB   (flat/small models, "3s", "4s", "5s" or "6s" option)
 WIN386.LIB   (32-bit Windows API)
 .millust end
 .np
@@ -313,8 +329,8 @@ WIN386.LIB   (32-bit Windows API)
 .ix 'CLIB3R.LIB'
 .ix 'CLIB3S.LIB'
 .millust begin
-CLIB3R.LIB   (flat/small models, "3r", "4r" or "5r" option)
-CLIB3S.LIB   (flat/small models, "3s", "4s" or "5s" option)
+CLIB3R.LIB   (flat/small models, "3r", "4r", "5r" or "6r" option)
+CLIB3S.LIB   (flat/small models, "3s", "4s", "5s" or "6s" option)
 .millust end
 .do end
 .*
@@ -513,14 +529,14 @@ The &cmppname 32-bit Class Libraries are listed below.
 .ix 'cplx73s.lib'
 .millust begin
     (iostream and string class libraries)
-plib3r.lib   (flat models, "3r", "4r" or "5r" option)
-plib3s.lib   (flat models, "3s", "4s" or "5s" option)
+plib3r.lib   (flat models, "3r", "4r", "5r" or "6r" option)
+plib3s.lib   (flat models, "3s", "4s", "5s" or "6s" option)
     (complex class library for "fpc" option)
-cplx3r.lib   (flat models, "3r", "4r" or "5r" option)
-cplx3s.lib   (flat models, "3s", "4s" or "5s" option)
+cplx3r.lib   (flat models, "3r", "4r", "5r" or "6r" option)
+cplx3s.lib   (flat models, "3s", "4s", "5s" or "6s" option)
     (complex class library for "fpi..." options)
-cplx73r.lib  (flat models, "3r", "4r" or "5r" option)
-cplx73s.lib  (flat models, "3s", "4s" or "5s" option)
+cplx73r.lib  (flat models, "3r", "4r", "5r" or "6r" option)
+cplx73s.lib  (flat models, "3s", "4s", "5s" or "6s" option)
 .millust end
 .pc
 These libraries are independent of the operating system.
@@ -540,16 +556,16 @@ used.
 .ix 'CPLX73S.LIB'
 .millust begin
     (iostream and string class libraries)
-PLIB3R.LIB   (flat models, "3r", "4r" or "5r" option)
-PLIB3S.LIB   (flat models, "3s", "4s" or "5s" option)
+PLIB3R.LIB   (flat models, "3r", "4r", "5r" or "6r" option)
+PLIB3S.LIB   (flat models, "3s", "4s", "5s" or "6s" option)
 PLIBMT3R.LIB (multi-thread library for OS/2 and Windows NT)
 PLIBMT3S.LIB (multi-thread library for OS/2 and Windows NT)
     (complex class library for "fpc" option)
-CPLX3R.LIB   (flat models, "3r", "4r" or "5r" option)
-CPLX3S.LIB   (flat models, "3s", "4s" or "5s" option)
+CPLX3R.LIB   (flat models, "3r", "4r", "5r" or "6r" option)
+CPLX3S.LIB   (flat models, "3s", "4s", "5s" or "6s" option)
     (complex class library for "fpi..." options)
-CPLX73R.LIB  (flat models, "3r", "4r" or "5r" option)
-CPLX73S.LIB  (flat models, "3s", "4s" or "5s" option)
+CPLX73R.LIB  (flat models, "3r", "4r", "5r" or "6r" option)
+CPLX73S.LIB  (flat models, "3s", "4s", "5s" or "6s" option)
 .millust end
 .pc
 These libraries are independent of the operating system (except those
@@ -764,8 +780,8 @@ WIN&pc.MATH87L.LIB (Windows dependent)
 .ix 'math387r.lib'
 .ix 'math387s.lib'
 .millust begin
-math387r.lib (flat/small models, "3r", "4r" or "5r" option)
-math387s.lib (flat/small models, "3s", "4s" os "5s" option)
+math387r.lib (flat/small models, "3r", "4r", "5r" or "6r" option)
+math387s.lib (flat/small models, "3s", "4s", "5s" or "6s" option)
 emu387.lib   (QNX dependent)
 .millust end
 .do end
@@ -773,8 +789,8 @@ emu387.lib   (QNX dependent)
 .ix 'MATH387R.LIB'
 .ix 'MATH387S.LIB'
 .millust begin
-MATH387R.LIB (flat/small models, "3r", "4r" or "5r" option)
-MATH387S.LIB (flat/small models, "3s", "4s" or "5s" option)
+MATH387R.LIB (flat/small models, "3r", "4r", "5r" or "6r" option)
+MATH387S.LIB (flat/small models, "3s", "4s", "5s" or "6s" option)
 DOS&pc.EMU387.LIB (DOS dependent)
 WIN&pc.EMU387.LIB (Windows dependent)
 OS2&pc.EMU387.LIB (OS/2 dependent)
@@ -884,16 +900,16 @@ WIN&pc.MATHL.LIB (Windows dependent)
 .ix 'math3r.lib'
 .ix 'math3s.lib'
 .millust begin
-math3r.lib (flat/small models, "3r", "4r" or "5r" option)
-math3s.lib (flat/small models, "3s", "4s" os "5s" option)
+math3r.lib (flat/small models, "3r", "4r", "5r" or "6r" option)
+math3s.lib (flat/small models, "3s", "4s", "5s" or "6s" option)
 .millust end
 .do end
 .el .do begin
 .ix 'MATH3R.LIB'
 .ix 'MATH3S.LIB'
 .millust begin
-MATH3R.LIB (flat/small models, "3r", "4r" or "5r" option)
-MATH3S.LIB (flat/small models, "3s", "4s" or "5s" option)
+MATH3R.LIB (flat/small models, "3r", "4r", "5r" or "6r" option)
+MATH3S.LIB (flat/small models, "3s", "4s", "5s" or "6s" option)
 .millust end
 .do end
 .* ------------------------------------------------------
@@ -957,6 +973,28 @@ To undefine the environment variable, enter the command:
 &prompt.&setcmdup NO87=
 .millust end
 .do end
+.*
+.*
+.section *refid=liblfn The LFN Environment Variable
+.*
+.np
+If you have the application compiled and linked to use DOS Long file name
+support (LFN) then you can define the
+.ev LFN
+environment variable to suppress usage of DOS LFN on run-time.
+.np
+.ix '&setcmdup' 'LFN environment variable'
+Using the "&setcmdup" command, define the environment variable
+as follows:
+.millust begin
+&prompt.&setcmdup LFN=N
+.millust end
+.pc
+Now, when you run your application, DOS LFN support will be ignored.
+To undefine the environment variable, enter the command:
+.millust begin
+&prompt.&setcmdup LFN=
+.millust end
 .*
 .section *refid=cplibrt The &product Run-time Initialization Routines
 .*

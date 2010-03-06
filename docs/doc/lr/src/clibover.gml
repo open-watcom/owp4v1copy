@@ -320,6 +320,10 @@ Extensions (MMX).
 .note Miscellaneous Functions
 .sk 0
 This collection consists of the remaining functions.
+.*
+.note DOS LFN aware Functions
+.sk 0
+These functions are DOS LFN capable.
 .endnote
 .np
 The following subsections describe these function classes in more detail.
@@ -1615,7 +1619,7 @@ These functions pertain to directory manipulation.
 .fd *fun="chdir" change current working directory
 .fd *fun="closedir" close opened directory file
 .fd *fun="getcwd" get current working directory
-.fd *fun="getdcwd" get current directory on drive
+.fd *fun="_getdcwd" get current directory on drive
 .fd *fun="mkdir" make a new directory
 .fd *fun="opendir" open directory file
 .fd *fun="readdir" read file name from directory
@@ -2323,6 +2327,61 @@ header file for examples.
 .fd *fun="_wsetlocale" set locale category
 .fd *fun="_wsplitpath" split a filename into its components
 .fd *fun="_wsplitpath2" split a filename into its components
+.fdend
+.*======================================================================
+.section DOS LFN aware Functions
+.*
+.np
+.ix 'DOS LFN aware Functions'
+These functions deal with DOS Long File Name if an application is compiled
+with -D__WATCOM_LFN__ option and DOS LFN support is available on host system.
+.fdbeg
+.fd *fun="access" test file or directory for mode of access
+.fd *fun="chdir" change current working directory
+.fd *fun="chmod" change permissions for a file
+.fd *fun="creat" create a file
+.fd *fun="_dos_creat" create a file
+.fd *fun="_dos_creatnew" create a new file
+.fd *fun="_dos_findfirst" find first file matching a specified pattern
+.fd *fun="_dos_getfileattr" get file attributes
+.fd *fun="_dos_open" open a file
+.fd *fun="_dos_setfileattr" set the attributes of a file
+.fd *fun="findfirst" find first file matching a specified pattern
+.fd *fun="_fullpath" return full path specification for file
+.fd *fun="getcwd" get current working directory
+.fd *fun="_getdcwd" get current directory on drive
+.fd *fun="lstat" get file status
+.fd *fun="mkdir" make a new directory
+.fd *fun="open" open a file
+.fd *fun="opendir" open directory file
+.fd *fun="remove" delete a file
+.fd *fun="rename" rename a file
+.fd *fun="rmdir" remove a directory
+.fd *fun="sopen" open a file for shared access
+.fd *fun="stat" get file status
+.fd *fun="tmpnam" create name for temporary file
+.fd *fun="unlink" delete a file
+.fd *fun="utime" set modification time for a file
+.fd *fun="_waccess" test file or directory for mode of access
+.fd *fun="_wchdir" change current working directory
+.fd *fun="_wchmod" change permissions for a file
+.fd *fun="_wcreat" create a file
+.fd *fun="_wdos_findfirst" find first file matching a specified pattern
+.fd *fun="_wfindfirst" find first file matching a specified pattern
+.fd *fun="_wfullpath" return full path specification for file
+.fd *fun="_wgetcwd" get current working directory
+.fd *fun="_wgetdcwd" get current directory on drive
+.fd *fun="_wmkdir" make a new directory
+.fd *fun="_wopen" open a file
+.fd *fun="_wopendir" open directory file
+.fd *fun="_wremove" delete a file
+.fd *fun="_wrename" rename a file
+.fd *fun="_wrmdir" remove a directory
+.fd *fun="_wsopen" open a file for shared access
+.fd *fun="_wstat" get file status
+.fd *fun="_wtmpnam" create name for temporary file
+.fd *fun="_wunlink" delete a file
+.fd *fun="_wutime" set modification time for a file
 .fdend
 .endlevel
 .*
