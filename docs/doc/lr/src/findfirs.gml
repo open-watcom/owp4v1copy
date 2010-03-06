@@ -139,6 +139,7 @@ void main()
     _findclose( handle );
   }
 .exmp end
-.funcw
-.class DOS
+.listnew Classification:
+DOS
+.listend
 .system

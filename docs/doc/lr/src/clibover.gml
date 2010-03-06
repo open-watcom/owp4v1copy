@@ -2346,7 +2346,7 @@ with -D__WATCOM_LFN__ option and DOS LFN support is available on host system.
 .fd *fun="_dos_getfileattr" get file attributes
 .fd *fun="_dos_open" open a file
 .fd *fun="_dos_setfileattr" set the attributes of a file
-.fd *fun="findfirst" find first file matching a specified pattern
+.fd *fun="_findfirst" find first file matching a specified pattern
 .fd *fun="_fullpath" return full path specification for file
 .fd *fun="getcwd" get current working directory
 .fd *fun="_getdcwd" get current directory on drive
