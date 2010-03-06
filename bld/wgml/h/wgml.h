@@ -227,7 +227,7 @@ extern  void    scan_line( void );
 
 
 /* gsfuncs.c                          */
-extern  char    *   scr_multi_funcs( char * in, char * end, char * * ppval );
+extern  char    *   scr_multi_funcs( char * in, char * end, char * * ppval, int32_t valsize );
 
 
 /* gsfunelu.c                         */
@@ -278,12 +278,14 @@ extern  int32_t calc_skip_value( void );
 extern void     init_dict( symvar * * dict );
 extern void     free_dict( symvar * * dict );
 extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
+extern int      find_symvar_l( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f );
 extern void     print_sym_dict( symvar * dict );
 extern void     reset_auto_inc_dict( symvar * dict );
 
 
 /* gsyssym.c                          */
+extern  void    add_to_sysdir( char * var_name, char char_val );
 extern  void    init_sys_dict( symvar * * dict );
 extern  void    init_sysparm( char * cmdline, char * banner );
 
@@ -304,6 +306,9 @@ extern  void        add_text_chars_to_pool( text_line * a_line );
 extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
 extern  void        add_text_line_to_pool( text_line * a_line );
 extern  text_line * alloc_text_line( void );
+extern  tag_cb    * alloc_tag_cb( void );
+extern  void        add_tag_cb_to_pool( tag_cb * cb );
+extern  void        free_pool_storage( void );
 
 
 /* gtitlepo.c                         */
@@ -339,10 +344,10 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
  * prototypes for the gml tag processing routines
  */
 
-#ifdef pick
-    #undef pick
+#ifdef pickg
+    #undef pickg
 #endif
-#define pick( name, length, routine, flags )  extern void routine( const gmltag * entry );
+#define pickg( name, length, routine, flags )  extern void routine( const gmltag * entry );
 
 #include "gtags.h"
 
@@ -374,7 +379,11 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
  * prototypes for the script control word processing routines
  */
 
-#define pick( name, routine, flags )  extern void routine( void );
+#undef picklab
+#define picklab( name, routine, flags )  extern void routine( void );
+
+#undef picks
+#define picks( name, routine, flags )  extern void routine( void );
 
 #include "gscrcws.h"
 
@@ -383,7 +392,7 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
  */
 
 #define pick( name, length, mand_parms, opt_parms, routine ) \
-    extern condcode routine( parm parms[MAX_FUN_PARMS], size_t parm_count, char * * ppval );
+    extern condcode routine( parm parms[MAX_FUN_PARMS], size_t parm_count, char * * ppval, int32_t valsize );
 
 #include "gsfuncs.h"
 

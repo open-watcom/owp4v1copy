@@ -30,9 +30,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -108,7 +105,7 @@ static char * subst_1var( char * pout, char * pvar, size_t len )
     ProcFlags.suppress_msg = false;
     if( !scan_err ) {
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
-            rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
+            rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
                               var_ind, &symsubval );
         } else {
             rc = find_symvar( &global_dict, symvar_entry.name, var_ind,

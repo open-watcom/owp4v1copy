@@ -1111,6 +1111,7 @@ static void set_OPTFile( option * opt )
         strcpy_s( token_buf, buf_size, str );
         if( try_file_name != NULL ) {
             mem_free( try_file_name );
+            try_file_name = NULL;
         }
         split_attr_file( token_buf, attrwork, sizeof( attrwork ) );
         if( attrwork[0]  ) {
@@ -1767,6 +1768,7 @@ int proc_options( char * string )
         }
         if( file_names[level] != NULL ) {
             mem_free( file_names[level] );
+            file_names[level] = NULL;
         }
         if( level == 0 ) break;
         tok = sav_tokens[--level];

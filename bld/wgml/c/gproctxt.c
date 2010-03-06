@@ -42,9 +42,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 #include "outbuff.h"
@@ -53,6 +50,8 @@
 /***************************************************************************/
 /*  puncadj modelled after the host ASM sources to get the same horizontal */
 /*  spacing as wgml4, but still no luck                               TBD  */
+/*  further testing showed that .:!? are used as full stop characters      */
+/*  the others ;,) have no special effect                                  */
 /***************************************************************************/
 
 static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem, int32_t cnt )
@@ -87,7 +86,7 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem, int32_
     tp_start = tp_ind + 2;
     delta = *delta0;
     loop_cnt = 3;                       // 3 passes
-    while( loop_cnt > 1 && delta >= space ) {   // only 1 passes TBD
+    while( loop_cnt > 2 && delta >= space ) {   // only 1 pass TBD
         if( ps_device ) {
             space = wgml_fonts[0].spc_width / 2;// TBD
 //          space += loop_cnt - 1;      // TBD
@@ -99,7 +98,7 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem, int32_
             ch = tw->text[tw->count - 1];
             switch( loop_cnt ) {
             case   3:                   // test full stop
-                if( ch == '.' || ch == '!' || ch == '?' ) {
+                if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
                     spacew = space;
                     if( remw > 0 ) {
                         spacew++;
@@ -215,7 +214,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
     do {                                // calculate used width
         if( tw->x_address >= lm ) {  // no justify for words left of ju start
             if( cnt == 0 ) {
-                tc = tw;               // remember first text_char to justify
+                tc = tw;              // remember first text_char for justify
             }
             cnt++;                      // number of 'words'
             sum_w += tw->width;         // sum of 'words' widths
@@ -244,9 +243,9 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
     if( input_cbs->fmflags & II_research && GlobalFlags.lastpass ) {
         find_symvar( &sys_dict, "$ju", no_subscript, &symjusub);// .ju as string
-        out_msg( "\n  ju_%s lm:%d rm:%d line_width:%d sum_w:%d hor_end:%d"
+        out_msg( "\n ju_%s lm:%d %d rm:%d sum_w:%d hor_end:%d"
                  " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
-                 lm, rm, line_width, sum_w, hor_end, delta, rem, delta0, cnt );
+                 lm, line_width, rm, sum_w, hor_end, delta, rem, delta0, cnt );
     }
     if( delta < 1 && rem < 1 ) {        // nothing to distribute
         return;
@@ -273,7 +272,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
     switch( just ) {                  // what type of justification is wanted
 /*************************************
-    case  ju_half :
+    case  ju_half :                   Treated as left ??? TBD
         delta /= 2;
         if( delta < 1 && rem < 1 ) {
             break;
@@ -298,13 +297,10 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
         }
 
         if( input_cbs->fmflags & II_research && GlobalFlags.lastpass ) {
-            text_line dummy = { NULL, 0, 0, NULL };
-
-            dummy.first = tc;
-            test_out_t_line( &dummy );
-            out_msg( "\n  ju_%s lm:%d rm:%d line_width:%d sum_w:%d hor_end:%d"
+            test_out_t_line( line );
+            out_msg( "\n ju_%s lm:%d %d rm:%d sum_w:%d hor_end:%d"
                      " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
-                     lm, rm, line_width, sum_w, hor_end, delta, rem, delta0,
+                     lm, line_width, rm, sum_w, hor_end, delta, rem, delta0,
                      cnt );
         }
         if( delta < 1 && rem < 1 ) {    // nothing to distribute
@@ -665,7 +661,8 @@ void    process_text( char * text, uint8_t font_num )
 
                 if( n_char->x_address + n_char->width > g_page_right ) {
                     pre_space = 0;
-                    process_line_full( &t_line, ProcFlags.concat );
+                    process_line_full( &t_line, ProcFlags.concat
+                                          || (ProcFlags.justify > ju_off) );
                     p_char = NULL;
                     if( !ProcFlags.page_started ) {
                         document_new_page();// page was full, start new one
@@ -745,11 +742,12 @@ void    process_text( char * text, uint8_t font_num )
                 t_line.line_height = wgml_fonts[font_num].line_height;
             }
         }
-        t_line.last  = n_char;
+//      t_line.last  = n_char;
         input_cbs->fmflags &= ~II_sol;
         if( n_char->x_address + n_char->width > g_page_right ) {
             pre_space = 0;
-            process_line_full( &t_line, ProcFlags.concat );
+            process_line_full( &t_line,
+                               ProcFlags.concat || (ProcFlags.justify > ju_off) );
             p_char = NULL;
             if( !ProcFlags.page_started ) {
                 document_new_page();
@@ -802,7 +800,7 @@ void    process_text( char * text, uint8_t font_num )
             post_space = 0;
             post_space_save = 0;
             if( input_cbs->fmflags & II_eol ) {
-                process_line_full( &t_line, false );
+                process_line_full( &t_line, (ProcFlags.justify > ju_off) );
                 p_char = NULL;
                 if( !ProcFlags.page_started ) {
                     document_new_page();

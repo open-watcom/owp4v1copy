@@ -30,9 +30,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -142,6 +139,40 @@ int find_symvar( symvar * * dict, char * name, sub_index sub, symsub * * symsubv
     }
     return( rc );
 }
+
+/***************************************************************************/
+/*  find_symvar_l   find local symbolic variable                           */
+/*          if the dictionary is the local dict then                       */
+/*          search up thru the local dictionaries up to the master file    */
+/*                                                                         */
+/***************************************************************************/
+int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsubval )
+{
+    symvar  *   wk;
+    inputcb *   incbs;
+    int         rc = 0;
+
+    rc = find_symvar( dict, name, sub, symsubval );
+    if( rc ) {
+        return( rc );                   // found variable in specified dict
+    }
+    if( dict == &input_cbs->local_dict ) { // if current local dict
+
+                                        // search upwards thru all local dicts
+
+        for( incbs = input_cbs->prev; incbs != NULL; incbs = incbs->prev ) {
+            if( incbs->local_dict != NULL ) {
+                wk = incbs->local_dict;
+                rc = find_symvar( &wk, name, sub, symsubval );
+                if( rc ) {
+                    return( rc );       // found variable
+                }
+            }
+        }
+    }
+    return( rc );                       // not found
+}
+
 
 /***************************************************************************/
 /*  search symbol and subscript entry in specified  dictionary             */
@@ -391,7 +422,7 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
             }
             break;
         default:
-            g_err( ERR_LOGIC_ERR, __FILE__ );
+            g_err( err_logic_err, __FILE__ );
             show_include_stack();
             err_count++;
             g_suicide();

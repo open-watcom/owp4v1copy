@@ -31,9 +31,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -161,6 +158,19 @@ static  char    pdayofwval[10];
 static  char    pmonthval[12];
 static  char    pyearval[5];
 static  char    timeval[9];
+
+/***************************************************************************/
+/*  make new single char value known in dictionary                         */
+/*  This is called from gsdccw.c and others                                */
+/***************************************************************************/
+
+void    add_to_sysdir( char * name, char char_val )
+{
+    symsub  *   dictval;
+
+    find_symvar( &sys_dict, name, no_subscript, &dictval);
+    *(dictval->value) = char_val;
+}
 
 /***************************************************************************/
 /*  convert integer to roman digits                                        */
@@ -974,12 +984,6 @@ static void systermtfun( symvar * e )
     return;
 };
 
-static void systisetfun( symvar * e )
-{
-    var_wng( e->name );
-    return;
-};
-
 static void systmfun( symvar * e )
 {
     utoa( tm, systmstr, 10 );
@@ -1047,6 +1051,12 @@ static void syspassnofun( symvar * e )  // dummy routine not needed
 };
 
 static void syspassoffun( symvar * e )  // dummy routine not needed
+{
+    e->varfunc = NULL;
+    return;
+};
+
+static void systisetfun( symvar * e )   // dummy routine not needed
 {
     e->varfunc = NULL;
     return;
@@ -1171,7 +1181,7 @@ void    init_sysparm( char * cmdline, char * banner )
 
 /***************************************************************************/
 /*  init_sys_dict  initialize dictionary and some entries which do not     */
-/*                 change                                                  */
+/*                 change very often                                       */
 /***************************************************************************/
 
 void    init_sys_dict( symvar * * dict )
@@ -1210,6 +1220,8 @@ void    init_sys_dict( symvar * * dict )
     sysco0.value    = str[ju_on];
     *syscpstr  = 'N';
     *(syscpstr + 1) = 0;
+    *syscontstr = 0x03;
+    *(syscontstr + 1) = 0;
 //  *syscpagesstr  =
 //  *syscpcstr =
 //  *syscpistr =
@@ -1304,10 +1316,11 @@ void    init_sys_dict( symvar * * dict )
 //  *sysstitlestr =
     syssu0.value = str[ju_on];
     syssys0.value = "DOS";
-    *systabstr       = *systbstr       = ' ';
+    *systabstr       = *systbstr       = 0x09;
     *(systabstr + 1) = *(systbstr + 1) = 0;
 //  *systermtstr =
-//  *systisetstr =
+    *systisetstr = ' ';
+    *(systisetstr + 1) = 0;
 //  *systitlestr =
 //  *sysuseridstr =
 //  *syswdstr =

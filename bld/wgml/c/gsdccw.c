@@ -25,15 +25,12 @@
 *  ========================================================================
 *
 * Description: implement .dc define character
-*                            only CW, and GML options implemented
-*                        .cw script control word  separator
+*                            only CW and GML options implemented
+*                        .cw script control word separator
 *  comments are from script-tso.txt
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
-#include <stdarg.h>
-#include <errno.h>
 
 #include "wgml.h"
 #include "gvars.h"
@@ -279,26 +276,7 @@
 /*     This example makes the separator "#",  defines a TOP running title  */
 /*     containing semi-colons,  redefines  the separator to be  ";",  and  */
 /*     then uses it.                                                       */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
 /***************************************************************************/
-
-
-/***************************************************************************/
-/*  make new single char value known in dictionary                         */
-/***************************************************************************/
-
-static  void    add_to_sysdir( char * name, char char_val )
-{
-    symsub  *   dictval;
-
-    find_symvar( &sys_dict, name, no_subscript, &dictval);
-    *(dictval->value) = char_val;
-}
-
 
 /***************************************************************************/
 /*  scr_cw    implement .cw control word                                   */
@@ -310,7 +288,6 @@ void    scr_cw( void )
     char        *   p;
     char            c;
     int             len;
-
 
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
@@ -357,7 +334,7 @@ void    scr_cw( void )
 
 /***************************************************************************/
 /*  scr_dc    implement .dc define character control word                  */
-/*              not all options are implemented                      TBD   */
+/*              only some options are implemented                    TBD   */
 /***************************************************************************/
 
 void    scr_dc( void )

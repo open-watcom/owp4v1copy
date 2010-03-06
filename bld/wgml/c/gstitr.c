@@ -32,9 +32,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 #include "copfiles.h"
@@ -175,6 +172,7 @@ void    scr_ti( void )
         len = 0;
     }
     cop_ti_table( pa, len );
+    add_to_sysdir( "$tiset", in_esc );  // put in dictionary
 
     scan_restart = scan_stop + 1;
     return;

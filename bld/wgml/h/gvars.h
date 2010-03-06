@@ -213,7 +213,7 @@ global gaentry  *   att_entry;          // ... entry in tag_dict
 
 global  long        li_cnt;             // remaining count for .li processing
 
-global  uint8_t     in_esc;             // input char for .ti processing
+global  uint8_t     in_esc;             // input escape char from .ti
 
 global text_line    t_line;             // for constructing output line
 global text_chars * p_char;             // previous text char   "
@@ -278,6 +278,9 @@ global  int32_t     g_cur_threshold;    // current widow threshold value
                                         // from layout (widow or heading)
 
 global  int         hpcount;            // :HPx nesting level
+
+global  tag_cb  *   wk_cb;              // infos about nested tags
+global  tag_cb  *   tag_pool;           // list of reusable tag_cbs
 
 global  banner_lay_tag  * sect_ban_top[2];// top even / odd banner for curr sect
 global  banner_lay_tag  * sect_ban_bot[2];// bot even / odd banner for curr sect

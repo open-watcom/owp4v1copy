@@ -30,9 +30,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <errno.h>
-#include <stdarg.h>
-
 #include "wgml.h"
 #include "gvars.h"
 

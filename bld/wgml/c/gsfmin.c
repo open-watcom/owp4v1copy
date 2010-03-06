@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'min( )
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 /***************************************************************************/
 /*  script string function &'min(                                          */
 /*                                                                         */
 /***************************************************************************/
- 
+
 /***************************************************************************/
 /*                                                                         */
 /* &'min(number<,number ...>):  The Minimum function returns the smallest  */
@@ -50,9 +50,9 @@
 /*  ! Maximum number count is 6                                            */
 /*                                                                         */
 /***************************************************************************/
- 
- 
-condcode    scr_min( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
+
+
+condcode    scr_min( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result, int32_t ressize )
 {
     char            *   pval;
     char            *   pend;
@@ -62,26 +62,26 @@ condcode    scr_min( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
     getnum_block        gn;
     long                minimum;
     char                linestr[MAX_L_AS_STR];
- 
+
     if( (parmcount < 2) || (parmcount > 6) ) {
         cc = neg;
         return( cc );
     }
- 
+
     minimum = LONG_MAX;
- 
+
     gn.ignore_blanks = false;
- 
+
     for( k = 0; k < parmcount; k++ ) {
- 
- 
+
+
         pval = parms[k].a;
         pend = parms[k].e;
- 
+
         unquote_if_quoted( &pval, &pend );
- 
+
         len = pend - pval + 1;          // length
- 
+
         if( len <= 0 ) {                // null string nothing to do
             continue;                   // skip empty value
         }
@@ -107,8 +107,8 @@ condcode    scr_min( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
             minimum = gn.result;        // new minimum
         }
     }
- 
+
     *result += sprintf( *result, "%d", minimum );
- 
+
     return( pos );
 }

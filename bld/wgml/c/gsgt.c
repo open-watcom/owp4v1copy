@@ -33,9 +33,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -379,8 +376,8 @@ void    scr_gt( void )
 
     cc = getarg();                      // Tagname
 
-    if( cc == omit || (*tok_start == '*' && tag_entry == NULL) ) {
-        // no operands or tagname * and no previous definition
+    if( cc == omit ) {
+        // no operands
         tag_name_missing_err();
         return;
     }
@@ -394,7 +391,9 @@ void    scr_gt( void )
         }
         savetag = '*';         // remember for possible global delete / print
         if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
-            out_msg("  using tagname %s %s\n", tagname, tag_entry->name );
+            if( tag_entry != NULL ) {
+                out_msg("  using tagname %s %s\n", tagname, tag_entry->name );
+            }
         }
     } else {
         savetag = ' ';               // no global function for delete / print

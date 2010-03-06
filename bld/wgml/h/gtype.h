@@ -518,7 +518,7 @@ typedef struct scrfunc {
     const   size_t  parm_cnt;           // mandatory parms
     const   size_t  opt_parm_cnt;       // optional parms
     condcode        (*fun)( parm parms[MAX_FUN_PARMS], size_t parm_count,
-                            char * * ppval );
+                            char * * ppval, int32_t valsize );
 } scrfunc;
 
 
@@ -729,7 +729,12 @@ typedef enum lay_sub {
 
 /***************************************************************************/
 /*  definitions for functioncodes inserted into input buffer               */
-/*  incomplete will probably change                             TBD        */
+/*  function start should be an even value                                 */
+/*  function end the following odd value                                   */
+/*                                                                         */
+/*  0xfe 0x02 subscripted text 0xfe 0x03     example for subscripted text  */
+/*                                                                         */
+/*  incomplete will change                                      TBD        */
 /***************************************************************************/
 
 typedef enum functs {
@@ -738,10 +743,42 @@ typedef enum functs {
 
     function_subscript      = 0x02,
     function_sub_end        = 0x03,
+
     function_superscript    = 0x04,
     function_super_end      = 0x05
 } functs;
 
 
+/***************************************************************************/
+/*  tags and controlwords as enums for distinction during processing       */
+/***************************************************************************/
+
+#undef pickg
+#define pickg( name, length, routine, flags )  t_##name,
+
+#undef picklab
+#define picklab( name, routine, flags )  t_##label,
+
+#undef picks
+#define picks( name, routine, flags )  t_##name,
+
+typedef enum e_tags {
+    t_NONE,
+#include "gtags.h"
+#include "gscrcws.h"
+    t_MAX                               // the last one for range check
+} e_tags;
+
+/***************************************************************************/
+/*  stack of margins and other values for the nested tags et al            */
+/***************************************************************************/
+
+typedef struct tag_cb {
+    struct  tag_cb   *   prev;
+    uint32_t            left;           // margin
+    uint32_t            right;          // margin
+    uint32_t            post_skip;
+    e_tags              c_tag;
+} tag_cb;
 
 #endif                                  // GTYPE_H_INCLUDED

@@ -33,9 +33,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -56,7 +53,6 @@
 /* ON.  The other possible operands specify Concatenate ON and the appro-   */
 /* priate mode of Justify.  See the .CO and .JU descriptions for details.   */
 /****************************************************************************/
-
 
 /***************************************************************************/
 /* CONCATENATE  enables  or cancels  the  formation  of output  lines  by  */
@@ -89,10 +85,6 @@
 /* concatenation  process "breaks"  the  input line  at  that point  when  */
 /* adding words to the output line.                                        */
 /***************************************************************************/
-
-
-
-
 
 /****************************************************************************/
 /* JUSTIFY causes output lines to be padded with inter-word blanks to the   */
@@ -198,7 +190,7 @@ static void process_co_ju( bool both , char *cwcurr )
 
             /***************************************************************/
             /*  .ju left is treated as .ju off by wgml4.0                  */
-            /*  system variable SYSJU is set to OFF                        */
+            /*  system variable &SYSJU is set to OFF                       */
             /***************************************************************/
             ProcFlags.justify = ju_off; // left is like off for wgml 4.0
             scan_restart = pa + len;

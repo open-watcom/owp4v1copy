@@ -27,33 +27,30 @@
 * Description: WGML implement :BANREGION :eBANREGION  tags for LAYOUT processing
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
-#include <stdarg.h>
-#include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 extern  banner_lay_tag  *   curr_ban;   // in glbanner.c
 extern  banner_lay_tag  *   del_ban;    // in glbanner.c
- 
+
 static  region_lay_tag      wk;         // temp for input values
 static  region_lay_tag  *   prev_reg;
- 
- 
+
+
 /***************************************************************************/
 /*   :BANREGION attributes                                                 */
 /***************************************************************************/
 const   lay_att     banregion_att[12] =
     { e_indent, e_hoffset, e_width, e_voffset, e_depth, e_font, e_refnum,
       e_region_position, e_pouring, e_script_format, e_contents, e_dummy_zero };
- 
+
 static  const   int att_count = sizeof( banregion_att );
 static  int         count[sizeof( banregion_att )];
 static  int         sum_count;
- 
+
 /**************************************************************************************/
 /*Define a banner region within a banner. Each banner region specifies a rectangular  */
 /*section of the banner. A banner region begins with a :banregion tag and ends with an*/
@@ -225,18 +222,18 @@ static  int         sum_count;
 /*To delete a banner region, specify only the refnum attribute. All banner            */
 /*regions must be deleted before a banner definition will be removed.                 */
 /**************************************************************************************/
- 
- 
+
+
 /***************************************************************************/
 /*  init banregion with no values                                          */
 /***************************************************************************/
- 
+
 static  void    init_banregion_wk( region_lay_tag * reg )
 {
     int         k;
     char    *   p;
     char        z0[2] = "0";
- 
+
     reg->next = NULL;
     p = &z0;
     to_internal_SU( &p, &(reg->indent) );
@@ -255,14 +252,14 @@ static  void    init_banregion_wk( region_lay_tag * reg )
         count[k] = 0;
     }
     sum_count = 0;
- 
+
 }
- 
- 
+
+
 /***************************************************************************/
 /*  lay_banregion                                                          */
 /***************************************************************************/
- 
+
 void    lay_banregion( const gmltag * entry )
 {
     char        *   p;
@@ -271,10 +268,10 @@ void    lay_banregion( const gmltag * entry )
     lay_att         curr;
     att_args        l_args;
     bool            cvterr;
- 
+
     p = scan_start;
     cvterr = false;
- 
+
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -285,15 +282,15 @@ void    lay_banregion( const gmltag * entry )
             lay_banner_end_prepare();
         }
         ProcFlags.lay_xxx = el_banregion;
- 
+
         init_banregion_wk( &wk );
- 
+
     } else {
         if( !strnicmp( ":banregion", buff2, sizeof( ":banregion" ) ) ) {
             err_count++;
             g_err( err_nested_lay, entry->tagname );
             file_mac_info();
- 
+
             while( !ProcFlags.reprocess_line  ) {
                 eat_lay_sub_tag();
                 if( strnicmp( ":ebanregion", buff2, sizeof( ":ebanregion" ) ) ) {
@@ -308,10 +305,10 @@ void    lay_banregion( const gmltag * entry )
         cvterr = true;
         for( k = 0; k < att_count; k++ ) {
             curr = banregion_att[k];
- 
+
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
- 
+
                 if( count[k] ) {
                     cvterr = 1;                  // attribute specified twice
                 } else {
@@ -376,15 +373,15 @@ void    lay_banregion( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
- 
+
 /***************************************************************************/
 /*  search region in banner                                                */
 /***************************************************************************/
- 
+
 static region_lay_tag * find_region( banner_lay_tag * ban )
 {
     region_lay_tag  *   reg;
- 
+
     reg = ban->region;
     prev_reg = NULL;
     while( reg != NULL ) {
@@ -397,18 +394,18 @@ static region_lay_tag * find_region( banner_lay_tag * ban )
     }
     return( reg );
 }
- 
+
 /***************************************************************************/
 /*  lay_ebanregion                                                         */
 /***************************************************************************/
- 
+
 void    lay_ebanregion( const gmltag * entry )
 {
     region_lay_tag  *   reg;
     banner_lay_tag  *   reg_ban;
     int                 k;
     bool                region_deleted;
- 
+
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -416,7 +413,7 @@ void    lay_ebanregion( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx == el_banregion ) {   // :banregion was last tag
         ProcFlags.lay_xxx = el_ebanregion;
- 
+
         prev_reg = NULL;
         reg_ban = NULL;
         region_deleted = false;
@@ -427,7 +424,7 @@ void    lay_ebanregion( const gmltag * entry )
                 reg_ban = curr_ban;
             }
             reg = find_region( reg_ban );
- 
+
             if( reg != NULL) {          // banregion delete
                if( prev_reg == NULL ) {
                    reg_ban->region = reg->next;
@@ -435,6 +432,7 @@ void    lay_ebanregion( const gmltag * entry )
                    prev_reg->next = reg->next;
                }
                mem_free( reg );
+               reg = NULL;
                region_deleted = true;   // processing complete
             }
         }
@@ -504,7 +502,7 @@ void    lay_ebanregion( const gmltag * entry )
                 }
             }
         }
- 
+
     } else {
         g_err( err_no_lay, &(entry->tagname[1]), entry->tagname );
         err_count++;

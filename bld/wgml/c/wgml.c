@@ -36,10 +36,7 @@
 
 #define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
 
-#include <stdarg.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
 
 #include "wgml.h"
 #include "findfile.h"
@@ -139,7 +136,7 @@ static  void    set_default_extension( const char * masterfname )
     if( strlen( ext ) > 0) {
         if( strlen( ext ) > strlen( def_ext ) ) {
             mem_free( def_ext);
-            def_ext = mem_alloc( 1+ strlen( ext ) );
+            def_ext = mem_alloc( 1 + strlen( ext ) );
         }
         strcpy_s( def_ext, 1 + strlen( ext ), ext );
     }
@@ -645,24 +642,35 @@ int main( int argc, char * argv[] )
             init_pass();
             utoa( pass, passnoval->value, 10 ); // fill current passno
 
-//            g_trmem_prt_list();  // all memory freed if no output from call
             g_info( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
+//          if( GlobalFlags.research ) {
+//              g_trmem_prt_list();     // TBD
+//          }
 
             proc_input( master_fname );
 
-//            g_trmem_prt_list();       // show allocated memory at pass end
 
             if( t_line.first != NULL ) {// output last line (if any)
 
                 process_line_full( &t_line, false );
 
             }
+            while( wk_cb != NULL ) {
+                tag_cb  *   cb = wk_cb->prev;
+
+                add_tag_cb_to_pool( wk_cb );
+                wk_cb = cb;
+            }
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
             }
             g_info( INF_PASS_2, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
+
+//          if( GlobalFlags.research ) {// TBD
+//              g_trmem_prt_list();     // show allocated memory at pass end
+//          }
 
             if( !GlobalFlags.lastpass && (err_count > 0) ) {
                 g_info( inf_error_stop );

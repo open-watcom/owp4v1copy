@@ -30,9 +30,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 #include "copfiles.h"
@@ -43,7 +40,7 @@
 /*    GML tags                                                             */
 /***************************************************************************/
 
-#define pick( name, length, routine, flags) { name, length, routine, flags },
+#define pickg( name, length, routine, flags) { #name, length, routine, flags },
 
 static  const   gmltag  gml_tags[] = {
 
@@ -79,7 +76,8 @@ static  const   gmltag  lay_tags[] = {
 /*    SCR control words                                                    */
 /***************************************************************************/
 
-#define pick( name, routine, flags) { name, routine, flags },
+#define picks( name, routine, flags) { #name, routine, flags },
+#define picklab( name, routine, flags) { #name, routine, flags },
 
 static  const   scrtag  scr_tags[] = {
 
@@ -91,6 +89,9 @@ static  const   scrtag  scr_tags[] = {
 #define SCR_TAGMAX  (sizeof( scr_tags ) / sizeof( scr_tags[0] ) - 1)
 
 #undef pick
+#undef pickg
+#undef picklab
+#undef picks
 
 
 
@@ -757,11 +758,8 @@ void    scan_line( void )
                 if( !ProcFlags.fb_document_done ) {
                     /***************************************************/
                     /*  text starts without any tag or control word    */
-                    /* set page geometry and margins from layout       */
-                    /* do body section start as default section        */
                     /***************************************************/
                     do_layout_end_processing();
-// TBD              prepare_doc_sect( doc_sect_body );
                 }
                 // processs (remaining) text
                 process_text( scan_start, g_curr_font_num );

@@ -54,8 +54,8 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
     pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
-        rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                          var_ind, &symsubval );
+        rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                            var_ind, &symsubval );
     } else {
         rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                           &symsubval );
@@ -94,8 +94,8 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
         pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
-            rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                              var_ind, &symsubval );
+            rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                var_ind, &symsubval );
         } else {
             rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                               &symsubval );
@@ -149,8 +149,8 @@ char    *scr_single_func_sS( char * in, char * end, char * * result, char fun )
         pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
-            rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                              var_ind, &symsubval );
+            rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                var_ind, &symsubval );
         } else {
             rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                               &symsubval );
@@ -206,8 +206,8 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
         pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
-            rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                              var_ind, &symsubval );
+            rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                var_ind, &symsubval );
         } else {
             rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                               &symsubval );

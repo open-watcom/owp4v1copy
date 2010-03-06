@@ -105,6 +105,7 @@ void init_global_vars( void )
     fm                  = 0;            // footing margin          &$fm
     fm                  = 0;            // heading margin          &$hm
 
+    in_esc              = ' ';
     t_line.first        = NULL;
     t_line.y_address    = 0;
     text_pool           = NULL;
@@ -142,6 +143,7 @@ void init_global_vars( void )
     buf_lines_cnt       = 0;
 
     g_skip_wgml4        = 0;
+    wk_cb               = NULL;
 
 }
 

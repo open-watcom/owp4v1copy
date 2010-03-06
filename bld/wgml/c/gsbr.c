@@ -33,9 +33,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 #include "copfiles.h"
@@ -82,14 +79,7 @@
 void    scr_br( void )
 {
     char        *   p;
-#if 0
-    char            cwcurr[4];          // if errmsg is neccessary
 
-    cwcurr[0] = SCR_char;
-    cwcurr[1] = 't';
-    cwcurr[2] = 'i';
-    cwcurr[3] = '\0';
-#endif
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
         p++;
@@ -120,6 +110,4 @@ void  scr_process_break( void )
     return;
 
 }
-
-
 

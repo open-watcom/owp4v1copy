@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'left( )
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 /***************************************************************************/
 /*  script string function &'left(                                         */
 /*                                                                         */
 /***************************************************************************/
- 
+
 /***************************************************************************/
 /*                                                                         */
 /* &'left(string,length<,pad>):   To  generate  a   character  string  of  */
@@ -50,8 +50,8 @@
 /* ! optional parm PAD is NOT implemented                                  */
 /*                                                                         */
 /***************************************************************************/
- 
-condcode    scr_left( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
+
+condcode    scr_left( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result, int32_t ressize )
 {
     char            *   pval;
     char            *   pend;
@@ -60,24 +60,24 @@ condcode    scr_left( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resu
     int                 len;
     getnum_block        gn;
     char                linestr[MAX_L_AS_STR];
- 
+
     if( parmcount != 2 ) {
         cc = neg;
         return( cc );
     }
- 
+
     pval = parms[0].a;
     pend = parms[0].e;
- 
+
     unquote_if_quoted( &pval, &pend );
- 
+
     len = pend - pval + 1;              // default length
- 
+
     if( len <= 0 ) {                    // null string nothing to do
         **result = '\0';
         return( pos );
     }
- 
+
     if( parms[1].e >= parms[1].a ) {// length specified
         gn.argstart = parms[1].a;
         gn.argstop  = parms[1].e;
@@ -99,22 +99,27 @@ condcode    scr_left( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resu
         }
         len = gn.result;
     }
- 
+
     for( k = 0; k < len; k++ ) {        // copy from start
-        if( pval > pend ) {
+        if( (pval > pend) || (ressize <= 0) ) {
             break;
         }
         **result = *pval++;
         *result += 1;
+        ressize--;
     }
- 
+
     for( ; k < len; k++ ) {             // pad to length
+        if( ressize <= 0 ) {
+            break;
+        }
         **result = ' ';
         *result += 1;
+        ressize--;
     }
- 
+
     **result = '\0';
- 
+
     return( pos );
 }
- 
+

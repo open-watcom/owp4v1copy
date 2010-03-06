@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'length( )
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 /***************************************************************************/
 /*  script string function &'length(                                       */
 /*                                                                         */
 /***************************************************************************/
- 
+
 /***************************************************************************/
 /*                                                                         */
 /* &'length(string):  The Length function returns  the length of 'string'  */
@@ -50,26 +50,26 @@
 /*      &'length(one,two,three) ==> too many operands                      */
 /*                                                                         */
 /***************************************************************************/
- 
-condcode    scr_length( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
+
+condcode    scr_length( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result, int32_t ressize )
 {
     char            *   pval;
     char            *   pend;
     int                 len;
- 
+
     if( parmcount != 1 ) {
         return( neg );
     }
- 
+
     pval = parms[0].a;
     pend = parms[0].e;
- 
+
     unquote_if_quoted( &pval, &pend );
- 
+
     len = pend - pval + 1;
- 
+
     *result += sprintf( *result, "%d", len );
- 
+
     return( pos );
 }
- 
+

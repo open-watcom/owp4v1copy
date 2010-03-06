@@ -25,19 +25,19 @@
 *  ========================================================================
 *
 * Description:  WGML utility functions for alloc / free / reuse of
-*                           text_chars / text_line structs
+*                           different structs
 *
 *               add_text_chars_to_pool  prepare reuse of text_chars instance(s)
 *               alloc_text_chars        create a text_chars instance
 *               alloc_text_line         create a text_line instance
 *               add_text_line_to_pool   prepare reuse of a text_line instance
+*               add_tag_cb_to_pool      nested tag cb
+*               alloc_tag_cb            nested tag cb
+*               free_pool_storage       do free for all pools
 *
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
-#include <stdarg.h>
-#include <errno.h>
 
 #include "wgml.h"
 #include "gvars.h"
@@ -102,10 +102,8 @@ void    add_text_chars_to_pool( text_line * a_line )
     if( text_pool == NULL ) {
         text_pool = a_line->first;
     } else {
-        tw = text_pool;
-        while( tw->next != NULL ) {
-            tw = tw->next;
-        }
+        for( tw = text_pool; tw->next != NULL; tw = tw->next )
+            ;                           // empty
         tw->next = a_line->first;
     }
 }
@@ -147,5 +145,81 @@ void    add_text_line_to_pool( text_line * a_line )
 
     a_line->next = line_pool;
     line_pool = a_line;
+}
+
+
+/***************************************************************************/
+/*  allocate / reuse a tag_cb     instance                                 */
+/***************************************************************************/
+
+tag_cb  * alloc_tag_cb( void )
+{
+    tag_cb  *   curr;
+
+    curr = tag_pool;
+    if( curr != NULL ) {                // there is one to use
+        tag_pool = curr->prev;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( tag_cb ) );
+    }
+
+    curr->prev = NULL;
+    curr->c_tag = t_NONE;
+
+    return( curr );
+}
+
+
+/***************************************************************************/
+/*  add a tag_cb    instance to free pool for reuse                        */
+/***************************************************************************/
+
+void    add_tag_cb_to_pool( tag_cb * a_cb )
+{
+
+    if( a_cb == NULL ) {
+        return;
+    }
+
+    a_cb->prev = tag_pool;
+    tag_pool = a_cb;
+}
+
+/***************************************************************************/
+/*  free all elements of our storage pools                                 */
+/***************************************************************************/
+
+void    free_pool_storage( void )
+{
+    tag_cb      *cwk;
+    tag_cb      *cw = tag_pool;
+    text_line   *lwk;
+    text_line   *lw = line_pool;
+    text_chars  *wk;
+    text_chars  *w = text_pool;
+
+    while( w != NULL ) {
+       wk = w->next;
+       mem_free( w );
+       w = wk;
+    }
+
+    w = t_line.first;
+    while( w != NULL ) {
+       wk = w->next;
+       mem_free( w );
+       w = wk;
+    }
+
+    while( lw != NULL ) {
+       lwk = lw->next;
+       mem_free( lw );
+       lw = lwk;
+    }
+    while( cw != NULL ) {
+       cwk = cw->prev;
+       mem_free( cw );
+       cw = cwk;
+    }
 }
 

@@ -27,14 +27,11 @@
 * Description: WGML implement :DL :GL :OL :SL :UL tags for LAYOUT processing
 *
 *
-*                              only level 1 is supported
+*                              only level 1 is supported            TBD
 *
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
-#include <errno.h>
-#include <stdarg.h>
 
 #include "wgml.h"
 #include "gvars.h"
@@ -561,7 +558,7 @@ void    lay_dl( const gmltag * entry )
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.dl.level );
                     if( layout_work.dl.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported
+                       cvterr = 1;      // only level 1 allowed /supported  TBD
                     }
                     break;
                 case   e_left_indent:
@@ -655,7 +652,7 @@ void    lay_gl( const gmltag * entry )
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.gl.level );
                     if( layout_work.gl.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported
+                       cvterr = 1;      // only level 1 allowed /supported  TBD
                     }
                     break;
                 case   e_left_indent:
@@ -745,7 +742,7 @@ void    lay_ol( const gmltag * entry )
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.ol.level );
                     if( layout_work.ol.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported
+                       cvterr = 1;      // only level 1 allowed /supported  TBD
                     }
                     break;
                 case   e_left_indent:
@@ -848,7 +845,7 @@ void    lay_sl( const gmltag * entry )
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.sl.level );
                     if( layout_work.sl.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported
+                       cvterr = 1;      // only level 1 allowed /supported  TBD
                     }
                     break;
                 case   e_left_indent:
@@ -938,7 +935,7 @@ void    lay_ul( const gmltag * entry )
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.ul.level );
                     if( layout_work.ul.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported
+                       cvterr = 1;      // only level 1 allowed /supported  TBD
                     }
                     break;
                 case   e_left_indent:

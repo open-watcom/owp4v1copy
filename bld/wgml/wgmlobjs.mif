@@ -115,13 +115,14 @@ scr_objs =  &
         gsdccw.obj   &
         gsetvar.obj  &
         gsfc2d.obj   &
+        gsfc2x.obj   &
         gsfd2c.obj   &
         gsfdelst.obj &
         gsfindex.obj &
         gsfinsrt.obj &
         gsfleft.obj  &
         gsflngth.obj &
-        gsflower.obj &
+        gsflowup.obj &
         gsfmin.obj   &
         gsfright.obj &
         gsfstrip.obj &
@@ -129,7 +130,6 @@ scr_objs =  &
         gsftrans.obj &
         gsfuncs.obj  &
         gsfunelu.obj &
-        gsfupper.obj &
         gsfveclp.obj &
         gsfwordx.obj &
         gsga.obj     &

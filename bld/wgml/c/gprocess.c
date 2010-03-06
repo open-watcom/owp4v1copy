@@ -33,9 +33,8 @@
 
 #include "wgml.h"
 #include "gvars.h"
-#include "copfiles.h"
 
-static  char    *   var_unresolved2;
+static  char    *   var_unresolved2;    // ptr for resume search
 
 
 /*  split_input
@@ -374,8 +373,8 @@ void        process_line( void )
             ProcFlags.suppress_msg = false;
 
             if( symvar_entry.flags & local_var ) {  // lookup var in dict
-                rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                                  var_ind, &symsubval );
+                rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                    var_ind, &symsubval );
             } else {
                 rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                                   &symsubval );
@@ -552,12 +551,13 @@ void        process_line( void )
                 /*   &'words(                                              */
                 /*                                                         */
                 /*   Others are recognized but not processed               */
-                /*                                                         */
+                /*   &'c2x(    is used for test output                     */
                 /***********************************************************/
                 if( *(pchar + 1) == '\'' ) {
                     char * * ppval = &p2;
+                    int32_t  valsize = buf_size - (p2 - buff2);
 
-                    pw = scr_multi_funcs( pchar, pwend, ppval );
+                    pw = scr_multi_funcs( pchar, pwend, ppval, valsize );
                     pchar = strchr( pw, ampchar );// look for next & in buffer
                     continue;
                 } else {
@@ -710,8 +710,8 @@ void        process_late_subst( void )
             ProcFlags.suppress_msg = false;
 
             if( symvar_entry.flags & local_var ) {  // lookup var in dict
-                rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                                  var_ind, &symsubval );
+                rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                    var_ind, &symsubval );
             } else {
                 rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                                   &symsubval );

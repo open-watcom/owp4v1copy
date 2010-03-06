@@ -29,18 +29,18 @@
 *                   &'index( haystack, needle,   ... )
 *                   &'pos  ( needle,   haystack, ... )
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 /***************************************************************************/
 /*  script string function &'index(                                        */
 /*  script string function &'pos(                                          */
 /*                                                                         */
 /***************************************************************************/
- 
+
 /***************************************************************************/
 /*                                                                         */
 /* &'index(haystack,needle<,start>):   The  Index  function  returns  the  */
@@ -77,8 +77,8 @@
 /*      &'pos(a,abcd,3,'.') ==> error, too many operands                   */
 /*                                                                         */
 /***************************************************************************/
- 
-condcode    scr_index( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
+
+condcode    scr_index( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result, int32_t ressize )
 {
     char            *   pneedle;
     char            *   pneedlend;
@@ -93,27 +93,27 @@ condcode    scr_index( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
     char            *   ph;
     char            *   pn;
     char                linestr[MAX_L_AS_STR];
- 
+
     if( (parmcount < 2) || (parmcount > 3) ) {
         cc = neg;
         return( cc );
     }
- 
+
     phay = parms[0].a;
     phayend = parms[0].e;
- 
+
     unquote_if_quoted( &phay, &phayend );
     hay_len = phayend - phay + 1;       // haystack length
- 
+
     pneedle = parms[1].a;
     pneedlend = parms[1].e;
- 
+
     unquote_if_quoted( &pneedle, &pneedlend );
     needle_len = pneedlend - pneedle + 1;   // needle length
- 
+
     n   = 0;                            // default start pos
     gn.ignore_blanks = false;
- 
+
     if( parmcount > 2 ) {               // evalute start pos
         if( parms[2].e >= parms[2].a ) {// start pos specified
             gn.argstart = parms[2].a;
@@ -137,23 +137,23 @@ condcode    scr_index( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
             n = gn.result - 1;
         }
     }
- 
+
     if( (hay_len <= 0) ||               // null string nothing to do
         (needle_len <= 0) ||            // needle null nothing to do
         (needle_len > hay_len) ||       // needle longer haystack
         (n + needle_len > hay_len) ) {  // startpos + needlelen > haystack
                                         // ... match impossible
- 
+
         **result = '0';                 // return index zero
         *result += 1;
         **result = '\0';
         return( pos );
     }
- 
+
     ph = phay + n;                      // startpos in haystack
     pn = pneedle;
     index = 0;
- 
+
     for( ph = phay + n; ph <= phayend - needle_len + 1; ph++ ) {
         pn = pneedle;
         while( (*ph == *pn) && (pn <= pneedlend)) {
@@ -165,33 +165,33 @@ condcode    scr_index( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
             break;
         }
     }
- 
+
     *result += sprintf( *result, "%d", index );
- 
+
     return( pos );
 }
- 
+
 /*
  * scr_pos : swap parm1 and parm2, then call scr_index
  *
  */
- 
-condcode    scr_pos( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
+
+condcode    scr_pos( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result, int32_t ressize )
 {
     char            *   pwk;
- 
+
     if( parmcount < 2 ) {
         return( neg );
     }
- 
+
     pwk = parms[0].a;
     parms[0].a = parms[1].a;
     parms[1].a = pwk;
- 
+
     pwk = parms[0].e;
     parms[0].e = parms[1].e;
     parms[1].e = pwk;
- 
-    return( scr_index( parms, parmcount, result ) );
+
+    return( scr_index( parms, parmcount, result, ressize ) );
 }
- 
+

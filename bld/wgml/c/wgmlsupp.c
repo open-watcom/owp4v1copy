@@ -219,31 +219,8 @@ void    free_some_mem( void )
     }
     free_layout_banner();
 
-    {
-        text_line   *lwk;
-        text_line   *lw = line_pool;
-        text_chars  *wk;
-        text_chars  *w = text_pool;
+    free_pool_storage();
 
-        while( w != NULL ) {
-           wk = w->next;
-           mem_free( w );
-           w = wk;
-        }
-
-        w = t_line.first;
-        while( w != NULL ) {
-           wk = w->next;
-           mem_free( w );
-           w = wk;
-        }
-
-        while( lw != NULL ) {
-           lwk = lw->next;
-           mem_free( lw );
-           lw = lwk;
-        }
-    }
 }
 
 

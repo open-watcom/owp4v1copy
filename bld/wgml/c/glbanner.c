@@ -30,9 +30,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -417,6 +414,7 @@ void    lay_ebanner( const gmltag * entry )
                     layout_work.banner = del_ban->next; // delete 1st banner
                 }
                 mem_free( del_ban );
+                del_ban = NULL;
             }
         } else {
             banwk = mem_alloc( sizeof( banner_lay_tag ) );

@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'right( )
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 /***************************************************************************/
 /*  script string function &'right(                                        */
 /*                                                                         */
 /***************************************************************************/
- 
+
 /***************************************************************************/
 /*                                                                         */
 /* &'right(string,length<,pad>):   To  generate  a  character  string  of  */
@@ -49,8 +49,8 @@
 /*      &'right('ABC  DEF',7) ==> "BC  DEF"                                */
 /*                                                                         */
 /***************************************************************************/
- 
-condcode    scr_right( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
+
+condcode    scr_right( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result, int32_t ressize )
 {
     char            *   pval;
     char            *   pend;
@@ -61,21 +61,21 @@ condcode    scr_right( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
     getnum_block        gn;
     char                padchar;
     char                linestr[MAX_L_AS_STR];
- 
+
     if( (parmcount < 2) || (parmcount > 3) ) {
         cc = neg;
         return( cc );
     }
- 
+
     pval = parms[0].a;
     pend = parms[0].e;
- 
+
     unquote_if_quoted( &pval, &pend );
- 
+
     len = pend - pval + 1;              // total length
- 
+
     gn.ignore_blanks = false;
- 
+
     gn.argstart = parms[1].a;
     gn.argstop  = parms[1].e;
     cc = getnum( &gn );
@@ -95,7 +95,7 @@ condcode    scr_right( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
         return( cc );
     }
     n = gn.result;
- 
+
     if( n > 0 ) {                       // result not nullstring
         if( n > len ) {                 // padding needed
             padchar = ' ';              // default padchar
@@ -103,29 +103,41 @@ condcode    scr_right( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
                 if( parms[2].e >= parms[2].a ) {
                     char * pa = parms[2].a;
                     char * pe = parms[2].e;
- 
+
                     unquote_if_quoted( &pa, &pe);
                     padchar = *pa;
                 }
             }
             for( k = n - len; k > 0; k-- ) {
+                if( ressize <= 0 ) {
+                    break;
+                }
                 **result = padchar;
                 *result += 1;
+                ressize--;
             }
             for( ; pval <= pend; pval++ ) {
+                if( ressize <= 0 ) {
+                    break;
+                }
                 **result = *pval;
                 *result += 1;
+                ressize--;
             }
         } else {                        // no padding
- 
+
             pval += len - n;
             for( ; pval <= pend; pval++ ) {
+                if( ressize <= 0 ) {
+                    break;
+                }
                 **result = *pval;
                 *result += 1;
+                ressize--;
             }
         }
     }
     **result = '\0';
- 
+
     return( pos );
 }

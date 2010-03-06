@@ -42,7 +42,6 @@ void    add_line_to_buf_lines( text_line * * buf_lines, text_line * a_line )
 
     tline = alloc_text_line();
 
-    tline->next        = NULL;
     tline->first       = a_line->first;
     tline->last        = a_line->last;
     tline->y_address   = a_line->y_address;

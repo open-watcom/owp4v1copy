@@ -42,20 +42,21 @@
 /* &'c2d(string<,n>):  To  convert the binary  representation of  a char-  */
 /*    acter 'string'  to a decimal number.    The 'string' is  treated as  */
 /*    signed when the length 'n' is included.                              */
-/*      &'c2d($) ==> 91                                                    */
-/*      &'c2d(a) ==> 129                                                   */
-/*      &'c2d(AA) ==> 49601                                                */
-/*      &'c2d('a',1) ==> -127                                              */
-/*      &'c2d('a',2) ==> 129                                               */
-/*      &'c2d('0a',2) ==> -3967                                            */
-/*      &'c2d('0a',1) ==> -127                                             */
-/*      &'c2d('X',0) ==> 0                                                 */
+/* ! examples are all in EBCDIC, ASCII shown below                         */
+/*      &'c2d($) ==> 91             36                                     */
+/*      &'c2d(a) ==> 129            97                                     */
+/*      &'c2d(AA) ==> 49601      16705                                     */
+/*      &'c2d('a',1) ==> -127       97 2. parm ignored                     */
+/*      &'c2d('a',2) ==> 129        97 2. parm ignored                     */
+/*      &'c2d('0a',2) ==> -3967     97 2. parm ignored                     */
+/*      &'c2d('0a',1) ==> -127      97 2. parm ignored                     */
+/*      &'c2d('X',0) ==> 0          88 2. parm ignored                     */
 /*                                                                         */
 /* ! 2. parameter not implemented                                          */
 /*                                                                         */
 /***************************************************************************/
 
-condcode    scr_c2d( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
+condcode    scr_c2d( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result, int32_t ressize )
 {
     char            *   pval;
     char            *   pend;
@@ -83,9 +84,10 @@ condcode    scr_c2d( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
     }
     ultoa( n, linestr, 10 );
     p = linestr;
-    while( *p ) {
+    while( *p && ressize > 0) {
         **result = *p++;
         *result += 1;
+        ressize--;
     }
     return( pos );
 }

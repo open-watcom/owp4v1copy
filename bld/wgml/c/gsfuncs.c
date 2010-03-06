@@ -56,14 +56,14 @@ static bool         multiletter_function;
 
 /*  find end of parm for multi letter functions
  *     end of parm is either , or )
- *     but only if outside of string and not in deeper ( level
- *      string delimiters are several still growing number of chars
+ *     but only if outside of string and not in deeper paren level
+ *      string delimiters are several chars
  *
  */
 
-static  char    * find_end_of_parm( char * pchar )
+static  char    * find_end_of_parm( char * pchar, char * pend )
 {
-#define max_paren 100                   // should be enough
+#define max_paren 50                    // should be enough
     char    quotechar[max_paren];
     bool    instring[max_paren];
     int     paren_level;
@@ -101,10 +101,11 @@ static  char    * find_end_of_parm( char * pchar )
             } else {
                 switch( c ) {
                 case    '(' :
+                    paren_level++;
                     if( paren_level < max_paren ) {
-                        paren_level++;
                         instring[paren_level] = false;
                     } else {
+                        paren_level--;
                         finished = true;// error msg ??? TBD
                     }
                     break;
@@ -124,12 +125,37 @@ static  char    * find_end_of_parm( char * pchar )
                 }
             }
         }
-        if( finished ) {
+        if( finished || (pchar >= pend)) {
             break;
         }
     }
     return( pchar );
 }
+
+
+/***************************************************************************/
+/*  err_info  give some info about error                                   */
+/***************************************************************************/
+
+static  void    err_info( char * * result )
+{
+    char                linestr[MAX_L_AS_STR];
+
+    if( input_cbs->fmflags & II_macro ) {
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
+    } else {
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
+    }
+    err_count++;
+    show_include_stack();
+
+    **result = '&';                 // result is & to preserve the input
+    *result += 1;
+    **result = '\0';
+}
+
 
 /***************************************************************************/
 /*  scr_multi_funcs  isolate function name, lookup name in table           */
@@ -137,7 +163,7 @@ static  char    * find_end_of_parm( char * pchar )
 /*                   call corresponding function                           */
 /***************************************************************************/
 
-char    *scr_multi_funcs( char * in, char * end, char * * result )
+char    *scr_multi_funcs( char * in, char * end, char * * result, int32_t valsize )
 {
     char            *   pchar;
     int                 rc;
@@ -150,7 +176,6 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     parm                parms[MAX_FUN_PARMS];
     int                 parmcount;
     condcode            cc;
-    char                linestr[MAX_L_AS_STR];
 
     rc = 0;
     fnlen = 0;
@@ -169,19 +194,7 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
 
     if( *pchar != '(' ) {         // open paren does not follow function name
         g_err( err_func_parm_miss );
-        if( input_cbs->fmflags & II_macro ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
-            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-        } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
-            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-        }
-        err_count++;
-        show_include_stack();
-
-        **result = '&';                 // result is & to preserve the input
-        *result += 1;
-        **result = '\0';
+        err_info( result );
         return( in + 1 );               // but avoid endless loop
     }
 
@@ -200,19 +213,7 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     }
     if( !found ) {
         g_err( err_func_name, fn );
-        if( input_cbs->fmflags & II_macro ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
-            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-        } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
-            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-        }
-        err_count++;
-        show_include_stack();
-
-        **result = '&';                 // result is & to preserve the input
-        *result += 1;
-        **result = '\0';
+        err_info( result );
         return( in + 1 );               // but avoid endless loop
     }
     funcind = k;
@@ -221,14 +222,14 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
 
     for( k = 0; k < scr_functions[funcind].parm_cnt; k++ ) {
 
-        parms[k].a = ++pchar;         // first over ( then over ,
+        parms[k].a = ++pchar;           // first over ( then over ,
 
-        pchar = find_end_of_parm( pchar );
+        pchar = find_end_of_parm( pchar, end );
 
         parms[k].e = pchar - 1;
         parms[k + 1].a = pchar + 1;
 
-        if( *pchar == ')' ) {
+        if( (*pchar == ')') || (pchar >= end) ) {
             break;                      // end of parms
         }
     }
@@ -236,65 +237,41 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
 
     if( m < scr_functions[funcind].parm_cnt ) {
         g_err( err_func_parm_miss );
-        if( input_cbs->fmflags & II_macro ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
-            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-        } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
-            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-        }
-        err_count++;
-        show_include_stack();
-
-        **result = '&';                 // result is & to preserve the input
-        *result += 1;
-        **result = '\0';
+        err_info( result );
         return( in + 1 );               // but avoid endless loop
     }
 
 
 
     // collect the optional parm(s)
-    if( *pchar == ')' ) {               // no optional parms
+    if( (*pchar == ')') || (pchar >= end) ) {   // no optional parms
         k = 0;
     } else {
         for( k = 0; k < scr_functions[funcind].opt_parm_cnt; k++ ) {
             parms[m + k].a = ++pchar;
 
-            pchar = find_end_of_parm( pchar );
+            pchar = find_end_of_parm( pchar, end );
 
             parms[m + k].e     = pchar - 1;
             parms[m + k + 1].a = pchar + 1;
-            if( *pchar == ')' ) {
+            if( (*pchar == ')') || (pchar >= end) ) {
                 break;                  // end of parms
             }
         }
         k +=  (k < scr_functions[funcind].opt_parm_cnt);
     }
     parmcount = m + k;                  // total parmcount
-    parms[parmcount].a = NULL;        // end of parms indicator
+    parms[parmcount].a = NULL;          // end of parms indicator
 
     if( *pchar != ')' ) {
         g_err( err_func_parm_end );
-        if( input_cbs->fmflags & II_macro ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
-            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-        } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
-            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-        }
-        err_count++;
-        show_include_stack();
-
-        **result = '&';                 // result is & to preserve the input
-        *result += 1;
-        **result = '\0';
+        err_info( result );
         return( in + 1 );               // but avoid endless loop
     }
 
     ProcFlags.suppress_msg = multiletter_function;
 
-    cc = scr_functions[funcind].fun( parms, parmcount, result );
+    cc = scr_functions[funcind].fun( parms, parmcount, result, valsize );
 
     ProcFlags.suppress_msg = false;
     if( cc != pos ) {                   // error in function

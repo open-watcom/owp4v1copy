@@ -4,6 +4,7 @@
 .* for device ps without specifying another layout
 .* as result of several runs with tsys07.gml ( ~3 h run for every first letter )
 .* some longer variables which are documented are shown too
+.* some single char values are shown in decimal and hex
 
 
 .ty SYSAD = &SYSAD
@@ -19,7 +20,7 @@
 .ty SYSBFONTS = &SYSBFONTS
 .ty SYSBM = &SYSBM
 .ty SYSBO = &SYSBO
-.ty SYSBS = &SYSBS
+.ty SYSBS = &SYSBS c2d(sysbs)=&'c2d(&sysbs) c2x(sysbs)=&'c2x(&sysbs)
 .ty SYSBX = &SYSBX
 .ty SYSBXCHAR = &SYSBXCHAR
 
@@ -29,7 +30,7 @@
 .ty SYSCDCOUNT = &SYSCDCOUNT
 .ty SYSCL = &SYSCL
 .ty SYSCO = &SYSCO
-.ty SYSCONT = &SYSCONT
+.ty SYSCONT = &SYSCONT c2d(syscont)=&'c2d(&syscont) c2x(syscont)=&'c2x(&syscont)
 .ty SYSCP = &SYSCP
 .ty SYSCPAGES = &SYSCPAGES
 .ty SYSCPC = &SYSCPC
@@ -138,7 +139,7 @@
 .ty SYSPW = &SYSPW
 .ty SYSPYEAR = &SYSPYEAR
 
-.ty SYSRB = &SYSRB
+.ty SYSRB = &SYSRB c2d(sysrb)=&'c2d(&sysrb) c2x(sysrb)=&'c2x(&sysrb)
 .ty SYSRECNO = &SYSRECNO
 .ty SYSRESH = &SYSRESH
 .ty SYSRESV = &SYSRESV
@@ -158,8 +159,8 @@
 .ty SYSSU = &SYSSU
 .ty SYSSYS = &SYSSYS
 
-.ty SYSTAB = &SYSTAB
-.ty SYSTB = &SYSTB
+.ty SYSTAB = &SYSTAB c2d(systab)=&'c2d(&systab) c2x(systab)=&'c2x(&systab)
+.ty SYSTB = &SYSTB c2d(systb)=&'c2d(&systb) c2x(systb)=&'c2x(&systb)
 .ty SYSTERMT = &SYSTERMT
 .ty SYSTIME = &SYSTIME
 .ty SYSTISET = &SYSTISET

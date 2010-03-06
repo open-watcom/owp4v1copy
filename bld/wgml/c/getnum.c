@@ -27,24 +27,23 @@
 * Description:  WGML internal subroutine getnum  for expression evaluation
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
-#include <stdarg.h>
+
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 #define NULC    '\0'
 #define not_ok  (-1)
 #define ok      0
- 
+
 typedef struct operator {
         int     priority;
         char    operc;
 } operator;
- 
+
 static  operator opers[] = {
     {  4,    '+'  },
     {  8,    '-'  },
@@ -54,29 +53,29 @@ static  operator opers[] = {
     {  0,    '('  },
     {  0,    NULC }                     // terminating entry
 };
- 
+
 #define MAXOPER 128                     // operator maximum
 #define MAXTERM 128                     // terms maximum
- 
+
 static  char    tokbuf[256];            // workarea
- 
+
 static  int     coper;                  // current operator stack ptr
 static  int     cvalue;                 // current argument stack ptr
 static  int     nparens;                // nesting level
- 
+
 static  char    oper_stack[MAXOPER];    // operator stack
 static  long    value_stack[MAXTERM];   // argument stack
 static  int     ignore_blanks;
- 
- 
+
+
 /*
  *   get priority of operator
  */
- 
+
 static  int get_prio( char token )
 {
     operator *op;
- 
+
     for( op = opers; op->operc; ++op ) {
         if( token == op->operc ) {
             break;
@@ -84,11 +83,11 @@ static  int get_prio( char token )
     }
     return( op->priority );
 }
- 
+
 /*
  *  get priority of the top of stack operator
  */
- 
+
 static  int get_prio_m1( void )
 {
     if( !coper ) {
@@ -96,12 +95,12 @@ static  int get_prio_m1( void )
     }
     return( get_prio( oper_stack[coper - 1] ) );
 }
- 
- 
+
+
 /*
  * stack functions
  */
- 
+
 static  int pop_val( long *arg )
 {
     if( --cvalue < 0 ) {
@@ -110,12 +109,12 @@ static  int pop_val( long *arg )
     *arg = value_stack[cvalue];
     return( ok );
 }
- 
+
 static  void push_val( long arg )
 {
     value_stack[cvalue++] = arg;
 }
- 
+
 static  int pop_op( int *op )
 {
     if( --coper < 0 ) {
@@ -124,7 +123,7 @@ static  int pop_op( int *op )
     *op = oper_stack[coper];
     return( ok );
 }
- 
+
 static  void push_op( char op )
 {
     if( !get_prio( op ) ) {
@@ -132,94 +131,94 @@ static  void push_op( char op )
     }
     oper_stack[coper++] = op;
 }
- 
- 
+
+
 /*
  *  evaluate expression
  */
- 
+
 static  int do_expr( void )
 {
     long arg1;
     long arg2;
     int op;
- 
+
     if( not_ok == pop_op( &op ) ) {
         return( not_ok );
     }
- 
+
     if( not_ok == pop_val( &arg1 ) ) {
         return( not_ok );
     }
- 
+
     pop_val( &arg2 );
- 
+
     switch( op ) {
     case '+':
         push_val( arg2 + arg1 );
         break;
- 
+
     case '-':
         push_val( arg2 - arg1 );
         break;
- 
+
     case '*':
         push_val( arg2 * arg1 );
         break;
- 
+
     case '/':
         if( 0 == arg1 ) {
             return( not_ok );
         }
         push_val( arg2 / arg1 );
         break;
- 
+
     case '(':
         cvalue += 2;
         break;
- 
+
     default:
         return( not_ok );
     }
- 
+
     if( 1 > cvalue ) {
         return( not_ok );
     } else {
         return( op );
     }
 }
- 
+
 /*
  *  Evaluate one level
  */
- 
+
 static int do_paren( void )
 {
     int op;
- 
+
     if( 1 > nparens-- ) {
         return( not_ok );
     }
- 
+
     do {
         op = do_expr();
         if( op < ok ) {
             break;
         }
     } while( get_prio( (char)op ) );
- 
+
     return( op );
 }
- 
- 
+
+
 /*
  *  Get an operator
  */
- 
+
 static  operator * get_op( char * str )
 {
     operator *op;
- 
+
     for( op = opers; op->operc; ++op ) {
         if( *str == op->operc ) {
             return( op );
@@ -227,18 +226,18 @@ static  operator * get_op( char * str )
     }
     return( NULL );
 }
- 
- 
+
+
 /*
  *  Get an expression
  */
- 
+
 static char * get_exp( char * str )
 {
     char *ptr  = str;
     char *tptr = tokbuf;
     struct operator *op;
- 
+
     while( *ptr ) {
         if( *ptr == ' ' ) {
             if( ignore_blanks ) {
@@ -267,14 +266,14 @@ static char * get_exp( char * str )
             } else
                 break;
         }
- 
+
         *tptr++ = *ptr++;
     }
     *tptr = NULC;
- 
+
     return tokbuf;
 }
- 
+
 static  int evaluate( char * * line, long *val )
 {
     long        arg;
@@ -284,13 +283,13 @@ static  int evaluate( char * * line, long *val )
     int         ercode;
     operator *  op;
     int         expr_oper;              // looking for term or operator
- 
+
     expr_oper = 0;
     coper     = 0;
     cvalue    = 0;
     nparens   = 0;
     ptr       = *line;
- 
+
     while( *ptr ) {
         if( *ptr == ' ' ) {
             if( ignore_blanks ) {
@@ -303,11 +302,11 @@ static  int evaluate( char * * line, long *val )
         switch( expr_oper ) {
         case 0:                         // look for term
             str = get_exp( ptr );
- 
+
             if( str == NULL ) {         // nothing is error
                 return( not_ok );
             }
- 
+
             op = get_op( str );
             if( *(str +1) == NULC ) {
                 if( NULL != op ) {
@@ -315,27 +314,27 @@ static  int evaluate( char * * line, long *val )
                     ptr++;
                     break;
                 }
- 
+
                 if( (*str == '-' ) || (*str == '+' ) ) {
                     push_op(*str);
                     ++ptr;
                     break;
                 }
             }
- 
+
             arg = strtol( str, &endptr, 10 );
             if( (((arg == LONG_MIN) || (arg == LONG_MAX)) && errno == ERANGE)
                  || (str == endptr) ) {
                  return( not_ok );
             }
- 
+
             push_val( arg );
- 
+
             ptr += strlen( str );
- 
+
             expr_oper = 1;              // look for operator next
             break;
- 
+
         case 1:                         // look for operator
             op = get_op( ptr );
             if( NULL == op ) {
@@ -357,7 +356,7 @@ static  int evaluate( char * * line, long *val )
             break;
         }
     }
- 
+
     while( 1 < cvalue ) {
         ercode = do_expr();
         if( ok > ercode )
@@ -370,20 +369,20 @@ static  int evaluate( char * * line, long *val )
         return( not_ok );
     }
 }
- 
+
 /***************************************************************************/
 /*  ideas from cbt282.122                                                  */
 /*  getnum  evaluate a numeric result                                      */
 /*                                                                         */
 /***************************************************************************/
- 
+
 condcode getnum( getnum_block *gn )
 {
     char    *   a;                      // arg start  (X2)
     char    *   z;                      // arg stop   (R1)
     char        c;
     int         rc;
- 
+
     a = gn->argstart;
     z = gn->argstop;
     while( a < z && *a == ' ' ) {
@@ -420,4 +419,4 @@ condcode getnum( getnum_block *gn )
     }
     return( gn->cc );
 }
- 
+

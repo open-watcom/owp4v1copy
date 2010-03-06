@@ -30,19 +30,17 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
+
 /***************************************************************************/
-/*   The page geometry and margins are set up here to match the wgml 4.0   */
+/*   The page geometry and margins are set up here to match the wgml 4     */
 /*  behaviour. Some values are guesswork and some are hardcoded, if no     */
 /*  formula is found for computing the value                               */
 /*  The values used are from the device and the layout :page and :default  */
 /*                                                                         */
-/*  The system variables &SYSxxx show where the value is used              */
+/*  The system variables &SYSxxx show where the value is stored in wgml4   */
 /*                                                                         */
 /*                                      incomplete              TBD        */
 /*                                                                         */
@@ -53,6 +51,7 @@ void    init_page_geometry( void )
 #if 0                                   // activate for multi column TBD
     uint32_t    offset;
 #endif
+
 
     g_resh = bin_device->horizontal_base_units; // hor resolution  &sysresh
     g_resv = bin_device->vertical_base_units;   // vert resolution &sysresv
@@ -88,11 +87,11 @@ void    init_page_geometry( void )
     rm = conv_hor_unit( &layout_work.page.right_margin )
          - bin_device->x_offset;        // right margin &syspagerm
 
-    g_page_left = max( lm + bin_device->x_offset, bin_device->x_start );
-    g_page_left_org = g_page_left;
+    g_page_left_org = max( lm + bin_device->x_offset, bin_device->x_start );
+    g_page_left = g_page_left_org;
 
-    g_page_right = min( rm + bin_device->x_offset, bin_device->page_width );
-    g_page_right_org = g_page_right;
+    g_page_right_org = min( rm + bin_device->x_offset, bin_device->page_width );
+    g_page_right = g_page_right_org;
 
     g_net_page_width = rm - lm;
     g_ll = g_net_page_width * CPI / bin_device->horizontal_base_units; // &sysll
@@ -205,13 +204,18 @@ void    init_page_geometry( void )
     }
     g_indent = 0;
     g_indentr = 0;
+
+    wk_cb        = alloc_tag_cb();
+    wk_cb->c_tag = t_NONE;
+    wk_cb->left  = g_page_left_org;
+    wk_cb->right = g_page_right_org;
 }
 
 
 /***************************************************************************/
 /*  Layout end processing / document start processing                      */
-/*  will be called either before a non LAYOUT tag is processed, or when the*/
-/*  first line without tags is found                                       */
+/*  will be called either before the first non LAYOUT tag is processed,    */
+/*  or when the first line without tags is found, i.e. produces output     */
 /***************************************************************************/
 
 void    do_layout_end_processing( void )
