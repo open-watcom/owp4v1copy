@@ -195,7 +195,6 @@ typedef struct line {
     } inf;
     char        data[1];        // actual string for line
 } line;
-#define LINE_SIZE sizeof( line )
 
 typedef struct {
     line    *head, *tail;

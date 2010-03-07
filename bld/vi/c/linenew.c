@@ -107,7 +107,7 @@ line *LineAlloc( char *data, int len )
 {
     line        *tmp;
 
-    tmp = MemAlloc( LINE_SIZE + len );  /* Don't Need len+1 */
+    tmp = MemAlloc( sizeof( line ) + len );  /* Don't Need len+1 */
     if( data != NULL ) {
         memcpy( tmp->data, data, len );
     }

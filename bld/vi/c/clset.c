@@ -927,7 +927,7 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 MaxLinem1 = MaxLine - 1;
                 StaticStart();
                 /* 94/05/11 -- WorkLine was not realloced - thus too short */
-                WorkLine = MemReAlloc( WorkLine, LINE_SIZE + MaxLine + 2 );
+                WorkLine = MemReAlloc( WorkLine, sizeof( line ) + MaxLine + 2 );
                 break;
             case SET1_T_TOOLBARBUTTONHEIGHT:
                 ToolBarButtonHeight = i;

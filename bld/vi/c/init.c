@@ -333,7 +333,7 @@ static void doInitializeEditor( int argc, char *argv[] )
     if( TagFileName == NULL ) {
         AddString( &TagFileName, "tags" );
     }
-    WorkLine = MemAlloc( LINE_SIZE + MaxLine + 2 );
+    WorkLine = MemAlloc( sizeof( line ) + MaxLine + 2 );
     DotBuffer = MemAlloc( (maxdotbuffer + 2) * sizeof( vi_key ) );
     AltDotBuffer = MemAlloc( (maxdotbuffer + 2) * sizeof( vi_key ) );
     DotCmd = MemAlloc( (maxdotbuffer + 2) * sizeof( vi_key ) );
