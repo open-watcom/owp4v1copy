@@ -215,7 +215,7 @@ static void ensureCursorDisplayed( void )
             SetCurrentLine( CurrentPos.line );
         }
 
-        wc = VirtualCursorPosition() - LeftTopPos.column;
+        wc = VirtualColumnOnCurrentLine( CurrentPos.column ) - LeftTopPos.column;
         if( !ColumnInWindow( wc, &diff ) ) {
             SetCurrentColumn( CurrentPos.column );
         }

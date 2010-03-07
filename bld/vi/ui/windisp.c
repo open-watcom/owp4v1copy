@@ -502,8 +502,8 @@ void HiliteAColumnRange( linenum line, int scol, int ecol )
 {
     int s, e;
 
-    s = VirtualCursorPosition2( scol );
-    e = VirtualCursorPosition2( ecol + 1 ) - 1;
+    s = VirtualColumnOnCurrentLine( scol );
+    e = VirtualColumnOnCurrentLine( ecol + 1 ) - 1;
     if( scol == 0 ) {
         s = 0;
     }
@@ -519,8 +519,8 @@ void ColorAColumnRange( int row, int scol, int ecol, type_style *style )
 {
     int s, e, t;
 
-    s = VirtualCursorPosition2( scol );
-    e = VirtualCursorPosition2( ecol );
+    s = VirtualColumnOnCurrentLine( scol );
+    e = VirtualColumnOnCurrentLine( ecol );
     if( s > e ) {
         t = s;
         s = e;

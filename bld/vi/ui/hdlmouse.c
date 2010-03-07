@@ -94,7 +94,7 @@ vi_rc HandleMouseEvent( void )
                 return( ERR_NO_ERR );
             }
             win_x += LeftTopPos.column;
-            win_x = RealCursorPosition( win_x );
+            win_x = RealColumnOnCurrentLine( win_x );
             GoToColumnOnCurrentLine( win_x );
             if( diff_word ) {
                 InitWordSearch( WordAltDefn );
@@ -160,7 +160,7 @@ vi_rc HandleMouseEvent( void )
                     return( ERR_NO_ERR );
                 }
                 win_x += LeftTopPos.column;
-                win_x = RealCursorPosition( win_x );
+                win_x = RealColumnOnCurrentLine( win_x );
                 GoToColumnOnCurrentLine( win_x );
                 if( ShiftDown() ) {
                     EditFlags.Dragging = FALSE;

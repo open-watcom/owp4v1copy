@@ -276,17 +276,11 @@ int GetVirtualCursorPosition( char *buff, int curs )
 
 } /* GetVirtualCursorPosition */
 
-int VirtualCursorPosition( void )
-{
-    return( VirtualCursorPosition2( CurrentPos.column ) );
-
-} /* VirtualCursorPosition */
-
 /*
- * VirtualCursorPosition2 - compute the screen position of a specified
+ * VirtualColumnOnCurrentLine - compute the screen position of a specified
  *                          column in the current line
  */
-int VirtualCursorPosition2( int ccol )
+int VirtualColumnOnCurrentLine( int ccol )
 {
     int col;
 
@@ -305,7 +299,7 @@ int VirtualCursorPosition2( int ccol )
         return( GetVirtualCursorPosition( CurrentLine->data, col ) );
     }
 
-} /* VirtualCursorPosition2 */
+} /* VirtualColumnOnCurrentLine */
 
 /*
  * realPosition
@@ -333,10 +327,10 @@ static int realPosition( int virt_pos, char *buff, int len )
 } /* realPosition */
 
 /*
- * RealCursorPosition - compute the real cursor position on the current
+ * RealColumnOnCurrentLine - compute the real cursor position on the current
  *                      line, given the virtual position
  */
-int RealCursorPosition( int vc )
+int RealColumnOnCurrentLine( int vc )
 {
     int         cl;
     char        *buff;
@@ -350,7 +344,7 @@ int RealCursorPosition( int vc )
     }
     return( realPosition( vc, buff, cl ) );
 
-} /* RealCursorPosition */
+} /* RealColumnOnCurrentLine */
 
 /*
  * CursorPositionOffRight - determine if cursor is beyond the end of text

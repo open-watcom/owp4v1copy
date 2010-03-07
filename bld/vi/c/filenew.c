@@ -159,7 +159,7 @@ static vi_rc createNewFile( char *name, bool same_file )
      */
     CurrentPos.line = 0;
     CurrentPos.column = 1;
-    ColumnDesired = 1;
+    VirtualColumnDesired = 1;
     LeftTopPos.line = 1;
     LeftTopPos.column = 0;
     if( !same_file ) {

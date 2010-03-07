@@ -229,8 +229,8 @@ vi_rc InvokeColSelHook( int sc, int ec )
     }
     wordbuff[j] = 0;
 #ifndef __WIN__
-    sc = x1 + VirtualCursorPosition2( sc ) - LeftTopPos.column;
-    ec = x1 + VirtualCursorPosition2( ec ) - LeftTopPos.column;
+    sc = x1 + VirtualColumnOnCurrentLine( sc ) - LeftTopPos.column;
+    ec = x1 + VirtualColumnOnCurrentLine( ec ) - LeftTopPos.column;
     if( !has_bord ) {
         sc--;
         ec--;
@@ -264,7 +264,7 @@ vi_rc InvokeLineSelHook( linenum s, linenum e )
         lne = WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) +
               CurrentPos.line - LeftTopPos.line + has_bord;
         col = WindowAuxInfo( CurrentWindow, WIND_INFO_X1 ) +
-              VirtualCursorPosition() - LeftTopPos.column - 1 + has_bord;
+              VirtualColumnOnCurrentLine( CurrentPos.column ) - LeftTopPos.column - 1 + has_bord;
         if( col < 0 ) {
             col = 0;
         }

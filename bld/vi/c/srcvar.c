@@ -60,7 +60,7 @@ void VarAddRandC( void )
 
     VarAddGlobalLong( "R", CurrentPos.line );
     VarAddGlobalLong( "Linelen", len );
-    vc = VirtualCursorPosition();
+    vc = VirtualColumnOnCurrentLine( CurrentPos.column );
     VarAddGlobalLong( "C", (long) vc );
     // VarDump( );
 

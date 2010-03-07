@@ -151,9 +151,9 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
         // for any line but the current one!
 
         // if( thisLine == CurrentLine ){
-            int real_left = RealCursorPosition( LeftTopPos.column + 1 );
+            int real_left = RealColumnOnCurrentLine( LeftTopPos.column + 1 );
             old_col = col;
-            col = RealCursorPosition( col + 1 ) - real_left;
+            col = RealColumnOnCurrentLine( col + 1 ) - real_left;
 
             // kludge! - Real Cursor position refuses to say cursor is to right
             //           of last character like it ought to when Modeless
@@ -276,11 +276,11 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
     }
 }
 
-int PixelFromColumnOnCurrentLine( int col )
+int PixelFromColumnOnCurrentLine( int vcol )
 {
     int         x, w;
     getCursorInfo( CurrentWindow, CurrentPos.line - LeftTopPos.line + 1,
-                   col - LeftTopPos.column, &x, &w );
+                   vcol - LeftTopPos.column, &x, &w );
 
     return( x );
 }

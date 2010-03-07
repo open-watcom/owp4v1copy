@@ -114,7 +114,7 @@ line            *CurrentLine;
 line            *WorkLine;
 i_mark          CurrentPos = { 1, 1 };
 i_mark          LeftTopPos = { 1, 0 };
-int             ColumnDesired = 1;
+int             VirtualColumnDesired = 1;
 window_id       CurrentWindow = (window_id)-1;
 window_id       MessageWindow = (window_id)-1;
 window_id       StatusWindow = (window_id)-1;

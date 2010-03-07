@@ -165,7 +165,7 @@ void UpdateStatusWindow( void )
                 use_num = TRUE;
                 break;
             case 'C':
-                num = VirtualCursorPosition();
+                num = VirtualColumnOnCurrentLine( CurrentPos.column );
                 use_num = TRUE;
                 break;
             case 'D':

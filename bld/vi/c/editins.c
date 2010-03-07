@@ -613,7 +613,7 @@ vi_rc IMTabs( void )
         /*
          * get position of cursor on virtual line
          */
-        vc = VirtualCursorPosition();
+        vc = VirtualColumnOnCurrentLine( CurrentPos.column );
         if( CurrentPos.column - 1 == WorkLine->len && !EditFlags.Modeless ) {
             add = 1;
         } else {
@@ -685,7 +685,7 @@ vi_rc IMTabs( void )
         }
         WorkLine->len = strlen( WorkLine->data );
         StaticFree( buff );
-        cp = RealCursorPosition( cp ) + add;
+        cp = RealColumnOnCurrentLine( cp ) + add;
         GoToColumn( cp, WorkLine->len + 1 );
         DisplayWorkLine( FALSE );
         break;
@@ -875,11 +875,11 @@ vi_rc IMCloseBrace( void )
             ReplaceCurrentLine();
             rc = findMatchingBrace( &pos );
             if( rc == ERR_NO_ERR ) {
-                newcol = VirtualCursorPosition();
+                newcol = VirtualColumnOnCurrentLine( CurrentPos.column );
                 CGimmeLinePtr( pos.line, &cfcb, &cline );
                 i = FindStartOfALine( cline );
                 i = GetVirtualCursorPosition( cline->data, i );
-                j = i - VirtualCursorPosition2( CurrentPos.column );
+                j = i - VirtualColumnOnCurrentLine( CurrentPos.column );
                 ts = ShiftWidth;
                 if( j > 0 ) {
                     ShiftWidth = j;
@@ -889,7 +889,7 @@ vi_rc IMCloseBrace( void )
                     Shift( CurrentPos.line, CurrentPos.line, '<', FALSE );
                 }
                 ShiftWidth = ts;
-                newcol = 1 + RealCursorPosition( j + newcol );
+                newcol = 1 + RealColumnOnCurrentLine( j + newcol );
             }
             GetCurrentLine();
         }

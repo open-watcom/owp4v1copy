@@ -186,16 +186,16 @@ void SetWindowCursorForReal( void )
     }
 #ifndef __WIN__
     SetGenericWindowCursor( CurrentWindow, (int) (CurrentPos.line - LeftTopPos.line + 1),
-                            VirtualCursorPosition() - LeftTopPos.column );
+                            VirtualColumnOnCurrentLine( CurrentPos.column ) - LeftTopPos.column );
 #else
     // for windows assume tabs to be of lenght 1
     if( !EditFlags.RealTabs ){
         SetGenericWindowCursor( CurrentWindow, (int) (CurrentPos.line - LeftTopPos.line + 1),
-                                VirtualCursorPosition() - LeftTopPos.column );
+                                VirtualColumnOnCurrentLine( CurrentPos.column ) - LeftTopPos.column );
     } else {
 
         SetGenericWindowCursor( CurrentWindow, (int) (CurrentPos.line - LeftTopPos.line + 1),
-                                VirtualCursorPosition() );
+                                VirtualColumnOnCurrentLine( CurrentPos.column ) );
     }
 #endif
 

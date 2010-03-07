@@ -51,7 +51,7 @@ void SaveInfo( info *ci  )
     }
     ci->CurrentFile = CurrentFile;
     ci->CurrentPos = CurrentPos;
-    ci->ColumnDesired = ColumnDesired;
+    ci->VirtualColumnDesired = VirtualColumnDesired;
     ci->LeftTopPos = LeftTopPos;
     ci->CurrentWindow = CurrentWindow;
     ci->UndoStack = UndoStack;
@@ -118,7 +118,7 @@ bool RestoreInfo( info *ci  )
         ci->CurrNumWindow = NO_WINDOW;
         ci->CurrentPos.line = 1;
         ci->CurrentPos.column = 1;
-        ci->ColumnDesired = 1;
+        ci->VirtualColumnDesired = 1;
         ci->LeftTopPos.line = 1;
         ci->LeftTopPos.column = 0;
         CurrentLine = NULL;
@@ -141,7 +141,7 @@ bool RestoreInfo( info *ci  )
     HScrollBarScale = ci->HScrollBarScale;
 #endif
     CurrentPos = ci->CurrentPos;
-    ColumnDesired = ci->ColumnDesired;
+    VirtualColumnDesired = ci->VirtualColumnDesired;
     LeftTopPos = ci->LeftTopPos;
     CurrentWindow = ci->CurrentWindow;
     CurrNumWindow = ci->CurrNumWindow;
@@ -217,7 +217,7 @@ static int getFileInfoString( char *st, int is_small )
         MySprintf( st + strlen( st ), " line %l of %l  -- %l%%%% --",
             CurrentPos.line, CurrentFile->fcbs.tail->end_line, pc );
         if( EditFlags.ColumnInFileStatus ) {
-            MySprintf( st + strlen( st  ), " (col %d)", VirtualCursorPosition() );
+            MySprintf( st + strlen( st  ), " (col %d)", VirtualColumnOnCurrentLine( CurrentPos.column ) );
         }
     } else {
         if( EditFlags.NewFile ) {
@@ -250,7 +250,7 @@ static int getFileInfoString( char *st, int is_small )
         MySprintf( st + strlen( st ), " line %l of %l",
             CurrentPos.line, CurrentFile->fcbs.tail->end_line );
         if( EditFlags.ColumnInFileStatus ) {
-            MySprintf( st + strlen( st ), " (col %d)", VirtualCursorPosition() );
+            MySprintf( st + strlen( st ), " (col %d)", VirtualColumnOnCurrentLine( CurrentPos.column ) );
         }
     }
     return( strlen( st ) );

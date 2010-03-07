@@ -100,7 +100,7 @@ extern line         *WorkLine;
 extern line         *CurrentLine;
 extern i_mark       CurrentPos;
 extern i_mark       LeftTopPos;
-extern int          ColumnDesired;
+extern int          VirtualColumnDesired;
 extern window_id    CurrentWindow, MessageWindow, StatusWindow, CurrNumWindow;
 extern window_id    MenuWindow;
 extern char         *Comspec;

@@ -289,7 +289,7 @@ static bool isMouseButtonDown( void )
 static bool jumpToCoord( int row, int col )
 {
     GoToLineRelCurs( LeftTopPos.line + row - 1 );
-    col = RealCursorPosition( col + LeftTopPos.column );
+    col = RealColumnOnCurrentLine( col + LeftTopPos.column );
     GoToColumnOnCurrentLine( col );
     return( TRUE );
 

@@ -287,7 +287,7 @@ vi_rc MoveRight( range *r, long count )
 
 vi_rc MoveToColumn( range *r, long count )
 {
-    return( newColumnOnCurrentLine( r, RealCursorPosition( (int)count ) ) );
+    return( newColumnOnCurrentLine( r, RealColumnOnCurrentLine( (int)count ) ) );
 }
 
 /*
@@ -304,7 +304,7 @@ vi_rc MoveTab( range *r, long count )
     r->start.line = CurrentPos.line;
     r->line_based = FALSE;
     len = VirtualLineLen( CurrentLine->data );
-    vc = VirtualCursorPosition();
+    vc = VirtualColumnOnCurrentLine( CurrentPos.column );
     while( count ) {
         i = Tab( vc, TabAmount );
         vc += i;
@@ -314,7 +314,7 @@ vi_rc MoveTab( range *r, long count )
         }
         count -= 1;
     }
-    r->start.column = RealCursorPosition( vc );
+    r->start.column = RealColumnOnCurrentLine( vc );
     return( ERR_NO_ERR );
 
 } /* MoveTab */
@@ -331,7 +331,7 @@ vi_rc MoveShiftTab( range *r, long count )
     }
     r->start.line = CurrentPos.line;
     r->line_based = FALSE;
-    vc = VirtualCursorPosition();
+    vc = VirtualColumnOnCurrentLine( CurrentPos.column );
     while( count ) {
         i = ShiftTab( vc, TabAmount );
         vc -= i;
@@ -341,7 +341,7 @@ vi_rc MoveShiftTab( range *r, long count )
         }
         count -= 1;
     }
-    r->start.column = RealCursorPosition( vc );
+    r->start.column = RealColumnOnCurrentLine( vc );
     return( ERR_NO_ERR );
 
 } /* MoveShiftTab */

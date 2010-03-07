@@ -431,7 +431,7 @@ typedef struct info {
     mark        *MarkList;
     bool        linenumflag;
     window_id   CurrentWindow;
-    int         ColumnDesired;
+    int         VirtualColumnDesired;
     bool        CMode;
     bool        WriteCRLF;
     select_rgn  SelRgn;

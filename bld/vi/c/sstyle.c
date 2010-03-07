@@ -147,7 +147,7 @@ void addSelection( ss_block *ss_start, linenum line_no )
     i = 0;
 
     // get nicely ordered values from SelRgn
-    sel_end_col = VirtualCursorPosition2( SelRgn.end.column ) - 1;
+    sel_end_col = VirtualColumnOnCurrentLine( SelRgn.end.column ) - 1;
     sel_start_col = SelRgn.start_col_v - 1;
 #ifdef __WIN__
     if( EditFlags.RealTabs ) {

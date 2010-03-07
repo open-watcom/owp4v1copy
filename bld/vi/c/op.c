@@ -202,7 +202,7 @@ vi_rc Change( range *r )
     tmp = WorkLine->data[ecol];
     WorkLine->data[ecol] = '$';
 #else
-    vecol = VirtualCursorPosition2( ecol + 1 );
+    vecol = VirtualColumnOnCurrentLine( ecol + 1 );
     vecol--;
     ExpandTabsInABuffer( CurrentLine->data, CurrentLine->len, WorkLine->data, MaxLine );
     WorkLine->len = strlen( WorkLine->data );

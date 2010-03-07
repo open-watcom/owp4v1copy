@@ -120,7 +120,7 @@ void InitSelectedRegion( void )
     SelRgn.lines = FALSE;
     SelRgn.start = CurrentPos;
     SelRgn.end = CurrentPos;
-    SelRgn.start_col_v = VirtualCursorPosition();
+    SelRgn.start_col_v = VirtualColumnOnCurrentLine( CurrentPos.column );
 #ifdef __WIN__
     last_start_line = CurrentPos.line;
     last_end_line = CurrentPos.line;
@@ -213,7 +213,7 @@ void UpdateDrag( window_id id, int win_x, int win_y )
         }
         GoToLineRelCurs( ny );
         win_x += LeftTopPos.column;
-        nx = RealCursorPosition( win_x );
+        nx = RealColumnOnCurrentLine( win_x );
         GoToColumnOnCurrentLine( nx );
     } else {
 #ifndef __WIN__
