@@ -733,9 +733,14 @@ static vi_rc processMenu( int sel, menu *cmenu, int xpos, int ypos, int rxwid )
             x1 = ws;
             arl = NULL;
         }
-        x2 = x1 + cmenu->maxwidth + 1;
         y1 = ypos;
-        y2 = y1 + (int) cmenu->itemcnt + 1;
+        if( menuw_info.has_border ) {
+            x2 = x1 + cmenu->maxwidth + 1;
+            y2 = y1 + (int) cmenu->itemcnt + 1;
+        } else {
+            x2 = x1 + cmenu->maxwidth - 1;
+            y2 = y1 + (int) cmenu->itemcnt - 1;
+        }
 
         /*
          * make sure menu will be valid!
