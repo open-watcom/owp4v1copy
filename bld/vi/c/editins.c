@@ -91,7 +91,7 @@ static int trimWorkLine( void )
             i--;
         }
         if( i == -1 ) {
-            len = RealLineLen( WorkLine->data );
+            len = VirtualLineLen( WorkLine->data );
         }
         WorkLine->len = i + 1;
         WorkLine->data[i + 1] = 0;
@@ -639,7 +639,7 @@ vi_rc IMTabs( void )
         }
         if( back && (vc - j < 1) ) {
             break;
-        } else if( RealLineLen( WorkLine->data ) + j >= MaxLine ) {
+        } else if( VirtualLineLen( WorkLine->data ) + j >= MaxLine ) {
             break;
         }
 

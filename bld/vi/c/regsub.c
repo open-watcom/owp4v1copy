@@ -89,7 +89,7 @@ int RegSub( regexp *prog, char *source, char *dest, linenum lineno )
                     buff[i] = 0;
                     j = atoi( buff ) - 1;
                     *dst = 0;
-                    i = RealLineLen( dest );
+                    i = VirtualLineLen( dest );
                     while( i < j ) {
                         *dst++ = ' ';
                         i++;

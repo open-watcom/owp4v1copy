@@ -242,7 +242,7 @@ vi_rc DCUpdate( void )
                         displayText = "*** ERR NULL DATA ***";
                     }
                 }
-                displayOffset = RealLineLen( displayText );
+                displayOffset = VirtualLineLen( displayText );
                 if( displayOffset > LeftTopPos.column ) {
                     displayOffset = LeftTopPos.column;
                 }

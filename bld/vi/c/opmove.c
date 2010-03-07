@@ -303,7 +303,7 @@ vi_rc MoveTab( range *r, long count )
 
     r->start.line = CurrentPos.line;
     r->line_based = FALSE;
-    len = RealLineLen( CurrentLine->data );
+    len = VirtualLineLen( CurrentLine->data );
     vc = VirtualCursorPosition();
     while( count ) {
         i = Tab( vc, TabAmount );

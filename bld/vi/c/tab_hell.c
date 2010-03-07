@@ -411,9 +411,9 @@ int RealCursorPositionOnLine( linenum line_num, int virt_pos )
 } /* RealCursorPositionOnLine */
 
 /*
- * RealLineLen - compute the real length of a specified line
+ * VirtualLineLen - compute the real length of a specified line
  */
-int RealLineLen( char *buff )
+int VirtualLineLen( char *buff )
 {
     int j, cl;
     int pos = 0;
@@ -426,7 +426,7 @@ int RealLineLen( char *buff )
     }
     return( pos );
 
-} /* RealLineLen */
+} /* VirtualLineLen */
 
 /*
  * AddLeadingTabSpace - make leading spaces tabs (if possible)

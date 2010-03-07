@@ -372,7 +372,7 @@ bool CheckCurrentColumn( void )
     int     clen, vcp;
     bool    dispall = FALSE;
 
-    clen = RealLineLen( CurrentLine->data );
+    clen = VirtualLineLen( CurrentLine->data );
     if( clen == 0 ) {
         clen = 1;
     }
