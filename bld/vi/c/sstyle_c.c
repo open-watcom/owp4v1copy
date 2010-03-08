@@ -471,14 +471,12 @@ static void getString( ss_block *ss_new, char *start, int skip )
     char    *text = nstart;
 
     ss_new->type = SE_STRING;
-again:
     while( *text && *text != '"' ) {
-        text++;
-    }
-    if( (*text == '"') && (*(text - 1) == '\\') && (*(text - 2) != '\\') ) {
-        // a literal quote - skip over
-        text++;
-        goto again;
+        if( *text == '\\' && (*(text + 1) == '\\' || *(text + 1) == '"') ) {
+            text += 2;
+        } else {
+            text++;
+        }
     }
     if( *text == '\0' ) {
         if( *(text - 1) != '\\' ) {

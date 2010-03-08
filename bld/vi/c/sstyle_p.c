@@ -420,14 +420,12 @@ static void getString( ss_block *ss_new, char *start, int skip )
 
     flags.beforeRegExp = FALSE;
     ss_new->type = SE_STRING;
-again:
     while( *text && *text != '"' ) {
-        text++;
-    }
-    if( (*text == '"') && (*(text - 1) == '\\') && (*(text - 2) != '\\') ) {
-        // a literal quote - skip over
-        text++;
-        goto again;
+        if( *text == '\\' && (*(text + 1) == '\\' || *(text + 1) == '"') ) {
+            text += 2;
+        } else {
+            text++;
+        }
     }
     if( *text == '\0' ) {
         if( *(text - 1) != '\\' ) {
@@ -455,7 +453,7 @@ static void getRegExp( ss_block *ss_new, char *start )
     ss_new->type = SE_REGEXP;
 start:
     while( *text && *text != '/' ) {
-        if( *text == '\\' && *(text + 1) == '/' ) {
+        if( *text == '\\' && (*(text + 1) == '\\' || *(text + 1) == '/') ) {
             text += 2;
         } else {
             text++;
