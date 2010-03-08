@@ -10,7 +10,7 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2009/09/15
+:cmt. Reflects main Perforce branch as of 2010/03/05
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
@@ -23,30 +23,41 @@ Following is a list of changes made in &product 1.9:
 .begbull
 .bull
 The NULL macro is now defined as ((void *)0) for C; for C++, NULL is still
-defined as 0 or 0L as previously. This change may require modifications
-to user code if NULL was incorrectly used as an integer constant.
-Note: The 16-bit windows.h header defines NULL as 0; for 16-bit Windows
-programming, the effective definition of NULL depends on whether windows.h
-or one of the standard C headers is included first.
+defined as 0 or 0L as previously. This change may require modifications to
+user code if NULL was incorrectly used as an integer constant. Note: The
+16-bit windows.h header defines NULL as 0; for 16-bit Windows programming,
+the effective definition of NULL depends on whether windows.h or one of the
+standard C headers is included first.
 .bull
 The C compiler has improved handling of the _Bool type (C99 mode specific).
 The _Bool type can now generally be used in expressions wherever an integer
 may be used.
 .bull
-The C compiler now correctly handles initialization of static floating-point
-variables with 64-bit integer constants.
+The C compiler now considers enumeration types to be compatible with their
+underlying integer type, as required by ISO C. Note that the choice of the
+underlying type varies and should not be relied upon.
+.bull
+The C compiler now correctly handles initialization of static
+floating-point variables with 64-bit integer constants.
+.bull
+The C and C++ compilers now support the __int8, __int16, and __int32
+extension keywords.
 .bull
 The 16-bit C and C++ compilers now allow the :> operator to be used in
 initializers of variables with static storage, as long as both operands are
 integer constants. This enables the use of MK_FP macro in initializers.
 .bull
-The C++ compiler now treats warning W737, implicit conversion of pointers to
-integral types of same size, as an error.
+The C++ compiler now treats warning W737, implicit conversion of pointers
+to integral types of same size, as an error.
 .bull
 The C++ compiler now supports several new warnings: W931, warn about
-meaningless cv-qualifier in casts; W932, warn about meaningless cv-qualifier
-in function return types; and W933, warn about use of C-style casts in C++
-code. These warnings must be explicitly enabled through the -wce option.
+meaningless cv-qualifier in casts; W932, warn about meaningless
+cv-qualifier in function return types; and W933, warn about use of C-style
+casts in C++ code. These warnings must be explicitly enabled through the
+-wce option.
+.bull
+The code generator now eliminates redundant epilog code for 32-bit Intel
+processors when doing size optimization.
 .bull
 The code generator correctly handles constant folding of signed 64-bit
 integer division and right shift operations.
@@ -54,54 +65,102 @@ integer division and right shift operations.
 The code generator now supports constant folding of 64-bit integer modulo
 operations.
 .bull
-The code generator now makes more accurate decision when choosing whether
-a multiplication by a constant should be replaced by a sequence of shifts
-and additions. Results depend on target CPU type.
+The code generator no longer mishandles floating-point comparisons where
+one operand is a variable of type float and the other operand is a constant
+of type double or long double.
+.bull
+The code generator no longer produces incorrect code when a constant
+expression of type float (e.g., 1.0f + 1.0f) is passed as an argument to a
+function which takes a float argument.
+.bull
+The code generator now makes more accurate decision when choosing whether a
+multiplication by a constant should be replaced by a sequence of shifts and
+additions. Results depend on target CPU type.
 .bull
 The 386 code generator now produces a CDQ instruction except when targeting
 a Pentium and optimizing for speed, when a MOV/SAR sequence is emitted as
 previously when converting a signed 32-bit integer to 64-bit.
 .bull
 The code generator no longer emits rendundant CS segment overrides when
-creating calls to symbols imported from DLLs. 
+creating calls to symbols imported from DLLs.
+.bull
+The Win32 API headers and import libraries have been updated to support the
+new interfaces in Windows 7.
+.bull
+Support for 16-bit OLE 2.0 has been added.
+.bull
+Support for RDOS targets has been added.
+.bull
+Support for ZDOS targets has been added to the linker.
+.bull
+The floating-point exception handler for 16-bit DOS no longer crashes if
+the user signal handler modified DS.
+.bull
+The _floodfill() graphics library function now works correctly again.
+.bull
+The library no longer leaks memory when a thread created by _beginthread()
+terminates.
+.bull
+The %Lf format specifier (and related format specifiers) used with printf
+family functions now works.
+.bull
+The library now contains _fseeki64 and _ftelli64 functions to handle 64-bit
+file offset pointer for streams.
+.bull
+The library implemenations of _lseeki64, _telli64, _fileleni64,
+_(w)stati64, _(w)findfirsti64, _(w)findnexti64 on OS/2 now properly use
+64-bit file sizes and offsets.
+.bull
+The library implementations of puts and putws now correctly return EOF if
+they fail
+.bull
+DOS long file name (LFN) support has been added (new doslfn??.lib model
+specific libraries contain DOS LFN version of appropriate modules). By
+default DOS LFN support is enabled. It can be switch off by setup LFN=N
+environment variable.
 .bull
 The wasm assembler now implements support for Turbo Assembler compatible
-IDEAL mode. The -zcm option may be used to select emulation mode.
+IDEAL mode. The -zcm option may be used to select this feature.
 .bull
 The assembler now supports built-in @code and @data symbols.
 .bull
 The assembler now supports ELSEIF directives for conditional assembly.
 .bull
-The assembler no longer incorrectly assumes that absolute segments are
-byte aligned; they are paragraph (16 byte) aligned.
+The assembler no longer incorrectly assumes that absolute segments are byte
+aligned; they are paragraph (16 byte) aligned.
 .bull
 The built-in cd command in wmake now supports quoted paths with spaces.
 .bull
-The floating-point exception handler for 16-bit DOS no longer crashes if the
-user signal handler modified DS.
-.bull
-The _floodfill() graphics library function now works correctly again.
-.bull
-Support for ZDOS and RDOS targets has been added to the linker.
-.bull
 The linker now supports libraries in BSD, COFF, and GNU ar format.
 .bull
-The linker now allows stack sizes smaller than 512 bytes
-to be specified and does not silently override them. However, a new
-warning (W1172) will be emitted in such case.
+The linker now allows stack sizes smaller than 512 bytes to be specified
+and does not silently override them. However, a new warning (W1172) will be
+emitted in such case.
 .bull
 A FULLHEADER option specific to the DOS EXE format has been added to the
 linker. Please see the Linker Guide for further information.
 .bull
 The library manager (wlib) now supports BSD, COFF, and GNU variants of the
-ar library archive format. Extended -fab, -fag, -fag options select the
-variant. The -fa option now selects default format depending on host platform.
+ar library archive format. Extended -fab, -fag, -fac options select the
+variant. The -fa option now selects default format depending on host
+platform.
+.bull
+This release introduces Open Watcom's IPF compiler (wipfc) used for
+creating help files on OS/2.
 .bull
 The vi editor now supports non-ASCII characters in the 0x80-0xFF range.
 .bull
 The console version of the vi editor for Windows now uses standard Windows
-keyboard processing; AltGr and dead keys now function correctly. 
-Additionally, Caps Lock is only effective for keys which generate characters.
+keyboard processing; AltGr and dead keys now function correctly.
+Additionally, Caps Lock is only effective for keys which generate
+characters.
+.bull
+The editor now supports for syntax highlight of awk files.
+.bull
+The editor now supports a Select All command.
+.bull
+The windowed editor now holds the position of the replace and
+search/replace dialogs between invocations.
 .bull
 The wcl and wcl386 utilities now work correctly on a Linux host.
 .bull
