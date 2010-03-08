@@ -49,7 +49,8 @@
 extern char * __CreateInheritString( void );
 
 int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
-                                  CHAR_TYPE *envpar, const CHAR_TYPE * const argv[] )
+                                  CHAR_TYPE *envpar, 
+                                  const CHAR_TYPE * const argv[] )
 {
     int tid;
     int handle;
@@ -65,10 +66,10 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
     char *envdata;
     char *envp;
     char *ep;
-    char *inherit;
+    char *options;
     int ok;
 
-    inherit = __CreateInheritString();
+    options = __CreateInheritString();
 
     __F_NAME(__ccmdline,__wccmdline)( pgmname, argv, cmdline, 0 );
 
@@ -109,7 +110,7 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
     }
 
     if( ok ) {
-        handle = RdosSpawn( pgmname, cmdline, 0, envpar, &tid );
+        handle = RdosSpawn( pgmname, cmdline, 0, envpar, options, &tid );
 
         if( !handle )
             ok = 0;
@@ -129,7 +130,7 @@ int _dospawn( int mode, CHAR_TYPE *pgmname, CHAR_TYPE *cmdline,
         RdosFreeProcessHandle( handle );                        
     }
 
-    lib_free( inherit );
+    lib_free( options );
     lib_free( p );
 
     return( rc );

@@ -912,7 +912,7 @@ static void DebugThread( void *Param )
         
     RdosWaitMilli( 250 );
 
-    obj->FHandle = RdosSpawnDebug( obj->FProgram, obj->FParam, obj->FStartDir, 0, &thread);
+    obj->FHandle = RdosSpawnDebug( obj->FProgram, obj->FParam, obj->FStartDir, 0, 0, &thread);
 
     if( obj->FHandle ) {
         WaitHandle = RdosCreateWait();
