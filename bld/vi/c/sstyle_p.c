@@ -115,6 +115,7 @@ static void getHex( ss_block *ss_new, char *start )
     char    *text = start + 2;
     bool    nodigits = TRUE;
 
+    flags.beforeRegExp = FALSE;
     ss_new->type = SE_HEX;
     while( *text && isxdigit( *text ) ) {
         text++;
@@ -150,7 +151,7 @@ static void getFloat( ss_block *ss_new, char *start, int skip, int command )
     char    lastc;
 
     ss_new->type = SE_FLOAT;
-
+    flags.beforeRegExp = FALSE;
     if( command == AFTER_ZERO ) {
         while( isdigit( *text ) ) {
             text++;
@@ -228,6 +229,7 @@ static void getNumber( ss_block *ss_new, char *start, char top )
     int     lastc;
     char    *text = start + 1;
 
+    flags.beforeRegExp = FALSE;
     while( (*text >= '0') && (*text <= top) ) {
         text++;
     }
@@ -293,6 +295,15 @@ static void getText( ss_block *ss_new, char *start )
     isKeyword = IsKeyword( start, FALSE );
     *text = save_char;
 
+    // Expect a double regular expression after s, tr, and y.
+    if( text - start == 1 && (*start == 's' || *start == 'y') ) {
+        flags.doubleRegExp = TRUE;
+    } else if( text - start == 2 && *start == 't' && *(start + 1) == 'r' ) {
+        flags.doubleRegExp = TRUE;
+    } else {
+        flags.doubleRegExp = FALSE;
+    }
+    flags.beforeRegExp = isKeyword;
     ss_new->type = SE_IDENTIFIER;
     if( isKeyword ) {
         ss_new->type = SE_KEYWORD;
@@ -318,6 +329,7 @@ static void getVariable( ss_block *ss_new, char *start )
             text += 2;
         }
     }
+    flags.beforeRegExp = FALSE;
     ss_new->type = SE_VARIABLE;
     ss_new->len = text - start;
 }
@@ -333,12 +345,15 @@ static void getSpecialVariable( ss_block *ss_new, char *start )
     } else {
         text++;
     }
+    flags.beforeRegExp = FALSE;
     ss_new->type = SE_VARIABLE;
     ss_new->len = text - start;
 }
 
 static void getSymbol( ss_block *ss_new, char *start )
 {
+    flags.beforeRegExp = TRUE;
+    flags.doubleRegExp = FALSE;
     ss_new->type = SE_SYMBOL;
     ss_new->len = 1;
 }
@@ -346,6 +361,7 @@ static void getSymbol( ss_block *ss_new, char *start )
 static void getChar( ss_block *ss_new, char *start, int skip )
 {
     char    *text = start + skip;
+    flags.beforeRegExp = FALSE;
     ss_new->type = SE_CHAR;
 embedded:
     while( (*text) && (*text != '\'') ) {
@@ -379,6 +395,8 @@ static void getBeyondText( ss_block *ss_new )
 
 static void getInvalidChar( ss_block *ss_new )
 {
+    flags.beforeRegExp = TRUE;
+    flags.doubleRegExp = FALSE;
     ss_new->type = SE_INVALIDTEXT;
     ss_new->len = 1;
 }
@@ -389,6 +407,8 @@ static void getPerlComment( ss_block *ss_new, char *start )
     while( *text ) {
         text++;
     }
+    flags.beforeRegExp = TRUE;
+    flags.doubleRegExp = FALSE;
     ss_new->type = SE_COMMENT;
     ss_new->len = text - start;
 }
@@ -398,6 +418,7 @@ static void getString( ss_block *ss_new, char *start, int skip )
     char    *nstart = start + skip;
     char    *text = nstart;
 
+    flags.beforeRegExp = FALSE;
     ss_new->type = SE_STRING;
 again:
     while( *text && *text != '"' ) {
@@ -427,6 +448,30 @@ again:
     ss_new->len = text - start;
 }
 
+static void getRegExp( ss_block *ss_new, char *start )
+{
+    char    *text = start + 1;
+
+    ss_new->type = SE_REGEXP;
+start:
+    while( *text && *text != '/' ) {
+        if( *text == '\\' && *(text + 1) == '/' ) {
+            text += 2;
+        } else {
+            text++;
+        }
+    }
+    text++;
+    if( flags.doubleRegExp ) {
+        flags.doubleRegExp = FALSE;
+        goto start;
+    }
+    while( isalpha( *text ) ) {
+        text++;
+    }
+    ss_new->len = text - start;
+}
+
 void InitPerlFlagsGivenValues( ss_flags_p *newFlags )
 {
     flags = *newFlags;
@@ -449,6 +494,8 @@ void InitPerlFlags( linenum line_no )
     bool    inBlock = FALSE;
 
     flags.inString = FALSE;
+    flags.beforeRegExp = TRUE;
+    flags.doubleRegExp = FALSE;
 
     CGimmeLinePtr( line_no, &fcb, &thisline );
     line = thisline;
@@ -531,6 +578,12 @@ void GetPerlBlock( ss_block *ss_new, char *start, line *line, linenum line_no )
         case '"':
             getString( ss_new, start, 1 );
             return;
+        case '/':
+            if( flags.beforeRegExp ) {
+                getRegExp( ss_new, start );
+                return;
+            }
+            break;
         case '$':
         case '@':
         case '%':

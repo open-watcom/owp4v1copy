@@ -156,6 +156,8 @@ static void doWindow( FILE *f, int id, window_info *wi, bool colour_only )
                    SEType[SE_STRING].background, SEType[SE_STRING].font );
         MyFprintf( f, "    variable %d %d %d\n", SEType[SE_VARIABLE].foreground,
                    SEType[SE_VARIABLE].background, SEType[SE_VARIABLE].font );
+        MyFprintf( f, "    regexp %d %d %d\n", SEType[SE_REGEXP].foreground,
+                   SEType[SE_VARIABLE].background, SEType[SE_VARIABLE].font );
     }
     MyFprintf( f, "endwindow\n" );
 

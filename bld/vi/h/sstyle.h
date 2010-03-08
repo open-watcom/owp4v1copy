@@ -63,6 +63,7 @@ typedef enum syntax_element {
     SE_FLOAT,
     SE_STRING,
     SE_VARIABLE,
+    SE_REGEXP,
     SE_NUMTYPES,        // always last
 } syntax_element;
 
@@ -121,7 +122,9 @@ typedef struct ss_flags_m {
 
 typedef struct ss_flags_p {
     unsigned short  inString        : 1;
-    unsigned short  spare           : 15;
+    unsigned short  beforeRegExp    : 1;
+    unsigned short  doubleRegExp    : 1;
+    unsigned short  spare           : 13;
 } ss_flags_p;
 
 typedef union ss_flags {
