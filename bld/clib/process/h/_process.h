@@ -51,4 +51,7 @@ extern int  _dospawn(int,char *,char *, char *, const char * const *);
 #pragma aux _dospawn "_*" parm caller [];
 #endif
 #endif
+#ifdef __RDOS__
+extern int  _doexec(char *,char *, const char * const *);
+#endif
 extern void __init_execve( void );

@@ -12,6 +12,7 @@
 !inject delaywnt.obj                     nt nta ntp
 !inject delayrdu.obj                                                                                rdu
 !inject doexec.obj   d16
+!inject doexerdu.obj                                                                                rdu
 !inject dospnos2.obj                                        o16 o32
 !inject dospnwnt.obj                     nt nta ntp
 !inject dospnrdu.obj                                                                                rdu
@@ -29,7 +30,8 @@
 !inject exlpeqnx.obj                                                q16 q32
 !inject exlpqnx.obj                                                 q16 q32
 !inject exlqnx.obj                                                  q16 q32
-!inject exv.obj      d16                 nt nta ntp         o16 o32                     l32 lpc lmp rdu
+!inject exv.obj      d16                 nt nta ntp         o16 o32                     l32 lpc lmp
+!inject exvrdu.obj                                                                                  rdu
 !inject exve.obj     d16
 !inject exveos2.obj                                         o16 o32
 !inject exveqnx.obj                                                 q16 q32

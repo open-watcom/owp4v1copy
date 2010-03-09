@@ -41,6 +41,5 @@
 
 _WCRTLINK int execve( const CHAR_TYPE *path, const CHAR_TYPE * const argv[], const CHAR_TYPE * const envp[] )
 {
-    spawnve( P_NOWAIT, path, argv, envp );
-    return( 0 );
+    return( spawnve( P_WAIT, path, argv, envp ) );
 }
