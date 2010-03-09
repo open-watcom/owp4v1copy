@@ -179,10 +179,16 @@ int main( int argc, char * const argv[] )
          */
         env = environ;
         while( env ) {
-            if( !strncmp( *env, "PATH=", 5 ) ) {
-                path = *env;
+            if( *env ) {
+                if( !strncmp( *env, "PATH=", 5 ) ) {
+                    path = *env;
+                    break;
+                }
+            } else {
+                path = "";
                 break;
             }
+            
             ++env;
         }
 
@@ -245,6 +251,14 @@ int main( int argc, char * const argv[] )
 
         status = unlink( "test.fil" );
         VERIFY( status == 0 );
+
+#if defined( __RDOS__ )
+        rc = execve( ProgramName, child_args, child_envp );
+        VERIFY( rc == CHILD_RC );
+
+        rc = execv( ProgramName, child_args );
+        VERIFY( rc == CHILD_RC );
+#endif
 
         signal_count = 0;
         signal_number = 0;
