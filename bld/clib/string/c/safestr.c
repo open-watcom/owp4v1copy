@@ -59,7 +59,9 @@ int     NumViolations = 0;  /* runtime-constraint violation counter */
 /* Runtime-constraint handler for tests; doesn't abort program. */
 void my_constraint_handler( const char *msg, void *ptr, errno_t error )
 {
+#ifdef DEBUG_MSG
     fprintf( stderr, "Runtime-constraint in %s", msg );
+#endif
     ++NumViolations;
 }
 
@@ -412,7 +414,7 @@ int main( int argc, char *argv[] )
     my_stdout = freopen( "tmp.log", "a", stdout );
     if( my_stdout == NULL ) {
         fprintf( stderr, "Unable to redirect stdout\n" );
-        exit( -1 );
+        exit( EXIT_FAILURE );
     }
 #endif
     /*** Initialize ***/
@@ -427,12 +429,12 @@ int main( int argc, char *argv[] )
         printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
         return( EXIT_FAILURE );
     }
-    printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
+    printf( "Tests completed (%s).\n", ProgramName );
 
 #ifdef __SW_BW
-    fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
+    fprintf( stderr, "Tests completed (%s).\n", ProgramName );
     fclose( my_stdout );
     _dwShutDown();
 #endif
-    return( 0 );
+    return( EXIT_SUCCESS );
 }

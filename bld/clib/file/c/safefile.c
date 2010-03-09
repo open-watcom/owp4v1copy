@@ -79,7 +79,9 @@ int     NumViolations = 0;  /* runtime-constraint violation counter */
 /* Runtime-constraint handler for tests; doesn't abort program. */
 void my_constraint_handler( const char *msg, void *ptr, errno_t error )
 {
+#ifdef DEBUG_MSG
     fprintf( stderr, "Runtime-constraint in %s", msg );
+#endif
     ++NumViolations;
 }
 

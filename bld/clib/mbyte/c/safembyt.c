@@ -27,7 +27,6 @@
 * Description:  Non-exhaustive test of the Safer C library
 *               multibyte character functions.
 *
-*               modelled after mbtest.c
 ****************************************************************************/
 
 
@@ -69,7 +68,9 @@ int     NumViolations = 0;  /* runtime-constraint violation counter */
 /* Runtime-constraint handler for tests; doesn't abort program. */
 void my_constraint_handler( const char *msg, void *ptr, errno_t error )
 {
+#ifdef DEBUG_FMT
     fprintf( stderr, "Runtime-constraint in %s", msg );
+#endif
     ++NumViolations;
 }
 
@@ -556,18 +557,18 @@ void TestAddendum( void )
 
 void main( int argc, char *argv[] )
 {
-    int                 exitcode;
+    int             exitcode;
 
     /*** Initialize ***/
-    #ifdef __SW_BW
-        FILE *          my_stdout;
-        my_stdout = freopen( "tmp.log", "a", stdout );
-        if( my_stdout == NULL ) {
-            fprintf( stderr, "Unable to redirect stdout\n" );
-            exit( -1 );
-        }
-    #endif
-    strcpy( ProgramName, strlwr(argv[0]) );     /* store executable filename */
+#ifdef __SW_BW
+    FILE            *my_stdout;
+    my_stdout = freopen( "tmp.log", "a", stdout );
+    if( my_stdout == NULL ) {
+        fprintf( stderr, "Unable to redirect stdout\n" );
+        exit( EXIT_FAILURE );
+    }
+#endif
+    strcpy( ProgramName, strlwr( argv[0] ) );   /* store executable filename */
     if( _setmbcp( 932 ) != 0 ) {
         printf( "Cannot initialize code page.\n\n" );
         exit( EXIT_FAILURE );
@@ -589,25 +590,22 @@ void main( int argc, char *argv[] )
     /*** Print a pass/fail message and quit ***/
     if( NumErrors == 0 ) {
         printf( "%s: SUCCESS.\n", ProgramName );
-        #ifdef __SW_BW
-            fprintf( stderr, "%s: SUCCESS.\n", ProgramName );
-        #endif
+#ifdef __SW_BW
+        fprintf( stderr, "%s: SUCCESS.\n", ProgramName );
+#endif
         exitcode = EXIT_SUCCESS;
     } else {
         printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
-        #ifdef __SW_BW
-            fprintf( stderr, "%s: FAILURE (%d errors).\n",
-                     ProgramName, NumErrors );
-        #endif
+#ifdef __SW_BW
+        fprintf( stderr, "%s: FAILURE (%d errors).\n",
+                 ProgramName, NumErrors );
+#endif
         exitcode = EXIT_FAILURE;
     }
 
-    #ifdef __SW_BW
-        fclose( my_stdout );
-        _dwShutDown();
-    #endif
+#ifdef __SW_BW
+    fclose( my_stdout );
+    _dwShutDown();
+#endif
     exit( exitcode );
 }
-
-
-

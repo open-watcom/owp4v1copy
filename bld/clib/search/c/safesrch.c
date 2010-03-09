@@ -122,7 +122,9 @@ int longintcmp_s( void const *_a, void const *_b, void *context )
 /* Runtime-constraint handler for tests; doesn't abort program. */
 void my_constraint_handler( const char *msg, void *ptr, errno_t error )
 {
+#ifdef DEBUG_MSG
     fprintf( stderr, "Runtime-constraint in %s", msg );
+#endif
     ++NumViolations;
 }
 
@@ -258,9 +260,9 @@ int main( int argc, char *argv[] )
 
     //Status_Print( );
 
-    printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
+    printf( "Tests completed (%s).\n", ProgramName );
 #ifdef __SW_BW
-    fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
+    fprintf( stderr, "Tests completed (%s).\n", ProgramName );
     fclose( my_stdout );
     _dwShutDown();
 #endif
