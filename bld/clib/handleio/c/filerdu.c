@@ -380,7 +380,7 @@ _WCRTLINK char * __CreateInheritString( void )
 
     str = lib_malloc( MAX_INHERIT_SPACE );
 
-    remain = MAX_INHERIT_SPACE - 2;
+    remain = MAX_INHERIT_SPACE - 2 - sizeof( FILE_INHERIT );
     ptr = str;
     strcpy( ptr, FILE_INHERIT );
     ptr += strlen( FILE_INHERIT );
