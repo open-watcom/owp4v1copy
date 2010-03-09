@@ -49,6 +49,7 @@
 #include "openmode.h"
 
 #define CONSOLE "CON"
+#define FILE_INHERIT "[FILE]"
 
 #define MAX_INHERIT_SPACE   0x4000
 
@@ -207,10 +208,85 @@ static char GetHandle( int handle, int *rdos_handle, unsigned *mode )
     return( type );
 }
 
+static void ProcessFile( char *filename, int handle, unsigned mode )
+{
+    rdos_handle_type *obj;
+    int rdos_handle;
+    int org_handle;
+    
+    rdos_handle = RdosOpenFile( filename, 0 );
+
+    if( rdos_handle ) {
+        obj = AllocHandleObj( filename );
+    }
+
+    if( obj ) {
+        obj->rdos_handle = rdos_handle;
+        obj->mode = mode;
+        obj->type = HANDLE_TYPE_FILE;
+        org_handle = AllocHandleEntry( obj );
+        dup2( org_handle, handle );
+        close( org_handle );
+    }
+}
+
+static void ProcessFileInherit( const char *inherit )
+{
+    const char *ptr;
+    int size;
+    char filename[300];
+    char *fp;
+    int handle;
+    unsigned mode;
+
+    size = strlen( FILE_INHERIT );
+    inherit += size;
+    inherit++;
+
+    ptr = inherit;
+
+    while( ptr && *ptr ) {
+        size = 0;
+        fp = filename;
+        while( size < 300 && *ptr != '=' ) {
+            *fp = *ptr;
+            fp++;
+            ptr++;
+        }
+        *fp = 0;
+        ptr++;
+        
+        if( sscanf( ptr, "%d,%d", &handle, &mode ) == 2 )
+            ProcessFile( filename, handle, mode );
+
+        ptr = strchr( ptr, 0xd );        
+        if( ptr )
+            ptr++;
+    }
+}
+
+static void ProcessInherit( const char *inherit )
+{
+    const char *ptr;
+    int size;
+
+    while( *inherit ) {
+        ptr = strstr( inherit, FILE_INHERIT );
+        if( ptr )
+            ProcessFileInherit( ptr );
+
+        size = strlen( inherit );
+        inherit += size;
+        inherit++;
+    }
+}
+
 void InitHandle( void )
 {
     int i;
     rdos_handle_type *h;
+    const char *inherit;
+    const char *ptr;
 
     handle_section = RdosCreateSection();    
     handle_count = 5;
@@ -237,6 +313,11 @@ void InitHandle( void )
 
     h->ref_count++;
     handle_ptr[2] = h;
+
+    inherit = RdosGetOptions();
+
+    if( inherit )
+        ProcessInherit( inherit );
 }
 
 void FiniHandle( void )
@@ -279,6 +360,7 @@ static char *AddInherit( char *ptr, int handle, rdos_handle_type *obj, int *rema
         ptr += strlen( obj->file_name );
         strcpy( ptr, str );
         ptr += strlen( str );
+        *ptr = 0xd;
         ptr++;
         (*remain) -= len;
     }    
@@ -291,30 +373,43 @@ _WCRTLINK char * __CreateInheritString( void )
     char               *ptr;
     int                 handle;
     int                 remain;
+    int                 count;
     rdos_handle_type   *obj;
+
+    count = 0;
 
     str = lib_malloc( MAX_INHERIT_SPACE );
 
     remain = MAX_INHERIT_SPACE - 2;
     ptr = str;
+    strcpy( ptr, FILE_INHERIT );
+    ptr += strlen( FILE_INHERIT );
+    *ptr = 0xd;
+    ptr++;
 
     RdosEnterSection( handle_section );
 
     for( handle = 0; handle < handle_count; handle++ ) {
         obj = handle_ptr[handle];
         if( obj ) {
-            if( obj->file_name )
+            if( obj->file_name ) {
+                count++;
                 ptr = AddInherit( ptr, handle, obj, &remain );                 
+            }
         }
     }
-
-    *ptr = 0;
-    ptr++;
-    *ptr = 0;
     
     RdosLeaveSection( handle_section );
 
-    return( str );
+    if( count ) {    
+        *ptr = 0;
+        ptr++;
+        *ptr = 0;
+        return( str );
+    } else {
+        lib_free( str );
+        return( 0 );
+    }
 }
 
 _WCRTLINK int unlink( const CHAR_TYPE *filename ) 
@@ -511,8 +606,11 @@ _WCRTLINK int dup2( int handle1, int handle2 )
     if( handle1 == handle2 )
         return( handle2 );
 
-    if( handle2 < 0 || handle2 >= handle_count )
+    if( handle2 < 0 )
         return( -1 );
+
+    while( handle2 >= handle_count )
+        GrowHandleArr( );
         
     RdosEnterSection( handle_section );
 

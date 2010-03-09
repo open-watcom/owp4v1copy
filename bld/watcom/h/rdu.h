@@ -479,3 +479,6 @@
 #define CallGate_add_wait_for_proc_end 0x9a 126 1 0 0 2 0
 #define CallGate_get_proc_exit_code 0x9a 127 1 0 0 2 0
 
+#define CallGate_get_cpu_version 0x9a 128 1 0 0 2 0
+#define CallGate_get_options 0x9a 129 1 0 0 2 0
+

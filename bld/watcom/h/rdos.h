@@ -312,6 +312,7 @@ int RDOSAPI RdosSuspendThread(int Thread);
 int RDOSAPI RdosSuspendAndSignalThread(int Thread);
 
 void RDOSAPI RdosCpuReset();
+int RDOSAPI RdosGetCpuVersion(char *VendorStr, int *FeatureFlags, int *freq);
 void RDOSAPI RdosGetVersion(int *Major, int *Minor, int *Release);
 void RDOSAPI RdosCreateThread(void (*Start)(void *Param), const char *Name, void *Param, int StackSize);
 void RDOSAPI RdosCreatePrioThread(void (*Start)(void *Param), int Prio, const char *Name, void *Param, int StackSize);
@@ -474,6 +475,7 @@ unsigned short int RDOSAPI RdosCalcCrc(int Handle, unsigned short int CrcVal, co
 int RDOSAPI RdosGetModuleHandle();
 const char *RDOSAPI RdosGetExeName();
 const char *RDOSAPI RdosGetCmdLine();
+const char *RDOSAPI RdosGetOptions();
 int RDOSAPI RdosLoadDll(const char *Name);
 void RDOSAPI RdosFreeDll(int handle);
 int RDOSAPI RdosGetModuleName(int handle, char *Buf, int Size);
@@ -1158,6 +1160,14 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov [edi],ecx" \
     parm [ebx] [esi] [edi]  \
     modify [eax ecx edx];
+
+#pragma aux RdosGetCpuVersion = \
+    CallGate_get_cpu_version  \
+    "movzx  eax,al" \
+    "mov [esi],edx" \
+    "mov [ecx],ebx" \
+    parm [edi] [esi] [ecx] \
+    value [eax];
 
 #pragma aux RdosTerminateThread = \
     CallGate_terminate_thread;
@@ -2024,6 +2034,11 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetCmdLine = \
     CallGate_get_cmd_line  \
+    ValidateEdi \
+    value [edi];
+
+#pragma aux RdosGetOptions = \
+    CallGate_get_options  \
     ValidateEdi \
     value [edi];
 
@@ -3097,6 +3112,14 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosCpuReset = \
     CallGate_cpu_reset;
 
+#pragma aux RdosGetCpuVersion = \
+    CallGate_get_cpu_version  \
+    "movzx  eax,al" \
+    "mov [esi],edx" \
+    "mov [ecx],ebx" \
+    parm [edi] [esi] [ecx] \
+    value [eax];
+
 #pragma aux RdosGetVersion = \
     CallGate_get_version  \
     "movzx edx,dx"  \
@@ -3966,6 +3989,11 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetCmdLine = \
     CallGate_get_cmd_line  \
+    ValidateDi \
+    value [edi];
+
+#pragma aux RdosGetOptions = \
+    CallGate_get_options  \
     ValidateDi \
     value [edi];
 
