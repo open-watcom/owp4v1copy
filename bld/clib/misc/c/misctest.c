@@ -61,7 +61,19 @@ char    ProgramName[128];                       /* executable filename */
 int     NumErrors = 0;                          /* number of errors */
 
 #ifdef __SW_BW
-    FILE *my_stdout;
+FILE    *my_stdout;
+
+/*
+ * Local run-time error message output implementation. Needed
+ * to avoid popping up a dialog box when an assertion is hit. Also
+ * sends the message to stdout instead of the usual stderr.
+ */
+void __rterr_msg( const char *hdr, const char *msg )
+{
+    fputs( hdr, stdout );
+    fputs( ": ", stdout );
+    fputs( msg, stdout );
+}
 #endif
 
 /****
