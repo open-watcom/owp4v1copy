@@ -252,14 +252,6 @@ int main( int argc, char * const argv[] )
         status = unlink( "test.fil" );
         VERIFY( status == 0 );
 
-#if defined( __RDOS__ )
-        rc = execve( ProgramName, child_args, child_envp );
-        VERIFY( rc == CHILD_RC );
-
-        rc = execv( ProgramName, child_args );
-        VERIFY( rc == CHILD_RC );
-#endif
-
         signal_count = 0;
         signal_number = 0;
         /* Install SIGBREAK handler */
