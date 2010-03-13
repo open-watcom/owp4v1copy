@@ -24,6 +24,7 @@ export DWATCOM=$WATCOM
 export DOC_ROOT=$OWROOT/docs
 export INCLUDE=$WATCOM/lh
 export EDPATH=$WATCOM/eddat
+export WIPFC=$WATCOM/wipfc
 export PATH=$OWBINDIR:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
 
 echo Open Watcom compiler build environment

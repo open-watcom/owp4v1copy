@@ -120,8 +120,11 @@ env=++FINCLUDE=%CDDir%\SRC\FORTRAN,             IsOS2 IsOS2DosBox IsDOS IsWin Is
 env=++FINCLUDE=%DstDir%\SRC\FORTRAN,            IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | ?%DstDir%\binw\wfc386.exe
 env=WATCOM=%OWDir%,                             IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
 env=EDPATH=%OWDir%\EDDAT,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
+env=EDPATH=%OWDir%/eddat,                       IsLinux
 env=WWINHELP=%HDir%\BINW,                       IsDOS IsWin IsWin95 IsWinNT | | | MinimalInstall helpfiles ! SrcIsCD & |
 env=WHTMLHELP=%HDir%\BINNT\HELP,                IsWin95 IsWinNT | MinimalInstall htmlhelp_helpfiles ! SrcIsCD & |
+env=WIPFC=%OWDir%\WIPFC,                        IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
+env=WIPFC=%OWDir%/wipfc,                        IsLinux
 icon=view.exe, %HDir%\binp\help\c_readme.inf, Getting Started,,, IsOS2 DoCreateHelpIcons IsFortranInstall !
 icon=view.exe, %HDir%\binp\help\f_readme.inf, Getting Started,,, IsOS2 DoCreateHelpIcons IsFortranInstall
 icon=e.exe, %OWDir%\readme.txt, Read Me,,, IsOS2 DoCreateHelpIcons IsFortranInstall ! IsJapanese !

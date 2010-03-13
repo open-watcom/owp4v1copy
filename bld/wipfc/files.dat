@@ -8,16 +8,16 @@ usr="wipfc.exe"     dir="binp"  cond="os2host os2targ"              where="c f77
 usr="wipfc"         dir="binl"  cond="lnxhost os2targ"              where="c f77"
 
 # WIPFC data files
-[ DEFAULT type="s" dir="wipfc" where="c f77 ac" ]
+[ DEFAULT type="s" dir="wipfc" cond="os2targ"	where="c f77 ac" ]
 
-usr="de_DE.nls"	cond="os2targ"	where="c f77 ac"
-usr="en_GB.nls"	cond="os2targ"	where="c f77 ac"
-usr="en_US.nls"	cond="os2targ"	where="c f77 ac"
-usr="fr_CA.nls"	cond="os2targ"	where="c f77 ac"
-usr="fr_FR.nls"	cond="os2targ"	where="c f77 ac"
-usr="ja_JA.nls"	cond="os2targ"	where="c f77 ac"
-usr="xx_YY.nls"	cond="os2targ"	where="c f77 ac"
-usr="entity.txt"	cond="os2targ"	where="c f77 ac"
-usr="entit932.txt"	cond="os2targ"	where="c f77 ac"
-usr="entit934.txt"	cond="os2targ"	where="c f77 ac"
-usr="entit938.txt"	cond="os2targ"	where="c f77 ac"
+usr="de_DE.nls"
+usr="en_GB.nls"
+usr="en_US.nls"
+usr="fr_CA.nls"
+usr="fr_FR.nls"
+usr="ja_JA.nls"
+usr="xx_YY.nls"
+usr="entity.txt"
+usr="entit932.txt"
+usr="entit934.txt"
+usr="entit938.txt"

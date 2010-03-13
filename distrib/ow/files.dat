@@ -56,6 +56,7 @@
 [ INCLUDE <DEVDIR>/w16api/files.dat ]
 [ INCLUDE <DEVDIR>/w32api/files.dat ]
 [ INCLUDE <DEVDIR>/causeway/files.dat ]
+[ INCLUDE <DEVDIR>/wipfc/files.dat ]
 [ INCLUDE <DEVDIR>/redist/files.dat ]
 [ INCLUDE readme.dat ]
 
