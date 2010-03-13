@@ -69,7 +69,7 @@ OBJ_RFILE *ObjReadOpen( const char *filename ) {
     OBJ_RFILE   *new;
 
     fh = open( filename, O_RDONLY | O_BINARY );
-    if( (unsigned)fh > -128 ) {
+    if( fh == -1 ) {
         return( NULL );
     }
     new = MemAlloc( sizeof( *new ) );
@@ -229,7 +229,7 @@ OBJ_WFILE *ObjWriteOpen( const char *filename ) {
     OBJ_WFILE    *new;
 
     fh = open( filename, OP_MODE, OP_PERM );
-    if( (unsigned)fh > -128 ) {
+    if( fh == -1 ) {
         return( NULL );
     }
     new = MemAlloc( sizeof( *new ) + OBJ_BUFFER_SIZE );
