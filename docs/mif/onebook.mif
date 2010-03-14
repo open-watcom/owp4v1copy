@@ -41,6 +41,7 @@ optfile_whpcvt=whpcopts.tmp
 vi_script_nt=crtcnt.tmp
 gml_lib=..$(SL)gml$(SL)syslib
 dosemu_wgml_batch=wgml.bat
+wine_hc_batch=winehc.bat
 
 #
 # define target and platform help compilers
@@ -149,7 +150,16 @@ all : $(dep_$(dotarget)) .SYMBOLIC
 .EXTENSIONS: .hlp .hpj .cnt .rtf .cn1
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
+!ifeq %build_platform linux386
+    @%create $(wine_hc_batch)
+    @%append $(wine_hc_batch) $(hc_nt) -xn $*.hpj
+    # this lowercase help file name
+    @%append $(wine_hc_batch) ren $(hbook).hlp xxxxxxxx.tmp
+    @%append $(wine_hc_batch) ren xxxxxxxx.tmp $(hbook).hlp
+    wine cmd /c $(wine_hc_batch)
+!else
     $(hc_nt) -xn $*.hpj
+!endif
 
 $(hbook).hpj : $(proj_objs)
     @%make compile_hpj_nt
