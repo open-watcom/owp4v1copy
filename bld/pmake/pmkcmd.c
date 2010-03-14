@@ -24,20 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  pmake command line interface
+* Description:  Standalone pmake utility.
 *
 ****************************************************************************/
 
+
 #include <unistd.h>
-#include <signal.h>
-#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <errno.h>
 #ifdef __UNIX__
-    #include <sys/wait.h>
     #include <sys/stat.h>
   #ifdef __WATCOMC__
     #include <process.h>
@@ -47,8 +44,6 @@
     #include <process.h>
     #include <dos.h>
 #endif
-#include <setjmp.h>
-#include <stdarg.h>
 #include "watcom.h"
 #include "pmake.h"
 #if !defined( __WATCOMC__ )
@@ -63,38 +58,14 @@
 #define TMPBAT "tmp.bat"
 #endif
 
-#ifndef __LINUX__
-#define intSystem system
-#endif
-
 static char     buffer[512];
 
-#ifdef __LINUX__
-static int intSystem( char *cmd )
-/* interruptable "system" (so that ctrl-c works) */
+void PMakeOutput( char *out )
 {
-    pid_t       pid = fork();
-    int         status;
-
-    if( pid == -1 )
-        return -1;
-    if( pid == 0 ) {
-        execl( "/bin/sh", "sh", "-c", cmd, NULL );
-        exit( 127 );
-    }
-    for( ;; ) {
-        if( waitpid( pid, &status, 0 ) == -1 ) {
-            if( errno == EINTR ) {
-                continue;
-            }
-            status = -1;
-        }
-        return status;
-    }
+    puts( out );
 }
-#endif
 
-void WriteCmdFile( pmake_data *data )
+static void WriteCmdFile( pmake_data *data )
 {
     FILE        *fp;
     pmake_list  *curr;
@@ -131,9 +102,65 @@ void WriteCmdFile( pmake_data *data )
     }
 }
 
+static unsigned RunCommand( const char *cmd )
+{
+    char        *cmdnam = strdup( cmd );
+    char        *sp = strchr( cmdnam, ' ' );
+    int         rc;
+
+    if( sp != NULL ) {
+        *sp = '\0';
+        sp++;
+    }
+    rc = spawnlp( P_WAIT, cmdnam, cmdnam, sp, NULL );
+    free( cmdnam );
+    return( rc );
+}
+
+static unsigned DoPMake( pmake_data *data )
+{
+    pmake_list  *curr;
+    unsigned    res;
+    char        cmd[256];
+
+    res = 0;
+    for( curr = data->dir_list; curr != NULL; curr = curr->next ) {
+        res = chdir( curr->dir_name );
+        if( res != 0 ) {
+            break;
+        }
+        if( data->display ) {
+            fputs( "==== ", stdout );
+            puts( curr->dir_name );
+        }
+        PMakeCommand( data, cmd );
+        res = RunCommand( cmd );
+        if( res != 0 ) {
+            break;
+        }
+    }
+    return( res );
+}
+
+static unsigned ProcPMake( pmake_data  *data )
+{
+    unsigned    res;
+    char        save[_MAX_PATH];
+
+    if( data->want_help || data->signaled ) {
+        PMakeCleanup( data );
+        return( 2 );
+    }
+    getcwd( save, sizeof( save ) );
+    res = DoPMake( data );
+    chdir( save );
+    PMakeCleanup( data );
+    return( res );
+}
+
 char    *Help[] = {
-"Usage: PMAKE [options] [targ_list] [make options]",
-"     Execute 'wmake.exe' in each subdirectory of the current working",
+"Usage: pmake [options] [targ_list] [make options]",
+"     Execute 'wmake' in each subdirectory of the current working",
 "     directory that has a makefile which contains the specified ",
 "     'targ_list' in the format: '#pmake[/<priority>]: <target>*'",
 "",
@@ -201,28 +228,14 @@ int main( void )
     if( data->want_help ) {
         PrintHelp();
     }
-    WriteCmdFile( data );
+    /* If -b was given, only write out a batch file. By default,
+     * execute the commands directly.
+     */
+    if( data->batch )
+        WriteCmdFile( data );
+    else
+        ProcPMake( data );
 
     PMakeCleanup( data );
-
-    if( !data->batch ) {
-        if( intSystem( TMPBAT ) ) {
-            printf( "PMAKE: error during attempt to run %s: %s\n",
-                TMPBAT, strerror( errno ) );
-            return( EXIT_FAILURE );
-        }
-#ifndef __UNIX__
-        if( remove( TMPBAT ) ) {
-            printf( "PMAKE: unable to remove %s: %s\n",
-                TMPBAT, strerror( errno ) );
-            return( EXIT_FAILURE );
-        }
-#endif
-    }
     return( EXIT_SUCCESS );
-}
-
-void PMakeOutput( char *out )
-{
-    puts( out );
 }
