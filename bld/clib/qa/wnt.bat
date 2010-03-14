@@ -41,8 +41,8 @@ echo ***NOTE: skipping Causeway tests...
 if [%NODOS4GW%]==[NODOS4GW] goto NoDOS4GW
 set odos4g=%dos4g%
 set dos4g=quiet
-rsi_3r
-rsi_3s
+d4g_3r
+d4g_3s
 set dos4g=%odos4g%
 set odos4g=
 goto DoneDOS4GW
@@ -69,8 +69,8 @@ win_s
 win_m
 win_c
 win_l
-win32_3r
-win32_3s
+w386_3r
+w386_3s
 rem wntw_3r
 rem wntw_3s
 cat tmp.log

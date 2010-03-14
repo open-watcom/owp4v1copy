@@ -13,8 +13,8 @@
 #                               cw_3r
 # PLS   PharLap                 pls_3s
 #                               pls_3r
-# RSI   Rational Systems        rsi_3s
-#                               rsi_3r
+# D4G   DOS/4G(W)               d4g_3s
+#                               d4g_3r
 # X32   Flashtek                x32_3s
 #                               x32_3r
 # OS2   OS/2 16-bit             os2_s
@@ -26,10 +26,16 @@
 # OS3   OS/2 32-bit             os3_3r
 # OS3   OS/2 32-bit pm          os3pm_3r
 #                               os3pm_3s
-# WIN   Windows 16-bit          create icons; click ( or use WinRun )
-# W32   Windows 32-bit          create icons; click ( or use WinRun )
+# WIN   Windows 3.x 16-bit      win_s
+#                               win_c
+#                               win_m
+#                               win_l
+# W386  Windows 3.x 32-bit      w386_3r
+#                               w386_3s 
 # WNT   Windows NT Console      wnt_3r
+#                               wnt_3rd
 #                               wnt_3s
+#                               wnt_3sd
 # WNT   Windows NT Window       wntw_3r
 #                               wntw_3s
 # WNT   Windows NT Console(AXP) wnt_axp
@@ -39,7 +45,16 @@
 # RDOS  RDOS (32-bit app)       rdos_3r
 # RDOS                          rdos_3s
 
+# Attempt to build without cproj.mif; for use with other Watcom versions.
+!ifdef no_cproj
+clib_dir  = ../..
+cc_i86    = *wcc
+cc_386    = *wcc386
+cc_axp    = *wccaxp
+pharlap   = \tools\
+!else
 !include cproj.mif
+!endif
 
 # Avoid the need for !include $(clib_dir)/flags.mif with
 # debug flags need to be last to override optimization flags
@@ -68,7 +83,7 @@ a_dbg_flags = -d1
     @set WINDOWS_INCLUDE=$(%WATCOM)/h/win:$(%WATCOM)/h
     @set PATH=$(%WATCOM)/binl:$(%WATCOM)/binw:$(%PATH)
 !else
-    @set WATCOM=$(%RELROOT)
+#   @set WATCOM=$(%RELROOT)
     @set INCLUDE=
     @set DOS_INCLUDE=$(%WATCOM)\h
     @set RDOS_INCLUDE=$(%WATCOM)\h
@@ -92,9 +107,20 @@ link_i86  = DEBUG dwarf
 link_axp  = DEBUG codeview
 link_opts = NAME $^* OPTION quiet
 
-dosexes = &
-    dos_s.exe dos_c.exe dos_m.exe dos_l.exe dos_h.exe &
-    cw_3s.exe cw_3r.exe rsi_3s.exe rsi_3r.exe
+dosexes    = dos_s.exe dos_c.exe dos_m.exe dos_l.exe dos_h.exe
+d4gexes    = d4g_3r.exe d4g_3s.exe
+cwexes     = cw_3r.exe cw_3s.exe
+plsexes    = pls_3s.exe pls_3r.exe
+x32exes    = x32_3s.exe x32_3r.exe
+rdosexes   = rdos_3r.exe rdos_3s.exe
+w16exes    = win_s.exe win_c.exe win_m.exe win_l.exe
+w386exes   = w386_3s.exe w386_3r.exe
+os2exes    = os2_s.exe os2_c.exe os2_m.exe os2_l.exe os2_h.exe os2_mt.exe
+os3exes    = os3_3r.exe os3_3s.exe
+wntexes    = wnt_3r.exe wnt_3s.exe wnt_3rd.exe wnt_3sd.exe
+wntwexes   = wntw_3s.exe wntw_3r.exe
+wntaxpexes = wnt_axp.exe
+lnx386exes = lnx_3r lnx_3s
 
 !ifdef %TEST_PLS
 dosexes += pls_3s.exe pls_3r.exe
@@ -103,33 +129,10 @@ dosexes += pls_3s.exe pls_3r.exe
 dosexes += x32_3s.exe x32_3r.exe
 !endif
 
-rdosexes = &
-    rdos_3r.exe rdos_3s.exe
 
-winexes = &
-    win_s.exe win_c.exe win_m.exe win_l.exe &
-    win32_3s.exe win32_3r.exe
-
-os2exes = &
-    os2_s.exe os2_c.exe os2_m.exe os2_l.exe os2_h.exe os2_mt.exe
-
-os3exes = &
-    os3_3r.exe os3_3s.exe # os3pm_3r.exe os3pm_3s.exe
-
-wntexes = &
-    wnt_3s.exe wnt_3r.exe
-
-wntwexes = &
-    wntw_3s.exe wntw_3r.exe
-
-wntaxpexes = &
-    wnt_axp.exe # wntw_axp.exe
-
-lnx386exes = &
-    lnx_3r lnx_3s
 
 exes = &
-    $(dosexes) $(rdosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntaxpexes) # $(wntwexes)
+    $(dosexes) $(cwexes) $(d4gexes) $(rdosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntaxpexes) # $(wntwexes)
 
 all : .symbolic $(exes)
 
@@ -249,12 +252,12 @@ rdos_3s.exe : $(srcfile)
     wlink SYSTEM rdos $(link_opts) $(link_i86) FILE $^*.obj
     @rm *.obj
 
-rsi_3s.exe : $(srcfile)
+d4g_3s.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=dos -d__DOS4G__ $(c_dbg_flags)
     wlink SYSTEM dos4g $(link_opts) $(link_i86) FILE $^*.obj
     @rm $^*.obj
 
-rsi_3r.exe : $(srcfile)
+d4g_3r.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=dos -d__DOS4G__ $(c_dbg_flags)
     wlink SYSTEM dos4g $(link_opts) $(link_i86) FILE $^*.obj
     @rm $^*.obj
@@ -341,14 +344,14 @@ win_l.exe : $(srcfile)
     *wlink SYSTEM windows $(link_opts) $(link_i86) OPTION heap=10k, stack=5k FILE $^*.obj
     @rm $^*.obj
 
-win32_3r.exe : $(srcfile)
+w386_3r.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -zw $(defwin) -bt=windows $(c_dbg_flags)
     *wlink SYSTEM win386 $(link_opts) $(link_i86) OPTION mindata=32K,maxdata=32K FILE $^*.obj
     @rm $^*.obj
     wbind -n -q -s $(%WATCOM)/binw/win386.ext $^*
     @rm $^*.rex
 
-win32_3s.exe : $(srcfile)
+w386_3s.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -zw $(defwin) -bt=windows $(c_dbg_flags)
     wlink SYSTEM win386 $(link_opts) $(link_i86) OPTION mindata=32K,maxdata=32K FILE $^*.obj
     @rm $^*.obj
@@ -362,6 +365,17 @@ wnt_3r.exe : $(srcfile)
 
 wnt_3s.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=nt $(c_dbg_flags)
+    wlink SYSTEM nt $(link_opts) $(link_i86) FILE $^*.obj
+    @rm *.obj
+
+wnt_3rd.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -br -bt=nt $(c_dbg_flags)
+    wlink SYSTEM nt $(link_opts) $(link_i86) FILE $^*.obj
+    @rm *.obj
+
+# NB: The -fpi switch works around a fmttest failure
+wnt_3sd.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -fpi -br -bt=nt $(c_dbg_flags)
     wlink SYSTEM nt $(link_opts) $(link_i86) FILE $^*.obj
     @rm *.obj
 
@@ -394,6 +408,74 @@ lnx_3s : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_386) -3s -bt=linux $(c_dbg_flags)
     wlink SYSTEM linux $(link_opts) $(link_i86) FILE $^*.obj
     @rm *.obj
+
+
+# Run 16-bit DOS executables
+rundos : $(dosexes) .symbolic
+    @dos_s.exe
+    @dos_c.exe
+    @dos_m.exe
+    @dos_l.exe
+    @dos_h.exe
+
+# Run CauseWay 32-bit DOS extended executables
+runcw : $(cwexes) .symbolic
+    @cw_3r.exe
+    @cw_3s.exe
+
+# Run DOS/4G 32-bit DOS extended executables
+rund4g : $(d4gexes) .symbolic
+    @d4g_3r.exe
+    @d4g_3s.exe
+
+# Run PharLap 386|DOS 32-bit DOS extended executables
+runpls : $(plsexes) .symbolic
+    @pls_3r.exe
+    @pls_3s.exe
+
+# Run Windows 3.x 16-bit executables
+runw16 : $(w16exes) .symbolic
+    @rm -f tmp.log
+    @echo Executing win_s.exe
+    @win_s.exe
+    @echo Executing win_c.exe
+    @win_c.exe
+    @echo Executing win_m.exe
+    @win_m.exe
+    @echo Executing win_l.exe
+    @win_l.exe
+    @cat tmp.log
+
+# Run Windows 3.x 32-bit executables (Win386)
+runw386 :  $(w386exes) .symbolic
+    @rm -f tmp.log
+    @echo Executing w386_3r.exe
+    @w386_3r.exe
+    @echo Executing w386_3s.exe
+    @w386_3s.exe
+    @cat tmp.log
+   
+# Run OS/2 16-bit executables
+runos2 : $(os2exes) .symbolic
+    @os2_s.exe
+    @os2_c.exe
+    @os2_m.exe
+    @os2_l.exe
+    @os2_h.exe
+    @os2_mt.exe
+
+# Run OS/2 32-bit executables
+runos3 : $(os3exes) .symbolic
+    @os3_3r.exe
+    @os3_3s.exe
+
+# Run Windows NT (Win32) executables
+runwnt : $(wntexes) .symbolic
+    @wnt_3r.exe
+    @wnt_3s.exe
+    @wnt_3rd.exe
+    @wnt_3sd.exe
+
 
 additional_cleanup = lnx_3r lnx_3s
 !include ../mif/clean.mif
