@@ -444,7 +444,7 @@ runw16 : $(w16exes) .symbolic
     @win_m.exe
     @echo Executing win_l.exe
     @win_l.exe
-    @cat tmp.log
+    @type tmp.log
 
 # Run Windows 3.x 32-bit executables (Win386)
 runw386 :  $(w386exes) .symbolic
@@ -453,7 +453,7 @@ runw386 :  $(w386exes) .symbolic
     @w386_3r.exe
     @echo Executing w386_3s.exe
     @w386_3s.exe
-    @cat tmp.log
+    @type tmp.log
    
 # Run OS/2 16-bit executables
 runos2 : $(os2exes) .symbolic
