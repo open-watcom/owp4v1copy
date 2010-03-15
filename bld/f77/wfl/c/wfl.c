@@ -656,7 +656,12 @@ const char *DoWildCard( const char *base )
     }
     while( (entry = readdir( parent )) != NULL ) {
         if( ISVALIDENTRY( entry ) ) {
-            if( fnmatch( pattern, entry->d_name, FNM_PATHNAME | FNM_PERIOD | FNM_NOESCAPE ) == 0 ) {
+#ifndef __UNIX__
+#define __FNM_OPTIONS   ( FNM_PATHNAME | FNM_PERIOD | FNM_NOESCAPE | FNM_IGNORECASE )
+#else
+#define __FNM_OPTIONS   ( FNM_PATHNAME | FNM_PERIOD | FNM_NOESCAPE )
+#endif            
+            if( fnmatch( pattern, entry->d_name, __FNM_OPTIONS ) == 0 ) {
                 break;
             }
         }
