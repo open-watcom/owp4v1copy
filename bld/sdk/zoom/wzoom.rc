@@ -14,6 +14,10 @@
 
 "APPLICON" ICON 10zoom.ico
 
+#ifdef __NT__
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+#endif
+
 #include "menu.rc"
 
 STRINGTABLE
