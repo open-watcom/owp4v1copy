@@ -24,6 +24,7 @@
 #                               os2_h
 #                               os2_mt
 # OS3   OS/2 32-bit             os3_3r
+#                               os3_3s
 # OS3   OS/2 32-bit pm          os3pm_3r
 #                               os3pm_3s
 # WIN   Windows 3.x 16-bit      win_s
@@ -116,7 +117,7 @@ rdosexes   = rdos_3r.exe rdos_3s.exe
 w16exes    = win_s.exe win_c.exe win_m.exe win_l.exe
 w386exes   = w386_3s.exe w386_3r.exe
 os2exes    = os2_s.exe os2_c.exe os2_m.exe os2_l.exe os2_h.exe os2_mt.exe
-os3exes    = os3_3r.exe os3_3s.exe
+os3exes    = os3_3r.exe os3_3s.exe os3_3rd.exe os3_3sd.exe
 wntexes    = wnt_3r.exe wnt_3s.exe wnt_3rd.exe wnt_3sd.exe
 wntwexes   = wntw_3s.exe wntw_3r.exe
 wntaxpexes = wnt_axp.exe
@@ -314,6 +315,16 @@ os3_3s.exe : $(srcfile)
     wlink SYSTEM os2v2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
     @rm $^*.obj
 
+os3_3rd.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -br -bt=os2 $(c_dbg_flags)
+    wlink SYSTEM os2v2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    @rm $^*.obj
+
+os3_3sd.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -br -bt=os2 $(c_dbg_flags)
+    wlink SYSTEM os2v2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    @rm $^*.obj
+
 os3pm_3r.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r $(defwin) -bt=os2 $(c_dbg_flags)
     wlink SYSTEM os2v2_pm $(link_opts) $(link_i86) FILE $^*.obj
@@ -468,6 +479,8 @@ runos2 : $(os2exes) .symbolic
 runos3 : $(os3exes) .symbolic
     @os3_3r.exe
     @os3_3s.exe
+    @os3_3rd.exe
+    @os3_3sd.exe
 
 # Run Windows NT (Win32) executables
 runwnt : $(wntexes) .symbolic
