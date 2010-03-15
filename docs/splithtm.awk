@@ -1,4 +1,7 @@
-BEGIN { file = "" }
+BEGIN {
+    ORS = "\r\n";
+    file = "";
+}
 
 /<H. ID=\"(.*)\"> (.*) <\/H.>/ {
     if( length( file ) > 0 ) {
@@ -19,6 +22,7 @@ BEGIN { file = "" }
     print "<HTML>" > file;
     print "<HEAD>" >> file;
     print "<TITLE>" title "</TITLE>" >> file;
+    print "</HEAD>" >> file;
     print "<BODY>" >> file;
     print "<H1>" title "</H1>" >> file;
     next;

@@ -1,4 +1,5 @@
 BEGIN {
+    ORS = "\r\n";
     print "<HTML>";
     print "<BODY>";
     print "<UL>";
@@ -18,6 +19,9 @@ function transsym( str ) {
     gsub( /}/, "_", file );
     gsub( /,/, "_", file );
     gsub( /\#/, "_", file );
+    gsub( /\?/, "_", file );
+    gsub( /\./, "_", file );
+    gsub( /\r/, "", file );
 }
 
 /\.ixchap / {
@@ -36,9 +40,11 @@ function transsym( str ) {
     name1 = $0;
     gsub( /.ixline '/, "", name1 );
     gsub( /' '(.*)'/, "", name1 );
+    gsub( /\r/, "", name1 );
     name2 = $0;
     gsub( /.ixline '(.*)' '/, "", name2 );
     gsub( /'/, "", name2 );
+    gsub( /\r/, "", name2 );
     print "<LI><OBJECT TYPE=\"text/sitemap\">";
     print "<PARAM NAME=\"Name\" VALUE=\"" name1 "\">";
     print "</OBJECT>";
@@ -55,6 +61,7 @@ function transsym( str ) {
     name = $0;
     gsub( /.ixline /, "", name );
     gsub( /'/, "", name );
+    gsub( /\r/, "", name );
     print "<LI><OBJECT TYPE=\"text/sitemap\">";
     print "<PARAM NAME=\"Name\" VALUE=\"" name "\">";
     print "<PARAM NAME=\"Local\" VALUE=\"" file ".htm\">";
@@ -64,5 +71,5 @@ function transsym( str ) {
 END {
     print "</UL>";
     print "</BODY>";
-    print "</UL>";
+    print "</HTML>";
 }
