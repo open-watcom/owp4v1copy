@@ -113,7 +113,7 @@ int __F_NAME(__cenvarg,__wcenvarg)(
     }
     _RWD_amblksiz = oamblksiz;
     *envptr = p;
-#if defined( _M_I86 )
+#if defined( _M_I86 ) && defined( __DOS__ )
   #if defined(__SMALL_DATA__)
     p = (char *) (((unsigned) p + 15) & 0xfff0);
   #else           /* large data models */         /* 12-aug-88 */
