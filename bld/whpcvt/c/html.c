@@ -358,30 +358,28 @@ int html_trans_line( section_def *section, int alloc_size )
        turn this flag off. This causes the next non-tag line to NOT
        put out the blank line */
 
-    if( Blank_line_pfx || Blank_line_sfx )
-    {
-        line_len += trans_add_str( "<P>", section, &alloc_size );
+    if( Blank_line_pfx ) {
+        if( Blank_line_sfx ) {
+            line_len += trans_add_str( "<BR>", section, &alloc_size );
+        }
         Blank_line_pfx = FALSE;
     }
-    Blank_line_sfx = TRUE;
 
     /* An explanation of 'Blank_line_sfx': some ending tags automatically
        generate a blank line, so no blank line after them should get
        generated. Normally, this flag is set to TRUE, but ending
-       tags and Defn list term tags set this FALSE, so no extra '<P>'
+       tags and Defn list term tags set this FALSE, so no extra '<BR>'
        is generated.
        But, this rule only applies if a blank line immediately
        follows the tag, so its reset here regardless */
-#if 0
 
+    Blank_line_sfx = TRUE;
 
-   if( *ptr != CH_LIST_ITEM && *ptr != CH_DLIST_TERM &&
-                                    *ptr != CH_DLIST_DESC && !Tab_xmp ) {
+    ch = *(unsigned char *)ptr;
+    if( ch != CH_LIST_ITEM && ch != CH_DLIST_TERM && ch != CH_DLIST_DESC && !Tab_xmp ) {
         /* a .br in front of li and dt would generate extra spaces */
-        if( ! done_blank )
-           line_len += trans_add_str( "<P>", section, &alloc_size );
+        line_len += trans_add_str( "<BR>", section, &alloc_size );
     }
-#endif
 
     term_fix = FALSE;
     for( ;; ) {
