@@ -61,12 +61,14 @@ bool    MainCmdLine( char **fn, char **rest, char **opts, char *ptr ) {
 
     uint        opt_num;
     bool        scanning_file_name;
+    bool        quoted;
 
     *fn = NULL;
     *rest = NULL;
     opt_num = 0;
     for(;;) {
         scanning_file_name = FALSE;
+        quoted = FALSE;
         ptr = SkipBlanks( ptr );
         if( *ptr == NULLCHAR ) break;
         if( _IsSwitchChar( *ptr ) ) {
@@ -85,14 +87,23 @@ bool    MainCmdLine( char **fn, char **rest, char **opts, char *ptr ) {
             break;
         }
         for(;;) {
-            if( *ptr == NULLCHAR ) break;
-            if( ( *ptr == ' ' ) || ( *ptr == '\t' ) ) {
+            if( *ptr == NULLCHAR )
+                break;
+            if( quoted ) {
+                if( *ptr == '\"' ) {
+                    quoted = FALSE;
+                }
+            } else if( *ptr == '\"' ) {
+                quoted = TRUE;
+            } else if( ( *ptr == ' ' ) || ( *ptr == '\t' ) ) {
                 *ptr = NULLCHAR;
                 ++ptr;
                 break;
             }
-            if( !scanning_file_name ) {
-                if( _IsSwitchChar( *ptr ) ) break;
+            if( !scanning_file_name && !quoted ) {
+                if( _IsSwitchChar( *ptr ) ) {
+                    break;
+                }
             }
             ++ptr;
         }

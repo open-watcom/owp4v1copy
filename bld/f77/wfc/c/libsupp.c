@@ -45,6 +45,14 @@
 #include <stdlib.h>
 #include <malloc.h>
 
+#if defined( __UNIX__ )
+#define PATH_SEP '/'
+#else
+#define PATH_SEP '\\'
+#endif
+
+#define LIBRARY_SEP ';'
+
 extern  void            SDClose(file_handle);
 extern  file_handle     SDOpen(char *,int);
 extern  uint            SDRead(file_handle,char *,uint);
@@ -85,7 +93,7 @@ static  int     Combine( char *path, char *name, char *buff, int buff_len ) {
     len = CopyMaxStr( path, buff, buff_len );
     if( ( buff[ len - 1 ] != ':' ) && ( buff[ len - 1 ] != '\\' ) &&
         ( buff[ len - 1 ] != '/' ) ) {
-        buff[ len ] = '\\';
+        buff[ len ] = PATH_SEP;
         ++len;
         buff[ len ] = NULLCHAR;
     }
@@ -120,7 +128,7 @@ static  bool    ExtractName( char **lib ) {
             last = TRUE;
             break;
         }
-        if( *ptr == ';' ) {
+        if( *ptr == LIBRARY_SEP ) {
             last = FALSE;
             break;
         }
@@ -154,7 +162,7 @@ static lib_handle SearchPath( char *path, char *name ) {
             lp = SearchDir( path, name );
             if( lp != NULL ) break;
             if( last ) break;
-            ptr++; // skip the ';'
+            ptr++; // skip the LIBRARY_SEP
         }
     }
     return( lp );

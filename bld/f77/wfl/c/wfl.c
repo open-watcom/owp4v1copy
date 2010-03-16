@@ -51,6 +51,31 @@
 #include <malloc.h>
 #include <fnmatch.h>
 #include "pathgrp.h"
+#include "swchar.h"
+
+#if _CPU == 8086
+    #define _NAME_      "F77/16 "
+    #define WFC         "wfc"           // copmiler name
+    #define WFLENV      "WFL"           // "WFL" environment variable
+#elif _CPU == 386
+    #define _NAME_      "F77/32 "
+  #define WFC           "wfc386"        // compiler name
+    #define WFLENV      "WFL386"        // "WFL" environment variable
+#elif _CPU == _AXP
+    #define _NAME_      "F77 Alpha AXP "
+  #define WFC           "wfcaxp"        // copmiler name
+    #define WFLENV      "WFLAXP"        // "WFL" environment variable
+#elif _CPU == _PPC
+    #define _NAME_      "F77 PowerPC "
+  #define WFC           "wfcppc"        // copmiler name
+    #define WFLENV      "WFLPPC"        // "WFL" environment variable
+#else
+    #error Unknown Target CPU
+#endif
+
+#define LINK            "wlink"         // linker name
+#define PACK            "cvpack"        // packer name
+#define TEMPFILE        "__wfl__.lnk"   // temporary linker directive file
 
 #if defined( __UNIX__ )
   #define OBJ_EXT       ".o"          // object file extension
@@ -60,74 +85,29 @@
   #define EXE_EXT       ".exe"        // executable file extension
 #endif
 
-/* forward declarations */
-static  void    Usage( void );
-static  int     Parse( void );
-static  void    FindPath( char *name, char *buf );
-static  int     CompLink( void );
-static  void    MakeName( char *name, char *ext );
-static  void    Fputnl( char *text, FILE *fptr );
-static  int     IsOption( char *cmd, int cmd_len, char *opt );
-static  void    AddName( char *name, FILE *link_fp );
-
-
-#if _CPU == 386
-  #define WFC           "wfc386"        // compiler name
-  #define WCLENV        "WFL386"        // "wcl" environment variable
-#elif _CPU == 8086
-  #define WFC           "wfc"           // copmiler name
-  #define WCLENV        "WFL"           // "wcl" environment variable
-#elif _CPU == _AXP
-  #define WFC           "wfcaxp"        // copmiler name
-  #define WCLENV        "WFLAXP"        // "wcl" environment variable
-#elif _CPU == _PPC
-  #define WFC           "wfcppc"        // copmiler name
-  #define WCLENV        "WFLPPC"        // "wcl" environment variable
-#else
-  #error Unknown OS/CPU
-#endif
-
-#define LINK            "wlink"         // linker name
-#define TEMPFILE        "__wfl__.lnk"   // temporary linker directive file
-
-#define NULL_STR        ""
-#define NULLCHAR        '\0'
-#define ATTR_MASK       _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
-                                        // mask for illegal file types
-
 #ifdef __UNIX__
-#define ISVALIDENTRY(x) (1)
+  #define ISVALIDENTRY(x)   (1)
+  #define FNM_OPTIONS       (FNM_PATHNAME | FNM_NOESCAPE)
 #else
-#define ISVALIDENTRY(x) ((x->d_attr & (ATTR_MASK)) == 0 )
+  // mask for illegal file types
+  #define ATTR_MASK         (_A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR)
+  #define ISVALIDENTRY(x)   ((x->d_attr & ATTR_MASK) == 0 )
+  #define FNM_OPTIONS       (FNM_PATHNAME | FNM_NOESCAPE | FNM_IGNORECASE)
 #endif
 
 #define TRUE            1
 #define FALSE           0
 
-typedef struct list {
-    char        *filename;
-    struct list *next;
-} list;
-#if defined( __OS2__ ) || defined( __NT__ )
+#if defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
 #define MAX_CMD 10240
 #else
 #define MAX_CMD 130
 #endif
 
-static  char    *Cmd;                   // command line parameters
-static  char    *Word;                  // one parameter
-static  char    Files[MAX_CMD];         // list of filenames from Cmd
-static  char    Libs[MAX_CMD];          // list of libraries from Cmd
-static  char    CmpOpts[MAX_CMD];       // list of compiler options from Cmd
-static  char    PathBuffer[_MAX_PATH];  // path for compiler or linker executable file
-static  FILE    *Fp;                    // file pointer for TempFile
-static  char    *LinkName;              // name for TempFile if /fd specified
-static  list    *ObjList;               // linked list of object filenames
-static  char    SwitchChars[3];         // valid switch characters
-static  char    ExeName[_MAX_PATH];     // name of executable
-static  char    *ObjName;               // object file name pattern
-static  char    *SystemName;            // system name
-static  int     DebugFlag;              // debugging flag
+typedef struct list {
+    char        *filename;
+    struct list *next;
+} list;
 
 static char *DebugOptions[] = {
     "",
@@ -142,27 +122,15 @@ static  struct flags {
     unsigned quiet        : 1;  // compile quietly
     unsigned no_link      : 1;  // compile only, no link step
     unsigned link_for_sys : 1;  // system specified
-#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
-    unsigned default_win  : 1;  // OS/2 default windowed application
-#else
+#if _CPU == 8086
     unsigned windows      : 1;  // Windows application
     unsigned link_for_dos : 1;  // produce DOS executable
     unsigned link_for_os2 : 1;  // produce OS/2 executable
+#else
+    unsigned default_win  : 1;  // OS/2 default windowed application
 #endif
     unsigned do_cvpack    : 1;  // do codeview cvpack
 } Flags;
-
-#if _CPU == 386
-    #define     _NAME_  "F77/32 "
-#elif _CPU == 8086
-    #define     _NAME_  "F77/16 "
-#elif _CPU == _AXP
-    #define     _NAME_  "F77 Alpha AXP "
-#elif _CPU == _PPC
-    #define     _NAME_  "F77 PowerPC "
-#else
-    #error Unknown System
-#endif
 
 typedef enum tool_type {
     TYPE_FOR,
@@ -178,8 +146,33 @@ static struct {
 } tools[ TYPE_MAX ] = {
     { WFC,      WFC EXE_EXT,        NULL },
     { LINK,     LINK EXE_EXT,       NULL },
-    { "cvpack", "cvpack" EXE_EXT,   NULL }
+    { PACK,     PACK EXE_EXT,       NULL }
 };
+
+static  char    *Cmd;                   // command line parameters
+static  char    *Word;                  // one parameter
+static  char    CmpOpts[MAX_CMD];       // list of compiler options from Cmd
+static  char    PathBuffer[_MAX_PATH];  // path for compiler or linker executable file
+static  FILE    *Fp;                    // file pointer for TempFile
+static  char    *LinkName;              // name for TempFile if /fd specified
+static  list    *ObjList;               // linked list of object filenames
+static  list    *FileList;              // list of filenames from Cmd
+static  list    *LibList;               // list of libraries from Cmd
+static  char    SwitchChars[3];         // valid switch characters
+static  char    ExeName[_MAX_PATH];     // name of executable
+static  char    *ObjName;               // object file name pattern
+static  char    *SystemName;            // system name
+static  int     DebugFlag;              // debugging flag
+
+/* forward declarations */
+static  void    Usage( void );
+static  int     Parse( void );
+static  void    FindPath( char *name, char *buf );
+static  int     CompLink( void );
+static  void    MakeName( char *name, char *ext );
+static  void    Fputnl( char *text, FILE *fptr );
+static  int     IsOption( char *cmd, int cmd_len, char *opt );
+static  void    AddName( char *name, FILE *link_fp );
 
 
 static  void    wfl_exit( int rc ) {
@@ -234,12 +227,21 @@ static  void    *MemAlloc( int size ) {
     return( ptr );
 }
 
+static void     AddFile( list **l, char *fname )
+{
+    list *p;
+
+    p = MemAlloc( sizeof( list ) );
+    p->filename = strdup( fname );
+    p->next = *l;
+    *l = p;
+}
 
 void    main( int argc, char *argv[] ) {
 //======================================
 
     int         rc;
-    char        *wcl_env;
+    char        *wfl_env;
     char        *p;
     char        *q;
 
@@ -250,32 +252,24 @@ void    main( int argc, char *argv[] ) {
 
     CmpOpts[0] = '\0';
 
-#ifdef __UNIX__
     SwitchChars[0] = '-';
-#else
-    SwitchChars[0] = '/';
-#endif
-    SwitchChars[1] = '-';
+    SwitchChars[1] = _dos_switch_char();
     SwitchChars[2] = '\0';
 
     Word = MemAlloc( MAX_CMD );
-    Cmd = MemAlloc( 2*MAX_CMD ); // for "wfl" environment variable and command line
+    Cmd = MemAlloc( 2*MAX_CMD ); // for "WFL" environment variable and command line
 
-    // add "wcl" environment variable to "Cmd" unless "/y" is specified
-    // in "Cmd" or the "wcl" environment string
+    // add "WFL" environment variable to "Cmd" unless "/y" is specified
+    // in "Cmd" or the "WFL" environment string
 
-    wcl_env = getenv( WCLENV );
-    if( wcl_env != NULL ) {
-        strcpy( Cmd, wcl_env );
+    wfl_env = getenv( WFLENV );
+    if( wfl_env != NULL ) {
+        strcpy( Cmd, wfl_env );
         strcat( Cmd, " " );
         p = Cmd + strlen( Cmd );
         getcmd( p );
-        q = Cmd;
-        for(;;) {
-            q = strpbrk( q, SwitchChars );
-            if( q == NULL ) break;
-            ++q;
-            if( tolower( *q ) == 'y' ) {
+        for( q = Cmd; (q = strpbrk( q, SwitchChars )) != NULL; ) {
+            if( tolower( *(++q) ) == 'y' ) {
                 getcmd( Cmd );
                 p = Cmd;
                 break;
@@ -286,15 +280,15 @@ void    main( int argc, char *argv[] ) {
         p = Cmd;
     }
     p = SkipSpaces( p );
-    if( ( *p == NULLCHAR ) || ( strncmp( p, "? ", 2 ) == NULL ) ) {
+    if( ( *p == '\0' ) || ( strncmp( p, "? ", 2 ) == NULL ) ) {
         Usage();
-        wfl_exit( 1 );
-    }
+        rc = 1;
+    } else {
     Fp = fopen( TEMPFILE, "w" );
     if( Fp == NULL ) {
         PrintMsg( CL_ERROR_OPENING_TMP_FILE );
-        wfl_exit( 1 );
-    }
+            rc = 1;
+        } else {
     ObjName = NULL;
     rc = Parse();
     if( rc == 0 ) {
@@ -313,6 +307,10 @@ void    main( int argc, char *argv[] ) {
     } else {
         remove( TEMPFILE );
     }
+        }
+    }
+    free( Word );
+    free( Cmd );
     wfl_exit( rc == 0 ? 0 : 1 );
 }
 
@@ -321,15 +319,19 @@ static  char    *ScanFName( char *end, int len ) {
 //================================================
 
     for(;;) {
-        if( *end == '\0' ) break;
-        if( *end == ' '  ) break;
-        if( *end == SwitchChars[0] ) break;
-        if( *end == SwitchChars[1] ) break;
+        if( *end == '\0' )
+            break;
+        if( *end == ' '  )
+            break;
+        if( *end == '-' )
+            break;
+        if( *end == SwitchChars[1] )
+            break;
         Word[len] = *end;
         ++len;
         ++end;
     }
-    Word[len] = NULLCHAR;
+    Word[len] = '\0';
     return( end );
 }
 
@@ -346,12 +348,12 @@ static  int     Parse( void ) {
     Flags.no_link = 0;
     Flags.link_for_sys = 0;
     Flags.quiet        = 0;
-#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
-    Flags.default_win  = 0;
-#else
+#if _CPU == 8086
     Flags.windows      = 0;
     Flags.link_for_dos = 0;
     Flags.link_for_os2 = 0;
+#else
+    Flags.default_win  = 0;
 #endif
     Flags.do_cvpack    = 0;
 
@@ -362,7 +364,7 @@ static  int     Parse( void ) {
 
     do {
         opt = *Cmd;
-        if( ( opt == SwitchChars[0] ) || ( opt == SwitchChars[1] ) ) {
+        if( ( opt == '-' ) || ( opt == SwitchChars[1] ) ) {
             Cmd++;
         } else {
             opt = ' ';
@@ -370,15 +372,21 @@ static  int     Parse( void ) {
         in_quotes = FALSE;
         end = Cmd;
         for(;;) {
-            if( *end == '\0' ) break;
+            if( *end == '\0' )
+                break;
             if( *end == '"' ) {
-                if( in_quotes ) break;
+                if( in_quotes )
+                    break;
                 in_quotes = TRUE;
             }
             if( !in_quotes ) {
-                if( *end == ' '  ) break;
-                if( *end == SwitchChars[0] ) break;
-                if( *end == SwitchChars[1] ) break;
+                if( *end == ' '  )
+                    break;
+                if( *end == '-' )
+                    break;
+                if( *end == SwitchChars[1] ) {
+                    break;
+                }
             }
             ++end;
         }
@@ -386,19 +394,17 @@ static  int     Parse( void ) {
         if( len != 0 ) {
             if( opt == ' ' ) {  // if filename, add to list
                 strncpy( Word, Cmd, len );
-                Word[len] = NULLCHAR;
+                Word[len] = '\0';
                 strlwr( Word );
                 if( strstr( Word, ".lib" ) != NULL ) {
-                    strcat( Libs, Libs[0] != '\0' ? "," : " " );
-                    strcat( Libs, Word );
+                    AddFile( &LibList, Word );
                 } else {
-                    strcat( Files, Word );
-                    strcat( Files, " " );
+                    AddFile( &FileList, Word );
                 }
             } else {            // otherwise, do option
                 --len;
                 strncpy( Word, Cmd + 1, len );
-                Word[len] = NULLCHAR;
+                Word[len] = '\0';
                 cmp_option = 1; // assume its a compiler option
                 switch( tolower( *Cmd ) ) {
                 case 'f':       // files option
@@ -500,7 +506,7 @@ static  int     Parse( void ) {
 
                 // compiler options that affect the linker
 
-#if _CPU == 386 || _CPU == _AXP || _CPU == _PPC
+#if _CPU != 8086
                 case 'b':
                     if( stricmp( Word, "w" ) ) {
                         Flags.default_win = 1;
@@ -553,14 +559,14 @@ static  int     Parse( void ) {
                     CmpOpts[len++] = ' ';
                     CmpOpts[len++] = opt;
                     CmpOpts[len++] = *Cmd;      // keep original case
-                    CmpOpts[len] = NULLCHAR;
+                    CmpOpts[len] = '\0';
                     strcat( CmpOpts, Word );
                 }
             }
             Cmd = end;
         }
         Cmd = SkipSpaces( Cmd );
-    } while( *Cmd != NULLCHAR );
+    } while( *Cmd != '\0' );
     return( 0 );
 }
 
@@ -572,14 +578,18 @@ static int     IsOption( char *cmd, int cmd_len, char *opt ) {
 
     len = 0;
     for(;;) {
-        if( len == cmd_len ) break;
-        if( toupper( *cmd ) != toupper( *opt ) ) return( 0 );
+        if( len == cmd_len )
+            break;
+        if( toupper( *cmd ) != toupper( *opt ) )
+            return( 0 );
         ++cmd;
         ++opt;
         ++len;
     }
-    if( *opt == NULLCHAR ) return( 1 );
-    if( isupper( *opt ) ) return( 0 );
+    if( *opt == '\0' )
+        return( 1 );
+    if( isupper( *opt ) )
+        return( 0 );
     return( 1 );
 }
 
@@ -656,12 +666,7 @@ const char *DoWildCard( const char *base )
     }
     while( (entry = readdir( parent )) != NULL ) {
         if( ISVALIDENTRY( entry ) ) {
-#ifndef __UNIX__
-#define __FNM_OPTIONS   ( FNM_PATHNAME | FNM_PERIOD | FNM_NOESCAPE | FNM_IGNORECASE )
-#else
-#define __FNM_OPTIONS   ( FNM_PATHNAME | FNM_PERIOD | FNM_NOESCAPE )
-#endif            
-            if( fnmatch( pattern, entry->d_name, __FNM_OPTIONS ) == 0 ) {
+            if( fnmatch( pattern, entry->d_name, FNM_OPTIONS ) == 0 ) {
                 break;
             }
         }
@@ -735,10 +740,12 @@ static  int     CompLink( void ) {
 //================================
 
     int         rc;
-    char        *p;
     const char  *file;
     int         comp_err;
     PGROUP      pg;
+    int         i;
+    list        *currobj;
+    list        *nextobj;
     
     if( Flags.quiet ) {
         Fputnl( "option quiet", Fp );
@@ -783,9 +790,9 @@ static  int     CompLink( void ) {
     }
 
     comp_err = FALSE;
-    p = strtok( Files, " " );   // get first filespec
-    while( p != NULL ) {
-        strcpy( Word, p );
+    ObjList = NULL;
+    for( currobj = FileList; currobj != NULL; currobj = nextobj ) {
+        strcpy( Word, currobj->filename );
         MakeName( Word, ".for" );   // if no extension, assume ".for"
         file = DoWildCard( Word );
         while( file != NULL ) {     // while more filenames:
@@ -816,11 +823,16 @@ static  int     CompLink( void ) {
             file = DoWildCard( NULL );  // get next filename
         }
         DoWildCardClose();
-        p = strtok( NULL, " " );        // get next filespec
+        nextobj = currobj->next;
+        free( currobj->filename );
+        free( currobj );
     }
-    if( Libs[0] != '\0' ) {
+    for( currobj = LibList; currobj != NULL; currobj = nextobj ) {
         fputs( "library", Fp );
-        Fputnl( Libs, Fp );
+        Fputnl( currobj->filename, Fp );
+        nextobj = currobj->next;
+        free( currobj->filename );
+        free( currobj );
     }
     fclose( Fp );   // close TempFile
 
@@ -836,6 +848,17 @@ static  int     CompLink( void ) {
             if( rc != 0 ) {
                 rc = 2;    // return 2 to show Temp_File already closed
             }
+        }
+    }
+    for( currobj = ObjList; currobj != NULL; currobj = nextobj ) {
+        nextobj = currobj->next;
+        free( currobj->filename );
+        free( currobj );
+    }
+    for( i = 0; i < TYPE_MAX; ++i ) {
+        if( tools[i].path != NULL ) {
+            free( tools[i].path );
+            tools[i].path = NULL;
         }
     }
     return( rc );
@@ -856,7 +879,7 @@ static  void    MakeName( char *name, char *ext ) {
     PGROUP  pg;
     
     _splitpath2( name, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
-    if( pg.ext == '\0' )
+    if( pg.ext[0] == '\0' )
         pg.ext = ext;
     _makepath( name, pg.drive, pg.dir, pg.fname, pg.ext );
 }
@@ -872,11 +895,10 @@ static  void    AddName( char *name, FILE *link_fp ) {
     PGROUP      pg1;
     PGROUP      pg2;
 
-    curr_name = ObjList;
-    while( curr_name != NULL ) {
-        if( stricmp( name, curr_name->filename ) == 0 )  return;
+    for( curr_name = ObjList; curr_name != NULL; curr_name = curr_name->next ) {
+        if( stricmp( name, curr_name->filename ) == 0 )
+            return;
         last_name = curr_name;
-        curr_name = curr_name->next;
     }
     new_name = MemAlloc( sizeof( struct list ) );
     if( ObjList == NULL ) {
