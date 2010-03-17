@@ -1,5 +1,5 @@
 .func begin
-.funct   freopen_s   TR 24371
+.funct   freopen_s   TR 24731
 .funct_w _wfreopen_s
 .func gen
 #include <stdio.h>
