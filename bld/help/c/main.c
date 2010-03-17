@@ -166,7 +166,7 @@ int main( int argc, char *argv[] )
         printf( "ui failed\n" );
         return( EXIT_FAILURE );
     } else {
-#if defined __OS2__
+#if defined( __OS2__ ) || defined( __NT__ )
         initmouse( 2 );  /* the 0=mouseless,1=mouse,2=initialized mouse */
 #elif !defined __UNIX__
         uiinitgmouse( 2 );  /* the 0=mouseless,1=mouse,2=initialized mouse */
