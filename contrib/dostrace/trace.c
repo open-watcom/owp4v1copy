@@ -773,7 +773,7 @@ dos_handler(
         tprintf("write(%u, %04X:%04X, %u) = ", _bx, _ds, _dx, _cx);
         break;
     case 0x41:              /* Unlink */
-        tprintf("chdir(\"%Fs\") = ", makefptr(_ds, _dx));
+        tprintf("unlink(\"%Fs\") = ", makefptr(_ds, _dx));
         break;
     case 0x42:              /* Lseek */
         tprintf("lseek(%u, %ld, %d) = ",_bx, makelong(_cx, _dx), _ax & 0xff);
