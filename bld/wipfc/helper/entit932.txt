@@ -199,4 +199,4 @@ n&supn.
 &larrow.
 &rarrow.
 >&rahead.
-                                           
+&lahead.
