@@ -43,6 +43,8 @@
 Lexer::Token Lines::parse( Lexer* lexer )
 {
     Lexer::Token tok( parseAttributes( lexer ) );
+    if( tok == Lexer::WHITESPACE && lexer->text()[0] == L'\n' )
+        tok = document->getNextToken(); //consume '\n' if just after tag end
     while( tok != Lexer::END ) {
         if( parseInline( lexer, tok ) ) {
             if( lexer->tagId() == Lexer::ELINES )
@@ -90,10 +92,12 @@ Lexer::Token Lines::parseAttributes( Lexer* lexer )
 /*****************************************************************************/
 void Lines::buildText( Cell* cell )
 {
+    cell->addByte( 0xFC );  //toggle spacing
     cell->addByte( 0xFF );  //esc
     cell->addByte( 0x03 );  //size
     cell->addByte( 0x1A );  //begin lines sequence
     cell->addByte( alignment );
+    cell->addByte( 0xFC );  //toggle spacing
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
 }
@@ -103,7 +107,6 @@ void ELines::buildText( Cell* cell )
     cell->addByte( 0xFF );  //esc
     cell->addByte( 0x02 );  //size
     cell->addByte( 0x1B );  //end lines sequence
-    cell->addByte( 0xFA );  //end paragraph
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
 }

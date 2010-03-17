@@ -45,6 +45,8 @@
 Lexer::Token Fig::parse( Lexer* lexer )
 {
     Lexer::Token tok( parseAttributes( lexer ) );
+    if( tok == Lexer::WHITESPACE && lexer->text()[0] == L'\n' )
+        tok = document->getNextToken(); //consume '\n' if just after tag end
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC)) {
         if( parseInline( lexer, tok ) ) {
             if( lexer->tagId() == Lexer::EFIG )
@@ -64,10 +66,12 @@ Lexer::Token Fig::parse( Lexer* lexer )
 /*****************************************************************************/
 void Fig::buildText( Cell* cell )
 {
+    cell->addByte( 0xFC );  //toggle spacing
     cell->addByte( 0xFF );  //esc
     cell->addByte( 0x03 );  //size
     cell->addByte( 0x1A );  //begin fig sequence
     cell->addByte( 0x01 );  //left align
+    cell->addByte( 0xFC );  //toggle spacing
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
 }
@@ -77,7 +81,6 @@ void EFig::buildText( Cell* cell )
     cell->addByte( 0xFF );  //esc
     cell->addByte( 0x02 );  //size
     cell->addByte( 0x1B );  //end fig sequence
-    cell->addByte( 0xFA );  //end paragraph
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
 }
