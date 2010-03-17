@@ -20,4 +20,14 @@
         />
     </dependentAssembly>
 </dependency>
+<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+        <requestedPrivileges>
+            <requestedExecutionLevel
+                level="highestAvailable"
+                uiAccess="false"
+            />
+        </requestedPrivileges>
+    </security>
+</trustInfo>
 </assembly>
