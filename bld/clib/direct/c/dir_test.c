@@ -143,6 +143,8 @@ void main( int argc, char *argv[] )
     __F_NAME(strcat,wcscat)( buffer, TMPFILEPREFIX );
     __F_NAME(strcat,wcscat)( buffer, ".*" );
     save_checkbits = checkbits;
+
+    /* Open the directory using a wildcard pattern. */
     VERIFY( ( dirp = __F_NAME(opendir,_wopendir)( buffer ) ) != NULL );
 
     for( ctr = 0;; ++ctr ) {
@@ -176,6 +178,30 @@ void main( int argc, char *argv[] )
 
     VERIFY( checkbits == 0 );   // If not, readdir() didn't report all files
     VERIFY( __F_NAME(closedir,_wclosedir)( dirp ) == 0 );
+
+    /* Open the directory itself, no pattern. */
+    VERIFY( ( dirp = __F_NAME(opendir,_wopendir)( TMPDIR ) ) != NULL );
+    checkbits = save_checkbits;
+
+    ctr = 0;
+    direntp = __F_NAME(readdir,_wreaddir)( dirp );
+    while( direntp ) {
+        /* Skip '.' and '..' entries. */
+        if( direntp->d_name[0] != '.' ) {
+            __F_NAME(strcpy,wcscpy)( buffer, TMPFILEPREFIX );
+            __F_NAME(strcat,wcscat)( buffer, STRING( "." ) );
+            __F_NAME(itoa,_witoa)( ctr, buffer2, 10 );
+            __F_NAME(strcat,wcscat)( buffer, buffer2 );
+            VERIFY( __F_NAME(strcmp,wcscmp)(buffer,direntp->d_name) == 0 );
+            checkbits &= ~( 1 << ctr );
+            ++ctr;
+        }
+        direntp = __F_NAME(readdir,_wreaddir)( dirp );
+    }
+
+    VERIFY( checkbits == 0 );   // If not, readdir() didn't report all files
+    VERIFY( __F_NAME(closedir,_wclosedir)( dirp ) == 0 );
+
     VERIFY( __F_NAME(rmdir,_wrmdir)( TMPDIR ) == -1 ); // Should == -1; TMPDIR non-empty
     VERIFY( __F_NAME(chdir,_wchdir)( TMPDIR ) == 0 );
 
