@@ -166,18 +166,17 @@ $(hbook).hpj : $(proj_objs)
 
 !ifeq hbook cbooks
 $(hbook).cnt : $(docsrc_dir)$(SL)gs$(SL)$(hbook).cnt
-    @%make prepare_vi_script_cp
+    awk -f ../makecnt1.awk $[@ > $(hbook).cnt
 !else ifeq hbook ebooks
 $(hbook).cnt : $(docsrc_dir)$(SL)gs$(SL)$(hbook).cnt
-    @%make prepare_vi_script_cp
+    awk -f ../makecnt1.awk $[@ > $(hbook).cnt
 !else ifeq hbook fbooks
 $(hbook).cnt : $(docsrc_dir)$(SL)gs$(SL)$(hbook).cnt
-    @%make prepare_vi_script_cp
+    awk -f ../makecnt1.awk $[@ > $(hbook).cnt
 !else
 $(hbook).cnt : $(hbook).cn1
-    @%make prepare_vi_script_hdr
+    awk -f ../makecnt2.awk -v file=$(hbook).hlp -v title="$(book_title)" -v multi=$(book_multi_chapter) $[@ > $(hbook).cnt
 !endif
-    !$(vi) -s $(vi_script_nt) $[@
 
 $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
@@ -585,41 +584,6 @@ compile_hpj_nt : .PROCEDURE
     @%append $^@ BrowseButtons()
     @%append $^@ CreateButton( "btn_index", "&Index", "JumpId( `$(hbook).hlp', `index_of_topics' )" )
     @%append $^@ CreateButton( "btn_up", "&Up", "Contents()" )
-
-
-#-------------------------------------------------------------
-# create vi script for nt contents file creation (with header)
-#-------------------------------------------------------------
-prepare_vi_script_hdr: .PROCEDURE
-    @%create $(vi_script_nt)
-# add header to contents file
-    @%append $(vi_script_nt) execute i:Base $(hbook).hlp>main\n:Title $(book_title)\n:Index $(book_title) Help=$(hbook).hlp\n\n1 $(book_title)\n\e
-# fix problem with broken lines in *.cn1
-# join line with "=" on the end of line with next one
-    @%append $(vi_script_nt) 1,$$s/=$$/=ZZZ/
-    @%append $(vi_script_nt) g/=ZZZ/j
-    @%append $(vi_script_nt) 1,$$s/=ZZZ /=/
-!ifndef book_multi_chapter
-# remove topics links for first level and
-# resequence topics links levels, each to one level up
-    @%append $(vi_script_nt) /^1/d
-    @%append $(vi_script_nt) 1,$$s/^2/1/
-    @%append $(vi_script_nt) 1,$$s/^3/2/
-    @%append $(vi_script_nt) 1,$$s/^4/3/
-    @%append $(vi_script_nt) 1,$$s/^5/4/
-    @%append $(vi_script_nt) 1,$$s/^6/5/
-!endif
-    @%append $(vi_script_nt) w! $^@
-    @%append $(vi_script_nt) q!
-
-#-------------------------------------------------------
-# create vi script for nt contents file creation (copy)
-#-------------------------------------------------------
-prepare_vi_script_cp: .PROCEDURE
-    @%create $(vi_script_nt)
-    @%append $(vi_script_nt) execute /^1\ndd
-    @%append $(vi_script_nt) w! $^@
-    @%append $(vi_script_nt) q!
 
 #-------------------------------------------------------
 # create DOSEMU batch file to run wgml utility
