@@ -9,7 +9,6 @@ The following pages test various list tags&per.
 :h2 res=2.Simple List
 :i2 refid='1'.sl
 :p.The following is an example of a simple list&per.
-
 :sl.
 :li.First item&per. First item&per. First item&per. First item&per. First item&per.
 :sl compact.
@@ -21,6 +20,23 @@ The following pages test various list tags&per.
 :li.Second item&per. Second item&per. Second item&per. Second item&per. Second item&per.
 :li.Third item&per. Third item&per. Third item&per. Third item&per. Third item&per.
 :sl compact.
+:li.First subitem of third item&per. First subitem of third item&per. First subitem of third item&per.
+:li.Second subitem of third item&per. Second subitem of third item&per. Second subitem of third item&per.
+:li.Third subitem of third item&per. Third subitem of third item&per. Third subitem of third item&per.
+:esl.
+:esl.
+:p.Text after the list and before a very compact list&per.
+:sl verycompact.
+:li.First item&per. First item&per. First item&per. First item&per. First item&per.
+:sl verycompact.
+:li.First subitem of first item&per. First subitem of first item&per. First subitem of first item&per.
+:li.Second subitem of first item&per. Second subitem of first item&per. Second subitem of first item&per.
+:li.Third subitem of first item&per. Third subitem of first item&per. Third subitem of first item&per.
+:li.Fourth subitem of first item&per.Fourth subitem of first item&per. Fourth subitem of first item&per.
+:esl.
+:li.Second item&per. Second item&per. Second item&per. Second item&per. Second item&per.
+:li.Third item&per. Third item&per. Third item&per. Third item&per. Third item&per.
+:sl verycompact.
 :li.First subitem of third item&per. First subitem of third item&per. First subitem of third item&per.
 :li.Second subitem of third item&per. Second subitem of third item&per. Second subitem of third item&per.
 :li.Third subitem of third item&per. Third subitem of third item&per. Third subitem of third item&per.
@@ -51,7 +67,28 @@ The following pages test various list tags&per.
 :li.Third subitem of third item&per. Third subitem of third item&per. Third subitem of third item&per.
 :eul.
 :eul.
-:p.Text after the list
+:p.Text after the list and before a very compact list&per.
+:ul verycompact.
+:li.First item&per. First item&per. First item&per. First item&per. First item&per.
+:ul verycompact.
+:li.First subitem of first item&per. First subitem of first item&per. First subitem of first item&per.
+:li.Second subitem of first item&per. Second subitem of first item&per. Second subitem of first item&per.
+:ul verycompact.
+:li.First subsubitem of the first list&per. First subsubitem of the first list&per. First subsubitem of the first list&per.
+:li.Second subsubitem of the first list&per.Second subsubitem of the first list&per. Second subsubitem of the first list&per.
+:eul.
+:li.Third subitem of first item&per. Third subitem of first item&per. Third subitem of first item&per.
+:li.Fourth subitem of first item&per.Fourth subitem of first item&per. Fourth subitem of first item&per.
+:eul.
+:li.Second item&per. Second item&per. Second item&per. Second item&per. Second item&per.
+:li.Third item&per. Third item&per. Third item&per. Third item&per. Third item&per.
+:ul verycompact.
+:li.First subitem of third item&per.First subitem of third item&per. First subitem of third item&per.
+:li.Second subitem of third item&per. Second subitem of third item&per. Second subitem of third item&per.
+:li.Third subitem of third item&per. Third subitem of third item&per. Third subitem of third item&per.
+:eul.
+:eul.
+:p.Text after the list&per.
 
 :h2 res=4.Ordered List
 :i2 refid='1'.ol
@@ -76,7 +113,28 @@ The following pages test various list tags&per.
 :li.Third subitem of third item&per. Third subitem of third item&per. Third subitem of third item&per.
 :eol.
 :eol.
-:p.Text after the list
+:p.Text after the list and before a very compact list&per.
+:ol verycompact.
+:li.First item&per. First item&per. First item&per. First item&per. First item&per.
+:ol verycompact.
+:li.First subitem of first item&per. First subitem of first item&per. First subitem of first item&per.
+:li.Second subitem of first item&per. Second subitem of first item&per. Second subitem of first item&per.
+:ol verycompact.
+:li.First subsubitem of the first list&per. First subsubitem of the first list&per. First subsubitem of the first list&per.
+:li.Second subsubitem of the first list&per.Second subsubitem of the first list&per. Second subsubitem of the first list&per.
+:eol.
+:li.Third subitem of first item&per. Third subitem of first item&per. Third subitem of first item&per.
+:li.Fourth subitem of first item&per.Fourth subitem of first item&per. Fourth subitem of first item&per.
+:eol.
+:li.Second item&per. Second item&per. Second item&per. Second item&per. Second item&per.
+:li.Third item&per. Third item&per. Third item&per. Third item&per. Third item&per.
+:ol verycompact.
+:li.First subitem of third item&per.First subitem of third item&per. First subitem of third item&per.
+:li.Second subitem of third item&per. Second subitem of third item&per. Second subitem of third item&per.
+:li.Third subitem of third item&per. Third subitem of third item&per. Third subitem of third item&per.
+:eol.
+:eol.
+:p.Text after the list&per.
 
 :h2 res=5.Mixing lists together
 :i2 refid='1'.ol and ul together

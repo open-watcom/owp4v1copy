@@ -28,6 +28,7 @@
 *
 *   :sl / :esl
 *       compact (else blank line between items)
+*       verycompact (no extra lines at all; a wipfc extension)
 *   If nested, indent 4 spaces
 *
 ****************************************************************************/
@@ -77,7 +78,8 @@ Lexer::Token Sl::parse( Lexer* lexer )
                 {
                     Element* elt( new SlLi( document, this, document->dataName(),
                         document->dataLine(), document->dataCol(),
-                        itemCount++, nestLevel, indent, compact && !needLine ) );
+                        itemCount++, nestLevel, indent, veryCompact ||
+                        ( compact && !needLine ) ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
                     needLine = false;
@@ -151,6 +153,8 @@ Lexer::Token Sl::parseAttributes( Lexer* lexer )
         else if( tok == Lexer::FLAG ) {
             if( lexer->text() == L"compact" )
                 compact = true;
+            else if( lexer->text() == L"verycompact" )
+                veryCompact = true;
             else
                 document->printError( ERR1_ATTRNOTDEF );
         }
