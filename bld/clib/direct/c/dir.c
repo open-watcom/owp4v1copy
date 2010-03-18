@@ -153,7 +153,7 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
                 if( opened ) {
                     _dos_findclose( (struct _find_t *)tmp.d_dta );
                 }
-                if( _dos_findfirst( __F_NAME(dirname,mbcsName), attr, (struct _find_t *)tmp.d_dta ) ) {
+                if( _dos_findfirst( __F_NAME(pathname,mbcsName), attr, (struct _find_t *)tmp.d_dta ) ) {
                     return( NULL );
                 }
                 opened = 1;
