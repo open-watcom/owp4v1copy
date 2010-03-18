@@ -49,6 +49,7 @@ Lexer::Token Sl::parse( Lexer* lexer )
 {
     Lexer::Token tok( parseAttributes( lexer ) );
     unsigned int itemCount( 0 );
+    bool needLine( true );
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC ) ) {
         if( parseInline( lexer, tok ) ) {
             switch( lexer->tagId() ) {
@@ -59,6 +60,7 @@ Lexer::Token Sl::parse( Lexer* lexer )
                         indent == 1 ? 4 : indent + 4 ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
+                    needLine = true;
                 }
                 break;
             case Lexer::OL:
@@ -68,15 +70,17 @@ Lexer::Token Sl::parse( Lexer* lexer )
                         nestLevel + 1, indent == 1 ? 4 : indent + 4 ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
+                    needLine = true;
                 }
                 break;
             case Lexer::LI:
                 {
                     Element* elt( new SlLi( document, this, document->dataName(),
                         document->dataLine(), document->dataCol(),
-                        itemCount++, nestLevel, indent, compact ) );
+                        itemCount++, nestLevel, indent, compact && !needLine ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
+                    needLine = false;
                 }
                 break;
             case Lexer::LP:
@@ -94,6 +98,7 @@ Lexer::Token Sl::parse( Lexer* lexer )
                         indent == 1 ? 4 : indent + 4 ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
+                    needLine = true;
                 }
                 break;
             case Lexer::SL:
@@ -103,6 +108,7 @@ Lexer::Token Sl::parse( Lexer* lexer )
                         nestLevel + 1, indent == 1 ? 4 : indent + 4 ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
+                    needLine = true;
                 }
                 break;
             case Lexer::ESL:
@@ -123,6 +129,7 @@ Lexer::Token Sl::parse( Lexer* lexer )
                         nestLevel + 1, indent == 1 ? 4 : indent + 4 ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
+                    needLine = true;
                 }
                 break;
             default:
