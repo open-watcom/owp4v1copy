@@ -1,0 +1,40 @@
+# afxapi Builder Control file
+# ===========================
+
+set PROJDIR=<CWD>
+
+[ INCLUDE <OWROOT>/bat/master.ctl ]
+[ LOG <LOGFNAME>.<LOGEXT> ]
+
+cdsay .
+
+[ BLOCK <1> build rel2 ]
+#=======================
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+
+[ BLOCK <1> rel2 ]
+#=================
+    cdsay <PROJDIR>
+
+[ BLOCK <1> rel2 cprel2 acprel2 ]
+#================================
+  [ IFDEF (os_nt "") <2*> ]
+    <CPCMD> nt/*.h                        <RELROOT>/h/nt/afx/
+    <CPCMD> nt/*.inl                      <RELROOT>/h/nt/afx/
+    <CPCMD> nt/*.rc                       <RELROOT>/h/nt/afx/
+
+    <CPCMD> include/res/*.cur             <RELROOT>/h/nt/afx/res/
+
+    <CPCMD> dnt386/*.lib                  <RELROOT>/lib386/nt/afx/
+    <CPCMD> dnt386.uni/*.lib              <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386/*.lib                   <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386.uni/*.lib               <RELROOT>/lib386/nt/afx/
+
+[ BLOCK <1> clean ]
+#==================
+    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+
+[ BLOCK . . ]
+#============
+
+cdsay <PROJDIR>

@@ -1,0 +1,263 @@
+.EXTENSIONS : .mh .inl .mnl .rc .mrc
+
+proj_name = afxapi
+
+afxapi_autodepends  = .autodepend
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_path += -I"$(dev_dir)/afxapi/$(host_os)"
+
+splice = wsplice -i$(hdr_dir) $[@ $^@
+
+headers =               &
+        afx.h           &
+        afx.inl         &
+        afxadv.h        &
+        afxcmn.h        &
+        afxcmn1.inl     &
+        afxcmn2.inl     &
+        afxcmn3.inl     &
+        afxcmn4.inl     &
+        afxcoll.h       &
+        afxcoll.inl     &
+        afxdd_.h        &
+        afxdlgs.h       &
+        afxdlgs.inl     &
+        afxext.h        &
+        afxext.inl      &
+        afxmsg_.h       &
+        afxprint.rc     &
+        afxpriv.h       &
+        afxres.rc       &
+        afxstat_.h      &
+        afxtls_.h       &
+        afxv_w32.h      &
+        afxver_.h       &
+        afxwin.h        &
+        afxwin1.inl     &
+        afxwin2.inl     &
+        afxwin3.inl     &
+        afxwin4.inl     &
+        afxwin5.inl
+
+libs = &
+!ifeq unicode 1
+!ifeq debug 1
+        uafxcwd.lib
+!else
+        uafxcw.lib
+!endif
+!else
+!ifeq debug 1
+        nafxcwd.lib
+!else
+        nafxcw.lib
+!endif
+!endif
+
+objs =                  &
+        animate.obj     &
+        archive.obj     &
+        archivex.obj    &
+        arstream.obj    &
+        bitmap.obj      &
+        brush.obj       &
+        button.obj      &
+        bytearr.obj     &
+        cdhook.obj      &
+        clientdc.obj    &
+        cmdline.obj     &
+        cmdtarg.obj     &
+        cmdui.obj       &
+        colordlg.obj    &
+        combobox.obj    &
+        comboex.obj     &
+        commdlg.obj     &
+        createdc.obj    &
+        ctrlbar.obj     &
+        ctrlview.obj    &
+        dataexch.obj    &
+        dc.obj          &
+        debug.obj       &
+        dialog.obj      &
+        dlgbar.obj      &
+        dockbar.obj     &
+        dockcont.obj    &
+        docmangr.obj    &
+        document.obj    &
+        doctempl.obj    &
+        draglist.obj    &
+        dumpcont.obj    &
+        dwordarr.obj    &
+        edit.obj        &
+        editview.obj    &
+        edstate.obj     &
+        except.obj      &
+        file.obj        &
+        filedlg.obj     &
+        filefind.obj    &
+        filenew.obj     &
+        filex.obj       &
+        finddlg.obj     &
+        font.obj        &
+        fontdlg.obj     &
+        formview.obj    &
+        framewnd.obj    &
+        gdiobj.obj      &
+        handmap.obj     &
+        header.obj      &
+        hook.obj        &
+        hotkey.obj      &
+!ifeq debug 1
+        ie3.obj         &
+        ie4.obj         &
+!endif
+        imagelst.obj    &
+!ifeq debug 1
+        inline1.obj     &
+        inline2.obj     &
+        inline3.obj     &
+        inline4.obj     &
+!endif
+        invargx.obj     &
+        ipaddctl.obj    &
+        isvalid.obj     &
+        linkctrl.obj    &
+        listbox.obj     &
+        listctrl.obj    &
+        mapp2p.obj      &
+        mapp2w.obj      &
+        maps2o.obj      &
+        maps2p.obj      &
+        maps2s.obj      &
+        mapw2o.obj      &
+        mapw2p.obj      &
+        mdichild.obj    &
+        mdiframe.obj    &
+        memfile.obj     &
+        memoryx.obj     &
+        menu.obj        &
+        metafile.obj    &
+        minidock.obj    &
+        minifwnd.obj    &
+        modstate.obj    &
+        mtstate.obj     &
+        multidoc.obj    &
+        notrack.obj     &
+        notsuppx.obj    &
+        obarr.obj       &
+        object.obj      &
+        oblist.obj      &
+        pagectrl.obj    &
+        pagesdlg.obj    &
+        paintdc.obj     &
+        palette.obj     &
+        pen.obj         &
+        plobject.obj    &
+        prevdc.obj      &
+        preview.obj     &
+        prevstat.obj    &
+        printdex.obj    &
+        printdlg.obj    &
+        printinf.obj    &
+        printing.obj    &
+        progress.obj    &
+        proppage.obj    &
+        propsht.obj     &
+        ptrarr.obj      &
+        ptrlist.obj     &
+        rebar.obj       &
+        rebarctl.obj    &
+        recent.obj      &
+        regclass.obj    &
+        resx.obj        &
+        rgn.obj         &
+        richedit.obj    &
+        runclass.obj    &
+        scrollbr.obj    &
+        scrollvw.obj    &
+        simplex.obj     &
+        simplist.obj    &
+        singldoc.obj    &
+        slider.obj      &
+        spinbtn.obj     &
+        statbar.obj     &
+        statctrl.obj    &
+        statcui.obj     &
+        static.obj      &
+        stdio.obj       &
+        strarr.obj      &
+        string.obj      &
+        strlist.obj     &
+        substr.obj      &
+        tabctrl.obj     &
+        threadit.obj    &
+        thrstate.obj    &
+        time.obj        &
+        timespan.obj    &
+        tlobject.obj    &
+        toolbar.obj     &
+        toolctrl.obj    &
+        toolcui.obj     &
+        tooltip.obj     &
+        treectrl.obj    &
+        uintarr.obj     &
+        userx.obj       &
+        view.obj        &
+        win2k.obj       &
+        win98.obj       &
+        winapp.obj      &
+        windowdc.obj    &
+        wininit.obj     &
+        winmain.obj     &
+        winthred.obj    &
+!ifeq debug 1
+        winxp.obj       &
+!endif
+        wnd.obj         &
+        wndproc.obj     &
+        wordarr.obj
+
+!ifeq unicode 1
+extra_c_flags += -D_UNICODE
+!endif
+!ifeq debug 1
+extra_c_flags += -D_DEBUG
+!endif
+extra_c_flags += -D_ENABLE_AUTODEPEND -fhwe -xs
+extra_lib_flags_386 = -io -ii
+
+additional_cleanup = *.h *.inl
+
+all : $($(what_to_build)) .SYMBOLIC
+    @%null
+
+.mh: $(include_dir)
+.mnl: $(include_dir)
+.mrc: $(include_dir)
+
+.cpp: $(lib_dir)
+
+.mh.h:
+    $(splice)
+
+.mnl.inl:
+    $(splice)
+
+.mrc.rc:
+    $(splice)
+
+nafxcw.lib: $(objs)
+    $(librarian) $(libflags) $<
+
+nafxcwd.lib: $(objs)
+    $(librarian) $(libflags) $<
+
+uafxcw.lib: $(objs)
+    $(librarian) $(libflags) $<
+
+uafxcwd.lib: $(objs)
+    $(librarian) $(libflags) $<
