@@ -571,13 +571,15 @@ static void WriteExportInfo( pe_header *header, pe_object *object )
     dir.ordinal_base = FmtData.u.os2.exports->ordinal;
     if( FmtData.u.os2.res_module_name != NULL ) {
         name = FmtData.u.os2.res_module_name;
-        namelen = strlen( name );
     } else {
-        /* RemovePath strips the extension, which we don't want */
         name = RemovePath( Root->outfile->fname, &namelen );
     }
-    dir.address_table_rva = ROUND_UP( dir.name_rva+namelen+1,
-                                                (unsigned long)sizeof(pe_va) );
+    /* RemovePath strips the extension, which we actually need to keep!
+     * Always recalculate the len including the extension.
+     */
+    namelen = strlen( name ) + 1;
+    dir.address_table_rva = ROUND_UP( dir.name_rva + namelen,
+                                      (unsigned long)sizeof( pe_va ) );
     num_entries = 0;
     for( exp = FmtData.u.os2.exports; exp != NULL; exp = exp->next ) {
         high_ord = exp->ordinal;
@@ -599,9 +601,8 @@ static void WriteExportInfo( pe_header *header, pe_object *object )
     _ChkAlloc( sort, sizeof( entry_export * ) * num_entries );
     /* write the export directory table */
     WriteLoad( &dir, sizeof( dir ) );
-    /* write the module name */
+    /* write the module name (includes null terminator) */
     WriteLoad( name, namelen );
-    WriteLoad( "", 1 );     // null termination of the module name
     NullAlign( sizeof( pe_va ) );
     /* write the export address table */
     i = 0;
