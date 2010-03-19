@@ -37,6 +37,9 @@
 #define _WIN32_WINNT    0x0600
 #define _WIN32_IE       0x0700
 
+// Skip over the #pragma extref directive in afx.h when compiling the library itself.
+#define __AFX_INTERNAL__
+
 #include <afx.h>
 #include <afxwin.h>
 #include <afxext.h>
