@@ -765,9 +765,6 @@ static int insertFixups( VBUF *src_code )
                         cg_fix = FIX_SYM_SEGMENT;
                     }
                     break;
-                case FIX_RELOFF8:
-                    CErr2p( ERR_ASSEMBLER_ERROR, "cannot reach label with short jump" );
-                    break;
                 case FIX_RELOFF16:
                     skip = 2;
                     cg_fix = FIX_SYM_RELOFF;
@@ -795,6 +792,9 @@ static int insertFixups( VBUF *src_code )
 #if _CPU == 8086
                     fixup_padding = 1;
 #endif
+                    break;
+                default:
+                    CErr2p( ERR_ASSEMBLER_ERROR, "cannot reach label" );
                     break;
                 }
                 if( skip != 0 ) {

@@ -480,9 +480,6 @@ static int InsertFixups( unsigned char *buff, unsigned i, byte_seq **code )
                         cg_fix = FIX_SYM_SEGMENT;
                     }
                     break;
-                case FIX_RELOFF8:
-                    CErr2p( ERR_UNREACHABLE_SYM, name );
-                    break;
                 case FIX_RELOFF16:
                     skip = 2;
                     cg_fix = FIX_SYM_RELOFF;
@@ -510,6 +507,9 @@ static int InsertFixups( unsigned char *buff, unsigned i, byte_seq **code )
 #if _CPU == 8086
                     fixup_padding = 1;
 #endif
+                    break;
+                default:
+                    CErr2p( ERR_UNREACHABLE_SYM, name );
                     break;
                 }
                 if( skip != 0 ) {
