@@ -160,6 +160,11 @@ cdsay .
     cdsay qa
     pmake -d clibqa -h
 
+[ BLOCK <1> tests ]
+#==================
+    cdsay qa
+    pmake -d clibqa -h tests
+
 [ BLOCK <1> clean ]
 #==================
 # ALIASGEN_CLEAN takes care of no longer trying to !include the not existing

@@ -53,6 +53,7 @@ cc_i86    = *wcc
 cc_386    = *wcc386
 cc_axp    = *wccaxp
 pharlap   = \tools\
+flashtek  = \tools\x32\
 !else
 !include cproj.mif
 !endif
@@ -64,38 +65,10 @@ c_dbg_flags = -d2
 a_dbg_flags = -d1
 !endif
 
+
 .erase
 .extensions:
 .extensions: .exe .rex .exp .obj .c .asm
-
-# Use delivered files for a release build; development files for debug build
-.before
-!ifeq release 0
-!else
-!ifdef __UNIX__
-    @set WATCOM=$(%RELROOT)
-    @set INCLUDE=
-    @set DOS_INCLUDE=$(%WATCOM)/h
-    @set RDOS_INCLUDE=$(%WATCOM)/h
-    @set NT_INCLUDE=$(%WATCOM)/h
-    @set OS2_INCLUDE=$(%WATCOM)/h
-    @set QNX_INCLUDE=$(%WATCOM)/qh
-    @set LINUX_INCLUDE=$(%WATCOM)/lh
-    @set WINDOWS_INCLUDE=$(%WATCOM)/h/win:$(%WATCOM)/h
-    @set PATH=$(%WATCOM)/binl:$(%WATCOM)/binw:$(%PATH)
-!else
-#   @set WATCOM=$(%RELROOT)
-    @set INCLUDE=
-    @set DOS_INCLUDE=$(%WATCOM)\h
-    @set RDOS_INCLUDE=$(%WATCOM)\h
-    @set NT_INCLUDE=$(%WATCOM)\h
-    @set OS2_INCLUDE=$(%WATCOM)\h
-    @set QNX_INCLUDE=$(%WATCOM)\qh
-    @set LINUX_INCLUDE=$(%WATCOM)\lh
-    @set WINDOWS_INCLUDE=$(%WATCOM)\h\win;$(%WATCOM)\h
-    @set PATH=$(%WATCOM)\binnt;$(%WATCOM)\binw;$(%PATH)
-!endif
-!endif
 
 !ifndef defwin
 defwin=-bw
@@ -420,6 +393,35 @@ lnx_3s : $(srcfile)
     wlink SYSTEM linux $(link_opts) $(link_i86) FILE $^*.obj
     @rm *.obj
 
+# Tests to run on DOS and compatible hosts (16-bit DOS + extenders)
+dosdeps = rundos runcw rund4g
+
+# Tests to run on OS/2 hosts (16-bit + 32-bit OS/2)
+os2deps = runos2 runos3
+
+# Tests to run on Windows NT hosts (DOS + Win16 + Win32)
+# Could be 16-bit OS/2 as well on Windows 2000 and earlier
+wntdeps = $(dosdeps) runw16 runw386 runwnt
+
+# Tests to run on Linux hosts
+lnxdeps = runlnx
+
+# Allow rundeps to be specified on the command line; default to
+# host-specific set of tests
+!ifndef rundeps
+!ifdef __NT__
+rundeps = $(wntdeps)
+!else ifdef __MSDOS__
+rundeps = $(dosdeps)
+!else ifdef __OS2__
+rundeps = $(os2deps)
+!else ifdef __LINUX__
+rundeps = $(lnxdeps)
+!endif
+!endif
+
+tests : $(rundeps) .symbolic
+    @echo The clib tests completed: SUCCESS!
 
 # Run 16-bit DOS executables
 rundos : $(dosexes) .symbolic
@@ -436,8 +438,14 @@ runcw : $(cwexes) .symbolic
 
 # Run DOS/4G 32-bit DOS extended executables
 rund4g : $(d4gexes) .symbolic
+    # The DOS/4GW 1.97 loader uses an old broken 16-bit MSC runtime that does
+    # not handle long PATH env vars; make PATH short for this test
+    @set OPATH=$(%PATH)
+    @set PATH=$(%WATCOM)\binw
     @d4g_3r.exe
     @d4g_3s.exe
+    @set PATH=$(%OPATH)
+    @set OPATH=
 
 # Run PharLap 386|DOS 32-bit DOS extended executables
 runpls : $(plsexes) .symbolic
@@ -489,6 +497,10 @@ runwnt : $(wntexes) .symbolic
     @wnt_3rd.exe
     @wnt_3sd.exe
 
+# Run Linux executables
+runlnx : $(lnxexes) .symbolic
+    @lnx_3r
+    @lnx_3s
 
 additional_cleanup = lnx_3r lnx_3s
 !include ../mif/clean.mif
