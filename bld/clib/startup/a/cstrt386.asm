@@ -377,8 +377,8 @@ zerobss:mov     dl,cl                   ; save bottom 2 bits of count in edx
         mov     _LpCmdLine,eax          ; save command line address
         mov     _LpPgmName,esi          ; save program name address
         mov     eax,0FFH                ; run all initalizers
-        call    __InitRtns              ; call initializer routines
         sub     ebp,ebp                 ; ebp=0 indicate end of ebp chain
+        call    __InitRtns              ; call initializer routines
         call    __CMain
 _cstart_ endp
 
