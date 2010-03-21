@@ -311,6 +311,9 @@ noparm: sub     al,al
         push    edi                     ; save pointer to pgm name
         push    edx                     ; save ds(stored in dx)
         mov     ds,es:_Envseg           ; get segment addr of environment area
+                                        ; WARNING! The __sys_init_387_emulator
+                                        ; routine (dosinite.asm) needs ebp to
+                                        ; be nonzero if and only if NO87 set
         mov     ebp,FLG_LFN             ; assume 'no87=' and 'lfn=n' env. var. not present
 L1:     mov     eax,[esi]               ; get first 4 characters
         or      eax,20202020h           ; map to lower case
@@ -347,6 +350,7 @@ L5:     cmp     byte ptr [esi],0        ; end of pgm name ?
 
         assume  ds:DGROUP
         mov     eax,ebp
+        and     ebp,FLG_NO87            ; only leave the NO87 bit in ebp
         mov     __no87,al               ; set state of "NO87" enironment var
         and     __uselfn,ah             ; set "LFN" support status
         mov     _STACKLOW,edi           ; save low address of stack
@@ -375,8 +379,8 @@ zerobss:mov     dl,cl                   ; save bottom 2 bits of count in edx
         mov     _LpCmdLine,eax          ; save command line address
         mov     _LpPgmName,esi          ; save program name address
         mov     eax,0FFH                ; run all initalizers
-        sub     ebp,ebp                 ; ebp=0 indicate end of ebp chain
         call    __InitRtns              ; call initializer routines
+        sub     ebp,ebp                 ; ebp=0 indicate end of ebp chain
         call    __CMain
 _cstart_ endp
 
