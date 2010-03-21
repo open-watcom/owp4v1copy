@@ -313,22 +313,20 @@ noparm: sub     al,al
         mov     ds,es:_Envseg           ; get segment addr of environment area
         mov     ebp,FLG_LFN             ; assume 'no87=' and 'lfn=n' env. var. not present
 L1:     mov     eax,[esi]               ; get first 4 characters
-        or      eax,2020h               ; map to lower case
+        or      eax,20202020h           ; map to lower case
         cmp     eax,37386f6eh           ; check for 'no87'
         jne     short L2                ; skip to next test if not 'no87'
         cmp     byte ptr 4[esi],'='     ; make sure next char is '='
         jne     short L4                ; no
         or      ebp,FLG_NO87            ; - indicate 'no87' was present
-        jmp     L3
-L2:     or      eax,202020h             ; map to lower case
-        cmp     eax,3d6e666ch           ; check for 'lfn='
+        jmp     L4
+L2:     cmp     eax,3d6e666ch           ; check for 'lfn='
         jne     short L4                ; skip if not 'lfn='
         mov     al,byte ptr 4[esi]      ; get next character
         or      al,20h                  ; map to lower case
         cmp     al,'n'                  ; make sure next char is 'n'
         jne     short L4                ; no
         and     ebp,not FLG_LFN         ; indicate no 'lfn=n' present
-L3:     add     esi,5                   ; skip after env.var. name
 L4:     cmp     byte ptr [esi],0        ; end of string ?
         lodsb
         jne     L4                      ; until end of string
