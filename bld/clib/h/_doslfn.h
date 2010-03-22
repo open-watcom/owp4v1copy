@@ -71,18 +71,21 @@
 #include "pushpck1.h"
 /* The find block for the LFN find */
 typedef struct {
-    long    attributes;
-    long    creattime;
-    long    creatdate;
-    long    accesstime;
-    long    accessdate;
-    long    wrtime;
-    long    wrdate;
-    long    hfilesize;
-    long    lfilesize;
-    long    reserved[2];
-    char    lfn[NAME_MAX + 1];
-    char    sfn[14];
+    long            attributes;
+    unsigned short  creattime;
+    unsigned short  creatdate;
+    long            cr_pad;
+    unsigned short  accesstime;
+    unsigned short  accessdate;
+    long            ac_pad;
+    unsigned short  wrtime;
+    unsigned short  wrdate;
+    long            wr_pad;
+    long            hfilesize;
+    long            lfilesize;
+    long            reserved[2];
+    char            lfn[NAME_MAX + 1];
+    char            sfn[14];
 } lfnfind_t;
 
 typedef struct {
