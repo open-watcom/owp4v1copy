@@ -30,7 +30,6 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/whpcvt/prereq.ctl ]
 [ INCLUDE <DEVDIR>/helpcomp/prereq.ctl ]
 [ INCLUDE <DEVDIR>/hcdos/prereq.ctl ]
-[ INCLUDE <DEVDIR>/wipfc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/bmp2eps/prereq.ctl ]
 [ INCLUDE <DEVDIR>/ssl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstub/lang.ctl ]

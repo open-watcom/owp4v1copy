@@ -24,7 +24,7 @@ set DWATCOM=%WATCOM%
 set DOC_ROOT=%OWROOT%\docs
 set INCLUDE=%WATCOM%\h;%WATCOM%\h\os2
 set EDPATH=%WATCOM%\eddat
-set WIPFC=%WATCOM%\wipfc
+set WIPFC=%DEVDIR%\wipfc\helper
 set PATH=%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binp;%WATCOM%\binw;%DOC_ROOT%\cmds;%OS2TKROOT%\bin;%DEFPATH%
 
 echo Open Watcom compiler build environment
