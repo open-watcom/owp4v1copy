@@ -39,7 +39,7 @@
 
 Text::Text( Document* d, Element* p, const std::wstring* f, unsigned int r,
             unsigned int c, const std::wstring& txt, bool ts ) :
-            Element( d, p, f, r, c ), toggleSpacing( ts )
+            Element( d, p, f, r, c ), whiteSpace( Tag::NONE), toggleSpacing( ts )
 {
     GlobalDictionaryWord* word( new GlobalDictionaryWord( txt ) );
     text = document->addWord( word );   //insert into global dictionary

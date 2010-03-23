@@ -35,8 +35,9 @@
 
 class Entity : public Text {
 public:
-    Entity( Document* d, Element* p, const std::wstring* f, unsigned int r, unsigned int c ) :
-        Text( d, p, f, r, c ) { };
+    Entity( Document* d, Element* p, const std::wstring* f, unsigned int r,
+        unsigned int c, Tag::WsHandling w = Tag::NONE ) :
+        Text( d, p, f, r, c, w ) { };
     Entity( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, const std::wstring& txt, bool ts = false ) :
         Text( d, p, f, r, c, txt, ts ) { };

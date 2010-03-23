@@ -35,8 +35,9 @@
 
 class Punctuation : public Text {
 public:
-    Punctuation( Document* d, Element* p, const std::wstring* f, unsigned int r, unsigned int c ) :
-        Text( d, p, f, r, c ) { };
+    Punctuation( Document* d, Element* p, const std::wstring* f, unsigned int r,
+        unsigned int c, Tag::WsHandling w = Tag::NONE ) :
+        Text( d, p, f, r, c, w ) { };
     Punctuation( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, const std::wstring& txt, bool ts = true ) :
         Text( d, p, f, r, c, txt, ts ) { };

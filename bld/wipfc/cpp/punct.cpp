@@ -39,7 +39,7 @@ Lexer::Token Punctuation::parse( Lexer* lexer )
     GlobalDictionaryWord* word( new GlobalDictionaryWord( txt ) );
     text = document->addWord( word );   //insert into global dictionary
     Lexer::Token tok( document->getNextToken() );
-    if( document->autoSpacing() ) {
+    if( whiteSpace != Tag::SPACES && document->autoSpacing() ) {
         Lexer::Token t( document->lastToken() );
         if( t == Lexer::WORD || t == Lexer::ENTITY || t == Lexer::PUNCTUATION ) {
             document->toggleAutoSpacing();

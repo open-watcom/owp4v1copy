@@ -65,7 +65,7 @@ Lexer::Token Entity::parse( Lexer* lexer )
                 tok = document->getNextToken();
             }
         }
-        if( document->autoSpacing() ) {
+        if( whiteSpace != Tag::SPACES && document->autoSpacing() ) {
             Lexer::Token t( document->lastToken() );
             if( t == Lexer::WORD || t == Lexer::ENTITY || t == Lexer::PUNCTUATION ) {
                 document->toggleAutoSpacing();

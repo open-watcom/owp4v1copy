@@ -32,13 +32,15 @@
 #define TEXT_INCLUDED
 
 #include "element.hpp"
+#include "tag.hpp"
 
 class GlobalDictionaryWord; //forward reference
 
 class Text : public Element {
 public:
     Text( Document* d, Element* p, const std::wstring* f, unsigned int r,
-        unsigned int c, bool ts = false) : Element( d, p, f, r, c ), text( 0 ),
+        unsigned int c, Tag::WsHandling w = Tag::NONE, bool ts = false) :
+        Element( d, p, f, r, c ), text( 0 ), whiteSpace( w ), 
         toggleSpacing( ts ) { };
     Text( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, const std::wstring& txt, bool ts );
@@ -49,6 +51,7 @@ public:
     void clearToggleSpacing() { toggleSpacing = false; };
 protected:
     GlobalDictionaryWord* text;
+    Tag::WsHandling whiteSpace;
     bool toggleSpacing;
 private:
     Text( const Text& rhs );            //no copy

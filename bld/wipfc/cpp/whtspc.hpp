@@ -32,13 +32,12 @@
 #define WHITESPACE_INCLUDED
 
 #include "text.hpp"
-#include "tag.hpp"
 
 class WhiteSpace : public Text {
 public:
     WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
-        unsigned int c, Tag::WsHandling w = Tag::NONE ) : Text( d, p, f, r, c ),
-        spaces( 0 ), whiteSpace( w ) { };
+        unsigned int c, Tag::WsHandling w = Tag::NONE ) : Text( d, p, f, r, c, w ),
+        spaces( 0 ) { };
     WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, const std::wstring& tx, Tag::WsHandling w = Tag::NONE,
         bool ts = false );
@@ -49,7 +48,6 @@ private:
     WhiteSpace( const WhiteSpace& rhs );            //no copy
     WhiteSpace& operator=( const WhiteSpace& rhs ); //no assignment
     unsigned char spaces;
-    Tag::WsHandling whiteSpace;
 };
 
 class LiteralWhiteSpace : public Element {

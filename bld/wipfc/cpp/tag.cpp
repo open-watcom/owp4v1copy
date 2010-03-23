@@ -104,19 +104,19 @@ bool Tag::parseInline( Lexer* lexer, Lexer::Token& tok )
     bool notHandled( false );
     if( tok == Lexer::WORD ) {
         Word* word( new Word( document, this, document->dataName(),
-            document->lexerLine(), document->lexerCol() ) );
+            document->lexerLine(), document->lexerCol(), whiteSpace ) );
         appendChild( word );
         tok = word->parse( lexer );
     }
     else if( tok == Lexer::ENTITY ) {
         Entity* entity( new Entity( document, this, document->dataName(),
-            document->lexerLine(), document->lexerCol() ) );
+            document->lexerLine(), document->lexerCol(), whiteSpace ) );
         appendChild( entity );
         tok = entity->parse( lexer );
     }
     else if( tok == Lexer::PUNCTUATION ) {
         Punctuation* punct( new Punctuation( document, this, document->dataName(),
-            document->lexerLine(), document->lexerCol() ) );
+            document->lexerLine(), document->lexerCol(), whiteSpace ) );
         appendChild( punct );
         tok = punct->parse( lexer );
     }
@@ -343,7 +343,7 @@ bool Tag::parseInline( Lexer* lexer, Lexer::Token& tok )
         case Lexer::LINK:
             {
                 Element* elt( new Link( document, this, document->dataName(),
-                    document->lexerLine(), document->lexerCol() ) );
+                    document->lexerLine(), document->lexerCol(), whiteSpace ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }
