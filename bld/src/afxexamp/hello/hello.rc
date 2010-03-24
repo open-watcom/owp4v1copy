@@ -1,0 +1,7 @@
+#include <afxres.h>
+#include "resource.h"
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    IDR_MAINFRAME   "Hello, World!"
+END
