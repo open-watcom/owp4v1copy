@@ -122,7 +122,7 @@ env=WATCOM=%OWDir%,                             IsOS2 IsOS2DosBox IsDOS IsWin Is
 env=EDPATH=%OWDir%\EDDAT,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
 env=EDPATH=%OWDir%/eddat,                       IsLinux
 env=WWINHELP=%HDir%\BINW,                       IsDOS IsWin IsWin95 IsWinNT | | | MinimalInstall helpfiles ! SrcIsCD & |
-env=WHTMLHELP=%HDir%\BINNT\HELP,                IsWin95 IsWinNT | MinimalInstall htmlhelp_helpfiles ! SrcIsCD & |
+env=WHTMLHELP=%OWDir%\BINNT\HELP,               IsWin95 IsWinNT |
 env=WIPFC=%OWDir%\WIPFC,                        IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
 env=WIPFC=%OWDir%/wipfc,                        IsLinux
 icon=view.exe, %HDir%\binp\help\c_readme.inf, Getting Started,,, IsOS2 DoCreateHelpIcons IsFortranInstall !
