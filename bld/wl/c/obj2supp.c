@@ -1028,7 +1028,7 @@ static void PatchData( fix_data *fix )
             return;
         }
     }
-    if( ( fix->type & FIX_ABS ) && !( FmtData.type & MK_QNX ) || isdbi ) {
+    if( ( fix->type & FIX_ABS ) && !( FmtData.type & (MK_QNX | MK_DOS16M) ) || isdbi ) {
         fix->done = TRUE;
     }
     if( !( fix->type & FIX_BASE ) ) {     // it's offset only
@@ -1241,7 +1241,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
 
     if( fix->done )
         return;
-    if( ( fix->type & FIX_ABS ) && !( FmtData.type & MK_QNX )
+    if( ( fix->type & FIX_ABS ) && !( FmtData.type & (MK_QNX | MK_DOS16M) )
         && !fix->imported )
         return;
     ftype = fix->type & ( FIX_OFFSET_MASK | FIX_BASE );
