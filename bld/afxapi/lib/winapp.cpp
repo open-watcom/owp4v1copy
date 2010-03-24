@@ -37,6 +37,7 @@ static const TCHAR _MRUEntry[] = _T( "File%d" );
 IMPLEMENT_DYNAMIC( CWinApp, CWinThread )
 
 BEGIN_MESSAGE_MAP( CWinApp, CWinThread )
+    ON_COMMAND( ID_APP_EXIT, OnAppExit )
     ON_COMMAND_EX_RANGE( ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile )
     ON_UPDATE_COMMAND_UI( ID_FILE_MRU_FILE1, OnUpdateRecentFileMenu )
 END_MESSAGE_MAP()
@@ -623,6 +624,13 @@ void CWinApp::OnFilePrintSetup()
 {
     CPrintDialog dlg( TRUE );
     DoPrintDialog( &dlg );
+}
+
+void CWinApp::OnAppExit()
+/***********************/
+{
+    ASSERT( m_pMainWnd != NULL );
+    m_pMainWnd->SendMessage( WM_CLOSE );
 }
 
 BOOL CWinApp::OnOpenRecentFile( UINT nID )

@@ -2290,6 +2290,7 @@ protected:
     afx_msg void    OnFileNew();
     afx_msg void    OnFileOpen();
     afx_msg void    OnFilePrintSetup();
+    afx_msg void    OnAppExit();
     afx_msg BOOL    OnOpenRecentFile( UINT nID );
     afx_msg void    OnUpdateRecentFileMenu( CCmdUI *pCmdUI );
     DECLARE_MESSAGE_MAP()
