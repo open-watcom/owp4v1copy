@@ -57,7 +57,7 @@ objects = $(objs_$(target)_$(host_cpu)) sample.obj sampdata.obj io.obj sysio.obj
 extra_c_flags =  -s
 
 extra_c_flags_dos_dos = -DREPORT_TYPE=__interrupt -DFAR_PTR=__far
-extra_c_flags_dos_rsi = -DREPORT_TYPE= -DFAR_PTR=__far -zu -hc
+extra_c_flags_dos_rsi = -DREPORT_TYPE= -DFAR_PTR=__far -hc -zdp
 extra_c_flags_dos_pls = -DREPORT_TYPE= -DFAR_PTR= -D_PLS
 extra_c_flags_dos     = $(extra_c_flags_dos_$(target))
 extra_c_flags_win     = -DREPORT_TYPE= -DFAR_PTR=__far -zu -zw -orlt -3
