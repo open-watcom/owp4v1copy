@@ -309,6 +309,7 @@ public:
     
     virtual void    OnBeginPrinting( CDC *pDC, CPrintInfo *pInfo );
     virtual void    OnPrepareDC( CDC *pDC, CPrintInfo *pInfo );
+    virtual BOOL    OnPreparePrinting( CPrintInfo *pInfo );
     virtual void    OnPrint( CDC *pDC, CPrintInfo *pInfo );
     virtual BOOL    PreCreateWindow( CREATESTRUCT &cs );
 #ifdef _DEBUG

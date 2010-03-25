@@ -160,6 +160,12 @@ void CEditView::OnPrepareDC( CDC *pDC, CPrintInfo *pInfo )
     }
 }
 
+BOOL CEditView::OnPreparePrinting( CPrintInfo *pInfo )
+/****************************************************/
+{
+    return( DoPreparePrinting( pInfo ) );
+}
+
 void CEditView::OnPrint( CDC *pDC, CPrintInfo *pInfo )
 /****************************************************/
 {
