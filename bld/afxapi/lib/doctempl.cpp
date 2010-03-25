@@ -146,7 +146,7 @@ CDocTemplate::Confidence CDocTemplate::MatchDocType( LPCTSTR lpszPathName,
     }
 
     LPCTSTR lpszPathExt = _tcsrchr( lpszPathName, _T( '.' ) );
-    if( strExt.CompareNoCase( lpszPathExt ) == 0 ) {
+    if( lpszPathExt != NULL && strExt.CompareNoCase( lpszPathExt ) == 0 ) {
         return( yesAttemptNative );
     }
     return( noAttempt );
