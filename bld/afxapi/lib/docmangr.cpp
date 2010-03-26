@@ -67,14 +67,21 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
 
     CString strFilter;
     CString strDocString;
+    LPCTSTR lpszDefExt = NULL;
     if( pTemplate != NULL ) {
-        if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) ) {
-            strFilter += strDocString;
-            strFilter.AppendChar( _T( '\0' ) );
-            strFilter.AppendChar( _T( '*' ) );
-            pTemplate->GetDocString( strDocString, CDocTemplate::filterExt );
-            strFilter += strDocString;
-            strFilter.AppendChar( _T( '\0' ) );
+        CString strExt;
+        if( pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) ) {
+            if( strExt.GetLength() > 1 ) {
+                ASSERT( strExt[0] == '.' );
+                lpszDefExt = (LPCTSTR)strExt + 1;
+            }
+            if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) ) {
+                strFilter += strDocString;
+                strFilter.AppendChar( _T( '\0' ) );
+                strFilter.AppendChar( _T( '*' ) );
+                strFilter += strExt;
+                strFilter.AppendChar( _T( '\0' ) );
+            }
         }
     } else {
         POSITION position = m_templateList.GetHeadPosition();
@@ -97,15 +104,6 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
     strFilter += _T( "*.*" );
     strFilter.AppendChar( _T( '\0' ) );
 
-    CString strExt;
-    LPCTSTR lpszDefExt = NULL;
-    if( pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) ) {
-        if( strExt.GetLength() > 1 ) {
-            ASSERT( strExt[0] == '.' );
-            lpszDefExt = (LPCTSTR)strExt + 1;
-        }
-    }
-    
     CFileDialog dlg( bOpenFileDialog, lpszDefExt, NULL,
                      lFlags | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, strFilter,
                      AfxGetMainWnd() );
