@@ -1021,6 +1021,57 @@ LRESULT CFrameWnd::OnSetMessageString( WPARAM wParam, LPARAM lParam )
     return( nIDOld );
 }
 
+void CFrameWnd::OnUpdateKeyIndicator( CCmdUI *pCmdUI )
+/****************************************************/
+{
+    SHORT   wKeyState = 0x0000;
+    if( pCmdUI->m_nID == ID_INDICATOR_NUM ) {
+        wKeyState = ::GetKeyState( VK_NUMLOCK );
+    } else if( pCmdUI->m_nID == ID_INDICATOR_CAPS ) {
+        wKeyState = ::GetKeyState( VK_CAPITAL );
+    } else if( pCmdUI->m_nID == ID_INDICATOR_SCRL ) {
+        wKeyState = ::GetKeyState( VK_SCROLL );
+    }
+    pCmdUI->Enable( wKeyState & 0x0001 );
+}
+
+BOOL CFrameWnd::OnToolTipText( UINT nID, NMHDR *pNMHDR, LRESULT *pResult )
+/************************************************************************/
+{
+    UNUSED_ALWAYS( nID );
+    UNUSED_ALWAYS( pResult );
+
+    int nToolID;
+    if( ((NMTTDISPINFO *)pNMHDR)->uFlags & TTF_IDISHWND ) {
+        nToolID = ::GetDlgCtrlID( pNMHDR->hwndFrom );
+    } else {
+        nToolID = pNMHDR->idFrom;
+    }
+
+    CString strPrompt;
+    CString strTip;
+    strPrompt.LoadString( nToolID );
+    AfxExtractSubString( strTip, strPrompt, 1 );
+    ASSERT( strTip.GetLength() < 80 );
+    
+    // On Windows XP and later, Windows sends TTN_NEEDTEXTW when a common control
+    // manifest is used, even if the application is using ANSI.  Therefore, it is
+    // necessary to handle both TTN_NEEDTEXTA and TTN_NEEDTEXTW in the ANSI version.
+#ifdef _UNICODE
+    NMTTDISPINFOW *pInfo = (NMTTDISPINFOW *)pNMHDR;
+    wcscpy( pInfo->szText, strTip );
+#else
+    if( pNMHDR->code == TTN_NEEDTEXTA ) {
+        NMTTDISPINFOA *pInfo = (NMTTDISPINFOA *)pNMHDR;
+        strcpy( pInfo->szText, strTip );
+    } else {
+        NMTTDISPINFOW *pInfo = (NMTTDISPINFOW *)pNMHDR;
+        ::MultiByteToWideChar( CP_ACP, 0L, strTip, -1, pInfo->szText, 80 );
+    }
+#endif
+    
+    return( TRUE );
+}
 BOOL CFrameWnd::OnBarCheck( UINT nID )
 /************************************/
 {
@@ -1129,56 +1180,4 @@ void CFrameWnd::OnUpdateControlBarMenu( CCmdUI *pCmdUI )
     } else {
         pCmdUI->ContinueRouting();
     }
-}
-
-void CFrameWnd::OnUpdateKeyIndicator( CCmdUI *pCmdUI )
-/****************************************************/
-{
-    SHORT   wKeyState = 0x0000;
-    if( pCmdUI->m_nID == ID_INDICATOR_NUM ) {
-        wKeyState = ::GetKeyState( VK_NUMLOCK );
-    } else if( pCmdUI->m_nID == ID_INDICATOR_CAPS ) {
-        wKeyState = ::GetKeyState( VK_CAPITAL );
-    } else if( pCmdUI->m_nID == ID_INDICATOR_SCRL ) {
-        wKeyState = ::GetKeyState( VK_SCROLL );
-    }
-    pCmdUI->Enable( wKeyState & 0x0001 );
-}
-
-BOOL CFrameWnd::OnToolTipText( UINT nID, NMHDR *pNMHDR, LRESULT *pResult )
-/************************************************************************/
-{
-    UNUSED_ALWAYS( nID );
-    UNUSED_ALWAYS( pResult );
-
-    int nToolID;
-    if( ((NMTTDISPINFO *)pNMHDR)->uFlags & TTF_IDISHWND ) {
-        nToolID = ::GetDlgCtrlID( pNMHDR->hwndFrom );
-    } else {
-        nToolID = pNMHDR->idFrom;
-    }
-
-    CString strPrompt;
-    CString strTip;
-    strPrompt.LoadString( nToolID );
-    AfxExtractSubString( strTip, strPrompt, 1 );
-    ASSERT( strTip.GetLength() < 80 );
-    
-    // On Windows XP and later, Windows sends TTN_NEEDTEXTW when a common control
-    // manifest is used, even if the application is using ANSI.  Therefore, it is
-    // necessary to handle both TTN_NEEDTEXTA and TTN_NEEDTEXTW in the ANSI version.
-#ifdef _UNICODE
-    NMTTDISPINFOW *pInfo = (NMTTDISPINFOW *)pNMHDR;
-    wcscpy( pInfo->szText, strTip );
-#else
-    if( pNMHDR->code == TTN_NEEDTEXTA ) {
-        NMTTDISPINFOA *pInfo = (NMTTDISPINFOA *)pNMHDR;
-        strcpy( pInfo->szText, strTip );
-    } else {
-        NMTTDISPINFOW *pInfo = (NMTTDISPINFOW *)pNMHDR;
-        ::MultiByteToWideChar( CP_ACP, 0L, strTip, -1, pInfo->szText, 80 );
-    }
-#endif
-    
-    return( TRUE );
 }

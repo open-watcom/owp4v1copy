@@ -603,6 +603,14 @@ BOOL CWinApp::WriteProfileString( LPCTSTR lpszSection, LPCTSTR lpszEntry,
     }
 }
 
+void CWinApp::OnContextHelp()
+/***************************/
+{
+    if( m_pMainWnd != NULL && m_pMainWnd->IsFrameWnd() ) {
+        ((CFrameWnd *)m_pMainWnd)->OnContextHelp();
+    }
+}
+
 void CWinApp::OnFileNew()
 /***********************/
 {
@@ -624,6 +632,38 @@ void CWinApp::OnFilePrintSetup()
 {
     CPrintDialog dlg( TRUE );
     DoPrintDialog( &dlg );
+}
+
+void CWinApp::OnHelp()
+/********************/
+{
+    if( m_pMainWnd != NULL ) {
+        m_pMainWnd->OnHelp();
+    }
+}
+
+void CWinApp::OnHelpFinder()
+/**************************/
+{
+    if( m_pMainWnd != NULL ) {
+        m_pMainWnd->OnHelpFinder();
+    }
+}
+
+void CWinApp::OnHelpIndex()
+/*************************/
+{
+    if( m_pMainWnd != NULL ) {
+        m_pMainWnd->OnHelpIndex();
+    }
+}
+
+void CWinApp::OnHelpUsing()
+/*************************/
+{
+    if( m_pMainWnd != NULL ) {
+        m_pMainWnd->OnHelpUsing();
+    }
 }
 
 void CWinApp::OnAppExit()

@@ -1308,6 +1308,8 @@ protected:
 #endif
     afx_msg LRESULT OnDragList( WPARAM wParam, LPARAM lParam );
     afx_msg LRESULT OnNTCtlColor( WPARAM wParam, LPARAM lParam );
+    
+public:
     afx_msg void    OnHelp();
     afx_msg void    OnHelpFinder();
     afx_msg void    OnHelpIndex();
@@ -1409,11 +1411,13 @@ protected:
     afx_msg LRESULT OnHelpHitTest( WPARAM wParam, LPARAM lParam );
     afx_msg LRESULT OnPopMessageString( WPARAM wParam, LPARAM lParam );
     afx_msg LRESULT OnSetMessageString( WPARAM wParam, LPARAM lParam );
+    afx_msg void    OnUpdateKeyIndicator( CCmdUI *pCmdUI );
+    afx_msg BOOL    OnToolTipText( UINT nID, NMHDR *pNMHDR, LRESULT *pResult );
+    
+public:
     afx_msg BOOL    OnBarCheck( UINT nID );
     afx_msg void    OnContextHelp();
     afx_msg void    OnUpdateControlBarMenu( CCmdUI *pCmdUI );
-    afx_msg void    OnUpdateKeyIndicator( CCmdUI *pCmdUI );
-    afx_msg BOOL    OnToolTipText( UINT nID, NMHDR *pNMHDR, LRESULT *pResult );
     DECLARE_MESSAGE_MAP()
 };
 
@@ -2287,9 +2291,14 @@ public:
     BOOL            WriteProfileString( LPCTSTR lpszSection, LPCTSTR lpszEntry, LPCTSTR lpszValue );
     
 protected:
+    afx_msg void    OnContextHelp();
     afx_msg void    OnFileNew();
     afx_msg void    OnFileOpen();
     afx_msg void    OnFilePrintSetup();
+    afx_msg void    OnHelp();
+    afx_msg void    OnHelpFinder();
+    afx_msg void    OnHelpIndex();
+    afx_msg void    OnHelpUsing();
     afx_msg void    OnAppExit();
     afx_msg BOOL    OnOpenRecentFile( UINT nID );
     afx_msg void    OnUpdateRecentFileMenu( CCmdUI *pCmdUI );
