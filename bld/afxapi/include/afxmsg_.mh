@@ -104,8 +104,8 @@ enum AfxSig {
     { WM_COMMAND, CN_UPDATE_COMMAND_UI, id, id, AfxSigCmdUI, \
       (AFX_PMSG)(void (CCmdTarget::*)( CCmdUI * ))memberFxn },
 #define ON_UPDATE_COMMAND_UI_RANGE( id1, id2, memberFxn ) \
-    { WM_COMMAND, CN_UPDATE_COMMAND_UI, id1, id2, AfxSigCmdUI_RANGE, \
-      (AFX_PMSG)(void (CCmdTarget::*)( CCmdUI *, UINT ))memberFxn },
+    { WM_COMMAND, CN_UPDATE_COMMAND_UI, id1, id2, AfxSigCmdUI, \
+      (AFX_PMSG)(void (CCmdTarget::*)( CCmdUI * ))memberFxn },
 #define ON_UPDATE_COMMAND_UI_REFLECT( memberFxn ) \
     { WM_COMMAND + WM_REFLECT_BASE, (WORD)CN_UPDATE_COMMAND_UI, 0, AfxSigCmdUI, \
       (AFX_PMSG)(void (CCmdTarget::*)( CCmdUI * ))memberFxn },
