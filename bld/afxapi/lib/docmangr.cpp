@@ -97,7 +97,16 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
     strFilter += _T( "*.*" );
     strFilter.AppendChar( _T( '\0' ) );
 
-    CFileDialog dlg( bOpenFileDialog, NULL, NULL,
+    CString strExt;
+    LPCTSTR lpszDefExt = NULL;
+    if( pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) ) {
+        if( strExt.GetLength() > 1 ) {
+            ASSERT( strExt[0] == '.' );
+            lpszDefExt = (LPCTSTR)strExt + 1;
+        }
+    }
+    
+    CFileDialog dlg( bOpenFileDialog, lpszDefExt, NULL,
                      lFlags | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, strFilter,
                      AfxGetMainWnd() );
     dlg.m_ofn.lpstrTitle = strTitle;
