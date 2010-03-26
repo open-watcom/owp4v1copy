@@ -3208,6 +3208,19 @@ AFX_INLINE void CWaitCursor::Restore()
     pApp->DoWaitCursor( 0 );
 }
 
+AFX_INLINE void AfxFormatString1( CString &rString, UINT nIDS, LPCTSTR lpsz1 )
+/****************************************************************************/
+{
+    rString.FormatMessage( nIDS, lpsz1 );
+}
+
+AFX_INLINE void AfxFormatString2( CString &rString, UINT nIDS, LPCTSTR lpsz1,
+                                  LPCTSTR lpsz2 )
+/***********************************************/
+{
+    rString.FormatMessage( nIDS, lpsz1, lpsz2 );
+}
+
 AFX_INLINE CWinApp * AFXAPI AfxGetApp()
 /*************************************/
 {
