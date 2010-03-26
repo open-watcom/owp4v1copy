@@ -56,7 +56,7 @@ cv-qualifier in function return types; and W933, warn about use of C-style
 casts in C++ code. These warnings must be explicitly enabled through the
 -wce option.
 .bull
-The code generator now eliminates redundant epilog code for 32-bit Intel
+The code generator now eliminates redundant epilogue code for 32-bit Intel
 processors when doing size optimization.
 .bull
 The code generator correctly handles constant folding of signed 64-bit
@@ -81,7 +81,7 @@ The 386 code generator now produces a CDQ instruction except when targeting
 a Pentium and optimizing for speed, when a MOV/SAR sequence is emitted as
 previously when converting a signed 32-bit integer to 64-bit.
 .bull
-The code generator no longer emits rendundant CS segment overrides when
+The code generator no longer emits redundant CS segment overrides when
 creating calls to symbols imported from DLLs.
 .bull
 The Win32 API headers and import libraries have been updated to support the
@@ -107,7 +107,7 @@ family functions now works.
 The library now contains _fseeki64 and _ftelli64 functions to handle 64-bit
 file offset pointer for streams.
 .bull
-The library implemenations of _lseeki64, _telli64, _fileleni64,
+The library implementations of _lseeki64, _telli64, _fileleni64,
 _(w)stati64, _(w)findfirsti64, _(w)findnexti64 on OS/2 now properly use
 64-bit file sizes and offsets.
 .bull
@@ -147,6 +147,8 @@ platform.
 .bull
 This release introduces Open Watcom's IPF compiler (wipfc) used for
 creating help files on OS/2.
+.bull
+Documentation is now provided in Windows CHM format as an option.
 .bull
 The vi editor now supports non-ASCII characters in the 0x80-0xFF range.
 .bull
@@ -212,7 +214,7 @@ function body already exists for the corresponding symbolic name.
 .bull
 Various fixes to the handling of the include_alias pragma have been made.
 .bull
-The C and C++ compilers now have diagnostics for meaningless comparision of
+The C and C++ compilers now have diagnostics for meaningless comparison of
 64-bit and bit-field operands.
 .bull
 The C and C++ compilers now have conversion tables from CP=1250,1252
@@ -303,7 +305,7 @@ The DOS real-mode trap file (std.trp) now correctly displays high parts of
 32-bit registers on 386+ CPUs. Previously, the high parts were always
 displayed as zeros.
 .bull
-WLIB now has a new -pa option to set up library page size automaticaly to
+WLIB now has a new -pa option to set up library page size automatically to
 optimal size.
 .bull
 WLIB now handles COFF import libraries more correctly.
@@ -342,7 +344,7 @@ WLINK can now use the WLINK_LNK environment variable to override the default
 directive file name (wlink.lnk). If the specified file isn't found then
 default file is used as usual.
 .bull
-WLINK now properly emits segments overlaped by groups to output file.
+WLINK now properly emits segments overlapped by groups to output file.
 .bull
 WLINK now properly handles imported symbols that are locally defined with the
 dllimport specifier in PE formatted files.
@@ -387,7 +389,7 @@ Following is a list of changes made in &product 1.7:
 .begbull
 .bull
 Functions using the __cdecl calling convention now return floating-point
-values in FPU registers in 32-bit code. This is the correct behaviour
+values in FPU registers in 32-bit code. This is the correct behavior
 compatible with other compilers.
 .bull
 The C and C++ compilers now support an include_alias pragma which can be
@@ -399,7 +401,7 @@ certain standard headers).
 The C compiler now emits warnings on operations which mix multi-level
 pointer types such as void** and int**. Previously a warning was only
 emitted in ANSI mode. Note that while void** is not assignment compatible
-with int**, void* is. The new stricter behaviour is in line with most other
+with int**, void* is. The new stricter behavior is in line with most other
 C compilers and helps users write cleaner and more portable code.
 .bull
 The C compiler now warns (W400) when an expression of plain char type is
@@ -414,7 +416,7 @@ issues in more cases.
 The C compiler now allows benign variable redefinitions where __near or
 __far modifiers aren't always explicitly specified but match when current
 data model is taken into account (eg. 'extern int __near x;' and 'extern
-int x;' in small data models). The new behaviour is compatible with the C++
+int x;' in small data models). The new behavior is compatible with the C++
 compiler as well as with other vendors' compilers.
 .bull
 The default stack size for 32-bit DOS extended executables has been
@@ -439,7 +441,7 @@ The LIBC and CLIB thin netware libraries have been added to the
 distribution as experimental.
 .bull
 32-bit DOS executables now correctly pass environment to child processes
-started through the spawn family of functions. Previous incorrect behaviour
+started through the spawn family of functions. Previous incorrect behavior
 was introduced in version 1.6.
 .bull
 In the NetWare libraries, __get_stdout with __get_std_stream was causing an
@@ -626,7 +628,7 @@ exit.
 Numerous problems with the Win386 extender support have been fixed so that
 Win386 now works again.
 .bull
-The dmpobj utility has been ehnanced to support additional OMF records, and
+The dmpobj utility has been enhanced to support additional OMF records, and
 new command line options have been added.
 .endbull
 .*
@@ -689,24 +691,24 @@ New warning W137, "Extern function 'fn' redeclared as static", has been added
 to the C compiler. Existing error E1072, "Storage class disagrees with
 previous definition of 'symbol'" has been extended to cover redefinitions
 from 'extern' to 'static' and not only from 'static' to 'extern'. Changing
-the linkage of a symbol invokes undefined behaviour according to ISO C.
+the linkage of a symbol invokes undefined behavior according to ISO C.
 .bull
 New warning W138, "No newline at end of file", has been added to the C
 compiler. It is emitted if no line terminator character was found before the
 end of a source file. Such files do not conform to ISO C. The missing newline
 character will be automatically inserted; this matches the C++ compiler
-behaviour. Note that missing newlines could previously lead to spurious
+behavior. Note that missing newlines could previously lead to spurious
 "#endif matches #if in different source file" warnings.
 .bull
 The C compiler has been modified to allow the __export or __declspec(dllexport)
 modifier on a declaration when earlier declaration exists with no modifier.
-The updated behaviour is compatible with the C++ compiler as well as some
+The updated behavior is compatible with the C++ compiler as well as some
 compilers from other vendors.
 .bull
 In ISO/ANSI mode (-za), the compiler now always warns if it encounters a call
 to unprototyped function. In extensions mode (default, -ze), this warning
 (W131) is suppressed if a matching prototype is found later in the source
-file. Note that the behaviour in extensions mode is unchanged from earlier
+file. Note that the behavior in extensions mode is unchanged from earlier
 versions.
 .bull
 The C compiler now eliminates static functions that are always inlined from
@@ -867,14 +869,14 @@ and recognize the __fastcall keyword.
 .bull
 The C compiler now recognizes #pragma data_seg and code_seg forms that
 specify segment and class names without enclosing them in parentheses. The
-new behaviour is consistent with other compilers.
+new behavior is consistent with other compilers.
 .bull
 New -fti switch has been added to the C compiler to track #include file
 opens. This helps diagnose include file problems in complex projects.
 .bull
 The code generator no longer emits debug information for unreferenced
 typedefs when -d1+ or -d2 switch is used. This produces slightly to
-significantly smaller debug information. Note that behaviour of -d3 is
+significantly smaller debug information. Note that behavior of -d3 is
 unchanged.
 .bull
 The 386 code generator will no longer select the 'and' instruction to perform
@@ -932,7 +934,7 @@ Win32 and 32-bit OS/2. Also, default value for SIGFPE has been changed to
 SIG_DFL from SIG_IGN on all platforms.
 .bull
 The e/E format of printf() family of functions has been changed to format
-the exponent with minimum of two digits (instead of three). This behaviour
+the exponent with minimum of two digits (instead of three). This behavior
 is dictated by C99 and consistent with most other compilers.
 .bull
 The floating-point to string conversion routines now format values with
@@ -965,7 +967,7 @@ strncasecmp() are also declared in string.h for compatibility with other
 compilers.
 .bull
 The C runtime library no longer returns ESPIPE when calling write() on a pipe
-or device that was opened with O_APPEND flag. The old behaviour was not POSIX
+or device that was opened with O_APPEND flag. The old behavior was not POSIX
 conforming.
 .bull
 Handling of pathnames that include spaces has been improved in the make
@@ -980,7 +982,7 @@ disassembler.
 New -zz and -zzo option have been added to the assembler (wasm) for
 backwards compatibility. See Tools User's Guide for details.
 .bull
-Default behaviour of inline assembler has changed. The CPU optimization
+Default behavior of inline assembler has changed. The CPU optimization
 level (-4, -5, -6) now implies the available instruction set: -5 implies
 MMX and 3DNow!, -6 also implies SSE/SSE2/SSE3. Also note that any CPU
 setting override now reverts to default at the end of each inline assembly
@@ -1025,7 +1027,7 @@ compiler (wrc).
 The include search order in the resource compiler has been changed
 to be more consistent with the C/C++ compilers, as well as with IBM's and
 Microsoft's resource compilers. System include files (enclosed in angle
-brackets) are no longer searched in current directory or in the dicrectory
+brackets) are no longer searched in current directory or in the directory
 of the file containing the #include directive.
 .bull
 The Windows resource compiler has been made more compatible with
@@ -1034,7 +1036,7 @@ scripts designed for Microsoft's RC in the way it treats string literals.
 The MS LINK compatibility wrapper now supports a /RELEASE switch.
 .bull
 Syntax highlighting support for makefiles has been added to the editor.
-The default syntax highlighting scheme has also been made more colourful.
+The default syntax highlighting scheme has also been made more colorful.
 .bull
 The editor and Windows GUI tools now store configuration files in more
 appropriate locations (notably on multi-user machines).
@@ -1072,8 +1074,8 @@ Following is a list of changes made in &product 1.3:
 .bull
 The C++ compiler now restricts the scope of variables declared in a for
 loop to the scope of that loop in accordance with ISO C++, not extending
-the scope beyond the loop (ARM compliant behaviour). Code relying on the
-pre-standard behaviour must either be changed or compiled with new -zf
+the scope beyond the loop (ARM compliant behavior). Code relying on the
+pre-standard behavior must either be changed or compiled with new -zf
 switch which reverts to old scoping rules.
 .bull
 Support for default template arguments has been added to the C++ compiler.
@@ -1215,7 +1217,7 @@ allocations/frees since last call to _heapchk(). As a consequence, _heapchk()
 previously did not detect certain instances of heap corruption.
 .bull
 [OS/2 32-bit] The default __disallow_single_dgroup() implementation no longer
-statically links agaist PMWIN.DLL. This allows DLLs to load on systems where
+statically links against PMWIN.DLL. This allows DLLs to load on systems where
 PMWIN.DLL isn't present.
 .bull
 [OS/2 32-bit] Re-implemented clock(). The new implementation uses the OS
@@ -1274,7 +1276,7 @@ C and C++ compilers. LL, ULL and LLU suffixes are recognized for constants.
 Added C99 style *LLONG_MIN/MAX defines to limits.h.
 .bull
 The C++ compiler has been fixed to properly accept source files where
-a template was the last item in a namespace or an external linkage.
+a template was the last item in a name space or an external linkage.
 .bull
 Several new -adxx options have been added to the C and C++ compilers
 to support automatic generation of 'make' style dependency files.
@@ -1317,14 +1319,14 @@ The linker has been fixed to read "AR" style archives produced by third
 party tools.
 .bull
 The linker has been fixed to prevent crashes when linking with COFF files
-providing uninitialised COMDAT entries
+providing uninitialized COMDAT entries
 .bull
 Several linker crashes related to ELF object files and executables have
 been resolved.
 .bull
 Updated wlink to call wlib with the -c (case sensitive) option when
 creating import libraries. This fixes problems with DLLs that export
-symbols differring only in case.
+symbols differing only in case.
 .bull
 The C runtime library has been optimized to produce smaller
 executables.
@@ -1612,7 +1614,7 @@ is not considered leaves
 .mono S(char)
 as the only way to satisfy the implicit conversion.
 .bull
-We have added support for namespaces.
+We have added support for name spaces.
 .millust begin
 namespace x {
     // anything that can go in file-scope
@@ -1631,15 +1633,15 @@ the "using x::member" statement.
 (also eliminating the need for "x::" scoping).
 .autopoint
 .point
-Namespaces eliminate the hand mangling of names.
+Name spaces eliminate the hand mangling of names.
 For example, instead of prefixing names with a distinguishing string
 like "XPQ_" (e.g., XPQ_Lookup), you can put the names in a namespace
 called "XPQ".
 .point
-Namespaces allow for private names in a module.
+Name spaces allow for private names in a module.
 This is most useful for types which are used in a single module.
 .point
-Namespaces encourage the meaningful classification of implementation
+Name spaces encourage the meaningful classification of implementation
 components.
 For example, code-generation components might reside in a namespace
 called "CodeGen".
@@ -2071,7 +2073,7 @@ Version 2.52b of the 16-bit MFC is included in the package.
 .*
 .begbull
 .bull
-Support has been added for 256 colour bitmaps.
+Support has been added for 256 color bitmaps.
 .bull
 Support has been added for 16 X 16 icons.
 .bull
@@ -2158,7 +2160,7 @@ improvements to the software.
 .note
 The editor is more tightly integrated with the IDE.
 .note
-It is now easier to select your own favourite editor from the IDE.
+It is now easier to select your own favorite editor from the IDE.
 .note
 The keyboard interface in the Integrated Development Environment (IDE)
 has been improved.
@@ -2689,7 +2691,7 @@ __iscsymf
 .note
 In version 9.5, the linker used to include LIBFILE object files in
 reverse order (i.e., the last one listed was the first to be
-included). We have corrected this behaviour so that they are included
+included). We have corrected this behavior so that they are included
 in the order listed.
 .millust begin
 Directive           Old Order   New Order
@@ -3366,7 +3368,7 @@ has changed).
 .*
 .begbull
 .bull
-Support has been added for > 16 colours for bitmaps.
+Support has been added for > 16 colors for bitmaps.
 .bull
 Support has been added for 16 X 16 icons.
 .bull
@@ -3557,7 +3559,7 @@ the "/quiet" option will only display diagnostic messages (if any).
 .point
 The "/cc" option has been added.  It specifies that unit 6 is a carriage
 control device and that output to this unit will be assumed to contain
-carriage control characters.  Note that a blank carriage controle
+carriage control characters.  Note that a blank carriage control
 character will automatically be generated for list-directed output.
 .point
 The "/automatic" option causes all local variables (including arrays) to
