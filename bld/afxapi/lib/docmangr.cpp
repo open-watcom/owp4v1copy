@@ -196,10 +196,12 @@ CDocument *CDocManager::OpenDocumentFile( LPCTSTR lpszFileName )
 void CDocManager::RegisterShellFileTypes( BOOL bCompat )
 /******************************************************/
 {
-    POSITION position = m_templateList.GetHeadPosition();
+    POSITION    position = m_templateList.GetHeadPosition();
+    int         nIcon = 0;
     while( position != NULL ) {
         CDocTemplate *pTemplate = (CDocTemplate *)m_templateList.GetNext( position );
         ASSERT( pTemplate != NULL );
+        nIcon++;
 
         CString strExtension;
         CString strProgId;
@@ -233,15 +235,23 @@ void CDocManager::RegisterShellFileTypes( BOOL bCompat )
         ::GetModuleFileName( AfxGetInstanceHandle(), szExeName, 255 );
 
         CString strFmt1;
+        CString strFmt2;
         strFmt1.Format( _T( "%s\\shell\\open\\command" ), (LPCTSTR)strProgId );
         if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
             continue;
         }
         ::RegSetValue( hKey, NULL, REG_SZ, szExeName, _tcslen( szExeName ) );
         ::RegCloseKey( hKey );
-        
+
+        strFmt1.Format( _T( "%s\\DefaultIcon" ), (LPCTSTR)strProgId );
+        strFmt2.Format( _T( "%s,%d" ), szExeName, nIcon );
+        if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
+            continue;
+        }
+        ::RegSetValue( hKey, NULL, REG_SZ, strFmt2, strFmt2.GetLength() );
+        ::RegCloseKey( hKey );
+                
         if( bCompat ) {
-            CString strFmt2;
             strFmt1.Format( _T( "%s\\shell\\print\\command" ), (LPCTSTR)strProgId );
             strFmt2.Format( _T( "%s /p" ), szExeName );
             if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
