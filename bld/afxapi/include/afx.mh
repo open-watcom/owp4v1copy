@@ -847,6 +847,14 @@ void AFXAPI     AfxDump( const CObject *pOb );
 #define ASSERT_KINDOF( classname, pobject ) \
     ASSERT( pobject->IsKindOf( RUNTIME_CLASS( classname ) ) )
 #define TRACE       AfxTrace
+#define TRACE0( exp ) \
+    TRACE( exp )
+#define TRACE1( exp, param1 ) \
+    TRACE( exp, param1 )
+#define TRACE2( exp, param1, param2 ) \
+    TRACE( exp, param1, param2 )
+#define TRACE3( exp, param1, param2, param3 ) \
+    TRACE( exp, param1, param2, param3 )
 #define ENSURE_ARG( booleanExpression ) \
     ENSURE( booleanExpression )
 #define ENSURE_VALID( pObject ) \
