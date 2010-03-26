@@ -437,8 +437,8 @@ void AFXAPI DDX_Radio( CDataExchange *pDX, int nIDC, int &value )
             }
             hWnd = ::GetWindow( hWnd, GW_HWNDNEXT );
             if( hWnd == NULL || ::GetWindowLong( hWnd, GWL_STYLE ) & WS_GROUP ) {
-                AfxMessageBox( AFX_IDP_PARSE_RADIO_BUTTON );
-                pDX->Fail();
+                value = -1;
+                break;
             }
         }
     } else {
