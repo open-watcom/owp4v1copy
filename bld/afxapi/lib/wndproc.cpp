@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -51,5 +51,11 @@ LRESULT CALLBACK AfxWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
     pState->m_msgCur.pt.x = LOWORD( dwPos );
     pState->m_msgCur.pt.y = HIWORD( dwPos );
 
-    return( pWnd->WindowProc( message, wParam, lParam ) );
+    try {
+        return( pWnd->WindowProc( message, wParam, lParam ) );
+    } catch( CException *pEx ) {
+        CWinThread *pThread = AfxGetThread();
+        ASSERT( pThread != NULL );
+        return( pThread->ProcessWndProcException( pEx, &pState->m_msgCur ) );
+    }
 }
