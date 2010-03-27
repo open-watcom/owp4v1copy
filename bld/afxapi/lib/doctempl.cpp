@@ -141,15 +141,15 @@ CDocTemplate::Confidence CDocTemplate::MatchDocType( LPCTSTR lpszPathName,
     }
 
     CString strExt;
-    if( !GetDocString( strExt, filterExt ) ) {
-        return( noAttempt );
+    if( !GetDocString( strExt, filterExt ) || strExt.IsEmpty() ) {
+        return( yesAttemptForeign );
     }
 
     LPCTSTR lpszPathExt = _tcsrchr( lpszPathName, _T( '.' ) );
     if( lpszPathExt != NULL && strExt.CompareNoCase( lpszPathExt ) == 0 ) {
         return( yesAttemptNative );
     }
-    return( noAttempt );
+    return( yesAttemptForeign );
 }
 
 void CDocTemplate::RemoveDocument( CDocument *pDoc )
