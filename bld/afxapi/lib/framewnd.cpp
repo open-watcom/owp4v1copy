@@ -196,11 +196,14 @@ BOOL CFrameWnd::LoadFrame( UINT nIDResource, DWORD dwDefaultStyle, CWnd *pParent
 /***************************************************/
 {
     m_nIDHelp = nIDResource;
+
+    CString str;
+    str.LoadString( nIDResource );
+    AfxExtractSubString( m_strTitle, str, 0 );
     
     HICON hIcon = ::LoadIcon( AfxGetResourceHandle(), MAKEINTRESOURCE( nIDResource ) );
     LPCTSTR lpszClass = AfxRegisterWndClass( CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW, NULL,
                                              (HBRUSH)(COLOR_WINDOW + 1), hIcon );
-    m_strTitle.LoadString( nIDResource );
     LoadAccelTable( MAKEINTRESOURCE( nIDResource ) );
     return( Create( lpszClass, m_strTitle, dwDefaultStyle, rectDefault, pParentWnd,
                     MAKEINTRESOURCE( nIDResource ), 0L, pContext ) );
