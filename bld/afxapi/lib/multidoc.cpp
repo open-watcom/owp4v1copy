@@ -97,7 +97,6 @@ CDocument *CMultiDocTemplate::OpenDocumentFile( LPCTSTR lpszPathName, BOOL bMake
         }
         pDoc->SetPathName( lpszPathName );
     }
-    bMakeVisible = bMakeVisible;
     InitialUpdateFrame( pFrame, pDoc, bMakeVisible );
     return( pDoc );
 }
