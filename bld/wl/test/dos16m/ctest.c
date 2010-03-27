@@ -16,6 +16,7 @@ int main( int argc, char **argv )
     char        **env;
     int         i;
 
+    /* The version is 4.45 for DOS/4G(W) 1.97. */
     printf( "DOS/16M version: %Ws\n", _d16info.versionp );
     printf( "Executed as: %s\n", argv[0] );
 
@@ -26,7 +27,7 @@ int main( int argc, char **argv )
     while( *f_env ) {
         printf( "%Ws\n", f_env );
         f_env += _fstrlen( f_env ) + 1;
-        if( i-- == 0 )
+        if( --i == 0 )
             break;  /* Limit the number of strings printed. */
     }
 
@@ -37,7 +38,7 @@ int main( int argc, char **argv )
     while( *env ) {
         puts( *env );
         ++env;
-        if( i-- == 0 )
+        if( --i == 0 )
             break;  /* Limit the number of strings printed. */
     }
 
