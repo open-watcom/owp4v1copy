@@ -144,11 +144,11 @@
 .*  generate title and start of code (declaration)
 .   .topsect &fncttl.
 .   .if '&funcgrp.' ne '' .do begin
-.   .   .ixm &funcgrp.
+.   .   .ixm '&funcgrp.'
 .   .do end
 .   .sr *i=1
 .   .pe &__fnx.
-.   .   .if '&funcgrp.' ne '&$$fnc(&*i.)' .ixm &$$fnc(&*i.);.sr *i=&*i.+1
+.   .   .if '&funcgrp.' ne '&$$fnc(&*i.)' .ixm '&$$fnc(&*i.)';.sr *i=&*i.+1
 .   .cp 5
 .   .newcode Synopsis:
 .do end
@@ -381,7 +381,7 @@ Prototype in
 .dm id end
 .*
 .dm kw begin
-.ix &*
+.ix '&*'
 :SF font=4.&*:eSF.
 .dm kw end
 .*

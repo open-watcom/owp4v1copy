@@ -27,7 +27,7 @@
 :set symbol="func" value="_&*".
 :set symbol="headtxt0$" value="_&*".
 :set symbol="headtxt1$" value="_&*".
-.ixm &func.
+.ixm '&func.'
 .se __fnx=1
 .se $$fnc(1)=&func.
 .newcode Synopsis:
@@ -48,8 +48,8 @@
 :set symbol="func2" value="_&*._w".
 :set symbol="headtxt0$" value="_&* &rroutines".
 :set symbol="headtxt1$" value="_&* &rroutines".
-.ixm &func.
-.ixm &func._w
+.ixm '&func.'
+.ixm '&func._w'
 .se __fnx=2
 .se $$fnc(1)=&func.
 .se $$fnc(2)=&func._w
@@ -67,9 +67,9 @@
 :set symbol="func3" value="_&*._wxy".
 :set symbol="headtxt0$" value="_&* &rroutines".
 :set symbol="headtxt1$" value="_&* &rroutines".
-.ixm &func.
-.ixm &func._w
-.ixm &func._wxy
+.ixm '&func.'
+.ixm '&func._w'
+.ixm '&func._wxy'
 .se __fnx=3
 .se $$fnc(1)=&func.
 .se $$fnc(2)=&func._w
@@ -87,8 +87,8 @@
 :set symbol="func2" value="_&*.ms".
 :set symbol="headtxt0$" value="_&* &rroutines".
 :set symbol="headtxt1$" value="_&* &rroutines".
-.ixm &func.
-.ixm &func.ms
+.ixm '&func.'
+.ixm '&func.ms'
 .se __fnx=2
 .se $$fnc(1)=&func.
 .se $$fnc(2)=&func.ms
@@ -131,14 +131,14 @@
 .dm grexam end
 .*
 .dm gfuncref begin
-.ix &*1
+.ix '&*1'
 (see the
 .kw _&*1
 &routine)&*2
 .dm gfuncref end
 .*
 .dm gfuncsref begin
-.ix &*1
+.ix '&*1'
 (see the
 .kw _&*1
 &routines)&*2
@@ -146,11 +146,11 @@
 .*
 .dm uterm begin
 .note _&*
-.ix &*
+.ix '&*'
 .dm uterm end
 .*
 .dm uindex begin
 uindex=2
-.ix &*
+.ix '&*'
 .dm uindex end
 .*
