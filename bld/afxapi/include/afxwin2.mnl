@@ -1069,6 +1069,12 @@ AFX_INLINE CWnd * PASCAL CWnd::GetFocus()
     return( CWnd::FromHandle( ::GetFocus() ) );
 }
 
+AFX_INLINE CWnd * PASCAL CWnd::GetForegroundWindow()
+/**************************************************/
+{
+    return( CWnd::FromHandle( ::GetForegroundWindow() ) );
+}
+
 AFX_INLINE CWnd * PASCAL CWnd::GetOpenClipboardWindow()
 /*****************************************************/
 {

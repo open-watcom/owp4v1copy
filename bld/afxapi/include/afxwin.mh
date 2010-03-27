@@ -1138,6 +1138,7 @@ public:
     static const MSG * PASCAL   GetCurrentMessage();
     static CWnd * PASCAL        GetDesktopWindow();
     static CWnd * PASCAL        GetFocus();
+    static CWnd * PASCAL        GetForegroundWindow();
     static CWnd * PASCAL        GetOpenClipboardWindow();
     static BOOL PASCAL          ReflectLastMsg( HWND hWndChild, LRESULT *pResult = NULL );
     static void PASCAL          SetCaretPos( POINT point );
