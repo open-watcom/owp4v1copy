@@ -66,16 +66,17 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
     strTitle.LoadString( nIDSTitle );
 
     CString strFilter;
+    CString strExt;
     CString strDocString;
     LPCTSTR lpszDefExt = NULL;
     if( pTemplate != NULL ) {
-        CString strExt;
-        if( pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) ) {
-            if( strExt.GetLength() > 1 ) {
-                ASSERT( strExt[0] == '.' );
-                lpszDefExt = (LPCTSTR)strExt + 1;
-            }
-            if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) ) {
+        if( pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) &&
+            !strExt.IsEmpty() ) {
+            ASSERT( strExt.GetLength() >= 2 );
+            ASSERT( strExt[0] == '.' );
+            lpszDefExt = (LPCTSTR)strExt + 1;
+            if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) &&
+                !strDocString.IsEmpty() ) {
                 strFilter += strDocString;
                 strFilter.AppendChar( _T( '\0' ) );
                 strFilter.AppendChar( _T( '*' ) );
@@ -88,12 +89,15 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
         while( position != NULL ) {
             pTemplate = (CDocTemplate *)m_templateList.GetNext( position );
             ASSERT( pTemplate != NULL );
-            if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) ) {
+            if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) &&
+                pTemplate->GetDocString( strDocString, CDocTemplate::filterExt ) &&
+                !strDocString.IsEmpty() && !strExt.IsEmpty() ) {
+                ASSERT( strExt.GetLength() >= 2 );
+                ASSERT( strExt[0] == '.' );
                 strFilter += strDocString;
                 strFilter.AppendChar( _T( '\0' ) );
                 strFilter.AppendChar( _T( '*' ) );
-                pTemplate->GetDocString( strDocString, CDocTemplate::filterExt );
-                strFilter += strDocString;
+                strFilter += strExt;
                 strFilter.AppendChar( _T( '\0' ) );
             }
         }
