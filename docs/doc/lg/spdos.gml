@@ -844,6 +844,7 @@ deny write mode`0x02
 deny read mode`0x03
 deny none mode`0x04
 .tb set
+.tb
 .illust end
 .np
 The return value is the previous sharing mode used by the overlay

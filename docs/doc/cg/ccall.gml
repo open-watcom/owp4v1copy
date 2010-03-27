@@ -618,6 +618,8 @@ the argument list.
 .if '&machine' eq '8086' .do begin
 ^huge pointer^&fptrsz.^&fargsz.^[&dxup &axup]
 .do end
+.tb set
+.tb
 .np
 .us Note that the size of the argument listed in the table assumes
 .us that no function prototypes are specified.

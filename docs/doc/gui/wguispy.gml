@@ -423,14 +423,15 @@ Messages followed by (*) are undocumented messages.
 .br
 Messages followed by (**) are available under Win32 only.
 .*
+.tb set $
+.tb &INDlvl.+2 &syscl./2+1
+.*
 .beglevel
 .*
 .section Clipboard Messages
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_ASKCBFORMATNAME $WM_CHANGECBCHAIN
 $WM_CLEAR           $WM_CLIPBOARDUPDATE (**)
 $WM_COPY            $WM_CUT
@@ -445,8 +446,6 @@ $WM_UNDO            $WM_VSCROLLCLIPBOARD
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_DDE_ACK         $WM_DDE_ADVISE
 $WM_DDE_DATA        $WM_DDE_EXECUTE
 $WM_DDE_INITIATE    $WM_DDE_POKE
@@ -458,8 +457,6 @@ $WM_DDE_UNADVISE
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_INITDIALOG      $WM_INITMENU
 $WM_INITMENUPOPUP   $WM_UNINITMENUPOPUP (**)
 
@@ -469,8 +466,6 @@ $WM_INITMENUPOPUP   $WM_UNINITMENUPOPUP (**)
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_APPCOMMAND (**)    $WM_BEGINDRAG (*)
 $WM_CHAR               $WM_CHARTOITEM
 $WM_COMMAND            $WM_CONTEXTMENU (**)
@@ -494,8 +489,6 @@ $WM_UNICHAR (**)       $WM_VSCROLL
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_ISACTIVEICON (*)$WM_MDIACTIVATE
 $WM_MDICASCADE      $WM_MDICREATE
 $WM_MDIDESTROY      $WM_MDIGETACTIVE
@@ -508,8 +501,6 @@ $WM_MDISETMENU      $WM_MDITILE
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_CAPTURECHANGED (**)$WM_LBUTTONDBLCLK
 $WM_LBUTTONDOWN     $WM_LBUTTONUP
 $WM_MBUTTONDBLCLK   $WM_MBUTTONDOWN
@@ -526,8 +517,6 @@ $WM_XBUTTONDOWN (**)$WM_XBUTTONUP (**)
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_NCACTIVATE      $WM_NCCALCSIZE
 $WM_NCCREATE        $WM_NCDESTROY
 $WM_NCPAINT
@@ -537,8 +526,6 @@ $WM_NCPAINT
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_NCHITTEST       $WM_NCLBUTTONDBLCLK
 $WM_NCLBUTTONDOWN   $WM_NCLBUTTONUP
 $WM_NCMBUTTONDBLCLK $WM_NCMBUTTONDOWN
@@ -553,8 +540,6 @@ $WM_NCXBUTTONDOWN (**)$WM_NCXBUTTONUP (**)
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_CHANGEUISTATE (**)$WM_COALESCE_FIRST
 $WM_COALESCE_LAST     $WM_COMMNOTIFY
 $WM_CONVERTREQUEST (*)$WM_CONVERTRESULT (*)
@@ -571,8 +556,6 @@ $WM_UPDATEUISTATE (**)$WM_YOMICHAR (*)
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_CANCELJOURNAL (**)$WM_COMPACTING
 $WM_DEVMODECHANGE     $WM_DEVICECHANGE (**)
 $WM_DISPLAYCHANGE (**)$WM_ENDSESSION
@@ -593,8 +576,6 @@ $WM_WININICHANGE      $WM_WTSSESSION_CHANGE (**)
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_USER
 .monooff
 .*
@@ -602,8 +583,6 @@ $WM_USER
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $None
 .monooff
 .*
@@ -611,8 +590,6 @@ $None
 .*
 .np
 .monoon
-.tb set $
-.tb &INDlvl.+2 &syscl./2+1
 $WM_ACTIVATE           $WM_ACTIVATEAPP
 $WM_ACTIVATESHELLWINDOW (*)$WM_ALTTABACTIVE (*)
 $WM_CANCELMODE         $WM_CREATE
@@ -652,6 +629,9 @@ $WM_WINDOWPOSCHANGED   $WM_WINDOWPOSCHANGING
 .monooff
 .*
 .endlevel
+.*
+.tb set
+.tb
 .*
 .section Saving and Loading Message Configurations
 .*
