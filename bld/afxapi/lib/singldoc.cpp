@@ -98,10 +98,12 @@ CDocument *CSingleDocTemplate::OpenDocumentFile( LPCTSTR lpszPathName,
         if( !pDoc->OnNewDocument() ) {
             return( NULL );
         }
+        SetDefaultTitle( pDoc );
     } else {
         if( !pDoc->OnOpenDocument( lpszPathName ) ) {
             return( NULL );
         }
+        pDoc->SetPathName( lpszPathName );
     }
 
     InitialUpdateFrame( (CFrameWnd *)pApp->m_pMainWnd, pDoc, bMakeVisible );
