@@ -37,19 +37,20 @@ be combined explicitly with a segment value to produce a valid pointer.
 To support based pointers, the following keywords are provided:
 ..sk 1 c
 .ix keyword
-..tb set ›
 ..sr firsttab=&SYSIN.+3
+..tb set $
 ..tb &firsttab. +9 +9 +9 +9
 .kwon
-›&kwbased.
+$&kwbased.
 .kwix &kwbased_sp.
-›&kwsegment.
+$&kwsegment.
 .kwix &kwsegm_sp.
-›&kwsegname.
+$&kwsegname.
 .kwix &kwsegnm_sp.
-›&kwself.
+$&kwself.
 .kwix &kwself_sp.
 .kwoff
+..tb set
 ..tb
 .keep begin
 .pp

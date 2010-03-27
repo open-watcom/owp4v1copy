@@ -187,13 +187,13 @@ or
 ..do end
 .boxbeg
 .monoon
-›    ›:HP0.32-bit:eHP0.        ›:HP0.16-bit:eHP0.        ›signed›unsigned
-›long›:HP0.representation:eHP0.›:HP0.representation:eHP0.›short ›short
+$    $:HP0.32-bit:eHP0.        $:HP0.16-bit:eHP0.        $signed$unsigned
+$long$:HP0.representation:eHP0.$:HP0.representation:eHP0.$short $short
 .monooff
 .boxline
 .monoon
-›65538 ›0x00010002›0x0002›2     ›2
-›100000›0x000186A0›0x86A0›-31072›34464
+$65538 $0x00010002$0x0002$2     $2
+$100000$0x000186A0$0x86A0$-31072$34464
 .monooff
 .boxend
 .do end
@@ -266,13 +266,13 @@ and
 ..do end
 .boxbeg
 .monoon
-›signed›:HP0.16-bit›32-bit:eHP0.›signed›unsigned
-›short ›:HP0.represention›representation:eHP0.›long  ›long
+$signed$:HP0.16-bit$32-bit:eHP0.$signed$unsigned
+$short $:HP0.represention$representation:eHP0.$long  $long
 .monooff
 .boxline
 .monoon
-›-2    ›0xFFFE ›0xFFFFFFFE›-2   ›4294967294
-›32766 ›0x7FFE ›0x00007FFE›32766›32766
+$-2    $0xFFFE $0xFFFFFFFE$-2   $4294967294
+$32766 $0x7FFE $0x00007FFE$32766$32766
 .monooff
 .boxend
 .do end
@@ -465,19 +465,19 @@ an addition on combinations of various types:
 .  .boxcol 14
 ..do end
 .boxbeg
-› Operation                     › Result Type
+$ Operation                     $ Result Type
 .boxline
 .monoon
-›signed char + signed char  ›signed int
-›unsigned char + signed int ›signed int
-›signed int + signed int    ›signed int
-›signed int + unsigned int  ›unsigned int
-›unsigned int + signed long ›signed long
-›signed int + unsigned long ›unsigned long
-›signed char + float        ›float
-›signed long + double       ›double
-›float + double             ›double
-›float + long double        ›long double
+$signed char + signed char  $signed int
+$unsigned char + signed int $signed int
+$signed int + signed int    $signed int
+$signed int + unsigned int  $unsigned int
+$unsigned int + signed long $signed long
+$signed int + unsigned long $unsigned long
+$signed char + float        $float
+$signed long + double       $double
+$float + double             $double
+$float + long double        $long double
 .monooff
 .boxend
 .do end

@@ -8,20 +8,20 @@
 .boxcol  9
 .boxcol  9
 .boxbeg
-›           ›Smallest›Largest ›Digits  ›370
-›           ›Absolute›Absolute›Of      ›Type
-›Type       ›Value   ›Value   ›Accuracy›Name
+$           $Smallest$Largest $Digits  $370
+$           $Absolute$Absolute$Of      $Type
+$Type       $Value   $Value   $Accuracy$Name
 .boxline
 .monoon
-›float      ›5.4E-79 ›7.2E75  ›7       ›:HP0.short:eHP0.
+$float      $5.4E-79 $7.2E75  $7       $:HP0.short:eHP0.
 .monooff
 .boxline
 .monoon
-›double     ›5.4E-79 ›7.2E75  ›16      ›:HP0.long:eHP0.
+$double     $5.4E-79 $7.2E75  $16      $:HP0.long:eHP0.
 .monooff
 .boxline
 .monoon
-›long double›5.4E-79 ›7.2E75  ›16      ›:HP0.long:eHP0.
+$long double$5.4E-79 $7.2E75  $16      $:HP0.long:eHP0.
 .monooff
 .boxend
 .do end

@@ -258,14 +258,14 @@ as shown in the first column:
 .  .boxcol 19
 ..do end
 .boxbeg
-›Argument             ›After Substitution
+$Argument             $After Substitution
 .boxline
 .monoon
-›string( abc )        ›"abc"
-›string( "abc" )      ›"\"abc\""
-›string( "abc" "def" )›"\"abc\" \"def\""
-›string( \'/ )        ›"\\'/"
-›string( f(x) )       ›"f(x)"
+$string( abc )        $"abc"
+$string( "abc" )      $"\"abc\""
+$string( "abc" "def" )$"\"abc\" \"def\""
+$string( \'/ )        $"\\'/"
+$string( f(x) )       $"f(x)"
 .monooff
 .boxend
 .do end
@@ -325,17 +325,17 @@ the "Result" column indicates successive expansions of the macros.
 .  .boxcol 17
 ..do end
 .boxbeg
-›Argument           ›After Substitution
+$Argument           $After Substitution
 .boxline
-.mono ›glue( 12, 34 )     ›1234
+.mono $glue( 12, 34 )     $1234
 .boxline
-.mono ›glue( first, 1 )   ›first1
-.mono ›                   ›"Peas"
+.mono $glue( first, 1 )   $first1
+.mono $                   $"Peas"
 .boxline
-.mono ›glue( first, 2 )   ›first2
+.mono $glue( first, 2 )   $first2
 .boxline
-.mono ›glue( first, last )›firstlast
-.mono ›                   ›"Peace on Earth"
+.mono $glue( first, last )$firstlast
+.mono $                   $"Peace on Earth"
 .boxend
 .do end
 .el .do begin
@@ -395,21 +395,21 @@ Consider the following examples, with these macro definitions in place:
 .  .boxcol 21
 ..do end
 .boxbeg
-›Invocation           ›After Substitution
+$Invocation           $After Substitution
 .boxline
-.mono ›f(c)                 ›c
+.mono $f(c)                 $c
 .boxline
-.mono ›f(f(c))              ›f(c)
-.mono ›                     ›c
+.mono $f(f(c))              $f(c)
+.mono $                     $c
 .boxline
-.mono ›f(g(c))              ›f((1+c))
-.mono ›                     ›(1+c)
+.mono $f(g(c))              $f((1+c))
+.mono $                     $(1+c)
 .boxline
-.mono ›h("hello",f("there"))›h("hello","there")
-.mono ›                     ›"hello" "there"
+.mono $h("hello",f("there"))$h("hello","there")
+.mono $                     $"hello" "there"
 .boxline
-.mono ›f(xyz)("Hello\n")    ›f(printf)("Hello\n")
-.mono ›                     ›printf("Hello\n")
+.mono $f(xyz)("Hello\n")    $f(printf)("Hello\n")
+.mono $                     $printf("Hello\n")
 .boxend
 .do end
 .el .do begin
@@ -502,19 +502,19 @@ Several example usages of the above macros follow:
 .  .boxcol 22
 ..do end
 .boxbeg
-›Invocation           ›After Substitution
+$Invocation           $After Substitution
 .boxline
-.mono ›shuffle(x,y,z)           ›y,z,x
+.mono $shuffle(x,y,z)           $y,z,x
 .boxline
-.mono ›shuffle(x,y)             ›y,x
+.mono $shuffle(x,y)             $y,x
 .boxline
-.mono ›shuffle(a,b,c,d,e)       ›b,c,d,e,a
+.mono $shuffle(a,b,c,d,e)       $b,c,d,e,a
 .boxline
-.mono ›showlist(x,y,z)          ›"x,y,z"
+.mono $showlist(x,y,z)          $"x,y,z"
 .boxline
-.mono ›args("%d+%d=%d",a,b,c)   ›a,b,c
+.mono $args("%d+%d=%d",a,b,c)   $a,b,c
 .boxline
-.mono ›args("none")             ›
+.mono $args("none")             $
 .boxend
 .do end
 .el .do begin
@@ -561,23 +561,23 @@ Consider these examples, using the above macro definitions:
 .  .boxcol 13
 ..do end
 .boxbeg
-›Invocation ›After Rescanning
+$Invocation $After Rescanning
 .boxline
-.mono ›f(g)(r)    ›g(r)
-.mono ›           ›(1+r)
+.mono $f(g)(r)    $g(r)
+.mono $           $(1+r)
 .boxline
-.mono ›f(f)(r)    ›f(r)
+.mono $f(f)(r)    $f(r)
 .boxline
-.mono ›h(f,(b))   ›f (b)
-.mono ›           ›b
+.mono $h(f,(b))   $f (b)
+.mono $           $b
 .boxline
-.mono ›i(h(i,(b)))›i(i (b))
-.mono ›           ›2-i (b)
+.mono $i(h(i,(b)))$i(i (b))
+.mono $           $2-i (b)
 .boxline
-.mono ›i(i (b))   ›i(2-b)
-.mono ›           ›2-2-b
+.mono $i(i (b))   $i(2-b)
+.mono $           $2-2-b
 .boxline
-.mono ›rcrs       ›rcrs+2
+.mono $rcrs       $rcrs+2
 .boxend
 .do end
 .el .do begin

@@ -86,28 +86,30 @@ The following illustrates the method used to pass arguments.
 .sr c0=&sysin+1
 .sr c1=&c0+20
 .sr c2=&c1+20
-.tb set ›
+.tb set $
 .tb &c0+1 &c1+1
 .keep 20
 .bx on &c0 &c1 &c2
-›Type of Argument›Method Used to Pass Argument
+$Type of Argument$Method Used to Pass Argument
 .bx
-›non-character constant›address of constant
-›non-character expression›address of value of expression
-›non-character variable›address of variable
-›character constant›address of string descriptor
-›character expression›address of string descriptor
-›character variable›address of string descriptor
-›non-character array›address of array
-›non-character array element›address of array
-›character array›address of string descriptor
-›character array element›address of string descriptor
-›character substring›address of string descriptor
-›subprogram›address of subprogram
-›alternate return specifier›no argument passed
-›user-defined structure›address of structure
+$non-character constant$address of constant
+$non-character expression$address of value of expression
+$non-character variable$address of variable
+$character constant$address of string descriptor
+$character expression$address of string descriptor
+$character variable$address of string descriptor
+$non-character array$address of array
+$non-character array element$address of array
+$character array$address of string descriptor
+$character array element$address of string descriptor
+$character substring$address of string descriptor
+$subprogram$address of subprogram
+$alternate return specifier$no argument passed
+$user-defined structure$address of structure
 .bx off
 .keep end
+.tb set
+.tb
 .np
 When passing a character array as an argument, the string descriptor
 contains the address of the first element of the array and the length

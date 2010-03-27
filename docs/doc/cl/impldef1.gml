@@ -194,61 +194,61 @@ execution character set.
 .  .boxcol 20
 ..do end
 .boxbeg
-›Escape  ›Hex
-›Sequence›Value›Meaning
+$Escape  $Hex
+$Sequence$Value$Meaning
 .boxline
 .monoon
-›\a›07
+$\a$07
 .monooff
-..ct ›Bell or alert
+..ct $Bell or alert
 .monoon
-›\b›08
+$\b$08
 .monooff
-..ct ›Backspace
+..ct $Backspace
 .monoon
-›\f›0C
+$\f$0C
 .monooff
-..ct ›Form feed
+..ct $Form feed
 .monoon
-›\n›0A
+$\n$0A
 .monooff
-..ct ›New-line
+..ct $New-line
 .monoon
-›\r›0D
+$\r$0D
 .monooff
-..ct ›Carriage return
+..ct $Carriage return
 .monoon
-›\t›09
+$\t$09
 .monooff
-..ct ›Horizontal tab
+..ct $Horizontal tab
 .monoon
-›\v›0B
+$\v$0B
 .monooff
-..ct ›Vertical tab
+..ct $Vertical tab
 .monoon
-›\'›27
+$\'$27
 .monooff
-..ct ›Apostrophe or single quote
+..ct $Apostrophe or single quote
 .monoon
-›\"›22
+$\"$22
 .monooff
-..ct ›Double quote
+..ct $Double quote
 .monoon
-›\?›3F
+$\?$3F
 .monooff
-..ct ›Question mark
+..ct $Question mark
 .monoon
-›\\›5C
+$\\$5C
 .monooff
-..ct ›Backslash
+..ct $Backslash
 .monoon
-›\:HP1.ddd:eHP1.›
+$\:HP1.ddd:eHP1.$
 .monooff
-..ct ›Octal value
+..ct $Octal value
 .monoon
-›\x:HP1.ddd:eHP1.›
+$\x:HP1.ddd:eHP1.$
 .monooff
-..ct ›Hexadecimal value
+..ct $Hexadecimal value
 .boxend
 .do end
 .el .do begin
@@ -496,16 +496,16 @@ The result of casting an integer to a pointer or vice versa (6.3.4).
 .  .boxcol 20
 ..do end
 .boxbeg
-›Pointer›:MONO.short int:eMONO.
-›Type   ›:MONO.int                ›long int:eMONO.
+$Pointer$:MONO.short int:eMONO.
+$Type   $:MONO.int                $long int:eMONO.
 .boxline
-›near›result is pointer value     ›result is DS register in
-›    ›                            ›high-order 2 bytes, pointer
-›    ›                            ›value in low-order 2 bytes
+$near$result is pointer value     $result is DS register in
+$    $                            $high-order 2 bytes, pointer
+$    $                            $value in low-order 2 bytes
 .boxline
-›far ›segment is discarded, result›result is segment in high-
-›huge›is pointer offset (low-order›order 2 bytes, offset in
-›    ›2 bytes of pointer)         ›low-order 2 bytes
+$far $segment is discarded, result$result is segment in high-
+$huge$is pointer offset (low-order$order 2 bytes, offset in
+$    $2 bytes of pointer)         $low-order 2 bytes
 .boxend
 .do end
 .el .do begin
@@ -540,19 +540,19 @@ huge       is pointer offset (low-order order 2 bytes, offset in
 .  .boxcol 20
 ..do end
 .boxbeg
-›Integer  ›             ›far pointer
-›Type     ›near pointer ›huge pointer
+$Integer  $             $far pointer
+$Type     $near pointer $huge pointer
 .boxline
 .monoon
-›short int›:HP0.result is integer value     ›result segment is DS:eHP0.
-›int      ›:HP0.                            ›register, offset is:eHP0.
-›         ›:HP0.                            ›integer value:eHP0.
+$short int$:HP0.result is integer value     $result segment is DS:eHP0.
+$int      $:HP0.                            $register, offset is:eHP0.
+$         $:HP0.                            $integer value:eHP0.
 .monooff
 .boxline
 .monoon
-›long int ›:HP0.result is low-order 2 bytes ›result segment is high-:eHP0.
-›         ›:HP0.of integer value            ›order 2 bytes, offset is:eHP0.
-›         ›:HP0.                            ›low-order 2 bytes:eHP0.
+$long int $:HP0.result is low-order 2 bytes $result segment is high-:eHP0.
+$         $:HP0.of integer value            $order 2 bytes, offset is:eHP0.
+$         $:HP0.                            $low-order 2 bytes:eHP0.
 .monooff
 .boxend
 .do end
@@ -587,15 +587,15 @@ long int    result is low-order 2       result segment is high-
 .  .boxcol 20
 ..do end
 .boxbeg
-›Pointer›            ›:MONO.int:eMONO.
-›Type   ›:MONO.short ›long int:eMONO.
+$Pointer$            $:MONO.int:eMONO.
+$Type   $:MONO.short $long int:eMONO.
 .boxline
-›near›result is low-order 2 bytes ›result is pointer value
-›    ›of pointer value            ›
+$near$result is low-order 2 bytes $result is pointer value
+$    $of pointer value            $
 .boxline
-›far ›segment is discarded, result›segment is discarded, result
-›huge›is low-order 2 bytes of     ›is pointer offset
-›    ›pointer value               ›
+$far $segment is discarded, result$segment is discarded, result
+$huge$is low-order 2 bytes of     $is pointer offset
+$    $pointer value               $
 .boxend
 .do end
 .el .do begin
@@ -628,20 +628,20 @@ huge        result is low-order 2       result is pointer offset
 .  .boxcol 20
 ..do end
 .boxbeg
-›Integer  ›                             ›far pointer
-›Type     ›near pointer                 ›huge pointer
+$Integer  $                             $far pointer
+$Type     $near pointer                 $huge pointer
 .boxline
 .monoon
-›short int›:HP0.result is integer value,  ›result segment is DS:eHP0.
-›         ›:HP0.with zeroes for high-order›register, offset is integer:eHP0.
-›         ›:HP0.2 bytes                   ›value, with zeroes for:eHP0.
-›         ›:HP0.                          ›high-order 2 bytes:eHP0.
+$short int$:HP0.result is integer value,  $result segment is DS:eHP0.
+$         $:HP0.with zeroes for high-order$register, offset is integer:eHP0.
+$         $:HP0.2 bytes                   $value, with zeroes for:eHP0.
+$         $:HP0.                          $high-order 2 bytes:eHP0.
 .monooff
 .boxline
 .monoon
-›int      ›:HP0.result is integer value   ›result segment is DS:eHP0.
-›long int ›:HP0.                          ›register, offset is:eHP0.
-›         ›:HP0.                          ›integer value:eHP0.
+$int      $:HP0.result is integer value   $result segment is DS:eHP0.
+$long int $:HP0.                          $register, offset is:eHP0.
+$         $:HP0.                          $integer value:eHP0.
 .monooff
 .boxend
 .do end

@@ -12,10 +12,12 @@
 .sepsect Language Reference
 .septoc Language Reference
 .sk 29
-.tb set ›
 .sr c0=&syscl/2
+.tb set $
 .tb &c0-5 &c0
-.us ›First Edition
+.us $First Edition
+.tb set
+.tb
 .**
 .newpage 2
 ..pn roman lower

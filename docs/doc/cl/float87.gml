@@ -17,21 +17,21 @@
 ..do end
 .keep break
 .boxbeg
-›           ›Smallest›Largest ›Digits  ›80x87
-›           ›Absolute›Absolute›Of      ›Type
-›Type       ›Value   ›Value   ›Accuracy›Name
+$           $Smallest$Largest $Digits  $80x87
+$           $Absolute$Absolute$Of      $Type
+$Type       $Value   $Value   $Accuracy$Name
 .boxline
 .monoon
-›float      ›1.1E-38 ›3.4E+38 ›6›:HP0.short real:eHP0.
+$float      $1.1E-38 $3.4E+38 $6$:HP0.short real:eHP0.
 .monooff
 .boxline
 .monoon
-›double     ›2.2E-308›1.7E+308›15›:HP0.long real:eHP0.
+$double     $2.2E-308$1.7E+308$15$:HP0.long real:eHP0.
 .monooff
 ..if '&target' eq 'PC'  or '&target' eq 'PC 370' ..th ..do begin
 .boxline
 .monoon
-›long double›2.2E-308›1.7E+308›15›:HP0.long real:eHP0.
+$long double$2.2E-308$1.7E+308$15$:HP0.long real:eHP0.
 .monooff
 ..do end
 .boxend

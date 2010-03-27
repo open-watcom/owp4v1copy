@@ -17,17 +17,17 @@
 .  .boxcol 20
 ..do end
 .boxbeg
-›Type          ›Smallest Value›Largest Value
+$Type          $Smallest Value$Largest Value
 .boxline
 .smonoon
-›signed char       ›-128                ›127
-›unsigned char     ›0                   ›255
-›signed short      ›-32768              ›32767
-›unsigned short    ›0                   ›65535
-›signed long       ›-2147483648         ›2147483647
-›unsigned long     ›0                   ›4294967295
-›signed long long  ›-9223372036854775808›9223372036854775807
-›unsigned long long›0                   ›18446744073709551615
+$signed char       $-128                $127
+$unsigned char     $0                   $255
+$signed short      $-32768              $32767
+$unsigned short    $0                   $65535
+$signed long       $-2147483648         $2147483647
+$unsigned long     $0                   $4294967295
+$signed long long  $-9223372036854775808$9223372036854775807
+$unsigned long long$0                   $18446744073709551615
 .smonooff
 .boxend
 .do end

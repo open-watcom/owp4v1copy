@@ -12,17 +12,17 @@
 .  .boxcol 25
 ..do end
 .boxbeg
-›Escape›
-›Sequence› Meaning
+$Escape$
+$Sequence$ Meaning
 .boxline
 .monoon
-›\a›:HP0.Causes an audible or visual alert:eHP0.
-›\b›:HP0.Back up one character:eHP0.
-›\f›:HP0.Move to the start of the next page:eHP0.
-›\n›:HP0.Move to the start of the next line:eHP0.
-›\r›:HP0.Move to the start of the current line:eHP0.
-›\t›:HP0.Move to the next horizontal tab:eHP0.
-›\v›:HP0.Move to the next vertical tab:eHP0.
+$\a$:HP0.Causes an audible or visual alert:eHP0.
+$\b$:HP0.Back up one character:eHP0.
+$\f$:HP0.Move to the start of the next page:eHP0.
+$\n$:HP0.Move to the start of the next line:eHP0.
+$\r$:HP0.Move to the start of the current line:eHP0.
+$\t$:HP0.Move to the next horizontal tab:eHP0.
+$\v$:HP0.Move to the next vertical tab:eHP0.
 .monooff
 .boxend
 .do end

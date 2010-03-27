@@ -10,15 +10,15 @@
 ..do end
 .boxbeg
 .monoon
-›FLT_ROUNDS›:HP0.Technique:eHP0.
+$FLT_ROUNDS$:HP0.Technique:eHP0.
 .monooff
 .boxline
 .monoon
-›-1›:HP0.indeterminable:eHP0.
-› 0›:HP0.toward zero:eHP0.
-› 1›:HP0.to nearest number:eHP0.
-› 2›:HP0.toward positive infinity:eHP0.
-› 3›:HP0.toward negative infinity:eHP0.
+$-1$:HP0.indeterminable:eHP0.
+$ 0$:HP0.toward zero:eHP0.
+$ 1$:HP0.to nearest number:eHP0.
+$ 2$:HP0.toward positive infinity:eHP0.
+$ 3$:HP0.toward negative infinity:eHP0.
 .monooff
 .boxend
 .do end

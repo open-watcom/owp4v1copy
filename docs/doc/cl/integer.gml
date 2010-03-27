@@ -325,57 +325,57 @@ storage size.
 .  .boxcol 20
 ..do end
 .boxbeg
-›                  ›Minimum    ›Maximum
-›Type              ›Value      ›Value
+$                  $Minimum    $Maximum
+$Type              $Value      $Value
 .boxline
 .smonoon
-›signed char       ›-128       ›127
-.smonooff
-.boxline
-.smonoon
-›unsigned char     ›0          ›255
+$signed char       $-128       $127
 .smonooff
 .boxline
 .smonoon
-›char              ›0          ›255
+$unsigned char     $0          $255
 .smonooff
 .boxline
 .smonoon
-›short int         ›-32768     ›32767
+$char              $0          $255
 .smonooff
 .boxline
 .smonoon
-›unsigned short int›0          ›65535
+$short int         $-32768     $32767
 .smonooff
 .boxline
 .smonoon
-›int :HP0.(&c286.):eHP0.›-32768     ›32767
-.smonooff
-.smonoon
-›int :HP0.(&c386.):eHP0.›-2147483648›2147483647
+$unsigned short int$0          $65535
 .smonooff
 .boxline
 .smonoon
-›unsigned int :HP0.(&c286.):eHP0.›0          ›65535
+$int :HP0.(&c286.):eHP0.$-32768     $32767
 .smonooff
 .smonoon
-›unsigned int :HP0.(&c386.):eHP0.›0          ›4294967295
-.smonooff
-.boxline
-.smonoon
-›long int          ›-2147483648›2147483647
+$int :HP0.(&c386.):eHP0.$-2147483648$2147483647
 .smonooff
 .boxline
 .smonoon
-›unsigned long int ›0          ›18446744073709551615
+$unsigned int :HP0.(&c286.):eHP0.$0          $65535
+.smonooff
+.smonoon
+$unsigned int :HP0.(&c386.):eHP0.$0          $4294967295
 .smonooff
 .boxline
 .smonoon
-›long long int     ›-92233720368547758078›9223372036854775807
+$long int          $-2147483648$2147483647
 .smonooff
 .boxline
 .smonoon
-›unsigned long long›0     ›18446744073709551615
+$unsigned long int $0          $18446744073709551615
+.smonooff
+.boxline
+.smonoon
+$long long int     $-92233720368547758078$9223372036854775807
+.smonooff
+.boxline
+.smonoon
+$unsigned long long$0     $18446744073709551615
 .smonooff
 .boxend
 .do end
@@ -444,43 +444,43 @@ storage size.
 .  .boxcol 12
 ..do end
 .boxbeg
-›                  ›Minimum    ›Maximum
-›Type              ›Value      ›Value
+$                  $Minimum    $Maximum
+$Type              $Value      $Value
 .boxline
 .monoon
-›signed char       ›-128       ›127
+$signed char       $-128       $127
 .monooff
 .boxline
 .monoon
-›unsigned char     ›0          ›255
+$unsigned char     $0          $255
 .monooff
 .boxline
 .monoon
-›char              ›0          ›255
+$char              $0          $255
 .monooff
 .boxline
 .monoon
-›short int         ›-32768     ›32767
+$short int         $-32768     $32767
 .monooff
 .boxline
 .monoon
-›unsigned short int›0          ›65535
+$unsigned short int$0          $65535
 .monooff
 .boxline
 .monoon
-›int               ›-2147483648›2147483647
+$int               $-2147483648$2147483647
 .monooff
 .boxline
 .monoon
-›unsigned int      ›0          ›4294967295
+$unsigned int      $0          $4294967295
 .monooff
 .boxline
 .monoon
-›long int          ›-2147483648›2147483647
+$long int          $-2147483648$2147483647
 .monooff
 .boxline
 .monoon
-›unsigned long int ›0          ›4294967295
+$unsigned long int $0          $4294967295
 .monooff
 .boxend
 .us &wlooc. integer types and ranges

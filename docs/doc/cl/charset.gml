@@ -116,14 +116,17 @@ character sequences as substitutes for certain standard characters:
 .*               Steve
 ..bx new &SYSIN.+5 +10 +8
 ..sr firsttab=&SYSIN.+10
+..tb set $
 ..tb &firsttab.c +9c
-›Character
-›Sequence›Replaces
+$Character
+$Sequence$Replaces
 ..bx
-›(:›[
-› :)›]
-›|›|
-›&turnstile.›^
+$(:$[
+$ :)$]
+$|$|
+$&turnstile.$^
+..tb set
+..tb
 ..bx off
 .shade end
 ..do end

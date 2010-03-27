@@ -57,7 +57,7 @@
 :SET symbol='charset'   value="Character Sets".
 :SET symbol='initobj'   value="Initialization of Objects".
 .*
-..sr tabchar=›
+..sr tabchar=$
 .*
 :GDOC.
 .*
