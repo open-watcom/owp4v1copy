@@ -560,8 +560,6 @@ $(docsrc_dir)$(SL)gui$(SL)wedref.gml &
 $(docsrc_dir)$(SL)gui$(SL)wedregx.gml &
 $(docsrc_dir)$(SL)gui$(SL)wedtutor.gml &
 $(docsrc_dir)$(SL)gui$(SL)wguiaccl.gml &
-$(docsrc_dir)$(SL)gui$(SL)wguiapxa.gml &
-$(docsrc_dir)$(SL)gui$(SL)wguiapxb.gml &
 $(docsrc_dir)$(SL)gui$(SL)wguibrow.gml &
 $(docsrc_dir)$(SL)gui$(SL)wguidlog.gml &
 $(docsrc_dir)$(SL)gui$(SL)wguidrnt.gml &
