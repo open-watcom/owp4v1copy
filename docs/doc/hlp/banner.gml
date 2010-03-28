@@ -7,6 +7,7 @@
 .do end
 :ZH2 ctx='&*tag.'.&*
 .pu 1 .ixsect &*
+.pu 1 .ixsectid &*tag.
 .se headtxt0$=&*
 .se headtxt1$=&*
 .se SCTlvl=1

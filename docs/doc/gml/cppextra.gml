@@ -213,6 +213,7 @@
 :ZH2 ctx='&*tag.'.&* [&*cl_tmp.]
 .' .'if &e'&dohelp eq 1 .do begin
 .' .' .'pu 1 .ixsect &* [&*cl_tmp.]
+.' .' .'pu 1 .ixsectid &*tag.
 .' .' .'se SCTlvl=2
 .' .' .cntents &headtxt0$.
 .' .do end
@@ -229,6 +230,7 @@
 .el .do begin
 :ZH2 ctx='&*tag.'.&* Class Description
 .pu 1 .ixsect &* Class Description
+.pu 1 .ixsectid &*tag.
 .se SCTlvl=1
 .cntents &* Class Description
 .do end

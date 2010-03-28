@@ -979,6 +979,10 @@ or
 .ty ***We don't do ixsect
 .dm ixsect end
 .*
+.dm ixsectid begin
+.* placeholder, pass info for external HTML Help processing
+.dm ixsectid end
+.*
 .dm ixline begin
 .ty ***We don't do ixline
 .dm ixline end

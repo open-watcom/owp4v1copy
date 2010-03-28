@@ -640,6 +640,10 @@ The following pages contain cross-references to the
 .section &sectttl$. [&bookno.]
 .dm ixsect end
 .*
+.dm ixsectid begin
+.* placeholder, pass info for external HTML Help processing
+.dm ixsectid end
+.*
 .dm ixline begin
 .se *iwrd="&*1"
 .se *iwrd="&'strip(&*iwrd.,'T',',')"
