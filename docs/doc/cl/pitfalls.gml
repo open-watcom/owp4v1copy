@@ -265,9 +265,9 @@ in the definition was not treated as an
 end-of-statement indicator as expected, but was included in the
 definition of the macro
 .ix 'manifest constant'
-.ix constant manifest
-.ix constant '#define'
-.ix constant 'enumeration'
+.ix 'constant' 'manifest'
+.ix 'constant' '#define'
+.ix 'constant' 'enumeration'
 (:ITAL.manifest constant:eITAL.)
 .mono MAXVAL.
 The substitution then results in a semi-colon being placed in
@@ -342,7 +342,7 @@ if( value1 > 0 ) {
 .*
 .section Missing break in switch Statement
 .*
-.ix pitfall 'missing break in switch'
+.ix 'pitfall' 'missing break in switch'
 .ix 'common error' 'missing break in switch'
 .pp
 In the code fragment,
@@ -398,7 +398,7 @@ statement.
 .*
 .section Side-effects in Macros
 .*
-.ix pitfall 'side-effects in macros'
+.ix 'pitfall' 'side-effects in macros'
 .ix 'common error' 'side-effects in macros'
 .pp
 In the code fragment,

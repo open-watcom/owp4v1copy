@@ -183,7 +183,7 @@ occurs when creating the buckets, the
 table will be created with zero buckets.
 If the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled, then attempting to insert into a hash
 table with zero buckets with throw an
 .MONO out_of_memory
@@ -274,7 +274,7 @@ the values, then only some will be copied,
 and the number of entries will correctly reflect the number copied.
 If all of the elements cannot be copied, then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 :RSLTS.
 The
@@ -303,7 +303,7 @@ destructor is the destructor for the
 class.
 If the number of elements is not zero and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 Otherwise, the hash elements are cleared using the
 .MONO clear
@@ -357,7 +357,7 @@ occurs when creating the buckets, the
 table will be created with zero buckets.
 If the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled, then attempting to insert into a hash
 table with zero buckets with throw an
 .MONO out_of_memory
@@ -448,7 +448,7 @@ the values, then only some will be copied,
 and the number of entries will correctly reflect the number copied.
 If all of the elements cannot be copied, then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 :RSLTS.
 The
@@ -477,7 +477,7 @@ destructor is the destructor for the
 class.
 If the number of elements is not zero and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 Otherwise, the hash elements are cleared using the
 .MONO clear
@@ -737,7 +737,7 @@ determine to which bucket it should be stored.
 If allocation of the
 node to store the value fails, then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, the insert will not be completed.
 :P.
@@ -747,7 +747,7 @@ there must be only one equivalent element in the set.
 If an element equivalent to the inserted element is already
 in the hash set, the hash set will remain unchanged, and the
 .MONO not_unique
-.ix not_unique exception
+.ix 'not_unique' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, the insert will not be completed.
 :P.
@@ -847,12 +847,12 @@ elements are copied.
 If an allocation failure occurs when creating the buckets, the
 table will be created with zero buckets, and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 If there is not enough memory to copy all of
 the values or pointers in the hash, then only some will be copied, and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 The number of entries will correctly reflect the number copied.
 :RSLTS.
@@ -945,12 +945,12 @@ which bucket they should be stored into.
 Entries are not destroyed or created in the process of being moved.
 If there is not enough memory to resize the hash, the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled, and the hash will contain
 the number of buckets it contained before the resize.
 If the new number is zero, then the
 .MONO zero_buckets
-.ix zero_buckets exception
+.ix 'zero_buckets' 'exception'
 exception is thrown if it is enabled, and no resize will be performed.
 The hash is guaranteed to contain the same number of entries after
 the resize.

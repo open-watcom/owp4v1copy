@@ -130,11 +130,11 @@ is the
 .MONO WCValSList<Type>
 class, then the
 .MONO WCValSListItemSize( Type )
-.ix WCValSListItemSize macro
+.ix 'WCValSListItemSize' 'macro'
 macro returns the size of the elements which are allocated by the
 :HP1.allocator:eHP1. function.  Similarly, the
 .MONO WCPtrSListItemSize( Type )
-.ix WCPtrSListItemSize macro
+.ix 'WCPtrSListItemSize' 'macro'
 macro returns the size of
 .MONO WCPtrSList<Type>
 elements.
@@ -165,7 +165,7 @@ storage class destructor performs the destruction.
 :P.
 If the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled,
 the exception is thrown if the queue is not empty of queue elements.
 :RSLTS.
@@ -234,11 +234,11 @@ The queue element is not removed from the queue.
 If the queue is empty, one of two exceptions can be thrown.
 If the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, then it will be thrown.
 Otherwise, the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception will be thrown, if enabled.
 :RSLTS.
 The first queue element is returned.
@@ -271,11 +271,11 @@ The queue element is also removed from the queue.
 If the queue is empty, one of two exceptions can be thrown.
 If the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, then it will be thrown.
 Otherwise, the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception will be thrown, if enabled.
 :RSLTS.
 The first element in the queue is removed and returned.
@@ -306,7 +306,7 @@ It will be the last element in the queue, and the last to be retrieved.
 :P.
 If the insert fails, the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception will be thrown, if enabled.
 The queue will remain unchanged.
 :RSLTS.
@@ -350,11 +350,11 @@ The queue element is not removed from the queue.
 If the queue is empty, one of two exceptions can be thrown.
 If the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, then it will be thrown.
 Otherwise, the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception will be thrown, if enabled.
 :RSLTS.
 The last queue element is returned.

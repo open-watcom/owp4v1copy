@@ -12,7 +12,7 @@ section of the standard that discusses the behavior.
 .*
 .bigterms
 .bigterm
-.ix diagnostic
+.ix 'diagnostic'
 How a diagnostic is identified (5.1.1.3).
 .bigdesc
 .pp
@@ -78,14 +78,14 @@ The semantics of the arguments to main (5.1.2.2.1).
 .pp
 Each blank-separated token, except within quoted strings,
 on the command line is made into a string that is an element of
-.ix argv
+.ix 'argv'
 .ix 'parameter' 'to main' 'argv'
 .mono argv.
 Quoted strings are maintained as one element.
 .pp
 For example, for the command line,
 .millust pgm 2+ 1 tokens "one token"
-.ix argc
+.ix 'argc'
 .ix 'parameter' 'to main' 'argc'
 .mono argc
 would have the value
@@ -151,12 +151,12 @@ except as explicitly specified in the standard (5.2.1).
 .bigdesc
 .pp
 The full IBM PC character set is available in both the
-.ix 'character set' source
+.ix 'character set' 'source'
 source and
-.ix 'character set' execution
+.ix 'character set' 'execution'
 execution character sets. The set of values between 0x20 and 0x7F
 are the
-.ix 'character set' ASCII
+.ix 'character set' 'ASCII'
 ASCII character set.
 .bigterm
 The shift states used for the encoding of multibyte characters (5.2.1.2).
@@ -315,7 +315,7 @@ has the same range of values as
 or
 .kw unsigned char
 (6.2.1.1).
-.ix type char
+.ix 'type' 'char'
 .ix 'character type'
 .bigdesc
 .pp
@@ -468,10 +468,10 @@ The value is rounded to the nearest value in the smaller type.
 .bigterm
 The type of integer required to hold the maximum size of an array ~-
 that is, the type of the
-.ix operator sizeof
+.ix 'operator' 'sizeof'
 .kw sizeof
 operator,
-.ix size_t
+.ix 'size_t'
 .kw size_t
 (6.3.3.4, 7.1.1).
 .bigdesc
@@ -664,7 +664,7 @@ long int                                register, offset is
 .bigterm
 The type of integer required to hold the difference between two
 pointers to elements of the same array,
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 (6.3.6, 7.1.1).
 .bigdesc
@@ -673,14 +673,14 @@ If the
 .ix 'huge memory model'
 .ix 'memory model' 'huge'
 huge memory model is being used,
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 has type
 .kw long int
 ..ct ..li .
 .pp
 For all other memory models,
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 has type
 .kw int
@@ -691,7 +691,7 @@ not being used,
 then the result type will be
 .kw long int
 even though
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 is
 .kw int
@@ -746,7 +746,7 @@ See the &userguide. for default values and other details.
 .bigterm
 Whether a "plain"
 .kw int
-.ix bit-field
+.ix 'bit-field'
 bit-field
 is treated as a
 .kw signed int
@@ -823,7 +823,7 @@ The maximum number of
 .kw case
 values in a
 .ix 'switch statement'
-.ix statement switch
+.ix 'statement' 'switch'
 .kw switch
 statement (6.6.4.2).
 .bigdesc
@@ -883,8 +883,8 @@ The date and time are always available.
 .*
 .bigterms
 .bigterm
-.ix null pointer
-.ix pointer null
+.ix 'null pointer'
+.ix 'pointer' 'null'
 .ix 'NULL macro'
 The null pointer constant to which the macro
 .mkw NULL

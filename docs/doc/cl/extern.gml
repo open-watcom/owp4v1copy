@@ -5,7 +5,7 @@
 If an object is declared with the keyword
 .kw extern
 inside a function, then the object has
-.ix linkage external
+.ix 'linkage' 'external'
 .ix 'external linkage'
 .us external linkage,
 meaning that its value is available to all modules, and to the

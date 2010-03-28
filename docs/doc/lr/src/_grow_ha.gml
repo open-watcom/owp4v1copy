@@ -38,21 +38,21 @@ Let
 .id n
 represent the number of files to be opened concurrently.
 Ensure that the
-.ix stdin
+.ix 'stdin'
 .us stdin,
-.ix stdout
+.ix 'stdout'
 .us stdout,
 and
-.ix stderr
+.ix 'stderr'
 .us stderr
 files are included in the count.
 .if '&machsys' ne 'QNX' .do begin
 .if '&machsys' ne 'PP' .do begin
 Also include
-.ix stdaux
+.ix 'stdaux'
 .us stdaux
 and
-.ix stdprn
+.ix 'stdprn'
 .us stdprn
 files in the count for some versions of DOS.
 The

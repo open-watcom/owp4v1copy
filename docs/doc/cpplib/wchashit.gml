@@ -10,7 +10,7 @@ An increment operation causing the iterator to be positioned after the end
 of the hash returns zero.
 Further increments will cause the
 .MONO undef_iter
-.ix undex_iter exception
+.ix 'undex_iter' 'exception'
 exception to be thrown, if it is enabled.
 The
 .MONO WCIterExcept

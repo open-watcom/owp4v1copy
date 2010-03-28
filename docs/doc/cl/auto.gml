@@ -18,8 +18,8 @@ An object declared with no storage class specifier or with
 is "addressable", which means that the
 .us address-of
 .ix 'address-of operator'
-.ix operator 'address-of'
-.ix operator &
+.ix 'operator' 'address-of'
+.ix 'operator' '&'
 operator may be applied to it.
 .pp
 The programmer should not assume any relationship between the

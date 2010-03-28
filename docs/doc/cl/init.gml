@@ -15,9 +15,9 @@ static storage duration
 may be any expression that evaluates to a
 constant value, including using the
 .us address-of
-.ix operator address-of
+.ix 'operator' 'address-of'
 .ix 'address-of operator'
-.ix operator &
+.ix 'operator' '&'
 operator to take the address of a function or object with static
 storage duration.
 .pp
@@ -56,7 +56,7 @@ For arrays of
 characters
 being initialized with a string literal,
 and for arrays of
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 being initialized with a wide string literal,
 the braces around initial values are optional.
@@ -68,7 +68,7 @@ by the number of initializing values provided. In particular, an
 array of characters of unknown size may be initialized using a string
 literal, in which case the size of the array is the number of characters
 in the string, plus one for the terminating
-.ix null character
+.ix 'null character'
 null character. Each
 character of the string is placed in successive elements of the array.
 Consider the following array declarations:

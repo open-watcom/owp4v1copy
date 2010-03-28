@@ -12,7 +12,7 @@ search performance.
 There are three sets of list container classes: value, pointer and intrusive.
 :P.
 Value lists are the simplest to use but have the most requirements on the
-.ix value lists
+.ix 'value' 'lists'
 type stored in the lists.
 Copies are made of the values stored in the list, which could be undesirable
 if the stored objects are complicated and copying is expensive.
@@ -26,7 +26,7 @@ container class implements single linked value lists, and the
 class double linked value lists.
 :P.
 Pointer list elements store pointers to objects.  No creating, copying or
-.ix pointer lists
+.ix 'pointer' 'lists'
 destroying of objects stored in the list occurs.
 The only requirement of the type pointed to is that an
 equivalence operator is provided so that lookups can be performed.  The

@@ -172,12 +172,12 @@ integral promotions and
 arithmetic conversions are examples.
 Other types
 may require an explicit
-.ix cast
+.ix 'cast'
 cast.
 .pp
 The compiler decides whether or not an explicit cast is required based
 on the concept of
-.ix type compatible
+.ix 'type' 'compatible'
 .ix 'compatible types'
 .us compatible types.
 The following types are compatible:

@@ -13,7 +13,7 @@ int _wputenv( const wchar_t *env_name );
 .do end
 .funcend
 .desc begin
-.ix environment
+.ix 'environment'
 The environment list consists of a number of environment names,
 each of which has a value associated with it.
 Entries can be added to the environment list with the

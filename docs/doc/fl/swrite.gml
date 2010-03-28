@@ -78,7 +78,7 @@ unless the operand is a symbolic constant (see the
 statement).
 .point
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 An asterisk
 .mono (*),
 indicating
@@ -87,7 +87,7 @@ formatting.
 .point
 .xt on
 .ix 'namelist-directed format'
-.ix format namelist-directed
+.ix 'format' 'namelist-directed'
 A
 .kw NAMELIST
 name, indicating
@@ -188,7 +188,7 @@ asterisk (as in the second and fourth examples).
 In the examples, the format identifier is an asterisk indicating
 list-directed formatting.
 .ix 'list-directed output'
-.ix output list-directed
+.ix 'output' 'list-directed'
 .exam begin
       WRITE( 8 )X, Y, Z
       WRITE( UNIT=8 )X, Y, Z

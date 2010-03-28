@@ -351,7 +351,7 @@ function.
 .section Function Prototypes
 .*
 .ix 'function' 'prototype'
-.ix prototype function
+.ix 'prototype' 'function'
 .pp
 A function prototype is like a definition of a function, but without
 the body.
@@ -426,7 +426,7 @@ To be able to use these, the header
 must be included.
 .pp
 The type
-.ix type va_list
+.ix 'type' 'va_list'
 .ix 'va_list type'
 .kw va_list
 is an
@@ -445,8 +445,8 @@ This object is used by the macros and functions for processing the list.
 .* has been made in the function processing its variable parameter list.
 .pp
 The macro
-.ix macro 'variable argument' 'va_start'
-.ix va_start
+.ix 'macro' 'variable argument' 'va_start'
+.ix 'va_start'
 .mkw va_start
 has the form,
 .millust begin
@@ -462,8 +462,8 @@ list. The argument
 is the name (identifier) of the last parameter before the
 .mono ,...
 and must not have been declared with the storage class
-.ix 'storage class' register
-.ix register
+.ix 'storage class' 'register'
+.ix 'register'
 .kw register
 ..ct ..li .
 .pp
@@ -478,8 +478,8 @@ may be executed more than once, but only if an intervening
 is executed.
 .pp
 The macro
-.ix macro 'variable argument' va_arg
-.ix va_arg
+.ix 'macro' 'variable argument' 'va_arg'
+.ix 'va_arg'
 .mkw va_arg
 has the form,
 .millust begin
@@ -545,8 +545,8 @@ If the type of the next parameter does not match
 or if no parameter was specified, the behavior is undefined.
 .pp
 The macro
-.ix va_end
-.ix macro 'variable argument' 'va_end'
+.ix 'va_end'
+.ix 'macro' 'variable argument' 'va_end'
 .mkw va_end
 has the form,
 .millust begin
@@ -628,11 +628,11 @@ extern int main( int argc, char * argv[] )
 .millust end
 .pc
 The objects
-.ix argc
+.ix 'argc'
 .ix 'parameter' 'to main' 'argc'
 .mono argc
 and
-.ix argv
+.ix 'argv'
 .ix 'parameter' 'to main' 'argv'
 .mono argv
 have the following properties:

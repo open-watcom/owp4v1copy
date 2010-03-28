@@ -35,7 +35,7 @@ is a variable name, array name, or a dummy procedure name.
 is called a
 .us dummy argument.
 .ix 'dummy argument'
-.ix argument dummy
+.ix 'argument' 'dummy'
 .mnote len
 is called the length specification and is the length
 (number of characters) of the result of the character function.
@@ -100,7 +100,7 @@ is a variable name, array name, or a dummy procedure name.
 is called a
 .us dummy argument.
 .ix 'dummy argument'
-.ix argument dummy
+.ix 'argument' 'dummy'
 .mnote len
 is called the length specification and
 has one of the following forms:

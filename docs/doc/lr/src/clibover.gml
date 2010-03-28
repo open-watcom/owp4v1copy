@@ -1260,27 +1260,27 @@ When a program begins execution, there are a number of streams
 already open for use:
 .begnote
 .note stdin
-.ix '&KbIo' stdin
-.ix stdin
+.ix '&KbIo' 'stdin'
+.ix 'stdin'
 Standard Input: input from the
 console
 .note stdout
 Standard Output: output to the
 console
-.ix '&KbIo' stdout
-.ix stdout
+.ix '&KbIo' 'stdout'
+.ix 'stdout'
 .note stderr
-.ix '&Errs' stderr
-.ix stderr
+.ix '&Errs' 'stderr'
+.ix 'stderr'
 Standard Error: output to the
 console (used for error messages)
 .if '&machsys' ne 'QNX' .do begin
 .note stdaux
-.ix stdaux
+.ix 'stdaux'
 Standard Auxiliary: auxiliary port, available for use by a program
 (not available in some Windows platforms)
 .note stdprn
-.ix stdprn
+.ix 'stdprn'
 Standard Printer: available for use by a program
 (not available in some Windows platforms)
 .do end

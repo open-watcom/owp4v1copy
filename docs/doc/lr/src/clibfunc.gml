@@ -259,7 +259,7 @@ manual.
 .section Default Signals
 .bigterm
 If the equivalent of
-.ix SIG_DFL
+.ix 'SIG_DFL'
 .kw signal
 .ct ( sig, SIG_DFL );
 is not executed prior to the call of a signal handler,

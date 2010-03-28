@@ -59,7 +59,7 @@ and
 must be
 .us dummy arguments
 .ix 'dummy argument'
-.ix argument dummy
+.ix 'argument' 'dummy'
 or belong to a common block.
 .id D
 is a 2-dimensional array containing 4 rows.
@@ -69,7 +69,7 @@ in the last dimension indicates that
 .id D
 is an
 .us assumed size array.
-.ix array 'assumed-size'
+.ix 'array' 'assumed-size'
 .ix 'assumed-size array'
 .id D
 must be a
@@ -77,7 +77,7 @@ must be a
 The number of columns is determined from the number of elements
 of the
 .us actual argument.
-.ix argument actual
+.ix 'argument' 'actual'
 .ix 'actual argument'
 For example, if the actual argument contains 8 elements then
 .id D

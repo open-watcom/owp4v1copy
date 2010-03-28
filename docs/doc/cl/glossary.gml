@@ -76,13 +76,13 @@ may modify the object to which the pointer points, while the argument
 value (the pointer) is unaffected.
 .*
 .note array
-.ix array
+.ix 'array'
 An array is a set of objects of the same type, grouped into adjacent
 memory locations. References to elements of the array are made by
-.ix subscript
+.ix 'subscript'
 .us subscripts
 or
-.ix index
+.ix 'index'
 .us indices.
 .*
 .note assignment
@@ -135,11 +135,11 @@ in a byte.
 .shade end
 .*
 .note bit-field
-.ix bit-field
+.ix 'bit-field'
 A bit-field is a type that contains a specified number of bits.
 .*
 .note block
-.ix block
+.ix 'block'
 A block is a part of a function that begins with
 .mono {
 and ends with
@@ -150,7 +150,7 @@ action. A block is also called a
 .us compound statement.
 .*
 .note byte
-.ix byte
+.ix 'byte'
 A byte is the smallest unit of storage representable by a unique
 .us address,
 usually capable of holding one character of information.
@@ -175,7 +175,7 @@ in a byte.
 .shade end
 .*
 .note cast
-.ix cast
+.ix 'cast'
 To cast an object is to explicitly convert it to another
 .us type.
 .*
@@ -183,7 +183,7 @@ To cast an object is to explicitly convert it to another
 .ix 'character constant'
 .ix 'constant' 'character'
 A character constant is usually one character (possibly a
-.ix trigraphs
+.ix 'trigraphs'
 .us trigraph
 or
 .ix 'escape sequences'
@@ -214,10 +214,10 @@ or four characters.
 .************************************************************************
 .*
 .note comment
-.ix comment
+.ix 'comment'
 A comment is a sequence of characters, outside of a
 .ix 'string literal'
-.ix string
+.ix 'string'
 .us string literal
 or
 .ix 'character constant'
@@ -233,7 +233,7 @@ that terminates it.
 Hence, a comment may not contain another comment.
 .*
 .note compiler
-.ix compiler
+.ix 'compiler'
 A compiler is a program which reads a file containing programming
 language statements and translates it into instructions that the
 computer can understand.
@@ -248,11 +248,11 @@ and ends with
 .mono }
 and contains declarations of objects and statements that perform some
 action. A compound statement is also called a
-.ix block
+.ix 'block'
 .us block.
 .*
 .note declaration
-.ix declaration
+.ix 'declaration'
 A declaration describes the attributes of an object or function, such
 as the storage duration, linkage, and type.
 The space for an object is reserved when its
@@ -264,13 +264,13 @@ function does not include the statements to be executed when the
 function is called.
 .*
 .note decrement
-.ix decrement
+.ix 'decrement'
 To decrement a number is to subtract (one) from it. To decrement a
 pointer is to decrease its value by the size of the object to which
 the pointer points.
 .*
 .note definition
-.ix definition
+.ix 'definition'
 A definition of an object is the same as a
 .us declaration,
 except that the storage for the object is reserved when its definition
@@ -278,12 +278,12 @@ is found. A function definition includes the statements to be executed
 when the function is called.
 .*
 .note exception
-.ix exception
+.ix 'exception'
 An exception occurs when an operand to an operator has an invalid
 value. Division by zero is a common exception.
 .*
 .note floating-point
-.ix floating-point
+.ix 'floating-point'
 A floating-point number is a member of a subset of the mathematical
 set of real numbers, containing (possibly) a fraction and an exponent.
 The floating-point
@@ -297,7 +297,7 @@ or
 ..ct ..li .
 .*
 .note function
-.ix function
+.ix 'function'
 A function is a collection of declarations and statements, preceded by
 a declaration of the name of the function and the
 .us parameters
@@ -307,7 +307,7 @@ The statements describe a series of steps to be taken after the
 function is called, and before it finishes.
 .*
 .note header
-.ix header
+.ix 'header'
 A header contains C source, usually function prototypes, structure and
 union definitions, linkages to externally-defined objects and macro
 definitions. A header is included using the
@@ -318,7 +318,7 @@ preprocessor directive.
 .*
 .keep begin
 .note identifier
-.ix identifier
+.ix 'identifier'
 An identifier is a sequence of characters, starting with a letter or
 underscore, and consisting of letters, digits and underscores. An
 identifier is used as the name of an object, a tag, function, typedef,
@@ -340,13 +340,13 @@ that was declared without specifying how many items. The
 type is also an incomplete type, but it can never be completed.
 .*
 .note increment
-.ix increment
+.ix 'increment'
 To increment a number is to add (one) to it. To increment a pointer is
 to increase its value by the size of the object to which the pointer
 points.
 .*
 .note index
-.ix index
+.ix 'index'
 An index (or
 .us subscript
 ..ct )
@@ -356,14 +356,14 @@ It is an integral value. The first element of an array has the index
 zero.
 .*
 .note indirection
-.ix indirection
+.ix 'indirection'
 Indirection occurs when an object that is a pointer to an object is
 actually used to point to it. The unary form of the
 .ix 'operator' 'indirection'
 .ix 'operator' 'unary *'
 .ix 'operator' '*'
 .ix 'indirection operator'
-.ix 'unary operator' *
+.ix 'unary operator' '*'
 .mono *
 operator, or the
 .ix 'operator' 'arrow'
@@ -373,13 +373,13 @@ operator, or the
 operator are used for indirection.
 .*
 .note initialization
-.ix initialization
+.ix 'initialization'
 The initialization of an object is the act of giving it its first
 (initial) value. This may be done by giving an initialization value
 when the object is declared, or by explicitly assigning it a value.
 .*
 .note integer
-.ix integer
+.ix 'integer'
 An integer is a
 .us type
 that is a subset of the mathematical set of integers. It is
@@ -428,14 +428,14 @@ type) or
 ..ct ..li .
 .*
 .note keyword
-.ix keyword
+.ix 'keyword'
 A keyword is an
 .us identifier
 that is reserved for use by the compiler. No object name or other use
 of an identifier may use a keyword.
 .*
 .note label
-.ix label
+.ix 'label'
 A label is an
 .us identifier
 that corresponds to a particular
@@ -443,7 +443,7 @@ that corresponds to a particular
 in a
 .us function.
 It may be used by the
-.ix statement goto
+.ix 'statement' 'goto'
 .ix 'goto statement'
 .kw goto
 statement.
@@ -461,7 +461,7 @@ Whether or not the function actually generates a function call is
 implementation-defined.
 .*
 .note line
-.ix line
+.ix 'line'
 A line is conceptually similar to a line as seen in a text editor. The
 line in a text editor may be called a physical line. Several physical
 lines may be joined together into one logical line (or just "line") by
@@ -475,11 +475,11 @@ line, so using the
 \
 .monooff
 symbol is usually only necessary when defining
-.ix macro
+.ix 'macro'
 .us macros.
 .*
 .note linkage
-.ix linkage
+.ix 'linkage'
 An object with
 .us external
 linkage may be referenced by any
@@ -493,7 +493,7 @@ within the
 in which it is defined.
 .*
 .note lint
-.ix lint
+.ix 'lint'
 lint is a utility program, often provided with the compiler, which
 detects problems that the compiler will accept as syntactically valid,
 but likely are not what the programmer intended.
@@ -532,7 +532,7 @@ and
 ..ct ..li .
 .*
 .note macro
-.ix macro
+.ix 'macro'
 There are two kinds of macros. An object-like macro is an
 .us identifier
 that is replaced by a sequence of
@@ -565,7 +565,7 @@ syntax of the use of the identifier resolves which category the
 identifier falls into.
 .*
 .note nesting
-.ix nesting
+.ix 'nesting'
 Nesting is placing something inside something else. For example, a
 .kw for
 statement may, as part of its body, contain another
@@ -576,8 +576,8 @@ is said to be nested inside the first. Another form of nesting occurs
 when source files include other files.
 .*
 .note null pointer constant
-.ix null pointer
-.ix pointer null
+.ix 'null pointer'
+.ix 'pointer' 'null'
 The value zero, when used in a place where a pointer type is expected,
 is considered to be a null pointer constant, which is a value that
 indicates that the pointer does not currently point to anything. The
@@ -589,7 +589,7 @@ The macro
 is often used to represent the null pointer constant.
 .*
 .note null character
-.ix null character
+.ix 'null character'
 The character with all
 .us bits
 set to zero is used to terminate
@@ -602,7 +602,7 @@ in a string, or as the character constant
 ..ct ..li .
 .*
 .note object
-.ix object
+.ix 'object'
 An object is a collection of
 .us bytes
 in the storage of the computer, used to represent values. The size and
@@ -625,24 +625,24 @@ object, in which case the function may modify the object to which its
 parameter points.
 .*
 .note pointer
-.ix pointer
+.ix 'pointer'
 An object that contains the
 .us address
 of another object is said to be a pointer to that object.
 .*
 .note portable
-.ix portable
+.ix 'portable'
 Portable software is written in such a way that it is relatively easy
 to make the software run on different hardware or operating systems.
 .*
 .note precedence
-.ix precedence
+.ix 'precedence'
 Precedence is the set of implicit rules for determining the order of
 execution of an expression in the absence of parentheses.
 .*
 .keep begin
 .note preprocessor
-.ix preprocessor
+.ix 'preprocessor'
 The preprocessor:
 .begbull $compact
 .bull
@@ -663,14 +663,14 @@ before the compiler translates the source.
 .keep end
 .*
 .note recursion
-.ix recursion
+.ix 'recursion'
 Recursion occurs when a
 .us function
 calls itself either directly, or by calling another function which
 calls it. See recursion. (!)
 .*
 .note register
-.ix register
+.ix 'register'
 A register is a special part of the computer, usually not part of the
 addressable storage. Registers may contain values and are generally
 faster to use than storage.
@@ -693,7 +693,7 @@ via the
 statement.
 .*
 .note rounding
-.ix rounding
+.ix 'rounding'
 A value is rounded when the representation used to store a value is
 not exact. The value may be increased or decreased to the nearest
 value that may be accurately represented.
@@ -705,7 +705,7 @@ Basically, it is a single item, with type such as character, any of
 the various integer types, or floating-point.
 .*
 .note scope
-.ix scope
+.ix 'scope'
 The scope of an
 .us identifier
 identifies the part of the
@@ -729,14 +729,14 @@ as it is the compiler's job to ensure that side-effects are resolved
 at the proper time.
 .*
 .note side-effect
-.ix side-effect
+.ix 'side-effect'
 A side-effect modifies a value of an object, causing a change in the
 state of the program. The most common side-effect is
 .us assignment,
 whereby the value of the left operand is changed.
 .*
 .note signed
-.ix signed
+.ix 'signed'
 A signed value can represent both negative and positive values.
 .pp
 The
@@ -755,7 +755,7 @@ and
 ..ct ..li .
 .*
 .note statement
-.ix statement
+.ix 'statement'
 A statement describes the actions that are to be taken by the program.
 (Statements are distinct from the declarations of objects.)
 .*
@@ -766,7 +766,7 @@ invoked, and destroyed when the program exits. Any value stored in the
 object will remain until explicitly modified.
 .*
 .note string
-.ix string
+.ix 'string'
 A string is a sequence of characters terminated by a
 .us null character.
 A reference to a string is made with the
@@ -786,8 +786,8 @@ the sequence of characters within the quotes, plus a
 placed at the end.
 .*
 .note structure
-.ix structure
-.ix type structure
+.ix 'structure'
+.ix 'type' 'structure'
 A structure is a
 .us type
 which is a set of named members of (possibly different) types, which
@@ -795,7 +795,7 @@ reside in memory starting at adjacent and sequentially increasing
 storage locations.
 .*
 .note subscript
-.ix subscript
+.ix 'subscript'
 A subscript (or
 .us index
 ..ct )
@@ -806,7 +806,7 @@ the subscript zero.
 .*
 .keep begin
 .note tag
-.ix tag
+.ix 'tag'
 A tag is an identifier which names a structure, union or enumeration.
 In the declaration,
 .millust begin
@@ -820,7 +820,7 @@ is an object declared with the enumeration type.
 .keep end
 .*
 .note token
-.ix token
+.ix 'token'
 A token is the unit used by the
 .us preprocessor
 for scanning for
@@ -832,7 +832,7 @@ comment is one token, while other characters are each, individually,
 one token.
 .*
 .note type
-.ix type
+.ix 'type'
 The type of an
 .us object
 describes the size of the object, and what interpretation is to be
@@ -853,15 +853,15 @@ in a documented manner, terminating the compilation with an error, and
 terminating the execution with an error.
 .*
 .note union
-.ix union
-.ix type union
+.ix 'union'
+.ix 'type' 'union'
 A union is a
 .us type
 which is a set of named members of (possibly different) types, which
 reside in memory starting at the same memory location.
 .*
 .note unsigned
-.ix unsigned
+.ix 'unsigned'
 An unsigned value is one that can represent only non-negative values.
 ..pp
 The
@@ -880,7 +880,7 @@ and
 ..ct ..li .
 .*
 .note variable
-.ix variable
+.ix 'variable'
 A variable is generally the same thing as an
 .us object.
 .ix 'object'
@@ -889,8 +889,8 @@ It is most often used to refer to
 objects.
 .*
 .note void
-.ix void
-.ix type void
+.ix 'void'
+.ix 'type' 'void'
 The
 .kw void
 .us type

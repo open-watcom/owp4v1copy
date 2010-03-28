@@ -3,32 +3,32 @@
 Identifiers are used as:
 .begbull $compact
 .bull
-.ix object
+.ix 'object'
 .ix 'variable name'
 .ix 'name' 'object'
 .ix 'name' 'variable'
 object or variable names,
 .bull
-.ix function name
-.ix name function
+.ix 'function' 'name'
+.ix 'name' 'function'
 function names,
 .bull
-.ix label name
-.ix name label
+.ix 'label' 'name'
+.ix 'name' 'label'
 labels,
 .bull
-.ix structure name
+.ix 'structure' 'name'
 .ix 'name' 'structure'
-.ix union name
+.ix 'union' 'name'
 .ix 'name' 'union'
 .ix 'enumeration name'
-.ix name enumeration
+.ix 'name' 'enumeration'
 structure, union or enumeration tags,
 .bull
 .ix 'name' 'structure member'
 .ix 'name' 'union member'
-.ix structure member name
-.ix union member name
+.ix 'structure' 'member' 'name'
+.ix 'union' 'member' 'name'
 the name of a member of a structure or union,
 .bull
 enumeration constants,
@@ -38,7 +38,7 @@ enumeration constants,
 .ix 'name' 'macro'
 macro names,
 .bull
-.ix typedef
+.ix 'typedef'
 .ix 'type definition'
 typedef names.
 .endbull
@@ -92,8 +92,8 @@ characters for functions or objects with external or internal linkage.
 .pp
 The linker provided with &wcboth.
 restricts the number of significant characters in external
-.ix identifier external 'significant characters'
-.ix linker 'external identifer' 'significant characters'
+.ix 'identifier' 'external' 'significant characters'
+.ix 'linker' 'external identifer' 'significant characters'
 identifiers to 40 characters, and
 by default, distinguishes between identifiers that differ only in the
 .ix 'case sensitive'
@@ -117,12 +117,12 @@ The case of letters is ignored.
 .pp
 Any external identifier that starts with the
 underscore
-.ix "underscore" "leading"
-.ix "leading underscore"
+.ix 'underscore' 'leading'
+.ix 'leading underscore'
 character ("_") may be
 reserved
-.ix "reserved identifier"
-.ix "identifier" "reserved"
+.ix 'reserved identifier'
+.ix 'identifier' 'reserved'
 by the compiler. Any other identifier that starts with two
 underscores, or an underscore and an upper-case letter may be
 reserved.

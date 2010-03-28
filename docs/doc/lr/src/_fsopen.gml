@@ -166,7 +166,7 @@ argument) causes all subsequent writes to the file to be forced to the
 current end-of-file, regardless of previous calls to the
 .kw fseek
 function.
-.ix '&StrIo' fseek
+.ix '&StrIo' 'fseek'
 When a file is opened with update mode (
 .ct .id '+'
 as the second or third character of the

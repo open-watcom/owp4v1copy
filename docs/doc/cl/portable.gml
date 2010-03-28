@@ -63,13 +63,13 @@ if( upletter >= 'I'  &&  upletter <= 'N' ) {
 .pc
 If the program was being developed on a machine using the
 .ix 'ASCII character set'
-.ix 'character set' ASCII
+.ix 'character set' 'ASCII'
 ASCII character set, this code would work fine, since the upper case
 letters have 26 consecutive values.
 However, porting
 the program to a machine using the
 .ix 'EBCDIC character set'
-.ix 'character set' EBCDIC
+.ix 'character set' 'EBCDIC'
 EBCDIC character set, problems may arise because between
 the letters 'I' and 'J' are 7 other characters, including '}'.
 Thus, the name "}VAR" might be considered a valid integer variable
@@ -229,7 +229,7 @@ very difficult because many of the function and object names will
 not be the same as contained in the source code.
 .pp
 Another implementation-defined behavior occurs with the type
-.ix type char
+.ix 'type' 'char'
 .kw char
 ..ct ..li .
 The standard does not impose a
@@ -249,7 +249,7 @@ should explicitly declare the object with that type.
 .*
 .pp
 The range of an object of type
-.ix type int
+.ix 'type' 'int'
 .kw int
 is not specified by the standard, except to say that the minimum range
 is &MINUS.32767 to 32767. If an object is to contain an integer value, then
@@ -262,7 +262,7 @@ exceed this range, then a
 may be required.
 .pp
 The same argument applies to objects with type
-.ix type float
+.ix 'type' 'float'
 .kw float
 ..ct ..li .
 It may make more sense to declare them with type

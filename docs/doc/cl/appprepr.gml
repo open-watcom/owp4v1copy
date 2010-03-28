@@ -3,7 +3,7 @@
 .pp
 The C preprocessor
 recognizes the following directives:
-.ix include
+.ix 'include'
 .ppix #include
 .millust #include
 Include the named header, substituting the directive with

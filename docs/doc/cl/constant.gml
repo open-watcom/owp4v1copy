@@ -680,7 +680,7 @@ constant is preceded by the character
 ..ct ..li .
 .pp
 The type of a wide character constant is
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 ..ct ,
 which is one of the integral types, and is described in the header
@@ -692,7 +692,7 @@ which is one of the integral types, and is described in the header
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 .shade begin
 With &wcboth.,
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 is defined as
 .kw unsigned short
@@ -701,7 +701,7 @@ is defined as
 ..do end
 ..if '&target' eq 'PC 370' ..th ..do begin
 With &wlooc.,
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 is defined as
 .kw ??????????????
@@ -716,7 +716,7 @@ For example, the constant
 is a wide character constant containing the letter
 .mono a
 from the source character set, and has type
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 ..ct ..li .
 In contrast, the constant
@@ -765,7 +765,7 @@ escape sequence.
 .pp
 The value of a string
 literal is the sequence of characters within the quotes, plus a
-.ix null character
+.ix 'null character'
 null character at the end.
 .pp
 The type of a string literal is "array of
@@ -887,10 +887,10 @@ string is preceded by the character
 ..ct ..li .
 .pp
 The type of a wide string literal is "array of
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 ..ct ".
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 is one of the integral types, and is described in the header
 .hdr <stddef.h>
@@ -901,7 +901,7 @@ is one of the integral types, and is described in the header
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 .shade begin
 With &wcboth.,
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 is defined as
 .kw unsigned short
@@ -910,7 +910,7 @@ is defined as
 ..do end
 ..if '&target' eq 'PC 370' ..th ..do begin
 With &wlooc.,
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 is defined as
 .kw ??????????????
@@ -928,7 +928,7 @@ and
 .mono b
 ..ct ..li .
 Its type is "array [3] of
-.ix wchar_t
+.ix 'wchar_t'
 .kw wchar_t
 ..ct ", and the values of its elements are
 .mono L'a'

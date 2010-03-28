@@ -10,7 +10,7 @@ A declaration inside a function
 indicates to the compiler that the object
 has
 .ix 'no linkage'
-.ix linkage no
+.ix 'linkage' 'no'
 .us no linkage,
 meaning that it is available only within the function.
 A declaration not inside any function

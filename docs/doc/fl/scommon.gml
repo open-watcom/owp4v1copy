@@ -14,14 +14,14 @@ If
 .id cb
 is omitted, the
 .us blank common block
-.ix 'common block' blank
+.ix 'common block' 'blank'
 .ix 'blank common block'
 is assumed.
 If specified,
 .id cb
 is called a
 .us named common block.
-.ix 'common block' named
+.ix 'common block' 'named'
 .ix 'named common block'
 The names appearing in
 .id nlist

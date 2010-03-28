@@ -1,4 +1,4 @@
-.ix modularity
+.ix 'modularity'
 .pp
 For many small programs, it is possible to write a single module
 which contains all of the C source for the program. This module

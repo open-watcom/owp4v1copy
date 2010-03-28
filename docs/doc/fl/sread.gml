@@ -108,7 +108,7 @@ unless the operand is a symbolic constant (see the
 statement).
 .point
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 An asterisk
 .mono (*),
 indicating
@@ -122,7 +122,7 @@ statement in which the asterisk
 .mono (*)
 may be omitted.
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 This is a form of
 .us list-directed
 formatting in which unit 5 is assumed.
@@ -135,7 +135,7 @@ READ * [,ilist]
 .point
 .xt on
 .ix 'namelist-directed format'
-.ix format namelist-directed
+.ix 'format' 'namelist-directed'
 A
 .kw NAMELIST
 name, indicating
@@ -215,7 +215,7 @@ is composed of one or more of items (1) through (5).
 .exam end
 .pc
 .ix 'formatted input'
-.ix input formatted
+.ix 'input' 'formatted'
 The above gives four examples of formatted
 .kw READ
 statements, using the first of three supported forms of the
@@ -273,7 +273,7 @@ asterisk (as in the second and fourth examples).
 In the fifth example, the asterisk is a format identifier indicating
 list-directed formatting.
 .ix 'list-directed input'
-.ix input list-directed
+.ix 'input' 'list-directed'
 The fifth and sixth examples are examples of the second and
 third forms, respectively, of the
 .kw READ
@@ -285,7 +285,7 @@ statement is used, we call this
 list-directed
 .us list-directed
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 formatting.
 .exam begin
       READ( 8 )X, Y, Z
@@ -294,7 +294,7 @@ formatting.
 .pc
 The above gives two examples of unformatted
 .ix 'unformatted input'
-.ix input unformatted
+.ix 'input' 'unformatted'
 .kw READ
 statements.
 The unit number used in the example is 8.

@@ -146,7 +146,7 @@ an error of omission.
 .section Null Statements
 .*
 .pp
-.ix null statement
+.ix 'null' 'statement'
 .ix 'empty statement'
 .ix 'statement' 'null'
 .ix 'statement' 'empty'
@@ -320,7 +320,7 @@ is a
 .ix 'compound statement'
 .ix 'statement' 'compound'
 compound statement or
-.ix block
+.ix 'block'
 block.
 Embedded within the
 statement
@@ -415,10 +415,10 @@ the following output is produced:
 .*
 .section Iteration Statements
 .*
-.ix looping
-.ix iteration
-.ix statement looping
-.ix statement iteration
+.ix 'looping'
+.ix 'iteration'
+.ix 'statement' 'looping'
+.ix 'statement' 'iteration'
 .pp
 Iteration statements control looping. There are three forms of
 iteration statements:
@@ -439,7 +439,7 @@ The
 .ix 'statement' 'compound'
 compound statement
 or
-.ix block
+.ix 'block'
 block)
 is executed repeatedly until the controlling expression
 is equal to zero.

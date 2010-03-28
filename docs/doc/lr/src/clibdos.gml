@@ -14,7 +14,7 @@ documentation for the DOS that you are using should be consulted.
 .*
 .np
 .ix 'DOS devices'
-.ix devices
+.ix 'devices'
 Most of the hardware devices attached to your computer have names
 which are recognized by DOS.
 These names cannot be used as the names of files.
@@ -58,7 +58,7 @@ the fifth disk drive
 .*
 .np
 .ix 'DOS directory'
-.ix directory
+.ix 'directory'
 Each disk drive is conceptually divided into directories.
 Each directory is capable of containing files and/or other directories.
 The initial directory, called the
@@ -67,7 +67,7 @@ is not named; all other directories are named and can be accessed with a
 .us path
 specification.
 A path is either absolute or relative to the current working directory.
-.ix path
+.ix 'path'
 .ix 'DOS path'
 Some examples are:
 .begnote

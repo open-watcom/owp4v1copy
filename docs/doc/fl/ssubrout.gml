@@ -13,7 +13,7 @@ is a variable name, array name, dummy procedure name or an asterisk
 is called a
 .us dummy argument.
 .ix 'dummy argument'
-.ix argument dummy
+.ix 'argument' 'dummy'
 .endnote
 .np
 A

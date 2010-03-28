@@ -139,13 +139,13 @@ line.
 .*
 .np
 .ix 'comment line'
-.ix line comment
+.ix 'line' 'comment'
 .us Comment
 lines are denoted by placing a "C" or "*" in column one of the line.
 &product also allows the use of a lowercase "c" as a comment
 indicator.
 .ix 'blank line'
-.ix line blank
+.ix 'line' 'blank'
 .us Blank
 lines are treated as comment lines.
 Comment lines may be placed anywhere in the program source (i.e.,
@@ -157,8 +157,8 @@ set.
 .np
 .xt begin
 &product allows end-of-line comments.
-.ix end-of-line comments
-.ix comments end-of-line
+.ix 'end-of-line' 'comments'
+.ix 'comments' 'end-of-line'
 If a "!" character appears in column 1 or anywhere in the statement
 portion of a source line, the remainder of that line is treated as a
 comment unless the "!" appears inside quotation marks or in column 6.
@@ -169,7 +169,7 @@ comment unless the "!" appears inside quotation marks or in column 6.
 .np
 .xt begin
 .ix 'debug line'
-.ix line debug
+.ix 'line' 'debug'
 .us Debug
 lines are denoted by placing a "D" or "d" in column one of the line.
 Debug lines contain FORTRAN statements.
@@ -183,7 +183,7 @@ See the User's Guide for information on activating debug statements.
 .*
 .np
 .ix 'initial line'
-.ix line initial
+.ix 'line' 'initial'
 An
 .us initial
 line is the first line of a FORTRAN statement.
@@ -206,7 +206,7 @@ ending in an
 statement.
 The body of the FORTRAN
 .us statement
-.ix statement
+.ix 'statement'
 is entered starting in column 7 and stopping at column 72.
 .ix 'sequence field'
 Column 73 and on is called the
@@ -219,7 +219,7 @@ and is ignored by the compiler.
 A statement may be
 .us continued
 .ix 'continuation line'
-.ix line continuation
+.ix 'line' 'continuation'
 on a new line.
 A continuation character is placed in column 6.
 The continuation character may not be a blank character or a "0"
@@ -356,7 +356,7 @@ Execution of a FORTRAN program begins with the first
 .us executable
 statement in the main program.
 The other statements identify the start of a subprogram.
-.ix subprogram
+.ix 'subprogram'
 If the first statement of a program unit is not one of the above
 then the program unit is considered to be a main program.
 .np
@@ -427,7 +427,7 @@ must precede all other statements containing a reference to that
 symbolic constant.
 .endnote
 .np
-.ix order statement
+.ix 'order' 'statement'
 .ix 'statement order'
 The following chart illustrates the required order of FORTRAN
 statements.

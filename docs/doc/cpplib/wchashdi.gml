@@ -198,7 +198,7 @@ occurs when creating the buckets, the
 table will be created with zero buckets.
 If the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled, then attempting to insert into a hash
 table with zero buckets with throw an
 .MONO out_of_memory
@@ -277,7 +277,7 @@ the values in the dictionary, then only some will be copied,
 and the number of entries will correctly reflect the number copied.
 If all of the elements cannot be copied, then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 :RSLTS.
 The &fn. creates an &obj. which is a copy of the passed dictionary.
@@ -298,7 +298,7 @@ The &fn. creates an &obj. which is a copy of the passed dictionary.
 The &fn. is the destructor for the &cls.:PERIOD.
 If the number of dictionary elements is not zero and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 Otherwise, the dictionary elements are cleared using the
 .MONO clear
@@ -604,7 +604,7 @@ determine to which bucket it should be stored.
 If allocation of the
 node to store the key-value pair fails, then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, the insert will not be completed.
 :P.
@@ -682,7 +682,7 @@ data_object[ 5 ] = "Hello";
 If an allocation error occurs while inserting a new key-value pair,
 then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, then a reference to address
 zero will be returned.
@@ -716,7 +716,7 @@ in the dictionary with the given
 is returned.
 If no equivalent element is found, then the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, then a reference to address
 zero will be returned.
@@ -747,12 +747,12 @@ elements are copied.
 If an allocation failure occurs when creating the buckets, the
 table will be created with zero buckets, and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 If there is not enough memory to copy all of
 the values or pointers in the dictionary, then only some will be copied, and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 The number of entries will correctly reflect the number copied.
 :RSLTS.
@@ -821,12 +821,12 @@ which bucket they should be stored into.
 Entries are not destroyed or created in the process of being moved.
 If there is not enough memory to resize the dictionary, the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled, and the dictionary will contain
 the number of buckets it contained before the resize.
 If the new number is zero, then the
 .MONO zero_buckets
-.ix zero_buckets exception
+.ix 'zero_buckets' 'exception'
 exception is thrown if it is enabled, and no resize will be performed.
 The dictionary is guaranteed to contain the same number of entries after
 the resize.

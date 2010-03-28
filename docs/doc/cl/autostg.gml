@@ -8,7 +8,7 @@ Such an object is said to have
 .us automatic storage duration.
 The
 .us scope
-.ix scope
+.ix 'scope'
 of the object is said to be the function in which it is defined.
 .pp
 If such an object has the same name as another object defined

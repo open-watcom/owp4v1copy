@@ -38,7 +38,7 @@ being defined (otherwise the structure would have indeterminate size),
 although it may contain a pointer to it.
 .pp
 The structure may be given an optional
-.ix tag
+.ix 'tag'
 .us tag
 with which the structure may be referenced elsewhere in the program.
 If no tag is given, then only those objects listed following

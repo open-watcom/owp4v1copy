@@ -2,15 +2,15 @@
 .*
 .pp
 With the 80386 processor, a far pointer consists of a 16-bit
-.ix pointer selector
+.ix 'pointer' 'selector'
 selector
 and a 32-bit
-.ix pointer offset
+.ix 'pointer' 'offset'
 offset.
 &wc386. also supports a special kind of far pointer which consists
 of a 16-bit selector and a 16-bit offset.
 These pointers, referred to as
-.ix pointer far16
+.ix 'pointer' 'far16'
 .ul far16
 pointers, allow 32-bit code to access code and data running in 16-bit
 mode.

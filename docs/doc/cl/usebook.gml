@@ -75,6 +75,6 @@ The C language does not contain any I/O capabilities.
 The &libref describes all of the library functions, including those
 used for input and output.
 .pp
-.ix glossary
+.ix 'glossary'
 A glossary is included in the appendix,
 and describes all terms used in the book.

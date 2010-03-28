@@ -19,7 +19,7 @@ a faster retrieval time.
 Elements cannot be inserted into these vectors by assigning to a vector index.
 Vectors automatically grow when necessary to insert an element if the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is not enabled.
 :P.
 In the description of each member function, the text
@@ -249,7 +249,7 @@ in the first optional parameter, which defaults to the constant
 (currently defined as 10).
 If the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is not enabled, then the second optional parameter is used to
 specify the value to increase the vector size
 when an element is inserted
@@ -291,7 +291,7 @@ All of the vector elements and exception trap states are copied.
 :P.
 If the new vector cannot be fully created, it will have length zero.  The
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if enabled in the vector being copied.
 :RSLTS.
 The
@@ -319,7 +319,7 @@ destructor is the destructor for the
 class.
 If the vector is not length zero and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 Otherwise, the vector entries are cleared using the
 .MONO clear
@@ -368,7 +368,7 @@ in the first optional parameter, which defaults to the constant
 (currently defined as 10).
 If the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is not enabled, then the second optional parameter is used to
 specify the value to increase the vector size when an element is inserted
 into a full vector.
@@ -409,7 +409,7 @@ All of the vector elements and exception trap states are copied.
 :P.
 If the new vector cannot be fully created, it will have length zero.  The
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if enabled in the vector being copied.
 :RSLTS.
 The
@@ -437,7 +437,7 @@ destructor is the destructor for the
 class.
 If the vector is not length zero and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 Otherwise, the vector entries are cleared using the
 .MONO clear
@@ -501,7 +501,7 @@ Several different results can occur if the vector is not large enough for
 the new element.
 If the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is enabled, the exception is thrown.
 If the exception is not enabled, the append fails if the amount the vector
 is to be grown (the second parameter to the constructor) is zero(0).
@@ -513,7 +513,7 @@ If
 .MONO resize
 fails, the element is not appended to the vector and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown, if enabled.
 :RSLTS.
 The &fn. appends an element to the
@@ -692,10 +692,10 @@ from the vector.
 :P.
 If the vector is empty, one of two exceptions can be thrown.  The
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is thrown if it is enabled.  Otherwise, if the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is enabled, it is thrown.
 If neither exception is enabled, a first element of the vector is added
 
@@ -798,7 +798,7 @@ Several different results can occur if the vector is not large enough for
 the new element.
 If the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is enabled, the exception is thrown.
 If the exception is not enabled, the insert fails if the amount the vector
 is to be grown (the second parameter to the constructor) is zero(0).
@@ -810,7 +810,7 @@ If
 .MONO resize
 fails, the element is not inserted to the vector and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown, if enabled.
 :RSLTS.
 The &fn. inserts an element in to the vector.
@@ -866,7 +866,7 @@ member function.
 If the passed index is negative or greater than the number of entries in
 the vector and the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is enabled, the exception is thrown.  If the exception is not
 enabled, the new element is inserted as the first element when the index is
 negative, or as the last element when the index is too large.
@@ -875,7 +875,7 @@ Several different results can occur if the vector is not large enough for
 the new element.
 If the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is enabled, the exception is thrown.
 If the exception is not enabled, the insert fails if the amount the vector
 is to be grown (the second parameter to the constructor) is zero(0).
@@ -887,7 +887,7 @@ If
 .MONO resize
 fails, the element is not inserted into the vector and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown, if enabled.
 :RSLTS.
 The &fn. inserts an element into the
@@ -937,10 +937,10 @@ from the vector.
 :P.
 If the vector is empty, one of two exceptions can be thrown.  The
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is thrown if it is enabled.  Otherwise, if the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is enabled, it is thrown.
 If neither exception is enabled, a first element of the vector is added
 
@@ -1029,10 +1029,10 @@ member functions.
 :P.
 If the vector is empty, one of two exceptions can be thrown.  The
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is thrown if it is enabled.  Otherwise, if the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is enabled, it is thrown.
 If neither exception is enabled, a first element of the vector is added
 
@@ -1048,7 +1048,7 @@ be returned.
 :P.
 If the index value is negative and the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is enabled, the exception is thrown.
 An attempt to index an element with index greater than or equal to the
 number of entries in the vector will also cause the
@@ -1112,7 +1112,7 @@ All of the vector elements and exception trap states are copied.
 If the left hand side vector cannot be fully created, it will have
 zero length.  The
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if enabled in the right hand side vector.
 :RSLTS.
 The &fn. assigns the left hand side vector to be a copy of the right hand side.
@@ -1180,7 +1180,7 @@ Several different results can occur if the vector is not large enough for
 the new element.
 If the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is enabled, the exception is thrown.
 If the exception is not enabled, the prepend fails if the amount the vector
 is to be grown (the second parameter to the constructor) is zero(0).
@@ -1192,7 +1192,7 @@ If
 .MONO resize
 fails, the element is not inserted to the vector and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown, if enabled.
 :RSLTS.
 The &fn. prepends an element to the
@@ -1345,7 +1345,7 @@ down one index.
 :P.
 If the vector is empty and the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, the exception is thrown.
 :P.
 If an attempt to remove an element with a negative index is made and the
@@ -1409,7 +1409,7 @@ down one index.
 :P.
 If the vector is empty and the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, the exception is thrown.
 :RSLTS.
 The &fn. removes the first element from the vector.
@@ -1451,7 +1451,7 @@ If the vector was empty, NULL(0) is returned.
 The &fn. removes the last element from a vector.
 If the vector is empty and the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, the exception is thrown.
 :RSLTS.
 The &fn. removes the last element from the vector.
@@ -1517,7 +1517,7 @@ The objects pointed to by the remaining elements are not deleted.
 :P.
 If the resize cannot be performed and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled, the exception is thrown.
 :RSLTS.
 The vector is resized to :HP1.new_size:eHP1.:PERIOD.

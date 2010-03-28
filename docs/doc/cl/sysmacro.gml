@@ -7,7 +7,7 @@ for describing the memory model being used:
 .mkwfont &mkwCOMPACT.
 .discuss begin
 The compact memory model is being used.
-.ix 'memory model' compact
+.ix 'memory model' 'compact'
 .ix 'compact memory model'
 .discuss end
 .*
@@ -31,7 +31,7 @@ The name of the current function (a string literal).
 .mkwfont &mkwHUGE.
 .discuss begin
 The huge memory model is being used.
-.ix 'memory model' huge
+.ix 'memory model' 'huge'
 .ix 'huge memory model'
 .discuss end
 .*
@@ -40,7 +40,7 @@ The huge memory model is being used.
 .mkwfont &mkwLARGE.
 .discuss begin
 The large memory model is being used.
-.ix 'memory model' large
+.ix 'memory model' 'large'
 .ix 'large memory model'
 .discuss end
 .*
@@ -49,7 +49,7 @@ The large memory model is being used.
 .mkwfont &mkwMEDIUM.
 .discuss begin
 The medium memory model is being used.
-.ix 'memory model' medium
+.ix 'memory model' 'medium'
 .ix 'medium memory model'
 .discuss end
 .*
@@ -58,7 +58,7 @@ The medium memory model is being used.
 .mkwfont &mkwSMALL.
 .discuss begin
 The small memory model is being used.
-.ix 'memory model' small
+.ix 'memory model' 'small'
 .ix 'small memory model'
 .discuss end
 .*
@@ -229,7 +229,7 @@ The program is being compiled for use on the Intel 80386 processor.
 .mkwfont &mkwM_I86CM.
 .discuss begin
 The compact memory model is being used.
-.ix 'memory model' compact
+.ix 'memory model' 'compact'
 .ix 'compact memory model'
 .discuss end
 .*
@@ -238,7 +238,7 @@ The compact memory model is being used.
 .mkwfont &mkwM_I86HM.
 .discuss begin
 The huge memory model is being used.
-.ix 'memory model' huge
+.ix 'memory model' 'huge'
 .ix 'huge memory model'
 .discuss end
 .*
@@ -247,7 +247,7 @@ The huge memory model is being used.
 .mkwfont &mkwM_I86LM.
 .discuss begin
 The large memory model is being used.
-.ix 'memory model' large
+.ix 'memory model' 'large'
 .ix 'large memory model'
 .discuss end
 .*
@@ -256,7 +256,7 @@ The large memory model is being used.
 .mkwfont &mkwM_I86MM.
 .discuss begin
 The medium memory model is being used.
-.ix 'memory model' medium
+.ix 'memory model' 'medium'
 .ix 'medium memory model'
 .discuss end
 .*
@@ -265,7 +265,7 @@ The medium memory model is being used.
 .mkwfont &mkwM_I86SM.
 .discuss begin
 The small memory model is being used.
-.ix 'memory model' small
+.ix 'memory model' 'small'
 .ix 'small memory model'
 .discuss end
 .*

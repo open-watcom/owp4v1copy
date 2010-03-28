@@ -8,12 +8,12 @@ The following sections describe support for composite data types.
 .section Structures and Records
 .*
 .np
-.ix structure
+.ix 'structure'
 As an extension to the basic FORTRAN 77 types such as INTEGER, REAL,
 LOGICAL, etc., &product supports the creation of hierarchical,
 composite data types called
 .us structures.
-.ix record
+.ix 'record'
 A structure is a template describing the form of a
 .us record.
 It is composed of members or fields of various types, including other

@@ -48,12 +48,12 @@ Operator    Arithmetic Operation
 .np
 Some operators can be either binary or unary.
 .ix 'binary operator'
-.ix operator binary
+.ix 'operator' 'binary'
 A
 .us binary operator
 is one that requires two operands.
 .ix 'unary operator'
-.ix operator unary
+.ix 'operator' 'unary'
 A
 .us unary operator
 is one that requires one operand.
@@ -79,8 +79,8 @@ x + y       y is added to x
 .np
 Arithmetic expressions can contain more than one operator.
 It is thus necessary to define rules of evaluation for such expressions.
-.ix 'arithmetic operators' precedence
-.ix operator precedence
+.ix 'arithmetic operators' 'precedence'
+.ix 'operator' 'precedence'
 A
 .us precedence relation
 is defined between operators.
@@ -136,7 +136,7 @@ The result in this case is 17.
 .*
 .np
 .ix 'arithmetic expression' 'primary'
-.ix expression primary
+.ix 'expression' 'primary'
 The building blocks for arithmetic expressions are called
 .us arithmetic primaries.
 They are one of the following:
@@ -159,8 +159,8 @@ A grammar for forming arithmetic expressions can be described which
 reflects the precedence relation among arithmetic operators.
 .np
 Exponentiation has highest precedence.
-.ix 'arithmetic expression' factor
-.ix expression factor
+.ix 'arithmetic expression' 'factor'
+.ix 'expression' 'factor'
 We define a
 .us factor
 as:
@@ -179,8 +179,8 @@ when evaluating a factor.
 .np
 Next in the precedence hierarchy are the multiplication and division
 operators.
-.ix 'arithmetic expression' term
-.ix expression term
+.ix 'arithmetic expression' 'term'
+.ix 'expression' 'term'
 We define a
 .us term
 as:
@@ -206,7 +206,7 @@ between the exponentiation operator and the division and
 multiplication operators.
 .np
 .ix 'arithmetic expression'
-.ix expression arithmetic
+.ix 'expression' 'arithmetic'
 An
 .us arithmetic expression
 can now be defined as follows.
@@ -249,7 +249,7 @@ are allowed.
 .*
 .np
 .ix 'arithmetic constant expression'
-.ix expression 'arithmetic constant'
+.ix 'expression' 'arithmetic constant'
 An
 .us arithmetic constant expression
 is an arithmetic expression in which all primaries are one of the
@@ -267,8 +267,8 @@ There is a further restriction with the exponentiation operator;
 the exponent must be of type INTEGER.
 .np
 .xt begin
-.ix 'intrinsic function' ISIZEOF
-.ix ISIZEOF
+.ix 'intrinsic function' 'ISIZEOF'
+.ix 'ISIZEOF'
 As an extension to the FORTRAN 77 language, &product supports the use
 of the intrinsic function
 .kw ISIZEOF
@@ -279,7 +279,7 @@ in an arithmetic constant expression.
 .xt end
 .np
 .ix 'integer constant expression'
-.ix expression 'integer constant'
+.ix 'expression' 'integer constant'
 An
 .us integer constant expression
 is an arithmetic constant expression in which all constants and
@@ -291,7 +291,7 @@ symbolic constants are of type INTEGER.
 .exam end
 .np
 .ix 'real constant expression'
-.ix expression 'real constant'
+.ix 'expression' 'real constant'
 A
 .us real constant expression
 is an arithmetic constant expression in which at least one
@@ -304,7 +304,7 @@ constants or symbolic constants are of type REAL or INTEGER.
 .exam end
 .np
 .ix 'double precision constant expression'
-.ix expression 'double precision constant'
+.ix 'expression' 'double precision constant'
 A
 .us double precision constant expression
 is an arithmetic constant expression in which at least one constant or
@@ -317,7 +317,7 @@ or symbolic constants are of type DOUBLE PRECISION, REAL or INTEGER.
 .exam end
 .np
 .ix 'complex constant expression'
-.ix expression 'complex constant'
+.ix 'expression' 'complex constant'
 A
 .us complex constant expression
 is an arithmetic constant expression in which at least one
@@ -331,7 +331,7 @@ INTEGER.
 .exam end
 .np
 .ix 'double precision complex constant expression'
-.ix expression 'double precision complex constant'
+.ix 'expression' 'double precision complex constant'
 .xt begin
 A
 .us double precision complex constant expression
@@ -495,7 +495,7 @@ is the string
 .section Rules for Forming Character Expressions
 .*
 .np
-.ix 'character expression' primaries
+.ix 'character expression' 'primaries'
 The building blocks for character expressions are called
 .us character primaries.
 They are one of the following.
@@ -567,8 +567,8 @@ symbolic character constant
 .endpoint
 .np
 .xt begin
-.ix 'intrinsic function' CHAR
-.ix CHAR
+.ix 'intrinsic function' 'CHAR'
+.ix 'CHAR'
 As an extension to the FORTRAN 77 language, &product supports the use
 of the intrinsic function
 .kw CHAR
@@ -599,7 +599,7 @@ logical.
 .*
 .np
 .ix 'relational operator'
-.ix operator relational
+.ix 'operator' 'relational'
 The following table lists the
 .us relational operators
 and the operation they perform.
@@ -621,7 +621,7 @@ Operator    Relational Operation
 .*
 .np
 .ix 'relational expression'
-.ix expression relational
+.ix 'expression' 'relational'
 The form of a
 .us relational expression
 is as follows.
@@ -1006,7 +1006,7 @@ Rule (2) specifies that the logical terms are combined from left to
 right.
 .np
 .ix 'logical expression'
-.ix expression logical
+.ix 'expression' 'logical'
 A
 .us logical expression
 can now be defined as follows.
@@ -1046,7 +1046,7 @@ using the .OR. operator to form the final result.
 .*
 .np
 .ix 'logical constant expression'
-.ix expression 'logical constant'
+.ix 'expression' 'logical constant'
 A
 .us logical constant expression
 is a logical expression in which each primary is one of the following:
@@ -1108,7 +1108,7 @@ operator.
 Since we can mix these four types of operators, it is necessary to
 define a precedence among these four classes of operators.
 The following defines this precedence of operators.
-.ix expression 'evaluation of'
+.ix 'expression' 'evaluation of'
 .autopoint
 .point
 arithmetic operators (highest precedence)

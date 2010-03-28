@@ -35,7 +35,7 @@ of operators in the absence of parentheses,
 the common algebraic ordering,
 .note
 the associativity of operators.
-.ix operator associativity
+.ix 'operator' 'associativity'
 .ix 'associativity of operators'
 .endnote
 .pp
@@ -68,7 +68,7 @@ to completely describe the relationships between the various levels.
 In order to understand certain components of expressions,
 it is important to understand
 the term
-.ix lvalue
+.ix 'lvalue'
 .us lvalue
 ..ct ..li .
 .pp
@@ -105,7 +105,7 @@ are
 .us lvalues.
 .pp
 A
-.ix lvalue modifiable
+.ix 'lvalue' 'modifiable'
 .ix 'modifiable lvalue'
 .us modifiable lvalue
 is an
@@ -149,7 +149,7 @@ An identifier that designates a function is called a
 .us function designator.
 An identifier that designates an object
 is an
-.ix lvalue
+.ix 'lvalue'
 .us lvalue.
 :ZDT.constant
 :ZDD.
@@ -374,7 +374,7 @@ of the parameters in the function prototype, the behavior is
 undefined.
 .pp
 If the
-.ix ellipsis
+.ix 'ellipsis'
 ellipsis (
 ..ct .mono ,...
 ..ct )
@@ -901,7 +901,7 @@ The type of the result of the
 .kw sizeof
 operator is implementation-defined,
 but it is an unsigned integer type, and is represented by
-.ix size_t
+.ix 'size_t'
 .kw size_t
 in the
 .hdr <stddef.h>
@@ -912,7 +912,7 @@ header.
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 .shade begin
 For the &wcboth. compilers, the macro
-.ix size_t
+.ix 'size_t'
 .kw size_t
 is
 .kw unsigned int
@@ -922,7 +922,7 @@ is
 ..if '&target' eq 'PC 370' ..th ..do begin
 .shade begin
 For the &wlooc. compiler, the macro
-.ix size_t
+.ix 'size_t'
 .kw size_t
 is
 .kw unsigned int
@@ -1030,7 +1030,7 @@ A pointer may be converted to a pointer to another type.
 However,
 the pointer may be invalid
 if the resulting pointer is not properly
-.ix alignment
+.ix 'alignment'
 aligned for
 the type.
 Converting a pointer to a pointer to a type with less strict
@@ -1220,9 +1220,9 @@ of integer type and positive value,
 and the division is inexact,
 the result is the
 .ix 'rounding'
-.ix truncation
+.ix 'truncation'
 .ix 'division' 'rounding'
-.ix integer division rounding
+.ix 'integer' 'division rounding'
 largest integer less than the algebraic (exact)
 quotient. (The result is rounded down.)
 .pp
@@ -1239,13 +1239,13 @@ The &wcboth. compilers always round
 ..el ..if '&target' eq 'PC 370' ..th ..do begin
 The &wcall. compilers always round
 ..do end
-.ix integer division rounding
-.ix division rounding
+.ix 'integer' 'division rounding'
+.ix 'division rounding'
 the result of integer division
 toward zero.
 This action is also called
-.ix integer division truncation
-.ix division truncation
+.ix 'integer' 'division truncation'
+.ix 'division truncation'
 truncation.
 .shade end
 .*
@@ -1388,7 +1388,7 @@ the subscripts of the two array members (assuming the type is "array of
 ..ct ").
 The type of the result is implementation-defined, and is represented
 by
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 (a signed integral type)
 defined in the
@@ -1400,7 +1400,7 @@ header.
 ..if '&target' eq 'PC' or '&target' eq 'PC 370' ..th ..do begin
 .shade begin
 With &wcboth.,
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 is
 .kw int
@@ -1409,7 +1409,7 @@ unless the
 .ix 'memory model' 'huge'
 .ix 'huge memory model'
 huge memory model is being used, in which case
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 is
 .kw long int
@@ -1419,7 +1419,7 @@ is
 ..if '&target' eq 'PC 370' ..th ..do begin
 .shade begin
 With &wlooc., the type of
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 is
 .kw int
@@ -2116,8 +2116,8 @@ both are pointers and one is a pointer to
 ..ct ,
 .bull
 the left operand is a pointer, and the right is a
-.ix null pointer
-.ix pointer null
+.ix 'null pointer'
+.ix 'pointer' 'null'
 null pointer constant (0).
 .endbull
 .*
@@ -2231,7 +2231,7 @@ for( i = 0, j = 0, k = 0;; i++, j++, k++ )
 .uillust end
 .pc
 The
-.ix statement for
+.ix 'statement' 'for'
 .ix 'for statement'
 .kw for
 statement allows three expressions.
@@ -2244,13 +2244,13 @@ increments the three objects.
 .section Constant Expressions
 .*
 .ix 'constant expression'
-.ix expression constant
+.ix 'expression' 'constant'
 .pp
 A constant expression may be specified in several places:
 .begbull $compact
 .bull
 the size of a
-.ix bit-field
+.ix 'bit-field'
 bit-field member of a structure,
 .bull
 the value of an

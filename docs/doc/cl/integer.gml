@@ -1,9 +1,9 @@
-.ix type integer
+.ix 'type' 'integer'
 .pp
 The most commonly used type is the integer. Integers are used for
 storing most numbers that do not require a decimal point, such as
 counters, sizes and
-.ix array index
+.ix 'array' 'index'
 .ix 'index'
 indices into arrays.
 The range of integers is limited by the underlying machine architecture
@@ -81,7 +81,7 @@ to
 .*
 .pp
 Specifying the type
-.ix type char
+.ix 'type' 'char'
 .kw char
 indicates that the amount of storage is large enough to store any member
 of the

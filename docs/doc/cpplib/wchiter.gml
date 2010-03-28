@@ -294,7 +294,7 @@ hash iterator object is destroyed.
 The &fn. returns a pointer to the hash container object.
 If the iterator has not been initialized with a hash object, and the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is enabled, the exception is thrown.
 :RSLTS.
 A pointer to the hash object associated with the iterator is returned,
@@ -336,7 +336,7 @@ position.
 .ITERATOR_UNDEFINED
 In this case the
 .MONO undef_item
-.ix undef_item
+.ix 'undef_item'
 exception is thrown, if enabled.
 :RSLTS.
 .if &lpref. eq Val .th .do begin
@@ -386,7 +386,7 @@ value of the hash item at the current iterator position.
 .ITERATOR_UNDEFINED
 In this case the
 .MONO undef_item
-.ix undef_item
+.ix 'undef_item'
 exception is thrown, if enabled.
 :RSLTS.
 .if &lpref. eq Val .th .do begin
@@ -435,7 +435,7 @@ the hash.
 If the iterator is not associated with a hash or the iterator
 position before the increment was past the last element the hash, the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is thrown, if enabled.
 :RSLTS
 The &fn. returns a non-zero value if the iterator is positioned on a
@@ -472,7 +472,7 @@ the hash.
 If the iterator is not associated with a hash or the iterator
 position before the increment was past the last element the hash, the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is thrown, if enabled.
 :RSLTS
 The &fn. returns a non-zero value if the iterator is positioned on a
@@ -563,7 +563,7 @@ the current iterator position.
 .ITERATOR_UNDEFINED
 In this case the
 .MONO undef_item
-.ix undef_item
+.ix 'undef_item'
 exception is thrown, if enabled.
 :RSLTS.
 .if &lpref. eq Val .th .do begin

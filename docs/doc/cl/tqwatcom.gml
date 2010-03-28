@@ -1,4 +1,4 @@
-.ix keyword
+.ix 'keyword'
 ..tb set $
 ..sr firsttab=&SYSIN.+3
 ..tb &firsttab. +18 +18

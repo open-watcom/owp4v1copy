@@ -31,7 +31,7 @@ both. The &wc286. compiler provides a mechanism whereby pointers
 can be declared that get beyond the 64K limit. This can be done either
 by specifying an option when compiling the files (see the
 &userguide) or by including a special
-.ix type pointer
+.ix 'type' 'pointer'
 type qualifier keyword in the declaration of the object.
 Later sections describe these keywords and their use.
 .pp
@@ -50,27 +50,27 @@ The five memory models are
 referred to as:
 :ZDL termhi=1.
 :ZDT.small
-.ix 'memory model' small
+.ix 'memory model' 'small'
 .ix 'small memory model'
 :ZDD.
 small code (code < 64K), small data (data < 64K)
 :ZDT.compact
-.ix 'memory model' compact
+.ix 'memory model' 'compact'
 .ix 'compact memory model'
 :ZDD.
 small code (code < 64K), big data (total data > 64K, all objects < 64K)
 :ZDT.medium
-.ix 'memory model' medium
+.ix 'memory model' 'medium'
 .ix 'medium memory model'
 :ZDD.
 big code (code > 64K), small data (data < 64K)
 :ZDT.large
-.ix 'memory model' large
+.ix 'memory model' 'large'
 .ix 'large memory model'
 :ZDD.
 big code (code > 64K), big data (total data > 64K, all objects < 64K)
 :ZDT.huge
-.ix 'memory model' huge
+.ix 'memory model' 'huge'
 .ix 'huge memory model'
 :ZDD.
 big code (code > 64K), huge data (total data > 64K, objects > 64K)
@@ -110,10 +110,10 @@ be called with a 32-bit pointer.
 A 32-bit pointer consists of
 two 16-bit quantities,
 called the
-.ix pointer segment
+.ix 'pointer' 'segment'
 .us segment
 and
-.ix pointer offset
+.ix 'pointer' 'offset'
 .us offset.
 (When the computer uses the segment and offset to refer to an
 actual memory location, the two values are combined to produce a
@@ -130,14 +130,14 @@ grouped.
 It is possible to call other functions within the same group using
 a 16-bit value.
 These functions are said to be
-.ix function near
-.ix near
+.ix 'function' 'near'
+.ix 'near'
 .us near.
 Functions outside the group can still be called, but
 must be called using a 32-bit value.
 These functions are said to be
-.ix function far
-.ix far
+.ix 'function' 'far'
+.ix 'far'
 .us far.
 .pp
 When the big code option is given on the command line
@@ -213,12 +213,12 @@ objects can be referred to using 16-bit pointers,
 regardless of the code group being executed.
 These objects are
 said to be
-.ix near
+.ix 'near'
 .us near.
 Objects outside this region can still be referenced, but must be
 referred to using a 32-bit value.
 These objects are said to be
-.ix far
+.ix 'far'
 .us far.
 .pp
 When the big data option is given on the command line
@@ -233,7 +233,7 @@ The programmer must decide which method is easier to use.
 .*
 .section Mixing Memory Models
 .*
-.ix 'memory model' mixing
+.ix 'memory model' 'mixing'
 .pp
 It is possible to mix small and big code and data pointers within one
 program. In fact, a programmer striving for optimum efficiency will
@@ -265,13 +265,13 @@ functions are
 and pointers to functions are
 declared automatically to be
 .ix 'far pointer'
-.ix pointer far
+.ix 'pointer' 'far'
 pointers to
 .us far
 functions. Similarly, the big data model causes all pointers to objects
 (other than functions) to be
 .ix 'far pointer'
-.ix pointer far
+.ix 'pointer' 'far'
 pointers to
 .us far
 objects. However, when either the small code or small data model
@@ -443,13 +443,13 @@ functions are
 and pointers to functions are
 automatically declared to be
 .ix 'near pointer'
-.ix pointer near
+.ix 'pointer' 'near'
 pointers to
 .us near
 functions. Similarly, the small data model causes all pointers to objects
 (other than functions) to be
 .ix 'near pointer'
-.ix pointer near
+.ix 'pointer' 'near'
 pointers to
 .us near
 objects. However, when either the big code or big data model
@@ -567,7 +567,7 @@ structure.
 .*
 .section &hugekw. for &wc286.
 .*
-.ix pointer huge
+.ix 'pointer' 'huge'
 .ix 'huge pointer'
 .pp
 Even using the big data model, each object is restricted in size
@@ -674,11 +674,11 @@ Objects or functions that are near require a 32-bit pointer to access them.
 Objects or functions that are far require a 48-bit pointer to access them.
 This 48-bit pointer consists of two parts:
 a
-.ix pointer selector
+.ix 'pointer' 'selector'
 .ul selector
 consisting of 16 bits,
 and an
-.ix pointer offset
+.ix 'pointer' 'offset'
 .ul offset
 consisting of 32 bits.
 A selector is similar to a segment in a 16-bit program's far pointer,
@@ -688,9 +688,9 @@ Instead, the processor uses the selector value in conjunction with a
 "descriptor table" to determine what region of memory is to be
 accessed.
 In the discussion of far pointers on the 80386, the terms
-.ix pointer selector
+.ix 'pointer' 'selector'
 selector and
-.ix pointer segment
+.ix 'pointer' 'segment'
 segment may be used interchangeably.
 .pp
 Like the 16-bit compiler, the &wc386. compiler supports the

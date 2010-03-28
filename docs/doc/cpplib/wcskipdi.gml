@@ -185,7 +185,7 @@ If an allocation failure occurs while creating the skip list, the
 .MONO out_of_memory
 exception is thrown if the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled.
 
 :RSLTS.
@@ -246,7 +246,7 @@ the values, then only some will be copied,
 and the number of entries will correctly reflect the number copied.
 If all of the elements cannot be copied, then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 :RSLTS.
 The &fn. creates an &obj. which is a copy of the passed dictionary.
@@ -266,7 +266,7 @@ The &fn. creates an &obj. which is a copy of the passed dictionary.
 The &fn. is the destructor for the &cls.:PERIOD.
 If the number of dictionary elements is not zero and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 Otherwise, the dictionary elements are cleared using the
 .MONO clear
@@ -526,7 +526,7 @@ a key and value into the dictionary.
 If allocation of the
 node to store the key-value pair fails, then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, the insert will not be completed.
 :RSLTS.
@@ -581,7 +581,7 @@ so that insertions can be made with the operator.
 If an allocation error occurs while inserting a new key-value pair,
 then the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, then a reference to address
 zero will be returned.
@@ -615,7 +615,7 @@ in the dictionary with the given
 is returned.
 If no equivalent element is found, then the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is thrown if it is enabled.
 If the exception is not enabled, then a reference to address
 zero will be returned.
@@ -646,7 +646,7 @@ all values or pointers stored in the list, and the exception trap states.
 If there is not enough memory to copy all of
 the values or pointers in the dictionary, then only some will be copied, and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if it is enabled.
 The number of entries will correctly reflect the number copied.
 :RSLTS.

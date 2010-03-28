@@ -5,8 +5,8 @@ that name represents.
 A
 .ix 'declaration' 'of object'
 .ix 'declaration' 'of function'
-.ix object declaration
-.ix function declaration
+.ix 'object' 'declaration'
+.ix 'function' 'declaration'
 .us declaration
 describes to the compiler what a name is, including:
 .begbull
@@ -60,7 +60,7 @@ or just to the function within which the declaration appears.
 .pp
 The
 .us definition
-.ix definition
+.ix 'definition'
 of an object is similar to its declaration, except that the storage for
 the object is reserved.
 Whether the declaration of an object is also a definition depends upon
@@ -167,7 +167,7 @@ with
 ..ct ..li .
 Its
 value is available only within the function (or
-.ix statement compound
+.ix 'statement' 'compound'
 .ix 'compound statement'
 compound statement)
 in which it is defined.
@@ -264,7 +264,7 @@ Its value is only available within the
 .us module
 ..ct ..li .
 (The difference is the
-.ix scope
+.ix 'scope'
 .us scope
 of the object
 .mono nums
@@ -310,24 +310,24 @@ of declarations of objects and functions.
 .*
 .section Name Scope
 .*
-.ix scope
+.ix 'scope'
 .ix 'name' 'scope'
 .pp
 An identifier may be referenced
 only within its
 .us scope
 ..ct ..li .
-.ix scope
+.ix 'scope'
 .pp
 An identifier declared within a function or within a
 .ix 'compound statement'
-.ix statement compound
+.ix 'statement' 'compound'
 compound statement
 within
 a function has
 .us block
 .ix 'block scope'
-.ix scope block
+.ix 'scope' 'block'
 scope, and may be referenced only in the block in which it is declared.
 The object's scope includes any enclosed blocks and
 terminates at the } which terminates the enclosing block.
@@ -336,7 +336,7 @@ An identifier declared within a function prototype (as a parameter to
 that function) has
 .us function prototype
 .ix 'function prototype scope'
-.ix scope 'function prototype'
+.ix 'scope' 'function prototype'
 scope, and may not be referenced elsewhere.
 Its scope terminates at the ) which terminates the prototype.
 .pp
@@ -344,7 +344,7 @@ An identifier declared outside of any function or function prototype
 has
 .us file
 .ix 'file scope'
-.ix scope file
+.ix 'scope' 'file'
 scope, and may be referenced anywhere within the module in which it
 is declared.
 If a function contains a declaration for the same identifier,
@@ -354,8 +354,8 @@ file scope becomes visible again.
 .pp
 A label, which must appear within a function, has
 .us function
-.ix scope function
-.ix function scope
+.ix 'scope' 'function'
+.ix 'function' 'scope'
 scope.
 .*
 .section Type Specifiers

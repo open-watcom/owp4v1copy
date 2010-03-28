@@ -84,7 +84,7 @@ a string or a comment, otherwise the behavior is undefined.
 .pp
 If the character set of the computer being used to compile the program
 does not contain a certain character, a
-.ix trigraphs
+.ix 'trigraphs'
 .us trigraph
 sequence may be used to represent it.
 Refer to the section
@@ -147,7 +147,7 @@ found in the one-byte character set.
 Multibyte characters are generally restricted to:
 .begbull $compact
 .bull
-.ix comment
+.ix 'comment'
 comments,
 .bull
 .ix 'string literal'
@@ -156,7 +156,7 @@ string literals,
 .ix 'character constant'
 character constants,
 .bull
-.ix header
+.ix 'header'
 header names.
 .endbull
 ..sk 1 c

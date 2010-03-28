@@ -23,7 +23,7 @@ are replaced by the appropriate single character.
 .note
 Physical source lines are
 .ix 'continuation lines'
-.ix line continuation
+.ix 'line' 'continuation'
 joined together
 wherever a line is terminated by a backslash (
 ..ct .mono \

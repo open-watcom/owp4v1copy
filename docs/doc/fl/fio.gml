@@ -7,7 +7,7 @@
 .np
 FORTRAN 77 provides a means of communicating information or
 .us data
-.ix data
+.ix 'data'
 between a FORTRAN program and the computing environment.
 The computing environment may include a number of devices which are
 capable of the recording, retrieval, display, and input of data.
@@ -62,7 +62,7 @@ This solves the problem of wasted space but creates a severe problem
 when trying to display the records in nice orderly columns.
 The telephone book itself is a collection of records or a
 .us file.
-.ix file
+.ix 'file'
 .np
 We have introduced much of the terminology of data processing:
 "data", "records", "fixed and variable record sizes", "files",
@@ -90,7 +90,7 @@ processed by the program, or making inquiries about files.
 .section Records
 .*
 .np
-.ix record
+.ix 'record'
 FORTRAN distinguishes between three kinds of records, namely:
 .autopoint
 .point
@@ -109,7 +109,7 @@ We shall describe each of these in the following sections.
 .*
 .np
 .ix 'formatted record'
-.ix record formatted
+.ix 'record' 'formatted'
 A formatted record consists of characters.
 The length of a formatted record is determined by the number of
 characters in it.
@@ -127,7 +127,7 @@ our telephone book example.
 .*
 .np
 .ix 'unformatted record'
-.ix record unformatted
+.ix 'record' 'unformatted'
 An unformatted record consists of values such as integers, real
 numbers, complex numbers, etc.
 It may also consist of characters.
@@ -172,7 +172,7 @@ interchangeably when talking about the size of variables.
 .*
 .np
 .ix 'endfile record'
-.ix record endfile
+.ix 'record' 'endfile'
 An endfile record is a special record that follows all other records
 in a file.
 Simply stated, an endfile record occurs at the end of a file.
@@ -181,7 +181,7 @@ It has no length.
 When the end of a file is reached (i.e., an attempt to read a record
 results in the endfile record being read), an "end-of-file"
 condition exists.
-.ix end-of-file
+.ix 'end-of-file'
 There are no more records following the endfile record.
 There is only one endfile record so it is strictly illegal to
 attempt to read another record after the endfile record has been
@@ -191,7 +191,7 @@ read (i.e., when the end-of-file condition exists).
 .section Files
 .*
 .np
-.ix file
+.ix 'file'
 Earlier we described the notion of a file as a collection of records.
 In FORTRAN, there are two kinds of files:
 .autopoint
@@ -206,7 +206,7 @@ Internal
 .section External Files
 .*
 .np
-.ix file external
+.ix 'file' 'external'
 .ix 'external file'
 .ix 'file existence'
 External files are files that exist or can be created upon external
@@ -228,14 +228,14 @@ and
 statements may refer to files that do not exist (and in so doing, may
 very well cause the file to be created).
 .begnote Properties of External Files
-.ix 'external file' properties
+.ix 'external file' 'properties'
 .note Name
-.ix 'external file' name
+.ix 'external file' 'name'
 In FORTRAN, a file may or may not have a name.
 If it does have a name then, not surprisingly, it is called a
 .us named
 file.
-.ix file name
+.ix 'file' 'name'
 All files in &product have names and so it may seem odd to
 introduce this notion.
 However, we do since the
@@ -247,8 +247,8 @@ next.
 As well, different FORTRAN 77 compilers may have different file
 naming conventions.
 .note Access
-.ix access
-.ix 'external file' access
+.ix 'access'
+.ix 'external file' 'access'
 "Access" simply refers to the way in which we can position to and read
 or write the data in a particular record in a file.
 There are two ways in which records can be accessed in a file;
@@ -256,7 +256,7 @@ There are two ways in which records can be accessed in a file;
 or
 .us directly.
 .np
-.ix access sequential
+.ix 'access' 'sequential'
 .ix 'sequential access'
 Using the
 .us sequential access
@@ -272,7 +272,7 @@ and so on.
 This numbering convention is important when we look at the other
 access method which is "direct".
 .np
-.ix access direct
+.ix 'access' 'direct'
 .ix 'direct access'
 Using the
 .us direct access
@@ -302,7 +302,7 @@ may not be accessed using the direct method or vice versa.
 FORTRAN calls this property of a file the "set of allowed access
 methods".
 .note Record Form
-.ix record form
+.ix 'record' 'form'
 .ix 'external file' 'record form'
 Some files have the property of being able to handle both formatted
 and unformatted record formats.
@@ -313,7 +313,7 @@ On the other hand a graphics printer may readily accept unformatted
 records for reproducing graphical images on paper.
 FORTRAN calls this property of a file the "set of allowed forms".
 .note Record Length
-.ix record length
+.ix 'record' 'length'
 .ix 'external file' 'record length'
 Another property of a file is record length.
 Some files may have restrictions on the length of a record.
@@ -326,7 +326,7 @@ FORTRAN calls this property the "set of allowed record lengths".
 .section Internal Files
 .*
 .np
-.ix file internal
+.ix 'file' 'internal'
 .ix 'internal file'
 Internal files are special files that reside only in memory.
 They do not exist before or after the execution of a FORTRAN
@@ -344,9 +344,9 @@ can contain only one record but an internal file that is a character
 array can contain several records (as many as there are elements in the
 array).
 .begnote Properties of Internal Files
-.ix 'internal file' properties
+.ix 'internal file' 'properties'
 .note Records
-.ix 'internal file' records
+.ix 'internal file' 'records'
 Unless the name of a character array is used, only one record is
 contained in an internal file.
 The length of this record is the same as the length of the variable,
@@ -362,7 +362,7 @@ If the number of characters written to a record in an internal file
 is less than the length of the record then the record is padded with
 blanks.
 .note Definition
-.ix 'internal file' definition
+.ix 'internal file' 'definition'
 A record may be read only if the variable, array element, or substring
 is defined (i.e., it has been assigned some value).
 Definition may not only result from an output statement such as
@@ -370,13 +370,13 @@ Definition may not only result from an output statement such as
 It may also be defined through other means; for example, a character
 assignment statement.
 .note Position
-.ix 'internal file' position
+.ix 'internal file' 'position'
 For all input/output statements, the file is positioned at the
 beginning of the first record.
 Multiple records may be read or written using the "slash" format edit
 descriptor (see the chapter entitled :HDREF refid='fformat'.).
 .note Restrictions
-.ix 'internal file' restrictions
+.ix 'internal file' 'restrictions'
 Only sequential access formatted input and output statements (
 .ct
 .kw READ
@@ -386,7 +386,7 @@ and
 internal file.
 .np
 .xt begin
-.ix list-directed
+.ix 'list-directed'
 Although FORTRAN 77 states that list-directed formatted input/output
 to an internal file is not permitted, &product allows you to use
 list-directed formatted input/output statements.
@@ -440,7 +440,7 @@ statement is executed.
 Many FORTRAN 77 input/output statements refer to external files using a
 mechanism called the
 .us unit.
-.ix unit
+.ix 'unit'
 There are many units available to the FORTRAN 77 programmer.
 &product numbers these units from 0 to 999;
 thus the unit number is a non-negative integer less than 1000.
@@ -448,15 +448,15 @@ thus the unit number is a non-negative integer less than 1000.
 A unit may be associated with a particular file.
 This association is called
 .us connection.
-.ix connection unit
-.ix connection file
+.ix 'connection' 'unit'
+.ix 'connection' 'file'
 Any unit may or may not be connected to a file.
 There are a number of ways in which this connection may be
 established.
 .np
 A unit may be
 .us preconnected
-.ix preconnection
+.ix 'preconnection'
 to a file before execution of a program begins.
 The User's Guide describes the mechanism for preconnecting
 a unit to a file.
@@ -497,7 +497,7 @@ However, a file may be connected to different units at different
 times.
 We shall explain how this is possible.
 .np
-.ix disconnection
+.ix 'disconnection'
 A file may be
 .us disconnected
 from a unit by the use of the
@@ -592,7 +592,7 @@ We shall look at these specifiers in more detail.
 .*
 .np
 .ix 'unit specifier'
-.ix specifier unit
+.ix 'specifier' 'unit'
 .np
 The form of a unit specifier in an input/output statement is:
 .begnote
@@ -631,7 +631,7 @@ item in the list of specifiers.
 .*
 .np
 .ix 'format specifier'
-.ix specifier format
+.ix 'specifier' 'format'
 .np
 The form of a format specifier in an input/output statement is:
 .begnote
@@ -670,7 +670,7 @@ unless the operand is a symbolic constant (see the
 statement).
 .point
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 An asterisk
 .mono (*),
 indicating
@@ -679,7 +679,7 @@ formatting.
 .point
 .xt on
 .ix 'namelist-directed format'
-.ix format namelist-directed
+.ix 'format' 'namelist-directed'
 A
 .kw NAMELIST
 name, indicating
@@ -700,7 +700,7 @@ must not be specified for the first item in the list.
 .*
 .np
 .ix 'record specifier'
-.ix specifier record
+.ix 'specifier' 'record'
 .np
 The form of a record specifier in an input/output statement is:
 .begnote
@@ -712,14 +712,14 @@ It is the number of the record to be read when a file is
 connected for
 .us direct access.
 .ix 'direct access'
-.ix access direct
+.ix 'access' 'direct'
 .endnote
 .*
 .section Input/Output Status Specifier
 .*
 .np
 .ix 'status specifier'
-.ix specifier status
+.ix 'specifier' 'status'
 .np
 The form of an input/output status specifier in an input/output
 statement is:
@@ -758,7 +758,7 @@ IO-03  ENDFILE statement requires sequential access mode
 .*
 .np
 .ix 'error specifier'
-.ix specifier error
+.ix 'specifier' 'error'
 The form of an error specifier in an input/output statement is:
 .begnote
 .ix 'ERR='
@@ -780,7 +780,7 @@ terminated.
 .*
 .np
 .ix 'end-of-file specifier'
-.ix specifier end-of-file
+.ix 'specifier' 'end-of-file'
 The form of an end-of-file specifier in an input/output statement is:
 .begnote
 .ix 'END='
@@ -802,7 +802,7 @@ terminated.
 .section Printing of Formatted Records
 .*
 .np
-.ix printing
+.ix 'printing'
 Printing occurs when
 .us formatted
 records are transferred to a device which interprets the first
@@ -816,7 +816,7 @@ statement.
 What actually determines whether or not you are "printing" is the
 device (or file) to which records are transferred.
 .np
-.ix ASA
+.ix 'ASA'
 .ix 'carriage control'
 The first character of the record controls the vertical spacing.
 This feature is quite often called ASA (American Standards

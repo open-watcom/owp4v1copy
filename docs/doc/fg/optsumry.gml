@@ -360,21 +360,21 @@ status of the macro.
 .ix 'macros' 'predefined'
 .np
 .ix 'predefined macros' '__i86__'
-.ix __i86__
+.ix '__i86__'
 The macro
 .mono __i86__
 is a special macro that is defined by the compiler and identifies the
 target as a 16-bit Intel 80x86 compatible environment.
 .np
 .ix 'predefined macros' '__386__'
-.ix __386__
+.ix '__386__'
 The macro
 .mono __386__
 is a special macro that is defined by the compiler and identifies the
 target as a 32-bit Intel 386 compatible environment.
 .np
 .ix 'predefined macros' '__stack_conventions__'
-.ix __stack_conventions__
+.ix '__stack_conventions__'
 The macro
 .mono __stack_conventions__
 is a special macro that is defined by the 32-bit compiler when the

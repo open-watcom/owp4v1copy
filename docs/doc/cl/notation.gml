@@ -1,4 +1,4 @@
-.ix notation
+.ix 'notation'
 .pp
 The C programming language contains many useful features, each of which
 has a number of optional parts.

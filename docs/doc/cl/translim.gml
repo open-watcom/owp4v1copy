@@ -87,8 +87,8 @@ initial characters due to limitations in the linking/loading process.
 .bull
 509 characters in a logical
 .ix 'continuation lines'
-.ix line continuation
-.ix line logical
+.ix 'line' 'continuation'
+.ix 'line' 'logical'
 (continued) source line,
 .bull
 509 characters in a character
@@ -96,7 +96,7 @@ initial characters due to limitations in the linking/loading process.
 string literal
 or
 .ix 'wide string literal'
-.ix 'string literal' wide
+.ix 'string literal' 'wide'
 wide string literal
 (after concatenation),
 .bull
@@ -112,7 +112,7 @@ files,
 .kw case
 labels for a
 .ix 'switch statement'
-.ix statement switch
+.ix 'statement' 'switch'
 .kw switch
 statement
 (excluding those for any nested

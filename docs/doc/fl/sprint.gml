@@ -65,7 +65,7 @@ unless the operand is a symbolic constant (see the
 statement).
 .point
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 An asterisk
 .mono (*),
 indicating
@@ -87,7 +87,7 @@ PRINT * [,olist]
 .point
 .xt on
 .ix 'namelist-directed format'
-.ix format namelist-directed
+.ix 'format' 'namelist-directed'
 A
 .kw NAMELIST
 name, indicating
@@ -137,7 +137,7 @@ is composed of one or more of items (1) through (6).
 The above example illustrates
 .us list-directed
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 formatting using the
 .kw PRINT
 statement.
@@ -183,7 +183,7 @@ Hello    123    12.5000000      (12.5000000,4.5799999)
 The above example illustrates a &product extension of
 .us list-directed
 .ix 'list-directed format'
-.ix format list-directed
+.ix 'format' 'list-directed'
 formatting using the
 .kw PRINT
 statement.

@@ -175,7 +175,7 @@ All of the vector elements and exception trap states are copied.
 :P.
 If the new vector cannot be fully created, it will have length zero.  The
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if enabled in the vector being copied.
 :RSLTS.
 The &fn. creates a &obj. which is a copy of the passed vector.
@@ -195,7 +195,7 @@ The &fn. creates a &obj. which is a copy of the passed vector.
 The &fn. is the destructor for the &cls.:PERIOD.
 If the vector is not length zero and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 Otherwise, the vector elements are cleared using the
 .MONO clear
@@ -311,7 +311,7 @@ an element into the vector.
 If an attempt to access an element with index greater than or equal to the
 length of a non-constant vector is made and the
 .MONO resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 exception is enabled, the exception is thrown.  If the exception is not
 enabled, the vector is automatically resized using the
 .MONO resize
@@ -329,13 +329,13 @@ New vector elements are initialized to NULL(0).
 
 If the resize failed, and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled, the exception is thrown.  If the exception is not
 enabled and the resize failed, the last element is indexed (a new
 element if the vector was zero length).
 If a negative value is used to index the non-constant vector and the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is enabled, the exception is thrown.  If the exception is not
 enabled and the vector is empty, the
 .MONO resize_required
@@ -344,10 +344,10 @@ exception may be thrown.
 An attempt to index an empty constant vector may cause one of two
 exceptions to be thrown.  If the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, it is thrown.  Otherwise, the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is thrown, if enabled.
 If neither exception is enabled, a first vector element is added and
 indexed (so that a reference to a valid element can be returned).
@@ -355,7 +355,7 @@ indexed (so that a reference to a valid element can be returned).
 Indexing with a negative value or a value greater than or equal to the
 length of a constant vector causes the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception to be thrown, if enabled.
 :RSLTS.
 The &fn. returns a reference to the element at the given index.
@@ -388,7 +388,7 @@ All of the vector elements and exception trap states are copied.
 If the left hand side vector cannot be fully created, it will have
 zero length.  The
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is thrown if enabled in the right hand side vector.
 :RSLTS.
 The &fn. assigns the left hand side vector to be a copy of the right hand side.
@@ -460,7 +460,7 @@ The objects pointed to by the remaining elements are not deleted.
 :P.
 If the resize cannot be performed and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled, the exception is thrown.
 :RSLTS.
 The vector is resized to :HP1.new_size:eHP1.:PERIOD.

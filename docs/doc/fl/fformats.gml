@@ -99,7 +99,7 @@ is considered to be only that array element.
 .section Format Specification
 .*
 .np
-.ix format 'see also' 'edit descriptor'
+.ix 'format' 'see also' 'edit descriptor'
 A
 .us format specification
 .ix 'format specification'
@@ -129,7 +129,7 @@ is a format specification with a nonempty list
 .mnote r
 is a positive unsigned integer constant called a
 .us repeat specification.
-.ix format 'repeat specification'
+.ix 'format' 'repeat specification'
 .endnote
 .np
 The comma separating the items of
@@ -173,9 +173,9 @@ edit descriptor.
 The forms of
 .us repeatable edit descriptors
 .ix 'repeatable edit descriptor'
-.ix 'edit descriptor' repeatable
-.ix extension 'E edit descriptor'
-.ix extension 'Z edit descriptor'
+.ix 'edit descriptor' 'repeatable'
+.ix 'extension' 'E edit descriptor'
+.ix 'extension' 'Z edit descriptor'
 are:
 .millust begin
     Iw
@@ -223,12 +223,12 @@ are unsigned integer constants.
 The forms of
 .us nonrepeatable edit descriptors
 .ix 'nonrepeatable edit descriptors'
-.ix 'edit descriptor' repeatable
+.ix 'edit descriptor' 'repeatable'
 .ix '$ edit descriptor'
 .ix '\ edit descriptor'
-.ix extension 'X edit descriptor'
-.ix extension '$ edit descriptor'
-.ix extension '\ edit descriptor'
+.ix 'extension' 'X edit descriptor'
+.ix 'extension' '$ edit descriptor'
+.ix 'extension' '\ edit descriptor'
 are:
 .millust begin
     'hh...h' (apostrophe)
@@ -295,12 +295,12 @@ When the edit descriptors
 or apostrophe are
 processed, they process a sequence of characters called a
 .us field.
-.ix format field
+.ix 'format' 'field'
 On input, the field is the character data read from a record; on output
 it is the character data written to a record.
 The number of characters in a field is called the
 .us field width.
-.ix format 'field width'
+.ix 'format' 'field width'
 .*
 .beglevel
 .*
@@ -310,7 +310,7 @@ The number of characters in a field is called the
 The
 .us apostrophe edit descriptor
 .ix 'apostrophe edit descriptor'
-.ix 'edit descriptor' apostrophe
+.ix 'edit descriptor' 'apostrophe'
 has the same form as a character constant
 and can only be used on output.
 It causes the characters in the format specification enclosed in quotes
@@ -336,7 +336,7 @@ statement.
 The
 .id nH
 .ix 'H edit descriptor'
-.ix 'edit descriptor' H
+.ix 'edit descriptor' 'H'
 edit descriptor causes the
 .id n
 characters following the
@@ -362,11 +362,11 @@ statement.
 .*
 .np
 .ix 'positional edit descriptor'
-.ix 'edit descriptor' positional
-.ix 'edit descriptor' positional T
-.ix 'edit descriptor' positional TL
-.ix 'edit descriptor' positional TR
-.ix 'edit descriptor' positional X
+.ix 'edit descriptor' 'positional'
+.ix 'edit descriptor' 'positional T'
+.ix 'edit descriptor' 'positional TL'
+.ix 'edit descriptor' 'positional TR'
+.ix 'edit descriptor' 'positional X'
 .ix 'T edit descriptor'
 .ix 'TL edit descriptor'
 .ix 'TR edit descriptor'
@@ -443,7 +443,7 @@ THE NUMBER 12345 IS AN INTEGER
 The
 .us slash edit descriptor
 .ix 'slash edit descriptor'
-.ix 'edit descriptor' slash
+.ix 'edit descriptor' 'slash'
 indicates the end of data transfer on the current record.
 On input from a record connected for sequential access, the remaining
 characters in the record are skipped and the file is positioned to the
@@ -465,7 +465,7 @@ record.
 The
 .us colon edit descriptor
 .ix 'colon edit descriptor'
-.ix 'edit descriptor' colon
+.ix 'edit descriptor' 'colon'
 terminates processing of the format
 specification if there are no more items in the I/O list.
 If there are items remaining in the I/O list, the colon edit
@@ -482,9 +482,9 @@ and
 .ix 'S edit descriptor'
 .ix 'SS edit descriptor'
 .ix 'SP edit descriptor'
-.ix 'edit descriptor' S
-.ix 'edit descriptor' SS
-.ix 'edit descriptor' SP
+.ix 'edit descriptor' 'S'
+.ix 'edit descriptor' 'SS'
+.ix 'edit descriptor' 'SP'
 edit descriptors control optional plus characters in
 numeric output fields.
 They only effect the
@@ -531,7 +531,7 @@ The form of a
 .id P
 edit descriptor is
 .ix 'P edit descriptor'
-.ix 'edit descriptor' P
+.ix 'edit descriptor' 'P'
 .id kP
 where
 .id k
@@ -612,8 +612,8 @@ and
 .id BZ
 .ix 'BN edit descriptor'
 .ix 'BZ edit descriptor'
-.ix 'edit descriptor' BN
-.ix 'edit descriptor' BZ
+.ix 'edit descriptor' 'BN'
+.ix 'edit descriptor' 'BZ'
 edit descriptors are used to describe the interpretation
 of embedded blanks in numeric input fields.
 They only effect
@@ -646,8 +646,8 @@ statement) currently in effect for the unit.
 .np
 .ix '$ edit descriptor'
 .ix '\ edit descriptor'
-.ix 'edit descriptor' $
-.ix 'edit descriptor' \
+.ix 'edit descriptor' '$'
+.ix 'edit descriptor' '\'
 .xt begin
 The $ and \ edit descriptors behave identically.
 The $ and \ edit descriptors are intended for output to an interactive
@@ -764,7 +764,7 @@ The
 and
 .id Iw.m
 .ix 'I edit descriptor'
-.ix 'edit descriptor' numeric I
+.ix 'edit descriptor' 'numeric' 'I'
 edit descriptors indicate that the field width
 of the field to be edited is
 .id w.
@@ -834,7 +834,7 @@ An
 .id F
 edit descriptor has the form
 .ix 'F edit descriptor'
-.ix 'edit descriptor' numeric F
+.ix 'edit descriptor' 'numeric' 'F'
 .id Fw.d
 where
 .id w
@@ -918,9 +918,9 @@ and
 .id Ew.dEe
 edit descriptors indicate that the field
 .ix 'E edit descriptor'
-.ix 'edit descriptor' numeric E
+.ix 'edit descriptor' 'numeric' 'E'
 .ix 'D edit descriptor'
-.ix 'edit descriptor' numeric D
+.ix 'edit descriptor' 'numeric' 'D'
 width is
 .id w,
 the fractional part contains
@@ -1070,7 +1070,7 @@ and
 .id Gw.dEe
 edit descriptors indicate that the field
 .ix 'D edit descriptor'
-.ix 'edit descriptor' numeric D
+.ix 'edit descriptor' 'numeric' 'D'
 width is
 .id w,
 the fractional part contains
@@ -1185,7 +1185,7 @@ statement in the previous example is the string:
 Since a complex datum consists of a pair of real or double precision
 data, the editing
 .ix 'complex edit descriptor'
-.ix 'edit descriptor' numeric complex
+.ix 'edit descriptor' 'numeric' 'complex'
 of a complex datum is specified by two successive pairs of
 .id F,
 .id E,
@@ -1206,7 +1206,7 @@ Double precision complex editing is identical to complex editing.
 The
 .id Lw
 .ix 'L edit descriptor'
-.ix 'edit descriptor' L
+.ix 'edit descriptor' 'L'
 edit descriptor is used for I/O list items of type logical.
 The field width is
 .id w.
@@ -1263,7 +1263,7 @@ The
 .id A[w]
 edit descriptor is used for I/O list items of type character.
 .ix 'A edit descriptor'
-.ix 'edit descriptor' A
+.ix 'edit descriptor' 'A'
 On input, the I/O list item becomes defined with character data.
 On output, the I/O list item must be defined with character data.
 If
@@ -1344,7 +1344,7 @@ The
 .id Zw
 edit descriptor is used to display the hexadecimal representation of
 .ix 'Z edit descriptor'
-.ix 'edit descriptor' Z
+.ix 'edit descriptor' 'Z'
 data or read hexadecimal data.
 It is a &product extension.
 The

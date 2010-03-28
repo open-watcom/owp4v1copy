@@ -281,14 +281,14 @@ The new element is inserted after the current iterator item.
 .ITERATOR_UNDEFINED
 The element is not appended.  If the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is enabled, it is thrown.
 .*
 .if &lpref. ne Isv .th .do begin
 :P.
 If the append fails, the
 .MONO out_of_memory
-.ix out_of_memory
+.ix 'out_of_memory'
 exception is thrown, if enabled in the list being iterated over.
 The list remains unchanged.
 .do end
@@ -316,7 +316,7 @@ is returned if the append fails.
 The &fn. returns a pointer to the list container object.
 If the iterator has not been initialized with a list object, and the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is enabled, the exception is thrown.
 :RSLTS.
 A pointer to the list object associated with the iterator is returned,
@@ -353,7 +353,7 @@ position.
 .ITERATOR_UNDEFINED
 In this case the
 .MONO undef_item
-.ix undef_item
+.ix 'undef_item'
 exception is thrown, if enabled.
 :RSLTS.
 .if &lpref. eq Val .th .do begin
@@ -398,14 +398,14 @@ so the &fn. is not allowed with single linked lists.
 .ITERATOR_UNDEFINED
 The element is not inserted.  If the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is enabled, the exception is thrown.
 .*
 .if &lpref. ne Isv .th .do begin
 :P.
 If the insert fails and the
 .MONO out_of_memory
-.ix out_of_memory
+.ix 'out_of_memory'
 exception is enabled in the list being iterated over, the exception is
 thrown.
 The list remains unchanged.
@@ -447,7 +447,7 @@ the list.
 If the iterator is not associated with a list or the iterator
 position before the increment was past the last element the list, the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is thrown, if enabled.
 :RSLTS
 .if &lpref. eq Isv .th .do begin
@@ -493,7 +493,7 @@ the list.
 If the iterator is not associated with a list or the iterator
 position before the increment was past the last element the list, the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is thrown, if enabled.
 :RSLTS
 .if &lpref. eq Isv .th .do begin
@@ -531,13 +531,13 @@ operation will set the current item to be the given element in the list.
 If the current item was after the last element in the list previous to
 the iteration, and the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is enabled, the exception will be thrown.
 Attempting to increment the iterator
 position more than element after the end of the list, or by less than one
 element causes the
 .MONO iter_range
-.ix iter_range exception
+.ix 'iter_range' 'exception'
 exception to be thrown, if enabled.
 :RSLTS
 .if &lpref. eq Isv .th .do begin
@@ -582,7 +582,7 @@ the current item will be set to the last element.
 If the iterator is not associated with a list or the iterator
 position previous to the decrement was before the first element the list, the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is thrown, if enabled.
 :RSLTS
 .if &lpref. eq Isv .th .do begin
@@ -622,12 +622,12 @@ the end of the list.
 If the current item was before the first element in the list previous to
 the iteration, and the
 .MONO undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 exception is enabled, the exception will be thrown.
 Attempting to decrement the iterator position more than one element before
 the beginning of the list, or by less than one element causes the
 .MONO iter_range
-.ix iter_range exception
+.ix 'iter_range' 'exception'
 exception to be thrown, if enabled.
 :RSLTS
 .if &lpref. eq Isv .th .do begin

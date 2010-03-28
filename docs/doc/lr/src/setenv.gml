@@ -25,7 +25,7 @@ int _usetenv( const wchar_t *name,
 .do end
 .funcend
 .desc begin
-.ix environment
+.ix 'environment'
 The environment list consists of a number of environment names,
 each of which has a value associated with it.
 Entries can be added to the environment list
@@ -47,13 +47,13 @@ or with the &func function.
 .if '&machsys' eq 'PP' .do begin
 .do end
 .el .if '&machsys' eq 'QNX' .do begin
-.ix environment
+.ix 'environment'
 All entries in the environment list can be displayed by using the
 .qnxcmd export
 with no arguments.
 .do end
 .el .do begin
-.ix environment
+.ix 'environment'
 All entries in the environment list can be displayed by using the
 .doscmd set
 with no arguments.
@@ -124,7 +124,7 @@ or with the
 .kw putenv
 or &func functions.
 .do end
-.ix environment
+.ix 'environment'
 All entries in the environment list can be obtained by using the
 .kw getenv
 function.

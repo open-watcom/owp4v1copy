@@ -1,6 +1,6 @@
 .pp
 A hardware port is used to communicate with a device.
-.ix port hardware
+.ix 'port' 'hardware'
 .ix 'hardware port'
 One or two bytes can be read and/or written from each port, depending
 upon the hardware.

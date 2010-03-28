@@ -98,7 +98,7 @@ are interpreted according to the following:
 .termhd1 Value
 .termhd2 Meaning
 .note CHAR_MAX
-.ix CHAR_MAX
+.ix 'CHAR_MAX'
 No further grouping is to be performed.
 .note 0
 The previous element is to be repeatedly used for the remainder of

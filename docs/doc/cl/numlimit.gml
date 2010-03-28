@@ -101,7 +101,7 @@ characteristics of the various floating-point types.
 .*
 .section Numerical Limits for Integer Types
 .*
-.ix 'numerical limits' integer
+.ix 'numerical limits' 'integer'
 .ix 'integer' 'limits'
 .pp
 The following macros are replaced by constant expressions that may be
@@ -355,7 +355,7 @@ the maximum value for an object of type
 .  ..sr numboxcol2=26
 ..do end
 .*
-.ix 'numerical limits' floating-point
+.ix 'numerical limits' 'floating-point'
 .ix 'floating-point' 'limits'
 .pp
 The following macros are replaced by expressions which are not

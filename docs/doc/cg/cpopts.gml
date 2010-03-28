@@ -3414,7 +3414,7 @@ The use of this option should be avoided.
 :OPT refid='SWxr' name='xr'.&optdag.
 .ix 'options' 'xr'
 .ix 'options' 'RTTI'
-.ix RTTI
+.ix 'RTTI'
 The "xr" option is used to to enable the use of the C++ feature called
 Run-Time Type Information (RTTI).
 RTTI can only be used with classes that have virtual functions

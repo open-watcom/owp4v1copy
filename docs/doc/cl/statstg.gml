@@ -22,7 +22,7 @@ There are three types of static objects:
 objects whose values are only available within the function
 in which they are defined
 .ix 'no linkage'
-.ix linkage no
+.ix 'linkage' 'no'
 (no linkage).
 For example,
 .millust begin
@@ -36,7 +36,7 @@ extern void Fn( int x )
 objects whose values are
 only available within the module in which they are defined
 .ix 'internal linkage'
-.ix 'linkage' internal
+.ix 'linkage' 'internal'
 (internal linkage).
 For example,
 .millust begin
@@ -51,7 +51,7 @@ extern void Fn( int x )
 objects whose values are available to all components of
 the program
 .ix 'external linkage'
-.ix 'linkage' external
+.ix 'linkage' 'external'
 (external linkage).
 For example,
 .millust begin

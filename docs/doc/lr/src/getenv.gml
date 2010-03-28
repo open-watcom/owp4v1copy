@@ -47,7 +47,7 @@ or
 .kw setenv
 functions.
 .do end
-.ix environment
+.ix 'environment'
 .if '&machsys' eq 'QNX' .do begin
 All entries in the environment list can be displayed by using the
 .qnxcmd export

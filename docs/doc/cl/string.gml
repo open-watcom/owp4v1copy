@@ -5,7 +5,7 @@ A
 .us string
 is a special form of the type "array of characters",
 specifically an array of characters terminated by a
-.ix 'null' 'character'
+.ix 'null character'
 .us null character.
 The null character is
 a character with the value zero, represented as

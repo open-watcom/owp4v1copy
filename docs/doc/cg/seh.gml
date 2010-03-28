@@ -52,13 +52,13 @@ block is exited (
 .kw return,
 .kw goto,
 or
-.kw longjmp()
+.kw longjmp
 .ct ).
 Exceptions to this are calls to
-.kw abort(),
-.kw exit()
+.kw abort,
+.kw exit
 or
-.kw _exit()
+.kw _exit
 which terminate the execution of the process.
 .np
 There can be no intervening code between

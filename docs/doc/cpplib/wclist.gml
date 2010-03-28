@@ -12,7 +12,7 @@ are single or double linked lists.
 .*
 .if &lpref. eq Isv .th .do begin
 The created list is intrusive,
-.ix intrusive classes
+.ix 'intrusive' 'classes'
 which means that list elements which
 are inserted must be created with a library supplied base class.
 The class
@@ -243,7 +243,7 @@ that for a list object instance, the
 (the size of the memory to be allocated).
 The
 .MONO WCValSListItemSize(Type)
-.ix WCValSListItemSize macro
+.ix 'WCValSListItemSize' 'macro'
 macro returns the size of the elements which are allocated by the
 :HP1.allocator:eHP1. function.
 :RSLTS.
@@ -288,7 +288,7 @@ elements.
 :P.
 If all of the elements cannot be copied and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 is enabled in the list being copied, the exception is thrown.
 The new list is created in a valid state, even if all of the list elements
 could not be copied.
@@ -317,7 +317,7 @@ The &fn. destroys the
 object.
 If the list is not empty and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 If the
 .MONO not_empty
@@ -387,7 +387,7 @@ for a list object instance, the
 (the size of the memory to be allocated).
 The
 .MONO WCValDListItemSize(Type)
-.ix WCValDListItemSize macro
+.ix 'WCValDListItemSize' 'macro'
 macro returns the size of the elements which are allocated by the
 :HP1.allocator:eHP1. function.
 :RSLTS.
@@ -432,7 +432,7 @@ elements.
 :P.
 If all of the elements cannot be copied and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 is enabled in the list being copied, the exception is thrown.
 The new list is created in a valid state, even if all of the list elements
 could not be copied.
@@ -461,7 +461,7 @@ The &fn. destroys the
 object.
 If the list is not empty and the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled, the exception is thrown.
 If the
 .MONO not_empty
@@ -507,7 +507,7 @@ The data stored in the list is a copy of the data passed as a parameter.
 :P.
 If the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled and the append fails, the exception is thrown.
 :RSLTS.
 The data element is appended to the end of the list.  A TRUE value
@@ -735,7 +735,7 @@ element will be the number of list entries minus one.
 :P.
 If the list is empty and the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, the exception is thrown.
 If the
 .MONO index_range
@@ -797,11 +797,11 @@ The &fn. returns the value of the last list element in the list object.
 If the list is empty, one of two exceptions can be thrown.
 If the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, it is thrown.
 The
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception is thrown if it is enabled and the
 .MONO empty_container
 exception is not enabled.
@@ -896,7 +896,7 @@ element will be the number of list entries minus one.
 :P.
 If the list is empty and the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, the exception is thrown.
 If the
 .MONO index_range
@@ -1048,7 +1048,7 @@ The data stored in the list is a copy of the data passed as a parameter.
 :P.
 If the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception is enabled and the insert fails, the exception is thrown.
 :RSLTS.
 The data element is inserted into the beginning of the list.  A TRUE value
@@ -1138,7 +1138,7 @@ elements.
 :P.
 If all of the elements cannot be copied and the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 is enabled in the right hand side list, the exception is thrown.
 The new list is created in a valid state, even if all of the list elements
 could not be copied.

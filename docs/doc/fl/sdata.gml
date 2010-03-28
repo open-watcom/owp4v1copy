@@ -156,7 +156,7 @@ in
 Entities in a named common block can be initialized only within a
 .us block data subprogram.
 .ix 'block data subprogram'
-.ix subprogram 'block data'
+.ix 'subprogram' 'block data'
 .np
 The following extensions to data initialization are supported by &product..
 .autonote

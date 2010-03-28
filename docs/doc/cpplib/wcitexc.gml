@@ -133,12 +133,12 @@ The bit values defined by the &fn. can be read and set by the
 member function
 :MONO.exceptions
 :CONT.,
-.ix exceptions function
+.ix 'exceptions' 'function'
 which is used to control exception handling.
 :P.
 The
 .MONO WCIterExcept::undef_iter
-.ix undef_iter exception
+.ix 'undef_iter' 'exception'
 bit setting traps the use of the iterator when the position within
 the container object is undefined.
 Trying to operate on an iterator with no associated container object,
@@ -148,7 +148,7 @@ is an undefined operation.
 :P.
 The
 .MONO WCIterExcept::undef_item
-.ix undef_item exception
+.ix 'undef_item' 'exception'
 bit setting traps an attempt to obtain the current element of the iterator
 when the iterator has no associated container object, or is positioned either
 before or after the container elements.  The
@@ -164,7 +164,7 @@ member function for non-dictionary iterators.
 :P.
 The
 .MONO WCIterExcept::iter_range
-.ix iter_range exception
+.ix 'iter_range' 'exception'
 bit setting traps an attempt to use a iteration count value that would
 place the iterator more than one element past the end or before the
 beginning of the container elements.  The

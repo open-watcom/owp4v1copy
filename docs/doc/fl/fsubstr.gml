@@ -7,7 +7,7 @@
 .np
 A
 .us substring
-.ix substring
+.ix 'substring'
 is a contiguous portion of a character entity.
 The substring operation selects a substring from a character entity.
 The resulting substring can then be treated as a character entity in

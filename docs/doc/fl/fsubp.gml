@@ -43,7 +43,7 @@ Complete execution of the main program implies the complete execution
 of the program.
 Each executable program can contain only one main program.
 .np
-.ix subprogram
+.ix 'subprogram'
 A
 .us subprogram
 is a program unit that either has a
@@ -68,7 +68,7 @@ The statement defining a statement function is not an executable
 statement.
 .np
 .ix 'statement function'
-.ix function statement
+.ix 'function' 'statement'
 A
 .us statement function
 has the following form.
@@ -294,7 +294,7 @@ unless the operand is a symbolic constant.
 .*
 .np
 .ix 'intrinsic function'
-.ix function intrinsic
+.ix 'function' 'intrinsic'
 An
 .us intrinsic function
 is a function that is provided by &product..
@@ -356,7 +356,7 @@ the generic name of the sine function.
 .*
 .np
 .ix 'external function'
-.ix function external
+.ix 'function' 'external'
 An
 .us external function
 is a program unit that has a
@@ -523,7 +523,7 @@ statement.
 .section Subroutines
 .*
 .np
-.ix subroutine
+.ix 'subroutine'
 A
 .us subroutine
 is a program unit that has a
@@ -988,14 +988,14 @@ Arguments are passed to subprograms through argument lists and
 are received by subprograms through argument lists.
 .ix 'actual argument list'
 .ix 'actual argument'
-.ix argument actual
+.ix 'argument' 'actual'
 The argument list used to pass arguments to a subprogram is called the
 .us actual argument list
 and the arguments are called
 .us actual arguments.
 .ix 'dummy argument list'
 .ix 'dummy argument'
-.ix argument dummy
+.ix 'argument' 'dummy'
 The argument list of the receiving subprogram is called the
 .us dummy argument list
 and the arguments are called
@@ -1148,7 +1148,7 @@ actual array.
 .section Variables as Dummy Arguments
 .*
 .np
-.ix 'dummy argument' variable
+.ix 'dummy argument' 'variable'
 A dummy argument that is a variable may be associated with an actual
 argument that is a variable, array element, substring or expression.
 Only if the actual argument is a variable, array element or substring
@@ -1157,7 +1157,7 @@ can the corresponding actual argument be redefined.
 .section Arrays as Dummy Arguments
 .*
 .np
-.ix 'dummy argument' array
+.ix 'dummy argument' 'array'
 A dummy argument that is an array may be associated with an actual
 argument that is an array, array element or array element substring.
 The number and size of the dimensions in the actual argument array
@@ -1280,7 +1280,7 @@ is an external subroutine or function.
 .section Asterisks as Dummy Arguments
 .*
 .np
-.ix 'dummy argument' asterisk
+.ix 'dummy argument' 'asterisk'
 A dummy argument that is an asterisk may only appear in the dummy
 argument list of a
 .kw SUBROUTINE

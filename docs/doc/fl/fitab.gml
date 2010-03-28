@@ -57,15 +57,15 @@ a dagger (&dagger).
 .cp 15
 .section Type Conversion
 .*
-.ix 'generic function' INT
-.ix 'intrinsic function' INT
-.ix 'intrinsic function' IFIX
-.ix 'intrinsic function' IDINT
-.ix 'intrinsic function' HFIX
-.ix INT
-.ix IFIX
-.ix IDINT
-.ix HFIX
+.ix 'generic function' 'INT'
+.ix 'intrinsic function' 'INT'
+.ix 'intrinsic function' 'IFIX'
+.ix 'intrinsic function' 'IDINT'
+.ix 'intrinsic function' 'HFIX'
+.ix 'INT'
+.ix 'IFIX'
+.ix 'IDINT'
+.ix 'HFIX'
 .sr c0=&INDlvl+1
 .sr c1=&INDlvl+17
 .sr c2=&INDlvl+30
@@ -85,13 +85,13 @@ a dagger (&dagger).
 \                      \IDINT      \I&arrow.IDINT(D)
 .box off
 .im finote1
-.ix 'generic function' REAL
-.ix 'intrinsic function' REAL
-.ix 'intrinsic function' FLOAT
-.ix 'intrinsic function' SNGL
-.ix REAL
-.ix FLOAT
-.ix SNGL
+.ix 'generic function' 'REAL'
+.ix 'intrinsic function' 'REAL'
+.ix 'intrinsic function' 'FLOAT'
+.ix 'intrinsic function' 'SNGL'
+.ix 'REAL'
+.ix 'FLOAT'
+.ix 'SNGL'
 .cp 14
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
@@ -106,13 +106,13 @@ a dagger (&dagger).
 \                  \SNGL        \R&arrow.SNGL(D)
 .box off
 .im finote2
-.ix 'generic function' DBLE
-.ix 'intrinsic function' DBLE
-.ix 'intrinsic function' DREAL
-.ix 'intrinsic function' DFLOAT
-.ix DBLE
-.ix DREAL
-.ix DFLOAT
+.ix 'generic function' 'DBLE'
+.ix 'intrinsic function' 'DBLE'
+.ix 'intrinsic function' 'DREAL'
+.ix 'intrinsic function' 'DFLOAT'
+.ix 'DBLE'
+.ix 'DREAL'
+.ix 'DFLOAT'
 .cp 13
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
@@ -126,9 +126,9 @@ a dagger (&dagger).
 \                     \DFLOAT      \D&arrow.DFLOAT(I) &dagger\
 .box off
 .im finote3
-.ix 'generic function' CMPLX
-.ix 'intrinsic function' CMPLX
-.ix CMPLX
+.ix 'generic function' 'CMPLX'
+.ix 'intrinsic function' 'CMPLX'
+.ix 'CMPLX'
 .cp 11
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
@@ -140,9 +140,9 @@ a dagger (&dagger).
 \                      \              \C&arrow.CMPLX(Z) &dagger\
 .box off
 .im finote4a
-.ix 'generic function' DCMPLX
-.ix 'intrinsic function' DCMPLX
-.ix DCMPLX
+.ix 'generic function' 'DCMPLX'
+.ix 'intrinsic function' 'DCMPLX'
+.ix 'DCMPLX'
 .cp 11
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
@@ -154,8 +154,8 @@ a dagger (&dagger).
 \                     \                \Z&arrow.DCMPLX(Z)
 .box off
 .im finote4b
-.ix 'intrinsic function' ICHAR
-.ix ICHAR
+.ix 'intrinsic function' 'ICHAR'
+.ix 'ICHAR'
 .cp 7
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
@@ -163,8 +163,8 @@ a dagger (&dagger).
 \Conversion to integer \ICHAR \I&arrow.ICHAR(CH)
 .box off
 .im finote5a
-.ix 'intrinsic function' CHAR
-.ix CHAR
+.ix 'intrinsic function' 'CHAR'
+.ix 'CHAR'
 .cp 7
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
@@ -176,11 +176,11 @@ a dagger (&dagger).
 .cp 15
 .section Truncation
 .*
-.ix 'generic function' AINT
-.ix 'intrinsic function' AINT
-.ix 'intrinsic function' DINT
-.ix AINT
-.ix DINT
+.ix 'generic function' 'AINT'
+.ix 'intrinsic function' 'AINT'
+.ix 'intrinsic function' 'DINT'
+.ix 'AINT'
+.ix 'DINT'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -194,11 +194,11 @@ a dagger (&dagger).
 .cp 15
 .section Nearest Whole Number
 .*
-.ix 'generic function' ANINT
-.ix 'intrinsic function' ANINT
-.ix 'intrinsic function' DNINT
-.ix ANINT
-.ix DNINT
+.ix 'generic function' 'ANINT'
+.ix 'intrinsic function' 'ANINT'
+.ix 'intrinsic function' 'DNINT'
+.ix 'ANINT'
+.ix 'DNINT'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -211,11 +211,11 @@ a dagger (&dagger).
 .cp 15
 .section Nearest Integer
 .*
-.ix 'generic function' NINT
-.ix 'intrinsic function' NINT
-.ix 'intrinsic function' IDNINT
-.ix NINT
-.ix IDNINT
+.ix 'generic function' 'NINT'
+.ix 'intrinsic function' 'NINT'
+.ix 'intrinsic function' 'IDNINT'
+.ix 'NINT'
+.ix 'IDNINT'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -228,17 +228,17 @@ a dagger (&dagger).
 .cp 20
 .section Absolute Value
 .*
-.ix 'generic function' ABS
-.ix 'intrinsic function' IABS
-.ix 'intrinsic function' ABS
-.ix 'intrinsic function' DABS
-.ix 'intrinsic function' CABS
-.ix 'intrinsic function' CDABS
-.ix ABS
-.ix IABS
-.ix DABS
-.ix CABS
-.ix CDABS
+.ix 'generic function' 'ABS'
+.ix 'intrinsic function' 'IABS'
+.ix 'intrinsic function' 'ABS'
+.ix 'intrinsic function' 'DABS'
+.ix 'intrinsic function' 'CABS'
+.ix 'intrinsic function' 'CDABS'
+.ix 'ABS'
+.ix 'IABS'
+.ix 'DABS'
+.ix 'CABS'
+.ix 'CDABS'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -258,13 +258,13 @@ a dagger (&dagger).
 .cp 15
 .section Remainder
 .*
-.ix 'generic function' MOD
-.ix 'intrinsic function' MOD
-.ix 'intrinsic function' AMOD
-.ix 'intrinsic function' DMOD
-.ix MOD
-.ix AMOD
-.ix DMOD
+.ix 'generic function' 'MOD'
+.ix 'intrinsic function' 'MOD'
+.ix 'intrinsic function' 'AMOD'
+.ix 'intrinsic function' 'DMOD'
+.ix 'MOD'
+.ix 'AMOD'
+.ix 'DMOD'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -282,13 +282,13 @@ The value of MOD, AMOD and DMOD is undefined if the value of a2 is 0.
 .cp 15
 .section Transfer of Sign
 .*
-.ix 'generic function' SIGN
-.ix 'intrinsic function' ISIGN
-.ix 'intrinsic function' SIGN
-.ix 'intrinsic function' DSIGN
-.ix ISIGN
-.ix SIGN
-.ix DSIGN
+.ix 'generic function' 'SIGN'
+.ix 'intrinsic function' 'ISIGN'
+.ix 'intrinsic function' 'SIGN'
+.ix 'intrinsic function' 'DSIGN'
+.ix 'ISIGN'
+.ix 'SIGN'
+.ix 'DSIGN'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -305,13 +305,13 @@ If the value of a1 is 0, the result is 0 which has no sign.
 .cp 15
 .section Positive Difference
 .*
-.ix 'generic function' DIM
-.ix 'intrinsic function' IDIM
-.ix 'intrinsic function' DIM
-.ix 'intrinsic function' DDIM
-.ix IDIM
-.ix DIM
-.ix DDIM
+.ix 'generic function' 'DIM'
+.ix 'intrinsic function' 'IDIM'
+.ix 'intrinsic function' 'DIM'
+.ix 'intrinsic function' 'DDIM'
+.ix 'IDIM'
+.ix 'DIM'
+.ix 'DDIM'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -326,8 +326,8 @@ If the value of a1 is 0, the result is 0 which has no sign.
 .cp 10
 .section Double Precision Product
 .*
-.ix 'intrinsic function' DPROD
-.ix DPROD
+.ix 'intrinsic function' 'DPROD'
+.ix 'DPROD'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -337,17 +337,17 @@ If the value of a1 is 0, the result is 0 which has no sign.
 .cp 15
 .section Choosing Largest Value
 .*
-.ix 'generic function' MAX
-.ix 'intrinsic function' MAX0
-.ix 'intrinsic function' AMAX1
-.ix 'intrinsic function' DMAX1
-.ix 'intrinsic function' AMAX0
-.ix 'intrinsic function' MAX1
-.ix MAX0
-.ix AMAX1
-.ix DMAX1
-.ix AMAX0
-.ix MAX1
+.ix 'generic function' 'MAX'
+.ix 'intrinsic function' 'MAX0'
+.ix 'intrinsic function' 'AMAX1'
+.ix 'intrinsic function' 'DMAX1'
+.ix 'intrinsic function' 'AMAX0'
+.ix 'intrinsic function' 'MAX1'
+.ix 'MAX0'
+.ix 'AMAX1'
+.ix 'DMAX1'
+.ix 'AMAX0'
+.ix 'MAX1'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -364,17 +364,17 @@ If the value of a1 is 0, the result is 0 which has no sign.
 .cp 15
 .section Choosing Smallest Value
 .*
-.ix 'generic function' MIN
-.ix 'intrinsic function' MIN0
-.ix 'intrinsic function' AMIN1
-.ix 'intrinsic function' DMIN1
-.ix 'intrinsic function' AMIN0
-.ix 'intrinsic function' MIN1
-.ix MIN0
-.ix AMIN1
-.ix DMIN1
-.ix AMIN0
-.ix MIN1
+.ix 'generic function' 'MIN'
+.ix 'intrinsic function' 'MIN0'
+.ix 'intrinsic function' 'AMIN1'
+.ix 'intrinsic function' 'DMIN1'
+.ix 'intrinsic function' 'AMIN0'
+.ix 'intrinsic function' 'MIN1'
+.ix 'MIN0'
+.ix 'AMIN1'
+.ix 'DMIN1'
+.ix 'AMIN0'
+.ix 'MIN1'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -391,8 +391,8 @@ If the value of a1 is 0, the result is 0 which has no sign.
 .cp 10
 .section Length
 .*
-.ix 'intrinsic function' LEN
-.ix LEN
+.ix 'intrinsic function' 'LEN'
+.ix 'LEN'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -405,8 +405,8 @@ The argument to the LEN function need not be defined.
 .cp 10
 .section Length Without Trailing Blanks
 .*
-.ix 'intrinsic function' LENTRIM
-.ix LENTRIM
+.ix 'intrinsic function' 'LENTRIM'
+.ix 'LENTRIM'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -418,8 +418,8 @@ The argument to the LEN function need not be defined.
 .cp 10
 .section Index of a Substring
 .*
-.ix 'intrinsic function' INDEX
-.ix INDEX
+.ix 'intrinsic function' 'INDEX'
+.ix 'INDEX'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -435,11 +435,11 @@ If y is not contained in x, zero is returned.
 .cp 15
 .section Imaginary Part of Complex Number
 .*
-.ix 'generic function' IMAG
-.ix 'intrinsic function' AIMAG
-.ix 'intrinsic function' DIMAG
-.ix AIMAG
-.ix DIMAG
+.ix 'generic function' 'IMAG'
+.ix 'intrinsic function' 'AIMAG'
+.ix 'intrinsic function' 'DIMAG'
+.ix 'AIMAG'
+.ix 'DIMAG'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -453,11 +453,11 @@ If y is not contained in x, zero is returned.
 .cp 15
 .section Conjugate of a Complex Number
 .*
-.ix 'generic function' CONJG
-.ix 'intrinsic function' CONJG
-.ix 'intrinsic function' DCONJG
-.ix CONJG
-.ix DCONJD
+.ix 'generic function' 'CONJG'
+.ix 'intrinsic function' 'CONJG'
+.ix 'intrinsic function' 'DCONJG'
+.ix 'CONJG'
+.ix 'DCONJD'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -471,15 +471,15 @@ If y is not contained in x, zero is returned.
 .cp 15
 .section Square Root
 .*
-.ix 'generic function' SQRT
-.ix 'intrinsic function' SQRT
-.ix 'intrinsic function' DSQRT
-.ix 'intrinsic function' CSQRT
-.ix 'intrinsic function' CDSQRT
-.ix SQRT
-.ix DSQRT
-.ix CSQRT
-.ix CDSQRT
+.ix 'generic function' 'SQRT'
+.ix 'intrinsic function' 'SQRT'
+.ix 'intrinsic function' 'DSQRT'
+.ix 'intrinsic function' 'CSQRT'
+.ix 'intrinsic function' 'CDSQRT'
+.ix 'SQRT'
+.ix 'DSQRT'
+.ix 'CSQRT'
+.ix 'CDSQRT'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -500,15 +500,15 @@ When the real part of the result is 0, the imaginary part is >= 0.
 .cp 15
 .section Exponential
 .*
-.ix 'generic function' EXP
-.ix 'intrinsic function' EXP
-.ix 'intrinsic function' DEXP
-.ix 'intrinsic function' CEXP
-.ix 'intrinsic function' CDEXP
-.ix EXP
-.ix DEXP
-.ix CEXP
-.ix CDEXP
+.ix 'generic function' 'EXP'
+.ix 'intrinsic function' 'EXP'
+.ix 'intrinsic function' 'DEXP'
+.ix 'intrinsic function' 'CEXP'
+.ix 'intrinsic function' 'CDEXP'
+.ix 'EXP'
+.ix 'DEXP'
+.ix 'CEXP'
+.ix 'CDEXP'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -526,15 +526,15 @@ When the real part of the result is 0, the imaginary part is >= 0.
 .cp 15
 .section Natural Logarithm
 .*
-.ix 'generic function' LOG
-.ix 'intrinsic function' ALOG
-.ix 'intrinsic function' DLOG
-.ix 'intrinsic function' CLOG
-.ix 'intrinsic function' CDLOG
-.ix ALOG
-.ix DLOG
-.ix CLOG
-.ix CDLOG
+.ix 'generic function' 'LOG'
+.ix 'intrinsic function' 'ALOG'
+.ix 'intrinsic function' 'DLOG'
+.ix 'intrinsic function' 'CLOG'
+.ix 'intrinsic function' 'CDLOG'
+.ix 'ALOG'
+.ix 'DLOG'
+.ix 'CLOG'
+.ix 'CDLOG'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -561,11 +561,11 @@ argument is < 0 and the imaginary part of the argument = 0.
 .cp 15
 .section Common Logarithm
 .*
-.ix 'generic function' LOG10
-.ix 'intrinsic function' ALOG10
-.ix 'intrinsic function' DLOG10
-.ix ALOG10
-.ix DLOG10
+.ix 'generic function' 'LOG10'
+.ix 'intrinsic function' 'ALOG10'
+.ix 'intrinsic function' 'DLOG10'
+.ix 'ALOG10'
+.ix 'DLOG10'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -578,15 +578,15 @@ argument is < 0 and the imaginary part of the argument = 0.
 .cp 20
 .section Sine
 .*
-.ix 'generic function' SIN
-.ix 'intrinsic function' SIN
-.ix 'intrinsic function' DSIN
-.ix 'intrinsic function' CSIN
-.ix 'intrinsic function' CDSIN
-.ix SIN
-.ix DSIN
-.ix CSIN
-.ix CDSIN
+.ix 'generic function' 'SIN'
+.ix 'intrinsic function' 'SIN'
+.ix 'intrinsic function' 'DSIN'
+.ix 'intrinsic function' 'CSIN'
+.ix 'intrinsic function' 'CDSIN'
+.ix 'SIN'
+.ix 'DSIN'
+.ix 'CSIN'
+.ix 'CDSIN'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -605,15 +605,15 @@ argument is < 0 and the imaginary part of the argument = 0.
 .cp 20
 .section Cosine
 .*
-.ix 'generic function' COS
-.ix 'intrinsic function' COS
-.ix 'intrinsic function' DCOS
-.ix 'intrinsic function' CCOS
-.ix 'intrinsic function' CDCOS
-.ix COS
-.ix DCOS
-.ix CCOS
-.ix CDCOS
+.ix 'generic function' 'COS'
+.ix 'intrinsic function' 'COS'
+.ix 'intrinsic function' 'DCOS'
+.ix 'intrinsic function' 'CCOS'
+.ix 'intrinsic function' 'CDCOS'
+.ix 'COS'
+.ix 'DCOS'
+.ix 'CCOS'
+.ix 'CDCOS'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -632,11 +632,11 @@ argument is < 0 and the imaginary part of the argument = 0.
 .cp 15
 .section Tangent
 .*
-.ix 'generic function' TAN
-.ix 'intrinsic function' TAN
-.ix 'intrinsic function' DTAN
-.ix TAN
-.ix DTAN
+.ix 'generic function' 'TAN'
+.ix 'intrinsic function' 'TAN'
+.ix 'intrinsic function' 'DTAN'
+.ix 'TAN'
+.ix 'DTAN'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -650,11 +650,11 @@ argument is < 0 and the imaginary part of the argument = 0.
 .cp 15
 .section Cotangent
 .*
-.ix 'generic function' COTAN
-.ix 'intrinsic function' COTAN
-.ix 'intrinsic function' DCOTAN
-.ix COTAN
-.ix DCOTAN
+.ix 'generic function' 'COTAN'
+.ix 'intrinsic function' 'COTAN'
+.ix 'intrinsic function' 'DCOTAN'
+.ix 'COTAN'
+.ix 'DCOTAN'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -668,11 +668,11 @@ argument is < 0 and the imaginary part of the argument = 0.
 .cp 15
 .section Arcsine
 .*
-.ix 'generic function' ASIN
-.ix 'intrinsic function' ASIN
-.ix 'intrinsic function' DASIN
-.ix ASIN
-.ix DASIN
+.ix 'generic function' 'ASIN'
+.ix 'intrinsic function' 'ASIN'
+.ix 'intrinsic function' 'DASIN'
+.ix 'ASIN'
+.ix 'DASIN'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -688,11 +688,11 @@ The result is such that -&pi./2 <= result <= &pi./2.
 .cp 15
 .section Arccosine
 .*
-.ix 'generic function' ACOS
-.ix 'intrinsic function' ACOS
-.ix 'intrinsic function' DACOS
-.ix ACOS
-.ix DACOS
+.ix 'generic function' 'ACOS'
+.ix 'intrinsic function' 'ACOS'
+.ix 'intrinsic function' 'DACOS'
+.ix 'ACOS'
+.ix 'DACOS'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -708,16 +708,16 @@ The result is such that 0 <= result <= &pi..
 .cp 15
 .section Arctangent
 .*
-.ix 'generic function' ATAN
-.ix 'generic function' ATAN2
-.ix 'intrinsic function' ATAN
-.ix 'intrinsic function' DATAN
-.ix 'intrinsic function' ATAN2
-.ix 'intrinsic function' DATAN2
-.ix ATAN
-.ix DATAN
-.ix ATAN2
-.ix DATAN2
+.ix 'generic function' 'ATAN'
+.ix 'generic function' 'ATAN2'
+.ix 'intrinsic function' 'ATAN'
+.ix 'intrinsic function' 'DATAN'
+.ix 'intrinsic function' 'ATAN2'
+.ix 'intrinsic function' 'DATAN2'
+.ix 'ATAN'
+.ix 'DATAN'
+.ix 'ATAN2'
+.ix 'DATAN2'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -745,11 +745,11 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Hyperbolic Sine
 .*
-.ix 'generic function' SINH
-.ix 'intrinsic function' SINH
-.ix 'intrinsic function' DSINH
-.ix SINH
-.ix DSINH
+.ix 'generic function' 'SINH'
+.ix 'intrinsic function' 'SINH'
+.ix 'intrinsic function' 'DSINH'
+.ix 'SINH'
+.ix 'DSINH'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -762,11 +762,11 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Hyperbolic Cosine
 .*
-.ix 'generic function' COSH
-.ix 'intrinsic function' COSH
-.ix 'intrinsic function' DCOSH
-.ix COSH
-.ix DCOSH
+.ix 'generic function' 'COSH'
+.ix 'intrinsic function' 'COSH'
+.ix 'intrinsic function' 'DCOSH'
+.ix 'COSH'
+.ix 'DCOSH'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -779,11 +779,11 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Hyperbolic Tangent
 .*
-.ix 'generic function' TANH
-.ix 'intrinsic function' TANH
-.ix 'intrinsic function' DTANH
-.ix TANH
-.ix DTANH
+.ix 'generic function' 'TANH'
+.ix 'intrinsic function' 'TANH'
+.ix 'intrinsic function' 'DTANH'
+.ix 'TANH'
+.ix 'DTANH'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -796,11 +796,11 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Gamma Function
 .*
-.ix 'generic function' GAMMA
-.ix 'intrinsic function' GAMMA
-.ix 'intrinsic function' DGAMMA
-.ix GAMMA
-.ix DGAMMA
+.ix 'generic function' 'GAMMA'
+.ix 'intrinsic function' 'GAMMA'
+.ix 'intrinsic function' 'DGAMMA'
+.ix 'GAMMA'
+.ix 'DGAMMA'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -813,12 +813,12 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Natural Log of Gamma Function
 .*
-.ix 'generic function' GAMMA
-.ix 'intrinsic function' ALGAMA
-.ix 'intrinsic function' DLGAMA
-.ix GAMMA
-.ix ALGAMA
-.ix DLGAMA
+.ix 'generic function' 'GAMMA'
+.ix 'intrinsic function' 'ALGAMA'
+.ix 'intrinsic function' 'DLGAMA'
+.ix 'GAMMA'
+.ix 'ALGAMA'
+.ix 'DLGAMA'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -831,11 +831,11 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Error Function
 .*
-.ix 'generic function' ERF
-.ix 'intrinsic function' ERF
-.ix 'intrinsic function' DERF
-.ix ERF
-.ix DERF
+.ix 'generic function' 'ERF'
+.ix 'intrinsic function' 'ERF'
+.ix 'intrinsic function' 'DERF'
+.ix 'ERF'
+.ix 'DERF'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -848,11 +848,11 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Complement of Error Function
 .*
-.ix 'generic function' ERFC
-.ix 'intrinsic function' ERFC
-.ix 'intrinsic function' DERFC
-.ix ERFC
-.ix DERFC
+.ix 'generic function' 'ERFC'
+.ix 'intrinsic function' 'ERFC'
+.ix 'intrinsic function' 'DERFC'
+.ix 'ERFC'
+.ix 'DERFC'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -865,8 +865,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 9
 .section Lexically Greater Than or Equal
 .*
-.ix 'intrinsic function' LGE
-.ix LGE
+.ix 'intrinsic function' 'LGE'
+.ix 'LGE'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -877,8 +877,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 9
 .section Lexically Greater Than
 .*
-.ix 'intrinsic function' LGT
-.ix LGT
+.ix 'intrinsic function' 'LGT'
+.ix 'LGT'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -889,8 +889,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 9
 .section Lexically Less Than or Equal
 .*
-.ix 'intrinsic function' LLE
-.ix LLE
+.ix 'intrinsic function' 'LLE'
+.ix 'LLE'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -901,8 +901,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 9
 .section Lexically Less Than
 .*
-.ix 'intrinsic function' LLT
-.ix LLT
+.ix 'intrinsic function' 'LLT'
+.ix 'LLT'
 .box on &c0 &c1 &c2 &c3
 \Definition\Name\Usage
 .box
@@ -913,14 +913,14 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 17
 .section Binary Pattern Processing Functions: Boolean Operations
 .*
-.ix 'intrinsic function' IAND
-.ix IAND
-.ix 'intrinsic function' IOR
-.ix IOR
-.ix 'intrinsic function' IEOR
-.ix IEOR
-.ix 'intrinsic function' NOT
-.ix NOT
+.ix 'intrinsic function' 'IAND'
+.ix 'IAND'
+.ix 'intrinsic function' 'IOR'
+.ix 'IOR'
+.ix 'intrinsic function' 'IEOR'
+.ix 'IEOR'
+.ix 'intrinsic function' 'NOT'
+.ix 'NOT'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -936,14 +936,14 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Binary Pattern Processing Functions: Shift Operations
 .*
-.ix 'intrinsic function' ISHL
-.ix 'intrinsic function' ISHFT
-.ix ISHL
-.ix ISHFT
-.ix 'intrinsic function' ISHA
-.ix ISHA
-.ix 'intrinsic function' ISHC
-.ix ISHC
+.ix 'intrinsic function' 'ISHL'
+.ix 'intrinsic function' 'ISHFT'
+.ix 'ISHL'
+.ix 'ISHFT'
+.ix 'intrinsic function' 'ISHA'
+.ix 'ISHA'
+.ix 'intrinsic function' 'ISHC'
+.ix 'ISHC'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -959,8 +959,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 15
 .section Binary Pattern Processing Functions: Bit Testing
 .*
-.ix 'intrinsic function' BTEST
-.ix BTEST
+.ix 'intrinsic function' 'BTEST'
+.ix 'BTEST'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -975,8 +975,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 10
 .section Binary Pattern Processing Functions: Set Bit
 .*
-.ix 'intrinsic function'   IBSET
-.ix IBSET
+.ix 'intrinsic function' 'IBSET'
+.ix 'IBSET'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -988,8 +988,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 10
 .section Binary Pattern Processing Functions: Clear Bit
 .*
-.ix 'intrinsic function' IBCLR
-.ix IBCLR
+.ix 'intrinsic function' 'IBCLR'
+.ix 'IBCLR'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -1001,8 +1001,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 10
 .section Binary Pattern Processing Functions: Change Bit
 .*
-.ix 'intrinsic function' IBCHNG
-.ix IBCHNG
+.ix 'intrinsic function' 'IBCHNG'
+.ix 'IBCHNG'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -1014,8 +1014,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 10
 .section Allocated Array
 .*
-.ix 'intrinsic function' ALLOCATED
-.ix ALLOCATED
+.ix 'intrinsic function' 'ALLOCATED'
+.ix 'ALLOCATED'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -1025,8 +1025,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 10
 .section Memory Location
 .*
-.ix 'intrinsic function' LOC
-.ix LOC
+.ix 'intrinsic function' 'LOC'
+.ix 'LOC'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -1038,8 +1038,8 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .cp 10
 .section Size of Variable or Structure
 .*
-.ix 'intrinsic function' ISIZEOF
-.ix ISIZEOF
+.ix 'intrinsic function' 'ISIZEOF'
+.ix 'ISIZEOF'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt
@@ -1063,8 +1063,8 @@ array has size 0.
 .cp 15
 .section Volatile Reference
 .*
-.ix 'intrinsic function' VOLATILE
-.ix VOLATILE
+.ix 'intrinsic function' 'VOLATILE'
+.ix 'VOLATILE'
 .bxt on &c0 &c3 &c1 &c2
 \Definition\Name\Usage
 .bxt

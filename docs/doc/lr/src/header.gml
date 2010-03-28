@@ -619,7 +619,7 @@ This POSIX header file contains terminal I/O system types.
 .*------------------------------
 .df time.h
 .ix '&TimeFunc'
-.ix tm
+.ix 'tm'
 This ANSI header file declares functions related to times and dates and
 defines the structure
 .kw struct tm.

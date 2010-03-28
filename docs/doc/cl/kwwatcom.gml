@@ -1,5 +1,5 @@
 Microsoft compilers compatible
-.ix keyword
+.ix 'keyword'
 ..sr firsttab=&SYSIN.+3
 ..tb set $
 ..tb &firsttab. +20 +20

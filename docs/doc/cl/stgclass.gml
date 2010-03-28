@@ -14,7 +14,7 @@ returns.
 .bull
 the
 .us scope
-.ix scope
+.ix 'scope'
 of the object. An object may be declared so that it is only
 accessible within the function in which it is defined,
 within the module

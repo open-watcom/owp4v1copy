@@ -46,7 +46,7 @@ and
 are equivalent to 1 and 2 respectively.
 .pp
 An enumerated type may be given an optional
-.ix tag
+.ix 'tag'
 .us tag
 (name) with which it may be identified elsewhere in the program.
 In the example above, the tag of the enumerated type is

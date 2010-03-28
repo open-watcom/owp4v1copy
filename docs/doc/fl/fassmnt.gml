@@ -22,7 +22,7 @@ Character
 .*
 .np
 .ix 'arithmetic assignment statement'
-.ix 'assignment statement' arithmetic
+.ix 'assignment statement' 'arithmetic'
 The form of an
 .us arithmetic assignment statement
 is
@@ -98,7 +98,7 @@ will be undefined.
 .*
 .np
 .ix 'logical assignment statement'
-.ix 'assignment statement' logical
+.ix 'assignment statement' 'logical'
 The form of a
 .us logical assignment statement
 is
@@ -205,7 +205,7 @@ Its value is undefined and should be treated that way.
 .*
 .np
 .ix 'character assignment statement'
-.ix 'assignment statement' character
+.ix 'assignment statement' 'character'
 The form of a
 .us character assignment statement
 is
@@ -278,7 +278,7 @@ padded on the right with blanks to the length of
 .*
 .np
 .ix 'extended assignment statement'
-.ix 'assignment statement' extended
+.ix 'assignment statement' 'extended'
 &product supports an extension to the FORTRAN 77 assignment
 statement, namely the 
 .us extended assignment statement

@@ -32,7 +32,7 @@ You do not need to derive from it directly.
 :P.
 The
 .MONO WCListExcept
-.ix WCListExcept class
+.ix 'WCListExcept' 'class'
 class (formally used by the list container classes) has been replaced by
 the
 .MONO WCExcept
@@ -158,13 +158,13 @@ All uses of these bits should use the &fn.:PERIOD.
 :P.
 The bit values defined by the &fn. can be read and set by the
 :MONO.exceptions
-.ix exceptions
+.ix 'exceptions'
 member function,
 which is also used to control exception handling.
 :P.
 The
 .MONO WCExcept::not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 bit setting traps the destruction of a container when the container
 has at one or more entries.
 If this error is not trapped, memory may not be properly released back to the
@@ -172,20 +172,20 @@ system.
 :P.
 The
 .MONO WCExcept::index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 state setting traps an attempt to access a container item by an index value
 that is either not positive or is larger than the index of the last
 item in the container.
 :P.
 The
 .MONO WCExcept::empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 bit setting traps an attempt to perform and invalid operation on a
 container with no entries.
 :P.
 The
 .MONO WCExcept::out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 bit setting traps any container class allocation failures.
 If this exception is not enabled, the operation in which the allocation
 failed will return a FALSE (zero) value.  Container class copy constructors
@@ -194,7 +194,7 @@ incomplete copies may result.
 :P.
 The
 .MONO WCExcept::resize_required
-.ix resize_required exception
+.ix 'resize_required' 'exception'
 bit setting traps any vector operations which cannot be performed unless the
 vector is resized to a larger size.  If this exception is not enabled, the
 vector class will attempt an appropriate resize when necessary for
@@ -202,14 +202,14 @@ an operation.
 :P.
 The
 .MONO WCExcept::not_unique
-.ix not_unique exception
+.ix 'not_unique' 'exception'
 bit setting traps an attempt to add a duplicate value to a set container, or
 a duplicate key to a dictionary container.  The duplicate value is not
 added to the container object regardless of the exception trap state.
 :P.
 The
 .MONO WCExcept::zero_buckets
-.ix zero_buckets exception
+.ix 'zero_buckets' 'exception'
 bit setting traps an attempt to resize of hash container to have zero buckets.
 No resize is performed whether or not the exception is enabled.
 :eLIBF.

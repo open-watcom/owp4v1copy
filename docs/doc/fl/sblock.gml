@@ -18,7 +18,7 @@ A block data subprogram is used to provide initial values for
 variables and array elements in
 .us named common blocks.
 .ix 'named common block'
-.ix 'common block' named
+.ix 'common block' 'named'
 .np
 The only statements which are allowed to appear in a block
 data subprogram are:

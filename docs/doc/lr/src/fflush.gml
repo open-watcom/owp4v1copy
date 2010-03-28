@@ -8,7 +8,7 @@ If the file
 .arg fp
 is open for output or update, the &func
 function causes any unwritten data to be written to the file.
-.ix '&StrIo' ungetc
+.ix '&StrIo' 'ungetc'
 If the file
 .arg fp
 is open for input or update, the &func function undoes the effect of

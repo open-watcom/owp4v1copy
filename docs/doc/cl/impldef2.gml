@@ -51,9 +51,9 @@ The characters in the source and execution character sets.
 .discuss begin
 .pp
 The full EBCDIC character set is available in both the
-.ix 'character set' source
+.ix 'character set' 'source'
 source and
-.ix 'character set' execution
+.ix 'character set' 'execution'
 execution character sets.
 .discuss end
 .keep break
@@ -123,7 +123,7 @@ signed
 or
 unsigned.
 .bd off
-.ix type char
+.ix 'type' 'char'
 .ix 'character type'
 .discuss begin
 .pp
@@ -234,7 +234,7 @@ The value is rounded towards zero.
 ..sk 1 c
 .bd on
 The type of
-.ix size_t
+.ix 'size_t'
 .kw size_t
 ..ct ,
 the result of the
@@ -263,7 +263,7 @@ The usual arithmetic conversions then take place.
 ..sk 1 c
 .bd on
 The type of
-.ix ptrdiff_t
+.ix 'ptrdiff_t'
 .kw ptrdiff_t
 ..ct ,
 the result of subtracting two pointers.
@@ -320,7 +320,7 @@ See the &userguide. for details.
 .bd on
 Whether an
 int
-.ix bit-field
+.ix 'bit-field'
 bit-field
 is treated as
 signed
@@ -384,7 +384,7 @@ The maximum number of
 case
 labels or values in a
 .ix 'switch statement'
-.ix statement switch
+.ix 'statement' 'switch'
 switch
 statement.
 .bd off
@@ -452,7 +452,7 @@ The date and time are always available.
 ..sk 1 c
 .bd on
 .ix 'null pointer'
-.ix pointer null
+.ix 'pointer' 'null'
 The value of the null pointer constant.
 .bd off
 .discuss begin

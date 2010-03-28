@@ -110,7 +110,7 @@ In &product, a numeric storage unit occupies &nunit and a
 character storage unit occupies &cunit..
 .np
 The following table summarizes all data types supported by &product..
-.ix 'data type' summary
+.ix 'data type' 'summary'
 .if &e'&dohelp eq 0 .do begin
 .cp 22
 .* .box on 1 18 26 36
@@ -198,7 +198,7 @@ The data type of a function name specifies the type of the
 result returned by the function when it is referenced.
 A name that identifies a specific intrinsic function has type as
 specified in the chapter entitled :HDREF refid='fsubp'..
-.ix function generic
+.ix 'function' 'generic'
 .ix 'generic function'
 A
 .us generic function
@@ -222,7 +222,7 @@ statement can affect the type of the external function being defined.
 .section Constants
 .*
 .np
-.ix constant
+.ix 'constant'
 A
 .us constant
 can be one of arithmetic, logical or character.
@@ -241,7 +241,7 @@ The blank character is insignificant for all but character constants.
 .section Integer Constants
 .*
 .np
-.ix constant integer
+.ix 'constant' 'integer'
 .ix 'integer constant'
 An
 .us integer constant
@@ -266,7 +266,7 @@ followed by a decimal point followed by a fractional part.
 The integer and fractional parts are non-empty strings of digits.
 Either can be omitted but not both.
 .np
-.ix constant real
+.ix 'constant' 'real'
 .ix 'real constant'
 A
 .us real constant
@@ -285,7 +285,7 @@ An integer constant followed by an
 followed by an optionally signed integer constant.
 .endpoint
 .np
-.ix exponent
+.ix 'exponent'
 The optionally signed integer constant that follows the
 .mono E
 is called the
@@ -310,7 +310,7 @@ The following are examples of real constants.
 .section Double Precision Constant
 .*
 .np
-.ix constant 'double precision'
+.ix 'constant' 'double precision'
 .ix 'double precision constant'
 A
 .us double precision constant
@@ -328,7 +328,7 @@ followed by an optionally signed
 integer constant.
 .endpoint
 .np
-.ix exponent
+.ix 'exponent'
 The optionally signed integer constant that follows the
 .mono D
 is called the
@@ -360,7 +360,7 @@ The following are examples of double precision constants.
 .section Complex Constant
 .*
 .np
-.ix constant complex
+.ix 'constant' 'complex'
 .ix 'complex constant'
 A
 .us complex constant
@@ -379,7 +379,7 @@ The following are examples of complex constants.
 .section Double Precision Complex Constant (Extension)
 .*
 .np
-.ix constant 'double precision complex'
+.ix 'constant' 'double precision complex'
 .ix 'double precision complex constant'
 .xt begin
 A
@@ -399,7 +399,7 @@ The following are examples of double precision complex constants.
 .section Logical Constant
 .*
 .np
-.ix constant logical
+.ix 'constant' 'logical'
 .ix 'logical constant'
 A
 .us logical constant
@@ -416,7 +416,7 @@ representing the value false.
 .section Character Constant
 .*
 .np
-.ix constant character
+.ix 'constant' 'character'
 .ix 'character constant'
 A
 .us character constant
@@ -442,7 +442,7 @@ The following are examples of character constants.
 .*
 .np
 .xt begin
-.ix constant string
+.ix 'constant' 'string'
 .ix 'string constant'
 A
 .us string constant
@@ -476,7 +476,7 @@ The following are examples of string constants.
 .section Hollerith Constants (Extension)
 .*
 .np
-.ix constant hollerith
+.ix 'constant' 'hollerith'
 .ix 'hollerith constant'
 .xt begin
 A
@@ -517,7 +517,7 @@ The following are examples of hollerith constants.
 .section Hexadecimal Constants (Extension)
 .*
 .np
-.ix constant hexadecimal
+.ix 'constant' 'hexadecimal'
 .ix 'hexadecimal constant'
 .xt begin
 Two forms of
@@ -586,7 +586,7 @@ The second example is equivalent to the binary pattern
 .section Octal Constants (Extension)
 .*
 .np
-.ix constant octal
+.ix 'constant' 'octal'
 .ix 'octal constant'
 .xt begin
 An

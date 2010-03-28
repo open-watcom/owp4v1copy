@@ -1,5 +1,5 @@
 .ix 'pointer'
-.ix type pointer
+.ix 'type' 'pointer'
 .pp
 A
 .us pointer
@@ -86,7 +86,7 @@ is a pointer, but to no particular type of object.
 .pp
 Any place that a pointer may be used, the constant 0 may also be
 used. This value is the
-.ix null pointer
+.ix 'null pointer'
 .ix 'pointer' 'null'
 .us null pointer constant.
 The value that is used internally to represent a null pointer is
@@ -95,7 +95,7 @@ It does not necessarily correspond to the integer value 0. It merely
 represents a pointer that
 does not currently point at anything.
 The macro
-.ix NULL macro
+.ix 'NULL' 'macro'
 .mkw NULL
 ..ct ,
 defined in the header

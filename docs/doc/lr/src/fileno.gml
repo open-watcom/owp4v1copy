@@ -15,29 +15,29 @@ The following symbolic values in
 .hdrfile &iohdr
 define the file &handle.s that are associated with the C language
 .if '&machsys' eq 'PP' .do begin
-.ix stdin
-.ix stdout
-.ix stderr
+.ix 'stdin'
+.ix 'stdout'
+.ix 'stderr'
 .us stdin,
 .us stdout,
 and
 .us stderr
 .do end
 .el .if '&machsys' eq 'QNX' .do begin
-.ix stdin
-.ix stdout
-.ix stderr
+.ix 'stdin'
+.ix 'stdout'
+.ix 'stderr'
 .us stdin,
 .us stdout,
 and
 .us stderr
 .do end
 .el .do begin
-.ix stdin
-.ix stdout
-.ix stderr
-.ix stdaux
-.ix stdprn
+.ix 'stdin'
+.ix 'stdout'
+.ix 'stderr'
+.ix 'stdaux'
+.ix 'stdprn'
 .us stdin,
 .us stdout,
 .us stderr,

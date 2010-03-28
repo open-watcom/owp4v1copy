@@ -12,7 +12,7 @@ statement appears in a subroutine subprogram then
 .id name
 is a
 .us subroutine name.
-.ix subroutine name
+.ix 'subroutine' 'name'
 If the
 .kw ENTRY
 statement appears in a function subprogram then
@@ -20,14 +20,14 @@ statement appears in a function subprogram then
 is an
 .us external function name.
 .ix 'external function name'
-.ix function 'external name'
+.ix 'function' 'external name'
 .mnote d
 is a variable name, array name, dummy procedure name, or an asterisk.
 .id d
 is called a
 .us dummy argument.
 .ix 'dummy argument'
-.ix argument dummy
+.ix 'argument' 'dummy'
 An asterisk is allowed only in a subroutine subprogram.
 .endnote
 .np

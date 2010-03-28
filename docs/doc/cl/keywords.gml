@@ -8,7 +8,7 @@ called
 They may not be used for any kind of identifier, including
 object names, function names, labels, structure or union
 tags (names).
-.ix identifier
+.ix 'identifier'
 .sk 1
 .im kwlist
 .sk 1

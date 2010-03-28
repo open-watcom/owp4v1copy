@@ -27,7 +27,7 @@ An increment operation causing the iterator to be positioned after the end
 of the list returns zero.
 Further increments will cause the
 .MONO undef_iter
-.ix undex_iter exception
+.ix 'undex_iter' 'exception'
 exception to be thrown, if it is enabled.
 This behaviour allows lists to be traversed simply using a while loop, and is
 demonstrated in the examples for the iterator classes.

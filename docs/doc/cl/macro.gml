@@ -29,9 +29,9 @@ to be equivalent to the token
 .mono 256.
 This is sometimes called a
 .ix 'manifest constant'
-.ix constant manifest
-.ix constant '#define'
-.ix constant 'enumeration'
+.ix 'constant' 'manifest'
+.ix 'constant' '#define'
+.ix 'constant' 'enumeration'
 .us manifest constant,
 because it provides
 a descriptive term for a value that makes programs easier to
@@ -929,7 +929,7 @@ may be undefined
 .*
 .pp
 The macro,
-.ix macro offsetof
+.ix 'macro' 'offsetof'
 .ix 'offset of member'
 .ix 'offsetof'
 .cillust begin
@@ -941,7 +941,7 @@ type, member
 .cillust end
 .pc
 expands to a constant expression with type
-.ix size_t
+.ix 'size_t'
 .kw size_t
 ..ct ..li .
 The value of the expression is the offset in bytes of
@@ -963,7 +963,7 @@ The
 .ix 'NULL macro'
 .mkw NULL
 macro expands to a
-.ix null pointer
+.ix 'null pointer'
 .us null pointer constant,
 which is a value that indicates a pointer does not currently point to
 anything.

@@ -399,8 +399,8 @@ A>parserv p378
 B>&dbgcmd. /tr=par;2 app
 .millust end
 .np
-.ix dbgport.sys
-.ix dbginst.exe
+.ix 'dbgport.sys'
+.ix 'dbginst.exe'
 Windows NT Note: Under Windows NT/2000/XP you must have the dbgport.sys
 device driver installed and loaded on your machine before the host
 debugger will be able to access the parallel port. To install this file

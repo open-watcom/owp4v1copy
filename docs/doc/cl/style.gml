@@ -1,4 +1,4 @@
-.ix style
+.ix 'style'
 .ix 'programming style'
 .pp
 Programming style is as individual as a person's
@@ -68,7 +68,7 @@ Consider the following sample set of rules, used throughout this book:
 objects declared within a function
 with
 .ix 'automatic storage duration'
-.ix 'storage duration' automatic
+.ix 'storage duration' 'automatic'
 automatic storage duration
 are entirely in lower case,
 .millust begin
@@ -79,7 +79,7 @@ struct s * sptr;
 .note
 objects with
 .ix 'static storage duration'
-.ix 'storage duration' static
+.ix 'storage duration' 'static'
 static storage duration (global objects)
 start with an upper
 case letter, and words or word fragments also start with
@@ -100,9 +100,9 @@ static field * CreateField( char * name );
 .note
 all
 .ix 'manifest constant'
-.ix constant manifest
-.ix constant '#define'
-.ix constant 'enumeration'
+.ix 'constant' 'manifest'
+.ix 'constant' '#define'
+.ix 'constant' 'enumeration'
 constants are entirely in upper case.
 .millust begin
 #define FIELD_LIMIT 500
@@ -154,7 +154,7 @@ Note: the
 .ix 'library function'
 library functions do not use mixed case names.
 Also, the function
-.ix 'function' main
+.ix 'function' 'main'
 .mono main
 does not begin with an upper case
 .mono M.
@@ -164,7 +164,7 @@ other functions because of the letter-case difference.
 .section Choose Appropriate Names
 .*
 .pp
-.ix style 'object names'
+.ix 'style' 'object names'
 The naming of objects can be critical to the ease with which
 bugs can be found, or changes can be made. Using object names such
 as
@@ -195,7 +195,7 @@ what is going on.
 .*
 .section Indent to Emphasize Structure
 .*
-.ix style indenting
+.ix 'style' 'indenting'
 .pp
 The following is a valid function:
 .millust begin
@@ -322,7 +322,7 @@ is an asset.
 .*
 .section Visually Align Object Declarations
 .*
-.ix style 'aligning declarations'
+.ix 'style' 'aligning declarations'
 .pp
 A lengthy series of object declarations can be difficult to read if
 care is not taken to improve the readability. Consider the
@@ -351,7 +351,7 @@ the same column.
 .*
 .section Keep Functions Small
 .*
-.ix style 'small functions'
+.ix 'style' 'small functions'
 .pp
 A function that is several hundred lines long can be difficult
 to comprehend, especially if it is being looked at on a terminal,
@@ -368,7 +368,7 @@ maintain.
 .*
 .section Use Extra Spacing for Emphasis
 .*
-.ix style spacing
+.ix 'style' 'spacing'
 .pp
 In complicated expressions and conditions, use spacing to
 emphasize the order of operations. Consider these examples:
@@ -384,7 +384,7 @@ that the subexpressions with fewer spaces are performed first.
 .*
 .section Underline Function Declarations
 .*
-.ix style 'underlining function declarations'
+.ix 'style' 'underlining function declarations'
 .pp
 A large module with many functions is a common occurrence.
 .ix 'underlining function declarations'
@@ -402,7 +402,7 @@ extern int TrimLength( char * string )
 .*
 .section Use static for Most Functions
 .*
-.ix style 'static objects'
+.ix 'style' 'static objects'
 .pp
 Most functions do not need to be called from routines outside of the
 current module. Yet, if the keyword
@@ -410,7 +410,7 @@ current module. Yet, if the keyword
 is not used in the function declaration, then the function is
 automatically given
 .ix 'external linkage'
-.ix linkage external
+.ix 'linkage' 'external'
 .us external linkage
 ..ct ..li .
 This can lead to a proliferation of external symbols, which
@@ -456,15 +456,15 @@ will make them easier to find.
 .*
 .section Do Not Reuse the Names of Static Objects
 .*
-.ix style 'reusing names'
+.ix 'style' 'reusing names'
 .pp
 If an object with
 .ix 'static storage duration'
-.ix 'storage duration' static
+.ix 'storage duration' 'static'
 static storage duration exists in one module, but
 has
 .ix 'internal linkage'
-.ix linkage internal
+.ix 'linkage' 'internal'
 .us internal linkage
 ..ct ,
 then another object with the same name should not be declared in another
@@ -473,7 +473,7 @@ The programmer may confuse them.
 .pp
 Even more importantly, if an object exists with
 .ix 'external linkage'
-.ix linkage external
+.ix 'linkage' 'external'
 .us external linkage
 ..ct ,
 a module should not declare another object with the same name with
@@ -486,7 +486,7 @@ the next programmer to look at the code will likely be confused.
 .*
 .pp
 .ix 'included file'
-.ix style 'included files'
+.ix 'style' 'included files'
 Included source files
 can be used to organize data structures and related information.
 They should be used when the same structure is needed in
@@ -499,14 +499,14 @@ related information for one aspect of the program. For example,
 a file that describes a symbol table might contain the
 actual structures or other types that are required, along with any
 .ix 'manifest constant'
-.ix constant manifest
-.ix constant '#define'
-.ix constant 'enumeration'
+.ix 'constant' 'manifest'
+.ix 'constant' '#define'
+.ix 'constant' 'enumeration'
 manifest constants that are useful.
 .*
 .section Use Function Prototypes
 .*
-.ix style 'function prototypes'
+.ix 'style' 'function prototypes'
 .*
 .pp
 Function prototypes are very useful for eliminating common errors when
@@ -536,7 +536,7 @@ and the function prototypes from
 .*
 .section Do Not Do Too Much In One Statement
 .*
-.ix style 'complicated statements'
+.ix 'style' 'complicated statements'
 .pp
 In the same manner that a big function that does too much can be confusing,
 so too can a long statement.
@@ -571,10 +571,10 @@ is more readable, and most compilers will produce the same code.
 .section Do Not Use goto Too Much
 .*
 .pp
-.ix style goto
+.ix 'style' 'goto'
 The
 .ix 'goto statement'
-.ix statement goto
+.ix 'statement' 'goto'
 .kw goto
 statement is a very powerful tool, but it is very easy to misuse.
 Here are some general rules for the use of
@@ -605,7 +605,7 @@ Use
 .kw goto
 to jump out of nested blocks, where the
 .ix 'break statement'
-.ix statement break
+.ix 'statement' 'break'
 .kw break
 statement is not appropriate.
 .endbull
@@ -618,8 +618,8 @@ to a minimum.
 .section Use Comments
 .*
 .pp
-.ix style comments
-.ix comment
+.ix 'style' 'comments'
+.ix 'comment'
 Comments are crucial to good programming style. Regardless of how
 well the program is written,
 some code will be difficult to understand. Comments make it possible

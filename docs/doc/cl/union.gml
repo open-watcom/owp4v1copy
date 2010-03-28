@@ -9,7 +9,7 @@ higher storage locations.
 (The Pascal term for a union is "variant record".)
 .pp
 The
-.ix 'name space' unions
+.ix 'name space' 'unions'
 .us name space
 for union tags is different from that of object names, labels and
 member names, so a tag may be the same identifier
@@ -49,7 +49,7 @@ it contains.
 .pp
 A pointer to an object that is a union points to each of the members
 of the union. If one or more of the members of the union is a
-.ix bit-field
+.ix 'bit-field'
 .us bit-field
 ..ct ,
 then a pointer to the object also points to the storage unit in which

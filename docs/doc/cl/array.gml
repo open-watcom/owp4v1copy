@@ -127,7 +127,7 @@ is
 .monoon
 '\0'
 .monooff
-.ix null character
+.ix 'null character'
 (the null character),
 representing the terminating character in the string (see
 Strings).

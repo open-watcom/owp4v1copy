@@ -1,4 +1,4 @@
-.ix history
+.ix 'history'
 .pp
 The C programming language was developed by Dennis Ritchie in 1972
 for the UNIX operating system.

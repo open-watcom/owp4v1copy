@@ -129,11 +129,11 @@ is the
 .MONO WCValSList<Type>
 class, then the
 .MONO WCValSListItemSize(Type)
-.ix WCValSListItemSize macro
+.ix 'WCValSListItemSize' 'macro'
 macro returns the size of the elements which are allocated by the
 :HP1.allocator:eHP1. function.  Similarly, the
 .MONO WCPtrSListItemSize( Type )
-.ix WCPtrSListItemSize macro
+.ix 'WCPtrSListItemSize' 'macro'
 macro returns the size of
 .MONO WCPtrSList<Type>
 elements.
@@ -164,7 +164,7 @@ storage class destructor performs the destruction.
 :P.
 If the
 .MONO not_empty
-.ix not_empty exception
+.ix 'not_empty' 'exception'
 exception is enabled,
 the exception is thrown if the stack is not empty of stack elements.
 :RSLTS.
@@ -254,11 +254,11 @@ The stack element is also removed from the stack.
 If the stack is empty, one of two exceptions can be thrown.
 If the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, then it will be thrown.
 Otherwise, the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception will be thrown, if enabled.
 :RSLTS.
 The top stack element is removed and returned.
@@ -289,7 +289,7 @@ It will be the first element on the stack to be popped.
 :P.
 If the push fails, the
 .MONO out_of_memory
-.ix out_of_memory exception
+.ix 'out_of_memory' 'exception'
 exception will be thrown, if enabled, and the stack will remain unchanged.
 :RSLTS.
 The stack element is pushed onto the top of the stack.
@@ -315,11 +315,11 @@ The stack element is not removed from the stack.
 If the stack is empty, one of two exceptions can be thrown.
 If the
 .MONO empty_container
-.ix empty_container exception
+.ix 'empty_container' 'exception'
 exception is enabled, then it will be thrown.
 Otherwise, the
 .MONO index_range
-.ix index_range exception
+.ix 'index_range' 'exception'
 exception will be thrown, if enabled.
 :RSLTS.
 The top stack element is returned.

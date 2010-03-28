@@ -88,15 +88,15 @@ In this case, the result of ATAN2 is of type REAL.
 .note Definition:
 .mono int(a)
 .nameuse
-.ix 'generic function' INT
-.ix 'intrinsic function' INT
-.ix 'intrinsic function' IFIX
-.ix 'intrinsic function' IDINT
-.ix 'intrinsic function' HFIX
-.ix INT
-.ix IFIX
-.ix IDINT
-.ix HFIX
+.ix 'generic function' 'INT'
+.ix 'intrinsic function' 'INT'
+.ix 'intrinsic function' 'IFIX'
+.ix 'intrinsic function' 'IDINT'
+.ix 'intrinsic function' 'HFIX'
+.ix 'INT'
+.ix 'IFIX'
+.ix 'IDINT'
+.ix 'HFIX'
 .note INT &generic.
 I&arrow.INT(I),
 I&arrow.INT(R),
@@ -122,13 +122,13 @@ I&arrow.IDINT(D)
 .*
 .begnote $setptnt 12
 .nameuse
-.ix 'generic function' REAL
-.ix 'intrinsic function' REAL
-.ix 'intrinsic function' FLOAT
-.ix 'intrinsic function' SNGL
-.ix REAL
-.ix FLOAT
-.ix SNGL
+.ix 'generic function' 'REAL'
+.ix 'intrinsic function' 'REAL'
+.ix 'intrinsic function' 'FLOAT'
+.ix 'intrinsic function' 'SNGL'
+.ix 'REAL'
+.ix 'FLOAT'
+.ix 'SNGL'
 .note REAL &generic.
 R&arrow.REAL(I),
 R&arrow.REAL(R),
@@ -152,13 +152,13 @@ R&arrow.SNGL(D)
 .*
 .begnote $setptnt 12
 .nameuse
-.ix 'generic function' DBLE
-.ix 'intrinsic function' DBLE
-.ix 'intrinsic function' DREAL
-.ix 'intrinsic function' DFLOAT
-.ix DBLE
-.ix DREAL
-.ix DFLOAT
+.ix 'generic function' 'DBLE'
+.ix 'intrinsic function' 'DBLE'
+.ix 'intrinsic function' 'DREAL'
+.ix 'intrinsic function' 'DFLOAT'
+.ix 'DBLE'
+.ix 'DREAL'
+.ix 'DFLOAT'
 .note DBLE &generic.
 D&arrow.DBLE(I),
 D&arrow.DBLE(R),
@@ -180,9 +180,9 @@ D&arrow.DFLOAT(I) &dagger.
 .*
 .begnote $setptnt 12
 .nameuse
-.ix 'generic function' CMPLX
-.ix 'intrinsic function' CMPLX
-.ix CMPLX
+.ix 'generic function' 'CMPLX'
+.ix 'intrinsic function' 'CMPLX'
+.ix 'CMPLX'
 .note CMPLX &generic.
 C&arrow.CMPLX(I), C&arrow.CMPLX(I,I),
 C&arrow.CMPLX(R), C&arrow.CMPLX(R,R),
@@ -200,9 +200,9 @@ C&arrow.CMPLX(Z) &dagger.
 .*
 .begnote $setptnt 12
 .nameuse
-.ix 'generic function' DCMPLX
-.ix 'intrinsic function' DCMPLX
-.ix DCMPLX
+.ix 'generic function' 'DCMPLX'
+.ix 'intrinsic function' 'DCMPLX'
+.ix 'DCMPLX'
 .note DCMPLX &generic. &dagger.
 Z&arrow.DCMPLX(I), Z&arrow.DCMPLX(I,I),
 Z&arrow.DCMPLX(R), Z&arrow.DCMPLX(R,R),
@@ -220,8 +220,8 @@ Z&arrow.DCMPLX(Z)
 .*
 .begnote $setptnt 12
 .nameuse
-.ix 'intrinsic function' ICHAR
-.ix ICHAR
+.ix 'intrinsic function' 'ICHAR'
+.ix 'ICHAR'
 .note ICHAR
 I&arrow.ICHAR(CH)
 .note Notes:
@@ -233,8 +233,8 @@ I&arrow.ICHAR(CH)
 .*
 .begnote $setptnt 12
 .nameuse
-.ix 'intrinsic function' CHAR
-.ix CHAR
+.ix 'intrinsic function' 'CHAR'
+.ix 'CHAR'
 .note CHAR
 CH&arrow.CHAR(I)
 .note Notes:
@@ -248,11 +248,11 @@ CH&arrow.CHAR(I)
 .note Definition:
 .mono int(a)
 .nameuse
-.ix 'generic function' AINT
-.ix 'intrinsic function' AINT
-.ix 'intrinsic function' DINT
-.ix AINT
-.ix DINT
+.ix 'generic function' 'AINT'
+.ix 'intrinsic function' 'AINT'
+.ix 'intrinsic function' 'DINT'
+.ix 'AINT'
+.ix 'DINT'
 .note AINT &generic.
 R&arrow.AINT(R),
 D&arrow.AINT(D)
@@ -274,11 +274,11 @@ if a>=0;
 .mono int(a-.5)
 if a<0
 .nameuse
-.ix 'generic function' ANINT
-.ix 'intrinsic function' ANINT
-.ix 'intrinsic function' DNINT
-.ix ANINT
-.ix DNINT
+.ix 'generic function' 'ANINT'
+.ix 'intrinsic function' 'ANINT'
+.ix 'intrinsic function' 'DNINT'
+.ix 'ANINT'
+.ix 'DNINT'
 .note ANINT &generic.
 R&arrow.ANINT(R),
 D&arrow.ANINT(D)
@@ -298,11 +298,11 @@ if a>=0;
 .mono int(a-.5)
 if a<0
 .nameuse
-.ix 'generic function' NINT
-.ix 'intrinsic function' NINT
-.ix 'intrinsic function' IDNINT
-.ix NINT
-.ix IDNINT
+.ix 'generic function' 'NINT'
+.ix 'intrinsic function' 'NINT'
+.ix 'intrinsic function' 'IDNINT'
+.ix 'NINT'
+.ix 'IDNINT'
 .note NINT &generic.
 I&arrow.NINT(R),
 I&arrow.NINT(D)
@@ -322,21 +322,21 @@ if a is complex;
 .mono |a|
 otherwise
 .nameuse
-.ix 'generic function' ABS
-.ix 'intrinsic function' IABS
-.ix 'intrinsic function' I1ABS
-.ix 'intrinsic function' I2ABS
-.ix 'intrinsic function' ABS
-.ix 'intrinsic function' DABS
-.ix 'intrinsic function' CABS
-.ix 'intrinsic function' CDABS
-.ix ABS
-.ix IABS
-.ix I1ABS
-.ix I2ABS
-.ix DABS
-.ix CABS
-.ix CDABS
+.ix 'generic function' 'ABS'
+.ix 'intrinsic function' 'IABS'
+.ix 'intrinsic function' 'I1ABS'
+.ix 'intrinsic function' 'I2ABS'
+.ix 'intrinsic function' 'ABS'
+.ix 'intrinsic function' 'DABS'
+.ix 'intrinsic function' 'CABS'
+.ix 'intrinsic function' 'CDABS'
+.ix 'ABS'
+.ix 'IABS'
+.ix 'I1ABS'
+.ix 'I2ABS'
+.ix 'DABS'
+.ix 'CABS'
+.ix 'CDABS'
 .note ABS &generic.
 I&arrow.ABS(I),
 I1&arrow.ABS(I1) &dagger.,
@@ -372,17 +372,17 @@ D&arrow.CDABS(Z)
 .note Definition:
 .mono mod(a1,a2) = a1-int(a1/a2)*a2
 .nameuse
-.ix 'generic function' MOD
-.ix 'intrinsic function' MOD
-.ix 'intrinsic function' I1MOD
-.ix 'intrinsic function' I2MOD
-.ix 'intrinsic function' AMOD
-.ix 'intrinsic function' DMOD
-.ix MOD
-.ix I1MOD
-.ix I2MOD
-.ix AMOD
-.ix DMOD
+.ix 'generic function' 'MOD'
+.ix 'intrinsic function' 'MOD'
+.ix 'intrinsic function' 'I1MOD'
+.ix 'intrinsic function' 'I2MOD'
+.ix 'intrinsic function' 'AMOD'
+.ix 'intrinsic function' 'DMOD'
+.ix 'MOD'
+.ix 'I1MOD'
+.ix 'I2MOD'
+.ix 'AMOD'
+.ix 'DMOD'
 .note MOD &generic.
 I&arrow.MOD(I,I),
 I1&arrow.MOD(I1,I1) &dagger.,
@@ -416,17 +416,17 @@ if a2>=0;
 .mono -|a1|
 if a2<0
 .nameuse
-.ix 'generic function' SIGN
-.ix 'intrinsic function' ISIGN
-.ix 'intrinsic function' I1SIGN
-.ix 'intrinsic function' I2SIGN
-.ix 'intrinsic function' SIGN
-.ix 'intrinsic function' DSIGN
-.ix ISIGN
-.ix I1SIGN
-.ix I2SIGN
-.ix SIGN
-.ix DSIGN
+.ix 'generic function' 'SIGN'
+.ix 'intrinsic function' 'ISIGN'
+.ix 'intrinsic function' 'I1SIGN'
+.ix 'intrinsic function' 'I2SIGN'
+.ix 'intrinsic function' 'SIGN'
+.ix 'intrinsic function' 'DSIGN'
+.ix 'ISIGN'
+.ix 'I1SIGN'
+.ix 'I2SIGN'
+.ix 'SIGN'
+.ix 'DSIGN'
 .note SIGN &generic.
 I&arrow.SIGN(I,I),
 I1&arrow.SIGN(I1,I1) &dagger.,
@@ -457,17 +457,17 @@ if a1>a2;
 .mono 0
 if a1<=a2
 .nameuse
-.ix 'generic function' DIM
-.ix 'intrinsic function' IDIM
-.ix 'intrinsic function' I1DIM
-.ix 'intrinsic function' I2DIM
-.ix 'intrinsic function' DIM
-.ix 'intrinsic function' DDIM
-.ix IDIM
-.ix I1DIM
-.ix I2DIM
-.ix DIM
-.ix DDIM
+.ix 'generic function' 'DIM'
+.ix 'intrinsic function' 'IDIM'
+.ix 'intrinsic function' 'I1DIM'
+.ix 'intrinsic function' 'I2DIM'
+.ix 'intrinsic function' 'DIM'
+.ix 'intrinsic function' 'DDIM'
+.ix 'IDIM'
+.ix 'I1DIM'
+.ix 'I2DIM'
+.ix 'DIM'
+.ix 'DDIM'
 .note DIM &generic.
 I&arrow.DIM(I,I),
 I1&arrow.DIM(I1,I1) &dagger.,
@@ -493,8 +493,8 @@ D&arrow.DDIM(D,D)
 .note Definition:
 .mono a1*a2
 .nameuse
-.ix 'intrinsic function' DPROD
-.ix DPROD
+.ix 'intrinsic function' 'DPROD'
+.ix 'DPROD'
 .note DPROD
 D&arrow.DPROD(R,R)
 .endnote
@@ -506,21 +506,21 @@ D&arrow.DPROD(R,R)
 .note Definition:
 .mono max(a1,a2,...)
 .nameuse
-.ix 'generic function' MAX
-.ix 'intrinsic function' MAX0
-.ix 'intrinsic function' I1MAX0
-.ix 'intrinsic function' I2MAX0
-.ix 'intrinsic function' AMAX1
-.ix 'intrinsic function' DMAX1
-.ix 'intrinsic function' AMAX0
-.ix 'intrinsic function' MAX1
-.ix MAX0
-.ix I1MAX0
-.ix I2MAX0
-.ix AMAX1
-.ix DMAX1
-.ix AMAX0
-.ix MAX1
+.ix 'generic function' 'MAX'
+.ix 'intrinsic function' 'MAX0'
+.ix 'intrinsic function' 'I1MAX0'
+.ix 'intrinsic function' 'I2MAX0'
+.ix 'intrinsic function' 'AMAX1'
+.ix 'intrinsic function' 'DMAX1'
+.ix 'intrinsic function' 'AMAX0'
+.ix 'intrinsic function' 'MAX1'
+.ix 'MAX0'
+.ix 'I1MAX0'
+.ix 'I2MAX0'
+.ix 'AMAX1'
+.ix 'DMAX1'
+.ix 'AMAX0'
+.ix 'MAX1'
 .note MAX &generic.
 I&arrow.MAX(I,...),
 I1&arrow.MAX(I1,...) &dagger.,
@@ -550,21 +550,21 @@ I&arrow.MAX1(R,...)
 .note Definition:
 .mono min(a1,a2,...)
 .nameuse
-.ix 'generic function' MIN
-.ix 'intrinsic function' MIN0
-.ix 'intrinsic function' I1MIN0
-.ix 'intrinsic function' I2MIN0
-.ix 'intrinsic function' AMIN1
-.ix 'intrinsic function' DMIN1
-.ix 'intrinsic function' AMIN0
-.ix 'intrinsic function' MIN1
-.ix MIN0
-.ix I1MIN0
-.ix I2MIN0
-.ix AMIN1
-.ix DMIN1
-.ix AMIN0
-.ix MIN1
+.ix 'generic function' 'MIN'
+.ix 'intrinsic function' 'MIN0'
+.ix 'intrinsic function' 'I1MIN0'
+.ix 'intrinsic function' 'I2MIN0'
+.ix 'intrinsic function' 'AMIN1'
+.ix 'intrinsic function' 'DMIN1'
+.ix 'intrinsic function' 'AMIN0'
+.ix 'intrinsic function' 'MIN1'
+.ix 'MIN0'
+.ix 'I1MIN0'
+.ix 'I2MIN0'
+.ix 'AMIN1'
+.ix 'DMIN1'
+.ix 'AMIN0'
+.ix 'MIN1'
 .note MIN &generic.
 I&arrow.MIN(I,...),
 I1&arrow.MIN(I1,...) &dagger.,
@@ -594,8 +594,8 @@ I&arrow.MIN1(R,...)
 .note Definition:
 Length of character entity
 .nameuse
-.ix 'intrinsic function' LEN
-.ix LEN
+.ix 'intrinsic function' 'LEN'
+.ix 'LEN'
 .note LEN
 I&arrow.LEN(CH)
 .note Notes:
@@ -609,8 +609,8 @@ The argument to the LEN function need not be defined.
 .note Definition:
 Length of character entity excluding trailing blanks
 .nameuse
-.ix 'intrinsic function' LENTRIM
-.ix LENTRIM
+.ix 'intrinsic function' 'LENTRIM'
+.ix 'LENTRIM'
 .note LENTRIM
 I&arrow.LENTRIM(CH)
 .endnote
@@ -626,8 +626,8 @@ is location of substring
 in string
 .mono a1
 .nameuse
-.ix 'intrinsic function' INDEX
-.ix INDEX
+.ix 'intrinsic function' 'INDEX'
+.ix 'INDEX'
 .note INDEX
 I&arrow.INDEX(CH,CH)
 .note Notes:
@@ -644,11 +644,11 @@ If y is not contained in x, zero is returned.
 .note Definition:
 .mono ai
 .nameuse
-.ix 'generic function' IMAG
-.ix 'intrinsic function' AIMAG
-.ix 'intrinsic function' DIMAG
-.ix AIMAG
-.ix DIMAG
+.ix 'generic function' 'IMAG'
+.ix 'intrinsic function' 'AIMAG'
+.ix 'intrinsic function' 'DIMAG'
+.ix 'AIMAG'
+.ix 'DIMAG'
 .note IMAG &generic. &dagger.
 R&arrow.IMAG(C),
 D&arrow.IMAG(Z)
@@ -669,11 +669,11 @@ D&arrow.DIMAG(Z) &dagger.
 .note Definition:
 .mono (ar,-ai)
 .nameuse
-.ix 'generic function' CONJG
-.ix 'intrinsic function' CONJG
-.ix 'intrinsic function' DCONJG
-.ix CONJG
-.ix DCONJD
+.ix 'generic function' 'CONJG'
+.ix 'intrinsic function' 'CONJG'
+.ix 'intrinsic function' 'DCONJG'
+.ix 'CONJG'
+.ix 'DCONJD'
 .note CONJG &generic. &dagger.
 C&arrow.CONJG(C),
 Z&arrow.CONJG(Z)
@@ -694,15 +694,15 @@ Z&arrow.DCONJG(Z) &dagger.
 .note Definition:
 .mono a**1/2
 .nameuse
-.ix 'generic function' SQRT
-.ix 'intrinsic function' SQRT
-.ix 'intrinsic function' DSQRT
-.ix 'intrinsic function' CSQRT
-.ix 'intrinsic function' CDSQRT
-.ix SQRT
-.ix DSQRT
-.ix CSQRT
-.ix CDSQRT
+.ix 'generic function' 'SQRT'
+.ix 'intrinsic function' 'SQRT'
+.ix 'intrinsic function' 'DSQRT'
+.ix 'intrinsic function' 'CSQRT'
+.ix 'intrinsic function' 'CDSQRT'
+.ix 'SQRT'
+.ix 'DSQRT'
+.ix 'CSQRT'
+.ix 'CDSQRT'
 .note SQRT &generic.
 R&arrow.SQRT(R),
 D&arrow.SQRT(D),
@@ -732,15 +732,15 @@ When the real part of the result is 0, the imaginary part is >= 0.
 .note Definition:
 .mono e**a
 .nameuse
-.ix 'generic function' EXP
-.ix 'intrinsic function' EXP
-.ix 'intrinsic function' DEXP
-.ix 'intrinsic function' CEXP
-.ix 'intrinsic function' CDEXP
-.ix EXP
-.ix DEXP
-.ix CEXP
-.ix CDEXP
+.ix 'generic function' 'EXP'
+.ix 'intrinsic function' 'EXP'
+.ix 'intrinsic function' 'DEXP'
+.ix 'intrinsic function' 'CEXP'
+.ix 'intrinsic function' 'CDEXP'
+.ix 'EXP'
+.ix 'DEXP'
+.ix 'CEXP'
+.ix 'CDEXP'
 .note EXP &generic.
 R&arrow.EXP(R),
 D&arrow.EXP(D),
@@ -770,15 +770,15 @@ log (a)
    e
 .millust end
 .nameuse
-.ix 'generic function' LOG
-.ix 'intrinsic function' ALOG
-.ix 'intrinsic function' DLOG
-.ix 'intrinsic function' CLOG
-.ix 'intrinsic function' CDLOG
-.ix ALOG
-.ix DLOG
-.ix CLOG
-.ix CDLOG
+.ix 'generic function' 'LOG'
+.ix 'intrinsic function' 'ALOG'
+.ix 'intrinsic function' 'DLOG'
+.ix 'intrinsic function' 'CLOG'
+.ix 'intrinsic function' 'CDLOG'
+.ix 'ALOG'
+.ix 'DLOG'
+.ix 'CLOG'
+.ix 'CDLOG'
 .note LOG &generic.
 R&arrow.LOG(R),
 D&arrow.LOG(D),
@@ -817,11 +817,11 @@ log  (a)
    10
 .millust end
 .nameuse
-.ix 'generic function' LOG10
-.ix 'intrinsic function' ALOG10
-.ix 'intrinsic function' DLOG10
-.ix ALOG10
-.ix DLOG10
+.ix 'generic function' 'LOG10'
+.ix 'intrinsic function' 'ALOG10'
+.ix 'intrinsic function' 'DLOG10'
+.ix 'ALOG10'
+.ix 'DLOG10'
 .note LOG10 &generic.
 R&arrow.LOG10(R),
 D&arrow.LOG10(D)
@@ -838,15 +838,15 @@ D&arrow.DLOG10(D)
 .note Definition:
 .mono sin(a)
 .nameuse
-.ix 'generic function' SIN
-.ix 'intrinsic function' SIN
-.ix 'intrinsic function' DSIN
-.ix 'intrinsic function' CSIN
-.ix 'intrinsic function' CDSIN
-.ix SIN
-.ix DSIN
-.ix CSIN
-.ix CDSIN
+.ix 'generic function' 'SIN'
+.ix 'intrinsic function' 'SIN'
+.ix 'intrinsic function' 'DSIN'
+.ix 'intrinsic function' 'CSIN'
+.ix 'intrinsic function' 'CDSIN'
+.ix 'SIN'
+.ix 'DSIN'
+.ix 'CSIN'
+.ix 'CDSIN'
 .note SIN &generic.
 R&arrow.SIN(R),
 D&arrow.SIN(D),
@@ -875,15 +875,15 @@ Z&arrow.CDSIN(Z) &dagger.
 .note Definition:
 .mono cos(a)
 .nameuse
-.ix 'generic function' COS
-.ix 'intrinsic function' COS
-.ix 'intrinsic function' DCOS
-.ix 'intrinsic function' CCOS
-.ix 'intrinsic function' CDCOS
-.ix COS
-.ix DCOS
-.ix CCOS
-.ix CDCOS
+.ix 'generic function' 'COS'
+.ix 'intrinsic function' 'COS'
+.ix 'intrinsic function' 'DCOS'
+.ix 'intrinsic function' 'CCOS'
+.ix 'intrinsic function' 'CDCOS'
+.ix 'COS'
+.ix 'DCOS'
+.ix 'CCOS'
+.ix 'CDCOS'
 .note COS &generic.
 R&arrow.COS(R),
 D&arrow.COS(D),
@@ -912,11 +912,11 @@ Z&arrow.CDCOS(Z) &dagger.
 .note Definition:
 .mono tan(a)
 .nameuse
-.ix 'generic function' TAN
-.ix 'intrinsic function' TAN
-.ix 'intrinsic function' DTAN
-.ix TAN
-.ix DTAN
+.ix 'generic function' 'TAN'
+.ix 'intrinsic function' 'TAN'
+.ix 'intrinsic function' 'DTAN'
+.ix 'TAN'
+.ix 'DTAN'
 .note TAN &generic.
 R&arrow.TAN(R),
 D&arrow.TAN(D)
@@ -935,11 +935,11 @@ D&arrow.DTAN(D)
 .note Definition:
 .mono cotan(a)
 .nameuse
-.ix 'generic function' COTAN
-.ix 'intrinsic function' COTAN
-.ix 'intrinsic function' DCOTAN
-.ix COTAN
-.ix DCOTAN
+.ix 'generic function' 'COTAN'
+.ix 'intrinsic function' 'COTAN'
+.ix 'intrinsic function' 'DCOTAN'
+.ix 'COTAN'
+.ix 'DCOTAN'
 .note COTAN &generic. &dagger.
 R&arrow.COTAN(R),
 D&arrow.COTAN(D)
@@ -960,11 +960,11 @@ D&arrow.DCOTAN(D) &dagger.
 .note Definition:
 .mono arcsin(a)
 .nameuse
-.ix 'generic function' ASIN
-.ix 'intrinsic function' ASIN
-.ix 'intrinsic function' DASIN
-.ix ASIN
-.ix DASIN
+.ix 'generic function' 'ASIN'
+.ix 'intrinsic function' 'ASIN'
+.ix 'intrinsic function' 'DASIN'
+.ix 'ASIN'
+.ix 'DASIN'
 .note ASIN &generic.
 R&arrow.ASIN(R),
 D&arrow.ASIN(D)
@@ -984,11 +984,11 @@ The result is such that -&pi./2 <= result <= &pi./2.
 .note Definition:
 .mono arccos(a)
 .nameuse
-.ix 'generic function' ACOS
-.ix 'intrinsic function' ACOS
-.ix 'intrinsic function' DACOS
-.ix ACOS
-.ix DACOS
+.ix 'generic function' 'ACOS'
+.ix 'intrinsic function' 'ACOS'
+.ix 'intrinsic function' 'DACOS'
+.ix 'ACOS'
+.ix 'DACOS'
 .note ACOS &generic.
 R&arrow.ACOS(R),
 D&arrow.ACOS(D)
@@ -1008,16 +1008,16 @@ The result is such that 0 <= result <= &pi..
 .note Definition:
 .mono arctan(a)
 .nameuse
-.ix 'generic function' ATAN
-.ix 'generic function' ATAN2
-.ix 'intrinsic function' ATAN
-.ix 'intrinsic function' DATAN
-.ix 'intrinsic function' ATAN2
-.ix 'intrinsic function' DATAN2
-.ix ATAN
-.ix DATAN
-.ix ATAN2
-.ix DATAN2
+.ix 'generic function' 'ATAN'
+.ix 'generic function' 'ATAN2'
+.ix 'intrinsic function' 'ATAN'
+.ix 'intrinsic function' 'DATAN'
+.ix 'intrinsic function' 'ATAN2'
+.ix 'intrinsic function' 'DATAN2'
+.ix 'ATAN'
+.ix 'DATAN'
+.ix 'ATAN2'
+.ix 'DATAN2'
 .note ATAN &generic.
 R&arrow.ATAN(R),
 D&arrow.ATAN(D)
@@ -1055,11 +1055,11 @@ The result of ATAN2 and DATAN2 is such that -&pi. < result <= &pi..
 .note Definition:
 .mono sinh(a)
 .nameuse
-.ix 'generic function' SINH
-.ix 'intrinsic function' SINH
-.ix 'intrinsic function' DSINH
-.ix SINH
-.ix DSINH
+.ix 'generic function' 'SINH'
+.ix 'intrinsic function' 'SINH'
+.ix 'intrinsic function' 'DSINH'
+.ix 'SINH'
+.ix 'DSINH'
 .note SINH &generic.
 R&arrow.SINH(R)
 D&arrow.SINH(D)
@@ -1076,11 +1076,11 @@ D&arrow.DSINH(D)
 .note Definition:
 .mono cosh(a)
 .nameuse
-.ix 'generic function' COSH
-.ix 'intrinsic function' COSH
-.ix 'intrinsic function' DCOSH
-.ix COSH
-.ix DCOSH
+.ix 'generic function' 'COSH'
+.ix 'intrinsic function' 'COSH'
+.ix 'intrinsic function' 'DCOSH'
+.ix 'COSH'
+.ix 'DCOSH'
 .note COSH &generic.
 R&arrow.COSH(R),
 D&arrow.COSH(D)
@@ -1097,11 +1097,11 @@ D&arrow.DCOSH(D)
 .note Definition:
 .mono tanh(a)
 .nameuse
-.ix 'generic function' TANH
-.ix 'intrinsic function' TANH
-.ix 'intrinsic function' DTANH
-.ix TANH
-.ix DTANH
+.ix 'generic function' 'TANH'
+.ix 'intrinsic function' 'TANH'
+.ix 'intrinsic function' 'DTANH'
+.ix 'TANH'
+.ix 'DTANH'
 .note TANH &generic.
 R&arrow.TANH(R),
 D&arrow.TANH(D)
@@ -1118,11 +1118,11 @@ D&arrow.DTANH(D)
 .note Definition:
 .mono gamma(a)
 .nameuse
-.ix 'generic function' GAMMA
-.ix 'intrinsic function' GAMMA
-.ix 'intrinsic function' DGAMMA
-.ix GAMMA
-.ix DGAMMA
+.ix 'generic function' 'GAMMA'
+.ix 'intrinsic function' 'GAMMA'
+.ix 'intrinsic function' 'DGAMMA'
+.ix 'GAMMA'
+.ix 'DGAMMA'
 .note GAMMA &generic.
 R&arrow.GAMMA(R),
 D&arrow.GAMMA(D)
@@ -1142,12 +1142,12 @@ log (gamma(a))
    e
 .millust end
 .nameuse
-.ix 'generic function' GAMMA
-.ix 'intrinsic function' ALGAMA
-.ix 'intrinsic function' DLGAMA
-.ix GAMMA
-.ix ALGAMA
-.ix DLGAMA
+.ix 'generic function' 'GAMMA'
+.ix 'intrinsic function' 'ALGAMA'
+.ix 'intrinsic function' 'DLGAMA'
+.ix 'GAMMA'
+.ix 'ALGAMA'
+.ix 'DLGAMA'
 .note LGAMMA &generic.
 R&arrow.LGAMMA(R),
 D&arrow.LGAMMA(D)
@@ -1164,11 +1164,11 @@ D&arrow.DLGAMA(D)
 .note Definition:
 .mono erf(a)
 .nameuse
-.ix 'generic function' ERF
-.ix 'intrinsic function' ERF
-.ix 'intrinsic function' DERF
-.ix ERF
-.ix DERF
+.ix 'generic function' 'ERF'
+.ix 'intrinsic function' 'ERF'
+.ix 'intrinsic function' 'DERF'
+.ix 'ERF'
+.ix 'DERF'
 .note ERF &generic.
 R&arrow.ERF(R),
 D&arrow.ERF(D)
@@ -1185,11 +1185,11 @@ D&arrow.DERF(D)
 .note Definition:
 .mono 1-erf(a)
 .nameuse
-.ix 'generic function' ERFC
-.ix 'intrinsic function' ERFC
-.ix 'intrinsic function' DERFC
-.ix ERFC
-.ix DERFC
+.ix 'generic function' 'ERFC'
+.ix 'intrinsic function' 'ERFC'
+.ix 'intrinsic function' 'DERFC'
+.ix 'ERFC'
+.ix 'DERFC'
 .note ERFC &generic.
 R&arrow.ERFC(R),
 D&arrow.ERFC(D)
@@ -1206,8 +1206,8 @@ D&arrow.DERFC(D)
 .note Definition:
 a1>=a2
 .nameuse
-.ix 'intrinsic function' LGE
-.ix LGE
+.ix 'intrinsic function' 'LGE'
+.ix 'LGE'
 .note LGE
 L&arrow.LGE(CH,CH)
 .note Notes:
@@ -1221,8 +1221,8 @@ L&arrow.LGE(CH,CH)
 .note Definition:
 a1>a2
 .nameuse
-.ix 'intrinsic function' LGT
-.ix LGT
+.ix 'intrinsic function' 'LGT'
+.ix 'LGT'
 .note LGT
 L&arrow.LGT(CH,CH)
 .note Notes:
@@ -1236,8 +1236,8 @@ L&arrow.LGT(CH,CH)
 .note Definition:
 a1<=a2
 .nameuse
-.ix 'intrinsic function' LLE
-.ix LLE
+.ix 'intrinsic function' 'LLE'
+.ix 'LLE'
 .note LLE
 L&arrow.LLE(CH,CH)
 .note Notes:
@@ -1251,8 +1251,8 @@ L&arrow.LLE(CH,CH)
 .note Definition:
 a1<a2
 .nameuse
-.ix 'intrinsic function' LLT
-.ix LLT
+.ix 'intrinsic function' 'LLT'
+.ix 'LLT'
 .note LLT
 L&arrow.LLT(CH,CH)
 .note Notes:
@@ -1267,14 +1267,14 @@ L&arrow.LLT(CH,CH)
 .mono iand(i,j)
 Boolean AND
 .nameuse
-.ix 'generic function' IAND
-.ix IAND
-.ix 'intrinsic function' IAND
-.ix IAND
-.ix 'intrinsic function' I1AND
-.ix I1AND
-.ix 'intrinsic function' I2AND
-.ix I2AND
+.ix 'generic function' 'IAND'
+.ix 'IAND'
+.ix 'intrinsic function' 'IAND'
+.ix 'IAND'
+.ix 'intrinsic function' 'I1AND'
+.ix 'I1AND'
+.ix 'intrinsic function' 'I2AND'
+.ix 'I2AND'
 .note IAND &generic
 I&arrow.IAND(I,I),
 I1&arrow.IAND(I1,I1),
@@ -1295,14 +1295,14 @@ I2&arrow.I2AND(I2,I2)
 .mono ior(i,j)
 Boolean inclusive OR
 .nameuse
-.ix 'generic function' IOR
-.ix IOR
-.ix 'intrinsic function' IOR
-.ix IOR
-.ix 'intrinsic function' I1OR
-.ix I1OR
-.ix 'intrinsic function' I2OR
-.ix I2OR
+.ix 'generic function' 'IOR'
+.ix 'IOR'
+.ix 'intrinsic function' 'IOR'
+.ix 'IOR'
+.ix 'intrinsic function' 'I1OR'
+.ix 'I1OR'
+.ix 'intrinsic function' 'I2OR'
+.ix 'I2OR'
 .note IOR &generic
 I&arrow.IOR(I,I),
 I1&arrow.IOR(I1,I1),
@@ -1323,14 +1323,14 @@ I2&arrow.I2OR(I2,I2)
 .mono ieor(i,j)
 Boolean exclusive OR
 .nameuse
-.ix 'generic function' IEOR
-.ix IEOR
-.ix 'intrinsic function' IEOR
-.ix IEOR
-.ix 'intrinsic function' I1EOR
-.ix I1EOR
-.ix 'intrinsic function' I2EOR
-.ix I2EOR
+.ix 'generic function' 'IEOR'
+.ix 'IEOR'
+.ix 'intrinsic function' 'IEOR'
+.ix 'IEOR'
+.ix 'intrinsic function' 'I1EOR'
+.ix 'I1EOR'
+.ix 'intrinsic function' 'I2EOR'
+.ix 'I2EOR'
 .note IEOR &generic
 I&arrow.IEOR(I,I),
 I1&arrow.IEOR(I1,I1),
@@ -1351,14 +1351,14 @@ I2&arrow.I2EOR(I2,I2)
 .mono not(i)
 Boolean complement
 .nameuse
-.ix 'generic function' NOT
-.ix NOT
-.ix 'intrinsic function' NOT
-.ix NOT
-.ix 'intrinsic function' I1NOT
-.ix I1NOT
-.ix 'intrinsic function' I2NOT
-.ix I2NOT
+.ix 'generic function' 'NOT'
+.ix 'NOT'
+.ix 'intrinsic function' 'NOT'
+.ix 'NOT'
+.ix 'intrinsic function' 'I1NOT'
+.ix 'I1NOT'
+.ix 'intrinsic function' 'I2NOT'
+.ix 'I2NOT'
 .note NOT &generic
 I&arrow.NOT(I),
 I1&arrow.NOT(I1),
@@ -1379,13 +1379,13 @@ I2&arrow.I2NOT(I2)
 .mono ishl(j,n)
 Logical shift
 .nameuse
-.ix 'generic function' ISHL
-.ix 'intrinsic function' ISHL
-.ix ISHL
-.ix 'intrinsic function' I1SHL
-.ix I1SHL
-.ix 'intrinsic function' I2SHL
-.ix I2SHL
+.ix 'generic function' 'ISHL'
+.ix 'intrinsic function' 'ISHL'
+.ix 'ISHL'
+.ix 'intrinsic function' 'I1SHL'
+.ix 'I1SHL'
+.ix 'intrinsic function' 'I2SHL'
+.ix 'I2SHL'
 .note ISHL &generic.
 I&arrow.ISHL(I,I),
 I1&arrow.ISHL(I1,I1),
@@ -1405,13 +1405,13 @@ I2&arrow.I2SHL(I2,I2)
 .mono ishft(j,n)
 Logical shift
 .nameuse
-.ix 'generic function' ISHFT
-.ix 'intrinsic function' ISHFT
-.ix ISHFT
-.ix 'intrinsic function' I1SHFT
-.ix I1SHFT
-.ix 'intrinsic function' I2SHFT
-.ix I2SHFT
+.ix 'generic function' 'ISHFT'
+.ix 'intrinsic function' 'ISHFT'
+.ix 'ISHFT'
+.ix 'intrinsic function' 'I1SHFT'
+.ix 'I1SHFT'
+.ix 'intrinsic function' 'I2SHFT'
+.ix 'I2SHFT'
 .note ISHFT &generic.
 I&arrow.ISHFT(I,I),
 I1&arrow.ISHFT(I1,I1),
@@ -1434,13 +1434,13 @@ I2&arrow.I2SHFT(I2,I2)
 .mono isha(j,n)
 Arithmetic shift
 .nameuse
-.ix 'generic function' ISHA
-.ix 'intrinsic function' ISHA
-.ix ISHA
-.ix 'intrinsic function' I1SHA
-.ix I1SHA
-.ix 'intrinsic function' I2SHA
-.ix I2SHA
+.ix 'generic function' 'ISHA'
+.ix 'intrinsic function' 'ISHA'
+.ix 'ISHA'
+.ix 'intrinsic function' 'I1SHA'
+.ix 'I1SHA'
+.ix 'intrinsic function' 'I2SHA'
+.ix 'I2SHA'
 .note ISHA &generic.
 I&arrow.ISHA(I,I),
 I1&arrow.ISHA(I1,I1),
@@ -1463,13 +1463,13 @@ I2&arrow.I2SHA(I2,I2)
 .mono ishc(j,n)
 Circular shift
 .nameuse
-.ix 'generic function' ISHC
-.ix 'intrinsic function' ISHC
-.ix ISHC
-.ix 'intrinsic function' I1SHC
-.ix I1SHC
-.ix 'intrinsic function' I2SHC
-.ix I2SHC
+.ix 'generic function' 'ISHC'
+.ix 'intrinsic function' 'ISHC'
+.ix 'ISHC'
+.ix 'intrinsic function' 'I1SHC'
+.ix 'I1SHC'
+.ix 'intrinsic function' 'I2SHC'
+.ix 'I2SHC'
 .note ISHC &generic.
 I&arrow.ISHC(I,I),
 I1&arrow.ISHC(I1,I1),
@@ -1493,13 +1493,13 @@ Test bit - a2'th bit of a1 is tested.
 If it is 1, .TRUE. is returned.
 If it is 0, .FALSE. is returned.
 .nameuse
-.ix 'generic function' BTEST
-.ix 'intrinsic function' BTEST
-.ix BTEST
-.ix 'intrinsic function' I1BTEST
-.ix I1BTEST
-.ix 'intrinsic function' I2BTEST
-.ix I2BTEST
+.ix 'generic function' 'BTEST'
+.ix 'intrinsic function' 'BTEST'
+.ix 'BTEST'
+.ix 'intrinsic function' 'I1BTEST'
+.ix 'I1BTEST'
+.ix 'intrinsic function' 'I2BTEST'
+.ix 'I2BTEST'
 .note BTEST &generic.
 L&arrow.BTEST(I,I),
 L&arrow.BTEST(I1,I1),
@@ -1519,13 +1519,13 @@ L&arrow.I2BTEST(I2,I2)
 .note Definition:
 Set bit - Return a1 with a2'th bit set.
 .nameuse
-.ix 'generic function' IBSET
-.ix 'intrinsic function' IBSET
-.ix IBSET
-.ix 'intrinsic function' I1BSET
-.ix I1BSET
-.ix 'intrinsic function' I2BSET
-.ix I2BSET
+.ix 'generic function' 'IBSET'
+.ix 'intrinsic function' 'IBSET'
+.ix 'IBSET'
+.ix 'intrinsic function' 'I1BSET'
+.ix 'I1BSET'
+.ix 'intrinsic function' 'I2BSET'
+.ix 'I2BSET'
 .note IBSET &generic.
 I&arrow.IBSET(I,I),
 I1&arrow.IBSET(I1,I1),
@@ -1545,13 +1545,13 @@ I2&arrow.I2BSET(I2,I2)
 .note Definition:
 Clear bit - Return a1 with a2'th bit cleared.
 .nameuse
-.ix 'generic function' IBCLR
-.ix 'intrinsic function' IBCLR
-.ix IBCLR
-.ix 'intrinsic function' I1BCLR
-.ix I1BCLR
-.ix 'intrinsic function' I2BCLR
-.ix I2BCLR
+.ix 'generic function' 'IBCLR'
+.ix 'intrinsic function' 'IBCLR'
+.ix 'IBCLR'
+.ix 'intrinsic function' 'I1BCLR'
+.ix 'I1BCLR'
+.ix 'intrinsic function' 'I2BCLR'
+.ix 'I2BCLR'
 .note IBCLR &generic.
 I&arrow.IBCLR(I,I),
 I1&arrow.IBCLR(I1,I1),
@@ -1571,13 +1571,13 @@ I2&arrow.I2BCLR(I2,I2)
 .note Definition:
 Change bit - Return a1 with a2'th bit complemented.
 .nameuse
-.ix 'generic function' IBCHNG
-.ix 'intrinsic function' IBCHNG
-.ix IBCHNG
-.ix 'intrinsic function' I1BCHNG
-.ix I1BCHNG
-.ix 'intrinsic function' I2BCHNG
-.ix I2BCHNG
+.ix 'generic function' 'IBCHNG'
+.ix 'intrinsic function' 'IBCHNG'
+.ix 'IBCHNG'
+.ix 'intrinsic function' 'I1BCHNG'
+.ix 'I1BCHNG'
+.ix 'intrinsic function' 'I2BCHNG'
+.ix 'I2BCHNG'
 .note IBCHNG &generic.
 I&arrow.IBCHNG(I,I),
 I1&arrow.IBCHNG(I1,I1),
@@ -1598,13 +1598,13 @@ I2&arrow.I2BCHNG(I2,I2)
 .mono lshift(j,n)
 Arithmetic left shift
 .nameuse
-.ix 'generic function' LSHIFT
-.ix 'intrinsic function' LSHIFT
-.ix LSHIFT
-.ix 'intrinsic function' I1LSHIFT
-.ix I1LSHIFT
-.ix 'intrinsic function' I2LSHIFT
-.ix I2LSHIFT
+.ix 'generic function' 'LSHIFT'
+.ix 'intrinsic function' 'LSHIFT'
+.ix 'LSHIFT'
+.ix 'intrinsic function' 'I1LSHIFT'
+.ix 'I1LSHIFT'
+.ix 'intrinsic function' 'I2LSHIFT'
+.ix 'I2LSHIFT'
 .note LSHIFT &generic.
 I&arrow.LSHIFT(I,I),
 I1&arrow.LSHIFT(I1,I1),
@@ -1622,13 +1622,13 @@ I2&arrow.I2LSHIFT(I2,I2)
 .mono rshift(j,n)
 Arithmetic right shift
 .nameuse
-.ix 'generic function' RSHIFT
-.ix 'intrinsic function' RSHIFT
-.ix RSHIFT
-.ix 'intrinsic function' I1RSHIFT
-.ix I1RSHIFT
-.ix 'intrinsic function' I2RSHIFT
-.ix I2RSHIFT
+.ix 'generic function' 'RSHIFT'
+.ix 'intrinsic function' 'RSHIFT'
+.ix 'RSHIFT'
+.ix 'intrinsic function' 'I1RSHIFT'
+.ix 'I1RSHIFT'
+.ix 'intrinsic function' 'I2RSHIFT'
+.ix 'I2RSHIFT'
 .note RSHIFT &generic.
 I&arrow.RSHIFT(I,I),
 I1&arrow.RSHIFT(I1,I1),
@@ -1650,8 +1650,8 @@ I2&arrow.I2RSHIFT(I2,I2)
 .note Definition:
 Is array A allocated?
 .nameuse
-.ix 'intrinsic function' ALLOCATED
-.ix ALLOCATED
+.ix 'intrinsic function' 'ALLOCATED'
+.ix 'ALLOCATED'
 .note ALLOCATED
 L&arrow.ALLOCATED(A)
 .endnote
@@ -1663,8 +1663,8 @@ L&arrow.ALLOCATED(A)
 .note Definition:
 Location of A where A is any variable, array or array element
 .nameuse
-.ix 'intrinsic function' LOC
-.ix LOC
+.ix 'intrinsic function' 'LOC'
+.ix 'LOC'
 .note LOC
 I&arrow.LOC(A)
 .endnote
@@ -1677,8 +1677,8 @@ I&arrow.LOC(A)
 Size of A in bytes where A is any constant, variable, array, or
 structure
 .nameuse
-.ix 'intrinsic function' ISIZEOF
-.ix ISIZEOF
+.ix 'intrinsic function' 'ISIZEOF'
+.ix 'ISIZEOF'
 .note ISIZEOF
 I&arrow.ISIZEOF(A)
 .note Notes:
@@ -1701,8 +1701,8 @@ array has size 0.
 .note Definition:
 A is a volatile reference
 .nameuse
-.ix 'intrinsic function' VOLATILE
-.ix VOLATILE
+.ix 'intrinsic function' 'VOLATILE'
+.ix 'VOLATILE'
 .note VOLATILE
 A&arrow.VOLATILE(A)
 .note Notes:

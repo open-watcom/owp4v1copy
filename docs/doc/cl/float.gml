@@ -15,7 +15,7 @@ On some computers, floating-point arithmetic is
 (simulated)
 by software,
 rather than hardware.
-.ix floating-point emulation
+.ix 'floating-point' 'emulation'
 Software emulation can greatly reduce the speed
 of a program.
 While this should not affect the portability of
@@ -24,14 +24,14 @@ a prudent programmer limits the use of floating-point
 numbers.
 .pp
 There are three floating-point number types,
-.ix type float
+.ix 'type' 'float'
 .kw float
 ..ct ,
-.ix type double
+.ix 'type' 'double'
 .kw double
 ..ct ,
 and
-.ix type 'long double'
+.ix 'type' 'long double'
 .kw long double
 ..ct ..li .
 .pp
@@ -65,8 +65,8 @@ The floating-point format is the
 .cp 7
 .shade begin
 By default, the &wcboth. compilers
-.ix emulation floating-point
-.ix floating-point emulation
+.ix 'emulation' 'floating-point'
+.ix 'floating-point' 'emulation'
 emulate floating-point arithmetic.
 If the
 8087 or 80x87 Numeric Processor Extension

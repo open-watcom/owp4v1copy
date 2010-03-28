@@ -1,7 +1,7 @@
 .if '&bldnam' eq 'win386' .do begin
-.ix WIN386.EXT
-.ix WBIND.EXE
-.ix supervisor
+.ix 'WIN386.EXT'
+.ix 'WBIND.EXE'
+.ix 'supervisor'
 .ix 'Windows supervisor'
 The "&bldexe" file must now be combined with &company.'s 32-bit Windows
 supervisor
@@ -13,21 +13,21 @@ combines your 32-bit application code and data (".rex" file) with the
 The process involves the following steps:
 .autonote
 .note
-.ix WBIND
-.ix WIN386.EXT
+.ix 'WBIND'
+.ix 'WIN386.EXT'
 .fi WBIND
 copies
 .fi WIN386.EXT
 into the current directory.
 .note
-.ix WBIND.EXE
+.ix 'WBIND.EXE'
 .fi WBIND.EXE
 optionally runs the resource compiler on the 32-bit Windows supervisor
 so that the 32-bit executable can have access to the applications
 resources.
 .note
-.ix WBIND.EXE
-.ix WIN386.EXT
+.ix 'WBIND.EXE'
+.ix 'WIN386.EXT'
 .fi WBIND.EXE
 concatenates
 .fi WIN386.EXT
@@ -37,7 +37,7 @@ the ".rex" file.
 .np
 .ix 'binding 32-bit applications'
 .ix 'Windows' 'binding 32-bit applications'
-.ix WBIND
+.ix 'WBIND'
 The following describes the syntax of the
 .fi WBIND
 command.
@@ -47,7 +47,7 @@ WBIND file_spec [-d] [-n] [-q] [-s supervisor] [-R rc_options]
 .np
 The square brackets [ ] denote items which are optional.
 .begnote $break $setptnt 15
-.ix WBIND
+.ix 'WBIND'
 .mnote WBIND
 is the name of the &company Bind utility.
 .mnote file_spec
@@ -80,8 +80,8 @@ To bind our example program, the following command may be issued:
 &prompt.wbind &demo -n
 .millust end
 .pc
-.ix WIN386.EXT
-.ix W386DLL.EXT
+.ix 'WIN386.EXT'
+.ix 'W386DLL.EXT'
 .ix 'binding a 32-bit DLL'
 If the "s" option is specified, it must identify the location of the
 .fi WIN386.EXT

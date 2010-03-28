@@ -36,7 +36,7 @@ be combined explicitly with a segment value to produce a valid pointer.
 .pp
 To support based pointers, the following keywords are provided:
 ..sk 1 c
-.ix keyword
+.ix 'keyword'
 ..sr firsttab=&SYSIN.+3
 ..tb set $
 ..tb &firsttab. +9 +9 +9 +9
