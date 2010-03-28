@@ -428,7 +428,7 @@ void AFXAPI DDX_Radio( CDataExchange *pDX, int nIDC, int &value )
     if( pDX->m_bSaveAndValidate ) {
         int index = 0;
         for( ;; ) {
-            if( ::SendMessage( hWnd, WM_GETDLGCODE, 0, 0L ) == DLGC_RADIOBUTTON ) {
+            if( ::SendMessage( hWnd, WM_GETDLGCODE, 0, 0L ) & DLGC_RADIOBUTTON ) {
                 if( ::SendMessage( hWnd, BM_GETCHECK, 0, 0L ) == BST_CHECKED ) {
                     value = index;
                     break;
@@ -444,7 +444,7 @@ void AFXAPI DDX_Radio( CDataExchange *pDX, int nIDC, int &value )
     } else {
         int index = 0;
         for( ;; ) {
-            if( ::SendMessage( hWnd, WM_GETDLGCODE, 0, 0L ) == DLGC_RADIOBUTTON ) {
+            if( ::SendMessage( hWnd, WM_GETDLGCODE, 0, 0L ) & DLGC_RADIOBUTTON ) {
                 if( index == value ) {
                     break;
                 }
