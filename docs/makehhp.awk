@@ -1,6 +1,7 @@
 BEGIN {
     ORS = "\r\n";
     print "[OPTIONS]";
+    print "Binary TOC=Yes";
     print "Compatibility=1.1 or later";
     if( length( hhcfile ) > 0 ) {
         print "Contents file=" hhcfile;
@@ -26,7 +27,7 @@ BEGIN {
     if( length( hhkfile ) > 0 ) {
         hhkfile = "\"" hhkfile "\"";
     }
-    print "Main=\"" title "\"," hhcfile "," hhkfile ",,,,,,,0x2020,,0x300e,,,,,,,,0";
+    print "Main=\"" title "\"," hhcfile "," hhkfile ",,,,,,,0x2020,,0x60300e,,,,,,,,0";
     print "";
     print "[FILES]";
 }
