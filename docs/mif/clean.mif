@@ -10,7 +10,7 @@ clean : .procedure
  @if exist *.ipf rm -f *.ipf
  @if exist *.inf rm -f *.inf
  @if exist *.tmp rm -f *.tmp
- 
+
  @if exist *.ib rm -f *.ib
  @if exist *.blt rm -f *.blt
  @if exist *.rtf rm -f *.rtf
@@ -33,8 +33,8 @@ clean : .procedure
  @if exist *.ch? rm -f *.ch?
 
 !ifeq dotarget ps
- @if exist temp rm -f temp/*.ps temp/*.tmp temp/*.bmp
- @if exist temp rmdir temp
+ @if exist tmp rm -f tmp/*.ps tmp/*.tmp tmp/*.bmp
+ @if exist tmp rmdir tmp
 !endif
  
 # useful to delete all windows .gid
