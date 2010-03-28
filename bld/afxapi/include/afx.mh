@@ -124,6 +124,29 @@ public:
     TCHAR   operator[]( int iChar ) const;
     
     operator PCTSTR() const;
+    
+    friend BOOL operator==( const CString &str1, const CString &str2 );
+    friend BOOL operator==( const CString &str1, PCTSTR psz2 );
+    friend BOOL operator==( const CString &str1, TCHAR ch2 );
+    friend BOOL operator==( PCTSTR psz1, const CString &str2 );
+    friend BOOL operator==( TCHAR ch1, const CString &str2 );
+    friend BOOL operator!=( const CString &str1, const CString &str2 );
+    friend BOOL operator!=( const CString &str1, PCTSTR psz2 );
+    friend BOOL operator!=( const CString &str1, TCHAR ch2 );
+    friend BOOL operator!=( PCTSTR psz1, const CString &str2 );
+    friend BOOL operator!=( TCHAR ch1, const CString &str2 );
+    friend BOOL operator<( const CString &str1, const CString &str2 );
+    friend BOOL operator<( const CString &str1, PCTSTR psz2 );
+    friend BOOL operator<( PCTSTR psz1, const CString &str2 );
+    friend BOOL operator>( const CString &str1, const CString &str2 );
+    friend BOOL operator>( const CString &str1, PCTSTR psz2 );
+    friend BOOL operator>( PCTSTR psz1, const CString &str2 );
+    friend BOOL operator<=( const CString &str1, const CString &str2 );
+    friend BOOL operator<=( const CString &str1, PCTSTR psz2 );
+    friend BOOL operator<=( PCTSTR psz1, const CString &str2 );
+    friend BOOL operator>=( const CString &str1, const CString &str2 );
+    friend BOOL operator>=( const CString &str1, PCTSTR psz2 );
+    friend BOOL operator>=( PCTSTR psz1, const CString &str2 );
 };
 
 struct CRuntimeClass {

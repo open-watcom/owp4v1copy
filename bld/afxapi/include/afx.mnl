@@ -119,6 +119,138 @@ AFX_INLINE CString::operator PCTSTR() const
     return( m_psz );
 }
 
+AFX_INLINE BOOL operator==( const CString &str1, const CString &str2 )
+/********************************************************************/
+{
+    return( _tcscmp( str1.m_psz, str2.m_psz ) == 0 );
+}
+
+AFX_INLINE BOOL operator==( const CString &str1, PCTSTR psz2 )
+/************************************************************/
+{
+    return( _tcscmp( str1.m_psz, psz2 ) == 0 );
+}
+
+AFX_INLINE BOOL operator==( const CString &str1, TCHAR ch2 )
+/**********************************************************/
+{
+    return( str1.m_nDataLength == 1 && str1.m_psz[0] == ch2 );
+}
+
+AFX_INLINE BOOL operator==( PCTSTR psz1, const CString &str2 )
+/************************************************************/
+{
+    return( _tcscmp( psz1, str2.m_psz ) == 0 );
+}
+
+AFX_INLINE BOOL operator==( TCHAR ch1, const CString &str2 )
+/**********************************************************/
+{
+    return( str2.m_nDataLength == 1 && str2.m_psz[0] == ch1 );
+}
+
+AFX_INLINE BOOL operator!=( const CString &str1, const CString &str2 )
+/********************************************************************/
+{
+    return( _tcscmp( str1.m_psz, str2.m_psz ) != 0 );
+}
+
+AFX_INLINE BOOL operator!=( const CString &str1, PCTSTR psz2 )
+/************************************************************/
+{
+    return( _tcscmp( str1.m_psz, psz2 ) != 0 );
+}
+
+AFX_INLINE BOOL operator!=( const CString &str1, TCHAR ch2 )
+/**********************************************************/
+{
+    return( str1.m_nDataLength != 1 || str1.m_psz[0] != ch2 );
+}
+
+AFX_INLINE BOOL operator!=( PCTSTR psz1, const CString &str2 )
+/************************************************************/
+{
+    return( _tcscmp( psz1, str2.m_psz ) != 0 );
+}
+
+AFX_INLINE BOOL operator!=( TCHAR ch1, const CString &str2 )
+/**********************************************************/
+{
+    return( str2.m_nDataLength != 1 || str2.m_psz[0] != ch1 );
+}
+
+AFX_INLINE BOOL operator<( const CString &str1, const CString &str2 )
+/*******************************************************************/
+{
+    return( _tcscmp( str1.m_psz, str2.m_psz ) < 0 );
+}
+
+AFX_INLINE BOOL operator<( const CString &str1, PCTSTR psz2 )
+/***********************************************************/
+{
+    return( _tcscmp( str1.m_psz, psz2 ) < 0 );
+}
+
+AFX_INLINE BOOL operator<( PCTSTR psz1, const CString &str2 )
+/***********************************************************/
+{
+    return( _tcscmp( psz1, str2.m_psz ) < 0 );
+}
+
+AFX_INLINE BOOL operator>( const CString &str1, const CString &str2 )
+/*******************************************************************/
+{
+    return( _tcscmp( str1.m_psz, str2.m_psz ) > 0 );
+}
+
+AFX_INLINE BOOL operator>( const CString &str1, PCTSTR psz2 )
+/***********************************************************/
+{
+    return( _tcscmp( str1.m_psz, psz2 ) > 0 );
+}
+
+AFX_INLINE BOOL operator>( PCTSTR psz1, const CString &str2 )
+/***********************************************************/
+{
+    return( _tcscmp( psz1, str2.m_psz ) > 0 );
+}
+
+AFX_INLINE BOOL operator<=( const CString &str1, const CString &str2 )
+/********************************************************************/
+{
+    return( _tcscmp( str1.m_psz, str2.m_psz ) <= 0 );
+}
+
+AFX_INLINE BOOL operator<=( const CString &str1, PCTSTR psz2 )
+/************************************************************/
+{
+    return( _tcscmp( str1.m_psz, psz2 ) <= 0 );
+}
+
+AFX_INLINE BOOL operator<=( PCTSTR psz1, const CString &str2 )
+/************************************************************/
+{
+    return( _tcscmp( psz1, str2.m_psz ) <= 0 );
+}
+
+AFX_INLINE BOOL operator>=( const CString &str1, const CString &str2 )
+/********************************************************************/
+{
+    return( _tcscmp( str1.m_psz, str2.m_psz ) >= 0 );
+}
+
+AFX_INLINE BOOL operator>=( const CString &str1, PCTSTR psz2 )
+/************************************************************/
+{
+    return( _tcscmp( str1.m_psz, psz2 ) >= 0 );
+}
+
+AFX_INLINE BOOL operator>=( PCTSTR psz1, const CString &str2 )
+/************************************************************/
+{
+    return( _tcscmp( psz1, str2.m_psz ) >= 0 );
+}
+
 AFX_INLINE AFX_CLASSINIT::AFX_CLASSINIT( CRuntimeClass *pNewClass )
 /*****************************************************************/
 {
