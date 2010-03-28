@@ -153,7 +153,7 @@ $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
 !ifeq %build_platform linux386
     @%create $(wine_hc_batch)
     @%append $(wine_hc_batch) $(hc_nt) -xn $*.hpj
-    # this lowercase help file name
+    # this lowercase help file name in wine
     @%append $(wine_hc_batch) ren $(hbook).hlp xxxxxxxx.tmp
     @%append $(wine_hc_batch) ren xxxxxxxx.tmp $(hbook).hlp
     wine cmd /c $(wine_hc_batch)
@@ -249,9 +249,17 @@ $(hbook).chm $(hbook).chi : ../html/$(hbook).htm
     awk -f ../makehhc.awk ../html/$(hbook).htm >$(hbook)/$(hbook).hhc
     awk -f ../makehhk.awk ../html/$(hbook).mix >$(hbook)/$(hbook).hhk
     awk -f ../makehhp.awk -v hhcfile=$(hbook).hhc -v hhkfile=$(hbook).hhk ../html/$(hbook).htm >$(hbook)/$(hbook).hhp
+!ifeq %build_platform linux386
+    %create $(wine_hc_batch)
+    %append $(wine_hc_batch) $(hc_hh) $(hbook)/$(hbook).hhp
+    %append $(wine_hc_batch) copy /y $(hbook)\$(hbook).chm $(hbook).chm
+    %append $(wine_hc_batch) copy /y $(hbook)\$(hbook).chi $(hbook).chi
+    -wine cmd /c $(wine_hc_batch)
+!else
     -$(hc_hh) $(hbook)/$(hbook).hhp
     $(CPYCMD) $(hbook)\$(hbook).chm $^:. > $(nulldevice)
     $(CPYCMD) $(hbook)\$(hbook).chi $^:. > $(nulldevice)
+!endif
 
 ####################################################
 #

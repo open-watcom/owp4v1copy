@@ -29,6 +29,13 @@ clean : .procedure
  @if exist *.lay rm -f *.lay
  @if exist *.tim rm -f *.tim
  @if exist *.dat rm -f *.dat
+
+ @if exist *.ch? rm -f *.ch?
+
+!ifeq dotarget ps
+ @if exist temp rm -f temp/*.ps temp/*.tmp temp/*.bmp
+ @if exist temp rmdir temp
+!endif
  
 # useful to delete all windows .gid
  @if exist *.gid @attrib -h *.gid
@@ -38,9 +45,6 @@ clean : .procedure
  @if exist *.bat rm -f *.bat
 
 !ifeq dotarget htmlhelp
- @for %f in ($(books)) do @rm -f %f/*.bmp
- @for %f in ($(books)) do @rm -f %f/*.htm
- @for %f in ($(books)) do @rm -f %f/*.hh?
- @for %f in ($(books)) do @rm -f %f/*.ch?
+ @for %f in ($(books)) do @if exist %f rm -f %f/*.bmp %f/*.htm %f/*.hh? %f/*.ch?
  @for %f in ($(books)) do @if exist %f rmdir %f
 !endif
