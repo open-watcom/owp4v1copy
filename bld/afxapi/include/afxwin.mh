@@ -1466,7 +1466,7 @@ protected:
 };
 
 class CMDIChildWnd : public CFrameWnd {
-private:
+protected:
     HMENU   m_hMenuShared;
     
     DECLARE_DYNCREATE( CMDIChildWnd )
