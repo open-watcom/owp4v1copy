@@ -209,7 +209,6 @@ public:
     public: \
         static const CRuntimeClass  class##class_name; \
         virtual CRuntimeClass       *GetRuntimeClass() const; \
-    protected: \
         static CObject  *CreateObject();
 #define IMPLEMENT_DYNCREATE( class_name, base_class_name ) \
     const CRuntimeClass class_name::class##class_name = \
@@ -229,7 +228,6 @@ public:
         static const CRuntimeClass  class##class_name; \
         virtual CRuntimeClass       *GetRuntimeClass() const; \
         friend CArchive             &operator>>( CArchive &ar, class_name *&pOb ); \
-    protected: \
         static CObject  *CreateObject();
 #define IMPLEMENT_SERIAL( class_name, base_class_name, wSchema ) \
     const CRuntimeClass class_name::class##class_name = \
