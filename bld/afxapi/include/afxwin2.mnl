@@ -608,7 +608,7 @@ AFX_INLINE int CWnd::GetWindowText( CString &rString ) const
 {
     int nLength = ::GetWindowTextLength( m_hWnd );
     LPTSTR lpszStringBuf = rString.GetBuffer( nLength + 1 );
-    nLength = ::GetWindowText( m_hWnd, lpszStringBuf, nLength );
+    nLength = ::GetWindowText( m_hWnd, lpszStringBuf, nLength + 1 );
     rString.ReleaseBuffer( nLength );
     return( nLength );
 }
