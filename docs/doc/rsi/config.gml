@@ -144,12 +144,12 @@ and settings that will automatically be set are marked
 .se c5=1+60
 .do end
 .el .do begin
-.se c0=1+1
-.se c1=&c0.+8
-.se c2=&c1.+16
+.se c0=&INDlvl+2
+.se c1=&c0.+5
+.se c2=&c1.+12
 .se c3=&c2.+8
-.se c4=&c3.+11
-.se c5=&c4.+36
+.se c4=&c3.+8
+.se c5=&c4.+22
 .do end
 .tb set $
 .tb &c0 &c1 &c2 &c3 &c4 &c5
