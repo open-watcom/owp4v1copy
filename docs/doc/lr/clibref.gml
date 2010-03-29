@@ -15,7 +15,7 @@
 :INCLUDE file='LYTCHG'.
 :INCLUDE file='BANTOP'.
 :INCLUDE file='FMTMACRO'.
-:INCLUDE file='SYMBOLS'.
+:INCLUDE file='LRSYMS'.
 :set symbol="which"     value="C".
 .if '&machsys' ne 'WIN32' .do begin
 :INCLUDE file='GRSYMS'.

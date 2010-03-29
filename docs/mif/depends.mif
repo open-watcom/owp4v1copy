@@ -1168,7 +1168,7 @@ $(docsrc_dir)$(SL)lr$(SL)liblist7.gml &
 $(docsrc_dir)$(SL)lr$(SL)libmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)os2help.gml &
 $(docsrc_dir)$(SL)lr$(SL)safecmac.gml &
-$(docsrc_dir)$(SL)lr$(SL)symbols.gml
+$(docsrc_dir)$(SL)lr$(SL)lrsyms.gml
 
 # lr$(SL)src sub-directory
 incs_lr2 = $(docsrc_dir)$(SL)lr$(SL)src
