@@ -131,8 +131,10 @@ void FTSElement::encode( std::vector< STD1::uint8_t >& rle )
     std::vector< STD1::uint8_t > dif;
     ConstPageIter tst( pages.begin() );
     ConstPageIter itr( pages.begin() + 1 );
-    bool same( *itr == *tst && *( itr + 1) == *tst );
-    size_t sameCount( 3 );
+    //bool same( *itr == *tst  && *( itr + 1) == *tst  );
+    //size_t sameCount( 3 );
+    bool same( *itr == *tst );
+    size_t sameCount( 2 );
     while( itr != pages.end() ) {
         if( same ) {
             if( *itr != *tst ) {
@@ -156,7 +158,8 @@ void FTSElement::encode( std::vector< STD1::uint8_t >& rle )
                 ++sameCount;
         }
         else {
-            if( *itr == *tst && itr + 1 != pages.end() && *( itr + 1 ) == *tst ) {
+            //if( *itr == *tst && itr + 1 != pages.end() && *( itr + 1 ) == *tst ) {
+            if( *itr == *tst ) {
                 std::vector< STD1::uint8_t >::const_iterator byte( dif.begin() );
                 size_t difSize( dif.size() );
                 STD1::uint8_t code( 0xFF );
@@ -181,7 +184,8 @@ void FTSElement::encode( std::vector< STD1::uint8_t >& rle )
                     dif.clear();
                 }
                 same = true;
-                sameCount = 3;
+                //sameCount = 3;
+                sameCount = 2;
             }
             else {
                 dif.push_back( *tst );
