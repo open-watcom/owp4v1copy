@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -364,4 +364,46 @@ start:
         delete [] pszBuff;
     }
     return( *this );
+}
+
+CArchive & AFXAPI operator<<( CArchive &ar, const RECT &rect )
+/************************************************************/
+{
+    ar << rect.left << rect.top << rect.right << rect.bottom;
+    return( ar );
+}
+
+CArchive & AFXAPI operator<<( CArchive &ar, POINT point )
+/*******************************************************/
+{
+    ar << point.x << point.y;
+    return( ar );
+}
+
+CArchive & AFXAPI operator<<( CArchive &ar, SIZE size )
+/*****************************************************/
+{
+    ar << size.cx << size.cy;
+    return( ar );
+}
+
+CArchive & AFXAPI operator>>( CArchive &ar, RECT &rect )
+/******************************************************/
+{
+    ar >> rect.left >> rect.top >> rect.right >> rect.bottom;
+    return( ar );
+}
+
+CArchive & AFXAPI operator>>( CArchive &ar, POINT &point )
+/********************************************************/
+{
+    ar >> point.x >> point.y;
+    return( ar );
+}
+
+CArchive & AFXAPI operator>>( CArchive &ar, SIZE &size )
+/******************************************************/
+{
+    ar >> size.cx >> size.cy;
+    return( ar );
 }

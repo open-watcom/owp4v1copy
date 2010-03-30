@@ -2337,6 +2337,12 @@ void AFXAPI         AfxThrowUserException();
 
 LRESULT CALLBACK    AfxWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 
+CArchive & AFXAPI       operator<<( CArchive &ar, const RECT &rect );
+CArchive & AFXAPI       operator<<( CArchive &ar, POINT point );
+CArchive & AFXAPI       operator<<( CArchive &ar, SIZE size );
+CArchive & AFXAPI       operator>>( CArchive &ar, RECT &rect );
+CArchive & AFXAPI       operator>>( CArchive &ar, POINT &point );
+CArchive & AFXAPI       operator>>( CArchive &ar, SIZE &size );
 #ifdef _DEBUG
 CDumpContext & AFXAPI   operator<<( CDumpContext &dc, const RECT &rect );
 CDumpContext & AFXAPI   operator<<( CDumpContext &dc, POINT point );
