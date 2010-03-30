@@ -56,6 +56,7 @@ public:
         unsigned int c, bool ts = false ) : Element( d, p, f, r, c ), toggleSpacing( ts ) { };
     ~LiteralWhiteSpace() { } ;
     Lexer::Token parse( Lexer* lexer ) { lexer = lexer; return Lexer::END; };
+    std::pair< bool, bool > buildLocalDict( Page* page );
     void buildText( Cell* cell );
 private:
     LiteralWhiteSpace( const LiteralWhiteSpace& rhs );              //no copy

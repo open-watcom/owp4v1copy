@@ -101,6 +101,13 @@ void WhiteSpace::buildText( Cell* cell )
         printError( ERR1_LARGEPAGE );
 }
 /***************************************************************************/
+std::pair< bool, bool > LiteralWhiteSpace::buildLocalDict( Page* page )
+{
+    std::pair< bool, bool > retval( false, toggleSpacing );
+    page = page;
+    return retval;
+}
+/***************************************************************************/
 void LiteralWhiteSpace::buildText( Cell* cell )
 {
     if( toggleSpacing )
