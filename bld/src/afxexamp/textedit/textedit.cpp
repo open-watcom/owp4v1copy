@@ -37,6 +37,9 @@ BOOL CTextEditApp::InitInstance()
     }
     m_pMainWnd = pWnd;
 
+    // Enable support for opening files via DDE.
+    EnableShellOpen();
+    
     // Perform file associations.
     RegisterShellFileTypes();
     
@@ -53,7 +56,7 @@ BOOL CTextEditApp::InitInstance()
     // Show and update the window.
     m_pMainWnd->ShowWindow( m_nCmdShow );
     m_pMainWnd->UpdateWindow();
-    
+
     return( TRUE );
 }
 

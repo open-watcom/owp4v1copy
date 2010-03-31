@@ -30,6 +30,7 @@
 
 
 #include "stdafx.h"
+#include <dde.h>
 
 // Define _sntprintf if it's not in tchar.h.
 #ifndef _sntprintf
@@ -67,6 +68,9 @@ BEGIN_MESSAGE_MAP( CFrameWnd, CWnd )
     ON_WM_SETCURSOR()
     ON_WM_SIZE()
     ON_WM_SYSCOMMAND()
+    ON_MESSAGE( WM_DDE_INITIATE, OnDDEInitiate )
+    ON_MESSAGE( WM_DDE_EXECUTE, OnDDEExecute )
+    ON_MESSAGE( WM_DDE_TERMINATE, OnDDETerminate )
     ON_MESSAGE( WM_COMMANDHELP, OnCommandHelp )
     ON_MESSAGE( WM_HELPHITTEST, OnHelpHitTest )
     ON_MESSAGE( WM_POPMESSAGESTRING, OnPopMessageString )
@@ -968,6 +972,64 @@ void CFrameWnd::OnSysCommand( UINT nID, LPARAM lParam )
     } else {
         CWnd::OnSysCommand( nID, lParam );
     }
+}
+
+LRESULT CFrameWnd::OnDDEInitiate( WPARAM wParam, LPARAM lParam )
+/**************************************************************/
+{
+    HWND    hWndClient = (HWND)wParam;
+    ATOM    atomApp = (ATOM)LOWORD( lParam );
+    ATOM    atomTopic = (ATOM)HIWORD( lParam );
+
+    CWinApp *pApp = AfxGetApp();
+    ASSERT( pApp != NULL );
+
+    if( pApp->m_atomApp != 0 && pApp->m_atomSystemTopic != 0 &&
+        atomApp == pApp->m_atomApp && atomTopic == pApp->m_atomSystemTopic ) {
+        ::SendMessage( hWndClient, WM_DDE_ACK, (WPARAM)m_hWnd, lParam );
+    }
+        
+    return( 0L );
+}
+
+LRESULT CFrameWnd::OnDDETerminate( WPARAM wParam, LPARAM lParam )
+/***************************************************************/
+{
+    UNUSED_ALWAYS( lParam );
+
+    HWND hWndClient = (HWND)wParam;
+    ::PostMessage( hWndClient, WM_DDE_TERMINATE, (WPARAM)m_hWnd, 0L );
+    return( 0L );
+}
+
+LRESULT CFrameWnd::OnDDEExecute( WPARAM wParam, LPARAM lParam )
+/*************************************************************/
+{
+    HWND    hWndClient = (HWND)wParam;
+    HGLOBAL hMem = (HGLOBAL)lParam;
+    ::PostMessage( hWndClient, WM_DDE_ACK, (WPARAM)m_hWnd, MAKELPARAM( 0x8000, hMem ) );
+
+    CString str;
+    LPVOID lpMem = ::GlobalLock( hMem );
+#ifdef _UNICODE
+    if( !::IsWindowUnicode( hWndClient ) ) {
+        str = (LPCSTR)lpMem;
+    } else {
+#endif
+        str = (LPCTSTR)lpMem;
+#ifdef _UNICODE
+    }
+#endif
+    ::GlobalUnlock( hMem );
+
+    CWinApp *pApp = AfxGetApp();
+    ASSERT( pApp != NULL );
+    
+    LPTSTR lpszCommand = str.GetBuffer();
+    pApp->OnDDECommand( lpszCommand );
+    str.ReleaseBuffer();
+    
+    return( 0L );
 }
 
 LRESULT CFrameWnd::OnCommandHelp( WPARAM wParam, LPARAM lParam )

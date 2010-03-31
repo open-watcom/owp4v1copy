@@ -1408,6 +1408,9 @@ protected:
     afx_msg BOOL    OnSetCursor( CWnd *pWnd, UINT nHitTest, UINT message );
     afx_msg void    OnSize( UINT nType, int cx, int cy );
     afx_msg void    OnSysCommand( UINT nID, LPARAM lParam );
+    afx_msg LRESULT OnDDEInitiate( WPARAM wParam, LPARAM lParam );
+    afx_msg LRESULT OnDDEExecute( WPARAM wParam, LPARAM lParam );
+    afx_msg LRESULT OnDDETerminate( WPARAM wParam, LPARAM lParam );
     afx_msg LRESULT OnCommandHelp( WPARAM wParam, LPARAM lParam );
     afx_msg LRESULT OnHelpHitTest( WPARAM wParam, LPARAM lParam );
     afx_msg LRESULT OnPopMessageString( WPARAM wParam, LPARAM lParam );
@@ -2120,6 +2123,7 @@ public:
     virtual BOOL            DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate *pTemplate );
     virtual POSITION        GetFirstDocTemplatePosition() const;
     virtual CDocTemplate    *GetNextDocTemplate( POSITION &pos ) const;
+    virtual BOOL            OnDDECommand( LPTSTR lpszCommand );
     virtual void            OnFileNew();
     virtual void            OnFileOpen();
     virtual CDocument       *OpenDocumentFile( LPCTSTR lpszFileName );
@@ -2231,13 +2235,16 @@ public:
     LPCTSTR         m_pszHelpFilePath;
     LPCTSTR         m_pszProfileName;
     AFX_HELP_TYPE   m_eHelpType;
-private:
+protected:
     HGLOBAL         m_hDevMode;
     HGLOBAL         m_hDevNames;
     int             m_nWaitCursorCount;
     HCURSOR         m_hcurWaitCursorRestore;
     CRecentFileList *m_pRecentFileList;
-        
+public:
+    ATOM            m_atomApp;
+    ATOM            m_atomSystemTopic;
+    
     DECLARE_DYNAMIC( CWinApp )
     
 public:
@@ -2248,6 +2255,7 @@ public:
     virtual int         DoMessageBox( LPCTSTR lpszPrompt, UINT nType, UINT nIDPrompt );
     virtual void        DoWaitCursor( int nCode );
     virtual void        HtmlHelp( DWORD_PTR dwData, UINT nCmd = 0x000F );
+    virtual BOOL        OnDDECommand( LPTSTR lpszCommand );
     virtual CDocument   *OpenDocumentFile( LPCTSTR lpszFileName );
     virtual BOOL        SaveAllModified();
     virtual void        WinHelp( DWORD_PTR dwData, UINT nCmd = HELP_CONTEXT );
@@ -2264,6 +2272,7 @@ public:
     INT_PTR         DoPrintDialog( CPrintDialog *pPD );
     BOOL            DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate *pTemplate );
     void            EnableHtmlHelp();
+    void            EnableShellOpen();
     POSITION        GetFirstDocTemplatePosition() const;
     AFX_HELP_TYPE   GetHelpMode();
     CDocTemplate    *GetNextDocTemplate( POSITION &pos ) const;

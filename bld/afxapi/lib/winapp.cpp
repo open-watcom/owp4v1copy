@@ -111,6 +111,8 @@ CWinApp::CWinApp( LPCTSTR lpszAppName )
     m_nWaitCursorCount = 0;
     m_hcurWaitCursorRestore = NULL;
     m_pRecentFileList = NULL;
+    m_atomApp = 0;
+    m_atomSystemTopic = 0;
 }
 
 CWinApp::~CWinApp()
@@ -142,6 +144,12 @@ CWinApp::~CWinApp()
     }
     if( m_hDevNames != NULL ) {
         ::GlobalFree( m_hDevNames );
+    }
+    if( m_atomApp != 0 ) {
+        ::GlobalDeleteAtom( m_atomApp );
+    }
+    if( m_atomSystemTopic != 0 ) {
+        ::GlobalDeleteAtom( m_atomSystemTopic );
     }
 }
 
@@ -188,6 +196,16 @@ void CWinApp::HtmlHelp( DWORD_PTR dwData, UINT nCmd )
 {
     if( m_pMainWnd != NULL ) {
         m_pMainWnd->HtmlHelp( dwData, nCmd );
+    }
+}
+
+BOOL CWinApp::OnDDECommand( LPTSTR lpszCommand )
+/**********************************************/
+{
+    if( m_pDocManager != NULL ) {
+        return( m_pDocManager->OnDDECommand( lpszCommand ) );
+    } else {
+        return( FALSE );
     }
 }
 
@@ -356,6 +374,30 @@ BOOL CWinApp::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFlags,
                                              bOpenFileDialog, pTemplate ) );
 }
 
+void CWinApp::EnableShellOpen()
+/*****************************/
+{
+    TCHAR   szModuleName[MAX_PATH];
+    TCHAR   szShortName[MAX_PATH];
+    ::GetModuleFileName( AfxGetInstanceHandle(), szModuleName, MAX_PATH );
+    ::GetShortPathName( szModuleName, szShortName, MAX_PATH );
+
+    // Chop off the path and extension.
+    LPTSTR lpszFileName = _tcsrchr( szShortName, '\\' );
+    if( lpszFileName == NULL ) {
+        lpszFileName = szShortName;
+    } else {
+        lpszFileName++;
+    }
+    LPTSTR lpszExt = _tcsrchr( lpszFileName, '.' );
+    if( lpszExt != NULL ) {
+        *lpszExt = _T( '\0' );
+    }
+
+    m_atomApp = ::GlobalAddAtom( lpszFileName );
+    m_atomSystemTopic = ::GlobalAddAtom( _T( "system" ) );
+}
+
 POSITION CWinApp::GetFirstDocTemplatePosition() const
 /***************************************************/
 {
@@ -478,6 +520,7 @@ BOOL CWinApp::ProcessShellCommand( CCommandLineInfo &rCmdInfo )
     } else if( rCmdInfo.m_nShellCommand == CCommandLineInfo::FileOpen ||
                rCmdInfo.m_nShellCommand == CCommandLineInfo::FilePrint ||
                rCmdInfo.m_nShellCommand == CCommandLineInfo::FilePrintTo ) {
+        AfxMessageBox(rCmdInfo.m_strFileName);
         CDocument *pDoc = OpenDocumentFile( rCmdInfo.m_strFileName );
         if( pDoc == NULL ) {
             return( FALSE );

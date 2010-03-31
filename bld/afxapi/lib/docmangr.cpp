@@ -32,6 +32,9 @@
 #include "stdafx.h"
 #include "filenew.h"
 
+static const TCHAR _DDECmdStart[] = _T( "[open(\"" );
+static const TCHAR _DDECmdEnd[] = _T( "\")]" );
+
 IMPLEMENT_DYNAMIC( CDocManager, CObject )
 
 CDocManager::CDocManager()
@@ -129,6 +132,34 @@ CDocTemplate *CDocManager::GetNextDocTemplate( POSITION &pos ) const
 /******************************************************************/
 {
     return( (CDocTemplate *)m_templateList.GetNext( pos ) );
+}
+
+BOOL CDocManager::OnDDECommand( LPTSTR lpszCommand )
+/**************************************************/
+{
+    if( _tcsncmp( lpszCommand, _DDECmdStart,
+                  sizeof( _DDECmdStart ) / sizeof( TCHAR ) - 1 ) != 0 ) {
+        return( FALSE );
+    }
+    lpszCommand += sizeof( _DDECmdStart ) / sizeof( TCHAR ) - 1;
+
+    LPTSTR lpszEnd = _tcsstr( lpszCommand, _DDECmdEnd );
+    if( lpszEnd == NULL ) {
+        return( FALSE );
+    }
+    *lpszEnd = _T( '\0' );
+
+    CWinApp *pApp = AfxGetApp();
+    ASSERT( pApp != NULL );
+    CWnd *pMainWnd = pApp->m_pMainWnd;
+    ASSERT( pMainWnd != NULL );
+    if( !pMainWnd->IsWindowVisible() ) {
+        pMainWnd->ShowWindow( SW_SHOW );
+    }
+    
+    OpenDocumentFile( lpszCommand );
+    
+    return( TRUE );
 }
 
 void CDocManager::OnFileNew()
@@ -240,13 +271,31 @@ void CDocManager::RegisterShellFileTypes( BOOL bCompat )
 
         CString strFmt1;
         CString strFmt2;
+        CString strTemp;
+
+        // If it's an MDI application, register it for DDE open.
+        BOOL    bDDE = !pTemplate->GetDocString( strTemp, CDocTemplate::windowTitle ) ||
+                       strTemp.IsEmpty();
+        
         strFmt1.Format( _T( "%s\\shell\\open\\command" ), (LPCTSTR)strProgId );
+        strFmt2 = szExeName;
+        if( bDDE ) {
+            strFmt2 += _T( " /dde" );
+        }
         if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
             continue;
         }
-        ::RegSetValue( hKey, NULL, REG_SZ, szExeName, _tcslen( szExeName ) );
+        ::RegSetValue( hKey, NULL, REG_SZ, strFmt2, strFmt2.GetLength() );
         ::RegCloseKey( hKey );
-
+        if( bDDE ) {
+            strFmt1.Format( _T( "%s\\shell\\open\\ddeexec" ), (LPCTSTR)strProgId );
+            strFmt2 = _T( "[open(\"%1\")]" );
+            if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
+                continue;
+            }
+            ::RegSetValue( hKey, NULL, REG_SZ, strFmt2, strFmt2.GetLength() );
+        }
+        
         strFmt1.Format( _T( "%s\\DefaultIcon" ), (LPCTSTR)strProgId );
         strFmt2.Format( _T( "%s,%d" ), szExeName, nIcon );
         if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {

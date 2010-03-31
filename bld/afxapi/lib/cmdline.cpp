@@ -47,15 +47,15 @@ void CCommandLineInfo::ParseParam( const TCHAR *pszParam, BOOL bFlag, BOOL bLast
 {
     UNUSED_ALWAYS( bLast );
     if( bFlag ) {
-        if( _tcsicmp( pszParam, _T( "p" ) ) ) {
+        if( _tcsicmp( pszParam, _T( "p" ) ) == 0 ) {
             m_nShellCommand = FilePrint;
-        } else if( _tcsicmp( pszParam, _T( "pt" ) ) ) {
+        } else if( _tcsicmp( pszParam, _T( "pt" ) ) == 0 ) {
             m_nShellCommand = FilePrintTo;
-        } else if( _tcsicmp( pszParam, _T( "dde" ) ) ) {
+        } else if( _tcsicmp( pszParam, _T( "dde" ) ) == 0 ) {
             m_nShellCommand = FileDDE;
-        } else if( _tcsicmp( pszParam, _T( "automation" ) ) ) {
+        } else if( _tcsicmp( pszParam, _T( "automation" ) ) == 0 ) {
             m_bRunAutomated = TRUE;
-        } else if( _tcsicmp( pszParam, _T( "embedding" ) ) ) {
+        } else if( _tcsicmp( pszParam, _T( "embedding" ) ) == 0) {
             m_bRunEmbedded = TRUE;
         }
     } else {
