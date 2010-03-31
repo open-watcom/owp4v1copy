@@ -911,7 +911,7 @@ void CFrameWnd::OnMenuSelect( UINT nItemID, UINT nFlags, HMENU hSysMenu )
         }
     } else {
         if( nFlags & MF_POPUP ) {
-            SetMessageText( (LPCTSTR)NULL );
+            SetMessageText( _T( "" ) );
         } else if( nItemID >= AFX_IDM_FIRST_MDICHILD ) {
             SetMessageText( AFX_IDS_MDICHILD );
         } else if( nItemID >= 0xF000 && nItemID < 0xF1F0) {
