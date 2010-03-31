@@ -30,7 +30,7 @@ unrecognized characters, including the terminating null character of the
 input string. Then, it attempts to convert the subject sequence to a
 floating-point number, and return the result.
 .np
-The expected form of the subject sequence is an optional plus or minus sign, 
+The expected form of the subject sequence is an optional plus or minus sign,
 then one of the following:
 .begbull $compact
 .bull
@@ -51,7 +51,7 @@ or
 The subject sequence is defined as the longest initial subsequence of the
 input string, starting with the first non-whitespace character, that is of
 the expected form. The subject sequence contains no characters if the input
-string is not of the expected form.  
+string is not of the expected form.
 .np
 A decimal floating-point number recognized by &func (after optional sign was
 processed) is a string containing:
@@ -84,7 +84,7 @@ string is not of the expected form.
 .np
 If the subject sequence contains
 .mono NAN
-.ct , a NaN (with appropriate sign) will be returned; the optional
+.'ct , a NaN (with appropriate sign) will be returned; the optional
 digit-nondigit sequence is ignored. If the subject sequence contains
 .mono INF
 .ct , the value of infinity (with appropriate sign) will be returned.

@@ -59,8 +59,8 @@ The hour may be between 0 and 24, and the minutes (and seconds)
 - if present - between 0 and 59.
 If preceded by a "&minus", the time zone will be east of the
 .ix 'Prime Meridian'
-.us Prime Meridian;;
-otherwise it will be west (which may be indicated by an optional
+.us Prime Meridian
+.'ct ; otherwise it will be west (which may be indicated by an optional
 preceding "+").
 .note rule
 indicates when to change to and back from summer time and the time shift
