@@ -28,7 +28,8 @@
 *               In addition to main(), these global functions are implemented:
 *                   print_banner()
 *                   print_usage()
-*               as well as this #define macro:
+*               as well as these #define macros:
+*                   TAB_COUNT
 *                   TEXT_START
 *               and these enums:
 *                   oc_construct_type
@@ -39,6 +40,8 @@
 *                   oc_column
 *                   oc_element
 *                   oc_fig_element
+*                   oc_hpos_list
+*                   oc_hpos_t
 *                   oc_page
 *                   oc_text_element
 *                   text_phrase
@@ -46,10 +49,13 @@
 *                   oc_break
 *                   oc_cur_page
 *                   oc_cur_post_skip
+*                   oc_cur_tabs
+*                   oc_default_tabs
 *                   oc_document_start
 *                   oc_element_pool
 *                   oc_font_number
 *                   oc_indent
+*                   oc_inter_tab
 *                   oc_is_paragraph
 *                   oc_line_height_zero
 *                   oc_max_depth
@@ -80,6 +86,9 @@
 *                   oc_output_page()
 *                   oc_process_line_full()
 *                   oc_process_text()
+*                   oc_tab_position()
+*                   oc_text_chars_width()
+*                   oc_wgml_tabs()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
@@ -105,9 +114,10 @@
 #include "research.h"
 #include "wgml.h"
 
-/* This is used with the text_chars struct to set the initial value of length. */
+/* These are used with structs whose length can vary. */
 
-#define TEXT_START 32
+#define TAB_COUNT 16    // oc_hpos_list
+#define TEXT_START 32   // text_chars
 
 /* Enum definitions. */
 
@@ -179,6 +189,14 @@ typedef struct {
     oc_column           column;
 } oc_page;
 
+typedef uint32_t    oc_hpos_t;
+
+typedef struct {
+    uint16_t            current;
+    uint16_t            length;
+    oc_hpos_t       *   hpos;
+} oc_hpos_list;
+
 typedef struct {
     uint8_t             font_number;
     bool                line_break;
@@ -195,16 +213,19 @@ static  bool                oc_is_paragraph         = false;
 static  bool                oc_new_page             = false;
 static  bool                oc_new_section          = false;
 static  bool                oc_script               = false;
-//static  char                oc_tab_char = ' ';
+static  char                oc_tab_char             = '\t';
 static  oc_element      *   oc_element_pool         = NULL;
 static  oc_element      *   oc_new_element          = NULL;
 static  oc_column           oc_next_column          = { 0, NULL, NULL };
+static  oc_hpos_list    *   oc_cur_tabs             = NULL;
+static  oc_hpos_list        oc_default_tabs         = { 0, 0, NULL};
 static  oc_page             oc_cur_page             = { false, { 0, NULL, NULL } };
 static  text_chars      *   oc_text_chars_pool      = NULL;
 static  text_line       *   oc_text_line_pool       = NULL;
 static  uint8_t             oc_font_number          = 0;
 static  uint32_t            oc_cur_post_skip        = 0;
 static  uint32_t            oc_indent               = 0;
+static  uint32_t            oc_inter_tab            = 0;
 static  uint32_t            oc_line_height_zero     = 0;
 static  uint32_t            oc_max_depth            = 0;
 static  uint32_t            oc_old_post_skip        = 0;
@@ -296,10 +317,22 @@ static  text_phrase         para_subsup[] = {
     {0, false, "\xfe\xff. These should work as intended, however:" },
     {1, false, " \xfe\x01subscript text\xfe\xff" },
     {0, false, " and " },
-    {1, false, "\xfe\x02superscript text\xfe\xff" },
+    {1, false, "\xfe\x02superscript text\xfe\xff." },
     {0, false, NULL }
 };
- 
+
+static  text_phrase         para_tab[] = {
+    {0, true, "And now we come to wgml tabs. This is a test line with no " },
+    {0, false, "wgml tabs at all. " },
+    {0, false, ">This>is>a>test>line>which>is>infested>with>wgml>tabs. " },
+    {0, false, "And this line shows one>tab, two>>tabs, and " },
+    {0, false, "three>>>tabs. Here are tabs>" },
+    {1, false, "before and after" },
+    {0, false, ">a highlighted phrase. " },
+    {0, false, "Finally, here is a set of five     spaces." },
+    {0, false, NULL }
+};
+
 #if 0 // Needed until the boxes are ready for testing
  
 static  text_phrase         para2[] = {
@@ -469,7 +502,6 @@ static text_chars * oc_alloc_text_chars(  char * in_text, size_t count,
 {
     uint32_t        size    = TEXT_START;
     text_chars  *   retval  = NULL;
-
     if( oc_text_chars_pool == NULL ) {
         if( count > TEXT_START ) {
             size = (( count / TEXT_START ) + 1) * TEXT_START;
@@ -873,13 +905,7 @@ static void oc_process_line_full( text_line * in_line, bool justify )
              * the text that will be output (internal spacing included).
              */
 
-            cur_chars = in_line->first;
-            if( cur_chars->next != NULL) {
-                while( cur_chars->next != NULL) {
-                    cur_chars = cur_chars->next;
-                }
-            }
-
+            cur_chars = in_line->last;
             title_width = cur_chars->x_address + cur_chars->width;
             title_width -= in_line->first->x_address;
 
@@ -1168,6 +1194,273 @@ static void oc_process_line_full( text_line * in_line, bool justify )
     return;
 }
 
+/* Function oc_text_chars_width().
+ * Returns the width of text up to the first tab stop.
+ *
+ * Parameters:
+ *      text contains the text to process.
+ *      count contains the number of characters in text.
+ *      font contains the font to use in computing the width.
+ *
+ * Returns:
+ *      the width of the text up to the first tab stop.
+ *
+ * Notes:
+ *      This is a convenience function wrapping cop_text_width(), which
+ *          ignores embedded tab stops and so can be used in contexts where
+ *          tab stops are to be ignored, such as the w' and 'width functions.
+ *      Testing shows that an initial tab stop, if any, is not expanded at
+ *          this time; indeed, an initial tab stop appears to cause the token
+ *          to be treated as having a width of "0".
+ */
+
+static uint32_t oc_text_chars_width( uint8_t * text, uint32_t count, \
+                                     uint8_t font )
+{
+    int         i;
+    uint32_t    cur_count   = 0;
+    uint32_t    retval      = 0;
+
+    for( i = 0; i < count; i++) {
+        if( (text[i] == '\t') || (text[i] == oc_tab_char) ) {
+            break;
+        }
+        cur_count++;   
+    }
+
+    if( cur_count != 0 ) {
+        retval = cop_text_width( text, cur_count, font );
+    }
+
+    return( retval );
+}
+
+/* Function oc_tab_position().
+ * Determines the position of a wgml tab stop.
+ *
+ * Parameter:
+ *      cur_pos contains the current horizontal position on the line.
+ *
+ * Returns:
+ *      the horizontal position of the next tab stop after cur_pos.
+ */
+
+static uint32_t oc_tab_position( uint32_t cur_pos )
+{
+    int                 i;
+    uint32_t            last_tab;
+    uint32_t            req_count;
+    uint32_t            req_length;
+    uint32_t            req_width;
+    uint32_t            retval      = 0;
+
+    /* Resize tab_list if necessary. */
+
+    last_tab = oc_cur_tabs->hpos[oc_cur_tabs->current - 1];
+    if( cur_pos > last_tab ) {
+
+        /* Compute the minimum number of additional tab stops needed. */
+
+        req_width = cur_pos - last_tab;
+        req_count = (req_width / oc_inter_tab) + 1;
+
+        /* See if additional space is needed. */
+
+        if( (oc_cur_tabs->current + req_count) > oc_cur_tabs->length ) {
+
+            /* Compute the new size. The intent is to add enough tabs not
+             * only for the current value, but for up to TAB_COUNT - 1 more.
+             */
+
+            req_count /= TAB_COUNT;
+            req_count++;
+
+            req_length = oc_cur_tabs->length + req_count;
+            oc_cur_tabs->hpos = mem_realloc( oc_cur_tabs->hpos, \
+                                        req_length * sizeof( oc_hpos_t ) );
+            oc_cur_tabs->length = req_length;
+        }
+
+        /* Set tabs up to the last available position in the hpos array. */
+
+        for( i = oc_cur_tabs->current; i < oc_cur_tabs->length; i++ ) {
+            oc_cur_tabs->hpos[i] = oc_cur_tabs->hpos[i - 1] + oc_inter_tab;
+        }
+        oc_cur_tabs->current = oc_cur_tabs->length;
+    }
+
+    /* Skip all tab stops to the left of cur_pos. */
+
+    for( i = 0; i < oc_cur_tabs->current; i++ ) {
+        if( cur_pos < oc_cur_tabs->hpos[i] ) {
+            retval = oc_cur_tabs->hpos[i];
+            break;
+        }
+    }
+
+    /* This would be a good point to preserve the value of the tab position
+     * in a variable that the justification function can use as the left
+     * boundry of the text to be justified.
+     */
+
+    return( retval );
+}
+
+/* Function oc_wgml_tabs().
+ * This function converts a text_chars instance into a doubly-linked list
+ * of text_chars instances reflecting the presence of wgml tabs. 
+ *
+ * Parameter:
+ *      in_chars contains a pointer to the text_chars instance.
+ *
+ * Returns:
+ *      a pointer to the last text_chars instance in the doubly-linked list.
+ *
+ * Note:
+ *      If in_chars contains no wgml tabs, it is not altered, and the
+ *          pointer returned will be the same as in_chars.
+ */
+
+static text_chars * oc_wgml_tabs( text_chars * in_chars )
+{
+    int             i;
+    text_chars  *   cur_chars       = in_chars;
+    text_chars  *   retval          = in_chars;
+    uint8_t     *   cur_text        = in_chars->text;
+    uint32_t        count           = in_chars->count;
+    uint32_t        cur_count       = 0;
+    uint32_t        cur_h_address   = in_chars->x_address;
+    uint32_t        start;
+
+    /* The first word is to be left in in_chars. */
+
+    for( i = 0; i < count; i++) {
+        if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+            break;
+        }
+        cur_count++;
+    }
+
+    if( cur_count == 0 ) {
+
+        /* in_chars starts with the first wgml tab stop. Find the positon of
+         * that tab, and update cur_h_address and in_chars.
+         */
+
+        cur_h_address = oc_tab_position( cur_h_address );
+        in_chars->x_address = cur_h_address;
+
+        /* Move to the next character and check it. */
+
+        i++;
+        if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+
+            /* If the second character is also a wgml tab, in_chars becomes
+             * an empty text_chars.
+             */
+
+             in_chars->count = 0;
+
+        } else {
+
+            /* If the second character is not a wgml tab, then the word
+             * following the first tab is controlled by in_chars.
+             */
+
+            start = i;
+            for( i; i < count; i++ ) {
+                if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+                    break;                
+                }
+            }
+
+            /* i is sitting on the next wgml tab, or one byte past the end of
+             * the original text. start contains the starting position of the
+             * text to be controlled by in_chars. The wgml tab character
+             * itself must be removed from the front of the text.
+             */
+
+            cur_count = i - start;
+            memmove_s( &in_chars->text[0], cur_count, &in_chars->text[start], \
+                                                                    cur_count);
+            in_chars->count = cur_count;
+            in_chars->width = cop_text_width( in_chars->text, in_chars->count, \
+                                                        in_chars->font_number );
+            cur_h_address += in_chars->width;
+        }
+
+    } else {
+
+        /* in_chars->text starts with a non-tab character. Adjust in_chars to
+         * control the first word. The x_address value is already correct.
+         */
+
+        in_chars->count = cur_count;
+        cur_h_address += in_chars->width;
+    }
+
+    if( i < count ) {
+
+        /* i is sitting on the first wgml tab following the first word:
+         * update cur_h_address, increment i to the next character and save
+         * the resulting position to process the rest of the original text.
+         */
+
+        cur_h_address = oc_tab_position( cur_h_address );
+        i++;
+        start = i;
+        for( i; i < count; i++ ) {
+
+            /* Get the next word. */
+
+            for( i; i < count; i++ ) {
+                if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+                    break;
+                }
+            }                
+
+            /* i is sitting on either the tab after the current word or one
+             * position past the end of the original text, start contains the
+             * starting position of the current word: move it to a new
+             * text_chars instance and hook it into the list.
+             */
+
+            cur_count = i - start;
+            retval = oc_alloc_text_chars( &cur_text[start], cur_count, \
+                                        in_chars->font_number, in_chars->type );
+            retval->x_address = cur_h_address;
+            cur_chars->next = retval;
+            retval->prev = cur_chars;
+            cur_chars = cur_chars->next;
+            retval->width = cop_text_width( retval->text, retval->count, \
+                                                    in_chars->font_number );
+            cur_h_address += retval->width;
+
+            /* Set up for the next word. */
+
+            start = i + 1;
+            cur_h_address = oc_tab_position( cur_h_address );
+
+        }
+
+        /* If the last character in the original text was a tab, add an empty
+         * text_chars.
+         */
+
+        i = count - 1;
+        if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+            retval = oc_alloc_text_chars( NULL, 0, in_chars->font_number, \
+                                                            in_chars->type );
+            retval->x_address = cur_h_address;
+            cur_chars->next = retval;
+            retval->prev = cur_chars;
+            cur_chars = cur_chars->next;
+        }
+    }
+
+    return( retval );
+}
+
 /* Function oc_process_text().
  * This function produces text_line instances from a single input buffer. This
  * may be as simple as adding a few words to an existing text_line or finishing
@@ -1199,6 +1492,7 @@ static void oc_process_line_full( text_line * in_line, bool justify )
 
 static void oc_process_text( char * input_text, uint8_t font_number )
 {
+    static  bool            tabbing         = false;
     static  size_t          increment       = 0;
     static  size_t          spaces          = 0;
     static  text_type       cur_type        = norm;
@@ -1213,14 +1507,15 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             text_chars  *   next_chars      = NULL;
             text_chars  *   save_chars      = NULL;
             uint32_t        cur_height      = 0;
+            uint32_t        offset          = 0;
 
     /* These invariants should hold on entry:
      * If oc_new_section is true:
      *      It is the start of new document section.
      *      the_line->last should be NULL.
-     *      spaces should be 0.
-     *      When we start counting tabs, tabs should be 0.
      *      increment should be 0.
+     *      spaces should be 0.
+     *      tabbing should be false.
      * otherwise, this is the start of a new phrase:
      *      the_line->first points to a linked list of text_chars instances.
      *      the_line->last points to the last text_chars instance in the_line.
@@ -1228,9 +1523,10 @@ static void oc_process_text( char * input_text, uint8_t font_number )
      *          it is the first text_chars instance in the_line; otherwise, it
      *          points to the text_chars instance such that prev->next points
      *          to that text_chars.
-     *      spaces contains the number of spaces (if any) before this phrase.
-     *      tabs, when counted, will do the same for tab characters.
      *      increment should contain the width of next_chars.
+     *      spaces contains the number of spaces (if any) before this phrase.
+     *      tabbing will be true if and only if the last character of the
+     *          preceding phrase was a wgml tab.
      * If input_text is NULL, then oc_break should be true.
      */
 
@@ -1251,8 +1547,9 @@ static void oc_process_text( char * input_text, uint8_t font_number )
         /* Ensure proper starting values for the new section. */
 
         cur_h_address = oc_page_left + oc_indent;
-        spaces = 0; // when tabs are counted, set tabs to 0 also
         increment = 0;
+        spaces = 0;
+        tabbing = false;
 
         /* Enable new section processing in oc_output_page(). */
 
@@ -1305,19 +1602,26 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
     if( oc_break ) {
 
-        /* Submit the_line with justification suppressed. */
+        /* Submit the_line with justification suppressed.
+         * Note: the_line is set to NULL here so that, at the end of document
+         * output, a final text_line, which will never be used, will not be
+         * created.
+         */
 
         oc_process_line_full( the_line, false );
+        the_line = NULL;
+
+        /* If there is no input_text, this was the last line on the last page
+         * of a section (or document). There is, then, no point in continuing.
+         * Note: if this is not the end of the document, the_line will be
+         * initialized on the next call to this function.
+         */
+
+        if( input_text == NULL ) return;
 
         /* Allocate a new text_line. */
 
         the_line = oc_alloc_text_line();
-
-        /* If there is no input_text, this was the last line on the last page
-         * of a section (or document). There is, then, no point in continuing.
-         */
-
-        if( input_text == NULL ) return;
 
         /* Reset variables for use with the new line. If the above line is
          * triggered, they will be reset when the function is called next
@@ -1325,8 +1629,9 @@ static void oc_process_text( char * input_text, uint8_t font_number )
          */
 
         cur_h_address = oc_page_left + oc_cur_page.column.last->indent;
-        spaces = 0; // when tabs are counted, set tabs to 0 also
         increment = 0;
+        spaces = 0;
+        tabbing = false;
 
         /* Set the line_height to its initial value. */
 
@@ -1379,90 +1684,73 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
     if( input_text == NULL ) return;
 
-    /* At this point, we should be ready to add text_chars to the_line
-     * based on the contents of input_text.
+    /* Since spaces will only be greater than zero at this point if the
+     * prior phrase ended with one or more spaces, this would be a good
+     * place to reset spaces to zero if control word .ct has been found
+     * following the last phrase.
      */
 
+    /* Now add text_chars to the_line based on the contents of input_text. */
+
     cur_height = 0;
-
-    /* Now process input_text. */
-
     while( *input_text != '\0' ) {
 
         /* These invariants should hold at the top of this loop:
          * the_line should never be NULL.
-         * If the_line->first is NULL and next_chars is NULL:
-         *      It is the start of a new phrase and a new line.
+         * If the_line->first is NULL:
+         *      It is the start of a new paragraph (possibly a new section).
          *      cur_chars should be NULL.
+         *      next_chars should be NULL.
          *      pre_chars should be NULL.
+         *      increment should be 0.
          *      spaces should be 0.
-         *      When we start counting tabs, tabs should be 0.
-         *      increment should be 0.
-         * If the_line->first is NULL and next_chars is not NULL:
-         *      this is the start of a new line, but not of a new phrase.
-         *      cur_chars should be NULL.
-         *      pre_chars should be NULL.
-         *      spaces may be 0 or may be > 0.
-         *      When we start counting tabs, tabs may be 0 or may be > 0.
-         *      increment should be 0.
-         * If the_line->first is not NULL but next_chars is NULL:
-         *      It is the start of a new phrase, but not of a new line.
+         *      tabbing should be false.
+         * If the_line->first is not NULL:
+         *      It is the start of a new phrase.
          *      the_line->last points to the last text_chars instance in
          *          the_line.
          *      for each text_chars which is part of the_line, prev is null if
          *          it is the first text_chars instance in the_line; otherwise,
          *          it points to the text_chars instance such that prev->next
          *          points to that text_chars.
-         *      spaces may be 0 or may be > 0.
-         *      When we start counting tabs, tabs may be 0 or may be > 0.
          *      increment should be 0.
-         * If the_line->first is not NULL and next_chars is not NULL:
-         *      This cannot happen.
+         *      spaces may be 0 or may be > 0.
+         *      tabbing will be true if and only if the last character of the
+         *          preceding phrase was a wgml tab.
          */
 
         if( oc_script ) {
 
             /* If "script" was specified, then an empty text_chars will be
-             * needed if next_chars is NULL (that is, this is the start of a
-             * new phrase) and spaces (and/or, eventually,  tabs) is not zero,
-             * and if the font used by the previous phrase differs from that
-             * used by the current phrase.
+             * needed if if the font used by the previous phrase differs from
+             * that used by the current phrase and spaces is not zero.
              */
 
-            if( (next_chars == NULL) && (spaces != 0) ) {
-                if( old_font != font_number ) {
-                    if( the_line->first == NULL ) {
+            if( old_font != font_number ) {
+                if( spaces != 0 ) {
 
-                        /* An empty text_chars at the start of the line is
-                         * used for the spacing that establishes the left
-                         * margin plus any indent. For now, it uses
-                         * oc_page_left plus any indent.
-                         * NOTE: it is not at all clear that this code is
-                         * ever executed.
-                         */
+                    /* Since the_line->first will be NULL only when a new
+                     * section or break was involved, and since spaces is
+                     * zeroed in those cases, the_line->first cannot be NULL.
+                     * An empty text_chars in the middle of a line is used
+                     * for the spacing from the end of the last text_chars
+                     * to the start of the new phrase.
+                     */
 
-                        the_line->first = \
+                    the_line->last->next = \
                             oc_alloc_text_chars( NULL, 0, old_font, cur_type );
-                        the_line->last = the_line->first;
-                        cur_h_address = oc_page_left + \
-                                                oc_cur_page.column.last->indent;
-                    } else {
+                    the_line->last->next->prev = the_line->last;
+                    the_line->last = the_line->last->next;
 
-                        /* An empty text_chars in the middle of a line is used
-                         * for the spacing from the end of the last text_chars
-                         * to the start of the new phrase.
-                         */
+                    /* spaces is known to be nonzero: update the horizontal
+                     * position and use it to set the_line->last->x_address.
+                     */
 
-                        the_line->last->next = \
-                            oc_alloc_text_chars( NULL, 0, old_font, cur_type );
-                        the_line->last->next->prev = the_line->last;
-                        the_line->last = the_line->last->next;
-                    }
+                    space_width = spaces * wgml_fonts[font_number].spc_width;
+                    cur_h_address += space_width;
                     the_line->last->x_address = cur_h_address;
 
-                    /* Reset spaces (and, eventually, tabs), and adjust the
-                     * line_height if necessary.
-                     */
+                    /* Reset spaces and adjust the line_height if necessary. */
 
                     spaces = 0;
                     cur_height = wgml_fonts[old_font].line_height;
@@ -1474,36 +1762,6 @@ static void oc_process_text( char * input_text, uint8_t font_number )
         }
         old_font = font_number;
 
-        /* If next_chars is not NULL, add it to the_line.
-         */
-
-        if( next_chars != NULL ) {
-            if( the_line->first == NULL ) {
-                the_line->first = next_chars;
-                the_line->last = the_line->first;
-            } else {
-                next_chars->prev = the_line->last;
-                the_line->last->next = next_chars;
-                the_line->last =  next_chars;
-            }
-            next_chars = NULL;
-
-            /* Adjust the line_height, if appropriate. */
-
-            cur_height = wgml_fonts[font_number].line_height;
-            if( the_line->line_height < cur_height ) {
-                the_line->line_height = cur_height;
-            }
-
-            /* Update cur_h_address to the width of the token added. */
-
-            cur_h_address += the_line->last->width;
-
-            /* Reset spaces (and, eventually, tabs). */
-
-            spaces = 0;
-        }
-
         /* Count any spaces before the next token. */
 
         while( *input_text != '\0' ) {
@@ -1511,6 +1769,12 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             spaces++;
             input_text++;
         }
+
+        /* If the end of the phrase is next, then the phrase ended with
+         * spaces and/or tabs. Phrase processing is done.
+         */
+
+        if( *input_text == '\0' ) break;
 
         /* Compute space_width and adjust cur_h_address. */
 
@@ -1542,16 +1806,10 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             space_width = spaces * wgml_fonts[font_number].spc_width;
             cur_h_address += space_width;
 
-            /* Reset spaces (and, eventually, tabs). */
+            /* Reset spaces. */
 
             spaces = 0;
         }
-
-        /* If the end of the phrase is next, then the phrase ended with
-         * spaces and/or tabs. Phrase processing is done.
-         */
-
-        if( *input_text == '\0' ) break;
 
         /* Process any escape sequences. */
 
@@ -1575,9 +1833,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             input_text++;
         }
 
-        /* If a space is next, go back to the top to count spaces.
-         * Note: tabs will probably need to be included when tabbing is done.
-         */
+        /* If a space is next, go back to the top to count spaces. */
 
         if( *input_text == ' ' ) continue;
 
@@ -1618,14 +1874,38 @@ static void oc_process_text( char * input_text, uint8_t font_number )
         if( next_chars->count == 0 ) {
             next_chars->width = 0;
         } else {
-            next_chars->width = cop_text_width( next_chars->text, \
+            next_chars->width = oc_text_chars_width( next_chars->text, \
                                 next_chars->count, next_chars->font_number );
         }
         increment = next_chars->width;
 
+        /* Add an empty text_chars, if next_chars->text[0] is a wgml tab, but
+         * not if this is a continuation of the previous phrase with no
+         * intervening spaces.
+         * Note: increment will only be zero at this point if that is the case.
+         */
+
+        if( increment == 0 ) {
+            if( cur_h_address != (the_line->last->x_address + \
+                                                    the_line->last->width) ) {
+                the_line->last->next = \
+                            oc_alloc_text_chars( NULL, 0, old_font, cur_type );
+                the_line->last->next->prev = the_line->last;
+                the_line->last = the_line->last->next;
+                the_line->last->x_address = cur_h_address;
+
+                /* Adjust the line_height if necessary. */
+
+                cur_height = wgml_fonts[old_font].line_height;
+                if( the_line->line_height < cur_height ) {
+                    the_line->line_height = cur_height;
+                }
+            }
+        }
+
         /* Update text_line. */
 
-        if( (cur_h_address + increment) > oc_page_right ) {
+        if( !tabbing && ((cur_h_address + increment) > oc_page_right )) {
 
             /* Detach the last text_chars instance, if it is empty.
              * Note: save_chars will always be NULL at this point.
@@ -1635,6 +1915,36 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                 save_chars = the_line->last;
                 the_line->last = the_line->last->prev;
                 the_line->last->next = NULL;
+            } else {
+
+                /* If next_chars starts immediately after the_line->last,
+                 * then the two text_chars instances are part of the same
+                 * word (which has an internal highlighted phrase or the .ct
+                 * control word has been encountered) and both must be on
+                 * the same line: detach the_line->last and and save it in
+                 * save_chars.
+                 * Note: save_chars will always be NULL at this point.
+                 */
+
+                if( cur_h_address == (the_line->last->x_address + \
+                                                    the_line->last->width) ) {
+                    save_chars = the_line->last;
+                    the_line->last = the_line->last->prev;
+                    the_line->last->next = NULL;
+                }            
+
+                /* Detach the last text_chars instance, if it is empty, and
+                 * prepend it to save_chars.
+                 * Note: these instances have been checked for tabs;
+                 * next_chars has not and so must be kept separate.
+                 */
+
+                if( the_line->last->count == 0 ) {
+                    save_chars->prev = the_line->last;
+                    the_line->last->next = save_chars;
+                    the_line->last = the_line->last->prev;
+                    the_line->last->next = NULL;
+                }
             }
 
             /* Process the full text_line and get a new one. */
@@ -1646,45 +1956,85 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
             cur_h_address = oc_page_left;
 
-            /* At this point, next_chars->x_address is set to the proper
-             * value for the end of the prior text_line. This resets it
-             * to the proper value for the start of the current line.
-             */
-
-            next_chars->x_address = cur_h_address;
-
-            /* Attach save_chars to the_line if it is not NULL. */
+            /* Now process save_chars. */
 
             if( save_chars != NULL ) {
-                save_chars->x_address = cur_h_address;
+
+                /* Attach save_chars to the_line. */
+
                 the_line->first = save_chars;
                 the_line->last = the_line->first;
-                save_chars = NULL;
+
+                /* save_chars is a doubly-linked list of one or more
+                 * text_chars instances. The first must be located at
+                 * cur_h_address, and the others must be repositioned
+                 * to the same relative position using offset.
+                 */
+
+                offset = save_chars->x_address - cur_h_address;
+                save_chars->x_address = cur_h_address;
+                save_chars = save_chars->next;
+
+                /* Now reposition any following text_chars instances, keeping
+                 * cur_h_address and the_line->last updated to the start of
+                 * each instance.
+                 */
+
+                while( save_chars != NULL ) {
+                    the_line->last = save_chars;
+                    save_chars->x_address -= offset;
+                    cur_h_address = save_chars->x_address;
+                    save_chars = save_chars->next;
+                }
+
+                /* At this point, next_chars->x_address is set to the proper
+                 * value for the end of the prior text_line. Reset it using 
+                 * offset and update cur_h_address. 
+                 */
+
+                next_chars->x_address -= offset;
+                cur_h_address = next_chars->x_address;
+
+            } else {
+
+                /* At this point, next_chars->x_address is set to the proper
+                 * value for the end of the prior text_line. Reset it to the
+                 * the start of the current line.
+                 */
+
+                next_chars->x_address = cur_h_address;
             }
         }
-    }
 
-    /* At this point, if next_chars is not NULL, then these invariants hold: 
-     *      the_line is not NULL.
-     *      next_chars is guaranteed to fit into the_line.
-     * Note: it seems unlikely that the_line->first will ever be NULL; this
-     * is something to check in the future.
-     */
+        /* Add next_chars to the_line. */
 
-    if( next_chars != NULL ) {
         if( the_line->first == NULL ) {
             the_line->first = next_chars;
-            the_line->last = next_chars;
         } else {
             next_chars->prev = the_line->last;
             the_line->last->next = next_chars;
-            the_line->last = next_chars;
         }
+        the_line->last = oc_wgml_tabs( next_chars );
         next_chars = NULL;
 
-        /* Update cur_h_address to the width of the token added. */
+        /* Set tabbing to true if the_line->last is an empty text_chars:
+         * at this point, this can only happen if the original content of
+         * next_chars ended with a wgml tab.
+         * NOTE: if wgml tab alignment or fill characters affects how tabbing
+         * is done, something more elaborate may be needed here.
+         */
 
-        cur_h_address += increment;
+        if( the_line->last->count == 0 ) {
+            tabbing = true;
+        } else {
+            tabbing = false;
+        }
+
+        /* Update cur_h_address to the total length of the text in
+         * the_line->last.
+         */
+
+        cur_h_address = the_line->last->x_address + the_line->last->width;
 
         /* Adjust the line_height, if appropriate. */
 
@@ -1693,11 +2043,10 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             the_line->line_height = cur_height;
         }
 
-        /* Reset spaces (and, eventually, tabs). */
+        /* Reset spaces. */
 
         spaces = 0;
     }
-
     return;
 }
 
@@ -1833,9 +2182,10 @@ static void emulate_wgml( void )
     oc_element      *   te_pool_ptr = NULL;
     text_chars      *   tc_pool_ptr = NULL;
     text_line       *   tl_pool_ptr = NULL;
-    uint32_t            oc_h_len;
-    uint32_t            oc_v_len;
+    uint32_t            first_tab;
     uint32_t            max_char_width;
+    uint32_t            oc_h_len; // needed?
+    uint32_t            oc_v_len; // needed?
 
     /* Set the file-level globals. */
 
@@ -1901,11 +2251,6 @@ static void emulate_wgml( void )
         te_pool_ptr->element.oc_text.first = NULL;
     }
 
-    /* Set up oc_cur_page.column. */
-
-    oc_cur_page.column.cur_depth = 0;
-    oc_cur_page.column.first = 0;
-
     /* These values are currently being tuned to match wgml 4.0.
      * The constants used with oc_max_depth match the values used by
      * wgml 4.0 for a page depth of 9.66i converted to vertical base
@@ -1917,8 +2262,11 @@ static void emulate_wgml( void )
         oc_page_top = bin_device->y_start;
         oc_max_depth = 9660 - bin_device->y_offset;
     } else {
-        oc_page_top = 0;
-        oc_max_depth = 58;
+        oc_page_top = bin_device->y_start;
+        if( bin_device->y_start > 0 ) {
+            oc_page_top--;
+        }
+        oc_max_depth = 58 - bin_device->y_offset;
     }
 
     /* The "missing" value, oc_page_bottom, was dropped because no use was
@@ -1927,11 +2275,32 @@ static void emulate_wgml( void )
      */
 
     /* The values used set up a left margin of '1i' and a right margin of
-     * '7i', expressed in horizontal base units.
+     * '7i', expressed in horizontal base units, both from the position
+     * specificed in the :PAGESTART block.
      */
 
-    oc_page_left = bin_device->horizontal_base_units;
-    oc_page_right = 7 * bin_device->horizontal_base_units;
+    oc_page_left = bin_device->horizontal_base_units + bin_device->x_start \
+                                                     - bin_device->x_offset;
+    oc_page_right = 7 * bin_device->horizontal_base_units + bin_device->x_start \
+                                                     - bin_device->x_offset;
+
+    /* Set up the default tabs and initialize oc_cur_tabs.
+     * Note: the margin, that is, oc_page_left, is included in the
+     *       tab stop values. This may or may not work in wgml.
+     */
+
+    first_tab = (6 * (bin_device->horizontal_base_units / 10)) - 1;
+    oc_inter_tab = 5 * (bin_device->horizontal_base_units / 10);
+
+    oc_default_tabs.hpos = mem_alloc( TAB_COUNT * sizeof( oc_hpos_t ) );
+    oc_default_tabs.length = TAB_COUNT;
+    oc_default_tabs.hpos[0] = oc_page_left + first_tab;
+    for( i = 1; i < oc_default_tabs.length; i++ ) {
+        oc_default_tabs.hpos[i] = oc_default_tabs.hpos[i - 1] + oc_inter_tab;
+    }
+    oc_default_tabs.current = oc_default_tabs.length;
+
+    oc_cur_tabs = &oc_default_tabs;
 
     /* This is used for the line height when the actual height is either not
      * known or not well defined. Not every use in this test program will be
@@ -1990,8 +2359,14 @@ static void emulate_wgml( void )
 
     /* Output the text paragraphs. */
 
+    oc_tab_char = '>';
+    emulate_layout_page( para_tab, oc_paragraph );
+    oc_tab_char = '\t';
     emulate_layout_page( para_font, oc_paragraph );
     emulate_layout_page( para_stop, oc_paragraph );
+    oc_tab_char = '>';
+    emulate_layout_page( para_tab, oc_paragraph );
+    oc_tab_char = '\t';
     emulate_layout_page( para_subsup, oc_paragraph );
 
     /* Now switch to "wscript/noscript" mode. */
@@ -1999,6 +2374,9 @@ static void emulate_wgml( void )
     oc_script = false;
     emulate_layout_page( para_font, oc_paragraph );
     emulate_layout_page( para_stop, oc_paragraph );
+    oc_tab_char = '>';
+    emulate_layout_page( para_tab, oc_paragraph );
+    oc_tab_char = '\t';
     emulate_layout_page( para_subsup, oc_paragraph );
 
 #if 0 // restore when boxing is done again and blank-line-insertion is handled
@@ -2098,6 +2476,13 @@ static void emulate_wgml( void )
     fb_finish();
 
     /* Free allocated memory. */
+
+    /* Free the wgml-tab related objects. */
+
+    if( oc_default_tabs.hpos != NULL ) {
+        mem_free( oc_default_tabs.hpos );
+        oc_default_tabs.hpos = NULL;
+    }
 
     /* Free the memory held by the oc_element pool. */
 

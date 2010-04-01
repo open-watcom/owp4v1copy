@@ -2847,8 +2847,11 @@ static void fb_first_text_chars( text_chars * in_chars, \
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
 
-        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
-///        if( htab_done && text_out_open ) post_text_output();
+        /* Checking htab_done here causes discrepancies between our output
+         * and wgml 4.0's output.
+         */
+
+        if( undo_shift && text_out_open ) post_text_output();
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -2858,8 +2861,12 @@ static void fb_first_text_chars( text_chars * in_chars, \
     if( uline ) {
         if( !text_out_open ) pre_text_output();
         output_uscores( in_chars );
-        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
-///        if( htab_done && text_out_open ) post_text_output();
+
+        /* Checking htab_done here causes discrepancies between our output
+         * and wgml 4.0's output.
+         */
+
+        if( undo_shift && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2950,8 +2957,12 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
         if( !text_out_open ) pre_text_output();
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
-        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
-///        if( htab_done && text_out_open ) post_text_output();
+
+        /* Checking htab_done here causes discrepancies between our output
+         * and wgml 4.0's output.
+         */
+
+        if( undo_shift && text_out_open ) post_text_output();
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -2961,8 +2972,12 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
     if( uline ) {
         if( !text_out_open ) pre_text_output();
         output_uscores( in_chars );
-        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
-///        if( htab_done && text_out_open ) post_text_output();
+
+        /* Checking htab_done here causes discrepancies between our output
+         * and wgml 4.0's output.
+         */
+
+        if( undo_shift && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -3280,8 +3295,12 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
         if( !text_out_open ) pre_text_output();
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
-        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
-///        if( htab_done && text_out_open ) post_text_output();
+
+        /* Checking htab_done here causes discrepancies between our output
+         * and wgml 4.0's output.
+         */
+
+        if( undo_shift && text_out_open ) post_text_output();
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -3291,8 +3310,12 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
     if( uline ) {
         if( !text_out_open ) pre_text_output();
         output_uscores( in_chars );
-        if( (undo_shift || htab_done) && text_out_open ) post_text_output();
-///        if( htab_done && text_out_open ) post_text_output();
+
+        /* Checking htab_done here causes discrepancies between our output
+         * and wgml 4.0's output.
+         */
+
+        if( undo_shift && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
