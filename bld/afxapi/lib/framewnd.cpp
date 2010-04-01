@@ -61,6 +61,7 @@ BEGIN_MESSAGE_MAP( CFrameWnd, CWnd )
     ON_WM_ACTIVATE()
     ON_WM_CLOSE()
     ON_WM_CREATE()
+    ON_WM_DROPFILES()
     ON_WM_ENDSESSION()
     ON_WM_INITMENUPOPUP()
     ON_WM_MENUSELECT()
@@ -854,6 +855,22 @@ int CFrameWnd::OnCreate( LPCREATESTRUCT lpCreateStruct )
     ::PostMessage( m_hWnd, WM_SETMESSAGESTRING, AFX_IDS_IDLEMESSAGE, 0L );
     
     return( 0 );
+}
+
+void CFrameWnd::OnDropFiles( HDROP hDropInfo )
+/********************************************/
+{
+    CWinApp *pApp = AfxGetApp();
+    ASSERT( pApp != NULL );
+
+    ::SetActiveWindow( m_hWnd );
+    UINT nCount = ::DragQueryFile( hDropInfo, 0xFFFFFFFF, NULL, 0 );
+    for( int i = 0; i < nCount; i++ ) {
+        TCHAR szFileName[MAX_PATH];
+        ::DragQueryFile( hDropInfo, i, szFileName, MAX_PATH );
+        pApp->OpenDocumentFile( szFileName );
+    }
+    ::DragFinish( hDropInfo );
 }
 
 void CFrameWnd::OnEndSession( BOOL bEnding )

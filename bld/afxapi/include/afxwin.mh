@@ -1401,6 +1401,7 @@ protected:
     afx_msg void    OnActivate( UINT nState, CWnd *pWndOther, BOOL bMinimized );
     afx_msg void    OnClose();
     afx_msg int     OnCreate( LPCREATESTRUCT lpCreateStruct );
+    afx_msg void    OnDropFiles( HDROP hDropInfo );
     afx_msg void    OnEndSession( BOOL bEnding );
     afx_msg void    OnInitMenuPopup( CMenu *pPopupMenu, UINT nIndex, BOOL bSysMenu );
     afx_msg void    OnMenuSelect( UINT nItemID, UINT nFlags, HMENU hSysMenu );

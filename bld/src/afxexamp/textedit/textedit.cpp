@@ -37,6 +37,9 @@ BOOL CTextEditApp::InitInstance()
     }
     m_pMainWnd = pWnd;
 
+    // Enable support for opening files via drag/drop.
+    m_pMainWnd->DragAcceptFiles();
+    
     // Enable support for opening files via DDE.
     EnableShellOpen();
     
