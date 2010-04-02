@@ -225,6 +225,11 @@ vi_rc GotoFile( window_id id )
 void BringUpFile( info *ci, bool runCmds )
 {
     window_id   wn;
+    static bool recursive = FALSE;
+
+    if( recursive ) {
+        return;
+    }
 
     SourceHook( SRC_HOOK_BUFFOUT, ERR_NO_ERR );
     wn = CurrentWindow;
@@ -253,7 +258,9 @@ void BringUpFile( info *ci, bool runCmds )
     // be careful when runCmds true!  Some commands redraw the screen,
     // which calls BringUpFile, which (if runCmds = TRUE) will run cmds...
     if( runCmds && ci != NULL ) {
-        // FTSRunCmds( ci->CurrentFile->name );
+        recursive = TRUE;
+        FTSRunCmds( ci->CurrentFile->name );
+        recursive = FALSE;
     }
 
 #ifdef __WIN__
