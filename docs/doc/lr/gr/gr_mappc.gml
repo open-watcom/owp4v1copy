@@ -12,7 +12,8 @@ integer*4 color
 The &func &routine sets (or remaps) the palette color
 .arg pixval
 to be the color
-.arg color.
+.arg color
+.ct .li .
 This &routine is supported in all video modes, but only works
 with EGA, MCGA and VGA adapters.
 .pp
@@ -23,7 +24,8 @@ The argument
 .arg color
 specifies the actual color displayed on the screen by pixels with
 pixel value
-.arg pixval.
+.arg pixval
+.ct .li .
 Color values are selected by specifying the red, green and
 blue intensities that make up the color.
 Each intensity can be in the range from 0 to 63, resulting in 262144
@@ -49,7 +51,8 @@ The &func &routine takes effect immediately.
 All pixels on the complete screen which have a pixel value equal to the value of
 .arg pixval
 will now have the color indicated by the argument
-.arg color.
+.arg color
+.ct .li .
 .desc end
 .return begin
 The &func &routine returns the previous color for the pixel value

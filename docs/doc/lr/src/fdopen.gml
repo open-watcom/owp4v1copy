@@ -24,21 +24,29 @@ The &handle was returned by one of
 .if '&machsys' eq 'PP' .do begin
 .kw creat
 or
-.kw open.
+.kw open
+.ct .li .
 .do end
 .el .do begin
-.kw creat,
-.kw dup,
-.kw dup2,
+.kw creat
+.ct ,
+.kw dup
+.ct ,
+.kw dup2
+.ct ,
 .if '&machsys' eq 'QNX' .do begin
-.kw fcntl,
+.kw fcntl
+.ct ,
 .do end
-.kw open,
+.kw open
+.ct ,
 .if '&machsys' eq 'QNX' .do begin
-.kw pipe,
+.kw pipe
+.ct ,
 .do end
 or
-.kw sopen.
+.kw sopen
+.ct .li .
 .do end
 The open mode
 .arg mode

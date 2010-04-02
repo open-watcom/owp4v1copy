@@ -59,7 +59,8 @@ The &func function is used to start a new thread of execution at the
 function identified by
 .arg start_address
 with a single parameter identified by
-.arg arglist.
+.arg arglist
+.ct .li .
 .np
 For each operating environment under which &func is supported,
 the &func function uses the appropriate system call to begin a new
@@ -108,9 +109,11 @@ The
 .kw _beginthreadex
 function can be used to create a new thread,
 in a running or suspended state specified by
-.arg initflag,
+.arg initflag
+.ct .li ,
 with security attributes specified by
-.arg security.
+.arg security
+.ct .li .
 .np
 The initial state of the new thread (running or suspended) is
 specified by the
@@ -133,7 +136,8 @@ structure (see Microsoft's
 .us Win32 Programmer's Reference
 for more information).
 For default behaviour, the security structure pointer can be
-.kw NULL.
+.kw NULL
+.ct .li .
 .np
 The thread identifier is returned in the location identified by the
 .arg thrdid
@@ -146,7 +150,8 @@ The thread ends when it exits from its main function or calls
 .ct,
 .kw _endthread
 or
-.kw _endthreadex.
+.kw _endthreadex
+.ct .li .
 .np
 The variable/function
 .kw _threadid

@@ -16,9 +16,10 @@ to contain default values before a chart is drawn.
 All values in the chart structure are initialized, including
 blanking of all titles.
 The chart type in the structure is initialized to the value
-.arg type,
-and the chart style is initialized to
-.arg style.
+.arg type
+.ct , and the chart style is initialized to
+.arg style
+.ct .li .
 .pp
 The argument
 .arg type

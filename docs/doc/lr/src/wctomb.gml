@@ -17,12 +17,14 @@ int _fwctomb( char __far *s, wchar_t wc );
 The &func function determines the number of bytes required to
 represent the multibyte character corresponding to the wide character
 contained in
-.arg wc.
+.arg wc
+.ct .li .
 If
 .arg s
 is not a NULL pointer, the multibyte character representation is
 stored in the array pointed to by
-.arg s.
+.arg s
+.ct .li .
 At most
 .kw MB_CUR_MAX
 characters will be stored.
@@ -46,7 +48,8 @@ does not correspond to a valid multibyte character
 .note len
 the number of bytes that comprise the multibyte character
 corresponding to the value of
-.arg wc.
+.arg wc
+.ct .li .
 .endnote
 .return end
 .see begin

@@ -123,8 +123,10 @@ file name.
 .endnote
 .np
 The arguments
-.arg &*drv.,
-.arg dir,
+.arg &*drv.
+.ct ,
+.arg dir
+.ct ,
 .arg fname
 and
 .arg ext

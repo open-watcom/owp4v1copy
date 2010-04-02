@@ -21,7 +21,8 @@ The size of a paragraph is 16 bytes.
 The allocated memory is always paragraph aligned.
 The segment descriptor for the allocated memory is returned in the
 word pointed to by
-.arg segment.
+.arg segment
+.ct .li .
 If the allocation request fails, the maximum number of paragraphs that
 can be allocated is returned in this word instead.
 .np

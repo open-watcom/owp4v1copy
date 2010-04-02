@@ -21,7 +21,8 @@ int _u_vbprintf( wchar_t *buf, size_t bufsize,
 The &func function formats data under control of the
 .arg format
 control string and writes the result to
-.arg buf.
+.arg buf
+.ct .li .
 The argument
 .arg bufsize
 specifies the size of the character array
@@ -35,8 +36,8 @@ function.
 The &func function is equivalent to the
 .kw _bprintf
 function, with the variable argument list replaced with
-.arg arg,
-which has been initialized by the
+.arg arg
+.ct , which has been initialized by the
 .kw va_start
 macro.
 .if &'length(&wfunc.) ne 0 .do begin

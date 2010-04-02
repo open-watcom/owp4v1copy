@@ -29,7 +29,8 @@ The &func function is not re-entrant or thread-safe.
 .*
 .return begin
 The &func function returns a pointer to the final component of
-.arg path.
+.arg path
+.ct .li .
 .return end
 .*
 .see begin

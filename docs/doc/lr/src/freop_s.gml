@@ -28,9 +28,10 @@ errno_t _ufreopen_s( FILE * restrict * restrict newstreamptr,
 .*
 .rtconst begin
 None of
-.arg newstreamptr,
-.arg mode,
-and
+.arg newstreamptr
+.ct ,
+.arg mode
+.ct , and
 .arg stream
 shall be a null pointer.
 If there is a runtime-constraint violation, &func neither attempts to close any file
@@ -63,7 +64,8 @@ to that specified by
 the stream had been used. It is implementation-defined which changes of mode are
 permitted (if any), and under what circumstances.
 The &func function first attempts to close any file that is associated with
-.arg stream.
+.arg stream
+.ct .li .
 Failure to close the file is ignored. The error and end-of-file indicators for the stream are
 cleared.
 If the file was opened successfully, then the pointer to FILE pointed to by
@@ -78,7 +80,8 @@ The &wfunc function is identical to &func except that it accepts
 wide-character string arguments for
 .arg filename
 and
-.arg mode.
+.arg mode
+.ct .li .
 .do end
 .desc end
 .*

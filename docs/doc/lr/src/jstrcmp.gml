@@ -20,7 +20,8 @@ The &func and &ffunc functions compare
 the Kanji string pointed to by
 .arg s1
 to the Kanji string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 The rule of comparison is:
 .illust begin
 ASCII and numeric characters < Katakana characters < Kanji characters
@@ -38,7 +39,8 @@ an integer less than, equal to, or greater than zero, indicating that
 the Kanji string pointed to by
 .arg s1
 is less than, equal to, or greater than the Kanji string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist jstrcmp jstricmp jstrncmp jstrnicmp

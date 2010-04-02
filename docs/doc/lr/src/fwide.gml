@@ -7,7 +7,8 @@ int fwide( FILE *fp, int mode );
 .desc begin
 The &func function determines the orientation of the stream pointed
 to by
-.arg fp.
+.arg fp
+.ct .li .
 If
 .arg mode
 is greater than zero, the function first attempts to make the stream

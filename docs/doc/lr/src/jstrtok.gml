@@ -21,10 +21,12 @@ used to break the Kanji string pointed to by
 .arg s1
 into a sequence of tokens, each of which is delimited by a single- or
 double-byte character from the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 The first call to &func will return a pointer to the first token in
 the Kanji string pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 Subsequent calls to &func must pass a NULL pointer as the first
 argument, in order to get the next token in the Kanji string.
 The set of delimiters used in each of these calls to &func can be
@@ -34,7 +36,8 @@ The first call in the sequence searches
 .arg s1
 for the first single- or double-byte character that is not contained
 in the current delimiter string
-.arg s2.
+.arg s2
+.ct .li .
 If no such character is found, then there are no tokens in
 .arg s1
 and the &func function returns a NULL pointer.
@@ -44,7 +47,8 @@ The &func function then searches from there for a single- or
 double-byte character that is contained in the current delimiter
 If no such character is found, the current token extends to the end of
 the string pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 If such a character is found, it is overwritten by a null character,
 which terminates the current token.
 The &func function saves a pointer to the following character, from

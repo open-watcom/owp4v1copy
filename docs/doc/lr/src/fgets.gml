@@ -20,7 +20,8 @@ The &func function gets a string of characters from the file
 designated by
 .arg fp
 and stores them in the array pointed to by
-.arg buf.
+.arg buf
+.ct .li .
 The &func function stops reading characters when end-of-file is
 reached, or when a newline character is read, or when
 .arg n-1
@@ -33,10 +34,11 @@ read into the array.
 The &wfunc function is identical to &func except that it gets a string
 of multibyte characters (if present) from the input stream pointed to
 by
-.arg fp,
-converts them to wide characters, and stores them in the
+.arg fp
+.ct , converts them to wide characters, and stores them in the
 wide-character array pointed to by
-.arg buf.
+.arg buf
+.ct .li .
 In this case,
 .arg n
 specifies the number of wide characters, less one, to be read.
@@ -47,7 +49,8 @@ The &ufunc Unicode function is identical to &func except that it gets
 Unicode characters from the file designated by
 .arg fp
 and stores them in the array pointed to by
-.arg buf.
+.arg buf
+.ct .li .
 .do end
 .np
 A common programming error is to assume the presence of a new-line

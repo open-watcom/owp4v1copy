@@ -7,8 +7,8 @@ and
 .kw wcstombs
 .ct )
 in that they have an extra argument,
-.arg ps,
-of type pointer to
+.arg ps
+.ct , of type pointer to
 .kw mbstate_t
 that points to an object that can completely describe the current
 conversion state of the associated multibyte character sequence.
@@ -19,13 +19,13 @@ is a null pointer, each function uses its own internal
 object instead.
 You are guaranteed that no other function in the library calls these
 functions with a null pointer for
-.arg ps,
-thereby ensuring the stability of the state.
+.arg ps
+.ct , thereby ensuring the stability of the state.
 .np
 Also unlike their corresponding functions, the conversion source
 argument,
-.arg src,
-has a pointer-to-pointer type.
+.arg src
+.ct , has a pointer-to-pointer type.
 When the function is storing conversion results (that is, when
 .arg dst
 is not a null pointer), the pointer object pointed to by this argument
@@ -37,8 +37,8 @@ the described conversion state (either internal or pointed to by
 .arg ps
 .ct )
 as current and then, if the destination pointer,
-.arg dst,
-is not a null pointer, the conversion state described by the pointed-to
+.arg dst
+.ct , is not a null pointer, the conversion state described by the pointed-to
 object is altered as needed to track the shift state of the associated
 multibyte character sequence.
 For encodings without state dependency, the pointer to the

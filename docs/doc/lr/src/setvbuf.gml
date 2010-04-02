@@ -9,7 +9,8 @@ int setvbuf( FILE *fp,
 .desc begin
 The &func function can be used to associate a buffer with the file
 designated by
-.arg fp.
+.arg fp
+.ct .li .
 If this function is used, it must be called after the file has been
 opened and before it has been read or written.
 The argument
@@ -45,7 +46,8 @@ The &func function returns zero on success, or a non-zero value if an
 invalid value is given for
 .arg mode
 or
-.arg size.
+.arg size
+.ct .li .
 .return end
 .see begin
 .seelist setvbuf fopen setbuf

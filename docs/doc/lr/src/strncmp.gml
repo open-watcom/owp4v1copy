@@ -52,7 +52,8 @@ The &func compares not more than
 characters from the string pointed to by
 .arg s1
 to the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .im farparm
 .im widefunc
 .im mbsffunc
@@ -63,7 +64,8 @@ The &func function returns an integer less than, equal to, or greater
 than zero, indicating that the string pointed to by
 .arg s1
 is less than, equal to, or greater than the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist &function. strcmp stricmp strncmp strnicmp

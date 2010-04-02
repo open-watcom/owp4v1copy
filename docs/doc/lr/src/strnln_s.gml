@@ -17,7 +17,8 @@ size_t wcsnlen_s( const wchar_t * s,
 .*
 .desc begin
 The &func function calculates the length of the string pointed to by
-.arg s.
+.arg s
+.ct .li .
 
 .im widefunc
 .desc end
@@ -32,7 +33,8 @@ terminating null character. If there is no null character in the first
 characters of
 .arg s
 then &func returns
-.arg maxsize.
+.arg maxsize
+.ct .li .
 At most the first
 .arg maxsize
 characters of

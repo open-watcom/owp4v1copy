@@ -340,10 +340,12 @@ character other than a blank or "0" could have been used.
 .*
 .np
 The first statement of a program unit may be a
-.kw PROGRAM,
-.kw FUNCTION,
-.kw SUBROUTINE,
-or
+.kw PROGRAM
+.ct ,
+.kw FUNCTION
+.ct ,
+.kw SUBROUTINE
+.ct , or
 .kw BLOCK DATA
 statement.
 The
@@ -406,8 +408,10 @@ statement and its corresponding terminal statement.
 &product extends these rules to apply to all program structure
 blocks resulting from the use of statements introduced to the language
 by &product (e.g.,
-.kw WHILE,
-.kw LOOP,
+.kw WHILE
+.ct ,
+.kw LOOP
+.ct ,
 .kw SELECT
 .ct ).
 .xt off

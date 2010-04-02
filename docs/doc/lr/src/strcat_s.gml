@@ -23,7 +23,8 @@ Let
 denote the value
 .arg s1max - strnlen_s(s1, s1max)
 upon entry to
-.kw strcat_s.
+.kw strcat_s
+.ct .li .
 Neither
 .arg s1
 nor
@@ -31,14 +32,16 @@ nor
 shall be a null pointer.
 .arg s1max
 shall not be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .arg s1max
 shall not equal zero.
 .arg m
 shall not equal zero.
 .arg m
 shall be greater than
-.arg strnlen_s(s2, m).
+.arg strnlen_s(s2, m)
+.ct .li .
 Copying shall not take place between objects that overlap.
 .np
 If there is a runtime-constraint violation, then if
@@ -46,8 +49,8 @@ If there is a runtime-constraint violation, then if
 is not a null pointer and
 .arg s1max
 is greater than zero and not greater than
-.kw RSIZE_MAX,
-then
+.kw RSIZE_MAX
+.ct , then
 .kw strcat_s
 sets
 .arg s1[0]
@@ -58,11 +61,13 @@ to the null character.
 The &func function appends a copy of the string pointed to by
 .arg s2
 (including the terminating null character) to the end of the string pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 The initial character from
 .arg s2
 overwrites the null character at the end of
-.arg s1.
+.arg s1
+.ct .li .
 All elements following the terminating null character (if any) written by
 &func in the array of
 .arg s1max

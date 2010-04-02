@@ -209,7 +209,8 @@ code and data models.
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 A mixed memory model application might be characterized as one that
 uses the
-.kw near,
+.kw near
+.ct ,
 .kw far
 or
 .kw huge

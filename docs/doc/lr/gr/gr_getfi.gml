@@ -15,7 +15,8 @@ Fonts are selected with the
 The font information is returned in the
 .id _fontinfo
 structure indicated by the argument
-.arg info.
+.arg info
+.ct .li .
 The structure contains the following fields:
 .begterm 15
 .note type

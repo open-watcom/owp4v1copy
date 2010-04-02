@@ -24,8 +24,8 @@ The function
 places the converted time in the
 .kw tm
 structure pointed to by
-.arg tmbuf,
-and the &func function places the converted time in a static
+.arg tmbuf
+.ct , and the &func function places the converted time in a static
 structure that is re-used each time &func is called.
 .im tzref
 .desc end

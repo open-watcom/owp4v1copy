@@ -20,15 +20,16 @@ unsigned int _wcsnextc( const wchar_t *string ) {
 .desc begin
 The &mfunc function returns the integer value of the next
 multibyte-character in
-.arg string,
-without advancing the string pointer.
+.arg string
+.ct , without advancing the string pointer.
 &mfunc recognizes multibyte character sequences according to the
 multibyte code page currently in use.
 .np
 The header file
 .hdrfile tchar.h
 defines the generic-text routine
-.kw _tcsnextc.
+.kw _tcsnextc
+.ct .li .
 This macro maps to &mfunc if
 .kw _MBCS
 has been defined, or to &wfunc if
@@ -49,7 +50,8 @@ string.
 .return begin
 These functions return the integer value of the next character
 (single-byte, wide, or multibyte) pointed to by
-.arg string.
+.arg string
+.ct .li .
 .return end
 .see begin
 .seelist &function. _mbsnextc _strdec _strinc _strninc

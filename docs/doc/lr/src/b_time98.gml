@@ -12,10 +12,12 @@ The values for service are:
 .termhd2 Meaning
 .term _TIME_GETCLOCK
 Places the current system clock value in the location pointed to by
-.arg timeval.
+.arg timeval
+.ct .li .
 .term _TIME_SETCLOCK
 Sets the system clock to the value in the location pointed to by
-.arg timeval.
+.arg timeval
+.ct .li .
 .endterm
 .np
 The area pointed to by the argument

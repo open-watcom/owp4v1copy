@@ -12,9 +12,11 @@ integer*1 def(8)
 .desc begin
 The &func &routine sets the current bit-map definition
 for the character
-.arg ch.
+.arg ch
+.ct .li .
 The bit-map is contained in the array
-.arg def.
+.arg def
+.ct .li .
 The current font must be an 8-by-8 bit-mapped font.
 .desc end
 .return begin

@@ -14,7 +14,8 @@ The &func function selects a portion of a program's
 according to the category given by
 .arg category
 and the locale specified by
-.arg locale.
+.arg locale
+.ct .li .
 A
 .us locale
 affects the collating sequence (the order in which characters compare

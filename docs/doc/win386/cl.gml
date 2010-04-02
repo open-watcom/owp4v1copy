@@ -80,4 +80,5 @@ After a program has been linked, it must be bound to the 32-bit
 Windows supervisor
 .kw WIN386.EXT
 using
-.kw WBIND.EXE.
+.kw WBIND.EXE
+.ct .li .

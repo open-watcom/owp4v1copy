@@ -19,7 +19,8 @@ errno_t _wtmpnam_s( wchar_t * s, rsize_t maxsize );
 shall not be a null pointer.
 .arg maxsize
 shall be less than or equal to
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .arg maxsize
 shall be greater than the length of the generated file name string.
 .rtconst end

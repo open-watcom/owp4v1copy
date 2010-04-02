@@ -48,7 +48,8 @@ suppression is indicated by a
 .mono *
 .ct ).
 The first of these arguments is the same as for
-.kw fscanf.
+.kw fscanf
+.ct .li .
 That argument is immediately followed in the argument list by the second
 argument, which has type
 .kw size_t
@@ -63,7 +64,8 @@ character).
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

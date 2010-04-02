@@ -62,7 +62,8 @@ routine.
 .desc end
 .return begin
 These functions return the result of the desired Bessel function of
-.arg x.
+.arg x
+.ct .li .
 .return end
 .see begin
 .seelist bessel matherr

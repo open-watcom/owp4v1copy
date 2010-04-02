@@ -47,7 +47,8 @@ to by
 .arg str
 of the sequence of characters (excluding the terminating null
 character) in the string pointed to by
-.arg substr.
+.arg substr
+.ct .li .
 .im farfunc
 .im widefunc
 .im mbsffunc

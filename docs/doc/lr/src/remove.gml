@@ -15,7 +15,8 @@ int _uremove( const wchar_t *filename );
 .desc begin
 The &func function deletes the file whose name is the string pointed
 to by
-.arg filename.
+.arg filename
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it accepts a

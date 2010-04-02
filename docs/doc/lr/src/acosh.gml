@@ -7,7 +7,8 @@ double acosh( double x );
 .funcend
 .desc begin
 The &func function computes the inverse hyperbolic cosine of
-.arg x.
+.arg x
+.ct .li .
 A domain error occurs if the value of
 .arg x
 is less than 1.0.

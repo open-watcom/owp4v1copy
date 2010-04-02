@@ -55,7 +55,8 @@ The &func function copies no more than
 characters from the string pointed to by
 .arg src
 into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Copying of overlapping objects is not guaranteed to work properly.
 See the
 .kw memmove
@@ -67,8 +68,8 @@ is shorter than
 .arg n
 characters, null characters are appended to the copy in the array pointed
 to by
-.arg dst,
-until
+.arg dst
+.ct , until
 .arg n
 characters in all have been written.
 If the string pointed to by
@@ -83,7 +84,8 @@ characters, then the result will not be terminated by a null character.
 .desc end
 .return begin
 The &func function returns the value of
-.arg dst.
+.arg dst
+.ct .li .
 .return end
 .see begin
 .seelist strncpy strlcpy strcpy strdup strncpy_s strcpy_s

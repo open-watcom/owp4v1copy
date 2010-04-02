@@ -24,7 +24,8 @@ The original values of the fields
 and
 .kw tm_mon
 are not restricted to ranges described for
-.kw struct tm.
+.kw struct tm
+.ct .li .
 If these fields are not in their proper ranges, they are adjusted
 so that they are in the proper ranges.
 Values for the fields

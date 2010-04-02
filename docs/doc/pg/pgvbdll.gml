@@ -649,7 +649,8 @@ environment variable for header file searches.
 It also causes the compiler to define the macro
 .kwm __WINDOWS__
 and, for the 32-bit C or C++ compiler only, the macro
-.kwm __WINDOWS_386__.
+.kwm __WINDOWS_386__
+.ct .li .
 .note
 The "zu" option is used when compiling 16-bit code that is to be placed
 in a Dynamic Link Library (DLL) since the SS register points to the

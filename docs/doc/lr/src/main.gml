@@ -27,9 +27,11 @@ int PASCAL wWinMain( HINSTANCE hInstance,
 The command line to the program is broken into a sequence of tokens
 separated by blanks and are passed to &func as an array of pointers
 to character strings in the parameter
-.arg argv.
+.arg argv
+.ct .li .
 The number of arguments found is passed in the parameter
-.arg argc.
+.arg argc
+.ct .li .
 The first element of
 .arg argv
 will be a pointer to a character string containing the program name.
@@ -103,7 +105,8 @@ Windows-based application.
 The
 .kw wWinMain
 function is a wide-character version of
-.kw WinMain.
+.kw WinMain
+.ct .li .
 .begterm 10
 .termhd1 Parameters
 .termhd2 Meaning
@@ -174,8 +177,8 @@ parameter.
 If
 .kw WM_QUIT
 was received as a result of calling
-.kw PostQuitMessage,
-the value of
+.kw PostQuitMessage
+.ct , the value of
 .kw wParam
 is the value of the
 .kw PostQuitMessage

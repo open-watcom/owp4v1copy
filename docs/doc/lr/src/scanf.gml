@@ -21,7 +21,8 @@ int _uscanf( const wchar_t *format, ... );
 The &func function scans input from the file designated by
 .kw stdin
 under control of the argument
-.arg format.
+.arg format
+.ct .li .
 The
 .arg format
 string is described below.
@@ -31,7 +32,8 @@ receive values.
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

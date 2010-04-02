@@ -8,8 +8,8 @@ The &func function sets the current code page number.
 .return begin
 The &func function returns zero if the code page is set successfully.
 If an invalid code page value is supplied for
-.arg codepage,
-the function returns -1 and the code page setting is unchanged.
+.arg codepage
+.ct , the function returns -1 and the code page setting is unchanged.
 .return end
 .see begin
 .im seeismbb &function.

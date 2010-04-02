@@ -7,7 +7,8 @@ The signed 16-bit words of
 .arg m1
 are multiplied with the respective signed 16-bit words
 of
-.arg m2.
+.arg m2
+.ct .li .
 The 32-bit intermediate results are summed by pairs producing
 two 32-bit integers.
 .millust begin

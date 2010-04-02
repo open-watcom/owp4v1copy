@@ -45,9 +45,11 @@ The &func function computes the length, in bytes, of the initial
 segment of the string pointed to by
 .arg str
 which consists of characters from the string pointed to by
-.arg charset.
+.arg charset
+.ct .li .
 The terminating null character is not considered to be part of
-.arg charset.
+.arg charset
+.ct .li .
 .im farparm
 .im widefunc
 .im mbsffunc

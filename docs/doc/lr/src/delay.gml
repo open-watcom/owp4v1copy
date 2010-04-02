@@ -23,7 +23,8 @@ the scheduling of other, higher priority activity by the system.
 .do end
 .el .do begin
 The &func function suspends execution by the specified number of
-.arg milliseconds.
+.arg milliseconds
+.ct .li .
 .do end
 .desc end
 .return begin

@@ -7,16 +7,16 @@ unsigned _dos_setblock( unsigned size,
 .funcend
 .desc begin
 The &func function uses system call 0x4A to change the size of
-.arg segment,
-which was previously allocated by
+.arg segment
+.ct , which was previously allocated by
 .kw _dos_allocmem
-.ct,
-to
+.ct, to
 .arg size
 paragraphs.
 If the request fails, the maximum number of paragraphs that this
 memory block can be changed to is returned in the word pointed to by
-.arg maxsize.
+.arg maxsize
+.ct .li .
 .np
 For 32-bit DOS applications, it is recommended that the corresponding
 DPMI services be used.

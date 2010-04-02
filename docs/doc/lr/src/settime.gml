@@ -14,7 +14,8 @@ The &func function uses system call 0x2D to set the current system time.
 The time information is passed in a
 .kw dostime_t
 structure pointed to by
-.arg time.
+.arg time
+.ct .li .
 .desc end
 .return begin
 The &func function returns zero if successful.

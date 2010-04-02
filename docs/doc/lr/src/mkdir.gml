@@ -32,7 +32,8 @@ int _umkdir( const wchar_t *path );
 .*
 .desc begin
 The &func function creates a new subdirectory with name
-.arg path.
+.arg path
+.ct .li .
 The
 .arg path
 can be either relative to the current working directory or it can be
@@ -40,7 +41,8 @@ an absolute path name.
 .if '&machsys' eq 'QNX' .do begin
 .np
 The file permission bits of the new directory are initialized from
-.arg mode.
+.arg mode
+.ct .li .
 The file permission bits of the
 .arg mode
 argument are modified by the process's file creation mask (see

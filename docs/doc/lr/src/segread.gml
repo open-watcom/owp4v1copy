@@ -5,7 +5,8 @@ void segread( struct SREGS *seg_regs );
 .desc begin
 The &func function places the values of the segment registers into
 the structure located by
-.arg seg_regs.
+.arg seg_regs
+.ct .li .
 .desc end
 .return begin
 No value is returned.

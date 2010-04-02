@@ -16,7 +16,8 @@ used when text is displayed by the
 The information is stored in the
 .id textsettings
 structure indicated by the argument
-.arg settings.
+.arg settings
+.ct .li .
 The structure contains the following fields (all are
 .id &short
 fields):

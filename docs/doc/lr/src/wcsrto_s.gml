@@ -25,9 +25,12 @@ errno_t _fwcsrtombs_s( size_t __far * restrict retval,
 .*
 .rtconst begin
 None of
-.arg retval,
-.arg src,
-.arg *src, or
+.arg retval
+.ct ,
+.arg src
+.ct ,
+.arg *src
+.ct , or
 .arg ps
 shall be null pointers. If
 .arg dst
@@ -37,7 +40,8 @@ then neither
 nor
 .arg dstmax
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg dst
 is a null
@@ -53,8 +57,8 @@ not equal zero. If
 is not a null pointer and
 .arg len
 is not less than
-.arg dstmax,
-then the
+.arg dstmax
+.ct , then the
 conversion shall have been stopped (see below) because a terminating null wide character
 was reached or because an encoding error occurred.
 .np
@@ -68,8 +72,8 @@ If
 is not a null pointer and
 .arg dstmax
 is greater than zero and less than
-.kw RSIZE_MAX,
-then &func. sets
+.kw RSIZE_MAX
+.ct , then &func. sets
 .arg dst[0]
 to the null character.
 .rtconst end
@@ -80,12 +84,14 @@ indirectly pointed to by
 .arg src
 into a sequence of corresponding multibyte characters that
 begins in the conversion state described by the object pointed to by
-.arg ps.
+.arg ps
+.ct .li .
 If
 .arg dst
 is not a null pointer, the converted characters are then stored
 into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Conversion continues up to and including a terminating null wide character,
 which is also stored.
 .np
@@ -99,16 +105,19 @@ character;
 .arg dst
 is not a null pointer) when the next multibyte character would exceed the
 limit of n total bytes to be stored into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 If the wide
 character being converted is the null wide character, then n is the lesser of
 .arg len
 or
-.arg dstmax.
+.arg dstmax
+.ct .li .
 Otherwise, n is the lesser of
 .arg len
 or
-.arg dstmax-1.
+.arg dstmax-1
+.ct .li .
 :eul.
 If the conversion stops without converting a null wide character and
 .arg dst

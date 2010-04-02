@@ -20,7 +20,8 @@ The &func function is not re-entrant or thread-safe.
 .return begin
 The &func function returns a pointer to a string that is the parent
 directory of
-.arg path.
+.arg path
+.ct .li .
 If
 .arg path
 is a null pointer or points to an empty string, a pointer to the string "."

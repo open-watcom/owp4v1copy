@@ -12,7 +12,8 @@ The &func function writes
 elements of
 .arg elsize
 bytes each to the file specified by
-.arg fp.
+.arg fp
+.ct .li .
 .desc end
 .return begin
 The &func function returns the number of complete elements

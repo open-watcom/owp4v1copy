@@ -7,7 +7,8 @@ The 16-bit words in
 .arg m
 are each independently shifted to the right by the scalar shift count
 in
-.arg count.
+.arg count
+.ct .li .
 The high-order bits of each element are filled with zeros.
 The shift count is interpreted as unsigned.
 Shift counts greater than 15 yield all zeros.

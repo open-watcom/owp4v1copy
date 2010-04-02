@@ -544,7 +544,8 @@ return( y );
 and changed the keyword
 .kwm void
 to
-.kwm int.
+.kwm int
+.ct .li .
 .np
 We compile the program with the "warning" option.
 .exam begin 1
@@ -963,14 +964,16 @@ The
 identifies the target as an Intel environment.
 .note
 The
-.kwm __I86__,
+.kwm __I86__
+.ct ,
 .kwm M_I86
 and
 .kwm _M_I86
 macros identify the target as a 16-bit Intel environment.
 .note
 The
-.kwm __386__,
+.kwm __386__
+.ct ,
 .kwm M_I386
 and
 .kwm _M_I386
@@ -1030,7 +1033,8 @@ Linux       __LINUX__, __UNIX__
 .autonote Notes:
 .note
 The
-.kwm __DOS__,
+.kwm __DOS__
+.ct ,
 .kwm _DOS
 and
 .kwm MSDOS
@@ -1363,7 +1367,8 @@ keyword to describe functions and other object names that are in far
 memory and pointers to far objects.
 .np
 &product predefines the macros
-.kwm far,
+.kwm far
+.ct ,
 .kwm _far
 and
 .kwm SOMDLINK
@@ -1510,8 +1515,10 @@ restored when a call is made.
 .endnote
 .np
 &product predefines the macros
-.kwm cdecl,
-.kwm _cdecl,
+.kwm cdecl
+.ct ,
+.kwm _cdecl
+.ct ,
 .kwm _Cdecl
 and
 .kwm SOMLINK
@@ -1527,7 +1534,8 @@ keyword to describe Pascal functions that are called using a special
 convention described by a pragma in the "stddef.h" header file.
 .np
 &product predefines the macros
-.kwm pascal,
+.kwm pascal
+.ct ,
 .kwm _pascal
 and
 .kwm _Pascal
@@ -1599,17 +1607,26 @@ data.
 There are several modifiers that can be specified with the
 .kwm __declspec
 keyword:
-.kwm thread,
-.kwm naked,
-.kwm dllimport,
-.kwm dllexport,
-.kwm __pragma( "string" ),
-.kwm __cdecl,
-.kwm __pascal,
-.kwm __fortran,
-.kwm __stdcall,
-and
-.kwm __syscall.
+.kwm thread
+.ct ,
+.kwm naked
+.ct ,
+.kwm dllimport
+.ct ,
+.kwm dllexport
+.ct ,
+.kwm __pragma( "string" )
+.ct ,
+.kwm __cdecl
+.ct ,
+.kwm __pascal
+.ct ,
+.kwm __fortran
+.ct ,
+.kwm __stdcall
+.ct , and
+.kwm __syscall
+.ct .li .
 These attributes are a property only of the declaration of the
 object or function to which they are applied.
 Unlike the
@@ -1626,13 +1643,18 @@ The
 .kwm thread
 attribute affects data and objects only.
 The
-.kwm naked,
-.kwm __pragma,
-.kwm __cdecl,
-.kwm __pascal,
-.kwm __fortran,
-.kwm __stdcall,
-and
+.kwm naked
+.ct ,
+.kwm __pragma
+.ct ,
+.kwm __cdecl
+.ct ,
+.kwm __pascal
+.ct ,
+.kwm __fortran
+.ct ,
+.kwm __stdcall
+.ct , and
 .kwm __syscall
 attributes affect functions only.
 The
@@ -1775,8 +1797,10 @@ made.
 .endnote
 .np
 &product predefines the macros
-.kwm _syscall,
-.kwm _System,
+.kwm _syscall
+.ct ,
+.kwm _System
+.ct ,
 .kwm SOMLINK
 (32-bit only)
 and
@@ -1833,7 +1857,8 @@ char __far16 *bufptr;
 declares the object
 .id bufptr
 to be a far16 pointer to
-.kw char.
+.kw char
+.ct .li .
 .np
 A function declared as,
 .illust begin
@@ -1895,7 +1920,8 @@ Note that
 is
 .bd not
 interchangeable with
-.kwm __far16.
+.kwm __far16
+.ct .li .
 .np
 A pointer declared as,
 .illust begin
@@ -2142,8 +2168,8 @@ _NULLOFF
 .millust end
 .pc
 They are used in a manner similar to
-.kwm NULL,
-but are used with objects declared as
+.kwm NULL
+.ct , but are used with objects declared as
 .kwm __segment
 and
 .kwm __based
@@ -2240,7 +2266,8 @@ A segment object based pointer is specified as follows:
 where
 .id segment
 is an object defined as type
-.kwm __segment.
+.kwm __segment
+.ct .li .
 .np
 An object of type
 .kwm __segment
@@ -2272,11 +2299,13 @@ might be assigned values such as the following:
 a constant value (e.g., the segment containing screen memory),
 .bull
 the result of the library function
-.kw _bheapseg,
+.kw _bheapseg
+.ct ,
 .bull
 the segment portion of another pointer value, by casting it to the
 type
-.kwm __segment.
+.kwm __segment
+.ct .li .
 .endbull
 .*
 .section Void Based Pointers
@@ -2321,8 +2350,8 @@ segment :> offset
 where
 .id segment
 is an expression of type
-.kwm __segment,
-and
+.kwm __segment
+.ct , and
 .id offset
 is an expression of type
 .id __based( void ) *.
@@ -2613,8 +2642,8 @@ DLLImport int  dll_data;
 .np
 Functions, data and objects are exported from a DLL by
 use of
-.kwm __declspec(dllexport),
-the
+.kwm __declspec(dllexport)
+ct , the
 .kwm __export
 keyword (for which
 .kwm __declspec(dllexport)

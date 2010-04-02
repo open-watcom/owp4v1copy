@@ -12,7 +12,8 @@ The &func function writes data at the operating system level.
 The number of bytes transmitted is given by
 .arg len
 and the data to be transmitted is located at the address specified by
-.arg buffer.
+.arg buffer
+.ct .li .
 .if &'length(&_func.) ne 0 .do begin
 .np
 The &_func function is identical to &func..

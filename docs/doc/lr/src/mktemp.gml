@@ -49,7 +49,8 @@ or thread.
 .desc end
 .return begin
 The &func function returns a pointer to the modified
-.arg template.
+.arg template
+.ct .li .
 The &func function returns NULL if
 .arg template
 is badly formed or no more unique names can be created from the given

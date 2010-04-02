@@ -46,7 +46,8 @@ as appropriate.
 .do end
 .*
 .el .if '&machsys' eq 'PP' .do begin
-.kw dirent.
+.kw dirent
+.ct .li .
 .blkcode begin
 typedef struct dirent {
   void*   d_handle;             /* readdir handle */
@@ -57,7 +58,8 @@ typedef struct dirent {
 .do end
 .*
 .el .do begin
-.kw dirent.
+.kw dirent
+.ct .li .
 .blkcode begin
 #if defined(__OS2__) || defined(__NT__)
 #define NAME_MAX 255    /* maximum for HPFS or NTFS */

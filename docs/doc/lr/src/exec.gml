@@ -76,7 +76,8 @@ int _wexecvpe( file, argv, envp );
 The &func functions load and execute a new child process, named by
 .arg path
 or
-.arg file.
+.arg file
+.ct .li .
 If the child process is successfully loaded, it replaces the current
 process in memory.
 No return is made to the original program.
@@ -109,16 +110,14 @@ or as a vector of pointers (
 .kw execve
 .ct,
 .kw execvp
-.ct,
-and
+.ct , and
 .kw execvpe
 .ct ).
 At least one argument,
 .arg arg0
 or
 .arg argv[0]
-.ct ,
-must be passed to the child process.
+.ct , must be passed to the child process.
 By convention, this first argument is a pointer to the name of the
 program.
 .np
@@ -134,22 +133,20 @@ pointer.
 The environment for the invoked program is inherited from the parent
 process when you use the
 .kw execl
-.ct,
+.ct ,
 .kw execlp
-.ct,
+.ct ,
 .kw execv
-.ct,
-and
+.ct , and
 .kw execvp
 functions.
 The
 .kw execle
-.ct,
+.ct ,
 .kw execlpe
-.ct,
+.ct ,
 .kw execve
-.ct,
-and
+.ct , and
 .kw execvpe
 functions allow a different environment to be passed to the child process
 through the
@@ -172,8 +169,7 @@ If the value of
 .arg envp
 is
 .mono NULL
-.ct ,
-then the child process inherits the environment of the parent process.
+.ct , then the child process inherits the environment of the parent process.
 .np
 The environment is the collection of environment variables whose
 values have been defined with the
@@ -204,12 +200,18 @@ functions are extensions to POSIX 1003.1.
 .*==========================================
 .if &'length(&wfunc.) ne 0 .do begin
 The wide-character
-.kw _wexecl,
-.kw _wexecle,
-.kw _wexeclp,
-.kw _wexeclpe,
-.kw _wexecv,
-.kw _wexecve,
+.kw _wexecl
+.ct ,
+.kw _wexecle
+.ct ,
+.kw _wexeclp
+.ct ,
+.kw _wexeclpe
+.ct ,
+.kw _wexecv
+.ct ,
+.kw _wexecve
+.ct ,
 .kw _wexecvp
 and
 .kw _wexecvpe

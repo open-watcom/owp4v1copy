@@ -11,7 +11,8 @@ int _chsize( int &fd, long size );
 The &func function changes the size of the file associated with
 .arg &fd
 by extending or truncating the file to the length specified by
-.arg size.
+.arg size
+.ct .li .
 If the file needs to be extended, the file is padded with NULL ('\0')
 characters.
 .if &'length(&_func.) ne 0 .do begin
@@ -23,9 +24,10 @@ Use &_func for ANSI naming conventions.
 .np
 Note that the &func function call ignores advisory locks which may
 have been set by the
-.kw fcntl,
-.kw lock,
-or
+.kw fcntl
+.ct ,
+.kw lock
+.ct , or
 .kw locking
 functions.
 .do end

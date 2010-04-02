@@ -18,7 +18,8 @@ struct  diskinfo_t {        /* disk parameters     */
 .funcend
 .desc begin
 The &func function makes disk access operations specified by
-.arg service.
+.arg service
+.ct .li .
 Please exercise caution when using this function because it accesses
 disks directly.
 Information for the desired
@@ -26,7 +27,8 @@ Information for the desired
 is passed the
 .kw diskinfo_t
 structure pointed to by
-.arg diskinfo.
+.arg diskinfo
+.ct .li .
 The value for
 .arg service
 can be one of the following values:
@@ -40,7 +42,8 @@ _DISK_WRITE        _DISK_WRITEDDAM
 .millust end
 .np
 In the following description, <sector> etc. means the field of the structure
-.kw diskinfo_t.
+.kw diskinfo_t
+.ct .li .
 .begterm 12
 .termhd1 Value
 .termhd2 Meaning
@@ -126,10 +129,10 @@ is specified in
 .arg service
 and an error occurs, the lower byte is zero.
 When
-.kw _DISK_ALTERNATE,
-is specified in
-.arg service,
-the error value is not returned.
+.kw _DISK_ALTERNATE
+.ct , is specified in
+.arg service
+.ct , the error value is not returned.
 .np
 The contents of status information are different depending on the
 .arg service

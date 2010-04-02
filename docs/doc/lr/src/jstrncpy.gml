@@ -25,7 +25,8 @@ no more than
 single- or double-byte characters from the Kanji string pointed to by
 .arg src
 into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Copying of overlapping objects is not guaranteed to work properly.
 See the
 .kw memmove
@@ -37,8 +38,8 @@ is shorter than
 .arg n
 characters, null characters are appended to the copy in the array pointed
 to by
-.arg dst,
-until
+.arg dst
+.ct , until
 .arg n
 characters in all have been written.
 If the Kanji string pointed to by
@@ -57,7 +58,8 @@ The &func function returns
 The &func and &ffunc functions return
 .do end
 the value of
-.arg dst.
+.arg dst
+.ct .li .
 .return end
 .see begin
 .seelist &function. jstrncpy strcpy strdup strncpy

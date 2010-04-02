@@ -17,7 +17,8 @@ argument is a bitwise inclusive OR of the bits described below. It
 modifies the interpretation of
 .arg pattern
 and
-.arg string.
+.arg string
+.ct .li .
 .begterm 6
 .termhd1 Flag
 .termhd2 Meaning
@@ -25,37 +26,41 @@ and
 If set, a path separator in
 .arg string
 is explicitly matched by a slash in
-.arg pattern.
+.arg pattern
+.ct .li .
 It isn't matched by either the asterisk or question mark special characters,
 or by a bracket expression.
 .term FNM_PERIOD
 If set, a leading period in
 .arg string
 matches a period in
-.arg pattern,
-where the definition of "leading" depends on FNM_PATHNAME:
+.arg pattern
+.ct , where the definition of "leading" depends on FNM_PATHNAME:
 .begbull $compact
 .bull
 If FNM_PATHNAME is set, a period is leading if it's the first character in
-.arg string,
-or if it immediately follows a path separator.
+.arg string
+.ct , or if it immediately follows a path separator.
 .bull
 If FNM_PATHNAME isn't set, a period is leading only if it's
 the first character in
-.arg string.
+.arg string
+.ct .li .
 .endbull
 .term FNM_NOESCAPE
 If set, disables backslash escaping:
 .begbull $compact
 .bull
 If FNM_NOESCAPE isn't set in
-.arg flags,
-a backslash character (\) in
+.arg flags
+.ct , a backslash character (\) in
 .arg pattern
 followed by any other character matches that second character in
-.arg string.
+.arg string
+.ct .li .
 In particular, \\ matches a backslash in
-.arg string.
+.arg string
+.ct .li .
 .bull
 If FNM_NOESCAPE is set, a backslash character is treated as an
 ordinary character.
@@ -149,7 +154,8 @@ and
 The &func function returns zero when
 .arg string
 matches the pattern specified by 
-.arg pattern.
+.arg pattern
+.ct .li .
 If there is no match, FNM_NOMATCH is returned. If an error occurs, &func
 returns another non-zero value.
 .return end

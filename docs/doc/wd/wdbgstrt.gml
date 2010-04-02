@@ -545,7 +545,8 @@ should attempt to establish.
 .ix 'options' 'XConfig'
 .ix 'XConfig option'
 specifies a set of X Windows configuration options to pass to
-.bd xterm.
+.bd xterm
+.ct .li .
 The following example sets the
 .bd xterm
 font size to 12 point.
@@ -598,7 +599,8 @@ should attempt to establish.
 .ix 'options' 'XConfig'
 .ix 'XConfig option'
 specifies a set of X Windows configuration options to pass to
-.bd xqsh.
+.bd xqsh
+.ct .li .
 
 .endnote
 .*

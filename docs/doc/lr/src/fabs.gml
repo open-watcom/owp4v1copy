@@ -5,11 +5,13 @@ double fabs( double x );
 .funcend
 .desc begin
 The &func function computes the absolute value of the argument
-.arg x.
+.arg x
+.ct .li .
 .desc end
 .return begin
 The &func function returns the absolute value of
-.arg x.
+.arg x
+.ct .li .
 .return end
 .see begin
 .seelist fabs abs labs imaxabs

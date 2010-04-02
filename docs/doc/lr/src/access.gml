@@ -20,7 +20,8 @@ int _uaccess( const wchar_t *path, int mode );
 The &func function determines if the file or directory specified by
 .arg path
 exists and if it can be accessed with the file permission given by
-.arg mode.
+.arg mode
+.ct .li .
 .if &'length(&_func.) ne 0 .do begin
 .np
 The &_func function is identical to &func..
@@ -61,13 +62,15 @@ write-only files.
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg path.
+.arg path
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
 The &ufunc Unicode function is identical to &func except that it
 accepts a Unicode string argument for
-.arg path.
+.arg path
+.ct .li .
 .do end
 .desc end
 .return begin

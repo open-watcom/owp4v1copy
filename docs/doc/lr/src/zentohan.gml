@@ -6,7 +6,8 @@ JMOJI zentohan( JMOJI c );
 .desc begin
 The &func function returns the single-byte ASCII character equivalent
 to the double-byte character
-.arg c.
+.arg c
+.ct .li .
 The ASCII character will be in the range 0x20 to 0x7E.
 .desc end
 .return begin

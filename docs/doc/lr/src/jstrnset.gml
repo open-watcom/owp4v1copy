@@ -19,7 +19,8 @@ The &func and &ffunc functions fill
 the string
 .arg s1
 with the value of the argument
-.arg fill.
+.arg fill
+.ct .li .
 If
 .arg fill
 is a single-byte character, its value must be in the low-order byte

@@ -17,7 +17,8 @@ The &func and &ffunc functions return
 the type of an 8-bit character indicated as a byte offset
 .arg n
 from the start of the string
-.arg str.
+.arg str
+.ct .li .
 .begterm 10
 .termhd1 Constant
 .termhd2 Meaning
@@ -41,17 +42,22 @@ or it is the null character,
 .desc end
 .return begin
 If the character is a null character, &func returns
-.kw CT_ILGL.
+.kw CT_ILGL
+.ct .li .
 If the offset
 .arg n
 is beyond the end of the string, &func returns
-.kw CT_ILGL.
+.kw CT_ILGL
+.ct .li .
 In all other cases, it returns one of
-.kw CT_ANK,
-.kw CT_KJ1,
-.kw CT_KJ2,
-or
-.kw CT_ILGL.
+.kw CT_ANK
+.ct ,
+.kw CT_KJ1
+.ct ,
+.kw CT_KJ2
+.ct , or
+.kw CT_ILGL
+.ct .li .
 .return end
 .see begin
 .seelist &function. chkctype iskanji iskanji2 jiszen nthctype

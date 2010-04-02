@@ -51,7 +51,8 @@ It is used whenever the debugger prompts for an address and in
 lower level commands such
 .kw Examine
 and
-.kw Modify.
+.kw Modify
+.ct .li .
 If the notation for a particular command argument is <address>,
 it is an address expression.
 If it ends in just "expr" then it is a normal expression.

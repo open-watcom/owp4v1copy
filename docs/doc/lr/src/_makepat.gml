@@ -80,7 +80,8 @@ The full pathname
 (e.g., //2/home/fred/myfile.dat)
 .do end
 is placed in the buffer pointed to by the argument
-.arg path.
+.arg path
+.ct .li .
 .im widefunc
 .im unifunc
 .np

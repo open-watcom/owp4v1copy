@@ -41,13 +41,15 @@ or both.
 If both the parent and child processes use these functions, the result
 is undefined.
 Either or both processes may use
-.kw closedir.
+.kw closedir
+.ct .li .
 .do end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it rewinds a
 directory of wide-character filenames opened by
-.kw _wopendir.
+.kw _wopendir
+.ct .li .
 .do end
 .desc end
 .return begin

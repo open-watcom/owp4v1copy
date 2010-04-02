@@ -52,7 +52,8 @@ The chart environment structure
 .arg env
 is filled with default values based on the type of chart and the values
 of the
-.arg cat,
+.arg cat
+.ct ,
 .arg values
 and
 .arg labels

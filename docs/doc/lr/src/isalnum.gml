@@ -44,7 +44,8 @@ The &wfunc function returns a non-zero value if either
 or
 .kw iswdigit
 is true for
-.arg c.
+.arg c
+.ct .li .
 .do end
 .return end
 .see begin

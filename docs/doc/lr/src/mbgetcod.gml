@@ -12,7 +12,8 @@ The &func function places the next single- or double-byte character
 from the start of the Kanji string specified by
 .arg mbstr
 in the wide character pointed to by
-.arg dbchp.
+.arg dbchp
+.ct .li .
 If the second-half of a double-byte character is NULL, then the
 returned wide character is NULL.
 .im ffarfunc

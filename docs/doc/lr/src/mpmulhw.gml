@@ -6,7 +6,8 @@ __m64 _m_pmulhw(__m64 *m1, __m64 *m2);
 The signed 16-bit words of
 .arg m1
 are multiplied with the respective signed 16-bit words of
-.arg m2.
+.arg m2
+.ct .li .
 The high-order 16-bits of each result are placed in the respective
 elements of the result.
 .desc end

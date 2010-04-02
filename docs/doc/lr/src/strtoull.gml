@@ -67,13 +67,15 @@ If the correct value would cause overflow,
 is returned and
 .kw errno
 is set to
-.kw ERANGE.
+.kw ERANGE
+.ct .li .
 If
 .arg base
 is out of range, zero is returned and
 .kw errno
 is set to
-.kw EDOM.
+.kw EDOM
+.ct .li .
 .return end
 .see begin
 .im seestoi &function.

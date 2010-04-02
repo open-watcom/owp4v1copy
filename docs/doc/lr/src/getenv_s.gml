@@ -12,7 +12,8 @@ errno_t getenv_s( size_t * restrict len,
 shall not be a null pointer.
 .arg maxsize
 shall neither be equal to zero nor be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg maxsize
 is not equal to zero, then
@@ -29,22 +30,26 @@ is not null) is set to zero, and the environment list is not searched.
 .desc begin
 The &func function searches the environment list for an entry matching
 the string pointed to by
-.arg name.
+.arg name
+.ct .li .
 .np
 If that entry is found, &func performs the following actions. If
 .arg len
 is not a null pointer, the length of the string associated with the matched
 entry is stored in the integer pointed to by
-.arg len.
+.arg len
+.ct .li .
 If the length of the associated string is less than
-.arg maxsize,
-then the associated string is copied to the array pointed to by
-.arg value.
+.arg maxsize
+.ct , then the associated string is copied to the array pointed to by
+.arg value
+.ct .li .
 .np
 If that entry is not found, &func performs the following actions. If
 .arg len
 is not a null pointer, zero is stored in the integer pointed to by
-.arg len.
+.arg len
+.ct .li .
 If
 .arg maxsize
 is greater than zero, then
@@ -133,7 +138,8 @@ assignments:
 The &func function returns zero if the environment string specified by
 .arg name
 was found and successfully stored in the buffer pointed to by
-.arg value.
+.arg value
+.ct .li .
 Otherwise, a non-zero value is returned.
 .return end
 .*

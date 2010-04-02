@@ -28,8 +28,8 @@ immediately after the last character read into the array.
 The &wfunc function is identical to &func except that it gets a string
 of multibyte characters (if present) from the input stream pointed to
 by
-.kw stdin,
-converts them to wide characters, and stores them in the
+.kw stdin
+.ct , converts them to wide characters, and stores them in the
 wide-character array pointed to by
 .arg buf
 until end-of-file is encountered or a wide-character new-line

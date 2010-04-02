@@ -24,7 +24,8 @@ The &func function locates the first occurrence of
 (converted to an unsigned char) in the first
 .arg length
 characters of the object pointed to by
-.arg buf.
+.arg buf
+.ct .li .
 .im farfunc
 .if &'length(&wfunc.) ne 0 .do begin
 .np

@@ -9,7 +9,8 @@ character*(*) text
 .gfuncend
 .desc begin
 The &func &routine displays the character string indicated by the argument
-.arg text.
+.arg text
+.ct .li .
 The string must be terminated by a null character
 .if '&lang' eq 'C' .do begin
 ('\0').

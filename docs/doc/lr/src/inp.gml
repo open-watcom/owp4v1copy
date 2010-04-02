@@ -6,7 +6,8 @@ unsigned int inp( int port );
 .desc begin
 The &func function reads one byte from the 80x86 hardware port whose
 number is given by
-.arg port.
+.arg port
+.ct .li .
 .im portdesc
 .im privity
 .desc end

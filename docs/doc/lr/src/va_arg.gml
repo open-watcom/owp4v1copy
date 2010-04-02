@@ -9,7 +9,8 @@ list of variable arguments.
 It must be used with the associated macros
 .kw va_start
 and
-.kw va_end.
+.kw va_end
+.ct .li .
 A sequence such as
 .millust begin
 void example( char *dst, ... )

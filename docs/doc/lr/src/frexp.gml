@@ -9,12 +9,13 @@ normalized fraction and an integral power of 2.
 It stores the integral power of 2 in the
 .arg int
 object pointed to by
-.arg exp.
+.arg exp
+.ct .li .
 .desc end
 .return begin
 The &func function returns the value of
-.arg x,
-such that
+.arg x
+.ct , such that
 .arg x
 is a
 .id double
@@ -23,7 +24,8 @@ with magnitude in the interval [0.5,1) or zero, and
 equals
 .arg x
 times 2 raised to the power
-.arg *exp.
+.arg *exp
+.ct .li .
 If
 .arg value
 is zero, then both parts of the result are zero.

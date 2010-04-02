@@ -7,7 +7,8 @@ double pow( double x, double y );
 The &func function computes
 .arg x
 raised to the power
-.arg y.
+.arg y
+.ct .li .
 A domain error occurs if
 .arg x
 is zero and
@@ -23,7 +24,8 @@ A range error may occur.
 The &func function returns the value of
 .arg x
 raised to the power
-.arg y.
+.arg y
+.ct .li .
 .im errnodom
 .return end
 .see begin

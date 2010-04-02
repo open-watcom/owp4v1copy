@@ -5,7 +5,8 @@ unsigned _dos_commit( int handle );
 .desc begin
 The &func function uses system call 0x68 to flush to disk the DOS
 buffers associated with the file indicated by
-.arg handle.
+.arg handle
+.ct .li .
 It also forces an update on the corresponding disk directory and the
 file allocation table.
 .desc end

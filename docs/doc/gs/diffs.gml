@@ -1868,7 +1868,8 @@ The Win32
 variable was added to the library.
 .bull
 The Win32
-.kw _winmajor,
+.kw _winmajor
+.ct ,
 .kw _winminor
 and
 .kw _winver
@@ -2752,9 +2753,12 @@ object will need to be recompiled. We recommend that you recompile
 your application.
 .np
 The C++ compiler now supports the use of the
-.kw __export,
-.kw __cdecl,
-.kw __pascal,
+.kw __export
+.ct ,
+.kw __cdecl
+.ct ,
+.kw __pascal
+.ct ,
 .kw __stdcall
 and
 .kw __syscall

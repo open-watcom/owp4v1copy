@@ -8,9 +8,11 @@ int bcmp(const void *s1, const void *s2, size_t n);
 The &func function compares the byte string pointed to by
 .arg s1
 to the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 The number of bytes to compare is specified by
-.arg n.
+.arg n
+.ct .li .
 Null characters may be included in the comparision.
 .np
 Note that this function is similar to the ANSI

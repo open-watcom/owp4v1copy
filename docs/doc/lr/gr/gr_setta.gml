@@ -12,7 +12,8 @@ The &func &routine sets the current text alignment to the values
 specified by the arguments
 .arg horiz
 and
-.arg vert.
+.arg vert
+.ct .li .
 When text is displayed with the
 .kw _grtext
 &routine, it is aligned (justified) horizontally and vertically

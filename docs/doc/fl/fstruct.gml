@@ -84,7 +84,8 @@ statement.
 An optional block label may be specified with the
 .kw IF
 statement (see the
-.kw CYCLE,
+.kw CYCLE
+.ct ,
 .kw EXIT
 or
 .kw QUIT
@@ -231,7 +232,8 @@ statement.
 An optional block label may be specified with the
 .kw IF
 statement (see the
-.kw CYCLE,
+.kw CYCLE
+.ct ,
 .kw EXIT
 or
 .kw QUIT
@@ -359,7 +361,8 @@ statement.
 This extension to FORTRAN 77 allows the creation of DO-loops without the
 introduction of statement numbers.
 An optional block label may be specified (see the
-.kw CYCLE,
+.kw CYCLE
+.ct ,
 .kw EXIT
 or
 .kw QUIT
@@ -392,7 +395,8 @@ the
 statement is treated in the same manner as if the word
 .kw CONTINUE
 had been used instead of
-.kw END DO.
+.kw END DO
+.ct .li .
 .np
 Some examples follow.
 .keep 10
@@ -479,7 +483,8 @@ When the
 statement is reached, the expression is re-evaluated and program control
 proceeds as previously described.
 An optional block label may be specified (see the
-.kw CYCLE,
+.kw CYCLE
+.ct ,
 .kw EXIT
 or
 .kw QUIT
@@ -583,7 +588,8 @@ or
 .kw QUIT
 statement.
 An optional block label may be specified (see the
-.kw CYCLE,
+.kw CYCLE
+.ct ,
 .kw EXIT
 or
 .kw QUIT
@@ -640,7 +646,8 @@ decisions are repeated.
 .* .kw DO
 .* following the right parenthesis is optional.
 An optional block label may be specified (see the
-.kw CYCLE,
+.kw CYCLE
+.ct ,
 .kw EXIT
 or
 .kw QUIT
@@ -826,7 +833,8 @@ and
 The
 .kw SELECT
 statement may contain a block label (see the
-.kw CYCLE,
+.kw CYCLE
+.ct ,
 .kw EXIT
 or
 .kw QUIT
@@ -1410,8 +1418,8 @@ Control resumes at the statement following the
 .kw END GUESS
 statement.
 Since this statement is an
-.kw END LOOP,
-control is transferred to the beginning of the loop.
+.kw END LOOP
+.ct , control is transferred to the beginning of the loop.
 .np
 The above example illustrates the point that all the information
 required to make a choice (in this case between a valid set of data
@@ -1456,8 +1464,10 @@ contained.
 .np
 When transferring out of a loop, control is passed to the statement
 following the
-.kw END DO,
-.kw END WHILE,
+.kw END DO
+.ct ,
+.kw END WHILE
+.ct ,
 .kw END LOOP
 or
 .kw UNTIL
@@ -1595,8 +1605,10 @@ statement that invoked the remote block.
 .np
 When transferring out of a loop, control is passed to the statement
 following the
-.kw END DO,
-.kw END WHILE,
+.kw END DO
+.ct ,
+.kw END WHILE
+.ct ,
 .kw END LOOP
 or
 .kw UNTIL
@@ -1696,8 +1708,10 @@ The
 .kw CYCLE
 statement is used to cause a transfer of control from within a loop to
 the terminal statement of a corresponding
-.kw DO,
-.kw DO WHILE,
+.kw DO
+.ct ,
+.kw DO WHILE
+.ct ,
 .kw WHILE
 or
 .kw LOOP
@@ -1920,8 +1934,10 @@ of the program visually obvious.
 The normal flow of control of the new programming constructs described
 earlier may be altered with standard FORTRAN control statements.
 For example, the program may exit from a block using a
-.kw GO TO,
-.kw STOP,
+.kw GO TO
+.ct ,
+.kw STOP
+.ct ,
 .kw RETURN
 or arithmetic
 .kw IF
@@ -1930,7 +1946,8 @@ However, a block may not be entered in the middle through use of any
 control statement such as
 .kw GO TO
 or the arithmetic
-.kw IF.
+.kw IF
+.ct .li .
 .np
 Consider the following example.
 .keep 10

@@ -5,7 +5,8 @@ int fclose( FILE *fp );
 .funcend
 .desc begin
 The &func function closes the file
-.arg fp.
+.arg fp
+.ct .li .
 If there was any unwritten buffered data for the file, it is written out
 before the file is closed.
 Any unread buffered data is discarded.

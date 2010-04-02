@@ -13,8 +13,8 @@ character string.
 The function examines only the byte at offset
 .arg count
 in
-.arg mbstr,
-ignoring invalid characters before the specified byte
+.arg mbstr
+.ct , ignoring invalid characters before the specified byte
 .np
 .us Note:
 A similar function was called

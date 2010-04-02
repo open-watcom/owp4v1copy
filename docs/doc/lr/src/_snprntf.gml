@@ -22,7 +22,8 @@ function, except that the argument
 specifies a character array into which the generated output is placed,
 rather than to a file.
 The maximum number of characters to store is specified by
-.arg count.
+.arg count
+.ct .li .
 A null character is placed at the end of the generated character
 string if fewer than
 .arg count
@@ -40,7 +41,8 @@ specifies an array of wide characters into which the generated output
 is to be written, rather than converted to multibyte characters and
 written to a stream.
 The maximum number of wide characters to store is specified by
-.arg count.
+.arg count
+.ct .li .
 A null wide character is placed at the end of the generated wide
 character string if fewer than
 .arg count

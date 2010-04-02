@@ -42,8 +42,8 @@ wchar_t *_ustrnset( wchar_t *str, int fill, size_t count );
 The &func function fills the string
 .arg str
 with the value of the argument
-.arg fill,
-converted to be a character value.
+.arg fill
+.ct , converted to be a character value.
 When the value of
 .arg count
 is greater than the length of the string, the entire string is filled.

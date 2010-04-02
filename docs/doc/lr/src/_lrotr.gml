@@ -6,9 +6,10 @@ unsigned long _lrotr( unsigned long value,
 .funcend
 .desc begin
 The &func function rotates the unsigned long integer, determined by
-.arg value,
-to the right by the number of bits specified in
-.arg shift.
+.arg value
+.ct , to the right by the number of bits specified in
+.arg shift
+.ct .li .
 .desc end
 .return begin
 The rotated value is returned.

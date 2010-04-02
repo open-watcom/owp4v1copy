@@ -20,7 +20,8 @@ integer*2 mode
 .gfuncend
 .desc begin
 The &func &routines display the screen image indicated by the argument
-.arg image.
+.arg image
+.ct .li .
 The &func &routine uses the view coordinate system.
 The &func2 &routine uses the window coordinate system.
 .np

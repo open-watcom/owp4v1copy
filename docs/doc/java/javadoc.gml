@@ -68,7 +68,8 @@ that tag is not allowed.  Tags are allowed in comment blocks as follows:
 is allowed only in comment blocks for a
 .kw class
 or
-.kw interface.
+.kw interface
+.ct .li .
 .np
 .id @exception
 is allowed only in comment blocks for a method or constructor.
@@ -89,7 +90,8 @@ is allowed in any comment block
 is allowed only in comment blocks for a
 .kw class
 or
-.kw interface.
+.kw interface
+.ct .li .
 
 :MSGSYM. WARN_JD_TAG_NAKED
 :MSGTXT. JavaDoc tag not followed by text

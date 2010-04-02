@@ -11,7 +11,8 @@ void FreeHugeAlias16( DWORD fp16, DWORD size );
 .funcend
 .desc begin
 &func frees a 16-bit far pointer alias that was allocated with
-.kw AllocHugeAlias16.
+.kw AllocHugeAlias16
+.ct .li .
 The size of the original 32-bit memory object must be specified.
 It is important to use
 .kw FreeHugeAlias16

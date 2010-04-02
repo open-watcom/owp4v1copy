@@ -10,7 +10,8 @@ void _endthreadex( unsigned retval );
 .func end
 .desc begin
 The &func function is used to terminate a thread created by
-.kw _beginthread.
+.kw _beginthread
+.ct .li .
 For each operating environment under which &func is supported,
 the &func function uses the appropriate system call to end the current
 thread of execution.
@@ -18,7 +19,8 @@ thread of execution.
 The
 .kw _endthreadex
 function is used to terminate a thread created by
-.kw _beginthreadex.
+.kw _beginthreadex
+.ct .li .
 The thread exit code
 .arg retval
 must be specified.

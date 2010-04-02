@@ -5,7 +5,8 @@ long long int llabs( long long int j );
 .desc begin
 The &func function returns the absolute value
 of its long long integer argument
-.arg j.
+.arg j
+.ct .li .
 .desc end
 .return begin
 The &func function returns the absolute value of its argument.

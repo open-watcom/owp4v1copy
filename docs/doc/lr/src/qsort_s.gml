@@ -14,7 +14,8 @@ Neither
 nor
 .arg size
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg nmemb
 is not equal to zero, then neither
@@ -30,13 +31,15 @@ The &func function sorts an array of
 .arg nmemb
 objects, the initial element of which is
 pointed to by
-.arg base.
+.arg base
+.ct .li .
 The size of each object is specified by
-.arg size.
+.arg size
+.ct .li .
 The contents of the array are sorted into ascending order according to a comparison
 function pointed to by
-.arg compar,
-which is called with three arguments. The first two
+.arg compar
+.ct , which is called with three arguments. The first two
 point to the objects being compared. The function shall return an integer less than, equal
 to, or greater than zero if the first argument is considered to be respectively less than,
 equal to, or greater than the second. The third argument to the comparison function is the

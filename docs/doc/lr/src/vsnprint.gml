@@ -25,10 +25,12 @@ int vsnwprintf( wchar_t *buf,
 The &func function formats data under control of the
 .arg format
 control string and stores the result in
-.arg buf.
+.arg buf
+.ct .li .
 The maximum number of characters to store, including a terminating
 null character, is specified by
-.arg count.
+.arg count
+.ct .li .
 The
 .arg format
 string is described under the description of the
@@ -37,8 +39,8 @@ function.
 The &func function is equivalent to the
 .kw _snprintf
 function, with the variable argument list replaced with
-.arg arg,
-which has been initialized by the
+.arg arg
+.ct , which has been initialized by the
 .kw va_start
 macro.
 .if &'length(&wfunc.) ne 0 .do begin
@@ -50,7 +52,8 @@ is to be written, rather than converted to multibyte characters and
 written to a stream.
 The maximum number of wide characters to write, including a
 terminating null wide character, is specified by
-.arg count.
+.arg count
+.ct .li .
 The &wfunc function accepts a wide-character string argument for
 .arg format
 .do end
@@ -64,7 +67,8 @@ been sufficiently large, not counting the terminating null
 character, or a negative value if an encoding error occurred.
 Thus, the null-terminated output has been completely written if and only
 if the returned value is nonnegative and less than
-.arg count.
+.arg count
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 The &wfunc function returns the number of wide characters that would have
 been written had
@@ -73,7 +77,8 @@ been sufficiently large, not counting the terminating null wide character,
 or a negative value if an encoding error occurred.
 Thus, the null-terminated output has been completely written if and only
 if the returned value is nonnegative and less than
-.arg count.
+.arg count
+.ct .li .
 .do end
 .im errnoref
 .return end

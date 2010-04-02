@@ -69,7 +69,8 @@ arguments.
 The information is returned in a
 .kw find_t
 structure pointed to by
-.arg buffer.
+.arg buffer
+.ct .li .
 The
 .arg path
 argument may contain wildcard characters ('?' and '*').
@@ -88,8 +89,10 @@ If
 is specified, then normal files are included in the search.
 .point
 If any of
-.kw _A_HIDDEN,
-.kw _A_SYSTEM,
+.kw _A_HIDDEN
+.ct ,
+.kw _A_SYSTEM
+.ct ,
 .kw _A_SUBDIR
 are specified, then normal files and the specified type of files are
 included in the search.
@@ -146,7 +149,8 @@ This function deallocates any resources that were allocated by the
 function.
 .if &'length(&wfunc.) ne 0 .do begin
 The wide-character
-.kw _wdos_findclose,
+.kw _wdos_findclose
+.ct ,
 .kw _wdos_findfirst
 and
 .kw _wdos_findnext

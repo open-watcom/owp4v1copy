@@ -5,7 +5,8 @@ double log( double x );
 .funcend
 .desc begin
 The &func function computes the natural logarithm (base e) of
-.arg x.
+.arg x
+.ct .li .
 A domain error occurs if the argument is negative.
 A range error occurs if the argument is zero.
 .desc end

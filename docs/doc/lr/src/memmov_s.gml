@@ -33,10 +33,12 @@ shall be a null pointer. Neither
 nor
 .arg n
 shall be greater than
-.arg RSIZE_MAX.
+.arg RSIZE_MAX
+.ct .li .
 .arg n
 shall not be greater than
-.arg s1max.
+.arg s1max
+.ct .li .
 .np
 If there is a runtime-constraint violation, the &func function stores zeros in the first
 .arg s1max
@@ -48,7 +50,8 @@ is not a null pointer and
 .arg s1max
 is
 not greater than
-.arg RSIZE_MAX.
+.arg RSIZE_MAX
+.ct .li .
 .rtconst end
 .*
 .desc begin
@@ -57,7 +60,8 @@ The &func function copies
 characters from the buffer pointed to by
 .arg s2
 into the buffer pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 This copying takes place as if the
 .arg n
 characters from the buffer
@@ -72,7 +76,8 @@ or
 ,and then the
 .arg n
 characters from the temporary array are copied into the object pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 .np
 See the
 .arg memcpy_s

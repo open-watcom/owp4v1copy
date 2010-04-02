@@ -23,7 +23,8 @@ characters.
 The first character of
 .arg src
 overwrites the null character at the end of
-.arg dst.
+.arg dst
+.ct .li .
 A terminating null character is always appended to the result, unless
 .arg n
 characters of

@@ -10,7 +10,8 @@ size_t far _fmbclen( const unsigned char __far *ch );
 .desc begin
 The &func function determines the number of bytes comprising the
 multibyte character pointed to by
-.arg ch.
+.arg ch
+.ct .li .
 .im farparm
 .desc end
 .return begin

@@ -8,7 +8,8 @@ unsigned short _bios_printer( unsigned service,
 .desc begin
 The &func function uses INT 0x17 to perform printer output
 services to the printer specified by
-.arg port.
+.arg port
+.ct .li .
 The values for service are:
 .begterm 12
 .termhd1 Value
@@ -17,13 +18,16 @@ The values for service are:
 Sends the low-order byte of
 .arg data
 to the printer specified by
-.arg port.
+.arg port
+.ct .li .
 .term _PRINTER_INIT
 Initializes the printer specified by
-.arg port.
+.arg port
+.ct .li .
 .term _PRINTER_STATUS
 Get the status of the printer specified by
-.arg port.
+.arg port
+.ct .li .
 .endterm
 .desc end
 .return begin

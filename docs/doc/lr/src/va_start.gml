@@ -19,7 +19,8 @@ notation in the original function definition.
 It must be used with the associated macros
 .kw va_arg
 and
-.kw va_end.
+.kw va_end
+.ct .li .
 See the description of
 .kw va_arg
 for complete documentation on these macros.

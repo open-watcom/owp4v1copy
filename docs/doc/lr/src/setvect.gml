@@ -8,7 +8,8 @@ void _dos_setvect( unsigned intnum,
 The &func function sets interrupt vector number
 .arg intnum
 to point to the interrupt handling function pointed to by
-.arg handler.
+.arg handler
+.ct .li .
 .desc end
 .return begin
 The &func function does not return a value.

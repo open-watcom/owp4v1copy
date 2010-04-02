@@ -9,13 +9,15 @@ int int86x( int inter_no,
 .desc begin
 The &func function causes the computer's central processor (CPU) to be
 interrupted with an interrupt whose number is given by
-.arg inter_no.
+.arg inter_no
+.ct .li .
 Before the interrupt, the CPU registers are loaded from the structure
 located by
 .arg in_regs
 and the DS and ES segment registers are loaded from the structure
 located by
-.arg seg_regs.
+.arg seg_regs
+.ct .li .
 .im segregs
 .np
 Following the interrupt, the structure located by

@@ -11,8 +11,8 @@ The &func function compares, without case sensitivity, the string
 pointed to by
 .arg s1
 to the string pointed to by
-.arg s2,
-for at most
+.arg s2
+.ct , for at most
 .arg len
 characters.
 .np
@@ -26,7 +26,8 @@ than zero, indicating that the string pointed to by
 .arg s1
 is, ignoring case, less than, equal to, or greater than the string pointed
 to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist strnicmp strcmp stricmp strncmp strcasecmp

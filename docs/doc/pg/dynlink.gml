@@ -254,12 +254,13 @@ Here are some explanatory notes on this example.
 This function is called when the DLL is attaching to the address space
 of the current process as a result of the process starting up or as a
 result of a call to
-.kw LoadLibrary.
+.kw LoadLibrary
+.ct .li .
 A DLL can use this opportunity to initialize any instance data.
 .np
 During initial process startup or after a call to
-.kw LoadLibrary,
-the operating system scans the list of loaded DLLs for the process.
+.kw LoadLibrary
+.ct , the operating system scans the list of loaded DLLs for the process.
 For each DLL that has not already been called with the
 .id DLL_PROCESS_ATTACH
 value, the system calls the DLL's
@@ -268,7 +269,8 @@ entry-point (in the &product run-time system).
 This call is made in the context of the thread that caused the process
 address space to change, such as the primary thread of the process or
 the thread that called
-.kw LoadLibrary.
+.kw LoadLibrary
+.ct .li .
 .*
 .note __FTHRD_INITIALIZE_
 .*
@@ -294,8 +296,8 @@ Note that
 is called with this value only by threads created after the DLL is
 attached to the process.
 When a DLL is attached by
-.kw LoadLibrary,
-existing threads do not call the
+.kw LoadLibrary
+.ct , existing threads do not call the
 .kw LibMain
 entry-point of the newly loaded DLL.
 .*
@@ -339,11 +341,12 @@ This function is called when the DLL is detaching from the address
 space of the calling process as a result of either a normal
 termination or
 of a call to
-.kw FreeLibrary.
+.kw FreeLibrary
+.ct .li .
 When a DLL detaches from a process as a result of process termination
 or as a result of a call to
-.kw FreeLibrary,
-the operating system does not call the DLL's
+.kw FreeLibrary
+.ct , the operating system does not call the DLL's
 .kw LibMain
 with the
 .id DLL_THREAD_DETACH
@@ -367,7 +370,8 @@ If the return value is 0 when
 is called because the process uses the
 .kw LoadLibrary
 function,
-.kw LoadLibrary returns NULL.
+.kw LoadLibrary
+returns NULL.
 .np
 If the return value is 0 when
 .kw LibMain
@@ -493,7 +497,8 @@ EXTERNC void dll_entry_2( void )
 .*
 This is a handle for the DLL.
 It can be used as a argument to other functions such as
-.kw GetModuleFileName.
+.kw GetModuleFileName
+.ct .li .
 .*
 .note fdwReason
 .*
@@ -511,15 +516,16 @@ It can have one of the following values:
 This value indicates that the DLL is attaching to the address space of
 the current process as a result of the process starting up or as a
 result of a call to
-.kw LoadLibrary.
+.kw LoadLibrary
+.ct .li .
 A DLL can use this opportunity to initialize any instance data or to
 use the
 .kw TlsAlloc
 function to allocate a Thread Local Storage (TLS) index.
 .np
 During initial process startup or after a call to
-.kw LoadLibrary,
-the operating system scans the list of loaded DLLs for the process.
+.kw LoadLibrary
+.ct , the operating system scans the list of loaded DLLs for the process.
 For each DLL that has not already been called with the
 .id DLL_PROCESS_ATTACH
 value, the system calls the DLL's
@@ -528,7 +534,8 @@ entry-point.
 This call is made in the context of the thread that caused the process
 address space to change, such as the primary thread of the process or
 the thread that called
-.kw LoadLibrary.
+.kw LoadLibrary
+.ct .li .
 .*
 .note DLL_THREAD_ATTACH
 .*
@@ -554,8 +561,8 @@ Note that
 is called with this value only by threads created after the DLL is
 attached to the process.
 When a DLL is attached by
-.kw LoadLibrary,
-existing threads do not call the
+.kw LoadLibrary
+.ct , existing threads do not call the
 .kw LibMain
 entry-point of the newly loaded DLL.
 .*
@@ -597,7 +604,8 @@ for it.
 This value indicates that the DLL is detaching from the address space
 of the calling process as a result of either a normal termination or
 of a call to
-.kw FreeLibrary.
+.kw FreeLibrary
+.ct .li .
 The DLL can use this opportunity to call the
 .kw TlsFree
 function to free any TLS indices allocated by using
@@ -605,8 +613,8 @@ function to free any TLS indices allocated by using
 and to free any thread local data.
 When a DLL detaches from a process as a result of process termination
 or as a result of a call to
-.kw FreeLibrary,
-the operating system does not call the DLL's
+.kw FreeLibrary
+.ct , the operating system does not call the DLL's
 .kw LibMain
 with the
 .id DLL_THREAD_DETACH
@@ -655,14 +663,16 @@ If the return value is FALSE (0) when
 is called because the process uses the
 .kw LoadLibrary
 function,
-.kw LoadLibrary returns NULL.
+.kw LoadLibrary
+returns NULL.
 .np
 If the return value is FALSE (0) when
 .kw LibMain
 is called during process initialization, the process terminates with
 an error.
 To get extended error information, call
-.kw GetLastError.
+.kw GetLastError
+.ct .li .
 .np
 When the system calls
 .kw LibMain
@@ -687,13 +697,15 @@ This is a handle for the DLL.
 A 0 value indicates that the DLL is attaching to the address space of
 the current process as a result of the process starting up or as a
 result of a call to
-.kw DosLoadModule.
+.kw DosLoadModule
+.ct .li .
 A DLL can use this opportunity to initialize any instance data.
 .np
 A non-zero value indicates that the DLL is detaching from the address
 space of the calling process as a result of either a normal
 termination or of a call to
-.kw DosFreeModule.
+.kw DosFreeModule
+.ct .li .
 .*
 .note Return Value
 .*

@@ -77,7 +77,8 @@ functions.
 You may find it easier to use
 .kw _Call16
 rather than &func followed by a call to
-.kw InvokeIndirectFunction.
+.kw InvokeIndirectFunction
+.ct .li .
 .desc end
 .return begin
 The &func function returns a handle to the indirect function, or NULL

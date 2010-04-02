@@ -20,7 +20,8 @@ The &func and &ffunc functions skip
 over
 .arg n
 single- or double-byte characters in the Kanji string
-.arg src.
+.arg src
+.ct .li .
 A pointer to the next character is returned.
 .im ffarfunc
 .desc end

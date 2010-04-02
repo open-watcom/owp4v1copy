@@ -27,7 +27,8 @@ int _ustrcoll( const wchar_t *s1, const wchar_t *s2 );
 The &func function compares the string pointed to by
 .arg s1
 to the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 The comparison uses the collating sequence selected by the
 .kw setlocale
 function.
@@ -49,8 +50,8 @@ The &func function returns an integer less than, equal to, or
 greater than zero, indicating that the string pointed to by
 .arg s1
 is less than, equal to, or greater than the string pointed to by
-.arg s2,
-according to the collating sequence selected.
+.arg s2
+.ct , according to the collating sequence selected.
 .return end
 .see begin
 .seelist strcoll setlocale strcmp strncmp

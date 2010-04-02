@@ -13,8 +13,8 @@ void qsort( void *base,
 The &func function sorts an array of
 .arg num
 elements, which is pointed to by
-.arg base,
-using a modified version of Sedgewick's Quicksort algorithm.
+.arg base
+.ct , using a modified version of Sedgewick's Quicksort algorithm.
 Each element in the array is
 .arg width
 bytes in size.

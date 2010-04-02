@@ -10,7 +10,8 @@ The &func function prints, on the file designated by
 .ct,
 the Kanji error message corresponding to the error number
 contained in
-.kw errno.
+.kw errno
+.ct .li .
 The &func function is implemented as follows:
 .millust begin
 #include <stdio.h>

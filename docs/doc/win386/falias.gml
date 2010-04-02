@@ -12,7 +12,8 @@ void FreeAlias16( DWORD fp16 );
 .desc begin
 &func frees a 16-bit far pointer alias for a 32-bit near pointer that
 was allocated with
-.kw AllocAlias16.
+.kw AllocAlias16
+.ct .li .
 This is important to do when there is no further use for the pointer
 since there are a limited number of 16-bit aliases available (due to
 limited space in the local descriptor table).

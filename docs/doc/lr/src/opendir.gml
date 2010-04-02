@@ -23,7 +23,8 @@ The &func function is used in conjunction with the functions
 and
 .kw closedir
 to obtain the list of file names contained in the directory specified by
-.arg dirname.
+.arg dirname
+.ct .li .
 The path indicated by
 .arg dirname
 can be either relative to the current working directory or it can be
@@ -39,8 +40,10 @@ within a directory.
 .im dirent
 .np
 More than one directory can be read at the same time using the
-.kw opendir,
-.kw readdir,
+.kw opendir
+.ct ,
+.kw readdir
+.ct ,
 .if '&machsys' eq 'QNX' .do begin
 .kw rewinddir
 .do end
@@ -65,7 +68,8 @@ or both.
 If both the parent and child processes use these functions, the result
 is undefined.
 Either or both processes may use
-.kw closedir.
+.kw closedir
+.ct .li .
 .do end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
@@ -109,7 +113,8 @@ to retrieve the file names
 matching the pattern
 .do end
 specified by
-.arg dirname.
+.arg dirname
+.ct .li .
 The &func function returns
 .mono NULL
 if
@@ -119,7 +124,8 @@ is not a valid pathname.
 .do end
 .el .do begin
 is not a valid pathname, or if there are no files matching
-.arg dirname.
+.arg dirname
+.ct .li .
 .do end
 .return end
 .error begin
@@ -131,7 +137,8 @@ is not a valid pathname, or if there are no files matching
 Search permission is denied for a component of
 .arg dirname
 or read permission is denied for
-.arg dirname.
+.arg dirname
+.ct .li .
 .if '&machsys' eq 'QNX' .do begin
 .term ENAMETOOLONG
 The length of the argument

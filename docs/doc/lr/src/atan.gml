@@ -9,7 +9,8 @@ double atan( double x );
 .desc begin
 The &func function computes the principal value of the
 arctangent of
-.arg x.
+.arg x
+.ct .li .
 .desc end
 .return begin
 The &func function returns the arctangent in the range (&minus.&pi./2,&pi./2).

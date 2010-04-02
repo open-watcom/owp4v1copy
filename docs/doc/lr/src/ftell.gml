@@ -6,7 +6,8 @@ long int ftell( FILE *fp );
 .desc begin
 The &func function returns the current read/write position
 of the file specified by
-.arg fp.
+.arg fp
+.ct .li .
 This position defines the character that will be read or written by the
 next I/O operation on the file.
 The value returned by &func can be used in a subsequent call to
@@ -16,7 +17,8 @@ to set the file to the same position.
 .return begin
 The &func function returns the current read/write position
 of the file specified by
-.arg fp.
+.arg fp
+.ct .li .
 When an error is detected,
 .mono -1L
 is returned.

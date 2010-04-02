@@ -5,7 +5,8 @@ unsigned FP_OFF( void __far *far_ptr );
 .desc begin
 The &func macro can be used to obtain the offset portion of the far
 pointer value given in
-.arg far_ptr.
+.arg far_ptr
+.ct .li .
 .desc end
 .return begin
 The macro returns an unsigned integer value which is the offset portion

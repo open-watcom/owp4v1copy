@@ -39,7 +39,8 @@ interposed before the arguments to &func.
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

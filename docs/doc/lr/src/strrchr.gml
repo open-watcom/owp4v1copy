@@ -41,7 +41,8 @@ wchar_t *_ustrrchr( const wchar_t *s, int c );
 The &func function locates the last occurrence of
 .arg c
 (converted to a char) in the string pointed to by
-.arg s.
+.arg s
+.ct .li .
 The terminating null character is considered to be part of the string.
 .im farfunc
 .im widefunc

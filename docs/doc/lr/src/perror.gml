@@ -21,7 +21,8 @@ The &func function prints, on the file designated by
 .ct,
 the error message corresponding to the error number
 contained in
-.kw errno.
+.kw errno
+.ct .li .
 The &func function writes first the string pointed to by
 .arg prefix
 to stderr.

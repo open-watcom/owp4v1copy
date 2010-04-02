@@ -39,7 +39,8 @@ code is saved for return to the parent process whenever the parent
 process executes an appropriate subsequent
 .kw wait
 or
-.kw waitpid.
+.kw waitpid
+.ct .li .
 .note
 Termination of a process does not directly terminate its children.
 The sending of a

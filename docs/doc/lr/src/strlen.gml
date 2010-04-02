@@ -33,7 +33,8 @@ size_t _ustrlen( const wchar_t *s );
 .*
 .desc begin
 The &func function computes the length of the string pointed to by
-.arg s.
+.arg s
+.ct .li .
 .im farparm
 .im widefunc
 .im mbsffunc

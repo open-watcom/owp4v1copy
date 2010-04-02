@@ -26,7 +26,8 @@ int _uchdir( const wchar_t *path );
 .if '&machsys' eq 'QNX' .do begin
 The &func function changes the current working directory to the
 specified
-.arg path.
+.arg path
+.ct .li .
 The
 .arg path
 can be either relative to the current working directory or it can be
@@ -36,7 +37,8 @@ an absolute path name.
 .ix 'current directory'
 The &func function changes the current directory on the specified
 drive to the specified
-.arg path.
+.arg path
+.ct .li .
 .ix 'current drive'
 If no drive is specified in
 .arg path
@@ -86,7 +88,8 @@ remains unchanged.
 .if '&machsys' eq 'QNX' .do begin
 .term EACCES
 Search permission is denied for a component of
-.arg path.
+.arg path
+.ct .li .
 .term ENAMETOOLONG
 The argument
 .arg path

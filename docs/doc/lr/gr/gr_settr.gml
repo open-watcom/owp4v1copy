@@ -10,7 +10,8 @@ integer*2 rows
 .desc begin
 The &func &routine selects the number of rows of text displayed on the screen.
 The number of rows is specified by the argument
-.arg rows.
+.arg rows
+.ct .li .
 Computers equipped with EGA, MCGA and VGA adapters can support
 different numbers of text rows.
 The number of rows that can be selected depends on the current
@@ -19,8 +20,8 @@ video mode and the type of monitor attached.
 If the argument
 .arg rows
 has the value
-.arg _MAXTEXTROWS,
-the maximum number of text rows will be selected for the current
+.arg _MAXTEXTROWS
+.ct , the maximum number of text rows will be selected for the current
 video mode and hardware configuration.
 In text modes the maximum number of rows is 43 for EGA adapters,
 and 50 for MCGA and VGA adapters.

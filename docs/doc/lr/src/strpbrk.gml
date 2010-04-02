@@ -45,7 +45,8 @@ The &func function locates the first occurrence in the string pointed
 to by
 .arg str
 of any character from the string pointed to by
-.arg charset.
+.arg charset
+.ct .li .
 .im farfunc
 .im widefunc
 .im mbsffunc
@@ -57,7 +58,8 @@ The &func function returns a pointer to the located character, or
 if no character from
 .arg charset
 occurs in
-.arg str.
+.arg str
+.ct .li .
 .return end
 .see begin
 .seelist &function. strchr strpbrk strrchr strtok

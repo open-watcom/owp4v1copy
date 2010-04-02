@@ -355,7 +355,8 @@ the debugging information placed in the executable file by the
 &lnkname..
 Note that global symbol information generated using "DEBUG NOVELL"
 cannot be removed by
-.kw &stripcmdup..
+.kw &stripcmdup
+.ct .li .
 .np
 For more information on this utility,
 see the chapter entitled "The &stripname" in the

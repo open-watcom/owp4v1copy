@@ -20,7 +20,8 @@ The &func function copies no more than
 characters from the string pointed to by
 .arg src
 into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Copying of overlapping objects is not guaranteed to work properly.
 See the
 .kw memmove

@@ -6,7 +6,8 @@ char *_cmdname( char *buffer );
 .desc begin
 The &func function obtains a copy of the executing program's pathname
 and places it in
-.arg buffer.
+.arg buffer
+.ct .li .
 .desc end
 .return begin
 If the pathname of the executing program cannot be determined then

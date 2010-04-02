@@ -21,7 +21,8 @@ errno_t wcserror_s( wchar_t * s,
 shall not be a null pointer.
 .arg maxsize
 shall not be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .arg maxsize
 shall not equal zero.
 .np
@@ -37,9 +38,10 @@ to a locale-specific message string. Typically,the values for
 .arg errnum
 come from errno, but &func shall map any value of type int to a message.
 If the length of the desired string is less than
-.arg maxsize,
-then the string is copied to the array pointed to by
-.arg s.
+.arg maxsize
+.ct , then the string is copied to the array pointed to by
+.arg s
+.ct .li .
 Otherwise, if
 .arg maxsize
 is greater than zero, then
@@ -51,8 +53,8 @@ and then
 is set to the null character. Then, if
 .arg maxsize
 is greater than 3, then
-.arg s[maxsize-2], s[maxsize-3],
-and
+.arg s[maxsize-2], s[maxsize-3]
+.ct , and
 .arg s[maxsize-4]
 are set to the character period (.).
 .im widefunc

@@ -23,11 +23,12 @@ array indirectly pointed to by
 .arg src
 into a sequence of corresponding multibyte characters that begins
 in the shift state described by
-.arg ps,
-which, if
+.arg ps
+.ct , which, if
 .arg dst
 is not a null pointer, are then stored into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Conversion continues up to and including a terminating null wide
 character, but the terminating null character (byte) will not be
 stored.
@@ -38,7 +39,8 @@ is not a null pointer) when the next multibyte character would exceed
 the limit of
 .arg len
 total bytes to be stored into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Each conversion takes place as if by a call to the
 .kw wcrtomb
 function.

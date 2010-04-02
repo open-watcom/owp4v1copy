@@ -34,10 +34,12 @@ uppercase letter.
 The &wfunc function returns a non-zero value when the argument is a
 wide character that corresponds to an uppercase letter, or if it is one
 of an implementation-defined set of wide characters for which none of
-.kw iswcntrl,
-.kw iswdigit,
-.kw iswpunct,
-or
+.kw iswcntrl
+.ct ,
+.kw iswdigit
+.ct ,
+.kw iswpunct
+.ct , or
 .kw iswspace
 is true.
 .do end

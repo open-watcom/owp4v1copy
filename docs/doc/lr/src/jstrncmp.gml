@@ -25,7 +25,8 @@ not more than
 single- or double-byte characters from the Kanji string pointed to by
 .arg s1
 to the Kanji string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 The rule of comparison is:
 .illust begin
 ASCII and numeric characters < Katakana characters < Kanji characters
@@ -43,7 +44,8 @@ an integer less than, equal to, or greater than zero, indicating that
 the Kanji string pointed to by
 .arg s1
 is less than, equal to, or greater than the Kanji string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist jstrncmp jstrcmp jstricmp jstrnicmp strcmp stricmp strncmp strnicmp

@@ -10,7 +10,8 @@ The &func function places the next single- or double-byte character
 specified by
 .arg dbch
 at the start of the buffer specified by
-.arg mbstr.
+.arg mbstr
+.ct .li .
 .im ffarfunc
 .desc end
 .return begin

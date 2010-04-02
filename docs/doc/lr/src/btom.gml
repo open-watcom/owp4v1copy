@@ -20,7 +20,8 @@ character set (DBCS) string specified by
 and
 .arg nb
 bytes from
-.arg str.
+.arg str
+.ct .li .
 A double-byte character is treated as one character.
 Counting stops when either
 .arg nb

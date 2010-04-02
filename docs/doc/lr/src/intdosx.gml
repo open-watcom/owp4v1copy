@@ -16,7 +16,8 @@ located by
 .arg in_regs
 and the segment registers DS and ES are loaded from the structure
 located by
-.arg seg_regs.
+.arg seg_regs
+.ct .li .
 The AH register contains a number indicating the function requested.
 .im segregs
 .np
@@ -44,7 +45,8 @@ The &func function returns the value of the AX (EAX in 32-bit library)
 register after the interrupt has completed.
 The CARRY flag (when set, an error has occurred) is copied into the
 structure located by
-.arg out_regs.
+.arg out_regs
+.ct .li .
 .im errnoref
 .return end
 .see begin

@@ -38,7 +38,8 @@ wchar_t *_ustrset( wchar_t *s1, int fill );
 The &func function fills the string pointed to by
 .arg s1
 with the character
-.arg fill.
+.arg fill
+.ct .li .
 The terminating null character in the original string remains
 unchanged.
 .if &'length(&_func.) ne 0 .do begin

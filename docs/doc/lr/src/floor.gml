@@ -5,12 +5,13 @@ double floor( double x );
 .funcend
 .desc begin
 The &func function computes the largest integer not greater than
-.arg x.
+.arg x
+.ct .li .
 .desc end
 .return begin
 The &func function computes the largest integer not greater than
-.arg x,
-expressed as a
+.arg x
+.ct , expressed as a
 .id double.
 .return end
 .see begin

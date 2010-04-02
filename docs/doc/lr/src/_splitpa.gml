@@ -167,15 +167,19 @@ file name.
 .np
 The arguments
 .if '&machsys' eq 'PP' .do begin
-.arg node,
+.arg node
+.ct ,
 .do end
 .el .if '&machsys' eq 'QNX' .do begin
-.arg node,
+.arg node
+.ct ,
 .do end
 .el .do begin
-.arg drive,
+.arg drive
+.ct ,
 .do end
-.arg dir,
+.arg dir
+.ct ,
 .arg fname
 and
 .arg ext

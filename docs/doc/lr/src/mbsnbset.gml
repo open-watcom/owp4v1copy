@@ -15,7 +15,8 @@ unsigned char __far *_fmbsnbset( unsigned char __far *str,
 The &func function fills the string
 .arg str
 with the value of the argument
-.arg fill,
+.arg fill
+.ct .li .
 When the value of
 .arg len
 is greater than the length of the string, the entire string is filled.
@@ -23,8 +24,8 @@ Otherwise, that number of characters at the start of the string are set
 to the fill character.
 .np
 &func is similar to
-.kw _mbsnset,
-except that it fills in
+.kw _mbsnset
+.ct , except that it fills in
 .arg count
 bytes rather than
 .arg count

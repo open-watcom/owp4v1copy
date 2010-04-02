@@ -40,7 +40,8 @@ positive or negative zero
 .return begin
 The &func macro returns the value of the number classification macro
 appropriate to the value of its argument
-.arg x.
+.arg x
+.ct .li .
 .return end
 .*
 .see begin

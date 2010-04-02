@@ -19,7 +19,8 @@ int _ufputs( const wchar_t *buf, FILE *fp );
 The &func function writes the character string pointed to by
 .arg buf
 to the output stream designated by
-.arg fp.
+.arg fp
+.ct .li .
 The terminating null character is not written.
 .if &'length(&wfunc.) ne 0 .do begin
 .np

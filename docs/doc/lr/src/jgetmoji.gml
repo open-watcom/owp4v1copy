@@ -19,7 +19,8 @@ the next single- or double-byte character from the start of the Kanji
 string specified by
 .arg str
 in the wide character pointed to by
-.arg c.
+.arg c
+.ct .li .
 If the second-half of a double-byte character is NULL, then the
 returned wide character is NULL.
 .im ffarfunc

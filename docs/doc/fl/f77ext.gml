@@ -299,9 +299,12 @@ operator is supported (equivalent to
 .ct ).
 .note
 The
-.kw .AND.,
-.kw .OR.,
-.kw .NEQV.,
+.kw .AND.
+.ct ,
+.kw .OR.
+.ct ,
+.kw .NEQV.
+.ct ,
 .kw .EQV.
 and
 .kw .XOR.
@@ -340,9 +343,12 @@ Block labels can be used to identify blocks of code.
 .millust end
 .note
 An integer expression in an
-.kw IF,
-.kw ELSE IF,
-.kw DO WHILE,
+.kw IF
+.ct ,
+.kw ELSE IF
+.ct ,
+.kw DO WHILE
+.ct ,
 .kw WHILE
 or
 .kw UNTIL

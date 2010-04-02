@@ -29,7 +29,8 @@ character) which can be be used to store this name.
 An error occurs if the length of the path (including the terminating
 .mono '\0'
 character) exceeds
-.arg maxlen.
+.arg maxlen
+.ct .li .
 .np
 The maximum size that might be required for
 .arg buffer

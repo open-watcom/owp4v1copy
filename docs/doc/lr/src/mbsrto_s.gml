@@ -34,7 +34,8 @@ is not a null pointer, then neither
 nor
 .arg dstmax
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg dst
 is a null
@@ -53,7 +54,8 @@ is not less than
 ,then a null character shall occur within the first
 .arg dstmax
 multibyte characters of the array pointed to by
-.arg *src.
+.arg *src
+.ct .li .
 .np
 If there is a runtime-constraint violation, then &func. does the following. If
 .arg retval
@@ -73,14 +75,15 @@ to the null wide character.
 .desc begin
 The &func. function converts a sequence of multibyte characters that begins
 in the conversion state described by the object pointed to by
-.arg ps,
-from the array indirectly pointed to by
+.arg ps
+.ct , from the array indirectly pointed to by
 .arg src
 into a sequence of corresponding wide characters. If
 .arg dst
 is not a null pointer, the converted characters are stored into the array
 pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Conversion continues up to and including a terminating null character,
 which is also stored.
 .np
@@ -90,13 +93,14 @@ that does not form a valid multibyte character, or (if
 is not a null pointer) when
 .arg len
 wide characters have been stored into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 If
 .arg dst
 is not a null pointer and no null wide character was stored
 into the array pointed to by
-.arg dst,
-then
+.arg dst
+.ct , then
 .arg dst[len]
 is set to the null wide character. Each conversion takes place as if by a call
 to the

@@ -18,7 +18,8 @@ The &func function sets, at the operating system level, the
 translation mode to be the value of
 .arg mode
 for the file whose file &handle is given by
-.arg &fd..
+.arg &fd
+.ct .li .
 The mode, defined in the
 .hdrfile fcntl.h
 header file, can be one of:

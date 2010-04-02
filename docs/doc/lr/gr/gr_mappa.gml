@@ -11,7 +11,8 @@ integer*4 colors(*)
 The &func &routine sets (or remaps) all of the colors in the palette.
 The color values in the palette are replaced by the array of
 color values given by the argument
-.arg colors.
+.arg colors
+.ct .li .
 This &routine is supported in all video modes, but only works
 with EGA, MCGA and VGA adapters.
 .np

@@ -7,7 +7,8 @@ The &func function converts the string pointed to by
 .arg sbcs
 to a wide-character string and places it in the buffer
 pointed to by
-.arg wcs.
+.arg wcs
+.ct .li .
 .np
 The conversion ends at the first null character.
 .desc end

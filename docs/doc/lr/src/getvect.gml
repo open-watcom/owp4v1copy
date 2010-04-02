@@ -5,12 +5,14 @@ void (__interrupt __far *_dos_getvect(unsigned intnum))();
 .funcend
 .desc begin
 The &func function gets the current value of interrupt vector number
-.arg intnum.
+.arg intnum
+.ct .li .
 .desc end
 .return begin
 The &func function returns a far pointer to the current interrupt
 handler for interrupt number
-.arg intnum.
+.arg intnum
+.ct .li .
 .return end
 .see begin
 .seelist getvect _chain_intr _dos_keep _dos_setvect

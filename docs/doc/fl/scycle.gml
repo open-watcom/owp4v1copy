@@ -8,8 +8,10 @@ The
 .kw CYCLE
 statement may be used to cause a transfer of control from within a
 loop to the terminal statement of a corresponding
-.kw DO,
-.kw DO WHILE,
+.kw DO
+.ct ,
+.kw DO WHILE
+.ct ,
 .kw WHILE
 or
 .kw LOOP

@@ -6,7 +6,8 @@ int cscanf( const char *format, ... );
 .desc begin
 The &func function scans input from the console
 under control of the argument
-.arg format.
+.arg format
+.ct .li .
 Following the format string is a list of addresses to receive values.
 The &func function uses the function
 .kw getche

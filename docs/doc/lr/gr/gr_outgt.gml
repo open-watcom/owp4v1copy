@@ -9,7 +9,8 @@ character*(*) text
 .gfuncend
 .desc begin
 The &func &routine displays the character string indicated by the argument
-.arg text.
+.arg text
+.ct .li .
 The string must be terminated by a null character
 .if '&lang' eq 'C' .do begin
 ('\0').
@@ -26,8 +27,8 @@ The string is displayed starting at the current position (see the
 The current position is updated to follow the displayed text.
 .pp
 When no font has been previously selected with
-.kw _setfont,
-a default font will be used.
+.kw _setfont
+.ct , a default font will be used.
 The default font is an 8-by-8 bit-mapped font.
 .im gr_text
 .desc end

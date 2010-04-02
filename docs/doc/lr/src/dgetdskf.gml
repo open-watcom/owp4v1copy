@@ -13,12 +13,14 @@ struct diskfree_t {
 .desc begin
 The &func function uses system call 0x36 to obtain useful information
 on the disk drive specified by
-.arg drive.
+.arg drive
+.ct .li .
 Specify 0 for the default drive, 1 for drive A, 2 for drive B, etc.
 The information about the drive is returned in the structure
 .kw diskfree_t
 pointed to by
-.arg diskspace.
+.arg diskspace
+.ct .li .
 .desc end
 .return begin
 The &func function returns zero if successful.

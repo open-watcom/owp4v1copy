@@ -17,7 +17,8 @@ int _ugetc( FILE *fp );
 .funcend
 .desc begin
 The &func function gets the next character from the file designated by
-.arg fp.
+.arg fp
+.ct .li .
 The character is returned as an
 .id int
 value.
@@ -41,29 +42,36 @@ returns a Unicode character.
 .return begin
 The &func function returns the next character from the input stream
 pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 If the stream is at end-of-file, the end-of-file indicator is set and
 &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 If a read error occurs, the error indicator is set and
 &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function returns the next wide character from the input
 stream pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 If the stream is at end-of-file, the end-of-file indicator is set and
 &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 If a read error occurs, the error indicator is set and &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 If an encoding error occurs,
 .kw errno
 is set to
 .kw EILSEQ
 and &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

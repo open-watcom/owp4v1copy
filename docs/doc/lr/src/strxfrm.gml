@@ -21,7 +21,8 @@ The &func function transforms, for no more than
 characters, the string pointed to by
 .arg src
 to the buffer pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 The transformation uses the collating sequence selected by the
 .kw setlocale
 function so that two transformed strings will compare identically
@@ -57,8 +58,8 @@ applied to the original two strings.
 .return begin
 The &func function returns the length of the transformed string.
 If this length is more than
-.arg n,
-the contents of the array pointed to by
+.arg n
+.ct , the contents of the array pointed to by
 .arg dst
 are indeterminate.
 .return end

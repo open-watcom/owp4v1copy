@@ -7,7 +7,8 @@ int vcprintf( const char *format, va_list arg );
 .desc begin
 The &func function writes output directly to the console under control
 of the argument
-.arg format.
+.arg format
+.ct .li .
 The
 .kw putch
 function is used to output characters to the console.
@@ -19,8 +20,8 @@ function.
 The &func function is equivalent to the
 .kw cprintf
 function, with the variable argument list replaced with
-.arg arg,
-which has been initialized by the
+.arg arg
+.ct , which has been initialized by the
 .kw va_start
 macro.
 .desc end

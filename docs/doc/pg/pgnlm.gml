@@ -60,8 +60,8 @@ environment variable before searching the
 environment variable, and
 .bull
 reference a special startup symbol,
-.kw __WATCOM_Prelude,
-in the libraries.
+.kw __WATCOM_Prelude
+.ct , in the libraries.
 .endbull
 .note
 You must compile your source files with the small memory model option

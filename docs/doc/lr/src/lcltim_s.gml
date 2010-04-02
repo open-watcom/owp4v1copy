@@ -22,13 +22,14 @@ The &func function converts the calendar time pointed to by
 .arg timer
 into a broken-down time, expressed as local time.
 The broken-down time is stored in the structure pointed to by
-.arg result.
+.arg result
+.ct .li .
 .desc end
 .*
 .return begin
 The &func function returns
-.arg result,
-or a null pointer if the specified time cannot be converted to local time
+.arg result
+.ct , or a null pointer if the specified time cannot be converted to local time
 or there is a runtime-constraint violation.
 .return end
 .*

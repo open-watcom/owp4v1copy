@@ -9,7 +9,8 @@ and the
 type.
 .do end
 .el .do begin
-.kw _wdirent.
+.kw _wdirent
+.ct .li .
 .do end
 .blkcode begin
 .if '&machsys' eq 'QNX' .do begin

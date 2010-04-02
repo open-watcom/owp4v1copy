@@ -569,7 +569,8 @@ function if the size requested is zero (7.10.3).
 .bigdesc
 .np
 The value returned will be
-.kw NULL.
+.kw NULL
+.ct .li .
 No actual memory is allocated.
 .*-------------------------
 .section The abort Function

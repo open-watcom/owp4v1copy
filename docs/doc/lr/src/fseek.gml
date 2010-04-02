@@ -6,7 +6,8 @@ int fseek( FILE *fp, long int offset, int where );
 .desc begin
 The &func function changes the read/write position of the file
 specified by
-.arg fp.
+.arg fp
+.ct .li .
 This position defines the character that will be read or written on
 the next I/O operation on the file.
 The argument
@@ -14,12 +15,14 @@ The argument
 is a file pointer returned by
 .kw fopen
 or
-.kw freopen.
+.kw freopen
+.ct .li .
 The argument
 .arg offset
 is the position to seek to relative to one of three positions
 specified by the argument
-.arg where.
+.arg where
+.ct .li .
 Allowable values for
 .arg where
 are:
@@ -54,7 +57,8 @@ The position can be restored by using the value returned by
 in a subsequent call to &func with the
 .arg where
 parameter set to
-.kw SEEK_SET.
+.kw SEEK_SET
+.ct .li .
 .if '&machsys' eq 'PP' .do begin
 .np
 The requested file position may NOT be beyond the end of the file.

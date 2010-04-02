@@ -47,9 +47,11 @@ segment of the string pointed to by
 which consists entirely of characters
 .us not
 from the string pointed to by
-.arg charset.
+.arg charset
+.ct .li .
 The terminating null character is not considered part of
-.arg str.
+.arg str
+.ct .li .
 .im farparm
 .im widefunc
 .im mbsfunc

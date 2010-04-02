@@ -7,7 +7,8 @@ The &func function creates a pipe (an unnamed FIFO) and places a file
 descriptor for the read end of the pipe in
 .arg phandles[0]
 and a file descriptor for the write end of the pipe in
-.arg phandles[1].
+.arg phandles[1]
+.ct .li .
 Their integer values are the two lowest available at the time of the
 &func function call.
 The
@@ -22,7 +23,8 @@ flag.)
 Data can be written to file descriptor
 .arg phandles[1]
 and read from file descriptor
-.arg phandles[0].
+.arg phandles[0]
+.ct .li .
 A read on file descriptor
 .arg phandles[0]
 returns the data written to
@@ -34,7 +36,8 @@ to act as filters, passing the write end of the pipe to the data
 producing process as its
 .kw STDOUT_FILENO
 and the read end of the pipe to the data consuming process as its
-.kw STDIN_FILENO.
+.kw STDIN_FILENO
+.ct .li .
 (either via the traditional fork/dup2/exec or the more efficient spawn
 calls).
 .np

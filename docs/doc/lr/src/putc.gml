@@ -23,7 +23,8 @@ except it may be implemented as a macro.
 The &func function writes the character specified by the argument
 .arg c
 to the output stream designated by
-.arg fp.
+.arg fp
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it converts the
@@ -42,12 +43,14 @@ and writes the Unicode character to the output stream.
 .return begin
 The &func function returns the character written or, if a write error
 occurs, the error indicator is set and &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function returns the wide character written or, if a write
 error occurs, the error indicator is set and &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 .do end
 .np
 .im errnoref

@@ -19,7 +19,8 @@ the number of bytes between the start of the Kanji string specified by
 and
 .arg nm
 characters from
-.arg str.
+.arg str
+.ct .li .
 A double-byte Kanji character is treated as one character.
 Processing stops when either
 .arg nm

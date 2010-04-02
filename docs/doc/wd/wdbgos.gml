@@ -663,7 +663,8 @@ included.
 If a path is omitted, the &dbgname will first attempt to locate the
 file in the current directory and, if not successful, attempt to
 locate the file in the default dumper directory:
-.bd /usr/dumps.
+.bd /usr/dumps
+.ct .li .
 .endnote
 .np
 Basically, the &dbgname is fully functional when a postmortem dump is

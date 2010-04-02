@@ -90,7 +90,8 @@ An Open Dialog Resource dialog appears listing all resource files.
 .step Double click on the resource file you want to open
 .orstep Click on the resource file you want to open
 to select it, then
-.bd click on OK.
+.bd click on OK
+.ct .li .
 .result
 A Select Dialog(s) dialog appears listing all of the dialog resources
 in the selected resource file. You can select one, several, or all of the
@@ -99,7 +100,8 @@ select will open on the editor window of the Dialog Editor window.
 .step Double click on the dialog you want to open.
 .orstep Click on the dialogs you want to open
 to select them, then
-.bd click on OK.
+.bd click on OK
+.ct .li .
 .result
 The selected dialog(s) appears in the &company Dialog Editor window in
 the editor window.
@@ -360,8 +362,8 @@ the dialog that you want to appear on the dialog in the application.
 Any changes you make to this field are not stored until you:
 .begbull $compact
 .bull
-.bd Press ENTER,
-or
+.bd Press ENTER
+.ct , or
 .bull
 .bd Select the Set button
 to the right of the field.
@@ -392,8 +394,8 @@ This field is not applicable for all objects. Any changes you make to
 this field are not stored until you:
 .begbull $compact
 .bull
-.bd Press ENTER,
-or
+.bd Press ENTER
+.ct , or
 .bull
 .bd Select the Set button
 to the right of the field

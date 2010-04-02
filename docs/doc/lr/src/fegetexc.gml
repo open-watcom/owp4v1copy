@@ -11,11 +11,17 @@ object pointed to by the argument flagp.
 .np
 Valid exceptions are
 .kw FE_INVALID
+.ct ,
 .kw FE_DENORMAL
+.ct ,
 .kw FE_DIVBYZERO
+.ct ,
 .kw FE_OVERFLOW
+.ct ,
 .kw FE_UNDERFLOW
+and
 .kw FE_INEXACT
+.ct .li .
 .np
 The value
 .kw FE_ALL_EXCEPT

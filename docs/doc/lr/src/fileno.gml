@@ -6,7 +6,8 @@ int fileno( FILE *stream );
 .desc begin
 The &func function returns the number of the file &handle for the file
 designated by
-.arg stream.
+.arg stream
+.ct .li .
 This number can be used in POSIX input/output calls anywhere the
 value returned by
 .kw open
@@ -87,7 +88,8 @@ Standard printer file number,
 .return begin
 The &func function returns the number of the file &handle for the file
 designated by
-.arg stream.
+.arg stream
+.ct .li .
 If an error occurs, a value of -1 is returned and
 .kw errno
 is set to indicate the error.

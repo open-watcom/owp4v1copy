@@ -20,7 +20,8 @@ The &func and &ffunc functions compare,
 with case insensitivity, the Kanji string pointed to by
 .arg s1
 to the Kanji string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 All uppercase Roman characters (A-Z) from
 .arg s1
 and
@@ -43,7 +44,8 @@ an integer less than, equal to, or greater than zero, indicating that
 the Kanji string pointed to by
 .arg s1
 is less than, equal to, or greater than the Kanji string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist jstricmp strcmp strcmpi strncmp strnicmp

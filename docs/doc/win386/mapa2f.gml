@@ -20,7 +20,8 @@ The &func function returns a 32-bit near pointer equivalent of a pointer
 allocated previously with
 .kw AllocAlias16
 or
-.kw AllocHugeAlias16.
+.kw AllocHugeAlias16
+.ct .li .
 This is useful if you are communicating with a 16-bit application
 that is returning pointers that you previously gave it.
 .desc end

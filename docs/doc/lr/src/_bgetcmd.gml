@@ -8,11 +8,13 @@ int _bgetcmd( char *cmd_line, int len );
 .desc begin
 The &func function causes the command line information, with the program
 name removed, to be copied to
-.arg cmd_line.
+.arg cmd_line
+.ct .li .
 The argument
 .arg len
 specifies the size of
-.arg cmd_line.
+.arg cmd_line
+.ct .li .
 The information is terminated with a
 .mono '\0'
 character.

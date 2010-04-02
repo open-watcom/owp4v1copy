@@ -20,7 +20,8 @@ Information for the desired
 is passed the
 .kw diskinfo_t
 structure pointed to by
-.arg diskinfo.
+.arg diskinfo
+.ct .li .
 The value for
 .arg service
 can be one of the following values:

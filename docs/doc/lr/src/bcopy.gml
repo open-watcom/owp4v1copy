@@ -8,9 +8,11 @@ void bcopy( const void *src, void *dst, size_t n );
 The &func function copies the byte string pointed to by
 .arg src
 (including any null characters) into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 The number of bytes to copy is specified by
-.arg n.
+.arg n
+.ct .li .
 Copying of overlapping objects is guaranteed to work properly.
 .np
 Note that this function is similar to the ANSI

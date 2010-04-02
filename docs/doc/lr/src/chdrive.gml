@@ -5,7 +5,8 @@ void _chdrive( int drive );
 .funcend
 .desc begin
 The &func function changes the current working drive to the one specified by
-.arg drive.
+.arg drive
+.ct .li .
 A value of 1 is drive A, 2 is drive B, 3 is drive C, etc.
 .desc end
 .return begin

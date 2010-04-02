@@ -1642,7 +1642,8 @@ such a file.
 .np
 .xt begin
 The
-.kw READ,
+.kw READ
+.ct ,
 .kw WRITE
 .ct , and
 .kw PRINT

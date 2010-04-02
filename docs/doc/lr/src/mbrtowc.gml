@@ -23,11 +23,12 @@ If
 is not a null pointer, the &func function determines the number of
 bytes that are contained in the multibyte character (plus any leading
 shift sequences) pointed to by
-.arg s,
-produces the value of the corresponding wide character and then, if
+.arg s
+.ct , produces the value of the corresponding wide character and then, if
 .arg pwc
 is not a null pointer, stores that value in the object pointed to by
-.arg pwc.
+.arg pwc
+.ct .li .
 If the corresponding wide character is the null wide character, the
 resulting state described will be the initial conversion state.
 .im farparm
@@ -78,8 +79,8 @@ or fewer bytes do not form a complete and valid multibyte character);
 the value of the macro
 .kw EILSEQ
 will be stored in
-.kw errno,
-but the conversion state will be unchanged.
+.kw errno
+.ct , but the conversion state will be unchanged.
 .endnote
 .return end
 .see begin

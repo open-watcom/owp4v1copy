@@ -7,7 +7,8 @@ int _putw( int binint, FILE *fp );
 The &func function writes a binary value of type
 .us int
 to the current position of the stream
-.arg fp.
+.arg fp
+.ct .li .
 &func does not affect the alignment of items in the stream, nor does
 it assume any special alignment.
 .np
@@ -21,12 +22,13 @@ differ across systems.
 .return begin
 The &func function returns the value written or, if a write error
 occurs, the error indicator is set and &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 Since
 .kw EOF
 is a legitimate value to write to
-.arg fp,
-use
+.arg fp
+.ct , use
 .kw ferror
 to verify that an error has occurred.
 .return end

@@ -23,7 +23,8 @@ and the null character
 occupy the last two positions of the string.
 .pp
 The string is placed in the buffer pointed to by
-.arg buf.
+.arg buf
+.ct .li .
 .pp
 Whenever &func is called, the
 .kw tzset

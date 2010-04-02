@@ -134,8 +134,8 @@ available for DOS, Windows and OS/2.
 .*
 .np
 The &company Help program,
-.kw WHELP,
-may be used under DOS to access on-line documentation.
+.kw WHELP
+.ct , may be used under DOS to access on-line documentation.
 The &company Help command line syntax is:
 .millust begin
 WHELP help_file [topic_name]

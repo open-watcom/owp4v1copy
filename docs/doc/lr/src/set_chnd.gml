@@ -8,7 +8,8 @@ constraint_handler_t set_constraint_handler_s(
 .*
 .desc begin
 The &func function sets the runtime-constraint handler to be
-.arg handler.
+.arg handler
+.ct .li .
 The runtime-constraint handler is the function called when a library function
 detect a runtime-constraint violation. Only the most recent handler registered
 with &func is called when a runtime-constraint violation occurs.
@@ -22,9 +23,8 @@ A null pointer or a pointer to an implementation defined object. This
 implementation passes a null pointer.
 .note
 If the function calling the handler has a return type declared as
-.kw errno_t,
-the return value of the function is passed. Otherwise, a positive value of
-type
+.kw errno_t
+.ct , the return value of the function is passed. Otherwise, a positive value of type
 .kw errno_t
 is passed.
 .endnote

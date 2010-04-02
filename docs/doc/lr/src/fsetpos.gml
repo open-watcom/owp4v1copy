@@ -7,8 +7,8 @@ int fsetpos( FILE *fp, fpos_t *pos );
 The &func function positions the file
 .arg fp
 according to the value of the object pointed to by
-.arg pos,
-which shall be a value returned by an earlier call to the
+.arg pos
+.ct , which shall be a value returned by an earlier call to the
 .kw fgetpos
 function on the same file.
 .desc end

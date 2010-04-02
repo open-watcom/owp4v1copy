@@ -13,11 +13,13 @@ struct timeb {
 .desc begin
 The &func function gets the current time and stores it in the
 structure pointed to by
-.arg timeptr.
+.arg timeptr
+.ct .li .
 .desc end
 .return begin
 The &func function fills in the fields of the structure pointed to by
-.arg timeptr.
+.arg timeptr
+.ct .li .
 The &func function returns &minus.1 if not successful, and no useful
 value otherwise.
 .return end

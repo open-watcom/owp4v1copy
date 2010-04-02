@@ -35,7 +35,8 @@ shall be a null pointer. Neither
 nor
 .arg n
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .arg s1max
 shall not equal zero.
 .arg m
@@ -45,7 +46,8 @@ is not less than
 .arg m, then
 .arg m
 shall be greater than
-.arg strnlen_s(s2, m).
+.arg strnlen_s(s2, m)
+.ct .li .
 Copying shall not take place between objects that overlap.
 .np
 If there is a runtime-constraint violation, then if
@@ -54,8 +56,8 @@ is not a null pointer and
 .arg s1max
 is
 greater than zero and not greater than
-.kw RSIZE_MAX,
-then &func sets
+.kw RSIZE_MAX
+.ct , then &func sets
 .arg s1[0]
 to the null character.
 .rtconst end
@@ -67,11 +69,13 @@ successive characters (characters that follow a null character are not copied)
 from the array pointed to by
 .arg s2
 to the end of the string pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 The initial character from
 .arg s2
 overwrites the null character at the end of
-.arg s1.
+.arg s1
+.ct .li .
 If no null character was copied from
 .arg s2,then
 .arg s1[s1max-m+n]

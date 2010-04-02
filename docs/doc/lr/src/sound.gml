@@ -5,7 +5,8 @@ void sound( unsigned frequency );
 .funcend
 .desc begin
 The &func function turns on the PC's speaker at the specified
-.arg frequency.
+.arg frequency
+.ct .li .
 The frequency is in Hertz (cycles per second).
 The speaker can be turned off by calling the
 .kw nosound

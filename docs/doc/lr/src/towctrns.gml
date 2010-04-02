@@ -9,7 +9,8 @@ wint_t towctrans( wint_t wc, wctrans_t desc );
 The &func function maps the wide character
 .arg wc
 using the mapping described by
-.arg desc.
+.arg desc
+.ct .li .
 Valid values of
 .arg desc
 are defined by the use of the
@@ -35,7 +36,8 @@ towupper(wc)
 The &func function returns the mapped value of
 .arg wc
 using the mapping described by
-.arg desc.
+.arg desc
+.ct .li .
 .return end
 .*
 .see begin

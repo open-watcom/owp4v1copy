@@ -12,7 +12,8 @@ A range error may occur.
 The &func function returns the value of
 .arg x
 times 2 raised to the power
-.arg exp.
+.arg exp
+.ct .li .
 .return end
 .see begin
 .seelist ldexp frexp modf

@@ -15,12 +15,13 @@ Neither
 nor
 .arg size
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg nmemb
 is not equal to zero, then none of
-.arg key, base,
-or
+.arg key, base
+.ct , or
 .arg compar
 shall be a null pointer.
 If there is a runtime-constraint violation, the &func function does not
@@ -33,11 +34,13 @@ The &func function searches an array of
 .arg nmemb
 objects, the initial element of
 which is pointed to by
-.arg base,
-for an element that matches the object pointed to by
-.arg key.
+.arg base
+.ct , for an element that matches the object pointed to by
+.arg key
+.ct .li .
 The size of each element of the array is specified by
-.arg size.
+.arg size
+.ct .li .
 The comparison function pointed to by
 .arg compar
 is called with three arguments. The first

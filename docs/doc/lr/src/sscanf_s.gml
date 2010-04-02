@@ -50,7 +50,8 @@ The &wfunc function is identical to &func except that it accepts
 wide-character string arguments for
 .arg s
 and
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

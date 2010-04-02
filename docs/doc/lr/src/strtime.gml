@@ -14,7 +14,8 @@ wchar_t _ustrtime( wchar_t *timestr );
 .funcend
 .desc begin
 The &func function copies the current time to the buffer pointed to by
-.arg timestr.
+.arg timestr
+.ct .li .
 The time is formatted as "HH:MM:SS"
 where "HH" is two digits representing the hour in 24-hour notation,
 where "MM" is two digits representing the minutes past the hour, and
@@ -25,7 +26,8 @@ The buffer must be at least 9 bytes long.
 .desc end
 .return begin
 The &func function returns a pointer to the resulting text string
-.arg timestr.
+.arg timestr
+.ct .li .
 .return end
 .see begin
 .seelist &function. asctime Functions ctime Functions gmtime localtime mktime

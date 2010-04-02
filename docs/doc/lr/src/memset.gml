@@ -26,7 +26,8 @@ The &func function fills the first
 characters of the object pointed to by
 .arg dst
 with the value
-.arg c.
+.arg c
+.ct .li .
 .im farfunc
 .if &'length(&wfunc.) ne 0 .do begin
 .np
@@ -49,7 +50,8 @@ is interpreted to mean the number of Unicode characters.
 .desc end
 .return begin
 The &func function returns the pointer
-.arg dst.
+.arg dst
+.ct .li .
 .return end
 .see begin
 .seelist &function. memchr memcmp memcpy memicmp memmove memset

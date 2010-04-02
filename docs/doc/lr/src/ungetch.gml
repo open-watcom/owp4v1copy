@@ -12,13 +12,15 @@ This character will be returned by the next read from the console (with
 or
 .kw getche
 functions) and will be detected by the function
-.kw kbhit.
+.kw kbhit
+.ct .li .
 Only the last character returned in this way is remembered.
 .pp
 The &func function clears the end-of-file indicator, unless the value of
 .arg c
 is
-.kw EOF.
+.kw EOF
+.ct .li .
 .desc end
 .return begin
 The &func function returns the character pushed back.

@@ -6,10 +6,12 @@ void intr( int inter_no, union REGPACK *regs );
 .desc begin
 The &func function causes the computer's central processor (CPU) to
 be interrupted with an interrupt whose number is given by
-.arg inter_no.
+.arg inter_no
+.ct .li .
 Before the interrupt, the CPU registers are loaded from the structure
 located by
-.arg regs.
+.arg regs
+.ct .li .
 All of the segment registers must contain valid values.
 Failure to do so will cause a segment violation when running
 in protect mode.

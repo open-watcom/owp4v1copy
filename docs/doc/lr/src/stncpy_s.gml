@@ -29,16 +29,18 @@ shall be a null pointer. Neither
 nor
 .arg n
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .arg s1max
 shall not equal zero. If
 .arg n
 is not less than
-.arg s1max,
-then
+.arg s1max
+.ct , then
 .arg s1max
 shall be greater than
-.arg strnlen_s(s2, s1max).
+.arg strnlen_s(s2, s1max)
+.ct .li .
 .np
 Copying shall not take place between
 objects that overlap.
@@ -48,8 +50,8 @@ If there is a runtime-constraint violation, then if
 is not a null pointer and
 .arg s1max
 is greater than zero and not greater than
-.kw RSIZE_MAX,
-then
+.kw RSIZE_MAX
+.ct , then
 .kw strncpy_s
 sets
 .arg s1[0]
@@ -63,10 +65,11 @@ successive characters (characters that follow a null character are not
 copied) from the array pointed to by
 .arg s2
 to the array pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 If no null character was copied from
-.arg s2,
-then
+.arg s2
+.ct , then
 .arg s1[n]
 is set to
 a null character.

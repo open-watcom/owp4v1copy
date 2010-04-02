@@ -24,7 +24,8 @@ int _usscanf( const wchar_t *in_string,
 The &func function scans input from the character string
 .arg in_string
 under control of the argument
-.arg format.
+.arg format
+.ct .li .
 Following the format string is the list of addresses of items to
 receive values.
 .pp

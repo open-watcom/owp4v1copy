@@ -56,7 +56,8 @@ is called.
 The non-ANSI function
 .kw _asctime
 places the result string in the buffer pointed to by
-.arg buf.
+.arg buf
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The

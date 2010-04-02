@@ -1815,7 +1815,8 @@ or
 .ix 'system alias name'
 .kwm system
 are identical to
-.kwm __syscall.
+.kwm __syscall
+.ct .li .
 .do end
 .note __watcall
 .ix 'alias names' '__watcall'
@@ -2754,11 +2755,16 @@ When an argument is a user-defined structure and is passed by value,
 a copy of the structure is made and passed as an argument.
 .note
 For scalar arguments, arguments of type
-.bd INTEGER*1, INTEGER*2, INTEGER*4,
+.bd INTEGER*1
+.ct ,
+.bd INTEGER*2
+.ct ,
+.bd INTEGER*4
+ct ,
 .bd REAL
 or
-.bd DOUBLE PRECISION,
-a length specification can be specified
+.bd DOUBLE PRECISION
+.ct , a length specification can be specified
 when the "VALUE" attribute is specified to pass the argument by value.
 This length specification refers to the size of the argument; the compiler
 will convert the actual argument to a type that matches the size.
@@ -2766,12 +2772,14 @@ For example, if an argument of type
 .bd REAL
 is passed to a subprogram that
 has an argument attribute of "VALUE*8", the argument will be converted to
-.bd DOUBLE PRECISION.
+.bd DOUBLE PRECISION
+.ct .li .
 If an argument of type
 .bd DOUBLE PRECISION
 is passed to a subprogram that
 has an argument attribute of "VALUE*4", the argument will be converted to
-.bd REAL.
+.bd REAL
+.ct .li .
 If an argument of type
 .bd INTEGER*4
 is passed to a subprogram that
@@ -2779,7 +2787,8 @@ has an argument attribute of "VALUE*2" or VALUE*1, the argument will be
 converted to
 .bd INTEGER*2
 or
-.bd INTEGER*1.
+.bd INTEGER*1
+.ct .li .
 If an argument of type
 .bd INTEGER*2
 is passed to a subprogram that
@@ -2787,7 +2796,8 @@ has an argument attribute of "VALUE*4 or VALUE*1", the argument will be
 converted to
 .bd INTEGER*4
 or
-.bd INTEGER*1.
+.bd INTEGER*1
+.ct .li .
 If an argument of type
 .bd INTEGER*1
 is passed to a subprogram that
@@ -2795,7 +2805,8 @@ has an argument attribute of "VALUE*4 or VALUE*2", the argument will be
 converted to
 .bd INTEGER*4
 or
-.bd INTEGER*2.
+.bd INTEGER*2
+.ct .li .
 .note
 If the number of arguments exceeds the number of entries in the
 argument-attribute list, the last attribute will be assumed for the
@@ -2898,7 +2909,8 @@ EBX:EAX.
 .do end
 For example, if the following register set was specified for a routine
 having an argument of type
-.bd &double,
+.bd &double
+.ct ,
 .if '&machine' eq '8086' .do begin
 .millust begin
 [AX BX SI DI]
@@ -2954,7 +2966,8 @@ memory model.
 .note &long_int, &single
 The only registers that will be assigned to 4-byte arguments (e.g.,
 arguments of type
-.bd &long_int,
+.bd &long_int
+.ct ,
 .if '&lang' eq 'FORTRAN 77' .do begin
 when passed by value
 .do end
@@ -2964,7 +2977,8 @@ DX:AX, CX:BX, CX:AX, CX:SI, DX:BX, DI:AX, CX:DI, DX:SI, DI:BX, SI:AX,
 CX:DX, DX:DI, DI:SI, SI:BX and BX:AX.
 For example, if the following register set was specified for a routine
 with one argument of type
-.bd &long_int,
+.bd &long_int
+.ct ,
 .millust begin
 [ES DI]
 .millust end
@@ -2991,7 +3005,8 @@ are:
 &axup, &bxup, &cxup, &dxup, &siup and &diup..
 For example, if the following register set was specified for a routine
 with one argument of type
-.bd &machint,
+.bd &machint
+.ct ,
 .millust begin
 [&bpup]
 .millust end
@@ -3095,7 +3110,8 @@ Consider the following example.
 Suppose
 .id myrtn
 is a routine with 3 arguments each of type
-.bd &arg_2_regs..
+.bd &arg_2_regs
+.ct .li .
 .if '&lang' eq 'FORTRAN 77' .do begin
 Note that the arguments are passed by value.
 .do end
@@ -3107,7 +3123,8 @@ The second argument will be passed in the register pair &cxup:&bxup..
 .point
 The third argument will be pushed on the stack since &bpup:&siup is
 not a valid register pair for arguments of type
-.bd &arg_2_regs..
+.bd &arg_2_regs
+.ct .li .
 .endpoint
 .np
 It is possible for registers from the second register set to be used
@@ -3131,7 +3148,8 @@ is a routine with 3 arguments,
 the first of type
 .bd &int
 and the second and third of type
-.bd &arg_2_regs..
+.bd &arg_2_regs
+.ct .li .
 .if '&lang' eq 'FORTRAN 77' .do begin
 Note that all arguments are passed by value.
 .do end
@@ -3267,11 +3285,13 @@ In general, &cmpname assigns the following types to register sets.
 .note
 A register set consisting of a single 8-bit register (1 byte) is
 assigned a type of
-.bd &uchar..
+.bd &uchar
+.ct .li .
 .note
 A register set consisting of a single 16-bit register (2 bytes) is
 assigned a type of
-.bd &ushort_int..
+.bd &ushort_int
+.ct .li .
 .note
 A register set consisting of
 .if '&machine' eq '8086' .do begin
@@ -3282,7 +3302,8 @@ a single 32-bit register
 .do end
 (4 bytes) is assigned
 a type of
-.bd &ulong_int..
+.bd &ulong_int
+.ct .li .
 .note
 A register set consisting of
 .if '&machine' eq '8086' .do begin
@@ -3292,7 +3313,8 @@ four 16-bit
 two 32-bit
 .do end
 registers (8 bytes) is assigned a type of
-.bd &double..
+.bd &double
+.ct .li .
 .endnote
 .if '&lang' eq 'FORTRAN 77' .do begin
 .np
@@ -3344,7 +3366,8 @@ The first argument must be passed as a C string, a pointer to the
 actual character data terminated by a null character.
 By default, the address of a string descriptor is passed for arguments
 of type
-.bd CHARACTER.
+.bd CHARACTER
+.ct .li .
 See the chapter entitled "Assembly Language Considerations" for more
 information on string descriptors.
 The second argument is of type
@@ -5166,8 +5189,8 @@ in the following way.
 .note
 Since "8087" was specified in the register set, the first argument,
 being of type
-.bd &single,
-will be passed in an 80x87 floating-point register.
+.bd &single
+.ct , will be passed in an 80x87 floating-point register.
 .note
 The second argument will be passed on the stack since no 80x86
 registers were specified in the register set.

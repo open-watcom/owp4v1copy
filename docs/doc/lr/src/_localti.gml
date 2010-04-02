@@ -9,10 +9,11 @@ struct tm *_localtime( const time_t *timer,
 The &func function converts the calendar time pointed to by
 .arg timer
 into a structure of type
-.kw tm,
-of time information, expressed as local time.
+.kw tm
+.ct , of time information, expressed as local time.
 The information is stored in the structure pointed to by
-.arg tmbuf.
+.arg tmbuf
+.ct .li .
 Whenever &func is called, the
 .kw tzset
 function is also called.

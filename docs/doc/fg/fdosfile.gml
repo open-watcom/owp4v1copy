@@ -934,9 +934,10 @@ and
 .kw WRITE
 refer to files by a unit number.
 All input/output statements except
-.kw OPEN,
-.kw CLOSE,
-and
+.kw OPEN
+.ct ,
+.kw CLOSE
+.ct , and
 .kw INQUIRE
 must refer to a unit that is connected to a file.
 The &cmpname run-time system automatically establishes the connection

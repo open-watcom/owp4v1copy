@@ -10,7 +10,8 @@ The &func function constructs a value with type
 .kw wctrans_t
 that describes a mapping between wide characters identified by the
 string argument
-.arg property.
+.arg property
+.ct .li .
 The constructed value is affected by the
 .kw LC_CTYPE
 category of the current locale; the constructed value becomes

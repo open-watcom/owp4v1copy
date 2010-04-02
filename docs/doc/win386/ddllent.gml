@@ -14,15 +14,18 @@ int DefineDLLEntry( int index, void * routine, ... );
 The &func function defines an
 .arg index
 number for the 32-bit DLL procedure
-.arg routine.
+.arg routine
+.ct .li .
 The parameter
 .arg index
 defines the index number that must be used in order to invoke the
 32-bit FAR procedure
-.arg routine.
+.arg routine
+.ct .li .
 The variable argument list defines the types of parameters that will be
 received by the 32-bit DLL
-.arg routine.
+.arg routine
+.ct .li .
 Valid parameter types are:
 .begterm 16 $compact
 .term DLL_PTR

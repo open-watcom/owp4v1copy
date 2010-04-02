@@ -8,7 +8,8 @@ The &func function loads the double pointed to by
 .arg src
 in IEEE format and converts it to Microsoft binary format, storing the
 result into the double pointed to by
-.arg dest.
+.arg dest
+.ct .li .
 .np
 For &func, IEEE Nan's and Infinities will cause overflow.
 IEEE denormals will be converted if within range.

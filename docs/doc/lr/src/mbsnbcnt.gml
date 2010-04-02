@@ -23,7 +23,8 @@ size_t _wcsncnt( const wchar_t *string, size_t n ) {
 The &mfunc function counts the number of bytes in the first
 .arg n
 multibyte characters of the string
-.arg string.
+.arg string
+.ct .li .
 .np
 .us Note:
 This function was called
@@ -39,7 +40,8 @@ It is most useful in mixed memory model applications.
 The header file
 .hdrfile tchar.h
 defines the generic-text routine
-.kw _tcsnbcnt.
+.kw _tcsnbcnt
+.ct .li .
 This macro maps to &mfunc if
 .kw _MBCS
 has been defined, or to the &wfunc macro if
@@ -59,14 +61,16 @@ The &func function returns the number of characters (i.e.,
 in the first
 .arg n
 bytes of the single-byte string
-.arg string.
+.arg string
+.ct .li .
 The &wfunc function returns the number of bytes (i.e., 2 *
 .arg n
 .ct )
 in the first
 .arg n
 wide characters of the wide-character string
-.arg string.
+.arg string
+.ct .li .
 .desc end
 .return begin
 The &func functions return the number of bytes in the string up to the

@@ -6,10 +6,11 @@ void _dos_setdrive( unsigned drive, unsigned *total );
 .desc begin
 The &func function uses system call 0x0E to set the current default
 disk drive to be the drive specified by
-.arg drive,
-where 1 = drive A, 2 = drive B, etc.
+.arg drive
+.ct , where 1 = drive A, 2 = drive B, etc.
 The total number of disk drives is returned in the word pointed to by
-.arg total.
+.arg total
+.ct .li .
 For DOS versions 3.0 or later, the minimum number of drives returned
 is 5.
 .desc end

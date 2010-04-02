@@ -357,8 +357,8 @@ system   x32r
 .millust end
 .np
 If the system is
-.kw x32r,
-a FlashTek executable file is created for an application using the
+.kw x32r
+.ct , a FlashTek executable file is created for an application using the
 register calling convention.
 .millust begin
 system   x32rv
@@ -366,8 +366,8 @@ system   x32rv
 .millust end
 .np
 If the system is
-.kw x32rv,
-a virtual-memory FlashTek executable file is created for an
+.kw x32rv
+.ct , a virtual-memory FlashTek executable file is created for an
 application using the register calling convention.
 .millust begin
 system   x32s
@@ -375,8 +375,8 @@ system   x32s
 .millust end
 .np
 If the system is
-.bd x32s,
-a FlashTek executable file is created for an application using the
+.bd x32s
+.ct , a FlashTek executable file is created for an application using the
 stack calling convention.
 .millust begin
 system   x32sv
@@ -384,8 +384,8 @@ system   x32sv
 .millust end
 .np
 If the system is
-.bd x32sv,
-a virtual-memory FlashTek executable file is created for an
+.bd x32sv
+.ct , a virtual-memory FlashTek executable file is created for an
 application using the stack calling convention.
 .np
 For more information,

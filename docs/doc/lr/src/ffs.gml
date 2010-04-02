@@ -5,7 +5,8 @@ int ffs( int i );
 .funcend
 .desc begin
 The &func finds the first bit set, beginning with the least significant bit, in
-.arg i.
+.arg i
+.ct .li .
 Bits are numbered starting at one (the least significant bit).
 .desc end
 .return begin

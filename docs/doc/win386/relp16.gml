@@ -11,7 +11,8 @@ void ReleaseProc16( CALLBACKPTR cbp );
 .funcend
 .desc begin
 &func releases the callback function allocated by
-.kw GetProc16.
+.kw GetProc16
+.ct .li .
 Since the callback routines are a limited resource, it is important to
 release the routines when they are no longer required.
 .desc end

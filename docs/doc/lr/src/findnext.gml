@@ -32,7 +32,8 @@ function.
 The information is returned in a
 .kw _finddata_t
 structure pointed to by
-.arg fileinfo.
+.arg fileinfo
+.ct .li .
 .millust begin
 struct _finddata_t {
   unsigned  attrib;
@@ -60,7 +61,8 @@ function.
 The information is returned in a
 .kw _finddatai64_t
 structure pointed to by
-.arg fileinfo.
+.arg fileinfo
+.ct .li .
 .millust begin
 struct _finddatai64_t {
   unsigned  attrib;

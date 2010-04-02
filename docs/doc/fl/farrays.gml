@@ -559,8 +559,8 @@ in a type statement either as part of an array declarator or by itself
 to establish the type of the array.
 .note
 in an array declarator in a
-.kw DIMENSION,
-type or
+.kw DIMENSION
+.ct , type or
 .kw COMMON
 statement.
 .note

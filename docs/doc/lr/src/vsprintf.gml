@@ -30,7 +30,8 @@ int _uvsprintf( wchar_t *buf,
 The &func function formats data under control of the
 .arg format
 control string and writes the result to
-.arg buf.
+.arg buf
+.ct .li .
 The
 .arg format
 string is described under the description of the
@@ -39,8 +40,8 @@ function.
 The &func function is equivalent to the
 .kw sprintf
 function, with the variable argument list replaced with
-.arg arg,
-which has been initialized by the
+.arg arg
+.ct , which has been initialized by the
 .kw va_start
 macro.
 .if &'length(&wfunc.) ne 0 .do begin
@@ -52,7 +53,8 @@ is to be written, rather than converted to multibyte characters and
 written to a stream.
 The maximum number of wide characters to write, including a
 terminating null wide character, is specified by
-.arg count.
+.arg count
+.ct .li .
 The &wfunc function accepts a wide-character string argument for
 .arg format
 .do end

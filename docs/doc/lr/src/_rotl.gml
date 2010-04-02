@@ -6,9 +6,10 @@ unsigned int _rotl( unsigned int value,
 .funcend
 .desc begin
 The &func function rotates the unsigned integer, determined by
-.arg value,
-to the left by the number of bits specified in
-.arg shift.
+.arg value
+.ct , to the left by the number of bits specified in
+.arg shift
+.ct .li .
 If you port an application using &func between a 16-bit and a 32-bit
 environment, you will get different results because of the difference
 in the size of integers.

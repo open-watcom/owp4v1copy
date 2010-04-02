@@ -5,7 +5,8 @@ int fsync( int fd );
 .desc begin
 The &func function writes to disk all the currently queued data for
 the open file specified by
-.arg fd.
+.arg fd
+.ct .li .
 All necessary file system information required to retrieve the data is
 also written to disk.
 The file access times are also updated.

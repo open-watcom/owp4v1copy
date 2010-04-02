@@ -89,7 +89,8 @@ digit-nondigit sequence is ignored. If the subject sequence contains
 .mono INF
 .ct , the value of infinity (with appropriate sign) will be returned.
 This case can be distinguished from overflow by checking
-.kw errno.
+.kw errno
+.ct .li .
 .np
 For a hexadecimal floating-point number, the optional exponent is
 binary (that is, denotes a power of two), not decimal.
@@ -102,8 +103,8 @@ points if
 is not
 .mono NULL.
 By comparing the "end" pointer with
-.arg ptr,
-it can be determined how much of the string, if any, was scanned by
+.arg ptr
+.ct , it can be determined how much of the string, if any, was scanned by
 the &func function.
 .im widefunc
 .im unifunc
@@ -117,11 +118,13 @@ If the correct value would cause overflow, plus or minus
 is returned according to the sign, and
 .kw errno
 is set to
-.kw ERANGE.
+.kw ERANGE
+.ct .li .
 If the correct value would cause underflow, then zero is returned, and
 .kw errno
 is set to
-.kw ERANGE.
+.kw ERANGE
+.ct .li .
 .im errnocnv
 .return end
 .*

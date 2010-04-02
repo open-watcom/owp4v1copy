@@ -1455,7 +1455,8 @@ additional operations.
 Defines the macros
 .kwm _DOS
 and
-.kwm MSDOS.
+.kwm MSDOS
+.ct .li .
 .note WINDOWS
 Same as specifying one of the "zw" options.
 Defines the macros
@@ -1468,13 +1469,16 @@ and
 (32-bit only)
 Causes the compiler to use stack-based calling conventions.
 Also defines the macro
-.kwm __NETWARE_386__.
+.kwm __NETWARE_386__
+.ct .li .
 .note QNX
 Defines the macro
-.kwm __UNIX__.
+.kwm __UNIX__
+.ct .li .
 .note LINUX
 Defines the macro
-.kwm __UNIX__.
+.kwm __UNIX__
+.ct .li .
 .endnote
 .np
 Specifying "bt" with no target name following restores the default
@@ -5355,9 +5359,10 @@ on generating fast code.
 .ix 'exception handling'
 The "xd..." options disable exception handling.
 Consequently, it is not possible to use
-.kw throw,
-.kw try,
-or
+.kw throw
+.ct ,
+.kw try
+.ct , or
 .kw catch
 statements, or to specify a function exception specification.
 If your program (or a library which it includes) throws exceptions,

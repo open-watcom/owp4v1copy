@@ -50,8 +50,8 @@ the 16-bit environment.
 Throughout this document, there will be references to both
 .kw near
 and
-.kw far,
-and
+.kw far
+.ct , and
 .kw 16-bit
 and
 .kw 32-bit
@@ -105,8 +105,8 @@ Windows, in general, uses 16-bit far pointers to pass information around.
 These 16-bit far pointers can also be used by a 32-bit Windows application.
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 Using a special macro,
-.kw MK_FP32,
-the offset of the 16-bit far pointer is extended from 16 bits to 32 bits,
+.kw MK_FP32
+.ct , the offset of the 16-bit far pointer is extended from 16 bits to 32 bits,
 and the pointer becomes a 32-bit far pointer.
 The 32-bit far pointer is then used by the application to access the
 data (note that offsets still must be less than 64K, since the

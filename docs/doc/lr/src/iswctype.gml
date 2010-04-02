@@ -9,7 +9,8 @@ int iswctype( wint_t wc, wctype_t desc );
 The &func function determines whether the wide character
 .arg wc
 has the property described by
-.arg desc.
+.arg desc
+.ct .li .
 Valid values of
 .arg desc
 are defined by the use of the
@@ -65,7 +66,8 @@ The &func function returns non-zero (true) if and only if the value of
 the wide character
 .arg wc
 has the property described by
-.arg desc.
+.arg desc
+.ct .li .
 .return end
 .*
 .see begin

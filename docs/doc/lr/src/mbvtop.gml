@@ -13,12 +13,14 @@ unsigned char __far *_fmbvtop( unsigned int ch,
 The &func function stores the multibyte character
 .arg ch
 into the string pointed to by
-.arg addr.
+.arg addr
+.ct .li .
 .im farparm
 .desc end
 .return begin
 The &func function returns the value of the argument
-.arg addr.
+.arg addr
+.ct .li .
 .return end
 .see begin
 .im seembc &function.

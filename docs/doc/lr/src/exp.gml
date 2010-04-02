@@ -5,7 +5,8 @@ double exp( double x );
 .funcend
 .desc begin
 The &func function computes the exponential function of
-.arg x.
+.arg x
+.ct .li .
 A range error occurs if the magnitude of
 .arg x
 is too large.

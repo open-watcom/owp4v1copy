@@ -12,7 +12,8 @@ int _fmblen( const char __far *s, size_t n );
 .desc begin
 The &func function determines the number of bytes comprising the
 multibyte character pointed to by
-.arg s.
+.arg s
+.ct .li .
 At most
 .arg n
 bytes of the array pointed to by

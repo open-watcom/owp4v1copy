@@ -6,7 +6,8 @@ int cprintf( const char *format, ... );
 .desc begin
 The &func function writes output directly to the console under control
 of the argument
-.arg format.
+.arg format
+.ct .li .
 The
 .kw putch
 function is used to output characters to the console.

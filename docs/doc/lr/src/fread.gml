@@ -14,7 +14,8 @@ elements of
 bytes each from the file specified by
 .arg fp
 into the buffer specified by
-.arg buf.
+.arg buf
+.ct .li .
 .desc end
 .return begin
 The &func function returns the number of complete elements

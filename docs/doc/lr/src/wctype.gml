@@ -10,7 +10,8 @@ The &func function constructs a value with type
 .kw wctype_t
 that describes a class of wide characters identified by the string
 argument,
-.arg property.
+.arg property
+.ct .li .
 The constructed value is affected by the
 .kw LC_CTYPE
 category of the current locale; the constructed value becomes
@@ -37,10 +38,12 @@ any wide character for which
 .kw iswlower
 is true, that is, for any wide character that is one of an
 implementation-defined set for which none of
-.kw iswcntrl,
-.kw iswdigit,
-.kw iswpunct,
-or
+.kw iswcntrl
+.ct ,
+.kw iswdigit
+.ct ,
+.kw iswpunct
+.ct , or
 .kw iswspace
 is true
 .*
@@ -63,10 +66,12 @@ any printable wide character except a space wide character
 .termnx lower
 any wide character corresponding to a lowercase letter, or one of an
 implementation-defined set of wide characters for which none of
-.kw iswcntrl,
-.kw iswdigit,
-.kw iswpunct,
-or
+.kw iswcntrl
+.ct ,
+.kw iswdigit
+.ct ,
+.kw iswpunct
+.ct , or
 .kw iswspace
 is true
 .*
@@ -89,10 +94,12 @@ is false
 .termnx upper
 any wide character corresponding to a uppercase letter, or if c is one
 of an implementation-defined set of wide characters for which none of
-.kw iswcntrl,
-.kw iswdigit,
-.kw iswpunct,
-or
+.kw iswcntrl
+.ct ,
+.kw iswdigit
+.ct ,
+.kw iswpunct
+.ct , or
 .kw iswspace
 is true
 .*

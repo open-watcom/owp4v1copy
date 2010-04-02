@@ -23,7 +23,8 @@ The &func function performs a case insensitive comparison of the
 string pointed to by
 .arg s1
 to the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 The comparison uses the current code page which can be selected by the
 .kw _setmbcp
 function.
@@ -35,10 +36,11 @@ These functions return an integer less than, equal to, or greater than
 zero, indicating that the string pointed to by
 .arg s1
 is less than, equal to, or greater than the string pointed to by
-.arg s2,
-according to the collating sequence selected.
+.arg s2
+.ct , according to the collating sequence selected.
 :CMT. If an error occurs, these functions return
-:CMT. .kw _NLSCMPERR.
+:CMT. .kw _NLSCMPERR
+:CMT. .ct .li .
 :CMT. The
 :CMT. .kw _wcsicoll
 :CMT. function may set

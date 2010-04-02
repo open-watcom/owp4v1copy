@@ -25,11 +25,13 @@ not more than
 single or double-byte characters of the Kanji string pointed to by
 .arg src
 to the end of the Kanji string pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 The first character of
 .arg src
 overwrites the null character at the end of
-.arg dst.
+.arg dst
+.ct .li .
 A terminating null character is always appended to the result.
 .im ffarfunc
 .desc end
@@ -41,7 +43,8 @@ The &func function returns
 The &func and &ffunc functions return
 .do end
 the value of
-.arg dst.
+.arg dst
+.ct .li .
 .return end
 .see begin
 .seelist &function. jstrcat jstrncat strcat strncat

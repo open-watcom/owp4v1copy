@@ -22,7 +22,8 @@ int _ufscanf( FILE *fp, const wchar_t *format, ... );
 The &func function scans input from the file designated by
 .arg fp
 under control of the argument
-.arg format.
+.arg format
+.ct .li .
 Following the format string is a list of addresses to receive values.
 The
 .arg format
@@ -33,7 +34,8 @@ function.
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

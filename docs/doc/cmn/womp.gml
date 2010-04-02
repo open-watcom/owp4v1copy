@@ -385,7 +385,8 @@ To work around this problem you must use "name_" whenever referring to
 a function (e.g., "go main_")
 .np
 The default external naming convention for &company FORTRAN functions is
-.bd ALL UPPERCASE.
+.bd ALL UPPERCASE
+.ct .li .
 So, you can use "go FMAIN" to begin a FORTRAN program.
 .np
 &company parameter passing is described in the "User's Guide".

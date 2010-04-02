@@ -45,10 +45,12 @@ or
 .kw iswlower
 is true, or any wide character that is one of an
 implementation-defined set for which none of
-.kw iswcntrl,
-.kw iswdigit,
-.kw iswpunct,
-or
+.kw iswcntrl
+.ct ,
+.kw iswdigit
+.ct ,
+.kw iswpunct
+.ct , or
 .kw iswspace
 is true.
 .do end

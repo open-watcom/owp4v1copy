@@ -5,7 +5,8 @@ int _open_osfhandle( long osfhandle, int access );
 .desc begin
 The &func function allocates a POSIX-level file handle and sets it to
 point to the operating system's internal file handle specified by
-.arg osfhandle.
+.arg osfhandle
+.ct .li .
 The value returned by
 .kw _get_osfhandle
 can be used as an argument to the &func function.

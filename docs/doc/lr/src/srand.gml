@@ -8,7 +8,8 @@ The &func function uses the argument
 .arg seed
 to start a new sequence of pseudo-random integers to be returned by
 subsequent calls to
-.kw rand.
+.kw rand
+.ct .li .
 A particular sequence of pseudo-random integers can be repeated by
 calling &func with the same
 .arg seed

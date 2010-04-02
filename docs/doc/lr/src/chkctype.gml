@@ -16,13 +16,15 @@ is the first byte of a double-byte Kanji character.
 If
 .arg c
 is the first byte of a double-byte Kanji character, it returns
-.kw CT_KJ1.
+.kw CT_KJ1
+.ct .li .
 If
 .arg c
 is not the first byte of a double-byte Kanji character, it returns
 .kw CT_ANK
 or
-.kw CT_ILGL.
+.kw CT_ILGL
+.ct .li .
 .np
 If
 .arg mode
@@ -34,11 +36,13 @@ is the second byte of a double-byte Kanji character.
 If
 .arg c
 is the second byte of a double-byte Kanji character, it returns
-.kw CT_KJ2.
+.kw CT_KJ2
+.ct .li .
 If
 .arg c
 is not the second byte of a double-byte Kanji character, it returns
-.kw CT_ILGL.
+.kw CT_ILGL
+.ct .li .
 Note that the
 .kw nthctype
 function identifies the type of the n'th byte of a Kanji string.
@@ -48,13 +52,17 @@ If
 .arg c
 is a null character,
 &func returns
-.kw CT_ILGL.
+.kw CT_ILGL
+.ct .li .
 In all other cases, it returns one of
-.kw CT_ANK,
-.kw CT_KJ1,
-.kw CT_KJ2,
-or
-.kw CT_ILGL.
+.kw CT_ANK
+.ct ,
+.kw CT_KJ1
+.ct ,
+.kw CT_KJ2
+.ct , or
+.kw CT_ILGL
+.ct .li .
 .begterm 10
 .termhd1 Constant
 .termhd2 Meaning

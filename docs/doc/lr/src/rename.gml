@@ -16,7 +16,8 @@ int _urename( const wchar_t *old, const wchar_t *new );
 The &func function causes the file whose name is indicated by the string
 .arg old
 to be renamed to the name given by the string
-.arg new.
+.arg new
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 The &wfunc function is identical to &func except that it accepts
 wide-character string arguments.

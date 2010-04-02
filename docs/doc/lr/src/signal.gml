@@ -46,9 +46,10 @@ OS/2 process flag C via DosFlagProcess
 .np
 .if '&machsys' eq 'QNX' .do begin
 There are three types of actions that can be associated with a signal:
-.kw SIG_DFL,
-.kw SIG_IGN,
-or a
+.kw SIG_DFL
+.ct ,
+.kw SIG_IGN
+.ct , or a
 .us pointer to a function.
 Initially, all signals are set to
 .kw SIG_DFL
@@ -94,7 +95,8 @@ to return from a signal handler, the signal will remain masked.
 You can use
 .kw siglongjmp
 to restore the mask to the state saved in a previous call to
-.kw sigsetjmp.
+.kw sigsetjmp
+.ct .li .
 .do end
 .np
 After returning from the signal-catching function, the receiving
@@ -115,7 +117,8 @@ The signal catching function is described as follows:
 It is not possible to catch the signals
 .kw SIGKILL
 and
-.kw SIGSTOP.
+.kw SIGSTOP
+.ct .li .
 .do end
 .np
 Since signal-catching functions are invoked asynchronously with
@@ -139,13 +142,14 @@ flag (see
 .ct ).
 While a process is stopped, any additional signals that are sent to
 the process are not delivered until the process is continued, except
-.kw SIGKILL,
-which always terminates the receiving process.
+.kw SIGKILL
+.ct , which always terminates the receiving process.
 :cmt. A process that is a member of an orphaned process group will not be
 :cmt. allowed to stop in response to the
-:cmt. .kw SIGTSTP,
-:cmt. .kw SIGTTIN,
-:cmt. or
+:cmt. .kw SIGTSTP
+:cmt. .ct ,
+:cmt. .kw SIGTTIN
+:cmr. .ct , or
 :cmt. .kw SIGTTOU
 :cmt. signals.
 :cmt. In cases where delivery of one of these signals would stop such a
@@ -168,7 +172,8 @@ The action for the signals
 or
 .kw SIGSTOP
 cannot be set to
-.kw SIG_IGN.
+.kw SIG_IGN
+.ct .li .
 .np
 Setting a signal action to
 .kw SIG_IGN
@@ -178,8 +183,8 @@ discarded, whether or not it is blocked.
 If a process sets the action for the
 .kw SIGCHLD
 signal to
-.kw SIG_IGN,
-the behaviour is unspecified.
+.kw SIG_IGN
+.ct , the behaviour is unspecified.
 .do end
 :cmt. .if '&machsys' ne 'QNX' .do begin
 :cmt. .term SIG_ACK
@@ -250,7 +255,8 @@ A return value of
 indicates that the request could not be handled, and
 .kw errno
 is set to the value
-.kw EINVAL.
+.kw EINVAL
+.ct .li .
 .np
 Otherwise, the previous value of
 .arg func

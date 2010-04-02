@@ -13,7 +13,8 @@ The argument
 is the name of a function of type
 .kw PFV
 or
-.kw PFU.
+.kw PFU
+.ct .li .
 .begterm 12
 .termhd1 Type
 .termhd2 Description

@@ -20,12 +20,14 @@ which points to a memory block previously allocated through a call to
 .ct,
 .kw realloc
 or
-.kw _smalloc.
+.kw _smalloc
+.ct .li .
 .do end
 .el .do begin
 .kw malloc
 or
-.kw realloc.
+.kw realloc
+.ct .li .
 .do end
 After the call, the freed block is available for allocation.
 .desc end
@@ -89,7 +91,8 @@ the appropriate version of
 .ct,
 .kw malloc
 or
-.kw realloc.
+.kw realloc
+.ct .li .
 After the call, the freed block is available for allocation.
 .np
 Each function deallocates memory from a particular heap, as listed below:

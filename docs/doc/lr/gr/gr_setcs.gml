@@ -17,7 +17,8 @@ The &func &routines set the character height and width to the values
 specified by the arguments
 .arg height
 and
-.arg width.
+.arg width
+.ct .li .
 For the &func &routine, the arguments
 .arg height
 and

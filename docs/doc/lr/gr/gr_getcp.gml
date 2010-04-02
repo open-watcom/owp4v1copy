@@ -22,7 +22,8 @@ when a new video
 mode is selected.
 It is changed
 by successful calls to the
-.kw _arc,
+.kw _arc
+.ct ,
 .kw _moveto
 and
 .kw _lineto

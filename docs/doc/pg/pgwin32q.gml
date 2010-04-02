@@ -60,9 +60,10 @@ Use the
 .kw _Call16
 procedure to call the 16-bit function since it is simpler
 to use than the
-.kw GetIndirectFunctionHandle,
-.kw InvokeIndirectFunction,
-and
+.kw GetIndirectFunctionHandle
+.ct ,
+.kw InvokeIndirectFunction
+.ct , and
 .kw FreeIndirectFunctionHandle
 sequence.
 An example of this process is provided under the
@@ -111,7 +112,8 @@ to the 32-bit Windows supervisor (since the supervisor is a 16-bit
 Windows application).
 Note that resource compiler options may be specified by using the "R"
 option of
-.kw WBIND.
+.kw WBIND
+.ct .li .
 .*
 .section All function pointers passed to Windows must be 16-bit far pointers, correct?
 .*
@@ -126,18 +128,20 @@ exported.
 .np
 A 16-bit far pointer to a function is obtained in one of two ways:
 either Windows gives it to you (via
-.kw GetProcAddr,
-for example), or you obtain a pointer from the supervisor, via
-.kw GetProc16.
+.kw GetProcAddr
+.ct , for example), or you obtain a pointer from the supervisor, via
+.kw GetProc16
+.ct .li .
 .np
 Function pointers obtained from Windows may either be fed into other
 Windows functions requiring function pointers, or called indirectly
 by using
 .kw _Call16
 or by using the
-.kw GetIndirectFunctionHandle,
-.kw InvokeIndirectFunction,
-and
+.kw GetIndirectFunctionHandle
+.ct ,
+.kw InvokeIndirectFunction
+.ct , and
 .kw FreeIndirectFunctionHandle
 sequence.
 .np
@@ -233,7 +237,8 @@ can be used by your 32-bit application.
 For example, to access the memory returned by
 .kw GlobalLock
 requires the use of
-.kw MK_FP32.
+.kw MK_FP32
+.ct .li .
 To access any pointer passed to you (in a callback routine)
 requires the use of
 .kw MK_FP32

@@ -211,7 +211,8 @@ is an approximate representation of a real number, occupies 8 bytes
 that of an item of type
 .bd REAL
 or
-.bd REAL*4.
+.bd REAL*4
+.ct .li .
 If
 .id m
 is the magnitude of a real number
@@ -303,7 +304,8 @@ occupies 8 bytes (two consecutive numeric storage units), the first
 being the real part and the second the imaginary part.
 The approximation of the real and imaginary parts of a complex number
 is the same degree of approximation used for items of type
-.bd REAL.
+.bd REAL
+.ct .li .
 .*
 .section COMPLEX*16 Data Type
 .*
@@ -322,7 +324,8 @@ occupies 16 bytes (four consecutive numeric storage units), the first
 two being the real part and the last two the imaginary part.
 The approximation of the real and imaginary parts of a complex number
 is the same degree of approximation used for items of type
-.bd DOUBLE PRECISION.
+.bd DOUBLE PRECISION
+.ct .li .
 .*
 .section CHARACTER Data Type
 .*
@@ -389,17 +392,20 @@ The following illustrates the relative size of the data types in terms
 of bytes.
 .bd LOGICAL
 is equivalent to
-.bd LOGICAL*4,
+.bd LOGICAL*4
+.ct ,
 .bd INTEGER
 is equivalent to
-.bd INTEGER*4,
+.bd INTEGER*4
+.ct ,
 .bd DOUBLE PRECISION
 is equivalent to
-.bd REAL*8,
-and
+.bd REAL*8
+.ct , and
 .bd COMPLEX
 is equivalent to
-.bd COMPLEX*8.
+.bd COMPLEX*8
+.ct .li .
 .ix 'short option'
 If the "short" option is used,
 .bd LOGICAL
@@ -408,7 +414,8 @@ is equivalent to
 and
 .bd INTEGER
 is equivalent to
-.bd INTEGER*2.
+.bd INTEGER*2
+.ct .li .
 .pc
 .sr c0=&sysin+11
 .sr bs=2

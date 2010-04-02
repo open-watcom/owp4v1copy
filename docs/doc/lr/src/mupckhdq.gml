@@ -7,7 +7,8 @@ The &func function performs an interleaved unpack of the
 high-order data elements of
 .arg m1
 and
-.arg m2.
+.arg m2
+.ct .li .
 It ignores the low-order double-words.
 When unpacking from a memory operand, the full 64-bit operand
 is accessed from memory but only the high-order 32 bits are utilized.

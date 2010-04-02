@@ -11,9 +11,11 @@ is false (0).
 The diagnostic message has the form
 .np
 .mono Assertion failed:
-.arg expression,
+.arg expression
+.ct ,
 .mono file
-.arg filename,
+.arg filename
+.ct ,
 .mono line
 .arg linenumber
 .np

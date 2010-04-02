@@ -21,7 +21,8 @@ array pointed to by
 .arg pwcs
 into a sequence of multibyte characters and stores them in the
 array pointed to by
-.arg s.
+.arg s
+.ct .li .
 The &func function stops if a multibyte character would exceed the limit of
 .arg n
 total bytes, or if the null character is stored.

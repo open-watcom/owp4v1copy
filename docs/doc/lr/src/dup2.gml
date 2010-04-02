@@ -9,7 +9,8 @@ int _dup2( int &fd, int &fd.2 );
 .funcend
 .desc begin
 The &func function duplicates the file &handle given by the argument
-.arg &fd..
+.arg &fd
+.ct .li .
 The new file &handle is identical to the original in that it references
 the same file or device, it has the same open mode (read and/or write)
 and it will have identical file position to the original (changing the
@@ -17,7 +18,8 @@ position with one &handle will result in a changed position in the
 other).
 .pp
 The number of the new &handle is
-.arg &fd.2.
+.arg &fd.2
+.ct .li .
 If a file already is opened with this &handle, the file is closed
 before the duplication is attempted.
 .if &'length(&_func.) ne 0 .do begin

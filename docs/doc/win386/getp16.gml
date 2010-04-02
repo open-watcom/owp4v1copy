@@ -14,7 +14,8 @@ The &func function returns a 16-bit far function pointer suitable for
 use as a Windows callback function.
 This callback function will invoke the 32-bit far procedure specified
 by
-.arg fcn.
+.arg fcn
+.ct .li .
 The types of callback functions that may be allocated are:
 .begterm 8
 .term GETPROC_CALLBACK
@@ -203,7 +204,8 @@ This pointer may then be fed to any Windows function that requires a
 pointer to a function within the 32-bit program.
 Note that the callback function within the 32-bit program must be
 declared as
-.kw FAR.
+.kw FAR
+.ct .li .
 .return end
 .see begin
 .seelist &function. ReleaseProc16

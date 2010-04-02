@@ -7,7 +7,8 @@ double atanh( double x );
 .funcend
 .desc begin
 The &func function computes the inverse hyperbolic tangent of
-.arg x.
+.arg x
+.ct .li .
 A domain error occurs if the value of
 .arg x
 is outside the range (&minus.1,1).

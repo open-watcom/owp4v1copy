@@ -10,7 +10,8 @@ integer*2 length
 .gfuncend
 .desc begin
 The &func &routine displays the character string indicated by the argument
-.arg text.
+.arg text
+.ct .li .
 The argument
 .arg length
 specifies the number of characters to be displayed.

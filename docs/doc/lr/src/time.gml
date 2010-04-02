@@ -6,7 +6,8 @@ time_t time( time_t *tloc );
 .desc begin
 The &func function determines the current calendar time and encodes it
 into the type
-.kw time_t.
+.kw time_t
+.ct .li .
 .np
 The time represents the time since January 1, 1970 Coordinated
 Universal Time (UTC) (formerly known as Greenwich Mean Time (GMT)).
@@ -19,7 +20,8 @@ If
 is not
 .mono NULL,
 the current calendar time is also stored in the object pointed to by
-.arg tloc.
+.arg tloc
+.ct .li .
 .return end
 .see begin
 .im seetime time

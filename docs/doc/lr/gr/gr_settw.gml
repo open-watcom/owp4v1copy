@@ -22,7 +22,8 @@ The initial text output position is
 Subsequent text positions are reported (by the
 .kw _gettextposition
 &routine) and set (by the
-.kw _outtext,
+.kw _outtext
+.ct ,
 .kw _outmem
 and
 .kw _settextposition

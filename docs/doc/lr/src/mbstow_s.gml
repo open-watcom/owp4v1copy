@@ -30,7 +30,8 @@ is not a null pointer, then neither
 nor
 .arg dstmax
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg dst
 is a null pointer, then
@@ -45,11 +46,12 @@ zero. If
 is not a null pointer and
 .arg len
 is not less than
-.arg dstmax,
-then a null character shall occur within the first
+.arg dstmax
+.ct , then a null character shall occur within the first
 .arg dstmax
 multibyte characters of the array pointed to by
-.arg src.
+.arg src
+.ct .li .
 .np
 If there is a runtime-constraint violation, then &func. does the following. If
 .arg retval
@@ -60,8 +62,8 @@ to (size_t)(-1). If
 is not a null pointer and
 .arg dstmax
 is greater than zero and less than
-.kw RSIZE_MAX,
-then &func. sets
+.kw RSIZE_MAX
+.ct , then &func. sets
 .arg dst[0]
 to the null wide character.
 .rtconst end
@@ -74,7 +76,8 @@ into a sequence of corresponding wide characters. If
 .arg dst
 is not a null pointer, the converted characters are stored into the
 array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 .np
 Conversion continues up to and including a terminating null
 character, which is also stored. Conversion stops earlier in two cases: when a sequence of
@@ -83,13 +86,14 @@ bytes is encountered that does not form a valid multibyte character, or (if
 is not a null pointer) when
 .arg len
 wide characters have been stored into the array pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 If
 .arg dst
 is not a null pointer and no null wide character was stored into the array
 pointed to by
-.arg dst,
-then
+.arg dst
+.ct , then
 .arg dst[len]
 is set to the null wide character. Each conversion
 takes place as if by a call to the
@@ -101,7 +105,8 @@ Regardless of whether
 is or is not a null pointer, if the input conversion encounters a
 sequence of bytes that do not form a valid multibyte character, an encoding error occurs:
 the &func. function stores the value (size_t)(-1) into
-.arg *retval.
+.arg *retval
+.ct .li .
 Otherwise, the &func function stores into
 .arg *retval
 the number of multibyte

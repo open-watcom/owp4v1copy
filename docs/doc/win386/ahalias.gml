@@ -21,8 +21,8 @@ that is
 .arg size
 bytes in size.
 This is similar to the function
-.kw AllocAlias16,
-except that
+.kw AllocAlias16
+.ct , except that
 .kw AllocAlias16
 will only give 16-bit far pointers to 32-bit memory objects of up to
 64K in size.

@@ -25,9 +25,12 @@ If it does appear, it must be the first statement in the main program.
 .exam end
 .np
 The main program can contain any &product statement except a
-.kw FUNCTION,
-.kw SUBROUTINE,
-.kw BLOCK DATA,
+.kw FUNCTION
+.ct ,
+.kw SUBROUTINE
+.ct ,
+.kw BLOCK DATA
+.ct ,
 .kw RETURN
 or
 .kw ENTRY

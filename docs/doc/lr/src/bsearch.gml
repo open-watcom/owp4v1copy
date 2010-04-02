@@ -14,9 +14,10 @@ void *bsearch( const void *key,
 The &func function performs a binary search of a sorted array of
 .arg num
 elements, which is pointed to by
-.arg base,
-for an item which matches the object pointed to by
-.arg key.
+.arg base
+.ct , for an item which matches the object pointed to by
+.arg key
+.ct .li .
 Each element in the array is
 .arg width
 bytes in size.
@@ -26,7 +27,8 @@ is called with two arguments that point to elements in the array.
 The first argument
 .arg pkey
 points to the same object pointed to by
-.arg key.
+.arg key
+.ct .li .
 The second argument
 .arg pbase
 points to a element in the array.
@@ -42,8 +44,8 @@ of the array, or
 .mono NULL
 if a matching object could not be found.
 If there are multiple values in the array which are equal to the
-.arg key,
-the return value is not necessarily the first occurrence of a matching
+.arg key
+.ct , the return value is not necessarily the first occurrence of a matching
 value when the array is searched linearly.
 .return end
 .see begin

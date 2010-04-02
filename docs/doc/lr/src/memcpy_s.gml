@@ -40,10 +40,12 @@ shall be a null pointer. Neither
 nor
 .arg n
 shall be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .arg n
 shall not be greater than
-.arg s1max.
+.arg s1max
+.ct .li .
 . Copying shall not take place between
 objects that overlap.
 .np
@@ -57,7 +59,8 @@ is not a null pointer and
 .arg s1max
 is
 not greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .rtconst end
 .*
 .desc begin
@@ -66,7 +69,8 @@ The &func function copies
 characters from the buffer pointed to by
 .arg s2
 into the buffer pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 Copying between overlapping objects is not allowed.
 See the
 .kw memmove_s

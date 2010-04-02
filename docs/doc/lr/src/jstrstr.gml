@@ -21,7 +21,8 @@ the first occurrence in the Kanji string pointed to by
 .arg str
 of the sequence of single- and double-byte characters (excluding the
 terminating null character) in the Kanji string pointed to by
-.arg substr.
+.arg substr
+.ct .li .
 .im ffarfunc
 .desc end
 .return begin

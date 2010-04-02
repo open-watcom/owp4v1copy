@@ -33,12 +33,14 @@ The number of characters (including the trailing null) required for the
 result to be written to the array pointed to by
 .arg s
 shall not be greater than
-.arg n.
+.arg n
+.ct .li .
 The
 .mono %n
 specifier (modified or not by flags, field width, or precision) shall not
 appear in the string pointed to by
-.arg format.
+.arg format
+.ct .li .
 Any argument to &func corresponding to a
 .mono %s
 specifier shall not be a null pointer. No encoding error shall occur.
@@ -60,8 +62,8 @@ The &func function is equivalent to the
 function except for the explicit runtime-constraints listed above.
 .np
 The &func function, unlike
-.kw snprintf_s,
-treats a result too big for the array pointed to by
+.kw snprintf_s
+.ct , treats a result too big for the array pointed to by
 .arg s
 as a runtime-constraint violation.
 .if &'length(&wfunc.) ne 0 .do begin

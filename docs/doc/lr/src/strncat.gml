@@ -54,11 +54,13 @@ characters of the string
 pointed to by
 .arg src
 to the end of the string pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 The first character of
 .arg src
 overwrites the null character at the end of
-.arg dst.
+.arg dst
+.ct .li .
 A terminating null character is always appended to the result.
 .im farfunc
 .im widefunc
@@ -67,7 +69,8 @@ A terminating null character is always appended to the result.
 .desc end
 .return begin
 The &func function returns the value of
-.arg dst.
+.arg dst
+.ct .li .
 .return end
 .see begin
 .seelist strncat strcat strlcat strncat_s strcat_s

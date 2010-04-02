@@ -7,7 +7,8 @@ int vcscanf( const char *format, va_list args )
 .desc begin
 The &func function scans input from the console
 under control of the argument
-.arg format.
+.arg format
+.ct .li .
 The &func function uses the function
 .kw getche
 to read characters from the console.
@@ -20,8 +21,8 @@ function.
 The &func function is equivalent to the
 .kw cscanf
 function, with a variable argument list replaced with
-.arg arg,
-which has been initialized using the
+.arg arg
+.ct , which has been initialized using the
 .kw va_start
 macro.
 .desc end

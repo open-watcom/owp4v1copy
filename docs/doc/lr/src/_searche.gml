@@ -17,7 +17,8 @@ The &func function searches for the file specified by
 .arg name
 in the list of directories assigned to the environment variable
 specified by
-.arg env_var.
+.arg env_var
+.ct .li .
 Common values for
 .arg env_var
 are PATH, LIB and INCLUDE.
@@ -28,7 +29,8 @@ each of the directories
 specified by the environment variable is searched.
 .pp
 The full pathname is placed in the buffer pointed to by the argument
-.arg pathname.
+.arg pathname
+.ct .li .
 If the specified file cannot be found, then
 .arg pathname
 will contain an empty string.

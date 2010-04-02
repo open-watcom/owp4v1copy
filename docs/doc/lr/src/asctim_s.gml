@@ -22,7 +22,8 @@ nor
 .arg timeptr
 shall be a null pointer.
 maxsize shall not be less than 26 and shall not be greater than
-.arg RSIZE_MAX.
+.arg RSIZE_MAX
+.ct .li .
 The broken-down time pointed to by
 .arg timeptr
 shall be normalized. The calendar year represented by the broken-down time
@@ -38,7 +39,8 @@ is set to a null character if
 is not a null pointer and
 .arg maxsize
 is not zero and is not greater than
-.arg RSIZE_MAX.
+.arg RSIZE_MAX
+.ct .li .
 .rtconst end
 .*
 .desc begin

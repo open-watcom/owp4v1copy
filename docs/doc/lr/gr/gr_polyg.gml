@@ -34,7 +34,8 @@ The &func2 and &func3 &routines use the window coordinate system.
 The polygon is defined as containing
 .arg numpts
 points whose coordinates are given in the array
-.arg points.
+.arg points
+.ct .li .
 .im gr_fgfil fill polygon
 .* .pp
 .* When the coordinates

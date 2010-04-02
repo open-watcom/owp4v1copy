@@ -21,5 +21,6 @@ function must be a function whose attributes are those specified by
 one of the alias names
 .kwm __cdecl
 or
-.kwm __pascal.
+.kwm __pascal
+.ct .li .
 These alias names will be described in a later section.

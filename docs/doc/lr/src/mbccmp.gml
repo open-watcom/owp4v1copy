@@ -13,7 +13,8 @@ int _fmbccmp( const unsigned char __far *s1,
 The &func function compares one multibyte character from
 .arg s1
 to one multibyte character from
-.arg s2.
+.arg s2
+.ct .li .
 .im farparm
 .desc end
 .return begin

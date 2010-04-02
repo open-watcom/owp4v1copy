@@ -14,7 +14,8 @@ function calculates the quotient and remainder of the division of the
 numerator
 .arg numer
 by the denominator
-.arg denom.
+.arg denom
+.ct .li .
 .desc end
 .*
 .return begin

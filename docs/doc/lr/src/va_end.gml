@@ -9,7 +9,8 @@ from a list of variable arguments.
 It must be used with the associated macros
 .kw va_start
 and
-.kw va_arg.
+.kw va_arg
+.ct .li .
 See the description for
 .kw va_arg
 for complete documentation on these macros.

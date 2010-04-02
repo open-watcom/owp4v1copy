@@ -6,7 +6,8 @@ unsigned long inpd( int port );
 .desc begin
 The &func function reads a double-word (four bytes) from the 80x86 hardware
 port whose number is given by
-.arg port.
+.arg port
+.ct .li .
 .im portdesc
 .im privity
 .desc end

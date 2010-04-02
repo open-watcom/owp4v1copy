@@ -29,7 +29,8 @@ argument shall not be a null pointer. The
 .mono %n
 specifier (modified or not by flags, field width, or precision) shall not
 appear in the string pointed to by
-.arg format.
+.arg format
+.ct .li .
 Any argument to &func corresponding to a
 .mono %s
 specifier shall not be a null pointer.
@@ -47,7 +48,8 @@ function except for the explicit runtime-constraints listed above.
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
@@ -55,7 +57,8 @@ The &ufunc Unicode function is identical to &func except that it
 accepts a Unicode string argument for
 .arg format
 and writes Unicode characters to the file
-.kw stdout.
+.kw stdout
+.ct .li .
 .do end
 .desc end
 .*

@@ -169,9 +169,10 @@ is a logical expression.
 The block
 .kw IF
 statement is used in conjunction with the
-.kw ELSE IF,
-.kw ELSE,
-and
+.kw ELSE IF
+.ct ,
+.kw ELSE
+.ct , and
 .kw END IF
 statements.
 .exam begin

@@ -22,10 +22,12 @@ int lstat( const char *path, struct stat *buf );
 .desc begin
 The &func functions obtain information about the file or directory
 referenced in
-.arg path.
+.arg path
+.ct .li .
 This information is placed in the structure located at the address
 indicated by
-.arg buf.
+.arg buf
+.ct .li .
 .im statdesc
 .if &'length(&_func.) ne 0 .do begin
 .np
@@ -33,9 +35,10 @@ The &_func function is identical to &func..
 Use &_func for ANSI/ISO naming conventions.
 .do end
 The
-.kw _stati64,
-.kw _wstat,
-and
+.kw _stati64
+.ct ,
+.kw _wstat
+.ct , and
 .kw _wstati64
 functions differ from &func in the type of structure that they are
 asked to fill in.
@@ -54,7 +57,8 @@ function is identical to &func on non-UNIX platforms.
 .begterm 12
 .term EACCES
 Search permission is denied for a component of
-.arg path.
+.arg path
+.ct .li .
 .if '&machsys' eq 'QNX' .do begin
 .term EIO
 A physical error occurred on the block device.

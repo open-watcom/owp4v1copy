@@ -969,7 +969,8 @@ function to acquire memory; in a large data model, the
 function is used.
 .np
 It is also possible to allocate memory from a based heap using
-.kw _bmalloc.
+.kw _bmalloc
+.ct .li .
 Based heaps are similar to far heaps in that they are located
 outside the normal data segment.
 Based pointers only store the offset portion of the full address,
@@ -2598,9 +2599,12 @@ is omitted, is
 .endnote
 .np
 Whenever
-.kw ctime,
-.kw _ctime,
-.kw localtime,
+.kw ctime
+.ct ,
+.kw _ctime
+.ct ,
+.kw localtime
+.ct ,
 .kw _localtime
 or
 .kw mktime

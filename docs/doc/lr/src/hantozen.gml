@@ -6,7 +6,8 @@ JMOJI hantozen( JMOJI c );
 .desc begin
 The &func function returns the double-byte character equivalent to the
 single-byte ASCII character
-.arg c.
+.arg c
+.ct .li .
 The ASCII character must be in the range 0x20 to 0x7E.
 .desc end
 .return begin

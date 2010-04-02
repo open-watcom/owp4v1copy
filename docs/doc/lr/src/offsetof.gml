@@ -9,12 +9,14 @@ within the
 .kw struct
 or
 .kw union
-.arg composite.
+.arg composite
+.ct .li .
 This provides a portable method to determine the offset.
 .desc end
 .return begin
 The &func function returns the offset of
-.arg name.
+.arg name
+.ct .li .
 .return end
 .exmp begin
 #include <stdio.h>

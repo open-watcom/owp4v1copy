@@ -6,7 +6,8 @@ intmax_t imaxabs( intmax_t j );
 .desc begin
 The &func function returns the absolute value
 of its maximum-size integer argument
-.arg j.
+.arg j
+.ct .li .
 .desc end
 .return begin
 The &func function returns the absolute value of its argument.

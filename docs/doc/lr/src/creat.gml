@@ -56,7 +56,8 @@ accepts a Unicode string argument.
 .do end
 .np
 The name of the file to be created is given by
-.arg path.
+.arg path
+.ct .li .
 When the file exists (it must be writeable), it is truncated to
 contain no data and the preceding
 .arg mode
@@ -132,8 +133,10 @@ be extended.
 A component of the path prefix is not a directory.
 .term EROFS
 The named file resides on a read-only file system and either
-.kw O_WRONLY,
-.kw O_RDWR,
+.kw O_WRONLY
+.ct ,
+.kw O_RDWR
+.ct ,
 .kw O_CREAT
 (if the file does not exist), or
 .kw O_TRUNC

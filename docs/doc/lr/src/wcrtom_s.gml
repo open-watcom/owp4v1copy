@@ -29,7 +29,8 @@ shall be a null pointer. If
 is not a null pointer, then
 .arg smax
 shall not equal zero and shall not be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg s
 is not a null pointer,
@@ -37,7 +38,8 @@ then
 .arg smax
 shall be not be less than the number of bytes to be stored in the array pointed
 to by
-.arg s.
+.arg s
+.ct .li .
 If
 .arg s
 is a null pointer, then
@@ -49,8 +51,8 @@ If there is a runtime-constraint violation, then &func does the following. If
 is not a null pointer and
 .arg smax
 is greater than zero and not greater than
-.kw RSIZE_MAX,
-then &func. sets
+.kw RSIZE_MAX
+.ct , then &func. sets
 .arg s[0]
 to the null character. If
 .arg retval
@@ -84,7 +86,8 @@ by
 .arg wc
 (including any shift sequences), and stores the multibyte character representation
 in the array whose first element is pointed to by
-.arg s.
+.arg s
+.ct .li .
 At most
 .kw MB_CUR_MAX
 bytes are
@@ -104,7 +107,8 @@ conversion state is unspecified. Otherwise, the &func function stores into
 .arg *retval
 the number of bytes (including any shift sequences) stored in the array pointed
 to by
-.arg s.
+.arg s
+.ct .li .
 .im safefarw
 .desc end
 .*

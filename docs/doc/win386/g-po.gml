@@ -643,8 +643,8 @@ WM_MDICREATE       WM_NCCALCSIZE
 Note that for
 .kw SendMessage
 and
-.kw SendDlgItemMessage,
-some of the messages may NOT require pointer conversion:
+.kw SendDlgItemMessage
+.ct , some of the messages may NOT require pointer conversion:
 .begbull
 .bull
 CB_ADDSTRING, CB_FINDSTRING, CB_FINDSTRINGEXACT, CB_INSERTSTRING
@@ -692,7 +692,8 @@ In the 32-bit environment, there is no need to use these functions.
 The only time
 .kw GlobalAlloc
 is needed is when allocating shared memory, i.e.,
-.kw GMEM_DDESHARE.
+.kw GMEM_DDESHARE
+.ct .li .
 .if '&lang' eq 'FORTRAN 77' .do begin
 .np
 The
@@ -720,7 +721,8 @@ permit.
 .*
 .np
 To access a callback function, an instance of it must be created using
-.kw MakeProcInstance.
+.kw MakeProcInstance
+.ct .li .
 This creates a "thunk" (a special piece of code) that automatically
 puts the application's data segment into the AX register, and then
 calls the specified callback function.
@@ -939,7 +941,8 @@ as in the following example.
 .do end
 .np
 Be careful of the following when using
-.kw NOAUTOPROCS.
+.kw NOAUTOPROCS
+.ct .li .
 .autonote
 .note
 The call to
@@ -1177,7 +1180,8 @@ created by the Supervisor is no longer valid.
 The return value from
 .kw _Call16
 is a
-.kw DWORD.
+.kw DWORD
+.ct .li .
 .np
 .if '&lang' eq 'FORTRAN 77' .do begin
 .code begin
@@ -1337,7 +1341,8 @@ data.
 These are useful when using pointers obtained by
 .kw MK_FP32
 and
-.kw MK_LOCAL32.
+.kw MK_LOCAL32
+.ct .li .
 .np
 Memory manipulation:
 .* .ix '_fmemccpy'

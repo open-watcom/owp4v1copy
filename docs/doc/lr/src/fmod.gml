@@ -5,22 +5,23 @@ double fmod( double x, double y );
 .funcend
 .desc begin
 The &func function computes the floating-point remainder of
-.arg x/y,
-even if the quotient
+.arg x/y
+.ct , even if the quotient
 .arg x/y
 is not representable.
 .desc end
 .return begin
 The &func function returns the value
-.arg x &minus. (i * y),
-for some integer
+.arg x &minus. (i * y)
+.ct , for some integer
 .arg i
 such that, if
 .arg y
 is non-zero, the result has the same sign as
 .arg x
 and magnitude less than the magnitude of
-.arg y.
+.arg y
+.ct .li .
 If the value of
 .arg y
 is zero, then the value returned is zero.

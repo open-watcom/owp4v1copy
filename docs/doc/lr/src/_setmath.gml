@@ -15,8 +15,8 @@ new mathematical error handling routine.
 .bi Note:
 Under some systems, the default math error handler can be replaced by
 providing a user-written function of the same name,
-.kw matherr,
-and using linking strategies to replace the default handler.
+.kw matherr
+.ct , and using linking strategies to replace the default handler.
 Under PenPoint, the default handler is bound into a dynamic link
 library and can only be replaced by notifying the C library with a
 call to the &func function.

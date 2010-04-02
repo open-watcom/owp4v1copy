@@ -19,7 +19,8 @@ int _uunlink( const wchar_t *path );
 .desc begin
 The &func function deletes the file whose name is the string
 pointed to by
-.arg path.
+.arg path
+.ct .li .
 This function is equivalent to the
 .kw remove
 function.

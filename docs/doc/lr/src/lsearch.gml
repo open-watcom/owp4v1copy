@@ -14,7 +14,8 @@ The &func function performs a linear search for the value
 in the array of
 .arg num
 elements pointed to by
-.arg base.
+.arg base
+.ct .li .
 Each element of the array is
 .arg width
 bytes in size.
@@ -22,11 +23,13 @@ The argument
 .arg compare
 is a pointer to a user-supplied routine that will be called by &func
 to determine the relationship of an array element with the
-.arg key.
+.arg key
+.ct .li .
 One of the arguments to the
 .arg compare
 function will be an array element, and the other will be
-.arg key.
+.arg key
+.ct .li .
 .pp
 The
 .arg compare

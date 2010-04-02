@@ -7,7 +7,8 @@ double asinh( double x );
 .funcend
 .desc begin
 The &func function computes the inverse hyperbolic sine of
-.arg x.
+.arg x
+.ct .li .
 .desc end
 .return begin
 The &func function returns the inverse hyperbolic sine value.

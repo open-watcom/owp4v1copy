@@ -10,8 +10,8 @@ unsigned _dos_open( const char *path,
 .funcend
 .desc begin
 The &func function uses system call 0x3D to open the file specified by
-.arg path,
-which must be an existing file.
+.arg path
+.ct , which must be an existing file.
 The
 .arg mode
 argument specifies the file's access, sharing and inheritance permissions.

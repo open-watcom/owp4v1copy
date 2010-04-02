@@ -76,7 +76,8 @@ int _wspawnvpe( mode, file, argv, envp );
 .funcbold spawn...
 .desc begin
 The &func functions create and execute a new child process, named by
-.arg pgm.
+.arg pgm
+.ct .li .
 The value of
 .arg mode
 determines how the program is loaded and how the invoking
@@ -159,8 +160,7 @@ At least one argument,
 .arg arg0
 or
 .arg argv[0]
-.ct ,
-must be passed to the child process.
+.ct , must be passed to the child process.
 By convention, this first argument is a pointer to the name of the
 program.
 .np
@@ -212,8 +212,7 @@ If the value of
 .arg envp
 is
 .mono NULL
-.ct ,
-then the child process inherits the environment of the parent process.
+.ct , then the child process inherits the environment of the parent process.
 .np
 The environment is the collection of environment variables whose
 values that have been defined with the
@@ -336,7 +335,8 @@ function.
 .term P_NOWAITO
 then the return value from &func is the process id of the child process.
 The exit code cannot be obtained for a process spawned with
-.kw P_NOWAITO.
+.kw P_NOWAITO
+.ct .li .
 .endterm
 .np
 When an error is detected while invoking the indicated program, &func

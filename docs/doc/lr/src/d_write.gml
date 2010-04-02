@@ -11,10 +11,12 @@ The &func function uses system call 0x40 to write
 bytes of data from the buffer pointed to by
 .arg buffer
 to the file specified by
-.arg &fd..
+.arg &fd
+.ct .li .
 The number of bytes successfully written will be stored in the
 unsigned integer pointed to by
-.arg bytes.
+.arg bytes
+.ct .li .
 .desc end
 .return begin
 The &func function returns zero if successful.

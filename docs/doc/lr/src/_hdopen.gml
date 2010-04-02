@@ -7,8 +7,8 @@ The &func function takes a previously opened operating system file
 handle specified by
 .arg os_handle
 and opened with access and sharing specified by
-.arg mode,
-and creates a POSIX-style file handle.
+.arg mode
+.ct , and creates a POSIX-style file handle.
 .desc end
 .return begin
 The &func function returns the new POSIX-style file handle if

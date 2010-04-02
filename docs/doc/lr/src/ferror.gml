@@ -7,11 +7,13 @@ int ferror( FILE *fp );
 .desc begin
 The &func function tests the error indicator for the stream
 pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 .desc end
 .return begin
 The &func function returns non-zero if the error indicator is set for
-.arg fp.
+.arg fp
+.ct .li .
 .return end
 .see begin
 .seelist &function. clearerr feof ferror perror strerror

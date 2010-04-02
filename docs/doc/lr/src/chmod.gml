@@ -27,12 +27,14 @@ int _uchmod( const wchar_t *path, int permission );
 The &func function changes the permissions for a file specified by
 .arg path
 to be the settings in the mode given by
-.arg permission.
+.arg permission
+.ct .li .
 .im openperv
 .if '&machsys' eq 'QNX' .do begin
 .np
 The following bits may also be specified in
-.arg permission.
+.arg permission
+.ct .li .
 .begterm 12 $compact
 .termhd1 Permission
 .termhd2 Meaning
@@ -85,7 +87,8 @@ is set to indicate the error.
 .termhd2 Meaning
 .term EACCES
 Search permission is denied for a component of
-.arg path.
+.arg path
+.ct .li .
 .if '&machsys' eq 'QNX' .do begin
 .term ENAMETOOLONG
 The argument

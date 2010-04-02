@@ -17,7 +17,8 @@ int _umask( int cmask );
 .funcend
 .desc begin
 The &func function sets the process's file mode creation mask to
-.arg cmask.
+.arg cmask
+.ct .li .
 The process's file mode creation mask is used during
 .if '&machsys' eq 'QNX' .do begin
 .kw creat
@@ -62,7 +63,8 @@ is specified, then writing is not allowed (i.e., the file is read only).
 .desc end
 .return begin
 The &func function returns the previous value of
-.arg cmask.
+.arg cmask
+.ct .li .
 .return end
 .see begin
 .seelist umask chmod creat mkdir mkfifo open sopen

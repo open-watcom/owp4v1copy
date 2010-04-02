@@ -19,14 +19,16 @@ This value may be changed by a program at any time.
 This
 .id int
 item contains the number of arguments passed to
-.kw main.
+.kw main
+.ct .li .
 .df __argv
 .proto stdlib.h
 This
 .id char **
 item contains a pointer to a vector containing the actual arguments
 passed to
-.kw main.
+.kw main
+.ct .li .
 .do end
 .df daylight
 .proto time.h
@@ -120,8 +122,8 @@ functions.
 The default setting of
 .kw _fmode
 is
-.kw O_TEXT,
-for text-mode translation.
+.kw O_TEXT
+.ct , for text-mode translation.
 .kw O_BINARY
 is the setting for binary mode.
 .*
@@ -138,11 +140,12 @@ when linking your application.
 This object file contains code to change the initial setting of
 .kw _fmode
 to
-.kw O_BINARY,
-causing all files except
-.kw stdin,
-.kw stdout,
-and
+.kw O_BINARY
+.ct , causing all files except
+.kw stdin
+.ct ,
+.kw stdout
+.ct , and
 .kw stderr
 to be opened in binary mode.
 .bull
@@ -374,7 +377,8 @@ header file.
 This
 .id int
 variable contains the number of messages declared in
-.kw sys_errlist.
+.kw sys_errlist
+.ct .li .
 .do end
 .if '&machsys' ne 'QNX' .do begin
 .df _threadid
@@ -427,14 +431,16 @@ environment variable.
 This
 .id int
 item contains the number of arguments passed to
-.kw wmain.
+.kw wmain
+.ct .li .
 .df __wargv
 .proto stdlib.h
 This
 .id wchar_t **
 item contains a pointer to a vector containing the actual arguments
 passed to
-.kw wmain.
+.kw wmain
+.ct .li .
 .df _wenviron
 .proto stdlib.h
 This

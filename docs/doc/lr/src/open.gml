@@ -21,9 +21,11 @@ int _uopen( const wchar_t *path, int access, ... );
 .desc begin
 The &func function opens a file at the operating system level.
 The name of the file to be opened is given by
-.arg path.
+.arg path
+.ct .li .
 The file will be accessed according to the access mode specified by
-.arg access.
+.arg access
+.ct .li .
 The optional argument is the file permissions to be used when the
 .kw O_CREAT
 flag is on in the
@@ -38,13 +40,15 @@ Use &_func for ANSI/ISO naming conventions.
 .np
 The &wfunc function is identical to &func except that it
 accepts a wide character string argument for
-.arg path.
+.arg path
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
 The &ufunc Unicode function is identical to &func except that it
 accepts a Unicode string argument for
-.arg path.
+.arg path
+.ct .li .
 .do end
 .im openacc
 .im openper

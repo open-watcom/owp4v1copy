@@ -15,7 +15,8 @@ The &func function uses system call 0x2C to get the current system time.
 The time information is returned in a
 .kw dostime_t
 structure pointed to by
-.arg time.
+.arg time
+.ct .li .
 .desc end
 .return begin
 The &func function has no return value.

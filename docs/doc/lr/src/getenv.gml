@@ -18,7 +18,8 @@ wchar_t  *_ugetenv( const wchar_t *name );
 .desc begin
 The &func function searches the environment list for an entry matching
 the string pointed to by
-.arg name.
+.arg name
+.ct .li .
 .if '&machsys' eq 'QNX' .do begin
 The matching is case-sensitive; all lowercase letters are treated
 as different from uppercase letters.
@@ -102,20 +103,22 @@ value of &wfunc are wide-character strings.
 :CMT. The
 :CMT. .kw _wenviron
 :CMT. global variable is a wide-character version of
-:CMT. .kw _environ.
+:CMT. .kw _environ
+:CMT. .ct .li .
 :CMT. .np
 :CMT. In an MBCS program (for example, in an SBCS ASCII program),
 :CMT. .kw _wenviron
 :CMT. is initially NULL because the environment is composed of
 :CMT. multibyte-character strings.
 :CMT. Then, on the first call to
-:CMT. .kw _wputenv,
-:CMT. or on the first call to
+:CMT. .kw _wputenv
+:CMT. .ct , or on the first call to
 :CMT. .kw _wgetenv
 :CMT. if an (MBCS) environment already exists, a corresponding
 :CMT. wide-character string environment is created and is then
 :CMT. pointed to by
-:CMT. .kw _wenviron.
+:CMT. .kw _wenviron
+:CMT. .ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

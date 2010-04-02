@@ -18,7 +18,8 @@ The &func function calculates the length of the (untruncated) locale-specific
 message string that the
 .kw strerror_s
 function maps to
-.arg errnum.
+.arg errnum
+.ct .li .
 
 .im widefunc
 .desc end

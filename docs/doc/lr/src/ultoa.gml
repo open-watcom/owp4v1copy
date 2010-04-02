@@ -30,7 +30,8 @@ The &func function converts the unsigned binary integer
 into the equivalent string in base
 .arg radix
 notation storing the result in the character array pointed to by
-.arg buffer.
+.arg buffer
+.ct .li .
 A null character is appended to the result.
 The size of
 .arg buffer

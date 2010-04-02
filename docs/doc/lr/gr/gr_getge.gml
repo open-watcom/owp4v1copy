@@ -11,7 +11,8 @@ character*(*) text
 The &func &routine returns the length in pixels of the argument
 .arg text
 as it would be displayed in the current font by the &routine
-.kw _outgtext.
+.kw _outgtext
+.ct .li .
 Note that the text is not displayed on the screen, only its length
 is determined.
 .desc end

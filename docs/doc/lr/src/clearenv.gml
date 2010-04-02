@@ -45,7 +45,8 @@ library functions.
 .do end
 .pp
 The &func function may manipulate the value of the pointer
-.kw environ.
+.kw environ
+.ct .li .
 .desc end
 .return begin
 The &func function returns zero upon successful completion.

@@ -6,8 +6,8 @@ __m64 _m_pcmpgtw(__m64 *m1, __m64 *m2);
 If the respective signed words of
 .arg m1
 are greater than the respective signed words of
-.arg m2,
-the respective words of the result are set to all ones, otherwise they
+.arg m2
+.ct , the respective words of the result are set to all ones, otherwise they
 are set to all zeros.
 .desc end
 .return begin

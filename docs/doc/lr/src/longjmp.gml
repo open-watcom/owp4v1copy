@@ -21,7 +21,8 @@ After the &func function restores the environment, program
 execution continues as if the corresponding call to
 .kw setjmp
 had just returned the value specified by
-.arg return_value.
+.arg return_value
+.ct .li .
 If the value of
 .arg return_value
 is 0, the value returned is 1.

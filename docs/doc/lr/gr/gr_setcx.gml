@@ -15,7 +15,8 @@ double precision space
 .desc begin
 The &func &routines set the current character spacing to have the value
 of the argument
-.arg space.
+.arg space
+.ct .li .
 For the &func &routine,
 .arg space
 represents a number of pixels.

@@ -33,8 +33,10 @@ identifies the program unit where execution is to begin.
 A main program is a program unit which has as its first statement a
 .kw PROGRAM
 statement or one which does not have a
-.kw PROGRAM,
-.kw FUNCTION,
+.kw PROGRAM
+.ct ,
+.kw FUNCTION
+.ct ,
 .kw SUBROUTINE
 or
 .kw BLOCK DATA
@@ -47,7 +49,8 @@ Each executable program can contain only one main program.
 A
 .us subprogram
 is a program unit that either has a
-.kw FUNCTION,
+.kw FUNCTION
+.ct ,
 .kw SUBROUTINE
 or
 .kw BLOCK DATA
@@ -103,7 +106,8 @@ is completed.
 A name that is a statement function dummy argument can also be the
 name of a variable, a common block, the dummy argument of another
 statement function or appear in the dummy argument list of a
-.kw FUNCTION,
+.kw FUNCTION
+.ct ,
 .kw SUBROUTINE
 or
 .kw ENTRY
@@ -500,9 +504,12 @@ external function subprogram.
 .note
 The name of a dummy argument is a name local to the subprogram and must
 not appear in an
-.kw EQUIVALENCE,
-.kw PARAMETER,
-.kw SAVE,
+.kw EQUIVALENCE
+.ct ,
+.kw PARAMETER
+.ct ,
+.kw SAVE
+.ct ,
 .kw INTRINSIC
 or
 .kw DATA
@@ -616,7 +623,8 @@ neither has a type.
 .setptnt 0 5
 .note
 A subroutine subprogram can contain any statement except a
-.kw FUNCTION,
+.kw FUNCTION
+.ct ,
 .kw BLOCK DATA
 or
 .kw PROGRAM
@@ -629,9 +637,12 @@ same name as the subroutine.
 .note
 The name of a dummy argument is local to the subroutine subprogram
 and must not appear in an
-.kw EQUIVALENCE,
-.kw PARAMETER,
-.kw SAVE,
+.kw EQUIVALENCE
+.ct ,
+.kw PARAMETER
+.ct ,
+.kw SAVE
+.ct ,
 .kw INTRINSIC
 or
 .kw DATA
@@ -693,7 +704,8 @@ The order, number, type and names of the dummy argument lists
 of an
 .kw ENTRY
 statement may be different from that of a
-.kw FUNCTION,
+.kw FUNCTION
+.ct ,
 .kw SUBROUTINE
 or other
 .kw ENTRY
@@ -815,9 +827,10 @@ statement must not appear in an executable statement preceding
 the
 .kw ENTRY
 statement unless it has also appeared in a
-.kw FUNCTION,
-.kw SUBROUTINE,
-or
+.kw FUNCTION
+.ct ,
+.kw SUBROUTINE
+.ct , or
 .kw ENTRY
 statement that precedes the executable statement.
 .endnote
@@ -1034,17 +1047,22 @@ a subroutine subprogram.
 Dummy arguments that are variables of type INTEGER can be used in
 dummy array declarators.
 No dummy argument may appear in an
-.kw EQUIVALENCE,
-.kw DATA,
-.kw PARAMETER,
-.kw SAVE,
+.kw EQUIVALENCE
+.ct ,
+.kw DATA
+.ct ,
+.kw PARAMETER
+.ct ,
+.kw SAVE
+.ct ,
 .kw INTRINSIC
 or
 .kw COMMON
 statement except as a common block name.
 A dummy argument must not be the same name as the subprogram name
 specified in the
-.kw FUNCTION,
+.kw FUNCTION
+.ct ,
 .kw SUBROUTINE
 or
 .kw ENTRY

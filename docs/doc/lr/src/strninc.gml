@@ -33,7 +33,8 @@ multibyte code page currently in use.
 The header file
 .hdrfile tchar.h
 defines the generic-text routine
-.kw _tcsninc.
+.kw _tcsninc
+.ct .li .
 This macro maps to &mfunc if
 .kw _MBCS
 has been defined, or to &wfunc if
@@ -57,7 +58,8 @@ characters or
 if
 .arg str
 was
-.kw NULL.
+.kw NULL
+.ct .li .
 If
 .arg count
 exceeds the number of characters remaining in the string, the result is

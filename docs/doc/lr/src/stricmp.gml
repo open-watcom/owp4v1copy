@@ -47,7 +47,8 @@ The &func function compares, with case insensitivity, the string
 pointed to by
 .arg s1
 to the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 All uppercase characters from
 .arg s1
 and
@@ -68,7 +69,8 @@ The &func function returns an integer less than, equal to, or greater
 than zero, indicating that the string pointed to by
 .arg s1
 is less than, equal to, or greater than the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist &function. strcmp strcmpi stricmp strncmp strnicmp

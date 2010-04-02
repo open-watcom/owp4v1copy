@@ -17,7 +17,8 @@ The &func and &ffunc functions place
 the next single- or double-byte character specified by
 .arg c
 at the start of the buffer specified by
-.arg str.
+.arg str
+.ct .li .
 .im ffarfunc
 .desc end
 .return begin

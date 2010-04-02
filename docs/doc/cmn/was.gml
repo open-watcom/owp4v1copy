@@ -204,16 +204,24 @@ fills the skipped bytes with zeros in data sections or nop instructions
 in text sections.
 .np
 Normally, the
-.kw .word,
-.kw .long,
-.kw .quad,
-.kw .float,
-.kw .double,
-.kw .d_floating,
-.kw .f_floating,
-.kw .g_floating,
-.kw .s_floating,
-and
+.kw .word
+.ct ,
+.kw .long
+.ct ,
+.kw .quad
+.ct ,
+.kw .float
+.ct ,
+.kw .double
+.ct ,
+.kw .d_floating
+.ct ,
+.kw .f_floating
+.ct ,
+.kw .g_floating
+.ct ,
+.kw .s_floating
+.ct , and
 .kw .t_floating
 directives
 automatically align their data appropriately. For example,
@@ -228,10 +236,12 @@ does an implicit
 The automatic alignment feature can be disabled with
 .mono .align 0.
 The assembler reinstates automatic alignment at the next
-.kw .text,
-.kw .data,
-.kw .rdata,
-or
+.kw .text
+.ct ,
+.kw .data
+.ct ,
+.kw .rdata
+.ct , or
 .kw .sdata
 directive that it encounters.
 .np
@@ -581,11 +591,11 @@ into the .rdata section.
 The .set directive instructs the assembler to enable or disable certain
 options. The assembler has the following default options:
 .begpoint $compact
-.point at.
+.point at,
 .point macro,
 .point move,
 .point novolatile, and
-.point reorder,
+.point reorder.
 .endpoint
 .pc
 Only one option can be specified for each
@@ -599,7 +609,8 @@ The
 option permits the assembler to use the
 .kw $at
 register for macros, but generates warnings if the source program uses
-.kw $at.
+.kw $at
+.ct .li .
 
 .bull
 When you use the
@@ -633,7 +644,8 @@ option; otherwise, an error results.
 The
 .kw move
 option cancels the effect of
-.kw nomove.
+.kw nomove
+.ct .li .
 
 .bull
 The
@@ -668,8 +680,8 @@ instructions may not be moved in relation to each other or removed by
 redundant load removal or other optimization. The
 .kw volatile
 option is less restrictive than
-.kw noreorder;
-it allows the assembler to move other instructions (that is,
+.kw noreorder
+.'ct ; it allows the assembler to move other instructions (that is,
 instructions other than load and store instructions) without
 restrictions.
 

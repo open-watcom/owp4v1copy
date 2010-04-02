@@ -17,7 +17,8 @@ FILE *_u_fsopen( const wchar_t *filename,
 .funcend
 .desc begin
 The &func function opens the file whose name is the string pointed to by
-.arg filename,
+.arg filename
+.ct .li ,
 and associates a stream with it.
 The arguments
 .arg mode
@@ -191,8 +192,8 @@ intervening call to a file positioning function, unless the read
 resulted in end-of-file.
 .np
 The shared access for the file,
-.arg share,
-is established by a combination of bits defined in the
+.arg share
+.ct , is established by a combination of bits defined in the
 .hdrfile share.h
 header file.
 The following values may be set:
@@ -232,7 +233,8 @@ The &wfunc function is identical to &func except that it accepts
 wide-character string arguments for
 .arg filename
 and
-.arg mode.
+.arg mode
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
@@ -240,7 +242,8 @@ The &ufunc Unicode function is identical to &func except that it
 accepts Unicode string arguments for
 .arg filename
 and
-.arg mode.
+.arg mode
+.ct .li .
 .do end
 .desc end
 .return begin

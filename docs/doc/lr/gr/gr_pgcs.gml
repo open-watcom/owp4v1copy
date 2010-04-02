@@ -36,7 +36,8 @@ The &func &routine displays a scatter chart from the single series
 of data contained in the arrays
 .arg x
 and
-.arg y.
+.arg y
+.ct .li .
 The argument
 .arg n
 specifies the number of values to chart.
@@ -60,11 +61,12 @@ real x( nseries, dim )
 .millust end
 .pp
 The number of values used from each series is given by the argument
-.arg n,
-where
+.arg n
+.ct , where
 .arg n
 is less than or equal to
-.arg dim.
+.arg dim
+.ct .li .
 The argument
 .arg labels
 is an array of &strings..

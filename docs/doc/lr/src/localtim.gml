@@ -18,8 +18,7 @@ The &func functions convert the calendar time pointed to by
 .arg timer
 into a structure of type
 .kw tm
-.ct,
-of time information, expressed as local time.
+.ct, of time information, expressed as local time.
 Whenever &func is called, the
 .kw tzset
 function is also called.
@@ -35,8 +34,8 @@ The
 function places the converted time in the
 .kw tm
 structure pointed to by
-.arg tmbuf,
-and the &func function places the converted time in a static structure
+.arg tmbuf
+.ct , and the &func function places the converted time in a static structure
 that is re-used each time &func is called.
 .im tzref
 .desc end

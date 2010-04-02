@@ -6,7 +6,8 @@ __m64 _m_psllqi(__m64 *m, int count);
 The 64-bit quad-word in
 .arg m
 is shifted to the left by the scalar shift count in
-.arg count.
+.arg count
+.ct .li .
 The low-order bits are filled with zeros.
 The shift count is interpreted as unsigned.
 Shift counts greater than 63 yield all zeros.

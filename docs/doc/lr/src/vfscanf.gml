@@ -27,7 +27,8 @@ int _uvfscanf( FILE *fp,
 The &func function scans input from the file designated by
 .arg fp
 under control of the argument
-.arg format.
+.arg format
+.ct .li .
 The
 .arg format
 string is described under the description of the
@@ -37,15 +38,16 @@ function.
 The &func function is equivalent to the
 .kw fscanf
 function, with a variable argument list replaced with
-.arg arg,
-which has been initialized using the
+.arg arg
+.ct , which has been initialized using the
 .kw va_start
 macro.
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

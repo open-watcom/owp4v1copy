@@ -10,11 +10,12 @@ be interrupted with an interrupt number hexadecimal 21 (
 .ct ), which is
 a request to invoke a specific DOS function.
 Before the interrupt, the DX register is loaded from
-.arg dx,
-the AH register is loaded with the DOS function number from
+.arg dx
+.ct , the AH register is loaded with the DOS function number from
 .arg dos_func
 and the AL register is loaded from
-.arg al.
+.arg al
+.ct .li .
 The remaining registers are passed unchanged to DOS.
 .np
 You should consult the technical documentation for the DOS operating

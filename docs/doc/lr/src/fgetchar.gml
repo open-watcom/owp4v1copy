@@ -21,7 +21,8 @@ int _ufgetchar( void );
 The &func function is equivalent to
 .kw fgetc
 with the argument
-.kw stdin.
+.kw stdin
+.ct .li .
 .if &'length(&_func.) ne 0 .do begin
 .np
 The &_func function is identical to &func..
@@ -43,29 +44,36 @@ a Unicode character.
 .return begin
 The &func function returns the next character from the input stream
 pointed to by
-.kw stdin.
+.kw stdin
+.ct .li .
 If the stream is at end-of-file, the end-of-file indicator is set and
 &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 If a read error occurs, the error indicator is set and
 &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function returns the next wide character from the input
 stream pointed to by
-.kw stdin.
+.kw stdin
+.ct .li .
 If the stream is at end-of-file, the end-of-file indicator is set and
 &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 If a read error occurs, the error indicator is set and &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 If an encoding error occurs,
 .kw errno
 is set to
 .kw EILSEQ
 and &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 .do end
 .np
 .im errnoref

@@ -491,7 +491,8 @@ function. The file also contains declarations for the constants
 .kw P_NOWAITO
 .ct,
 and
-.kw P_OVERLAY.
+.kw P_OVERLAY
+.ct .li .
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df pwd.h
@@ -591,7 +592,8 @@ is defined.
 This ISO C90 header file declares the standard input/output functions.
 Files, devices and directories are referenced using pointers to objects
 of the type
-.kw FILE.
+.kw FILE
+.ct .li .
 .*------------------------------
 .df stdlib.h
 This ISO C90 header file declares many standard functions excluding those
@@ -622,7 +624,8 @@ This POSIX header file contains terminal I/O system types.
 .ix 'tm'
 This ANSI header file declares functions related to times and dates and
 defines the structure
-.kw struct tm.
+.kw struct tm
+.ct .li .
 .*------------------------------
 .if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
 .df unistd.h
@@ -656,8 +659,10 @@ variable argument lists. The equivalent ANSI header file is <stdarg.h>.
 .*------------------------------
 .df wchar.h
 This ISO C99 header file defines several data types including
-.kw wchar_t,
-.kw size_t,
+.kw wchar_t
+.ct ,
+.kw size_t
+.ct ,
 .kw mbstate_t
 (an object that can hold conversion state information necessary to
 convert between multibyte characters and wide characters),

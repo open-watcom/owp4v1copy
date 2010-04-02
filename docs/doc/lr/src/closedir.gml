@@ -21,7 +21,8 @@ int _uclosedir( UDIR *dirp );
 The &func function closes the directory specified by
 .arg dirp
 and frees the memory allocated by
-.kw opendir.
+.kw opendir
+.ct .li .
 .if '&machsys' eq 'QNX' .do begin
 .np
 The result of using a directory stream after one of the
@@ -45,13 +46,15 @@ Either or both processes may use the &func function.
 .np
 The &wfunc function is identical to &func except that it closes a
 directory of wide-character filenames opened by
-.kw _wopendir.
+.kw _wopendir
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
 The &ufunc Unicode function is identical to &func except that it
 closes a directory of Unicode filenames opened by
-.kw _uopendir.
+.kw _uopendir
+.ct .li .
 .do end
 .desc end
 .return begin

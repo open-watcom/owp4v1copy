@@ -218,12 +218,16 @@ of a FORTRAN program.
 .np
 All input/output statements may refer to files that exist.
 In addition, the
-.kw INQUIRE,
-.kw OPEN,
-.kw CLOSE,
-.kw WRITE,
-.kw PRINT,
-and
+.kw INQUIRE
+.ct ,
+.kw OPEN
+.ct ,
+.kw CLOSE
+.ct ,
+.kw WRITE
+.ct ,
+.kw PRINT
+.ct , and
 .kw ENDFILE
 statements may refer to files that do not exist (and in so doing, may
 very well cause the file to be created).
@@ -366,7 +370,8 @@ blanks.
 A record may be read only if the variable, array element, or substring
 is defined (i.e., it has been assigned some value).
 Definition may not only result from an output statement such as
-.kw WRITE.
+.kw WRITE
+.ct .li .
 It may also be defined through other means; for example, a character
 assignment statement.
 .note Position
@@ -398,10 +403,12 @@ This is an extension to the language standard.
 .np
 No other input/output statements (
 .ct
-.kw OPEN,
-.kw ENDFILE,
-.kw REWIND,
-etc.) may be used.
+.kw OPEN
+.ct ,
+.kw ENDFILE
+.ct ,
+.kw REWIND
+.ct , etc.) may be used.
 .endnote
 .np
 Internal files may be used to convert data from one format to another.
@@ -467,9 +474,10 @@ execution of an
 statement.
 .np
 All input/output statements except
-.kw OPEN,
-.kw CLOSE,
-and
+.kw OPEN
+.ct ,
+.kw CLOSE
+.ct , and
 .kw INQUIRE
 must refer to a unit that is connected to a file.
 &product automatically establishes a connection of the unit to a
@@ -611,7 +619,8 @@ expression or an asterisk
 in which case unit 5 is assumed for an input statement
 and unit 6 is assumed for an output statement.
 The unit identifier must not be an asterisk for the
-.kw BACKSPACE,
+.kw BACKSPACE
+.ct ,
 .kw ENDFILE
 and
 .kw REWIND

@@ -2,14 +2,15 @@
 The restartable multibyte/wide character conversion functions differ
 from the corresponding internal-state multibyte character functions (
 .ct
-.kw mblen,
-.kw mbtowc,
-and
+.kw mblen
+.ct ,
+.kw mbtowc
+.ct , and
 .kw wctomb
 .ct )
 in that they have an extra argument,
-.arg ps,
-of type pointer to
+.arg ps
+.ct , of type pointer to
 .kw mbstate_t
 that points to an object that can completely describe the current
 conversion state of the associated multibyte character sequence.
@@ -20,8 +21,8 @@ is a null pointer, each function uses its own internal
 object instead.
 You are guaranteed that no other function in the library calls these
 functions with a null pointer for
-.arg ps,
-thereby ensuring the stability of the state.
+.arg ps
+.ct , thereby ensuring the stability of the state.
 .np
 Also unlike their corresponding functions, the return value does not
 represent whether the encoding is state-dependent.

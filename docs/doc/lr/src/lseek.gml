@@ -51,7 +51,8 @@ The value of
 .arg offset
 is used as a relative offset from a file position determined by the
 value of the argument
-.arg origin.
+.arg origin
+.ct .li .
 .np
 The new file position is determined in a manner dependent upon the
 value of

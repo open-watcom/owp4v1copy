@@ -24,9 +24,10 @@ FILE *_ufopen( const wchar_t *filename,
 .*
 .rtconst begin
 None of
-.arg streamptr,
-.arg filename,
-or
+.arg streamptr
+.ct ,
+.arg filename
+.ct , or
 .arg mode
 shall be a null pointer.
 If there is a runtime-constraint violation, &func does not attempt to open a file.
@@ -39,8 +40,8 @@ to the null pointer.
 .*
 .desc begin
 The &func function opens the file whose name is the string pointed to by
-.arg filename,
-and associates a stream with it.
+.arg filename
+.ct , and associates a stream with it.
 The
 .arg mode
 string shall be as described for fopen, with the addition that modes starting
@@ -203,8 +204,10 @@ However, writing may not be followed by reading without an
 intervening call to the
 .kw fflush
 function or to a file positioning function (
-.ct .kw fseek,
-.kw fsetpos,
+.ct .kw fseek
+.ct ,
+.kw fsetpos
+.ct ,
 .kw rewind
 .ct ).
 Similarly, reading may not be followed by writing without an
@@ -216,7 +219,8 @@ The &wfunc function is identical to &func except that it
 accepts wide-character string arguments for
 .arg filename
 and
-.arg mode.
+.arg mode
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
@@ -224,7 +228,8 @@ The &ufunc Unicode function is identical to &func except that it
 accepts Unicode string arguments for
 .arg filename
 and
-.arg mode.
+.arg mode
+.ct .li .
 .do end
 .desc end
 .return begin

@@ -11,7 +11,8 @@ The &func function closes all open stream files, except
 .kw stdout
 .ct,
 and
-.kw stderr.
+.kw stderr
+.ct .li .
 .do end
 .el .if '&machsys' eq 'QNX' .do begin
 .kw stdin
@@ -19,7 +20,8 @@ and
 .kw stdout
 .ct,
 and
-.kw stderr.
+.kw stderr
+.ct .li .
 .do end
 .el .do begin
 .kw stdin
@@ -31,14 +33,16 @@ and
 .kw stdaux
 .ct,
 and
-.kw stdprn.
+.kw stdprn
+.ct .li .
 .do end
 This includes streams created (and not yet closed) by
 .kw fdopen
 .ct,
 .kw fopen
 and
-.kw freopen.
+.kw freopen
+.ct .li .
 .if '&machsys' eq 'DOS' .do begin
 The
 .us stdaux

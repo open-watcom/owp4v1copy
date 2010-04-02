@@ -6,9 +6,10 @@ unsigned long outpd( int port,
 .funcend
 .desc begin
 The &func function writes a double-word (four bytes), determined by
-.arg value,
-to the 80x86 hardware port whose number is given by
-.arg port.
+.arg value
+.ct , to the 80x86 hardware port whose number is given by
+.arg port
+.ct .li .
 .im portdesc
 .im privity
 .desc end

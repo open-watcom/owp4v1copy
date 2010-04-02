@@ -7,7 +7,8 @@ void clearerr( FILE *fp );
 .desc begin
 The &func function clears the end-of-file and error indicators
 for the stream pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 These indicators are cleared only when the file is opened or by an
 explicit call to the &func or
 .kw rewind

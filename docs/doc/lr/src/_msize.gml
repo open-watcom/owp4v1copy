@@ -44,24 +44,29 @@ Near heap (inside the default data segment)
 .endterm
 .np
 In small data models (small and medium memory models), &func maps to
-.kw _nmsize.
+.kw _nmsize
+.ct .li .
 In large data models (compact, large and huge memory models), &func
 maps to
-.kw _fmsize.
+.kw _fmsize
+.ct .li .
 :cmt. .pp
 :cmt. The
 :cmt. .kw _nmsize
 :cmt. function returns the size of the memory block allocated by a call to
-:cmt. .kw _nmalloc.
+:cmt. .kw _nmalloc
+:cmt. .ct .li .
 :cmt. .pp
 :cmt. The
 :cmt. .kw _fmsize
 :cmt. function returns the size of the memory block allocated by a call to
-:cmt. .kw _fmalloc.
+:cmt. .kw _fmalloc
+:cmt. .ct .li .
 .desc end
 .return begin
 The &func functions return the size of the memory block pointed to by
-.arg buffer.
+.arg buffer
+.ct .li .
 .return end
 .see begin
 .im seealloc _msize

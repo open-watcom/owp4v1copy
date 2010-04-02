@@ -18,7 +18,8 @@ If the value of
 is zero, the
 .kw free
 function is called to release the memory pointed to by
-.arg old_blk.
+.arg old_blk
+.ct .li .
 .np
 Otherwise, the &func function re-allocates space for an object of
 .arg size
@@ -30,13 +31,15 @@ shrinking the allocated size of the allocated memory block
 when
 .arg size
 is sufficiently smaller than the size of
-.arg old_blk.
+.arg old_blk
+.ct .li .
 .bull
 extending the allocated size of the allocated memory block
 .arg old_blk
 if there is a large enough block of unallocated memory immediately
 following
-.arg old_blk.
+.arg old_blk
+.ct .li .
 .bull
 allocating a new block and copying the contents of
 .arg old_blk
@@ -45,7 +48,8 @@ to the new block.
 .np
 Because it is possible that a new block will be allocated, no other
 pointers should point into the memory of
-.arg old_blk.
+.arg old_blk
+.ct .li .
 These pointers will point to freed memory, with possible disastrous
 results, when a new block is allocated.
 .np
@@ -143,7 +147,8 @@ If the value of
 is zero, the corresponding
 .kw free
 function is called to release the memory pointed to by
-.arg old_blk.
+.arg old_blk
+.ct .li .
 .np
 Otherwise, the &func function re-allocates space for an object of
 .arg size
@@ -155,13 +160,15 @@ shrinking the allocated size of the allocated memory block
 when
 .arg size
 is sufficiently smaller than the size of
-.arg old_blk.
+.arg old_blk
+.ct .li .
 .bull
 extending the allocated size of the allocated memory block
 .arg old_blk
 if there is a large enough block of unallocated memory immediately
 following
-.arg old_blk.
+.arg old_blk
+.ct .li .
 .bull
 allocating a new block and copying the contents of
 .arg old_blk

@@ -22,9 +22,11 @@ at the position
 .coord x y ,
 using the current text settings.
 The concatenation point is returned in the argument
-.arg concat.
+.arg concat
+.ct .li .
 The text extent parallelogram is returned in the array
-.arg extent.
+.arg extent
+.ct .li .
 .pp
 The concatenation point is the position to use to output text after
 the given string.

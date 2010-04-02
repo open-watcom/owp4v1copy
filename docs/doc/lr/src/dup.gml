@@ -9,7 +9,8 @@ int _dup( int &fd );
 .funcend
 .desc begin
 The &func function duplicates the file &handle given by the argument
-.arg &fd..
+.arg &fd
+.ct .li .
 The new file &handle refers to the same open file &handle as the
 original file &handle, and shares any locks.
 The new file &handle is identical to the original in that it references

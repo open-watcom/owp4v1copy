@@ -10,13 +10,18 @@ statement may be used to cause a transfer of control to the first
 executable statement that follows the terminal statement of the
 block which contains it.
 Examples of such terminal statements are
-.kw ADMIT,
-.kw CASE,
-.kw END DO,
-.kw END LOOP,
-.kw END WHILE,
-.kw UNTIL,
-etc.
+.kw ADMIT
+.ct ,
+.kw CASE
+.ct ,
+.kw END DO
+.ct ,
+.kw END LOOP
+.ct ,
+.kw END WHILE
+.ct ,
+.kw UNTIL
+.ct , etc.
 If
 .id block-label
 is present then control is transferred out of the block identified

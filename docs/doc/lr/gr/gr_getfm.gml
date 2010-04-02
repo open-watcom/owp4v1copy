@@ -11,11 +11,15 @@ integer*1 mask(8)
 .desc begin
 The &func &routine copies the current fill mask into the area
 located by the argument
-.arg mask.
+.arg mask
+.ct .li .
 The fill mask is used by the
-.kw _ellipse,
-.kw _floodfill,
-.kw _pie,
+.kw _ellipse
+.ct ,
+.kw _floodfill
+.ct ,
+.kw _pie
+.ct ,
 .kw _polygon
 and
 .kw _rectangle
@@ -29,7 +33,8 @@ If no fill mask has been set,
 .id NULL
 is returned; otherwise,
 the &func &routine returns
-.arg mask.
+.arg mask
+.ct .li .
 .return end
 .do end
 .see begin

@@ -31,8 +31,8 @@ The output position for graphics output can be set by use of the
 .if '&lang' eq 'C' .do begin
 .np
 Also note that output to the standard output file,
-.kw stdout,
-is line buffered by default.
+.kw stdout
+.ct , is line buffered by default.
 It may be necessary to flush the output stream using
 .mono fflush( stdout )
 after a

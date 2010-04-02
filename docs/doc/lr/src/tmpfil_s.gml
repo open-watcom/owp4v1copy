@@ -32,11 +32,14 @@ is defined.
 Otherwise, the current working directory is used.
 .ix 'environment variable' 'tmpfile_s'
 They are listed in the order examined:
-.kw TMP,
-.kw TEMP,
-.kw TMPDIR,
-and
-.kw TEMPDIR.
+.kw TMP
+.ct ,
+.kw TEMP
+.ct ,
+.kw TMPDIR
+.ct , and
+.kw TEMPDIR
+.ct .li .
 .do end
 .desc end
 .*

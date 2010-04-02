@@ -43,7 +43,8 @@ is to be written, rather than converted to multibyte characters and
 written to a stream.
 The maximum number of wide characters to write, including a
 terminating null wide character, is specified by
-.arg n.
+.arg n
+.ct .li .
 The &wfunc function accepts a wide-character string argument for
 .arg format
 .do end

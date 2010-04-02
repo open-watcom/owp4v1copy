@@ -18,7 +18,8 @@ struct com_t
 .desc begin
 The &func function provides serial communications services to the
 serial port specified by
-.arg port.
+.arg port
+.ct .li .
 The values for
 .arg port
 may be:
@@ -47,15 +48,18 @@ It gets the data length of the valid data in the receive buffer. The
 received data length is stored in the
 .mono size
 field of the structure
-.kw com_t.
+.kw com_t
+.ct .li .
 .term _COM_INIT
 It initializes the serial port specified in the argument
-.arg port.
+.arg port
+.ct .li .
 It uses all fields of the structure
-.kw com_t.
+.kw com_t
+.ct .li .
 When _COM_CH2 or _COM_CH3 is specified in the argument
-.arg port,
-the
+.arg port
+.ct , the
 .mono baud
 field of the structure
 .kw com_t
@@ -82,7 +86,8 @@ the information of the controller information in the field
 and the system port information in the field
 .mono buffer+1
 of the structure
-.kw com_t.
+.kw com_t
+.ct .li .
 .np
 The returned controller information is described below.
 .desc end

@@ -21,9 +21,10 @@ wchar_t *wcstok_s( wchar_t * restrict s1,
 .*
 .rtconst begin
 None of
-.arg s1max,
-.arg s2,
-or
+.arg s1max
+.ct ,
+.arg s2
+.ct , or
 .arg ptr
 shall be a null pointer. If
 .arg s1
@@ -32,7 +33,8 @@ is a null pointer,then
 shall not be a null pointer. The value of
 .arg *s1max
 shall not be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 The end of the token found shall occur within the first
 .arg *s1max
 characters of
@@ -46,7 +48,8 @@ through the
 or
 .arg s2
 pointers, and does not store a value in the object pointed to by
-.arg ptr.
+.arg ptr
+.ct .li .
 .rtconst end
 .*
 .desc begin
@@ -54,7 +57,8 @@ A sequence of calls to the &func function breaks the string pointed to by
 .arg s1
 into a sequence of tokens, each of which is delimited by a character
 from the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 The fourth argument points to a caller-provided char pointer into which the
 &func function stores information necessary for it to continue scanning the same
 string.
@@ -68,7 +72,8 @@ and updates the value pointed to by
 .arg s1max
 to reflect the number of elements that remain in
 relation to
-.arg ptr.
+.arg ptr
+.ct .li .
 Subsequent calls in the sequence have a null first argument and the
 objects pointed to by
 .arg s1max
@@ -82,7 +87,8 @@ The first call in the sequence searches the string pointed to by
 .arg s1
 for the first character that is not contained in the current separator
 string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 If no such character is found, then there are no tokens in the string pointed to by
 .arg s1
 and the &func function returns a null pointer. If such a character is found,
@@ -91,8 +97,8 @@ first character in
 .arg s1
 that is contained in the current separator string. If no such character is found, the
 current token extends to the end of the string pointed to by
-.arg s1,
-and subsequent searches in the same string for a token return a null pointer.
+.arg s1
+.ct , and subsequent searches in the same string for a token return a null pointer.
 If such a character is found, it is overwritten by a null character,
 which terminates the current token.
 In all cases, the &func function stores sufficient information in the pointer pointed
@@ -102,8 +108,8 @@ so that subsequent calls, with a null pointer for
 .arg s1
 and the unmodified pointer
 value for
-.arg ptr,
-shall start searching just past the element overwritten by a null character (if any).
+.arg ptr
+.ct , shall start searching just past the element overwritten by a null character (if any).
 .im widefunc
 .desc end
 .*

@@ -4,7 +4,8 @@ int _os_handle( int handle );
 .funcend
 .desc begin
 The &func function takes a POSIX-style file handle specified by
-.arg handle.
+.arg handle
+.ct .li .
 It returns the corresponding operating system level handle.
 .desc end
 .return begin

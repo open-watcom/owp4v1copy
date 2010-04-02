@@ -9,7 +9,8 @@ integer*1 mask(8)
 .gfuncend
 .desc begin
 The &func &routine sets the current fill mask to the value of the argument
-.arg mask.
+.arg mask
+.ct .li .
 .if '&lang' eq 'C' .do begin
 When the value of the
 .arg mask

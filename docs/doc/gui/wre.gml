@@ -228,7 +228,8 @@ open.
 .step Double click on the desired file
 .orstep Click on the desired file
 to select it, then
-.bd click on OK.
+.bd click on OK
+.ct .li .
 .result
 The Open File dialog closes and a Resource dialog for the selected
 resource file appears in the Resource Editor window. This dialog
@@ -412,7 +413,8 @@ then
 .bd choose Edit from the Resource menu
 .orstep Select the desired resource,
 then
-.bd press ENTER.
+.bd press ENTER
+.ct .li .
 .result
 The appropriate editor for the selected resource opens on top of the
 Resource Editor window. Use this editor to make changes to the
@@ -516,7 +518,8 @@ resource file to which you want to copy the selected resource.
 .step Double click on the desired resource file
 .orstep Click on the desired resource file
 to select it, then
-.bd click on OK.
+.bd click on OK
+.ct .li .
 .result
 The Resource Editor copies the resource to the selected resource file.
 The dialog closes and you return to the &company Resource Editor

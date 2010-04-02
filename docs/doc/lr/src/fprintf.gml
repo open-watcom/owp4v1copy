@@ -22,7 +22,8 @@ int _ufprintf( FILE *fp, const wchar_t *format, ... );
 The &func function writes output to the file pointed to by
 .arg fp
 under control of the argument
-.arg format.
+.arg format
+.ct .li .
 The
 .arg format
 string is described under the description of the
@@ -32,7 +33,8 @@ function.
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

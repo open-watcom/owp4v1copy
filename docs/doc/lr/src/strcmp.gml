@@ -41,7 +41,8 @@ int _ustrcmp( const wchar_t *s1, const wchar_t *s2 );
 The &func function compares the string pointed to by
 .arg s1
 to the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .im farparm
 .im widefunc
 .im mbsfunc
@@ -52,7 +53,8 @@ The &func function returns an integer less than, equal to, or greater
 than zero, indicating that the string pointed to by
 .arg s1
 is less than, equal to, or greater than the string pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist &function. strcmp strcmpi stricmp strncmp strnicmp

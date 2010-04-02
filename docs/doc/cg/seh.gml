@@ -47,15 +47,19 @@ The
 .kw _finally
 block of code is guaranteed to be executed no matter how the guarded
 block is exited (
-.kw break,
-.kw continue,
-.kw return,
-.kw goto,
-or
+.kw break
+.ct ,
+.kw continue
+.ct ,
+.kw return
+.ct ,
+.kw goto
+.ct , or
 .kw longjmp
 .ct ).
 Exceptions to this are calls to
-.kw abort,
+.kw abort
+.ct ,
 .kw exit
 or
 .kw _exit
@@ -70,7 +74,8 @@ blocks.
 The following is a contrived example of the use of
 .kw  _try
 and
-.kw _finally.
+.kw _finally
+.ct .li .
 .exam begin
 #include <stdio.h>
 #include <stdlib.h>
@@ -134,7 +139,8 @@ block.
 One way is to exit the
 .us try
 block using a statement like
-.kw return.
+.kw return
+.ct .li .
 The other way is to fall through the end of the
 .us try
 block and into the
@@ -380,10 +386,12 @@ The point of this exercise was that after the
 .us finally
 block is executed, the normal flow of execution is resumed
 at the
-.kw break,
-.kw continue,
-.kw return,
-etc. statement and the normal behaviour for that statement occurs.
+.kw break
+.ct ,
+.kw continue
+.ct ,
+.kw return
+.ct , etc. statement and the normal behaviour for that statement occurs.
 It is as if the compiler had inserted a function call just before
 the statement that exits the
 .us try
@@ -397,10 +405,12 @@ _try {
 .np
 There is some overhead associated with local unwinds such as that
 incurred by the use of
-.kw break,
-.kw continue,
-.kw return,
-etc.
+.kw break
+.ct ,
+.kw continue
+.ct ,
+.kw return
+.ct , etc.
 To avoid this overhead, a new transfer keyword called
 .kw _leave
 can be used.
@@ -466,10 +476,12 @@ There are two ways to enter the
 .us finally
 block.
 One way is caused by unwinds &mdash. either local (by the use of
-.kw break,
-.kw continue,
-.kw return,
-or
+.kw break
+.ct ,
+.kw continue
+.ct ,
+.kw return
+.ct , or
 .kw goto
 .ct )
 or global (more on global unwinds later).

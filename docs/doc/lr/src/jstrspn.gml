@@ -21,9 +21,11 @@ the length of the initial segment of the Kanji string pointed to by
 .arg str
 which consists of single- and double-byte characters from the Kanji
 string pointed to by
-.arg charset.
+.arg charset
+.ct .li .
 The terminating null character is not considered to be part of
-.arg charset.
+.arg charset
+.ct .li .
 .im ffarparm
 .desc end
 .return begin

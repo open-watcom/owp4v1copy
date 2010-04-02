@@ -26,7 +26,8 @@ the cursor will not be displayed
 .desc end
 .return begin
 The &func &routine returns the previous setting for
-.arg mode.
+.arg mode
+.ct .li .
 .return end
 .see begin
 .seelist &function. _gettextcursor _settextcursor

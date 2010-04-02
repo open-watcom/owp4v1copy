@@ -15,7 +15,8 @@ The &func function computes
 The &func and &ffunc functions compute
 .do end
 the number of characters in the Kanji string pointed to by
-.arg s.
+.arg s
+.ct .li .
 A double-byte character is treated as one character.
 .im ffarparm
 .desc end

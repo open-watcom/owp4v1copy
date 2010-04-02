@@ -6,7 +6,8 @@ unsigned _dos_close( int &fd );
 .funcend
 .desc begin
 The &func function uses system call 0x3E to close the file indicated by
-.arg &fd..
+.arg &fd
+.ct .li .
 The value for
 .arg &fd
 is the one returned by a function call that created or last opened the file.

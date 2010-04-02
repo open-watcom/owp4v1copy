@@ -13,7 +13,8 @@ int DefineUserProc16( int typ, PROCPTR routine, ... );
 .desc begin
 The &func function defines the arguments accepted by the user defined
 callback procedure
-.arg routine.
+.arg routine
+.ct .li .
 There may be up to 32 user defined callbacks.
 The parameter
 .arg typ
@@ -28,7 +29,8 @@ is being defined
 The callback routine must be declared as FAR PASCAL, or as FAR cdecl.
 The variable argument list defines the types of parameters that will be
 received by the user defined callback procedure
-.arg routine.
+.arg routine
+.ct .li .
 Valid parameter types are:
 .begterm
 .term UDP16_PTR
@@ -43,7 +45,8 @@ Valid parameter types are:
 callback routine will be declared as type
 .kw cdecl
 rather than as type
-.kw PASCAL.
+.kw PASCAL
+.ct .li .
 This keyword may be placed anywhere before the
 .kw UDP16_ENDLIST
 keyword.

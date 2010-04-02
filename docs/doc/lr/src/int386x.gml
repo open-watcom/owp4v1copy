@@ -9,7 +9,8 @@ int int386x( int inter_no,
 .desc begin
 The &func function causes the computer's central processor (CPU) to
 be interrupted with an interrupt whose number is given by
-.arg inter_no.
+.arg inter_no
+.ct .li .
 This function is present in the 32-bit C libraries and may be executed
 on Intel 386 compatible systems.
 Before the interrupt, the CPU registers are loaded from the structure
@@ -17,7 +18,8 @@ located by
 .arg in_regs
 and the DS, ES, FS and GS segment registers are loaded from the
 structure located by
-.arg seg_regs.
+.arg seg_regs
+.ct .li .
 .im segregs
 .np
 Following the interrupt, the structure located by

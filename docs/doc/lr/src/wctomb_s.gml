@@ -33,11 +33,12 @@ If
 is not a null pointer, then
 .arg smax
 shall not be less than
-.arg n,
-and
+.arg n
+.ct , and
 .arg smax
 shall not be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 If
 .arg s
 is a null pointer, then
@@ -46,8 +47,8 @@ shall equal zero.
 .np
 If there is a runtime-constraint violation, &func does not modify
 the int pointed to by
-.arg status,
-and if
+.arg status
+.ct , and if
 .arg s
 is not a null pointer, no more than
 .arg smax
@@ -71,7 +72,8 @@ is not a null pointer). The
 number of characters stored never exceeds
 .kw MB_CUR_MAX
 or
-.arg smax.
+.arg smax
+.ct .li .
 If
 .arg wc
 is a null wide character, a null byte is stored, preceded by any shift
@@ -96,8 +98,8 @@ either
 or
 .arg -1
 if
-.arg wc,
-respectively, does or does not correspond to a valid multibyte character.
+.arg wc
+.ct , respectively, does or does not correspond to a valid multibyte character.
 .np
 In no case will the int pointed to by
 .arg status

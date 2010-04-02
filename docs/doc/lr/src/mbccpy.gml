@@ -13,7 +13,8 @@ void _fmbccpy( unsigned char __far *dest,
 The &func function copies one multibyte character from
 .arg ch
 to
-.arg dest.
+.arg dest
+.ct .li .
 .im farparm
 .desc end
 .return begin

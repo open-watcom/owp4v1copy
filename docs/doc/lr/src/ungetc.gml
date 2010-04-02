@@ -19,7 +19,8 @@ int _uungetc( int c, FILE *fp );
 The &func function pushes the character specified by
 .arg c
 back onto the input stream pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 This character will be returned by the next read on the stream.
 The pushed-back character will be discarded if a call is made to the
 .kw fflush
@@ -37,20 +38,23 @@ The &func function clears the end-of-file indicator, unless the value
 of
 .arg c
 is
-.kw EOF.
+.kw EOF
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it pushes the
 wide character specified by
 .arg c
 back onto the input stream pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 .np
 The &wfunc function clears the end-of-file indicator, unless the value
 of
 .arg c
 is
-.kw WEOF.
+.kw WEOF
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
@@ -58,7 +62,8 @@ The &ufunc Unicode function is identical to &func except that it
 pushes the Unicode character specified by
 .arg c
 back onto the input stream pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 .do end
 .desc end
 .return begin

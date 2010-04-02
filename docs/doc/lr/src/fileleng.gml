@@ -12,11 +12,13 @@ __int64 _filelengthi64( int &fd );
 .desc begin
 The &func function returns, as a 32-bit long integer, the number of
 bytes in the opened file indicated by the file &handle
-.arg &fd..
+.arg &fd
+.ct .li .
 .np
 The &_func64 function returns, as a 64-bit integer, the number of
 bytes in the opened file indicated by the file &handle
-.arg &fd..
+.arg &fd
+.ct .li .
 .if &'length(&_func.) ne 0 .do begin
 .np
 The &_func function is identical to &func..

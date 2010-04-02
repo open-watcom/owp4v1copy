@@ -14,7 +14,8 @@ wchar_t _ustrdate( wchar_t *datestr );
 .funcend
 .desc begin
 The &func function copies the current date to the buffer pointed to by
-.arg datestr.
+.arg datestr
+.ct .li .
 The date is formatted as "MM/DD/YY"
 where "MM" is two digits representing the month,
 where "DD" is two digits representing the day, and
@@ -25,7 +26,8 @@ The buffer must be at least 9 bytes long.
 .desc end
 .return begin
 The &func function returns a pointer to the resulting text string
-.arg datestr.
+.arg datestr
+.ct .li .
 .return end
 .see begin
 .seelist &function. asctime Functions ctime Functions gmtime localtime mktime

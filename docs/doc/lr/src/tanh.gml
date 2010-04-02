@@ -7,7 +7,8 @@ double tanh( double x );
 .funcend
 .desc begin
 The &func function computes the hyperbolic tangent of
-.arg x.
+.arg x
+.ct .li .
 .np
 When the
 .arg x

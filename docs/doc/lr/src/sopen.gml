@@ -27,9 +27,11 @@ int _usopen( const wchar_t *filename,
 The &func function opens a file at the operating system level for
 shared access.
 The name of the file to be opened is given by
-.arg filename.
+.arg filename
+.ct .li .
 The file will be accessed according to the access mode specified by
-.arg access.
+.arg access
+.ct .li .
 When the file is to be created, the optional argument must be given
 which establishes the future access permissions for the file.
 Additionally, the sharing mode of the file is given by the
@@ -59,8 +61,8 @@ accepts a Unicode string argument.
 .im openper
 .np
 The shared access for the file,
-.arg share,
-is established by a combination of bits defined in the
+.arg share
+.ct , is established by a combination of bits defined in the
 .hdrfile share.h
 header file.
 The following values may be set:
@@ -91,9 +93,10 @@ sopen( path, oflag, SH_COMPAT, ... );
 .np
 Note that the &func function call ignores advisory locks which may
 have been set by the
-.kw fcntl,
-.kw lock,
-or
+.kw fcntl
+.ct ,
+.kw lock
+.ct , or
 .kw locking
 functions.
 .do end

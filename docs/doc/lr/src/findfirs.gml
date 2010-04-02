@@ -28,7 +28,8 @@ argument may contain wildcard characters ('?' and '*').
 The information is returned in a
 .kw _finddata_t
 structure pointed to by
-.arg fileinfo.
+.arg fileinfo
+.ct .li .
 .millust begin
 struct _finddata_t {
   unsigned  attrib;
@@ -52,7 +53,8 @@ argument may contain wildcard characters ('?' and '*').
 The information is returned in a
 .kw _finddatai64_t
 structure pointed to by
-.arg fileinfo.
+.arg fileinfo
+.ct .li .
 .millust begin
 struct _finddatai64_t {
   unsigned  attrib;
@@ -101,7 +103,8 @@ file or group of files matching the
 specification, which can be used in a subsequent call to
 .kw _findnext
 or to
-.kw _findclose.
+.kw _findclose
+.ct .li .
 Otherwise, &_func and returns &minus.1 and sets
 .kw errno
 to one of the following values:

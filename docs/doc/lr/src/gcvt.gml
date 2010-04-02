@@ -21,7 +21,8 @@ wchar_t *_wgcvt( double value,
 The &func function converts the floating-point number
 .arg value
 into a character string and stores the result in
-.arg buffer.
+.arg buffer
+.ct .li .
 The parameter
 .arg ndigits
 specifies the number of significant digits desired.

@@ -33,10 +33,10 @@ attempt to perform further input, and it is unspecified to what extent
 .*
 .desc begin
 The &func function is equivalent to
-.kw scanf_s,
-with the variable argument list replaced by
-.arg arg,
-which shall have been initialized by the
+.kw scanf_s
+.ct , with the variable argument list replaced by
+.arg arg
+.ct , which shall have been initialized by the
 .kw va_start
 macro (and possibly subsequent
 .kw va_arg
@@ -47,7 +47,8 @@ macro.
 .np
 The &wfunc function is identical to &func except that it accepts a
 wide-character string argument for
-.arg format.
+.arg format
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

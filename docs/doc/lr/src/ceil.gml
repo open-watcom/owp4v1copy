@@ -6,12 +6,13 @@ double ceil( double x );
 .desc begin
 The &func function (ceiling function)
 computes the smallest integer not less than
-.arg x.
+.arg x
+.ct .li .
 .desc end
 .return begin
 The &func function returns the smallest integer not less than
-.arg x,
-expressed as a
+.arg x
+.ct , expressed as a
 .id double.
 .return end
 .see begin

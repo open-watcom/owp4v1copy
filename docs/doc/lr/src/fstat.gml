@@ -19,10 +19,12 @@ int _wfstati64( int handle, struct _stati64 *buf );
 .desc begin
 The &func functions obtain information about an open file whose file
 &handle is
-.arg &fd..
+.arg &fd
+.ct .li .
 This information is placed in the structure located at the address
 indicated by
-.arg buf.
+.arg buf
+.ct .li .
 .im statdesc
 .if &'length(&_func.) ne 0 .do begin
 .np
@@ -30,9 +32,10 @@ The &_func function is identical to &func..
 Use &_func for ANSI/ISO naming conventions.
 .do end
 The
-.kw _fstati64,
-.kw _wfstat,
-and
+.kw _fstati64
+.ct ,
+.kw _wfstat
+.ct , and
 .kw _wfstati64
 functions differ from &func in the type of structure that they are
 asked to fill in.

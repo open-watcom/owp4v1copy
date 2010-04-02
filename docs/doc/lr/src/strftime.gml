@@ -177,8 +177,8 @@ The format modifiers E and O are ignored. (eg. %EY is the same as %Y)
 .desc end
 .return begin
 If the number of characters to be placed into the array is less than
-.arg maxsize,
-the &func function returns the number of characters placed into the
+.arg maxsize
+.ct , the &func function returns the number of characters placed into the
 array pointed to by
 .arg s
 not including the terminating null character.

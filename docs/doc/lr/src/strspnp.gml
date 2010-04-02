@@ -51,9 +51,11 @@ wchar_t *_ustrspnp( const wchar_t *str,
 The &func function returns a pointer to the first character in
 .arg str
 that does not belong to the set of characters in
-.arg charset.
+.arg charset
+.ct .li .
 The terminating null character is not considered to be part of
-.arg charset.
+.arg charset
+.ct .li .
 .if &'length(&_func.) ne 0 .do begin
 .np
 The &_func function is identical to &func..
@@ -70,7 +72,8 @@ The &func function returns
 if
 .arg str
 consists entirely of characters from
-.arg charset.
+.arg charset
+.ct .li .
 .return end
 .see begin
 .seelist strspnp strcspn strspn

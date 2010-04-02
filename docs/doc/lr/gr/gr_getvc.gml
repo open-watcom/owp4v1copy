@@ -14,7 +14,8 @@ and the hardware configuration.
 The information is returned in the
 .id videoconfig
 structure indicated by the argument
-.arg config.
+.arg config
+.ct .li .
 The structure contains the following fields (all are
 .id &short
 fields):

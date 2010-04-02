@@ -33,7 +33,8 @@ The &func function copies
 characters from the buffer pointed to by
 .arg src
 to the buffer pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Copying of overlapping objects will take place properly.
 See the
 .kw memcpy
@@ -61,7 +62,8 @@ is interpreted to mean the number of Unicode characters.
 .*
 .return begin
 The &func function returns
-.arg dst.
+.arg dst
+.ct .li .
 .return end
 .*
 .see begin

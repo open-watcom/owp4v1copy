@@ -22,12 +22,13 @@ differ across systems.
 .return begin
 The &func function returns the integer value read or, if a read error
 or end-of-file occurs, the error indicator is set and &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 Since
 .kw EOF
 is a legitimate value to read from
-.arg fp,
-use
+.arg fp
+.ct , use
 .kw ferror
 to verify that an error has occurred.
 .return end

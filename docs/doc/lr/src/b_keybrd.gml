@@ -51,7 +51,8 @@ services return zero if there was no character available, otherwise
 it returns the same value returned by
 .kw _KEYBRD_READ
 and
-.kw _NKEYBRD_READ.
+.kw _NKEYBRD_READ
+.ct .li .
 .np
 The shift status is returned in the low-order byte with one bit
 for each special key defined as follows:

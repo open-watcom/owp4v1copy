@@ -38,7 +38,8 @@ for the file
 or directory
 .do end
 identified by
-.arg path.
+.arg path
+.ct .li .
 .if '&machsys' eq 'PP' .do begin
 The volume on which the file resides must support access and
 modification times.
@@ -53,8 +54,7 @@ If the
 .arg times
 argument is
 .mono NULL
-.ct ,
-the access and modification times of the file or directory are set to
+.ct , the access and modification times of the file or directory are set to
 the current time.
 .if '&machsys' eq 'QNX' .do begin
 The effective user ID of the process must match the owner of the file
@@ -70,8 +70,7 @@ If the
 .arg times
 argument is not
 .mono NULL
-.ct ,
-it is interpreted as a pointer to a
+.ct , it is interpreted as a pointer to a
 .kw utimbuf
 structure and the access and modification times of the file or
 directory are set to the values contained in the designated structure.

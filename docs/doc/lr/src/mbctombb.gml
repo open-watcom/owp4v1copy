@@ -5,7 +5,8 @@ unsigned int _mbctombb( unsigned int ch );
 .desc begin
 The &func function returns the single-byte character equivalent
 to the double-byte character
-.arg ch.
+.arg ch
+.ct .li .
 The single-byte character will be in the range 0x20 through 0x7E or
 0xA1 through 0xDF.
 .np

@@ -14,8 +14,10 @@ The current position defaults to the top left corner of the screen,
 .coord 1 1 ,
 when a new video mode is selected.
 It is changed by successful calls to the
-.kw _outtext,
-.kw _outmem,
+.kw _outtext
+.ct ,
+.kw _outmem
+.ct ,
 .kw _settextposition
 and
 .kw _settextwindow

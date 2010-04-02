@@ -24,13 +24,15 @@ _fmbsnccnt( const unsigned char __far *string, size_t n );
 The &func function counts the number of characters in the first
 .arg n
 bytes of
-.arg string.
+.arg string
+.ct .li .
 .np
 The &mfunc function counts the number of multibyte characters in the
 first
 .arg n
 bytes of
-.arg string.
+.arg string
+.ct .li .
 If &mfunc finds a null byte as the second byte of a double-byte
 character, the first (lead) byte is not included in the count.
 .np
@@ -48,7 +50,8 @@ It is most useful in mixed memory model applications.
 The header file
 .hdrfile tchar.h
 defines the generic-text routine
-.kw _tcsnccnt.
+.kw _tcsnccnt
+.ct .li .
 This macro maps to &mfunc if
 .kw _MBCS
 has been defined, or to the &wfunc macro if
@@ -63,16 +66,19 @@ used otherwise.
 .return begin
 &func returns the number of characters from the beginning
 of the string to byte
-.arg n.
+.arg n
+.ct .li .
 &wfunc returns the number of wide characters from the beginning
 of the string to byte
-.arg n.
+.arg n
+.ct .li .
 &mfunc returns the number of multibyte characters from the beginning
 of the string to byte
-.arg n.
+.arg n
+.ct .li .
 If these functions find a null character before byte
-.arg n,
-they return the number of characters before the null character.
+.arg n
+.ct , they return the number of characters before the null character.
 If the string consists of fewer than
 .arg n
 characters, these functions return the number of characters in the

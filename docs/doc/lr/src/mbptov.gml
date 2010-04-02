@@ -8,7 +8,8 @@ unsigned int _fmbptov( const unsigned char __far *string );
 .desc begin
 The &func function returns the multibyte character at the position in
 the string pointed to by
-.arg string.
+.arg string
+.ct .li .
 .im farparm
 .desc end
 .return begin

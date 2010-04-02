@@ -7,7 +7,8 @@ int feof( FILE *fp );
 .desc begin
 The &func function tests the end-of-file indicator for the stream
 pointed to by
-.arg fp.
+.arg fp
+.ct .li .
 Because this indicator is set when an input operation attempts to read
 past the end of the file the &func
 function will detect the end of the file only after an attempt
@@ -19,7 +20,8 @@ once the program attempts to read more data.
 .return begin
 The &func function returns non-zero
 if the end-of-file indicator is set for
-.arg fp.
+.arg fp
+.ct .li .
 .return end
 .see begin
 .seelist &function. clearerr feof ferror fopen freopen perror read strerror

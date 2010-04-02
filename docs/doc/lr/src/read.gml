@@ -12,7 +12,8 @@ The &func function reads data at the operating system level.
 The number of bytes transmitted is given by
 .arg len
 and the data is transmitted starting at the address specified by
-.arg buffer.
+.arg buffer
+.ct .li .
 .np
 The
 .arg &fd

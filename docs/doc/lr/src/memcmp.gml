@@ -30,7 +30,8 @@ The &func function compares the first
 characters of the object pointed to by
 .arg s1
 to the object pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .im farparm
 .if &'length(&wfunc.) ne 0 .do begin
 .np
@@ -56,7 +57,8 @@ The &func function returns an integer less than, equal to, or greater
 than zero, indicating that the object pointed to by
 .arg s1
 is less than, equal to, or greater than the object pointed to by
-.arg s2.
+.arg s2
+.ct .li .
 .return end
 .see begin
 .seelist &function. memchr memcmp memcpy memicmp memset

@@ -9,7 +9,8 @@ and the
 type.
 .do end
 .el .do begin
-.kw udirent.
+.kw udirent
+.ct .li .
 .do end
 .blkcode begin
 .if '&machsys' eq 'PP' .do begin

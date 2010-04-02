@@ -13,7 +13,8 @@ The &func function calculates the quotient
 and remainder of the division of the numerator
 .arg numer
 by the denominator
-.arg denom.
+.arg denom
+.ct .li .
 .desc end
 .*
 .return begin
@@ -22,7 +23,8 @@ The &func function returns a structure of type
 which contains the fields
 .kw quot
 and
-.kw rem.
+.kw rem
+.ct .li .
 .return end
 .*
 .see begin

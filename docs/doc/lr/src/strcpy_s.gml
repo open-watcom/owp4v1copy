@@ -25,12 +25,14 @@ nor
 shall be a null pointer.
 .arg s1max
 shall not be greater than
-.kw RSIZE_MAX.
+.kw RSIZE_MAX
+.ct .li .
 .arg s1max
 shall not equal zero.
 .arg s1max
 shall be greater than
-.arg strnlen_s(s2, s1max).
+.arg strnlen_s(s2, s1max)
+.ct .li .
 Copying shall not take place between objects that overlap.
 .np
 If there is a runtime-constraint violation, then if
@@ -50,7 +52,8 @@ to the null character.
 The &func function copies the string pointed to by
 .arg s2
 (including the terminating null character) into the array pointed to by
-.arg s1.
+.arg s1
+.ct .li .
 
 All elements following the terminating null character (if any) written by &func in
 the array of

@@ -11,11 +11,13 @@ the argument.
 It stores the integral part as a
 .id double
 in the object pointed to by
-.arg iptr.
+.arg iptr
+.ct .li .
 .desc end
 .return begin
 The &func function returns the signed fractional part of
-.arg value.
+.arg value
+.ct .li .
 .return end
 .see begin
 .seelist modf frexp ldexp

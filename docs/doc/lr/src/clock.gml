@@ -7,7 +7,8 @@ clock_t clock(void);
 The &func function returns the number of clock ticks of processor time
 used by program since the program started executing.
 This can be converted to seconds by dividing by the value of the macro
-.kw CLOCKS_PER_SEC.
+.kw CLOCKS_PER_SEC
+.ct .li .
 .if '&machsys' ne 'QNX' .do begin
 .np
 Note that under DOS and OS/2, the clock tick counter will reset to 0

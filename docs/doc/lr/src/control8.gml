@@ -15,7 +15,8 @@ If
 is non-zero, then the control word is updated with bits from
 .arg newcw
 corresponding to every bit that is on in
-.arg mask.
+.arg mask
+.ct .li .
 .desc end
 .return begin
 The &func function returns the new control word.

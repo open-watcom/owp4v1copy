@@ -23,10 +23,12 @@ the length of the initial segment of the Kanji string pointed to by
 which consists entirely of characters
 .us not
 from the Kanji string pointed to by
-.arg charset.
+.arg charset
+.ct .li .
 A double-byte character is treated as one character.
 The terminating null character is not considered part of
-.arg str.
+.arg str
+.ct .li .
 .im ffarparm
 .desc end
 .return begin

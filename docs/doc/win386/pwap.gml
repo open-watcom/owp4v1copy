@@ -18,7 +18,8 @@ In order to stop the supervisor from trying to convert the data into a
 .desc end
 .return begin
 The &func returns a 32-bit "near" pointer, that is really the parameter
-.arg dw.
+.arg dw
+.ct .li .
 .return end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .exmp begin

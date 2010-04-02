@@ -17,13 +17,15 @@ The parameters
 and
 .arg argv
 are the argument count and argument array as passed to
-.kw main.
+.kw main
+.ct .li .
 The argument
 .arg optstring
 is a string of recognised option characters; if a character is followed by a
 colon, the option takes an argument. All option characters allowed by Utility
 Syntax Guideline 3 are allowed in
-.arg optstring.
+.arg optstring
+.ct .li .
 .np
 The global variable
 .kw optind
@@ -31,7 +33,8 @@ is the index of the next element of the
 .arg argv[]
 vector to be processed. It is initialised to 1 by the system, and &func
 updates it when it finishes with each element of
-.arg argv[].
+.arg argv[]
+.ct .li .
 When an element of
 .arg argv[]
 contains multiple option characters, &func uses a static variable to determine
@@ -84,11 +87,13 @@ points to the string "-"
 .endbull
 .*
 &func returns -1 without changing
-.kw optind.
+.kw optind
+.ct .li .
 If
 .arg argv[optind]
 points to the string "--", &func returns -1 after incrementing
-.kw optind.
+.kw optind
+.ct .li .
 .np
 If &func encounters an option character that is not contained in
 .arg optstring
@@ -104,7 +109,8 @@ the global variable
 to 0 and the first character of
 .arg optstring
 is not a colon, &func also prints a diagnostic message to
-.kw stderr.
+.kw stderr
+.ct .li .
 .np
 The &func function is not re-entrant and hence not thread-safe.
 .desc end

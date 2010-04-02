@@ -33,7 +33,8 @@ The &func function copies
 characters from the buffer pointed to by
 .arg src
 into the buffer pointed to by
-.arg dst.
+.arg dst
+.ct .li .
 Copying of overlapping objects is not guaranteed to work properly.
 See the
 .kw memmove

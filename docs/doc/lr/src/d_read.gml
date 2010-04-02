@@ -11,10 +11,12 @@ The &func function uses system call 0x3F to read
 bytes of data from the file specified by
 .arg &fd
 into the buffer pointed to by
-.arg buffer.
+.arg buffer
+.ct .li .
 The number of bytes successfully read will be stored in the
 unsigned integer pointed to by
-.arg bytes.
+.arg bytes
+.ct .li .
 .desc end
 .return begin
 The &func function returns zero if successful.

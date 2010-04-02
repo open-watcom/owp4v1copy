@@ -18,14 +18,16 @@ int _ugetchar( void );
 The &func function is equivalent to
 .kw getc
 with the argument
-.kw stdin.
+.kw stdin
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is similar to &func except that it is equivalent
 to
 .kw getwc
 with the argument
-.kw stdin.
+.kw stdin
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np
@@ -33,35 +35,43 @@ The &ufunc Unicode function is similar to &func except that it is
 equivalent to
 .kw _ugetc
 with the argument
-.kw stdin.
+.kw stdin
+.ct .li .
 .do end
 .desc end
 .return begin
 The &func function returns the next character from the input stream
 pointed to by
-.kw stdin.
+.kw stdin
+.ct .li .
 If the stream is at end-of-file, the end-of-file indicator is set and
 &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 If a read error occurs, the error indicator is set and
 &func returns
-.kw EOF.
+.kw EOF
+.ct .li .
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function returns the next wide character from the input
 stream pointed to by
-.kw stdin.
+.kw stdin
+.ct .li .
 If the stream is at end-of-file, the end-of-file indicator is set and
 &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 If a read error occurs, the error indicator is set and &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 If an encoding error occurs,
 .kw errno
 is set to
 .kw EILSEQ
 and &wfunc returns
-.kw WEOF.
+.kw WEOF
+.ct .li .
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 .np

@@ -11,7 +11,8 @@ int _eof( int &fd );
 The &func function determines, at the operating system level, if the
 end of the file has been reached for the file whose file &handle is
 given by
-.arg &fd..
+.arg &fd
+.ct .li .
 Because the current file position is set following an input operation,
 the &func function may be called to detect the end of the file before
 an input operation beyond the end of the file is attempted.

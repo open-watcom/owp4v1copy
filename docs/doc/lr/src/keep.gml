@@ -10,7 +10,8 @@ The amount of memory kept for the program is
 .arg memsize
 paragraphs (a paragraph is 16 bytes) from the Program Segment Prefix
 which is stored in the variable
-.kw _psp.
+.kw _psp
+.ct .li .
 The value of
 .arg retcode
 is returned to the parent process.

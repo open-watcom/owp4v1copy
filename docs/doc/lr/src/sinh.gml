@@ -7,7 +7,8 @@ double sinh( double x );
 .funcend
 .desc begin
 The &func function computes the hyperbolic sine of
-.arg x.
+.arg x
+.ct .li .
 A range error occurs if the magnitude of
 .arg x
 is too large.

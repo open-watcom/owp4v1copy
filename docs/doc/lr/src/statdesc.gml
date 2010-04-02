@@ -2,7 +2,8 @@
 The file
 .hdrfile sys&pc.stat.h
 contains definitions for the structure
-.kw stat.
+.kw stat
+.ct .li .
 .if '&machsys' ne 'QNX' .do begin
 .begterm 10
 .termhd1 Field
@@ -147,10 +148,12 @@ Search/execute permission bit
 .np
 .kw S_IRWXU
 is the bitwise inclusive OR of
-.kw S_IRUSR,
-.kw S_IWUSR,
-and
-.kw S_IXUSR.
+.kw S_IRUSR
+.ct ,
+.kw S_IWUSR
+.ct , and
+.kw S_IXUSR
+.ct .li .
 .begterm 12 $compact
 .termhd1 Mask
 .if '&machsys' eq 'QNX' .do begin
@@ -171,10 +174,12 @@ Search/execute permission bit
 .np
 .kw S_IRWXG
 is the bitwise inclusive OR of
-.kw S_IRGRP,
-.kw S_IWGRP,
-and
-.kw S_IXGRP.
+.kw S_IRGRP
+.ct ,
+.kw S_IWGRP
+.ct , and
+.kw S_IXGRP
+.ct .li .
 .begterm 12 $compact
 .termhd1 Mask
 .if '&machsys' eq 'QNX' .do begin
@@ -195,10 +200,12 @@ Search/execute permission bit
 .np
 .kw S_IRWXO
 is the bitwise inclusive OR of
-.kw S_IROTH,
-.kw S_IWOTH,
-and
-.kw S_IXOTH.
+.kw S_IROTH
+.ct ,
+.kw S_IWOTH
+.ct , and
+.kw S_IXOTH
+.ct .li .
 .begterm 12 $compact
 .termhd1 Mask
 .termhd2 Meaning

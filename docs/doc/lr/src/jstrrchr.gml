@@ -20,7 +20,8 @@ The &func and &ffunc functions locate
 the last occurrence of the single- or double-byte character
 .arg c
 in the Kanji string pointed to by
-.arg s.
+.arg s
+.ct .li .
 The terminating null character is considered to be part of the string.
 .im ffarfunc
 .desc end

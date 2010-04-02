@@ -5,7 +5,8 @@ int abs( int j );
 .*
 .desc begin
 The &func function returns the absolute value of its integer argument
-.arg j.
+.arg j
+.ct .li .
 .desc end
 .*
 .return begin

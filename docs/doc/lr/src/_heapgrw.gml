@@ -23,7 +23,8 @@ You will want to do this in the small data models if you are using both
 and
 .kw _fmalloc
 or
-.kw halloc.
+.kw halloc
+.ct .li .
 Once a call to
 .kw _fmalloc
 or
@@ -35,7 +36,8 @@ unless space has been reserved for the near heap using either
 .ct,
 .kw sbrk
 or
-.kw _nheapgrow.
+.kw _nheapgrow
+.ct .li .
 .np
 The
 .kw _fheapgrow

@@ -20,7 +20,8 @@ space available within the heap to satisfy an allocation request by
 .kw _bmalloc
 .ct,
 or
-.kw _brealloc.
+.kw _brealloc
+.ct .li .
 .np
 The value returned by &func is the segment value or selector for the
 based heap.

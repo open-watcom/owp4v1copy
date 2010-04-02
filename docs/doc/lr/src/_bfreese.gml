@@ -9,7 +9,8 @@ The &func function frees a based-heap segment.
 The argument
 .arg seg
 indicates the segment returned by an earlier call to
-.kw _bheapseg.
+.kw _bheapseg
+.ct .li .
 .desc end
 .return begin
 The &func function returns 0 if successful and -1 if an error occurred.

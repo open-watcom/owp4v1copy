@@ -15,7 +15,8 @@ The &func function uses system call 0x2B to set the current system date.
 The date information is passed in a
 .kw dosdate_t
 structure pointed to by
-.arg date.
+.arg date
+.ct .li .
 .desc end
 .return begin
 The &func function returns zero if successful.
