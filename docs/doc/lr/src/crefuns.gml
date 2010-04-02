@@ -5,13 +5,13 @@
 The following functions in the C library are re-entrant:
 .np
 .monoon
-abs
-atoi
-atol
-bsearch
-bsearch_s
-div
-fabs
+abs~b~b~b~b~b~b~b~b~b~b~b
+atoi~b~b~b~b~b~b~b~b~b~b
+atol~b~b~b~b~b~b~b~b~b~b
+bsearch~b~b~b~b~b~b~b
+bsearch_s~b~b~b~b~b
+div~b~b~b~b~b~b~b~b~b~b~b
+fabs~b~b~b~b~b~b~b~b~b~b
 _fmbsrtowcs_s~b
 _fmbstowcs_s~b~b
 _fmemccpy~b~b~b~b~b
