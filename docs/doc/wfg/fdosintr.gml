@@ -10,10 +10,10 @@
 .np
 &product is the newest member of the WATFOR family of debugging
 FORTRAN compilers.
-.ix &product
-.ix &cmpname
-.ix WATFOR
-.ix WATFIV
+.ix '&product'
+.ix '&cmpname'
+.ix 'WATFOR'
+.ix 'WATFIV'
 Like its predecessors, WATFOR and WATFIV, the compiler shortens the
 time spent to develop FORTRAN programs.
 A program is compiled directly into the computer's memory and then
@@ -50,8 +50,8 @@ If the math coprocessor is present, it will be used to perform floating-point
 computations.
 If the math coprocessor is not present, all computations are performed using
 the instruction set of the Intel 80x86.
-.ix 'floating-point' support
-.ix 'floating-point' simulation
+.ix 'floating-point' 'support'
+.ix 'floating-point' 'simulation'
 .ix 'Intel 8088'
 .ix 'Intel 8086'
 Performing floating-point operations such as addition and
@@ -147,8 +147,8 @@ versions of &cmpname..
 .section Extensions to FORTRAN 77
 .*
 .np
-.ix extension
-.ix WATFOR-77 extensions
+.ix 'extension'
+.ix 'WATFOR-77 extensions'
 &cmpname provides many extensions to the FORTRAN 77 language
 standard.
 The
@@ -160,7 +160,7 @@ For example, the use of any function or subroutine
 which is provided with the compiler but that is not described in
 the language standard is not diagnosed.
 .np
-.ix message extension
+.ix 'message extension'
 Extension messages are issued by the compiler when you select the
 "extensions" option (see the chapter entitled "Compiler
 Options").

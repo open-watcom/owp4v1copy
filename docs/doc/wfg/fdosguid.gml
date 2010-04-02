@@ -19,12 +19,12 @@ The following chapter describes the editor interface to &cmpname..
 .synote
 .note []
 The square brackets denote items which are optional.
-.ix &cmpcmdup.
-.note &cmpcmdup.
+.ix '&cmpcmdup'
+.note &cmpcmdup
 is the version of &cmpname which does not require the 80x87 numeric
 data processor.
-.ix &cmp2cmdup.
-.note &cmp2cmdup.
+.ix '&cmp2cmdup'
+.note &cmp2cmdup
 is the version of &cmpname which requires the 80x87 numeric
 data processor.
 .note options
@@ -76,10 +76,10 @@ the statement portion of a line to column 132.
 .section Invoking &cmpname
 .*
 .np
-.ix &cmpcmdup
+.ix '&cmpcmdup'
 In the following sections, we will use &cmpcmdup to illustrate
 how to use &cmpname..
-.ix &cmp2cmdup.
+.ix '&cmp2cmdup'
 The name &cmp2cmdup. may be used in an equivalent manner when
 the math coprocessor is present.
 .np
@@ -106,7 +106,7 @@ in the current directory.
 Type the following command and press the "Enter" key.
 .millust &prompt.&cmpcmd root
 .np
-.ix message interpretation
+.ix 'message interpretation'
 There are deliberate errors in the program so the message
 .code begin
 root&cxt.(4): *ERR* LI-12 column 15, INTEGER argument type is invalid
@@ -119,9 +119,9 @@ How should this message be interpreted?
 The message
 .mono *ERR*
 means that some violation of the rules of FORTRAN has been committed.
-.ix message error
-.ix error
-.ix line
+.ix 'message error'
+.ix 'error'
+.ix 'line'
 Specifically, on the fourth line of the source file
 :FNAME.root&cxt.:eFNAME.
 near column 15 an error was detected.
@@ -146,7 +146,7 @@ issued by &cmpname..
 In addition to the message that is displayed on the screen, a
 source program listing file,
 :FNAME.root.lst:eFNAME., is created by the compiler.
-.ix listing source
+.ix 'listing source'
 If you examine the listing file, you will find something similar
 to the following.
 .code begin
@@ -188,8 +188,8 @@ options were in effect at the time the compilation of the program
 began.
 These and other options are described in the chapter entitled
 "Compiler Options".
-.ix statistics compile-time
-.ix statistics execution-time
+.ix 'statistics compile-time'
+.ix 'statistics execution-time'
 .ix 'compiler statistics'
 At the end of the program listing, we find some statistics such as how
 long it took to compile the program and the number of error messages
@@ -241,7 +241,7 @@ variable or by explicitly declaring the type of the variable.
 .np
 This is just one example of how &cmpname handles compile-time
 errors.
-.ix compile-time
+.ix 'compile-time'
 We use the term "compile-time" since the error was detected
 before any execution of the program was attempted.
 .np
@@ -264,9 +264,9 @@ message is displayed on the screen:
 - Executing in MAIN PROGRAM, statement 3 in file root&cxt.
 .code end
 .pc
-.ix execution-time
+.ix 'execution-time'
 This message is issued at execution time.
-.ix trace-back
+.ix 'trace-back'
 Execution-time messages are accompanied by a program "trace-back".
 The trace-back is a sequence of one or more messages which describes
 the state of the executing program at the time the error was detected.
@@ -301,7 +301,7 @@ Object bytes free:             524244  Statements Executed:             2
 .in +3
 .code end
 .np
-.ix ISN
+.ix 'ISN'
 Here, we see the use of the ISN.
 The error has occurred in the third
 .us statement
@@ -370,7 +370,7 @@ Object bytes free:             524100  Statements Executed:             4
 .np
 You may have noticed that the printed result of this program appeared
 on the screen but not in the listing file.
-.ix listing
+.ix 'listing'
 .ix 'printed result'
 .ix 'NOXTYPE option'
 .ix 'options' 'NOXTYPE'
@@ -512,7 +512,7 @@ memory.
 Try the following example.
 .millust &prompt.&cmpcmd.
 &cmpname will be loaded into memory and then the prompt
-.ix 'command line' prompt
+.ix 'command line' 'prompt'
 .ix 'prompt'
 .millust begin
 To exit, press Ctrl/Z and then press Enter
@@ -764,12 +764,12 @@ This feature has been generalized in the following manner.
 .synote
 .note []
 The square brackets denote items which are optional.
-.ix &cmpcmdup
+.ix '&cmpcmdup'
 .note &cmpcmdup
 is the version of &cmpname which does not require the 80x87
 numeric data processor.
-.ix &cmp2cmdup.
-.note &cmp2cmdup.
+.ix '&cmp2cmdup'
+.note &cmp2cmdup
 is the version of &cmpname which requires the 80x87 numeric
 data processor.
 .note options
@@ -818,8 +818,8 @@ option is selected as a default for the entire batch.
 .section Halting an Executing FORTRAN Program
 .*
 .np
-.ix 'compilation' halting
-.ix 'execution' halting
+.ix 'compilation' 'halting'
+.ix 'execution' 'halting'
 .ix 'interrupting execution'
 .ix 'interrupting compilation'
 .ix 'Ctrl/Break'

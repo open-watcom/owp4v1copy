@@ -8,10 +8,10 @@ DOS-hosted system.
 .section Selecting the &cmpname Editor Interface
 .*
 .np
-.ix editor integration
+.ix 'editor integration'
 As we mentioned in the first chapter, a second way of using &cmpname
 is with an integrated editor.
-.ix editor '&cmpname Editor'
+.ix 'editor' '&cmpname Editor'
 When invoked through &cmpname, the &cmpname Editor can be used to
 create, modify, and run FORTRAN programs.
 In this mode, the editor and compiler are completely memory
@@ -40,7 +40,7 @@ sections is disabled.
 .section Invoking &cmpname and the Editor
 .*
 .np
-.ix &cmpname starting
+.ix '&cmpname starting'
 From the command line, &cmpname and the editor are invoked as follows:
 .ix 'invoking &cmpname'
 .ix 'invoking editor'
@@ -54,18 +54,18 @@ From the command line, &cmpname and the editor are invoked as follows:
 .synote
 .note []
 The square brackets denote items which are optional.
-.ix &cmpcmdup.
+.ix '&cmpcmdup'
 .note &cmpcmdup.
 is the version of &cmpname which does not require the 80x87 numeric
 data processor.
-.ix &cmp2cmdup.
+.ix '&cmp2cmdup'
 .note &cmp2cmdup.
 is the version of &cmpname which requires the 80x87 numeric data
 processor.
 .note EDIT
 is the option that selects the editor interface.
 .note options
-.ix options specifying
+.ix 'options specifying'
 is a list of other &cmpname options, each preceded by a slash.
 The list of options may not contain any blank characters.
 Options may be specified in any order.
@@ -92,16 +92,16 @@ Afterwards, you may wish to consult the section of the book
 entitled "The WATCOM Editor" for a more in-depth introduction to the
 editor.
 .np
-.ix &cmpcmdup
+.ix '&cmpcmdup'
 In the following sections, we will use &cmpcmdup. to illustrate how to
 use &cmpname and the Editor on the PC.
-.ix &cmp2cmdup.
+.ix '&cmp2cmdup'
 The name &cmp2cmdup. may be used in an equivalent manner when
 the math coprocessor is present.
 .np
 Let us assume that the default drive is "A" and that
 the compiler and editor reside on this diskette.
-.ix &cmpcmdup
+.ix '&cmpcmdup'
 Type the command
 .millust &cmpcmdup /EDIT
 and press the "Enter" key.
@@ -148,14 +148,14 @@ not invoke "WEDITF.EXE".
 Check that this file has been placed in the current directory or one
 of the directories listed in the "PATH" environment string.
 .np
-.ix editor 'cursor'
+.ix 'editor' 'cursor'
 A small bar called the
 .us cursor
 is at the left near the bottom of the screen.
-.ix editor 'command entry area'
+.ix 'editor' 'command entry area'
 This line is known as the editor
 .us command entry area.
-.ix editor 'message area'
+.ix 'editor' 'message area'
 The line above the command line is called the editor's
 .us message area.
 The command entry area is used by you to give commands to the editor,
@@ -168,8 +168,8 @@ what some of the program function keys will do.
 .section Entering Commands
 .*
 .np
-.ix editor 'entering commands'
-.ix shell
+.ix 'editor' 'entering commands'
+.ix 'shell'
 .ix 'command shell'
 When entering a command to the PC command processor or "shell", you
 must press the "Enter" key as a signal to the shell to process what
@@ -189,11 +189,11 @@ print it.
 .section Examining the Directory
 .*
 .np
-.ix editor 'examining directories'
+.ix 'editor' 'examining directories'
 To examine the names of files on disk from the editor, you can use the
 editor's "directory" command.
 Some examples follow:
-.ix 'editor commands' DIRECTORY
+.ix 'editor commands' 'DIRECTORY'
 .exam begin
 directory
 dir c:
@@ -216,7 +216,7 @@ causes the list to disappear.
 One of the programs included with the &cmpname software can now be
 loaded into the computer and examined.
 Enter a command similar to the following:
-.ix 'editor commands' EDIT
+.ix 'editor commands' 'EDIT'
 .exam begin
 edit c:\watcom\src\fortran\sample.&langsuff
 .exam end
@@ -249,7 +249,7 @@ tutorial.
 .np
 The program can now be run on the computer.
 Enter the command:
-.ix 'editor commands' RUN
+.ix 'editor commands' 'RUN'
 .millust run
 The screen will appear as follows:
 :cmt. .cp 15
@@ -289,7 +289,7 @@ bottom of the screen.
 .point (ii)
 One line of the display is highlighted; it has an intensity which is
 different from the other lines on the screen.
-.ix editor 'current line'
+.ix 'editor' 'current line'
 This line is referred to as the
 .us current line.
 If you are using a monochrome display and no line on the screen
@@ -297,7 +297,7 @@ appears highlighted then you should adjust the display using the
 "contrast" knob on the monitor.
 .endpoint
 .np
-.ix editor 'cursor keys'
+.ix 'editor' 'cursor keys'
 There are four cursor keys on the keyboard which control these
 two features.
 Each of these four keys has an arrow which indicates a
@@ -306,7 +306,7 @@ The cursor keys are grouped on the right side of the keyboard.
 Pressing any of the cursor keys may cause a number to appear
 at the cursor.
 .ix 'Num Lock key'
-.ix keys 'Num Lock'
+.ix 'keys' 'Num Lock'
 .ix 'numeric lock'
 If this happens then the keypad is in "numeric lock" mode.
 .np
@@ -324,11 +324,11 @@ and "down" keys respectively.
 Now that we see how the two markers on the screen can be controlled
 we shall try some other techniques.
 .np
-.ix editor 'function keys'
+.ix 'editor' 'function keys'
 An area of the keyboard contains a number of special function keys.
 These keys may be labelled F1, F2, etc. or perhaps PF1, PF2, etc.
 .np
-.ix editor 'F4 key'
+.ix 'editor' 'F4 key'
 Press function key 4 (F4 or PF4); the cursor will move to the beginning
 of the highlighted line and the highlighting will disappear.
 For the remainder of these exercises, we will refer to function
@@ -336,7 +336,7 @@ keys using the short form "Fx" where the "x" is one of the
 numbers from 1 to 10.
 The cursor can now be moved from line to line and along a line by using
 the cursor control keys.
-.ix editor 'text entry'
+.ix 'editor' 'text entry'
 The cursor is in an area of the screen called the
 .us text entry area.
 .*
@@ -380,13 +380,13 @@ text entry area.
 Move the cursor to the letter "m" in "my" and type the letter "a".
 The cursor will now move to the "y".
 .ix 'Del key'
-.ix keys Del
+.ix 'keys' 'Del'
 The characters "y other" can be deleted by depressing the delete
 key (marked "Del") once for each letter or space to be deleted.
 To enter the extra characters after the word "program",
 move the cursor to the apostrophe (') after the letter "m".
 .ix 'Ins key'
-.ix keys Ins
+.ix 'keys' 'Ins'
 Press the insert key (marked "Ins") and type " which I changed".
 Note that the cursor appears larger when "insert mode" is active.
 .begnote Notes:
@@ -414,12 +414,12 @@ Pressing the "Enter" key will cause the output to disappear.
 .section Saving a Program
 .*
 .np
-.ix editor 'saving a program'
+.ix 'editor' 'saving a program'
 The program which we have just changed can be saved on a diskette.
 First ensure that the cursor is in the command entry area.
 Recall that function key F4 can be used to do this.
 Enter the command:
-.ix 'editor commands' PUT
+.ix 'editor commands' 'PUT'
 .millust put myprog.&langsuff
 After a short pause, a message will appear in the message area of
 the screen.
@@ -483,9 +483,9 @@ program.
 The program you have just saved can be used to illustrate the addition
 of lines to a program.
 .np
-.ix Tab 'setting TAB stops'
+.ix 'Tab' 'setting TAB stops'
 .ix 'Tab key'
-.ix keys Tab
+.ix 'keys' 'Tab'
 Before we do this, it might be appropriate to introduce you to two new
 editor commands.
 The PC keyboard contains a special key for moving the cursor to
@@ -503,7 +503,7 @@ FORTRAN requires that we enter statements between columns 7 and 72
 inclusive (you can use the &cmpname "XLINE" option to extend the line
 length to 132).
 Let us define a set of TAB stops suitable for FORTRAN programs.
-.ix 'editor commands' TABSET
+.ix 'editor commands' 'TABSET'
 Enter the command:
 .millust tabset 1 7 11 15 19 23
 This command will redefine the default TAB stops (but only while you
@@ -516,7 +516,7 @@ preference.
 .ix 'margin bell'
 If any text is typed beyond column 72, it will be ignored by &cmpname
 according to the rules of FORTRAN.
-.ix 'editor commands' BELL
+.ix 'editor commands' 'BELL'
 Since we don't want to enter FORTRAN statements that go past column
 72, enter the following command:
 .millust bell 72
@@ -529,7 +529,7 @@ statements).
 Move the cursor to the text entry area using F4 and then position the
 cursor on the line that contains the words "This is a".
 .ix 'F5 key'
-.ix keys F5
+.ix 'keys' 'F5'
 Press function key 5 (F5) to create a blank line following this line.
 The cursor will automatically move to the beginning of the new line
 and change height to indicate that you are now in text insertion mode.
@@ -576,7 +576,7 @@ Deleting a line from a program is quite simple.
 Move the cursor to the text entry area by pressing function key F4
 and then move the cursor to the line that was just added to the
 program.
-.ix editor 'F6 key'
+.ix 'editor' 'F6 key'
 Press function key F6 and the line on which the cursor is located will
 disappear.
 Note that pressing Shift together with function key F6 will cause the
@@ -585,7 +585,7 @@ line to reappear.
 .section Printing a Program
 .*
 .np
-.ix editor 'printing a program'
+.ix 'editor' 'printing a program'
 The program in which we have just deleted a line can be printed on
 a printer.
 To print the program, move the cursor to the command entry area
@@ -620,7 +620,7 @@ release the file for printing.
 To conclude, we will show how to exit from &cmpname and return to the
 shell.
 Enter the command
-.ix 'editor commands' BYE
+.ix 'editor commands' 'BYE'
 .millust bye
 and one of two things will happen:
 .begnote
@@ -634,7 +634,7 @@ will appear in the message area.
 .np
 If the latter occurs then some change was made to the program and it
 has not been "put" to disk since that change.
-.ix 'editor commands' QUIT
+.ix 'editor commands' 'QUIT'
 If you are not interested in saving the modified program, simply enter
 the command
 .millust quit
@@ -668,8 +668,8 @@ section of the book entitled "The WATCOM Editor".
 .section The "RUN" Command
 .*
 .np
-.ix RUN
-.ix 'editor commands' RUN
+.ix 'RUN'
+.ix 'editor commands' 'RUN'
 In the above examples, we showed you the simplest form of the
 editor's "RUN" command.
 It can also be used to pass options to the &cmpname compiler and
@@ -789,7 +789,7 @@ To compile and execute this program, enter the command:
 This command requests &cmpname to process the current workspace and
 ensures that a listing of the source program is produced on disk.
 .np
-.ix message interpretation
+.ix 'message interpretation'
 There are deliberate errors in the program so the message
 .code begin
 root&cxt.(4): *ERR* LI-12 column 15, INTEGER argument type is invalid
@@ -802,9 +802,9 @@ How should this message be interpreted?
 The message
 .mono *ERR*
 means that some violation of the rules of FORTRAN has been committed.
-.ix message error
-.ix error
-.ix line
+.ix 'message error'
+.ix 'error'
+.ix 'line'
 Specifically, on the fourth line of the source file
 :FNAME.root&cxt.:eFNAME. near column 15 an error was detected.
 The error says that the argument of the generic FORTRAN function that
@@ -828,7 +828,7 @@ issued by &cmpname..
 In addition to the message that is displayed on the screen, a
 source program listing file,
 :FNAME.root.lst:eFNAME., is created by the compiler.
-.ix listing source
+.ix 'listing source'
 To examine the listing file, enter the command:
 .millust edit root.lst
 The contents of the screen will appear similar to the following.
@@ -876,8 +876,8 @@ options were in effect at the time the compilation of the program
 began.
 These and other options are described in the chapter entitled
 "Compiler Options".
-.ix statistics compile-time
-.ix statistics execution-time
+.ix 'statistics' 'compile-time'
+.ix 'statistics' 'execution-time'
 .ix 'compiler statistics'
 At the end of the program listing, we find some statistics such as how
 long it took to compile the program and the number of error messages
@@ -929,7 +929,7 @@ variable or by explicitly declaring the type of the variable.
 .np
 This is just one example of how &cmpname handles compile-time
 errors.
-.ix compile-time
+.ix 'compile-time'
 We use the term "compile-time" since the error was detected
 before any execution of the program was attempted.
 .np
@@ -991,9 +991,9 @@ This time a different message is displayed on the screen:
 - Executing in MAIN PROGRAM, statement 3 in file root&cxt.
 .code end
 .pc
-.ix execution-time
+.ix 'execution-time'
 This message is issued at execution time.
-.ix trace-back
+.ix 'trace-back'
 Execution-time messages are accompanied by a program "trace-back".
 The trace-back is a sequence of one or more messages which describes
 the state of the executing program at the time the error was detected.
@@ -1033,7 +1033,7 @@ following.
 :cmt. .cbox end
 :picture file='UGPRG11' text='Listing of Revision 1'.
 .np
-.ix ISN
+.ix 'ISN'
 Here, we see the use of the ISN.
 The error has occurred in the third
 .us statement
@@ -1119,7 +1119,7 @@ the following.
 .np
 You may have noticed that the printed result of this program appeared
 on the screen but not in the listing file.
-.ix listing
+.ix 'listing'
 .ix 'printed result'
 .ix 'NOXTYPE option'
 .ix 'options' 'NOXTYPE'
@@ -1139,7 +1139,7 @@ Now that you have a completely correct FORTRAN program, you probably
 will want to save a copy of it on the disk.
 As we saw in an earlier section, you can use the editor's "PUT"
 command to save the program.
-.ix 'editor commands' PUT
+.ix 'editor commands' 'PUT'
 .millust put
 If you forget to do this and exit from &cmpname then any changes since
 the last "put" will be lost.
@@ -1289,8 +1289,8 @@ Error file:   B:\TESTS\LINEQSMN.ERR
 .section Halting an Executing FORTRAN Program
 .*
 .np
-.ix 'compilation' halting
-.ix 'execution' halting
+.ix 'compilation' 'halting'
+.ix 'execution' 'halting'
 .ix 'interrupting execution'
 .ix 'interrupting compilation'
 When a FORTRAN program is "RUN" two steps are performed.

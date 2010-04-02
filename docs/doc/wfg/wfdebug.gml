@@ -21,8 +21,8 @@ or modify variables.
 .*
 .section Invoking the &cmpname Debugger
 .*
-.ix debugger invoking
-.ix invoking debugger
+.ix 'debugger' 'invoking'
+.ix 'invoking debugger'
 .if '&machsys' = 'VM/SP CMS' .do begin
 .***************************************
 .mbigbox begin
@@ -207,7 +207,7 @@ a number.
 .section The Breakpoint Command
 .*
 .np
-.ix 'debugger commands' breakpoint
+.ix 'debugger commands' 'breakpoint'
 The
 .us breakpoint
 command is used to set or clear breakpoints.
@@ -238,7 +238,7 @@ DEBUG>b /c
 .*
 .section The Display Command
 .*
-.ix 'debugger commands' display
+.ix 'debugger commands' 'display'
 .mbox begin
 Display [* | <isn>[:<isn>]]
 .mbox end
@@ -272,7 +272,7 @@ DEBUG>display *
 .*
 .section The Go Command
 .*
-.ix 'debugger commands' go
+.ix 'debugger commands' 'go'
 .mbox begin
 Go [<isn>]
 .mbox end
@@ -292,7 +292,7 @@ DEBUG>g +2
 .*
 .section The Help Command
 .*
-.ix 'debugger commands' help
+.ix 'debugger commands' 'help'
 .mbox begin
 Help
 .mbox end
@@ -304,7 +304,7 @@ their options.
 .*
 .section The Logio Command
 .*
-.ix 'debugger commands' logio
+.ix 'debugger commands' 'logio'
 .mbox begin
 Logio [<unit>]
 .mbox end
@@ -368,7 +368,7 @@ Two records are read from unit 2 and written to unit 3.
 .*
 .section The Quit Command
 .*
-.ix 'debugger commands' quit
+.ix 'debugger commands' 'quit'
 .mbox begin
 Quit
 .mbox end
@@ -379,7 +379,7 @@ command terminates the debugger and returns to the system.
 .*
 .section The Trace Command
 .*
-.ix 'debugger commands' trace
+.ix 'debugger commands' 'trace'
 .mbox begin
 Trace
 .mbox end
@@ -414,7 +414,7 @@ you do not wish to retrace all the statements in the loop.
 .*
 .section The Unit Command
 .*
-.ix 'debugger commands' unit
+.ix 'debugger commands' 'unit'
 .mbox begin
 Unit [<unit>]
 .mbox end
@@ -505,7 +505,7 @@ IOSTAT= 0
 .*
 .section The Where Command
 .*
-.ix 'debugger commands' where
+.ix 'debugger commands' 'where'
 .mbox begin
 Where
 .mbox end
@@ -522,7 +522,7 @@ DEBUG>w
 .*
 .section Executing System Commands
 .*
-.ix 'debugger commands' !
+.ix 'debugger commands' '!'
 .mbox begin
 ! [<command>]
 .mbox end
@@ -649,7 +649,7 @@ DEBUG>
 .*
 .section Modifying Data
 .*
-.ix 'debugger commands' /
+.ix 'debugger commands' '/'
 .mbox begin
 / <item> <value>
 .mbox end
@@ -801,7 +801,7 @@ entering a Ctrl/X sequence at the keyboard.
 .section Debugging Example
 .*
 .np
-.ix debugger 'example'
+.ix 'debugger' 'example'
 Let us debug the following "DEMO" program.
 .millust begin
       INTEGER I, J, SQR
@@ -873,7 +873,7 @@ In the above example, we simply traced the execution of all statements
 in the program.
 .np
 .ix 'interrupting execution'
-.ix debugger 'interrupting execution'
+.ix 'debugger' 'interrupting execution'
 While the program is executing, it may be halted by
 .if '&machsys' = 'VM/SP CMS' .do begin
 pressing the line-entering key.

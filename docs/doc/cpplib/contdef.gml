@@ -65,7 +65,7 @@ as the right shift operator.
 :P.
 Some classes use the
 .MONO intrusive
-.ix intrusive classes
+.ix 'intrusive classes'
 method of storing data.
 These classes require the data being stored in the container to be
 defined in terms of a common base class.
@@ -94,7 +94,7 @@ value stored in the member data
 :P.
 Some classes use the
 .MONO value
-.ix value classes
+.ix 'value classes'
 method of storing data.
 These classes make a copy of the data when creating a new element.
 A new storage class definition is not required
@@ -111,7 +111,7 @@ A new storage class definition is not required
 when defining a pointer class.
 Although the
 .MONO pointer
-.ix pointer classes
+.ix 'pointer classes'
 container class is really a specialization of the
 .MONO value
 class,
