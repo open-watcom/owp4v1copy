@@ -21,9 +21,18 @@ function transsym( str ) {
     gsub( /\./, "_", targ )
     gsub( /\|/, "_", targ )
     gsub( /\"/, "_", targ )
+    gsub( /'/, "_", targ )
     gsub( /:/, "_", targ )
     gsub( /\(/, "L", targ )
     gsub( /\)/, "R", targ )
+    gsub( /\*/, "T", targ )
+    gsub( /\\/, "B", targ )
+    gsub( /%/, "_", targ )
+    gsub( /~/, "_", targ )
+    gsub( /@/, "A", targ )
+    gsub( /\$/, "_", targ )
+    gsub( /&/, "_", targ )
+    gsub( /!/, "_", targ )
     gsub( /\r/, "", targ )
     return targ
 }
