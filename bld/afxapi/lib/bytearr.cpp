@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -249,7 +249,9 @@ void CByteArray::SetAtGrow( INT_PTR nIndex, BYTE newElement )
             delete [] m_pData;
         }
         m_pData = pNewData;
-        m_nSize = nNewMaxSize;
+    }
+    if( nIndex >= m_nSize ) {
+        m_nSize = nIndex + 1;
     }
     m_pData[nIndex] = newElement;
 }

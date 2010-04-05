@@ -248,7 +248,9 @@ void CUIntArray::SetAtGrow( INT_PTR nIndex, UINT newElement )
             delete [] m_pData;
         }
         m_pData = pNewData;
-        m_nSize = nNewMaxSize;
+    }
+    if( nIndex >= m_nSize ) {
+        m_nSize = nIndex + 1;
     }
     m_pData[nIndex] = newElement;
 }
