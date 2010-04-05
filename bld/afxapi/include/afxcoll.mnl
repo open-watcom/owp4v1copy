@@ -515,7 +515,7 @@ AFX_INLINE const void *CPtrList::GetPrev( POSITION &rPosition ) const
 {
     ASSERT( rPosition != NULL );
     CNode *pNode = (CNode *)rPosition;
-    rPosition = (POSITION)pNode->pNext;
+    rPosition = (POSITION)pNode->pPrev;
     return( pNode->data );
 }
 
@@ -524,7 +524,7 @@ AFX_INLINE void *&CPtrList::GetPrev( POSITION &rPosition )
 {
     ASSERT( rPosition != NULL );
     CNode *pNode = (CNode *)rPosition;
-    rPosition = (POSITION)pNode->pNext;
+    rPosition = (POSITION)pNode->pPrev;
     return( pNode->data );
 }
 
@@ -630,7 +630,7 @@ AFX_INLINE const CObject *CObList::GetPrev( POSITION &rPosition ) const
 {
     ASSERT( rPosition != NULL );
     CNode *pNode = (CNode *)rPosition;
-    rPosition = (POSITION)pNode->pNext;
+    rPosition = (POSITION)pNode->pPrev;
     return( pNode->data );
 }
 
@@ -639,7 +639,7 @@ AFX_INLINE CObject *&CObList::GetPrev( POSITION &rPosition )
 {
     ASSERT( rPosition != NULL );
     CNode *pNode = (CNode *)rPosition;
-    rPosition = (POSITION)pNode->pNext;
+    rPosition = (POSITION)pNode->pPrev;
     return( pNode->data );
 }
 
@@ -745,7 +745,7 @@ AFX_INLINE const CString &CStringList::GetPrev( POSITION &rPosition ) const
 {
     ASSERT( rPosition != NULL );
     CNode *pNode = (CNode *)rPosition;
-    rPosition = (POSITION)pNode->pNext;
+    rPosition = (POSITION)pNode->pPrev;
     return( pNode->data );
 }
 
@@ -754,7 +754,7 @@ AFX_INLINE CString &CStringList::GetPrev( POSITION &rPosition )
 {
     ASSERT( rPosition != NULL );
     CNode *pNode = (CNode *)rPosition;
-    rPosition = (POSITION)pNode->pNext;
+    rPosition = (POSITION)pNode->pPrev;
     return( pNode->data );
 }
 
