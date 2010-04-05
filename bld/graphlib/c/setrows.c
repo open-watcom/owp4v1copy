@@ -80,34 +80,6 @@ static void             Load_EGA( short, short, short );
 static void             Load_MCGA( short, short, short );
 
 
-extern void         InitGener( void );
-#if defined ( __386__ )
-    #pragma aux InitGener = \
-        0x06                        /*  push    es          */ \
-        0xb8 0x00 0xa0 0x00 0x00    /*  mov     ax,0a000H   */ \
-        0x8e 0xc0                   /*  mov     es,ax       */ \
-        0x33 0xc0                   /*  xor     eax,eax     */ \
-        0x8b 0xf8                   /*  mov     edi,eax     */ \
-        0xb9 0x00 0x10 0x00 0x00    /*  mov     ecx,1000H   */ \
-        0x66 0xab                   /* L1     stosw         */ \
-        0xfe 0xc0                   /*    inc     al        */ \
-        0xe2 0xfa                   /*  loop    L1          */ \
-        0x07                        /*  pop     es          */ \
-        modify [eax ecx edi];
-#else
-    #pragma aux InitGener = \
-        0xb8 0x00 0xa0              /*  mov     ax,0a000H   */ \
-        0x8e 0xc0                   /*  mov     es,ax       */ \
-        0x33 0xc0                   /*  xor     ax,ax       */ \
-        0x8b 0xf8                   /*  mov     di,ax       */ \
-        0xb9 0x00 0x10              /*  mov     cx,1000H    */ \
-        0xab                        /* L1     stosw         */ \
-        0xfe 0xc0                   /*    inc     al        */ \
-        0xe2 0xfb                   /*  loop    L1          */ \
-        modify [ax cx es di];
-#endif
-
-
 static void TextModeRows( short rows )
 //====================================
 
@@ -341,7 +313,7 @@ static void Load_MCGA( short rows, short font, short cursor )
 {
     VideoInt( _BIOS_VIDEO_PAGE, 0, 0, 0 );         // set active page to 0
     VideoInt( _BIOS_SET_MODE + GetVideoMode(), 0, 0, 0 );
-    InitGener();                                    // must do for MCGA 40 rows
+    _fmemset( MK_FP( _EgaSeg, _EgaOff ), 0, 0x2000 );  // must do for MCGA 40 rows
     VideoInt( font & 0xFF0F, 0, 0, 0 );             // load character set
     VideoInt( 0x1103, 0, 0, 0 );
     VideoInt( _BIOS_CURSOR_SIZE, 0, cursor, 0 );    // reset the cursor
