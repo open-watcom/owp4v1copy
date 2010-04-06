@@ -214,7 +214,7 @@ POSITION CPtrList::InsertBefore( POSITION position, void *newElement )
     pNode->pPrev = pNode->pNext->pPrev;
     pNode->data = newElement;
     pNode->pNext->pPrev = pNode;
-    if( pNode->pNext != NULL ) {
+    if( pNode->pPrev != NULL ) {
         pNode->pPrev->pNext = pNode;
     }
     m_nCount++;

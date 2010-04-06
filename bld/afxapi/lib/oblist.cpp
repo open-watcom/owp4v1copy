@@ -236,7 +236,7 @@ POSITION CObList::InsertBefore( POSITION position, CObject *newElement )
     pNode->pPrev = pNode->pNext->pPrev;
     pNode->data = newElement;
     pNode->pNext->pPrev = pNode;
-    if( pNode->pNext != NULL ) {
+    if( pNode->pPrev != NULL ) {
         pNode->pPrev->pNext = pNode;
     }
     m_nCount++;
