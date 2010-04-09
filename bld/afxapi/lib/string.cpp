@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -30,6 +30,7 @@
 
 
 #include "stdafx.h"
+#include <afxtempl.h>
 
 void CString::Grow()
 /******************/
@@ -518,4 +519,32 @@ void __cdecl CString::FormatMessage( PCTSTR pszFormat, ... )
     va_start( args, pszFormat );
     FormatMessageV( pszFormat, &args );
     va_end( args );
+}
+
+template<>
+UINT AFXAPI HashKey( LPCTSTR key )
+/********************************/
+{
+    ASSERT( key != NULL );
+    UINT nHashKey;
+    while( *key != _T( '\0' ) ) {
+        nHashKey = (nHashKey << 5) + nHashKey + *key;
+        key++;
+    }
+    return( nHashKey );
+}
+
+template<>
+void AFXAPI SerializeElements( CArchive &ar, CString *pElements, INT_PTR nCount )
+/*******************************************************************************/
+{
+    ASSERT( pElements != NULL );
+    ASSERT( nCount >= 0 );
+    for( int i = 0; i < nCount; i++ ) {
+        if( ar.IsStoring() ) {
+            ar << pElements[i];
+        } else {
+            ar >> pElements[i];
+        }
+    }
 }

@@ -33,6 +33,7 @@ headers =               &
         afxpriv.h       &
         afxres.rc       &
         afxstat_.h      &
+        afxtempl.h      &
         afxtls_.h       &
         afxv_w32.h      &
         afxver_.h       &
