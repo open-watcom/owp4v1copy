@@ -1,9 +1,9 @@
 .func main wmain WinMain wWinMain
 .funcw wmain
 int main( void );
-int main( int argc, const char *argv[] );
+int main( int argc, char *argv[] );
 .if '&machsys' eq 'QNX' .do begin
-int main( int argc, const char *argv[], char *envp[] );
+int main( int argc, char *argv[], char *envp[] );
 .do end
 .ixfunc2 '&Process' &func
 .if &'length(&wfunc.) ne 0 .do begin
