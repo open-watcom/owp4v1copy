@@ -82,7 +82,7 @@ glEvalCoord1f@4
 glEvalCoord1fv@4
 glEvalCoord2d@16
 glEvalCoord2dv@4
-glEvalCoord2f28
+glEvalCoord2f@8
 glEvalCoord2fv@4
 glEvalMesh1@12
 glEvalMesh2@20
@@ -142,7 +142,7 @@ glIndexsv@4
 glIndexub@4
 glIndexubv@4
 glInitNames@0
-glInterlavedArrays@12
+glInterleavedArrays@12
 glIsEnabled@4
 glIsList@4
 glIsTexture@4
