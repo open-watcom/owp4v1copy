@@ -5108,6 +5108,7 @@ WINSPOOLAPI int WINAPI  DeviceCapabilitiesW( LPCWSTR, LPCWSTR, WORD, LPWSTR, CON
     #define CreateFontIndirect          CreateFontIndirectA
     #define CreateIC                    CreateICA
     #define CreateMetaFile              CreateMetaFileA
+    #define CreateScalableFontResource  CreateScalableFontResourceA
     #define DeviceCapabilities          DeviceCapabilitiesA
     #define EnumFontFamilies            EnumFontFamiliesA
     #define EnumFonts                   EnumFontsA
