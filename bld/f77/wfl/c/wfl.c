@@ -149,7 +149,6 @@ static struct {
     { PACK,     PACK EXE_EXT,       NULL }
 };
 
-static  char    *Cmd;                   // command line parameters
 static  char    *Word;                  // one parameter
 static  char    CmpOpts[MAX_CMD];       // list of compiler options from Cmd
 static  char    PathBuffer[_MAX_PATH];  // path for compiler or linker executable file
@@ -166,7 +165,7 @@ static  int     DebugFlag;              // debugging flag
 
 /* forward declarations */
 static  void    Usage( void );
-static  int     Parse( void );
+static  int     Parse( char * );
 static  void    FindPath( char *name, char *buf );
 static  int     CompLink( void );
 static  void    MakeName( char *name, char *ext );
@@ -244,6 +243,7 @@ void    main( int argc, char *argv[] ) {
     char        *wfl_env;
     char        *p;
     char        *q;
+    char        *cmd;
 
     argc = argc;
 
@@ -257,60 +257,60 @@ void    main( int argc, char *argv[] ) {
     SwitchChars[2] = '\0';
 
     Word = MemAlloc( MAX_CMD );
-    Cmd = MemAlloc( 2*MAX_CMD ); // for "WFL" environment variable and command line
+    cmd = MemAlloc( 2*MAX_CMD ); // for "WFL" environment variable and command line
 
-    // add "WFL" environment variable to "Cmd" unless "/y" is specified
-    // in "Cmd" or the "WFL" environment string
+    // add "WFL" environment variable to "cmd" unless "/y" is specified
+    // in "cmd" or the "WFL" environment string
 
     wfl_env = getenv( WFLENV );
     if( wfl_env != NULL ) {
-        strcpy( Cmd, wfl_env );
-        strcat( Cmd, " " );
-        p = Cmd + strlen( Cmd );
+        strcpy( cmd, wfl_env );
+        strcat( cmd, " " );
+        p = cmd + strlen( cmd );
         getcmd( p );
-        for( q = Cmd; (q = strpbrk( q, SwitchChars )) != NULL; ) {
+        for( q = cmd; (q = strpbrk( q, SwitchChars )) != NULL; ) {
             if( tolower( *(++q) ) == 'y' ) {
-                getcmd( Cmd );
-                p = Cmd;
+                getcmd( cmd );
+                p = cmd;
                 break;
             }
         }
     } else {
-        getcmd( Cmd );
-        p = Cmd;
+        getcmd( cmd );
+        p = cmd;
     }
     p = SkipSpaces( p );
     if( ( *p == '\0' ) || ( strncmp( p, "? ", 2 ) == NULL ) ) {
         Usage();
         rc = 1;
     } else {
-    Fp = fopen( TEMPFILE, "w" );
-    if( Fp == NULL ) {
-        PrintMsg( CL_ERROR_OPENING_TMP_FILE );
+        Fp = fopen( TEMPFILE, "w" );
+        if( Fp == NULL ) {
+            PrintMsg( CL_ERROR_OPENING_TMP_FILE );
             rc = 1;
         } else {
-    ObjName = NULL;
-    rc = Parse();
-    if( rc == 0 ) {
-        if( !Flags.quiet ) {
-            PrtBanner();
-        }
-        rc = CompLink();
-    }
-    if( rc == 1 )
-        fclose( Fp );
-    if( LinkName != NULL ) {
-        if( stricmp( LinkName, TEMPFILE ) != 0 ) {
-            remove( LinkName );
-            rename( TEMPFILE, LinkName );
-        }
-    } else {
-        remove( TEMPFILE );
-    }
+            ObjName = NULL;
+            rc = Parse( cmd );
+            if( rc == 0 ) {
+                if( !Flags.quiet ) {
+                    PrtBanner();
+                }
+                rc = CompLink();
+            }
+            if( rc == 1 )
+                fclose( Fp );
+            if( LinkName != NULL ) {
+                if( stricmp( LinkName, TEMPFILE ) != 0 ) {
+                    remove( LinkName );
+                    rename( TEMPFILE, LinkName );
+                }
+            } else {
+                remove( TEMPFILE );
+            }
         }
     }
     free( Word );
-    free( Cmd );
+    free( cmd );
     wfl_exit( rc == 0 ? 0 : 1 );
 }
 
@@ -336,8 +336,8 @@ static  char    *ScanFName( char *end, int len ) {
 }
 
 
-static  int     Parse( void ) {
-//=============================
+static  int     Parse( char *cmd ) {
+//==================================
 
     char        opt;
     char        *end;
@@ -359,18 +359,18 @@ static  int     Parse( void ) {
 
     DebugFlag = 0;
 
-    // "Cmd" will always begin with at least one
+    // "cmd" will always begin with at least one
     // non-space character if we get this far
 
     do {
-        opt = *Cmd;
+        opt = *cmd;
         if( ( opt == '-' ) || ( opt == SwitchChars[1] ) ) {
-            Cmd++;
+            cmd++;
         } else {
             opt = ' ';
         }
         in_quotes = FALSE;
-        end = Cmd;
+        end = cmd;
         for(;;) {
             if( *end == '\0' )
                 break;
@@ -390,10 +390,10 @@ static  int     Parse( void ) {
             }
             ++end;
         }
-        len = end - Cmd;
+        len = end - cmd;
         if( len != 0 ) {
             if( opt == ' ' ) {  // if filename, add to list
-                strncpy( Word, Cmd, len );
+                strncpy( Word, cmd, len );
                 Word[len] = '\0';
                 strlwr( Word );
                 if( strstr( Word, ".lib" ) != NULL ) {
@@ -403,10 +403,10 @@ static  int     Parse( void ) {
                 }
             } else {            // otherwise, do option
                 --len;
-                strncpy( Word, Cmd + 1, len );
+                strncpy( Word, cmd + 1, len );
                 Word[len] = '\0';
                 cmp_option = 1; // assume its a compiler option
-                switch( tolower( *Cmd ) ) {
+                switch( tolower( *cmd ) ) {
                 case 'f':       // files option
                     end = ScanFName( end, len );
                     switch( tolower( Word[0] ) ) {
@@ -515,7 +515,7 @@ static  int     Parse( void ) {
 #endif
 
                 case 'q':
-                    if( IsOption( Cmd, len + sizeof(char), "Quiet" ) ) {
+                    if( IsOption( cmd, len + sizeof(char), "Quiet" ) ) {
                         Flags.quiet = 1;
                     }
                     break;
@@ -539,13 +539,13 @@ static  int     Parse( void ) {
                     }
                     break;
                 case 's':
-                    if( IsOption( Cmd, len + sizeof( char ), "SYntax" ) ) {
+                    if( IsOption( cmd, len + sizeof( char ), "SYntax" ) ) {
                         Flags.no_link = 1;
                     }
                     break;
 #if _CPU == 8086
                 case 'w':
-                    if( IsOption( Cmd, len + sizeof( char ), "WIndows" ) ) {
+                    if( IsOption( cmd, len + sizeof( char ), "WIndows" ) ) {
                         Flags.windows = 1;
                     }
                     break;
@@ -558,21 +558,21 @@ static  int     Parse( void ) {
                     len = strlen( CmpOpts );
                     CmpOpts[len++] = ' ';
                     CmpOpts[len++] = opt;
-                    CmpOpts[len++] = *Cmd;      // keep original case
+                    CmpOpts[len++] = *cmd;      // keep original case
                     CmpOpts[len] = '\0';
                     strcat( CmpOpts, Word );
                 }
             }
-            Cmd = end;
+            cmd = end;
         }
-        Cmd = SkipSpaces( Cmd );
-    } while( *Cmd != '\0' );
+        cmd = SkipSpaces( cmd );
+    } while( *cmd != '\0' );
     return( 0 );
 }
 
 
 static int     IsOption( char *cmd, int cmd_len, char *opt ) {
-//=====================================================
+//============================================================
 
     int         len;
 
