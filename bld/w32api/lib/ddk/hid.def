@@ -40,6 +40,6 @@ HidP_SetScaledUsageValue@32
 HidP_SetUsageValue@32
 HidP_SetUsageValueArray@36
 HidP_SetUsages@32
-HidP_TranslateUsageAndPagesToI8042ScanCodes@24
+HidP_TranslateUsagesToI8042ScanCodes@24
 HidP_UnsetUsages@32
 HidP_UsageListDifference@20

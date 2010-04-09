@@ -454,8 +454,8 @@ RegisterServiceCtrlHandlerA@8
 RegisterServiceCtrlHandlerExA@12
 RegisterServiceCtrlHandlerExW@12
 RegisterServiceCtrlHandlerW@8
-RegisterTraceGuidsA@16
-RegisterTraceGuidsW@16
+RegisterTraceGuidsA@32
+RegisterTraceGuidsW@32
 RemoveTraceCallback@4
 RemoveUsersFromEncryptedFile@8
 ReportEventA@36
@@ -465,8 +465,8 @@ SetAclInformation@16
 SetEncryptedFileMetadata@24
 SetEntriesInAclA@16
 SetEntriesInAclW@16
-SetFileSecurityA@20
-SetFileSecurityW@20
+SetFileSecurityA@12
+SetFileSecurityW@12
 SetKernelObjectSecurity@12
 SetNamedSecurityInfoA@28
 SetNamedSecurityInfoW@28

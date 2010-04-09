@@ -152,9 +152,9 @@ InternetSetStatusCallbackW@8
 InternetTimeFromSystemTime@16
 InternetTimeFromSystemTimeA@16
 InternetTimeFromSystemTimeW@16
-InternetTimeToSystemTime@16
-InternetTimeToSystemTimeA@16
-InternetTimeToSystemTimeW@16
+InternetTimeToSystemTime@12
+InternetTimeToSystemTimeA@12
+InternetTimeToSystemTimeW@12
 InternetUnlockRequestFile@4
 InternetWriteFile@16
 PrivacyGetZonePreferenceW@20

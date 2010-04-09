@@ -7,7 +7,7 @@ ScsiPortConvertUlongToPhysicalAddress@4
 ScsiPortFlushDma@4
 ScsiPortFreeDeviceBase@8
 ScsiPortGetBusData@24
-ScsiPortGetDeviceBase@8
+ScsiPortGetDeviceBase@28
 ScsiPortGetLogicalUnit@16
 ScsiPortGetPhysicalAddress@16
 ScsiPortGetSrb@20

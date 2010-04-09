@@ -10,7 +10,7 @@ OleCreateFromClip@28
 OleCreateFromFile@36
 OleCreateFromTemplate@32
 OleCreateInvisible@36
-OleCreateLinkFromClip@32
+OleCreateLinkFromClip@28
 OleCreateLinkFromFile@40
 OleDelete@4
 OleDraw@20
@@ -41,7 +41,7 @@ OleReconnect@4
 OleRegisterClientDoc@8
 OleRelease@4
 OleRename@8
-OleRenameClientDoc@8
+OleRenameClientDoc@16
 OleRequestData@8
 OleRevertClientDoc@4
 OleRevokeClientDoc@4

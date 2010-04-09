@@ -7,8 +7,8 @@ ScriptCPtoX@36
 ScriptCacheGetHeight@12
 ScriptFreeCache@4
 ScriptGetCMap@24
-ScriptGetFontAlternateTags@32
-ScriptGetFontFeatureTags@28
+ScriptGetFontAlternateGlyphs@40
+ScriptGetFontFeatureTags@32
 ScriptGetFontLanguageTags@28
 ScriptGetFontProperties@12
 ScriptGetFontScriptTags@24

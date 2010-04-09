@@ -129,7 +129,7 @@ SetupDiGetDeviceInfoListDetailW@8
 SetupDiGetDeviceInstallParamsA@12
 SetupDiGetDeviceInstallParamsW@12
 SetupDiGetDeviceInstanceIdA@20
-SetupDiGetDeviceInstanceIdW@0
+SetupDiGetDeviceInstanceIdW@20
 SetupDiGetDeviceInterfaceAlias@16
 SetupDiGetDeviceInterfaceDetailA@24
 SetupDiGetDeviceInterfaceDetailW@24

@@ -1,7 +1,7 @@
 LIBRARY MPRAPI.DLL
 EXPORTS
 MprAdminBufferFree@4
-MprAdminConnectionClearStatus@8
+MprAdminConnectionClearStats@8
 MprAdminConnectionEnum@28
 MprAdminConnectionEnumEx@28
 MprAdminConnectionGetInfo@16
@@ -44,7 +44,7 @@ MprAdminMIBEntryGetNext@28
 MprAdminMIBEntrySet@20
 MprAdminMIBServerConnect@8
 MprAdminMIBServerDisconnect@4
-MprAdminPortClearStatus@8
+MprAdminPortClearStats@8
 MprAdminPortDisconnect@8
 MprAdminPortEnum@32
 MprAdminPortGetInfo@16

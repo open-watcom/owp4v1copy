@@ -312,7 +312,7 @@ RpcIfIdVectorFree@4
 RpcIfInqId@8
 RpcImpersonateClient@4
 RpcMgmtEnableIdleCleanup@0
-RpcMgmtEpEltInqBegin@4
+RpcMgmtEpEltInqBegin@24
 RpcMgmtEpEltInqDone@4
 RpcMgmtEpEltInqNextA@20
 RpcMgmtEpEltInqNextW@20

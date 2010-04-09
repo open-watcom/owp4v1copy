@@ -282,7 +282,7 @@ StrCmpNICA@12
 StrCmpNICW@12
 StrCmpNIW@12
 StrCmpNW@12
-StrCmpW@12
+StrCmpW@8
 StrCpyNW@12
 StrCpyW@8
 StrDupA@4

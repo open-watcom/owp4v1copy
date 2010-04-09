@@ -10,7 +10,7 @@ ConvertIndexToColorName@16
 CreateColorTransformA@16
 CreateColorTransformW@16
 CreateDeviceLinkProfile@28
-CreateMultiPlatformTransform@24
+CreateMultiProfileTransform@24
 CreateProfileFromLogColorSpaceA@8
 CreateProfileFromLogColorSpaceW@8
 DeleteColorTransform@4

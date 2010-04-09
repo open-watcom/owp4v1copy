@@ -276,7 +276,7 @@ const int * WINAPI  ScriptString_pcOutChars( SCRIPT_STRING_ANALYSIS );
 HRESULT WINAPI      ScriptTextOut( HDC, SCRIPT_CACHE *, int, int, UINT, const RECT *, const SCRIPT_ANALYSIS *, const WCHAR *, int, const WORD *, int, const int *, const int *, const GOFFSET * );
 HRESULT WINAPI      ScriptXtoCP( int, int, int, const WORD *, const SCRIPT_VISATTR *, const int *, const SCRIPT_ANALYSIS *, int *, int * );
 #if (UNISCRIBE_OPENTYPE >= 0x0100)
-HRESULT WINAPI      ScriptGetFontAlternateTags( HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *, OPENTYPE_TAG, OPENTYPE_TAG, OPENTYPE_TAG, WORD, int, WORD *, int * );
+HRESULT WINAPI      ScriptGetFontAlternateGlyphs( HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *, OPENTYPE_TAG, OPENTYPE_TAG, OPENTYPE_TAG, WORD, int, WORD *, int * );
 HRESULT WINAPI      ScriptGetFontFeatureTags( HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *, OPENTYPE_TAG, OPENTYPE_TAG, int, OPENTYPE_TAG *, int * );
 HRESULT WINAPI      ScriptGetFontLanguageTags( HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *, OPENTYPE_TAG, int, OPENTYPE_TAG *, int * );
 HRESULT WINAPI      ScriptGetFontScriptTags( HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *, int, OPENTYPE_TAG *, int * );

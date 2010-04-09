@@ -6,7 +6,7 @@ GetExpandedNameW@8
 LZClose@4
 LZCopy@8
 LZDone@0
-LZInit24
+LZInit@4
 LZOpenFileA@12
 LZOpenFileW@12
 LZRead@12

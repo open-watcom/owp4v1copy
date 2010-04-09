@@ -87,7 +87,7 @@ WSAStartup@8
 WSAStringToAddressA@20
 WSAStringToAddressW@20
 WSAUnadvertiseProvider@4
-WSAUnhookBlockingHost@0
+WSAUnhookBlockingHook@0
 WSAWaitForMultipleEvents@20
 WSCDeinstallProvider@8
 WSCEnableNSProvider@8

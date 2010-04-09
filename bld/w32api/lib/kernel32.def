@@ -602,7 +602,7 @@ GetVolumePathNamesForVolumeNameA@16
 GetVolumePathNamesForVolumeNameW@16
 GetWindowsDirectoryA@8
 GetWindowsDirectoryW@8
-GetWriteWatch@4
+GetWriteWatch@24
 GlobalAddAtomA@4
 GlobalAddAtomW@4
 GlobalAlloc@8
@@ -624,7 +624,7 @@ GlobalSize@4
 GlobalUnWire@4
 GlobalUnfix@4
 GlobalUnlock@4
-GlboalWire@4
+GlobalWire@4
 Heap32First@12
 Heap32ListFirst@8
 Heap32ListNext@8

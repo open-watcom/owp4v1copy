@@ -328,7 +328,7 @@ RealizePalette@4
 RectInRegion@8
 RectVisible@8
 Rectangle@20
-RemoveFontMemResourceEx
+RemoveFontMemResourceEx@4
 RemoveFontResourceA@4
 RemoveFontResourceExA@12
 RemoveFontResourceExW@12
