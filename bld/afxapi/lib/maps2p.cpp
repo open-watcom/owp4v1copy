@@ -200,7 +200,7 @@ BOOL CMapStringToPtr::RemoveKey( LPCTSTR key )
     if( m_pHashTable == NULL ) {
         return( FALSE );
     }
-    int nHashKey = HashKey( key ) % m_nHashTableSize;
+    UINT nHashKey = HashKey( key ) % m_nHashTableSize;
     if( m_pHashTable[nHashKey] == NULL ) {
         return( FALSE );
     }
@@ -234,7 +234,7 @@ void CMapStringToPtr::SetAt( LPCTSTR key, void *newValue )
             m_pHashTable[i] = NULL;
         }
     }
-    int nHashKey = HashKey( key ) % m_nHashTableSize;
+    UINT nHashKey = HashKey( key ) % m_nHashTableSize;
     CAssoc *pAssoc = m_pHashTable[nHashKey];
     while( pAssoc != NULL ) {
         if( pAssoc->key == key ) {
@@ -260,7 +260,7 @@ void *&CMapStringToPtr::operator[]( LPCTSTR key )
             m_pHashTable[i] = NULL;
         }
     }
-    int nHashKey = HashKey( key ) % m_nHashTableSize;
+    UINT nHashKey = HashKey( key ) % m_nHashTableSize;
     CAssoc *pAssoc = m_pHashTable[nHashKey];
     while( pAssoc != NULL ) {
         if( pAssoc->key == key ) {
