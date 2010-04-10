@@ -1575,6 +1575,7 @@ void CWnd::OnNcDestroy()
 {
     CWinThread *pThread = AfxGetThread();
     if( pThread != NULL && pThread->m_pMainWnd == this ) {
+        pThread->m_pMainWnd = NULL;
         ::PostQuitMessage( 0 );
     }
     

@@ -809,6 +809,12 @@ void CFrameWnd::OnClose()
                 return;
             }
             pApp->CloseAllDocuments( FALSE );
+            if( pApp->m_pMainWnd == NULL ) {
+                // If the main window has been destroyed by CloseAllDocuments()
+                // (e.g. in an SDI application), just return since trying to execute the
+                // rest of OnClose() will cause a crash due to an invalid this pointer.
+                return;
+            }
         }
         
         CDocument *pDoc = GetActiveDocument();
