@@ -437,7 +437,6 @@ BOOL CWinApp::GetPrinterDeviceDefaults( PRINTDLG *pPrintDlg )
 UINT CWinApp::GetProfileInt( LPCTSTR lpszSection, LPCTSTR lpszEntry, int nDefault )
 /*********************************************************************************/
 {
-        printf("Before\n");
     if( m_pszRegistryKey != NULL ) {
         HKEY hKey = _OpenRegistryKey( m_pszRegistryKey, m_pszAppName, lpszSection );
         if( hKey == NULL ) {
@@ -448,7 +447,6 @@ UINT CWinApp::GetProfileInt( LPCTSTR lpszSection, LPCTSTR lpszEntry, int nDefaul
         DWORD cbData = sizeof( DWORD );
         LONG lRet = ::RegQueryValueEx( hKey, lpszEntry, NULL, &dwType, (LPBYTE)&dwData,
                                        &cbData );
-        printf("After\n");
         ::RegCloseKey( hKey );
         if( lRet != ERROR_SUCCESS || dwType != REG_DWORD ) {
             return( nDefault );
