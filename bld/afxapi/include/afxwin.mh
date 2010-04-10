@@ -645,6 +645,7 @@ public:
 class CPaintDC : public CDC {
 protected:
     HWND        m_hWnd;
+public:
     PAINTSTRUCT m_ps;
     
     DECLARE_DYNAMIC( CPaintDC )
