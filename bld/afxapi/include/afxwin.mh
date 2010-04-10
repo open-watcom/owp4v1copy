@@ -1438,14 +1438,15 @@ public:
     virtual BOOL    CreateClient( LPCREATESTRUCT lpCreateStruct, CMenu *pWindowMenu );
     virtual HMENU   GetWindowMenuPopup( HMENU hMenuBar );
     
-    virtual LRESULT DefWindowProc( UINT message, WPARAM wParam, LPARAM lParam );
-    virtual BOOL    OnCmdMsg( UINT nID, int nCode, void *pExtra, AFX_CMDHANDLERINFO *pHandlerInfo );
-    virtual BOOL    OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext *pContext );
-    virtual BOOL    PreCreateWindow( CREATESTRUCT &cs );
-    virtual BOOL    PreTranslateMessage( MSG *pMsg );
+    virtual LRESULT     DefWindowProc( UINT message, WPARAM wParam, LPARAM lParam );
+    virtual CFrameWnd   *GetActiveFrame();
+    virtual BOOL        OnCmdMsg( UINT nID, int nCode, void *pExtra, AFX_CMDHANDLERINFO *pHandlerInfo );
+    virtual BOOL        OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext *pContext );
+    virtual BOOL        PreCreateWindow( CREATESTRUCT &cs );
+    virtual BOOL        PreTranslateMessage( MSG *pMsg );
 #ifdef _DEBUG
-    virtual void    AssertValid() const;
-    virtual void    Dump( CDumpContext &dc ) const;
+    virtual void        AssertValid() const;
+    virtual void        Dump( CDumpContext &dc ) const;
 #endif
 
     CMDIChildWnd    *CreateNewChild( CRuntimeClass *pClass, UINT nResource, HMENU hMenu = NULL, HACCEL hAccel = NULL );

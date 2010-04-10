@@ -92,6 +92,17 @@ LRESULT CMDIFrameWnd::DefWindowProc( UINT message, WPARAM wParam, LPARAM lParam 
     return( ::DefFrameProc( m_hWnd, m_hWndMDIClient, message, wParam, lParam ) );
 }
 
+CFrameWnd *CMDIFrameWnd::GetActiveFrame()
+/***************************************/
+{
+    CMDIChildWnd *pChild = MDIGetActive();
+    if( pChild != NULL ) {
+        return( pChild );
+    } else {
+        return( this );
+    }
+}
+
 BOOL CMDIFrameWnd::OnCmdMsg( UINT nID, int nCode, void *pExtra,
                              AFX_CMDHANDLERINFO *pHandlerInfo )
 /*************************************************************/
