@@ -67,6 +67,20 @@ AFX_INLINE void CByteArray::SetAt( INT_PTR nIndex, BYTE newElement )
     m_pData[nIndex] = newElement;
 }
 
+AFX_INLINE BYTE &CByteArray::operator[]( INT_PTR nIndex )
+/*******************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+AFX_INLINE BYTE CByteArray::operator[]( INT_PTR nIndex ) const
+/************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
 AFX_INLINE WORD &CWordArray::ElementAt( INT_PTR nIndex )
 /******************************************************/
 {
@@ -128,6 +142,20 @@ AFX_INLINE void CWordArray::SetAt( INT_PTR nIndex, WORD newElement )
 {
     ASSERT( nIndex < m_nSize );
     m_pData[nIndex] = newElement;
+}
+
+AFX_INLINE WORD &CWordArray::operator[]( INT_PTR nIndex )
+/*******************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+AFX_INLINE WORD CWordArray::operator[]( INT_PTR nIndex ) const
+/************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
 }
 
 AFX_INLINE DWORD &CDWordArray::ElementAt( INT_PTR nIndex )
@@ -193,6 +221,20 @@ AFX_INLINE void CDWordArray::SetAt( INT_PTR nIndex, DWORD newElement )
     m_pData[nIndex] = newElement;
 }
 
+AFX_INLINE DWORD &CDWordArray::operator[]( INT_PTR nIndex )
+/*********************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+AFX_INLINE DWORD CDWordArray::operator[]( INT_PTR nIndex ) const
+/**************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
 AFX_INLINE UINT &CUIntArray::ElementAt( INT_PTR nIndex )
 /******************************************************/
 {
@@ -254,6 +296,20 @@ AFX_INLINE void CUIntArray::SetAt( INT_PTR nIndex, UINT newElement )
 {
     ASSERT( nIndex < m_nSize );
     m_pData[nIndex] = newElement;
+}
+
+AFX_INLINE UINT &CUIntArray::operator[]( INT_PTR nIndex )
+/*******************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+AFX_INLINE UINT CUIntArray::operator[]( INT_PTR nIndex ) const
+/************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
 }
 
 AFX_INLINE void *&CPtrArray::ElementAt( INT_PTR nIndex )
@@ -319,6 +375,20 @@ AFX_INLINE void CPtrArray::SetAt( INT_PTR nIndex, void *newElement )
     m_pData[nIndex] = newElement;
 }
 
+AFX_INLINE void *&CPtrArray::operator[]( INT_PTR nIndex )
+/*******************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+AFX_INLINE void *CPtrArray::operator[]( INT_PTR nIndex ) const
+/************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
 AFX_INLINE CObject *&CObArray::ElementAt( INT_PTR nIndex )
 /********************************************************/
 {
@@ -380,6 +450,20 @@ AFX_INLINE void CObArray::SetAt( INT_PTR nIndex, CObject *newElement )
 {
     ASSERT( nIndex < m_nSize );
     m_pData[nIndex] = newElement;
+}
+
+AFX_INLINE CObject *&CObArray::operator[]( INT_PTR nIndex )
+/*********************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+AFX_INLINE CObject *CObArray::operator[]( INT_PTR nIndex ) const
+/**************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
 }
 
 AFX_INLINE CString &CStringArray::ElementAt( INT_PTR nIndex )
@@ -450,6 +534,20 @@ AFX_INLINE void CStringArray::SetAt( INT_PTR nIndex, const CString &newElement )
 {
     ASSERT( nIndex < m_nSize );
     m_pData[nIndex] = newElement;
+}
+
+AFX_INLINE CString &CStringArray::operator[]( INT_PTR nIndex )
+/************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+AFX_INLINE CString CStringArray::operator[]( INT_PTR nIndex ) const
+/*****************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
 }
 
 AFX_INLINE const void *CPtrList::GetAt( POSITION position ) const

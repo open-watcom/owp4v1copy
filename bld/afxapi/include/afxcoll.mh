@@ -47,6 +47,9 @@ public:
     void        SetAt( INT_PTR nIndex, BYTE newElement );
     void        SetAtGrow( INT_PTR nIndex, BYTE newElement );
     void        SetSize( INT_PTR nNewSize, INT_PTR nGrowBy = -1 );
+    
+    BYTE    &operator[]( INT_PTR nIndex );
+    BYTE    operator[]( INT_PTR nIndex ) const;
 };
 
 class CWordArray : public CObject {
@@ -87,6 +90,9 @@ public:
     void        SetAt( INT_PTR nIndex, WORD newElement );
     void        SetAtGrow( INT_PTR nIndex, WORD newElement );
     void        SetSize( INT_PTR nNewSize, INT_PTR nGrowBy = -1 );
+    
+    WORD    &operator[]( INT_PTR nIndex );
+    WORD    operator[]( INT_PTR nIndex ) const;
 };
 
 class CDWordArray : public CObject {
@@ -127,6 +133,9 @@ public:
     void        SetAt( INT_PTR nIndex, DWORD newElement );
     void        SetAtGrow( INT_PTR nIndex, DWORD newElement );
     void        SetSize( INT_PTR nNewSize, INT_PTR nGrowBy = -1 );
+    
+    DWORD   &operator[]( INT_PTR nIndex );
+    DWORD   operator[]( INT_PTR nIndex ) const;
 };
 
 class CUIntArray : public CObject {
@@ -167,6 +176,9 @@ public:
     void        SetAt( INT_PTR nIndex, UINT newElement );
     void        SetAtGrow( INT_PTR nIndex, UINT newElement );
     void        SetSize( INT_PTR nNewSize, INT_PTR nGrowBy = -1 );
+    
+    UINT    &operator[]( INT_PTR nIndex );
+    UINT    operator[]( INT_PTR nIndex ) const;
 };
 
 class CPtrArray : public CObject {
@@ -206,6 +218,9 @@ public:
     void        SetAt( INT_PTR nIndex, void *newElement );
     void        SetAtGrow( INT_PTR nIndex, void *newElement );
     void        SetSize( INT_PTR nNewSize, INT_PTR nGrowBy = -1 );
+    
+    void    *&operator[]( INT_PTR nIndex );
+    void    *operator[]( INT_PTR nIndex ) const;
 };
 
 class CObArray : public CObject {
@@ -246,6 +261,9 @@ public:
     void            SetAt( INT_PTR nIndex, CObject *newElement );
     void            SetAtGrow( INT_PTR nIndex, CObject *newElement );
     void            SetSize( INT_PTR nNewSize, INT_PTR nGrowBy = -1 );
+    
+    CObject *&operator[]( INT_PTR nIndex );
+    CObject *operator[]( INT_PTR nIndex ) const;
 };
 
 class CStringArray : public CObject {
@@ -290,6 +308,9 @@ public:
     void            SetAtGrow( INT_PTR nIndex, LPCTSTR newElement );
     void            SetAtGrow( INT_PTR nIndex, const CString &newElement );
     void            SetSize( INT_PTR nNewSize, INT_PTR nGrowBy = -1 );
+    
+    CString &operator[]( INT_PTR nIndex );
+    CString operator[]( INT_PTR nIndex ) const;
 };
 
 class CPtrList : public CObject {
