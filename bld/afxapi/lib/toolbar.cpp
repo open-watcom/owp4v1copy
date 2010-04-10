@@ -359,6 +359,7 @@ void CToolBar::SetButtonInfo( int nIndex, UINT nID, UINT nStyle, int iImage )
         ::SendMessage( m_hWnd, TB_DELETEBUTTON, nIndex, 0L );
         ::SendMessage( m_hWnd, TB_INSERTBUTTON, nIndex, (LPARAM)&tbb );
         ::SendMessage( m_hWnd, WM_SETREDRAW, TRUE, 0L );
+        ::InvalidateRect( m_hWnd, NULL, TRUE );
     }
 }
 
@@ -375,6 +376,7 @@ void CToolBar::SetButtonStyle( int nIndex, UINT nStyle )
         ::SendMessage( m_hWnd, TB_DELETEBUTTON, nIndex, 0L );
         ::SendMessage( m_hWnd, TB_INSERTBUTTON, nIndex, (LPARAM)&tbb );
         ::SendMessage( m_hWnd, WM_SETREDRAW, TRUE, 0L );
+        ::InvalidateRect( m_hWnd, NULL, TRUE );
     }
 }
 
@@ -389,6 +391,7 @@ BOOL CToolBar::SetButtonText( int nIndex, LPCTSTR lpszText )
     }
     ::SendMessage( m_hWnd, TB_DELETEBUTTON, nIndex, 0L );
     ::SendMessage( m_hWnd, TB_INSERTBUTTON, nIndex, (LPARAM)&tbb );
+    ::InvalidateRect( m_hWnd, NULL, TRUE );
     return( TRUE );
 }
 
