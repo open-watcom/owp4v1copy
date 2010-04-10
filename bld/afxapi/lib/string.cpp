@@ -66,35 +66,50 @@ CString::CString( const CString &strSrc )
 CString::CString( const char *pszSrc )
 /*************************************/
 {
-    m_nDataLength = strlen( pszSrc );
-    m_nAllocLength = m_nDataLength + 1;
-    m_psz = new TCHAR[m_nAllocLength];
+    if( pszSrc == NULL ) {
+        m_nDataLength = 0;
+        m_nAllocLength = 1;
+        m_psz = new TCHAR[1];
+        m_psz[0] = _T( '\0' );
+    } else {
+        m_nDataLength = strlen( pszSrc );
+        m_nAllocLength = m_nDataLength + 1;
+        m_psz = new TCHAR[m_nAllocLength];
 #ifdef _UNICODE
-    ::MultiByteToWideChar( CP_ACP, 0L, pszSrc, -1, m_psz, m_nDataLength );
+        ::MultiByteToWideChar( CP_ACP, 0L, pszSrc, -1, m_psz, m_nDataLength );
 #else
-    strcpy( m_psz, pszSrc );
+        strcpy( m_psz, pszSrc );
 #endif
-    m_psz[m_nAllocLength - 1] = _T( '\0' );
+        m_psz[m_nAllocLength - 1] = _T( '\0' );
+    }
 }
 
 CString::CString( const wchar_t *pszSrc )
 /***************************************/
 {
-    m_nDataLength = wcslen( pszSrc );
-    m_nAllocLength = m_nDataLength + 1;
-    m_psz = new TCHAR[m_nAllocLength];
+    if( pszSrc == NULL ) {
+        m_nDataLength = 0;
+        m_nAllocLength = 1;
+        m_psz = new TCHAR[1];
+        m_psz[0] = _T( '\0' );
+    } else {
+        m_nDataLength = wcslen( pszSrc );
+        m_nAllocLength = m_nDataLength + 1;
+        m_psz = new TCHAR[m_nAllocLength];
 #ifndef _UNICODE
-    ::WideCharToMultiByte( CP_ACP, 0L, pszSrc, -1, m_psz, m_nDataLength,
-                           NULL, NULL );
+        ::WideCharToMultiByte( CP_ACP, 0L, pszSrc, -1, m_psz, m_nDataLength,
+                               NULL, NULL );
 #else
-    wcscpy( m_psz, pszSrc );
+        wcscpy( m_psz, pszSrc );
 #endif
-    m_psz[m_nAllocLength - 1] = _T( '\0' );
+        m_psz[m_nAllocLength - 1] = _T( '\0' );
+    }
 }
 
 CString::CString( const char *pch, int nLength )
 /**********************************************/
 {
+    ASSERT( pch != NULL );
     m_nDataLength = nLength;
     m_nAllocLength = m_nDataLength + 1;
     m_psz = new TCHAR[m_nAllocLength];
@@ -109,6 +124,7 @@ CString::CString( const char *pch, int nLength )
 CString::CString( const wchar_t *pch, int nLength )
 /*************************************************/
 {
+    ASSERT( pch != NULL );
     m_nDataLength = nLength;
     m_nAllocLength = m_nDataLength + 1;
     m_psz = new TCHAR[m_nAllocLength];
@@ -153,6 +169,7 @@ void CString::Append( const CString &strSrc )
 void CString::Append( PCTSTR pszSrc, int nLength )
 /************************************************/
 {
+    ASSERT( pszSrc != NULL );
     int nOldLength = m_nDataLength;
     m_nDataLength += nLength;
     Grow();
@@ -162,10 +179,12 @@ void CString::Append( PCTSTR pszSrc, int nLength )
 void CString::Append( PCTSTR pszSrc )
 /***********************************/
 {
-    int nOldLength = m_nDataLength;
-    m_nDataLength += _tcslen( pszSrc );
-    Grow();
-    _tcscpy( m_psz + nOldLength, pszSrc );
+    if( pszSrc != NULL ) {
+        int nOldLength = m_nDataLength;
+        m_nDataLength += _tcslen( pszSrc );
+        Grow();
+        _tcscpy( m_psz + nOldLength, pszSrc );
+    }
 }
 
 void CString::AppendChar( TCHAR ch )
@@ -180,6 +199,7 @@ void CString::AppendChar( TCHAR ch )
 int CString::Find( PCTSTR pszSub, int iStart ) const
 /**************************************************/
 {
+    ASSERT( pszSub != NULL );
     if( iStart < 0 || iStart > m_nDataLength ) {
         return( -1 );
     }
@@ -370,6 +390,7 @@ void CString::SetAt( int iChar, TCHAR ch )
 void CString::SetString( PCTSTR pszSrc, int nLength )
 /***************************************************/
 {
+    ASSERT( pszSrc != NULL );
     m_nDataLength = nLength;
     Grow();
     _tcsncpy( m_psz, pszSrc, nLength );
@@ -400,60 +421,72 @@ void CString::Truncate( int nNewLength )
 CString &CString::operator+=( PCSTR pszSrc )
 /******************************************/
 {
+    if( pszSrc != NULL ) {
 #ifdef _UNICODE
-    int     nLength = strlen( pszSrc );
-    wchar_t *pszBuff = new wchar_t[nLength + 1];
-    ::MultiByteToWideChar( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1 );
-    Append( pszBuff );
-    delete [] pszBuff;
+        int     nLength = strlen( pszSrc );
+        wchar_t *pszBuff = new wchar_t[nLength + 1];
+        ::MultiByteToWideChar( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1 );
+        Append( pszBuff );
+        delete [] pszBuff;
 #else
-    Append( pszSrc );
+        Append( pszSrc );
 #endif
+    }
     return( *this );
 }
 
 CString &CString::operator+=( PCWSTR pszSrc )
 /*******************************************/
 {
+    if( pszSrc != NULL ) {
 #ifndef _UNICODE
-    int     nLength = wcslen( pszSrc );
-    char    *pszBuff = new char[nLength + 1];
-    ::WideCharToMultiByte( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1, NULL, NULL );
-    Append( pszBuff );
-    delete [] pszBuff;
+        int     nLength = wcslen( pszSrc );
+        char    *pszBuff = new char[nLength + 1];
+        ::WideCharToMultiByte( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1, NULL, NULL );
+        Append( pszBuff );
+        delete [] pszBuff;
 #else
-    Append( pszSrc );
+        Append( pszSrc );
 #endif
+    }
     return( *this );
 }
 
 CString &CString::operator=( PCSTR pszSrc )
 /*****************************************/
 {
+    if( pszSrc == NULL ) {
+        Empty();
+    } else {
 #ifdef _UNICODE
-    int     nLength = strlen( pszSrc );
-    wchar_t *pszBuff = new wchar_t[nLength + 1];
-    ::MultiByteToWideChar( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1 );
-    SetString( pszBuff );
-    delete [] pszBuff;
+        int     nLength = strlen( pszSrc );
+        wchar_t *pszBuff = new wchar_t[nLength + 1];
+        ::MultiByteToWideChar( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1 );
+        SetString( pszBuff );
+        delete [] pszBuff;
 #else
-    SetString( pszSrc );
+        SetString( pszSrc );
 #endif
+    }
     return( *this );
 }
 
 CString &CString::operator=( PCWSTR pszSrc )
 /******************************************/
 {
+    if( pszSrc == NULL ) {
+        Empty();
+    } else {
 #ifndef _UNICODE
-    int     nLength = wcslen( pszSrc );
-    char    *pszBuff = new char[nLength + 1];
-    ::WideCharToMultiByte( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1, NULL, NULL );
-    SetString( pszBuff );
-    delete [] pszBuff;
+        int     nLength = wcslen( pszSrc );
+        char    *pszBuff = new char[nLength + 1];
+        ::WideCharToMultiByte( CP_ACP, 0L, pszSrc, -1, pszBuff, nLength + 1, NULL, NULL );
+        SetString( pszBuff );
+        delete [] pszBuff;
 #else
-    SetString( pszSrc );
+        SetString( pszSrc );
 #endif
+    }
     return( *this );
 }
 
@@ -525,7 +558,10 @@ template<>
 UINT AFXAPI HashKey( LPCTSTR key )
 /********************************/
 {
-    ASSERT( key != NULL );
+    if( key == NULL ) {
+        return( 0 );
+    }
+
     UINT nHashKey;
     while( *key != _T( '\0' ) ) {
         nHashKey = (nHashKey << 5) + nHashKey + *key;
