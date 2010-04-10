@@ -2247,6 +2247,7 @@ protected:
 public:
     ATOM            m_atomApp;
     ATOM            m_atomSystemTopic;
+    UINT            m_nNumPreviewPages;
     
     DECLARE_DYNAMIC( CWinApp )
     

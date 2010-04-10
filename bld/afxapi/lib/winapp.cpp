@@ -33,6 +33,8 @@
 
 static const TCHAR _MRUSection[] = _T( "Recent File List" );
 static const TCHAR _MRUEntry[] = _T( "File%d" );
+static const TCHAR _PreviewSection[] = _T( "Settings" );
+static const TCHAR _PreviewEntry[] = _T( "PreviewPages" );
 
 IMPLEMENT_DYNAMIC( CWinApp, CWinThread )
 
@@ -113,6 +115,7 @@ CWinApp::CWinApp( LPCTSTR lpszAppName )
     m_pRecentFileList = NULL;
     m_atomApp = 0;
     m_atomSystemTopic = 0;
+    m_nNumPreviewPages = 0;
 }
 
 CWinApp::~CWinApp()
@@ -434,6 +437,7 @@ BOOL CWinApp::GetPrinterDeviceDefaults( PRINTDLG *pPrintDlg )
 UINT CWinApp::GetProfileInt( LPCTSTR lpszSection, LPCTSTR lpszEntry, int nDefault )
 /*********************************************************************************/
 {
+        printf("Before\n");
     if( m_pszRegistryKey != NULL ) {
         HKEY hKey = _OpenRegistryKey( m_pszRegistryKey, m_pszAppName, lpszSection );
         if( hKey == NULL ) {
@@ -444,6 +448,7 @@ UINT CWinApp::GetProfileInt( LPCTSTR lpszSection, LPCTSTR lpszEntry, int nDefaul
         DWORD cbData = sizeof( DWORD );
         LONG lRet = ::RegQueryValueEx( hKey, lpszEntry, NULL, &dwType, (LPBYTE)&dwData,
                                        &cbData );
+        printf("After\n");
         ::RegCloseKey( hKey );
         if( lRet != ERROR_SUCCESS || dwType != REG_DWORD ) {
             return( nDefault );
@@ -491,6 +496,7 @@ void CWinApp::LoadStdProfileSettings( UINT nMaxMRU )
                                                  _MRUEntry, nMaxMRU );
         m_pRecentFileList->ReadList();
     }
+    GetProfileInt( _PreviewSection, _PreviewEntry, 0 );
 }
 
 void CWinApp::ParseCommandLine( CCommandLineInfo &rCmdInfo )
@@ -544,6 +550,9 @@ void CWinApp::SaveStdProfileSettings()
 {
     if( m_pRecentFileList != NULL ) {
         m_pRecentFileList->WriteList();
+    }
+    if( m_nNumPreviewPages != 0 ) {
+        WriteProfileInt( _PreviewSection, _PreviewEntry, m_nNumPreviewPages );
     }
 }
 

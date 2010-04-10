@@ -255,6 +255,7 @@ BOOL CView::DoPreparePrinting( CPrintInfo *pInfo )
             return( FALSE );
         }
     }
+    pInfo->m_nNumPreviewPages = pApp->m_nNumPreviewPages;
     pInfo->m_strPageDesc.LoadString( AFX_IDS_PREVIEWPAGEDESC );
     return( TRUE );
 }

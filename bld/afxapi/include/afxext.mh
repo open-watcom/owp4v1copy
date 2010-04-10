@@ -379,6 +379,7 @@ struct CPrintInfo {
     BOOL            m_bDirect;
     BOOL            m_bContinuePrinting;
     UINT            m_nCurPage;
+    UINT            m_nNumPreviewPages;
     CString         m_strPageDesc;
     LPVOID          m_lpUserData;
     CRect           m_rectDraw;

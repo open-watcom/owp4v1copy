@@ -309,6 +309,11 @@ BOOL CPreviewView::SetPrintView( CView *pPrintView )
     if( !pPrintView->OnPreparePrinting( m_pPreviewInfo ) ) {
         return( FALSE );
     }
+    m_nPages = m_pPreviewInfo->m_nNumPreviewPages;
+    if( m_nPages == 0 ) {
+        m_nPages = 1;
+    }
+    
     ASSERT( m_pPreviewInfo->m_pPD != NULL );
     ASSERT( m_pPreviewInfo->m_pPD->m_pd.hDC != NULL );
     ASSERT( m_dcPrint.m_hDC == NULL );
@@ -431,6 +436,10 @@ void CPreviewView::OnNumPageChange()
     }
     Invalidate();
     ::UpdateWindow( m_hWnd );
+
+    CWinApp *pApp = AfxGetApp();
+    ASSERT( pApp != NULL );
+    pApp->m_nNumPreviewPages = m_nPages;
 }
 
 void CPreviewView::OnPrevPage()
