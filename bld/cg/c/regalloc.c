@@ -532,9 +532,17 @@ static  signed_32     CountRegMoves( conflict_node *conf,
                         count += half;
                     }
                 } else if( res == tree->temp || res == tree->alt ) {
-                   if( op1 == reg_name || op2 == reg_name ) {
+                    if( op1 == reg_name || op2 == reg_name ) {
                         count += half;
-                   }
+                    } else if( op1 && ( op1->n.class == N_REGISTER )
+                        && HW_Ovlap( reg, op1->r.reg ) ) {
+                        /* 
+                           If we're operating on an overlapping register,
+                           (conversions) give preference. E.g.:
+                              CNV I1 DL   ==> t1
+                         */
+                        count += half;  /* Or just a quarter? */
+                    }
                 }
 /* 88-Dec-23*/
             #endif
@@ -554,6 +562,14 @@ static  signed_32     CountRegMoves( conflict_node *conf,
                          MOV U2 [DI] ==> t1
                          MOV U1 t1   ==> CL
                     */
+                    count += half;
+                } else if( ( op1->n.class == N_REGISTER )
+                        && HW_Ovlap( reg, op1->r.reg ) ) {
+                    /*
+                       Similarly when we're moving from an overlapping
+                       register (conversions), prefer that one. E.g.:
+                         MOV I1 DL   ==> t1
+                     */
                     count += half;
                 }
             }
