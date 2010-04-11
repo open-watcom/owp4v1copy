@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Source file management.
 *
 ****************************************************************************/
 
@@ -1738,12 +1737,10 @@ void SrcFileGuardStateSig(      // SIGNAL SIGNIFICANCE (TOKEN, ETC) IN FILE
     SRCFILE src_file;
 
     /* NYI: needs to be able to handle a NULL srcFile! */
-    if( PPState == PPS_NORMAL ) {
-        src_file = srcFile;
-        _FIND_ACTUAL( src_file );
-        if( src_file->guard_state != GUARD_MID ) {
-            src_file->guard_state = GUARD_INCLUDE;
-        }
+    src_file = srcFile;
+    _FIND_ACTUAL( src_file );
+    if( src_file->guard_state != GUARD_MID ) {
+        src_file->guard_state = GUARD_INCLUDE;
     }
 }
 
