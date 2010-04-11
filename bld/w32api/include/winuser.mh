@@ -6159,8 +6159,8 @@ WINUSERAPI VOID WINAPI          keybd_event( BYTE, BYTE, DWORD, ULONG_PTR );
 WINUSERAPI VOID WINAPI          mouse_event( DWORD, DWORD, DWORD, DWORD, ULONG_PTR );
 WINUSERAPI int WINAPIV          wsprintfA( LPSTR, LPCSTR, ... );
 WINUSERAPI int WINAPIV          wsprintfW( LPWSTR, LPCWSTR, ... );
-WINUSERAPI int WINAPI           wvsprintfA( LPSTR, LPCSTR, va_list );
-WINUSERAPI int WINAPI           wvsprintfW( LPWSTR, LPCWSTR, va_list );
+WINUSERAPI int WINAPI           wvsprintfA( LPSTR, LPCSTR, void * );
+WINUSERAPI int WINAPI           wvsprintfW( LPWSTR, LPCWSTR, void * );
 #ifdef _WINGDI_
 WINUSERAPI LONG WINAPI          ChangeDisplaySettingsA( DEVMODEA *, DWORD );
 WINUSERAPI LONG WINAPI          ChangeDisplaySettingsExA( LPCSTR, DEVMODEA *, HWND, DWORD, LPVOID );
@@ -6426,6 +6426,12 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
 #define SetSysModalWindow( x )              NULL
 #define SetWindowLongPtrA( p1, p2, p3 )     SetWindowLongA( p1, p2, p3 )
 #define SetWindowLongPtrW( p1, p2, p3 )     SetWindowLongW( p1, p2, p3 )
+
+/* Microsoft defines va_list differently from Open Watcom, so it must be dereferenced
+ * before being passed to any Win32 API functions.
+ */
+#define wvsprintfA( p1, p2, p3 )    wvsprintfA( p1, p2, *(p3) )
+#define wvsprintfW( p1, p2, p3 )    wvsprintfW( p1, p2, *(p3) )
 
 /* Aliases for compatibility with Win16 */
 #define AnsiLower       CharLowerA
