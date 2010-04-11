@@ -771,6 +771,7 @@ positive_tests = &
     pp35.$(ext) &
     pp36.$(ext) &
     pp37.$(ext) &
+    pp38.$(ext) &
     prag01.$(ext) &
     prag02.$(ext) &
     prag03.$(ext) &
