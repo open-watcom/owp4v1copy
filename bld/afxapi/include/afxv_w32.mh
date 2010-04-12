@@ -48,3 +48,21 @@
 #include <ole2.h>
 #include <commdlg.h>
 #include <commctrl.h>
+
+// FormatMessage() must be defined as an inline function instead of a macro in order
+// to avoid conflicting with CString::FormatMessage().  This function requires special
+// treatment because FormatMessageA() and FormatMessageW() are defined as macros in
+// winbase.h.
+#undef FormatMessage
+inline BOOL FormatMessage( DWORD dwFlags, LPCVOID lpSource, DWORD dwMessageId,
+                           DWORD dwLanguageId, LPTSTR lpBuffer, DWORD nSize,
+                           va_list *Arguments )
+{
+#ifdef UNICODE
+    return( FormatMessageW( dwFlags, lpSource, dwMessageId, dwLanguageId, lpBuffer,
+                            nSize, Arguments ) );
+#else
+    return( FormatMessageA( dwFlags, lpSource, dwMessageId, dwLanguageId, lpBuffer,
+                            nSize, Arguments ) );
+#endif
+}
