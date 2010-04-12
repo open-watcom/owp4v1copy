@@ -3129,9 +3129,9 @@ WINADVAPI BOOL WINAPI               AddConditionalAce( PACL, DWORD, DWORD, UCHAR
  * before being passed to any Win32 API functions.
  */
 #define FormatMessageA( p1, p2, p3, p4, p5, p6, p7 ) \
-    FormatMessageA( p1, p2, p3, p4, p5, p6, *(p7) )
+    FormatMessageA( p1, p2, p3, p4, p5, p6, (p7) == NULL ? NULL : *(p7) )
 #define FormatMessageW( p1, p2, p3, p4, p5, p6, p7 ) \
-    FormatMessageW( p1, p2, p3, p4, p5, p6, *(p7) )
+    FormatMessageW( p1, p2, p3, p4, p5, p6, (p7) == NULL ? NULL : *(p7) )
 
 /* Aliases for macros defined in winnt.h */
 #define MoveMemory                          RtlMoveMemory
