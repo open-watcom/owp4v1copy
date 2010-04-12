@@ -103,31 +103,6 @@ struct AFX_PROPSHEETHEADER {
     };
 };
 
-// Work around a compiler bug that causes PRINTDLG to not be properly aligned.
-#pragma pack( push, 1 )
-struct AFX_PRINTDLG {
-    DWORD           lStructSize;
-    HWND            hwndOwner;
-    HGLOBAL         hDevMode;
-    HGLOBAL         hDevNames;
-    HDC             hDC;
-    DWORD           Flags;
-    WORD            nFromPage;
-    WORD            nToPage;
-    WORD            nMinPage;
-    WORD            nMaxPage;
-    WORD            nCopies;
-    HINSTANCE       hInstance;
-    LPARAM          lCustData;
-    LPPRINTHOOKPROC lpfnPrintHook;
-    LPSETUPHOOKPROC lpfnSetupHook;
-    LPCTSTR         lpPrintTemplateName;
-    LPCTSTR         lpSetupTemplateName;
-    HGLOBAL         hPrintTemplate;
-    HGLOBAL         hSetupTemplate;
-};
-#pragma pack( pop )
-
 class CCommonDialog : public CDialog {
     DECLARE_DYNAMIC( CCommonDialog )
     
@@ -243,7 +218,7 @@ public:
 
 class CPrintDialog : public CCommonDialog {
 public:
-    AFX_PRINTDLG    m_pd;
+    PRINTDLG    m_pd;
     
     DECLARE_DYNAMIC( CPrintDialog )
     

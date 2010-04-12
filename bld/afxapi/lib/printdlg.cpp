@@ -43,7 +43,7 @@ CPrintDialog::CPrintDialog( BOOL bPrintSetupOnly, DWORD dwFlags, CWnd *pParentWn
     } else {
         dwFlags |= PD_RETURNDC;
     }
-    m_pd.lStructSize = sizeof( AFX_PRINTDLG );
+    m_pd.lStructSize = sizeof( PRINTDLG );
     m_pd.hwndOwner = pParentWnd->GetSafeHwnd();
     m_pd.hDevMode = NULL;
     m_pd.hDevNames = NULL;
@@ -71,7 +71,7 @@ INT_PTR CPrintDialog::DoModal()
     ASSERT( pState != NULL );
     ASSERT( pState->m_pAlternateWndInit == NULL );
     pState->m_pAlternateWndInit = this;
-    return( ::PrintDlg( (PRINTDLG *)&m_pd ) ? IDOK : IDCANCEL );
+    return( ::PrintDlg( &m_pd ) ? IDOK : IDCANCEL );
 }
 
 #ifdef _DEBUG
@@ -81,7 +81,7 @@ void CPrintDialog::AssertValid() const
 {
     CCommonDialog::AssertValid();
 
-    ASSERT( m_pd.lStructSize == sizeof( AFX_PRINTDLG ) );
+    ASSERT( m_pd.lStructSize == sizeof( PRINTDLG ) );
 }
 
 void CPrintDialog::Dump( CDumpContext &dc ) const
@@ -142,7 +142,7 @@ BOOL CPrintDialog::GetDefaults()
 /******************************/
 {
     m_pd.Flags |= PD_RETURNDEFAULT;
-    return( ::PrintDlg( (PRINTDLG *)&m_pd ) );
+    return( ::PrintDlg( &m_pd ) );
 }
 
 CString CPrintDialog::GetDeviceName() const
