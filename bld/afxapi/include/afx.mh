@@ -118,9 +118,13 @@ public:
     CString &operator+=( PCSTR pszSrc );
     CString &operator+=( PCWSTR pszSrc );
     CString &operator+=( const CString &strSrc );
+    CString &operator+=( char ch );
+    CString &operator+=( wchar_t ch );
     CString &operator=( PCSTR pszSrc );
     CString &operator=( PCWSTR pszSrc );
     CString &operator=( const CString &strSrc );
+    CString &operator=( char ch );
+    CString &operator=( wchar_t ch );
     TCHAR   operator[]( int iChar ) const;
     
     operator PCTSTR() const;

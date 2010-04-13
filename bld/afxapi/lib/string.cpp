@@ -452,6 +452,32 @@ CString &CString::operator+=( PCWSTR pszSrc )
     return( *this );
 }
 
+CString &CString::operator+=( char ch )
+/*************************************/
+{
+#ifdef _UNICODE
+    wchar_t ch2;
+    ::MultiByteToWideChar( CP_ACP, 0L, &ch, 1, &ch2, 1 );
+    AppendChar( ch2 );
+#else
+    AppendChar( ch );
+#endif
+    return( *this );
+}
+
+CString &CString::operator+=( wchar_t ch )
+/****************************************/
+{
+#ifndef _UNICODE
+    char ch2;
+    ::WideCharToMultiByte( CP_ACP, 0L, &ch, 1, &ch2, 1, NULL, NULL );
+    AppendChar( ch2 );
+#else
+    AppendChar( ch );
+#endif
+    return( *this );
+}
+
 CString &CString::operator=( PCSTR pszSrc )
 /*****************************************/
 {
@@ -487,6 +513,34 @@ CString &CString::operator=( PCWSTR pszSrc )
         SetString( pszSrc );
 #endif
     }
+    return( *this );
+}
+
+CString &CString::operator=( char ch )
+/************************************/
+{
+    TCHAR szSrc[2];
+#ifdef _UNICODE
+    ::MultiByteToWideChar( CP_ACP, 0L, &ch, 1, szSrc, 1 );
+#else
+    szSrc[0] = ch;
+#endif
+    szSrc[1] = _T( '\0' );
+    SetString( szSrc );
+    return( *this );
+}
+
+CString &CString::operator=( wchar_t ch )
+/***************************************/
+{
+    TCHAR szSrc[2];
+#ifndef _UNICODE
+    ::WideCharToMultiByte( CP_ACP, 0L, &ch, 1, szSrc, 1, NULL, NULL );
+#else
+    szSrc[0] = ch;
+#endif
+    szSrc[1] = _T( '\0' );
+    SetString( szSrc );
     return( *this );
 }
 
