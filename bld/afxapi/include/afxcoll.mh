@@ -518,7 +518,9 @@ public:
     void    *&operator[]( WORD key );
     
 protected:
+    typedef WORD    BASE_KEY;
     typedef WORD    BASE_ARG_KEY;
+    typedef void    *BASE_VALUE;
 };
 
 class CMapPtrToWord : public CObject {
@@ -560,7 +562,9 @@ public:
     WORD    &operator[]( void *key );
     
 protected:
+    typedef void    *BASE_KEY;
     typedef void    *BASE_ARG_KEY;
+    typedef WORD    BASE_VALUE;
 };
 
 class CMapPtrToPtr : public CObject {
@@ -602,7 +606,9 @@ public:
     void    *&operator[]( void *key );
     
 protected:
+    typedef void    *BASE_KEY;
     typedef void    *BASE_ARG_KEY;
+    typedef void    *BASE_VALUE;
 };
 
 class CMapWordToOb : public CObject {
@@ -645,7 +651,9 @@ public:
     CObject *&operator[]( WORD key );
     
 protected:
+    typedef WORD    BASE_KEY;
     typedef WORD    BASE_ARG_KEY;
+    typedef CObject *BASE_VALUE;
 };
 
 class CMapStringToPtr : public CObject {
@@ -687,7 +695,9 @@ public:
     void    *&operator[]( LPCTSTR key );
     
 protected:
+    typedef CString BASE_KEY;
     typedef LPCTSTR BASE_ARG_KEY;
+    typedef void    *BASE_VALUE;
 };
 
 class CMapStringToOb : public CObject {
@@ -730,7 +740,9 @@ public:
     CObject *&operator[]( LPCTSTR key );
     
 protected:
+    typedef CString BASE_KEY;
     typedef LPCTSTR BASE_ARG_KEY;
+    typedef CObject *BASE_VALUE;
 };
 
 class CMapStringToString : public CObject {
@@ -773,7 +785,9 @@ public:
     CString &operator[]( LPCTSTR key );
     
 protected:
+    typedef CString BASE_KEY;
     typedef LPCTSTR BASE_ARG_KEY;
+    typedef CString BASE_VALUE;
 };
 
 #ifndef _DEBUG

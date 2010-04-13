@@ -226,7 +226,8 @@ template< class BASE_CLASS, class KEY, class VALUE >
 class CTypedPtrMap : public BASE_CLASS {
 public:
     void    GetNextAssoc( POSITION &rPosition, KEY &rKey, VALUE &rValue ) const
-        { BASE_CLASS::GetNextAssoc( rPosition, rKey, rValue ); }
+        { BASE_CLASS::GetNextAssoc( rPosition, (BASE_CLASS::BASE_KEY &)rKey,
+                                    (BASE_CLASS::BASE_VALUE &)rValue ); }
     BOOL    Lookup( BASE_CLASS::BASE_ARG_KEY key, VALUE &rValue ) const
         { return( BASE_CLASS::Lookup( key, rValue ) ); }
     BOOL    RemoveKey( KEY key )
@@ -235,7 +236,7 @@ public:
         { BASE_CLASS::SetAt( key, newValue ); }
     
     VALUE   &operator[]( BASE_CLASS::BASE_ARG_KEY key )
-        { return( BASE_CLASS::operator[]( key ) ); }
+        { return( (VALUE &)BASE_CLASS::operator[]( key ) ); }
 };
 
 template< class TYPE, class ARG_TYPE >
