@@ -837,6 +837,7 @@ static  void Encode( instruction *ins )
         assert( ins->operands[0]->n.class == N_REGISTER );
         assert( ins->result->n.class != N_REGISTER );
         reg_index = _NameReg( ins->operands[0] );
+        getMemEncoding( ins->result, &mem_index, &mem_offset );
         // 'sdc1 rt,offset(base)' - MIPS32-R2/MIPS64 only?
         GenIType( 0x3d, reg_index, mem_index, mem_offset );
         break;
