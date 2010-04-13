@@ -229,7 +229,7 @@ public:
         { BASE_CLASS::GetNextAssoc( rPosition, (BASE_CLASS::BASE_KEY &)rKey,
                                     (BASE_CLASS::BASE_VALUE &)rValue ); }
     BOOL    Lookup( BASE_CLASS::BASE_ARG_KEY key, VALUE &rValue ) const
-        { return( BASE_CLASS::Lookup( key, rValue ) ); }
+        { return( BASE_CLASS::Lookup( key, (BASE_CLASS::BASE_VALUE &)rValue ) ); }
     BOOL    RemoveKey( KEY key )
         { return( BASE_CLASS::RemoveKey( key ) ); }
     void    SetAt( KEY key, VALUE newValue )
