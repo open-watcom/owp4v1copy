@@ -56,7 +56,7 @@ extern int              InDOS(void);
 /*
  Located int SAMPLE.C
 */
-extern void             StopAndSave();
+extern void             StopAndSave( void );
 extern intrptr          HookTimer(intrptr);
 
 extern void             RecordSample( union INTPACK FAR_PTR *r );
@@ -170,7 +170,7 @@ void interrupt far timer_handler( union INTPACK r )
 extern short GetCS(void);
 #pragma aux GetCS = 0x8c 0xc8;
 
-void StartTimer()
+void StartTimer( void )
 {
     TimerMod = TimerMult;
     old_timer_handler = HookTimer( MK_FP( GetCS(), (int)&timer_handler ) );
@@ -186,7 +186,7 @@ void StartTimer()
 }
 
 
-void StopTimer()    /* undo */
+void StopTimer( void )  /* undo */
 {
     /*
     //  Bit worried that NetWare 5 or 6 could interrupt here when switching to

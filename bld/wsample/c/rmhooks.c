@@ -109,7 +109,7 @@ intrptr HookTimer( intrptr new_int08 )
     tailored ones (defined in INTERC.ASM module).
 */
 
-void InstallDOSIntercepts()
+void InstallDOSIntercepts( void )
 {
     int i;
 
@@ -137,7 +137,7 @@ void InstallDOSIntercepts()
 }
 
 
-void RemoveDOSIntercepts()  /* will undo the above */
+void RemoveDOSIntercepts( void )    /* will undo the above */
 {
     int i;
 

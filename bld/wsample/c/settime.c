@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Set up sampling timer rate.
 *
 ****************************************************************************/
 
@@ -47,7 +46,7 @@
 #include "wmsg.h"
 
 
-void InitTimerRate()
+void InitTimerRate( void )
 {
     TimerMult = DEF_MULT;
     TimerRestoreValue = 0;
@@ -97,12 +96,12 @@ extern void ResolveRateDifferences(void)
 
 #endif
 
-unsigned long TimerRate()
+unsigned long TimerRate( void )
 {
     return( 100000000 / TICKS_PER_HUNDRED );
 }
 
-unsigned SafeMargin()
+unsigned SafeMargin( void )
 {
     unsigned    safe_wait;
     unsigned    margin;

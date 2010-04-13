@@ -94,7 +94,7 @@ WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
 WResSetRtns( open, close, ( int (*)( WResFileID, void *, size_t)) read, ( int (*)( WResFileID, const void *, size_t)) write, res_seek, tell, malloc, free );
 #endif
 
-int MsgInit()
+int MsgInit( void )
 {
     int         initerror;
     int         i;
@@ -183,7 +183,7 @@ int MsgInit( HANDLE inst )
 }
 #endif
 
-void MsgFini()
+void MsgFini( void )
 {
     int          i;
 

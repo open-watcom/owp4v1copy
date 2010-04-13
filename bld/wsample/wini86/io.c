@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File I/O functions for 16-bit Windows.
 *
 ****************************************************************************/
 
@@ -87,7 +86,7 @@ int SampSeek( unsigned long loc )
 
 } /* SampSeek */
 
-int SampClose()
+int SampClose( void )
 {
     SharedMemory->SampOffset = 0;
     SharedMemory->SampleHandle = 0;

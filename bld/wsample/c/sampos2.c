@@ -80,7 +80,7 @@ unsigned NextThread( unsigned tid )
     return( tid+1 );
 }
 
-void InitTimerRate()
+void InitTimerRate( void )
 {
     SleepTime = 55;
 }
@@ -90,12 +90,12 @@ void SetTimerRate( char **cmd )
     SleepTime = GetNumber( 1, 1000, cmd, 10 );
 }
 
-unsigned long TimerRate()
+unsigned long TimerRate( void )
 {
     return( 1000L * SleepTime );
 }
 
-unsigned SafeMargin()
+unsigned SafeMargin( void )
 {
     return( Ceiling-10 );
 }
@@ -103,7 +103,7 @@ unsigned SafeMargin()
 #define EXE_LX  0x584c
 #define EXE_NE  0x454e
 
-static int IsLX()
+static int IsLX( void )
 {
     int                 f;
     unsigned_32         offset;
@@ -143,7 +143,7 @@ static void InternalError( char * str )
     If we're running on OS/2 2.x and it's an LX style file, spawn off the
     OS/2 2.x sampler to collect things
 */
-int VersionCheck()
+int VersionCheck( void )
 {
     USHORT          env_sel;
     USHORT          cmd_off;
@@ -270,7 +270,7 @@ static void writeMemory( seg_offset *to, int size, char *from )
 }
 
 
-void GetCommArea()
+void GetCommArea( void )
 {
     if( CommonAddr.segment == 0 ) {             /* can't get the common */
         Comm.cgraph_top = 0;                    /* region yet.          */
@@ -284,7 +284,7 @@ void GetCommArea()
     }
 }
 
-void ResetCommArea()
+void ResetCommArea( void )
 {
     if( CommonAddr.segment != 0 ) {     /* reset common variables */
         Comm.pop_no = 0;
@@ -295,7 +295,7 @@ void ResetCommArea()
     }
 }
 
-void GetNextAddr()
+void GetNextAddr( void )
 {
     seg_offset  addr;
     struct {
@@ -317,7 +317,7 @@ void GetNextAddr()
     }
 }
 
-void StopProg()
+void StopProg( void )
 {
 }
 
