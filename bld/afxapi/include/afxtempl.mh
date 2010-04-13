@@ -336,6 +336,22 @@ AFX_INLINE void CArray< TYPE, ARG_TYPE >::SetAt( INT_PTR nIndex, ARG_TYPE newEle
 }
 
 template< class TYPE, class ARG_TYPE >
+AFX_INLINE TYPE &CArray< TYPE, ARG_TYPE >::operator[]( INT_PTR nIndex )
+/*********************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+template< class TYPE, class ARG_TYPE >
+AFX_INLINE const TYPE &CArray< TYPE, ARG_TYPE >::operator[]( INT_PTR nIndex ) const
+/*********************************************************************************/
+{
+    ASSERT( nIndex < m_nSize );
+    return( m_pData[nIndex] );
+}
+
+template< class TYPE, class ARG_TYPE >
 AFX_INLINE const TYPE &CList< TYPE, ARG_TYPE >::GetAt( POSITION position ) const
 /******************************************************************************/
 {
