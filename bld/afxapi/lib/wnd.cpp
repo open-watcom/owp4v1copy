@@ -86,7 +86,7 @@ typedef LRESULT (CWnd::*PHANDLER_L_P)( CPoint );
 
 // HtmlHelp() function
 typedef HWND (WINAPI *PFN_HTMLHELP)( HWND, LPCTSTR, UINT, DWORD_PTR );
-static PFN_HTMLHELP _HtmlHelpFnPtr;
+static PFN_HTMLHELP _HtmlHelpFnPtr = NULL;
 
 // HtmlHelp() function name
 #ifdef _UNICODE
@@ -94,6 +94,9 @@ static PFN_HTMLHELP _HtmlHelpFnPtr;
 #else
     #define HTMLHELP_NAME   "HtmlHelpA"
 #endif
+
+// IsAppThemed() function
+typedef BOOL (WINAPI *PFN_ISAPPTHEMED)( void );
 
 // Register DRAGLISTMSGSTRING message.
 const UINT CWnd::m_nMsgDragList = ::RegisterWindowMessage( DRAGLISTMSGSTRING );
@@ -168,6 +171,31 @@ static UINT _TranslateCtlType( UINT message )
         return( CTLCOLOR_STATIC );
     }
     return( 0 );
+}
+
+static BOOL _DisableToolTips()
+/****************************/
+{
+    // The tool tips flicker on Windows Vista and later when visual styles are enabled.
+    // Lacking a better solution, just disable them on these versions.
+    OSVERSIONINFO osvi;
+    ::GetVersionEx( &osvi );
+    if( osvi.dwMajorVersion < 6 ) {
+        return( FALSE );
+    }
+
+    HINSTANCE hInstance = ::LoadLibrary( _T( "UXTHEME.DLL" ) );
+    if( hInstance == NULL ) {
+        return( FALSE );
+    }
+
+    BOOL            bResult = FALSE;
+    PFN_ISAPPTHEMED pfn = (PFN_ISAPPTHEMED)::GetProcAddress( hInstance, "IsAppThemed" );
+    if( pfn != NULL ) {
+        bResult = pfn();
+    }
+    ::FreeLibrary( hInstance );
+    return( bResult );
 }
 
 CWnd::CWnd()
@@ -832,10 +860,12 @@ BOOL CWnd::EnableToolTips( BOOL bEnable )
 /***************************************/
 {
     if( bEnable ) {
-        AFX_MODULE_STATE *pState = AfxGetModuleState();
-        ASSERT( pState != NULL );
-        pState->m_pfnFilterToolTipMessage = _FilterToolTipMessage;
-        m_nFlags |= WF_TOOLTIPS;
+        if( !_DisableToolTips() ) {
+            AFX_MODULE_STATE *pState = AfxGetModuleState();
+            ASSERT( pState != NULL );
+            pState->m_pfnFilterToolTipMessage = _FilterToolTipMessage;
+            m_nFlags |= WF_TOOLTIPS;
+        }
     } else {
         m_nFlags &= ~WF_TOOLTIPS;
     }
@@ -846,10 +876,12 @@ BOOL CWnd::EnableTrackingToolTips( BOOL bEnable )
 /***********************************************/
 {
     if( bEnable ) {
-        AFX_MODULE_STATE *pState = AfxGetModuleState();
-        ASSERT( pState != NULL );
-        pState->m_pfnFilterToolTipMessage = _FilterToolTipMessage;
-        m_nFlags |= WF_TRACKINGTOOLTIPS;
+        if( !_DisableToolTips() ) {
+            AFX_MODULE_STATE *pState = AfxGetModuleState();
+            ASSERT( pState != NULL );
+            pState->m_pfnFilterToolTipMessage = _FilterToolTipMessage;
+            m_nFlags |= WF_TRACKINGTOOLTIPS;
+        }
     } else {
         m_nFlags &= ~WF_TRACKINGTOOLTIPS;
     }
