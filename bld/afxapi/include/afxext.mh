@@ -27,6 +27,26 @@ class CToolBarCtrl;
 #define LM_LENGTHY  0x00000020L
 #define LM_COMMIT   0x00000040L
 
+class CBitmapButton : public CButton {
+protected:
+    CBitmap m_bitmap;
+    CBitmap m_bitmapSel;
+    CBitmap m_bitmapFocus;
+    CBitmap m_bitmapDisabled;
+    
+    DECLARE_DYNAMIC( CBitmapButton )
+    
+public:
+    CBitmapButton();
+    
+    virtual void    DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct );
+    
+    BOOL    AutoLoad( UINT nID, CWnd *pParent );
+    BOOL    LoadBitmaps( LPCTSTR lpszBitmapResource, LPCTSTR lpszBitmapResourceSel = NULL, LPCTSTR lpszBitmapResourceFocus = NULL, LPCTSTR lpszBitmapResourceDisabled = NULL );
+    BOOL    LoadBitmaps( UINT nIDBitmapResource, UINT nIDBitmapResourceSel = 0, UINT nIDBitmapResourceFocus = 0, UINT nIDBitmapResourceDisabled = 0 );
+    void    SizeToContent();
+};
+
 class CControlBar : public CWnd {
 public:
     BOOL            m_bAutoDelete;
