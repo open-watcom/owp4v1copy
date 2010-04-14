@@ -119,6 +119,62 @@ AFX_INLINE CString::operator PCTSTR() const
     return( m_psz );
 }
 
+AFX_INLINE CString operator+( const CString &str1, const CString &str2 )
+/**********************************************************************/
+{
+    CString str( str1 );
+    str += str2;
+    return( str );
+}
+
+AFX_INLINE CString operator+( const CString &str1, PCTSTR psz2 )
+/**************************************************************/
+{
+    CString str( str1 );
+    str += psz2;
+    return( str );
+}
+
+AFX_INLINE CString operator+( PCTSTR psz1, const CString &str2 )
+/**************************************************************/
+{
+    CString str( psz1 );
+    str += str2;
+    return( str );
+}
+
+AFX_INLINE CString operator+( char ch1, const CString &str2 )
+/***********************************************************/
+{
+    CString str( ch1 );
+    str += str2;
+    return( str );
+}
+
+AFX_INLINE CString operator+( const CString &str1, char ch2 )
+/***********************************************************/
+{
+    CString str( str1 );
+    str += ch2;
+    return( str );
+}
+
+AFX_INLINE CString operator+( wchar_t ch1, const CString &str2 )
+/**************************************************************/
+{
+    CString str( ch1 );
+    str += str2;
+    return( str );
+}
+
+AFX_INLINE CString operator+( const CString &str1, wchar_t ch2 )
+/**************************************************************/
+{
+    CString str( str1 );
+    str += ch2;
+    return( str );
+}
+
 AFX_INLINE BOOL operator==( const CString &str1, const CString &str2 )
 /********************************************************************/
 {

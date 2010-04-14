@@ -106,6 +106,46 @@ CString::CString( const wchar_t *pszSrc )
     }
 }
 
+CString::CString( char ch, int nLength )
+/**************************************/
+{
+    ASSERT( nLength >= 0 );
+    m_nDataLength = nLength;
+    m_nAllocLength = m_nDataLength + 1;
+    m_psz = new TCHAR[m_nAllocLength];
+    if( m_nDataLength > 0 ) {
+#ifdef _UNICODE
+        ::MultiByteToWideChar( CP_ACP, 0L, &ch, 1, m_psz, 1 );
+#else
+        m_psz[0] = ch;
+#endif
+        for( int i = 1; i < m_nDataLength; i++ ) {
+            m_psz[i] = m_psz[0];
+        }
+    }
+    m_psz[m_nAllocLength - 1] = _T( '\0' );
+}
+
+CString::CString( wchar_t ch, int nLength )
+/*****************************************/
+{
+    ASSERT( nLength >= 0 );
+    m_nDataLength = nLength;
+    m_nAllocLength = m_nDataLength + 1;
+    m_psz = new TCHAR[m_nAllocLength];
+    if( m_nDataLength > 0 ) {
+#ifndef _UNICODE
+        ::WideCharToMultiByte( CP_ACP, 0L, &ch, 1, m_psz, 1, NULL, NULL );
+#else
+        m_psz[0] = ch;
+#endif
+        for( int i = 1; i < m_nDataLength; i++ ) {
+            m_psz[i] = m_psz[0];
+        }
+    }
+    m_psz[m_nAllocLength - 1] = _T( '\0' );
+}
+
 CString::CString( const char *pch, int nLength )
 /**********************************************/
 {
