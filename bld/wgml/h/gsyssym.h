@@ -46,7 +46,7 @@
   picl( bo,      bs,      no_free+ro+access_fun+predefined          )
   picc( bs,      bx,      no_free+ro+access_fun+predefined          )
   picc( bx,      bxchar,  no_free+ro+access_fun+predefined          )
-  pick( bxchar,  cc,      no_free+ro+access_fun+predefined          )
+  picl( bxchar,  cc,      no_free+ro+access_fun+predefined          )
   picc( cc,      ccc,     no_free+ro+access_fun+predefined          )
   picl( ccc,     cd,      no_free+ro+access_fun+predefined          )
   picl( cd,      cdcount, no_free+ro+access_fun+predefined          )
