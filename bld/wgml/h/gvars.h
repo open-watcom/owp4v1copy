@@ -196,6 +196,7 @@ global struct ProcFlags {
 global  size_t          buf_size;       // default buffer size
 global  char        *   token_buf;
 
+global char         *   workbuf;        // work for input buffer
 global char         *   buff2;          // input buffer
 global size_t           buff2_lg;       // input buffer used length
 global char         *   open_paren;     // ( in input
@@ -279,7 +280,7 @@ global  int32_t     g_cur_threshold;    // current widow threshold value
 
 global  int         hpcount;            // :HPx nesting level
 
-global  tag_cb  *   wk_cb;              // infos about nested tags
+global  tag_cb  *   n_cb;               // infos about nested tags
 global  tag_cb  *   tag_pool;           // list of reusable tag_cbs
 
 global  banner_lay_tag  * sect_ban_top[2];// top even / odd banner for curr sect
@@ -297,7 +298,9 @@ global  char        *   lay_file;       // layout file specified on cmdline
 
 /***************************************************************************/
 /* Layout attribute names as character strings                             */
-/***************************************************************************/
+/*  array initialized in glconvrt.c                                        */
+/*  longest attribute name is extract_threshold  (=17)                     */
+/**************************** ....+....1....+.. ****************************/
 extern  const   char    att_names[e_dummy_max + 1][18];
 
 

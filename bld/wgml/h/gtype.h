@@ -745,7 +745,7 @@ typedef enum functs {
     function_sub_end        = 0x03,
 
     function_superscript    = 0x04,
-    function_super_end      = 0x05
+    function_sup_end        = 0x05
 } functs;
 
 
@@ -757,7 +757,7 @@ typedef enum functs {
 #define pickg( name, length, routine, flags )  t_##name,
 
 #undef picklab
-#define picklab( name, routine, flags )  t_##label,
+#define picklab( name, routine, flags )  t_label,
 
 #undef picks
 #define picks( name, routine, flags )  t_##name,
@@ -777,7 +777,12 @@ typedef struct tag_cb {
     struct  tag_cb   *   prev;
     uint32_t            left;           // margin
     uint32_t            right;          // margin
-    uint32_t            post_skip;
+    uint32_t            post_skip;      // skip at tag end
+    uint32_t            tsize;          // :dl
+    uint8_t             headhi;         // :dl
+    uint8_t             termhi;         // :dl :gl
+    bool                dl_break;       // :dl
+    bool                compact;        // :dl :gl :ol :sl :ul
     e_tags              c_tag;
 } tag_cb;
 

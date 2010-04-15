@@ -207,6 +207,7 @@ char    *scr_multi_funcs( char * in, char * end, char * * result, int32_t valsiz
             found = true;
             if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
                 out_msg( " Function %s found\n", scr_functions[k].fname );
+                add_multi_func_research( fn );
             }
             break;
         }
@@ -298,6 +299,8 @@ used single letter functions: others are unused
 &S'  superscript high
 &u'  upper
 
+&w'  width          implemented for internal use
+
 used other functions:
 
 &'delstr(
@@ -320,5 +323,7 @@ used other functions:
 &'word(
 &'wordpos(
 &'words(
+
+&'width          implemented for internal use
 
 #endif

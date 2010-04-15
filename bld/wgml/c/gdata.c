@@ -133,6 +133,7 @@ void init_global_vars( void )
 
     buf_size            = BUF_SIZE;
     buff2               = mem_alloc( buf_size );
+    workbuf             = mem_alloc( buf_size );
 
     post_skip           = NULL;         // no post skip for first :P aragraph
     pre_space           = 0;            // experimental
@@ -143,7 +144,7 @@ void init_global_vars( void )
     buf_lines_cnt       = 0;
 
     g_skip_wgml4        = 0;
-    wk_cb               = NULL;
+    n_cb                = NULL;
 
 }
 

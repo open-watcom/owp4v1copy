@@ -205,10 +205,16 @@ void    init_page_geometry( void )
     g_indent = 0;
     g_indentr = 0;
 
-    wk_cb        = alloc_tag_cb();
-    wk_cb->c_tag = t_NONE;
-    wk_cb->left  = g_page_left_org;
-    wk_cb->right = g_page_right_org;
+    n_cb        = alloc_tag_cb();
+    n_cb->c_tag = t_NONE;
+    n_cb->left  = g_page_left_org;
+    n_cb->right = g_page_right_org;
+    n_cb->post_skip = 0;
+    n_cb->tsize = 0;
+    n_cb->termhi = 0;
+    n_cb->headhi = 0;
+    n_cb->dl_break = false;
+    n_cb->compact = false;
 }
 
 

@@ -59,8 +59,8 @@ void    calc_skip( void )
     if( g_skip < 0 ) {                  // overprint
         if( bin_driver->y_positive == 0x00 ) {
             g_cur_v_start += wgml_fonts[g_curr_font_num].line_height;
-        } else {
-            g_cur_v_start -= wgml_fonts[g_curr_font_num].line_height;
+//      } else {
+//          g_cur_v_start -= wgml_fonts[g_curr_font_num].line_height; // TBD
         }
     } else {
         if( bin_driver->y_positive == 0x00 ) {

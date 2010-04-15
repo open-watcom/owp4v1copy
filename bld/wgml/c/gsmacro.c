@@ -35,26 +35,26 @@
 *             scr_em              -- .em control word execute macro
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /*  add info about macro   to LIFO input list                              */
 /*  if second parm is not null, macro is called via GML tag processing     */
 /***************************************************************************/
-
+ 
 void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 {
     macrocb *   new;
     inputcb *   nip;
-
+ 
     new = mem_alloc( sizeof( macrocb ) );
-
+ 
     nip = mem_alloc( sizeof( inputcb ) );
     nip->hidden_head = NULL;
     nip->hidden_tail = NULL;
@@ -62,16 +62,16 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
     memset( nip->if_cb, '\0', sizeof( ifcb ) );
     nip->pe_cb.count = -1;
     nip->pe_cb.line = NULL;
-
+ 
     init_dict( &nip->local_dict );
-
+ 
     nip->s.m        = new;
-
+ 
     new->lineno     = 0;
     new->macline    = me->macline;
     new->mac        = me;
     new->tag        = ge;
-
+ 
     if( ge == NULL ) {
         new->flags      = FF_macro;
         nip->fmflags    = II_macro;
@@ -79,13 +79,13 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
         new->flags      = FF_tag;
         nip->fmflags    = II_tag;
     }
-
+ 
     nip->prev = input_cbs;
     input_cbs = nip;
     return;
 }
-
-
+ 
+ 
 /*
  * add macro parms from input line as local symbolic variables
  * for non quoted parms try to assign symbolic variables
@@ -103,12 +103,12 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
  *  conflicts  -> change define MAC_STAR_NAME in gtype.h
  *
  */
-
+ 
 void    add_macro_parms( char * p )
 {
     int             len;
     condcode        cc;
-
+ 
     while( *p && *p == ' ' ) {
         ++p;
     }
@@ -116,19 +116,19 @@ void    add_macro_parms( char * p )
     if( len > 0 ) {
         char    starbuf[12];
         int     star0;
-
+ 
                                         // the macro parameter line
                                         // the name _ has to change (perhaps)
         add_symvar( &input_cbs->local_dict, MAC_STAR_NAME, p, no_subscript,
                     local_var );
-
+ 
         star0 = 0;
         garginit();
         cc = getarg();
         while( cc > omit ) {            // as long as there are parms
             char        c;
             char    *   scan_save;
-
+ 
             if( cc == pos ) {           // argument not quoted
                            /* look if it is a symbolic variable definition */
                 scan_save  = scan_start;
@@ -137,9 +137,9 @@ void    add_macro_parms( char * p )
                 scan_start = tok_start; // rescan for variable
                 ProcFlags.suppress_msg = true;  // no errmsg please
                 ProcFlags.blanks_allowed = 0;   // no blanks please
-
+ 
                 scr_se();               // try to set variable and value
-
+ 
                 ProcFlags.suppress_msg = false; // reenable err msg
                 ProcFlags.blanks_allowed = 1;   // blanks again
                 *scan_save = c;        // restore original char at string end
@@ -155,7 +155,7 @@ void    add_macro_parms( char * p )
                                 no_subscript, local_var );
                     *p = c;                // restore original char at string end
                 }
-
+ 
             }
             if( cc == quotes ) {        // add argument as local symbolic var
                 star0++;
@@ -173,23 +173,23 @@ void    add_macro_parms( char * p )
         add_symvar( &input_cbs->local_dict, "0", starbuf,
                     no_subscript, local_var );
     }
-
+ 
     if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
         print_sym_dict( input_cbs->local_dict );
     }
 }
-
-
+ 
+ 
 /*
  * free storage for macro lines
  *              or split input lines
  */
-
+ 
 void    free_lines( inp_line * line )
 {
     inp_line    *wk;
     inp_line    *wk1;
-
+ 
     wk = line;
     while( wk != NULL ) {
          wk1 = wk->next;
@@ -198,7 +198,7 @@ void    free_lines( inp_line * line )
     }
     return;
 }
-
+ 
 /***************************************************************************/
 /* DEFINE  MACRO defines  a  sequence of  input lines  to  be invoked  by  */
 /* ".name" as  a user-defined control word  or as an Execute  Macro (.EM)  */
@@ -251,7 +251,7 @@ void    free_lines( inp_line * line )
 /*     macro.   If the Set Symbol begins with an asterisk the symbol will  */
 /*     be local to the invoked macro.                                      */
 /***************************************************************************/
-
+ 
 void    scr_dm( void )
 {
     char        *   nmstart;
@@ -270,13 +270,13 @@ void    scr_dm( void )
     condcode        cc;
     inputcb     *   cb;
     char            linestr[MAX_L_AS_STR];
-
+ 
     cb = input_cbs;
-
+ 
     garginit();
-
+ 
     cc = getarg();
-
+ 
     if( cc == omit ) {
         err_count++;
         g_err( err_missing_name );
@@ -285,12 +285,12 @@ void    scr_dm( void )
         show_include_stack();
         return;
     }
-
+ 
     p = tok_start;
-
+ 
     pn      = macname;
     len     = 0;
-
+ 
     /*  truncate name if too long WITHOUT error msg
      *  this is wgml 4.0 behaviour
      *
@@ -305,7 +305,7 @@ void    scr_dm( void )
         len++;
     }
     macname[MAC_NAME_LENGTH] = '\0';
-
+ 
     cc = getarg();
     if( cc == omit ) {                  // nothing found
         err_count++;
@@ -315,19 +315,19 @@ void    scr_dm( void )
         g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         return;
     }
-
+ 
     p = scan_start;
     head = NULL;
     last = NULL;
     save = *p;             // save char so we can make null terminated string
     *p   = '\0';
     macro_line_count = 0;
-
+ 
     compend   = !stricmp( tok_start, "end" );
     compbegin = !stricmp( tok_start, "begin" );
     if( !(compbegin | compend) ) { // only .dm macname /line1/line2/ possible
         char    sepchar;
-
+ 
         if( cc == quotes ) {
             tok_start--;    // for single line .dm /yy/xxy/.. back to sepchar
         }
@@ -339,11 +339,11 @@ void    scr_dm( void )
             return;
         }
         ProcFlags.in_macro_define = 1;
-
+ 
         *p   = save;
         lineno_start = cb->s.f->lineno;
-
-
+ 
+ 
         p = tok_start;
         sepchar = *p++;
         nmstart = p;
@@ -368,7 +368,7 @@ void    scr_dm( void )
         }
         compend = 1;                    // so the end processing will happen
     }                                   // BEGIN or END not found
-
+ 
     if( compend && !(ProcFlags.in_macro_define) ) {
         err_count++;
         // SC--003: A macro is not being defined
@@ -386,14 +386,14 @@ void    scr_dm( void )
     }
     *p   = save;
     if( compbegin ) {                   // start new macro define
-
+ 
         ProcFlags.in_macro_define = 1;
         lineno_start = cb->s.f->lineno;
-
+ 
         while( !(cb->s.f->flags & FF_eof) ) {  // process all macro lines
-
-            get_line();
-
+ 
+            get_line( true );
+ 
             if( cb->s.f->flags & (FF_eof | FF_err) ) {
                 break;                  // out of read loop
             }
@@ -402,9 +402,9 @@ void    scr_dm( void )
                 if( tolower( *(p + 1) ) == 'd' &&
                     tolower( *(p + 2) ) == 'm' &&
                     (*(p + 3) == ' ' || *(p + 3) == '\0') ) {
-
+ 
                     garginit();
-
+ 
                     cc = getarg();
                     if( cc == omit ) {  // only .dm  means macro end
                         compend = 1;
@@ -474,17 +474,17 @@ void    scr_dm( void )
             return;
         }
     }                                   // end compbegin
-
+ 
     if( compend ) {                     // macro END definition processing
         mac_entry   *   me;
-
+ 
         me = find_macro( macro_dict, macname );
         if( me != NULL ) {              // delete macro with same name
             free_macro_entry( &macro_dict, me );
         }
-
+ 
         ProcFlags.in_macro_define = 0;
-
+ 
         len = strlen( cb->s.f->filename );
         me  = mem_alloc( len + sizeof( mac_entry ) );
         me->next = NULL;
@@ -493,9 +493,9 @@ void    scr_dm( void )
         me->macline = head;
         me->lineno = lineno_start;
         strcpy( me->mac_file_name, cb->s.f->filename );
-
+ 
         add_macro_entry( &macro_dict, me );
-
+ 
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
             utoa( macro_line_count, linestr, 10 );
             g_info( inf_mac_defined, macname, linestr );
@@ -510,8 +510,8 @@ void    scr_dm( void )
     scan_restart = scan_stop + 1;
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* MACRO EXIT  causes immediate  termination of the  macro or  input file  */
 /* currently being processed  and resumption of the  higher-level file or  */
@@ -543,44 +543,44 @@ void    scr_dm( void )
 /* ! the line operand is ignored for .me in the master document file       */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    scr_me( void )
 {
     condcode        cc;
-
+ 
     if( input_cbs->prev != NULL ) {     // if not master document file
-
+ 
         garginit();
-
+ 
         cc = getarg();
         if( cc != omit ) {              // line operand present
-
+ 
             free_lines( input_cbs->hidden_head );   // clear stacked input
             split_input( buff2, tok_start );// stack line operand
-
+ 
             // now move stacked line to previous input stack
-
+ 
             input_cbs->hidden_head->next = input_cbs->prev->hidden_head;
             input_cbs->prev->hidden_head = input_cbs->hidden_head;
-
+ 
             input_cbs->hidden_head = NULL;  // and delete from current input
             input_cbs->hidden_tail = NULL;
         }
     }
-
+ 
     input_cbs->fmflags |= II_eof;       // set eof
-
+ 
     input_cbs->if_cb->if_level = 0;     // terminate
     ProcFlags.keep_ifstate = false;     // ... all .if controls
     scan_restart = scan_stop + 1;
     return;
 }
-
-
+ 
+ 
 static void macro_missing( void )
 {
     char        linestr[MAX_L_AS_STR];
-
+ 
     g_err( err_mac_name_inv );
     if( input_cbs->fmflags & II_macro ) {
         utoa( input_cbs->s.m->lineno, linestr, 10 );
@@ -590,8 +590,8 @@ static void macro_missing( void )
         g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* ! EMPTY PAGE  is not implemented ( not used in OW documentation )       */
 /*                                                                         */
@@ -641,7 +641,7 @@ static void macro_missing( void )
 /*     be assumed.   If the specified macro has not already been defined,  */
 /*     an error will result.                                               */
 /***************************************************************************/
-
+ 
 void    scr_em( void )
 {
     char        *   p;
@@ -651,26 +651,26 @@ void    scr_em( void )
     inputcb     *   cb;
     mac_entry   *   me;
     int             len;
-
+ 
     cb = input_cbs;
-
+ 
     garginit();
-
+ 
     cc = getarg();
-
+ 
     if( cc == omit ) {
         err_count++;
         macro_missing();
         show_include_stack();
         return;
     }
-
+ 
     if( *tok_start == SCR_char ) {      // possible macro name
         p = tok_start + 1;              // over .
-
+ 
         pn      = macname;
         len     = 0;
-
+ 
         /*  truncate name if too long WITHOUT error msg
          *  this is wgml 4.0 behaviour
          *
@@ -685,12 +685,12 @@ void    scr_em( void )
             len++;
         }
         macname[MAC_NAME_LENGTH] = '\0';
-
+ 
         me = find_macro( macro_dict, macname );
     } else {
         me = NULL;                      // no macro name
     }
-
+ 
     if( me == NULL ) {                  // macro not specified or not defined
         err_count++;
         macro_missing();
@@ -702,4 +702,4 @@ void    scr_em( void )
     scan_restart = scan_stop + 1;
     return;
 }
-
+ 

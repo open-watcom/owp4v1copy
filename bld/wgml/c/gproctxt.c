@@ -54,14 +54,12 @@
 /*  the others ;,) have no special effect                                  */
 /***************************************************************************/
 
-static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem, int32_t cnt )
+static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
+                         int32_t cnt, uint32_t lm )
 {
+    text_chars  *   tleft;              // first text_char to justify
     text_chars  *   tn;
     text_chars  *   tw;
-    text_chars  *   tp[30];
-    const size_t    tp_max = sizeof( tp ) / sizeof( tp[0] ) - 1;
-    int32_t         tp_ind;
-    int32_t         tp_start;
     int32_t         delta;
     int32_t         loop_cnt;
     int32_t         space = wgml_fonts[0].spc_width;// TBD
@@ -70,20 +68,22 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem, int32_
     char            ch;
     bool            changed;
 
+    tleft = line->first;
+    for( tleft = line->first; tleft->x_address < lm ; tleft = tleft->next ) {
+        if( tleft == NULL ) {
+            return;                     // no justify due to left margin
+        }
+    }
+    if( tleft->next == NULL ) {
+        return;                         // only 1 text_chars no justify
+    }
+
     if( ps_device ) {
         space /= 2;                     // TBD
 //      space -= 3;                     // TBD
     }
 
     changed = false;
-    tp_ind = tp_max;
-    tw = line->first;
-    while( tw != NULL && tp_ind >= 0) { // construct back chain
-        tp[tp_ind] = tw;                // perhaps struct text_chars should
-        tp_ind--;                       // get a prev ptr TBD
-        tw = tw->next;
-    }
-    tp_start = tp_ind + 2;
     delta = *delta0;
     loop_cnt = 3;                       // 3 passes
     while( loop_cnt > 2 && delta >= space ) {   // only 1 pass TBD
@@ -91,9 +91,10 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem, int32_
             space = wgml_fonts[0].spc_width / 2;// TBD
 //          space += loop_cnt - 1;      // TBD
         }
-        tp_ind = tp_start;
-        while( tp_ind < tp_max ) {
-            tw = tp[tp_ind++];
+
+        /* from right to left search for stop chars */
+        for( tw = line->last->prev; tw != tleft; tw = tw->prev ) {
+
             tn = tw->next;
             ch = tw->text[tw->count - 1];
             switch( loop_cnt ) {
@@ -280,11 +281,11 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
         // falltrough
 ************************************** */
     case  ju_on :
-        if( tc->x_address < lm ) {
-            break;                      // left of left margin no justify
-        }
+//      if( tc->x_address < lm ) {
+//          break;                      // left of left margin no justify
+//      }
 
-        puncadj( line, &delta0, rem, cnt - 1 );
+        puncadj( line, &delta0, rem, cnt - 1, lm );
 
         hor_end = tl->x_address + tl->width;// hor end position
         delta0 = rm - hor_end;          // TBD
@@ -459,8 +460,8 @@ void    test_page_full( void )
                 p_char = NULL;
             }
         } else {
-            if( g_cur_v_start + wgml_fonts[g_curr_font_num].line_height
-                    >= g_page_bottom ) {
+//          if( g_cur_v_start + wgml_fonts[g_curr_font_num].line_height
+            if( g_cur_v_start >= g_page_bottom ) { // TBD
                 newpage = widow_check();
                 if( !newpage ) {
                     finish_page();
@@ -606,111 +607,128 @@ void    process_text( char * text, uint8_t font_num )
             p++;
         }
     }
+    n_char = NULL;
     pword = p;                          // remember word start
     while( *p ) {
         if( *p == function_escape ) {   // special sub/superscript...
-            if( p == pword ) {
-                pword = p + 2;          // over function escape codes
-            }
-            p++;
-            switch( *p ) {
-            case   function_subscript :
-                typ = sub;
+            switch( *(p + 1) ) {
+            case function_subscript :   // start of subscript
+                typn = sub;
                 break;
-            case   function_superscript :
-                typ = sup;
+            case function_superscript : // start of superscript
+                typn = sup;
                 break;
-            case   function_end:
-            default:
+            case function_end:
+            case function_sub_end:      // perhaps different action TBD
+            case function_sup_end:
                 typn = norm;
-                *p = ' ';               // force word end
-                p--;
-                *p = ' ';               // replacing function esc codes
-                p--;
                 break;
+            default:
+                out_msg( "gproctxt.c unknown function escape %#.02x\n",
+                         *(p + 1) );
+                wng_count++;
+                show_include_stack();
+                typn = norm;            // set normal mode TBD
             }
-        }
-        p++;
-        if( *p != ' ' ) {               // no space no word end
-            continue;
-        }
-        if( ProcFlags.in_trans && *(p - 1) == in_esc ) {
-            continue;                   // guarded space no word end
-        } else {
+            if( p > pword ) {
+                count = p - pword;      // no of bytes
+
+                n_char = process_word( pword, count, font_num );
+                n_char->type = typ;
+//                n_char->t_flags = 0; // TBD
+            }
+            typ = typn;
+            p += 2;
+            pword = p;
+
+        } else {                        // no function escape
+            p++;
+            if( *p != ' ' ) {           // no space no word end
+                continue;
+            }
+            if( ProcFlags.in_trans && *(p - 1) == in_esc ) {
+                continue;               // guarded space no word end
+            }
             if( !ProcFlags.concat && ((*(p - 1) == ' ') || (*(p + 1) == ' ')) ) {
                 while( *p == ' ' ) {    // more than 1 space no word end
                     p++;                // if .co off
                 }
                 p--;
-            } else {                    // 'word' end
-                count = p - pword;      // no of bytes
-
-                n_char = process_word( pword, count, font_num );
-                n_char->type = typ;
-                typ = typn;
-                if( t_line.first == NULL ) {// first element in output line
-                    ju_x_start = g_cur_h_start;
-                    pre_space = 0;
-                }
-                n_char->x_address = g_cur_h_start + pre_space;
-                input_cbs->fmflags &= ~II_sol;  // no longer at start of line
-
-                /***********************************************************/
-                /*  Test if word exceeds right margin                      */
-                /***********************************************************/
-
-                if( n_char->x_address + n_char->width > g_page_right ) {
-                    pre_space = 0;
-                    process_line_full( &t_line, ProcFlags.concat
-                                          || (ProcFlags.justify > ju_off) );
-                    p_char = NULL;
-                    if( !ProcFlags.page_started ) {
-                        document_new_page();// page was full, start new one
-                        document_top_banner();
-                    }
-                    set_h_start();
-                    n_char->x_address = g_cur_h_start;
-                }
-
-                if( t_line.first == NULL ) {// first element in output line
-                    pre_space = 0;
-                    calc_skip();
-                    test_page_full();
-                    if( !ProcFlags.top_ban_proc ) {
-                        document_new_page();
-                        document_top_banner();
-                    }
-                    t_line.first = n_char;
-                    t_line.y_address = g_cur_v_start;
-                    t_line.line_height = wgml_fonts[font_num].line_height;
-                    ju_x_start = n_char->x_address;
-                    ProcFlags.line_started = true;
-                } else {
-                    p_char->next = n_char;
-                    n_char->prev = p_char;
-                    if( t_line.line_height < wgml_fonts[font_num].line_height ) {
-                        t_line.line_height = wgml_fonts[font_num].line_height;
-                    }
-                }
-                t_line.last  = n_char;
-                p_char = n_char;
-
-                g_cur_h_start = n_char->x_address + n_char->width;
-                ProcFlags.page_started = true;
-                post_space = wgml_fonts[font_num].spc_width;
-                if( is_stop_char( n_char->text[n_char->count - 1] ) ) {
-                     post_space += wgml_fonts[font_num].spc_width;
-                }
-
-                if( ProcFlags.concat ) {// ignore multiple blanks in concat mode
-                    while( *p == ' ' ) {
-                        p++;
-                    }
-                    p--;
-                }
-                pword = p + 1;          // new word start or end of record
+                continue;
             }
         }
+        if( n_char == NULL ) {
+            count = p - pword;          // no of bytes
+
+            n_char = process_word( pword, count, font_num );
+            n_char->type = typ;
+//            n_char->t_flags = 0;      // TBD
+            typ = typn;
+        }
+        if( t_line.first == NULL ) {    // first element in output line
+            ju_x_start = g_cur_h_start;
+            pre_space = 0;
+        }
+        n_char->x_address = g_cur_h_start + pre_space;
+        input_cbs->fmflags &= ~II_sol;  // no longer at start of line
+
+        /***********************************************************/
+        /*  Test if word exceeds right margin                      */
+        /***********************************************************/
+
+        if( n_char->x_address + n_char->width > g_page_right ) {
+            pre_space = 0;
+            process_line_full( &t_line, ProcFlags.concat
+                                  && (ProcFlags.justify > ju_off) );
+            p_char = NULL;
+            if( !ProcFlags.page_started ) {
+                document_new_page();    // page was full, start new one
+                document_top_banner();
+            }
+            set_h_start();
+            n_char->x_address = g_cur_h_start;
+        }
+
+        if( t_line.first == NULL ) {    // first element in output line
+            pre_space = 0;
+            calc_skip();
+            test_page_full();
+            if( !ProcFlags.top_ban_proc ) {
+                document_new_page();
+                document_top_banner();
+            }
+            t_line.first = n_char;
+            t_line.y_address = g_cur_v_start;
+            t_line.line_height = wgml_fonts[font_num].line_height;
+            ju_x_start = n_char->x_address;
+            ProcFlags.line_started = true;
+        } else {
+            p_char->next = n_char;
+            n_char->prev = p_char;
+            if( t_line.line_height < wgml_fonts[font_num].line_height ) {
+                t_line.line_height = wgml_fonts[font_num].line_height;
+            }
+        }
+        t_line.last  = n_char;
+        p_char = n_char;
+
+        g_cur_h_start = n_char->x_address + n_char->width;
+        ProcFlags.page_started = true;
+        post_space = wgml_fonts[font_num].spc_width;
+        if( is_stop_char( n_char->text[n_char->count - 1] ) ) {
+             post_space += wgml_fonts[font_num].spc_width;
+        }
+
+        if( ProcFlags.concat ) {     // ignore multiple blanks in concat mode
+            if( *p == ' ' ) {
+                while( *p == ' ' ) {
+                    p++;
+                }
+            }
+            p--;
+        }
+        pword = p + 1;               // new word start or end of input record
+        n_char = NULL;
     }
     while( *p == ' ' ) {                // ??? TBD
         p--;
@@ -747,7 +765,7 @@ void    process_text( char * text, uint8_t font_num )
         if( n_char->x_address + n_char->width > g_page_right ) {
             pre_space = 0;
             process_line_full( &t_line,
-                               ProcFlags.concat || (ProcFlags.justify > ju_off) );
+                               ProcFlags.concat && (ProcFlags.justify > ju_off) );
             p_char = NULL;
             if( !ProcFlags.page_started ) {
                 document_new_page();
@@ -800,6 +818,9 @@ void    process_text( char * text, uint8_t font_num )
             post_space = 0;
             post_space_save = 0;
             if( input_cbs->fmflags & II_eol ) {
+                scr_process_break();    // TBD
+                p_char = NULL;
+#if 0
                 process_line_full( &t_line, (ProcFlags.justify > ju_off) );
                 p_char = NULL;
                 if( !ProcFlags.page_started ) {
@@ -807,6 +828,7 @@ void    process_text( char * text, uint8_t font_num )
                     document_top_banner();
                 }
                 set_h_start();
+#endif
             }
         }
     }

@@ -134,7 +134,7 @@ void    lay_abspref( const gmltag * entry )
     lay_att             curr;
     att_args            l_args;
     int                 cvterr;
-    int                 x_tag;
+    lay_sub             x_tag;
     abspref_lay_tag *   ap;
 
     p = scan_start;

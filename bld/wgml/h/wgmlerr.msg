@@ -105,8 +105,8 @@ pick( INF_PASS_2,               "  End of pass %s of %s ( %s mode )",
 pick( WNG_IGN_OPTION,           "Option ignored: %s",
                                 "Option ignored: %s" )
 
-pick( WNG_WNG_OPTION,           "Option ignored: %s, formatting may be different",
-                                "Option ignored: %s, formatting may be different" )
+pick( WNG_WNG_OPTION,           "Option ignored: %s, formatting may be different than expected",
+                                "Option ignored: %s, formatting may be different than expected" )
 
 pick( ERR_PU_NUM,               "Workfile number not 1 - 9 Line %s of %s '%s'",
                                 "Workfile number not 1 - 9 Line %s of %s '%s'" )
@@ -132,11 +132,11 @@ pick( ERR_TAG_MACRO,            "The macro '%s' for the gml tag '%s' is not defi
 pick( ERR_IF_INTERN,            "If internal logic error Line %s of %s '%s'",
                                 "If internal logic error Line %s of %s '%s'" )
 
-pick( INF_SUBST_LINE,           "> >%s< <",
-                                "> >%s< <" )
+pick( INF_SUBST_LINE,           ">-V->%s<-V-<",
+                                ">-V->%s<-V-<" )
 
-pick( INF_TEXT_LINE,            ") )%s( (",
-                                ") )%s( (" )
+pick( INF_TEXT_LINE,            ")-T-)%s(-T-(",
+                                ")-T-)%s(-T-(" )
 
 pick( INF_SKIP_LINE,            "Skip line",
                                 "Skip line" )
@@ -372,8 +372,8 @@ pick( ERR_XX_OPT,               "Invalid %s option %s",
 pick( ERR_NESTED_PE,            "Nested .pe not supported",
                                 "Nested .pe not supported" )
 
-pick( INF_ERROR_STOP,           "  Remaining pass(es) skipped due to error count",
-                                "  Remaining pass(es) skipped due to error count" )
+pick( INF_ERROR_STOP,           "  Remaining pass%s skipped due to error count",
+                                "  Remaining pass%s skipped due to error count" )
 
 pick( ERR_PARM_MISSING,         "A control word parameter is required for %s",
                                 "A control word parameter is required for %s" )

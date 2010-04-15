@@ -52,7 +52,7 @@ void    lay_xx( const gmltag * entry )
     lay_att         curr;
     att_args        l_args;
     int             cvterr;
-    int             x_tag;
+    lay_sub         x_tag;
     int8_t      *   iptr;
 
     p = scan_start;

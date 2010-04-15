@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WGML single letter functions &e'    &l'     &u'
-*                                             exist, length, upper
+* Description:  WGML single letter functions &e'    &l'     &u'     &w'
+*                                             exist, length, upper,  width
 *                           &s'        &S'
 *                            subscript, Superscript
 ****************************************************************************/
@@ -69,7 +69,7 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
     **result = '\0';
 
     if( *pchar == '.' ) {
-        pchar++;                        // skip optional terminating dot
+        pchar++;                    // skip optional terminating dot
     }
     ProcFlags.substituted = true;       // something changed
     return( pchar );
@@ -116,8 +116,9 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
     }
     *result  += strlen( *result );
     **result = '\0';
+
     if( *pchar == '.' ) {
-        pchar++;                        // skip optional terminating dot
+        pchar++;                    // skip optional terminating dot
     }
     ProcFlags.substituted = true;       // something changed
     return( pchar );
@@ -126,8 +127,8 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
 
 /***************************************************************************/
 /*  script single letter function &s'         subscript                    */
-/*  script single letter function &S'         supercript                   */
-/*                                                                         */
+/*  script single letter function &S'         superscript                  */
+/*                       subscript or superscript is coded in parm fun     */
 /***************************************************************************/
 
 char    *scr_single_func_sS( char * in, char * end, char * * result, char fun )
@@ -178,7 +179,7 @@ char    *scr_single_func_sS( char * in, char * end, char * * result, char fun )
     **result = '\0';
 
     if( *pchar == '.' ) {
-        pchar++;                        // skip optional terminating dot
+        pchar++;                    // skip optional terminating dot
     }
     ProcFlags.substituted = true;       // something changed
     return( pchar );
@@ -231,7 +232,78 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
     **result = '\0';
 
     if( *pchar == '.' ) {
-        pchar++;                        // skip optional terminating dot
+        pchar++;                    // skip optional terminating dot
+    }
+    ProcFlags.substituted = true;       // something changed
+    return( pchar );
+}
+
+
+/***************************************************************************/
+/*  script single letter function &w'         width                        */
+/*              returns   width in CPI rounded up if neccessary            */
+/*                                                                         */
+/*  some logic has to be in sync with scr_width() in gsfwidth.c            */
+/***************************************************************************/
+
+char    *scr_single_func_w( char * in, char * end, char * * result )
+{
+    char            *   pchar;
+    sub_index           var_ind;
+    symvar              symvar_entry;
+    symsub          *   symsubval;
+    int                 rc;
+    int                 len;
+    uint32_t            width;
+
+    if( *(in + 3) == '&' ) {            // symbol name
+        pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
+
+        if( symvar_entry.flags & local_var ) {  // lookup var in dict
+            rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                var_ind, &symsubval );
+        } else {
+            rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
+                              &symsubval );
+        }
+        if( rc == 2 ) {
+            width = cop_text_width( symsubval->value,
+                                    strlen( symsubval->value ),
+                                    g_curr_font_num);
+        } else {
+
+        /*******************************************************************/
+        /* for undefined variable calc length of name, & and perhaps *     */
+        /*******************************************************************/
+            width = cop_text_width( symvar_entry.name,
+                                    strlen( symvar_entry.name ),
+                                    g_curr_font_num )
+                    + wgml_fonts[g_curr_font_num].width_table['&'];
+
+            if( symvar_entry.flags & local_var ) {  // add width of *
+                width += wgml_fonts[g_curr_font_num].width_table['*'];
+            }
+        }
+    } else {                            // string
+        pchar = in + 3;
+        len = 0;
+        while( !((*pchar == ' ') || (*pchar == '.') || (pchar == end)) ) {
+            len++;
+            pchar++;
+        }
+        width = cop_text_width( in + 3, len, g_curr_font_num );
+    }
+    len = width;
+    width = (width * CPI + g_resh / 2) / g_resh;
+    sprintf( *result, "%d", width );
+#if 0                                   // perhaps as debug output
+    sprintf( *result + strlen( *result ), " %d", len );
+#endif
+    *result  += strlen( *result );
+    **result = '\0';
+
+    if( *pchar == '.' ) {
+        pchar++;                    // skip optional terminating dot
     }
     ProcFlags.substituted = true;       // something changed
     return( pchar );
@@ -265,7 +337,7 @@ static  char    *scr_single_func_unsupport( char * in, char * * result )
 
 
 /***********************************************************************/
-/*  Some single letter functions are implemeted here                   */
+/*  Some single letter functions are implemented here                  */
 /*                                                                     */
 /*  functions used within the OW doc build system:                     */
 /*   &e'  existance of variable 0 or 1                                 */
@@ -277,6 +349,7 @@ static  char    *scr_single_func_unsupport( char * in, char * * result )
 /*                                                                     */
 /*   other single letter functions are not used AFAIK                  */
 /*                                                                     */
+/*   &w'  width for internal use                                       */
 /***********************************************************************/
 
 char    *scr_single_funcs( char * in, char * end, char * * result )
@@ -300,6 +373,9 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
         case  'u' :                     // upper function
             pw = scr_single_func_u( in, end, result );
             break;
+        case  'w' :                     // width function
+            pw = scr_single_func_w( in, end, result );
+            break;
         default:
             pw = scr_single_func_unsupport( in, result );
             wng_count++;
@@ -313,3 +389,5 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
     ProcFlags.substituted = true;
     return( pw );
 }
+
+

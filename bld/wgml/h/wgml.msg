@@ -33,11 +33,11 @@ pick( INF_USE_OPR3,    "\tdefault is srcfile with full line range.",
 pick( INF_USE_OPR4,    "\tShow substituted lines:",
                        "\tShow substituted lines:" )
 
-pick( INF_USE_OPSUB,   "\t> >line with variables substituted< <",
-                       "\t> >line with varibales substituted< <" )
+pick( INF_USE_OPSUB,   "\t>V>line with variables substituted<V<",
+                       "\t>V>line with variables substituted<V<" )
 
-pick( INF_USE_OPRES,   "\t) )resulting text line after macro / tag processing( (",
-                       "\t) )resulting text line after macro / tag processing( (" )
+pick( INF_USE_OPRES,   "\t)T)resulting text line after macro / tag processing(V(",
+                       "\t)T)resulting text line after macro / tag processing(V(" )
 
 pick( INF_USE_BL1,     " ", " " )
 

@@ -217,6 +217,9 @@ void    free_some_mem( void )
     if( buff2 != NULL ) {
         mem_free( buff2 );
     }
+    if( workbuf != NULL ) {
+        mem_free( workbuf );
+    }
     free_layout_banner();
 
     free_pool_storage();
@@ -261,7 +264,7 @@ static  void    get_macro_line( void )
 /*                                                                         */
 /*  returns  false for EOF                                                 */
 /***************************************************************************/
-bool    get_line( void )
+bool    get_line( bool research )
 {
     filecb      *   cb;
     char        *   p;
@@ -317,16 +320,8 @@ bool    get_line( void )
 
                         if( cb->flags & FF_crlf ) {// try to delete CRLF at end
                             p += strlen( p ) - 1;
-                            if( *p == '\r' ) {
+                            while( (*p == '\r') || (*p == '\n')  ) {
                                 *p-- = '\0';
-                                if( *p == '\n' ) {
-                                    *p-- = '\0';
-                                }
-                            } else if( *p == '\n' ) {
-                                *p-- = '\0';
-                                if( *p == '\r' ) {
-                                    *p-- = '\0';
-                                }
                             }
                         }
                     } else {
@@ -350,7 +345,20 @@ bool    get_line( void )
     }
 
     buff2_lg = strnlen_s( buff2, buf_size );
-
+#if 0
+    if( !(input_cbs->fmflags & II_eof) ) {  // for empty physical line
+        if( (input_cbs->fmflags & II_sol) &&
+            (input_cbs->fmflags & II_eol) ) {
+            if( buff2_lg == 0 ) {
+                *buff2   = SCR_char;    // simulate .br input
+                *(buff2 + 1) = 'b';
+                *(buff2 + 2) = 'r';
+                buff2_lg = 3;
+            }
+        }
+    }
+#endif
+#if 1
     if( !ProcFlags.concat ) {
         if( !(input_cbs->fmflags & II_eof) ) {
             if( (input_cbs->fmflags & II_sol) &&
@@ -364,7 +372,7 @@ bool    get_line( void )
             }
         }
     }
-
+#endif
     *(buff2 + buff2_lg) = '\0';
     *(buff2 + buff2_lg + 1) = '\0';
     if( input_cbs->fmflags & II_file ) {
@@ -390,7 +398,7 @@ bool    get_line( void )
     }
 
     if( !(input_cbs->fmflags & II_eof) ) {
-        if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+        if( research && GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
             printf( "%s\n", buff2 );
         }
     }

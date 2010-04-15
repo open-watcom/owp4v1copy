@@ -64,7 +64,7 @@ extern  void    free_some_mem( void );
 extern  void    free_layout_banner( void );
 extern  void    g_banner( void );
 // extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
-extern  bool    get_line( void );
+extern  bool    get_line( bool researchoutput );
 extern  void    inc_inc_level( void );
 
 #pragma aux     my_exit aborts;
@@ -214,6 +214,12 @@ extern  void    print_GML_tags_research( void );
 extern  void    add_SCR_tag_research( char * tag );
 extern  void    free_SCR_tags_research( void );
 extern  void    print_SCR_tags_research( void );
+extern  void    add_single_func_research( char * in );
+extern  void    free_single_funcs_research( void );
+extern  void    print_single_funcs_research( void );
+extern  void    add_multi_func_research( char * in );
+extern  void    free_multi_funcs_research( void );
+extern  void    print_multi_funcs_research( void );
 extern  void    printf_research( char * msg, ... );
 extern  void    test_out_t_line( text_line  * a_line );
 
@@ -235,6 +241,7 @@ extern  char    *   scr_single_funcs( char * in, char * end, char * * result );
 extern  char    *   scr_single_func_e( char * in, char * end, char * * result );
 extern  char    *   scr_single_func_l( char * in, char * end, char * * result );
 extern  char    *   scr_single_func_u( char * in, char * end, char * * result );
+extern  char    *   scr_single_func_w( char * in, char * end, char * * result );
 
 
 /* gsgoto.c                           */

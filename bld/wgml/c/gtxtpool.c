@@ -47,7 +47,6 @@
 /*  allocate / reuse and init a text_chars instance                        */
 /*      optionally fill in text                                            */
 /***************************************************************************/
-
 text_chars  * alloc_text_chars( char * p, size_t cnt, uint8_t font_num )
 {
     text_chars   *   curr;
@@ -67,6 +66,22 @@ text_chars  * alloc_text_chars( char * p, size_t cnt, uint8_t font_num )
     } else {                            // no one large enough found
         curr = mem_alloc( sizeof( *curr ) + cnt );
         curr->length = cnt;             // set max text size
+
+        if( text_pool == NULL ) {       // alloc 10 text_chars if pool empty
+            int k;
+
+#define text_def    16              // default length if allocated in advance
+
+            text_pool = mem_alloc( sizeof( *prev ) + text_def );
+            prev = text_pool;
+            for( k = 0; k < 10; k++ ) {
+                prev->length = text_def;
+                prev->next = mem_alloc( sizeof( *prev ) + text_def );
+                prev = prev->next;
+            }
+            prev->next = NULL;
+            prev->length = text_def;
+        }
     }
 
     curr->prev = NULL;
@@ -115,13 +130,23 @@ void    add_text_chars_to_pool( text_line * a_line )
 
 text_line   * alloc_text_line( void )
 {
-    text_line    *   curr;
+    text_line   *   curr;
+    text_line   *   prev;
+    int             k;
 
     curr = line_pool;
     if( curr != NULL ) {                // there is one to use
         line_pool = curr->next;
     } else {                            // pool is empty
         curr = mem_alloc( sizeof( text_line ) );
+
+        line_pool = mem_alloc( sizeof( *prev ) );
+        prev = line_pool;
+        for( k = 0; k < 10; k++ ) {     // alloc 10 text_lines if pool empty
+            prev->next = mem_alloc( sizeof( *prev ) );
+            prev = prev->next;
+        }
+        prev->next = NULL;
     }
 
     curr->next = NULL;
@@ -155,14 +180,23 @@ void    add_text_line_to_pool( text_line * a_line )
 tag_cb  * alloc_tag_cb( void )
 {
     tag_cb  *   curr;
+    tag_cb  *   prev;
+    int         k;
 
     curr = tag_pool;
     if( curr != NULL ) {                // there is one to use
         tag_pool = curr->prev;
     } else {                            // pool is empty
         curr = mem_alloc( sizeof( tag_cb ) );
-    }
 
+        prev = mem_alloc( sizeof( *prev ) );
+        tag_pool = prev;
+        for( k = 0; k < 10; k++ ) { // alloc 10 tag_cb if pool empty
+            prev->prev = mem_alloc( sizeof( *prev ) );
+            prev = prev->prev;
+        }
+        prev->prev = NULL;
+    }
     curr->prev = NULL;
     curr->c_tag = t_NONE;
 
@@ -185,41 +219,38 @@ void    add_tag_cb_to_pool( tag_cb * a_cb )
     tag_pool = a_cb;
 }
 
+
 /***************************************************************************/
 /*  free all elements of our storage pools                                 */
 /***************************************************************************/
 
 void    free_pool_storage( void )
 {
-    tag_cb      *cwk;
-    tag_cb      *cw = tag_pool;
-    text_line   *lwk;
-    text_line   *lw = line_pool;
-    text_chars  *wk;
-    text_chars  *w = text_pool;
+    void    *   v;
+    void    *   wv;
 
-    while( w != NULL ) {
-       wk = w->next;
-       mem_free( w );
-       w = wk;
+    for( v = text_pool; v != NULL; ) {
+        wv = ( (text_chars *) v)->next;
+        mem_free( v );
+        v = wv;
     }
 
-    w = t_line.first;
-    while( w != NULL ) {
-       wk = w->next;
-       mem_free( w );
-       w = wk;
+    for( v = t_line.first; v != NULL; ) {
+        wv = ( (text_chars *) v)->next;
+        mem_free( v );
+        v = wv;
     }
 
-    while( lw != NULL ) {
-       lwk = lw->next;
-       mem_free( lw );
-       lw = lwk;
+    for( v = line_pool; v != NULL; ) {
+        wv = ( (text_line *) v)->next;
+        mem_free( v );
+        v = wv;
     }
-    while( cw != NULL ) {
-       cwk = cw->prev;
-       mem_free( cw );
-       cw = cwk;
+
+    for( v = tag_pool; v != NULL; ) {
+        wv = ( (tag_cb *) v)->prev;
+        mem_free( v );
+        v = wv;
     }
 }
 
