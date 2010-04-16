@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  RDOS helper routines for TLS. 
 ;*
 ;*****************************************************************************
 
@@ -48,9 +47,19 @@ __tls_array = 2Ch
 
 ; RDOS gate definitions
 
-wait_milli_nr				= 25
-create_thread_nr	        = 28
+wait_milli_nr	            = 25
+create_thread_nr            = 28
 terminate_thread_nr         = 29
+
+; Call gate segment declaration
+CGATE           SEGMENT AT 2
+ORG     wait_milli_nr
+wait_milli          label byte
+ORG     create_thread_nr
+create_thread       label byte
+ORG     terminate_thread_nr
+terminate_thread    label byte
+CGATE           ENDS
 
 DGROUP          GROUP   CONST,CONST2,_DATA,_BSS
 
@@ -116,9 +125,7 @@ __tls_set_done:
     ret
 
 __task_end:
-	db 9Ah                  ; call to terminate thread
-	dd terminate_thread_nr
-	dw 2
+        call far ptr terminate_thread   ; won't return
 
 __task_start:
 	mov ax,ds
@@ -143,14 +150,10 @@ __create_thread:
 	mov fs:__pv_arbitrary,eax
 	mov bx,fs
 	mov ax,2
-	db 9Ah                  ; call to create thread
-	dd create_thread_nr
-	dw 2
+	call far ptr create_thread
 ;
 	mov eax,10
-	db 9Ah                  ; call to wait milli
-	dd wait_milli_nr
-	dw 2
+	call far ptr wait_milli
 ;
 	popad
 	pop ds
