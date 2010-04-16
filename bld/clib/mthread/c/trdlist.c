@@ -61,7 +61,7 @@ thread_data *__GetThreadData( void )
             tdata = __AllocInitThreadData( tdata );
             if( tdata != NULL ) {
                 if( __initthread( tdata ) ) {
-                    lib_free( tdata );
+                    __FreeInitThreadData( tdata );
                     tdata = NULL;
                 } else {
                     __ThreadData[tid].data = tdata;
@@ -86,7 +86,7 @@ thread_data *__GetThreadData( void )
                 tdata = __AllocInitThreadData( tdata );
                 if( tdata != NULL ) {
                     if( !__AddThreadData( tid, tdata ) ) {
-                        lib_free( tdata );
+                        __FreeInitThreadData( tdata );
                         tdata = NULL;
                     }
                 }
