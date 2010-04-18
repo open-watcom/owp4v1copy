@@ -61,6 +61,12 @@ void CDrawingView::OnInitialUpdate()
     SetScrollSizes( MM_LOENGLISH, GetDocument()->GetDrawingSize() );
 }
 
+BOOL CDrawingView::OnPreparePrinting( CPrintInfo *pInfo )
+{
+    // Do the default preparation.
+    return( DoPreparePrinting( pInfo ) );
+}
+
 void CDrawingView::OnLButtonDown( UINT nFlags, CPoint point )
 {
     CScrollView::OnLButtonDown( nFlags, point );

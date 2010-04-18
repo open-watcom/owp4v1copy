@@ -23,6 +23,7 @@ public:
 
     virtual void    OnDraw( CDC *pDC );
     virtual void    OnInitialUpdate();
+    virtual BOOL    OnPreparePrinting( CPrintInfo *pInfo );
 
     CDrawingDoc *GetDocument() const;
     
