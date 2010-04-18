@@ -275,7 +275,10 @@ BOOL CView::DoPrintPreview( UINT nIDResource, CView *pPrintView,
     ASSERT( pPreviewView->IsKindOf( RUNTIME_CLASS( CPreviewView ) ) );
     pPreviewView->m_pOrigView = this;
     pPreviewView->m_pPreviewState = pState;
-    pPreviewView->SetPrintView( pPrintView );
+    if( !pPreviewView->SetPrintView( pPrintView ) ) {
+        delete pPreviewView;
+        return( FALSE );
+    }
     
     CFrameWnd *pFrame = GetTopLevelFrame();
     ASSERT( pFrame != NULL );
