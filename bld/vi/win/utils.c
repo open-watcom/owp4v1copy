@@ -405,7 +405,9 @@ void MyDelay( int ms )
 
 void MyBeep( void )
 {
-    MessageBeep( -1 );
+    if( EditFlags.BeepFlag ) {
+        MessageBeep( -1 );
+    }
 }
 
 static char oldPath[FILENAME_MAX];
