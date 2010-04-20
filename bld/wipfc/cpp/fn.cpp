@@ -47,13 +47,15 @@ Lexer::Token Fn::parse( Lexer* lexer )
     Lexer::Token tok( parseAttributes( lexer ) );
     bool done( false );
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC)) {
-        if( parseInline( lexer, tok ) ) {
-            if( lexer->tagId() == Lexer::EFN ) {
-                tok = Tag::parseAttributes( lexer );
-                break;
+        if( lexer->tagId() == Lexer::EFN ) {
+            tok = Tag::parseAttributes( lexer );
+            break;
+        }
+        else if( parseInline( lexer, tok ) ) {
+            if( parseBlock( lexer, tok ) ) {
+                if( parseListBlock( lexer, tok ) )
+                    parseCleanup( lexer, tok );
             }
-            else if( parseBlock( lexer, tok ) )
-                parseCleanup( lexer, tok );
         }
     }
     return tok;
