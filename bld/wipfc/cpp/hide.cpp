@@ -62,6 +62,12 @@ Lexer::Token Hide::parse( Lexer* lexer )
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
             if( key == L"key" ) {
+                //kill of all other "'"
+                std::wstring::size_type index( value.find( L'\'', 0 ) );
+                while( index != std::wstring::npos ) {
+                    value.erase( index, 1 );
+                    index = value.find( L'\'', index );
+                }
                 keyPhrase = value;
             }
             else
