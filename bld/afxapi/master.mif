@@ -26,6 +26,8 @@ headers =               &
         afxdd_.h        &
         afxdlgs.h       &
         afxdlgs.inl     &
+        afxdtctl.h      &
+        afxdtctl.inl    &
         afxext.h        &
         afxext.inl      &
         afxmsg_.h       &
@@ -82,6 +84,7 @@ objs =                  &
         ctrlbar.obj     &
         ctrlview.obj    &
         dataexch.obj    &
+        datetime.obj    &
         dc.obj          &
         debug.obj       &
         dialog.obj      &
@@ -146,6 +149,7 @@ objs =                  &
         minidock.obj    &
         minifwnd.obj    &
         modstate.obj    &
+        monthcal.obj    &
         mtstate.obj     &
         multidoc.obj    &
         notrack.obj     &

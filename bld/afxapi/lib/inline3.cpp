@@ -36,6 +36,9 @@
     #error Only the debug build should contain inline3.cpp.
 #endif
 
+#include <afxdtctl.h>
+
 #undef AFX_INLINE
 #define AFX_INLINE
 #include <afxcmn1.inl>
+#include <afxdtctl.inl>
