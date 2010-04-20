@@ -100,8 +100,10 @@ Lexer::Token I2::parseAttributes( Lexer* lexer )
                 document->printError( ERR1_ATTRNOTDEF );
         }
         else if( tok == Lexer::FLAG ) {
-            if( lexer->text() == L"global" )
-                index->setGlobal();
+            if( lexer->text() == L"global" ) {
+                if( !document->isInf() )    //only for hlp files
+                    index->setGlobal();
+            }
             else
                 document->printError( ERR1_ATTRNOTDEF );
         }
