@@ -83,25 +83,46 @@ int                 Values[ NUMSECT ] = {   /* Scaled with max of 100 */
     20, 30, 40, 35, 50, 60, 75, 70, 80, 90
 };
 
+#define _MAX 63   // 6 colour bits
 
-int main( void )
-/*============*/
+
+static void FadeColors( void )
+/*============================
+
+    This routine gradually fades the background text, brightening
+    the foreground text and the border at the same time. */
+
 {
-    int     i;
+    int                 i;
+    long                red, blue, green;
 
-    if( !InitScreen() ) {
-        puts( "No graphics adapter present" );
-        return( 1 );
+    for( i = 1; i <= _MAX; i++ ) {
+        red = i;
+        green = i << 8;
+        blue = (long) ( _MAX - i ) << 16;
+        _remappalette( TextColour, blue );
+        _remappalette( TextColour2, blue + green );
+        _remappalette( BorderColour, red );
+        delay( 75 );
     }
-    Do_Demo1();
-    Press_any_key();
+}
 
-    for( i = 0; modes[i]; ++i ) {
-        Do_Demo2( modes[i] );
-    }
-    _setvideomode( _DEFAULTMODE );      /* reset the screen */
 
-    return( 0 );
+static void DrawText( short width, short y )
+/*==========================================
+
+    This routine displays the text strings. */
+
+{
+    int                 xc;
+
+    xc = VC.numxpixels / 2;
+    _setcharsize( width, width );
+    _settextalign( _CENTER, _BOTTOM );
+    _grtext( xc, y, "Graph Library" );
+    _setcharsize( width, width );
+    _settextalign( _CENTER, _TOP );
+    _grtext( xc, VC.numypixels - y, "TEST" );
 }
 
 
@@ -144,23 +165,6 @@ static void Press_any_key( void )
     getch();
 }
 
-
-static void DrawText( short width, short y )
-/*==========================================
-
-    This routine displays the text strings. */
-
-{
-    int                 xc;
-
-    xc = VC.numxpixels / 2;
-    _setcharsize( width, width );
-    _settextalign( _CENTER, _BOTTOM );
-    _grtext( xc, y, "Graph Library" );
-    _setcharsize( width, width );
-    _settextalign( _CENTER, _TOP );
-    _grtext( xc, VC.numypixels - y, "TEST" );
-}
 
 static void mess_with_stride( void )
 {
@@ -229,48 +233,6 @@ static int InitScreen( void )
         _remappalette( BorderColour, _BLACK );  /* black      */
     }
     return( 1 );
-}
-
-
-#define _MAX 63   // 6 colour bits
-
-
-static void FadeColors( void )
-/*============================
-
-    This routine gradually fades the background text, brightening
-    the foreground text and the border at the same time. */
-
-{
-    int                 i;
-    long                red, blue, green;
-
-    for( i = 1; i <= _MAX; i++ ) {
-        red = i;
-        green = i << 8;
-        blue = (long) ( _MAX - i ) << 16;
-        _remappalette( TextColour, blue );
-        _remappalette( TextColour2, blue + green );
-        _remappalette( BorderColour, red );
-        delay( 75 );
-    }
-}
-
-
-void Do_Demo2( short mode )
-/*=========================
-
-    This program draws bar and pie graphs for the
-    data specified above. */
-
-{
-    if( !_setvideomode( mode ) ) return;
-    _getvideoconfig( &VC ); /* fill videoconfig structure */
-    TitleColour = ( VC.numcolors - 1 ) % 16;
-    Title();
-    BarGraph();
-    PieGraph();
-    Press_any_key();
 }
 
 
@@ -417,4 +379,42 @@ static void PieGraph( void )
         x3 = x4;
         y3 = y4;
     }
+}
+
+
+void Do_Demo2( short mode )
+/*=========================
+
+    This program draws bar and pie graphs for the
+    data specified above. */
+
+{
+    if( !_setvideomode( mode ) ) return;
+    _getvideoconfig( &VC ); /* fill videoconfig structure */
+    TitleColour = ( VC.numcolors - 1 ) % 16;
+    Title();
+    BarGraph();
+    PieGraph();
+    Press_any_key();
+}
+
+
+int main( void )
+/*============*/
+{
+    int     i;
+
+    if( !InitScreen() ) {
+        puts( "No graphics adapter present" );
+        return( 1 );
+    }
+    Do_Demo1();
+    Press_any_key();
+
+    for( i = 0; modes[i]; ++i ) {
+        Do_Demo2( modes[i] );
+    }
+    _setvideomode( _DEFAULTMODE );      /* reset the screen */
+
+    return( 0 );
 }
