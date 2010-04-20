@@ -866,8 +866,8 @@ class CDataExchange {
 public:
     CWnd    *m_pDlgWnd;
     BOOL    m_bSaveAndValidate;
-private:
     UINT    m_idLastControl;
+private:
     BOOL    m_bEditLastControl;
     
 public:

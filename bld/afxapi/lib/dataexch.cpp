@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -110,6 +110,38 @@ void AFXAPI DDV_MinMaxByte( CDataExchange *pDX, BYTE value, BYTE minVal, BYTE ma
             pDX->Fail();
         }
     }
+}
+
+void AFXAPI DDV_MinMaxDateTime( CDataExchange *pDX, CTime &refValue,
+                                const CTime *refMinRange, const CTime *refMaxRange )
+/**********************************************************************************/
+{
+    ASSERT( refMinRange == NULL || refMaxRange == NULL || *refMinRange <= *refMaxRange );
+    ASSERT( pDX->m_pDlgWnd != NULL );
+
+    if( !pDX->m_bSaveAndValidate ) {
+        if( *refMinRange != NULL && refValue < *refMinRange ) {
+            return;
+        }
+        if( *refMaxRange != NULL && refValue > *refMaxRange ) {
+            return;
+        }
+    }
+    
+    HWND hWnd = ::GetDlgItem( pDX->m_pDlgWnd->m_hWnd, pDX->m_idLastControl );
+    ASSERT( hWnd != NULL );
+
+    SYSTEMTIME  st[2];
+    UINT        nFlags = 0;
+    if( refMinRange != NULL ) {
+        refMinRange->GetAsSystemTime( st[0] );
+        nFlags |= GDTR_MIN;
+    }
+    if( refMaxRange != NULL ) {
+        refMaxRange->GetAsSystemTime( st[1] );
+        nFlags |= GDTR_MAX;
+    }
+    ::SendMessage( hWnd, DTM_SETRANGE, nFlags, (LPARAM)&st );
 }
 
 void AFXAPI DDV_MinMaxDouble( CDataExchange *pDX, const double &value, double minVal,
@@ -224,6 +256,38 @@ void AFXAPI DDV_MinMaxLongLong( CDataExchange *pDX, LONGLONG value, LONGLONG min
     }
 }
 
+void AFXAPI DDV_MinMaxMonth( CDataExchange *pDX, CTime &refValue,
+                             const CTime *refMinRange, const CTime *refMaxRange )
+/*******************************************************************************/
+{
+    ASSERT( refMinRange == NULL || refMaxRange == NULL || *refMinRange <= *refMaxRange );
+    ASSERT( pDX->m_pDlgWnd != NULL );
+
+    if( !pDX->m_bSaveAndValidate ) {
+        if( *refMinRange != NULL && refValue < *refMinRange ) {
+            return;
+        }
+        if( *refMaxRange != NULL && refValue > *refMaxRange ) {
+            return;
+        }
+    }
+    
+    HWND hWnd = ::GetDlgItem( pDX->m_pDlgWnd->m_hWnd, pDX->m_idLastControl );
+    ASSERT( hWnd != NULL );
+
+    SYSTEMTIME  st[2];
+    UINT        nFlags = 0;
+    if( refMinRange != NULL ) {
+        refMinRange->GetAsSystemTime( st[0] );
+        nFlags |= GDTR_MIN;
+    }
+    if( refMaxRange != NULL ) {
+        refMaxRange->GetAsSystemTime( st[1] );
+        nFlags |= GDTR_MAX;
+    }
+    ::SendMessage( hWnd, MCM_SETRANGE, nFlags, (LPARAM)&st );
+}
+
 void AFXAPI DDV_MinMaxShort( CDataExchange *pDX, short value, short minVal,
                              short maxVal )
 /*****************************************/
@@ -241,6 +305,24 @@ void AFXAPI DDV_MinMaxShort( CDataExchange *pDX, short value, short minVal,
             pDX->Fail();
         }
     }
+}
+
+void AFXAPI DDV_MinMaxSlider( CDataExchange *pDX, DWORD value,
+                              DWORD minVal, DWORD maxVal )
+/********************************************************/
+{
+    ASSERT( minVal <= maxVal );
+    ASSERT( pDX->m_pDlgWnd != NULL );
+
+    if( !pDX->m_bSaveAndValidate && (value < minVal || value > maxVal) ) {
+        return;
+    }
+    
+    HWND hWnd = ::GetDlgItem( pDX->m_pDlgWnd->m_hWnd, pDX->m_idLastControl );
+    ASSERT( hWnd != NULL );
+
+    ::SendMessage( hWnd, TBM_SETRANGEMIN, FALSE, minVal );
+    ::SendMessage( hWnd, TBM_SETRANGEMAX, TRUE, maxVal );
 }
 
 void AFXAPI DDV_MinMaxUInt( CDataExchange *pDX, UINT value, UINT minVal, UINT maxVal )
@@ -368,6 +450,31 @@ void AFXAPI DDX_Control( CDataExchange *pDX, int nIDC, CWnd &rControl )
     }
 }
 
+void AFXAPI DDX_DateTimeCtrl( CDataExchange *pDX, int nIDC, CTime &value )
+/************************************************************************/
+{
+    SYSTEMTIME  st;
+    HWND        hWnd = pDX->PrepareCtrl( nIDC );
+    if( pDX->m_bSaveAndValidate ) {
+        ::SendMessage( hWnd, DTM_GETSYSTEMTIME, 0, (LPARAM)&st );
+        value = CTime( st ).GetTime();
+    } else {
+        value.GetAsSystemTime( st );
+        ::SendMessage( hWnd, DTM_SETSYSTEMTIME, GDT_VALID, (LPARAM)&st );
+    }
+}
+
+void AFXAPI DDX_IPAddress( CDataExchange *pDX, int nIDC, DWORD &value )
+/*********************************************************************/
+{
+    HWND hWnd = pDX->PrepareCtrl( nIDC );
+    if( pDX->m_bSaveAndValidate ) {
+        ::SendMessage( hWnd, IPM_GETADDRESS, 0, (LPARAM)&value );
+    } else {
+        ::SendMessage( hWnd, IPM_SETADDRESS, 0, value );
+    }
+}
+
 void AFXAPI DDX_LBIndex( CDataExchange *pDX, int nIDC, int &index )
 /*****************************************************************/
 {
@@ -418,6 +525,20 @@ void AFXAPI DDX_LBStringExact( CDataExchange *pDX, int nIDC, CString &value )
         int index = (int)::SendMessage( hWnd, LB_FINDSTRINGEXACT, -1,
                                         (LPARAM)(LPCTSTR)value );
         ::SendMessage( hWnd, LB_SETCURSEL, index, 0L );
+    }
+}
+
+void AFXAPI DDX_MonthCalCtrl( CDataExchange *pDX, int nIDC, CTime &value )
+/************************************************************************/
+{
+    SYSTEMTIME  st;
+    HWND        hWnd = pDX->PrepareCtrl( nIDC );
+    if( pDX->m_bSaveAndValidate ) {
+        ::SendMessage( hWnd, MCM_GETCURSEL, 0, (LPARAM)&st );
+        value = CTime( st ).GetTime();
+    } else {
+        value.GetAsSystemTime( st );
+        ::SendMessage( hWnd, MCM_SETCURSEL, 0, (LPARAM)&st );
     }
 }
 
@@ -473,6 +594,17 @@ void AFXAPI DDX_Scroll( CDataExchange *pDX, int nIDC, int &value )
         value = ::GetScrollPos( hWnd, SB_CTL );
     } else {
         ::SetScrollPos( hWnd, SB_CTL, value, TRUE );
+    }
+}
+
+void AFXAPI DDX_Slider( CDataExchange *pDX, int nIDC, int &value )
+/****************************************************************/
+{
+    HWND hWnd = pDX->PrepareCtrl( nIDC );
+    if( pDX->m_bSaveAndValidate ) {
+        value = (int)::SendMessage( hWnd, TBM_GETPOS, 0, 0L );
+    } else {
+        ::SendMessage( hWnd, TBM_SETPOS, TRUE, value );
     }
 }
 
