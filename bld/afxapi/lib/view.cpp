@@ -116,7 +116,6 @@ void CView::OnEndPrintPreview( CDC *pDC, CPrintInfo *pInfo, POINT point,
     ASSERT( pFrame != NULL );
     CPrintPreviewState *pState = pView->m_pPreviewState;
     ASSERT( pState != NULL );
-    ASSERT( pState->pViewActiveOld != NULL );
     pFrame->SetActiveView( pState->pViewActiveOld );
     pFrame->OnSetPreviewMode( FALSE, pState );
     pView->DestroyWindow();
