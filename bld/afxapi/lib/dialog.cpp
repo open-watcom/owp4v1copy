@@ -40,9 +40,10 @@ INT_PTR CALLBACK AfxDlgProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
     
     if( message == WM_INITDIALOG ) {
         CDialog *pDialog = (CDialog *)CWnd::FromHandlePermanent( hWnd );
-        if( pDialog != NULL ) {
-            ASSERT( pDialog->IsKindOf( RUNTIME_CLASS( CDialog ) ) );
+        if( pDialog != NULL && pDialog->IsKindOf( RUNTIME_CLASS( CDialog ) ) ) {
             return( pDialog->OnInitDialog() );
+        } else {
+            return( 1 );
         }
     }
     return( 0 );
