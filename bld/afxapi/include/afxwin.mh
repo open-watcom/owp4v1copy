@@ -1940,6 +1940,7 @@ public:
     
 protected:
     afx_msg int     OnCreate( LPCREATESTRUCT lpCreateStruct );
+    afx_msg BOOL    OnEraseBkgnd( CDC *pDC );
     afx_msg void    OnPaint();
     afx_msg void    OnFilePrint();
     afx_msg void    OnFilePrintPreview();

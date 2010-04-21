@@ -52,6 +52,7 @@ IMPLEMENT_DYNAMIC( CView, CWnd )
 
 BEGIN_MESSAGE_MAP( CView, CWnd )
     ON_WM_CREATE()
+    ON_WM_ERASEBKGND()
     ON_WM_PAINT()
     ON_MESSAGE_VOID( WM_INITIALUPDATE, OnInitialUpdate )
 END_MESSAGE_MAP()
@@ -324,6 +325,17 @@ int CView::OnCreate( LPCREATESTRUCT lpCreateStruct )
         pContext->m_pCurrentDoc->AddView( this );
     }
     return( 0 );
+}
+
+BOOL CView::OnEraseBkgnd( CDC *pDC )
+/**********************************/
+{
+    RECT    rect;
+    CBrush  br;
+    ::GetClientRect( m_hWnd, &rect );
+    br.CreateSysColorBrush( COLOR_WINDOW );
+    pDC->FillRect( &rect, &br );
+    return( TRUE );
 }
 
 void CView::OnPaint()
