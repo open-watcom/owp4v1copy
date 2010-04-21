@@ -1976,6 +1976,15 @@ AFX_INLINE void CMDIFrameWnd::MDICascade( int nType )
     ::SendMessage( m_hWndMDIClient, WM_MDICASCADE, nType, 0L );
 }
 
+AFX_INLINE void CMDIChildWnd::MDIDestroy()
+/****************************************/
+{
+    CMDIFrameWnd *pFrame = GetMDIFrame();
+    ASSERT( pFrame != NULL );
+    ASSERT( pFrame->m_hWndMDIClient != NULL ) ;
+    ::SendMessage( pFrame->m_hWndMDIClient, WM_MDIDESTROY, (WPARAM)m_hWnd, 0L );
+}
+
 AFX_INLINE CMDIChildWnd *CMDIFrameWnd::MDIGetActive( BOOL *pbMaximized ) const
 /****************************************************************************/
 {

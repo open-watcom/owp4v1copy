@@ -305,18 +305,7 @@ LRESULT CWnd::DefWindowProc( UINT message, WPARAM wParam, LPARAM lParam )
 BOOL CWnd::DestroyWindow()
 /************************/
 {
-    BOOL bResult = ::DestroyWindow( m_hWnd );
-    AFX_MODULE_THREAD_STATE *pState = AfxGetModuleThreadState();
-    ASSERT( pState != NULL );
-    CHandleMap *pHandleMap = pState->m_pmapHWND;
-    ASSERT( pHandleMap != NULL );
-    CWnd *pWnd = (CWnd *)pHandleMap->LookupPermanent( m_hWnd );
-    if( pWnd != NULL && pWnd != this ) {
-        pWnd->m_hWnd = NULL;
-    }
-    pHandleMap->RemoveHandle( m_hWnd );
-    m_hWnd = NULL;
-    return( bResult );
+    return( ::DestroyWindow( m_hWnd ) );
 }
 
 void CWnd::DoDataExchange( CDataExchange *pDX )

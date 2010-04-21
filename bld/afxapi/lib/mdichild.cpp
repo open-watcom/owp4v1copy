@@ -227,23 +227,6 @@ CMDIFrameWnd *CMDIChildWnd::GetMDIFrame()
     return( pFrame );
 }
 
-void CMDIChildWnd::MDIDestroy()
-/*****************************/
-{
-    CMDIFrameWnd *pFrame = GetMDIFrame();
-    ASSERT( pFrame != NULL );
-    ASSERT( pFrame->m_hWndMDIClient != NULL ) ;
-    ::SendMessage( pFrame->m_hWndMDIClient, WM_MDIDESTROY, (WPARAM)m_hWnd, 0L );
-
-    AFX_MODULE_THREAD_STATE *pState = AfxGetModuleThreadState();
-    ASSERT( pState != NULL );
-    CHandleMap *pHandleMap = pState->m_pmapHWND;
-    ASSERT( pHandleMap != NULL );
-    ASSERT( pHandleMap->LookupPermanent( m_hWnd ) == this );
-    pHandleMap->RemoveHandle( m_hWnd );
-    m_hWnd = NULL;
-}
-
 void CMDIChildWnd::SetHandles( HMENU hMenu, HACCEL hAccel )
 /*********************************************************/
 {
