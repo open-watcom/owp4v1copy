@@ -56,7 +56,7 @@ Lexer::Token Warning::parse( Lexer* lexer )
             if( key == L"text" ) {
                 temp = L":hp2.";
                 temp += value;
-                temp += L":ehp2.";
+                temp += L"  :ehp2.";
             }
             else
                 document->printError( ERR1_ATTRNOTDEF );
@@ -74,7 +74,7 @@ Lexer::Token Warning::parse( Lexer* lexer )
     if( temp.empty() ) {
         temp = L":hp2.";
         temp += document->warning();
-        temp += L":ehp2.";
+        temp += L"  :ehp2.";
     }
     document->pushInput( new IpfBuffer( fname, document->dataLine(),
         document->dataCol(), temp ) );
@@ -91,8 +91,6 @@ Lexer::Token Warning::parse( Lexer* lexer )
     whiteSpace = Tag::NONE;
     document->setBlockParsing( oldBlockParsing );
     document->popInput();
-    appendChild( new WhiteSpace( document, this, document->dataName(), document->lexerLine(),
-        document->lexerCol(), L"  ", Tag::LITERAL, false ) );
     tok = document->getNextToken(); //next token from main stream
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC)) {
         if( parseInline( lexer, tok ) ) {
@@ -105,14 +103,7 @@ Lexer::Token Warning::parse( Lexer* lexer )
                 lexer->tagId() == Lexer::H5 ||
                 lexer->tagId() == Lexer::H6 ||
                 lexer->tagId() == Lexer::ACVIEWPORT ||
-                lexer->tagId() == Lexer::CAUTION ||
-                lexer->tagId() == Lexer::ECAUTION ||
-                lexer->tagId() == Lexer::FN ||
-                lexer->tagId() == Lexer::NOTE ||
-                lexer->tagId() == Lexer::NT ||
-                lexer->tagId() == Lexer::ENT ||
-                lexer->tagId() == Lexer::WARNING ||
-                lexer->tagId() == Lexer::EWARNING )
+                lexer->tagId() == Lexer::FN )
                     parseCleanup( lexer, tok );
             else if( parseBlock( lexer, tok ) ) {
                 if( parseListBlock( lexer, tok ) )
