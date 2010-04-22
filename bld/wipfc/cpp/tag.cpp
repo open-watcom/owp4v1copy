@@ -393,6 +393,11 @@ bool Tag::parseInline( Lexer* lexer, Lexer::Token& tok )
 bool Tag::parseBlock( Lexer* lexer, Lexer::Token& tok )
 {
     bool notHandled( false );
+    if( !document->autoSpacing() ) {    //tag came after a word-punct combo
+        document->toggleAutoSpacing();
+        document->lastText()->setToggleSpacing();
+        document->setLastPrintable( Lexer::TAG, 0 );
+    }
     if( tok == Lexer::TAG ) {
         switch( lexer->tagId() ) {
         //make new tag
