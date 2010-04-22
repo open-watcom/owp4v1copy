@@ -61,6 +61,7 @@
 !inject cmix        dos                      os2           win # depends on zoom, etc.
 !inject fmix        dos                      os2           win # depends on zoom, etc.
 !inject wgmlref                                        ps
+!inject wipfc       dos  html  htmlhelp  nt  os2  pdf  ps  win
 
 !ifndef dotarget
 !error $$(dotarget) unset for documentation. Must be dos, html, htmlhelp, nt, os2, pdf, ps or win.
@@ -605,6 +606,14 @@ book_objs_ps=$(objs_wgmlref_ps)
 book_incs=$(incs_wgmlref)
 book_bmroot=$(bmroot_wgmlref)
 book_src=rfman
+book_multi_chapter=1
+
+!else ifeq hbook wipfc
+# wipfc
+book_title=OS/2 Help Compiler Reference Manual
+book_objs=$(objs_wipfc)
+book_incs=$(incs_wipfc)
+book_src=wipfc
 book_multi_chapter=1
 
 !else

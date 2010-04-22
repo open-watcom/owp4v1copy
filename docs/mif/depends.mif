@@ -3074,3 +3074,61 @@ objs_wgmlref = &
     $(wgmlref_dir)rftut.gml &
     $(wgmlref_dir)rftuxmp.gml &
     $(wgmlref_dir)wbsymbol.gml
+
+# wipfc sub-directory
+wipfc_dir = $(docsrc_dir)$(SL)wipfc$(SL)
+bmroot_wipfc = $(docsrc_dir)$(SL)wipfc
+incs_wipfc = $(docsrc_dir)$(SL)wipfc
+objs_wipfc = &
+    $(wipfc_dir)wipfc.gml &
+    $(wipfc_dir)ipfdefs.gml &
+    $(wipfc_dir)ipfintro.gml &
+    $(wipfc_dir)ipfuse.gml &
+    $(wipfc_dir)ipftags.gml &
+    $(wipfc_dir)ipfcmds.gml &
+    $(wipfc_dir)ipftref.gml &
+    $(wipfc_dir)ipferr.gml &
+    $(wipfc_dir)ipfsym.gml &
+    $(wipfc_dir)acvwprt.gml &
+    $(wipfc_dir)artlink.gml &
+    $(wipfc_dir)artwork.gml &
+    $(wipfc_dir)caution.gml &
+    $(wipfc_dir)cgraphic.gml &
+    $(wipfc_dir)color.gml &
+    $(wipfc_dir)ctrl.gml &
+    $(wipfc_dir)ctrldef.gml &
+    $(wipfc_dir)ddf.gml &
+    $(wipfc_dir)dl.gml &
+    $(wipfc_dir)docprof.gml &
+    $(wipfc_dir)fig.gml &
+    $(wipfc_dir)figcap.gml &
+    $(wipfc_dir)font.gml &
+    $(wipfc_dir)fn.gml &
+    $(wipfc_dir)hn.gml &
+    $(wipfc_dir)hdref.gml &
+    $(wipfc_dir)hide.gml &
+    $(wipfc_dir)hpn.gml &
+    $(wipfc_dir)i1.gml &
+    $(wipfc_dir)i2.gml &
+    $(wipfc_dir)icmd.gml &
+    $(wipfc_dir)isyn.gml &
+    $(wipfc_dir)li.gml &
+    $(wipfc_dir)lines.gml &
+    $(wipfc_dir)link.gml &
+    $(wipfc_dir)lm.gml &
+    $(wipfc_dir)lp.gml &
+    $(wipfc_dir)note.gml &
+    $(wipfc_dir)nt.gml &
+    $(wipfc_dir)ol.gml &
+    $(wipfc_dir)p.gml &
+    $(wipfc_dir)parml.gml &
+    $(wipfc_dir)pbutton.gml &
+    $(wipfc_dir)rm.gml &
+    $(wipfc_dir)sl.gml &
+    $(wipfc_dir)table.gml &
+    $(wipfc_dir)title.gml &
+    $(wipfc_dir)ul.gml &
+    $(wipfc_dir)userdoc.gml &
+    $(wipfc_dir)warning.gml &
+    $(wipfc_dir)xmp.gml
+
