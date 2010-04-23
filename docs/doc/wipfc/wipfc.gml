@@ -16,7 +16,7 @@
 .if &e'&dohelp eq 0 .do begin
 :FRONTM.
 :TITLEP.
-:TITLE stitle=&ipfname.
+:TITLE.&ipfname
 :TITLE.User's Guide
 :INCLUDE file='doctitle'.
 :eTITLEP.
