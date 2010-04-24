@@ -45,7 +45,8 @@ extra_c_flags_link      = -3 -dSERVER
 
 extra_cpp_flags_i86     = -zc -zm
 
-extra_l_flags = op eliminate sort global
+extra_l_flags       = op eliminate sort global
+extra_l_flags_nt    = op stack=100k
 
 prereq_inc_os2 = $(docs_root)/os2
 prereq_inc_win = $(docs_root)/win

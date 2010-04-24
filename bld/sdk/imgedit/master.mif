@@ -137,7 +137,7 @@ libs += $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
 extra_l_flags     = option map lib { $(libs) }
 
 extra_l_flags_win = option rwr option stack=16k option heapsize=2k lib ddeml.lib
-extra_l_flags_nt  = option stack=32k
+extra_l_flags_nt  = option stack=100k
 !ifeq host_CPU 386
 extra_l_flags_nt += alias '_WinMain'='_WinMain@16'
 !endif
