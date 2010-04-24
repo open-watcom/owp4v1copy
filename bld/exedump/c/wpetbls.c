@@ -68,8 +68,9 @@ extern char  Fname[ _MAX_FNAME ];
 /*
  * Dump the Export address Table.
  */
-static void dmp_exp_addr( unsigned_32 offset, unsigned_32 num_ent )
-/*****************************************************************/
+static void dmp_exp_addr( unsigned_32 offset, unsigned_32 num_ent,
+                          unsigned_32 base )
+/****************************************************************/
 {
     unsigned_32     *address;
     unsigned_32     addr_size;
@@ -83,7 +84,7 @@ static void dmp_exp_addr( unsigned_32 offset, unsigned_32 num_ent )
     Wdputslc( "Export Address Table\n" );
     Wdputslc( "====================\n" );
     for( i = 0; i < num_ent; i++ ) {
-        Putdecl( i, 3 );
+        Putdecl( i + base, 4 );
         Wdputc( ':' );
         Puthex( address[i], 8 );
         if( (i+1) % 4 == 0 ) {
@@ -156,7 +157,7 @@ static void dmp_imp_addr( unsigned_32 offset )
                 Wdputs( "     " );
             }
         }
-        Putdecl( i, 3 );
+        Putdecl( i, 4 );
         Wdputc( ':' );
         Puthex( address, 8 );
         Wread( &address, addr_size );
@@ -278,7 +279,7 @@ void Dmp_exports( void )
     Dump_header( (char *)&pe_export.flags, pe_export_msg );
     dmp_exp_addr( pe_export.address_table_rva -
             Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
-            pe_export.num_eat_entries );
+            pe_export.num_eat_entries, pe_export.ordinal_base );
     dmp_exp_ord_name( pe_export.name_ptr_table_rva -
             Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
             pe_export.ordinal_table_rva -
