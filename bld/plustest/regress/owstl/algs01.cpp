@@ -56,7 +56,7 @@ struct test_case {
 // Note that the 'title' member is no longer used but it is retained for
 // documentation and possible future use.
 //
-struct test_case tests[] = {
+const struct test_case tests[] = {
 
     // The first few test cases are short. They only exercise the
     // InsertionSort subset of std::sort's behavior.
@@ -140,6 +140,94 @@ struct test_case tests[] = {
 };
 const int number_cases = sizeof(tests)/sizeof(test_case);
 
+
+// The following test cases exercise reverse sorts. They allow the sorting
+// algorithm that takes a comparison object to be exercised.
+//
+const struct test_case reverse_tests[] = {
+
+    // The first few test cases are short. They only exercise the
+    // InsertionSort subset of std::sort's behavior.
+
+    { "SHORT: An empty sequence",
+        { 0 },        // Open Watcom v1.5 doesn't accept { } as an initializer.
+        { 0 }, 0 },
+
+    { "SHORT: One element", 
+        { 1 },
+        { 1 }, 1 },
+
+    { "SHORT: Two elements",
+        { 1, 2 },
+        { 2, 1 }, 2 },
+
+    { "SHORT: Three elements",
+        { 2, 3, 1 },
+        { 3, 2, 1 }, 3 },
+
+    { "SHORT: Random elements, size 2^n",
+        { 4, 2, 8, 5, 3, 7, 6, 1 },
+        { 8, 7, 6, 5, 4, 3, 2, 1 }, 8 },
+
+    { "SHORT: Random elements, size 2^n + 1",
+        { 1, 8, 3, 2, 4, 9, 5, 7, 6 },
+        { 9, 8, 7, 6, 5, 4, 3, 2, 1 }, 9 },
+
+    { "SHORT: Random elements, size 2^n - 1",
+        { 4, 2, 5, 3, 1, 7, 6 },
+        { 7, 6, 5, 4, 3, 2, 1 }, 7 },
+
+    { "SHORT: Already sorted",
+        { 5, 4, 3, 2, 1 },
+        { 5, 4, 3, 2, 1 }, 5 },
+
+    { "SHORT: Already reverse sorted",
+        { 1, 2, 3, 4, 5 },
+        { 5, 4, 3, 2, 1 }, 5 },
+
+    { "SHORT: One pair of duplicate elements",
+        { 1, 2, 4, 2, 3 },
+        { 4, 3, 2, 2, 1 }, 5 },
+
+    { "SHORT: All duplicate elements",
+        { 1, 1, 1, 1, 1 },
+        { 1, 1, 1, 1, 1 }, 5 },
+
+    // The following tests are all length 11. This is the first length at
+    // which a partitioning is done.
+
+    { "LONG: Random elements; median3 in middle",
+        {  3,  4,  1,  9, 10,  5,  7, 11,  2,  6,  8 },
+        { 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1 }, 11 },
+
+    { "LONG: Random elements; median3 on left",
+        {  5,  4,  1,  9, 10,  8,  7, 11,  2,  6,  3 },
+        { 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1 }, 11 },
+
+    { "LONG: Random elements; median3 on right",
+        {  3,  4,  1,  9, 10,  8,  7, 11,  2,  6,  5 },
+        { 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1 }, 11 },
+
+    { "LONG: Already sorted",
+        { 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1 },
+        { 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1 }, 11 },
+
+    { "LONG: Already reversed sorted",
+        {  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11 },
+        { 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1 }, 11 },
+
+    { "LONG: All duplicate elements",
+        {  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
+        {  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 }, 11 },
+
+    // The following tests are all long enough to cause multiple recursions.
+
+    { "VERY LONG: Random elements",
+        {  4, 18,  5,  1,  9,  7, 12, 20,  6, 13,  2,  3, 14, 8, 10, 15, 11, 19, 17, 16, 21 },
+        { 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10,  9, 8,  7,  6,  5,  4,  3,  2,  1 }, 21 }
+};
+const int number_reverse_cases = sizeof(reverse_tests)/sizeof(test_case);
+
 bool heap_test( )
 {
     // Since sorting a heap gives most of the other heap related code a good
@@ -147,13 +235,9 @@ bool heap_test( )
     // heap test. At some point it might be nice to build a more heap-
     // specific test.
 
-    // First I must copy the test cases. I don't want to leave them all sorted
-    // for the sort_test!
-    //
+    // First I must copy the test cases to avoid leaving them sorted.
     test_case *tc = new test_case[number_cases];
     for( int i = 0; i < number_cases; ++i ) tc[i] = tests[i];
-
-    // Now basically do the same thing as in sort_test.
 
     // For each test...
     for( int i = 0; i < number_cases; ++i ) {
@@ -174,25 +258,78 @@ bool heap_test( )
     return( true );
 }
 
-bool sort_test( )
+bool reverse_heap_test( )
 {
+    // First I must copy the test cases to avoid leaving them sorted.
+    test_case *tc = new test_case[number_reverse_cases];
+    for( int i = 0; i < number_reverse_cases; ++i ) tc[i] = reverse_tests[i];
+
     // For each test...
-    for( int i = 0; i < number_cases; ++i ) {
+    for( int i = 0; i < number_reverse_cases; ++i ) {
 
         // Do the test.
-        std::sort( &tests[i].input[0], &tests[i].input[tests[i].size] );
+        std::make_heap( &tc[i].input[0], &tc[i].input[tc[i].size], std::greater< int >( ) );
+        std::sort_heap( &tc[i].input[0], &tc[i].input[tc[i].size], std::greater< int >( ) );
 
         // Did it work?
         bool worked = true;
-        for( int j = 0; j < tests[i].size; ++j ) {
-            if ( tests[i].input[j] != tests[i].expected[j] ) worked = false;
+        for( int j = 0; j < tc[i].size; ++j ) {
+            if ( tc[i].input[j] != tc[i].expected[j] ) worked = false;
         }
         if ( !worked ) FAIL;
     }
 
+    delete [] tc;
     return( true );
 }
 
+bool sort_test( )
+{
+    // First I must copy the test cases to avoid leaving them sorted.
+    test_case *tc = new test_case[number_cases];
+    for( int i = 0; i < number_cases; ++i ) tc[i] = tests[i];
+
+    // For each test...
+    for( int i = 0; i < number_cases; ++i ) {
+
+        // Do the test.
+        std::sort( &tc[i].input[0], &tc[i].input[tc[i].size] );
+
+        // Did it work?
+        bool worked = true;
+        for( int j = 0; j < tc[i].size; ++j ) {
+            if ( tc[i].input[j] != tc[i].expected[j] ) worked = false;
+        }
+        if ( !worked ) FAIL;
+    }
+
+    delete [] tc;
+    return( true );
+}
+
+bool reverse_sort_test( )
+{
+    // First I must copy the test cases to avoid leaving them sorted.
+    test_case *tc = new test_case[number_reverse_cases];
+    for( int i = 0; i < number_reverse_cases; ++i ) tc[i] = reverse_tests[i];
+
+    // For each test...
+    for( int i = 0; i < number_reverse_cases; ++i ) {
+
+        // Do the test.
+        std::sort( &tc[i].input[0], &tc[i].input[tc[i].size], std::greater< int >( ) );
+
+        // Did it work?
+        bool worked = true;
+        for( int j = 0; j < tc[i].size; ++j ) {
+            if ( tc[i].input[j] != tc[i].expected[j] ) worked = false;
+        }
+        if ( !worked ) FAIL;
+    }
+
+    delete [] tc;
+    return( true );
+}
 
 bool bsearch_test( )
 {
@@ -272,10 +409,12 @@ int main( )
     int original_count = heap_count( );
 
     try {
-        if( !heap_test( )        || !heap_ok( "t01" ) ) rc = 1;
-        if( !sort_test( )        || !heap_ok( "t02" ) ) rc = 1;
-        if( !bsearch_test( )     || !heap_ok( "t03" ) ) rc = 1;
-        if( !permutation_test( ) || !heap_ok( "t03" ) ) rc = 1;
+        if( !heap_test( )         || !heap_ok( "t01" ) ) rc = 1;
+        if( !reverse_heap_test( ) || !heap_ok( "t02" ) ) rc = 1;
+        if( !sort_test( )         || !heap_ok( "t03" ) ) rc = 1;
+        if( !reverse_sort_test( ) || !heap_ok( "t04" ) ) rc = 1;
+        if( !bsearch_test( )      || !heap_ok( "t05" ) ) rc = 1;
+        if( !permutation_test( )  || !heap_ok( "t06" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

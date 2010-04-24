@@ -98,7 +98,7 @@ extra_cflags_mmwindef += -3
 # this is my laziness bit...
 $(names) : test.lnk .symbolic
     @%make $^*.obj
-    $(linker) @test.lnk NAME $^* FILE $^*
+    $(linker) @test.lnk NAME $^* FILE $^*.obj
     $(run) $^*
     @echo PASS
 

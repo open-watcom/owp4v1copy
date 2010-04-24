@@ -43,11 +43,11 @@ namespace _ow {
     inline Int heap_right( Int index )
         { return ( 2*index + 2 ); }
 
-    template< class RandomAccess >
+    template< class RandomAccess, class Compare >
     void heapify( RandomAccess first,
                   RandomAccess last,
-                  typename
-                    iterator_traits< RandomAccess >::difference_type index)
+                  typename iterator_traits< RandomAccess >::difference_type index,
+                  Compare comp )
     {
         using std::swap;
         typedef typename iterator_traits< RandomAccess >::difference_type Int;
@@ -55,22 +55,22 @@ namespace _ow {
         Int size = last - first;
         Int L    = heap_left( index );   // Index of left child.
         Int R    = heap_right( index );  // Index of right child.
-        Int largest = index;             // Index of largest child.
+        Int latest = index;              // Index of latest child.
 
-        if( L < size && first[largest] < first[L] ) largest = L;
-        if( R < size && first[largest] < first[R] ) largest = R;
-        if( largest != index ) {
-            swap( first[index], first[largest] );
-            heapify( first, last, largest );
+        if( L < size && comp( first[latest], first[L] ) ) latest = L;
+        if( R < size && comp( first[latest], first[R] ) ) latest = R;
+        if( latest != index ) {
+            swap( first[index], first[latest] );
+            heapify( first, last, latest, comp );
         }
     }
 
 } // namespace _ow
 
-// push_heap( RandomAccess, RandomAccess )
-// ***************************************
-template< class RandomAccess >
-void push_heap( RandomAccess first, RandomAccess last )
+// push_heap( RandomAccess, RandomAccess, Compare )
+// ************************************************
+template< class RandomAccess, class Compare >
+void push_heap( RandomAccess first, RandomAccess last, Compare comp )
 {
     typedef typename iterator_traits< RandomAccess >::difference_type Int;
     using std::swap;
@@ -80,16 +80,26 @@ void push_heap( RandomAccess first, RandomAccess last )
         throw std::domain_error( "heap underflow" );
 
     Int index = (last - first) - 1;
-    while( index > 0 && first[heap_parent( index )] < first[index] ) {
+    while( index > 0 && comp( first[heap_parent( index )], first[index] ) ) {
         swap( first[heap_parent( index )], first[index] );
         index = heap_parent( index );
     }
 }
 
-// pop_heap( RandomAccess, RandomAccess )
-// **************************************
+// push_heap( RandomAccess, RandomAccess )
+//****************************************
 template< class RandomAccess >
-void pop_heap( RandomAccess first, RandomAccess last )
+inline void push_heap( RandomAccess first, RandomAccess last )
+{
+    push_heap( first, last,
+               less< typename iterator_traits< RandomAccess >::value_type >( ) );
+}
+
+
+// pop_heap( RandomAccess, RandomAccess, Compare )
+// ***********************************************
+template< class RandomAccess, class Compare >
+void pop_heap( RandomAccess first, RandomAccess last, Compare comp )
 {
     using std::swap;
 
@@ -99,14 +109,23 @@ void pop_heap( RandomAccess first, RandomAccess last )
     --last;
     if( first != last ) {
         swap( *first, *last );
-        _ow::heapify( first, last, 0 );
+        _ow::heapify( first, last, 0, comp );
     }
 }
 
-// make_heap( RandomAccess, RandomAccess )
-// ***************************************
+// pop_heap( RandomAccess, RandomAccess )
+// **************************************
 template< class RandomAccess >
-void make_heap( RandomAccess first, RandomAccess last )
+inline void pop_heap( RandomAccess first, RandomAccess last )
+{
+    pop_heap( first, last,
+              less< typename iterator_traits< RandomAccess >::value_type >( ) );
+}
+
+// make_heap( RandomAccess, RandomAccess, Compare )
+// ************************************************
+template< class RandomAccess, class Compare >
+void make_heap( RandomAccess first, RandomAccess last, Compare comp )
 {
     typedef typename iterator_traits< RandomAccess >::difference_type Int;
 
@@ -115,14 +134,23 @@ void make_heap( RandomAccess first, RandomAccess last )
 
     if( size <= 1 ) return;
     for( index = size/2 - 1; index >= 0; --index ) {
-        _ow::heapify( first, last, index );
+        _ow::heapify( first, last, index, comp );
     }
 }
 
-// sort_heap( RandomAccess, RandomAccess )
+// make_heap( RandomAccess, RandomAccess )
 // ***************************************
 template< class RandomAccess >
-void sort_heap( RandomAccess first, RandomAccess last )
+inline void make_heap( RandomAccess first, RandomAccess last )
+{
+    make_heap( first, last,
+               less< typename iterator_traits< RandomAccess >::value_type >( ) );
+}
+
+// sort_heap( RandomAccess, RandomAccess, Compare )
+// ************************************************
+template< class RandomAccess, class Compare >
+void sort_heap( RandomAccess first, RandomAccess last, Compare comp )
 {
     typedef typename iterator_traits< RandomAccess >::difference_type Int;
     using std::swap;
@@ -134,8 +162,17 @@ void sort_heap( RandomAccess first, RandomAccess last )
     for( index = size - 1; index > 0; --index ) {
         swap( first[0], first[index] );
         --last;
-        _ow::heapify( first, last, 0 );
+        _ow::heapify( first, last, 0, comp );
     }
+}
+
+// sort_heap( RandomAccess, RandomAccess )
+// ***************************************
+template< class RandomAccess >
+inline void sort_heap( RandomAccess first, RandomAccess last )
+{
+    sort_heap( first, last,
+               less< typename iterator_traits< RandomAccess >::value_type >( ) );
 }
 
 namespace _ow {
