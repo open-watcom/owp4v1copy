@@ -304,7 +304,7 @@ static void ReadARStringTable( file_list *list, unsigned long *loc, unsigned siz
     char            *data;
     unsigned        i;
 
-    if( size ) {
+    if( list->strtab == NULL && size > 0 ) {
         list->strtab = CachePermRead( list, *loc, size );
         data = list->strtab;
         for( i = 0; i < size; ++i ) {
@@ -339,8 +339,7 @@ static bool ReadARDict( file_list *list, unsigned long *loc, bool makedict )
             *loc += MAKE_EVEN( size );
         } else if( ar_hdr->name[ 0 ] == '/' && ar_hdr->name[ 1 ] == '/' ) {
             *loc += sizeof( ar_header );
-            if( makedict )
-                ReadARStringTable( list, loc, size );
+            ReadARStringTable( list, loc, size );
             *loc += MAKE_EVEN( size );
         } else {
             break;         // found an actual object file
