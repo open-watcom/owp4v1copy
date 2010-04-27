@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF munging public routines.
 *
 ****************************************************************************/
 
@@ -51,6 +50,10 @@ extern orl_return       OmfAddFixupp( omf_file_handle ofh, int is32, int mode,
                                       int location, orl_sec_offset offset,
                                       int fmethod, omf_idx fidx, int tmethod,
                                       omf_idx tidx, orl_sec_offset disp );
+
+extern orl_return       OmfAddBakpat( omf_file_handle ofh, uint_8 loctype,
+                                      orl_sec_offset location, omf_idx segidx,
+                                      orl_sec_offset disp );
 
 extern orl_return       OmfAddExtDef( omf_file_handle ofh, omf_bytes buffer,
                                       unsigned int len, omf_rectyp typ );

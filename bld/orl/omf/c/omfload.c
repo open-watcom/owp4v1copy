@@ -880,6 +880,59 @@ static orl_return       doFIXUPP( omf_file_handle ofh, omf_rectyp typ )
 }
 
 
+static orl_return       doBAKPAT( omf_file_handle ofh, omf_rectyp typ )
+{
+    orl_return          err;
+    omf_bytes           buffer;
+    long                len;
+    uint_8              loctype;
+    int                 is32;
+    int                 wordsize;
+    orl_sec_offset      displacement;
+    orl_sec_offset      offset;
+    omf_idx             segidx;
+
+    assert( ofh );
+
+    /* BAKPAT records are created by Microsoft QuickC, as well as by 16-bit
+     * Microsoft C/C++ 7.0 and later when compiling without optimizations.
+     */
+    err = loadRecord( ofh );
+    if( err != ORL_OKAY )
+        return( err );
+
+    is32 = check32Bit( ofh, typ );
+    wordsize = OmfGetWordSize( is32 );
+
+    len = ofh->parselen;
+    buffer = ofh->parsebuf;
+    if( len < 0 )
+        return( ORL_ERROR );
+
+    segidx = loadIndex( &buffer, &len );
+    if( !segidx )
+        return( ORL_ERROR );
+
+    loctype = buffer[0];
+    --len; ++buffer;
+
+    while( len ) {
+        /* Read the offset and displacement (always the same size). */
+        offset = getUWord( buffer, wordsize );
+        buffer += wordsize;
+        len -= wordsize;
+        displacement = getUWord( buffer, wordsize );
+        buffer += wordsize;
+        len -= wordsize;
+
+        err = OmfAddBakpat( ofh, loctype, offset, segidx, displacement );
+        if( err != ORL_OKAY )
+            break;
+    }
+    return( err );
+}
+
+
 static orl_return       doLEDATA( omf_file_handle ofh, omf_rectyp typ )
 {
     orl_return          err;
@@ -1076,6 +1129,7 @@ static orl_return       procRecord( omf_file_handle ofh, omf_rectyp typ )
                                 /* No idea what to do with these yet    */
     case( CMD_BAKPAT ):         /* backpatch record (for Quick C)       */
     case( CMD_BAKPAT32 ):
+        return( doBAKPAT( ofh, typ ) );
     case( CMD_NBKPAT ):         /* named backpatch record (quick c?)    */
     case( CMD_NBKPAT32 ):       /* 32-bit named backpatch record        */
         return( loadRecord( ofh ) );

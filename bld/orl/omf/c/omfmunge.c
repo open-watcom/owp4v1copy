@@ -654,6 +654,60 @@ static orl_return       expandPrevLIData( omf_file_handle ofh )
 }
 
 
+static orl_return       applyBakpats( omf_file_handle ofh )
+{
+    omf_sec_handle      sh;
+    orl_return          err = ORL_OKAY;
+    omf_tmp_bkfix       tbf;
+    uint_8              *pfix8;
+    uint_16             *pfix16;
+    uint_32             *pfix32;
+
+    assert( ofh );
+    assert( ofh->bakpat );
+
+    ofh->bakpat->last_fixup = NULL;
+
+    /* Go through all the backpatches and update the segment data. The BAKPATs
+     * aren't normal fixups and may modify all sorts of instructions.
+     */
+    while( ofh->bakpat->first_fixup ) {
+        tbf = ofh->bakpat->first_fixup;
+        ofh->bakpat->first_fixup = tbf->next;
+
+        sh = findSegment( ofh, tbf->sidx );
+        if( !sh ) {
+            err = ORL_ERROR;
+            break;
+        }
+        switch( tbf->reltype ) {
+        case ORL_RELOC_TYPE_WORD_8:
+            pfix8 = sh->contents + tbf->offset;
+            *pfix8 += tbf->disp;
+            break;
+        case ORL_RELOC_TYPE_WORD_16:
+            pfix16 = (uint_16 *)(sh->contents + tbf->offset);
+            *pfix16 += tbf->disp;
+            break;
+        case ORL_RELOC_TYPE_WORD_32:
+            pfix32 = (uint_32 *)(sh->contents + tbf->offset);
+            *pfix32 += tbf->disp;
+            break;
+        default:
+            assert( 0 );
+            err = ORL_ERROR;
+            break;
+        }
+        if( err != ORL_OKAY )
+            break;
+
+        _ClientFree( ofh, tbf );
+    }
+
+    return( err );
+}
+
+
 static orl_return       finishPrevWork( omf_file_handle ofh )
 {
     orl_return  err = ORL_OKAY;
@@ -663,6 +717,10 @@ static orl_return       finishPrevWork( omf_file_handle ofh )
     if( ofh->status & OMF_STATUS_ADD_LIDATA ) {
         ofh->status &= ~OMF_STATUS_ADD_LIDATA;
         err = expandPrevLIData( ofh );
+    }
+    if( ofh->status & OMF_STATUS_ADD_BAKPAT ) {
+        ofh->status &= ~OMF_STATUS_ADD_BAKPAT;
+        err = applyBakpats( ofh );
     }
     assert( !( ofh->status & OMF_STATUS_ADD_MASK ) );
     return( err );
@@ -944,6 +1002,63 @@ orl_return              OmfAddLName( omf_file_handle ofh, omf_bytes buffer,
     }
 
     return( addString( ofh->lnames, buffer, len ) );
+}
+
+
+orl_return              OmfAddBakpat( omf_file_handle ofh, uint_8 loctype,
+                                      orl_sec_offset location, omf_idx segidx,
+                                      orl_sec_offset disp )
+{
+    omf_tmp_bkfix       tbf;
+    orl_reloc_type      reltype;
+
+    assert( ofh );
+
+    /* The BAKPAT records must be applied at the end.
+     */
+    if( !ofh->bakpat ) {
+        ofh->bakpat = _ClientAlloc( ofh, sizeof( omf_tmp_bakpat_struct ) );
+        if( !ofh->bakpat ) 
+            return( ORL_OUT_OF_MEMORY );
+        memset( ofh->bakpat, 0, sizeof( omf_tmp_bakpat_struct ) );
+        ofh->status |= OMF_STATUS_ADD_BAKPAT;
+    }
+
+    assert( ofh->status & OMF_STATUS_ADD_BAKPAT );
+
+    /* Translate the location type. */
+    switch( loctype ) {
+    case 0:
+        reltype = ORL_RELOC_TYPE_WORD_8;
+        break;
+    case 1:
+        reltype = ORL_RELOC_TYPE_WORD_16;
+        break;
+    case 2:
+    case 9:
+        reltype = ORL_RELOC_TYPE_WORD_32;
+        break;
+    default:
+        return( ORL_ERROR );
+    }
+
+    tbf = _ClientAlloc( ofh, sizeof( omf_tmp_bkfix_struct ) );
+    if( !tbf ) return( ORL_OUT_OF_MEMORY );
+    memset( tbf, 0, sizeof( omf_tmp_bkfix_struct ) );
+
+    tbf->reltype = reltype;
+    tbf->sidx    = segidx;
+    tbf->offset  = location;
+    tbf->disp    = disp;
+
+    if( ofh->bakpat->last_fixup ) {
+        ofh->bakpat->last_fixup->next = tbf;
+    } else {
+        ofh->bakpat->first_fixup = tbf;
+    }
+    ofh->bakpat->last_fixup = tbf;
+
+    return( ORL_OKAY );
 }
 
 

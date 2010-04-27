@@ -40,8 +40,9 @@
 #define OMF_STATUS_ARCH_SET             0x00000002
 #define OMF_STATUS_ADD_LIDATA           0x00000008
 #define OMF_STATUS_EASY_OMF             0x00000010
+#define OMF_STATUS_ADD_BAKPAT           0x00000020
 
-#define OMF_STATUS_ADD_MASK             OMF_STATUS_ADD_LIDATA
+#define OMF_STATUS_ADD_MASK             (OMF_STATUS_ADD_LIDATA | OMF_STATUS_ADD_BAKPAT)
 
 /* section flags
  */
@@ -118,6 +119,12 @@ typedef omf_tmp_lidata_struct           *omf_tmp_lidata;
 typedef struct omf_tmp_fixup_struct     omf_tmp_fixup_struct;
 typedef omf_tmp_fixup_struct            *omf_tmp_fixup;
 
+typedef struct omf_tmp_bakpat_struct    omf_tmp_bakpat_struct;
+typedef omf_tmp_bakpat_struct           *omf_tmp_bakpat;
+
+typedef struct omf_tmp_bkfix_struct    omf_tmp_bkfix_struct;
+typedef omf_tmp_bkfix_struct           *omf_tmp_bkfix;
+
 typedef struct omf_thred_fixup_struct   omf_thred_fixup;
 
 struct omf_tmp_lidata_struct {
@@ -141,6 +148,19 @@ struct omf_tmp_fixup_struct {
     omf_idx             fidx;
     int                 tmethod;
     omf_idx             tidx;
+    orl_sec_offset      disp;
+};
+
+struct omf_tmp_bakpat_struct {
+    omf_tmp_bkfix       first_fixup;
+    omf_tmp_bkfix       last_fixup;
+};
+
+struct omf_tmp_bkfix_struct {
+    omf_tmp_bkfix       next;
+    orl_reloc_type      reltype;
+    omf_idx             sidx;
+    orl_sec_offset      offset;
     orl_sec_offset      disp;
 };
 
@@ -191,6 +211,7 @@ struct omf_file_handle_struct {
     omf_sec_handle      work_sec;
 
     omf_tmp_lidata      lidata;
+    omf_tmp_bakpat      bakpat;
 
     omf_dbg_style       debug_style;
 
