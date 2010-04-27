@@ -675,7 +675,11 @@ static orl_return       applyBakpats( omf_file_handle ofh )
         tbf = ofh->bakpat->first_fixup;
         ofh->bakpat->first_fixup = tbf->next;
 
-        sh = findSegment( ofh, tbf->sidx );
+        assert( tbf->segidx || tbf->symidx );
+        if( tbf->segidx )
+            sh = findSegment( ofh, tbf->segidx );
+        else 
+            sh = findComDatByName( ofh, tbf->symidx );
         if( !sh ) {
             err = ORL_ERROR;
             break;
@@ -704,6 +708,11 @@ static orl_return       applyBakpats( omf_file_handle ofh )
         _ClientFree( ofh, tbf );
     }
 
+    assert( !(ofh->status & OMF_STATUS_ADD_BAKPAT) );
+    /* Free the entire bakpat structure as well. */
+    _ClientFree( ofh, ofh->bakpat );
+    ofh->bakpat = NULL;
+
     return( err );
 }
 
@@ -718,6 +727,11 @@ static orl_return       finishPrevWork( omf_file_handle ofh )
         ofh->status &= ~OMF_STATUS_ADD_LIDATA;
         err = expandPrevLIData( ofh );
     }
+    /* NB: We're assuming that a BAKPAT/NBKPAT record always follows
+     * the LEDATA (or possibly LIDATA) record it modifies. This is
+     * not guaranteed by the TIS OMF spec, but the backpatch records
+     * make no sense otherwise.
+     */
     if( ofh->status & OMF_STATUS_ADD_BAKPAT ) {
         ofh->status &= ~OMF_STATUS_ADD_BAKPAT;
         err = applyBakpats( ofh );
@@ -1007,14 +1021,15 @@ orl_return              OmfAddLName( omf_file_handle ofh, omf_bytes buffer,
 
 orl_return              OmfAddBakpat( omf_file_handle ofh, uint_8 loctype,
                                       orl_sec_offset location, omf_idx segidx,
-                                      orl_sec_offset disp )
+                                      omf_idx symidx, orl_sec_offset disp )
 {
     omf_tmp_bkfix       tbf;
     orl_reloc_type      reltype;
 
     assert( ofh );
 
-    /* The BAKPAT records must be applied at the end.
+    /* The BAKPAT records must be applied at the end. One of segidx/symidx
+     * must be set to distinguish between BAKPAT and NBKPAT.
      */
     if( !ofh->bakpat ) {
         ofh->bakpat = _ClientAlloc( ofh, sizeof( omf_tmp_bakpat_struct ) );
@@ -1047,7 +1062,8 @@ orl_return              OmfAddBakpat( omf_file_handle ofh, uint_8 loctype,
     memset( tbf, 0, sizeof( omf_tmp_bkfix_struct ) );
 
     tbf->reltype = reltype;
-    tbf->sidx    = segidx;
+    tbf->segidx  = segidx;
+    tbf->symidx  = symidx;
     tbf->offset  = location;
     tbf->disp    = disp;
 

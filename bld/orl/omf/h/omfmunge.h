@@ -53,7 +53,7 @@ extern orl_return       OmfAddFixupp( omf_file_handle ofh, int is32, int mode,
 
 extern orl_return       OmfAddBakpat( omf_file_handle ofh, uint_8 loctype,
                                       orl_sec_offset location, omf_idx segidx,
-                                      orl_sec_offset disp );
+                                      omf_idx symidx, orl_sec_offset disp );
 
 extern orl_return       OmfAddExtDef( omf_file_handle ofh, omf_bytes buffer,
                                       unsigned int len, omf_rectyp typ );

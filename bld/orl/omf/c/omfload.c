@@ -891,11 +891,13 @@ static orl_return       doBAKPAT( omf_file_handle ofh, omf_rectyp typ )
     orl_sec_offset      displacement;
     orl_sec_offset      offset;
     omf_idx             segidx;
+    omf_idx             symidx;
 
     assert( ofh );
 
     /* BAKPAT records are created by Microsoft QuickC, as well as by 16-bit
      * Microsoft C/C++ 7.0 and later when compiling without optimizations.
+     * NBKPAT records are probably specific to MS C++ 7.0 and later only.
      */
     err = loadRecord( ofh );
     if( err != ORL_OKAY )
@@ -909,12 +911,25 @@ static orl_return       doBAKPAT( omf_file_handle ofh, omf_rectyp typ )
     if( len < 0 )
         return( ORL_ERROR );
 
-    segidx = loadIndex( &buffer, &len );
-    if( !segidx )
-        return( ORL_ERROR );
+    segidx = symidx = 0;
 
-    loctype = buffer[0];
-    --len; ++buffer;
+    if( typ == CMD_BAKPAT || typ == CMD_BAKPAT32 ) {
+        /* Segment index first, then location type. */
+        segidx = loadIndex( &buffer, &len );
+        if( !segidx )
+            return( ORL_ERROR );
+
+        loctype = buffer[0];
+        --len; ++buffer;
+    } else {
+        assert( typ == CMD_NBKPAT || typ == CMD_NBKPAT32 );
+        /* Location first, then symbol index. */
+        loctype = buffer[0];
+        --len; ++buffer;
+        symidx = loadIndex( &buffer, &len );
+        if( !symidx )
+            return( ORL_ERROR );
+    }
 
     while( len ) {
         /* Read the offset and displacement (always the same size). */
@@ -925,7 +940,7 @@ static orl_return       doBAKPAT( omf_file_handle ofh, omf_rectyp typ )
         buffer += wordsize;
         len -= wordsize;
 
-        err = OmfAddBakpat( ofh, loctype, offset, segidx, displacement );
+        err = OmfAddBakpat( ofh, loctype, offset, segidx, symidx, displacement );
         if( err != ORL_OKAY )
             break;
     }
@@ -1126,13 +1141,11 @@ static orl_return       procRecord( omf_file_handle ofh, omf_rectyp typ )
     case( CMD_LINSYM32 ):       /* 32-bit LINNUM for a COMDAT           */
         return( doLINNUM( ofh, typ ) );
 
-                                /* No idea what to do with these yet    */
     case( CMD_BAKPAT ):         /* backpatch record (for Quick C)       */
-    case( CMD_BAKPAT32 ):
-        return( doBAKPAT( ofh, typ ) );
-    case( CMD_NBKPAT ):         /* named backpatch record (quick c?)    */
+    case( CMD_BAKPAT32 ):       /* 32-bit backpatch record              */
+    case( CMD_NBKPAT ):         /* named backpatch record (MS C++)      */
     case( CMD_NBKPAT32 ):       /* 32-bit named backpatch record        */
-        return( loadRecord( ofh ) );
+        return( doBAKPAT( ofh, typ ) );
 
     case( CMD_RHEADR ):         /* These records are simply ignored     */
     case( CMD_REGINT ):         /****************************************/

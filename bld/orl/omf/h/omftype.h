@@ -159,7 +159,8 @@ struct omf_tmp_bakpat_struct {
 struct omf_tmp_bkfix_struct {
     omf_tmp_bkfix       next;
     orl_reloc_type      reltype;
-    omf_idx             sidx;
+    omf_idx             segidx;
+    omf_idx             symidx;
     orl_sec_offset      offset;
     orl_sec_offset      disp;
 };
