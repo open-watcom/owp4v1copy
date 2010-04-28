@@ -5607,6 +5607,8 @@ Caution should be exercised when using this option.
 If the value of the segment register being restored matches the value
 of a segment that was freed within the function, a general protection
 fault will occur in protected-mode environments.
+When this option is used, the compiler also assumes that called functions
+save and restore segment registers.
 By default, the compiler does not generate code to save and restore
 segment registers.
 This option is provided for compatibility with the version 8.0 release.
