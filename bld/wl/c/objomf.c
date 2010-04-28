@@ -255,12 +255,20 @@ static void Pass1Cmd( byte cmd )
     case CMD_ALIAS:
         ProcAlias();
         break;
+    case CMD_BAKP32:
+        ObjFormat |= FMT_MS_386;
+    case CMD_BAKPAT:
+        CurrMod->modinfo |= MOD_NEED_PASS_2;
+        ProcBakpat();
+        break;
+    case CMD_NBKP32:
+        ObjFormat |= FMT_MS_386;
+    case CMD_NBKPAT:
+        CurrMod->modinfo |= MOD_NEED_PASS_2;
+        ProcNbkpat();
+        break;
     case CMD_VERNUM:
     case CMD_VENDEXT:
-    case CMD_BAKPAT:
-    case CMD_BAKP32:
-    case CMD_NBKPAT:
-    case CMD_NBKP32:    /* ignore bakpats in pass 1 */
     case CMD_LOCSYM:
     case CMD_TYPDEF:
     case CMD_DEBSYM:

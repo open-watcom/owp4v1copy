@@ -50,8 +50,8 @@
 
 typedef struct bakpatlist {
     struct bakpatlist   *next;
-    virt_mem            addr;
     unsigned_16         len;
+    segdata             *sdata;
     byte                loctype;
     bool                is32bit;
     char                data[1];
@@ -237,8 +237,8 @@ static void GetTarget( unsigned loc, frame_spec *targ )
     }
 }
 
-static void StoreBakPat( segnode *seg, byte loctype )
-/****************************************************/
+static void StoreBakPat( segdata *sdata, byte loctype )
+/*****************************************************/
 /* store a bakpat record away for future processing. */
 {
     unsigned            len;
@@ -247,8 +247,8 @@ static void StoreBakPat( segnode *seg, byte loctype )
     len = EOObjRec - ObjBuff;
     _ChkAlloc( bkptr, sizeof(bakpat_list) + len - 1 );
     bkptr->len = len;
-    bkptr->addr = seg->entry->data;
     bkptr->loctype = loctype;
+    bkptr->sdata = sdata;   /* We don't know the data offset yet. */
     bkptr->is32bit = (ObjFormat & FMT_32BIT_REC) != 0;
     memcpy( bkptr->data, ObjBuff, len );
     LinkList( &BakPats, bkptr );
@@ -265,7 +265,7 @@ void ProcBakpat( void )
     if( seg->info & SEG_DEAD )
         return;
     loctype = *ObjBuff++;
-    StoreBakPat( seg, loctype );
+    StoreBakPat( seg->entry, loctype );
 }
 
 void DoBakPats( void )
@@ -302,7 +302,8 @@ void DoBakPats( void )
                 data += sizeof(unsigned_16);
                 bkptr->len -= 2 * sizeof(unsigned_16);
             }
-            vmemloc = bkptr->addr + off;
+            /* Now the sdata->data pointer should be valid. */
+            vmemloc = bkptr->sdata->data + off;
             switch( bkptr->loctype ) {
             case 0:
                 ReadInfo( vmemloc, &value8, sizeof(unsigned_8) );
@@ -333,7 +334,6 @@ void ProcNbkpat( void )
 {
     list_of_names       *symname;
     symbol              *sym;
-    segnode             seg;
     byte                loctype;
 
     loctype = *ObjBuff++;
@@ -343,6 +343,5 @@ void ProcNbkpat( void )
         return;
     if( sym->info & SYM_DEAD )
         return;
-    seg.entry = sym->p.seg;
-    StoreBakPat( &seg, loctype );
+    StoreBakPat( sym->p.seg, loctype );
 }

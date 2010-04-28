@@ -36,6 +36,7 @@
 #include "wlnkmsg.h"
 #include "virtmem.h"
 #include "obj2supp.h"
+#include "omfreloc.h"
 #include "dbgall.h"
 #include "mapio.h"
 #include "overlays.h"
@@ -90,6 +91,7 @@ void PModule( mod_entry *obj )
     DEBUG(( DBG_BASE, "2 : processing module %s", obj->name ));
     CurrMod = obj;
     IterateModRelocs( CurrMod->relocs, CurrMod->sizerelocs, IncExecRelocs );
+    DoBakPats();
     DBIGenModule();
     CheckStop();
 }
