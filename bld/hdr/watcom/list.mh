@@ -228,7 +228,7 @@ public:
     void merge( list &other );
 
     //ow extentions
-    bool _Sane( );
+    bool _Sane( ) const;
 
 private:
     inline void  pop( Node* );
@@ -869,12 +869,12 @@ void list< Type, Allocator >::pop( Node* n )
 }
 
 /* ------------------------------------------------------------------
- * _Sane( )
+ * _Sane( ) const
  * returns true if invariants check out ok
  */
 template< class Type, class Allocator >
 bool
-list< Type, Allocator >::_Sane( )
+list< Type, Allocator >::_Sane( ) const
 {
     //sentinel can't have null links
     if( !sentinel->fwd || !sentinel->bwd ) return( false );

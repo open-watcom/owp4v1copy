@@ -63,6 +63,7 @@ template = &
         mmwin16$(ext)   &
         mmwindef$(ext)  &
         numer01$(ext)   &
+        queue01$(ext)   &
         stack01$(ext)   &
         set01$(ext)     &
         set02$(ext)     &
@@ -98,8 +99,8 @@ extra_cflags_mmwindef += -3
 # this is my laziness bit...
 $(names) : test.lnk .symbolic
     @%make $^*.obj
-    $(linker) @test.lnk NAME $^* FILE $^*.obj
-    $(run) $^*
+    $(linker) @test.lnk NAME $^*.exe FILE $^*.obj
+    $(run) $^*.exe
     @echo PASS
 
 !ifdef __OS2__

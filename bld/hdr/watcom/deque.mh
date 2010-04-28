@@ -1263,7 +1263,6 @@ namespace std {
     return( true );
   }
 
-/* bug : funtion templates can't have non-type template params
   // ==============================
   // Ordinary functions using deque
   // ==============================
@@ -1355,7 +1354,7 @@ namespace std {
     x.swap( y );
   }
   #endif
-*/
+
 } // namespace std
 
 #endif

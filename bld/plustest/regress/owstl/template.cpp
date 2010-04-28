@@ -34,30 +34,30 @@
 
 bool some_test( )
 {
-  bool rc = true;
+    bool rc = true;
 
-  // Exercise some facility here.
+    // Exercise some facility here.
 
-  return( rc );
+    return( rc );
 }
 
 
 int main( )
 {
-  int rc = 0;
-  int original_count = heap_count( );
+    int rc = 0;
+    int original_count = heap_count( );
 
-  try {
-    if( !some_test( )    || !heap_ok( "t01" ) ) rc = 1;
-  }
-  catch( ... ) {
-    std::cout << "Unexpected exception of unexpected type.\n";
-    rc = 1;
-  }
+    try {
+        if( !some_test( )    || !heap_ok( "t01" ) ) rc = 1;
+    }
+    catch( ... ) {
+        std::cout << "Unexpected exception of unexpected type.\n";
+        rc = 1;
+    }
 
-  if( heap_count( ) != original_count ) {
-    std::cout << "Possible memory leak!\n";
-    rc = 1;
-  }
-  return( rc );
+    if( heap_count( ) != original_count ) {
+        std::cout << "Possible memory leak!\n";
+        rc = 1;
+    }
+    return( rc );
 }
