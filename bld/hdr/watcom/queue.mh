@@ -30,6 +30,22 @@ namespace std {
         friend inline
         bool operator<( const queue< Type, Container > &x, const queue< Type, Container > &y );
 
+        template< class Type, class Container >
+        friend inline
+        bool operator!=( const queue< Type, Container > &x, const queue< Type, Container > &y );
+
+        template< class Type, class Container >
+        friend inline
+        bool operator<=( const queue< Type, Container > &x, const queue< Type, Container > &y );
+
+        template< class Type, class Container >
+        friend inline
+        bool operator>( const queue< Type, Container > &x, const queue< Type, Container > &y );
+
+        template< class Type, class Container >
+        friend inline
+        bool operator>=( const queue< Type, Container > &x, const queue< Type, Container > &y );
+
     public:
         typedef typename Container::value_type      value_type;
         typedef typename Container::reference       reference;
@@ -162,7 +178,7 @@ namespace std {
     inline
     bool operator!=( const queue< Type, Container > &x, const queue< Type, Container > &y )
     {
-        return( !(x == y) );
+        return( !(x.c == y.c) );
     }
 
     template< class Type, class Container >
@@ -176,21 +192,21 @@ namespace std {
     inline
     bool operator<=( const queue< Type, Container > &x, const queue< Type, Container > &y )
     {
-        return( (x < y) || (x == y) );
+        return( (x.c < y.c) || (x.c == y.c) );
     }
 
     template< class Type, class Container >
     inline
     bool operator>( const queue< Type, Container > &x, const queue< Type, Container > &y )
     {
-        return( y < x );
+        return( y.c < x.c );
     }
 
     template< class Type, class Container >
     inline
     bool operator>=( const queue< Type, Container > &x, const queue< Type, Container > &y )
     {
-        return( (y < x) || (x == y) );
+        return( (y.c < x.c) || (x.c == y.c) );
     }
 
 } // namespace std

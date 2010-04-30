@@ -70,8 +70,7 @@ bool relational_test( )
 {
     // At the time of this writing, std::dequeue::swap is not implemented. Also the relational
     // operators in std::list are not implemented. Once those issues are fixed this test can be
-    // enabled and generalized to use both container templates.
-#ifdef NEVER
+    // extended and generalized to use both container templates.
     std::queue< int > a, b;
 
     for( int i = 0; i < 1000; ++i ) {
@@ -84,6 +83,7 @@ bool relational_test( )
     if(  (a == b) ) FAIL;
     if( !(a <  b) ) FAIL;
 
+#ifdef NEVER
     a.swap( b );
     if( !(a._Sane( ) and b._Sane( )) ) FAIL;
     if(  (a == b) ) FAIL;
