@@ -300,10 +300,8 @@ fe_attr FEAttr(                 // GET SYMBOL ATTRIBUTES
             attr |= FE_VARARGS;
         }
     } else {
-        if( SymIsInitialized( sym ) ) {
-            if( SymIsComdatData( sym ) ) {
-                attr |= FE_COMMON;
-            }
+        if( SymIsComdatData( sym ) ) {
+            attr |= FE_COMMON;
         }
         if( mod_flags & TF1_STAY_MEMORY ) {
             attr |= FE_VOLATILE;
