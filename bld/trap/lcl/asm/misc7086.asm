@@ -188,18 +188,21 @@ comment ~
 
 ifndef REAL_MODE
 
+        .386
+
 Read387 PROC
         public  "C",Read387
         push    ds
         push    bx
+	push    edi
         mov     ds,dx
         mov     bx,ax
-        db      66H
-        fnsave  ds:[bx]
+	movzx   edi,bx
+        fsaved  ds:[bx]
+	fwait
+        frstord ds:[bx]
         fwait
-        db      66H
-        fnrstor ds:[bx]
-        fwait
+	pop     edi
         pop     bx
         pop     ds
         ret
@@ -209,11 +212,14 @@ Write387 PROC
         public  "C",Write387
         push    ds
         push    bx
+	push    edi
         mov     ds,dx
         mov     bx,ax
-        db      66h
-        fnrstor ds:[bx]
+	movzx   edi,bx
+	fwait
+        frstord ds:[bx]
         fwait
+	pop     edi
         pop     bx
         pop     ds
         ret
