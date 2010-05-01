@@ -36,7 +36,6 @@
 #include "dpmi.h"
 #include "dbgdefn.h"
 #include "dsxutil.h"
-#include "tinyio.h"
 #include "dbglit.h"
 
 extern void                     ProcCmd( void );
@@ -134,7 +133,7 @@ void KillDebugger( int rc )
 {
     RestoreHandlers();
     Cleanup();
-    TinyTerminateProcess( rc );
+    _exit( rc );
 }
 
 void GUImain( void )
