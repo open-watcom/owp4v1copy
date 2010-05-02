@@ -153,6 +153,9 @@ void CStringList::AddHead( CStringList *pNewList )
             m_pNodeHead->pPrev = pNodeCur;
         }
         m_pNodeHead = pNodeFirst;
+        if( m_pNodeTail == NULL ) {
+            m_pNodeTail = pNodeCur;
+        }
         m_nCount += pNewList->m_nCount;
     }
 }
@@ -219,6 +222,9 @@ void CStringList::AddTail( CStringList *pNewList )
             m_pNodeTail->pNext = pNodeFirst;
         }
         m_pNodeTail = pNodeCur;
+        if( m_pNodeHead == NULL ) {
+            m_pNodeHead = pNodeFirst;
+        }
         m_nCount += pNewList->m_nCount;
     }
 }
