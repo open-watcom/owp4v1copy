@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -73,14 +73,14 @@ void CScrollView::UpdateBars()
         si.nPage += cxVScroll;
     }
     SetScrollInfo( SB_HORZ, &si );
-    ShowScrollBar( SB_HORZ, bHasX );
+    EnableScrollBarCtrl( SB_HORZ, bHasX );
     si.nMax = m_totalDev.cy;
     si.nPage = rectClient.Height();
     if( !bHasX ) {
         si.nPage += cyHScroll;
     }
     SetScrollInfo( SB_VERT, &si );
-    ShowScrollBar( SB_VERT, bHasY );
+    EnableScrollBarCtrl( SB_VERT, bHasY );
 
     int xNew = bHasX ? GetScrollPos( SB_HORZ ) : 0;
     int yNew = bHasY ? GetScrollPos( SB_VERT ) : 0;
@@ -370,7 +370,7 @@ void CScrollView::SetScaleToFitSize( SIZE sizeTotal )
     m_nMapMode = -1;
     m_totalLog.cx = sizeTotal.cx;
     m_totalLog.cy = sizeTotal.cy;
-    ShowScrollBar( SB_BOTH, FALSE );
+    EnableScrollBarCtrl( SB_BOTH, FALSE );
 }
 
 void CScrollView::SetScrollSizes( int nMapMode, SIZE sizeTotal, const SIZE &sizePage,

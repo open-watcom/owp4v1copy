@@ -190,6 +190,7 @@ objs =                  &
         singldoc.obj    &
         slider.obj      &
         spinbtn.obj     &
+        splitter.obj    &
         statbar.obj     &
         statctrl.obj    &
         statcui.obj     &

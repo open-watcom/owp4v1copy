@@ -1,6 +1,6 @@
 CC = wpp386
-CFLAGS = -bt=nt -zq -fh
-OBJS = quikdraw.obj quikfrm.obj drawdoc.obj drawview.obj shapes.obj
+CFLAGS = -bt=nt -zq -fh -D_DEBUG
+OBJS = quikdraw.obj quikfrm.obj drawfrm.obj drawdoc.obj drawview.obj shapes.obj
 LNK = quikdraw.lnk
 
 quikdraw.exe : $(OBJS) $(LNK) quikdraw.res
@@ -14,7 +14,7 @@ $(LNK) : makefile
     %create $(LNK)
     @%append $(LNK) name quikdraw.exe
     @%append $(LNK) op quiet
-    @%append $(LNK) system nt_win
+    #@%append $(LNK) system nt_win
     @for %i in ($(OBJS)) do @%append $(LNK) file %i
 
 .cpp.obj : .autodepend

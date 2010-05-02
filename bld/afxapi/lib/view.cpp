@@ -52,7 +52,9 @@ IMPLEMENT_DYNAMIC( CView, CWnd )
 
 BEGIN_MESSAGE_MAP( CView, CWnd )
     ON_WM_CREATE()
+    ON_WM_DESTROY()
     ON_WM_ERASEBKGND()
+    ON_WM_MOUSEACTIVATE()
     ON_WM_PAINT()
     ON_MESSAGE_VOID( WM_INITIALUPDATE, OnInitialUpdate )
 END_MESSAGE_MAP()
@@ -183,6 +185,27 @@ void CView::OnUpdate( CView *pSender, LPARAM lHint, CObject *pHint )
     UNUSED_ALWAYS( lHint );
     UNUSED_ALWAYS( pHint );
     Invalidate();
+}
+
+CScrollBar *CView::GetScrollBarCtrl( int nBar ) const
+/***************************************************/
+{
+    ASSERT( nBar == SB_HORZ || nBar == SB_VERT );
+    if( (nBar == SB_HORZ && !(GetStyle() & WS_HSCROLL)) ||
+        (nBar == SB_VERT && !(GetStyle() & WS_VSCROLL)) ) {
+        CWnd *pSplitter = GetParent();
+        ASSERT( pSplitter != NULL );
+        if( pSplitter->IsKindOf( RUNTIME_CLASS( CSplitterWnd ) ) ) {
+            UINT nID = ::GetDlgCtrlID( m_hWnd );
+            if( nBar == SB_HORZ ) {
+                nID = AFX_IDW_HSCROLL_FIRST + (nID - AFX_IDW_PANE_FIRST) % 16;
+            } else {
+                nID = AFX_IDW_VSCROLL_FIRST + (nID - AFX_IDW_PANE_FIRST) / 16;
+            }
+            return( (CScrollBar *)pSplitter->GetDlgItem( nID ) );
+        }
+    }
+    return( NULL );
 }
 
 BOOL CView::OnCmdMsg( UINT nID, int nCode, void *pExtra,
@@ -326,6 +349,16 @@ int CView::OnCreate( LPCREATESTRUCT lpCreateStruct )
     return( 0 );
 }
 
+void CView::OnDestroy()
+/********************/
+{
+    CFrameWnd *pFrame = GetParentFrame();
+    if( pFrame != NULL && pFrame->GetActiveView() == this ) {
+        pFrame->SetActiveView( NULL );
+    }
+    CWnd::OnDestroy();
+}
+
 BOOL CView::OnEraseBkgnd( CDC *pDC )
 /**********************************/
 {
@@ -335,6 +368,23 @@ BOOL CView::OnEraseBkgnd( CDC *pDC )
     br.CreateSysColorBrush( COLOR_WINDOW );
     pDC->FillRect( &rect, &br );
     return( TRUE );
+}
+
+int CView::OnMouseActivate( CWnd *pDesktopWnd, UINT nHitTest, UINT message )
+/**************************************************************************/
+{
+    int nRet = CWnd::OnMouseActivate( pDesktopWnd, nHitTest, message );
+    if( nRet == MA_NOACTIVATE || nRet == MA_NOACTIVATEANDEAT ) {
+        return( nRet );
+    }
+
+    CFrameWnd *pFrame = GetParentFrame();
+    ASSERT( pFrame != NULL );
+    if( pFrame->GetActiveView() != this ) {
+        pFrame->SetActiveView( this );
+    }
+    
+    return( nRet );
 }
 
 void CView::OnPaint()

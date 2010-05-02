@@ -623,8 +623,15 @@ void CFrameWnd::InitialUpdateFrame( CDocument *pDoc, BOOL bMakeVisible )
 
     if( GetActiveView() == NULL ) {
         CView *pView = (CView *)GetDescendantWindow( AFX_IDW_PANE_FIRST );
-        if( pView != NULL && pView->IsKindOf( RUNTIME_CLASS( CView ) ) ) {
-            SetActiveView( pView );
+        if( pView != NULL ) {
+            if( pView->IsKindOf( RUNTIME_CLASS( CView ) ) ) {
+                SetActiveView( pView );
+            } else if( pView->IsKindOf( RUNTIME_CLASS( CSplitterWnd ) ) ) {
+                pView = (CView *)pView->GetDescendantWindow( AFX_IDW_PANE_FIRST );
+                if( pView->IsKindOf( RUNTIME_CLASS( CView ) ) ) {
+                    SetActiveView( pView );
+                }
+            }
         }
     }
     if( pDoc != NULL ) {

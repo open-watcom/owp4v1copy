@@ -368,6 +368,87 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
+// Splitter window styles
+#define SPLS_DYNAMIC_SPLIT  0x0001L
+#define SPLS_INVERT_TRACKER 0x0002L
+
+class CSplitterWnd : public CWnd {
+public:
+    enum ESplitType {
+        splitBox,
+        splitBar,
+        splitIntersection,
+        splitBorder
+    };
+    
+protected:
+    struct CRowColInfo {
+        int nMinSize;
+        int nIdealSize;
+        int nCurSize;
+    };
+    
+    CRuntimeClass   *m_pDynamicViewClass;
+    int             m_nMaxRows;
+    int             m_nMaxCols;
+    int             m_cxSplitter;
+    int             m_cySplitter;
+    int             m_nRows;
+    int             m_nCols;
+    BOOL            m_bHasHScroll;
+    BOOL            m_bHasVScroll;
+    CRowColInfo     *m_pColInfo;
+    CRowColInfo     *m_pRowInfo;
+    BOOL            m_bTracking;
+    CPoint          m_ptTrackOffset;
+    CRect           m_rectLimit;
+    CRect           m_rectTracker;
+    int             m_htTrack;
+    
+    DECLARE_DYNAMIC( CSplitterWnd )
+    
+public:
+    CSplitterWnd();
+    
+    virtual BOOL    Create( CWnd *pParentWnd, int nMaxRows, int nMaxCols, SIZE sizeMin, CCreateContext *pContext, DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL | SPLS_DYNAMIC_SPLIT, UINT nID = AFX_IDW_PANE_FIRST );
+    virtual BOOL    CreateScrollBarCtrl( DWORD dwStyle, UINT nID );
+    virtual BOOL    CreateView( int row, int col, CRuntimeClass *pViewClass, SIZE sizeInit, CCreateContext *pContext );
+    virtual void    DeleteColumn( int colDelete );
+    virtual void    DeleteRow( int rowDelete );
+    virtual void    DeleteView( int row, int col );
+    virtual CWnd    *GetActivePane( int *pRow = NULL, int *pCol = NULL );
+    virtual void    OnDrawSplitter( CDC *pDC, ESplitType nType, const CRect &rect );
+    virtual void    OnInvertTracker( const CRect &rect );
+    virtual void    RecalcLayout();
+    virtual void    SetActivePane( int row, int col, CWnd *pWnd = NULL );
+    virtual BOOL    SplitColumn( int cxBefore );
+    virtual BOOL    SplitRow( int cyBefore );
+    
+    int     GetColumnCount() const;
+    void    GetColumnInfo( int col, int &cxCur, int &cxMin ) const;
+    CWnd    *GetPane( int row, int col ) const;
+    int     GetRowCount() const;
+    void    GetRowInfo( int row, int &cyCur, int &cyMin ) const;
+    DWORD   GetScrollStyle() const;
+    int     IdFromRowCol( int row, int col ) const;
+    BOOL    IsChildPane( CWnd *pWnd, int *pRow, int *pCol );
+    BOOL    IsTracking();
+    void    SetColumnInfo( int col, int cxIdeal, int cxMin );
+    void    SetRowInfo( int row, int cyIdeal, int cyMin );
+    void    SetScrollStyle( DWORD dwStyle );
+    
+protected:
+    afx_msg void    OnHScroll( UINT nSBCode, UINT nPos, CScrollBar *pScrollBar );
+    afx_msg void    OnLButtonDown( UINT nFlags, CPoint point );
+    afx_msg void    OnLButtonUp( UINT nFlags, CPoint point );
+    afx_msg void    OnMouseMove( UINT nFlags, CPoint point );
+    afx_msg void    OnPaint();
+    afx_msg BOOL    OnSetCursor( CWnd *pWnd, UINT nHitTest, UINT message );
+    afx_msg void    OnSize( UINT nType, int cx, int cy );
+    afx_msg void    OnVScroll( UINT nSBCode, UINT nPos, CScrollBar *pScrollBar );
+    DECLARE_MESSAGE_MAP()
+};
+
 class CMetaFileDC : public CDC {
 private:
     BOOL m_bEnhanced;

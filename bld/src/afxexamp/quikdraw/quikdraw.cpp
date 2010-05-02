@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "quikdraw.h"
 #include "quikfrm.h"
+#include "drawfrm.h"
 #include "drawdoc.h"
 #include "drawview.h"
 
@@ -26,7 +27,7 @@ BOOL CQuickDrawApp::InitInstance()
     // type and register it with the framework.
     CDocTemplate *pTemplate = new CMultiDocTemplate( IDR_DRAWINGTYPE,
                                                      RUNTIME_CLASS( CDrawingDoc ),
-                                                     RUNTIME_CLASS( CMDIChildWnd ),
+                                                     RUNTIME_CLASS( CDrawingFrameWnd ),
                                                      RUNTIME_CLASS( CDrawingView ) );
     AddDocTemplate( pTemplate );
 

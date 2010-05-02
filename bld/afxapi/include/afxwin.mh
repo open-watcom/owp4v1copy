@@ -1916,12 +1916,13 @@ public:
     virtual BOOL    OnScroll( UINT nScrollCode, UINT nPos, BOOL bDoScroll = TRUE );
     virtual BOOL    OnScrollBy( CSize sizeScroll, BOOL bDoScroll = TRUE );
     virtual void    OnUpdate( CView *pSender, LPARAM lHint, CObject *pHint );
-    
-    virtual BOOL    OnCmdMsg( UINT nID, int nCode, void *pExtra, AFX_CMDHANDLERINFO *pHandlerInfo );
-    virtual BOOL    PreCreateWindow( CREATESTRUCT &cs );
-    virtual void    PostNcDestroy();
+
+    virtual CScrollBar  *GetScrollBarCtrl( int nBar ) const;
+    virtual BOOL        OnCmdMsg( UINT nID, int nCode, void *pExtra, AFX_CMDHANDLERINFO *pHandlerInfo );
+    virtual BOOL        PreCreateWindow( CREATESTRUCT &cs );
+    virtual void        PostNcDestroy();
 #ifdef _DEBUG
-    virtual void    Dump( CDumpContext &dc ) const;
+    virtual void        Dump( CDumpContext &dc ) const;
 #endif
 
     BOOL        DoPreparePrinting( CPrintInfo *pInfo );
@@ -1931,7 +1932,9 @@ public:
     
 protected:
     afx_msg int     OnCreate( LPCREATESTRUCT lpCreateStruct );
+    afx_msg void    OnDestroy();
     afx_msg BOOL    OnEraseBkgnd( CDC *pDC );
+    afx_msg int     OnMouseActivate( CWnd *pDesktopWnd, UINT nHitTest, UINT message );
     afx_msg void    OnPaint();
     afx_msg void    OnFilePrint();
     afx_msg void    OnFilePrintPreview();
