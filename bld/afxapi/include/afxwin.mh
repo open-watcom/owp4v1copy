@@ -1535,6 +1535,15 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
+// Work around a compiler bug that causes problems when a function taking an anonymous
+// structure as a parameter is placed in a static library.
+struct AFX_DLGTEMPLATE : DLGTEMPLATE {
+    // No additional fields
+};
+#define DLGTEMPLATE     AFX_DLGTEMPLATE
+#define LPDLGTEMPLATE   AFX_DLGTEMPLATE *
+#define LPCDLGTEMPLATE  const AFX_DLGTEMPLATE *
+
 class CDialog : public CWnd {
 protected:
     UINT            m_nIDHelp;
