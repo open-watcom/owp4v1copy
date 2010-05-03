@@ -88,9 +88,9 @@ def_targ        = wcc$(target_cpu)c.exe
 
 # options for single source utility compilations
 !ifdef __UNIX__
-wcl_util_opts = $(def_fpu_flags_$(host_os)_$(host_cpu)) -ox -w4 -fo=.obj -fe=$^@
+wcl_util_opts = $(def_fpu_flags_$(host_os)_$(host_cpu)) -ox -w8 -fo=.obj -fe=$^@
 !else
-wcl_util_opts = $(def_fpu_flags_$(host_os)_$(host_cpu)) -ox -w4 -fe=$^@
+wcl_util_opts = $(def_fpu_flags_$(host_os)_$(host_cpu)) -ox -w8 -fe=$^@
 !endif
 
 #common bootstrap definitions for Linux

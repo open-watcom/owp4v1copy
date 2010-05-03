@@ -139,9 +139,9 @@ memory_model_386 = $(default_memory_model_386_$(host_os))
 model_switch_386 = -m$(memory_model_386)
 
 !ifdef __UNIX__
-cflags_all      =-w4 -we $(mode_cflags) -fo=.obj
+cflags_all      =-w8 -we $(mode_cflags) -fo=.obj
 !else
-cflags_all      =-w4 -we $(mode_cflags)
+cflags_all      =-w8 -we $(mode_cflags)
 !endif
 !ifdef sys_dll
 !ifndef suppress_bd
@@ -280,14 +280,14 @@ clflags          = $(mode_clflags) $(clflags_$(host_os)_$(host_cpu)) $(model_swi
 aflags_all      =
 
 !ifdef __UNIX__
-aflags_386      = -3-w4-fo=.obj
-aflags_i86      = -w4-fo=.obj
+aflags_386      = -3-w8-fo=.obj
+aflags_i86      = -w8-fo=.obj
 aflags_axp      = -we-fo=.obj
 aflags_ppc      = -we-fo=.obj
 aflags_mps      = -we-fo=.obj
 !else
-aflags_386      = -3-w4
-aflags_i86      = -w4
+aflags_386      = -3-w8
+aflags_i86      = -w8
 aflags_axp      = -we
 aflags_ppc      = -we
 aflags_mps      = -we

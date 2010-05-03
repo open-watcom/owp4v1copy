@@ -14,7 +14,7 @@ batserv.exe : batserv.obj
         $(linker) $(lflags) file batserv.obj op stack=16k
 
 batcli.obj : batcli.c
-        *wcc -zq -w4-we -oaxt -fo=.obj -d1 $(inc_dirs_sys) batcli.c
+        *wcc -zq -w8-we -oaxt -fo=.obj -d1 $(inc_dirs_sys) batcli.c
 
 tst.exe : tst.c batcli.obj
         *wcl -zq -d2 tst.c batcli.obj -l=dos

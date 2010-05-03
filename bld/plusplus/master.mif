@@ -403,10 +403,10 @@ code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $@
 !endif
  
-target_as_axp = wasmaxp -zq -w4
-target_as_i86 = bwasm -zq -w4
-target_as_386 = bwasm -zq -3 -w4
-target_as_ppc = wasmppc -zq -w4
+target_as_axp = wasmaxp -zq -w8
+target_as_i86 = bwasm -zq -w8
+target_as_386 = bwasm -zq -3 -w8
+target_as_ppc = wasmppc -zq -w8
  
 xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
     $(target_as_$(target_cpu)) -fo=.obj -I$(watcom_h) $[@

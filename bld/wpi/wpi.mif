@@ -21,13 +21,13 @@ librarian=wlib
 !ifdef codeview
 CMN_CFLAGS += -hc-d1-s
 !else
-CMN_CFLAGS = -ox-s-w4-v-d2
+CMN_CFLAGS = -ox-s-w8-v-d2
 !endif
 !else
-CMN_CFLAGS = -ox-s-w4-v -$(%MAKE_DEBUG)
+CMN_CFLAGS = -ox-s-w8-v -$(%MAKE_DEBUG)
 !endif
 !else
-CMN_CFLAGS = -ox-s-w4-v-d1
+CMN_CFLAGS = -ox-s-w8-v-d1
 !endif
 
 # makefiles can override this if they want

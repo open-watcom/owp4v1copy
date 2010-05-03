@@ -241,11 +241,11 @@ code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $@
 !endif
 
-target_as_axp   = wasaxp -zq -w4
-target_as_i86   = bwasm -zq -w4
-target_as_386   = bwasm -zq -w4 -3
-target_as_ppc   = wasppc -zq -w4
-target_as_mps   = wasmps -zq -w4
+target_as_axp   = wasaxp -zq -w8
+target_as_i86   = bwasm -zq -w8
+target_as_386   = bwasm -zq -w8 -3
+target_as_ppc   = wasppc -zq -w8
+target_as_mps   = wasmps -zq -w8
 
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
         $(target_as_$(target_cpu)) -I"$(watcom_h)" -fo=.obj $[@
