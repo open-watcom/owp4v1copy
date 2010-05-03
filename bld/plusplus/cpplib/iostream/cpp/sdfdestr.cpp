@@ -36,6 +36,11 @@
 #include <stdiobuf.h>
 #endif
 
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8
+// This one is not so trivial
+#pragma warning 656 9
+
 stdiobuf::~stdiobuf() {
     if( __file_pointer != NULL ) {
         if( out_waiting() ) {

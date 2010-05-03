@@ -35,6 +35,10 @@
 #include <iostream>
 #endif
 
+// Complain about defining trivial constructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
 namespace std {
 
   // Default constructor, no associated streambuf.

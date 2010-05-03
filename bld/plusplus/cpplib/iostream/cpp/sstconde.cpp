@@ -35,6 +35,10 @@
 #include <strstrea>
 #endif
 
+// Complain about defining trivial constructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
 namespace std {
 
   // Construct an empty strstream that may have characters placed in it.
