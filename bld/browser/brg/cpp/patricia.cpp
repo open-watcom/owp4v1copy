@@ -38,7 +38,9 @@
 class PatriciaNode {
 public:
                         PatriciaNode();         // construct the head node
-                        ~PatriciaNode();
+                        ~PatriciaNode() {
+                            // not called as ragnarok() is used
+                        };
 
     void *              operator new( size_t ) { return _nodePool.alloc(); };
     void                operator delete( void * p ) { _nodePool.free( p ); };
@@ -86,12 +88,6 @@ PatriciaNode::PatriciaNode( int_16 bitPos, char * key,
         , _right( (right) ? right : this )
 //---------------------------------------------------------------------
 {
-}
-
-PatriciaNode::~PatriciaNode()
-//---------------------------
-{
-    // not called as ragnarok() is used
 }
 
 static void PatriciaNode::ragnarok()

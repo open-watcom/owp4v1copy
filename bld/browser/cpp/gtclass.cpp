@@ -47,7 +47,7 @@
 const int PTRPOOLSIZE = 128;
 const int NODEPOOLSIZE = 64;
 
-#pragma warning 549 5           // sizeof contains compiler genned info.
+#pragma warning 549 9           // sizeof contains compiler genned info.
 MemoryPool TreeClassPtr::_pool( sizeof( TreeClassPtr ), "TreeClassPtr",
                                     PTRPOOLSIZE );
 MemoryPool TreeClassNode::_pool( sizeof( TreeClassNode ), "TreeClassNode",
@@ -391,12 +391,6 @@ TreeClassWindow::TreeClassWindow( char * title )
     _findFilter->setSymType( KSTClasses );
 }
 
-
-TreeClassWindow::~TreeClassWindow()
-//---------------------------------
-{
-}
-
 bool TreeClassWindow::contextHelp( bool is_active_window )
 //--------------------------------------------------------
 {
@@ -480,4 +474,13 @@ void TreeClassWindow::fillRoots( void )
             }
         }
     }
+}
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
+TreeClassWindow::~TreeClassWindow()
+//---------------------------------
+{
 }

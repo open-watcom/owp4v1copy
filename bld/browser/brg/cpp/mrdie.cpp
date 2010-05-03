@@ -91,14 +91,6 @@ MergeDIE::MergeDIE( const MergeDIE& other )
     *this = other;
 }
 
-MergeDIE::~MergeDIE()
-//-------------------
-{
-    // WARNING --   this destructor probably won't be called for
-    //              all dies, since the ragnarok call is used to
-    //              free all allocated dies
-}
-
 void MergeDIE::ragnarok()
 //-----------------------
 // free all MergeDie's allocated with the
@@ -432,3 +424,15 @@ void MergeDIE::writeSelf( MergeInfoSection * sect, MergeFile & outFile,
     _flags._written = 1;
 }
 #endif
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 657 9
+
+MergeDIE::~MergeDIE()
+//-------------------
+{
+    // WARNING --   this destructor probably won't be called for
+    //              all dies, since the ragnarok call is used to
+    //              free all allocated dies
+}

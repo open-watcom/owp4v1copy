@@ -52,11 +52,6 @@ EnumStyleEdit::EnumStyleEdit( WWindow * parent,
 {
 }
 
-EnumStyleEdit::~EnumStyleEdit()
-//-----------------------------
-{
-}
-
 bool EnumStyleEdit::contextHelp( bool is_active_win )
 //---------------------------------------------------
 {
@@ -150,4 +145,13 @@ void EnumStyleEdit::defaultButton( WWindow * )
 //--------------------------------------------
 {
     setValues( _default );
+}
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
+EnumStyleEdit::~EnumStyleEdit()
+//-----------------------------
+{
 }

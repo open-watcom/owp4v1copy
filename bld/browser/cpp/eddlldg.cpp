@@ -66,11 +66,6 @@ NewEditDLL::NewEditDLL( WWindow * parent,
 {
 }
 
-NewEditDLL::~NewEditDLL()
-//-----------------------
-{
-}
-
 void NewEditDLL::initialize()
 //--------------------------
 {
@@ -233,3 +228,13 @@ bool NewEditDLL::contextHelp( bool is_active_win )
     }
     return( TRUE );
 }
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
+NewEditDLL::~NewEditDLL()
+//-----------------------
+{
+}
+

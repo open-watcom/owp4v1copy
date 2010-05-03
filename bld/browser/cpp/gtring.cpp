@@ -43,7 +43,7 @@ const int sibSep = 10;
 
 const int POOLSIZE = 64;
 
-#pragma warning 549 5           // sizeof contains compiler genned info.
+#pragma warning 549 9           // sizeof contains compiler genned info.
 MemoryPool TreeRing::_pool( sizeof( TreeRing ), "TreeRing", POOLSIZE );
 #pragma warning 549 3
 

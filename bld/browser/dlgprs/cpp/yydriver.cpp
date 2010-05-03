@@ -23,7 +23,8 @@
 
 #define YYABORT         return(1)
 #define YYACCEPT        return(0)
-#define YYERROR         goto yyerrlab
+//Never used
+//#define YYERROR         goto yyerrlab
 
 YYPARSER::YYPARSER( const char * fileName )
 //-----------------------------------------
@@ -95,7 +96,8 @@ yycheck2:
               switch( yyerrflag ){
                 case 0:
                   yyerror( "syntax error" );
-                  yyerrlab:
+                  //Never used
+                  //yyerrlab:
                 case 1:
                 case 2:
                   yyerrflag = 3;

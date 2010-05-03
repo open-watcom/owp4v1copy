@@ -49,11 +49,6 @@ MergeFile::MergeFile( const char * filename )
 {
 }
 
-MergeFile::~MergeFile()
-//---------------------
-{
-}
-
 uint_32 MergeFile::readULEB128( dr_section sect, uint_32& off )
 //-------------------------------------------------------------
 // Returns the ULEB128 value, updates off
@@ -448,4 +443,14 @@ uint_32 MergeFile::readForm( dr_section sect, uint_32& off, uint_32 form,
         InternalAssert( 0 /* not a numeric type */ );
     }
     return 0;
+}
+
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 657 9
+
+MergeFile::~MergeFile()
+//---------------------
+{
 }

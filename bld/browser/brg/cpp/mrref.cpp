@@ -87,12 +87,6 @@ MergeRefSection::MergeRefSection( MergeLineSection& line,
 {
 }
 
-
-MergeRefSection::~MergeRefSection()
-//--------------------------------
-{
-}
-
 void MergeRefSection::mergeRefs( WCPtrOrderedVector<MergeFile>& files )
 //---------------------------------------------------------------------
 {
@@ -366,4 +360,13 @@ void MergeRefSection::skipDeadScope( MergeFile * file,
     #endif
 
     InfoAssert( scopeLevel == 0 );      // ie we didn't hit EOF
+}
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 657 9
+
+MergeRefSection::~MergeRefSection()
+//--------------------------------
+{
 }
