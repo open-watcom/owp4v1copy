@@ -380,9 +380,9 @@ uchar unescape(SubStr &s){
         return xlat['\a'];
     case '0': case '1': case '2': case '3':
     case '4': case '5': case '6': case '7': {
-        uchar v = c - '0';
+        uchar v = (uchar)(c - '0');
         for(; s.len != 0 && '0' <= (c = *s.str) && c <= '7'; s.len--, s.str++)
-            v = v*8 + (c - '0');
+            v = (uchar)(v*8 + (c - '0'));
         return v;
     } default:
         return xlat[c];

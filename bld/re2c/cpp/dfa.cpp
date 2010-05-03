@@ -37,8 +37,8 @@
 #include "substr.h"
 #include "dfa.h"
 
-inline char octCh(uint c){
-    return '0' + (char)c%8;
+inline static char octCh(uint c){
+    return (char)('0' + (char)(c%8));
 }
 
 void prtCh(std::ostream &o, uchar c){
@@ -70,7 +70,7 @@ void printSpan(std::ostream &o, uint lb, uint ub){
     } else {
     prtCh(o, (uchar)lb);
     o << "-";
-    prtCh(o, (uchar)ub-1);
+    prtCh(o, (uchar)(ub-1));
     }
     o << "]";
 }
