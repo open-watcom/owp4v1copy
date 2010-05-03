@@ -178,6 +178,11 @@ static BOOL _DisableToolTips()
 {
     // The tool tips flicker on Windows Vista and later when visual styles are enabled.
     // Lacking a better solution, just disable them on these versions.
+    static BOOL bResult = FALSE;
+    if( bResult ) {
+        return( TRUE );
+    }
+    
     OSVERSIONINFO osvi;
     ::GetVersionEx( &osvi );
     if( osvi.dwMajorVersion < 6 ) {
@@ -189,7 +194,6 @@ static BOOL _DisableToolTips()
         return( FALSE );
     }
 
-    BOOL            bResult = FALSE;
     PFN_ISAPPTHEMED pfn = (PFN_ISAPPTHEMED)::GetProcAddress( hInstance, "IsAppThemed" );
     if( pfn != NULL ) {
         bResult = pfn();
