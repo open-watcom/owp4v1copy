@@ -58,6 +58,31 @@ _WCRTLINK void *malloc( size_t amount )
 
 #endif
 
+/* By setting __ALLOC_DEBUG it is possible to spot memory allocation errors in
+   RDOS target. RdosAllocateMem will here allocate whole pages regardless of actual
+   request size. The kernel device-driver should also be set to not reuse pages
+   until all pages have been allocated for this to work properly.  */
+
+#if defined( __RDOS__ ) && defined( __ALLOC_DEBUG )
+
+#include <rdos.h>
+
+_WCRTLINK void _WCNEAR *_nmalloc( size_t amt )
+{
+    void *ptr;
+    unsigned size;
+
+    size = amt;
+    size--;
+    size &= 0xFFFFF000;
+    size += 0x1000;
+
+    ptr = RdosAllocateMem( size );
+    
+    return( (void _WCNEAR *)ptr );
+}    
+
+#else
 
 _WCRTLINK void _WCNEAR *_nmalloc( size_t amt )
 {
@@ -122,3 +147,5 @@ lbl_release_heap:
     _ReleaseNHeap();
     return( (void _WCNEAR *)ptr );
 }
+
+#endif
