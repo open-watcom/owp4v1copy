@@ -40,6 +40,10 @@ WEXPORT VToolItem::VToolItem( ToolType typ, int toolId, WObject *client, cbtbi p
 {
 }
 
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
 WEXPORT VToolItem::~VToolItem()
 {
 }
