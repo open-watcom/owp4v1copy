@@ -122,10 +122,6 @@ WEXPORT WFileName::WFileName( const char* name )
 {
 }
 
-WEXPORT WFileName::~WFileName()
-{
-}
-
 #ifndef NOPERSIST
 WFileName* WEXPORT WFileName::createSelf( WObjectFile& )
 {
@@ -622,3 +618,11 @@ bool WEXPORT WFileName::renameFile( const char* newname ) const
     return FALSE;
 }
 
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 657 9
+
+WEXPORT WFileName::~WFileName()
+{
+}

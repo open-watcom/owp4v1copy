@@ -56,12 +56,6 @@ WEXPORT WListBox::WListBox( WStatDialog* parent, unsigned id, WStyle wstyle )
 }
 
 
-WEXPORT WListBox::~WListBox() {
-/*****************************/
-
-}
-
-
 bool WListBox::gettingFocus( WWindow* ) {
 /***************************************/
 
@@ -247,4 +241,13 @@ void* WEXPORT WListBox::tagPtr( int index ) {
 /*******************************************/
 
     return( GUIGetListItemData( parent()->handle(), controlId(), index ) );
+}
+
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
+WEXPORT WListBox::~WListBox() {
+/*****************************/
 }

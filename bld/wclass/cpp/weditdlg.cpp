@@ -47,12 +47,6 @@ WEXPORT WEditDialog::WEditDialog( WWindow* parent, const char* text )
 }
 
 
-WEXPORT WEditDialog::~WEditDialog() {
-/***********************************/
-
-}
-
-
 void WEditDialog::updateExtents( const char *t, int *w, int *h ) {
 /****************************************************************/
 
@@ -126,3 +120,14 @@ bool WEXPORT WEditDialog::edit( WString& reply ) {
     _reply = &reply;
     return( process() == TRUE );
 }
+
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
+WEXPORT WEditDialog::~WEditDialog() {
+/***********************************/
+
+}
+

@@ -81,11 +81,6 @@ WEXPORT WButton::WButton( WStatDialog *parent, unsigned id, WStyle wstyle )
 }
 
 
-WEXPORT WButton::~WButton() {
-/***************************/
-
-}
-
 
 void WEXPORT WButton::onClick( WObject *client, cbw click ) {
 /***********************************************************/
@@ -132,4 +127,14 @@ bool WButton::processMsg( gui_event msg ) {
         break;
     }
     return( FALSE );
+}
+
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
+WEXPORT WButton::~WButton() {
+/***************************/
+
 }

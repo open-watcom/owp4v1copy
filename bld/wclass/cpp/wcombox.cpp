@@ -52,12 +52,6 @@ WEXPORT WComboBox::WComboBox( WStatDialog* parent,
 }
 
 
-WEXPORT WComboBox::~WComboBox() {
-/*******************************/
-
-}
-
-
 //      Define Edit Combo Box
 //      =====================
 
@@ -72,12 +66,6 @@ WEXPORT WEditComboBox::WEditComboBox( WStatDialog* parent, unsigned id,
                                       WStyle style )
         : WCombo( parent, id, style ) {
 /*************************************/
-
-}
-
-
-WEXPORT WEditComboBox::~WEditComboBox() {
-/***************************************/
 
 }
 
@@ -104,12 +92,6 @@ WEXPORT WCombo::WCombo( WStatDialog* parent, unsigned id,
         , _dblClickClient( NULL )
         , _dblClick( NULL ) {
 /***************************/
-
-}
-
-
-WEXPORT WCombo::~WCombo() {
-/*************************/
 
 }
 
@@ -241,4 +223,21 @@ void * WEXPORT WCombo::tagPtr( int index ) {
 /******************************************/
 
     return( GUIGetListItemData( parent()->handle(), controlId(), index ) );
+}
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+#pragma warning 657 9
+
+WEXPORT WComboBox::~WComboBox() {
+/*******************************/
+}
+
+WEXPORT WEditComboBox::~WEditComboBox() {
+/***************************************/
+}
+
+WEXPORT WCombo::~WCombo() {
+/*************************/
 }

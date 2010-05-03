@@ -54,12 +54,6 @@ WEXPORT WAutoDialog::WAutoDialog( WWindow *parent, const char *text,
 }
 
 
-WEXPORT WAutoDialog::~WAutoDialog() {
-/***********************************/
-
-}
-
-
 void WAutoDialog::updateExtents( const char *t, int *w, int *h ) {
 /****************************************************************/
 
@@ -194,3 +188,13 @@ bool WEXPORT WAutoDialog::getInput( WStringList &replys ) {
     _replys = &replys;
     return( process() == TRUE );
 }
+
+// Complain about defining trivial destructor inside class
+// definition only for warning levels above 8 
+#pragma warning 656 9
+
+WEXPORT WAutoDialog::~WAutoDialog() {
+/***********************************/
+
+}
+
