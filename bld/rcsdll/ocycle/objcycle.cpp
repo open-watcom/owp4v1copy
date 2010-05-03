@@ -85,8 +85,6 @@ int objectCycleSystem::fini()
     return( TRUE );
 };
 
-objectCycleSystem::~objectCycleSystem() {};
-
 int objectCycleSystem::checkout( userData *d, rcsstring name,
                             rcsstring pj, rcsstring tgt )
 {
@@ -108,4 +106,11 @@ int objectCycleSystem::runShell()
 {
     if( rs_fp == NULL ) return( FALSE );
     return( (*rs_fp)() );
+};
+
+// Complain about defining trivial constructor inside class
+// definition only for warning levels above 8 
+#pragma warning 657 9
+
+objectCycleSystem::~objectCycleSystem() {
 };

@@ -87,8 +87,6 @@ int mksSISystem::fini()
     return( TRUE );
 };
 
-mksSISystem::~mksSISystem() {};
-
 int mksSISystem::checkout( userData *d, rcsstring name,
                             rcsstring pj, rcsstring tgt )
 {
@@ -111,3 +109,12 @@ int mksSISystem::runShell()
     if( rs_fp == NULL ) return( FALSE );
     return( (*rs_fp)( NULL ) );
 };
+
+
+// Complain about defining trivial constructor inside class
+// definition only for warning levels above 8 
+#pragma warning 657 9
+
+mksSISystem::~mksSISystem() {
+};
+
