@@ -3551,6 +3551,25 @@ void ClassDtorNullBody( SYMBOL dtor )
         /* out-of-line definition */
         if(( GenSwitches & DBG_LOCALS ) == 0 ) {
             if( IsSrcFilePrimary( dtor->locn->tl.src_file ) ) {
+                //
+                // If dtor is:
+                //      empty and pure and virtual
+                // DO NOT complain at any warning level that defining it inside class definition
+                //    "may improve code quality"
+                // as there is no way to define at the same time
+                // function body and "pure virtuality" 
+                // 
+                // class X {
+                //      virtual ~X() = 0;           // OK
+                //      virtual ~X() { } = 0;       // impossible
+                //      virtual ~X() = 0 { };       // impossible
+                // };
+                //
+                TYPE fn_type = FunctionDeclarationType( dtor->sym_type );
+                if( ((fn_type->flag & TF1_PURE   )!=0) &&
+                    ((fn_type->flag & TF1_VIRTUAL)!=0) ) {
+                    return;
+                }
                 if( info->dtor_user_code_checked ) {
                     CErr1( WARN_OPTIMIZE_IF_EARLIER );
                 } else if( ! SymIsInline( dtor ) ) {
