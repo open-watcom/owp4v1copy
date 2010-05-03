@@ -101,7 +101,7 @@ inline int Scanner::nextch()
 void Scanner::putback( int c )
 {
     if( _maxBuf > 0 ) {
-        _buffer[--_curPos] = c;
+        _buffer[--_curPos] = static_cast<uint_8>(c);
     }
 }
 
@@ -207,13 +207,13 @@ void Scanner::pullCommand( Token * tok )
     char    num_string[7];
     int     i;
 
-    tok->_text[0] = nextch();
+    tok->_text[0] = static_cast<char>(nextch());
 
     for( i=1; i<BUF_SIZE-1; i++ ) {
         current = nextch();
 
         if( !islower( current ) ) break;
-        tok->_text[i] = current;
+        tok->_text[i] = static_cast<char>(current);
     }
     tok->_text[i] = '\0';
 
@@ -222,7 +222,7 @@ void Scanner::pullCommand( Token * tok )
     } else {
         tok->_hasValue = 1;
         for( i=0; i<6; i++ ) {
-            num_string[i] = current;
+            num_string[i] = static_cast<char>(current);
             current = nextch();
             if( !isdigit(current) ) break;
         }
@@ -241,7 +241,7 @@ void Scanner::pullCommand( Token * tok )
 
 void Scanner::pullText( Token * tok )
 {
-    tok->_text[0] = nextch();
+    tok->_text[0] = static_cast<char>(nextch());
 
     int     i = 1;
     int     current;
@@ -266,7 +266,7 @@ void Scanner::pullText( Token * tok )
             ++_lineNum;
             continue;
         }
-        tok->_text[i++] = current;
+        tok->_text[i++] = static_cast<char>(current);
     }
     tok->_text[i] = '\0';
     tok->_value = i;
@@ -289,7 +289,7 @@ void Scanner::pullHex( Token * tok )
         if( !isxdigit( current ) ) {
             break;
         }
-        result[i] = current;
+        result[i] = static_cast<char>(current);
     }
     result[i] = '\0';
     if( i < 2 && current != S_ENDC ) {

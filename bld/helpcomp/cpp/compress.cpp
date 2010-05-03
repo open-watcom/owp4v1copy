@@ -232,7 +232,7 @@ int CompReader::compress( char const source[], int amount )
     }
 
     memcpy( _buffer+_last, source, amount );
-    _last += amount;
+    _last += static_cast<short>(amount);
 
     int hash_value;
     int key_size, old_key_size;
@@ -293,7 +293,7 @@ int CompReader::compress( char const source[], int amount )
         _current += 1;
     } else {
         result += _dest->putCode( _current-best_match, old_key_size );
-        _current += old_key_size;
+        _current += static_cast<short>(old_key_size);
     }
     if( _current > HOLD_SIZE ){
         _first = (short) (_current - HOLD_SIZE);
@@ -332,8 +332,8 @@ int CompReader::add( char const source[], int amount )
     for( int i=0; i<amount; ++i ){
     result += _dest->putChr( source[i] );
     }
-    _last += amount;
-    _current += amount;
+    _last += static_cast<short>(amount);
+    _current += static_cast<short>(amount);
     if( _current > HOLD_SIZE ){
     _first = (short) (_current - HOLD_SIZE);
     }
@@ -358,8 +358,8 @@ int CompReader::skip( int amount )
     for( int i=0; i<amount; ++i ){
     result += _dest->putChr( 0 );
     }
-    _last += amount;
-    _current += amount;
+    _last += static_cast<short>(amount);
+    _current += static_cast<short>(amount);
     if( _current > HOLD_SIZE ){
     _first = (short) (_current - HOLD_SIZE);
     }

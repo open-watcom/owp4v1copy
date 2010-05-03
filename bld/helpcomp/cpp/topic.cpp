@@ -1203,7 +1203,7 @@ void HFTopic::newNode( int is_new_topic )
                  _curText->_size-_curText->_zeroes[j-1]-1 );
             _curText->_size -= j-1-i;
             _curText->_uncompSize -= j-1-i;
-            _curText->_numZeroes -= j-1-i;
+            _curText->_numZeroes -= static_cast<uint_16>(j-1-i);
             for( k=i; k<_curText->_numZeroes; k++ ){
             _curText->_zeroes[k] = (uint_16) (_curText->_zeroes[k+j-1-i]-j+1+i);
             }
