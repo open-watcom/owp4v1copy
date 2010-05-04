@@ -1936,6 +1936,10 @@ protected:
     afx_msg BOOL    OnEraseBkgnd( CDC *pDC );
     afx_msg int     OnMouseActivate( CWnd *pDesktopWnd, UINT nHitTest, UINT message );
     afx_msg void    OnPaint();
+    afx_msg BOOL    OnNextPaneCmd( UINT nID );
+    afx_msg BOOL    OnSplitCmd( UINT nID );
+    afx_msg void    OnUpdateNextPaneMenu( CCmdUI *pCmdUI );
+    afx_msg void    OnUpdateSplitCmd( CCmdUI *pCmdUI );
     afx_msg void    OnFilePrint();
     afx_msg void    OnFilePrintPreview();
     DECLARE_MESSAGE_MAP()

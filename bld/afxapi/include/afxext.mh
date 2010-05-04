@@ -410,19 +410,26 @@ protected:
 public:
     CSplitterWnd();
     
+    virtual void    ActivateNext( BOOL bPrev = FALSE );
+    virtual BOOL    CanActivateNext( BOOL bPrev = FALSE );
     virtual BOOL    Create( CWnd *pParentWnd, int nMaxRows, int nMaxCols, SIZE sizeMin, CCreateContext *pContext, DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL | SPLS_DYNAMIC_SPLIT, UINT nID = AFX_IDW_PANE_FIRST );
     virtual BOOL    CreateScrollBarCtrl( DWORD dwStyle, UINT nID );
     virtual BOOL    CreateView( int row, int col, CRuntimeClass *pViewClass, SIZE sizeInit, CCreateContext *pContext );
     virtual void    DeleteColumn( int colDelete );
     virtual void    DeleteRow( int rowDelete );
     virtual void    DeleteView( int row, int col );
+    virtual BOOL    DoKeyboardSplit();
     virtual CWnd    *GetActivePane( int *pRow = NULL, int *pCol = NULL );
+    virtual int     HitTest( CPoint pt ) const;
     virtual void    OnDrawSplitter( CDC *pDC, ESplitType nType, const CRect &rect );
     virtual void    OnInvertTracker( const CRect &rect );
     virtual void    RecalcLayout();
     virtual void    SetActivePane( int row, int col, CWnd *pWnd = NULL );
+    virtual void    SetSplitCursor( int ht );
     virtual BOOL    SplitColumn( int cxBefore );
     virtual BOOL    SplitRow( int cyBefore );
+    virtual void    StartTracking( int ht );
+    virtual void    StopTracking( BOOL bAccept );
     
     int     GetColumnCount() const;
     void    GetColumnInfo( int col, int &cxCur, int &cxMin ) const;
@@ -439,6 +446,7 @@ public:
     
 protected:
     afx_msg void    OnHScroll( UINT nSBCode, UINT nPos, CScrollBar *pScrollBar );
+    afx_msg void    OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags );
     afx_msg void    OnLButtonDown( UINT nFlags, CPoint point );
     afx_msg void    OnLButtonUp( UINT nFlags, CPoint point );
     afx_msg void    OnMouseMove( UINT nFlags, CPoint point );

@@ -57,6 +57,12 @@ BEGIN_MESSAGE_MAP( CView, CWnd )
     ON_WM_MOUSEACTIVATE()
     ON_WM_PAINT()
     ON_MESSAGE_VOID( WM_INITIALUPDATE, OnInitialUpdate )
+    ON_COMMAND_EX( ID_NEXT_PANE, OnNextPaneCmd )
+    ON_COMMAND_EX( ID_PREV_PANE, OnNextPaneCmd )
+    ON_COMMAND_EX( ID_WINDOW_SPLIT, OnSplitCmd )
+    ON_UPDATE_COMMAND_UI( ID_WINDOW_SPLIT, OnUpdateSplitCmd )
+    ON_UPDATE_COMMAND_UI( ID_NEXT_PANE, OnUpdateNextPaneMenu )
+    ON_UPDATE_COMMAND_UI( ID_PREV_PANE, OnUpdateNextPaneMenu )
 END_MESSAGE_MAP()
 
 CView::CView()
@@ -393,6 +399,52 @@ void CView::OnPaint()
     CPaintDC dc( this );
     OnPrepareDC( &dc );
     OnDraw( &dc );
+}
+
+BOOL CView::OnNextPaneCmd( UINT nID )
+/***********************************/
+{
+    CSplitterWnd *pSplitter = (CSplitterWnd *)GetParent();
+    if( pSplitter == NULL || !pSplitter->IsKindOf( RUNTIME_CLASS( CSplitterWnd ) ) ) {
+        return( FALSE );
+    }
+    pSplitter->ActivateNext( nID == ID_PREV_PANE );
+    return( TRUE );
+}
+
+BOOL CView::OnSplitCmd( UINT nID )
+/********************************/
+{
+    UNUSED_ALWAYS( nID );
+
+    CSplitterWnd *pSplitter = (CSplitterWnd *)GetParent();
+    if( pSplitter == NULL || !pSplitter->IsKindOf( RUNTIME_CLASS( CSplitterWnd ) ) ) {
+        return( FALSE );
+    }
+    pSplitter->DoKeyboardSplit();
+    return( TRUE );
+}
+
+void CView::OnUpdateNextPaneMenu( CCmdUI *pCmdUI )
+/************************************************/
+{
+    ASSERT( pCmdUI != NULL );
+
+    CSplitterWnd *pSplitter = (CSplitterWnd *)GetParent();
+    pCmdUI->Enable( pSplitter != NULL &&
+                    pSplitter->IsKindOf( RUNTIME_CLASS( CSplitterWnd ) ) &&
+                    pSplitter->CanActivateNext( pCmdUI->m_nID == ID_PREV_PANE ) );
+}
+
+void CView::OnUpdateSplitCmd( CCmdUI *pCmdUI )
+/********************************************/
+{
+    ASSERT( pCmdUI != NULL );
+
+    CSplitterWnd *pSplitter = (CSplitterWnd *)GetParent();
+    pCmdUI->Enable( pSplitter != NULL &&
+                    pSplitter->IsKindOf( RUNTIME_CLASS( CSplitterWnd ) ) &&
+                    !pSplitter->IsTracking() );
 }
 
 void CView::OnFilePrint()

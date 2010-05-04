@@ -44,6 +44,7 @@ IMPLEMENT_DYNAMIC( CSplitterWnd, CWnd )
 
 BEGIN_MESSAGE_MAP( CSplitterWnd, CWnd )
     ON_WM_HSCROLL()
+    ON_WM_KEYDOWN()
     ON_WM_LBUTTONDOWN()
     ON_WM_LBUTTONUP()
     ON_WM_MOUSEMOVE()
@@ -52,30 +53,6 @@ BEGIN_MESSAGE_MAP( CSplitterWnd, CWnd )
     ON_WM_SIZE()
     ON_WM_VSCROLL()
 END_MESSAGE_MAP()
-
-static void _SetHSplitCursor()
-/****************************/
-{
-    static HCURSOR hCursor = NULL;
-    if( hCursor == NULL ) {
-        CWinApp *pApp = AfxGetApp();
-        ASSERT( pApp != NULL );
-        hCursor = pApp->LoadStandardCursor( IDC_SIZEWE );
-    }
-    ::SetCursor( hCursor );
-}
-
-static void _SetVSplitCursor()
-/****************************/
-{
-    static HCURSOR hCursor = NULL;
-    if( hCursor == NULL ) {
-        CWinApp *pApp = AfxGetApp();
-        ASSERT( pApp != NULL );
-        hCursor = pApp->LoadStandardCursor( IDC_SIZENS );
-    }
-    ::SetCursor( hCursor );
-}
 
 CSplitterWnd::CSplitterWnd()
 /**************************/
@@ -87,6 +64,41 @@ CSplitterWnd::CSplitterWnd()
     m_pRowInfo = NULL;
     m_bTracking = FALSE;
     m_htTrack = HT_NOHIT;
+}
+
+void CSplitterWnd::ActivateNext( BOOL bPrev )
+/*******************************************/
+{
+    int row;
+    int col;
+    VERIFY( GetActivePane( &row, &col ) != NULL );
+    if( !bPrev ) {
+        col++;
+        if( col >= m_nCols ) {
+            col = 0;
+            row++;
+            if( row >= m_nRows ) {
+                row = 0;
+            }
+        }
+    } else {
+        col--;
+        if( col < 0 ) {
+            col = m_nCols - 1;
+            row--;
+            if( row < 0 ) {
+                row = m_nRows - 1;
+            }
+        }
+    }
+    SetActivePane( row, col );
+}
+
+BOOL CSplitterWnd::CanActivateNext( BOOL bPrev )
+/**********************************************/
+{
+    UNUSED_ALWAYS( bPrev );
+    return( m_nRows > 1 || m_nCols > 1 );
 }
 
 BOOL CSplitterWnd::Create( CWnd *pParentWnd, int nMaxRows, int nMaxCols, SIZE sizeMin,
@@ -289,6 +301,30 @@ void CSplitterWnd::DeleteView( int row, int col )
     pWnd->DestroyWindow();
 }
 
+BOOL CSplitterWnd::DoKeyboardSplit()
+/**********************************/
+{
+    int ht = HT_NOHIT;
+    if( m_nRows < m_nMaxRows ) {
+        ht = HT_VSPLITBOX;
+    } else if( m_nRows > 1 ) {
+        ht = HT_VSPLITBAR_FIRST;
+    } else if( m_nCols < m_nMaxCols ) {
+        ht = HT_HSPLITBOX;
+    } else if( m_nCols > 1 ) {
+        ht = HT_HSPLITBAR_FIRST;
+    } else {
+        return( FALSE );
+    }
+    StartTracking( ht );
+
+    CPoint point = m_rectTracker.CenterPoint();
+    ::ClientToScreen( m_hWnd, &point );
+    ::SetCursorPos( point.x, point.y );
+    
+    return( TRUE );
+}
+
 CWnd *CSplitterWnd::GetActivePane( int *pRow, int *pCol )
 /*******************************************************/
 {
@@ -314,6 +350,51 @@ CWnd *CSplitterWnd::GetActivePane( int *pRow, int *pCol )
         *pCol = col;
     }
     return( pView );
+}
+
+int CSplitterWnd::HitTest( CPoint pt ) const
+/******************************************/
+{
+    int cxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
+    int cyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
+
+    CRect rectClient;
+    ::GetClientRect( m_hWnd, &rectClient );
+    
+    if( m_nRows < m_nMaxRows ) {
+        CRect rectBox( rectClient.right - cxVScroll, rectClient.top,
+                       rectClient.right, rectClient.top + m_cySplitter );
+        if( rectBox.PtInRect( pt ) ) {
+            return( HT_VSPLITBOX );
+        }
+    } else if( m_nRows > 1 ) {
+        CRect rectBar( rectClient.left, 0, rectClient.right, 0 );
+        for( int i = 0; i < m_nRows - 1; i++ ) {
+            rectBar.top = rectBar.bottom + m_pRowInfo[i].nCurSize;
+            rectBar.bottom = rectBar.top + m_cySplitter;
+            if( rectBar.PtInRect( pt ) ) {
+                return( HT_VSPLITBAR_FIRST + i );
+            }
+        }
+    }
+    
+    if( m_nCols < m_nMaxCols ) {
+        CRect rectBox( rectClient.left, rectClient.bottom - cyHScroll,
+                       rectClient.left + m_cxSplitter, rectClient.bottom );
+        if( rectBox.PtInRect( pt ) ) {
+            return( HT_HSPLITBOX );
+        }
+    } else if( m_nCols > 1 ) {
+        CRect rectBar( 0, rectClient.top, 0, rectClient.bottom );
+        for( int i = 0; i < m_nCols - 1; i++ ) {
+            rectBar.left = rectBar.right + m_pColInfo[i].nCurSize;
+            rectBar.right = rectBar.left + m_cxSplitter;
+            if( rectBar.PtInRect( pt ) ) {
+                return( HT_HSPLITBAR_FIRST + i );
+            }
+        }
+    }
+    return( HT_NOHIT );
 }
 
 void CSplitterWnd::OnDrawSplitter( CDC *pDC, ESplitType nType, const CRect &rect )
@@ -463,6 +544,29 @@ void CSplitterWnd::RecalcLayout()
     ::EndDeferWindowPos( hDWP );
 }
 
+void CSplitterWnd::SetSplitCursor( int ht )
+/*****************************************/
+{
+    static HCURSOR hcurHorz = NULL;
+    static HCURSOR hcurVert = NULL;
+    if( ht == HT_HSPLITBOX || (ht >= HT_HSPLITBAR_FIRST && ht <= HT_HSPLITBAR_LAST) ) {
+        if( hcurHorz == NULL ) {
+            CWinApp *pApp = AfxGetApp();
+            ASSERT( pApp != NULL );
+            hcurHorz = pApp->LoadStandardCursor( IDC_SIZEWE );
+        }
+        ::SetCursor( hcurHorz );
+    } else if( ht == HT_VSPLITBOX ||
+               (ht >= HT_VSPLITBAR_FIRST && ht <= HT_VSPLITBAR_LAST) ) {
+        if( hcurVert == NULL ) {
+            CWinApp *pApp = AfxGetApp();
+            ASSERT( pApp != NULL );
+            hcurVert = pApp->LoadStandardCursor( IDC_SIZENS );
+        }
+        ::SetCursor( hcurVert );
+    }
+}
+
 BOOL CSplitterWnd::SplitColumn( int cxBefore )
 /********************************************/
 {
@@ -573,6 +677,109 @@ BOOL CSplitterWnd::SplitRow( int cyBefore )
     ::UpdateWindow( m_hWnd );
     
     return( TRUE );
+}
+
+void CSplitterWnd::StartTracking( int ht )
+/****************************************/
+{
+    if( m_bTracking || ht == HT_NOHIT ) {
+        return;
+    }
+    
+    int cxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
+    int cyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
+
+    CRect rectClient;
+    ::GetClientRect( m_hWnd, &rectClient );
+    
+    if( ht == HT_VSPLITBOX ) {
+        m_rectLimit = rectClient;
+        if( m_bHasHScroll ) {
+            m_rectLimit.bottom -= cyHScroll;
+        }
+        m_rectTracker = rectClient;
+        m_rectTracker.bottom = m_rectTracker.top + m_cySplitter;
+    } else if( ht >= HT_VSPLITBAR_FIRST && ht <= HT_VSPLITBAR_LAST ) {
+        int n = ht - HT_VSPLITBAR_FIRST;
+        m_rectTracker.SetRect( rectClient.left, 0, rectClient.right, 0 );
+        for( int i = 0; i <= n; i++ ) {
+            m_rectTracker.top = m_rectTracker.bottom + m_pRowInfo[i].nCurSize;
+            m_rectTracker.bottom = m_rectTracker.top + m_cySplitter;
+        }
+        m_rectLimit = m_rectTracker;
+        m_rectLimit.top -= m_pRowInfo[n].nCurSize;
+        m_rectLimit.bottom += m_pRowInfo[n + 1].nCurSize;
+    } else if( ht == HT_HSPLITBOX ) {
+        m_rectLimit = rectClient;
+        if( m_bHasVScroll ) {
+            m_rectLimit.right - cxVScroll;
+        }
+        m_rectTracker = rectClient;
+        m_rectTracker.right = m_rectTracker.left + m_cxSplitter;
+    } else if( ht >= HT_HSPLITBAR_FIRST && ht <= HT_HSPLITBAR_LAST ) {
+        int n = ht - HT_HSPLITBAR_FIRST;
+        m_rectTracker.SetRect( 0, rectClient.top, 0, rectClient.bottom );
+        for( int i = 0; i <= n; i++ ) {
+            m_rectTracker.left = m_rectTracker.right + m_pColInfo[i].nCurSize;
+            m_rectTracker.right = m_rectTracker.left + m_cxSplitter;
+        }
+        m_rectLimit = m_rectTracker;
+        m_rectLimit.left -= m_pColInfo[n].nCurSize;
+        m_rectLimit.right += m_pColInfo[n + 1].nCurSize;
+    }
+
+    m_htTrack = ht;
+    m_bTracking = TRUE;
+    ::SetCapture( m_hWnd );
+    ::SetFocus( m_hWnd );
+    ::RedrawWindow( m_hWnd, NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW );
+    OnInvertTracker( m_rectTracker );
+    SetSplitCursor( ht );
+}
+
+void CSplitterWnd::StopTracking( BOOL bAccept )
+/*********************************************/
+{
+    if( !m_bTracking ) {
+        return;
+    }
+
+    m_bTracking = FALSE;
+    OnInvertTracker( m_rectTracker );
+    ::ReleaseCapture();
+    if( bAccept ) {
+        if( m_htTrack == HT_VSPLITBOX ) {
+            SplitRow( m_rectTracker.top - m_rectLimit.top );
+        } else if( m_htTrack == HT_HSPLITBOX ) {
+            SplitColumn( m_rectTracker.left - m_rectLimit.left );
+        } else if( m_htTrack >= HT_VSPLITBAR_FIRST && m_htTrack <= HT_VSPLITBAR_LAST ) {
+            int i = m_htTrack - HT_VSPLITBAR_FIRST;
+            ASSERT( i < m_nRows );
+            m_pRowInfo[i].nCurSize = m_rectTracker.top - m_rectLimit.top;
+            m_pRowInfo[i + 1].nCurSize = m_rectLimit.bottom - m_rectTracker.bottom;
+            if( m_pRowInfo[i].nCurSize < m_pRowInfo[i].nMinSize ) {
+                DeleteRow( i );
+            } else if( m_pRowInfo[i + 1].nCurSize < m_pRowInfo[i].nMinSize ) {
+                DeleteRow( i + 1 );
+            } else {
+                RecalcLayout();
+            }
+        } else if( m_htTrack >= HT_HSPLITBAR_FIRST && m_htTrack <= HT_HSPLITBAR_LAST ) {
+            int i = m_htTrack - HT_HSPLITBAR_FIRST;
+            ASSERT( i < m_nCols );
+            m_pColInfo[i].nCurSize = m_rectTracker.left - m_rectLimit.left;
+            m_pColInfo[i + 1].nCurSize = m_rectLimit.right - m_rectTracker.right;
+            if( m_pColInfo[i].nCurSize < m_pColInfo[i].nMinSize ) {
+                DeleteColumn( i );
+            } else if( m_pColInfo[i + 1].nCurSize < m_pColInfo[i].nMinSize ) {
+                DeleteColumn( i + 1 );
+            } else {
+                RecalcLayout();
+            }
+        }
+        ::UpdateWindow( m_hWnd );
+        m_htTrack = HT_NOHIT;
+    }
 }
 
 DWORD CSplitterWnd::GetScrollStyle() const
@@ -686,82 +893,50 @@ void CSplitterWnd::OnHScroll( UINT nSBCode, UINT nPos, CScrollBar *pScrollBar )
     }
 }
 
+void CSplitterWnd::OnKeyDown( UINT nChar, UINT nRepCnt, UINT nFlags )
+/*******************************************************************/
+{
+    CWnd::OnKeyDown( nChar, nRepCnt, nFlags );
+
+    if( !m_bTracking ) {
+        return;
+    }
+
+    if( nChar == VK_ESCAPE || nChar == VK_RETURN ) {
+        StopTracking( nChar == VK_RETURN );
+    } else if( m_htTrack == HT_VSPLITBOX ||
+               (m_htTrack >= HT_VSPLITBAR_FIRST && m_htTrack <= HT_VSPLITBAR_LAST) ) {
+        if( nChar == VK_UP || nChar == VK_DOWN ) {
+            CPoint point;
+            ::GetCursorPos( &point );
+            if( nChar == VK_UP ) {
+                point.y--;
+            } else {
+                point.y++;
+            }
+            ::SetCursorPos( point.x, point.y );
+        }
+    } else if( m_htTrack == HT_HSPLITBOX ||
+               (m_htTrack >= HT_HSPLITBAR_FIRST && m_htTrack <= HT_HSPLITBAR_LAST) ) {
+        if( nChar == VK_LEFT || nChar == VK_RIGHT ) {
+            CPoint point;
+            ::GetCursorPos( &point );
+            if( nChar == VK_LEFT ) {
+                point.x--;
+            } else {
+                point.x++;
+            }
+            ::SetCursorPos( point.x, point.y );
+        }
+    }
+}
+
 void CSplitterWnd::OnLButtonDown( UINT nFlags, CPoint point )
 /***********************************************************/
 {
     CWnd::OnLButtonDown( nFlags, point );
 
-    int cxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
-    int cyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
-
-    CRect rectClient;
-    ::GetClientRect( m_hWnd, &rectClient );
-    
-    if( m_nRows < m_nMaxRows ) {
-        CRect rectBox( rectClient.right - cxVScroll, rectClient.top,
-                       rectClient.right, rectClient.top + m_cySplitter );
-        if( rectBox.PtInRect( point ) ) {
-            m_rectLimit = rectClient;
-            if( m_bHasHScroll ) {
-                m_rectLimit.bottom -= cyHScroll;
-            }
-            m_rectTracker.SetRect( m_rectLimit.left, point.y - m_cySplitter / 2,
-                                   m_rectLimit.right, point.y + m_cySplitter / 2 );
-            m_htTrack = HT_VSPLITBOX;
-            goto finish;
-        }
-    } else if( m_nRows > 1 ) {
-        m_rectTracker.SetRect( rectClient.left, 0, rectClient.right, 0 );
-        for( int i = 0; i < m_nRows - 1; i++ ) {
-            m_rectTracker.top = m_rectTracker.bottom + m_pRowInfo[i].nCurSize;
-            m_rectTracker.bottom = m_rectTracker.top + m_cySplitter;
-            if( m_rectTracker.PtInRect( point ) ) {
-                m_rectLimit = m_rectTracker;
-                m_rectLimit.top -= m_pRowInfo[i].nCurSize;
-                m_rectLimit.bottom += m_pRowInfo[i + 1].nCurSize;
-                m_htTrack = HT_VSPLITBAR_FIRST + i;
-                goto finish;
-            }
-        }
-    }
-    
-    if( m_nCols < m_nMaxCols ) {
-        CRect rectBox( rectClient.left, rectClient.bottom - cyHScroll,
-                       rectClient.left + m_cxSplitter, rectClient.bottom );
-        if( rectBox.PtInRect( point ) ) {
-            m_rectLimit = rectClient;
-            if( m_bHasVScroll ) {
-                m_rectLimit.right - cxVScroll;
-            }
-            m_rectTracker.SetRect( point.x - m_cxSplitter / 2, m_rectLimit.top,
-                                   point.x + m_cxSplitter / 2, m_rectLimit.bottom );
-            m_htTrack = HT_HSPLITBOX;
-            goto finish;
-        }
-    } else if( m_nCols > 1 ) {
-        m_rectTracker.SetRect( 0, rectClient.top, 0, rectClient.bottom );
-        for( int i = 0; i < m_nCols - 1; i++ ) {
-            m_rectTracker.left = m_rectTracker.right + m_pColInfo[i].nCurSize;
-            m_rectTracker.right = m_rectTracker.left + m_cxSplitter;
-            if( m_rectTracker.PtInRect( point ) ) {
-                m_rectLimit = m_rectTracker;
-                m_rectLimit.left -= m_pColInfo[i].nCurSize;
-                m_rectLimit.right += m_pColInfo[i + 1].nCurSize;
-                m_htTrack = HT_HSPLITBAR_FIRST + i;
-                goto finish;
-            }
-        }
-    }
-    return;
-    
-finish:
-    ASSERT( m_htTrack != HT_NOHIT );
-    m_bTracking = TRUE;
-    m_ptTrackOffset = point;
-    ::SetCapture( m_hWnd );
-    ::SetFocus( m_hWnd );
-    ::RedrawWindow( m_hWnd, NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW );
-    OnInvertTracker( m_rectTracker );
+    StartTracking( HitTest( point ) );
 }
 
 void CSplitterWnd::OnLButtonUp( UINT nFlags, CPoint point )
@@ -770,41 +945,7 @@ void CSplitterWnd::OnLButtonUp( UINT nFlags, CPoint point )
     CWnd::OnLButtonUp( nFlags, point );
 
     if( m_bTracking ) {
-        m_bTracking = FALSE;
-        OnInvertTracker( m_rectTracker );
-        ::ReleaseCapture();
-        if( m_htTrack == HT_VSPLITBOX ) {
-            SplitRow( m_rectTracker.top - m_rectLimit.top );
-        } else if( m_htTrack == HT_HSPLITBOX ) {
-            SplitColumn( m_rectTracker.left - m_rectLimit.left );
-        } else if( m_htTrack >= HT_VSPLITBAR_FIRST && m_htTrack <= HT_VSPLITBAR_LAST ) {
-            int i = m_htTrack - HT_VSPLITBAR_FIRST;
-            ASSERT( i < m_nRows );
-            m_pRowInfo[i].nCurSize = m_rectTracker.top - m_rectLimit.top;
-            m_pRowInfo[i + 1].nCurSize = m_rectLimit.bottom - m_rectTracker.bottom;
-            if( m_pRowInfo[i].nCurSize < m_pRowInfo[i].nMinSize ) {
-                DeleteRow( i );
-            } else if( m_pRowInfo[i + 1].nCurSize < m_pRowInfo[i].nMinSize ) {
-                DeleteRow( i + 1 );
-            } else {
-                RecalcLayout();
-                ::UpdateWindow( m_hWnd );
-            }
-        } else if( m_htTrack >= HT_HSPLITBAR_FIRST && m_htTrack <= HT_HSPLITBAR_LAST ) {
-            int i = m_htTrack - HT_HSPLITBAR_FIRST;
-            ASSERT( i < m_nCols );
-            m_pColInfo[i].nCurSize = m_rectTracker.left - m_rectLimit.left;
-            m_pColInfo[i + 1].nCurSize = m_rectLimit.right - m_rectTracker.right;
-            if( m_pColInfo[i].nCurSize < m_pColInfo[i].nMinSize ) {
-                DeleteColumn( i );
-            } else if( m_pColInfo[i + 1].nCurSize < m_pColInfo[i].nMinSize ) {
-                DeleteColumn( i + 1 );
-            } else {
-                RecalcLayout();
-            }
-            ::UpdateWindow( m_hWnd );
-        }
-        m_htTrack = HT_NOHIT;
+        StopTracking( TRUE );
     }
 }
 
@@ -889,45 +1030,10 @@ BOOL CSplitterWnd::OnSetCursor( CWnd *pWnd, UINT nHitTest, UINT message )
     CPoint point( ::GetMessagePos() );
     ::ScreenToClient( m_hWnd, &point );
     
-    CRect rectClient;
-    ::GetClientRect( m_hWnd, &rectClient );
-    
-    if( m_nRows < m_nMaxRows ) {
-        CRect rectBox( rectClient.right - cxVScroll, rectClient.top,
-                       rectClient.right, rectClient.top + m_cySplitter );
-        if( rectBox.PtInRect( point ) ) {
-            _SetVSplitCursor();
-            return( TRUE );
-        }
-    } else if( m_nRows > 1 ) {
-        CRect rectBar( rectClient.left, 0, rectClient.right, 0 );
-        for( int i = 0; i < m_nRows - 1; i++ ) {
-            rectBar.top = rectBar.bottom + m_pRowInfo[i].nCurSize;
-            rectBar.bottom = rectBar.top + m_cySplitter;
-            if( rectBar.PtInRect( point ) ) {
-                _SetVSplitCursor();
-                return( TRUE );
-            }
-        }
-    }
-    
-    if( m_nCols < m_nMaxCols ) {
-        CRect rectBox( rectClient.left, rectClient.bottom - cyHScroll,
-                       rectClient.left + m_cxSplitter, rectClient.bottom );
-        if( rectBox.PtInRect( point ) ) {
-            _SetHSplitCursor();
-            return( TRUE );
-        }
-    } else if( m_nCols > 1 ) {
-        CRect rectBar( 0, rectClient.top, 0, rectClient.bottom );
-        for( int i = 0; i < m_nCols - 1; i++ ) {
-            rectBar.left = rectBar.right + m_pColInfo[i].nCurSize;
-            rectBar.right = rectBar.left + m_cxSplitter;
-            if( rectBar.PtInRect( point ) ) {
-                _SetHSplitCursor();
-                return( TRUE );
-            }
-        }
+    int ht = HitTest( point );
+    if( ht != HT_NOHIT ) {
+        SetSplitCursor( ht );
+        return( TRUE );
     }
 
     return( CWnd::OnSetCursor( pWnd, nHitTest, message ) );
