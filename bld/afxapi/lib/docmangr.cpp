@@ -93,7 +93,7 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
             pTemplate = (CDocTemplate *)m_templateList.GetNext( position );
             ASSERT( pTemplate != NULL );
             if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) &&
-                pTemplate->GetDocString( strDocString, CDocTemplate::filterExt ) &&
+                pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) &&
                 !strDocString.IsEmpty() && !strExt.IsEmpty() ) {
                 ASSERT( strExt.GetLength() >= 2 );
                 ASSERT( strExt[0] == '.' );
