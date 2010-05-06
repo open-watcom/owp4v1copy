@@ -31,6 +31,8 @@ headers =               &
         afxext.h        &
         afxext.inl      &
         afxmsg_.h       &
+        afxmt.h         &
+        afxmt.inl       &
         afxprint.rc     &
         afxpriv.h       &
         afxres.rc       &
@@ -81,6 +83,7 @@ objs =                  &
         comboex.obj     &
         commdlg.obj     &
         createdc.obj    &
+        critsect.obj    &
         ctrlbar.obj     &
         ctrlview.obj    &
         dataexch.obj    &
@@ -100,6 +103,7 @@ objs =                  &
         edit.obj        &
         editview.obj    &
         edstate.obj     &
+        event.obj       &
         except.obj      &
         file.obj        &
         filedlg.obj     &
@@ -152,6 +156,8 @@ objs =                  &
         monthcal.obj    &
         mtstate.obj     &
         multidoc.obj    &
+        multlock.obj    &
+        mutex.obj       &
         notrack.obj     &
         notsuppx.obj    &
         obarr.obj       &
@@ -185,9 +191,11 @@ objs =                  &
         runclass.obj    &
         scrollbr.obj    &
         scrollvw.obj    &
+        semaphor.obj    &
         simplex.obj     &
         simplist.obj    &
         singldoc.obj    &
+        singlock.obj    &
         slider.obj      &
         spinbtn.obj     &
         splitter.obj    &
@@ -200,6 +208,7 @@ objs =                  &
         string.obj      &
         strlist.obj     &
         substr.obj      &
+        syncobj.obj     &
         tabctrl.obj     &
         threadit.obj    &
         thrstate.obj    &

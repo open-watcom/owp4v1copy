@@ -24,22 +24,40 @@
 *
 *  ========================================================================
 *
-* Description:  Out-of-line expansion of inline functions for the debug
-*               build of the Application Framework.
+* Description:  Implementation of CCriticalSection.
 *
 ****************************************************************************/
 
 
 #include "stdafx.h"
-
-#ifndef _DEBUG
-    #error Only the debug build should contain inline2.cpp.
-#endif
-
 #include <afxmt.h>
 
-#undef AFX_INLINE
-#define AFX_INLINE
-#include <afxdlgs.inl>
-#include <afxext.inl>
-#include <afxmt.inl>
+IMPLEMENT_DYNAMIC( CCriticalSection, CSyncObject )
+
+CCriticalSection::CCriticalSection()
+    : CSyncObject ( NULL )
+/************************/
+{
+    ::InitializeCriticalSection( &m_sect );
+}
+
+CCriticalSection::~CCriticalSection()
+/***********************************/
+{
+    ::DeleteCriticalSection( &m_sect );
+}
+
+BOOL CCriticalSection::Lock( DWORD dwTimeout )
+/********************************************/
+{
+    ASSERT( dwTimeout == INFINITE );
+    UNUSED( dwTimeout );
+    return( Lock() );
+}
+
+BOOL CCriticalSection::Unlock()
+/*****************************/
+{
+    ::LeaveCriticalSection( &m_sect );
+    return( TRUE );
+}

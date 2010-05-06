@@ -24,22 +24,32 @@
 *
 *  ========================================================================
 *
-* Description:  Out-of-line expansion of inline functions for the debug
-*               build of the Application Framework.
+* Description:  Implementation of CSemaphore.
 *
 ****************************************************************************/
 
 
 #include "stdafx.h"
-
-#ifndef _DEBUG
-    #error Only the debug build should contain inline2.cpp.
-#endif
-
 #include <afxmt.h>
 
-#undef AFX_INLINE
-#define AFX_INLINE
-#include <afxdlgs.inl>
-#include <afxext.inl>
-#include <afxmt.inl>
+IMPLEMENT_DYNAMIC( CSemaphore, CSyncObject )
+
+CSemaphore::CSemaphore( LONG lInitialCount, LONG lMaxCount, LPCTSTR pstrName,
+                        LPSECURITY_ATTRIBUTES lpsaAttributes )
+    : CSyncObject( pstrName )
+/***************************/
+{
+    m_hObject = ::CreateSemaphore( lpsaAttributes, lInitialCount, lMaxCount, pstrName );
+}
+
+BOOL CSemaphore::Unlock()
+/***********************/
+{
+    return( Unlock( 1 ) );
+}
+
+BOOL CSemaphore::Unlock( LONG lCount, LPLONG lpPrevCount )
+/********************************************************/
+{
+    return( ::ReleaseSemaphore( m_hObject, lCount, lpPrevCount ) );
+}

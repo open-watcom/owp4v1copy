@@ -24,22 +24,52 @@
 *
 *  ========================================================================
 *
-* Description:  Out-of-line expansion of inline functions for the debug
-*               build of the Application Framework.
+* Description:  Implementation of CSingleLock.
 *
 ****************************************************************************/
 
 
 #include "stdafx.h"
-
-#ifndef _DEBUG
-    #error Only the debug build should contain inline2.cpp.
-#endif
-
 #include <afxmt.h>
 
-#undef AFX_INLINE
-#define AFX_INLINE
-#include <afxdlgs.inl>
-#include <afxext.inl>
-#include <afxmt.inl>
+CSingleLock::CSingleLock( CSyncObject *pObject, BOOL bInitialLock )
+/*****************************************************************/
+{
+    ASSERT( pObject != NULL );
+    m_pObject = pObject;
+    m_hObject = pObject->m_hObject;
+    m_bAcquired = FALSE;
+    if( bInitialLock ) {
+        Lock();
+    }
+}
+
+BOOL CSingleLock::Lock( DWORD dwTimeout )
+/***************************************/
+{
+    ASSERT( !m_bAcquired );
+    m_bAcquired = m_pObject->Lock( dwTimeout );
+    return( m_bAcquired );
+}
+
+BOOL CSingleLock::Unlock()
+/************************/
+{
+    if( !m_bAcquired ) {
+        return( TRUE );
+    }
+    BOOL bUnlocked = m_pObject->Unlock();
+    m_bAcquired = !bUnlocked;
+    return( bUnlocked );
+}
+
+BOOL CSingleLock::Unlock( LONG lInitialCount, LPLONG lpPrevCount )
+/****************************************************************/
+{
+    if( !m_bAcquired ) {
+        return( TRUE );
+    }
+    BOOL bUnlocked = m_pObject->Unlock( lInitialCount, lpPrevCount );
+    m_bAcquired = !bUnlocked;
+    return( bUnlocked );
+}

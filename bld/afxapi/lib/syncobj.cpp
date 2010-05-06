@@ -24,22 +24,57 @@
 *
 *  ========================================================================
 *
-* Description:  Out-of-line expansion of inline functions for the debug
-*               build of the Application Framework.
+* Description:  Implementation of CSyncObject.
 *
 ****************************************************************************/
 
 
 #include "stdafx.h"
-
-#ifndef _DEBUG
-    #error Only the debug build should contain inline2.cpp.
-#endif
-
 #include <afxmt.h>
 
-#undef AFX_INLINE
-#define AFX_INLINE
-#include <afxdlgs.inl>
-#include <afxext.inl>
-#include <afxmt.inl>
+IMPLEMENT_DYNAMIC( CSyncObject, CObject )
+
+CSyncObject::CSyncObject( LPCTSTR pstrName )
+/******************************************/
+{
+    UNUSED_ALWAYS( pstrName );
+    m_hObject = NULL;
+}
+
+CSyncObject::~CSyncObject()
+/*************************/
+{
+    if( m_hObject != NULL ) {
+        ::CloseHandle( m_hObject );
+    }
+}
+
+BOOL CSyncObject::Lock( DWORD dwTimeout )
+/***************************************/
+{
+    DWORD dwRet = ::WaitForSingleObject( m_hObject, dwTimeout );
+    if( dwRet != WAIT_OBJECT_0 && dwRet != WAIT_ABANDONED ) {
+        return( FALSE );
+    }
+    return( TRUE );
+}
+
+BOOL CSyncObject::Unlock( LONG lCount, LPLONG lpPrevCount )
+/*********************************************************/
+{
+    UNUSED_ALWAYS( lCount );
+    UNUSED_ALWAYS( lpPrevCount );
+    return( TRUE );
+}
+
+#ifdef _DEBUG
+
+void CSyncObject::Dump( CDumpContext &dc ) const
+/**********************************************/
+{
+    CObject::Dump( dc );
+
+    dc << "m_hObject = " << m_hObject << "\n";
+}
+
+#endif // _DEBUG
