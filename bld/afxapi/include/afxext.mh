@@ -414,6 +414,7 @@ public:
     virtual BOOL    CanActivateNext( BOOL bPrev = FALSE );
     virtual BOOL    Create( CWnd *pParentWnd, int nMaxRows, int nMaxCols, SIZE sizeMin, CCreateContext *pContext, DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL | SPLS_DYNAMIC_SPLIT, UINT nID = AFX_IDW_PANE_FIRST );
     virtual BOOL    CreateScrollBarCtrl( DWORD dwStyle, UINT nID );
+    virtual BOOL    CreateStatic( CWnd *pParentWnd, int nRows, int nCols, DWORD dwStyle = WS_CHILD | WS_VISIBLE, UINT nID = AFX_IDW_PANE_FIRST );
     virtual BOOL    CreateView( int row, int col, CRuntimeClass *pViewClass, SIZE sizeInit, CCreateContext *pContext );
     virtual void    DeleteColumn( int colDelete );
     virtual void    DeleteRow( int rowDelete );

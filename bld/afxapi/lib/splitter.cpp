@@ -125,7 +125,7 @@ BOOL CSplitterWnd::Create( CWnd *pParentWnd, int nMaxRows, int nMaxCols, SIZE si
         m_pRowInfo[i].nCurSize = -1;
     }
 
-    m_pColInfo = new CRowColInfo[m_nMaxRows];
+    m_pColInfo = new CRowColInfo[m_nMaxCols];
     for( int i = 0; i < m_nMaxCols; i++ ) {
         m_pColInfo[i].nMinSize = sizeMin.cx;
         m_pColInfo[i].nIdealSize = sizeMin.cx;
@@ -151,6 +151,39 @@ BOOL CSplitterWnd::CreateScrollBarCtrl( DWORD dwStyle, UINT nID )
     return( ::CreateWindowEx( 0L, _T( "SCROLLBAR" ), NULL,
                               WS_CHILD | WS_VISIBLE | dwStyle, 0, 0, 0, 0, m_hWnd,
                               (HMENU)nID, AfxGetInstanceHandle(), NULL ) != NULL );
+}
+
+BOOL CSplitterWnd::CreateStatic( CWnd *pParentWnd, int nRows, int nCols,
+                                 DWORD dwStyle, UINT nID )
+/********************************************************/
+{
+    m_nMaxRows = nRows;
+    m_nMaxCols = nCols;
+    m_nRows = nRows;
+    m_nCols = nCols;
+
+    if( !CWnd::Create( _T( "AfxMDIFrame" ), NULL, dwStyle & ~(WS_HSCROLL | WS_VSCROLL),
+                       CRect( 0, 0, 0, 0 ), pParentWnd, nID ) ) {
+        return( FALSE );
+    }
+
+    m_pRowInfo = new CRowColInfo[m_nMaxRows];
+    for( int i = 0; i < m_nMaxRows; i++ ) {
+        m_pRowInfo[i].nMinSize = 0;
+        m_pRowInfo[i].nIdealSize = 0;
+        m_pRowInfo[i].nCurSize = -1;
+    }
+
+    m_pColInfo = new CRowColInfo[m_nMaxCols];
+    for( int i = 0; i < m_nMaxCols; i++ ) {
+        m_pColInfo[i].nMinSize = 0;
+        m_pColInfo[i].nIdealSize = 0;
+        m_pColInfo[i].nCurSize = -1;
+    }
+
+    SetScrollStyle( dwStyle );
+
+    return( TRUE );
 }
 
 BOOL CSplitterWnd::CreateView( int row, int col, CRuntimeClass *pViewClass,
@@ -757,24 +790,44 @@ void CSplitterWnd::StopTracking( BOOL bAccept )
             ASSERT( i < m_nRows );
             m_pRowInfo[i].nCurSize = m_rectTracker.top - m_rectLimit.top;
             m_pRowInfo[i + 1].nCurSize = m_rectLimit.bottom - m_rectTracker.bottom;
-            if( m_pRowInfo[i].nCurSize < m_pRowInfo[i].nMinSize ) {
-                DeleteRow( i );
-            } else if( m_pRowInfo[i + 1].nCurSize < m_pRowInfo[i].nMinSize ) {
-                DeleteRow( i + 1 );
-            } else {
+            if( !(GetStyle() & SPLS_DYNAMIC_SPLIT) ) {
+                if( m_pRowInfo[i].nCurSize < m_pRowInfo[i].nMinSize ) {
+                    m_pRowInfo[i].nCurSize = m_pRowInfo[i].nMinSize;
+                }
+                if( m_pRowInfo[i + 1].nCurSize < m_pRowInfo[i + 1].nMinSize ) {
+                    m_pRowInfo[i + 1].nCurSize = m_pRowInfo[i + 1].nMinSize;
+                }
                 RecalcLayout();
+            } else {
+                if( m_pRowInfo[i].nCurSize < m_pRowInfo[i].nMinSize ) {
+                    DeleteRow( i );
+                } else if( m_pRowInfo[i + 1].nCurSize < m_pRowInfo[i + 1].nMinSize ) {
+                    DeleteRow( i + 1 );
+                } else {
+                    RecalcLayout();
+                }
             }
         } else if( m_htTrack >= HT_HSPLITBAR_FIRST && m_htTrack <= HT_HSPLITBAR_LAST ) {
             int i = m_htTrack - HT_HSPLITBAR_FIRST;
             ASSERT( i < m_nCols );
             m_pColInfo[i].nCurSize = m_rectTracker.left - m_rectLimit.left;
             m_pColInfo[i + 1].nCurSize = m_rectLimit.right - m_rectTracker.right;
-            if( m_pColInfo[i].nCurSize < m_pColInfo[i].nMinSize ) {
-                DeleteColumn( i );
-            } else if( m_pColInfo[i + 1].nCurSize < m_pColInfo[i].nMinSize ) {
-                DeleteColumn( i + 1 );
-            } else {
+            if( !(GetStyle() & SPLS_DYNAMIC_SPLIT) ) {
+                if( m_pColInfo[i].nCurSize < m_pColInfo[i].nMinSize ) {
+                    m_pColInfo[i].nCurSize = m_pColInfo[i].nMinSize;
+                }
+                if( m_pColInfo[i + 1].nCurSize < m_pColInfo[i + 1].nMinSize ) {
+                    m_pColInfo[i + 1].nCurSize = m_pColInfo[i + 1].nMinSize;
+                }
                 RecalcLayout();
+            } else {
+                if( m_pColInfo[i].nCurSize < m_pColInfo[i].nMinSize ) {
+                    DeleteColumn( i );
+                } else if( m_pColInfo[i + 1].nCurSize < m_pColInfo[i].nMinSize ) {
+                    DeleteColumn( i + 1 );
+                } else {
+                    RecalcLayout();
+                }
             }
         }
         ::UpdateWindow( m_hWnd );
