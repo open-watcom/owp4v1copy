@@ -24,21 +24,43 @@
 *
 *  ========================================================================
 *
-* Description:  Out-of-line expansion of inline functions for the debug
-*               build of the Application Framework.
+* Description:  Implementation of CListView.
 *
 ****************************************************************************/
 
 
 #include "stdafx.h"
-
-#ifndef _DEBUG
-    #error Only the debug build should contain inline4.cpp.
-#endif
-
 #include <afxcview.h>
 
-#undef AFX_INLINE
-#define AFX_INLINE
-#include <afxcmn2.inl>
-#include <afxcview.inl>
+IMPLEMENT_DYNCREATE( CListView, CCtrlView )
+
+BEGIN_MESSAGE_MAP( CListView, CCtrlView )
+    ON_WM_DESTROY()
+END_MESSAGE_MAP()
+
+CListView::CListView()
+    : CCtrlView( WC_LISTVIEW, AFX_WS_DEFAULT_VIEW )
+/*************************************************/
+{
+}
+
+void CListView::RemoveImageList( int nImageList )
+/***********************************************/
+{
+    HIMAGELIST himl = (HIMAGELIST)::SendMessage( m_hWnd, LVM_GETIMAGELIST,
+                                                 nImageList, 0L );
+    if( himl != NULL && CImageList::FromHandlePermanent( himl ) != NULL ) {
+        ::SendMessage( m_hWnd, LVM_SETIMAGELIST, nImageList, (LPARAM)NULL );
+    }
+}
+
+void CListView::OnDestroy()
+/*************************/
+{
+    RemoveImageList( LVSIL_NORMAL );
+    RemoveImageList( LVSIL_SMALL );
+    RemoveImageList( LVSIL_STATE );
+    RemoveImageList( LVSIL_GROUPHEADER );
+
+    CCtrlView::OnDestroy();
+}

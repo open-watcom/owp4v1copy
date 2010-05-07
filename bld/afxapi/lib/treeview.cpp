@@ -24,21 +24,41 @@
 *
 *  ========================================================================
 *
-* Description:  Out-of-line expansion of inline functions for the debug
-*               build of the Application Framework.
+* Description:  Implementation of CTreeView.
 *
 ****************************************************************************/
 
 
 #include "stdafx.h"
-
-#ifndef _DEBUG
-    #error Only the debug build should contain inline4.cpp.
-#endif
-
 #include <afxcview.h>
 
-#undef AFX_INLINE
-#define AFX_INLINE
-#include <afxcmn2.inl>
-#include <afxcview.inl>
+IMPLEMENT_DYNCREATE( CTreeView, CCtrlView )
+
+BEGIN_MESSAGE_MAP( CTreeView, CCtrlView )
+    ON_WM_DESTROY()
+END_MESSAGE_MAP()
+
+CTreeView::CTreeView()
+    : CCtrlView( WC_TREEVIEW, AFX_WS_DEFAULT_VIEW )
+/*************************************************/
+{
+}
+
+void CTreeView::RemoveImageList( int nImageList )
+/***********************************************/
+{
+    HIMAGELIST himl = (HIMAGELIST)::SendMessage( m_hWnd, TVM_GETIMAGELIST,
+                                                 nImageList, 0L );
+    if( himl != NULL && CImageList::FromHandlePermanent( himl ) != NULL ) {
+        ::SendMessage( m_hWnd, TVM_SETIMAGELIST, nImageList, (LPARAM)NULL );
+    }
+}
+
+void CTreeView::OnDestroy()
+/*************************/
+{
+    RemoveImageList( TVSIL_NORMAL );
+    RemoveImageList( TVSIL_STATE );
+
+    CCtrlView::OnDestroy();
+}

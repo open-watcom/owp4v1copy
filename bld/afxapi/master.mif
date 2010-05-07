@@ -23,6 +23,8 @@ headers =               &
         afxcmn4.inl     &
         afxcoll.h       &
         afxcoll.inl     &
+        afxcview.h      &
+        afxcview.inl    &
         afxdd_.h        &
         afxdlgs.h       &
         afxdlgs.inl     &
@@ -137,6 +139,7 @@ objs =                  &
         linkctrl.obj    &
         listbox.obj     &
         listctrl.obj    &
+        listview.obj    &
         mapp2p.obj      &
         mapp2w.obj      &
         maps2o.obj      &
@@ -220,6 +223,7 @@ objs =                  &
         toolcui.obj     &
         tooltip.obj     &
         treectrl.obj    &
+        treeview.obj    &
         uintarr.obj     &
         userx.obj       &
         view.obj        &
