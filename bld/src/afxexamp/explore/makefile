@@ -1,6 +1,6 @@
 CC = wpp386
 CFLAGS = -bt=nt -zq -fh
-OBJS = explore.obj explfrm.obj expldoc.obj leftview.obj rightvw.obj
+OBJS = explore.obj explfrm.obj expldoc.obj leftview.obj rightvw.obj itemdlg.obj
 LNK = explore.lnk
 
 explore.exe : $(OBJS) $(LNK) explore.res

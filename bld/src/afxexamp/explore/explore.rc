@@ -2,6 +2,8 @@
 #include "resource.h"
 
 IDR_MAINFRAME   ICON DISCARDABLE explore.ico
+IDI_TREEITEM    ICON DISCARDABLE treeitem.ico
+IDI_LISTITEM    ICON DISCARDABLE listitem.ico
 
 IDR_MAINFRAME BITMAP DISCARDABLE toolbar.bmp
 
@@ -42,6 +44,16 @@ BEGIN
     BEGIN
         MENUITEM "&Toolbar", ID_VIEW_TOOLBAR
         MENUITEM "&Status Bar", ID_VIEW_STATUS_BAR
+        MENUITEM SEPARATOR
+        MENUITEM "Lar&ge Icons", ID_VIEW_LARGEICON
+        MENUITEM "S&mall Icons", ID_VIEW_SMALLICON
+        MENUITEM "&List", ID_VIEW_LIST
+        MENUITEM "&Details", ID_VIEW_DETAILS
+    END
+    POPUP "&Insert"
+    BEGIN
+        MENUITEM "&Tree Item...", ID_INSERT_TREE_ITEM
+        MENUITEM "&List Item...", ID_INSERT_LIST_ITEM
     END
     POPUP "&Help"
     BEGIN
@@ -79,6 +91,20 @@ BEGIN
                 BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 85, 60, 50, 15
 END
 
+IDD_INSERTITEM DIALOG DISCARDABLE 20, 40, 140, 70
+STYLE DS_MODALFRAME | WS_OVERLAPPED | WS_CAPTION | WS_VISIBLE | WS_SYSMENU
+CAPTION "Insert Item"
+FONT 8, "Helv"
+BEGIN
+    CONTROL     "&Name:", IDC_STATIC, "STATIC", WS_CHILD | WS_VISIBLE, 10, 10, 120, 8
+    CONTROL     "", IDC_NAME, "EDIT", ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE |
+                WS_BORDER | WS_TABSTOP, 10, 20, 120, 12
+    CONTROL     "OK", IDOK, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE |
+                WS_TABSTOP, 10, 45, 50, 15
+    CONTROL     "Cancel", IDCANCEL, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE |
+                WS_TABSTOP, 80, 45, 50, 15
+END
+
 STRINGTABLE DISCARDABLE
 BEGIN
     AFX_IDS_APP_TITLE       "Explore"
@@ -102,6 +128,7 @@ BEGIN
     ID_VIEW_STATUS_BAR      "Show or hide the status bar.\nStatus Bar"
     ID_APP_ABOUT            "Display program information and copyright notice.\nAbout"
     IDR_MAINFRAME           "Explore\nDocument\nDocument\nExplore Files (*.owe)\n.owe\nOWExplore.Document\nOpen Watcom Explore Document"
+    IDS_NAME                "Name"
 END
 
 VS_VERSION_INFO VERSIONINFO

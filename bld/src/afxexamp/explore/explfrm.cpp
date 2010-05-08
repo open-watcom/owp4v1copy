@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "explore.h"
 #include "explfrm.h"
+#include "expldoc.h"
 #include "leftview.h"
 #include "rightvw.h"
 
@@ -23,6 +24,20 @@ CExploreFrameWnd::CExploreFrameWnd()
 {
 }
 
+BOOL CExploreFrameWnd::OnCmdMsg( UINT nID, int nCode, void *pExtra,
+                                 AFX_CMDHANDLERINFO *pInfo )
+{
+    // Let both views have a chance to handle any commands, regardless of which one is
+    // currently active.
+    if( GetLeftView()->OnCmdMsg( nID, nCode, pExtra, pInfo ) ) {
+        return( TRUE );
+    }
+    if( GetRightView()->OnCmdMsg( nID, nCode, pExtra, pInfo ) ) {
+        return( TRUE );
+    }
+    return( CFrameWnd::OnCmdMsg( nID, nCode, pExtra, pInfo ) );
+}
+    
 BOOL CExploreFrameWnd::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext *pContext )
 {
     // Create a static splitter window with one row and two columns.
@@ -43,6 +58,22 @@ BOOL CExploreFrameWnd::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext *pCon
     }
 
     return( TRUE );
+}
+
+CLeftView *CExploreFrameWnd::GetLeftView()
+{
+    CLeftView *pLeftView = (CLeftView *)m_wndSplitter.GetPane( 0, 0 );
+    ASSERT( pLeftView != NULL );
+    ASSERT( pLeftView->IsKindOf( RUNTIME_CLASS( CLeftView ) ) );
+    return( pLeftView );
+}
+
+CRightView *CExploreFrameWnd::GetRightView()
+{
+    CRightView *pRightView = (CRightView *)m_wndSplitter.GetPane( 0, 1 );
+    ASSERT( pRightView != NULL );
+    ASSERT( pRightView->IsKindOf( RUNTIME_CLASS( CRightView ) ) );
+    return( pRightView );
 }
 
 int CExploreFrameWnd::OnCreate( LPCREATESTRUCT lpCreateStruct )

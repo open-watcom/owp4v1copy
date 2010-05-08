@@ -14,10 +14,16 @@ BOOL CExploreDoc::OnNewDocument()
         return( FALSE );
     }
 
+    m_listTreeItems.RemoveAll();
+    m_listListItems.RemoveAll();
+    
     return( TRUE );
 }
 
 void CExploreDoc::Serialize( CArchive &ar )
 {
     CDocument::Serialize( ar );
+
+    m_listTreeItems.Serialize( ar );
+    m_listListItems.Serialize( ar );
 }
