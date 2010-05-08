@@ -137,14 +137,21 @@ int CListCtrl::InsertColumn( int nCol, LPCTSTR lpszColumnHeading, int nFormat,
 {
     LVCOLUMN lvc;
     memset( &lvc, 0, sizeof( LVCOLUMN ) );
-    lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+    lvc.mask = LVCF_FMT;
     lvc.fmt = nFormat;
-    lvc.cx = nWidth;
+    if( nWidth >= 0 ) {
+        lvc.mask |= LVCF_WIDTH;
+        lvc.cx = nWidth;
+    }
     if( lpszColumnHeading != NULL ) {
+        lvc.mask |= LVCF_TEXT;
         lvc.pszText = (LPTSTR)lpszColumnHeading;
         lvc.cchTextMax = _tcslen( lpszColumnHeading );
     }
-    lvc.iSubItem = nSubItem;
+    if( nSubItem >= 0 ) {
+        lvc.mask |= LVCF_SUBITEM;
+        lvc.iSubItem = nSubItem;
+    }
     return( (int)::SendMessage( m_hWnd, LVM_INSERTCOLUMN, nCol, (LPARAM)&lvc ) );
 }
 
