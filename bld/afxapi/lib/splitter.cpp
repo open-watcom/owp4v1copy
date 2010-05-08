@@ -212,6 +212,9 @@ BOOL CSplitterWnd::CreateView( int row, int col, CRuntimeClass *pViewClass,
             pContext->m_pCurrentFrame = GetParentFrame();
         }
     }
+
+    m_pRowInfo[row].nIdealSize = sizeInit.cy;
+    m_pColInfo[col].nIdealSize = sizeInit.cx;
     
     UINT nID = IdFromRowCol( row, col );
     BOOL bCreated = pWnd->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW,
