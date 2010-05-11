@@ -1006,11 +1006,11 @@ LWSTDAPI                PathMatchSpecExW( LPCWSTR, LPCWSTR, DWORD );
 #define UrlIsFileUrlA( x )          UrlIsA( x, URLIS_FILEURL )
 #define UrlIsFileUrlW( x )          UrlIsW( x, URLIS_FILEURL )
 
-/* Microsoft defines va_list differently from Open Watcom, so it must be dereferenced
+/* Microsoft defines va_list differently from Open Watcom, so it must be indexed
  * before being passed to any Win32 API functions.
  */
-#define wvnsprintfA( p1, p2, p3, p4 )   wvnsprintfA( p1, p2, p3, *(p4) )
-#define wvnsprintfW( p1, p2, p3, p4 )   wvnsprintfW( p1, p2, p3, *(p4) )
+#define wvnsprintfA( p1, p2, p3, p4 )   wvnsprintfA( p1, p2, p3, (p4)[0] )
+#define wvnsprintfW( p1, p2, p3, p4 )   wvnsprintfW( p1, p2, p3, (p4)[0] )
 
 /* Aliases */
 #define StrCatA                     lstrcatA

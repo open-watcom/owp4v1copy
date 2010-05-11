@@ -6427,11 +6427,11 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
 #define SetWindowLongPtrA( p1, p2, p3 )     SetWindowLongA( p1, p2, p3 )
 #define SetWindowLongPtrW( p1, p2, p3 )     SetWindowLongW( p1, p2, p3 )
 
-/* Microsoft defines va_list differently from Open Watcom, so it must be dereferenced
+/* Microsoft defines va_list differently from Open Watcom, so it must be indexed
  * before being passed to any Win32 API functions.
  */
-#define wvsprintfA( p1, p2, p3 )    wvsprintfA( p1, p2, *(p3) )
-#define wvsprintfW( p1, p2, p3 )    wvsprintfW( p1, p2, *(p3) )
+#define wvsprintfA( p1, p2, p3 )    wvsprintfA( p1, p2, (p3)[0] )
+#define wvsprintfW( p1, p2, p3 )    wvsprintfW( p1, p2, (p3)[0] )
 
 /* Aliases for compatibility with Win16 */
 #define AnsiLower       CharLowerA

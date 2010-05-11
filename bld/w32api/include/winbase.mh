@@ -3125,13 +3125,13 @@ WINADVAPI BOOL WINAPI               AddConditionalAce( PACL, DWORD, DWORD, UCHAR
         ProcThreadAttributeValue( ProcThreadAttributeMitigationPolicy, FALSE, TRUE, FALSE )
 #endif
 
-/* Microsoft defines va_list differently from Open Watcom, so it must be dereferenced
+/* Microsoft defines va_list differently from Open Watcom, so it must be indexed
  * before being passed to any Win32 API functions.
  */
 #define FormatMessageA( p1, p2, p3, p4, p5, p6, p7 ) \
-    FormatMessageA( p1, p2, p3, p4, p5, p6, (p7) == NULL ? NULL : *(void **)(p7) )
+    FormatMessageA( p1, p2, p3, p4, p5, p6, (p7) == NULL ? NULL : &(*(p7))[0] )
 #define FormatMessageW( p1, p2, p3, p4, p5, p6, p7 ) \
-    FormatMessageW( p1, p2, p3, p4, p5, p6, (p7) == NULL ? NULL : *(void **)(p7) )
+    FormatMessageW( p1, p2, p3, p4, p5, p6, (p7) == NULL ? NULL : &(*(p7))[0] )
 
 /* Aliases for macros defined in winnt.h */
 #define MoveMemory                          RtlMoveMemory

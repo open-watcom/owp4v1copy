@@ -755,10 +755,10 @@ EXTERN_C ULONG WMIAPI   TraceSetInformation( TRACEHANDLE, TRACE_INFO_CLASS, PVOI
 #endif
 #endif
 
-/* Microsoft defines va_list differently from Open Watcom, so it must be dereferenced
+/* Microsoft defines va_list differently from Open Watcom, so it must be indexed
  * before being passed to any Win32 API functions.
  */
-#define TraceMessageVa( p1, p2, p3, p4, p5 )    TraceMessageVa( p1, p2, p3, p4, *(p5) )
+#define TraceMessageVa( p1, p2, p3, p4, p5 )    TraceMessageVa( p1, p2, p3, p4, (p5)[0] )
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
 #ifndef _WDMDDK_
