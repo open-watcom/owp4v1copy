@@ -27,7 +27,7 @@
 #endif
 
 // Force the use of framework-provided WinMain for Windows applications.
-#if !defined( _USRDLL ) && !defined( __AFX_INTERNAL__ )
+#if !defined( _USRDLL ) && !defined( _CONSOLE ) && !defined( __AFX_INTERNAL__ )
     #pragma extref WinMain
 #endif
 
