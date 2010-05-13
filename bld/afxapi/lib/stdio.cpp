@@ -138,13 +138,13 @@ ULONGLONG CStdioFile::GetLength() const
     if( (lOldPos = ftell( m_pStream )) == -1 ) {
         CFileException::ThrowErrno( errno, m_strFileName );
     }
-    if( fseek( m_pStream, SEEK_END, 0 ) != 0 ) {
+    if( fseek( m_pStream, 0, SEEK_END ) != 0 ) {
         CFileException::ThrowErrno( errno, m_strFileName );
     }
     if( (lSize = ftell( m_pStream )) == -1 ) {
         CFileException::ThrowErrno( errno, m_strFileName );
     }
-    if( fseek( m_pStream, SEEK_SET, lOldPos ) != 0 ) {
+    if( fseek( m_pStream, lOldPos, SEEK_SET ) != 0 ) {
         CFileException::ThrowErrno( errno, m_strFileName );
     }
     return( lSize );
