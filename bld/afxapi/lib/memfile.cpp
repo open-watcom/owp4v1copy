@@ -127,16 +127,18 @@ void CMemFile::LockRange( ULONGLONG dwPos, ULONGLONG dwCount )
 UINT CMemFile::Read( void *lpBuf, UINT nCount )
 /*********************************************/
 {
-    if( nCount == 0 ) {
+    ASSERT( m_nPosition <= m_nFileSize );
+    if( nCount == 0 || m_nPosition == m_nFileSize ) {
         return( 0 );
-    }
-    if( m_nPosition + nCount > m_nFileSize ) {
-        Memcpy( (BYTE *)lpBuf, m_lpBuffer + m_nPosition, m_nFileSize - m_nPosition );
-        return( m_nFileSize - m_nPosition );
+    } 
+    if( m_nPosition + nCount >= m_nFileSize ) {
+        nCount = m_nFileSize - m_nPosition;
+        Memcpy( (BYTE *)lpBuf, m_lpBuffer + m_nPosition, nCount );
     } else {
         Memcpy( (BYTE *)lpBuf, m_lpBuffer + m_nPosition, nCount );
-        return( nCount );
     }
+    m_nPosition += nCount;
+    return( nCount );
 }
 
 ULONGLONG CMemFile::Seek( LONGLONG lOff, UINT nFrom )
@@ -184,11 +186,12 @@ void CMemFile::UnlockRange( ULONGLONG dwPos, ULONGLONG dwCount )
 void CMemFile::Write( const void *lpBuf, UINT nCount )
 /****************************************************/
 {
-    if( m_nPosition + nCount > m_nFileSize ) {
+    if( m_nPosition + nCount >= m_nFileSize ) {
         m_nFileSize = m_nPosition + nCount;
         GrowFile( m_nFileSize );
     }
     Memcpy( m_lpBuffer + m_nPosition, (const BYTE *)lpBuf, nCount );
+    m_nPosition += nCount;
 }
 
 #ifdef _DEBUG
