@@ -44,9 +44,10 @@
 *                   oc_hpos_t
 *                   oc_page
 *                   oc_text_element
-*                   text_phrase
+*                   oc_text_phrase
 *               and these variables (the text arrays are not listed):
 *                   oc_break
+*                   oc_concat
 *                   oc_cur_page
 *                   oc_cur_post_skip
 *                   oc_cur_tabs
@@ -54,6 +55,7 @@
 *                   oc_document_start
 *                   oc_element_pool
 *                   oc_font_number
+*                   oc_hyphen_width
 *                   oc_indent
 *                   oc_inter_tab
 *                   oc_is_paragraph
@@ -86,8 +88,10 @@
 *                   oc_output_page()
 *                   oc_process_line_full()
 *                   oc_process_text()
+*                   oc_split_text()
 *                   oc_tab_position()
 *                   oc_text_chars_width()
+*                   oc_validate_text_line()
 *                   oc_wgml_tabs()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
@@ -199,15 +203,16 @@ typedef struct {
 
 typedef struct {
     uint8_t             font_number;
-    bool                line_break;
+    bool                new_record;
     char            *   text;
-} text_phrase;
+} oc_text_phrase;
  
 /* Local variables. */
  
 /* These are used by more than one function. */
 
 static  bool                oc_break                = false;
+static  bool                oc_concat               = false;
 static  bool                oc_document_start       = false;
 static  bool                oc_is_paragraph         = false;
 static  bool                oc_new_page             = false;
@@ -224,6 +229,7 @@ static  text_chars      *   oc_text_chars_pool      = NULL;
 static  text_line       *   oc_text_line_pool       = NULL;
 static  uint8_t             oc_font_number          = 0;
 static  uint32_t            oc_cur_post_skip        = 0;
+static  uint32_t            oc_hyphen_width         = 0;
 static  uint32_t            oc_indent               = 0;
 static  uint32_t            oc_inter_tab            = 0;
 static  uint32_t            oc_line_height_zero     = 0;
@@ -246,63 +252,105 @@ NULL
  
 /* Load the document text arrays. */
  
-static  text_phrase         title[] = {
-    { 3, true, "OUTCHECK~ Document" },
-    { 0, false, NULL}
+static  oc_text_phrase         title[] = {
+    { 3, true, "OUTCHECK~ Document " },
+    { 0, true, NULL}
 };
 
-static  text_phrase         para_font[] = {
+static  oc_text_phrase         intro_cosc[] = {
+    { 0, true, "'script' and '.co on' are in effect. " },
+    { 0, true, NULL}
+};
+
+static  oc_text_phrase         intro_cowsc[] = {
+    { 0, true, "'wscript' and '.co on' are in effect. " },
+    { 0, true, NULL}
+};
+
+static  oc_text_phrase         intro_xcosc[] = {
+    { 0, true, "'script' and '.co off' are in effect. " },
+    { 0, true, NULL}
+};
+
+static  oc_text_phrase         intro_xcowsc[] = {
+    { 0, true, "'wscript' and '.co off' are in effect. " },
+    { 0, true, NULL}
+};
+
+static  oc_text_phrase         para_font[] = {
     {0, true, "Parts of this document were copied and modified from the Wiki. " },
-    {0, false, "The reason for this was to make it less self-referential. " },
-    {0, false, "Ironically, we start with some rather self-referential tests " },
-    {0, false, "of font switching: the title was in available font 3; most of " },
-    {0, false, "the text is in available font 0; here is a phrase in " },
-    {1, false, "available font 1" },
+    {0, true, "The reason for this was to make it less self-referential. " },
+    {0, true, "Ironically, we start with some rather self-referential tests " },
+    {0, true, "of font switching: the title was in available font 3; most of " },
+    {0, true, "the text is in available font 0; " },
+    {0, false, "here is a phrase in " },
+    {1, true, "available font 1" },
     {0, false, " and here is a phrase in " },
-    {2, false, "available font 2" },
-    {0, false, ", neither including spaces before or behind (the usual " },
-    {0, false, "situation). The rarer cases have the highlighted phrase include" },
-    {1, false, " the space before" },
+    {2, true, "available font 2" },
+    {0, false, ", neither including spaces before or behind " },
+    {0, true, "(the usual situation). The rarer cases have " },
+    {0, false, "the highlighted phrase" },
+    {1, true, " include the space before" },
     {0, false, " or " },
     {2, false, "the space behind " },
-    {0, false, "(which can affect layout if the space widths vary by font) " },
-    {0, false, "and, very rarely, perhaps, to start in the mid" },
+    {0, true, "(which can affect layout if the space widths vary by font) " },
+    {0, true, "and, very rarely, perhaps, to start in the mid" },
     {3, false, "dle" },
     {0, false, " of a word. " },
-    {0, false, NULL }
+    {0, true, NULL }
 };
  
-static  text_phrase         para_stop[] = {
+static  oc_text_phrase         para_long[] = {
+    {0, true, "These are tests of extremely long words. First, a solid multiline word: aaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeeeaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee " },
+    {0, true, "And now an early multi-part multiline word: aaaaaaaaaa" },
+    {1, false, "aaaaaaaaaa" },
+    {0, false, "bbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeeeaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee " },
+    {0, true, "And now a late multi-part multiline word: aaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbccccc" },
+    {1, false, "cccccccccc" },
+    {0, false, "cccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeeeaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee " },
+    {0, true, "Now with early tabbing: aaaaa>aaaaaaaaaa>aaaaabbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeeeaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee " },
+    {0, true, "and: aaaaa>aaaaa" },
+    {1, false, "aaaaa>aaaaa" },
+    {0, false, "bbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeeeaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee " },
+    {0, true, "Next, with late tabbing: aaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee>aaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee " },
+    {0, true, "and: aaaaaaaaaa" },
+    {1, false, "aaaaaaaaaa" },
+    {0, false, "bbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee>aaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccdddddddddddddddddddddddddddeeeeeeeeeeeeeeee " },
+    {0, true, NULL }
+};
+ 
+static  oc_text_phrase         para_stop[] = {
     {0, true, "Now we get to the test of the stops. Research suggests that " },
-    {0, false, "there are four: '.', '!', '?' and '.', at least when the " },
-    {0, false, "criterion is that wgml 4.0 puts two spaces after them when " },
-    {0, false, "they are used with wscript/noscript in effect! This is surely " },
-    {0, false, "worth examining, is it not? It is a bit surprising, however, " },
-    {0, false, "to find that neither ',' nor ';' is a stop; still, what " },
-    {0, false, "matters here is what wgml 4.0 does. And putting the stop before " },
-    {0, false, "a ')' appears to cancel the effect. (Thus, this will be " },
-    {0, false, "not be followed by two spaces.) (Nor will this example!) (And " },
-    {0, false, "this won't either, will it?) (This one is, of course, rather " },
-    {0, false, "unlikely:) in practice. " },
-    {0, false, NULL }
+    {0, true, "there are four: '.', '!', '?' and '.', at least when the " },
+    {0, true, "criterion is that wgml 4.0 puts two spaces after them when " },
+    {0, true, "they are used with wscript/noscript in effect! This is surely " },
+    {0, true, "worth examining, is it not? It is a bit surprising, however, " },
+    {0, true, "to find that neither ',' nor ';' is a stop; still, what " },
+    {0, true, "matters here is what wgml 4.0 does. And putting the stop before " },
+    {0, true, "a ')' appears to cancel the effect. (Thus, this will " },
+    {0, true, "not be followed by two spaces.) (Nor will this example!) (And " },
+    {0, true, "this won't either, will it?) (This one is, of course, rather " },
+    {0, true, "unlikely:) in practice. " },
+    {0, true, NULL }
 };
 
-static  text_phrase         para_subsup[] = {
+static  oc_text_phrase         para_subsup[] = {
     {0, true, "Next we test subscripts and superscripts. First we try some " },
-    {0, false, "tricks with the single-letter functions: " },
+    {0, true, "tricks with the single-letter functions: " },
     {0, false, "\xfe\x01subscript\xfe\xff should be subscripted, " },
-    {0, false, "\xfe\x02superscript\xfe\xff should be superscripted. These " },
-    {0, false, "should produce an interesting effect: " },
+    {0, true, " and \xfe\x02superscript\xfe\xff should be superscripted. These " },
+    {0, true, "should produce an interesting effect: " },
     {0, false, "\xfe\x01subscript\xfe\xff\xfe\x02superscript\xfe\xff. These " },
-    {0, false, "should not work: \xfe\x01\xfe\xff"},
+    {0, true, "should not work: \xfe\x01\xfe\xff"},
     {1, false, "subscript" },
     {0, false, " and \xfe\x02\xfe\xff"},
     {1, false, "superscript" },
-    {0, false, " but these should: " },
+    {0, true, " but these should: " },
     {1, false, "\xfe\x01subscript\xfe\xff" },
     {0, false, " and " },
     {1, false, "\xfe\x02superscript\xfe\xff" },
-    {0, false, ". The functions should do no better: \xfe\x01" },
+    {0, false, ". The functions " },
+    {0, true, "should do no better: \xfe\x01" },
     {1, false, "subscript text" },
     {0, false, "\xfe\xff, \xfe\x02" },
     {1, false, "superscript text" },
@@ -314,34 +362,37 @@ static  text_phrase         para_subsup[] = {
     {1, false, "text" },
     {0, false, "\xfe\xff, and \xfe\x02superscript " },
     {1, false, "text"},
-    {0, false, "\xfe\xff. These should work as intended, however:" },
+    {0, false, "\xfe\xff. " },
+    {0, true, "These should work as intended, however:" },
     {1, false, " \xfe\x01subscript text\xfe\xff" },
     {0, false, " and " },
     {1, false, "\xfe\x02superscript text\xfe\xff." },
-    {0, false, NULL }
+    {0, true, NULL }
 };
 
-static  text_phrase         para_tab[] = {
+static  oc_text_phrase         para_tab[] = {
     {0, true, "And now we come to wgml tabs. This is a test line with no " },
     {0, false, "wgml tabs at all. " },
     {0, false, ">This>is>a>test>line>which>is>infested>with>wgml>tabs. " },
-    {0, false, "And this line shows one>tab, two>>tabs, and " },
-    {0, false, "three>>>tabs. Here are tabs>" },
+    {0, true, ">This>is>a>test>line>which>is>infested>with>wgml>tabs. " },
+    {0, true, "And this line shows one>tab, two>>tabs, and " },
+    {0, false, "three>>>tabs. " },
+    {0, true, "Here are tabs>" },
     {1, false, "before and after" },
     {0, false, ">a highlighted phrase. " },
-    {0, false, "Finally, here is a set of five     spaces." },
-    {0, false, NULL }
+    {0, true, "Finally, here is a set of five     spaces." },
+    {0, true, NULL }
 };
 
 #if 0 // Needed until the boxes are ready for testing
  
-static  text_phrase         para2[] = {
+static  oc_text_phrase         para2[] = {
     {0, true, "This box was created using .bx (and several other control " },
     {0, false, "words) and illustrates one of the many possibilites available: " },
     {0, false, NULL }
 };
  
-static  text_phrase         bx_box[] = {
+static  oc_text_phrase         bx_box[] = {
     {0, true, "%binary(3)>the appropriate graphic appears" },
     {0, true, "%binary1(4)>the appropriate graphic appears" },
     {0, true, "%binary2(5)>the appropriate graphic appears" },
@@ -349,13 +400,13 @@ static  text_phrase         bx_box[] = {
     {0, false, NULL }
 };
  
-static  text_phrase         para3[] = {
+static  oc_text_phrase         para3[] = {
     {0, true, "This box was created using :FIG., which is in some ways less " },
     {0, false, "flexible than .bx but which has its advantages: " },
     {0, false, NULL }
 };
 
-static  text_phrase         fig_box[] = {
+static  oc_text_phrase         fig_box[] = {
     {0, true, "%x_address() returns the current horizontal print position" },
     {0, true, "%y_address() returns the current vertical print position" },
     {0, false, NULL }
@@ -1275,7 +1326,7 @@ static uint32_t oc_tab_position( uint32_t cur_pos )
             req_count /= TAB_COUNT;
             req_count++;
 
-            req_length = oc_cur_tabs->length + req_count;
+            req_length = oc_cur_tabs->length + (req_count * TAB_COUNT);
             oc_cur_tabs->hpos = mem_realloc( oc_cur_tabs->hpos, \
                                         req_length * sizeof( oc_hpos_t ) );
             oc_cur_tabs->length = req_length;
@@ -1461,6 +1512,188 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
     return( retval );
 }
 
+/* Function oc_split_text().
+ * Splits a text_chars instance into two in such a way that the text controlled
+ * by the original instance ends with the last character that will be
+ * entirely to the left of limit.
+ *
+ * Parameters:
+ *      in_chars contains the text_chars instance to split.
+ *      limit contains the right limit to split in_chars at.
+ *
+ * Parameter Modified:
+ *      in_chars will now fit into the space specified.
+ *
+ * Returns:
+ *      The number of characters in in_chars that will not fit.
+ *
+ * Notes:
+ *      If the device has variable-width fonts, it is possible for there to
+ *          be space at the end of the line but not enough space for even the
+ *          first character in in_chars->text to fit.
+ *      Also, if the test which determined that in_chars did not fit was done
+ *          with a larger limit than the value passed (for example, when
+ *          hyphenation is being done), then it is possible that only the
+ *          hyphen would fit, even with a character device.
+ *      The value returned is a count rather than a text_chars * because, if
+ *          no characters will fit, the result of returning a text_chars *
+ *          would be to make in_chars an empty text_chars instance which has
+ *          no use and so is not needed. It is more efficient for the calling
+ *          function to react to this situation by putting all of in_chars
+ *          onto the next line.
+ */
+
+static uint32_t oc_split_text( text_chars * in_chars, uint32_t limit )
+{
+    uint32_t    retval;
+    uint32_t    test_count;
+    uint32_t    test_limit;
+    uint32_t    test_width;
+
+    if( limit < in_chars->x_address ) {
+
+        /* It is not possible that any characters will fit. */
+
+        retval = in_chars->count;
+
+    } else {
+
+        /* It is possible that some characters might fit. */
+
+        test_limit = limit - in_chars->x_address;   
+        if( in_chars->width > test_limit ) {
+
+            /* A more exact computation is needed. */
+
+            test_count = test_limit / wgml_fonts[in_chars->font_number].\
+                                                                default_width;
+            test_width = cop_text_width( in_chars->text, test_count, \
+                                                        in_chars->font_number );
+
+            if( test_width != test_limit ) {
+
+                /* Not all characters will fit. */
+                
+                if( test_width < test_limit ) {
+                    while( test_width < test_limit ) {
+                        test_count++;
+                        test_width = cop_text_width( in_chars->text, \
+                                            test_count, in_chars->font_number );
+                    }
+                } else {
+                    while( test_width > test_limit ) {
+                        test_count--;
+                        test_width = cop_text_width( in_chars->text, \
+                                            test_count, in_chars->font_number );
+                    }
+                }
+
+                /* Do not update in_chars if either no characters will fit in
+                 * the space specified or if all characters will fit.
+                 * Note: Testing showed that both conditions could occur.
+                 */
+
+                if( test_count == 0 ) {
+
+                    /* No characters will fit. */
+
+                    retval = in_chars->count;
+
+                } else if( test_count == in_chars->count ) { 
+
+                    /* All characters will fit. */
+
+                    retval = 0;
+
+                } else {
+
+                    /* Some characters will fit: finalize retval and in_chars. */
+
+                    retval = in_chars->count - test_count;
+                    in_chars->count = test_count;
+                    in_chars->width = test_width;
+                }
+            } else {
+
+                /* test_count chars will fit exactly. */
+
+                retval = in_chars->count - test_count;
+                in_chars->count = test_count;
+                in_chars->width = test_width;
+            }
+        } else {
+
+            /* The entire in_chars->text will fit, with room to spare. */
+
+            retval = 0;
+        }
+    }
+
+    return( retval );
+}
+
+/* Function oc_validate_text_line.
+ * This function validates a text_line instance in the sense that it tests
+ * that the x_address and prev values in the text_chars instances are correct.
+ *
+ * Parameter:
+ *      in_line contains the text_line instance to check.
+ *
+ * Returns:
+ *      true if each successive text_chars is properly positioned.
+ *      false if an improperly position text_chars is found.
+ *
+ * Notes:
+ *      This is a diagnostic function, needed only because, by using
+ *          oc_page instances, it is impossible to trace back from the
+ *          code detecting this error in devfuncs.c to the line creating
+ *          the problem here. It is done as a function to simplify its use.
+ *      A "correct" x_address is defined as:
+ *          in_line->first->x_address (any value);
+ *          for any subsequent text_chars instance S:
+ *              S->x_address >= S.prev->x_address + S.prev->width
+ *          that is, S must start after S.prev ends, although there need not
+ *              be any spaces in between.
+ */
+
+static bool oc_validate_text_line( text_line * in_line )
+{
+    bool            retval      = true;
+    text_chars  *   cur_chars   = NULL;
+
+    if( in_line != NULL ) {
+        if( in_line->first != NULL ) {
+            cur_chars = in_line->first;
+
+            while( cur_chars->next != NULL ) {
+                cur_chars = cur_chars->next;
+
+                /* This actually occurred in testing! Since cur_chars is,
+                 * at earliest, the_line->first->next, cur_chars->prev
+                 * should never be NULL.
+                 * In fact, this was the test that failed when this function
+                 * was first used.
+                 */
+
+                if( cur_chars->prev == NULL ) {
+                    retval = false;
+                    break;
+                }
+
+                /* This is the test originally intended. */
+
+                if( cur_chars->x_address < (cur_chars->prev->x_address + \
+                                                    cur_chars->prev->width) ) {
+                    retval = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    return( retval );
+}
+
 /* Function oc_process_text().
  * This function produces text_line instances from a single input buffer. This
  * may be as simple as adding a few words to an existing text_line or finishing
@@ -1482,8 +1715,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
  *      This function is intended to explore methods for converting input text 
  *          which has been finalized except for input translation and tabbing
  *          to a text_line instance. It is intended to mimic features of
- *          parse_text() in gproctxt.c. This version works as if "script" were
- *          given on the command line.
+ *          parse_text() in gproctxt.c. 
  *      The first text_chars of the first text_line in each oc_element will be
  *          positioned at the location given by oc_page_left plus oc_indent.
  *          The first text_chars of subsequent text_lines in the same
@@ -1504,10 +1736,12 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             char        *   token_start     = 0;
             size_t          count           = 0;
             size_t          space_width     = 0;
+            text_chars  *   hyphen_chars    = NULL;
             text_chars  *   next_chars      = NULL;
             text_chars  *   save_chars      = NULL;
             uint32_t        cur_height      = 0;
             uint32_t        offset          = 0;
+            uint32_t        old_count       = 0;
 
     /* These invariants should hold on entry:
      * If oc_new_section is true:
@@ -1529,6 +1763,10 @@ static void oc_process_text( char * input_text, uint8_t font_number )
      *          preceding phrase was a wgml tab.
      * If input_text is NULL, then oc_break should be true.
      */
+
+    /* This will keep the compiler happy and, who can say, might be helpful. */
+
+    if( !oc_validate_text_line( the_line ) ) out_msg( "Gotcha!\n");
 
     /* Make sure we have a text_line. */
 
@@ -1608,6 +1846,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
          * created.
          */
 
+        if( !oc_validate_text_line( the_line ) ) out_msg( "Gotcha!\n");
         oc_process_line_full( the_line, false );
         the_line = NULL;
 
@@ -1628,7 +1867,11 @@ static void oc_process_text( char * input_text, uint8_t font_number )
          * as a new section will be starting.
          */
 
-        cur_h_address = oc_page_left + oc_cur_page.column.last->indent;
+        if( oc_is_paragraph ) {
+            cur_h_address = oc_page_left + oc_cur_page.column.last->indent;
+        } else {
+            cur_h_address = oc_page_left;
+        }
         increment = 0;
         spaces = 0;
         tabbing = false;
@@ -1647,9 +1890,16 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         switch( oc_new_element->type ) {
         case oc_text:
-            oc_new_element->net_skip += oc_old_post_skip;
-            oc_new_element->net_skip += oc_pre_skip;
-            oc_new_element->net_skip += oc_pre_top_skip;
+
+            /* This may need to be redone in future. */
+
+            if( oc_concat || oc_is_paragraph ) {
+                oc_new_element->net_skip += oc_old_post_skip;
+                oc_new_element->net_skip += oc_pre_skip;
+                oc_new_element->net_skip += oc_pre_top_skip;
+            } else {
+                oc_new_element->net_skip = 0;
+            }    
             oc_old_post_skip = oc_cur_post_skip;
             break;
         case oc_bx:
@@ -1782,6 +2032,12 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             space_width = 0;
         } else {
 
+            /* Set tabbing to false since there was at least one space before
+             * next_chars.
+             */
+
+            tabbing = false;
+
             if( !oc_script ) { 
 
                 /* If "script" was not specified, then either "wscript" was
@@ -1793,13 +2049,19 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                  * a stop followed by a ")" is also a stop. Note that the text,
                  * at this point, is not being justified; justification may
                  * change things a bit.
+                 * NOTE: when ".co off" is in effect, the_line can be empty at
+                 * this point, in which case spaces becomes 0.
                  */
 
-                ch = the_line->last->text[the_line->last->count - 1];
-                if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
-                    spaces = 2;
+                if( the_line->last == NULL ) {
+                    spaces = 0;
                 } else {
-                    spaces = 1;
+                    ch = the_line->last->text[the_line->last->count - 1];
+                    if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
+                        spaces = 2;
+                    } else {
+                        spaces = 1;
+                    }
                 }
             }
 
@@ -1849,7 +2111,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         token_start = input_text;
         while( *input_text != '\0' ) {
-            if( isspace( *input_text ) ) {
+            if( oc_concat && isspace( *input_text ) ) {
                 if( ProcFlags.in_trans ) {
                     if( *(input_text - 1) != in_esc ) {
                         break;
@@ -1861,6 +2123,33 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                 }
             }
             input_text++;
+        }
+
+        /* If .co is "off", shorten the token to exclude any space characters
+         * at the end. Since input_text is a character string, it will end
+         * with a '\0'.
+         * NOTE: token_start is known not to point to a space character.
+         * NOTE: input_text should point to the first position after the
+         * last non-space non-null character. Omitting the final increment
+         * produced endless looping.
+         */
+
+        if( !oc_concat ) {
+            while( input_text > token_start ) {
+                if( (*input_text == '\0') || isspace( *input_text ) ) {
+                    input_text--;
+                } else {
+                    break;
+                }
+            }
+
+            /* If the token was halted by an escape sequence, then the first
+             * byte of that escape sequence must not be skipped.
+             */
+
+            if( *input_text != 0xFE ) {
+                input_text++;
+            }
         }
         count = input_text - token_start;
 
@@ -1882,127 +2171,405 @@ static void oc_process_text( char * input_text, uint8_t font_number )
         /* Add an empty text_chars, if next_chars->text[0] is a wgml tab, but
          * not if this is a continuation of the previous phrase with no
          * intervening spaces.
+         * Note: the_line can be empty, in which case the empty text_chars is
+         * not appropriate.
          * Note: increment will only be zero at this point if that is the case.
          */
 
         if( increment == 0 ) {
-            if( cur_h_address != (the_line->last->x_address + \
+            if( the_line->last != NULL ) {
+                if( cur_h_address != (the_line->last->x_address + \
                                                     the_line->last->width) ) {
-                the_line->last->next = \
+                    the_line->last->next = \
                             oc_alloc_text_chars( NULL, 0, old_font, cur_type );
-                the_line->last->next->prev = the_line->last;
-                the_line->last = the_line->last->next;
-                the_line->last->x_address = cur_h_address;
+                    the_line->last->next->prev = the_line->last;
+                    the_line->last = the_line->last->next;
+                    the_line->last->x_address = cur_h_address;
 
-                /* Adjust the line_height if necessary. */
+                    /* Adjust the line_height if necessary. */
 
-                cur_height = wgml_fonts[old_font].line_height;
-                if( the_line->line_height < cur_height ) {
-                    the_line->line_height = cur_height;
+                    cur_height = wgml_fonts[old_font].line_height;
+                    if( the_line->line_height < cur_height ) {
+                        the_line->line_height = cur_height;
+                    }
                 }
             }
         }
 
+        /* Set old_count to the current number of characters controlled by
+         * next_chars. This will be used, if needed, to catch the case where
+         * none of the characters in next_chars can, in fact, fit on the current
+         * line. 
+         */ 
+
+        old_count = next_chars->count;
+
         /* Update text_line. */
 
-        if( !tabbing && ((cur_h_address + increment) > oc_page_right )) {
+        if( oc_concat ) {
 
-            /* Detach the last text_chars instance, if it is empty.
-             * Note: save_chars will always be NULL at this point.
+            /* Determine if next_chars will fit on the_line.
+             * Note: this test is not affected by the width of a hyphen.
              */
 
-            if( the_line->last->count == 0 ) {
-                save_chars = the_line->last;
-                the_line->last = the_line->last->prev;
-                the_line->last->next = NULL;
-            } else {
+            while( !tabbing && ((cur_h_address + increment) > oc_page_right ) ) {
 
-                /* If next_chars starts immediately after the_line->last,
-                 * then the two text_chars instances are part of the same
-                 * word (which has an internal highlighted phrase or the .ct
-                 * control word has been encountered) and both must be on
-                 * the same line: detach the_line->last and and save it in
-                 * save_chars.
-                 * Note: save_chars will always be NULL at this point.
+                /* Start with save_chars. */
+
+                save_chars = the_line->last;
+
+                /* Find any and all text_chars instances in the_line that
+                 * form a single word with next_chars (the initial value
+                 * of cur_h_address is the starting position of next_chars).
+                 * Notes: save_chars will point to the first text_chars which
+                 *            is not part of a such a word.
+                 *        if save_chars is NULL, then either the_line is empty
+                 *            or the entire line is part of a single word.
                  */
 
-                if( cur_h_address == (the_line->last->x_address + \
-                                                    the_line->last->width) ) {
-                    save_chars = the_line->last;
-                    the_line->last = the_line->last->prev;
-                    the_line->last->next = NULL;
+                if( save_chars != NULL ) {
+                    while( cur_h_address == (save_chars->x_address + \
+                                                        save_chars->width) ) {
+                        cur_h_address = save_chars->x_address;
+                        save_chars = save_chars->prev;
+                        if( save_chars == NULL ) break;
+                    }
                 }            
 
-                /* Detach the last text_chars instance, if it is empty, and
-                 * prepend it to save_chars.
-                 * Note: these instances have been checked for tabs;
-                 * next_chars has not and so must be kept separate.
+                /* Identify when save_chars must be moved to a new line. */
+
+                if( save_chars != NULL ) {
+                    if( ((save_chars != the_line->last) && \
+                        (!(oc_page_left + increment) > oc_page_right)) || \
+                                                (save_chars->count == 0) ) {
+
+                        /* the_line ends in either a multi-text_chars word or
+                         * an empty text_chars. A multi-text_chars word starts
+                         * with save_chars->next unless save_chars is empty, in
+                         * which case it starts with save_chars.
+                         * Note: In either case, this has the effect of ensuring
+                         *       that the_line->last is not empty.
+                         */
+
+                        if( save_chars->count == 0 ) {
+
+                            /* Detach the entire save_chars list. */
+
+                            the_line->last = save_chars->prev;
+                            the_line->last->next = NULL;
+                            save_chars->prev = NULL;
+
+                        } else {
+
+                            /* Detach save_chars->next and the rest of the list,
+                             * but leave save_chars itself at the end of
+                             * the_line.
+                             */
+
+                            the_line->last = save_chars;
+                            save_chars = save_chars->next;
+                            save_chars->prev = NULL;
+                            the_line->last->next = NULL;
+                        }
+                    } else {
+
+                        /* If save_chars does not need to be moved, then it
+                         * must be set to NULL. This prevents looping caused
+                         * by never splitting next_chars.
+                         */
+
+                        save_chars = NULL;
+                    }
+                }
+
+                /* At this point:
+                 *  if save_chars is NULL, then next_chars needs to be
+                 *      appended to the_line and split.
+                 *  if save_chars is not NULL, the the_line is ready to be
+                 *      output and the fate of next_chars will be decided
+                 *      on the next pass through the loop.   
                  */
 
-                if( the_line->last->count == 0 ) {
-                    save_chars->prev = the_line->last;
-                    the_line->last->next = save_chars;
-                    the_line->last = the_line->last->prev;
-                    the_line->last->next = NULL;
+                if( save_chars == NULL ) {
+
+                    /* A split is possible. It is only appropriate, however,
+                     * if the_line is empty or if next_chars will not fit
+                     * on its own line, unless it is part of a multi-text_chars
+                     * word, and if at least one character in next_chars->text
+                     * will fit on the current line.
+                     */
+
+                    if( (the_line->last == NULL) || \
+                        ((the_line->last->x_address + the_line->last->width) \
+                                                == next_chars->x_address) || \
+                            ((oc_page_left + increment) > oc_page_right) ) {
+
+                        /* Here we see how much of next_chars->text will fit
+                         * when the width of a hyphen is taken into account.
+                         */
+
+                        count = oc_split_text( next_chars, \
+                                            oc_page_right - oc_hyphen_width );
+
+                        /* This is unlikely, but why take chances? */
+
+                        if( count == 0 ) {
+
+                            /* next_chars fits entirely. */
+
+                            save_chars = NULL;
+                            break;
+                        }
+
+                        /* count can equal old_count, but, in that case, there
+                         * is nothing to do.
+                         */ 
+
+                        if( count != old_count ) {
+
+                            /* next_chars is split, and hyphenation is needed.
+                             * Start by attaching next_chars to the_line.
+                             */
+
+                            if( the_line->first == NULL ) {
+                                the_line->first = next_chars;
+                            } else {
+                                next_chars->prev = the_line->last;
+                                the_line->last->next = next_chars;
+                            }
+                            the_line->last = next_chars;
+                            next_chars = NULL;
+
+                            /* Create next_chars to contain the rest of the
+                             * split text.
+                             */
+
+                            next_chars = oc_alloc_text_chars( \
+                                &the_line->last->text[the_line->last->count], \
+                                        count, the_line->last->font_number, \
+                                                        the_line->last->type );
+
+                            /* Finalize the_line->last. */
+
+                            the_line->last = oc_wgml_tabs( the_line->last );
+
+                            /* Adjust the line_height, if appropriate. */
+
+                            cur_height = wgml_fonts[font_number].line_height;
+                            if( the_line->line_height < cur_height ) {
+                                the_line->line_height = cur_height;
+                            }
+
+                            /* Create and attach hyphen_chars to the_line.
+                             * Note: Each text_line which is hyphenated will
+                             *       have its own hyphen_chars since, if they
+                             *       were shared, then the common text_chars
+                             *       would eventually be freed multiple times, and
+                             *       the coding to prevent that would be very
+                             *       complicated.
+                             */
+
+
+                            hyphen_chars = oc_alloc_text_chars( "-", 1, 0, norm );
+                            hyphen_chars->width = oc_hyphen_width;
+
+                            hyphen_chars->x_address = the_line->last->x_address \
+                                                    + the_line->last->width;
+                            hyphen_chars->prev = the_line->last;
+                            the_line->last->next = hyphen_chars;
+                            the_line->last = hyphen_chars;
+                            hyphen_chars = NULL;
+
+                            /* Adjust the line_height, if appropriate. */
+
+                            cur_height = oc_line_height_zero;
+                            if( the_line->line_height < cur_height ) {
+                                the_line->line_height = cur_height;
+                            }
+                        }
+                    }
                 }
+
+                /* At this point:
+                 *   the_line is either empty or ready for output.
+                 *   save_chars is either NULL or contains the start
+                 *       of the new line.
+                 *   next_chars needs to have x_address updated.
+                 *   cur_h_address needs to be updated.
+                 */
+
+                if( the_line->first != NULL ) {
+
+                    /* Process the full text_line and get a new one. */
+
+                    if( !oc_validate_text_line( the_line ) ) out_msg( "Gotcha!\n");
+                    oc_process_line_full( the_line, true );
+                    the_line = oc_alloc_text_line();
+
+                }
+
+                /* Update cur_h_address to the start of the new line. */
+
+                cur_h_address = oc_page_left;
+
+                /* save_chars processing. */
+
+                if( save_chars == NULL ) {
+
+                    /* Reset next_chars to the left margin. */
+
+                    next_chars->x_address = cur_h_address;
+
+                } else {
+                                
+                    /* Attach save_chars to the_line. */
+
+                    the_line->first = save_chars;
+                    the_line->last = save_chars;
+
+                    /* save_chars is a doubly-linked list of one or more
+                     * text_chars instances. The first must be located at
+                     * cur_h_address, and the others must be repositioned
+                     * to the same relative position using offset.
+                     */
+
+                    offset = save_chars->x_address - cur_h_address;
+                    save_chars->x_address = cur_h_address;
+
+                    /* Adjust the line_height, if appropriate. */
+
+                    cur_height = wgml_fonts[save_chars->font_number].line_height;
+                    if( the_line->line_height < cur_height ) {
+                        the_line->line_height = cur_height;
+                    }
+
+                    save_chars = save_chars->next;
+
+                    /* Now reposition any following text_chars instances,
+                     * keeping cur_h_address and the_line->last updated to
+                     * the start of each instance.
+                     */
+
+                    while( save_chars != NULL ) {
+                        the_line->last = save_chars;
+                        save_chars->x_address -= offset;
+                        cur_h_address = save_chars->x_address;
+
+                        /* Adjust the line_height, if appropriate. */
+
+                        cur_height = \
+                                wgml_fonts[save_chars->font_number].line_height;
+                        if( the_line->line_height < cur_height ) {
+                            the_line->line_height = cur_height;
+                        }
+
+                        save_chars = save_chars->next;
+                    }
+
+                    /* At this point, next_chars->x_address is set to the proper
+                     * value for the end of the prior text_line. Reset it using
+                     * offset and update cur_h_address. 
+                     */
+
+                    next_chars->x_address -= offset;
+                    cur_h_address = next_chars->x_address;
+                }
+
+                /* Update next_chars and increment so that, at the top
+                 * of the loop, they will be correct for the next pass.
+                 */
+
+                next_chars->width = oc_text_chars_width( next_chars->text, \
+                                next_chars->count, next_chars->font_number );
+                increment = next_chars->width;
             }
 
-            /* Process the full text_line and get a new one. */
+        } else {
+                
+            /* When ".co off" is in effect, the_line can be empty at this
+             * point. If it is empty, then there is nothing to do unless
+             * "wcript/noscript" is in effect.
+             * NOTE: if "script" is in effect, next_chars will be added
+             * to the_line below.
+             */
 
-            oc_process_line_full( the_line, true );
-            the_line = oc_alloc_text_line();
+            if( !oc_script ) {
 
-            /* Reset cur_h_address. */
-
-            cur_h_address = oc_page_left;
-
-            /* Now process save_chars. */
-
-            if( save_chars != NULL ) {
-
-                /* Attach save_chars to the_line. */
-
-                the_line->first = save_chars;
-                the_line->last = the_line->first;
-
-                /* save_chars is a doubly-linked list of one or more
-                 * text_chars instances. The first must be located at
-                 * cur_h_address, and the others must be repositioned
-                 * to the same relative position using offset.
+                /* "wscript/noscript" in effect: split next_chars.
+                 * NOTE: if/when columns are supported, the second 
+                 * parameter may depend on the current column.
                  */
 
-                offset = save_chars->x_address - cur_h_address;
-                save_chars->x_address = cur_h_address;
-                save_chars = save_chars->next;
+                count = oc_split_text( next_chars, oc_page_right);
 
-                /* Now reposition any following text_chars instances, keeping
-                 * cur_h_address and the_line->last updated to the start of
-                 * each instance.
+                /* The loop is needed so that the text is split over as many
+                 * lines as necessary.
                  */
 
-                while( save_chars != NULL ) {
-                    the_line->last = save_chars;
-                    save_chars->x_address -= offset;
-                    cur_h_address = save_chars->x_address;
-                    save_chars = save_chars->next;
+                while( count > 0 ) {
+
+                    /* count can equal old_count, but, in that case, there
+                     * is nothing to do.
+                     */ 
+
+
+                    if( count != old_count ) {
+
+                        /* Attach next_chars to the_line. */
+
+                        if( the_line->first == NULL ) {
+                            the_line->first = next_chars;
+                        } else {
+                            next_chars->prev = the_line->last;
+                            the_line->last->next = next_chars;
+                        }
+                        the_line->last = next_chars;
+                        next_chars = NULL;
+
+                        /* Create next_chars to contain the rest of the split
+                         * text.
+                         */
+
+                        next_chars = oc_alloc_text_chars( \
+                            &the_line->last->text[the_line->last->count], \
+                                        count, the_line->last->font_number, \
+                                                        the_line->last->type );
+                    }
+
+                    /* Finalize the_line->last. */
+
+                    the_line->last = oc_wgml_tabs( the_line->last );
+
+                    /* Adjust the line_height, if appropriate. */
+
+                    cur_height = wgml_fonts[font_number].line_height;
+                    if( the_line->line_height < cur_height ) {
+                        the_line->line_height = cur_height;
+                    }
+
+                    /* Process the full text_line and get a new one. */
+
+                    if( !oc_validate_text_line( the_line ) ) out_msg( "Gotcha!\n");
+                    oc_process_line_full( the_line, false );
+                    the_line = oc_alloc_text_line();
+    
+                    /* Reset cur_h_address. */
+
+                    cur_h_address = oc_page_left;
+
+                    /* Reset next_chars so it can be processed again, in case
+                     * the text in save_chars is so wide that it, also, must
+                     * be cut off and moved to a new text_line.
+                     */
+
+                    next_chars->x_address = cur_h_address;
+                    next_chars->width = oc_text_chars_width( next_chars->text, \
+                                next_chars->count, next_chars->font_number );
+
+                    /* See if next_chars is still too long. */
+
+                    count = oc_split_text( next_chars, oc_page_right);
                 }
-
-                /* At this point, next_chars->x_address is set to the proper
-                 * value for the end of the prior text_line. Reset it using 
-                 * offset and update cur_h_address. 
-                 */
-
-                next_chars->x_address -= offset;
-                cur_h_address = next_chars->x_address;
-
-            } else {
-
-                /* At this point, next_chars->x_address is set to the proper
-                 * value for the end of the prior text_line. Reset it to the
-                 * the start of the current line.
-                 */
-
-                next_chars->x_address = cur_h_address;
             }
         }
 
@@ -2015,20 +2582,17 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             the_line->last->next = next_chars;
         }
         the_line->last = oc_wgml_tabs( next_chars );
-        next_chars = NULL;
 
-        /* Set tabbing to true if the_line->last is an empty text_chars:
-         * at this point, this can only happen if the original content of
-         * next_chars ended with a wgml tab.
-         * NOTE: if wgml tab alignment or fill characters affects how tabbing
-         * is done, something more elaborate may be needed here.
+        /* Set tabbing to true if next_chars contained at least one wgml tab
+         * character. 
+         * Note: if wgml tab alignment or fill characters affects how tabbing
+         *           is done, something more elaborate may be needed here.
          */
 
-        if( the_line->last->count == 0 ) {
+        if( next_chars != the_line->last ) {
             tabbing = true;
-        } else {
-            tabbing = false;
         }
+        next_chars = NULL;
 
         /* Update cur_h_address to the total length of the text in
          * the_line->last.
@@ -2055,11 +2619,11 @@ static void oc_process_text( char * input_text, uint8_t font_number )
  * the font number and break flag. 
  *
  * Parameters:
- *      in_text points to the text_phrase array to be processed.
+ *      in_text points to the oc_text_phrase array to be processed.
  *
  * Global Changed:
  *      oc_break is set to the correct value.
- *      oc_font_number is set to the font_number of the last text_phrase
+ *      oc_font_number is set to the font_number of the last oc_text_phrase
  *          processed.
  *
  * Notes:
@@ -2067,18 +2631,57 @@ static void oc_process_text( char * input_text, uint8_t font_number )
  *          processing in our wgml. 
  */
  
-static void emulate_input_source( text_phrase * in_text )
+static void emulate_input_source( oc_text_phrase * in_text )
 {
-    text_phrase *   cur_phrase  = NULL;
+    oc_text_phrase *   cur_phrase  = NULL;
 
-    /* Process all the text_phrases in in_text. */
+    /* Process the first oc_text_phrase, which is always considered to cause a
+     * break in this simplified emulation.
+     */
 
     cur_phrase = in_text;
+    if( cur_phrase->font_number >= wgml_font_cnt ) {
+        cur_phrase->font_number = 0;
+    }
+    oc_font_number = cur_phrase->font_number;
+    oc_break = true;
+    oc_process_text( cur_phrase->text, oc_font_number );
+    cur_phrase++;
+
+    /* Process the remaining oc_text_phrases in in_text. */
+
     while( cur_phrase->text != NULL ) {
         if( cur_phrase->font_number >= wgml_font_cnt ) \
                                                 cur_phrase->font_number = 0;
         oc_font_number = cur_phrase->font_number;
-        oc_break = cur_phrase->line_break;
+        if( oc_concat ) {
+
+            /* In this emulation, there are no breaks inside a paragraph if
+             * ".co on" is in effect.
+             */
+
+            oc_break = false;
+
+        } else {
+
+            /* In this emulation, there are is a break inside a paragraph if
+             * ".co off" is in effect and cur_phrase->new_record is "true".
+             */
+
+            oc_break = cur_phrase->new_record;
+
+            if( oc_break ) {
+
+                /* If there is an internal break, a new oc_element will need
+                 * to be provided if oc_current_oc_element is NULL.
+                 */
+
+                if( oc_new_element == NULL ) {
+                    oc_is_paragraph = false;
+                    oc_new_element = oc_alloc_oc_element( oc_text );
+                }
+            }
+        }
         oc_process_text( cur_phrase->text, oc_font_number );
         cur_phrase++;
     }
@@ -2093,10 +2696,10 @@ static void emulate_input_source( text_phrase * in_text )
  *
  * Parameters:
  *      construct encodes the type of construct to be emulated.
- *      input_text points to the text_phrase array to be processed.
+ *      input_text points to the oc_text_phrase array to be processed.
  */
  
-static void emulate_layout_page( text_phrase * input_text, \
+static void emulate_layout_page( oc_text_phrase * input_text, \
                                    oc_construct_type construct )
 {
     switch( construct ) {
@@ -2126,15 +2729,14 @@ static void emulate_layout_page( text_phrase * input_text, \
 
     case oc_paragraph:
 
-        /* Set the globals. This emulates a pre_skip of 1 and an indent of
-         * '0.5i'.
+        /* Set the globals. This emulates a pre_skip of 1. The indent has
+         * already been set to '0.5i'.
          */
 
         oc_pre_top_skip = 0;
         oc_pre_skip = 1;
         oc_old_post_skip = oc_cur_post_skip;
         oc_cur_post_skip = 0;
-        oc_indent = bin_device->horizontal_base_units / 2;
 
         /* Initalize oc_new_element. */
 
@@ -2187,7 +2789,7 @@ static void emulate_wgml( void )
     uint32_t            oc_h_len; // needed?
     uint32_t            oc_v_len; // needed?
 
-    /* Set the file-level globals. */
+    /* Set the static globals. */
 
     /* Initialize the oc_element pool to hold ten instances. These are
      * oc_text_elements because that is the oc_element used most often.
@@ -2276,13 +2878,16 @@ static void emulate_wgml( void )
 
     /* The values used set up a left margin of '1i' and a right margin of
      * '7i', expressed in horizontal base units, both from the position
-     * specificed in the :PAGESTART block.
+     * specificed in the :PAGESTART block. The indent is set to '0.5i', which
+     * is technically correct only for paragraphs, but which is used by
+     * oc_validate_text_line().
      */
 
     oc_page_left = bin_device->horizontal_base_units + bin_device->x_start \
                                                      - bin_device->x_offset;
     oc_page_right = 7 * bin_device->horizontal_base_units + bin_device->x_start \
                                                      - bin_device->x_offset;
+    oc_indent = bin_device->horizontal_base_units / 2;
 
     /* Set up the default tabs and initialize oc_cur_tabs.
      * Note: the margin, that is, oc_page_left, is included in the
@@ -2302,13 +2907,17 @@ static void emulate_wgml( void )
 
     oc_cur_tabs = &oc_default_tabs;
 
-    /* This is used for the line height when the actual height is either not
-     * known or not well defined. Not every use in this test program will be
-     * appropriate in our wgml, at least, not when it has to process the OW
-     * docs, which do have different line heights for different fonts.
+    /* This was originally created to be used in outcheck.c but not necessarily
+     * in our wgml to simplify situations where the line height is either not
+     * known or not well defined. However, it is also used with hyphenation,
+     * since the hyphen used is always in the default font.
      */
 
     oc_line_height_zero = wgml_fonts[0].line_height;
+
+    /* This is used in hyphenating extremely long words. */
+
+    oc_hyphen_width = wgml_fonts[0].width_table['-'];
 
     /* Set the variables. */
 
@@ -2321,8 +2930,9 @@ static void emulate_wgml( void )
 
     /* The OUTCHECK Test Document. */
 
-    /* Start in "script" mode. */
+    /* Start in "script" mode with concatenation on. */
 
+    oc_concat = true;
     oc_script = true;
 
     /* Allow input translation tests. */
@@ -2359,25 +2969,49 @@ static void emulate_wgml( void )
 
     /* Output the text paragraphs. */
 
-    oc_tab_char = '>';
-    emulate_layout_page( para_tab, oc_paragraph );
-    oc_tab_char = '\t';
-    emulate_layout_page( para_font, oc_paragraph );
-    emulate_layout_page( para_stop, oc_paragraph );
-    oc_tab_char = '>';
-    emulate_layout_page( para_tab, oc_paragraph );
-    oc_tab_char = '\t';
-    emulate_layout_page( para_subsup, oc_paragraph );
+    /* We are still in "script" mode with concatenation on. */
 
-    /* Now switch to "wscript/noscript" mode. */
+    oc_tab_char = '>';
+    emulate_layout_page( intro_cosc, oc_paragraph );
+    emulate_layout_page( para_font, oc_paragraph );
+    emulate_layout_page( para_long, oc_paragraph );
+    emulate_layout_page( para_stop, oc_paragraph );
+    emulate_layout_page( para_subsup, oc_paragraph );
+    emulate_layout_page( para_tab, oc_paragraph );
+
+    /* Now switch to "wscript/noscript" mode with concatenation on. */
 
     oc_script = false;
+    emulate_layout_page( intro_cowsc, oc_paragraph );
     emulate_layout_page( para_font, oc_paragraph );
+    emulate_layout_page( para_long, oc_paragraph );
     emulate_layout_page( para_stop, oc_paragraph );
-    oc_tab_char = '>';
+    emulate_layout_page( para_subsup, oc_paragraph );
+    emulate_layout_page( para_tab, oc_paragraph );
+
+    /* Now switch to "script" mode with concatenation off. */
+
+    oc_concat = false;
+    oc_script = true;
+    emulate_layout_page( intro_xcosc, oc_paragraph );
+    emulate_layout_page( para_font, oc_paragraph );
+    emulate_layout_page( para_long, oc_paragraph );
+    emulate_layout_page( para_stop, oc_paragraph );
+    emulate_layout_page( para_subsup, oc_paragraph );
+    emulate_layout_page( para_tab, oc_paragraph );
+
+    /* Now switch to "wscript/noscript" mode with concatenation off. */
+
+    oc_concat = false;
+    oc_script = false;
+    emulate_layout_page( intro_xcowsc, oc_paragraph );
+    emulate_layout_page( para_font, oc_paragraph );
+    emulate_layout_page( para_long, oc_paragraph );
+    emulate_layout_page( para_stop, oc_paragraph );
+    emulate_layout_page( para_subsup, oc_paragraph );
     emulate_layout_page( para_tab, oc_paragraph );
     oc_tab_char = '\t';
-    emulate_layout_page( para_subsup, oc_paragraph );
+
 
 #if 0 // restore when boxing is done again and blank-line-insertion is handled
     /* A blank line is placed between paragraphs. */
