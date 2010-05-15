@@ -1,0 +1,23 @@
+test_exes  = &
+    object01.$(exe) &
+    object02.$(exe) &
+    string01.$(exe) &
+    string02.$(exe) &
+    string03.$(exe) &
+    string04.$(exe) &
+    file01.$(exe) &
+    file02.$(exe) &
+    file03.$(exe) &
+    file04.$(exe) &
+    arch01.$(exe) &
+    arch02.$(exe) &
+    array01.$(exe) &
+    array02.$(exe) &
+    array03.$(exe) &
+    array04.$(exe) &
+    array05.$(exe) &
+    array06.$(exe) &
+    array07.$(exe) &
+
+
+ext = $(ext_$(arch))
