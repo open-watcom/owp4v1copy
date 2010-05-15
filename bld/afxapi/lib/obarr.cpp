@@ -101,6 +101,9 @@ INT_PTR CObArray::Add( CObject *newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( CObject * ) );
             delete [] m_pData;
         }
+        if( m_nGrowBy > 1 ) {
+            memset( pNewData + m_nSize + 1, 0, (m_nGrowBy - 1) * sizeof( CObject * ) );
+        }
         m_pData = pNewData;
     }
     m_pData[m_nSize] = newElement;
@@ -124,6 +127,10 @@ INT_PTR CObArray::Append( const CObArray &src )
             memcpy( pNewData, m_pData, m_nSize * sizeof( CObject * ) );
             delete [] m_pData;
         }
+        if( m_nMaxSize > m_nSize + src.m_nSize ) {
+            memset( pNewData + m_nSize + src.m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + src.m_nSize)) * sizeof( CObject * ) );
+        }
         m_pData = pNewData;
     }
     memcpy( m_pData + m_nSize, src.m_pData, src.m_nSize * sizeof( CObject * ) );
@@ -146,6 +153,10 @@ void CObArray::Copy( const CObArray &src )
             delete [] m_pData;
         }
         m_pData = new CObject *[m_nMaxSize];
+        if( m_nMaxSize > src.m_nSize ) {
+            memset( m_pData + src.m_nSize, 0,
+                    (m_nMaxSize - src.m_nSize) * sizeof( CObject * ) );
+        }
     }
     memcpy( m_pData, src.m_pData, src.m_nSize * sizeof( CObject * ) );
     m_nSize = src.m_nSize;
@@ -181,6 +192,10 @@ void CObArray::InsertAt( INT_PTR nIndex, CObject *newElement, int nCount )
         }
         m_nMaxSize = nNewMaxSize;
         CObject **pNewData = new CObject *[m_nMaxSize];
+        if( m_nSize + nCount < m_nMaxSize ) {
+            memset( pNewData + m_nSize + nCount, 0,
+                    (m_nMaxSize - (m_nSize + nCount)) * sizeof( CObject * ) );
+        }
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( CObject * ) );
             delete [] m_pData;
@@ -199,6 +214,7 @@ void CObArray::InsertAt( INT_PTR nStartIndex, CObArray *pNewArray )
 /*****************************************************************/
 {
     ASSERT( nStartIndex >= 0 );
+    ASSERT( pNewArray != NULL );
     int nNewMaxSize = m_nSize + pNewArray->m_nSize;
     if( nNewMaxSize > m_nMaxSize ) {
         if( nNewMaxSize % m_nGrowBy != 0 ) {
@@ -210,6 +226,10 @@ void CObArray::InsertAt( INT_PTR nStartIndex, CObArray *pNewArray )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( CObject * ) );
             delete [] m_pData;
+        }
+        if( m_nSize + pNewArray->m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize + pNewArray->m_nSize, 0,
+                (m_nMaxSize - (m_nSize + pNewArray->m_nSize)) * sizeof( CObject * ) );
         }
         m_pData = pNewData;
     }
@@ -230,6 +250,7 @@ void CObArray::RemoveAt( INT_PTR nIndex, INT_PTR nCount )
                  (m_nSize - (nIndex + nCount)) * sizeof( CObject * ) );
     }
     m_nSize -= nCount;
+    memset( m_pData + m_nSize, 0, nCount * sizeof( CObject * ) );
 }
 
 void CObArray::SetAtGrow( INT_PTR nIndex, CObject *newElement )
@@ -248,6 +269,8 @@ void CObArray::SetAtGrow( INT_PTR nIndex, CObject *newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( CObject * ) );
             delete [] m_pData;
         }
+        ASSERT( m_nSize < m_nMaxSize );
+        memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( CObject * ) );
         m_pData = pNewData;
     }
     if( nIndex > m_nSize ) {
@@ -274,6 +297,9 @@ void CObArray::SetSize( INT_PTR nNewSize, INT_PTR nGrowBy )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( CObject * ) );
             delete [] m_pData;
+        }
+        if( m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( CObject * ) );
         }
         m_pData = pNewData;
     }

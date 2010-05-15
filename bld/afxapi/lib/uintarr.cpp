@@ -101,6 +101,9 @@ INT_PTR CUIntArray::Add( UINT newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( UINT ) );
             delete [] m_pData;
         }
+        if( m_nGrowBy > 1 ) {
+            memset( pNewData + m_nSize + 1, 0, (m_nGrowBy - 1) * sizeof( UINT ) );
+        }
         m_pData = pNewData;
     }
     m_pData[m_nSize] = newElement;
@@ -124,6 +127,10 @@ INT_PTR CUIntArray::Append( const CUIntArray &src )
             memcpy( pNewData, m_pData, m_nSize * sizeof( UINT ) );
             delete [] m_pData;
         }
+        if( m_nMaxSize > m_nSize + src.m_nSize ) {
+            memset( pNewData + m_nSize + src.m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + src.m_nSize)) * sizeof( UINT ) );
+        }
         m_pData = pNewData;
     }
     memcpy( m_pData + m_nSize, src.m_pData, src.m_nSize * sizeof( UINT ) );
@@ -146,6 +153,10 @@ void CUIntArray::Copy( const CUIntArray &src )
             delete [] m_pData;
         }
         m_pData = new UINT[m_nMaxSize];
+        if( m_nMaxSize > src.m_nSize ) {
+            memset( m_pData + src.m_nSize, 0,
+                    (m_nMaxSize - src.m_nSize) * sizeof( UINT ) );
+        }
     }
     memcpy( m_pData, src.m_pData, src.m_nSize * sizeof( UINT ) );
     m_nSize = src.m_nSize;
@@ -181,6 +192,10 @@ void CUIntArray::InsertAt( INT_PTR nIndex, UINT newElement, int nCount )
         }
         m_nMaxSize = nNewMaxSize;
         UINT *pNewData = new UINT[m_nMaxSize];
+        if( m_nSize + nCount < m_nMaxSize ) {
+            memset( pNewData + m_nSize + nCount, 0,
+                    (m_nMaxSize - (m_nSize + nCount)) * sizeof( UINT ) );
+        }
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( UINT ) );
             delete [] m_pData;
@@ -199,6 +214,7 @@ void CUIntArray::InsertAt( INT_PTR nStartIndex, CUIntArray *pNewArray )
 /*********************************************************************/
 {
     ASSERT( nStartIndex >= 0 );
+    ASSERT( pNewArray != NULL );
     int nNewMaxSize = m_nSize + pNewArray->m_nSize;
     if( nNewMaxSize > m_nMaxSize ) {
         if( nNewMaxSize % m_nGrowBy != 0 ) {
@@ -210,6 +226,10 @@ void CUIntArray::InsertAt( INT_PTR nStartIndex, CUIntArray *pNewArray )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( UINT ) );
             delete [] m_pData;
+        }
+        if( m_nSize + pNewArray->m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize + pNewArray->m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + pNewArray->m_nSize)) * sizeof( UINT ) );
         }
         m_pData = pNewData;
     }
@@ -226,9 +246,11 @@ void CUIntArray::RemoveAt( INT_PTR nIndex, INT_PTR nCount )
     ASSERT( nCount >= 1 );
     ASSERT( nIndex + nCount <= m_nSize );
     if( nIndex + nCount < m_nSize ) {
-        memmove( m_pData + nIndex + nCount, m_pData + nIndex, nCount * sizeof( UINT ) );
+        memmove( m_pData + nIndex, m_pData + nIndex + nCount,
+                 (m_nSize - (nIndex + nCount)) * sizeof( UINT ) );
     }
     m_nSize -= nCount;
+    memset( m_pData + m_nSize, 0, nCount * sizeof( UINT ) );
 }
 
 void CUIntArray::SetAtGrow( INT_PTR nIndex, UINT newElement )
@@ -247,6 +269,8 @@ void CUIntArray::SetAtGrow( INT_PTR nIndex, UINT newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( UINT ) );
             delete [] m_pData;
         }
+        ASSERT( m_nSize < m_nMaxSize );
+        memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( UINT ) );
         m_pData = pNewData;
     }
     if( nIndex >= m_nSize ) {
@@ -273,6 +297,9 @@ void CUIntArray::SetSize( INT_PTR nNewSize, INT_PTR nGrowBy )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( UINT ) );
             delete [] m_pData;
+        }
+        if( m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( UINT ) );
         }
         m_pData = pNewData;
     }

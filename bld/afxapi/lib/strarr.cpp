@@ -172,6 +172,10 @@ void CStringArray::Copy( const CStringArray &src )
             delete [] m_pData;
         }
         m_pData = new CString[m_nMaxSize];
+    } else if( m_nMaxSize > src.m_nSize ) {
+        for( int i = src.m_nSize; i < m_nMaxSize; i++ ) {
+            m_pData[i].Empty();
+        }
     }
     for( int i = 0; i < src.m_nSize; i++ ) {
         m_pData[i] = src.m_pData[i];
@@ -298,6 +302,9 @@ void CStringArray::RemoveAt( INT_PTR nIndex, INT_PTR nCount )
         }
     }
     m_nSize -= nCount;
+    for( int i = 0; i < nCount; i++ ) {
+        m_pData[m_nSize + i].Empty();
+    }
 }
 
 void CStringArray::SetAtGrow( INT_PTR nIndex, LPCTSTR newElement )

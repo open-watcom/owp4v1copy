@@ -101,6 +101,9 @@ INT_PTR CByteArray::Add( BYTE newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( BYTE ) );
             delete [] m_pData;
         }
+        if( m_nGrowBy > 1 ) {
+            memset( pNewData + m_nSize + 1, 0, (m_nGrowBy - 1) * sizeof( BYTE ) );
+        }
         m_pData = pNewData;
     }
     m_pData[m_nSize] = newElement;
@@ -124,6 +127,10 @@ INT_PTR CByteArray::Append( const CByteArray &src )
             memcpy( pNewData, m_pData, m_nSize * sizeof( BYTE ) );
             delete [] m_pData;
         }
+        if( m_nMaxSize > m_nSize + src.m_nSize ) {
+            memset( pNewData + m_nSize + src.m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + src.m_nSize)) * sizeof( BYTE ) );
+        }
         m_pData = pNewData;
     }
     memcpy( m_pData + m_nSize, src.m_pData, src.m_nSize * sizeof( BYTE ) );
@@ -146,6 +153,10 @@ void CByteArray::Copy( const CByteArray &src )
             delete [] m_pData;
         }
         m_pData = new BYTE[m_nMaxSize];
+        if( m_nMaxSize > src.m_nSize ) {
+            memset( m_pData + src.m_nSize, 0,
+                    (m_nMaxSize - src.m_nSize) * sizeof( BYTE ) );
+        }
     }
     memcpy( m_pData, src.m_pData, src.m_nSize * sizeof( BYTE ) );
     m_nSize = src.m_nSize;
@@ -181,6 +192,10 @@ void CByteArray::InsertAt( INT_PTR nIndex, BYTE newElement, int nCount )
         }
         m_nMaxSize = nNewMaxSize;
         BYTE *pNewData = new BYTE[m_nMaxSize];
+        if( m_nSize + nCount < m_nMaxSize ) {
+            memset( pNewData + m_nSize + nCount, 0,
+                    (m_nMaxSize - (m_nSize + nCount)) * sizeof( BYTE ) );
+        }
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( BYTE ) );
             delete [] m_pData;
@@ -199,6 +214,7 @@ void CByteArray::InsertAt( INT_PTR nStartIndex, CByteArray *pNewArray )
 /*********************************************************************/
 {
     ASSERT( nStartIndex >= 0 );
+    ASSERT( pNewArray != NULL );
     int nNewMaxSize = m_nSize + pNewArray->m_nSize;
     if( nNewMaxSize > m_nMaxSize ) {
         if( nNewMaxSize % m_nGrowBy != 0 ) {
@@ -210,6 +226,10 @@ void CByteArray::InsertAt( INT_PTR nStartIndex, CByteArray *pNewArray )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( BYTE ) );
             delete [] m_pData;
+        }
+        if( m_nSize + pNewArray->m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize + pNewArray->m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + pNewArray->m_nSize)) * sizeof( BYTE ) );
         }
         m_pData = pNewData;
     }
@@ -230,6 +250,7 @@ void CByteArray::RemoveAt( INT_PTR nIndex, INT_PTR nCount )
                  (m_nSize - (nIndex + nCount)) * sizeof( BYTE ) );
     }
     m_nSize -= nCount;
+    memset( m_pData + m_nSize, 0, nCount * sizeof( BYTE ) );
 }
 
 void CByteArray::SetAtGrow( INT_PTR nIndex, BYTE newElement )
@@ -248,6 +269,8 @@ void CByteArray::SetAtGrow( INT_PTR nIndex, BYTE newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( BYTE ) );
             delete [] m_pData;
         }
+        ASSERT( m_nSize < m_nMaxSize );
+        memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( BYTE ) );
         m_pData = pNewData;
     }
     if( nIndex >= m_nSize ) {
@@ -274,6 +297,9 @@ void CByteArray::SetSize( INT_PTR nNewSize, INT_PTR nGrowBy )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( BYTE ) );
             delete [] m_pData;
+        }
+        if( m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( BYTE ) );
         }
         m_pData = pNewData;
     }

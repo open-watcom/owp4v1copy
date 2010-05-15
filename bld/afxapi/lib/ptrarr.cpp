@@ -82,6 +82,9 @@ INT_PTR CPtrArray::Add( void *newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( void * ) );
             delete [] m_pData;
         }
+        if( m_nGrowBy > 1 ) {
+            memset( pNewData + m_nSize + 1, 0, (m_nGrowBy - 1) * sizeof( void * ) );
+        }
         m_pData = pNewData;
     }
     m_pData[m_nSize] = newElement;
@@ -105,6 +108,10 @@ INT_PTR CPtrArray::Append( const CPtrArray &src )
             memcpy( pNewData, m_pData, m_nSize * sizeof( void * ) );
             delete [] m_pData;
         }
+        if( m_nMaxSize > m_nSize + src.m_nSize ) {
+            memset( pNewData + m_nSize + src.m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + src.m_nSize)) * sizeof( void * ) );
+        }
         m_pData = pNewData;
     }
     memcpy( m_pData + m_nSize, src.m_pData, src.m_nSize * sizeof( void * ) );
@@ -127,6 +134,10 @@ void CPtrArray::Copy( const CPtrArray &src )
             delete [] m_pData;
         }
         m_pData = new void *[m_nMaxSize];
+        if( m_nMaxSize > src.m_nSize ) {
+            memset( m_pData + src.m_nSize, 0,
+                    (m_nMaxSize - src.m_nSize) * sizeof( void * ) );
+        }
     }
     memcpy( m_pData, src.m_pData, src.m_nSize * sizeof( void * ) );
     m_nSize = src.m_nSize;
@@ -162,6 +173,10 @@ void CPtrArray::InsertAt( INT_PTR nIndex, void *newElement, int nCount )
         }
         m_nMaxSize = nNewMaxSize;
         void **pNewData = new void *[m_nMaxSize];
+        if( m_nSize + nCount < m_nMaxSize ) {
+            memset( pNewData + m_nSize + nCount, 0,
+                    (m_nMaxSize - (m_nSize + nCount)) * sizeof( void * ) );
+        }
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( void * ) );
             delete [] m_pData;
@@ -180,6 +195,7 @@ void CPtrArray::InsertAt( INT_PTR nStartIndex, CPtrArray *pNewArray )
 /*******************************************************************/
 {
     ASSERT( nStartIndex >= 0 );
+    ASSERT( pNewArray != NULL );
     int nNewMaxSize = m_nSize + pNewArray->m_nSize;
     if( nNewMaxSize > m_nMaxSize ) {
         if( nNewMaxSize % m_nGrowBy != 0 ) {
@@ -191,6 +207,10 @@ void CPtrArray::InsertAt( INT_PTR nStartIndex, CPtrArray *pNewArray )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( void * ) );
             delete [] m_pData;
+        }
+        if( m_nSize + pNewArray->m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize + pNewArray->m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + pNewArray->m_nSize)) * sizeof( void * ) );
         }
         m_pData = pNewData;
     }
@@ -211,6 +231,7 @@ void CPtrArray::RemoveAt( INT_PTR nIndex, INT_PTR nCount )
                  (m_nSize - (nIndex + nCount)) * sizeof( void * ) );
     }
     m_nSize -= nCount;
+    memset( m_pData + m_nSize, 0, nCount * sizeof( void * ) );
 }
 
 void CPtrArray::SetAtGrow( INT_PTR nIndex, void *newElement )
@@ -229,6 +250,8 @@ void CPtrArray::SetAtGrow( INT_PTR nIndex, void *newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( void * ) );
             delete [] m_pData;
         }
+        ASSERT( m_nSize < m_nMaxSize );
+        memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( void * ) );
         m_pData = pNewData;
     }
     if( nIndex >= m_nSize ) {
@@ -255,6 +278,9 @@ void CPtrArray::SetSize( INT_PTR nNewSize, INT_PTR nGrowBy )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( void * ) );
             delete [] m_pData;
+        }
+        if( m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( void * ) );
         }
         m_pData = pNewData;
     }

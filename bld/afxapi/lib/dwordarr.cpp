@@ -101,6 +101,9 @@ INT_PTR CDWordArray::Add( DWORD newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( DWORD ) );
             delete [] m_pData;
         }
+        if( m_nGrowBy > 1 ) {
+            memset( pNewData + m_nSize + 1, 0, (m_nGrowBy - 1) * sizeof( DWORD ) );
+        }
         m_pData = pNewData;
     }
     m_pData[m_nSize] = newElement;
@@ -124,6 +127,10 @@ INT_PTR CDWordArray::Append( const CDWordArray &src )
             memcpy( pNewData, m_pData, m_nSize * sizeof( DWORD ) );
             delete [] m_pData;
         }
+        if( m_nMaxSize > m_nSize + src.m_nSize ) {
+            memset( pNewData + m_nSize + src.m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + src.m_nSize)) * sizeof( DWORD ) );
+        }
         m_pData = pNewData;
     }
     memcpy( m_pData + m_nSize, src.m_pData, src.m_nSize * sizeof( DWORD ) );
@@ -146,6 +153,10 @@ void CDWordArray::Copy( const CDWordArray &src )
             delete [] m_pData;
         }
         m_pData = new DWORD[m_nMaxSize];
+        if( m_nMaxSize > src.m_nSize ) {
+            memset( m_pData + src.m_nSize, 0,
+                    (m_nMaxSize - src.m_nSize) * sizeof( DWORD ) );
+        }
     }
     memcpy( m_pData, src.m_pData, src.m_nSize * sizeof( DWORD ) );
     m_nSize = src.m_nSize;
@@ -181,6 +192,10 @@ void CDWordArray::InsertAt( INT_PTR nIndex, DWORD newElement, int nCount )
         }
         m_nMaxSize = nNewMaxSize;
         DWORD *pNewData = new DWORD[m_nMaxSize];
+        if( m_nSize + nCount < m_nMaxSize ) {
+            memset( pNewData + m_nSize + nCount, 0,
+                    (m_nMaxSize - (m_nSize + nCount)) * sizeof( DWORD ) );
+        }
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( DWORD ) );
             delete [] m_pData;
@@ -199,6 +214,7 @@ void CDWordArray::InsertAt( INT_PTR nStartIndex, CDWordArray *pNewArray )
 /***********************************************************************/
 {
     ASSERT( nStartIndex >= 0 );
+    ASSERT( pNewArray != NULL );
     int nNewMaxSize = m_nSize + pNewArray->m_nSize;
     if( nNewMaxSize > m_nMaxSize ) {
         if( nNewMaxSize % m_nGrowBy != 0 ) {
@@ -210,6 +226,10 @@ void CDWordArray::InsertAt( INT_PTR nStartIndex, CDWordArray *pNewArray )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( DWORD ) );
             delete [] m_pData;
+        }
+        if( m_nSize + pNewArray->m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize + pNewArray->m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + pNewArray->m_nSize)) * sizeof( DWORD ) );
         }
         m_pData = pNewData;
     }
@@ -230,6 +250,7 @@ void CDWordArray::RemoveAt( INT_PTR nIndex, INT_PTR nCount )
                  (m_nSize - (nIndex + nCount)) * sizeof( DWORD ) );
     }
     m_nSize -= nCount;
+    memset( m_pData + m_nSize, 0, nCount * sizeof( DWORD ) );
 }
 
 void CDWordArray::SetAtGrow( INT_PTR nIndex, DWORD newElement )
@@ -248,6 +269,8 @@ void CDWordArray::SetAtGrow( INT_PTR nIndex, DWORD newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( DWORD ) );
             delete [] m_pData;
         }
+        ASSERT( m_nSize < m_nMaxSize );
+        memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( DWORD ) );
         m_pData = pNewData;
     }
     if( nIndex >= m_nSize ) {
@@ -274,6 +297,9 @@ void CDWordArray::SetSize( INT_PTR nNewSize, INT_PTR nGrowBy )
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( DWORD ) );
             delete [] m_pData;
+        }
+        if( m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( DWORD ) );
         }
         m_pData = pNewData;
     }
