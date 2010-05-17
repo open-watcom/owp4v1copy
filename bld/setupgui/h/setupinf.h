@@ -49,8 +49,7 @@ typedef enum {
 typedef enum {
     AM_OVERWRITE,
     AM_BEFORE,
-    AM_AFTER,
-    AM_UNINSTALL
+    AM_AFTER
 } append_mode;
 
 extern void             CheckStateVars();

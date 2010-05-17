@@ -435,7 +435,7 @@ static void cmdline_modify_var( char *buf, const char *env_var, char *env_val, a
 #if !( defined( __OS2__ ) || defined( __UNIX__ ) )
     if( GetVariableIntVal( "IsOS2DosBox" ) == 1 || stricmp( env_var, "PATH" ) != 0 ) {
 #endif
-        if( append == AM_UNINSTALL ) {
+        if( VarGetIntVal( UnInstall ) ) {
             sprintf( buf, SET_VAR_SET, env_var, env_val );
         } else if( append == AM_AFTER ) {
             sprintf( buf, SETENV "%s=%s" PATH_SEP "%s\n", env_var, env_val, new_val );
@@ -446,7 +446,7 @@ static void cmdline_modify_var( char *buf, const char *env_var, char *env_val, a
         }
 #if !( defined( __OS2__ ) || defined( __UNIX__ ) )
     } else {    // handle PATH specially
-        if( append == AM_UNINSTALL ) {
+        if( VarGetIntVal( UnInstall ) ) {
             sprintf( buf, "PATH %s" PATH_SEP "\n", env_val );
         } else if( append == AM_AFTER ) {
             sprintf( buf, "PATH %s" PATH_SEP "%s" PATH_SEP "\n", env_val, new_val );
@@ -527,8 +527,6 @@ static void CheckEnvironmentLine( char *buf, int num, bool *Found )
             if( stricmp( env_var, new_var ) == 0 ) {
                 // found an environment variable, replace its value
                 NoDupPaths( new_val, env_val, PATH_SEP_CHAR );
-                if( uninstall )
-                    append = AM_UNINSTALL;
                 cmdline_modify_var( buf, env_var, env_val, append );
                 Found[i] = TRUE;
                 found = TRUE;
@@ -710,8 +708,6 @@ static void CheckAutoLine( char *buf, int num, bool *Found )
             if( stricmp( env_var, new_var ) == 0 ) {
                 // found an environment variable, replace its value
                 NoDupPaths( new_val, env_val, PATH_SEP_CHAR );
-                if( uninstall )
-                    append = AM_UNINSTALL;
                 cmdline_modify_var( buf, env_var, env_val, append );
                 Found[i] = TRUE;
                 found = TRUE;
