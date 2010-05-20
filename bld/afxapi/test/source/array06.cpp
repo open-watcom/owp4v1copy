@@ -63,5 +63,33 @@ int main()
         if( arr1.GetAt( 9 ) != NULL ) _fail;
     }
 
+    CObArray sarr1;
+    CObArray sarr2;
+    sarr1.SetSize( 10 );
+    for( int i = 0; i < 10; i++ ) {
+        sarr1.SetAt( i, (CObject *)i );
+    }
+    
+    CMemFile file;
+    CArchive ar( &file, CArchive::store );
+    for( int i = 1; i < 10; i++ ) {
+        ar.MapObject( (CObject *)i );
+    }
+    sarr1.Serialize( ar );
+    ar.Close();
+
+    file.Seek( 0, CFile::begin );
+    CArchive ar2( &file, CArchive::load );
+    for( int i = 1; i < 10; i++ ) {
+        ar2.MapObject( (CObject *)i );
+    }
+    sarr2.Serialize( ar2 );
+    ar2.Close();
+
+    if( sarr1.GetSize() != sarr2.GetSize() ) _fail;
+    for( int i = 0; i < sarr1.GetSize(); i++ ) {
+        if( sarr1.GetAt( i ) != sarr2.GetAt( i ) ) _fail;
+    }
+
     _PASS;
 }

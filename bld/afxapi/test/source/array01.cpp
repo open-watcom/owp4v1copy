@@ -63,5 +63,27 @@ int main()
         if( arr1.GetAt( 9 ) != 0 ) _fail;
     }
 
+    CByteArray sarr1;
+    CByteArray sarr2;
+    sarr1.SetSize( 10 );
+    for( int i = 0; i < 10; i++ ) {
+        sarr1.SetAt( i, i );
+    }
+    
+    CMemFile file;
+    CArchive ar( &file, CArchive::store );
+    sarr1.Serialize( ar );
+    ar.Close();
+
+    file.Seek( 0, CFile::begin );
+    CArchive ar2( &file, CArchive::load );
+    sarr2.Serialize( ar2 );
+    ar2.Close();
+
+    if( sarr1.GetSize() != sarr2.GetSize() ) _fail;
+    for( int i = 0; i < sarr1.GetSize(); i++ ) {
+        if( sarr1.GetAt( i ) != sarr2.GetAt( i ) ) _fail;
+    }
+
     _PASS;
 }
