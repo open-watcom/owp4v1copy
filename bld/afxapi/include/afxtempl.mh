@@ -579,6 +579,9 @@ INT_PTR CArray< TYPE, ARG_TYPE >::Add( ARG_TYPE newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( TYPE ) );
             free( m_pData );
         }
+        if( m_nGrowBy > 1 ) {
+            memset( pNewData + m_nSize, 0, m_nGrowBy * sizeof( TYPE ) );
+        }
         m_pData = pNewData;
     }
     new( m_pData + m_nSize ) TYPE;
@@ -604,6 +607,8 @@ INT_PTR CArray< TYPE, ARG_TYPE >::Append( const CArray &src )
             memcpy( pNewData, m_pData, m_nSize * sizeof( TYPE ) );
             free( m_pData );
         }
+        ASSERT( m_nMaxSize > m_nSize );
+        memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( TYPE ) );
         m_pData = pNewData;
     }
     for( int i = 0; i < src.m_nSize; i++ ) {
@@ -619,6 +624,12 @@ template< class TYPE, class ARG_TYPE >
 void CArray< TYPE, ARG_TYPE >::Copy( const CArray &src )
 /******************************************************/
 {
+    if( m_pData != NULL ) {
+        for( int i = 0; i < m_nSize; i++ ) {
+            m_pData[i].~TYPE();
+        }
+    }
+
     int nNewMaxSize = src.m_nSize;
     if( nNewMaxSize > m_nMaxSize ) {
         if( nNewMaxSize % m_nGrowBy != 0 ) {
@@ -626,21 +637,14 @@ void CArray< TYPE, ARG_TYPE >::Copy( const CArray &src )
             nNewMaxSize += m_nGrowBy;
         }
         m_nMaxSize = nNewMaxSize;
-        TYPE *pNewData = (TYPE *)malloc( sizeof( TYPE ) * m_nMaxSize );
         if( m_pData != NULL ) {
-            memcpy( pNewData, m_pData, m_nSize * sizeof( TYPE ) );
             free( m_pData );
         }
-        m_pData = pNewData;
+        m_pData = (TYPE *)malloc( sizeof( TYPE ) * m_nMaxSize );
     }
-    if( m_nSize > src.m_nSize ) {
-        for( int i = src.m_nSize; i < m_nSize; i++ ) {
-            m_pData[i].~TYPE();
-        }
-    } else {
-        for( int i = m_nSize; i < src.m_nSize; i++ ) {
-            new( m_pData + i ) TYPE;
-        }
+    memset( m_pData, 0, sizeof( TYPE ) * m_nMaxSize );
+    for( int i = m_nSize; i < src.m_nSize; i++ ) {
+        new( m_pData + i ) TYPE;
     }
     CopyElements( m_pData, src.m_pData, src.m_nSize );
     m_nSize = src.m_nSize;
@@ -679,6 +683,10 @@ void CArray< TYPE, ARG_TYPE >::InsertAt( INT_PTR nIndex, ARG_TYPE newElement,
         }
         m_nMaxSize = nNewMaxSize;
         TYPE *pNewData = (TYPE *)malloc( sizeof( TYPE ) * m_nMaxSize );
+        if( m_nSize + nCount < m_nMaxSize ) {
+            memset( pNewData + m_nSize + nCount, 0,
+                    (m_nMaxSize - (m_nSize + nCount)) * sizeof( TYPE ) );
+        }
         if( m_pData != NULL ) {
             memcpy( pNewData, m_pData, m_nSize * sizeof( TYPE ) );
             free( m_pData );
@@ -687,9 +695,10 @@ void CArray< TYPE, ARG_TYPE >::InsertAt( INT_PTR nIndex, ARG_TYPE newElement,
     }
     memmove( m_pData + nIndex + nCount, m_pData + nIndex,
              (m_nSize - nIndex) * sizeof( TYPE ) );
+    memset( m_pData + nIndex, 0, nCount * sizeof( TYPE ) );
     for( int i = 0; i < nCount; i++ ) {
         new( m_pData + nIndex + i ) TYPE;
-        m_pData[nIndex + i] = newElement;
+        CopyElements( m_pData + nIndex + i, &newElement, 1 );
     }
     m_nSize += nCount;
 }
@@ -711,10 +720,15 @@ void CArray< TYPE, ARG_TYPE >::InsertAt( INT_PTR nStartIndex, CArray *pNewArray 
             memcpy( pNewData, m_pData, m_nSize * sizeof( TYPE ) );
             free( m_pData );
         }
+        if( m_nSize + pNewArray->m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize + pNewArray->m_nSize, 0,
+                    (m_nMaxSize - (m_nSize + pNewArray->m_nSize)) * sizeof( TYPE ) );
+        }
         m_pData = pNewData;
     }
     memmove( m_pData + nStartIndex + pNewArray->m_nSize, m_pData + nStartIndex,
              (m_nSize - nStartIndex) * sizeof( TYPE ) );
+    memset( m_pData + nStartIndex, 0, pNewArray->m_nSize * sizeof( TYPE ) );
     for( int i = 0; i < pNewArray->m_nSize; i++ ) {
         new( m_pData + nStartIndex + i ) TYPE;
     }
@@ -729,6 +743,7 @@ void CArray< TYPE, ARG_TYPE >::RemoveAll()
     for( int i = 0; i < m_nSize; i++ ) {
         m_pData[i].~TYPE();
     }
+    memset( m_pData, 0, m_nSize * sizeof( TYPE ) );
     m_nSize = 0;
 }
 
@@ -746,6 +761,7 @@ void CArray< TYPE, ARG_TYPE >::RemoveAt( INT_PTR nIndex, INT_PTR nCount )
                  (m_nSize - (nIndex + nCount)) * sizeof( TYPE ) );
     }
     m_nSize -= nCount;
+    memset( m_pData + m_nSize, 0, nCount * sizeof( TYPE ) );
 }
 
 template< class TYPE, class ARG_TYPE >
@@ -765,13 +781,15 @@ void CArray< TYPE, ARG_TYPE >::SetAtGrow( INT_PTR nIndex, ARG_TYPE newElement )
             memcpy( pNewData, m_pData, m_nSize * sizeof( TYPE ) );
             free( m_pData );
         }
+        ASSERT( m_nSize < m_nMaxSize );
+        memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( TYPE ) );
         m_pData = pNewData;
     }
-    if( nNewMaxSize > m_nSize ) {
-        for( int i = m_nSize; i < nNewMaxSize; i++ ) {
+    if( nIndex >= m_nSize ) {
+        for( int i = m_nSize; i <= nIndex; i++ ) {
             new( m_pData + i ) TYPE;
         }
-        m_nSize = nNewMaxSize;
+        m_nSize = nIndex + 1;
     }
     m_pData[nIndex] = newElement;
 }
@@ -796,12 +814,16 @@ void CArray< TYPE, ARG_TYPE >::SetSize( INT_PTR nNewSize, INT_PTR nGrowBy )
             memcpy( pNewData, m_pData, m_nSize * sizeof( TYPE ) );
             free( m_pData );
         }
+        if( m_nSize < m_nMaxSize ) {
+            memset( pNewData + m_nSize, 0, (m_nMaxSize - m_nSize) * sizeof( TYPE ) );
+        }
         m_pData = pNewData;
     }
     if( m_nSize > nNewSize ) {
         for( int i = nNewSize; i < m_nSize; i++ ) {
             m_pData[i].~TYPE();
         }
+        memset( m_pData + nNewSize, 0, (m_nSize - nNewSize) * sizeof( TYPE ) );
     } else {
         for( int i = m_nSize; i < nNewSize; i++ ) {
             new( m_pData + i ) TYPE;

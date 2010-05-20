@@ -18,6 +18,7 @@ test_exes  = &
     array05.$(exe) &
     array06.$(exe) &
     array07.$(exe) &
+    array08.$(exe) &
 
 
 ext = $(ext_$(arch))
