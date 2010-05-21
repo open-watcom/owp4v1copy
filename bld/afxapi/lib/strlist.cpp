@@ -268,6 +268,9 @@ POSITION CStringList::InsertAfter( POSITION position, LPCTSTR newElement )
     pNode->pPrev->pNext = pNode;
     if( pNode->pNext != NULL ) {
         pNode->pNext->pPrev = pNode;
+    } else {
+        ASSERT( m_pNodeTail == (CNode *)position );
+        m_pNodeTail = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );
@@ -284,6 +287,9 @@ POSITION CStringList::InsertAfter( POSITION position, const CString &newElement 
     pNode->pPrev->pNext = pNode;
     if( pNode->pNext != NULL ) {
         pNode->pNext->pPrev = pNode;
+    } else {
+        ASSERT( m_pNodeTail == (CNode *)position );
+        m_pNodeTail = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );
@@ -300,6 +306,9 @@ POSITION CStringList::InsertBefore( POSITION position, LPCTSTR newElement )
     pNode->pNext->pPrev = pNode;
     if( pNode->pPrev != NULL ) {
         pNode->pPrev->pNext = pNode;
+    } else {
+        ASSERT( m_pNodeHead == (CNode *)position );
+        m_pNodeHead = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );
@@ -316,6 +325,9 @@ POSITION CStringList::InsertBefore( POSITION position, const CString &newElement
     pNode->pNext->pPrev = pNode;
     if( pNode->pPrev != NULL ) {
         pNode->pPrev->pNext = pNode;
+    } else {
+        ASSERT( m_pNodeHead == (CNode *)position );
+        m_pNodeHead = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );

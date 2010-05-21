@@ -210,6 +210,9 @@ POSITION CPtrList::InsertAfter( POSITION position, void *newElement )
     pNode->pPrev->pNext = pNode;
     if( pNode->pNext != NULL ) {
         pNode->pNext->pPrev = pNode;
+    } else {
+        ASSERT( m_pNodeTail == (CNode *)position );
+        m_pNodeTail = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );
@@ -226,6 +229,9 @@ POSITION CPtrList::InsertBefore( POSITION position, void *newElement )
     pNode->pNext->pPrev = pNode;
     if( pNode->pPrev != NULL ) {
         pNode->pPrev->pNext = pNode;
+    } else {
+        ASSERT( m_pNodeHead == (CNode *)position );
+        m_pNodeHead = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );

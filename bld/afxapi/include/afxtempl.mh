@@ -1034,6 +1034,9 @@ POSITION CList< TYPE, ARG_TYPE >::InsertAfter( POSITION position, ARG_TYPE newEl
     pNode->pPrev->pNext = pNode;
     if( pNode->pNext != NULL ) {
         pNode->pNext->pPrev = pNode;
+    } else {
+        ASSERT( m_pNodeTail == (CNode *)position );
+        m_pNodeTail = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );
@@ -1051,6 +1054,9 @@ POSITION CList< TYPE, ARG_TYPE >::InsertBefore( POSITION position, ARG_TYPE newE
     pNode->pNext->pPrev = pNode;
     if( pNode->pPrev != NULL ) {
         pNode->pPrev->pNext = pNode;
+    } else {
+        ASSERT( m_pNodeHead == (CNode *)position );
+        m_pNodeHead = pNode;
     }
     m_nCount++;
     return( (POSITION)pNode );
