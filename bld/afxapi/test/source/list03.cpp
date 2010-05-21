@@ -123,5 +123,33 @@ int main()
     if( position == NULL ) _fail;
     if( list2.GetPrev( position ) != _T( "C" ) ) _fail;
 
+    CStringList slist1;
+    CStringList slist2;
+    for( int i = 0; i < 10; i++ ) {
+        CString str;
+        str.Format( _T( "%d" ), i );
+        slist1.AddTail( str );
+    }
+    
+    CMemFile file;
+    CArchive ar( &file, CArchive::store );
+    slist1.Serialize( ar );
+    ar.Close();
+
+    file.Seek( 0, CFile::begin );
+    CArchive ar2( &file, CArchive::load );
+    slist2.Serialize( ar2 );
+    ar2.Close();
+
+    if( slist1.GetSize() != slist2.GetSize() ) _fail;
+
+    POSITION position1 = slist1.GetHeadPosition();
+    POSITION position2 = slist2.GetHeadPosition();
+    while( position1 != NULL && position2 != NULL ) {
+        if( slist1.GetNext( position1 ) != slist2.GetNext( position2 ) ) _fail;
+    }
+    if( position1 != NULL ) _fail;
+    if( position2 != NULL ) _fail;
+
     _PASS;
 }
