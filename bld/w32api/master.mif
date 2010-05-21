@@ -340,6 +340,7 @@ headers = &
         ddk/classpnp.h       &
         ddk/d4drvif.h        &
         ddk/d4iface.h        &
+        ddk/dderror.h        &
         ddk/ddkmapi.h        &
         ddk/ddrawint.h       &
         ddk/devioctl.h       &
