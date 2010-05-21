@@ -20,6 +20,11 @@ test_exes  = &
     array07.$(exe) &
     array08.$(exe) &
     array09.$(exe) &
+    list01.$(exe) &
+    list02.$(exe) &
+    list03.$(exe) &
+    list04.$(exe) &
+    list05.$(exe) &
 
 
 ext = $(ext_$(arch))
