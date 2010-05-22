@@ -94,5 +94,25 @@ int main()
     map.RemoveKey( 0 );
     if( map.Lookup( 0, value ) ) _fail;
 
+    CMapIntToInt smap1;
+    CMapIntToInt smap2;
+    smap1[0] = 0;
+    smap1[1] = 1;
+    smap1[2] = 2;
+    
+    CMemFile file;
+    CArchive ar( &file, CArchive::store );
+    smap1.Serialize( ar );
+    ar.Close();
+
+    file.Seek( 0, CFile::begin );
+    CArchive ar2( &file, CArchive::load );
+    smap2.Serialize( ar2 );
+    ar2.Close();
+
+    if( smap2[0] != 0 ) _fail;
+    if( smap2[1] != 1 ) _fail;
+    if( smap2[2] != 2 ) _fail;
+
     _PASS;
 }

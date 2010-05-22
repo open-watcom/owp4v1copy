@@ -51,5 +51,29 @@ int main()
     map.RemoveKey( _T( "0" ) );
     if( map.Lookup( _T( "0" ), value ) ) _fail;
 
+    CMapStringToOb smap1;
+    CMapStringToOb smap2;
+    smap1[_T( "0" )] = (CObject *)0;
+    smap1[_T( "1" )] = (CObject *)1;
+    smap1[_T( "2" )] = (CObject *)2;
+    
+    CMemFile file;
+    CArchive ar( &file, CArchive::store );
+    ar.MapObject( (CObject *)1 );
+    ar.MapObject( (CObject *)2 );
+    smap1.Serialize( ar );
+    ar.Close();
+
+    file.Seek( 0, CFile::begin );
+    CArchive ar2( &file, CArchive::load );
+    ar2.MapObject( (CObject *)1 );
+    ar2.MapObject( (CObject *)2 );
+    smap2.Serialize( ar2 );
+    ar2.Close();
+
+    if( smap2[_T( "0" )] != (CObject *)0 ) _fail;
+    if( smap2[_T( "1" )] != (CObject *)1 ) _fail;
+    if( smap2[_T( "2" )] != (CObject *)2 ) _fail;
+
     _PASS;
 }
