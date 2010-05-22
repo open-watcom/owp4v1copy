@@ -157,7 +157,7 @@ BOOL CMapPtrToWord::Lookup( void *key, WORD &rValue ) const
     if( m_pHashTable == NULL ) {
         return( FALSE );
     }
-    int     nHashKey = HashKey( key ) % m_nHashTableSize;
+    UINT    nHashKey = HashKey( key ) % m_nHashTableSize;
     CAssoc  *pAssoc = m_pHashTable[nHashKey];
     while( pAssoc != NULL ) {
         if( pAssoc->key == key ) {

@@ -146,7 +146,7 @@ UINT CMapStringToString::HashKey( LPCTSTR key ) const
 /***************************************************/
 {
     ASSERT( key != NULL );
-    UINT nHashKey;
+    UINT nHashKey = 0;
     while( *key != _T( '\0' ) ) {
         nHashKey = (nHashKey << 5) + nHashKey + *key;
         key++;
@@ -188,7 +188,7 @@ BOOL CMapStringToString::Lookup( LPCTSTR key, CString &rValue ) const
     if( m_pHashTable == NULL ) {
         return( FALSE );
     }
-    int     nHashKey = HashKey( key ) % m_nHashTableSize;
+    UINT    nHashKey = HashKey( key ) % m_nHashTableSize;
     CAssoc  *pAssoc = m_pHashTable[nHashKey];
     while( pAssoc != NULL ) {
         if( pAssoc->key == key ) {

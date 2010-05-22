@@ -656,7 +656,7 @@ UINT AFXAPI HashKey( LPCTSTR key )
         return( 0 );
     }
 
-    UINT nHashKey;
+    UINT nHashKey = 0;
     while( *key != _T( '\0' ) ) {
         nHashKey = (nHashKey << 5) + nHashKey + *key;
         key++;
