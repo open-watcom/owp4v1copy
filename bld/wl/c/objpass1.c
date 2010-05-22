@@ -188,7 +188,7 @@ static bool CheckAltSym( void *_sym, void *_info )
     comdat_info *info = _info;
     symbol      *sym = _sym;
 
-    if( sym != info->sym && IS_SYM_COMDAT(sym) && sym->info & SYM_HAS_DATA ) {
+    if( sym != info->sym && IS_SYM_COMDAT( sym ) && (sym->info & SYM_HAS_DATA) ) {
         return( CheckSameData( sym, info ) );
     }
     return( FALSE );
@@ -245,12 +245,12 @@ static void DoIncSymbol( void *_sym )
         if( sym->info & SYM_STATIC ) {
             flags |= ST_STATIC;
         }
-        mainsym = SymOp( flags, sym->name, strlen(sym->name) );
-        if( IS_SYM_NICOMDEF(sym) ) {
+        mainsym = SymOp( flags, sym->name, strlen( sym->name ) );
+        if( IS_SYM_NICOMDEF( sym ) ) {
             MakeCommunalSym( mainsym, sym->p.cdefsize,
                                 (sym->info & SYM_FAR_COMMUNAL) != 0,
-                                IS_SYM_COMM32(sym) );
-        } else if( IS_SYM_COMDAT(sym) ) {
+                                IS_SYM_COMM32( sym ) );
+        } else if( IS_SYM_COMDAT( sym ) ) {
             if( sym->info & SYM_HAS_DATA ) {
                 data = GetAltdefContents( sym->p.seg );
             } else {
@@ -264,14 +264,14 @@ static void DoIncSymbol( void *_sym )
         }
         CarveFree( CarveSymbol, sym );
     } else {
-        if( !IS_SYM_COMDAT(sym) ) {
+        if( !IS_SYM_COMDAT( sym ) ) {
             Ring2Append( &CurrMod->publist, sym );
         }
         if( sym->info & SYM_DEAD )
             return;
-        if( IS_SYM_IMPORTED(sym) ) {
+        if( IS_SYM_IMPORTED( sym ) ) {
             DoSavedImport( sym );
-        } else if( IS_SYM_COMDAT(sym) ) {
+        } else if( IS_SYM_COMDAT( sym ) ) {
             DefineComdat( sym->p.seg, sym, sym->addr.off,
                           sym->info & SYM_CDAT_SEL_MASK,
                           GetSegContents(sym->p.seg, sym->p.seg->data) );
@@ -371,7 +371,7 @@ void DoIncGroupDefs( void )
     group_entry     **grouptab;
 
     numgroups = RingCount( IncGroupDefs );
-    _ChkAlloc( IncGroups, sizeof(group_entry *) * numgroups );
+    _ChkAlloc( IncGroups, sizeof( group_entry * ) * numgroups );
     grouptab = IncGroups;
     RingLookup( IncGroupDefs, DefIncGroup, &grouptab );
     RingFree( &IncGroupDefs );
@@ -449,7 +449,7 @@ static void DoAllocateSegment( segdata *sdata, char *clname )
 static void CheckQNXSegMismatch( stateflag mask )
 /***********************************************/
 {
-    if( FmtData.type & MK_QNX && LinkState & mask
+    if( (FmtData.type & MK_QNX) && (LinkState & mask)
                                 && !FmtData.u.qnx.seen_mismatch ) {
         LnkMsg( WRN+LOC+MSG_CANNOT_HAVE_16_AND_32, NULL );
         FmtData.u.qnx.seen_mismatch = TRUE;
@@ -568,7 +568,7 @@ static void CheckForLast( seg_leader *seg, class_entry *class )
 /*************************************************************/
 // check to see if this segment should be the last one in an autogroup.
 {
-    if( CurrMod->modinfo & MOD_LAST_SEG && class->flags & CLASS_CODE ) {
+    if( (CurrMod->modinfo & MOD_LAST_SEG) && (class->flags & CLASS_CODE) ) {
         if( LastCodeSeg != NULL ) {             // more than one code seg
             LastCodeSeg->info &= ~LAST_SEGMENT; // so don't end at previous
         }
@@ -689,8 +689,8 @@ void AddToGroup( group_entry *group, seg_leader *seg )
         return;
     }
     if( (group->leaders != NULL) &&
-        ((group->leaders->info & USE_32) != (seg->info & USE_32)) &&
-        !((FmtData.type & MK_OS2_FLAT) && FmtData.u.os2.mixed1632) &&
+        ( (group->leaders->info & USE_32) != (seg->info & USE_32) ) &&
+        !( (FmtData.type & MK_OS2_FLAT) && FmtData.u.os2.mixed1632 ) &&
         !(FmtData.type & MK_RAW)) {
 
         char    *segname_16;
@@ -732,7 +732,7 @@ void DefineSymbol( symbol *sym, segnode *seg, offset off,
         frame = 0;
     }
     name_len = strlen( sym->name );
-    if( sym->addr.seg != UNDEFINED && !IS_SYM_COMMUNAL(sym) ) {
+    if( sym->addr.seg != UNDEFINED && !IS_SYM_COMMUNAL( sym ) ) {
         if( seg != NULL && sym->p.seg != NULL ) {
             frame_ok = (sym->p.seg->u.leader == seg->entry->u.leader);
             if( sym->p.seg->u.leader->combine != COMBINE_COMMON ) {
@@ -750,15 +750,15 @@ void DefineSymbol( symbol *sym, segnode *seg, offset off,
         }
     } else {
         sym_type = SYM_REGULAR;
-        if( IS_SYM_IMPORTED(sym) ) {
+        if( IS_SYM_IMPORTED( sym ) ) {
             sym = HashReplace( sym );
-            if( FmtData.type & MK_PE && sym->p.import != NULL ) {
+            if( (FmtData.type & MK_PE) && sym->p.import != NULL ) {
                 dll_sym_info  *dll_info = sym->p.import;
                 AddPEImportLocalSym( sym, dll_info->iatsym );
                 sym_type |= SYM_REFERENCED;
                 LnkMsg( WRN+MSG_IMPORT_LOCAL, "s", sym->name );
             }
-        } else if( IS_SYM_COMMUNAL(sym) ) {
+        } else if( IS_SYM_COMMUNAL( sym ) ) {
             sym = HashReplace( sym );
             sym->p.seg = NULL;
         }
@@ -771,8 +771,8 @@ void DefineSymbol( symbol *sym, segnode *seg, offset off,
                 DefStripSym( sym, seg->entry );
             }
             if( seg->info & SEG_CODE ) {
-                if( FmtData.type & MK_OVERLAYS && FmtData.u.dos.distribute
-                    && LinkState & SEARCHING_LIBRARIES ) {
+                if( (FmtData.type & MK_OVERLAYS) && FmtData.u.dos.distribute
+                    && (LinkState & SEARCHING_LIBRARIES) ) {
                     sym->info |= SYM_DISTRIB;
                 }
             }
@@ -826,7 +826,7 @@ static void NearAllocCommunal( symbol *sym, unsigned size )
 /*********************************************************/
 {
     sym->p.seg = GetSegment( CommunalSegName, BSSClassName, DataGrpName,
-                                     2, COMBINE_ADD, !IS_SYM_COMM32(sym) );
+                                     2, COMBINE_ADD, !IS_SYM_COMM32( sym ) );
     sym->p.seg->length = size;
 }
 
@@ -839,7 +839,7 @@ static void FarAllocCommunal( symbol *sym, unsigned size )
     first = NULL;
     for(;;) {
         seg = GetSegment( sym->name, FarDataClassName, NULL,
-                          0, COMBINE_INVALID, !IS_SYM_COMM32(sym) );
+                          0, COMBINE_INVALID, !IS_SYM_COMM32( sym ) );
         if( first == NULL )
             first = seg;
         if( size < MAX_SEGMENT ) {
@@ -879,8 +879,8 @@ symbol *MakeCommunalSym( symbol *sym, offset size, bool isfar,
     } else {
         symtype = SYM_COMMUNAL_16;
     }
-    if( !(sym->info & SYM_DEFINED) || IS_SYM_IMPORTED(sym) ) {
-        if( IS_SYM_IMPORTED(sym) ) {
+    if( !(sym->info & SYM_DEFINED) || IS_SYM_IMPORTED( sym ) ) {
+        if( IS_SYM_IMPORTED( sym ) ) {
             sym = HashReplace( sym );
         }
         ClearSymUnion( sym );
@@ -894,7 +894,7 @@ symbol *MakeCommunalSym( symbol *sym, offset size, bool isfar,
         sym->mod = CurrMod;
         Ring2Append( &CurrMod->publist, sym );
     } else {
-        if( IS_SYM_NICOMDEF(sym) ) {
+        if( IS_SYM_NICOMDEF( sym ) ) {
             size = max( sym->p.seg->length, size );
             sym->p.seg->length = size;
         }
@@ -945,7 +945,7 @@ void DefineComdat( segdata *sdata, symbol *sym, offset value,
                           sym_info select, unsigned_8 *data )
 /******************************************************************/
 {
-    if( IS_SYM_REGULAR(sym) && sym->info & SYM_DEFINED ) {
+    if( IS_SYM_REGULAR( sym ) && (sym->info & SYM_DEFINED) ) {
         AddCDatAltDef( sdata, sym, data, select );
         sdata->isdead = TRUE;
         return;
@@ -955,7 +955,7 @@ void DefineComdat( segdata *sdata, symbol *sym, offset value,
         AddCDatAltDef( sdata, sym, data, select );
         sdata->isdead = TRUE;
     } else {
-        if( sym->info & SYM_DEFINED && !IS_SYM_COMDAT(sym) ) {
+        if( (sym->info & SYM_DEFINED) && !IS_SYM_COMDAT( sym ) ) {
             sym = HashReplace( sym );
         }
         ClearSymUnion( sym );
@@ -977,10 +977,10 @@ void DefineLazyExtdef( symbol *sym, symbol *def, bool isweak )
 {
     symbol      *defaultsym;
 
-    if( !(sym->info & (SYM_DEFINED | SYM_EXPORTED)) && !IS_SYM_IMPORTED(sym)
-                                                  && !IS_SYM_COMMUNAL(sym) ) {
-        if( IS_SYM_A_REF(sym) && !IS_SYM_LINK_WEAK(sym) ) {
-            if( IS_SYM_VF_REF(sym) ) {
+    if( !(sym->info & (SYM_DEFINED | SYM_EXPORTED)) && !IS_SYM_IMPORTED( sym )
+                                                  && !IS_SYM_COMMUNAL( sym ) ) {
+        if( IS_SYM_A_REF( sym ) && !IS_SYM_LINK_WEAK( sym ) ) {
+            if( IS_SYM_VF_REF( sym ) ) {
                 defaultsym = *sym->e.vfdata;
             } else {
                 defaultsym = sym->e.def;
@@ -988,7 +988,7 @@ void DefineLazyExtdef( symbol *sym, symbol *def, bool isweak )
             if( def != defaultsym ) {
                 LnkMsg( LOC_REC+WRN+MSG_LAZY_EXTDEF_MISMATCH, "S",sym );
             }
-        } else if( !(sym->info & SYM_OLDHAT) || IS_SYM_LINK_WEAK(sym) ) {
+        } else if( !(sym->info & SYM_OLDHAT) || IS_SYM_LINK_WEAK( sym ) ) {
             if( isweak ) {
                 SET_SYM_TYPE( sym, SYM_WEAK_REF );
             } else {
@@ -1023,19 +1023,19 @@ static symbol **GetVFList( symbol *defsym, symbol *mainsym, bool generate,
         condsym = FindISymbol( name );
         if( condsym == NULL ) {
             condsym = MakeWeakExtdef( name, defsym );
-        } else if( condsym->info & SYM_DEFINED && !IS_SYM_COMMUNAL(condsym) ) {
+        } else if( (condsym->info & SYM_DEFINED) && !IS_SYM_COMMUNAL(condsym) ) {
             generate = FALSE;
             if( mainsym == NULL ) {
                 break;
             }
         }
-        if( LinkFlags & STRIP_CODE && mainsym != NULL ) {
+        if( (LinkFlags & STRIP_CODE) && mainsym != NULL ) {
             AddSymEdge( condsym, mainsym );
         }
         count++;
     }
     if( generate ) {
-        _ChkAlloc( symlist, sizeof(symbol *) * count );
+        _ChkAlloc( symlist, sizeof( symbol * ) * count );
         liststart = symlist;
         *symlist = defsym;
         symlist++;
@@ -1067,7 +1067,7 @@ static void DefineVirtualFunction( symbol *sym, symbol *defsym, bool ispure,
             SET_SYM_TYPE( sym, SYM_VF_REF );
         }
     } else {                    // might still need this if eliminated
-        if( LinkFlags & STRIP_CODE && !(sym->info & SYM_EXPORTED) ) {
+        if( (LinkFlags & STRIP_CODE) && !(sym->info & SYM_EXPORTED) ) {
             sym->e.def = defsym;
         }
     }
@@ -1088,15 +1088,15 @@ void DefineVFTableRecord( symbol *sym, symbol *def, bool ispure,
     if( sym->info & SYM_DEFINED ) {
         /* if defined, still may have to keep track of conditional symbols
          * for dead code elimination */
-        if( LinkFlags & STRIP_CODE
+        if( (LinkFlags & STRIP_CODE)
                         && !(sym->info & (SYM_VF_REFS_DONE | SYM_EXPORTED)) ) {
             GetVFList( def, sym, FALSE, rtns );
             sym->e.def = def;
             sym->info |= SYM_VF_REFS_DONE;
             DataRef( def );
         }
-    } else if( !IS_SYM_IMPORTED(sym) && !IS_SYM_COMMUNAL(sym) ) {
-        if( IS_SYM_VF_REF(sym) ) {
+    } else if( !IS_SYM_IMPORTED( sym ) && !IS_SYM_COMMUNAL( sym ) ) {
+        if( IS_SYM_VF_REF( sym ) ) {
             if( IS_SYM_PURE_REF( sym ) ^ ispure ) {
                 LnkMsg( LOC_REC+WRN+MSG_VF_PURE_MISMATCH, "S", sym );
             }
@@ -1120,7 +1120,7 @@ void DefineVFTableRecord( symbol *sym, symbol *def, bool ispure,
                 }
                 _LnkFree( startlist );
             }
-        } else if( IS_SYM_A_REF(sym) || !(sym->info & SYM_OLDHAT) ) {
+        } else if( IS_SYM_A_REF( sym ) || !(sym->info & SYM_OLDHAT) ) {
             DefineVirtualFunction( sym, def, ispure, rtns );
         }
     }
@@ -1133,7 +1133,7 @@ void DefineVFReference( void *src, symbol *targ, bool issym )
         AddSymEdge( src, targ );
     } else {
         if( ((segnode *)src)->info & SEG_CODE ) {
-            AddEdge( (segdata *) ((segnode *)src)->entry, targ );
+            AddEdge( (segdata *)((segnode *)src)->entry, targ );
         }
     }
 }
@@ -1145,8 +1145,8 @@ void DefineReference( symbol *sym )
     if( FmtData.type & MK_OVERLAYS ) {
         TryRefVector( sym );
     }
-    if( FmtData.type & MK_NOVELL && LinkState & SEARCHING_LIBRARIES
-            && IS_SYM_IMPORTED( sym ) && sym->info & SYM_CHECKED ) {
+    if( (FmtData.type & MK_NOVELL) && (LinkState & SEARCHING_LIBRARIES)
+            && IS_SYM_IMPORTED( sym ) && (sym->info & SYM_CHECKED) ) {
         sym->info &= ~SYM_CHECKED;
         LinkState |= LIBRARIES_ADDED;   // force another pass thru libs
     }
@@ -1193,7 +1193,7 @@ bool SeenDLLRecord( void )
 /*******************************/
 {
     LinkState |= FMT_SEEN_IMPORT_CMT;
-    if( !HintFormat( (MK_OS2 | MK_PE | MK_ELF | MK_NOVELL) ) ) {
+    if( !HintFormat( MK_OS2 | MK_PE | MK_ELF | MK_NOVELL ) ) {
         LnkMsg( LOC+WRN+MSG_DLL_WITH_386, NULL );
         return( FALSE );    /* Not OK to process import/export records. */
     } else {
@@ -1235,7 +1235,7 @@ static void ExportSymbol( length_name *expname )
 
     sym = SymOp( ST_CREATE | ST_REFERENCE, expname->name, expname->len );
     sym->info |= SYM_EXPORTED;
-    AddNameTable( expname->name, expname->len, TRUE, &FmtData.u.nov.exp.export);
+    AddNameTable( expname->name, expname->len, TRUE, &FmtData.u.nov.exp.export );
 }
 
 void HandleExport( length_name *expname, length_name *intname,
@@ -1269,4 +1269,3 @@ bool CheckVFList( symbol *sym )
     }
     return( FALSE );
 }
-

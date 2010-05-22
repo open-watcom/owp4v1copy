@@ -120,7 +120,7 @@ static void ReOrderClasses( section *sec )
 // This builds various classes into separate rings, and then joins them
 // together.
 {
-    class_entry         *rings[ORD_LAST+1];
+    class_entry         *rings[ORD_LAST + 1];
     class_entry         *nextcl;
     class_entry         *currcl;
     class_entry         **owner;
@@ -137,8 +137,8 @@ static void ReOrderClasses( section *sec )
         nextcl = currcl->next_class;  // Take class out of original ring
         currcl->next_class = NULL;
         CheckClassUninitialized( currcl );
-        if( ( FmtData.type & ( MK_NOVELL | MK_PHAR_LAP | MK_OS2_LX ) )
-            && !( currcl->flags & CLASS_32BIT ) ) {
+        if( (FmtData.type & (MK_NOVELL | MK_PHAR_LAP | MK_OS2_LX))
+            && !(currcl->flags & CLASS_32BIT) ) {
             ord = ORD_REALMODE;
         } else {
             name = currcl->name;
@@ -538,7 +538,7 @@ void CalcAddresses( void )
         AllocFileSegs();
         if( FmtData.objalign == NO_BASE_SPEC ) {
             if( FmtData.type & MK_PE ) {
-                if( !( LinkState & HAVE_I86_CODE ) ) {
+                if( !(LinkState & HAVE_I86_CODE) ) {
                     FmtData.objalign = ( 64 * 1024UL );
                 } else {
                     FmtData.objalign = 4*1024;
@@ -562,7 +562,7 @@ void CalcAddresses( void )
     }
     StartMemMap();
     AllocClasses( Root );
-    if( FmtData.type & ( MK_REAL_MODE | MK_FLAT | MK_ID_SPLIT ) ) {
+    if( FmtData.type & (MK_REAL_MODE | MK_FLAT | MK_ID_SPLIT) ) {
         if( FmtData.type & MK_OVERLAYS ) {
             CalcOvl();
         }
@@ -572,7 +572,7 @@ void CalcAddresses( void )
     } else if( FmtData.type & MK_DOS16M ) {
         CalcGrpSegs();
 #endif
-    } else if( FmtData.type & ( MK_PE | MK_OS2_FLAT | MK_QNX_FLAT | MK_ELF ) ) {
+    } else if( FmtData.type & (MK_PE | MK_OS2_FLAT | MK_QNX_FLAT | MK_ELF) ) {
         if( FmtData.output_raw || FmtData.output_hex ) {
             flat = 0;
         } else if( FmtData.type & MK_PE ) {
@@ -599,7 +599,7 @@ void CalcAddresses( void )
             flat = ROUND_UP( flat + size, FmtData.objalign );
         }
         ReallocFileSegs();
-    } else if( FmtData.type & ( MK_QNX | MK_OS2_16BIT ) ) {
+    } else if( FmtData.type & (MK_QNX | MK_OS2_16BIT) ) {
         ReallocFileSegs();
     }
     DBIAddrStart();
@@ -644,7 +644,7 @@ static void SetLeaderSeg( void *_seg )
 {
     seg_leader      *seg = _seg;
 
-    if( !( seg->info & SEG_ABSOLUTE ) ) {
+    if( !(seg->info & SEG_ABSOLUTE) ) {
         seg->seg_addr.seg = seg->group->grp_addr.seg;
     }
 }
@@ -680,7 +680,7 @@ static void ReallocFileSegs( void )
         }
     }
     for( class = Root->classlist; class != NULL; class = class->next_class ){
-        if( !( class->flags & CLASS_DEBUG_INFO ) ) {
+        if( !(class->flags & CLASS_DEBUG_INFO) ) {
             RingWalk( class->segs, SetLeaderSeg );
         }
     }
@@ -697,10 +697,10 @@ static void FindUninitDataStart( void )
     setnext = TRUE;
     FmtData.dgroupsplitseg = NULL;
     FmtData.bsspad = 0;
-    if( !( LinkState & DOSSEG_FLAG ) )
+    if( !(LinkState & DOSSEG_FLAG) )
         return;
     for( class = Root->classlist; class != NULL; class = class->next_class ) {
-        if( !( class->flags & CLASS_DEBUG_INFO ) ) {
+        if( !(class->flags & CLASS_DEBUG_INFO) ) {
             if( class->flags & CLASS_LXDATA_SEEN ) {
                 setnext = TRUE;
             } else if( setnext ) {
@@ -842,7 +842,7 @@ static void CalcGrpAddr( group_entry *currgrp )
             }
         } else {
             Ring2Lookup( seg, FindEndAddr, &info );
-            if( (FmtData.type & MK_REAL_MODE) && !(seg->info & USE_32) 
+            if( (FmtData.type & MK_REAL_MODE) && !(seg->info & USE_32)
                 && (info.end_addr - info.grp_addr > 64 * 1024L) ) {
                 LnkMsg( ERR+MSG_GROUP_TOO_BIG, "sl", currgrp->sym->name,
                         info.end_addr - info.grp_addr - 64 * 1024L );
@@ -896,7 +896,7 @@ static void AllocSeg( void *_seg )
 {
     seg_leader  *seg = _seg;
 
-    if( !( seg->info & SEG_ABSOLUTE ) ) {
+    if( !(seg->info & SEG_ABSOLUTE) ) {
         if( IS_DBG_DWARF( seg ) ) {
             CurrLoc.off = 0;
         }
@@ -1007,7 +1007,7 @@ void FinishMapSort( void )
     symbol      *sym;
     bool        ok;
 
-    if( ( MapFlags & MAP_GLOBAL ) && ( NumMapSyms > 0 ) ) {
+    if( (MapFlags & MAP_GLOBAL) && ( NumMapSyms > 0 ) ) {
         symarray = NULL;
         if( NumMapSyms < ( UINT_MAX / sizeof( symbol * ) ) - 1 ) {
             _LnkAlloc( symarray, NumMapSyms * sizeof( symbol * ) );
@@ -1067,7 +1067,7 @@ static bool DefPubSym( void *_pub, void *_info )
     unsigned_16 frame;
     signed_32   temp;
 
-    if( pub->info & ( SYM_DEAD | SYM_IS_ALTDEF ) )
+    if( pub->info & (SYM_DEAD | SYM_IS_ALTDEF) )
         return( FALSE );
     if( IS_SYM_ALIAS( pub ) )
         return( FALSE );
@@ -1091,8 +1091,8 @@ static bool DefPubSym( void *_pub, void *_info )
             DBIGenGlobal( pub, info->sect );
         }
     }
-    if( ( MapFlags & MAP_FLAG ) && !SkipSymbol( pub ) ) {
-        if( info->first && !( MapFlags & MAP_GLOBAL ) ) {
+    if( (MapFlags & MAP_FLAG) && !SkipSymbol( pub ) ) {
+        if( info->first && !(MapFlags & MAP_GLOBAL) ) {
             WritePubModHead();
             info->first = FALSE;
         }
@@ -1117,13 +1117,13 @@ void DoPubs( section *sect )
 {
     pubdefinfo  info;
 
-    if( ( CurrMod->modinfo & MOD_NEED_PASS_2 )
-        && !( CurrMod->modinfo & MOD_IMPORT_LIB ) ) {
+    if( (CurrMod->modinfo & MOD_NEED_PASS_2)
+        && !(CurrMod->modinfo & MOD_IMPORT_LIB) ) {
         DBIAddModule( CurrMod, sect );
     }
     info.symarray = NULL;
-    if( ( MapFlags & MAP_SORT )
-        && !( MapFlags & MAP_GLOBAL )
+    if( (MapFlags & MAP_SORT)
+        && !(MapFlags & MAP_GLOBAL)
         && ( CurrMod->publist != NULL ) ) {
         _ChkAlloc( info.symarray,
                         Ring2Count( CurrMod->publist ) * sizeof( symbol * ) );
@@ -1224,7 +1224,7 @@ static void FillTypeFlags( unsigned_16 flags, segflag_type type )
         clflags = CLASS_CODE;
     }
     for( class = Root->classlist; class != NULL; class = class->next_class ) {
-        if( clflags == ( class->flags & CLASS_CODE ) ) {
+        if( clflags == (class->flags & CLASS_CODE) ) {
             RingLookup( class->segs, SetClassFlag, &flags );
         }
     }
@@ -1240,9 +1240,9 @@ static void FindFloatSyms( void )
     ClearFloatBits();
     for( index = 0; index < ( sizeof( FloatNames ) / sizeof( FloatNames[0] ) );
             index++ ) {
-        sym = FindISymbol( FloatNames[ index ].name );
+        sym = FindISymbol( FloatNames[index].name );
         if( sym != NULL ) {
-            SET_FFIX_VALUE( sym, FloatNames[ index ].idx );
+            SET_FFIX_VALUE( sym, FloatNames[index].idx );
         }
     }
 }

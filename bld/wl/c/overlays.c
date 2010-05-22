@@ -86,7 +86,7 @@ static void NumASect( section *sect )
 void NumberSections( void )
 /********************************/
 {
-    if( ( FmtData.type & MK_OVERLAYS ) && FmtData.u.dos.distribute ) {
+    if( (FmtData.type & MK_OVERLAYS) && FmtData.u.dos.distribute ) {
         _ChkAlloc( SectOvlTab, sizeof( section * ) * ( OvlNum + 1 ) );
         SectOvlTab[0] = Root;
     }
@@ -129,7 +129,7 @@ section *GetOvlSect( char *clname )
 {
     section             *sect;
 
-    if( !( FmtData.type & MK_OVERLAYS ) ) {
+    if( !(FmtData.type & MK_OVERLAYS) ) {
         sect = Root;
     } else {
         sect = CheckOvlSect( clname );

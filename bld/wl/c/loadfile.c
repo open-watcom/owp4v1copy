@@ -195,7 +195,7 @@ static void DoCVPack( void )
     int         retval;
     char        *name;
 
-    if( LinkFlags & CVPACK_FLAG && !(LinkState & LINK_ERROR) ) {
+    if( (LinkFlags & CVPACK_FLAG) && !(LinkState & LINK_ERROR) ) {
         if( SymFileName != NULL ) {
             name = SymFileName;
         } else {
@@ -248,7 +248,7 @@ void GetStkAddr( void )
             StackAddr.off = StackSegPtr->seg_addr.off + StackSegPtr->size;
         } else {
 #ifdef _OS2
-            if( FmtData.type & MK_WINDOWS && LinkFlags & STK_SIZE_FLAG ) {
+            if( (FmtData.type & MK_WINDOWS) && (LinkFlags & STK_SIZE_FLAG) ) {
                 PhoneyStack();
             } else
 #endif
@@ -282,7 +282,7 @@ static void DefABSSSym( char *name )
    symbol          *sym;
 
     sym = RefISymbol( name );
-    if( !(sym->info & SYM_DEFINED) || sym->info & SYM_LINK_GEN ) {
+    if( !(sym->info & SYM_DEFINED) || (sym->info & SYM_LINK_GEN) ) {
         sym->info |= SYM_DEFINED | SYM_LINK_GEN;
         if( FmtData.type & MK_OVERLAYS ) {
             sym->u.d.ovlstate |= OVL_NO_VECTOR | OVL_FORCE;
@@ -460,7 +460,7 @@ void GetStartAddr( void )
     case START_UNDEFED:         // NOTE: the possible fall through
         addoff = FALSE;
         if( !FmtData.dll ) {
-            if( Groups == NULL || FmtData.type & MK_ELF ) {
+            if( Groups == NULL || (FmtData.type & MK_ELF) ) {
                 StartInfo.addr.seg = 0;
                 StartInfo.addr.off = 0;
             } else {
@@ -695,7 +695,7 @@ static void SetupImpLib( void )
 void BuildImpLib( void )
 /*****************************/
 {
-    if( LinkState & LINK_ERROR || ImpLib.handle == NIL_HANDLE
+    if( (LinkState & LINK_ERROR) || ImpLib.handle == NIL_HANDLE
                                 || !FmtData.make_implib )
         return;
     if( ImpLib.bufsize > 0 ) {
@@ -895,7 +895,7 @@ unsigned long NullAlign( unsigned align )
 
     off = PosLoad();
     align--;
-    pad = ( (off+align) & ~(unsigned long)align ) - off;
+    pad = ( ( off + align ) & ~(unsigned long)align ) - off;
     PadLoad( pad );
     return( off + pad );
 }
@@ -907,7 +907,7 @@ unsigned long OffsetAlign( unsigned long off, unsigned long align )
     unsigned long       pad;
 
     align--;
-    pad = ( (off+align) & ~align ) - off;
+    pad = ( ( off + align ) & ~align ) - off;
     PadLoad( pad );
     return( off + pad );
 }
@@ -959,8 +959,8 @@ static bool DoGroupLeader( void *_seg, void *_info )
     grpwriteinfo    *info = _info;
 
     // If class or sector should not be output, skip it
-    if ( !(seg->class->flags & CLASS_NOEMIT ||
-           seg->segflags & SEG_NOEMIT) ) {
+    if ( !( (seg->class->flags & CLASS_NOEMIT) ||
+           (seg->segflags & SEG_NOEMIT) ) ) {
         info->seg_start = info->grp_start + GetLeaderDelta( seg );
         DoWriteLeader( seg, info );
     }
@@ -1007,7 +1007,7 @@ offset  WriteDOSGroupLoad( group_entry *group, bool repos )
     info.repos = repos;
     info.grp_start = PosLoad();
     // If group is a copy group, substitute source group(s) here
-    if (class->flags & CLASS_COPY ) {
+    if( class->flags & CLASS_COPY ) {
         info.lastgrp = NULL; // so it will use the first group
         RingLookup( class->DupClass->segs->group->leaders, WriteCopyGroups, &info );
     } else {

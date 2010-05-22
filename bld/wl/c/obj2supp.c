@@ -62,7 +62,7 @@
 #include "obj2supp.h"
 
 typedef struct fix_data {
-    byte *      data;
+    byte        *data;
     unsigned_32 value;              /* value at location being patched */
     targ_addr   loc_addr;
     targ_addr   tgt_addr;
@@ -76,12 +76,11 @@ typedef struct fix_data {
 
 static offset           LastOptimized;  // offset last optimized.
 static fix_type         LastOptType;
-static segdata *        LastSegData;
+static segdata          *LastSegData;
 static offset           FixupOverflow;
 
 static unsigned         MapOS2FixType( unsigned type );
-static void             PatchOffset( fix_data *fix, unsigned_32 val,
-                                     bool isdelta );
+static void             PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta );
 static void             Relocate( save_fixup *save, fix_data *fix, frame_spec *targ );
 
 
@@ -103,7 +102,7 @@ static void DCERelocRef( symbol *sym, bool isdata )
 /*************************************************/
 {
     if( isdata ) {
-        if( !( sym->info & SYM_VF_REFS_DONE ) ) {
+        if( !(sym->info & SYM_VF_REFS_DONE) ) {
             DataRef( sym );
         }
     } else {
@@ -123,9 +122,9 @@ static void TraceFixup( fix_type type, frame_spec *targ )
     bool        isovldata;          // TRUE if data and overlaying.
     bool        overlay;            // TRUE if doing overlays;
 
-    overlay = ( ( FmtData.type & MK_OVERLAYS ) && !FmtData.u.dos.noindirect );
-    if( ( LinkFlags & STRIP_CODE ) || overlay ) {
-        isovldata = !( CurrRec.seg->u.leader->info & SEG_OVERLAYED );
+    overlay = ( (FmtData.type & MK_OVERLAYS) && !FmtData.u.dos.noindirect );
+    if( (LinkFlags & STRIP_CODE) || overlay ) {
+        isovldata = !(CurrRec.seg->u.leader->info & SEG_OVERLAYED);
         if( ObjFormat & FMT_UNSAFE_FIXUPP )
             isovldata = TRUE;
         if( targ->type == FIX_FRAME_SEG ) {
@@ -138,7 +137,7 @@ static void TraceFixup( fix_type type, frame_spec *targ )
             if( LinkFlags & STRIP_CODE ) {
                 DCERelocRef( targ->u.sym, !CurrRec.seg->iscode );
             }
-            if( !( type & FIX_REL ) && overlay ) {
+            if( !(type & FIX_REL) && overlay ) {
                 switch( type & FIX_POINTER_MASK ) {
                 case FIX_OFFSET_16:
                     if( FmtData.u.dos.ovl_short ) {
@@ -172,8 +171,8 @@ static unsigned CalcFixupSize( fix_type type )
 {
     unsigned value;
 
-    value = OffsetSizes[ FIX_GET_OFFSET( type ) ];
-    if( type &  FIX_BASE ) {
+    value = OffsetSizes[FIX_GET_OFFSET( type )];
+    if( type & FIX_BASE ) {
         value += sizeof( unsigned_16 );
     }
     return( value );
@@ -184,8 +183,8 @@ static unsigned CalcAddendSize( fix_type fixtype )
 {
     if( fixtype & FIX_ADDEND_ZERO ) {
         return( 0 );
-    } else if( ( fixtype & FIX_BASE )
-        && ( ( fixtype & FIX_OFFSET_MASK ) == FIX_OFFSET_32 ) ) {
+    } else if( (fixtype & FIX_BASE)
+        && ( (fixtype & FIX_OFFSET_MASK) == FIX_OFFSET_32 ) ) {
         return( MAX_ADDEND_SIZE );
     }
     return( sizeof( unsigned_32 ) );
@@ -270,11 +269,11 @@ static void MapFramePtr( frame_spec *frame, void **targ )
     }
 }
 
-static segdata * GetFrameSegData( frame_spec *targ )
+static segdata *GetFrameSegData( frame_spec *targ )
 /**************************************************/
 {
-    segdata *   sdata;
-    seg_leader *leader;
+    segdata     *sdata;
+    seg_leader  *leader;
 
     sdata = NULL;
     switch( targ->type ) {
@@ -299,7 +298,7 @@ static bool IsReadOnly( segdata *sdata )
 {
     return( sdata->iscode
         || ( sdata->u.leader->group != NULL )
-        && ( sdata->u.leader->group->segflags & SEG_READ_ONLY ) );
+        && (sdata->u.leader->group->segflags & SEG_READ_ONLY) );
 }
 
 static void CheckRWData( frame_spec *targ, targ_addr *addr )
@@ -307,7 +306,7 @@ static void CheckRWData( frame_spec *targ, targ_addr *addr )
 {
     symbol sym;
 
-    if( ( FmtData.type & MK_WINDOWS )
+    if( (FmtData.type & MK_WINDOWS)
         && FmtData.u.os2.chk_seg_relocs
         && IsReadOnly( LastSegData ) ) {
         if( ( !IS_SYM_IMPORTED( targ->u.sym ) )
@@ -328,7 +327,7 @@ static bool IsTargAbsolute( frame_spec *targ )
 /********************************************/
 {
     return( ( targ->type == FIX_FRAME_SEG ) && targ->u.sdata->isabs
-        || ( targ->type == FIX_FRAME_EXT ) && ( targ->u.sym->info & SYM_ABSOLUTE ) );
+        || ( targ->type == FIX_FRAME_EXT ) && (targ->u.sym->info & SYM_ABSOLUTE) );
 }
 
 static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
@@ -348,7 +347,7 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
         if( targ->u.sym->info & SYM_TRACE ) {
             RecordTracedSym( targ->u.sym );
         }
-        if( !( targ->u.sym->info & SYM_DEFINED ) ) {
+        if( !(targ->u.sym->info & SYM_DEFINED) ) {
             ProcUndefined( targ->u.sym );
             return;
         }
@@ -356,7 +355,7 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
         if( IS_SYM_IMPORTED( targ->u.sym ) ) {
             if( ( frame->type < FIX_FRAME_LOC )
                 && ( targ->u.sym != frame->u.sym ) ) {
-                if( FmtData.type & ( MK_NOVELL | MK_OS2_FLAT | MK_PE ) ) {
+                if( FmtData.type & (MK_NOVELL | MK_OS2_FLAT | MK_PE) ) {
                     fix.tgt_addr.seg = faddr.seg;
                     fix.tgt_addr.off = 0;
                 } else {
@@ -367,7 +366,7 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
         }
     }
     if( save->flags & FIX_BASE ) {
-        if( FmtData.type & ( MK_PROT_MODE & ~( MK_OS2_FLAT | MK_PE ) ) ) {
+        if( FmtData.type & (MK_PROT_MODE & ~(MK_OS2_FLAT | MK_PE)) ) {
             if( faddr.seg != fix.tgt_addr.seg ) {
                 if( FmtData.type & MK_ID_SPLIT ) {
                     LnkMsg( LOC+ERR+MSG_NOV_NO_CODE_DATA_RELOC, "a",
@@ -419,8 +418,8 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
 unsigned IncExecRelocs( void *_save )
 /******************************************/
 {
-    save_fixup *save = _save;
-    segdata *   sdata;
+    save_fixup  *save = _save;
+    segdata     *sdata;
     frame_spec  targ;
     frame_spec  frame;
 
@@ -472,15 +471,15 @@ static void FixFrameValue( frame_type type, void **target )
 unsigned RelocMarkSyms( void *_fix )
 /*****************************************/
 {
-    save_fixup *fix = _fix;
-    segdata *   sdata;
+    save_fixup  *fix = _fix;
+    segdata     *sdata;
     frame_type  frame;
-    symbol *    sym;
+    symbol      *sym;
 
     if( fix->flags & FIX_CHANGE_SEG ) {
         sdata = CarveMapIndex( CarveSegData,
                                 (void *)( fix->flags & ~FIX_CHANGE_SEG ) );
-        fix->flags = (unsigned_32) sdata | FIX_CHANGE_SEG;
+        fix->flags = (unsigned_32)sdata | FIX_CHANGE_SEG;
     } else {
         frame = FIX_GET_FRAME( fix->flags );
         if( FRAME_HAS_DATA( frame ) ) {
@@ -542,7 +541,7 @@ void StoreFixup( offset off, fix_type type, frame_spec *frame,
     }
     fix.type = type;
     fix.data = buff;
-    if( ( type & ( FIX_OFFSET_MASK | FIX_HIGH ) ) == FIX_HIGH_OFFSET_16 ) {
+    if( (type & (FIX_OFFSET_MASK | FIX_HIGH)) == FIX_HIGH_OFFSET_16 ) {
         addend += FixupOverflow << 16;
     }
     PatchOffset( &fix, addend, TRUE );
@@ -553,7 +552,7 @@ void StoreFixup( offset off, fix_type type, frame_spec *frame,
     if( FRAME_HAS_DATA( frame->type ) ) {
         PermSaveFixup( &frame->u.abs, sizeof( unsigned_32 ) );
     }
-    if( !( save.flags & FIX_ADDEND_ZERO ) )  {
+    if( !(save.flags & FIX_ADDEND_ZERO) )  {
         PermSaveFixup( buff, CalcAddendSize( save.flags ) );
     }
     TraceFixup( save.flags, targ );
@@ -567,12 +566,12 @@ void StoreFixup( offset off, fix_type type, frame_spec *frame,
 unsigned IncSaveRelocs( void *_save )
 /******************************************/
 {
-    save_fixup *save = _save;
-    segdata *   sdata;
+    save_fixup  *save = _save;
+    segdata     *sdata;
     frame_spec  targ;
     unsigned    fixsize;
     unsigned    datasize;
-    char *      data;
+    char        *data;
 
     fixsize = CalcSavedFixSize( save->flags );
     if( save->flags & FIX_CHANGE_SEG ) {
@@ -649,7 +648,7 @@ static void PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta )
 /*********************************************************************/
 /* patch offsets into the loaded object */
 {
-    byte *      code;
+    byte        *code;
     unsigned_32 oldval;
     signed_32   sval;
 
@@ -692,7 +691,7 @@ static void PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta )
                 val += sval;
                 if( ( oldval >> 16 ) < ( val >> 16 ) ) {
                     FixupOverflow = 1;
-                } else if( ( fix->type & FIX_SIGNED )
+                } else if( (fix->type & FIX_SIGNED)
                     && ( oldval >> 16 ) == ( val >> 16 )
                     && ( (signed_16)( val & 0xFFFF ) < 0 ) ) {
                     FixupOverflow = 1;
@@ -754,8 +753,8 @@ static byte WinFFixMap[] = {
 static void MakeWindowsFloatReloc( fix_data *fix )
 /************************************************/
 {
-    base_reloc          new_reloc;
-    os2_reloc_item *    os2item;
+    base_reloc      new_reloc;
+    os2_reloc_item  *os2item;
 
     InitReloc( &new_reloc );
     os2item = &new_reloc.item.os2;
@@ -763,7 +762,7 @@ static void MakeWindowsFloatReloc( fix_data *fix )
     os2item->reloc_offset = fix->loc_addr.off
                         - CurrRec.seg->u.leader->group->grp_addr.off;
     os2item->reloc_type = OSFIXUP | ADDITIVE;
-    os2item->put.fltpt = WinFFixMap[ fix->ffix ];
+    os2item->put.fltpt = WinFFixMap[fix->ffix];
     DumpReloc( &new_reloc );
 }
 
@@ -804,11 +803,11 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
     signed_32   pos;
     unsigned    fixsize;
     group_entry *group;
-    segdata  *  sdata;
+    segdata     *sdata;
     fix_type    special;
 
     if( FmtData.type & MK_ELF ) {
-        if( !( fix->type & FIX_REL ) )
+        if( !(fix->type & FIX_REL) )
             return( FALSE );
 #if 0
     XXX: this is not the right thing to do for elf-i386
@@ -816,7 +815,7 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
             return( FALSE );
 #endif
     }
-    if( ( FmtData.type & ( MK_QNX | MK_WINDOWS ) )
+    if( (FmtData.type & (MK_QNX | MK_WINDOWS))
         && ( fix->ffix != FFIX_NOT_A_FLOAT ) ) {
         if( fix->ffix != FFIX_IGNORE ) {
             if( FmtData.type & MK_QNX ) {
@@ -854,7 +853,7 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         }
         return( TRUE );
     }
-    if( !( fix->type & FIX_REL ) )
+    if( !(fix->type & FIX_REL) )
         return( FALSE );
     if( FmtData.type & MK_OS2_FLAT ) {
         /* OS/2 V2 relative fixups to imported items or other objects
@@ -865,7 +864,7 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
             return( FALSE );
         }
     }
-    if( ( fix->type & FIX_ABS ) && !( FmtData.type & MK_QNX ) ) {
+    if( (fix->type & FIX_ABS) && !(FmtData.type & MK_QNX) ) {
         LnkMsg( LOC+ERR+MSG_BAD_ABS_FIXUP, "a", &fix->loc_addr );
         return( TRUE );
     }
@@ -879,8 +878,8 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         } else if( FmtData.type & MK_ELF ) {
             return( FALSE );
         } else if( FmtData.type & MK_NOVELL ) {
-            if( ( ( fix->type & FIX_OFFSET_MASK ) != FIX_OFFSET_32 )
-                || ( fix->type & FIX_BASE ) ) {
+            if( ( (fix->type & FIX_OFFSET_MASK) != FIX_OFFSET_32 )
+                || (fix->type & FIX_BASE) ) {
                 LnkMsg( LOC+ERR+MSG_BAD_IMP_REL_RELOC, "a", &fix->loc_addr );
             } else {                           // TRUE == isrelative.
                 AddNovImpReloc( targ->u.sym, fix->loc_addr.off, TRUE,
@@ -892,8 +891,8 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         return( TRUE );
     }
     /* XXX: MK_ELF must not be included for non-i386 */
-    if( FmtData.type & ( MK_PROT_MODE & ~( MK_OS2_FLAT | MK_PE | MK_ELF ) ) ) {
-        if( ( fix->loc_addr.seg != fix->tgt_addr.seg ) && !( fix->type & FIX_ABS ) ) {
+    if( FmtData.type & (MK_PROT_MODE & ~(MK_OS2_FLAT | MK_PE | MK_ELF)) ) {
+        if( ( fix->loc_addr.seg != fix->tgt_addr.seg ) && !(fix->type & FIX_ABS) ) {
             //must have same file segment.
             if( FmtData.type & MK_ID_SPLIT ) {
                 LnkMsg( LOC+ERR+MSG_NOV_NO_CODE_DATA_RELOC, "a",
@@ -916,7 +915,7 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
             off -= group->linear;
         }
         off += fix->tgt_addr.off - fix->loc_addr.off;
-    } else if( FmtData.type & ( MK_386 | MK_QNX ) ) {
+    } else if( FmtData.type & (MK_386 | MK_QNX) ) {
         off = fix->tgt_addr.off - fix->loc_addr.off;
         if( fix->type & FIX_ABS ) {
             off -= FindGroup( fix->loc_addr.seg )->linear;
@@ -929,7 +928,7 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
 #endif
     }
     fixsize = CalcFixupSize( fix->type );
-    if ( !( fix->type & FIX_NOADJ ) ) {
+    if ( !(fix->type & FIX_NOADJ) ) {
         off -= fixsize;
     }
     if( fix->type == FIX_OFFSET_16 ) {
@@ -943,8 +942,8 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         CheckPartialRange( fix, off, 0x03FFFFFF, 0x02000000 );
     }
     PatchOffset( fix, off, TRUE );
-    fix->os2_selfrel = FmtData.type & MK_OS2_LX && FmtData.u.os2.gen_rel_relocs;
-    return( !( fix->os2_selfrel || fix->type & FIX_ABS ) );
+    fix->os2_selfrel = (FmtData.type & MK_OS2_LX) && FmtData.u.os2.gen_rel_relocs;
+    return( !( fix->os2_selfrel || (fix->type & FIX_ABS) ) );
 }
 
 static offset FindRealAddr( fix_data *fix )
@@ -956,13 +955,13 @@ static offset FindRealAddr( fix_data *fix )
 
     off = fix->tgt_addr.off;
     dbiflat = DBINoReloc( CurrRec.seg->u.leader );
-    if( ( fix->type & FIX_ABS )
-        || dbiflat && !( CurrMod->modinfo & MOD_FLATTEN_DBI ) ) {
+    if( (fix->type & FIX_ABS)
+        || dbiflat && !(CurrMod->modinfo & MOD_FLATTEN_DBI) ) {
         return( off );
     }
-    if( ( FmtData.type & ( MK_OS2_FLAT | MK_LINEARIZE | MK_QNX_FLAT ) )
-        && !( fix->type & FIX_SEC_REL ) ) {
-        if( ( FmtData.type & ( MK_OS2_LE | MK_WIN_VXD ) ) && !dbiflat )
+    if( (FmtData.type & (MK_OS2_FLAT | MK_LINEARIZE | MK_QNX_FLAT))
+        && !(fix->type & FIX_SEC_REL) ) {
+        if( (FmtData.type & (MK_OS2_LE | MK_WIN_VXD)) && !dbiflat )
             return( off );
        /*
             put the correct value in so that internal fixups
@@ -974,7 +973,7 @@ static offset FindRealAddr( fix_data *fix )
             return( off );
         off += ( group->linear - group->grp_addr.off );
         if( FmtData.type & MK_LINEARIZE ) {
-            if( !( fix->type & FIX_NO_BASE ) ) {
+            if( !(fix->type & FIX_NO_BASE) ) {
                 off += FmtData.base;
             }
             // want dbi addresses relative to 0, but not for ELF
@@ -993,13 +992,13 @@ static offset FindRealAddr( fix_data *fix )
 static void PatchData( fix_data *fix )
 /************************************/
 {
-    byte *      data;
+    byte        *data;
     segment     segval;
     bool        isdbi;
 
     data = fix->data;
     fix->additive = FALSE;
-    if( fix->imported && ( FmtData.type & MK_OS2_FLAT ) ) {
+    if( fix->imported && (FmtData.type & MK_OS2_FLAT) ) {
         fix->value = fix->tgt_addr.off;
     } else {
         fix->value = 0;
@@ -1028,31 +1027,31 @@ static void PatchData( fix_data *fix )
             return;
         }
     }
-    if( ( fix->type & FIX_ABS ) && !( FmtData.type & (MK_QNX | MK_DOS16M) ) || isdbi ) {
+    if( (fix->type & FIX_ABS) && !(FmtData.type & (MK_QNX | MK_DOS16M)) || isdbi ) {
         fix->done = TRUE;
     }
-    if( !( fix->type & FIX_BASE ) ) {     // it's offset only
-        if( !( ( FmtData.type & MK_WINDOWS ) && ( fix->type & FIX_LOADER_RES ) ) ) {
+    if( !(fix->type & FIX_BASE) ) {     // it's offset only
+        if( !( (FmtData.type & MK_WINDOWS) && (fix->type & FIX_LOADER_RES) ) ) {
             PatchOffset( fix, FindRealAddr( fix ), FALSE );
-            if( !( FmtData.type & ( MK_ELF | MK_QNX | MK_PE | MK_OS2_FLAT | MK_NOVELL | MK_PHAR_REX | MK_ZDOS | MK_RAW ) )
-                || ( FmtData.type & MK_OS2_LX ) && !FmtData.u.os2.gen_int_relocs ){
+            if( !(FmtData.type & (MK_ELF | MK_QNX | MK_PE | MK_OS2_FLAT | MK_NOVELL | MK_PHAR_REX | MK_ZDOS | MK_RAW))
+                || (FmtData.type & MK_OS2_LX) && !FmtData.u.os2.gen_int_relocs ) {
                 fix->done = TRUE;
             }
         }
     } else {    // its a seg reloc and maybe an offset as well.
-        if( ( fix->type & FIX_OFFSET_MASK ) != FIX_NO_OFFSET ) {
-            if( !fix->done && ( FmtData.type & ( MK_OS2 | MK_WIN_VXD ) ) )
+        if( (fix->type & FIX_OFFSET_MASK) != FIX_NO_OFFSET ) {
+            if( !fix->done && (FmtData.type & (MK_OS2 | MK_WIN_VXD)) )
                 return;
             PatchOffset( fix, FindRealAddr( fix ), FALSE );
-            data += OffsetSizes[ FIX_GET_OFFSET( fix->type ) ];
+            data += OffsetSizes[FIX_GET_OFFSET( fix->type )];
         }
         if( FmtData.type & MK_PROT_MODE ) {
             PUT_U16( data, 0 );
         }
-        if( FmtData.type & ( MK_DOS16M | MK_PHAR_MULTISEG ) ) {
+        if( FmtData.type & (MK_DOS16M | MK_PHAR_MULTISEG) ) {
             PUT_U16( data, fix->tgt_addr.seg );
-        } else if( fix->done || ( FmtData.type & ( MK_QNX | MK_DOS ) ) ) {
-            if( isdbi && ( LinkFlags & CV_DBI_FLAG ) ) {    // FIXME
+        } else if( fix->done || (FmtData.type & (MK_QNX | MK_DOS)) ) {
+            if( isdbi && (LinkFlags & CV_DBI_FLAG) ) {    // FIXME
                 segval = FindGroupIdx( fix->tgt_addr.seg );
             } else if( fix->type & FIX_ABS ) {
                 /* MASM 5.1 stuffs abs seg length in displacement; ignore it like LINK. */
@@ -1078,7 +1077,7 @@ static void PatchData( fix_data *fix )
 static bool FarCallOpt( fix_data *fix )
 /*************************************/
 {
-    byte *      code;
+    byte        *code;
     unsigned_16 temp16;
     unsigned_32 temp32;
     byte        instruction;
@@ -1107,9 +1106,9 @@ static bool FarCallOpt( fix_data *fix )
         return( FALSE );
     if( fix->type & FIX_ABS )
         return( FALSE );
-    if( ( fix->type & FIX_POINTER_MASK ) == FIX_BASE_OFFSET_16 ) {
+    if( (fix->type & FIX_POINTER_MASK) == FIX_BASE_OFFSET_16 ) {
         is32bit = FALSE;
-    } else if( ( fix->type & FIX_POINTER_MASK ) == FIX_BASE_OFFSET_32 ) {
+    } else if( (fix->type & FIX_POINTER_MASK) == FIX_BASE_OFFSET_32 ) {
         is32bit = TRUE;
     } else {
         return( FALSE );
@@ -1129,7 +1128,7 @@ static bool FarCallOpt( fix_data *fix )
         } else {
             temp16 = GET_U16( code + 1 );
         }
-        if( FmtData.type & ( MK_OS2 | MK_WIN_VXD ) ) {
+        if( FmtData.type & (MK_OS2 | MK_WIN_VXD) ) {
             if( is32bit ) {
                 temp32 += fix->tgt_addr.off;     // haven't done this for OS/2
             } else {
@@ -1195,7 +1194,7 @@ static void MakeBase( fix_data *fix )
     unsigned size;
 
     if( fix->type & FIX_BASE ) {
-        size = OffsetSizes[ FIX_GET_OFFSET( fix->type ) ];
+        size = OffsetSizes[FIX_GET_OFFSET( fix->type )];
         fix->loc_addr.off += size;
     }
 }
@@ -1220,9 +1219,9 @@ static unsigned MapOS2FixType( unsigned type )
 
     off = FIX_GET_OFFSET( type );
     if( type & FIX_BASE ) {
-        return( OS2SegmentedFixTypeMap[ off ] );
+        return( OS2SegmentedFixTypeMap[off] );
     }
-    return( OS2OffsetFixTypeMap[ off ] );
+    return( OS2OffsetFixTypeMap[off] );
 }
 
 static void FmtReloc( fix_data *fix, frame_spec *tthread )
@@ -1231,20 +1230,20 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
     offset              off;
     base_reloc          new_reloc;
     targ_addr           targ;
-    group_entry *       grp;
-    segdata *           seg;
+    group_entry         *grp;
+    segdata             *seg;
     bool                save;
-    byte *              fixptr;
-    dll_sym_info *      dll;
+    byte                *fixptr;
+    dll_sym_info        *dll;
     bool                freedll;
     fix_type            ftype;
 
     if( fix->done )
         return;
-    if( ( fix->type & FIX_ABS ) && !( FmtData.type & (MK_QNX | MK_DOS16M) )
+    if( (fix->type & FIX_ABS) && !(FmtData.type & (MK_QNX | MK_DOS16M))
         && !fix->imported )
         return;
-    ftype = fix->type & ( FIX_OFFSET_MASK | FIX_BASE );
+    ftype = fix->type & (FIX_OFFSET_MASK | FIX_BASE);
     if( (FmtData.type & (MK_PHAR_SIMPLE | MK_PHAR_FLAT))
         || (FmtData.type & (MK_NOVELL | MK_ELF))
             && (LinkState & HAVE_I86_CODE) && (ftype != FIX_OFFSET_32)
@@ -1256,7 +1255,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         LnkMsg( LOC+ERR+MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
         return;
     }
-    if( !( LinkState & MAKE_RELOCS ) )
+    if( !(LinkState & MAKE_RELOCS) )
         return;
     if( FmtData.type & MK_QNX ) {
         if( ftype == FIX_OFFSET_32 ) {
@@ -1291,9 +1290,9 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         if( fix->type & FIX_HIGH ) {
             reltype = PE_FIX_HIGHADJ;   // NYI: can be high when objalign ==
             new_reloc.rel_size = sizeof( high_pe_reloc_item );    // 0x10000
-            new_reloc.item.hpe.low_off = (unsigned_16) targ.off;
+            new_reloc.item.hpe.low_off = (unsigned_16)targ.off;
         } else if( ftype == FIX_OFFSET_16 ) {
-            if( !( FmtData.objalign & 0xFFFF ) ) {
+            if( !(FmtData.objalign & 0xFFFF) ) {
                 save = FALSE;
             }
             reltype = PE_FIX_LOW;
@@ -1302,7 +1301,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         }
         new_reloc.item.pe = ( off & OSF_PAGE_MASK ) | reltype;
     } else if( FmtData.type & MK_OS2_16BIT ) {
-        os2_reloc_item * os2item;
+        os2_reloc_item  *os2item;
 
         fixptr = fix->data;
         os2item = &new_reloc.item.os2;
@@ -1316,7 +1315,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
                     break;
                 }
             }
-            if( ( grp != NULL ) && ( grp->segflags & SEG_MOVABLE ) ) {
+            if( ( grp != NULL ) && (grp->segflags & SEG_MOVABLE) ) {
                 os2item->put.internal.grp_num = (signed_8)MOVABLE_ENTRY_PNT;
                 os2item->put.internal.off = FindEntryOrdinal( targ, grp );
             } else {
@@ -1350,7 +1349,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         dll = NULL;
         if( fix->type & FIX_REL ) {
             fixtype = OSF_32BIT_SELF_REL;
-            if( fix->os2_selfrel && ( tthread->type & FIX_FRAME_EXT ) ) {
+            if( fix->os2_selfrel && (tthread->type & FIX_FRAME_EXT) ) {
                 freedll = FindOS2ExportSym( tthread->u.sym, &dll );
                 if( dll != NULL ) {
                     fix->imported = TRUE;
@@ -1486,7 +1485,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
     } else if( FmtData.type & MK_NOVELL ) {
         if( fix->imported ) {
             save = FALSE;
-            AddNovImpReloc( tthread->u.sym, off, ( fix->type & FIX_REL ) != 0,
+            AddNovImpReloc( tthread->u.sym, off, (fix->type & FIX_REL) != 0,
                              fix->loc_addr.seg == DATA_SEGMENT );
         } else {
             if( fix->loc_addr.seg != DATA_SEGMENT ) {
@@ -1509,7 +1508,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
                 if( seg->iscode ) {
                     new_reloc.item.qnxl.reloc_offset |= 0x80000000;
                 }
-                if( ( fix->type & FIX_ABS ) && ( fix->type & FIX_REL ) ) {
+                if( (fix->type & FIX_ABS) && (fix->type & FIX_REL) ) {
                     new_reloc.item.qnxl.reloc_offset |= 0x40000000;
                 }
                 if( fix->type == FIX_BASE_OFFSET_32 ) {
@@ -1568,9 +1567,9 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
             }
         }
         sym = tthread->u.sym;
-        if( IS_SYM_ALIAS( sym ) && ( sym->info & SYM_WAS_LAZY ) ) {
+        if( IS_SYM_ALIAS( sym ) && (sym->info & SYM_WAS_LAZY) ) {
             save = FALSE;
-        } else if( ( tthread->type & FIX_FRAME_EXT ) && IsSymElfImpExp( sym ) ) {
+        } else if( (tthread->type & FIX_FRAME_EXT) && IsSymElfImpExp( sym ) ) {
             new_reloc.item.elf.addend = 0;
         } else {
             seg = GetFrameSegData( tthread );

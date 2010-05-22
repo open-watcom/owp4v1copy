@@ -361,13 +361,13 @@ void OvlDefVector( symbol *sym )
         return;
     sdata = sym->p.seg;
     if( sdata == NULL ) {
-        sym->u.d.ovlstate |= ( OVL_FORCE | OVL_NO_VECTOR );
+        sym->u.d.ovlstate |= (OVL_FORCE | OVL_NO_VECTOR);
         return;         /* NOTE: <--- premature return <----------- */
     } else {
         ovl_num = sdata->u.leader->class->section->ovl_num;
     }
     if( !sdata->iscode || ( ovl_num == 0 ) ) {      // not code or in root
-        sym->u.d.ovlstate |= ( OVL_FORCE | OVL_NO_VECTOR );
+        sym->u.d.ovlstate |= (OVL_FORCE | OVL_NO_VECTOR);
     } else {
         if( sym->info & SYM_REFERENCED ) {
             if( sym->u.d.ovlref != ovl_num ) {
@@ -403,10 +403,10 @@ static void OvlRefVector( symbol *sym )
 
     if( IS_SYM_COMMUNAL( sym ) )
         return;
-    if( ( sym->u.d.ovlstate & OVL_VEC_MASK ) != OVL_UNDECIDED )
+    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_UNDECIDED )
         return;
-    if( !( sym->info & SYM_DEFINED ) ) {
-        if( !( sym->u.d.ovlstate & OVL_REF ) ) {
+    if( !(sym->info & SYM_DEFINED) ) {
+        if( !(sym->u.d.ovlstate & OVL_REF) ) {
             sym->u.d.ovlref = CurrSect->ovl_num;
             sym->u.d.ovlstate |= OVL_REF;
         } else if( FmtData.u.dos.distribute ) {
@@ -428,9 +428,9 @@ static void OvlRefVector( symbol *sym )
 void TryRefVector( symbol *sym )
 /**************************************/
 {
-    if( !( FmtData.type & MK_OVERLAYS ) )
+    if( !(FmtData.type & MK_OVERLAYS) )
         return;
-    if( ( LinkState & SEARCHING_LIBRARIES ) && FmtData.u.dos.distribute ) {
+    if( (LinkState & SEARCHING_LIBRARIES) && FmtData.u.dos.distribute ) {
         RefDistribSym( sym );
     } else {
         OvlRefVector( sym );
@@ -440,11 +440,11 @@ void TryRefVector( symbol *sym )
 void OvlUseVector( symbol *sym, extnode *newnode )
 /********************************************************/
 {
-    if( !( FmtData.type & MK_OVERLAYS ) )
+    if( !(FmtData.type & MK_OVERLAYS) )
         return;
     if( IS_SYM_COMMUNAL( sym ) )
         return;
-    if( ( sym->u.d.ovlstate & OVL_VEC_MASK ) != OVL_MAKE_VECTOR )
+    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_MAKE_VECTOR )
         return;
     if( IsAncestor( sym->p.seg->u.leader->class->section->ovl_num, CurrSect ) ) {
          return;
@@ -458,7 +458,7 @@ void IndirectCall( symbol *sym )
 {
     unsigned_16 ovl_num;
 
-    if( !( FmtData.type & MK_OVERLAYS ) )
+    if( !(FmtData.type & MK_OVERLAYS) )
         return;
     if( NO_VECTOR( sym ) )
         return;
@@ -559,7 +559,7 @@ void EmitOvlVectors( void )
         loader_name = _LongOvlldr;
     }
     symptr = RefISymbol( loader_name );
-    if( !( symptr->info & SYM_DEFINED ) ) {
+    if( !(symptr->info & SYM_DEFINED) ) {
         LnkMsg( ERR+MSG_NO_OVERLAY_LOADER, NULL );
     } else if( isshort ) {
         ShortVectors( symptr );

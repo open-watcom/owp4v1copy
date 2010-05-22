@@ -214,8 +214,8 @@ static void XFerReloc( offset off, group_entry *group, unsigned type )
     reloc_item  reloc;
     size_t      size;
 
-    size = sizeof(pe_reloc_item);
-    reloc.pe = ((off + group->linear) & OSF_PAGE_MASK) | type;
+    size = sizeof( pe_reloc_item );
+    reloc.pe = (( off + group->linear ) & OSF_PAGE_MASK) | type;
     if( type == PE_FIX_HIGHADJ ) {
         size = sizeof( high_pe_reloc_item );
         reloc.hpe.low_off = AlphaJump.low;
@@ -251,14 +251,14 @@ offset FindIATSymAbsOff( symbol *sym )
     dll_sym_info        *dll;
 
     dll = sym->p.import;
-    DbgAssert( IS_SYM_IMPORTED(sym) && dll != NULL );
+    DbgAssert( IS_SYM_IMPORTED( sym ) && dll != NULL );
     return( dll->iatsym->addr.off );
 }
 
 signed_32 FindSymPosInTocv( symbol *sym )
 /***********************************************/
 {
-    offset off = FindIATSymAbsOff(sym) - IDataGroup->linear - FmtData.base;
+    offset off = FindIATSymAbsOff( sym ) - IDataGroup->linear - FmtData.base;
     off = off - TocShift - IData.eof_ilt_off;
     return( off );
 }
@@ -282,19 +282,19 @@ static void GenPETransferTable( void )
     if( IDataGroup != NULL ) {
         datalen = GetTransferGlueSize( LinkState );
         data = GetTransferGlueCode( LinkState );
-        WALK_IMPORT_SYMBOLS(sym) {
+        WALK_IMPORT_SYMBOLS( sym ) {
             if( LinkState & HAVE_ALPHA_CODE ) {
                 offset dest = FindIATSymAbsOff( sym );
                 AlphaJump.high = dest >> 16;
                 AlphaJump.low = dest;
                 if( LinkState & MAKE_RELOCS ) {
                     if( !(FmtData.objalign & 0xFFFF) ) {
-                        XFerReloc( sym->addr.off+offsetof(alpha_transfer, high),
+                        XFerReloc( sym->addr.off + offsetof( alpha_transfer, high ),
                                    group, PE_FIX_HIGH );
                     } else {
-                        XFerReloc( sym->addr.off+offsetof(alpha_transfer, low),
+                        XFerReloc( sym->addr.off + offsetof( alpha_transfer, low ),
                                    group, PE_FIX_LOW );
-                        XFerReloc( sym->addr.off+offsetof(alpha_transfer, high),
+                        XFerReloc( sym->addr.off + offsetof( alpha_transfer, high ),
                                     group, PE_FIX_HIGHADJ );
                     }
                 }
@@ -302,12 +302,12 @@ static void GenPETransferTable( void )
                 offset dest = FindIATSymAbsOff( sym );
                 I386Jump.dest = dest;
                 if( LinkState & MAKE_RELOCS ) {
-                    XFerReloc( sym->addr.off + offsetof(i386_transfer,dest),
+                    XFerReloc( sym->addr.off + offsetof( i386_transfer, dest ),
                                 group, PE_FIX_HIGHLOW );
                 }
             } else {
                 int_16 pos;
-                pos = FindSymPosInTocv(sym);
+                pos = FindSymPosInTocv( sym );
                 PPCJump[0] &= 0xffff0000;
                 PPCJump[0] |= 0x0000ffff & pos;
             }
@@ -452,11 +452,13 @@ static void WriteIAT( virt_mem buf, offset linear )
             } else {
                 iat = PE_IMPORT_BY_ORDINAL | imp->dll->u.ordinal;
             }
-            PutInfo( buf+pos, &iat, sizeof( iat ) ); pos += sizeof ( iat );
+            PutInfo( buf+pos, &iat, sizeof( iat ) );
+            pos += sizeof( iat );
         }
         /* NULL entry marks end of list */
         iat = 0;
-        PutInfo( buf+pos, &iat, sizeof( iat ) ); pos += sizeof ( iat );
+        PutInfo( buf+pos, &iat, sizeof( iat ) );
+        pos += sizeof( iat );
     }
 }
 
@@ -492,23 +494,23 @@ static void WriteImportInfo( void )
         dir.name_rva = mod_name_rva;
         dir.import_lookup_table_rva = IData.ilt_off + size + linear;
         dir.import_address_table_rva = IData.iat_off + size + linear;
-        size += (mod->num_entries + 1) * sizeof( pe_va );
+        size += ( mod->num_entries + 1 ) * sizeof( pe_va );
         mod_name_rva += mod->mod->len + 1;
-        PutInfo( buf+pos, &dir, sizeof(dir) );
-        pos += sizeof(dir);
+        PutInfo( buf+pos, &dir, sizeof( dir ) );
+        pos += sizeof( dir );
     }
-    PutNulls( buf+pos, sizeof(dir) );    /* NULL entry marks end of table */
-    pos += sizeof(dir);
-    WriteIAT(buf+IData.ilt_off, linear); // Import Lookup table
-    WriteToc(buf+IData.eof_ilt_off);
-    for( pos = IData.eof_ilt_off; pos < IData.iat_off; pos += sizeof(pe_va)) {
+    PutNulls( buf + pos, sizeof( dir ) );    /* NULL entry marks end of table */
+    pos += sizeof( dir );
+    WriteIAT( buf + IData.ilt_off, linear ); // Import Lookup table
+    WriteToc( buf + IData.eof_ilt_off );
+    for( pos = IData.eof_ilt_off; pos < IData.iat_off; pos += sizeof( pe_va ) ) {
         XFerReloc( pos, group, PE_FIX_HIGHLOW );
     }
-    WriteIAT(buf+IData.iat_off, linear); // Import Address table
+    WriteIAT( buf + IData.iat_off, linear ); // Import Address table
     pos = IData.mod_name_off;            /* write the module names */
     for( mod = PEImpList; mod != NULL; mod = mod->next ) {
         int size = mod->mod->len + 1;
-        PutInfo( buf+pos, mod->mod->name, size);
+        PutInfo( buf + pos, mod->mod->name, size );
         pos += size;
     }
     pos = IData.hint_off;        /* write out the import names */
@@ -516,14 +518,14 @@ static void WriteImportInfo( void )
         hint = 1;
         for( imp = mod->imports; imp != NULL; imp = imp->next ) {
             if( imp->imp != NULL ) {
-                PutNulls( buf+pos, pos & 1);
+                PutNulls( buf + pos, pos & 1 );
                 pos += pos & 1;/* round up */
-                PutInfo(buf+pos, &hint, sizeof(hint));
-                pos += sizeof(hint);
+                PutInfo( buf + pos, &hint, sizeof( hint ) );
+                pos += sizeof( hint );
                 size = imp->imp->len;
-                PutInfo(buf+pos, imp->imp->name, size);
+                PutInfo( buf + pos, imp->imp->name, size );
                 pos += size;
-                PutNulls( buf+pos, 1);
+                PutNulls( buf + pos, 1);
                 pos++;
                 hint++;
             }
@@ -655,16 +657,16 @@ static unsigned_32 WriteRelocList( void **reloclist, unsigned_32 size,
         pagesize = RelocSize( *reloclist );
         if( pagesize != 0 ) {
             padme = FALSE;
-            if( (pagesize / sizeof(pe_reloc_item)) & 0x1 ) {
-                pagesize += sizeof(pe_reloc_item);
+            if( ( pagesize / sizeof( pe_reloc_item ) ) & 0x1 ) {
+                pagesize += sizeof( pe_reloc_item );
                 padme = TRUE;
             }
-            pagesize += 2*sizeof(unsigned_32);
-            WriteLoad( &pagerva, sizeof(unsigned_32) );
-            WriteLoad( &pagesize, sizeof(unsigned_32) );
+            pagesize += 2 * sizeof( unsigned_32 );
+            WriteLoad( &pagerva, sizeof( unsigned_32 ) );
+            WriteLoad( &pagesize, sizeof( unsigned_32 ) );
             DumpRelocList( *reloclist );
             if( padme ) {
-                PadLoad( sizeof(pe_reloc_item) );
+                PadLoad( sizeof( pe_reloc_item ) );
             }
             size += pagesize;
         }
@@ -709,10 +711,10 @@ static void WriteFixupInfo( pe_header *header, pe_object *object )
                                                      OSF_RLIDX_LOW(numpages) );
         }
     }
-    PadLoad( sizeof(pe_fixup_header) );
-    size += sizeof(pe_fixup_header);
+    PadLoad( sizeof( pe_fixup_header ) );
+    size += sizeof( pe_fixup_header );
     object->physical_size = ROUND_UP( size, header->file_align );
-    header->table[PE_TBL_FIXUP].size = size - sizeof(pe_fixup_header);
+    header->table[PE_TBL_FIXUP].size = size - sizeof( pe_fixup_header );
     header->table[PE_TBL_FIXUP].rva = object->rva;
     header->image_size += ROUND_UP( size, header->object_align );
 }
@@ -824,7 +826,7 @@ void DoAddResource( char *name )
     unsigned            len;
 
     len = strlen( name );
-    _PermAlloc( info, sizeof(list_of_names) + len );
+    _PermAlloc( info, sizeof( list_of_names ) + len );
     memcpy( info->name, name, len + 1 );
     info->next_name = FmtData.u.pe.resources;
     FmtData.u.pe.resources = info;
@@ -838,7 +840,7 @@ static void WritePEResources( pe_header *header, pe_object *object )
     int         allopen;
     int         status;
 
-    memset( &einfo, 0, sizeof(einfo) );
+    memset( &einfo, 0, sizeof( einfo ) );
 
     if( FmtData.resource != NULL ) {
         DoAddResource( FmtData.resource );
@@ -958,9 +960,9 @@ static void SwapDesc( virt_mem a, virt_mem b )
 
     a = *((virt_mem *)a);
     b = *((virt_mem *)b);
-    ReadInfo( a, &tmp, sizeof(procedure_descriptor) );
-    CopyInfo( a, b, sizeof(procedure_descriptor) );
-    PutInfo( b, &tmp, sizeof(procedure_descriptor) );
+    ReadInfo( a, &tmp, sizeof( procedure_descriptor ) );
+    CopyInfo( a, b, sizeof( procedure_descriptor ) );
+    PutInfo( b, &tmp, sizeof( procedure_descriptor ) );
 }
 
 static bool SetPDataArray( void *_sdata, void *_array )
@@ -974,11 +976,11 @@ static bool SetPDataArray( void *_sdata, void *_array )
     if( !sdata->isdead ) {
         size = sdata->length;
         data = sdata->data;
-        while( size >= sizeof(procedure_descriptor) ) {
+        while( size >= sizeof( procedure_descriptor ) ) {
             **array = data;
             *array += 1;
-            data += sizeof(procedure_descriptor);
-            size -= sizeof(procedure_descriptor);
+            data += sizeof( procedure_descriptor );
+            size -= sizeof( procedure_descriptor );
         }
     }
     return( FALSE );
@@ -1002,11 +1004,11 @@ static void SetMiscTableEntries( pe_header *hdr )
     leader = SetLeaderTable( CoffPDataSegName, &hdr->table[PE_TBL_EXCEPTION] );
     /* The .pdata section may end up being empty if the symbols got optimized out */
     if( leader != NULL && leader->size ) {
-        numpdatas = leader->size / sizeof(procedure_descriptor);
-        _ChkAlloc( sortarray, numpdatas * sizeof(virt_mem *) );
+        numpdatas = leader->size / sizeof( procedure_descriptor );
+        _ChkAlloc( sortarray, numpdatas * sizeof( virt_mem * ) );
         temp = sortarray;
         RingLookup( leader->pieces, SetPDataArray, &temp );
-        VMemQSort( (virt_mem) sortarray, numpdatas, sizeof(virt_mem *),
+        VMemQSort( (virt_mem)sortarray, numpdatas, sizeof( virt_mem * ),
                    SwapDesc, CmpDesc );
         _LnkFree( sortarray );
     }
@@ -1018,11 +1020,16 @@ static unsigned FindNumObjects( void )
     unsigned            num_objects;
 
     num_objects = NumGroups;
-    if( LinkState & MAKE_RELOCS ) ++num_objects;
-    if( FmtData.u.os2.exports != NULL ) ++num_objects;
-    if( LinkFlags & CV_DBI_FLAG ) ++num_objects;
-    if( FmtData.u.os2.description != NULL ) ++num_objects;
-    if( FmtData.resource != NULL || FmtData.u.pe.resources != NULL ) ++num_objects;
+    if( LinkState & MAKE_RELOCS )
+        ++num_objects;
+    if( FmtData.u.os2.exports != NULL )
+        ++num_objects;
+    if( LinkFlags & CV_DBI_FLAG )
+        ++num_objects;
+    if( FmtData.u.os2.description != NULL )
+        ++num_objects;
+    if( FmtData.resource != NULL || FmtData.u.pe.resources != NULL )
+        ++num_objects;
     return( num_objects );
 }
 
@@ -1056,7 +1063,7 @@ void FiniPELoadFile( void )
 
     CheckNumRelocs();
     num_objects = FindNumObjects();
-    head_size = sizeof(pe_header);
+    head_size = sizeof( pe_header );
     memset( &exe_head, 0, head_size ); /* zero all header fields */
     if( FmtData.u.pe.signature != 0 ) {
         exe_head.signature = FmtData.u.pe.signature;
@@ -1073,8 +1080,8 @@ void FiniPELoadFile( void )
     exe_head.magic = 0x10b;
     exe_head.num_objects = num_objects;
     exe_head.time_stamp = time( NULL );
-    exe_head.nt_hdr_size = head_size - offsetof(pe_header,flags)
-                                             - sizeof(exe_head.flags);
+    exe_head.nt_hdr_size = head_size - offsetof( pe_header, flags )
+                                             - sizeof( exe_head.flags );
     exe_head.flags = PE_FLG_REVERSE_BYTE_LO | PE_FLG_32BIT_MACHINE;
     if( !(LinkState & MAKE_RELOCS) ) {
         exe_head.flags |= PE_FLG_RELOCS_STRIPPED;
@@ -1163,7 +1170,7 @@ void FiniPELoadFile( void )
     _ChkAlloc( object, num_objects * sizeof( pe_object ) );
     memset( object, 0, num_objects * sizeof( pe_object ) );
     /* leave space for the header and object table */
-    PadLoad( head_size + num_objects * sizeof(pe_object) );
+    PadLoad( head_size + num_objects * sizeof( pe_object ) );
     GenPETransferTable();
     WriteImportInfo();
     SetMiscTableEntries( &exe_head );
@@ -1231,7 +1238,7 @@ void FiniPELoadFile( void )
                 DbgAssert( ( buffsize % 2 ) != 1 ); /* check for odd length */
                 currpos += buffsize;
 
-                crc = CalcPEChecksum( crc, (unsigned short *)buffer, (buffsize / sizeof(unsigned short)) );
+                crc = CalcPEChecksum( crc, (unsigned short *)buffer, buffsize / sizeof( unsigned short ) );
             }
 
             _LnkFree( buffer );
@@ -1267,9 +1274,9 @@ static void ReadExports( unsigned_32 namestart, unsigned_32 nameend,
     unsigned_16         *ordptr;
     char                *nameptr;
 
-    _ChkAlloc( ordbuf, numords * sizeof(unsigned_16) );
+    _ChkAlloc( ordbuf, numords * sizeof( unsigned_16 ) );
     QSeek( file, ordstart, fname );
-    QRead( file, ordbuf, numords * sizeof(unsigned_16), fname );
+    QRead( file, ordbuf, numords * sizeof( unsigned_16 ), fname );
     QSeek( file, namestart, fname );
     QRead( file, TokBuff, nameend - namestart, fname );
     nameptr = TokBuff,
@@ -1298,11 +1305,11 @@ void ReadPEExportTable( f_handle file, pe_hdr_table_entry *base )
     unsigned_32         namestart;
 
     fname = FmtData.u.os2.old_lib_name;
-    QRead( file, &table, sizeof(pe_export_directory), fname );
-    nameptrsize = table.num_name_ptrs * sizeof(unsigned_32);
+    QRead( file, &table, sizeof( pe_export_directory ), fname );
+    nameptrsize = table.num_name_ptrs * sizeof( unsigned_32 );
     if( nameptrsize == 0 )                      /* NOTE: <-- premature return */
         return;
-    _ChkAlloc( nameptrs, nameptrsize + sizeof(unsigned_32) );
+    _ChkAlloc( nameptrs, nameptrsize + sizeof( unsigned_32 ) );
     QSeek( file, table.name_ptr_table_rva - base->rva, fname );
     QRead( file, nameptrs, nameptrsize, fname );
     numentries = 1;
@@ -1310,19 +1317,19 @@ void ReadPEExportTable( f_handle file, pe_hdr_table_entry *base )
     curr = nameptrs;
     *curr -= base->rva;
     namestart = *curr++;
-    nameptrsize -= sizeof(unsigned_32);
+    nameptrsize -= sizeof( unsigned_32 );
     while( nameptrsize > 0 ) {
         *curr -= base->rva;
         if( *curr - namestart > TokSize ) {
             ReadExports( namestart, *(curr - 1), entrystart, numentries,
                          table.ordinal_base, file, fname );
-            entrystart += numentries * sizeof(unsigned_16);
+            entrystart += numentries * sizeof( unsigned_16 );
             numentries = 1;
             namestart = *(curr - 1);
         }
         numentries++;
         curr++;
-        nameptrsize -= sizeof(unsigned_32);
+        nameptrsize -= sizeof( unsigned_32 );
     }   /* NOTE! this assumes the name table is at the end */
     ReadExports( namestart, base->size + *nameptrs, entrystart, numentries,
                  table.ordinal_base, file, fname );

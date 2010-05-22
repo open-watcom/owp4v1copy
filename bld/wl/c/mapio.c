@@ -55,13 +55,13 @@ static char *MsgStrings[] = {
 #include "msg.h"
 
 typedef struct symrecinfo {
-    struct symrecinfo * next;
-    symbol *            sym;
-    mod_entry *         mod;
+    struct symrecinfo   *next;
+    symbol              *sym;
+    mod_entry           *mod;
 } symrecinfo;
 
-static symrecinfo *     UndefList;
-static symrecinfo *     SymTraceList;
+static symrecinfo       *UndefList;
+static symrecinfo       *SymTraceList;
 static  int             MapCol;
 static  time_t          StartT;
 static  clock_t         ClockTicks;
@@ -86,7 +86,7 @@ void StartTime( void )
 }
 
 
-static char * PutDec( char *ptr, unsigned num )
+static char *PutDec( char *ptr, unsigned num )
 /*********************************************/
 {
     *ptr++ = ( num / 10 ) % 10 + '0';
@@ -115,24 +115,24 @@ void StopMapBuffering( void )
 void MapInit( void )
 /*************************/
 {
-    char                tim[ 8 + 1 ];
-    char                dat[ 8 + 1 ];
+    char                tim[8 + 1];
+    char                dat[8 + 1];
     char                *ptr;
     struct tm           *localt;
     char                *msg;
 
     Absolute_Seg = FALSE;
     Buffering = FALSE;  // buffering on/off.
-    if( ( MapFlags & MAP_FLAG ) == 0 )
+    if( (MapFlags & MAP_FLAG) == 0 )
         return;
     MapFile = QOpenRW( MapFName );
     StartMapBuffering();
     localt = localtime( &StartT );
     MapCol = 0;
-    msg = MsgStrings[ PRODUCT ];
+    msg = MsgStrings[PRODUCT];
     BufWrite( msg, strlen( msg ) );
     WriteMapNL( 1 );
-    msg = MsgStrings[ COPYRIGHT ];
+    msg = MsgStrings[COPYRIGHT];
     BufWrite( msg, strlen( msg ) );
     WriteMapNL( 1 );
     ptr = tim;
@@ -179,7 +179,7 @@ static void WriteBox( unsigned int msgnum )
 void WriteGroups( void )
 /*****************************/
 {
-    group_entry *   currgrp;
+    group_entry     *currgrp;
 
     if( Groups != NULL ) {
         WriteBox( MSG_MAP_BOX_GROUP );
@@ -216,7 +216,7 @@ static void WriteNonAbsSeg( void *_seg )
 {
     seg_leader *seg = _seg;
 
-    if( !( seg->info & SEG_ABSOLUTE ) ) {
+    if( !(seg->info & SEG_ABSOLUTE) ) {
         WriteFormat( 0, seg->segname );
         WriteFormat( 23, seg->class->name );
         if( seg->group != NULL ) {
@@ -263,24 +263,24 @@ void WriteSegs( section *sect )
         WriteMapNL( 1 );
         count = 0;
         for( cl = sect->classlist; cl != NULL; cl = cl->next_class ) {
-            if( ( cl->flags & CLASS_DEBUG_INFO ) == 0 ) {
+            if( (cl->flags & CLASS_DEBUG_INFO) == 0 ) {
                 count += RingCount( cl->segs );
             }
         }
         _ChkAlloc( segs, count * sizeof( seg_info ) );
         count = 0;
         for( cl = sect->classlist; cl != NULL; cl = cl->next_class ) {
-            if( ( cl->flags & CLASS_DEBUG_INFO ) == 0 ) {
+            if( (cl->flags & CLASS_DEBUG_INFO) == 0 ) {
                 seg = NULL;
                 while( (seg = RingStep( cl->segs, seg )) != NULL ) {
-                    segs[ count ].idx = count;
-                    segs[ count++ ].seg = seg;
+                    segs[count].idx = count;
+                    segs[count++].seg = seg;
                 }
             }
         }
         qsort( segs, count, sizeof( seg_info ), cmp_seg );
         for( i = 0; i < count; ++i ) {
-            WriteNonAbsSeg( segs[ i ].seg );
+            WriteNonAbsSeg( segs[i].seg );
         }
         if( Absolute_Seg ) {
             WriteBox( MSG_MAP_BOX_ABS_SEG );
@@ -288,7 +288,7 @@ void WriteSegs( section *sect )
             Msg_Write_Map( MSG_MAP_TITLE_ABS_SEG_1 );
             WriteMapNL( 1 );
             for( i = 0; i < count; ++i ) {
-                WriteAbsSeg( segs[ i ].seg );
+                WriteAbsSeg( segs[i].seg );
             }
         }
         _LnkFree( segs );
@@ -313,12 +313,13 @@ void WritePubHead( void )
 void WritePubModHead( void )
 /*********************************/
 {
-    char        full_name[ PATH_MAX ];
+    char        full_name[PATH_MAX];
 
     if ( CurrMod->f.source == NULL ) {
         strcpy( full_name , CurrMod->name );
     } else {
-        char *  path_ptr;
+        char    *path_ptr;
+
         path_ptr = CurrMod->f.source->file->prefix;
         if( path_ptr != NULL ) {
             QMakeFileName( &path_ptr, CurrMod->f.source->file->name, full_name );
@@ -353,9 +354,9 @@ static void WriteModSegHead( void )
 static void WriteImports( void )
 /******************************/
 {
-    if( FmtData.type & ( MK_NOVELL | MK_OS2 | MK_PE ) ) {
+    if( FmtData.type & (MK_NOVELL | MK_OS2 | MK_PE) ) {
         WriteBox( MSG_MAP_BOX_IMP_SYM );
-        if( FmtData.type & ( MK_NOVELL | MK_ELF ) ) {
+        if( FmtData.type & (MK_NOVELL | MK_ELF) ) {
             Msg_Write_Map( MSG_MAP_TITLE_IMP_SYM_0 );
             Msg_Write_Map( MSG_MAP_TITLE_IMP_SYM_1 );
         } else {
@@ -410,7 +411,7 @@ static void WriteVerbSeg( void *_seg )
 static void WriteVerbMod( mod_entry *mod )
 /****************************************/
 {
-    if( mod->modinfo & MOD_NEED_PASS_2 && mod->segs != NULL ) {
+    if( (mod->modinfo & MOD_NEED_PASS_2) && mod->segs != NULL ) {
         WriteFormat( 0, mod->name );
         if( strlen( mod->name ) > 15 )
             WriteMapNL( 1 );
@@ -436,7 +437,7 @@ static bool CheckSymRecList( void *_info, void *sym )
 static void AddSymRecList( symbol *sym, symrecinfo **head )
 /*********************************************************/
 {
-    symrecinfo *        info;
+    symrecinfo      *info;
 
     if( RingLookup( *head, CheckSymRecList, sym ) == NULL ) {
         _ChkAlloc( info, sizeof( symrecinfo ) );
@@ -450,7 +451,7 @@ static void AddSymRecList( symbol *sym, symrecinfo **head )
 void ProcUndefined( symbol *sym )
 /***************************************/
 {
-    if( ( LinkFlags & UNDEFS_ARE_OK ) == 0 )
+    if( (LinkFlags & UNDEFS_ARE_OK) == 0 )
         LinkState |= LINK_ERROR;
     AddSymRecList( sym, &UndefList );
 }
@@ -466,8 +467,8 @@ void RecordTracedSym( symbol *sym )
 static void PrintUndefined( void *_info )
 /***************************************/
 {
-    symrecinfo *info = _info;
-    mod_entry * mod;
+    symrecinfo  *info = _info;
+    mod_entry   *mod;
 
     mod = info->mod;
     LnkMsg( YELL+MSG_UNDEF_SYM, "12S", mod->f.source->file->name, mod->name,
@@ -480,7 +481,7 @@ static void PrintUndefined( void *_info )
 static void PrintSymTrace( void *_info )
 /**************************************/
 {
-    symrecinfo * info = _info;
+    symrecinfo  *info = _info;
 
     LnkMsg( MAP+MSG_MOD_TRACE, "Ss", info->sym, info->mod->name );
 }
@@ -528,10 +529,10 @@ static void Write32( char *s, unsigned_32 size )
 void WriteLibsUsed( void )
 /*******************************/
 {
-    file_list * lib;
-    char *      name;
-    char *      path_ptr;
-    char        new_name[ PATH_MAX ];
+    file_list   *lib;
+    char        *name;
+    char        *path_ptr;
+    char        new_name[PATH_MAX];
 
     if( LinkState & GENERATE_LIB_LIST ) {
         WriteBox( MSG_MAP_BOX_LIB_USED );
@@ -568,11 +569,11 @@ void MapSizes( void )
     Write32( msg_buff, StackSize );
     Msg_Get( MSG_MAP_MEM_SIZE, msg_buff );
     Write32( msg_buff, MemorySize() );
-    if( FmtData.type & MK_OVERLAYS && FmtData.u.dos.dynamic ) {
+    if( (FmtData.type & MK_OVERLAYS) && FmtData.u.dos.dynamic ) {
         Msg_Get( MSG_MAP_OVL_SIZE, msg_buff );
         Write32( msg_buff, (unsigned long)AreaSize * 16 );
     }
-    if( !( FmtData.type & MK_NOVELL ) && ( !FmtData.dll || ( FmtData.type & MK_PE ) ) ){
+    if( !(FmtData.type & MK_NOVELL) && ( !FmtData.dll || (FmtData.type & MK_PE) ) ){
         Msg_Write_Map( MSG_MAP_ENTRY_PT_ADDR, &StartInfo.addr );
     }
 }
@@ -580,12 +581,12 @@ void MapSizes( void )
 void EndTime( void )
 /*************************/
 {
-    char *      ptr;
+    char        *ptr;
     signed_16   h;
     signed_16   m;
     signed_16   s;
     signed_16   t;
-    char        tim[ 11 + 1 ];
+    char        tim[11 + 1];
 
     if( MapFlags & MAP_FLAG ) {
 
@@ -628,7 +629,7 @@ void WriteMapNL( unsigned count )
     }
 }
 
-static unsigned MapPrint( char *str, va_list * args )
+static unsigned MapPrint( char *str, va_list *args )
 /***************************************************/
 {
     char        buff[MAX_MSG_SIZE];
@@ -639,7 +640,7 @@ static unsigned MapPrint( char *str, va_list * args )
     return( len );
 }
 
-void DoWriteMap( char *format, va_list * arglist )
+void DoWriteMap( char *format, va_list *arglist )
 /*******************************************************/
 {
     if( MapFlags & MAP_FLAG ) {

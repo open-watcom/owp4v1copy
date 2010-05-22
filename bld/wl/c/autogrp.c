@@ -116,7 +116,7 @@ static seg_leader *GetNextSeg( section *sec, seg_leader *seg )
 
     if( seg == NULL ) {
         for( class = sec->classlist; class != NULL; class = class->next_class ) {
-            if( !( class->flags & CLASS_DEBUG_INFO ) ) {
+            if( !(class->flags & CLASS_DEBUG_INFO) ) {
                  break;
             }
         }
@@ -129,7 +129,7 @@ static seg_leader *GetNextSeg( section *sec, seg_leader *seg )
     seg = RingStep( class->segs, seg );
     while( seg == NULL ) {
         for( class = class->next_class; class != NULL; class = class->next_class ) {
-            if( !( class->flags & CLASS_DEBUG_INFO ) ) {
+            if( !(class->flags & CLASS_DEBUG_INFO) ) {
                  break;
             }
         }
@@ -153,7 +153,7 @@ static bool CanPack( seg_leader *one, seg_leader *two )
             return( FALSE );
         }
     }
-    if( ( one->info & (USE_32 | SEG_CODE) ) != ( two->info & (USE_32 | SEG_CODE) ) )
+    if( (one->info & (USE_32 | SEG_CODE)) != (two->info & (USE_32 | SEG_CODE)) )
         return( FALSE );
     if( one->segflags != two->segflags || (two->segflags & SEG_FIXED) )
         return( FALSE );
@@ -233,10 +233,10 @@ static void PackSegs( seg_leader *seg, unsigned num_segs )
     group->section = seg->class->section;
     while( num_segs != 0 ) {
         if( seg->group == NULL || seg->group == group ) {
-            if( !( seg->info & SEG_CODE ) ) {
+            if( !(seg->info & SEG_CODE) ) {
                 group->segflags |= SEG_DATA;
             }
-            if( !( seg->class->flags & CLASS_READ_ONLY ) ) {
+            if( !(seg->class->flags & CLASS_READ_ONLY) ) {
                 group->segflags &= ~SEG_READ_ONLY;
             }
             if( seg->class->flags & CLASS_COPY ) {  // If class is copied, mark group accordingly
@@ -374,7 +374,7 @@ static void FindSplitGroups( void )
 {
     group_entry     *group;
 
-    if( !( FmtData.type & MK_OVERLAYS ) )
+    if( !(FmtData.type & MK_OVERLAYS) )
         return;
     for( group = Groups; group != NULL; group = group->next_group ) {
         if( Ring2Lookup( group->leaders, CheckGroupSplit, group->section ) ) {
