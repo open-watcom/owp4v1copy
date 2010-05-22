@@ -25,6 +25,15 @@ test_exes  = &
     list03.$(exe) &
     list04.$(exe) &
     list05.$(exe) &
+    map01.$(exe) &
+    map02.$(exe) &
+    map03.$(exe) &
+    map04.$(exe) &
+    map05.$(exe) &
+    map06.$(exe) &
+    map07.$(exe) &
+    map08.$(exe) &
+    map09.$(exe) &
 
 
 ext = $(ext_$(arch))
