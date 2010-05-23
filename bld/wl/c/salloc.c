@@ -55,7 +55,7 @@ void NormalizeAddr( void )
 {
     unsigned_32 new_seg;
 
-    DbgAssert( !(FmtData.type & (MK_PROT_MODE & MK_DOS16M)) );
+    DbgAssert( !(FmtData.type & MK_PROT_MODE) );
 
     if( CurrSect == NonSect || !FmtData.u.dos.ovl_short ) {
         new_seg = (CurrLoc.off >> FmtData.SegShift) + CurrLoc.seg;

@@ -135,7 +135,7 @@ void FiniLoadFile( void )
         BinOutput();                    //    they apply to all formats
     } else if ( FmtData.output_hex ) {  //    and override native output
         HexOutput();
-    } else if( FmtData.type & MK_REAL_MODE ) {
+    } else if( FmtData.type & MK_DOS ) {
         FiniDOSLoadFile();
 #ifdef _OS2
     } else if( IS_PPC_OS2 ) {
@@ -1060,7 +1060,7 @@ void FreeOutFiles( void )
     }
 }
 
-static void *SetToZero( void *dest, const void *dummy, size_t size )
+static void *SetToFillChar( void *dest, const void *dummy, size_t size )
 /******************************************************************/
 {
     memset( dest, FmtData.FillChar, size );
@@ -1077,7 +1077,7 @@ void PadLoad( unsigned long size )
         return;
     outfile = CurrSect->outfile;
     if( outfile->buffer != NULL ) {
-        WriteBuffer( NULL, size, outfile, SetToZero );
+        WriteBuffer( NULL, size, outfile, SetToFillChar );
     } else {
         WriteNulls( outfile->handle, size, outfile->fname );
     }
@@ -1090,7 +1090,7 @@ void PadBuffFile( outfilelist *outfile, unsigned long size )
     if( size == 0 )
         return;
     if( outfile->buffer != NULL ) {
-        WriteBuffer( NULL, size, outfile, SetToZero );
+        WriteBuffer( NULL, size, outfile, SetToFillChar );
     } else {
         WriteNulls( outfile->handle, size, outfile->fname );
     }
