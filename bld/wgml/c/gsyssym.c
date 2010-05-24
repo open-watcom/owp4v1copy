@@ -966,15 +966,15 @@ static void syssysfun( symvar * e )
     return;
 };
 
-static void systabfun( symvar * e )
+static void systabfun( symvar * e )     // current user-defined tab character
 {
-    var_wng( e->name );
+    *systabstr = tab_char;
     return;
 };
 
-static void systbfun( symvar * e )
+static void systbfun( symvar * e )     // current user-defined tab character
 {
-    var_wng( e->name );
+    *systbstr = tab_char;
     return;
 };
 

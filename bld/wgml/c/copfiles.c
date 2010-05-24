@@ -40,11 +40,11 @@
 *                   fb_position()
 *                   fb_start()
 *                   fb_vline()
-*               plus these local variables:
+*               plus these static variables:
 *                   bin_fonts
 *                   cur_token
 *                   ti_table
-*               and these local functions:
+*               and these static functions:
 *                   compute_metrics()
 *                   find_cop_font()
 *                   find_dev_font()
@@ -88,13 +88,13 @@
 #include "outbuff.h"
 #include "wgml.h"
 
-/* Local data. */
+/* Static data. */
 
 static cop_font        *   bin_fonts;       // binary fonts being used (linked list)
 static record_buffer   *   cur_token;       // Current token.
 static uint8_t             ti_table[0x100]; // .TI-controlled translation table
 
-/* Local function definitions. */
+/* Static function definitions. */
 
 /* Function scale_basis_to_horizontal_base_units().
  * Converts a length expressed in scale_basis units to the same length
@@ -808,8 +808,8 @@ uint8_t cop_in_trans( uint8_t in_char, uint8_t font )
 }
 
 /* Function cop_setup().
- * Initializes the various globals specific to the binary device library
- * subsystem. And the local.
+ * Initialize the static globals and those extern globals which depend either
+ * contain information from or depend on information in the device library.
  */
 
 void cop_setup( void )
@@ -821,6 +821,7 @@ void cop_setup( void )
     int                 i;
     int                 j;
     opt_font        *   cur_opt         = NULL;
+    uint32_t            first_tab;
     wgml_font           def_font;
 
     /* A "device" option must have been processed,
@@ -833,7 +834,7 @@ void cop_setup( void )
         g_suicide();
     }
 
-    /* Set the globals to known values. */
+    /* Set the externs to known values. */
 
     bin_device = NULL;
     bin_driver = NULL;
@@ -842,7 +843,7 @@ void cop_setup( void )
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
 
-    /* Initialize the local variables. */
+    /* Initialize the static variables. */
 
     bin_fonts = NULL;
 
@@ -854,6 +855,8 @@ void cop_setup( void )
     for( i = 0; i < 0x100; i++) {
         ti_table[i] = i;
     }
+
+    /* Initialize the extern variables. */
 
     /* Emit the expected message. */
 
@@ -1307,6 +1310,8 @@ void cop_setup( void )
         }
     }
 
+    /* Initialize items dependent on the device library. */
+
     /* Initialize the width_table entries. This is done here because it is
      * not clear whether or not a more efficient method is needed. Note that
      * all wgml_font instances will have a valid table, and that different
@@ -1342,6 +1347,25 @@ void cop_setup( void )
         wgml_fonts[i].em_base = wgml_fonts[i].width_table['M'];
         wgml_fonts[i].spc_width = wgml_fonts[i].width_table[' '];
     }
+
+    /* Initialize the default tabs and related extern variables. */
+
+    first_tab = (6 * (bin_device->horizontal_base_units / 10)) - 1;
+    inter_tab = 5 * (bin_device->horizontal_base_units / 10);
+
+    def_tabs.tabs = mem_alloc( TAB_COUNT * sizeof( tab_stop ) );
+    def_tabs.length = TAB_COUNT;
+    def_tabs.tabs[0].column = g_page_left + first_tab;
+    def_tabs.tabs[0].fill_char = ' ';
+    def_tabs.tabs[0].alignment = ' ';
+    for( i = 1; i < def_tabs.length; i++ ) {
+        def_tabs.tabs[i].column = def_tabs.tabs[i - 1].column + inter_tab;
+        def_tabs.tabs[i].fill_char = ' ';
+        def_tabs.tabs[i].alignment = ' ';
+    }
+    def_tabs.current = def_tabs.length;
+
+    cur_tabs = &def_tabs;
 
     /* Initialize the dependent modules. */
 
@@ -1392,6 +1416,15 @@ void cop_teardown( void )
         mem_free( cur_token );
         cur_token = NULL;
     }
+
+    /* Free def_tabs.tabs. */
+
+    if( def_tabs.tabs != NULL ) {
+        mem_free( def_tabs.tabs );
+        def_tabs.tabs = NULL;
+    }
+
+    cur_tabs = NULL;
 
     /* Release any memory allocated by the dependent modules. */
 

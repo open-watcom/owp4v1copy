@@ -73,6 +73,8 @@
 #define MAX_CPI         100             // not documented, assumed
 #define MAX_LPI         100             // not documented, assumed
 
+#define TAB_COUNT       16              // used with tab_list
+
 
 /* default filename extensions */
 #define DEF_EXT         ".def"
@@ -785,5 +787,22 @@ typedef struct tag_cb {
     bool                compact;        // :dl :gl :ol :sl :ul
     e_tags              c_tag;
 } tag_cb;
+
+/***************************************************************************/
+/*  a single tab stop and an array of tab stops                            */
+/***************************************************************************/
+
+typedef struct {
+    uint32_t            column;
+//    char        *       fill_str; multi-char fill string: only use if needed
+    char                alignment;
+    char                fill_char;
+} tab_stop;
+
+typedef struct {
+    uint16_t            current;
+    uint16_t            length;
+    tab_stop       *    tabs;
+} tab_list;
 
 #endif                                  // GTYPE_H_INCLUDED

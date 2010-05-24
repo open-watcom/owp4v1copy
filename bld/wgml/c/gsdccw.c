@@ -346,7 +346,7 @@ void    scr_dc( void )
     int             k;
     char    string[2] = { 0, 0 };
     int             opt;
-    static const char   options[3] [5] = { "cw", "gml" };
+    static const char   options[4] [5] = { "cw", "gml", "tb" };
                                         // please add new options at end
     int             max_opt = sizeof( options) / sizeof( options[0] );
 
@@ -447,6 +447,27 @@ void    scr_dc( void )
         add_symvar( &global_dict, "gml", string, no_subscript,
                     predefined + late_subst);
         add_to_sysdir( "$gml", GML_char );
+        break;
+    case 3 :                            // TB option
+        if( len == 3 ) {
+            if( strnicmp( pa, "OFF", len ) ) {
+                *p = '\0';
+                dc_opt_err( pa );       // only OFF is valid
+                return;
+            }
+            c = 0x09;                   // OFF is 0x09
+        } else {
+            if( len != 1 ) {
+                *p = '\0';
+                dc_opt_err( pa );       // only 1 char is valid
+                return;
+            }
+        }
+        scan_restart = pa + len;
+        tab_char = c;
+        string[0] = c;
+        add_to_sysdir( "$tb", tab_char );
+        add_to_sysdir( "$tab", tab_char );
         break;
     default:                            // unknown / unimplemented option
         *p = '\0';

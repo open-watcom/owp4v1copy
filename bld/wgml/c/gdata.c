@@ -106,6 +106,7 @@ void init_global_vars( void )
     fm                  = 0;            // heading margin          &$hm
 
     in_esc              = ' ';
+    tab_char            = 0x09;
     t_line.first        = NULL;
     t_line.y_address    = 0;
     text_pool           = NULL;

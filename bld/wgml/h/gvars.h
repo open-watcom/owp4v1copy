@@ -216,6 +216,9 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input escape char from .ti
 
+global  uint32_t    inter_tab;          // distance between default tabs
+global  char        tab_char;           // tab character from .tb 
+
 global text_line    t_line;             // for constructing output line
 global text_chars * p_char;             // previous text char   "
 global text_chars * text_pool;          // for reuse of text_chars structs
@@ -295,6 +298,14 @@ global  int32_t         lay_ind;// index into lay_tab for attribute processing
 global  layout_data     layout_work;    // layout used for formatting
 global  char        *   lay_file;       // layout file specified on cmdline
 
+
+/***************************************************************************/
+/* Pointer to current set of tabs and the tab lists.                       */
+/***************************************************************************/
+
+global  tab_list    *   cur_tabs;   // initially set to &def_tabs
+global  tab_list        def_tabs;   // tabs at columns 6, 11, 16, ..., 81
+//global  tab_list        user_tabs;   // will be used for .tb <n ...> tabs
 
 /***************************************************************************/
 /* Layout attribute names as character strings                             */

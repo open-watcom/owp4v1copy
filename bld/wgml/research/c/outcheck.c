@@ -29,7 +29,6 @@
 *                   print_banner()
 *                   print_usage()
 *               as well as these #define macros:
-*                   TAB_COUNT
 *                   TEXT_START
 *               and these enums:
 *                   oc_construct_type
@@ -50,14 +49,11 @@
 *                   oc_concat
 *                   oc_cur_page
 *                   oc_cur_post_skip
-*                   oc_cur_tabs
-*                   oc_default_tabs
 *                   oc_document_start
 *                   oc_element_pool
 *                   oc_font_number
 *                   oc_hyphen_width
 *                   oc_indent
-*                   oc_inter_tab
 *                   oc_is_paragraph
 *                   oc_line_height_zero
 *                   oc_max_depth
@@ -72,7 +68,6 @@
 *                   oc_pre_skip
 *                   oc_pre_top_skip
 *                   oc_script
-*                   oc_tab_char
 *                   oc_text_chars_pool
 *                   oc_text_line_pool
 *               and these local functions:
@@ -118,9 +113,8 @@
 #include "research.h"
 #include "wgml.h"
 
-/* These are used with structs whose length can vary. */
+/* This is used with a struct whose length can vary. */
 
-#define TAB_COUNT 16    // oc_hpos_list
 #define TEXT_START 32   // text_chars
 
 /* Enum definitions. */
@@ -194,7 +188,7 @@ typedef struct {
 } oc_page;
 
 typedef uint32_t    oc_hpos_t;
-
+  
 typedef struct {
     uint16_t            current;
     uint16_t            length;
@@ -218,12 +212,9 @@ static  bool                oc_is_paragraph         = false;
 static  bool                oc_new_page             = false;
 static  bool                oc_new_section          = false;
 static  bool                oc_script               = false;
-static  char                oc_tab_char             = '\t';
 static  oc_element      *   oc_element_pool         = NULL;
 static  oc_element      *   oc_new_element          = NULL;
 static  oc_column           oc_next_column          = { 0, NULL, NULL };
-static  oc_hpos_list    *   oc_cur_tabs             = NULL;
-static  oc_hpos_list        oc_default_tabs         = { 0, 0, NULL};
 static  oc_page             oc_cur_page             = { false, { 0, NULL, NULL } };
 static  text_chars      *   oc_text_chars_pool      = NULL;
 static  text_line       *   oc_text_line_pool       = NULL;
@@ -231,7 +222,6 @@ static  uint8_t             oc_font_number          = 0;
 static  uint32_t            oc_cur_post_skip        = 0;
 static  uint32_t            oc_hyphen_width         = 0;
 static  uint32_t            oc_indent               = 0;
-static  uint32_t            oc_inter_tab            = 0;
 static  uint32_t            oc_line_height_zero     = 0;
 static  uint32_t            oc_max_depth            = 0;
 static  uint32_t            oc_old_post_skip        = 0;
@@ -1273,7 +1263,7 @@ static uint32_t oc_text_chars_width( uint8_t * text, uint32_t count, \
     uint32_t    retval      = 0;
 
     for( i = 0; i < count; i++) {
-        if( (text[i] == '\t') || (text[i] == oc_tab_char) ) {
+        if( (text[i] == '\t') || (text[i] == tab_char) ) {
             break;
         }
         cur_count++;   
@@ -1307,17 +1297,18 @@ static uint32_t oc_tab_position( uint32_t cur_pos )
 
     /* Resize tab_list if necessary. */
 
-    last_tab = oc_cur_tabs->hpos[oc_cur_tabs->current - 1];
+    last_tab = cur_tabs->tabs[cur_tabs->current - 1].column;
     if( cur_pos > last_tab ) {
 
         /* Compute the minimum number of additional tab stops needed. */
 
         req_width = cur_pos - last_tab;
-        req_count = (req_width / oc_inter_tab) + 1;
+        req_count = (req_width / inter_tab) + 1;
 
         /* See if additional space is needed. */
 
-        if( (oc_cur_tabs->current + req_count) > oc_cur_tabs->length ) {
+        if( (cur_tabs->tabs[cur_tabs->current - 1].column + req_count) > \
+                                                        cur_tabs->length ) {
 
             /* Compute the new size. The intent is to add enough tabs not
              * only for the current value, but for up to TAB_COUNT - 1 more.
@@ -1326,25 +1317,28 @@ static uint32_t oc_tab_position( uint32_t cur_pos )
             req_count /= TAB_COUNT;
             req_count++;
 
-            req_length = oc_cur_tabs->length + (req_count * TAB_COUNT);
-            oc_cur_tabs->hpos = mem_realloc( oc_cur_tabs->hpos, \
-                                        req_length * sizeof( oc_hpos_t ) );
-            oc_cur_tabs->length = req_length;
+            req_length = cur_tabs->length + (req_count * TAB_COUNT);
+            cur_tabs->tabs = mem_realloc( cur_tabs->tabs, \
+                                        req_length * sizeof( tab_stop ) );
+            cur_tabs->length = req_length;
         }
 
         /* Set tabs up to the last available position in the hpos array. */
 
-        for( i = oc_cur_tabs->current; i < oc_cur_tabs->length; i++ ) {
-            oc_cur_tabs->hpos[i] = oc_cur_tabs->hpos[i - 1] + oc_inter_tab;
+        for( i = cur_tabs->current; i < cur_tabs->length; i++ ) {
+            cur_tabs->tabs[i].column = cur_tabs->tabs[i - 1].column + \
+                                                                    inter_tab;
+            cur_tabs->tabs[i].fill_char = ' ';
+            cur_tabs->tabs[i].alignment = ' ';
         }
-        oc_cur_tabs->current = oc_cur_tabs->length;
+        cur_tabs->current = cur_tabs->length;
     }
 
     /* Skip all tab stops to the left of cur_pos. */
 
-    for( i = 0; i < oc_cur_tabs->current; i++ ) {
-        if( cur_pos < oc_cur_tabs->hpos[i] ) {
-            retval = oc_cur_tabs->hpos[i];
+    for( i = 0; i < cur_tabs->current; i++ ) {
+        if( cur_pos < cur_tabs->tabs[i].column ) {
+            retval = cur_tabs->tabs[i].column;
             break;
         }
     }
@@ -1386,7 +1380,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
     /* The first word is to be left in in_chars. */
 
     for( i = 0; i < count; i++) {
-        if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+        if( (cur_text[i] == '\t') || (cur_text[i] == tab_char) ) {
             break;
         }
         cur_count++;
@@ -1404,7 +1398,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
         /* Move to the next character and check it. */
 
         i++;
-        if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+        if( (cur_text[i] == '\t') || (cur_text[i] == tab_char) ) {
 
             /* If the second character is also a wgml tab, in_chars becomes
              * an empty text_chars.
@@ -1420,7 +1414,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
 
             start = i;
             for( i; i < count; i++ ) {
-                if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+                if( (cur_text[i] == '\t') || (cur_text[i] == tab_char) ) {
                     break;                
                 }
             }
@@ -1465,7 +1459,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
             /* Get the next word. */
 
             for( i; i < count; i++ ) {
-                if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+                if( (cur_text[i] == '\t') || (cur_text[i] == tab_char) ) {
                     break;
                 }
             }                
@@ -1499,7 +1493,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
          */
 
         i = count - 1;
-        if( (cur_text[i] == '\t') || (cur_text[i] == oc_tab_char) ) {
+        if( (cur_text[i] == '\t') || (cur_text[i] == tab_char) ) {
             retval = oc_alloc_text_chars( NULL, 0, in_chars->font_number, \
                                                             in_chars->type );
             retval->x_address = cur_h_address;
@@ -2784,7 +2778,6 @@ static void emulate_wgml( void )
     oc_element      *   te_pool_ptr = NULL;
     text_chars      *   tc_pool_ptr = NULL;
     text_line       *   tl_pool_ptr = NULL;
-    uint32_t            first_tab;
     uint32_t            max_char_width;
     uint32_t            oc_h_len; // needed?
     uint32_t            oc_v_len; // needed?
@@ -2889,24 +2882,6 @@ static void emulate_wgml( void )
                                                      - bin_device->x_offset;
     oc_indent = bin_device->horizontal_base_units / 2;
 
-    /* Set up the default tabs and initialize oc_cur_tabs.
-     * Note: the margin, that is, oc_page_left, is included in the
-     *       tab stop values. This may or may not work in wgml.
-     */
-
-    first_tab = (6 * (bin_device->horizontal_base_units / 10)) - 1;
-    oc_inter_tab = 5 * (bin_device->horizontal_base_units / 10);
-
-    oc_default_tabs.hpos = mem_alloc( TAB_COUNT * sizeof( oc_hpos_t ) );
-    oc_default_tabs.length = TAB_COUNT;
-    oc_default_tabs.hpos[0] = oc_page_left + first_tab;
-    for( i = 1; i < oc_default_tabs.length; i++ ) {
-        oc_default_tabs.hpos[i] = oc_default_tabs.hpos[i - 1] + oc_inter_tab;
-    }
-    oc_default_tabs.current = oc_default_tabs.length;
-
-    oc_cur_tabs = &oc_default_tabs;
-
     /* This was originally created to be used in outcheck.c but not necessarily
      * in our wgml to simplify situations where the line height is either not
      * known or not well defined. However, it is also used with hyphenation,
@@ -2969,9 +2944,14 @@ static void emulate_wgml( void )
 
     /* Output the text paragraphs. */
 
+    /* Set both system variables, just as ".dc tb" would do. */
+
+    tab_char = tab_char = '>';
+    add_to_sysdir( "$tb", tab_char );
+    add_to_sysdir( "$tab", tab_char );
+
     /* We are still in "script" mode with concatenation on. */
 
-    oc_tab_char = '>';
     emulate_layout_page( intro_cosc, oc_paragraph );
     emulate_layout_page( para_font, oc_paragraph );
     emulate_layout_page( para_long, oc_paragraph );
@@ -3010,8 +2990,12 @@ static void emulate_wgml( void )
     emulate_layout_page( para_stop, oc_paragraph );
     emulate_layout_page( para_subsup, oc_paragraph );
     emulate_layout_page( para_tab, oc_paragraph );
-    oc_tab_char = '\t';
 
+    /* Reset the tab-related system symbols. */
+
+    tab_char = tab_char = 0x09;
+    add_to_sysdir( "$tb", tab_char );
+    add_to_sysdir( "$tab", tab_char );
 
 #if 0 // restore when boxing is done again and blank-line-insertion is handled
     /* A blank line is placed between paragraphs. */
@@ -3110,13 +3094,6 @@ static void emulate_wgml( void )
     fb_finish();
 
     /* Free allocated memory. */
-
-    /* Free the wgml-tab related objects. */
-
-    if( oc_default_tabs.hpos != NULL ) {
-        mem_free( oc_default_tabs.hpos );
-        oc_default_tabs.hpos = NULL;
-    }
 
     /* Free the memory held by the oc_element pool. */
 
