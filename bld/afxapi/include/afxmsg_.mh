@@ -75,7 +75,21 @@ enum AfxSig {
     AfxSigCmd_v_pv,
     AfxSigCmd_b_pv,
     AfxSig_l,
-    AfxSig_l_p
+    AfxSig_l_p,
+    AfxSig_u_W_u,
+    AfxSig_v_u_M,
+    AfxSig_u_u_M,
+    AfxSig_u_v_MENUGETOBJECTINFO,
+    AfxSig_v_M_u,
+    AfxSig_v_u_LPMDINEXTMENU,
+    AfxSig_APPCOMMAND,
+    AfxSig_RAWINPUT,
+    AfxSig_u_u_u,
+    AfxSig_MOUSE_XBUTTON,
+    AfxSig_MOUSE_NCXBUTTON,
+    AfxSig_INPUTLANGCHANGE,
+    AfxSig_v_u_hkl,
+    AfxSig_INPUTDEVICECHANGE
 };
 
 // Command notification codes
@@ -323,9 +337,6 @@ enum AfxSig {
 #define ON_WM_MOUSEMOVE() \
     { WM_MOUSEMOVE, 0, 0, 0, AfxSig_v_u_p, \
       (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, CPoint ))OnMouseMove },
-#define ON_WM_MOUSEWHEEL() \
-    { WM_MOUSEWHEEL, 0, 0, 0, AfxSig_MOUSEWHEEL, \
-      (AFX_PMSG)(AFX_PMSGW)(BOOL (CWnd::*)( UINT, short, CPoint ))OnMouseWheel },
 #define ON_WM_MOVE() \
     { WM_MOVE, 0, 0, 0, AfxSig_v_v_ii, \
       (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT ))OnMove },
@@ -505,10 +516,70 @@ enum AfxSig {
       (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( WINDOWPOS * ))OnWindowPosChanging },
 #define ON_WM_WININICHANGE() \
     { WM_WININICHANGE, 0, 0, 0, AfxSig_v_v_s, \
-      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( LPTSTR )) },
+      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( LPTSTR ))OnWinIniChange },
 #define ON_WM_WTSSESSION_CHANGE() \
     { WM_WTSSESSION_CHANGE, 0, 0, 0, AfxSig_v_u_u, \
-      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT )) },
+      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT ))OnSessionChange },
+#if (WINVER >= 0x0500)
+    #define ON_WM_MENUDRAG() \
+        { WM_MENUDRAG, 0, 0, 0, AfxSig_u_u_M, \
+          (AFX_PMSG)(AFX_PMSGW)(UINT (CWnd::*)( UINT, CMenu * ))OnMenuDrag },
+    #define ON_WM_MENUGETOBJECT() \
+        { WM_MENUGETOBJECT, 0, 0, 0, AfxSig_u_v_MENUGETOBJECTINFO, \
+          (AFX_PMSG)(AFX_PMSGW)(UINT (CWnd::*)( MENUGETOBJECTINFO *))OnMenuGetObject },
+    #define ON_WM_MENURBUTTONUP() \
+        { WM_MENURBUTTONUP, 0, 0, 0, AfxSig_v_u_M, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, CMenu * ))OnMenuRButtonUp },
+    #define ON_WM_UNINITMENUPOPUP() \
+        { WM_UNINITMENUPOPUP, 0, 0, 0, AfxSig_v_M_u, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( CMenu *, UINT ))OnUnInitMenuPopup },
+#endif
+#if (WINVER >= 0x0500) || (_WIN32_WINNT >= 0x0400)
+    #define ON_WM_MOUSEWHEEL() \
+        { WM_MOUSEWHEEL, 0, 0, 0, AfxSig_MOUSEWHEEL, \
+          (AFX_PMSG)(AFX_PMSGW)(BOOL (CWnd::*)( UINT, short, CPoint ))OnMouseWheel },
+#endif
+#if (WINVER >= 0x0500) || (_WIN32_WINNT >= 0x0400) || (_WIN32_IE >= 0x0300)
+    #define ON_WM_MOUSEHOVER() \
+        { WM_MOUSEHOVER, 0, 0, 0, AfxSig_v_u_p, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, CPoint ))OnMouseHover },
+    #define ON_WM_MOUSELEAVE() \
+        { WM_MOUSELEAVE, 0, 0, 0, AfxSig_v_v_v, (AFX_PMSG)(AFX_PMSGW)OnMouseLeave },
+#endif
+#if (_WIN32_WINNT >= 0x0500)
+    #define ON_WM_CHANGEUISTATE() \
+        { WM_CHANGEUISTATE, 0, 0, 0, AfxSig_v_uu_v, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT ))OnChangeUIState },
+    #define ON_WM_NCXBUTTONDBLCLK() \
+        { WM_NCXBUTTONDBLCLK, 0, 0, 0, AfxSig_MOUSE_NCXBUTTON, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( short, UINT, CPoint ))OnNcXButtonDblClk },
+    #define ON_WM_NCXBUTTONDOWN() \
+        { WM_NCXBUTTONDOWN, 0, 0, 0, AfxSig_MOUSE_NCXBUTTON, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( short, UINT, CPoint ))OnNcXButtonDown },
+    #define ON_WM_NCXBUTTONUP() \
+        { WM_NCXBUTTONUP, 0, 0, 0, AfxSig_MOUSE_NCXBUTTON, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( short, UINT, CPoint ))OnNcXButtonUp },
+    #define ON_WM_QUERYUISTATE() \
+        { WM_QUERYUISTATE, 0, 0, 0, AfxSig_u_v_v, \
+          (AFX_PMSG)(AFX_PMSGW)(UINT (CWnd::*)())OnQueryUIState },
+    #define ON_WM_UPDATEUISTATE() \
+        { WM_UPDATEUISTATE, 0, 0, 0, AfxSig_v_uu_v, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT ))OnUpdateUIState },
+    #define ON_WM_XBUTTONDBLCLK() \
+        { WM_XBUTTONDBLCLK, 0, 0, 0, AfxSig_MOUSE_XBUTTON, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT, CPoint ))OnXButtonDblClk },
+    #define ON_WM_XBUTTONDOWN() \
+        { WM_XBUTTONDOWN, 0, 0, 0, AfxSig_MOUSE_XBUTTON, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT, CPoint ))OnXButtonDown },
+    #define ON_WM_XBUTTONUP() \
+        { WM_XBUTTONUP, 0, 0, 0, AfxSig_MOUSE_XBUTTON, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT, CPoint ))OnXButtonUp },
+#endif
+#if (_WIN32_WINNT >= 0x0501)
+    #define ON_WM_INPUT() \
+        { WM_INPUT, 0, 0, 0, AfxSig_RAWINPUT, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, HRAWINPUT ))OnRawInput },
+#endif
 
 // Button notification handling macros
 #define ON_BN_CLICKED( id, memberFxn ) \

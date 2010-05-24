@@ -55,6 +55,7 @@ typedef void    (CWnd::*PHANDLER_V_H_V)( HANDLE );
 typedef void    (CWnd::*PHANDLER_V_H_H)( HANDLE, HANDLE );
 typedef void    (CWnd::*PHANDLER_V_U_V)( UINT );
 typedef void    (CWnd::*PHANDLER_V_U_U)( UINT, UINT );
+typedef void    (CWnd::*PHANDLER_V_UU_V)( UINT, UINT );
 typedef void    (CWnd::*PHANDLER_V_V_II)( int, int );
 typedef void    (CWnd::*PHANDLER_V_U_UU)( UINT, UINT, UINT );
 typedef void    (CWnd::*PHANDLER_V_U_II)( UINT, int, int );
@@ -83,6 +84,13 @@ typedef void    (CWnd::*PHANDLER_V_U_P)( UINT, CPoint );
 typedef void    (CWnd::*PHANDLER_SIZING)( UINT, LPRECT );
 typedef BOOL    (CWnd::*PHANDLER_MOUSEWHEEL)( UINT, short, CPoint );
 typedef LRESULT (CWnd::*PHANDLER_L_P)( CPoint );
+typedef void    (CWnd::*PHANDLER_V_U_M)( UINT, CMenu * );
+typedef UINT    (CWnd::*PHANDLER_U_U_M)( UINT, CMenu * );
+typedef UINT    (CWnd::*PHANDLER_U_V_MENUGETOBJECTINFO)( MENUGETOBJECTINFO * );
+typedef void    (CWnd::*PHANDLER_V_M_U)( CMenu *, UINT );
+typedef void    (CWnd::*PHANDLER_RAWINPUT)( UINT, HRAWINPUT );
+typedef void    (CWnd::*PHANDLER_MOUSE_XBUTTON)( UINT, UINT, CPoint );
+typedef void    (CWnd::*PHANDLER_MOUSE_NCXBUTTON)( short, UINT, CPoint );
 
 // HtmlHelp() function
 typedef HWND (WINAPI *PFN_HTMLHELP)( HWND, LPCTSTR, UINT, DWORD_PTR );
@@ -520,6 +528,10 @@ BOOL CWnd::OnWndMsg( UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResul
                         (this->*(PHANDLER_V_U_U)(AFX_PMSGW)pEntries[i].pfn)(
                             (UINT)wParam, (UINT)lParam );
                         break;
+                    case AfxSig_v_uu_v:
+                        (this->*(PHANDLER_V_UU_V)(AFX_PMSGW)pEntries[i].pfn)(
+                            LOWORD( wParam ), HIWORD( wParam ) );
+                        break;
                     case AfxSig_v_v_ii:
                         (this->*(PHANDLER_V_V_II)(AFX_PMSGW)pEntries[i].pfn)(
                             LOWORD( lParam ), HIWORD( lParam ) );
@@ -637,6 +649,34 @@ BOOL CWnd::OnWndMsg( UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResul
                     case AfxSig_l_p:
                         *pResult = (this->*(PHANDLER_L_P)(AFX_PMSGW)pEntries[i].pfn)(
                             CPoint( lParam ) );
+                        break;
+                    case AfxSig_v_u_M:
+                        (this->*(PHANDLER_V_U_M)(AFX_PMSGW)pEntries[i].pfn)(
+                            (UINT)wParam, CMenu::FromHandle( (HMENU)lParam ) );
+                        break;
+                    case AfxSig_u_u_M:
+                        *pResult = (this->*(PHANDLER_U_U_M)(AFX_PMSGW)pEntries[i].pfn)(
+                            (UINT)wParam, CMenu::FromHandle( (HMENU)lParam ) );
+                        break;
+                    case AfxSig_u_v_MENUGETOBJECTINFO:
+                        *pResult = (this->*(PHANDLER_U_V_MENUGETOBJECTINFO)(AFX_PMSGW)pEntries[i].pfn)(
+                            (MENUGETOBJECTINFO *)lParam );
+                        break;
+                    case AfxSig_v_M_u:
+                        (this->*(PHANDLER_V_M_U)(AFX_PMSGW)pEntries[i].pfn)(
+                            CMenu::FromHandle( (HMENU)wParam ), (UINT)lParam );
+                        break;
+                    case AfxSig_RAWINPUT:
+                        (this->*(PHANDLER_RAWINPUT)(AFX_PMSGW)pEntries[i].pfn)(
+                            (UINT)wParam, (HRAWINPUT)lParam );
+                        break;
+                    case AfxSig_MOUSE_XBUTTON:
+                        (this->*(PHANDLER_MOUSE_XBUTTON)(AFX_PMSGW)pEntries[i].pfn)(
+                            LOWORD( wParam ), HIWORD( wParam ), CPoint( lParam ) );
+                        break;
+                    case AfxSig_MOUSE_NCXBUTTON:
+                        (this->*(PHANDLER_MOUSE_NCXBUTTON)(AFX_PMSGW)pEntries[i].pfn)(
+                            LOWORD( wParam ), HIWORD( wParam ), CPoint( lParam ) );
                         break;
                     default:
                         return( FALSE );
