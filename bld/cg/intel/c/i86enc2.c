@@ -270,10 +270,10 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
     name        *temp;
     bool        emit_data;
 
+    first = FALSE;
     endp = p + len;
     while( p < endp ) {
         _Code;
-        first = TRUE;
         emit_data = 1;
         startp = p;
         for( ; p < endp && emit_data; ) {
@@ -329,6 +329,7 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
                 default:
                     if( !first ) {
                         emit_data = 0;
+                        first = TRUE;
                         continue;
                     }
                     /* floating point fixup */
