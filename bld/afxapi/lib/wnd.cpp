@@ -83,6 +83,7 @@ typedef void    (CWnd::*PHANDLER_V_UU_M)( UINT, UINT, HMENU );
 typedef void    (CWnd::*PHANDLER_V_U_P)( UINT, CPoint );
 typedef void    (CWnd::*PHANDLER_SIZING)( UINT, LPRECT );
 typedef BOOL    (CWnd::*PHANDLER_MOUSEWHEEL)( UINT, short, CPoint );
+typedef void    (CWnd::*PHANDLER_MOUSEHWHEEL)( UINT, short, CPoint );
 typedef LRESULT (CWnd::*PHANDLER_L_P)( CPoint );
 typedef void    (CWnd::*PHANDLER_V_U_M)( UINT, CMenu * );
 typedef UINT    (CWnd::*PHANDLER_U_U_M)( UINT, CMenu * );
@@ -91,6 +92,7 @@ typedef void    (CWnd::*PHANDLER_V_M_U)( CMenu *, UINT );
 typedef void    (CWnd::*PHANDLER_RAWINPUT)( UINT, HRAWINPUT );
 typedef void    (CWnd::*PHANDLER_MOUSE_XBUTTON)( UINT, UINT, CPoint );
 typedef void    (CWnd::*PHANDLER_MOUSE_NCXBUTTON)( short, UINT, CPoint );
+typedef void    (CWnd::*PHANDLER_INPUTDEVICECHANGE)( unsigned short );
 
 // HtmlHelp() function
 typedef HWND (WINAPI *PFN_HTMLHELP)( HWND, LPCTSTR, UINT, DWORD_PTR );
@@ -643,7 +645,13 @@ BOOL CWnd::OnWndMsg( UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResul
                             (UINT)wParam, (LPRECT)lParam );
                         break;
                     case AfxSig_MOUSEWHEEL:
-                        (this->*(PHANDLER_MOUSEWHEEL)(AFX_PMSGW)pEntries[i].pfn)(
+                        if( !(this->*(PHANDLER_MOUSEWHEEL)(AFX_PMSGW)pEntries[i].pfn)(
+                            LOWORD( wParam ), HIWORD( wParam ), CPoint( lParam ) ) ) {
+                            return( FALSE );
+                        }
+                        break;
+                    case AfxSig_MOUSEHWHEEL:
+                        (this->*(PHANDLER_MOUSEHWHEEL)(AFX_PMSGW)pEntries[i].pfn)(
                             LOWORD( wParam ), HIWORD( wParam ), CPoint( lParam ) );
                         break;
                     case AfxSig_l_p:
@@ -677,6 +685,10 @@ BOOL CWnd::OnWndMsg( UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResul
                     case AfxSig_MOUSE_NCXBUTTON:
                         (this->*(PHANDLER_MOUSE_NCXBUTTON)(AFX_PMSGW)pEntries[i].pfn)(
                             LOWORD( wParam ), HIWORD( wParam ), CPoint( lParam ) );
+                        break;
+                    case AfxSig_INPUTDEVICECHANGE:
+                        (this->*(PHANDLER_INPUTDEVICECHANGE)(AFX_PMSGW)pEntries[i].pfn)(
+                            (unsigned short)wParam );
                         break;
                     default:
                         return( FALSE );

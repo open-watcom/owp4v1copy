@@ -62,6 +62,7 @@ enum AfxSig {
     AfxSig_v_u_p,
     AfxSig_SIZING,
     AfxSig_MOUSEWHEEL,
+    AfxSig_MOUSEHWHEEL,
     AfxSigCmd_v,
     AfxSigCmd_b,
     AfxSigCmd_RANGE,
@@ -488,9 +489,6 @@ enum AfxSig {
 #define ON_WM_TIMER() \
     { WM_TIMER, 0, 0, 0, AfxSig_v_u_v, \
       (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT_PTR ))OnTimer },
-#define ON_WM_UNICHAR() \
-    { WM_UNICHAR, 0, 0, 0, AfxSig_v_u_uu, \
-      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT, UINT ))OnUniChar },
 #define ON_WM_USERCHANGED() \
     { WM_USERCHANGED, 0, 0, 0, AfxSig_v_v_v, (AFX_PMSG)(AFX_PMSGW)OnUserChanged },
 #define ON_WM_VKEYTOITEM() \
@@ -579,6 +577,29 @@ enum AfxSig {
     #define ON_WM_INPUT() \
         { WM_INPUT, 0, 0, 0, AfxSig_RAWINPUT, \
           (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, HRAWINPUT ))OnRawInput },
+    #define ON_WM_UNICHAR() \
+        { WM_UNICHAR, 0, 0, 0, AfxSig_v_u_uu, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT, UINT ))OnUniChar },
+    #define ON_WM_WTSSESSION_CHANGE() \
+        { WM_WTSSESSION_CHANGE, 0, 0, 0, AfxSig_v_u_u, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT ))OnSessionChange },
+#endif
+#if (_WIN32_WINNT >= 0x0600)
+    #define ON_WM_DWMCOLORIZATIONCOLORCHANGED() \
+        { WM_DWMCOLORIZATIONCOLORCHANGED, 0, 0, 0, AfxSig_v_u_u, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( DWORD, BOOL ))OnColorizationColorChanged },
+    #define ON_WM_DWMNCRENDERINGCHANGED() \
+        { WM_DWMNCRENDERINGCHANGED, 0, 0, 0, AfxSig_v_u_v, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( BOOL ))OnNcRenderingChanged },
+    #define ON_WM_DWMWINDOWMAXIMIZEDCHANGE() \
+        { WM_DWMWINDOWMAXIMIZEDCHANGE, 0, 0, 0, AfxSig_v_u_v, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( BOOL ))OnWindowMaximizedChanged },
+    #define ON_WM_INPUT_DEVICE_CHANGE() \
+        { WM_INPUT_DEVICE_CHANGE, 0, 0, 0, AfxSig_INPUTDEVICECHANGE, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( unsigned short ))OnInputDeviceChange },
+    #define ON_WM_MOUSEHWHEEL() \
+        { WM_MOUSEHWHEEL, 0, 0, 0, AfxSig_MOUSEHWHEEL, \
+          (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, short, CPoint ))OnMouseHWheel },
 #endif
 
 // Button notification handling macros
