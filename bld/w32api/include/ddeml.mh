@@ -118,14 +118,14 @@ DECLARE_HANDLE( HSZ );
 #define QID_SYNC    0xFFFFFFFFL
 
 /* Strings used by DDE */
-#define SZDDESYS_TOPIC          TEXT( "System" )
-#define SZDDESYS_ITEM_TOPICS    TEXT( "Topics" )
-#define SZDDESYS_ITEM_SYSITEMS  TEXT( "SysItems" )
-#define SZDDESYS_ITEM_RTNMSG    TEXT( "ReturnMessage" )
-#define SZDDESYS_ITEM_STATUS    TEXT( "Status" )
-#define SZDDESYS_ITEM_FORMATS   TEXT( "Formats" )
-#define SZDDESYS_ITEM_HELP      TEXT( "Help" )
-#define SZDDE_ITEM_ITEMLIST     TEXT( "TopicItemList" )
+#define SZDDESYS_TOPIC          TEXT("System")
+#define SZDDESYS_ITEM_TOPICS    TEXT("Topics")
+#define SZDDESYS_ITEM_SYSITEMS  TEXT("SysItems")
+#define SZDDESYS_ITEM_RTNMSG    TEXT("ReturnMessage")
+#define SZDDESYS_ITEM_STATUS    TEXT("Status")
+#define SZDDESYS_ITEM_FORMATS   TEXT("Formats")
+#define SZDDESYS_ITEM_HELP      TEXT("Help")
+#define SZDDE_ITEM_ITEMLIST     TEXT("TopicItemList")
 
 /* DDE data handle special value */
 #define CBR_BLOCK   ((HDDEDATA)-1)

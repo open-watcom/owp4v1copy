@@ -1671,7 +1671,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #define DL_MOVECURSOR   3L
 
 /* Drag list registered message */
-#define DRAGLISTMSGSTRING   TEXT( "commctrl_DragListMsg" )
+#define DRAGLISTMSGSTRING   TEXT("commctrl_DragListMsg")
 
 /* Up/down minimum and maximum */
 #define UD_MAXVAL   0x7FFF

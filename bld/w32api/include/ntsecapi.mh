@@ -269,17 +269,17 @@ typedef ULONG   *PLSA_ENUMERATION_HANDLE;
 #endif
 
 /* Privilege names */
-#define SE_INTERACTIVE_LOGON_NAME                   TEXT( "SeInteractiveLogonRight" )
-#define SE_NETWORK_LOGON_NAME                       TEXT( "SeNetworkLogonRight" )
-#define SE_BATCH_LOGON_NAME                         TEXT( "SeBatchLogonRight" )
-#define SE_SERVICE_LOGON_NAME                       TEXT( "SeServiceLogonRight" )
-#define SE_DENY_INTERACTIVE_LOGON_NAME              TEXT( "SeDenyInteractiveLogonRight" )
-#define SE_DENY_NETWORK_LOGON_NAME                  TEXT( "SeDenyNetworkLogonRight" )
-#define SE_DENY_BATCH_LOGON_NAME                    TEXT( "SeDenyBatchLogonRight" )
-#define SE_DENY_SERVICE_LOGON_NAME                  TEXT( "SeDenyServiceLogonRight" )
+#define SE_INTERACTIVE_LOGON_NAME                   TEXT("SeInteractiveLogonRight")
+#define SE_NETWORK_LOGON_NAME                       TEXT("SeNetworkLogonRight")
+#define SE_BATCH_LOGON_NAME                         TEXT("SeBatchLogonRight")
+#define SE_SERVICE_LOGON_NAME                       TEXT("SeServiceLogonRight")
+#define SE_DENY_INTERACTIVE_LOGON_NAME              TEXT("SeDenyInteractiveLogonRight")
+#define SE_DENY_NETWORK_LOGON_NAME                  TEXT("SeDenyNetworkLogonRight")
+#define SE_DENY_BATCH_LOGON_NAME                    TEXT("SeDenyBatchLogonRight")
+#define SE_DENY_SERVICE_LOGON_NAME                  TEXT("SeDenyServiceLogonRight")
 #if (_WIN32_WINNT >= 0x0501)
-    #define SE_REMOTE_INTERACTIVE_LOGON_NAME        TEXT( "SeRemoteInteractiveLogonRight" )
-    #define SE_DENY_REMOTE_INTERACTIVE_LOGON_NAME   TEXT( "SeDenyRemoteInteractiveLogonRight" )
+    #define SE_REMOTE_INTERACTIVE_LOGON_NAME        TEXT("SeRemoteInteractiveLogonRight")
+    #define SE_DENY_REMOTE_INTERACTIVE_LOGON_NAME   TEXT("SeDenyRemoteInteractiveLogonRight")
 #endif
 
 /* Negotiate maximum prefix lengths */

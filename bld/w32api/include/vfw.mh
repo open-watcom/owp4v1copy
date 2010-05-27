@@ -389,7 +389,7 @@ typedef WORD    TWOCC;
 #endif
 
 /* MCI window class */
-#define MCIWND_WINDOW_CLASS TEXT( "MCIWndClass" )
+#define MCIWND_WINDOW_CLASS TEXT("MCIWndClass")
 
 /* MCIWndOpen() flags */
 #define MCIWNDOPENF_NEW 0x0001
@@ -1728,9 +1728,9 @@ static DWORD    dwICValue;
 #define MCIWndGetRepeat( x ) \
     (BOOL)MCIWndSM( x, MCIWNDM_GETREPEAT, 0, 0 )
 #define MCIWndUseFrames( x ) \
-    MCIWndSetTimeFormat( x, TEXT( "frames" ) )
+    MCIWndSetTimeFormat( x, TEXT("frames") )
 #define MCIWndUseTime( x ) \
-    MCIWndSetTimeFormat( x, TEXT( "ms" ) )
+    MCIWndSetTimeFormat( x, TEXT("ms") )
 #define MCIWndSetActiveTimer( x, p ) \
     (VOID)MCIWndSM( x, MCIWNDM_SETACTIVETIMER, (WPARAM)(UINT)(p), 0 )
 #define MCIWndSetInactiveTimer( x, p ) \

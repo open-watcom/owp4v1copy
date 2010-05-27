@@ -280,8 +280,8 @@ typedef SECURITY_INTEGER    *PTimeStamp;
 /* Security entry point names */
 #define SECURITY_ENTRYPOINT_ANSIA       "InitSecurityInterfaceA"
 #define SECURITY_ENTRYPOINT_ANSIW       "InitSecurityInterfaceW"
-#define SECURITY_ENTRYPOINTA            SEC_TEXT( "InitSecurityInterfaceA" )
-#define SECURITY_ENTRYPOINTW            SEC_TEXT( "InitSecurityInterfaceW" )
+#define SECURITY_ENTRYPOINTA            SEC_TEXT("InitSecurityInterfaceA")
+#define SECURITY_ENTRYPOINTW            SEC_TEXT("InitSecurityInterfaceW")
 #define SECURITY_ENTRYPOINT16           "INITSECURITYINTERFACEA"
 #ifdef UNICODE
     #define SECURITY_ENTRYPOINT_ANSI    SECURITY_ENTRYPOINT_ANSIW

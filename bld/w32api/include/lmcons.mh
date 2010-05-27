@@ -76,10 +76,10 @@
 #define PARMNUM_BASE_INFOLEVEL  1000
 
 /* Message file names */
-#define MESSAGE_FILENAME    TEXT( "NETMSG" )
-#define OS2MSG_FILENAME     TEXT( "BASE" )
-#define HELP_MSG_FILENAME   TEXT( "NETH" )
-#define BACKUP_MSG_FILENAME TEXT( "BAK.MSG" )
+#define MESSAGE_FILENAME    TEXT("NETMSG")
+#define OS2MSG_FILENAME     TEXT("BASE")
+#define HELP_MSG_FILENAME   TEXT("NETH")
+#define BACKUP_MSG_FILENAME TEXT("BAK.MSG")
 
 /* Platform identifiers */
 #define PLATFORM_ID_DOS 300

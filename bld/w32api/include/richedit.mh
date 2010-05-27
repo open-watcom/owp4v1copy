@@ -587,9 +587,9 @@
 #define OLEOP_DOVERB    1L
 
 /* Rich text clipboard formats */
-#define CF_RTF          TEXT( "Rich Text Format" )
-#define CF_RTFNOOBJS    TEXT( "Rich Text Format Without Objects" )
-#define CF_RETEXTOBJ    TEXT( "RichEdit Text and Objects" )
+#define CF_RTF          TEXT("Rich Text Format")
+#define CF_RTFNOOBJS    TEXT("Rich Text Format Without Objects")
+#define CF_RETEXTOBJ    TEXT("RichEdit Text and Objects")
 
 /* Set text flags */
 #define ST_DEFAULT      0

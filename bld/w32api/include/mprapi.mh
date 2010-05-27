@@ -22,7 +22,7 @@ typedef HANDLE  MPR_SERVER_HANDLE;
 typedef HANDLE  MIB_SERVER_HANDLE;
 
 /* Remoting and Remote Access Service (RRAS) name */
-#define RRAS_SERVICE_NAME   TEXT( "RemoteAccess" )
+#define RRAS_SERVICE_NAME   TEXT("RemoteAccess")
 
 /* Protocol identifiers */
 #define PID_IPX     0x0000002BL

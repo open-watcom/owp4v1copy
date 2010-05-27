@@ -62,18 +62,18 @@ typedef GUID        *REFGPEXTENSIONID;
 
 /* Group policy registry keys */
 #if (WINVER >= 0x0500)
-    #define GP_DLLNAME                      TEXT( "DllName" )
-    #define GP_ENABLEASYNCHRONOUSPROCESSING TEXT( "EnableAsynchronousProcessing" )
-    #define GP_MAXNOGPOLISTCHANGESINTERVAL  TEXT( "MaxNoGPOListChangesInterval" )
-    #define GP_NOBACKGROUNDPOLICY           TEXT( "NoBackgroundPolicy" )
-    #define GP_NOGPOLISTCHANGES             TEXT( "NoGPOListChanges" )
-    #define GP_NOMACHINEPOLICY              TEXT( "NoMachinePolicy" )
-    #define GP_NOSLOWLINK                   TEXT( "NoSlowLink" )
-    #define GP_NOTIFYLINKTRANSITION         TEXT( "NotifyLinkTransition" )
-    #define GP_NOUSERPOLICY                 TEXT( "NoUserPolicy" )
-    #define GP_PERUSERLOCALSETTINGS         TEXT( "PerUserLocalSettings" )
-    #define GP_PROCESSGROUPPOLICY           TEXT( "ProcessGroupPolicy" )
-    #define GP_REQUIRESSUCCESSFULREGISTRY   TEXT( "RequiresSuccessfulRegistry" )
+    #define GP_DLLNAME                      TEXT("DllName")
+    #define GP_ENABLEASYNCHRONOUSPROCESSING TEXT("EnableAsynchronousProcessing")
+    #define GP_MAXNOGPOLISTCHANGESINTERVAL  TEXT("MaxNoGPOListChangesInterval")
+    #define GP_NOBACKGROUNDPOLICY           TEXT("NoBackgroundPolicy")
+    #define GP_NOGPOLISTCHANGES             TEXT("NoGPOListChanges")
+    #define GP_NOMACHINEPOLICY              TEXT("NoMachinePolicy")
+    #define GP_NOSLOWLINK                   TEXT("NoSlowLink")
+    #define GP_NOTIFYLINKTRANSITION         TEXT("NotifyLinkTransition")
+    #define GP_NOUSERPOLICY                 TEXT("NoUserPolicy")
+    #define GP_PERUSERLOCALSETTINGS         TEXT("PerUserLocalSettings")
+    #define GP_PROCESSGROUPPOLICY           TEXT("ProcessGroupPolicy")
+    #define GP_REQUIRESSUCCESSFULREGISTRY   TEXT("RequiresSuccessfulRegistry")
 #endif
 
 /* Group policy object information flags */

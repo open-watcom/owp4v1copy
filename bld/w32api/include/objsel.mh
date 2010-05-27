@@ -12,7 +12,7 @@
 :include cpluspro.sp
 
 /* Selection list clipboard format */
-#define CFSTR_DSOP_DS_SELECTION_LIST    TEXT( "CFSTR_DSOP_DS_SELECTION_LIST" )
+#define CFSTR_DSOP_DS_SELECTION_LIST    TEXT("CFSTR_DSOP_DS_SELECTION_LIST")
 
 /* Scope types */
 #define DSOP_SCOPE_TYPE_TARGET_COMPUTER                 0x00000001L

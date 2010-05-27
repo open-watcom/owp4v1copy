@@ -21,8 +21,8 @@
 #define DSQPF_NOCHOOSECOLUMNS           0x00000040L
 
 /* Directory Service clipboard format strings */
-#define CFSTR_DSQUERYPARAMS TEXT( "DsQueryParameters" )
-#define CFSTR_DSQUERYSCOPE  TEXT( "DsQueryScope" )
+#define CFSTR_DSQUERYPARAMS TEXT("DsQueryParameters")
+#define CFSTR_DSQUERYSCOPE  TEXT("DsQueryScope")
 
 /* Directory Service column properties */
 #define DSCOLUMNPROP_ADSPATH        (-1L)

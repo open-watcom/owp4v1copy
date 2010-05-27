@@ -230,8 +230,8 @@
 #define SCH_CRED_CERT_CONTEXT   0x00000003L
 
 /* SSL function names */
-#define SSL_CRACK_CERTIFICATE_NAME  TEXT( "SslCrackCertificate" )
-#define SSL_FREE_CERTIFICATE_NAME   TEXT( "SslFreeCertificate" )
+#define SSL_CRACK_CERTIFICATE_NAME  TEXT("SslCrackCertificate")
+#define SSL_FREE_CERTIFICATE_NAME   TEXT("SslFreeCertificate")
 
 /* TLS signature algorithms */
 enum eTlsSignatureAlgorithm {

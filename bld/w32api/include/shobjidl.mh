@@ -384,7 +384,7 @@ typedef HANDLE                  HTHEME;
 
 /* Shell drag image registered message */
 #if (NTDDI_VERSION >= 0x05000000)
-    #define DI_GETDRAGIMAGE TEXT( "ShellGetDragImage" )
+    #define DI_GETDRAGIMAGE TEXT("ShellGetDragImage")
 #endif
 
 /* AutoRun content flags */

@@ -39,10 +39,10 @@ typedef SCARDCONTEXT    *LPSCARDHANDLE;
 #define SCARD_SCOPE_SYSTEM      2L
 
 /* Smart card reader groups */
-#define SCARD_ALL_READERS       TEXT( "SCard$AllReaders\000" )
-#define SCARD_DEFAULT_READERS   TEXT( "SCard$DefaultReaders\000" )
-#define SCARD_LOCAL_READERS     TEXT( "SCard$LocalReaders\000" )
-#define SCARD_SYSTEM_READERS    TEXT( "SCard$SystemReaders\000" )
+#define SCARD_ALL_READERS       TEXT("SCard$AllReaders\000")
+#define SCARD_DEFAULT_READERS   TEXT("SCard$DefaultReaders\000")
+#define SCARD_LOCAL_READERS     TEXT("SCard$LocalReaders\000")
+#define SCARD_SYSTEM_READERS    TEXT("SCard$SystemReaders\000")
 
 /* Smart card providers */
 #define SCARD_PROVIDER_PRIMARY  1L

@@ -281,21 +281,21 @@ typedef HRASCONN    *LPHRASCONN;
 #define RASFP_Ras   0x00000004L
 
 /* RAS entry device types */
-#define RASDT_Modem         TEXT( "modem" )
-#define RASDT_Isdn          TEXT( "isdn" )
-#define RASDT_X25           TEXT( "x25" )
-#define RASDT_Vpn           TEXT( "vpn" )
-#define RASDT_Pad           TEXT( "pad" )
-#define RASDT_Generic       TEXT( "GENERIC" )
-#define RASDT_Serial        TEXT( "SERIAL" )
-#define RASDT_FrameRelay    TEXT( "FRAMERELAY" )
-#define RASDT_Atm           TEXT( "ATM" )
-#define RASDT_Sonet         TEXT( "SONET" )
-#define RASDT_SW56          TEXT( "SW56" )
-#define RASDT_Irda          TEXT( "IRDA" )
-#define RASDT_Parallel      TEXT( "PARALLEL" )
+#define RASDT_Modem         TEXT("modem")
+#define RASDT_Isdn          TEXT("isdn")
+#define RASDT_X25           TEXT("x25")
+#define RASDT_Vpn           TEXT("vpn")
+#define RASDT_Pad           TEXT("pad")
+#define RASDT_Generic       TEXT("GENERIC")
+#define RASDT_Serial        TEXT("SERIAL")
+#define RASDT_FrameRelay    TEXT("FRAMERELAY")
+#define RASDT_Atm           TEXT("ATM")
+#define RASDT_Sonet         TEXT("SONET")
+#define RASDT_SW56          TEXT("SW56")
+#define RASDT_Irda          TEXT("IRDA")
+#define RASDT_Parallel      TEXT("PARALLEL")
 #if (WINVER >= 0x0501)
-    #define RASDT_PPPoE     TEXT( "PPPoE" )
+    #define RASDT_PPPoE     TEXT("PPPoE")
 #endif
 
 /* RAS entry types */

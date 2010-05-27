@@ -61,7 +61,7 @@
 #define PSPCB_SI_INITDIALOG (WM_USER + 1)
 
 /* Security identifier information list clipboard format */
-#define CFSTR_ACLUI_SID_INFO_LIST   TEXT( "CFSTR_ACLUI_SID_INFO_LIST" )
+#define CFSTR_ACLUI_SID_INFO_LIST   TEXT("CFSTR_ACLUI_SID_INFO_LIST")
 
 /* ISecurityInformation object information */
 typedef struct _SI_OBJECT_INFO {

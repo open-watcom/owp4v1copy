@@ -148,7 +148,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* Special folders registry path */
 #define REGSTR_PATH_SPECIAL_FOLDERS \
-    REGSTR_PATH_EXPLORER TEXT( "\\Shell Folders" )
+    REGSTR_PATH_EXPLORER TEXT("\\Shell Folders")
 
 /* Special folder identifiers */
 #define CSIDL_DESKTOP                   0x0000
@@ -538,34 +538,34 @@ DECLARE_HANDLE( HPSXA );
 #endif
 
 /* Shell clipboard format strings */
-#define CFSTR_SHELLIDLIST           TEXT( "Shell IDList Array" )
-#define CFSTR_SHELLIDLISTOFFSET     TEXT( "Shell Object Offsets" )
-#define CFSTR_NETRESOURCES          TEXT( "Net Resource" )
-#define CFSTR_FILEDESCRIPTORA       TEXT( "FileGroupDescriptor" )
-#define CFSTR_FILEDESCRIPTORW       TEXT( "FileGroupDescriptorW" )
-#define CFSTR_FILECONTENTS          TEXT( "FileContents" )
-#define CFSTR_FILENAMEA             TEXT( "FileName" )
-#define CFSTR_FILENAMEW             TEXT( "FileNameW" )
-#define CFSTR_PRINTERGROUP          TEXT( "PrinterFriendlyName" )
-#define CFSTR_FILENAMEMAPA          TEXT( "FileNameMap" )
-#define CFSTR_FILENAMEMAPW          TEXT( "FileNameMapW" )
-#define CFSTR_SHELLURL              TEXT( "UniformResourceLocator" )
+#define CFSTR_SHELLIDLIST           TEXT("Shell IDList Array")
+#define CFSTR_SHELLIDLISTOFFSET     TEXT("Shell Object Offsets")
+#define CFSTR_NETRESOURCES          TEXT("Net Resource")
+#define CFSTR_FILEDESCRIPTORA       TEXT("FileGroupDescriptor")
+#define CFSTR_FILEDESCRIPTORW       TEXT("FileGroupDescriptorW")
+#define CFSTR_FILECONTENTS          TEXT("FileContents")
+#define CFSTR_FILENAMEA             TEXT("FileName")
+#define CFSTR_FILENAMEW             TEXT("FileNameW")
+#define CFSTR_PRINTERGROUP          TEXT("PrinterFriendlyName")
+#define CFSTR_FILENAMEMAPA          TEXT("FileNameMap")
+#define CFSTR_FILENAMEMAPW          TEXT("FileNameMapW")
+#define CFSTR_SHELLURL              TEXT("UniformResourceLocator")
 #define CFSTR_INETURLA              CFSTR_SHELLURL
-#define CFSTR_INETURLW              TEXT( "UniformResourceLocatorW" )
-#define CFSTR_PREFERREDDROPEFFECT   TEXT( "Preferred DropEffect" )
-#define CFSTR_PERFORMEDDROPEFFECT   TEXT( "Performed DropEffect" )
-#define CFSTR_PASTESUCCEEDED        TEXT( "Paste Succeeded" )
-#define CFSTR_INDRAGLOOP            TEXT( "InShellDragLoop" )
-#define CFSTR_MOUNTEDVOLUME         TEXT( "MountedVolume" )
-#define CFSTR_PERSISTEDDATAOBJECT   TEXT( "PersistedDataObject" )
-#define CFSTR_TARGETCLSID           TEXT( "TargetCLSID" )
-#define CFSTR_LOGICALPERFORMEDDROPEFFECT    TEXT( "Logical Performed DropEffect" )
-#define CFSTR_AUTOPLAY_SHELLIDLISTS TEXT( "Autoplay Enumerated IDList Array" )
-#define CFSTR_UNTRUSTEDDRAGDROP     TEXT( "UntrustedDragDrop" )
-#define CFSTR_FILE_ATTRIBUTES_ARRAY TEXT( "File Attributes Array" )
-#define CFSTR_INVOKECOMMAND_DROPPARAM   TEXT( "InvokeCommand DropParam" )
-#define CFSTR_SHELLDROPHANDLER      TEXT( "DropHandlerCLSID" )
-#define CFSTR_DROPDESCRIPTION       TEXT( "DropDescription" )
+#define CFSTR_INETURLW              TEXT("UniformResourceLocatorW")
+#define CFSTR_PREFERREDDROPEFFECT   TEXT("Preferred DropEffect")
+#define CFSTR_PERFORMEDDROPEFFECT   TEXT("Performed DropEffect")
+#define CFSTR_PASTESUCCEEDED        TEXT("Paste Succeeded")
+#define CFSTR_INDRAGLOOP            TEXT("InShellDragLoop")
+#define CFSTR_MOUNTEDVOLUME         TEXT("MountedVolume")
+#define CFSTR_PERSISTEDDATAOBJECT   TEXT("PersistedDataObject")
+#define CFSTR_TARGETCLSID           TEXT("TargetCLSID")
+#define CFSTR_LOGICALPERFORMEDDROPEFFECT    TEXT("Logical Performed DropEffect")
+#define CFSTR_AUTOPLAY_SHELLIDLISTS TEXT("Autoplay Enumerated IDList Array")
+#define CFSTR_UNTRUSTEDDRAGDROP     TEXT("UntrustedDragDrop")
+#define CFSTR_FILE_ATTRIBUTES_ARRAY TEXT("File Attributes Array")
+#define CFSTR_INVOKECOMMAND_DROPPARAM   TEXT("InvokeCommand DropParam")
+#define CFSTR_SHELLDROPHANDLER      TEXT("DropHandlerCLSID")
+#define CFSTR_DROPDESCRIPTION       TEXT("DropDescription")
 #ifdef UNICODE
     #define CFSTR_FILEDESCRIPTOR    CFSTR_FILEDESCRIPTORW
     #define CFSTR_FILENAME          CFSTR_FILENAMEW

@@ -15,10 +15,10 @@
 #define DSPROVIDER_AD_LDS   0x00000020L
 
 /* Directory Service clipboard format strings */
-#define CFSTR_DSOBJECTNAMES             TEXT( "DsObjectNames" )
-#define CFSTR_DS_DISPLAY_SPEC_OPTIONS   TEXT( "DsDisplaySpecOptions" )
+#define CFSTR_DSOBJECTNAMES             TEXT("DsObjectNames")
+#define CFSTR_DS_DISPLAY_SPEC_OPTIONS   TEXT("DsDisplaySpecOptions")
 #define CFSTR_DSDISPLAYSPECOPTIONS      CFSTR_DS_DISPLAY_SPEC_OPTIONS
-#define CFSTR_DSPROPERTYPAGEINFO        TEXT( "DsPropPageInfo" )
+#define CFSTR_DSPROPERTYPAGEINFO        TEXT("DsPropPageInfo")
 
 /* Directory Service property prefixes */
 #define DS_PROP_SHELL_PREFIX    L"shell"
@@ -31,7 +31,7 @@
 #define DSDSOF_DSAVAILABLE          0x40000000L
 
 /* Directory Service property messages */
-#define DSPROP_ATTRCHANGED_MSG  TEXT( "DsPropAttrChanged" )
+#define DSPROP_ATTRCHANGED_MSG  TEXT("DsPropAttrChanged")
 
 /* Directory Service browse domain tree flags */
 #define DBDTF_RETURNFQDN            0x00000001L
