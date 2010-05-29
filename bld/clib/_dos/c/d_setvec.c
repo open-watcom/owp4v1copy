@@ -70,7 +70,7 @@
         parm caller [ax] [cx dx];
 #endif
 
-_WCRTLINK void _dos_setvect( int intnum, void (__interrupt _WCFAR *func)() )
+_WCRTLINK void _dos_setvect( unsigned intnum, void (__interrupt _WCFAR *func)() )
 {
 #if defined(__WINDOWS_386__)
     TinySetVect( intnum, (void _WCNEAR *) func );

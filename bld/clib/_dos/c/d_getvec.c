@@ -55,7 +55,7 @@
         parm [ax] value [es bx];
 #endif
 
-_WCRTLINK void (__interrupt _WCFAR *_dos_getvect( int intnum ))()
+_WCRTLINK void (__interrupt _WCFAR *_dos_getvect( unsigned intnum ))()
 {
 #if defined(__386__)
   #if defined(__WINDOWS_386__)
