@@ -34,6 +34,10 @@ test_exes  = &
     map07.$(exe) &
     map08.$(exe) &
     map09.$(exe) &
+    handle01.$(exe) &
+    rect01.$(exe) &
+    cmd01.$(exe) &
+    cmd02.$(exe) &
 
 
 ext = $(ext_$(arch))
