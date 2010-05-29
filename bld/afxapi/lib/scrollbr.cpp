@@ -41,5 +41,5 @@ CScrollBar::CScrollBar()
 BOOL CScrollBar::Create( DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID )
 /************************************************************************************/
 {
-    return( CWnd::Create( _T( "SCROLLBAR" ), NULL, dwStyle, rect, pParentWnd, nID ) );
+    return( CWnd::Create( _T("SCROLLBAR"), NULL, dwStyle, rect, pParentWnd, nID ) );
 }

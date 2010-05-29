@@ -32,8 +32,8 @@
 #include "stdafx.h"
 #include "filenew.h"
 
-static const TCHAR _DDECmdStart[] = _T( "[open(\"" );
-static const TCHAR _DDECmdEnd[] = _T( "\")]" );
+static const TCHAR _DDECmdStart[] = _T("[open(\"");
+static const TCHAR _DDECmdEnd[] = _T("\")]");
 
 IMPLEMENT_DYNAMIC( CDocManager, CObject )
 
@@ -76,15 +76,15 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
         if( pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) &&
             !strExt.IsEmpty() ) {
             ASSERT( strExt.GetLength() >= 2 );
-            ASSERT( strExt[0] == '.' );
+            ASSERT( strExt[0] == _T('.') );
             lpszDefExt = (LPCTSTR)strExt + 1;
             if( pTemplate->GetDocString( strDocString, CDocTemplate::filterName ) &&
                 !strDocString.IsEmpty() ) {
                 strFilter += strDocString;
-                strFilter.AppendChar( _T( '\0' ) );
-                strFilter.AppendChar( _T( '*' ) );
+                strFilter.AppendChar( _T('\0') );
+                strFilter.AppendChar( _T('*') );
                 strFilter += strExt;
-                strFilter.AppendChar( _T( '\0' ) );
+                strFilter.AppendChar( _T('\0') );
             }
         }
     } else {
@@ -96,20 +96,20 @@ BOOL CDocManager::DoPromptFileName( CString &fileName, UINT nIDSTitle, DWORD lFl
                 pTemplate->GetDocString( strExt, CDocTemplate::filterExt ) &&
                 !strDocString.IsEmpty() && !strExt.IsEmpty() ) {
                 ASSERT( strExt.GetLength() >= 2 );
-                ASSERT( strExt[0] == '.' );
+                ASSERT( strExt[0] == _T('.') );
                 strFilter += strDocString;
-                strFilter.AppendChar( _T( '\0' ) );
-                strFilter.AppendChar( _T( '*' ) );
+                strFilter.AppendChar( _T('\0') );
+                strFilter.AppendChar( _T('*') );
                 strFilter += strExt;
-                strFilter.AppendChar( _T( '\0' ) );
+                strFilter.AppendChar( _T('\0') );
             }
         }
     }
     strDocString.LoadString( AFX_IDS_ALLFILTER );
     strFilter += strDocString;
-    strFilter.AppendChar( _T( '\0' ) );
-    strFilter += _T( "*.*" );
-    strFilter.AppendChar( _T( '\0' ) );
+    strFilter.AppendChar( _T('\0') );
+    strFilter += _T("*.*");
+    strFilter.AppendChar( _T('\0') );
 
     CFileDialog dlg( bOpenFileDialog, lpszDefExt, NULL,
                      lFlags | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, strFilter,
@@ -147,7 +147,7 @@ BOOL CDocManager::OnDDECommand( LPTSTR lpszCommand )
     if( lpszEnd == NULL ) {
         return( FALSE );
     }
-    *lpszEnd = _T( '\0' );
+    *lpszEnd = _T('\0');
 
     CWinApp *pApp = AfxGetApp();
     ASSERT( pApp != NULL );
@@ -277,10 +277,10 @@ void CDocManager::RegisterShellFileTypes( BOOL bCompat )
         BOOL    bDDE = !pTemplate->GetDocString( strTemp, CDocTemplate::windowTitle ) ||
                        strTemp.IsEmpty();
         
-        strFmt1.Format( _T( "%s\\shell\\open\\command" ), (LPCTSTR)strProgId );
+        strFmt1.Format( _T("%s\\shell\\open\\command"), (LPCTSTR)strProgId );
         strFmt2 = szExeName;
         if( bDDE ) {
-            strFmt2 += _T( " /dde" );
+            strFmt2 += _T(" /dde");
         }
         if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
             continue;
@@ -288,16 +288,16 @@ void CDocManager::RegisterShellFileTypes( BOOL bCompat )
         ::RegSetValue( hKey, NULL, REG_SZ, strFmt2, strFmt2.GetLength() );
         ::RegCloseKey( hKey );
         if( bDDE ) {
-            strFmt1.Format( _T( "%s\\shell\\open\\ddeexec" ), (LPCTSTR)strProgId );
-            strFmt2 = _T( "[open(\"%1\")]" );
+            strFmt1.Format( _T("%s\\shell\\open\\ddeexec"), (LPCTSTR)strProgId );
+            strFmt2 = _T("[open(\"%1\")]");
             if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
                 continue;
             }
             ::RegSetValue( hKey, NULL, REG_SZ, strFmt2, strFmt2.GetLength() );
         }
         
-        strFmt1.Format( _T( "%s\\DefaultIcon" ), (LPCTSTR)strProgId );
-        strFmt2.Format( _T( "%s,%d" ), szExeName, nIcon );
+        strFmt1.Format( _T("%s\\DefaultIcon"), (LPCTSTR)strProgId );
+        strFmt2.Format( _T("%s,%d"), szExeName, nIcon );
         if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
             continue;
         }
@@ -305,16 +305,16 @@ void CDocManager::RegisterShellFileTypes( BOOL bCompat )
         ::RegCloseKey( hKey );
                 
         if( bCompat ) {
-            strFmt1.Format( _T( "%s\\shell\\print\\command" ), (LPCTSTR)strProgId );
-            strFmt2.Format( _T( "%s /p" ), szExeName );
+            strFmt1.Format( _T("%s\\shell\\print\\command"), (LPCTSTR)strProgId );
+            strFmt2.Format( _T("%s /p"), szExeName );
             if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
                 continue;
             }
             ::RegSetValue( hKey, NULL, REG_SZ, strFmt2, strFmt2.GetLength() );
             ::RegCloseKey( hKey );
 
-            strFmt1.Format( _T( "%s\\shell\\printto\\command" ), (LPCTSTR)strProgId );
-            strFmt2.Format( _T( "%s /pt" ), szExeName );
+            strFmt1.Format( _T("%s\\shell\\printto\\command"), (LPCTSTR)strProgId );
+            strFmt2.Format( _T("%s /pt"), szExeName );
             if( ::RegCreateKey( HKEY_CLASSES_ROOT, strFmt1, &hKey ) != ERROR_SUCCESS ) {
                 continue;
             }

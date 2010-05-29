@@ -391,7 +391,7 @@ BOOL CFrameWnd::PreCreateWindow( CREATESTRUCT &cs )
 /*************************************************/
 {
     if( cs.lpszClass == NULL ) {
-        cs.lpszClass = _T( "AfxFrameOrView" );
+        cs.lpszClass = _T("AfxFrameOrView");
     }
     cs.dwExStyle |= WS_EX_CLIENTEDGE;
     return( TRUE );
@@ -779,7 +779,7 @@ void CFrameWnd::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
         ::SetWindowText( m_hWnd, m_strTitle );
     } else {
         TCHAR szTitleBarText[256];
-        _sntprintf( szTitleBarText, 255, _T( "%s - %s" ),
+        _sntprintf( szTitleBarText, 255, _T("%s - %s"),
                     (LPCTSTR)m_strTitle, lpszDocName );
         ::SetWindowText( m_hWnd, szTitleBarText );
     }
@@ -945,7 +945,7 @@ void CFrameWnd::OnMenuSelect( UINT nItemID, UINT nFlags, HMENU hSysMenu )
         }
     } else {
         if( nFlags & MF_POPUP ) {
-            SetMessageText( _T( "" ) );
+            SetMessageText( _T("") );
         } else if( nItemID >= AFX_IDM_FIRST_MDICHILD ) {
             SetMessageText( AFX_IDS_MDICHILD );
         } else if( nItemID >= 0xF000 && nItemID < 0xF1F0) {

@@ -48,7 +48,7 @@ int CComboBox::CompareItem( LPCOMPAREITEMSTRUCT lpCompareItemStruct )
 BOOL CComboBox::Create( DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID )
 /***********************************************************************************/
 {
-    return( CWnd::Create( _T( "COMBOBOX" ), NULL, dwStyle, rect, pParentWnd, nID ) );
+    return( CWnd::Create( _T("COMBOBOX"), NULL, dwStyle, rect, pParentWnd, nID ) );
 }
 
 void CComboBox::DeleteItem( LPDELETEITEMSTRUCT lpDeleteItemStruct )

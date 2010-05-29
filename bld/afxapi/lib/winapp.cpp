@@ -31,10 +31,10 @@
 
 #include "stdafx.h"
 
-static const TCHAR _MRUSection[] = _T( "Recent File List" );
-static const TCHAR _MRUEntry[] = _T( "File%d" );
-static const TCHAR _PreviewSection[] = _T( "Settings" );
-static const TCHAR _PreviewEntry[] = _T( "PreviewPages" );
+static const TCHAR _MRUSection[] = _T("Recent File List");
+static const TCHAR _MRUEntry[] = _T("File%d");
+static const TCHAR _PreviewSection[] = _T("Settings");
+static const TCHAR _PreviewEntry[] = _T("PreviewPages");
 
 IMPLEMENT_DYNAMIC( CWinApp, CWinThread )
 
@@ -52,7 +52,7 @@ static HKEY _OpenRegistryKey( LPCTSTR lpszKey, LPCTSTR lpszApp, LPCTSTR lpszSect
     HKEY hKeyApp = NULL;
     HKEY hKeySection = NULL;
 
-    ::RegOpenKeyEx( HKEY_CURRENT_USER, _T( "SOFTWARE" ), 0L, KEY_ALL_ACCESS,
+    ::RegOpenKeyEx( HKEY_CURRENT_USER, _T("SOFTWARE"), 0L, KEY_ALL_ACCESS,
                     &hKeySoftware );
     if( hKeySoftware != NULL ) {
         ::RegCreateKeyEx( hKeySoftware, lpszKey, 0L, NULL, 0L, KEY_ALL_ACCESS, NULL,
@@ -386,19 +386,19 @@ void CWinApp::EnableShellOpen()
     ::GetShortPathName( szModuleName, szShortName, MAX_PATH );
 
     // Chop off the path and extension.
-    LPTSTR lpszFileName = _tcsrchr( szShortName, '\\' );
+    LPTSTR lpszFileName = _tcsrchr( szShortName, _T('\\') );
     if( lpszFileName == NULL ) {
         lpszFileName = szShortName;
     } else {
         lpszFileName++;
     }
-    LPTSTR lpszExt = _tcsrchr( lpszFileName, '.' );
+    LPTSTR lpszExt = _tcsrchr( lpszFileName, _T('.') );
     if( lpszExt != NULL ) {
-        *lpszExt = _T( '\0' );
+        *lpszExt = _T('\0');
     }
 
     m_atomApp = ::GlobalAddAtom( lpszFileName );
-    m_atomSystemTopic = ::GlobalAddAtom( _T( "system" ) );
+    m_atomSystemTopic = ::GlobalAddAtom( _T("system") );
 }
 
 POSITION CWinApp::GetFirstDocTemplatePosition() const
@@ -503,7 +503,7 @@ void CWinApp::ParseCommandLine( CCommandLineInfo &rCmdInfo )
     for( int i = 1; i < __argc; i++ ) {
         const TCHAR *pszParam = __targv[i];
         BOOL        bLast = (i == __argc - 1);
-        if( pszParam[0] == _T( '/' ) || pszParam[0] == _T( '-' ) ) {
+        if( pszParam[0] == _T('/') || pszParam[0] == _T('-') ) {
             rCmdInfo.ParseParam( pszParam + 1, TRUE, bLast );
         } else {
             rCmdInfo.ParseParam( pszParam, FALSE, bLast );
@@ -627,7 +627,7 @@ BOOL CWinApp::WriteProfileInt( LPCTSTR lpszSection, LPCTSTR lpszEntry, int nValu
         return( lRet == ERROR_SUCCESS );
     } else {
         TCHAR szValue[12];
-        _stprintf( szValue, _T( "%d" ), nValue );
+        _stprintf( szValue, _T("%d"), nValue );
         return( ::WritePrivateProfileString( lpszSection, lpszEntry, szValue,
                                              m_pszProfileName ) );
     }

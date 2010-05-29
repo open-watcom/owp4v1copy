@@ -57,7 +57,7 @@ CDumpContext &CDumpContext::DumpAsHex( BYTE b )
 /*********************************************/
 {
     TCHAR   szBuff[5];
-    _stprintf( szBuff, _T( "0x%02hhx" ), b );
+    _stprintf( szBuff, _T("0x%02hhx"), b );
     OutputString( szBuff );
     return( *this );
 }
@@ -66,7 +66,7 @@ CDumpContext &CDumpContext::DumpAsHex( DWORD dw )
 /***********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%08lx" ), dw );
+    _stprintf( szBuff, _T("0x%08lx"), dw );
     OutputString( szBuff );
     return( *this );
 }
@@ -75,7 +75,7 @@ CDumpContext &CDumpContext::DumpAsHex( int n )
 /********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%08lx" ), n );
+    _stprintf( szBuff, _T("0x%08lx"), n );
     OutputString( szBuff );
     return( *this );
 }
@@ -84,7 +84,7 @@ CDumpContext &CDumpContext::DumpAsHex( LONG l )
 /*********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%08lx" ), l );
+    _stprintf( szBuff, _T("0x%08lx"), l );
     OutputString( szBuff );
     return( *this );
 }
@@ -93,7 +93,7 @@ CDumpContext &CDumpContext::DumpAsHex( LONGLONG n )
 /*************************************************/
 {
     TCHAR   szBuff[19];
-    _stprintf( szBuff, _T( "0x%016I64x" ), n );
+    _stprintf( szBuff, _T("0x%016I64x"), n );
     OutputString( szBuff );
     return( *this );
 }
@@ -102,7 +102,7 @@ CDumpContext &CDumpContext::DumpAsHex( UINT u )
 /*********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%08lx" ), u );
+    _stprintf( szBuff, _T("0x%08lx"), u );
     OutputString( szBuff );
     return( *this );
 }
@@ -111,7 +111,7 @@ CDumpContext &CDumpContext::DumpAsHex( ULONGLONG n )
 /**************************************************/
 {
     TCHAR   szBuff[19];
-    _stprintf( szBuff, _T( "0x%016I64x" ), n );
+    _stprintf( szBuff, _T("0x%016I64x"), n );
     OutputString( szBuff );
     return( *this );
 }
@@ -120,7 +120,7 @@ CDumpContext &CDumpContext::DumpAsHex( WORD w )
 /*********************************************/
 {
     TCHAR   szBuff[7];
-    _stprintf( szBuff, _T( "0x%04hx" ), w );
+    _stprintf( szBuff, _T("0x%04hx"), w );
     OutputString( szBuff );
     return( *this );
 }
@@ -142,16 +142,16 @@ void CDumpContext::HexDump( LPCTSTR lpszLine, BYTE *pby, int nBytes, int nWidth 
         if( nColumn == 0 ) {
             OutputString( lpszLine );
         }
-        _stprintf( szBuff, _T( " %02hx" ), pby[i] );
+        _stprintf( szBuff, _T(" %02hx"), pby[i] );
         OutputString( szBuff );
         nColumn++;
         if( nColumn >= nWidth ) {
-            OutputString( _T( "\r\n" ) );
+            OutputString( _T("\r\n") );
             nColumn = 0;
         }
     }
     if( nColumn != 0 ) {
-        OutputString( _T( "\r\n" ) );
+        OutputString( _T("\r\n") );
     }
 }
 
@@ -186,14 +186,14 @@ CDumpContext &CDumpContext::operator<<( LPCSTR lpsz )
     TCHAR   *pszBuff2 = new TCHAR[2 * nLength + 1];
     int     nCurPos = 0;
     for( int i = 0; i < nLength; i++ ) {
-        if( pszBuff1[i] == _T( '\n' ) ) {
-            pszBuff2[nCurPos] = _T( '\r' );
+        if( pszBuff1[i] == _T('\n') ) {
+            pszBuff2[nCurPos] = _T('\r');
             nCurPos++;
         }
         pszBuff2[nCurPos] = pszBuff1[i];
         nCurPos++;
     }
-    pszBuff2[nCurPos] = _T( '\0' );
+    pszBuff2[nCurPos] = _T('\0');
 
     OutputString( pszBuff2 );
     delete [] pszBuff2;
@@ -218,14 +218,14 @@ CDumpContext &CDumpContext::operator<<( LPCWSTR lpsz )
     TCHAR   *pszBuff2 = new TCHAR[2 * nLength + 1];
     int     nCurPos = 0;
     for( int i = 0; i < nLength; i++ ) {
-        if( pszBuff1[i] == _T( '\n' ) ) {
-            pszBuff2[nCurPos] = _T( '\r' );
+        if( pszBuff1[i] == _T('\n') ) {
+            pszBuff2[nCurPos] = _T('\r');
             nCurPos++;
         }
         pszBuff2[nCurPos] = pszBuff1[i];
         nCurPos++;
     }
-    pszBuff2[nCurPos] = _T( '\0' );
+    pszBuff2[nCurPos] = _T('\0');
 
     OutputString( pszBuff2 );
     delete [] pszBuff2;
@@ -239,7 +239,7 @@ CDumpContext &CDumpContext::operator<<( const void *lp )
 /******************************************************/
 {
     TCHAR szBuff[11];
-    _stprintf( szBuff, _T( "0x%8lx" ), (LONG)lp );
+    _stprintf( szBuff, _T("0x%8lx"), (LONG)lp );
     OutputString( szBuff );
     return( *this );
 }
@@ -248,7 +248,7 @@ CDumpContext &CDumpContext::operator<<( BYTE by )
 /***********************************************/
 {
     TCHAR szBuff[5];
-    _stprintf( szBuff, _T( "%hhu" ), by );
+    _stprintf( szBuff, _T("%hhu"), by );
     OutputString( szBuff );
     return( *this );
 }
@@ -257,7 +257,7 @@ CDumpContext &CDumpContext::operator<<( WORD w )
 /**********************************************/
 {
     TCHAR   szBuff[7];
-    _stprintf( szBuff, _T( "%hu" ), w );
+    _stprintf( szBuff, _T("%hu"), w );
     OutputString( szBuff );
     return( *this );
 }
@@ -266,7 +266,7 @@ CDumpContext &CDumpContext::operator<<( DWORD dw )
 /************************************************/
 {
     TCHAR   szBuff[12];
-    _stprintf( szBuff, _T( "%lu" ), dw );
+    _stprintf( szBuff, _T("%lu"), dw );
     OutputString( szBuff );
     return( *this );
 }
@@ -275,7 +275,7 @@ CDumpContext &CDumpContext::operator<<( int n )
 /*********************************************/
 {
     TCHAR szBuff[12];
-    _stprintf( szBuff, _T( "%ld" ), n );
+    _stprintf( szBuff, _T("%ld"), n );
     OutputString( szBuff );
     return( *this );
 }
@@ -284,7 +284,7 @@ CDumpContext &CDumpContext::operator<<( double d )
 /************************************************/
 {
     TCHAR szBuff[32];
-    _stprintf( szBuff, _T( "%g" ), d );
+    _stprintf( szBuff, _T("%g"), d );
     OutputString( szBuff );
     return( *this );
 }
@@ -293,7 +293,7 @@ CDumpContext &CDumpContext::operator<<( float f )
 /***********************************************/
 {
     TCHAR   szBuff[32];
-    _stprintf( szBuff, _T( "%hg" ), f );
+    _stprintf( szBuff, _T("%hg"), f );
     OutputString( szBuff );
     return( *this );
 }
@@ -302,7 +302,7 @@ CDumpContext &CDumpContext::operator<<( LONG l )
 /**********************************************/
 {
     TCHAR   szBuff[12];
-    _stprintf( szBuff, _T( "%ld" ), l );
+    _stprintf( szBuff, _T("%ld"), l );
     OutputString( szBuff );
     return( *this );
 }
@@ -311,7 +311,7 @@ CDumpContext &CDumpContext::operator<<( UINT u )
 /**********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "%lu" ), u );
+    _stprintf( szBuff, _T("%lu"), u );
     OutputString( szBuff );
     return( *this );
 }
@@ -320,7 +320,7 @@ CDumpContext &CDumpContext::operator<<( LONGLONG n )
 /**************************************************/
 {
     TCHAR   szBuff[22];
-    _stprintf( szBuff, _T( "%I64d" ), n );
+    _stprintf( szBuff, _T("%I64d"), n );
     OutputString( szBuff );
     return( *this );
 }
@@ -329,7 +329,7 @@ CDumpContext &CDumpContext::operator<<( ULONGLONG n )
 /***************************************************/
 {
     TCHAR   szBuff[21];
-    _stprintf( szBuff, _T( "%I64u" ), n );
+    _stprintf( szBuff, _T("%I64u"), n );
     OutputString( szBuff );
     return( *this );
 }
@@ -338,7 +338,7 @@ CDumpContext &CDumpContext::operator<<( HWND h )
 /**********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%0lx" ), (LONG)h );
+    _stprintf( szBuff, _T("0x%0lx"), (LONG)h );
     OutputString( szBuff );
     return( *this );
 }
@@ -347,7 +347,7 @@ CDumpContext &CDumpContext::operator<<( HDC h )
 /*********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%0lx" ), (LONG)h );
+    _stprintf( szBuff, _T("0x%0lx"), (LONG)h );
     OutputString( szBuff );
     return( *this );
 }
@@ -356,7 +356,7 @@ CDumpContext &CDumpContext::operator<<( HMENU h )
 /***********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%0lx" ), (LONG)h );
+    _stprintf( szBuff, _T("0x%0lx"), (LONG)h );
     OutputString( szBuff );
     return( *this );
 }
@@ -365,7 +365,7 @@ CDumpContext &CDumpContext::operator<<( HACCEL h )
 /************************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%0lx" ), (LONG)h );
+    _stprintf( szBuff, _T("0x%0lx"), (LONG)h );
     OutputString( szBuff );
     return( *this );
 }
@@ -374,7 +374,7 @@ CDumpContext &CDumpContext::operator<<( HFONT h )
 /***********************************************/
 {
     TCHAR   szBuff[11];
-    _stprintf( szBuff, _T( "0x%0lx" ), (LONG)h );
+    _stprintf( szBuff, _T("0x%0lx"), (LONG)h );
     OutputString( szBuff );
     return( *this );
 }

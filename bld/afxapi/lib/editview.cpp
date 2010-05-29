@@ -68,8 +68,8 @@ const DWORD CEditView::dwStyleDefault =
     ES_MULTILINE | ES_NOHIDESEL;
 
 CEditView::CEditView()
-    : CCtrlView( _T( "EDIT" ), 0L )
-/*********************************/
+    : CCtrlView( _T("EDIT"), 0L )
+/*******************************/
 {
     m_nTabStops = 32;
     m_pShadowBuffer = NULL;
@@ -309,14 +309,14 @@ UINT CEditView::PrintInsideRect( CDC *pDC, RECT &rectLayout, UINT nIndexStart,
     int y = rectLayout.top;
     int nCurrentIndex = nIndexStart;
     while( y + nCharHeight < rectLayout.bottom && nCurrentIndex <= nIndexStop ) {
-        if( lpszBuffer[nCurrentIndex] == _T( '\r' ) ) {
+        if( lpszBuffer[nCurrentIndex] == _T('\r') ) {
             nCurrentIndex++;
-            if( lpszBuffer[nCurrentIndex] == _T( '\n' ) ) {
+            if( lpszBuffer[nCurrentIndex] == _T('\n') ) {
                 nCurrentIndex++;
             }
             y += nCharHeight;
             continue;
-        } else if( lpszBuffer[nCurrentIndex] == _T( '\0' ) ) {
+        } else if( lpszBuffer[nCurrentIndex] == _T('\0') ) {
             nCurrentIndex++;
             continue;
         }
@@ -325,9 +325,9 @@ UINT CEditView::PrintInsideRect( CDC *pDC, RECT &rectLayout, UINT nIndexStart,
         int nLineWidth = 0;
         int nLastSpace = 0;
         while( nLineWidth < nWidth && nCurrentIndex + nLength <= nIndexStop &&
-               lpszBuffer[nCurrentIndex + nLength] != _T( '\r' ) &&
-               lpszBuffer[nCurrentIndex + nLength] != _T( '\n' ) &&
-               lpszBuffer[nCurrentIndex + nLength] != _T( '\0' ) ) {
+               lpszBuffer[nCurrentIndex + nLength] != _T('\r') &&
+               lpszBuffer[nCurrentIndex + nLength] != _T('\n') &&
+               lpszBuffer[nCurrentIndex + nLength] != _T('\0') ) {
             nLength++;
             nLineWidth = pDC->GetTabbedTextExtent( lpszBuffer + nCurrentIndex, nLength,
                                                    1, &m_nTabStops ).cx;
@@ -344,17 +344,17 @@ UINT CEditView::PrintInsideRect( CDC *pDC, RECT &rectLayout, UINT nIndexStart,
                             &m_nTabStops, rectLayout.left );
         nCurrentIndex += nLength;
         if( GetStyle() & ES_AUTOHSCROLL ) {
-            while( lpszBuffer[nCurrentIndex] != _T( '\r' ) &&
-                   lpszBuffer[nCurrentIndex] != _T( '\n' ) ) {
+            while( lpszBuffer[nCurrentIndex] != _T('\r') &&
+                   lpszBuffer[nCurrentIndex] != _T('\n') ) {
                 nCurrentIndex++;
             }
         }
-        if( lpszBuffer[nCurrentIndex] == _T( '\r' ) ) {
+        if( lpszBuffer[nCurrentIndex] == _T('\r') ) {
             nCurrentIndex++;
-            if( lpszBuffer[nCurrentIndex] == _T( '\n' ) ) {
+            if( lpszBuffer[nCurrentIndex] == _T('\n') ) {
                 nCurrentIndex++;
             }
-        } else if( lpszBuffer[nCurrentIndex] == _T( '\n' ) ) {
+        } else if( lpszBuffer[nCurrentIndex] == _T('\n') ) {
             nCurrentIndex++;
         }
         y += nCharHeight;
@@ -386,7 +386,7 @@ void CEditView::SerializeRaw( CArchive &ar )
         } else {
             LPTSTR lpszBuffer = new TCHAR[nLength + 1];
             ar.Read( lpszBuffer, (UINT)nLength * sizeof( TCHAR ) );
-            lpszBuffer[nLength] = _T( '\0' );
+            lpszBuffer[nLength] = _T('\0');
             ::SetWindowText( m_hWnd, lpszBuffer );
         }
     }

@@ -38,7 +38,7 @@ CSimpleException::CSimpleException()
 {
     m_bInitialized = FALSE;
     m_bLoaded = FALSE;
-    m_szMessage[0] = _T( '\0' );
+    m_szMessage[0] = _T('\0');
 }
 
 CSimpleException::CSimpleException( BOOL bAutoDelete ) : CException( bAutoDelete )
@@ -46,7 +46,7 @@ CSimpleException::CSimpleException( BOOL bAutoDelete ) : CException( bAutoDelete
 {
     m_bInitialized = FALSE;
     m_bLoaded = FALSE;
-    m_szMessage[0] = _T( '\0' );
+    m_szMessage[0] = _T('\0');
 }
 
 BOOL CSimpleException::GetErrorMessage( LPTSTR lpszError, UINT nMaxError,
@@ -70,7 +70,7 @@ BOOL CSimpleException::GetErrorMessage( LPTSTR lpszError, UINT nMaxError,
         return( TRUE );
     } else {
         if( lpszError != NULL && nMaxError > 0 ) {
-            lpszError[0] = _T( '\0' );
+            lpszError[0] = _T('\0');
         }
         return( FALSE );
     }

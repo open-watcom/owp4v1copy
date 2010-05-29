@@ -51,7 +51,7 @@ BOOL AfxRegisterClass( WNDCLASS *lpWndClass )
     ASSERT( pState != NULL );
     if( pState->m_bDLL ) {
         pState->m_strUnregisterList += lpWndClass->lpszClassName;
-        pState->m_strUnregisterList += _T( "\n" );
+        pState->m_strUnregisterList += _T("\n");
     }
 
     return( TRUE );
@@ -65,10 +65,10 @@ LPCTSTR AfxRegisterWndClass( UINT nClassStyle, HCURSOR hCursor, HBRUSH hbrBackgr
     ASSERT( pState != NULL );
     if( hCursor == NULL && hbrBackground == NULL && hIcon == NULL ) {
         _sntprintf( pState->m_szTempClassName, _AFX_TEMP_CLASS_NAME_SIZE - 1,
-                    _T( "Afx:%p:%x" ), AfxGetInstanceHandle(), nClassStyle );
+                    _T("Afx:%p:%x"), AfxGetInstanceHandle(), nClassStyle );
     } else {
         _sntprintf( pState->m_szTempClassName, _AFX_TEMP_CLASS_NAME_SIZE - 1,
-                    _T( "Afx:%p:%x:%p:%p:%p" ), AfxGetInstanceHandle(), nClassStyle,
+                    _T("Afx:%p:%x:%p:%p:%p"), AfxGetInstanceHandle(), nClassStyle,
                     hCursor, hbrBackground, hIcon );
     }
 

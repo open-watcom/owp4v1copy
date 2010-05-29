@@ -39,7 +39,7 @@ CFileFind::CFileFind()
     m_pFoundInfo = NULL;
     m_pNextInfo = NULL;
     m_hContext = NULL;
-    m_chDirSeparator = _T( '\\' );
+    m_chDirSeparator = _T('\\');
 }
 
 CFileFind::~CFileFind()
@@ -72,7 +72,7 @@ BOOL CFileFind::FindFile( LPCTSTR pstrName, DWORD dwUnused )
     if( cchRoot == 0 || cchRoot > MAX_PATH ) {
         return( FALSE );
     }
-    *lpszFilePart = _T( '\0' );
+    *lpszFilePart = _T('\0');
     m_hContext = ::FindFirstFile( pstrName, (LPWIN32_FIND_DATA)m_pNextInfo );
     if( m_hContext == INVALID_HANDLE_VALUE ) {
         return( FALSE );
@@ -126,8 +126,8 @@ CString CFileFind::GetFilePath() const
 /************************************/
 {
     CString strFilePath = m_strRoot;
-    if( strFilePath.Right( 1 ).Compare( _T( "\\" ) ) != 0 ) {
-        strFilePath += _T( "\\" );
+    if( strFilePath.Right( 1 ).Compare( _T("\\") ) != 0 ) {
+        strFilePath += _T("\\");
     }
     strFilePath += ((LPWIN32_FIND_DATA)m_pFoundInfo)->cFileName;
     return( strFilePath );
@@ -147,7 +147,7 @@ CString CFileFind::GetFileTitle() const
 CString CFileFind::GetFileURL() const
 /***********************************/
 {
-    CString strURL( _T( "file://" ) );
+    CString strURL( _T("file://") );
     strURL += GetFilePath();
     return( strURL );
 }
@@ -192,7 +192,7 @@ BOOL CFileFind::IsDots() const
 /****************************/
 {
     CString strFileName = GetFileName();
-    return( strFileName == _T( "." ) || strFileName == _T( ".." ) );
+    return( strFileName == _T(".") || strFileName == _T("..") );
 }
 
 BOOL CFileFind::MatchesMask( DWORD dwMask ) const

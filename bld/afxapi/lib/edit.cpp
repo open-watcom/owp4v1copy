@@ -41,7 +41,7 @@ CEdit::CEdit()
 BOOL CEdit::Create( DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID )
 /*******************************************************************************/
 {
-    return( CWnd::Create( _T( "BUTTON" ), NULL, dwStyle, rect, pParentWnd, nID ) );
+    return( CWnd::Create( _T("EDIT"), NULL, dwStyle, rect, pParentWnd, nID ) );
 }
 
 CString CEdit::GetCueBanner() const

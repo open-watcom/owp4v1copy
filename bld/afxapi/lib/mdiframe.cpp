@@ -61,7 +61,7 @@ BOOL CMDIFrameWnd::CreateClient( LPCREATESTRUCT lpCreateStruct, CMenu *pWindowMe
     ccs.hWindowMenu = pWindowMenu->GetSafeHmenu();
     ccs.idFirstChild = AFX_IDM_FIRST_MDICHILD;
 
-    m_hWndMDIClient = ::CreateWindowEx( WS_EX_CLIENTEDGE, _T( "MDICLIENT" ), NULL,
+    m_hWndMDIClient = ::CreateWindowEx( WS_EX_CLIENTEDGE, _T("MDICLIENT"), NULL,
                                         WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN |
                                         WS_CLIPSIBLINGS | MDIS_ALLCHILDSTYLES,
                                         0, 0, 0, 0, m_hWnd, (HMENU)AFX_IDW_PANE_FIRST,
@@ -133,7 +133,7 @@ BOOL CMDIFrameWnd::PreCreateWindow( CREATESTRUCT &cs )
 /****************************************************/
 {
     if( cs.lpszClass == NULL ) {
-        cs.lpszClass = _T( "AfxMDIFrame" );
+        cs.lpszClass = _T("AfxMDIFrame");
     }
     return( TRUE );
 }

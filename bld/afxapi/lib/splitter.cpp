@@ -113,7 +113,7 @@ BOOL CSplitterWnd::Create( CWnd *pParentWnd, int nMaxRows, int nMaxCols, SIZE si
     m_nRows = 1;
     m_nCols = 1;
 
-    if( !CWnd::Create( _T( "AfxMDIFrame" ), NULL, dwStyle & ~(WS_HSCROLL | WS_VSCROLL),
+    if( !CWnd::Create( _T("AfxMDIFrame"), NULL, dwStyle & ~(WS_HSCROLL | WS_VSCROLL),
                        CRect( 0, 0, 0, 0 ), pParentWnd, nID ) ) {
         return( FALSE );
     }
@@ -148,7 +148,7 @@ BOOL CSplitterWnd::Create( CWnd *pParentWnd, int nMaxRows, int nMaxCols, SIZE si
 BOOL CSplitterWnd::CreateScrollBarCtrl( DWORD dwStyle, UINT nID )
 /***************************************************************/
 {
-    return( ::CreateWindowEx( 0L, _T( "SCROLLBAR" ), NULL,
+    return( ::CreateWindowEx( 0L, _T("SCROLLBAR"), NULL,
                               WS_CHILD | WS_VISIBLE | dwStyle, 0, 0, 0, 0, m_hWnd,
                               (HMENU)nID, AfxGetInstanceHandle(), NULL ) != NULL );
 }
@@ -162,7 +162,7 @@ BOOL CSplitterWnd::CreateStatic( CWnd *pParentWnd, int nRows, int nCols,
     m_nRows = nRows;
     m_nCols = nCols;
 
-    if( !CWnd::Create( _T( "AfxMDIFrame" ), NULL, dwStyle & ~(WS_HSCROLL | WS_VSCROLL),
+    if( !CWnd::Create( _T("AfxMDIFrame"), NULL, dwStyle & ~(WS_HSCROLL | WS_VSCROLL),
                        CRect( 0, 0, 0, 0 ), pParentWnd, nID ) ) {
         return( FALSE );
     }

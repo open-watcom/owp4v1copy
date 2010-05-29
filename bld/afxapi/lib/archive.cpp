@@ -208,21 +208,21 @@ BOOL CArchive::ReadString( CString &rString )
     TCHAR   ch;
     for( ;; ) {
         Read( (void *)&ch, sizeof( TCHAR ) );
-        if( ch == '\n' ) {
+        if( ch == _T('\n') ) {
             break;
-        } else if( ch == '\r' ) {
+        } else if( ch == _T('\r') ) {
             Read( (void *)&ch, sizeof( TCHAR ) );
             break;
         }
         szBuff[nCur] = ch;
         nCur++;
         if( nCur == 128 ) {
-            szBuff[128] = _T( '\0' );
+            szBuff[128] = _T('\0');
             rString += szBuff;
             nCur = 0;
         }
     }
-    szBuff[nCur] = _T( '\0' );
+    szBuff[nCur] = _T('\0');
     rString += szBuff;
     return( TRUE );
 }
@@ -234,16 +234,16 @@ LPTSTR CArchive::ReadString( LPTSTR lpsz, UINT nMax )
     TCHAR   ch;
     while( nCur < nMax ) {
         Read( (void *)&ch, sizeof( TCHAR ) );
-        if( ch == '\n' ) {
+        if( ch == _T('\n') ) {
             break;
-        } else if( ch == '\r' ) {
+        } else if( ch == _T('\r') ) {
             Read( (void *)&ch, sizeof( TCHAR ) );
             break;
         }
         lpsz[nCur] = ch;
         nCur++;
     }
-    lpsz[nCur] = _T( '\0' );
+    lpsz[nCur] = _T('\0');
     return( lpsz );
 }
 

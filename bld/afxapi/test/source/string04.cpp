@@ -4,7 +4,7 @@
 int main() {
     CString str;
     str.LoadString( 1 );
-    if( str != _T( "abcd" ) ) _fail;
+    if( str != _T("abcd") ) _fail;
 
     _PASS;
 }

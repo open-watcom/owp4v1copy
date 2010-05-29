@@ -37,12 +37,12 @@
 BOOL AFXAPI AfxAssertFailedLine( LPCSTR lpszFileName, int nLine )
 /***************************************************************/
 {
-    CString strMessage( _T( "Assertion failed!\n\nFile: " ) );
+    CString strMessage( _T("Assertion failed!\n\nFile: ") );
     strMessage += lpszFileName;
-    strMessage.AppendFormat( _T( "\nLine: %d\n\n" ), nLine );
-    strMessage += _T( "Select Abort to terminate the program.\n" );
-    strMessage += _T( "Select Retry to debug.\n" );
-    strMessage += _T( "Select Ignore to continue execution." );
+    strMessage.AppendFormat( _T("\nLine: %d\n\n"), nLine );
+    strMessage += _T("Select Abort to terminate the program.\n");
+    strMessage += _T("Select Retry to debug.\n");
+    strMessage += _T("Select Ignore to continue execution.");
     int nResult = ::MessageBox( NULL, strMessage, NULL, MB_ABORTRETRYIGNORE );
     if( nResult == IDABORT ) {
         AfxAbort();

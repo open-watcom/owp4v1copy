@@ -40,9 +40,9 @@ static BOOL _InitRichEdit()
     _AFX_RICHEDIT_STATE *pState = _afxRichEditState.GetData();
     ASSERT( pState != NULL );
     if( pState->m_hInstRichEdit == NULL && pState->m_hInstRichEdit2 == NULL ) {
-        pState->m_hInstRichEdit2 = ::LoadLibrary( _T( "RICHED20.DLL" ) );
+        pState->m_hInstRichEdit2 = ::LoadLibrary( _T("RICHED20.DLL") );
         if( pState->m_hInstRichEdit2 == NULL ) {
-            pState->m_hInstRichEdit = ::LoadLibrary( _T( "RICHED32.DLL" ) );
+            pState->m_hInstRichEdit = ::LoadLibrary( _T("RICHED32.DLL") );
             if( pState->m_hInstRichEdit == NULL ) {
                 return( FALSE );
             }
@@ -66,7 +66,7 @@ BOOL CRichEditCtrl::Create( DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, U
     if( _afxRichEditState->m_hInstRichEdit2 != NULL ) {
         return( CWnd::Create( RICHEDIT_CLASS, NULL, dwStyle, rect, pParentWnd, nID ) );
     } else {
-        return( CWnd::Create( _T( "RICHEDIT" ), NULL, dwStyle, rect, pParentWnd, nID ) );
+        return( CWnd::Create( _T("RICHEDIT"), NULL, dwStyle, rect, pParentWnd, nID ) );
     }
 }
 
@@ -82,7 +82,7 @@ BOOL CRichEditCtrl::CreateEx( DWORD dwExStyle, DWORD dwStyle, const RECT &rect,
         return( CWnd::CreateEx( dwExStyle, RICHEDIT_CLASS, NULL, dwStyle, rect,
                                 pParentWnd, nID ) );
     } else {
-        return( CWnd::CreateEx( dwExStyle, _T( "RICHEDIT" ), NULL, dwStyle, rect,
+        return( CWnd::CreateEx( dwExStyle, _T("RICHEDIT"), NULL, dwStyle, rect,
                                 pParentWnd, nID ) );
     }
 }

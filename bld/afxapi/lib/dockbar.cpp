@@ -44,7 +44,7 @@ BOOL CDockBar::Create( CWnd *pParentWnd, DWORD dwStyle, UINT nID )
 {
     m_dwStyle = dwStyle & CBRS_ALL;
     dwStyle &= ~CBRS_ALL;
-    return( CWnd::Create( _T( "AfxControlBar" ), NULL, dwStyle, CRect( 0, 0, 0, 0 ),
+    return( CWnd::Create( _T("AfxControlBar"), NULL, dwStyle, CRect( 0, 0, 0, 0 ),
                           pParentWnd, nID ) );
 }
 

@@ -199,7 +199,7 @@ static BOOL _DisableToolTips()
         return( FALSE );
     }
 
-    HINSTANCE hInstance = ::LoadLibrary( _T( "UXTHEME.DLL" ) );
+    HINSTANCE hInstance = ::LoadLibrary( _T("UXTHEME.DLL") );
     if( hInstance == NULL ) {
         return( FALSE );
     }
@@ -340,7 +340,7 @@ void CWnd::HtmlHelp( DWORD_PTR dwData, UINT nCmd )
 {
     PrepareForHelp();
     if( _HtmlHelpFnPtr == NULL ) {
-        HINSTANCE hInstance = ::LoadLibrary( _T( "HHCTRL.OCX" ) );
+        HINSTANCE hInstance = ::LoadLibrary( _T("HHCTRL.OCX") );
         if( hInstance != NULL ) {
             _HtmlHelpFnPtr = (PFN_HTMLHELP)::GetProcAddress( hInstance, HTMLHELP_NAME );
         }
@@ -712,7 +712,7 @@ BOOL CWnd::PreCreateWindow( CREATESTRUCT &cs )
 /********************************************/
 {
     if( cs.lpszClass == NULL ) {
-        cs.lpszClass = _T( "AfxWnd" );
+        cs.lpszClass = _T("AfxWnd");
     }
     return( TRUE );
 }

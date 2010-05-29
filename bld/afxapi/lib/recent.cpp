@@ -77,7 +77,7 @@ BOOL CRecentFileList::GetDisplayName( CString &strName, int nIndex, LPCTSTR lpsz
     }
     if( lpszCurDir != NULL ) {
         if( _tcsnicmp( m_arrNames[nIndex], lpszCurDir, nCurDir ) == 0 &&
-            _tcschr( (LPCTSTR)m_arrNames[nIndex] + nCurDir + 1, _T( '\\' ) ) == NULL ) {
+            _tcschr( (LPCTSTR)m_arrNames[nIndex] + nCurDir + 1, _T('\\') ) == NULL ) {
             LPTSTR lpszBuffer = strName.GetBuffer( MAX_PATH );
             ::GetFileTitle( m_arrNames[nIndex], lpszBuffer, MAX_PATH );
             strName.ReleaseBuffer();
@@ -98,7 +98,7 @@ BOOL CRecentFileList::GetDisplayName( CString &strName, int nIndex, LPCTSTR lpsz
     LPTSTR lpszBuffer = strName.GetBuffer( m_nMaxDisplayLength + 1 );
     memset( lpszBuffer, 0, (m_nMaxDisplayLength + 1) * sizeof( TCHAR ) );
     _tcsncpy( lpszBuffer, m_arrNames[nIndex], m_nMaxDisplayLength - 3 );
-    _tcscat( lpszBuffer, _T( "..." ) );
+    _tcscat( lpszBuffer, _T("...") );
     strName.ReleaseBuffer();
     return( TRUE );
 }
@@ -150,16 +150,16 @@ void CRecentFileList::UpdateMenu( CCmdUI *pCmdUI )
             int     nCurDir = ::GetCurrentDirectory( MAX_PATH, szCurDir );
             for( int i = 0; i < m_nSize && !m_arrNames[i].IsEmpty(); i++ ) {
                 if( i + 1 < 10 ) {
-                    strCaption.Format( _T( "&%d " ), i + 1 );
+                    strCaption.Format( _T("&%d "), i + 1 );
                 } else if( i + 1 == 10 ) {
-                    strCaption = _T( "1&0 " );
+                    strCaption = _T("1&0 ");
                 } else {
-                    strCaption.Format( _T( "%d " ), i + 1 );
+                    strCaption.Format( _T("%d "), i + 1 );
                 }
                 GetDisplayName( strDisplayName, i, szCurDir, nCurDir );
                 for( int j = 0; j < strDisplayName.GetLength(); j++ ) {
-                    if( strDisplayName[j] == _T( '&' ) ) {
-                        strCaption += _T( "&&" );
+                    if( strDisplayName[j] == _T('&') ) {
+                        strCaption += _T("&&");
                     } else {
                         strCaption.AppendChar( strDisplayName[j] );
                     }

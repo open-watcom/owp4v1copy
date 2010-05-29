@@ -84,8 +84,8 @@ BOOL CBitmapButton::AutoLoad( UINT nID, CWnd *pParent )
     GetWindowText( strText );
     ASSERT( strText.GetLength() > 0 );
 
-    if( !LoadBitmaps( strText + _T( "U" ), strText + _T( "D" ), strText + _T( "F" ),
-                      strText + _T( "X" ) ) ) {
+    if( !LoadBitmaps( strText + _T("U"), strText + _T("D"), strText + _T("F"),
+                      strText + _T("X") ) ) {
         return( FALSE );
     }
 

@@ -2,8 +2,8 @@
 
 int main()
 {
-    CString str1 = _T( "aaaa" );
-    CString str2 = _T( "bbbb" );
+    CString str1 = _T("aaaa");
+    CString str2 = _T("bbbb");
 
     CString test1( str1 );
     if( test1 != str1 ) _fail;
@@ -21,17 +21,17 @@ int main()
     if( test7 != str1 ) _fail;
 
     if( !(str1 < str2) ) _fail;
-    if( !(str1 < _T( "bbbb" )) ) _fail;
-    if( !(_T( "aaaa" ) < str2) ) _fail;
+    if( !(str1 < _T("bbbb")) ) _fail;
+    if( !(_T("aaaa") < str2) ) _fail;
     if( str1 > str2 ) _fail;
-    if( str1 > _T( "bbbb" ) ) _fail;
-    if( _T( "aaaa" ) > str2 ) _fail;
+    if( str1 > _T("bbbb") ) _fail;
+    if( _T("aaaa") > str2 ) _fail;
     if( !(str1 <= str2) ) _fail;
-    if( !(str1 <= _T( "bbbb" )) ) _fail;
-    if( !(_T( "aaaa" ) <= str2) ) _fail;
+    if( !(str1 <= _T("bbbb")) ) _fail;
+    if( !(_T("aaaa") <= str2) ) _fail;
     if( str1 >= str2 ) _fail;
-    if( str1 >= _T( "bbbb" ) ) _fail;
-    if( _T( "aaaa" ) >= str2 ) _fail;
+    if( str1 >= _T("bbbb") ) _fail;
+    if( _T("aaaa") >= str2 ) _fail;
 
     if( str1.Collate( str2 ) >= 0 ) _fail;
     if( str1.CollateNoCase( str2 ) >= 0 ) _fail;

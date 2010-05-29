@@ -48,7 +48,7 @@ BOOL CDialogBar::Create( CWnd *pParentWnd, LPCTSTR lpszTemplateName, UINT nStyle
     
     CREATESTRUCT cs;
     memset( &cs, 0, sizeof( CREATESTRUCT ) );
-    cs.lpszClass = _T( "AfxControlBar" );
+    cs.lpszClass = _T("AfxControlBar");
     cs.style = nStyle | WS_CHILD;
     cs.hwndParent = pParentWnd->GetSafeHwnd();
     cs.hMenu = (HMENU)nID;

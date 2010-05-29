@@ -52,20 +52,20 @@ BOOL AFXAPI AfxWinInit( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpC
     wc.hCursor = ::LoadCursor( NULL, IDC_ARROW );
     wc.hbrBackground = NULL;
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = _T( "AfxWnd" );
+    wc.lpszClassName = _T("AfxWnd" );
     AfxRegisterClass( &wc );
     wc.hIcon = ::LoadIcon( NULL, IDI_WINLOGO );
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wc.lpszClassName = _T( "AfxFrameOrView" );
+    wc.lpszClassName = _T("AfxFrameOrView");
     AfxRegisterClass( &wc );
     wc.style = CS_DBLCLKS;
     wc.hbrBackground = NULL;
-    wc.lpszClassName = _T( "AfxMDIFrame" );
+    wc.lpszClassName = _T("AfxMDIFrame");
     AfxRegisterClass( &wc );
     wc.style = 0;
     wc.hIcon = NULL;
     wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-    wc.lpszClassName = _T( "AfxControlBar" );
+    wc.lpszClassName = _T("AfxControlBar");
     AfxRegisterClass( &wc );
     
     CWinApp *pApp = AfxGetApp();
@@ -76,21 +76,21 @@ BOOL AFXAPI AfxWinInit( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpC
 
         TCHAR szBuff[MAX_PATH + 1];
         ::GetModuleFileName( hInstance, szBuff, MAX_PATH );
-        TCHAR *pszFile = _tcsrchr( szBuff, _T( '\\' ) );
+        TCHAR *pszFile = _tcsrchr( szBuff, _T('\\') );
         if( pszFile != NULL ) {
             pszFile++;
         } else {
             pszFile = szBuff;
         }
-        TCHAR *pszExt = _tcsrchr( pszFile, _T( '.' ) );
+        TCHAR *pszExt = _tcsrchr( pszFile, _T('.') );
         if( pszExt != NULL ) {
-            *pszExt = _T( '\0' );
+            *pszExt = _T('\0');
         }
         pApp->m_pszExeName = _tcsdup( pszFile );
         if( pApp->m_eHelpType == afxHTMLHelp ) {
-            _tcscat( pszFile, _T( ".CHM" ) );
+            _tcscat( pszFile, _T(".CHM") );
         } else {
-            _tcscat( pszFile, _T( ".HLP" ) );
+            _tcscat( pszFile, _T(".HLP") );
         }
         pApp->m_pszHelpFilePath = _tcsdup( pszFile );
         if( pApp->m_pszAppName == NULL ) {

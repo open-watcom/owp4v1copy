@@ -32,7 +32,7 @@ AFX_INLINE void CString::Empty()
 /******************************/
 {
     m_nDataLength = 0;
-    m_psz[0] = _T( '\0' );
+    m_psz[0] = _T('\0');
 }
 
 AFX_INLINE int CString::GetAllocLength() const

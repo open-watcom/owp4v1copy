@@ -51,7 +51,7 @@ CString::CString()
     m_nDataLength = 0;
     m_nAllocLength = 1;
     m_psz = new TCHAR[1];
-    m_psz[0] = _T( '\0' );
+    m_psz[0] = _T('\0');
 }
 
 CString::CString( const CString &strSrc )
@@ -70,7 +70,7 @@ CString::CString( const char *pszSrc )
         m_nDataLength = 0;
         m_nAllocLength = 1;
         m_psz = new TCHAR[1];
-        m_psz[0] = _T( '\0' );
+        m_psz[0] = _T('\0');
     } else {
         m_nDataLength = strlen( pszSrc );
         m_nAllocLength = m_nDataLength + 1;
@@ -80,7 +80,7 @@ CString::CString( const char *pszSrc )
 #else
         strcpy( m_psz, pszSrc );
 #endif
-        m_psz[m_nAllocLength - 1] = _T( '\0' );
+        m_psz[m_nAllocLength - 1] = _T('\0');
     }
 }
 
@@ -91,7 +91,7 @@ CString::CString( const wchar_t *pszSrc )
         m_nDataLength = 0;
         m_nAllocLength = 1;
         m_psz = new TCHAR[1];
-        m_psz[0] = _T( '\0' );
+        m_psz[0] = _T('\0');
     } else {
         m_nDataLength = wcslen( pszSrc );
         m_nAllocLength = m_nDataLength + 1;
@@ -102,7 +102,7 @@ CString::CString( const wchar_t *pszSrc )
 #else
         wcscpy( m_psz, pszSrc );
 #endif
-        m_psz[m_nAllocLength - 1] = _T( '\0' );
+        m_psz[m_nAllocLength - 1] = _T('\0');
     }
 }
 
@@ -123,7 +123,7 @@ CString::CString( char ch, int nLength )
             m_psz[i] = m_psz[0];
         }
     }
-    m_psz[m_nAllocLength - 1] = _T( '\0' );
+    m_psz[m_nAllocLength - 1] = _T('\0');
 }
 
 CString::CString( wchar_t ch, int nLength )
@@ -143,7 +143,7 @@ CString::CString( wchar_t ch, int nLength )
             m_psz[i] = m_psz[0];
         }
     }
-    m_psz[m_nAllocLength - 1] = _T( '\0' );
+    m_psz[m_nAllocLength - 1] = _T('\0');
 }
 
 CString::CString( const char *pch, int nLength )
@@ -158,7 +158,7 @@ CString::CString( const char *pch, int nLength )
 #else
     strncpy( m_psz, pch, nLength );
 #endif
-    m_psz[m_nAllocLength - 1] = _T( '\0' );
+    m_psz[m_nAllocLength - 1] = _T('\0');
 }
 
 CString::CString( const wchar_t *pch, int nLength )
@@ -173,7 +173,7 @@ CString::CString( const wchar_t *pch, int nLength )
 #else
     wcsncpy( m_psz, pch, nLength );
 #endif
-    m_psz[m_nAllocLength - 1] = _T( '\0' );
+    m_psz[m_nAllocLength - 1] = _T('\0');
 }
 
 CString::~CString()
@@ -233,7 +233,7 @@ void CString::AppendChar( TCHAR ch )
     m_nDataLength++;
     Grow();
     m_psz[m_nDataLength - 1] = ch;
-    m_psz[m_nDataLength] = _T( '\0' );
+    m_psz[m_nDataLength] = _T('\0');
 }
 
 int CString::Find( PCTSTR pszSub, int iStart ) const
@@ -300,7 +300,7 @@ TCHAR CString::GetAt( int iChar ) const
     if( iChar >= 0 && iChar < m_nDataLength ) {
         return( m_psz[iChar] );
     } else {
-        return( _T( '\0' ) );
+        return( _T('\0') );
     }
 }
 
@@ -434,7 +434,7 @@ void CString::SetString( PCTSTR pszSrc, int nLength )
     m_nDataLength = nLength;
     Grow();
     _tcsncpy( m_psz, pszSrc, nLength );
-    m_psz[m_nDataLength] = _T( '\0' );
+    m_psz[m_nDataLength] = _T('\0');
 }
 
 void CString::SetString( PCTSTR pszSrc )
@@ -454,7 +454,7 @@ void CString::Truncate( int nNewLength )
 {
     if( nNewLength < m_nDataLength ) {
         m_nDataLength = nNewLength;
-        m_psz[m_nDataLength] = _T( '\0' );
+        m_psz[m_nDataLength] = _T('\0');
     }
 }
 
@@ -565,7 +565,7 @@ CString &CString::operator=( char ch )
 #else
     szSrc[0] = ch;
 #endif
-    szSrc[1] = _T( '\0' );
+    szSrc[1] = _T('\0');
     SetString( szSrc );
     return( *this );
 }
@@ -579,7 +579,7 @@ CString &CString::operator=( wchar_t ch )
 #else
     szSrc[0] = ch;
 #endif
-    szSrc[1] = _T( '\0' );
+    szSrc[1] = _T('\0');
     SetString( szSrc );
     return( *this );
 }
@@ -657,7 +657,7 @@ UINT AFXAPI HashKey( LPCTSTR key )
     }
 
     UINT nHashKey = 0;
-    while( *key != _T( '\0' ) ) {
+    while( *key != _T('\0') ) {
         nHashKey = (nHashKey << 5) + nHashKey + *key;
         key++;
     }

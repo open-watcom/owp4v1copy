@@ -42,7 +42,7 @@ BOOL CStatic::Create( LPCTSTR lpszText, DWORD dwStyle, const RECT &rect,
                       CWnd *pParentWnd, UINT nID )
 /************************************************/
 {
-    return( CWnd::Create( _T( "STATIC" ), lpszText, dwStyle, rect, pParentWnd, nID ) );
+    return( CWnd::Create( _T("STATIC"), lpszText, dwStyle, rect, pParentWnd, nID ) );
 }
 
 void CStatic::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )

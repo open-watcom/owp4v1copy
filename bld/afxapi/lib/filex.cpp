@@ -51,7 +51,7 @@ BOOL CFileException::GetErrorMessage( LPTSTR lpszError, UINT nMaxError,
     }
     if( m_cause < none || m_cause > endOfFile ) {
         if( lpszError != NULL && nMaxError > 0 ) {
-            lpszError[0] = _T( '\0' );
+            lpszError[0] = _T('\0');
         }
         return( FALSE );
     }

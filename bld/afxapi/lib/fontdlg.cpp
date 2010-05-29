@@ -59,7 +59,7 @@ CFontDialog::CFontDialog( LPLOGFONT lplfInitial, DWORD dwFlags, CDC *pdcPrinter,
     m_cf.nFontType = 0;
     m_cf.nSizeMin = 0;
     m_cf.nSizeMax = 0;
-    m_szStyleName[0] = _T( '\0' );
+    m_szStyleName[0] = _T('\0');
 }
 
 CFontDialog::CFontDialog( const CHARFORMAT &charformat, DWORD dwFlags, CDC *pdcPrinter,
@@ -90,7 +90,7 @@ CFontDialog::CFontDialog( const CHARFORMAT &charformat, DWORD dwFlags, CDC *pdcP
     m_cf.nFontType = 0;
     m_cf.nSizeMin = 0;
     m_cf.nSizeMax = 0;
-    m_szStyleName[0] = _T( '\0' );
+    m_szStyleName[0] = _T('\0');
 
     m_lf.lfHeight = charformat.yHeight;
     m_lf.lfWidth = 0L;
@@ -131,7 +131,7 @@ CFontDialog::CFontDialog( const CHARFORMAT &charformat, DWORD dwFlags, CDC *pdcP
     if( charformat.dwMask & CFM_FACE ) {
         _tcscpy( m_lf.lfFaceName, charformat.szFaceName );
     } else {
-        m_lf.lfFaceName[0] = _T( '\0' );
+        m_lf.lfFaceName[0] = _T('\0');
     }
 }
 

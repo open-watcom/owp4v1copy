@@ -86,7 +86,7 @@ void AFXAPI DDV_MaxChars( CDataExchange *pDX, const CString &value, int nChars )
         if( value.GetLength() > nChars ) {
             CString strMessage;
             TCHAR   szChars[12];
-            _stprintf( szChars, _T( "%ld" ), nChars );
+            _stprintf( szChars, _T("%ld"), nChars );
             strMessage.FormatMessage( AFX_IDP_PARSE_STRING_SIZE, szChars );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -103,8 +103,8 @@ void AFXAPI DDV_MinMaxByte( CDataExchange *pDX, BYTE value, BYTE minVal, BYTE ma
             CString strMessage;
             TCHAR   szMin[4];
             TCHAR   szMax[4];
-            _stprintf( szMin, _T( "%hhu" ), minVal );
-            _stprintf( szMax, _T( "%hhu" ), maxVal );
+            _stprintf( szMin, _T("%hhu"), minVal );
+            _stprintf( szMax, _T("%hhu"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -154,8 +154,8 @@ void AFXAPI DDV_MinMaxDouble( CDataExchange *pDX, const double &value, double mi
             CString strMessage;
             TCHAR   szMin[64];
             TCHAR   szMax[64];
-            _stprintf( szMin, _T( "%g" ), minVal );
-            _stprintf( szMax, _T( "%g" ), maxVal );
+            _stprintf( szMin, _T("%g"), minVal );
+            _stprintf( szMax, _T("%g"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_REAL_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -173,8 +173,8 @@ void AFXAPI DDV_MinMaxDWord( CDataExchange *pDX, const DWORD &value, DWORD minVa
             CString strMessage;
             TCHAR   szMin[11];
             TCHAR   szMax[11];
-            _stprintf( szMin, _T( "%lu" ), minVal );
-            _stprintf( szMax, _T( "%lu" ), maxVal );
+            _stprintf( szMin, _T("%lu"), minVal );
+            _stprintf( szMax, _T("%lu"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -192,8 +192,8 @@ void AFXAPI DDV_MinMaxFloat( CDataExchange *pDX, float value, float minVal,
             CString strMessage;
             TCHAR   szMin[64];
             TCHAR   szMax[64];
-            _stprintf( szMin, _T( "%hg" ), minVal );
-            _stprintf( szMax, _T( "%hg" ), maxVal );
+            _stprintf( szMin, _T("%hg"), minVal );
+            _stprintf( szMax, _T("%hg"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_REAL_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -210,8 +210,8 @@ void AFXAPI DDV_MinMaxInt( CDataExchange *pDX, int value, int minVal, int maxVal
             CString strMessage;
             TCHAR   szMin[12];
             TCHAR   szMax[12];
-            _stprintf( szMin, _T( "%ld" ), minVal );
-            _stprintf( szMax, _T( "%ld" ), maxVal );
+            _stprintf( szMin, _T("%ld"), minVal );
+            _stprintf( szMax, _T("%ld"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -228,8 +228,8 @@ void AFXAPI DDV_MinMaxLong( CDataExchange *pDX, long value, long minVal, long ma
             CString strMessage;
             TCHAR   szMin[12];
             TCHAR   szMax[12];
-            _stprintf( szMin, _T( "%ld" ), minVal );
-            _stprintf( szMax, _T( "%ld" ), maxVal );
+            _stprintf( szMin, _T("%ld"), minVal );
+            _stprintf( szMax, _T("%ld"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -247,8 +247,8 @@ void AFXAPI DDV_MinMaxLongLong( CDataExchange *pDX, LONGLONG value, LONGLONG min
             CString strMessage;
             TCHAR   szMin[22];
             TCHAR   szMax[22];
-            _stprintf( szMin, _T( "%I64d" ), minVal );
-            _stprintf( szMax, _T( "%I64d" ), maxVal );
+            _stprintf( szMin, _T("%I64d"), minVal );
+            _stprintf( szMax, _T("%I64d"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -298,8 +298,8 @@ void AFXAPI DDV_MinMaxShort( CDataExchange *pDX, short value, short minVal,
             CString strMessage;
             TCHAR   szMin[7];
             TCHAR   szMax[7];
-            _stprintf( szMin, _T( "%hd" ), minVal );
-            _stprintf( szMax, _T( "%hd" ), maxVal );
+            _stprintf( szMin, _T("%hd"), minVal );
+            _stprintf( szMax, _T("%hd"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -334,8 +334,8 @@ void AFXAPI DDV_MinMaxUInt( CDataExchange *pDX, UINT value, UINT minVal, UINT ma
             CString strMessage;
             TCHAR   szMin[11];
             TCHAR   szMax[11];
-            _stprintf( szMin, _T( "%lu" ), minVal );
-            _stprintf( szMax, _T( "%lu" ), maxVal );
+            _stprintf( szMin, _T("%lu"), minVal );
+            _stprintf( szMax, _T("%lu"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -353,8 +353,8 @@ void AFXAPI DDV_MinMaxULongLong( CDataExchange *pDX, ULONGLONG value, ULONGLONG 
             CString strMessage;
             TCHAR   szMin[21];
             TCHAR   szMax[21];
-            _stprintf( szMin, _T( "%I64u" ), minVal );
-            _stprintf( szMax, _T( "%I64u" ), maxVal );
+            _stprintf( szMin, _T("%I64u"), minVal );
+            _stprintf( szMax, _T("%I64u"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -372,8 +372,8 @@ void AFXAPI DDV_MinMaxUnsigned( CDataExchange *pDX, unsigned value, unsigned min
             CString strMessage;
             TCHAR   szMin[11];
             TCHAR   szMax[11];
-            _stprintf( szMin, _T( "%lu" ), minVal );
-            _stprintf( szMax, _T( "%lu" ), maxVal );
+            _stprintf( szMin, _T("%lu"), minVal );
+            _stprintf( szMax, _T("%lu"), maxVal );
             strMessage.FormatMessage( AFX_IDP_PARSE_INT_RANGE, szMin, szMax );
             AfxMessageBox( strMessage );
             pDX->Fail();
@@ -615,13 +615,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, BYTE &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%hhu" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%hhu"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_BYTE );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[4];
-        _stprintf( szBuff, _T( "%hhu" ), value );
+        _stprintf( szBuff, _T("%hhu"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }
@@ -633,13 +633,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, short &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%hd" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%hd"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_INT );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[7];
-        _stprintf( szBuff, _T( "%hd" ), value );
+        _stprintf( szBuff, _T("%hd"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }
@@ -651,13 +651,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, int &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%ld" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%ld"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_INT );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[12];
-        _stprintf( szBuff, _T( "%ld" ), value );
+        _stprintf( szBuff, _T("%ld"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }
@@ -669,13 +669,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, UINT &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%lu" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%lu"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_UINT );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[11];
-        _stprintf( szBuff, _T( "%lu" ), value );
+        _stprintf( szBuff, _T("%lu"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }
@@ -687,13 +687,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, long &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%ld" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%ld"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_INT );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[12];
-        _stprintf( szBuff, _T( "%ld" ), value );
+        _stprintf( szBuff, _T("%ld"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }
@@ -705,13 +705,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, DWORD &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%lu" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%lu"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_UINT );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[11];
-        _stprintf( szBuff, _T( "%lu" ), value );
+        _stprintf( szBuff, _T("%lu"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }
@@ -737,13 +737,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, float &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%hg" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%hg"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_REAL );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[11];
-        _stprintf( szBuff, _T( "%hg" ), value );
+        _stprintf( szBuff, _T("%hg"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }
@@ -755,13 +755,13 @@ void AFXAPI DDX_Text( CDataExchange *pDX, int nIDC, double &value )
     if( pDX->m_bSaveAndValidate ) {
         TCHAR szBuff[256];
         ::GetWindowText( hWnd, szBuff, 255 );
-        if( _stscanf( szBuff, _T( "%g" ), &value ) != 1 ) {
+        if( _stscanf( szBuff, _T("%g"), &value ) != 1 ) {
             AfxMessageBox( AFX_IDP_PARSE_REAL );
             pDX->Fail();
         }
     } else {
         TCHAR szBuff[11];
-        _stprintf( szBuff, _T( "%g" ), value );
+        _stprintf( szBuff, _T("%g"), value );
         ::SetWindowText( hWnd, szBuff );
     }
 }

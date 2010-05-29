@@ -345,7 +345,7 @@ LRESULT CStatusBar::OnGetText( WPARAM wParam, LPARAM lParam )
 
     int n = CommandToIndex( ID_SEPARATOR );
     if( n < 0 ) {
-        ((LPTSTR)lParam)[0] = _T( '\0' );
+        ((LPTSTR)lParam)[0] = _T('\0');
         return( 0L );
     }
 
@@ -355,7 +355,7 @@ LRESULT CStatusBar::OnGetText( WPARAM wParam, LPARAM lParam )
         nLength = (int)wParam - 1;
     }
     _tcsncpy( (LPTSTR)lParam, (LPCTSTR)strText, nLength );
-    ((LPTSTR)lParam)[0] = _T( '\0' );
+    ((LPTSTR)lParam)[0] = _T('\0');
     return( nLength );
 }
 

@@ -2329,7 +2329,7 @@ public:
 CWinThread * AFXAPI AfxBeginThread( AFX_THREADPROC pfnThreadProc, LPVOID pParam, int nPriority = THREAD_PRIORITY_NORMAL, UINT nStackSize = 0, DWORD dwCreateFlags = 0L, LPSECURITY_ATTRIBUTES lpSecurityAttrs = NULL );
 CWinThread * AFXAPI AfxBeginThread( CRuntimeClass *pThreadClass, int nPriority = THREAD_PRIORITY_NORMAL, UINT nStackSize = 0, DWORD dwCreateFlags = 0L, LPSECURITY_ATTRIBUTES lpSecurityAttrs = NULL );
 void AFXAPI         AfxEndThread( UINT nExitCode, BOOL bDelete = TRUE );
-BOOL AFXAPI         AfxExtractSubString( CString &rString, LPCTSTR lpszFullString, int iSubString, TCHAR chSep = _T( '\n' ) );
+BOOL AFXAPI         AfxExtractSubString( CString &rString, LPCTSTR lpszFullString, int iSubString, TCHAR chSep = _T('\n') );
 void AFXAPI         AfxFormatString1( CString &rString, UINT nIDS, LPCTSTR lpsz1 );
 void AFXAPI         AfxFormatString2( CString &rString, UINT nIDS, LPCTSTR lpsz1, LPCTSTR lpsz2 );
 CWinApp * AFXAPI    AfxGetApp();

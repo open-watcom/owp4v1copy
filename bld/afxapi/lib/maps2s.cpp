@@ -147,7 +147,7 @@ UINT CMapStringToString::HashKey( LPCTSTR key ) const
 {
     ASSERT( key != NULL );
     UINT nHashKey = 0;
-    while( *key != _T( '\0' ) ) {
+    while( *key != _T('\0') ) {
         nHashKey = (nHashKey << 5) + nHashKey + *key;
         key++;
     }

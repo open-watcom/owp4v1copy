@@ -50,7 +50,7 @@ BOOL CException::GetErrorMessage( LPTSTR lpszError, UINT nMaxError,
 /*****************************************************/
 {
     if( lpszError != NULL && nMaxError > 0 ) {
-        lpszError[0] = _T( '\0' );
+        lpszError[0] = _T('\0');
     }
     if( pnHelpContext != NULL ) {
         *pnHelpContext = 0;

@@ -40,14 +40,14 @@ BOOL AFXAPI AfxExtractSubString( CString &rString, LPCTSTR lpszFullString,
     while( i < iSubString ) {
         if( *lpszSubString == chSep ) {
             i++;
-        } else if( *lpszSubString == _T( '\0' ) ) {
+        } else if( *lpszSubString == _T('\0') ) {
             return( FALSE );
         }
         lpszSubString++;
     }
 
     int nLength = 0;
-    while( lpszSubString[nLength] != chSep && lpszSubString[nLength] != _T( '\0' ) ) {
+    while( lpszSubString[nLength] != chSep && lpszSubString[nLength] != _T('\0') ) {
         nLength++;
     }
     rString.SetString( lpszSubString, nLength );

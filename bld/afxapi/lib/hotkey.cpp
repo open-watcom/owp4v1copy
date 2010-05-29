@@ -70,15 +70,15 @@ CString CHotKeyCtrl::GetHotKeyName() const
     CString str;
     if( wModifiers & HOTKEYF_CONTROL ) {
         str += GetKeyName( VK_CONTROL, FALSE );
-        str += _T( " + " );
+        str += _T(" + ");
     }
     if( wModifiers & HOTKEYF_ALT ) {
         str += GetKeyName( VK_MENU, FALSE );
-        str += _T( " + " );
+        str += _T(" + ");
     }
     if( wModifiers & HOTKEYF_SHIFT ) {
         str += GetKeyName( VK_SHIFT, FALSE );
-        str += _T( " + " );
+        str += _T(" + ");
     }
     str += GetKeyName( wVirtualKeyCode, wModifiers & HOTKEYF_EXT );
     return( str );

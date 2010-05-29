@@ -78,7 +78,7 @@ CFileDialog::CFileDialog( BOOL bOpenFileDialog, LPCTSTR lpszDefExt, LPCTSTR lpsz
     if( lpszFileName != NULL ) {
         _tcscpy( m_szFileName, lpszFileName );
     } else {
-        m_szFileName[0] = _T( '\0' );
+        m_szFileName[0] = _T('\0');
     }
 }
 
@@ -237,20 +237,20 @@ CString CFileDialog::GetNextPathName( POSITION &pos ) const
     ASSERT( pos != NULL );
     if( m_ofn.Flags & OFN_ALLOWMULTISELECT ) {
         LPCTSTR lpszFile = (LPCTSTR)pos;
-        TCHAR   chSep = (m_ofn.Flags & OFN_EXPLORER ? _T( '\0' ) : _T( ' ' ));
+        TCHAR   chSep = (m_ofn.Flags & OFN_EXPLORER ? _T('\0') : _T(' '));
         LPCTSTR lpszNext = _tcschr( lpszFile, chSep );
         if( lpszNext == NULL ) {
             pos = NULL;
         } else {
             lpszNext++;
-            if( lpszNext[0] == _T( '\0' ) ) {
+            if( lpszNext[0] == _T('\0') ) {
                 pos = NULL;
             } else {
                 pos = (POSITION)lpszNext;
             }
         }
         CString strPath( m_szFileName );
-        strPath += _T( "\\" );
+        strPath += _T("\\");
         strPath += lpszFile;
         return( strPath );
     } else {
@@ -263,10 +263,10 @@ POSITION CFileDialog::GetStartPosition() const
 /********************************************/
 {
     if( m_ofn.Flags & OFN_ALLOWMULTISELECT ) {
-        LPCTSTR lpszPath = _tcschr( m_szFileName, _T( '\0' ) );
+        LPCTSTR lpszPath = _tcschr( m_szFileName, _T('\0') );
         ASSERT( lpszPath != NULL );
         lpszPath++;
-        ASSERT( lpszPath[0] != _T( '\0' ) );
+        ASSERT( lpszPath[0] != _T('\0') );
         return( (POSITION)lpszPath );
     } else {
         return( (POSITION)m_szFileName );

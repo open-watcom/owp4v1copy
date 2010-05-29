@@ -51,8 +51,8 @@ CFindReplaceDialog::CFindReplaceDialog()
     m_fr.lpfnHook = AfxCommDlgProc;
     m_fr.lpTemplateName = NULL;
 
-    m_szFindWhat[0] = _T( '\0' );
-    m_szReplaceWith[0] = _T( '\0' );
+    m_szFindWhat[0] = _T('\0');
+    m_szReplaceWith[0] = _T('\0');
 }
 
 BOOL CFindReplaceDialog::Create( BOOL bFindDialogOnly, LPCTSTR lpszFindWhat,

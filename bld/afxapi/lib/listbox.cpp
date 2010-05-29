@@ -56,7 +56,7 @@ int CListBox::CompareItem( LPCOMPAREITEMSTRUCT lpCompareItemStruct )
 BOOL CListBox::Create( DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID )
 /**********************************************************************************/
 {
-    return( CWnd::Create( _T( "LISTBOX" ), NULL, dwStyle, rect, pParentWnd, nID ) );
+    return( CWnd::Create( _T("LISTBOX"), NULL, dwStyle, rect, pParentWnd, nID ) );
 }
 
 void CListBox::DeleteItem( LPDELETEITEMSTRUCT lpDeleteItemStruct )

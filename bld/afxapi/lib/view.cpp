@@ -236,7 +236,7 @@ BOOL CView::PreCreateWindow( CREATESTRUCT &cs )
         return( FALSE );
     }
     if( cs.lpszClass == NULL ) {
-        cs.lpszClass = _T( "AfxFrameOrView" );
+        cs.lpszClass = _T("AfxFrameOrView");
     }
     if( cs.style & WS_BORDER ) {
         cs.style &= ~WS_BORDER;

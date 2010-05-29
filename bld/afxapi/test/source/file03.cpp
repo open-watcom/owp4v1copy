@@ -6,14 +6,14 @@ int main()
     int testlen = _tcslen( teststr );
 
     CStdioFile file;
-    if( !file.Open( _T( "filetest.tmp" ), CFile::modeWrite | CFile::modeCreate ) ) {
+    if( !file.Open( _T("filetest.tmp"), CFile::modeWrite | CFile::modeCreate ) ) {
         _fail;
     }
     file.WriteString( teststr );
     file.Close();
 
     CString str;
-    if( !file.Open( _T( "filetest.tmp" ), CFile::modeRead ) ) {
+    if( !file.Open( _T("filetest.tmp"), CFile::modeRead ) ) {
         _fail;
     }
     if( !file.ReadString( str ) ) _fail;
@@ -25,7 +25,7 @@ int main()
     if( strcmp( buf, teststr ) != 0 ) _fail;
     file.Close();
 
-    CFile::Remove( _T( "filetest.tmp" ) );
+    CFile::Remove( _T("filetest.tmp") );
 
     _PASS;
 }

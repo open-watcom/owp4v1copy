@@ -6,14 +6,14 @@ int main()
     int testlen = strlen( teststr );
 
     CStdioFile file;
-    if( !file.Open( _T( "filetest.tmp" ), CFile::modeWrite | CFile::modeCreate ) ) {
+    if( !file.Open( _T("filetest.tmp"), CFile::modeWrite | CFile::modeCreate ) ) {
         _fail;
     }
     file.Write( teststr, testlen );
     file.Close();
 
     char buf[255];
-    if( !file.Open( _T( "filetest.tmp" ), CFile::modeRead ) ) {
+    if( !file.Open( _T("filetest.tmp"), CFile::modeRead ) ) {
         _fail;
     }
     if( file.GetLength() != testlen ) _fail;
@@ -21,7 +21,7 @@ int main()
     if( memcmp( buf, teststr, testlen ) != 0 ) _fail;
     file.Close();
 
-    CFile::Remove( _T( "filetest.tmp" ) );
+    CFile::Remove( _T("filetest.tmp") );
 
     _PASS;
 }

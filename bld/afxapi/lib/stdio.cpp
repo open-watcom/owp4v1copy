@@ -75,9 +75,9 @@ BOOL CStdioFile::ReadString( CString &rString )
         if( _fgetts( szBuff, 128, m_pStream ) == NULL && !feof( m_pStream ) ) {
             CFileException::ThrowErrno( errno, m_strFileName );
         }
-        pchNL = _tcschr( szBuff, _T( '\n' ) );
+        pchNL = _tcschr( szBuff, _T('\n') );
         if( pchNL != NULL ) {
-            *pchNL = _T( '\0' );
+            *pchNL = _T('\0');
         }
         rString += szBuff;
     }

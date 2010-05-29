@@ -36,28 +36,28 @@ CString CTimeSpan::Format( LPCTSTR lpszFormat )
 {
     CString str;
     TCHAR   szBuff[12];
-    while( *lpszFormat != _T( '\0' ) ) {
-        if( *lpszFormat == _T( '%' ) ) {
+    while( *lpszFormat != _T('\0') ) {
+        if( *lpszFormat == _T('%') ) {
             lpszFormat++;
             switch( *lpszFormat ) {
-            case _T( 'D' ):
-                _stprintf( szBuff, _T( "%d" ), GetDays() );
+            case _T('D'):
+                _stprintf( szBuff, _T("%d"), GetDays() );
                 break;
-            case _T( 'H' ):
-                _stprintf( szBuff, _T( "%d" ), GetHours() );
+            case _T('H'):
+                _stprintf( szBuff, _T("%d"), GetHours() );
                 break;
-            case _T( 'M' ):
-                _stprintf( szBuff, _T( "%d" ), GetMinutes() );
+            case _T('M'):
+                _stprintf( szBuff, _T("%d"), GetMinutes() );
                 break;
-            case _T( 'S' ):
-                _stprintf( szBuff, _T( "%d" ), GetSeconds() );
+            case _T('S'):
+                _stprintf( szBuff, _T("%d"), GetSeconds() );
                 break;
-            case _T( '%' ):
-                szBuff[0] = _T( '%' );
-                szBuff[1] = _T( '\0' );
+            case _T('%'):
+                szBuff[0] = _T('%');
+                szBuff[1] = _T('\0');
                 break;
             default:
-                szBuff[0] = _T( '\0' );
+                szBuff[0] = _T('\0');
                 break;
             }
             str += szBuff;

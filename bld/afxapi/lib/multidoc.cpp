@@ -121,7 +121,7 @@ void CMultiDocTemplate::SetDefaultTitle( CDocument *pDocument )
         strTitle.LoadString( AFX_IDS_UNTITLED );
     }
     m_nUntitledCount++;
-    strTitle.Format( _T( "%s%d" ), (LPCTSTR)strDocName, m_nUntitledCount );
+    strTitle.Format( _T("%s%d"), (LPCTSTR)strDocName, m_nUntitledCount );
     pDocument->SetTitle( strTitle );
 }
 

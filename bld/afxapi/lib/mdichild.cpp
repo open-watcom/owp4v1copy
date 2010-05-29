@@ -186,7 +186,7 @@ void CMDIChildWnd::OnUpdateFrameTitle( BOOL bAddToTitle )
             ::SetWindowText( m_hWnd, pDoc->GetTitle() );
         } else {
             TCHAR szTitleBarText[256];
-            _sntprintf( szTitleBarText, 255, _T( "%s : %d" ),
+            _sntprintf( szTitleBarText, 255, _T("%s : %d"),
                         (LPCTSTR)pDoc->GetTitle(), m_nWindow );
             ::SetWindowText( m_hWnd, szTitleBarText );
         }

@@ -42,7 +42,7 @@ BOOL CButton::Create( LPCTSTR lpszCaption, DWORD dwStyle, const RECT &rect,
                       CWnd *pParentWnd, UINT nID )
 /************************************************/
 {
-    return( CWnd::Create( _T( "BUTTON" ), lpszCaption, dwStyle, rect, pParentWnd,
+    return( CWnd::Create( _T("BUTTON"), lpszCaption, dwStyle, rect, pParentWnd,
                           nID ) );
 }
 
