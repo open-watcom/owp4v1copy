@@ -1129,14 +1129,15 @@ static void writepass1stuff( char *name )
     write_end_of_pass1();
 }
 
-static unsigned long OnePass( char *string )
-/******************************************/
+static void OnePassInit( void )
+/*****************************/
 {
     CmdlParamsInit();
-
-    IfCondInit();
-    ProcStackInit();
     AssumeInit();
+    
+    Options.locals_prefix[0] = '@';
+    Options.locals_prefix[1] = '@';
+    Options.locals_len = 0;
 
     EndDirectiveFound = FALSE;
     PhaseError = FALSE;
@@ -1145,6 +1146,15 @@ static unsigned long OnePass( char *string )
     LineNumber = 0;
     lastLineNumber = 0;
     MacroExitState = 0;
+}
+
+static unsigned long OnePass( char *string )
+/******************************************/
+{
+    OnePassInit();
+
+    IfCondInit();
+    ProcStackInit();
 
     for(;;) {
         if( ScanLine( string, MAX_LINE_LEN ) == NULL )
@@ -1171,6 +1181,7 @@ void WriteObjModule( void )
 
     AsmCodeBuffer = codebuf;
 
+    AsmSymInit();
     write_init();
 
     Parse_Pass = PASS_1;
@@ -1255,7 +1266,7 @@ void WriteObjModule( void )
     OpenLstFile();
     WriteListing();
 
-    AsmSymFini();
     FreeIncludePath();
     write_fini();
+    AsmSymFini();
 }

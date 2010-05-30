@@ -1165,7 +1165,6 @@ static void do_init_stuff( char **cmdline )
     }
     open_files();
     PushLineQueue();
-    AsmLookup( "$" );    // create "$" symbol for current segment counter
 }
 
 #ifdef __UNIX__
@@ -1313,11 +1312,4 @@ void CmdlParamsInit( void )
 
     set_cpu_parameters();
     set_fpu_parameters();
-    Options.locals_prefix[0] = '@'; // default LOCALS prefix is @@
-    Options.locals_prefix[1] = '@';
-    if( Options.mode & MODE_TASM ) {
-        Options.locals_len = 2;     // default LOCALS is on
-    } else {
-        Options.locals_len = 0;     // default LOCALS is off
-    }
 }

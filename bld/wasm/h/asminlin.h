@@ -142,6 +142,9 @@ extern unsigned char            *AsmCodeBuffer;    // code buffer for generated 
 
 extern void                     AsmLine( char * );
 extern void                     AsmInit( int, int, int, int );
+#if defined( _STANDALONE_ )
+extern void                     AsmSymInit( void );
+#endif
 extern void                     AsmSymFini( void );
 
 #if !defined( _STANDALONE_ )

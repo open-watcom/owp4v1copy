@@ -56,9 +56,11 @@ int directive( int i, long direct )
     switch( direct ) {
     case T_MASM:
         Options.mode &= ~MODE_IDEAL;
+        Options.locals_len = 0;
         return( NOT_ERROR );
     case T_IDEAL:
         Options.mode |= MODE_IDEAL;
+        Options.locals_len = 2;
         return( NOT_ERROR );
     case T_DOT_286C:
         direct = T_DOT_286;
