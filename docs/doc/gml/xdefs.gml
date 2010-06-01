@@ -32,12 +32,12 @@ DOS/4G and DOS/16M are trademarks of Tenberry Software, Inc.
 QNX is a registered trademark of QNX Software Systems Ltd.
 .dm tmarkqnx end
 
-:set symbol="ver"       value="1".
-:set symbol="rev"       value="9".
+:set symbol="ver"       value="2".
+:set symbol="rev"       value="0".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
-:set symbol="version"   value="190".
-:set symbol="vermacro"  value="1290".
+:set symbol="version"   value="200".
+:set symbol="vermacro"  value="2000".
 :set symbol="minram"    value="8 MB".
 :set symbol="mfc16"     value="MFC 2.52b".
 :set symbol="mfc32"     value="MFC 4.1".

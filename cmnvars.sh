@@ -5,8 +5,8 @@
 #       the end.
 
 # Set the version numbers
-export BLD_VER=19
-export BLD_VER_STR=1.9
+export BLD_VER=20
+export BLD_VER_STR=2.0
 
 # Set up default path information variable
 [ -n "$DEFPATH" ] || export DEFPATH=$PATH

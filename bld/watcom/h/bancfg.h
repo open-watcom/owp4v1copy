@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#define _BANVER     1290
+#define _BANVER     2000
 #define _BETAVER    1
 #define _BANEXTRA   " Limited Availability"
 #define _BANEXSHORT " LA"
