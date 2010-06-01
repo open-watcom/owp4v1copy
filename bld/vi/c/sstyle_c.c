@@ -41,6 +41,7 @@ static  char        *firstNonWS;
 
 #define DIRECTIVE_ERROR     "error"
 #define DIRECTIVE_IF        "if"
+#define DIRECTIVE_ELIF      "elif"
 #define DIRECTIVE_PRAGMA    "pragma"
 #define KEYWORD_DECLSPEC    "__declspec"
 #define KEYWORD_DEFINED     "defined"
@@ -337,6 +338,8 @@ static void getPreprocessor( ss_block *ss_new, char *start )
         if( isdirective( directive, DIRECTIVE_ERROR ) ) {
             flags.inErrorDir = TRUE;
         } else if( isdirective( directive, DIRECTIVE_IF ) ) {
+            flags.inIfDir = TRUE;
+        } else if( isdirective( directive, DIRECTIVE_ELIF ) ) {
             flags.inIfDir = TRUE;
         } else if( isdirective( directive, DIRECTIVE_PRAGMA ) ) {
             flags.inPragmaDir = TRUE;
