@@ -13,7 +13,6 @@ set WLINK_LNK=bootstrp.lnk
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
 
 # compiled using wmake + gcc + ar/wlib
-[ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/prereq.ctl ]
