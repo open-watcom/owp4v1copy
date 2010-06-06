@@ -1661,8 +1661,8 @@ void CWnd::OnNcDestroy()
     PostNcDestroy();
 }
 
-AFX_INLINE void CWnd::OnParentNotify( UINT message, LPARAM lParam )
-/*****************************************************************/
+void CWnd::OnParentNotify( UINT message, LPARAM lParam )
+/******************************************************/
 {
     HWND hWnd;
     if( message == WM_CREATE || message == WM_DESTROY ) {

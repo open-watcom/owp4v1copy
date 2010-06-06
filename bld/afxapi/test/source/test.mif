@@ -38,6 +38,8 @@ test_exes  = &
     rect01.$(exe) &
     cmd01.$(exe) &
     cmd02.$(exe) &
+    wnd01.$(exe) &
+    wnd02.$(exe) &
 
 
 ext = $(ext_$(arch))

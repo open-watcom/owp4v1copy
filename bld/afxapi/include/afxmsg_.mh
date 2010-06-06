@@ -328,7 +328,7 @@ enum AfxSig {
       (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( LPMEASUREITEMSTRUCT ))MeasureItem },
 #define ON_WM_MENUCHAR() \
     { WM_MENUCHAR, 0, 0, 0, AfxSig_l_uu_M, \
-      (AFX_PMSG)(AFX_PMSGW)(LONG (CWnd:*)( UINT, UINT, CMenu * ))OnMenuChar },
+      (AFX_PMSG)(AFX_PMSGW)(LONG (CWnd::*)( UINT, UINT, CMenu * ))OnMenuChar },
 #define ON_WM_MENUSELECT() \
     { WM_MENUSELECT, 0, 0, 0, AfxSig_v_uu_M, \
       (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, UINT, HMENU ))OnMenuSelect },
@@ -403,10 +403,10 @@ enum AfxSig {
       (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( CWnd * ))OnPaletteIsChanging },
 #define ON_WM_PARENTNOTIFY() \
     { WM_PARENTNOTIFY, 0, 0, 0, AfxSig_v_w_l, \
-      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, LONG ))OnParentNotify },
+      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, LPARAM ))OnParentNotify },
 #define ON_WM_PARENTNOTIFY_REFLECT() \
     { WM_PARENTNOTIFY + WM_REFLECT_BASE, 0, 0, 0, AfxSig_v_w_l, \
-      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, LONG ))ParentNotify },
+      (AFX_PMSG)(AFX_PMSGW)(void (CWnd::*)( UINT, LPARAM ))ParentNotify },
 #define ON_WM_QUERYDRAGICON() \
     { WM_QUERYDRAGICON, 0, 0, 0, AfxSig_C_v_v, \
       (AFX_PMSG)(AFX_PMSGW)(HCURSOR (CWnd::*)())OnQueryDragIcon },
