@@ -750,6 +750,8 @@ LRESULT WINEXPORT WdeMainWndProc( HWND hWnd, UINT message,
                 case IDM_FMHCENTRE:
                 case IDM_ESCAPE:
                 case IDM_DELETEOBJECT:
+                case IDM_SPACE_HORZ:
+                case IDM_SPACE_VERT:
                     ret = WdePassToEdit ( message, wParam, lParam );
                     pass_to_def = FALSE;
                     break;

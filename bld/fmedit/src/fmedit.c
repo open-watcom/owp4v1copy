@@ -53,6 +53,7 @@
 #include "eatom.def"
 #include "oitem.def"
 #include "align.def"
+#include "space.def"
 #include "clip.def"
 
 void WINEXP CloseFormEdit( HWND wnd )
@@ -275,6 +276,10 @@ BOOL WINEXP FMEditWndProc( HWND wnd, unsigned message,
         case IDM_FMVCENTRE :
         case IDM_FMBOTTOM :
             Align( wparam );
+            break;
+        case IDM_SPACE_HORZ:
+        case IDM_SPACE_VERT:
+            Space( wparam );
             break;
         default :
             return( FALSE );

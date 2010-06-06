@@ -204,6 +204,7 @@ static void WdeEnableAlignTools( HMENU menu, int offset )
 
     EnableMenuItem( menu, ALIGN_SUBMENU,    cmd | MF_BYPOSITION );
     EnableMenuItem( menu, SAMESIZE_SUBMENU, cmd | MF_BYPOSITION );
+    EnableMenuItem( menu, SPACE_SUBMENU,    cmd | MF_BYPOSITION );
 }
 
 static void WdeSetDialogObjectDialogMenu( HMENU menu, int offset,

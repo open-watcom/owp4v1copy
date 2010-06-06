@@ -83,7 +83,8 @@
 #define EDIT_MENU          1
 #define ALIGN_SUBMENU      5
 #define SAMESIZE_SUBMENU   6
-#define SYMBOLS_SUBMENU    15
+#define SPACE_SUBMENU      7
+#define SYMBOLS_SUBMENU    16
 #define IDM_SAME_WIDTH     120
 #define IDM_SAME_HEIGHT    121
 #define IDM_SAME_SIZE      122

@@ -139,6 +139,14 @@ BEGIN
             MENUITEM sp( "Same &Size",
                          "Same &Size" )            IDM_SAME_SIZE
         END
+        POPUP    sp( "Space E&venly",
+                     "Space E&venly" )
+        BEGIN
+            MENUITEM sp( "&Horizontally",
+                         "&Horizontally" )         IDM_SPACE_HORZ
+            MENUITEM sp( "&Vertically",
+                         "&Vertically" )           IDM_SPACE_VERT
+        END
         MENUITEM sp( "Size to Text\tF7",
                      "Size to Text\tF7" )          IDM_SIZETOTEXT
         MENUITEM sp( "Goto Ob&ject",

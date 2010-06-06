@@ -22,6 +22,7 @@ suppress_bd = 1
 
 object =                &
         align.obj       &
+        space.obj       &
         fmedit.obj      &
         grid.obj        &
         paint.obj       &
