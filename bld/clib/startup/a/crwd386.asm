@@ -93,8 +93,11 @@ _Extender         db 0          ; see clib\h\extender.inc for values
 _ExtenderSubtype  db 0          ; non-zero -> variant of extender
 __X32VM    db 0                 ; non-zero => X-32VM DOS Extender
 endif
+ifdef __DOS__
+_Envptr    df 0                 ; far environment pointer
+else
 _Envptr    dd 0                 ; offset part of environment pointer
-_Envseg    dw 0                 ; segment containing environment strings
+endif
 ifndef __QNX__
 ifndef __LINUX__
 _osmajor   db 0                 ; major DOS version number
@@ -163,7 +166,6 @@ ifndef __NETWARE__
         public  "C",_cbyte2
         public  "C",_child
         public  "C",_Envptr
-        public  "C",_Envseg
 endif
         public  __no87
         public  "C",__FPE_handler

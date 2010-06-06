@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  CauseWay DLL 32-bit startup code.
+;* Description:  DOS 32-bit DLL startup code.
 ;*
 ;*****************************************************************************
 
@@ -57,8 +57,7 @@ include xinit.inc
         extrn   __no87                  : word
         extrn   "C",_Extender           : byte
         extrn   "C",_ExtenderSubtype    : byte
-        extrn   "C",_Envptr             : dword
-        extrn   "C",_Envseg             : word
+        extrn   "C",_Envptr             : fword
         extrn   "C",__FPE_handler       : dword
         extrn   "C",_LpCmdLine          : dword
         extrn   "C",_LpPgmName          : dword
@@ -261,8 +260,8 @@ rat10:                                  ; - endif
         mov     ebx,ds
         mov     es,ebx                  ; get access to code segment
         mov     es:__saved_DS,ds        ; save DS value
-        mov     _Envptr,esi             ; save address of environment strings
-        mov     _Envseg,cx              ; save segment of environment area
+        mov     dword ptr _Envptr,esi   ; save address of environment strings
+        mov     word ptr _Envptr+4,cx   ; save segment of environment area
         push    esi                     ; save address of environment strings
 ;
 ;       copy command line into bottom of private stack
@@ -297,7 +296,7 @@ noparm: sub     al,al
         dec     edi                     ; back up pointer 1
         push    edi                     ; save pointer to pgm name
         push    edx                     ; save ds(stored in dx)
-        mov     ds,es:_Envseg           ; get segment addr of environment area
+        mov     ds,es:word ptr _Envptr+4 ; get segment addr of environment area
         sub     ebp,ebp                 ; assume "no87" env. var. not present
 L1:     mov     eax,[esi]               ; get first 4 characters
         or      eax,20202020h           ; map to lower case

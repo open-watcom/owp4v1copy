@@ -116,8 +116,6 @@ _WCRTLINK void  (*__sig_fini_rtn)(void) = { &NullSigFini };
 #endif
 extern  char            _end;
 
-extern  char            *_Envptr;
-
 int                     __Is_DLL;       /* TRUE => DLL, else not a DLL */
 
 #if defined(_M_IX86)
@@ -143,7 +141,7 @@ void __OS2MainInit( EXCEPTIONREGISTRATIONRECORD *xcpt, void *ptr,
     for( args = cmd; *args != '\0'; ++args ); /* skip over program name */
     ++args;
 
-    _Envptr = env;
+    _RWD_Envptr = env;
     _LpCmdLine = args;
 #ifdef _UNICODE
     _LpwCmdLine = lib_malloc( (strlen( _LpCmdLine ) + 1) * sizeof( wchar_t ) );

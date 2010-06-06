@@ -114,6 +114,11 @@ extern  char                *__ASTACKPTR;
  #pragma aux                __ASTACKSIZ "*"
 #endif
 #endif
+#if defined( __DOS_386__ ) || defined( __WINDOWS_386__ )
+extern char     _WCFAR *_Envptr;
+#else
+extern char     _WCI86FAR *_Envptr;
+#endif
 
 #if !defined(__QNX__) && !defined(__LINUX__) && defined(_M_IX86)
     extern void         (*__Save8087)(_87state *);/* Ptr to FP state save rtn (spawn) */
@@ -136,6 +141,9 @@ extern unsigned char        __uselfn;   /* LFN support available flag */
 #define _RWD_iob                __iob
 #if !defined(__NETWARE__)
     #define _RWD_threadid       _threadid
+#endif
+#if !defined( _M_I86 ) && ( defined( __DOS__ ) || defined( __NT__ ) || defined( __OS2__ ) )
+    #define _RWD_Envptr         _Envptr
 #endif
 #define _RWD_environ            environ
 #define _RWD_wenviron           _wenviron

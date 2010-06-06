@@ -44,7 +44,7 @@ br_suffix=0
 patch_level=0
 !endif
 
-extra_l_flags_dll = option impfile=$(dllname).imp reference __DLLstart_ disable 121
+extra_l_flags_dll = option impfile=$(dllname).imp reference __DLLstart_
 !ifeq release 0
 extra_l_flags_dll += option map,mangle,artificial,verbose
 !endif

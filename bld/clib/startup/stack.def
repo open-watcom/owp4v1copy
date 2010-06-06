@@ -3,7 +3,7 @@ _cbyte2
 _child
 _curbrk
 _Envptr
-_Envseg
+#_Envseg
 _LpCmdLine
 _LpPgmName
 _LpwCmdLine

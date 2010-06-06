@@ -72,8 +72,7 @@ FLG_LFN     equ 100h
         extrn   "C",__uselfn            : byte
         extrn   "C",_Extender           : byte
         extrn   "C",_ExtenderSubtype    : byte
-        extrn   "C",_Envptr             : dword
-        extrn   "C",_Envseg             : word
+        extrn   "C",_Envptr             : fword
         extrn   "C",__FPE_handler       : dword
         extrn   "C",_LpCmdLine          : dword
         extrn   "C",_LpPgmName          : dword
@@ -279,8 +278,8 @@ know_extender:                          ; endif
         mov     _ExtenderSubtype,ah     ; record extender subtype
         mov     es,bx                   ; get access to code segment
         mov     es:__saved_DS,ds        ; save DS value
-        mov     _Envptr,esi             ; save address of environment strings
-        mov     _Envseg,cx              ; save segment of environment area
+        mov     dword ptr _Envptr,esi   ; save address of environment strings
+        mov     word ptr _Envptr+4,cx   ; save segment of environment area
         push    esi                     ; save address of environment strings
 ;
 ;       copy command line into bottom of stack
@@ -310,7 +309,7 @@ noparm: sub     al,al
         dec     edi                     ; back up pointer 1
         push    edi                     ; save pointer to pgm name
         push    edx                     ; save ds(stored in dx)
-        mov     ds,es:_Envseg           ; get segment addr of environment area
+        mov     ds,es:word ptr _Envptr+4 ; get segment addr of environment area
                                         ; WARNING! The __sys_init_387_emulator
                                         ; routine (dosinite.asm) needs ebp to
                                         ; be nonzero if and only if NO87 set

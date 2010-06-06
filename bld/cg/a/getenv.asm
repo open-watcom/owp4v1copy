@@ -1,4 +1,4 @@
-        extrn   "C",_Envseg : word
+        extrn   "C",_Envptr : fword
         name    GetEnvVar
 
 _text segment byte public 'code'
@@ -18,8 +18,7 @@ GetEnvVar_ proc near
         push    ds                      ; ...
         push    ebp                     ; ...
         mov     ebp,eax                 ; DS:SI @ reqd env variable
-        xor     edi,edi                 ; ES:EDI @ env strings
-        mov     es,_Envseg              ; point to environment block
+        les     edi,_Envptr             ; ES:EDI point to environment block
 theloop:                                ; loop : theloop
         cmp     byte ptr es:[edi],0     ; - quif sitting on nullchar
         je      noenv                   ; - ...

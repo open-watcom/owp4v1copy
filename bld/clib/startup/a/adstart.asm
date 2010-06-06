@@ -136,8 +136,7 @@ endif   ; ACAD
         extrn   "C",__uselfn        : byte
         extrn   "C",_Extender       : byte
         extrn   "C",_ExtenderSubtype: byte
-        extrn   "C",_Envptr         : dword
-        extrn   "C",_Envseg         : word
+        extrn   "C",_Envptr         : fword
         extrn   "C",__FPE_handler   : dword
         extrn   "C",_LpCmdLine      : dword
         extrn   "C",_LpPgmName      : dword
@@ -384,11 +383,11 @@ noparm: sub     al,al
           jmp   short haveenv           ; else
 pharlap:mov   dx,ENV_SEG                ; - PharLap environment segment
 haveenv:                                ; endif
-        mov     es: _Envseg,dx          ; save segment of environment area
+        mov     es:word ptr _Envptr+4,dx ; save segment of environment area
         mov     ds,dx                   ; get segment addr of environment area
         sub     ebp,ebp                 ; assume "NO87" env. var. not present
         sub     esi,esi                 ; offset 0
-        mov     es: _Envptr,esi         ; save offset of environment area
+        mov     es:dword ptr _Envptr,esi ; save offset of environment area
 L1:     mov     eax,[esi]               ; get first 4 characters
         or      eax,2020h               ; map to lower case
         cmp     eax,37386f6eh           ; check for "no87"

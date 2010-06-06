@@ -103,8 +103,6 @@ _WCRTLINK void  (*__sig_fini_rtn)(void) = __sig_null_rtn;
 #endif
 extern  char            _end;
 
-extern  char            *_Envptr;
-
 int                     __Is_DLL;       /* TRUE => DLL, else not a DLL */
 static char             *_cmd_ptr;
 static wchar_t          *_wcmd_ptr;
@@ -123,7 +121,7 @@ int __NTInit( int is_dll, thread_data *tdata, HANDLE hdll )
     __FirstThreadData = tdata;
     __initPOSIXHandles();
 
-    _Envptr = GetEnvironmentStrings();
+    _RWD_Envptr = GetEnvironmentStrings();
 
     /*
      * Force reference to environ so that __setenvp is linked in; hence,
@@ -223,9 +221,9 @@ void __NTFini( void )
         lib_free( _wcmd_ptr );
         _wcmd_ptr = NULL;
     }
-    if( _Envptr != NULL ) {
-        FreeEnvironmentStrings( _Envptr );
-        _Envptr = NULL;
+    if( _RWD_Envptr != NULL ) {
+        FreeEnvironmentStrings( _RWD_Envptr );
+        _RWD_Envptr = NULL;
     }
 }
 

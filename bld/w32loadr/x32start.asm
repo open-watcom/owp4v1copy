@@ -161,7 +161,7 @@ __x386_zero_base_ptr            dd      0f0000000h
         public  "C",__FPE_handler
         public  "C",_Extender
         public  __LpPgmName,__LpCmdLine
-        public  __Envseg,__Envptr,__no87,__cbyte2
+        public  __Envptr,__no87,__cbyte2
         public  __child,__cbyte,__STACKTOP,__STACKLOW
         public  __osminor,__osmajor,__psp,__curbrk
         public  __dynend,__x386_stacklow,__X32VM,__ASTACKSIZ,__ASTACKPTR
@@ -182,8 +182,7 @@ __child         dd      0
 __no87          dw      0
 _Extender       db      3               ;pretend we are Pharlap version 3
                 db      0
-__Envptr        dd      0
-__Envseg        dw      0
+__Envptr        df      0
 __osmajor       db      0
 __osminor       db      0
 __X32VM         db      1
@@ -250,7 +249,7 @@ __x386_init proc near
         mov     __osminor,ah
 
         mov     __saved_DS,ds           ; save DS value
-        mov     __Envseg,gs             ; save segment of environment area
+        mov     word ptr __Envptr+4,gs  ; save segment of environment area
         push    fs
         pop     es                      ;pointer to psp
         mov     edi,81h                 ;DOS command buffer es:edi

@@ -184,8 +184,7 @@ __D16Infoseg   dw       0020h   ; DOS/4G kernel segment
         extrn   "C",_LpPgmName          : dword
         extrn   "C",_LpCmdLine          : dword
         extrn   "C",__FPE_handler       : dword
-        extrn   "C",_Envseg             : word
-        extrn   "C",_Envptr             : dword
+        extrn   "C",_Envptr             : fword
         extrn   __no87                  : byte
         extrn   "C",__uselfn            : byte
         extrn   "C",_Extender           : byte
@@ -255,7 +254,9 @@ __x386_init proc near
         mov     _osminor,ah
 
         mov     __saved_DS,ds           ; save DS value
-        mov     _Envseg,gs              ; save segment of environment area
+        mov     word ptr _Envptr+4,gs   ; save segment of environment area
+        sub     eax,eax                 ; offset 0
+        mov     dword ptr _Envptr,eax   ; save offset of environment area
         mov     _Extender,3             ; pretend to be PharLap V3
         mov     __X32VM,1               ; mark that this is X32VM
         push    fs

@@ -103,8 +103,6 @@ _WCRTLINK void  (*__sig_fini_rtn)(void) = __sig_null_rtn;
 #endif
 extern  char            _end;
 
-extern  char            *_Envptr;
-
 int                     __Is_DLL;       /* TRUE => DLL, else not a DLL */
 static char             *_cmd_ptr;
 static wchar_t          *_wcmd_ptr;

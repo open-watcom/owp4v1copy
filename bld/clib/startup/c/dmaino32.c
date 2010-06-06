@@ -60,7 +60,6 @@ extern  int                 __disallow_single_dgroup( unsigned );
     char                    *_LpDllName;        /* pointer to dll name */
     wchar_t                 *_LpwDllName;       /* pointer to dll name */
 #else
-    extern      char        *_Envptr;
     extern      unsigned    __MaxThreads;
 
     extern      void        __OS2Init( int, void * );
@@ -141,7 +140,7 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         unsigned    i;
 
         DosGetInfoBlocks( &pptib, &pppib );
-        _Envptr = pppib->pib_pchenv;
+        _RWD_Envptr = pppib->pib_pchenv;
         _LpCmdLine = pppib->pib_pchcmd;
         while( *_LpCmdLine ) {          // skip over program name
             _LpCmdLine++;
