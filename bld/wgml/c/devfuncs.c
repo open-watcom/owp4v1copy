@@ -175,8 +175,7 @@
 
 #define __STDC_WANT_LIB_EXT1__  1
 #include <conio.h>
-#include <dos.h>
-#undef NAME_MAX
+#include <unistd.h>
 #include <stdbool.h>
 #include <string.h>
 
