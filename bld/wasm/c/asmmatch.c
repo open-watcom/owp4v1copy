@@ -73,14 +73,14 @@ static int output( int i )
     /*
      * Output debug info - line numbers
      */
-    if( Options.debug_flag && !PhaseError && (Parse_Pass != PASS_1) ) {
+    if( Options.debug_flag && !PhaseError && ( Parse_Pass != PASS_1 ) ) {
         AddLinnumDataRef();
     }
 
     /*
      * Check if FP is valid
      */
-    if((( ins->cpu & P_FPU_MASK ) != P_NO87 ) && ( Options.floating_point == NO_FP_ALLOWED )) {
+    if(( (ins->cpu & P_FPU_MASK) != P_NO87 ) && ( Options.floating_point == NO_FP_ALLOWED )) {
         AsmError( NO_FP_WITH_FPC_SET );
         return( ERROR );
     }
@@ -90,7 +90,7 @@ static int output( int i )
     if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
-        && (( ins->allowed_prefix == FWAIT ) || (( ins->cpu&P_FPU_MASK ) != P_NO87 ))) {
+        && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
             if( AddFloatingPointEmulationFixup( ins, FALSE ) == ERROR ) {
                 return( ERROR );
             }
@@ -100,9 +100,9 @@ static int output( int i )
     /*
      * Check if CPU and FPU is valid for output code
      */
-    if( ( ins->cpu & P_CPU_MASK ) > ( rCode->info.cpu & P_CPU_MASK )
-        || ( ins->cpu & P_FPU_MASK ) > ( rCode->info.cpu & P_FPU_MASK )
-        || ( ins->cpu & P_EXT_MASK ) > ( ins->cpu & rCode->info.cpu & P_EXT_MASK ) ) {
+    if( (ins->cpu & P_CPU_MASK) > (rCode->info.cpu & P_CPU_MASK)
+        || (ins->cpu & P_FPU_MASK) > (rCode->info.cpu & P_FPU_MASK)
+        || (ins->cpu & P_EXT_MASK) > (ins->cpu & rCode->info.cpu & P_EXT_MASK) ) {
         AsmError( INVALID_INSTRUCTION_WITH_CURRENT_CPU_SETTING );
         return( ERROR );
     }
@@ -162,7 +162,7 @@ static int output( int i )
      * Output FP FWAIT if required
      */
     if( ins->token == T_FWAIT ) {
-        if(( rCode->info.cpu&P_CPU_MASK ) < P_386 ) {
+        if( (rCode->info.cpu & P_CPU_MASK) < P_386 ) {
 #if defined( _STANDALONE_ )
             if(( Options.floating_point == DO_FP_EMULATION ) && ( !rCode->use32 )) {
                 AsmCodeByte( OP_NOP );
@@ -177,13 +177,13 @@ static int output( int i )
     } else if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
-        && (( ins->allowed_prefix == FWAIT ) || (( ins->cpu&P_FPU_MASK ) != P_NO87 ))) {
+        && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
         AsmCodeByte( OP_WAIT );
 #endif
     } else if( ins->allowed_prefix != NO_FWAIT ) {
         // implicit FWAIT synchronization for 8087 (CPU 8086/80186)
-        if((( rCode->info.cpu&P_CPU_MASK ) < P_286 )
-            && (( ins->cpu&P_FPU_MASK ) == P_87 )) {
+        if(( (rCode->info.cpu & P_CPU_MASK) < P_286 )
+            && ( (ins->cpu & P_FPU_MASK) == P_87 )) {
             AsmCodeByte( OP_WAIT );
         }
     }
@@ -195,7 +195,7 @@ static int output( int i )
     if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
-        && (( ins->allowed_prefix == FWAIT ) || (( ins->cpu&P_FPU_MASK ) != P_NO87 ))) {
+        && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
         if( AddFloatingPointEmulationFixup( ins, TRUE ) == ERROR ) {
             return( ERROR );
         }
@@ -210,14 +210,19 @@ static int output( int i )
     /*
      * Output operand size prefix
      */
-    if( ins->cpu & NO_OPPRFX )
+    if( ins->cpu & NO_OPPRFX ) {
         rCode->prefix.opsiz = FALSE;
+    }
     switch( ins->byte1_info ) {
     case F_16:
-        if( rCode->use32 ) rCode->prefix.opsiz = TRUE;
+        if( rCode->use32 ) {
+            rCode->prefix.opsiz = TRUE;
+        }
         break;
     case F_32:
-        if( !rCode->use32 ) rCode->prefix.opsiz = TRUE;
+        if( !rCode->use32 ) {
+            rCode->prefix.opsiz = TRUE;
+        }
         break;
     case F_660F:
         rCode->prefix.opsiz = TRUE;
@@ -230,7 +235,7 @@ static int output( int i )
         break;
     }
     if( rCode->prefix.opsiz == TRUE ) {
-        if( ( rCode->info.cpu & P_CPU_MASK ) < P_386 ) {
+        if( (rCode->info.cpu & P_CPU_MASK) < P_386 ) {
             AsmError( CANNOT_USE_386_OPSIZE_MODE_WITH_CURRENT_CPU_SETTING );
             return( ERROR );
         }
@@ -286,11 +291,11 @@ static int output( int i )
     if( ins->opnd_dir ) {
         /* The reg and r/m fields are backwards */
         tmp = rCode->info.rm_byte;
-        rCode->info.rm_byte = ( tmp & 0xc0 ) | ((tmp >> 3) & 0x7) | ((tmp << 3) & 0x38);
+        rCode->info.rm_byte = (tmp & 0xc0) | ((tmp >> 3) & 0x7) | ((tmp << 3) & 0x38);
     }
     switch( ins->rm_info ) {
     case R_in_OP:
-        AsmCodeByte( ins->opcode | ( rCode->info.rm_byte & NOT_BIT_67 ) );
+        AsmCodeByte( ins->opcode | (rCode->info.rm_byte & NOT_BIT_67) );
         break;
     case no_RM:
         AsmCodeByte( ins->opcode | rCode->info.opcode );
@@ -306,7 +311,7 @@ static int output( int i )
         tmp = ins->rm_byte | rCode->info.rm_byte;
         AsmCodeByte( tmp );
         if( addr_32( rCode ) ) {
-            switch ( tmp & NOT_BIT_345 ) {
+            switch( tmp & NOT_BIT_345 ) {
             case 0x04:
                  // mod = 00, r/m = 100
                  // s-i-b is present
@@ -354,7 +359,7 @@ static int output_data( OPNDTYPE determinant, int index )
         out = 1;
     } else if( determinant & OP_I16 ) { // 16 bit
         out = 2;
-    } else if( determinant & ( OP_I32 | OP_J32 ) ) { // 32 bit
+    } else if( determinant & (OP_I32 | OP_J32) ) { // 32 bit
         out = 4;
     } else if( determinant & OP_J48 ) {
         out = 6;
@@ -366,13 +371,13 @@ static int output_data( OPNDTYPE determinant, int index )
             break;
         case MOD_00:
             if( !addr_32( Code ) ) {
-                if( ( Code->info.rm_byte & BIT_012 ) == D16 ) {
+                if( (Code->info.rm_byte & BIT_012) == D16 ) {
                      out = 2;
                 }
             } else {
                 switch( Code->info.rm_byte & BIT_012 ) {
                 case S_I_B:
-                    if( ( Code->sib & BIT_012 ) != D32 ) {
+                    if( (Code->sib & BIT_012) != D32 ) {
                         break;  // out = 0
                     }
                     // no break
@@ -454,8 +459,8 @@ int match_phase_1( void )
     i = AsmOpcode[Code->info.token].position;
 
     // make sure the user want 80x87 ins
-    if( ( AsmOpTable[i].cpu & P_FPU_MASK ) != P_NO87 ) {
-        if( ( Code->info.cpu & P_FPU_MASK ) == P_NO87 ) {
+    if( (AsmOpTable[i].cpu & P_FPU_MASK) != P_NO87 ) {
+        if( (Code->info.cpu & P_FPU_MASK) == P_NO87 ) {
             AsmError( INVALID_INSTRUCTION_WITH_CURRENT_CPU_SETTING );
             return( ERROR );
         } else {
@@ -464,8 +469,8 @@ int match_phase_1( void )
     }
 
     // make sure the user want 80x86 protected mode ins
-    if( ( AsmOpTable[i].cpu & P_PM ) != 0 ) {
-        if( ( Code->info.cpu & P_PM ) == 0 ) {
+    if( AsmOpTable[i].cpu & P_PM ) {
+        if( (Code->info.cpu & P_PM) == 0 ) {
             AsmError( INVALID_INSTRUCTION_WITH_CURRENT_CPU_SETTING );
             return( ERROR );
         }
@@ -481,7 +486,7 @@ int match_phase_1( void )
         /* fixme -- temporary fix for all OP_M types */
         // if( cur_opnd & OP_M ) { I think there is a problem here
         if( cur_opnd & OP_M_ANY ) {
-            if( !( ( asm_op1 & cur_opnd ) && ( ( asm_op1 & OP_M_DFT ) == ( cur_opnd & OP_M_DFT ) ) ) ) {
+            if( !( (asm_op1 & cur_opnd) && ( (asm_op1 & OP_M_DFT) == (cur_opnd & OP_M_DFT) ) ) ) {
                 if( MEM_TYPE( Code->mem_type, BYTE ) ) {
                     cur_opnd = OP_M_B;
                 } else if( MEM_TYPE( Code->mem_type, WORD ) ) {
@@ -515,15 +520,15 @@ int match_phase_1( void )
 
         switch( asm_op1 ) {
         case OP_MMX:
-             if( cur_opnd & OP_MMX ) {
-                 return( match_phase_2( &i ) );
-             }
-             break;
+            if( cur_opnd & OP_MMX ) {
+                return( match_phase_2( &i ) );
+            }
+            break;
         case OP_XMM:
-             if( cur_opnd & OP_XMM ) {
-                 return( match_phase_2( &i ) );
-             }
-             break;
+            if( cur_opnd & OP_XMM ) {
+                return( match_phase_2( &i ) );
+            }
+            break;
         case OP_R16:
             if( cur_opnd & asm_op1 ) {
                 temp_opsiz = Code->prefix.opsiz;
@@ -585,7 +590,7 @@ int match_phase_1( void )
             }
             break;
         case OP_I_3:                    // for INT only
-            if( ( ( cur_opnd & OP_I8 ) && Code->data[OPND1] == 3 ) &&
+            if( ( (cur_opnd & OP_I8) && Code->data[OPND1] == 3 ) &&
                                 Code->info.opnd_type[OPND2] == OP_NONE ) {
                 return( output( i ) );
             }
@@ -600,9 +605,9 @@ int match_phase_1( void )
             /* this is the check to see if the operand we have matches
              * the type of the one we need
              */
-            if( ( asm_op1 & cur_opnd )
-                && ( ( ( cur_opnd & OP_M_ANY ) == 0 )
-                    || ( ( asm_op1 & OP_M_DFT ) == ( cur_opnd & OP_M_DFT ) ) ) ) {
+            if( (asm_op1 & cur_opnd)
+                && ( ( (cur_opnd & OP_M_ANY) == 0 )
+                    || ( (asm_op1 & OP_M_DFT) == (cur_opnd & OP_M_DFT) ) ) ) {
                 retcode = match_phase_2( &i );
                 if( retcode != EMPTY ) {
                     return( retcode );
@@ -623,7 +628,7 @@ static int check_3rd_operand( int i )
 
     cur_opnd = Code->info.opnd_type[OPND3];
     if( ( AsmOpTable[i].opnd_type_3rd == OP3_NONE )
-        || ( AsmOpTable[i].opnd_type_3rd & OP3_HID ) ) {
+        || (AsmOpTable[i].opnd_type_3rd & OP3_HID) ) {
         if( cur_opnd == OP_NONE ) {
             return( NOT_ERROR );
         } else {
@@ -798,23 +803,21 @@ static int match_phase_3( int *i, OPNDTYPE determinant )
                 if( InsFixups[OPND2] != NULL ) {
                     break;
                 }
-            } else if( ( cur_opnd & OP_I )
+            } else if( (cur_opnd & OP_I)
                 && ( InsFixups[OPND2] == NULL )
-                && ( ( last_opnd & OP_R16 )
-                || ( last_opnd & OP_M16 ) && ( MEM_TYPE( Code->mem_type, WORD ) ) ) ) {
-                if( (int_8)Code->data[OPND2] ==
-                    (int_16)Code->data[OPND2] ) {
+                && ( (last_opnd & OP_R16)
+                || (last_opnd & OP_M16) && ( MEM_TYPE( Code->mem_type, WORD ) ) ) ) {
+                if( (int_8)Code->data[OPND2] == (int_16)Code->data[OPND2] ) {
                     Code->info.opnd_type[OPND2] = OP_I8;
                     Code->data[OPND2] = (int_8)Code->data[OPND2];
                 } else {
                     break;
                 }
-            } else if( ( cur_opnd & OP_I )
+            } else if( (cur_opnd & OP_I)
                 && ( InsFixups[OPND2] == NULL )
-                && ( ( last_opnd & OP_R32 )
-                || ( last_opnd & OP_M32 ) && ( MEM_TYPE( Code->mem_type, DWORD ) ) ) ) {
-                if( (int_8)Code->data[OPND2] ==
-                    (int_32)Code->data[OPND2] ) {
+                && ( (last_opnd & OP_R32)
+                || (last_opnd & OP_M32) && ( MEM_TYPE( Code->mem_type, DWORD ) ) ) ) {
+                if( (int_8)Code->data[OPND2] == (int_32)Code->data[OPND2] ) {
                     Code->info.opnd_type[OPND2] = OP_I8;
                     Code->data[OPND2] = (int_8)Code->data[OPND2];
                 } else {
@@ -829,14 +832,14 @@ static int match_phase_3( int *i, OPNDTYPE determinant )
                 return( ERROR );
             return( output_data( OP_I8, OPND2 ) );
         case OP_I_1:
-            if( cur_opnd == OP_I8  &&  Code->data[OPND2] == 1 ) {
+            if( cur_opnd == OP_I8 && Code->data[OPND2] == 1 ) {
                 if( output( *i ) == ERROR )
                     return( ERROR );
                 return( output_data( last_opnd, OPND1 ) );
             }
             break;
         case OP_M16:
-            if( cur_opnd & OP_M
+            if( (cur_opnd & OP_M)
                 && ( MEM_TYPE( Code->mem_type, WORD )
                 || Code->mem_type == MT_EMPTY ) ) {
                 if( output( *i ) == ERROR )
@@ -862,15 +865,15 @@ static int match_phase_3( int *i, OPNDTYPE determinant )
             }
             break;
         default:
-            if( ( asm_op2 & ( OP_MMX | OP_XMM ) )
-                && ( cur_opnd & asm_op2 ) ) {
+            if( (asm_op2 & (OP_MMX | OP_XMM))
+                && (cur_opnd & asm_op2) ) {
                 if( check_3rd_operand( *i ) == ERROR )
                     break;
                 if( output( *i ) == ERROR )
                     return( ERROR );
                 if( output_data( last_opnd, OPND1 ) == ERROR )
                     return( ERROR );
-                if( ( cur_opnd  & OP_M_ANY ) && ( asm_op2 & OP_M_ANY ) ) {
+                if( (cur_opnd & OP_M_ANY) && (asm_op2 & OP_M_ANY) ) {
                     if( output_data( cur_opnd, OPND2 ) == ERROR ) {
                         return( ERROR );
                     }
