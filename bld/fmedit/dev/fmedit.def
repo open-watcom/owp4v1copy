@@ -1,7 +1,6 @@
 /* available FMEDIT DLL routines */
 
 #ifndef _FMEDIT_INCLUDE
-
 #define _FMEDIT_INCLUDE
 
 #define FM_EXPORT   __export PASCAL
@@ -11,18 +10,18 @@ typedef int ACTION;
 typedef int NOTE_ID;
 
 typedef enum {
-   SCROLL_NONE
-,  SCROLL_HORZ
-,  SCROLL_VERT
-,  SCROLL_BOTH
+   SCROLL_NONE,
+   SCROLL_HORZ,
+   SCROLL_VERT,
+   SCROLL_BOTH
 } SCR_CONFIG;
 
-typedef void              *   OBJPTR;
-typedef union object_defn *   OBJHANDLE;
-typedef union object_defn         OBJECT_DEFN;
+typedef void                *OBJPTR;
+typedef union object_defn   *OBJHANDLE;
+typedef union object_defn   OBJECT_DEFN;
 typedef OBJPTR (PASCAL *CREATE_RTN)( OBJPTR, RECT *, OBJPTR );
-typedef CREATE_RTN CREATE_TABLE[];
-typedef unsigned                  STATE_HDL;
+typedef CREATE_RTN          CREATE_TABLE[];
+typedef unsigned            STATE_HDL;
 typedef BOOL (PASCAL *OBJECT)( ACTION, OBJPTR, void *, void * );
 
 #include "constant.def"
@@ -107,11 +106,11 @@ extern void       FM_EXPORT ClearError( void );
 extern void       FM_EXPORT SetMouseRtn( HWND, void (FM_EXPORT *)( HWND, RECT * ));
 extern STATE_HDL  FM_EXPORT GetCurrFormID( void );
 extern BOOL       FM_EXPORT InitStateFormID( STATE_HDL );
-extern void   FM_EXPORT HideSelectBoxes( void );
-extern void   FM_EXPORT ShowSelectBoxes( void );
+extern void       FM_EXPORT HideSelectBoxes( void );
+extern void       FM_EXPORT ShowSelectBoxes( void );
 
 /* scroll.def exports */
-extern void   FM_EXPORT UpdateScroll( void );
+extern void FM_EXPORT UpdateScroll( void );
 
 /* application input functions */
 

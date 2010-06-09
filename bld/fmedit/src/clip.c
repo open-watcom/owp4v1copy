@@ -46,96 +46,82 @@
 static CLIP_INFO     ClipBoard;
 
 #ifdef __NT__
-#define GET_CURRENT_TASK GetCurrentProcess
+    #define GET_CURRENT_TASK GetCurrentProcess
 #else
-#define GET_CURRENT_TASK GetCurrentTask
+    #define GET_CURRENT_TASK GetCurrentTask
 #endif
 
 extern void InitClipboard( void )
 /*******************************/
-
-  {
+{
     memset( &ClipBoard, 0, sizeof( CLIP_INFO ) );
-  }
+}
 
 
 static void FreeClipboard( void )
 /*******************************/
-
-  {
-    DLIST *     objlist;
+{
+    DLIST       *objlist;
     DLIST_ELT   elt;
 
-    for( objlist = ClipBoard.objs;
-         objlist != NULL;
-         objlist = DListConsume( objlist ) )
-         {
+    for( objlist = ClipBoard.objs; objlist != NULL; objlist = DListConsume( objlist ) ) {
         elt = DListElement( objlist );
         Destroy( elt.copy, FALSE );
     }
     InitClipboard();
-  }
+}
 
 
 void WINEXP FMResetClipboard( void )
 /**********************************/
-
-/* Reset the list of copy objects */
-
-  {
-
+{
+    /* Reset the list of copy objects */
     if( ClipBoard.task == GET_CURRENT_TASK() ) {
         FreeClipboard();
     }
-  }
+}
 
 void WINEXP FMNewClipboard( void )
 /********************************/
-
-  {
+{
     FreeClipboard();
     ClipBoard.task = GET_CURRENT_TASK();
-  }
+}
 
 
-extern void * GetClipList( void )
-/*******************************/
-
-  {
+extern void *GetClipList( void )
+/******************************/
+{
     return( ClipBoard.objs );
-  }
+}
 
 
-extern void * NextClipList( DLIST * clist )
-/*****************************************/
-
-  {
+extern void *NextClipList( DLIST * clist )
+/****************************************/
+{
     return( DListNext( clist ) );
-  }
+}
 
 
 extern OBJPTR GetClipObject( DLIST * clist )
 /******************************************/
-
-  {
+{
     DLIST_ELT elt;
 
     elt = DListElement( clist );
     return( elt.copy );
-  }
+}
 
-static DLIST * FindInsertPoint( OBJPTR original )
-/***********************************************/
-
-/* order the clipboard list so that higher level objects are added before
- * lower level ones
- */
-
-  {
+static DLIST *FindInsertPoint( OBJPTR original )
+/**********************************************/
+{
+    /* order the clipboard list so that higher level objects are added before
+     * lower level ones
+     */
     int         priority;
     int         currpr;
-    DLIST *     lst;
-    DLIST *     prev;
+    DLIST       *lst;
+    DLIST       *prev;
     DLIST_ELT   elt;
 
     prev = NULL;
@@ -149,17 +135,15 @@ static DLIST * FindInsertPoint( OBJPTR original )
         prev = lst;
     }
     return( prev );
-  }
+}
 
 
 void WINEXP FMAddClipboard( OBJPTR original, OBJPTR copy )
 /********************************************************/
-
-/* Add obj to the list of copy objects */
-
-  {
+{
+    /* Add obj to the list of copy objects */
     DLIST_ELT   elt;
-    DLIST *     last;
+    DLIST       *last;
 
     if( !FMClipObjExists( original ) ) {
         last = FindInsertPoint( original );
@@ -171,15 +155,13 @@ void WINEXP FMAddClipboard( OBJPTR original, OBJPTR copy )
             DListAddElt( &ClipBoard.objs, elt );
         }
     }
-  }
+}
 
 
 BOOL WINEXP FMClipObjExists( OBJPTR obj )
 /***************************************/
-
-/* See if obj is already in the list of copy objects */
-
-  {
+{
+    /* See if obj is already in the list of copy objects */
     DLIST_ELT elt;
 
     elt.copy = NULL;
@@ -191,12 +173,11 @@ BOOL WINEXP FMClipObjExists( OBJPTR obj )
         elt.original = NULL;
         return( DListFindElt( ClipBoard.objs, elt ) != NULL );
     }
-  }
+}
 
 
 BOOL WINEXP FMPasteValid( void )
 /******************************/
-
-  {
+{
     return( ClipBoard.task == GET_CURRENT_TASK() );
-  }
+}

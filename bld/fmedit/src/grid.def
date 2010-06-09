@@ -1,5 +1,5 @@
 #ifndef FM_EXPORT
-#define FM_EXPORT   __export PASCAL
+    #define FM_EXPORT   __export PASCAL
 #endif
 
 extern BOOL SnapRectToGrid( RECT * );

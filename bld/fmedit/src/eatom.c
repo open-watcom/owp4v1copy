@@ -67,79 +67,73 @@ static BOOL EAtomIsMarkValid( OBJPTR, void *, void * );
 static void ShowEAtomRect( EATOM * obj );
 
 static DISPATCH_ITEM EAtomActions[] = {
-    { LOCATE,               EAtomLocation           }
-,   { MOVE,                 EAtomMove               }
-,   { RESIZE,               EAtomResize             }
-,   { REGISTER,             EAtomRegister           }
-,   { RECREATE,             EAtomRecreate           }
-,   { DESTROY,              EAtomDestroy            }
-,   { VALIDATE_ACTION,      EAtomValidateAction     }
-,   { DRAW,                 EAtomDraw               }
-,   { GET_OBJPTR,           EAtomGetObjptr          }
-,   { UNDO_MOVE,            EAtomUndoMove           }
-,   { REMOVE_FROM_PARENT,   EAtomRemoveFromParent   }
-,   { GET_ANCHOR,           EAtomGetAnchor          }
-,   { NOTIFY,               EAtomNotify             }
-,   { IS_MARK_VALID,        EAtomIsMarkValid        }
+    { LOCATE,               EAtomLocation           },
+    { MOVE,                 EAtomMove               },
+    { RESIZE,               EAtomResize             },
+    { REGISTER,             EAtomRegister           },
+    { RECREATE,             EAtomRecreate           },
+    { DESTROY,              EAtomDestroy            },
+    { VALIDATE_ACTION,      EAtomValidateAction     },
+    { DRAW,                 EAtomDraw               },
+    { GET_OBJPTR,           EAtomGetObjptr          },
+    { UNDO_MOVE,            EAtomUndoMove           },
+    { REMOVE_FROM_PARENT,   EAtomRemoveFromParent   },
+    { GET_ANCHOR,           EAtomGetAnchor          },
+    { NOTIFY,               EAtomNotify             },
+    { IS_MARK_VALID,        EAtomIsMarkValid        }
 };
 
-#define MAX_ACTIONS (sizeof(EAtomActions)/sizeof(DISPATCH_ITEM))
+#define MAX_ACTIONS (sizeof( EAtomActions ) / sizeof( DISPATCH_ITEM ))
 
-extern BOOL PASCAL EAtomDispatch( ACTION id, EATOM * obj,
-                                      void * p1, void * p2 )
-/**********************************************************/
-
-/* dispatch the desired operation to the correct place */
-
-  {
+extern BOOL PASCAL EAtomDispatch( ACTION id, EATOM *obj,
+                                  void *p1, void *p2 )
+/****************************************************/
+{
+    /* dispatch the desired operation to the correct place */
     int i;
 
-    if( id >= APP_ACTIONS  ) {
-        return( Forward( obj->obj, id, p1, p2 ));
+    if( id >= APP_ACTIONS ) {
+        return( Forward( obj->obj, id, p1, p2 ) );
     }
 
-    for(i=0; i<MAX_ACTIONS; i++ ) {
+    for( i = 0; i < MAX_ACTIONS; i++ ) {
         if( EAtomActions[i].id == id ) {
-            return((EAtomActions[i].rtn)( obj, p1, p2));
+            return( (EAtomActions[i].rtn)( obj, p1, p2 ) );
         }
     }
     return( FALSE );
-  }
+}
 
-static BOOL EAtomValidateAction( OBJPTR _obj, void * _idptr, void * p2 )
-/*********************************************************************/
-
-/* check if the desired action is valid for and EATOM */
-
-  {
+static BOOL EAtomValidateAction( OBJPTR _obj, void *_idptr, void *p2 )
+/********************************************************************/
+{
+    /* check if the desired action is valid for and EATOM */
     EATOM   *obj = _obj;
     ACTION  *idptr = _idptr;
-    int i;
+    int     i;
 
     obj = obj;        /* ref'd to avoid warning */
     p2 = p2;          /* ref'd to avoid warning */
 
-    if( *idptr >= APP_ACTIONS  ) {
-        return( Forward( obj->obj, VALIDATE_ACTION, idptr, p2 ));
+    if( *idptr >= APP_ACTIONS ) {
+        return( Forward( obj->obj, VALIDATE_ACTION, idptr, p2 ) );
     }
-    for(i=0; i<MAX_ACTIONS; i++ ) {
+    for( i = 0; i < MAX_ACTIONS; i++ ) {
         if( EAtomActions[i].id == *idptr ) {
             return( TRUE );
         }
     }
     return( FALSE );
-  }
+}
 
 
-extern OBJPTR EAtomCreate( OBJPTR parent, RECT * loc, OBJPTR handle )
-/*******************************************************************/
-
-/* create an EATOM object */
-
-  {
-    EATOM   *new;
-    POINT   offset;
-    STATE_ID st;
+extern OBJPTR EAtomCreate( OBJPTR parent, RECT *loc, OBJPTR handle )
+/******************************************************************/
+{
+    /* create an EATOM object */
+    EATOM       *new;
+    POINT       offset;
+    STATE_ID    st;
 
     new = EdAlloc( sizeof( EATOM ) );
     new->invoke = (FARPROC)&EAtomDispatch;
@@ -156,21 +150,21 @@ extern OBJPTR EAtomCreate( OBJPTR parent, RECT * loc, OBJPTR handle )
     new->show = GetShowEatoms();
     GetOffset( &offset );
     if( new->show ) {
-        #if USE_OWN_WINDOW
-            new->hwnd = CreateWindow( "EAtomClass",
-                                      NULL,
-                                      WS_VISIBLE | WS_CHILD | WS_DISABLED,
-                                      new->rect.left - offset.x,
-                                      new->rect.top - offset.y,
-                                      new->rect.right - new->rect.left,
-                                      new->rect.bottom - new->rect.top,
-                                      GetAppWnd(),
-                                      NULL,
-                                      GetInst(),
-                                      NULL );
-        #else
-            new->hwnd = GetAppWnd();
-        #endif
+#if USE_OWN_WINDOW
+        new->hwnd = CreateWindow( "EAtomClass",
+                                  NULL,
+                                  WS_VISIBLE | WS_CHILD | WS_DISABLED,
+                                  new->rect.left - offset.x,
+                                  new->rect.top - offset.y,
+                                  new->rect.right - new->rect.left,
+                                  new->rect.bottom - new->rect.top,
+                                  GetAppWnd(),
+                                  NULL,
+                                  GetInst(),
+                                  NULL );
+#else
+        new->hwnd = GetAppWnd();
+#endif
     } else {
         new->hwnd = NULL;
     }
@@ -181,26 +175,24 @@ extern OBJPTR EAtomCreate( OBJPTR parent, RECT * loc, OBJPTR handle )
     }
     ShowEAtomRect( new );
     return( new );
-  }
+}
 
 
-static BOOL EAtomLocation( OBJPTR _obj, void * _rect, void * p2 )
-/**************************************************************/
-
-/* return the location of the atom */
-
-  {
+static BOOL EAtomLocation( OBJPTR _obj, void *_rect, void *p2 )
+/*************************************************************/
+{
+    /* return the location of the atom */
     EATOM   *obj = _obj;
     RECT    *rect = _rect;
     p2 = p2;          /* ref'd to avoid warning */
     *rect = obj->rect;
     return( TRUE );
-  }
+}
 
-static void CalcDrawRect( RECT * rect, RECT * drawrect )
+static void CalcDrawRect( RECT *rect, RECT *drawrect )
 /****************************************************/
-/* Calculate the rectangle for this eatom's client area */
 {
+    /* Calculate the rectangle for this eatom's client area */
 #if USE_OWN_WINDOW
     drawrect->left = 0;
     drawrect->top = 0;
@@ -223,8 +215,8 @@ static void CalcDrawRect( RECT * rect, RECT * drawrect )
 #endif
 }
 
-static void DrawEAtomRect( EATOM * obj )
-/**************************************/
+static void DrawEAtomRect( EATOM *obj )
+/*************************************/
 {
     RECT  drawrect;
     HDC   hdc;
@@ -235,34 +227,32 @@ static void DrawEAtomRect( EATOM * obj )
         DrawFocusRect( hdc, &drawrect );
         ReleaseDC( obj->hwnd, hdc );
     }
-} /* DrawEAtomRect */
+}
 
-static void ShowEAtomRect( EATOM * obj )
-/**************************************/
+static void ShowEAtomRect( EATOM *obj )
+/*************************************/
 {
     if( !obj->displayed ) {
         DrawEAtomRect( obj );
         obj->displayed = TRUE;
     }
-} /* ShowEAtomRect */
+}
 
-static void HideEAtomRect( EATOM * obj )
-/**************************************/
+static void HideEAtomRect( EATOM *obj )
+/*************************************/
 {
     if( obj->displayed ) {
         DrawEAtomRect( obj );
         obj->displayed = FALSE;
     }
-} /* HideEAtomRect */
+}
 
-static BOOL EAtomMove( OBJPTR _obj, void * _offset, void * p2 )
-/*************************************************************/
-
-/*  do the move operation.  The amount to move is stored in the left and
- *  top values of the passed rect.
- */
-
-  {
+static BOOL EAtomMove( OBJPTR _obj, void *_offset, void *p2 )
+/***********************************************************/
+{
+    /*  Do the move operation.  The amount to move is stored in the left and
+     *  top values of the passed rect.
+     */
     EATOM   *obj = _obj;
     POINT   *offset = _offset;
     POINT   scrolloffset;
@@ -272,30 +262,28 @@ static BOOL EAtomMove( OBJPTR _obj, void * _offset, void * p2 )
     AutoScroll( obj->rect, *offset );
     GetOffset( &scrolloffset );
     OffsetRect( &obj->rect, offset->x, offset->y );
-    #if USE_OWN_WINDOW
-        if( obj->show ) {
-            InvalidateRect( obj->hwnd, NULL, TRUE );
-            MoveWindow( obj->hwnd, obj->rect.left - scrolloffset.x,
-                                   obj->rect.top - scrolloffset.y,
-                                   obj->rect.right - obj->rect.left,
-                                   obj->rect.bottom - obj->rect.top,
-                                   FALSE );
-        }
-    #endif
+#if USE_OWN_WINDOW
+    if( obj->show ) {
+        InvalidateRect( obj->hwnd, NULL, TRUE );
+        MoveWindow( obj->hwnd, obj->rect.left - scrolloffset.x,
+                               obj->rect.top - scrolloffset.y,
+                               obj->rect.right - obj->rect.left,
+                               obj->rect.bottom - obj->rect.top,
+                               FALSE );
+    }
+#endif
     MouseAction( &obj->rect );
     ShowEAtomRect( obj );
     return( TRUE );
-  }
+}
 
 
-static BOOL EAtomResize( OBJPTR _obj, void * _info, void * p2 )
-/************************************************************/
-
-/*  do the resize operation.  The amount to resize is stored in the left and
- *  top values of the passed rect.
- */
-
-  {
+static BOOL EAtomResize( OBJPTR _obj, void *_info, void *p2 )
+/***********************************************************/
+{
+    /*  Do the resize operation.  The amount to resize is stored in the left and
+     *  top values of the passed rect.
+     */
     EATOM   *obj = _obj;
     RECT    *info = _info;
     POINT   point;
@@ -329,11 +317,11 @@ static BOOL EAtomResize( OBJPTR _obj, void * _info, void * p2 )
         AutoScroll( obj->rect, point );
         GetOffset( &scrolloffset );
         CopyRect( &obj->rect, &newrect );
-        #if USE_OWN_WINDOW
-            if( obj->show ) {
-                InvalidateRect( obj->hwnd, NULL, TRUE );
-            }
-        #endif
+#if USE_OWN_WINDOW
+        if( obj->show ) {
+            InvalidateRect( obj->hwnd, NULL, TRUE );
+        }
+#endif
         point.x = obj->rect.right - obj->rect.left;
         point.y = obj->rect.bottom - obj->rect.top;
         if( point.x < 0 ) {
@@ -342,30 +330,28 @@ static BOOL EAtomResize( OBJPTR _obj, void * _info, void * p2 )
         if( point.y < 0 ) {
             point.y = 0;
         }
-        #if USE_OWN_WINDOW
-            if( obj->show ) {
-                MoveWindow( obj->hwnd, obj->rect.left - scrolloffset.x,
-                                       obj->rect.top - scrolloffset.y,
-                                       point.x,
-                                       point.y,
-                                       FALSE );
-            }
-        #endif
+#if USE_OWN_WINDOW
+        if( obj->show ) {
+            MoveWindow( obj->hwnd, obj->rect.left - scrolloffset.x,
+                                   obj->rect.top - scrolloffset.y,
+                                   point.x,
+                                   point.y,
+                                   FALSE );
+        }
+#endif
         MouseAction( &obj->rect );
         ShowEAtomRect( obj );
     }
     return( TRUE );
-  }
+}
 
 
-static BOOL EAtomRecreate( OBJPTR _obj, void * _pt, void * p2 )
-/*************************************************************/
-
-/*  Recreate the passed object by using the point in anchor as one
- *  corner and the passed point as the other
- */
-
-  {
+static BOOL EAtomRecreate( OBJPTR _obj, void *_pt, void *p2 )
+/***********************************************************/
+{
+    /*  Recreate the passed object by using the point in anchor as one
+     *  corner and the passed point as the other
+     */
     EATOM   *obj = _obj;
     POINT   *pt = _pt;
     POINT   scrolloffset;
@@ -400,32 +386,29 @@ static BOOL EAtomRecreate( OBJPTR _obj, void * _pt, void * p2 )
         AutoScroll( newrect, delta );
         GetOffset( &scrolloffset );
         CopyRect( &obj->rect, &newrect );
-        #if USE_OWN_WINDOW
-            if( obj->show ) {
-                InvalidateRect( obj->hwnd, NULL, TRUE );
-                MoveWindow( obj->hwnd, obj->rect.left - scrolloffset.x,
-                                       obj->rect.top - scrolloffset.y,
-                                       obj->rect.right - obj->rect.left,
-                                       obj->rect.bottom - obj->rect.top,
-                                       FALSE );
-            }
-        #endif
+#if USE_OWN_WINDOW
+        if( obj->show ) {
+            InvalidateRect( obj->hwnd, NULL, TRUE );
+            MoveWindow( obj->hwnd, obj->rect.left - scrolloffset.x,
+                                   obj->rect.top - scrolloffset.y,
+                                   obj->rect.right - obj->rect.left,
+                                   obj->rect.bottom - obj->rect.top,
+                                   FALSE );
+        }
+#endif
         if( GetState() != SELECTING ) {
             MouseAction( &obj->rect );
         }
         ShowEAtomRect( obj );
     }
     return( TRUE );
-  }
+}
 
 
-static BOOL EAtomRegister( OBJPTR _obj, void * p1, void * p2 )
-/************************************************************/
-
-/* register the object */
-
-
-  {
+static BOOL EAtomRegister( OBJPTR _obj, void *p1, void *p2 )
+/**********************************************************/
+{
+    /* register the object */
     EATOM       *obj = _obj;
     BOOL        ret;
     OBJPTR      new;
@@ -438,12 +421,12 @@ static BOOL EAtomRegister( OBJPTR _obj, void * p1, void * p2 )
     ret = TRUE;
     currobj = GetCurrObjptr( obj );
     state = GetState();
-    if( !IsRectEmpty( (LPRECT) &obj->rect ) || state == CREATING ) {
+    if( !IsRectEmpty( (LPRECT)&obj->rect ) || state == CREATING ) {
         /* register the completed action with the appropriate object */
         switch( state ) {
-        case CREATING :
+        case CREATING:
             DeleteCurrObject( currobj );
-            new = Create( GetBaseObjType(), obj->obj, &obj->rect, NULL  );
+            new = Create( GetBaseObjType(), obj->obj, &obj->rect, NULL );
             if( new != NULL ) {
                 if( Register( new ) ) {
                     AddCurrObject( new );
@@ -456,7 +439,7 @@ static BOOL EAtomRegister( OBJPTR _obj, void * p1, void * p2 )
             }
             Destroy( (OBJECT *)obj, FALSE );
             break;
-        case MOVING :
+        case MOVING:
             off.x = obj->rect.left;
             off.y = obj->rect.top;
             SnapPointToGrid( &off );
@@ -473,7 +456,7 @@ static BOOL EAtomRegister( OBJPTR _obj, void * p1, void * p2 )
                 }
             }
             break;
-        case SIZING :
+        case SIZING:
             DeleteCurrObject( currobj );
             Resize( obj->obj, &obj->rect, TRUE );
             AddCurrObject( obj->obj );
@@ -481,8 +464,8 @@ static BOOL EAtomRegister( OBJPTR _obj, void * p1, void * p2 )
             break;
 #ifdef DEBUG_ON
         default :
-            MessageBox( GFileIO.hWnd, ( LPSTR ) "MOVE\RESIZE Error",
-                        NULL, MB_OK | MB_ICONSTOP );
+            MessageBox( GFileIO.hWnd, "MOVE\RESIZE Error", NULL, MB_OK | MB_ICONSTOP );
+            break;
 #endif
         }
         UpdateScroll();
@@ -492,32 +475,31 @@ static BOOL EAtomRegister( OBJPTR _obj, void * p1, void * p2 )
         Destroy( (OBJECT *)obj, FALSE );
     }
     return( ret );
-  }
+}
 
-static BOOL EAtomDestroy( OBJPTR _obj, void * p1, void * p2 )
-/***********************************************************/
-/* destroy the EATOM */
+static BOOL EAtomDestroy( OBJPTR _obj, void *p1, void *p2 )
+/*********************************************************/
 {
+    /* destroy the EATOM */
     EATOM   *obj = _obj;
     p1 = p1;          /* ref'd to avoid warning */
     p2 = p2;          /* ref'd to avoid warning */
 
-    #if USE_OWN_WINDOW
-        if( obj->show ) {
-            SendMessage( obj->hwnd, WM_KILLFOCUS, 0, 0 );
-            DestroyWindow( obj->hwnd );
-        }
-    #else
-        HideEAtomRect( obj );
-    #endif
+#if USE_OWN_WINDOW
+    if( obj->show ) {
+        SendMessage( obj->hwnd, WM_KILLFOCUS, 0, 0 );
+        DestroyWindow( obj->hwnd );
+    }
+#else
+    HideEAtomRect( obj );
+#endif
     EdFree( obj );
     return( TRUE );
 }
 
-static BOOL EAtomDraw( OBJPTR _obj, void * _rect, void * _hdc )
-/**********************************************************/
-
-  {
+static BOOL EAtomDraw( OBJPTR _obj, void *_rect, void *_hdc )
+/***********************************************************/
+{
     EATOM   *obj = _obj;
     RECT    *rect = _rect;
     HDC     *hdc = _hdc;
@@ -529,14 +511,12 @@ static BOOL EAtomDraw( OBJPTR _obj, void * _rect, void * _hdc )
         DrawEAtomRect( obj );
     }
     return( TRUE );
-  }
+}
 
-static BOOL EAtomGetObjptr( OBJPTR _obj, void * _newobj, void * p2 )
-/******************************************************************/
-
-/* Get the OBJPTR of the object associated with this EATOM */
-
-  {
+static BOOL EAtomGetObjptr( OBJPTR _obj, void *_newobj, void *p2 )
+/****************************************************************/
+{
+    /* Get the OBJPTR of the object associated with this EATOM */
     EATOM   *obj = _obj;
     OBJPTR  *newobj = _newobj;
     p2 = p2;          /* ref'd to avoid warning */
@@ -545,12 +525,11 @@ static BOOL EAtomGetObjptr( OBJPTR _obj, void * _newobj, void * p2 )
         *newobj = obj->obj;
     }
     return( TRUE );
-  }
+}
 
-static BOOL EAtomUndoMove( OBJPTR _obj, void * p1, void * p2 )
-/************************************************************/
-
-  {
+static BOOL EAtomUndoMove( OBJPTR _obj, void *p1, void *p2 )
+/**********************************************************/
+{
     EATOM   *obj = _obj;
     p1 = p1;          /* ref'd to avoid warning */
     p2 = p2;          /* ref'd to avoid warning */
@@ -558,18 +537,17 @@ static BOOL EAtomUndoMove( OBJPTR _obj, void * p1, void * p2 )
     GetObjectParent( obj->obj, &obj->parent );
     if( obj->parent != NULL ) {
         RemoveObject( obj->parent, obj->obj );
-        obj->offset.x = - obj->offset.x;
-        obj->offset.y = - obj->offset.y;
+        obj->offset.x = -obj->offset.x;
+        obj->offset.y = -obj->offset.y;
         return( Move( obj->obj, &obj->offset, TRUE ));
     } else {
         return( FALSE );
     }
-  }
+}
 
-static BOOL EAtomRemoveFromParent( OBJPTR _obj, void * p1, void * p2 )
-/********************************************************************/
-
-  {
+static BOOL EAtomRemoveFromParent( OBJPTR _obj, void *p1, void *p2 )
+/******************************************************************/
+{
     EATOM   *obj = _obj;
     p1 = p1;          /* ref'd to avoid warning */
     p2 = p2;          /* ref'd to avoid warning */
@@ -581,32 +559,31 @@ static BOOL EAtomRemoveFromParent( OBJPTR _obj, void * p1, void * p2 )
     } else  {
         return( TRUE );
     }
-  }
+}
 
 
-static BOOL EAtomGetAnchor( OBJPTR _obj, void * _pt, void * p2 )
-/**************************************************************/
-
-  {
+static BOOL EAtomGetAnchor( OBJPTR _obj, void *_pt, void *p2 )
+/************************************************************/
+{
     EATOM   *obj = _obj;
     POINT   *pt = _pt;
     p2 = p2;
     *pt = obj->anchor;
     return( TRUE );
-  }
+}
 
-static BOOL EAtomIsMarkValid( OBJPTR obj, void * valid, void * p2 )
-/******************************************************************/
+static BOOL EAtomIsMarkValid( OBJPTR obj, void *valid, void *p2 )
+/***************************************************************/
 {
     obj = obj;
     p2 = p2;
 
     *(BOOL *)valid = FALSE;
     return( TRUE );
-} /* EAtomIsMarkValid */
+}
 
-static BOOL EAtomNotify( OBJPTR _obj, void * _id, void * p2 )
-/*************************************************************/
+static BOOL EAtomNotify( OBJPTR _obj, void *_id, void *p2 )
+/*********************************************************/
 {
     EATOM   *obj = _obj;
     NOTE_ID *id = _id;
@@ -616,45 +593,36 @@ static BOOL EAtomNotify( OBJPTR _obj, void * _id, void * p2 )
     case MOVE_END:
         if( obj->obj != NULL ) {
             return( Forward( obj->obj, NOTIFY, id, p2 ) );
-        } else {
-            return( FALSE );
         }
-        break;
+        return( FALSE );
     default:
         return( FALSE );
-        break;
     }
-} /* EAtomNotify */
+}
 
 
 long WINIEXP EAtomWndProc( HWND wnd, unsigned message,
                            WPARAM wparam, LPARAM lparam )
-/****************************************************/
-
-/* processes messages */
-
-  {
+/*******************************************************/
+{
+    /* processes messages */
     PAINTSTRUCT    ps;
 
     switch( message ) {
-        case WM_PAINT :
-            BeginPaint( wnd, ( LPPAINTSTRUCT ) &ps );
-            EndPaint( wnd, ( LPPAINTSTRUCT ) &ps );
-            break;
-        default :
-            return( DefWindowProc( wnd, message, wparam, lparam ));
+    case WM_PAINT:
+        BeginPaint( wnd, &ps );
+        EndPaint( wnd, &ps );
         break;
-
+    default :
+        return( DefWindowProc( wnd, message, wparam, lparam ) );
     }
     return( 0L );
-  }
+}
 
 extern void InitEAtom( void )
 /***************************/
-
-/* Initialization for EATOM objects - register the EAtomClass */
-
-  {
+{
+    /* Initialization for EATOM objects - register the EAtomClass */
     WNDCLASS wc;
 
     wc.style = 0;
@@ -669,5 +637,4 @@ extern void InitEAtom( void )
     wc.lpszMenuName =  NULL;
     wc.lpszClassName = "EAtomClass";    /* Name used in call to CreateWindow*/
     RegisterClass( &wc );
-  }
-
+}
