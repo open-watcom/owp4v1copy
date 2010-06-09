@@ -279,8 +279,8 @@ static  oc_text_phrase         para_font[] = {
     {2, true, "available font 2" },
     {0, false, ", neither including spaces before or behind " },
     {0, true, "(the usual situation). The rarer cases have " },
-    {0, false, "the highlighted phrase" },
-    {1, true, " include the space before" },
+    {0, false, "the highlighted phrase include" },
+    {1, true, " the space before" },
     {0, false, " or " },
     {2, false, "the space behind " },
     {0, true, "(which can affect layout if the space widths vary by font) " },
@@ -945,7 +945,8 @@ static void oc_process_line_full( text_line * in_line, bool justify )
             /* Compute the total width of the line, that is, the width of
              * the text that will be output (internal spacing included).
              */
-
+//now doesn't work. cur_chars is reflecting the 1/2" indent even though it
+//doesn't apply.
             cur_chars = in_line->last;
             title_width = cur_chars->x_address + cur_chars->width;
             title_width -= in_line->first->x_address;
@@ -1726,6 +1727,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
     static  uint32_t        cur_h_address   = 0;
     static  text_line   *   the_line        = NULL;
 
+            bool            ws_spc_done     = false;
             char            ch;
             char        *   token_start     = 0;
             size_t          count           = 0;
@@ -1963,34 +1965,34 @@ static void oc_process_text( char * input_text, uint8_t font_number )
          *          preceding phrase was a wgml tab.
          */
 
-        if( oc_script ) {
+        if( spaces != 0 ) {
 
-            /* If "script" was specified, then an empty text_chars will be
-             * needed if if the font used by the previous phrase differs from
-             * that used by the current phrase and spaces is not zero.
+            /* Since the_line->first will be NULL only when a new section or
+             * break was involved, and since spaces is zeroed in those cases,
+             * the_line->first cannot be NULL.
              */
 
-            if( old_font != font_number ) {
-                if( spaces != 0 ) {
+            if( oc_script ) {
 
-                    /* Since the_line->first will be NULL only when a new
-                     * section or break was involved, and since spaces is
-                     * zeroed in those cases, the_line->first cannot be NULL.
-                     * An empty text_chars in the middle of a line is used
-                     * for the spacing from the end of the last text_chars
-                     * to the start of the new phrase.
-                     */
+                /* "script" is in effect: an empty text_chars will be needed
+                 * if the font used by the previous phrase differs from that
+                 * used by the current phrase.
+                 */
+
+                if( old_font != font_number ) {
+
+                    /* Obtain the text_chars instance and link it in. */
 
                     the_line->last->next = \
                             oc_alloc_text_chars( NULL, 0, old_font, cur_type );
                     the_line->last->next->prev = the_line->last;
                     the_line->last = the_line->last->next;
 
-                    /* spaces is known to be nonzero: update the horizontal
-                     * position and use it to set the_line->last->x_address.
+                    /* update the horizontal position and use it to set
+                     * the_line->last->x_address.
                      */
 
-                    space_width = spaces * wgml_fonts[font_number].spc_width;
+                    space_width = spaces * wgml_fonts[old_font].spc_width;
                     cur_h_address += space_width;
                     the_line->last->x_address = cur_h_address;
 
@@ -2002,15 +2004,41 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                         the_line->line_height = cur_height;
                     }
                 }
+
+            } else {
+
+                /* "wscript" (or "noscript") is in effect: compute space_width
+                 * and set the related variables.
+                 * NOTE: this uses old_font, whether it is the same as
+                 * font_number or not.
+                 */
+
+                space_width = wgml_fonts[old_font].spc_width;
+
+                ch = the_line->last->text[the_line->last->count - 1];
+                if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
+                    space_width *= 2;
+                }
+
+                spaces = 0;
+                tabbing = false;
+                ws_spc_done = true;
             }
         }
+
+        /* Reset old_font for the next phrase. */
+
         old_font = font_number;
 
-        /* Count any spaces before the next token. */
+        /* Pass over nay spaces before the next token. If ws_spc_done is true,
+         * skip them; otherwise, count them.
+         */
 
         while( *input_text != '\0' ) {
             if( !isspace( *input_text ) ) break;
-            spaces++;
+            if( !ws_spc_done ) {
+                spaces++;
+            }
             input_text++;
         }
 
@@ -2022,50 +2050,51 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         /* Compute space_width and adjust cur_h_address. */
 
-        if( spaces == 0 ) {
-            space_width = 0;
-        } else {
+        if( !ws_spc_done ) {
 
-            /* Set tabbing to false since there was at least one space before
-             * next_chars.
+            /* If ws_spc_done is true, there is nothing to do: space_width, 
+             * spaces, and tabbing have been set properly.
              */
 
-            tabbing = false;
+            if( spaces != 0 ) {
 
-            if( !oc_script ) { 
-
-                /* If "script" was not specified, then either "wscript" was
-                 * specified, "noscript" was specified, or nothing was specified
-                 * (which is the same as "noscript") and the space count must be
-                 * reduced to "1" ("2" after a stop or half stop) at this point.
-                 * NOTE: the list of stops is per actual test with wgml 4.0, but
-                 * will be tested further. There is no indication (so far) that
-                 * a stop followed by a ")" is also a stop. Note that the text,
-                 * at this point, is not being justified; justification may
-                 * change things a bit.
-                 * NOTE: when ".co off" is in effect, the_line can be empty at
-                 * this point, in which case spaces becomes 0.
+                /* Set tabbing to false since there was at least one space
+                 * before next_chars.
                  */
 
-                if( the_line->last == NULL ) {
-                    spaces = 0;
-                } else {
-                    ch = the_line->last->text[the_line->last->count - 1];
-                    if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
-                        spaces = 2;
+                tabbing = false;
+
+                if( !oc_script ) { 
+
+                    /* When ".co off" is in effect, the_line can be empty at
+                     * this point, in which case spaces becomes 0.
+                     */
+
+                    if( the_line->last == NULL ) {
+                        spaces = 0;
                     } else {
-                        spaces = 1;
+
+                        /* "wscript" (or "noscript") is in effect: set up
+                         * space_width and ws_spc_done and reset spaces. 
+                         * NOTE: this uses font_number, not old_font.
+                         */
+
+                        space_width = wgml_fonts[font_number].spc_width;
+
+                        ch = the_line->last->text[the_line->last->count - 1];
+                        if( ch == '.' || ch == '!' || ch == '?' || ch == ':' ) {
+                            space_width *= 2;
+                        }
                     }
+                } else {
+
+                    space_width = spaces * wgml_fonts[font_number].spc_width;
                 }
+                spaces = 0;
             }
-
-            space_width = spaces * wgml_fonts[font_number].spc_width;
-            cur_h_address += space_width;
-
-            /* Reset spaces. */
-
-            spaces = 0;
         }
+        cur_h_address += space_width;
+        ws_spc_done = false;
 
         /* Process any escape sequences. */
 
@@ -2699,12 +2728,15 @@ static void emulate_layout_page( oc_text_phrase * input_text, \
     switch( construct ) {
     case oc_title_text:
 
-        /* Set the globals. This emulates a pre_top_skip of 15. */
+        /* Set the globals. This emulates a pre_top_skip of 15 and an indent
+         * of 0.
+         */
 
         oc_pre_top_skip = 15;
         oc_pre_skip = 0;
         oc_old_post_skip = oc_cur_post_skip;
         oc_cur_post_skip = 0;
+        oc_indent = 0;
 
         /* Initalize oc_new_element. */
 
@@ -2723,14 +2755,15 @@ static void emulate_layout_page( oc_text_phrase * input_text, \
 
     case oc_paragraph:
 
-        /* Set the globals. This emulates a pre_skip of 1. The indent has
-         * already been set to '0.5i'.
+        /* Set the globals. This emulates a pre_skip of 1 and an indent of 
+         * '0.5i'.
          */
 
         oc_pre_top_skip = 0;
         oc_pre_skip = 1;
         oc_old_post_skip = oc_cur_post_skip;
         oc_cur_post_skip = 0;
+        oc_indent = bin_device->horizontal_base_units / 2;
 
         /* Initalize oc_new_element. */
 
@@ -2871,16 +2904,13 @@ static void emulate_wgml( void )
 
     /* The values used set up a left margin of '1i' and a right margin of
      * '7i', expressed in horizontal base units, both from the position
-     * specificed in the :PAGESTART block. The indent is set to '0.5i', which
-     * is technically correct only for paragraphs, but which is used by
-     * oc_validate_text_line().
+     * specificed in the :PAGESTART block. 
      */
 
     oc_page_left = bin_device->horizontal_base_units + bin_device->x_start \
                                                      - bin_device->x_offset;
     oc_page_right = 7 * bin_device->horizontal_base_units + bin_device->x_start \
                                                      - bin_device->x_offset;
-    oc_indent = bin_device->horizontal_base_units / 2;
 
     /* This was originally created to be used in outcheck.c but not necessarily
      * in our wgml to simplify situations where the line height is either not
