@@ -31,7 +31,7 @@
 
 
 typedef enum {
-    FIX_CHANGE_SEG      = 0x00000001,   // has to be 1.  used in pointers!
+    FIX_CHANGE_SEG      = 0x00000001,
     FIX_ADDEND_ZERO     = 0x00000002,
     FIX_UNSAFE          = 0x00000004,
     FIX_ABS             = 0x00000008,
@@ -82,6 +82,9 @@ typedef enum {
 #define FIX_GET_FRAME(x)  (((x) & FIX_FRAME_MASK) >> FIX_FRAME_SHIFT)
 #define FIX_GET_TARGET(x) (((x) & FIX_TARGET_MASK) >> FIX_TARGET_SHIFT)
 
+#define FIX_SET_FRAME(x)  ((fix_type)(x) << FIX_FRAME_SHIFT)
+#define FIX_SET_TARGET(x) ((fix_type)(x) << FIX_TARGET_SHIFT)
+
 /* This ordering is roughly the same as intel's - don't mess it up without
    a good reason (and make sure the code that depends on it is fixed!) */
 
@@ -108,12 +111,6 @@ typedef struct {
     } u;
     frame_type  type;
 } frame_spec;
-
-typedef struct {
-    unsigned_32 flags;
-    unsigned_32 off;
-    void *      target;
-} save_fixup;
 
 // functions external to obj2supp
 
