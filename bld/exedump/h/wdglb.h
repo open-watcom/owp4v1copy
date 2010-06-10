@@ -49,7 +49,6 @@
 #define PERLINE                 16
 #define NUMLINE                 24
 #define LINE_LEN                78
-#define BUFFERSIZE              157
 #define SLEN                    30
 #define TRUE                    1
 #define FALSE                   0

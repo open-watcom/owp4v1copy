@@ -105,7 +105,6 @@ static void dmp_exp_ord_name( unsigned_32 nam_off, unsigned_32 ord_off,
     unsigned_16     *ord_addr;
     unsigned_32     *nam_addr;
     unsigned_32     addr_size;
-    char            *name;
     unsigned_32     i;
 
     Wlseek( nam_off );
@@ -125,10 +124,7 @@ static void dmp_exp_ord_name( unsigned_32 nam_off, unsigned_32 ord_off,
         Wdputs( "        " );
         Puthex( nam_addr[i], 8 );
         Wdputs( "        " );
-        Wlseek( nam_addr[i] - Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off );
-        name = Wmalloc( BUFFERSIZE );
-        Wread( name, BUFFERSIZE );
-        Wdputs( name );
+        Dump_asciiz( nam_addr[i] - Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off );
         Wdputslc( "\n" );
     }
 }
@@ -166,11 +162,6 @@ static void dmp_imp_addr( unsigned_32 offset )
     Wdputslc( "\n" );
 }
 
-typedef struct {
-    unsigned_16         hint;
-    char                name[ BUFFERSIZE ];
-} pe_hint_name_ent;
-
 /*
  * Dump the Import lookup Table.
  */
@@ -180,7 +171,7 @@ static void dmp_imp_lookup( unsigned_32 offset )
     unsigned_32             address;
     unsigned_32             addr_size;
     int                     i;
-    pe_hint_name_ent        hint_name;
+    unsigned_16             hint;
 
     Wlseek( offset );
     Wdputslc( "\n" );
@@ -199,10 +190,10 @@ static void dmp_imp_lookup( unsigned_32 offset )
 	    Putdecl( address & ~PE_IMPORT_BY_ORDINAL, 8 );
         } else {
             Wlseek( address - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
-            Wread( &hint_name, sizeof( pe_hint_name_ent ) );
-            Putdecl( hint_name.hint, 8 );
+            Wread( &hint, sizeof( hint ) );
+            Putdecl( hint, 8 );
             Wdputs( "        " );
-            Wdputs( hint_name.name );
+            Dump_asciiz( address - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off + sizeof( hint ) );
         }
         Wdputslc( "\n" );
         offset += sizeof( unsigned_32 );
@@ -221,7 +212,6 @@ static void dmp_ord_name( unsigned_32 nam_off, unsigned_32 ord_off,
     unsigned_16     *ord_addr;
     unsigned_32     *nam_addr;
     unsigned_32     addr_size;
-    char            *name;
     int             i;
 
     Wlseek( nam_off );
@@ -234,10 +224,7 @@ static void dmp_ord_name( unsigned_32 nam_off, unsigned_32 ord_off,
     Wread( ord_addr, addr_size );
     Wdputslc( "\n" );
     for( i = 0; i < num_ptr; i++ ) {
-        Wlseek( nam_addr[i] - Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off );
-        name = Wmalloc( BUFFERSIZE );
-        Wread( name, BUFFERSIZE );
-        Wdputs( name );
+        Dump_asciiz( nam_addr[i] - Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off );
         Wdputc( '.' );
         Wdputc( '\'' );
         Wdputs( Fname );
@@ -296,7 +283,6 @@ void Dmp_imports( void )
 {
     pe_import_directory     pe_import;
     unsigned_32             offset;
-    char                    name[BUFFERSIZE];
 
     offset = Imp_off;
     for( ;; ) {
@@ -305,10 +291,8 @@ void Dmp_imports( void )
         if( pe_import.import_lookup_table_rva == 0 ) break;
         Banner( "Import Directory Table" );
         Dump_header( (char *)&pe_import.import_lookup_table_rva, pe_import_msg );
-        Wlseek( pe_import.name_rva - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
-        Wread( name, sizeof( name ) );
         Wdputs( "          DLL name = <" );
-        Wdputs( name );
+        Dump_asciiz( pe_import.name_rva - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
         Wdputslc( ">\n" );
         dmp_imp_lookup( pe_import.import_lookup_table_rva -
                 Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );

@@ -182,6 +182,7 @@ extern void Wdputc( char );
 extern void Wdputs( const char * );
 extern void Wdputslc( const char * );
 extern void Dump_header( void *, char ** );
+extern void Dump_asciiz( long offset );
 extern void DumpFlags( unsigned_32, unsigned_32, char **, char * );
 extern void *Wmalloc( size_t );
 extern void Banner( char * );

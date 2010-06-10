@@ -257,6 +257,37 @@ extern void DumpFlags( unsigned_32 flags, unsigned_32 ignore, char **msg,
     Wdputslc( "\n" );
 }
 
+#define min_len(a, b) ((a) < (b) ? (a) : (b))
+
+/*
+ * dump an arbitrarily long ASCIIZ string starting at specified offset
+ */
+void Dump_asciiz( long offset )
+/*****************************/
+{
+    char            buf[65];
+    long            fsize;
+    unsigned_32     amount;
+
+
+    Wlseek( offset );
+    fsize = WFileSize();
+    memset( buf, 0, sizeof( buf ) );
+
+    /* We must handle both arbitrarily long strings and strings that
+     * are stored right at the end of the image.
+     */
+    do {
+        amount = min_len( sizeof( buf ) - 1, fsize - offset );
+        Wread( buf, amount );
+        Wdputs( buf );
+        /* Check if we read in a null terminator. */
+        if( strlen( buf ) < sizeof( buf ) - 1 )
+            break;
+        offset += amount;
+    } while( offset < fsize );
+}
+
 /*
  * allocate memory
  */
