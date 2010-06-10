@@ -124,7 +124,7 @@ cover16.dll : cover16.obj
     @del tmp.lnk
 
 cover16.obj : cover16.c
-    set include=$(%watcom)/h/win;$(%include)
+    set include=$(%watcom)/h;$(%watcom)/h/win;$(%include)
     $(c286) cover16 $(dllflags) $(c16flags)
 
 

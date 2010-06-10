@@ -25,6 +25,12 @@ verbose = 0
 # don't ask, just nuke the files
 .ERASE
 
+# it prevents different target header path mixing
+!ifndef bootstrap
+.BEFORE
+     @set include= 
+!endif
+
 # if you wish to build debug version
 !ifdef %DEBUG_BUILD
 debug_build = $(%DEBUG_BUILD)
@@ -433,17 +439,3 @@ gmllib    = $(docs_root)/gml/syslib
 windev_dir= $(tools_root)/windev
 
 !endif
-
-#
-#
-# Projects that should use autodepend
-#
-# Check defrule.mif
-#
-# format is projectname_autodepends
-#
-cg_autodepends = .AUTODEPEND
-cc_version = tree
-
-wlink_autodepends = .AUTODEPEND
-wasm_autodepends = .AUTODEPEND
