@@ -129,6 +129,9 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             case PROCESSOR_INTEL_486:
                 CopyRCString( ABT_RUNNING_ON_486, buff, sizeof( buff ) );
                 break;
+            case PROCESSOR_INTEL_PENTIUM:
+                CopyRCString( ABT_RUNNING_ON_586, buff, sizeof( buff ) );
+                break;
             // the following are not always defined. Since they fall thru
             // to the default case anyway lets just comment them out.
             // Those who come after me can figure out what to do.

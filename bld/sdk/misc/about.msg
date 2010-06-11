@@ -22,6 +22,9 @@ pick( ABT_RUNNING_ON_386,
 pick( ABT_RUNNING_ON_486,
         "Running on an i486",
         "i486 ã‚Å“®ì’†" )
+pick( ABT_RUNNING_ON_586,
+        "Running on a Pentium or compatible",
+        "Pentium ã‚Å“®ì’†" )
 pick( ABT_VIRT_MEM,
         "Virtual Memory:\t\t%d KB",
         "‰¼‘zƒƒ‚ƒŠ:\t\t%d KB" )
