@@ -51,7 +51,7 @@ typedef struct {
     char    *bmp;
     HBITMAP hbmp;
     WORD    id;
-    char    string[256];
+    char    string[64];
 } WdeToolBitMapType;
 
 /****************************************************************************/
@@ -126,15 +126,25 @@ void WdeHandleMeasureItem( MEASUREITEMSTRUCT *mis )
     BITMAP              bm;
     HDC                 hdc;
     RECT                rc;
+    HBITMAP             check_bitmap;
+    BITMAP              check_bm;
     WdeToolBitMapType   *od_data;
+    int                 border_width;
+    int                 spacing;
+
     if( mis->CtlType == ODT_MENU ) {
+        border_width = GetSystemMetrics( SM_CXBORDER );
+        spacing = border_width * 2 + 4;
+        check_bitmap = LoadBitmap( NULL, MAKEINTRESOURCE( OBM_CHECK ) );
+        GetObject( check_bitmap, sizeof( BITMAP ), &check_bm );
         od_data = (WdeToolBitMapType *)mis->itemData;
         GetObject( od_data->hbmp, sizeof( BITMAP ), &bm );
         hdc = GetDC( NULL );
         rc.left = rc.top = 0;
-        DrawText( hdc, od_data->string, -1, &rc, DT_CALCRECT );
+        DrawText( hdc, od_data->string, -1, &rc,
+                  DT_LEFT | DT_SINGLELINE | DT_CALCRECT );
         ReleaseDC( NULL, hdc );
-        mis->itemWidth = bm.bmWidth + rc.right;
+        mis->itemWidth = bm.bmWidth + check_bm.bmWidth + spacing + rc.right;
         mis->itemHeight = max( bm.bmHeight, rc.bottom );
     }
 }
@@ -153,9 +163,11 @@ void WdeHandleDrawItem( DRAWITEMSTRUCT *dis )
     BITMAP              check_bm;
     int                 x;
     int                 y;
-    int                 border_width = GetSystemMetrics( SM_CXBORDER );
+    int                 border_width;
     RECT                rc;
     WdeToolBitMapType   *od_data;
+
+    border_width = GetSystemMetrics( SM_CXBORDER );
     if( dis->CtlType == ODT_MENU ) {
         od_data = (WdeToolBitMapType *)dis->itemData;
         check_bitmap = LoadBitmap( NULL, MAKEINTRESOURCE( OBM_CHECK ) );
@@ -199,7 +211,7 @@ void WdeHandleDrawItem( DRAWITEMSTRUCT *dis )
             }
         }
         CopyRect( &rc, &dis->rcItem );
-        rc.left += bm.bmWidth + check_bm.bmWidth + border_width;
+        rc.left += bm.bmWidth + check_bm.bmWidth + border_width * 2 + 4;
         old_fore_color = SetTextColor( dis->hDC, fore_color );
         old_back_color = SetBkColor( dis->hDC, back_color );
         DrawText( dis->hDC, od_data->string, -1, &rc,
