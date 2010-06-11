@@ -24,20 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Tools menu (owner drawn).
 *
 ****************************************************************************/
 
 
 #define OEMRESOURCE
 #include <windows.h>
-
-#ifdef __NT__
-    #ifndef DT_HIDEPREFIX
-        #define DT_HIDEPREFIX   0x00100000L
-    #endif
-#endif
 
 #include "wdeglbl.h"
 #include "wde_rc.h"
@@ -86,10 +79,8 @@ static WdeToolBitMapType WdeMenuBitmaps[] =
     { "HScrMode",       NULL, IDM_HSCROLL_TOOL,  "" },
     { "VScrMode",       NULL, IDM_VSCROLL_TOOL,  "" },
     { "SBoxMode",       NULL, IDM_SIZEBOX_TOOL,  "" },
-#ifndef __NT__
     { "Custom1",        NULL, IDM_CUSTOM1_TOOL,  "" },
     { "Custom2",        NULL, IDM_CUSTOM2_TOOL,  "" },
-#endif
     { "AlignLeft",      NULL, IDM_FMLEFT,        "" },
     { "AlignRight",     NULL, IDM_FMRIGHT,       "" },
     { "AlignTop",       NULL, IDM_FMTOP,         "" },
@@ -99,23 +90,6 @@ static WdeToolBitMapType WdeMenuBitmaps[] =
     { "SameWidth",      NULL, IDM_SAME_WIDTH,    "" },
     { "SameHeight",     NULL, IDM_SAME_HEIGHT,   "" },
     { "SameSize",       NULL, IDM_SAME_SIZE,     "" },
-    { "SelMode",        NULL, IDM_SELECT_MODE,   "" },
-    { "DiagMode",       NULL, IDM_DIALOG_TOOL,   "" },
-    { "PushMode",       NULL, IDM_PBUTTON_TOOL,  "" },
-    { "RadMode",        NULL, IDM_RBUTTON_TOOL,  "" },
-    { "ChekMode",       NULL, IDM_CBUTTON_TOOL,  "" },
-    { "GrpMode",        NULL, IDM_GBUTTON_TOOL,  "" },
-    { "TextMode",       NULL, IDM_TEXT_TOOL,     "" },
-    { "FramMode",       NULL, IDM_FRAME_TOOL,    "" },
-    { "IconMode",       NULL, IDM_ICON_TOOL,     "" },
-    { "EditMode",       NULL, IDM_EDIT_TOOL,     "" },
-    { "ListMode",       NULL, IDM_LISTBOX_TOOL,  "" },
-    { "CombMode",       NULL, IDM_COMBOBOX_TOOL, "" },
-    { "HScrMode",       NULL, IDM_HSCROLL_TOOL,  "" },
-    { "VScrMode",       NULL, IDM_VSCROLL_TOOL,  "" },
-    { "SBoxMode",       NULL, IDM_SIZEBOX_TOOL,  "" },
-    { "Custom1",        NULL, IDM_CUSTOM1_TOOL,  "" },
-    { "Custom2",        NULL, IDM_CUSTOM2_TOOL,  "" },
     { NULL,             NULL, -1,                "" },
 };
 
@@ -228,13 +202,8 @@ void WdeHandleDrawItem( DRAWITEMSTRUCT *dis )
         rc.left += bm.bmWidth + check_bm.bmWidth + border_width;
         old_fore_color = SetTextColor( dis->hDC, fore_color );
         old_back_color = SetBkColor( dis->hDC, back_color );
-#ifdef __NT__
-        DrawText( dis->hDC, od_data->string, -1, &rc,
-                  DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_HIDEPREFIX );
-#else
         DrawText( dis->hDC, od_data->string, -1, &rc,
                   DT_LEFT | DT_VCENTER | DT_SINGLELINE );
-#endif
         SetTextColor( dis->hDC, old_fore_color );
         SetBkColor( dis->hDC, old_back_color );
         SelectObject( mem_dc, old_bitmap );
@@ -242,4 +211,3 @@ void WdeHandleDrawItem( DRAWITEMSTRUCT *dis )
         DeleteDC( mem_dc );
     }
 }
-
