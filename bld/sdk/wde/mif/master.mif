@@ -1,6 +1,10 @@
 proj_name = wde
 name = wde
 
+!ifndef wde_autodepends
+wde_autodepends = .AUTODEPEND
+!endif 
+
 .EXTENSIONS: .res
 .EXTENSIONS: .rc
 
