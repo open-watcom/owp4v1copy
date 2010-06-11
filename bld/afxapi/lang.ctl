@@ -26,9 +26,9 @@ cdsay .
     <CPCMD> include/res/*.cur             <RELROOT>/h/nt/afx/res/
 
     <CPCMD> dnt386/*.lib                  <RELROOT>/lib386/nt/afx/
-    <CPCMD> dnt386.uni/*.lib              <RELROOT>/lib386/nt/afx/
+    <CPCMD> dnt386u/*.lib                 <RELROOT>/lib386/nt/afx/
     <CPCMD> nt386/*.lib                   <RELROOT>/lib386/nt/afx/
-    <CPCMD> nt386.uni/*.lib               <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386u/*.lib                  <RELROOT>/lib386/nt/afx/
 
 [ BLOCK <1> clean ]
 #==================
