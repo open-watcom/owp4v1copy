@@ -114,7 +114,7 @@
 !endif
 
 .extensions:
-.extensions: .exe .dis .obj .err .c .asm .mif
+.extensions: .exe .dis .dib .obj .err .c .asm .mif
 .mif: ..;$(mif_path)
 
 !ifndef no_continue
@@ -494,4 +494,4 @@ clean : .symbolic global
 
 common_clean : .procedure
     rm -f *.?bj *.err *.lnk *.exe *.out *.sym
-    rm -f *.dmp *.map *.lst *.log *.dis *.tmp
+    rm -f *.dmp *.map *.lst *.log *.dis *.dib *.tmp
