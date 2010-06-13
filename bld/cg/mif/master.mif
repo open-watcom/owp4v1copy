@@ -1,5 +1,9 @@
 proj_name = cg
 
+!ifndef cg_autodepends
+cg_autodepends = .AUTODEPEND
+!endif 
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
