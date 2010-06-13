@@ -322,8 +322,14 @@ $(intname).lib: $(objs)
     @rm tmp2.def
     @rm tmp3.def
 
-$(dllname).dll: $(intname).lib $(dllname).lnk
+# systems where version resource must be added to .DLL
+version_res_nt_386 = version.res
+
+$(dllname).dll: $(intname).lib $(dllname).lnk $(version_res_$(host_os)_$(host_cpu))
     $(linker) name $(dllname).dll @$(dllname).lnk
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 $(dllname).lib: $(dllname).dll
     $(librarian) $(libflags) +$(dllname).dll
@@ -337,3 +343,14 @@ $(dllname).lnk: $(__MAKEFILES__)
 
 $(statname).lib: $(static_objs)
     $(librarian) $(libflags) $<
+
+./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
+    $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level = 0
+!endif
+
+version.res: ./genverrc.exe ../version.rc $(fe_misc_dir)/c/genverrc.c
+    $[@ ../version.rc version.rc $$ $(dllname) $(patch_level)
+    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
