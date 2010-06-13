@@ -12,7 +12,7 @@
 // All classes in this file require Internet Explorer 3.0 or later.
 #if (_WIN32_IE >= 0x0300)
 
-class CMonthCalCtrl : public CWnd {
+class _AFXLINK CMonthCalCtrl : public CWnd {
     DECLARE_DYNAMIC( CMonthCalCtrl )
     
 public:
@@ -74,7 +74,7 @@ public:
 #endif
 };
 
-class CDateTimeCtrl : public CWnd {
+class _AFXLINK CDateTimeCtrl : public CWnd {
     DECLARE_DYNAMIC( CDateTimeCtrl )
     
 public:

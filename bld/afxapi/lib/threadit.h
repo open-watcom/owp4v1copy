@@ -32,7 +32,7 @@
 #ifndef __THREADIT_H__
 #define __THREADIT_H__
 
-void AFXAPI AfxInitThread();
-void AFXAPI AfxTermThread( HINSTANCE hInstTerm );
+_AFXLINK void AFXAPI AfxInitThread();
+_AFXLINK void AFXAPI AfxTermThread( HINSTANCE hInstTerm );
 
 #endif

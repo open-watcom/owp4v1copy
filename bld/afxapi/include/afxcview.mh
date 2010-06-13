@@ -11,7 +11,7 @@
 
 #include <afxcmn.h>
 
-class CTreeView : public CCtrlView {
+class _AFXLINK CTreeView : public CCtrlView {
     DECLARE_DYNCREATE( CTreeView )
     
 public:
@@ -25,7 +25,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CListView : public CCtrlView {
+class _AFXLINK CListView : public CCtrlView {
     DECLARE_DYNCREATE( CListView )
     
 public:

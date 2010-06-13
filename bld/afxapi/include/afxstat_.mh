@@ -21,7 +21,7 @@ class CWnd;
 // CHandleMap is an internal class not accessible to users.
 class CHandleMap;
 
-class AFX_MODULE_THREAD_STATE : public CNoTrackObject {
+class _AFXLINK AFX_MODULE_THREAD_STATE : public CNoTrackObject {
 public:
     AFX_MODULE_THREAD_STATE();
     virtual ~AFX_MODULE_THREAD_STATE();
@@ -40,7 +40,7 @@ public:
     CControlBar     *m_pLastStatus;
 };
 
-class AFX_MODULE_STATE : public CNoTrackObject {
+class _AFXLINK AFX_MODULE_STATE : public CNoTrackObject {
 public:
     AFX_MODULE_STATE( BOOL bDLL );
     virtual ~AFX_MODULE_STATE();
@@ -59,7 +59,7 @@ public:
 // Temporary class name maximum size
 #define _AFX_TEMP_CLASS_NAME_SIZE   96
 
-class _AFX_THREAD_STATE : public CNoTrackObject {
+class _AFXLINK _AFX_THREAD_STATE : public CNoTrackObject {
 public:
     _AFX_THREAD_STATE();
     
@@ -76,8 +76,8 @@ public:
     TCHAR               m_szTempClassName[_AFX_TEMP_CLASS_NAME_SIZE];
 };
 
-AFX_MODULE_STATE * AFXAPI           AfxGetModuleState();
-AFX_MODULE_THREAD_STATE * AFXAPI    AfxGetModuleThreadState();
-_AFX_THREAD_STATE * AFXAPI          AfxGetThreadState();
+_AFXLINK AFX_MODULE_STATE * AFXAPI          AfxGetModuleState();
+_AFXLINK AFX_MODULE_THREAD_STATE * AFXAPI   AfxGetModuleThreadState();
+_AFXLINK _AFX_THREAD_STATE * AFXAPI         AfxGetThreadState();
 
 #endif /* __AFXSTATE_H__ */

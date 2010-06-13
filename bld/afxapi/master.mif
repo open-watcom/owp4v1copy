@@ -50,20 +50,50 @@ headers =               &
         afxwin4.inl     &
         afxwin5.inl
 
-libs = &
 !ifeq unicode 1
 !ifeq debug 1
-        uafxcwd.lib
+dllname = owf$(bld_ver)ud
+intname = owfi$(bld_ver)ud
+statname = owfs$(bld_ver)ud
 !else
-        uafxcw.lib
+dllname = owf$(bld_ver)u
+intname = owfi$(bld_ver)u
+statname = owfs$(bld_ver)u
 !endif
 !else
 !ifeq debug 1
-        nafxcwd.lib
+dllname = owf$(bld_ver)d
+intname = owfi$(bld_ver)d
+statname = owfs$(bld_ver)d
 !else
-        nafxcw.lib
+dllname = owf$(bld_ver)
+intname = owfi$(bld_ver)
+statname = owfs$(bld_ver)
 !endif
 !endif
+
+dlls =                  &
+        $(dllname).dll  &
+        $(dllname).lib  &
+        $(statname).lib
+
+libname = &
+!ifeq unicode 1
+!ifeq debug 1
+        uafxcwd
+!else
+        uafxcw
+!endif
+!else
+!ifeq debug 1
+        nafxcwd
+!else
+        nafxcw
+!endif
+!endif
+
+libs =                  &
+        $(libname).lib
 
 objs =                  &
         animate.obj     &
@@ -232,7 +262,6 @@ objs =                  &
         winapp.obj      &
         windowdc.obj    &
         wininit.obj     &
-        winmain.obj     &
         winthred.obj    &
 !ifeq debug 1
         winxp.obj       &
@@ -241,16 +270,22 @@ objs =                  &
         wndproc.obj     &
         wordarr.obj
 
+static_objs =           &
+        winmain.obj
+
 !ifeq unicode 1
 extra_c_flags += -D_UNICODE
 !endif
 !ifeq debug 1
 extra_c_flags += -D_DEBUG
 !endif
+!ifeq what_to_build dlls
+extra_c_flags += -D_AFXDLL
+!endif
 extra_c_flags += -D_ENABLE_AUTODEPEND -fhwe -xs
 extra_lib_flags_386 = -io -ii
 
-additional_cleanup = *.h *.inl
+additional_cleanup = *.h *.inl *.def
 
 all : $($(what_to_build)) .SYMBOLIC
     @%null
@@ -270,14 +305,35 @@ all : $($(what_to_build)) .SYMBOLIC
 .mrc.rc:
     $(splice)
 
-nafxcw.lib: $(objs)
+afx.h: afx.mh
+    wsplice -i$(hdr_dir) $[@ tmp.h
+    awk -f ../dobldver.awk -v bld_ver=$(bld_ver) tmp.h > afx.h
+    @rm tmp.h
+
+$(libname).lib: $(objs) $(static_objs)
     $(librarian) $(libflags) $<
 
-nafxcwd.lib: $(objs)
-    $(librarian) $(libflags) $<
+$(intname).lib: $(objs)
+    $(librarian) -z=tmp.def $(libflags) $<
+    $(sed) -f $(lib_misc_dir)/sed/export.sed tmp.def > tmp2.def
+    sort < tmp2.def > tmp3.def
+    uniq tmp3.def > export.def
+    @rm tmp.def
+    @rm tmp2.def
+    @rm tmp3.def
 
-uafxcw.lib: $(objs)
-    $(librarian) $(libflags) $<
+$(dllname).dll: $(intname).lib $(dllname).lnk
+    $(linker) name $(dllname).dll @$(dllname).lnk
 
-uafxcwd.lib: $(objs)
+$(dllname).lib: $(dllname).dll
+    $(librarian) $(libflags) +$(dllname).dll
+
+$(dllname).lnk: $(__MAKEFILES__)
+    %create $@
+    @%append $@ $(lflags_dll)
+    @%append $@ op map
+    @%append $@ file $(intname).lib
+    @%append $@ export @export.def
+
+$(statname).lib: $(static_objs)
     $(librarian) $(libflags) $<

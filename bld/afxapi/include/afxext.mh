@@ -27,7 +27,7 @@ class CToolBarCtrl;
 #define LM_LENGTHY  0x00000020L
 #define LM_COMMIT   0x00000040L
 
-class CBitmapButton : public CButton {
+class _AFXLINK CBitmapButton : public CButton {
 protected:
     CBitmap m_bitmap;
     CBitmap m_bitmapSel;
@@ -47,7 +47,7 @@ public:
     void    SizeToContent();
 };
 
-class CControlBar : public CWnd {
+class _AFXLINK CControlBar : public CWnd {
 public:
     BOOL            m_bAutoDelete;
     int             m_cxLeftBorder;
@@ -126,7 +126,7 @@ protected:
 #define TBBS_ELLIPSES       MAKELONG( 0, TBSTATE_ELLIPSES )
 #define TBBS_MARKED         MAKELONG( 0, TBSTATE_MARKED )
 
-class CToolBar : public CControlBar {
+class _AFXLINK CToolBar : public CControlBar {
 private:
     HRSRC       m_hRsrcImageWell;
     HINSTANCE   m_hInstImageWell;
@@ -189,7 +189,7 @@ protected:
 #define SBPS_DISABLED   0x04000000L
 #define SBPS_STRETCH    0x08000000L
 
-class CStatusBar : public CControlBar {
+class _AFXLINK CStatusBar : public CControlBar {
     DECLARE_DYNAMIC( CStatusBar )
     
 public:
@@ -228,7 +228,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CDialogBar : public CControlBar {
+class _AFXLINK CDialogBar : public CControlBar {
 private:
     CSize   m_sizeDefault;
     LPCTSTR m_lpszTemplateName;
@@ -250,7 +250,7 @@ public:
 
 #if (_WIN32_IE >= 0x0300)
 
-class CReBar : public CControlBar {
+class _AFXLINK CReBar : public CControlBar {
     DECLARE_DYNAMIC( CReBar )
     
 public:
@@ -282,7 +282,7 @@ protected:
 
 #endif // (_WIN32_IE >= 0x0300)
 
-class CFormView : public CScrollView {
+class _AFXLINK CFormView : public CScrollView {
 private:
     LPCTSTR         m_lpszTemplateName;
     CCreateContext  *m_pCreateContext;
@@ -306,7 +306,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CEditView : public CCtrlView {
+class _AFXLINK CEditView : public CCtrlView {
 private:
     int         m_nTabStops;
     LPTSTR      m_pShadowBuffer;
@@ -372,7 +372,7 @@ protected:
 #define SPLS_DYNAMIC_SPLIT  0x0001L
 #define SPLS_INVERT_TRACKER 0x0002L
 
-class CSplitterWnd : public CWnd {
+class _AFXLINK CSplitterWnd : public CWnd {
 public:
     enum ESplitType {
         splitBox,
@@ -458,7 +458,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CMetaFileDC : public CDC {
+class _AFXLINK CMetaFileDC : public CDC {
 private:
     BOOL m_bEnhanced;
     
@@ -483,7 +483,7 @@ public:
 #endif
 };
 
-struct CPrintInfo {
+struct _AFXLINK CPrintInfo {
     CPrintDialog    *m_pPD;
     BOOL            m_bPreview;
     BOOL            m_bDirect;
@@ -505,7 +505,7 @@ struct CPrintInfo {
     void    SetMinPage( UINT nMinPage );
 };
 
-struct CPrintPreviewState {
+struct _AFXLINK CPrintPreviewState {
     UINT    nIDMainPane;
     HMENU   hMenu;
     DWORD   dwStates;
@@ -524,7 +524,7 @@ struct CCreateContext {
     CFrameWnd       *m_pCurrentFrame;
 };
 
-HBITMAP AFXAPI  AfxLoadSysColorBitmap( HINSTANCE hInst, HRSRC hRsrc, BOOL bMono = FALSE );
+_AFXLINK HBITMAP AFXAPI AfxLoadSysColorBitmap( HINSTANCE hInst, HRSRC hRsrc, BOOL bMono = FALSE );
 
 #ifndef _DEBUG
     #include <afxext.inl>

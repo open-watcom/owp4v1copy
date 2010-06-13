@@ -22,7 +22,7 @@ public:
     TCHAR   szText[256];
 };
 
-class CImageList : public CObject {
+class _AFXLINK CImageList : public CObject {
 public:
     HIMAGELIST  m_hImageList;
     
@@ -86,7 +86,7 @@ public:
     static CImageList * PASCAL  GetDragImage( LPPOINT lpPoint, LPPOINT lpPointHotSpot );
 };
 
-class CToolBarCtrl : public CWnd {
+class _AFXLINK CToolBarCtrl : public CWnd {
     DECLARE_DYNAMIC( CToolBarCtrl )
     
 public:
@@ -195,7 +195,7 @@ public:
 #endif
 };
 
-class CStatusBarCtrl : public CWnd {
+class _AFXLINK CStatusBarCtrl : public CWnd {
     DECLARE_DYNAMIC( CStatusBarCtrl )
     
 public:
@@ -232,7 +232,7 @@ public:
 
 #if (_WIN32_IE >= 0x0300)
 
-class CReBarCtrl : public CWnd {
+class _AFXLINK CReBarCtrl : public CWnd {
     DECLARE_DYNAMIC( CReBarCtrl )
     
 public:
@@ -298,7 +298,7 @@ public:
 
 #endif // (_WIN32_IE >= 0x0300)
 
-class CToolTipCtrl : public CWnd {
+class _AFXLINK CToolTipCtrl : public CWnd {
     DECLARE_DYNAMIC( CToolTipCtrl )
     
 public:
@@ -347,7 +347,7 @@ public:
 #endif
 };
 
-class CAnimateCtrl : public CWnd {
+class _AFXLINK CAnimateCtrl : public CWnd {
     DECLARE_DYNAMIC( CAnimateCtrl )
     
 public:
@@ -367,7 +367,7 @@ public:
 #endif
 };
 
-class CProgressCtrl : public CWnd {
+class _AFXLINK CProgressCtrl : public CWnd {
     DECLARE_DYNAMIC( CProgressCtrl )
     
 public:
@@ -402,7 +402,7 @@ public:
 #endif
 };
 
-class CSliderCtrl : public CWnd {
+class _AFXLINK CSliderCtrl : public CWnd {
     DECLARE_DYNAMIC( CSliderCtrl )
     
 public:
@@ -446,7 +446,7 @@ public:
 #endif
 };
 
-class CSpinButtonCtrl : public CWnd {
+class _AFXLINK CSpinButtonCtrl : public CWnd {
     DECLARE_DYNAMIC( CSpinButtonCtrl )
     
 public:
@@ -476,7 +476,7 @@ public:
 #endif
 };
 
-class CHotKeyCtrl : public CWnd {
+class _AFXLINK CHotKeyCtrl : public CWnd {
     DECLARE_DYNAMIC( CHotKeyCtrl )
     
 public:
@@ -496,7 +496,7 @@ public:
 
 #if (_WIN32_IE >= 0x0400)
 
-class CIPAddressCtrl : public CWnd {
+class _AFXLINK CIPAddressCtrl : public CWnd {
     DECLARE_DYNAMIC( CIPAddressCtrl )
     
 public:
@@ -517,7 +517,7 @@ public:
 
 #endif // (_WIN32_IE >= 0x0400)
 
-class CHeaderCtrl : public CWnd {
+class _AFXLINK CHeaderCtrl : public CWnd {
     DECLARE_DYNAMIC( CHeaderCtrl )
     
 public:
@@ -563,7 +563,7 @@ public:
 #endif
 };
 
-class CTreeCtrl : public CWnd {
+class _AFXLINK CTreeCtrl : public CWnd {
     DECLARE_DYNAMIC( CTreeCtrl )
     
 public:
@@ -666,7 +666,7 @@ public:
 #endif
 };
 
-class CListCtrl : public CWnd {
+class _AFXLINK CListCtrl : public CWnd {
     DECLARE_DYNAMIC( CListCtrl )
     
 public:
@@ -827,7 +827,7 @@ public:
 #endif
 };
 
-class CTabCtrl : public CWnd {
+class _AFXLINK CTabCtrl : public CWnd {
     DECLARE_DYNAMIC( CTabCtrl )
     
 public:
@@ -880,7 +880,7 @@ public:
 
 #if (_WIN32_IE >= 0x0400)
 
-class CPagerCtrl : public CWnd {
+class _AFXLINK CPagerCtrl : public CWnd {
     DECLARE_DYNAMIC( CPagerCtrl )
     
 public:
@@ -913,7 +913,7 @@ public:
 
 #if (_WIN32_WINNT >= 0x0501)
 
-class CLinkCtrl : public CWnd {
+class _AFXLINK CLinkCtrl : public CWnd {
     DECLARE_DYNAMIC( CLinkCtrl )
     
 public:
@@ -945,7 +945,7 @@ public:
 
 #if (_WIN32_IE >= 0x0300)
 
-class CComboBoxEx : public CComboBox {
+class _AFXLINK CComboBoxEx : public CComboBox {
     DECLARE_DYNAMIC( CComboBoxEx )
     
 public:
@@ -974,7 +974,7 @@ public:
 
 #endif // (_WIN32_IE >= 0x0300)
 
-class CDragListBox : public CListBox {
+class _AFXLINK CDragListBox : public CListBox {
 protected:
     int m_nLast;
     
@@ -998,7 +998,7 @@ public:
     int ItemFromPt( CPoint pt, BOOL bAutoScroll = TRUE ) const;
 };
 
-class CRichEditCtrl : public CWnd {
+class _AFXLINK CRichEditCtrl : public CWnd {
     DECLARE_DYNAMIC( CRichEditCtrl )
     
 public:

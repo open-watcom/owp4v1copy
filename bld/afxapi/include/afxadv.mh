@@ -12,7 +12,7 @@
 // Default maximum file name length for recent file list
 #define AFX_ABBREV_FILENAME_LEN 30
 
-class CRecentFileList {
+class _AFXLINK CRecentFileList {
 protected:
     int     m_nSize;
     CString *m_arrNames;

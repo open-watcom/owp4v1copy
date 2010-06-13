@@ -249,9 +249,9 @@ template< class TYPE >
 void AFXAPI SerializeElements( CArchive &ar, TYPE *pElements, INT_PTR nCount );
 
 template<>
-UINT AFXAPI HashKey( LPCTSTR key );
+_AFXLINK UINT AFXAPI HashKey( LPCTSTR key );
 template<>
-void AFXAPI SerializeElements( CArchive &ar, CString *pElements, INT_PTR nCount );
+_AFXLINK void AFXAPI SerializeElements( CArchive &ar, CString *pElements, INT_PTR nCount );
 
 template< class TYPE, class ARG_TYPE >
 AFX_INLINE TYPE &CArray< TYPE, ARG_TYPE >::ElementAt( INT_PTR nIndex )

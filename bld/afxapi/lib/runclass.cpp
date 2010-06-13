@@ -46,10 +46,19 @@ BOOL CRuntimeClass::IsDerivedFrom( const CRuntimeClass *pBaseClass )
 {
     if( pBaseClass == this ) {
         return( TRUE );
-    } else if( m_pBaseClass == NULL ) {
-        return( FALSE );
     } else {
-        return( m_pBaseClass->IsDerivedFrom( pBaseClass ) );
+        CRuntimeClass *pNextClass;
+#ifdef _AFXDLL
+        ASSERT( m_pfnGetBaseClass != NULL );
+        pNextClass = m_pfnGetBaseClass();
+#else
+        pNextClass = m_pBaseClass;
+#endif
+        if( pNextClass == NULL ) {
+            return( FALSE );
+        } else {
+            return( pNextClass->IsDerivedFrom( pBaseClass ) );
+        }
     }
 }
 

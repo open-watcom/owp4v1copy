@@ -44,13 +44,6 @@ typedef void (CCmdTarget::*PFN_NOTIFY_HANDLER_RANGE)( UINT, NMHDR *, LRESULT * )
 
 IMPLEMENT_DYNAMIC( CCmdTarget, CObject )
 
-const AFX_MSGMAP_ENTRY CCmdTarget::_messageEntries[] = {
-    { 0, 0, 0, 0, AfxSig_end, NULL }
-};
-
-const AFX_MSGMAP CCmdTarget::messageMap =
-    { NULL, CCmdTarget::_messageEntries };
-
 const AFX_INTERFACEMAP_ENTRY CCmdTarget::_interfaceEntries[] = {
     { NULL, -1 }
 };
@@ -73,6 +66,27 @@ const AFX_INTERFACEMAP *CCmdTarget::GetInterfaceMap() const
 const AFX_MSGMAP *CCmdTarget::GetMessageMap() const
 /*************************************************/
 {
+    return( GetThisMessageMap() );
+}
+
+#ifdef _AFXDLL
+
+const AFX_INTERFACEMAP * PASCAL CCmdTarget::GetThisInterfaceMap()
+/***************************************************************/
+{
+    return( &interfaceMap );
+}
+
+#endif // _AFXDLL
+
+const AFX_MSGMAP * PASCAL CCmdTarget::GetThisMessageMap()
+/*******************************************************/
+{
+    static const AFX_MSGMAP_ENTRY _messageEntries[] = {
+        { 0, 0, 0, 0, AfxSig_end, NULL }
+    };
+    static const AFX_MSGMAP messageMap =
+        { NULL, _messageEntries };
     return( &messageMap );
 }
 
@@ -88,7 +102,7 @@ BOOL CCmdTarget::OnCmdMsg( UINT nID, int nCode, void *pExtra,
         // Take the low word and cast it to a signed 16-bit integer.
         nCode = (short)LOWORD( nCode );
     }
-    while( pMessageMap != NULL ) {
+    for( ;; ) {
         const AFX_MSGMAP_ENTRY *pEntries = pMessageMap->lpEntries;
         int i = 0;
         while( pEntries[i].nSig != AfxSig_end ) {
@@ -179,7 +193,10 @@ BOOL CCmdTarget::OnCmdMsg( UINT nID, int nCode, void *pExtra,
             }
             i++;
         }
-        pMessageMap = pMessageMap->pBaseMap;
+        if( pMessageMap->pfnGetBaseMap == NULL ) {
+            break;
+        }
+        pMessageMap = pMessageMap->pfnGetBaseMap();
     }
     return( FALSE );
 }
@@ -206,7 +223,11 @@ DWORD CCmdTarget::InternalQueryInterface( const void *piid, LPVOID *ppvObj )
 /*************************************************************************/
 {
     const AFX_INTERFACEMAP *pInterfaceMap = GetInterfaceMap();
+#ifdef _AFXDLL
+    for( ;; ) {
+#else
     while( pInterfaceMap != NULL ) {
+#endif
         const AFX_INTERFACEMAP_ENTRY *pEntries = pInterfaceMap->pEntry;
         int i = 0;
         while( pEntries[i].piid != NULL ) {
@@ -217,7 +238,14 @@ DWORD CCmdTarget::InternalQueryInterface( const void *piid, LPVOID *ppvObj )
             }
             i++;
         }
+#ifdef _AFXDLL
+        if( pInterfaceMap->pfnGetBaseMap == NULL ) {
+            break;
+        }
+        pInterfaceMap = pInterfaceMap->pfnGetBaseMap();
+#else
         pInterfaceMap = pInterfaceMap->pBaseMap;
+#endif
     }
     return( E_NOINTERFACE );
 }

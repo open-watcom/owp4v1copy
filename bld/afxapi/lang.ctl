@@ -25,10 +25,24 @@ cdsay .
 
     <CPCMD> include/res/*.cur             <RELROOT>/h/nt/afx/res/
 
-    <CPCMD> dnt386/*.lib                  <RELROOT>/lib386/nt/afx/
-    <CPCMD> dnt386u/*.lib                 <RELROOT>/lib386/nt/afx/
-    <CPCMD> nt386/*.lib                   <RELROOT>/lib386/nt/afx/
-    <CPCMD> nt386u/*.lib                  <RELROOT>/lib386/nt/afx/
+    <CPCMD> dnt386/nafxcwd.lib            <RELROOT>/lib386/nt/afx/
+    <CPCMD> dnt386u/uafxcwd.lib           <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386/nafxcw.lib              <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386u/uafxcw.lib             <RELROOT>/lib386/nt/afx/
+
+    <CPCMD> dnt386.dll/owf??d.dll         <RELROOT>/binnt/
+    <CPCMD> dnt386u.dll/owf??ud.dll       <RELROOT>/binnt/
+    <CPCMD> nt386.dll/owf??.dll           <RELROOT>/binnt/
+    <CPCMD> nt386u.dll/owf??u.dll         <RELROOT>/binnt/
+
+    <CPCMD> dnt386.dll/owf??d.lib         <RELROOT>/lib386/nt/afx/
+    <CPCMD> dnt386.dll/owfs??d.lib        <RELROOT>/lib386/nt/afx/
+    <CPCMD> dnt386u.dll/owf??ud.lib       <RELROOT>/lib386/nt/afx/
+    <CPCMD> dnt386u.dll/owfs??ud.lib      <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386.dll/owf??.lib           <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386.dll/owfs??.lib          <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386u.dll/owf??u.lib         <RELROOT>/lib386/nt/afx/
+    <CPCMD> nt386u.dll/owfs??u.lib        <RELROOT>/lib386/nt/afx/
 
 [ BLOCK <1> clean ]
 #==================

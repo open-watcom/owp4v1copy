@@ -9,7 +9,7 @@
 
 :include readonly.sp
 
-class CSyncObject : public CObject {
+class _AFXLINK CSyncObject : public CObject {
 public:
     HANDLE  m_hObject;
     
@@ -30,7 +30,7 @@ public:
     operator HANDLE() const;
 };
 
-class CCriticalSection : public CSyncObject {
+class _AFXLINK CCriticalSection : public CSyncObject {
 public:
     CRITICAL_SECTION    m_sect;
     
@@ -48,7 +48,7 @@ public:
     operator CRITICAL_SECTION *();
 };
 
-class CMutex : public CSyncObject {
+class _AFXLINK CMutex : public CSyncObject {
     DECLARE_DYNAMIC( CMutex )
     
 public:
@@ -57,7 +57,7 @@ public:
     virtual BOOL    Unlock();
 };
 
-class CSemaphore : public CSyncObject {
+class _AFXLINK CSemaphore : public CSyncObject {
     DECLARE_DYNAMIC( CSemaphore )
     
 public:
@@ -67,7 +67,7 @@ public:
     virtual BOOL    Unlock( LONG lCount, LPLONG lpPrevCount = NULL );
 };
 
-class CEvent : public CSyncObject {
+class _AFXLINK CEvent : public CSyncObject {
     DECLARE_DYNAMIC( CEvent )
     
 public:
@@ -80,7 +80,7 @@ public:
     BOOL    SetEvent();
 };
 
-class CSingleLock {
+class _AFXLINK CSingleLock {
 protected:
     CSyncObject *m_pObject;
     HANDLE      m_hObject;
@@ -96,7 +96,7 @@ public:
     BOOL    Unlock( LONG lCount, LPLONG lpPrevCount = NULL );
 };
 
-class CMultiLock {
+class _AFXLINK CMultiLock {
 protected:
     HANDLE              m_hPreallocated[8];
     BOOL                m_bPreallocated[8];

@@ -9,7 +9,7 @@
 
 :include readonly.sp
 
-class CSimpleList {
+class _AFXLINK CSimpleList {
 private:
     void    *m_pHead;
     size_t  m_nNextOffset;
@@ -43,12 +43,12 @@ public:
         { return( (TYPE)CSimpleList::GetHead() ); }
 };
 
-class CNoTrackObject {
+class _AFXLINK CNoTrackObject {
 public:
     virtual ~CNoTrackObject();
 };
 
-class CProcessLocalObject {
+class _AFXLINK CProcessLocalObject {
 private:
     CNoTrackObject * volatile   m_pObject;
 
@@ -59,7 +59,7 @@ public:
     CNoTrackObject  *GetData( CNoTrackObject *(*pfnCreateObject)() );
 };
 
-class CThreadLocalObject {
+class _AFXLINK CThreadLocalObject {
 private:
     int m_nSlot;
 

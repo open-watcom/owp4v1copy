@@ -11,18 +11,40 @@
 
 #include <afxver_.h>
 
-// Automatically use the appropriate static library.
-#ifdef _UNICODE
-    #ifdef _DEBUG
-        #pragma library( "uafxcwd.lib" )
+// Automatically use the appropriate static library or import library.
+#ifndef __AFX_INTERNAL__
+    #ifdef _AFXDLL
+        #ifdef _UNICODE
+            #ifdef _DEBUG
+                #pragma library( "owf$$BLD_VER$$ud.lib" )
+                #pragma library( "owfs$$BLD_VER$$ud.lib" )
+            #else
+                #pragma library( "owf$$BLD_VER$$u.lib" )
+                #pragma library( "owfs$$BLD_VER$$ud.lib" )
+            #endif
+        #else
+            #ifdef _DEBUG
+                #pragma library( "owf$$BLD_VER$$d.lib" )
+                #pragma library( "owfs$$BLD_VER$$d.lib" )
+            #else
+                #pragma library( "owf$$BLD_VER$$.lib" )
+                #pragma library( "owfs$$BLD_VER$$.lib" )
+            #endif
+        #endif
     #else
-        #pragma library( "uafxcw.lib" )
-    #endif
-#else
-    #ifdef _DEBUG
-        #pragma library( "nafxcwd.lib" )
-    #else
-        #pragma library( "nafxcw.lib" )
+        #ifdef _UNICODE
+            #ifdef _DEBUG
+                #pragma library( "uafxcwd.lib" )
+            #else
+                #pragma library( "uafxcw.lib" )
+            #endif
+        #else
+            #ifdef _DEBUG
+                #pragma library( "nafxcwd.lib" )
+            #else
+                #pragma library( "nafxcw.lib" )
+            #endif
+        #endif
     #endif
 #endif
 
@@ -50,7 +72,18 @@ typedef struct __POSITION   *POSITION;
 #endif
 #define UNUSED_ALWAYS( x )  x
 
-class CString {
+// Macro to specify classes or functions in the framework library
+#ifdef _AFXDLL
+    #ifdef __AFX_INTERNAL__
+        #define _AFXLINK    __declspec( dllexport )
+    #else
+        #define _AFXLINK    __declspec( dllimport )
+    #endif
+#else
+    #define _AFXLINK
+#endif
+
+class _AFXLINK CString {
 private:
     PTSTR   m_psz;
     int     m_nAllocLength;
@@ -162,12 +195,16 @@ public:
     friend BOOL     operator>=( PCTSTR psz1, const CString &str2 );
 };
 
-struct CRuntimeClass {
+struct _AFXLINK CRuntimeClass {
     LPCSTR          m_lpszClassName;
     int             m_nObjectSize;
     UINT            m_wSchema;
-    CObject         *(*m_pfnCreateObject)();
+    CObject         *(PASCAL *m_pfnCreateObject)();
+#ifdef _AFXDLL
+    CRuntimeClass   *(PASCAL *m_pfnGetBaseClass)();
+#else
     CRuntimeClass   *m_pBaseClass;
+#endif
     CRuntimeClass   *m_pNextClass;
 
     CObject *CreateObject();
@@ -178,13 +215,18 @@ struct CRuntimeClass {
     static CObject * PASCAL         CreateObject( LPCWSTR lpszClassName );
     static CRuntimeClass * PASCAL   FromName( LPCSTR lpszClassName );
     static CRuntimeClass * PASCAL   FromName( LPCWSTR lpszClassName );
+
+#ifdef _AFXDLL
+    static CRuntimeClass * PASCAL   _GetBaseClass();
+    static CRuntimeClass * PASCAL   GetThisClass();
+#endif
 };
 
-struct AFX_CLASSINIT {
+struct _AFXLINK AFX_CLASSINIT {
     AFX_CLASSINIT( CRuntimeClass *pNewClass );
 };
 
-class CObject {
+class _AFXLINK CObject {
 public:
     CObject();
     virtual ~CObject();
@@ -201,72 +243,171 @@ public:
     BOOL    IsSerializable() const;
     
     static const CRuntimeClass classCObject;
+#ifdef _AFXDLL
+    static CRuntimeClass * PASCAL   _GetBaseClass();
+    static CRuntimeClass * PASCAL   GetThisClass();
+#endif
 };
 
 // Object model macros
-#define RUNTIME_CLASS( class_name ) ((CRuntimeClass *)&class_name::class##class_name)
-#define DECLARE_DYNAMIC( class_name ) \
-    public: \
-        static const CRuntimeClass  class##class_name; \
-        virtual CRuntimeClass       *GetRuntimeClass() const;
-#define IMPLEMENT_DYNAMIC( class_name, base_class_name ) \
-    const CRuntimeClass class_name::class##class_name = \
-        { #class_name, sizeof( class_name ), 0xFFFF, NULL, \
-          RUNTIME_CLASS( base_class_name ) }; \
-    const AFX_CLASSINIT _init_##class_name( RUNTIME_CLASS( class_name ) ); \
-    CRuntimeClass *class_name::GetRuntimeClass() const \
-    { \
-        return( (CRuntimeClass *)&class##class_name ); \
-    }
-#define DECLARE_DYNCREATE( class_name ) \
-    public: \
-        static const CRuntimeClass  class##class_name; \
-        virtual CRuntimeClass       *GetRuntimeClass() const; \
-        static CObject  *CreateObject();
-#define IMPLEMENT_DYNCREATE( class_name, base_class_name ) \
-    const CRuntimeClass class_name::class##class_name = \
-        { #class_name, sizeof( class_name ), 0xFFFF, class_name::CreateObject, \
-          RUNTIME_CLASS( base_class_name ) }; \
-    const AFX_CLASSINIT _init_##class_name( RUNTIME_CLASS( class_name ) ); \
-    CRuntimeClass *class_name::GetRuntimeClass() const \
-    { \
-        return( (CRuntimeClass *)&class##class_name ); \
-    } \
-    CObject *class_name::CreateObject() \
-    { \
-        return( new class_name ); \
-    }
-#define DECLARE_SERIAL( class_name ) \
-    public: \
-        static const CRuntimeClass  class##class_name; \
-        virtual CRuntimeClass       *GetRuntimeClass() const; \
-        friend CArchive             &operator>>( CArchive &ar, class_name *&pOb ); \
-        static CObject  *CreateObject();
-#define IMPLEMENT_SERIAL( class_name, base_class_name, wSchema ) \
-    const CRuntimeClass class_name::class##class_name = \
-        { #class_name, sizeof( class_name ), wSchema, class_name::CreateObject, \
-          RUNTIME_CLASS( base_class_name ) }; \
-    const AFX_CLASSINIT _init_##class_name( RUNTIME_CLASS( class_name ) ); \
-    CRuntimeClass *class_name::GetRuntimeClass() const \
-    { \
-        return( (CRuntimeClass *)&class##class_name ); \
-    } \
-    CArchive &operator>>( CArchive &ar, class_name *&pOb ) \
-    { \
-        pOb = (class_name *)ar.ReadObject( RUNTIME_CLASS( class_name ) ); \
-        return( ar ); \
-    } \
-    CObject *class_name::CreateObject() \
-    { \
-        return( new class_name ); \
-    }
+#ifdef _AFXDLL
+    #define RUNTIME_CLASS( class_name ) (class_name::GetThisClass())
+    #define DECLARE_DYNAMIC( class_name ) \
+        protected: \
+            static CRuntimeClass * PASCAL   _GetBaseClass(); \
+        public: \
+            static const CRuntimeClass      class##class_name; \
+            virtual CRuntimeClass           *GetRuntimeClass() const; \
+            static CRuntimeClass * PASCAL   GetThisClass();
+    #define IMPLEMENT_DYNAMIC( class_name, base_class_name ) \
+        CRuntimeClass * PASCAL class_name::_GetBaseClass() \
+        { \
+            return( base_class_name::GetThisClass() ); \
+        } \
+        const CRuntimeClass class_name::class##class_name = \
+            { #class_name, sizeof( class_name ), 0xFFFF, NULL, \
+              class_name::_GetBaseClass }; \
+        const AFX_CLASSINIT _init_##class_name( \
+            (CRuntimeClass *)&class_name::class##class_name ); \
+        CRuntimeClass *class_name::GetRuntimeClass() const \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        } \
+        CRuntimeClass * PASCAL class_name::GetThisClass() \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        }
+    #define DECLARE_DYNCREATE( class_name ) \
+        protected: \
+            static CRuntimeClass * PASCAL   _GetBaseClass(); \
+        public: \
+            static const CRuntimeClass      class##class_name; \
+            virtual CRuntimeClass           *GetRuntimeClass() const; \
+            static CRuntimeClass * PASCAL   GetThisClass(); \
+            static CObject * PASCAL         CreateObject();
+    #define IMPLEMENT_DYNCREATE( class_name, base_class_name ) \
+        CRuntimeClass * PASCAL class_name::_GetBaseClass() \
+        { \
+            return( base_class_name::GetThisClass() ); \
+        } \
+        const CRuntimeClass class_name::class##class_name = \
+            { #class_name, sizeof( class_name ), 0xFFFF, class_name::CreateObject, \
+              class_name::_GetBaseClass }; \
+        const AFX_CLASSINIT _init_##class_name( \
+            (CRuntimeClass *)&class_name::class##class_name ); \
+        CRuntimeClass *class_name::GetRuntimeClass() const \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        } \
+        CRuntimeClass * PASCAL class_name::GetThisClass() \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        } \
+        CObject * PASCAL class_name::CreateObject() \
+        { \
+            return( new class_name ); \
+        }
+    #define DECLARE_SERIAL( class_name ) \
+        protected: \
+            static CRuntimeClass * PASCAL   _GetBaseClass(); \
+        public: \
+            static const CRuntimeClass      class##class_name; \
+            virtual CRuntimeClass           *GetRuntimeClass() const; \
+            friend CArchive                 &operator>>( CArchive &ar, class_name *&pOb ); \
+            static CRuntimeClass * PASCAL   GetThisClass(); \
+            static CObject * PASCAL         CreateObject();
+    #define IMPLEMENT_SERIAL( class_name, base_class_name, wSchema ) \
+        CRuntimeClass * PASCAL class_name::_GetBaseClass() \
+        { \
+            return( base_class_name::GetThisClass() ); \
+        } \
+        const CRuntimeClass class_name::class##class_name = \
+            { #class_name, sizeof( class_name ), 0xFFFF, class_name::CreateObject, \
+              class_name::_GetBaseClass }; \
+        const AFX_CLASSINIT _init_##class_name( \
+            (CRuntimeClass *)&class_name::class##class_name ); \
+        CRuntimeClass *class_name::GetRuntimeClass() const \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        } \
+        CArchive &operator>>( CArchive &ar, class_name *&pOb ) \
+        { \
+            pOb = (class_name *)ar.ReadObject( RUNTIME_CLASS( class_name ) ); \
+            return( ar ); \
+        } \
+        CRuntimeClass * PASCAL class_name::GetThisClass() \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        } \
+        CObject * PASCAL class_name::CreateObject() \
+        { \
+            return( new class_name ); \
+        }
+#else
+    #define RUNTIME_CLASS( class_name ) ((CRuntimeClass *)&class_name::class##class_name)
+    #define DECLARE_DYNAMIC( class_name ) \
+        public: \
+            static const CRuntimeClass  class##class_name; \
+            virtual CRuntimeClass       *GetRuntimeClass() const;
+    #define IMPLEMENT_DYNAMIC( class_name, base_class_name ) \
+        const CRuntimeClass class_name::class##class_name = \
+            { #class_name, sizeof( class_name ), 0xFFFF, NULL, \
+              RUNTIME_CLASS( base_class_name ) }; \
+        const AFX_CLASSINIT _init_##class_name( RUNTIME_CLASS( class_name ) ); \
+        CRuntimeClass *class_name::GetRuntimeClass() const \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        }
+    #define DECLARE_DYNCREATE( class_name ) \
+        public: \
+            static const CRuntimeClass  class##class_name; \
+            virtual CRuntimeClass       *GetRuntimeClass() const; \
+            static CObject * PASCAL     CreateObject();
+    #define IMPLEMENT_DYNCREATE( class_name, base_class_name ) \
+        const CRuntimeClass class_name::class##class_name = \
+            { #class_name, sizeof( class_name ), 0xFFFF, class_name::CreateObject, \
+              RUNTIME_CLASS( base_class_name ) }; \
+        const AFX_CLASSINIT _init_##class_name( RUNTIME_CLASS( class_name ) ); \
+        CRuntimeClass *class_name::GetRuntimeClass() const \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        } \
+        CObject * PASCAL class_name::CreateObject() \
+        { \
+            return( new class_name ); \
+        }
+    #define DECLARE_SERIAL( class_name ) \
+        public: \
+            static const CRuntimeClass  class##class_name; \
+            virtual CRuntimeClass       *GetRuntimeClass() const; \
+            friend CArchive             &operator>>( CArchive &ar, class_name *&pOb ); \
+            static CObject * PASCAL     CreateObject();
+    #define IMPLEMENT_SERIAL( class_name, base_class_name, wSchema ) \
+        const CRuntimeClass class_name::class##class_name = \
+            { #class_name, sizeof( class_name ), wSchema, class_name::CreateObject, \
+              RUNTIME_CLASS( base_class_name ) }; \
+        const AFX_CLASSINIT _init_##class_name( RUNTIME_CLASS( class_name ) ); \
+        CRuntimeClass *class_name::GetRuntimeClass() const \
+        { \
+            return( (CRuntimeClass *)&class##class_name ); \
+        } \
+        CArchive &operator>>( CArchive &ar, class_name *&pOb ) \
+        { \
+            pOb = (class_name *)ar.ReadObject( RUNTIME_CLASS( class_name ) ); \
+            return( ar ); \
+        } \
+        CObject *class_name::CreateObject() \
+        { \
+            return( new class_name ); \
+        }
+#endif
 #define STATIC_DOWNCAST( class_name, pObject ) \
     ((class_name *)pObject)
 #define DYNAMIC_DOWNCAST( class_name, pObject ) \
     (((CObject *)pObject)->IsKindOf( RUNTIME_CLASS( class_name ) ) ? \
     ((class_name *)pObject) : NULL)
 
-class CException : public CObject {
+class _AFXLINK CException : public CObject {
 private:
     BOOL m_bAutoDelete;
 
@@ -286,7 +427,7 @@ public:
     void    Delete();
 };
 
-class CSimpleException : public CException {
+class _AFXLINK CSimpleException : public CException {
 protected:
     BOOL    m_bInitialized;
     BOOL    m_bLoaded;
@@ -305,28 +446,28 @@ public:
 #endif
 };
 
-class CMemoryException : public CSimpleException {
+class _AFXLINK CMemoryException : public CSimpleException {
     DECLARE_DYNAMIC( CMemoryException )
 
 public:
     CMemoryException();
 };
 
-class CNotSupportedException : public CSimpleException {
+class _AFXLINK CNotSupportedException : public CSimpleException {
     DECLARE_DYNAMIC( CNotSupportedException )
 
 public:
     CNotSupportedException();
 };
 
-class CInvalidArgException : public CSimpleException {
+class _AFXLINK CInvalidArgException : public CSimpleException {
     DECLARE_DYNAMIC( CInvalidArgException )
 
 public:
     CInvalidArgException();
 };
 
-class CFileException : public CException {
+class _AFXLINK CFileException : public CException {
 public:
     enum {
         none,
@@ -366,7 +507,7 @@ public:
     static void PASCAL  ThrowOsError( LONG lOsError, LPCTSTR lpszFileName = NULL );
 };
 
-class CArchiveException : public CException {
+class _AFXLINK CArchiveException : public CException {
 public:
     enum {
         none,
@@ -413,7 +554,7 @@ public:
 #define END_CATCH_ALL \
     }
 
-class CFile : public CObject {
+class _AFXLINK CFile : public CObject {
 public:
     static const HANDLE hFileNull;
     
@@ -499,7 +640,7 @@ public:
     static void PASCAL  SetStatus( LPCTSTR lpszFileName, const CFileStatus &rStatus );
 };
 
-class CStdioFile : public CFile {
+class _AFXLINK CStdioFile : public CFile {
 public:
     FILE    *m_pStream;
 
@@ -531,7 +672,7 @@ public:
 #endif
 };
 
-class CMemFile : public CFile {
+class _AFXLINK CMemFile : public CFile {
 private:
     BYTE    *m_lpBuffer;
     SIZE_T  m_nBufferSize;
@@ -572,7 +713,7 @@ protected:
     virtual BYTE    *Realloc( BYTE *lpMem, SIZE_T nBytes );
 };
 
-class CArchive {
+class _AFXLINK CArchive {
 private:
     CFile   *m_pFile;
     UINT    m_nMode;
@@ -652,7 +793,7 @@ public:
     CArchive    &operator>>( LONGLONG &dwdw );
 };
 
-class CTimeSpan {
+class _AFXLINK CTimeSpan {
 private:
     time_t  m_timeSpan;
 
@@ -684,7 +825,7 @@ public:
     BOOL        operator>=( CTimeSpan span ) const;
 };
 
-class CTime {
+class _AFXLINK CTime {
 private:
     time_t  m_time;
 
@@ -736,7 +877,7 @@ struct CFileStatus {
     TCHAR       m_szFullName[MAX_PATH];
 };
 
-class CFileFind : public CObject {
+class _AFXLINK CFileFind : public CObject {
 protected:
     void    *m_pFoundInfo;
     void    *m_pNextInfo;
@@ -783,7 +924,7 @@ public:
     BOOL        IsTemporary() const;
 };
 
-class CDumpContext {
+class _AFXLINK CDumpContext {
 private:
     CFile   *m_pFile;
     int     m_nDepth;
@@ -829,24 +970,24 @@ public:
 };
 
 #ifdef _DEBUG
-extern CDumpContext afxDump;
+extern _AFXLINK CDumpContext afxDump;
 #endif
 
-void AFXAPI     AfxAbort();
-void AFXAPI     AfxClassInit( CRuntimeClass *pNewClass );
-BOOL AFXAPI     AfxIsValidAddress( const void *lp, UINT nBytes, BOOL bReadWrite = TRUE );
-BOOL AFXAPI     AfxIsValidString( LPCTSTR lpsz, int nLength = -1 );
-void AFXAPI     AfxThrowArchiveException( int cause, LPCTSTR lpszArchiveName );
-void AFXAPI     AfxThrowFileException( int cause, LONG lOsError = -1, LPCTSTR lpszFileName = NULL );
-void AFXAPI     AfxThrowInvalidArgException();
-void AFXAPI     AfxThrowMemoryException();
-void AFXAPI     AfxThrowNotSupportedException();
-void __cdecl    AfxTrace( LPCTSTR lpszFormat, ... );
+_AFXLINK void AFXAPI    AfxAbort();
+_AFXLINK void AFXAPI    AfxClassInit( CRuntimeClass *pNewClass );
+_AFXLINK BOOL AFXAPI    AfxIsValidAddress( const void *lp, UINT nBytes, BOOL bReadWrite = TRUE );
+_AFXLINK BOOL AFXAPI    AfxIsValidString( LPCTSTR lpsz, int nLength = -1 );
+_AFXLINK void AFXAPI    AfxThrowArchiveException( int cause, LPCTSTR lpszArchiveName );
+_AFXLINK void AFXAPI    AfxThrowFileException( int cause, LONG lOsError = -1, LPCTSTR lpszFileName = NULL );
+_AFXLINK void AFXAPI    AfxThrowInvalidArgException();
+_AFXLINK void AFXAPI    AfxThrowMemoryException();
+_AFXLINK void AFXAPI    AfxThrowNotSupportedException();
+_AFXLINK void __cdecl   AfxTrace( LPCTSTR lpszFormat, ... );
 #ifdef _DEBUG
-BOOL AFXAPI     AfxAssertFailedLine( LPCSTR lpszFileName, int nLine );
-void AFXAPI     AfxAssertValidObject( CObject *pObject, LPCSTR lpszFileName, int nLine );
-void AFXAPI     AfxDoForAllClasses( void (*pfn)( const CRuntimeClass *pClass, void *pContext ), void *pContext );
-void AFXAPI     AfxDump( const CObject *pOb );
+_AFXLINK BOOL AFXAPI    AfxAssertFailedLine( LPCSTR lpszFileName, int nLine );
+_AFXLINK void AFXAPI    AfxAssertValidObject( CObject *pObject, LPCSTR lpszFileName, int nLine );
+_AFXLINK void AFXAPI    AfxDoForAllClasses( void (*pfn)( const CRuntimeClass *pClass, void *pContext ), void *pContext );
+_AFXLINK void AFXAPI    AfxDump( const CObject *pOb );
 #endif
 
 // Debugging macros

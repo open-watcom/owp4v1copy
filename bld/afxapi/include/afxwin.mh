@@ -42,7 +42,7 @@ struct CPrintInfo;
 struct CPrintPreviewState;
 struct AFX_CMDHANDLERINFO;
 
-class CRect : public tagRECT {
+class _AFXLINK CRect : public tagRECT {
 public:
     CRect();
     CRect( int l, int t, int r, int b );
@@ -110,7 +110,7 @@ public:
     operator LPRECT();
 };
 
-class CPoint : public tagPOINT {
+class _AFXLINK CPoint : public tagPOINT {
 public:
     CPoint();
     CPoint( int initX, int initY );
@@ -137,7 +137,7 @@ public:
     CPoint  operator-() const;
 };
 
-class CSize : public tagSIZE {
+class _AFXLINK CSize : public tagSIZE {
 public:
     CSize();
     CSize( int initCX, int initCY );
@@ -158,21 +158,21 @@ public:
     CSize   operator-() const;
 };
 
-class CUserException : public CSimpleException {
+class _AFXLINK CUserException : public CSimpleException {
     DECLARE_DYNAMIC( CUserException )
 
 public:
     CUserException();
 };
 
-class CResourceException : public CSimpleException {
+class _AFXLINK CResourceException : public CSimpleException {
     DECLARE_DYNAMIC( CResourceException )
 
 public:
     CResourceException();
 };
 
-class CGdiObject : public CObject {
+class _AFXLINK CGdiObject : public CObject {
 public:
     HGDIOBJ m_hObject;
     
@@ -204,7 +204,7 @@ public:
     static CGdiObject * PASCAL  FromHandle( HGDIOBJ hObject );
 };
 
-class CPen : public CGdiObject {
+class _AFXLINK CPen : public CGdiObject {
     DECLARE_DYNAMIC( CPen )
     
 public:
@@ -223,7 +223,7 @@ public:
     static CPen * PASCAL    FromHandle( HPEN hPen );
 };
 
-class CBrush : public CGdiObject {
+class _AFXLINK CBrush : public CGdiObject {
     DECLARE_DYNAMIC( CBrush )
 
 public:
@@ -246,7 +246,7 @@ public:
     static CBrush * PASCAL  FromHandle( HBRUSH hBrush );
 };
 
-class CFont : public CGdiObject {
+class _AFXLINK CFont : public CGdiObject {
     DECLARE_DYNAMIC( CFont )
 
 public:
@@ -263,7 +263,7 @@ public:
     static CFont * PASCAL   FromHandle( HFONT hFont );
 };
 
-class CRgn : public CGdiObject {
+class _AFXLINK CRgn : public CGdiObject {
     DECLARE_DYNAMIC( CRgn )
     
 public:
@@ -296,7 +296,7 @@ public:
     static CRgn * PASCAL    FromHandle( HRGN hRgn );
 };
 
-class CPalette : public CGdiObject {
+class _AFXLINK CPalette : public CGdiObject {
     DECLARE_DYNAMIC( CPalette )
 
 public:
@@ -316,7 +316,7 @@ public:
     static CPalette * PASCAL    FromHandle( HPALETTE hPalette );
 };
 
-class CBitmap : public CGdiObject {
+class _AFXLINK CBitmap : public CGdiObject {
     DECLARE_DYNAMIC( CBitmap )
 
 public:
@@ -341,7 +341,7 @@ public:
     static CBitmap * PASCAL FromHandle( HBITMAP hBitmap );
 };
 
-class CDC : public CObject {
+class _AFXLINK CDC : public CObject {
 public:
     HDC     m_hDC;
     HDC     m_hAttribDC;
@@ -612,7 +612,7 @@ public:
     static CDC * PASCAL FromHandle( HDC hDC );
 };
 
-class CClientDC : public CDC {
+class _AFXLINK CClientDC : public CDC {
 protected:
     HWND    m_hWnd;
     
@@ -627,7 +627,7 @@ public:
 #endif
 };
 
-class CWindowDC : public CDC {
+class _AFXLINK CWindowDC : public CDC {
 protected:
     HWND    m_hWnd;
     
@@ -642,7 +642,7 @@ public:
 #endif
 };
 
-class CPaintDC : public CDC {
+class _AFXLINK CPaintDC : public CDC {
 protected:
     HWND        m_hWnd;
 public:
@@ -659,7 +659,7 @@ public:
 #endif
 };
 
-class CMenu : public CObject {
+class _AFXLINK CMenu : public CObject {
 public:
     HMENU   m_hMenu;
     
@@ -745,7 +745,7 @@ struct AFX_MSGMAP_ENTRY {
 
 // Message map
 struct AFX_MSGMAP {
-    const AFX_MSGMAP        *pBaseMap;
+    const AFX_MSGMAP        *(PASCAL *pfnGetBaseMap)();
     const AFX_MSGMAP_ENTRY  *lpEntries;
 };
 
@@ -757,29 +757,37 @@ struct AFX_INTERFACEMAP_ENTRY {
 
 // Interface map
 struct AFX_INTERFACEMAP {
+#ifdef _AFXDLL
+    const AFX_INTERFACEMAP          *(PASCAL *pfnGetBaseMap)();
+#else
     const AFX_INTERFACEMAP          *pBaseMap;
+#endif
     const AFX_INTERFACEMAP_ENTRY    *pEntry;
 };
 
 // Message map macros
 #define DECLARE_MESSAGE_MAP() \
-    private: \
-        static const AFX_MSGMAP_ENTRY _messageEntries[]; \
     protected: \
-        static const AFX_MSGMAP messageMap; \
-        virtual const AFX_MSGMAP *GetMessageMap() const;
+        virtual const AFX_MSGMAP            *GetMessageMap() const; \
+        static const AFX_MSGMAP * PASCAL    GetThisMessageMap();
+
 #define BEGIN_MESSAGE_MAP( theClass, baseClass ) \
-    const AFX_MSGMAP theClass::messageMap = \
-        { &baseClass::messageMap, theClass::_messageEntries }; \
     const AFX_MSGMAP *theClass::GetMessageMap() const \
     { \
-        return( &messageMap ); \
+        return( GetThisMessageMap() ); \
     } \
-    const AFX_MSGMAP_ENTRY theClass::_messageEntries[] = {
+    const AFX_MSGMAP * PASCAL theClass::GetThisMessageMap() \
+    { \
+        typedef baseClass   __BASE_CLASS__; \
+        static const AFX_MSGMAP_ENTRY _messageEntries[] = {
 #define END_MESSAGE_MAP() \
-        { 0, 0, 0, 0, AfxSig_end, NULL } \
-    };
-
+            { 0, 0, 0, 0, AfxSig_end, NULL } \
+        }; \
+        static const AFX_MSGMAP messageMap = \
+            { __BASE_CLASS__::GetThisMessageMap, _messageEntries }; \
+        return( &messageMap ); \
+    }
+ 
 // Interface part macros
 #define BEGIN_INTERFACE_PART( localClass, iface ) \
     class X##localClass : public iface { \
@@ -793,20 +801,42 @@ struct AFX_INTERFACEMAP {
     theClass *pThis = (theClass *)((BYTE *)this - offsetof( theClass, m_x##localClass ));
 
 // Interface map macros
-#define DECLARE_INTERFACE_MAP() \
-    private: \
-        static const AFX_INTERFACEMAP_ENTRY _interfaceEntries[]; \
-    protected: \
-        static const AFX_INTERFACEMAP interfaceMap; \
-        virtual const AFX_INTERFACEMAP *GetInterfaceMap() const;
-#define BEGIN_INTERFACE_MAP( theClass, baseClass ) \
-    const AFX_INTERFACEMAP theClass::interfaceMap = \
-        { &baseClass::interfaceMap, theClass::_interfaceEntries }; \
-    const AFX_INTERFACEMAP *theClass::GetInterfaceMap() const \
-    { \
-        return( &interfaceMap ); \
-    } \
-    const AFX_INTERFACEMAP_ENTRY theClass::_interfaceEntries[] = {
+#ifdef _AFXDLL
+    #define DECLARE_INTERFACE_MAP() \
+        private: \
+            static const AFX_INTERFACEMAP_ENTRY _interfaceEntries[]; \
+        protected: \
+            static const AFX_INTERFACEMAP interfaceMap; \
+            virtual const AFX_INTERFACEMAP          *GetInterfaceMap() const; \
+            static const AFX_INTERFACEMAP * PASCAL  GetThisInterfaceMap();
+    #define BEGIN_INTERFACE_MAP( theClass, baseClass ) \
+        const AFX_INTERFACEMAP theClass::interfaceMap = \
+            { baseClass::GetThisInterfaceMap, theClass::_interfaceEntries }; \
+        const AFX_INTERFACEMAP *theClass::GetInterfaceMap() const \
+        { \
+            return( &interfaceMap ); \
+        } \
+        const AFX_INTERFACEMAP * PASCAL theClass::GetThisInterfaceMap() \
+        { \
+            return( &interfaceMap ); \
+        } \
+        const AFX_INTERFACEMAP_ENTRY theClass::_interfaceEntries[] = {
+#else
+    #define DECLARE_INTERFACE_MAP() \
+        private: \
+            static const AFX_INTERFACEMAP_ENTRY _interfaceEntries[]; \
+        protected: \
+            static const AFX_INTERFACEMAP interfaceMap; \
+            virtual const AFX_INTERFACEMAP *GetInterfaceMap() const;
+    #define BEGIN_INTERFACE_MAP( theClass, baseClass ) \
+        const AFX_INTERFACEMAP theClass::interfaceMap = \
+            { &baseClass::interfaceMap, theClass::_interfaceEntries }; \
+        const AFX_INTERFACEMAP *theClass::GetInterfaceMap() const \
+        { \
+            return( &interfaceMap ); \
+        } \
+        const AFX_INTERFACEMAP_ENTRY theClass::_interfaceEntries[] = {
+#endif
 #define END_INTERFACE_MAP() \
         { NULL, -1 } \
     };
@@ -816,7 +846,7 @@ struct AFX_INTERFACEMAP {
 // Calling convention for message handlers
 #define afx_msg
 
-class CCmdTarget : public CObject {
+class _AFXLINK CCmdTarget : public CObject {
 private:
     DWORD   m_dwRef;
     
@@ -843,7 +873,7 @@ public:
     DECLARE_INTERFACE_MAP()
 };
 
-class CCmdUI {
+class _AFXLINK CCmdUI {
 public:
     UINT    m_nID;
     UINT    m_nIndex;
@@ -862,7 +892,7 @@ public:
     void    ContinueRouting();
 };
 
-class CDataExchange {
+class _AFXLINK CDataExchange {
 public:
     CWnd    *m_pDlgWnd;
     BOOL    m_bSaveAndValidate;
@@ -886,7 +916,7 @@ public:
 #define TTF_NOTBUTTON   0x80000000
 #define TTF_ALWAYSTIP   0x40000000
 
-class CWnd : public CCmdTarget {
+class _AFXLINK CWnd : public CCmdTarget {
 public:
     HWND    m_hWnd;
     HWND    m_hWndOwner;
@@ -1324,7 +1354,7 @@ public:
 #define FWS_PREFIXTITLE 0x00004000L
 #define FWS_SNAPTOBARS  0x00002000L
 
-class CFrameWnd : public CWnd {
+class _AFXLINK CFrameWnd : public CWnd {
 public:
     BOOL        m_bAutoMenuEnable;
     int         m_nWindow;
@@ -1427,7 +1457,7 @@ public:
     DECLARE_MESSAGE_MAP()
 };
 
-class CMDIFrameWnd : public CFrameWnd {
+class _AFXLINK CMDIFrameWnd : public CFrameWnd {
 public:
     HWND    m_hWndMDIClient;
     
@@ -1471,7 +1501,7 @@ protected:
     DECLARE_MESSAGE_MAP();
 };
 
-class CMDIChildWnd : public CFrameWnd {
+class _AFXLINK CMDIChildWnd : public CFrameWnd {
 protected:
     HMENU   m_hMenuShared;
     
@@ -1513,7 +1543,7 @@ protected:
 #define MFS_MOVEFRAME       0x00000800L
 #define MFS_BLOCKSYSMENU    0x00001000L
 
-class CMiniFrameWnd : public CFrameWnd {
+class _AFXLINK CMiniFrameWnd : public CFrameWnd {
     DECLARE_DYNCREATE( CMiniFrameWnd )
     
 public:
@@ -1535,7 +1565,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CDialog : public CWnd {
+class _AFXLINK CDialog : public CWnd {
 protected:
     UINT            m_nIDHelp;
 private:
@@ -1577,7 +1607,7 @@ public:
     DECLARE_MESSAGE_MAP()
 };
 
-class CStatic : public CWnd {
+class _AFXLINK CStatic : public CWnd {
     DECLARE_DYNAMIC( CStatic )
     
 public:
@@ -1598,7 +1628,7 @@ public:
     HICON           SetIcon( HICON hIcon );
 };
 
-class CButton : public CWnd {
+class _AFXLINK CButton : public CWnd {
     DECLARE_DYNAMIC( CButton )
     
 public:
@@ -1630,7 +1660,7 @@ public:
 #endif
 };
 
-class CEdit : public CWnd {
+class _AFXLINK CEdit : public CWnd {
     DECLARE_DYNAMIC( CEdit )
     
 public:
@@ -1689,7 +1719,7 @@ public:
 #endif
 };
 
-class CListBox : public CWnd {
+class _AFXLINK CListBox : public CWnd {
     DECLARE_DYNAMIC( CListBox )
     
 public:
@@ -1752,7 +1782,7 @@ public:
 #endif
 };
 
-class CComboBox : public CWnd {
+class _AFXLINK CComboBox : public CWnd {
     DECLARE_DYNAMIC( CComboBox )
     
 public:
@@ -1812,7 +1842,7 @@ public:
 #endif
 };
 
-class CScrollBar : public CWnd {
+class _AFXLINK CScrollBar : public CWnd {
     DECLARE_DYNAMIC( CScrollBar )
     
 public:
@@ -1834,7 +1864,7 @@ public:
 #endif
 };
 
-class CDocument : public CCmdTarget {
+class _AFXLINK CDocument : public CCmdTarget {
 private:
     CString         m_strTitle;
     CString         m_strPathName;
@@ -1892,7 +1922,7 @@ protected:
     friend class CDocTemplate;
 };
 
-class CView : public CWnd {
+class _AFXLINK CView : public CWnd {
 protected:
     CDocument   *m_pDocument;
     
@@ -1947,7 +1977,7 @@ protected:
     friend class CDocument;
 };
 
-class CCtrlView : public CView {
+class _AFXLINK CCtrlView : public CView {
 public:
     CString m_strClass;
     DWORD   m_dwDefaultStyle;
@@ -1967,7 +1997,7 @@ public:
     DECLARE_MESSAGE_MAP()
 };
 
-class CScrollView : public CView {
+class _AFXLINK CScrollView : public CView {
 private:
     int     m_nMapMode;
     CSize   m_totalLog;
@@ -2011,7 +2041,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CDocTemplate : public CCmdTarget {
+class _AFXLINK CDocTemplate : public CCmdTarget {
 public:
     enum DocStringIndex {
         windowTitle,
@@ -2065,7 +2095,7 @@ public:
 #endif
 };
 
-class CSingleDocTemplate : public CDocTemplate {
+class _AFXLINK CSingleDocTemplate : public CDocTemplate {
 private:
     CDocument   *m_pOnlyDoc;
     
@@ -2085,7 +2115,7 @@ public:
 #endif
 };
 
-class CMultiDocTemplate : public CDocTemplate {
+class _AFXLINK CMultiDocTemplate : public CDocTemplate {
 public:
     HMENU       m_hMenuShared;
     HACCEL      m_hAccelTable;
@@ -2111,7 +2141,7 @@ public:
 #endif
 };
 
-class CDocManager : public CObject {
+class _AFXLINK CDocManager : public CObject {
 private:
     CPtrList    m_templateList;
     
@@ -2140,7 +2170,7 @@ public:
 // Thread procedure
 typedef UINT (__cdecl *AFX_THREADPROC)( LPVOID pParam );
 
-class CWinThread : public CCmdTarget {
+class _AFXLINK CWinThread : public CCmdTarget {
 public:
     CWnd            *m_pMainWnd;
     CWnd            *m_pActiveWnd;
@@ -2184,7 +2214,7 @@ public:
     operator HANDLE() const;
 };
 
-class CCommandLineInfo : public CObject {
+class _AFXLINK CCommandLineInfo : public CObject {
 public:
     enum {
         FileNew,
@@ -2225,7 +2255,7 @@ enum AFX_HELP_TYPE {
 // Default MRU count
 #define _AFX_MRU_COUNT  4
 
-class CWinApp : public CWinThread {
+class _AFXLINK CWinApp : public CWinThread {
 public:
     HINSTANCE       m_hInstance;
     LPTSTR          m_lpCmdLine;
@@ -2318,7 +2348,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CWaitCursor {
+class _AFXLINK CWaitCursor {
 public:
     CWaitCursor();
     ~CWaitCursor();
@@ -2326,39 +2356,39 @@ public:
     void Restore();
 };
 
-CWinThread * AFXAPI AfxBeginThread( AFX_THREADPROC pfnThreadProc, LPVOID pParam, int nPriority = THREAD_PRIORITY_NORMAL, UINT nStackSize = 0, DWORD dwCreateFlags = 0L, LPSECURITY_ATTRIBUTES lpSecurityAttrs = NULL );
-CWinThread * AFXAPI AfxBeginThread( CRuntimeClass *pThreadClass, int nPriority = THREAD_PRIORITY_NORMAL, UINT nStackSize = 0, DWORD dwCreateFlags = 0L, LPSECURITY_ATTRIBUTES lpSecurityAttrs = NULL );
-void AFXAPI         AfxEndThread( UINT nExitCode, BOOL bDelete = TRUE );
-BOOL AFXAPI         AfxExtractSubString( CString &rString, LPCTSTR lpszFullString, int iSubString, TCHAR chSep = _T('\n') );
-void AFXAPI         AfxFormatString1( CString &rString, UINT nIDS, LPCTSTR lpsz1 );
-void AFXAPI         AfxFormatString2( CString &rString, UINT nIDS, LPCTSTR lpsz1, LPCTSTR lpsz2 );
-CWinApp * AFXAPI    AfxGetApp();
-LPCTSTR AFXAPI      AfxGetAppName();
-HINSTANCE AFXAPI    AfxGetInstanceHandle();
-CWnd * AFXAPI       AfxGetMainWnd();
-HINSTANCE AFXAPI    AfxGetResourceHandle();
-CWinThread * AFXAPI AfxGetThread();
-int AFXAPI          AfxMessageBox( LPCTSTR lpszText, UINT nType = MB_OK, UINT nIDHelp = 0 );
-int AFXAPI          AfxMessageBox( UINT nIDPrompt, UINT nType = MB_OK, UINT nIDHelp = 0 );
-BOOL AFXAPI         AfxRegisterClass( WNDCLASS *lpWndClass );
-LPCTSTR AFXAPI      AfxRegisterWndClass( UINT nClassStyle, HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0 );
-void AFXAPI         AfxSetResourceHandle( HINSTANCE hInstResource );
-BOOL AFXAPI         AfxWinInit( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow );
-void AFXAPI         AfxThrowResourceException();
-void AFXAPI         AfxThrowUserException();
+_AFXLINK CWinThread * AFXAPI    AfxBeginThread( AFX_THREADPROC pfnThreadProc, LPVOID pParam, int nPriority = THREAD_PRIORITY_NORMAL, UINT nStackSize = 0, DWORD dwCreateFlags = 0L, LPSECURITY_ATTRIBUTES lpSecurityAttrs = NULL );
+_AFXLINK CWinThread * AFXAPI    AfxBeginThread( CRuntimeClass *pThreadClass, int nPriority = THREAD_PRIORITY_NORMAL, UINT nStackSize = 0, DWORD dwCreateFlags = 0L, LPSECURITY_ATTRIBUTES lpSecurityAttrs = NULL );
+_AFXLINK void AFXAPI            AfxEndThread( UINT nExitCode, BOOL bDelete = TRUE );
+_AFXLINK BOOL AFXAPI            AfxExtractSubString( CString &rString, LPCTSTR lpszFullString, int iSubString, TCHAR chSep = _T('\n') );
+_AFXLINK void AFXAPI            AfxFormatString1( CString &rString, UINT nIDS, LPCTSTR lpsz1 );
+_AFXLINK void AFXAPI            AfxFormatString2( CString &rString, UINT nIDS, LPCTSTR lpsz1, LPCTSTR lpsz2 );
+_AFXLINK CWinApp * AFXAPI       AfxGetApp();
+_AFXLINK LPCTSTR AFXAPI         AfxGetAppName();
+_AFXLINK HINSTANCE AFXAPI       AfxGetInstanceHandle();
+_AFXLINK CWnd * AFXAPI          AfxGetMainWnd();
+_AFXLINK HINSTANCE AFXAPI       AfxGetResourceHandle();
+_AFXLINK CWinThread * AFXAPI    AfxGetThread();
+_AFXLINK int AFXAPI             AfxMessageBox( LPCTSTR lpszText, UINT nType = MB_OK, UINT nIDHelp = 0 );
+_AFXLINK int AFXAPI             AfxMessageBox( UINT nIDPrompt, UINT nType = MB_OK, UINT nIDHelp = 0 );
+_AFXLINK BOOL AFXAPI            AfxRegisterClass( WNDCLASS *lpWndClass );
+_AFXLINK LPCTSTR AFXAPI         AfxRegisterWndClass( UINT nClassStyle, HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0 );
+_AFXLINK void AFXAPI            AfxSetResourceHandle( HINSTANCE hInstResource );
+_AFXLINK BOOL AFXAPI            AfxWinInit( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow );
+_AFXLINK void AFXAPI            AfxThrowResourceException();
+_AFXLINK void AFXAPI            AfxThrowUserException();
 
-LRESULT CALLBACK    AfxWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
+_AFXLINK LRESULT CALLBACK   AfxWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 
-CArchive & AFXAPI       operator<<( CArchive &ar, const RECT &rect );
-CArchive & AFXAPI       operator<<( CArchive &ar, POINT point );
-CArchive & AFXAPI       operator<<( CArchive &ar, SIZE size );
-CArchive & AFXAPI       operator>>( CArchive &ar, RECT &rect );
-CArchive & AFXAPI       operator>>( CArchive &ar, POINT &point );
-CArchive & AFXAPI       operator>>( CArchive &ar, SIZE &size );
+_AFXLINK CArchive & AFXAPI      operator<<( CArchive &ar, const RECT &rect );
+_AFXLINK CArchive & AFXAPI      operator<<( CArchive &ar, POINT point );
+_AFXLINK CArchive & AFXAPI      operator<<( CArchive &ar, SIZE size );
+_AFXLINK CArchive & AFXAPI      operator>>( CArchive &ar, RECT &rect );
+_AFXLINK CArchive & AFXAPI      operator>>( CArchive &ar, POINT &point );
+_AFXLINK CArchive & AFXAPI      operator>>( CArchive &ar, SIZE &size );
 #ifdef _DEBUG
-CDumpContext & AFXAPI   operator<<( CDumpContext &dc, const RECT &rect );
-CDumpContext & AFXAPI   operator<<( CDumpContext &dc, POINT point );
-CDumpContext & AFXAPI   operator<<( CDumpContext &dc, SIZE size );
+_AFXLINK CDumpContext & AFXAPI  operator<<( CDumpContext &dc, const RECT &rect );
+_AFXLINK CDumpContext & AFXAPI  operator<<( CDumpContext &dc, POINT point );
+_AFXLINK CDumpContext & AFXAPI  operator<<( CDumpContext &dc, SIZE size );
 #endif
 
 #ifndef _DEBUG

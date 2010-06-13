@@ -439,7 +439,7 @@ BOOL CWnd::OnWndMsg( UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResul
         }
     } else {
         const AFX_MSGMAP *pMessageMap = GetMessageMap();
-        while( pMessageMap != NULL ) {
+        for( ;; ) {
             const AFX_MSGMAP_ENTRY *pEntries = pMessageMap->lpEntries;
             int i = 0;
             while( pEntries[i].nSig != AfxSig_end ) {
@@ -697,7 +697,10 @@ BOOL CWnd::OnWndMsg( UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResul
                 }
                 i++;
             }
-            pMessageMap = pMessageMap->pBaseMap;
+            if( pMessageMap->pfnGetBaseMap == NULL ) {
+                break;
+            }
+            pMessageMap = pMessageMap->pfnGetBaseMap();
         }
     }
     return( FALSE );

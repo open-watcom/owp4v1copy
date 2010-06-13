@@ -67,7 +67,7 @@ void CWinThread::DispatchThreadMessage( MSG *pMsg )
 /*************************************************/
 {
     const AFX_MSGMAP *pMessageMap = GetMessageMap();
-    while( pMessageMap != NULL ) {
+    for( ;; ) {
         const AFX_MSGMAP_ENTRY *pEntries = pMessageMap->lpEntries;
         int i = 0;
         while( pEntries[i].nSig != AfxSig_end ) {
@@ -86,7 +86,10 @@ void CWinThread::DispatchThreadMessage( MSG *pMsg )
             }
             i++;
         }
-        pMessageMap = pMessageMap->pBaseMap;
+        if( pMessageMap->pfnGetBaseMap == NULL ) {
+            break;
+        }
+        pMessageMap = pMessageMap->pfnGetBaseMap();
     }
 }
 

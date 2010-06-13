@@ -9,7 +9,7 @@
 
 :include readonly.sp
 
-class CByteArray : public CObject {
+class _AFXLINK CByteArray : public CObject {
 private:
     BYTE    *m_pData;
     INT_PTR m_nSize;
@@ -52,7 +52,7 @@ public:
     BYTE    operator[]( INT_PTR nIndex ) const;
 };
 
-class CWordArray : public CObject {
+class _AFXLINK CWordArray : public CObject {
 private:
     WORD    *m_pData;
     INT_PTR m_nSize;
@@ -95,7 +95,7 @@ public:
     WORD    operator[]( INT_PTR nIndex ) const;
 };
 
-class CDWordArray : public CObject {
+class _AFXLINK CDWordArray : public CObject {
 private:
     DWORD   *m_pData;
     INT_PTR m_nSize;
@@ -138,7 +138,7 @@ public:
     DWORD   operator[]( INT_PTR nIndex ) const;
 };
 
-class CUIntArray : public CObject {
+class _AFXLINK CUIntArray : public CObject {
 private:
     UINT    *m_pData;
     INT_PTR m_nSize;
@@ -181,7 +181,7 @@ public:
     UINT    operator[]( INT_PTR nIndex ) const;
 };
 
-class CPtrArray : public CObject {
+class _AFXLINK CPtrArray : public CObject {
 private:
     void    **m_pData;
     INT_PTR m_nSize;
@@ -223,7 +223,7 @@ public:
     void    *operator[]( INT_PTR nIndex ) const;
 };
 
-class CObArray : public CObject {
+class _AFXLINK CObArray : public CObject {
 private:
     CObject **m_pData;
     INT_PTR m_nSize;
@@ -266,7 +266,7 @@ public:
     CObject *operator[]( INT_PTR nIndex ) const;
 };
 
-class CStringArray : public CObject {
+class _AFXLINK CStringArray : public CObject {
 private:
     CString *m_pData;
     INT_PTR m_nSize;
@@ -313,7 +313,7 @@ public:
     CString operator[]( INT_PTR nIndex ) const;
 };
 
-class CPtrList : public CObject {
+class _AFXLINK CPtrList : public CObject {
 private:
     struct CNode {
         CNode   *pNext;
@@ -366,7 +366,7 @@ public:
     void        SetAt( POSITION position, void *newElement );
 };
 
-class CObList : public CObject {
+class _AFXLINK CObList : public CObject {
 private:
     struct CNode {
         CNode   *pNext;
@@ -420,7 +420,7 @@ public:
     void            SetAt( POSITION position, CObject *newElement );
 };
 
-class CStringList : public CObject {
+class _AFXLINK CStringList : public CObject {
 private:
     struct CNode {
         CNode   *pNext;
@@ -479,7 +479,7 @@ public:
     void            SetAt( POSITION position, const CString &newElement );
 };
 
-class CMapWordToPtr : public CObject {
+class _AFXLINK CMapWordToPtr : public CObject {
 private:
     struct CAssoc {
         CAssoc  *pNext;
@@ -523,7 +523,7 @@ protected:
     typedef void    *BASE_VALUE;
 };
 
-class CMapPtrToWord : public CObject {
+class _AFXLINK CMapPtrToWord : public CObject {
 private:
     struct CAssoc {
         CAssoc  *pNext;
@@ -567,7 +567,7 @@ protected:
     typedef WORD    BASE_VALUE;
 };
 
-class CMapPtrToPtr : public CObject {
+class _AFXLINK CMapPtrToPtr : public CObject {
 private:
     struct CAssoc {
         CAssoc  *pNext;
@@ -611,7 +611,7 @@ protected:
     typedef void    *BASE_VALUE;
 };
 
-class CMapWordToOb : public CObject {
+class _AFXLINK CMapWordToOb : public CObject {
 private:
     struct CAssoc {
         CAssoc  *pNext;
@@ -656,7 +656,7 @@ protected:
     typedef CObject *BASE_VALUE;
 };
 
-class CMapStringToPtr : public CObject {
+class _AFXLINK CMapStringToPtr : public CObject {
 private:
     struct CAssoc {
         CAssoc  *pNext;
@@ -700,7 +700,7 @@ protected:
     typedef void    *BASE_VALUE;
 };
 
-class CMapStringToOb : public CObject {
+class _AFXLINK CMapStringToOb : public CObject {
 private:
     struct CAssoc {
         CAssoc  *pNext;
@@ -745,7 +745,7 @@ protected:
     typedef CObject *BASE_VALUE;
 };
 
-class CMapStringToString : public CObject {
+class _AFXLINK CMapStringToString : public CObject {
 private:
     struct CAssoc {
         CAssoc  *pNext;

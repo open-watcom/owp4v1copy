@@ -103,7 +103,7 @@ struct AFX_PROPSHEETHEADER {
     };
 };
 
-class CCommonDialog : public CDialog {
+class _AFXLINK CCommonDialog : public CDialog {
     DECLARE_DYNAMIC( CCommonDialog )
     
 public:
@@ -113,7 +113,7 @@ public:
     virtual void    OnOK();
 };
 
-class CFileDialog : public CCommonDialog {
+class _AFXLINK CFileDialog : public CCommonDialog {
 public:
     union {
         OPENFILENAME        m_ofn;
@@ -161,7 +161,7 @@ public:
     void                SetTemplate( LPCTSTR lpWin3ID, LPCTSTR lpWin4ID );
 };
 
-class CColorDialog : public CCommonDialog {
+class _AFXLINK CColorDialog : public CCommonDialog {
 public:
     CHOOSECOLOR m_cc;
     
@@ -184,7 +184,7 @@ public:
     static COLORREF * PASCAL    GetSavedCustomColors();
 };
 
-class CFontDialog : public CCommonDialog {
+class _AFXLINK CFontDialog : public CCommonDialog {
 public:
     CHOOSEFONT  m_cf;
 protected:
@@ -216,7 +216,7 @@ public:
     BOOL        IsUnderline() const;
 };
 
-class CPrintDialog : public CCommonDialog {
+class _AFXLINK CPrintDialog : public CCommonDialog {
 public:
     PRINTDLG    m_pd;
     
@@ -249,7 +249,7 @@ public:
 
 #if (_WIN32_WINNT >= 0x0500)
 
-class CPrintDialogEx : public CCommonDialog {
+class _AFXLINK CPrintDialogEx : public CCommonDialog {
 public:
     PRINTDLGEX  m_pdex;
     
@@ -291,7 +291,7 @@ public:
 
 #endif // (_WIN32_WINNT >= 0x0500)
 
-class CPageSetupDialog : public CCommonDialog {
+class _AFXLINK CPageSetupDialog : public CCommonDialog {
 public:
     PAGESETUPDLG    m_psd;
     
@@ -319,7 +319,7 @@ public:
     CString     GetPortName() const;
 };
 
-class CFindReplaceDialog : public CCommonDialog {
+class _AFXLINK CFindReplaceDialog : public CCommonDialog {
 public:
     FINDREPLACE m_fr;
 protected:
@@ -352,7 +352,7 @@ public:
     static CFindReplaceDialog * PASCAL  GetNotifier( LPARAM lParam );
 };
 
-class CPropertyPage : public CDialog {
+class _AFXLINK CPropertyPage : public CDialog {
 public:
     union {
         PROPSHEETPAGE       m_psp;
@@ -401,7 +401,7 @@ public:
     void                SetModified( BOOL bChanged = TRUE );
 };
 
-class CPropertySheet : public CWnd {
+class _AFXLINK CPropertySheet : public CWnd {
 public:
     union {
         PROPSHEETHEADER     m_psh;

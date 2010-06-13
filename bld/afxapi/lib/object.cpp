@@ -31,7 +31,12 @@
 
 #include "stdafx.h"
 
-const CRuntimeClass CObject::classCObject = { "CObject", 0, 0xFFFF, NULL, NULL };
+const CRuntimeClass CObject::classCObject =
+#ifdef _AFXDLL
+    { "CObject", 0, 0xFFFF, NULL, _GetBaseClass };
+#else
+    { "CObject", 0, 0xFFFF, NULL, NULL };
+#endif
 
 CObject::CObject()
 /****************/
@@ -80,3 +85,19 @@ BOOL CObject::IsSerializable() const
 {
     return( GetRuntimeClass()->m_wSchema != 0xFFFF );
 }
+
+#ifdef _AFXDLL
+
+CRuntimeClass * PASCAL CObject::_GetBaseClass()
+/*********************************************/
+{
+    return( NULL );
+}
+
+CRuntimeClass * PASCAL CObject::GetThisClass()
+/********************************************/
+{
+    return( (CRuntimeClass *)&classCObject );
+}
+
+#endif // _AFXDLL

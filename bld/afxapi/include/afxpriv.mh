@@ -76,7 +76,7 @@ struct AFX_SIZEPARENTPARAMS {
     BOOL    bStretch;
 };
 
-class CPreviewDC : public CDC {
+class _AFXLINK CPreviewDC : public CDC {
 protected:
     int     m_nScaleNum;
     int     m_nScaleDen;
@@ -123,7 +123,7 @@ public:
 #define ZOOM_MIDDLE 1
 #define ZOOM_IN     2
 
-class CPreviewView : public CScrollView {
+class _AFXLINK CPreviewView : public CScrollView {
 protected:
     struct PAGE_INFO {
         CRect   rectScreen;
@@ -191,7 +191,7 @@ protected:
     friend class CView;
 };
 
-class CDockBar : public CControlBar {
+class _AFXLINK CDockBar : public CControlBar {
 public:
     BOOL        m_bFloating;
     CPtrArray   m_arrBars;
@@ -214,7 +214,7 @@ public:
     void    ShowAll( BOOL bShow );
 };
 
-class CMiniDockFrameWnd : public CMiniFrameWnd {
+class _AFXLINK CMiniDockFrameWnd : public CMiniFrameWnd {
 public:
     CDockBar    m_wndDockBar;
     
@@ -232,7 +232,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 };
 
-class CDockContext {
+class _AFXLINK CDockContext {
 public:
     CPoint      m_ptLast;
     CRect       m_rectLast;
@@ -267,7 +267,7 @@ public:
     BOOL        Track();
 };
 
-class CArchiveStream : public IStream {
+class _AFXLINK CArchiveStream : public IStream {
 public:
     CArchive    *m_pArchive;
     
@@ -291,9 +291,9 @@ public:
     STDMETHOD( Clone )( IStream **ppstm );
 };
 
-HDC AFXAPI  AfxCreateDC( HGLOBAL hDevNames, HGLOBAL hDevMode );
-void AFXAPI AfxHookWindowCreate( CWnd *pWnd );
-void AFXAPI AfxRepositionWindow( AFX_SIZEPARENTPARAMS *lpLayout, HWND hWnd, LPCRECT lpRect );
-BOOL AFXAPI AfxUnhookWindowCreate();
+_AFXLINK HDC AFXAPI     AfxCreateDC( HGLOBAL hDevNames, HGLOBAL hDevMode );
+_AFXLINK void AFXAPI    AfxHookWindowCreate( CWnd *pWnd );
+_AFXLINK void AFXAPI    AfxRepositionWindow( AFX_SIZEPARENTPARAMS *lpLayout, HWND hWnd, LPCRECT lpRect );
+_AFXLINK BOOL AFXAPI    AfxUnhookWindowCreate();
 
 #endif /* __AFXPRIV_H__ */
