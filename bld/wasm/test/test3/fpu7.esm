@@ -1,0 +1,33 @@
+Module: fpu7.asm
+
+Segment: S1 PARA USE16 00000002 bytes
+0000                          L$1:
+0000    00 00                                           ..
+
+Segment: S2 PARA USE16 00000048 bytes
+0000    9B DB 6F 01               fld         tbyte ptr 0x1[bx] 
+0004    9B DB E2                  fclex       
+0007    DB E2                     fnclex      
+0009    9B DB E3                  finit       
+000C    DB E3                     fninit      
+000E    9B DB E1                  fdisi       
+0011    DB E1                     fndisi      
+0013    9B DB E0                  feni        
+0016    DB E0                     fneni       
+0018    9B DD 36 00 00            fsave       L$1 
+001D    DD 36 00 00               fnsave      L$1 
+0021    9B DD 26 00 00            frstor      L$1 
+0026    9B D9 36 00 00            fstenv      L$1 
+002B    D9 36 00 00               fnstenv     L$1 
+002F    9B D9 26 00 00            fldenv      L$1 
+0034    9B D9 3E 00 00            fstcw       word ptr L$1 
+0039    D9 3E 00 00               fnstcw      word ptr L$1 
+003D    9B DD 3E 00 00            fstsw       word ptr L$1 
+0042    DD 3E 00 00               fnstsw      word ptr L$1 
+0046    90                        nop         
+0047    9B                        fwait       
+
+Routine Size: 72 bytes,    Routine Base: S2 + 0000
+
+No disassembly errors
+

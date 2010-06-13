@@ -1,0 +1,32 @@
+Module: fpu3.asm
+
+Segment: S1 PARA USE16 00000002 bytes
+0000                          L$1:
+0000    00 00                                           ..
+
+Segment: S2 PARA USE16 00000044 bytes
+0000    DB 6F 01                  fld         tbyte ptr 0x1[bx] 
+0003    9B DB E2                  fclex       
+0006    DB E2                     fnclex      
+0008    9B DB E3                  finit       
+000B    DB E3                     fninit      
+000D    9B DB E1                  fdisi       
+0010    DB E1                     fndisi      
+0012    9B DB E0                  feni        
+0015    DB E0                     fneni       
+0017    9B DD 36 00 00            fsave       L$1 
+001C    DD 36 00 00               fnsave      L$1 
+0020    DD 26 00 00               frstor      L$1 
+0024    9B D9 36 00 00            fstenv      L$1 
+0029    D9 36 00 00               fnstenv     L$1 
+002D    D9 26 00 00               fldenv      L$1 
+0031    9B D9 3E 00 00            fstcw       word ptr L$1 
+0036    D9 3E 00 00               fnstcw      word ptr L$1 
+003A    9B DD 3E 00 00            fstsw       word ptr L$1 
+003F    DD 3E 00 00               fnstsw      word ptr L$1 
+0043    9B                        fwait       
+
+Routine Size: 68 bytes,    Routine Base: S2 + 0000
+
+No disassembly errors
+

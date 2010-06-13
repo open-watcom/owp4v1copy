@@ -162,7 +162,7 @@ static int output( int i )
      * Output FP FWAIT if required
      */
     if( ins->token == T_FWAIT ) {
-        if( (rCode->info.cpu & P_CPU_MASK) < P_386 ) {
+        if( (rCode->info.cpu & P_FPU_MASK) < P_387 ) {
 #if defined( _STANDALONE_ )
             if(( Options.floating_point == DO_FP_EMULATION ) && ( !rCode->use32 )) {
                 AsmCodeByte( OP_NOP );

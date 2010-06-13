@@ -60,6 +60,7 @@ extern void             ObjRecInit( void );
 extern void             DelErrFile( void );
 extern void             PrintfUsage( int first_ln );
 extern void             MsgPrintf1( int resourceid, char *token );
+extern void             AsmBufferInit( void );
 
 extern const char       *FingerMsg[];
 
@@ -1148,7 +1149,7 @@ static void do_init_stuff( char **cmdline )
     if( !MsgInit() )
         exit(1);
 
-    AsmInit( -1, -1, -1, -1 );                // initialize hash table
+    AsmBufferInit();
     strcpy( buff, "__WASM__=" BANSTR( _BANVER ) );
     add_constant( buff );
     ForceInclude = getenv( "FORCE" );
@@ -1307,6 +1308,9 @@ void set_fpu_parameters( void )
 void CmdlParamsInit( void )
 /*************************/
 {
+    Code->use32 = 0;    // default is 16-bit segment
+    Code->info.cpu = P_86 | P_87;   // default is 8086 CPU and 8087 FPU
+
     if( ForceInclude != NULL )
         InputQueueFile( ForceInclude );
 

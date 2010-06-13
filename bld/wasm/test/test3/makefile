@@ -22,6 +22,13 @@ extern2.dis &
 extern3.dis &
 extprocf.dis &
 extprocn.dis &
+fpu1.dib &
+fpu2.dib &
+fpu3.dib &
+fpu4.dib &
+fpu5.dib &
+fpu6.dib &
+fpu7.dib &
 indirect.dis &
 jmpshrt.dis &
 lsxxx.dis &
@@ -52,5 +59,12 @@ asm_flags_callcnv5 = -zcm
 asm_flags_jmpshrt = -zcm
 asm_flags_retiret = -zcm
 asm_flags_support = -zcm -Dmemodel=large
+asm_flags_fpu1 = -fpi87
+asm_flags_fpu2 = -fpi87
+asm_flags_fpu3 = -fpi87
+asm_flags_fpu4 = -fpi87
+asm_flags_fpu5 = -fpi
+asm_flags_fpu6 = -fpi
+asm_flags_fpu7 = -fpi
 
 !include ../test.mif

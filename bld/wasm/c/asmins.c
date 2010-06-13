@@ -159,6 +159,16 @@ void GetInsString( asm_token token, char *string, int len )
 }
 #endif
 
+void AsmBufferInit( void )
+/************************/
+{
+    int         count;
+
+    for( count = 0; count < MAX_TOKEN; count ++ ) {
+        AsmBuffer[count] = &tokens[count];
+    }
+}
+
 int get_instruction_position( char *string )
 /******************************************/
 {
@@ -3094,14 +3104,12 @@ static int check_size( void )
     return( state );
 }
 
+#if !defined( _STANDALONE_ )
+
 void AsmInit( int cpu, int fpu, int use32, int extn )
 /***************************************************/
 {
-    int         count;
-
-    for( count = 0; count < MAX_TOKEN; count ++ ) {
-        AsmBuffer[count] = &tokens[count];
-    }
+    AsmBufferInit();
 
     if( use32 < 0 )
         use32 = 0;   // default is 16-bit segment
@@ -3161,8 +3169,6 @@ void AsmInit( int cpu, int fpu, int use32, int extn )
         break;
     }
 }
-
-#if !defined( _STANDALONE_ )
 
 static enum asm_cpu CPUinfo;
 
