@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows specific prototypes.
 *
 ****************************************************************************/
 
 
-/* windows stuff */
 #ifdef __WIN__
 
 #ifndef WINRTNS_INCLUDED
@@ -39,14 +37,12 @@
 #include "winhdr.h"
 void        DDEFini( void );
 void        MessageLoop( bool block );
-void        StatusDisplay( char * );
 window_id   NewEditWindow( void );
 window_id   NewCommandWindow( void );
 window_id   NewFileCompleteWindow( void );
 window_id   NewRepeatCountWindow( void );
 window_id   NewMsgWindow( void );
 window_id   NewStatWindow( void );
-void        RecalcStatusBarSize( window_id );
 bool        WindowsKeyPush( WORD, WORD );
 vi_rc       MenuCommand( UINT );
 void        StatusLine( int, char *, int );
