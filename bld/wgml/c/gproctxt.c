@@ -643,19 +643,37 @@ void    process_text( char * text, uint8_t font_num )
 
         } else {                        // no function escape
             p++;
-            if( *p != ' ' ) {           // no space no word end
-                continue;
-            }
-            if( ProcFlags.in_trans && *(p - 1) == in_esc ) {
-                continue;               // guarded space no word end
-            }
-            if( !ProcFlags.concat && ((*(p - 1) == ' ') || (*(p + 1) == ' ')) ) {
-                while( *p == ' ' ) {    // more than 1 space no word end
-                    p++;                // if .co off
+            if( *p ) {                  // process last word inside loop
+                if( *p != ' ' ) {       // no space no word end
+                    continue;
                 }
-                p--;
-                continue;
+                if( ProcFlags.in_trans && *(p - 1) == in_esc ) {
+                    continue;           // guarded space no word end
+                }
+                if( !ProcFlags.concat ) {  // .co off: include spaces
+                    if( (p - 1) == text ) { // initial spaces affect spacing
+                        pre_space = wgml_fonts[font_num].spc_width;
+                        while( *p == ' ' ) {
+                            pre_space += wgml_fonts[font_num].spc_width;
+                            p++;
+                        }                    
+                        pword = p;
+                    }
+                    continue;
+                }
+#if 0
+                if( !ProcFlags.concat && ((*(p - 1) == ' ') || (*(p + 1) == ' ')) ) {
+                    while( *p == ' ' ) {    // more than 1 space no word end
+                        p++;                // if .co off
+                    }
+                    p--;
+                    continue;
+                }
+#endif
             }
+        }
+        if( p == pword ) {      // excludes end-of-phrase empty text_chars
+            break;
         }
         if( n_char == NULL ) {
             count = p - pword;          // no of bytes
@@ -664,6 +682,10 @@ void    process_text( char * text, uint8_t font_num )
             n_char->type = typ;
 //            n_char->t_flags = 0;      // TBD
             typ = typn;
+        }
+        if( !ProcFlags.concat ) {       // remove end spaces if .co off
+            while( n_char->text[--n_char->count] == ' ' );
+            n_char->count++;
         }
         if( t_line.first == NULL ) {    // first element in output line
             ju_x_start = g_cur_h_start;
@@ -719,6 +741,9 @@ void    process_text( char * text, uint8_t font_num )
              post_space += wgml_fonts[font_num].spc_width;
         }
 
+        if( !*p ) {            // exit at end of text
+            break;
+        }
         if( ProcFlags.concat ) {     // ignore multiple blanks in concat mode
             if( *p == ' ' ) {
                 while( *p == ' ' ) {
@@ -733,7 +758,7 @@ void    process_text( char * text, uint8_t font_num )
     while( *p == ' ' ) {                // ??? TBD
         p--;
     }
-
+#if 0
     if( p > pword ) {                   // last word
         count = p - pword;              // no of bytes
 
@@ -810,7 +835,7 @@ void    process_text( char * text, uint8_t font_num )
             post_space_save = post_space;
         }
     }
-
+#endif
     if( t_line.first != NULL ) {        // something in the line
         ProcFlags.page_started = true;
 

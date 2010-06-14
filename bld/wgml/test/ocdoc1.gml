@@ -3,6 +3,11 @@
 .co on
 .ju off
 .tb set >
+.co off
+     This tests spaces before,    within, and after a line.    
+.co on
+.br;     This tests spaces before,    within, and after a line.    
+
 .sk;Parts of this document were copied and modified from the Wiki. The reason
 for this was to make it less self-referential. Ironically, we start with some
 rather self-referential tests of font switching: the title was in available

@@ -268,7 +268,7 @@ static  oc_text_phrase         intro_xcowsc[] = {
 };
 
 static  oc_text_phrase         para_font[] = {
-    {0, true, "Parts of this document were copied and modified from the Wiki. " },
+    {0, true, "     Parts of this document were copied and modified from the Wiki. " },
     {0, true, "The reason for this was to make it less self-referential. " },
     {0, true, "Ironically, we start with some rather self-referential tests " },
     {0, true, "of font switching: the title was in available font 3; most of " },
@@ -945,8 +945,7 @@ static void oc_process_line_full( text_line * in_line, bool justify )
             /* Compute the total width of the line, that is, the width of
              * the text that will be output (internal spacing included).
              */
-//now doesn't work. cur_chars is reflecting the 1/2" indent even though it
-//doesn't apply.
+
             cur_chars = in_line->last;
             title_width = cur_chars->x_address + cur_chars->width;
             title_width -= in_line->first->x_address;
@@ -2035,7 +2034,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
          */
 
         while( *input_text != '\0' ) {
-            if( !isspace( *input_text ) ) break;
+            if( *input_text != ' ' ) break;
             if( !ws_spc_done ) {
                 spaces++;
             }
@@ -2066,12 +2065,15 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
                 if( !oc_script ) { 
 
-                    /* When ".co off" is in effect, the_line can be empty at
-                     * this point, in which case spaces becomes 0.
-                     */
-
                     if( the_line->last == NULL ) {
-                        spaces = 0;
+
+                        /* Spaces is correct if ".co off" is in effect. */
+
+                        if( oc_concat ) {
+                            spaces = 0;
+                        }
+                        space_width = spaces * wgml_fonts[font_number].spc_width;
+
                     } else {
 
                         /* "wscript" (or "noscript") is in effect: set up
@@ -2087,7 +2089,6 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                         }
                     }
                 } else {
-
                     space_width = spaces * wgml_fonts[font_number].spc_width;
                 }
                 spaces = 0;
@@ -2134,7 +2135,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         token_start = input_text;
         while( *input_text != '\0' ) {
-            if( oc_concat && isspace( *input_text ) ) {
+            if( oc_concat && (*input_text == ' ') ) {
                 if( ProcFlags.in_trans ) {
                     if( *(input_text - 1) != in_esc ) {
                         break;
@@ -2159,7 +2160,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
         if( !oc_concat ) {
             while( input_text > token_start ) {
-                if( (*input_text == '\0') || isspace( *input_text ) ) {
+                if( (*input_text == '\0') || (*input_text == ' ') ) {
                     input_text--;
                 } else {
                     break;
