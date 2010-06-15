@@ -62,6 +62,10 @@ lflags_dll_qnx_i86     = sys qnx disable 1023
 lflags_dll_qnx_386     = sys pharlap rex disable 1023,1014
 lflags_dll_win_i86     = sys windows op rwr
 
+!ifdef %BUILDMODE
+lflags_dll_linux_386   += libpath $(clib_dir)/library/linux.386/mf_r
+!endif
+
 extra_l_flags_dll = op map
 
 extra_l_flags_dll_nt_386_javavm   = op offset=0x6e800000
@@ -78,25 +82,12 @@ extra_l_flags_dll_nt      = export DIPLOAD op modname=$(name) $(lflags_nt_$(host
 extra_l_flags_dll_os2     = export DIPLOAD op modname=$(name)
 extra_l_flags_dll_win     = op modname=$(name)
 extra_l_flags_dll_rdos    = export DIPLOAD op modname=$(name) $(lflags_rdos_386_$(name))
-!ifeq __VERSION__ 1280
-extra_l_flags_dll_rdos    += libpath $(clib_dir)/library/rdos.386/mf_r
-!endif
 
 !ifdef bootstrap
 $(lib_name) : $(objs) $(imp_libs) $(cl_libs) $(__MAKEFILES__)
         $(cl) -shared $(clflags) $(objs) $(imp_libs) $(cl_libs)
 !else
 $(lib_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
-!ifeq __VERSION__ 1280
-!ifeq host_os rdos
-        set WLINK_LNK=$(wlink_dir)/prebuild/wlsystem.lnk
-!ifdef __UNIX__
-linker = *$(wlink_dir)/prebuild/wl.exe op quiet
-!else
-linker = *$(wlink_dir)\prebuild\wl.exe op quiet
-!endif
-!endif
-!endif
 !ifdef imp_libs
         $(linker) name $^@ $(lflags_dll) file {$(objs)} library {$(imp_libs)}
 !else

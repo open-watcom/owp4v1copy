@@ -66,6 +66,10 @@ lflags_dll_linux_386= sys pharlap rex disable 1023,1014
 lflags_dll_qnx_386  = sys pharlap rex disable 1023,1014
 lflags_dll_win_i86  = sys windows op rwr
 
+!ifdef %BUILDMODE
+lflags_dll_linux_386   += libpath $(clib_dir)/library/linux.386/mf_r
+!endif
+
 extra_l_flags_dll = op map
 
 extra_l_flags_dll_nt_386   = op offset=0x6eb00000
@@ -77,9 +81,6 @@ extra_l_flags_dll_os2  = export MADLOAD op modname=$(name)
 extra_l_flags_dll_nt   = export MADLOAD op modname=$(name) $(extra_l_flags_dll_nt_$(host_cpu))
 extra_l_flags_dll_win  = op modname=$(name)
 extra_l_flags_dll_rdos = export MADLOAD op modname=$(name) $(extra_l_flags_dll_rdos_386)
-!ifeq __VERSION__ 1280
-extra_l_flags_dll_rdos += libpath $(clib_dir)/library/rdos.386/mf_r
-!endif
 
 ##################
 
@@ -96,15 +97,5 @@ $(lib_name) : $(dis_prereq) $(objs) $(cl_libs) $(__MAKEFILES__)
         $(cl) -shared -fPIC $(clflags) $(objs) $(cl_libs)
 !else
 $(lib_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
-!ifeq __VERSION__ 1280
-!ifeq host_os rdos
-        set WLINK_LNK=$(wlink_dir)/prebuild/wlsystem.lnk
-!ifdef __UNIX__
-linker = *$(wlink_dir)/prebuild/wl.exe op quiet
-!else
-linker = *$(wlink_dir)\prebuild\wl.exe op quiet
-!endif
-!endif
-!endif
         $(linker) name $^@ $(lflags_dll) file {$(objs)}
 !endif
