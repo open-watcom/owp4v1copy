@@ -146,8 +146,9 @@ BOOL CMDIChildWnd::LoadFrame( UINT nIDResource, DWORD dwDefaultStyle, CWnd *pPar
             m_hAccelTable = pTemplate->m_hAccelTable;
         }
     }
-    
-    HICON hIcon = ::LoadIcon( AfxGetResourceHandle(), MAKEINTRESOURCE( nIDResource ) );
+
+    HINSTANCE hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nIDResource ), RT_ICON );
+    HICON hIcon = ::LoadIcon( hInstance, MAKEINTRESOURCE( nIDResource ) );
     LPCTSTR lpszClass = AfxRegisterWndClass( CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW, NULL,
                                              (HBRUSH)(COLOR_WINDOW + 1), hIcon );
     m_strTitle.LoadString( nIDResource );

@@ -2376,6 +2376,9 @@ _AFXLINK void AFXAPI            AfxSetResourceHandle( HINSTANCE hInstResource );
 _AFXLINK BOOL AFXAPI            AfxWinInit( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow );
 _AFXLINK void AFXAPI            AfxThrowResourceException();
 _AFXLINK void AFXAPI            AfxThrowUserException();
+#ifdef _AFXDLL
+_AFXLINK HINSTANCE AFXAPI       AfxFindResourceHandle( LPCTSTR lpszName, LPCTSTR lpszType );
+#endif
 
 _AFXLINK LRESULT CALLBACK   AfxWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 
@@ -2391,6 +2394,11 @@ _AFXLINK CDumpContext & AFXAPI  operator<<( CDumpContext &dc, POINT point );
 _AFXLINK CDumpContext & AFXAPI  operator<<( CDumpContext &dc, SIZE size );
 #endif
 
+// For the static library build, AfxFindResourceHandle is implemented as a macro.
+#ifndef _AFXDLL
+    #define AfxFindResourceHandle( lpszName, lpszType ) AfxGetResourceHandle()
+#endif
+
 #ifndef _DEBUG
     #include <afxwin1.inl>
     #include <afxwin2.inl>
@@ -2403,6 +2411,11 @@ _AFXLINK CDumpContext & AFXAPI  operator<<( CDumpContext &dc, SIZE size );
     #if (_WIN32_WINNT >= 0x0501)
         #include <afxwin5.inl>
     #endif
+#endif
+
+// This header must be included at the end of afxwin.h because it requires CCmdTarget.
+#ifdef _AFXDLL
+    #include <afxdll_.h>
 #endif
 
 #endif /* __AFX_H__ */

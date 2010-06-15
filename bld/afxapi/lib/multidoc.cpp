@@ -72,12 +72,14 @@ void CMultiDocTemplate::LoadTemplate()
     CDocTemplate::LoadTemplate();
 
     if( m_hMenuShared == NULL ) {
-        m_hMenuShared = ::LoadMenu( AfxGetResourceHandle(),
-                                    MAKEINTRESOURCE( m_nIDResource ) );
+        HINSTANCE hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( m_nIDResource ),
+                                                     RT_MENU );
+        m_hMenuShared = ::LoadMenu( hInstance, MAKEINTRESOURCE( m_nIDResource ) );
     }
     if( m_hAccelTable == NULL ) {
-        m_hAccelTable = ::LoadAccelerators( AfxGetResourceHandle(),
-                                            MAKEINTRESOURCE( m_nIDResource ) );
+        HINSTANCE hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( m_nIDResource ),
+                                                     RT_ACCELERATOR );
+        m_hAccelTable = ::LoadAccelerators( hInstance, MAKEINTRESOURCE( m_nIDResource ) );
     }
 }
 

@@ -394,7 +394,9 @@ BOOL CPreviewView::OnSetCursor( CWnd *pWnd, UINT nHitTest, UINT message )
         UINT nPage;
         if( FindPageRect( point, nPage ) ) {
             if( m_hMagnifyCursor == NULL ) {
-                m_hMagnifyCursor = ::LoadCursor( AfxGetResourceHandle(),
+                HINSTANCE hInstance = AfxFindResourceHandle(
+                    MAKEINTRESOURCE( AFX_IDC_MAGNIFY ), RT_CURSOR );
+                m_hMagnifyCursor = ::LoadCursor( hInstance,
                                                  MAKEINTRESOURCE( AFX_IDC_MAGNIFY ) );
             }
             ::SetCursor( m_hMagnifyCursor );

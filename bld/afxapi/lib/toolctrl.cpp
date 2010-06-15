@@ -56,7 +56,7 @@ int CToolBarCtrl::AddBitmap( int nNumButtons, UINT nBitmapID )
 /************************************************************/
 {
     TBADDBITMAP tbab;
-    tbab.hInst = AfxGetResourceHandle();
+    tbab.hInst = AfxFindResourceHandle( MAKEINTRESOURCE( nBitmapID ), RT_BITMAP );
     tbab.nID = nBitmapID;
     return( ::SendMessage( m_hWnd, TB_ADDBITMAP, nNumButtons, (LPARAM)&tbab ) );
 }

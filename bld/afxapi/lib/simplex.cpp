@@ -58,8 +58,9 @@ BOOL CSimpleException::GetErrorMessage( LPTSTR lpszError, UINT nMaxError,
     }
     if( !m_bInitialized ) {
         m_bInitialized = TRUE;
-        if( ::LoadString( AfxGetResourceHandle(), m_nResourceID,
-                          m_szMessage, 127 ) != 0 ) {
+        HINSTANCE hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( m_nResourceID ),
+                                                     RT_STRING );
+        if( ::LoadString( hInstance, m_nResourceID, m_szMessage, 127 ) != 0 ) {
             m_bLoaded = TRUE;
         }
     }

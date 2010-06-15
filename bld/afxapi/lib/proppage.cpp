@@ -255,7 +255,7 @@ void CPropertyPage::Construct( LPCTSTR lpszTemplateName, UINT nIDCaption,
 /**************************************************************************/
 {
     m_psp.dwFlags = PSP_USECALLBACK;
-    m_psp.hInstance = AfxGetResourceHandle();
+    m_psp.hInstance = AfxFindResourceHandle( lpszTemplateName, RT_DIALOG );
     m_psp.pszTemplate = lpszTemplateName;
     m_psp.hIcon = NULL;
     if( nIDCaption != 0 ) {

@@ -64,7 +64,7 @@ BOOL CToolTipCtrl::AddTool( CWnd *pWnd, UINT nIDText, LPCRECT lpRectTool,
     if( lpRectTool != NULL ) {
         ::CopyRect( &ti.rect, lpRectTool );
     }
-    ti.hinst = AfxGetResourceHandle();
+    ti.hinst = AfxFindResourceHandle( MAKEINTRESOURCE( nIDText ), RT_STRING );
     ti.lpszText = (LPTSTR)nIDText;
     return( (BOOL)::SendMessage( m_hWnd, TTM_ADDTOOL, 0, (LPARAM)&ti ) );
 }
@@ -170,7 +170,7 @@ void CToolTipCtrl::UpdateTipText( UINT nIDText, CWnd *pWnd, UINT_PTR nIDTool )
     ti.cbSize = sizeof( TOOLINFO );
     ti.hwnd = pWnd->GetSafeHwnd();
     ti.uId = nIDTool;
-    ti.hinst = AfxGetResourceHandle();
+    ti.hinst = AfxFindResourceHandle( MAKEINTRESOURCE( nIDText ), RT_STRING );
     ti.lpszText = (LPTSTR)nIDText;
     ::SendMessage( m_hWnd, TTM_UPDATETIPTEXT, 0, (LPARAM)&ti );
 }

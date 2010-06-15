@@ -28,6 +28,7 @@ headers =               &
         afxdd_.h        &
         afxdlgs.h       &
         afxdlgs.inl     &
+        afxdll_.h       &
         afxdtctl.h      &
         afxdtctl.inl    &
         afxext.h        &
@@ -132,6 +133,9 @@ objs =                  &
         draglist.obj    &
         dumpcont.obj    &
         dwordarr.obj    &
+!ifeq what_to_build dlls
+        dynlink.obj     &
+!endif
         edit.obj        &
         editview.obj    &
         edstate.obj     &

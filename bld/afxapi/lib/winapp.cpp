@@ -584,8 +584,10 @@ void CWinApp::SetRegistryKey( LPCTSTR lpszRegistryKey )
 void CWinApp::SetRegistryKey( UINT nIDRegistryKey )
 /*************************************************/
 {
-    TCHAR szBuff[256];
-    ::LoadString( AfxGetResourceHandle(), nIDRegistryKey, szBuff, 255 );
+    TCHAR       szBuff[256];
+    HINSTANCE   hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nIDRegistryKey ),
+                                                   RT_STRING );
+    ::LoadString( hInstance, nIDRegistryKey, szBuff, 255 );
     SetRegistryKey( szBuff );
 }
 
@@ -755,8 +757,9 @@ int AFXAPI AfxMessageBox( LPCTSTR lpszText, UINT nType, UINT nIDHelp )
 int AFXAPI AfxMessageBox( UINT nIDPrompt, UINT nType, UINT nIDHelp )
 /******************************************************************/
 {
-    TCHAR szBuff[256];
-    ::LoadString( AfxGetResourceHandle(), nIDPrompt, szBuff, 255 );
+    TCHAR       szBuff[256];
+    HINSTANCE   hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nIDPrompt ), RT_STRING );
+    ::LoadString( hInstance, nIDPrompt, szBuff, 255 );
     CWinApp *pApp = AfxGetApp();
     if( pApp != NULL ) {
         return( pApp->DoMessageBox( szBuff, nType, nIDHelp ) );

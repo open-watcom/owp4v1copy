@@ -122,7 +122,8 @@ BOOL CFrameWnd::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwS
 /*****************************************************************/
 {
     if( lpszMenuName != NULL ) {
-        m_hMenuDefault = ::LoadMenu( AfxGetResourceHandle(), lpszMenuName );
+        HINSTANCE hInstance = AfxFindResourceHandle( lpszMenuName, RT_MENU );
+        m_hMenuDefault = ::LoadMenu( hInstance, lpszMenuName );
     } else {
         m_hMenuDefault = NULL;
     }
@@ -205,8 +206,9 @@ BOOL CFrameWnd::LoadFrame( UINT nIDResource, DWORD dwDefaultStyle, CWnd *pParent
     CString str;
     str.LoadString( nIDResource );
     AfxExtractSubString( m_strTitle, str, 0 );
-    
-    HICON hIcon = ::LoadIcon( AfxGetResourceHandle(), MAKEINTRESOURCE( nIDResource ) );
+
+    HINSTANCE hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nIDResource ), RT_ICON );
+    HICON hIcon = ::LoadIcon( hInstance, MAKEINTRESOURCE( nIDResource ) );
     LPCTSTR lpszClass = AfxRegisterWndClass( CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW, NULL,
                                              (HBRUSH)(COLOR_WINDOW + 1), hIcon );
     LoadAccelTable( MAKEINTRESOURCE( nIDResource ) );
@@ -496,8 +498,9 @@ BOOL CFrameWnd::CanEnterHelpMode()
     if( _HelpCursor == NULL ) {
         _HelpCursor = ::LoadCursor( NULL, IDC_HELP );
         if( _HelpCursor == NULL ) {
-            _HelpCursor = ::LoadCursor( AfxGetResourceHandle(),
-                                        MAKEINTRESOURCE( AFX_IDC_CONTEXTHELP ) );
+            HINSTANCE hInstance = AfxFindResourceHandle(
+                MAKEINTRESOURCE( AFX_IDC_CONTEXTHELP ), RT_CURSOR );
+            _HelpCursor = ::LoadCursor( hInstance, MAKEINTRESOURCE( AFX_IDC_CONTEXTHELP ) );
         }
     }
     return( _HelpCursor != NULL );
@@ -661,8 +664,9 @@ BOOL CFrameWnd::IsTracking() const
 BOOL CFrameWnd::LoadAccelTable( LPCTSTR lpszResourceName )
 /********************************************************/
 {
+    HINSTANCE hInstance = AfxFindResourceHandle( lpszResourceName, RT_ACCELERATOR );
     ASSERT( m_hAccelTable == NULL );
-    m_hAccelTable = ::LoadAccelerators( AfxGetResourceHandle(), lpszResourceName );
+    m_hAccelTable = ::LoadAccelerators( hInstance, lpszResourceName );
     return( m_hAccelTable != NULL );
 }
 

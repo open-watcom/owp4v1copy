@@ -94,7 +94,8 @@ BOOL CDialog::Create( LPCTSTR lpszTemplateName, CWnd *pParentWnd )
         pParentWnd = AfxGetMainWnd();
     }
     AfxHookWindowCreate( this );
-    HWND hWnd = ::CreateDialogParam( AfxGetResourceHandle(), lpszTemplateName,
+    HINSTANCE hInstance = AfxFindResourceHandle( lpszTemplateName, RT_DIALOG );
+    HWND hWnd = ::CreateDialogParam( hInstance, lpszTemplateName,
                                      pParentWnd->GetSafeHwnd(), AfxDlgProc, 0L );
     if( !AfxUnhookWindowCreate() ) {
         PostNcDestroy();
@@ -151,8 +152,10 @@ INT_PTR CDialog::DoModal()
 /************************/
 {
     if( m_lpszTemplateName != NULL ) {
+        HINSTANCE hInstance = AfxFindResourceHandle( m_lpszTemplateName, RT_DIALOG );
+
         AfxHookWindowCreate( this );
-        INT_PTR nResult = ::DialogBoxParam( AfxGetResourceHandle(), m_lpszTemplateName,
+        INT_PTR nResult = ::DialogBoxParam( hInstance, m_lpszTemplateName,
                                             m_pParentWnd->GetSafeHwnd(),
                                             AfxDlgProc, 0L );
         AfxUnhookWindowCreate();

@@ -17,6 +17,9 @@ class CToolTipCtrl;
 class CWinApp;
 class CWinThread;
 class CWnd;
+#ifdef _AFXDLL
+class CDynLinkLibrary;
+#endif
 
 // CHandleMap is an internal class not accessible to users.
 class CHandleMap;
@@ -53,6 +56,9 @@ public:
     CTypedSimpleList< CRuntimeClass * >     m_classList;
     CString                                 m_strUnregisterList;
     void                                    (PASCAL *m_pfnFilterToolTipMessage)( MSG *, CWnd * );
+#ifdef _AFXDLL
+    CTypedSimpleList< CDynLinkLibrary * >   m_libraryList;
+#endif
     CThreadLocal< AFX_MODULE_THREAD_STATE > m_thread;
 };
 

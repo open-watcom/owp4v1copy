@@ -266,7 +266,7 @@ UINT CToolBar::GetItemID( int nIndex ) const
 BOOL CToolBar::LoadBitmap( LPCTSTR lpszResourceName )
 /***************************************************/
 {
-    m_hInstImageWell = AfxGetResourceHandle();
+    m_hInstImageWell = AfxFindResourceHandle( lpszResourceName, RT_BITMAP );
     m_hRsrcImageWell = ::FindResource( m_hInstImageWell, lpszResourceName, RT_BITMAP );
     if( m_hRsrcImageWell == NULL ) {
         m_hInstImageWell = NULL;
@@ -293,7 +293,7 @@ BOOL CToolBar::LoadBitmap( LPCTSTR lpszResourceName )
 BOOL CToolBar::LoadToolBar( LPCTSTR lpszResourceName )
 /****************************************************/
 {
-    HINSTANCE hInstance = AfxGetResourceHandle();
+    HINSTANCE hInstance = AfxFindResourceHandle( lpszResourceName, RT_TOOLBAR );
     HRSRC hResource = ::FindResource( hInstance, lpszResourceName, RT_TOOLBAR );
     if( hResource == NULL ) {
         return( FALSE );

@@ -340,7 +340,8 @@ BOOL CString::LoadString( HINSTANCE hInstance, UINT nID )
 BOOL CString::LoadString( UINT nID )
 /**********************************/
 {
-    return( LoadString( AfxGetResourceHandle(), nID ) );
+    HINSTANCE hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nID ), RT_STRING );
+    return( LoadString( hInstance, nID ) );
 }
     
 CString CString::Mid( int iStart, int iCount ) const
@@ -587,11 +588,12 @@ CString &CString::operator=( wchar_t ch )
 void __cdecl CString::AppendFormat( UINT nFormatID, ... )
 /*******************************************************/
 {
-    va_list args;
-    TCHAR   szFormat[1024];
-    TCHAR   szBuff[1024];
+    va_list     args;
+    TCHAR       szFormat[1024];
+    TCHAR       szBuff[1024];
+    HINSTANCE   hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nFormatID ), RT_STRING );
     va_start( args, nFormatID );
-    ::LoadString( AfxGetResourceHandle(), nFormatID, szFormat, 1024 );
+    ::LoadString( hInstance, nFormatID, szFormat, 1024 );
     _vstprintf( szBuff, szFormat, args );
     Append( szBuff );
     va_end( args );
@@ -611,10 +613,11 @@ void __cdecl CString::AppendFormat( PCTSTR pszFormat, ... )
 void __cdecl CString::Format( UINT nFormatID, ... )
 /*************************************************/
 {
-    va_list args;
-    TCHAR   szFormat[1024];
+    va_list     args;
+    TCHAR       szFormat[1024];
+    HINSTANCE   hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nFormatID ), RT_STRING );
     va_start( args, nFormatID );
-    ::LoadString( AfxGetResourceHandle(), nFormatID, szFormat, 1024 );
+    ::LoadString( hInstance, nFormatID, szFormat, 1024 );
     FormatV( szFormat, args );
     va_end( args );
 }
@@ -631,10 +634,11 @@ void __cdecl CString::Format( PCTSTR pszFormat, ... )
 void __cdecl CString::FormatMessage( UINT nFormatID, ... )
 /********************************************************/
 {
-    va_list args;
-    TCHAR   szFormat[1024];
+    va_list     args;
+    TCHAR       szFormat[1024];
+    HINSTANCE   hInstance = AfxFindResourceHandle( MAKEINTRESOURCE( nFormatID ), RT_STRING );
     va_start( args, nFormatID );
-    ::LoadString( AfxGetResourceHandle(), nFormatID, szFormat, 1024 );
+    ::LoadString( hInstance, nFormatID, szFormat, 1024 );
     FormatMessageV( szFormat, &args );
     va_end( args );
 }
