@@ -32,9 +32,16 @@
 #ifndef _ASMSTMT_H
 #define _ASMSTMT_H
 
+#if _INTEL_CPU
+    #include "asminlin.h"
+#else
+    #include "asinline.h"
+#endif
+
 extern  void        AsmSysInit( unsigned char * );
 extern  void        AsmSysFini( void );
 extern  char const  *AsmSysDefineByte( void );
 extern  void        AsmSysMakeInlineAsmFunc( int );
+extern  void        AsmSysLine( char * );
 
 #endif

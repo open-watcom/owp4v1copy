@@ -33,7 +33,6 @@
 #include "cgswitch.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
-#include "asminlin.h"
 #include "asmstmt.h"
 
 extern struct aux_info  *GetLangInfo( type_modifiers flags );
@@ -605,6 +604,12 @@ local void FreeAsmFixups( void )
 }
 
 
+void AsmSysLine( char *buff )
+/***************************/
+{
+    AsmLine( buff, FALSE );
+}
+
 local int GetByteSeq( byte_seq **code )
 /*************************************/
 {
@@ -624,7 +629,7 @@ local int GetByteSeq( byte_seq **code )
     name = NULL;
     for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
-            AsmLine( Buffer );
+            AsmLine( Buffer, FALSE );
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();

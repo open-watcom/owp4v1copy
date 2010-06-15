@@ -37,7 +37,6 @@
 #include "cgdata.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
-#include "asminlin.h"
 #include "fnovload.h"
 #include "cgswitch.h"
 #include "initdefs.h"
@@ -1096,6 +1095,11 @@ void AsmSysPCHReadCode( AUX_INFO *info )
     }
 }
 
+void AsmSysLine( char *buff )
+{
+    AsmLine( buff, FALSE );
+}
+
 static int GetByteSeq( void )
 {
     int             len;
@@ -1115,7 +1119,7 @@ static int GetByteSeq( void )
         if( CurToken == T_STRING ) {
             AsmCodeAddress = len;
             AsmCodeBuffer = VbufBuffer( &code_buffer );
-            AsmLine( Buffer );
+            AsmLine( Buffer, FALSE );
             len = AsmCodeAddress;
             NextToken();
             if( CurToken == T_COMMA )  NextToken();

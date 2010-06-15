@@ -33,7 +33,6 @@
 #include "cgswitch.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
-#include "asinline.h"
 #include "asmstmt.h"
 #include "scan.h"
 #include <ctype.h>
@@ -143,6 +142,11 @@ static byte_seq_reloc *GetFixups( void )
     return( head );
 }
 
+void AsmSysLine( char *buff )
+/***************************/
+{
+    AsmLine( buff );
+}
 
 local int GetByteSeq( risc_byte_seq **code )
 /******************************************/

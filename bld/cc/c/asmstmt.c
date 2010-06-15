@@ -33,12 +33,6 @@
 #include "pragdefn.h"
 #include "asmstmt.h"
 
-#if _INTEL_CPU
-    #include "asminlin.h"
-#else
-    #include "asinline.h"
-#endif
-
 #define MAX_ASM_LINE_LEN 511
 
 static int EndOfAsmStmt( void )
@@ -95,7 +89,7 @@ static void GetAsmLine( void )
     buf[ MAX_ASM_LINE_LEN ] = '\0';
     if( *buf != '\0' ) {
         TokenLoc.line = AsmErrLine;
-        AsmLine( buf );
+        AsmSysLine( buf );
     }
     CompFlags.pre_processing = 0;
 }

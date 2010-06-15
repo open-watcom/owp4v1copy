@@ -34,6 +34,11 @@
 #define _ASMSTMT_H
 
 #include "vbuf.h"
+#if _INTEL_CPU
+  #include "asminlin.h"
+#else
+  #include "asinline.h"
+#endif
 
 #define MAX_INSTR_SIZE  64
 
@@ -49,6 +54,7 @@ extern void         AsmSysFini( void );
 extern void         AsmSysDone( void );
 extern char const   *AsmSysDefineByte( void );
 extern void         AsmSysCopyCode( void );
+extern void         AsmSysLine( char * );
 
 // in ASMALLOC
 void    *AsmAlloc( unsigned );

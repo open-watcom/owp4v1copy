@@ -39,7 +39,6 @@
 #include "fnovload.h"
 #include "name.h"
 #include "asmstmt.h"
-#include "asinline.h"
 #include "carve.h"
 #include "pcheader.h"
 
@@ -311,6 +310,11 @@ void AsmSysPCHReadCode( AUX_INFO *info )
         PCHRead( &reloc->off, sizeof( reloc->off ) );
         PCHRead( &reloc->type, sizeof( reloc->type ) );
     }
+}
+
+void AsmSysLine( char *buff )
+{
+    AsmLine( buff );
 }
 
 static risc_byte_seq *AuxCodeDup(        // DUPLICATE AUX CODE

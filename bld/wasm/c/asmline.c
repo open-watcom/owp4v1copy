@@ -684,10 +684,10 @@ void AsmByte( unsigned char byte )
 #endif
 }
 
+#if defined( _STANDALONE_ )
 void AsmLine( char *string )
 /**************************/
 {
-#if defined( _STANDALONE_ )
     int             count;
 
     // Token_Count is the number of tokens scanned
@@ -722,11 +722,15 @@ void AsmLine( char *string )
   #ifdef DEBUG_OUT
     dbg_output();               // for debuggin only
   #endif
+}
 #else
+void AsmLine( char *string, bool use_emu )
+/****************************************/
+{
     // Token_Count is the number of tokens scanned
     Token_Count = AsmScan( string );
     if( Token_Count > 0 ) {
         AsmParse();
     }
-#endif
 }
+#endif

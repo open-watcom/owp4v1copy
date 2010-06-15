@@ -70,17 +70,19 @@ static  aux_info        *AliasInfo;
 static  char            SymName[MAX_SYMLEN];
 static  int             SymLen;
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 static  arr_info        *ArrayInfo;
 #endif
 
 extern  char            *RegNames[];
 extern  hw_reg_set      RegValue[];
 extern  byte            MaxReg;
+#if _INTEL_CPU
 #if _CPU == 8086
 extern  hw_reg_set      WinParms[];
-#elif _CPU == 386
+#else
 extern  hw_reg_set      StackParms[];
+#endif
 #endif
 extern  aux_info        IFInfo;
 extern  aux_info        IFCharInfo;
@@ -265,22 +267,22 @@ void    DoPragma( char *ptr );
 void            InitAuxInfo( void ) {
 //=============================
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
     int         cpu;
     int         fpu;
     int         use32;
 
-#if _CPU == 8086
+  #if _CPU == 8086
     use32 = 0;
-#elif _CPU == 386
+  #else
     use32 = 1;
-#endif
+  #endif
     cpu = 0;
     fpu = 0;
-#if _CPU == 8086
+  #if _CPU == 8086
     if( CPUOpts & CPUOPT_80186 ) cpu = 1;
     if( CPUOpts & CPUOPT_80286 ) cpu = 2;
-#endif
+  #endif
     if( CPUOpts & CPUOPT_80386 ) cpu = 3;
     if( CPUOpts & CPUOPT_80486 ) cpu = 4;
     if( CPUOpts & CPUOPT_80586 ) cpu = 5;
@@ -296,9 +298,8 @@ void            InitAuxInfo( void ) {
     DefaultLibs = NULL;
     AuxInfo = NULL;
     DependencyInfo = NULL;
-#if _CPU == 8086 || _CPU == 386
-
-#if _CPU == 8086
+#if _INTEL_CPU
+  #if _CPU == 8086
     // Change auxiliary information for calls to run-time routines to match
     // the options used to compile the run-time routines
     if( CGOpts & CGOPT_M_LARGE ) {
@@ -314,16 +315,16 @@ void            InitAuxInfo( void ) {
             HW_CTurnOff( IFVarInfo.save, HW_DS );
         }
     }
-        HW_CTurnOff( IFXInfo.save, HW_ES );
-        HW_CTurnOff( RtRtnInfo.save, HW_ES );
-        HW_CTurnOff( RtStopInfo.save, HW_ES );
-        HW_CTurnOff( RtVarInfo.save, HW_ES );
-        HW_CTurnOff( CoRtnInfo.save, HW_ES );
-        HW_CTurnOff( IFInfo.save, HW_ES );
-        HW_CTurnOff( IFCharInfo.save, HW_ES );
-        HW_CTurnOff( IFChar2Info.save, HW_ES );
-        HW_CTurnOff( IFVarInfo.save, HW_ES );
-#endif
+    HW_CTurnOff( IFXInfo.save, HW_ES );
+    HW_CTurnOff( RtRtnInfo.save, HW_ES );
+    HW_CTurnOff( RtStopInfo.save, HW_ES );
+    HW_CTurnOff( RtVarInfo.save, HW_ES );
+    HW_CTurnOff( CoRtnInfo.save, HW_ES );
+    HW_CTurnOff( IFInfo.save, HW_ES );
+    HW_CTurnOff( IFCharInfo.save, HW_ES );
+    HW_CTurnOff( IFChar2Info.save, HW_ES );
+    HW_CTurnOff( IFVarInfo.save, HW_ES );
+  #endif
 
     if( !(CGOpts & CGOPT_SEG_REGS) ) {
         if( _FloatingDS( CGOpts ) ) {
@@ -332,9 +333,9 @@ void            InitAuxInfo( void ) {
         if( _FloatingES( CGOpts ) ) {
             HW_CTurnOff( DefaultInfo.save, HW_ES );
         }
-#if _CPU == 8086
+  #if _CPU == 8086
         if( CPUOpts & (CPUOPT_80386 | CPUOPT_80486 | CPUOPT_80586 | CPUOPT_80686) )
-#endif
+  #endif
         {
             if( _FloatingFS( CGOpts ) ) {
                 HW_CTurnOff( DefaultInfo.save, HW_FS );
@@ -347,8 +348,7 @@ void            InitAuxInfo( void ) {
     if( OZOpts & OZOPT_O_FRAME ) {
         DefaultInfo.cclass |= GENERATE_STACK_FRAME;
     }
-#endif
-#if _CPU == 386
+  #if _CPU != 8086
     if( CGOpts & CGOPT_STK_ARGS ) {
         DefaultInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
         DefaultInfo.parms = StackParms;
@@ -370,21 +370,22 @@ void            InitAuxInfo( void ) {
         HW_CTurnOff( IFChar2Info.save, HW_FLTS );
         HW_CTurnOff( IFVarInfo.save, HW_FLTS );
     }
-#endif
-#if _CPU == 8086
+  #endif
+  #if _CPU == 8086
     if( CGOpts & CGOPT_WINDOWS ) {
         DefaultInfo.parms = WinParms;
         IFXInfo.parms = WinParms;
     }
+  #endif
 #endif
 
     FortranInfo = DefaultInfo;
     ProgramInfo = DefaultInfo;
-#if _CPU == 386
+#if _INTEL_CPU
+  #if _CPU != 8086
     DoPragma( __Syscall );
     DoPragma( __Stdcall );
-#endif
-#if _CPU == 8086 || _CPU == 386
+  #endif
     DoPragma( __Pascal );
     DoPragma( __Cdecl );
 #endif
@@ -1409,7 +1410,7 @@ static  void    GetByteSeq( void ) {
     float_specified = FALSE;
 #endif
     seq_len = 0;
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
     AsmSaveCPUInfo();
 #endif
     for(;;) {
@@ -1421,7 +1422,11 @@ static  void    GetByteSeq( void ) {
             *(char *)(TokEnd - sizeof( char )) = NULLCHAR;
             AsmCodeAddress = seq_len;
             AsmCodeBuffer = buff;
+#if _INTEL_CPU
+            AsmLine( &TokStart[1], FALSE );
+#else
             AsmLine( &TokStart[1] );
+#endif
             if( AsmCodeAddress <= MAXIMUM_BYTESEQ ) {
                 seq_len = AsmCodeAddress;
             } else {
@@ -1455,13 +1460,13 @@ static  void    GetByteSeq( void ) {
     }
     InsertFixups( buff, seq_len );
     AsmSymFini();
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
     AsmRestoreCPUInfo();
 #endif
 }
 
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 static  hw_reg_set      RegSet( void ) {
 //================================
 
@@ -1511,7 +1516,7 @@ static  void            GetParmInfo( void ) {
 // Collect argument information.
 
     struct {
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
         unsigned f_pop           : 1;
         unsigned f_reverse       : 1;
         unsigned f_loadds        : 1;
@@ -1521,7 +1526,7 @@ static  void            GetParmInfo( void ) {
         unsigned f_args          : 1;
     } have;
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
     have.f_pop           = 0;
     have.f_reverse       = 0;
     have.f_loadds        = 0;
@@ -1533,7 +1538,7 @@ static  void            GetParmInfo( void ) {
         if( !have.f_args && RecToken( "(" ) ) {
             GetArgList();
             have.f_args = 1;
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
         } else if( !have.f_pop && RecToken( "CALLER" ) ) {
             CurrAux->cclass |= CALLER_POPS;
             have.f_pop = 1;
@@ -1592,32 +1597,32 @@ static  void    GetArgList( void ) {
                     Error( PR_BAD_PARM_SIZE );
                     CSuicide();
                 }
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
             } else if( RecToken( "FAR" ) ) {
                 pass_info |= ARG_FAR;
     #if ( _CPU == 8086 )
                 pass_info |= ARG_SIZE_2;
-    #elif ( _CPU == 386 )
+    #else
                 pass_info |= ARG_SIZE_4;
     #endif
             } else if( RecToken( "NEAR" ) ) {
                 pass_info |= ARG_NEAR;
     #if ( _CPU == 8086 )
                 pass_info |= ARG_SIZE_2;
-    #elif ( _CPU == 386 )
+    #else
                 pass_info |= ARG_SIZE_4;
     #endif
             } else {
     #if ( _CPU == 8086 )
                 pass_info |= ARG_SIZE_2;
-    #elif ( _CPU == 386 )
+    #else
                 pass_info |= ARG_SIZE_4;
     #endif
 #endif
             }
         } else if( RecToken( "REFERENCE" ) ) {
             pass_info |= PASS_BY_REFERENCE;
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
             if( RecToken( "FAR" ) ) {
                 pass_info |= ARG_FAR;
             } else if( RecToken( "NEAR" ) ) {
@@ -1631,7 +1636,7 @@ static  void    GetArgList( void ) {
             }
         } else if( RecToken( "DATA_REFERENCE" ) ) {
             pass_info |= PASS_BY_DATA | PASS_BY_REFERENCE;
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
             if( RecToken( "FAR" ) ) {
                 pass_info |= ARG_FAR;
             } else if( RecToken( "NEAR" ) ) {
@@ -1655,7 +1660,7 @@ static  void    GetArgList( void ) {
 }
 
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 static  void            GetRetInfo( void ) {
 //====================================
 

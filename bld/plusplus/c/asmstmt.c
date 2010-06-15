@@ -42,12 +42,6 @@
 #include "scan.h"
 #include "asmstmt.h"
 
-#if _INTEL_CPU
-#include "asminlin.h"
-#else
-#include "asinline.h"
-#endif
-
 #ifdef DISABLE_ASM_STMT
 
 PTREE AsmStmt( void )
@@ -148,7 +142,7 @@ static void getAsmLine( VBUF *buff )
         ensureBufferReflectsCurToken();
     }
     if( line[0] != '\0' ) {
-        AsmLine( line );
+        AsmSysLine( line );
     }
     VbufSetLen( buff, AsmCodeAddress );
     if( CurToken == T_SEMI_COLON ) {
