@@ -48,7 +48,7 @@
 
 static int          xChar, yChar;
 #ifdef __NT__
-static HINSTANCE    hInstCommCtrl;
+static HINSTANCE    hInstCommCtrl = NULL;
 
 typedef VOID (WINAPI *PFNICC)( VOID );
 
@@ -291,7 +291,14 @@ void ResizeSpyBox( WORD width, WORD height )
     RECT        area;
     HWND        hinthwnd;
 
-    ypos = LISTBOX_Y + yChar + 3;
+    ypos = LISTBOX_Y;
+#ifdef __NT__
+    if( hInstCommCtrl == NULL ) {
+#endif
+        ypos += yChar + 3;
+#ifdef __NT__
+    }
+#endif
     width -= 2 * LISTBOX_X;
     nheight = height - ypos - LISTBOX_X;
 
