@@ -59,6 +59,7 @@ static COLORREF                 colorButtonFace;
 static COLORREF                 colorTextFace;
 static statushook               statusWndHookFunc;
 static RECT                     statusRect;
+static int                      statusHeight = 0;
 static BOOL                     hasGDIObjects = FALSE;
 static HWND                     stat = NULL;
 #ifdef __NT__
@@ -359,11 +360,13 @@ static void updateParts() {
 HWND StatusWndCreate( HWND parent, RECT *size, HINSTANCE hinstance,
                       LPVOID lpvParam )
 {
-#if defined (__NT__)
+#if defined( __NT__ )
     if( hInstCommCtrl != NULL ) {
         stat = CreateWindow( STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE |
                              WS_CLIPSIBLINGS | SBARS_SIZEGRIP,
                              0, 0, 0, 0, parent, NULL, hinstance, NULL );
+        GetWindowRect( stat, size );
+        statusHeight = size->bottom - size->top;
         if( numSections > 0 ) {
             updateParts();
         }
@@ -597,6 +600,15 @@ void StatusWndSetSeparators( int num_items, status_block_desc *list )
 #endif
 
 } /* StatusWndSetSeparators */
+
+/*
+ * StatusWndGetHeight - get the height of the status window
+ */
+int StatusWndGetHeight( void )
+{
+    return( statusHeight );
+
+} /* StatusWndGetHeight */
 
 /*
  * StatusWndFini - cleans up everything allocated for the status window

@@ -611,6 +611,9 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
                                       WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
                                       TBSTYLE_FLAT, 0, 0, 0, 0, bar->owner, NULL,
                                       GET_HINSTANCE( bar->owner ), NULL );
+            GetWindowRect( bar->hwnd, &disp->area );
+            ScreenToClient( bar->owner, (LPPOINT)&disp->area.left );
+            ScreenToClient( bar->owner, (LPPOINT)&disp->area.right );
         }
         bar->old_wndproc = (WNDPROC)GetWindowLong( bar->hwnd, GWL_WNDPROC );
         SetProp( bar->hwnd, "bar", (LPVOID)bar );

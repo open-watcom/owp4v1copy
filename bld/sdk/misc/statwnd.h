@@ -80,6 +80,7 @@ extern  HWND    StatusWndCreate( HWND parent, RECT *size, HINSTANCE hinstance, L
 extern  void    StatusWndDraw3DBox( HDC hdc );
 extern  void    StatusWndDrawLine( HDC hdc, HFONT hfont, const char *str, UINT flags );
 extern  void    StatusWndSetSeparators( int num_items, status_block_desc *list );
+extern  int     StatusWndGetHeight( void );
 extern  void    StatusWndFini( void );
 
 #define HORZ_BORDER     4       /* width of left and right raised area  */

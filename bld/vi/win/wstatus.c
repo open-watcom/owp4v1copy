@@ -240,7 +240,6 @@ window_id NewStatWindow( void )
     size.right += 1;
     size.bottom += 1;
     stat = StatusWndCreate( Root, &size, InstanceHandle, NULL );
-    GetWindowRect( stat, &size );
     return( stat );
 
 } /* NewStatWindow */

@@ -33,6 +33,7 @@
 #include "vi.h"
 #include "winaux.h"
 #include "font.h"
+#include "statwnd.h"
 #include "wstatus.h"
 
 window *Windows[] = {
@@ -64,6 +65,9 @@ void DefaultWindows( RECT *world, RECT *workspace )
     int         border;
     int         screeny;
     int         diff;
+#ifdef __NT__
+    int         statusHeight = StatusWndGetHeight();
+#endif
 
     border = GetSystemMetrics( SM_CYBORDER );
     screeny = GetSystemMetrics( SM_CYSCREEN );
@@ -80,7 +84,15 @@ void DefaultWindows( RECT *world, RECT *workspace )
          * like adding yet another define.
          * This whole function reeks a little anyway :)
          */
-        r->top = r->bottom - (FontHeight( WIN_FONT( w ) ) + 2 * border + 7);
+#ifdef __NT__
+        if( statusHeight != 0 ) {
+            r->top = r->bottom - statusHeight;
+        } else {
+#endif
+            r->top = r->bottom - (FontHeight( WIN_FONT( w ) ) + 2 * border + 7);
+#ifdef __NT__
+        }
+#endif
         last = r;
     } else {
         tmp = *world;
@@ -91,9 +103,17 @@ void DefaultWindows( RECT *world, RECT *workspace )
     /* next the message bar */
     w = &MessageBar;
     r = &w->area;
-    // let these windows share a common border
+    // let these windows share a common border, except when Win32 common controls
+    // are used
     *r = *last;
-    r->bottom = last->top + border;
+    r->bottom = last->top;
+#ifdef __NT__
+    if( statusHeight == 0 ) {
+#endif
+        r->bottom += border;
+#ifdef __NT__
+    }
+#endif
     r->top = r->bottom - FontHeight( WIN_FONT( w ) ) - 4 * border;
     last = r;
 
