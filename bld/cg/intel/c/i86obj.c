@@ -211,27 +211,15 @@ static  lname_cache     *NameCache;
 static  lname_cache     *NameCacheDumped;
 
 static char *FPPatchName[] = {
-    NULL,
-    "FIWRQQ",
-    "FIDRQQ",
-    "FIERQQ",
-    "FICRQQ",
-    "FISRQQ",
-    "FIARQQ",
-    "FIFRQQ",
-    "FIGRQQ"
+#define pick_fp(enum,name,alt_name) name,
+#include "fppatche.h"
+#undef pick_fp
 };
 
 static char *FPPatchAltName[] = {
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    "FJCRQQ",
-    "FJSRQQ",
-    "FJARQQ",
-    "FJFRQQ",
-    "FJGRQQ"
+#define pick_fp(enum,name,alt_name) alt_name,
+#include "fppatche.h"
+#undef pick_fp
 };
 
 typedef struct virt_func_ref_list {

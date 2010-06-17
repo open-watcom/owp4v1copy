@@ -35,44 +35,20 @@
 #include "directiv.h"
 #include "asmfixup.h"
 #include "mangle.h"
+#include "fppatch.h"
 
 #include "myassert.h"
 
-typedef enum {
-    FPP_NONE,
-    FPP_WAIT,
-    FPP_NORMAL,
-    FPP_ES,
-    FPP_CS,
-    FPP_SS,
-    FPP_DS,
-    FPP_FS,
-    FPP_GS,
-    FPP_NUMBER_OF_TYPES
-} fp_patches;
-
 static char *FPPatchName[] = {
-    NULL,
-    "FIWRQQ",
-    "FIDRQQ",
-    "FIERQQ",
-    "FICRQQ",
-    "FISRQQ",
-    "FIARQQ",
-    "FIFRQQ",
-    "FIGRQQ"
+#define pick_fp(enum,name,alt_name) name,
+#include "fppatche.h"
+#undef pick_fp
 };
 
 static char *FPPatchAltName[] = {
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    "FJCRQQ",
-    "FJSRQQ",
-    "FJARQQ",
-    "FJFRQQ",
-    "FJGRQQ"
+#define pick_fp(enum,name,alt_name) alt_name,
+#include "fppatche.h"
+#undef pick_fp
 };
 
 int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *ins, bool secondary )

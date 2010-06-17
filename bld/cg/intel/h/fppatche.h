@@ -24,14 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  FP patches enumeration
+* Description:  FP patches data definition pick file
 *
 ****************************************************************************/
 
 
-typedef enum {
-#define pick_fp(enum,name,alt_name) enum,
-#include "fppatche.h"
-#undef pick_fp
-    FPP_NUMBER_OF_TYPES
-} fp_patches;
+//        enum        name     alt_name
+pick_fp( FPP_NONE,   NULL,     NULL )
+pick_fp( FPP_WAIT,   "FIWRQQ", NULL )
+pick_fp( FPP_NORMAL, "FIDRQQ", NULL )
+pick_fp( FPP_ES,     "FIERQQ", NULL )
+pick_fp( FPP_CS,     "FICRQQ", "FJCRQQ" )
+pick_fp( FPP_SS,     "FISRQQ", "FJSRQQ" )
+pick_fp( FPP_DS,     "FIARQQ", "FJARQQ" )
+pick_fp( FPP_FS,     "FIFRQQ", "FJFRQQ" )
+pick_fp( FPP_GS,     "FIGRQQ", "FJGRQQ" )
