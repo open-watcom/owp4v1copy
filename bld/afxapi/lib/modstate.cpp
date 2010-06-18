@@ -50,6 +50,9 @@ AFX_MODULE_STATE::AFX_MODULE_STATE( BOOL bDLL )
     m_bDLL = (BYTE)bDLL;
     m_classList.Construct( (int)&((CRuntimeClass *)0)->m_pNextClass );
     m_pfnFilterToolTipMessage = NULL;
+#ifdef _AFXDLL
+    m_libraryList.Construct( (int)&((CDynLinkLibrary *)0)->m_pNextDLL );
+#endif
 }
 
 AFX_MODULE_STATE::~AFX_MODULE_STATE()

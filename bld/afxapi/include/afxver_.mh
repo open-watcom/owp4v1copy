@@ -9,6 +9,8 @@
 #pragma disable_message( 387 )
 #pragma disable_message( 549 )
 #pragma disable_message( 628 )
+#pragma disable_message( 656 )
+#pragma disable_message( 657 )
 #pragma disable_message( 849 )
 
 #include <afxv_w32.h>
