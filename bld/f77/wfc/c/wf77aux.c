@@ -1288,11 +1288,21 @@ static  void    InsertFixups( unsigned char *buff, unsigned i ) {
                 *dst++ = FLOATING_FIXUP_BYTE;
                 // only expect a 'fixup_type' of FIX_SEG
                 switch( fix->fixup_type ) {
+                case FIX_FPPATCH:
+                    *dst++ = fix->offset;
+                    break;
                 case FIX_SEG:
                     if( name == NULL ) {
                         // special case for floating point fixup
-                        if( *src != 0x9b ) { /* FWAIT */
-                            *dst++ = 0x9b;
+                        if( ( src[0] == 0x90 ) && ( src[1] == 0x9B ) ) {
+                            // inline assembler FWAIT instruction 0x90, 0x9b
+                            *dst++ = FIX_FPP_WAIT;
+                        } else if( src[0] == 0x9b && (src[1] & 0xd8) == 0xd8 ) {
+                            // FWAIT as first byte and FPU instruction opcode as second byte
+                            *dst++ = FIX_FPP_NORMAL;
+                        } else {
+                            // skip FP patch
+                            --dst;
                         }
                         break;
                     }

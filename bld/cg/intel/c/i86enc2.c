@@ -268,17 +268,13 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
     offset      off = 0;
     fe_attr     attr = 0;
     name        *temp;
-    bool        emit_data;
 
     first = FALSE;
     endp = p + len;
     while( p < endp ) {
         _Code;
-        emit_data = 1;
         startp = p;
-        for( ; p < endp && emit_data; ) {
-            if( ( p - startp ) >= ( INSSIZE - 5 ) )
-                break;
+        for( ; p < endp && ( p - startp ) < ( INSSIZE - 5 ); ) {
             if( p[0] == FLOATING_FIXUP_BYTE ) {
                 type = p[1];
                 switch( type ) {
@@ -327,19 +323,17 @@ static  void    CodeSequence( byte *p, byte_seq_len len ) {
                     }
                     continue;
                 default:
+                    // floating point fixups
                     if( !first ) {
-                        emit_data = 0;
+                        // ensure previous instructions be emited and
+                        // start new FPU instruction
+                        startp = p - INSSIZE;
                         first = TRUE;
                         continue;
                     }
-                    /* floating point fixup */
-                    ++p;
+                    p += 2;
                     if( _IsEmulation() ) {
-                        if( ( p[0] == 0x90 ) && ( p[1] == 0x9B ) ) { // inline FWAIT
-                            FPPatchType = FPP_WAIT;
-                        } else {
-                            FPPatchType = FPP_NORMAL;
-                        }
+                        FPPatchType = type;
                         Used87 = TRUE;
                     }
                     break;

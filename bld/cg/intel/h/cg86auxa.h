@@ -65,6 +65,12 @@
 
 #define DO_SYM_FIXUPS           DO_FLOATING_FIXUPS      /* must be the same */
 #define SYM_FIXUP_BYTE          FLOATING_FIXUP_BYTE     /* must be the same */
-#define FIX_SYM_OFFSET          0x00    /* followed by a long */
-#define FIX_SYM_SEGMENT         0x01    /* .. */
-#define FIX_SYM_RELOFF          0x02    /* .. */
+
+typedef enum {
+#define pick_fp(enum,name,alt_name) FIX_ ## enum,
+#include "fppatche.h"
+#undef pick_fp
+    FIX_SYM_OFFSET,     /* followed by a long */
+    FIX_SYM_SEGMENT,    /* .. */
+    FIX_SYM_RELOFF      /* .. */
+} cg_fixups;

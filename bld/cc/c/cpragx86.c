@@ -461,18 +461,21 @@ static int InsertFixups( unsigned char *buff, unsigned i, byte_seq **code )
                 fixup_padding = 0;
 #endif
                 switch( fix->fixup_type ) {
+                case FIX_FPPATCH:
+                    *dst++ = fix->offset;
+                    break;
                 case FIX_SEG:
                     if( name == NULL ) {
-                        /* special case for floating point fixup */
-                        if( src[0] == 0x9b ) {
-                           // FWAIT instruction as first byte
-                        } else if( ( src[0] == 0x90 ) && ( src[1] == 0x9B ) ) {
+                        // special case for floating point fixup
+                        if( ( src[0] == 0x90 ) && ( src[1] == 0x9B ) ) {
                            // inline assembler FWAIT instruction 0x90, 0x9b
-                        } else if( ( src[0] & 0xd8 ) == 0xd8 ) {
-                           // FPU instruction, add FWAIT before it
-                            *dst++ = 0x9b;
+                            *dst++ = FIX_FPP_WAIT;
+                        } else if( src[0] == 0x9b && (src[1] & 0xd8) == 0xd8 ) {
+                           // FWAIT as first byte and FPU instruction opcode as second byte
+                            *dst++ = FIX_FPP_NORMAL;
                         } else {
-                            // FIXME - probably wrong use of float !!!!
+                            // skip FP patch
+                            --dst;
                         }
                     } else {
                         skip = 2;

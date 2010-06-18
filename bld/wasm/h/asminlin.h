@@ -79,7 +79,8 @@ enum fixup_types {
         FIX_OFF16,
         FIX_OFF32,
         FIX_PTR16,
-        FIX_PTR32
+        FIX_PTR32,
+        FIX_FPPATCH
 };
 
 enum fixup_options {
