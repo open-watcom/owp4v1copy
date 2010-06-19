@@ -146,7 +146,7 @@ extern void                     AsmLine( char * );
 extern void                     AsmSymInit( void );
 #else
 extern void                     AsmLine( char *, bool );
-extern void                     AsmInit( int, int, int, int );
+extern void                     AsmInit( int, int, int, bool );
 extern void                     AsmSaveCPUInfo( void );
 extern void                     AsmRestoreCPUInfo( void );
 #endif

@@ -3106,67 +3106,27 @@ static int check_size( void )
 
 #if !defined( _STANDALONE_ )
 
-void AsmInit( int cpu, int fpu, int use32, int extn )
-/***************************************************/
+void AsmInit( int use32, int cpu, int fpu, bool fpu_emu )
+/*******************************************************/
 {
     AsmBufferInit();
 
-    if( use32 < 0 )
-        use32 = 0;   // default is 16-bit segment
-    if( cpu < 0 )
-        cpu = 0;     // default is 8086 CPU
-    if( fpu < 0 )
-        fpu = 1;     // default is FPU use
-    if( extn < 0 )
-        extn = 0;    // default is no CPU extension instructions
-    switch( use32 ) {
-    case 0:
-        Code->use32 = 0;
-        break;
-    case 1:
-        Code->use32 = 1;
-        break;
-    }
+    Code->use32 = use32;
     switch( cpu ) {
-    case 0:
-        Code->info.cpu = P_86;
-        if( fpu )
-            Code->info.cpu |= P_87;
-        break;
-    case 1:
-        Code->info.cpu = P_186;
-        if( fpu )
-            Code->info.cpu |= P_87;
-        break;
-    case 2:
-        Code->info.cpu = P_286p;
-        if( fpu )
-            Code->info.cpu |= P_287;
-        break;
-    case 3:
-        Code->info.cpu = P_386p;
-        if( fpu )
-            Code->info.cpu |= P_387;
-        break;
-    case 4:
-        Code->info.cpu = P_486p;
-        if( fpu )
-            Code->info.cpu |= P_387;
-        break;
-    case 5:
-        Code->info.cpu = P_586p;
-        if( fpu )
-            Code->info.cpu |= P_387;
-        if( extn )
-            Code->info.cpu |= P_K3D | P_MMX;
-        break;
-    case 6:
-        Code->info.cpu = P_686p;
-        if( fpu )
-            Code->info.cpu |= P_387;
-        if( extn )
-            Code->info.cpu |= P_K3D | P_MMX | P_SSE | P_SSE2 | P_SSE3;
-        break;
+    case 0: Code->info.cpu = P_86;   break;
+    case 1: Code->info.cpu = P_186;  break;
+    case 2: Code->info.cpu = P_286p; break;
+    case 3: Code->info.cpu = P_386p; break;
+    case 4: Code->info.cpu = P_486p; break;
+    case 5: Code->info.cpu = P_586p | P_K3D | P_MMX; break;
+    case 6: Code->info.cpu = P_686p | P_K3D | P_MMX | P_SSE | P_SSE2 | P_SSE3; break;
+    }
+    floating_point = ( fpu_emu ) ? DO_FP_EMULATION : NO_FP_EMULATION;
+    switch( fpu ) {
+    case 0: floating_point = NO_FP_ALLOWED; break;
+    case 1: Code->info.cpu |= P_87;  break;
+    case 2: Code->info.cpu |= P_287; break;
+    case 3: Code->info.cpu |= P_387; break;
     }
 }
 

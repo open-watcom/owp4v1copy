@@ -85,6 +85,14 @@
 #define BYTE_10                 10
 #define BYTE_16                 16
 
+enum fpe {
+    DO_FP_EMULATION,
+    NO_FP_EMULATION,
+    NO_FP_ALLOWED
+};
+
+extern enum fpe floating_point;
+
 #if defined( _STANDALONE_ )
 
 #define DELIM                   " ,\t\0"
@@ -120,12 +128,6 @@ extern File_Info        AsmFiles;   // files information
 #define OBJ_EXT "obj"
 #endif
 
-enum fpe {
-    DO_FP_EMULATION,
-    NO_FP_EMULATION,
-    NO_FP_ALLOWED
-};
-
 typedef enum smode {
     MODE_MASM6  = 0,
     MODE_MASM5  = 1,
@@ -141,7 +143,6 @@ typedef struct global_options {
     bool        quiet;
     bool        banner_printed;
     bool        debug_flag;
-    enum fpe    floating_point;
     bool        output_comment_data_in_code_records;
 
     /* error handling stuff */

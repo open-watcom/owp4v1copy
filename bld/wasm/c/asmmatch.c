@@ -44,6 +44,10 @@ extern int  AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool 
 
 #endif
 
+#define USE_FPU_EMUL    ((floating_point==DO_FP_EMULATION)&&(!rCode->use32))
+
+enum fpe        floating_point = DO_FP_EMULATION;
+
 static int match_phase_3( int *i, OPNDTYPE determinant );
 
 static int output_3DNow( int i )
@@ -80,22 +84,23 @@ static int output( int i )
     /*
      * Check if FP is valid
      */
-    if(( (ins->cpu & P_FPU_MASK) != P_NO87 ) && ( Options.floating_point == NO_FP_ALLOWED )) {
+    if(( (ins->cpu & P_FPU_MASK) != P_NO87 ) && ( floating_point == NO_FP_ALLOWED )) {
         AsmError( NO_FP_WITH_FPC_SET );
         return( ERROR );
     }
+#endif
+
     /*
      * Output FP fixup if required
      */
-    if(( Options.floating_point == DO_FP_EMULATION )
-        && ( !rCode->use32 )
-        && ( ins->allowed_prefix != NO_FWAIT )
+    if( USE_FPU_EMUL && ( ins->allowed_prefix != NO_FWAIT )
         && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
-            if( AddFloatingPointEmulationFixup( ins, FALSE ) == ERROR ) {
-                return( ERROR );
-            }
-    }
+#if defined( _STANDALONE_ )
+        if( AddFloatingPointEmulationFixup( ins, FALSE ) == ERROR ) {
+            return( ERROR );
+        }
 #endif
+    }
 
     /*
      * Check if CPU and FPU is valid for output code
@@ -163,23 +168,15 @@ static int output( int i )
      */
     if( ins->token == T_FWAIT ) {
         if( (rCode->info.cpu & P_FPU_MASK) < P_387 ) {
-#if defined( _STANDALONE_ )
-            if(( Options.floating_point == DO_FP_EMULATION ) && ( !rCode->use32 )) {
+            if( USE_FPU_EMUL ) {
                 AsmCodeByte( OP_NOP );
             }
-#else
-            AsmCodeByte( OP_NOP );
-#endif
         }
     } else if( ins->allowed_prefix == FWAIT ) {
         AsmCodeByte( OP_WAIT );
-#if defined( _STANDALONE_ )
-    } else if(( Options.floating_point == DO_FP_EMULATION )
-        && ( !rCode->use32 )
-        && ( ins->allowed_prefix != NO_FWAIT )
+    } else if( USE_FPU_EMUL && ( ins->allowed_prefix != NO_FWAIT )
         && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
         AsmCodeByte( OP_WAIT );
-#endif
     } else if( ins->allowed_prefix != NO_FWAIT ) {
         // implicit FWAIT synchronization for 8087 (CPU 8086/80186)
         if(( (rCode->info.cpu & P_CPU_MASK) < P_286 )
@@ -188,19 +185,17 @@ static int output( int i )
         }
     }
 
-#if defined( _STANDALONE_ )
     /*
      * Output FP fixup if required
      */
-    if(( Options.floating_point == DO_FP_EMULATION )
-        && ( !rCode->use32 )
-        && ( ins->allowed_prefix != NO_FWAIT )
+    if( USE_FPU_EMUL && ( ins->allowed_prefix != NO_FWAIT )
         && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
+#if defined( _STANDALONE_ )
         if( AddFloatingPointEmulationFixup( ins, TRUE ) == ERROR ) {
             return( ERROR );
         }
-    }
 #endif
+    }
     /*
      * Output address size prefix
      */

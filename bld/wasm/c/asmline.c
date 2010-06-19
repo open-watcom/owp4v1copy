@@ -685,6 +685,7 @@ void AsmByte( unsigned char byte )
 }
 
 #if defined( _STANDALONE_ )
+
 void AsmLine( char *string )
 /**************************/
 {
@@ -723,14 +724,24 @@ void AsmLine( char *string )
     dbg_output();               // for debuggin only
   #endif
 }
+
 #else
+
 void AsmLine( char *string, bool use_emu )
 /****************************************/
 {
+    enum fpe    old_floating_point;
+
+    old_floating_point = floating_point;
+    if( old_floating_point != NO_FP_ALLOWED ) {
+        floating_point = ( use_emu ) ? DO_FP_EMULATION : NO_FP_EMULATION;
+    }
     // Token_Count is the number of tokens scanned
     Token_Count = AsmScan( string );
     if( Token_Count > 0 ) {
         AsmParse();
     }
+    floating_point = old_floating_point;
 }
+
 #endif

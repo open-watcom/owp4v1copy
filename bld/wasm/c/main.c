@@ -99,7 +99,6 @@ global_options Options = {
     FALSE,              // quiet
     FALSE,              // banner_printed
     FALSE,              // debug_flag
-    DO_FP_EMULATION,    // floating_point
     TRUE,               // output_comment_data_in_code_records
 
     0,                  // error_count
@@ -255,13 +254,13 @@ static void SetFPU( void )
 {
     switch( OptValue ) {
     case 'i':
-        Options.floating_point = DO_FP_EMULATION;
+        floating_point = DO_FP_EMULATION;
         break;
     case '7':
-        Options.floating_point = NO_FP_EMULATION;
+        floating_point = NO_FP_EMULATION;
         break;
     case 'c':
-        Options.floating_point = NO_FP_ALLOWED;
+        floating_point = NO_FP_ALLOWED;
         break;
     case 0:
     case 2:
@@ -1259,7 +1258,7 @@ void set_cpu_parameters( void )
 void set_fpu_parameters( void )
 /*****************************/
 {
-    switch( Options.floating_point ) {
+    switch( floating_point ) {
     case DO_FP_EMULATION:
         add_constant( "__FPI__" );
         break;
@@ -1308,7 +1307,7 @@ void set_fpu_parameters( void )
 void CmdlParamsInit( void )
 /*************************/
 {
-    Code->use32 = 0;    // default is 16-bit segment
+    Code->use32 = 0;                // default is 16-bit segment
     Code->info.cpu = P_86 | P_87;   // default is 8086 CPU and 8087 FPU
 
     if( ForceInclude != NULL )

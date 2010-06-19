@@ -48,7 +48,7 @@
 #elif ( _CPU == _AXP || _CPU == _PPC )
   #include "asinline.h"
 #else
-  #error Unknow Target
+  #error Unknow Target Platform
 #endif
 
 #include <string.h>
@@ -186,18 +186,14 @@ static  char            _clib[] = { "clib" };
 static  char            _math[] = { "math" };
 static  char            _wresppc[] = { "wresppc" };
 
-#else
-  #error Unknown Platform
 #endif
 
 #define MAX_REG_SETS    16
 #define MAXIMUM_BYTESEQ 127
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 #elif _CPU == _AXP || _CPU == _PPC
   #define AsmSymFini    AsmFini
-#else
-  #error Unknown Target
 #endif
 
 
@@ -270,15 +266,11 @@ void            InitAuxInfo( void ) {
 #if _INTEL_CPU
     int         cpu;
     int         fpu;
-    int         use32;
-
   #if _CPU == 8086
-    use32 = 0;
-  #else
-    use32 = 1;
+    bool        fpu_emu;
   #endif
+
     cpu = 0;
-    fpu = 0;
   #if _CPU == 8086
     if( CPUOpts & CPUOPT_80186 ) cpu = 1;
     if( CPUOpts & CPUOPT_80286 ) cpu = 2;
@@ -287,12 +279,39 @@ void            InitAuxInfo( void ) {
     if( CPUOpts & CPUOPT_80486 ) cpu = 4;
     if( CPUOpts & CPUOPT_80586 ) cpu = 5;
     if( CPUOpts & CPUOPT_80686 ) cpu = 6;
-    if( CPUOpts & ( CPUOPT_FPI87 | CPUOPT_FPI ) ) fpu = 1;
-    AsmInit( cpu, fpu, use32, 1 );
+
+    if( CPUOpts & CPUOPT_FP287 ) {
+        fpu = 2;
+    } else if( CPUOpts & CPUOPT_FP387 ) {
+        fpu = 3;
+    } else if( CPUOpts & CPUOPT_FP5 ) {
+        fpu = 3;
+    } else if( CPUOpts & CPUOPT_FP6 ) {
+        fpu = 3;
+    } else if( CPUOpts & (CPUOPT_FPI | CPUOPT_FPI87) ) {
+        // no level specified; use default
+  #if _CPU == 8086
+        fpu = 1;
+  #else
+        fpu = 3;
+  #endif
+    } else {
+        fpu = 0;
+    }
+  #if _CPU == 8086
+    fpu_emu = FALSE;
+    if( CPUOpts & CPUOPT_FPI ) {
+        fpu_emu = TRUE;
+    }
+    if( CPUOpts & CPUOPT_FPI87 ) {
+        fpu_emu = FALSE;
+    }
+    AsmInit( 0, cpu, fpu, fpu_emu );
+  #else
+    AsmInit( 1, cpu, fpu, FALSE );
+  #endif
 #elif _CPU == _AXP || _CPU == _PPC
     AsmInit();
-#else
-    #error Unknown Target
 #endif
 
     DefaultLibs = NULL;
@@ -406,7 +425,7 @@ void            FiniAuxInfo( void ) {
     FreeChain( &DefaultLibs );
     // in case of fatal error, FiniAuxInfo() is called
     // from TDPurge()
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
     FreeChain( &ArrayInfo );
 #endif
     FreeChain( &DependencyInfo );
@@ -417,7 +436,7 @@ void            FiniAuxInfo( void ) {
 void    SubAuxInit( void ) {
 //====================
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 // Initialize aux information for a subprogram.
 
     ArrayInfo = NULL;
@@ -428,7 +447,7 @@ void    SubAuxInit( void ) {
 void    SubAuxFini( void ) {
 //====================
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 // Finalize aux information for a subprogram.
 
     arr_info    *next;
@@ -448,7 +467,7 @@ void    SubAuxFini( void ) {
 #endif
 }
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 static  void    AddArrayInfo( char *arr_name, uint arr_len ) {
 //============================================================
 
@@ -608,8 +627,6 @@ void    DefaultLibInfo( void ) {
     if( Options & OPT_RESOURCES ) {
         AddDefaultLib( _wresppc, _WRESPPC, '1' );
     }
-#else
-  #error Unknown Platform
 #endif
 }
 
@@ -656,7 +673,7 @@ aux_info        *NewAuxEntry( char *name, int name_len ) {
     aux = FMemAlloc( sizeof( aux_info ) + name_len );
     aux->sym_len = name_len;
     memcpy( aux->sym_name, name, name_len );
-    aux->sym_name[ name_len ] = NULLCHAR;
+    aux->sym_name[name_len] = NULLCHAR;
     aux->link = AuxInfo;
     aux->parms = DefaultInfo.parms;
     aux->code = DefaultInfo.code;
@@ -714,7 +731,7 @@ void            Pragma( void ) {
 
 // Process a pragma.
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
     char        *arr;
     uint        arr_len;
 #endif
@@ -738,30 +755,24 @@ void            Pragma( void ) {
                 ScanFnToken();
             }
         }
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
     } else if( RecToken( "ARRAY" ) ) {
         SymbolId();
         TokUpper();
         arr = TokStart;
         arr_len = TokEnd - TokStart;
         ScanToken();
-#if _CPU == 386
         if( RecToken( "FAR" ) ) {
             if( _SmallDataModel( CGOpts ) ) {
                 AddArrayInfo( arr, arr_len );
             }
-        }
-#elif _CPU == 8086
-        if( RecToken( "FAR" ) ) {
-            if( _SmallDataModel( CGOpts ) ) {
-                AddArrayInfo( arr, arr_len );
-            }
+  #if _CPU == 8086
         } else if( RecToken( "HUGE" ) ) {
             if( CGOpts & CGOPT_M_LARGE ) {
                 AddArrayInfo( arr, arr_len );
             }
+  #endif
         }
-#endif
 #endif
     } else {
         AliasInfo = &FortranInfo;
@@ -794,7 +805,7 @@ void            Pragma( void ) {
                     have.f_parm = 1;
                 } else if( !have.f_far && RecToken( "=" ) ) {
                     GetByteSeq();
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
                     have.f_far = 1;
                 } else if( !have.f_far && RecToken( "FAR" ) ) {
                     CurrAux->cclass |= FAR;
@@ -814,7 +825,7 @@ void            Pragma( void ) {
                 } else if( !have.f_export && RecToken( "EXPORT" ) ) {
                     CurrAux->cclass |= DLL_EXPORT;
                     have.f_export = 1;
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
                 } else if( !have.f_value && RecToken( "VALUE" ) ) {
                     GetRetInfo();
                     have.f_value = 1;
@@ -822,7 +833,7 @@ void            Pragma( void ) {
                 } else if( !have.f_value && RecToken( "ABORTS" ) ) {
                     CurrAux->cclass |= SUICIDAL;
                     have.f_value = 1;
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
                 } else if( !have.f_modify && RecToken( "MODIFY" ) ) {
                     GetSaveInfo();
                     have.f_modify = 1;
@@ -982,7 +993,7 @@ static  void    ScanFnToken( void ) {
     TokEnd = ptr;
 }
 
-#if (( _CPU == 8086 || _CPU == 386))
+#if _INTEL_CPU
 static  void    TokUpper( void ) {
 //==========================
 
@@ -1083,7 +1094,7 @@ void            CopyAuxInfo( aux_info *dst, aux_info *src ) {
 
 static  void    DupCallBytes( aux_info *dst, aux_info *src ) {
 //============================================================
-#if _CPU == 8086 || _CPU == 386
+#if _INTEL_CPU
 
     byte_seq    *new_seq;
     uint        seq_len;
@@ -1121,8 +1132,6 @@ static  void    DupCallBytes( aux_info *dst, aux_info *src ) {
     }
     dst->code->relocs = head;
 
-#else
-  #error Unknown Target
 #endif
 }
 
@@ -1136,7 +1145,7 @@ static  void    DupParmInfo( aux_info *dst, aux_info *src ) {
 
     reg_set = src->parms;
     size = 0;
-    while( !HW_CEqual( reg_set[ size ], HW_EMPTY ) ) {
+    while( !HW_CEqual( reg_set[size], HW_EMPTY ) ) {
         ++size;
     }
     ++size;
@@ -1217,7 +1226,7 @@ static  void            ObjectName( void ) {
         FMemFree( CurrAux->objname );
     }
     memcpy( name, TokStart + sizeof( char ), obj_len );
-    name[ obj_len ] = NULLCHAR;
+    name[obj_len] = NULLCHAR;
     CurrAux->objname = name;
     ScanToken();
 }
@@ -1231,7 +1240,7 @@ enum    sym_state       AsmQueryExternal( char *name ) {
 }
 
 
-#if ( _CPU == 8086 || _CPU == 386 )
+#if _INTEL_CPU
 enum    sym_type        AsmQueryType( char *name ) {
 //==================================================
 
@@ -1243,7 +1252,7 @@ enum    sym_type        AsmQueryType( char *name ) {
 static  void    InsertFixups( unsigned char *buff, unsigned i ) {
 //===============================================================
                         // additional slop in buffer to simplify the code
-    unsigned char       temp[MAXIMUM_BYTESEQ+2*sizeof(byte)];
+    unsigned char       temp[MAXIMUM_BYTESEQ + 2 * sizeof( byte )];
     struct asmfixup     *fix;
     struct asmfixup     *head;
     struct asmfixup     *chk;
@@ -1327,7 +1336,7 @@ static  void    InsertFixups( unsigned char *buff, unsigned i ) {
                 }
                 *dst++ = *src++;
             }
-            if( dst > &temp[ MAXIMUM_BYTESEQ ] ) {
+            if( dst > &temp[MAXIMUM_BYTESEQ] ) {
                 Error( PR_BYTE_SEQ_LIMIT );
                 CSuicide();
             }
@@ -1413,12 +1422,11 @@ static  void    GetByteSeq( void ) {
     int             seq_len;
     int             len;
     char            *ptr;
-    byte            buff[MAXIMUM_BYTESEQ+32]; // extra for assembler
+    byte            buff[MAXIMUM_BYTESEQ + 32]; // extra for assembler
 #if _CPU == 8086
-    bool            float_specified;
-
-    float_specified = FALSE;
+    bool            use_fpu_emu = FALSE;
 #endif
+
     seq_len = 0;
 #if _INTEL_CPU
     AsmSaveCPUInfo();
@@ -1433,7 +1441,12 @@ static  void    GetByteSeq( void ) {
             AsmCodeAddress = seq_len;
             AsmCodeBuffer = buff;
 #if _INTEL_CPU
+  #if _CPU == 8086
+            AsmLine( &TokStart[1], use_fpu_emu );
+            use_fpu_emu = FALSE;
+  #else
             AsmLine( &TokStart[1], FALSE );
+  #endif
 #else
             AsmLine( &TokStart[1] );
 #endif
@@ -1446,9 +1459,17 @@ static  void    GetByteSeq( void ) {
             ScanToken();
         } else if( RecToken( "FLOAT" ) ) {
 #if _CPU == 8086
-            AddAFix( seq_len, NULL, FIX_SEG, 0 );
+            if( CPUOpts & CPUOPT_FPI ) {
+                use_fpu_emu = TRUE;
+            }
 #endif
         } else {
+#if _CPU == 8086
+            if( use_fpu_emu ) {
+                AddAFix( seq_len, NULL, FIX_SEG, 0 );
+                use_fpu_emu = FALSE;
+            }
+#endif
             ptr = TokStart;
             if( ( *ptr != 'Z' ) && ( *ptr != 'z' ) )
                 break;
@@ -1489,7 +1510,7 @@ static  hw_reg_set      RegSet( void ) {
         reg = KwLookUp( RegNames, MaxReg, TokStart, TokEnd-TokStart, TRUE );
         if( reg == 0 )
             break;
-        HW_TurnOn( reg_set, RegValue[ reg ] );
+        HW_TurnOn( reg_set, RegValue[reg] );
         ScanToken();
     }
     ReqToken( "]" );
@@ -1506,13 +1527,13 @@ static  hw_reg_set      *RegSets( void ) {
 
     num_sets = 0;
     while( RecToken( "[" ) ) {
-        reg_sets[ num_sets ] = RegSet();
+        reg_sets[num_sets] = RegSet();
         if( ( num_sets < MAX_REG_SETS ) &&
             !HW_CEqual( reg_sets[num_sets], HW_EMPTY ) ) {
             ++num_sets;
         }
     }
-    HW_CAsgn( reg_sets[ num_sets ], HW_EMPTY );
+    HW_CAsgn( reg_sets[num_sets], HW_EMPTY );
     regs = FMemAlloc( ( num_sets + 1 ) * sizeof( hw_reg_set ) );
     memcpy( regs, reg_sets, ( num_sets + 1 ) * sizeof( hw_reg_set ) );
     return( regs );

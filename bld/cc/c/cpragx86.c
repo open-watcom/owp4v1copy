@@ -93,17 +93,9 @@ void PragmaInit( void )
 {
     int         cpu;
     int         fpu;
-    int         use32;
 
     pragmaAuxInfoInit();
 
-#if _CPU == 386
-    use32 = 1;
-    cpu = 3;
-#else
-    use32 = 0;
-    cpu = 0;
-#endif
     AsmFuncNum = 0;
     switch( GET_CPU( ProcRevision ) ) {
     case CPU_86:    cpu = 0; break;
@@ -113,13 +105,31 @@ void PragmaInit( void )
     case CPU_486:   cpu = 4; break;
     case CPU_586:   cpu = 5; break;
     case CPU_686:   cpu = 6; break;
+#if _CPU == 8086
+    default:        cpu = 0; break;
+#else
+    default:        cpu = 3; break;
+#endif
     }
-    switch( GET_FPU( ProcRevision ) ) {
+    switch( GET_FPU_LEVEL( ProcRevision ) ) {
     case FPU_NONE:  fpu = 0; break;
+    case FPU_87:    fpu = 1; break;
+//    case FPU_287:   fpu = 2; break;
+    case FPU_387:   fpu = 3; break;
+    case FPU_586:   fpu = 3; break;
+    case FPU_686:   fpu = 3; break;
+#if _CPU == 8086
     default:        fpu = 1; break;
+#else
+    default:        fpu = 3; break;
+#endif
     }
 
-    AsmInit( cpu, fpu, use32, 1 );
+#if _CPU == 8086
+    AsmInit( 0, cpu, fpu, GET_FPU_EMU( ProcRevision ) );
+#else
+    AsmInit( 1, cpu, fpu, FALSE );
+#endif
 }
 
 
@@ -355,7 +365,7 @@ local int AsmType( TYPEPTR typ, type_modifiers flags )
         return( AsmType( typ->object, flags ) );
     case TYPE_FIELD:
     case TYPE_UFIELD:
-        return( AsmDataType[ typ->u.f.field_type ] );
+        return( AsmDataType[typ->u.f.field_type] );
     case TYPE_FUNCTION:
         return( AsmCodePtrType( flags ) );
     case TYPE_POINTER:
@@ -364,7 +374,7 @@ local int AsmType( TYPEPTR typ, type_modifiers flags )
         typ = typ->object;
         /* fall through */
     default:
-        return( AsmDataType[ typ->decl_type ] );
+        return( AsmDataType[typ->decl_type] );
     }
 }
 
@@ -384,7 +394,7 @@ static int InsertFixups( unsigned char *buff, unsigned i, byte_seq **code )
 /*************************************************************************/
 {
                         /* additional slop in buffer to simplify the code */
-    unsigned char       temp[ MAXIMUM_BYTESEQ + 1 + 2 * sizeof( long ) ];
+    unsigned char       temp[MAXIMUM_BYTESEQ + 1 + 2 * sizeof( long )];
     struct asmfixup     *fix;
     struct asmfixup     *head;
     struct asmfixup     *chk;
@@ -561,7 +571,7 @@ static int InsertFixups( unsigned char *buff, unsigned i, byte_seq **code )
                 }
                 *dst++ = *src++;
             }
-            if( dst > &temp[ MAXIMUM_BYTESEQ ] ) {
+            if( dst > &temp[MAXIMUM_BYTESEQ] ) {
                 CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
                 return( 0 );
             }
@@ -610,18 +620,25 @@ local void FreeAsmFixups( void )
 void AsmSysLine( char *buff )
 /***************************/
 {
+#if _CPU == 8086
+    AsmLine( buff, GET_FPU_EMU( ProcRevision ) );
+#else
     AsmLine( buff, FALSE );
+#endif
 }
 
 local int GetByteSeq( byte_seq **code )
 /*************************************/
 {
-    unsigned char       buff[ MAXIMUM_BYTESEQ + 32 ];
+    unsigned char       buff[MAXIMUM_BYTESEQ + 32];
     char                *name;
     unsigned long       offset;
     fix_words           fixword;
     int                 uses_auto;
     char                too_many_bytes;
+#if _CPU == 8086
+    bool                use_fpu_emu = FALSE;
+#endif
 
     AsmSysInit( buff );
     CompFlags.pre_processing = 1;       /* enable macros */
@@ -632,22 +649,36 @@ local int GetByteSeq( byte_seq **code )
     name = NULL;
     for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
+#if _CPU == 8086
+            AsmLine( Buffer, use_fpu_emu );
+            use_fpu_emu = FALSE;
+#else
             AsmLine( Buffer, FALSE );
+#endif
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
             }
         } else if( CurToken == T_CONSTANT ) {
+#if _CPU == 8086
+            if( use_fpu_emu ) {
+                AddAFix( AsmCodeAddress, NULL, FIX_SEG, 0 );
+                use_fpu_emu = FALSE;
+            }
+#endif
             AsmCodeBuffer[AsmCodeAddress++] = Constant;
             NextToken();
         } else {
+#if _CPU == 8086
+            use_fpu_emu = FALSE;
+#endif
             fixword = FixupKeyword();
             if( fixword == FIXWORD_NONE )
                 break;
             if( fixword == FIXWORD_FLOAT ) {
 #if _CPU == 8086
                 if( GET_FPU_EMU( ProcRevision ) ) {
-                    AddAFix( AsmCodeAddress, NULL, FIX_SEG, 0 );
+                    use_fpu_emu = TRUE;
                 }
 #endif
             } else { /* seg or offset */
@@ -737,7 +768,7 @@ hw_reg_set PragRegName( char *str )
     p = Registers;
     while( *p != '\0' ) {
         if( stricmp( p, str ) == 0 )
-            return( RegBits[ index ] );
+            return( RegBits[index] );
         index++;
         while( *p++ != '\0' ) {
             ;
