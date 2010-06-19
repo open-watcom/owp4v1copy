@@ -329,10 +329,12 @@ $(intname).lib: $(objs)
 # systems where version resource must be added to .DLL
 version_res_nt_386 = version.res
 
-$(dllname).dll: $(intname).lib $(dllname).lnk $(version_res_$(host_os)_$(host_cpu))
+$(dllname).dll: $(intname).lib $(dllname).lnk owf.res $(version_res_$(host_os)_$(host_cpu))
     $(linker) name $(dllname).dll @$(dllname).lnk
 !ifdef version_res_$(host_os)_$(host_cpu)
-    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+    $(rc) -k owf.res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
+!else
+    $(rc) -k owf.res $^@
 !endif
 
 $(dllname).lib: $(dllname).dll
@@ -347,6 +349,9 @@ $(dllname).lnk: $(__MAKEFILES__)
 
 $(statname).lib: $(static_objs)
     $(librarian) $(libflags) $<
+
+owf.res: ../lib/owf.rc .AUTODEPEND
+    $(rc) $(rc_flags) -ad -zk0 $(inc_path) -I../include $[@ -fo=$^@
 
 ./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
     $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)

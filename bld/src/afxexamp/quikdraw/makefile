@@ -1,5 +1,5 @@
 CC = wpp386
-CFLAGS = -bt=nt -zq -fh -D_DEBUG
+CFLAGS = -bt=nt -zq -fh
 OBJS = quikdraw.obj quikfrm.obj drawfrm.obj drawdoc.obj drawview.obj shapes.obj
 LNK = quikdraw.lnk
 

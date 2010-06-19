@@ -162,4 +162,6 @@ END
 
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST DISCARDABLE appmanif.xml
 
-#include <afxres.rc>
+#ifndef _AFXDLL
+    #include <afxres.rc>
+#endif
