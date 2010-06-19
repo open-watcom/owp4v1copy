@@ -30,6 +30,7 @@
 ****************************************************************************/
 
 
+typedef signed_32   soffset;
 typedef unsigned_32 offset;
 typedef unsigned_16 segment;
 

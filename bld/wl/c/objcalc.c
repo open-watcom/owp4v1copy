@@ -715,8 +715,8 @@ static void FindUninitDataStart( void )
 }
 
 typedef struct  {
-    unsigned_32 grp_addr;
-    unsigned_32 end_addr;
+    offset      grp_addr;
+    offset      end_addr;
     group_entry *currgrp;
     group_entry *lastgrp;  // used only for copy classes
     bool        first_time;
@@ -728,7 +728,7 @@ static bool FindEndAddr( void *_seg, void *_info )
 {
     seg_leader  *seg  = _seg;
     grpaddrinfo *info = _info;
-    unsigned_32 seg_addr;
+    offset      seg_addr;
 
     if( FmtData.type & MK_REAL_MODE ) {
         seg_addr = MK_REAL_ADDR( seg->seg_addr.seg, seg->seg_addr.off );
@@ -759,7 +759,7 @@ static bool FindInitEndAddr( void *_seg, void *_info )
 {
     seg_leader  *seg  = _seg;
     grpaddrinfo *info = _info;
-    unsigned_32 seg_addr;
+    offset      seg_addr;
 
     if( FmtData.type & MK_REAL_MODE ) {
         seg_addr = MK_REAL_ADDR( seg->seg_addr.seg, seg->seg_addr.off );
@@ -807,7 +807,7 @@ static void CalcGrpAddr( group_entry *currgrp )
     grpaddrinfo     info;
     seg_leader      *seg;
     class_entry     *class;
-    unsigned long   addr;
+    offset          addr;
     targ_addr       save;
 
     for( ; currgrp != NULL; currgrp = currgrp->next_group ) {
@@ -1065,7 +1065,7 @@ static bool DefPubSym( void *_pub, void *_info )
     seg_leader  *leader;
     offset      off;
     unsigned_16 frame;
-    signed_32   temp;
+    offset      temp;
 
     if( pub->info & (SYM_DEAD | SYM_IS_ALTDEF) )
         return( FALSE );

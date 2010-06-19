@@ -243,7 +243,7 @@ void SetTocAddr( offset off, group_entry *group )
     XDefSymAddr( TocSym, off + TocShift, group->grp_addr.seg );
 }
 
-static signed_32 OffFromToc( offset off )
+static offset OffFromToc( offset off )
 /***************************************/
 {
     offset toff;
@@ -255,11 +255,11 @@ static signed_32 OffFromToc( offset off )
     return( toff );
 }
 
-signed_32 FindEntryPosInToc( TocEntryId *e )
+offset FindEntryPosInToc( TocEntryId *e )
 /*************************************************/
 {
     TocEntry    searchEntry;
-    TocEntry *  entry;
+    TocEntry    *entry;
 
     searchEntry.e = *e;
     entry = FindHTableElem( Toc, &searchEntry );
@@ -271,7 +271,7 @@ signed_32 FindEntryPosInToc( TocEntryId *e )
 
 }
 
-signed_32 FindSdataOffPosInToc( segdata *sdata, offset off )
+offset FindSdataOffPosInToc( segdata *sdata, offset off )
 /*****************************************************************/
 {
     TocEntryId e;
@@ -282,7 +282,7 @@ signed_32 FindSdataOffPosInToc( segdata *sdata, offset off )
     return( FindEntryPosInToc( &e ) );
 }
 
-signed_32 FindSymPosInToc( symbol * sym )
+offset FindSymPosInToc( symbol * sym )
 /**********************************************/
 {
     TocEntryId e;

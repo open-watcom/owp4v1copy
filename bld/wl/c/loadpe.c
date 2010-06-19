@@ -198,14 +198,14 @@ static offset CalcIATAbsOffset( void )
     return( IDataGroup->linear + FmtData.base + IData.iat_off );
 }
 
-static void CalcImpOff( dll_sym_info *dll, unsigned *off )
+static void CalcImpOff( dll_sym_info *dll, offset *off )
 /********************************************************/
 {
     if( dll != NULL) { // if not end of mod marker
         dll->iatsym->addr.off = *off;
         dll->iatsym->addr.seg = 0;
     }
-    *off += 4;
+    *off += sizeof( pe_va );
 }
 
 static void XFerReloc( offset off, group_entry *group, unsigned type )
@@ -255,12 +255,10 @@ offset FindIATSymAbsOff( symbol *sym )
     return( dll->iatsym->addr.off );
 }
 
-signed_32 FindSymPosInTocv( symbol *sym )
+offset FindSymPosInTocv( symbol *sym )
 /***********************************************/
 {
-    offset off = FindIATSymAbsOff( sym ) - IDataGroup->linear - FmtData.base;
-    off = off - TocShift - IData.eof_ilt_off;
-    return( off );
+    return( FindIATSymAbsOff( sym ) - IDataGroup->linear - FmtData.base - TocShift - IData.eof_ilt_off );
 }
 
 static void GenPETransferTable( void )
@@ -306,10 +304,7 @@ static void GenPETransferTable( void )
                                 group, PE_FIX_HIGHLOW );
                 }
             } else {
-                int_16 pos;
-                pos = FindSymPosInTocv( sym );
-                PPCJump[0] &= 0xffff0000;
-                PPCJump[0] |= 0x0000ffff & pos;
+                PPCJump[0] = (PPCJump[0] & 0xffff0000) | (FindSymPosInTocv( sym ) & 0x0000ffff);
             }
             off = sym->addr.off - base;
             PutInfo( XFerSegData->data + off, data, datalen );
@@ -416,9 +411,9 @@ static void WriteDataPages( pe_header *header, pe_object *object )
     }
 }
 
-static void WalkImportsMods( void (*action)(dll_sym_info *, unsigned*),
-                             void *cookie )
-/****************************************************************/
+static void WalkImportsMods( void (*action)(dll_sym_info *, offset *),
+                                                        offset *cookie )
+/**********************************************************************/
 {
     struct module_import        *mod;
     struct import_name          *imp;

@@ -35,10 +35,10 @@ extern void             CleanToc( void );
 extern void             AddSymToToc( symbol * );
 extern void             AddSdataOffToToc( segdata *, offset );
 extern void             PrepareToc( void );
-extern signed_32        FindSdataOffPosInToc( segdata *, offset );
+extern offset           FindSdataOffPosInToc( segdata *, offset );
 extern offset           FindIATSymAbsOff( symbol * );
-extern signed_32        FindSymPosInToc( symbol * );
-extern signed_32        FindSymPosInTocv( symbol * );
+extern offset           FindSymPosInToc( symbol * );
+extern offset           FindSymPosInTocv( symbol * );
 extern unsigned long    GetTocSize( void );
 extern void             WriteToc( virt_mem );
 extern void             SetTocAddr( offset , group_entry * );
@@ -48,4 +48,3 @@ extern void             ResetToc( void );
 
 extern offset TocSize;
 extern offset TocShift;
-

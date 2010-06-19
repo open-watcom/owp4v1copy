@@ -162,7 +162,7 @@ static unsigned_32 GetLeaf( void )
     } else if( leaf == COMDEF_LEAF_3 ) {
         value = GET_U16_UN(ObjBuff);
         ObjBuff += sizeof( unsigned_16 );
-        value += ( unsigned_32 )( *( unsigned char UNALIGN * )ObjBuff ) << 16;
+        value += (unsigned_32)GET_U8_UN(ObjBuff) << 16;
         ObjBuff += sizeof( char );
     } else if( leaf == COMDEF_LEAF_4 ) {
         value = GET_U32_UN(ObjBuff);

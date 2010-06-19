@@ -93,7 +93,7 @@ void DoRelocs( void )
     unsigned    omftype;
     offset      place_to_fix;
     unsigned    loc;
-    signed_32   addend;
+    offset      addend;
     frame_spec  fthread;
     frame_spec  tthread;
 
@@ -134,7 +134,7 @@ void DoRelocs( void )
             }
             place_to_fix = ((typ & 3) << 8) + GET_U8_UN( ObjBuff );
             ++ObjBuff;
-            typ = *ObjBuff;
+            typ = GET_U8_UN( ObjBuff );
             ++ObjBuff;
             loc = typ >> 4 & 7;
             if( typ & 0x80 ) {
@@ -151,10 +151,10 @@ void DoRelocs( void )
             addend = 0;
             if( loc <= TARGET_ABSWD ) {  /*  if( (loc & 4) == 0 )then */
                 if( ObjFormat & FMT_32BIT_REC ) {
-                    addend = *((signed_32 UNALIGN *)ObjBuff);
-                    ObjBuff += sizeof( signed_32 );
+                    addend = GET_U32_UN( ObjBuff );
+                    ObjBuff += sizeof( unsigned_32 );
                 } else {
-                    addend = GET_U16_UN(ObjBuff);
+                    addend = GET_U16_UN( ObjBuff );
                     ObjBuff += sizeof( unsigned_16 );
                 }
             }
@@ -264,7 +264,8 @@ void ProcBakpat( void )
     seg = (segnode *) FindNode( SegNodes, GetIdx() );
     if( seg->info & SEG_DEAD )
         return;
-    loctype = *ObjBuff++;
+    loctype = GET_U8_UN( ObjBuff );
+    ++ObjBuff;
     StoreBakPat( seg->entry, loctype );
 }
 
@@ -336,7 +337,8 @@ void ProcNbkpat( void )
     symbol              *sym;
     byte                loctype;
 
-    loctype = *ObjBuff++;
+    loctype = GET_U8_UN( ObjBuff );
+    ++ObjBuff;
     symname = FindName( GetIdx() );
     sym = RefISymbol( symname->name );
     if( !IS_SYM_COMDAT(sym) )           /* can't handle these otherwise */

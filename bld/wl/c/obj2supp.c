@@ -63,7 +63,7 @@
 
 typedef struct fix_data {
     byte        *data;
-    unsigned_32 value;              /* value at location being patched */
+    offset      value;      /* value at location being patched */
     targ_addr   loc_addr;
     targ_addr   tgt_addr;
     fix_type    type;
@@ -76,14 +76,14 @@ typedef struct fix_data {
 
 typedef struct {
     fix_type    flags;
-    unsigned_32 off;
+    offset      off;
     void        *target;
     void        *frame;
 } fixupf_t;
 
 typedef struct {
     fix_type    flags;
-    unsigned_32 off;
+    offset      off;
     void        *target;
 } fixup_t;
 
@@ -105,9 +105,9 @@ static fix_type         LastOptType;
 static segdata          *LastSegData;
 static offset           FixupOverflow;
 
-static unsigned         MapOS2FixType( unsigned type );
-static void             PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta );
-static void             Relocate( save_fixup *save, fix_data *fix, frame_spec *targ );
+static unsigned         MapOS2FixType( fix_type type );
+static void             PatchOffset( fix_data *fix, offset val, bool isdelta );
+static void             Relocate( offset off, fix_data *fix, frame_spec *targ );
 
 
 #define MAX_ADDEND_SIZE ( 2 * sizeof( unsigned_32 ) )
@@ -249,7 +249,7 @@ static void UpdateFramePtr( frame_spec *frame )
 }
 
 static void GetFrameAddr( frame_spec *frame, targ_addr *addr,
-                          targ_addr *tgt_addr, unsigned_32 off )
+                          targ_addr *tgt_addr, offset off )
 /**************************************************************/
 {
     switch( frame->type ) {
@@ -360,13 +360,14 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
     fix_data    fix;
     targ_addr   faddr;
     fix_type    fixtype = save->u.fixup.flags;
+    offset      off = save->u.fixup.off;
 
     memset( &fix, 0, sizeof( fix_data ) );        // to get all bitfields 0
-    GetFrameAddr( targ, &fix.tgt_addr, NULL, save->u.fixup.off );
-    GetFrameAddr( frame, &faddr, &fix.tgt_addr, save->u.fixup.off );
+    GetFrameAddr( targ, &fix.tgt_addr, NULL, off );
+    GetFrameAddr( frame, &faddr, &fix.tgt_addr, off );
     fix.type = fixtype;
     fix.loc_addr = CurrRec.addr;
-    fix.loc_addr.off += save->u.fixup.off;
+    fix.loc_addr.off += off;
 
     if( targ->type == FIX_FRAME_EXT ) {
         if( targ->u.sym->info & SYM_TRACE ) {
@@ -437,7 +438,7 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
         }
     }
 
-    Relocate( save, &fix, targ );
+    Relocate( off, &fix, targ );
 }
 
 unsigned IncExecRelocs( void *_save )
@@ -674,13 +675,12 @@ static unsigned FindGroupIdx( segment seg )
     return( 0 );
 }
 
-static void PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta )
+static void PatchOffset( fix_data *fix, offset val, bool isdelta )
 /*********************************************************************/
 /* patch offsets into the loaded object */
 {
     byte        *code;
-    unsigned_32 oldval;
-    signed_32   sval;
+    offset      oldval;
 
     FixupOverflow = 0;
     if( val == 0 )
@@ -705,10 +705,10 @@ static void PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta )
         }                       // NOTE the fall through
     case FIX_NO_OFFSET:         // used for FIX_BASE
         if( fix->type & FIX_SIGNED ) {
+            oldval = val;
+            val += GET_S16( code );
             if( isdelta ) {
-                sval = (signed_32)GET_S16( code ) + val;
-                val = sval;
-                if( sval > 0x7FFF ) {
+                if( (soffset)val > 0x7FFF ) {
                     val = val & 0xFFFF;
                     if( val > 0x7FFF ) {
                         FixupOverflow = 1;
@@ -716,9 +716,6 @@ static void PatchOffset( fix_data *fix, unsigned_32 val, bool isdelta )
                     }
                 }
             } else {
-                oldval = val;
-                sval = (signed_32)GET_S16( code );
-                val += sval;
                 if( ( oldval >> 16 ) < ( val >> 16 ) ) {
                     FixupOverflow = 1;
                 } else if( (fix->type & FIX_SIGNED)
@@ -802,7 +799,7 @@ static offset GetSegOff( segdata *sdata )
     return( sdata->a.delta + sdata->u.leader->seg_addr.off );
 }
 
-static void CheckPartialRange( fix_data *fix, signed_32 off,
+static void CheckPartialRange( fix_data *fix, offset off,
                                unsigned_32 mask, unsigned_32 topbit )
 /*******************************************************************/
 {
@@ -827,10 +824,8 @@ static void CheckPartialRange( fix_data *fix, signed_32 off,
 static bool CheckSpecials( fix_data *fix, frame_spec *targ )
 /**********************************************************/
 {
-    signed_32   off;
-    unsigned_32 uoff;
-    signed_32   temp;
-    signed_32   pos;
+    offset      off;
+    offset      pos;
     unsigned    fixsize;
     group_entry *group;
     segdata     *sdata;
@@ -866,15 +861,16 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
                 pos = FindSymPosInToc( targ->u.sym );
             } else {
                 sdata = GetFrameSegData( targ );
-                uoff = fix->tgt_addr.off - GetSegOff( sdata );
-                pos = FindSdataOffPosInToc( sdata, uoff );
+                off = fix->tgt_addr.off - GetSegOff( sdata );
+                pos = FindSdataOffPosInToc( sdata, off );
             }
         }
         DbgVerify( ( pos % 4 ) == 0, "symbol not in toc" );
-        if( fix->type & FIX_OFFSET_16 )
-            PUT_U16( fix->data, (signed_16)pos );
-        else
+        if( fix->type & FIX_OFFSET_16 ) {
+            PUT_U16( fix->data, pos );
+        } else {
             PUT_U32( fix->data, pos );
+        }
         return( TRUE );
     } else if( special == FIX_IFGLUE ) {
         if( ( targ->type == FIX_FRAME_EXT ) && IS_SYM_IMPORTED( targ->u.sym ) ) {
@@ -950,20 +946,19 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         if( fix->type & FIX_ABS ) {
             off -= FindGroup( fix->loc_addr.seg )->linear;
         }
-    } else if( !(FmtData.type & MK_DOS16M) ) {
-        off = SUB_ADDR( fix->tgt_addr, fix->loc_addr );
 #ifdef _DOS16M
-    } else {
+    } else if( FmtData.type & MK_DOS16M ) {
         off = SUB_16M_ADDR( fix->tgt_addr, fix->loc_addr );
 #endif
+    } else {
+        off = SUB_ADDR( fix->tgt_addr, fix->loc_addr );
     }
     fixsize = CalcFixupSize( fix->type );
     if ( !(fix->type & FIX_NOADJ) ) {
         off -= fixsize;
     }
     if( fix->type == FIX_OFFSET_16 ) {
-        temp = off + ( fix->loc_addr.off + fixsize );
-        if( ( temp < 0 ) || ( temp >= 0x10000 ) ) {
+        if( off + ( fix->loc_addr.off + fixsize ) >= 0x10000 ) {
             LnkMsg( LOC+ERR+MSG_FIXUP_OFF_RANGE, "a", &fix->loc_addr );
         }
     } else if( fix->type == FIX_OFFSET_21 ) {
@@ -1242,7 +1237,7 @@ static void MakeBase( fix_data *fix )
 static byte OS2OffsetFixTypeMap[] = { 1, 0, 5, 1, 7, 1};
 static byte OS2SegmentedFixTypeMap[] = { 2, 1, 3, 1, 6, 1};
 
-static unsigned MapOS2FixType( unsigned type )
+static unsigned MapOS2FixType( fix_type type )
 /********************************************/
 {
     unsigned    off;
@@ -1644,8 +1639,8 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
     }
 }
 
-static void Relocate( save_fixup *save, fix_data *fix, frame_spec *targ )
-/***********************************************************************/
+static void Relocate( offset off, fix_data *fix, frame_spec *targ )
+/*****************************************************************/
 {
     int         shift;
     unsigned    datasize;
@@ -1667,11 +1662,11 @@ static void Relocate( save_fixup *save, fix_data *fix, frame_spec *targ )
 
         addbuf[0] = 0;
         addbuf[1] = 0;
-        shift = ( save->u.fixup.off < 2 ) ? save->u.fixup.off : 2;
+        shift = ( off < 2 ) ? off : 2;
         datasize += shift;
         fix->data += 2;
     }
-    ReadInfo( CurrRec.seg->data + save->u.fixup.off - shift, fix->data - shift, datasize );
+    ReadInfo( CurrRec.seg->data + off - shift, fix->data - shift, datasize );
 
     if( !CheckSpecials( fix, targ ) ) {
         PatchData( fix );
@@ -1679,5 +1674,5 @@ static void Relocate( save_fixup *save, fix_data *fix, frame_spec *targ )
             FarCallOpt( fix );
         FmtReloc( fix, targ );
     }
-    PutInfo( CurrRec.seg->data + save->u.fixup.off - shift, fix->data - shift, datasize );
+    PutInfo( CurrRec.seg->data + off - shift, fix->data - shift, datasize );
 }
