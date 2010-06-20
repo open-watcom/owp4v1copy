@@ -308,7 +308,7 @@ CArchive &CArchive::operator<<( const CString &str )
     int nLength = str.GetLength();
 #ifdef _UNICODE
     (*this) << (BYTE)0xFF;
-    (*this) << (BYTE)0xFFFE;
+    (*this) << (WORD)0xFFFE;
 #endif
     if( nLength < 0xFF ) {
         (*this) << (BYTE)nLength;
