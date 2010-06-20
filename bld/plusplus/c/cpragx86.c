@@ -1041,10 +1041,8 @@ void AsmSysPCHWriteCode( AUX_INFO *info )
                     d = copyCodeLen( d, p, sizeof( unsigned long ) );
                     p += sizeof( unsigned long );
                     break;
-                case 0x9B: // FWAIT
-                    break;
                 default:
-                    DbgNever();
+                    break;
                 }
             }
         } else {
@@ -1096,10 +1094,8 @@ void AsmSysPCHReadCode( AUX_INFO *info )
                     copyCodeLen( p, &sym, sizeof( sym ) );
                     p += sizeof( SYMBOL ) + sizeof( unsigned long );
                     break;
-                case 0x9B: // FWAIT
-                    break;
                 default:
-                    DbgNever();
+                    break;
                 }
             }
         } else {
