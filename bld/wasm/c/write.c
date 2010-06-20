@@ -563,11 +563,13 @@ void get_frame( fixup *fixnode, struct asmfixup *fixup )
 /*************************************************************/
 {
     if( fixup->frame == NULL ) {
-        fixnode->lr.frame = FRAME_TARG;
-        fixnode->lr.frame_datum = fixnode->lr.target_datum;
-    } else if( fixup->frame == (asm_sym *)-1 ) {
-        fixnode->lr.frame = FRAME_LOC;
-        fixnode->lr.frame_datum = 0;
+        if( fixup->fixup_type == FIX_FPPATCH ) {
+            fixnode->lr.frame = FRAME_LOC;
+            fixnode->lr.frame_datum = 0;
+        } else {
+            fixnode->lr.frame = FRAME_TARG;
+            fixnode->lr.frame_datum = fixnode->lr.target_datum;
+        }
     } else if( fixup->frame->state == SYM_GRP ) {
         fixnode->lr.frame = FRAME_GRP;
         fixnode->lr.frame_datum = ((dir_node *)fixup->frame)->e.grpinfo->idx;
@@ -768,6 +770,7 @@ static struct fixup *CreateFixupRec( unsigned long offset, struct asmfixup *fixu
         break;
     case FIX_RELOFF16:
         fixnode->self_relative = TRUE;
+    case FIX_FPPATCH:
     case FIX_OFF16:
         fixnode->loc_method = FIX_OFFSET;
         break;
@@ -1065,6 +1068,7 @@ void FlushCurrSeg( void )
         case FIX_RELOFF8:
             i = 1;
             break;
+        case FIX_FPPATCH:
         case FIX_OFF16:
         case FIX_RELOFF16:
         case FIX_SEG:

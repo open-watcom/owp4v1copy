@@ -364,59 +364,79 @@ int store_fixup( int index )
     return( NOT_ERROR );
 }
 
-int MakeFpFixup( struct asm_sym *sym )
-/*************************************/
+static int MakeFpFixup( char *patch_name )
+/****************************************/
 {
-    int     old_count;
-    asm_sym *old_frame;
+    dir_node            *dir;
+    struct asmfixup     *fixup;
 
-    old_count = Opnd_Count;
-    old_frame = Frame;
-    Opnd_Count = OPND3;
-    Frame = (asm_sym *)-1;
-    AddFixup( sym, FIX_OFF16, OPTJ_NONE );
-    Frame = old_frame;
-    Opnd_Count = old_count;
-    if( store_fixup( OPND3 ) == ERROR )
-        return( ERROR ); // extra entry in insfixups
-    return( NOT_ERROR );
+    dir = (dir_node *)AsmGetSymbol( patch_name );
+    if( dir == NULL ) {
+        dir = dir_insert( patch_name, TAB_EXT );
+        if( dir != NULL ) {
+            GetSymInfo( &dir->sym );
+            dir->sym.offset = 0;
+            dir->sym.referenced = TRUE;
+            dir->sym.mem_type = MT_FAR;
+            SetMangler( &dir->sym, "N", LANG_NONE );
+        }
+    }
+    if( dir != NULL ) {
+        if( Parse_Pass != PASS_1 ) {
+            fixup = AsmAlloc( sizeof( struct asmfixup ) );
+            if( fixup == NULL )
+                return( ERROR );
+            fixup->external = 0;
+            fixup->fixup_loc = AsmCodeAddress;
+            fixup->fixup_seg = NULL;
+            fixup->sym = &dir->sym;
+            fixup->offset = 0;
+            fixup->frame = NULL;
+            fixup->next = dir->sym.fixup;
+            dir->sym.fixup = fixup;
+            fixup->fixup_type = FIX_FPPATCH;
+            fixup->fixup_option = OPTJ_NONE;
+            if( FixupListHead == NULL ) {
+                FixupListTail = FixupListHead = fixup;
+            } else {
+                FixupListTail->next_loc = fixup;
+                FixupListTail = fixup;
+            }
+            fixup->next_loc = NULL;
+        }
+        return( NOT_ERROR );
+    }
+    return( ERROR );
 }
 
 #endif
 
-
-int AddFPpatchFixup( fp_patches patch, bool secondary )
-/*****************************************************/
+int AddFPPatchAndFixups( fp_patches patch )
+/*****************************************/
 {
+    if( FPPatchName[patch] != NULL ) {
 #if defined( _STANDALONE_ )
-    dir_node        *dir;
-    char            **patch_name_array;
+        char    *patch_name;
 
-    patch_name_array = ( secondary ? FPPatchAltName : FPPatchName );
-
-    /* put out an extern def for the the patch */
-    if( patch_name_array[patch] == NULL )
-        return( NOT_ERROR );
-    dir = (dir_node *)AsmGetSymbol( patch_name_array[patch] );
-    if( dir == NULL ) {
-        dir = dir_insert( patch_name_array[patch], TAB_EXT );
-        if( dir == NULL )
+        patch_name = FPPatchName[patch];
+        if( MakeFpFixup( patch_name ) == ERROR )
             return( ERROR );
-        GetSymInfo( &dir->sym );
-        dir->sym.offset = 0;
-        dir->sym.referenced = TRUE;
-        dir->sym.mem_type = MT_FAR;
-        SetMangler( &dir->sym, "N", LANG_NONE );
-    }
-    if( MakeFpFixup( &dir->sym ) == ERROR )
-        return( ERROR );
+        if( patch == FPP_WAIT ) {
+            AsmCodeByte( OP_NOP );
+        } else {
+            AsmCodeByte( OP_WAIT );
+            patch_name = FPPatchAltName[patch];
+            if( patch_name != NULL ) {
+                return( MakeFpFixup( patch_name ) );
+            }
+        }
 #else
-    struct asmfixup     *fixup;
+        struct asmfixup     *fixup;
 
-    if( !secondary ) {
         fixup = AsmAlloc( sizeof( struct asmfixup ) );
-        if( fixup == NULL )
+        if( fixup == NULL ) {
             return( ERROR );
+        }
         fixup->next = FixupHead;
         FixupHead = fixup;
         fixup->external = 0;
@@ -425,8 +445,7 @@ int AddFPpatchFixup( fp_patches patch, bool secondary )
         fixup->offset = patch;
         fixup->fixup_type = FIX_FPPATCH;
         fixup->fixup_option = OPTJ_NONE;
-    }
 #endif
+    }
     return( NOT_ERROR );
 }
-

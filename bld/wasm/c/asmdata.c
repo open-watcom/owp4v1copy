@@ -336,11 +336,11 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
 #endif
             break;
         case T_ID: {
-            int i;
-            int fixup_type;
-            asm_sym *init_sym;
-            char *ptr;
-            long data = 0;
+            int                 i;
+            enum fixup_types    fixup_type;
+            asm_sym             *init_sym;
+            char                *ptr;
+            long                data = 0;
             struct asmfixup     *fixup;
             /* temporary test .. if this works, combine code for id & resid */
 #if defined( _STANDALONE_ )
@@ -470,12 +470,12 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             break;
             }
         case T_UNARY_OPERATOR: {
-            int i;
-            int fixup_type;
-            int seg_off_operator_loc = 0;
-            asm_sym *init_sym;
-            char *ptr;
-            long data = 0;
+            int                 i;
+            enum fixup_types    fixup_type;
+            int                 seg_off_operator_loc = 0;
+            asm_sym             *init_sym;
+            char                *ptr;
+            long                data = 0;
             struct asmfixup     *fixup;
 
             if( AsmBuffer[cur_pos]->u.value == T_OFFSET ||

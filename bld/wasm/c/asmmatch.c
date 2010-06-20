@@ -44,7 +44,7 @@
 #if defined( _STANDALONE_ )
 extern void     AddLinnumDataRef( void );
 #endif
-extern int      AddFPpatchFixup( fp_patches patch, bool secondary );
+extern int      AddFPPatchAndFixups( fp_patches patch );
 
 enum fpe        floating_point = DO_FP_EMULATION;
 
@@ -249,20 +249,10 @@ static int output( int i )
     }
 
     /*
-     * Output FPU instruction emulation patch code and fixup
+     * Output FPU instruction emulation patch code and fixups
      */
-    if( USE_FPU_EMUL && patch != FPP_NONE ) {
-        if( AddFPpatchFixup( patch, FALSE ) == ERROR ) {
-            return( ERROR );
-        }
-        if( patch == FPP_WAIT ) {
-            AsmCodeByte( OP_NOP );
-        } else {
-            AsmCodeByte( OP_WAIT );
-            if( AddFPpatchFixup( patch, TRUE ) == ERROR ) {
-                return( ERROR );
-            }
-        }
+    if( AddFPPatchAndFixups( patch ) == ERROR ) {
+        return( ERROR );
     }
 
     /*
