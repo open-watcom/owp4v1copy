@@ -174,6 +174,42 @@ static void split_at_GML_tag( void )
     }
 }
 
+
+/***************************************************************************/
+/*  look for control word separator character and split line if found      */
+/*  and other conditions don't prevent it                                  */
+/*  if splitpos is not NULL, the CWsep is already known                    */
+/***************************************************************************/
+
+static void split_at_CW_sep_char( char * splitpos ) {
+    /***********************************************************/
+    /*  if 2 CW_sep_chars follow, don't split line             */
+    /*  ... this is NOWHERE documented, but wgml 4.0 tested    */
+    /*  also don't split if last char of record                */
+    /***********************************************************/
+
+    if( !(*(buff2 + 1) == '\'') ) {
+        if( splitpos == NULL ) {        // splitpos not yet known
+            splitpos = strchr( buff2 + 2, CW_sep_char );
+        }
+
+        if( (splitpos != NULL) && (*(splitpos + 1) != '\0') ) {
+            if( *(splitpos + 1) != CW_sep_char ) {
+                split_input( buff2, splitpos + 1 );// split after CW_sep_char
+
+                buff2_lg = strnlen_s( buff2, buf_size ) - 1;
+                *(buff2 + buff2_lg) = '\0'; // terminate 1. part
+#if 0
+            } else {                    // ignore 1 CW_sep_char TBD
+                memmove_s( splitpos, splitpos - buff2 + buff2_lg + 1,
+                           splitpos + 1, splitpos - buff2 + buff2_lg );
+                buff2_lg = strnlen_s( buff2, buf_size );
+#endif
+            }
+        }
+    }
+}
+
 /***************************************************************************/
 /*  take the contents of the input line in buff2 and try to make the best  */
 /*  of it                                                                  */
@@ -204,8 +240,26 @@ void        process_line( void )
 
     /***********************************************************************/
     /*  look for GML tag start character and split line at GML tag         */
+    /*  special for script control line: possibly split at CW_sep_char     */
     /***********************************************************************/
+    if( !ProcFlags.literal && (*buff2 == SCR_char) ) {
+        pchar = strchr( buff2 + 1, CW_sep_char );
+        p2 = strchr( buff2 + 1, GML_char );
+        if( pchar && (p2 > pchar) ) {// GML_char follows CW_sepchar in buffer
 
+            for( p2 = buff2 + 1; *p2 == SCR_char; p2++ ) {
+                ; /* empty */
+            }
+            if( !(  (*p2 == '\'') ||    // suppress CW_separator
+                    (*p2 == '*')  ||    // comment
+                    (CW_sep_char == '\0') ||// no CW sep char
+                    !strnicmp( p2, "cm ", 3) // comment
+                 ) ) {
+
+                split_at_CW_sep_char( pchar );  // now split record
+            }
+        }
+    }
     split_at_GML_tag();
 
     if( !ProcFlags.literal ) {
@@ -253,30 +307,7 @@ void        process_line( void )
             } else {
                 ProcFlags.CW_sep_ignore = false;
 
-                /***********************************************************/
-                /*  if 2 CW_sep_chars follow, don't split line             */
-                /*  ... this is NOWHERE documented, but wgml 4.0 tested    */
-                /*  also don't split if last char of record                */
-                /***********************************************************/
-
-                if( !(*(buff2 + 1) == '\'') ) {
-                    pchar = strchr( buff2 + 2, CW_sep_char );
-
-                    if( (pchar != NULL) && (*(pchar + 1) != '\0') ) {
-                        if( *(pchar + 1) != CW_sep_char ) {
-                            split_input( buff2, pchar + 1 );// split after CW_sep_char
-
-                            buff2_lg = strnlen_s( buff2, buf_size ) - 1;
-                            *(buff2 + buff2_lg) = '\0'; // terminate 1. part
-#if 0
-                        } else {        // ignore 1 CW_sep_char TBD
-                            memmove_s( pchar, pchar - buff2 + buff2_lg + 1,
-                                       pchar + 1, pchar - buff2 + buff2_lg );
-                            buff2_lg = strnlen_s( buff2, buf_size );
-#endif
-                        }
-                    }
-                }
+                split_at_CW_sep_char( NULL );
             }
         }
     }

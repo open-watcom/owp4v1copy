@@ -33,6 +33,7 @@
 .*:123
 :p
 This :HP2.test:eHP2. fragment. :hp1.111.:hp1.xxx:ehp1.:ehp1.
+.br;This line contains a :HP1.highlighted phrase:eHP1. with external spaces.
 .br
 Here we have some text to fill the line. Let it overflow, just to see
 whether wgml 4.0 and our new wgml handle line overflow and to see the
