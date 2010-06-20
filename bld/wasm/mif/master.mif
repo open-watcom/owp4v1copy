@@ -44,7 +44,8 @@ extra_c_flags_genmsomf = -DMSG_WOMP_RC_BASE=200
 extra_c_flags_fixup = -DMSG_WOMP_RC_BASE=200
 extra_c_flags_asmalloc = $(trmem_cover_cflags)
 extra_c_flags_trmem = $(trmem_cflags)
-extra_c_flags_fpfixup = -I"$(cg_dir)/intel/h"
+extra_c_flags_asmfixup = -I"$(cg_dir)/intel/h"
+extra_c_flags_asmmatch = -I"$(cg_dir)/intel/h"
 
 #lflags stuff
 #########
@@ -75,7 +76,6 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     condasm.obj         &
     breakout.obj        &
     asmstruc.obj        &
-    fpfixup.obj         &
     asmexpnd.obj        &
     mangle.obj          &
     for.obj             &

@@ -46,16 +46,6 @@
 #include "asmsym.h"
 #include "asmops.h"
 
-enum prefix_reg {
-    PREFIX_EMPTY = EMPTY,
-    PREFIX_ES = 0x26,
-    PREFIX_CS = 0x2E,
-    PREFIX_SS = 0x36,
-    PREFIX_DS = 0x3E,
-    PREFIX_FS = 0x64,
-    PREFIX_GS = 0x65
-};
-
 #if defined( _STANDALONE_ )
     struct asm_ins {
         unsigned short      token;                  /* T_ADD, etc */

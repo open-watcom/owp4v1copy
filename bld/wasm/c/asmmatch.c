@@ -31,20 +31,20 @@
 
 
 #include "asmglob.h"
-
 #include "asmalloc.h"
 #include "asmfixup.h"
-
+#include "fppatch.h"
 #if defined( _STANDALONE_ )
-
-#include "directiv.h"
-
-extern void AddLinnumDataRef( void );
-extern int  AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool );
-
+  #include "directiv.h"
 #endif
 
-#define USE_FPU_EMUL    ((floating_point==DO_FP_EMULATION)&&(!rCode->use32))
+
+#define USE_FPU_EMUL    ((floating_point==DO_FP_EMULATION)&&(!rCode->use32)&&(ins->cpu & P_FPU_MASK)!=P_NO87)
+
+#if defined( _STANDALONE_ )
+extern void     AddLinnumDataRef( void );
+#endif
+extern int      AddFPpatchFixup( fp_patches patch, bool secondary );
 
 enum fpe        floating_point = DO_FP_EMULATION;
 
@@ -72,6 +72,7 @@ static int output( int i )
     const struct asm_ins ASMFAR *ins = &AsmOpTable[i];
     struct asm_code             *rCode = Code;
     unsigned_8                  tmp;
+    fp_patches                  patch = FPP_NONE;
 
 #if defined( _STANDALONE_ )
     /*
@@ -91,18 +92,6 @@ static int output( int i )
 #endif
 
     /*
-     * Output FP fixup if required
-     */
-    if( USE_FPU_EMUL && ( ins->allowed_prefix != NO_FWAIT )
-        && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
-#if defined( _STANDALONE_ )
-        if( AddFloatingPointEmulationFixup( ins, FALSE ) == ERROR ) {
-            return( ERROR );
-        }
-#endif
-    }
-
-    /*
      * Check if CPU and FPU is valid for output code
      */
     if( (ins->cpu & P_CPU_MASK) > (rCode->info.cpu & P_CPU_MASK)
@@ -110,6 +99,39 @@ static int output( int i )
         || (ins->cpu & P_EXT_MASK) > (ins->cpu & rCode->info.cpu & P_EXT_MASK) ) {
         AsmError( INVALID_INSTRUCTION_WITH_CURRENT_CPU_SETTING );
         return( ERROR );
+    }
+
+    /*
+     * Check if FPU instruction requires emulator patch and fixup
+     */
+    if( USE_FPU_EMUL ) {
+        if( ins->token == T_FWAIT ) {
+            if( (rCode->info.cpu & P_FPU_MASK) < P_387 ) {
+                patch = FPP_WAIT;
+            }
+        } else if( ins->allowed_prefix != NO_FWAIT ) {
+            switch( Code->prefix.seg ) {
+            case EMPTY:     patch = FPP_NORMAL; break;
+            case PREFIX_ES: patch = FPP_ES;     break;
+            case PREFIX_CS: patch = FPP_CS;     break;
+            case PREFIX_SS: patch = FPP_SS;     break;
+            case PREFIX_DS: patch = FPP_DS;     break;
+            case PREFIX_FS: patch = FPP_FS;     break;
+            case PREFIX_GS: patch = FPP_GS;     break;
+            }
+        }
+    }
+
+    /*
+     * Add extra FWAIT instruction if necessary
+     */
+    if( patch == FPP_NONE && ins->token != T_FWAIT && ins->allowed_prefix != NO_FWAIT ) {
+        if( ins->allowed_prefix == FWAIT ) {
+            AsmCodeByte( OP_WAIT );
+        } else if( (rCode->info.cpu & P_CPU_MASK) < P_286 && (ins->cpu & P_FPU_MASK) == P_87 ) {
+            // implicit FWAIT synchronization for 8087 (CPU 8086/80186)
+            AsmCodeByte( OP_WAIT );
+        }
     }
 
     /*
@@ -163,39 +185,6 @@ static int output( int i )
         break;
     }
 
-    /*
-     * Output FP FWAIT if required
-     */
-    if( ins->token == T_FWAIT ) {
-        if( (rCode->info.cpu & P_FPU_MASK) < P_387 ) {
-            if( USE_FPU_EMUL ) {
-                AsmCodeByte( OP_NOP );
-            }
-        }
-    } else if( ins->allowed_prefix == FWAIT ) {
-        AsmCodeByte( OP_WAIT );
-    } else if( USE_FPU_EMUL && ( ins->allowed_prefix != NO_FWAIT )
-        && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
-        AsmCodeByte( OP_WAIT );
-    } else if( ins->allowed_prefix != NO_FWAIT ) {
-        // implicit FWAIT synchronization for 8087 (CPU 8086/80186)
-        if(( (rCode->info.cpu & P_CPU_MASK) < P_286 )
-            && ( (ins->cpu & P_FPU_MASK) == P_87 )) {
-            AsmCodeByte( OP_WAIT );
-        }
-    }
-
-    /*
-     * Output FP fixup if required
-     */
-    if( USE_FPU_EMUL && ( ins->allowed_prefix != NO_FWAIT )
-        && (( ins->allowed_prefix == FWAIT ) || ( (ins->cpu & P_FPU_MASK) != P_NO87 ))) {
-#if defined( _STANDALONE_ )
-        if( AddFloatingPointEmulationFixup( ins, TRUE ) == ERROR ) {
-            return( ERROR );
-        }
-#endif
-    }
     /*
      * Output address size prefix
      */
@@ -258,6 +247,24 @@ static int output( int i )
             break;
         }
     }
+
+    /*
+     * Output FPU instruction emulation patch code and fixup
+     */
+    if( USE_FPU_EMUL && patch != FPP_NONE ) {
+        if( AddFPpatchFixup( patch, FALSE ) == ERROR ) {
+            return( ERROR );
+        }
+        if( patch == FPP_WAIT ) {
+            AsmCodeByte( OP_NOP );
+        } else {
+            AsmCodeByte( OP_WAIT );
+            if( AddFPpatchFixup( patch, TRUE ) == ERROR ) {
+                return( ERROR );
+            }
+        }
+    }
+
     /*
      * Output segment prefix
      */

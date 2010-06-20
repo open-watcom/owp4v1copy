@@ -11,7 +11,7 @@ S2 segment public use16 'CODE'
    assume ds:S1
    assume cs:S2
 
-   FLD tbyte ptr [bx + 1]
+   FLD tbyte ptr ss:[bx + 1]
    FCLEX
    FNCLEX
    FINIT
@@ -20,18 +20,18 @@ S2 segment public use16 'CODE'
    FNDISI
    FENI
    FNENI
-   FSAVE status
-   FNSAVE status
-   FRSTOR status
-   FSTENV status
-   FNSTENV status
-   FLDENV status
-   FSTCW status
-   FNSTCW status
-   FSTSW status
-   FNSTSW status
-;   FSTSW AX
-;   FNSTSW AX
+   FSAVE   ss:status
+   FNSAVE  ss:status
+   FRSTOR  ss:status
+   FSTENV  ss:status
+   FNSTENV ss:status
+   FLDENV  ss:status
+   FSTCW   ss:status
+   FNSTCW  ss:status
+   FSTSW   ss:status
+   FNSTSW  ss:status
+;   FSTSW   AX
+;   FNSTSW  AX
    FWAIT
 
 S2 ends

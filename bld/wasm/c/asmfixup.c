@@ -31,27 +31,36 @@
 
 
 #include "asmglob.h"
-
 #include "asmalloc.h"
-
-#if defined( _STANDALONE_ )
-
-#include "directiv.h"
-#include "myassert.h"
 #include "asmfixup.h"
-
-struct asmfixup         *FixupListHead; // head of list of fixups
-struct asmfixup         *FixupListTail;
-
-#else
-
-struct asmfixup         *FixupHead;
-
+#include "fppatch.h"
+#if defined( _STANDALONE_ )
+  #include "directiv.h"
+  #include "myassert.h"
+  #include "mangle.h"
 #endif
 
+#if defined( _STANDALONE_ )
+struct asmfixup         *FixupListHead; // head of list of fixups
+struct asmfixup         *FixupListTail;
+#else
+struct asmfixup         *FixupHead;
+#endif
 struct asmfixup         *InsFixups[3];
 
 #if defined( _STANDALONE_ )
+
+static char *FPPatchName[] = {
+#define pick_fp(enum,name,alt_name) name,
+#include "fppatche.h"
+#undef pick_fp
+};
+
+static char *FPPatchAltName[] = {
+#define pick_fp(enum,name,alt_name) alt_name,
+#include "fppatche.h"
+#undef pick_fp
+};
 
 void add_frame( void )
 /********************/
@@ -374,3 +383,50 @@ int MakeFpFixup( struct asm_sym *sym )
 }
 
 #endif
+
+
+int AddFPpatchFixup( fp_patches patch, bool secondary )
+/*****************************************************/
+{
+#if defined( _STANDALONE_ )
+    dir_node        *dir;
+    char            **patch_name_array;
+
+    patch_name_array = ( secondary ? FPPatchAltName : FPPatchName );
+
+    /* put out an extern def for the the patch */
+    if( patch_name_array[patch] == NULL )
+        return( NOT_ERROR );
+    dir = (dir_node *)AsmGetSymbol( patch_name_array[patch] );
+    if( dir == NULL ) {
+        dir = dir_insert( patch_name_array[patch], TAB_EXT );
+        if( dir == NULL )
+            return( ERROR );
+        GetSymInfo( &dir->sym );
+        dir->sym.offset = 0;
+        dir->sym.referenced = TRUE;
+        dir->sym.mem_type = MT_FAR;
+        SetMangler( &dir->sym, "N", LANG_NONE );
+    }
+    if( MakeFpFixup( &dir->sym ) == ERROR )
+        return( ERROR );
+#else
+    struct asmfixup     *fixup;
+
+    if( !secondary ) {
+        fixup = AsmAlloc( sizeof( struct asmfixup ) );
+        if( fixup == NULL )
+            return( ERROR );
+        fixup->next = FixupHead;
+        FixupHead = fixup;
+        fixup->external = 0;
+        fixup->fixup_loc = AsmCodeAddress;
+        fixup->name = NULL;
+        fixup->offset = patch;
+        fixup->fixup_type = FIX_FPPATCH;
+        fixup->fixup_option = OPTJ_NONE;
+    }
+#endif
+    return( NOT_ERROR );
+}
+

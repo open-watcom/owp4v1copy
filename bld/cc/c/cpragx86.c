@@ -483,6 +483,18 @@ static int InsertFixups( unsigned char *buff, unsigned i, byte_seq **code )
                         } else if( src[0] == 0x9b && (src[1] & 0xd8) == 0xd8 ) {
                            // FWAIT as first byte and FPU instruction opcode as second byte
                             *dst++ = FIX_FPP_NORMAL;
+                        } else if( src[0] == 0x9b && (src[2] & 0xd8) == 0xd8 ) {
+                           // FWAIT as first byte and FPU instruction opcode as third byte
+                           // second byte should be segment override prefix
+                            switch( src[1] ) {
+                            case PREFIX_ES: *dst++ = FIX_FPP_ES;    break;
+                            case PREFIX_CS: *dst++ = FIX_FPP_CS;    break;
+                            case PREFIX_SS: *dst++ = FIX_FPP_SS;    break;
+                            case PREFIX_DS: *dst++ = FIX_FPP_DS;    break;
+                            case PREFIX_GS: *dst++ = FIX_FPP_GS;    break;
+                            case PREFIX_FS: *dst++ = FIX_FPP_FS;    break;
+                            default: --dst; break;  // skip FP patch
+                            }
                         } else {
                             // skip FP patch
                             --dst;
