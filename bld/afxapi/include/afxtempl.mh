@@ -1525,7 +1525,7 @@ template< class TYPE >
 void AFXAPI CopyElements( TYPE *pDest, const TYPE *pSrc, INT_PTR nCount )
 /***********************************************************************/
 {
-    ASSERT( pType != NULL );
+    ASSERT( pDest != NULL );
     ASSERT( pSrc != NULL );
     ASSERT( nCount >= 0 );
     for( int i = 0; i < nCount; i++ ) {
