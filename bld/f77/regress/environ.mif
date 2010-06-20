@@ -485,19 +485,19 @@ clean : .symbolic global
     @%null
 
 common_clean : .procedure
-    @if exist *.?bj rm *.?bj
-    @if exist *.err rm *.err
-    @if exist *.lnk rm *.lnk
-    @if exist *.lbc rm *.lbc
-    @if exist *.$(exe) rm *.$(exe)
-    @if exist *.dll rm *.dll
-    @if exist *.out rm *.out
-    @if exist *.sym rm *.sym
-    @if exist *.dmp rm *.dmp
-    @if exist *.map rm *.map
-    @if exist *.lst rm *.lst
-    @if exist *.log rm *.log
-    @if exist *.pdb rm *.pdb
-    @if exist *.pch rm *.pch
-    @if exist *.lib rm *.lib
-    @if exist *.res rm *.res
+    @if exist *.?bj rm -f *.?bj
+    @if exist *.err rm -f *.err
+    @if exist *.lnk rm -f *.lnk
+    @if exist *.lbc rm -f *.lbc
+    @if exist *.$(exe) rm -f *.$(exe)
+    @if exist *.dll rm -f *.dll
+    @if exist *.out rm -f *.out
+    @if exist *.sym rm -f *.sym
+    @if exist *.dmp rm -f *.dmp
+    @if exist *.map rm -f *.map
+    @if exist *.lst rm -f *.lst
+    @if exist *.log rm -f *.log
+    @if exist *.pdb rm -f *.pdb
+    @if exist *.pch rm -f *.pch
+    @if exist *.lib rm -f *.lib
+    @if exist *.res rm -f *.res

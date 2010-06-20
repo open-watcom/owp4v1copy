@@ -43,6 +43,6 @@ $(all_tests) : .procedure
     -@wmake -h global
 
 global : .procedure
-    @if exist *.obj rm *.obj
-    @if exist *.err rm *.err
-    @if exist *.exe rm *.exe
+    @if exist *.obj rm -f *.obj
+    @if exist *.err rm -f *.err
+    @if exist *.exe rm -f *.exe
