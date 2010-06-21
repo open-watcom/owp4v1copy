@@ -101,6 +101,13 @@ static void unsupported_opts( OPT_STORAGE *cmdOpts )
 
     /*** Build a string listing all unsupported options that were used ***/
     opts[0] = '\0';
+    if( cmdOpts->EHa  )  append_unsupported( opts, "EHa"  );
+    if( cmdOpts->EHac )  append_unsupported( opts, "EHac" );
+    if( cmdOpts->EHc  )  append_unsupported( opts, "EHc"  );
+    if( cmdOpts->EHca )  append_unsupported( opts, "EHca" );
+    if( cmdOpts->EHcs )  append_unsupported( opts, "EHcs" );
+    if( cmdOpts->EHs  )  append_unsupported( opts, "EHs"  );
+    if( cmdOpts->EHsc )  append_unsupported( opts, "EHsc" );
     if( cmdOpts->Fa   )  append_unsupported( opts, "Fa"   );
     if( cmdOpts->FA   )  append_unsupported( opts, "FA"   );
     if( cmdOpts->FAc  )  append_unsupported( opts, "FAc"  );

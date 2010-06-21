@@ -67,6 +67,41 @@
 :target. any
 :usage. preprocess and insert #line directives to stdout
 
+:option. \E\H\a
+:target. any
+:internal.
+:usage. specify exception handling
+
+:option. \E\H\a\c
+:target. any
+:internal.
+:usage. specify exception handling
+
+:option. \E\H\c
+:target. any
+:internal.
+:usage. specify exception handling
+
+:option. \E\H\c\a
+:target. any
+:internal.
+:usage. specify exception handling
+
+:option. \E\H\c\s
+:target. any
+:internal.
+:usage. specify exception handling
+
+:option. \E\H\s
+:target. any
+:internal.
+:usage. specify exception handling
+
+:option \E\H\s\c
+:target. any
+:internal.
+:usage. specify exception handling
+
 :option. \E\P
 :target. any
 :usage. preprocess without #line directives to stdout
