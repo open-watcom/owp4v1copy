@@ -33,7 +33,6 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
-
 /***************************************************************************/
 /*  :P.perhaps paragraph elements                                          */
 /***************************************************************************/
@@ -101,7 +100,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-    post_space_save = 0;
+//    post_space_save = 0;
     p_char = NULL;
 
     if( *p == '.' ) p++;                // over '.'
@@ -160,7 +159,7 @@ void    start_line_with_string( char * text, uint8_t font_num )
 
     n_char->x_address = g_cur_h_start;
     ju_x_start = g_cur_h_start;
-    pre_space = 0;
+//    pre_space = 0;
     input_cbs->fmflags &= ~II_sol;      // no longer start of line
 
     n_char->width = cop_text_width( n_char->text, n_char->count, font_num );
@@ -169,7 +168,7 @@ void    start_line_with_string( char * text, uint8_t font_num )
     /***********************************************************/
 
     if( n_char->x_address + n_char->width > g_page_right ) {
-        pre_space = 0;
+//        pre_space = 0;
         process_line_full( &t_line, ProcFlags.concat );
         p_char = NULL;
         if( !ProcFlags.page_started ) {
@@ -181,7 +180,7 @@ void    start_line_with_string( char * text, uint8_t font_num )
     }
 
     if( t_line.first == NULL ) {        // first element in output line
-        pre_space = 0;
+//        pre_space = 0;
         calc_skip();
         test_page_full();
         if( !ProcFlags.top_ban_proc ) {
@@ -203,7 +202,7 @@ void    start_line_with_string( char * text, uint8_t font_num )
     g_cur_h_start = n_char->x_address + n_char->width;
     ProcFlags.page_started = true;
     post_space = post_space * wgml_fonts[layout_work.defaults.font].spc_width;
-    post_space_save = 0;
+//    post_space_save = 0;
 }
 
 /***************************************************************************/
@@ -267,8 +266,8 @@ extern  void    gml_note( const gmltag * entry )
 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-    post_space_save = 0;
-    pre_space = 0;
+//    post_space_save = 0;
+//    pre_space = 0;
     p_char = NULL;
 
     g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent );
@@ -286,6 +285,7 @@ extern  void    gml_note( const gmltag * entry )
     spacing = layout_work.note.spacing;
     g_curr_font_num = layout_work.defaults.font;
     if( *p == '.' ) p++;                // over '.'
+    if( *p == ' ' ) p++;                // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }

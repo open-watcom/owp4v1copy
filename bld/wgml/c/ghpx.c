@@ -39,7 +39,7 @@ static  int hp[20] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 #define HPMAXIND  (int)(sizeof( hp ) / sizeof( hp[0] ) - 1)
 
-
+#if 0
 /***************************************************************************/
 /*  set_space possibly suppress space if tag follows                       */
 /***************************************************************************/
@@ -61,7 +61,7 @@ static void set_space( char * p )
         }
     }
 }
-
+#endif
 
 /***************************************************************************/
 /*  :HPx common processing                                                 */
@@ -95,7 +95,7 @@ static bool gml_hpx_common( const gmltag * entry, int font )
     scan_err = false;
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
-    set_space( p );
+//    set_space( p );
     if( *p ) {
         process_text( p, font);
     }
@@ -148,7 +148,7 @@ void    gml_ehpx( const gmltag * entry )
         scan_err = false;
         p = scan_start;
         if( *p == '.' ) p++;                // over '.'
-        set_space( p );
+//        set_space( p );
         if( *p ) {
             process_text( p, g_curr_font_num );
         }

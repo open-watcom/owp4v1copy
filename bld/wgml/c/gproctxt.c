@@ -550,7 +550,7 @@ void    process_line_full( text_line * a_line, bool justify )
     test_page_full();
 }
 
-
+#if 0
 /***************************************************************************/
 /*  shift spaces before and after 'word'                                   */
 /***************************************************************************/
@@ -565,7 +565,7 @@ void    shift_spaces( void )
     }
     post_space = 0;
 }
-
+#endif
 /***************************************************************************/
 /*  create a text_chars instance and fill it with a 'word'                 */
 /***************************************************************************/
@@ -577,7 +577,7 @@ text_chars * process_word( char * pword, size_t count, uint8_t font_num )
     n_char = alloc_text_chars( pword, count, font_num );
     intrans( n_char->text, &n_char->count, font_num );
     n_char->width = cop_text_width( n_char->text, n_char->count, font_num );
-    shift_spaces();
+//    shift_spaces();
 
     return( n_char );
 }
@@ -602,9 +602,45 @@ void    process_text( char * text, uint8_t font_num )
     static      text_type   typn = norm;
 
     p = text;
+#if 0 // moved into next if block so only affects first line in paragraph
     if( ProcFlags.concat ) {            // experimental TBD
         while( *p == ' ' ) {
             p++;
+        }
+    }
+#endif
+    if( t_line.first == NULL ) {    // first phrase in paragraph
+        post_space = 0;
+        if( ProcFlags.concat ) {    // ".co on": skip initial spaces
+            while( *p == ' ' ) {
+                p++;
+            }
+        } else {                    // ".co off": compute initial spacing
+            while( *p == ' ' ) {
+                post_space += wgml_fonts[font_num].spc_width;
+                p++;
+            }                    
+        }
+        ju_x_start = g_cur_h_start; // g_cur_h_start appears correct on entry
+    } else {                        // subsequent phrase in paragraph
+        if( ProcFlags.concat ) {    // ".co on"
+            if( post_space == 0 ) {
+                // compute initial spacing if needed; .ct may affect this
+                if( (*p == ' ') || (input_cbs->fmflags & II_sol) ) {
+                    post_space = wgml_fonts[font_num].spc_width;
+                    if( is_stop_char( t_line.last->text[t_line.last->count - 1] ) ) {
+                         post_space += wgml_fonts[font_num].spc_width;
+                    }
+                }
+            }
+            while( *p == ' ' ) {    // skip initial spaces
+                p++;
+            }                    
+        } else {                    // ".co off": increment initial spacing
+            while( *p == ' ' ) {
+                post_space += wgml_fonts[font_num].spc_width;
+                p++;
+            }                    
         }
     }
     n_char = NULL;
@@ -650,15 +686,7 @@ void    process_text( char * text, uint8_t font_num )
                 if( ProcFlags.in_trans && *(p - 1) == in_esc ) {
                     continue;           // guarded space no word end
                 }
-                if( !ProcFlags.concat ) {  // .co off: include spaces
-                    if( (p - 1) == text ) { // initial spaces affect spacing
-                        pre_space = wgml_fonts[font_num].spc_width;
-                        while( *p == ' ' ) {
-                            pre_space += wgml_fonts[font_num].spc_width;
-                            p++;
-                        }                    
-                        pword = p;
-                    }
+                if( !ProcFlags.concat ) { // .co off: include internal spaces
                     continue;
                 }
 #if 0
@@ -683,15 +711,22 @@ void    process_text( char * text, uint8_t font_num )
 //            n_char->t_flags = 0;      // TBD
             typ = typn;
         }
-        if( !ProcFlags.concat ) {       // remove end spaces if .co off
+        // remove end-of-line spaces if .co off
+        if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
             while( n_char->text[--n_char->count] == ' ' );
             n_char->count++;
+            n_char->width = cop_text_width( n_char->text, n_char->count, font_num );
         }
+#if 0 // hoisted, only catches first line of new paragraph
         if( t_line.first == NULL ) {    // first element in output line
             ju_x_start = g_cur_h_start;
-            pre_space = 0;
+            post_space = 0;
+//            pre_space = 0;
         }
-        n_char->x_address = g_cur_h_start + pre_space;
+#endif
+//        n_char->x_address = g_cur_h_start + pre_space;
+        n_char->x_address = g_cur_h_start + post_space;
+        post_space = 0;
         input_cbs->fmflags &= ~II_sol;  // no longer at start of line
 
         /***********************************************************/
@@ -699,7 +734,7 @@ void    process_text( char * text, uint8_t font_num )
         /***********************************************************/
 
         if( n_char->x_address + n_char->width > g_page_right ) {
-            pre_space = 0;
+//            pre_space = 0;
             process_line_full( &t_line, ProcFlags.concat
                                   && (ProcFlags.justify > ju_off) );
             p_char = NULL;
@@ -710,9 +745,8 @@ void    process_text( char * text, uint8_t font_num )
             set_h_start();
             n_char->x_address = g_cur_h_start;
         }
-
         if( t_line.first == NULL ) {    // first element in output line
-            pre_space = 0;
+//            pre_space = 0;
             calc_skip();
             test_page_full();
             if( !ProcFlags.top_ban_proc ) {
@@ -731,18 +765,21 @@ void    process_text( char * text, uint8_t font_num )
                 t_line.line_height = wgml_fonts[font_num].line_height;
             }
         }
-        t_line.last  = n_char;
+        t_line.last = n_char;
         p_char = n_char;
 
         g_cur_h_start = n_char->x_address + n_char->width;
         ProcFlags.page_started = true;
+
+        // exit at end of text unless at end of input line
+        if( !(input_cbs->fmflags & II_eol) && !*p ) {
+            break;
+        }
+//        post_space = wgml_fonts[font_num].spc_width;
         post_space = wgml_fonts[font_num].spc_width;
         if( is_stop_char( n_char->text[n_char->count - 1] ) ) {
+//             post_space += wgml_fonts[font_num].spc_width;
              post_space += wgml_fonts[font_num].spc_width;
-        }
-
-        if( !*p ) {            // exit at end of text
-            break;
         }
         if( ProcFlags.concat ) {     // ignore multiple blanks in concat mode
             if( *p == ' ' ) {
@@ -755,10 +792,10 @@ void    process_text( char * text, uint8_t font_num )
         pword = p + 1;               // new word start or end of input record
         n_char = NULL;
     }
+#if 0
     while( *p == ' ' ) {                // ??? TBD
         p--;
     }
-#if 0
     if( p > pword ) {                   // last word
         count = p - pword;              // no of bytes
 
@@ -840,8 +877,8 @@ void    process_text( char * text, uint8_t font_num )
         ProcFlags.page_started = true;
 
         if( !ProcFlags.concat ) {
-            post_space = 0;
-            post_space_save = 0;
+//            post_space = 0;
+//            post_space_save = 0;
             if( input_cbs->fmflags & II_eol ) {
                 scr_process_break();    // TBD
                 p_char = NULL;
