@@ -2,7 +2,7 @@
 
 int main()
 {
-    LPCTSTR teststr = "abcdefg";
+    LPCTSTR teststr = _T("abcdefg");
     int testlen = _tcslen( teststr );
 
     CStdioFile file;
@@ -19,10 +19,10 @@ int main()
     if( !file.ReadString( str ) ) _fail;
     if( str != teststr ) _fail;
 
-    char buf[255];
+    TCHAR buf[255];
     file.Seek( 0, CFile::begin );
     if( file.ReadString( buf, 255 ) == NULL ) _fail;
-    if( strcmp( buf, teststr ) != 0 ) _fail;
+    if( _tcscmp( buf, teststr ) != 0 ) _fail;
     file.Close();
 
     CFile::Remove( _T("filetest.tmp") );
