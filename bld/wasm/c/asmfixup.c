@@ -414,10 +414,10 @@ static int MakeFpFixup( char *patch_name )
 int AddFPPatchAndFixups( fp_patches patch )
 /*****************************************/
 {
-    if( FPPatchName[patch] != NULL ) {
 #if defined( _STANDALONE_ )
-        char    *patch_name;
+    char    *patch_name;
 
+    if( FPPatchName[patch] != NULL ) {
         patch_name = FPPatchName[patch];
         if( MakeFpFixup( patch_name ) == ERROR )
             return( ERROR );
@@ -430,9 +430,11 @@ int AddFPPatchAndFixups( fp_patches patch )
                 return( MakeFpFixup( patch_name ) );
             }
         }
+    }
 #else
-        struct asmfixup     *fixup;
+    struct asmfixup     *fixup;
 
+    if( patch != FPP_NONE ) {
         fixup = AsmAlloc( sizeof( struct asmfixup ) );
         if( fixup == NULL ) {
             return( ERROR );
@@ -445,7 +447,12 @@ int AddFPPatchAndFixups( fp_patches patch )
         fixup->offset = patch;
         fixup->fixup_type = FIX_FPPATCH;
         fixup->fixup_option = OPTJ_NONE;
-#endif
+        if( patch == FPP_WAIT ) {
+            AsmCodeByte( OP_NOP );
+        } else {
+            AsmCodeByte( OP_WAIT );
+        }
     }
+#endif
     return( NOT_ERROR );
 }
