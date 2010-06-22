@@ -2590,32 +2590,7 @@ int AsmParse( void )
             }
             break;
         case T_COMMA:
-            if( Opnd_Count == OPND1 ) {
-                Opnd_Count++;
-            } else if( Opnd_Count == OPND2 ) {
-                switch( rCode->info.token ) {
-                case T_SHLD:
-                case T_SHRD:
-                    switch( AsmBuffer[i+1]->token ) {
-                    case T_NUM:
-                        break;
-                    case T_REG:
-                        i++;
-                        if( AsmBuffer[i]->u.value == T_CL ) {
-                            break;
-                        }
-                    default:
-                        AsmError( INVALID_SHLD_SHRD_FORMAT );
-                        return( ERROR );
-                    }
-                    break;
-                case T_NULL:
-                    break;
-                default:
-                    Opnd_Count++;
-                    break;
-                }
-            } else {
+            if( Opnd_Count > OPND2 ) {
                 AsmError( TOO_MANY_COMMAS );
                 return( ERROR );
             }
@@ -2629,8 +2604,30 @@ int AsmParse( void )
             if( EvalOperand( &i, Token_Count, &opndx, TRUE ) == ERROR ) {
                 return( ERROR );
             }
-            if( opndx.empty )
-                break;
+            Opnd_Count++;
+            if( opndx.empty ) {
+                if( AsmBuffer[i]->token == T_FLOAT
+                    || AsmBuffer[i]->token == T_MINUS
+                    || AsmBuffer[i]->token == T_PLUS ) {
+                    i--;
+                    continue;
+                }
+                AsmError( SYNTAX_ERROR );
+                return( ERROR );
+            }
+            if( Opnd_Count == OPND3 ) {
+                if( rCode->info.token == T_SHLD || rCode->info.token == T_SHRD ) {
+                    if( opndx.type == EXPR_CONST ) {
+                        Opnd_Count--;
+                    } else if( opndx.type == EXPR_REG ) {
+                        if( AsmBuffer[opndx.base_reg]->u.value == T_CL ) {
+                            Opnd_Count--;
+                            i--;
+                            break;
+                        }
+                    }
+                }
+            }
             switch( opndx.type ) {
             case EXPR_ADDR:
                 temp = process_address( &opndx );
@@ -2664,6 +2661,9 @@ int AsmParse( void )
                 AsmError( SYNTAX_ERROR_UNEXPECTED_COLON );
                 return( ERROR );
             }
+            break;
+        case T_PLUS:
+        case T_MINUS:
             break;
         case T_FLOAT:
             if( idata_float( AsmBuffer[i]->u.value ) == ERROR ) {
