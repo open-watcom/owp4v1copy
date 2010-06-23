@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DDE Spy toolbar.
 *
 ****************************************************************************/
 
@@ -94,7 +93,7 @@ static void ResizeForTB( RECT *area, HWND hwnd ) {
     if( area == NULL ) {
         info->list.ypos = 0;
     } else {
-        info->list.ypos = area->bottom - area->top + 1;
+        info->list.ypos = area->bottom - area->top;
     }
     ResizeListBox( winsize.right - winsize.left,
                    winsize.bottom - winsize.top, &(info->list ) );
