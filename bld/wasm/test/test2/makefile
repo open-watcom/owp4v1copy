@@ -75,6 +75,7 @@ t36.dis &
 t37.dis &
 t38.dis &
 t39.dis &
+t40.dis &
 t51.dis &
 test.dis &
 timer.dis &

@@ -1223,7 +1223,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             token_1->value = token_1->value << token_2->value;
             break;
         case T_SHR:
-            token_1->value = token_1->value >> token_2->value;
+            token_1->value = (unsigned_32)token_1->value >> token_2->value;
             break;
         case T_NOT:
             token_1->value = ~(token_2->value);
