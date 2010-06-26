@@ -215,7 +215,6 @@ void MakeDDEToolBar( HWND hwnd ) {
     ToolBar.info.background = 0;
     ToolBar.info.foreground = 0;
     ToolBar.info.use_tips = TRUE;
-    ResizeForTB( &ToolBar.info.area, hwnd );
     ToolBar.fixed = TRUE;
     ToolBar.floatrect = ToolBar.info.area;
     ToolBar.floatrect.bottom += GetSystemMetrics( SM_CYCAPTION ) +
@@ -223,6 +222,7 @@ void MakeDDEToolBar( HWND hwnd ) {
 
     ToolBar.hdl = ToolBarInit( hwnd );
     ToolBarDisplay( ToolBar.hdl, &ToolBar.info );
+    ResizeForTB( &ToolBar.info.area, hwnd );
 
     ToolBar.bitmaps = MemAlloc( BUTTON_CNT * sizeof( HBITMAP ) );
     for( i=0; i < BUTTON_CNT; i++ ) {
@@ -308,12 +308,14 @@ BOOL ToggleTB( HWND parent ) {
         if( ToolBar.fixed ) {
             ToolBar.info.style = TOOLBAR_FIXED_STYLE;
             GetFixedTBRect( parent, &ToolBar.info.area );
-            ResizeForTB( &ToolBar.info.area, parent );
         } else {
             ToolBar.info.style = TOOLBAR_FLOAT_STYLE;
             ToolBar.info.area = ToolBar.floatrect;
         }
         ToolBarDisplay( ToolBar.hdl, &ToolBar.info );
+        if( ToolBar.fixed ) {
+            ResizeForTB( &ToolBar.info.area, parent );
+        }
         hwnd = ToolBarWindow( ToolBar.hdl );
         MoveWindow( hwnd, ToolBar.info.area.left, ToolBar.info.area.top,
                     ToolBar.info.area.right - ToolBar.info.area.left,
