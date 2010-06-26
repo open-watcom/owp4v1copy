@@ -53,6 +53,9 @@ typedef struct tool {
     UINT        flags;
     WORD        state;
     RECT        area;
+#ifdef __NT__
+    char        tip[MAX_TIP];
+#endif
 } tool;
 
 typedef struct toolbar {
@@ -256,6 +259,63 @@ static void createButtonList( HWND hwnd, toolbar *bar, tool *top )
 
 } /* createButtonList */
 
+
+#ifdef __NT__
+
+/*
+ * reinsertButtons - insert buttons once again when a toolbar that was destroyed is
+ *                   recreated
+ */
+static void reinsertButtons( toolbar *bar )
+{
+    tool        *t;
+    TBBUTTON    tbb;
+    TBADDBITMAP tbab;
+    BITMAP      bm;
+    int         n;
+    TOOLINFO    ti;
+    if( hInstCommCtrl != NULL ) {
+        for( t = bar->tool_list; t != NULL; t = t->next ) {
+            if( !(t->flags & ITEM_BLANK) ) {
+                GetObject( t->bitmap, sizeof( BITMAP ), &bm );
+                SendMessage( bar->hwnd, TB_SETBITMAPSIZE, 0,
+                             MAKELONG( bm.bmWidth, bm.bmHeight ) );
+                tbab.hInst = NULL;
+                tbab.nID = (UINT_PTR)TB_CreateTransparentBitmap( t->bitmap, bm.bmWidth,
+                                                                 bm.bmHeight );
+                tbb.iBitmap = (int)SendMessage( bar->hwnd, TB_ADDBITMAP, 1, (LPARAM)&tbab );
+                tbb.idCommand = t->id;
+                tbb.fsState = TBSTATE_ENABLED;
+                tbb.fsStyle = TBSTYLE_BUTTON;
+                if( t->flags & ITEM_STICKY ) {
+                    tbb.fsStyle |= TBSTYLE_CHECK;
+                }
+            } else {
+                tbb.iBitmap = -1;
+                tbb.idCommand = -1;
+                tbb.fsState = 0;
+                tbb.fsStyle = TBSTYLE_SEP;
+            }
+            tbb.iString = 0;
+            SendMessage( bar->hwnd, TB_ADDBUTTONS, 1, (LPARAM)&tbb );
+            if( bar->tooltips != NULL && !(t->flags & ITEM_BLANK) ) {
+                n = SendMessage( bar->hwnd, TB_BUTTONCOUNT, 0, 0L );
+                SendMessage( bar->hwnd, TB_GETITEMRECT, n - 1, (LPARAM)&ti.rect );
+                ti.cbSize = sizeof( TOOLINFO );
+                ti.uFlags = 0;
+                ti.hwnd = bar->hwnd;
+                ti.uId = t->id;
+                ti.hinst = GET_HINSTANCE( bar->owner );
+                ti.lpszText = t->tip;
+                SendMessage( bar->tooltips, TTM_ADDTOOL, 0, (LPARAM)&ti );
+            }
+        }
+    }
+
+} /* reinsertButtons */
+
+#endif
+
 void ToolBarRedrawButtons( struct toolbar *bar )
 {
     if( bar ) {
@@ -431,26 +491,29 @@ void ToolBarAddItem( toolbar *bar, TOOLITEMINFO *info )
     BITMAP      bm;
     int         n;
     TOOLINFO    ti;
-
-    if( hInstCommCtrl == NULL ) {
 #endif
-        t = (tool *)MemAlloc( sizeof( tool ) );
-        if( info->flags & ITEM_BLANK ) {
-            t->blank_space = info->blank_space;
-        } else {
-            t->bitmap = info->bmp;
-        }
-        t->id = info->id;
-        t->next = NULL;
-        t->flags = info->flags;
-        t->depressed = info->depressed;
-        t->state = BUTTON_UP;
-        addTool( &bar->tool_list, t );
-        if( !(info->flags & ITEM_BLANK) && info->bmp != HNULL ) {
-            createButtonList( bar->hwnd, bar, t );
-        }
-#ifdef __NT__
+
+    t = (tool *)MemAlloc( sizeof( tool ) );
+    if( info->flags & ITEM_BLANK ) {
+        t->blank_space = info->blank_space;
     } else {
+        t->bitmap = info->bmp;
+    }
+    t->id = info->id;
+    t->next = NULL;
+    t->flags = info->flags;
+    t->depressed = info->depressed;
+    t->state = BUTTON_UP;
+#ifdef __NT__
+    strcpy( t->tip, info->tip );
+#endif
+    addTool( &bar->tool_list, t );
+    if( !(info->flags & ITEM_BLANK) && info->bmp != HNULL ) {
+        createButtonList( bar->hwnd, bar, t );
+    }
+
+#ifdef __NT__
+    if( hInstCommCtrl != NULL ) {
         if( !(info->flags & ITEM_BLANK) ) {
             GetObject( info->bmp, sizeof( BITMAP ), &bm );
             SendMessage( bar->hwnd, TB_SETBITMAPSIZE, 0,
@@ -607,13 +670,32 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
                                       TBSTYLE_FLAT, 0, 0, 0, 0, bar->container, NULL,
                                       GET_HINSTANCE( bar->owner ), NULL );
         } else {
-            bar->hwnd = CreateWindow( TOOLBARCLASSNAME, NULL,
-                                      WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
-                                      TBSTYLE_FLAT, 0, 0, 0, 0, bar->owner, NULL,
-                                      GET_HINSTANCE( bar->owner ), NULL );
+            CREATESTRUCT cs;
+            cs.dwExStyle = 0L;
+            cs.lpszClass = TOOLBARCLASSNAME;
+            cs.lpszName = NULL;
+            cs.style = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | TBSTYLE_FLAT;
+            cs.x = 0;
+            cs.y = 0;
+            cs.cx = 0;
+            cs.cy = 0;
+            cs.hwndParent = bar->owner;
+            cs.hMenu = NULL;
+            cs.hInstance = GET_HINSTANCE( bar->owner );
+            cs.lpCreateParams = NULL;
+            bar->container = NULL;
+            bar->hwnd = CreateWindow( cs.lpszClass, cs.lpszName, cs.style, cs.x, cs.y,
+                                      cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance,
+                                      cs.lpCreateParams );
             GetWindowRect( bar->hwnd, &disp->area );
             ScreenToClient( bar->owner, (LPPOINT)&disp->area.left );
             ScreenToClient( bar->owner, (LPPOINT)&disp->area.right );
+            if( bar->hook != NULL ) {
+                // The toolbar isn't subclassed until after the WM_CREATE message is sent,
+                // but the hook may be looking for this message, so fake it by calling the
+                // hook from here.
+                bar->hook( bar->hwnd, WM_CREATE, 0, (LPARAM)&cs );
+            }
         }
         bar->old_wndproc = (WNDPROC)GetWindowLong( bar->hwnd, GWL_WNDPROC );
         SetProp( bar->hwnd, "bar", (LPVOID)bar );
@@ -630,6 +712,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
         } else {
             bar->tooltips = NULL;
         }
+        reinsertButtons( bar );
     } else if( LOBYTE(LOWORD(GetVersion())) >= 4 &&
          (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
         CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
@@ -1310,6 +1393,11 @@ LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
             bar->helphook( hwnd, lastID, FALSE );
             lastID = -1;
             KillTimer( hwnd, 1 );
+        }
+        break;
+    case WM_DESTROY:
+        if( bar->hook != NULL ) {
+            bar->hook( hwnd, msg, wparam, lparam );
         }
         break;
     }
