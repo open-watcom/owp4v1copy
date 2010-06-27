@@ -88,10 +88,10 @@ static  bool    HasUnion( sym_id fld ) {
 
     for(;;) {
         if( fld == NULL ) return( FALSE );
-        if( fld->fd.typ == TY_STRUCTURE ) {
+        if( fld->fd.typ == FT_STRUCTURE ) {
             if( HasUnion( fld->fd.xt.record->fl.sym_fields ) ) break;
         }
-        if( fld->fd.typ == TY_UNION ) break;
+        if( fld->fd.typ == FT_UNION ) break;
         fld = fld->fd.link;
     }
     return( TRUE );
@@ -199,13 +199,13 @@ void    ListItem( void ) {
     } else if( RecArrName() ) {
         CITNode->sym_ptr->ns.xflags |= SY_DEFINED;
         ChkAssumed();
-        if( CITNode->typ == TY_STRUCTURE ) {
+        if( CITNode->typ == FT_STRUCTURE ) {
             ChkStructIO( CITNode->sym_ptr->ns.xt.sym_record );
             GIOStructArray();
         } else {
             GIOArray();
         }
-    } else if( CITNode->typ == TY_STRUCTURE ) {
+    } else if( CITNode->typ == FT_STRUCTURE ) {
         CITNode->sym_ptr->ns.xflags |= SY_DEFINED;
         if( CITNode->opn.us & USOPN_FLD ) {
             sd = CITNode->value.st.field_id->fd.xt.sym_record;

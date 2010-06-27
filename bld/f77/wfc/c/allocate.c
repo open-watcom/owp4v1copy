@@ -97,12 +97,12 @@ void    CpAllocate( void )
             sym = LkSym();
             if( ( sym->ns.flags & SY_CLASS ) == SY_VARIABLE ) {
                 if( (sym->ns.flags & SY_SUBSCRIPTED) && _Allocatable( sym ) &&
-                    !( (sym->ns.typ == TY_CHAR) && (sym->ns.xt.size == 0) ) ) {
+                    !( (sym->ns.typ == FT_CHAR) && (sym->ns.xt.size == 0) ) ) {
                     AdvanceITPtr();
                     ReqOpenParen();
                     sym->ns.xflags |= SY_DEFINED;
                     GAllocate( sym );
-                } else if( (sym->ns.typ == TY_CHAR) && (sym->ns.xt.size == 0) &&
+                } else if( (sym->ns.typ == FT_CHAR) && (sym->ns.xt.size == 0) &&
                            !( sym->ns.flags & SY_SUBSCRIPTED ) ) {
                     AdvanceITPtr();
                     ReqMul();
@@ -231,7 +231,7 @@ void    CpDeAllocate( void )
             if( ( sym->ns.flags & SY_CLASS ) == SY_VARIABLE ) {
                 if( (sym->ns.flags & SY_SUBSCRIPTED) && _Allocatable( sym ) ) {
                     GDeAllocate( sym );
-                } else if( (sym->ns.typ == TY_CHAR) && (sym->ns.xt.size == 0) ) {
+                } else if( (sym->ns.typ == FT_CHAR) && (sym->ns.xt.size == 0) ) {
                     sym->ns.xflags |= SY_ALLOCATABLE;
                     GDeAllocateString( sym );
                 } else {

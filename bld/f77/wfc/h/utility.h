@@ -61,6 +61,6 @@ extern  void    EatDoParm( void );
 extern  void    IfExpr( void );
 extern  void    CharSubExpr( void );
 extern  bool    BitOn( unsigned_16 bits );
-extern  int     Map2BaseType( TYPE typ );
+extern  TYPE    Map2BaseType( TYPE typ );
 extern  bool    ClassIs( unsigned_16 class );
 extern  bool    Subscripted( void );

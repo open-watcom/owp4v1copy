@@ -760,9 +760,9 @@ segment_id      GetDataSegId( sym_id sym ) {
         id = GetComSeg( sym, 0 );
     } else if( sym->ns.flags & SY_SUBSCRIPTED ) {
         id = sym->ns.si.va.vi.seg_id;
-    } else if( sym->ns.typ == TY_CHAR ) {
+    } else if( sym->ns.typ == FT_CHAR ) {
         id = sym->ns.si.va.vi.seg_id;
-    } else if( sym->ns.typ == TY_STRUCTURE ) {
+    } else if( sym->ns.typ == FT_STRUCTURE ) {
         id = sym->ns.si.va.vi.seg_id;
     } else if( sym->ns.flags & SY_DATA_INIT ) {
         id = WF77_LDATA;
@@ -849,7 +849,7 @@ seg_offset      GetDataOffset( sym_id sym ) {
         seg_offset = GetComOffset( sym->ns.si.va.vi.ec_ext->offset );
     } else if( sym->ns.flags & SY_SUBSCRIPTED ) {
         seg_offset = DGBackTell( FEBack( sym ) );
-    } else if( sym->ns.typ == TY_CHAR ) {
+    } else if( sym->ns.typ == FT_CHAR ) {
         seg_offset = DGBackTell( sym->ns.si.va.bck_hdl );
     } else {
         seg_offset = DGBackTell( FEBack( sym ) );
@@ -979,7 +979,7 @@ void    DefStructs( void ) {
                    _SymSize( sym ) * sym->ns.si.va.dim_ext->num_elts );
                 sym->ns.si.va.dim_ext->l.cg_typ = UserType;
                 ++UserType;
-            } else if( sym->ns.typ == TY_CHAR ) {
+            } else if( sym->ns.typ == FT_CHAR ) {
                 BEDefType( UserType, ALIGN_BYTE, sym->ns.xt.size );
                 sym->ns.si.va.vi.cg_typ = UserType;
                 ++UserType;
@@ -987,7 +987,7 @@ void    DefStructs( void ) {
         }
         for( sym = MList; sym != NULL; sym = sym->ns.link ) {
             if( sym->ns.flags & (SY_IN_EQUIV | SY_SUBSCRIPTED) ) continue;
-            if( (sym->ns.typ == TY_CHAR) && (sym->ns.xt.size != 0) ) {
+            if( (sym->ns.typ == FT_CHAR) && (sym->ns.xt.size != 0) ) {
                 BEDefType( UserType, ALIGN_BYTE, sym->ns.xt.size );
                 sym->ns.si.ms.cg_typ = UserType;
                 ++UserType;
@@ -1060,11 +1060,11 @@ fe_attr FEAttr( sym_id sym ) {
                 } else {
                     attr |= FE_STATIC;
                 }
-            } else if( (flags & SY_SUBSCRIPTED) || (sym->ns.typ == TY_STRUCTURE) ) {
+            } else if( (flags & SY_SUBSCRIPTED) || (sym->ns.typ == FT_STRUCTURE) ) {
                 if( !(Options & OPT_AUTOMATIC) ) {
                     attr |= FE_STATIC;
                 }
-            } else if( sym->ns.typ == TY_CHAR ) {
+            } else if( sym->ns.typ == FT_CHAR ) {
                 // SCB's with length 0 are automatic temporaries
                 // We mustn't allow the codegen to blow away non magical symbols
                 if( (Options & OPT_AUTOMATIC ) && !_MgcIsMagic( sym ) ) {
@@ -1127,7 +1127,7 @@ segment_id      FESegID( sym_id sym ) {
                 if( !_Allocatable( sym ) ) {
                     id = GetDataSegId( sym );
                 }
-            } else if( sym->ns.typ != TY_CHAR ) {
+            } else if( sym->ns.typ != FT_CHAR ) {
                 id = GetDataSegId( sym );
             }
         }
@@ -1444,7 +1444,7 @@ void    FEMessage( int msg, void *x ) {
 static  dbg_type        BaseDbgType( TYPE typ, uint size ) {
 //==========================================================
 
-    if( typ == TY_CHAR ) {
+    if( typ == FT_CHAR ) {
         return( DBCharBlock( size ) );
     } else {
         return( DBGTypes[ ParmType( typ, size ) ] );
@@ -1460,7 +1460,7 @@ static  dbg_type        GetDbgType( sym_id sym ) {
     dbg_loc     loc;
     dbg_type    type;
 
-    if( (sym->ns.typ == TY_CHAR) && (sym->ns.xt.size == 0) ) {
+    if( (sym->ns.typ == FT_CHAR) && (sym->ns.xt.size == 0) ) {
         if( (sym->ns.flags & SY_CLASS) == SY_SUBPROGRAM ) {
             // return value for character*(*) function
             loc = DBLocInit();
@@ -1495,9 +1495,9 @@ static  dbg_type        GetDbgType( sym_id sym ) {
             DBLocFini( loc );
             return( type );
         }
-    } else if( sym->ns.typ == TY_STRUCTURE ) {
+    } else if( sym->ns.typ == FT_STRUCTURE ) {
         return( sym->ns.xt.record->dbi );
-    } else if( (sym->ns.typ == TY_CHAR) ) {
+    } else if( (sym->ns.typ == FT_CHAR) ) {
         char    new_name[32];
         sprintf( new_name, "%s*%u", DBGNames[ PT_CHAR ], sym->ns.xt.size );
         return( DBCharBlockNamed( new_name, sym->ns.xt.size ) );        
@@ -1545,7 +1545,7 @@ static  dbg_type        GetDBGSubProgType( sym_id sym ) {
         #error Unknown platform
 #endif
     } else if( (sym->ns.flags & SY_SUBPROG_TYPE) == SY_FUNCTION ) {
-        if( sym->ns.typ == TY_CHAR ) {
+        if( sym->ns.typ == FT_CHAR ) {
             // for character*(*) functions, we want to pass 0 so that
             // the debugger can tell that it's a character*(*) function
             return( DBCharBlock( sym->ns.xt.size ) );
@@ -1583,7 +1583,7 @@ static  dbg_type        DefDbgSubprogram( sym_id sym, dbg_type db_type ) {
     parameter   *arg;
     dbg_type    arg_type;
 
-    if( sym->ns.typ == TY_CHAR ) {
+    if( sym->ns.typ == FT_CHAR ) {
         db_type = DBDereference( T_POINTER, db_type );
     }
     db_proc = DBBegProc( T_CODE_PTR, db_type );
@@ -1598,7 +1598,7 @@ static  dbg_type        DefDbgSubprogram( sym_id sym, dbg_type db_type ) {
                                           GetDBGSubProgType( arg->id ) ) ) );
 
             } else {
-                if( arg->id->ns.typ == TY_CHAR ) {
+                if( arg->id->ns.typ == FT_CHAR ) {
                     if( !(arg->id->ns.flags & SY_VALUE_PARM) ) {
                         if( Options & OPT_DESCRIPTOR ) {
                             arg_type = DBDereference( T_POINTER, arg_type );
@@ -1629,7 +1629,7 @@ static  void    DefDbgFields( sym_id sd, dbg_struct db, unsigned_32 f_offset ) {
 
     field = sd->sd.fl.sym_fields;
     while( field != NULL ) {
-        if( field->fd.typ == TY_UNION ) {
+        if( field->fd.typ == FT_UNION ) {
             size = 0;
             map = field->fd.xt.sym_record;
             while( map != NULL ) {
@@ -1641,7 +1641,7 @@ static  void    DefDbgFields( sym_id sd, dbg_struct db, unsigned_32 f_offset ) {
             }
         } else {
             STFieldName( field, field_name );
-            if( field->fd.typ == TY_STRUCTURE ) {
+            if( field->fd.typ == FT_STRUCTURE ) {
                 DefDbgStruct( field->fd.xt.sym_record );
                 size = field->fd.xt.record->size;
                 db_type = field->fd.xt.record->dbi;
@@ -1694,7 +1694,7 @@ static  dbg_type        DefCommonStruct( sym_id sym ) {
     for(;;) {
         com_ext = sym->ns.si.va.vi.ec_ext;
         STGetName( sym, field_name );
-        if( sym->ns.typ == TY_STRUCTURE ) {
+        if( sym->ns.typ == FT_STRUCTURE ) {
             DefDbgStruct( sym->ns.xt.sym_record );
         }
         size = _SymSize( sym );
@@ -1738,7 +1738,7 @@ dbg_type        FEDbgRetType( sym_id sym ) {
 
     _UnShadow( sym );
     InitDBGTypes();
-    if( sym->ns.typ == TY_STRUCTURE ) {
+    if( sym->ns.typ == FT_STRUCTURE ) {
         DefDbgStruct( sym->ns.xt.sym_record );
     }
     return( GetDBGSubProgType( sym ) );
@@ -1799,7 +1799,7 @@ dbg_type        FEDbgType( sym_id sym ) {
     if( (sym->ns.flags & SY_CLASS) == SY_COMMON ) {
         db_type = DefCommonStruct( sym );
     } else {
-        if( sym->ns.typ == TY_STRUCTURE ) {
+        if( sym->ns.typ == FT_STRUCTURE ) {
             DefDbgStruct( sym->ns.xt.sym_record );
         }
         if( (sym->ns.flags & SY_CLASS) == SY_SUBPROGRAM ) {
@@ -1816,7 +1816,7 @@ dbg_type        FEDbgType( sym_id sym ) {
                 // return value always points to the return value
                 db_type = GetDbgType( sym->ns.si.ms.sym );
                 db_type = DBDereference( T_POINTER, db_type );
-                if( SubProgId->ns.typ == TY_CHAR ) { // character function
+                if( SubProgId->ns.typ == FT_CHAR ) { // character function
                     db_type = DBDereference( T_POINTER, db_type );
                 }
             } else {
@@ -1830,7 +1830,7 @@ dbg_type        FEDbgType( sym_id sym ) {
                     }
                     if( sym->ns.flags & SY_SUB_PARM ) {
                         db_type = DBDereference( T_POINTER, db_type );
-                        if( sym->ns.typ == TY_CHAR ) {
+                        if( sym->ns.typ == FT_CHAR ) {
                             if( !(sym->ns.flags & SY_VALUE_PARM) ) {
                                 if( Options & OPT_DESCRIPTOR ) {
                                     db_type = DBDereference( T_POINTER, db_type );
@@ -1841,7 +1841,7 @@ dbg_type        FEDbgType( sym_id sym ) {
                     if( _Allocatable( sym ) ) {
                         db_type = DBDereference( T_POINTER, db_type );
                     }
-                } else if( sym->ns.typ == TY_CHAR ) {
+                } else if( sym->ns.typ == FT_CHAR ) {
                     // character variable
                     db_type = DBDereference( T_POINTER, db_type );
                     if( sym->ns.flags & SY_SUB_PARM ) {

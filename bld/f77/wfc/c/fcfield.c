@@ -85,7 +85,7 @@ cg_name FieldArrayEltSize( sym_id fd ) {
 
 // Return size of an array element.  Array is a field in a structure.
 
-    if( fd->fd.typ == TY_STRUCTURE ) {
+    if( fd->fd.typ == FT_STRUCTURE ) {
         return( CGInteger( fd->fd.xt.record->size, T_INTEGER ) );
     } else {
         return( CGInteger( fd->fd.xt.size, T_INTEGER ) );

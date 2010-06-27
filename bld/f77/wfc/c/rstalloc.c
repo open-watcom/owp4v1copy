@@ -159,7 +159,7 @@ sym_id  FreeREntry( sym_id sym ) {
 
     fd = sym->sd.fl.sym_fields;
     while( fd != NULL ) {
-        if( fd->fd.typ == TY_UNION ) {
+        if( fd->fd.typ == FT_UNION ) {
             FreeRList( fd->fd.xt.sym_record );
         } else {
             if( fd->fd.dim_ext != NULL ) {

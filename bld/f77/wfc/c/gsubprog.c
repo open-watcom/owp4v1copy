@@ -104,7 +104,7 @@ void    GBegCall( itnode *itptr ) {
     if( !(Options & OPT_DESCRIPTOR) ) {
         if( (sp->ns.flags & SY_SUBPROG_TYPE) == SY_FUNCTION ) {
             if( !(sp->ns.flags & SY_INTRINSIC) ) {
-                if( sp->ns.typ == TY_CHAR ) {
+                if( sp->ns.typ == FT_CHAR ) {
                     OutPtr( GTempString( sp->ns.xt.size ) );
                 }
             }
@@ -115,7 +115,7 @@ void    GBegCall( itnode *itptr ) {
     OutU16( num_args );
     ObjSeek( curr_obj );
     if( (sp->ns.flags & SY_SUBPROG_TYPE) == SY_FUNCTION ) {
-        if( sp->ns.typ == TY_CHAR ) {
+        if( sp->ns.typ == FT_CHAR ) {
             if( (Options & OPT_DESCRIPTOR) || (sp->ns.flags & SY_INTRINSIC) ) {
                 OutPtr( GTempString( sp->ns.xt.size ) );
             }
@@ -158,7 +158,7 @@ void    GArg( void ) {
     if( ( CITNode->opn.us & USOPN_WHERE ) == USOPN_SAFE ) {
         if( (CITNode->opn.us & USOPN_FLD) &&
             ((CITNode->opn.us & USOPN_WHAT) == USOPN_ARR) &&
-            (CITNode->typ == TY_CHAR) ) {
+            (CITNode->typ == FT_CHAR) ) {
             EmitOp( FC_PASS_FIELD_CHAR_ARRAY );
             OutPtr( CITNode->value.st.field_id );
             OutPtr( GTempString( 0 ) );
@@ -171,7 +171,7 @@ void    GArg( void ) {
         PushOpn( CITNode );
     } else if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_ARR ) {
         PushOpn( CITNode );
-        if( CITNode->typ == TY_CHAR ) {
+        if( CITNode->typ == FT_CHAR ) {
             EmitOp( FC_PASS_CHAR_ARRAY );
             SymRef( CITNode );
             OutPtr( GTempString( 0 ) );
@@ -386,7 +386,7 @@ void    GNullRetIdx( void ) {
 
     PushConst( 0 );
     EmitOp( FC_ASSIGN_ALT_RET );
-    DumpType( TY_INTEGER, TypeSize( TY_INTEGER ) );
+    DumpType( FT_INTEGER, TypeSize( FT_INTEGER ) );
 }
 
 

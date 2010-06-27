@@ -63,7 +63,7 @@ TYPE    ImplType( char chr ) {
 // character.
 
     if( CharSetInfo.is_foreign( chr ) )
-        return( TY_REAL );
+        return( FT_REAL );
     return( ImplicitTab[ CharIndex( chr ) ].typ );
 }
 
@@ -75,7 +75,7 @@ uint    ImplSize( char chr ) {
 // given character.
 
     if( CharSetInfo.is_foreign( chr ) )
-        return( StorageSize( TY_REAL ) );
+        return( StorageSize( FT_REAL ) );
     return( ImplicitTab[ CharIndex( chr ) ].size );
 }
 
@@ -111,9 +111,9 @@ void    InitImplTab( void ) {
     int         i;
 
     for( i = 0; i <= IMPL_SIZE; ++i ) {
-        typ = TY_REAL;
+        typ = FT_REAL;
         if( ( i >= 8 ) && ( i <= 13 ) ) {
-            typ = TY_INTEGER;
+            typ = FT_INTEGER;
         }
         ImplicitTab[i].typ = typ;
         ImplicitTab[i].impl_ed = FALSE;

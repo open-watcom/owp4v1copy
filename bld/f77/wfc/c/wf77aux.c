@@ -457,7 +457,7 @@ void    SubAuxFini( void ) {
         next = ArrayInfo->link;
         arr = SymFind( ArrayInfo->arr, strlen( ArrayInfo->arr ) );
         if( ( arr != NULL ) && ( arr->ns.flags & SY_SUBSCRIPTED ) &&
-            ( arr->ns.typ != TY_CHAR ) &&
+            ( arr->ns.typ != FT_CHAR ) &&
             ( ( arr->ns.flags & SY_SUB_PARM ) || _Allocatable( arr ) ) ) {
             arr->ns.si.va.dim_ext->dim_flags |= DIM_EXTENDED;
         }

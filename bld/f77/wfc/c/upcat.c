@@ -74,7 +74,7 @@ static  void    FoldCatSequence( itnode *cit ) {
     for(;;) {
         if( CITNode->opn.us != USOPN_CON ) break;
         num++;
-        if( CITNode->typ != TY_CHAR ) {
+        if( CITNode->typ != FT_CHAR ) {
             TypeErr( MD_ILL_OPR, CITNode->typ );
         } else {
             size += CITNode->value.cstring.len;
@@ -147,9 +147,9 @@ static  int     ScanCat( int *size_ptr ) {
     for(;;) {
         if( CITNode->opn.ds == DSOPN_PHI ) {
             // no operand (A = B // // C)
-            TypeErr( SX_WRONG_TYPE, TY_CHAR );
-        } else if( CITNode->typ != TY_CHAR ) {
-            TypeTypeErr( MD_MIXED, TY_CHAR, CITNode->typ );
+            TypeErr( SX_WRONG_TYPE, FT_CHAR );
+        } else if( CITNode->typ != FT_CHAR ) {
+            TypeTypeErr( MD_MIXED, FT_CHAR, CITNode->typ );
         } else if( ( CITNode->size == 0 ) && ( size_ptr != NULL ) ) {
             // NULL 'size_ptr' means we are concatenating into a character
             // variable so character*(*) variables are allowed.
@@ -400,7 +400,7 @@ void            CatArgs( int num ) {
     for(;;) {
         // Don't call CatArg() if no operand or not of type character.
         // This covers the case where invalid operands are specified.
-        if( ( itptr->opn.ds != DSOPN_PHI ) && ( itptr->typ == TY_CHAR ) ) {
+        if( ( itptr->opn.ds != DSOPN_PHI ) && ( itptr->typ == FT_CHAR ) ) {
             GCatArg( itptr );
         }
         if( --count <= 0 ) break;

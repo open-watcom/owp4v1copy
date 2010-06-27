@@ -189,7 +189,7 @@ void CpSubroutine( void )
     CkSubEnd();
     ProgSw |= PS_IN_SUBPROGRAM;
     if( ReqName( NAME_SUBROUTINE ) ) {
-        entry = SubProgName( TY_NO_TYPE, SY_USAGE | SY_SUBPROGRAM | SY_PENTRY |
+        entry = SubProgName( FT_NO_TYPE, SY_USAGE | SY_SUBPROGRAM | SY_PENTRY |
                               SY_SUBROUTINE | SY_REFERENCED, 0, TRUE );
         if( RecOpenParen() ) {
             ParmList( TRUE, entry );
@@ -218,7 +218,7 @@ void    Function( TYPE typ, uint size, bool len_spec )
     entry_pt    *entry;
 
     flags = SY_USAGE | SY_SUBPROGRAM | SY_PENTRY | SY_FUNCTION;
-    if( typ == TY_NO_TYPE ) {
+    if( typ == FT_NO_TYPE ) {
         typ = ImplType( *(CITNode->opnd) );
     } else {
         flags |= SY_TYPE;
@@ -246,7 +246,7 @@ void    Function( TYPE typ, uint size, bool len_spec )
 
 void CpFunction( void )
 {
-    Function( TY_NO_TYPE, -1, FALSE );
+    Function( FT_NO_TYPE, -1, FALSE );
 }
 
 void CpEntry( void )

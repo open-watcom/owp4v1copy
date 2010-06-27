@@ -116,12 +116,12 @@ void    DSName( void ) {
                 }
             } else if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_NWL ) {
                 // field better be character and substrung
-                if( ( CITNode->sym_ptr->fd.typ != TY_CHAR ) || !SubStrung() ) {
+                if( ( CITNode->sym_ptr->fd.typ != FT_CHAR ) || !SubStrung() ) {
                     AdvError( PC_SURP_PAREN );
                 }
             }
             // setup FieldNode for the next field lookup
-            if( CITNode->sym_ptr->fd.typ == TY_STRUCTURE ) {
+            if( CITNode->sym_ptr->fd.typ == FT_STRUCTURE ) {
                 // chain fields for CkFieldNoList()
                 CITNode->value.sc.struct_chain = FieldNode;
                 FieldNode = CITNode; // must come after LkField()
@@ -170,7 +170,7 @@ void    DSName( void ) {
         sd = FindStruct( CITNode->opnd, CITNode->opnd_size );
         if( sd != NULL ) {
             CITNode->opn.us = USOPN_CON;
-            CITNode->typ = TY_STRUCTURE;
+            CITNode->typ = FT_STRUCTURE;
             CITNode->value.intstar4 = sd->sd.size;
             return;
         }
@@ -195,7 +195,7 @@ void    DSName( void ) {
         } else if( RecNWL() ) {     // if name with list, not dimensioned
             if( ASType & AST_DIM ) {
                 IllName( sym_ptr );
-            } else if( (CITNode->typ == TY_CHAR) && SubStrung() ) {
+            } else if( (CITNode->typ == FT_CHAR) && SubStrung() ) {
                 SetTypeUsage( SY_TYPE | SY_USAGE );
             } else {
                 ScanningFunction();
@@ -221,7 +221,7 @@ void    DSName( void ) {
         } else {
             CITNode->opn.us = USOPN_CON;
             CITNode->sym_ptr = sym_ptr->ns.si.pc.value;
-            if( CITNode->typ == TY_CHAR ) {
+            if( CITNode->typ == FT_CHAR ) {
                 if( StmtSw & SY_DATA_INIT ) {
                     CITNode->sym_ptr->lt.flags |= LT_DATA_STMT;
                 } else {
@@ -255,7 +255,7 @@ void    DSName( void ) {
 static  void    ChkStructName( void ) {
 //===============================
 
-    if( CITNode->typ == TY_STRUCTURE ) {
+    if( CITNode->typ == FT_STRUCTURE ) {
         // save the current FieldNode
         // consider:            STRUCTURE /S1/
         //                          INTEGER J
@@ -283,7 +283,7 @@ void    GetFunctionShadow( void ) {
     // IMPLICIT statement changed the type of the function
     fn_shadow = FindShadow( CITNode->sym_ptr );
     fn_shadow->ns.typ = CITNode->sym_ptr->ns.typ;
-    if( fn_shadow->ns.typ == TY_STRUCTURE ) {
+    if( fn_shadow->ns.typ == FT_STRUCTURE ) {
         fn_shadow->ns.xt.record = CITNode->sym_ptr->ns.xt.record;
     } else {
         fn_shadow->ns.xt.size = CITNode->sym_ptr->ns.xt.size;
@@ -330,7 +330,7 @@ static  void    SubProg( void ) {
             Extension( SR_TRIED_RECURSION );
         }
     } else if( sp_type == SY_FUNCTION ) {
-        if( RecNWL() && SubStrung() && (CITNode->typ == TY_CHAR) &&
+        if( RecNWL() && SubStrung() && (CITNode->typ == FT_CHAR) &&
             (CITNode->flags & SY_PS_ENTRY) ) {
             GetFunctionShadow();
         } else if( !RecNWL() && !(ASType & AST_CNA) ) {

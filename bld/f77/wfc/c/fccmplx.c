@@ -754,12 +754,12 @@ void            PushCmplxConst( sym_id sym ) {
 
     char        fmt_buff[80];
 
-    if( sym->cn.typ == TY_COMPLEX ) {
+    if( sym->cn.typ == FT_COMPLEX ) {
         CnvS2S( &sym->cn.value.complex.imagpart, fmt_buff );
         XPush( CGFloat( fmt_buff, T_SINGLE ) );
         CnvS2S( &sym->cn.value.complex.realpart, fmt_buff );
         XPush( CGFloat( fmt_buff, T_SINGLE ) );
-    } else if( sym->cn.typ == TY_DCOMPLEX ) {
+    } else if( sym->cn.typ == FT_DCOMPLEX ) {
         CnvD2S( &sym->cn.value.dcomplex.imagpart, fmt_buff );
         XPush( CGFloat( fmt_buff, T_DOUBLE ) );
         CnvD2S( &sym->cn.value.dcomplex.realpart, fmt_buff );
@@ -797,7 +797,7 @@ void            CmplxAssign( sym_id sym, cg_type dst_typ, cg_type src_typ ) {
         // check for structure type before checking for array
         // Consider:    A(1).X = A(2).X
         //    where A is an array of structures containing complex field X
-        if( sym->ns.typ == TY_STRUCTURE ) {
+        if( sym->ns.typ == FT_STRUCTURE ) {
             dest = XPop();
             GetU16(); // ignore structure information
         } else if( flags & SY_SUBSCRIPTED ) {

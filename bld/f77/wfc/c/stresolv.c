@@ -114,7 +114,7 @@ static  intstar4        CheckSubStr( act_eq_entry *eqv_entry ) {
 
     sym = eqv_entry->name_equived;
     substr = &eqv_entry->subscrs[ eqv_entry->subs_no ];
-    if( sym->ns.typ != TY_CHAR ) {
+    if( sym->ns.typ != FT_CHAR ) {
         NameTypeErr( EV_ONLY_IF_CHAR, sym );
         offset = 0;
     } else {
@@ -188,7 +188,7 @@ static  byte    ClassifyType( TYPE sym_type ) {
     byte        typ;
 
     typ = ES_NOT_CHAR;
-    if( sym_type == TY_CHAR ) {
+    if( sym_type == FT_CHAR ) {
         typ = ES_CHAR;
     }
     return( typ );

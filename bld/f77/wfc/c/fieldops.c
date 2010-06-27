@@ -67,13 +67,13 @@ void    FieldOp( TYPE typ1, TYPE typ2, OPTR op ) {
     if( CITNode->opn.us & USOPN_FLD ) {
         // sub-field reference
         EmitOp( FC_ADD );
-        DumpTypes( TY_INTEGER, TypeSize( TY_INTEGER ),
-                   TY_INTEGER, TypeSize( TY_INTEGER ) );
+        DumpTypes( FT_INTEGER, TypeSize( FT_INTEGER ),
+                   FT_INTEGER, TypeSize( FT_INTEGER ) );
     } else {
         EmitOp( FC_FIELD_OP );
         OutPtr( CITNode->sym_ptr );
         if( ( StmtSw & SS_DATA_INIT ) == 0 ) {
-            if( typ2 == TY_CHAR ) {
+            if( typ2 == FT_CHAR ) {
                 if( ( CITNode->link->opn.us & USOPN_WHAT ) != USOPN_ARR ) {
                     if( ( ( CITNode->link->opn.us & USOPN_WHAT ) != USOPN_NWL ) &&
                         ( ( CITNode->link->opn.us & USOPN_WHAT ) != USOPN_ASS ) ) {

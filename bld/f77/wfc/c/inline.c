@@ -447,7 +447,7 @@ call_handle     InitInlineCall( int rtn_id ) {
         strcpy( SymBuff, in_entry->name );
         sym = STAdd( SymBuff, name_len );
         sym->ns.flags = SY_USAGE | SY_TYPE | SY_SUBPROGRAM | SY_FUNCTION;
-        sym->ns.typ = TY_INTEGER_TARG;
+        sym->ns.typ = FT_INTEGER_TARG;
         sym->ns.xt.size = TypeSize( sym->ns.typ );
         sym->ns.address = NULL;
         in_entry->sym_ptr = sym;

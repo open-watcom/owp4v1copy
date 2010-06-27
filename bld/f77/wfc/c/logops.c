@@ -51,7 +51,7 @@ void    LogOp( TYPE typ1, TYPE typ2, OPTR op ) {
         flip = TRUE;
     }
     PushOpn( CITNode->link );
-    if( typ1 == TY_NO_TYPE ) {  // unary
+    if( typ1 == FT_NO_TYPE ) {  // unary
         if( _IsTypeInteger( typ2 ) ) {
             EmitOp( FC_BIT_NOT );
         } else {

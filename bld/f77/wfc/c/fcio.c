@@ -181,13 +181,13 @@ static  void    StructIO( struct field *fd ) {
     unsigned_32 size;
 
     while( fd != NULL ) {
-        if( fd->typ == TY_STRUCTURE ) {
+        if( fd->typ == FT_STRUCTURE ) {
             if( fd->dim_ext != NULL ) {
                 StructIOArrayStruct( (sym_id)fd );
             } else {
                 StructIO( fd->xt.record->fl.fields );
             }
-        } else if( fd->typ == TY_UNION ) {
+        } else if( fd->typ == FT_UNION ) {
             size = 0;
             map = fd->xt.sym_record;
             while( map != NULL ) { // find biggest map
@@ -714,7 +714,7 @@ static  void    StructIOItem( sym_id fd ) {
 
     if( fd->fd.dim_ext == NULL ) {
         XPush( TmpVal( TmpStructPtr, T_POINTER ) );
-        if( fd->fd.typ == TY_CHAR ) {
+        if( fd->fd.typ == FT_CHAR ) {
             XPush( CGInteger( fd->fd.xt.size, T_INTEGER ) );
         }
         IORtnTable[ ParmType( fd->fd.typ, fd->fd.xt.size ) ]();
@@ -730,7 +730,7 @@ static  void    StructIOItem( sym_id fd ) {
         } else {
             rtn = RT_INP_ARRAY;
         }
-        if( fd->fd.typ == TY_CHAR ) {
+        if( fd->fd.typ == FT_CHAR ) {
             ChrArrayIO( rtn + 1, TmpVal( TmpStructPtr, T_POINTER ),
                         CGInteger( fd->fd.dim_ext->num_elts, T_INT_4 ),
                         CGInteger( fd->fd.xt.size, T_INTEGER ) );
@@ -891,7 +891,7 @@ void    ArrayIO( RTCODE num_array, RTCODE chr_array ) {
     if( field == NULL ) {
         addr = SymAddr( arr );
         num_elts = ArrayNumElts( arr );
-        if( arr->ns.typ == TY_CHAR ) {
+        if( arr->ns.typ == FT_CHAR ) {
             ChrArrayIO( chr_array, addr, num_elts, ArrayEltSize( arr ) );
         } else {
             NumArrayIO( num_array, addr, num_elts,
@@ -900,7 +900,7 @@ void    ArrayIO( RTCODE num_array, RTCODE chr_array ) {
     } else { // must be a array field in a structure
         addr = XPop();
         num_elts = FieldArrayNumElts( field );
-        if( field->fd.typ == TY_CHAR ) {
+        if( field->fd.typ == FT_CHAR ) {
             elt_size = CGInteger( field->fd.xt.size, T_INTEGER );
             ChrArrayIO( chr_array, addr, num_elts, elt_size );
         } else {

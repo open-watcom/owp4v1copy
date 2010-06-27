@@ -67,17 +67,17 @@ uint            StorageSize( TYPE typ ) {
 // This function is sensitive to the "short" option.
 
     if( Options & OPT_SHORT ) {
-        if( typ == TY_INTEGER )
+        if( typ == FT_INTEGER )
             return( sizeof( intstar2 ) );
-        if( typ == TY_LOGICAL ) {
+        if( typ == FT_LOGICAL ) {
             return( sizeof( logstar1 ) );
         }
     }
     if( Options & OPT_EXTEND_REAL ) {
-        if( typ == TY_REAL )
+        if( typ == FT_REAL )
             return( sizeof( double ) );
-        if( typ == TY_DOUBLE ) {
-            return( TypeInfo[ TY_EXTENDED ].size );
+        if( typ == FT_DOUBLE ) {
+            return( TypeInfo[ FT_EXTENDED ].size );
         }
     }
     return( TypeInfo[ typ ].size );

@@ -351,8 +351,8 @@ void    CnvTo( itnode *itptr, TYPE typ, uint size ) {
 
 // Convert itnode to desired numeric type.
 
-    CnvToTab[ ( ( typ - TY_INTEGER_1 ) * CONV_TAB_COLS )
-           + ( itptr->typ - TY_INTEGER_1 ) ]( itptr, size );
+    CnvToTab[ ( ( typ - FT_INTEGER_1 ) * CONV_TAB_COLS )
+           + ( itptr->typ - FT_INTEGER_1 ) ]( itptr, size );
     itptr->typ = typ;
     itptr->size = size;
 }

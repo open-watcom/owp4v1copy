@@ -74,11 +74,11 @@ void    GDoInit( TYPE do_type ) {
 static intstar4 GetIntValue( itnode *node ) {
 //===========================================
 
-    if( node->typ == TY_REAL ) {
+    if( node->typ == FT_REAL ) {
         return( node->value.single );
-    } else if( node->typ == TY_DOUBLE ) {
+    } else if( node->typ == FT_DOUBLE ) {
         return( node->value.dble );
-    } else if( node->typ == TY_EXTENDED ) {
+    } else if( node->typ == FT_EXTENDED ) {
         return( node->value.extended );
     } else {
         return( ITIntValue( node ) );
@@ -90,7 +90,7 @@ static bool NeedIncrement( intstar4 limit, intstar4 incr, TYPE do_type ) {
 //=======================================================================
 
     switch( do_type ) {
-    case TY_INTEGER_1:
+    case FT_INTEGER_1:
         if( incr > 0 ) {
             if( limit > SCHAR_MAX - incr ) {
                 return( TRUE );
@@ -101,7 +101,7 @@ static bool NeedIncrement( intstar4 limit, intstar4 incr, TYPE do_type ) {
             }
         }
         break;
-    case TY_INTEGER_2:
+    case FT_INTEGER_2:
         if( incr > 0 ) {
             if( limit > SHRT_MAX - incr ) {
                 return( TRUE );
@@ -112,7 +112,7 @@ static bool NeedIncrement( intstar4 limit, intstar4 incr, TYPE do_type ) {
             }
         }
         break;
-    case TY_INTEGER:
+    case FT_INTEGER:
         if( incr > 0 ) {
             if( limit > LONG_MAX - incr ) {
                 return( TRUE );
@@ -218,12 +218,12 @@ static  void    DoLoop( TYPE do_type ) {
             if( _IsTypeInteger( do_type ) ) {
                 loop_ctrl = StaticAlloc( do_size, do_type );
             } else {
-                loop_ctrl = StaticAlloc( sizeof( intstar4 ), TY_INTEGER );
+                loop_ctrl = StaticAlloc( sizeof( intstar4 ), FT_INTEGER );
             }
             doptr->iteration = loop_ctrl;
             OutPtr( loop_ctrl );
             if( e3_node == NULL ) {
-                DumpType( TY_INTEGER, TypeSize( TY_INTEGER ) );
+                DumpType( FT_INTEGER, TypeSize( FT_INTEGER ) );
             } else {
                 GenType( e3_node );
             }

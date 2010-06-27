@@ -145,7 +145,7 @@ void    CpRecord( void ) {
     CSExtn();
     sd = StructName();
     if( IsFunctionDefn() ) {
-        Function( TY_STRUCTURE, 0, TRUE );
+        Function( FT_STRUCTURE, 0, TRUE );
         SubProgId->ns.xt.sym_record = sd;
     } else {
         MustBeTypeDecl();
@@ -154,10 +154,10 @@ void    CpRecord( void ) {
                 var_node = CITNode;
                 if( SgmtSw & SG_DEFINING_STRUCTURE ) {
                     sym = FieldDecl();
-                    sym->fd.typ = TY_STRUCTURE;
+                    sym->fd.typ = FT_STRUCTURE;
                     sym->fd.xt.sym_record = sd;
                 } else {
-                    sym = VarDecl( TY_STRUCTURE );
+                    sym = VarDecl( FT_STRUCTURE );
                     sym->ns.xt.sym_record = sd;
                 }
                 if( RecOpenParen() ) {

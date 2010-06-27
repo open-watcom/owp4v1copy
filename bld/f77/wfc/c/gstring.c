@@ -66,7 +66,7 @@ sym_id  GTempString( uint size ) {
 
     sym_id     sym_ptr;
 
-    sym_ptr = StaticAlloc( sizeof( string ), TY_CHAR );
+    sym_ptr = StaticAlloc( sizeof( string ), FT_CHAR );
     sym_ptr->ns.xt.size = size;
     return( sym_ptr );
 }
@@ -111,7 +111,7 @@ static  uint    SrcChar( itnode *op ) {
         return( op->sym_ptr->lt.length );
     }
     if( ( op->opn.us & USOPN_WHAT ) == USOPN_NNL ) { // character variable
-        if( op->sym_ptr->ns.typ == TY_STRUCTURE ) {
+        if( op->sym_ptr->ns.typ == FT_STRUCTURE ) {
             return( 0 );        // No mechanism exists for keeping the size.
         } else {
             return( op->sym_ptr->ns.xt.size );
@@ -126,14 +126,14 @@ static  uint    TargChar( itnode *op ) {
 
     if( op->opn.us & USOPN_SS1 ) return( op->value.st.ss_size );
     if( ( op->opn.us & USOPN_WHAT ) == USOPN_NNL ) { // character variable
-        if( op->sym_ptr->ns.typ == TY_STRUCTURE ) {
+        if( op->sym_ptr->ns.typ == FT_STRUCTURE ) {
             return( 0 );        // No mechanism exists for keeping the size.
         } else {
             return( op->sym_ptr->ns.xt.size );
         }
     }
     if( ( op->opn.us & USOPN_WHAT ) == USOPN_NWL ) { // character array
-        if( op->sym_ptr->ns.typ == TY_STRUCTURE ) {
+        if( op->sym_ptr->ns.typ == FT_STRUCTURE ) {
             return( 0 );        // No mechanism exists for keeping the size.
         } else {
             return( op->sym_ptr->ns.xt.size );
@@ -162,7 +162,7 @@ void    AsgnChar( void ) {
         if( OptimalChSize( i ) && OptimalChSize( j ) && ( i == j ) ) {
             PushOpn( save_cit );
             EmitOp( FC_CHAR_1_MOVE );
-            DumpType( MapTypes( TY_INTEGER, i ), i );
+            DumpType( MapTypes( FT_INTEGER, i ), i );
             GenChar1Op( CITNode );
             if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_CON ) {
                 CITNode->sym_ptr->lt.flags &= ~LT_SCB_TMP_REFERENCE;

@@ -663,28 +663,28 @@ static  void    InitOne( TYPE typ, ftn_type *one ) {
 //==================================================
 
     switch( typ ) {
-    case TY_INTEGER_1:
-    case TY_INTEGER_2:
-    case TY_INTEGER:
+    case FT_INTEGER_1:
+    case FT_INTEGER_2:
+    case FT_INTEGER:
         one->intstar4 = 1;
         break;
-    case TY_REAL:
+    case FT_REAL:
         one->single = 1;
         break;
-    case TY_DOUBLE:
+    case FT_DOUBLE:
         one->dble = 1;
         break;
-    case TY_TRUE_EXTENDED:
+    case FT_TRUE_EXTENDED:
         one->extended = 1;
         break;
-    case TY_COMPLEX:
+    case FT_COMPLEX:
         one->complex.realpart = 1;
         one->complex.imagpart = 0;
         break;
-    case TY_DCOMPLEX:
+    case FT_DCOMPLEX:
         one->dcomplex.realpart = 1;
         one->dcomplex.imagpart = 0;
-    case TY_TRUE_XCOMPLEX:
+    case FT_TRUE_XCOMPLEX:
         one->xcomplex.realpart = 1;
         one->xcomplex.imagpart = 0;
     }
@@ -695,23 +695,23 @@ static  bool    ZeroBase( TYPE typ, ftn_type *base ) {
 //====================================================
 
     switch( typ ) {
-    case TY_INTEGER_1:
-    case TY_INTEGER_2:
-    case TY_INTEGER:
+    case FT_INTEGER_1:
+    case FT_INTEGER_2:
+    case FT_INTEGER:
         return( base->intstar4 == 0 );
-    case TY_REAL:
+    case FT_REAL:
         return( base->single == 0 );
-    case TY_DOUBLE:
+    case FT_DOUBLE:
         return( base->dble == 0 );
-    case TY_TRUE_EXTENDED:
+    case FT_TRUE_EXTENDED:
         return( base->extended == 0 );
-    case TY_COMPLEX:
+    case FT_COMPLEX:
         return( ( base->complex.realpart == 0 ) &&
                 ( base->complex.imagpart == 0 ) );
-    case TY_DCOMPLEX:
+    case FT_DCOMPLEX:
         return( ( base->dcomplex.realpart == 0 ) &&
                 ( base->dcomplex.imagpart == 0 ) );
-    default: // case TY_XCOMPLEX:
+    default: // case FT_XCOMPLEX:
         return( ( base->xcomplex.realpart == 0 ) &&
                 ( base->xcomplex.imagpart == 0 ) );
     }
@@ -744,7 +744,7 @@ void    ExpI( TYPE typ, ftn_type *base, intstar4 exponent ) {
         InitOne( typ, &result );
         if( exponent < 0 ) {
             // base == 1 / base
-            Div[ typ - TY_INTEGER_1 ]( &result, base );
+            Div[ typ - FT_INTEGER_1 ]( &result, base );
             *base = result;
             InitOne( typ, &result );
             exponent = -exponent;
@@ -755,12 +755,12 @@ void    ExpI( TYPE typ, ftn_type *base, intstar4 exponent ) {
         exponent /= 2;
         while( exponent != 0 ) {
             for(;;) {
-                Mul[ typ - TY_INTEGER_1 ]( base, base );
+                Mul[ typ - FT_INTEGER_1 ]( base, base );
                 odd = ( ( exponent & 1 ) != 0 );
                 exponent /= 2;
                 if( odd ) break;
             }
-            Mul[ typ - TY_INTEGER_1 ]( &result, base );
+            Mul[ typ - FT_INTEGER_1 ]( &result, base );
         }
         *base = result;
     }

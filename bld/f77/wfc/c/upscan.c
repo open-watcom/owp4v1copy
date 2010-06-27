@@ -359,7 +359,7 @@ static  void    ParenExpr( void ) {
         //           IF( ('9') .NE. (A) ) CONTINUE
         // make sure that we can optimize the character operation
         if( CITNode->opn.us == USOPN_NNL ) {
-            if( CITNode->typ == TY_CHAR ) {
+            if( CITNode->typ == FT_CHAR ) {
                 int     ch_size;
 
                 ch_size = CITNode->size;
@@ -478,8 +478,8 @@ static  void    HighColon( void ) {
         // we don't know have access to the symbol table
         // entry so we can't compute the size
         CITNode->opn.us = USOPN_SSR;
-        CITNode->typ = TY_INTEGER;
-        CITNode->size = TypeSize( TY_INTEGER );
+        CITNode->typ = FT_INTEGER;
+        CITNode->size = TypeSize( FT_INTEGER );
     } else if( SimpleScript( CITNode ) &&
                ( (BkLink->opr == OPR_FBR) || (BkLink->opr == OPR_LBR) ) ) {
         int     ch_size;
@@ -498,8 +498,8 @@ static  void    MkConst( intstar4 number ) {
 //==========================================
 
     CITNode->value.intstar4 = number;
-    CITNode->typ  = TY_INTEGER;
-    CITNode->size = TypeSize( TY_INTEGER );
+    CITNode->typ  = FT_INTEGER;
+    CITNode->size = TypeSize( FT_INTEGER );
     CITNode->opn.us  = USOPN_CON;
 }
 
@@ -639,7 +639,7 @@ static  void    USCleanUp( void ) {
     }
     first->link = CITNode;
     CITNode = first;
-    CITNode->typ = TY_NO_TYPE;
+    CITNode->typ = FT_NO_TYPE;
     CITNode->opn.ds = DSOPN_PHI;
 }
 
@@ -653,19 +653,19 @@ static  bool    DoGenerate( TYPE typ1, TYPE typ2, uint *res_size ) {
         if( ( ASType & AST_ASF ) || CkAssignOk() ) return( TRUE );
         return( FALSE );
     } else {
-        if( ( ( typ1 == TY_DOUBLE ) && ( typ2 == TY_COMPLEX ) ) ||
-            ( ( typ2 == TY_DOUBLE ) && ( typ1 == TY_COMPLEX ) ) ) {
-            ResultType = TY_DCOMPLEX;
-            *res_size = TypeSize( TY_DCOMPLEX );
+        if( ( ( typ1 == FT_DOUBLE ) && ( typ2 == FT_COMPLEX ) ) ||
+            ( ( typ2 == FT_DOUBLE ) && ( typ1 == FT_COMPLEX ) ) ) {
+            ResultType = FT_DCOMPLEX;
+            *res_size = TypeSize( FT_DCOMPLEX );
             Extension( MD_DBLE_WITH_CMPLX );
-        } else if( ( ( typ1 == TY_TRUE_EXTENDED ) && ( typ2 == TY_COMPLEX ) )
-            ||     ( ( typ2 == TY_TRUE_EXTENDED ) && ( typ1 == TY_COMPLEX ) )
-            ||     ( ( typ1 == TY_TRUE_EXTENDED ) && ( typ2 == TY_DCOMPLEX ) )
-            ||     ( ( typ2 == TY_TRUE_EXTENDED ) && ( typ1 == TY_DCOMPLEX ) ) ) {
-            ResultType = TY_XCOMPLEX;
-            *res_size = TypeSize( TY_XCOMPLEX );
+        } else if( ( ( typ1 == FT_TRUE_EXTENDED ) && ( typ2 == FT_COMPLEX ) )
+            ||     ( ( typ2 == FT_TRUE_EXTENDED ) && ( typ1 == FT_COMPLEX ) )
+            ||     ( ( typ1 == FT_TRUE_EXTENDED ) && ( typ2 == FT_DCOMPLEX ) )
+            ||     ( ( typ2 == FT_TRUE_EXTENDED ) && ( typ1 == FT_DCOMPLEX ) ) ) {
+            ResultType = FT_XCOMPLEX;
+            *res_size = TypeSize( FT_XCOMPLEX );
             Extension( MD_DBLE_WITH_CMPLX );
-        } else if( ( typ2 > typ1 ) || ( typ1 == TY_STRUCTURE ) || ( typ1 == TY_NO_TYPE ) ) {
+        } else if( ( typ2 > typ1 ) || ( typ1 == FT_STRUCTURE ) || ( typ1 == FT_NO_TYPE ) ) {
             ResultType = typ2;
             *res_size = TypeSize( typ2 );
         } else {
@@ -705,7 +705,7 @@ static  void    FixFldNode( void ) {
             // where Y is an array. We need the field name of
             // array for i/o.
             CITNode->value.st.field_id = next->sym_ptr;
-        } else if( next->typ == TY_STRUCTURE ) {
+        } else if( next->typ == FT_STRUCTURE ) {
             // pass on structure name
             // Consider:        PRINT *, X.Y(1)
             // where Y is an array of structures. The structure we
@@ -745,7 +745,7 @@ static  void    Generate( void ) {
         typ2 = next->typ;
         opr = next->opr;
         if( RecNOpn() ) {
-            typ1 = TY_NO_TYPE;
+            typ1 = FT_NO_TYPE;
             CITNode->size = next->size;
             if( (opr != OPR_PLS) && (opr != OPR_MIN) && (opr != OPR_NOT) ) {
                 BadSequence();
@@ -753,15 +753,15 @@ static  void    Generate( void ) {
             }
         }
         op = OprNum[ opr ];
-        if( typ1 == TY_NO_TYPE ) {
-            mask = LegalOprsU[ typ2 - TY_FIRST ];
+        if( typ1 == FT_NO_TYPE ) {
+            mask = LegalOprsU[ typ2 - FT_FIRST ];
         } else {
-            mask = LegalOprsB[ ( typ2 - TY_FIRST ) * LEGALOPR_TAB_COLS + typ1 - TY_FIRST ];
+            mask = LegalOprsB[ ( typ2 - FT_FIRST ) * LEGALOPR_TAB_COLS + typ1 - FT_FIRST ];
         }
         if( ( ( mask >> ( op - OPTR_FIRST ) ) & 1 ) == 0 ) {
             // illegal combination
             MoveDown();
-            if( typ1 == TY_NO_TYPE ) {
+            if( typ1 == FT_NO_TYPE ) {
                 TypeErr( MD_UNARY_OP, typ2 );
             } else if( typ1 == typ2 ) {
                 TypeErr( MD_ILL_OPR, typ1 );
@@ -771,14 +771,14 @@ static  void    Generate( void ) {
             BackTrack();
         } else if( DoGenerate( typ1, typ2, &res_size ) ) {
             if( ( opr >= OPR_FIRST_RELOP ) && ( opr <= OPR_LAST_RELOP ) &&
-                ( (ResultType == TY_COMPLEX) || (ResultType == TY_DCOMPLEX) ||
-                (ResultType == TY_XCOMPLEX) ) &&
+                ( (ResultType == FT_COMPLEX) || (ResultType == FT_DCOMPLEX) ||
+                (ResultType == FT_XCOMPLEX) ) &&
                 ( opr != OPR_EQ ) && ( opr != OPR_NE ) ) {
                 // can only compare complex with .EQ. and .NE.
                 Error( MD_RELOP_OPND_COMPLEX );
             } else {
                 if( ( next->opn.us == USOPN_CON ) &&
-                    ( ( CITNode->opn.us == USOPN_CON ) || ( typ1 == TY_NO_TYPE ) ) ) {
+                    ( ( CITNode->opn.us == USOPN_CON ) || ( typ1 == FT_NO_TYPE ) ) ) {
                     // we can do some constant folding
                     ConstTable[ op ]( typ1, typ2, op );
                 } else {
@@ -807,7 +807,7 @@ static  void    Generate( void ) {
             case OPR_GE:
             case OPR_LE:
             case OPR_GT:
-                ResultType = TY_LOGICAL;
+                ResultType = FT_LOGICAL;
                 res_size = TypeSize( ResultType );
                 break;
             case OPR_FLD:
@@ -833,7 +833,7 @@ void    AddConst( itnode *node ) {
     cstring     *val_ptr;
 
     val_ptr = &node->value.cstring;
-    if( node->typ != TY_CHAR ) {
+    if( node->typ != FT_CHAR ) {
         node->sym_ptr = STConst( val_ptr, node->typ, node->size );
     } else {
         if( node->value.cstring.len == 0 ) {
@@ -850,7 +850,7 @@ static  TYPE    IFPromote( TYPE typ ) {
 // arguments
 
     if( ( Options & OPT_PROMOTE ) && _IsTypeInteger( typ ) ) {
-        typ = TY_INTEGER;
+        typ = FT_INTEGER;
     }
     return( typ );
 }
@@ -946,7 +946,7 @@ static  void    IFPrmChk( void ) {
 
             if( (parm_code == PC_ARRAY_NAME) && _Allocatable( sym ) )
                 break;
-            if( (parm_code == PC_VARIABLE) && (sym->ns.typ == TY_CHAR) &&
+            if( (parm_code == PC_VARIABLE) && (sym->ns.typ == FT_CHAR) &&
                 (sym->ns.xt.size == 0) && !(sym->ns.flags & SY_SUB_PARM) ) {
                 sym->ns.xflags |= SY_ALLOCATABLE;
                 break;
@@ -960,9 +960,9 @@ static  void    IFPrmChk( void ) {
                 MkConst( _SymSize( CITNode->sym_ptr ) );
                 break;
             case USOPN_CON:
-                if( CITNode->typ == TY_CHAR ) {
+                if( CITNode->typ == FT_CHAR ) {
                     MkConst( CITNode->value.cstring.len );
-                } else if( CITNode->typ == TY_STRUCTURE ) {
+                } else if( CITNode->typ == FT_STRUCTURE ) {
                     MkConst( CITNode->value.intstar4 );
                 } else {
                     MkConst( CITNode->size );
@@ -988,7 +988,7 @@ static  void    IFPrmChk( void ) {
                     //          PRINT *, MOD( I, 3 )
                     // I is INTEGER*2 and 3 is INTEGER*4
                     CnvTo( CITNode, parm_typ, TypeSize( parm_typ ) );
-                } else if( ( Options & OPT_PROMOTE ) && ( parm_typ == TY_INTEGER ) &&
+                } else if( ( Options & OPT_PROMOTE ) && ( parm_typ == FT_INTEGER ) &&
                            TypeIs( parm_typ ) ) {
                     // check if we should allow
                     //  INTEGER*1 I
@@ -1155,7 +1155,7 @@ static  void    InlineCnvt( void ) {
             cit->flags = 0;
         } else {
             GArg();
-            GILCnvTo( TY_INTEGER, TypeSize( TY_INTEGER ) );
+            GILCnvTo( FT_INTEGER, TypeSize( FT_INTEGER ) );
             ProcList( cit );
             MarkIFUsed( IF_CHAR );
             CITNode = cit;
@@ -1165,25 +1165,25 @@ static  void    InlineCnvt( void ) {
         cit->value.intstar4 = CITNode->value.intstar4;
         cit->opn.us = USOPN_CON;
         cit->flags = 0;
-    } else if( ( typ >= TY_INTEGER_1 ) && ( typ <= TY_XCOMPLEX ) ) {
+    } else if( ( typ >= FT_INTEGER_1 ) && ( typ <= FT_XCOMPLEX ) ) {
         // this switch statement replaces a huge if() statement for speed
         switch( func ) {
         case IF_CMPLX:
             switch( typ ) {
-            case( TY_DOUBLE ):
+            case( FT_DOUBLE ):
                 func = IF_DCMPLX;
-                func_type = TY_DCOMPLEX;
+                func_type = FT_DCOMPLEX;
                 break;
-            case( TY_TRUE_EXTENDED ):
+            case( FT_TRUE_EXTENDED ):
                 func = IF_QCMPLX;
-                func_type = TY_XCOMPLEX;
+                func_type = FT_XCOMPLEX;
                 break;
             }
         case IF_DCMPLX:
         case IF_QCMPLX:
             if( RecNextOpr( OPR_COM ) ) {
                 if( CITNode->link->typ == typ ) {
-                    if( typ <= TY_EXTENDED ) {
+                    if( typ <= FT_EXTENDED ) {
                         if( func == IF_CMPLX ) {
                             GMakeCplx();
                         } else if ( func == IF_DCMPLX ) {
@@ -1324,11 +1324,11 @@ static  void    InlineCnvt( void ) {
         case IF_MIN1:           GMin( func_type );      break;
         case IF_REAL:           // Make sure that D<-REAL(Z) && X<-REAL(Q)
             switch( typ ) {
-            case( TY_DCOMPLEX ):
-                func_type = TY_DOUBLE;
+            case( FT_DCOMPLEX ):
+                func_type = FT_DOUBLE;
                 break;
-            case( TY_TRUE_XCOMPLEX ):
-                func_type = TY_EXTENDED;
+            case( FT_TRUE_XCOMPLEX ):
+                func_type = FT_EXTENDED;
                 break;
             break;
             }                   // Fall through to default:

@@ -101,7 +101,7 @@ aux_info    *AuxLookup( sym_id sym ) {
             // check for character arguments must come first so that
             // IF@xxx gets generated for intrinsic functions with character
             // arguments (instead of XF@xxxx)
-            } else if( IFArgType( sym->ns.si.fi.index ) == TY_CHAR ) {
+            } else if( IFArgType( sym->ns.si.fi.index ) == FT_CHAR ) {
                 if( sym->ns.flags & SY_IF_ARGUMENT ) {
                     if( !(Options & OPT_DESCRIPTOR) ) {
                         return( &IFChar2Info );

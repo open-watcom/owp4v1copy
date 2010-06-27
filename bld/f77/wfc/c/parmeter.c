@@ -77,7 +77,7 @@ void    CpParameter( void ) {
             if( sym->ns.flags & (SY_USAGE | SY_SUB_PARM | SY_IN_EC) ) {
                 IllName( sym );
                 assign_val = FALSE;
-            } else if( typ == TY_STRUCTURE ) {
+            } else if( typ == FT_STRUCTURE ) {
                 IllType( sym );
                 assign_val = FALSE;
             } else {
@@ -86,17 +86,17 @@ void    CpParameter( void ) {
             AdvanceITPtr();
             ReqEquSign();
             parm_size = sym->ns.xt.size;
-            if( typ == TY_STRUCTURE ) {
-                ConstExpr( TY_NO_TYPE );
+            if( typ == FT_STRUCTURE ) {
+                ConstExpr( FT_NO_TYPE );
             } else if( _IsTypeLogical( typ ) ) {
                 CLogicExpr();
-            } else if( typ == TY_CHAR ) {
+            } else if( typ == FT_CHAR ) {
                 CCharExpr();
             } else {
                 CArithExpr();
             }
             if( !AError && assign_val ) {
-                if( typ == TY_CHAR ) {
+                if( typ == FT_CHAR ) {
                     string = (byte *)CITNode->value.cstring.strptr;
                     if( CITNode->size < parm_size ) {
                         lit = FMemAlloc( parm_size );

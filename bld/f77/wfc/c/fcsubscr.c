@@ -117,7 +117,7 @@ void    FCSubscript( void ) {
             ConstDims( arr );
         }
     }
-    if( arr->ns.typ == TY_CHAR ) {
+    if( arr->ns.typ == FT_CHAR ) {
         MakeSCB( GetPtr(), ArrayEltSize( arr ) );
     }
 }

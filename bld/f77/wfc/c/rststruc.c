@@ -153,7 +153,7 @@ static  sym_id  *Strut( sym_id *p_field, char *name, uint len ) {
     for(;;) {
         field = *p_field;
         if( field == NULL ) return( p_field );
-        if( field->fd.typ == TY_UNION ) {
+        if( field->fd.typ == FT_UNION ) {
             map = field->fd.xt.sym_record;
             for(;;) {
                 if( map == NULL ) break;
@@ -224,7 +224,7 @@ static  sym_id  LookupField( sym_id field, char *name, uint len,
     f_offset = 0;
     for(;;) {
         if( field == NULL ) return( NULL );
-        if( field->fd.typ == TY_UNION ) {
+        if( field->fd.typ == FT_UNION ) {
             size = 0;
             map = field->fd.xt.sym_record;
             while( map != NULL ) {
@@ -245,7 +245,7 @@ static  sym_id  LookupField( sym_id field, char *name, uint len,
                     return( field );
                 }
             }
-            if( field->fd.typ == TY_STRUCTURE ) {
+            if( field->fd.typ == FT_STRUCTURE ) {
                 size = field->fd.xt.record->size;
             } else {
                 size = field->fd.xt.size;
@@ -293,7 +293,7 @@ bool    CalcStructSize( sym_id sd ) {
     field = sd->sd.fl.sym_fields;
     while( field != NULL ) {
         size = 0;
-        if( field->fd.typ == TY_UNION ) {
+        if( field->fd.typ == FT_UNION ) {
             map = field->fd.xt.sym_record;
             while( map != NULL ) {
                 if( CalcStructSize( map ) ) {
@@ -306,7 +306,7 @@ bool    CalcStructSize( sym_id sd ) {
                 map = map->sd.link;
             }
         } else {
-            if( field->fd.typ == TY_STRUCTURE ) {
+            if( field->fd.typ == FT_STRUCTURE ) {
                 if( StmtSw & SS_DATA_INIT ) {
                     if( field->fd.xt.record->fl.fields == NULL ) {
                         StructErr( SP_UNDEF_STRUCT, field->fd.xt.sym_record );
@@ -348,7 +348,7 @@ void    STUnion( void ) {
     //                      ENDMAP
     if( CurrStruct == NULL ) return;
     un = FMemAlloc( sizeof( funion ) );
-    un->fd.typ = TY_UNION;
+    un->fd.typ = FT_UNION;
     un->fd.link = NULL;
     un->fd.xt.record = NULL;
     field = CurrStruct->sd.fl.sym_fields;

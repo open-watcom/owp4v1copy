@@ -87,7 +87,7 @@ void    GEndSubScr( itnode *arr ) {
     }
     if( ( arr->opn.us & USOPN_FLD ) == 0 ) {
         if( ( StmtSw & SS_DATA_INIT ) == 0 ) {
-            if( arr->sym_ptr->ns.typ == TY_CHAR ) {
+            if( arr->sym_ptr->ns.typ == FT_CHAR ) {
                 OutPtr( GTempString( 0 ) );
             }
         }

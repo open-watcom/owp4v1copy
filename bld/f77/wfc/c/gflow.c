@@ -139,21 +139,21 @@ void    InitSelect( void ) {
             // must be a variable name
             CSHead->cs_info.cases->sel_expr = CITNode->sym_ptr;
         } else {
-            if( CITNode->typ == TY_CHAR ) {
-                sel_expr = StaticAlloc( 1, TY_CHAR );
+            if( CITNode->typ == FT_CHAR ) {
+                sel_expr = StaticAlloc( 1, FT_CHAR );
                 CSHead->cs_info.cases->sel_expr = sel_expr;
                 PushSym( sel_expr );
                 EmitOp( FC_CHAR_1_MOVE );
-                DumpType( TY_INTEGER_1, 1 );
+                DumpType( FT_INTEGER_1, 1 );
                 OutPtr( NULL );
             } else {
                 sel_expr = StaticAlloc( CITNode->size,
-                                        MapTypes( TY_INTEGER, CITNode->size));
+                                        MapTypes( FT_INTEGER, CITNode->size));
                 CSHead->cs_info.cases->sel_expr = sel_expr;
                 PushOpn( CITNode );
                 EmitOp( FC_POP );  // pop select expression into temporary
                 OutPtr( sel_expr );
-                DumpTypes( MapTypes( TY_INTEGER, CITNode->size ), CITNode->size,
+                DumpTypes( MapTypes( FT_INTEGER, CITNode->size ), CITNode->size,
                            CITNode->typ, CITNode->size );
             }
             EmitOp( FC_EXPR_DONE );
@@ -209,13 +209,13 @@ void    GAsgnGoTo( bool list ) {
 
     if( !list ) {
         if( WildLabel == NULL ) {
-            WildLabel = StaticAlloc( sizeof( inttarg ), TY_INTEGER_TARG );
+            WildLabel = StaticAlloc( sizeof( inttarg ), FT_INTEGER_TARG );
         }
         EmitOp( FC_PUSH );
         OutPtr( CITNode->sym_ptr );
         EmitOp( FC_POP );
         OutPtr( WildLabel );
-        DumpTypes( TY_INTEGER_TARG, sizeof( inttarg ), CITNode->typ, CITNode->size );
+        DumpTypes( FT_INTEGER_TARG, sizeof( inttarg ), CITNode->typ, CITNode->size );
         EmitOp( FC_EXPR_DONE );
         GBranch( StNumbers.branches );      // goto select table
     } else {

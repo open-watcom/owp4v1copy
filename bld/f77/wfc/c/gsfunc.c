@@ -67,7 +67,7 @@ void    GSFCall( itnode *sfunc ) {
         arg = arg->link;
     }
     OutPtr( NULL );
-    if( sfunc->typ == TY_CHAR ) {
+    if( sfunc->typ == FT_CHAR ) {
         OutPtr( GTempString( sfunc->size ) );
     }
     SetOpn( sfunc, USOPN_SAFE );

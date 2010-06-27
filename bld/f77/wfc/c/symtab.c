@@ -191,7 +191,7 @@ sym_id  LkField( sym_id sd ) {
                        &CITNode->value.intstar4 );
     if( sym != NULL ) {
         CITNode->typ = sym->fd.typ;
-        if( CITNode->typ == TY_STRUCTURE ) {
+        if( CITNode->typ == FT_STRUCTURE ) {
             CITNode->size = sym->fd.xt.record->size;
         } else {
             CITNode->size = sym->fd.xt.size;

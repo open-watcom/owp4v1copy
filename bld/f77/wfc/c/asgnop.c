@@ -49,17 +49,17 @@ void    AsgnOp( TYPE typ1, TYPE typ2, OPTR opr ) {
 // Generate code to perform an assign operation.
 
     typ1 = typ1; typ2 = typ2; opr = opr;
-    if( ResultType == TY_CHAR ) {
+    if( ResultType == FT_CHAR ) {
         AsgnChar();
     } else {
         EmitOp( FC_POP );
         SymRef( CITNode );
         GenTypes( CITNode, CITNode->link );
-        if( CITNode->sym_ptr->ns.typ == TY_STRUCTURE ) {
+        if( CITNode->sym_ptr->ns.typ == FT_STRUCTURE ) {
             if( CITNode->opn.us & USOPN_SAFE ) {
                 // destination is a sub-field or an array element
                 OutU16( 1 );
-                if( CITNode->typ == TY_STRUCTURE ) {
+                if( CITNode->typ == FT_STRUCTURE ) {
                     if( CITNode->opn.us & USOPN_FLD ) {
                         // sub-field is a structure
                         OutPtr( CITNode->value.st.field_id );

@@ -44,21 +44,21 @@ typedef enum {
 #include "symdefn.h"
 } TYPE;
 
-#define TY_FIRST    TY_LOGICAL_1
+#define FT_FIRST    FT_LOGICAL_1
 
-#define TY_EXTENDED TY_DOUBLE
-#define TY_XCOMPLEX TY_DCOMPLEX
+#define FT_EXTENDED FT_DOUBLE
+#define FT_XCOMPLEX FT_DCOMPLEX
 
-#define FIRST_BASE_TYPE TY_LOGICAL_1
-#define LAST_BASE_TYPE  TY_TRUE_XCOMPLEX
+#define FIRST_BASE_TYPE FT_LOGICAL_1
+#define LAST_BASE_TYPE  FT_TRUE_XCOMPLEX
 
 #if _CPU == 8086
- #define TY_INTEGER_TARG TY_INTEGER_2
+ #define FT_INTEGER_TARG FT_INTEGER_2
 #else
- #define TY_INTEGER_TARG TY_INTEGER
+ #define FT_INTEGER_TARG FT_INTEGER
 #endif
 
-#define _IsTypeLogical( typ )   ((typ >= TY_LOGICAL_1) && (typ <= TY_LOGICAL))
-#define _IsTypeInteger( typ )   ((typ >= TY_INTEGER_1) && (typ <= TY_INTEGER))
+#define _IsTypeLogical( typ )   ((typ >= FT_LOGICAL_1) && (typ <= FT_LOGICAL))
+#define _IsTypeInteger( typ )   ((typ >= FT_INTEGER_1) && (typ <= FT_INTEGER))
 
 #endif

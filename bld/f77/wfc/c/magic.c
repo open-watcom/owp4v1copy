@@ -60,7 +60,7 @@ sym_id  NewMagSym( int class ) {
     new->ns.flags = TEMP_FLAGS;
     new->ns.xflags = 0;
     new->ns.xt.size = 0;
-    new->ns.typ = TY_NO_TYPE;
+    new->ns.typ = FT_NO_TYPE;
     new->ns.si.ms.sym = NULL;
     return( new );
 }
@@ -109,9 +109,9 @@ sym_id  TmpVar( TYPE typ, uint size ) {
 sym_id  TmpAlloc( uint size ) {
 //============================
 
-// Allocate a temporary and set the type to TY_NO_TYPE.
+// Allocate a temporary and set the type to FT_NO_TYPE.
 
-    return( TmpVar( TY_NO_TYPE, size ) );
+    return( TmpVar( FT_NO_TYPE, size ) );
 }
 
 
@@ -153,7 +153,7 @@ sym_id  StaticOffset( sym_id stat, int offset ) {
     ml->ns.reloc_chain.lr = NULL;
     ml->ns.xt.size = offset;
     ml->ns.flags = TEMP_FLAGS;
-    ml->ns.typ = TY_NO_TYPE;
+    ml->ns.typ = FT_NO_TYPE;
     ml->ns.link = stat->ns.si.ms.tmp_info.stat_off;
     stat->ns.si.ms.tmp_info.stat_off = ml;
     return( ml );

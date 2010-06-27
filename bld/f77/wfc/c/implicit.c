@@ -71,7 +71,7 @@ static  bool    ReqChar( void ) {
 static  bool            StarStar( TYPE typ ) {
 //============================================
 
-    if( typ != TY_CHAR ) return( FALSE );
+    if( typ != FT_CHAR ) return( FALSE );
     if( RecNOpn() == FALSE ) return( FALSE );
     if( RecNextOpr( OPR_LBR ) == FALSE ) return( FALSE );
     AdvanceITPtr();
@@ -92,30 +92,30 @@ static  bool    CheckSize( TYPE typ, intstar4 size, itnode *start ) {
 
     itnode      *temp;
 
-    if( (typ == TY_DOUBLE) || (typ == TY_DCOMPLEX) ||
-        (typ == TY_EXTENDED) || (typ == TY_XCOMPLEX) ) {
+    if( (typ == FT_DOUBLE) || (typ == FT_DCOMPLEX) ||
+        (typ == FT_EXTENDED) || (typ == FT_XCOMPLEX) ) {
         temp = CITNode;
         CITNode = start; // get the caret in proper place
         TypeErr( TY_NOT_DBL_PREC, typ );
         CITNode = temp;
         return( FALSE );
     }
-    if( typ == TY_LOGICAL ) {
+    if( typ == FT_LOGICAL ) {
         if( size == sizeof( logstar1 ) ) return( TRUE );
         if( size == sizeof( logstar4 ) ) return( TRUE );
-    } else if( typ == TY_INTEGER ) {
+    } else if( typ == FT_INTEGER ) {
         if( size == sizeof( intstar1 ) ) return( TRUE );
         if( size == sizeof( intstar2 ) ) return( TRUE );
         if( size == sizeof( intstar4 ) ) return( TRUE );
-    } else if( typ == TY_REAL ) {
+    } else if( typ == FT_REAL ) {
         if( size == sizeof( single ) ) return( TRUE );
         if( size == sizeof( double ) ) return( TRUE );
         if( size == sizeof( extended ) ) return( TRUE );
-    } else if( typ == TY_COMPLEX ) {
+    } else if( typ == FT_COMPLEX ) {
         if( size == sizeof( complex ) ) return( TRUE );
         if( size == sizeof( dcomplex ) ) return( TRUE );
         if( size == sizeof( xcomplex ) ) return( TRUE );
-    } else if( typ == TY_CHAR ) {
+    } else if( typ == FT_CHAR ) {
 #if _CPU == 8086
         if( (size > 0) && (size <= USHRT_MAX) ) return( TRUE );
 #else
@@ -186,7 +186,7 @@ bool    LenSpec( TYPE typ, uint *size_ptr ) {
             }
         }
     }
-    if( len_spec && ( typ != TY_CHAR ) ) {
+    if( len_spec && ( typ != FT_CHAR ) ) {
         temp = CITNode;
         CITNode = save_itptr;
         StmtExtension( TY_LEN_SPEC );
@@ -205,14 +205,14 @@ static  TYPE    RecTypeKW( void ) {
     TYPE    typ;
 
     if( RecName() ) {
-        for( typ = TY_LOGICAL_1; typ <= TY_CHAR; typ++ ) {
+        for( typ = FT_LOGICAL_1; typ <= FT_CHAR; typ++ ) {
             if( CmpNode2Str( CITNode, TypeKW( typ ) ) ) {
                 return( typ );
             }
         }
     }
     Error( IM_UNRECOG_TYPE );
-    return( TY_NO_TYPE );
+    return( FT_NO_TYPE );
 }
 
 
@@ -238,7 +238,7 @@ void    CpImplicit( void ) {
         for(;;) {
             typ = RecTypeKW();
             AdvanceITPtr();
-            if( ( typ != TY_NO_TYPE ) && !LenSpec( typ, &size ) ) {
+            if( ( typ != FT_NO_TYPE ) && !LenSpec( typ, &size ) ) {
                 size = StorageSize( typ );
             }
             ReqOpenParen();

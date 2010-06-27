@@ -262,12 +262,12 @@ void    FormatIdd( void ) {
         ProcIOExpr();           // will allow for array name alone
         if( !AError ) {
             if( RecArrName() ) {
-                if( CITNode->typ != TY_CHAR ) {
+                if( CITNode->typ != FT_CHAR ) {
                     Extension( IL_NON_CHARACTER );
                 }
                 ChkAssumed();
                 GFmtArrSet();
-            } else if( CITNode->typ != TY_CHAR ) {
+            } else if( CITNode->typ != FT_CHAR ) {
                 Error( IL_BAD_FMT_SPEC );
             } else if( ( CITNode->opn.us == USOPN_CON ) ) {
                 AddConst( CITNode ); // in case single constant
@@ -297,7 +297,7 @@ void    Unit(void) {
         if( !AError ) {
             if( _IsTypeInteger( CITNode->typ ) && !RecArrName() ) {
                 GPassValue( FC_SET_UNIT );
-            } else if( CITNode->typ == TY_CHAR ) {
+            } else if( CITNode->typ == FT_CHAR ) {
                 KWRememb( IO_INTERNAL );
                 CkAssignOk();
                 if( RecArrName() ) {

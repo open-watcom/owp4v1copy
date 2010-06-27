@@ -38,6 +38,6 @@ bool    TypeCmplx( TYPE typ ) {
 
 // Return true if type is COMPLEX or COMPLEX*16 or COMPLEX*20.
 
-    return( ( typ == TY_COMPLEX ) || ( typ == TY_DCOMPLEX ) ||
-                ( typ == TY_XCOMPLEX ) );
+    return( ( typ == FT_COMPLEX ) || ( typ == FT_DCOMPLEX ) ||
+                ( typ == FT_XCOMPLEX ) );
 }

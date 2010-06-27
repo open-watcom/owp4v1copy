@@ -88,7 +88,7 @@ static  itnode  *NewITNode( void ) {
         new->link = NULL;
         new->list = NULL;
         new->flags = 0;
-        new->typ = TY_NO_TYPE;
+        new->typ = FT_NO_TYPE;
         new->chsize = 0;
         new->is_unsigned = 0;
         new->is_catparen = 0;

@@ -106,8 +106,8 @@ call_handle     InitCall( RTCODE rtn_id ) {
         sym = STAdd( SymBuff, name_len );
         sym->ns.flags = SY_USAGE | SY_TYPE | SY_SUBPROGRAM | SY_FUNCTION |
                         SY_RT_ROUTINE;
-        if( rt_entry->typ == TY_NO_TYPE ) {
-            sym->ns.typ = TY_INTEGER_TARG;
+        if( rt_entry->typ == FT_NO_TYPE ) {
+            sym->ns.typ = FT_INTEGER_TARG;
         } else {
             sym->ns.typ = rt_entry->typ;
         }

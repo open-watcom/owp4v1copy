@@ -88,7 +88,7 @@ void    GMakeCplx( void ) {
 // into complex number ( real( a1 ), real( a2 ) )
 
     EmitOp( FC_MAKE_COMPLEX );
-    MakeComplex( TY_COMPLEX );
+    MakeComplex( FT_COMPLEX );
 }
 
 
@@ -99,7 +99,7 @@ void    GMakeDCplx( void ) {
 // into double complex number ( double( a1 ), double( a2 ) )
 
     EmitOp( FC_MAKE_DCOMPLEX );
-    MakeComplex( TY_DCOMPLEX );
+    MakeComplex( FT_DCOMPLEX );
 }
 
 
@@ -110,7 +110,7 @@ void    GMakeXCplx( void ) {
 // into double complex number ( double( a1 ), double( a2 ) )
 
     EmitOp( FC_MAKE_XCOMPLEX );
-    MakeComplex( TY_XCOMPLEX );
+    MakeComplex( FT_XCOMPLEX );
 }
 
 

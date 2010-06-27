@@ -522,7 +522,7 @@ void RemKeyword( itnode *itptr, int remove_len )
                 new_it_node->flags = 0;
                 new_it_node->list = itptr->list;
                 new_it_node->link = itptr->link;
-                new_it_node->typ = TY_NO_TYPE;
+                new_it_node->typ = FT_NO_TYPE;
                 itptr->link = new_it_node;
             }
         }

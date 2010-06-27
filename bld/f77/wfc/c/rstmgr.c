@@ -117,7 +117,7 @@ sym_id    STAdvShadow( sym_id sym ) {
 
     sym_id       shadow;
 
-    shadow = StaticAlloc( sizeof( inttarg ), TY_INTEGER_TARG );
+    shadow = StaticAlloc( sizeof( inttarg ), FT_INTEGER_TARG );
     shadow->ns.flags |= SY_SPECIAL_PARM | SY_SUBSCRIPTED;
     shadow->ns.si.ms.sym = sym;
     return( shadow );
@@ -149,7 +149,7 @@ sym_id    STArgShadow( sym_id sym ) {
 
     sym_id       shadow;
 
-    shadow = StaticAlloc( sizeof( inttarg ), TY_INTEGER_TARG );
+    shadow = StaticAlloc( sizeof( inttarg ), FT_INTEGER_TARG );
     shadow->ns.flags |= SY_SPECIAL_PARM | SY_VALUE_PARM;
     shadow->ns.si.ms.sym = sym;
     return( shadow );
@@ -229,7 +229,7 @@ sym_id    STShadow( sym_id sym ) {
     sym_id       shadow;
 
     if( StmtSw & SS_DATA_INIT ) { // implied do parm
-        shadow = TmpVar( TY_INTEGER, TypeSize( TY_INTEGER ) );
+        shadow = TmpVar( FT_INTEGER, TypeSize( FT_INTEGER ) );
     } else {
         shadow = StaticAlloc( sym->ns.xt.size, sym->ns.typ );
     }

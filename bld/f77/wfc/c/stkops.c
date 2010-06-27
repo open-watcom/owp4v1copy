@@ -72,7 +72,7 @@ void    PushOpn( itnode *itptr ) {
             EmitOp( FC_PUSH );
             SymRef( itptr );
         } else if( what == USOPN_CON ) {
-            if( typ == TY_CHAR ) {
+            if( typ == FT_CHAR ) {
                 EmitOp( FC_PUSH_LIT );
                 if( itptr->sym_ptr->lt.flags & LT_SCB_TMP_REFERENCE ) {
                     itptr->sym_ptr->lt.flags |= LT_SCB_REQUIRED;
@@ -118,7 +118,7 @@ void    PushConst( intstar4 val ) {
 // Push an integer constant.
 
     EmitOp( FC_PUSH_CONST );
-    OutPtr( STConst( &val, TY_INTEGER, TypeSize( TY_INTEGER ) ) );
+    OutPtr( STConst( &val, FT_INTEGER, TypeSize( FT_INTEGER ) ) );
 }
 
 

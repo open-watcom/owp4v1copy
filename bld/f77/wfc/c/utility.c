@@ -155,16 +155,16 @@ bool TypeIs( TYPE typ ) {
 // Return TRUE if current itnode has specified variable type.
 
     switch( CITNode->typ ) {
-    case( TY_INTEGER ):
-    case( TY_INTEGER_2 ):
-    case( TY_INTEGER_1 ):
-        return( ( typ == TY_INTEGER ) ||
-                ( typ == TY_INTEGER_2 ) ||
-                ( typ == TY_INTEGER_1 ) );
-    case( TY_LOGICAL ):
-    case( TY_LOGICAL_1 ):
-        return( ( typ == TY_LOGICAL ) ||
-                ( typ == TY_LOGICAL_1 ) );
+    case( FT_INTEGER ):
+    case( FT_INTEGER_2 ):
+    case( FT_INTEGER_1 ):
+        return( ( typ == FT_INTEGER ) ||
+                ( typ == FT_INTEGER_2 ) ||
+                ( typ == FT_INTEGER_1 ) );
+    case( FT_LOGICAL ):
+    case( FT_LOGICAL_1 ):
+        return( ( typ == FT_LOGICAL ) ||
+                ( typ == FT_LOGICAL_1 ) );
     default:
         return( CITNode->typ == typ );
     }
@@ -182,7 +182,7 @@ bool    ConstExpr( TYPE typ ) {
     if( CITNode->opn.us != USOPN_CON ) {
         Error( SX_NOT_CONST_EXPR );
         return( FALSE );
-    } else if( !TypeIs( typ ) && (typ != TY_NO_TYPE) ) {
+    } else if( !TypeIs( typ ) && (typ != FT_NO_TYPE) ) {
         TypeErr( SX_WRONG_TYPE, typ );
         return( FALSE );
     }
@@ -206,7 +206,7 @@ void    DimExpr( void ) {
 
     ASType = AST_DIM;
     EatExpr();
-    ChkType( TY_INTEGER );
+    ChkType( FT_INTEGER );
 }
 
 
@@ -265,7 +265,7 @@ bool    CLogicExpr( void ) {
 
 // Process a constant logical expression.
 
-    return( ConstExpr( TY_LOGICAL ) );
+    return( ConstExpr( FT_LOGICAL ) );
 }
 
 
@@ -274,7 +274,7 @@ bool    CCharExpr( void ) {
 
 // Process a constant character expression.
 
-    return( ConstExpr( TY_CHAR ) );
+    return( ConstExpr( FT_CHAR ) );
 }
 
 
@@ -283,15 +283,15 @@ bool    CIntExpr( void ) {
 
 // Process a constant integer expression.
 
-    return( ConstExpr( TY_INTEGER ) );
+    return( ConstExpr( FT_INTEGER ) );
 }
 
 
 void    CArithExpr( void ) {
 //====================
 
-    if( ConstExpr( TY_NO_TYPE ) &&
-        ( ( CITNode->typ < TY_INTEGER_1 ) || ( CITNode->typ > TY_XCOMPLEX ) ) ) {
+    if( ConstExpr( FT_NO_TYPE ) &&
+        ( ( CITNode->typ < FT_INTEGER_1 ) || ( CITNode->typ > FT_XCOMPLEX ) ) ) {
        Error( SX_NOT_SIMPLE_NUMBER );
     }
 }
@@ -307,7 +307,7 @@ void    BoolExpr( void ) {
     if( _IsTypeInteger( CITNode->typ ) ) {
         Extension( SP_INTEGER_CONDITION );
     } else if( !_IsTypeLogical( CITNode->typ ) ) {
-        TypeErr( SX_WRONG_TYPE, TY_LOGICAL );
+        TypeErr( SX_WRONG_TYPE, FT_LOGICAL );
     }
 }
 
@@ -319,7 +319,7 @@ void    BoolSubExpr( void ) {
 
     ASType = ( AST_CCR | AST_SUB );       // flag to set condition codes
     EatExpr();
-    ChkType( TY_LOGICAL );
+    ChkType( FT_LOGICAL );
 }
 
 
@@ -331,9 +331,9 @@ void    SelectExpr( void ) {
     ProcExpr();
     if( ( !_IsTypeLogical( CITNode->typ ) ) &&
         ( !_IsTypeInteger( CITNode->typ ) ) &&
-        ( CITNode->typ != TY_CHAR ) ) {
-        TypeErr( SX_WRONG_TYPE, TY_INTEGER );
-        CITNode->typ = TY_NO_TYPE;
+        ( CITNode->typ != FT_CHAR ) ) {
+        TypeErr( SX_WRONG_TYPE, FT_INTEGER );
+        CITNode->typ = FT_NO_TYPE;
     }
 }
 
@@ -344,7 +344,7 @@ void    IntegerExpr( void ) {
 // Process an expression and check that it is integer.
 
     ProcExpr();
-    ChkType( TY_INTEGER );
+    ChkType( FT_INTEGER );
 }
 
 
@@ -354,7 +354,7 @@ void    IntSubExpr( void ) {
 // Process a subexpression and check that it is integer.
 
     ProcSubExpr();
-    ChkType( TY_INTEGER );
+    ChkType( FT_INTEGER );
 }
 
 
@@ -364,7 +364,7 @@ static  void    EatNumb( int ast ) {
     ASType = ast;
     EatExpr();
     if( AError ) return;
-    if( ( CITNode->typ < TY_INTEGER_1 ) || ( CITNode->typ > TY_EXTENDED ) ) {
+    if( ( CITNode->typ < FT_INTEGER_1 ) || ( CITNode->typ > FT_EXTENDED ) ) {
         Error( SX_NOT_SIMPLE_NUMBER );
     }
 }
@@ -396,7 +396,7 @@ void    CharSubExpr( void ) {
 // Process a character subexpression.
 
     ProcSubExpr();
-    ChkType( TY_CHAR );
+    ChkType( FT_CHAR );
 }
 
 
@@ -409,20 +409,20 @@ bool    BitOn( unsigned_16 bits ) {
 }
 
 
-int    Map2BaseType( TYPE typ ) {
+TYPE   Map2BaseType( TYPE typ ) {
 //==============================
 
 // Due to the three different integer sizes we use this function
 // we use the equivalent function
 
     switch( typ ) {
-    case( TY_INTEGER ):
-    case( TY_INTEGER_2 ):
-    case( TY_INTEGER_1 ):
-        return( TY_INTEGER );
-    case( TY_LOGICAL ):
-    case( TY_LOGICAL_1 ):
-        return( TY_LOGICAL );
+    case( FT_INTEGER ):
+    case( FT_INTEGER_2 ):
+    case( FT_INTEGER_1 ):
+        return( FT_INTEGER );
+    case( FT_LOGICAL ):
+    case( FT_LOGICAL_1 ):
+        return( FT_LOGICAL );
     default:
         return( typ );
     }

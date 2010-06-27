@@ -162,13 +162,13 @@ static  void    RelOp( TYPE typ1, TYPE typ2, OPTR op ) {
 //======================================================
 
     typ1 = typ1; typ2 = typ2; op = op;
-    if( ResultType != TY_CHAR ) {
+    if( ResultType != FT_CHAR ) {
         Convert();
     }
-    XCmpTab[ ResultType - TY_INTEGER_1 ]( &CITNode->value,
+    XCmpTab[ ResultType - FT_INTEGER_1 ]( &CITNode->value,
                                         &CITNode->link->value,
           &CmpValue[ ( CITNode->link->opr - OPR_FIRST_RELOP ) * 3 ] );
-    ResultType = TY_LOGICAL;
+    ResultType = FT_LOGICAL;
 }
 
 
@@ -179,8 +179,8 @@ static  void    BinOp( TYPE typ1, TYPE typ2, OPTR op ) {
 
     typ2 = typ2;
     op -= OPTR_FIRST_ARITHOP;
-    index = ResultType - TY_INTEGER_1;
-    if( typ1 != TY_NO_TYPE ) {
+    index = ResultType - FT_INTEGER_1;
+    if( typ1 != FT_NO_TYPE ) {
         Convert();
         XArithTab[ index * AR_TAB_COLS + op ]
                  ( &CITNode->value, &CITNode->link->value );

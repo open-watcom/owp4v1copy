@@ -1166,7 +1166,7 @@ void    DtPush( void ) {
     } else { // must be variable to initialize
         InitVar = sym;
         DtOffset = 0;
-        if( sym->ns.typ != TY_STRUCTURE ) {
+        if( sym->ns.typ != FT_STRUCTURE ) {
             DtItemSize = InitVar->ns.xt.size;
         }
     }
@@ -1331,7 +1331,7 @@ void    DtSubscript( void ) {
         NameStmtErr( EV_SSCR_INVALID, InitVar, PR_DATA );
     }
     DtOffset = offset * _SymSize( InitVar );
-    if( InitVar->ns.typ != TY_STRUCTURE ) {
+    if( InitVar->ns.typ != FT_STRUCTURE ) {
         DtItemSize = InitVar->ns.xt.size;
     }
 }
@@ -1380,7 +1380,7 @@ void    DtFieldSubscript( void ) {
     base = DXPop();
     fd = GetPtr();
     if( Subscript( fd->fd.dim_ext, &offset ) ) {
-        if( fd->fd.typ == TY_STRUCTURE ) {
+        if( fd->fd.typ == FT_STRUCTURE ) {
             offset *= fd->fd.xt.record->size;
         } else {
             offset *= fd->fd.xt.size;
@@ -1496,7 +1496,7 @@ void    DtFieldOp( void ) {
 
     InitVar = GetPtr();
     fd = GetPtr();
-    if( fd->fd.typ == TY_CHAR ) {
+    if( fd->fd.typ == FT_CHAR ) {
         // DtItemSize will be set if a field has been substrung
         if( DtItemSize == 0 ) {
             DtItemSize = fd->fd.xt.size;
@@ -1521,7 +1521,7 @@ static  void    StructInit( sym_id fd ) {
 //=======================================
 
     while( fd != NULL ) {
-        if( fd->fd.typ == TY_STRUCTURE ) {
+        if( fd->fd.typ == FT_STRUCTURE ) {
             StructInit( fd->fd.xt.record->fl.sym_fields );
         } else {
             StructInitItem( fd );
@@ -1543,7 +1543,7 @@ static  void    StructInitItem( sym_id fd ) {
     if( fd->fd.dim_ext == NULL ) {
         AsnVal( ParmType( fd->fd.typ, DtItemSize ) );
     } else {
-        if( fd->fd.typ == TY_STRUCTURE ) {
+        if( fd->fd.typ == FT_STRUCTURE ) {
             InitStructArr( fd, fd->fd.dim_ext );
         } else {
             InitArr( fd->fd.dim_ext, fd->fd.typ, DtItemSize );

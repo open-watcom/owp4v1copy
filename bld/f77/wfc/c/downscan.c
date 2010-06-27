@@ -66,7 +66,7 @@ static  void    LitC( void ) {
 
     CITNode->value.cstring.strptr = CITNode->opnd;
     CITNode->value.cstring.len = CITNode->opnd_size;
-    CITNode->typ = TY_CHAR;
+    CITNode->typ = FT_CHAR;
     CITNode->size = CITNode->opnd_size;
     CITNode->opn.us = USOPN_CON;
 }
@@ -76,8 +76,8 @@ static  void    LogC( void ) {
 //======================
 
     CITNode->value.logstar1 = *CITNode->opnd == 'T';
-    CITNode->typ = TY_LOGICAL;
-    CITNode->size = TypeSize( TY_LOGICAL );
+    CITNode->typ = FT_LOGICAL;
+    CITNode->size = TypeSize( FT_LOGICAL );
     CITNode->opn.us = USOPN_CON;
 }
 
@@ -98,14 +98,14 @@ static  void    IntC( void ) {
             }
         }
         
-        CITNode->typ = TY_INTEGER;
-        CITNode->size = TypeSize( TY_INTEGER );
+        CITNode->typ = FT_INTEGER;
+        CITNode->size = TypeSize( FT_INTEGER );
         CITNode->opn.us = USOPN_CON;
 
         if( CITNode->value.intstar4 < SHRT_MIN || CITNode->value.intstar4 > SHRT_MAX ) {
             Warning( KO_IOVERFLOW );
         }
-        CnvTo( CITNode, TY_INTEGER_2, TypeSize( TY_INTEGER_2 ) );
+        CnvTo( CITNode, FT_INTEGER_2, TypeSize( FT_INTEGER_2 ) );
 
     } else {
         if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value.intstar4, FALSE, NULL ) != INT_OK ) {
@@ -118,8 +118,8 @@ static  void    IntC( void ) {
                 Warning( KO_IOVERFLOW );
             }
         }
-        CITNode->typ = TY_INTEGER;
-        CITNode->size = TypeSize( TY_INTEGER );
+        CITNode->typ = FT_INTEGER;
+        CITNode->size = TypeSize( FT_INTEGER );
         CITNode->opn.us = USOPN_CON;
     }
 }
@@ -146,8 +146,8 @@ static  void    RealC( void ) {
     if( CnvFloat( CITNode, PRECISION_SINGLE ) ) {
         CITNode->value.single = CITNode->value.extended;
     }
-    CITNode->typ = TY_REAL;
-    CITNode->size = TypeSize( TY_REAL );
+    CITNode->typ = FT_REAL;
+    CITNode->size = TypeSize( FT_REAL );
     CITNode->opn.us = USOPN_CON;
 }
 
@@ -158,8 +158,8 @@ static  void    DoubleC( void ) {
     if( CnvFloat( CITNode, PRECISION_DOUBLE ) ) {
         CITNode->value.dble = CITNode->value.extended;
     }
-    CITNode->typ = TY_DOUBLE;
-    CITNode->size = TypeSize( TY_DOUBLE );
+    CITNode->typ = FT_DOUBLE;
+    CITNode->size = TypeSize( FT_DOUBLE );
     CITNode->opn.us = USOPN_CON;
 }
 
@@ -168,8 +168,8 @@ static  void    ExtendedC( void ) {
 //===========================
 
     CnvFloat( CITNode, PRECISION_EXTENDED );
-    CITNode->typ = TY_EXTENDED;
-    CITNode->size = TypeSize( TY_EXTENDED );
+    CITNode->typ = FT_EXTENDED;
+    CITNode->size = TypeSize( FT_EXTENDED );
     CITNode->opn.us = USOPN_CON;
 }
 
@@ -201,15 +201,15 @@ static  void    ConstBase( uint base ) {
     if( CITNode->opnd_size <= 3 ) {
         CITNode->value.intstar1 = strtoul( CITNode->opnd, &end, base );
         CITNode->size = sizeof( intstar1 );
-        CITNode->typ = TY_INTEGER_1;
+        CITNode->typ = FT_INTEGER_1;
     } else if( CITNode->opnd_size <= 5 ) {
         CITNode->value.intstar2 = strtoul( CITNode->opnd, &end, base );
         CITNode->size = sizeof( intstar2 );
-        CITNode->typ = TY_INTEGER_2;
+        CITNode->typ = FT_INTEGER_2;
     } else {
         CITNode->value.intstar4 = strtoul( CITNode->opnd, &end, base );
         CITNode->size = sizeof( intstar4 );
-        CITNode->typ = TY_INTEGER;
+        CITNode->typ = FT_INTEGER;
     }
     if( ( *end != NULLCHAR ) || ( errno != 0 ) ) {
         Error( CN_BAD_HEX_OCT );
@@ -331,7 +331,7 @@ static  void    BuildCplx( int real_sign, int imag_sign ) {
     val = &CITNode->value;
     itptr = CITNode->link;
     if( ( itptr->opn.ds == DSOPN_EXT ) || ( itptr->link->opn.ds == DSOPN_EXT ) ) {
-        CITNode->typ = TY_XCOMPLEX;
+        CITNode->typ = FT_XCOMPLEX;
         if( CnvFloat( itptr, PRECISION_EXTENDED ) ) {
             val->xcomplex.realpart = real_sign * itptr->value.extended;
         }
@@ -341,7 +341,7 @@ static  void    BuildCplx( int real_sign, int imag_sign ) {
         }
         Extension( CN_DOUBLE_COMPLEX );
     } else if( ( itptr->opn.ds == DSOPN_DBL ) || ( itptr->link->opn.ds == DSOPN_DBL ) ) {
-        CITNode->typ = TY_DCOMPLEX;
+        CITNode->typ = FT_DCOMPLEX;
         if( CnvFloat( itptr, PRECISION_DOUBLE ) ) {
             val->dcomplex.realpart = real_sign * itptr->value.extended;
         }
@@ -351,7 +351,7 @@ static  void    BuildCplx( int real_sign, int imag_sign ) {
         }
         Extension( CN_DOUBLE_COMPLEX );
     } else {
-        CITNode->typ = TY_COMPLEX;
+        CITNode->typ = FT_COMPLEX;
         if( CnvFloat( itptr, PRECISION_SINGLE ) ) {
             val->complex.realpart = real_sign * itptr->value.extended;
         }

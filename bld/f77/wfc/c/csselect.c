@@ -92,7 +92,7 @@ void CpSelect( void )
         SelectExpr();
         CSHead->cs_info.cases->sel_type = CITNode->typ;
     } else {
-        CSHead->cs_info.cases->sel_type = TY_NO_TYPE;
+        CSHead->cs_info.cases->sel_type = FT_NO_TYPE;
     }
     InitSelect();
     AdvanceITPtr();
@@ -131,7 +131,7 @@ static intstar4 MinCaseValue( TYPE typ )
 
     if( _IsTypeInteger( typ ) ) {
         return( LONG_MIN );
-    } else { // if( typ = TY_CHAR ) {
+    } else { // if( typ = FT_CHAR ) {
         return( 0 );
     }
 }
@@ -143,7 +143,7 @@ static intstar4 MaxCaseValue( TYPE typ )
 
     if( _IsTypeInteger( typ ) ) {
         return( LONG_MAX );
-    } else { // if( typ = TY_CHAR ) {
+    } else { // if( typ = FT_CHAR ) {
         return( 255 );
     }
 }
@@ -157,7 +157,7 @@ static intstar4 CaseValue( void )
         return( ITIntValue( CITNode ) );
     } else if( _IsTypeLogical( CITNode->typ  ) ) {
         return( _LogValue( CITNode->value.logstar1 ) );
-    } else { // if( CITNode->typ = TY_CHAR ) {
+    } else { // if( CITNode->typ = FT_CHAR ) {
         return( *CITNode->value.cstring.strptr );
     }
 }

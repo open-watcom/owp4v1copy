@@ -169,7 +169,7 @@ static  void    PrSubList( itnode *array_node ) {
         SubStrArgs( array_node );
     } else {
         if( array_node->opn.us & USOPN_FLD ) {
-            if( array_node->sym_ptr->fd.typ == TY_CHAR ) {
+            if( array_node->sym_ptr->fd.typ == FT_CHAR ) {
                 if( !(StmtSw & SS_DATA_INIT) )
                     GFieldSCB( array_node->sym_ptr->fd.xt.size );
             }
@@ -211,7 +211,7 @@ void    ProcList( itnode *cit ) {
             CITNode = cit;  // PrSFList has to look up the symbol
             PrSFList();
         } else {
-            if( ( cit->typ == TY_CHAR ) && ( cit->size == 0 ) ) {
+            if( ( cit->typ == FT_CHAR ) && ( cit->size == 0 ) ) {
                 CITNode = cit;    // For OpndErr().
                 OpndErr( SR_ILL_CHARFUNC );
             } else {

@@ -439,7 +439,7 @@ void    FCSFCall( void ) {
     for(;;) {
         sf_arg = GetPtr();
         if( sf_arg == NULL ) break;
-        if( sf_arg->ns.typ == TY_CHAR ) {
+        if( sf_arg->ns.typ == FT_CHAR ) {
             value = Concat( 1, CGFEName( sf_arg, T_CHAR ) );
         } else {
             sf_type = F772CGType( sf_arg );
@@ -461,7 +461,7 @@ void    FCSFCall( void ) {
             arg_list = CGBinary( O_COMMA, arg_list, value, T_DEFAULT );
         }
     }
-    if( sf->ns.typ == TY_CHAR ) {
+    if( sf->ns.typ == FT_CHAR ) {
         tmp = GetPtr();
         value = CGUnary( O_POINTS, CGFEName( tmp, T_CHAR ), T_CHAR );
         value = CGAssign( CGFEName( sf, T_CHAR ), value, T_CHAR );
@@ -485,7 +485,7 @@ void    FCSFCall( void ) {
         GetObjPtr();
         FCodeSequence();
         FCodeSeek( curr_obj );
-        if( sf->ns.typ == TY_CHAR ) {
+        if( sf->ns.typ == FT_CHAR ) {
             CGTrash( XPop() );
             XPush( value );
         } else if( TypeCmplx( sf->ns.typ ) ) {
