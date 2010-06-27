@@ -4,7 +4,7 @@
 # 'RSIHELP' or 'WSAMPRSI'. The full DOS/4G does not have this restriction.
 #
 
-D16INC = -I"../../d16api/include"
+D16INC = -I"../../../d16api/include"
 
 all : atest.exp ctest.exp wsamprsi.exe
 

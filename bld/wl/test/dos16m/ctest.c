@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "d16info.h"
+#include <dos16.h>
 
-extern d16info_t __far  _d16info;
 extern char __far       _env16M[]; 
 
 /* Exercise basic DOS/16M functionality, especially the special
