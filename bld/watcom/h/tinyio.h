@@ -471,9 +471,7 @@ typedef uint_32 __based( __segname( "_STACK" ) )    *u32_stk_ptr;
 #define TinyFarFindFirst        _fTinyFindFirst
 #define TinyFindNext            _TinyFindNext
 #define TinyFindNextDTA         _TinyFindNextDTA
-#define TinyFindNextLFN         _TinyFindNextLFN
 #define TinyFindCloseDTA        _TinyFindCloseDTA
-#define TinyFindCloseLFN        _TinyFindCloseLFN
 #define TinyGetFileStamp        _TinyGetFileStamp
 #define TinySetFileStamp        _TinySetFileStamp
 #define TinyGetVect             _TinyGetVect
@@ -537,7 +535,6 @@ typedef uint_32 __based( __segname( "_STACK" ) )    *u32_stk_ptr;
 #define TinySetDTA              _nTinySetDTA
 #define TinyFindFirst           _nTinyFindFirst
 #define TinyFindFirstDTA        _nTinyFindFirstDTA
-#define TinyFindFirstLFN        _nTinyFindFirstLFN
 #define TinyGetFileAttr         _nTinyGetFileAttr
 #define TinySetFileAttr         _nTinySetFileAttr
 #define TinyGetCountry          _nTinyGetCountry
@@ -573,7 +570,6 @@ typedef uint_32 __based( __segname( "_STACK" ) )    *u32_stk_ptr;
 #define TinyGetCWDir            _fTinyGetCWDir
 #define TinySetDTA              _fTinySetDTA
 #define TinyFindFirst           _fTinyFindFirst
-#define TinyFindFirstLFN        _fTinyFindFirstLFN
 #define TinyGetFileAttr         _fTinyGetFileAttr
 #define TinySetFileAttr         _fTinySetFileAttr
 #define TinyGetCountry          _fTinyGetCountry
@@ -655,18 +651,12 @@ void                    _fTinySetDTA( void __far * );
 void        tiny_call   _nTinySetDTA( void __near * );
 tiny_ret_t              _fTinyFindFirst( const char __far *__pattern,
                                 create_attr __attr);
-tiny_ret_t              _fTinyFindFirstLFN( const char __far *__pattern,
-                                create_attr __attr, void __far * );
 tiny_ret_t  tiny_call   _nTinyFindFirst( const char __near *, create_attr );
 tiny_ret_t  tiny_call   _nTinyFindFirstDTA( const char __near *, create_attr,
                                 void * );
-tiny_ret_t              _nTinyFindFirstLFN( const char __near *__pattern,
-                                create_attr __attr, void __far * );
 tiny_ret_t  tiny_call   _TinyFindNext( void );
 tiny_ret_t  tiny_call   _TinyFindNextDTA( void * );
-tiny_ret_t  tiny_call   _TinyFindNextLFN( tiny_handle_t, void __far * );
 tiny_ret_t  tiny_call   _TinyFindCloseDTA( void * );
-tiny_ret_t  tiny_call   _TinyFindCloseLFN( tiny_handle_t );
 tiny_ret_t  tiny_call   _TinyGetFileStamp( tiny_handle_t );
 #ifdef _OLD_TINYIO_
 tiny_ret_t  tiny_call   _TinySetFileStamp( tiny_handle_t, uint __p_hms,
@@ -1309,26 +1299,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx] [ecx] \
         value           [eax];
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreateEx = \
-        "mov ax,716Ch"  \
-        "push ecx"      \
-        "stc"           \
-        _INT_21         \
-        "pop ecx"       \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        "mov ax,6C00h"  \
-        _INT_21         \
-"finish: "              \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [esi] [ebx] [ecx] [edx]\
-        value           [eax];
-#else
 #pragma aux             _nTinyCreateEx = \
         "mov ax,6C00h"  \
         _INT_21         \
@@ -1336,7 +1306,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [esi] [ebx] [ecx] [edx]\
         value           [eax];
-#endif
 
 #pragma aux             _nTinyCreateNew = \
         "mov ah,5Bh"    \
@@ -1346,26 +1315,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx] [ecx] \
         value           [eax];
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreateTemp = \
-        "push ecx"      \
-        "mov esi,edx"   \
-        "mov cl,1"      \
-        "mov ch,0"      \
-        "mov ax,7160h"  \
-        "stc"           \
-        _INT_21         \
-        "pop ecx"       \
-        "jc short func" \
-        "mov edx,edi"   \
-"func:   "              \
-        "mov ah,5Ah"    \
-        _INT_21         \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [edx] [ecx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyCreateTemp = \
         "mov ah,5Ah"    \
         _INT_21         \
@@ -1373,7 +1322,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] [ecx] \
         value           [eax];
-#endif
 
 #pragma aux             _TinyClose = \
         "mov ah,3Eh"    \
@@ -1446,25 +1394,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [edx] \
         modify exact    [eax ebx ecx edx];
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyDelete = \
-        "mov si,0"      \
-        "mov ax,7141h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_UNLINK \
-        _INT_21         \
-"finish: "              \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [edx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyDelete = \
         _MOV_AH DOS_UNLINK \
         _INT_21         \
@@ -1472,36 +1401,12 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] \
         value           [eax];
-#endif
 
 // 06/22/95 T. Schiller
 //
 // The only reason we save/restore ebx is that in win386 the high word of
 // ebx sometimes (one known cause is that the File Manager is running) gets
 // trashed.
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyRename = \
-        "push ebx"      \
-        "push es"       \
-        "mov es,cx"     \
-        "mov ax,7156h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_RENAME \
-        _INT_21         \
-"finish: "              \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        "pop es"        \
-        "pop ebx"       \
-        parm caller     [edx] [cx edi]\
-        value           [eax];
-#else
 #pragma aux             _nTinyRename = \
         "push ebx"      \
         "push es"       \
@@ -1514,26 +1419,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "pop ebx"       \
         parm caller     [edx] [cx edi]\
         value           [eax];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyMakeDir = \
-        "mov ax,7139h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_MKDIR \
-        _INT_21         \
-"finish: "              \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [edx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyMakeDir = \
         _MOV_AH DOS_MKDIR \
         _INT_21         \
@@ -1541,26 +1427,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] \
         value           [eax];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyRemoveDir = \
-        "mov ax,713Ah"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_RMDIR \
-        _INT_21         \
-"finish: "              \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [edx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyRemoveDir = \
         _MOV_AH DOS_RMDIR \
         _INT_21         \
@@ -1568,26 +1435,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] \
         value           [eax];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyChangeDir = \
-        "mov ax,713Bh"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_CHDIR \
-        _INT_21         \
-"finish: "              \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [edx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyChangeDir = \
         _MOV_AH DOS_CHDIR \
         _INT_21         \
@@ -1595,26 +1443,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] \
         value           [eax];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyGetCWDir = \
-        "mov ax,7147h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_GETCWD \
-        _INT_21         \
-"finish: "              \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [esi] [dl] \
-        value           [eax];
-#else
 #pragma aux             _nTinyGetCWDir = \
         _MOV_AH DOS_GETCWD \
         _INT_21         \
@@ -1622,7 +1451,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [esi] [dl] \
         value           [eax];
-#endif
 
 #pragma aux             _TinyDup = \
         _MOV_AH DOS_DUP \
@@ -1788,17 +1616,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx] [cx] [ebx] \
         value           [eax];
 
-#pragma aux             _nTinyFindFirstLFN = \
-        "mov  ax,714Eh" \
-        "mov  si,1"     \
-        "stc"           \
-        "int  21h"      \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [edx] [cx] [es edi] \
-        value           [eax] \
-        modify          [cx si];
-
 #pragma aux             _TinyFindNext = \
         _MOV_AH DOS_FIND_NEXT \
         _INT_21         \
@@ -1814,32 +1631,12 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx] \
         value           [eax];
 
-#pragma aux             _TinyFindNextLFN = \
-        "mov  ax,714fh" \
-        "mov  si,1"     \
-        "stc"           \
-        "int  21h"      \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [bx] [es edi] \
-        value           [eax] \
-        modify          [cx si];
-
 #pragma aux             _TinyFindCloseDTA = \
         _MOV_AX_W 1 DOS_FIND_NEXT \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [edx] \
-        value           [eax];
-
-#pragma aux             _TinyFindCloseLFN = \
-        "mov  ax,71A1h" \
-        "stc"           \
-        "int  21h"      \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [bx] \
         value           [eax];
 
 #pragma aux             _TinyGetFileStamp = \
@@ -1970,49 +1767,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreateEx = \
-        _SET_DS_DGROUP  \
-        "mov ax,716Ch"  \
-        "stc"           \
-        "push cx"       \
-        _INT_21         \
-        "pop cx"        \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        "mov ah,0x6C"   \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [si] [bx] [cx] [dx]\
-        value           [dx ax] \
-        modify exact    [ax bx cx dx si];
-
-#pragma aux             _fTinyCreateEx = \
-        _SET_DS_SREG    \
-        "mov ax, 716Ch" \
-        "stc"           \
-        "push cx"       \
-        _INT_21         \
-        "pop cx"        \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        "mov ah,0x6C"   \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG si] [bx] [cx] [dx]\
-        value           [dx ax] \
-        modify exact    [ax bx cx dx si _SREG];
-#else
 #pragma aux             _nTinyCreateEx = \
         _SET_DS_DGROUP  \
         _MOV_AH 0x6C    \
@@ -2032,7 +1786,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG si] [bx] [cx] [dx]\
         value           [dx ax] \
         modify exact    [ax bx cx dx si _SREG];
-#endif
 
 #pragma aux             _nTinyCreateNew = \
         _SET_DS_DGROUP  \
@@ -2054,49 +1807,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreateTemp = \
-        _SET_DS_DGROUP  \
-        "push cx"       \
-        "mov si,dx"     \
-        "mov cl,1"      \
-        "mov ch,0"      \
-        "mov ax,7160h"  \
-        "stc"           \
-        _INT_21         \
-        "pop cx"        \
-        "jc short func" \
-        "mov dx,di"     \
-"func:   "              \
-        "mov ah,5Ah"    \
-        _INT_21         \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] [cx] \
-        value           [dx ax] \
-        modify exact    [si ax cx dx];
-
-#pragma aux             _fTinyCreateTemp = \
-        _SET_DS_SREG    \
-        "push cx"       \
-        "mov si,dx"     \
-        "mov cl,1"      \
-        "mov ch,0"      \
-        "mov ax,7160h"  \
-        "stc"           \
-        _INT_21         \
-        "pop cx"        \
-        "jc short func" \
-        "mov dx,di"     \
-"func:   "              \
-        "mov ah,5Ah"    \
-        _INT_21         \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] [cx] \
-        value           [dx ax] \
-        modify exact    [si ax cx dx _SREG];
-#else
 #pragma aux             _nTinyCreateTemp = \
         _SET_DS_DGROUP  \
         _MOV_AH 0x5A    \
@@ -2116,7 +1826,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG dx] [cx] \
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
-#endif
 
 #pragma aux             _TinyClose = \
         _MOV_AH DOS_CLOSE    \
@@ -2243,89 +1952,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [dx ax] \
         modify exact    [ax bx cx dx];
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyGetFileAttr = \
-        _SET_DS_DGROUP  \
-        "mov ax,7143h"  \
-        "mov bl,0"      \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AX _GET_ DOS_CHMOD \
-        _INT_21         \
-"finish: "              \
-        "mov ax,cx"     \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] \
-        value           [dx ax] \
-        modify exact    [bx ax cx dx];
-
-#pragma aux             _nTinySetFileAttr = \
-        _SET_DS_DGROUP  \
-        "mov ax,7143h"  \
-        "mov bl,1"      \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AX _SET_ DOS_CHMOD \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] [cx] \
-        value           [dx ax] \
-        modify exact    [bx ax cx dx];
-
-#pragma aux             _fTinyGetFileAttr = \
-        _SET_DS_SREG    \
-        "mov ax,7143h"  \
-        "mov bl,0"      \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        "mov ax,4300h"  \
-        _INT_21         \
-"finish: "              \
-        "mov ax,cx"     \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] \
-        value           [dx ax] \
-        modify exact    [bx ax cx dx _SREG];
-
-#pragma aux             _fTinySetFileAttr = \
-        _SET_DS_SREG    \
-        "mov ax,7143h"  \
-        "mov bl,1"      \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        "mov ax,4301h"  \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] [cx] \
-        value           [dx ax] \
-        modify exact    [bx ax cx dx _SREG];
-#else
 #pragma aux             _nTinyGetFileAttr = \
         _SET_DS_DGROUP  \
         _MOV_AX _GET_ DOS_CHMOD \
@@ -2367,90 +1993,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG dx] [cx] \
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyDelete = \
-        _SET_DS_DGROUP  \
-        "mov ax,7141h"  \
-        "mov si,0"      \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_UNLINK \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] \
-        value           [dx ax] \
-        modify exact    [si ax dx];
-
-#pragma aux             _nTinyRename = \
-        _SET_DS_DGROUP  \
-        "mov ax,ss"     \
-        "mov es,ax"     \
-        "mov ax,7156h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_RENAME \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] [di]\
-        value           [dx ax] \
-        modify exact    [ax dx di es];
-
-#pragma aux             _fTinyDelete = \
-        _SET_DS_SREG    \
-        "mov ax,7141h"  \
-        "mov si,0"      \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_UNLINK \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] \
-        value           [dx ax] \
-        modify exact    [si ax dx _SREG];
-
-#pragma aux             _fTinyRename = \
-        _SET_DS_SREG    \
-        "mov es,cx"     \
-        "mov ax,7156h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_RENAME \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] [cx di]\
-        value           [dx ax] \
-        modify exact    [ax cx dx di es _SREG];
-#else
 #pragma aux             _nTinyDelete = \
         _SET_DS_DGROUP  \
         _MOV_AH DOS_UNLINK \
@@ -2492,161 +2035,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG dx] [cx di]\
         value           [dx ax] \
         modify exact    [ax cx dx di es _SREG];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyMakeDir = \
-        _SET_DS_DGROUP  \
-        "mov ax,7139h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_MKDIR \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] \
-        value           [dx ax] \
-        modify exact    [ax dx];
-
-#pragma aux             _nTinyRemoveDir = \
-        _SET_DS_DGROUP  \
-        "mov ax,713Ah"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_RMDIR \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] \
-        value           [dx ax] \
-        modify exact    [ax dx];
-
-#pragma aux             _nTinyChangeDir = \
-        _SET_DS_DGROUP  \
-        "mov ax,713Bh"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_CHDIR \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] \
-        value           [dx ax] \
-        modify exact    [ax dx];
-
-#pragma aux             _nTinyGetCWDir = \
-        _SET_DS_DGROUP  \
-        "mov ax,7147h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_GETCWD \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [si] [dl] \
-        value           [dx ax] \
-        modify exact    [ax dx si];
-
-#pragma aux             _fTinyMakeDir = \
-        _SET_DS_SREG    \
-        "mov ax,7139h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_MKDIR \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] \
-        value           [dx ax] \
-        modify exact    [ax dx _SREG];
-
-#pragma aux             _fTinyRemoveDir = \
-        _SET_DS_SREG    \
-        "mov ax,713Ah"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_RMDIR \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] \
-        value           [dx ax] \
-        modify exact    [ax dx _SREG];
-
-#pragma aux             _fTinyChangeDir = \
-        _SET_DS_SREG    \
-        "mov ax,713Bh"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_CHDIR \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] \
-        value           [dx ax] \
-        modify exact    [ax dx _SREG];
-
-#pragma aux             _fTinyGetCWDir = \
-        _SET_DS_SREG    \
-        "mov ax,7147h"  \
-        "stc"           \
-        _INT_21         \
-        "jnc short finish" \
-        "cmp ax,7100h"  \
-        "stc"           \
-        "jnz short finish" \
-"old:    "              \
-        _MOV_AH DOS_GETCWD \
-        _INT_21         \
-"finish: "              \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG si] [dl] \
-        value           [dx ax] \
-        modify exact    [ax dx si _SREG];
-#else
 #pragma aux             _nTinyMakeDir = \
         _SET_DS_DGROUP  \
         _MOV_AH DOS_MKDIR \
@@ -2726,7 +2115,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG si] [dl] \
         value           [dx ax] \
         modify exact    [ax dx si _SREG];
-#endif
 
 #pragma aux             _TinyDup = \
         _MOV_AH DOS_DUP    \
@@ -2880,18 +2268,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [dx ax] \
         modify exact    [ax cx dx];
 
-#pragma aux             _nTinyFindFirstLFN = \
-        _SET_DS_DGROUP  \
-        "mov  ax,714Eh" \
-        "mov  si,1"     \
-        "stc"           \
-        "int  21h"      \
-        "sbb  dx,dx"    \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] [cx] [es di] \
-        value           [dx ax] \
-        modify          [cx si];
-
 #pragma aux             _fTinySetDTA = \
         _SET_DS_SREG    \
         _MOV_AH DOS_SET_DTA \
@@ -2910,40 +2286,12 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
 
-#pragma aux             _fTinyFindFirstLFN = \
-        "mov  ax,714Eh" \
-        "mov  si,1"     \
-        "stc"           \
-        "int  21h"      \
-        "sbb  dx,dx"    \
-        parm caller     [ds dx] [cx] [es di]\
-        value           [dx ax] \
-        modify          [cx si];
-
 #pragma aux             _TinyFindNext = \
         _MOV_AH DOS_FIND_NEXT \
         _INT_21         \
         _SBB_DX_DX      \
         value           [dx ax] \
         modify exact    [ax dx];
-
-#pragma aux             _TinyFindNextLFN = \
-        "mov  ax,714fh" \
-        "mov  si,1"     \
-        "stc"           \
-        "int  21h"      \
-        "sbb  dx,dx"    \
-        parm caller     [bx] [es di] \
-        value           [dx ax] \
-        modify          [cx si];
-
-#pragma aux             _TinyFindCloseLFN = \
-        "mov  ax,71A1h" \
-        "stc"           \
-        "int  21h"      \
-        "sbb  dx,dx"    \
-        parm caller     [bx] \
-        value           [dx ax];
 
 #pragma aux             _TinyGetFileStamp = \
         _MOV_AX _GET_ DOS_FILE_DATE \
