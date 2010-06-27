@@ -24,19 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Hook Coprocessor Not Available exception (387 emulation).
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include <stdlib.h>
-#if 0
-#pragma pack(__push,1);
-#include "dos16.h"
-#pragma pack(__pop);
-#endif
+#include <dos16.h>
 #include "wdebug.h"
 
 extern void __int7( void );
@@ -102,11 +97,7 @@ static char has_wgod_emu = 0;
 static char FPArea[128];
 
 #pragma aux __hook387 "*" parm caller [DX EAX];
-#if 0 /* the D16INFO typedef is so far, unknown */
 char __hook387( D16INFO __far *_d16infop )
-#else
-char __hook387( void __far *_d16infop )
-#endif
 /****************************************/
 {
     char        iswin;
@@ -125,10 +116,8 @@ char __hook387( void __far *_d16infop )
     if( _d16infop != NULL ) {
         if( DPMICheckVendorSpecificAPI( "RATIONAL DOS/4G" ) == 0 ) {
             __set_dos_vector( 7, &__int7 );
-#if 0
             _d16infop->has_87 = 1;              /* enable emulator */
             _d16infop->MSW_bits |= EMULATING_87;
-#endif
             putcr0( getcr0() | EMULATING_87 );
             gorealmode();
             hooked = 1;
@@ -138,11 +127,7 @@ char __hook387( void __far *_d16infop )
 }
 
 #pragma aux __unhook387 "*" parm caller [DX EAX];
-#if 0 /* the D16INFO typedef is so far, unknown */
 char __unhook387( D16INFO __far *_d16infop )
-#else
-char __unhook387( void __far *_d16infop )
-#endif
 /******************************************/
 {
     if( has_wgod_emu ) {
@@ -150,10 +135,8 @@ char __unhook387( void __far *_d16infop )
         EMUShutdown();
         return( 1 );
     } else if( hooked ) {
-#if 0
         _d16infop->has_87 = 0;  /* disable emulator */
         _d16infop->MSW_bits &= ~EMULATING_87;
-#endif
         putcr0( getcr0() & ~EMULATING_87 );
         gorealmode();
     }

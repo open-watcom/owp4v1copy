@@ -57,8 +57,4 @@ fpeinth_postopts=$(fpi87_postopts)
 fenv_postopts=$(fpi87_postopts) -za99
 cntrl87_postopts=$(fpi87_postopts)
 dosinite_postopts=$(fpi87_postopts)
-
-# BUILD WORKAROUND because of insufficiently smart 1.8 compiler
-!ifeq __VERSION__ 1280
-cntrl87_postopts = $(fpi87_postopts) -wcd112
-!endif
+hook387_postopts=-I"../../../../../d16api/include"
