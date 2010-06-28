@@ -467,7 +467,7 @@ extern  n       *NewNode( nclass c, cg_type t ) {
     return( nd );
 }
 
-#define FE_TYPE( x )    ( ( (x) > T_FIRST_FREE ) && ( (x) < T_LAST_FREE ) )
+#define FE_TYPE( x )    ( ( (x) >= T_FIRST_FREE ) && ( (x) <= T_LAST_FREE ) )
 extern  n       *Binary( cg_op op, n *l, n *r, cg_type t ) {
 //==========================================================
 

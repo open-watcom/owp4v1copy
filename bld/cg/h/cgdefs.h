@@ -242,12 +242,16 @@ typedef enum {
 
         T_PROC_PARM,    /*  For Pascal procedural parameters */
         T_VA_LIST,      /*  For RISC-based O_VA_START support */
+
         T_FIRST_FREE,   /*  First user definable type */
 
+#if defined( BY_FORTRAN_FRONT_END )
+  #include "fetypes.h"
+#endif
 
-#define T_LAST_FREE     65530U
+        T_LAST_FREE = 65530U - 1,
 
-        T_NEAR_INTEGER = T_LAST_FREE,
+        T_NEAR_INTEGER,
         T_LONG_INTEGER,
         T_HUGE_INTEGER
 } cg_type;
