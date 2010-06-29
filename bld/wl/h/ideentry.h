@@ -33,6 +33,6 @@ extern void     WriteStdOut( char * );
 extern void     WriteNLStdOut( void );
 extern void     WriteInfoStdOut( char *, unsigned, char * );
 extern char     *GetEnvString( char * );
-extern bool     GetAddtlCommand( unsigned, char * );
+extern void     GetExtraCommands( void );
 extern bool     IsStdOutConsole( void );
 extern bool     ExecDLLPgm( char *, char * );

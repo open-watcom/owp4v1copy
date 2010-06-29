@@ -32,6 +32,7 @@
 #include "msg.h"
 #include "fileio.h"
 #include <stdlib.h>
+#include <string.h>
 #include <malloc.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -41,13 +42,15 @@
 #include "ideentry.h"
 #include "wlink.h"
 #include "wlnkmsg.h"
+#include "cmdline.h"
 
-#if IDE_GET_TARGET_FILE != EXTRA_NAME_DIR
-  || IDE_GET_OBJ_FILE != EXTRA_OBJ_FILE
-  || IDE_GET_LIB_FILE != EXTRA_LIB_FILE
-  || IDE_GET_RES_FILE != EXTRA_RES_FILE
-#error idedll.h is out of date with fileio.h
-#endif
+#define PREFIX_SIZE 8
+
+typedef struct {
+    IDEInfoType type;
+    char        prefix[PREFIX_SIZE + 1];
+    bool        retry;
+} extra_cmd_info;
 
 static IDECBHdl         IdeHdl;
 static IDEInitInfo      InitInfo;
@@ -60,9 +63,23 @@ static IDECallBacks     *IdeCB;
 static bool     RunOnce;
 #endif
 
+static extra_cmd_info ExtraCmds[] = {
+    IDE_GET_TARGET_FILE,"name    ",     FALSE,
+    IDE_GET_OBJ_FILE,   "file    ",     TRUE,
+    IDE_GET_LIB_FILE,   "lib     ",     TRUE,
+    IDE_GET_RES_FILE,   "opt res=",     FALSE,
+    0,                  "\0",           FALSE
+};
+
 static IDEMsgSeverity SeverityMap[] = {
-    IDEMSGSEV_NOTE_MSG, IDEMSGSEV_NOTE_MSG, IDEMSGSEV_WARNING, IDEMSGSEV_ERROR,
-    IDEMSGSEV_ERROR, IDEMSGSEV_ERROR, IDEMSGSEV_BANNER
+//   IDE msg severity       Wlink msg class
+    IDEMSGSEV_NOTE_MSG,     // INF
+    IDEMSGSEV_NOTE_MSG,     // YELL
+    IDEMSGSEV_WARNING,      // WRN
+    IDEMSGSEV_ERROR,        // MILD_ERR
+    IDEMSGSEV_ERROR,        // ERR
+    IDEMSGSEV_ERROR,        // FTL
+    IDEMSGSEV_BANNER        // BANNER
 };
 
 #if defined( DLLS_IMPLEMENTED )
@@ -140,8 +157,8 @@ bool IsStdOutConsole( void )
     return InitInfo.console_output;
 }
 
-bool GetAddtlCommand( unsigned cmd, char *buf )
-/****************************************************/
+static bool GetAddtlCommand( IDEInfoType cmd, char *buf )
+/*******************************************************/
 {
     cmd = cmd;
     buf = buf;
@@ -152,6 +169,25 @@ bool GetAddtlCommand( unsigned cmd, char *buf )
 #endif
 }
 
+void GetExtraCommands( void )
+/***************************/
+{
+    extra_cmd_info const    *cmd;
+    char                    buff[_MAX_PATH + PREFIX_SIZE];
+
+    for( cmd = ExtraCmds; cmd->prefix[0] != '\0'; ++cmd ) {
+        for( ;; ) {
+            memcpy( buff, cmd->prefix, PREFIX_SIZE );
+            if( !GetAddtlCommand( cmd->type, buff + PREFIX_SIZE ) )
+                break;
+            if( DoBuffCmdParse( buff ) )
+                break;
+            if( !cmd->retry ) {
+                break;
+            }
+        }
+    }
+}
 
 /* routines which are called by the DLL driver */
 

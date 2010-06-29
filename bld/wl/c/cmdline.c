@@ -82,7 +82,6 @@ static bool             ProcNTHelp( void );
 static bool             ProcZdosHelp( void );
 static bool             ProcRawHelp( void );
 static void             WriteHelp( unsigned first_ln, unsigned last_ln, bool prompt );
-static void             GetExtraCommands( void );
 
 static  parse_entry   FormatHelp[] = {
     "Dos",          ProcDosHelp,            MK_ALL,     0,
@@ -305,44 +304,6 @@ char *GetNextLink( void )
     return( cmd );
 }
 
-#define PREFIX_SIZE 8
-
-struct extra_cmd_info {
-    unsigned    type;
-    char        prefix[PREFIX_SIZE + 1];
-    bool        retry;
-};
-
-static struct extra_cmd_info ExtraCmds[] = {
-    EXTRA_NAME_DIR, "name    ",     FALSE,
-    EXTRA_OBJ_FILE, "file    ",     TRUE,
-    EXTRA_LIB_FILE, "lib     ",     TRUE,
-    EXTRA_RES_FILE, "opt res=",     FALSE,
-    0,              "\0",           FALSE
-};
-
-static void GetExtraCommands( void )
-/**********************************/
-{
-    struct extra_cmd_info const        *cmd;
-    char                                buff[_MAX_PATH + PREFIX_SIZE];
-
-    for( cmd = ExtraCmds; cmd->prefix[0] != '\0'; ++cmd ) {
-        for( ;; ) {
-            memcpy( buff, cmd->prefix, PREFIX_SIZE );
-            if( !GetAddtlCommand( cmd->type, buff + PREFIX_SIZE ) )
-                break;
-            NewCommandSource( NULL, buff, COMMANDLINE );
-            if( Spawn( DoCmdParse ) )
-                break;
-            if( !cmd->retry ) {
-                break;
-            }
-        }
-    }
-
-}
-
 void Syntax( void )
 /************************/
 {
@@ -404,6 +365,13 @@ static void DoCmdParse( void )
         }
         RestoreParser();
     }
+}
+
+int DoBuffCmdParse( char *cmd )
+/*****************************/
+{
+    NewCommandSource( NULL, cmd, COMMANDLINE );
+    return( Spawn( DoCmdParse ) );
 }
 
 static void WriteGenHelp( void )
