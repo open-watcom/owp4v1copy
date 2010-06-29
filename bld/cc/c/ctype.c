@@ -820,7 +820,7 @@ local TYPEPTR EnumFieldType( TYPEPTR ftyp,
                              unsigned width )
 {
     TYPEPTR     typ;
-    unsigned char data_type;
+    DATA_TYPE   data_type;
 
     typ = TypeNode( TYPE_FIELD, NULL );
     typ->u.f.field_start = start;
@@ -836,6 +836,7 @@ local TYPEPTR EnumFieldType( TYPEPTR ftyp,
     }
     typ->u.f.field_type = data_type;
     switch( data_type ) {
+    case TYPE_BOOL:
     case TYPE_UCHAR:
     case TYPE_USHORT:
     case TYPE_UINT:

@@ -663,8 +663,14 @@ local FIELDPTR InitBitField( FIELDPTR field )
         bit_value = 0;
         if( CurToken != T_RIGHT_BRACE )
             bit_value = ConstExpr();
-        ChkConstant( bit_value, BitMask[ typ->u.f.field_width - 1 ] );
-        bit_value &= BitMask[ typ->u.f.field_width - 1 ];
+        if( typ->u.f.field_type == TYPE_BOOL ) {
+            if( bit_value != 0 ) {
+                bit_value = 1;
+            }
+        } else {
+            ChkConstant( bit_value, BitMask[typ->u.f.field_width - 1] );
+            bit_value &= BitMask[typ->u.f.field_width - 1];
+        }
         if( is64bit ) {
             uint64 tmp;
             U32ToU64( bit_value, &tmp );

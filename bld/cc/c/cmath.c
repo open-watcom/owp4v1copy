@@ -518,7 +518,7 @@ pointer_class ExprTypeClass( TYPEPTR typ )
 #define Convert( opnd, opnd_type, result_type )     opnd
 
 // return 0 not a num, else number of bits | SIGN_BIT if signed
-static int NumSize( int op_type )
+static int NumSize( DATA_TYPE op_type )
 {
     int     size;
 
@@ -731,7 +731,6 @@ TREEPTR BoolConv( TYPEPTR typ, TREEPTR tree )
 
         ctree = ExprNode( IntLeaf( 1 ), OPR_COLON, IntLeaf( 0 ) );
         tree = ExprNode( tree, OPR_QUESTION, ctree );
-        tree->op.flags       = OPFLAG_NONE;
         tree->op.result_type = typ;
         tree->expr_type      = typ;
         FoldExprTree( tree );
@@ -1844,6 +1843,8 @@ TREEPTR FixupAss( TREEPTR opnd, TYPEPTR newtyp )
     } else {
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             CastConstValue( opnd, newtyp->decl_type );
+        } else if( cnv == S2B ) {
+            opnd = BoolConv( newtyp, opnd );
         } else {
             opnd = ExprNode( NULL, OPR_CONVERT, opnd );
             opnd->op.result_type = newtyp;
