@@ -533,8 +533,3 @@ ufns += &
 !include ../../objlist.mif
 
 files = $(rt) $(both) $(dep_rt) $(dep_both) $(ifns) $(xfns) $(math) $(ufns) $(objs)
-
-# BUILD WORKAROUND because of insufficiently smart 1.8 compiler
-!ifeq __VERSION__ 1280
-fmtrtns_postopts = -wcd112
-!endif

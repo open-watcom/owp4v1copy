@@ -275,12 +275,6 @@ extra_c_flags_regexp = -fi=wndregx.h
 
 extra_c_flags_nt += -DENABLE_TRAP_LOGGING
 
-
-# BUILD WORKAROUND because of insufficiently smart 1.8 compiler
-!ifeq __VERSION__ 1280
-extra_c_flags_winfilio = -wcd112
-!endif
-
 # inc_dirs
 ###########
 inc_dirs = -I. -I"$(wv_dir)/h" -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"
@@ -386,16 +380,6 @@ $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs)
         wstrip -q -a -r $^@ . $(resfile)
 !else
 $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk) $(version_res_$(host_os)_$(host_cpu))
-!ifeq __VERSION__ 1280
-!ifeq host_os rdos
-        set WLINK_LNK=$(wlink_dir)/prebuild/wlsystem.lnk
-!ifdef __UNIX__
-linker = *$(wlink_dir)/prebuild/wl.exe op quiet
-!else
-linker = *$(wlink_dir)\prebuild\wl.exe op quiet
-!endif
-!endif
-!endif
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)

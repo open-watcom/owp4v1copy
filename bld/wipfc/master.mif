@@ -13,11 +13,6 @@ extra_cpp_flags += -et
 
 extra_l_flags = op eliminate,map
 
-# temporary fix to be working with OW 1.8 (multibyte/wide character stuff bug in CRTL for Linux), it can be removed later
-!ifeq __VERSION__ 1280
-lflags_linux_386 += libpath $(clib_dir)/library/linux.386/mf_r
-!endif
-
 inc_dirs = -I"../cpp"
 
 .cpp : ../cpp
