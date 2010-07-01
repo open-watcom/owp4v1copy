@@ -1355,7 +1355,7 @@ void cop_setup( void )
 
     def_tabs.tabs = mem_alloc( TAB_COUNT * sizeof( tab_stop ) );
     def_tabs.length = TAB_COUNT;
-    def_tabs.tabs[0].column = g_page_left + first_tab;
+    def_tabs.tabs[0].column = first_tab;
     def_tabs.tabs[0].fill_char = ' ';
     def_tabs.tabs[0].alignment = ' ';
     for( i = 1; i < def_tabs.length; i++ ) {

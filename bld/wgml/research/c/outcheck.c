@@ -1386,13 +1386,30 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
         cur_count++;
     }
 
-    if( cur_count == 0 ) {
+    /* If cur_count == count, then there are no wgml tabs in in_chars. */
 
-        /* in_chars starts with the first wgml tab stop. Find the positon of
-         * that tab, and update cur_h_address and in_chars.
+    if( cur_count == count ) {
+        return( retval );
+    }
+
+    /* in_chars is to contain any text before the first wgml tab. If there
+     * is none, then it will become an extra text_chars preserving the spacing
+     * after the preceding text_chars, except at the start of line, in which
+     * case it will contain the text after the first wgml tab (up to the next
+     * wgml tab) or be an empty text_chars at that tab stop.
+     * This is what wgml 4.0 does.
+     * Note: in_chars->width must have been set by oc_text_chars_width().
+     */
+
+    if( (cur_h_address == oc_page_left) && (cur_count == 0) ) {
+
+        /* in_chars is at the left margin and starts with the first wgml tab
+         * stop. Find the positon of that tab, and update cur_h_address and
+         * in_chars.
          */
 
-        cur_h_address = oc_tab_position( cur_h_address );
+        cur_h_address = oc_tab_position( cur_h_address - oc_page_left ) \
+                                                            + oc_page_left;
         in_chars->x_address = cur_h_address;
 
         /* Move to the next character and check it. */
@@ -1404,7 +1421,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
              * an empty text_chars.
              */
 
-             in_chars->count = 0;
+            in_chars->count = 0;
 
         } else {
 
@@ -1427,21 +1444,25 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
 
             cur_count = i - start;
             memmove_s( &in_chars->text[0], cur_count, &in_chars->text[start], \
-                                                                    cur_count);
+                                                                      cur_count);
             in_chars->count = cur_count;
             in_chars->width = cop_text_width( in_chars->text, in_chars->count, \
-                                                        in_chars->font_number );
+                                                          in_chars->font_number );
             cur_h_address += in_chars->width;
         }
 
     } else {
 
-        /* in_chars->text starts with a non-tab character. Adjust in_chars to
-         * control the first word. The x_address value is already correct.
+        /* Either this is not the start of the line or in_chars->text starts
+         * with a non-tab character. Adjust in_chars to control the first
+         * word. The x_address value is already correct; cur_h_address needs
+         * to be updated if the text_chars is not empty.
          */
 
         in_chars->count = cur_count;
-        cur_h_address += in_chars->width;
+        if( in_chars->width != 0 ) {
+            cur_h_address += in_chars->width;
+        }
     }
 
     if( i < count ) {
@@ -1451,7 +1472,8 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
          * the resulting position to process the rest of the original text.
          */
 
-        cur_h_address = oc_tab_position( cur_h_address );
+        cur_h_address = oc_tab_position( cur_h_address - oc_page_left ) \
+                                                            + oc_page_left;
         i++;
         start = i;
         for( i; i < count; i++ ) {
@@ -1484,8 +1506,8 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
             /* Set up for the next word. */
 
             start = i + 1;
-            cur_h_address = oc_tab_position( cur_h_address );
-
+            cur_h_address = oc_tab_position( cur_h_address - oc_page_left ) \
+                                                            + oc_page_left;
         }
 
         /* If the last character in the original text was a tab, add an empty
@@ -2191,7 +2213,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                                 next_chars->count, next_chars->font_number );
         }
         increment = next_chars->width;
-
+#if 0
         /* Add an empty text_chars, if next_chars->text[0] is a wgml tab, but
          * not if this is a continuation of the previous phrase with no
          * intervening spaces.
@@ -2219,7 +2241,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                 }
             }
         }
-
+#endif
         /* Set old_count to the current number of characters controlled by
          * next_chars. This will be used, if needed, to catch the case where
          * none of the characters in next_chars can, in fact, fit on the current

@@ -203,7 +203,6 @@ extern  void    process_line_full( text_line * a_line, bool justify );
 extern  void    process_text( char * text, uint8_t font_num );
 extern  text_chars * process_word( char * text, size_t count, uint8_t font_num );
 extern  void    set_h_start( void );
-// extern  void    shift_spaces( void );
 extern  void    test_page_full( void );
 
 

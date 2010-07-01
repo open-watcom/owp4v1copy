@@ -2,7 +2,7 @@
 :BODY
 .co on
 .ju off
-.tb set >
+.dc tb >
 .co off
      This tests spaces before,    within, and after a line.    
 .co on

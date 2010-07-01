@@ -100,7 +100,6 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-//    post_space_save = 0;
     p_char = NULL;
 
     if( *p == '.' ) p++;                // over '.'

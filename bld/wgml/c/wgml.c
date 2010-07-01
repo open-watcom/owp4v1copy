@@ -566,7 +566,6 @@ static  void    init_pass( void )
     line                = 0;            // current output lineno on page
     lc                  = 0;            // remaining lines on page
     post_space          = 0;
-//    post_space_save     = 0;
     p_char              = NULL;
 
     init_tag_att();                     // reset last defined GML tag

@@ -137,9 +137,7 @@ void init_global_vars( void )
     workbuf             = mem_alloc( buf_size );
 
     post_skip           = NULL;         // no post skip for first :P aragraph
-//    pre_space           = 0;            // experimental
     post_space          = 0;            // experimental
-//    post_space_save     = 0;            // experimental
 
     buf_lines           = NULL;         // no buffered widow line(s)
     buf_lines_cnt       = 0;
