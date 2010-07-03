@@ -61,7 +61,7 @@
 #include "guitypes.h"
 
 #include "gui.h"
-#include "wptoolbr.h"
+#include "toolbr.h"
 #include "guihint.h"
 
 #if !defined(MK_FP32)  &&  !defined(__WINDOWS_386__)

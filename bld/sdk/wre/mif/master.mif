@@ -104,7 +104,8 @@ OBJS += trmem.tbj trmemcvr.tbj
 .c         : ../c;$(misc_dir);$(cpp_dir);$(trmem_dir)
 
 inc_dirs  = -Ih -I"../h" -I"$(wstring_dir)/h" -I"$(wmenu_dir)/h" -I"$(wacc_dir)/h"
-inc_dirs += -I"$(wr_dir)/h" -I$(trmem_dir) -I"$(wres_dir)/h" -I$(cpp_dir) -I$(misc_dir)
+inc_dirs += -I"$(wr_dir)/h" -I"$(trmem_dir)" -I"$(wres_dir)/h" -I"$(cpp_dir)" -I"$(misc_dir)"
+inc_dirs += -I"$(wpi_dir)/h"
 
 msgfiles  = $(sdk_dir)/misc/about.msg
 
@@ -112,7 +113,8 @@ xlibs = $(wacc_dir)/$(host_os)$(host_cpu)/wacc.lib &
         $(wmenu_dir)/$(host_os)$(host_cpu)/wmenu.lib &
         $(wstring_dir)/$(host_os)$(host_cpu)/wstring.lib &
         $(wr_dir)/$(host_os)$(host_cpu)/wr.lib &
-        $(wres_lib)
+        $(wres_lib) &
+        $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
 
 extra_l_flags = op map, v
 extra_l_flags_nt = op stack=100k,heap=16k commit heap=8k

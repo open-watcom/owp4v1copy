@@ -70,7 +70,7 @@ typedef enum {
 #include "menuids.h"
 #include "mem.h"
 #include "wstatus.h"
-#include "wptoolbr.h"
+#include "toolbr.h"
 
 #define MAX_DIM         2048
 #define MIN_DIM         0
@@ -431,6 +431,7 @@ void InitFunctionBar( HWND hparent );
 void CloseFunctionBar( void );
 void ResizeFunctionBar( WPI_PARAM2 lparam );
 void PressGridButton( void );
+int GetFunctionBarHeight( void );
 
 /* modclrs.c */
 void EditColours( void );

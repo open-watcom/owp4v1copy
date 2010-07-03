@@ -156,12 +156,14 @@ extra_c_flags_about= -DWRCTL3D -fh
 
 fmedit_lib = $(fmedit_dir)/$(host_os)$(host_cpu)/fmedit.lib
 wr_lib = $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
+wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
 
 # where to look for various files
 .c : c;../c;$(misc_dir);$(cpp_dir)
 
 inc_dirs  = -Ih -I"../h" -I"$(fmedit_dir)/dev" -I"$(wres_dir)/h"
-inc_dirs += -I"$(wr_dir)/h" -I"$(misc_dir)" -I$(cpp_dir)
+inc_dirs += -I"$(wr_dir)/h" -I"$(misc_dir)" -I"$(cpp_dir)"
+inc_dirs += -I"$(wpi_dir)/h"
 
 msgfiles  = $(sdk_dir)/misc/about.msg
 
@@ -177,7 +179,7 @@ extra_l_flags_nt = op stack=100k, heap=16k commit heap=8k
 extra_l_flags_win  = op stack=32k, rwr
 extra_l_flags_win += library commdlg, ddeml
 
-xlibs = $(wres_lib) $(fmedit_lib) $(wr_lib)
+xlibs = $(wres_lib) $(fmedit_lib) $(wr_lib) $(wpi_lib)
 
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res

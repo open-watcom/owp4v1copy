@@ -88,7 +88,7 @@ sysobjs = guixscal.obj &
           guiclass.obj &
           guif1hk.obj  &
           wmdisim.obj  &
-          wptoolbr.obj &
+          toolbr.obj &
           guiclen.obj  &
           ctl3d32.obj
 

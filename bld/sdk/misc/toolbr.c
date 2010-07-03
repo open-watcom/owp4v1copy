@@ -24,23 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  Toolbar class for Windows.
+* Description:  Toolbar class for Windows and OS/2.
 *
 ****************************************************************************/
 
 
-#include <windows.h>
+#ifdef __OS2_PM__
+    #define INCL_PM
+    #define INCL_WINFRAMEMGR
+    #define INCL_NLS
+    #define INCL_GPILCIDS
+    #define INCL_GPIPRIMITIVES
+    #include <os2.h>
+    #define __FAR
+#else
+    #include <windows.h>
+    #ifdef __NT__
+        #ifndef _WIN32_IE
+            #define _WIN32_IE   0x0400
+        #endif
+        #include <commctrl.h>
+    #endif
+#endif
+
 #include <string.h>
 #include <assert.h>
-#ifdef __NT__
-    #ifndef _WIN32_IE
-        #define _WIN32_IE   0x0400
-    #endif
-    #include <commctrl.h>
-#endif
+
 #include "mem.h"
 #include "toolbr.h"
-#include "win1632.h"
 
 typedef struct tool {
     struct tool *next;
@@ -52,7 +63,7 @@ typedef struct tool {
     UINT        id;
     UINT        flags;
     WORD        state;
-    RECT        area;
+    WPI_RECT    area;
 #ifdef __NT__
     char        tip[MAX_TIP];
 #endif
@@ -63,15 +74,15 @@ typedef struct toolbar {
     HWND        owner;
     toolhook    hook;
     helphook    helphook;
-    POINT       button_size;
-    POINT       border;
+    WPI_POINT   button_size;
+    WPI_POINT   border;
     HBITMAP     background;
     HBRUSH      foreground;
     HBRUSH      bgbrush;
     int         border_width;
     tool        *tool_list;
-    char        is_fixed:1;
-    char        spare:7;
+    char        is_fixed    : 1;
+    char        spare       : 7;
 #ifdef __NT__
     HWND        container;
     WNDPROC     old_wndproc;
@@ -83,30 +94,25 @@ typedef struct toolbar {
 
 #define BORDER_WIDTH( bar )     1
 
-#ifdef __WINDOWS_386__
-    #define __FAR__     __far
-    #define MAKEPTR( a ) ((void far *)MK_FP32( (void *) a ))
-#else
-    #define __FAR__
-    #define MAKEPTR( a ) ((LPVOID) a)
-#endif
-
-#if defined(__WINDOWS_386__)
-    #define WINEXP FAR PASCAL
-#elif defined(__NT__)
-    #define WINEXP __export __stdcall
-#else
-    #define WINEXP __export FAR PASCAL
+#ifndef __OS2_PM__
+    #ifdef __WINDOWS_386__
+        #define MAKEPTR( a ) ((void far *)MK_FP32( (void *) a ))
+    #else
+        #define MAKEPTR( a ) ((LPVOID) a)
+    #endif
 #endif
 
 #define BLANK_SIZE( w ) ((w) / 3)
 
-#define GET_INFO( w )   ((toolbar *)GetWindowLong( w, 0 ))
-#define SET_INFO( w,i ) (SetWindowLong( w, 0, (LONG)(LPSTR)i))
+#define GET_INFO( w )       ((toolbar *)_wpi_getwindowlong( w, 0 ))
+#define SET_INFO( w, i )    (_wpi_setwindowlong( w, 0, (LONG)(LPSTR)i ))
 
 static char     *className = "WTool";
 #ifdef __NT__
 static char     *containerClassName = "WToolContainer";
+#endif
+#ifdef __OS2_PM__
+static char     toolBarClassRegistered = FALSE;
 #endif
 
 static char         gdiObjectsCreated;
@@ -116,7 +122,11 @@ static HPEN         btnHighlightPen;
 static HPEN         btnFacePen;
 static HBRUSH       blackBrush;
 static HBRUSH       btnFaceBrush;
-static COLORREF     crButtonFace;
+static COLORREF     btnColor;
+static WPI_INST     appInst;
+#ifdef __OS2_PM__
+static WPI_PROC     oldFrameProc;
+#endif
 #ifdef __NT__
 static HINSTANCE    hInstCommCtrl;
 #endif
@@ -125,20 +135,22 @@ static tool *currTool;
 static char currIsDown;
 static WORD lastID = -1;
 static BOOL mouse_captured = FALSE;
-static BOOL ignore_mousemove = FALSE; // release_capture generates
-                                      // a WM_MOUSEMOVE msg
-
-#if defined(__NT__) || defined(__WINDOWS__)
-void    TB_TransparentBlt( HDC, UINT, UINT, UINT, UINT, HDC, COLORREF );
+static BOOL ignore_mousemove = FALSE;   /* ReleaseCapture() generates
+                                           a WM_MOUSEMOVE message */
+#ifndef __OS2_PM__
+static BOOL round_corners = TRUE;       /* Platform has rounded buttons? */
+#else
+static BOOL round_corners = FALSE;      /* Platform has rounded buttons? */
 #endif
+
 #ifdef __NT__
 HBITMAP TB_CreateTransparentBitmap( HBITMAP, int, int );
 #endif
 
-LONG WINEXP     ToolBarWndProc( HWND, unsigned, UINT, LONG );
+MRESULT CALLBACK    ToolBarWndProc( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 #ifdef __NT__
-LRESULT WINAPI  WinToolWndProc( HWND, UINT, WPARAM, LPARAM );
-LRESULT WINAPI  ToolContainerWndProc( HWND, UINT, WPARAM, LPARAM );
+LRESULT WINAPI      WinToolWndProc( HWND, UINT, WPARAM, LPARAM );
+LRESULT WINAPI      ToolContainerWndProc( HWND, UINT, WPARAM, LPARAM );
 #endif
 
 #ifdef __NT__
@@ -153,7 +165,9 @@ static PFNICC   pfnInitCommonControls;
 static tool *findTool( tool *list, WORD id )
 {
     while( list != NULL ) {
-        if( list->id == id ) break;
+        if( list->id == id ) {
+            break;
+        }
         list = list->next;
     }
     return( list );
@@ -161,11 +175,12 @@ static tool *findTool( tool *list, WORD id )
 } /* findTool */
 
 /*
- * addTool - add an item to the tool bar list
+ * addTool - add an item to the toolbar list
  */
 static void addTool( tool **list, tool *t )
 {
-    tool    *curr, **last;
+    tool    *curr;
+    tool    **last;
 
     last = list;
     for( curr = *list; curr != NULL; curr = curr->next ) {
@@ -177,7 +192,7 @@ static void addTool( tool **list, tool *t )
 } /* addTool */
 
 /*
- * deleteTool - delete an item from the tool bar list
+ * deleteTool - delete an item from the toolbar list
  */
 static void deleteTool( tool **list, tool *t )
 {
@@ -196,40 +211,54 @@ static void deleteTool( tool **list, tool *t )
 } /* deleteTool */
 
 /*
- * buttonPosition - get position of a button on the tool bar
+ * buttonPosition - get position of a button on the toolbar
  */
-static BOOL buttonPosition( HWND hwnd, toolbar *bar, tool *top, POINT *p )
+static BOOL buttonPosition( HWND hwnd, toolbar *bar, tool *top, WPI_POINT *p )
 {
-    RECT    rect;
-    int     width, height;
-    tool    *curr;
-    POINT   pos;
+    WPI_RECT    rect;
+    int         width;
+    int         height;
+    tool        *curr;
+    WPI_POINT   pos;
+#ifdef __OS2_PM__
+    int         wndheight;
+#endif
 
-    GetClientRect( hwnd, &rect );
-    width = rect.right - rect.left - 2 * bar->border.x;
-    height = rect.bottom - rect.top - 2 * bar->border.y;
+    _wpi_getclientrect( hwnd, &rect );
+    width = _wpi_getwidthrect( rect ) - 2 * bar->border.x;
+    height = _wpi_getheightrect( rect ) - 2 * bar->border.y;
+#ifdef __OS2_PM__
+    wndheight = _wpi_getheightrect( rect );
+#endif
     curr = bar->tool_list;
     pos.y = 0;
     while( pos.y + bar->button_size.y <= height ) {
         pos.x = 0;
         while( pos.x + bar->button_size.x <= width ) {
-            // we assert curr because top MUST be in the list - the only
-            // way curr can be NULL is if top is NULL (bad) or not in the
-            // list (also bad).
+            /*
+             * We assert curr because top MUST be in the list - the only
+             * way curr can be NULL is if top is NULL (bad) or not in the
+             * list (also bad).
+             */
             assert( curr != NULL );
             if( curr == top ) {
                 p->x = pos.x + bar->border.x;
+#ifndef __OS2_PM__
                 p->y = pos.y + bar->border.y;
+#else
+                p->y = _wpi_cvth_y( pos.y, wndheight ) - bar->button_size.y -
+                    bar->border.y + 1;
+#endif
                 return( TRUE );
             }
             if( curr->flags & ITEM_BLANK ) {
                 pos.x += curr->blank_space;
             } else {
-                pos.x += bar->button_size.x-1;
+                pos.x += bar->button_size.x - 1;
             }
             curr = curr->next;
         }
-        pos.y += bar->button_size.y-1;
+        pos.y += bar->button_size.y - 1;
     }
     return( FALSE );
 
@@ -240,20 +269,20 @@ static BOOL buttonPosition( HWND hwnd, toolbar *bar, tool *top, POINT *p )
  */
 static void createButtonList( HWND hwnd, toolbar *bar, tool *top )
 {
-    POINT       pos;
+    WPI_POINT   pos;
 
-    // top must be an element in the tool_list hanging off of bar
-    // we are going to create buttons for all the tools from top
-    // to the end of the list
+    /*
+     * top must be an element in the tool_list hanging off of bar
+     * we are going to create buttons for all the tools from top
+     * to the end of the list.
+     */
     while( top != NULL ) {
         if( !buttonPosition( hwnd, bar, top, &pos ) ) {
-            // no more buttons will fit
+            /* No more buttons will fit. */
             break;
         }
-        top->area.top = pos.y;
-        top->area.left = pos.x;
-        top->area.bottom = pos.y + bar->button_size.y;
-        top->area.right = pos.x + bar->button_size.x;
+        _wpi_setrectvalues( &top->area, pos.x, pos.y, pos.x + bar->button_size.x,
+                            pos.y + bar->button_size.y );
         top = top->next;
     }
 
@@ -316,23 +345,34 @@ static void reinsertButtons( toolbar *bar )
 
 #endif
 
+/*
+ * ToolBarRedrawButtons - redraw the toolbar buttons
+ */
 void ToolBarRedrawButtons( struct toolbar *bar )
 {
     if( bar ) {
         createButtonList( bar->hwnd, bar, bar->tool_list );
     }
-}
+
+} /* ToolBarRedrawButtons */
 
 /*
  * ToolBarInit - initialize the tool bar
  */
 toolbar *ToolBarInit( HWND parent )
 {
-    WNDCLASS    wc;
+    COLORREF    clr_btnface;
+    COLORREF    clr_btnshadow;
+    COLORREF    clr_btnhighlight;
+    COLORREF    clr_black;
     toolbar     *bar;
+#ifndef __OS2_PM__
+    /* Win16 and Win32 version of the initialization */
+    WNDCLASS    wc;
     HANDLE      instance;
-    
+
     instance = GET_HINSTANCE( parent );
+    appInst = instance;
 
 #ifdef __NT__
     if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
@@ -368,36 +408,71 @@ toolbar *ToolBarInit( HWND parent )
             wc.lpszClassName = className;
             RegisterClass( &wc );
         }
+        clr_btnshadow = GetSysColor( COLOR_BTNSHADOW );
+        clr_btnhighlight = GetSysColor( COLOR_BTNHIGHLIGHT );
+        clr_btnface = GetSysColor( COLOR_BTNFACE );
+#ifdef __NT__
+        clr_black = GetSysColor( COLOR_BTNTEXT );
+#else
+        clr_black = RGB( 0, 0, 0 );
+#endif
+        btnColor = clr_btnface;
+#ifdef __NT__
+    }
+#endif
+#else
+    /* OS/2 PM version of the initialization */
+    int         rc;
+    HAB         hab;
+
+    hab = WinQueryAnchorBlock( parent );
+    appInst.hab = hab;
+    appInst.mod_handle = (HMODULE)0;
+
+    if( !toolBarClassRegistered ) {
+        rc = WinRegisterClass( hab, className, (PFNWP)ToolBarWndProc,
+                               CS_MOVENOTIFY | CS_SIZEREDRAW | CS_CLIPSIBLINGS,
+                               sizeof( PVOID ) );
+        toolBarClassRegistered = TRUE;
+    }
+    clr_btnshadow = CLR_DARKGRAY;
+    clr_btnhighlight = CLR_WHITE;
+    clr_btnface = CLR_PALEGRAY;
+    clr_black = CLR_BLACK;
+    btnColor = CLR_PALEGRAY;
+#endif
+
+    bar = (toolbar *)MemAlloc( sizeof( toolbar ) );
+    if ( bar ) {
+        memset( bar, 0, sizeof( toolbar ) );
+        bar->border_width = 1;
+        bar->owner = parent;
+    }
+
+#ifdef __NT__
+    if( hInstCommCtrl == NULL ) {
+#endif
         if( !gdiObjectsCreated ) {
-            blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                                  GetSysColor( COLOR_BTNTEXT ) );
-            btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                                      GetSysColor( COLOR_BTNSHADOW ) );
-            btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                                         GetSysColor( COLOR_BTNHIGHLIGHT ) );
-            btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                                    GetSysColor( COLOR_BTNFACE ) );
-            blackBrush = GetStockObject( BLACK_BRUSH );
-            btnFaceBrush = CreateSolidBrush( GetSysColor( COLOR_BTNFACE ) );
+            blackPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_black );
+            btnShadowPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_btnshadow );
+            btnHighlightPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_btnhighlight );
+            btnFacePen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_btnface );
+            blackBrush = _wpi_createsolidbrush( clr_black );
+            btnFaceBrush = _wpi_createsolidbrush( clr_btnface );
             gdiObjectsCreated = TRUE;
         }
 #ifdef __NT__
     }
 #endif
-    bar = (toolbar *)MemAlloc( sizeof( toolbar ) );
-    if ( bar ) {
-        bar->border_width = 1;
-        bar->owner = parent;
-    }
 
     return( bar );
 
 } /* ToolBarInit */
 
+#ifndef __OS2_PM__
+
 /*
- * ToolBarChangeSysColors - fiddle with what ToolBar believes
- *                          are the system colours.
- * new:                     stopped fiddeling!
+ * ToolBarChangeSysColors - update the variables in which system colors are stored
  */
 void ToolBarChangeSysColors( COLORREF tbFace,
                              COLORREF tbHighlight, COLORREF tbShadow )
@@ -421,8 +496,8 @@ void ToolBarChangeSysColors( COLORREF tbFace,
                                      GetSysColor( COLOR_BTNHIGHLIGHT ) );
         btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
                                 GetSysColor( COLOR_BTNFACE ) );
-        crButtonFace = GetSysColor( COLOR_BTNFACE );
-        btnFaceBrush = CreateSolidBrush( crButtonFace );
+        btnColor = GetSysColor( COLOR_BTNFACE );
+        btnFaceBrush = CreateSolidBrush( btnColor );
         gdiObjectsCreated = TRUE;
 #ifdef __NT__
     }
@@ -430,16 +505,19 @@ void ToolBarChangeSysColors( COLORREF tbFace,
 
 } /* ToolBarChangeSysColors */
 
+#endif
+
 /*
- * ToolBarDestroy - done with the tool bar
+ * ToolBarDestroy - done with the toolbar
  */
 void ToolBarDestroy ( toolbar *bar )
 {
-    tool    *curr, *tmp;
+    tool    *curr;
+    tool    *tmp;
 
-    if ( bar ) {
+    if( bar ) {
         if( bar->hwnd != HNULL ) {
-            DestroyWindow( bar->hwnd );
+            _wpi_destroywindow( _wpi_getframe( bar->hwnd ) );
         }
 #ifdef __NT__
         if( bar->container != NULL ) {
@@ -452,8 +530,8 @@ void ToolBarDestroy ( toolbar *bar )
             curr = curr->next;
             MemFree( tmp );
         }
-        if( bar->bgbrush != NULL ) {
-            DeleteObject( bar->bgbrush );
+        if( bar->bgbrush != NULLHANDLE ) {
+            _wpi_deleteobject( bar->bgbrush );
         }
         MemFree( bar );
     }
@@ -465,15 +543,15 @@ void ToolBarDestroy ( toolbar *bar )
  */
 void ToolBarFini( toolbar *bar )
 {
-    ToolBarDestroy ( bar );
+    ToolBarDestroy( bar );
 
     if( gdiObjectsCreated ) {
-        DeleteObject( blackPen );
-        DeleteObject( btnShadowPen );
-        DeleteObject( btnHighlightPen );
-        DeleteObject( btnFacePen );
-        DeleteObject( blackBrush );
-        DeleteObject( btnFaceBrush );
+        _wpi_deleteobject( blackPen );
+        _wpi_deleteobject( btnShadowPen );
+        _wpi_deleteobject( btnHighlightPen );
+        _wpi_deleteobject( btnFacePen );
+        _wpi_deleteobject( blackBrush );
+        _wpi_deleteobject( btnFaceBrush );
         gdiObjectsCreated = FALSE;
     }
 
@@ -552,17 +630,21 @@ void ToolBarAddItem( toolbar *bar, TOOLITEMINFO *info )
 
 } /* ToolBarAddItem */
 
+/*
+ * ToolBarSetState - set the state of a toolbar button
+ */
 void ToolBarSetState( toolbar *bar, WORD id, WORD state )
 {
     tool        *t;
-    
+
 #ifdef __NT__
     if( hInstCommCtrl == NULL ) {
 #endif
         t = findTool( bar->tool_list, id );
         t->state = state;
-        // force the button to be redrawn
-        InvalidateRect( bar->hwnd, &t->area, FALSE );
+
+        /* Force the button to be redrawn. */
+        _wpi_invalidaterect( bar->hwnd, &t->area, FALSE );
 #ifdef __NT__
     } else {
         SendMessage( bar->hwnd, TB_CHECKBUTTON, (WPARAM)id,
@@ -572,6 +654,9 @@ void ToolBarSetState( toolbar *bar, WORD id, WORD state )
 
 } /* ToolBarSetState */
 
+/*
+ * ToolBarGetState - get the state of a toolbar button
+ */
 WORD ToolBarGetState( toolbar *bar, WORD id )
 {
     tool        *t;
@@ -606,8 +691,10 @@ BOOL ToolBarDeleteItem( toolbar *bar, WORD id )
 #endif
         t = findTool( bar->tool_list, id );
         if( t != NULL ) {
-            // need to destroy the window on the tool bar and recreate
-            // all the other tools after this one
+            /*
+             * We need to destroy the window on the toolbar and recreate
+             * all the other tools after this one.
+             */
             next = t->next;
             deleteTool( &bar->tool_list, t );
             createButtonList( bar->hwnd, bar, next );
@@ -625,28 +712,78 @@ BOOL ToolBarDeleteItem( toolbar *bar, WORD id )
 
 } /* ToolBarDeleteItem */
 
+#ifdef __OS2_PM__
+
+/*
+ * FrameProc - frame procedure for use on OS/2 PM
+ */
+WPI_MRESULT CALLBACK FrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
+                                WPI_PARAM2 lparam )
+{
+    HWND        client;
+
+    switch( msg ) {
+    case WM_RBUTTONDBLCLK:
+    case WM_LBUTTONDBLCLK:
+        client = WinWindowFromID( hwnd, FID_CLIENT );
+        if( client != NULLHANDLE ) {
+            _wpi_sendmessage( client, msg, (WPI_PARAM1)0x0FFFFFFF, 0 );
+        }
+        break;
+    case WM_SYSCOMMAND:
+        if( SHORT1FROMMP( wparam ) != SC_CLOSE ) {
+            client = WinWindowFromID( hwnd, FID_CLIENT );
+            if( client != NULLHANDLE ) {
+                _wpi_sendmessage( client, msg, wparam, lparam );
+            }
+            break;
+        }
+        /* Fall through!! */
+    case WM_CLOSE:
+        client = WinWindowFromID( hwnd, FID_CLIENT );
+        if( client != NULLHANDLE ) {
+            _wpi_sendmessage( client, WM_CLOSE, 0, 0 );
+        }
+        _wpi_destroywindow( hwnd );
+        return( NULL );
+    }
+    return( _wpi_callwindowproc( oldFrameProc, hwnd, msg, wparam, lparam ) );
+
+} /* FrameProc */
+
+#endif
+
 /*
  * ToolBarDisplay - create and show the tool bar
  */
 void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
 {
-    int height, width;
+    int     height;
+    int     width;
+#ifdef __OS2_PM__
+    HWND    frame;
+    HWND    parent;
+#endif
 
     currTool = NULL;
     currIsDown = FALSE;
     lastID = -1;
     mouse_captured = FALSE;
 
-    if( bar->bgbrush != NULL ) {
-        DeleteObject( bar->bgbrush );
-        bar->bgbrush = 0;
+    if( bar->bgbrush != NULLHANDLE ) {
+        _wpi_deleteobject( bar->bgbrush );
+        bar->bgbrush = NULLHANDLE;
     }
-    if( disp->background != NULL ) {
-        bar->bgbrush = CreatePatternBrush( disp->background );
+
+    if( disp->background != NULLHANDLE ) {
+        bar->bgbrush = _wpi_createpatternbrush( disp->background );
     }
 
     if( bar->hwnd != HNULL ) {
-        DestroyWindow( bar->hwnd );
+        if( _wpi_getcapture() == bar->hwnd ) {
+            _wpi_releasecapture();
+        }
+        _wpi_destroywindow( _wpi_getframe( bar->hwnd ) );
     }
     bar->button_size = disp->button_size;
     bar->hook = disp->hook;
@@ -655,11 +792,13 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     bar->background = disp->background;
     bar->foreground = disp->foreground;
     bar->is_fixed = disp->is_fixed;
-    width = disp->area.right - disp->area.left;
-    height = disp->area.bottom - disp->area.top;
-#if defined(__NT__)
+    width = _wpi_getwidthrect( disp->area );
+    height = _wpi_getheightrect( disp->area );
+
+#ifndef __OS2_PM__
+#if defined( __NT__ )
     if( hInstCommCtrl != NULL ) {
-        if( (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
+        if( !bar->is_fixed ) {
             bar->container = CreateWindowEx( WS_EX_TOOLWINDOW, containerClassName, NULL,
                                              WS_VISIBLE | WS_CAPTION | WS_SYSMENU |
                                              WS_THICKFRAME, disp->area.left,
@@ -691,9 +830,11 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
             ScreenToClient( bar->owner, (LPPOINT)&disp->area.left );
             ScreenToClient( bar->owner, (LPPOINT)&disp->area.right );
             if( bar->hook != NULL ) {
-                // The toolbar isn't subclassed until after the WM_CREATE message is sent,
-                // but the hook may be looking for this message, so fake it by calling the
-                // hook from here.
+                /*
+                 * The toolbar isn't subclassed until after the WM_CREATE message is sent,
+                 * but the hook may be looking for this message, so fake it by calling the
+                 * hook from here.
+                 */
                 bar->hook( bar->hwnd, WM_CREATE, 0, (LPARAM)&cs );
             }
         }
@@ -713,14 +854,12 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
             bar->tooltips = NULL;
         }
         reinsertButtons( bar );
-    } else if( LOBYTE(LOWORD(GetVersion())) >= 4 &&
-         (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
+    } else if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 && !bar->is_fixed ) {
         CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
                         disp->area.left, disp->area.top, width, height,
                         bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
-    }
-    else {
-        if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+    } else {
+        if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
             CreateWindow( className, NULL, WS_CHILD | WS_CLIPSIBLINGS,
                           disp->area.left, disp->area.top, width, height,
                           bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
@@ -745,6 +884,26 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
 #ifdef __NT__
     }
 #endif
+#else
+    if( disp->is_fixed ) {
+        parent = bar->owner;
+    } else {
+        parent = HWND_DESKTOP;
+    }
+    frame = WinCreateStdWindow( parent, 0L, &disp->style, NULL, "", 0L, (HMODULE)0,
+                                0, NULL );
+
+    WinSetOwner( frame, bar->owner );
+    oldFrameProc = _wpi_subclasswindow( frame, (WPI_PROC)FrameProc );
+
+    WinSetPresParam( frame, PP_BACKGROUNDCOLORINDEX, (ULONG)sizeof( LONG ) + 1,
+                     (PVOID)&btnColor );
+    WinCreateWindow( frame, className, "", WS_VISIBLE, 0, 0, 0, 0, frame, HWND_TOP,
+                     FID_CLIENT, (PVOID)bar, NULL );
+
+    WinSetWindowPos( frame, HWND_TOP, disp->area.xLeft, disp->area.yBottom, width,
+                     height, SWP_MOVE | SWP_SIZE | SWP_HIDE );
+#endif
 
 } /* ToolBarDisplay */
 
@@ -761,7 +920,7 @@ HWND ToolBarWindow( toolbar *bar )
         return( bar->container );
     }
 #endif
-    return( bar->hwnd );
+    return( _wpi_getframe( bar->hwnd ) );
 
 } /* ToolBarWindow */
 
@@ -770,187 +929,260 @@ HWND ToolBarWindow( toolbar *bar )
  */
 void UpdateToolBar( toolbar *bar )
 {
-    InvalidateRect( bar->hwnd, NULL, TRUE );
-    UpdateWindow( bar->hwnd );
+    _wpi_invalidaterect( bar->hwnd, NULL, TRUE );
+    _wpi_updatewindow( bar->hwnd );
 
 } /* UpdateToolBar */
 
 /*
  * drawTopLeftCorner - draws the top left corner of a button
  */
-static void drawTopLeftCorner( HDC hdc, POINT size, int border, HPEN pen )
-
+static void drawTopLeftCorner( WPI_PRES pres, WPI_POINT size, int border, HPEN pen )
 {
     HPEN        old_pen;
+    WPI_POINT   pt;
 
-    old_pen = SelectObject( hdc, pen );
-    MoveToEx( hdc, border, size.y - 2 * border, NULL );
-    LineTo( hdc, border, border );
-    LineTo( hdc, size.x - border, border );
-    SelectObject( hdc, old_pen );
+    old_pen = _wpi_selectobject( pres, pen );
+    _wpi_setpoint( &pt, border, size.y - 2 * border );
+    _wpi_cvth_pt( &pt, size.y );
+    _wpi_movetoex( pres, &pt, NULL );
+
+    _wpi_setpoint( &pt, border, border );
+    _wpi_cvth_pt( &pt, size.y );
+    _wpi_lineto( pres, &pt );
+
+    _wpi_setpoint( &pt, size.x - border, border );
+    _wpi_cvth_pt( &pt, size.y );
+    _wpi_lineto( pres, &pt );
+    _wpi_selectobject( pres, old_pen );
 
 } /* drawTopLeftCorner */
 
 /*
  * drawTopLeftInsideCorner - draws the top left corner of a button
  */
-static void drawTopLeftInsideCorner( HDC hdc, POINT size, int border, HPEN pen )
-
+static void drawTopLeftInsideCorner( WPI_PRES pres, WPI_POINT size, int border, HPEN pen )
 {
     HPEN        old_pen;
+    WPI_POINT   pt;
 
-    old_pen = SelectObject( hdc, pen );
-    MoveToEx( hdc, border * 2, size.y - 2 * border, NULL );
-    LineTo( hdc, border * 2, border * 2 );
-    LineTo( hdc, size.x - border, border * 2 );
-    SelectObject( hdc, old_pen );
+    old_pen = _wpi_selectobject( pres, pen );
+    _wpi_setpoint( &pt, border * 2, size.y - 2 * border );
+    _wpi_cvth_pt( &pt, size.y );
+    _wpi_movetoex( pres, &pt, NULL );
+
+    _wpi_setpoint( &pt, border * 2, border * 2 );
+    _wpi_cvth_pt( &pt, size.y );
+    _wpi_lineto( pres, &pt );
+
+    pt.x = size.x - border;
+    _wpi_lineto( pres, &pt );
+    _wpi_selectobject( pres, old_pen );
 
 } /* drawTopLeftCorner */
 
 /*
  * drawBottomRightCorner - draws the bottom right corner of a button
  */
-static void drawBottomRightCorner( HDC hdc, POINT size, int border, HPEN pen )
+static void drawBottomRightCorner( WPI_PRES pres, WPI_POINT size, int border, HPEN pen )
 {
     HPEN        old_pen;
+    WPI_POINT   pt;
+    int         height;
 
+    height = size.y;
     size.x -= 2 * border;
     size.y -= 2 * border;
-    old_pen = SelectObject( hdc, pen );
-    MoveToEx( hdc, size.x, border, NULL );
-    LineTo( hdc, size.x, size.y );
-    LineTo( hdc, border - 1, size.y );
-    SelectObject( hdc, old_pen );
+    old_pen = _wpi_selectobject( pres, pen );
+    _wpi_setpoint( &pt, size.x, border );
+    _wpi_cvth_pt( &pt, height );
+    _wpi_movetoex( pres, &pt, NULL );
+
+    _wpi_setpoint( &pt, size.x, size.y );
+    _wpi_cvth_pt( &pt, height );
+    _wpi_lineto( pres, &pt );
+
+    _wpi_setpoint( &pt, border - 1, size.y );
+    _wpi_cvth_pt( &pt, height );
+    _wpi_lineto( pres, &pt );
+    _wpi_selectobject( pres, old_pen );
 
 } /* drawBottomRightCorner */
 
 /*
  * drawBottomRightInsideCorner - draw the inside corner of a button
  */
-static void drawBottomRightInsideCorner( HDC hdc, POINT size, int border, HPEN pen )
+static void drawBottomRightInsideCorner( WPI_PRES pres, WPI_POINT size, int border,
+                                         HPEN pen )
 {
     HPEN        old_pen;
+    WPI_POINT   pt;
+    int         height;
 
+    height = size.y;
     size.x -= 3 * border;
     size.y -= 3 * border;
-    old_pen = SelectObject( hdc, pen );
-    MoveToEx( hdc, 2 * border, size.y, NULL );
-    LineTo( hdc, size.x, size.y );
-    LineTo( hdc, size.x, border );
-    SelectObject( hdc, old_pen );
+    old_pen = _wpi_selectobject( pres, pen );
+    _wpi_setpoint( &pt, 2 * border, size.y );
+    _wpi_cvth_pt( &pt, height );
+    _wpi_movetoex( pres, &pt, NULL );
+
+    _wpi_setpoint( &pt, size.x, size.y );
+    _wpi_cvth_pt( &pt, height );
+    _wpi_lineto( pres, &pt );
+
+    _wpi_setpoint( &pt, size.x, border );
+    _wpi_cvth_pt( &pt, height );
+    _wpi_lineto( pres, &pt );
+    _wpi_selectobject( pres, old_pen );
 
 } /* drawBottomRightInsideCorner */
 
 /*
  * drawBorder - draw to border of a button
  */
-static void drawBorder( HDC hdc, POINT size, int border )
+static void drawBorder( WPI_PRES pres, WPI_POINT size, int border )
 {
     HPEN        old_pen;
-    int         y,x;
+    int         x;
+    int         y;
+    WPI_POINT   pt;
 
-    y = size.y - 1;
+    y = _wpi_cvth_y( size.y - 1, size.y );
     x = size.x - 1;
 
-    old_pen = SelectObject( hdc, blackPen );
+    old_pen = _wpi_selectobject( pres, blackPen );
 
-    MoveToEx( hdc, 0, 0, NULL );
-    LineTo( hdc, x, 0 );
-    LineTo( hdc, x, y );
-    LineTo( hdc, 0, y );
-    LineTo( hdc, 0, 0 );
+    _wpi_setpoint( &pt, 0, _wpi_cvth_y( 0, size.y ) );
+    _wpi_movetoex( pres, &pt, NULL );
 
-    SelectObject( hdc, btnFacePen );
-    MoveToEx( hdc, 0, 0, NULL );
-    LineTo( hdc, border, 0 );
-    MoveToEx( hdc, x, 0, NULL );
-    LineTo( hdc, x, border );
-    MoveToEx( hdc, x, y, NULL );
-    LineTo( hdc, x - border, y );
-    MoveToEx( hdc, 0, y, NULL );
-    LineTo( hdc, 0, y - border );
+    pt.x = x;
+    _wpi_lineto( pres, &pt );
+    pt.y = y;
+    _wpi_lineto( pres, &pt );
+    pt.x = 0;
+    _wpi_lineto( pres, &pt );
+    pt.y = _wpi_cvth_y( 0, size.y );
+    _wpi_lineto( pres, &pt );
 
-    SelectObject( hdc, old_pen );
+    _wpi_selectobject( pres, btnFacePen );
+    _wpi_setpoint( &pt, 0, _wpi_cvth_y( 0, size.y ) );
+    _wpi_movetoex( pres, &pt, NULL );
+    pt.x = border;
+    if( !round_corners ) {
+        pt.x -= 1;
+    }
+    _wpi_lineto( pres, &pt );
+    pt.x = x;
+    _wpi_movetoex( pres, &pt, NULL );
+    pt.y = _wpi_cvth_y( border, size.y );
+    if( !round_corners ) {
+        pt.y += 1;
+    }
+    _wpi_lineto( pres, &pt );
+
+    pt.y = y;
+    _wpi_movetoex( pres, &pt, NULL );
+    pt.x = x - border;
+    if( !round_corners ) {
+        pt.x += 1;
+    }
+    _wpi_lineto( pres, &pt );
+    pt.x = 0;
+    _wpi_movetoex( pres, &pt, NULL );
+    pt.y = _wpi_cvth_y( _wpi_cvth_y( y, size.y ) - border, size.y );
+    if( !round_corners ) {
+        pt.y -= 1;
+    }
+    _wpi_lineto( pres, &pt );
+
+    _wpi_selectobject( pres, old_pen );
 
 } /* drawBorder */
 
 /*
  * toolBarDrawBitmap - draw the bitmap on a button
  */
-static void toolBarDrawBitmap( HDC hdc, POINT dst_size, POINT dst_org, HBITMAP bitmap )
+static void toolBarDrawBitmap( WPI_PRES pres, WPI_POINT dst_size, WPI_POINT dst_org,
+                               HBITMAP bitmap )
 {
-    BITMAP      bm;
+    WPI_BITMAP  bm;
+    WPI_PRES    mempres;
     HDC         memdc;
-    POINT       src_org, src_size;
+    WPI_POINT   src_org;
+    WPI_POINT   src_size;
     HBRUSH      old_brush;
     HBITMAP     old_bmp;
 
-    DPtoLP( hdc, &dst_size, 1 );
-    DPtoLP( hdc, &dst_org, 1 );
+    DPtoLP( pres, &dst_size, 1 );
+    DPtoLP( pres, &dst_org, 1 );
 
-    memdc = CreateCompatibleDC( hdc );
-    old_bmp = SelectObject( memdc, bitmap );
+    mempres = _wpi_createcompatiblepres( pres, appInst, &memdc );
+    old_bmp = _wpi_selectbitmap( mempres, bitmap );
 
-    GetObject( bitmap, sizeof( BITMAP ), &bm );
+    _wpi_getbitmapstruct( bitmap, &bm );
 
-    src_size.x = bm.bmWidth;
-    src_size.y = bm.bmHeight;
-    DPtoLP( hdc, &src_size, 1 );
+    src_size.x = _wpi_bitmapwidth( &bm );
+    src_size.y = _wpi_bitmapheight( &bm );
+    DPtoLP( pres, &src_size, 1 );
 
     src_org.x = 0;
     src_org.y = 0;
-    DPtoLP( hdc, &src_org, 1 );
+    DPtoLP( pres, &src_org, 1 );
 
-    #if defined( __NT__ ) || defined( __WINDOWS__ )
-        SetStretchBltMode( hdc, COLORONCOLOR );
-    #else
-        SetStretchBltMode( hdc, STRETCH_DELETESCANS );
-    #endif
+#if defined( __NT__ ) || defined( __WINDOWS__ )
+    SetStretchBltMode( pres, COLORONCOLOR );
+#else
+    SetStretchBltMode( pres, STRETCH_DELETESCANS );
+#endif
 
     /*
      * If it's a monochrome bitmap try and do the right thing - I can see
      * this pissing off some users, but oh well.
      */
-    if( bm.bmBitsPixel == 1 && bm.bmPlanes == 1 ) {
-        old_brush = SelectObject( hdc, blackBrush );
+    if( _wpi_bitmapbitcount( &bm ) == 1 && _wpi_bitmapplanes( &bm ) == 1 ) {
+        old_brush = _wpi_selectobject( pres, blackBrush );
 
-        StretchBlt( hdc, dst_org.x, dst_org.y, dst_size.x, dst_size.y, memdc, src_org.x,
-                    src_org.y, src_size.x, src_size.y, 0xb8074a );
+        _wpi_stretchblt( pres, dst_org.x, dst_org.y, dst_size.x, dst_size.y, mempres,
+                         src_org.x, src_org.y, src_size.x, src_size.y, 0xB8074A );
 
-        if( old_bmp != HNULL ) {
-            SelectObject( memdc, old_bmp );
-        }
-
-        SelectObject( hdc, old_brush );
+        _wpi_getoldbitmap( mempres, old_bmp );
+        _wpi_selectobject( pres, old_brush );
     } else {
-        StretchBlt( hdc, dst_org.x, dst_org.y, dst_size.x, dst_size.y, memdc, src_org.x,
-                    src_org.y, src_size.x, src_size.y, SRCCOPY );
+        _wpi_stretchblt( pres, dst_org.x, dst_org.y, dst_size.x, dst_size.y, mempres,
+                         src_org.x, src_org.y, src_size.x, src_size.y, SRCCOPY );
 
-        if( old_bmp != HNULL ) {
-            SelectObject( memdc, old_bmp );
-        }
+        _wpi_getoldbitmap( mempres, old_bmp );
     }
-    DeleteDC( memdc );
+    _wpi_deletecompatiblepres( mempres, memdc );
 
 } /* toolBarDrawBitmap */
 
 /*
  * drawButton - draw a button on the toolbar
  */
-static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
+static void drawButton( HWND hwnd, tool *tool, BOOL down, WPI_PRES pres,
+                        WPI_PRES mempres, HDC mem )
 {
     toolbar     *bar;
     HBRUSH      brush;
+    HBITMAP     bitmap;
+    HBITMAP     oldbmp;
     int         shift;
     BOOL        selected;
-    BOOL        got_dc;
-    POINT       dst_size;
-    POINT       dst_org;
+    WPI_POINT   dst_size;
+    WPI_POINT   dst_org;
     HBITMAP     used_bmp;
-    HBITMAP     bitmap, oldbmp;
-    HDC         mem;
+    WPI_RECTDIM left;
+    WPI_RECTDIM right;
+    WPI_RECTDIM top;
+    WPI_RECTDIM bottom;
+    BOOL        delete_pres;
+    BOOL        delete_mempres;
 #if defined( __NT__ ) || defined( __WINDOWS__ )
-    HBITMAP     bitmap2, oldbmp2, bmptmp;
+    HBITMAP     bitmap2;
+    HBITMAP     oldbmp2;
+    HBITMAP     bmptmp;
     HDC         mem2;
     RECT        fill;
     COLORREF    cr;
@@ -973,18 +1205,23 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
         shift = 2 * BORDER_WIDTH( bar );
     }
 
-    got_dc = FALSE;
-    if( hdc == (HDC)NULL ) {
-        hdc = GetDC( hwnd );
-        got_dc = TRUE;
+    delete_pres = FALSE;
+    delete_mempres = FALSE;
+    if( pres == NULLHANDLE ) {
+        pres = _wpi_getpres( hwnd );
+        mempres = NULLHANDLE;
+        delete_pres = TRUE;
     }
 
-    mem = CreateCompatibleDC( hdc );
-    bitmap = CreateCompatibleBitmap( hdc, bar->button_size.x, bar->button_size.y );
-    oldbmp = SelectObject( mem, bitmap );
+    if( mempres == NULLHANDLE || mem == NULLHANDLE ) {
+        mempres = _wpi_createcompatiblepres( pres, appInst, &mem );
+        delete_mempres = TRUE;
+    }
+    bitmap = _wpi_createcompatiblebitmap( pres, bar->button_size.x, bar->button_size.y );
+    oldbmp = _wpi_selectbitmap( mempres, bitmap );
 #if defined( __NT__ ) || defined( __WINDOWS__ )
-    mem2 = CreateCompatibleDC( hdc );
-    bitmap2 = CreateCompatibleBitmap( hdc, bar->button_size.x, bar->button_size.y );
+    mem2 = CreateCompatibleDC( pres );
+    bitmap2 = CreateCompatibleBitmap( pres, bar->button_size.x, bar->button_size.y );
     oldbmp2 = SelectObject( mem2, bitmap2 );
 #endif
 
@@ -992,107 +1229,125 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
     if( selected && bar->bgbrush != HNULL ) {
         brush = bar->bgbrush;
     }
-    FillRect( mem, &tool->area, brush );
+    _wpi_fillrect( mempres, &tool->area, btnColor, brush );
 
     dst_size = bar->button_size;
     dst_size.x -= 4 * BORDER_WIDTH( bar );
     dst_size.y -= 4 * BORDER_WIDTH( bar );
     dst_org.x = (1 * BORDER_WIDTH( bar )) + shift;
     dst_org.y = (1 * BORDER_WIDTH( bar )) + shift;
+#ifdef __OS2_PM__
+    dst_org.y = _wpi_cvth_y( dst_org.y, bar->button_size.y );
+    dst_org.y = dst_org.y - dst_size.y + 1;
+#endif
     used_bmp = tool->bitmap;
     if( selected ) {
-        // if the button is selected and it has the ITEM_DOWNBMP flag
-        // then we draw the alternate bitmap instead.
+        /*
+         * If the button is selected and it has the ITEM_DOWNBMP flag
+         * then we draw the alternate bitmap instead.
+         */
         if( tool->flags & ITEM_DOWNBMP ) {
             used_bmp = tool->depressed;
         }
     }
-    toolBarDrawBitmap( mem, dst_size, dst_org, used_bmp );
+    toolBarDrawBitmap( mempres, dst_size, dst_org, used_bmp );
 
 #if defined( __NT__ ) || defined( __WINDOWS__ )
-    /* New, on WIN32 platforms, use TB_TransparentBlt() */
-    /* Get background color of button bitmap */
+    /* New, on Win32 platforms, use TB_TransparentBlt(). */
+    /* Get background color of button bitmap. */
     bmptmp = SelectObject( mem2, used_bmp );
-    /* Expects 0,0 pix in original to be in background color */
+    /* The pixel (0, 0) must be in the background color. */
     cr = GetPixel( mem2, 0, 0 );
     bmptmp = SelectObject( mem2, bmptmp );
-    /* IMPORTANT: must set required new background color for dest bmp */
+    /* IMPORTANT: must set required new background color for destination bitmap. */
     SetBkColor( mem2, GetSysColor( COLOR_BTNFACE ) );
     fill.top = 0;
     fill.left = 0;
     fill.right = bar->button_size.x;
     fill.bottom = bar->button_size.y;
     FillRect( mem2, &fill, brush );
-    TB_TransparentBlt( mem2, dst_org.x, dst_org.y, dst_size.x, dst_size.y, mem, cr );
+    TB_TransparentBlt( mem2, dst_org.x, dst_org.y, dst_size.x, dst_size.y, mempres, cr );
     if( oldbmp != HNULL ) {
-        SelectObject( mem, oldbmp );
+        SelectObject( mempres, oldbmp );
         DeleteObject( bitmap );
     }
-    DeleteDC( mem );
-    /* Switch new bitmap into vars expected by code below */
-    mem = mem2;
+    if( delete_mempres ) {
+        DeleteDC( mempres );
+    }
+    /* Switch new bitmap into variables expected by code below. */
+    mempres = mem2;
+    delete_mempres = TRUE;
     bitmap = bitmap2;
     oldbmp = oldbmp2;
 #endif
 
-    drawBorder( mem, bar->button_size, BORDER_WIDTH( bar ) );
+    drawBorder( mempres, bar->button_size, BORDER_WIDTH( bar ) );
     if( selected ) {
-        drawTopLeftCorner( mem, bar->button_size, BORDER_WIDTH( bar ), btnShadowPen );
-        drawTopLeftInsideCorner( mem, bar->button_size, BORDER_WIDTH( bar ),
+        drawTopLeftCorner( mempres, bar->button_size, BORDER_WIDTH( bar ), btnShadowPen );
+        drawTopLeftInsideCorner( mempres, bar->button_size, BORDER_WIDTH( bar ),
                                  btnFacePen );
     } else {
-        drawTopLeftCorner( mem, bar->button_size, BORDER_WIDTH( bar ), btnHighlightPen );
-        drawBottomRightCorner( mem, bar->button_size, BORDER_WIDTH( bar ),
+        drawTopLeftCorner( mempres, bar->button_size, BORDER_WIDTH( bar ), btnHighlightPen );
+        drawBottomRightCorner( mempres, bar->button_size, BORDER_WIDTH( bar ),
                                btnShadowPen );
-        drawBottomRightInsideCorner( mem, bar->button_size, BORDER_WIDTH( bar ),
+        drawBottomRightInsideCorner( mempres, bar->button_size, BORDER_WIDTH( bar ),
                                      btnShadowPen );
-
     }
-    BitBlt( hdc, tool->area.left, tool->area.top, bar->button_size.x, bar->button_size.y,
-            mem, 0, 0, SRCCOPY ); /* copy it to screen */
-
-    if( oldbmp != HNULL ) {
-        SelectObject( mem, oldbmp );
+    _wpi_getrectvalues( tool->area, &left, &top, &right, &bottom );
+    _wpi_bitblt( pres, left, top, bar->button_size.x, bar->button_size.y, mempres, 0, 0,
+                 SRCCOPY ); /* Copy it to the screen. */
+    _wpi_getoldbitmap( mempres, oldbmp );
+    if( delete_pres ) {
+        _wpi_releasepres( hwnd, pres );
     }
-    if( got_dc ) {
-        ReleaseDC( hwnd, hdc );
+    _wpi_deletebitmap( bitmap );
+    if( delete_mempres ) {
+        _wpi_deletecompatiblepres( mempres, mem );
     }
-    DeleteObject( bitmap );
-    DeleteDC( mem );
 
 } /* drawButton */
 
 /*
- * isPointInToolbar - is the point in the mousemove message in the toolbar
+ * The following function is never used.  Remove the #if 0 if it is needed in the future.
  */
-BOOL isPointInToolbar( HWND hwnd, WPARAM wparam, LPARAM lparam )
-{
-    POINT   p;
-    RECT    r;
+#if 0
 
+/*
+ * isPointInToolbar - check if the point in the WM_MOUSEMOVE message is in the toolbar
+ */
+static BOOL isPointInToolbar( HWND hwnd, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
+{
+    WPI_POINT   p;
+    WPI_RECT    r;
+
+    lparam = lparam;
     wparam = wparam;
 
-    MAKE_POINT( p, lparam );
-    GetClientRect( hwnd, &r );
-    if( PtInRect( &r, p ) ) {
+    WPI_MAKEPOINT( wparam, lparam, p );
+    _wpi_getclientrect( hwnd, &r );
+    if( _wpi_ptinrect( &r, p ) ) {
         return( TRUE );
     }
     return( FALSE );
 
 } /* isPointInToolbar */
 
+#endif
+
 /*
  * findToolAtPoint - find a tool at a given point
  */
-static tool *findToolAtPoint( toolbar *bar, LPARAM lparam )
+static tool *findToolAtPoint( toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
-    POINT   p;
-    tool    *tool;
+    WPI_POINT   p;
+    tool        *tool;
 
-    p.x = LOWORD( lparam );
-    p.y = HIWORD( lparam );
+    lparam = lparam;
+    wparam = wparam;
+
+    WPI_MAKEPOINT( wparam, lparam, p );
     for( tool = bar->tool_list; tool != NULL; tool = tool->next ) {
-        if( PtInRect( &tool->area, p ) ) {
+        if( _wpi_ptinrect( &tool->area, p ) ) {
             if( tool->flags & ITEM_BLANK ) {
                 return( NULL );
             } else {
@@ -1124,7 +1379,6 @@ static int customHitTest( toolbar *bar, POINT *pt )
             return( tbb.idCommand );
         }
     }
-
     return( -1 );
 
 } /* customHitTest */
@@ -1132,16 +1386,16 @@ static int customHitTest( toolbar *bar, POINT *pt )
 #endif
 
 /*
- * HasToolAtPoint - return TRUE if tool exists at a given point
+ * HasToolAtPoint - return TRUE if a tool exists at a given point
  */
-BOOL HasToolAtPoint( struct toolbar *bar, LPARAM lparam )
+BOOL HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
 #ifdef __NT__
     POINT   pt;
     
     if( hInstCommCtrl == NULL ) {
 #endif
-        return( findToolAtPoint( bar, lparam ) != NULL );
+        return( findToolAtPoint( bar, wparam, lparam ) != NULL );
 #ifdef __NT__
     } else {
         pt.x = LOWORD( lparam );
@@ -1153,10 +1407,11 @@ BOOL HasToolAtPoint( struct toolbar *bar, LPARAM lparam )
 } /* HasToolAtPoint */
 
 /*
- * FindToolIDAtPoint - Find the toolID at a given point, if any.  Returns
- * TRUE if tool exists at a given point.
+ * FindToolIDAtPoint - Find the tool ID at a given point, if any.  Returns
+ *                     TRUE if tool exists at a given point.
  */
-BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id )
+BOOL FindToolIDAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam,
+                        UINT *id )
 {
     tool    *ctool;
 #ifdef __NT__
@@ -1165,7 +1420,7 @@ BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id )
     
     if( hInstCommCtrl == NULL ) {
 #endif
-        ctool = findToolAtPoint( bar, lparam );
+        ctool = findToolAtPoint( bar, wparam, lparam );
         if( ctool != NULL ) {
             *id = ctool->id;
             return TRUE;
@@ -1191,22 +1446,32 @@ BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id )
 /*
  * ToolBarWndProc - callback routine for the tool bar
  */
-LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
+MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
+                                 WPI_PARAM2 lparam )
 {
-    CREATESTRUCT    __FAR__ *cs;
+    CREATESTRUCT    __FAR   *cs;
     toolbar         *bar;
     tool            *tool;
-    RECT            inter;
-    HDC             hdc;
+    WPI_RECT        inter;
+    WPI_PRES        pres;
+    WPI_PRES        mempres;
+    HDC             memdc;
     PAINTSTRUCT     ps;
     BOOL            posted;
 
     bar = GET_INFO( hwnd );
     if( msg == WM_CREATE ) {
+#ifndef __OS2_PM__
         cs = MAKEPTR( lparam );
-        bar = cs->lpCreateParams;
+        bar = (toolbar *)cs->lpCreateParams;
 #ifdef __WINDOWS_386__
         bar = MapAliasToFlat( (DWORD) bar );
+#endif
+#else
+        cs = PVOIDFROMMP( wparam );
+        bar = (toolbar *)cs;
+        WinSetPresParam( hwnd, PP_BACKGROUNDCOLORINDEX, (ULONG)sizeof( LONG ) + 1,
+                         (PVOID)&btnColor );
 #endif
         bar->hwnd = hwnd;
         SET_INFO( hwnd, bar );
@@ -1220,56 +1485,57 @@ LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
     case WM_SIZE:
         if( bar && bar->tool_list && !bar->is_fixed ) {
             createButtonList( hwnd, bar, bar->tool_list );
-            InvalidateRect( hwnd, NULL, TRUE );
-            UpdateWindow( hwnd );
+            _wpi_invalidaterect( hwnd, NULL, TRUE );
+            _wpi_updatewindow( hwnd );
         }
         break;
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONDBLCLK:
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
+    case WM_RBUTTONDOWN:
+    case WM_RBUTTONDBLCLK:
         if( bar && bar->tool_list ) {
             currTool = NULL;
-            tool = findToolAtPoint( bar, lparam );
+            tool = findToolAtPoint( bar, wparam, lparam );
             if( tool ) {
                 if( bar->hook != NULL ) {
-                    bar->hook( hwnd, WM_USER, tool->id, 0L );
+                    bar->hook( hwnd, WM_USER, MPFROMSHORT( tool->id ), (WPI_PARAM2)0 );
                 }
                 currTool = tool;
-                drawButton( (HDC)NULL, hwnd, tool, TRUE );
+                drawButton( hwnd, tool, TRUE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                 mouse_captured = TRUE;
-                SetCapture( hwnd );
+                _wpi_setcapture( hwnd );
                 currIsDown = TRUE;
                 if( bar->helphook != NULL ) {
-                    bar->helphook( hwnd, currTool->id, TRUE );
+                    bar->helphook( hwnd, MPFROMSHORT( currTool->id ), TRUE );
                 }
             }
         }
         break;
-    case WM_RBUTTONUP:
     case WM_LBUTTONUP:
+    case WM_RBUTTONUP:
         if( bar && bar->tool_list ) {
-            tool = findToolAtPoint( bar, lparam );
+            tool = findToolAtPoint( bar, wparam, lparam );
             posted = FALSE;
             if( tool != NULL ) {
                 if( tool == currTool ) {
-                    PostMessage( bar->owner, WM_COMMAND, tool->id, 0 );
+                    _wpi_postmessage( bar->owner, WM_COMMAND, tool->id, CMDSRC_MENU );
                     posted = TRUE;
-                    drawButton( (HDC)NULL, hwnd, tool, FALSE );
+                    drawButton( hwnd, tool, FALSE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                 }
             }
             if( !posted && bar->hook != NULL ) {
                 if( currTool != NULL ) {
-                    bar->hook( hwnd, WM_USER, currTool->id, 1L );
+                    bar->hook( hwnd, WM_USER, MPFROMSHORT( currTool->id ),
+                               (WPI_PARAM2)1 );
                 }
             }
             if( currTool != NULL ) {
                 mouse_captured = FALSE;
-                ignore_mousemove = TRUE; // release_capture generates a
-                                         // WM_MOUSEMOVE
-                ReleaseCapture();
+                ignore_mousemove = TRUE; /* ReleaseCapture() generates a
+                                            WM_MOUSEMOVE message */
+                _wpi_releasecapture();
                 if( bar->helphook != NULL ) {
-                    bar->helphook( hwnd, currTool->id, FALSE );
+                    bar->helphook( hwnd, MPFROMSHORT( currTool->id ), FALSE );
                 }
                 currTool = NULL;
             }
@@ -1280,32 +1546,32 @@ LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             ignore_mousemove = FALSE;
             break;
         }
-        tool = findToolAtPoint( bar, lparam );
+        tool = findToolAtPoint( bar, wparam, lparam );
         if( currTool ) {
             if( tool == currTool ) {
                 if( !currIsDown ) {
                     currIsDown = TRUE;
-                    drawButton( (HDC)NULL, hwnd, currTool, TRUE );
+                    drawButton( hwnd, currTool, TRUE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                     if( bar->helphook != NULL ) {
-                        bar->helphook( hwnd, currTool->id, TRUE );
+                        bar->helphook( hwnd, MPFROMSHORT( currTool->id ), TRUE );
                     }
                 }
             } else {
                 if( currIsDown ) {
-                    drawButton( (HDC)NULL, hwnd, currTool, FALSE );
+                    drawButton( hwnd, currTool, FALSE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                     currIsDown = FALSE;
                     if( bar->helphook != NULL ) {
-                        bar->helphook( hwnd, currTool->id, FALSE );
+                        bar->helphook( hwnd, MPFROMSHORT( currTool->id ), FALSE );
                     }
                 }
             }
         } else {
             if( bar->helphook != NULL ) {
                 if( tool ) {
-                    bar->helphook( hwnd, tool->id, TRUE );
+                    bar->helphook( hwnd, MPFROMSHORT( tool->id ), TRUE );
                     lastID = tool->id;
                 } else if( lastID != (WORD)-1 ) {
-                    bar->helphook( hwnd, lastID, FALSE );
+                    bar->helphook( hwnd, MPFROMSHORT( lastID ), FALSE );
                     lastID = -1;
                 }
             }
@@ -1318,31 +1584,44 @@ LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
 #endif
     case WM_PAINT:
 #if defined( __NT__ ) || defined( __WINDOWS__ )
-        if( crButtonFace != GetSysColor( COLOR_BTNFACE ) ) {
-            /* WM_SYSCOLORCHANGED: sometimes not received by window.
-               Have to fake it...  */
+        if( btnColor != GetSysColor( COLOR_BTNFACE ) ) {
+            /*
+             * WM_SYSCOLORCHANGED is sometimes not received by the window,
+             * so we have to fake it.
+             */
             ToolBarChangeSysColors( (COLORREF)0L, (COLORREF)0L, (COLORREF)0L );
         }
 #endif
-        hdc = BeginPaint( hwnd, &ps );
-        FillRect( hdc, &ps.rcPaint, btnFaceBrush );
+        pres = _wpi_beginpaint( hwnd, NULLHANDLE, &ps );
+        mempres = _wpi_createcompatiblepres( pres, appInst, &memdc );
+#ifdef __OS2_PM__
+        WinFillRect( pres, &ps, CLR_PALEGRAY );
         for( tool = bar->tool_list; tool != NULL; tool = tool->next ) {
-            if( IntersectRect( &inter, &ps.rcPaint, &tool->area ) ) {
-                drawButton( hdc, hwnd, tool, FALSE );
+            if( _wpi_intersectrect( appInst, &inter, &ps, &tool->area ) ) {
+#else
+        _wpi_fillrect( pres, &ps.rcPaint, clr_btnface, btnFaceBrush );
+        for( tool = bar->tool_list; tool != NULL; tool = tool->next ) {
+            if( _wpi_intersectrect( appInst, &inter, &ps.rcPaint, &tool->area ) ) {
+#endif
+                drawButton( hwnd, tool, FALSE, pres, mempres, memdc );
             }
         }
-        EndPaint( hwnd, &ps );
+        _wpi_deletecompatiblepres( mempres, memdc );
+        _wpi_endpaint( hwnd, NULLHANDLE, &ps );
         break;
     case WM_DESTROY:
         bar->hwnd = HNULL;
         break;
     }
-    return( DefWindowProc( hwnd, msg, wparam, lparam ) );
+    return( _wpi_defwindowproc( hwnd, msg, wparam, lparam ) );
 
 } /* ToolBarWndPproc */
 
 #ifdef __NT__
 
+/*
+ * WinToolWndProc - callback for native toolbars
+ */
 LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     struct toolbar  *bar;
@@ -1356,7 +1635,7 @@ LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     bar = (struct toolbar *)GetProp( hwnd, "bar" );
     switch( msg ) {
     case WM_MOUSEMOVE:
-        if( FindToolIDAtPoint( bar, lparam, &id ) ) {
+        if( FindToolIDAtPoint( bar, wparam, lparam, &id ) ) {
             n = SendMessage( hwnd, TB_COMMANDTOINDEX, id, 0L );
             SendMessage( hwnd, TB_GETBUTTON, n, (LPARAM)&tbb );
             if( (tbb.fsState & TBSTATE_PRESSED) || !(wparam & MK_LBUTTON) ) {
@@ -1401,11 +1680,13 @@ LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         }
         break;
     }
-    
     return( CallWindowProc( bar->old_wndproc, hwnd, msg, wparam, lparam ) );
 
 } /* WinToolWndProc */
 
+/*
+ * ToolContainerWndProc - window procedure for the frame window containing a native toolbar
+ */
 LRESULT WINAPI ToolContainerWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     HWND            otherwnd;
@@ -1420,7 +1701,7 @@ LRESULT WINAPI ToolContainerWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
     if( bar != NULL ) {
         bar->hook( hwnd, msg, wparam, lparam );
     }
-    
+
     switch( msg ) {
     case WM_SIZE:
         otherwnd = GetWindow( hwnd, GW_CHILD );
@@ -1440,7 +1721,7 @@ LRESULT WINAPI ToolContainerWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
 /*
  * ChangeToolButtonBitmap - change a bitmap for a toolbar item
  */
-void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
+void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
 {
     tool        *t;
 #ifdef __NT__
@@ -1453,8 +1734,8 @@ void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
         t = findTool( bar->tool_list, id );
         if( t != NULL ) {
             t->bitmap = newbmp;
-            InvalidateRect( bar->hwnd, &t->area, TRUE );
-            UpdateWindow( bar->hwnd );
+            _wpi_invalidaterect( bar->hwnd, &t->area, TRUE );
+            _wpi_updatewindow( bar->hwnd );
         }
 #ifdef __NT__
     } else {
@@ -1507,8 +1788,9 @@ void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height,
    HBRUSH   hBr, hBrT;
    COLORREF crBack, crText;
 
-   if( NULL == hDCIn )
+   if( NULL == hDCIn ) {
       return;
+   }
 
    /* Make two intermediate DC's */
    hDCMid = CreateCompatibleDC( hDC );
@@ -1559,7 +1841,7 @@ void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height,
    DeleteObject( hBmpT );
    DeleteObject( hBmpMono );
 
-}  /* TansparentBlt () */
+}  /* TransparentBlt */
 
 #endif
 
@@ -1596,9 +1878,8 @@ HBITMAP TB_CreateTransparentBitmap( HBITMAP hBitmap, int width, int height )
     SelectObject( hDC2, hOldBitmap2 );
     DeleteDC( hDC1 );
     DeleteDC( hDC2 );
-
     return( hNewBitmap );
-}
+
+} /* TB_CreateTransparentBitmap */
 
 #endif
-

@@ -30,7 +30,7 @@ extra_l_flags_win = option stack=7k option heapsize=2k lib ddeml.lib
 .c: ..;$(sdk_dir)/misc
 .h: ..;$(sdk_dir)/misc
 
-inc_dirs  = -I.. -I"$(sdk_dir)/misc"
+inc_dirs  = -I.. -I"$(sdk_dir)/misc" -I"$(wpi_dir)/h"
 
 msgfiles  = $(sdk_dir)/misc/about.msg $(sdk_dir)/misc/log.msg &
             $(sdk_dir)/misc/savelbox.msg $(sdk_dir)/misc/alias.msg
@@ -38,8 +38,10 @@ msgfiles  = $(sdk_dir)/misc/about.msg $(sdk_dir)/misc/log.msg &
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
 
+xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+
 $(name).exe : rcstr.gh $(objs) $(name).res $(version_res_$(host_os)_$(host_cpu))
-        $(LINKER) $(lflags) name $^@ file { $(objs) }
+        $(LINKER) $(lflags) name $^@ file { $(objs) } lib { $(xlibs) }
 !ifeq host_CPU axp
 !ifeq release 0
         cvpack $(name).exe

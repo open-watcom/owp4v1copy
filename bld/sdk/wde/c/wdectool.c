@@ -509,7 +509,7 @@ BOOL WdeControlsHook ( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam )
         case WM_RBUTTONDBLCLK:
         case WM_LBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
-            if( FindToolIDAtPoint( tbar->tbar, lParam, &cid ) ) {
+            if( FindToolIDAtPoint( tbar->tbar, wParam, lParam, &cid ) ) {
                 if( cid == IDM_CUSTOM1_TOOL ) {
                     ret = !WdeIsCurrentCustControlSet( 0 );
                 } else if( cid == IDM_CUSTOM2_TOOL ) {

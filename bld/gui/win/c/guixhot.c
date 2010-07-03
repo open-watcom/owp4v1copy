@@ -147,7 +147,7 @@ void GUIDrawBitmap( int hot_spot, WPI_PRES hdc,
 #ifdef __NT__
     /* Skip transparency for huge bitmaps, only splashes and such... */
     if( size.x < 50 && size.y < 50) {
-        /* New, on WIN32 platforms, use WPTB_TransparentBlt() */
+        /* New, on WIN32 platforms, use TB_TransparentBlt() */
         mem2 = _wpi_createcompatiblepres( hdc, GUIMainHInst, &new_hdc2 );
         if( bitmap2 == NULL)
            bitmap2 = CreateCompatibleBitmap( hdc, 50, 50 );
@@ -159,9 +159,7 @@ void GUIDrawBitmap( int hot_spot, WPI_PRES hdc,
         // SetBkColor( mem2, GetSysColor(COLOR_BTNFACE) );
         SetBkColor( mem2, bkcolour );
 
-        WPTB_TransparentBlt( mem2,    src_org.x,  src_org.y,
-                                      size.x,     size.y,
-                             memDC,   cr);
+        TB_TransparentBlt( mem2, src_org.x, src_org.y, size.x, size.y, memDC, cr );
 
         _wpi_bitblt( hdc, dst_org.x, dst_org.y, size.x, size.y, mem2,
                      src_org.x, src_org.y, SRCCOPY );

@@ -121,7 +121,7 @@ wspy_dll_lflags_ntaxp  = $(dll_debug_$(host_cpu)) &
 .c: $(wspy_dir);$(sdk_dir)/misc
 .h: $(wspy_dir);$(sdk_dir)/misc
 
-inc_dirs = -I$(wspy_dir) -I"$(sdk_dir)/misc"
+inc_dirs = -I"$(wspy_dir)" -I"$(sdk_dir)/misc" -I"$(wpi_dir)/h"
 
 wspy_to_build_win = rcstr.gh $(dllname).dll $(name).exe
 
@@ -130,6 +130,8 @@ wspy_to_build_nt = rcstr.gh $(dllname).dll $(name).exe
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
 
+xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+
 all : $(wspy_to_build_$(host_os)) .SYMBOLIC
         @%null
 
@@ -137,6 +139,7 @@ $(name).exe : $(objs) $(name).res $(dllname).lib $(version_res_$(host_os)_$(host
         %create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk file { $(objs) }
+        @%append $^&.lnk lib { $(xlibs) }
         $(linker) name $^@ @$^&.lnk
 !ifeq host_cpu axp
 !ifeq release 0

@@ -156,13 +156,13 @@ static void setClientSize( HWND hwnd )
 {
     RECT        rcclient;
     short       height;
+    int         func_height;
 
+    func_height = GetFunctionBarHeight();
     GetClientRect( hwnd, &rcclient );
-    height = rcclient.bottom - FUNCTIONBAR_WIDTH
-                                        - StatusWidth;
+    height = rcclient.bottom - func_height - StatusWidth;
 
-    MoveWindow(ClientWindow, 0, FUNCTIONBAR_WIDTH+1,
-                                rcclient.right, height, TRUE);
+    MoveWindow( ClientWindow, 0, func_height, rcclient.right, height, TRUE );
 
 } /* setClientSize */
 
@@ -334,6 +334,8 @@ MRESULT CALLBACK ImgEdFrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         return 0;
 
     case WM_SIZE:
+        ResizeFunctionBar(lparam);
+        ResizeStatusBar(lparam);
 #ifndef __OS2_PM__
         if (ClientWindow) {
             setClientSize( hwnd );
@@ -341,8 +343,6 @@ MRESULT CALLBACK ImgEdFrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
 #else
         resizeClientArea( lparam );
 #endif
-        ResizeFunctionBar(lparam);
-        ResizeStatusBar(lparam);
 
         if( !_imgwpi_issizeminimized(wparam) &&
                                         !_imgwpi_issizemaximized(wparam) ) {

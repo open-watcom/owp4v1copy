@@ -72,7 +72,8 @@ wr_lib = $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
 
 .c: ../c;../../c;$(misc_dir);$(cpp_dir)
 
-inc_dirs = -I"../h" -I"../../h" -I$(misc_dir) -I"$(wr_dir)/h" -I"$(wres_dir)/h" -I$(cpp_dir)
+inc_dirs = -I"../h" -I"../../h" -I"$(misc_dir)" -I"$(wr_dir)/h" -I"$(wres_dir)/h" -I"$(cpp_dir)"
+inc_dirs += -I"$(wpi_dir)/h"
 
 extra_l_flags = op map,v,static
 extra_l_flags_nt = op stack=16k,heap=16k commit heap=8k
@@ -82,7 +83,7 @@ extra_l_flags_win = library commdlg op stack=8k,rwr &
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
 
-xlibs = $(wres_lib) $(wr_lib)
+xlibs = $(wres_lib) $(wr_lib) $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
 
 $(name).lib: $(name).dll
         $(librarian) $(libflags) +$[@

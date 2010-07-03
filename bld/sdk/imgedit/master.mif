@@ -29,7 +29,7 @@ resinc = -I"$(wimgedit_dir)/objos2/res"
 objs =  imgedit.obj ieproc.obj ieclrpal.obj ieglob.obj pmcreate.obj &
         curclr.obj clrcntls.obj colours.obj imgdata.obj hinttext.obj &
         ienew.obj ieutil.obj drawproc.obj pmutils.obj xorand.obj &
-        iedraw.obj ieviewin.obj trnsform.obj iesave.obj wptoolbr.obj &
+        iedraw.obj ieviewin.obj trnsform.obj iesave.obj toolbr.obj &
         wstatus.obj mem.obj iestatus.obj iefonts.obj fill.obj freehand.obj &
         ieopen.obj wbitmap.obj palette.obj ieprofil.obj settings.obj &
         getdata.obj clip.obj iconinfo.obj bkcolour.obj pmicon.obj undo.obj &
@@ -47,7 +47,7 @@ msgfiles = $(sdk_dir)/misc/about.msg
 
 objs =  imgedit.obj ieproc.obj ieglob.obj ieclrpal.obj ienew.obj &
         ieopen.obj iesave.obj ieviewin.obj iedraw.obj icon.obj wstatus.obj &
-        palette.obj bitmap.obj ietoolbr.obj wptoolbr.obj wwinhelp.obj &
+        palette.obj bitmap.obj ietoolbr.obj toolbr.obj wwinhelp.obj &
         xorand.obj freehand.obj clip.obj drawproc.obj iestatus.obj &
         undo.obj snap.obj colours.obj iconinfo.obj ieutil.obj fill.obj &
         clrcntls.obj curclr.obj funcbar.obj modclrs.obj bkcolour.obj &

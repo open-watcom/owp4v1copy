@@ -214,6 +214,7 @@ void MakeDDEToolBar( HWND hwnd ) {
     ToolBar.info.helphook = showTBHint;
     ToolBar.info.background = 0;
     ToolBar.info.foreground = 0;
+    ToolBar.info.is_fixed = TRUE;
     ToolBar.info.use_tips = TRUE;
     ToolBar.fixed = TRUE;
     ToolBar.floatrect = ToolBar.info.area;

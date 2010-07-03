@@ -67,7 +67,7 @@ static void addFunctionButton( button *tb, BOOL is_sticky )
     TOOLITEMINFO        info;
 
     tb->hbmp = _wpi_loadbitmap( Instance, tb->name );
-    info.u.bmp = tb->hbmp;
+    info.bmp = tb->hbmp;
     info.id = tb->id;
     info.flags = ITEM_DOWNBMP;
 
@@ -99,7 +99,7 @@ void addItems( void )
     int                 i;
 
     tii.flags = ITEM_BLANK;
-    tii.u.blank_space = 5;
+    tii.blank_space = 5;
 
     if( ImgedIsDDE ) {
         addFunctionButton( &(toolList[10]), FALSE );
@@ -320,3 +320,19 @@ void PressGridButton( void )
         ToolBarSetState(functionBar, IMGED_GRID, BUTTON_UP);
     }
 } /* PressGridButton */
+
+/*
+ * GetFunctionBarHeight - get the height of the function bar
+ */
+int GetFunctionBarHeight( void )
+{
+    WPI_RECT    rect;
+
+    if( !functionBar ) {
+        return( 0 );
+    }
+
+    _wpi_getwindowrect( hFunctionBar, &rect );
+    return( _wpi_getheightrect( rect ) );
+
+} /* GetFunctionBarHeight */

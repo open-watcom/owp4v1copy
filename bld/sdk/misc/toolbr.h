@@ -29,32 +29,23 @@
 ****************************************************************************/
 
 
-/*
- * Caveats: monochrome and colour bitmaps are drawn differently. When
- * a monochrome bitmap is pressed down, it is drawn with the BITMAP given
- * in the TOOLDISPLAYINFO structure as a background brush. If you are
- * using colour bitmaps or don't care, just fill in 0 for the background.
- *  However, I believe monochrome bitmaps look much better, so try and
- * use those. For am example, see the VI toolbar in the default configuration.
- * Half of the bitmaps are colour, and the other half are monochrome (accident?).
- */
+#include "wpi.h"
 
-typedef BOOL (*toolhook)( HWND, unsigned, UINT, LONG );
-typedef void (*helphook)( HWND, UINT, BOOL );
+typedef BOOL (*toolhook)( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
+typedef void (*helphook)( HWND, WPI_PARAM1, BOOL );
 
 typedef struct TOOLDISPLAYINFO {
-    POINT       button_size;    // size, in pixels, of one tool item
-    POINT       border_size;    // width/height, in pixels, of border around tools
-    RECT        area;           // area of window in units appropriate to style
-    DWORD       style;          // style of toolbar window
-    toolhook    hook;           // function called before TOOLBAR window proc
-    helphook    helphook;       // function called when help text is needed
-    HBITMAP     background;     // background of depressed button (0 == default)
-    // ---- not implemented yet
-    HBRUSH      foreground;     // colour of mono-bitmap when depressed (0 == default)
-    char        is_fixed:1;     // is toolbar fixed or floating?
-    char        use_tips:1;     // use tool tips?
-    char        spare:7;        // spare bits
+    WPI_POINT   button_size;        /* size, in pixels, of one tool item */
+    WPI_POINT   border_size;        /* width/height, in pixels, of border around tools */
+    WPI_RECT    area;               /* area of window in units appropriate to style */
+    DWORD       style;              /* style of toolbar window */
+    toolhook    hook;               /* function called before toolbar window proc */
+    helphook    helphook;           /* function called when help text is needed */
+    HBITMAP     background;         /* background of depressed button (0 == default) */
+    HBRUSH      foreground;         /* color of mono bitmap when depressed (0 == default) */
+    char        is_fixed    : 1;    /* is toolbar fixed or floating? */
+    char        use_tips    : 1;    /* use tool tips? */
+    char        spare       : 6;    /* spare bits */
 } TOOLDISPLAYINFO;
 
 /* Button states for use with ITEM_STICKY flag below */
@@ -62,22 +53,22 @@ typedef struct TOOLDISPLAYINFO {
 #define BUTTON_DOWN     0x01
 
 /* Item flags */
-#define ITEM_STICKY     0x01    // item is sticky - ie stays down when clicked
+#define ITEM_STICKY     0x01    /* item is sticky, i.e. stays down when clicked */
 #define ITEM_DOWNBMP    0x02
 #define ITEM_BLANK      0x04
 
-/* Maximum tooltip length */
+/* Maximum tool tip length */
 #define MAX_TIP         128
 
 typedef struct TOOLITEMINFO {
     union {
-        HBITMAP bmp;            // handle to bitmap to display
-        WORD    blank_space;    // space if item is blank
+        HBITMAP bmp;            /* handle to bitmap to display */
+        WORD    blank_space;    /* space if item is blank */
     };
-    WORD        id;             // should be unique for each item
-    WORD        flags;          // see list of flags above
-    HBITMAP     depressed;      // bitmap to show when button is depressed
-    char        tip[MAX_TIP];   // tool tip string
+    WORD        id;             /* should be unique for each item */
+    WORD        flags;          /* see list of flags above */
+    HBITMAP     depressed;      /* bitmap to show when button is depressed */
+    char        tip[MAX_TIP];   /* tool tip string */
 } TOOLITEMINFO;
 
 struct toolbar *ToolBarInit( HWND );
@@ -89,13 +80,26 @@ void ToolBarSetState( struct toolbar *, WORD id, WORD state );
 WORD ToolBarGetState( struct toolbar *bar, WORD id );
 void ToolBarDestroy ( struct toolbar *bar );
 void ToolBarFini( struct toolbar * );
-//void ToolBarDrawBitmap( HDC hdc, POINT size, POINT org, HBITMAP bitmap );
+void ToolBarDrawBitmap( WPI_PRES pres, WPI_POINT size, WPI_POINT org, HBITMAP bitmap );
 void UpdateToolBar( struct toolbar *bar );
-void ChangeToolButtonBitmap( struct toolbar *bar, int id, HBITMAP newbmp );
-BOOL HasToolAtPoint( struct toolbar *bar, LONG lparam );
-BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id );
+void ChangeToolButtonBitmap( struct toolbar *bar, WORD id, HBITMAP newbmp );
+BOOL HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam );
+BOOL FindToolIDAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam, UINT *id );
+#ifndef __OS2_PM__
 void ToolBarChangeSysColors( COLORREF, COLORREF, COLORREF );
+#endif
 void ToolBarRedrawButtons( struct toolbar *bar );
 
-#define TOOLBAR_FIXED_STYLE     (WS_BORDER|WS_CHILDWINDOW)
-#define TOOLBAR_FLOAT_STYLE     (WS_CAPTION|WS_POPUP|WS_THICKFRAME|WS_SYSMENU)
+#if defined( __NT__ ) || defined( __WINDOWS__ )
+void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height, HDC hDCIn, COLORREF cr );
+#endif
+
+#ifndef __OS2_PM__
+    #define TOOLBAR_FIXED_STYLE         (WS_BORDER | WS_CHILDWINDOW)
+    #define TOOLBAR_FLOAT_STYLE         (WS_CAPTION | WS_POPUP | WS_THICKFRAME | WS_SYSMENU)
+    #define TOOLBAR_FLOATNOSIZE_STYLE   (WS_CAPTION | WS_POPUP | WS_SYSMENU)
+#else
+    #define TOOLBAR_FIXED_STYLE         (FCF_BORDER)
+    #define TOOLBAR_FLOAT_STYLE         (FCF_TITLEBAR | FCF_SIZEBORDER | FCF_SYSMENU)
+    #define TOOLBAR_FLOATNOSIZE_STYLE   (FCF_TITLEBAR | FCF_BORDER | FCF_SYSMENU)
+#endif

@@ -34,6 +34,10 @@ libs = $(ncurses_dir)/linux$(host_cpu)/ncurses.lib $(ui_dir)/unix/linux$(host_cp
 extra_l_flags_linux = lib $(ncurses_dir)/linux$(host_cpu)/ncurses.lib lib $(ui_dir)/unix/linux$(host_cpu)/ui.lib
 !endif
 !endif
+!ifdef sys_windowed
+libs += $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+extra_l_flags += lib $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+!endif
 
 extra_l_flags_dos_i86 = op stack=1k
 

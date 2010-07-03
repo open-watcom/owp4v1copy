@@ -218,7 +218,7 @@ void InitTools( HWND hparent )
     tii.flags = ITEM_DOWNBMP | ITEM_STICKY;
 
     for (i=0; i < NUMBER_OF_TOOLS-1; ++i) {
-        tii.u.bmp = hToolBmp[i];
+        tii.bmp = hToolBmp[i];
         tii.id = i + IMGED_CLIP;
         tii.depressed = hToolDep[i];
         ToolBarAddItem( tool_Bar, &tii );
@@ -277,7 +277,7 @@ void AddHotSpotTool( BOOL faddhotspot )
         if (hotspotPresent) {
             return;
         }
-        tii.u.bmp = hToolBmp[9];
+        tii.bmp = hToolBmp[9];
         tii.id = IMGED_HOTSPOT;
         tii.flags = ITEM_DOWNBMP | ITEM_STICKY;
         tii.depressed = hToolDep[9];
