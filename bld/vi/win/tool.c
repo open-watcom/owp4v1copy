@@ -124,7 +124,7 @@ static void nukeButtons( void )
     toolBarTail = NULL;
 }
 
-BOOL MyToolBarProc( HWND hwnd, unsigned msg, UINT w, LONG l );
+BOOL MyToolBarProc( HWND hwnd, UINT msg, UINT w, LONG l );
 void ToolBarHelp( HWND hwnd, UINT id, BOOL isdown );
 
 #if 0
@@ -208,7 +208,7 @@ void ToolBarHelp( HWND hwnd, UINT id, BOOL isdown )
 /*
  * MyToolBarProc - called by toolbar window proc
  */
-BOOL MyToolBarProc( HWND hwnd, unsigned msg, UINT w, LONG l )
+BOOL MyToolBarProc( HWND hwnd, UINT msg, UINT w, LONG l )
 {
     switch( msg ) {
     case WM_KILLFOCUS:
