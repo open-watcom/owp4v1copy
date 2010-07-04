@@ -569,7 +569,7 @@ extern  an      BGUnary( cg_op op, an left, type_def *tipe ) {
         if( left->tipe->length != WORD_SIZE ) {
             FEMessage( MSG_ERROR,
                 "runtime call cannot be made when DS not pegged" );
-            left = Unary( O_CONVERT, left, TypeAddress( T_NEAR_POINTER ) );
+            left = Unary( O_CONVERT, left, TypeAddress( TY_NEAR_POINTER ) );
         }
 #endif
     default:

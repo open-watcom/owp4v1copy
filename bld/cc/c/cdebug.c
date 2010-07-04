@@ -54,26 +54,26 @@ static void InitDBType( void )
     ScopeEnum = DBScope( "enum" );
     typ = GetType( TYPE_PLAIN_CHAR );
     if( typ->decl_type == TYPE_UCHAR ){
-        typ->debug_type = DBScalar( "char", T_UINT_1 );
+        typ->debug_type = DBScalar( "char", TY_UINT_1 );
     }else{
-        typ->debug_type = DBScalar( "char", T_INT_1 );
+        typ->debug_type = DBScalar( "char", TY_INT_1 );
     }
-    B_Int_1  = DBScalar( "signed char", T_INT_1 );
-    B_UInt_1 = DBScalar( "unsigned char", T_UINT_1 );
-    B_Short  = DBScalar( "short", T_INT_2 );
-    B_UShort = DBScalar( "unsigned short", T_UINT_2 );
+    B_Int_1  = DBScalar( "signed char", TY_INT_1 );
+    B_UInt_1 = DBScalar( "unsigned char", TY_UINT_1 );
+    B_Short  = DBScalar( "short", TY_INT_2 );
+    B_UShort = DBScalar( "unsigned short", TY_UINT_2 );
 #if TARGET_INT == 4
-    B_Int    = DBScalar( "int", T_INT_4 );
-    B_UInt   = DBScalar( "unsigned int", T_UINT_4 );
+    B_Int    = DBScalar( "int", TY_INT_4 );
+    B_UInt   = DBScalar( "unsigned int", TY_UINT_4 );
 #else
-    B_Int    = DBScalar( "int", T_INT_2 );
-    B_UInt   = DBScalar( "unsigned int", T_UINT_2 );
+    B_Int    = DBScalar( "int", TY_INT_2 );
+    B_UInt   = DBScalar( "unsigned int", TY_UINT_2 );
 #endif
-    B_Int32  = DBScalar( "long", T_INT_4 );
-    B_UInt32  = DBScalar( "unsigned long", T_UINT_4 );
-    B_Int64  = DBScalar( "__int64", T_INT_8 );
-    B_UInt64 = DBScalar( "unsigned __int64", T_UINT_8 );
-    B_Bool   = DBScalar( "_Bool", T_UINT_1 );
+    B_Int32  = DBScalar( "long", TY_INT_4 );
+    B_UInt32  = DBScalar( "unsigned long", TY_UINT_4 );
+    B_Int64  = DBScalar( "__int64", TY_INT_8 );
+    B_UInt64 = DBScalar( "unsigned __int64", TY_UINT_8 );
+    B_Bool   = DBScalar( "_Bool", TY_UINT_1 );
     DebugNameList = NULL;
 }
 
@@ -199,7 +199,7 @@ static dbug_type DoBasedPtr( TYPEPTR typ, cg_type cgtype )
                 have_retval = 1;
             } else {
                 dl = DBLocSym( dl, sym_handle );
-                dl = DBLocOp( dl, DB_OP_POINTS, T_UINT_2 );
+                dl = DBLocOp( dl, DB_OP_POINTS, TY_UINT_2 );
                 dl = DBLocConst( dl, 0 );
                 dl = DBLocOp( dl, DB_OP_MK_FP, 0 );
             }
@@ -243,7 +243,7 @@ dbug_type DBType( TYPEPTR typ )
         ret_val = DBScalar( "void", TY_DEFAULT );
         break;
     case TYPE_FLOAT:
-        ret_val = DBScalar( "float", T_SINGLE );
+        ret_val = DBScalar( "float", TY_SINGLE );
         break;
     case TYPE_DOUBLE:
         ret_val = DBScalar( "double", TY_DOUBLE );
@@ -283,7 +283,7 @@ dbug_type DBType( TYPEPTR typ )
         DebugNameList = fwd_info.next;
         break;
     case TYPE_FUNCTION:
-        cgtype = T_CODE_PTR;
+        cgtype = TY_CODE_PTR;
         pr = DBBegProc( cgtype, DBType( typ->object ) );
         for( pparms = typ->u.fn.parms; pparms; pparms++ ) {
             if( (*pparms == NULL) ) break;

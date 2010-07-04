@@ -96,7 +96,7 @@ extern  void    BuffEnd( seg_id seg ) {
     uint                last;
     uint                size;
 
-    ptr_type = TypeAddress( T_LONG_POINTER );
+    ptr_type = TypeAddress( TY_LONG_POINTER );
     old = SetOP( seg );
     CurrBuff->buff[ 0 ] = CurrBuff->index;
     buff = CurrBuff->buff;

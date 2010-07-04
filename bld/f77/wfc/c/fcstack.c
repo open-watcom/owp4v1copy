@@ -83,15 +83,15 @@ cg_type ArrayPtrType( sym_id sym ) {
     if( sym->ns.si.va.dim_ext->dim_flags & DIM_EXTENDED ) {
 #if _CPU == 8086
         if( CGOpts & CGOPT_M_LARGE ) {
-            return( T_HUGE_POINTER );
+            return( TY_HUGE_POINTER );
         } else { // if( CGOpts & CGOPT_M_MEDIUM ) {
-            return( T_LONG_POINTER );
+            return( TY_LONG_POINTER );
         }
 #elif _CPU == 386
-        return( T_LONG_POINTER );
+        return( TY_LONG_POINTER );
 #endif
     }
-    return( T_POINTER );
+    return( TY_POINTER );
 }
 
 
@@ -112,11 +112,11 @@ cg_type SymPtrType( sym_id sym ) {
     if( flags & SY_SUB_PARM ) {
         // subprogram argument
         if( ( flags & SY_CLASS ) == SY_SUBPROGRAM ) {
-            p_type = T_CODE_PTR;
+            p_type = TY_CODE_PTR;
         } else if( flags & SY_SUBSCRIPTED ) {
             p_type = ArrayPtrType( sym );
         } else {
-            p_type = T_GLOBAL_POINTER;
+            p_type = TY_GLOBAL_POINTER;
         }
     } else if( flags & SY_IN_EQUIV ) {
         leader = sym;
@@ -131,7 +131,7 @@ cg_type SymPtrType( sym_id sym ) {
             offset += ce_ext->offset;
             if( GetComBlkSize( ce_ext->com_blk ) <= MaxSegSize ) {
                 // common block fits in a segment
-                p_type = T_GLOBAL_POINTER;
+                p_type = TY_GLOBAL_POINTER;
             } else {
                 item_size = _SymSize( sym );
                 if( flags & SY_SUBSCRIPTED ) {
@@ -140,15 +140,15 @@ cg_type SymPtrType( sym_id sym ) {
                 if( offset + item_size <= MaxSegSize ) {
                     // object fits in first segment of common block
                     // (common block label is at start of first segment)
-                    p_type = T_GLOBAL_POINTER;
+                    p_type = TY_GLOBAL_POINTER;
                 } else {
-                    p_type = T_HUGE_POINTER;
+                    p_type = TY_HUGE_POINTER;
                 }
             }
         } else {
             if( ce_ext->high - ce_ext->low <= MaxSegSize ) {
                 // equivalence set fits in a segment
-                p_type = T_GLOBAL_POINTER;
+                p_type = TY_GLOBAL_POINTER;
             } else {
                 item_size = _SymSize( sym );
                 if( flags & SY_SUBSCRIPTED ) {
@@ -159,9 +159,9 @@ cg_type SymPtrType( sym_id sym ) {
                 if( ( GetGlobalSeg( offset ) == leader_seg ) &&
                     ( GetGlobalSeg( offset + item_size ) == leader_seg ) ) {
                     // the entire item is in the same segment as the leader
-                    p_type = T_GLOBAL_POINTER;
+                    p_type = TY_GLOBAL_POINTER;
                 } else {
-                    p_type = T_HUGE_POINTER;
+                    p_type = TY_HUGE_POINTER;
                 }
             }
         }
@@ -169,7 +169,7 @@ cg_type SymPtrType( sym_id sym ) {
         ce_ext = sym->ns.si.va.vi.ec_ext;
         if( GetComBlkSize( ce_ext->com_blk ) <= MaxSegSize ) {
             // common block fits in a segment
-            p_type = T_GLOBAL_POINTER;
+            p_type = TY_GLOBAL_POINTER;
         } else {
             item_size = _SymSize( sym );
             if( flags & SY_SUBSCRIPTED ) {
@@ -179,18 +179,18 @@ cg_type SymPtrType( sym_id sym ) {
                 if( ce_ext->offset + item_size <= MaxSegSize ) {
                     // object fits in first segment of common block
                     // (common block label is at start of first segment)
-                    p_type = T_GLOBAL_POINTER;
+                    p_type = TY_GLOBAL_POINTER;
                 } else {
-                    p_type = T_HUGE_POINTER;
+                    p_type = TY_HUGE_POINTER;
                 }
             } else {
                 // each symbol in common block gets a label at the offset into
                 // the common block
                 if( GetComOffset( ce_ext->offset ) + item_size <= MaxSegSize ) {
                     // object fits in a segment
-                    p_type = T_GLOBAL_POINTER;
+                    p_type = TY_GLOBAL_POINTER;
                 } else {
-                    p_type = T_HUGE_POINTER;
+                    p_type = TY_HUGE_POINTER;
                 }
             }
         }
@@ -202,14 +202,14 @@ cg_type SymPtrType( sym_id sym ) {
             item_size *= sym->ns.si.va.dim_ext->num_elts;
         }
         if( item_size > MaxSegSize ) {
-            p_type = T_HUGE_POINTER;
+            p_type = TY_HUGE_POINTER;
         } else if( item_size <= DataThreshold ) {
-            p_type = T_LOCAL_POINTER;
+            p_type = TY_LOCAL_POINTER;
         } else {
-            p_type = T_GLOBAL_POINTER;
+            p_type = TY_GLOBAL_POINTER;
         }
     } else {
-        p_type = T_LOCAL_POINTER;
+        p_type = TY_LOCAL_POINTER;
     }
     return( p_type );
 }
@@ -244,9 +244,9 @@ cg_name SymIndex( sym_id sym, cg_name i ) {
         if( ( sym->ns.flags & SY_SUBPROG_TYPE ) == SY_STMT_FUNC ) {
             addr = CGFEName( sym, F772CGType( sym ) );
         } else {
-            addr = CGFEName( sym, T_CODE_PTR );
+            addr = CGFEName( sym, TY_CODE_PTR );
             if( sym->ns.flags & SY_SUB_PARM ) {
-                addr = CGUnary( O_POINTS, addr, T_CODE_PTR );
+                addr = CGUnary( O_POINTS, addr, TY_CODE_PTR );
             }
             data_reference = FALSE;
         }
@@ -256,7 +256,7 @@ cg_name SymIndex( sym_id sym, cg_name i ) {
             if( sym->ns.typ == FT_CHAR ) {
                 if( Options & OPT_DESCRIPTOR ) {
                     addr = CGFEName( ReturnValue, F772CGType( sym ) );
-                    addr = CGUnary( O_POINTS, addr, T_POINTER );
+                    addr = CGUnary( O_POINTS, addr, TY_POINTER );
                 } else {
                     addr = SubAltSCB( sym->ns.si.ms.sym );
                 }
@@ -267,8 +267,8 @@ cg_name SymIndex( sym_id sym, cg_name i ) {
             if( (sym->ns.typ == FT_CHAR) && !(Options & OPT_DESCRIPTOR) ) {
                 addr = SubAltSCB( CommonEntry );
             } else {
-                addr = CGUnary( O_POINTS, CGFEName( ReturnValue, T_POINTER ),
-                                T_POINTER );
+                addr = CGUnary( O_POINTS, CGFEName( ReturnValue, TY_POINTER ),
+                                TY_POINTER );
             }
         }
     } else if( sym->ns.flags & SY_SUB_PARM ) {
@@ -286,7 +286,7 @@ cg_name SymIndex( sym_id sym, cg_name i ) {
                 addr = CGUnary( O_POINTS, CGFEName( sym, p_type ), p_type );
             }
         } else {
-            p_type = T_POINTER;
+            p_type = TY_POINTER;
             if( sym->ns.typ == FT_CHAR ) {
                 if( SCBRequired( sym ) ) {
                     addr = VarAltSCB( sym );
@@ -336,15 +336,15 @@ cg_name SymIndex( sym_id sym, cg_name i ) {
             }
         }
         if( i != NULL ) {
-            i = CGBinary( O_PLUS, i, CGInteger( offset, T_INT_4 ), T_INT_4 );
+            i = CGBinary( O_PLUS, i, CGInteger( offset, TY_INT_4 ), TY_INT_4 );
         } else {
-            i = CGInteger( offset, T_INT_4 );
+            i = CGInteger( offset, TY_INT_4 );
         }
         addr = CGBinary( O_PLUS, addr, i, SymPtrType( sym ) );
         if( (sym->ns.typ == FT_CHAR) && !(sym->ns.flags & SY_SUBSCRIPTED) ) {
             // tell code generator where storage pointed to by SCB is located
             addr = CGBinary( O_COMMA, addr,
-                             CGFEName( sym, F772CGType( sym ) ), T_DEFAULT );
+                             CGFEName( sym, F772CGType( sym ) ), TY_DEFAULT );
         }
         i = NULL;
     } else if( ( sym->ns.typ == FT_CHAR ) &&
@@ -354,10 +354,10 @@ cg_name SymIndex( sym_id sym, cg_name i ) {
     } else if( sym->ns.flags & SY_IN_COMMON ) {
         ce_ext = sym->ns.si.va.vi.ec_ext;
         if( i != NULL ) {
-            i = CGBinary( O_PLUS, i, CGInteger( ce_ext->offset, T_INT_4 ),
-                          T_INT_4 );
+            i = CGBinary( O_PLUS, i, CGInteger( ce_ext->offset, TY_INT_4 ),
+                          TY_INT_4 );
         } else {
-            i = CGInteger( ce_ext->offset, T_INT_4 );
+            i = CGInteger( ce_ext->offset, TY_INT_4 );
         }
         addr = CGBinary( O_PLUS, CGFEName( ce_ext->com_blk, F772CGType( sym ) ),
                          i, SymPtrType( sym ) );
@@ -484,8 +484,8 @@ void    FCPop( void ) {
     typ_info = GetU16();
     dst_typ = GetType1( typ_info );
     src_typ = GetType2( typ_info );
-    if( ( dst_typ == T_COMPLEX ) || ( dst_typ == T_DCOMPLEX )
-        || ( dst_typ == T_XCOMPLEX ) ) {
+    if( ( dst_typ == TY_COMPLEX ) || ( dst_typ == TY_DCOMPLEX )
+        || ( dst_typ == TY_XCOMPLEX ) ) {
         CmplxAssign( sym, dst_typ, src_typ );
     } else {
         if( (sym->ns.flags & SY_CLASS) == SY_SUBPROGRAM ) {
@@ -499,7 +499,7 @@ void    FCPop( void ) {
                 if( GetU16() ) {
                     // target is a sub-field
                     dst = XPop();
-                    if( dst_typ == T_USER_DEFINED ) {
+                    if( dst_typ == TY_USER_DEFINED ) {
                         // sub-field is a structure or an array element
                         fd = GetPtr();
                     }
@@ -512,7 +512,7 @@ void    FCPop( void ) {
             } else {
                 dst = SymAddr( sym );
             }
-            if( dst_typ == T_USER_DEFINED ) {
+            if( dst_typ == TY_USER_DEFINED ) {
                 if( fd == NULL ) {
                     dst_typ = sym->ns.xt.record->cg_typ;
                 } else {
@@ -523,8 +523,8 @@ void    FCPop( void ) {
                 return;
             }
         }
-        if( (src_typ == T_COMPLEX) || (src_typ == T_DCOMPLEX)
-            || (src_typ == T_XCOMPLEX) ) {
+        if( (src_typ == TY_COMPLEX) || (src_typ == TY_DCOMPLEX)
+            || (src_typ == TY_XCOMPLEX) ) {
             Cmplx2Scalar();
             src_typ = CmplxBaseType( src_typ );
         }
@@ -594,11 +594,11 @@ cg_name IntegerConstant( ftn_type *value, uint size ) {
 //===================================================
 
     if( size == sizeof( intstar1 ) ) {
-        return( CGInteger( value->intstar1, T_INT_1 ) );
+        return( CGInteger( value->intstar1, TY_INT_1 ) );
     } else if( size == sizeof( intstar2 ) ) {
-        return( CGInteger( value->intstar2, T_INT_2 ) );
+        return( CGInteger( value->intstar2, TY_INT_2 ) );
     } else {
-        return( CGInteger( value->intstar4, T_INT_4 ) );
+        return( CGInteger( value->intstar4, TY_INT_4 ) );
     }
 }
 
@@ -620,19 +620,19 @@ void    FCPushConst( void ) {
         break;
     case FT_LOGICAL_1 :
     case FT_LOGICAL :
-        XPush( CGInteger( sym->cn.value.logstar4, T_UINT_1 ) );
+        XPush( CGInteger( sym->cn.value.logstar4, TY_UINT_1 ) );
         break;
     case FT_REAL :
         CnvS2S( &sym->cn.value.single, fmt_buff );
-        XPush( CGFloat( fmt_buff, T_SINGLE ) );
+        XPush( CGFloat( fmt_buff, TY_SINGLE ) );
         break;
     case FT_DOUBLE :
         CnvD2S( &sym->cn.value.dble, fmt_buff );
-        XPush( CGFloat( fmt_buff, T_DOUBLE ) );
+        XPush( CGFloat( fmt_buff, TY_DOUBLE ) );
         break;
     case FT_TRUE_EXTENDED :
         CnvX2S( &sym->cn.value.extended, fmt_buff );
-        XPush( CGFloat( fmt_buff, T_LONGDOUBLE ) );
+        XPush( CGFloat( fmt_buff, TY_LONGDOUBLE ) );
         break;
     case FT_COMPLEX :
         PushCmplxConst( sym );
@@ -656,6 +656,6 @@ void    FCPushLit( void ) {
 
     sym = GetPtr();
     if( sym->lt.flags & (LT_SCB_REQUIRED | LT_SCB_TMP_REFERENCE) ) {
-        XPush( CGBackName( ConstBack( sym ), T_CHAR ) );
+        XPush( CGBackName( ConstBack( sym ), TY_CHAR ) );
     }
 }

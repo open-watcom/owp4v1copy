@@ -267,20 +267,20 @@ static cg_type DataPointerType( OPNODE *node )
     cg_type     dtype;
 
     if( Far16Pointer( node->flags ) ) {
-        dtype = T_POINTER;
+        dtype = TY_POINTER;
     } else if( node->flags & OPFLAG_NEARPTR ) {
-        dtype = T_NEAR_POINTER;
+        dtype = TY_NEAR_POINTER;
     } else if( node->flags & OPFLAG_FARPTR ) {
-        dtype = T_LONG_POINTER;
+        dtype = TY_LONG_POINTER;
     } else if( node->flags & OPFLAG_HUGEPTR ) {
-        dtype = T_HUGE_POINTER;
+        dtype = TY_HUGE_POINTER;
     } else {
-        dtype = T_POINTER;
+        dtype = TY_POINTER;
     }
     return( dtype );
 #else
     node;
-    return( T_POINTER );
+    return( TY_POINTER );
 #endif
 }
 
@@ -307,15 +307,15 @@ static cg_name PushSymSeg( OPNODE *node )
         segname = CGInteger( 0, TY_UNSIGNED );
     } else {
         if( sym_handle == Sym_CS ) { /* 23-jan-92 */
-            segname = CGFEName(  CurFuncHandle, T_LONG_CODE_PTR );
+            segname = CGFEName(  CurFuncHandle, TY_LONG_CODE_PTR );
         } else if( sym_handle == Sym_SS ) { /* 13-dec-92 */
             if( SSVar == NULL ) {
-                SSVar = CGTemp( T_UINT_2 );
+                SSVar = CGTemp( TY_UINT_2 );
             }
-            segname = CGTempName( SSVar, T_UINT_2 );
+            segname = CGTempName( SSVar, TY_UINT_2 );
         } else {
             sym = SymGetPtr( sym_handle );
-            segname = CGFEName( sym_handle, T_UINT_2 );
+            segname = CGFEName( sym_handle, TY_UINT_2 );
         }
     }
     return( segname );
@@ -330,7 +330,7 @@ static cg_name TryFieldAddr( unsigned offset )
     name = CGBinary( O_PLUS,
                      name,
                      CGInteger( offset, TY_UNSIGNED ),
-                     T_POINTER );
+                     TY_POINTER );
     name = CGVolatile( name );
     return( name );
 }
@@ -340,8 +340,8 @@ static cg_name TryExceptionInfoAddr( void )
     cg_name     name;
 
     name = TryFieldAddr( offsetof( struct try_block, exception_info ) );
-//    name = CGUnary( O_POINTS, name, T_POINTER );
-//    name = CGUnary( O_POINTS, name, T_POINTER );
+//    name = CGUnary( O_POINTS, name, TY_POINTER );
+//    name = CGUnary( O_POINTS, name, TY_POINTER );
     return( name );
 }
 
@@ -351,8 +351,8 @@ static void SetTryTable( back_handle except_table )
     cg_name     table;
 
     name = TryFieldAddr( offsetof( struct try_block, scope_table ) );
-    table = CGBackName( except_table, T_POINTER );
-    CGDone( CGAssign( name, table, T_POINTER ) );
+    table = CGBackName( except_table, TY_POINTER );
+    CGDone( CGAssign( name, table, TY_POINTER ) );
 }
 
 static void SetTryScope( int scope )
@@ -360,7 +360,7 @@ static void SetTryScope( int scope )
     cg_name     name;
 
     name = TryFieldAddr( offsetof( struct try_block, scope_index ) );
-    CGDone( CGAssign( name, CGInteger( scope, T_UINT_1 ), T_UINT_1 ) );
+    CGDone( CGAssign( name, CGInteger( scope, TY_UINT_1 ), TY_UINT_1 ) );
 }
 
 static void EndFinally( void )
@@ -372,11 +372,11 @@ static void EndFinally( void )
 
     label_handle = BENewLabel();
     name = TryFieldAddr( offsetof( struct try_block, unwindflag ) );
-    name = CGUnary( O_POINTS, name, T_UINT_1 );
-    name = CGCompare( O_EQ, name, CGInteger( 0, T_UINT_1 ), T_UINT_1 );
+    name = CGUnary( O_POINTS, name, TY_UINT_1 );
+    name = CGCompare( O_EQ, name, CGInteger( 0, TY_UINT_1 ), TY_UINT_1 );
     CGControl( O_IF_TRUE, name, label_handle );
-    func = CGFEName( SymFinally, T_CODE_PTR );
-    call_list = CGInitCall( func, T_INTEGER, SymFinally );
+    func = CGFEName( SymFinally, TY_CODE_PTR );
+    call_list = CGInitCall( func, TY_INTEGER, SymFinally );
     CGDone( CGCall( call_list ) );
     CGControl( O_LABEL, NULL, label_handle );
     BEFiniLabel( label_handle );
@@ -387,7 +387,7 @@ static cg_name TryAbnormalTermination( void )
     cg_name      name;
 
     name = TryFieldAddr( offsetof( struct try_block, unwindflag ) );
-    name = CGUnary( O_POINTS, name, T_UINT_1 );
+    name = CGUnary( O_POINTS, name, TY_UINT_1 );
     return( name );
 }
 
@@ -395,15 +395,15 @@ static void CallTryRtn( SYM_HANDLE try_rtn, cg_name parm )
 {
     call_handle call_list;
 
-    call_list = CGInitCall( CGFEName( try_rtn, T_POINTER ),
-                            T_INTEGER, try_rtn );
-    CGAddParm( call_list, parm, T_POINTER );
+    call_list = CGInitCall( CGFEName( try_rtn, TY_POINTER ),
+                            TY_INTEGER, try_rtn );
+    CGAddParm( call_list, parm, TY_POINTER );
     CGDone( CGCall( call_list ) );
 }
 
 static void CallTryInit( void )
 {
-    CallTryRtn( SymTryInit, CGFEName( TrySymHandle, T_POINTER ) );
+    CallTryRtn( SymTryInit, CGFEName( TrySymHandle, TY_POINTER ) );
 }
 
 static void CallTryFini( void )
@@ -411,7 +411,7 @@ static void CallTryFini( void )
     cg_name     name;
 
     name = TryFieldAddr( offsetof( struct try_block, next ) );
-    name = CGUnary( O_POINTS, name, T_POINTER );
+    name = CGUnary( O_POINTS, name, TY_POINTER );
     CallTryRtn( SymTryFini, name );
 }
 
@@ -420,10 +420,10 @@ static void TryUnwind( int scope_index )
     call_handle call_list;
     cg_name     parm;
 
-    call_list = CGInitCall( CGFEName( SymTryUnwind, T_POINTER ),
-                            T_INTEGER, SymTryUnwind );
-    parm = CGInteger( scope_index, T_UINT_1 );
-    CGAddParm( call_list, parm, T_INTEGER );
+    call_list = CGInitCall( CGFEName( SymTryUnwind, TY_POINTER ),
+                            TY_INTEGER, SymTryUnwind );
+    parm = CGInteger( scope_index, TY_UINT_1 );
+    CGAddParm( call_list, parm, TY_INTEGER );
     CGDone( CGCall( call_list ) );
 }
 #endif
@@ -434,11 +434,11 @@ local void GenVaStart( cg_name op1, cg_name offset )
     cg_name     name;
     cg_name     baseptr;
 
-    baseptr = CGVarargsBasePtr( T_POINTER );
-    name = CGLVAssign( op1, baseptr, T_POINTER );
-    name = CGBinary( O_PLUS, name, CGInteger( TARGET_POINTER, T_INTEGER ),
-                                        T_POINTER );
-    name = CGAssign( name, offset, T_INTEGER );
+    baseptr = CGVarargsBasePtr( TY_POINTER );
+    name = CGLVAssign( op1, baseptr, TY_POINTER );
+    name = CGBinary( O_PLUS, name, CGInteger( TARGET_POINTER, TY_INTEGER ),
+                                        TY_POINTER );
+    name = CGAssign( name, offset, TY_INTEGER );
     CGDone( name );
 }
 #elif _CPU == _PPC
@@ -447,7 +447,7 @@ local void GenVaStart( cg_name op1, cg_name offset )
     cg_name     name;
 
     offset = offset;
-    name = CGUnary( O_VA_START, op1, T_POINTER );
+    name = CGUnary( O_VA_START, op1, TY_POINTER );
     CGDone( name );
 }
 #elif _CPU == _MIPS
@@ -460,12 +460,12 @@ local void GenVaStart( cg_name op1, cg_name offset )
     cg_name     name;
     cg_name     baseptr;
 
-    baseptr = CGVarargsBasePtr( T_POINTER );
-    name = CGBinary( O_PLUS, baseptr, offset, T_POINTER );
-    name = CGLVAssign( op1, name, T_POINTER );
-    name = CGBinary( O_PLUS, name, CGInteger( TARGET_POINTER, T_INTEGER ),
-                                        T_POINTER );
-    name = CGAssign( name, CGInteger( 0, T_INTEGER ), T_INTEGER );
+    baseptr = CGVarargsBasePtr( TY_POINTER );
+    name = CGBinary( O_PLUS, baseptr, offset, TY_POINTER );
+    name = CGLVAssign( op1, name, TY_POINTER );
+    name = CGBinary( O_PLUS, name, CGInteger( TARGET_POINTER, TY_INTEGER ),
+                                        TY_POINTER );
+    name = CGAssign( name, CGInteger( 0, TY_INTEGER ), TY_INTEGER );
     CGDone( name );
 }
 #endif
@@ -575,7 +575,7 @@ static cg_name ArrowOperator( cg_name op1, OPNODE *node, cg_name op2 )
     // for the O_PLUS we want a pointer type
 #if _CPU == 386
     if( Far16Pointer( node->flags ) ) {
-        op1 = CGUnary( O_PTR_TO_NATIVE, op1, T_POINTER );
+        op1 = CGUnary( O_PTR_TO_NATIVE, op1, TY_POINTER );
     }
 #endif
 //  rvalue has already been done on left side of tree
@@ -594,21 +594,21 @@ static cg_name IndexOperator( cg_name op1, OPNODE *node, cg_name op2 )
 
 #if _CPU == 386
     if( Far16Pointer( node->flags ) ) {
-        op1 = CGUnary( O_PTR_TO_NATIVE, op1, T_POINTER );
+        op1 = CGUnary( O_PTR_TO_NATIVE, op1, TY_POINTER );
     }
 #endif
     element_size = SizeOfArg( node->result_type );
     if( element_size != 1 ) {
-        index_type = T_INTEGER;
+        index_type = TY_INTEGER;
 #if _CPU == 8086
         if( (node->flags & OPFLAG_HUGEPTR) ||
            ((TargetSwitches & (BIG_DATA | CHEAP_POINTER)) == BIG_DATA &&
             (node->flags & (OPFLAG_NEARPTR | OPFLAG_FARPTR)) == 0) ) {
-            index_type = T_INT_4;
+            index_type = TY_INT_4;
         }
 #endif
         op2 = CGBinary( O_TIMES, op2,
-                CGInteger( element_size, T_INTEGER ), index_type );
+                CGInteger( element_size, TY_INTEGER ), index_type );
     }
     op1 = CGBinary( O_PLUS, op1, op2, DataPointerType( node ) );
     if( node->flags & OPFLAG_UNALIGNED ) {
@@ -686,7 +686,7 @@ static cg_name PushString( OPNODE *node )
 
     string = node->string_handle;
     Emit1String( string );
-    return( CGBackName( string->cg_back_handle, T_UINT_1 ) );
+    return( CGBackName( string->cg_back_handle, TY_UINT_1 ) );
 }
 
 static cg_name DoIndirection( OPNODE *node, cg_name name )
@@ -701,7 +701,7 @@ static cg_name DoIndirection( OPNODE *node, cg_name name )
         // thunk routine expects 16:16 pointers!
         if( ( typ->object != NULL ) &&
             ( typ->object->decl_type != TYPE_FUNCTION ) )
-            name = CGUnary( O_PTR_TO_NATIVE, name, T_POINTER );
+            name = CGUnary( O_PTR_TO_NATIVE, name, TY_POINTER );
     }
 #endif
     if( node->flags & OPFLAG_UNALIGNED ) {
@@ -720,9 +720,9 @@ static cg_name ConvertPointer( OPNODE *node, cg_name name )
 {
 #if _CPU == 386
     if( FAR16_PTRCLASS( node->sp.oldptr_class ) ) {
-        name = CGUnary( O_PTR_TO_NATIVE, name, T_POINTER );
+        name = CGUnary( O_PTR_TO_NATIVE, name, TY_POINTER );
     } else if( FAR16_PTRCLASS( node->sp.newptr_class ) ) {
-        name = CGUnary( O_PTR_TO_FOREIGN, name, T_POINTER );
+        name = CGUnary( O_PTR_TO_FOREIGN, name, TY_POINTER );
     }
 #endif
     return( name );
@@ -963,14 +963,14 @@ local void EmitNodes( TREEPTR tree )
             cg_name     left;
 
             op1 = PopCGName();      // - get expression
-            temp_name = CGTemp( T_LONG_POINTER );
-            name = CGTempName( temp_name, T_LONG_POINTER );
-            left = CGAssign( name, op1, T_LONG_POINTER );
-            name = CGTempName( temp_name, T_LONG_POINTER );
+            temp_name = CGTemp( TY_LONG_POINTER );
+            name = CGTempName( temp_name, TY_LONG_POINTER );
+            left = CGAssign( name, op1, TY_LONG_POINTER );
+            name = CGTempName( temp_name, TY_LONG_POINTER );
             left = CGEval( left );  // force order - temp_name used on both sides
             PushCGName( left );
-            name = CGUnary( O_POINTS, name, T_LONG_POINTER );
-            PushCGName( CGUnary( O_POINTS, name, T_LONG_POINTER ) );
+            name = CGUnary( O_POINTS, name, TY_LONG_POINTER );
+            PushCGName( CGUnary( O_POINTS, name, TY_LONG_POINTER ) );
           } break;
         case OPR_CONVERT:
             if( node->result_type->decl_type != TYPE_VOID ) {
@@ -988,10 +988,10 @@ local void EmitNodes( TREEPTR tree )
             cg_name     name;
 
             op1 = PopCGName();          // - get expression
-            name = CGUnary( O_CONVERT, op1, T_LONG_POINTER );
-            name = CGUnary( O_CONVERT, name, T_UINT_4 );
+            name = CGUnary( O_CONVERT, op1, TY_LONG_POINTER );
+            name = CGUnary( O_CONVERT, name, TY_UINT_4 );
             name = CGBinary( O_RSHIFT, name,
-                             CGInteger( 16, TY_UNSIGNED ), T_UINT_4 );
+                             CGInteger( 16, TY_UNSIGNED ), TY_UINT_4 );
             name = PushCGName( name );
           } break;
         case OPR_MATHFUNC:              // intrinsic math func with 1 parm
@@ -1024,7 +1024,7 @@ local void EmitNodes( TREEPTR tree )
         case OPR_FARPTR:                // segment :> offset
             op2 = PopCGName();          // - get offset
             op1 = PopCGName();          // - get segment
-            PushCGName( CGBinary( O_CONVERT, op2, op1, T_LONG_POINTER ) );
+            PushCGName( CGBinary( O_CONVERT, op2, op1, TY_LONG_POINTER ) );
             break;
         case OPR_FUNCNAME:              // function name
             PushCGName( InitFuncCall( node ) ); // - push call_handle
@@ -1086,8 +1086,8 @@ local void EmitNodes( TREEPTR tree )
             break;
         case OPR_EXCEPT_CODE:
             op1 = TryExceptionInfoAddr();
-            op1 = CGUnary( O_POINTS, op1, T_POINTER );
-            PushCGName( CGUnary( O_POINTS, op1, T_INTEGER ) );
+            op1 = CGUnary( O_POINTS, op1, TY_POINTER );
+            PushCGName( CGUnary( O_POINTS, op1, TY_INTEGER ) );
             break;
         case OPR_EXCEPT_INFO:
             PushCGName( TryExceptionInfoAddr() );
@@ -1104,7 +1104,7 @@ local void EmitNodes( TREEPTR tree )
             break;
         case OPR_ALLOCA:
             op1 = PopCGName();          // - get size
-            PushCGName( CGUnary( O_STACK_ALLOC, op1, T_POINTER ) );
+            PushCGName( CGUnary( O_STACK_ALLOC, op1, TY_POINTER ) );
             break;
 #endif
         default:
@@ -1143,7 +1143,7 @@ void EmitInit( void )
 {
     SegListHead = NULL;
     SegImport = SegData - 1;
-    Refno = T_FIRST_FREE;
+    Refno = TY_FIRST_FREE;
 }
 
 
@@ -1544,10 +1544,10 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
         old_segment = BESetSeg( FunctionProfileSegment );
         FunctionProfileBlock = BENewBack( NULL );
         DGLabel( FunctionProfileBlock );
-        DGInteger( 0,   T_INTEGER );
-        DGInteger( -1,  T_INTEGER );
-        DGInteger( 0,   T_INTEGER );
-        DGInteger( 0,   T_INTEGER );
+        DGInteger( 0,   TY_INTEGER );
+        DGInteger( -1,  TY_INTEGER );
+        DGInteger( 0,   TY_INTEGER );
+        DGInteger( 0,   TY_INTEGER );
         DGBytes( len, fn_name );
         len &= 0x03;
         if( len ) {
@@ -1852,15 +1852,15 @@ local cg_type CodePtrType( type_modifiers flags )
     cg_type     dtype;
 
     if( flags & FLAG_FAR ) {
-        dtype = T_LONG_CODE_PTR;
+        dtype = TY_LONG_CODE_PTR;
     } else if( flags & FLAG_NEAR ) {
-        dtype = T_NEAR_CODE_PTR;
+        dtype = TY_NEAR_CODE_PTR;
     } else {
-        dtype = T_CODE_PTR;
+        dtype = TY_CODE_PTR;
     }
     return( dtype );
 #else
-    return( T_CODE_PTR );
+    return( TY_CODE_PTR );
 #endif
 }
 
@@ -1875,16 +1875,16 @@ extern cg_type PtrType( TYPEPTR typ, type_modifiers flags )
     } else {
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
         if( flags & FLAG_FAR ) {
-            dtype = T_LONG_POINTER;
+            dtype = TY_LONG_POINTER;
         } else if( flags & FLAG_HUGE ) {
-            dtype = T_HUGE_POINTER;
+            dtype = TY_HUGE_POINTER;
         } else if( flags & FLAG_NEAR ) {
-            dtype = T_NEAR_POINTER;
+            dtype = TY_NEAR_POINTER;
         } else {
-            dtype = T_POINTER;
+            dtype = TY_POINTER;
         }
 #else
-        dtype = T_POINTER;
+        dtype = TY_POINTER;
 #endif
     }
     return( dtype );
@@ -2031,14 +2031,14 @@ static void GenerateTryBlock( TREEPTR tree )
         DGLabel( except_table );
         for( try_index = 0; try_index <= max_try_index; try_index++ ) {
             stmt = ValueStack[ try_index ];
-            DGInteger( stmt->op.st.parent_scope, T_UINT_1 );  // parent index
+            DGInteger( stmt->op.st.parent_scope, TY_UINT_1 );  // parent index
             if( stmt->op.opr == OPR_EXCEPT ) {
-                DGInteger( 0, T_UINT_1 );
+                DGInteger( 0, TY_UINT_1 );
             } else {
-                DGInteger( 1, T_UINT_1 );
+                DGInteger( 1, TY_UINT_1 );
             }
             except_label = FEBack( stmt->op.st.try_sym_handle );
-            DGBackPtr( except_label, FESegID( CurFuncHandle ), 0, T_CODE_PTR );
+            DGBackPtr( except_label, FESegID( CurFuncHandle ), 0, TY_CODE_PTR );
         }
         BESetSeg( old_segment );
         SetTryTable( except_table );

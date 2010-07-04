@@ -86,7 +86,7 @@ static  byte    GetScalar( cg_type tipe ) {
     type_def    *tipe_addr;
 
     tipe_addr = TypeAddress( tipe );
-    if( tipe_addr->refno == T_DEFAULT ) {
+    if( tipe_addr->refno == TY_DEFAULT ) {
         return( SCALAR_VOID );
     }
     scalar = tipe_addr->length - 1;
@@ -378,8 +378,8 @@ static  dbg_type        DbgPtr( cg_type ptr_type, dbg_type base, int adjust,
     temp_buff   temp;
 
     switch( TypeAddress( ptr_type )->refno ) {
-    case T_NEAR_POINTER:
-    case T_NEAR_CODE_PTR:
+    case TY_NEAR_POINTER:
+    case TY_NEAR_CODE_PTR:
         NewType( &temp, WT_POINTER + POINTER_NEAR + adjust );
         break;
     default:
@@ -572,7 +572,7 @@ extern  dbg_type        WVEndProc( proc_list  *pr ) {
     temp_buff   temp;
     dbg_type    proc_type;
 
-    if( pr->call == T_NEAR_CODE_PTR ) {
+    if( pr->call == TY_NEAR_CODE_PTR ) {
         NewType( &temp, WT_PROCEDURE + PROC_NEAR );
    } else {
         NewType( &temp, WT_PROCEDURE + PROC_FAR );

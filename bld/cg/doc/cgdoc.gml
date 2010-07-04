@@ -72,9 +72,14 @@
 .do end
 .chap General
 :P.The code generator (back end) interface is a set of procedure calls.
-These are divided into Code Generation (CG), Data Generation (DG),
-miscellaneous Back End (BE), Front end supplied (FE), and debugger
-information (DB) routines.
+These are divided into following category of routines.
+:SL.
+:LI.Code Generation (CG)
+:LI.Data Generation (DG)
+:LI.Miscellaneous Back End (BE)
+:LI.Front end supplied (FE)
+:LI.Debugger information (DB)
+:eSL.
 .section cg_init_info BEInit( cg_switches switches, cg_target_switches targ_switches, uint optsize, proc_revision proc )
 :I1.BEInit
 :P.Initialize the code generator.
@@ -170,13 +175,13 @@ This allows the compiler to use some specialty x87 instructions.
 :DD.Generate Phar Lap EZ-OMF object files.
 :DT.BIG_DATA
 :DD.Use segmented pointers (16:16 or 16:32).
-This defines T_POINTER to be equivalent to T_HUGE_POINTER.
+This defines TY_POINTER to be equivalent to TY_HUGE_POINTER.
 :DT.BIG_CODE
 :DD.Use inter segment (far) call and return instructions.
 :DT.CHEAP_POINTER
 :DD.Assume far objects are addressable by one segment value.
 This must be used in conjunction with BIG_DATA.
-It defines T_POINTER to be equivalent to T_FAR_POINTER.
+It defines TY_POINTER to be equivalent to TY_FAR_POINTER.
 :DT.FLAT_MODEL
 :DD.Assume all segment registers address the same base memory.
 :DT.FLOATING_FS
@@ -620,59 +625,64 @@ The base types are:
 :DL tsize='1.5i'.
 :DTHD.Type
 :DDHD.C type
-:DT.T_UINT_1
+:DT.TY_UINT_1
 :DD.unsigned char
-:DT.T_INT_1
+:DT.TY_INT_1
 :DD.signed char
-:DT.T_UINT_2
+:DT.TY_UINT_2
 :DD.unsigned short
-:DT.T_INT_2
+:DT.TY_INT_2
 :DD.signed short
-:DT.T_UINT_4
+:DT.TY_UINT_4
 :DD.unsigned long
-:DT.T_INT_4
+:DT.TY_INT_4
 :DD.signed long
-:DT.T_UINT_8
+:DT.TY_UINT_8
 :DD.unsigned long long
-:DT.T_INT_8
+:DT.TY_INT_8
 :DD.signed long long
-:DT.T_LONG_POINTER
+:DT.TY_LONG_POINTER
 :DD.far *
-:DT.T_HUGE_POINTER
+:DT.TY_HUGE_POINTER
 :DD.huge *
-:DT.T_NEAR_POINTER
+:DT.TY_NEAR_POINTER
 :DD.near *
-:DT.T_LONG_CODE_PTR
+:DT.TY_LONG_CODE_PTR
 :DD.(far *)()
-:DT.T_NEAR_CODE_PTR
+:DT.TY_NEAR_CODE_PTR
 :DD.(near *)()
-:DT.T_SINGLE
+:DT.TY_SINGLE
 :DD.float
-:DT.T_DOUBLE
+:DT.TY_DOUBLE
 :DD.double
-:DT.T_LONG_DOUBLE
+:DT.TY_LONG_DOUBLE
 :DD.long double
-:DT.T_INTEGER
+:DT.TY_INTEGER
 :DD.int
-:DT.T_UNSIGNED
+:DT.TY_UNSIGNED
 :DD.unsigned int
-:DT.T_POINTER
+:DT.TY_POINTER
 :DD.*
-:DT.T_CODE_PTR
+:DT.TY_CODE_PTR
 :DD.(*)()
-:DT.T_BOOLEAN
+:DT.TY_BOOLEAN
 :DD.The result of a comparison or flow operator.
 May also be used as an integer.
-:DT.T_DEFAULT
+:DT.TY_DEFAULT
 :DD.Used to indicate default conversion
-:DT.T_NEAR_INTEGER
+:DT.TY_NEAR_INTEGER
 :DD.The result of subtracting 2 near pointers
-:DT.T_LONG_INTEGER
+:DT.TY_LONG_INTEGER
 :DD.The result of subtracting 2 far pointers
-:DT.T_HUGE_INTEGER
+:DT.TY_HUGE_INTEGER
 :DD.The result of subtracting 2 huge pointers
-:DT.T_FIRST_FREE
+:eDL.
+There are two special constants.
+:DL.
+:DT.TY_FIRST_FREE
 :DD.The first user definable type
+:DT.TY_LAST_FREE
+:DD.The last user definable type.
 :eDL.
 .section void BEDefType( cg_type what, uint align, unsigned_32 len )
 :I1.BEDefType
@@ -682,8 +692,8 @@ May also be used as an integer.
 :DTHD.Parameter
 :DDHD.Definition
 :DT.what
-:DD.An integral value greater than T_FIRST_FREE, used as the type
-identifier.
+:DD.An integral value greater than or equal to TY_FIRST_FREE and less
+then or equal to TY_LAST_FREE, used as the type identifier.
 :DT.align
 :DD.Currently ignored.
 :DT.len
@@ -748,7 +758,7 @@ procedure.
 A back_handle will be requested.
 :DT.type
 :DD.The return type of the procedure.
-Use T_INTEGER for void functions.
+Use TY_INTEGER for void functions.
 :eDL.
 .section void CGParmDecl( cg_sym_handle name, cg_type type )
 :I1.CGParmDecl
@@ -981,15 +991,15 @@ type for the resulting node.
 If the node is an operator node (CGBinary, CGUnary) the back end will
 convert the operands to the result type before performing the
 operation.
-If the type T_DEFAULT is passed, the code generator will use default
+If the type TY_DEFAULT is passed, the code generator will use default
 conversion rules to determine the resulting type of the node.
 These rules are the same as the ANSI C value preserving rules, with the
 exception that characters are not promoted to integers before doing
 arithmetic operations.
-:P.For example, if a node of type T_UINT_2 and a node of type T_INT_4
+:P.For example, if a node of type TY_UINT_2 and a node of type TY_INT_4
 are to be added, the back end will automatically convert the operands
-to T_INT_4 before performing the addition.
-The resulting node will have type T_INT_4.
+to TY_INT_4 before performing the addition.
+The resulting node will have type TY_INT_4.
 .chap Leaf Nodes
 .section cg_name CGInteger( signed_32 val, cg_type type )
 :I1.CGInteger
@@ -1263,7 +1273,7 @@ comparison.
 :eDL.
 :DL.
 :DT.Returns
-:DD.A T_BOOLEAN cg_name, which may be passed to a control flow CG
+:DD.A TY_BOOLEAN cg_name, which may be passed to a control flow CG
 routine, or used in an expression as an integral value.
 :eDL.
 .chap Control flow operations
@@ -1278,13 +1288,13 @@ routine, or used in an expression as an integral value.
 :DT.op
 :DD.An operator.
 :DT.left
-:DD.A T_BOOLEAN or integral cg_name.
+:DD.A TY_BOOLEAN or integral cg_name.
 :DT.right
-:DD.A T_BOOLEAN or integral cg_name, or NULL if op is O_FLOW_NOT.
+:DD.A TY_BOOLEAN or integral cg_name, or NULL if op is O_FLOW_NOT.
 :eDL.
 :DL.
 :DT.Returns
-:DD.A T_BOOLEAN cg_name.
+:DD.A TY_BOOLEAN cg_name.
 :eDL.
 .section cg_name CGChoose( cg_name sel, cg_name n1, cg_name n2, cg_type type )
 :I1.CGChoose
@@ -1296,7 +1306,7 @@ routine, or used in an expression as an integral value.
 :DTHD.Parameter
 :DDHD.Definition
 :DT.sel
-:DD.A T_BOOLEAN or integral cg_name used as the selector.
+:DD.A TY_BOOLEAN or integral cg_name used as the selector.
 :DT.n1
 :DD.The value to return if :HP2.sel:eHP2. is non-zero.
 :DT.n2
@@ -1365,7 +1375,7 @@ whether :HP2.expr:eHP2. is less than, equal to, or greater than zero.
 :DT.op
 :DD.a control flow operator.
 :DT.expr
-:DD.A T_BOOLEAN expression if op is O_IF_TRUE or O_IF_FALSE.
+:DD.A TY_BOOLEAN expression if op is O_IF_TRUE or O_IF_FALSE.
 NULL otherwise.
 :DT.lbl
 :DD.The target label.
@@ -1532,7 +1542,7 @@ before this routine call.
 :DD.The value of the return value, or NULL.
 :DT.type
 :DD.The type of the return value.
-Use T_INTEGER for void functions.
+Use TY_INTEGER for void functions.
 :eDL.
 .section cg_name CGEval( cg_name name )
 :I1.CGEval
@@ -1629,7 +1639,7 @@ or as the destination of an assignment operation.
 :DT.Returns
 :DD.The address of the bit field.
 To reference field2 in the following C structure for a little endian target,
-use start=4, len=5, and type=T_INT_2. For a big endian target, start=7.
+use start=4, len=5, and type=TY_INT_2. For a big endian target, start=7.
 :eDL.
 :XMP.
 typedef struct {
@@ -3107,8 +3117,7 @@ segment.
 :LI.SYM_FIXUP_BYTE
 :LI.THUNK_PROLOG
 :LI.TRUE
-:LI.T_HUGE_CODE_PTR
-:LI.T_LAST_FREE
+:LI.TY_HUGE_CODE_PTR
 :LI.USE_32
 :LI.WINDOWS
 :LI.WTK_MASK

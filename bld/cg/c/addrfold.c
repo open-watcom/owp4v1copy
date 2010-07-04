@@ -358,7 +358,7 @@ extern  bool    CypAddrPlus( an l_addr, an r_addr, type_def *tipe ) {
 
     mode_action action;
 
-    if( tipe->refno == T_HUGE_POINTER ) return( FALSE );
+    if( tipe->refno == TY_HUGE_POINTER ) return( FALSE );
     CheckPointer( l_addr );
     if( l_addr->format == NF_NAME ) return( FALSE );
     CheckPointer( r_addr );
@@ -405,7 +405,7 @@ extern  an      AddrPlus( an l_addr, an r_addr, type_def *tipe ) {
     if( !AddToTypeLength( l_addr->offset, r_addr->offset ) ) return( NULL );
     if( l_addr->format == NF_NAME ) return( NULL );
     if( r_addr->format == NF_NAME ) return( NULL );
-    if( tipe->refno == T_HUGE_POINTER ) return( NULL );
+    if( tipe->refno == TY_HUGE_POINTER ) return( NULL );
     addr = NewAddrName();
     for(;;) {
         action = AddTable[ Idx[ r_addr->class ] ][ Idx[ l_addr->class ] ];

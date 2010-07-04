@@ -347,34 +347,34 @@ typedef struct inline_rtn {
 } inline_rtn;
 
 static inline_rtn  __FAR NormalInlineTab[] = {
-        "__RTIStrBlastEq", __RTIStrBlastEq, T_INTEGER, NULL, NULL,
-        "__RTIStrBlastNe", __RTIStrBlastNe, T_INTEGER, NULL, NULL
+        "__RTIStrBlastEq", __RTIStrBlastEq, TY_INTEGER, NULL, NULL,
+        "__RTIStrBlastNe", __RTIStrBlastNe, TY_INTEGER, NULL, NULL
 };
 
 static inline_rtn  __FAR OptSpaceInlineTab[] = {
-        "__RTIStrBlastEq", __RTIStrBlastEqOS, T_INTEGER, NULL, NULL,
-        "__RTIStrBlastNe", __RTIStrBlastNeOS, T_INTEGER, NULL, NULL
+        "__RTIStrBlastEq", __RTIStrBlastEqOS, TY_INTEGER, NULL, NULL,
+        "__RTIStrBlastNe", __RTIStrBlastNeOS, TY_INTEGER, NULL, NULL
 };
 
 #if _CPU == 8086
 static inline_rtn  __FAR WinNormalInlineTab[] = {
-        "__RTIStrBlastEq", __RTIStrBlastEqWin, T_INTEGER, NULL, NULL,
-        "__RTIStrBlastNe", __RTIStrBlastNeWin, T_INTEGER, NULL, NULL
+        "__RTIStrBlastEq", __RTIStrBlastEqWin, TY_INTEGER, NULL, NULL,
+        "__RTIStrBlastNe", __RTIStrBlastNeWin, TY_INTEGER, NULL, NULL
 };
 
 static inline_rtn  __FAR WinOptSpaceInlineTab[] = {
-        "__RTIStrBlastEq", __RTIStrBlastEqWinOS, T_INTEGER, NULL, NULL,
-        "__RTIStrBlastNe", __RTIStrBlastNeWinOS, T_INTEGER, NULL, NULL
+        "__RTIStrBlastEq", __RTIStrBlastEqWinOS, TY_INTEGER, NULL, NULL,
+        "__RTIStrBlastNe", __RTIStrBlastNeWinOS, TY_INTEGER, NULL, NULL
 };
 
 static inline_rtn  __FAR SmallModelInlineTab[] = {
-        "__RTIStrBlastEq", __RTIStrBlastEqS, T_INTEGER, NULL, NULL,
-        "__RTIStrBlastNe", __RTIStrBlastNeS, T_INTEGER, NULL, NULL
+        "__RTIStrBlastEq", __RTIStrBlastEqS, TY_INTEGER, NULL, NULL,
+        "__RTIStrBlastNe", __RTIStrBlastNeS, TY_INTEGER, NULL, NULL
 };
 
 static inline_rtn  __FAR OptSpaceSmallModelInlineTab[] = {
-        "__RTIStrBlastEq", __RTIStrBlastEqSOS, T_INTEGER, NULL, NULL,
-        "__RTIStrBlastNe", __RTIStrBlastNeSOS, T_INTEGER, NULL, NULL
+        "__RTIStrBlastEq", __RTIStrBlastEqSOS, TY_INTEGER, NULL, NULL,
+        "__RTIStrBlastNe", __RTIStrBlastNeSOS, TY_INTEGER, NULL, NULL
 };
 #endif
 

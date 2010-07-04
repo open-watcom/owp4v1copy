@@ -172,7 +172,7 @@ static void DoReloc( dw_sym_handle sym, dw_addr_offset disp ){
 /**********************************/
     type_def            *ptr_type;
 
-    ptr_type = TypeAddress( T_NEAR_POINTER );
+    ptr_type = TypeAddress( TY_NEAR_POINTER );
     FEPtr( (sym_handle) sym, ptr_type, disp );
 }
 
@@ -189,7 +189,7 @@ static void DoLblReloc( bck_info *bck, long disp ){
     seg_id              id;
 
     id = AskSegID( bck, CG_BACK );
-    ptr_type = TypeAddress( T_NEAR_POINTER );
+    ptr_type = TypeAddress( TY_NEAR_POINTER );
     BackPtr( bck, id, disp, ptr_type );
 }
 
@@ -510,7 +510,7 @@ extern  void    DFBegCCU( seg_id code, dw_sym_handle dbg_pch ){
 #endif
         SetOP( old );
         Comp_High = Pc_High;
-        tipe_addr = TypeAddress( T_NEAR_POINTER );
+        tipe_addr = TypeAddress( TY_NEAR_POINTER );
         cu.offset_size = tipe_addr->length;
         switch( GetMemModel() ){
             case 'h':
@@ -652,7 +652,7 @@ extern  void    DFObjLineInitInfo( void ) {
         cu.flags = TRUE;
         cu.segment_size = 0;
 #endif
-        tipe_addr = TypeAddress( T_NEAR_POINTER );
+        tipe_addr = TypeAddress( TY_NEAR_POINTER );
         cu.offset_size = tipe_addr->length;
         switch( GetMemModel() ){
             case 'h':

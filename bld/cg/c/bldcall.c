@@ -156,7 +156,7 @@ extern  cn      BGInitCall(an node,type_def *tipe,aux_handle aux) {
     void                *cookie;
 #endif
 
-    if( tipe->refno == T_DEFAULT ) {
+    if( tipe->refno == TY_DEFAULT ) {
         tipe = TypeInteger;
     }
     new = CGAlloc( sizeof( call_node ) );

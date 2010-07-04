@@ -162,8 +162,8 @@ extern  void    WVSetBase( void ) {
 extern  void    WVObjectPtr(  cg_type ptr_type ) {
 /**********************************************/
     switch( TypeAddress( ptr_type )->refno ) {
-    case T_NEAR_POINTER:
-    case T_NEAR_CODE_PTR:
+    case TY_NEAR_POINTER:
+    case TY_NEAR_CODE_PTR:
         CurrProc_debug->obj_ptr_type = POINTER_NEAR;
         break;
     default:

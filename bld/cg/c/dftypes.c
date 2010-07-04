@@ -346,7 +346,7 @@ static  uint   DFPtrClass( cg_type ptr_type ){
     type_def    *tipe_addr;
     uint        flags;
 
-    if( (ptr_type == T_POINTER || ptr_type == T_CODE_PTR)
+    if( (ptr_type == TY_POINTER || ptr_type == TY_CODE_PTR)
 #if _TARGET &( _TARG_IAPX86 | _TARG_80386 )
       && _IsTargetModel( FLAT_MODEL )  ){
 #else
@@ -356,20 +356,20 @@ static  uint   DFPtrClass( cg_type ptr_type ){
     }else{
         tipe_addr = TypeAddress( ptr_type );
         switch( tipe_addr->refno ) {
-        case T_HUGE_POINTER:
+        case TY_HUGE_POINTER:
             flags = DW_PTR_TYPE_HUGE16;
         //  flags = DW_PTR_TYPE_FAR16;
             break;
-        case T_LONG_POINTER:
-        case T_LONG_CODE_PTR:
+        case TY_LONG_POINTER:
+        case TY_LONG_CODE_PTR:
             if( tipe_addr->length == 6 ){
                 flags = DW_PTR_TYPE_FAR32;
             }else{
                 flags = DW_PTR_TYPE_FAR16;
             }
             break;
-        case T_NEAR_POINTER:
-        case T_NEAR_CODE_PTR:
+        case TY_NEAR_POINTER:
+        case TY_NEAR_CODE_PTR:
             if( tipe_addr->length == 4 ){
                 flags = DW_PTR_TYPE_NEAR32;
             }else{

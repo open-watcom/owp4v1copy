@@ -37,7 +37,7 @@
 //
 // 91/06/11 -- J.W.Welch        -- defined
 
-#define TY_BOOLEAN T_UINT_1
+#define TY_BOOL TY_UINT_1
 
 
 #ifndef NDEBUG

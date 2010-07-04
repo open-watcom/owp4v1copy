@@ -171,7 +171,7 @@ static SYMBOL segEmitLabel(         // EMIT SEGMENT LABEL
     label = seg->label;
     if( label != NULL && ! seg->lab_gened ) {
         if( seg->seg_id == SEG_STACK ) {
-            CGAutoDecl( (cg_sym_handle)label, T_UINT_1 );
+            CGAutoDecl( (cg_sym_handle)label, TY_UINT_1 );
         } else {
             CgBackGenLabel( label );
         }

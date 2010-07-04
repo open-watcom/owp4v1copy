@@ -1743,13 +1743,13 @@ boolean IsCgTypeAggregate(      // CAN TYPE CAN BE INITIALIZED AS AGGREGATE?
 target_size_t CgMemorySize(     // COMPUTE SIZE OF A TYPE IN MEMORY
     TYPE type )                 // - type
 ;
-unsigned CgTypePtrSym(          // COMPUTE OUTPUT TYPE OF POINTER TO SYMBOL
+cg_type CgTypePtrSym(           // COMPUTE OUTPUT TYPE OF POINTER TO SYMBOL
     SYMBOL sym )                // - symbol
 ;
 target_size_t CgTypeSize(       // COMPUTE SIZE OF A TYPE
     TYPE type )                 // - type
 ;
-cg_type CgTypeSym(             // COMPUTE OUTPUT TYPE FOR SYMBOL
+cg_type CgTypeSym(              // COMPUTE OUTPUT TYPE FOR SYMBOL
     SYMBOL sym )                // - the symbol
 ;
 TYPE TypePointerDiff(           // GET TYPE FOR DIFFERENCE OF POINTERS

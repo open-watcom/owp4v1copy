@@ -90,7 +90,7 @@ extern  dbg_type DBScalar( char *nm, cg_type tipe ){
 
     tipe_addr = TypeAddress( tipe );
     new = CGAlloc( sizeof( *new ) );
-    if( tipe_addr->refno == T_DEFAULT ) { /* SCALAR_VOID */
+    if( tipe_addr->refno == TY_DEFAULT ) { /* SCALAR_VOID */
         new->common.class = CDEBUG_TYPE_INTEGER;
         new->common.len = 4;
         new->sign = 0;

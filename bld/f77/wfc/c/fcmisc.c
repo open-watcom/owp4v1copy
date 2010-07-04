@@ -67,7 +67,7 @@ void    FCCmplxDone( void ) {
 
 // Process end of a complex expression.
 
-    CGDone( CGBinary( O_COMMA, XPop(), XPop(), T_DEFAULT ) );
+    CGDone( CGBinary( O_COMMA, XPop(), XPop(), TY_DEFAULT ) );
 }
 
 
@@ -101,11 +101,11 @@ static  void    Break( RTCODE routine ) {
     handle = InitCall( routine );
     lit = GetPtr();
     if( lit == NULL ) {
-        arg = CGInteger( 0, T_LOCAL_POINTER );
+        arg = CGInteger( 0, TY_LOCAL_POINTER );
     } else {
-        arg = CGBackName( ConstBack( lit ), T_LOCAL_POINTER );
+        arg = CGBackName( ConstBack( lit ), TY_LOCAL_POINTER );
     }
-    CGAddParm( handle, arg, T_LOCAL_POINTER );
+    CGAddParm( handle, arg, TY_LOCAL_POINTER );
     CGDone( CGCall( handle ) );
 }
 

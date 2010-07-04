@@ -218,7 +218,7 @@ extern  cg_type PtrType( name *name ) {
 /*************************************/
 
     name=name;
-    return( T_NEAR_POINTER );
+    return( TY_NEAR_POINTER );
 }
 
 

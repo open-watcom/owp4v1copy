@@ -1025,19 +1025,19 @@ static  enum cv_ptrtype   PtrClass( cg_type ptr_type )
 
     tipe_addr = TypeAddress( ptr_type );
     switch( tipe_addr->refno ) {
-    case T_HUGE_POINTER:
+    case TY_HUGE_POINTER:
         ret = CV_HUGE;
         break;
-    case T_LONG_POINTER:
-    case T_LONG_CODE_PTR:
+    case TY_LONG_POINTER:
+    case TY_LONG_CODE_PTR:
         if( tipe_addr->length == 6 ) {
             ret = CV_FAR32;
         } else {
             ret = CV_FAR;
         }
         break;
-    case T_NEAR_POINTER:
-    case T_NEAR_CODE_PTR:
+    case TY_NEAR_POINTER:
+    case TY_NEAR_CODE_PTR:
         if( tipe_addr->length == 4 ) {
             ret = CV_NEAR32;
         } else {
@@ -1412,19 +1412,19 @@ static   cv_vtshape   CVVTShape( cg_type ptr_type )
 
     tipe_addr = TypeAddress( ptr_type );
     switch( tipe_addr->refno ) {
-    case T_HUGE_POINTER:
+    case TY_HUGE_POINTER:
         ret = CV_VTFAR;
         break;
-    case T_LONG_POINTER:
-    case T_LONG_CODE_PTR:
+    case TY_LONG_POINTER:
+    case TY_LONG_CODE_PTR:
         if( tipe_addr->length == 6 ){
             ret = CV_VTFAR32;
         }else{
             ret = CV_VTFAR;
         }
         break;
-    case T_NEAR_POINTER:
-    case T_NEAR_CODE_PTR:
+    case TY_NEAR_POINTER:
+    case TY_NEAR_CODE_PTR:
         if( tipe_addr->length == 4 ){
             ret = CV_VTNEAR32;
         }else{
@@ -1874,7 +1874,7 @@ extern  dbg_type    CVEndProc( proc_list  *pr )
     }
     EndTypeString( out );
 #if _TARGET &( _TARG_IAPX86 | _TARG_80386 )
-    if( pr->call == T_NEAR_CODE_PTR ) {
+    if( pr->call == TY_NEAR_CODE_PTR ) {
         call = CV_NEARC;
     } else {
         call = CV_FARC;

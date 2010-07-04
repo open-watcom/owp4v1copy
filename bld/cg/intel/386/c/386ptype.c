@@ -40,21 +40,21 @@ extern type_class_def MapIntReturn( cg_type type )
 /************************************************/
 {
     switch( type ) {
-    case T_INT_1:
+    case TY_INT_1:
         return( I1 );
-    case T_INT_2:
+    case TY_INT_2:
         return( I2 );
-    case T_INT_4:
+    case TY_INT_4:
         return( I4 );
-    case T_INT_8:
+    case TY_INT_8:
         return( I8 );
-    case T_UINT_1:
+    case TY_UINT_1:
         return( U1 );
-    case T_UINT_2:
+    case TY_UINT_2:
         return( U2 );
-    case T_UINT_4:
+    case TY_UINT_4:
         return( U4 );
-    case T_UINT_8:
+    case TY_UINT_8:
         return( U8 );
     default:
         _Zoiks( ZOIKS_127 );
@@ -71,12 +71,12 @@ extern type_class_def MapPointer( cg_type type )
 */
 {
     switch( type ) {
-    case T_NEAR_POINTER:
-    case T_NEAR_CODE_PTR:
+    case TY_NEAR_POINTER:
+    case TY_NEAR_CODE_PTR:
         return( U4 );
-    case T_HUGE_POINTER:
-    case T_LONG_POINTER:
-    case T_LONG_CODE_PTR:
+    case TY_HUGE_POINTER:
+    case TY_LONG_POINTER:
+    case TY_LONG_CODE_PTR:
         return( CP );
     default:
         _Zoiks( ZOIKS_127 );
@@ -92,8 +92,8 @@ extern  type_class_def  MapFloat( cg_type type, call_attributes attr )
 */
 {
     if( attr & ROUTINE_NO_FLOAT_REG_RETURNS ) return( XX );
-    if( type == T_SINGLE ) return( FS );
-    if( type == T_LONG_DOUBLE ) return( FL );
+    if( type == TY_SINGLE ) return( FS );
+    if( type == TY_LONG_DOUBLE ) return( FL );
     return( FD );
 }
 

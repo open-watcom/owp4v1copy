@@ -534,7 +534,7 @@ extern  void    GenCodePtr( pointer label ) {
     Dump a near reference to a label into the code segment.
 */
 
-    CodeHandle( OC_LREF, TypeAddress( T_NEAR_CODE_PTR )->length, label );
+    CodeHandle( OC_LREF, TypeAddress( TY_NEAR_CODE_PTR )->length, label );
 }
 
 

@@ -553,7 +553,7 @@ extern  n       *CGCallback( pointer func, pointer parm ) {
     call_back* cb;
 
     Action( "CGCallback" );
-    nd = NewNode( CALLBACK, T_DEFAULT );
+    nd = NewNode( CALLBACK, TY_DEFAULT );
     cb = CGAlloc( sizeof( call_back ) );
     nd->l = (n*)cb;
     cb->function = func;
@@ -595,9 +595,9 @@ static  cg_type PtrTipe( pointer s ) {
         a = 0;
     }
     if( a & FE_PROC ) {
-        return( T_CODE_PTR );
+        return( TY_CODE_PTR );
     } else {
-        return( T_POINTER );
+        return( TY_POINTER );
     }
 }
 extern  n       *CGFEName( pointer sym, cg_type t ) {

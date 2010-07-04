@@ -91,9 +91,9 @@ static  bool    DemoteTree( tn name, type_def *tipe, bool just_test ) {
             case O_LSHIFT:
             case O_PLUS:
             case O_MINUS:
-                if( name->tipe->refno == T_HUGE_POINTER ) break;
-                if( name->u.left->tipe->refno == T_HUGE_POINTER ) break;
-                if( name->rite->tipe->refno == T_HUGE_POINTER ) break;
+                if( name->tipe->refno == TY_HUGE_POINTER ) break;
+                if( name->u.left->tipe->refno == TY_HUGE_POINTER ) break;
+                if( name->rite->tipe->refno == TY_HUGE_POINTER ) break;
                 can_demote = DemoteTree( name->u.left, tipe, just_test );
                 if( can_demote ) {
                     can_demote = DemoteTree( name->rite, tipe, just_test );
@@ -140,7 +140,7 @@ extern  tn      FoldCnvRnd( cg_op op, tn name, type_def *to_tipe ) {
     cfloat      *junk;
 
     if( name->class == TN_CONS ) {
-        if( name->tipe->refno == T_DEFAULT ) {
+        if( name->tipe->refno == TY_DEFAULT ) {
             cf = CFCopy( name->u.name->c.value );
         } else {
             cf = CnvCFToType( name->u.name->c.value, name->tipe );
@@ -151,7 +151,7 @@ extern  tn      FoldCnvRnd( cg_op op, tn name, type_def *to_tipe ) {
             junk = cf;
             cf = CFTrunc( cf );
             CFFree( junk );
-            if( to_tipe->refno != T_DEFAULT ) {
+            if( to_tipe->refno != TY_DEFAULT ) {
                 junk = cf;
                 cf = CnvCFToType( cf, to_tipe );
                 CFFree( junk );
@@ -161,7 +161,7 @@ extern  tn      FoldCnvRnd( cg_op op, tn name, type_def *to_tipe ) {
             junk = cf;
             cf = CFRound( cf );
             CFFree( junk );
-            if( to_tipe->refno != T_DEFAULT ) {
+            if( to_tipe->refno != TY_DEFAULT ) {
                 junk = cf;
                 cf = CnvCFToType( cf, to_tipe );
                 CFFree( junk );

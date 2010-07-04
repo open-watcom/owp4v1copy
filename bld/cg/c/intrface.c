@@ -854,12 +854,12 @@ extern  cg_name _CGAPI CGFEName( sym_handle sym, cg_type tipe )
 
     if( (FEAttr( sym ) & FE_DLLIMPORT )
      && ( FEAuxInfo( sym, CALL_BYTES ) == NULL ) ){
-        leaf = TGLeaf( BGName( CG_FE, sym, TypeAddress( T_POINTER ) ) );
+        leaf = TGLeaf( BGName( CG_FE, sym, TypeAddress( TY_POINTER ) ) );
 #ifndef NDEBUG
         EchoAPI( "CGFEName( %s, %t ) declspec(dllimport)", sym, tipe );
         hdlAdd( CG_NAMES, leaf );
 #endif
-        leaf = CGUnary( O_POINTS, leaf, T_POINTER );
+        leaf = CGUnary( O_POINTS, leaf, TY_POINTER );
     } else {
         leaf = TGLeaf( BGName( CG_FE, sym, TypeAddress( tipe ) ) );
 #ifndef NDEBUG
@@ -901,12 +901,12 @@ extern  cg_name _CGAPI CGTempName( temp_handle temp, cg_type tipe )
     tn      retn;
 
     EchoAPI( "CGTempName( %T, %t )", temp, tipe );
-    retn = TGLeaf( BGTempName( temp, TypeAddress( T_POINTER ) ) );
+    retn = TGLeaf( BGTempName( temp, TypeAddress( TY_POINTER ) ) );
     hdlAdd( CG_NAMES, retn );
     return EchoAPICgnameReturn( retn );
 #else
     tipe = tipe;
-    return( TGLeaf( BGTempName( temp, TypeAddress( T_POINTER ) ) ) );
+    return( TGLeaf( BGTempName( temp, TypeAddress( TY_POINTER ) ) ) );
 #endif
 }
 
@@ -1318,7 +1318,7 @@ extern  void _CGAPI     CGSelOther( sel_handle s, label_handle lbl )
 extern  void _CGAPI     CGSelectRestricted( sel_handle s, cg_name expr, cg_switch_type allowed )
 /**********************************************************************************************/
 {
-    expr = TGen( expr, TypeAddress( T_DEFAULT ) );
+    expr = TGen( expr, TypeAddress( TY_DEFAULT ) );
     BGSelect( s, expr, allowed );
 }
 
@@ -1347,11 +1347,11 @@ extern  cg_name _CGAPI CGEval( cg_name name )
 
     EchoAPI( "CGEval( %n )", name );
     hdlUseOnce( CG_NAMES, name );
-    retn = TGTmpLeaf( TGen( name, TypeAddress( T_DEFAULT ) ) );
+    retn = TGTmpLeaf( TGen( name, TypeAddress( TY_DEFAULT ) ) );
     hdlAddUnary( CG_NAMES, retn, name );
     return EchoAPICgnameReturn( retn );
 #else
-    return( TGTmpLeaf( TGen( name, TypeAddress( T_DEFAULT ) ) ) );
+    return( TGTmpLeaf( TGen( name, TypeAddress( TY_DEFAULT ) ) ) );
 #endif
 }
 
@@ -1363,7 +1363,7 @@ extern  void _CGAPI     CGTrash( cg_name name )
     hdlUseOnce( CG_NAMES, name );
     hdlAllUsed( CG_NAMES );
 #endif
-    BGTrash( TGen( TGTrash( name ), TypeAddress( T_DEFAULT ) ) );
+    BGTrash( TGen( TGTrash( name ), TypeAddress( TY_DEFAULT ) ) );
 }
 
 extern  void _CGAPI     CGDone( cg_name name )
@@ -1374,7 +1374,7 @@ extern  void _CGAPI     CGDone( cg_name name )
     hdlUseOnce( CG_NAMES, name );
     hdlAllUsed( CG_NAMES );
 #endif
-    BGTrash( TGen( TGTrash( name ), TypeAddress( T_DEFAULT ) ) );
+    BGTrash( TGen( TGTrash( name ), TypeAddress( TY_DEFAULT ) ) );
     BGStartBlock();
 }
 
@@ -1469,7 +1469,7 @@ extern  cg_name * _CGAPI CGDuplicate( cg_name name )
     hdlExists( CG_NAMES, name );
 #endif
 
-    addr = TGen( name, TypeAddress( T_DEFAULT ) );
+    addr = TGen( name, TypeAddress( TY_DEFAULT ) );
     CGDuplicateArray[ 0 ] = TGReLeaf( BGCopy( addr ) );
     CGDuplicateArray[ 1 ] = TGReLeaf( addr );
 

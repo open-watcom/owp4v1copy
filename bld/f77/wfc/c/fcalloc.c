@@ -60,9 +60,9 @@ extern  cg_name         GetAdv(sym_id);
 
 
 #if _CPU == 8086 || _CPU == 386
-  #define FLAG_PARM_TYPE        T_UINT_2
+  #define FLAG_PARM_TYPE        TY_UINT_2
 #else
-  #define FLAG_PARM_TYPE        T_UINT_4
+  #define FLAG_PARM_TYPE        TY_UINT_4
 #endif
 
 static cg_name  getFlags( sym_id sym ) {
@@ -76,11 +76,11 @@ static cg_name  getFlags( sym_id sym ) {
         typ = ArrayPtrType( sym );
         tlen = BETypeLength( typ );
     } else {
-        tlen = BETypeLength( T_CHAR );
-        typ = T_CHAR;
+        tlen = BETypeLength( TY_CHAR );
+        typ = TY_CHAR;
     }
     fl = StructRef( CGFEName( sym, typ ), tlen );
-    return( CGUnary( O_POINTS, fl, T_UINT_2 ) );
+    return( CGUnary( O_POINTS, fl, TY_UINT_2 ) );
 }
 
 
@@ -105,9 +105,9 @@ void            FCAllocate( void ) {
         // check if array is already allocated before filling in ADV
         label = BENewLabel();
         fl = getFlags( arr );
-        fl = CGBinary( O_AND, fl, CGInteger( ALLOC_MEM, T_UINT_2 ), T_UINT_2 );
+        fl = CGBinary( O_AND, fl, CGInteger( ALLOC_MEM, TY_UINT_2 ), TY_UINT_2 );
         CGControl( O_IF_TRUE, CGCompare( O_NE, fl,
-                                CGInteger( 0, T_UINT_2 ), T_UINT_2 ), label );
+                                CGInteger( 0, TY_UINT_2 ), TY_UINT_2 ), label );
         FCodeSequence(); // fill in the ADV, SCB or RCB
         CGControl( O_LABEL, NULL, label );
         BEFiniLabel( label );
@@ -116,11 +116,11 @@ void            FCAllocate( void ) {
     }
     alloc_flags = GetU16();
     if( alloc_flags & ALLOC_NONE ) {
-        expr_loc = CGInteger( 0, T_POINTER );
+        expr_loc = CGInteger( 0, TY_POINTER );
     } else {
         FCodeSequence();
         if( alloc_flags & ALLOC_LOC ) {
-            expr_loc = XPopValue( T_INT_4 );
+            expr_loc = XPopValue( TY_INT_4 );
             if( alloc_flags & ALLOC_STAT ) {
                 FCodeSequence();
                 expr_stat = XPop();
@@ -135,28 +135,28 @@ void            FCAllocate( void ) {
         if( arr == NULL ) break;
         if( arr->ns.flags & SY_SUBSCRIPTED ) {
             dim = arr->ns.si.va.dim_ext;
-            CGAddParm( handle, CGInteger( _SymSize( arr ), T_INT_4 ),
-                       T_INT_4 );
+            CGAddParm( handle, CGInteger( _SymSize( arr ), TY_INT_4 ),
+                       TY_INT_4 );
             CGAddParm( handle, CGInteger( _DimCount( dim->dim_flags ),
-                                          T_INTEGER ),
-                       T_INTEGER );
-            CGAddParm( handle, GetAdv( arr ), T_LOCAL_POINTER );
+                                          TY_INTEGER ),
+                       TY_INTEGER );
+            CGAddParm( handle, GetAdv( arr ), TY_LOCAL_POINTER );
         }
-        CGAddParm( handle, CGFEName( arr, T_POINTER ), T_POINTER );
+        CGAddParm( handle, CGFEName( arr, TY_POINTER ), TY_POINTER );
         CGAddParm( handle, getFlags( arr ), FLAG_PARM_TYPE );
     }
     if( alloc_flags & ALLOC_NONE ) {
-        CGAddParm( handle, expr_loc, T_POINTER );
+        CGAddParm( handle, expr_loc, TY_POINTER );
     } else {
         if( alloc_flags & ALLOC_LOC ) {
-            CGAddParm( handle, expr_loc, T_INT_4 );
+            CGAddParm( handle, expr_loc, TY_INT_4 );
         }
         if( alloc_flags & ALLOC_STAT ) {
-            CGAddParm( handle, expr_stat, T_POINTER );
+            CGAddParm( handle, expr_stat, TY_POINTER );
         }
     }
-    CGAddParm( handle, CGInteger( num, T_INTEGER ), T_INTEGER );
-    CGAddParm( handle, CGInteger( alloc_flags, T_UINT_2 ), FLAG_PARM_TYPE );
+    CGAddParm( handle, CGInteger( num, TY_INTEGER ), TY_INTEGER );
+    CGAddParm( handle, CGInteger( alloc_flags, TY_UINT_2 ), FLAG_PARM_TYPE );
     CGDone( CGCall( handle ) );
 }
 
@@ -173,16 +173,16 @@ void            FCDeAllocate( void ) {
     for(;;) {
         arr = GetPtr();
         if( arr == NULL ) break;
-        CGAddParm( handle, CGFEName( arr, T_POINTER ), T_POINTER );
+        CGAddParm( handle, CGFEName( arr, TY_POINTER ), TY_POINTER );
         CGAddParm( handle, getFlags( arr ), FLAG_PARM_TYPE );
         ++num;
     }
-    CGAddParm( handle, CGInteger( num, T_INTEGER ), T_INTEGER );
+    CGAddParm( handle, CGInteger( num, TY_INTEGER ), TY_INTEGER );
     if( GetU16() & ALLOC_STAT ) {
         FCodeSequence();
-        CGAddParm( handle, XPop(), T_POINTER );
+        CGAddParm( handle, XPop(), TY_POINTER );
     } else {
-        CGAddParm( handle, CGInteger( 0, T_POINTER ), T_POINTER );
+        CGAddParm( handle, CGInteger( 0, TY_POINTER ), TY_POINTER );
     }
     CGDone( CGCall( handle ) );
 }
@@ -200,7 +200,7 @@ void    FCAllocated( void ) {
     fl = XPop();
 
     if( type & ALLOC_STRING ) {
-        fl = CGUnary( O_POINTS, fl, T_POINTER );
+        fl = CGUnary( O_POINTS, fl, TY_POINTER );
     }
-    XPush( CGCompare( O_NE, fl, CGInteger( 0, T_POINTER ), T_POINTER ) );
+    XPush( CGCompare( O_NE, fl, CGInteger( 0, TY_POINTER ), TY_POINTER ) );
 }

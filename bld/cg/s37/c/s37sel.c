@@ -333,13 +333,13 @@ extern  type_def        *SelNodeType( an node, bool is_signed ) {
 
     switch( node->tipe->length ) {
     case 1:
-        unsigned_t = T_UINT_1;
-        signed_t = T_INT_1;
+        unsigned_t = TY_UINT_1;
+        signed_t = TY_INT_1;
         break;
     case 2: /* no support in switch */
     case 4:
-        unsigned_t = T_UINT_4;
-        signed_t = T_INT_4;
+        unsigned_t = TY_UINT_4;
+        signed_t = TY_INT_4;
         break;
     default: /* an error */
         unsigned_t = NULL;

@@ -378,7 +378,7 @@ SYMBOL CgCmdCtorTest(           // GET SYMBOL FOR CTOR-TEST COMMAND
 }
 
 
-#define cgGenerateCmdCode( code ) DGInteger( code, T_UINT_1 )
+#define cgGenerateCmdCode( code ) DGInteger( code, TY_UINT_1 )
 
 
 static boolean cgGenerateCmdBase(  // EMIT BASE FOR COMMAND

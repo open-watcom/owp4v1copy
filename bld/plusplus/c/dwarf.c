@@ -250,33 +250,33 @@ static uint  dwarfAddressClassFlags( TYPE type ){
 /**********************************/
     uint    flags;
     cg_type ptr_type;
-    uint    offset_type;
+    cg_type offset_type;
 
     ptr_type = CgTypeOutput( type );
     switch( ptr_type ) {
-    case T_HUGE_POINTER:
+    case TY_HUGE_POINTER:
         flags = DW_PTR_TYPE_HUGE16;
         break;
-    case T_LONG_POINTER:
-    case T_LONG_CODE_PTR:
+    case TY_LONG_POINTER:
+    case TY_LONG_CODE_PTR:
         offset_type = CgTypeOffset();
-        if( offset_type == T_UINT_4 ){
+        if( offset_type == TY_UINT_4 ){
             flags = DW_PTR_TYPE_FAR32;
-        }else{
+        } else {
             flags = DW_PTR_TYPE_FAR16;
         }
         break;
-    case T_NEAR_POINTER:
-    case T_NEAR_CODE_PTR:
-    case T_POINTER:
+    case TY_NEAR_POINTER:
+    case TY_NEAR_CODE_PTR:
+    case TY_POINTER:
 #if _CPU == _AXP
         flags = DW_PTR_TYPE_DEFAULT;
 #else
         if(  TargetSwitches & FLAT_MODEL ) {
             flags = DW_PTR_TYPE_DEFAULT;
-        }else{
+        } else {
             offset_type = CgTypeOffset();
-            if( offset_type == T_UINT_4 ){
+            if( offset_type == TY_UINT_4 ){
                 flags = DW_PTR_TYPE_NEAR32;
             }else{
                 flags = DW_PTR_TYPE_NEAR16;

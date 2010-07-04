@@ -107,12 +107,12 @@ void    FCDoBegin( void ) {
         tmp = CGBinary( O_DIV, tmp, SymValue( increment ), do_type );
         // set type of interation count
         if( !_IsTypeInteger( do_var->ns.typ ) ) {
-            do_type = T_INT_4;
+            do_type = TY_INT_4;
         }
         // save interation count
         tmp = CGAssign( SymAddr( loop_ctrl ), tmp, do_type );
         // goto bottom of loop if iteration count <= 0
-        tmp = CGCompare( O_GT, tmp, CGInteger( 0, T_INTEGER ), do_type );
+        tmp = CGCompare( O_GT, tmp, CGInteger( 0, TY_INTEGER ), do_type );
         CGControl( O_IF_FALSE, tmp, bottom );
         CGControl( O_LABEL, NULL, top );
     }
@@ -155,14 +155,14 @@ void    FCDoEnd( void ) {
         CGDone( CGAssign( SymAddr( do_var ), tmp, do_type ) );
         // set type of iteration
         if( !_IsTypeInteger( do_var->ns.typ ) ) {
-            do_type = T_INT_4;
+            do_type = TY_INT_4;
         }
         // compute:  --iteration
         tmp = CGBinary( O_MINUS, SymValue( iteration ),
-                         CGInteger( 1, T_INTEGER ), do_type );
+                         CGInteger( 1, TY_INTEGER ), do_type );
         tmp = CGAssign( SymAddr( iteration ), tmp, do_type );
         // goto top of loop if iteration != 0
-        tmp = CGCompare( O_EQ, tmp, CGInteger( 0, T_INTEGER ), do_type );
+        tmp = CGCompare( O_EQ, tmp, CGInteger( 0, TY_INTEGER ), do_type );
         CGControl( O_IF_FALSE, tmp, top );
     }
 }

@@ -247,7 +247,7 @@ extern  tn  TGHandle( void *ptr )
     tn  node;
 
     node = NewTreeNode();
-    node->tipe = TypeAddress( T_DEFAULT );
+    node->tipe = TypeAddress( TY_DEFAULT );
     node->class = TN_HANDLE;
     node->op = O_NOP;
     node->u.handle = ptr;
@@ -262,7 +262,7 @@ extern  tn  TGCallback( cg_callback rtn, callback_handle ptr )
 {
     tn      node;
 
-    node = TGNode( TN_CALLBACK, O_NOP, NULL, TGHandle( ptr ), TypeAddress( T_DEFAULT ) );
+    node = TGNode( TN_CALLBACK, O_NOP, NULL, TGHandle( ptr ), TypeAddress( TY_DEFAULT ) );
     node->u.handle = TGHandle( rtn );
     return( node );
 }
@@ -284,12 +284,12 @@ static  type_def    *ResultType( tn left, tn rite, type_def *tipe,
 #if _TARGET & 0
     if( tipe->length < WORD_SIZE ) {
         if( tipe->attr & TYPE_SIGNED ) {
-            return( TypeAddress( T_INTEGER ) );
+            return( TypeAddress( TY_INTEGER ) );
         }
-        return( TypeAddress( T_UNSIGNED ) );
+        return( TypeAddress( TY_UNSIGNED ) );
     }
 #endif
-    if( !demote_const && tipe->refno != T_DEFAULT ) return( tipe );
+    if( !demote_const && tipe->refno != TY_DEFAULT ) return( tipe );
     if( left->class == TN_CONS ) {
         temp = left;
         left = rite;
@@ -303,7 +303,7 @@ static  type_def    *ResultType( tn left, tn rite, type_def *tipe,
     if( rtipe == TypeBoolean ) {
         rtipe = TypeInteger;
     }
-    if( tipe->refno == T_DEFAULT ) {
+    if( tipe->refno == TY_DEFAULT ) {
         return( ClassType( mat[ TypeClass(ltipe)*XX + TypeClass(rtipe) ] ));
     }
 #if _TARGET & 0
@@ -342,9 +342,9 @@ static bool RHSLongPointer( tn rite )
         }
     } else {
         switch( rite->tipe->refno ) {
-        case T_LONG_POINTER:
-        case T_HUGE_POINTER:
-        case T_LONG_CODE_PTR:
+        case TY_LONG_POINTER:
+        case TY_HUGE_POINTER:
+        case TY_LONG_CODE_PTR:
             return( TRUE );
             break;
         }
@@ -367,7 +367,7 @@ extern  tn  TGCompare(  cg_op op,  tn left,  tn rite,  type_def  *tipe )
 #if _TARGET & _TARG_AXP
     // FIXME: bad assumption being covered here
     if( tipe->length < 4 ) {
-        tipe = TypeAddress( T_INTEGER );
+        tipe = TypeAddress( TY_INTEGER );
         can_demote = FALSE;
     }
 #endif
@@ -466,7 +466,7 @@ extern  tn  TGConvert( tn name, type_def *tipe )
 
     node_type = name->tipe;
     new = name;
-    if( tipe->refno != T_DEFAULT && tipe != node_type ) {
+    if( tipe->refno != TY_DEFAULT && tipe != node_type ) {
         if( tipe == TypeBoolean ) {
             if( node_type != TypeBoolean ) {
                 new = TGCompare( O_NE, new, TGLeaf( Int( 0 ) ), node_type );
@@ -519,7 +519,7 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
         otipe = tipe;
         tipe = ResultType( left, rite, tipe, BinMat, FALSE );
         if( otipe == TypeNone ) { /* do integer divide to make C happy.*/
-            if( tipe->refno == T_UINT_1 || tipe->refno == T_INT_1 ) {
+            if( tipe->refno == TY_UINT_1 || tipe->refno == TY_INT_1 ) {
                 tipe = TypeInteger;
             }
         }
@@ -528,17 +528,17 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
         break;
 #if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
     case O_CONVERT: /* based pointer junk */
-        left = TGConvert( left, TypeAddress( T_NEAR_POINTER ) );
+        left = TGConvert( left, TypeAddress( TY_NEAR_POINTER ) );
         if( !RHSLongPointer( rite ) ) {
-            rite = TGConvert( rite, TypeAddress( T_UINT_2 ) );
+            rite = TGConvert( rite, TypeAddress( TY_UINT_2 ) );
         }
         switch( tipe->refno ) {
-        case T_DEFAULT:
-        case T_NEAR_POINTER:
-            tipe = TypeAddress( T_LONG_POINTER );
+        case TY_DEFAULT:
+        case TY_NEAR_POINTER:
+            tipe = TypeAddress( TY_LONG_POINTER );
             break;
-        case T_LONG_POINTER:
-        case T_HUGE_POINTER:
+        case TY_LONG_POINTER:
+        case TY_HUGE_POINTER:
             /* OK */
             break;
         default:
@@ -550,9 +550,9 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
     case O_PLUS: /* pointer arithmetic is a pain*/
         if( left->class == TN_CALL ) { /* address of return value*/
             tipe = TypePtr;
-            if( tipe->refno == T_HUGE_POINTER ) {
+            if( tipe->refno == TY_HUGE_POINTER ) {
                 rite = TGConvert( rite, TypeHugeInteger );
-            } else if( tipe->refno == T_LONG_POINTER ) {
+            } else if( tipe->refno == TY_LONG_POINTER ) {
                 rite = TGConvert( rite, TypeLongInteger );
             } else {
                 rite = TGConvert( rite, TypeNearInteger );
@@ -565,9 +565,9 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
                     rite = left;
                     left = temp;
                 }
-                if( tipe->refno == T_HUGE_POINTER ) {
+                if( tipe->refno == TY_HUGE_POINTER ) {
                     rite = TGConvert( rite, TypeHugeInteger );
-                } else if( tipe->refno == T_LONG_POINTER ) {
+                } else if( tipe->refno == TY_LONG_POINTER ) {
                     rite = TGConvert( rite, TypeLongInteger );
                 } else {
                     rite = TGConvert( rite, TypeNearInteger );
@@ -581,13 +581,13 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
                 }
             } else { /* non pointer add */
 #if _TARGET & _TARG_370  /* don't want miss I4= I4 op I2 instructions */
-                if( tipe->refno == T_INT_4 ) {
-                    if( commie && left->tipe->refno == T_INT_2 ) {
+                if( tipe->refno == TY_INT_4 ) {
+                    if( commie && left->tipe->refno == TY_INT_2 ) {
                         temp = rite;
                         rite = left;
                         left = temp;
                     }
-                    if( rite->tipe->refno != T_INT_2 ) {
+                    if( rite->tipe->refno != TY_INT_2 ) {
                         rite = TGConvert( rite, tipe );
                     }
                 } else {
@@ -611,26 +611,26 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
         tipe = ResultType( left, rite, tipe, SubMat, FALSE );
         /* pointer subtraction yields a different result type than ops!*/
         if( tipe->refno == TypeHugeInteger->refno
-            && left->tipe->refno == T_HUGE_POINTER
-            && rite->tipe->refno == T_HUGE_POINTER ) {
+            && left->tipe->refno == TY_HUGE_POINTER
+            && rite->tipe->refno == TY_HUGE_POINTER ) {
             /* nothing*/
         } else if( tipe->refno == TypeLongInteger->refno
-            && left->tipe->refno == T_LONG_POINTER
-            && rite->tipe->refno == T_LONG_POINTER ) {
+            && left->tipe->refno == TY_LONG_POINTER
+            && rite->tipe->refno == TY_LONG_POINTER ) {
              /* nothing*/
         } else if( tipe->refno == TypeNearInteger->refno
-            && left->tipe->refno == T_NEAR_POINTER
-            && rite->tipe->refno == T_NEAR_POINTER ) {
+            && left->tipe->refno == TY_NEAR_POINTER
+            && rite->tipe->refno == TY_NEAR_POINTER ) {
              /* nothing*/
-        } else if( tipe->refno == T_HUGE_POINTER ) {
+        } else if( tipe->refno == TY_HUGE_POINTER ) {
             rite = TGConvert( rite, TypeHugeInteger );
-        } else if( tipe->refno==T_LONG_POINTER ) {
+        } else if( tipe->refno == TY_LONG_POINTER ) {
             rite = TGConvert( rite, TypeLongInteger );
-        } else if( tipe->refno==T_NEAR_POINTER ) {
+        } else if( tipe->refno == TY_NEAR_POINTER ) {
             rite = TGConvert( rite, TypeNearInteger );
         } else {
 #if _TARGET & _TARG_370
-            if( tipe->refno != T_INT_4 || rite->tipe->refno != T_INT_2 ) {
+            if( tipe->refno != TY_INT_4 || rite->tipe->refno != TY_INT_2 ) {
                  rite = TGConvert( rite, tipe );
             }
 #else
@@ -642,7 +642,7 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
     case O_TIMES:
         tipe = ResultType( left, rite, tipe, BinMat, FALSE );
 #if _TARGET & _TARG_IAPX86
-        if( tipe->refno == T_INT_4 &&
+        if( tipe->refno == TY_INT_4 &&
             left->tipe->length <= 2 && rite->tipe->length <= 2 ) {
             left = TGConvert( left, TypeInteger );
         } else {
@@ -650,13 +650,13 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
             rite = TGConvert( rite, tipe );
         }
 #elif _TARGET & _TARG_370
-        if( tipe->refno == T_INT_4 ) {
-            if( commie && left->tipe->refno == T_INT_2 ) {
+        if( tipe->refno == TY_INT_4 ) {
+            if( commie && left->tipe->refno == TY_INT_2 ) {
                 temp = rite;
                 rite = left;
                 left = temp;
             }
-            if( rite->tipe->refno != T_INT_2 ) {
+            if( rite->tipe->refno != TY_INT_2 ) {
                  rite = TGConvert( rite, tipe );
             }
         } else {
@@ -877,7 +877,7 @@ extern  tn  TGAddParm( tn to, tn parm, type_def *tipe )
     tn  new;
     tn  scan;
 
-    if( tipe->refno == T_DEFAULT ) {
+    if( tipe->refno == TY_DEFAULT ) {
         tipe = parm->tipe;
         if( tipe == TypeBoolean ) {
             tipe = TypeInteger;
@@ -919,12 +919,12 @@ extern  tn  TGIndex( tn left, tn rite, type_def *tipe, type_def *ptipe )
     /*   the following would probably not be done*/
 
     if( tipe->length != 1 ) {
-        if( ptipe->refno == T_HUGE_POINTER ) {
+        if( ptipe->refno == TY_HUGE_POINTER ) {
             rite = CGBinary( O_TIMES, rite,
-                  CGInteger( tipe->length, T_INTEGER ), T_INT_4 );
+                  CGInteger( tipe->length, TY_INTEGER ), TY_INT_4 );
         } else {
             rite = CGBinary( O_TIMES, rite,
-                  CGInteger( tipe->length, T_INTEGER ), T_INTEGER );
+                  CGInteger( tipe->length, TY_INTEGER ), TY_INTEGER );
         }
     }
     rite = CGBinary( O_PLUS, left, rite, ptipe->refno );
@@ -940,7 +940,7 @@ extern  tn  DoTGAssign( tn dst, tn src, type_def *tipe, tn_class class )
     tn          node;
     type_def    *node_tipe;
 
-    if( tipe->refno == T_DEFAULT ) {
+    if( tipe->refno == TY_DEFAULT ) {
         tipe = src->tipe;
     }
     src = TGConvert( src, tipe );
@@ -1563,7 +1563,7 @@ static  an  AddrGen( tn node )
     alignment = node->alignment;
 #if _TARGET & _TARG_RISC
     if( alignment == 0 ) {
-        if( node->tipe->refno >= T_FIRST_FREE ) {
+        if( node->tipe->refno >= TY_FIRST_FREE ) {
             // it's a user-defined struct/type
             alignment = node->tipe->align;
         }
@@ -1606,7 +1606,7 @@ static  an  TNCallback( tn node )
     }
     FreeTreeNode( node->u.left );
     FreeTreeNode( node->rite );
-    return( BGInteger( 0, TypeAddress( T_UINT_2 ) ) );
+    return( BGInteger( 0, TypeAddress( TY_UINT_2 ) ) );
 }
 
 
@@ -1647,20 +1647,20 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
     tipeu = node->tipe;
     switch( tipeu->length ) {
     case 1:
-        tipeu = TypeAddress( T_UINT_1 );
-        tipes = TypeAddress( T_INT_1 );
+        tipeu = TypeAddress( TY_UINT_1 );
+        tipes = TypeAddress( TY_INT_1 );
         break;
     case 2:
-        tipeu = TypeAddress( T_UINT_2 );
-        tipes = TypeAddress( T_INT_2 );
+        tipeu = TypeAddress( TY_UINT_2 );
+        tipes = TypeAddress( TY_INT_2 );
         break;
     case 4:
-        tipeu = TypeAddress( T_UINT_4 );
-        tipes = TypeAddress( T_INT_4 );
+        tipeu = TypeAddress( TY_UINT_4 );
+        tipes = TypeAddress( TY_INT_4 );
         break;
     case 8:
-        tipeu = TypeAddress( T_UINT_8 );
-        tipes = TypeAddress( T_INT_8 );
+        tipeu = TypeAddress( TY_UINT_8 );
+        tipes = TypeAddress( TY_INT_8 );
         break;
     default:
         _Zoiks( ZOIKS_092 );
@@ -1697,16 +1697,16 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
             case 1:
                 break;
             case 2:
-                retv = BGConvert( retv, TypeAddress( T_INT_1 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_1 ) );
                 break;
             case 4:
-                retv = BGConvert( retv, TypeAddress( T_INT_1 ) );
-                retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_1 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_2 ) );
                 break;
             case 8:
-                retv = BGConvert( retv, TypeAddress( T_INT_1 ) );
-                retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
-                retv = BGConvert( retv, TypeAddress( T_INT_4 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_1 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_2 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_4 ) );
                 break;
             }
             retv = BGConvert( retv, tipes );
@@ -1715,11 +1715,11 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
             case 2:
                 break;
             case 4:
-                retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_2 ) );
                 break;
             case 8:
-                retv = BGConvert( retv, TypeAddress( T_INT_2 ) );
-                retv = BGConvert( retv, TypeAddress( T_INT_4 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_2 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_4 ) );
                 break;
             }
             retv = BGConvert( retv, tipes );
@@ -1728,7 +1728,7 @@ static  an  TNBitShift( an retv, btn node, bool already_masked )
             case 4:
                 break;
             case 8:
-                retv = BGConvert( retv, TypeAddress( T_INT_4 ) );
+                retv = BGConvert( retv, TypeAddress( TY_INT_4 ) );
                 break;
             }
             retv = BGConvert( retv, tipes );
@@ -2046,8 +2046,8 @@ static an   MakeBased( an left, an rite, type_def *tipe )
 
     temp_var = BGNewTemp( tipe );
     temp = MakeTempAddr( temp_var, tipe );
-    near_type = TypeAddress( T_NEAR_POINTER );
-    short_type = TypeAddress( T_UINT_2 );
+    near_type = TypeAddress( TY_NEAR_POINTER );
+    short_type = TypeAddress( TY_UINT_2 );
     if( rite->format == NF_ADDR &&
     ( rite->class == CL_ADDR_GLOBAL || rite->class == CL_ADDR_TEMP ) ) {
         BGDone( BGAssign( AddrCopy( temp ), left, near_type ) );
@@ -2058,9 +2058,9 @@ static an   MakeBased( an left, an rite, type_def *tipe )
         BGDone( BGAssign( seg_dest, seg, short_type ) );
     } else {
         switch( rite->tipe->refno ) {
-        case T_LONG_POINTER:
-        case T_HUGE_POINTER:
-        case T_LONG_CODE_PTR:
+        case TY_LONG_POINTER:
+        case TY_HUGE_POINTER:
+        case TY_LONG_CODE_PTR:
             BGDone( BGAssign( AddrCopy( temp ), rite, rite->tipe ) );
             BGDone( BGAssign( AddrCopy( temp ), left, near_type ) );
             break;
@@ -2319,7 +2319,7 @@ static  an  TNCall( tn what, bool ignore_return )
             parman = NotAddrGen( parmtn );
             tipe = scan->tipe;
         }
-        if( tipe->refno == T_DEFAULT ) {
+        if( tipe->refno == TY_DEFAULT ) {
             tipe = parman->tipe;
         }
         if( tipe == TypeProcParm ) {
@@ -2337,7 +2337,7 @@ static  an  TNCall( tn what, bool ignore_return )
                 // quantities when passed as parms to routines.
                 if( parman->tipe->length == 4 &&
                     !(parman->tipe->attr & TYPE_SIGNED) ) {
-                    parman = BGConvert( parman, TypeAddress( T_INT_4 ) );
+                    parman = BGConvert( parman, TypeAddress( TY_INT_4 ) );
                 }
 #endif
                 parman = BGConvert( parman, PassParmType( (pointer *)addr->rite, tipe, rtn_class ) );

@@ -33,7 +33,7 @@
 #include "cgdefs.h"
 
 // this will not be necessary when long doubles are implemented // UNCOMMENT_TOKEN
-#define T_LONGDOUBLE    T_DOUBLE
+#define TY_LONGDOUBLE    TY_DOUBLE
 #define T_DBG_XCOMPLEX  T_DBG_DCOMPLEX
 
 typedef enum {

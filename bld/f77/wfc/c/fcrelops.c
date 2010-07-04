@@ -173,10 +173,10 @@ static  void    XCharCompare( cg_op op ) {
     name1 = XPop();
     name2 = XPop();
     call = InitCall( RT_LEXCMP );
-    CGAddParm( call, name2, T_LOCAL_POINTER );
-    CGAddParm( call, name1, T_LOCAL_POINTER );
-    XPush( CGCompare( op, CGUnary( O_POINTS, CGCall( call ), T_INTEGER ),
-                      CGInteger( 0, T_INTEGER ), T_INTEGER ) );
+    CGAddParm( call, name2, TY_LOCAL_POINTER );
+    CGAddParm( call, name1, TY_LOCAL_POINTER );
+    XPush( CGCompare( op, CGUnary( O_POINTS, CGCall( call ), TY_INTEGER ),
+                      CGInteger( 0, TY_INTEGER ), TY_INTEGER ) );
 }
 
 

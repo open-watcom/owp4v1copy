@@ -42,18 +42,18 @@
 #include "fctypes.h"
 
 #define NUM_TYPES       12
-#define L1              T_UINT_1
-#define L4              T_UINT_4
-#define I1              T_INT_1
-#define I2              T_INT_2
-#define I4              T_INT_4
-#define R4              T_SINGLE
-#define R8              T_DOUBLE
-#define R10             T_LONGDOUBLE
-#define C8              T_COMPLEX
-#define C16             T_DCOMPLEX
-#define C20             T_XCOMPLEX
-#define CH              T_CHAR
+#define L1              TY_UINT_1
+#define L4              TY_UINT_4
+#define I1              TY_INT_1
+#define I2              TY_INT_2
+#define I4              TY_INT_4
+#define R4              TY_SINGLE
+#define R8              TY_DOUBLE
+#define R10             TY_LONGDOUBLE
+#define C8              TY_COMPLEX
+#define C16             TY_DCOMPLEX
+#define C20             TY_XCOMPLEX
+#define CH              TY_CHAR
 
 static  byte            MapCGTypes[] = {
 
@@ -127,18 +127,18 @@ static  int     CGIndex( cg_type typ ) {
 
 // Return index for a CG-type.
 
-    if( typ == T_UINT_1 ) return( 0 );
-    if( typ == T_UINT_2 ) return( 1 );
-    if( typ == T_INT_1 ) return( 2 );
-    if( typ == T_INT_2 ) return( 3 );
-    if( typ == T_INT_4 ) return( 4 );
-    if( typ == T_SINGLE ) return( 5 );
-    if( typ == T_DOUBLE ) return( 6 );
-    if( typ == T_LONGDOUBLE ) return( 7 );
-    if( typ == T_COMPLEX ) return( 8 );
-    if( typ == T_DCOMPLEX ) return( 9 );
-    if( typ == T_XCOMPLEX ) return( 10 );
-    return( 11 ); // typ == T_CHAR
+    if( typ == TY_UINT_1 ) return( 0 );
+    if( typ == TY_UINT_2 ) return( 1 );
+    if( typ == TY_INT_1 ) return( 2 );
+    if( typ == TY_INT_2 ) return( 3 );
+    if( typ == TY_INT_4 ) return( 4 );
+    if( typ == TY_SINGLE ) return( 5 );
+    if( typ == TY_DOUBLE ) return( 6 );
+    if( typ == TY_LONGDOUBLE ) return( 7 );
+    if( typ == TY_COMPLEX ) return( 8 );
+    if( typ == TY_DCOMPLEX ) return( 9 );
+    if( typ == TY_XCOMPLEX ) return( 10 );
+    return( 11 ); // typ == TY_CHAR
 }
 
 
@@ -157,11 +157,11 @@ bool                DataPointer( cg_type typ ) {
 
 // Is CG-type a pointer?
 
-    return( ( typ == T_NEAR_POINTER )  || ( typ == T_LONG_POINTER ) ||
-            ( typ == T_HUGE_POINTER )  || ( typ == T_LOCAL_POINTER ) ||
-            ( typ == T_COMPLEX )       || ( typ == T_DCOMPLEX ) ||
-            ( typ == T_XCOMPLEX )      ||
-            ( typ == T_CHAR )          || ( typ >= T_USER_DEFINED ) );
+    return( ( typ == TY_NEAR_POINTER )  || ( typ == TY_LONG_POINTER ) ||
+            ( typ == TY_HUGE_POINTER )  || ( typ == TY_LOCAL_POINTER ) ||
+            ( typ == TY_COMPLEX )       || ( typ == TY_DCOMPLEX ) ||
+            ( typ == TY_XCOMPLEX )      ||
+            ( typ == TY_CHAR )          || ( typ >= TY_USER_DEFINED ) );
 }
 
 
@@ -170,11 +170,11 @@ bool                TypeCGInteger( cg_type typ ) {
 
 // Is CG-type an integer?
 
-    return( ( typ == T_UINT_1 ) || ( typ == T_INT_1 ) ||
-            ( typ == T_UINT_2 ) || ( typ == T_INT_2 ) ||
-            ( typ == T_UINT_4 ) || ( typ == T_INT_4 ) ||
-            ( typ == T_UINT_8 ) || ( typ == T_INT_8 ) ||
-            ( typ == T_INTEGER ) );
+    return( ( typ == TY_UINT_1 ) || ( typ == TY_INT_1 ) ||
+            ( typ == TY_UINT_2 ) || ( typ == TY_INT_2 ) ||
+            ( typ == TY_UINT_4 ) || ( typ == TY_INT_4 ) ||
+            ( typ == TY_UINT_8 ) || ( typ == TY_INT_8 ) ||
+            ( typ == TY_INTEGER ) );
 }
 
 
@@ -183,20 +183,20 @@ bool                TypePointer( cg_type typ ) {
 
 // Is CG-type a pointer?
 
-    return( DataPointer( typ ) || ( typ == T_CODE_PTR ) ||
-            ( typ == T_LONG_CODE_PTR ) || ( typ == T_NEAR_CODE_PTR ) );
+    return( DataPointer( typ ) || ( typ == TY_CODE_PTR ) ||
+            ( typ == TY_LONG_CODE_PTR ) || ( typ == TY_NEAR_CODE_PTR ) );
 }
 
 
 cg_type             PromoteToBaseType( cg_type typ ) {
 //====================================================
 
-// if type is integer T_INT_1, T_INT_2 under the _AXP or _PPC, we must promote
+// if type is integer TY_INT_1, TY_INT_2 under the _AXP or _PPC, we must promote
 // it in order to make a call
 
 #if _CPU == _AXP || _CPU == _PPC
-    if( ( typ == T_INT_1 ) || ( typ == T_INT_2 )  ) {
-        typ = T_INT_4;
+    if( ( typ == TY_INT_1 ) || ( typ == TY_INT_2 )  ) {
+        typ = TY_INT_4;
     }
 #endif
     return( typ );

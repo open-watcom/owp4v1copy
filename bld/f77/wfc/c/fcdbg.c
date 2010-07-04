@@ -72,6 +72,6 @@ void    FCSetLine( void ) {
     line_num = GetU16();
     if( ( SubProgId->ns.flags & SY_SUBPROG_TYPE ) == SY_BLOCK_DATA ) return;
     handle = InitCall( RT_SET_LINE );
-    CGAddParm( handle, CGInteger( line_num, T_INTEGER ), T_INTEGER );
+    CGAddParm( handle, CGInteger( line_num, TY_INTEGER ), TY_INTEGER );
     CGDone( CGCall( handle ) );
 }

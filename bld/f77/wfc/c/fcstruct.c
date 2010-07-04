@@ -50,5 +50,5 @@ cg_name StructRef( cg_name structure, int offset ) {
 // Reference a field in a structure.
 
     return( CGBinary( O_PLUS, structure,
-                 CGInteger( offset, T_INTEGER ), T_LOCAL_POINTER ) );
+                 CGInteger( offset, TY_INTEGER ), TY_LOCAL_POINTER ) );
  }

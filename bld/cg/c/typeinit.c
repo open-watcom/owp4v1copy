@@ -58,14 +58,14 @@ extern  void    TypeInit( void )
 {
     InitTyping();
     TargTypeInit();
-    TypeProcParm = TypeAddress( T_PROC_PARM );
-    TypeInteger = TypeAddress( T_INTEGER );
-    TypeHugeInteger = TypeAddress( T_HUGE_INTEGER );
-    TypeLongInteger = TypeAddress( T_LONG_INTEGER );
-    TypeLongLongInteger = TypeAddress( T_INT_8 );   // should be something else perhaps?
-    TypeNearInteger = TypeAddress( T_NEAR_INTEGER );
-    TypeUnsigned = TypeAddress( T_UNSIGNED );
-    TypeBoolean = TypeAddress( T_BOOLEAN );
-    TypeNone = TypeAddress( T_DEFAULT );
-    TypePtr = TypeAddress( T_POINTER );
+    TypeProcParm = TypeAddress( TY_PROC_PARM );
+    TypeInteger = TypeAddress( TY_INTEGER );
+    TypeHugeInteger = TypeAddress( TY_HUGE_INTEGER );
+    TypeLongInteger = TypeAddress( TY_LONG_INTEGER );
+    TypeLongLongInteger = TypeAddress( TY_INT_8 );   // should be something else perhaps?
+    TypeNearInteger = TypeAddress( TY_NEAR_INTEGER );
+    TypeUnsigned = TypeAddress( TY_UNSIGNED );
+    TypeBoolean = TypeAddress( TY_BOOLEAN );
+    TypeNone = TypeAddress( TY_DEFAULT );
+    TypePtr = TypeAddress( TY_POINTER );
 }

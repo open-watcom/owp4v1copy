@@ -123,7 +123,7 @@ extern  an      MakeTempAddr( name *op, type_def *tipe )
 /******************************************************/
 {
     tipe = tipe;
-    return( MakeTypeTempAddr( op, TypeAddress( T_NEAR_POINTER ) ) );
+    return( MakeTypeTempAddr( op, TypeAddress( TY_NEAR_POINTER ) ) );
 }
 
 
@@ -512,9 +512,9 @@ extern  bool    NeedPtrConvert( an addr, type_def * tipe )
 {
     if( addr->format != NF_ADDR ) return( TRUE );
     if( addr->class == CL_ADDR_GLOBAL || addr->class == CL_ADDR_TEMP ) {
-        if( tipe->refno == T_NEAR_POINTER ) return( FALSE );
-        if( tipe->refno == T_LONG_POINTER ) return( FALSE );
-        if( tipe->refno == T_HUGE_POINTER ) return( FALSE );
+        if( tipe->refno == TY_NEAR_POINTER ) return( FALSE );
+        if( tipe->refno == TY_LONG_POINTER ) return( FALSE );
+        if( tipe->refno == TY_HUGE_POINTER ) return( FALSE );
     }
     return( TRUE );
 }

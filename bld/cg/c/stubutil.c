@@ -333,10 +333,8 @@ extern  char    *FtnTipe( dbg_ftn_type tipe ) {
 //=============================================
 
     switch( tipe ) {
-    case 0x47: return( "T_DBG_COMPLEX" );
-    case 0x4f: return( "T_DBG_DCOMPLEX" );
-    case 0x53: return( "T_DBG_NEAR_SCB" );
-    case 0x55: return( "T_DBG_FAR_SCB" );
+    case T_DBG_COMPLEX: return( "T_DBG_COMPLEX" );
+    case T_DBG_DCOMPLEX: return( "T_DBG_DCOMPLEX" );
     default:   CGError( "Undefined FORTRAN debug type %d", tipe );
     }
     return( NULL );
@@ -354,11 +352,12 @@ extern  char    *Tipe( cg_type tipe ) {
     char        *res;
     type_def    *t;
 
-    if( tipe >= T_FIRST_FREE ) {
+    if( tipe >= TY_FIRST_FREE ) {
         VerTipe( tipe, NULL );
         t = TypeAddress( tipe );
         res = LToS( t->refno );
         *--res = '_';
+        *--res = 'Y';
         *--res = 'T';
     } else {
         res = Tipes[ tipe ];
@@ -467,7 +466,7 @@ extern  n       *NewNode( nclass c, cg_type t ) {
     return( nd );
 }
 
-#define FE_TYPE( x )    ( ( (x) >= T_FIRST_FREE ) && ( (x) <= T_LAST_FREE ) )
+#define FE_TYPE( x )    ( ( (x) >= TY_FIRST_FREE ) && ( (x) <= TY_LAST_FREE ) )
 extern  n       *Binary( cg_op op, n *l, n *r, cg_type t ) {
 //==========================================================
 
@@ -562,7 +561,7 @@ extern  void    VerTipe( cg_type t, cg_type *l ) {
     }
     t = a->refno;
     if( l != NULL ) {
-        while( *l != T_DEFAULT ) {
+        while( *l != TY_DEFAULT ) {
             if( t == *l++ ) return;
         }
         CGError( "Illegal type for given routine %s", Tipe(t) );
@@ -832,8 +831,8 @@ extern  segment_id      SetFile( segment_id seg ) {
 extern  void    NotDefault( cg_type  t ) {
 //========================================
 
-    if( t == T_DEFAULT ) {
-        CGError( "T_DEFAULT not allowed as type to routine" );
+    if( t == TY_DEFAULT ) {
+        CGError( "TY_DEFAULT not allowed as type to routine" );
     }
 }
 

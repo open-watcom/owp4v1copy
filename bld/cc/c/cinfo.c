@@ -583,7 +583,7 @@ void    SetSegs( void )
         flags |= GIVEN_NAME;
     }
     BEDefSeg( SEG_CODE, flags, name,
-                SegAlign( (OptSize == 0) ? BETypeLength( T_INTEGER ) : 1 ) );
+                SegAlign( (OptSize == 0) ? BETypeLength( TY_INTEGER ) : 1 ) );
     BEDefSeg( SEG_CONST, BACK|INIT|ROM, TS_SEG_CONST,
                 SegAlign( SegAlignment[SEG_CONST] ) );
     BEDefSeg( SEG_CONST2, INIT | ROM, TS_SEG_CONST2,
@@ -631,7 +631,7 @@ void    SetSegs( void )
         tseg->segment_number = ++SegmentNum;
         BEDefSeg( tseg->segment_number,  GLOBAL | INIT | EXEC | GIVEN_NAME,
                 tseg->segname,
-                SegAlign( (OptSize == 0) ? BETypeLength( T_INTEGER ) : 1 ) );
+                SegAlign( (OptSize == 0) ? BETypeLength( TY_INTEGER ) : 1 ) );
     }
 }
 
@@ -883,23 +883,23 @@ cg_type FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, cg_type tipe )
     func = func;
     parm = parm;
     switch( tipe ) {
-    case T_INT_1:
-    case T_INT_2:
-    case T_INT_4:
-    case T_UINT_4:
-    case T_INTEGER:
+    case TY_INT_1:
+    case TY_INT_2:
+    case TY_INT_4:
+    case TY_UINT_4:
+    case TY_INTEGER:
     case TY_UNSIGNED:
-    case T_POINTER:
-    case T_CODE_PTR:
-    case T_NEAR_POINTER:
-    case T_NEAR_CODE_PTR:
-        return( T_INT_8 );
-    case T_UINT_1:
-    case T_UINT_2:
-        return( T_UINT_8 );
+    case TY_POINTER:
+    case TY_CODE_PTR:
+    case TY_NEAR_POINTER:
+    case TY_NEAR_CODE_PTR:
+        return( TY_INT_8 );
+    case TY_UINT_1:
+    case TY_UINT_2:
+        return( TY_UINT_8 );
     case TY_DOUBLE:
-    case T_SINGLE:
-    case T_LONG_DOUBLE:
+    case TY_SINGLE:
+    case TY_LONG_DOUBLE:
         return( TY_DOUBLE );
     default:
         return( tipe );
@@ -919,20 +919,20 @@ cg_type FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, cg_type tipe )
     parm = parm;
     switch( tipe ) {
 #if _CPU == 386 || _CPU == 370 || _CPU == _PPC || _CPU == _MIPS
-    case T_UINT_2:
-    case T_INT_2:
+    case TY_UINT_2:
+    case TY_INT_2:
 #endif
-    case T_INT_1:
-    case T_UINT_1:
+    case TY_INT_1:
+    case TY_UINT_1:
 #if _CPU == 386
         if( sym_handle != 0 ) {                         /* 22-mar-94 */
             sym = SymGetPtr( sym_handle );
             if( sym->attrib & FLAG_FAR16 ) {
-                return( T_INT_2 );
+                return( TY_INT_2 );
             }
         }
 #endif
-        tipe = T_INTEGER;
+        tipe = TY_INTEGER;
     }
     return( tipe );
 }

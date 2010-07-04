@@ -66,14 +66,14 @@ static  void    Equivalent( cg_op op_code ) {
     op1 = XPopValue( typ1 );
     op2 = XPopValue( typ2 );
     typ1 = CGType( op1 );
-    if( typ1 != T_BOOLEAN ) {
+    if( typ1 != TY_BOOLEAN ) {
         op1 = CGCompare( O_NE, op1, CGInteger( 0, typ1 ), typ1 );
     }
     typ2 = CGType( op2 );
-    if( typ2 != T_BOOLEAN ) {
+    if( typ2 != TY_BOOLEAN ) {
         op2 = CGCompare( O_NE, op2, CGInteger( 0, typ2 ), typ2 );
     }
-    XPush( CGCompare( op_code, op1, op2, T_UINT_1 ) );
+    XPush( CGCompare( op_code, op1, op2, TY_UINT_1 ) );
 }
 
 

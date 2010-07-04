@@ -115,7 +115,7 @@ extern  cg_init_info    BEInit( cg_switches cg_data, cg_target_switches tg_data,
     TypeIdx = 0;
     InitDbgInfo();
     TypeInit();
-    TypeDef( T_DEFAULT, 0 );
+    TypeDef( TY_DEFAULT, 0 );
     Inlines = NULL;
     NodeList = NULL;
     AutoList = NULL;

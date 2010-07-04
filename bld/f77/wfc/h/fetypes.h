@@ -29,26 +29,26 @@
 ****************************************************************************/
 
 
-    T_COMPLEX = T_FIRST_FREE,   // FORTRAN 77 COMPLEX*8
-    T_DCOMPLEX,                 // FORTRAN 77 COMPLEX*16
-    T_XCOMPLEX,                 // FORTRAN 77 COMPLEX*20
-    T_CHAR,                     // FORTRAN 77 CHARACTER*n
-    T_ADV_ENTRY,                // dimension entry in ADV
-    T_ADV_ENTRY_1,              // for 1-D arrays
-    T_ADV_ENTRY_2,              // for 2-D arrays
-    T_ADV_ENTRY_3,              // for 3-D arrays
-    T_ADV_ENTRY_4,              // for 4-D arrays
-    T_ADV_ENTRY_5,              // for 5-D arrays
-    T_ADV_ENTRY_6,              // for 6-D arrays
-    T_ADV_ENTRY_7,              // for 7-D arrays
-    T_ADV_LO,                   // "lo" field in dimension entry
-    T_ADV_HI,                   // "hi" field in dimension entry
-    T_LOCAL_POINTER,            // pointer to data in local data area
-    T_GLOBAL_POINTER,           // pointer to global data (single segment)
-    T_CHAR16,                   // SCB for "far16" support
-    T_CHAR_ALLOCATABLE,         // SCB for allocatable CHARACTER data
-    T_ARR_ALLOCATABLE,          // Allocatable array structure
-    T_ARR_ALLOCATABLE_EXTENDED, // Allocatable extended array structure
-    T_ADV_HI_CV,                // "hi" field in dimension entry for Codeview
-    T_ADV_ENTRY_CV,             // dimension entry in ADV for Codeview
-    T_USER_DEFINED,             // first user defined type
+    TY_COMPLEX = TY_FIRST_FREE,   // FORTRAN 77 COMPLEX*8
+    TY_DCOMPLEX,                 // FORTRAN 77 COMPLEX*16
+    TY_XCOMPLEX,                 // FORTRAN 77 COMPLEX*20
+    TY_CHAR,                     // FORTRAN 77 CHARACTER*n
+    TY_ADV_ENTRY,                // dimension entry in ADV
+    TY_ADV_ENTRY_1,              // for 1-D arrays
+    TY_ADV_ENTRY_2,              // for 2-D arrays
+    TY_ADV_ENTRY_3,              // for 3-D arrays
+    TY_ADV_ENTRY_4,              // for 4-D arrays
+    TY_ADV_ENTRY_5,              // for 5-D arrays
+    TY_ADV_ENTRY_6,              // for 6-D arrays
+    TY_ADV_ENTRY_7,              // for 7-D arrays
+    TY_ADV_LO,                   // "lo" field in dimension entry
+    TY_ADV_HI,                   // "hi" field in dimension entry
+    TY_LOCAL_POINTER,            // pointer to data in local data area
+    TY_GLOBAL_POINTER,           // pointer to global data (single segment)
+    TY_CHAR16,                   // SCB for "far16" support
+    TY_CHAR_ALLOCATABLE,         // SCB for allocatable CHARACTER data
+    TY_ARR_ALLOCATABLE,          // Allocatable array structure
+    TY_ARR_ALLOCATABLE_EXTENDED, // Allocatable extended array structure
+    TY_ADV_HI_CV,                // "hi" field in dimension entry for Codeview
+    TY_ADV_ENTRY_CV,             // dimension entry in ADV for Codeview
+    TY_USER_DEFINED,             // first user defined type

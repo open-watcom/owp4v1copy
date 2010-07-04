@@ -62,7 +62,7 @@
     #define SW                  I4
     #define WORD_SIZE           4
     #define REG_SIZE            4
-    #define T_WORD              T_UINT_4
+    #define TY_WORD             TY_UINT_4
     #define _OMF_32
 #elif _TARGET &  _TARG_IAPX86
     #define _TARG_CSET          _TARG_ASCII
@@ -73,7 +73,7 @@
     #define SW                  I2
     #define WORD_SIZE           2
     #define REG_SIZE            2
-    #define T_WORD              T_UINT_2
+    #define TY_WORD             TY_UINT_2
     #undef _OMF_32
 #elif _TARGET & _TARG_370
     #define _TARG_CSET          _TARG_EBCDIC
@@ -83,7 +83,7 @@
     #define SW                  I4
     #define WORD_SIZE           4
     #define REG_SIZE            4
-    #define T_WORD              T_UINT_4
+    #define TY_WORD             TY_UINT_4
 #elif _TARGET & _TARG_PPC
     #define _TARG_CSET          _TARG_ASCII
     #define _TARG_INTEGER       32
@@ -94,7 +94,7 @@
     #define WORD_SIZE           4
     #define REG_SIZE            4
     #define PAGE_SIZE           4096            /* for stack crawling */
-    #define T_WORD              T_UINT_4
+    #define TY_WORD             TY_UINT_4
     #define STACK_ALIGNMENT     16
     #define STACK_HEADER_SIZE   24
 #elif _TARGET & _TARG_MIPS
@@ -107,7 +107,7 @@
     #define WORD_SIZE           4
     #define REG_SIZE            4
     #define PAGE_SIZE           4096            /* for stack crawling */
-    #define T_WORD              T_UINT_4
+    #define TY_WORD             TY_UINT_4
     #define STACK_ALIGNMENT     16
     #define STACK_HEADER_SIZE   24
 #elif _TARGET & _TARG_AXP
@@ -120,7 +120,7 @@
     #define WORD_SIZE           4
     #define REG_SIZE            8
     #define PAGE_SIZE           4096            /* for stack crawling */
-    #define T_WORD              T_UINT_4
+    #define TY_WORD             TY_UINT_4
     #define STACK_ALIGNMENT     16
 #else
     #error Unknown target processor!

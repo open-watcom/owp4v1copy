@@ -112,9 +112,9 @@ void    FCDProd( void ) {
     cg_name     op1;
     cg_name     op2;
 
-    op1 = CGUnary( O_CONVERT, XPopValue( T_SINGLE ), T_DOUBLE );
-    op2 = CGUnary( O_CONVERT, XPopValue( T_SINGLE ), T_DOUBLE );
-    XPush( CGBinary( O_TIMES, op1, op2, T_DOUBLE ) );
+    op1 = CGUnary( O_CONVERT, XPopValue( TY_SINGLE ), TY_DOUBLE );
+    op2 = CGUnary( O_CONVERT, XPopValue( TY_SINGLE ), TY_DOUBLE );
+    XPush( CGBinary( O_TIMES, op1, op2, TY_DOUBLE ) );
 }
 
 void    FCXProd( void ) {
@@ -123,9 +123,9 @@ void    FCXProd( void ) {
     cg_name     op1;
     cg_name     op2;
 
-    op1 = CGUnary( O_CONVERT, XPopValue( T_DOUBLE ), T_LONGDOUBLE );
-    op2 = CGUnary( O_CONVERT, XPopValue( T_DOUBLE ), T_LONGDOUBLE );
-    XPush( CGBinary( O_TIMES, op1, op2, T_LONGDOUBLE ) );
+    op1 = CGUnary( O_CONVERT, XPopValue( TY_DOUBLE ), TY_LONGDOUBLE );
+    op2 = CGUnary( O_CONVERT, XPopValue( TY_DOUBLE ), TY_LONGDOUBLE );
+    XPush( CGBinary( O_TIMES, op1, op2, TY_LONGDOUBLE ) );
 }
 
 
@@ -299,9 +299,9 @@ void            FCLoc( void ) {
         }
     }
 #if _CPU == 8086
-    arg = CGUnary( O_CONVERT, arg, T_LONG_POINTER );
+    arg = CGUnary( O_CONVERT, arg, TY_LONG_POINTER );
 #endif
-    XPush( CGUnary( O_CONVERT, arg, T_UINT_4 ) );
+    XPush( CGUnary( O_CONVERT, arg, TY_UINT_4 ) );
 }
 
 

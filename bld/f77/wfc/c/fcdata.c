@@ -883,33 +883,33 @@ static  void    DoDataInit( PTYPE var_type ) {
             if( (var_type == PT_REAL_4) || (var_type == PT_CPLX_8) ) {
                 CnvS2S( (single *)const_ptr, fmt_buff );
                 cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff, TypeLength( T_SINGLE ) );
+                CFCnvTarget( cf, const_buff, TypeLength( TY_SINGLE ) );
                 CFFree( cf );
             } else if( (var_type == PT_REAL_8) || (var_type == PT_CPLX_16) ) {
                 CnvD2S( (double *)const_ptr, fmt_buff );
                 cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff, TypeLength( T_DOUBLE ) );
+                CFCnvTarget( cf, const_buff, TypeLength( TY_DOUBLE ) );
                 CFFree( cf );
             } else if( (var_type == PT_REAL_16) || (var_type == PT_CPLX_32) ) {
                 CnvX2S( (extended *)const_ptr, fmt_buff );
                 cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff, TypeLength( T_LONGDOUBLE ) );
+                CFCnvTarget( cf, const_buff, TypeLength( TY_LONGDOUBLE ) );
                 CFFree( cf );
             }
             if( var_type == PT_CPLX_8 ) {
                 CnvS2S( (single *)(const_ptr + sizeof( single )), fmt_buff );
                 cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff + sizeof( single ), TypeLength( T_SINGLE ) );
+                CFCnvTarget( cf, const_buff + sizeof( single ), TypeLength( TY_SINGLE ) );
                 CFFree( cf );
             } else if( var_type == PT_CPLX_16 ) {
                 CnvD2S( (double *)(const_ptr + sizeof( double )), fmt_buff );
                 cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff + sizeof( double ), TypeLength( T_DOUBLE ) );
+                CFCnvTarget( cf, const_buff + sizeof( double ), TypeLength( TY_DOUBLE ) );
                 CFFree( cf );
             } else if( var_type == PT_CPLX_32 ) {
                 CnvX2S( (extended *)(const_ptr + sizeof( extended )), fmt_buff );
                 cf = CFCnvSF( fmt_buff, fmt_buff + strlen( fmt_buff ) );
-                CFCnvTarget( cf, const_buff + sizeof( extended ), TypeLength( T_LONGDOUBLE ) );
+                CFCnvTarget( cf, const_buff + sizeof( extended ), TypeLength( TY_LONGDOUBLE ) );
                 CFFree( cf );
             }
             if( (var_type >= PT_REAL_4) && (var_type <= PT_CPLX_32) ) {

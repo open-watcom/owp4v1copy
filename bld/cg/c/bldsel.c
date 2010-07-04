@@ -228,26 +228,26 @@ extern  cg_type SelType( unsigned_32 value_range ) {
 
     if( ( value_range & 0xFFFF0000 ) == 0 ) {
         if( ( value_range & 0xFF00 ) == 0 ) {
-            tipe = T_UINT_1;
+            tipe = TY_UINT_1;
         } else {
-            tipe = T_UINT_2;
+            tipe = TY_UINT_2;
         }
     } else {
-        tipe = T_UINT_4;
+        tipe = TY_UINT_4;
     }
     if( tipe > SortTipe->refno ) {
         switch( SortTipe->refno ) {
-        case T_UINT_1:
-        case T_INT_1:
-            tipe = T_UINT_1;
+        case TY_UINT_1:
+        case TY_INT_1:
+            tipe = TY_UINT_1;
             break;
-        case T_UINT_2:
-        case T_INT_2:
-            tipe = T_UINT_2;
+        case TY_UINT_2:
+        case TY_INT_2:
+            tipe = TY_UINT_2;
             break;
-        case T_UINT_4:
-        case T_INT_4:
-            tipe = T_UINT_4;
+        case TY_UINT_4:
+        case TY_INT_4:
+            tipe = TY_UINT_4;
             break;
         }
     }
@@ -260,11 +260,11 @@ static  type_def        *UnSignedIntTipe( type_def *tipe ) {
 
     switch( tipe->length ) {
     case 1:
-        return( TypeAddress( T_UINT_1 ) );
+        return( TypeAddress( TY_UINT_1 ) );
     case 2:
-        return( TypeAddress( T_UINT_2 ) );
+        return( TypeAddress( TY_UINT_2 ) );
     case 4:
-        return( TypeAddress( T_UINT_4 ) );
+        return( TypeAddress( TY_UINT_4 ) );
     }
     _Zoiks( ZOIKS_102 );  /* if we get here bug */
     return( NULL );
@@ -505,7 +505,7 @@ static  void    SelectBlock( tbl_control *table, an node, label_handle other ) {
     uint                i;
     uint                targets;
 
-    MkSelOp( (name *) SelIdx( table, node ), T_UINT_2 );
+    MkSelOp( (name *) SelIdx( table, node ), TY_UINT_2 );
     i = 0;
     targets = 0;
     for(;;) {

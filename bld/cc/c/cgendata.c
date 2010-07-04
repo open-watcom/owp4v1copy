@@ -92,13 +92,13 @@ static void EmitDQuad( DATA_QUAD *dq )
     static unsigned long size = 0;
 
     if( dq->flags & Q_NEAR_POINTER ) {
-        data_type = T_NEAR_POINTER;
+        data_type = TY_NEAR_POINTER;
         size_of_item = TARGET_NEAR_POINTER;
     } else if( dq->flags & Q_FAR_POINTER ) {
-        data_type = T_LONG_POINTER;
+        data_type = TY_LONG_POINTER;
         size_of_item = TARGET_FAR_POINTER;
     } else if( dq->flags & Q_CODE_POINTER ) {
-        data_type = T_CODE_PTR;
+        data_type = TY_CODE_PTR;
         size_of_item = TARGET_POINTER;
 #if _CPU == 8086
         if( TargetSwitches & BIG_CODE ) {
@@ -106,7 +106,7 @@ static void EmitDQuad( DATA_QUAD *dq )
         }
 #endif
     } else {
-        data_type = T_POINTER;
+        data_type = TY_POINTER;
         size_of_item = TARGET_POINTER;
 #if _CPU == 8086
         if( TargetSwitches & BIG_DATA ) {
@@ -135,50 +135,50 @@ static void EmitDQuad( DATA_QUAD *dq )
     case QDT_CHAR:
     case QDT_UCHAR:
     case QDT_BOOL:
-        DGInteger( dq->u.long_values[0], T_UINT_1 );
+        DGInteger( dq->u.long_values[0], TY_UINT_1 );
         size += sizeof( char );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
-            DGInteger( dq->u.long_values[1], T_UINT_1 );
+            DGInteger( dq->u.long_values[1], TY_UINT_1 );
             size += sizeof( char );
         }
         break;
     case QDT_SHORT:
     case QDT_USHORT:
-        DGInteger( dq->u.long_values[0], T_UINT_2 );
+        DGInteger( dq->u.long_values[0], TY_UINT_2 );
         size += sizeof( target_short );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
-            DGInteger( dq->u.long_values[1], T_UINT_2 );
+            DGInteger( dq->u.long_values[1], TY_UINT_2 );
             size += sizeof( target_short );
         }
         break;
     case QDT_INT:
     case QDT_UINT:
-        DGInteger( dq->u.long_values[0], T_INTEGER );
+        DGInteger( dq->u.long_values[0], TY_INTEGER );
         size += sizeof( target_int );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
-            DGInteger( dq->u.long_values[1], T_INTEGER );
+            DGInteger( dq->u.long_values[1], TY_INTEGER );
             size += sizeof( target_int );
         }
         break;
     case QDT_LONG:
     case QDT_ULONG:
-        DGInteger( dq->u.long_values[0], T_UINT_4 );
+        DGInteger( dq->u.long_values[0], TY_UINT_4 );
         size += sizeof( target_long );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
-            DGInteger( dq->u.long_values[1], T_UINT_4 );
+            DGInteger( dq->u.long_values[1], TY_UINT_4 );
             size += sizeof( target_long );
         }
         break;
     case QDT_LONG64:
     case QDT_ULONG64:
-        DGInteger64( dq->u.long64, T_UINT_8 );
+        DGInteger64( dq->u.long64, TY_UINT_8 );
         size += sizeof( int64 );
         break;
 
     case QDT_FLOAT:
     case QDT_FIMAGINARY:
 //      ftoa( dq->u.double_value, Buffer );
-//      DGFloat( Buffer, T_SINGLE );
+//      DGFloat( Buffer, TY_SINGLE );
         {
             DATA_QUAD   local_dq;
             float       float_value;

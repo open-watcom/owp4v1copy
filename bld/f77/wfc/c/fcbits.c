@@ -83,7 +83,7 @@ void    FCBitTest( void ) {
     typ = GetType1( typ_info );
     op = XPopValue( typ );
     XPush( CGCompare( O_NE, CGBinary( O_AND, op, BitPosition( typ_info ), typ ),
-                            CGInteger( 0, T_INTEGER ), typ ) );
+                            CGInteger( 0, TY_INTEGER ), typ ) );
 }
 
 

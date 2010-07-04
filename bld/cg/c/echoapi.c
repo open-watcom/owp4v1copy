@@ -185,7 +185,7 @@ void verifyNotUserType   // VERIFY NOT A USER-DEFINED TYPE
     if( alias ) {
         type = alias->refno;
     }
-    if( type >= T_FIRST_FREE ) {
+    if( type >= TY_FIRST_FREE ) {
         errMsg( "cannot use user-defined type" );
         handleFailure();
     }
@@ -405,44 +405,32 @@ void EchoAPI              // EchoAPI ROUTINE
                   case 't' : {
                     cg_type type = (cg_type)va_arg( args, int );
                     switch( type ) {
-                      case_str( T_UINT_1 )
-                      case_str( T_INT_1 )
-                      case_str( T_UINT_2 )
-                      case_str( T_INT_2 )
-                      case_str( T_UINT_4 )
-                      case_str( T_INT_4 )
-                      case_str( T_UINT_8 )
-                      case_str( T_INT_8 )
-                      case_str( T_LONG_POINTER )
-                      case_str( T_HUGE_POINTER )
-                      case_str( T_NEAR_POINTER )
-                      case_str( T_LONG_CODE_PTR )
-                      case_str( T_NEAR_CODE_PTR )
-                      case_str( T_SINGLE )
-                #if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
+                      case_str( TY_UINT_1 )
+                      case_str( TY_INT_1 )
+                      case_str( TY_UINT_2 )
+                      case_str( TY_INT_2 )
+                      case_str( TY_UINT_4 )
+                      case_str( TY_INT_4 )
+                      case_str( TY_UINT_8 )
+                      case_str( TY_INT_8 )
+                      case_str( TY_LONG_POINTER )
+                      case_str( TY_HUGE_POINTER )
+                      case_str( TY_NEAR_POINTER )
+                      case_str( TY_LONG_CODE_PTR )
+                      case_str( TY_NEAR_CODE_PTR )
+                      case_str( TY_SINGLE )
                       case_str( TY_DOUBLE )
-                #else
-                      case_str( T_DOUBLE )
-                #endif
-                      case_str( T_LONG_DOUBLE )
-                      case_str( T_UNKNOWN )
-                #if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
+                      case_str( TY_LONG_DOUBLE )
+                      case_str( TY_UNKNOWN )
                       case_str( TY_DEFAULT )
-                #else
-                      case_str( T_DEFAULT )
-                #endif
-                      case_str( T_INTEGER )
-                #if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
+                      case_str( TY_INTEGER )
                       case_str( TY_UNSIGNED )
-                #else
-                      case_str( T_UNSIGNED )
-                #endif
-                      case_str( T_POINTER )
-                      case_str( T_CODE_PTR )
-                      case_str( T_BOOLEAN )
-                      case_str( T_PROC_PARM )
+                      case_str( TY_POINTER )
+                      case_str( TY_CODE_PTR )
+                      case_str( TY_BOOLEAN )
+                      case_str( TY_PROC_PARM )
                       default :
-                        EchoAPIString( "T_0" );
+                        EchoAPIString( "TY_0" );
                         itoa( type, buffer, 10 );
                         EchoAPIString( buffer );
                         break;

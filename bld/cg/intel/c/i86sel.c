@@ -140,8 +140,8 @@ extern  signed_32       ScanCost( select_node *s_node ) {
         list = list->next;
     }
     tipe = SelType( hi - lo );
-    if( ( tipe == T_UINT_4 && values < MIN_LVALUES ) ||
-         ( tipe != T_UINT_4 && values < MIN_SVALUES ) ) {
+    if( ( tipe == TY_UINT_4 && values < MIN_LVALUES ) ||
+         ( tipe != TY_UINT_4 && values < MIN_SVALUES ) ) {
         cost = MAX_COST;
     } else {
         type_length = TypeAddress( tipe )->length;
@@ -170,7 +170,7 @@ extern  signed_32       JumpCost( select_node *s_node ) {
         cost = MIN_JUMPS_SETUP + WORD_SIZE * in_range;
         /* an extra two bytes are needed to zero the high part before
            the jump */
-        if ( SelType( 0xffffffff ) == T_UINT_1 )
+        if ( SelType( 0xffffffff ) == TY_UINT_1 )
             cost += 2;
         cost = Balance( cost, 1 );
     }
@@ -209,7 +209,7 @@ extern  signed_32       IfCost( select_node *s_node, int entries ) {
     cost = jumpsize + CmpSize[ tipe_length ];
     /* for char-sized switches, often the two-byte "cmp al,xx" is used.
        otherwise we need three bytes */
-    if ( SelType( 0xffffffff ) != T_UINT_1 && tipe_length == 1 )
+    if ( SelType( 0xffffffff ) != TY_UINT_1 && tipe_length == 1 )
         cost++;
     cost *= entries;
     log_entries = 0;
@@ -248,7 +248,7 @@ extern  tbl_control     *MakeScanTab( select_list *list, signed_32 hi,
     table->size = cases;
     old = SetOP( AskCodeSeg() );
     table->value_lbl = AskForNewLabel();
-    CodeLabel( table->value_lbl, TypeAddress( T_NEAR_CODE_PTR )->length );
+    CodeLabel( table->value_lbl, TypeAddress( TY_NEAR_CODE_PTR )->length );
     GenSelEntry( TRUE );
     table->lbl = AskForNewLabel();
     if( tipe != real_tipe ) {
@@ -259,7 +259,7 @@ extern  tbl_control     *MakeScanTab( select_list *list, signed_32 hi,
     if( other == NULL ) {
         other = table->cases[ 0 ];  /* no otherwise? he bakes!*/
     }
-    if( tipe == T_WORD ) {
+    if( tipe == TY_WORD ) {
         GenValuesForward( list, hi, lo, to_sub, tipe );
     } else {
         GenValuesBackward( list, hi, lo, to_sub, tipe );
@@ -269,7 +269,7 @@ extern  tbl_control     *MakeScanTab( select_list *list, signed_32 hi,
     tab_ptr = &table->cases[ 0 ];
     curr = lo;
     scan = list;
-    if( tipe != T_WORD ) {
+    if( tipe != TY_WORD ) {
         GenCodePtr( other );
     }
     for(;;) {
@@ -284,7 +284,7 @@ extern  tbl_control     *MakeScanTab( select_list *list, signed_32 hi,
             ++curr;
         }
     }
-    if( tipe == T_WORD ) {
+    if( tipe == TY_WORD ) {
         GenCodePtr( other );
     }
     SetOP( old );
@@ -302,13 +302,13 @@ static  void    GenValuesForward( select_list *list, signed_32 hi,
     curr = lo;
     for(;;) {
         switch( tipe ) {
-        case T_UINT_1:
+        case TY_UINT_1:
             Gen1ByteValue( curr - to_sub );
             break;
-        case T_UINT_2:
+        case TY_UINT_2:
             Gen2ByteValue( curr - to_sub );
             break;
-        case T_UINT_4:
+        case TY_UINT_4:
             Gen4ByteValue( curr - to_sub );
             break;
         }
@@ -338,13 +338,13 @@ static  void    GenValuesBackward( select_list *list, signed_32 hi,
     }
     for(;;) {
         switch( tipe ) {
-        case T_UINT_1:
+        case TY_UINT_1:
             Gen1ByteValue( curr - to_sub );
             break;
-        case T_UINT_2:
+        case TY_UINT_2:
             Gen2ByteValue( curr - to_sub );
             break;
-        case T_UINT_4:
+        case TY_UINT_4:
             Gen4ByteValue( curr - to_sub );
             break;
         }
@@ -376,7 +376,7 @@ extern  tbl_control     *MakeJmpTab( select_list *list, signed_32 lo,
     old = SetOP( AskCodeSeg() );
     table->lbl = AskForNewLabel();
     table->value_lbl = NULL;
-    CodeLabel( table->lbl, TypeAddress( T_NEAR_CODE_PTR )->length );
+    CodeLabel( table->lbl, TypeAddress( TY_NEAR_CODE_PTR )->length );
     table->size = cases;
     tab_ptr = &table->cases[ 0 ];
     for(;;) {
@@ -406,7 +406,7 @@ extern  name_def        *SelIdx( tbl_control *table, an node ) {
 
     /* use CG routines here to get folding*/
     idxan = TreeGen( TGBinary( O_TIMES, TGLeaf( BGDuplicate( node ) ),
-                                TGLeaf( BGInteger( WORD_SIZE, TypeAddress( T_WORD ) ) ), TypeAddress( T_WORD ) ) );
+                                TGLeaf( BGInteger( WORD_SIZE, TypeAddress( TY_WORD ) ) ), TypeAddress( TY_WORD ) ) );
     idx = GenIns( idxan );
     BGDone( idxan );
     return( &AllocIndex( idx, AllocMemory( table, 0, CG_TBL, WD ), 0, WD )->n );
@@ -421,20 +421,20 @@ extern  type_def        *SelNodeType( an node, bool is_signed ) {
 
     switch( node->tipe->length ) {
     case 1:
-        unsigned_t = T_UINT_1;
-        signed_t = T_INT_1;
+        unsigned_t = TY_UINT_1;
+        signed_t = TY_INT_1;
         break;
     case 4:
-        unsigned_t = T_UINT_4;
-        signed_t = T_INT_4;
+        unsigned_t = TY_UINT_4;
+        signed_t = TY_INT_4;
         break;
     case 8:
-        unsigned_t = T_UINT_8;
-        signed_t = T_INT_8;
+        unsigned_t = TY_UINT_8;
+        signed_t = TY_INT_8;
         break;
     default:
-        unsigned_t = T_UINT_2;
-        signed_t = T_INT_2;
+        unsigned_t = TY_UINT_2;
+        signed_t = TY_INT_2;
         break;
     }
     return( TypeAddress( is_signed ? signed_t : unsigned_t ) );

@@ -199,64 +199,51 @@ typedef enum {
 
 /*  The first part must correspond to <typclass> */
 
-        T_UINT_1,       /*   0 */
-        T_INT_1,
-        T_UINT_2,
-        T_INT_2,
-        T_UINT_4,
-        T_INT_4,
-        T_UINT_8,
-        T_INT_8,
+        TY_UINT_1,       /*   0 */
+        TY_INT_1,
+        TY_UINT_2,
+        TY_INT_2,
+        TY_UINT_4,
+        TY_INT_4,
+        TY_UINT_8,
+        TY_INT_8,
 
-        T_LONG_POINTER,
-        T_HUGE_POINTER,
-        T_NEAR_POINTER,
-        T_LONG_CODE_PTR,
-        T_NEAR_CODE_PTR,
+        TY_LONG_POINTER,
+        TY_HUGE_POINTER,
+        TY_NEAR_POINTER,
+        TY_LONG_CODE_PTR,
+        TY_NEAR_CODE_PTR,
 
-        T_SINGLE,
-#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
+        TY_SINGLE,
         TY_DOUBLE,
-#else
-        T_DOUBLE,
-#endif
-        T_LONG_DOUBLE,
+        TY_LONG_DOUBLE,
 
-        T_UNKNOWN,
+        TY_UNKNOWN,
+        TY_DEFAULT,      /*  11  Use defaults */
 
-#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
-        TY_DEFAULT,     /*  11  Use defaults */
-#else
-        T_DEFAULT,      /*  11  Use defaults */
-#endif
+        TY_INTEGER,      /*  Default integer */
+        TY_UNSIGNED,     /*  Default unsigned */
+        TY_POINTER,      /*  Default data pointer */
+        TY_CODE_PTR,     /*  Default code pointer */
+        TY_BOOLEAN,      /*  Resultant type for O_FLOW, comparison ops */
 
-        T_INTEGER,      /*  Default integer */
-#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END )
-        TY_UNSIGNED,    /*  Default unsigned */
-#else
-        T_UNSIGNED,     /*  Default unsigned */
-#endif
-        T_POINTER,      /*  Default data pointer */
-        T_CODE_PTR,     /*  Default code pointer */
-        T_BOOLEAN,      /*  Resultant type for O_FLOW, comparison ops */
+        TY_PROC_PARM,    /*  For Pascal procedural parameters */
+        TY_VA_LIST,      /*  For RISC-based O_VA_START support */
 
-        T_PROC_PARM,    /*  For Pascal procedural parameters */
-        T_VA_LIST,      /*  For RISC-based O_VA_START support */
-
-        T_FIRST_FREE,   /*  First user definable type */
+        TY_FIRST_FREE,   /*  First user definable type */
 
 #if defined( BY_FORTRAN_FRONT_END )
   #include "fetypes.h"
 #endif
 
-        T_LAST_FREE = 65530U - 1,
+        TY_LAST_FREE = 65530U - 1,
 
-        T_NEAR_INTEGER,
-        T_LONG_INTEGER,
-        T_HUGE_INTEGER
+        TY_NEAR_INTEGER,
+        TY_LONG_INTEGER,
+        TY_HUGE_INTEGER
 } cg_type;
 
-#define T_HUGE_CODE_PTR T_LONG_CODE_PTR  /* for now */
+#define TY_HUGE_CODE_PTR TY_LONG_CODE_PTR  /* for now */
 
 #define MIN_OP          O_NOP
 #define O_FIRST_COND    O_EQ

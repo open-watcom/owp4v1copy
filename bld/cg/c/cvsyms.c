@@ -355,7 +355,7 @@ static void LabelReloc( seg_id seg, bck_info *bck, long disp )
 
     old = SetOP( seg );
     id = AskSegID( bck, CG_BACK );
-    ptr_type = TypeAddress( T_LONG_POINTER );
+    ptr_type = TypeAddress( TY_LONG_POINTER );
     BackPtr( bck, id, disp, ptr_type );
     SetOP( old );
 }

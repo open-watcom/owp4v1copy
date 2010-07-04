@@ -257,41 +257,41 @@ extern  cg_type NamePtrType( name *op ) {
                 if( op->m.memory_type == CG_FE ) {
                     if( FEAttr( sym ) & FE_PROC ) {
                         if( IsFarFunc( sym ) )
-                            return( T_LONG_CODE_PTR );
-                        return( T_NEAR_CODE_PTR );
+                            return( TY_LONG_CODE_PTR );
+                        return( TY_NEAR_CODE_PTR );
                     } else {
-                        return( T_HUGE_POINTER );
+                        return( TY_HUGE_POINTER );
                     }
                 } else {
-                    return( T_HUGE_POINTER );
+                    return( TY_HUGE_POINTER );
                 }
             } else if( AskSegPrivate( AskSegID( sym, op->m.memory_type ) )
                         || _IsTargetModel( FLOATING_DS ) ) {
                 if( op->m.memory_type == CG_FE &&
                     ( FEAttr( sym ) & FE_ONESEG ) ) {
-                    return( T_POINTER );
+                    return( TY_POINTER );
                 } else {
-                    return( T_HUGE_POINTER );
+                    return( TY_HUGE_POINTER );
                 }
             } else {
-                return( T_POINTER );
+                return( TY_POINTER );
             }
         } else if( _IsTargetModel( FLOATING_DS ) || op->m.memory_type == CG_CLB ) {
-            return( T_HUGE_POINTER );
+            return( TY_HUGE_POINTER );
         } else {
-            return( T_POINTER );
+            return( TY_POINTER );
         }
     } else if( op->n.class == N_TEMP ) {
         if( _IsTargetModel( FLOATING_SS ) || _IsTargetModel( FLOATING_DS ) ) {
             // can't have a stack > 64K - BBB 06/02/94
-            return( T_LONG_POINTER );
+            return( TY_LONG_POINTER );
         } else {
-            return( T_POINTER );
+            return( TY_POINTER );
         }
     } else if( _IsTargetModel( FLOATING_DS ) ) {
-        return( T_HUGE_POINTER );
+        return( TY_HUGE_POINTER );
     } else {
-        return( T_POINTER );
+        return( TY_POINTER );
     }
 }
 

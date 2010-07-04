@@ -247,7 +247,7 @@ extern  cg_type NamePtrType( name *op ) {
 /*************************************/
 
     op = op;
-    return( T_NEAR_POINTER );
+    return( TY_NEAR_POINTER );
 }
 
 

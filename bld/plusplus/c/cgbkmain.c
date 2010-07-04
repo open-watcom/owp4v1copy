@@ -157,10 +157,10 @@ static void cgResetThis(        // RESET THIS, IF REQUIRED
     if( ! IbpReference( NULL, &sym, &ref, &offset_ref ) ) {
         expr = CgExprPop();
         if( offset > 0 ) {
-           expr = CGBinary( O_MINUS, expr, CgOffset( offset ), T_POINTER );
+           expr = CGBinary( O_MINUS, expr, CgOffset( offset ), TY_POINTER );
         }
-        expr = CGLVAssign( CgSymbol( sym ), expr, T_POINTER );
-        CgExprPush( expr, T_POINTER );
+        expr = CGLVAssign( CgSymbol( sym ), expr, TY_POINTER );
+        CgExprPush( expr, TY_POINTER );
     }
 }
 
@@ -344,13 +344,13 @@ static void cgDtorThisOffset(   // DESTRUCT (*this)+offset
                                    , refd_sym
                                    , offset + refd_off
                                    , cdtor )
-              , T_POINTER );
+              , TY_POINTER );
     } else {
         expr = CgFetchSymbolAddOffset( this_sym, offset );
         expr = CgDestructExpr( dtor, expr, cdtor );
-        CgExprPush( expr, T_POINTER );
+        CgExprPush( expr, TY_POINTER );
         cgResetThis( offset );
-        CgDone( CgExprPop(), T_POINTER );
+        CgDone( CgExprPop(), TY_POINTER );
     }
 }
 
@@ -500,7 +500,7 @@ static unsigned cgDestructGroup(// DESTRUCT UP TO STATE ENTRY
                                            , se->sym_auto.sym
                                            , 0
                                            , cdtor )
-                      , T_POINTER );
+                      , TY_POINTER );
             } else {
                 ++ destructions;
                 flags |= DGRP_TAB_CALL;
@@ -517,9 +517,9 @@ static unsigned cgDestructGroup(// DESTRUCT UP TO STATE ENTRY
                 lab = CondLabelAdd( &lab_ring, se->test_flag.se_true );
                 CondInfoSetup( se->test_flag.index, &cond, fctl );
                 expr = CgSymbolPlusOffset( cond.sym, cond.offset );
-                expr = CgFetchType( expr, T_UINT_1 );
-                expr = CGBinary( O_AND, expr, CgOffset( cond.mask ), T_UINT_1 );
-                CgControl( O_IF_TRUE, expr, T_UINT_1, lab );
+                expr = CgFetchType( expr, TY_UINT_1 );
+                expr = CGBinary( O_AND, expr, CgOffset( cond.mask ), TY_UINT_1 );
+                CgControl( O_IF_TRUE, expr, TY_UINT_1, lab );
                 lab = CondLabelAdd( &lab_ring, se->test_flag.se_false );
                 CGControl( O_GOTO, NULL, lab );
                 flags &= ~ DGRP_LIVE;
@@ -1045,8 +1045,8 @@ static void cdArgTest(          // TESTING CODE FOR CDARG
         // test not needed
     } else {
         expr = CgFetchSym( fctl->cdtor_sym );
-        expr = CGBinary( O_AND, expr, CGInteger( mask, T_UINT_1 ), T_UINT_1 );
-        expr = CGCompare( O_NE, expr, CGInteger( 0, T_UINT_1 ), TY_BOOLEAN );
+        expr = CGBinary( O_AND, expr, CGInteger( mask, TY_UINT_1 ), TY_UINT_1 );
+        expr = CGCompare( O_NE, expr, CGInteger( 0, TY_UINT_1 ), TY_BOOL );
         optype = branch_on ? O_IF_TRUE : O_IF_FALSE;
         fctl->cdarg_lab = BENewLabel();
         CGControl( optype, expr, fctl->cdarg_lab );
@@ -1078,29 +1078,29 @@ static void genCtorDispInitCode(// generate ctor-disp init code
     BASE_CLASS *base;
 
     /* unsigned const *cdp; */
-    cdp = CGTemp( T_POINTER );
+    cdp = CGTemp( TY_POINTER );
     /* unsigned cdv; */
     cdv = CGTemp( TY_UNSIGNED );
     /* cdp = this->vbptr; */
     info = class_type->u.c.info;
     vb_offset = info->vb_offset;
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
-    e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset ), T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
-    e2 = CGTempName( cdp, T_POINTER );
-    e1 = CGAssign( e2, e1, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
+    e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset ), TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
+    e2 = CGTempName( cdp, TY_POINTER );
+    e1 = CGAssign( e2, e1, TY_POINTER );
     CGDone( e1 );
     RingIterBeg( info->bases, base ) {
         if( _IsVirtualBase( base ) ) {
             if( TypeCtorDispRequired( class_type, base->type ) ) {
                 /* cdv = cdp[i] + offsetof(scope,vbptr); */
-                e1 = CGTempName( cdp, T_POINTER );
-                e1 = CGUnary( O_POINTS, e1, T_POINTER );
+                e1 = CGTempName( cdp, TY_POINTER );
+                e1 = CGUnary( O_POINTS, e1, TY_POINTER );
                 e2 = CgOffset( base->vb_index * TARGET_UINT );
-                e1 = CGBinary( O_PLUS, e1, e2, T_POINTER );
+                e1 = CGBinary( O_PLUS, e1, e2, TY_POINTER );
                 e1 = CGUnary( O_POINTS, e1, TY_UNSIGNED );
-                e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset ), T_POINTER );
+                e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset ), TY_POINTER );
                 e2 = CGTempName( cdv, TY_UNSIGNED );
                 e1 = CGAssign( e2, e1, TY_UNSIGNED );
                 CGDone( e1 );
@@ -1109,9 +1109,9 @@ static void genCtorDispInitCode(// generate ctor-disp init code
                 e1 = CGUnary( O_POINTS, e1, TY_UNSIGNED );
                 e2 = CgOffset( TARGET_UINT );
                 e2 = CGBinary( O_MINUS, e1, e2, TY_UNSIGNED );
-                e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-                e1 = CGUnary( O_POINTS, e1, T_POINTER );
-                e2 = CGBinary( O_PLUS, e1, e2, T_POINTER );
+                e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+                e1 = CGUnary( O_POINTS, e1, TY_POINTER );
+                e2 = CGBinary( O_PLUS, e1, e2, TY_POINTER );
                 e1 = CGTempName( cdv, TY_UNSIGNED );
                 e1 = CGUnary( O_POINTS, e1, TY_UNSIGNED );
                 e1 = CGAssign( e2, e1, TY_UNSIGNED );
@@ -1130,14 +1130,14 @@ static void genExactVPtrInit(   // generate a vptr init with exact delta
     cg_name e1;
     cg_name e2;
 
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
-    e1 = CGBinary( O_PLUS, e1, CgOffset( delta ), T_POINTER );
-    e2 = CGFEName( (cg_sym_handle)table_sym, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
+    e1 = CGBinary( O_PLUS, e1, CgOffset( delta ), TY_POINTER );
+    e2 = CGFEName( (cg_sym_handle)table_sym, TY_POINTER );
     if( ! vbptr ) {
-        e2 = CGBinary( O_PLUS, e2, CgOffset( CgDataPtrSize() ), T_POINTER );
+        e2 = CGBinary( O_PLUS, e2, CgOffset( CgDataPtrSize() ), TY_POINTER );
     }
-    e1 = CGAssign( e1, e2, T_POINTER );
+    e1 = CGAssign( e1, e2, TY_POINTER );
     CGDone( e1 );
 }
 
@@ -1159,22 +1159,22 @@ static void genVBaseVPtrInit(   // generate a vptr init in a virtual base
         cdv = cdp[i] + vb_offset + delta;
         *(this + cdv) = &sym;
     */
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
-    e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset ), T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
+    e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset ), TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
     e2 = CgOffset( vb_index * TARGET_UINT );
-    e1 = CGBinary( O_PLUS, e1, e2, T_POINTER );
+    e1 = CGBinary( O_PLUS, e1, e2, TY_POINTER );
     e1 = CGUnary( O_POINTS, e1, TY_UNSIGNED );
-    e2 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e2 = CGUnary( O_POINTS, e2, T_POINTER );
-    e1 = CGBinary( O_PLUS, e2, e1, T_POINTER );
-    e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset + delta ), T_POINTER );
-    e2 = CGFEName( (cg_sym_handle)table_sym, T_POINTER );
+    e2 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e2 = CGUnary( O_POINTS, e2, TY_POINTER );
+    e1 = CGBinary( O_PLUS, e2, e1, TY_POINTER );
+    e1 = CGBinary( O_PLUS, e1, CgOffset( vb_offset + delta ), TY_POINTER );
+    e2 = CGFEName( (cg_sym_handle)table_sym, TY_POINTER );
     if( ! vbptr ) {
-        e2 = CGBinary( O_PLUS, e2, CgOffset( CgDataPtrSize() ), T_POINTER );
+        e2 = CGBinary( O_PLUS, e2, CgOffset( CgDataPtrSize() ), TY_POINTER );
     }
-    e1 = CGAssign( e1, e2, T_POINTER );
+    e1 = CGAssign( e1, e2, TY_POINTER );
     CGDone( e1 );
 }
 
@@ -1192,9 +1192,9 @@ static void genVthunkDelta(     // generate virtual function thunk deltas
     cg_name e1;
     cg_name e2;
 
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
     e2 = CgOffset( delta );
-    e1 = CGPreGets( op, e1, e2, T_POINTER );
+    e1 = CGPreGets( op, e1, e2, TY_POINTER );
     CGDone( e1 );
 }
 
@@ -1208,13 +1208,13 @@ static void genVthunkCDisp(     // generate virtual function thunk ctor-disp
     cg_name e1;
     cg_name e2;
 
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
     e2 = CgOffset( TARGET_UINT );
-    e1 = CGBinary( O_MINUS, e1, e2, T_POINTER );
+    e1 = CGBinary( O_MINUS, e1, e2, TY_POINTER );
     e2 = CGUnary( O_POINTS, e1, TY_UNSIGNED );
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e1 = CGPreGets( O_MINUS, e1, e2, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e1 = CGPreGets( O_MINUS, e1, e2, TY_POINTER );
     CGDone( e1 );
 }
 
@@ -1229,14 +1229,14 @@ static void genVthunkVBase(     // generate virtual function thunk ctor-disp
     cg_name e1;
     cg_name e2;
 
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
-    e1 = CGUnary( O_POINTS, e1, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
+    e1 = CGUnary( O_POINTS, e1, TY_POINTER );
     e2 = CgOffset( index * TARGET_UINT );
-    e1 = CGBinary( O_PLUS, e1, e2, T_POINTER );
+    e1 = CGBinary( O_PLUS, e1, e2, TY_POINTER );
     e2 = CGUnary( O_POINTS, e1, TY_UNSIGNED );
-    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, T_POINTER );
-    e1 = CGPreGets( O_PLUS, e1, e2, T_POINTER );
+    e1 = CGFEName( (cg_sym_handle)fctl->this_sym, TY_POINTER );
+    e1 = CGPreGets( O_PLUS, e1, e2, TY_POINTER );
     CGDone( e1 );
 }
 
@@ -1300,10 +1300,10 @@ static void emitProfilingData(
         DbgVerify( 0 == ( 3 & DGTell() ), "P5 segment out of wack" );
         fnh = BENewBack( 0 );
         DGLabel( fnh );
-        DGInteger( 0,   T_INTEGER );
-        DGInteger( -1,  T_INTEGER );
-        DGInteger( 0,   T_INTEGER );
-        DGInteger( 0,   T_INTEGER );
+        DGInteger( 0,   TY_INTEGER );
+        DGInteger( -1,  TY_INTEGER );
+        DGInteger( 0,   TY_INTEGER );
+        DGInteger( 0,   TY_INTEGER );
         len = VbufLen( &data ) + 1;
         DGBytes( len, VbufString( &data ) );
         len &= 0x03;
@@ -1661,14 +1661,14 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
               case CO_GT :
               case CO_LE :
                 CgExprPush( CGCompare( cg_opcode, op1, op2, exprn_type )
-                          , TY_BOOLEAN );
-                exprn_type = TY_BOOLEAN;
+                          , TY_BOOL );
+                exprn_type = TY_BOOL;
                 break;
 
               case CO_AND_AND :
               case CO_OR_OR :
-                CgExprPush( CGFlow( cg_opcode, op1, op2 ), TY_BOOLEAN );
-                exprn_type = TY_BOOLEAN;
+                CgExprPush( CGFlow( cg_opcode, op1, op2 ), TY_BOOL );
+                exprn_type = TY_BOOL;
                 break;
 
               case CO_INDEX :
@@ -1698,11 +1698,11 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
 #if _CPU == _AXP
               case CO_VASTART :
               { cg_name x;
-                x = CGVarargsBasePtr( T_POINTER );
-                op1 = CGLVAssign( op1, x, T_POINTER );
-                x = CGInteger( TARGET_POINTER, T_INTEGER );
-                x = CGBinary( O_PLUS, op1, x, T_POINTER );
-                CgExprPush( CGAssign( x, op2, T_INTEGER ), T_INTEGER );
+                x = CGVarargsBasePtr( TY_POINTER );
+                op1 = CGLVAssign( op1, x, TY_POINTER );
+                x = CGInteger( TARGET_POINTER, TY_INTEGER );
+                x = CGBinary( O_PLUS, op1, x, TY_POINTER );
+                CgExprPush( CGAssign( x, op2, TY_INTEGER ), TY_INTEGER );
               } break;
 #endif
 
@@ -1719,19 +1719,19 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
             op1 = CgExprPopType( &op_type );
             switch( ins_value.uvalue ) {
               case CO_EXCLAMATION :
-                CgExprPush( CGFlow( cg_opcode, op1, NULL ), TY_BOOLEAN );
-                exprn_type = TY_BOOLEAN;
+                CgExprPush( CGFlow( cg_opcode, op1, NULL ), TY_BOOL );
+                exprn_type = TY_BOOL;
                 break;
               case CO_UPLUS :
                 CgExprPush( op1, exprn_type );
                 break;
               case CO_FAR16_TO_POINTER:
-                CgExprPush( CGUnary( O_PTR_TO_NATIVE, op1, T_POINTER )
-                          , T_POINTER );
+                CgExprPush( CGUnary( O_PTR_TO_NATIVE, op1, TY_POINTER )
+                          , TY_POINTER );
                 break;
               case CO_POINTER_TO_FAR16:
-                CgExprPush( CGUnary( O_PTR_TO_FOREIGN, op1, T_POINTER )
-                          , T_POINTER );
+                CgExprPush( CGUnary( O_PTR_TO_FOREIGN, op1, TY_POINTER )
+                          , TY_POINTER );
                 break;
               case CO_VOLATILE_TOP:
                 CgExprPushWithAttr( op1, exprn_type, CG_SYM_VOLATILE );
@@ -1775,8 +1775,8 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
             op1 = CGLVAssign( op1
                             , op2
                             , CgTypeOutput( ins_value.pvalue ) );
-            CgExprPush( op1, T_POINTER );
-            exprn_type = T_POINTER;
+            CgExprPush( op1, TY_POINTER );
+            exprn_type = TY_POINTER;
           } break;
 
           case IC_OPR_INDEX :               // INDEX : SET INDEX TYPE
@@ -1803,18 +1803,18 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
             SegmentLabelGen( seg_id );
             type = ((SYMBOL)ins_value.pvalue)->sym_type;
             if( FunctionDeclarationType( type ) == NULL ) {
-                far_type = T_LONG_POINTER;
+                far_type = TY_LONG_POINTER;
             } else {
-                far_type = T_LONG_CODE_PTR;
+                far_type = TY_LONG_CODE_PTR;
             }
             ref = CGLVAssign( CGTempName( CGTemp( far_type ), far_type )
                             , CgSymbol( ins_value.pvalue )
                             , far_type );
             ref = CgOffsetExpr( ref
                               , TARGET_FAR_POINTER - TARGET_SHORT
-                              , T_POINTER );
-            ref = CgFetchType( ref, T_UINT_2 );
-            CgExprPush( ref, T_UINT_2 );
+                              , TY_POINTER );
+            ref = CgFetchType( ref, TY_UINT_2 );
+            CgExprPush( ref, TY_UINT_2 );
           } break;
 
           case IC_RARG_FETCH :              // FETCH A REFERENCE ARGUMENT
@@ -1878,8 +1878,8 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
           case IC_ALLOCA :                  // ALLOCA SUPPORT
           { cg_name expr;                   // - top expression
             expr = CgExprPop();
-            expr = CGUnary( O_STACK_ALLOC, expr, T_POINTER );
-            CgExprPush( expr, T_POINTER );
+            expr = CGUnary( O_STACK_ALLOC, expr, TY_POINTER );
+            CgExprPush( expr, TY_POINTER );
           } break;
 #endif
 
@@ -2310,8 +2310,8 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
             if( retn_sym == NULL ) {
                 if( SpecialFunction( fctl->func ) == SPFN_MAIN ) {
                     // C++ requires main() to return 0 if nothing returned
-                    cgname = CGInteger( 0, T_INTEGER );
-                    cgtype = T_INTEGER;
+                    cgname = CGInteger( 0, TY_INTEGER );
+                    cgtype = TY_INTEGER;
                 } else {
                     cgname = NULL;
                     cgtype = CgTypeOutput( GetBasicType( TYP_VOID ) );
@@ -2405,17 +2405,17 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
                         cg_name e2;                 // - expression(2)
                         e1 = FstabEmitStateVar( se, fctl );
                         e2 = ObjInitAssignIndex( fctl, init, 0 );
-                        e2 = CgComma( e1, e2, T_POINTER );
+                        e2 = CgComma( e1, e2, TY_POINTER );
                         e1 = CGLVAssign
                                 ( CgSymbolPlusOffset( init->reg->sym
                                                     , CgbkInfo.size_data_ptr )
                                 , CgSymbol( BeTypeSignature( array_element )
                                              ->sym )
-                                , T_POINTER );
-                        e2 = CgComma( e1, e2, T_POINTER );
+                                , TY_POINTER );
+                        e2 = CgComma( e1, e2, TY_POINTER );
                         e1 = ObjInitAssignBase( fctl, init );
-                        e2 = CgComma( e1, e2, T_POINTER );
-                        CgCommaBefore( e2, T_POINTER );
+                        e2 = CgComma( e1, e2, TY_POINTER );
+                        CgCommaBefore( e2, TY_POINTER );
                         se->array_init.reg = init->reg;
                     }
                 }
@@ -2434,7 +2434,7 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
                 init = ObjInitArray();
                 se = init->obj_se;
                 expr = ObjInitAssignIndex( fctl, init, ins_value.uvalue + 1 );
-                CgExprPush( expr, T_POINTER );
+                CgExprPush( expr, TY_POINTER );
             } else {
                 CgPushGarbage();
             }
@@ -2558,7 +2558,7 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
           case IC_DTOR_STATIC :     // STATIC SYMBOL NEEDS DTOR
             fctl->pre_init = FstabCurrPosn();
             CompFlags.genned_static_dtor = TRUE;
-            CgCommaOptional( CgDtorStatic( ins_value.pvalue ), T_POINTER );
+            CgCommaOptional( CgDtorStatic( ins_value.pvalue ), TY_POINTER );
             break;
 
           // values:
@@ -2637,8 +2637,8 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
                 cg_name sv_expr;
                 sv_expr = FstabEmitStateVar( fctl->pre_init, fctl );
                 if( NULL != sv_expr ) {
-                    top_expr = CgComma( top_expr, sv_expr, T_POINTER );
-                    top_type = T_POINTER;
+                    top_expr = CgComma( top_expr, sv_expr, TY_POINTER );
+                    top_type = TY_POINTER;
                 }
             }
             CgExprPush( top_expr, top_type );
@@ -2829,7 +2829,7 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
                 new_expr = CgExprPopType( &type_new_expr );
                 expr = CGLVAssign( CgSymbol( FnCtlNewCtorPtr( fctl ) )
                                  , CgMakeDup( &new_expr, type_new_expr )
-                                 , T_POINTER );
+                                 , TY_POINTER );
                 CgExprPush( CgComma( expr, new_expr, type_new_expr )
                           , type_new_expr );
             }
@@ -2913,7 +2913,7 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
             FstabAssignStateVar( se );
             CgRtCallInit( &def, RTF_SETJMP );
             CgRtParamAddrSym( &def, se->try_blk.try_impl->jmp_sym );
-            CgExprPush( CgRtCallExec( &def ), T_INTEGER );
+            CgExprPush( CgRtCallExec( &def ), TY_INTEGER );
           } break;
 
           case IC_TRY_DONE :                // TRY HAS BEEN COMPLETED
@@ -3053,7 +3053,7 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
             break;
 
           case IC_SET_LABEL_SV :            // SET STATE AT LABEL
-            CgDone( FstabEmitStateVar( BlkPosnCurr(), fctl ), T_POINTER );
+            CgDone( FstabEmitStateVar( BlkPosnCurr(), fctl ), TY_POINTER );
             break;
 
           case IC_DTOR_KIND :               // SET KIND OF DTOR IF REQ'D
@@ -3082,14 +3082,14 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
                     fctl->ctored_obj = se;
                     BlkPosnTempEndSet( se );
                     expr = CgCallBackCtorStart( NULL
-                                              , T_POINTER
+                                              , TY_POINTER
                                               , se );
-                    CgCommaBefore( expr, T_POINTER );
+                    CgCommaBefore( expr, TY_POINTER );
                     if( dtor_kind == DTC_ACTUAL_DBASE
                      || dtor_kind == DTC_ACTUAL_VBASE ) {
                         if( DtmTabular( fctl ) ) {
                             expr = ObjInitRegActualBase( se );
-                            CgCommaBefore( expr, T_POINTER );
+                            CgCommaBefore( expr, TY_POINTER );
                         }
                     }
                 }
@@ -3106,9 +3106,9 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
             if( init->defn != NULL
              && init->obj_se != NULL ) {
                 expr = CgCallBackCtorDone( NULL
-                                         , T_POINTER
+                                         , TY_POINTER
                                          , init->obj_se );
-                CgCommaOptional( expr, T_POINTER );
+                CgCommaOptional( expr, TY_POINTER );
             }
           } break;
 
