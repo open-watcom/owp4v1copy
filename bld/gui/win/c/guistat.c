@@ -34,7 +34,7 @@
 #include <string.h>
 #include "guiscale.h"
 #include "guixwind.h"
-#include "wstatus.h"
+#include "statwnd.h"
 #include "guiutil.h"
 #include "guixhook.h"
 #include "guistr.h"
@@ -116,7 +116,7 @@ bool GUICreateStatusWindow( gui_window *wnd, gui_ord x, gui_ord height,
     }
     GUISetResizeStatus( &ResizeStatus );
     GUISetFreeStatus( &FreeStatus );
-    if( !StatusWndInit( GUIMainHInst, NULL, 0 ) ) {
+    if( !StatusWndInit( GUIMainHInst, NULL, 0, NULLHANDLE ) ) {
         return( FALSE );
     }
     CalcStatusRect( wnd, x, height, &status_rect );

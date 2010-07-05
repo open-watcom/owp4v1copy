@@ -69,7 +69,7 @@ typedef enum {
 #include "icon.h"
 #include "menuids.h"
 #include "mem.h"
-#include "wstatus.h"
+#include "statwnd.h"
 #include "toolbr.h"
 
 #define MAX_DIM         2048

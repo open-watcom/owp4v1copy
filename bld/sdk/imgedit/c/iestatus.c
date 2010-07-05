@@ -119,7 +119,7 @@ BOOL InitStatusLine( HWND parent )
         ImageText = (char *)MemAlloc( len );
     }
 
-    StatusWndInit( Instance, (statushook)NULL, sizeof( LPVOID ) );
+    StatusWndInit( Instance, (statushook)NULL, sizeof( LPVOID ), NULL );
 
     GetClientRect( parent, &client );
 

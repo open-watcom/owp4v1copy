@@ -51,7 +51,7 @@ sysobjs = guixscal.obj &
           guispawn.obj &
           guigsysh.obj &
           guiwinlp.obj &
-          wstatus.obj  &
+          statwnd.obj  &
           guixutil.obj &
           guimouse.obj &
           guixhook.obj &

@@ -105,8 +105,8 @@ extra_c_flags_helpopen += -fh=gui03.pch
 extra_c_flags_helpio += -fh=gui03.pch
 extra_c_flags_guirdlg += -fh=gui04.pch
 extra_c_flags_guirmenu += -fh=gui04.pch
-extra_c_flags_wstatus += -fh=gui05.pch
-extra_c_flags_wptoolbr += -fh=gui05.pch
+extra_c_flags_statwnd += -fh=gui05.pch
+extra_c_flags_toolbr += -fh=gui05.pch
 extra_c_flags_wmdisim += -fh=gui06.pch
 extra_c_flags_guifdlg += -fh=gui06.pch
 extra_c_flags_guihelp += -fh=gui07.pch

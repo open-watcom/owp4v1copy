@@ -29,6 +29,8 @@
 ****************************************************************************/
 
 
+#include "wpi.h"
+
 /*
  *  This code will create a status window for a windows app, like used
  *  in vi and wvideo.  Use as follows :
@@ -64,21 +66,21 @@
 #define STATUS_FORMAT_LEFT      '<'
 #define STATUS_NEXT_BLOCK       '['
 
-typedef BOOL (*statushook)( HWND, unsigned, UINT, LONG );
+typedef BOOL (*statushook)( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 
 typedef struct {
-    WORD        separator_width;        // in pixels
-    WORD        width;                  // width of block area
-    char        width_is_percent:1;
-    char        width_is_pixels:1;
-    char        spare:6;
+    WORD        separator_width;            /* in pixels */
+    WORD        width;                      /* width of block area */
+    char        width_is_percent    : 1;
+    char        width_is_pixels     : 1;
+    char        spare               : 6;
 } status_block_desc;
 
-extern  int     StatusWndInit( HINSTANCE hinstance, statushook hook, int extra, HCURSOR );
+extern  int     StatusWndInit( WPI_INST hinstance, statushook hook, int extra, HCURSOR );
 extern  void    StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText, COLORREF btnHighlight, COLORREF btnShadow );
-extern  HWND    StatusWndCreate( HWND parent, RECT *size, HINSTANCE hinstance, LPVOID lpvParam );
-extern  void    StatusWndDraw3DBox( HDC hdc );
-extern  void    StatusWndDrawLine( HDC hdc, HFONT hfont, const char *str, UINT flags );
+extern  HWND    StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance, LPVOID lpvParam );
+extern  void    StatusWndDraw3DBox( WPI_PRES pres );
+extern  void    StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT flags );
 extern  void    StatusWndSetSeparators( int num_items, status_block_desc *list );
 extern  int     StatusWndGetHeight( void );
 extern  void    StatusWndFini( void );
@@ -87,13 +89,13 @@ extern  void    StatusWndFini( void );
 #define VERT_BORDER     2       /* height of top and bottom raised area */
 #define BORDER_SIZE     1       /* width/height of frame line           */
 
-/* total height of window used for 3d border */
-#define TOTAL_VERT ( 2*(VERT_BORDER + BORDER_SIZE ) )
+/* Total height of window used for 3D border */
+#define TOTAL_VERT (2 * (VERT_BORDER + BORDER_SIZE))
 
-/* total width of window used for 3d border */
-#define TOTAL_HORZ ( 2*(HORZ_BORDER + BORDER_SIZE ) )
+/* Total width of window used for 3D border */
+#define TOTAL_HORZ (2 * (HORZ_BORDER + BORDER_SIZE))
 
-/* max # sections on status bar */
+/* Maximum number of sections on status bar */
 #ifndef MAX_SECTIONS
-#define MAX_SECTIONS    20
+    #define MAX_SECTIONS    20
 #endif
