@@ -588,7 +588,7 @@ static void dbg_output( void )
         DebugMsg(("Line: %lu ", LineNumber ));
         DebugMsg(("Output :"));
         for( i = 0; i < Token_Count; i++ ) {
-            switch( AsmBuffer[i]->token ) {
+            switch( AsmBuffer[i]->class ) {
             case TC_NUM:
                 DebugMsg(( " %d ", AsmBuffer[i]->u.value ));
                 break;
