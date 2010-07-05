@@ -84,12 +84,12 @@ int OrgDirective( int i )
     struct asm_sym  *sym;
     int_32          value = 0;
 
-    if( AsmBuffer[i+1]->token == T_NUM ) {
+    if( AsmBuffer[i+1]->class == TC_NUM ) {
         return( ChangeCurrentLocation( FALSE, AsmBuffer[i+1]->u.value, FALSE ) );
-    } else if( AsmBuffer[i+1]->token == T_ID ) {
+    } else if( AsmBuffer[i+1]->class == TC_ID ) {
         sym = AsmLookup( AsmBuffer[i+1]->string_ptr );
-        if( AsmBuffer[i+2]->token == T_OP_SQ_BRACKET &&
-            AsmBuffer[i+3]->token == T_NUM ) {
+        if( AsmBuffer[i+2]->class == TC_OP_SQ_BRACKET &&
+            AsmBuffer[i+3]->class == TC_NUM ) {
             value = AsmBuffer[i+3]->u.value;
         }
         return( ChangeCurrentLocation( FALSE, sym->offset + value, FALSE ) );
@@ -133,7 +133,7 @@ static void fill_in_objfile_space( uint size )
     }
 }
 
-int AlignDirective( uint_16 directive, int i )
+int AlignDirective( asm_token directive, int i )
 /********************************************/
 {
     int_32 align_val;
@@ -141,7 +141,7 @@ int AlignDirective( uint_16 directive, int i )
 
     switch( directive ) {
     case T_ALIGN:
-        if( AsmBuffer[i+1]->token == T_NUM ) {
+        if( AsmBuffer[i+1]->class == TC_NUM ) {
             int power;
 
             align_val = AsmBuffer[i+1]->u.value;

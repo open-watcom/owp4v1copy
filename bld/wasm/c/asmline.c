@@ -589,23 +589,23 @@ static void dbg_output( void )
         DebugMsg(("Output :"));
         for( i = 0; i < Token_Count; i++ ) {
             switch( AsmBuffer[i]->token ) {
-            case T_NUM:
+            case TC_NUM:
                 DebugMsg(( " %d ", AsmBuffer[i]->u.value ));
                 break;
-            case T_STRING:
+            case TC_STRING:
                 DebugMsg(( " '%s' ", AsmBuffer[i]->string_ptr));
                 break;
-            case T_OP_SQ_BRACKET:
+            case TC_OP_SQ_BRACKET:
                 DebugMsg(( " %s ", "[" ));
                 break;
-            case T_CL_SQ_BRACKET:
+            case TC_CL_SQ_BRACKET:
                 DebugMsg(( " %s ", "]" ));
                 break;
-            case T_COLON:
+            case TC_COLON:
                 DebugMsg(( " %s ", ":" ));
                 break;
-            case T_RES_ID:
-                switch( AsmBuffer[i]->u.value ) {
+            case TC_RES_ID:
+                switch( AsmBuffer[i]->u.token ) {
                 case T_PTR:
                     DebugMsg(( " %s ", "Ptr" ));
                     break;

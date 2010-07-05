@@ -99,15 +99,15 @@ static void jumpExtend( int far_flag )
 
     /* there MUST be a conditional jump instruction in asmbuffer */
     for( i = 0; ; i++ ) {
-        if( ( AsmBuffer[i]->token == T_INSTR )
-            && IS_JMP( AsmBuffer[i]->u.value ) ) {
+        if( ( AsmBuffer[i]->class == TC_INSTR )
+            && IS_JMP( AsmBuffer[i]->u.token ) ) {
             break;
         }
     }
 
     AsmWarn( 4, EXTENDING_JUMP );
 
-    getJumpNegation( AsmBuffer[i]->u.value, buffer, MAX_LINE_LEN );
+    getJumpNegation( AsmBuffer[i]->u.token, buffer, MAX_LINE_LEN );
     if( far_flag ) {
         next_ins_size = Code->use32 ? 7 : 5;
     } else {
@@ -120,20 +120,15 @@ static void jumpExtend( int far_flag )
     } else {
         strcpy( buffer, "jmp " );
     }
-    for( i++; AsmBuffer[i]->token != T_FINAL; i++ ) {
-        switch( AsmBuffer[i]->token ) {
-        case T_NUM:
-        case T_DEC_NUM:
-        case T_OCT_NUM:
-        case T_HEX_NUM_0:
-        case T_HEX_NUM:
-        case T_BIN_NUM:
+    for( i++; AsmBuffer[i]->class != TC_FINAL; i++ ) {
+        switch( AsmBuffer[i]->class ) {
+        case TC_NUM:
             itoa( AsmBuffer[i]->u.value, buffer + strlen( buffer ), 10 );
             break;
-        case T_OP_SQ_BRACKET:
+        case TC_OP_SQ_BRACKET:
             strcat( buffer, "[" );
             break;
-        case T_CL_SQ_BRACKET:
+        case TC_CL_SQ_BRACKET:
             strcat( buffer, "]" );
             break;
         default:
@@ -153,8 +148,8 @@ static void FarCallToNear( void )
 
     /* there MUST be a call instruction in asmbuffer */
     for( i = 0; ; i++ ) {
-        if( ( AsmBuffer[i]->token == T_INSTR )
-            && ( AsmBuffer[i]->u.value == T_CALL ) ) {
+        if( ( AsmBuffer[i]->class == TC_INSTR )
+            && ( AsmBuffer[i]->u.token == T_CALL ) ) {
             break;
         }
     }
@@ -170,20 +165,15 @@ static void FarCallToNear( void )
 #else
     strcpy( buffer, "CALL NEAR PTR " );
 #endif
-    for( i++; AsmBuffer[i]->token != T_FINAL; i++ ) {
-        switch( AsmBuffer[i]->token ) {
-        case T_NUM:
-        case T_DEC_NUM:
-        case T_OCT_NUM:
-        case T_HEX_NUM_0:
-        case T_HEX_NUM:
-        case T_BIN_NUM:
+    for( i++; AsmBuffer[i]->class != TC_FINAL; i++ ) {
+        switch( AsmBuffer[i]->class ) {
+        case TC_NUM:
             itoa( AsmBuffer[i]->u.value, buffer+strlen( buffer ), 10 );
             break;
-        case T_OP_SQ_BRACKET:
+        case TC_OP_SQ_BRACKET:
             strcat( buffer, "[" );
             break;
-        case T_CL_SQ_BRACKET:
+        case TC_CL_SQ_BRACKET:
             strcat( buffer, "]" );
             break;
         default:
@@ -213,8 +203,11 @@ int jmp( expr_list *opndx )
     Code->data[Opnd_Count] = opndx->value;
     sym = opndx->sym;
     if( sym == NULL ) {
-        if( IS_JMPCALLN( Code->info.token ) )
-            Code->info.token++;
+        if( Code->info.token == T_CALL ) {
+            Code->info.token = T_CALLF;
+        } else if( Code->info.token == T_JMP ) {
+            Code->info.token = T_JMPF;
+        }
         if( Code->data[Opnd_Count] > USHRT_MAX )
             Code->info.opnd_type[Opnd_Count] = OP_I32;
         else
@@ -387,8 +380,10 @@ int jmp( expr_list *opndx )
         if( Code->mem_type == MT_EMPTY && sym->mem_type != MT_EMPTY ) {
             switch( sym->mem_type ) {
             case MT_FAR:
-                if( IS_JMPCALLN( Code->info.token ) ) {
-                    Code->info.token++;
+                if( Code->info.token == T_CALL ) {
+                    Code->info.token = T_CALLF;
+                } else if( Code->info.token == T_JMP ) {
+                    Code->info.token = T_JMPF;
                 }
                 // fall through
             case MT_SHORT:
@@ -397,10 +392,15 @@ int jmp( expr_list *opndx )
                 break;
 #if defined( _STANDALONE_ )
             case MT_PROC:
-                Code->mem_type = IS_PROC_FAR() ? MT_FAR : MT_NEAR;
-                if( IS_JMPCALLN( Code->info.token )
-                    && ( Code->mem_type == MT_FAR ) ) {
-                    Code->info.token++;
+                if( IS_PROC_FAR() ) {
+                    Code->mem_type = MT_FAR;
+                    if( Code->info.token == T_CALL ) {
+                        Code->info.token = T_CALLF;
+                    } else if( Code->info.token == T_JMP ) {
+                        Code->info.token = T_JMPF;
+                    }
+                } else {
+                    Code->mem_type = MT_NEAR;
                 }
                 break;
 #endif
@@ -412,8 +412,12 @@ int jmp( expr_list *opndx )
                 Code->mem_type = sym->mem_type;
             }
         }
-        if( ( Code->mem_type == MT_FAR ) && IS_JMPCALLN( Code->info.token ) ) {
-            Code->info.token++;
+        if( Code->mem_type == MT_FAR ) {
+            if( Code->info.token == T_CALL ) {
+                Code->info.token = T_CALLF;
+            } else if( Code->info.token == T_JMP ) {
+                Code->info.token = T_JMPF;
+            }
         }
         switch( Code->info.token ) {
         case T_CALLF:
@@ -735,8 +739,12 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
                 Code->mem_type = mem_type;
                 if( fix_mem_type ) {
                     Code->mem_type_fixed = TRUE;
-                    if( IS_JMPCALLN( Code->info.token ) && ( mem_type == MT_FAR ) ) {
-                        Code->info.token++;
+                    if( mem_type == MT_FAR ) {
+                        if( Code->info.token == T_CALL ) {
+                            Code->info.token = T_CALLF;
+                        } else if( Code->info.token == T_JMP ) {
+                            Code->info.token = T_JMPF;
+                        }
                     }
                 }
 

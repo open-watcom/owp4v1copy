@@ -64,20 +64,20 @@ int StructDef( int i )
 
     if( Options.mode & MODE_IDEAL ) {
         n = i + 1;
-        if( ( AsmBuffer[i]->u.value == T_STRUC ) &&
-            ( AsmBuffer[n]->token != T_ID ) ) {
+        if( ( AsmBuffer[i]->u.token == T_STRUC ) &&
+            ( AsmBuffer[n]->class != TC_ID ) ) {
             AsmError( SYNTAX_ERROR );
             return( ERROR );
         }
     } else {
         n = i - 1;
-        if( ( n < 0 ) || ( AsmBuffer[n]->token != T_ID ) ) {
+        if( ( n < 0 ) || ( AsmBuffer[n]->class != TC_ID ) ) {
             AsmError( SYNTAX_ERROR );
             return( ERROR );
         }
     }
     name = AsmBuffer[n]->string_ptr;
-    switch( AsmBuffer[i]->u.value ) {
+    switch( AsmBuffer[i]->u.token ) {
     case T_STRUC:
     case T_STRUCT:
         dir = (dir_node *)AsmGetSymbol( name );
@@ -87,9 +87,9 @@ int StructDef( int i )
             } else if( dir->sym.state == SYM_UNDEFINED ) {
                 dir_change( dir, TAB_STRUCT );
             } else if( ( dir->sym.state == SYM_STRUCT ) && (Options.mode & MODE_IDEAL) ) {
-               /* Redefinition of structure */
-               FreeInfo( dir );
-               dir_init( dir, TAB_STRUCT );
+                /* Redefinition of structure */
+                FreeInfo( dir );
+                dir_init( dir, TAB_STRUCT );
             } else {
                 AsmError( SYMBOL_ALREADY_DEFINED );
                 return( ERROR );
@@ -102,10 +102,10 @@ int StructDef( int i )
         break;
     case T_ENDS:
         if( Options.mode & MODE_IDEAL ) {
-            switch( AsmBuffer[n]->token ) {
-            case T_FINAL:   /* Name absent */
+            switch( AsmBuffer[n]->class ) {
+            case TC_FINAL:   /* Name absent */
                 name = Definition.curr_struct->sym.name;
-            case T_ID:
+            case TC_ID:
                 break;
             default:
                 AsmError( SYNTAX_ERROR );
@@ -142,7 +142,7 @@ int InitializeStructure( asm_sym *sym, asm_sym *struct_symbol, int i )
     dir = (dir_node *)struct_symbol;
 
     PushLineQueue();
-    if( AsmBuffer[i]->token != T_STRING ) {
+    if( AsmBuffer[i]->class != TC_STRING ) {
         AsmError( SYNTAX_ERROR ); // fixme
         return( ERROR );
     }
@@ -206,7 +206,7 @@ int AddFieldToStruct( asm_sym *sym,  int loc )
     f = AsmAlloc( sizeof( field_list ) );
 
     if( loc == -1 ) {
-        for( loc = 0; AsmBuffer[loc]->token != T_FINAL; ++loc ) {
+        for( loc = 0; AsmBuffer[loc]->class != TC_FINAL; ++loc ) {
             /* nothing to do */
         }
     }
@@ -220,24 +220,24 @@ int AddFieldToStruct( asm_sym *sym,  int loc )
     strcpy( f->initializer, AsmBuffer[ loc ]->string_ptr );
 
     /* now add the value to initialize the struct to */
-    for( i = loc + 1; AsmBuffer[i]->token != T_FINAL; i++ ) {
+    for( i = loc + 1; AsmBuffer[i]->class != TC_FINAL; i++ ) {
         if( AsmBuffer[i]->string_ptr != NULL ) {
             count += strlen( AsmBuffer[i]->string_ptr ) + 1;
         }
-        if( AsmBuffer[i]->token == T_STRING ) count += 2;
+        if( AsmBuffer[i]->class == TC_STRING ) count += 2;
     }
 
     f->value = AsmAlloc( count + 1 );
     f->value[0] = '\0';
 
-    for( i = loc + 1; AsmBuffer[i]->token != T_FINAL; i++ ) {
-        if( AsmBuffer[i]->token == T_STRING ) {
+    for( i = loc + 1; AsmBuffer[i]->class != TC_FINAL; i++ ) {
+        if( AsmBuffer[i]->class == TC_STRING ) {
             strcat( f->value, "<" );
         }
         if( AsmBuffer[i]->string_ptr != NULL ) {
             strcat( f->value, AsmBuffer[i]->string_ptr );
         }
-        if( AsmBuffer[i]->token == T_STRING ) {
+        if( AsmBuffer[i]->class == TC_STRING ) {
             strcat( f->value, ">" );
         }
         strcat( f->value, " " );

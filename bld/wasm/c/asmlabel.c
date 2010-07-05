@@ -187,20 +187,20 @@ int LabelDirective( int i )
     } else {
         n = i - 1;
     }
-    if( ( n < 0 ) || ( AsmBuffer[n]->token != T_ID ) ) {
+    if( ( n < 0 ) || ( AsmBuffer[n]->class != TC_ID ) ) {
         AsmError( INVALID_LABEL_DEFINITION );
         return( ERROR );
     }
-    if( AsmBuffer[++i]->token == T_ID ) {
+    if( AsmBuffer[++i]->class == TC_ID ) {
         if( IsLabelStruct( AsmBuffer[i]->string_ptr ) )
             return( MakeLabel( AsmBuffer[n]->string_ptr, MT_STRUCT ) );
     }
-    if( ( AsmBuffer[i]->token != T_RES_ID ) &&
-        ( AsmBuffer[i]->token != T_DIRECTIVE ) ) {
+    if( ( AsmBuffer[i]->class != TC_RES_ID ) &&
+        ( AsmBuffer[i]->class != TC_DIRECTIVE ) ) {
         AsmError( INVALID_LABEL_DEFINITION );
         return( ERROR );
     }
-    switch( AsmBuffer[i]->u.value ) {
+    switch( AsmBuffer[i]->u.token ) {
     case T_NEAR:
         return( MakeLabel( AsmBuffer[n]->string_ptr, MT_NEAR ));
     case T_FAR:

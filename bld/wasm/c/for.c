@@ -56,38 +56,38 @@ int ForDirective( int i, enum irp_type type )
     if( type == IRP_REPEAT ) {
         ExpandTheWorld( i, FALSE, TRUE );
         /* make a temporary macro, then call it */
-        if( AsmBuffer[i]->token != T_NUM ) {
+        if( AsmBuffer[i]->class != TC_NUM ) {
             AsmError( OPERAND_EXPECTED );
             return( ERROR );
         }
         arg_loc = i;
         len = AsmBuffer[i]->u.value;
         i++;
-        if( AsmBuffer[i]->token != T_FINAL ) {
+        if( AsmBuffer[i]->class != TC_FINAL ) {
             AsmError( OPERAND_EXPECTED );
             return( ERROR );
         }
     } else {
         /* save the parm list, make a temporary macro, then call it with each parm */
-        if( AsmBuffer[i]->token != T_ID ) {
+        if( AsmBuffer[i]->class != TC_ID ) {
             AsmError( OPERAND_EXPECTED );
             return( ERROR );
         }
         arg_loc = i;
-        for( ;AsmBuffer[i]->token != T_COMMA; i++ ) {
-            if( AsmBuffer[i]->token == T_FINAL ) {
+        for( ;AsmBuffer[i]->class != TC_COMMA; i++ ) {
+            if( AsmBuffer[i]->class == TC_FINAL ) {
                 AsmError( EXPECTING_COMMA );
                 return( ERROR );
             }
         }
         i++;
-        if( AsmBuffer[i]->token != T_STRING ) {
+        if( AsmBuffer[i]->class != TC_STRING ) {
             AsmError( PARM_REQUIRED );
             return( ERROR );
         }
         parmstring = AsmTmpAlloc( strlen( AsmBuffer[i]->string_ptr ) + 1 );
         strcpy( parmstring, AsmBuffer[i]->string_ptr );
-        AsmBuffer[i]->token = T_FINAL;
+        AsmBuffer[i]->class = TC_FINAL;
 
         AddTokens( AsmBuffer, arg_loc, 1 );
     }
@@ -96,13 +96,13 @@ int ForDirective( int i, enum irp_type type )
     sprintf( buffer, "%s%d", macroname, Globals.for_counter );
     if( Options.mode & MODE_IDEAL ) {
         AsmBuffer[i+1]->string_ptr = buffer;
-        AsmBuffer[i+1]->token = T_ID;
+        AsmBuffer[i+1]->class = TC_ID;
     } else {
         AsmBuffer[i]->string_ptr = buffer;
-        AsmBuffer[i++]->token = T_ID;
+        AsmBuffer[i++]->class = TC_ID;
     }
-    AsmBuffer[i]->token = T_DIRECTIVE;
-    AsmBuffer[i]->u.value = T_MACRO;
+    AsmBuffer[i]->class = TC_DIRECTIVE;
+    AsmBuffer[i]->u.token = T_MACRO;
 
     if( MacroDef( i, TRUE ) == ERROR ) return( ERROR );
 

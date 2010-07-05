@@ -42,7 +42,7 @@ struct AsmCodeName {
         unsigned short  next;           // index to next item in hash item list
 };
 
-enum asm_cpu {
+typedef enum asm_cpu {
         /* bit count from left: ( need at least 7 bits )
            bit 0-2:   Math coprocessor
            bit 3:     Protected mode
@@ -80,57 +80,55 @@ enum asm_cpu {
         P_FPU_MASK = 0x0007,
         P_CPU_MASK = 0x0070,
         P_EXT_MASK = 0x0F80
-};
+} asm_cpu;
 
 
-enum state {
-        T_FINAL,
-        T_INSTR,
-        T_RES_ID,
-        T_ID,
-        T_REG,
-        T_STRING,
-        T_DIRECTIVE,
-        T_DIRECT_EXPR,
-        T_DEC_NUM,
-        T_OCT_NUM,
-        T_HEX_NUM_0,
-        T_HEX_NUM,
-        T_NUM,
-        T_FLOAT,
-        T_NOOP,                 /* No operation */
+typedef enum tok_class {
+        TC_FINAL,
+        TC_INSTR,
+        TC_RES_ID,
+        TC_ID,
+        TC_REG,
+        TC_STRING,
+        TC_DIRECTIVE,
+        TC_DIRECT_EXPR,
+        TC_NUM,
+        TC_FLOAT,
+        TC_NOOP,                 /* No operation */
 
-        T_POSITIVE,
-        T_NEGATIVE,
-        T_ID_IN_BACKQUOTES,
-        T_BIN_NUM,
-        T_PATH,
-        T_UNARY_OPERATOR,
-        T_BAD_NUM,
+        TC_POSITIVE,
+        TC_NEGATIVE,
+        TC_ID_IN_BACKQUOTES,
+        TC_PATH,
+        TC_UNARY_OPERATOR,
+        TC_BAD_NUM,
 
-        T_OP_BRACKET    = '(',
-        T_OP_SQ_BRACKET = '[',
-        T_CL_BRACKET    = ')',
-        T_CL_SQ_BRACKET = ']',
-        T_COMMA         = ',',
-        T_COLON         = ':',
-        T_SEMI_COLON    = ';',
-        T_TIMES         = '*',
-        T_PLUS          = '+',
-        T_MINUS         = '-',
-        T_DOT           = '.',
-        T_QUESTION_MARK = '?',
-        T_PERCENT       = '%',
-        T_OP_BRACE      = '{',
-        T_CL_BRACE      = '}'
-};
+        TC_OP_BRACKET,       // '(',
+        TC_OP_SQ_BRACKET,    // '[',
+        TC_OP_BRACE,         // '{',
+        TC_CL_BRACKET,       // ')',
+        TC_CL_SQ_BRACKET,    // ']',
+        TC_CL_BRACE,         // '}'
+        TC_COMMA,            // ',',
+        TC_COLON,            // ':',
+        TC_SEMI_COLON,       // ';',
+        TC_DIVIDE,           // '/',
+        TC_TIMES,            // '*',
+        TC_PLUS,             // '+',
+        TC_MINUS,            // '-',
+        TC_DOT,              // '.',
+        TC_QUESTION_MARK,    // '?',
+        TC_PERCENT,          // '%',
+} tok_class;
 
 typedef struct asm_tok {
-        enum state      token;
+        tok_class       class;
         char            *string_ptr;
         union {
             long          value;
+            float         float_value;
             unsigned char bytes[10];
+            asm_token     token;
         } u;
 } asm_tok;
 

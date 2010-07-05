@@ -95,7 +95,7 @@ static int get_float( asm_tok *buf, char **input, char **output )
 
 done_scanning_float:
 
-    buf->token = T_FLOAT;
+    buf->class = TC_FLOAT;
     /* copy the string, fix input & output pointers */
     strncpy( *output, *input, ptr - *input );
     buf->string_ptr = *output;
@@ -104,7 +104,7 @@ done_scanning_float:
     (*output)++;
     *input = ptr;
 
-    *((float *)(&buf->u.value)) = atof(buf->string_ptr);
+    buf->u.float_value = (float)atof( buf->string_ptr );
     return( NOT_ERROR );
 }
 
@@ -129,7 +129,7 @@ static int get_string( asm_tok *buf, char **input, char **output )
 
     symbol_o = **input;
 
-    buf->token = T_STRING;
+    buf->class = TC_STRING;
     switch( symbol_o ) {
     case '"':
     case '\'':
@@ -314,7 +314,7 @@ done_scan:
         first_char_0 = FALSE;
     }
 #endif
-    buf->token = T_NUM;
+    buf->class = TC_NUM;
     if( base == 0 ) {
         base = first_char_0 ? 8 : 10;
     }
@@ -340,7 +340,7 @@ done_scan:
             || *ptr == '?' ) {
             ++ptr;
         }
-        buf->token = T_BAD_NUM;
+        buf->class = TC_BAD_NUM;
         break;
     }
     /* copy the string, fix input & output pointers */
@@ -361,6 +361,8 @@ done_scan:
         array_mul_add( buf->u.bytes, base, val, sizeof( buf->u.bytes ) );
         ++dig_start;
     }
+    if( buf->class == TC_BAD_NUM )
+        return( ERROR );
     return( NOT_ERROR );
 } /* get_number */
 
@@ -368,7 +370,7 @@ static int get_id_in_backquotes( asm_tok *buf, char **input, char **output )
 /**************************************************************************/
 {
     buf->string_ptr = *output;
-    buf->token = T_ID;
+    buf->class = TC_ID;
     buf->u.value = 0;
 
     /* copy char from input to output & inc both */
@@ -397,9 +399,9 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
 
     buf->string_ptr = *output;
     if( **input != '\\' ) {
-        buf->token = T_ID;
+        buf->class = TC_ID;
     } else {
-        buf->token = T_PATH;
+        buf->class = TC_PATH;
     }
     buf->u.value = 0;
 
@@ -416,7 +418,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             *(*output)++ = *(*input)++;
         } else if( cur_char == '\\' ) {
             *(*output)++ = *(*input)++;
-            buf->token = T_PATH;
+            buf->class = TC_PATH;
         } else  {
             break;
         }
@@ -425,13 +427,13 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
 
     /* now decide what to do with it */
 
-    if( buf->token == T_PATH )
+    if( buf->class == TC_PATH )
         return( NOT_ERROR );
     count = get_instruction_position( buf->string_ptr );
     if( count == EMPTY ) {
-        buf->token = T_ID;
+        buf->class = TC_ID;
         if( buf->string_ptr[1] == '\0' && buf->string_ptr[0] == '?' ) {
-            buf->token = T_QUESTION_MARK;
+            buf->class = TC_QUESTION_MARK;
         }
     } else {
 #if defined( _STANDALONE_ )
@@ -440,7 +442,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
   #if 0                
             switch( AsmOpTable[count].token ) {
             case T_...:
-                buf->token = T_ID;
+                buf->class = TC_ID;
                 return( NOT_ERROR );
             default:
                 break;
@@ -451,7 +453,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             switch( AsmOpTable[count].token ) {
             case T_FOR:
             case T_FORC:
-                buf->token = T_ID;
+                buf->class = TC_ID;
                 return( NOT_ERROR );
             default:
                 break;
@@ -509,7 +511,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             case T_UDATASEG:
             case T_UFARDATA:
             case T_WARN:
-                buf->token = T_ID;
+                buf->class = TC_ID;
                 return( NOT_ERROR );
             default:
                 break;
@@ -522,7 +524,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
   #if 0                
                 switch( AsmOpTable[count].token ) {
                 case T_...:
-                    buf->token = T_ID;
+                    buf->class = T_ID;
                     return( NOT_ERROR );
                 default:
                     break;
@@ -530,8 +532,8 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
   #endif                
                 if( ( ( i == 0 ) && ( Definition.struct_depth != 0 )  &&
                       !( AsmOpTable[count].rm_byte & ( OP_DIRECTIVE|OP_RES_ID ) ) ) ||
-                    ( ( i > 0 ) && ( AsmBuffer[--i]->token == T_DOT ) ) ) {
-                    buf->token = T_ID;
+                    ( ( i > 0 ) && ( AsmBuffer[--i]->class == TC_DOT ) ) ) {
+                    buf->class = TC_ID;
                     return( NOT_ERROR );
                 }
             } else {
@@ -539,7 +541,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
   #if 0                
                 switch( AsmOpTable[count].token ) {
                 case T_...:
-                    buf->token = T_ID;
+                    buf->class = TC_ID;
                     return( NOT_ERROR );
                 default:
                     break;
@@ -548,29 +550,29 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             }
         }
 #endif
-        buf->u.value = AsmOpTable[count].token;
+        buf->u.token = AsmOpTable[count].token;
 
         if( AsmOpTable[count].opnd_type[OPND1] == OP_SPECIAL ) {
             if( AsmOpTable[count].rm_byte & OP_REGISTER ) {
-                buf->token = T_REG;
+                buf->class = TC_REG;
             } else if( AsmOpTable[count].rm_byte & OP_RES_ID ) {
-                if( buf->u.value == T_PWORD ) {
-                    buf->u.value = T_FWORD;
-                } else if( buf->u.value == T_DP ) {
-                    buf->u.value = T_DF;
+                if( buf->u.token == T_PWORD ) {
+                    buf->u.token = T_FWORD;
+                } else if( buf->u.token == T_DP ) {
+                    buf->u.token = T_DF;
                 }
-                buf->token = T_RES_ID;
+                buf->class = TC_RES_ID;
             } else if( AsmOpTable[count].rm_byte & OP_UNARY_OPERATOR ) {
-                buf->token = T_UNARY_OPERATOR;
+                buf->class = TC_UNARY_OPERATOR;
             } else if( AsmOpTable[count].rm_byte & OP_DIRECTIVE ) {
 #if defined( _STANDALONE_ )
                 if( ( AsmOpTable[count].rm_byte & OP_IDEAL ) &&
                     ( (Options.mode & MODE_IDEAL) == 0 ) ) {
-                    buf->token = T_ID;
+                    buf->class = TC_ID;
                     return( NOT_ERROR );
                 }
 #endif
-                buf->token = T_DIRECTIVE;
+                buf->class = TC_DIRECTIVE;
 #if defined( _STANDALONE_ )
                 switch( AsmOpTable[count].token ) {
                 case T_COMMENT:
@@ -587,7 +589,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
                     *(*output) = '\0';
                     (*output)++;
                     (*input) += strlen( *input );
-                    buf->token = T_STRING;
+                    buf->class = TC_STRING;
                     buf->u.value = 0;
                     break;
                 case T_ENUM:
@@ -596,12 +598,12 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
                 } /* default do nothing */
 #endif
             } else if( AsmOpTable[count].rm_byte & OP_DIRECT_EXPR ) {
-                buf->token = T_DIRECT_EXPR;
+                buf->class = TC_DIRECT_EXPR;
             } else {
-                buf->token = T_INSTR;
+                buf->class = TC_INSTR;
             }
         } else {
-            buf->token = T_INSTR;
+            buf->class = TC_INSTR;
         }
     }
     return( NOT_ERROR );
@@ -610,7 +612,8 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
 static int get_special_symbol( asm_tok *buf, char **input, char **output )
 /************************************************************************/
 {
-    char    symbol;
+    char        symbol;
+    tok_class   cls;
 
     buf->string_ptr = *output;
 
@@ -620,39 +623,52 @@ static int get_special_symbol( asm_tok *buf, char **input, char **output )
     case '{' :
         if( EnumDirective == FALSE )    /* String delimiter? */
             return( get_string( buf, input, output ) );
+        cls = TC_OP_BRACE;
+        break;
     case '}' :
+        cls = TC_CL_BRACE;
+        break;
 #endif
     case '.' :
+        cls = TC_DOT;
+        break;
     case ',' :
+        cls = TC_COMMA;
+        break;
     case '+' :
+        cls = TC_PLUS;
+        break;
     case '-' :
+        cls = TC_MINUS;
+        break;
     case '*' :
+        cls = TC_TIMES;
+        break;
     case '/' :
+        cls = TC_DIVIDE;
+        break;
     case '[' :
+        cls = TC_OP_SQ_BRACKET;
+        break;
     case ']' :
+        cls = TC_CL_SQ_BRACKET;
+        break;
     case '(' :
+        cls = TC_OP_BRACKET;
+        break;
     case ')' :
+        cls = TC_CL_BRACKET;
+        break;
     case ':' :
+        cls = TC_COLON;
+        break;
     case '%' :
-        /* all of these are themselves a token */
-
-        /* fixme
-         * wasm used to do a bunch of error checking dealing with use of
-         * registers and +,- inside and outside brackets
-         * I am not sure we need to do this here
-         * this looks more like the job of the parser
-         */
-
-        buf->token = symbol;
-        *(*output)++ = *(*input)++;
-        *(*output)++ = '\0';
+        cls = TC_PERCENT;
         break;
 #if defined( _STANDALONE_ )
     case '=' :
-        buf->token = T_DIRECTIVE;
-        buf->u.value = T_EQU2;
-        *(*output)++ = *(*input)++;
-        *(*output)++ = '\0';
+        cls = TC_DIRECTIVE;
+        buf->u.token = T_EQU2;
         break;
 #else
     case '{' :
@@ -667,8 +683,10 @@ static int get_special_symbol( asm_tok *buf, char **input, char **output )
          * delimited by space characters, commas, newlines or nulls
          */
         return( get_string( buf, input, output ) );
-        break;
     }
+    buf->class = cls;
+    *(*output)++ = *(*input)++;
+    *(*output)++ = '\0';
     return( NOT_ERROR );
 }
 
@@ -678,7 +696,7 @@ static int get_inc_path( unsigned int *buf_index, char **input, char **output )
 {
     char symbol;
 
-    AsmBuffer[*buf_index]->token = T_PATH;
+    AsmBuffer[*buf_index]->class = TC_PATH;
     AsmBuffer[*buf_index]->u.value = 0;
     AsmBuffer[*buf_index]->string_ptr = *output;
 
@@ -755,9 +773,9 @@ int AsmScan( char *string )
             }
 #if defined( _STANDALONE_ )
             // this mess allows include directives with undelimited file names
-            if( AsmBuffer[buf_index]->token == T_DIRECTIVE &&
-                ( AsmBuffer[buf_index]->u.value == T_INCLUDE ||
-                AsmBuffer[buf_index]->u.value == T_INCLUDELIB ) ) {
+            if( AsmBuffer[buf_index]->class == TC_DIRECTIVE &&
+                ( AsmBuffer[buf_index]->u.token == T_INCLUDE ||
+                AsmBuffer[buf_index]->u.token == T_INCLUDELIB ) ) {
                 buf_index++;
                 get_inc_path( &buf_index, &ptr, &output_ptr );
             }
@@ -766,13 +784,6 @@ int AsmScan( char *string )
             if( get_number( AsmBuffer[buf_index], &ptr, &output_ptr ) == ERROR ) {
                 return( ERROR );
             }
-            /* handle negatives here - for inline assembler */
-#if !defined( _STANDALONE_ )
-            if( buf_index > 0 && AsmBuffer[buf_index - 1]->token == T_MINUS ) {
-                AsmBuffer[buf_index - 1]->token = T_PLUS;
-                AsmBuffer[buf_index]->u.value = -AsmBuffer[buf_index]->u.value;
-            }
-#endif
         } else if( *ptr == '`' ) {
             if( get_id_in_backquotes( AsmBuffer[buf_index], &ptr, &output_ptr ) == ERROR ) {
                 return( ERROR );
@@ -788,7 +799,7 @@ int AsmScan( char *string )
             return( ERROR );
         }
     }
-    AsmBuffer[buf_index]->token = T_FINAL;
+    AsmBuffer[buf_index]->class = TC_FINAL;
     *output_ptr='\0';
     return( buf_index );
 }

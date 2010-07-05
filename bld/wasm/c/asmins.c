@@ -71,7 +71,7 @@ static int              segm_override_jumps( expr_list *opndx );
 
 
 #if defined( _STANDALONE_ )
-extern int              directive( int , long );
+extern int              directive( int , asm_token );
 extern int              SymIs32( struct asm_sym *sym );
 
 extern int_8            DefineProc;     // TRUE if the definition of procedure
@@ -96,7 +96,7 @@ extern void             make_inst_hash_table( void );
 static int              curr_ptr_type;
 static char             ConstantOnly;
 
-static int              mem2code( char, int, int, asm_sym * );
+static int              mem2code( char, asm_token, asm_token, asm_sym * );
 
 /* moved here from asmline */
 static asm_tok          tokens[MAX_TOKEN];
@@ -143,15 +143,15 @@ void GetInsString( asm_token token, char *string, int len )
 {
     int index;
 
-    if( len > AsmOpcode[ token ].len ) {
-        len = AsmOpcode[ token ].len;
-        index = AsmOpcode[ token ].index;
+    if( len > AsmOpcode[token].len ) {
+        len = AsmOpcode[token].len;
+        index = AsmOpcode[token].index;
         if( AsmChars[index]== '.' ) {
             index++;
             len--;
         }
-        strncpy( string, &(AsmChars[ index ]), len );
-        string[ len ] = '\0';
+        strncpy( string, &(AsmChars[index]), len );
+        string[len] = '\0';
     } else {
         *string='\0';
     }
@@ -172,19 +172,19 @@ void AsmBufferInit( void )
 int get_instruction_position( char *string )
 /******************************************/
 {
-    unsigned short  i;
+    asm_token   token;
 
-    for( i = inst_table[ hashpjw( string ) ]; i--; i = AsmOpcode[ i ].next ) {
-        if( strnicmp( string, &AsmChars[ AsmOpcode[ i ].index ], AsmOpcode[ i ].len ) == 0
-            && string[ AsmOpcode[ i ].len ] == '\0' ) {
-            return( AsmOpcode[ i ].position );
+    for( token = inst_table[hashpjw( string )]; token--; token = AsmOpcode[token].next ) {
+        if( strnicmp( string, &AsmChars[AsmOpcode[token].index], AsmOpcode[token].len ) == 0
+            && string[AsmOpcode[token].len] == '\0' ) {
+            return( AsmOpcode[token].position );
         }
     }
     return( EMPTY );
 }
 
-static int comp_mem( int reg1, int reg2 )
-/***************************************/
+static int comp_mem( asm_token reg1, asm_token reg2 )
+/***************************************************/
 /*
 - compare and return the r/m field encoding of 16-bit address mode;
 - call by mem2code() only;
@@ -208,8 +208,8 @@ static int comp_mem( int reg1, int reg2 )
     return( ERROR );
 }
 
-static void seg_override( int seg_reg, asm_sym *sym )
-/***************************************************/
+static void seg_override( asm_token seg_reg, asm_sym *sym )
+/*********************************************************/
 /*
 - determine if segment override is necessary with the current address mode;
 */
@@ -356,18 +356,18 @@ int check_override( int *i )
     index = *i;
 
     if( ( index + 2 ) < Token_Count ) {
-        if( AsmBuffer[index+1]->token == T_COLON ) {
-            switch( AsmBuffer[index]->token ) {
-            case T_REG:
+        if( AsmBuffer[index+1]->class == TC_COLON ) {
+            switch( AsmBuffer[index]->class ) {
+            case TC_REG:
                 Code->prefix.seg =
-                    AsmOpTable[AsmOpcode[AsmBuffer[index]->u.value].position].opcode;
+                    AsmOpTable[AsmOpcode[AsmBuffer[index]->u.token].position].opcode;
                 (*i) += 2;
                 if( *i >= Token_Count ) {
                     AsmError( LABEL_EXPECTED_AFTER_COLON );
                     return( ERROR );
                 }
                 break;
-            case T_ID:      // Segment or Group override
+            case TC_ID:      // Segment or Group override
                 if( FixOverride(*i) != NOT_ERROR ) {
                     return( ERROR );
                 }
@@ -386,8 +386,8 @@ int check_override( int *i )
 }
 #endif
 
-static int Reg386( int reg_token )
-/********************************/
+static int Reg386( asm_token reg_token )
+/**************************************/
 {
     switch( reg_token ) {
     case T_EAX:         return( 0 );
@@ -467,8 +467,8 @@ int InRange( unsigned long val, unsigned bytes )
 
 }
 
-static int mem2code( char ss, int index, int base, asm_sym *sym )
-/***************************************************************/
+static int mem2code( char ss, asm_token index, asm_token base, asm_sym *sym )
+/***************************************************************************/
 /*
   encode the memory operand to machine code
 */
@@ -598,8 +598,8 @@ static int mem2code( char ss, int index, int base, asm_sym *sym )
     return( NOT_ERROR );
 }
 
-static int comp_opt( uint direct )
-/********************************/
+static int comp_opt( asm_token direct )
+/*************************************/
 /*
   Compare function for CPU directive
 */
@@ -713,8 +713,8 @@ static int comp_opt( uint direct )
     }
 }
 
-static int def_fpu( uint direct )
-/********************************/
+static int def_fpu( asm_token direct )
+/************************************/
 /*
   get FPU from CPU directive
 */
@@ -801,13 +801,13 @@ static void MakeCPUConstant( asm_token tok )
 }
 #endif
 
-int cpu_directive( int i )
-/************************/
+int cpu_directive( asm_token token )
+/***********************************/
 {
     int                 temp;
 
-    if( (temp = comp_opt( i )) != EMPTY ) {
-        if( i == T_DOT_NO87 ) {
+    if( (temp = comp_opt( token )) != EMPTY ) {
+        if( token == T_DOT_NO87 ) {
             Code->info.cpu &= ~P_FPU_MASK;                 // turn off FPU bits
         } else if( temp & P_EXT_MASK ) {
             Code->info.cpu |= temp & P_EXT_MASK;           // turn on desired bit(s)
@@ -818,7 +818,7 @@ int cpu_directive( int i )
             Code->info.cpu &= ~( P_CPU_MASK | P_PM );
             Code->info.cpu |= temp & ( P_CPU_MASK | P_PM );// setup CPU bits
             Code->info.cpu &= ~P_FPU_MASK;
-            Code->info.cpu |= def_fpu( i ) & P_FPU_MASK;   // setup FPU bits
+            Code->info.cpu |= def_fpu( token ) & P_FPU_MASK;   // setup FPU bits
         }
     } else {
         AsmError( UNKNOWN_DIRECTIVE );
@@ -826,8 +826,8 @@ int cpu_directive( int i )
     }
 
 #if defined( _STANDALONE_ )
-    MakeCPUConstant( i );
-    switch( i ) {
+    MakeCPUConstant( token );
+    switch( token ) {
     case T_DOT_686P:
     case T_P686P:
     case T_DOT_686:
@@ -948,12 +948,12 @@ static int proc_check( void )
     if( ( CurrProc == NULL ) || ( Token_Count == 0 ) || !DefineProc )
         return( FALSE );
 
-    if( AsmBuffer[0]->token == T_DIRECTIVE )
+    if( AsmBuffer[0]->class == TC_DIRECTIVE )
         return( FALSE );
 
     if( Token_Count > 1 ) {
-        if( ( AsmBuffer[1]->token == T_DIRECTIVE )
-            || ( AsmBuffer[1]->token == T_DIRECT_EXPR ) ) {
+        if( ( AsmBuffer[1]->class == TC_DIRECTIVE )
+            || ( AsmBuffer[1]->class == TC_DIRECT_EXPR ) ) {
             return( FALSE );
         }
     }
@@ -979,10 +979,10 @@ int get_register_argument( int index, char *buffer, int *register_count )
         size = 4;
     else
         size = 2;
-    if( AsmBuffer[i]->token == T_OP_SQ_BRACKET ) {
+    if( AsmBuffer[i]->class == TC_OP_SQ_BRACKET ) {
         i++;
-        if( AsmBuffer[i]->token == T_RES_ID ) {
-            switch( AsmBuffer[i]->u.value ) {
+        if( AsmBuffer[i]->class == TC_RES_ID ) {
+            switch( AsmBuffer[i]->u.token ) {
             case T_BYTE:
                 size = 1;
                 break;
@@ -1008,8 +1008,8 @@ int get_register_argument( int index, char *buffer, int *register_count )
             }
             i++;
         }
-        if( ( AsmBuffer[i]->token != T_ID ) &&
-            ( AsmBuffer[i+1]->token != T_CL_SQ_BRACKET ) ) {
+        if( ( AsmBuffer[i]->class != TC_ID ) &&
+            ( AsmBuffer[i+1]->class != TC_CL_SQ_BRACKET ) ) {
             AsmError( SYNTAX_ERROR );
             return( ERROR );
         }
@@ -1079,10 +1079,10 @@ int get_register_argument( int index, char *buffer, int *register_count )
                 }
             }
         }
-    } else if( ( AsmBuffer[i]->token == T_REG ) &&
-               ( ( AsmBuffer[i+1]->token == T_COMMA ) ||
-                 ( AsmBuffer[i+1]->token == T_FINAL ) ) ) {
-        switch( AsmBuffer[i]->u.value ) {
+    } else if( ( AsmBuffer[i]->class == TC_REG ) &&
+               ( ( AsmBuffer[i+1]->class == TC_COMMA ) ||
+                 ( AsmBuffer[i+1]->class == TC_FINAL ) ) ) {
+        switch( AsmBuffer[i]->u.token ) {
         case T_EAX:
         case T_EBX:
         case T_ECX:
@@ -1152,15 +1152,15 @@ int get_register_argument( int index, char *buffer, int *register_count )
             }
             break;
         }
-    } else if( AsmBuffer[i]->token == T_QUESTION_MARK ) {
+    } else if( AsmBuffer[i]->class == TC_QUESTION_MARK ) {
         return FALSE;
     } else {
         if( Use32 )
             sprintf( buffer, "mov e%s,", regs[j] );
         else
             sprintf( buffer, "mov %s,", regs[j] );
-        while( ( AsmBuffer[i]->token != T_FINAL ) &&
-               ( AsmBuffer[i]->token != T_COMMA ) ) {
+        while( ( AsmBuffer[i]->class != TC_FINAL ) &&
+               ( AsmBuffer[i]->class != TC_COMMA ) ) {
             strcat( buffer, AsmBuffer[i++]->string_ptr );
         }
         InputQueueLine( buffer );
@@ -1178,10 +1178,10 @@ int get_stack_argument( int index, char *buffer )
         size = 4;
     else
         size = 2;
-    if( AsmBuffer[i]->token == T_OP_SQ_BRACKET ) {
+    if( AsmBuffer[i]->class == TC_OP_SQ_BRACKET ) {
         i++;
-        if( AsmBuffer[i]->token == T_RES_ID ) {
-            switch( AsmBuffer[i]->u.value ) {
+        if( AsmBuffer[i]->class == TC_RES_ID ) {
+            switch( AsmBuffer[i]->u.token ) {
             case T_BYTE:
                 size = 1;
                 break;
@@ -1207,8 +1207,8 @@ int get_stack_argument( int index, char *buffer )
             }
             i++;
         }
-        if( ( AsmBuffer[i]->token != T_ID ) ||
-            ( AsmBuffer[i + 1]->token != T_CL_SQ_BRACKET ) ) {
+        if( ( AsmBuffer[i]->class != TC_ID ) ||
+            ( AsmBuffer[i + 1]->class != TC_CL_SQ_BRACKET ) ) {
             AsmError( SYNTAX_ERROR );
             return( ERROR );
         }
@@ -1269,8 +1269,8 @@ int get_stack_argument( int index, char *buffer )
         }
     }
     sprintf( buffer, "push " );
-    while( ( AsmBuffer[i]->token != T_FINAL ) &&
-           ( AsmBuffer[i]->token != T_COMMA ) ) {
+    while( ( AsmBuffer[i]->class != TC_FINAL ) &&
+           ( AsmBuffer[i]->class != TC_COMMA ) ) {
         strcat( buffer, AsmBuffer[i++]->string_ptr );
     }
     InputQueueLine( buffer );
@@ -1282,7 +1282,7 @@ int expand_call( int index, int lang_type )
     int         i, j;
     int         arglist[16];
     int         argcount, cleanup, reversed, register_count, register_arguments, parameter_on_stack;
-    char        buffer[ MAX_LINE_LEN ];
+    char        buffer[MAX_LINE_LEN];
 
     argcount = cleanup = reversed = register_count = register_arguments = 0;
     parameter_on_stack = TRUE;
@@ -1307,14 +1307,14 @@ int expand_call( int index, int lang_type )
     case LANG_BASIC:
         break;
     case LANG_NONE:
-        if( AsmBuffer[index]->token == T_FINAL )
+        if( AsmBuffer[index]->class == TC_FINAL )
             break;
         AsmError( SYNTAX_ERROR );
         return ( ERROR );
     }
-    for( i = index; AsmBuffer[i]->token != T_FINAL; ) {
-        if( ( AsmBuffer[i]->token != T_COMMA ) ||
-            ( AsmBuffer[i+1]->token == T_FINAL ) ) {
+    for( i = index; AsmBuffer[i]->class != TC_FINAL; ) {
+        if( ( AsmBuffer[i]->class != TC_COMMA ) ||
+            ( AsmBuffer[i+1]->class == TC_FINAL ) ) {
             AsmError( SYNTAX_ERROR );
             return ( ERROR );
         }
@@ -1323,8 +1323,8 @@ int expand_call( int index, int lang_type )
             return( ERROR );
         }
         for( j = ++i; ; j++ ) {
-            if( ( AsmBuffer[j]->token == T_FINAL ) ||
-                ( AsmBuffer[j]->token == T_COMMA ) ) {
+            if( ( AsmBuffer[j]->class == TC_FINAL ) ||
+                ( AsmBuffer[j]->class == TC_COMMA ) ) {
                 break;
             }
         }
@@ -1420,8 +1420,8 @@ static int segm_override_jumps( expr_list *opndx )
 /******************************************/
 {
     if( opndx->override != EMPTY ) {
-        if( AsmBuffer[opndx->override]->token == T_REG ) {
-            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.value].position].opcode;
+        if( AsmBuffer[opndx->override]->class == TC_REG ) {
+            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.token].position].opcode;
         } else {
 #if defined( _STANDALONE_ )
             if( FixOverride( opndx->override ) != NOT_ERROR ) {
@@ -1438,8 +1438,8 @@ static int segm_override_idata( expr_list *opndx )
 /******************************************/
 {
     if( opndx->override != EMPTY ) {
-        if( AsmBuffer[opndx->override]->token == T_REG ) {
-            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.value].position].opcode;
+        if( AsmBuffer[opndx->override]->class == TC_REG ) {
+            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.token].position].opcode;
         } else {
 #if defined( _STANDALONE_ )
             if( FixOverride( opndx->override ) != NOT_ERROR ) {
@@ -1456,8 +1456,8 @@ static int segm_override_memory( expr_list *opndx )
 /******************************************/
 {
     if( opndx->override != EMPTY ) {
-        if( AsmBuffer[opndx->override]->token == T_REG ) {
-            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.value].position].opcode;
+        if( AsmBuffer[opndx->override]->class == TC_REG ) {
+            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.token].position].opcode;
         } else {
 #if defined( _STANDALONE_ )
             if( FixOverride( opndx->override ) != NOT_ERROR ) {
@@ -1841,8 +1841,8 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
 /************************************************************/
 {
     uint_8              ss = SCALE_FACTOR_1;
-    int                 index = EMPTY;
-    int                 base = EMPTY;
+    asm_token           index = EMPTY;
+    asm_token           base = EMPTY;
     struct asm_sym      *sym;
     char                base_lock = FALSE;
     enum fixup_types    fixup_type;
@@ -1872,7 +1872,7 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
         }
     }
     if( opndx->base_reg != EMPTY ) {
-        base = AsmBuffer[opndx->base_reg]->u.value;
+        base = AsmBuffer[opndx->base_reg]->u.token;
         switch( base ) {     // check for base registers
         case T_EAX:
         case T_EBX:
@@ -1901,7 +1901,7 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
         }
     }
     if( opndx->idx_reg != EMPTY ) {
-        index = AsmBuffer[opndx->idx_reg]->u.value;
+        index = AsmBuffer[opndx->idx_reg]->u.token;
         switch( index ) {     // check for index registers
         case T_EAX:
         case T_EBX:
@@ -1928,10 +1928,10 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
             AsmError( INVALID_MEMORY_POINTER );
             return( ERROR );
         }
-        if( AsmBuffer[opndx->idx_reg]->u.value == T_ESP ) {
+        if( AsmBuffer[opndx->idx_reg]->u.token == T_ESP ) {
             if( opndx->scale == 1 ) {
                 index = base;
-                base = AsmBuffer[opndx->idx_reg]->u.value;
+                base = AsmBuffer[opndx->idx_reg]->u.token;
             } else {
                 AsmError( ESP_CANNOT_BE_USED_AS_INDEX );
                 return( ERROR );
@@ -2066,11 +2066,11 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
             return( ERROR );
         }
     }
-    if( IS_JMPCALLN( Code->info.token ) ) {
-        if( Code->mem_type == MT_DWORD ) {
-            if( !Code->use32 ) {
-                Code->info.token++;
-            }
+    if( Code->mem_type == MT_DWORD && !Code->use32 ) {
+        if( Code->info.token == T_CALL ) {
+            Code->info.token = T_CALLF;
+        } else if( Code->info.token == T_JMP ) {
+            Code->info.token = T_JMPF;
         }
     }
     return( NOT_ERROR );
@@ -2226,7 +2226,7 @@ static int process_reg( expr_list *opndx )
 
     if( opndx->indirect )  // simple register indirect operand ... [EBX]
         return( process_address( opndx ) );
-    temp = AsmOpcode[AsmBuffer[opndx->base_reg]->u.value].position;
+    temp = AsmOpcode[AsmBuffer[opndx->base_reg]->u.token].position;
     reg = AsmOpTable[temp].opcode;
     Code->info.opnd_type[Opnd_Count] = AsmOpTable[temp].opnd_type[OPND2];
     switch( AsmOpTable[temp].opnd_type[OPND2] ) {
@@ -2261,7 +2261,7 @@ static int process_reg( expr_list *opndx )
         }
     case OP_SR:                                 // any seg reg
     case OP_SR2:                                // 8086 segment register
-        if( AsmBuffer[opndx->base_reg]->u.value == T_CS ) {
+        if( AsmBuffer[opndx->base_reg]->u.token == T_CS ) {
             // POP CS is not allowed
             if( Code->info.token == T_POP ) {
                 AsmError( POP_CS_IS_NOT_ALLOWED );
@@ -2282,7 +2282,7 @@ static int process_reg( expr_list *opndx )
             Code->prefix.opsiz = TRUE;
         break;
     case OP_TR:                 // Test registers
-        switch( AsmBuffer[opndx->base_reg]->u.value ) {
+        switch( AsmBuffer[opndx->base_reg]->u.token ) {
         case T_TR3:
         case T_TR4:
         case T_TR5:
@@ -2391,8 +2391,8 @@ int AsmParse( void )
 #endif
 
     for( i = 0; i < Token_Count; i++ ) {
-        switch( AsmBuffer[i]->token ) {
-        case T_INSTR:
+        switch( AsmBuffer[i]->class ) {
+        case TC_INSTR:
 //            ExpandTheWorld( i, FALSE, TRUE );
 #if defined( _STANDALONE_ )
             if( ExpandAllConsts( i, FALSE ) == ERROR )
@@ -2405,15 +2405,15 @@ int AsmParse( void )
             }
             cur_opnd = OP_NONE;
 #if defined( _STANDALONE_ )
-            if( ( AsmBuffer[i+1]->token == T_DIRECTIVE )
-                || ( AsmBuffer[i+1]->token == T_COLON ) ) {
+            if( ( AsmBuffer[i+1]->class == TC_DIRECTIVE )
+                || ( AsmBuffer[i+1]->class == TC_COLON ) ) {
                 // instruction name is label
-                AsmBuffer[i]->token = T_ID;
+                AsmBuffer[i]->class = TC_ID;
                 i--;
                 continue;
             }
 #endif
-            switch( AsmBuffer[i]->u.value ) {
+            switch( AsmBuffer[i]->u.token ) {
             // prefix
             case T_LOCK:
             case T_REP:
@@ -2421,9 +2421,9 @@ int AsmParse( void )
             case T_REPNE:
             case T_REPNZ:
             case T_REPZ:
-                rCode->prefix.ins = AsmBuffer[i]->u.value;
+                rCode->prefix.ins = AsmBuffer[i]->u.token;
                 // prefix has to be followed by an instruction
-                if( AsmBuffer[i+1]->token != T_INSTR ) {
+                if( AsmBuffer[i+1]->class != TC_INSTR ) {
                     AsmError( PREFIX_MUST_BE_FOLLOWED_BY_AN_INSTRUCTION );
                     return( ERROR );
                 }
@@ -2437,7 +2437,7 @@ int AsmParse( void )
             case T_RETN:
             case T_RETF:
                 in_epilogue = 0;
-                rCode->info.token = AsmBuffer[i]->u.value;
+                rCode->info.token = AsmBuffer[i]->u.token;
                 break;
             case T_IRET:
             case T_IRETD:
@@ -2448,7 +2448,7 @@ int AsmParse( void )
             case T_IRETF:
             case T_IRETDF:
                 in_epilogue = 0;
-                rCode->info.token = AsmBuffer[i]->u.value;
+                rCode->info.token = AsmBuffer[i]->u.token;
                 break;
             case T_CALL:
                 if( Options.mode & MODE_IDEAL ) {
@@ -2465,7 +2465,7 @@ int AsmParse( void )
                 /* fall into default */
 #endif
             default:
-                rCode->info.token = AsmBuffer[i]->u.value;
+                rCode->info.token = AsmBuffer[i]->u.token;
                 break;
             }
             i++;
@@ -2495,18 +2495,18 @@ int AsmParse( void )
             }
             i--;
             break;
-        case T_RES_ID:
+        case TC_RES_ID:
             if( rCode->info.token == T_NULL ) {
                 temp = ( i == 0 ) ? -1 : 0;
                 return( data_init( temp, i ) );
             }
             AsmError( SYNTAX_ERROR );
             return( ERROR );
-        case T_DIRECTIVE:
-            return( directive( i, AsmBuffer[i]->u.value ) );
+        case TC_DIRECTIVE:
+            return( directive( i, AsmBuffer[i]->u.token ) );
             break;
 #if defined( _STANDALONE_ )
-        case T_DIRECT_EXPR:
+        case TC_DIRECT_EXPR:
             if( Parse_Pass != PASS_1 ) {
                 Modend = TRUE;
                 temp = i;
@@ -2518,15 +2518,15 @@ int AsmParse( void )
                     process_address( &opndx );
                 }
             }
-            return( directive( i, AsmBuffer[i]->u.value ) );
+            return( directive( i, AsmBuffer[i]->u.token ) );
             break;
 #endif
-        case T_ID:
+        case TC_ID:
 #if defined( _STANDALONE_ )
-            if( !( ( AsmBuffer[i+1]->token == T_DIRECTIVE )
-                && ( ( AsmBuffer[i+1]->u.value == T_EQU )
-                || ( AsmBuffer[i+1]->u.value == T_EQU2 )
-                || ( AsmBuffer[i+1]->u.value == T_TEXTEQU ) ) ) ) {
+            if( !( ( AsmBuffer[i+1]->class == TC_DIRECTIVE )
+                && ( ( AsmBuffer[i+1]->u.token == T_EQU )
+                || ( AsmBuffer[i+1]->u.token == T_EQU2 )
+                || ( AsmBuffer[i+1]->u.token == T_TEXTEQU ) ) ) ) {
                 switch( ExpandSymbol( i, FALSE ) ) {
                 case ERROR:
                     return( ERROR );
@@ -2549,25 +2549,25 @@ int AsmParse( void )
 #if ALLOW_STRUCT_INIT
 #if defined( _STANDALONE_ )
                 if( IsLabelStruct( AsmBuffer[i]->string_ptr )
-                    && ( AsmBuffer[i+1]->token != T_DIRECTIVE ) ) {
-                    AsmBuffer[i]->token = T_DIRECTIVE;
-                    AsmBuffer[i]->u.value = T_STRUCT;
+                    && ( AsmBuffer[i+1]->class != TC_DIRECTIVE ) ) {
+                    AsmBuffer[i]->class = TC_DIRECTIVE;
+                    AsmBuffer[i]->u.token = T_STRUCT;
                     return( data_init( -1, 0 ) );
                 }
 #endif
 #endif
 
-                switch( AsmBuffer[i+1]->token ) {
-                case T_COLON:
+                switch( AsmBuffer[i+1]->class ) {
+                case TC_COLON:
                     cur_opnd = OP_LABEL;
                     break;
 #if ALLOW_STRUCT_INIT
 #if defined( _STANDALONE_ )
-                case T_ID:
+                case TC_ID:
                     /* structure declaration */
                     if( IsLabelStruct( AsmBuffer[i+1]->string_ptr ) ) {
-                        AsmBuffer[i+1]->token = T_DIRECTIVE;
-                        AsmBuffer[i+1]->u.value = T_STRUCT;
+                        AsmBuffer[i+1]->class = TC_DIRECTIVE;
+                        AsmBuffer[i+1]->u.token = T_STRUCT;
                     } else {
                         AsmError( SYNTAX_ERROR );
                         return( ERROR );
@@ -2575,12 +2575,12 @@ int AsmParse( void )
                     /* fall through */
 #endif
 #endif
-                case T_RES_ID:
+                case TC_RES_ID:
                     return( data_init( i, i+1 ) );
                     break;
 #if defined( _STANDALONE_ )
-                case T_DIRECTIVE:
-                    return( directive( i+1, AsmBuffer[i+1]->u.value ) );
+                case TC_DIRECTIVE:
+                    return( directive( i+1, AsmBuffer[i+1]->u.token ) );
                     break;
 #endif
                 default:
@@ -2589,7 +2589,7 @@ int AsmParse( void )
                 }
             }
             break;
-        case T_COMMA:
+        case TC_COMMA:
             if( Opnd_Count > OPND2 ) {
                 AsmError( TOO_MANY_COMMAS );
                 return( ERROR );
@@ -2606,9 +2606,9 @@ int AsmParse( void )
             }
             Opnd_Count++;
             if( opndx.empty ) {
-                if( AsmBuffer[i]->token == T_FLOAT
-                    || AsmBuffer[i]->token == T_MINUS
-                    || AsmBuffer[i]->token == T_PLUS ) {
+                if( AsmBuffer[i]->class == TC_FLOAT
+                    || AsmBuffer[i]->class == TC_MINUS
+                    || AsmBuffer[i]->class == TC_PLUS ) {
                     i--;
                     continue;
                 }
@@ -2620,7 +2620,7 @@ int AsmParse( void )
                     if( opndx.type == EXPR_CONST ) {
                         Opnd_Count--;
                     } else if( opndx.type == EXPR_REG ) {
-                        if( AsmBuffer[opndx.base_reg]->u.value == T_CL ) {
+                        if( AsmBuffer[opndx.base_reg]->u.token == T_CL ) {
                             Opnd_Count--;
                             i--;
                             break;
@@ -2649,9 +2649,9 @@ int AsmParse( void )
             }
             i--;
             break;
-        case T_COLON:
+        case TC_COLON:
             if ( last_opnd == OP_LABEL ) {
-                if( AsmBuffer[i+1]->token != T_RES_ID ) {
+                if( AsmBuffer[i+1]->class != TC_RES_ID ) {
                     if( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_NEAR )==ERROR ) {
                          return( ERROR );
                     }
@@ -2662,14 +2662,14 @@ int AsmParse( void )
                 return( ERROR );
             }
             break;
-        case T_PLUS:
-        case T_MINUS:
+        case TC_PLUS:
+        case TC_MINUS:
             break;
-        case T_FLOAT:
+        case TC_FLOAT:
             if( idata_float( AsmBuffer[i]->u.value ) == ERROR ) {
                 return( ERROR );
             }
-            if( AsmBuffer[i-1]->token == T_MINUS ) {
+            if( AsmBuffer[i-1]->class == TC_MINUS ) {
                 rCode->data[Opnd_Count] ^= 0x80000000;
             }
 #if defined( _STANDALONE_ )

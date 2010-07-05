@@ -1217,7 +1217,7 @@ int main( void )
 void set_cpu_parameters( void )
 /*****************************/
 {
-    int token;
+    asm_token   token;
 
     // Start in masm mode
     Options.mode &= ~MODE_IDEAL;

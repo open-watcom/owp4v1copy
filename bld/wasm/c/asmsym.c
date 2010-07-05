@@ -667,7 +667,7 @@ static void log_symbol( struct asm_sym *sym )
         const_info  *cst = dir->e.constinfo;
 
         LstMsg( "%s %s        ", sym->name, dots + strlen( sym->name ) + 1 );
-        if( cst->count && cst->data[0].token != T_NUM ) {
+        if( cst->count && cst->data[0].class != TC_NUM ) {
             LstMsg( "Text     %s\n", cst->data[0].string_ptr );
         } else {
             LstMsg( "Number   %04Xh\n", cst->count ? cst->data[0].u.value : 0 );

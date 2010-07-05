@@ -262,12 +262,12 @@ enum regsize {
 };
 
 static char         code_segment_name[ MAX_LINE_LEN ];
-static asm_tok      const_CodeSize = { T_NUM, NULL, 0 };
-static asm_tok      const_DataSize = { T_NUM, NULL, 0 };
-static asm_tok      const_Model = { T_NUM, NULL, 0 };
-static asm_tok      const_Interface = { T_NUM, NULL, 0 };
-static asm_tok      const_data = { T_ID, NULL, 0 };
-static asm_tok      const_code = { T_ID, code_segment_name, 0 };
+static asm_tok      const_CodeSize = { TC_NUM, NULL, 0 };
+static asm_tok      const_DataSize = { TC_NUM, NULL, 0 };
+static asm_tok      const_Model = { TC_NUM, NULL, 0 };
+static asm_tok      const_Interface = { TC_NUM, NULL, 0 };
+static asm_tok      const_data = { TC_ID, NULL, 0 };
+static asm_tok      const_code = { TC_ID, code_segment_name, 0 };
 
 static const_info   info_CodeSize = { TRUE, 0, 0, TRUE, &const_CodeSize };
 static const_info   info_DataSize = { TRUE, 0, 0, TRUE, &const_DataSize };
@@ -739,7 +739,7 @@ void FreeInfo( dir_node *dir )
         if( !dir->e.constinfo->predef ) {
 #ifdef DEBUG_OUT
             if( ( dir->e.constinfo->count > 0 )
-                && ( dir->e.constinfo->data[0].token != T_NUM ) ) {
+                && ( dir->e.constinfo->data[0].class != TC_NUM ) ) {
                 DebugMsg( ( "freeing const(String): %s = ", dir->sym.name ) );
             } else {
                 DebugMsg( ( "freeing const(Number): %s = ", dir->sym.name ) );
@@ -747,7 +747,7 @@ void FreeInfo( dir_node *dir )
 #endif
             for( i=0; i < dir->e.constinfo->count; i++ ) {
 #ifdef DEBUG_OUT
-                if( dir->e.constinfo->data[i].token == T_NUM ) {
+                if( dir->e.constinfo->data[i].class == TC_NUM ) {
                     DebugMsg(( "%d ", dir->e.constinfo->data[i].u.value ));
                 } else {
                     DebugMsg(( "%s ", dir->e.constinfo->data[i].string_ptr ));
@@ -1024,7 +1024,7 @@ int CheckForLang( int i )
     char        *token;
     int         lang;
 
-    if( AsmBuffer[i]->token == T_ID) {
+    if( AsmBuffer[i]->class == TC_ID) {
         token = AsmBuffer[i]->string_ptr;
         // look up the type of token
         if( Options.mode & MODE_TASM ) {
@@ -1074,7 +1074,7 @@ int ExtDef( int i, bool glob_def )
         token = AsmBuffer[i++]->string_ptr;
 
         /* go past the colon */
-        if( AsmBuffer[i]->token != T_COLON ) {
+        if( AsmBuffer[i]->class != TC_COLON ) {
             AsmError( COLON_EXPECTED );
             return( ERROR );
         }
@@ -1092,7 +1092,7 @@ int ExtDef( int i, bool glob_def )
         } else {
             mem_type = TypeInfo[type].value;
         }
-        for( ; i< Token_Count && AsmBuffer[i]->token != T_COMMA; i++ );
+        for( ; i< Token_Count && AsmBuffer[i]->class != TC_COMMA; i++ );
 
         dir = (dir_node *)AsmGetSymbol( token );
         if( dir == NULL ) {
@@ -1135,10 +1135,10 @@ static char *Check4Mangler( int *i )
 {
     char *mangle_type = NULL;
 
-    if( AsmBuffer[*i]->token == T_STRING ) {
+    if( AsmBuffer[*i]->class == TC_STRING ) {
         mangle_type = AsmBuffer[*i]->string_ptr;
         (*i)++;
-        if( AsmBuffer[*i]->token != T_COMMA ) {
+        if( AsmBuffer[*i]->class != TC_COMMA ) {
             AsmWarn( 2, EXPECTING_COMMA );
         } else {
             (*i)++;
@@ -1177,7 +1177,7 @@ int PubDef( int i )
         } else if( dir->sym.state == SYM_CONST ) {
             /* check if the symbol expands to another symbol,
              * and if so, expand it */
-            if( dir->e.constinfo->data[0].token == T_ID ) {
+            if( dir->e.constinfo->data[0].class == TC_ID ) {
                 ExpandTheWorld( i, FALSE, TRUE );
                 return( PubDef( i ) );
             }
@@ -1226,7 +1226,7 @@ int GrpDef( int i )
     } else {
         n = --i;
     }
-    if( ( n < 0 ) || ( AsmBuffer[n]->token != T_ID ) ) {    /* name present? */
+    if( ( n < 0 ) || ( AsmBuffer[n]->class != TC_ID ) ) {    /* name present? */
         AsmError( GRP_NAME_MISSING );
         return( ERROR );
     }
@@ -1316,7 +1316,7 @@ int  SetCurrSeg( int i )
     char        *name;
     dir_node    *seg;
 
-    switch( AsmBuffer[i]->u.value ) {
+    switch( AsmBuffer[i]->u.token ) {
     case T_SEGMENT:
         FlushCurrSeg();
         if( Options.mode & MODE_IDEAL ) {
@@ -1456,24 +1456,24 @@ int SegDef( int i )
     int                 n;
     if( Options.mode & MODE_IDEAL ) {
         n = i + 1;
-        if( ( AsmBuffer[n]->token == T_DIRECTIVE ) &&
-            ( ( AsmBuffer[n]->u.value == T_STACK ) ||
-              ( AsmBuffer[n]->u.value == T_CONST ) ) )
-            AsmBuffer[n]->token = T_ID;
-        if( ( AsmBuffer[i]->u.value == T_SEGMENT ) &&
-            ( AsmBuffer[n]->token != T_ID ) ) {
+        if( ( AsmBuffer[n]->class == TC_DIRECTIVE ) &&
+            ( ( AsmBuffer[n]->u.token == T_STACK ) ||
+              ( AsmBuffer[n]->u.token == T_CONST ) ) )
+            AsmBuffer[n]->class = TC_ID;
+        if( ( AsmBuffer[i]->u.token == T_SEGMENT ) &&
+            ( AsmBuffer[n]->class != TC_ID ) ) {
             AsmError( SEG_NAME_MISSING );
             return( ERROR );
         }
     } else {
         n = i - 1;
-        if( ( n < 0 ) || ( AsmBuffer[n]->token != T_ID ) ) {
+        if( ( n < 0 ) || ( AsmBuffer[n]->class != TC_ID ) ) {
             AsmError( SEG_NAME_MISSING );
             return( ERROR );
         }
     }
     name = AsmBuffer[n]->string_ptr;
-    switch( AsmBuffer[i]->u.value ) {
+    switch( AsmBuffer[i]->u.token ) {
     case T_SEGMENT:
         /* Check to see if the segment is already defined */
         seg = (dir_node *)AsmGetSymbol( name );
@@ -1531,7 +1531,7 @@ int SegDef( int i )
             i++;        /* Go past SEGMENT */
         }
         for( ; i < Token_Count; i ++ ) {
-            if( AsmBuffer[i]->token == T_STRING ) {
+            if( AsmBuffer[i]->class == TC_STRING ) {
 
                 /* the class name - the only token which is of type STRING */
                 token = AsmBuffer[i]->string_ptr;
@@ -1589,7 +1589,7 @@ int SegDef( int i )
             case TOK_AT:
                 new->align = SEGDEF_ALIGN_ABS;
                 ExpandTheWorld( i + 1, FALSE, TRUE);
-                if( AsmBuffer[i+1]->token == T_NUM ) {
+                if( AsmBuffer[i+1]->class == TC_NUM ) {
                     i++;
                     new->abs_frame = AsmBuffer[i]->u.value;
                 } else {
@@ -1671,7 +1671,7 @@ int SegDef( int i )
             AsmError( SEGMENT_NOT_OPENED );
             return( ERROR );
         }
-        if( AsmBuffer[n]->token == T_ID ) {
+        if( AsmBuffer[n]->class == TC_ID ) {
             seg = (dir_node *)AsmGetSymbol( name );
             if( seg == NULL ) {
                 AsmErr( SEG_NOT_DEFINED, name );
@@ -1697,10 +1697,10 @@ error:
 int Include( int i )
 /******************/
 {
-    switch( AsmBuffer[i]->token ) {
-    case T_ID:
-    case T_STRING:
-    case T_PATH:
+    switch( AsmBuffer[i]->class ) {
+    case TC_ID:
+    case TC_STRING:
+    case TC_PATH:
         return( InputQueueFile( AsmBuffer[i]->string_ptr ) );
     default:
         AsmError( EXPECTED_FILE_NAME );
@@ -1730,8 +1730,8 @@ int IncludeLib( int i )
     return( NOT_ERROR );
 }
 
-static void input_group( int type, char *name )
-/*********************************************/
+static void input_group( asm_token type, char *name )
+/***************************************************/
 /* emit any GROUP instruction */
 {
     char        buffer[MAX_LINE_LEN];
@@ -1796,7 +1796,7 @@ int Startup( int i )
     }
     ModuleInfo.cmdline = FALSE;
 
-    switch( AsmBuffer[i]->u.value ) {
+    switch( AsmBuffer[i]->u.token ) {
     case T_DOT_STARTUP:
     case T_STARTUPCODE:
         count = 0;
@@ -1882,7 +1882,7 @@ int SimSeg( int i )
     char        buffer[ MAX_LINE_LEN ];
     int         bit;
     char        *string;
-    int         type;
+    asm_token   type;
     int         seg;
     int         ideal;
 
@@ -1894,7 +1894,7 @@ int SimSeg( int i )
     close_lastseg();
     buffer[0] = '\0';
     bit = ( ModuleInfo.defUse32 ) ? BIT32 : BIT16;
-    type = AsmBuffer[i]->u.value;
+    type = AsmBuffer[i]->u.token;
     i++; /* get past the directive token */
     if( i < Token_Count ) {
         string = AsmBuffer[i]->string_ptr;
@@ -1926,7 +1926,7 @@ int SimSeg( int i )
         input_group( type, NULL );
         InputQueueLine( SimCodeEnd[ideal][SIM_STACK] );
         if( i < Token_Count ) {
-            if( AsmBuffer[i]->token != T_NUM ) {
+            if( AsmBuffer[i]->class != TC_NUM ) {
                 AsmError( CONSTANT_EXPECTED );
                 return( ERROR );
             } else {
@@ -2292,7 +2292,7 @@ int Model( int i )
         i++;
 
         /* go past comma */
-        if( ( i < Token_Count ) && ( AsmBuffer[i]->token != T_COMMA ) ) {
+        if( ( i < Token_Count ) && ( AsmBuffer[i]->class != TC_COMMA ) ) {
             AsmError( EXPECTING_COMMA );
             return( ERROR );
         }
@@ -2370,14 +2370,14 @@ int SetAssume( int i )
 
         i++;
 
-        if( AsmBuffer[i]->token != T_COLON ) {
+        if( AsmBuffer[i]->class != TC_COLON ) {
             AsmError( COLON_EXPECTED );
             return( ERROR );
         }
         i++;
 
-        if( ( AsmBuffer[i]->token == T_UNARY_OPERATOR )
-            && ( AsmBuffer[i]->u.value == T_SEG ) ) {
+        if( ( AsmBuffer[i]->class == TC_UNARY_OPERATOR )
+            && ( AsmBuffer[i]->u.token == T_SEG ) ) {
             i++;
         }
 
@@ -2430,7 +2430,7 @@ int SetAssume( int i )
         }
 
         /* go past comma */
-        if( ( i < Token_Count ) && ( AsmBuffer[i]->token != T_COMMA ) ) {
+        if( ( i < Token_Count ) && ( AsmBuffer[i]->class != TC_COMMA ) ) {
             AsmError( EXPECTING_COMMA );
             return( ERROR );
         }
@@ -2658,7 +2658,7 @@ int ModuleEnd( int count )
         return( NOT_ERROR );
     }
 
-    if( AsmBuffer[1]->token != T_ID ) {
+    if( AsmBuffer[1]->class != TC_ID ) {
         AsmError( INVALID_START_ADDRESS );
         return( ERROR );
     }
@@ -2804,7 +2804,7 @@ int LocalDef( int i )
     info = CurrProc->e.procinfo;
 
     for( i++; i < Token_Count; i++ ) {
-        if( AsmBuffer[i]->token != T_ID ) {
+        if( AsmBuffer[i]->class != TC_ID ) {
             AsmError( LABEL_IS_EXPECTED );
             return( ERROR );
         }
@@ -2832,14 +2832,14 @@ int LocalDef( int i )
         local->is_register = 0;
 
         if( i < Token_Count ) {
-            if( AsmBuffer[i]->token == T_OP_SQ_BRACKET ) {
+            if( AsmBuffer[i]->class == TC_OP_SQ_BRACKET ) {
                 i++;
-                if( ( AsmBuffer[i]->token != T_NUM ) || ( i >= Token_Count ) ) {
+                if( ( AsmBuffer[i]->class != TC_NUM ) || ( i >= Token_Count ) ) {
                     AsmError( SYNTAX_ERROR );
                     return( ERROR );
                 }
                 local->factor = AsmBuffer[i++]->u.value;
-                if( ( AsmBuffer[i]->token != T_CL_SQ_BRACKET ) || ( i >= Token_Count ) ) {
+                if( ( AsmBuffer[i]->class != TC_CL_SQ_BRACKET ) || ( i >= Token_Count ) ) {
                     AsmError( EXPECTED_CL_SQ_BRACKET );
                     return( ERROR );
                 }
@@ -2848,7 +2848,7 @@ int LocalDef( int i )
         }
 
         if( i < Token_Count ) {
-            if( AsmBuffer[i]->token != T_COLON ) {
+            if( AsmBuffer[i]->class != TC_COLON ) {
                 AsmError( COLON_EXPECTED );
                 return( ERROR );
             }
@@ -2890,24 +2890,24 @@ int LocalDef( int i )
             curr->next = local;
         }
 
-        switch( AsmBuffer[++i]->token ) {
-        case T_DIRECTIVE:
-            if( ( AsmBuffer[i]->u.value == T_EQU2 ) &&
-                ( AsmBuffer[i+1]->token == T_ID ) &&
-                ( AsmBuffer[i+2]->token == T_FINAL ) ) {
+        switch( AsmBuffer[++i]->class ) {
+        case TC_DIRECTIVE:
+            if( ( AsmBuffer[i]->u.token == T_EQU2 ) &&
+                ( AsmBuffer[i+1]->class == TC_ID ) &&
+                ( AsmBuffer[i+2]->class == TC_FINAL ) ) {
                 i++;
                 StoreConstantNumber( AsmBuffer[i++]->string_ptr, info->localsize, TRUE );
             }
             break;
-        case T_COMMA:
+        case TC_COMMA:
             continue;
-        case T_FINAL:
+        case TC_FINAL:
         default:
             break;
         }
         break;
     }
-    if( AsmBuffer[i]->token != T_FINAL ) {
+    if( AsmBuffer[i]->class != TC_FINAL ) {
         AsmError( SYNTAX_ERROR );
         return( ERROR );
     }
@@ -2954,7 +2954,7 @@ int ArgDef( int i )
         register_count = unused_stack_space = 0;
     }
     for( i++; i < Token_Count; i++ ) {
-        if( AsmBuffer[i]->token != T_ID ) {
+        if( AsmBuffer[i]->class != TC_ID ) {
             AsmError( LABEL_IS_EXPECTED );
             return( ERROR );
         }
@@ -2963,7 +2963,7 @@ int ArgDef( int i )
         token = AsmBuffer[i++]->string_ptr;
 
         /* read colon */
-        if( AsmBuffer[i]->token != T_COLON ) {
+        if( AsmBuffer[i]->class != TC_COLON ) {
             AsmError( COLON_EXPECTED );
             return( ERROR );
         }
@@ -3075,24 +3075,24 @@ int ArgDef( int i )
             }
             break;
         }
-        switch( AsmBuffer[++i]->token ) {
-        case T_DIRECTIVE:
-            if( ( AsmBuffer[i]->u.value == T_EQU2 ) &&
-                ( AsmBuffer[i+1]->token == T_ID ) &&
-                ( AsmBuffer[i+2]->token == T_FINAL ) ) {
+        switch( AsmBuffer[++i]->class ) {
+        case TC_DIRECTIVE:
+            if( ( AsmBuffer[i]->u.token == T_EQU2 ) &&
+                ( AsmBuffer[i+1]->class == TC_ID ) &&
+                ( AsmBuffer[i+2]->class == TC_FINAL ) ) {
                 i++;
                 StoreConstantNumber( AsmBuffer[i++]->string_ptr, info->parasize, TRUE );
             }
             break;
-        case T_COMMA:
+        case TC_COMMA:
             continue;
-        case T_FINAL:
+        case TC_FINAL:
         default:
             break;
         }
         break;
     }
-    if( AsmBuffer[i]->token != T_FINAL ) {
+    if( AsmBuffer[i]->class != TC_FINAL ) {
         AsmError( SYNTAX_ERROR );
         return( ERROR );
     }
@@ -3121,7 +3121,7 @@ int UsesDef( int i )
 
     info = CurrProc->e.procinfo;
 
-    for( i++; ( i < Token_Count ) && ( AsmBuffer[i]->token != T_FINAL ); i++ ) {
+    for( i++; ( i < Token_Count ) && ( AsmBuffer[i]->class != TC_FINAL ); i++ ) {
         token = AsmBuffer[i]->string_ptr;
         regist = AsmAlloc( sizeof( regs_list ));
         regist->next = NULL;
@@ -3138,10 +3138,10 @@ int UsesDef( int i )
             }
             temp_regist->next = regist;
         }
-        if( AsmBuffer[++i]->token != T_COMMA )
+        if( AsmBuffer[++i]->class != TC_COMMA )
             break;
     }
-    if( AsmBuffer[i]->token != T_FINAL ) {
+    if( AsmBuffer[i]->class != TC_FINAL ) {
         AsmError( SYNTAX_ERROR );
         return( ERROR );
     }
@@ -3172,7 +3172,7 @@ int EnumDef( int i )
     } else {
         n = --i;
     }
-    if( ( n < 0 ) || ( AsmBuffer[n]->token != T_ID ) ) {    /* name present? */
+    if( ( n < 0 ) || ( AsmBuffer[n]->class != TC_ID ) ) {    /* name present? */
         AsmError( ENUM_NAME_MISSING );
         return( ERROR );
     }
@@ -3183,17 +3183,17 @@ int EnumDef( int i )
     n = 2;
     do {
         for( i = n++; ; i++ ) {
-            switch( AsmBuffer[i]->token ) {
-            case T_OP_BRACE:
+            switch( AsmBuffer[i]->class ) {
+            case TC_OP_BRACE:
                 in_braces++;
                 continue;
-            case T_CL_BRACE:
+            case TC_CL_BRACE:
                 in_braces--;
                 continue;
-            case T_FINAL:
+            case TC_FINAL:
                 n = 0;
                 break;
-            case T_ID:
+            case TC_ID:
                 name = AsmBuffer[i]->string_ptr;
                 break;
             default:
@@ -3201,18 +3201,18 @@ int EnumDef( int i )
                 return( ERROR );
             }
             if( n ) {
-                if( ( AsmBuffer[i+1]->token == T_DIRECTIVE ) &&
-                    ( AsmBuffer[i+1]->u.value == T_EQU2 ) ) {
+                if( ( AsmBuffer[i+1]->class == TC_DIRECTIVE ) &&
+                    ( AsmBuffer[i+1]->u.token == T_EQU2 ) ) {
                     i += 2;
-                    switch( AsmBuffer[i]->token ) {
-                    case T_NUM:
+                    switch( AsmBuffer[i]->class ) {
+                    case TC_NUM:
                         count = AsmBuffer[i]->u.value;
                         break;
-                    case T_ID:
+                    case TC_ID:
                         sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
                         if( ( sym != NULL ) && ( sym->state == SYM_CONST ) ) {
                             dir = ( dir_node * ) sym;
-                            if( dir->e.constinfo->data[0].token == T_NUM ) {
+                            if( dir->e.constinfo->data[0].class == TC_NUM ) {
                                 count = dir->e.constinfo->data[0].u.value;
                                 break;
                             }
@@ -3225,7 +3225,7 @@ int EnumDef( int i )
                 if( StoreConstantNumber( name, count++, TRUE ) == ERROR )
                     return( ERROR );
                 enums++;
-                if( AsmBuffer[i+1]->token == T_COMMA )
+                if( AsmBuffer[i+1]->class == TC_COMMA )
                     i++;
                 continue;
             } else {
@@ -3240,7 +3240,7 @@ int EnumDef( int i )
             break;
         }
     } while( in_braces );
-    if( ( AsmBuffer[i]->token != T_FINAL ) || ( enums == 0 ) ) {
+    if( ( AsmBuffer[i]->class != TC_FINAL ) || ( enums == 0 ) ) {
         AsmError( SYNTAX_ERROR );
         return( ERROR );
     }
@@ -3281,9 +3281,9 @@ static int proc_exam( dir_node *proc, int i )
     SetMangler( &proc->sym, NULL, LANG_NONE );
 
     /* Parse the definition line, except the parameters */
-    for( i++; i < Token_Count && AsmBuffer[i]->token != T_COMMA; i++ ) {
+    for( i++; i < Token_Count && AsmBuffer[i]->class != TC_COMMA; i++ ) {
         token = AsmBuffer[i]->string_ptr;
-        if( AsmBuffer[i]->token == T_STRING ) {
+        if( AsmBuffer[i]->class == TC_STRING ) {
             /* name mangling */
             SetMangler( &proc->sym, token, LANG_NONE );
             continue;
@@ -3333,7 +3333,7 @@ static int proc_exam( dir_node *proc, int i )
             minimum = TOK_PROC_USES;
             break;
         case TOK_PROC_USES:
-            for( i++; ( i < Token_Count ) && ( AsmBuffer[i]->token != T_COMMA ); i++ ) {
+            for( i++; ( i < Token_Count ) && ( AsmBuffer[i]->class != TC_COMMA ); i++ ) {
                 token = AsmBuffer[i]->string_ptr;
                 regist = AsmAlloc( sizeof( regs_list ));
                 regist->next = NULL;
@@ -3351,7 +3351,7 @@ static int proc_exam( dir_node *proc, int i )
                     temp_regist->next = regist;
                 }
             }
-            if( AsmBuffer[i]->token == T_COMMA )
+            if( AsmBuffer[i]->class == TC_COMMA )
                 i--;
             break;
         default:
@@ -3369,7 +3369,7 @@ parms:
     } else if( ( proc->sym.langtype == LANG_NONE ) && ( (Options.mode & MODE_IDEAL) == 0 ) ) {
         AsmError( LANG_MUST_BE_SPECIFIED );
         return( ERROR );
-    } else if( AsmBuffer[i]->token == T_COMMA ) {
+    } else if( AsmBuffer[i]->class == TC_COMMA ) {
         i++;
     }
 
@@ -3383,7 +3383,7 @@ parms:
         token = AsmBuffer[i++]->string_ptr;
 
         /* read colon */
-        if( AsmBuffer[i]->token != T_COLON ) {
+        if( AsmBuffer[i]->class != TC_COLON ) {
             AsmError( COLON_EXPECTED );
             return( ERROR );
         }
@@ -3484,7 +3484,7 @@ parms:
         }
         /* go past comma */
         i++;
-        if( ( i < Token_Count ) && ( AsmBuffer[i]->token != T_COMMA ) ) {
+        if( ( i < Token_Count ) && ( AsmBuffer[i]->class != TC_COMMA ) ) {
             AsmError( EXPECTING_COMMA );
             return( ERROR );
         }
@@ -3511,7 +3511,7 @@ int ProcDef( int i, bool proc_def )
     }
 
     if( Parse_Pass == PASS_1 ) {
-        if( ( n < 0 ) || ( AsmBuffer[n]->token != T_ID ) ) {
+        if( ( n < 0 ) || ( AsmBuffer[n]->class != TC_ID ) ) {
             AsmError( PROC_MUST_HAVE_A_NAME );
             return( ERROR );
         }
@@ -3578,7 +3578,7 @@ int ProcEnd( int i )
         AsmError( BLOCK_NESTING_ERROR );
         return( ERROR );
     } else if( Options.mode & MODE_IDEAL ) {
-        if( AsmBuffer[++i]->token == T_ID ) {
+        if( AsmBuffer[++i]->class == TC_ID ) {
             if( ( (dir_node *)AsmGetSymbol( AsmBuffer[i]->string_ptr ) != CurrProc ) ) {
                 AsmError( PROC_NAME_DOES_NOT_MATCH );
             }
@@ -3938,7 +3938,7 @@ int Ret( int i, int count, int flag_iret )
     info = CurrProc->e.procinfo;
 
     if( flag_iret ) {
-        if( AsmBuffer[i]->u.value == T_IRET ) {
+        if( AsmBuffer[i]->u.token == T_IRET ) {
             strcpy( buffer, "iretf" );
         } else {
             strcpy( buffer, "iretdf" );
@@ -4042,8 +4042,8 @@ int AddAlias( int i )
 {
     char    *tmp;
 
-    if( ( AsmBuffer[i+1]->token == T_DIRECTIVE ) &&
-        ( AsmBuffer[i+1]->u.value == T_EQU2 ) )
+    if( ( AsmBuffer[i+1]->class == TC_DIRECTIVE ) &&
+        ( AsmBuffer[i+1]->u.token == T_EQU2 ) )
         i++;  /* ALIAS <alias> = <target> (MASM, TASM) */
     else
         i--;  /* <alias> ALIAS <target> (WASM) */
@@ -4051,8 +4051,8 @@ int AddAlias( int i )
         AsmError( SYNTAX_ERROR );
         return( ERROR );
     }
-    if( ( AsmBuffer[i]->token != T_ID )
-        || ( AsmBuffer[i+2]->token != T_ID ) ) {
+    if( ( AsmBuffer[i]->class != TC_ID )
+        || ( AsmBuffer[i+2]->class != TC_ID ) ) {
         AsmError( SYMBOL_EXPECTED );
         return( ERROR );
     }
@@ -4117,7 +4117,7 @@ int CommDef( int i )
         token = AsmBuffer[i++]->string_ptr;
 
         /* go past the colon */
-        if( AsmBuffer[i]->token != T_COLON ) {
+        if( AsmBuffer[i]->class != TC_COLON ) {
             AsmError( COLON_EXPECTED );
             return( ERROR );
         }
@@ -4129,11 +4129,11 @@ int CommDef( int i )
             AsmError( INVALID_QUALIFIED_TYPE );
             return( ERROR );
         }
-        for( ; i< Token_Count && AsmBuffer[i]->token != T_COMMA; i++ ) {
-            if( AsmBuffer[i]->token == T_COLON ) {
+        for( ; i< Token_Count && AsmBuffer[i]->class != TC_COMMA; i++ ) {
+            if( AsmBuffer[i]->class == TC_COLON ) {
                 i++;
                 /* count */
-                if( AsmBuffer[i]->token != T_NUM ) {
+                if( AsmBuffer[i]->class != TC_NUM ) {
                     AsmError( EXPECTING_NUMBER );
                     return( ERROR );
                 }
@@ -4166,13 +4166,13 @@ int CommDef( int i )
 int Locals( int i )
 /*******************/
 {
-    Options.locals_len = ( AsmBuffer[i]->u.value == T_LOCALS ) ? 2 : 0;
+    Options.locals_len = ( AsmBuffer[i]->u.token == T_LOCALS ) ? 2 : 0;
     if( i + 1 == Token_Count ) {
         return( NOT_ERROR );
     }
-    if( AsmBuffer[i]->u.value == T_LOCALS ) {
+    if( AsmBuffer[i]->u.token == T_LOCALS ) {
         ++i;
-        if( i < Token_Count && AsmBuffer[i]->token == T_ID
+        if( i < Token_Count && AsmBuffer[i]->class == TC_ID
             && strlen( AsmBuffer[i]->string_ptr ) >= 2 ) {
             Options.locals_prefix[0] = AsmBuffer[i]->string_ptr[0];
             Options.locals_prefix[1] = AsmBuffer[i]->string_ptr[1];

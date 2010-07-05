@@ -214,14 +214,14 @@ int conditional_error_directive( int i )
         AsmErr( FORCED );
         return( ERROR );
     case T_DOT_ERRNZ:
-        if( AsmBuffer[i+1]->token == T_NUM && AsmBuffer[i+1]->u.value ) {
+        if( AsmBuffer[i+1]->class == TC_NUM && AsmBuffer[i+1]->u.value ) {
             AsmErr( FORCED_NOT_ZERO, AsmBuffer[i+1]->u.value );
             return( ERROR );
         }
         break;
     case T_DOT_ERRE:
     case T_ERRIFE:
-        if( AsmBuffer[i+1]->token == T_NUM && !AsmBuffer[i+1]->u.value ) {
+        if( AsmBuffer[i+1]->class == TC_NUM && !AsmBuffer[i+1]->u.value ) {
             AsmErr( FORCED_EQUAL, AsmBuffer[i+1]->u.value );
             return( ERROR );
         }
@@ -242,7 +242,7 @@ int conditional_error_directive( int i )
         break;
     case T_DOT_ERRB:
     case T_ERRIFB:
-        if( AsmBuffer[i+1]->token == T_STRING &&
+        if( AsmBuffer[i+1]->class == TC_STRING &&
             check_blank( AsmBuffer[i+1]->string_ptr ) ) {
             AsmErr( FORCED_BLANK, AsmBuffer[i+1]->string_ptr );
             return( ERROR );
@@ -250,7 +250,7 @@ int conditional_error_directive( int i )
         break;
     case T_DOT_ERRNB:
     case T_ERRIFNB:
-        if( AsmBuffer[i+1]->token != T_STRING ||
+        if( AsmBuffer[i+1]->class != TC_STRING ||
             !check_blank( AsmBuffer[i+1]->string_ptr ) ) {
             AsmErr( FORCED_NOT_BLANK, AsmBuffer[i+1]->string_ptr );
             return( ERROR );
@@ -290,10 +290,10 @@ int conditional_error_directive( int i )
 
 static if_state get_cond_state( int i )
 {
-    uint_16     direct;
+    asm_token   direct;
     if_state    cond_state;
 
-    direct = AsmBuffer[i]->u.value;
+    direct = AsmBuffer[i]->u.token;
 
     /* expand any constants if necessary */
     switch( direct ) {
@@ -315,7 +315,7 @@ static if_state get_cond_state( int i )
     switch( direct ) {
     case T_IF:
     case T_ELSEIF:
-        cond_state = ( AsmBuffer[i+1]->token == T_NUM && AsmBuffer[i+1]->u.value )
+        cond_state = ( AsmBuffer[i+1]->class == TC_NUM && AsmBuffer[i+1]->u.value )
                    ? ACTIVE : LOOKING_FOR_TRUE_COND;
         break;
     case T_IF1:
@@ -336,7 +336,7 @@ static if_state get_cond_state( int i )
         break;
     case T_IFE:
     case T_ELSEIFE:
-        cond_state = ( AsmBuffer[i+1]->token == T_NUM && !AsmBuffer[i+1]->u.value )
+        cond_state = ( AsmBuffer[i+1]->class == TC_NUM && !AsmBuffer[i+1]->u.value )
                    ? ACTIVE : LOOKING_FOR_TRUE_COND;
         break;
     case T_IFDIF:
@@ -373,9 +373,9 @@ static if_state get_cond_state( int i )
 int conditional_assembly_directive( int i )
 /*****************************************/
 {
-    uint_16     direct;
+    asm_token   direct;
 
-    direct = AsmBuffer[i]->u.value;
+    direct = AsmBuffer[i]->u.token;
 
     switch( direct ) {
     case T_IF:

@@ -387,7 +387,7 @@ static int output_data( OPNDTYPE determinant, int index )
         }
     }
     while( out > 0 ) {
-        AsmCodeByte( Code->data[index] );
+        AsmCodeByte( (uint_8)Code->data[index] );
         Code->data[index] >>= 8;
         out--;
     }

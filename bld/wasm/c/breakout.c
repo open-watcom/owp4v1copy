@@ -44,10 +44,10 @@
 
 /* prototypes */
 extern int              OrgDirective( int );
-extern int              AlignDirective( uint_16, int );
+extern int              AlignDirective( asm_token, int );
 extern int              ForDirective( int, enum irp_type );
 
-int directive( int i, long direct )
+int directive( int i, asm_token direct )
 /* Handle all directives */
 {
     int         ret;
@@ -89,7 +89,7 @@ int directive( int i, long direct )
             AsmError( UNKNOWN_DIRECTIVE );
             return( ERROR );
         } else {
-            ret = cpu_directive(direct);
+            ret = cpu_directive( direct );
             if( Parse_Pass != PASS_1 )
                 ret = NOT_ERROR;
             return( ret );
@@ -116,7 +116,7 @@ int directive( int i, long direct )
     case T_PXMM:
     case T_PXMM2:
     case T_PXMM3:
-        ret = cpu_directive(direct);
+        ret = cpu_directive( direct );
         if( Parse_Pass != PASS_1 )
             ret = NOT_ERROR;
         return( ret );

@@ -311,7 +311,7 @@ static int multiply(ELD *op1, ELD *op2, ELD *res)
     res->m32[0] = r1.m32[3];
     res->m32[1] = r1.m32[4];
     res->m32[2] = r1.m32[5];
-    res->e = exp;
+    res->e = (unsigned short)exp;
     return 0;
 }
 

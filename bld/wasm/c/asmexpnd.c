@@ -99,11 +99,11 @@ int ExpandSymbol( int i, bool early_only )
         /* insert the pre-scanned data for this constant */
         AddTokens( AsmBuffer, i, dir->e.constinfo->count - 1 );
         for( j = 0; j < dir->e.constinfo->count; j++ ) {
-            AsmBuffer[i+j]->token = dir->e.constinfo->data[j].token;
+            AsmBuffer[i+j]->class = dir->e.constinfo->data[j].class;
             AsmBuffer[i+j]->u.value = dir->e.constinfo->data[j].u.value;
             AsmBuffer[i+j]->string_ptr = dir->e.constinfo->data[j].string_ptr;
             #ifdef DEBUG_OUT
-            if( AsmBuffer[i+j]->token == T_NUM ) {
+            if( AsmBuffer[i+j]->class == TC_NUM ) {
                 DebugMsg(( " %d", AsmBuffer[i+j]->u.value ));
             } else {
                 DebugMsg(( " %s", AsmBuffer[i+j]->string_ptr ));
@@ -156,8 +156,8 @@ int ExpandProcString( int index )
         if( replace != NULL ) {
             if( *replace == '\0' ) {
                 replace++;  /* point to first register string */
-                if( ( AsmBuffer[index + 1]->token == T_PLUS ) &&
-                    ( AsmBuffer[index + 2]->token == T_NUM ) ) {
+                if( ( AsmBuffer[index + 1]->class == TC_PLUS ) &&
+                    ( AsmBuffer[index + 2]->class == TC_NUM ) ) {
                     offset = AsmBuffer[index + 2]->u.value;
                     if( ( ( Use32 ) && ( offset != 4 ) ) ||
                         ( ( !Use32 ) && ( offset != 2 ) ) ) {
@@ -174,13 +174,13 @@ int ExpandProcString( int index )
             if( ( label->is_register ) && ( info->is_vararg == FALSE ) ) {
                 left_bracket = right_bracket = 0;   /* reset bracket indexes */
                 for( i = 0; i < index; i++ ) {
-                    if( AsmBuffer[i]->token == T_OP_SQ_BRACKET )
+                    if( AsmBuffer[i]->class == TC_OP_SQ_BRACKET )
                         break;
                 }
                 if( i < index ) {
                     left_bracket = i;
                     for( i = index + 1; i < Token_Count; i++ ) {
-                        if( AsmBuffer[i]->token == T_CL_SQ_BRACKET ) {
+                        if( AsmBuffer[i]->class == TC_CL_SQ_BRACKET ) {
                             right_bracket = i;
                             break;
                         }
@@ -197,8 +197,8 @@ int ExpandProcString( int index )
                     right_bracket = index;
                 }
             }
-            if( index > 0 && AsmBuffer[index-1]->token == T_DIRECTIVE ) {
-                switch( AsmBuffer[index-1]->u.value ) {
+            if( index > 0 && AsmBuffer[index-1]->class == TC_DIRECTIVE ) {
+                switch( AsmBuffer[index-1]->u.token ) {
                 case T_IFDEF:
                 case T_IFNDEF:
                 case T_ELSEIFDEF:
@@ -210,9 +210,9 @@ int ExpandProcString( int index )
                     return( NOT_ERROR );
                 }
             }
-            if( AsmBuffer[index+1]->token == T_DIRECTIVE ) {
+            if( AsmBuffer[index+1]->class == TC_DIRECTIVE ) {
                 /* this will never happen with multiple words in a string */
-                switch( AsmBuffer[index+1]->u.value ) {
+                switch( AsmBuffer[index+1]->u.token ) {
                 case T_EQU:
                 case T_EQU2:
                 case T_TEXTEQU:
@@ -229,7 +229,7 @@ int ExpandProcString( int index )
 
     /* now we need to build the new line string to pass through the scanner */
     buffer[0] = '\0';
-    /* NOTE: if we have a T_DIRECTIVE, token_count is always set to 1 !??! */
+    /* NOTE: if we have a TC_DIRECTIVE, token_count is always set to 1 !??! */
     for( i=0; i < Token_Count; i++ ) {
         if( i != index ) {
             /* register parameter ? */
@@ -239,7 +239,7 @@ int ExpandProcString( int index )
                     continue;   /*yes, skip it */
             }
             // if( expand_directive_string( buffer, i ) == ERROR ) return( ERROR );
-            if( AsmBuffer[i]->token == T_STRING ) {
+            if( AsmBuffer[i]->class == TC_STRING ) {
                 strcat( buffer, "<" );
                 strcat( buffer, AsmBuffer[i]->string_ptr );
                 strcat( buffer, ">" );
@@ -247,7 +247,7 @@ int ExpandProcString( int index )
                 strcat( buffer, AsmBuffer[i]->string_ptr );
             }
         } else {
-            if( AsmBuffer[i]->token == T_PERCENT ) {
+            if( AsmBuffer[i]->class == TC_PERCENT ) {
                 /* don't save the % */
                 i++;
             }
@@ -276,7 +276,7 @@ int ExpandProcString( int index )
     /* make sure this line goes at the front of the queue */
     PushLineQueue();
     InputQueueLine( buffer );
-    AsmBuffer[0]->token = 0;
+    AsmBuffer[0]->class = 0;
     AsmBuffer[0]->string_ptr = NULL;
     AsmBuffer[0]->u.value = 0;
     return( STRING_EXPANDED );
@@ -329,7 +329,7 @@ static void FreeConstData( const_info *constinfo )
 
         for( i=0; i < constinfo->count; i++ ) {
 #ifdef DEBUG_OUT
-            if( constinfo->data[i].token == T_NUM ) {
+            if( constinfo->data[i].class == TC_NUM ) {
                 DebugMsg(( "%d ", constinfo->data[i].u.value ));
             } else {
                 DebugMsg(( "%s ", constinfo->data[i].string_ptr ));
@@ -375,7 +375,7 @@ int StoreConstantNumber( char *name, long value, bool redefine )
     }
     new = AsmAlloc( sizeof( struct asm_tok ) );
     memset( new[0].u.bytes, 0, sizeof( new[0].u.bytes ) );
-    new[0].token = T_NUM;
+    new[0].class = TC_NUM;
     new[0].u.value = value;
     new[0].string_ptr = NULL;
     FreeConstData( dir->e.constinfo );
@@ -422,7 +422,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         /* just define it to be 1 and get out */
         new = AsmAlloc( sizeof( asm_tok ) );
         memset( new[0].u.bytes, 0, sizeof( new[0].u.bytes ) );
-        new[0].token = T_NUM;
+        new[0].class = TC_NUM;
         new[0].u.value = 1;
         new[0].string_ptr = NULL;
         FreeConstData( dir->e.constinfo );
@@ -435,8 +435,8 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
     if( ExpandTheWorld( start, FALSE, TRUE ) == ERROR )
         return( ERROR );
 
-    for( counta = 0, i = start; AsmBuffer[i]->token != T_FINAL; i++ ) {
-        if( ( AsmBuffer[i]->token != T_STRING )
+    for( counta = 0, i = start; AsmBuffer[i]->class != TC_FINAL; i++ ) {
+        if( ( AsmBuffer[i]->class != TC_STRING )
             || ( AsmBuffer[i]->u.value != 0 ) ) {
             counta++;
         }
@@ -452,8 +452,8 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         can_be_redefine = ( counta > 1 ) ? TRUE : FALSE;
     }
     for( i=0; i < count; i++ ) {
-        switch( AsmBuffer[start+i]->token ) {
-        case T_STRING:
+        switch( AsmBuffer[start+i]->class ) {
+        case TC_STRING:
             if( AsmBuffer[start+i]->u.value == 0 ) {
                 i--;
                 count--;
@@ -462,9 +462,9 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             }
             can_be_redefine = TRUE;
             break;
-        case T_NUM:
+        case TC_NUM:
             break;
-        case T_ID:
+        case TC_ID:
             if( IS_SYM_COUNTER( AsmBuffer[start+i]->string_ptr ) ) {
                 char            buff[40];
                 /*
@@ -483,7 +483,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             can_be_redefine = TRUE;
             break;
         }
-        new[i].token = AsmBuffer[start + i]->token;
+        new[i].class = AsmBuffer[start + i]->class;
         memcpy( new[i].u.bytes, AsmBuffer[start + i]->u.bytes, sizeof( new[i].u.bytes ) );
         if( AsmBuffer[start+i]->string_ptr == NULL ) {
             new[i].string_ptr = NULL;
@@ -505,8 +505,8 @@ int ExpandAllConsts( int start_pos, bool early_only )
 {
     int i;
 
-    if( AsmBuffer[start_pos+1]->token == T_DIRECTIVE ) {
-        switch( AsmBuffer[start_pos+1]->u.value ) {
+    if( AsmBuffer[start_pos+1]->class == TC_DIRECTIVE ) {
+        switch( AsmBuffer[start_pos+1]->u.token ) {
         case T_EQU:
         case T_EQU2:
         case T_TEXTEQU:
@@ -514,8 +514,8 @@ int ExpandAllConsts( int start_pos, bool early_only )
         }
     }
     Globals.expand_count = 0;
-    for( i=start_pos; AsmBuffer[i]->token != T_FINAL; i++ ) {
-        if( AsmBuffer[i]->token != T_ID ) continue;
+    for( i=start_pos; AsmBuffer[i]->class != TC_FINAL; i++ ) {
+        if( AsmBuffer[i]->class != TC_ID ) continue;
         switch( ExpandSymbol( i, early_only ) ) {
         case ERROR:
             return( ERROR );
