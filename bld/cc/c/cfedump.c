@@ -309,13 +309,13 @@ static void DumpDQuad( DATA_QUAD *dq, unsigned long *psize )
     SYM_ENTRY           sym;
 
     if( dq->flags & Q_NEAR_POINTER ) {
-        data_type = T_NEAR_POINTER;
+        data_type = TY_NEAR_POINTER;
         size_of_item = TARGET_NEAR_POINTER;
     } else if( dq->flags & Q_FAR_POINTER ) {
-        data_type = T_LONG_POINTER;
+        data_type = TY_LONG_POINTER;
         size_of_item = TARGET_FAR_POINTER;
     } else if( dq->flags & Q_CODE_POINTER ) {
-        data_type = T_CODE_PTR;
+        data_type = TY_CODE_PTR;
         size_of_item = TARGET_POINTER;
 #if _CPU == 8086
         if( TargetSwitches & BIG_CODE ) {
@@ -323,7 +323,7 @@ static void DumpDQuad( DATA_QUAD *dq, unsigned long *psize )
         }
 #endif
     } else {
-        data_type = T_POINTER;
+        data_type = TY_POINTER;
         size_of_item = TARGET_POINTER;
 #if _CPU == 8086
         if( TargetSwitches & BIG_DATA ) {
