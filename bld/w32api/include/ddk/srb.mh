@@ -38,6 +38,9 @@ typedef PHYSICAL_ADDRESS    *PSCSI_PHYSICAL_ADDRESS;
 #define SCSI_DECODE_BUS_TARGET( x, p1, p2 ) \
     (p1 = (UCHAR)((x) >> 5), p2 = (UCHAR)((((x) >> 8) & ~0x1F) | ((x) & 0x1F)))
 
+/* ConfigInfo structure version */
+#define CONFIG_INFO_VERSION_2   sizeof(PORT_CONFIGURATION_INFORMATION)
+
 /* SCSI 64-bit DMA use flags */
 #define SCSI_DMA64_SYSTEM_SUPPORTED                 0x80
 #define SCSI_DMA64_MINIPORT_SUPPORTED               0x01
