@@ -67,7 +67,7 @@ void StatusWndSetSeparatorsWithArray( short *source, int num )
     MemFree( list );
 }
 
-BOOL StatusWindowProc( HWND, unsigned, UINT, LONG );
+BOOL StatusWindowProc( HWND, UINT, UINT, LONG );
 static BOOL Init( window *w, void *parm )
 {
     BOOL    rc;
@@ -202,7 +202,7 @@ void processLButtonUp( void )
 /*
  * StatusWindowProc - handle messages for the status window
  */
-BOOL StatusWindowProc( HWND hwnd, unsigned msg, UINT w, LONG l )
+BOOL StatusWindowProc( HWND hwnd, UINT msg, UINT w, LONG l )
 {
     w = w;
     l = l;
