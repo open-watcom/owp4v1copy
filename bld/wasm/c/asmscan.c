@@ -361,8 +361,6 @@ done_scan:
         array_mul_add( buf->u.bytes, base, val, sizeof( buf->u.bytes ) );
         ++dig_start;
     }
-    if( buf->class == TC_BAD_NUM )
-        return( ERROR );
     return( NOT_ERROR );
 } /* get_number */
 

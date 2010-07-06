@@ -445,7 +445,6 @@ int ExpandMacro( int tok_count)
 /*****************************/
 {
     char        buffer[MAX_LINE_LEN];
-    char        next_char[2];
     dir_node    *dir;
     asm_sym     *sym = NULL;
     macro_info  *info;
@@ -460,8 +459,6 @@ int ExpandMacro( int tok_count)
     char        *ptr;
 
     if( AsmBuffer[count]->class == TC_FINAL ) return( tok_count );
-
-    next_char[1]='\0';
 
     /* first, find out if it is a macro */
     for( ; count < tok_count; count++ ) {
@@ -549,10 +546,7 @@ int ExpandMacro( int tok_count)
                             count == tok_count ) {
                             break;
                         }
-                        if( ( AsmBuffer[count]->class > TC_ID_IN_BACKQUOTES ) ) {
-                            next_char[0] = *( AsmBuffer[count]->string_ptr );
-                            strcat( buffer, next_char );
-                        } else if( AsmBuffer[count]->class == TC_NUM ) {
+                        if( AsmBuffer[count]->class == TC_NUM ) {
                             if( *AsmBuffer[count]->string_ptr == 0 ) {
                                 itoa( AsmBuffer[count]->u.value, buffer+strlen( buffer ), 10 );
                             } else {
