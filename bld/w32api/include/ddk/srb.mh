@@ -39,7 +39,7 @@ typedef PHYSICAL_ADDRESS    *PSCSI_PHYSICAL_ADDRESS;
     (p1 = (UCHAR)((x) >> 5), p2 = (UCHAR)((((x) >> 8) & ~0x1F) | ((x) & 0x1F)))
 
 /* ConfigInfo structure version */
-#define CONFIG_INFO_VERSION_2   sizeof(PORT_CONFIGURATION_INFORMATION)
+#define CONFIG_INFO_VERSION_2   sizeof( PORT_CONFIGURATION_INFORMATION )
 
 /* SCSI 64-bit DMA use flags */
 #define SCSI_DMA64_SYSTEM_SUPPORTED                 0x80
