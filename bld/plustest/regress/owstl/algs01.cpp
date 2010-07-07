@@ -30,7 +30,9 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <vector>
 
+#include "itcat.h"
 #include "sanity.cpp"
 
 //
@@ -48,18 +50,17 @@ struct test_case {
     int   size;               // The number of elements in input I care about.
 };
 
-// The test cases. The current version of std::sort uses QuickSort but
-// falls over to InsertionSort on subsequences of length <= 10. Thus it is
-// important to use test cases that are longer than 10 to properly exercise
-// both algorithms.
+// The test cases. The current version of std::sort uses QuickSort but falls over to
+// InsertionSort on subsequences of length <= 10. Thus it is important to use test cases that
+// are longer than 10 to properly exercise both algorithms.
 //
-// Note that the 'title' member is no longer used but it is retained for
-// documentation and possible future use.
+// Note that the 'title' member is no longer used but it is retained for documentation and
+// possible future use.
 //
 const struct test_case tests[] = {
 
-    // The first few test cases are short. They only exercise the
-    // InsertionSort subset of std::sort's behavior.
+    // The first few test cases are short. They only exercise the InsertionSort subset of
+    // std::sort's behavior.
 
     { "SHORT: An empty sequence",
         { 0 },        // Open Watcom v1.5 doesn't accept { } as an initializer.
@@ -105,8 +106,8 @@ const struct test_case tests[] = {
         { 1, 1, 1, 1, 1 },
         { 1, 1, 1, 1, 1 }, 5 },
 
-    // The following tests are all length 11. This is the first length at
-    // which a partitioning is done.
+    // The following tests are all length 11. This is the first length at which a partitioning
+    // is done.
 
     { "LONG: Random elements; median3 in middle",
         {  3,  4,  1,  9, 10,  5,  7, 11,  2,  6,  8 },
@@ -141,13 +142,13 @@ const struct test_case tests[] = {
 const int number_cases = sizeof(tests)/sizeof(test_case);
 
 
-// The following test cases exercise reverse sorts. They allow the sorting
-// algorithm that takes a comparison object to be exercised.
+// The following test cases exercise reverse sorts. They allow the sorting algorithm that takes
+// a comparison object to be exercised.
 //
 const struct test_case reverse_tests[] = {
 
-    // The first few test cases are short. They only exercise the
-    // InsertionSort subset of std::sort's behavior.
+    // The first few test cases are short. They only exercise the InsertionSort subset of
+    // std::sort's behavior.
 
     { "SHORT: An empty sequence",
         { 0 },        // Open Watcom v1.5 doesn't accept { } as an initializer.
@@ -193,8 +194,8 @@ const struct test_case reverse_tests[] = {
         { 1, 1, 1, 1, 1 },
         { 1, 1, 1, 1, 1 }, 5 },
 
-    // The following tests are all length 11. This is the first length at
-    // which a partitioning is done.
+    // The following tests are all length 11. This is the first length at which a partitioning
+    // is done.
 
     { "LONG: Random elements; median3 in middle",
         {  3,  4,  1,  9, 10,  5,  7, 11,  2,  6,  8 },
@@ -230,10 +231,9 @@ const int number_reverse_cases = sizeof(reverse_tests)/sizeof(test_case);
 
 bool heap_test( )
 {
-    // Since sorting a heap gives most of the other heap related code a good
-    // workout, I will "borrow" the sort test cases to do a quick and dirty
-    // heap test. At some point it might be nice to build a more heap-
-    // specific test.
+    // Since sorting a heap gives most of the other heap related code a good workout, I will
+    // "borrow" the sort test cases to do a quick and dirty heap test. At some point it might be
+    // nice to build a more heap- specific test.
 
     // First I must copy the test cases to avoid leaving them sorted.
     test_case *tc = new test_case[number_cases];
@@ -362,6 +362,46 @@ bool bsearch_test( )
 }
 
 
+bool lexicographical_test( )
+{
+    using namespace std;
+
+    int a1[] = { 0 };
+    int a2[] = { 1, 2, 3, 4 };
+    int a3[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    int a4[] = { 0, 2, 3, 4, 5, 6, 7, 8 };
+    int a5[] = { 1, 0, 3, 4 };
+
+    if(  lexicographical_compare( InpIt<int>( a1 ), InpIt<int>( a1 + 0 ),
+                                  InpIt<int>( a1 ), InpIt<int>( a1 + 0 ) ) ) FAIL;
+    if(  lexicographical_compare( InpIt<int>( a2 ), InpIt<int>( a2 + 4 ),
+                                  InpIt<int>( a2 ), InpIt<int>( a2 + 4 ) ) ) FAIL;
+    if( !lexicographical_compare( InpIt<int>( a1 ), InpIt<int>( a1 + 0 ),
+                                  InpIt<int>( a2 ), InpIt<int>( a2 + 4 ) ) ) FAIL;
+    if(  lexicographical_compare( InpIt<int>( a2 ), InpIt<int>( a2 + 4 ),
+                                  InpIt<int>( a1 ), InpIt<int>( a1 + 0 ) ) ) FAIL;
+    if( !lexicographical_compare( InpIt<int>( a2 ), InpIt<int>( a2 + 4 ),
+                                  InpIt<int>( a3 ), InpIt<int>( a3 + 8 ) ) ) FAIL;
+    if(  lexicographical_compare( InpIt<int>( a3 ), InpIt<int>( a3 + 8 ),
+                                  InpIt<int>( a2 ), InpIt<int>( a2 + 4 ) ) ) FAIL;
+    if(  lexicographical_compare( InpIt<int>( a3 ), InpIt<int>( a3 + 8 ),
+                                  InpIt<int>( a4 ), InpIt<int>( a4 + 8 ) ) ) FAIL;
+    if( !lexicographical_compare( InpIt<int>( a4 ), InpIt<int>( a4 + 8 ),
+                                  InpIt<int>( a3 ), InpIt<int>( a3 + 8 ) ) ) FAIL;
+    if( !lexicographical_compare( InpIt<int>( a4 ), InpIt<int>( a4 + 8 ),
+                                  InpIt<int>( a5 ), InpIt<int>( a5 + 4 ) ) ) FAIL;
+    if(  lexicographical_compare( InpIt<int>( a5 ), InpIt<int>( a5 + 4 ),
+                                  InpIt<int>( a4 ), InpIt<int>( a4 + 8 ) ) ) FAIL;
+
+    // Sequences in different types of containers.
+    vector< int > v1( a3, a3 + 8 );
+    if(  !lexicographical_compare( a2, a2 + 4, v1.begin( ), v1.end( ) ) ) FAIL;
+    if(   lexicographical_compare( v1.begin( ), v1.end( ), a2, a2 + 4 ) ) FAIL;
+
+    return( true );
+}
+
+
 bool permutation_test( )
 {
     bool permutation_result;
@@ -409,12 +449,13 @@ int main( )
     int original_count = heap_count( );
 
     try {
-        if( !heap_test( )         || !heap_ok( "t01" ) ) rc = 1;
-        if( !reverse_heap_test( ) || !heap_ok( "t02" ) ) rc = 1;
-        if( !sort_test( )         || !heap_ok( "t03" ) ) rc = 1;
-        if( !reverse_sort_test( ) || !heap_ok( "t04" ) ) rc = 1;
-        if( !bsearch_test( )      || !heap_ok( "t05" ) ) rc = 1;
-        if( !permutation_test( )  || !heap_ok( "t06" ) ) rc = 1;
+        if( !heap_test( )            || !heap_ok( "t01" ) ) rc = 1;
+        if( !reverse_heap_test( )    || !heap_ok( "t02" ) ) rc = 1;
+        if( !sort_test( )            || !heap_ok( "t03" ) ) rc = 1;
+        if( !reverse_sort_test( )    || !heap_ok( "t04" ) ) rc = 1;
+        if( !bsearch_test( )         || !heap_ok( "t05" ) ) rc = 1;
+        if( !lexicographical_test( ) || !heap_ok( "t06" ) ) rc = 1;
+        if( !permutation_test( )     || !heap_ok( "t07" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

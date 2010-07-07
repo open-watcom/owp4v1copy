@@ -806,6 +806,47 @@ bool sort_test( )
 }
 
 
+bool relational_test( )
+{
+    // Make these static just to see if it works.
+    static int a1[] = { 0 };
+    static int a2[] = { 1, 2, 3, 4 };
+    static int a3[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    static int a4[] = { 0, 2, 3, 4, 5, 6, 7, 8 };
+    static int a5[] = { 1, 0, 3, 4 };
+
+    // Initialize some test lists using the data above.
+    std::list< int > x1( a1, a1 + 1 );
+    std::list< int > x2( a2, a2 + 4 );
+    std::list< int > x3( a3, a3 + 8 );
+    std::list< int > x4( a4, a4 + 8 );
+    std::list< int > x5( a5, a5 + 4 );
+
+    if( !( x1 == x1 ) ) FAIL;
+    if(  ( x1 == x2 ) ) FAIL;
+    if(  ( x2 == x3 ) ) FAIL;
+    if( !( x3 == x3 ) ) FAIL;
+
+    if(  ( x1 < x1 ) ) FAIL;
+    if(  ( x2 < x2 ) ) FAIL;
+    if( !( x1 < x2 ) ) FAIL;
+    if(  ( x2 < x1 ) ) FAIL;
+    if( !( x2 < x3 ) ) FAIL;
+    if(  ( x3 < x2 ) ) FAIL;
+    if(  ( x3 < x4 ) ) FAIL;
+    if( !( x4 < x3 ) ) FAIL;
+    if( !( x4 < x5 ) ) FAIL;
+    if(  ( x5 < x4 ) ) FAIL;
+
+    // Make sure there are no instantiation errors on the other relational operators.
+    if(  ( x1 != x1 ) ) FAIL;
+    if(  ( x2 >  x3 ) ) FAIL;
+    if(  ( x2 >= x3 ) ) FAIL;
+    if(  ( x3 <= x2 ) ) FAIL;
+    return( true );
+}
+
+
 int main( )
 {
     int rc = 0;
@@ -829,6 +870,7 @@ int main( )
         if( !merge_test( )            || !heap_ok( "t15" ) ) rc = 1;
         if( !allocator_test( )        || !heap_ok( "t16" ) ) rc = 1;
         if( !sort_test( )             || !heap_ok( "t17" ) ) rc = 1;
+        if( !relational_test( )       || !heap_ok( "t18" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
