@@ -768,6 +768,18 @@ void    scan_line( void )
                 process_text( scan_start, g_curr_font_num );
             }
         }
+
+        /*******************************************************************/
+        /*  For tags which produce text ( :note, ..) but have no following */
+        /* text on the same inputline and .co off is in effect, ensure the */
+        /* line is output                                                  */
+        /*******************************************************************/
+        if( !ProcFlags.concat && t_line.first != NULL ) {
+            if( input_cbs->fmflags & II_eol ) {
+                scr_process_break();    // TBD
+                p_char = NULL;
+            }
+        }
     } else if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
         g_info( inf_skip_line );
     }
