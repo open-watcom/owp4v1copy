@@ -146,8 +146,13 @@ static void split_at_GML_tag( void )
             return;                     // no split for :cmt. line
         }
     }
-    pchar = strchr( buff2 + 1, GML_char );  // look for GML tag start
-    if( pchar != NULL ) {
+
+    /***********************************************************************/
+    /*  Look for GML tag start char(s) until a probably valid tag is found */
+    /*  then split the line                                                */
+    /***********************************************************************/
+    pchar = strchr( buff2 + 1, GML_char );
+    while( pchar != NULL ) {
         while( *(pchar + 1) == GML_char ) {
             pchar++;                    // handle repeated GML_chars
         }
@@ -155,13 +160,7 @@ static void split_at_GML_tag( void )
             && is_id_char( *p2 ); p2++ )
             /* empty */ ;
 
-        if( (p2 > pchar + 1) && ((*p2 == '.') || (*p2 == ' ')
-
-     /* the following compare is logically ok, but would require to verify */
-     /* that the found tag is really a (user) tag  TBD                     */
-
-     /*      || (*p2 == GML_char)                                          */
-             ) ) {                      // 'good' tag end
+        if( (p2 > pchar + 1) && ((*p2 == '.') || (*p2 == ' ') ) ) {// 'good' tag end
 
             split_input( buff2, pchar );// split line
             buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
@@ -170,7 +169,9 @@ static void split_at_GML_tag( void )
                     li_cnt++;
                 }
             }
+            break;                      // we did a split stop now
         }
+        pchar = strchr( pchar + 1, GML_char );  // try next GMLchar
     }
 }
 
