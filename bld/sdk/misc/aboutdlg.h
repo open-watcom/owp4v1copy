@@ -32,7 +32,7 @@
 #include "banner.h"
 
 typedef struct {
-    HANDLE      inst;
+    HINSTANCE   inst;
     HWND        owner;
     LPSTR       title;
     LPSTR       name;
