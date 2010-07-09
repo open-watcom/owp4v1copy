@@ -1,11 +1,10 @@
 .func strtoimax wcstoimax _ustrtoimax
-#include <stdint.h>
+#include <inttypes.h>
 intmax_t strtoimax( const char *ptr,
                     char **endptr,
                     int base );
 .ixfunc2 '&Conversion' &func
 .if &'length(&wfunc.) ne 0 .do begin
-#include <stdint.h>
 intmax_t wcstoimax( const wchar_t *ptr,
                     wchar_t **endptr,
                     int base );
@@ -88,7 +87,7 @@ is set to
 .im seestoi &function.
 .see end
 .exmp begin
-#include <stdint.h>
+#include <inttypes.h>
 #include <stdlib.h>
 
 void main()
