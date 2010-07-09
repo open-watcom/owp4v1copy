@@ -2213,35 +2213,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                                 next_chars->count, next_chars->font_number );
         }
         increment = next_chars->width;
-#if 0
-        /* Add an empty text_chars, if next_chars->text[0] is a wgml tab, but
-         * not if this is a continuation of the previous phrase with no
-         * intervening spaces.
-         * Note: the_line can be empty, in which case the empty text_chars is
-         * not appropriate.
-         * Note: increment will only be zero at this point if that is the case.
-         */
 
-        if( increment == 0 ) {
-            if( the_line->last != NULL ) {
-                if( cur_h_address != (the_line->last->x_address + \
-                                                    the_line->last->width) ) {
-                    the_line->last->next = \
-                            oc_alloc_text_chars( NULL, 0, old_font, cur_type );
-                    the_line->last->next->prev = the_line->last;
-                    the_line->last = the_line->last->next;
-                    the_line->last->x_address = cur_h_address;
-
-                    /* Adjust the line_height if necessary. */
-
-                    cur_height = wgml_fonts[old_font].line_height;
-                    if( the_line->line_height < cur_height ) {
-                        the_line->line_height = cur_height;
-                    }
-                }
-            }
-        }
-#endif
         /* Set old_count to the current number of characters controlled by
          * next_chars. This will be used, if needed, to catch the case where
          * none of the characters in next_chars can, in fact, fit on the current
