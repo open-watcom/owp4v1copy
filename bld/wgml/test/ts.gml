@@ -85,7 +85,7 @@
 .ty SYSINR     = &SYSINR
 .ty SYSIR      = &SYSIR
 .ty SYSIXJ     = &SYSIXJ c2d(sysixj)=&'c2d(&sysixj) c2x(sysixj)=0x&'c2x(&sysixj)
-.ty SYSIXREF   = '&SYSIXREF' c2d(sysixref)=&'c2d(&sysixref) c2x(sysixref)=0x&'c2x(&sysixref)
+.ty SYSIXREF   = '&SYSIXREF' c2d(sysixref)=&'c2d('&sysixref') c2x(sysixref)=0x&'c2x('&sysixref')
 
 .ty SYSJU      = &SYSJU
 
@@ -129,7 +129,7 @@
 .ty SYSPI      = &SYSPI
 .ty SYSPIX     = &SYSPIX c2d(syspix)=&'c2d(&syspix) c2x(syspix)=0x&'c2x(&syspix)
 .ty SYSPL      = &SYSPL
-.ty SYSPLS     = '&SYSPLS' c2d(syspls)=&'c2d(&syspls) c2x(syspls)=0x&'c2x(&syspls)
+.ty SYSPLS     = '&SYSPLS' c2d(syspls)=&'c2d('&syspls') c2x(syspls)=0x&'c2x('&syspls')
 .ty SYSPMONTH  = &SYSPMONTH
 .ty SYSPN      = &SYSPN
 .ty SYSPPAGE   = &SYSPPAGE

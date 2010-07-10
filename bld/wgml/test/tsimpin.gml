@@ -32,6 +32,8 @@
 .*im tgeov
 .*:123
 :p
+:sf 2. SF 2:eSF.
+:sf 3. SF 3 :SF 1. dies ist sf1. :esf.:eSF.
 This :HP2.test:eHP2. fragment. :hp1.111.:hp1.xxx:ehp1.:ehp1.
 .br;This line contains a :HP1.highlighted phrase:eHP1. with external spaces.
 .br
