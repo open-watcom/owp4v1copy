@@ -41,9 +41,11 @@
 #include "guixutil.h"
 
 extern  WPI_INST        GUIMainHInst;
+statwnd                 *GUIStatusWnd;
 
 static void FreeStatus( void )
 {
+    StatusWndDestroy( GUIStatusWnd );
     StatusWndFini();
 }
 
@@ -119,8 +121,9 @@ bool GUICreateStatusWindow( gui_window *wnd, gui_ord x, gui_ord height,
     if( !StatusWndInit( GUIMainHInst, NULL, 0, NULLHANDLE ) ) {
         return( FALSE );
     }
+    GUIStatusWnd = StatusWndStart();
     CalcStatusRect( wnd, x, height, &status_rect );
-    wnd->status = StatusWndCreate( wnd->root, &status_rect,
+    wnd->status = StatusWndCreate( GUIStatusWnd, wnd->root, &status_rect,
                                    GUIMainHInst, NULL );
     if( wnd->status == NULLHANDLE ) {
         return( FALSE );
@@ -144,7 +147,7 @@ bool GUIDrawStatusText( gui_window *wnd, const char *text )
     } else {
         out_text = text;
     }
-    StatusWndDrawLine( pres, wnd->font, out_text,
+    StatusWndDrawLine( GUIStatusWnd, pres, wnd->font, out_text,
                        DT_SINGLELINE | DT_VCENTER | DT_LEFT );
     _wpi_releasepres( wnd->status, pres );
     if( ( text == NULL ) || ( *text == '\0' ) ) {

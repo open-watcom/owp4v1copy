@@ -67,6 +67,7 @@ static Bool        WdeDisplayStatusText     ( char * );
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
+static void      *WdeStatusBar   = NULL;
 static HWND      WdeStatusWindow = NULL;
 static HFONT     WdeStatusFont   = NULL;
 static char      WdeStatusText[2*MAX_STATUS_TEXT+2] = { 0 };
@@ -87,6 +88,7 @@ void WdeDestroyStatusLine ( void )
 {
     if ( WdeStatusWindow != NULL ) {
         DestroyWindow ( WdeStatusWindow );
+        StatusWndDestroy( WdeStatusBar );
         StatusWndFini ();
     }
 
@@ -146,15 +148,16 @@ Bool WdeCreateStatusLine( HWND main, HINSTANCE inst )
     if( !StatusWndInit( inst, WdeStatusWndProc, 0, (HCURSOR)NULL ) ) {
         return( FALSE );
     }
+    WdeStatusBar = StatusWndStart();
 
     sbd.separator_width = STATUS_LINE_PAD;
     sbd.width           = STATUS1_WIDTH;
     sbd.width_is_percent= FALSE;
     sbd.width_is_pixels = TRUE;
 
-    StatusWndSetSeparators( 1, &sbd );
+    StatusWndSetSeparators( WdeStatusBar, 1, &sbd );
 
-    WdeStatusWindow = StatusWndCreate( main, &rect, inst, NULL );
+    WdeStatusWindow = StatusWndCreate( WdeStatusBar, main, &rect, inst, NULL );
 
     if( WdeStatusWindow == NULL ) {
         WdeDisplayErrorMsg( WDE_NOCREATESTATUS );
@@ -273,9 +276,9 @@ Bool WdeDisplayStatusText ( char *str )
         hdc = GetDC ( WdeStatusWindow );
         if ( hdc != (HDC)NULL ) {
             if ( str ) {
-                StatusWndDrawLine ( hdc, WdeStatusFont, str, -1 );
+                StatusWndDrawLine ( WdeStatusBar, hdc, WdeStatusFont, str, -1 );
             } else {
-                StatusWndDrawLine ( hdc, WdeStatusFont, WdeClearStatusText, -1 );
+                StatusWndDrawLine ( WdeStatusBar, hdc, WdeStatusFont, WdeClearStatusText, -1 );
             }
             ReleaseDC ( WdeStatusWindow, hdc );
         }

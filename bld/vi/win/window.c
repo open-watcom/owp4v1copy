@@ -33,7 +33,6 @@
 #include "vi.h"
 #include "winaux.h"
 #include "font.h"
-#include "statwnd.h"
 #include "wstatus.h"
 
 window *Windows[] = {
@@ -66,7 +65,7 @@ void DefaultWindows( RECT *world, RECT *workspace )
     int         screeny;
     int         diff;
 #ifdef __NT__
-    int         statusHeight = StatusWndGetHeight();
+    int         statusHeight = GetStatusHeight();
 #endif
 
     border = GetSystemMetrics( SM_CYBORDER );

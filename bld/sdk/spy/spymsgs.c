@@ -33,9 +33,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <dde.h>
-#ifdef __NT__
-    #include <commctrl.h>
-#endif
 
 static message *userMsg;
 

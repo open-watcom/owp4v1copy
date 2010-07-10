@@ -46,6 +46,7 @@ window_id   NewStatWindow( void );
 bool        WindowsKeyPush( WORD, WORD );
 vi_rc       MenuCommand( UINT );
 void        StatusLine( int, char *, int );
+int         GetStatusHeight( void );
 
 // display.c
 void    ClearWindow( window_id );

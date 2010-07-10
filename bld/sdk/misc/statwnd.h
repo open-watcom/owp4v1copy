@@ -32,31 +32,38 @@
 #include "wpi.h"
 
 /*
- *  This code will create a status window for a windows app, like used
- *  in vi and wvideo.  Use as follows :
+ *  This code will create a status window for a Windows or OS/2 application,
+ *  as used in vi and wv.  Use as follows:
  *
- *  StatusWndInit -          called once only to set up class.  Supply a
+ *  StatusWndInit -          Called once only to set up class.  Supply a
  *                           hook function and the amount of extra data.
  *
- *  StatusWndChangeSysColors - changes what statwnd believes are the system
+ *  StatusWndStart -         Called once per status window.  Returns a status
+ *                           window handle.
+ *
+ *  StatusWndChangeSysColors - Changes what statwnd believes are the system
  *                             colours (does NOT change the real system
  *                             colours).
  *
- *  StatusWndCreate -        call when you wish to actually create the status
- *                           window, passing parent, location and lpvParam
+ *  StatusWndCreate -        Call when you wish to actually create the status
+ *                           window, passing parent, location and lpvParam.
  *
- *  StatusWndDrawLine -      call when you wish to draw a new line.  Pass in
+ *  StatusWndDrawLine -      Call when you wish to draw a new line.  Pass in
  *                           the display context, a font handle, a string
  *                           (which may contain STATUS_ESC_CHAR + STATUS_..
  *                           characters), and a DrawText flags setting.
  *                           If the flags are set to -1, then the string
  *                           will be parsed for escape sequences.
  *
- *  StatusWndSetSeparators - call to set up multiple blocks.  Pass in the
+ *  StatusWndSetSeparators - Call to set up multiple blocks.  Pass in the
  *                           number of blocks, and an array describing
  *                           each block.
  *
- *  StatusWndFini -          call when you are finished with the status window
+ *  StatusWndDestroy -       Call when you are finished with the status window.
+ *
+ *  StatusWndFini -          Call when you are finished with all status
+ *                           windows.  Make sure all status windows have been
+ *                           destroyed!
  *
  */
 
@@ -76,14 +83,18 @@ typedef struct {
     char        spare               : 6;
 } status_block_desc;
 
-extern  int     StatusWndInit( WPI_INST hinstance, statushook hook, int extra, HCURSOR );
-extern  void    StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText, COLORREF btnHighlight, COLORREF btnShadow );
-extern  HWND    StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance, LPVOID lpvParam );
-extern  void    StatusWndDraw3DBox( WPI_PRES pres );
-extern  void    StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT flags );
-extern  void    StatusWndSetSeparators( int num_items, status_block_desc *list );
-extern  int     StatusWndGetHeight( void );
-extern  void    StatusWndFini( void );
+typedef struct statwnd statwnd;
+
+int     StatusWndInit( WPI_INST hinstance, statushook hook, int extra, HCURSOR );
+statwnd *StatusWndStart( void );
+void    StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText, COLORREF btnHighlight, COLORREF btnShadow );
+HWND    StatusWndCreate( statwnd *sw, HWND parent, WPI_RECT *size, WPI_INST hinstance, LPVOID lpvParam );
+void    StatusWndDraw3DBox( statwnd *sw, WPI_PRES pres );
+void    StatusWndDrawLine( statwnd *sw, WPI_PRES pres, WPI_FONT hfont, const char *str, UINT flags );
+void    StatusWndSetSeparators( statwnd *sw, int num_items, status_block_desc *list );
+int     StatusWndGetHeight( statwnd *sw );
+void    StatusWndDestroy( statwnd *sw );
+void    StatusWndFini( void );
 
 #define HORZ_BORDER     4       /* width of left and right raised area  */
 #define VERT_BORDER     2       /* height of top and bottom raised area */

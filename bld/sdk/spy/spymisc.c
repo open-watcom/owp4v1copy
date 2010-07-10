@@ -35,9 +35,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <commdlg.h>
-#ifdef __NT__
-    #include <commctrl.h>
-#endif
 #include "spyexmsg.h"
 
 /* These styles are included in Win16 headers, but not Win32 headers. */

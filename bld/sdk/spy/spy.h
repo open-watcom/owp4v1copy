@@ -36,6 +36,9 @@
 #endif
 
 #include <windows.h>
+#ifdef __NT__
+    #include <commctrl.h>
+#endif
 #include "bool.h"
 #define MSG_RC_BASE     0
 #include "rcstr.gh"

@@ -34,6 +34,7 @@
 #include <string.h>
 #include "iemem.h"
 
+static void             *statusBar;
 static HWND             statusBarWnd;
 static char             leftBlock[3];
 static char             nextBlock[5];
@@ -120,6 +121,7 @@ BOOL InitStatusLine( HWND parent )
     }
 
     StatusWndInit( Instance, (statushook)NULL, sizeof( LPVOID ), NULL );
+    statusBar = StatusWndStart();
 
     GetClientRect( parent, &client );
 
@@ -155,7 +157,7 @@ BOOL InitStatusLine( HWND parent )
     sbd[3].width_is_percent = 0;
     sbd[3].width_is_pixels = 1;
 
-    StatusWndSetSeparators( 4, &sbd );
+    StatusWndSetSeparators( statusBar, 4, &sbd );
 
     strcpy( imgSizePosition, next_block );
     strcat( imgSizePosition, next_block );
@@ -168,7 +170,7 @@ BOOL InitStatusLine( HWND parent )
     strcat( hintTextPosition, next_block );
     strcat( hintTextPosition, leftBlock );
 
-    statusBarWnd = StatusWndCreate(parent, &rcsize, Instance, (LPVOID)NULL);
+    statusBarWnd = StatusWndCreate( statusBar, parent, &rcsize, Instance, (LPVOID)NULL );
 
     text = NULL;
     if( PosText && SizeText ) {
@@ -180,7 +182,7 @@ BOOL InitStatusLine( HWND parent )
     if( text ) {
         sprintf(text, "%s%s%s%s", leftBlock, PosText, nextBlock, SizeText );
         pres = _wpi_getpres( statusBarWnd );
-        StatusWndDrawLine( pres, SmallFont, text, -1 );
+        StatusWndDrawLine( statusBar, pres, SmallFont, text, -1 );
         _wpi_releasepres( statusBarWnd, pres );
         MemFree( text );
     }
@@ -215,7 +217,7 @@ void SetPosInStatus( WPI_POINT *pt, WPI_POINT *pointsize, HWND hwnd )
 
         sprintf( PositionText, SetPosText, leftBlock, x, y );
         pres = _wpi_getpres( statusBarWnd );
-        StatusWndDrawLine( pres, SmallFont, PositionText, -1 );
+        StatusWndDrawLine( statusBar, pres, SmallFont, PositionText, -1 );
         _wpi_releasepres( statusBarWnd, pres );
     }
 } /* SetPosInStatus */
@@ -252,8 +254,9 @@ void SetSizeInStatus( HWND hwnd, WPI_POINT *startpt, WPI_POINT *endpt,
     sprintf( PositionSizeText, SetSizeText, leftBlock, pos.x, pos.y,
                                nextBlock, width, height );
     pres = _wpi_getpres( statusBarWnd );
-    StatusWndDrawLine( pres, SmallFont, PositionSizeText, -1 );
+    StatusWndDrawLine( statusBar, pres, SmallFont, PositionSizeText, -1 );
     _wpi_releasepres( statusBarWnd, pres );
+
 } /* SetSizeInStatus */
 
 /*
@@ -287,6 +290,7 @@ void ResizeStatusBar( WPI_PARAM2 lparam )
 void FiniStatusLine( void )
 {
     DestroyWindow( statusBarWnd );
+    StatusWndDestroy( statusBar );
     StatusWndFini();
     if( PosText ) {
         IEFreeRCString( PosText );
@@ -349,8 +353,9 @@ void SetHotSpot( img_node *node )
     }
 
     pres = _wpi_getpres( statusBarWnd );
-    StatusWndDrawLine( pres, SmallFont, HotSpotText, -1 );
+    StatusWndDrawLine( statusBar, pres, SmallFont, HotSpotText, -1 );
     _wpi_releasepres( statusBarWnd, pres );
+
 } /* SetHotSpot */
 
 /*
@@ -382,8 +387,9 @@ void DisplayImageText( img_node *node )
     }
 
     pres = _wpi_getpres( statusBarWnd );
-    StatusWndDrawLine( pres, SmallFont, ImageText, -1 );
+    StatusWndDrawLine( statusBar, pres, SmallFont, ImageText, -1 );
     _wpi_releasepres( statusBarWnd, pres );
+
 } /* DisplayImageText */
 
 /*
@@ -398,8 +404,9 @@ void ClearImageText( void )
     strcat( text, "    " );
 
     pres = _wpi_getpres( statusBarWnd );
-    StatusWndDrawLine( pres, SmallFont, text, -1 );
+    StatusWndDrawLine( statusBar, pres, SmallFont, text, -1 );
     _wpi_releasepres( statusBarWnd, pres );
+
 } /* ClearImageText */
 
 void IEPrintAmtText( DWORD message, int amt )
@@ -491,9 +498,10 @@ void SetHintText( char *msg )
             strcat( text, " " );
         }
         pres = _wpi_getpres( statusBarWnd );
-        StatusWndDrawLine( pres, SmallFont, text, -1 );
+        StatusWndDrawLine( statusBar, pres, SmallFont, text, -1 );
         _wpi_releasepres( statusBarWnd, pres );
         MemFree( text );
     }
+
 } /* SetHintText */
 

@@ -112,7 +112,7 @@ Bool WInitStatusLines( HINSTANCE inst )
 
     WStatusDepth = tm.tmHeight + STATUS_LINE_PAD + VERT_BORDER * 2;
 
-    StatusWndInit( inst, WStatusWndProc, 0 );
+    StatusWndInit( inst, WStatusWndProc, 0, NULL );
 
     return( TRUE );
 }
@@ -133,8 +133,8 @@ int WGetStatusDepth ( void )
 
 void WResizeStatusWindows ( wstatbar *wsb, RECT *rect )
 {
-    if ( wsb->stat->win ) {
-        MoveWindow ( wsb->stat->win, 0,
+    if ( wsb->win ) {
+        MoveWindow ( wsb->win, 0,
                      max ( 0, (rect->bottom - rect->top) - WStatusDepth ),
                      (rect->right - rect->left), WStatusDepth, TRUE );
     }
@@ -175,7 +175,7 @@ wstatbar *WCreateStatusLine ( HWND parent, HINSTANCE inst )
 
     StatusWndSetSeparators( wsb->stat, 1, &sbd );
 
-    if( !StatusWndCreate( wsb->stat, parent, &rect, inst, NULL ) ) {
+    if( (wsb->win = StatusWndCreate( wsb->stat, parent, &rect, inst, NULL )) == NULL ) {
         WDisplayErrorMsg( W_STATUSNOTCREATED );
         WDestroyStatusLine ( wsb );
         return( NULL );
@@ -183,7 +183,7 @@ wstatbar *WCreateStatusLine ( HWND parent, HINSTANCE inst )
 
     WSetStatusReadyText( wsb );
 
-    GetWindowRect( wsb->stat->win, &rect );
+    GetWindowRect( wsb->win, &rect );
     WStatusDepth = rect.bottom - rect.top;
 
     return( wsb );
@@ -244,7 +244,7 @@ Bool WSetStatusText ( wstatbar *wsb, const char *s1, const char *s2 )
         }
     }
 
-    if ( wsb->stat->win == (HWND) NULL ) {
+    if ( wsb->win == (HWND) NULL ) {
         return ( TRUE );
     }
 
@@ -298,10 +298,10 @@ Bool WDisplayStatusText ( wstatbar *wsb )
 {
     HDC    hdc;
 
-    hdc = GetDC ( wsb->stat->win );
+    hdc = GetDC ( wsb->win );
     if ( hdc != (HDC)NULL ) {
         StatusWndDrawLine ( wsb->stat, hdc, WStatusFont, wsb->text, -1 );
-        ReleaseDC ( wsb->stat->win, hdc );
+        ReleaseDC ( wsb->win, hdc );
     }
 
     return ( TRUE );

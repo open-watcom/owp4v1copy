@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include "mstatwnd.h"
+#include "statwnd.h"
 
 typedef struct {
     WORD        menuid;

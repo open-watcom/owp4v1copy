@@ -43,6 +43,7 @@ static BOOL Fini( window *, void * );
 
 static BOOL     capIndex = -1;
 static short    *sections;
+static void     *sw = NULL;
 
 window StatusBar = {
     &statusw_info,
@@ -63,7 +64,7 @@ void StatusWndSetSeparatorsWithArray( short *source, int num )
         list[i].width = source[i];
         list[i].width_is_pixels = TRUE;
     }
-    StatusWndSetSeparators( num, list );
+    StatusWndSetSeparators( sw, num, list );
     MemFree( list );
 }
 
@@ -77,6 +78,7 @@ static BOOL Init( window *w, void *parm )
 
     rc = StatusWndInit( InstanceHandle, StatusWindowProc, sizeof( LPVOID ),
                         (HCURSOR)NULLHANDLE );
+    sw = StatusWndStart();
 #if defined( __NT__ )
     StatusWndChangeSysColors( GetSysColor( COLOR_BTNFACE ),
                               GetSysColor( COLOR_BTNTEXT ),
@@ -96,6 +98,7 @@ static BOOL Fini( window *w, void *parm )
 {
     w = w;
     parm = parm;
+    StatusWndDestroy( sw );
     StatusWndFini();
     return( FALSE );
 }
@@ -239,7 +242,7 @@ window_id NewStatWindow( void )
     size.left -= 1;
     size.right += 1;
     size.bottom += 1;
-    stat = StatusWndCreate( Root, &size, InstanceHandle, NULL );
+    stat = StatusWndCreate( sw, Root, &size, InstanceHandle, NULL );
     return( stat );
 
 } /* NewStatWindow */
@@ -264,7 +267,16 @@ void StatusLine( int line, char *str, int format )
     hdc = TextGetDC( StatusWindow, WIN_STYLE( &StatusBar ) );
     font = WIN_FONT( &StatusBar );
     hfont = FontHandle( font );
-    StatusWndDrawLine( hdc, hfont, str, (UINT) -1 );
+    StatusWndDrawLine( sw, hdc, hfont, str, (UINT) -1 );
     TextReleaseDC( StatusWindow, hdc );
 
 } /* StatusLine */
+
+/*
+ * GetStatusHeight - get the height of a Win32 native status bar
+ */
+int GetStatusHeight( void )
+{
+    return( StatusWndGetHeight( sw ) );
+
+} /* GetStatusHeight */

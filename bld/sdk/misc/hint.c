@@ -210,7 +210,7 @@ void HintWndDestroy( statwnd *wnd )
 
 int HintWndInit( HINSTANCE hinstance, statushook hook, int extra )
 {
-    return( StatusWndInit( hinstance, hook, extra ) );
+    return( StatusWndInit( hinstance, hook, extra, NULL ) );
 }
 
 void HintFini( void )
@@ -220,5 +220,5 @@ void HintFini( void )
 
 HWND GetHintHwnd( statwnd *wnd )
 {
-    return( wnd->win );
+    return( *(HWND *)wnd );
 }

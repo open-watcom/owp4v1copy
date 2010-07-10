@@ -54,12 +54,22 @@
     #define MAX_SECTIONS    20
 #endif
 
+/*
+ * The window must always be the first member of this structure so that
+ * GetHintHwnd() in hint.c will work properly.
+ */
+typedef struct statwnd {
+    HWND                win;
+    int                 numSections;
+    status_block_desc   sectionDesc[MAX_SECTIONS];
+    char                *sectionData[MAX_SECTIONS + 1];
+    UINT                sectionDataFlags[MAX_SECTIONS + 1];
+    WPI_FONT            sectionDataFont;
+    WPI_RECT            statusRect;
+    int                 wndHeight;
+} statwnd;
+
 static char                     *className = "StatusWnd";
-static int                      numSections = 0;
-static status_block_desc        sectionDesc[MAX_SECTIONS];
-static char                     *sectionData[MAX_SECTIONS + 1];
-static UINT                     sectionDataFlags[MAX_SECTIONS + 1];
-static WPI_FONT                 sectionDataFont;
 #if defined( __NT__ )
 static HFONT                    systemDataFont;
 #endif
@@ -69,13 +79,11 @@ static HBRUSH                   brushButtonFace;
 static COLORREF                 colorButtonFace;
 static COLORREF                 colorTextFace;
 static statushook               statusWndHookFunc;
-static WPI_RECT                 statusRect;
-static int                      statusHeight = 0;
+static int                      classWinExtra;
 static BOOL                     hasGDIObjects = FALSE;
 static BOOL                     classRegistered;
 static WPI_INST                 classHandle;
-static int                      wndHeight;
-static HWND                     stat = NULLHANDLE;
+static statwnd                  *currentStatWnd;
 #ifdef __NT__
 static HINSTANCE                hInstCommCtrl;
 
@@ -99,7 +107,7 @@ static PFNICC   pfnInitCommonControls;
 /*
  * getRect - get a rectangle
  */
-static void getRect( WPI_RECT *r, int i )
+static void getRect( statwnd *sw, WPI_RECT *r, int i )
 {
     WORD        pos;
     WORD        width;
@@ -112,24 +120,24 @@ static void getRect( WPI_RECT *r, int i )
     WPI_RECTDIM r_top;
     WPI_RECTDIM r_bottom;
 
-    *r = statusRect;
-    width = _wpi_getwidthrect( statusRect );
-    _wpi_getrectvalues( statusRect, &left, &top, &right, &bottom );
+    *r = sw->statusRect;
+    width = _wpi_getwidthrect( sw->statusRect );
+    _wpi_getrectvalues( sw->statusRect, &left, &top, &right, &bottom );
     _wpi_getrectvalues( *r, &r_left, &r_top, &r_right, &r_bottom );
     if( i > 0 ) {
-        if( sectionDesc[i - 1].width_is_percent ) {
-            pos = (WORD) (((DWORD) width * (DWORD) sectionDesc[i].width) / 100L);
+        if( sw->sectionDesc[i - 1].width_is_percent ) {
+            pos = (WORD) (((DWORD) width * (DWORD) sw->sectionDesc[i].width) / 100L);
         } else {
-            pos = sectionDesc[i - 1].width;
+            pos = sw->sectionDesc[i - 1].width;
         }
-        r_left = pos + sectionDesc[i - 1].separator_width;
+        r_left = pos + sw->sectionDesc[i - 1].separator_width;
     }
-    if( i == numSections ) {
+    if( i == sw->numSections ) {
         pos = right;
-    } else if( sectionDesc[i].width_is_percent ) {
-        pos = (WORD) (((DWORD) width * (DWORD) sectionDesc[i].width) / 100L);
+    } else if( sw->sectionDesc[i].width_is_percent ) {
+        pos = (WORD) (((DWORD) width * (DWORD) sw->sectionDesc[i].width) / 100L);
     } else {
-        pos = sectionDesc[i].width;
+        pos = sw->sectionDesc[i].width;
     }
     _wpi_setrectvalues( r, r_left, r_top, pos, r_bottom );
 
@@ -145,15 +153,15 @@ static COLORREF oldTextColor;
 /*
  * initPRES - initialize our presentation space for drawing text
  */
-static char initPRES( WPI_PRES pres )
+static char initPRES( statwnd *sw, WPI_PRES pres )
 {
-    if( sectionDataFont == NULL ) {
+    if( sw->sectionDataFont == NULL ) {
         return( FALSE );
     }
 #if defined( __NT__ )
     oldFont = _wpi_selectfont( pres, systemDataFont );
 #else
-    oldFont = _wpi_selectfont( pres, sectionDataFont );
+    oldFont = _wpi_selectfont( pres, sw->sectionDataFont );
 #endif
     oldBrush = _wpi_selectbrush( pres, brushButtonFace );
     oldBkColor = _wpi_getbackcolour( pres );
@@ -207,7 +215,7 @@ static void makeInsideRect( WPI_RECT *r )
 /*
  * outlineRect - draw the outline of a rectangle
  */
-static void outlineRect( WPI_PRES pres, WPI_RECT *r )
+static void outlineRect( statwnd *sw, WPI_PRES pres, WPI_RECT *r )
 {
     WPI_POINT   pt;
     WPI_RECTDIM left;
@@ -219,20 +227,20 @@ static void outlineRect( WPI_PRES pres, WPI_RECT *r )
     _wpi_getrectvalues( *r, &left, &top, &right, &bottom );
 
     _wpi_setpoint( &pt, left, bottom - 1 );
-    _wpi_cvth_pt( &pt, wndHeight );
+    _wpi_cvth_pt( &pt, sw->wndHeight );
     _wpi_movetoex( pres, &pt, NULL );
 
     oldpen = _wpi_selectobject( pres, penLight );
     pt.x = right - 1;
     _wpi_lineto( pres, &pt );
-    pt.y = _wpi_cvth_y( top, wndHeight );
+    pt.y = _wpi_cvth_y( top, sw->wndHeight );
     _wpi_lineto( pres, &pt );
 
     _wpi_selectobject( pres, penShade );
 
     pt.x = left;
     _wpi_lineto( pres, &pt );
-    pt.y = _wpi_cvth_y( bottom - 1, wndHeight );
+    pt.y = _wpi_cvth_y( bottom - 1, sw->wndHeight );
     _wpi_lineto( pres, &pt );
 
     _wpi_selectobject( pres, oldpen );
@@ -248,18 +256,29 @@ CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
     WPI_RECT    r;
     int         i;
     WPI_PRES    pres;
+    statwnd     *sw;
+
+    sw = (statwnd *)_wpi_getwindowlong( hwnd, classWinExtra );
 
     if( statusWndHookFunc != NULL ) {
         if( statusWndHookFunc( hwnd, msg, wparam, lparam ) ) {
             return( 0 );
         }
     }
+
+    if( (msg == WM_SIZE || msg == WM_PAINT) && sw == NULL ) {
+        return( _wpi_defwindowproc( hwnd, msg, wparam, lparam ) );
+    }
+
     switch( msg ) {
+    case WM_CREATE:
+        _wpi_setwindowlong( hwnd, classWinExtra, (LONG)currentStatWnd );
+        return( _wpi_defwindowproc( hwnd, msg, wparam, lparam ) );
     case WM_SIZE:
-        GetClientRect( hwnd, &statusRect );
-        wndHeight = _wpi_getheightrect( statusRect );
-        _wpi_inflaterect( classHandle, &statusRect, -HORZ_BORDER, -VERT_BORDER );
-        return( DefWindowProc( hwnd, msg, wparam, lparam ) );
+        GetClientRect( hwnd, &sw->statusRect );
+        sw->wndHeight = _wpi_getheightrect( sw->statusRect );
+        _wpi_inflaterect( classHandle, &sw->statusRect, -HORZ_BORDER, -VERT_BORDER );
+        return( _wpi_defwindowproc( hwnd, msg, wparam, lparam ) );
     case WM_PAINT:
         pres = _wpi_beginpaint( hwnd, NULLHANDLE, &ps );
 #ifdef __OS2_PM__
@@ -287,13 +306,14 @@ CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
             FillRect( hwnd, &rs, brushButtonFace );
         }
 #endif
-        StatusWndDraw3DBox( pres );
-        if( initPRES( pres ) ) {
-            for( i = 0; i <= numSections; i++ ) {
-                if( sectionData[i] != NULL ) {
-                    getRect( &r, i );
+        StatusWndDraw3DBox( sw, pres );
+        if( initPRES( sw, pres ) ) {
+            for( i = 0; i <= sw->numSections; i++ ) {
+                if( sw->sectionData[i] != NULL ) {
+                    getRect( sw, &r, i );
                     makeInsideRect( &r );
-                    _wpi_drawtext( pres, sectionData[i], -1, &r, sectionDataFlags[i] );
+                    _wpi_drawtext( pres, sw->sectionData[i], -1, &r,
+                                   sw->sectionDataFlags[i] );
                 }
             }
             finiPRES( pres );
@@ -308,15 +328,13 @@ CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
             DeleteObject( brushButtonFace );
             hasGDIObjects = FALSE;
         }
-        if( !hasGDIObjects ) {
-            colorButtonFace = GetSysColor( COLOR_BTNFACE );
-            colorTextFace = GetSysColor( COLOR_BTNTEXT );
-            brushButtonFace = CreateSolidBrush( colorButtonFace );
-            penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
-            penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
-            hasGDIObjects = TRUE;
-        }
-    break;
+        colorButtonFace = GetSysColor( COLOR_BTNFACE );
+        colorTextFace = GetSysColor( COLOR_BTNTEXT );
+        brushButtonFace = CreateSolidBrush( colorButtonFace );
+        penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
+        penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
+        hasGDIObjects = TRUE;
+        break;
 #endif
     case WM_ERASEBKGND:
 #if defined( __NT__ )
@@ -346,7 +364,7 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra,
                    HCURSOR hDefaultCursor )
 {
 #ifndef __OS2_PM__
-    // Win16 and Win32 version of the initialization
+    /* Win16 and Win32 version of the initialization */
     WNDCLASS    wc;
     int         rc;
 
@@ -372,10 +390,11 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra,
         rc = TRUE;
         if( !GetClassInfo( hinstance, className, &wc ) ) {
             classHandle = hinstance;
+            classWinExtra = extra;
             wc.style = CS_HREDRAW | CS_VREDRAW;
             wc.lpfnWndProc = (WNDPROC)StatusWndCallback;
             wc.cbClsExtra = 0;
-            wc.cbWndExtra = extra;
+            wc.cbWndExtra = extra + sizeof( statwnd * );
             wc.hInstance = hinstance;
             wc.hIcon = LoadIcon( (HINSTANCE)NULL, IDI_APPLICATION );
             wc.hCursor = hDefaultCursor;
@@ -411,13 +430,30 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra,
     if( !classRegistered ) {
         memcpy( &classHandle, &hinstance, sizeof( WPI_INST ) );
         rc = WinRegisterClass( hinstance.hab, className, (PFNWP)StatusWndCallback,
-                               CS_SIZEREDRAW | CS_CLIPSIBLINGS, extra );
+                               CS_SIZEREDRAW | CS_CLIPSIBLINGS,
+                               extra + sizeof( statwnd * ) );
+        classWinExtra = extra;
         classRegistered = TRUE;
     }
     return( rc );
 #endif
 
 } /* StatusWndInit */
+
+/*
+ * StatusWndStart - start a status window
+ */
+statwnd *StatusWndStart( void )
+{
+    statwnd *sw;
+
+    sw = (statwnd *)MemAlloc( sizeof( statwnd ) );
+    if( sw != NULL ) {
+        memset( sw, 0, sizeof( statwnd ) );
+    }
+    return( sw );
+
+} /* StatusWndStart */
 
 /*
  * StatusWndChangeSysColors - fiddle with what StatusWnd believes
@@ -451,31 +487,31 @@ void StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText,
 /*
  * updateParts - update the parts of a native status bar
  */
-static void updateParts()
+static void updateParts( statwnd *sw )
 {
     int     i;
     RECT    rc;
     int     width;
     int     *parts;
 
-    parts = (int *)MemAlloc( sizeof( int ) * (numSections + 1) );
-    GetClientRect( stat, &rc );
+    parts = (int *)MemAlloc( sizeof( int ) * (sw->numSections + 1) );
+    GetClientRect( sw->win, &rc );
     width = rc.right - rc.left;
-    for( i = 0; i < numSections; i++ ) {
-        if( sectionDesc[i].width_is_percent ) {
-            parts[i] = sectionDesc[i].width * width / 100;
+    for( i = 0; i < sw->numSections; i++ ) {
+        if( sw->sectionDesc[i].width_is_percent ) {
+            parts[i] = sw->sectionDesc[i].width * width / 100;
         } else {
-            parts[i] = sectionDesc[i].width;
+            parts[i] = sw->sectionDesc[i].width;
         }
         if( i > 0 && parts[i] != -1 ) {
-            parts[i] += sectionDesc[i - 1].separator_width;
+            parts[i] += sw->sectionDesc[i - 1].separator_width;
         }
     }
-    if( numSections == 0 || parts[numSections - 1] != -1 ) {
-        parts[numSections] = -1;
-        SendMessage( stat, SB_SETPARTS, numSections + 1, (LPARAM)parts );
+    if( sw->numSections == 0 || parts[sw->numSections - 1] != -1 ) {
+        parts[sw->numSections] = -1;
+        SendMessage( sw->win, SB_SETPARTS, sw->numSections + 1, (LPARAM)parts );
     } else {
-        SendMessage( stat, SB_SETPARTS, numSections, (LPARAM)parts );
+        SendMessage( sw->win, SB_SETPARTS, sw->numSections, (LPARAM)parts );
     }
     MemFree( parts );
 
@@ -486,37 +522,38 @@ static void updateParts()
 /*
  * StatusWndCreate - create the status window
  */
-HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance, LPVOID lpvParam )
+HWND StatusWndCreate( statwnd *sw, HWND parent, WPI_RECT *size, WPI_INST hinstance,
+                      LPVOID lpvParam )
 {
 #ifndef __OS2_PM__
     /* Win16 and Win32 version of creation */
+    currentStatWnd = sw;
 #if defined( __NT__ )
     if( hInstCommCtrl != NULL ) {
-        stat = CreateWindow( STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE |
-                             WS_CLIPSIBLINGS | SBARS_SIZEGRIP,
-                             0, 0, 0, 0, parent, NULL, hinstance, NULL );
-        GetWindowRect( stat, size );
-        statusHeight = size->bottom - size->top;
-        if( numSections > 0 ) {
-            updateParts();
+        sw->win = CreateWindow( STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE |
+                                WS_CLIPSIBLINGS | SBARS_SIZEGRIP,
+                                0, 0, 0, 0, parent, NULL, hinstance, NULL );
+        GetWindowRect( sw->win, size );
+        if( sw->numSections > 0 ) {
+            updateParts( sw );
         }
     } else if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
-        stat = CreateWindow( className, NULL, WS_CHILD, size->left, size->top,
-                             size->right - size->left, size->bottom - size->top, parent,
-                             (HMENU)NULL, hinstance, lpvParam );
+        sw->win = CreateWindow( className, NULL, WS_CHILD, size->left, size->top,
+                                size->right - size->left, size->bottom - size->top, parent,
+                                (HMENU)NULL, hinstance, lpvParam );
     } else {
-        stat = CreateWindow( className, NULL, WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
-                             size->left, size->top, size->right - size->left,
-                             size->bottom - size->top, parent, (HMENU)NULL, hinstance,
-                             lpvParam );
+        sw->win = CreateWindow( className, NULL, WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+                                size->left, size->top, size->right - size->left,
+                                size->bottom - size->top, parent, (HMENU)NULL, hinstance,
+                                lpvParam );
     }
 #else
-    stat = CreateWindow( className, NULL, WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
-                         size->left, size->top, size->right - size->left,
-                         size->bottom - size->top, parent, (HMENU)NULL, hinstance,
-                         lpvParam );
+    sw->win = CreateWindow( className, NULL, WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+                            size->left, size->top, size->right - size->left,
+                            size->bottom - size->top, parent, (HMENU)NULL, hinstance,
+                            lpvParam );
 #endif
-    if( stat != NULL ) {
+    if( sw->win != NULL ) {
 #if defined( __NT__ )
        if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
            /* New shell active, Win95 or later */
@@ -525,8 +562,8 @@ HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance, LPVOID lp
            systemDataFont = (HFONT) GetStockObject( SYSTEM_FONT );
        }
 #endif
-        ShowWindow( stat, SW_SHOWNORMAL );
-        UpdateWindow( stat );
+        ShowWindow( sw->win, SW_SHOWNORMAL );
+        UpdateWindow( sw->win );
     }
 #else
     /* OS/2 PM version of creation */
@@ -535,18 +572,19 @@ HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance, LPVOID lp
     hinstance = hinstance;
     lpvParam = lpvParam;
     flags = FCF_BORDER;
+    currentStatWnd = sw;
 
-    stat = WinCreateStdWindow( parent, WS_VISIBLE, &flags, className, "", 0L,
-                               (HMODULE)0, 10, NULL );
-    if( stat != NULLHANDLE ) {
-        WinSetWindowPos( stat, HWND_TOP, size->xLeft, size->yBottom,
+    sw->win = WinCreateStdWindow( parent, WS_VISIBLE, &flags, className, "", 0L,
+                                  (HMODULE)0, 10, NULL );
+    if( sw->win != NULLHANDLE ) {
+        WinSetWindowPos( sw->win, HWND_TOP, size->xLeft, size->yBottom,
                          size->xRight - size->xLeft, size->yTop - size->yBottom,
                          SWP_SIZE | SWP_MOVE | SWP_SHOW );
     }
 #endif
 
-    wndHeight = _wpi_getheightrect( *size );
-    return( stat );
+    sw->wndHeight = _wpi_getheightrect( *size );
+    return( sw->win );
 
 } /* StatusWndCreate */
 
@@ -554,16 +592,16 @@ HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance, LPVOID lp
  * StatusWndDraw3DBox - called by StatusWndDrawLine or externally
  *                      if StatusWndDrawLine is not used.
  */
-void StatusWndDraw3DBox( WPI_PRES pres )
+void StatusWndDraw3DBox( statwnd *sw, WPI_PRES pres )
 {
     HPEN        old_pen;
     int         i;
     WPI_RECT    r;
 
     old_pen = _wpi_selectobject( pres, penLight );
-    for( i = 0; i <= numSections; i++ ) {
-        getRect( &r, i );
-        outlineRect( pres, &r );
+    for( i = 0; i <= sw->numSections; i++ ) {
+        getRect( sw, &r, i );
+        outlineRect( sw, pres, &r );
         makeInsideRect( &r );
         _wpi_fillrect( pres, &r, colorButtonFace, brushButtonFace );
     }
@@ -574,7 +612,8 @@ void StatusWndDraw3DBox( WPI_PRES pres )
 /*
  * outputText - output a text string
  */
-void outputText( WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags, int curr_block )
+void outputText( statwnd *sw, WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags,
+                 int curr_block )
 {
     WPI_RECT    ir;
     WPI_RECT    draw_rect;
@@ -596,9 +635,9 @@ void outputText( WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags, int curr_bl
     SIZE        sz;
 #endif
 
-    if( sectionData[curr_block] != NULL ) {
-        if( !strcmp( buff, sectionData[curr_block] ) &&
-            flags == sectionDataFlags[curr_block] ) {
+    if( sw->sectionData[curr_block] != NULL ) {
+        if( !strcmp( buff, sw->sectionData[curr_block] ) &&
+            flags == sw->sectionDataFlags[curr_block] ) {
             return;
         }
     }
@@ -607,10 +646,10 @@ void outputText( WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags, int curr_bl
     if( len == 0 ) {
         return;
     }
-    MemFree( sectionData[curr_block] );
-    sectionData[curr_block] = MemAlloc( len + 1 );
-    memcpy( sectionData[curr_block], buff, len + 1 );
-    sectionDataFlags[curr_block] = flags | DT_TEXTATTRS;
+    MemFree( sw->sectionData[curr_block] );
+    sw->sectionData[curr_block] = MemAlloc( len + 1 );
+    memcpy( sw->sectionData[curr_block], buff, len + 1 );
+    sw->sectionDataFlags[curr_block] = flags | DT_TEXTATTRS;
 
 #ifndef __NT__
     _wpi_gettextextent( pres, buff, len, &ext, &height );
@@ -662,7 +701,8 @@ void outputText( WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags, int curr_bl
 /*
  * StatusWndDrawLine - draws a line in the status bar
  */
-void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT flags )
+void StatusWndDrawLine( statwnd *sw, WPI_PRES pres, WPI_FONT hfont, const char *str,
+                        UINT flags )
 {
     WPI_RECT    rect;
     char        buff[256];
@@ -671,17 +711,17 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT fla
 
     curr_block = 0;
 #if defined( __NT__ )
-    sectionDataFont = systemDataFont;
+    sw->sectionDataFont = systemDataFont;
 #else
-    sectionDataFont = hfont;
+    sw->sectionDataFont = hfont;
 #endif
 #ifdef __NT__
     if( hInstCommCtrl == NULL ) {
 #endif
-        if( !initPRES( pres ) ) {
+        if( !initPRES( sw, pres ) ) {
             return;
         }
-        getRect( &rect, curr_block );
+        getRect( sw, &rect, curr_block );
         makeInsideRect( &rect );
         bptr = (char *)str;
         if( flags == (UINT) -1  ) {
@@ -693,9 +733,9 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT fla
                     switch( *str ) {
                     case STATUS_NEXT_BLOCK:
                         *bptr = 0;
-                        outputText( pres, buff, &rect, flags, curr_block );
+                        outputText( sw, pres, buff, &rect, flags, curr_block );
                         curr_block++;
-                        getRect( &rect, curr_block );
+                        getRect( sw, &rect, curr_block );
                         makeInsideRect( &rect );
                         flags = DT_VCENTER | DT_LEFT;
                         bptr = buff;
@@ -721,7 +761,7 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT fla
             *bptr = 0;
             bptr = buff;
         }
-        outputText( pres, bptr, &rect, flags, curr_block );
+        outputText( sw, pres, bptr, &rect, flags, curr_block );
         finiPRES( pres );
 #ifdef __NT__
     } else {
@@ -734,7 +774,7 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT fla
                     if( *str == STATUS_NEXT_BLOCK ) {
                         *bptr = 0;
                         if( strlen( buff ) > 0 ) {
-                            SendMessage( stat, SB_SETTEXT, curr_block, (LPARAM)buff );
+                            SendMessage( sw->win, SB_SETTEXT, curr_block, (LPARAM)buff );
                         }
                         curr_block++;
                         bptr = buff;
@@ -748,7 +788,7 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT fla
             bptr = buff;
         }
         if( strlen( bptr ) > 0 ) {
-            SendMessage( stat, SB_SETTEXT, curr_block, (LPARAM)bptr );
+            SendMessage( sw->win, SB_SETTEXT, curr_block, (LPARAM)bptr );
         }
     }
 #endif
@@ -758,7 +798,7 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT fla
 /*
  * StatusWndSetSeparators - set the separator list
  */
-void StatusWndSetSeparators( int num_items, status_block_desc *list )
+void StatusWndSetSeparators( statwnd *sw, int num_items, status_block_desc *list )
 {
     int     i;
 
@@ -766,45 +806,63 @@ void StatusWndSetSeparators( int num_items, status_block_desc *list )
         num_items = MAX_SECTIONS;
     }
     for( i = 0; i < num_items; i++ ) {
-        sectionDesc[i] = list[i];
+        sw->sectionDesc[i] = list[i];
     }
-    numSections = num_items;
+    sw->numSections = num_items;
 
 #ifdef __NT__
-    if( hInstCommCtrl != NULL && stat != NULL ) {
-        updateParts();
+    if( hInstCommCtrl != NULL && sw->win != NULL ) {
+        updateParts( sw );
     }
 #endif
 
 } /* StatusWndSetSeparators */
 
 /*
- * StatusWndGetHeight - get the height of the status window
+ * StatusWndGetHeight - get the height of the status window for Win32 native status bars
  */
-int StatusWndGetHeight( void )
+int StatusWndGetHeight( statwnd *sw )
 {
-    return( statusHeight );
+    sw = sw;
+#ifdef __NT__
+    if( hInstCommCtrl != NULL ) {
+        return( sw->wndHeight );
+    }
+#endif
+    return( 0 );
+}
 
-} /* StatusWndGetHeight */
+/*
+ * StatusWndDestroy - cleans up everything allocated for the status window
+ */
+void StatusWndDestroy( statwnd *sw )
+{
+    int i;
+
+    if( sw != NULL ) {
+        if( sw->win != NULLHANDLE ) {
+            _wpi_destroywindow( sw->win );
+        }
+        for( i = 0; i <= sw->numSections; i++ ) {
+            MemFree( sw->sectionData[i] );
+            sw->sectionData[i] = NULL;
+        }
+        MemFree( sw );
+    }
+
+} /* StatusWndDestroy */
 
 /*
  * StatusWndFini - cleans up everything allocated for the status window
  */
 void StatusWndFini( void )
 {
-    int i;
-
     if( hasGDIObjects ) {
         _wpi_deleteobject( penLight );
         _wpi_deleteobject( penShade );
         _wpi_deleteobject( brushButtonFace );
         hasGDIObjects = FALSE;
     }
-    for( i = 0; i <= numSections; i++ ) {
-        MemFree( sectionData[i] );
-        sectionData[i] = NULL;
-    }
-    numSections = 0;
     if( classRegistered ) {
         _wpi_unregisterclass( className, classHandle );
         classRegistered = FALSE;

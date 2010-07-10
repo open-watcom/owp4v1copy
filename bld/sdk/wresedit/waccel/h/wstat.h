@@ -34,7 +34,7 @@
 #define WSTAT_INCLUDED
 
 #include <stdlib.h>
-#include "mstatwnd.h"
+#include "statwnd.h"
 
 /****************************************************************************/
 /* macro definitions                                                        */
@@ -45,8 +45,9 @@
 /* type definitions                                                         */
 /****************************************************************************/
 typedef struct wstatbar {
-    statwnd  *stat;
-    char      text[2*MAX_STATUS_TEXT+2];
+    void    *stat;
+    char    text[2*MAX_STATUS_TEXT+2];
+    HWND    win;
 } wstatbar;
 
 /****************************************************************************/

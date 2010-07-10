@@ -35,7 +35,6 @@
 #include <dde.h>
 
 #ifdef __NT__
-    #include <commctrl.h>
     #define NT_MSGS
 #endif
 

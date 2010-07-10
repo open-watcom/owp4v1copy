@@ -34,9 +34,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#ifdef __NT__
-    #include <commctrl.h>
-#endif
 
 #if defined( __NT__ )
     #define LISTBOX_X       6

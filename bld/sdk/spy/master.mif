@@ -29,14 +29,14 @@ objs_win = spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj &
            spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj &
            savelbox.obj toolbr.obj font.obj fontstr.obj mem.obj log.obj &
-           mark.obj about.obj ldstr.obj mstatwnd.obj hint.obj wwinhelp.obj &
+           mark.obj about.obj ldstr.obj statwnd.obj hint.obj wwinhelp.obj &
            jdlg.obj inipath.obj ctl3dcvr.obj
 
 objs_nt =  spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj spyzord.obj &
            spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj &
            savelbox.obj toolbr.obj font.obj fontstr.obj mem.obj log.obj &
-           mark.obj about.obj desknt.obj ldstr.obj mstatwnd.obj hint.obj &
+           mark.obj about.obj desknt.obj ldstr.obj statwnd.obj hint.obj &
            wwinhelp.obj jdlg.obj inipath.obj
 
 objs = $(objs_$(host_os))

@@ -25,7 +25,7 @@ object +=   wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
             wselft.obj wrename.obj wwait.obj wmemf.obj wcopystr.obj &
             widn2str.obj wclip.obj wisedit.obj weditsym.obj &
             preproc.obj ppexpr.obj ppmacro.obj &
-            toolbr.obj mstatwnd.obj ldstr.obj wwinhelp.obj jdlg.obj &
+            toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj &
             inipath.obj about.obj
 
 msgfiles = ../../h/w.msg ../h/$(name).msg $(sdk_dir)/misc/about.msg
@@ -58,7 +58,7 @@ extra_c_flags_wisedit= -fh
 extra_c_flags_weditsym= -bd
 
 extra_c_flags_toolbr= -fh
-extra_c_flags_mstatwnd= -fh
+extra_c_flags_statwnd= -fh
 extra_c_flags_ldstr= -fh
 extra_c_flags_wwinhelp= -fh
 extra_c_flags_jdlg= -fh
