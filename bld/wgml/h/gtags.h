@@ -121,7 +121,7 @@
   pickg( OL,       2,      gml_dummy,      tag_out_txt )
   pickg( P,        1,      gml_p,          tag_out_txt )
   pickg( PC,       2,      gml_pc,         tag_out_txt )
-  pickg( PREFACE,  8,      gml_preface,    tag_out_txt )
+  pickg( PREFACE,  7,      gml_preface,    tag_out_txt )
   pickg( PSC,      3,      gml_dummy,      tag_out_txt )
   pickg( Q,        1,      gml_dummy,      tag_out_txt )
   pickg( SET,      3,      gml_set,        tag_is_basic    )

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -407,9 +407,9 @@ static void     scan_script( void )
         toklen = pt - token_buf;
 
         if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
-            if( !ProcFlags.literal ) {
-               cw_err();
-            }
+//          if( !ProcFlags.literal ) {   // TBD
+//             cw_err();
+//          }
             scan_start = scan_restart;  // treat as text
             return;
         }

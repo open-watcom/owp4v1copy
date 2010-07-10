@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -165,4 +165,5 @@ void init_pass_data( void )
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
 
     hpcount             = -1;           // no :HPx nesting active
+    sfcount             = -1;           // no :SF  nesting active
 }

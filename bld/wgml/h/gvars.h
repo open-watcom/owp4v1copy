@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -217,7 +217,7 @@ global  long        li_cnt;             // remaining count for .li processing
 global  uint8_t     in_esc;             // input escape char from .ti
 
 global  uint32_t    inter_tab;          // distance between default tabs
-global  char        tab_char;           // tab character from .tb 
+global  char        tab_char;           // tab character from .tb
 
 global text_line    t_line;             // for constructing output line
 global text_chars * p_char;             // previous text char   "
@@ -280,6 +280,7 @@ global  int32_t     g_cur_threshold;    // current widow threshold value
                                         // from layout (widow or heading)
 
 global  int         hpcount;            // :HPx nesting level
+global  int         sfcount;            // :SF  nesting level
 
 global  tag_cb  *   n_cb;               // infos about nested tags
 global  tag_cb  *   tag_pool;           // list of reusable tag_cbs
