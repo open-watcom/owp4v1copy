@@ -33,14 +33,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "watcom.h"
-
 #include "hash.h"
-#include "asmops.gh"
+#include "mkopcode.h"
 
+#include "asmops.h"
 #define MKOPCODE
 #include "asminsd.h"
-
-#include "mkopcode.h"
 
 char Chars[ 32000 ];
 

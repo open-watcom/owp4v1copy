@@ -158,21 +158,17 @@ static int get_precedence( int i )
             return( 5 );
         }
         break;
+    case TC_ARITH_OPERATOR:
+        return( 8 );
+#if defined( _STANDALONE_ )
+    case TC_RELATION_OPERATOR:
+        return( 10 );
+#endif
     case TC_INSTR:
         switch( AsmBuffer[i]->u.token ) {
-        case T_MOD:
         case T_SHL:
         case T_SHR:
             return( 8 );
-#if defined( _STANDALONE_ )
-        case T_EQ:
-        case T_NE:
-        case T_LT:
-        case T_LE:
-        case T_GT:
-        case T_GE:
-            return( 10 );
-#endif
         case T_NOT:
             return( 11 );
         case T_AND:
@@ -209,9 +205,6 @@ static int get_precedence( int i )
     case TC_POSITIVE:
     case TC_NEGATIVE:
         return( 7 );
-    case TC_TIMES:
-    case TC_DIVIDE:
-        return( 8 );
     case TC_PLUS:
     case TC_MINUS:
         return( 9 );
@@ -931,57 +924,6 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             return( ERROR );
         }
         break;
-    case TC_TIMES:
-        /*
-         * The only formats allowed are:
-         *        constant * constant
-         *        register * scaling factor ( 1, 2, 4 or 8 )
-         *                   386 only
-         */
-        MakeConst( token_1 );
-        MakeConst( token_2 );
-        if( check_same( token_1, token_2, EXPR_CONST ) ) {
-            token_1->value *= token_2->value;
-        } else if( check_both( token_1, token_2, EXPR_REG, EXPR_CONST ) ) {
-            /* scaling factor */
-            if( token_2->type == EXPR_REG ) {
-                /* scale * reg */
-                token_1->idx_reg = token_2->base_reg;
-                token_1->base_reg = EMPTY;
-                token_1->scale = (uint_8)token_1->value;
-                token_1->value = 0;
-                token_2->base_reg = EMPTY;
-            } else {
-                /* reg * scale */
-                token_1->idx_reg = token_1->base_reg;
-                token_1->base_reg = EMPTY;
-                token_1->scale = (uint_8)token_2->value;
-            }
-            token_1->indirect |= token_2->indirect;
-            token_1->type = EXPR_ADDR;
-        } else {
-            if( error_msg )
-                AsmError( MULTIPLICATION_CONSTANT_EXPECTED );
-            token_1->type = EXPR_UNDEF;
-            return( ERROR );
-        }
-        break;
-    case TC_DIVIDE:
-        /*
-         * The only formats allowed are:
-         *        constant / constant
-         */
-        MakeConst( token_1 );
-        MakeConst( token_2 );
-        if( check_same( token_1, token_2, EXPR_CONST ) ) {
-            token_1->value /= token_2->value;
-        } else {
-            if( error_msg )
-                AsmError( DIVISION_CONSTANT_EXPECTED );
-            token_1->type = EXPR_UNDEF;
-            return( ERROR );
-        }
-        break;
     case TC_COLON:
         /*
          * The only formats allowed are:
@@ -1198,29 +1140,6 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             }
         }
         switch( AsmBuffer[index]->u.token ) {
-#if defined( _STANDALONE_ )
-        case T_EQ:
-            token_1->value = ( token_1->value == token_2->value ? -1:0 );
-            break;
-        case T_NE:
-            token_1->value = ( token_1->value != token_2->value ? -1:0 );
-            break;
-        case T_LT:
-            token_1->value = ( token_1->value < token_2->value ? -1:0 );
-            break;
-        case T_LE:
-            token_1->value = ( token_1->value <= token_2->value ? -1:0 );
-            break;
-        case T_GT:
-            token_1->value = ( token_1->value > token_2->value ? -1:0 );
-            break;
-        case T_GE:
-            token_1->value = ( token_1->value >= token_2->value ? -1:0 );
-            break;
-#endif
-        case T_MOD:
-            token_1->value %= token_2->value;
-            break;
         case T_SHL:
             token_1->value = token_1->value << token_2->value;
             break;
@@ -1333,6 +1252,103 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             break;
         }
         break;
+    case TC_ARITH_OPERATOR:
+        MakeConst( token_1 );
+        MakeConst( token_2 );
+        switch( AsmBuffer[index]->u.token ) {
+        case T_MOD:
+            /*
+             * The only formats allowed are:
+             *        constant MOD constant
+             */
+            if( !check_same( token_1, token_2, EXPR_CONST ) ) {
+                if( error_msg )
+                    AsmError( CONSTANT_EXPECTED );
+                token_1->type = EXPR_UNDEF;
+                return( ERROR );
+            }
+            token_1->value %= token_2->value;
+            break;
+        case T_OP_TIMES:
+            /*
+             * The only formats allowed are:
+             *        constant * constant
+             *        register * scaling factor ( 1, 2, 4 or 8 )
+             *                   386 only
+             */
+            if( check_same( token_1, token_2, EXPR_CONST ) ) {
+                token_1->value *= token_2->value;
+            } else if( check_both( token_1, token_2, EXPR_REG, EXPR_CONST ) ) {
+                /* scaling factor */
+                if( token_2->type == EXPR_REG ) {
+                    /* scale * reg */
+                    token_1->idx_reg = token_2->base_reg;
+                    token_1->base_reg = EMPTY;
+                    token_1->scale = (uint_8)token_1->value;
+                    token_1->value = 0;
+                    token_2->base_reg = EMPTY;
+                } else {
+                    /* reg * scale */
+                    token_1->idx_reg = token_1->base_reg;
+                    token_1->base_reg = EMPTY;
+                    token_1->scale = (uint_8)token_2->value;
+                }
+                token_1->indirect |= token_2->indirect;
+                token_1->type = EXPR_ADDR;
+            } else {
+                if( error_msg )
+                    AsmError( MULTIPLICATION_CONSTANT_EXPECTED );
+                token_1->type = EXPR_UNDEF;
+                return( ERROR );
+            }
+            break;
+        case T_OP_DIVIDE:
+            /*
+             * The only formats allowed are:
+             *        constant / constant
+             */
+            if( !check_same( token_1, token_2, EXPR_CONST ) ) {
+                if( error_msg )
+                    AsmError( DIVISION_CONSTANT_EXPECTED );
+                token_1->type = EXPR_UNDEF;
+                return( ERROR );
+            }
+            token_1->value /= token_2->value;
+            break;
+        }
+        break;
+#if defined( _STANDALONE_ )
+    case TC_RELATION_OPERATOR:
+        MakeConst( token_1 );
+        MakeConst( token_2 );
+        if( !check_same( token_1, token_2, EXPR_CONST ) ) {
+            if( error_msg )
+                AsmError( CONSTANT_EXPECTED );
+            token_1->type = EXPR_UNDEF;
+            return( ERROR );
+        }
+        switch( AsmBuffer[index]->u.token ) {
+        case T_EQ:
+            token_1->value = ( token_1->value == token_2->value ? -1:0 );
+            break;
+        case T_NE:
+            token_1->value = ( token_1->value != token_2->value ? -1:0 );
+            break;
+        case T_LT:
+            token_1->value = ( token_1->value < token_2->value ? -1:0 );
+            break;
+        case T_LE:
+            token_1->value = ( token_1->value <= token_2->value ? -1:0 );
+            break;
+        case T_GT:
+            token_1->value = ( token_1->value > token_2->value ? -1:0 );
+            break;
+        case T_GE:
+            token_1->value = ( token_1->value >= token_2->value ? -1:0 );
+            break;
+        }
+        break;
+#endif
     }
     token_1->empty = FALSE;
     return( NOT_ERROR );
@@ -1586,16 +1602,6 @@ static bool is_expr1( int i )
     switch( AsmBuffer[i]->class ) {
     case TC_INSTR:
         switch( AsmBuffer[i]->u.token ) {
-#if defined( _STANDALONE_ )
-        case T_EQ:
-        case T_NE:
-        case T_LT:
-        case T_LE:
-        case T_GT:
-        case T_GE:
-#endif
-        case T_MOD:
-            return( TRUE );
         case T_SHL:
         case T_SHR:
         case T_NOT:
@@ -1626,7 +1632,11 @@ static bool is_expr1( int i )
         if( i+1 < TokCnt )
             return( TRUE );
         break;
+    case TC_ARITH_OPERATOR:
+        return( TRUE );
 #if defined( _STANDALONE_ )
+    case TC_RELATION_OPERATOR:
+        return( TRUE );
     case TC_RES_ID:
         switch( AsmBuffer[i]->u.token ) {
         case T_FLAT:
@@ -1643,8 +1653,6 @@ static bool is_expr1( int i )
         if( AsmBuffer[i+1]->class == TC_FLOAT )
             break;
         return( TRUE );
-    case TC_TIMES:
-    case TC_DIVIDE:
     case TC_NUM:
     case TC_OP_BRACKET:
     case TC_CL_BRACKET:
@@ -1686,16 +1694,6 @@ static bool is_expr2( int i )
     switch( AsmBuffer[i]->class ) {
     case TC_INSTR:
         switch( AsmBuffer[i]->u.token ) {
-#if defined( _STANDALONE_ )
-        case T_EQ:
-        case T_NE:
-        case T_LT:
-        case T_LE:
-        case T_GT:
-        case T_GE:
-#endif
-        case T_MOD:
-            return( TRUE );
         case T_SHL:
         case T_SHR:
         case T_NOT:
@@ -1721,6 +1719,10 @@ static bool is_expr2( int i )
         }
         break;
     case TC_UNARY_OPERATOR:
+        return( TRUE );
+    case TC_ARITH_OPERATOR:
+        return( TRUE );
+    case TC_RELATION_OPERATOR:
         return( TRUE );
     case TC_RES_ID:
         switch( AsmBuffer[i]->u.token ) {
@@ -1757,8 +1759,6 @@ static bool is_expr2( int i )
         if( AsmBuffer[i+1]->class == TC_FLOAT )
             break;
         return( TRUE );
-    case TC_TIMES:
-    case TC_DIVIDE:
     case TC_NUM:
     case TC_OP_BRACKET:
     case TC_CL_BRACKET:
@@ -2021,7 +2021,8 @@ static int fix( expr_list *res, int start, int end )
             AsmBuffer[start++]->u.value = Store[res->idx_reg-old_start].u.value;
             if( res->scale != 1 ) {
                 AsmBuffer[start]->string_ptr = "*";
-                AsmBuffer[start++]->class = TC_TIMES;
+                AsmBuffer[start]->u.token = T_OP_TIMES;
+                AsmBuffer[start++]->class = TC_ARITH_OPERATOR;
                 AsmBuffer[start]->class = TC_NUM;
                 AsmBuffer[start]->u.value = res->scale;
                 AsmBuffer[start++]->string_ptr = "";
@@ -2208,16 +2209,6 @@ static int is_expr_const( int i )
     switch( AsmBuffer[i]->class ) {
     case TC_INSTR:
         switch( AsmBuffer[i]->u.token ) {
-#if defined( _STANDALONE_ )
-        case T_EQ:
-        case T_NE:
-        case T_LT:
-        case T_LE:
-        case T_GT:
-        case T_GE:
-#endif
-        case T_MOD:
-            return( TRUE );
         case T_SHL:
         case T_SHR:
         case T_NOT:
@@ -2241,13 +2232,15 @@ static int is_expr_const( int i )
         default:
             return( FALSE );
         }
+    case TC_ARITH_OPERATOR:
+        return( TRUE );
+    case TC_RELATION_OPERATOR:
+        return( TRUE );
     case TC_PLUS:
     case TC_MINUS:
         /* hack to stop asmeval from hanging on floating point numbers */
         if( AsmBuffer[i+1]->class == TC_FLOAT )
             return( FALSE );
-    case TC_TIMES:
-    case TC_DIVIDE:
     case TC_NUM:
     case TC_OP_BRACKET:
     case TC_CL_BRACKET:

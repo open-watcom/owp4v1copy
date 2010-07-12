@@ -33,7 +33,13 @@
 #ifndef _ASMOPS_H_
 #define _ASMOPS_H_
 
+typedef enum asm_token {
 #include "asmops.gh"
+        // this is not real tokens
+        // enable to include this operators to arithmetic operator class
+        T_OP_TIMES,
+        T_OP_DIVIDE,
+} asm_token;
 
 struct AsmCodeName {
         unsigned short  position;       // starting position in AsmOpTable
@@ -101,6 +107,8 @@ typedef enum tok_class {
         TC_ID_IN_BACKQUOTES,
         TC_PATH,
         TC_UNARY_OPERATOR,
+        TC_RELATION_OPERATOR,
+        TC_ARITH_OPERATOR,
         TC_BAD_NUM,
 
         TC_OP_BRACKET,       // '(',
@@ -112,8 +120,6 @@ typedef enum tok_class {
         TC_COMMA,            // ',',
         TC_COLON,            // ':',
         TC_SEMI_COLON,       // ';',
-        TC_DIVIDE,           // '/',
-        TC_TIMES,            // '*',
         TC_PLUS,             // '+',
         TC_MINUS,            // '-',
         TC_DOT,              // '.',

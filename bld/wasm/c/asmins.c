@@ -2343,8 +2343,8 @@ int AsmParse( void )
 */
 {
     int                 i;
-    OPNDTYPE            cur_opnd = OP_NONE;
-    OPNDTYPE            last_opnd = OP_NONE;
+    bool                cur_opnd_label = FALSE;
+    bool                last_opnd_label = FALSE;
     struct asm_code     *rCode = Code;
     expr_list           opndx;
     int                 temp;
@@ -2398,12 +2398,12 @@ int AsmParse( void )
             if( ExpandAllConsts( i, FALSE ) == ERROR )
                 return( ERROR );
 #endif
-            if( last_opnd != OP_NONE ) {
+            if( last_opnd_label ) {
                 // illegal operand is put before instruction
                 AsmError( SYNTAX_ERROR );
                 return( ERROR );
             }
-            cur_opnd = OP_NONE;
+            cur_opnd_label = FALSE;
 #if defined( _STANDALONE_ )
             if( ( AsmBuffer[i+1]->class == TC_DIRECTIVE )
                 || ( AsmBuffer[i+1]->class == TC_COLON ) ) {
@@ -2538,9 +2538,7 @@ int AsmParse( void )
             }
 #endif
 #if 0
-            if( ( last_opnd != OP_NONE )
-                && ( last_opnd != OP_M )
-                && ( last_opnd != OP_I ) ) {
+            if( last_opnd_label ) {
                 AsmError( SYNTAX_ERROR );
                 return( ERROR );
             }
@@ -2559,7 +2557,7 @@ int AsmParse( void )
 
                 switch( AsmBuffer[i+1]->class ) {
                 case TC_COLON:
-                    cur_opnd = OP_LABEL;
+                    cur_opnd_label = TRUE;
                     break;
 #if ALLOW_STRUCT_INIT
 #if defined( _STANDALONE_ )
@@ -2595,7 +2593,7 @@ int AsmParse( void )
                 return( ERROR );
             }
             i++;
-            cur_opnd = OP_NONE;
+            cur_opnd_label = FALSE;
             curr_ptr_type = EMPTY;
 #if defined( _STANDALONE_ )
             Frame = NULL;
@@ -2650,13 +2648,13 @@ int AsmParse( void )
             i--;
             break;
         case TC_COLON:
-            if ( last_opnd == OP_LABEL ) {
+            if( last_opnd_label ) {
                 if( AsmBuffer[i+1]->class != TC_RES_ID ) {
                     if( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_NEAR )==ERROR ) {
                          return( ERROR );
                     }
                 }
-                cur_opnd = OP_NONE;
+                cur_opnd_label = FALSE;
             } else {
                 AsmError( SYNTAX_ERROR_UNEXPECTED_COLON );
                 return( ERROR );
@@ -2682,7 +2680,7 @@ int AsmParse( void )
 #endif
             break;
         }
-        last_opnd = cur_opnd;
+        last_opnd_label = cur_opnd_label;
     }
     switch( rCode->info.token ) {
     case T_LODS:

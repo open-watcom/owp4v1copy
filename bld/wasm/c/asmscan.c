@@ -100,8 +100,7 @@ done_scanning_float:
     strncpy( *output, *input, ptr - *input );
     buf->string_ptr = *output;
     *output += ( ptr - *input );
-    **output = '\0';
-    (*output)++;
+    *(*output)++ = '\0';
     *input = ptr;
 
     buf->u.float_value = (float)atof( buf->string_ptr );
@@ -154,46 +153,36 @@ static int get_string( asm_tok *buf, char **input, char **output )
         return( NOT_ERROR );
     }
     (*input)++;
-
     count = 0;
     level = 0;
-    while( count < MAX_TOK_LEN ) {
+    for( count = 0; count < MAX_TOK_LEN; count++ ) {
         if( **input == symbol_o ) {
             if( symbol_c ) {
                 level++;
-                *(*output)++ = *(*input)++;
-                count++;
             } else if( *( *input + 1 ) == symbol_o ) {
                 /* if we see "" in a " delimited string,
                  * treat it as a literal " */
-                (*input)++; /* skip the 1st one */
-                *(*output)++ = *(*input)++; /* keep the 2nd one */
-                count++;
+                (*input)++; /* skip the 1st one and keep the 2nd one */
             } else {
-                *(*output)++ = '\0';
                 (*input)++; /* skip the closing delimiter */
-                buf->u.value = count;
                 break;
             }
         } else if( symbol_c && **input == symbol_c ) {
             if( level ) {
                 level--;
-                *(*output)++ = *(*input)++;
-                count++;
             } else {
-                *(*output)++ = '\0';
                 (*input)++; /* skip the closing delimiter */
-                buf->u.value = count;
                 break;
             }
         } else if( **input == '\0' || **input == '\n' ) {
+            *(*output)++ = '\0';
             AsmError( SYNTAX_ERROR );
             return( ERROR );
-        } else {
-            *(*output)++ = *(*input)++;
-            count++;
         }
+        *(*output)++ = *(*input)++;
     }
+    *(*output)++ = '\0';
+    buf->u.value = count;
     return( NOT_ERROR );
 }
 
@@ -348,8 +337,7 @@ done_scan:
     strncpy( *output, *input, len );
     buf->string_ptr = *output;
     *output += len;
-    **output = '\0';
-    (*output)++;
+    *(*output)++ = '\0';
     *input = ptr + extra;
     memset( buf->u.bytes, 0, sizeof( buf->u.bytes ) );
     while( dig_start < ptr ) {
@@ -429,174 +417,124 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
         return( NOT_ERROR );
     count = get_instruction_position( buf->string_ptr );
     if( count == EMPTY ) {
-        buf->class = TC_ID;
         if( buf->string_ptr[1] == '\0' && buf->string_ptr[0] == '?' ) {
             buf->class = TC_QUESTION_MARK;
         }
     } else {
+        buf->u.token = AsmOpTable[count].token;
 #if defined( _STANDALONE_ )
-        if( (Options.mode & MODE_MASM5) == 0 ) {
-            // ignore MASM5 keywords
-  #if 0                
-            switch( AsmOpTable[count].token ) {
-            case T_...:
-                buf->class = TC_ID;
+        switch( AsmOpTable[count].token ) {
+        // MASM6 keywords
+        case T_FOR:
+        case T_FORC:
+            if( Options.mode & (MODE_MASM5 | MODE_TASM) ) {
                 return( NOT_ERROR );
-            default:
-                break;
             }
-  #endif                
-        } else {
-            // ignore MASM6 keywords
-            switch( AsmOpTable[count].token ) {
-            case T_FOR:
-            case T_FORC:
-                buf->class = TC_ID;
+            break;
+        // TASM keywords
+        case T_ARG:
+        case T_ENUM:
+        case T_IDEAL:
+        case T_LOCALS:
+        case T_MASM:
+        case T_NOLOCALS:
+            if( (Options.mode & MODE_TASM) == 0 ) {
                 return( NOT_ERROR );
-            default:
-                break;
             }
-        }
-        if( (Options.mode & MODE_TASM) == 0 ) {
-            // ignore TASM keywords
-            switch( AsmOpTable[count].token ) {
-            case T_ARG:
-            case T_CODESEG:
-            case T_CONST:
-            case T_DATASEG:
-            case T_ENUM:
-            case T_ERR:
-            case T_ERRIFB:
-            case T_ERRIFDEF:
-            case T_ERRIFDIF:
-            case T_ERRIFDIFI:
-            case T_ERRIFE:
-            case T_ERRIFIDN:
-            case T_ERRIFIDNI:
-            case T_ERRIFNB:
-            case T_ERRIFNDEF:
-            case T_EXITCODE:
-            case T_FARDATA:
-            case T_IDEAL:
-            case T_LOCALS:
-            case T_MASM:
-            case T_MODEL:
-            case T_NOLOCALS:
-            case T_NOWARN:
-            case T_P186:
-            case T_P286:
-            case T_P286N:
-            case T_P286P:
-            case T_P287:
-            case T_P386:
-            case T_P386P:
-            case T_P387:
-            case T_P486:
-            case T_P486P:
-            case T_P586:
-            case T_P586P:
-            case T_P686:
-            case T_P686P:
-            case T_P8086:
-            case T_P8087:
-            case T_PK3D:
-            case T_PMMX:
-            case T_PXMM:
-            case T_PXMM2:
-            case T_PXMM3:
-            case T_STACK:
-            case T_STARTUPCODE:
-            case T_UDATASEG:
-            case T_UFARDATA:
-            case T_WARN:
-                buf->class = TC_ID;
+            break;
+        // TASM IDEAL keywords
+        case T_CODESEG:
+        case T_CONST:
+        case T_DATASEG:
+        case T_ERR:
+        case T_ERRIFB:
+        case T_ERRIFDEF:
+        case T_ERRIFDIF:
+        case T_ERRIFDIFI:
+        case T_ERRIFE:
+        case T_ERRIFIDN:
+        case T_ERRIFIDNI:
+        case T_ERRIFNB:
+        case T_ERRIFNDEF:
+        case T_EXITCODE:
+        case T_FARDATA:
+        case T_MODEL:
+        case T_NOWARN:
+        case T_P186:
+        case T_P286:
+        case T_P286N:
+        case T_P286P:
+        case T_P287:
+        case T_P386:
+        case T_P386P:
+        case T_P387:
+        case T_P486:
+        case T_P486P:
+        case T_P586:
+        case T_P586P:
+        case T_P686:
+        case T_P686P:
+        case T_P8086:
+        case T_P8087:
+        case T_PK3D:
+        case T_PMMX:
+        case T_PXMM:
+        case T_PXMM2:
+        case T_PXMM3:
+        case T_STACK:
+        case T_STARTUPCODE:
+        case T_UDATASEG:
+        case T_UFARDATA:
+        case T_WARN:
+            if( (Options.mode & MODE_IDEAL) == 0 ) {
                 return( NOT_ERROR );
-            default:
-                break;
             }
-        } else {
-            if( Options.mode & MODE_IDEAL ) {
-                int i = *buf_index;
-    
-                // ignore WASM/MASM keywords in TASM ideal mode if necessary
-  #if 0                
-                switch( AsmOpTable[count].token ) {
-                case T_...:
-                    buf->class = T_ID;
-                    return( NOT_ERROR );
-                default:
-                    break;
-                }
-  #endif                
-                if( ( ( i == 0 ) && ( Definition.struct_depth != 0 )  &&
-                      !( AsmOpTable[count].rm_byte & ( OP_DIRECTIVE|OP_RES_ID ) ) ) ||
-                    ( ( i > 0 ) && ( AsmBuffer[--i]->class == TC_DOT ) ) ) {
-                    buf->class = TC_ID;
-                    return( NOT_ERROR );
-                }
-            } else {
-                // ignore WASM/MASM keywords in TASM default mode if necessary
-  #if 0                
-                switch( AsmOpTable[count].token ) {
-                case T_...:
-                    buf->class = TC_ID;
-                    return( NOT_ERROR );
-                default:
-                    break;
-                }
-  #endif                
-            }
+            break;
         }
 #endif
-        buf->u.token = AsmOpTable[count].token;
 
         if( AsmOpTable[count].opnd_type[OPND1] == OP_SPECIAL ) {
-            if( AsmOpTable[count].rm_byte & OP_REGISTER ) {
+            if( AsmOpTable[count].rm_byte == OP_REGISTER ) {
                 buf->class = TC_REG;
-            } else if( AsmOpTable[count].rm_byte & OP_RES_ID ) {
-                if( buf->u.token == T_PWORD ) {
-                    buf->u.token = T_FWORD;
-                } else if( buf->u.token == T_DP ) {
+            } else if( AsmOpTable[count].rm_byte == OP_RES_ID ) {
+                buf->class = TC_RES_ID;
+                if( buf->u.token == T_DP ) {
                     buf->u.token = T_DF;
                 }
+            } else if( AsmOpTable[count].rm_byte == OP_RES_ID_PTR_MODIF ) {
                 buf->class = TC_RES_ID;
-            } else if( AsmOpTable[count].rm_byte & OP_UNARY_OPERATOR ) {
-                buf->class = TC_UNARY_OPERATOR;
-            } else if( AsmOpTable[count].rm_byte & OP_DIRECTIVE ) {
-#if defined( _STANDALONE_ )
-                if( ( AsmOpTable[count].rm_byte & OP_IDEAL ) &&
-                    ( (Options.mode & MODE_IDEAL) == 0 ) ) {
-                    buf->class = TC_ID;
-                    return( NOT_ERROR );
+                if( buf->u.token == T_PWORD ) {
+                    buf->u.token = T_FWORD;
                 }
+            } else if( AsmOpTable[count].rm_byte == OP_UNARY_OPERATOR ) {
+                buf->class = TC_UNARY_OPERATOR;
+#if defined( _STANDALONE_ )
+            } else if( AsmOpTable[count].rm_byte == OP_RELATION_OPERATOR ) {
+                buf->class = TC_RELATION_OPERATOR;
 #endif
+            } else if( AsmOpTable[count].rm_byte == OP_ARITH_OPERATOR ) {
+                buf->class = TC_ARITH_OPERATOR;
+            } else if( AsmOpTable[count].rm_byte == OP_DIRECTIVE ) {
                 buf->class = TC_DIRECTIVE;
 #if defined( _STANDALONE_ )
-                switch( AsmOpTable[count].token ) {
-                case T_COMMENT:
+                if( AsmOpTable[count].token == T_ENUM ) {
+                    EnumDirective = TRUE;
+                } else if( AsmOpTable[count].token == T_COMMENT ) {
                     /* save the whole line .. we need to check
                      * if the delim. char shows up 2 times */
-                    (*output)++;
-                    *(*output) = '\0';
-                    (*output)++;
                     (*buf_index)++;
                     buf = AsmBuffer[ *buf_index ];
                     buf->string_ptr = *output;
                     strcpy( buf->string_ptr, *input );
                     (*output) += strlen( *input );
-                    *(*output) = '\0';
-                    (*output)++;
+                    *(*output)++ = '\0';
                     (*input) += strlen( *input );
                     buf->class = TC_STRING;
                     buf->u.value = 0;
-                    break;
-                case T_ENUM:
-                    EnumDirective = TRUE;
-                    break;
-                } /* default do nothing */
-#endif
-            } else if( AsmOpTable[count].rm_byte & OP_DIRECT_EXPR ) {
+                }
+            } else if( AsmOpTable[count].rm_byte == OP_DIRECT_EXPR ) {
                 buf->class = TC_DIRECT_EXPR;
+#endif
             } else {
                 buf->class = TC_INSTR;
             }
@@ -617,16 +555,6 @@ static int get_special_symbol( asm_tok *buf, char **input, char **output )
 
     symbol = **input;
     switch( symbol ) {
-#if defined( _STANDALONE_ )
-    case '{' :
-        if( EnumDirective == FALSE )    /* String delimiter? */
-            return( get_string( buf, input, output ) );
-        cls = TC_OP_BRACE;
-        break;
-    case '}' :
-        cls = TC_CL_BRACE;
-        break;
-#endif
     case '.' :
         cls = TC_DOT;
         break;
@@ -640,10 +568,12 @@ static int get_special_symbol( asm_tok *buf, char **input, char **output )
         cls = TC_MINUS;
         break;
     case '*' :
-        cls = TC_TIMES;
+        buf->u.token = T_OP_TIMES;
+        cls = TC_ARITH_OPERATOR;
         break;
     case '/' :
-        cls = TC_DIVIDE;
+        buf->u.token = T_OP_DIVIDE;
+        cls = TC_ARITH_OPERATOR;
         break;
     case '[' :
         cls = TC_OP_SQ_BRACKET;
@@ -665,11 +595,19 @@ static int get_special_symbol( asm_tok *buf, char **input, char **output )
         break;
 #if defined( _STANDALONE_ )
     case '=' :
-        cls = TC_DIRECTIVE;
         buf->u.token = T_EQU2;
+        cls = TC_DIRECTIVE;
         break;
-#else
+    case '}' :
+        cls = TC_CL_BRACE;
+        break;
+#endif
     case '{' :
+#if defined( _STANDALONE_ )
+        if( EnumDirective ) {
+            cls = TC_OP_BRACE;
+            break;
+        }
 #endif
     case '\'' :
     case '"' :
@@ -689,14 +627,14 @@ static int get_special_symbol( asm_tok *buf, char **input, char **output )
 }
 
 #if defined( _STANDALONE_ )
-static int get_inc_path( unsigned int *buf_index, char **input, char **output )
-/*****************************************************************************/
+static int get_inc_path( asm_tok *buf, char **input, char **output )
+/******************************************************************/
 {
     char symbol;
 
-    AsmBuffer[*buf_index]->class = TC_PATH;
-    AsmBuffer[*buf_index]->u.value = 0;
-    AsmBuffer[*buf_index]->string_ptr = *output;
+    buf->class = TC_PATH;
+    buf->u.value = 0;
+    buf->string_ptr = *output;
 
     while( isspace( **input ) )
         (*input)++;
@@ -709,7 +647,7 @@ static int get_inc_path( unsigned int *buf_index, char **input, char **output )
     case '<' :
     case '{' :
         /* string delimiters -- just get the path as a string */
-        if( get_special_symbol( AsmBuffer[*buf_index], input, output ) == ERROR ) {
+        if( get_string( buf, input, output ) == ERROR ) {
             return( ERROR );
         }
         return( NOT_ERROR );
@@ -718,6 +656,7 @@ static int get_inc_path( unsigned int *buf_index, char **input, char **output )
         while( **input && !isspace( **input )  ) {
             *(*output)++ = *(*input)++;
         }
+        *(*output)++ = '\0';
         return( NOT_ERROR );
     }
 }
@@ -775,7 +714,7 @@ int AsmScan( char *string )
                 ( AsmBuffer[buf_index]->u.token == T_INCLUDE ||
                 AsmBuffer[buf_index]->u.token == T_INCLUDELIB ) ) {
                 buf_index++;
-                get_inc_path( &buf_index, &ptr, &output_ptr );
+                get_inc_path( AsmBuffer[buf_index], &ptr, &output_ptr );
             }
 #endif
         } else if( isdigit( *ptr ) ) {

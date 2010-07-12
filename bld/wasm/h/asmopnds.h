@@ -198,15 +198,17 @@ enum operand3_type {
 /* make all of these things OP_SPECIAL, and then add another value to
    differentiate between them */
 /* store OP_SPECIAL in operand slot, this const. somewhere else - RM_BYTE slot */
-#define OP_LABEL            0x1
-#define OP_IDEAL            0x1
-#define OP_REGISTER         0x2
-#define OP_RES_ID           0x4
-#define OP_DIRECTIVE        0x8
-#define OP_DIRECT_EXPR      0x10
-#define OP_ARITHOP          0x20
-#define OP_PTR_MODIFIER     0x40
-#define OP_UNARY_OPERATOR   0x80
+
+enum oper_type {
+    OP_DIRECTIVE = 1,
+    OP_REGISTER,
+    OP_RES_ID,
+    OP_RES_ID_PTR_MODIF,
+    OP_DIRECT_EXPR,
+    OP_RELATION_OPERATOR,
+    OP_ARITH_OPERATOR,
+    OP_UNARY_OPERATOR,
+};
 
 /* fix these comments up -- they are from the old stuff */
  /*     OP_NONE         no operands */
