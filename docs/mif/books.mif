@@ -60,7 +60,7 @@
 !inject zoom             html  htmlhelp  nt                win
 !inject cmix        dos                      os2           win # depends on zoom, etc.
 !inject fmix        dos                      os2           win # depends on zoom, etc.
-!inject wgmlref                                        ps
+!inject wgmlref                                   pdf  ps
 !inject wipfc       dos  html  htmlhelp  nt  os2  pdf  ps  win
 
 !ifndef dotarget

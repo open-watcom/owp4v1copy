@@ -44,19 +44,19 @@ How it is organized
 
 Under the main directory are number of sub-directories.
 
-.\gml	It is main directory for GML SCRIPT. It contains all GML support files.
+.\gml   It is main directory for GML SCRIPT. It contains all GML support files.
 
-.\doc	Main documentation source directory.
+.\doc   Main documentation source directory.
 
-.\cmds	It contains arbitrary files for creating on-line help version (help compilers etc.).
+.\cmds  It contains arbitrary files for creating on-line help version (help compilers etc.).
 
-.\mif	Contains makefiles for the documentation building system.
+.\mif   Contains makefiles for the documentation building system.
 
 .\dos .\os2 .\win .\nt Here on-line help version are created for each operating system.
 
-.\ps	Here the post script documentation is created.
+.\ps    Here the post script documentation is created.
 
-.\html	Html version of the documentation is there.
+.\html  Html version of the documentation is there.
 
 
 
@@ -100,6 +100,7 @@ where <bn> is one of
         tools               C/C++ Tools User's Guide
         wasaxp              AXP Assembler User's Guide (obsolete)
         wd                  Debugger User's Guide
+        wgmlref             Watcom Script/GML Tutorial and Reference Manual
         wlinkerr            Linker Error Messages (obsolete)
 
 The output file is of type ".ps". You should be able to send this to
