@@ -76,7 +76,6 @@ extra_c_flags_log = -fh=spy02.pch
 extra_c_flags_mark = -fh=spy02.pch
 extra_c_flags_desknt = -fh=spy02.pch
 extra_c_flags_ldstr = -fh=spy02.pch
-extra_c_flags_mstatwnd = -fh=spy02.pch
 extra_c_flags_hint = -fh=spy02.pch
 extra_c_flags_wwinhelp = -fh=spy02.pch
 extra_c_flags_jdlg = -fh=spy02.pch
