@@ -423,6 +423,9 @@ pick( ERR_VAR_NOT_IMPL,         "'%s' variable referenced but not yet implemente
 pick( ERR_TAG_EXPECTED,         "Expecting %s tag",
                                 "Expecting %s tag" )
 
+pick( ERR_TAG_NOT_EXPECTED,     "Not expecting %s tag",
+                                "Not expecting %s tag" )
+
 pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
                                 "Missing preceding %s tag" )
 

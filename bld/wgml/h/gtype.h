@@ -789,6 +789,16 @@ typedef struct tag_cb {
 } tag_cb;
 
 /***************************************************************************/
+/*  active hilighting levels (combined HPx and SF tags)                    */
+/***************************************************************************/
+
+typedef struct hi_level {
+    int     font;                       // save for previous font
+    int     tag;                        // -1 = :SF, 0 - 3 = :HPx
+
+} hi_level;
+
+/***************************************************************************/
 /*  a single tab stop and an array of tab stops                            */
 /***************************************************************************/
 

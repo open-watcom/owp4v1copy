@@ -205,8 +205,19 @@ void    g_err_tag( char * tag )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
-    sprintf_s( tagn, TAG_NAME_LENGTH * 1, "%c%s", GML_char, tag );
+    sprintf_s( tagn, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag );
     g_err( err_tag_expected, tagn );
+    file_mac_info();
+    err_count++;
+    return;
+}
+
+void    g_err_tag_no( char * tag )
+{
+    char    tagn[TAG_NAME_LENGTH + 1];
+
+    sprintf_s( tagn, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag );
+    g_err( err_tag_not_expected, tagn );
     file_mac_info();
     err_count++;
     return;

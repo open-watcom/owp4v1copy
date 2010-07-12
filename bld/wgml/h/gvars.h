@@ -279,8 +279,10 @@ global  int32_t     g_indentr;          // .in 2. value (right) default 0
 global  int32_t     g_cur_threshold;    // current widow threshold value
                                         // from layout (widow or heading)
 
-global  int         hpcount;            // :HPx nesting level
-global  int         sfcount;            // :SF  nesting level
+global  int         hilcount;           // :HPx :SF nesting level
+global  hi_level hil[20];               // "  savearea
+
+#define HILMAXIND  (int)(sizeof( hil ) / sizeof( hil[0] ) - 1)
 
 global  tag_cb  *   n_cb;               // infos about nested tags
 global  tag_cb  *   tag_pool;           // list of reusable tag_cbs

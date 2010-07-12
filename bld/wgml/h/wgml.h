@@ -133,6 +133,7 @@ extern  void    tag_text_req_err( char * tagname );
 extern  void    xx_err( const msg_ids errid );
 extern  void    xx_opt_err( char *cw, char *pa );
 extern  void    g_err_tag( char *tagname );
+extern  void    g_err_tag_no( char *tagname );
 extern  void    g_err_tag_prec( char *tagname );
 
 

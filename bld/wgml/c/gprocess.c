@@ -160,7 +160,8 @@ static void split_at_GML_tag( void )
             && is_id_char( *p2 ); p2++ )
             /* empty */ ;
 
-        if( (p2 > pchar + 1) && ((*p2 == '.') || (*p2 == ' ') ) ) {// 'good' tag end
+        if( (p2 > pchar + 1)
+            && ((*p2 == '.') || (*p2 == ' ') || (*p2 == '\0' ) ) ) {// 'good' tag end
 
             split_input( buff2, pchar );// split line
             buff2_lg = strnlen_s( buff2, buf_size );// new length of first part

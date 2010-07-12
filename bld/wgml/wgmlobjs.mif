@@ -53,11 +53,10 @@ gml_objs =  &
         gdate.obj    &
         gdocnum.obj  &
         gdocsect.obj &
-        ghpx.obj     &
+        ghpxsf.obj   &
         ginclude.obj &
         gppcnote.obj &
         gset.obj     &
-        gesfsf.obj   &
         gtagdict.obj &
         gtitle.obj   &
         gusertag.obj

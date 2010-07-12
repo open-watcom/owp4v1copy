@@ -164,6 +164,5 @@ void init_pass_data( void )
     ProcFlags.justify   = ju_on;        // .ju on default
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
 
-    hpcount             = -1;           // no :HPx nesting active
-    sfcount             = -1;           // no :SF  nesting active
+    hilcount            = -1;           // no :HPx or :SF nesting active
 }
