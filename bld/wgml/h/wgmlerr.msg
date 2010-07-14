@@ -198,9 +198,6 @@ pick( ERR_MAX_NESTING_OPT,      "Max nesting exceeded for option files",
 pick( ERR_INV_PAGE_RANGE,       "Page range invalid %s - %s",
                                 "Page range invalid %s - %s" )
 
-pick( ERR_INV_CW_SEP,           "Invalid controlword separator",
-                                "Invalid controlword separator" )
-
 pick( INF_MAC_LINE,             "\tLine %s of macro '%s'",
                                 "\tLine %s of macro '%s'" )
 
@@ -431,4 +428,14 @@ pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
 
 pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
                                 "'%s' tag only allowed in %s" )
+
+pick( ERR_CW_NOT_CHAR,          "A single character or a two character hexadecimal value must be specified",
+                                "A single character or a two character hexadecimal value must be specified")
+                                
+pick( ERR_DC_NOT_OFF,           "'OFF' is the only text value allowed",
+                                "'OFF' is the only text value allowed")
+                                
+pick( ERR_INV_CW_SEP,           "Invalid control word separator",
+                                "Invalid control word separator" )
+
 

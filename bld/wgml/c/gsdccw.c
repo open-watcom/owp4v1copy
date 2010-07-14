@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description: implement .dc define character
-*                            only CW and GML options implemented
+*                            only CW, GML and TB options implemented
 *                        .cw script control word separator
 *  comments are from script-tso.txt
 ****************************************************************************/
@@ -286,7 +286,6 @@ void    scr_cw( void )
 {
     char        *   pa;
     char        *   p;
-    char            c;
     int             len;
 
     p = scan_start;
@@ -303,27 +302,10 @@ void    scr_cw( void )
     }
     len = p - pa;
     if( len > 2 ) {
-        xx_err( err_inv_cw_sep );
+        xx_line_err( err_inv_cw_sep, pa );
         return;
-    } else if( len == 2 ) {             // 2 hex characters
-        if( isxdigit( *pa ) && isxdigit( *(pa + 1) ) ) {
-            c = '\0';
-            for( ; len > 0; len-- ) {
-                c *= 16;
-                if( isdigit( *pa ) ) {
-                    c += *pa - '0';
-                } else {
-                    c += toupper( *pa ) - 'A' + 10;
-                }
-                pa++;
-            }
-            CW_sep_char = c;
-        } else {
-            xx_err( err_inv_cw_sep );
-            return;
-        }
-    } else if( len == 1 ) {
-        CW_sep_char = *pa;
+    } else if( len > 0 ) {             // 1 char or 2 hex characters
+        CW_sep_char = parse_char( pa, len );
     } else {
         CW_sep_char = '\0';
     }
@@ -393,34 +375,11 @@ void    scr_dc( void )
         if( len == 3 ) {
             if( strnicmp( pa, "OFF", len ) ) {
                 *p = '\0';
-                dc_opt_err( pa );       // only OFF is valid
+                xx_line_err( err_dc_not_off, pa );   // only OFF is valid
                 return;
             }
         } else {
-            if( len == 2 ) {             // 2 hex characters
-                if( isxdigit( *pa ) && isxdigit( *(pa + 1) ) ) {
-                    c = '\0';
-                    for( ; len > 0; len-- ) {
-                        c *= 16;
-                        if( isdigit( *pa ) ) {
-                            c += *pa - '0';
-                        } else {
-                            c += toupper( *pa ) - 'A' + 10;
-                        }
-                        pa++;
-                    }
-                } else {
-                    *p = '\0';
-                    dc_opt_err( pa );
-                    return;
-                }
-            } else {
-                if( len != 1 ) {
-                    *p = '\0';
-                    dc_opt_err( pa );
-                    return;
-                }
-            }
+            c = parse_char( pa, len );
         }
         scan_restart = pa + len;
         CW_sep_char = c;
@@ -430,16 +389,12 @@ void    scr_dc( void )
         if( len == 3 ) {
             if( strnicmp( pa, "OFF", len ) ) {
                 *p = '\0';
-                dc_opt_err( pa );       // only OFF is valid
+                xx_line_err( err_dc_not_off, pa );   // only OFF is valid
                 return;
             }
             c = ' ';                    // OFF is blank
         } else {
-            if( len != 1 ) {
-                *p = '\0';
-                dc_opt_err( pa );       // only 1 char is valid
-                return;
-            }
+            c = parse_char( pa, len );
         }
         scan_restart = pa + len;
         GML_char = c;
@@ -452,16 +407,12 @@ void    scr_dc( void )
         if( len == 3 ) {
             if( strnicmp( pa, "OFF", len ) ) {
                 *p = '\0';
-                dc_opt_err( pa );       // only OFF is valid
+                xx_line_err( err_dc_not_off, pa );   // only OFF is valid
                 return;
             }
             c = 0x09;                   // OFF is 0x09
         } else {
-            if( len != 1 ) {
-                *p = '\0';
-                dc_opt_err( pa );       // only 1 char is valid
-                return;
-            }
+            c = parse_char( pa, len );
         }
         scan_restart = pa + len;
         tab_char = c;

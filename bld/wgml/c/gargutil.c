@@ -31,6 +31,7 @@
 *         getqst               --- scan quoted string
 *         is_xxx_char          --- test for allowed char
 *         is_quote_char        --- test for several quote chars
+*         parse_char           --- parse any "char" which can also be in hex
 *         unquote_if_quoted    --- adjust ptrs for quoted string
 *
 ****************************************************************************/
@@ -40,6 +41,44 @@
 #include "wgml.h"
 #include "gvars.h"
 
+/***************************************************************************/
+/* validate and return the character parameter, or raise an error          */
+/***************************************************************************/
+
+char parse_char( char * pa, int len )
+{
+    char        *   p;
+    char            c;
+
+    c = '\0';
+    p = pa + len;
+    if( len == 2 ) {             // 2 hex characters
+        if( isxdigit( *pa ) && isxdigit( *(pa + 1) ) ) {
+            for( ; len > 0; len-- ) {
+                c *= 16;
+                if( isdigit( *pa ) ) {
+                    c += *pa - '0';
+                } else {
+                    c += toupper( *pa ) - 'A' + 10;
+                }
+                pa++;
+            }
+        } else {
+            *p = '\0';
+            xx_line_err( err_cw_not_char, pa );
+            return( c );
+        }
+    } else {
+        if( len != 1 ) {
+            *p = '\0';
+            xx_line_err( err_cw_not_char, pa );
+            return( c );
+        }
+        c = *pa;
+    }
+
+    return( c );
+}
 
 
 bool    is_quote_char( char c )

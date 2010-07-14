@@ -33,7 +33,6 @@
 #include "wgml.h"
 #include "gvars.h"
 
-
 /***************************************************************************/
 /*  display lineno of file/macro and include stack                         */
 /***************************************************************************/
@@ -58,6 +57,34 @@ void    file_mac_info( void )
     return;
 }
 
+/***************************************************************************/
+/*  display lineno of file/macro and include stack                         */
+/***************************************************************************/
+
+static void show_line_error( char * pa )
+{
+    static char    *   buf = NULL;
+    static int         len = 0;
+    int                 cnt;
+
+    cnt = pa - buff2;   // number of characters before the offending input
+    cnt++;              // allow space for "*" at start of offending input
+
+    if( len < cnt ) {
+        len = cnt;
+        if( buf != NULL ) {
+            buf = (char *) mem_realloc( buf, len );
+        } else {
+            buf = (char *) mem_alloc( len );
+        }
+    }
+    memset( buf, ' ', cnt - 1 );
+    buf[cnt-1] = '*';
+    buf[cnt] = '\0';
+    out_msg( "%s\n", buff2 );
+    out_msg( "%s\n", buf );
+    return;
+}
 
 void    att_val_err( char * attname )
 {
@@ -84,15 +111,6 @@ void    cw_err( void )
 // SC--006: Unrecognized control word
     err_count++;
     g_err( err_cw_unrecognized, token_buf );
-    file_mac_info();
-    return;
-}
-
-
-void    dc_opt_err( char *pa )
-{
-    err_count++;
-    g_err( err_dc_opt, pa );
     file_mac_info();
     return;
 }
@@ -185,6 +203,16 @@ void    xx_opt_err( char *cw, char *pa )
     err_count++;
     g_err( err_xx_opt, cw, pa );
     file_mac_info();
+    return;
+}
+
+
+void    xx_line_err( const msg_ids errid, char *pa )
+{
+    err_count++;
+    g_err( errid );
+    file_mac_info();
+    show_line_error( pa );
     return;
 }
 

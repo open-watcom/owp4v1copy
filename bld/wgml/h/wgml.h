@@ -83,6 +83,7 @@ extern  bool        is_id_char( char c );
 extern  bool        is_macro_char( char c );
 extern  bool        is_stop_char( char c );
 extern  bool        is_symbol_char( char c );
+extern  char        parse_char( char * pa, int len );
 extern  void        unquote_if_quoted( char * * a, char * * z );
 
 
@@ -120,7 +121,7 @@ extern  void    g_suicide( void );
 extern  void    att_val_err( char * attname );
 extern  void    auto_att_err( void );
 extern  void    cw_err( void );
-extern  void    dc_opt_err( char * pa );
+extern  void    dc_opt_err( const msg_ids num, char * pa );
 extern  void    dc_opt_warn( char * pa );
 extern  void    file_mac_info( void );
 extern  void    nottag_err( void );
@@ -131,6 +132,7 @@ extern  void    tag_name_missing_err( void );
 extern  void    tag_text_err( char * tagname );
 extern  void    tag_text_req_err( char * tagname );
 extern  void    xx_err( const msg_ids errid );
+extern  void    xx_line_err( const msg_ids errid, char * pa );
 extern  void    xx_opt_err( char *cw, char *pa );
 extern  void    g_err_tag( char *tagname );
 extern  void    g_err_tag_no( char *tagname );
