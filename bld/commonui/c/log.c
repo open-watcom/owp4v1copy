@@ -111,8 +111,8 @@ static BOOL getLogName( char *buf, HWND hwnd )
     of.Flags = OFN_HIDEREADONLY;
 #ifndef NOUSE3D
     of.Flags |= OFN_ENABLEHOOK;
-    of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) LogSaveHook,
-                                             LogCurInfo.instance );
+    of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (LPVOID) LogSaveHook,
+                                                    LogCurInfo.instance );
 #endif
     rc = GetSaveFileName( &of );
 #ifndef NOUSE3D

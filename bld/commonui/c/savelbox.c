@@ -125,7 +125,7 @@ BOOL GetSaveFName( HWND mainhwnd, char *fname )
     of.Flags = OFN_HIDEREADONLY;
 #ifndef NOUSE3D
     of.Flags |= OFN_ENABLEHOOK;
-    of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) LBSaveHook,
+    of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (LPVOID) LBSaveHook,
                     GET_HINSTANCE( mainhwnd ) );
 #endif
     rc = GetSaveFileName( &of );

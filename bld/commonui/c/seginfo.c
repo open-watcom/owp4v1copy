@@ -42,7 +42,10 @@
 #include "mythelp.h"
 #include "dlgmod.h"
 #include "font.h"
+#include "wpi.h"
 #include "ctl3d.h"
+
+void SetFont( HWND, int );
 
 static ADDRESS  siAddr;
 static int      isDPMI;
@@ -153,8 +156,8 @@ BOOL __export FAR PASCAL SegInfoDialog( HWND hwnd, WORD msg, WORD wparam,
     switch( msg ) {
     case WM_INITDIALOG:
         if( !isDPMI ) {
-            MyGlobalEntryHandle( &ge, siAddr.seg );
-            SetWORDStaticField( hwnd, SEGINFO_HANDLE, ge.hBlock );
+            MyGlobalEntryHandle( &ge, (HINSTANCE)siAddr.seg );
+            SetWORDStaticField( hwnd, SEGINFO_HANDLE, (WORD)ge.hBlock );
             SetDWORDStaticField( hwnd, SEGINFO_ADDR, ge.dwAddress );
             SetDWORDStaticField( hwnd, SEGINFO_BLOCKSIZE, ge.dwBlockSize );
             SetWORDStaticField( hwnd, SEGINFO_LOCKCOUNT, ge.wcLock );
@@ -178,7 +181,7 @@ BOOL __export FAR PASCAL SegInfoDialog( HWND hwnd, WORD msg, WORD wparam,
         for( i = SEGINFO_LINE1; i <= SEGINFO_LINE7; i++ ) {
             SetFont( hwnd, i );
         }
-        DisplayMemLines( hwnd, &siAddr, SEGINFO_LINE1, SEGINFO_LINE7, NULL );
+        DisplayMemLines( hwnd, &siAddr, SEGINFO_LINE1, SEGINFO_LINE7, 0 );
         return( TRUE );
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
@@ -216,8 +219,8 @@ void DoSegInfo( HWND hwnd, WORD seg, BOOL isdpmi, HANDLE inst )
     siAddr.seg = seg;
     isDPMI = isdpmi;
     memLimit = GetASelectorLimit( seg );
-    fp = MakeProcInstance( SegInfoDialog, inst );
-    DialogBox( inst, "SEGMENTINFO", hwnd, fp );
+    fp = MakeProcInstance( (FARPROC)SegInfoDialog, inst );
+    DialogBox( inst, "SEGMENTINFO", hwnd, (DLGPROC)fp );
     FreeProcInstance( fp );
 
 } /* DoSegInfo */

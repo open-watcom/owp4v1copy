@@ -99,19 +99,19 @@ static int CvrCtl3DDLLInit( void )
         return( FALSE );
     }
 
-    cvrCtl3dSubclassDlg          = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)2 );
-    cvrCtl3dSubclassDlgEx        = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)21 );
-    cvrCtl3dGetVer               = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)1 );
-    cvrCtl3dEnabled              = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)5 );
-    cvrCtl3dCtlColor             = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)4 );
-    cvrCtl3dCtlColorEx           = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)18 );
-    cvrCtl3dColorChange          = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)6 );
-    cvrCtl3dSubclassCtl          = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)3 );
-    cvrCtl3dDlgFramePaint        = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)20 );
-    cvrCtl3dAutoSubclass         = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)16 );
-    cvrCtl3dRegister             = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)12 );
-    cvrCtl3dUnregister           = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)13 );
-    cvrCtl3dWinIniChange         = (void *)GetProcAddress( ctlDLLLib, (LPCSTR)22 );
+    cvrCtl3dSubclassDlg          = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)2 );
+    cvrCtl3dSubclassDlgEx        = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)21 );
+    cvrCtl3dGetVer               = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)1 );
+    cvrCtl3dEnabled              = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)5 );
+    cvrCtl3dCtlColor             = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)4 );
+    cvrCtl3dCtlColorEx           = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)18 );
+    cvrCtl3dColorChange          = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)6 );
+    cvrCtl3dSubclassCtl          = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)3 );
+    cvrCtl3dDlgFramePaint        = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)20 );
+    cvrCtl3dAutoSubclass         = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)16 );
+    cvrCtl3dRegister             = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)12 );
+    cvrCtl3dUnregister           = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)13 );
+    cvrCtl3dWinIniChange         = (void FAR *)GetProcAddress( ctlDLLLib, (LPCSTR)22 );
 
     if( ( cvrCtl3dSubclassDlg   == NULL ) ||
         ( cvrCtl3dSubclassDlgEx == NULL ) ||

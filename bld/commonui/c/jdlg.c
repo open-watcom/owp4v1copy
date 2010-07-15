@@ -568,7 +568,7 @@ int JDialogBox( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     return( ret );
 
 JDB_DEFAULT_ACTION:
-    return( DialogBox( hinst, lpszDlgTemp, hwndOwner, dlgproc ) );
+    return( DialogBox( hinst, (LPSTR)lpszDlgTemp, hwndOwner, dlgproc ) );
 }
 
 int JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
@@ -597,7 +597,7 @@ int JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     return( ret );
 
 JDBP_DEFAULT_ACTION:
-    return( DialogBoxParam( hinst, lpszDlgTemp, hwndOwner, dlgproc, lParamInit ) );
+    return( DialogBoxParam( hinst, (LPSTR)lpszDlgTemp, hwndOwner, dlgproc, lParamInit ) );
 }
 
 HWND JCreateDialog( HINSTANCE hinst, LPCSTR lpszDlgTemp,
@@ -624,7 +624,7 @@ HWND JCreateDialog( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     return( ret );
 
 JCD_DEFAULT_ACTION:
-    return( CreateDialog( hinst, lpszDlgTemp, hwndOwner, dlgproc ) );
+    return( CreateDialog( hinst, (LPSTR)lpszDlgTemp, hwndOwner, dlgproc ) );
 }
 
 HWND JCreateDialogParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
@@ -652,7 +652,7 @@ HWND JCreateDialogParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     return( ret );
 
 JCDP_DEFAULT_ACTION:
-    return( CreateDialogParam( hinst, lpszDlgTemp, hwndOwner,
+    return( CreateDialogParam( hinst, (LPSTR)lpszDlgTemp, hwndOwner,
                                dlgproc, lParamInit ) );
 }
 

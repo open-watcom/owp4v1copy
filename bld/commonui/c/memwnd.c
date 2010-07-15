@@ -53,6 +53,7 @@
     #include "ctl3dcvr.h"
 #endif
 #include "win1632.h"
+#include "wpi.h"
 #include "ldstr.h"
 #include "uistr.gh"
 
@@ -261,7 +262,7 @@ static void MemSave( MemWndInfo *info, HWND hwnd, BOOL gen_name ) {
         if( hdl == -1 ) {
             ret = FALSE;
         } else {
-            hourglass = LoadCursor( NULL, IDC_WAIT );
+            hourglass = LoadCursor( NULLHANDLE, IDC_WAIT );
             SetCapture( hwnd );
             oldcursor= SetCursor( hourglass );
             MemDumpHeader( hdl, info );
@@ -301,8 +302,8 @@ BOOL RegMemWndClass( HANDLE instance ) {
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 4;
     wc.hInstance = instance;
-    wc.hIcon = NULL;
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW);
+    wc.hIcon = NULLHANDLE;
+    wc.hCursor = LoadCursor( NULLHANDLE, IDC_ARROW);
     wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
     wc.lpszMenuName = "MEMINFOMENU";
     wc.lpszClassName = MEM_DISPLAY_CLASS;
@@ -790,7 +791,7 @@ BOOL __export FAR PASCAL OffsetProc( HWND hwnd, WORD msg, WORD wparam,
                                 MB_OK | MB_ICONEXCLAMATION );
                     break;
                 }
-                hourglass = LoadCursor( NULL, IDC_WAIT );
+                hourglass = LoadCursor( NULLHANDLE, IDC_WAIT );
                 SetCapture( parent );
                 oldcursor= SetCursor( hourglass );
                 if( ISCODE( info ) ) {
@@ -854,7 +855,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
             0,                          /* Initial X size */
             0,                          /* Initial Y size */
             hwnd,                       /* Parent window handle */
-            NULL,                       /* Window menu handle */
+            NULLHANDLE,                 /* Window menu handle */
             inst,                       /* Program instance handle */
             NULL);                      /* Create parameters */
         MoveWindow( hwnd, MemConfigInfo.xpos, MemConfigInfo.ypos,
@@ -1014,7 +1015,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
     case WM_DESTROY:
         SendMessage( info->parent, WM_USER, 0, 0 );
         if( info != NULL && info->curwnd ) {
-            CurWindow = NULL;
+            CurWindow = NULLHANDLE;
         }
         break;
     case WM_NCDESTROY:
@@ -1065,7 +1066,7 @@ static void PositionSegInfo( HWND hwnd ) {
         xpos = psize.left;
         ypos = psize.bottom - dheight;
     }
-    SetWindowPos( hwnd, NULL, xpos, ypos, 0, 0, SWP_NOSIZE | SWP_NOZORDER );
+    SetWindowPos( hwnd, NULLHANDLE, xpos, ypos, 0, 0, SWP_NOSIZE | SWP_NOZORDER );
 
 } /* PositionSegInfo */
 
@@ -1224,14 +1225,14 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
         if( MemConfigInfo.allowmult == WND_REPLACE ) {
             SendMessage( CurWindow, WM_CLOSE, 0, 0L );
         } else if( MemConfigInfo.allowmult == WND_SINGLE ) {
-            return( NULL );
+            return( NULLHANDLE );
         }
     }
     info = MemAlloc( sizeof( MemWndInfo ) );
     if( info == NULL ) {
         RCMessageBox( parent, MWND_CANT_DISP_MEM_WND, MemConfigInfo.appname,
                     MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
-        return( NULL );
+        return( NULLHANDLE );
     }
     info->sel = seg;
     info->limit = GetASelectorLimit( seg );
@@ -1240,7 +1241,7 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
     info->ins_cnt = 0;
     info->width = 0;
     info->parent = parent;
-    info->dialog = NULL;
+    info->dialog = NULLHANDLE;
     info->isdpmi = isdpmi;
     info->autopos = MemConfigInfo.autopos_info;
 #ifndef __NT__
@@ -1286,7 +1287,7 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
         0,                      /* Initial X size */
         0,                      /* Initial Y size */
         parent,                 /* Parent window handle */
-        NULL,                   /* Window menu handle */
+        NULLHANDLE,             /* Window menu handle */
         instance,               /* Program instance handle */
         info );                 /* Create parameters */
     if( hdl == NULL || info->scrlbar == NULL ) {
@@ -1294,7 +1295,7 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
                     MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
         DestroyWindow( hdl );
         MemFree( info );
-        return( NULL );
+        return( NULLHANDLE );
     }
     if( maximize ) {
         ShowWindow( hdl, SW_SHOWMAXIMIZED );
