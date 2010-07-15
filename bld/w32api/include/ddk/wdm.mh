@@ -9199,6 +9199,26 @@ __inline VOID ExFreeToNPagedLookasideList( PNPAGED_LOOKASIDE_LIST x, PVOID p )
     }
 }
 
+__inline VOID IoSetCompletionRoutine( PIRP x, PIO_COMPLETION_ROUTINE p1, PVOID p2, 
+                                      BOOLEAN p3, BOOLEAN p4, BOOLEAN p5 )
+{
+    PIO_STACK_LOCATION  v;
+    ASSERT( (p1 || p2 || p3) ? (p1 != NULL) : TRUE );
+    v = IoGetNextIrpStackLocation( x );
+    v->CompletionRoutine = p1;
+    v->Context = p2;
+    v->Control = 0;
+    if( p3 ) {
+        v->Control = SL_INVOKE_ON_SUCCESS;
+    }
+    if( p4 ) {
+        v->Control |= SL_INVOKE_ON_ERROR;
+    }
+    if( p5 ) {
+        v->Control |= SL_INVOKE_ON_CANCEL;
+    }
+}
+
 #if (NTDDI_VERSION >= 0x06000000)
 
 __inline PVOID ExAllocateFromLookasideListEx( PLOOKASIDE_LIST_EX x )
@@ -9230,26 +9250,6 @@ __inline ULONG_PTR IoGetRemainingStackSize( VOID )
     ULONG_PTR   v2;
     IoGetStackLimits( &v2, &v1 );
     return( (ULONG_PTR)(&v1) - v2 );
-}
-
-__inline VOID IoSetCompletionRoutine( PIRP x, PIO_COMPLETION_ROUTINE p1, PVOID p2, 
-                                      BOOLEAN p3, BOOLEAN p4, BOOLEAN p5 )
-{
-    PIO_STACK_LOCATION  v;
-    ASSERT( (p1 || p2 || p3) ? (p1 != NULL) : TRUE );
-    v = IoGetNextIrpStackLocation( x );
-    v->CompletionRoutine = p1;
-    v->Context = p2;
-    v->Control = 0;
-    if( p3 ) {
-        v->Control = SL_INVOKE_ON_SUCCESS;
-    }
-    if( p4 ) {
-        v->Control |= SL_INVOKE_ON_ERROR;
-    }
-    if( p5 ) {
-        v->Control |= SL_INVOKE_ON_CANCEL;
-    }
 }
 
 #ifndef _NTDDK_
