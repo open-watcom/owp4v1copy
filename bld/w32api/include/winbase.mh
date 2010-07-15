@@ -1717,13 +1717,13 @@ typedef struct tagACTCTXW {
 typedef ACTCTXW         *PACTCTXW;
 typedef const ACTCTXW   *PCACTCTXW;
 #ifdef UNICODE
-typedef ACTCTXW         ACTCTXW;
-typedef PACTCTXW        PACTCTXW;
-typedef PCACTCTXW       PCACTCTXW;
+typedef ACTCTXW         ACTCTX;
+typedef PACTCTXW        PACTCTX;
+typedef PCACTCTXW       PCACTCTX;
 #else
-typedef ACTCTXA         ACTCTXA;
-typedef PACTCTXA        PACTCTXA;
-typedef PCACTCTXA       PCACTCTXA;
+typedef ACTCTXA         ACTCTX;
+typedef PACTCTXA        PACTCTX;
+typedef PCACTCTXA       PCACTCTX;
 #endif
 #endif
 

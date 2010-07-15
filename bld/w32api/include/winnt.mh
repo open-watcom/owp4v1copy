@@ -799,9 +799,9 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define LANG_SERBIAN_NEUTRAL        0x7C1A
 
 /* Unreferenced parameter macros */
-#define UNREFERENCED_PARAMETER( x )             (x)
-#define DBG_UNREFERENCED_PARAMETER( x )         (x)
-#define DBG_UNREFERENCED_LOCAL_VARIABLE( x )    (x)
+#define UNREFERENCED_PARAMETER( x )             ((void)(x))
+#define DBG_UNREFERENCED_PARAMETER( x )         ((void)(x))
+#define DBG_UNREFERENCED_LOCAL_VARIABLE( x )    ((void)(x))
 
 /* Status codes */
 #define STATUS_WAIT_0                       0x00000000L
