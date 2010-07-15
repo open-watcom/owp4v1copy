@@ -84,6 +84,7 @@ END
 STRINGTABLE
 BEGIN
     #include "rcstrmsg.gh"
+    #include "uistrmsg.gh"
 END
 
 #include "msgs.dlg"

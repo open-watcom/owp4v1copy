@@ -36,6 +36,7 @@
 #include "mem.h"
 #include "config.h"
 #include "rcstr.gh"
+#include "uistr.gh"
 #include "ldstr.h"
 
 

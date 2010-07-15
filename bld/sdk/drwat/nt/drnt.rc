@@ -18,6 +18,7 @@
 #include "memwnd.h"
 #include "memdmp.h"
 #include "rcstr.gh"
+#include "uistr.gh"
 #include "dipload.h"
 #include "banner.h"
 
@@ -46,6 +47,7 @@ CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
 STRINGTABLE
 BEGIN
     #include "rcstrmsg.gh"
+    #include "uistrmsg.gh"
 END
 
 #include "procctl.dlg"

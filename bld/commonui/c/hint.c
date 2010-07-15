@@ -31,7 +31,7 @@
 
 #include <windows.h>
 #include "hint.h"
-#include "rcstr.gh"
+#include "uistr.gh"
 #include "mem.h"
 #include "ldstr.h"
 #include "win1632.h"

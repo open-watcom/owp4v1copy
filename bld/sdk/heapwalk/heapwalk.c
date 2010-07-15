@@ -55,6 +55,7 @@ static BOOL heapWalkInit( HANDLE currinst, HANDLE previnst, int cmdshow )
     if( !InitStringTable() ) {
         return( FALSE );
     }
+    SetInstance( Instance );
     CvrCtl3DInit( Instance );
     CvrCtl3dRegister( Instance );
     CvrCtl3dAutoSubclass( Instance );

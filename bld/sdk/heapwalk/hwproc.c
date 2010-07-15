@@ -118,7 +118,7 @@ static void SetDisplayType( HWND hwnd, HWND **title, WORD type ) {
                         MF_BYCOMMAND | MF_ENABLED );
         ModifyMenu( mh, 2, MF_BYPOSITION | MF_POPUP,
                     (UINT)LoadMenu( Instance, "SORTMENU" ),
-                    GetRCString( STR_SORT ) );
+                    HWGetRCString( STR_SORT ) );
         KillPushWin( *title );
         *title = SetUpPushWindows( hwnd, HEAPMENU_DISPLAY_ENTIRE );
         if( GSortType == HEAPMENU_SORT_GRAN ||
@@ -133,7 +133,7 @@ static void SetDisplayType( HWND hwnd, HWND **title, WORD type ) {
             *title = SetUpPushWindows( hwnd, type );
             ModifyMenu( mh, 2, MF_BYPOSITION | MF_POPUP,
                     (UINT)LoadMenu( Instance, "SORTMENU" ),
-                    GetRCString( STR_SORT ) );
+                    HWGetRCString( STR_SORT ) );
         } else {
             *title = NULL;
         }
@@ -144,7 +144,7 @@ static void SetDisplayType( HWND hwnd, HWND **title, WORD type ) {
     case HEAPMENU_DISPLAY_DPMI:
         ModifyMenu( mh, 2, MF_BYPOSITION | MF_POPUP,
                     (UINT)LoadMenu( Instance, "SORTDPMIMENU" ),
-                    GetRCString( STR_SORT ) );
+                    HWGetRCString( STR_SORT ) );
         EnableMenuItem( mh, HEAPMENU_ADD, MF_BYCOMMAND | MF_GRAYED );
         EnableMenuItem( mh, HEAPMENU_OBJECT_DISCARD,
                         MF_BYCOMMAND | MF_GRAYED );
@@ -168,18 +168,18 @@ static void SetDisplayType( HWND hwnd, HWND **title, WORD type ) {
 //      SetTitle( HeapDPMITitles, title );
         KillPushWin( *title );
         *title = SetUpPushWindows( hwnd, type );
-        typename = AllocRCString( STR_SELECTOR_LIST_ITEMS );
+        typename = HWAllocRCString( STR_SELECTOR_LIST_ITEMS );
         break;
     case HEAPMENU_DISPLAY_LRU:
         InsertMenu( mh, HEAPMENU_SORT_FLAG, MF_BYCOMMAND, HEAPMENU_SORT_LRU,
                    GetRCString( STR_BY_AGE ) );
-        typename = AllocRCString( STR_LRU_ITEMS );
+        typename = HWAllocRCString( STR_LRU_ITEMS );
         break;
     case HEAPMENU_DISPLAY_ENTIRE:
-        typename = AllocRCString( STR_ENTIRE_HEAP );
+        typename = HWAllocRCString( STR_ENTIRE_HEAP );
         break;
     case HEAPMENU_DISPLAY_FREE:
-        typename = AllocRCString( STR_FREE_ITEMS );
+        typename = HWAllocRCString( STR_FREE_ITEMS );
         break;
     default:
         typename = "";
@@ -189,7 +189,7 @@ static void SetDisplayType( HWND hwnd, HWND **title, WORD type ) {
     CheckMenuItem( mh, GSortType, MF_CHECKED | MF_BYCOMMAND );
     DrawMenuBar( hwnd );
     sprintf( buf, "%s - %s", HeapWalkName, typename );
-    FreeRCString( typename );
+    HWFreeRCString( typename );
     SetWindowText( hwnd, buf );
     HeapType = type;
 } /* SetDisplayType */
@@ -314,7 +314,7 @@ BOOL __export FAR PASCAL HeapWalkProc( HWND hwnd, UINT msg, WPARAM wparam,
         }
         DestroyMonoFonts();
         CvrCtl3dUnregister( Instance );
-	CvrCtl3DFini( Instance );
+        CvrCtl3DFini( Instance );
         WWinHelp( hwnd, "heapwalk.hlp", HELP_QUIT, 0 );
         PostQuitMessage( 0 );
         break;
@@ -346,10 +346,10 @@ BOOL __export FAR PASCAL HeapWalkProc( HWND hwnd, UINT msg, WPARAM wparam,
         case HEAPMENU_ABOUT:
             ai.owner = hwnd;
             ai.inst = Instance;
-            ai.name = GetRCString( STR_ABOUT_NAME );
+            ai.name = HWGetRCString( STR_ABOUT_NAME );
             ai.version = banner1p2( _HEAPWALKER_VERSION_ );
-            ai.first_cr_year = GetRCString( STR_ABOUT_COPYRIGHT_YEAR );
-            ai.title = GetRCString( STR_ABOUT_TITLE );
+            ai.first_cr_year = HWGetRCString( STR_ABOUT_COPYRIGHT_YEAR );
+            ai.title = HWGetRCString( STR_ABOUT_TITLE );
             DoAbout( &ai );
             break;
         case HEAPMENU_HELP_CONTENTS:

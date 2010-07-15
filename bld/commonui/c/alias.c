@@ -41,7 +41,7 @@
 #endif
 #include "win1632.h"
 #include "ldstr.h"
-#include "rcstr.gh"
+#include "uistr.gh"
 
 #define CONST_LEN       15
 

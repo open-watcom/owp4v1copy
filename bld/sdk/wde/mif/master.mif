@@ -59,9 +59,7 @@ OBJS =  wde_wres.obj wdealign.obj wdecsize.obj wdecust.obj  wdedebug.obj &
         wdefsbar.obj wdeflvw.obj wdeftvw.obj wdefhdr.obj wdeftabc.obj &
         wdefani.obj wdefupdn.obj wdeftrak.obj wdefprog.obj wdefhtky.obj &
         windlg.obj windlg32.obj &
-        preproc.obj ppexpr.obj ppmacro.obj &
-        toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj inipath.obj &
-        about.obj
+        preproc.obj ppexpr.obj ppmacro.obj
 
 extra_c_flags_nt    = -DNOUSE3D
 
@@ -154,18 +152,17 @@ extra_c_flags_wwinhelp= -fh
 extra_c_flags_jdlg= -fh
 extra_c_flags_about= -DWRCTL3D -fh
 
+commonui_lib = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 fmedit_lib = $(fmedit_dir)/$(host_os)$(host_cpu)/fmedit.lib
 wr_lib = $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
 wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
 
 # where to look for various files
-.c : c;../c;$(misc_dir);$(cpp_dir)
+.c : c;../c;$(cpp_dir)
 
 inc_dirs  = -Ih -I"../h" -I"$(fmedit_dir)/dev" -I"$(wres_dir)/h"
-inc_dirs += -I"$(wr_dir)/h" -I"$(misc_dir)" -I"$(cpp_dir)"
-inc_dirs += -I"$(wpi_dir)/h"
-
-msgfiles  = $(sdk_dir)/misc/about.msg
+inc_dirs += -I"$(wr_dir)/h" -I"$(cpp_dir)" -I"$(wpi_dir)/h" -I"$(misc_dir)"
+inc_dirs += -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
 
 all : $(name).exe .SYMBOLIC
         @%null
@@ -179,7 +176,7 @@ extra_l_flags_nt = op stack=100k, heap=16k commit heap=8k
 extra_l_flags_win  = op stack=32k, rwr
 extra_l_flags_win += library commdlg, ddeml
 
-xlibs = $(wres_lib) $(fmedit_lib) $(wr_lib) $(wpi_lib)
+xlibs = $(wres_lib) $(fmedit_lib) $(wr_lib) $(wpi_lib) $(commonui_lib)
 
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
@@ -206,8 +203,8 @@ $(name).exe: rcstr.gh $(OBJS) $(name).res $(xlibs) $(version_res_$(host_os)_$(ho
 rcstr.gh: rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-rcstrmsg.gh : ../h/wde.msg $(msgfiles)
-        $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@
+rcstrmsg.gh : ../h/wde.msg
+        $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 
 $(name).res: ../h/$(name).rc .AUTODEPEND
         $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@

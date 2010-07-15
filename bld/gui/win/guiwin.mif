@@ -51,7 +51,6 @@ sysobjs = guixscal.obj &
           guispawn.obj &
           guigsysh.obj &
           guiwinlp.obj &
-          statwnd.obj  &
           guixutil.obj &
           guimouse.obj &
           guixhook.obj &
@@ -87,10 +86,7 @@ sysobjs = guixscal.obj &
           guirmenu.obj &
           guiclass.obj &
           guif1hk.obj  &
-          wmdisim.obj  &
-          toolbr.obj &
-          guiclen.obj  &
-          ctl3d32.obj
+          guiclen.obj
 
 !ifeq host_OS os2
 sysobjs +=             &
@@ -98,9 +94,7 @@ sysobjs +=             &
           os2dlg.obj
 !else
 sysobjs +=             &
-          fontstr.obj  &
-          windlg.obj   &
-	  wwinhelp.obj
+          windlg.obj
 !endif
 
 # memory tracker cover routines

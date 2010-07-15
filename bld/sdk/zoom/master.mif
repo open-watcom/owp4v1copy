@@ -11,8 +11,7 @@ sys_windowed = 1
 !include deftarg.mif
 !include defrule.mif
 
-objs =  zoom.obj zmglob.obj zmproc.obj zmscreen.obj zmconfig.obj &
-        mem.obj about.obj ldstr.obj inipath.obj ctl3dcvr.obj
+objs =  zoom.obj zmglob.obj zmproc.obj zmscreen.obj zmconfig.obj
 
 extra_c_flags_mem = -DNO_WPI
 
@@ -20,16 +19,18 @@ extra_l_flags     = option map
 extra_l_flags_nt  = op stack=64k
 extra_l_flags_win = op stack=7k, heapsize=2k
 
-inc_dirs = -I.. -I"$(sdk_dir)/misc"
+xlibs = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
-.c: ..;$(sdk_dir)/misc
-.h: ..;$(sdk_dir)/misc
+inc_dirs = -I.. -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
+
+.c: ..
+.h: ..
 
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
 
 $(name).exe : rcstr.gh $(objs) $(name).res $(version_res_$(host_os)_$(host_cpu))
-        $(linker) $(lflags) name $(name).exe file { $(objs) }
+        $(linker) $(lflags) name $(name).exe file { $(objs) } lib { $(xlibs) }
 !ifdef version_res_$(host_os)_$(host_cpu)
         $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
@@ -43,7 +44,7 @@ $(name)j.exe : $(name).exe $(name)j.res
 rcstr.gh : rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-rcstrmsg.gh : ../wzoom.msg $(sdk_dir)/misc/about.msg
+rcstrmsg.gh : ../wzoom.msg
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 
 $(name).res : ../wzoom.rc .AUTODEPEND

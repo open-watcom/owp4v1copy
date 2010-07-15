@@ -50,6 +50,7 @@
 #include "heapinfo.h"
 #include "lclinfo.h"
 #include "rcstr.gh"
+#include "uistr.gh"
 #include "ldstr.h"
 #include "config.h"
 #include "menu.h"
@@ -371,4 +372,6 @@ void InitializeStringTables( void );
 
 /* hwldstr */
 BOOL InitStringTable( void );
-char *AllocRCString( DWORD id );
+char *HWAllocRCString( DWORD id );
+void HWFreeRCString( char *str );
+char *HWGetRCString( DWORD msgid );

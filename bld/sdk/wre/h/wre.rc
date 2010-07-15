@@ -3,6 +3,7 @@
 #include "banner.h"
 #include "wre_rc.h"
 #include "rcstr.gh"
+#include "uistr.gh"
 
 #undef pick
 #undef sp
@@ -12,6 +13,7 @@
 STRINGTABLE
 BEGIN
     #include "rcstrmsg.gh"
+    #include "uistrmsg.gh"
 END
 
 #include "wre.men"

@@ -47,6 +47,7 @@
  #include "ctl3dcvr.h"
 #endif
 #include "rcstr.gh"
+#include "uistr.gh"
 #include "ldstr.h"
 #include "hint.h"
 #include "cbfilt.h"

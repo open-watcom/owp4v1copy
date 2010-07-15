@@ -18,6 +18,7 @@
 #include "ssbar.h"
 #include "repdlg.h"
 #include "rcstr.gh"
+#include "uistr.gh"
 #include "../ctl/setfs.h"
 #include "../ctl/setscr.h"
 #include "../ctl/setgen.h"
@@ -69,6 +70,7 @@ DROPSS          CURSOR  dropss.cur
 STRINGTABLE PRELOAD DISCARDABLE
 BEGIN
     #include "rcstrmsg.gh"
+    #include "uistrmsg.gh"
 END
 
 #include "filelist.dlg"

@@ -1,7 +1,5 @@
 // NB the maximum allowable string length is 128 bytes
 
-#include "about.msg"
-
 // iefonts.c
 pick(   WIE_STATUSFONT,
         "Helv.8",

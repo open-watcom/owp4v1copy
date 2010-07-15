@@ -22,12 +22,8 @@ all: $(exc_name) .SYMBOLIC
 drwatcom_95 = 0
 !endif
 
-msgfiles = $(sdk_misc)/about.msg $(sdk_misc)/savelbox.msg &
-           $(sdk_misc)/memwnd.msg $(dig_dir)/h/mad.str
-
 link_name = $(proj_name).lnk
 common_dir=../../common
-sdk_misc = $(sdk_dir)/misc
 
 # cflags stuff
 ###############
@@ -56,9 +52,9 @@ dig_os = $(host_OS)
 
 extra_proj_obj_nt = global.obj param.obj procctl.obj dipcli.obj memory.obj &
             drproc.obj handler.obj memview.obj proclist.obj thrdctl.obj &
-            pefile.obj autoget.obj lddips.obj srchmsg.obj &
+            pefile.obj autoget.obj lddips.obj memwndcd.obj &
             madrtn.obj madsys.obj regstr.obj reglist.obj bitman.obj &
-            strcnv.obj regcrt.obj inipath.obj &
+            strcnv.obj regcrt.obj &
             $(mad_objs)
 !ifeq drwatcom_95 1
 extra_proj_obj_nt += reg95.obj
@@ -71,24 +67,24 @@ extra_proj_obj_nt += reg.obj
 
 extra_proj_obj_win = globals.obj notify.obj winproc.obj debug.obj dump.obj &
             win32app.obj lddips.obj stack.obj &
-            mythelp.obj intdata.obj inth.obj dbg386.obj sdkasm.obj &
-            ismod32.obj segmem.obj segmem2.obj getsaddr.obj getcsip.obj &
-            $(dis_objs) ctl3dcvr.obj
+            $(dis_objs)
 
-proj_obj =   mem.obj listbox.obj log.obj wwinhelp.obj stat.obj lognote.obj &
+proj_obj =  listbox.obj log.obj stat.obj lognote.obj &
             drwatcom.obj sym.obj profile.obj fault.obj &
-            font.obj fontstr.obj about.obj savelbox.obj mark.obj dlgmod.obj &
-            memwnd.obj memwndcd.obj ldstr.obj jdlg.obj disasm.obj &
+            disasm.obj &
             $(extra_proj_obj_$(host_OS)) &
             $(dip_objs)
 
-.asm : .;$(sdk_misc)
-.c : ..;$(common_dir);$(dig_srcs);$(mad_srcs);$(sdk_misc);$(dis_srcs)
+.asm : .
+.c : ..;$(common_dir);$(dig_srcs);$(mad_srcs);$(dis_srcs)
 
-inc_dirs = -I. -I.. -I"$(common_dir)" -I"$(dig_dir)/h" -I"$(sdk_misc)" $(dis_includes)
+inc_dirs = -I. -I.. -I"$(common_dir)" -I"$(dig_dir)/h" $(dis_includes)
+inc_dirs += -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
 
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
+
+xlibs = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
 #explicit rules
 ################
@@ -104,6 +100,7 @@ $(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj) $
 $(link_name) : $(__MAKEFILES__)
         @%write $^@ $(lflags)
         @%append $^@ file { $(proj_obj) }
+        @%append $^@ lib { $(xlibs) }
 
 !ifeq host_OS win
 $(proj_name).res : ../drwatcom.rc .AUTODEPEND
@@ -120,7 +117,7 @@ $(proj_name).res : ../drnt.rc .AUTODEPEND
 rcstr.gh : rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-rcstrmsg.gh : ../drwatcom.msg $(msgfiles)
+rcstrmsg.gh : ../drwatcom.msg
 !ifeq drwatcom_95 1
         $(cc) $(preproc_opts) $(inc_path) -DCHICAGO -fo=$^@
 !else

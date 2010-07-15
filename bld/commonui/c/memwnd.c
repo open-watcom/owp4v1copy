@@ -54,7 +54,7 @@
 #endif
 #include "win1632.h"
 #include "ldstr.h"
-#include "rcstr.gh"
+#include "uistr.gh"
 
 #define  ISCODE( x )    ( (x)->disp_type == MEMINFO_CODE_16 || \
                           (x)->disp_type == MEMINFO_CODE_32 )

@@ -27,5 +27,3 @@ pick(   STR_ABOUT_NAME,
 pick(   STR_INTERV_IS_ZERO,
         "The refresh interval must be greater than zero.",
         "XVŠÔŠu‚Í 0 ‚æ‚è‘å‚«‚¢’l‚Å‚·." )
-
-#include "about.msg"

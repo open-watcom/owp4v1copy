@@ -49,10 +49,10 @@ void ShowSelector( HWND list ) {
 
     index = SendMessage( list, LB_GETCURSEL, 0, 0L );
     if( index == LB_ERR ) {
-        msgtitle = AllocRCString( STR_GET_SELECTOR );
+        msgtitle = HWAllocRCString( STR_GET_SELECTOR );
         RCMessageBox( HeapWalkMainWindow, STR_NO_ITEM_SELECTED,
                       msgtitle, MB_OK | MB_ICONEXCLAMATION );
-        FreeRCString( msgtitle );
+        HWFreeRCString( msgtitle );
         return;
     }
     sel = GlobalHandleToSel( HeapList[index]->info.ge.hBlock );
@@ -63,9 +63,9 @@ void ShowSelector( HWND list ) {
         RCsprintf( buf, STR_SELECTOR_FOR_HANDLE, sel,
                    HeapList[index]->info.ge.hBlock );
     }
-    msgtitle = AllocRCString( STR_GET_SELECTOR );
+    msgtitle = HWAllocRCString( STR_GET_SELECTOR );
     MessageBox( HeapWalkMainWindow, buf, msgtitle, MB_OK );
-    FreeRCString( msgtitle );
+    HWFreeRCString( msgtitle );
 }
 
 BOOL GlobDiscardObj( HWND list ) {
@@ -76,24 +76,24 @@ BOOL GlobDiscardObj( HWND list ) {
 
     index = SendMessage( list, LB_GETCURSEL, 0, 0L );
     if( index == LB_ERR ) {
-        msgtitle = AllocRCString( STR_DISCARD );
+        msgtitle = HWAllocRCString( STR_DISCARD );
         RCMessageBox( HeapWalkMainWindow, STR_NO_ITEM_SELECTED,
                       msgtitle, MB_OK | MB_ICONEXCLAMATION );
-        FreeRCString( msgtitle );
+        HWFreeRCString( msgtitle );
         return( FALSE );
     }
     if( GlobalDiscard( HeapList[index]->info.ge.hBlock ) == 0 ) {
-        msgtitle = AllocRCString( STR_DISCARD );
+        msgtitle = HWAllocRCString( STR_DISCARD );
         RCMessageBox( HeapWalkMainWindow, STR_CANT_DISCARD_ITEM,
                     msgtitle, MB_OK | MB_ICONINFORMATION );
-        FreeRCString( msgtitle );
+        HWFreeRCString( msgtitle );
         return( FALSE );
     } else {
         RCsprintf( buf, STR_HDL_DISCARDED, HeapList[index]->info.ge.hBlock,
                  HeapList[index]->info.ge.dwBlockSize );
-        msgtitle = AllocRCString( STR_DISCARD );
+        msgtitle = HWAllocRCString( STR_DISCARD );
         MessageBox( HeapWalkMainWindow, buf, msgtitle, MB_OK );
-        FreeRCString( msgtitle );
+        HWFreeRCString( msgtitle );
         return( TRUE );
     }
 }
@@ -286,7 +286,7 @@ BOOL __export FAR PASCAL SetCodeDlgProc( HWND hwnd, WORD msg, WORD wparam,
     case WM_INITDIALOG:
         CenterDlg( hwnd );
         info = SetSwapAreaSize( 0 );
-        str = GetRCString( STR_VALUE_K );
+        str = HWGetRCString( STR_VALUE_K );
         sprintf( buf, str, LOWORD( info ) / 64 );
         SetStaticText( hwnd, CODE_CUR_SIZE, buf );
         sprintf( buf, str, HIWORD( info ) / 64 );

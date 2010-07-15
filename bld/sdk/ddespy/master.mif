@@ -11,11 +11,8 @@ sys_windowed = 1
 !include deftarg.mif
 !include defrule.mif
 
-objs =  savelbox.obj mem.obj font.obj fontstr.obj srchmsg.obj log.obj &
-        pushwin.obj alias.obj toolbr.obj mark.obj ldstr.obj hint.obj &
-        statwnd.obj wwinhelp.obj jdlg.obj ctl3dcvr.obj &
-        dde.obj ddeproc.obj ddeglob.obj ddemsg.obj ddebox.obj ddetrack.obj &
-        ddeflter.obj ddecfg.obj ddemisc.obj ddetool.obj about.obj inipath.obj
+objs =  dde.obj ddeproc.obj ddeglob.obj ddemsg.obj ddebox.obj ddetrack.obj &
+        ddeflter.obj ddecfg.obj ddemisc.obj ddetool.obj
 
 
 extra_c_flags_mem = -DNO_WPI
@@ -27,18 +24,17 @@ extra_l_flags_win = option stack=7k option heapsize=2k lib ddeml.lib
 
 #extra_l_flags_nt_axp  = lib ctl3d32.lib
 
-.c: ..;$(sdk_dir)/misc
-.h: ..;$(sdk_dir)/misc
+.c: ..
+.h: ..
 
-inc_dirs  = -I.. -I"$(sdk_dir)/misc" -I"$(wpi_dir)/h"
-
-msgfiles  = $(sdk_dir)/misc/about.msg $(sdk_dir)/misc/log.msg &
-            $(sdk_dir)/misc/savelbox.msg $(sdk_dir)/misc/alias.msg
+inc_dirs  = -I.. -I"$(commonui_dir)/$(host_os)$(host_cpu)"
+inc_dirs += -I"$(commonui_dir)/h" -I"$(wpi_dir)/h"
 
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
 
-xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib &
+        $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
 $(name).exe : rcstr.gh $(objs) $(name).res $(version_res_$(host_os)_$(host_cpu))
         $(LINKER) $(lflags) name $^@ file { $(objs) } lib { $(xlibs) }

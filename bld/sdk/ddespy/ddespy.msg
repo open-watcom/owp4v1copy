@@ -219,12 +219,6 @@ pick(   STR_ABOUT_NAME,
         "Open Watcom DDE Spy for Windows",
         "Open Watcom DDE Spy Windows版" )
 
-#include "savelbox.msg"
-#include "log.msg"
-#include "alias.msg"
-#include "about.msg"
-#include "hint.msg"
-
 pick(   STR_HINT_SAVE,
         "Save information in the event list to a file.",
         "イベントリストの情報のファイルへの保存." )

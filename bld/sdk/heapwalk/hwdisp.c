@@ -59,7 +59,7 @@ static HWND MkDisplayWin( DWORD captionid, HWND parent )
     HWND        hdl;
     char        *caption;
 
-    caption = GetRCString( captionid );
+    caption = HWGetRCString( captionid );
     hdl = CreateWindow(
         ITEM_DISPLAY_CLASS,     /* Window class name */
         caption,                /* Window caption */
@@ -227,10 +227,10 @@ static HWND ShowDialogHeapItem( heap_list *hl, HWND hwnd ) {
     info->type = GD_DIALOG;
     ptr = LockResource( hl->info.ge.hBlock );
     if( ptr == NULL ) {
-        rcstr = AllocRCString( STR_SHOW );
+        rcstr = HWAllocRCString( STR_SHOW );
         RCMessageBox( HeapWalkMainWindow, STR_CANT_LOCK_MEM,
                     rcstr, MB_OK | MB_ICONINFORMATION );
-        FreeRCString( rcstr );
+        HWFreeRCString( rcstr );
         return( NULL );
     }
     info->hdl = hl->info.ge.hBlock;
@@ -254,10 +254,10 @@ static HWND ShowDialogHeapItem( heap_list *hl, HWND hwnd ) {
     dial = CreateDialogIndirect( (HANDLE) tmp.info.ge.hBlock,
                                  ptr, hdl, (DLGPROC)DialProc );
     if( dial == NULL ) {
-        rcstr = AllocRCString( STR_SHOW );
+        rcstr = HWAllocRCString( STR_SHOW );
         RCMessageBox( HeapWalkMainWindow, STR_CANT_CREATE_DLG,
                         rcstr, MB_OK | MB_ICONINFORMATION );
-        FreeRCString( rcstr );
+        HWFreeRCString( rcstr );
         return( NULL );
     }
     ShowWindow( dial, SW_SHOW );
@@ -539,10 +539,10 @@ void ShowHeapObject( HWND lbhandle )
     dispwnd = NULL;
     index = SendMessage( lbhandle, LB_GETCURSEL, 0 , 0L );
     if( index == LB_ERR ) {
-        rcstr = AllocRCString( STR_SHOW );
+        rcstr = HWAllocRCString( STR_SHOW );
         RCMessageBox( HeapWalkMainWindow, STR_NO_ITEM_SELECTED,
                         rcstr, MB_OK | MB_ICONEXCLAMATION );
-        FreeRCString( rcstr );
+        HWFreeRCString( rcstr );
         return;
     }
     hl = HeapList[ index ];

@@ -44,7 +44,7 @@
     #include "ctl3dcvr.h"
 #endif
 #include "ldstr.h"
-#include "rcstr.gh"
+#include "uistr.gh"
 
 /*
  * writeListBoxContents

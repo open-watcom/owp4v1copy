@@ -21,6 +21,7 @@
 STRINGTABLE PRELOAD DISCARDABLE
 BEGIN
     #include "rcstrmsg.gh"
+    #include "uistrmsg.gh"
 END
 
 NUMBER_OF_STRINGS RCDATA

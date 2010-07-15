@@ -47,9 +47,7 @@ OBJS =  wremain.obj wremem.obj wremsg.obj wreresin.obj wrestat.obj &
         wreaccel.obj wremenu.obj wrestr.obj wrenew.obj wre_wres.obj &
         wredlg.obj wreimg.obj wredde.obj wresvmlt.obj wreimage.obj &
         wreclip.obj wresym.obj &
-        preproc.obj ppexpr.obj ppmacro.obj &
-        toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj inipath.obj &
-        about.obj
+        preproc.obj ppexpr.obj ppmacro.obj
 
 extra_c_flags_wremain= -fh
 extra_c_flags_wremem= -fh
@@ -89,27 +87,20 @@ extra_c_flags_wreimage= -fh
 extra_c_flags_wreclip= -fh
 extra_c_flags_wresym=
 
-extra_c_flags_toolbr= -fh
-extra_c_flags_statwnd= -fh
-extra_c_flags_ldstr= -fh
-extra_c_flags_wwinhelp= -fh
-extra_c_flags_jdlg= -fh
-extra_c_flags_about= -DWRCTL3D -fh
-
 !ifeq wre_trmem 1
 OBJS += trmem.tbj trmemcvr.tbj
 !endif
 
 # where to look for various files
-.c         : ../c;$(misc_dir);$(cpp_dir);$(trmem_dir)
+.c         : ../c;$(cpp_dir);$(trmem_dir)
 
 inc_dirs  = -Ih -I"../h" -I"$(wstring_dir)/h" -I"$(wmenu_dir)/h" -I"$(wacc_dir)/h"
 inc_dirs += -I"$(wr_dir)/h" -I"$(trmem_dir)" -I"$(wres_dir)/h" -I"$(cpp_dir)" -I"$(misc_dir)"
-inc_dirs += -I"$(wpi_dir)/h"
+inc_dirs += -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)" -I"$(wpi_dir)/h"
 
-msgfiles  = $(sdk_dir)/misc/about.msg
 
-xlibs = $(wacc_dir)/$(host_os)$(host_cpu)/wacc.lib &
+xlibs = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib &
+        $(wacc_dir)/$(host_os)$(host_cpu)/wacc.lib &
         $(wmenu_dir)/$(host_os)$(host_cpu)/wmenu.lib &
         $(wstring_dir)/$(host_os)$(host_cpu)/wstring.lib &
         $(wr_dir)/$(host_os)$(host_cpu)/wr.lib &

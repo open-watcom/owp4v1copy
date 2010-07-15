@@ -1,20 +1,18 @@
-msgfiles = $(sdk_dir)/misc/about.msg
 special = rcstr.gh
 
 objwiny  =  main.obj mainwnd.obj editwnd.obj dosdir.obj time.obj &
                 stubs.obj color.obj wstatus.obj font.obj &
                 window.obj display.obj getkey.obj cursor.obj command.obj &
                 utils.obj menu.obj filesel.obj flist.obj &
-                message.obj windir.obj contain.obj bitmap.obj palette.obj &
+                message.obj windir.obj contain.obj &
                 dde.obj srcwin.obj srcdde.obj tool.obj wintica.obj &
                 repcnt.obj clipbrd.obj asavedlg.obj profile.obj &
                 finddlg.obj ectlsub.obj grepdlg.obj cmddlg.obj &
-                statwnd.obj toolbr.obj ftbar.obj about.obj &
-                startdlg.obj usage.obj tagdlg.obj ldstr.obj &
-                hasshare.obj getidata.obj ctl3d32.obj linedlg.obj &
+                ftbar.obj startdlg.obj usage.obj tagdlg.obj &
+                hasshare.obj getidata.obj linedlg.obj &
                 clrbar.obj clrpick.obj ftpick.obj repdlg.obj &
                 setfs.obj setscr.obj setgen.obj util.obj hotkey.obj &
-                ssbar.obj subclass.obj snoop.obj wwinhelp.obj &
+                ssbar.obj subclass.obj snoop.obj &
                 ideactiv.obj hackdctl.obj filetype.obj
 
 extraobjs = $(objcb) $(objwiny)
@@ -26,7 +24,7 @@ rc_deps = ../win/viw.ico ../win/filelist.dlg ../win/fgrep.dlg &
           ../win/linedlg.dlg ../win/clrbar.dlg ../win/ftbar.dlg &
           ../win/dropclr.cur ../win/nodrop.cur ../win/dropft.cur &
           ../win/dropss.cur &
-          $(sdk_dir)/misc/about.dlg  &
+          $(commonui_dir)/h/about.dlg  &
           ../ctl/setfs.dlg ../ctl/setscr.dlg ../ctl/setgen.dlg
 
 !ifdef sys_windowed

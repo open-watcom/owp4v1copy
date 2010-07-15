@@ -63,6 +63,7 @@ objs = $(wv_objs) $(mem_objs)
 
 !ifeq sys_windowed 1
 wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+commonui_lib = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 !endif
 
 !ifndef bootstrap
@@ -115,17 +116,17 @@ extra_c_flags_guidrain += -fh=gui07.pch
 !endif
 
 !ifeq sys_windowed 1
-inc_dirs = -I. -I"../h" -I"../../h" -I"$(help_dir)/h" -I"$(wpi_dir)/h" -I"$(sdk_dir)/misc"
+inc_dirs = -I. -I"../h" -I"../../h" -I"$(help_dir)/h" -I"$(wpi_dir)/h" -I"$(commonui_dir)/h"
 !else
 inc_dirs = -I. -I"../h" -I"../../h" -I"$(help_dir)/h" -I"$(ui_dir)/h"
 !endif
 
-.c:     ../c;../../c;$(help_dir)/c;$(sdk_dir)/misc;$(trmem_dir)
+.c:     ../c;../../c;$(help_dir)/c;$(trmem_dir)
 .h:     ../h;../../h;$(wpi_dir)/h
 .msg:   ../../h
 
 $(name).lib : _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKEFILES__) $(wpi_lib)
-        $(librarian) $(libflags) $(objs) $(extra_objs) $(sysobjs) $(wpi_lib)
+        $(librarian) $(libflags) $(objs) $(extra_objs) $(sysobjs) $(wpi_lib) $(commonui_lib)
 
 ./mkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
         $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@

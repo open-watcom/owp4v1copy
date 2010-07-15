@@ -27,27 +27,24 @@ extra_c_flags_segmem2  = -3
 extra_l_flags = op map
 extra_l_flags_win = op stack=7k, heapsize=2k lib stress.lib
 
-inc_dirs = -I.. -I"$(sdk_dir)/misc" $(dis_includes)
+xlibs = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
-.c   : ..;$(sdk_dir)/misc;$(dis_srcs)
-.asm : ..;$(sdk_dir)/misc
+inc_dirs = -I.. -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
+inc_dirs += $(dis_includes)
+
+.c   : ..;$(dis_srcs)
+.asm : ..
 .rc  : ..
 
 objs_win = heapwalk.obj hwlist.obj hwproc.obj hwglob.obj hwsort.obj &
-        hwbox.obj hwdisp.obj hwsave.obj hwobjec.obj hwlocal.obj&
+        hwbox.obj hwdisp.obj hwsave.obj hwobjec.obj hwlocal.obj &
         hwlsort.obj hwconfig.obj  hwinfo.obj hwalloc.obj hwutil.obj &
-        hwbiglb.obj hwmonit.obj hwtable.obj hwldstr.obj ctl3dcvr.obj &
-        mythelp.obj mem.obj font.obj fontstr.obj segmem.obj segmem2.obj &
-        dlgmod.obj savelbox.obj memwnd.obj memwndcd.obj srchmsg.obj &
-        pushwin.obj sdkasm.obj about.obj ldstr.obj wwinhelp.obj jdlg.obj
+        hwbiglb.obj hwmonit.obj hwtable.obj hwldstr.obj
 
 objs = $(objs_$(host_os))
 
-msgfiles = $(sdk_dir)/misc/savelbox.msg &
-           $(sdk_dir)/misc/memwnd.msg $(sdk_dir)/misc/about.msg
-
 $(name).exe : rcstr.gh $(dis_prereq) $(objs) $(dis_objs) $(name).res
-        $(linker) $(lflags) name $^@ file {$(objs) $(dis_objs)}
+        $(linker) $(lflags) name $^@ file {$(objs) $(dis_objs)} lib {$(xlibs)}
         $(rc) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh

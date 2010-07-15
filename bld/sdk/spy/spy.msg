@@ -110,10 +110,6 @@ pick(   STR_SPYING_STOPPED,
         "Spying stopped because message %s was encountered",
         "Spying stopped because message %s was encountered" )
 
-#include "savelbox.msg"
-#include "log.msg"
-#include "about.msg"
-
 pick(   STR_EMPTY_STATUS,
         " ",
         " " )
@@ -217,8 +213,6 @@ pick(   STR_HINT_ABOUT,
 pick(   STR_HINT_SHOW_HELP,
         "Display/Hide this hint bar",
         "Display/Hide this hint bar" );
-
-#include "hint.msg"
 
 pick(   STR_MESSAGE,
         "Message: %s",

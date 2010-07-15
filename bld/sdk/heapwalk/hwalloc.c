@@ -205,21 +205,21 @@ BOOL __export FAR PASCAL FreeNDlgProc( HWND hwnd, WORD msg, WORD wparam,
         SetStaticText( hwnd, FREE_ALLOCATED, buf );
         switch( DialMode ) {
         case HEAPMENU_FREE_NK:
-            str = GetRCString( STR_FREE_N_BYTES );
+            str = HWGetRCString( STR_FREE_N_BYTES );
             SetWindowText( hwnd, str );
-            str = GetRCString( STR_BYTES_TO_FREE );
+            str = HWGetRCString( STR_BYTES_TO_FREE );
             SetDlgItemText( hwnd, FREE_AMT_TITLE, str );
             break;
         case HEAPMENU_ALLOC_NK:
-            str = GetRCString( STR_ALLOC_N_BYTES );
+            str = HWGetRCString( STR_ALLOC_N_BYTES );
             SetWindowText( hwnd, str );
-            str = GetRCString( STR_BYTES_TO_ALLOC );
+            str = HWGetRCString( STR_BYTES_TO_ALLOC );
             SetDlgItemText( hwnd, FREE_AMT_TITLE, str );
             break;
         case HEAPMENU_ALLOC_BUT_NK:
-            str = GetRCString( STR_ALLOC_ALL_BUT_N );
+            str = HWGetRCString( STR_ALLOC_ALL_BUT_N );
             SetWindowText( hwnd, str );
-            str = GetRCString( STR_BYTES_TO_LEAVE_FREE );
+            str = HWGetRCString( STR_BYTES_TO_LEAVE_FREE );
             SetDlgItemText( hwnd, FREE_AMT_TITLE, str );
             break;
         }

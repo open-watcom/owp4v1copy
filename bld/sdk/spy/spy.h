@@ -42,6 +42,7 @@
 #include "bool.h"
 #define MSG_RC_BASE     0
 #include "rcstr.gh"
+#include "uistr.gh"
 #include "ldstr.h"
 #include "hint.h"
 

@@ -77,6 +77,9 @@ misc_dir        = $(sdk_dir)/misc
 !ifndef wheapwlk_dir
 wheapwlk_dir    = $(sdk_dir)/heapwalk
 !endif
+!ifndef commonui_dir
+commonui_dir    = $(dev_dir)/commonui
+!endif
 !ifndef owl_dir
 owl_dir         = $(dev_dir)/owl
 !endif
@@ -400,6 +403,9 @@ misc_dir        = $(sdk_dir)\misc
 !endif
 !ifndef wheapwlk_dir
 wheapwlk_dir    = $(sdk_dir)\heapwalk
+!endif
+!ifndef commonui_dir
+commonui_dir    = $(dev_dir)\commonui
 !endif
 !ifndef owl_dir
 owl_dir         = $(dev_dir)\owl

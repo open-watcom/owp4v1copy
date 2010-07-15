@@ -53,10 +53,10 @@ static void fillMemManDialog( HWND hwnd ) {
     memset( &info, 0, sizeof( MEMMANINFO ) );
     info.dwSize = sizeof( MEMMANINFO );
     if( MemManInfo( &info ) == 0 ) {
-        msgtitle = AllocRCString( STR_MEM_MAN_INFO_TITLE );
+        msgtitle = HWAllocRCString( STR_MEM_MAN_INFO_TITLE );
         RCMessageBox( HeapWalkMainWindow, STR_CANT_GET_MEM_MAN_INFO,
                       msgtitle, MB_OK | MB_ICONINFORMATION );
-        FreeRCString( msgtitle );
+        HWFreeRCString( msgtitle );
         return;
     }
     ultoa( info.dwLargestFreeBlock, buf, 10 );
@@ -93,10 +93,10 @@ static void fillGblInfoDialog( HWND hwnd ) {
     memset( &meminfo, 0, sizeof( GLOBALINFO ) );
     meminfo.dwSize = sizeof( GLOBALINFO );
     if( GlobalInfo( &meminfo ) == 0 ) {
-        msgtitle = AllocRCString( STR_GLOB_HEAP_INFO );
+        msgtitle = HWAllocRCString( STR_GLOB_HEAP_INFO );
         RCMessageBox( HeapWalkMainWindow, STR_CANT_GET_GBL_HEAP_INFO,
                       msgtitle, MB_OK | MB_ICONINFORMATION );
-        FreeRCString( msgtitle );
+        HWFreeRCString( msgtitle );
         return;
     }
     utoa( meminfo.wcItems, buf, 10 );

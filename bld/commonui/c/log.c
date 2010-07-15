@@ -45,7 +45,7 @@
     #include "ctl3dcvr.h"
 #endif
 #include "ldstr.h"
-#include "rcstr.gh"
+#include "uistr.gh"
 
 static LogInfo          LogCurInfo;
 static char             *BufLines[ NO_BUF_LINES ];

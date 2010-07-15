@@ -117,9 +117,9 @@ static void GetDefaults( HeapConfigInfo *info ) {
     info->glob_ypos = y / 8;
     info->glob_xsize = 15 * ( x / 16 );
     info->glob_ysize = 3 * ( y / 4 );
-    str = GetRCString( STR_DEF_GLOB_HEAP_FNAME );
+    str = HWGetRCString( STR_DEF_GLOB_HEAP_FNAME );
     strcpy( info->gfname, str );
-    str = GetRCString( STR_DEF_LCL_HEAP_FNAME );
+    str = HWGetRCString( STR_DEF_LCL_HEAP_FNAME );
     strcpy( info->lfname, str );
 } /* GetDefaults */
 

@@ -58,6 +58,7 @@
         #include <commdlg.h>
         #pragma library( "commdlg.lib" );
     #endif
+    #include <ctl3d.h>
 #endif
 #include "guiwind.h"
 #include "guidlg.h"
@@ -65,7 +66,6 @@
 #include "guixutil.h"
 #include "guistr.h"
 #include "guixhook.h"
-#include "ctl3d.h"
 
 extern  WPI_INST        GUIMainHInst;
 

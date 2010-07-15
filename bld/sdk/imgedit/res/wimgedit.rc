@@ -5,6 +5,7 @@
 #include "dialogs.h"
 #include "about.h"
 #include "rcstr.gh"
+#include "uistr.gh"
 
 APPLICON        ICON    wimgedit.ico
 APPLBITMAP      BITMAP  wimgedit.bmp
@@ -109,6 +110,7 @@ Accelerators ACCELERATORS
 STRINGTABLE
 BEGIN
     #include "rcstrmsg.gh"
+    #include "uistrmsg.gh"
 END
 
 #ifdef __NT__

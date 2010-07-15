@@ -622,10 +622,6 @@ pick( STR_NO_DIPS_LOADED,
     "No debugging information processors were found.",
     "No debugging information processors were found." )
 
-#include "savelbox.msg"
-#include "memwnd.msg"
-#include "about.msg"
-
 pick( STR_MEM_INFO_FOR_PROC,
     "Memory Information for Process %08X (%s)",
     "Memory Information for Process %08X (%s)" )

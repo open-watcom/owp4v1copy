@@ -24,11 +24,9 @@ object +=   wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
             winst.obj wsetedit.obj wmsg.obj wopts.obj wstrdup.obj &
             wselft.obj wrename.obj wwait.obj wmemf.obj wcopystr.obj &
             widn2str.obj wclip.obj wisedit.obj weditsym.obj &
-            preproc.obj ppexpr.obj ppmacro.obj &
-            toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj &
-            inipath.obj about.obj
+            preproc.obj ppexpr.obj ppmacro.obj
 
-msgfiles = ../../h/w.msg ../h/$(name).msg $(sdk_dir)/misc/about.msg
+msgfiles = ../../h/w.msg ../h/$(name).msg
 
 extra_c_flags     = -DWIN_GUI -s
 
@@ -57,12 +55,6 @@ extra_c_flags_wclip= -fh
 extra_c_flags_wisedit= -fh
 extra_c_flags_weditsym= -bd
 
-extra_c_flags_toolbr= -fh
-extra_c_flags_statwnd= -fh
-extra_c_flags_ldstr= -fh
-extra_c_flags_wwinhelp= -fh
-extra_c_flags_jdlg= -fh
-
 # preprocessor objects
 extra_c_flags_preproc = -zm
 extra_c_flags_ppexpr = -zm
@@ -72,8 +64,9 @@ wr_lib = $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
 
 .c: ../c;../../c;$(misc_dir);$(cpp_dir)
 
-inc_dirs = -I"../h" -I"../../h" -I"$(misc_dir)" -I"$(wr_dir)/h" -I"$(wres_dir)/h" -I"$(cpp_dir)"
-inc_dirs += -I"$(wpi_dir)/h"
+inc_dirs = -I"../h" -I"../../h" -I"$(wr_dir)/h" -I"$(wres_dir)/h" -I"$(cpp_dir)"
+inc_dirs += -I"$(wpi_dir)/h" -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
+inc_dirs += -I"$(misc_dir)"
 
 extra_l_flags = op map,v,static
 extra_l_flags_nt = op stack=16k,heap=16k commit heap=8k
@@ -84,6 +77,7 @@ extra_l_flags_win = library commdlg op stack=8k,rwr &
 version_res_nt_386 = version.res
 
 xlibs = $(wres_lib) $(wr_lib) $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+xlibs += $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
 $(name).lib: $(name).dll
         $(librarian) $(libflags) +$[@

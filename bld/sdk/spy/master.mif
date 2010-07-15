@@ -21,29 +21,17 @@ wspy_dll_prefix = w
 
 dllname = $(wspy_dll_prefix)spyhk
 
-msgfiles = $(sdk_dir)/misc/savelbox.msg &
-           $(sdk_dir)/misc/log.msg $(sdk_dir)/misc/about.msg &
-           $(sdk_dir)/misc/hint.msg
-
 objs_win = spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj &
-           spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj &
-           savelbox.obj toolbr.obj font.obj fontstr.obj mem.obj log.obj &
-           mark.obj about.obj ldstr.obj statwnd.obj hint.obj wwinhelp.obj &
-           jdlg.obj inipath.obj ctl3dcvr.obj
+           spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj
 
 objs_nt =  spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj spyzord.obj &
-           spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj &
-           savelbox.obj toolbr.obj font.obj fontstr.obj mem.obj log.obj &
-           mark.obj about.obj desknt.obj ldstr.obj statwnd.obj hint.obj &
-           wwinhelp.obj jdlg.obj inipath.obj
+           spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj
 
 objs = $(objs_$(host_os))
 
 dllobjs = spydll.obj
-
-extra_c_flags_mem = -dNO_WPI
 
 extra_c_flags     += -s
 extra_c_flags_i86 += -zu -2 -zW
@@ -53,33 +41,21 @@ extra_c_flags_spydll = -bd -mc
 !else ifeq host_os nt
 extra_c_flags_spydll = -bd
 !endif
-extra_c_flags_spy = -fh=spy01.pch
-extra_c_flags_spyglob = -fh=spy01.pch
-extra_c_flags_spybox = -fh=spy01.pch
-extra_c_flags_spyproc = -fh=spy01.pch
-extra_C_flags_spymsgs = -fh=spy01.pch
-extra_c_flags_spyfilt = -fh=spy01.pch
-extra_c_flags_spypick = -fh=spy01.pch
-extra_c_flags_spymdlgs = -fh=spy01.pch
-extra_c_flags_spyarray = -fh=spy01.pch
-extra_c_flags_spyzord = -fh=spy01.pch
-extra_c_flags_spymisc = -fh=spy01.pch
-extra_c_flags_spycfg = -fh=spy01.pch
-extra_c_flags_spylog = -fh=spy01.pch
-extra_c_flags_spytool = -fh=spy01.pch
-extra_c_flags_spysel = -fh=spy01.pch
-extra_c_flags_savelbox = -fh=spy02.pch
-extra_c_flags_toolbr = -fh=spy02.pch
-extra_c_flags_font = -fh=spy02.pch
-extra_c_flags_fontstr = -fh=spy02.pch
-extra_c_flags_log = -fh=spy02.pch
-extra_c_flags_mark = -fh=spy02.pch
-extra_c_flags_desknt = -fh=spy02.pch
-extra_c_flags_ldstr = -fh=spy02.pch
-extra_c_flags_hint = -fh=spy02.pch
-extra_c_flags_wwinhelp = -fh=spy02.pch
-extra_c_flags_jdlg = -fh=spy02.pch
-extra_c_flags_inipath = -fh=spy02.pch
+extra_c_flags_spy = -fh
+extra_c_flags_spyglob = -fh
+extra_c_flags_spybox = -fh
+extra_c_flags_spyproc = -fh
+extra_C_flags_spymsgs = -fh
+extra_c_flags_spyfilt = -fh
+extra_c_flags_spypick = -fh
+extra_c_flags_spymdlgs = -fh
+extra_c_flags_spyarray = -fh
+extra_c_flags_spyzord = -fh
+extra_c_flags_spymisc = -fh
+extra_c_flags_spycfg = -fh
+extra_c_flags_spylog = -fh
+extra_c_flags_spytool = -fh
+extra_c_flags_spysel = -fh
 
 !ifeq release 0
 wspy_non_release_option = option rwr
@@ -120,7 +96,8 @@ wspy_dll_lflags_ntaxp  = $(dll_debug_$(host_cpu)) &
 .c: $(wspy_dir);$(sdk_dir)/misc
 .h: $(wspy_dir);$(sdk_dir)/misc
 
-inc_dirs = -I"$(wspy_dir)" -I"$(sdk_dir)/misc" -I"$(wpi_dir)/h"
+inc_dirs = -I"$(wspy_dir)" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
+inc_dirs += -I"$(commonui_dir)/h" -I"$(wpi_dir)/h"
 
 wspy_to_build_win = rcstr.gh $(dllname).dll $(name).exe
 
@@ -129,7 +106,8 @@ wspy_to_build_nt = rcstr.gh $(dllname).dll $(name).exe
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
 
-xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib &
+        $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
 all : $(wspy_to_build_$(host_os)) .SYMBOLIC
         @%null
@@ -160,7 +138,7 @@ $(name).exe : $(objs) $(name).res $(dllname).lib $(version_res_$(host_os)_$(host
 rcstr.gh : rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-rcstrmsg.gh : $(wspy_dir)/spy.msg $(msgfiles)
+rcstrmsg.gh : $(wspy_dir)/spy.msg
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 
 $(dllname).lib : $(dllname).dll

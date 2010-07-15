@@ -46,7 +46,7 @@
   #endif
 #endif
 #include "ldstr.h"
-#include "rcstr.gh"
+#include "uistr.gh"
 #if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
     #pragma library( "toolhelp.lib" )   /* For SystemHeapInfo */
 #endif

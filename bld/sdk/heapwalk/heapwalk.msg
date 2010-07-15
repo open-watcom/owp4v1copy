@@ -577,10 +577,6 @@ pick(   STR_SELECTOR_LIST_ITEMS,
         "Selector List",
         "Selector List" )
 
-#include "savelbox.msg"
-#include "memwnd.msg"
-#include "about.msg"
-
 //This string marks the end of the list and must always be last
 pick(   STR_THIS_IS_THE_LAST_STRING_IN_THE_LIST,
         "",
