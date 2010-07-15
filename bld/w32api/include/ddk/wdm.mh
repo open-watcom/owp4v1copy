@@ -8619,9 +8619,9 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
 /* Debugging macros */
 #if DBG
     #define ASSERT( x ) \
-        ((!(x)) ? (RtlAssert( #x, __FILE__, __LINE__, NULL ), FALSE) : TRUE)
+        ((void)((!(x)) ? (RtlAssert( #x, __FILE__, __LINE__, NULL ), FALSE) : TRUE))
     #define ASSERTMSG( x, p ) \
-        ((!(x)) ? (RtlAssert( #x, __FILE__, __LINE__, p ), FALSE) : TRUE)
+        ((void)((!(x)) ? (RtlAssert( #x, __FILE__, __LINE__, p ), FALSE) : TRUE))
     #define RTL_SOFT_ASSERT( x ) \
         ((!(x)) ? (DbgPrint( "%s(%d): Soft assertion failed\n   Expression: %s\n", \
         __FILE__, __LINE__, #x ), FALSE) : TRUE)
@@ -8636,7 +8636,7 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
     #define PAGED_CODE() \
         { \
             if( KeGetCurrentIrql() > APC_LEVEL ) { \
-                KdPrint( "EX: Pageable code called at IRQL %d\n", KeGetCurrentIrql() ); \
+                KdPrint( ("EX: Pageable code called at IRQL %d\n", KeGetCurrentIrql()) ); \
                 ASSERT( FALSE ); \
             } \
         }
