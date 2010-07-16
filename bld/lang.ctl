@@ -58,8 +58,9 @@ echo Bootstrapping compiler using GNU tools...
 #
 #        RC builds resource file libraries for everybody
 [ INCLUDE <DEVDIR>/fmedit/lang.ctl ]
-#        WPI needs to be done before SDK
+#        WPI and commonui needs to be done before SDK
 [ INCLUDE <DEVDIR>/wpi/lang.ctl ]
+[ INCLUDE <DEVDIR>/commonui/lang.ctl ]
 #
 [ INCLUDE <DEVDIR>/causeway/lang.ctl ]
 #        SDK must be done after DISASM?
