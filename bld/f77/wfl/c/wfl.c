@@ -828,7 +828,7 @@ static  int     CompLink( void ) {
         free( currobj );
     }
     for( currobj = LibList; currobj != NULL; currobj = nextobj ) {
-        fputs( "library", Fp );
+        fputs( "library ", Fp );
         Fputnl( currobj->filename, Fp );
         nextobj = currobj->next;
         free( currobj->filename );
