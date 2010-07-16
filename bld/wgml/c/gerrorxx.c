@@ -40,7 +40,7 @@
 
 static void show_line_error( char * pa )
 {
-    char    *   buf = NULL; // better as static global or extern?
+    char    *   buf = NULL;
     int         cnt;
 
     cnt = pa - buff2;   // number of characters before the offending input
@@ -77,7 +77,6 @@ void    file_mac_info( void )
         }
     }
     show_include_stack();
-//    show_line_error( pa ); // always associated with include file dump?
     return;
 }
 
