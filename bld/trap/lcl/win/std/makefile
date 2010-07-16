@@ -62,5 +62,7 @@ inc_dirs += -I"$(trap_dir)/lcl/dos/h" -I"$(sdk_dir)/misc"
 
 extra_c_flags_i86 = -3
 
+.c: $(commonui_dir)/c
+
 !include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif
