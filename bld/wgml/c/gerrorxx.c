@@ -33,6 +33,29 @@
 #include "wgml.h"
 #include "gvars.h"
 
+
+/***************************************************************************/
+/*  display offending text line and mark the offending token               */
+/***************************************************************************/
+
+static void show_line_error( char * pa )
+{
+    char    *   buf = NULL; // better as static global or extern?
+    int         cnt;
+
+    cnt = pa - buff2;   // number of characters before the offending input
+    cnt++;              // allow space for "*" at start of offending input
+    buf = (char *) mem_alloc( cnt );
+    memset( buf, ' ', cnt - 1 );
+    buf[cnt-1] = '*';
+    buf[cnt] = '\0';
+    out_msg( "%s\n", buff2 );
+    out_msg( "%s\n", buf );
+    mem_free( buf );
+    return;
+}
+
+
 /***************************************************************************/
 /*  display lineno of file/macro and include stack                         */
 /***************************************************************************/
@@ -54,35 +77,7 @@ void    file_mac_info( void )
         }
     }
     show_include_stack();
-    return;
-}
-
-/***************************************************************************/
-/*  display lineno of file/macro and include stack                         */
-/***************************************************************************/
-
-static void show_line_error( char * pa )
-{
-    static char    *   buf = NULL;
-    static int         len = 0;
-    int                 cnt;
-
-    cnt = pa - buff2;   // number of characters before the offending input
-    cnt++;              // allow space for "*" at start of offending input
-
-    if( len < cnt ) {
-        len = cnt;
-        if( buf != NULL ) {
-            buf = (char *) mem_realloc( buf, len );
-        } else {
-            buf = (char *) mem_alloc( len );
-        }
-    }
-    memset( buf, ' ', cnt - 1 );
-    buf[cnt-1] = '*';
-    buf[cnt] = '\0';
-    out_msg( "%s\n", buff2 );
-    out_msg( "%s\n", buf );
+//    show_line_error( pa ); // always associated with include file dump?
     return;
 }
 

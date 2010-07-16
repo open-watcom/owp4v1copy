@@ -429,6 +429,8 @@ pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
 pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
                                 "'%s' tag only allowed in %s" )
 
+/* Error messages for use with xx_line_err() */
+
 pick( ERR_CW_NOT_CHAR,          "A single character or a two character hexadecimal value must be specified",
                                 "A single character or a two character hexadecimal value must be specified")
                                 
