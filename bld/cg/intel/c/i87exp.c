@@ -224,7 +224,7 @@ extern  name    *ST( int num ) {
 }
 
 extern  instruction     *PrefFLDOp( instruction *ins,
-                                    operand_types op, name *opnd ) {
+                                    operand_type op, name *opnd ) {
 /*****************************************************************/
 
     instruction *new_ins = NULL;
@@ -254,7 +254,7 @@ extern  instruction     *PrefFLDOp( instruction *ins,
 }
 
 
-static  void    PrefixFLDOp( instruction *ins, operand_types op, int i ) {
+static  void    PrefixFLDOp( instruction *ins, operand_type op, int i ) {
 /*************************************************************************
     Prefix the floating point instruction "ins" with an FLD instruction
     for one of its operands (ins->operands[i]).  That operand has
@@ -518,7 +518,7 @@ static  instruction     *ExpMove( instruction *ins,
 
 
 
-static  instruction     *ExpPush( instruction *ins, operand_types op ) {
+static  instruction     *ExpPush( instruction *ins, operand_type op ) {
 /***********************************************************************
     expand a PUSH instruction.  On the 386 we generate FSTP 0[esp].  On
     the 8086..286 try MOV BP,SP  FSTP 0[bp].  If thats not possible,

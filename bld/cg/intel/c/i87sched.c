@@ -49,7 +49,7 @@ extern  int     Max87Stk;
 
 extern  instruction     *PrefFXCH( instruction *ins, int i );
 extern  instruction     *SuffFXCH( instruction *ins, int i );
-extern  instruction     *PrefFLDOp(instruction *,operand_types ,name *);
+extern  instruction     *PrefFLDOp(instruction *,operand_type ,name *);
 extern  instruction     *SuffFSTPRes(instruction *,name *,result_type );
 extern  name            *ST(int);
 extern  int             NumOperands(instruction*);
