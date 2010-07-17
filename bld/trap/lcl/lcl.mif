@@ -1,3 +1,2 @@
 extra_srcs +=;$(trap_dir)/lcl/c;$(trap_dir)/lcl/asm
 inc_dirs   += -I"$(trap_dir)/lcl/h"
-inc_dirs   += -I"$(commonui_dir)/h"
