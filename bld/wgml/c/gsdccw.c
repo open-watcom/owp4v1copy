@@ -372,8 +372,14 @@ void    scr_dc( void )
     }
     switch( opt ) {
     case 1 :                            // CW option
-        if( len == 3 ) {
-            if( strnicmp( pa, "OFF", len ) ) {
+        if( len > 2 ) {
+            if( len == 3 ) {
+                if( strnicmp( pa, "OFF", len ) ) {
+                    *p = '\0';
+                    xx_line_err( err_dc_not_off, pa );   // only OFF is valid
+                    return;
+                }
+            } else {
                 *p = '\0';
                 xx_line_err( err_dc_not_off, pa );   // only OFF is valid
                 return;
@@ -386,13 +392,19 @@ void    scr_dc( void )
         add_to_sysdir( "$cw", CW_sep_char );
         break;
     case 2 :                            // GML option
-        if( len == 3 ) {
-            if( strnicmp( pa, "OFF", len ) ) {
+        if( len > 2 ) {
+            if( len == 3 ) {
+                if( strnicmp( pa, "OFF", len ) ) {
+                    *p = '\0';
+                    xx_line_err( err_dc_not_off, pa );   // only OFF is valid
+                    return;
+                }
+                c = ' ';                    // OFF is blank
+            } else {
                 *p = '\0';
                 xx_line_err( err_dc_not_off, pa );   // only OFF is valid
                 return;
             }
-            c = ' ';                    // OFF is blank
         } else {
             c = parse_char( pa, len );
         }
@@ -404,13 +416,19 @@ void    scr_dc( void )
         add_to_sysdir( "$gml", GML_char );
         break;
     case 3 :                            // TB option
-        if( len == 3 ) {
-            if( strnicmp( pa, "OFF", len ) ) {
+        if( len > 2 ) {
+            if( len == 3 ) {
+                if( strnicmp( pa, "OFF", len ) ) {
+                    *p = '\0';
+                    xx_line_err( err_dc_not_off, pa );   // only OFF is valid
+                    return;
+                }
+                c = 0x09;                   // OFF is 0x09
+            } else {
                 *p = '\0';
                 xx_line_err( err_dc_not_off, pa );   // only OFF is valid
                 return;
             }
-            c = 0x09;                   // OFF is 0x09
         } else {
             c = parse_char( pa, len );
         }

@@ -431,6 +431,9 @@ pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
 
 /* Error messages for use with xx_line_err() */
 
+pick( ERR_CHAR_ONLY,            "Only a single character is allowed",
+                                "Only a single character is allowed")
+
 pick( ERR_CW_NOT_CHAR,          "A single character or a two character hexadecimal value must be specified",
                                 "A single character or a two character hexadecimal value must be specified")
                                 
@@ -439,5 +442,4 @@ pick( ERR_DC_NOT_OFF,           "'OFF' is the only text value allowed",
                                 
 pick( ERR_INV_CW_SEP,           "Invalid control word separator",
                                 "Invalid control word separator" )
-
 

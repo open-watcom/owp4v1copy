@@ -147,17 +147,8 @@
 
 void    scr_ti( void )
 {
-    char        *   pa;
     char        *   p;
-    int             len;
-#if 0
-    char            cwcurr[4];          // if errmsg becomes neccessary
 
-    cwcurr[0] = SCR_char;
-    cwcurr[1] = 't';
-    cwcurr[2] = 'i';
-    cwcurr[3] = '\0';
-#endif
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
         p++;
@@ -165,13 +156,8 @@ void    scr_ti( void )
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
-    pa = p;
 
-    len = scan_stop - pa;
-    if( len < 0 ) {
-        len = 0;
-    }
-    cop_ti_table( pa, len );
+    cop_ti_table( p );
     add_to_sysdir( "$tiset", in_esc );  // put in dictionary
 
     scan_restart = scan_stop + 1;
@@ -181,17 +167,8 @@ void    scr_ti( void )
 
 void    scr_tr( void )
 {
-    char        *   pa;
     char        *   p;
-    int             len;
-#if 0
-    char            cwcurr[4];          // if errmsg becomes neccessary
 
-    cwcurr[0] = SCR_char;
-    cwcurr[1] = 't';
-    cwcurr[2] = 'r';
-    cwcurr[3] = '\0';
-#endif
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
         p++;
@@ -199,13 +176,7 @@ void    scr_tr( void )
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
-    pa = p;
-
-    len = scan_stop - pa;
-    if( len < 0 ) {
-        len = 0;
-    }
-    cop_tr_table( pa, len );
+    cop_tr_table( p );
 
     scan_restart = scan_stop + 1;
     return;

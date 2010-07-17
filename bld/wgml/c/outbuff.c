@@ -977,120 +977,62 @@ static void set_out_file_attr( void )
 
 /* Global function definitions. */
 
-/* Function cop_tr_table().
- * Updates tr_table as specified by the data.
- *
- * Parameters:
- *      data contains any data associated with the .TR control word.
- *      count contains the number of bytes to process.
- *
- * Note:
- *      Whatever terminated the .TR record must not be part of the data.
- */
+/***************************************************************************/
+/* update tr_table as specified by the data                                */
+/***************************************************************************/
 
-void cop_tr_table( uint8_t * data, uint32_t count )
+void cop_tr_table( char * p )
 {
 
     bool        first_found;
     bool        no_data;
+    char    *   pa;
     int         i;
-    int         j;
-    size_t      token_length;
-    uint8_t     first_char;
-    uint8_t     hex_string[3];
     uint8_t     token_char;
+    uint8_t     first_char;
+    uint32_t    len;
 
-    /* Set up the variables. count must be "0" if there is no data. no_data
-     * will cause the table to be reset if it is still "true" after the loop.
-     */
+    char            cwcurr[4];
+    cwcurr[0] = SCR_char;
+    cwcurr[1] = 't';
+    cwcurr[2] = 'r';
+    cwcurr[3] = '\0';
 
-    if( data == NULL ) count = 0;
+    // if there is no data, then the table will be reset
     first_found = false;
     no_data = true;
 
-    for( i = 0; i < count; i++ ) {
-
-        /* Get the next token, if any. */
-
-        if( isspace( data[i] ) ) continue;
-
-        /* A token! */
-
-        token_length = 0;
-        for( j = i; j < count; j++) {
-            if( isspace( data[j] ) ) break;
-            token_length += 1;
+    while( *p ) {
+        while( *p && *p == ' ' ) {  // next char start
+            p++;
         }
-
-        /* If there was no token, then we are done. */
-
-        if( token_length == 0 ) break;
-
-        /* Validate the token. */
-
-        if( token_length > 2 ) {
-
-            /* The maximum allowed token length is 2. */
-
-            uint8_t * text = (uint8_t *) mem_alloc( token_length + 1 );
-            memcpy_s( text, token_length, &data[i], token_length );
-            text[token_length] = '\0';        
-
-            out_msg( "A single character or a two character hexadecimal value "\
-                                    "must be specified: '%s'\n", text );
-            mem_free( text );
-            err_count++;
-            g_suicide();
+        pa = p;
+        while( *p && *p != ' ' ) {  // next char start
+            p++;
         }
+        len = p - pa;
 
-        /* If the token length is 2, it must be a hexadecimal number. */
+        if( len == 0 ) break;   // exit loop if no next char
 
-        if( token_length == 2 ) {
-
-            hex_string[0] = data[i];
-            hex_string[1] = data[i + 1];
-            hex_string[2] = '\0';
-
-            if( !isxdigit( data[i] ) || !isxdigit( data[i + 1] ) ) {
-                out_msg( "A single character or a two character hexadecimal " \
-                            "value must be specified: '%s'\n", hex_string );
-                err_count++;
-                g_suicide();
-            }
-
-            token_char = (uint8_t) strtol( hex_string, NULL, 16 );
-        } else {
-            token_char = data[i];
-        }
-
-        /* Reset i to skip the token and note that data has been found. */
-
-        i = j;
+        token_char = parse_char( pa, len );
         no_data = false;
 
-        /* If we have an unused first_char, then we just found the char it
-         * is to be converted into. Otherwise, we found a new first_char.
-         */
-
-        if( first_found ) {
+        if( first_found ) {     // we now have two chars
             tr_table[first_char] = token_char;
             first_found = false;
-        } else {
+        } else {                // we found a first or only char
             first_char = token_char;
             first_found = true;
         }
     }
 
-    /* If first_found is true at this point, then a single character was
-     * found at the end of the data and the table must be updated to return
-     * the same character.
-     */
+    if( first_found ) {     // we now have two chars
+        tr_table[first_char] = first_char;
+    }
 
-    if( first_found ) tr_table[first_char] = first_char;
-
-    /* If there was no data, reset the table. */
-
-    if( no_data ) for( i = 0; i < 0x100; i++ ) tr_table[i] = i;
+    if( no_data ) {         // reset the table if no_data is still true
+        for( i = 0; i < 0x100; i++ ) tr_table[i] = i;
+    }
 
     return;
 }

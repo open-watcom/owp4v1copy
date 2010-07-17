@@ -609,7 +609,7 @@ extern uint8_t              cop_in_trans( uint8_t in_char, uint8_t font );
 extern void                 cop_setup( void );
 extern void                 cop_teardown( void );
 extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint8_t font );
-extern void                 cop_ti_table( uint8_t * data, uint32_t count );
+extern void                 cop_ti_table( char * p );
 extern void                 fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
 extern void                 fb_document( void );
 extern void                 fb_document_page( void );
@@ -625,7 +625,7 @@ extern void                 fb_absoluteaddress( void );
 extern void                 fb_new_section( uint32_t v_start );
 
 /* outbuff.c                           */
-extern void                 cop_tr_table( uint8_t * data, uint32_t count );
+extern void                 cop_tr_table( char * p );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

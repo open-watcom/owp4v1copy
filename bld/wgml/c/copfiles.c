@@ -54,9 +54,7 @@
 *                   get_cop_device()
 *                   get_cop_driver()
 *                   get_cop_font()
-*                   get_next_token()
 *                   scale_basis_to_horizontal_base_units()
-*                   validate_token()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
 *               not apparent and for how the various function blocks are used.
@@ -665,116 +663,6 @@ static void free_opt_fonts( void )
     }
 
     return;
-}
-
-/* Function get_next_token().
- * Extracts the next token from the buffer and returns in the supplied
- * record_buffer *.
- *
- * Parameters:
- *      buffer points to the first character to be processed.
- *      count contains the number of characters in the buffer.
- *      in_out points to the record_buffer to be loaded with the token.
- *
- * Parameter Modified:
- *      if a token is found, then in_out.current will contain its length
- *          and in_out.text will point to its first character.
- *      if a token is not found, then in_out.current will be "0".
- *
- * Returns:
- *      The number of characters processed, including whitespace.
- *
- * Notes:
- *      mem_realloc() will not return unless it succeeds.
- *      in_out.text will have null terminator (for use in error messages),
- *          but in_out.current does not include it.
- */
-
-static uint32_t get_next_token( uint8_t * buffer, uint32_t count, \
-                                        record_buffer * in_out )
-{
-    int     i;
-    int     j;
-    size_t  token_length;
-
-    in_out->current = 0;
-
-    for( i = 0; i < count; i++ ) {
-        if( isspace( buffer[i] ) ) continue;
-
-        /* A token! */
-
-        token_length = 0;
-        for( j = i; j < count; j++) {
-            if( isspace( buffer[j] ) ) break;
-            token_length += 1;
-        }
-
-        if( in_out->length < (token_length + 1) ) {
-            mem_realloc( in_out->text, token_length + 1 );
-            in_out->length = token_length + 1;
-        }
-        memcpy_s( in_out->text, token_length, &buffer[i], token_length );
-        in_out->current = token_length;
-        in_out->text[in_out->current] = '\0';
-        break;
-    }
-
-    return( j );
-}
-
-/* Function validate_token().
- * Ensures the token is valid, that is, is either a single character or a
- * two-character hexadecimal value and returns the character. 
- *
- * Parameter:
- *      token contains a pointer to the token. 
- *
- * Returns:
- *      The appropriate character value.
- *
- * Notes:
- *      This will treat "set" as an error; .ti processing must identify "set"
- *          through other means.
- *      Several errors are trapped and reported, after which the program quits.
- */
-
-static uint8_t validate_token( record_buffer * token )
-{
-    uint8_t retval;
-    uint8_t hex_string[3];
-
-    if( token->current > 2 ) {
-
-        /* The maximum allowed token length is 2. */
-
-        out_msg( "A single character or a two character hexadecimal value "\
-                                    "must be specified: '%s'\n", token->text );
-        err_count++;
-        g_suicide();
-    }
-
-    /* If the token length is 2, it must be a hexadecimal number. */
-
-    if( token->current == 2 ) {
-
-        if( !isxdigit( token->text[0] ) || !isxdigit( token->text[1] ) ) {
-            out_msg( "A single character or a two character hexadecimal value "\
-                                    "must be specified: '%s'\n", token->text );
-            err_count++;
-            g_suicide();
-        }
-
-        hex_string[0] = token->text[0];
-        hex_string[1] = token->text[1];
-        hex_string[2] = '\0';
-
-        retval = (uint8_t) strtol( hex_string, NULL, 16 );
-    } else {
-        retval = *token->text;
-    }
-
-    return( retval );
 }
 
 /* Extern function definitions */
@@ -1471,148 +1359,124 @@ uint32_t cop_text_width( uint8_t * text, uint32_t count, uint8_t font )
     return( width );
 }
 
-/* Function cop_ti_table().
- * Updates ti_table as specified by the data.
- *
- * Parameters:
- *      data contains any data associated with the .TI control word.
- *      count contains the number of bytes to process.
- *
- * Note:
- *      Whatever terminated the .TI record must not be part of the data.
- */
+/***************************************************************************/
+/* update ti_table as specified by the data                                */
+/***************************************************************************/
 
-void cop_ti_table( uint8_t * data, uint32_t count )
+void cop_ti_table( char * p )
 {
     bool        first_found;
     bool        no_data;
-    int         i           = 0;
+    char    *   pa;
+    int         i;
     uint8_t     token_char;
     uint8_t     first_char;
+    uint32_t    len;
 
-    /* Set up the variables. count must be "0" if there is no data. no_data
-     * will cause the table to be reset if it is still "true" after the loop.
-     */
+    char            cwcurr[4];
+    cwcurr[0] = SCR_char;
+    cwcurr[1] = 't';
+    cwcurr[2] = 'i';
+    cwcurr[3] = '\0';
 
-    if( data == NULL ) count = 0;
+    // if there is no data, then the table will be reset
     first_found = false;
     no_data = true;
 
-    if( count != 0 ) {
+    pa = p;
+    while( *p && *p != ' ' ) {          // end of word
+        p++;
+    }
+    len = p - pa;
 
-        /* Determine if this is a ".ti set" instance. */
-
-        /* Get the first token, if any. */
-
-        i = get_next_token( data, count, cur_token );
-
-        /* If the length of the token is "3", see if it is "set". */
-
-        if( cur_token->current == 3 ) {
-            if( !memicmp( cur_token->text, "set", 3 ) ) {
-
-                /* Get the next token, if any. */            
-
-                i += get_next_token( &data[i], count - i, cur_token );
-
-                if( cur_token->current == 0 ) {
-
-                    /* If there was no token, clear the input escape. */
-
-                    ProcFlags.in_trans = false;
-                    in_esc = ' ';
-                } else {
-
-                    /* Only a single character is valid; hex digits are
-                     * ignored by wgml 4.0.
-                     */
-
-                    if( cur_token->current > 1 ) {
-                        out_msg( ".ti set can only be used with a single "\
-                                     "character: '%s'\n", cur_token->text );
-                        err_count++;
-                        g_suicide();
+    if( len > 0 ) {
+        if( len > 2 ) { // check for ".ti set"
+            if( len == 3 ) {
+                if( !strnicmp( pa, "SET", len ) ) {
+                    while( *p && *p == ' ' ) {  // set char start
+                        p++;
                     }
-
-                    /* Set the escape character. */
+                    pa = p;
+                    while( *p && *p != ' ' ) {  // set char start
+                        p++;
+                    }
+                    len = p - pa;
+                    if( len == 0 ) {    // no set char: set to ' '
+                        ProcFlags.in_trans = false;
+                        in_esc = ' ';
+                    } else if( len > 1 ) { // hex digits are not allowed here
+                        *p = '\0';
+                        xx_line_err( err_char_only, pa );
+                        return;
+                    }
 
                     ProcFlags.in_trans = true;
                     in_esc = *cur_token->text;
 
-                    /* wgml 4.0 ignores any additional tokens. */
-
-                    get_next_token( &data[i], count - i, cur_token );
-                    if( cur_token->current != 0 ) {
-                        uint8_t * tail;
-
-                        tail = (uint8_t *) mem_alloc( count - i + 1);
-                        memcpy_s( tail, count - i, &data[i], count - i );
-                        tail[count - i] = '\0';
-                        out_msg( ".ti set cannot be used to set a translation:" \
-                                                            " '%s'\n", tail );
-                        mem_free( tail );
-                        err_count++;
-                        g_suicide();
+                    while( *p && *p == ' ' ) {  // text or '\0'
+                        p++;
                     }
+                    pa = p;
+                    while( *p && *p != ' ' ) {  // set char start
+                        p++;
+                    }
+                    len = p - pa;
+                    if( len > 0 ) {     // additional text not allowed
+                        *p = '\0';
+                        xx_line_err( err_char_only, p );
+                        return; 
+                    }
+                    return;     // done if was ".ti set"
+                } else {
+                    *p = '\0';
+                    xx_opt_err( cwcurr, pa );
+                    return;
                 }
-
-                /* Processing is done if this was ".ti set". */
-
-                return; 
+            } else {
+                *p = '\0';
+                xx_opt_err( cwcurr, pa );
+                return;
             }
         }
 
-        /* This was not ".ti set", and so, if not empty, the token found
-         * is either a first_char or invalid.
-         */
-
-        if( cur_token->current != 0 ) {
-            first_char = validate_token( cur_token );
+        // not .ti set: get pairs of chars
+        if( len > 0 ) {
+            first_char = parse_char( pa, len );  // first or only char
             first_found = true;
             no_data = false;
         }
-            
-        /* This loop only deals with the non-".ti set" forms. */
+        while( *p ) {
+            while( *p && *p == ' ' ) {  // next char start
+                p++;
+            }
+            pa = p;
+            while( *p && *p != ' ' ) {  // next char start
+                p++;
+            }
+            len = p - pa;
 
-        for( ; i < count; i++ ) {
+            if( len == 0 ) break;   // exit loop if no next char
 
-            /* Get the next token, if any. */
-
-            i += get_next_token( &data[i], count - i, cur_token );
-
-            /* If there was no token, then we are done. */
-
-            if( cur_token->current == 0 ) break;
-
-            /* Validate the token and note that valid data was found. */
-
-            token_char = validate_token( cur_token );
+            token_char = parse_char( pa, len );
             no_data = false;
 
-            /* If we have an unused first_char, then we just found the char it
-             * is to be converted into. Otherwise, we found a new first_char.
-             */
-
-            if( first_found ) {
+            if( first_found ) {     // we now have two chars
                 ti_table[first_char] = token_char;
                 first_found = false;
-            } else {
+            } else {                // we found a first or only char
                 first_char = token_char;
                 first_found = true;
             }
         }
     }
 
-    /* If first_found is true at this point, then a single character was
-     * found at the end of the data and the table must be updated to return
-     * the same character.
-     */
+    if( first_found ) {     // an only char, set table so it returns itself
+        ti_table[first_char] = first_char;
+    }
 
-    if( first_found ) ti_table[first_char] = first_char;
-
-    /* If there was no data, reset the table. */
-
-    if( no_data ) for( i = 0; i < 0x100; i++ ) ti_table[i] = i;
+    if( no_data ) {         // reset the table if no_data is still true
+        for( i = 0; i < 0x100; i++ ) ti_table[i] = i;
+    }
 
     return;
 }

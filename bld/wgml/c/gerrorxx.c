@@ -44,10 +44,10 @@ static void show_line_error( char * pa )
     int         cnt;
 
     cnt = pa - buff2;   // number of characters before the offending input
-    cnt++;              // allow space for "*" at start of offending input
-    buf = (char *) mem_alloc( cnt );
+    cnt ++;             // allow space for "*" at start of offending input
+    buf = (char *) mem_alloc( cnt + 1 );
     memset( buf, ' ', cnt - 1 );
-    buf[cnt-1] = '*';
+    buf[cnt - 1] = '*'; // puts "*" after last memset position; no, really
     buf[cnt] = '\0';
     out_msg( "%s\n", buff2 );
     out_msg( "%s\n", buf );
@@ -115,6 +115,7 @@ void    dc_opt_warn( char *pa )
     err_count++;
     g_warn( err_dc_opt, pa );
     file_mac_info();
+
     return;
 }
 
@@ -197,6 +198,7 @@ void    xx_opt_err( char *cw, char *pa )
     err_count++;
     g_err( err_xx_opt, cw, pa );
     file_mac_info();
+    show_line_error( pa );
     return;
 }
 
