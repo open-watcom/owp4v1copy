@@ -9,6 +9,7 @@
  ***************************************************************************/
 #ifndef _STDBOOL_H_INCLUDED
 #define _STDBOOL_H_INCLUDED
+
 :include readonly.sp
 ::
 :: To prevent compatibility problems for C++ programs that call C
@@ -24,13 +25,12 @@
 
 :: C++ programs should use the built in bool type.
 #ifndef __cplusplus
- #if __STDC_VERSION__ >= 199901L
-  #define bool _Bool
- #else
-  #define bool char
- #endif
+ #define bool _Bool
  #define true  1
  #define false 0
+ #if __STDC_VERSION__ < 199901L
+  typedef unsigned char _Bool;
+ #endif
 #endif
 
 #define __bool_true_false_are_defined 1
