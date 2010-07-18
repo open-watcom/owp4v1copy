@@ -44,7 +44,7 @@ void SysInit( int argc, char *argv[] )
     setenv( "BLD_HOST", "DOS", 1 );
 }
 
-unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
+int SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     /* no pipes for DOS so we call spawn with P_WAIT and hence cannot log */
     char        *cmdnam = strdup( cmd );
@@ -61,7 +61,7 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     return rc;
 }
 
-unsigned SysChdir( char *dir )
+int SysChdir( char *dir )
 {
     return SysDosChdir( dir );
 }

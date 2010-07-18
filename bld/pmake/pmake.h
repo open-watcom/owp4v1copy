@@ -52,13 +52,14 @@ typedef struct {
     unsigned    optimize : 1;
     unsigned    want_help : 1;
     unsigned    signaled : 1;
+    unsigned    ignore_err : 1;
     unsigned    levels;
     char        *command;
     char        *cmd_args;
     char        *makefile;
     pmake_list  *dir_list;
     target_list *targ_list;
-}        pmake_data;
+} pmake_data;
 
 pmake_data      *PMakeBuild( const char *cmd );
 void            PMakeCommand( pmake_data *, char * );

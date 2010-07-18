@@ -137,7 +137,7 @@ static void LogDir( char *dir )
     Log( FALSE, "%s", LogDirEquals( dir ) );
 }
 
-static unsigned ProcSet( char *cmd )
+static int ProcSet( char *cmd )
 {
     char        *var;
     char        *rep;
@@ -394,7 +394,7 @@ static int mkdir_nested( char *path )
     return( 0 );
 }
 
-static unsigned ProcOneCopy( char *src, char *dst, bool cond_copy )
+static int ProcOneCopy( char *src, char *dst, bool cond_copy )
 {
     FILE            *sp;
     FILE            *dp;
@@ -483,13 +483,13 @@ static unsigned ProcOneCopy( char *src, char *dst, bool cond_copy )
     return( 0 );
 }
 
-static unsigned ProcCopy( char *cmd, bool test_abit, bool cond_copy )
+static int ProcCopy( char *cmd, bool test_abit, bool cond_copy )
 {
     char        *src;
     char        *dst;
     copy_entry  *list;
     copy_entry  *next;
-    unsigned    res;
+    int         res;
 
     src = cmd;
     dst = strchr( src, ' ' );
@@ -531,7 +531,7 @@ static unsigned ProcCopy( char *cmd, bool test_abit, bool cond_copy )
     return( 0 );
 }
 
-static unsigned ProcMkdir( char *cmd )
+static int ProcMkdir( char *cmd )
 {
     return( mkdir_nested( cmd ) );
 }
@@ -541,16 +541,16 @@ void PMakeOutput( char *str )
     Log( FALSE, "%s\n", str );
 }
 
-static unsigned DoPMake( pmake_data *data, bool ignore_errors )
+static int DoPMake( pmake_data *data )
 {
     pmake_list  *curr;
-    unsigned    res;
+    int         res;
     char        cmd[256];
 
     for( curr = data->dir_list; curr != NULL; curr = curr->next ) {
         res = SysChdir( curr->dir_name );
         if( res != 0 ) {
-            if( ignore_errors ) {
+            if( data->ignore_err ) {
                 Log( FALSE, "non-zero return: %d\n", res );
                 continue;
             } else {
@@ -563,7 +563,7 @@ static unsigned DoPMake( pmake_data *data, bool ignore_errors )
         PMakeCommand( data, cmd );
         res = SysRunCommand( cmd );
         if( res != 0 ) {
-            if( ignore_errors ) {
+            if( data->ignore_err ) {
                 Log( FALSE, "non-zero return: %d\n", res );
             } else {
                 return( res );
@@ -573,10 +573,10 @@ static unsigned DoPMake( pmake_data *data, bool ignore_errors )
     return( 0 );
 }
 
-static unsigned ProcPMake( char *cmd, bool ignore_errors )
+static int ProcPMake( char *cmd, bool ignore_errors )
 {
     pmake_data  *data;
-    unsigned    res;
+    int         res;
     char        save[_MAX_PATH];
 
     data = PMakeBuild( cmd );
@@ -587,16 +587,17 @@ static unsigned ProcPMake( char *cmd, bool ignore_errors )
         return( 2 );
     }
     strcpy( save, IncludeStk->cwd );
-    res = DoPMake( data, ignore_errors );
+    data->ignore_err = ignore_errors;
+    res = DoPMake( data );
     SysChdir( save );
     getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
     PMakeCleanup( data );
     return( res );
 }
 
-unsigned RunIt( char *cmd, bool ignore_errors )
+int RunIt( char *cmd, bool ignore_errors )
 {
-    unsigned    res;
+    int     res;
 
     #define BUILTIN( b )        \
         (strnicmp( cmd, b, sizeof( b ) - 1 ) == 0 && cmd[sizeof(b)-1] == ' ')

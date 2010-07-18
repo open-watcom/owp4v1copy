@@ -40,7 +40,7 @@
 #include "watcom.h"
 #include "builder.h"
 
-unsigned SysRunCommand( const char *cmd )
+int SysRunCommand( const char *cmd )
 {
     int         my_std_output;
     int         my_std_error;

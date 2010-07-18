@@ -102,25 +102,37 @@ static void WriteCmdFile( pmake_data *data )
     }
 }
 
-static unsigned RunCommand( const char *cmd )
+static int RunCommand( const char *cmd )
 {
-    char        *cmdnam = strdup( cmd );
-    char        *sp = strchr( cmdnam, ' ' );
-    int         rc;
+    char        *cmdnam;
+    char        *sp;
+    const char  **argv;
+    int         i;
 
-    if( sp != NULL ) {
-        *sp = '\0';
-        sp++;
+    cmdnam = strdup( cmd );
+    argv = malloc( strlen( cmd ) * sizeof( char * ) );
+    i = 0;
+    for( sp = cmdnam; sp != NULL; ) {
+        while( *sp != '\0' && *sp == ' ' )
+            ++sp;
+        argv[i++] = sp;
+        sp = strchr( sp, ' ' );
+        if( sp != NULL ) {
+            *sp = '\0';
+            sp++;
+        }
     }
-    rc = spawnlp( P_WAIT, cmdnam, cmdnam, sp, NULL );
+    argv[i] = NULL;
+    i = spawnvp( P_WAIT, cmdnam, argv );
     free( cmdnam );
-    return( rc );
+    free( argv );
+    return( i );
 }
 
-static unsigned DoPMake( pmake_data *data )
+static int DoPMake( pmake_data *data )
 {
     pmake_list  *curr;
-    unsigned    res;
+    int         res;
     char        cmd[256];
 
     res = 0;
@@ -135,16 +147,16 @@ static unsigned DoPMake( pmake_data *data )
         }
         PMakeCommand( data, cmd );
         res = RunCommand( cmd );
-        if( res != 0 ) {
+        if( data->ignore_err == 0 && res != 0 ) {
             break;
         }
     }
     return( res );
 }
 
-static unsigned ProcPMake( pmake_data  *data )
+static int ProcPMake( pmake_data  *data )
 {
-    unsigned    res;
+    int         res;
     char        save[_MAX_PATH];
 
     if( data->want_help || data->signaled ) {
@@ -168,6 +180,7 @@ char    *Help[] = {
 "     -b create batch file -- without executing, file is " TMPBAT,
 "     -d display -- display progress in batch file",
 "     -ffilename -- use specified filename for makefile",
+"     -i ignore -- ignore commands return code",
 "     -ln level n -- only descend n directory levels, n defaults to 1",
 "     -mfile -- use specified file for make command",
 "     -o optimize -- minimize cd commands",
@@ -231,10 +244,11 @@ int main( void )
     /* If -b was given, only write out a batch file. By default,
      * execute the commands directly.
      */
-    if( data->batch )
+    if( data->batch ) {
         WriteCmdFile( data );
-    else
+    } else {
         ProcPMake( data );
+    }
 
     PMakeCleanup( data );
     return( EXIT_SUCCESS );

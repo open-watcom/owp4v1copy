@@ -469,7 +469,7 @@ static void ProcessCtlFile( const char *name )
 {
     char        *p;
     char        *log_name;
-    unsigned    res;
+    int         res;
     bool        logit;
 
     PushInclude( name );
@@ -488,8 +488,7 @@ static void ProcessCtlFile( const char *name )
                 if( !IncludeStk->skipping && !IncludeStk->ifdefskipping ) {
                     PushInclude( NextWord( p ) );
                 }
-            }
-            else if( stricmp( p, "LOG" ) == 0 ) {
+            } else if( stricmp( p, "LOG" ) == 0 ) {
                 if( IncludeStk->skipping == 0 ) {
                     log_name = NextWord( p );
                     p = NextWord( log_name );

@@ -44,7 +44,7 @@ void SysInit( int argc, char *argv[] )
     setenv( "BLD_HOST", "UNIX", 1 );
 }
 
-unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
+int SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     int         pipe_fd[2];
     pid_t       pid;
@@ -85,7 +85,7 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     return 0;
 }
 
-unsigned SysChdir( char *dir )
+int SysChdir( char *dir )
 {
     char        *end;
 

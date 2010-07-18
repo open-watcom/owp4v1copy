@@ -586,6 +586,9 @@ static void DoIt( void )
                 return;
             }
             break;
+        case 'i':
+            Options.ignore_err = 1;
+            break;
         case 'l':
             Options.levels = GetNumber( 1 );
             break;

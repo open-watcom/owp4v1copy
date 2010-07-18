@@ -105,7 +105,7 @@ void SysInit( int argc, char *argv[] )
     setenv( "BLD_HOST", "NT", 1 );
 }
 
-unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
+int SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     int                 rc;
     HANDLE              pipe_input;
@@ -131,9 +131,9 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     return( rc );
 }
 
-unsigned SysChdir( char *dir )
+int SysChdir( char *dir )
 {
-    unsigned    retval;
+    int     retval;
 
     retval = SysDosChdir( dir );
 

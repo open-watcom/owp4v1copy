@@ -52,7 +52,7 @@ void SysInit( int argc, char *argv[] )
     setenv( "BLD_HOST", "OS2", 1 );
 }
 
-unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
+int SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     int         rc;
     HFILE       pipe_input;
@@ -87,7 +87,7 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     return rc;
 }
 
-unsigned SysChdir( char *dir )
+int SysChdir( char *dir )
 {
     return SysDosChdir( dir );
 }

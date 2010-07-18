@@ -60,23 +60,23 @@ struct ctl_file {
 
 #define         MAX_LINE        4096
 
-extern bool            Quiet;
+extern bool         Quiet;
 
-extern include         *IncludeStk;
-extern FILE            *LogFile;
+extern include      *IncludeStk;
+extern FILE         *LogFile;
 
-extern void            LogFlush( void );
-extern void            Log( bool quiet, const char *, ... );
-extern void            OpenLog( const char * );
-extern void            CloseLog( void );
-extern const char      *LogDirEquals( char *dir );
-extern void            Fatal( const char *, ... );
-extern void            *Alloc( unsigned );
-extern char            *SkipBlanks( const char * );
-extern unsigned        RunIt( char *, bool );
-extern void            ResetArchives( copy_entry * );
-extern void            SysInit( int argc, char *argv[] );
-extern unsigned        SysRunCommand( const char * );
-extern unsigned        SysRunCommandPipe( const char *, int *readpipe );
-extern unsigned        SysChdir( char * );
-extern unsigned        SysDosChdir( char * );
+extern void         LogFlush( void );
+extern void         Log( bool quiet, const char *, ... );
+extern void         OpenLog( const char * );
+extern void         CloseLog( void );
+extern const char   *LogDirEquals( char *dir );
+extern void         Fatal( const char *, ... );
+extern void         *Alloc( unsigned );
+extern char         *SkipBlanks( const char * );
+extern int          RunIt( char *, bool );
+extern void         ResetArchives( copy_entry * );
+extern void         SysInit( int argc, char *argv[] );
+extern int          SysRunCommand( const char * );
+extern int          SysRunCommandPipe( const char *, int *readpipe );
+extern int          SysChdir( char * );
+extern int          SysDosChdir( char * );

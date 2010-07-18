@@ -32,8 +32,9 @@
 #include <string.h>
 #include <direct.h>
 #include <ctype.h>
+#include "builder.h"
 
-unsigned SysDosChdir( char *dir )
+int SysDosChdir( char *dir )
 {
     char        *end;
     unsigned    len;
