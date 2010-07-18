@@ -1,5 +1,7 @@
 proj_name = builder
 
+builder_autodepends = .autodepend
+
 additional_cleanup= proctab.c ytab.h awk.c
 
 !include cproj.mif
