@@ -36,60 +36,8 @@
 #include "mem.h"
 #include "ldstr.h"
 
-// No string to be loaded can be more than LDSTR_MAX_STR_LEN bytes long
-#define LDSTR_MAX_STR_LEN       500
-
 #define ALLOC_STRING( x )       AllocRCString( x )
 #define FREE_STRING( x )        FreeRCString( x )
-
-#ifndef SPECIAL_STRING_LOADING
-
-static char     getStringBuffer[ LDSTR_MAX_STR_LEN ];
-static char     tmpBuf[ LDSTR_MAX_STR_LEN ];
-static HANDLE   curInst;
-
-/*
- * GetRCString - return a pointer to a string from the resource file.
- *              NB the pointer is only valid until the next call to
- *              GetString
- */
-char *GetRCString( DWORD msgid )
-{
-    LoadString( curInst, msgid, getStringBuffer, LDSTR_MAX_STR_LEN );
-    return( getStringBuffer );
-}
-
-char *AllocRCString( DWORD id )
-{
-    char        *ret;
-    int         len;
-
-    len = LoadString( curInst, id, tmpBuf, LDSTR_MAX_STR_LEN );
-    ret = MemAlloc( len + 1 );
-    if( ret != NULL ) {
-        strcpy( ret, tmpBuf );
-    }
-    return( ret );
-}
-
-DWORD CopyRCString( DWORD id, char *buf, DWORD bufsize )
-{
-    DWORD       len;
-
-    len = LoadString( curInst, id, buf, bufsize );
-    return( len );
-}
-
-void FreeRCString( char *str )
-{
-    MemFree( str );
-}
-
-void SetInstance( HANDLE inst )
-{
-    curInst = inst;
-}
-#endif
 
 int RCsprintf( char *buf, DWORD fmtid, ... )
 {
@@ -105,7 +53,6 @@ int RCsprintf( char *buf, DWORD fmtid, ... )
     return( ret );
 }
 
-#ifndef WR_NO_RCFPRINTF
 /*
  * RCfprintf
  */
@@ -120,7 +67,6 @@ void RCfprintf( FILE *fp, DWORD strid, ... )
     FREE_STRING( str );
     va_end( al );
 }
-#endif
 
 /*
  * RCvfprintf
@@ -147,4 +93,3 @@ int RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type )
     FREE_STRING( msg );
     return( ret );
 }
-

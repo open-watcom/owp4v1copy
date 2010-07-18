@@ -55,7 +55,7 @@ static void WRDisplayRCMsg ( const char *msg )
     }
 }
 
-int RcFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
+int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
 {
     int         err;
     va_list     args;

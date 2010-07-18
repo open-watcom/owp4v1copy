@@ -100,7 +100,7 @@ static void FreeBigListNode( void *mem, char freemem )
             prevnode->next = travptr->next;
 #ifdef RCMEM_DEBUG
             if( *(memptr + travptr->size ) != RCMEM_ENDBYTE ) {
-                RcFprintf( stderr, NULL,
+                RcMsgFprintf( stderr, NULL,
                             "(%x) Memory Overrun (biglist)\n", mem );
             }
 #endif
@@ -208,7 +208,7 @@ extern void RCMemLayer1ShutDown( void )
     while( nextnode != NULL ) {
         nextnode = curnode->next;
 #ifdef RCMEM_DEBUG
-        RcFprintf( stderr, NULL,
+        RcMsgFprintf( stderr, NULL,
                 "Unfreed Memory Detected (0x%x bytes at 0x%x)\n",
                  curnode->size, (char *)curnode + sizeof( BigMemList ) );
 #endif

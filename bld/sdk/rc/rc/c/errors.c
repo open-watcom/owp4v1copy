@@ -201,7 +201,7 @@ static void RcMsgV( unsigned errornum, OutputSeverity sev, va_list arglist )
         break;
     }
 #if defined( DLL_COMPILE ) || defined( WR_COMPILED )
-    RcFprintf( stdout, &errinfo, "%s\n", errBuffer );
+    RcMsgFprintf( stdout, &errinfo, "%s\n", errBuffer );
 #else
     {
         int             indent;
@@ -218,11 +218,11 @@ static void RcMsgV( unsigned errornum, OutputSeverity sev, va_list arglist )
             } else {
                 break;
             }
-            RcFprintf( stdout, &errinfo, "%*s%s\n", indent, "", start );
+            RcMsgFprintf( stdout, &errinfo, "%*s%s\n", indent, "", start );
             start = end + 1;
             indent = len;
         }
-        RcFprintf( stdout, &errinfo, "%*s%s\n", indent, "", start );
+        RcMsgFprintf( stdout, &errinfo, "%*s%s\n", indent, "", start );
     }
 #endif
 }

@@ -17,11 +17,11 @@ msgfiles = $(commonui_dir)/h/about.msg $(commonui_dir)/h/alias.msg &
            $(commonui_dir)/h/hint.msg $(commonui_dir)/h/log.msg &
            $(commonui_dir)/h/memwnd.msg $(commonui_dir)/h/savelbox.msg
 
-objs = ctl3d32.obj  &
-       mem.obj      &
-       statwnd.obj  &
-       toolbr.obj   &
-       wmdisim.obj
+objs =  ctl3d32.obj  &
+        mem.obj      &
+        statwnd.obj  &
+        toolbr.obj   &
+        wmdisim.obj
 
 !ifneq host_os os2
 objs += about.obj    &
@@ -47,6 +47,7 @@ objs += about.obj    &
         savelbox.obj &
         sdkasm.obj   &
         srchmsg.obj  &
+        strsup.obj   &
         wwinhelp.obj
 !endif
 

@@ -190,7 +190,7 @@ static void flushPrintf( void ) {
         InitOutPutInfo( &info );
         info.severity = SEV_WARNING;
         info.flags = 0;
-        RcFprintf( NULL, &info, "\n" );
+        RcMsgFprintf( NULL, &info, "\n" );
     }
 }
 
@@ -230,8 +230,8 @@ void setPrintInfo( IDEMsgInfo *buf, OutPutInfo *src, char *msg ) {
     }
 }
 
-int RcFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
-/*******************************************************************/
+int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
+/*********************************************************************/
 {
     int             err;
     va_list         args;

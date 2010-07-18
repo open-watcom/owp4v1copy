@@ -756,7 +756,7 @@ extern void RcIoPrintBanner( void )
 
     InitOutPutInfo( &errinfo );
     errinfo.severity = SEV_BANNER;
-    RcFprintf( stderr, &errinfo, BannerText );
+    RcMsgFprintf( stderr, &errinfo, BannerText );
 }
 
 extern void RcIoPrintHelp( const char * progpath )
@@ -771,7 +771,7 @@ extern void RcIoPrintHelp( const char * progpath )
     errinfo.severity = SEV_BANNER;
 #ifdef __OSI__
     if( _Copyright != NULL ) {                      /* 04-may-94 */
-        RcFprintf( stdout, &errinfo, "%s\n", _Copyright );
+        RcMsgFprintf( stdout, &errinfo, "%s\n", _Copyright );
     }
 #endif
     _splitpath( progpath, NULL, NULL, progfname, NULL );
@@ -779,11 +779,11 @@ extern void RcIoPrintHelp( const char * progpath )
 
     index = USAGE_MSG_FIRST;
     GetRcMsg( index, buf, sizeof( buf ) );
-    RcFprintf( stdout, &errinfo, buf, progfname );
-    RcFprintf( stdout, &errinfo, "\n" );
+    RcMsgFprintf( stdout, &errinfo, buf, progfname );
+    RcMsgFprintf( stdout, &errinfo, "\n" );
     for( ++index; index <= USAGE_MSG_LAST; index++ ) {
         GetRcMsg( index, buf, sizeof( buf ) );
-        RcFprintf( stdout, &errinfo, "%s\n", buf );
+        RcMsgFprintf( stdout, &errinfo, "%s\n", buf );
     }
 }
 

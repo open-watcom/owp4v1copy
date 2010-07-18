@@ -24,33 +24,63 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Support functions for using strings loaded from resources.
 *
 ****************************************************************************/
 
 
+#include <windows.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdarg.h>
+#include "mem.h"
+#include "ldstr.h"
 
-#include "errprt.h"
+// No string to be loaded can be more than LDSTR_MAX_STR_LEN bytes long
+#define LDSTR_MAX_STR_LEN       500
 
-#if !defined( DLL_COMPILE )
-// this function is in rcdll.c for the DLL version
-int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
+static char     getStringBuffer[ LDSTR_MAX_STR_LEN ];
+static char     tmpBuf[ LDSTR_MAX_STR_LEN ];
+static HANDLE   curInst;
+
+/*
+ * GetRCString - return a pointer to a string from the resource file.
+ *              NB the pointer is only valid until the next call to
+ *              GetString
+ */
+char *GetRCString( DWORD msgid )
 {
-    int         err;
-    va_list     args;
-
-    info = info;
-    va_start( args, format );
-    err = vfprintf( fp, format, args );
-    va_end( args );
-
-    return( err );
+    LoadString( curInst, msgid, getStringBuffer, LDSTR_MAX_STR_LEN );
+    return( getStringBuffer );
 }
-#endif
 
-void InitOutPutInfo( OutPutInfo *info ) {
-    info->flags = 0;
+char *AllocRCString( DWORD id )
+{
+    char        *ret;
+    int         len;
+
+    len = LoadString( curInst, id, tmpBuf, LDSTR_MAX_STR_LEN );
+    ret = MemAlloc( len + 1 );
+    if( ret != NULL ) {
+        strcpy( ret, tmpBuf );
+    }
+    return( ret );
+}
+
+DWORD CopyRCString( DWORD id, char *buf, DWORD bufsize )
+{
+    DWORD       len;
+
+    len = LoadString( curInst, id, buf, bufsize );
+    return( len );
+}
+
+void FreeRCString( char *str )
+{
+    MemFree( str );
+}
+
+void SetInstance( HANDLE inst )
+{
+    curInst = inst;
 }

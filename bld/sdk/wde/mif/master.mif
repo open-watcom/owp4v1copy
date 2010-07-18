@@ -171,7 +171,7 @@ deps: .SYMBOLIC
         @echo making dependencies...
         @errout ..\bin\mkwdedep > $(nulldevice)
 
-extra_l_flags = op map, v, symfile
+extra_l_flags = op map, symfile
 extra_l_flags_nt = op stack=100k, heap=16k commit heap=8k
 extra_l_flags_win  = op stack=32k, rwr
 extra_l_flags_win += library commdlg, ddeml
