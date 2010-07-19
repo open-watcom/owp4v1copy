@@ -166,6 +166,7 @@ NTSTATUS NTAPI HwDispatchIoctl( IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp )
     PIO_STACK_LOCATION  Stack;
     PULONG              IdBuff;
     NTSTATUS            status;
+    ULONG               info;
 	
     DbgPrint( DRV_NAME ": HwDispatchIoctl\n" );
     PAGED_CODE();
@@ -196,13 +197,16 @@ NTSTATUS NTAPI HwDispatchIoctl( IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp )
     case IOCTL_BOXDEV_GET_IDS:
         IdBuff  = Irp->AssociatedIrp.SystemBuffer;
         *IdBuff = (DevExt->VendorID << 16) | DevExt->DeviceID;
+        status  = STATUS_SUCCESS;
+        info    = sizeof( *IdBuff );
         break;
-    default:    
-//        UserBuff->LregVal = 0x00002222; 
+    default:
+        status  = STATUS_INVALID_PARAMETER;
+        info    = 0;
         break;
     }
  
-    Irp->IoStatus.Information = sizeof( *IdBuff );
+    Irp->IoStatus.Information = info;
     Irp->IoStatus.Status      = status;
 
     /* Complete the IRP; don't bump up priority. */
