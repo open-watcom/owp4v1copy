@@ -1499,9 +1499,9 @@ typedef PVOID               *PCLFS_MGMT_CLIENT;
 #define PCI_STATUS_SIGNALED_SYSTEM_ERROR    0x4000
 #define PCI_STATUS_DETECTED_PARITY_ERROR    0x8000
 
-/* PCI whitespace values */
-#define PCI_WHITESPACE_CONFIG   0x00000000
-#define PCI_WHITESPACE_ROM      0x52696350
+/* PCI address space values */
+#define PCI_WHICHSPACE_CONFIG   0x00000000
+#define PCI_WHICHSPACE_ROM      0x52696350
 
 /* PCI capability identifiers */
 #define PCI_CAPABILITY_ID_POWER_MANAGEMENT  0x01
