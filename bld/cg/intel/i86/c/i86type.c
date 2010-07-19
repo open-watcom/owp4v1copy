@@ -33,11 +33,9 @@
 #include "cgdefs.h"
 #include "typclass.h"
 #include "typedef.h"
+#include "types.h"
 #include "model.h"
 #include "targsys.h"
-
-extern  type_def        *TypeAlias(cg_type,cg_type);
-extern  type_def        *TypeAddress( cg_type );
 
 //type_def THugeCP= {  TY_LONG_CODE_PTR,4,      TYPE_POINTER + TYPE_CODE };
 type_def TLongCP= {  TY_LONG_CODE_PTR,4,      TYPE_POINTER + TYPE_CODE };

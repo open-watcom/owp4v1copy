@@ -37,6 +37,7 @@
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
+#include "types.h"
 #include "zoiks.h"
 #include "dbgstrct.h"
 #include <stdio.h>
@@ -51,7 +52,6 @@
 
 extern  uint            Length(char*);
 extern  byte            *Copy(void*,void*,uint);
-extern  type_def        *TypeAddress(cg_type);
 extern  type_length     NewBase(name*);
 extern dw_loc_handle    DBGLoc2DF( dbg_loc loc );
 extern  void            DBLocFini( dbg_loc loc );

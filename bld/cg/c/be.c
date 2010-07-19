@@ -39,6 +39,7 @@
 #include "cgdefs.h"
 #include "typclass.h"
 #include "typedef.h"
+#include "types.h"
 #include "cfloat.h"
 #include "cgaux.h"
 #include "model.h"
@@ -66,14 +67,9 @@ extern  void            FShut(int);
 extern  int             FStdOut();
 extern  char            *EnvVar(char*);
 
-extern  type_def        *TypeAddress(cg_type);
 extern  void            DumpTree(pointer);
-extern  type_def        *TypeDef(cg_type,type_length);
 extern  uint            Length(char*);
-extern  void            TypeFini();
 extern  char            *CopyStr(char*,char*);
-extern  void            TypeInit();
-extern  type_def        *TypeAlias(cg_type,cg_type);
 extern  byte            *Copy(void*,void*,uint);
 extern  void            exit(int);
 extern  void            VDefLabel(l *);

@@ -45,6 +45,7 @@
 #include "ptrint.h"
 #include "zoiks.h"
 #include "cgaux.h"
+#include "types.h"
 
 #define BY_CG
 #include "feprotos.h"
@@ -68,14 +69,12 @@ extern  void            CGMemInit(void);
 extern  void            InitSegDefs(void);
 extern  void            InitDbgInfo(void);
 extern  void            TInit(void);
-extern  void            TypeInit(void);
 extern  bool            CGOpenf(void);
 extern  void            InitCG(void);
 extern  void            SillyMemLimit(void);
 extern  void            FiniCG(void);
 extern  void            AbortCG(void);
 extern  void            FiniDbgInfo(void);
-extern  void            TypeFini(void);
 extern  void            TFini(void);
 extern  void            CGMemFini(void);
 extern  seg_id          SetOP(seg_id);
@@ -88,11 +87,7 @@ extern  label_handle    AskForLabel(sym_handle);
 extern  seg_id          AskBackSeg(void);
 extern  bool            AskSegBlank(seg_id);
 extern  void            TellNoSymbol(label_handle);
-extern  type_def        *TypeDef(cg_type,type_length,type_length);
-extern  type_def        *TypeAlias(cg_type,cg_type);
-extern  type_length     TypeLength(cg_type);
 extern  void            BGProcDecl(sym_handle,type_def*);
-extern  type_def        *TypeAddress(cg_type);
 extern  void            BGParmDecl(sym_handle,type_def*);
 extern  void            BGAutoDecl(sym_handle,type_def*);
 extern  tn              TGLeaf(an);

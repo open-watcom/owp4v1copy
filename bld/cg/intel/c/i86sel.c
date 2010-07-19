@@ -38,6 +38,7 @@
 #include "addrname.h"
 #include "tree.h"
 #include "seldef.h"
+#include "types.h"
 #include "cgswitch.h"
 #define BY_CG
 #include "cgprotos.h"
@@ -63,7 +64,6 @@
 #define MAX_IN_RANGE    (MAX_COST/1000) /* so no overflow */
 
 extern  cg_type         SelType(unsigned_32);
-extern  type_def        *TypeAddress(cg_type);
 extern  seg_id          SetOP(seg_id);
 extern  label_handle    AskForNewLabel(void);
 extern  an              BGDuplicate(an);

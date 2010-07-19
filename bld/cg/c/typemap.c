@@ -33,10 +33,10 @@
 #include "standard.h"
 #include "coderep.h"
 #include "typedef.h"
+#include "types.h"
 #include "cgdefs.h"
 #include "procdef.h"
 
-extern  type_def*       TypeAddress(cg_type);
 extern  type_class_def  MapPointer(cg_type);
 extern  type_class_def  MapIntReturn(cg_type);
 extern  type_class_def  MapFloat(cg_type,call_attributes);

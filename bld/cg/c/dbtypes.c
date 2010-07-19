@@ -38,6 +38,7 @@
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
+#include "types.h"
 #include "ocentry.h"
 #include "objrep.h"
 #include "zoiks.h"
@@ -50,7 +51,6 @@
 extern  uint            Length(char*);
 extern  dbg_loc         LocDupl( dbg_loc );
 extern  offset          LocSimpField( dbg_loc );
-extern  type_def        *TypeAddress(cg_type);
 
 /* WV interface */
 #if _TARGET &( _TARG_IAPX86 | _TARG_80386 )

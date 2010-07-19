@@ -35,10 +35,8 @@
 #include "cgdefs.h"
 #include "typclass.h"
 #include "typedef.h"
+#include "types.h"
 #include "model.h"
-
-extern  type_def        *TypeAlias(cg_type,cg_type);
-extern  type_def        *TypeAddress( cg_type );
 
 type_def TNearCP= {  TY_NEAR_CODE_PTR,4,      TYPE_POINTER + TYPE_CODE };
 type_def THugeCP= {  TY_NEAR_CODE_PTR,4,      TYPE_POINTER + TYPE_CODE };

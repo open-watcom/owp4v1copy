@@ -44,6 +44,7 @@
 #include "cgdefs.h"
 #include "seldef.h"
 #include "typedef.h"
+#include "types.h"
 #include "pccode.h"
 #include "objrep.h"
 #include "fppatch.h"
@@ -72,7 +73,6 @@ extern  pointer         FindAuxInfo(name*,aux_class);
 extern  void            InputOC(any_oc*);
 extern  void            AddByte(byte);
 extern  int             OptInsSize(oc_class,oc_dest_attr);
-extern  type_def        *TypeAddress(cg_type);
 extern  void            AddToTemp(byte);
 extern  void            DoFESymRef( sym_handle, cg_class, offset, fe_fixup_types);
 extern  void            FlipCond(instruction*);

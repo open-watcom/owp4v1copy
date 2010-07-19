@@ -44,6 +44,7 @@
 #include "zoiks.h"
 #include "cgaux.h"
 #include "typedef.h"
+#include "types.h"
 #include "dbgstrct.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -60,7 +61,6 @@
 
 extern  void            FEPtr(sym_handle,type_def *,offset);
 extern  void            FEPtrBase(sym_handle);
-extern  type_def        *TypeAddress(cg_type);
 extern  seg_id          AskOP(void);
 extern  void            BackPtr( bck_info*, seg_id, offset, type_def* );
 extern  void            BackBigOffset( bck_info *, seg_id, offset );

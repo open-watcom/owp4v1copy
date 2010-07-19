@@ -43,6 +43,7 @@
 #include "zoiks.h"
 #include "cgaux.h"
 #include "typedef.h"
+#include "types.h"
 #include "dbgstrct.h"
 #include "dbcue.h"
 #define BY_CG
@@ -53,7 +54,6 @@
 #endif
 #include <string.h>
 
-extern  type_def        *TypeAddress(cg_type);
 extern  instruction     *MakeNop(void);
 extern  void            AddIns(instruction*);
 extern  name            *AllocRegName(hw_reg_set);

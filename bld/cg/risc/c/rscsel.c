@@ -37,10 +37,10 @@
 #include "addrname.h"
 #include "tree.h"
 #include "seldef.h"
+#include "types.h"
 
 extern  instruction     *NewIns( int );
 extern  void            AddIns( instruction * );
-extern  type_def        *TypeAddress( cg_type );
 
 extern  type_length     TypeClassLength[];
 

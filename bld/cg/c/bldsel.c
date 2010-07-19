@@ -38,11 +38,11 @@
 #include "seldef.h"
 #include "tree.h"
 #include "zoiks.h"
+#include "types.h"
 
 #include "bldins.h"
 
 extern  label_handle    AskForNewLabel(void);
-extern  type_def        *TypeAddress(cg_type);
 extern  void            AddTarget(label_handle,bool);
 extern  signed_32       IfCost(select_node*,int);
 extern  void            EnLink(label_handle,bool);

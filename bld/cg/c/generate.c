@@ -38,6 +38,7 @@
 #include "memcheck.h"
 #include "opcodes.h"
 #include "typedef.h"
+#include "types.h"
 #include "ptrint.h"
 #include "feprotos.h"
 #include "addrcnst.h"
@@ -104,8 +105,6 @@ extern  void            MergeIndex( void );
 extern  void            ScoreInit( void );
 extern  void            ScoreFini( void );
 extern  type_class_def  TypeClass( type_def * );
-extern  void            TypeInit( void );
-extern  void            TypeFini( void );
 extern  void            ObjInit( void );
 extern  void            ObjFini( void );
 extern  void            AbortObj( void );

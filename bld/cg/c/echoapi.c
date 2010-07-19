@@ -38,6 +38,7 @@
 #include "coderep.h"
 #include "cgdefs.h"
 #include "typedef.h"
+#include "types.h"
 #include "tree.h"
 #include "seldef.h"
 #include "echoapi.h"
@@ -48,7 +49,6 @@
 #include "feprotos.h"
 
 extern  void            FatalError(char *);
-extern  type_def        *TypeAddress(cg_type);
 extern  bool            GetEnvVar(char*,char*,int);
 extern  int             BGInlineDepth( void );
 

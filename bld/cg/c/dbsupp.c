@@ -44,6 +44,7 @@
 #include "zoiks.h"
 #include "cgaux.h"
 #include "typedef.h"
+#include "types.h"
 #include "dbgstrct.h"
 #include "feprotos.h"
 #ifndef NDEBUG
@@ -63,9 +64,8 @@ extern  hw_reg_set      Low64Reg(hw_reg_set);
 #endif
 extern  void            DataBytes(unsigned_32,byte*);
 extern  void            DoBigBckPtr(back_handle,offset);
-extern  type_def        *TypeAddress(cg_type);
 extern  type_length     NewBase(name*);
-extern  int     ParmsAtPrologue( void ) ;
+extern  int             ParmsAtPrologue( void ) ;
 
 
 static  dbg_loc         LocCreate( dbg_loc loc, unsigned typ ) {

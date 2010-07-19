@@ -37,6 +37,7 @@
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
+#include "types.h"
 #include "ocentry.h"
 #include "objrep.h"
 #include "zoiks.h"
@@ -71,7 +72,6 @@ extern  dbg_loc     LocDupl( dbg_loc );
 extern  void        DBLocFini( dbg_loc loc );
 extern  offset      LocSimpField( dbg_loc );
 extern  void        DataBytes(unsigned_32,byte*);
-extern  type_def    *TypeAddress(cg_type);
 extern  void        CVSymIConst( char *nm, long val, dbg_type tipe );
 extern  void        CVSymIConst64( char *nm, signed_64 val, dbg_type tipe );
 extern  void        CVOutSymICon( cv_out *out, char *nm, long val, dbg_type tipe );

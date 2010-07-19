@@ -43,6 +43,7 @@
 #include "rttable.h"
 #include "rtclass.h"
 #include "feprotos.h"
+#include "types.h"
 
 #include "addrfold.h"
 #include "bldins.h"
@@ -89,7 +90,6 @@ extern  instruction     *NewIns(int);
 extern  name            *AllocTemp(type_class_def);
 extern  bool            BlkTooBig( void );
 extern  bool            NeedPtrConvert(an,type_def*);
-extern  type_def        *TypeAddress(cg_type );
 extern  name            *AllocRegName( hw_reg_set );
 extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
 extern  hw_reg_set      ReturnAddrReg( void );

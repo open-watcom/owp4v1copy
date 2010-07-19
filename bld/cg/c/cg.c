@@ -37,6 +37,7 @@
 #include "cgdefs.h"
 #include "typclass.h"
 #include "typedef.h"
+#include "types.h"
 #include "cfloat.h"
 #include "cgaux.h"
 #include "model.h"
@@ -50,7 +51,6 @@
 extern  int             TempId;
 
 extern  void            DumpTree(n *);
-extern  type_def        *TypeAddress(cg_type);
 extern  char            *CopyStr(char*,char*);
 
 extern  char            *ACopyOf(char *);

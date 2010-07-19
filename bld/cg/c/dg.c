@@ -41,6 +41,7 @@
 #include "cgmem.h"
 #include "typclass.h"
 #include "typedef.h"
+#include "types.h"
 #include "cfloat.h"
 #include "cgaux.h"
 #include "model.h"
@@ -52,8 +53,6 @@
 #include "stubdata.h"
 
 extern  unsigned_16     TypeIdx;
-
-extern  type_def        *TypeAddress(cg_type);
 
 extern  char            *ACopyOf(char *);
 extern  void            VerTipe(cg_type ,cg_type *);

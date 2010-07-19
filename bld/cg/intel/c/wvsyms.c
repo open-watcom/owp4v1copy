@@ -44,13 +44,13 @@
 #include "zoiks.h"
 #include "cgaux.h"
 #include "typedef.h"
+#include "types.h"
 #include "dbgstrct.h"
 #include "wvdbg.h"
 #define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
 
-extern  type_def        *TypeAddress(cg_type);
 extern  seg_id          AskOP(void);
 extern  bck_info        *BENewBack(sym_handle);
 extern  void            BEFreeBack(bck_info*);

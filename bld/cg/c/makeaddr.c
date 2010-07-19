@@ -41,6 +41,7 @@
 #include "freelist.h"
 #include "cfloat.h"
 #include "feprotos.h"
+#include "types.h"
 
 #include "addrfold.h"
 
@@ -56,7 +57,6 @@ extern  name            *SAllocTemp(type_class_def,type_length);
 extern  name            *SAllocUserTemp(pointer,type_class_def,type_length);
 extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  type_def        *TypeAddress(cg_type);
 extern  name            *AllocConst(pointer);
 extern  void            FreeIns(instruction*);
 extern  void            AddIns(instruction*);

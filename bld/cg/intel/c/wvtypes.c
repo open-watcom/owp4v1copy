@@ -37,6 +37,7 @@
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
+#include "types.h"
 #include "ocentry.h"
 #include "objrep.h"
 #include "zoiks.h"
@@ -65,15 +66,14 @@ extern  void            BuffStart(temp_buff*,uint);
 extern  void            BuffEnd(seg_id);
 extern  void            LocDump( dbg_loc );
 extern  dbg_loc         LocDupl( dbg_loc );
-extern  type_def        *TypeAddress(cg_type);
 
 static  void            NewType( temp_buff *temp, uint ty_def );
 static  void            EndType( bool check_too_big );
 
 extern  unsigned_16     TypeIdx;
 extern  seg_id          DbgTypes;
-extern cue_ctl          LineInfo;
-extern fname_ctl       DBFiles;
+extern  cue_ctl         LineInfo;
+extern  fname_ctl       DBFiles;
 
 #define MAX_TYPE_SIZE  (1024 * 16)
 
