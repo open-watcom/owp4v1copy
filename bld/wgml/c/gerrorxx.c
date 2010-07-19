@@ -115,7 +115,7 @@ void    dc_opt_warn( char *pa )
     err_count++;
     g_warn( err_dc_opt, pa );
     file_mac_info();
-
+    show_line_error( pa );
     return;
 }
 

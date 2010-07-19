@@ -423,6 +423,7 @@ void    show_include_stack( void )
                 linemac, input_cbs->s.m->mac->mac_file_name);
     }
     if( inc_level > 1 ) {
+        out_msg( "\n" );
         ip = input_cbs->prev;
         while( ip != NULL ) {
             switch( ip->fmflags & II_input ) {
