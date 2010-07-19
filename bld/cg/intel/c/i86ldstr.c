@@ -474,30 +474,70 @@ extern  bool    LdStAlloc( void )
     return( changed );
 }
 
-static bool     CanCompressResult( instruction *ins,
-                                   name *prev_op0, instruction *next,
-                                   name **presult, name **popnd )
+static bool CanCompressOperand( instruction *ins, name **popnd )
+/**************************************************************/
 {
     int         i;
+    hw_reg_set  reg;
+    name        *op;
 
-    if( presult == NULL ) {
+    reg = (*popnd)->r.reg;
+    if( HW_Ovlap( reg, ins->head.next->head.live.regs ) ) {
         return( FALSE );
     }
-    if( HW_Ovlap( (*presult)->r.reg, next->head.next->head.live.regs ) ) {
+    // make sure that the REG is not used in any operands besides
+    // the one which we are thinking of replacing BBB - Dec 4, 1993
+    for( i = 0; i < ins->num_operands; i++ ) {
+        if( &ins->operands[i] != popnd ) {
+            op = ins->operands[i];
+            if( op->n.class == N_REGISTER && HW_Ovlap( op->r.reg, reg ) ) {
+                return( FALSE );
+            }
+        }
+    }
+    // make sure that the REG is not used in result
+    op = ins->result;
+    if( op != NULL ) {
+        switch( op->n.class ) {
+        case N_REGISTER:
+            if( HW_Ovlap( op->r.reg, reg ) )
+                return( FALSE );
+            break;
+        case N_INDEXED:
+            if( HW_Ovlap( op->i.index->r.reg, reg ) )
+                return( FALSE );
+            break;
+        default:
+            break;
+        }
+    }
+    return( TRUE );
+}
+
+static bool     CanCompressResult( instruction *ins,
+                                   name *prev_op0, instruction *next,
+                                   name **popnd )
+/**********************************************************************/
+{
+    int         i;
+    hw_reg_set  reg;
+    name        *op;
+
+    reg = ins->result->r.reg;
+    if( HW_Ovlap( reg, next->head.next->head.live.regs ) ) {
         return( FALSE );
     }
     if( popnd != NULL ) {
-        if( *popnd != *presult )
+        if( *popnd != ins->result ) {
             return( FALSE );
+        }
         if( next->result != prev_op0 ) {
             return( FALSE );
         }
     } else {
         for( i = 0; i < ins->num_operands; ++i ) {
-            if( ins->operands[i]->n.class != N_REGISTER ) {
-                continue;
-            }
-            if( HW_Ovlap( ins->operands[i]->r.reg, ins->result->r.reg ) ) {
+            op = ins->operands[i];
+            if( op->n.class == N_REGISTER && HW_Ovlap( op->r.reg, reg ) ) {
                 return( FALSE );
             }
         }
@@ -589,29 +629,15 @@ static void     CompressIns( instruction *ins )
     }
     // 2006-05-19 RomanT
     // Even if compression of result failed, we must try to compress operands
-    if( CanCompressResult( ins, prev_op0, next, presult, popnd ) ) {
+    if( presult != NULL && CanCompressResult( ins, prev_op0, next, popnd ) ) {
         replacement = next->result;
         preplace = presult;
-    } else {
-        presult = NULL; // Forget about result (don't free ins below!)
-        if( popnd == NULL )
-            return;
-        // make sure that the REG is not used in any operands besides
-        // the one which we are thinking of replacing BBB - Dec 4, 1993
-        for( i = 0; i < ins->num_operands; i++ ) {
-            if( popnd == &ins->operands[i] )
-                continue;
-            if( ins->operands[i]->n.class != N_REGISTER )
-                continue;
-            if( HW_Ovlap( ins->operands[i]->r.reg, (*popnd)->r.reg ) ) {
-                return;
-            }
-        }
-        if( HW_Ovlap( (*popnd)->r.reg, ins->head.next->head.live.regs ) ) {
-            return;
-        }
+    } else if( popnd != NULL && CanCompressOperand( ins, popnd ) ) {
         replacement = prev_op0;
         preplace = popnd;
+        presult = NULL;     // Forget about result (don't free ins below!)
+    } else {
+        return;
     }
     if( !ChangeIns( ins, replacement, preplace, CHANGE_GEN | CHANGE_ALL ) )
         return;
