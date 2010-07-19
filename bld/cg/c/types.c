@@ -34,27 +34,41 @@
 #include "typclass.h"
 #include "typedef.h"
 #include "cgmem.h"
+#include "types.h"
 
 typedef enum {
-                TYPE_DEFINITION,
-                TYPE_ALIAS
+        TYPE_DEFINITION,
+        TYPE_ALIAS
 } type_class;
 
 typedef struct alias {
-    struct type_def     *tptr;
-    cg_type             refno;
+        struct type_def     *tptr;
+        cg_type             refno;
 } alias;
 
 typedef union type_alloc {
-        struct alias    alias;
-        struct type_def type_def;
+        struct alias        alias;
+        struct type_def     type_def;
 } type_alloc;
 
 typedef struct type_list {
-        union type_alloc        tipe;
-        struct type_list        *link;
-        type_class              format;
+        union type_alloc    tipe;
+        struct type_list    *link;
+        type_class          format;
 } type_list;
+
+extern    type_def      *TypeInteger;
+extern    type_def      *TypeHugeInteger;
+extern    type_def      *TypeLongInteger;
+extern    type_def      *TypeLongLongInteger;
+extern    type_def      *TypeNearInteger;
+extern    type_def      *TypeUnsigned;
+extern    type_def      *TypePtr;
+extern    type_def      *TypeBoolean;
+extern    type_def      *TypeNone;
+extern    type_def      *TypeProcParm;
+
+extern    void          TargTypeInit(void);
 
 static    type_list     *TypeList;
 
@@ -68,8 +82,8 @@ static type_def TUInt2 = {  TY_UINT_2,       2,      0 };
 static type_def TInt2  = {  TY_INT_2,        2,      TYPE_SIGNED };
 static type_def TUInt4 = {  TY_UINT_4,       4,      0 };
 static type_def TInt4  = {  TY_INT_4,        4,      TYPE_SIGNED };
-static type_def TUInt8 = { TY_UINT_8,        8,      0 };
-static type_def TInt8  = { TY_INT_8,         8,      TYPE_SIGNED };
+static type_def TUInt8 = {  TY_UINT_8,       8,      0 };
+static type_def TInt8  = {  TY_INT_8,        8,      TYPE_SIGNED };
 extern type_def TNearCP;
 extern type_def TLongCP;
 extern type_def THugeCP;
@@ -87,15 +101,6 @@ type_def *PTInteger;
 type_def *PTUnsigned;
 type_def *PTPointer;
 type_def *PTCodePointer;
-
-extern  void    InitTyping() {
-/*****************************
-    initialize our typeing system
-*/
-
-    TypeList = NULL;
-}
-
 
 extern  type_def        *TypeAddress( cg_type tipe ) {
 /*****************************************************
@@ -242,4 +247,22 @@ extern  void    TypeFini() {
         next = next->link;
         CGFree( junk );
     }
+}
+
+extern  void    TypeInit( void )
+/******************************/
+{
+    TypeList = NULL;
+
+    TargTypeInit();
+    TypeProcParm = TypeAddress( TY_PROC_PARM );
+    TypeInteger = TypeAddress( TY_INTEGER );
+    TypeHugeInteger = TypeAddress( TY_HUGE_INTEGER );
+    TypeLongInteger = TypeAddress( TY_LONG_INTEGER );
+    TypeLongLongInteger = TypeAddress( TY_INT_8 );   // should be something else perhaps?
+    TypeNearInteger = TypeAddress( TY_NEAR_INTEGER );
+    TypeUnsigned = TypeAddress( TY_UNSIGNED );
+    TypeBoolean = TypeAddress( TY_BOOLEAN );
+    TypeNone = TypeAddress( TY_DEFAULT );
+    TypePtr = TypeAddress( TY_POINTER );
 }
