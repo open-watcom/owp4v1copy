@@ -110,7 +110,6 @@ void init_global_vars( void )
     t_line.first        = NULL;
     t_line.y_address    = 0;
     text_pool           = NULL;
-    p_char              = NULL;
     line_pool           = NULL;
 
 

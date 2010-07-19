@@ -777,7 +777,6 @@ void    scan_line( void )
         if( !ProcFlags.concat && t_line.first != NULL ) {
             if( input_cbs->fmflags & II_eol ) {
                 scr_process_break();    // TBD
-                p_char = NULL;
             }
         }
     } else if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {

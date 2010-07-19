@@ -220,7 +220,6 @@ global  uint32_t    inter_tab;          // distance between default tabs
 global  char        tab_char;           // tab character from .tb
 
 global text_line    t_line;             // for constructing output line
-global text_chars * p_char;             // previous text char   "
 global text_chars * text_pool;          // for reuse of text_chars structs
 global text_line  * line_pool;          // for reuse of text_line structs
 

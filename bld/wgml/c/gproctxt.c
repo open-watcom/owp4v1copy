@@ -688,7 +688,6 @@ void    test_page_full( void )
                 if( !newpage ) {
                     finish_page();
                 }
-                p_char = NULL;
             }
         } else {
 //          if( g_cur_v_start + wgml_fonts[g_curr_font_num].line_height
@@ -697,7 +696,6 @@ void    test_page_full( void )
                 if( !newpage ) {
                     finish_page();
                 }
-                p_char = NULL;
             }
         }
     }
@@ -1028,7 +1026,6 @@ void    process_text( char * text, uint8_t font_num )
                 if( t_line.first != NULL ) { // t_line is ready for output
                     process_line_full( &t_line, ProcFlags.concat
                                       && (ProcFlags.justify > ju_off) );
-                    p_char = NULL;
                     if( !ProcFlags.page_started ) {
                         document_new_page();    // page was full, start new one
                         document_top_banner();
@@ -1086,8 +1083,8 @@ void    process_text( char * text, uint8_t font_num )
                         ju_x_start = n_char->x_address;
                         ProcFlags.line_started = true;
                     } else {
-                        p_char->next = n_char;
-                        n_char->prev = p_char;
+                        t_line.last->next = n_char;
+                        n_char->prev = t_line.last;
                         if( t_line.line_height < wgml_fonts[font_num].line_height ) {
                             t_line.line_height = wgml_fonts[font_num].line_height;
                         }
@@ -1098,10 +1095,8 @@ void    process_text( char * text, uint8_t font_num )
                         &t_line.last->text[t_line.last->count], count, \
                                                     t_line.last->font_number );
                     t_line.last = wgml_tabs( t_line.last );
-                    p_char = t_line.last;
                     // process the full text_line
                     process_line_full( &t_line, false );
-                    p_char = NULL;
                     // reset n_char and count
                     set_h_start();
                     n_char->x_address = g_cur_h_start;
@@ -1125,8 +1120,8 @@ void    process_text( char * text, uint8_t font_num )
             ju_x_start = n_char->x_address;
             ProcFlags.line_started = true;
         } else {
-            p_char->next = n_char;
-            n_char->prev = p_char;
+            t_line.last->next = n_char;
+            n_char->prev = t_line.last;
             if( t_line.line_height < wgml_fonts[font_num].line_height ) {
                 t_line.line_height = wgml_fonts[font_num].line_height;
             }
@@ -1136,7 +1131,6 @@ void    process_text( char * text, uint8_t font_num )
         if( n_char != t_line.last ) {
             tabbing = true;
         }
-        p_char = t_line.last;
 
         g_cur_h_start = t_line.last->x_address + t_line.last->width;
         ProcFlags.page_started = true;
@@ -1166,10 +1160,8 @@ void    process_text( char * text, uint8_t font_num )
         if( !ProcFlags.concat ) {
             if( input_cbs->fmflags & II_eol ) {
                 scr_process_break();    // TBD
-                p_char = NULL;
 #if 0
                 process_line_full( &t_line, (ProcFlags.justify > ju_off) );
-                p_char = NULL;
                 if( !ProcFlags.page_started ) {
                     document_new_page();
                     document_top_banner();

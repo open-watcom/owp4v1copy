@@ -100,7 +100,6 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-    p_char = NULL;
 
     if( *p == '.' ) p++;                // over '.'
     if( *p ) {
@@ -167,7 +166,6 @@ void    start_line_with_string( char * text, uint8_t font_num )
 
     if( n_char->x_address + n_char->width > g_page_right ) {
         process_line_full( &t_line, ProcFlags.concat );
-        p_char = NULL;
         if( !ProcFlags.page_started ) {
             document_new_page();// page full, start new one
             document_top_banner();
@@ -189,11 +187,10 @@ void    start_line_with_string( char * text, uint8_t font_num )
         ju_x_start = n_char->x_address;
         ProcFlags.line_started = true;
     } else {
-        p_char->next = n_char;
-        n_char->prev = p_char;
+        t_line.last->next = n_char;
+        n_char->prev = t_line.last;
     }
     t_line.last  = n_char;
-    p_char = n_char;
 
     g_cur_h_start = n_char->x_address + n_char->width;
     ProcFlags.page_started = true;
@@ -261,15 +258,14 @@ extern  void    gml_note( const gmltag * entry )
 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-    p_char = NULL;
 
     g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent );
     g_cur_h_start = g_cur_left;
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     start_line_with_string( layout_work.note.string, layout_work.note.font );
-    if( p_char != NULL ) {
-        g_cur_left += p_char->width + post_space;
+    if( t_line.last != NULL ) {
+        g_cur_left += t_line.last->width + post_space;
     }
     post_space = 0;
     g_cur_h_start = g_cur_left;
