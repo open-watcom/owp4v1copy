@@ -50,7 +50,7 @@ boxdev.sys = 1
 
 
 [SourceDisksNames.x86]
-1 = %DISK_NAME%,,,\i386
+1 = %DISK_NAME%,,,
 
 
 [SourceDisksNames.amd64]
