@@ -36,24 +36,29 @@
 #include "mem.h"
 #include "ldstr.h"
 
-// No string to be loaded can be more than LDSTR_MAX_STR_LEN bytes long
+/* No string to be loaded can be more than LDSTR_MAX_STR_LEN bytes long. */
 #define LDSTR_MAX_STR_LEN       500
 
-static char     getStringBuffer[ LDSTR_MAX_STR_LEN ];
-static char     tmpBuf[ LDSTR_MAX_STR_LEN ];
+static char     getStringBuffer[LDSTR_MAX_STR_LEN];
+static char     tmpBuf[LDSTR_MAX_STR_LEN];
 static HANDLE   curInst;
 
 /*
- * GetRCString - return a pointer to a string from the resource file.
- *              NB the pointer is only valid until the next call to
- *              GetString
+ * GetRCString - return a pointer to a string from the resource file
+ *             - the pointer is only valid until the next call to
+ *               GetString
  */
 char *GetRCString( DWORD msgid )
 {
     LoadString( curInst, msgid, getStringBuffer, LDSTR_MAX_STR_LEN );
     return( getStringBuffer );
-}
 
+} /* GetRCString */
+
+/*
+ * AllocRCString - return a pointer to a string from the resource file
+ *               - the caller must free the memory
+ */
 char *AllocRCString( DWORD id )
 {
     char        *ret;
@@ -65,22 +70,34 @@ char *AllocRCString( DWORD id )
         strcpy( ret, tmpBuf );
     }
     return( ret );
-}
 
+} /* AllocRCString */
+
+/*
+ * CopyRCString - copy a string from the resource file into a buffer
+ */
 DWORD CopyRCString( DWORD id, char *buf, DWORD bufsize )
 {
     DWORD       len;
 
     len = LoadString( curInst, id, buf, bufsize );
     return( len );
-}
 
+} /* CopyRCString */
+
+/*
+ * FreeRCString - free the memory allocated by AllocRCString
+ */
 void FreeRCString( char *str )
 {
     MemFree( str );
 }
 
+/*
+ * SetInstance - set the instance handle used to load resource strings
+ */
 void SetInstance( HANDLE inst )
 {
     curInst = inst;
-}
+
+} /* SetInstance */

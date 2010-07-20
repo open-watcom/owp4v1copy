@@ -57,28 +57,29 @@
 #include "ldstr.h"
 #include "uistr.gh"
 
-#define  ISCODE( x )    ( (x)->disp_type == MEMINFO_CODE_16 || \
-                          (x)->disp_type == MEMINFO_CODE_32 )
+#define ISCODE( x )     ((x)->disp_type == MEMINFO_CODE_16 || \
+                        (x)->disp_type == MEMINFO_CODE_32)
 
-#define  MAX_BYTES      50
+#define MAX_BYTES       50
 
-/* NO_DATA_SPACE consists of 11 bytes to display the offsets on the left
+/*
+ * NO_DATA_SPACE consists of 11 bytes to display the offsets on the left
  * and 1 additional byte so that italic fonts don't get cut off on the right
  */
-#define  NO_DATA_SPACE  12
+#define NO_DATA_SPACE   12
 
 WORD                    FontWidth = 8;
 WORD                    FontHeight = 15;
 
 static  HFONT           CurFont;
 static  HWND            CurWindow;
-static  char            Buffer[ MAX_BYTES * 4 + 20 ];
+static  char            Buffer[MAX_BYTES * 4 + 20];
 #ifndef __NT__
 static  FARPROC         DialProc;
 static  unsigned        DialCount;
 #endif
 
-static MemWndConfig     MemConfigInfo ;
+static MemWndConfig     MemConfigInfo;
 
 static DWORD Disp_Types[] = {
     MWND_DISP_BYTES,
@@ -89,11 +90,11 @@ static DWORD Disp_Types[] = {
 };
 
 /* forward declarations */
-BOOL __export FAR PASCAL MemDisplayProc( HWND, UINT, WPARAM, DWORD );
-static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info );
-static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info );
-static void PositionSegInfo( HWND hwnd );
-static BOOL GenLine( char digits, DWORD limit, WORD type, WORD sel, char *buf, DWORD offset );
+BOOL __export FAR PASCAL MemDisplayProc( HWND, UINT, WPARAM, LPARAM );
+static void calcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info );
+static void displaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info );
+static void positionSegInfo( HWND hwnd );
+static BOOL genLine( char digits, DWORD limit, WORD type, WORD sel, char *buf, DWORD offset );
 
 typedef enum {
     MT_FREE,
@@ -109,13 +110,21 @@ static DWORD    CurLimit;
 static DWORD    CurBase;
 
 
-DWORD far GetASelectorLimit( WORD sel ) {
+/*
+ * GetASelectorLimit
+ */
+DWORD far GetASelectorLimit( WORD sel )
+{
     sel = sel;
     return( CurLimit );
-}
 
-DWORD ReadMem( WORD sel, DWORD off, void *buff, DWORD size ) {
+} /* GetASelectorLimit */
 
+/*
+ * ReadMem
+ */
+DWORD ReadMem( WORD sel, DWORD off, void *buff, DWORD size )
+{
     DWORD       bytesread;
 
     sel = sel;
@@ -126,46 +135,48 @@ DWORD ReadMem( WORD sel, DWORD off, void *buff, DWORD size ) {
         ReadProcessMemory( ProcessHdl, (void *)off, buff, size, &bytesread );
     }
     return( bytesread );
-}
+
+} /* ReadMem */
+
 #else
 
 /*
- * CreateAccessString
+ * createAccessString
  */
-
-static void CreateAccessString( char *ptr, descriptor *desc ) {
-
+static void createAccessString( char *ptr, descriptor *desc )
+{
     if( desc->type == 2 )  {
         *ptr =  'R';
-        ptr ++;
+        ptr++;
         if( desc->writeable_or_readable ) {
             *ptr = '/';
-            ptr ++;
+            ptr++;
             *ptr = 'W';
-            ptr ++;
+            ptr++;
         }
     } else {
         *ptr = 'E';
         ptr++;
         *ptr = 'x';
-        ptr ++;
+        ptr++;
         if( desc->writeable_or_readable ) {
             *ptr = '/';
-            ptr ++;
+            ptr++;
             *ptr = 'R';
-            ptr ++;
+            ptr++;
         }
     }
     *ptr = '\0';
-} /* CreateAccessString */
+
+} /* createAccessString */
+
 #endif
 
 /*
- * MemDumpHeader - put summary information at the top of a memory dump
+ * memDumpHeader - put summary information at the top of a memory dump
  */
-
-static void MemDumpHeader( int hdl, MemWndInfo *info ) {
-
+static void memDumpHeader( int hdl, MemWndInfo *info )
+{
     time_t              tm;
     char                buf[80];
     unsigned            len;
@@ -208,7 +219,7 @@ static void MemDumpHeader( int hdl, MemWndInfo *info ) {
             RCsprintf( buf, MWND_GRANULARITY_BYTE, &len );
         }
         write( hdl, buf, len );
-        CreateAccessString( access, &desc );
+        createAccessString( access, &desc );
         RCsprintf( buf, MWND_ACCESS, access, &len );
         write( hdl, buf, len );
     } else {
@@ -232,16 +243,16 @@ static void MemDumpHeader( int hdl, MemWndInfo *info ) {
     sprintf( buf, "%s\n\n%n", rcstr, &len );
     FreeRCString( rcstr );
     write( hdl, buf, len );
+
 } /* MemDumpHeader */
 
 /*
  * MemSave - save the contents of a memory display box
  */
-
-static void MemSave( MemWndInfo *info, HWND hwnd, BOOL gen_name ) {
-
+static void MemSave( MemWndInfo *info, HWND hwnd, BOOL gen_name )
+{
     char        fname[_MAX_PATH];
-//    OFSTRUCT  finfo;
+//  OFSTRUCT    finfo;
     DWORD       offset;
     DWORD       limit;
     int         hdl;
@@ -252,7 +263,9 @@ static void MemSave( MemWndInfo *info, HWND hwnd, BOOL gen_name ) {
 
     if( gen_name ) {
         ret = GenTmpFileName( MemConfigInfo.fname, fname );
-        if( !ret ) ReportSave( hwnd, fname, MemConfigInfo.appname, ret );
+        if( !ret ) {
+            ReportSave( hwnd, fname, MemConfigInfo.appname, ret );
+        }
     } else {
         ret = GetSaveFName( hwnd, fname );
     }
@@ -265,15 +278,14 @@ static void MemSave( MemWndInfo *info, HWND hwnd, BOOL gen_name ) {
             hourglass = LoadCursor( NULLHANDLE, IDC_WAIT );
             SetCapture( hwnd );
             oldcursor= SetCursor( hourglass );
-            MemDumpHeader( hdl, info );
+            memDumpHeader( hdl, info );
             if( ISCODE( info ) ) {
                 DumpMemAsm( info, hdl );
             } else {
                 offset = info->base;
                 limit = info->limit;
                 while( offset < limit ) {
-                    GenLine( 16, limit, info->disp_type, info->sel, Buffer,
-                                offset );
+                    genLine( 16, limit, info->disp_type, info->sel, Buffer, offset );
                     len = strlen( Buffer );
                     write( hdl, Buffer, len );
                     write( hdl, "\n", 1 );
@@ -286,49 +298,55 @@ static void MemSave( MemWndInfo *info, HWND hwnd, BOOL gen_name ) {
         }
         ReportSave( hwnd, fname, MemConfigInfo.appname, ret );
     }
+
 } /* MemSave */
 
 /*
  * RegMemWndClass - must be called by the first instance of a using
  *                  program to register window classes
  */
-
-BOOL RegMemWndClass( HANDLE instance ) {
-
+BOOL RegMemWndClass( HANDLE instance )
+{
     WNDCLASS    wc;
 
     wc.style = 0L;
-    wc.lpfnWndProc = (LPVOID) MemDisplayProc;
+    wc.lpfnWndProc = (LPVOID)MemDisplayProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 4;
     wc.hInstance = instance;
     wc.hIcon = NULLHANDLE;
-    wc.hCursor = LoadCursor( NULLHANDLE, IDC_ARROW);
+    wc.hCursor = LoadCursor( NULLHANDLE, IDC_ARROW );
     wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
     wc.lpszMenuName = "MEMINFOMENU";
     wc.lpszClassName = MEM_DISPLAY_CLASS;
     return( RegisterClass( &wc ) );
+
 } /* RegMemWndClass */
 
 /*
  * SetMemWndConfig - set memory display window configuration info
  */
-
-void SetMemWndConfig( MemWndConfig *cfg ) {
+void SetMemWndConfig( MemWndConfig *cfg )
+{
    MemConfigInfo = *cfg;
    MemConfigInfo.init = TRUE;
+
 } /* SetMemWndConfig */
 
 /*
  * GetMemWndConfig - get memory display window configuration info
  */
-
-void GetMemWndConfig( MemWndConfig *cfg ) {
+void GetMemWndConfig( MemWndConfig *cfg )
+{
     *cfg = MemConfigInfo;
+
 } /* GetMemWndConfig */
 
-void GetMemWndDefault( MemWndConfig *info ) {
-
+/*
+ * GetMemWndDefault
+ */
+void GetMemWndDefault( MemWndConfig *info )
+{
     info->init = TRUE;
     info->xpos = 0;
     info->ypos = 0;
@@ -343,48 +361,62 @@ void GetMemWndDefault( MemWndConfig *info ) {
     info->forget_pos = FALSE;
     info->disp_type = MEMINFO_BYTE;
     info->code_disp_type = MEMINFO_CODE_16;
+
 } /* GetMemWndDefault */
 
 /*
  * SetDefMemConfig
  */
-
-void SetDefMemConfig( void ) {
+void SetDefMemConfig( void )
+{
     GetMemWndDefault( &MemConfigInfo );
+
 } /* SetDefMemConfig */
 
-char MkHexDigit( char ch ) {
-    if( ch < 0xA ) return( '0' + ch );
+/*
+ * MkHexDigit
+ */
+char MkHexDigit( char ch )
+{
+    if( ch < 0xA ) {
+        return( '0' + ch );
+    }
     return( 'A' + ch - 0xA );
+
 } /* MkHexDigit */
 
-static char *GenByte( char ch, char *ptr ) {
-        *ptr = MkHexDigit( ch >> 4 );
-        ptr++;
-        *ptr = MkHexDigit( ch & 0xF );
-        ptr++;
-        return( ptr );
-} /* GenByte */
+/*
+ * genByte
+ */
+static char *genByte( char ch, char *ptr )
+{
+    *ptr = MkHexDigit( ch >> 4 );
+    ptr++;
+    *ptr = MkHexDigit( ch & 0xF );
+    ptr++;
+    return( ptr );
+
+} /* genByte */
 
 /*
- * GenLine - create a line for output of the form:
+ * genLine - create a line for output of the form:
 XXXXXXXX  dd dd dd dd dd dd dd dd dd dd dd dd dd dd dd dd  cccccccccccccccc
  */
-
-static BOOL GenLine( char digits, DWORD limit, WORD type,
+static BOOL genLine( char digits, DWORD limit, WORD type,
                      WORD sel, char *buf, DWORD offset )
 {
-
     char        *ptr;
     char        pad_char;
-    char        data[ MAX_BYTES ];
+    char        data[MAX_BYTES];
     size_t      len;
     unsigned    i;
 #ifdef __NT__
     DWORD       bytesread;
 
     bytesread = ReadMem( sel, offset, data, digits );
-    if( bytesread == 0 ) return( FALSE );
+    if( bytesread == 0 ) {
+        return( FALSE );
+    }
     pad_char = ' ';
 #else
     ReadMem( sel, offset, data, digits );
@@ -395,14 +427,14 @@ static BOOL GenLine( char digits, DWORD limit, WORD type,
     ptr = buf + 10;
     switch( type ) {
     case MEMINFO_BYTE:
-        for( i=0; i < digits; i++ ) {
+        for( i = 0; i < digits; i++ ) {
             if( offset + i >= limit ) {
                *ptr = pad_char;
                ptr++;
                *ptr = pad_char;
                ptr++;
             } else {
-                ptr = GenByte( data[i], ptr );
+                ptr = genByte( data[i], ptr );
             }
             *ptr = ' ';
             ptr++;
@@ -414,31 +446,33 @@ static BOOL GenLine( char digits, DWORD limit, WORD type,
 //      }
         break;
     case MEMINFO_WORD:
-        for( i=0; i < digits; i += 2 ) {
+        for( i = 0; i < digits; i += 2 ) {
             if( offset + i == limit -1 ) {
-                ptr = GenByte( data[i], ptr );
+                ptr = genByte( data[i], ptr );
                 memset( ptr, ' ', 3 );
                 ptr += 3;
                 i += 2;
             }
-            if( offset + i >= limit ) break;
-            ptr = GenByte( data[i+1], ptr );
-            ptr = GenByte( data[i], ptr );
+            if( offset + i >= limit ) {
+                break;
+            }
+            ptr = genByte( data[i + 1], ptr );
+            ptr = genByte( data[i], ptr );
             *ptr = ' ';
             ptr++;
         }
         if( i < digits ) {
-            len = ( ( digits - i ) / 2  ) * 5;
+            len = ((digits - i) / 2) * 5;
             memset( ptr, ' ', len );
             ptr += len;
         }
         break;
     case MEMINFO_DWORD:
-        for( i=0; i < digits; i += 4 ) {
+        for( i = 0; i < digits; i += 4 ) {
             if( offset + i < limit && offset + i > limit - 4 ) {
                 len = 0;
-                for( ; offset + i < limit ; i++ ) {
-                    ptr = GenByte( data[i], ptr );
+                for( ; offset + i < limit; i++ ) {
+                    ptr = genByte( data[i], ptr );
                     *ptr = ' ';
                     ptr++;
                     len += 3;
@@ -447,24 +481,26 @@ static BOOL GenLine( char digits, DWORD limit, WORD type,
                 ptr += 9 - len;
                 i += 4;
             }
-            if( offset + i >= limit ) break;
-            ptr = GenByte( data[i+3], ptr );
-            ptr = GenByte( data[i+2], ptr );
-            ptr = GenByte( data[i+1], ptr );
-            ptr = GenByte( data[i], ptr );
+            if( offset + i >= limit ) {
+                break;
+            }
+            ptr = genByte( data[i + 3], ptr );
+            ptr = genByte( data[i + 2], ptr );
+            ptr = genByte( data[i + 1], ptr );
+            ptr = genByte( data[i], ptr );
             *ptr = ' ';
             ptr++;
         }
         if( i < digits ) {
-            len = ( ( digits - i ) / 4 ) * 9;
+            len = ((digits - i) / 4) * 9;
             memset( ptr, ' ', len );
             ptr += len;
         }
         break;
     }
     *ptr = ' ';
-    ptr ++;
-    for( i=0; i < digits; i++ ) {
+    ptr++;
+    for( i = 0; i < digits; i++ ) {
         if( offset + i >= limit ) {
             memset( ptr, ' ', digits - i );
             ptr += digits - i;
@@ -475,36 +511,43 @@ static BOOL GenLine( char digits, DWORD limit, WORD type,
         } else {
             *ptr = '.';
         }
-        ptr ++;
+        ptr++;
     }
     *ptr = '\0';
     return( TRUE );
-} /* GenLine */
 
-static void MySetScrollPos( MemWndInfo *info, DWORD offset ) {
-
-    DWORD       val;
-
-    val = ( ( offset - info->base ) * SCROLL_RANGE ) /
-          ( info->limit - info->base );
-    SetScrollPos( info->scrlbar, SB_CTL, val, TRUE );
-}
-
-static DWORD ScrollPosToOffset( WORD pos, MemWndInfo *info ) {
-
-    DWORD       offset;
-
-    offset = ( pos * ( info->limit - info->base ) ) / SCROLL_RANGE;
-    offset += info->base;
-    return( offset );
-} /* ScrollPosToOffset */
+} /* genLine */
 
 /*
- * RedrawMemWnd
+ * mySetScrollPos
  */
+static void mySetScrollPos( MemWndInfo *info, DWORD offset )
+{
+    DWORD       val;
 
-static void RedrawMemWnd( HWND hwnd, HDC dc, MemWndInfo *info ) {
+    val = ((offset - info->base) * SCROLL_RANGE) / (info->limit - info->base);
+    SetScrollPos( info->scrlbar, SB_CTL, val, TRUE );
 
+} /* mySetScrollPos */
+
+/*
+ * scrollPosToOffset
+ */
+static DWORD scrollPosToOffset( WORD pos, MemWndInfo *info )
+{
+    DWORD       offset;
+
+    offset = (pos * (info->limit - info->base)) / SCROLL_RANGE;
+    offset += info->base;
+    return( offset );
+
+} /* scrollPosToOffset */
+
+/*
+ * redrawMemWnd
+ */
+static void redrawMemWnd( HWND hwnd, HDC dc, MemWndInfo *info )
+{
     unsigned    i;
     DWORD       offset;
     RECT        area;
@@ -514,10 +557,12 @@ static void RedrawMemWnd( HWND hwnd, HDC dc, MemWndInfo *info ) {
     POINT       txtsize;
     BOOL        rc;
 
-    if( CurFont != GetMonoFont() ) CalcTextDimensions( hwnd, dc, info );
+    if( CurFont != GetMonoFont() ) {
+        calcTextDimensions( hwnd, dc, info );
+    }
     old_font = SelectObject( dc, CurFont );
-    if(  ISCODE( info ) ) {
-        MySetScrollPos( info, ( info->limit - info->base) / 2 );
+    if( ISCODE( info ) ) {
+        mySetScrollPos( info, (info->limit - info->base) / 2 );
         RedrawAsCode( dc, info );
         return;
     }
@@ -530,8 +575,8 @@ static void RedrawMemWnd( HWND hwnd, HDC dc, MemWndInfo *info ) {
     offset = info->offset;
     wbrush = GetStockObject( WHITE_BRUSH );
     while( offset < info->limit ) {
-        rc = GenLine( info->bytesdisp, info->limit, info->disp_type,
-                      info->sel , Buffer, offset );
+        rc = genLine( info->bytesdisp, info->limit, info->disp_type,
+                      info->sel, Buffer, offset );
         DrawText( dc, Buffer, -1, &area, DT_LEFT | DT_NOCLIP );
         fill.top = area.top;
         fill.bottom = area.bottom;
@@ -542,18 +587,24 @@ static void RedrawMemWnd( HWND hwnd, HDC dc, MemWndInfo *info ) {
         area.bottom += FontHeight;
         offset += info->bytesdisp;
         i++;
-        if( i > info->lastline ) break;
+        if( i > info->lastline ) {
+            break;
+        }
     }
-    if( area.top < ( info->lastline + 1 ) * FontHeight ) {
-        area.bottom = ( info->lastline + 1 ) * FontHeight;
+    if( area.top < (info->lastline + 1) * FontHeight ) {
+        area.bottom = (info->lastline + 1) * FontHeight;
         FillRect( dc, &area, wbrush );
     }
-    MySetScrollPos( info, info->offset );
+    mySetScrollPos( info, info->offset );
     SelectObject( dc, old_font );
-} /* RedrawMemWnd */
 
-static unsigned BytesToDisplay( unsigned width, WORD type ) {
+} /* redrawMemWnd */
 
+/*
+ * bytesToDisplay
+ */
+static unsigned bytesToDisplay( unsigned width, WORD type )
+{
     unsigned    bytes;
 
     bytes = width / FontWidth;
@@ -562,31 +613,36 @@ static unsigned BytesToDisplay( unsigned width, WORD type ) {
     } else {
         switch( type ) {
         case MEMINFO_WORD:
-            bytes = 2 * ( ( bytes - NO_DATA_SPACE ) / 7 );
+            bytes = 2 * ((bytes - NO_DATA_SPACE) / 7);
             break;
         case MEMINFO_DWORD:
-            bytes = 4 * ( ( bytes - NO_DATA_SPACE ) / 14 );
+            bytes = 4 * ((bytes - NO_DATA_SPACE) / 14);
             break;
         case MEMINFO_BYTE:
         default:
-            bytes = ( bytes - NO_DATA_SPACE ) / 4;
+            bytes = (bytes - NO_DATA_SPACE) / 4;
 //          if( bytes > 16 ) bytes = 16;
             break;
         }
     }
-    if( bytes < 1 ) bytes = 1;
-    if( bytes > MAX_BYTES ) bytes = MAX_BYTES;
+    if( bytes < 1 ) {
+        bytes = 1;
+    }
+    if( bytes > MAX_BYTES ) {
+        bytes = MAX_BYTES;
+    }
     return( bytes );
-} /* BytesToDisplay */
+
+} /* bytesToDisplay */
 
 /*
- * CalcTextDimensions - find the number of bytes to display on a line,
+ * calcTextDimensions - find the number of bytes to display on a line,
  *                      the number of lines in the window, whether to
  *                      display scroll bars etc... when the window is
  *                      resized or the font changes
  */
-static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info ) {
-
+static void calcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info )
+{
     BOOL        owndc;
     RECT        rect;
     WORD        width;
@@ -616,17 +672,18 @@ static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info ) {
     info->lastline = height / FontHeight;
 
     /*
-     * decide if we need a scroll bar and calculate the number
-     * of bytes to display on each line
+     * Decide if we need a scroll bar and calculate the number
+     * of bytes to display on each line.
      */
-
-    info->bytesdisp = BytesToDisplay( width, info->disp_type );
+    info->bytesdisp = bytesToDisplay( width, info->disp_type );
     lines = info->limit / info->bytesdisp;
-    if( ( info->limit - info->base ) % info->bytesdisp != 0 ) lines++;
+    if( (info->limit - info->base) % info->bytesdisp != 0 ) {
+        lines++;
+    }
     if( ISCODE( info ) ) {
         need_scrlbar = NeedScrollBar( info );
     } else {
-        need_scrlbar = ( lines > info->lastline );
+        need_scrlbar = (lines > info->lastline);
     }
     if( need_scrlbar ) {
         scrl_width = GetSystemMetrics( SM_CXVSCROLL );
@@ -637,28 +694,34 @@ static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info ) {
         }
         MoveWindow( info->scrlbar, width, 0, scrl_width, height, TRUE );
         ShowWindow( info->scrlbar, SW_NORMAL );
-        info->bytesdisp = BytesToDisplay( width, info->disp_type );
+        info->bytesdisp = bytesToDisplay( width, info->disp_type );
     } else {
         ShowWindow( info->scrlbar, SW_HIDE );
     }
-    info->offset -= ( info->offset - info->base ) % info->bytesdisp;
+    info->offset -= (info->offset - info->base) % info->bytesdisp;
     info->width = width;
     SelectObject( dc, old_font );
-    if( owndc ) ReleaseDC( hwnd, dc );
-}
+    if( owndc ) {
+        ReleaseDC( hwnd, dc );
+    }
 
-static void ReSizeMemBox( HWND hwnd, DWORD size, MemWndInfo *info ) {
+} /* calcTextDimensions */
 
+/*
+ * resizeMemBox
+ */
+static void resizeMemBox( HWND hwnd, DWORD size, MemWndInfo *info )
+{
     HDC         dc;
     RECT        area;
     HBRUSH      wbrush;
 
     dc = GetDC( hwnd );
-//    old_font = SelectObject( dc, CurFont );
-    CalcTextDimensions( hwnd, dc, info );
+//  old_font = SelectObject( dc, CurFont );
+    calcTextDimensions( hwnd, dc, info );
 
     /*
-     * Clear edge areas that may not get refreshed
+     * Clear edge areas that may not get refreshed.
      */
     wbrush = GetStockObject( WHITE_BRUSH );
     area.top = 0;
@@ -669,29 +732,39 @@ static void ReSizeMemBox( HWND hwnd, DWORD size, MemWndInfo *info ) {
     area.top = area.bottom - FontHeight;
     area.left = 0;
     FillRect( dc, &area, wbrush );
-    RedrawMemWnd( hwnd, dc, info );
+    redrawMemWnd( hwnd, dc, info );
     InvalidateRect( info->scrlbar, NULL, TRUE );
     UpdateWindow( info->scrlbar );
-//    SelectObject( dc, old_font );
+//  SelectObject( dc, old_font );
     ReleaseDC( hwnd, dc );
-} /* ReSizeMembox */
 
-static void ScrollData( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info ) {
+} /* resizeMemBox */
 
+/*
+ * scrollData
+ */
+static void scrollData( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info )
+{
     HDC         dc;
     DWORD       offset;
 
     switch( wparam ) {
     case SB_LINEUP:
-        if( info->offset == info->base ) return;
+        if( info->offset == info->base ) {
+            return;
+        }
         info->offset -= info->bytesdisp;
         break;
     case SB_LINEDOWN:
-        if( info->limit - info->offset <= info->bytesdisp ) return;
+        if( info->limit - info->offset <= info->bytesdisp ) {
+            return;
+        }
         info->offset += info->bytesdisp;
         break;
     case SB_PAGEUP:
-        if( info->offset == info->base ) return;
+        if( info->offset == info->base ) {
+            return;
+        }
         if( info->offset < info->lastline * info->bytesdisp + info->base ) {
             info->offset = info->base;
         } else {
@@ -703,8 +776,7 @@ static void ScrollData( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info ) {
             if( info->limit - info->offset <= info->bytesdisp ) {
                 return;
             } else {
-                info->offset = info->limit -
-                           ( ( info->limit - info->base ) % info->bytesdisp );
+                info->offset = info->limit - ((info->limit - info->base) % info->bytesdisp);
                 if( info->offset == info->limit ) {
                     info->offset = info->limit - info->bytesdisp;
                 }
@@ -715,12 +787,11 @@ static void ScrollData( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info ) {
         break;
     case SB_THUMBTRACK:
     case SB_THUMBPOSITION:
-        offset = ScrollPosToOffset( pos, info );
-        offset -= ( offset - info->base ) % info->bytesdisp;
+        offset = scrollPosToOffset( pos, info );
+        offset -= (offset - info->base) % info->bytesdisp;
         info->offset = offset;
         if( offset >= info->limit ) {
-            info->offset = info->limit -
-                           ( ( info->limit - info->base ) % info->bytesdisp );
+            info->offset = info->limit - ((info->limit - info->base) % info->bytesdisp);
         }
         if( offset == info->limit ) {
             info->offset = info->limit - info->bytesdisp;
@@ -736,13 +807,16 @@ static void ScrollData( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info ) {
         return;
     }
     dc = GetDC( hwnd );
-    RedrawMemWnd( hwnd, dc, info );
+    redrawMemWnd( hwnd, dc, info );
     ReleaseDC( hwnd, dc );
+
 } /* ScrollData */
 
 
-BOOL __export FAR PASCAL OffsetProc( HWND hwnd, WORD msg, WORD wparam,
-                                    DWORD lparam )
+/*
+ * OffsetProc
+ */
+BOOL __export FAR PASCAL OffsetProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     char                buf[41];
     unsigned long       offset;
@@ -760,67 +834,68 @@ BOOL __export FAR PASCAL OffsetProc( HWND hwnd, WORD msg, WORD wparam,
         ctl = GetDlgItem( hwnd, OFF_OFFSET );
         SetFocus( ctl );
         return( FALSE );
-        break;
     case WM_COMMAND:
         switch( LOWORD( wparam ) ) {
-            case IDOK:
-                /* get the request */
-                GetDlgItemText( hwnd, OFF_OFFSET, buf, 40 );
-                offset = strtoul( buf, &end, 0 );
+        case IDOK:
+            /* get the request */
+            GetDlgItemText( hwnd, OFF_OFFSET, buf, 40 );
+            offset = strtoul( buf, &end, 0 );
+            if( *end != '\0' ) {
+                while( isspace( *end ) ) {
+                    end++;
+                }
                 if( *end != '\0' ) {
-                    while( isspace( *end ) ) end++;
-                    if( *end != '\0' ) {
-                        RCMessageBox( hwnd, MWND_ENTER_NUMERIC_VALUE,
-                                    MemConfigInfo.appname,
-                                    MB_OK | MB_ICONEXCLAMATION );
-                        break;
-                    }
-                }
-                /* set the offset */
-                parent = GetParent( hwnd );
-                info = (MemWndInfo *)GetWindowLong( parent, 0 );
-                if( offset > info->limit ) {
-                    RCMessageBox( hwnd, MWND_OFFSET_TOO_BIG,
-                                MemConfigInfo.appname,
-                                MB_OK | MB_ICONEXCLAMATION );
+                    RCMessageBox( hwnd, MWND_ENTER_NUMERIC_VALUE, MemConfigInfo.appname,
+                                  MB_OK | MB_ICONEXCLAMATION );
                     break;
                 }
-                if( offset < info->base ) {
-                    RCMessageBox( hwnd, MWND_OFFSET_TOO_SMALL,
-                                MemConfigInfo.appname,
-                                MB_OK | MB_ICONEXCLAMATION );
-                    break;
-                }
-                hourglass = LoadCursor( NULLHANDLE, IDC_WAIT );
-                SetCapture( parent );
-                oldcursor= SetCursor( hourglass );
-                if( ISCODE( info ) ) {
-                    info->ins_cnt = GetInsCnt( info, offset );
-                } else {
-                    offset -= ( offset - info->base ) % info->bytesdisp;
-                    info->offset = offset;
-                }
-                dc = GetDC( parent );
-                RedrawMemWnd( parent, dc, info );
-                ReleaseDC( parent, dc );
-                SetCursor( oldcursor );
-                ReleaseCapture();
-                /* fall through */
-            case IDCANCEL:
-                EndDialog( hwnd, FALSE );
+            }
+            /* set the offset */
+            parent = GetParent( hwnd );
+            info = (MemWndInfo *)GetWindowLong( parent, 0 );
+            if( offset > info->limit ) {
+                RCMessageBox( hwnd, MWND_OFFSET_TOO_BIG, MemConfigInfo.appname,
+                              MB_OK | MB_ICONEXCLAMATION );
                 break;
+            }
+            if( offset < info->base ) {
+                RCMessageBox( hwnd, MWND_OFFSET_TOO_SMALL, MemConfigInfo.appname,
+                              MB_OK | MB_ICONEXCLAMATION );
+                break;
+            }
+            hourglass = LoadCursor( NULLHANDLE, IDC_WAIT );
+            SetCapture( parent );
+            oldcursor = SetCursor( hourglass );
+            if( ISCODE( info ) ) {
+                info->ins_cnt = GetInsCnt( info, offset );
+            } else {
+                offset -= (offset - info->base) % info->bytesdisp;
+                info->offset = offset;
+            }
+            dc = GetDC( parent );
+            redrawMemWnd( parent, dc, info );
+            ReleaseDC( parent, dc );
+            SetCursor( oldcursor );
+            ReleaseCapture();
+            /* fall through */
+        case IDCANCEL:
+            EndDialog( hwnd, FALSE );
+            break;
         }
         break;
     default:
         return( FALSE );
     }
     return( TRUE );
-}
+
+} /* OffsetProc */
 
 
-BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
-                                    DWORD lparam ) {
-
+/*
+ * MemDisplayProc
+ */
+BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
+{
     HDC                 dc;
     MemWndInfo          *info;
     PAINTSTRUCT         paint;
@@ -833,12 +908,11 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
     FARPROC             fp;
     WORD                cmd;
 
-
     info = (MemWndInfo *)GetWindowLong( hwnd, 0 );
     switch( msg ) {
     case WM_CREATE:
         RegDisasmRtns();
-        info = (MemWndInfo *) ( (CREATESTRUCT *)lparam)->lpCreateParams;
+        info = (MemWndInfo *)((CREATESTRUCT *)lparam)->lpCreateParams;
         SetWindowLong( hwnd, 0, (DWORD)info );
         menu = GetMenu( hwnd );
         CheckMenuItem( menu, info->disp_type, MF_CHECKED );
@@ -849,7 +923,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
         info->scrlbar = CreateWindow(
             "ScrollBar",                /* Window class name */
             "",
-            WS_CHILD|SBS_VERT,          /* Window style */
+            WS_CHILD | SBS_VERT,        /* Window style */
             0,                          /* Initial X position */
             0,                          /* Initial Y position */
             0,                          /* Initial X size */
@@ -857,30 +931,30 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
             hwnd,                       /* Parent window handle */
             NULLHANDLE,                 /* Window menu handle */
             inst,                       /* Program instance handle */
-            NULL);                      /* Create parameters */
+            NULL );                     /* Create parameters */
         MoveWindow( hwnd, MemConfigInfo.xpos, MemConfigInfo.ypos,
                     MemConfigInfo.xsize, MemConfigInfo.ysize, TRUE );
         ShowWindow( info->scrlbar, SW_HIDE );
         SetScrollRange( info->scrlbar, SB_CTL, 0, SCROLL_RANGE, FALSE );
         if( MemConfigInfo.disp_info ) {
-            DisplaySegInfo( hwnd, inst, info );
+            displaySegInfo( hwnd, inst, info );
         }
         break;
     case WM_SIZE:
-        if( wparam == SIZE_MAXIMIZED ){
+        if( wparam == SIZE_MAXIMIZED ) {
             info->maximized = TRUE;
         } else {
             info->maximized = FALSE;
         }
-        ReSizeMemBox( hwnd, lparam, info );
+        resizeMemBox( hwnd, lparam, info );
     case WM_MOVE:
         if( info->autopos && IsWindow( info->dialog ) ) {
-            PositionSegInfo( info->dialog );
+            positionSegInfo( info->dialog );
         }
         break;
     case WM_PAINT:
         BeginPaint( hwnd, &paint );
-        RedrawMemWnd( hwnd, paint.hdc, info );
+        redrawMemWnd( hwnd, paint.hdc, info );
         EndPaint( hwnd, &paint );
         break;
     case WM_SHOWWINDOW:
@@ -908,10 +982,12 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
         case VK_NEXT:
             wparam = SB_PAGEDOWN;
             break;
-#if(0)
-/* I don't support these functions because it takes too long
- * to perform an end operation on an assembly window if it is the
- * first operation */
+#if 0
+        /*
+         * I don't support these functions because it takes too long
+         * to perform an end operation on an assembly window if it is the
+         * first operation.
+         */
         case VK_HOME:
             wparam = SB_TOP;
             break;
@@ -925,9 +1001,9 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
     case WM_VSCROLL:
         if( ISCODE( info ) ) {
             ScrollAsm( hwnd, GET_WM_VSCROLL_CODE( wparam, lparam ),
-                        GET_WM_VSCROLL_POS( wparam, lparam ), info );
+                       GET_WM_VSCROLL_POS( wparam, lparam ), info );
         } else {
-            ScrollData( hwnd, GET_WM_VSCROLL_CODE( wparam, lparam ),
+            scrollData( hwnd, GET_WM_VSCROLL_CODE( wparam, lparam ),
                         GET_WM_VSCROLL_POS( wparam, lparam ), info );
         }
         break;
@@ -942,7 +1018,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
             break;
         case MEMINFO_SHOW:
             inst = GET_HINSTANCE( hwnd );
-            DisplaySegInfo( hwnd, inst, info );
+            displaySegInfo( hwnd, inst, info );
             break;
         case MEMINFO_AUTO_POS:
             menu = GetMenu( hwnd );
@@ -952,7 +1028,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
                 info->autopos = FALSE;
             } else {
                 info->autopos = TRUE;
-                PositionSegInfo( info->dialog );
+                positionSegInfo( info->dialog );
             }
             break;
         case MEMINFO_EXIT:
@@ -967,7 +1043,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
         case MEMINFO_WORD:
         case MEMINFO_DWORD:
             if( ISCODE( info ) ) {
-                info->offset -= ( info->offset - info->base ) % info->bytesdisp;
+                info->offset -= (info->offset - info->base) % info->bytesdisp;
             }
             menu = GetMenu( hwnd );
             CheckMenuItem( menu, info->disp_type, MF_UNCHECKED );
@@ -983,7 +1059,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
             FillRect( dc, &area, wbrush );
             ReleaseDC( hwnd, dc );
             GetClientRect( hwnd, &area );
-            ReSizeMemBox( hwnd, size, info );
+            resizeMemBox( hwnd, size, info );
             break;
         case MEMINFO_OFFSET:
             inst = GET_HINSTANCE( hwnd );
@@ -1030,9 +1106,14 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
     }
     return( TRUE );
-}
 
-static void PositionSegInfo( HWND hwnd ) {
+} /* MemDisplayProc */
+
+/*
+ * positionSegInfo
+ */
+static void positionSegInfo( HWND hwnd )
+{
     HWND        parent;
     RECT        psize;
     RECT        dsize;
@@ -1052,9 +1133,10 @@ static void PositionSegInfo( HWND hwnd ) {
     scrn_width = GetSystemMetrics( SM_CXSCREEN );
     xpos = psize.left;
     ypos = psize.top;
-    if( ypos < 0 ) ypos = 0;
-    if( psize.bottom + dheight <= scrn_hite
-        && psize.left + dwidth <= scrn_width ) {
+    if( ypos < 0 ) {
+        ypos = 0;
+    }
+    if( psize.bottom + dheight <= scrn_hite && psize.left + dwidth <= scrn_width ) {
         ypos = psize.bottom;
     } else if( psize.top > dheight && psize.left + dwidth <= scrn_width ) {
         ypos = psize.top - dheight;
@@ -1068,11 +1150,12 @@ static void PositionSegInfo( HWND hwnd ) {
     }
     SetWindowPos( hwnd, NULLHANDLE, xpos, ypos, 0, 0, SWP_NOSIZE | SWP_NOZORDER );
 
-} /* PositionSegInfo */
+} /* positionSegInfo */
 
-
-BOOL __export FAR PASCAL SegInfoProc( HWND hwnd, WORD msg, WORD wparam,
-                                    DWORD lparam )
+/*
+ * SegInfoProc
+ */
+BOOL __export FAR PASCAL SegInfoProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     HWND        parent;
     HMENU       mh;
@@ -1081,7 +1164,7 @@ BOOL __export FAR PASCAL SegInfoProc( HWND hwnd, WORD msg, WORD wparam,
     lparam = lparam;
     switch( msg ) {
     case WM_INITDIALOG:
-        PositionSegInfo( hwnd );
+        positionSegInfo( hwnd );
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
@@ -1098,22 +1181,25 @@ BOOL __export FAR PASCAL SegInfoProc( HWND hwnd, WORD msg, WORD wparam,
         break;
     case WM_NCDESTROY:
 #ifndef __NT__
-        DialCount --;
+        DialCount--;
         if( DialCount == 0 ) {
             FreeProcInstance( DialProc );
         }
 #endif
-        return( FALSE ); /* we need to let WINDOWS see this message or
-                            fonts are left undeleted */
-        break;
+        return( FALSE ); /* we need to let Windows see this message
+                            or fonts are left undeleted */
     default:
         return( FALSE );
     }
     return( TRUE );
-}
 
-static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info ) {
+} /* SegInfoProc */
 
+/*
+ * displaySegInfo
+ */
+static void displaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info )
+{
 #ifdef __NT__
     parent = parent;
     instance = instance;
@@ -1132,7 +1218,7 @@ static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info ) {
     if( DialCount == 0 ) {
         DialProc = MakeProcInstance( (FARPROC)SegInfoProc, instance );
     }
-    DialCount ++;
+    DialCount++;
     if( info->isdpmi ) {
         GetADescriptor( info->sel, &desc );
         hwnd = CreateDialog( instance, "SEL_INFO", parent, (DLGPROC)DialProc );
@@ -1166,7 +1252,7 @@ static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info ) {
         SetDlgItemText( hwnd, SEL_INFO_GRAN, rcstr );
         FreeRCString( rcstr );
         ptr = buf;
-        CreateAccessString( ptr, &desc );
+        createAccessString( ptr, &desc );
         SetDlgItemText( hwnd, SEL_INFO_ACCESS, buf );
     } else {
         ge.dwSize = sizeof( GLOBALENTRY );
@@ -1195,11 +1281,15 @@ static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info ) {
     }
     info->dialog = hwnd;
 #endif
-} /* DisplaySegInfo */
+
+} /* displaySegInfo */
 
 
-HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
-
+/*
+ * DispMem
+ */
+HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi )
+{
     HWND                hdl;
     char                buf[50];
     MemWndInfo          *info;
@@ -1231,7 +1321,7 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
     info = MemAlloc( sizeof( MemWndInfo ) );
     if( info == NULL ) {
         RCMessageBox( parent, MWND_CANT_DISP_MEM_WND, MemConfigInfo.appname,
-                    MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
+                      MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
         return( NULLHANDLE );
     }
     info->sel = seg;
@@ -1279,9 +1369,9 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
     hdl = CreateWindow(
         MEM_DISPLAY_CLASS,      /* Window class name */
         buf,                    /* Window caption */
-        WS_OVERLAPPED|WS_CAPTION
-        |WS_SYSMENU|WS_THICKFRAME
-        |WS_MAXIMIZEBOX,        /* Window style */
+        WS_OVERLAPPED | WS_CAPTION |
+        WS_SYSMENU | WS_THICKFRAME |
+        WS_MAXIMIZEBOX,         /* Window style */
         0,                      /* Initial X position */
         0,                      /* Initial Y position */
         0,                      /* Initial X size */
@@ -1292,7 +1382,7 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
         info );                 /* Create parameters */
     if( hdl == NULL || info->scrlbar == NULL ) {
         RCMessageBox( parent, MWND_CANT_DISP_MEM_WND, MemConfigInfo.appname,
-                    MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
+                      MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
         DestroyWindow( hdl );
         MemFree( info );
         return( NULLHANDLE );
@@ -1306,12 +1396,17 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
         CurWindow = hdl;
     }
     return( hdl );
-}
+
+} /* DispMem */
 
 #ifdef __NT__
-HWND DispNTMem( HWND parent, HANDLE instance, HANDLE prochdl, DWORD offset,
-                DWORD limit, char *title ) {
 
+/*
+ * DispNTMem
+ */
+HWND DispNTMem( HWND parent, HANDLE instance, HANDLE prochdl, DWORD offset,
+                DWORD limit, char *title )
+{
     HWND        ret;
 
     ProcessHdl = prochdl;
@@ -1320,5 +1415,7 @@ HWND DispNTMem( HWND parent, HANDLE instance, HANDLE prochdl, DWORD offset,
     ret = DispMem( instance, parent, 0, FALSE );
     SetWindowText( ret, title );
     return( ret );
-}
+
+} /* DispNTMem */
+
 #endif

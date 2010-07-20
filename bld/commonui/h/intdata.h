@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _INTDATA_H_INCLUDED
+#define _INTDATA_H_INCLUDED
+
 #pragma pack( __push, 1 )
 
 typedef struct {
@@ -59,12 +62,14 @@ typedef struct {
 #pragma pack( __pop )
 
 enum {
-    KILL_APP=0,
+    KILL_APP = 0,
     RESTART_APP,
     CHAIN
 };
 
 #define EXCESS_CRAP_ON_STACK    0x14
 
-void RestoreState( interrupt_struct *idata, fault_frame *ff );
-void SaveState( interrupt_struct *idata, fault_frame *ff );
+void    RestoreState( interrupt_struct *idata, fault_frame *ff );
+void    SaveState( interrupt_struct *idata, fault_frame *ff );
+
+#endif /* _INTDATA_H_INCLUDED */

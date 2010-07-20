@@ -29,4 +29,9 @@
 ****************************************************************************/
 
 
-DWORD GetRealCSIP( HTASK htask, HMODULE *mod );
+#ifndef _GETCSIP_H_INCLUDED
+#define _GETCSIP_H_INCLUDED
+
+DWORD   GetRealCSIP( HTASK htask, HMODULE *mod );
+
+#endif /* _GETCSIP_H_INCLUDED */

@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _SRCHMSG_H_INCLUDED
+#define _SRCHMSG_H_INCLUDED
+
 /*
  * Here is an example of how to set up a message list.
  * Notice the 0, NULL entry used to delimit the end of the list.
@@ -38,7 +41,8 @@
  *          MH_CREATE,          "CREATED",
  *          MH_DELETE,          "DELETED",
  *          MH_KEEP,            "KEPT",
- *          0,                  NULL };
+ *          0,                  NULL
+ *   };
  *
  * or for one to be used with InitSrchTable (here 0, -1 delimits the end)
  *
@@ -47,7 +51,8 @@
  *          MH_CREATE,          (char *)STR_CREATED,
  *          MH_DELETE,          (char *)STR_DELETED,
  *          MH_KEEP,            (char *)STR_KEPT,
- *          0,                  (char *)-1 };
+ *          0,                  (char *)-1
+ *   };
  */
 
 typedef struct {
@@ -55,5 +60,7 @@ typedef struct {
      char       *msg;
 } msglist;
 
-char *SrchMsg( unsigned msgno, msglist *tbl, char *dflt );
-BOOL InitSrchTable( HANDLE inst, msglist *tbl );
+char    *SrchMsg( unsigned msgno, msglist *tbl, char *dflt );
+BOOL    InitSrchTable( HANDLE inst, msglist *tbl );
+
+#endif /* _SRCHMSG_H_INCLUDED */

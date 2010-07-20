@@ -45,18 +45,22 @@ typedef HWND (WINAPI *PFNHH)( HWND, LPCSTR, UINT, DWORD_PTR );
 static PFNHH    pfnHtmlHelp = NULL;
 #endif
 
+/*
+ * WWinHelp - open an WinHelp file
+ */
 BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
 {
     char        buff[_MAX_PATH];
     static char open = FALSE;
 
-    if( fuCommand == HELP_QUIT && !open ) return( FALSE );
+    if( fuCommand == HELP_QUIT && !open ) {
+        return( FALSE );
+    }
     open = TRUE;
 
     if( helpFile != NULL ) {
         if( __IsDBCS ) {
             /* Look for Japanese version of help file first */
-
             char        drive[_MAX_DRIVE];
             char        dir[_MAX_DIR];
             char        fname[_MAX_FNAME];
@@ -86,13 +90,18 @@ BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
         }
 
         /* Can't find the Japanese version, just look for the english one */
-
         _searchenv( helpFile, "WWINHELP", buff );
-        if( buff[0] != '\0' ) helpFile = buff;
+        if( buff[0] != '\0' ) {
+            helpFile = buff;
+        }
     }
     return( WinHelp( hwnd, helpFile, fuCommand, data ) );
-}
 
+} /* WWinHelp */
+
+/*
+ * WHtmlHelp - open an HTML Help file
+ */
 BOOL WHtmlHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
 {
 #ifdef __NT__
@@ -130,4 +139,5 @@ BOOL WHtmlHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
     data = data;
     return( FALSE );
 #endif
-}
+
+} /* WHtmlHelp */

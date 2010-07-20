@@ -29,28 +29,21 @@
 ****************************************************************************/
 
 
+#ifndef _JDLG_H_INCLUDED
+#define _JDLG_H_INCLUDED
+
 extern BOOL JDialogInit( void );
 extern void JDialogFini( void );
-extern int JDialogBox( HINSTANCE hinst, LPCSTR lpszDlgTemp,
-                       HWND hwndOwner, DLGPROC dlgproc );
-extern int JDialogBoxIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
-                               HWND hwndOwner, DLGPROC dlgproc );
-extern int JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
-                            HWND hwndOwner, DLGPROC dlgproc,
-                            LPARAM lParamInit );
-extern int JDialogBoxIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
-                                    HWND hwndOwner, DLGPROC dlgproc,
-                                    LPARAM lParamInit );
+extern int  JDialogBox( HINSTANCE hinst, LPCSTR lpszDlgTemp, HWND hwndOwner, DLGPROC dlgproc );
+extern int  JDialogBoxIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp, HWND hwndOwner, DLGPROC dlgproc );
+extern int  JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp, HWND hwndOwner, DLGPROC dlgproc, LPARAM lParamInit );
+extern int  JDialogBoxIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp, HWND hwndOwner, DLGPROC dlgproc, LPARAM lParamInit );
 
-extern HWND JCreateDialogIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
-                                   HWND hwndOwner, DLGPROC dlgproc );
-extern HWND JCreateDialogIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
-                                        HWND hwndOwner, DLGPROC dlgproc,
-                                        LPARAM lParamInit );
-extern HWND JCreateDialog( HINSTANCE hinst, LPCSTR lpszDlgTemp,
-                           HWND hwndOwner, DLGPROC dlgproc );
-extern HWND JCreateDialogParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
-                                HWND hwndOwner, DLGPROC dlgproc,
-                                LPARAM lParamInit );
+extern HWND JCreateDialogIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp, HWND hwndOwner, DLGPROC dlgproc );
+extern HWND JCreateDialogIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp, HWND hwndOwner, DLGPROC dlgproc, LPARAM lParamInit );
+extern HWND JCreateDialog( HINSTANCE hinst, LPCSTR lpszDlgTemp, HWND hwndOwner, DLGPROC dlgproc );
+extern HWND JCreateDialogParam( HINSTANCE hinst, LPCSTR lpszDlgTemp, HWND hwndOwner, DLGPROC dlgproc, LPARAM lParamInit );
 
 extern BOOL JDialogGetJFont( char **typeface, short *pointsize );
+
+#endif /* _JDLG_H_INCLUDED */

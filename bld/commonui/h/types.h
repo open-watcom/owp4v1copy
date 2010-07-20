@@ -29,7 +29,12 @@
 ****************************************************************************/
 
 
+#ifndef _TYPES_H_INCLUDED
+#define _TYPES_H_INCLUDED
+
 typedef struct {
     DWORD       offset;
     WORD        seg;
 } ADDRESS;
+
+#endif /* _TYPES_H_INCLUDED */

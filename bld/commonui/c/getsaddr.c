@@ -49,41 +49,51 @@ static BOOL SeekRead( int handle, DWORD newpos, void *buff, WORD size )
 {
     tiny_ret_t  rc;
 
-    if( TINY_ERROR( TinySeek( handle, newpos, TIO_SEEK_SET ) ) )
+    if( TINY_ERROR( TinySeek( handle, newpos, TIO_SEEK_SET ) ) ) {
         return( FALSE );
+    }
     rc = TinyRead( handle, buff, size );
-    if( TINY_ERROR( rc ) )
+    if( TINY_ERROR( rc ) ) {
         return( FALSE );
-    if( TINY_INFO( rc ) != size )
+    }
+    if( TINY_INFO( rc ) != size ) {
         return( FALSE );
+    }
     return( TRUE );
 
 } /* SeekRead */
 
 /*
- * FindNewHeader - get a pointer to the new exe header
+ * FindNewHeader - get a pointer to the new executable header
  */
 static BOOL FindNewHeader( int handle, DWORD *nh_offset )
 {
     WORD        data;
 
-    if( !SeekRead( handle, 0x00, &data, sizeof( data ) ) )
+    if( !SeekRead( handle, 0x00, &data, sizeof( data ) ) ) {
         return( FALSE );
-    if( data != EXE_MZ )
+    }
+    if( data != EXE_MZ ) {
         return( FALSE );
+    }
 
-    if( !SeekRead( handle, 0x18, &data, sizeof( data ) ) )
+    if( !SeekRead( handle, 0x18, &data, sizeof( data ) ) ) {
         return( FALSE );
-    if( data < 0x40 )
+    }
+    if( data < 0x40 ) {
         return( FALSE );
+    }
 
-    if( !SeekRead( handle, 0x3c, nh_offset, sizeof( DWORD ) ) )
+    if( !SeekRead( handle, 0x3c, nh_offset, sizeof( DWORD ) ) ) {
         return( FALSE );
+    }
 
-    if( !SeekRead( handle, *nh_offset, &data, sizeof( WORD ) ) )
+    if( !SeekRead( handle, *nh_offset, &data, sizeof( WORD ) ) ) {
         return( FALSE );
-    if( data != EXE_NE )
+    }
+    if( data != EXE_NE ) {
         return( FALSE );
+    }
 
     return( TRUE );
 
@@ -102,23 +112,24 @@ BOOL GetStartAddress( char *path, addr48_ptr *res )
     WORD        object;
 
     rc = TinyOpen( path, TIO_READ );
-    if( TINY_ERROR( rc ) )
+    if( TINY_ERROR( rc ) ) {
         return( FALSE );
+    }
     handle = TINY_INFO( rc );
 
     if( !FindNewHeader( handle, &nh_offset ) ) {
         TinyClose( handle );
         return( FALSE );
     }
-    if( !SeekRead( handle, nh_offset+0x14, &ip, sizeof( ip ) ) ) {
+    if( !SeekRead( handle, nh_offset + 0x14, &ip, sizeof( ip ) ) ) {
         TinyClose( handle );
         return( FALSE );
     }
-    if( !SeekRead( handle, nh_offset+0x16, &object, sizeof( object ) ) ) {
+    if( !SeekRead( handle, nh_offset + 0x16, &object, sizeof( object ) ) ) {
         TinyClose( handle );
         return( FALSE );
     }
-    res->offset = (DWORD) ip;
+    res->offset = (DWORD)ip;
     res->segment = object;
 
     TinyClose( handle );

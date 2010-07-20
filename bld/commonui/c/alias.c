@@ -47,66 +47,76 @@
 
 static AliasHdl         CurHdl;         /* used for dialog box processing */
 
-static AnAlias *FindAlias( AliasHdl hdl, unsigned long id ) {
-
+/*
+ * findAlias - search for an alias with the given handle and identifier
+ */
+static AnAlias *findAlias( AliasHdl hdl, unsigned long id )
+{
     AnAlias     *cur;
 
     cur = hdl->data;
     while( cur != NULL ) {
-        if( cur->id == id ) return( cur );
-        if( cur->id > id ) break;
+        if( cur->id == id ) {
+            return( cur );
+        }
+        if( cur->id > id ) {
+            break;
+        }
         cur = cur->next;
     }
     return( NULL );
-}
+
+} /* findAlias */
 
 /*
  * InitAliasHdl - initialize an alias handle before any aliases are
  *                assigned to it
  */
-
-void InitAliasHdl( AliasHdl *hdl, void (*updatefn)(unsigned long, char *, char *, void *), void *userdata ) {
+void InitAliasHdl( AliasHdl *hdl,
+                   void (*updatefn)( unsigned long, char *, char *, void * ),
+                   void *userdata )
+{
     *hdl = MemAlloc( sizeof( AliasList ) );
     (*hdl)->data = NULL;
     (*hdl)->userdata = userdata;
     (*hdl)->updatefn = updatefn;
-}
+
+} /* InitAliasHdl */
 
 /*
- * InsertAlias - insert an alias in the alias list using linear
- *              insertion sort
+ * insertAlias - insert an alias in the alias list using linear
+ *               insertion sort
  */
-
-static void InsertAlias( AliasHdl hdl, AnAlias *alias ) {
-
+static void insertAlias( AliasHdl hdl, AnAlias *alias )
+{
     AnAlias     **cur;
 
-    cur = &(hdl->data);
-    for( ;; ){
+    cur = &hdl->data;
+    for( ;; ) {
         if( *cur == NULL || (*cur)->id > alias->id ) {
             alias->next = *cur;
             *cur = alias;
             break;
         }
-        cur = &( (*cur)->next );
+        cur = &(*cur)->next;
     }
-}
+
+} /* insertAlias */
 
 /*
  * AddAlias - add an alias to an alias list
- *          - if an alias already exists for this id replace it
+ *          - if an alias already exists for this identifier replace it
  */
-
-void AddAlias( AliasHdl hdl, char *text, unsigned long id ) {
-
+void AddAlias( AliasHdl hdl, char *text, unsigned long id )
+{
     AnAlias     *cur;
     unsigned    len;
 
-    cur = FindAlias( hdl, id );
+    cur = findAlias( hdl, id );
     if( cur == NULL ) {
         cur = MemAlloc( sizeof( AnAlias ) );
         cur->id = id;
-        InsertAlias( hdl, cur );
+        insertAlias( hdl, cur );
         if( hdl->updatefn != NULL ) {
             hdl->updatefn( id, text, NULL, hdl->userdata );
         }
@@ -119,16 +129,17 @@ void AddAlias( AliasHdl hdl, char *text, unsigned long id ) {
     len = strlen( text ) + 1;
     cur->name = MemAlloc( len );
     strcpy( cur->name, text );
-}
+
+} /* AddAlias */
 
 /*
- * FreeAlias - free all memory associated with an alias list.
- *              InitAliasHdl must be called before this handle can be
- *              used again
+ * FreeAlias - free all memory associated with an alias list
+ *           - InitAliasHdl must be called before this handle can be
+ *             used again
  */
 
-void FreeAlias( AliasHdl hdl ) {
-
+void FreeAlias( AliasHdl hdl )
+{
     AnAlias     *cur;
     AnAlias     *tmp;
 
@@ -140,44 +151,62 @@ void FreeAlias( AliasHdl hdl ) {
         MemFree( tmp );
     }
     MemFree( hdl );
-}
+
+} /* FreeAlias */
 
 /*
- * LookupAlias - return the string associated with an id or NULL if
- *              no alias exists
+ * LookupAlias - return the string associated with an identifier or NULL if
+ *               no alias exists
  */
-char *LookupAlias( AliasHdl hdl, unsigned long id ) {
-
+char *LookupAlias( AliasHdl hdl, unsigned long id )
+{
     AnAlias     *cur;
 
-    cur = FindAlias( hdl, id );
-    if( cur == NULL ) return( NULL );
+    cur = findAlias( hdl, id );
+    if( cur == NULL ) {
+        return( NULL );
+    }
     return( cur->name );
-}
 
-static AnAlias *GetIthAlias( AliasHdl hdl, unsigned i ) {
+} /* LookupAlias */
 
+/*
+ * getIthAlias - get the alias in the given alias list with the given index
+ */
+static AnAlias *getIthAlias( AliasHdl hdl, unsigned i )
+{
     AnAlias     *ret;
 
     ret = hdl->data;
-    for( ; i > 0; i-- ) ret = ret->next;
+    for( ; i > 0; i-- ) {
+        ret = ret->next;
+    }
     return( ret );
 }
 
-static AnAlias *findAliasFromText( AliasHdl hdl, char *alias ) {
-
+/*
+ * findAliasFromText - find an alias in the given alias list with the given text
+ */
+static AnAlias *findAliasFromText( AliasHdl hdl, char *alias )
+{
     AnAlias     *cur;
 
     cur = hdl->data;
     while( cur != NULL ) {
-        if( !strcmp( alias, cur->name ) ) break;
+        if( !strcmp( alias, cur->name ) ) {
+            break;
+        }
         cur = cur->next;
     }
     return( cur );
-}
 
+} /* findAliasFromText */
+
+/*
+ * AliasDlgProc - alias list dialog procedure
+ */
 BOOL __export FAR PASCAL AliasDlgProc( HWND hwnd, UINT msg,
-                                          WPARAM wparam, DWORD lparam )
+                                       WPARAM wparam, LPARAM lparam )
 {
     AnAlias     *cur;
     unsigned    len;
@@ -199,8 +228,7 @@ BOOL __export FAR PASCAL AliasDlgProc( HWND hwnd, UINT msg,
         SendDlgItemMessage( hwnd, ALIAS_TEXT, EM_LIMITTEXT, 20, 0 );
         while( cur != NULL ) {
             sprintf( buf, "0x%08X", cur->id );
-            SendDlgItemMessage( hwnd, ALIAS_ID_LIST, LB_ADDSTRING, 0,
-                                    (DWORD) buf );
+            SendDlgItemMessage( hwnd, ALIAS_ID_LIST, LB_ADDSTRING, 0, (DWORD)buf );
             cur = cur->next;
         }
         break;
@@ -215,28 +243,34 @@ BOOL __export FAR PASCAL AliasDlgProc( HWND hwnd, UINT msg,
             case IDOK:
             case ALIAS_DO_MORE:
                 SendDlgItemMessage( hwnd, ALIAS_CUR_ID,
-                                WM_GETTEXT, CONST_LEN, (DWORD)buf );
+                                    WM_GETTEXT, CONST_LEN, (DWORD)buf );
                 realend = buf;
-                while( *realend != '\0' ) realend++;
+                while( *realend != '\0' ) {
+                    realend++;
+                }
                 realend--;
-                while( isspace( *realend ) ) realend--;
+                while( isspace( *realend ) ) {
+                    realend--;
+                }
                 realend++;
                 id = strtol( buf, &endptr, 0 );
                 if( endptr != realend || *buf == '\0' ) {
-                    RCMessageBox( hwnd, ALIAS_VALUE_MUST_BE_INT,
-                                  "", MB_OK );
+                    RCMessageBox( hwnd, ALIAS_VALUE_MUST_BE_INT, "", MB_OK );
                     break;
                 }
-                len = SendDlgItemMessage( hwnd, ALIAS_TEXT,
-                                WM_GETTEXTLENGTH, 0, 0 );
+                len = SendDlgItemMessage( hwnd, ALIAS_TEXT, WM_GETTEXTLENGTH, 0, 0 );
                 alias = MemAlloc( len + 1 );
-                len = SendDlgItemMessage( hwnd, ALIAS_TEXT,
-                                WM_GETTEXT, len + 1, (DWORD)alias );
+                len = SendDlgItemMessage( hwnd, ALIAS_TEXT, WM_GETTEXT,
+                                          len + 1, (DWORD)alias );
                 /* check for spaces */
                 endptr = alias;
-                while( !isspace( *endptr ) && *endptr != '\0' ) endptr ++;
+                while( !isspace( *endptr ) && *endptr != '\0' ) {
+                    endptr++;
+                }
                 realend = endptr;
-                while( isspace( *endptr ) ) endptr ++;
+                while( isspace( *endptr ) ) {
+                    endptr++;
+                }
                 if( *endptr != '\0' ) {
                     RCMessageBox( hwnd, ALIAS_NO_SPACES_ALLOWED, "", MB_OK );
                     MemFree( alias );
@@ -260,15 +294,11 @@ BOOL __export FAR PASCAL AliasDlgProc( HWND hwnd, UINT msg,
                 break;
             case ALIAS_ID_LIST:
                 if( GET_WM_COMMAND_CMD( wparam, lparam ) == LBN_SELCHANGE ) {
-                    sel = SendDlgItemMessage( hwnd, ALIAS_ID_LIST,
-                                    LB_GETCURSEL, 0, 0L );
-                    SendDlgItemMessage( hwnd, ALIAS_ID_LIST,
-                                    LB_GETTEXT, sel, (DWORD)buf );
-                    SendDlgItemMessage( hwnd, ALIAS_CUR_ID, WM_SETTEXT,
-                                    0, (DWORD)buf );
-                    cur = GetIthAlias( CurHdl, sel );
-                    SendDlgItemMessage( hwnd, ALIAS_TEXT, WM_SETTEXT,
-                                    0, (DWORD) ( cur->name ) );
+                    sel = SendDlgItemMessage( hwnd, ALIAS_ID_LIST, LB_GETCURSEL, 0, 0L );
+                    SendDlgItemMessage( hwnd, ALIAS_ID_LIST, LB_GETTEXT, sel, (DWORD)buf );
+                    SendDlgItemMessage( hwnd, ALIAS_CUR_ID, WM_SETTEXT, 0, (DWORD)buf );
+                    cur = getIthAlias( CurHdl, sel );
+                    SendDlgItemMessage( hwnd, ALIAS_TEXT, WM_SETTEXT, 0, (DWORD)cur->name );
                 }
                 break;
             default:
@@ -280,8 +310,11 @@ BOOL __export FAR PASCAL AliasDlgProc( HWND hwnd, UINT msg,
     return( TRUE );
 }
 
-void Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title ) {
-
+/*
+ * Query4Aliases - display the alias list dialog box
+ */
+void Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title )
+{
     FARPROC     fp;
     WORD        ret;
 
@@ -289,13 +322,21 @@ void Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title ) {
     fp = MakeProcInstance( (FARPROC)AliasDlgProc, instance );
     for( ;; ) {
         ret = DialogBoxParam( instance, "ALIAS_DLG", hwnd, (DLGPROC)fp, (DWORD)title );
-        if( ret != ALIAS_DO_MORE ) break;
+        if( ret != ALIAS_DO_MORE ) {
+            break;
+        }
     }
     FreeProcInstance( fp );
     CurHdl = NULL;
-}
 
-void EnumAliases( AliasHdl hdl, void (*enumfn)(unsigned long, char *, void *), void *userdata ) {
+} /* Query4Aliases */
+
+/*
+ * EnumAliases - enumerate all aliases in a given alias list
+ */
+void EnumAliases( AliasHdl hdl, void (*enumfn)( unsigned long, char *, void * ),
+                  void *userdata )
+{
     AnAlias     *cur;
 
     cur = hdl->data;
@@ -304,4 +345,5 @@ void EnumAliases( AliasHdl hdl, void (*enumfn)(unsigned long, char *, void *), v
         cur = cur->next;
     }
     enumfn( (DWORD)-1, NULL, userdata );
-}
+
+} /* EnumAliases */

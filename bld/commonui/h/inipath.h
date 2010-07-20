@@ -28,5 +28,9 @@
 *
 ****************************************************************************/
 
+#ifndef _INIPATH_H_INCLUDED
+#define _INIPATH_H_INCLUDED
+
 void GetConfigFilePath( char *, size_t );
 
+#endif /* _INIPATH_H_INCLUDED */

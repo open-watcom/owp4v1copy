@@ -44,11 +44,10 @@ static HANDLE   wint32DLL;
 extern BOOL     WDebug386;
 
 /*
- * Start386Debug - initialize for 32 bit debugging
+ * Start386Debug - initialize for 32-bit debugging
  */
 void Start386Debug( void )
 {
-
     if( CheckWin386Debug() == WGOD_VERSION ) {
         WDebug386 = TRUE;
     }
@@ -57,12 +56,12 @@ void Start386Debug( void )
         if( (UINT)wint32DLL < 32 ) {
             WDebug386 = FALSE;
         } else {
-            DoneWithInterrupt = (LPVOID) GetProcAddress( wint32DLL, "DoneWithInterrupt" );
-            GetDebugInterruptData = (LPVOID) GetProcAddress( wint32DLL, "GetDebugInterruptData" );
-            ResetDebugInterrupts32 = (LPVOID) GetProcAddress( wint32DLL, "ResetDebugInterrupts32" );
-            SetDebugInterrupts32 = (LPVOID) GetProcAddress( wint32DLL, "SetDebugInterrupts32" );
-            IsDebuggerExecuting = (LPVOID) GetProcAddress( wint32DLL, "IsDebuggerExecuting" );
-            DebuggerIsExecuting = (LPVOID) GetProcAddress( wint32DLL, "DebuggerIsExecuting" );
+            DoneWithInterrupt = (LPVOID)GetProcAddress( wint32DLL, "DoneWithInterrupt" );
+            GetDebugInterruptData = (LPVOID)GetProcAddress( wint32DLL, "GetDebugInterruptData" );
+            ResetDebugInterrupts32 = (LPVOID)GetProcAddress( wint32DLL, "ResetDebugInterrupts32" );
+            SetDebugInterrupts32 = (LPVOID)GetProcAddress( wint32DLL, "SetDebugInterrupts32" );
+            IsDebuggerExecuting = (LPVOID)GetProcAddress( wint32DLL, "IsDebuggerExecuting" );
+            DebuggerIsExecuting = (LPVOID)GetProcAddress( wint32DLL, "DebuggerIsExecuting" );
 
             if( !SetDebugInterrupts32() ) {
                 WDebug386 = FALSE;
@@ -79,7 +78,6 @@ void Start386Debug( void )
  */
 void Done386Debug( void )
 {
-
     if( WDebug386 ) {
         ResetDebugInterrupts32();
         FreeLibrary( wint32DLL );

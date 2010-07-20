@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _HINT_H_INCLUDED
+#define _HINT_H_INCLUDED
+
 #include "statwnd.h"
 
 typedef struct {
@@ -36,13 +39,14 @@ typedef struct {
     WORD        msgid;
 } MenuItemHint;
 
-void HintToolBar( statwnd *wnd, UINT menuid, BOOL select );
-WORD SizeHintBar( statwnd *wnd );
-void HintMenuSelect( statwnd *wnd, HWND hwnd, WPARAM wparam, LPARAM lparam );
-MenuItemHint *SetHintText( statwnd *wnd, MenuItemHint *hints, WORD cnt );
-statwnd *HintWndCreate( HWND parent, RECT *size,
-                        HINSTANCE hinstance, LPVOID lpvParam );
-void HintWndDestroy( statwnd *wnd );
-int HintWndInit( HINSTANCE hinstance, statushook hook, int extra );
-void HintFini( void );
-HWND GetHintHwnd( statwnd *wnd );
+void            HintToolBar( statwnd *wnd, UINT menuid, BOOL select );
+WORD            SizeHintBar( statwnd *wnd );
+void            HintMenuSelect( statwnd *wnd, HWND hwnd, WPARAM wparam, LPARAM lparam );
+MenuItemHint    *SetHintText( statwnd *wnd, MenuItemHint *hints, WORD cnt );
+statwnd         *HintWndCreate( HWND parent, RECT *size, HINSTANCE hinstance, LPVOID lpvParam );
+void            HintWndDestroy( statwnd *wnd );
+int             HintWndInit( HINSTANCE hinstance, statushook hook, int extra );
+void            HintFini( void );
+HWND            GetHintHwnd( statwnd *wnd );
+
+#endif /* _HINT_H_INCLUDED */

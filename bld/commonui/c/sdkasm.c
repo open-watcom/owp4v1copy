@@ -35,19 +35,19 @@
 static DisAsmRtns       *CurRtns;
 
 /*
- * RegisterRtns - register a set of formatting routines.  This function
- *              must be called for each DisAsmRtns structure before it is
- *              used
+ * RegisterRtns - register a set of formatting routines
+ *              - this function must be called for each DisAsmRtns structure
+ *                before it is used
  */
 void RegisterRtns( DisAsmRtns *rtns )
 {
     rtns = rtns;
-}
+
+} /* RegisterRtns */
 
 /*
  * MiscDoCode - cover function for the DoCode function of the disassembler
  */
-
 void MiscDoCode( instruction *ins, char is32, DisAsmRtns *rtns )
 {
     if( CurRtns != NULL ) {
@@ -57,13 +57,13 @@ void MiscDoCode( instruction *ins, char is32, DisAsmRtns *rtns )
     CurRtns = rtns;
     DoCode( ins, is32 );
     CurRtns = NULL;
-}
+
+} /* MiscDoCode */
 
 /*
  * MiscFormatIns - cover function for the FormatIns function of the
  *                 disassembler
  */
-
 void MiscFormatIns( char *buf, instruction *ins, form_option optn, DisAsmRtns *rtns )
 {
     if( CurRtns != NULL ) {
@@ -73,78 +73,135 @@ void MiscFormatIns( char *buf, instruction *ins, form_option optn, DisAsmRtns *r
     CurRtns = rtns;
     FormatIns( buf, ins, optn );
     CurRtns = NULL;
-}
+
+} /* MiscFormatIns */
 
 /*
- * Cover Functions for disassebler interface routines
+ * Cover Functions for disassembler interface routines
  */
 
+/*
+ * GetDataByte
+ */
 int_16 GetDataByte( void )
 {
     return( CurRtns->GetDataByte() );
+
 } /* GetDataByte */
 
+/*
+ * GetDataWord
+ */
 int_16 GetDataWord( void )
 {
     return( CurRtns->GetDataWord() );
+
 } /* GetDataWord */
 
+/*
+ * GetNextByte
+ */
 int_16 GetNextByte( void )
 {
     return( CurRtns->GetNextByte() );
+
 } /* GetNextByte */
 
+/*
+ * GetDataLong
+ */
 long GetDataLong( void )
 {
     return( CurRtns->GetDataLong() );
-}
 
+} /* GetDataLong */
+
+/*
+ * EndOfSegment
+ */
 char EndOfSegment( void )
 {
     return( CurRtns->EndOfSegment() );
-}
 
+} /* EndOfSegment */
+
+/*
+ * GetOffset
+ */
 DWORD GetOffset( void )
 {
     return( CurRtns->GetOffset() );
-}
 
+} /* GetOffset */
+
+/*
+ * ToStr
+ */
 char *ToStr( unsigned long value, uint_16 len, DWORD addr )
 {
     return( CurRtns->ToStr( value, len, addr ) );
-}
 
+} /* ToStr */
+
+/*
+ * JmpLabel
+ */
 char *JmpLabel( unsigned long addr, DWORD off )
 {
     return( CurRtns->JmpLabel( addr, off ) );
-}
 
+} /* JmpLabel */
+
+/*
+ * ToBrStr
+ */
 char *ToBrStr( unsigned long value, DWORD addr )
 {
     return( CurRtns->ToBrStr( value, addr ) );
-}
 
+} /* ToBrStr */
+
+/*
+ * ToIndex
+ */
 char *ToIndex( unsigned long value, unsigned long addr )
 {
     return( CurRtns->ToIndex( value, addr ) );
-}
 
+} /* ToIndex */
+
+/*
+ * ToSegStr
+ */
 char *ToSegStr( DWORD value, WORD seg, DWORD addr )
 {
     return( CurRtns->ToSegStr( value, seg, addr ) );
-}
 
+} /* ToSegStr */
+
+/*
+ * GetWtkInsName
+ */
 char *GetWtkInsName( unsigned ins )
 {
     return( CurRtns->GetWtkInsName( ins ) );
-}
 
+} /* GetWtkInsName */
+
+/*
+ * DoWtk
+ */
 void DoWtk( void )
 {
     CurRtns->DoWtk();
-}
 
+} /* DoWtk */
+
+/*
+ * IsWtk
+ */
 int IsWtk( void )
 {
     return( CurRtns->IsWtk() );
-}
+
+} /* IsWtk */

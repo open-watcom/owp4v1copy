@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-#ifndef __DESCRIPT_INCLUDED__
-#define __DESCRIPT_INCLUDED__
+#ifndef _DESCRIPT_H_INCLUDED
+#define _DESCRIPT_H_INCLUDED
 
 typedef struct {
     unsigned short  limit_15_0;
@@ -50,17 +50,13 @@ typedef struct {
     unsigned char   base_31_24;
 } descriptor;
 
-#define GET_DESC_BASE( desc ) ((DWORD) (desc).base_15_0 + \
-                ((DWORD) (desc).base_23_16 << 16L ) + \
-                ((DWORD) (desc).base_31_24 << 24L ))
+#define GET_DESC_BASE( desc ) \
+    ((DWORD)(desc).base_15_0 + ((DWORD)(desc).base_23_16 << 16L) + \
+    ((DWORD)(desc).base_31_24 << 24L))
 
 #define GET_DESC_LIMIT( desc ) \
-                ( (desc).granularity ? \
-                (( ( (DWORD) (desc).limit_15_0 + \
-                ((DWORD) (desc).limit_19_16<< 16L))  \
-                        << 12L) + 0xfffL ) \
-                : \
-                ((DWORD) (desc).limit_15_0 + \
-                ((DWORD) (desc).limit_19_16<< 16L)) \
-                )
-#endif
+    ((desc).granularity ? \
+    ((((DWORD)(desc).limit_15_0 + ((DWORD)(desc).limit_19_16 << 16L)) << 12L) + 0xfffL) : \
+    ((DWORD)(desc).limit_15_0 + ((DWORD)(desc).limit_19_16 << 16L)))
+
+#endif /* _DESCRIPT_H_INCLUDED */

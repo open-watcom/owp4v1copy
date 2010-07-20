@@ -36,11 +36,10 @@
 #include "ldstr.h"
 
 /*
- * SrchMsg - searchs tbl for a message corresponding to msgno.
+ * SrchMsg - searchs tbl for a message corresponding to msgno
  *         - if one exists a pointer to it is returned
  *           otherwise a pointer to dflt is returned
  */
-
 char *SrchMsg( unsigned msgno, msglist *tbl, char *dflt )
 {
     msglist             *curmsg;
@@ -49,34 +48,39 @@ char *SrchMsg( unsigned msgno, msglist *tbl, char *dflt )
     for( ;; ) {
         if( curmsg->msg == NULL ) {
             return( dflt );
-            break;
         }
         if( curmsg->msgno == msgno ) {
             return( curmsg->msg );
-            break;
         }
-        curmsg ++;
+        curmsg++;
     }
-}
+
+} /* SrchMsg */
 
 /*
  * InitSrchTable - load the strings for a search table from the resource
- *                 file.  WARNING this function must not be called more
- *                 than once for each table.
- *                 buf must be large enough to hold any message in the table
+ *                 file
+ *               - WARNING: this function must not be called more
+ *                 than once for each table
+ *               - buf must be large enough to hold any message in the table
  */
-BOOL InitSrchTable( HANDLE inst, msglist *tbl ) {
-
+BOOL InitSrchTable( HANDLE inst, msglist *tbl )
+{
     msglist             *curmsg;
 
     curmsg = tbl;
     inst = inst;
     for( ;; ) {
-        if( (DWORD)curmsg->msg == (DWORD)-1 ) break;
+        if( (DWORD)curmsg->msg == (DWORD)-1 ) {
+            break;
+        }
         curmsg->msg = AllocRCString( (DWORD)curmsg->msg );
-        if( curmsg->msg == NULL ) return( FALSE );
-        curmsg ++;
+        if( curmsg->msg == NULL ) {
+            return( FALSE );
+        }
+        curmsg++;
     }
     curmsg->msg = NULL;
     return( TRUE );
-}
+
+} /* InitSrchTable */

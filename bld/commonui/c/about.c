@@ -75,7 +75,7 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             SetDlgItemText( hwnd, ABOUT_VERSION, pai->version );
         }
         if( pai->first_cr_year != NULL ) {
-#if defined(__AXP__)
+#if defined( __AXP__ )
             if( strcmp( pai->first_cr_year, CURR_YEAR ) ) {
 #else
             if( _fstrcmp( pai->first_cr_year, CURR_YEAR ) ) {
@@ -86,7 +86,7 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             }
             SetDlgItemText( hwnd, ABOUT_COPYRIGHT, buff );
         }
-#if defined(__WINDOWS__) || defined(__WINDOWS_386__)
+#if defined( __WINDOWS__ ) || defined( __WINDOWS_386__ )
         {
             DWORD       flags;
             DWORD       kfree;
@@ -116,7 +116,7 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             }
             SetDlgItemText( hwnd, ABOUT_INFO3, buff );
         }
-        #else
+#else
         {
             SYSTEM_INFO         si;
             MEMORYSTATUS        ms;
@@ -132,13 +132,6 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             case PROCESSOR_INTEL_PENTIUM:
                 CopyRCString( ABT_RUNNING_ON_586, buff, sizeof( buff ) );
                 break;
-            // the following are not always defined. Since they fall thru
-            // to the default case anyway lets just comment them out.
-            // Those who come after me can figure out what to do.
-            //     -- Wes
-            //case PROCESSOR_INTEL_860:
-            //case PROCESSOR_MIPS_R2000:
-            //case PROCESSOR_MIPS_R3000:
             case PROCESSOR_MIPS_R4000:
             case PROCESSOR_ALPHA_21064:
             default:
@@ -150,7 +143,7 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             ms.dwLength = sizeof( ms );
             GlobalMemoryStatus( &ms );
             RCsprintf( buff, ABT_VIRT_MEM,
-                       ( ms.dwAvailPhys + ms.dwAvailPageFile ) / 1024L );
+                       (ms.dwAvailPhys + ms.dwAvailPageFile) / 1024L );
             SetDlgItemText( hwnd, ABOUT_INFO2, buff );
             RCsprintf( buff, ABT_MEM_LOAD, ms.dwMemoryLoad );
             SetDlgItemText( hwnd, ABOUT_INFO3, buff );

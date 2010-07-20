@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _STATWND_H_INCLUDED
+#define _STATWND_H_INCLUDED
+
 #include "wpi.h"
 
 /*
@@ -110,3 +113,5 @@ void    StatusWndFini( void );
 #ifndef MAX_SECTIONS
     #define MAX_SECTIONS    20
 #endif
+
+#endif /* _STATWND_H_INCLUDED */

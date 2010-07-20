@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _HDLINFO_H_INCLUDED
+#define _HDLINFO_H_INCLUDED
+
 #define HDL_INFO_DONT_CARE              300
 #define HDL_INFO_PLOCK                  301
 #define HDL_INFO_LOCK                   302
@@ -36,3 +39,5 @@
 #define HDL_INFO_ADDR                   304
 #define HDL_INFO_HDL                    305
 #define HDL_INFO_TYPE                   306
+
+#endif /* _HDLINFO_H_INCLUDED */

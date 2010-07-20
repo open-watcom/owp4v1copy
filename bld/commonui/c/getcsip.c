@@ -33,12 +33,13 @@
 #define INCLUDE_TOOLHELP_H
 #include <windows.h>
 
+#define MAKECSIP( cs, ip ) (((DWORD)(cs) << 16L) + (DWORD)(ip))
+
 /*
  * GetRealCSIP - get the CS:IP of a stopped task, cuz microsoft only tells
  *               you that the task is stopped in the kernel (gee, that's
  *               useful!!)
  */
-#define MAKECSIP( cs, ip ) ( ((DWORD) (cs) << 16L) + (DWORD) (ip) )
 DWORD GetRealCSIP( HTASK htask, HMODULE *mod )
 {
     DWORD               csip;
@@ -47,23 +48,33 @@ DWORD GetRealCSIP( HTASK htask, HMODULE *mod )
     TASKENTRY           te;
 
     te.dwSize = sizeof( te );
-    if( TaskFindHandle( &te, htask ) == NULL ) return( 0L );
+    if( TaskFindHandle( &te, htask ) == NULL ) {
+        return( 0L );
+    }
     if( mod != NULL ) {
         *mod = te.hModule;
     }
 
     csip = TaskGetCSIP( htask );
-    if( csip == 0L ) return( 0L );
+    if( csip == 0L ) {
+        return( 0L );
+    }
     se.dwSize = sizeof( se );
-    if( !StackTraceFirst( &se, htask ) ) return( csip );
+    if( !StackTraceFirst( &se, htask ) ) {
+        return( csip );
+    }
     csip = MAKECSIP( se.wCS, se.wIP );
     while( 1 ) {
         se.dwSize = sizeof( se );
-        if( !StackTraceNext( &se ) ) break;
+        if( !StackTraceNext( &se ) ) {
+            break;
+        }
         csip = MAKECSIP( se.wCS, se.wIP );
         ge.dwSize = sizeof( ge );
         if( GlobalEntryHandle( &ge, (HGLOBAL)se.wCS ) ) {
-            if( ge.hOwner == te.hModule ) break;
+            if( ge.hOwner == te.hModule ) {
+                break;
+            }
         }
     }
     return( csip );

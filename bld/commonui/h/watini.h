@@ -29,4 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _WATINI_H_INCLUDED
+#define _WATINI_H_INCLUDED
+
 #define WATCOM_INI      "watcom.ini"
+
+#endif /* _WATINI_H_INCLUDED */

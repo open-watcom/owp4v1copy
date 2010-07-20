@@ -34,8 +34,10 @@
 #include "mem.h"
 #include "pushwin.h"
 
-BOOL __export FAR PASCAL PushWinProc( HWND hwnd, WORD msg, WORD wparam,
-                                    DWORD lparam )
+/*
+ * PushWinProc - push window procedure
+ */
+BOOL __export FAR PASCAL PushWinProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     PushWinInfo         *info;
     PAINTSTRUCT         paint;
@@ -45,8 +47,8 @@ BOOL __export FAR PASCAL PushWinProc( HWND hwnd, WORD msg, WORD wparam,
     info = (PushWinInfo *)GetWindowLong( hwnd, 0 );
     switch( msg ) {
     case WM_CREATE:
-        info = (PushWinInfo *)( ( (CREATESTRUCT *)lparam )->lpCreateParams );
-        SetWindowLong( hwnd, 0, (DWORD) info );
+        info = (PushWinInfo *)((CREATESTRUCT *)lparam)->lpCreateParams;
+        SetWindowLong( hwnd, 0, (DWORD)info );
         break;
     case WM_PAINT:
         BeginPaint( hwnd, &paint );
@@ -70,10 +72,14 @@ BOOL __export FAR PASCAL PushWinProc( HWND hwnd, WORD msg, WORD wparam,
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
     }
     return( TRUE );
-}
 
-BOOL RegPushWin( HANDLE instance ) {
+} /* PushWinProc */
 
+/*
+ * RegPushWin - register the push window class
+ */
+BOOL RegPushWin( HANDLE instance )
+{
     WNDCLASS    wc;
 
     wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -82,17 +88,22 @@ BOOL RegPushWin( HANDLE instance ) {
     wc.cbWndExtra = 4;
     wc.hInstance = instance;
     wc.hIcon = NULL;
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW);
+    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wc.lpszMenuName = NULL;
     wc.lpszClassName = "PushWin";
-    if( !RegisterClass( &wc ) ) return( FALSE );
+    if( !RegisterClass( &wc ) ) {
+        return( FALSE );
+    }
     return( TRUE );
-}
 
+} /* RegPushWin */
+
+/*
+ * CreatePushWin - create a push window
+ */
 HWND CreatePushWin( HWND parent, char *txt, WORD id, HFONT font, HANDLE inst )
 {
-
     HWND                hwnd;
     PushWinInfo         *info;
     WORD                len;
@@ -116,4 +127,5 @@ HWND CreatePushWin( HWND parent, char *txt, WORD id, HFONT font, HANDLE inst )
         inst,                   /* Program instance handle */
         info );                 /* Create parameters */
     return( hwnd );
-}
+
+} /* CreatePushWin */

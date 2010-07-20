@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _ABOUT_H_INCLUDED
+#define _ABOUT_H_INCLUDED
+
 #define ABOUT_INFO1                 103
 #define ABOUT_INFO2                 104
 #define ABOUT_INFO3                 105
@@ -37,3 +40,5 @@
 #define ABOUT_ICON                  108
 #define ABOUT_COPYRIGHT             109
 #define APPICON                     101
+
+#endif /* _ABOUT_H_INCLUDED */

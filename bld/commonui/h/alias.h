@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _ALIAS_H_INCLUDED
+#define _ALIAS_H_INCLUDED
+
 #define ALIAS_TEXT                  102
 #define ALIAS_DO_MORE               108
 #define ALIAS_CUR_ID                103
@@ -42,15 +45,17 @@ typedef struct analias {
 
 typedef struct {
     AnAlias             *data;
-    void                (*updatefn)(unsigned long, char *, char *, void *);
+    void                (*updatefn)( unsigned long, char *, char *, void * );
     void                *userdata;
 } AliasList;
 
 typedef AliasList       *AliasHdl;
 
-void InitAliasHdl( AliasHdl *hdl, void (*updatefn)(unsigned long, char *, char *, void *), void *userdata );
-void AddAlias( AliasHdl hdl, char *text, unsigned long id );
-void FreeAlias( AliasHdl hdl );
-char *LookupAlias( AliasHdl hdl, unsigned long id );
-void Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title );
-void EnumAliases( AliasHdl hdl, void (*enumfn)(unsigned long, char *, void *), void *userdata );
+void    InitAliasHdl( AliasHdl *hdl, void (*updatefn)( unsigned long, char *, char *, void * ), void *userdata );
+void    AddAlias( AliasHdl hdl, char *text, unsigned long id );
+void    FreeAlias( AliasHdl hdl );
+char    *LookupAlias( AliasHdl hdl, unsigned long id );
+void    Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title );
+void    EnumAliases( AliasHdl hdl, void (*enumfn)( unsigned long, char *, void * ), void *userdata );
+
+#endif /* _ALIAS_H_INCLUDED */

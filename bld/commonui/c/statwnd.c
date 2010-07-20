@@ -248,7 +248,7 @@ static void outlineRect( statwnd *sw, WPI_PRES pres, WPI_RECT *r )
 } /* outlineRect */
 
 /*
- * StatusWndCallback - handle messages for
+ * StatusWndCallback - handle messages for the status window
  */
 CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
@@ -457,7 +457,7 @@ statwnd *StatusWndStart( void )
 
 /*
  * StatusWndChangeSysColors - fiddle with what StatusWnd believes
- *                            are the system colours
+ *                            are the system colors
  */
 void StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText,
                                COLORREF btnHighlight, COLORREF btnShadow )

@@ -38,6 +38,7 @@ BEGIN
     MENUITEM sp( "Set Offset...",
                  "Set Offset..." ), MEMINFO_OFFSET
 END
+
 #include "offset.dlg"
 #include "selinfo.dlg"
 #include "hdlinfo.dlg"

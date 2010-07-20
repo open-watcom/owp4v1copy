@@ -96,9 +96,9 @@ typedef struct toolbar {
 
 #ifndef __OS2_PM__
     #ifdef __WINDOWS_386__
-        #define MAKEPTR( a ) ((void far *)MK_FP32( (void *) a ))
+        #define MAKEPTR( a ) ((void far *)MK_FP32( (void *)a ))
     #else
-        #define MAKEPTR( a ) ((LPVOID) a)
+        #define MAKEPTR( a ) ((LPVOID)a)
     #endif
 #endif
 
@@ -474,8 +474,7 @@ toolbar *ToolBarInit( HWND parent )
 /*
  * ToolBarChangeSysColors - update the variables in which system colors are stored
  */
-void ToolBarChangeSysColors( COLORREF tbFace,
-                             COLORREF tbHighlight, COLORREF tbShadow )
+void ToolBarChangeSysColors( COLORREF tbFace, COLORREF tbHighlight, COLORREF tbShadow )
 {
 #ifdef __NT__
     if( hInstCommCtrl == NULL ) {
@@ -683,7 +682,8 @@ WORD ToolBarGetState( toolbar *bar, WORD id )
  */
 BOOL ToolBarDeleteItem( toolbar *bar, WORD id )
 {
-    tool    *t, *next;
+    tool    *t;
+    tool    *next;
 #ifdef __NT__
     int     n;
 
@@ -738,7 +738,7 @@ WPI_MRESULT CALLBACK FrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
             }
             break;
         }
-        /* Fall through!! */
+        /* fall through */
     case WM_CLOSE:
         client = WinWindowFromID( hwnd, FID_CLIENT );
         if( client != NULLHANDLE ) {
@@ -1615,7 +1615,7 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     }
     return( _wpi_defwindowproc( hwnd, msg, wparam, lparam ) );
 
-} /* ToolBarWndPproc */
+} /* ToolBarWndProc */
 
 #ifdef __NT__
 

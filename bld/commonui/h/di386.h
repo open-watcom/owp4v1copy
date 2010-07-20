@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _DI386_H_INCLUDED
+#define _DI386_H_INCLUDED
+
 extern void     (FAR PASCAL *DoneWithInterrupt)( LPVOID );
 extern int      (FAR PASCAL *GetDebugInterruptData)( LPVOID );
 extern void     (FAR PASCAL *ResetDebugInterrupts32)( void );
@@ -38,3 +41,5 @@ extern int      (FAR PASCAL *DebuggerIsExecuting)( int );
 
 void Start386Debug( void );
 void Done386Debug( void );
+
+#endif /* _DI386_H_INCLUDED */

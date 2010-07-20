@@ -38,7 +38,7 @@
 #include <windows.h>
 #include "segmem.h"
 
-static WORD win386Sig[2] = { 0xDEAD,0xBEEF };
+static WORD win386Sig[2] = { 0xDEAD, 0xBEEF };
 static WORD win386Sig2[2] = { 0xBEEF, 0xDEAD };
 
 typedef struct {
@@ -56,7 +56,7 @@ typedef struct {
  * CheckIsModuleWin32App - check if a given module handle is a win32 app
  */
 BOOL CheckIsModuleWin32App( HMODULE hmod, WORD *win32ds, WORD *win32cs,
-                                DWORD *win32initialeip )
+                            DWORD *win32initialeip )
 {
     GLOBALENTRY ge;
     winext_data wedata;
@@ -70,7 +70,7 @@ BOOL CheckIsModuleWin32App( HMODULE hmod, WORD *win32ds, WORD *win32cs,
     ReadMem( (WORD)ge.hBlock, 0, (LPVOID) &wedata, sizeof( wedata ) );
     if( memcmp( wedata.sig, win386Sig, sizeof( win386Sig) ) == 0 ||
         memcmp( wedata.sig, win386Sig2, sizeof( win386Sig2) ) == 0 ) {
-        if( memcmp( wedata.new_sig, win386Sig, sizeof( win386Sig) ) == 0 ) {
+        if( memcmp( wedata.new_sig, win386Sig, sizeof( win386Sig ) ) == 0 ) {
             segnum = 2;
         } else {
             segnum = 3;
@@ -78,12 +78,11 @@ BOOL CheckIsModuleWin32App( HMODULE hmod, WORD *win32ds, WORD *win32cs,
         if( !GlobalEntryModule( &ge, hmod, segnum ) ) {
             return( 0 );
         }
-        ReadMem( (WORD)ge.hBlock, wedata.dataseg_off, (LPVOID) win32ds,
-                        sizeof( WORD ) );
-        ReadMem( (WORD)ge.hBlock, wedata.stacksize_off, (LPVOID) win32initialeip,
-                        sizeof( DWORD ) );
-        ReadMem( (WORD)ge.hBlock, wedata.codeinfo_off+4, (LPVOID) win32cs,
-                        sizeof( WORD ) );
+        ReadMem( (WORD)ge.hBlock, wedata.dataseg_off, (LPVOID)win32ds, sizeof( WORD ) );
+        ReadMem( (WORD)ge.hBlock, wedata.stacksize_off, (LPVOID)win32initialeip,
+                 sizeof( DWORD ) );
+        ReadMem( (WORD)ge.hBlock, wedata.codeinfo_off + 4, (LPVOID)win32cs,
+                 sizeof( WORD ) );
         return( 1 );
     }
     return( 0 );
@@ -91,7 +90,7 @@ BOOL CheckIsModuleWin32App( HMODULE hmod, WORD *win32ds, WORD *win32cs,
 } /* CheckIsModuleWin32App */
 
 /*
- * FlagWin32AppAsDebugged - check if a given module handle is a win32 app
+ * FlagWin32AppAsDebugged - check if a given module handle is a Win32 application
  */
 void FlagWin32AppAsDebugged( HMODULE hmod )
 {
@@ -102,8 +101,8 @@ void FlagWin32AppAsDebugged( HMODULE hmod )
     if( !GlobalEntryModule( &ge, hmod, 1 ) ) {
         return;
     }
-    ReadMem( (WORD)ge.hBlock, 0, (LPVOID) &wedata, sizeof( wedata ) );
-    if( !memcmp( wedata.sig, win386Sig, sizeof( win386Sig) ) ) {
+    ReadMem( (WORD)ge.hBlock, 0, (LPVOID)&wedata, sizeof( wedata ) );
+    if( !memcmp( wedata.sig, win386Sig, sizeof( win386Sig ) ) ) {
         WriteMem( (WORD)ge.hBlock, 0, win386Sig2, 4 );
     }
 

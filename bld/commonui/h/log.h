@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _LOG_H_INCLUDED
+#define _LOG_H_INCLUDED
+
 #include <stdlib.h>
 
 #define LOG_ACTION_TRUNC                1
@@ -39,10 +42,10 @@
 #define LOG_TYPE_CONTINUOUS             2
 
 #define LOG_MAX_FNAME                   _MAX_PATH
+
 /*
  * LogConfig contains information available to the calling application
  */
-
 typedef struct logconfig {
     char                name[LOG_MAX_FNAME];
     char                curname[LOG_MAX_FNAME];
@@ -51,7 +54,7 @@ typedef struct logconfig {
     char                type;
     char                def_action;
     BOOL                query_for_name;
-}LogConfig;
+} LogConfig;
 
 typedef struct loginfo {
     LogConfig           config;
@@ -59,19 +62,17 @@ typedef struct loginfo {
     void                (*writefn)( int );
     HANDLE              instance;
     HWND                hwnd;
-}LogInfo;
+} LogInfo;
 
 #define NO_BUF_LINES                    100
 
-/* constants for log exists dialog */
-
+/* Constants for log exists dialog */
 #define LOG_TEXT                        101
 #define LOG_APPEND                      102
 #define LOG_REPLACE                     103
 #define LOG_CANCEL                      IDCANCEL
 
-/* constants for the configure log dialog */
-
+/* Constants for the configure log dialog */
 #define LOG_CFG_GROUP               201
 #define LOG_CFG_CONT                202
 #define LOG_CFG_PERIODIC            203
@@ -89,15 +90,17 @@ typedef struct loginfo {
 #define LOG_CFG_NAME_EDIT           215
 #define LOG_CFG_BROWSE              216
 
-void LogInit( HWND hwnd, HANDLE inst, void(*writefn)( int ) );
-BOOL SpyLogOpen( void );
-void SpyLogOut( char *res );
-void SetLogDef( void );
-void GetLogConfig( LogConfig *config );
-void SetLogConfig( LogConfig *config );
-void SpyLogClose( void );
-BOOL SpyLogPauseToggle( void );
-BOOL LogToggle( void );
-void LogConfigure( void );
-void LoadLogConfig( char *fname, char *section );
-void SaveLogConfig( char *fname, char *section );
+void    LogInit( HWND hwnd, HANDLE inst, void (*writefn)( int ) );
+BOOL    SpyLogOpen( void );
+void    SpyLogOut( char *res );
+void    SetLogDef( void );
+void    GetLogConfig( LogConfig *config );
+void    SetLogConfig( LogConfig *config );
+void    SpyLogClose( void );
+BOOL    SpyLogPauseToggle( void );
+BOOL    LogToggle( void );
+void    LogConfigure( void );
+void    LoadLogConfig( char *fname, char *section );
+void    SaveLogConfig( char *fname, char *section );
+
+#endif /* _LOG_H_INCLUDED */

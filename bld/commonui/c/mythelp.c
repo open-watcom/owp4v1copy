@@ -35,6 +35,9 @@
 #define INCLUDE_TOOLHELP_H
 #include <windows.h>
 
+/*
+ * MyModuleFindHandle - wrapper for ModuleFindHandle
+ */
 BOOL MyModuleFindHandle( MODULEENTRY FAR* me, HMODULE h )
 {
     BOOL        rc;
@@ -46,6 +49,9 @@ BOOL MyModuleFindHandle( MODULEENTRY FAR* me, HMODULE h )
 
 } /* MyModuleFindHandle */
 
+/*
+ * MyStackTraceNext - wrapper for StackTraceNext
+ */
 BOOL MyStackTraceNext( STACKTRACEENTRY *se )
 {
     se->dwSize = sizeof( STACKTRACEENTRY );
@@ -53,6 +59,9 @@ BOOL MyStackTraceNext( STACKTRACEENTRY *se )
 
 } /* MyStackTraceNext */
 
+/*
+ * MyTaskFindHandle - wrapper for TaskFindHandle
+ */
 BOOL MyTaskFindHandle( TASKENTRY *te, HTASK h )
 {
     te->dwSize = sizeof( TASKENTRY );
@@ -60,65 +69,81 @@ BOOL MyTaskFindHandle( TASKENTRY *te, HTASK h )
 
 } /* MyTaskFindHandle */
 
+/*
+ * MyTaskFirst - wrapper for TaskFirst
+ */
 BOOL MyTaskFirst( TASKENTRY *te )
 {
-
     te->dwSize = sizeof( TASKENTRY );
     return( TaskFirst( te ) );
 
 } /* MyTaskFirst */
 
+/*
+ * MyTaskNext - wrapper for TaskNext
+ */
 BOOL MyTaskNext( TASKENTRY *te )
 {
-
     te->dwSize = sizeof( TASKENTRY );
     return( TaskNext( te ) );
 
 } /* MyTaskNext */
 
-BOOL MyStackTraceCSIPFirst( STACKTRACEENTRY *se, WORD ss, WORD cs, WORD ip,
-                        WORD bp)
+/*
+ * MyStackTraceCSIPFirst - wrapper for StackTraceCSIPFirst
+ */
+BOOL MyStackTraceCSIPFirst( STACKTRACEENTRY *se, WORD ss, WORD cs, WORD ip, WORD bp )
 {
     se->dwSize = sizeof( STACKTRACEENTRY );
     return( StackTraceCSIPFirst( se, ss, cs, ip, bp ) );
 
 } /* MyStackTraceCSIPFirst */
 
+/*
+ * MyStackTraceFirst - wrapper for StackTraceFirst
+ */
 BOOL MyStackTraceFirst( STACKTRACEENTRY *se, HANDLE h )
 {
-
     se->dwSize = sizeof( STACKTRACEENTRY );
     return( StackTraceFirst( se, h ) );
 
 } /* MyStackTraceFirst */
 
+/*
+ * MyGlobalFirst - wrapper for GlobalFirst
+ */
 BOOL MyGlobalFirst( GLOBALENTRY *ge, WORD flags )
 {
-
     ge->dwSize = sizeof( GLOBALENTRY );
     return( GlobalFirst( ge, flags ) );
 
 } /* MyGlobalFirst */
 
+/*
+ * MyGlobalNext - wrapper for GlobalNext
+ */
 BOOL MyGlobalNext( GLOBALENTRY *ge, WORD flags )
 {
-
     ge->dwSize = sizeof( GLOBALENTRY );
     return( GlobalNext( ge, flags ) );
 
 } /* MyGlobalNext */
 
+/*
+ * MyGlobalEntryModule - wrapper for GlobalEntryModule
+ */
 BOOL MyGlobalEntryModule( GLOBALENTRY *ge, HMODULE hmod, WORD seg )
 {
-
     ge->dwSize = sizeof( GLOBALENTRY );
     return( GlobalEntryModule( ge, hmod, seg ) );
 
 } /* MyGlobalEntryModule */
 
+/*
+ * MyGlobalEntryHandle - wrapper for GlobalEntryHandle
+ */
 BOOL MyGlobalEntryHandle( GLOBALENTRY *ge, HMODULE hmem )
 {
-
     ge->dwSize = sizeof( GLOBALENTRY );
     return( GlobalEntryHandle( ge, hmem ) );
 

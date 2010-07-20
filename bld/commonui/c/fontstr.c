@@ -35,8 +35,8 @@
 #include <string.h>
 #include "fontstr.h"
 
-static char     *outFmtString="%d %d %d %d %d %d %d %d %d %d %d %d %d \"%s\"";
-static char     *inFmtString= "%d %d %d %d %d %d %d %d %d %d %d %d %d %[^\0]";
+static char     *outFmtString = "%d %d %d %d %d %d %d %d %d %d %d %d %d \"%s\"";
+static char     *inFmtString = "%d %d %d %d %d %d %d %d %d %d %d %d %d %[^\0]";
 
 /*
  * GetLogFontFromString - get a logical font from a string
@@ -55,21 +55,10 @@ int GetLogFontFromString( LOGFONT *l, char *data )
     int lfQuality;
     int lfPitchAndFamily;
 
-    num = sscanf( data, inFmtString,
-                 &l->lfHeight,
-                 &l->lfWidth,
-                 &l->lfEscapement,
-                 &l->lfOrientation,
-                 &l->lfWeight,
-                 &lfItalic,
-                 &lfUnderline,
-                 &lfStrikeOut,
-                 &lfCharSet,
-                 &lfOutPrecision,
-                 &lfClipPrecision,
-                 &lfQuality,
-                 &lfPitchAndFamily,
-                 &l->lfFaceName );
+    num = sscanf( data, inFmtString, &l->lfHeight, &l->lfWidth, &l->lfEscapement,
+                  &l->lfOrientation, &l->lfWeight, &lfItalic, &lfUnderline, &lfStrikeOut,
+                  &lfCharSet, &lfOutPrecision, &lfClipPrecision, &lfQuality,
+                  &lfPitchAndFamily, &l->lfFaceName );
     if( num != 14 ) {
         return( FALSE );
     }
@@ -83,10 +72,10 @@ int GetLogFontFromString( LOGFONT *l, char *data )
     l->lfPitchAndFamily = lfPitchAndFamily;
     if( l->lfFaceName[0] == '\"' ) {
         len = strlen( l->lfFaceName );
-        for( i=1;i<len;i++ ) {
-            l->lfFaceName[i-1] = l->lfFaceName[i];
+        for( i = 1; i < len; i++ ) {
+            l->lfFaceName[i - 1] = l->lfFaceName[i];
         }
-        l->lfFaceName[ len-2] = 0;
+        l->lfFaceName[len - 2] = 0;
     }
     return( TRUE );
 
@@ -97,11 +86,9 @@ int GetLogFontFromString( LOGFONT *l, char *data )
  */
 void GetFontFormatString( LOGFONT *lf, char *str )
 {
-    wsprintf( str, outFmtString,
-        lf->lfHeight, lf->lfWidth, lf->lfEscapement,
-        lf->lfOrientation, lf->lfWeight, lf->lfItalic,
-        lf->lfUnderline, lf->lfStrikeOut,
-        lf->lfCharSet, lf->lfOutPrecision, lf->lfClipPrecision,
-        lf->lfQuality, lf->lfPitchAndFamily, lf->lfFaceName );
+    wsprintf( str, outFmtString, lf->lfHeight, lf->lfWidth, lf->lfEscapement,
+              lf->lfOrientation, lf->lfWeight, lf->lfItalic, lf->lfUnderline,
+              lf->lfStrikeOut, lf->lfCharSet, lf->lfOutPrecision, lf->lfClipPrecision,
+              lf->lfQuality, lf->lfPitchAndFamily, lf->lfFaceName );
 
 } /* GetFontFormatString */

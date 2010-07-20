@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _TOOLBR_H_INCLUDED
+#define _TOOLBR_H_INCLUDED
+
 #include "wpi.h"
 
 typedef BOOL (*toolhook)( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
@@ -71,27 +74,27 @@ typedef struct TOOLITEMINFO {
     char        tip[MAX_TIP];   /* tool tip string */
 } TOOLITEMINFO;
 
-struct toolbar *ToolBarInit( HWND );
-void ToolBarDisplay( struct toolbar *, TOOLDISPLAYINFO * );
-void ToolBarAddItem( struct toolbar *, TOOLITEMINFO * );
-BOOL ToolBarDeleteItem( struct toolbar *, WORD id );
-HWND ToolBarWindow( struct toolbar * );
-void ToolBarSetState( struct toolbar *, WORD id, WORD state );
-WORD ToolBarGetState( struct toolbar *bar, WORD id );
-void ToolBarDestroy ( struct toolbar *bar );
-void ToolBarFini( struct toolbar * );
-void ToolBarDrawBitmap( WPI_PRES pres, WPI_POINT size, WPI_POINT org, HBITMAP bitmap );
-void UpdateToolBar( struct toolbar *bar );
-void ChangeToolButtonBitmap( struct toolbar *bar, WORD id, HBITMAP newbmp );
-BOOL HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam );
-BOOL FindToolIDAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam, UINT *id );
+struct toolbar  *ToolBarInit( HWND );
+void    ToolBarDisplay( struct toolbar *, TOOLDISPLAYINFO * );
+void    ToolBarAddItem( struct toolbar *, TOOLITEMINFO * );
+BOOL    ToolBarDeleteItem( struct toolbar *, WORD id );
+HWND    ToolBarWindow( struct toolbar * );
+void    ToolBarSetState( struct toolbar *, WORD id, WORD state );
+WORD    ToolBarGetState( struct toolbar *bar, WORD id );
+void    ToolBarDestroy ( struct toolbar *bar );
+void    ToolBarFini( struct toolbar * );
+void    ToolBarDrawBitmap( WPI_PRES pres, WPI_POINT size, WPI_POINT org, HBITMAP bitmap );
+void    UpdateToolBar( struct toolbar *bar );
+void    ChangeToolButtonBitmap( struct toolbar *bar, WORD id, HBITMAP newbmp );
+BOOL    HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam );
+BOOL    FindToolIDAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam, UINT *id );
 #ifndef __OS2_PM__
-void ToolBarChangeSysColors( COLORREF, COLORREF, COLORREF );
+void    ToolBarChangeSysColors( COLORREF, COLORREF, COLORREF );
 #endif
-void ToolBarRedrawButtons( struct toolbar *bar );
+void    ToolBarRedrawButtons( struct toolbar *bar );
 
 #if defined( __NT__ ) || defined( __WINDOWS__ )
-void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height, HDC hDCIn, COLORREF cr );
+void    TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height, HDC hDCIn, COLORREF cr );
 #endif
 
 #ifndef __OS2_PM__
@@ -103,3 +106,5 @@ void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height, HDC hD
     #define TOOLBAR_FLOAT_STYLE         (FCF_TITLEBAR | FCF_SIZEBORDER | FCF_SYSMENU)
     #define TOOLBAR_FLOATNOSIZE_STYLE   (FCF_TITLEBAR | FCF_BORDER | FCF_SYSMENU)
 #endif
+
+#endif /* _TOOLBR_H_INCLUDED */

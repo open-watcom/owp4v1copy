@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _SDKASM_H_INCLUDED
+#define _SDKASM_H_INCLUDED
+
 #include "standard.h"
 #include "deasm.h"
 
@@ -41,8 +44,7 @@ typedef struct disasmrtns {
     DWORD               (*GetOffset)( void );
     void                (*DoWtk)( void );
     int                 (*IsWtk)( void );
-    char                *(*ToStr)( unsigned long value, uint_16 len,
-                                    DWORD addr );
+    char                *(*ToStr)( unsigned long value, uint_16 len, DWORD addr );
     char                *(*JmpLabel)( unsigned long addr, DWORD off );
     char                *(*ToBrStr)( unsigned long value, DWORD addr );
     char                *(*ToIndex)( unsigned long value, unsigned long addr );
@@ -50,6 +52,8 @@ typedef struct disasmrtns {
     char                *(*GetWtkInsName)( unsigned ins );
 } DisAsmRtns;
 
-void RegisterRtns( DisAsmRtns *rtns );
-void MiscDoCode( instruction *,char, DisAsmRtns * );
-void MiscFormatIns( char *, instruction *, form_option, DisAsmRtns * );
+void    RegisterRtns( DisAsmRtns *rtns );
+void    MiscDoCode( instruction *, char, DisAsmRtns * );
+void    MiscFormatIns( char *, instruction *, form_option, DisAsmRtns * );
+
+#endif /* _SDKASM_H_INCLUDED */

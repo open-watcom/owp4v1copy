@@ -36,7 +36,7 @@
 #include "font.h"
 #include "win1632.h"
 #ifdef __WINDOWS__
-#pragma library("commdlg.lib")
+    #pragma library( "commdlg.lib" )
 #endif
 
 #define MAX_STR 256
@@ -46,7 +46,7 @@ static HFONT    fixedFont = (HFONT)0;
 static HFONT    courierFont = (HFONT)0;
 static BOOL     variableAllowed = FALSE;
 
-static char     *fontKey="Font";
+static char     *fontKey = "Font";
 
 /*
  * EnumFunc - enumerate fonts
@@ -57,37 +57,26 @@ int CALLBACK EnumFunc( LPLOGFONT lf, LPTEXTMETRIC tm, UINT ftype, LPSTR data )
     ftype = ftype;
     data = data;
 
-    /* Something has happened in the font world and windows font mapper since
-       the original source was written, it checked only for Courier. All the
-       font names below are verified as good monospaced fonts. Checks for the
-       best fonts first, so that the system picks the best if enumerated first.
-       Changed the test to == 0, because it is easier to read and understand.   */
-#if defined (__NT__)
-    if((FARstricmp( lf->lfFaceName, "andale mono" ) == 0)    ||
-       (FARstricmp( lf->lfFaceName, "lucida console" ) == 0) ||
-       (FARstricmp( lf->lfFaceName, "vera sans mono" ) == 0) ||
-       (FARstricmp( lf->lfFaceName, "courier new" ) == 0)    ||
-       (FARstricmp( lf->lfFaceName, "courier" ) == 0) )
+    /*
+     * Something has happened in the font world and Windows font mapper since
+     * the original source was written, it checked only for Courier. All the
+     * font names below are verified as good monospaced fonts. Check for the
+     * best fonts first, so that the system picks the best if enumerated first.
+     * Changed the test to == 0, because it is easier to read and understand.
+     */
+#if defined( __NT__ )
+    if( FARstricmp( lf->lfFaceName, "andale mono" ) == 0 ||
+        FARstricmp( lf->lfFaceName, "lucida console" ) == 0 ||
+        FARstricmp( lf->lfFaceName, "vera sans mono" ) == 0 ||
+        FARstricmp( lf->lfFaceName, "courier new" ) == 0 ||
+        FARstricmp( lf->lfFaceName, "courier" ) == 0 ) {
 #else
-    if((FARstricmp( lf->lfFaceName, "courier new" ) == 0) ||
-       (FARstricmp( lf->lfFaceName, "courier" ) == 0) )
+    if( FARstricmp( lf->lfFaceName, "courier new" ) == 0 ||
+        FARstricmp( lf->lfFaceName, "courier" ) == 0 ) {
 #endif
-    {
-        courierFont = CreateFont(
-            13,
-            0,
-            0,
-            0,
-            FW_NORMAL,
-            FALSE,
-            FALSE,
-            FALSE,
-            lf->lfCharSet,
-            OUT_DEFAULT_PRECIS,
-            CLIP_DEFAULT_PRECIS,
-            DEFAULT_QUALITY,
-            lf->lfPitchAndFamily,
-            lf->lfFaceName );
+        courierFont = CreateFont( 13, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, lf->lfCharSet,
+                                  OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+                                  lf->lfPitchAndFamily, lf->lfFaceName );
         return( 0 );
     }
     return( 1 );
@@ -104,15 +93,15 @@ static void getCourierFont( HANDLE inst )
     HDC         hdc;
 
     inst = inst;        /* shut up the compiler for NT */
-    hdc = GetDC( (HWND) NULL );
-    fp = MakeProcInstance( (FARPROC) EnumFunc, inst );
-    EnumFonts( hdc, NULL, (LPVOID) fp, 0 );
+    hdc = GetDC( (HWND)NULL );
+    fp = MakeProcInstance( (FARPROC)EnumFunc, inst );
+    EnumFonts( hdc, NULL, (LPVOID)fp, 0 );
     FreeProcInstance( fp );
-    ReleaseDC( (HWND) NULL, hdc );
+    ReleaseDC( (HWND)NULL, hdc );
 
     if( courierFont == NULL ) {
         courierFont = GetStockObject( ANSI_FIXED_FONT );
-        GetObject( courierFont, sizeof( LOGFONT ), (LPSTR) &logfont );
+        GetObject( courierFont, sizeof( LOGFONT ), (LPSTR)&logfont );
         courierFont = CreateFontIndirect( &logfont );
     }
 
@@ -123,7 +112,7 @@ static void getCourierFont( HANDLE inst )
  */
 void SetDlgMonoFont( HWND hwnd, int id )
 {
-    SendDlgItemMessage( hwnd, id, WM_SETFONT, (UINT) fixedFont, 0L );
+    SendDlgItemMessage( hwnd, id, WM_SETFONT, (UINT)fixedFont, 0L );
 
 } /* SetDlgMonoFont */
 
@@ -132,7 +121,7 @@ void SetDlgMonoFont( HWND hwnd, int id )
  */
 void SetMonoFont( HWND hwnd )
 {
-    SendMessage( hwnd, WM_SETFONT, (UINT) fixedFont, 0L );
+    SendMessage( hwnd, WM_SETFONT, (UINT)fixedFont, 0L );
 
 } /* SetMonoFont */
 
@@ -141,7 +130,7 @@ void SetMonoFont( HWND hwnd )
  */
 void SetDlgCourierFont( HWND hwnd, int id )
 {
-    SendDlgItemMessage( hwnd, id, WM_SETFONT, (UINT) fixedFont, 0L );
+    SendDlgItemMessage( hwnd, id, WM_SETFONT, (UINT)fixedFont, 0L );
 
 } /* SetDlgCourierFont */
 
@@ -150,7 +139,7 @@ void SetDlgCourierFont( HWND hwnd, int id )
  */
 void SetCourierFont( HWND hwnd )
 {
-    SendMessage( hwnd, WM_SETFONT, (UINT) courierFont, 0L );
+    SendMessage( hwnd, WM_SETFONT, (UINT)courierFont, 0L );
 
 } /* SetCourierFont */
 
@@ -174,12 +163,12 @@ void InitMonoFont( char *app, char *inifile, int default_font, HANDLE inst )
     }
     getCourierFont( inst );
     if( need_stock ) {
-#if defined (__NT__)
+#if defined( __NT__ )
         fixedFont = courierFont;
 #endif
-        if (fixedFont == (HFONT)0) {
-#if defined (__NT__)
-            fixedFont = GetStockObject(ANSI_FIXED_FONT);
+        if( fixedFont == (HFONT)0 ) {
+#if defined( __NT__ )
+            fixedFont = GetStockObject( ANSI_FIXED_FONT );
 #endif
             fixedFont = GetStockObject( default_font );
             GetObject( fixedFont, sizeof( LOGFONT ), &logFont );
@@ -188,10 +177,11 @@ void InitMonoFont( char *app, char *inifile, int default_font, HANDLE inst )
             GetObject( fixedFont, sizeof( LOGFONT ), &logFont );
         }
     }
+
 } /* InitMonoFont */
 
 /*
- * SaveMonoFont - save the current monofont
+ * SaveMonoFont - save the current mono font
  */
 void SaveMonoFont( char *app, char *inifile )
 {
@@ -214,7 +204,7 @@ BOOL ChooseMonoFont( HWND hwnd )
     memset( &cf, 0, sizeof( CHOOSEFONT ) );
     lf = logFont;
 
-    cf.lStructSize = sizeof(CHOOSEFONT);
+    cf.lStructSize = sizeof( CHOOSEFONT );
     cf.hwndOwner = hwnd;
     cf.lpLogFont = &lf;
     cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
@@ -263,5 +253,6 @@ HFONT GetMonoFont( void )
 void AllowVariableFonts( void )
 {
     variableAllowed = TRUE;
-}
+
+} /* AllowVariableFonts */
 

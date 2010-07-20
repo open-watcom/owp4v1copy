@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _SEGINFO_H_INCLUDED
+#define _SEGINFO_H_INCLUDED
+
 #define SEGINFO_ADDR            700
 #define SEGINFO_BLOCKSIZE       701
 #define SEGINFO_LOCKCOUNT       702
@@ -45,4 +48,6 @@
 #define SEGINFO_LINE6           716
 #define SEGINFO_LINE7           717
 
-void DoSegInfo( HWND hwnd, WORD seg, BOOL isdpmi, HANDLE inst );
+void    DoSegInfo( HWND hwnd, WORD seg, BOOL isdpmi, HANDLE inst );
+
+#endif /* _SEGINFO_H_INCLUDED */

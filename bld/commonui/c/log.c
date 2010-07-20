@@ -48,7 +48,7 @@
 #include "uistr.gh"
 
 static LogInfo          LogCurInfo;
-static char             *BufLines[ NO_BUF_LINES ];
+static char             *BufLines[NO_BUF_LINES];
 static WORD             LinesUsed;
 
 /*
@@ -61,8 +61,9 @@ static void writeCRLF( int f )
 } /* writeCRLF */
 
 #ifndef NOUSE3D
+
 /*
- * LogSaveHook - hook used called by common dialog - for 3-d controls
+ * LogSaveHook - hook used called by common dialog - for 3D controls
  */
 BOOL CALLBACK LogSaveHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
 {
@@ -72,21 +73,22 @@ BOOL CALLBACK LogSaveHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
     switch( msg ) {
     case WM_INITDIALOG:
 #ifndef NOUSE3D
-        // We must call this to subclass the directory listbox even
-        // if the app calls Ctl3dAutoSubclass (commdlg bug)
+        /*
+         * We must call this to subclass the directory listbox even
+         * if the app calls Ctl3dAutoSubclass (commdlg bug).
+         */
         CvrCtl3dSubclassDlg( hwnd, CTL3D_ALL );
 #endif
         return( TRUE );
-        break;
     }
     return( FALSE );
 
 } /* LogSaveHook */
+
 #endif
 
 /*
- * getLogName - get a filename for the log and check if the file already
- *              exists
+ * getLogName - get a filename for the log and check if the file already exists
  */
 static BOOL getLogName( char *buf, HWND hwnd )
 {
@@ -94,15 +96,15 @@ static BOOL getLogName( char *buf, HWND hwnd )
     int                 rc;
     static char         fname[LOG_MAX_FNAME];
     static char         filterList[] = "File (*.*)" \
-                                        "\0" \
-                                        "*.*" \
-                                        "\0\0";
+                                       "\0" \
+                                       "*.*" \
+                                       "\0\0";
 
     strcpy( fname, LogCurInfo.config.name );
     memset( &of, 0, sizeof( OPENFILENAME ) );
     of.lStructSize = sizeof( OPENFILENAME );
     of.hwndOwner = hwnd;
-    of.lpstrFilter = (LPSTR) filterList;
+    of.lpstrFilter = (LPSTR)filterList;
     of.lpstrDefExt = NULL;
     of.nFilterIndex = 1L;
     of.lpstrFile = fname;
@@ -111,12 +113,12 @@ static BOOL getLogName( char *buf, HWND hwnd )
     of.Flags = OFN_HIDEREADONLY;
 #ifndef NOUSE3D
     of.Flags |= OFN_ENABLEHOOK;
-    of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (LPVOID) LogSaveHook,
+    of.lpfnHook = (LPOFNHOOKPROC)MakeProcInstance( (LPVOID)LogSaveHook,
                                                     LogCurInfo.instance );
 #endif
     rc = GetSaveFileName( &of );
 #ifndef NOUSE3D
-    FreeProcInstance( (LPVOID) of.lpfnHook );
+    FreeProcInstance( (LPVOID)of.lpfnHook );
 #endif
     FreeRCString( (char *)of.lpstrTitle );
     if( !rc ) {
@@ -124,7 +126,8 @@ static BOOL getLogName( char *buf, HWND hwnd )
     }
     strcpy( buf, fname );
     return( TRUE );
-}
+
+} /* getLogName */
 
 /*
  * flushLog - write out everything in the log buffer
@@ -134,28 +137,29 @@ static void flushLog( BOOL free )
     WORD        i;
     int         f;
 
-    f = open( LogCurInfo.config.curname,
-                O_TEXT | O_WRONLY | O_CREAT | O_APPEND, 0 );
-    if( f < 0 ) return;
-    for( i=0; i < LinesUsed; i++ ) {
+    f = open( LogCurInfo.config.curname, O_TEXT | O_WRONLY | O_CREAT | O_APPEND, 0 );
+    if( f < 0 ) {
+        return;
+    }
+    for( i = 0; i < LinesUsed; i++ ) {
         write( f, BufLines[i], strlen( BufLines[i] ) );
         writeCRLF( f );
     }
     close( f );
     if( free ) {
-        for( i=0; i < LinesUsed; i++ ) {
+        for( i = 0; i < LinesUsed; i++ ) {
             MemFree( BufLines[i] );
         }
     }
     LinesUsed = 0;
-}
+
+} /* flushLog */
 
 /*
  * LogExistsDlgProc - handle the log exists dialog
  */
-
-BOOL __export FAR PASCAL LogExistsDlgProc( HWND hwnd, WORD msg,
-                                          WORD wparam, DWORD lparam )
+BOOL __export FAR PASCAL LogExistsDlgProc( HWND hwnd, UINT msg,
+                                           WPARAM wparam, LPARAM lparam )
 {
     lparam = lparam;
     switch( msg ) {
@@ -174,14 +178,17 @@ BOOL __export FAR PASCAL LogExistsDlgProc( HWND hwnd, WORD msg,
         return( FALSE );
     }
     return( TRUE );
-}
+
+} /* LogExistsDlgProc */
 
 /*
  * ConfigLogDlgProc - handle the configure log dialog
  */
-BOOL __export FAR PASCAL ConfigLogDlgProc( HWND hwnd, WORD msg,
-                                          WORD wparam, DWORD lparam )
+BOOL __export FAR PASCAL ConfigLogDlgProc( HWND hwnd, UINT msg,
+                                           WPARAM wparam, LPARAM lparam )
 {
+    char    *buf;
+
     lparam = lparam;
     switch( msg ) {
     case WM_INITDIALOG:
@@ -212,16 +219,12 @@ BOOL __export FAR PASCAL ConfigLogDlgProc( HWND hwnd, WORD msg,
     case WM_COMMAND:
         switch( wparam ) {
         case LOG_CFG_BROWSE:
-            {
-                char    *buf;
-
-                buf = MemAlloc( LOG_MAX_FNAME );
-                if( getLogName( buf, hwnd ) ) {
-                    strlwr( buf );
-                    SetDlgItemText( hwnd, LOG_CFG_NAME_EDIT, buf );
-                }
-                MemFree( buf );
+            buf = MemAlloc( LOG_MAX_FNAME );
+            if( getLogName( buf, hwnd ) ) {
+                strlwr( buf );
+                SetDlgItemText( hwnd, LOG_CFG_NAME_EDIT, buf );
             }
+            MemFree( buf );
             break;
         case LOG_CFG_OK:
             if( IsDlgButtonChecked( hwnd, LOG_CFG_QUERY_NAME ) ) {
@@ -242,7 +245,7 @@ BOOL __export FAR PASCAL ConfigLogDlgProc( HWND hwnd, WORD msg,
                 LogCurInfo.config.def_action = LOG_ACTION_QUERY;
             }
             GetDlgItemText( hwnd, LOG_CFG_NAME_EDIT,
-                                LogCurInfo.config.name, LOG_MAX_FNAME );
+                            LogCurInfo.config.name, LOG_MAX_FNAME );
             EndDialog( hwnd, TRUE );
             break;
         case LOG_CFG_CANCEL:
@@ -256,7 +259,8 @@ BOOL __export FAR PASCAL ConfigLogDlgProc( HWND hwnd, WORD msg,
         return( FALSE );
     }
     return( TRUE );
-}
+
+} /* ConfigLogDlgProc */
 
 /*
  * LogConfigure - display a dialog to let the user configure log features
@@ -265,19 +269,22 @@ void LogConfigure( void )
 {
     FARPROC     fp;
 
-    if( !LogCurInfo.init ) SetLogDef();
-    if( LogCurInfo.config.type == LOG_TYPE_BUFFER ) flushLog( TRUE );
+    if( !LogCurInfo.init ) {
+        SetLogDef();
+    }
+    if( LogCurInfo.config.type == LOG_TYPE_BUFFER ) {
+        flushLog( TRUE );
+    }
     fp = MakeProcInstance( (FARPROC)ConfigLogDlgProc, LogCurInfo.instance );
     DialogBox( LogCurInfo.instance, "LOG_CFG_DLG",
-                LogCurInfo.hwnd, (DLGPROC)fp );
+               LogCurInfo.hwnd, (DLGPROC)fp );
     FreeProcInstance( fp );
-}
 
+} /* LogConfigure */
 
 /*
  * SetLogDef - set the log configuration to the defaults
  */
-
 void SetLogDef( void )
 {
     strcpy( LogCurInfo.config.name, "dflt.log" );
@@ -285,16 +292,20 @@ void SetLogDef( void )
     LogCurInfo.config.def_action = LOG_ACTION_QUERY;
     LogCurInfo.config.query_for_name = TRUE;
     LogCurInfo.init = TRUE;
-}
+
+} /* SetLogDef */
 
 /*
  * GetLogConfig - copy the current log configuration information to config
  */
 void GetLogConfig( LogConfig *config )
 {
-    if( !LogCurInfo.init ) SetLogDef();
+    if( !LogCurInfo.init ) {
+        SetLogDef();
+    }
     *config = LogCurInfo.config;
-}
+
+} /* GetLogConfig */
 
 /*
  * SetLogConfig - set current log configuration
@@ -303,7 +314,8 @@ void SetLogConfig( LogConfig *config )
 {
     LogCurInfo.config = *config;
     LogCurInfo.init = TRUE;
-}
+
+} /* SetLogConfig */
 
 #define LOG_TYPE                "LOGtype"
 #define LOG_NAME                "LOGname"
@@ -313,12 +325,13 @@ void SetLogConfig( LogConfig *config )
 /*
  * SaveLogConfig - save the current log configuration
  */
-
 void SaveLogConfig( char *fname, char *section )
 {
     char        buf[10];
 
-    if( !LogCurInfo.init ) SetLogDef();
+    if( !LogCurInfo.init ) {
+        SetLogDef();
+    }
 
     itoa( LogCurInfo.config.type, buf, 10 );
     WritePrivateProfileString( section, LOG_TYPE, buf, fname );
@@ -330,8 +343,9 @@ void SaveLogConfig( char *fname, char *section )
     WritePrivateProfileString( section, LOG_QUERY, buf, fname );
 
     WritePrivateProfileString( section, LOG_NAME,
-                                LogCurInfo.config.name, fname );
-}
+                               LogCurInfo.config.name, fname );
+
+} /* SaveLogConfig */
 
 /*
  * LoadLogConfig - read log configuration information from the .ini file
@@ -341,14 +355,15 @@ void LoadLogConfig( char *fname, char *section )
 {
     SetLogDef();
     LogCurInfo.config.type = GetPrivateProfileInt( section,
-                        LOG_TYPE, LogCurInfo.config.type, fname );
+        LOG_TYPE, LogCurInfo.config.type, fname );
     LogCurInfo.config.def_action = GetPrivateProfileInt( section,
-                        LOG_ACTION, LogCurInfo.config.def_action, fname );
+        LOG_ACTION, LogCurInfo.config.def_action, fname );
     LogCurInfo.config.query_for_name = GetPrivateProfileInt( section,
-                        LOG_QUERY, LogCurInfo.config.query_for_name, fname );
+        LOG_QUERY, LogCurInfo.config.query_for_name, fname );
     GetPrivateProfileString( section, LOG_NAME, LogCurInfo.config.name,
                              LogCurInfo.config.name, LOG_MAX_FNAME, fname );
-}
+
+} /* LoadLogConfig */
 
 /*
  * SpyLogOut - dump a message to the log file
@@ -357,20 +372,23 @@ void SpyLogOut( char *res )
 {
     unsigned    len;
 
-    if( !LogCurInfo.config.logging || LogCurInfo.config.paused ) return;
+    if( !LogCurInfo.config.logging || LogCurInfo.config.paused ) {
+        return;
+    }
     if( LogCurInfo.config.type == LOG_TYPE_CONTINUOUS ) {
-        BufLines[ LinesUsed ] = res;
-        LinesUsed ++;
+        BufLines[LinesUsed] = res;
+        LinesUsed++;
         flushLog( FALSE );
     } else {
         len = strlen( res ) + 1;
-        BufLines[ LinesUsed ] = MemAlloc( len );
-        strcpy( BufLines[ LinesUsed ], res );
-        LinesUsed ++;
+        BufLines[LinesUsed] = MemAlloc( len );
+        strcpy( BufLines[LinesUsed], res );
+        LinesUsed++;
         if( LinesUsed == NO_BUF_LINES ) {
             flushLog( TRUE );
         }
     }
+
 } /* SpyLogOut */
 
 /*
@@ -385,10 +403,13 @@ BOOL SpyLogOpen( void )
     char        *msgtitle;
 
     flags = 0;
-    if( !LogCurInfo.init ) SetLogDef();
+    if( !LogCurInfo.init ) {
+        SetLogDef();
+    }
     if( LogCurInfo.config.query_for_name ) {
-        if( !getLogName( LogCurInfo.config.name, LogCurInfo.hwnd ) )
+        if( !getLogName( LogCurInfo.config.name, LogCurInfo.hwnd ) ) {
             return( FALSE );
+        }
     }
     strcpy( LogCurInfo.config.curname, LogCurInfo.config.name );
     switch( LogCurInfo.config.def_action ) {
@@ -402,7 +423,7 @@ BOOL SpyLogOpen( void )
         if( !access( LogCurInfo.config.curname, F_OK ) ) {
             fp = MakeProcInstance( (FARPROC)LogExistsDlgProc, LogCurInfo.instance );
             ret = DialogBox( LogCurInfo.instance, "LOG_EXISTS_DLG",
-                        LogCurInfo.hwnd, (DLGPROC)fp );
+                             LogCurInfo.hwnd, (DLGPROC)fp );
             FreeProcInstance( fp );
             switch( ret ) {
             case LOG_APPEND:
@@ -418,16 +439,16 @@ BOOL SpyLogOpen( void )
         break;
     }
     f = open( LogCurInfo.config.curname, O_TEXT | O_WRONLY | O_CREAT | flags,
-        S_IREAD | S_IWRITE );
+              S_IREAD | S_IWRITE );
     if( f < 0 ) {
         msgtitle = AllocRCString( LOG_LOG_ERROR );
         RCMessageBox( LogCurInfo.hwnd, LOG_CANT_OPEN_LOG, msgtitle,
-                        MB_OK | MB_ICONEXCLAMATION );
+                      MB_OK | MB_ICONEXCLAMATION );
         FreeRCString( msgtitle );
         return( FALSE );
     }
     if( LogCurInfo.writefn != NULL ) {
-        ( LogCurInfo.writefn )( f );
+        LogCurInfo.writefn( f );
     }
     close( f );
     LogCurInfo.config.logging = TRUE;
@@ -444,6 +465,7 @@ void SpyLogClose( void )
     flushLog( TRUE );
     LogCurInfo.config.logging = FALSE;
     LogCurInfo.config.paused = FALSE;
+
 } /* SpyLogClose */
 
 /*
@@ -452,10 +474,13 @@ void SpyLogClose( void )
 BOOL SpyLogPauseToggle( void )
 {
     if( LogCurInfo.config.logging ) {
-        if( !LogCurInfo.config.paused ) flushLog( TRUE );
+        if( !LogCurInfo.config.paused ) {
+            flushLog( TRUE );
+        }
         LogCurInfo.config.paused = !LogCurInfo.config.paused;
     }
     return( LogCurInfo.config.paused );
+
 } /* SpyLogPauseToggle */
 
 /*
@@ -463,28 +488,31 @@ BOOL SpyLogPauseToggle( void )
  */
 BOOL LogToggle( void )
 {
-    if( !LogCurInfo.init ) SetLogDef();
+    if( !LogCurInfo.init ) {
+        SetLogDef();
+    }
     if( !LogCurInfo.config.logging ) {
         return( SpyLogOpen() );
     }
     SpyLogClose();
     return( LogCurInfo.config.logging );
-}
+
+} /* LogToggle */
 
 /*
  * LogInit - must be called before any other log functions to do
- *              initialization
+ *           initialization
  *
  *      hwnd - is a window to be the parent to dialog boxes generated by
- *              the log function
+ *             the log function
  *      inst - is the INSTANCE of the calling application
  *      writefn - function that creates the log header or NULL if no
- *              header is desired
+ *                header is desired
  */
-
-void LogInit( HWND hwnd, HANDLE inst, void(*writefn)( int ) )
+void LogInit( HWND hwnd, HANDLE inst, void (*writefn)( int ) )
 {
     LogCurInfo.hwnd = hwnd;
     LogCurInfo.instance = inst;
     LogCurInfo.writefn = writefn;
-}
+
+} /* LogInit */

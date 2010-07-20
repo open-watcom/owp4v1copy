@@ -39,6 +39,9 @@
 #define ALLOC_STRING( x )       AllocRCString( x )
 #define FREE_STRING( x )        FreeRCString( x )
 
+/*
+ * RCsprintf - do sprintf with a format string from a resource
+ */
 int RCsprintf( char *buf, DWORD fmtid, ... )
 {
     va_list     al;
@@ -51,10 +54,11 @@ int RCsprintf( char *buf, DWORD fmtid, ... )
     FREE_STRING( fmtstr );
     va_end( al );
     return( ret );
-}
+
+} /* RCsprintf */
 
 /*
- * RCfprintf
+ * RCfprintf - do fprintf with a format string from a resource
  */
 void RCfprintf( FILE *fp, DWORD strid, ... )
 {
@@ -66,10 +70,11 @@ void RCfprintf( FILE *fp, DWORD strid, ... )
     vfprintf( fp, str, al );
     FREE_STRING( str );
     va_end( al );
-}
+
+} /* RCfprintf */
 
 /*
- * RCvfprintf
+ * RCvfprintf - do vfprintf with a format string from a resource
  */
 void RCvfprintf( FILE *fp, DWORD strid, va_list al )
 {
@@ -78,12 +83,13 @@ void RCvfprintf( FILE *fp, DWORD strid, va_list al )
     str = ALLOC_STRING( strid );
     vfprintf( fp, str, al );
     FREE_STRING( str );
-}
+
+} /* RCvfprintf */
 
 /*
- *MyMessageBox-
+ * RCMessageBox - display a message box with a string from a resource
  */
-int RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type )
+int RCMessageBox( HWND hwnd, DWORD msgid, char *title, UINT type )
 {
     char        *msg;
     int         ret;
@@ -92,4 +98,5 @@ int RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type )
     ret = MessageBox( hwnd, msg, title, type );
     FREE_STRING( msg );
     return( ret );
-}
+
+} /* RCMessageBox */

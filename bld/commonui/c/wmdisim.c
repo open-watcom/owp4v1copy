@@ -32,20 +32,18 @@
 #include <stdio.h>
 
 #ifdef __OS2_PM__
-#define INCL_PM
-#include "os2.h"
+    #define INCL_PM
+    #include "os2.h"
 #else
-#define OEMRESOURCE
-#include <windows.h>
-#ifdef __WINDOWS_386__
-#include <malloc.h>
-#endif
+    #define OEMRESOURCE
+    #include <windows.h>
+    #ifdef __WINDOWS_386__
+        #include <malloc.h>
+    #endif
 #endif
 
 #include "wmdisim.h"
-
-extern LPVOID   MemAlloc( UINT );
-extern void     MemFree( LPVOID );
+#include "mem.h"
 
 typedef char    bool;
 
@@ -76,11 +74,12 @@ static HWND     currentWindow;
 //static WPI_RECT       minChildRect;
 //static char   haveMinChildRect;
 
-#define MDI_DATA_FROM_HWND( hwnd ) ((mdi_data *) _wpi_getwindowlong( hwnd, mdiInfo.data_off ))
+#define MDI_DATA_FROM_HWND( hwnd ) ((mdi_data *)_wpi_getwindowlong( hwnd, mdiInfo.data_off ))
 
 static void deleteMaximizedMenuConfig( void );
-void SetSystemMenu( HWND hwnd );
 static void setMaximizedMenuConfig( HWND hwnd );
+
+void SetSystemMenu( HWND hwnd );
 
 /*
  * MDIInit - initialize MDI
@@ -96,7 +95,6 @@ void MDIInit( mdi_info *mi )
  */
 void MDIInitMenu( void )
 {
-
     if( childrenMaximized ) {
         MDIClearMaximizedMenuConfig();
         deleteMaximizedMenuConfig();
@@ -110,6 +108,9 @@ void MDIInitMenu( void )
 
 } /* MDIInitMenu */
 
+/*
+ * MDISetOrigSize
+ */
 void MDISetOrigSize( HWND hwnd, WPI_RECT *rect )
 {
     mdi_data    *md;
@@ -117,7 +118,8 @@ void MDISetOrigSize( HWND hwnd, WPI_RECT *rect )
     md = MDI_DATA_FROM_HWND( hwnd );
 
     CopyRect( &md->orig_size, rect );
-}
+
+} /* MDISetOrigSize */
 
 /*
  * doMaximize - handle maximizing an edit window
@@ -128,7 +130,10 @@ static void doMaximize( HWND hwnd )
     mdi_data            *md;
     WPI_RECT            r;
     bool                iconic;
-    WPI_RECTDIM         left, top, right, bottom;
+    WPI_RECTDIM         left;
+    WPI_RECTDIM         top;
+    WPI_RECTDIM         right;
+    WPI_RECTDIM         bottom;
 
     setMaximizedMenuConfig( hwnd );
 
@@ -189,7 +194,10 @@ static void doRestore( HWND hwnd )
 {
     DWORD       style;
     mdi_data    *md;
-    WPI_RECTDIM left, top, right, bottom;
+    WPI_RECTDIM left;
+    WPI_RECTDIM top;
+    WPI_RECTDIM right;
+    WPI_RECTDIM bottom;
 
     md = MDI_DATA_FROM_HWND( hwnd );
 
@@ -246,6 +254,7 @@ static void doRestoreAll( void )
 } /* doRestoreAll */
 
 #ifndef __OS2_PM__
+
 /*
  * doMaximizeAll - maximize all children
  */
@@ -275,6 +284,7 @@ static void doMaximizeAll( HWND first )
     SetSystemMenu( first );
 
 } /* doMaximizeAll */
+
 #endif
 
 /*
@@ -283,19 +293,18 @@ static void doMaximizeAll( HWND first )
  */
 static void getMenuBitmaps( void )
 {
-
     if( restoreBitmap == NULLHANDLE ) {
 #ifdef __OS2_PM__
         restoreBitmap = WinGetSysBitmap( HWND_DESKTOP, SBMP_RESTOREBUTTON );
 #else
-        restoreBitmap = LoadBitmap( (HANDLE) NULL, MAKEINTRESOURCE( OBM_RESTORE ) );
+        restoreBitmap = LoadBitmap( (HANDLE)NULL, MAKEINTRESOURCE( OBM_RESTORE ) );
 #endif
     }
     if( restoredBitmap == NULLHANDLE ) {
 #ifdef __OS2_PM__
         restoredBitmap = WinGetSysBitmap( HWND_DESKTOP, SBMP_RESTOREBUTTONDEP );
 #else
-        restoredBitmap = LoadBitmap( (HANDLE) NULL, MAKEINTRESOURCE( OBM_RESTORED ) );
+        restoredBitmap = LoadBitmap( (HANDLE)NULL, MAKEINTRESOURCE( OBM_RESTORED ) );
 #endif
     }
 
@@ -310,7 +319,10 @@ static void getMenuBitmaps( void )
 
 } /* getMenuBitmaps */
 
-static HMENU DuplicateMenu( HMENU orig )
+/*
+ * duplicateMenu - create a duplicate copy of a menu
+ */
+static HMENU duplicateMenu( HMENU orig )
 {
     WPI_MENUSTATE       mstate;
     int                 num;
@@ -334,20 +346,21 @@ static HMENU DuplicateMenu( HMENU orig )
                 if( _wpi_ismenuseparatorfromstate( &mstate ) ) {
                     _wpi_appendmenu( copy, menu_flags, attr_flags, 0, NULLHANDLE, NULL );
                 } else if( _wpi_ismenupopupfromstate( &mstate ) ) {
-                    sub = DuplicateMenu( _wpi_getsubmenu( orig, i ) );
+                    sub = duplicateMenu( _wpi_getsubmenu( orig, i ) );
                     name[0] = 0;
-                    _wpi_getmenutext( orig, i, name, MAX_STR-1, TRUE );
+                    _wpi_getmenutext( orig, i, name, MAX_STR - 1, TRUE );
                     _wpi_appendmenu( copy, menu_flags, attr_flags, 0, sub, name );
                 } else {
                     id = _wpi_getmenuitemid( orig, i );
-                    _wpi_getmenutext( orig, i, name, MAX_STR-1, TRUE );
+                    _wpi_getmenutext( orig, i, name, MAX_STR - 1, TRUE );
                     _wpi_appendmenu( copy, menu_flags, attr_flags, id, NULLHANDLE, name );
                 }
             }
         }
     }
     return( copy );
-}
+
+} /* duplicateMenu */
 
 /*
  * generateSystemMenu - generate a copy of the system menu for given window
@@ -358,10 +371,11 @@ static HMENU generateSystemMenu( HWND hwnd )
 
     sys_menu = _wpi_getsystemmenu( hwnd );
     if( sys_menu != NULLHANDLE ) {
-        return( DuplicateMenu( sys_menu ) );
+        return( duplicateMenu( sys_menu ) );
     } else {
         return( NULLHANDLE );
     }
+
 } /* generateSystemMenu */
 
 /*
@@ -373,20 +387,18 @@ static HMENU modifyChildSystemMenu( HMENU sys_menu )
         return( NULLHANDLE );
     }
 
-    /* fix hotkey designation for close
-    */
+    /* fix hotkey designation for close */
     _wpi_setmenutext( sys_menu, SC_CLOSE, "&Close\tCtrl+F4", FALSE );
 
-    /* remove task switch option
-    */
+    /* remove task switch option */
     _wpi_deletemenu( sys_menu, SC_TASKLIST, FALSE );
 
-    /* add next window option
-    */
+    /* add next window option */
     _wpi_appendmenu( sys_menu, MF_STRING, 0, SC_NEXTWINDOW, NULLHANDLE, "Nex&t\tCtrl+F6" );
 
     return( sys_menu );
-}
+
+} /* modifyChildSystemMenu */
 
 /*
  * SetSystemMenu -- make the system menu showing belong to the current window
@@ -405,7 +417,7 @@ void SetSystemMenu( HWND hwnd )
 #ifndef __OS2_PM__
     if( sys_menu != NULL ) {
         ModifyMenu( menu, 0, MF_POPUP | MF_BYPOSITION | MF_BITMAP,
-                    (UINT) sys_menu, (LPVOID)closeBitmap );
+                    (UINT)sys_menu, (LPVOID)closeBitmap );
     } else {
         ModifyMenu( menu, 0, MF_BYPOSITION | MF_BITMAP, -1,
                     (LPVOID)closeBitmap );
@@ -418,9 +430,11 @@ void SetSystemMenu( HWND hwnd )
     }
 #endif
     _wpi_drawmenubar( mdiInfo.root );
-}
+
+} /* SetSystemMenu */
 
 #ifndef __OS2_PM__
+
 /*
  * hitSysMenu - check if a specified point hit the system menu
  */
@@ -428,7 +442,10 @@ static bool hitSysMenu( HWND hwnd, WPI_PARAM2 lparam )
 {
     WPI_RECT    r;
     WPI_POINT   pt;
-    int         left, top, right, bottom;
+    int         left;
+    int         top;
+    int         right;
+    int         bottom;
 
     _wpi_getwindowrect( hwnd, &r );
     _wpi_getrectvalues( r, &left, &top, &right, &bottom );
@@ -442,9 +459,11 @@ static bool hitSysMenu( HWND hwnd, WPI_PARAM2 lparam )
     return( _wpi_ptinrect( &r, pt ) );
 
 } /* hitSysMenu */
+
 #endif
 
 #if 0
+
 /*
  * HitRestoreButton - check if a specified point hit the restore button
  */
@@ -452,7 +471,10 @@ bool HitRestoreButton( HWND hwnd, WPI_PARAM2 lparam )
 {
     WPI_RECT    r;
     WPI_POINT   pt;
-    int         left, top, right, bottom;
+    int         left;
+    int         top;
+    int         right;
+    int         bottom;
 
     _wpi_getwindowrect( hwnd, &r );
     _wpi_getrectvalues( r, &left, &top, &right, &bottom );
@@ -477,14 +499,15 @@ void SetRestoreBitmap( bool pressed )
     menu = _wpi_getmenu( mdiInfo.root );
     if( pressed ) {
         ModifyMenu( menu, 7, MF_BYPOSITION | MF_BITMAP | MF_HELP,
-                        SC_RESTORE, (LPVOID) restoredBitmap );
+                    SC_RESTORE, (LPVOID) restoredBitmap );
     } else {
         ModifyMenu( menu, 7, MF_BYPOSITION | MF_BITMAP | MF_HELP,
-                        SC_RESTORE, (LPVOID) restoreBitmap );
+                    SC_RESTORE, (LPVOID) restoreBitmap );
     }
     _wpi_drawmenubar( mdiInfo.root );
 
 } /* SetRestoreBitmap */
+
 #endif
 
 /*
@@ -505,13 +528,12 @@ static void setMaximizedMenuConfig( HWND hwnd )
         sys_menu = generateSystemMenu( hwnd );
         if( sys_menu != NULL ) {
             InsertMenu( menu, 0, MF_POPUP | MF_BYPOSITION | MF_BITMAP,
-                        (UINT) sys_menu, (LPVOID) closeBitmap );
+                        (UINT)sys_menu, (LPVOID)closeBitmap );
         } else {
-            InsertMenu( menu, 0, MF_BYPOSITION | MF_BITMAP, -1,
-                        (LPVOID) closeBitmap );
+            InsertMenu( menu, 0, MF_BYPOSITION | MF_BITMAP, -1, (LPVOID)closeBitmap );
         }
         InsertMenu( menu, -1, MF_HELP | MF_BYPOSITION | MF_BITMAP, SC_RESTORE,
-                    (LPVOID) restoreBitmap );
+                    (LPVOID)restoreBitmap );
         _wpi_drawmenubar( mdiInfo.root );
     }
 #else
@@ -542,7 +564,7 @@ void MDIClearMaximizedMenuConfig( void )
 } /* MDIClearMaximizedMenuConfig */
 
 /*
- * deleteMaxinimizedMenuConfig - delete the maximized menu configuration
+ * deleteMaximizedMenuConfig - delete the maximized menu configuration
  */
 static void deleteMaximizedMenuConfig( void )
 {
@@ -558,7 +580,8 @@ static void deleteMaximizedMenuConfig( void )
     count = (int)_wpi_getmenuitemcount( root_menu );
     _wpi_deletemenu( root_menu, count-1, TRUE );
     _wpi_drawmenubar( mdiInfo.root );
-}
+
+} /* deleteMaximizedMenuConfig */
 
 /*
  * MDISetMainWindowTitle - set the title of the main window
@@ -584,7 +607,7 @@ int MDIIsMaximized( void )
 } /* MDIIsMaximized */
 
 /*
- * MDIIsWndMaximized -- test is given window is currently maximized
+ * MDIIsWndMaximized - test is given window is currently maximized
  */
 int MDIIsWndMaximized( HWND hwnd )
 {
@@ -596,7 +619,7 @@ int MDIIsWndMaximized( HWND hwnd )
 } /* MDIIsWndMaximized */
 
 /*
- * MDIUpdatedMenu - test if we have updated ( added to ) the menus
+ * MDIUpdatedMenu - test if we have updated (added to) the menus
  */
 int MDIUpdatedMenu( void )
 {
@@ -623,17 +646,17 @@ void MDITile( int is_horz )
 #else
 #ifndef __OS2_PM__
     WORD        tile_how;
-    #if !defined( __NT__ )
-        HANDLE  h;
-        #if defined( __WINDOWS_386__ )
-            LPVOID      TileChildWindows;
-            HINDIR      hindir;
-        #else
-            int (FAR PASCAL* TileChildWindows)( HWND parent, WORD action );
-        #endif
-    #else
-        extern int FAR PASCAL TileChildWindows( HWND parent, WORD action );
-    #endif
+#if !defined( __NT__ )
+    HANDLE      h;
+#if defined( __WINDOWS_386__ )
+    LPVOID      TileChildWindows;
+    HINDIR      hindir;
+#else
+    int (FAR PASCAL *TileChildWindows)( HWND parent, WORD action );
+#endif
+#else
+    extern int FAR PASCAL TileChildWindows( HWND parent, WORD action );
+#endif
 
     if( childrenMaximized ) {
         return;
@@ -645,31 +668,32 @@ void MDITile( int is_horz )
         tile_how = MDITILE_VERTICAL;
     }
 
-    #if !defined( __NT__ )
-        h = LoadLibrary( "USER.EXE" );
-        if( h == NULL ) {
-            return;
-        }
-        TileChildWindows = (LPVOID) GetProcAddress( h, "TileChildWindows" );
-        if( TileChildWindows == NULL ) {
-            return;
-        }
-        #if defined( __WINDOWS_386__ )
-            hindir = GetIndirectFunctionHandle( TileChildWindows, INDIR_WORD,
-                                    INDIR_WORD, INDIR_ENDLIST );
-            InvokeIndirectFunction( hindir, mdiInfo.container, tile_how );
-            free( hindir );
-        #else
-            TileChildWindows( mdiInfo.container, tile_how );
-        #endif
-        FreeLibrary( h );
-    #else
-        TileChildWindows( mdiInfo.container, tile_how );
-    #endif
+#if !defined( __NT__ )
+    h = LoadLibrary( "USER.EXE" );
+    if( h == NULL ) {
+        return;
+    }
+    TileChildWindows = (LPVOID)GetProcAddress( h, "TileChildWindows" );
+    if( TileChildWindows == NULL ) {
+        return;
+    }
+#if defined( __WINDOWS_386__ )
+    hindir = GetIndirectFunctionHandle( TileChildWindows, INDIR_WORD,
+                                        INDIR_WORD, INDIR_ENDLIST );
+    InvokeIndirectFunction( hindir, mdiInfo.container, tile_how );
+    free( hindir );
+#else
+    TileChildWindows( mdiInfo.container, tile_how );
+#endif
+    FreeLibrary( h );
+#else
+    TileChildWindows( mdiInfo.container, tile_how );
+#endif
 #else
     is_horz = is_horz;
 #endif
 #endif
+
 } /* MDITile */
 
 /*
@@ -681,44 +705,43 @@ void MDICascade( void )
     return;
 #else
 #ifndef __OS2_PM__
-    #if !defined( __NT__ )
-        HANDLE  h;
-        #if defined( __WINDOWS_386__ )
-            LPVOID      CascadeChildWindows;
-            HINDIR      hindir;
-        #else
-            int (FAR PASCAL* CascadeChildWindows)( HWND parent, WORD action );
-        #endif
-    #else
-        extern int FAR PASCAL CascadeChildWindows( HWND parent, WORD action );
-    #endif
-
+#if !defined( __NT__ )
+    HANDLE      h;
+#if defined( __WINDOWS_386__ )
+    LPVOID      CascadeChildWindows;
+    HINDIR      hindir;
+#else
+    int (FAR PASCAL *CascadeChildWindows)( HWND parent, WORD action );
+#endif
+#else
+    extern int FAR PASCAL CascadeChildWindows( HWND parent, WORD action );
+#endif
 
     if( childrenMaximized ) {
         return;
     }
 
-    #if !defined( __NT__ )
-        h = LoadLibrary( "USER.EXE" );
-        if( h == NULL ) {
-            return;
-        }
-        CascadeChildWindows = (LPVOID) GetProcAddress( h, "CascadeChildWindows" );
-        if( CascadeChildWindows == NULL ) {
-            return;
-        }
-        #if defined( __WINDOWS_386__ )
-            hindir = GetIndirectFunctionHandle( CascadeChildWindows, INDIR_WORD,
-                                    INDIR_WORD, INDIR_ENDLIST );
-            InvokeIndirectFunction( hindir, mdiInfo.container, 0 );
-            free( hindir );
-        #else
-            CascadeChildWindows( mdiInfo.container, 0 );
-        #endif
-        FreeLibrary( h );
-    #else
-        CascadeChildWindows( mdiInfo.container, 0 );
-    #endif
+#if !defined( __NT__ )
+    h = LoadLibrary( "USER.EXE" );
+    if( h == NULL ) {
+        return;
+    }
+    CascadeChildWindows = (LPVOID)GetProcAddress( h, "CascadeChildWindows" );
+    if( CascadeChildWindows == NULL ) {
+        return;
+    }
+#if defined( __WINDOWS_386__ )
+    hindir = GetIndirectFunctionHandle( CascadeChildWindows, INDIR_WORD,
+                                        INDIR_WORD, INDIR_ENDLIST );
+    InvokeIndirectFunction( hindir, mdiInfo.container, 0 );
+    free( hindir );
+#else
+    CascadeChildWindows( mdiInfo.container, 0 );
+#endif
+    FreeLibrary( h );
+#else
+    CascadeChildWindows( mdiInfo.container, 0 );
+#endif
 #endif
 #endif
 
@@ -731,12 +754,12 @@ int MDINewWindow( HWND hwnd )
 {
     mdi_data    *md;
 
-    md = (mdi_data *) MemAlloc( sizeof( mdi_data ) );
+    md = (mdi_data *)MemAlloc( sizeof( mdi_data ) );
     if( md == NULL ) {
         return( FALSE );
     }
     md->hwnd = hwnd;
-    _wpi_setwindowlong( hwnd, mdiInfo.data_off, (LONG) md );
+    _wpi_setwindowlong( hwnd, mdiInfo.data_off, (LONG)md );
     if( mdiHead == NULL ) {
         mdiHead = mdiTail = md;
     } else {
@@ -753,11 +776,12 @@ int MDINewWindow( HWND hwnd )
 } /* MDINewWindow */
 
 /*
- * finiWindow - an mdi window is done
+ * finiWindow - an MDI window is done
  */
 static void finiWindow( HWND hwnd )
 {
-    mdi_data    *curr,*prev;
+    mdi_data    *curr;
+    mdi_data    *prev;
 
     curr = mdiHead;
     prev = NULL;
@@ -785,6 +809,7 @@ static void finiWindow( HWND hwnd )
 } /* finiWindow */
 
 #ifndef __OS2_PM__
+
 /*
  * processSysCommand - process a WM_SYSCOMMAND message for an MDI child
  */
@@ -825,7 +850,7 @@ static int processSysCommand( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         } else {
             md = md->next;
         }
-        /* note:  we are sending WM_SETFOCUS, for lack of anything
+        /* NOTE:  we are sending WM_SETFOCUS, for lack of anything
          *        better (WM_CHILDACTIVATE maybe?)
          */
         _wpi_sendmessage( md->hwnd, WM_SETFOCUS, 0, 0L );
@@ -836,6 +861,7 @@ static int processSysCommand( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
 } /* processSysCommand */
 
 #if 0
+
 /*
  * tryContainerScrollBars - try to add container scroll bars
  */
@@ -849,13 +875,13 @@ static void tryContainerScrollBars( void )
     _wpi_getwindowrect( mdiInfo.container, &r );
     if( minChildRect.top < r.top || minChildRect.bottom > r.bottom ) {
         _wpi_setscrollrange( mdiInfo.container, SB_VERT, minChildRect.top,
-                        minChildRect.bottom, FALSE );
+                             minChildRect.bottom, FALSE );
     } else {
         _wpi_setscrollrange( mdiInfo.container, SB_VERT, 1, 1, FALSE );
     }
     if( minChildRect.left < r.left || minChildRect.right > r.right ) {
         _wpi_setscrollrange( mdiInfo.container, SB_HORZ, minChildRect.left,
-                        minChildRect.right, FALSE );
+                             minChildRect.right, FALSE );
     } else {
         _wpi_setscrollrange( mdiInfo.container, SB_HORZ, 1, 1, FALSE );
     }
@@ -896,6 +922,7 @@ void MDIResizeContainer( void )
     tryContainerScrollBars();
 
 } /* MDIResizeContainer */
+
 #endif
 
 #endif
@@ -920,18 +947,18 @@ int MDIHitClose( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
     lparam = lparam;
 #endif
     return( FALSE );
+
 } /* MDIHitClose */
 
-/*
- * CheckForMessage -- check for a WM_COMMAND message that needs to be
- *                    sent to the maximized window
- */
-
 #ifndef __OS2_PM__
+
+/*
+ * CheckForMessage - check for a WM_COMMAND message that needs to be
+ *                   sent to the maximized window
+ */
 static bool CheckForMessage( HMENU menu, HWND currentWindow,
                              WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
-#ifndef __OS2_PM__
     int         num;
     int         i;
     UINT        id;
@@ -943,7 +970,7 @@ static bool CheckForMessage( HMENU menu, HWND currentWindow,
             flags = GetMenuState( menu, i, MF_BYPOSITION );
             if( flags & MF_POPUP ) {
                 if( CheckForMessage( GetSubMenu( menu, i ), currentWindow,
-                                 wparam, lparam ) ) {
+                                     wparam, lparam ) ) {
                     return( TRUE );
                 }
             } else {
@@ -955,15 +982,10 @@ static bool CheckForMessage( HMENU menu, HWND currentWindow,
             }
         }
     }
-#else
-    menu = menu;
-    currentWindow = currentWindow;
-    wparam = wparam;
-    lparam = lparam;
-#endif
     return( FALSE );
 
 } /* CheckForMessage */
+
 #endif
 
 /*
@@ -995,10 +1017,14 @@ int MDIIsSysCommand( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpara
 
 } /* MDIIsSysCommand */
 
+/*
+ * fixSystemMenu
+ */
 static void fixSystemMenu( HWND hwnd )
 {
     modifyChildSystemMenu( _wpi_getsystemmenu( hwnd ) );
-}
+
+} /* fixSystemMenu */
 
 /*
  * MDIChildHandleMessage - handle messages for MDI child windows
@@ -1072,7 +1098,10 @@ void MDIContainerResized( void )
 {
     mdi_data    *md;
     WPI_RECT    r;
-    WPI_RECTDIM left, top, right, bottom;
+    WPI_RECTDIM left;
+    WPI_RECTDIM top;
+    WPI_RECTDIM right;
+    WPI_RECTDIM bottom;
 
     if( MDIIsMaximized() ) {
         _wpi_getwindowrect( mdiInfo.container, &r );
@@ -1086,4 +1115,5 @@ void MDIContainerResized( void )
             md = md->next;
         }
     }
+
 } /* MDIContainerResized */

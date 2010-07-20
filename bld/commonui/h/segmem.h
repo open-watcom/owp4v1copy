@@ -29,9 +29,14 @@
 ****************************************************************************/
 
 
+#ifndef _SEGMEM_H_INCLUDED
+#define _SEGMEM_H_INCLUDED
+
 DWORD far   GetASelectorLimit( WORD );
-WORD  far   IsValidSelector( WORD );
+WORD far    IsValidSelector( WORD );
 void        GetADescriptor( WORD seg, void *desc );
 int         IsSeg32( WORD seg );
 DWORD       ReadMem( WORD sel, DWORD off, LPVOID buff, DWORD size );
 DWORD       WriteMem( WORD sel, DWORD off, LPVOID buff, DWORD size );
+
+#endif /* _SEGMEM_H_INCLUDED */

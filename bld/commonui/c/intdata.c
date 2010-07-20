@@ -45,7 +45,7 @@ void SaveState( interrupt_struct *idata, fault_frame *ff )
     idata->EDI = ff->EDI;
     idata->ESI = ff->ESI;
     idata->EBP = ff->EBP;
-    idata->ESP = ff->ESP+EXCESS_CRAP_ON_STACK;
+    idata->ESP = ff->ESP + EXCESS_CRAP_ON_STACK;
     idata->EBX = ff->EBX;
     idata->EDX = ff->EDX;
     idata->ECX = ff->ECX;
@@ -71,7 +71,7 @@ void RestoreState( interrupt_struct *idata, fault_frame *ff )
     ff->EDI = idata->EDI;
     ff->ESI = idata->ESI;
     ff->oldEBP = idata->EBP;
-    ff->ESP = idata->ESP-EXCESS_CRAP_ON_STACK;
+    ff->ESP = idata->ESP - EXCESS_CRAP_ON_STACK;
     ff->EBX = idata->EBX;
     ff->EDX = idata->EDX;
     ff->ECX = idata->ECX;

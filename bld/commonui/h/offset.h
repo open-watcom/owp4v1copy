@@ -29,4 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _OFFSET_H_INCLUDED
+#define _OFFSET_H_INCLUDED
+
 #define OFF_OFFSET                  101
+
+#endif /* _OFFSET_H_INCLUDED */

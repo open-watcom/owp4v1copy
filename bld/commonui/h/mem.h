@@ -29,7 +29,12 @@
 ****************************************************************************/
 
 
-void MemFree( void *ptr );
-void *MemAlloc( unsigned size );
-void *MemReAlloc( void *ptr, unsigned size );
-void MemStart( void );
+#ifndef _MEM_H_INCLUDED
+#define _MEM_H_INCLUDED
+
+void    MemFree( void *ptr );
+void    *MemAlloc( unsigned size );
+void    *MemReAlloc( void *ptr, unsigned size );
+void    MemStart( void );
+
+#endif /* _MEM_H_INCLUDED */

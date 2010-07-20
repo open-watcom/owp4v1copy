@@ -60,35 +60,39 @@ void DisplayMemLines( HWND hwnd, ADDRESS *addr, int idlo, int idhi, int sbid )
 {
     int         i,j;
     char        bytes[BYTES_LINE];
-    char        data[BYTES_LINE+1];
-    char        buff[256],tbuff[10];
-    DWORD       max,curr;
+    char        data[BYTES_LINE + 1];
+    char        buff[256];
+    char        tbuff[10];
+    DWORD       max;
+    DWORD       curr;
     ADDRESS     maddr;
     HWND        hscrl;
 
     maddr = *addr;
     for( i = idlo; i <= idhi; i++ ) {
         ReadMem( maddr.seg, maddr.offset, bytes, BYTES_LINE );
-        sprintf( buff,"%08lx: ", maddr.offset );
+        sprintf( buff, "%08lx: ", maddr.offset );
         for( j = 0; j < BYTES_LINE; j++ ) {
             data[j] = '.';
             if( maddr.offset + j < memLimit ) {
-                sprintf( tbuff, "%02x ", (unsigned) bytes[j] );
-                if( isprint( bytes[j] ) ) data[j] = bytes[j];
+                sprintf( tbuff, "%02x ", (unsigned)bytes[j] );
+                if( isprint( bytes[j] ) ) {
+                    data[j] = bytes[j];
+                }
             } else {
-                sprintf( tbuff,"?? " );
+                sprintf( tbuff, "?? " );
             }
             strcat( buff, tbuff );
         }
         data[BYTES_LINE] = 0;
-        strcat( buff,data );
+        strcat( buff, data );
         SetDlgItemText( hwnd, i, buff );
         maddr.offset += BYTES_LINE;
     }
 
     max = memLimit;
     if( max > MAXRANGE ) {
-        curr = (DWORD)((double)MAXRANGE*(double)addr->offset/(double)max);
+        curr = (DWORD)((double)MAXRANGE * (double)addr->offset / (double)max);
         max = MAXRANGE;
     } else {
         curr = addr->offset;
@@ -101,17 +105,17 @@ void DisplayMemLines( HWND hwnd, ADDRESS *addr, int idlo, int idhi, int sbid )
 } /* DisplayMemLines */
 
 /*
- * ScrollMemDisplay - move asm display in response to a scroll request
+ * scrollMemDisplay - move asm display in response to a scroll request
  */
-static void ScrollMemDisplay( HWND hwnd, WORD wparam, WORD pos, ADDRESS *addr,
-                        int idlo, int idhi, int sbid )
+static void scrollMemDisplay( HWND hwnd, WORD wparam, WORD pos, ADDRESS *addr,
+                              int idlo, int idhi, int sbid )
 {
     switch( wparam ) {
     case SB_PAGEDOWN:
-        addr->offset += 7*BYTES_LINE;
+        addr->offset += 7 * BYTES_LINE;
         break;
     case SB_PAGEUP:
-        addr->offset -= 7*BYTES_LINE;
+        addr->offset -= 7 * BYTES_LINE;
         break;
     case SB_LINEDOWN:
         addr->offset += BYTES_LINE;
@@ -119,10 +123,10 @@ static void ScrollMemDisplay( HWND hwnd, WORD wparam, WORD pos, ADDRESS *addr,
     case SB_LINEUP:
         addr->offset -= BYTES_LINE;
         break;
-//    case SB_THUMBPOSITION:
+//  case SB_THUMBPOSITION:
     case SB_THUMBTRACK:
         if( memLimit > MAXRANGE ) {
-            addr->offset = (DWORD) (((double)pos*(double)memLimit)/(double)MAXRANGE);
+            addr->offset = (DWORD)(((double)pos * (double)memLimit) / (double)MAXRANGE);
         } else {
             addr->offset = pos;
         }
@@ -130,11 +134,11 @@ static void ScrollMemDisplay( HWND hwnd, WORD wparam, WORD pos, ADDRESS *addr,
     default:
         return;
     }
-    if( (long) addr->offset < 0 ) {
+    if( (long)addr->offset < 0 ) {
         addr->offset = 0;
     }
     if( addr->offset >= memLimit ) {
-        addr->offset = memLimit-1;
+        addr->offset = memLimit - 1;
     }
     DisplayMemLines( hwnd, addr, idlo, idhi, sbid );
 
@@ -144,8 +148,7 @@ static void ScrollMemDisplay( HWND hwnd, WORD wparam, WORD pos, ADDRESS *addr,
 /*
  *  SegInfoDialog - display info about a segment
  */
-BOOL __export FAR PASCAL SegInfoDialog( HWND hwnd, WORD msg, WORD wparam,
-                                    DWORD lparam )
+BOOL __export FAR PASCAL SegInfoDialog( HWND hwnd, WORD msg, WPARAM wparam, LPARAM lparam )
 {
     GLOBALENTRY ge;
     char        buff[64];
@@ -165,18 +168,17 @@ BOOL __export FAR PASCAL SegInfoDialog( HWND hwnd, WORD msg, WORD wparam,
             SetFont( hwnd, SEGINFO_TYPE );
             switch( ge.wType ) {
             case GT_CODE:
-                SetDlgItemText( hwnd, SEGINFO_TYPE,"CODE" );
+                SetDlgItemText( hwnd, SEGINFO_TYPE, "CODE" );
                 break;
             case GT_DATA:
-                SetDlgItemText( hwnd, SEGINFO_TYPE,"DATA" );
+                SetDlgItemText( hwnd, SEGINFO_TYPE, "DATA" );
                 break;
             case GT_DGROUP:
-                SetDlgItemText( hwnd, SEGINFO_TYPE,"DGROUP" );
+                SetDlgItemText( hwnd, SEGINFO_TYPE, "DGROUP" );
                 break;
             }
-        } else {
         }
-        sprintf( buff,"Selector %04x", (WORD) siAddr.seg );
+        sprintf( buff, "Selector %04x", (WORD)siAddr.seg );
         SetWindowText( hwnd, buff );
         for( i = SEGINFO_LINE1; i <= SEGINFO_LINE7; i++ ) {
             SetFont( hwnd, i );
@@ -190,8 +192,8 @@ BOOL __export FAR PASCAL SegInfoDialog( HWND hwnd, WORD msg, WORD wparam,
 #endif
 
     case WM_VSCROLL:
-        ScrollMemDisplay( hwnd, wparam, LOWORD( lparam ), &siAddr,
-                        SEGINFO_LINE1, SEGINFO_LINE7, SEGINFO_SCROLL );
+        scrollMemDisplay( hwnd, wparam, LOWORD( lparam ), &siAddr,
+                          SEGINFO_LINE1, SEGINFO_LINE7, SEGINFO_SCROLL );
         return( TRUE );
 
     case WM_CLOSE:

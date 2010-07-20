@@ -37,18 +37,19 @@
 #include "mem.h"
 
 #ifndef MB_ERR_INVALID_CHARS
-#define MB_ERR_INVALID_CHARS 0x00000000
+    #define MB_ERR_INVALID_CHARS 0x00000000
 #endif
 
 #ifdef __NT__
-#define ADJUST_BLOCKLEN( a ) a = (((a)+3) & ~3)
+    #define ADJUST_BLOCKLEN( a ) a = (((a) + 3) & ~3)
 #else
-#define ADJUST_BLOCKLEN( a )
+    #define ADJUST_BLOCKLEN( a )
 #endif
 
-#if defined(__NT__)
-    #pragma pack(2);
+#if defined( __NT__ )
+    #pragma pack( 2 );
 #endif
+
 typedef struct {
     long        dtStyle;
 #ifdef __NT__
@@ -75,9 +76,12 @@ static BYTE     *JFontInfo = NULL;
 static int      JFontInfoLen = 0;
 
 
-#if defined(__NT__)
+#if defined( __NT__ )
+
+/*
+ * mbcs2unicode - convert a multibyte character string to Unicode
+ */
 static BOOL mbcs2unicode( char *src, LPWSTR *dest, int *len )
-/***********************************************************/
 {
     LPWSTR      new;
     int         len1, len2;
@@ -105,38 +109,39 @@ static BOOL mbcs2unicode( char *src, LPWSTR *dest, int *len )
     *len = len1;
 
     return( TRUE );
-}
+
+} /* mbcs2unicode */
 
 #endif
 
+/*
+ * createFontInfoData - allocate and fill the font information data
+ */
 static BOOL createFontInfoData( char *typeface, short pointsize,
                                 BYTE **fidata, int *size )
-/****************************/
 {
     BYTE        *data;
     int         slen;
+#if defined( __NT__ )
+    LPWSTR      unitypeface;
 
-    #if defined(__NT__)
-        data = NULL;
-        {
-            LPWSTR      unitypeface;
-            if( mbcs2unicode( typeface, &unitypeface, &slen ) ) {
-                slen *= sizeof(WCHAR);
-                data = (BYTE *)MemAlloc( sizeof( short ) + slen );
-                if( data != NULL ) {
-                    *((short *)data) = pointsize;
-                    memcpy( data+sizeof(short), unitypeface, slen );
-                }
-            }
-        }
-    #else
-        slen = strlen( typeface ) + 1;
+    data = NULL;
+    if( mbcs2unicode( typeface, &unitypeface, &slen ) ) {
+        slen *= sizeof( WCHAR );
         data = (BYTE *)MemAlloc( sizeof( short ) + slen );
         if( data != NULL ) {
-            *((short *)data) = pointsize;
-            memcpy( data+sizeof(short), typeface, slen );
+            *(short *)data = pointsize;
+            memcpy( data + sizeof( short ), unitypeface, slen );
         }
-    #endif
+    }
+#else
+    slen = strlen( typeface ) + 1;
+    data = (BYTE *)MemAlloc( sizeof( short ) + slen );
+    if( data != NULL ) {
+        *(short *)data = pointsize;
+        memcpy( data + sizeof( short ), typeface, slen );
+    }
+#endif
 
     if( data == NULL ) {
         return( FALSE );
@@ -146,64 +151,79 @@ static BOOL createFontInfoData( char *typeface, short pointsize,
     *size = slen + sizeof( short );
 
     return( TRUE );
-}
 
+} /* createFontInfoData */
+
+/*
+ * skipString - skip over a string
+ */
 static BYTE *skipString( BYTE *template )
-/***************************************/
 {
-    #if defined(__NT__)
-        // scan for zero word
-        for( ; ((WORD)*template); template+=2 );
-        template+=2;
-    #else
-        // scan for zero byte
-        for( ; *template; template++ );
-        template++;
-    #endif
+#if defined(__NT__)
+    /* scan for zero word */
+    for( ; (WORD)*template != 0; template += 2 );
+    template += 2;
+#else
+    /* scan for zero byte */
+    for( ; *template != 0; template++ );
+    template++;
+#endif
 
     return( template );
-}
 
+} /* skipString */
+
+/*
+ * hasFontInfo - check whether a dialog template has the DS_SETFONT style
+ */
 static BOOL hasFontInfo( BYTE *template )
-/***************************************/
 {
     _DLGTEMPLATE        *dt;
 
     dt = (_DLGTEMPLATE *)template;
 
-    return( ( dt->dtStyle & DS_SETFONT ) != 0 );
-}
+    return( (dt->dtStyle & DS_SETFONT) != 0 );
 
+} /* hasFontInfo */
+
+/*
+ * findFontInfo - find font information in a dialog template
+ */
 static BYTE *findFontInfo( BYTE *template )
-/*****************************************/
 {
-    // skip to the menu name
+    /* skip to the menu name */
     template = template + sizeof( _DLGTEMPLATE );
 
-    // skip the menu name
+    /* skip the menu name */
     template = skipString( template );
 
-    // skip the class name
+    /* skip the class name */
     template = skipString( template );
 
-    // skip the caption text
+    /* skip the caption text */
     template = skipString( template );
 
     return( template );
-}
 
+} /* findFontInfo */
+
+/*
+ * getFontInfoSize - get the font size from a dialog template
+ */
 static int getFontInfoSize( BYTE *fontinfo )
-/******************************************/
 {
     BYTE        *afterFontinfo;
 
     afterFontinfo = fontinfo + sizeof( short );
     afterFontinfo = skipString( afterFontinfo );
     return( afterFontinfo - fontinfo );
-}
 
+} /* getFontInfoSize */
+
+/*
+ * getSystemFontTypeface - get the system font face name and size
+ */
 static BOOL getSystemFontTypeface( char **typeface, short *pointsize )
-/********************************************************************/
 {
 #ifndef USE_SYSTEM_FONT
     *typeface = "‚l‚r –¾’©";
@@ -211,7 +231,7 @@ static BOOL getSystemFontTypeface( char **typeface, short *pointsize )
 
     return( TRUE );
 #else
-    HDC         hDc;
+    HDC         hDC;
     HFONT       systemFont;
     LOGFONT     lf;
     int         logpixelsy;
@@ -233,11 +253,11 @@ static BOOL getSystemFontTypeface( char **typeface, short *pointsize )
     }
     strcpy( *typeface, lf.lfFaceName );
 
-    hDc = GetDC( (HWND)NULL );
-    logpixelsy = GetDeviceCaps( hDc, LOGPIXELSY );
-    ReleaseDC( (HWND)NULL, hDc );
-    point = (( (unsigned long)lf.lfHeight * 720 ) / (unsigned long)logpixelsy);
-    roundup = ( ( point % 10 ) > 4 );
+    hDC = GetDC( (HWND)NULL );
+    logpixelsy = GetDeviceCaps( hDC, LOGPIXELSY );
+    ReleaseDC( (HWND)NULL, hDC );
+    point = (((unsigned long)lf.lfHeight * 720) / (unsigned long)logpixelsy);
+    roundup = ((point % 10) > 4);
     point /= 10;
     if( roundup ) {
         point++;
@@ -246,11 +266,14 @@ static BOOL getSystemFontTypeface( char **typeface, short *pointsize )
 
     return( TRUE );
 #endif
-}
 
+} /* getSystemFontTypeface */
+
+/*
+ * loadDialogTemplate - load a dialog template
+ */
 static HGLOBAL loadDialogTemplate( HINSTANCE hinst, LPCSTR lpszDlgTemp,
                                    DWORD *size )
-/******************/
 {
     HGLOBAL     htemplate;
     HRSRC       hrsrc;
@@ -271,10 +294,13 @@ static HGLOBAL loadDialogTemplate( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     }
 
     return( htemplate );
-}
 
+} /* loadDialogTemplate */
+
+/*
+ * createJTemplate - create a Japanese dialog template
+ */
 static HGLOBAL createJTemplate( HGLOBAL htemplate, DWORD size )
-/*************************************************************/
 {
     HGLOBAL     newHTemplate;
     DWORD       newSize;
@@ -307,12 +333,12 @@ static HGLOBAL createJTemplate( HGLOBAL htemplate, DWORD size )
     fontinfo = findFontInfo( template );
     fontinfoSize = getFontInfoSize( fontinfo );
 
-    // calcualte the size of the original dialog header
+    /* calcualte the size of the original dialog header */
     dlgHeaderSize = fontinfo - template + fontinfoSize;
     ADJUST_BLOCKLEN( dlgHeaderSize );
     ctlInfoSize = size - dlgHeaderSize;
 
-    // calcualte the size of the new dialog header
+    /* calculate the size of the new dialog header */
     newdlgHeaderSize = fontinfo - template + JFontInfoLen;
     ADJUST_BLOCKLEN( newdlgHeaderSize );
 
@@ -335,13 +361,13 @@ static HGLOBAL createJTemplate( HGLOBAL htemplate, DWORD size )
         return( NULL );
     }
 
-    // copy template data up to fontinfo
+    /* copy template data up to fontinfo */
     memcpy( newTemplate, template, fontinfo - template );
 
-    // copy the new fontinfo
-    memcpy( newTemplate + ( fontinfo - template ), JFontInfo, JFontInfoLen );
+    /* copy the new fontinfo */
+    memcpy( newTemplate + (fontinfo - template), JFontInfo, JFontInfoLen );
 
-    // copy the rest of the template data
+    /* copy the rest of the template data */
     memcpy( newTemplate + newdlgHeaderSize, template + dlgHeaderSize,
             ctlInfoSize );
 
@@ -351,10 +377,13 @@ static HGLOBAL createJTemplate( HGLOBAL htemplate, DWORD size )
 #endif
 
     return( newHTemplate );
-}
 
+} /* createJTemplate */
+
+/*
+ * JDialogInit - initialize Japenese dialogs
+ */
 BOOL JDialogInit( void )
-/**********************/
 {
     char        *typeface;
     short       pointsize;
@@ -367,23 +396,27 @@ BOOL JDialogInit( void )
         return( FALSE );
     }
 
-    return( createFontInfoData( typeface, pointsize, &JFontInfo,
-                                &JFontInfoLen ) );
+    return( createFontInfoData( typeface, pointsize, &JFontInfo, &JFontInfoLen ) );
 }
 
+/*
+ * JDialogFini - done with all Japanese dialogs
+ */
 void JDialogFini( void )
-/**********************/
 {
     if( JFontInfo ) {
         MemFree( JFontInfo );
         JFontInfo = NULL;
         JFontInfoLen = 0;
     }
-}
 
+} /* JDialogFini */
+
+/*
+ * cdIndirect - helper for JCreateDialogIndirect
+ */
 static HWND cdIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                         HWND hwndOwner, DLGPROC dlgproc, DWORD size )
-/*****************************************************/
 {
     HGLOBAL     newtemplate;
     HWND        ret;
@@ -393,7 +426,7 @@ static HWND cdIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
     }
 
     newtemplate = createJTemplate( hglblDlgTemp, size );
-    if( newtemplate == (HGLOBAL) NULL ) {
+    if( newtemplate == (HGLOBAL)NULL ) {
         goto CDI_DEFAULT_ACTION;
     }
 
@@ -411,12 +444,15 @@ CDI_DEFAULT_ACTION:
     GlobalUnlock( hglblDlgTemp );
 
     return( ret );
-}
 
+} /* cdIndirect */
+
+/*
+ * cdIndirectParam - helper for JCreateDialogIndirectParam
+ */
 static HWND cdIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                              HWND hwndOwner, DLGPROC dlgproc,
                              LPARAM lParamInit, DWORD size )
-/*************************************/
 {
     HGLOBAL     newtemplate;
     HWND        ret;
@@ -426,7 +462,7 @@ static HWND cdIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
     }
 
     newtemplate = createJTemplate( hglblDlgTemp, size );
-    if( newtemplate == (HGLOBAL) NULL ) {
+    if( newtemplate == (HGLOBAL)NULL ) {
         goto CDIP_DEFAULT_ACTION;
     }
 
@@ -444,11 +480,14 @@ CDIP_DEFAULT_ACTION:
     GlobalUnlock( hglblDlgTemp );
 
     return( ret );
-}
 
+} /* cdIndirectParam */
+
+/*
+ * dbIndirect - helper for JDialogBoxIndirect
+ */
 static int dbIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                        HWND hwndOwner, DLGPROC dlgproc, DWORD size )
-/****************************************************/
 {
     HGLOBAL     newtemplate;
     int         ret;
@@ -458,17 +497,17 @@ static int dbIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
     }
 
     newtemplate = createJTemplate( hglblDlgTemp, size );
-    if( newtemplate == (HGLOBAL) NULL ) {
+    if( newtemplate == (HGLOBAL)NULL ) {
         goto DBI_DEFAULT_ACTION;
     }
 
-    #if defined(__NT__)
-        ret = DialogBoxIndirect( hinst, GlobalLock( newtemplate ),
-                                 hwndOwner, dlgproc );
-        GlobalUnlock( newtemplate );
-    #else
-        ret = DialogBoxIndirect( hinst, newtemplate, hwndOwner, dlgproc );
-    #endif
+#if defined( __NT__ )
+    ret = DialogBoxIndirect( hinst, GlobalLock( newtemplate ),
+                             hwndOwner, dlgproc );
+    GlobalUnlock( newtemplate );
+#else
+    ret = DialogBoxIndirect( hinst, newtemplate, hwndOwner, dlgproc );
+#endif
 
     GlobalFree( newtemplate );
 
@@ -478,10 +517,12 @@ DBI_DEFAULT_ACTION:
     return( DialogBoxIndirect( hinst, hglblDlgTemp, hwndOwner, dlgproc ) );
 }
 
+/*
+ * dbIndirectParam - helper for JDialogBoxIndirectParam
+ */
 static int dbIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                             HWND hwndOwner, DLGPROC dlgproc,
                             LPARAM lParamInit, DWORD size )
-/************************************/
 {
     HGLOBAL     newtemplate;
     int         ret;
@@ -491,18 +532,18 @@ static int dbIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
     }
 
     newtemplate = createJTemplate( hglblDlgTemp, size );
-    if( newtemplate == (HGLOBAL) NULL ) {
+    if( newtemplate == (HGLOBAL)NULL ) {
         goto DBIP_DEFAULT_ACTION;
     }
 
-    #if defined(__NT__)
-        ret = DialogBoxIndirectParam( hinst, GlobalLock( newtemplate ),
-                                      hwndOwner, dlgproc, lParamInit );
-        GlobalUnlock( newtemplate );
-    #else
-        ret = DialogBoxIndirectParam( hinst, newtemplate,
-                                      hwndOwner, dlgproc, lParamInit );
-    #endif
+#if defined( __NT__ )
+    ret = DialogBoxIndirectParam( hinst, GlobalLock( newtemplate ),
+                                  hwndOwner, dlgproc, lParamInit );
+    GlobalUnlock( newtemplate );
+#else
+    ret = DialogBoxIndirectParam( hinst, newtemplate,
+                                  hwndOwner, dlgproc, lParamInit );
+#endif
 
     GlobalFree( newtemplate );
 
@@ -512,41 +553,52 @@ DBIP_DEFAULT_ACTION:
     return( DialogBoxIndirectParam( hinst, hglblDlgTemp, hwndOwner, dlgproc, lParamInit ) );
 }
 
+/*
+ * JDialogBoxIndirect - Japanese version of DialogBoxIndirect
+ */
 int JDialogBoxIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                         HWND hwndOwner, DLGPROC dlgproc )
-/**********************************/
 {
     return( dbIndirect( hinst, hglblDlgTemp, hwndOwner, dlgproc, -1 ) );
-}
 
+} /* JDialogBoxIndirect */
+
+/*
+ * JDialogBoxIndirectParam - Japanese version of DialogBoxIndirectParam
+ */
 int JDialogBoxIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                              HWND hwndOwner, DLGPROC dlgproc,
                              LPARAM lParamInit )
-/*************************/
 {
-    return( dbIndirectParam( hinst, hglblDlgTemp, hwndOwner, dlgproc,
-                             lParamInit, -1 ) );
-}
+    return( dbIndirectParam( hinst, hglblDlgTemp, hwndOwner, dlgproc, lParamInit, -1 ) );
 
+} /* JDialogBoxIndirectParam */
+
+/*
+ * JCreateDialogIndirect - Japanese version of CreateDialogIndirect
+ */
 HWND JCreateDialogIndirect( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                             HWND hwndOwner, DLGPROC dlgproc )
-/**************************************/
 {
     return( cdIndirect( hinst, hglblDlgTemp, hwndOwner, dlgproc, -1 ) );
-}
 
+} /* JCreateDialogIndirect */
+
+/*
+ * JCreateDialogIndirectParam - Japanese version of CreateDialogIndirectParam
+ */
 HWND JCreateDialogIndirectParam( HINSTANCE hinst, HGLOBAL hglblDlgTemp,
                                  HWND hwndOwner, DLGPROC dlgproc,
                                  LPARAM lParamInit )
-/**********************/
 {
-    return( cdIndirectParam( hinst, hglblDlgTemp, hwndOwner, dlgproc,
-                             lParamInit, -1 ) );
-}
+    return( cdIndirectParam( hinst, hglblDlgTemp, hwndOwner, dlgproc, lParamInit, -1 ) );
 
-int JDialogBox( HINSTANCE hinst, LPCSTR lpszDlgTemp,
-                HWND hwndOwner, DLGPROC dlgproc )
-/*********************************/
+} /* JCreateDialogIndirectParam */
+
+/*
+ * JDialogBox - Japanese version of DialogBox
+ */
+int JDialogBox( HINSTANCE hinst, LPCSTR lpszDlgTemp, HWND hwndOwner, DLGPROC dlgproc )
 {
     HGLOBAL     template;
     DWORD       size;
@@ -557,7 +609,7 @@ int JDialogBox( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     }
 
     template = loadDialogTemplate( hinst, lpszDlgTemp, &size );
-    if( template == (HGLOBAL) NULL ) {
+    if( template == (HGLOBAL)NULL ) {
         goto JDB_DEFAULT_ACTION;
     }
 
@@ -569,12 +621,14 @@ int JDialogBox( HINSTANCE hinst, LPCSTR lpszDlgTemp,
 
 JDB_DEFAULT_ACTION:
     return( DialogBox( hinst, (LPSTR)lpszDlgTemp, hwndOwner, dlgproc ) );
-}
 
-int JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
-                     HWND hwndOwner, DLGPROC dlgproc,
-                     LPARAM lParamInit )
-/************************/
+} /* JDialogBox */
+
+/*
+ * JDialogBoxParam - Japanese version of DialogBoxParam
+ */
+int JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp, HWND hwndOwner,
+                     DLGPROC dlgproc, LPARAM lParamInit )
 {
     HGLOBAL     template;
     DWORD       size;
@@ -585,12 +639,11 @@ int JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     }
 
     template = loadDialogTemplate( hinst, lpszDlgTemp, &size );
-    if( template == (HGLOBAL) NULL ) {
+    if( template == (HGLOBAL)NULL ) {
         goto JDBP_DEFAULT_ACTION;
     }
 
-    ret = dbIndirectParam( hinst, template, hwndOwner, dlgproc,
-                           lParamInit, size );
+    ret = dbIndirectParam( hinst, template, hwndOwner, dlgproc, lParamInit, size );
 
     FreeResource( template );
 
@@ -598,11 +651,14 @@ int JDialogBoxParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
 
 JDBP_DEFAULT_ACTION:
     return( DialogBoxParam( hinst, (LPSTR)lpszDlgTemp, hwndOwner, dlgproc, lParamInit ) );
-}
 
+} /* JDialogBoxParam */
+
+/*
+ * JCreateDialog - Japanese version of CreateDialog
+ */
 HWND JCreateDialog( HINSTANCE hinst, LPCSTR lpszDlgTemp,
                     HWND hwndOwner, DLGPROC dlgproc )
-/*************************************/
 {
     HGLOBAL     template;
     DWORD       size;
@@ -613,7 +669,7 @@ HWND JCreateDialog( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     }
 
     template = loadDialogTemplate( hinst, lpszDlgTemp, &size );
-    if( template == (HGLOBAL) NULL ) {
+    if( template == (HGLOBAL)NULL ) {
         goto JCD_DEFAULT_ACTION;
     }
 
@@ -625,11 +681,14 @@ HWND JCreateDialog( HINSTANCE hinst, LPCSTR lpszDlgTemp,
 
 JCD_DEFAULT_ACTION:
     return( CreateDialog( hinst, (LPSTR)lpszDlgTemp, hwndOwner, dlgproc ) );
-}
 
+} /* JCreateDialog */
+
+/*
+ * JCreateDialogParam - Japanese version of CreateDialogParam
+ */
 HWND JCreateDialogParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
                          HWND hwndOwner, DLGPROC dlgproc, LPARAM lParamInit )
-/******************************************************/
 {
     HGLOBAL     template;
     DWORD       size;
@@ -640,12 +699,11 @@ HWND JCreateDialogParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
     }
 
     template = loadDialogTemplate( hinst, lpszDlgTemp, &size );
-    if( template == (HGLOBAL) NULL ) {
+    if( template == (HGLOBAL)NULL ) {
         goto JCDP_DEFAULT_ACTION;
     }
 
-    ret = cdIndirectParam( hinst, template, hwndOwner, dlgproc,
-                           lParamInit, size );
+    ret = cdIndirectParam( hinst, template, hwndOwner, dlgproc, lParamInit, size );
 
     FreeResource( template );
 
@@ -654,9 +712,14 @@ HWND JCreateDialogParam( HINSTANCE hinst, LPCSTR lpszDlgTemp,
 JCDP_DEFAULT_ACTION:
     return( CreateDialogParam( hinst, (LPSTR)lpszDlgTemp, hwndOwner,
                                dlgproc, lParamInit ) );
-}
 
+} /* JCreateDialogParam */
+
+/*
+ * JDialogGetJFont - get the font used for Japanese dialogs
+ */
 BOOL JDialogGetJFont( char **typeface, short *pointsize )
 {
     return( getSystemFontTypeface( typeface, pointsize ) );
-}
+
+} /* JDialogGetJFont */

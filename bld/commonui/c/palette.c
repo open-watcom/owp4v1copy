@@ -33,14 +33,13 @@
 #include <stdlib.h>
 #include "mem.h"
 
-void MemFree( void *ptr );
-void *MemAlloc( unsigned size );
-void *MemReAlloc( void *ptr, unsigned size );
-void MemStart( void );
-
+/*
+ * CreateDIBPalette - create a palette for a bitmap
+ */
 HPALETTE CreateDIBPalette( BITMAPINFO *info )
 {
-    unsigned            num_colours, i;
+    unsigned            num_colours;
+    unsigned            i;
     LOGPALETTE          *palette;
     HPALETTE            palette_handle;
     RGBQUAD             *quads;
@@ -52,10 +51,11 @@ HPALETTE CreateDIBPalette( BITMAPINFO *info )
 
     palette_handle = (HPALETTE)0;
 
-    if( num_colours ) {
-        palette = MemAlloc( sizeof( LOGPALETTE ) +
-                num_colours * sizeof( PALETTEENTRY ) );
-        if( palette == NULL ) return( (HPALETTE)0 );
+    if( num_colours != 0 ) {
+        palette = MemAlloc( sizeof( LOGPALETTE ) + num_colours * sizeof( PALETTEENTRY ) );
+        if( palette == NULL ) {
+            return( (HPALETTE)0 );
+        }
         palette->palNumEntries = num_colours;
         palette->palVersion = 0x300;
 
@@ -70,4 +70,5 @@ HPALETTE CreateDIBPalette( BITMAPINFO *info )
         MemFree( palette );
     }
     return( palette_handle );
-}
+
+} /* CreateDIBPalette */

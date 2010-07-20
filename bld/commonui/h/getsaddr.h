@@ -29,4 +29,9 @@
 ****************************************************************************/
 
 
-BOOL GetStartAddress( char *path, void *res );
+#ifndef _GETSADDR_H_INCLUDED
+#define _GETSADDR_H_INCLUDED
+
+BOOL    GetStartAddress( char *path, void *res );
+
+#endif /* _GETSADDR_H_INCLUDED */

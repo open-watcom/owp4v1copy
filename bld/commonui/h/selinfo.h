@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _SELINFO_H_INCLUDED
+#define _SELINFO_H_INCLUDED
+
 #define SEL_INFO_DONT_CARE              300
 #define SEL_INFO_GRAN                   301
 #define SEL_INFO_TYPE                   302
@@ -38,3 +41,4 @@
 #define SEL_INFO_DPL                    306
 #define SEL_INFO_ACCESS                 307
 
+#endif /* _SELINFO_H_INCLUDED */

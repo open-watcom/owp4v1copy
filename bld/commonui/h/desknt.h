@@ -29,7 +29,13 @@
 ****************************************************************************/
 
 
-BOOL RegisterSnapClass( HANDLE instance );
-HWND DisplayDesktop( HWND hparent );
+#ifndef _DESKNT_H_INCLUDED
+#define _DESKNT_H_INCLUDED
+
 typedef BOOL (*deskNThook)( HWND, UINT, UINT, LONG );
-void SetDeskTopHook( deskNThook );
+
+BOOL    RegisterSnapClass( HANDLE instance );
+HWND    DisplayDesktop( HWND hparent );
+void    SetDeskTopHook( deskNThook );
+
+#endif /* _DESKNT_H_INCLUDED */

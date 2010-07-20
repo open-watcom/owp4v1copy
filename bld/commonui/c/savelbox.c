@@ -49,14 +49,14 @@
 /*
  * writeListBoxContents
  */
-static BOOL writeListBoxContents( void (*writefn)(FILE *), char *fname, HWND listbox )
+static BOOL writeListBoxContents( void (*writefn)( FILE * ), char *fname, HWND listbox )
 {
     WORD        i;
     LRESULT     count;
     FILE        *f;
     char        str[256];
 
-    f = fopen( fname,"w" );
+    f = fopen( fname, "w" );
     if( f == NULL ) {
         return( FALSE );
     }
@@ -69,8 +69,8 @@ static BOOL writeListBoxContents( void (*writefn)(FILE *), char *fname, HWND lis
         return( FALSE );
     }
     for( i = 0; i < count; i++ ) {
-        SendMessage( listbox, LB_GETTEXT, i, (LONG) (LPVOID) str );
-        fprintf( f,"%s\n", str );
+        SendMessage( listbox, LB_GETTEXT, i, (LONG)(LPVOID)str );
+        fprintf( f, "%s\n", str );
     }
     fclose( f );
     return( TRUE );
@@ -78,45 +78,48 @@ static BOOL writeListBoxContents( void (*writefn)(FILE *), char *fname, HWND lis
 } /* writeListBoxContents */
 
 #ifndef NOUSE3D
+
 /*
- * LBSaveHook - hook used called by common dialog - for 3-d controls
+ * LBSaveHook - hook used called by common dialog - for 3D controls
  */
-BOOL CALLBACK LBSaveHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
+BOOL CALLBACK LBSaveHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     wparam = wparam;
     lparam = lparam;
     hwnd = hwnd;
     switch( msg ) {
     case WM_INITDIALOG:
-        // We must call this to subclass the directory listbox even
-        // if the app calls Ctl3dAutoSubclass (commdlg bug)
+        /*
+         * We must call this to subclass the directory listbox even
+         * if the app calls Ctl3dAutoSubclass (commdlg bug).
+         */
         CvrCtl3dSubclassDlg( hwnd, CTL3D_ALL );
         return( TRUE );
-        break;
     }
     return( FALSE );
 
 } /* LBSaveHook */
+
 #endif
 
 /*
  * GetSaveFName - let the user select a file name for a save operation
- *                 fname must point to a buffer of length at least _MAX_PATH
+ *                fname must point to a buffer of length at least _MAX_PATH
  */
 BOOL GetSaveFName( HWND mainhwnd, char *fname )
 {
     static char         filterList[] = "File (*.*)" \
-                                        "\0" \
-                                        "*.*" \
-                                        "\0\0";
+                                       "\0" \
+                                       "*.*" \
+                                       "\0\0";
     OPENFILENAME        of;
     int                 rc;
 
-    fname[ 0 ] = 0;
+    fname[0] = 0;
     memset( &of, 0, sizeof( OPENFILENAME ) );
     of.lStructSize = sizeof( OPENFILENAME );
     of.hwndOwner = mainhwnd;
-    of.lpstrFilter = (LPSTR) filterList;
+    of.lpstrFilter = (LPSTR)filterList;
     of.lpstrDefExt = "";
     of.nFilterIndex = 1L;
     of.lpstrFile = fname;
@@ -125,12 +128,12 @@ BOOL GetSaveFName( HWND mainhwnd, char *fname )
     of.Flags = OFN_HIDEREADONLY;
 #ifndef NOUSE3D
     of.Flags |= OFN_ENABLEHOOK;
-    of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (LPVOID) LBSaveHook,
-                    GET_HINSTANCE( mainhwnd ) );
+    of.lpfnHook = (LPOFNHOOKPROC)MakeProcInstance( (LPVOID)LBSaveHook,
+                                                   GET_HINSTANCE( mainhwnd ) );
 #endif
     rc = GetSaveFileName( &of );
 #ifndef NOUSE3D
-    FreeProcInstance( (LPVOID) of.lpfnHook );
+    FreeProcInstance( (LPVOID)of.lpfnHook );
 #endif
     return( rc );
 
@@ -155,9 +158,9 @@ BOOL GenTmpFileName( char *tmpname, char *buf )
     len = 0;
     strcpy( buf, drive );
     len += strlen( drive );
-    strcpy( buf+len, dir );
+    strcpy( buf + len, dir );
     len += strlen( dir );
-    strcpy( buf+len, fname );
+    strcpy( buf + len, fname );
     fname_len = strlen( fname );
     if( fname_len < _MAX_FNAME - 4 ) {
         ptr = buf + len + fname_len;
@@ -166,24 +169,29 @@ BOOL GenTmpFileName( char *tmpname, char *buf )
         ptr = buf + len + _MAX_FNAME - 4;
         len = len + _MAX_FNAME - 1;
     }
-    strcpy( buf+len, ext );
-    for( i = 0 ;; ) {
+    strcpy( buf + len, ext );
+    for( i = 0;; ) {
         sprintf( id, "%03d", i );
         memcpy( ptr, id, 3 );
-        if( access( buf, F_OK ) == -1 ) break;
+        if( access( buf, F_OK ) == -1 ) {
+            break;
+        }
         i++;
-        if( i > 999 ) return( FALSE );
+        if( i > 999 ) {
+            return( FALSE );
+        }
     }
     return( TRUE );
+
 } /* GenTmpFileName */
 
 /*
- * RelToAbs - converts a relative path to an absolute path based on the
+ * relToAbs - converts a relative path to an absolute path based on the
  *            current working directory
  *          - assumes that the path given is valid
  */
-static void RelToAbs( char *path, char *out ) {
-
+static void relToAbs( char *path, char *out )
+{
     char        *cwd;
     unsigned    old_dir;
     unsigned    tot;
@@ -193,15 +201,16 @@ static void RelToAbs( char *path, char *out ) {
     char        ext[_MAX_EXT];
     char        *ptr;
 
-
     cwd = getcwd( NULL, 0 );
     _dos_getdrive( &old_dir );
     _splitpath( path, drive, dir, fname, ext );
     if( strcmp( dir, "\\" ) != 0 ) {
         if( *dir != '\0' ) {
             ptr = dir;
-            while( *ptr ) ptr++;
-            ptr --;
+            while( *ptr ) {
+                ptr++;
+            }
+            ptr--;
             *ptr = '\0';
         }
     }
@@ -212,10 +221,14 @@ static void RelToAbs( char *path, char *out ) {
     chdir( cwd );
     free( cwd );
     ptr = out;
-    /* make sure _splitpath doesn't mistake the last directory spec as a
-       filename */
-    while( *ptr ) ptr++;
-    if( *(ptr-1) != '\\' ) {
+    /*
+     * Make sure _splitpath doesn't mistake the last directory spec as a
+     * filename.
+     */
+    while( *ptr ) {
+        ptr++;
+    }
+    if( *(ptr - 1) != '\\' ) {
         ptr[0] = '\\';
         ptr++;
     }
@@ -224,28 +237,32 @@ static void RelToAbs( char *path, char *out ) {
     strupr( ext );
     _splitpath( out, drive, dir, NULL, NULL );
     _makepath( out, drive, dir, fname, ext );
-}
 
-void ReportSave( HWND parent, char *fname, char *appname, BOOL save_ok ) {
+} /* relToAbs */
 
+/*
+ * ReportSave
+ */
+void ReportSave( HWND parent, char *fname, char *appname, BOOL save_ok )
+{
     char        ful_fname[_MAX_PATH];
     char        buf[_MAX_PATH + 20];
 
     if( save_ok ) {
-        RelToAbs( fname, ful_fname );
+        relToAbs( fname, ful_fname );
         RCsprintf( buf, SLB_DATA_SAVED_TO, ful_fname );
-            MessageBox( parent, buf, appname, MB_OK | MB_TASKMODAL );
+        MessageBox( parent, buf, appname, MB_OK | MB_TASKMODAL );
     } else {
         RCMessageBox( parent, SLB_CANT_SAVE_DATA, appname,
-                    MB_OK | MB_TASKMODAL | MB_ICONEXCLAMATION );
+                      MB_OK | MB_TASKMODAL | MB_ICONEXCLAMATION );
     }
+
 } /* ReportSave */
 
 /*
  * SaveListBox - save out a list box
  */
-
-void SaveListBox( int how, void (*writefn)(FILE *),char *tmpname,
+void SaveListBox( int how, void (*writefn)( FILE * ), char *tmpname,
                   char *appname, HWND mainhwnd, HWND listbox )
 {
     char        fname[_MAX_PATH];
@@ -257,15 +274,18 @@ void SaveListBox( int how, void (*writefn)(FILE *),char *tmpname,
         ret = GetSaveFName( mainhwnd, fname );
     } else {
         ret = GenTmpFileName( tmpname, fname );
-        if( !ret ) ReportSave( mainhwnd, fname, appname, ret );
+        if( !ret ) {
+            ReportSave( mainhwnd, fname, appname, ret );
+        }
     }
     if( ret ) {
         hourglass = LoadCursor( NULL, IDC_WAIT );
         SetCapture( mainhwnd );
-        oldcursor= SetCursor( hourglass );
+        oldcursor = SetCursor( hourglass );
         ret = writeListBoxContents( writefn, fname, listbox );
         SetCursor( oldcursor );
         ReleaseCapture();
         ReportSave( mainhwnd, fname, appname, ret );
     }
+
 } /* SaveListBox */

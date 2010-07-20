@@ -29,4 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _PALETTE_H_INCLUDED
+#define _PALETTE_H_INCLUDED
+
 extern HPALETTE CreateDIBPalette( BITMAPINFO * );
+
+#endif /* _PALETTE_H_INCLUDED */

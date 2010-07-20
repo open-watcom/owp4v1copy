@@ -37,13 +37,12 @@
     #include "ctl3dcvr.h"
 #endif
 
-static void             (*WriteFn)(char *);
+static void             (*WriteFn)( char * );
 
 /*
  * MarkDlgProc - handle messages from the mark dialog
  */
-BOOL __export FAR PASCAL MarkDlgProc( HWND hwnd, WORD msg,
-                                          WORD wparam, DWORD lparam )
+BOOL __export FAR PASCAL MarkDlgProc( HWND hwnd, WORD msg, WPARAM wparam, LPARAM lparam )
 {
     char        buf[MARK_LEN];
     char        boxbuf[MARK_LEN];
@@ -104,19 +103,23 @@ BOOL __export FAR PASCAL MarkDlgProc( HWND hwnd, WORD msg,
         return( FALSE );
     }
     return( TRUE );
-}
+
+} /* MarkDlgProc */
 
 /*
  * ProcessMark - start a mark dialog
  */
-void ProcessMark( HWND owner, HANDLE instance, void (*fn)(char *) ) {
-
+void ProcessMark( HWND owner, HANDLE instance, void (*fn)( char * ) )
+{
     FARPROC             fp;
 
-    if( WriteFn != NULL ) return;
+    if( WriteFn != NULL ) {
+        return;
+    }
     WriteFn = fn;
     fp = MakeProcInstance( (FARPROC)MarkDlgProc, instance );
     DialogBox( instance, "MARK_DLG", owner, (DLGPROC)fp );
     FreeProcInstance( fp );
     WriteFn = NULL;
-}
+
+} /* ProcessMark */

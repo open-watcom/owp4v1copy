@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _PUSHWIN_H_INCLUDED
+#define _PUSHWIN_H_INCLUDED
+
 typedef struct {
     WORD                id;
     HFONT               font;
@@ -36,5 +39,7 @@ typedef struct {
     char                str[1];         /* dynamic array */
 } PushWinInfo;
 
-BOOL RegPushWin( HANDLE instance );
-HWND CreatePushWin( HWND parent, char *txt, WORD id, HFONT font, HANDLE inst );
+BOOL    RegPushWin( HANDLE instance );
+HWND    CreatePushWin( HWND parent, char *txt, WORD id, HFONT font, HANDLE inst );
+
+#endif /* _PUSHWIN_H_INCLUDED */

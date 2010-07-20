@@ -24,10 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  Prototype for WWinHelp routine.
+* Description:  Prototypes for WWinHelp and WHtmlHelp routines.
 *
 ****************************************************************************/
 
 
-BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data );
-BOOL WHtmlHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data );
+#ifndef _WWINHELP_H_INCLUDED
+#define _WWINHELP_H_INCLUDED
+
+BOOL    WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data );
+BOOL    WHtmlHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data );
+
+#endif /* _WWINHELP_H_INCLUDED */

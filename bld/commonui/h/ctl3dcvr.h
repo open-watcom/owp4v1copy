@@ -29,27 +29,27 @@
 ****************************************************************************/
 
 
-#ifndef CTL3DCVR_INCLUDED
-#define CTL3DCVR_INCLUDED
+#ifndef _CTL3DCVR_H_INCLUDED
+#define _CTL3DCVR_H_INCLUDED
 
-#include "ctl3d.h"
+#include <ctl3d.h>
 
 #define C3D_EXPORT  WINAPI
 
-extern int      C3D_EXPORT CvrCtl3DInit( HINSTANCE );
-extern void     C3D_EXPORT CvrCtl3DFini( HINSTANCE );
-extern BOOL     C3D_EXPORT CvrCtl3dSubclassDlg( HWND, WORD );
-extern BOOL     C3D_EXPORT CvrCtl3dSubclassDlgEx( HWND, DWORD );
-extern WORD     C3D_EXPORT CvrCtl3dGetVer( void );
-extern BOOL     C3D_EXPORT CvrCtl3dEnabled( void );
-extern HBRUSH   C3D_EXPORT CvrCtl3dCtlColor( HDC, LONG );
-extern HBRUSH   C3D_EXPORT CvrCtl3dCtlColorEx( UINT, WPARAM, LPARAM );
-extern BOOL     C3D_EXPORT CvrCtl3dColorChange( void );
-extern BOOL     C3D_EXPORT CvrCtl3dSubclassCtl( HWND );
-extern LONG     C3D_EXPORT CvrCtl3dDlgFramePaint( HWND, UINT, WPARAM, LPARAM );
-extern BOOL     C3D_EXPORT CvrCtl3dAutoSubclass( HANDLE );
-extern BOOL     C3D_EXPORT CvrCtl3dRegister( HANDLE );
-extern BOOL     C3D_EXPORT CvrCtl3dUnregister( HANDLE );
-extern VOID     C3D_EXPORT CvrCtl3dWinIniChange( void );
+extern int C3D_EXPORT       CvrCtl3DInit( HINSTANCE );
+extern void C3D_EXPORT      CvrCtl3DFini( HINSTANCE );
+extern BOOL C3D_EXPORT      CvrCtl3dSubclassDlg( HWND, WORD );
+extern BOOL C3D_EXPORT      CvrCtl3dSubclassDlgEx( HWND, DWORD );
+extern WORD C3D_EXPORT      CvrCtl3dGetVer( void );
+extern BOOL C3D_EXPORT      CvrCtl3dEnabled( void );
+extern HBRUSH C3D_EXPORT    CvrCtl3dCtlColor( HDC, LONG );
+extern HBRUSH C3D_EXPORT    CvrCtl3dCtlColorEx( UINT, WPARAM, LPARAM );
+extern BOOL C3D_EXPORT      CvrCtl3dColorChange( void );
+extern BOOL C3D_EXPORT      CvrCtl3dSubclassCtl( HWND );
+extern LONG C3D_EXPORT      CvrCtl3dDlgFramePaint( HWND, UINT, WPARAM, LPARAM );
+extern BOOL C3D_EXPORT      CvrCtl3dAutoSubclass( HANDLE );
+extern BOOL C3D_EXPORT      CvrCtl3dRegister( HANDLE );
+extern BOOL C3D_EXPORT      CvrCtl3dUnregister( HANDLE );
+extern VOID C3D_EXPORT      CvrCtl3dWinIniChange( void );
 
-#endif
+#endif /* _CTL3DCVR_H_INCLUDED */

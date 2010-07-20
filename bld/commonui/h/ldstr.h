@@ -29,29 +29,30 @@
 ****************************************************************************/
 
 
+#ifndef _LDSTR_H_INCLUDED
+#define _LDSTR_H_INCLUDED
+
 #include <stdio.h>
 #include <stdarg.h>
 
 
 /************************************************************************
  * SetInstance - must be called before any other routine in this file
- *
- * If SPECIAL_STRING_LOADING is defined this first group of functions
- * must be provided by the application.  This allows an app to have
- * its own buffering scheme for resource strings.
  ***********************************************************************/
-void SetInstance( HANDLE inst );
-char *AllocRCString( DWORD id );
-void FreeRCString( char *str );
-char *GetRCString( DWORD msgid );
-DWORD CopyRCString( DWORD id, char *buf, DWORD bufsize );
+void    SetInstance( HANDLE inst );
+char    *AllocRCString( DWORD id );
+void    FreeRCString( char *str );
+char    *GetRCString( DWORD msgid );
+DWORD   CopyRCString( DWORD id, char *buf, DWORD bufsize );
 
 /*
  * All functions below this point obtain strings using AllocRCString and
  * FreeRCString
  */
 
-int  RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type );
-void RCfprintf( FILE *fp, DWORD strid, ...  );
-int  RCsprintf( char *buf, DWORD fmtid, ... );
-void RCvfprintf( FILE *fp, DWORD strid, va_list al  );
+int     RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type );
+void    RCfprintf( FILE *fp, DWORD strid, ...  );
+int     RCsprintf( char *buf, DWORD fmtid, ... );
+void    RCvfprintf( FILE *fp, DWORD strid, va_list al );
+
+#endif /* _LDSTR_H_INCLUDED */

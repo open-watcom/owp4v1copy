@@ -59,7 +59,8 @@ BOOL Init32Ctl3d( void )
         FreeLibrary( dllCtl3d );
         return( FALSE );
     }
-    DLL32Ctl3dSubclassDlg = GetIndirectFunctionHandle( ptr, INDIR_WORD, INDIR_WORD, INDIR_ENDLIST );
+    DLL32Ctl3dSubclassDlg = GetIndirectFunctionHandle( ptr, INDIR_WORD, INDIR_WORD,
+                                                       INDIR_ENDLIST );
 
     ptr = GetProcAddress( dllCtl3d, "Ctl3dAutoSubclass" );
     if( ptr == NULL ) {
@@ -104,6 +105,7 @@ BOOL Init32Ctl3d( void )
     DLL32Ctl3dCtlColorEx = GetIndirectFunctionHandle( ptr, INDIR_WORD, INDIR_WORD, INDIR_DWORD, INDIR_ENDLIST );
 
     return( TRUE );
+
 } /* Init32Ctl3d */
 
 
@@ -117,4 +119,5 @@ void Fini32Ctl3d( void )
     }
 
 } /* Fini32Ctl3d */
+
 #endif

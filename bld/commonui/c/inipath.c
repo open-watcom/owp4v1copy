@@ -34,7 +34,7 @@
 #include <string.h>
 #ifdef __NT__
     #include <shlobj.h>
-    typedef HRESULT (WINAPI *GetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR);
+    typedef HRESULT (WINAPI *GetFolderPath)( HWND, int, HANDLE, DWORD, LPTSTR );
 #endif
 
 #define CONFIG_DIR "Open Watcom"
@@ -42,29 +42,30 @@
 
 /*
  * GetConfigFilePath - get the path to the directory containing the config files
- * shfolder.dll is loaded explicitly for compatability with Win98 -- calling
- * SHGetFolderPathA directly doesn't work, probably due to order of linking
+ *
+ * SHFOLDER.DLL is loaded explicitly for compatability with Win95.  Calling
+ * SHGetFolderPathA directly doesn't work, probably due to order of linking.
  */
 void GetConfigFilePath( char *path, size_t size )
 {
 #ifdef __NT__
     HINSTANCE library = LoadLibrary( "shfolder.dll" );
-    if ( library ) {
+    if( library != NULL ) {
         GetFolderPath getpath = (GetFolderPath)GetProcAddress(library, "SHGetFolderPathA");
         if (SUCCEEDED( getpath( NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path ) ) ) {
-            if( strlen( path ) + strlen( "\\" CONFIG_DIR ) + 12 < size) {
-                strcat( path, "\\" CONFIG_DIR);
-                if ( access(path, F_OK) )   /* make sure CONFIG_DIR diretory is present */
-                    mkdir( path );          /* if not, create it */
+            if( strlen( path ) + strlen( "\\" CONFIG_DIR ) + 12 < size ) {
+                strcat( path, "\\" CONFIG_DIR );
+                if( access( path, F_OK ) ) {    /* make sure CONFIG_DIR diretory is present */
+                    mkdir( path );              /* if not, create it */
+                }
             }
         }
         FreeLibrary( library );
-    }
-    else {                                  /* should only get here on old machines */
-        GetWindowsDirectory( path, size );  /* that don't have shfolder.dll */
+    } else {                                    /* should only get here on old machines */
+        GetWindowsDirectory( path, size );      /* that don't have SHFOLDER.DLL */
     }
 #else
     GetWindowsDirectory( path, size );
 #endif
-}
 
+} /* GetConfigFilePath */

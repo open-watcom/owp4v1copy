@@ -29,10 +29,14 @@
 ****************************************************************************/
 
 
-void GetWORDEditField( HWND hwnd, int id, WORD *reg );
-void GetDWORDEditField( HWND hwnd, int id, DWORD *reg );
-void SetWORDEditField( HWND hwnd, int id, WORD reg );
-void SetDWORDEditField( HWND hwnd, int id, DWORD reg );
-void SetWORDStaticField( HWND hwnd, int id, WORD reg );
-void SetDWORDStaticField( HWND hwnd, int id, DWORD reg );
+#ifndef _DLGMOD_H_INCLUDED
+#define _DLGMOD_H_INCLUDED
 
+void    GetWORDEditField( HWND hwnd, int id, WORD *reg );
+void    GetDWORDEditField( HWND hwnd, int id, DWORD *reg );
+void    SetWORDEditField( HWND hwnd, int id, WORD reg );
+void    SetDWORDEditField( HWND hwnd, int id, DWORD reg );
+void    SetWORDStaticField( HWND hwnd, int id, WORD reg );
+void    SetDWORDStaticField( HWND hwnd, int id, DWORD reg );
+
+#endif /* _DLGMOD_H_INCLUDED */

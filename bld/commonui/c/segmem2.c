@@ -75,7 +75,9 @@ int IsSeg32( WORD seg )
     descriptor  desc;
 
     GetADescriptor( seg, &desc );
-    if( desc.big_or_default ) return( TRUE );
+    if( desc.big_or_default ) {
+        return( TRUE );
+    }
     return( FALSE );
 
 } /* IsSeg32 */

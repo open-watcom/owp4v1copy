@@ -37,16 +37,16 @@
 #include <dos.h>
 #include <malloc.h>
 #ifdef __OS2_PM__
-#define INCL_WINDIALOGS
-#define INCL_WIN
-#define INCL_GPI
-#include <os2.h>
+    #define INCL_WINDIALOGS
+    #define INCL_WIN
+    #define INCL_GPI
+    #include <os2.h>
 #else
-#include <windows.h>
+    #include <windows.h>
 #endif
 #include "mem.h"
 #ifndef NO_WPI
-#include "wpi.h"
+    #include "wpi.h"
 #endif
 
 /*
@@ -62,6 +62,7 @@ void MemStart( void )
 #endif
 #endif
 #endif
+
 } /* MemStart */
 
 /*
@@ -70,12 +71,12 @@ void MemStart( void )
 void *MemAlloc( unsigned size )
 {
     void *x;
-#if defined(DEBUGMEM)
+#if defined( DEBUGMEM )
     x = GlobalLock( GlobalAlloc( GMEM_ZEROINIT | GMEM_MOVEABLE, size ) );
 #else
     x = calloc( 1, size );
 #endif
-#if defined(WANT_MSGS)
+#if defined( WANT_MSGS )
     if( x == NULL ) {
         MessageBox( HWND_DESKTOP, "AUUGH, Null Pointer", "Memory Allocation",
                     MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
@@ -92,7 +93,7 @@ void *MemReAlloc( void *ptr, unsigned size )
 {
     void *x;
 #ifndef __OS2_PM__
-#if defined(DEBUGMEM)
+#if defined( DEBUGMEM )
     GLOBALHANDLE        h;
 
     h = GlobalHandle( FP_SEG( ptr ) );
@@ -104,7 +105,7 @@ void *MemReAlloc( void *ptr, unsigned size )
 #else
     x = realloc( ptr, size );
 #endif
-#if defined(WANT_MSGS)
+#if defined( WANT_MSGS )
     if( x == NULL ) {
         MessageBox( HWND_DESKTOP, "AUUGH, Null Pointer", "Memory Allocation",
                     MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
@@ -120,7 +121,7 @@ void *MemReAlloc( void *ptr, unsigned size )
 void MemFree( void *ptr )
 {
 #ifndef __OS2_PM__
-#if defined(DEBUGMEM)
+#if defined( DEBUGMEM )
     GLOBALHANDLE        h;
 
     h = GlobalHandle( FP_SEG( ptr ) );
@@ -132,4 +133,5 @@ void MemFree( void *ptr )
 #else
     free( ptr );
 #endif
+
 } /* MemFree */

@@ -29,15 +29,20 @@
 ****************************************************************************/
 
 
-#include "fontstr.h"
-void SetDlgMonoFont( HWND hwnd, int id );
-void SetMonoFont( HWND hwnd );
-void SetDlgCourierFont( HWND hwnd, int id );
-void SetCourierFont( HWND hwnd );
-void InitMonoFont( char *app, char *inifile, int default_font, HANDLE inst );
-void SaveMonoFont( char *app, char *inifile );
-BOOL ChooseMonoFont( HWND hwnd );
-void DestroyMonoFonts( void );
-HFONT GetMonoFont( void );
-void AllowVariableFonts( void );
+#ifndef _FONT_H_INCLUDED
+#define _FONT_H_INCLUDED
 
+#include "fontstr.h"
+
+void    SetDlgMonoFont( HWND hwnd, int id );
+void    SetMonoFont( HWND hwnd );
+void    SetDlgCourierFont( HWND hwnd, int id );
+void    SetCourierFont( HWND hwnd );
+void    InitMonoFont( char *app, char *inifile, int default_font, HANDLE inst );
+void    SaveMonoFont( char *app, char *inifile );
+BOOL    ChooseMonoFont( HWND hwnd );
+void    DestroyMonoFonts( void );
+HFONT   GetMonoFont( void );
+void    AllowVariableFonts( void );
+
+#endif /* _FONT_H_INCLUDED */

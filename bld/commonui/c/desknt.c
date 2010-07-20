@@ -64,10 +64,8 @@ LONG CALLBACK DesktopProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     }
 
     switch ( msg ) {
-
     case WM_ERASEBKGND:
         break;
-
     case WM_CREATE:
         hdc = GetDC( hwnd );
         memdc = CreateCompatibleDC( hdc );
@@ -77,8 +75,6 @@ LONG CALLBACK DesktopProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         ReleaseDC( hwnd, hdc );
         DeleteDC( memdc );
         break;
-
-
     case WM_PAINT:
         hdc = BeginPaint( hwnd, &ps );
         memdc = CreateCompatibleDC( hdc );
@@ -88,11 +84,9 @@ LONG CALLBACK DesktopProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         DeleteDC( memdc );
         EndPaint( hwnd, &ps );
         break;
-
     case WM_DESTROY:
         DeleteObject( deskTopBitmap );
         break;
-
     default:
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
     }
@@ -100,8 +94,11 @@ LONG CALLBACK DesktopProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 
 } /* DesktopProc */
 
-BOOL RegisterSnapClass( HANDLE instance ) {
-
+/*
+ * RegisterSnapClass - register the window class used to display the desktop
+ */
+BOOL RegisterSnapClass( HANDLE instance )
+{
     WNDCLASS    wc;
 
     thisInstance = instance;
@@ -112,12 +109,15 @@ BOOL RegisterSnapClass( HANDLE instance ) {
     wc.hInstance = thisInstance;
     wc.hIcon = (HICON)NULL;
     wc.hCursor = (HCURSOR)NULL;
-    wc.hbrBackground = (HBRUSH) NULL;
+    wc.hbrBackground = (HBRUSH)NULL;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = "SnapClass";
-    if( !RegisterClass( &wc ) ) return( FALSE );
+    if( !RegisterClass( &wc ) ) {
+        return( FALSE );
+    }
     return( TRUE );
-}
+
+} /* RegisterSnapClass */
 
 /*
  * getDesktopBitmap - returns the bitmap for the entire desktop
@@ -138,11 +138,12 @@ static void getDesktopBitmap( void )
     SelectObject( memdc, oldbmp );
     DeleteDC( memdc );
     ReleaseDC( NULL, hdc );
+
 } /* getDesktopBitmap */
 
 /*
- * createDeskWindow - creates a window the size of the entire screen that
- *                    gets the desktop bitmap blted on it.
+ * createDeskWindow - create a window the size of the entire screen that
+ *                    gets the desktop bitmap blted on it
  */
 static HWND createDeskWindow( HWND hparent )
 {
@@ -157,16 +158,16 @@ static HWND createDeskWindow( HWND hparent )
         screenWidth,                            /* Initial X size */
         screenHeight,                           /* Initial Y size */
         hparent,                                /* Parent window handle */
-        (HMENU) NULL,                           /* Window menu handle */
+        (HMENU)NULL,                            /* Window menu handle */
         thisInstance,                           /* Program instance handle */
-        NULL);                                  /* Create parameters */
+        NULL );                                 /* Create parameters */
 
-    return (hwnd );
+    return( hwnd );
 
 } /* createDeskWindow */
 
 /*
- * DisplayDesktop - Displays the desktop on the screen.
+ * DisplayDesktop - display the desktop on the screen
  */
 HWND DisplayDesktop( HWND hparent )
 {
@@ -186,4 +187,5 @@ HWND DisplayDesktop( HWND hparent )
     SetWindowPos( desktopwindow, HWND_TOPMOST, 0, 0, 0, 0,
                   SWP_NOMOVE | SWP_NOSIZE );
     return( desktopwindow );
+
 } /* DisplayDesktop */

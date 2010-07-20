@@ -29,6 +29,9 @@
 ****************************************************************************/
 
 
+#ifndef _ABOUTDLG_H_INCLUDED
+#define _ABOUTDLG_H_INCLUDED
+
 #include "banner.h"
 
 typedef struct {
@@ -47,3 +50,5 @@ typedef about_info __far *LPABOUTINFO;
 #endif
 
 extern void DoAbout( LPABOUTINFO ai );
+
+#endif /* _ABOUTDLG_H_INCLUDED */
