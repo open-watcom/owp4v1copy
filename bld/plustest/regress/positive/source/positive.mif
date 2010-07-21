@@ -210,6 +210,7 @@ positive_tests = &
     bool02.$(ext) &
     bool03.$(ext) &
     bool04.$(ext) &
+    bool05.$(ext) &
     cdisp1.$(ext) &
     cdisp2.$(ext) &
     cdisp3.$(ext) &

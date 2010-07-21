@@ -237,7 +237,7 @@ typedef struct type_definition {
         struct {                        /* TYPE_FIELD or TYPE_UFIELD */
             unsigned char field_width;  /* # of bits */
             unsigned char field_start;  /* # of bits to << by */
-            unsigned char field_type;   /* TYPE_xxxx of field */
+            DATA_TYPE     field_type;   /* TYPE_xxxx of field */
         } f;
         union {
             struct array_info *array;   /* TYPE_ARRAY */

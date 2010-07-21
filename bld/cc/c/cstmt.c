@@ -68,7 +68,6 @@ static BLOCKPTR     BlockStack;
 static BLOCKPTR     LoopStack;
 static SWITCHPTR    SwitchStack;
 
-extern  TREEPTR BoolConv( TYPEPTR typ, TREEPTR tree );
 extern  int     LoopDecl( SYM_HANDLE *sym_head );
 
 void StmtInit( void )
@@ -378,7 +377,6 @@ static void ReturnStmt( SYM_HANDLE func_result, struct return_info *info )
         SKIP_TYPEDEFS( func_type );
         tree = RValue( Expr() );
         ChkRetType( tree );
-        tree = BoolConv( func_type, tree );
         tree = FixupAss( tree, func_type );
         tree = ExprNode( 0, OPR_RETURN, tree );
         tree->expr_type = func_type;

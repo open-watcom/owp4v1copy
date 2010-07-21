@@ -726,11 +726,9 @@ TREEPTR BoolConv( TYPEPTR typ, TREEPTR tree )
     /* Non-boolean types need to be converted to _Bool; _Bool expressions
      * also need to be converted unless they're constants.
      */
-    if( typ->decl_type == TYPE_BOOL && TypeOf( tree ) != typ ) {
-        TREEPTR     ctree;
-
-        ctree = ExprNode( IntLeaf( 1 ), OPR_COLON, IntLeaf( 0 ) );
-        tree = ExprNode( tree, OPR_QUESTION, ctree );
+    if( DataTypeOf( typ ) == TYPE_BOOL && TypeOf( tree ) != typ ) {
+        tree = ExprNode( tree, OPR_QUESTION, ExprNode( IntLeaf( 1 ), OPR_COLON, IntLeaf( 0 ) ) );
+        typ = GetType( TYPE_BOOL );
         tree->op.result_type = typ;
         tree->expr_type      = typ;
         FoldExprTree( tree );
@@ -1816,6 +1814,7 @@ TREEPTR FixupAss( TREEPTR opnd, TYPEPTR newtyp )
 
     if( opnd->op.opr == OPR_ERROR ) return( opnd );
     opnd = BaseConv( newtyp, opnd );
+    opnd = BoolConv( newtyp, opnd );
     newtyp = SkipTypeFluff( newtyp );
     typ = SkipTypeFluff( opnd->expr_type );
     decl1 = DataTypeOf( typ );
@@ -1843,8 +1842,6 @@ TREEPTR FixupAss( TREEPTR opnd, TYPEPTR newtyp )
     } else {
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             CastConstValue( opnd, newtyp->decl_type );
-        } else if( cnv == S2B ) {
-            opnd = BoolConv( newtyp, opnd );
         } else {
             opnd = ExprNode( NULL, OPR_CONVERT, opnd );
             opnd->op.result_type = newtyp;
