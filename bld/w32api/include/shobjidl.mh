@@ -53,6 +53,8 @@ typedef interface IEnumShellItems       IEnumShellItems;
 typedef interface IShellItemFilter      IShellItemFilter;
 typedef interface IContextMenuCB        IContextMenuCB;
 
+:include winshell.sp
+
 /* Shell primitive data types */
 typedef ULONG                   SFGAOF;
 typedef char                    *LPVIEWSETTINGS;
