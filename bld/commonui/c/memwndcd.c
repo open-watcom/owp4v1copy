@@ -29,11 +29,10 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <string.h>
 #include <io.h>
 #include <ctype.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 #include "memwnd.h"
 #include "segmem.h"
 #include "sdkasm.h"

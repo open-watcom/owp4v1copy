@@ -24,61 +24,25 @@
 *
 *  ========================================================================
 *
-* Description:  Save/restore register state.
+* Description:  Precompiled header for commonui.
 *
 ****************************************************************************/
 
 
-#include "precomp.h"
-#include "wdebug.h"
-#include "intdata.h"
-
-/*
- * SaveState - save current register state
- */
-void SaveState( interrupt_struct *idata, fault_frame *ff )
-{
-    idata->SS = ff->SS;
-    idata->GS = ff->GS;
-    idata->FS = ff->FS;
-    idata->ES = ff->ES;
-    idata->DS = ff->DS;
-    idata->EDI = ff->EDI;
-    idata->ESI = ff->ESI;
-    idata->EBP = ff->EBP;
-    idata->ESP = ff->ESP + EXCESS_CRAP_ON_STACK;
-    idata->EBX = ff->EBX;
-    idata->EDX = ff->EDX;
-    idata->ECX = ff->ECX;
-    idata->EAX = (ff->oldEAX & 0xFFFF0000) + ff->AX;
-    idata->EBP = ff->oldEBP;
-    idata->EFlags = ff->FLAGS;
-    idata->EIP = ff->IP;
-    idata->CS = ff->CS;
-    idata->InterruptNumber = ff->intnumber;
-
-} /* SaveState */
-
-/*
- * RestoreState - restore register state
- */
-void RestoreState( interrupt_struct *idata, fault_frame *ff )
-{
-    ff->SS = idata->SS;
-    ff->GS = idata->GS;
-    ff->FS = idata->FS;
-    ff->ES = idata->ES;
-    ff->DS = idata->DS;
-    ff->EDI = idata->EDI;
-    ff->ESI = idata->ESI;
-    ff->oldEBP = idata->EBP;
-    ff->ESP = idata->ESP - EXCESS_CRAP_ON_STACK;
-    ff->EBX = idata->EBX;
-    ff->EDX = idata->EDX;
-    ff->ECX = idata->ECX;
-    ff->AX = idata->EAX;
-    ff->IP = idata->EIP;
-    ff->CS = idata->CS;
-    ff->FLAGS = idata->EFlags;
-
-} /* RestoreState */
+#ifdef __OS2_PM__
+    #define INCL_PM
+    #define INCL_WINFRAMEMGR
+    #define INCL_NLS
+    #define INCL_GPILCIDS
+    #define INCL_GPIPRIMITIVES
+    #include <os2.h>
+    #define __FAR
+#else
+    #define INCLUDE_TOOLHELP_H
+    #define WIN32_LEAN_AND_MEAN
+    #define OEMRESOURCE
+    #include <windows.h>
+    #ifdef __NT__
+        #include <commctrl.h>
+    #endif
+#endif

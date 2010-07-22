@@ -29,13 +29,12 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <dos.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 #include "segmem.h"
 
 static WORD win386Sig[2] = { 0xDEAD, 0xBEEF };

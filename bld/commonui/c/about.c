@@ -29,11 +29,10 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 #include "about.h"
 #include "aboutdlg.h"
 #include "win1632.h"

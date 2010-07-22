@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include "sdkasm.h"
 
 static DisAsmRtns       *CurRtns;

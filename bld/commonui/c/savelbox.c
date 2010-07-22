@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include <commdlg.h>
 #include <string.h>
 #include <stdio.h>

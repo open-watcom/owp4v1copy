@@ -28,11 +28,12 @@
 *
 ****************************************************************************/
 
-#include <windows.h>
+#include "precomp.h"
 #include <direct.h>
 #include <io.h>
 #include <string.h>
 #ifdef __NT__
+    #include <shellapi.h>
     #include <shlobj.h>
     typedef HRESULT (WINAPI *GetFolderPath)( HWND, int, HANDLE, DWORD, LPTSTR );
 #endif

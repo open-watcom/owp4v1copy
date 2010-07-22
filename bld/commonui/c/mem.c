@@ -31,19 +31,12 @@
 
 //#define DEBUGMEM
 
+#include "precomp.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <dos.h>
 #include <malloc.h>
-#ifdef __OS2_PM__
-    #define INCL_WINDIALOGS
-    #define INCL_WIN
-    #define INCL_GPI
-    #include <os2.h>
-#else
-    #include <windows.h>
-#endif
 #include "mem.h"
 #ifndef NO_WPI
     #include "wpi.h"

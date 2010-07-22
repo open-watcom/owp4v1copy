@@ -29,11 +29,10 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <stdio.h>
 #include <string.h>
 #include <dos.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 #include "descript.h"
 #include "wdebug.h"
 

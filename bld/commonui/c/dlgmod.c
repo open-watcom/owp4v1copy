@@ -29,12 +29,12 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <dos.h>
-#include <windows.h>
 #include "font.h"
 
 /*

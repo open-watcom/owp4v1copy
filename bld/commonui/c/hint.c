@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include "hint.h"
 #include "uistr.gh"
 #include "mem.h"

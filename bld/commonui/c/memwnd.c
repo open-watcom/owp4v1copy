@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -38,8 +39,6 @@
 #include <fcntl.h>
 #include <io.h>
 #include <time.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 #include "font.h"
 #include "segmem.h"
 #include "mem.h"

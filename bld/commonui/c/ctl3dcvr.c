@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include "ctl3dcvr.h"
 
 typedef BOOL    (WINAPI *LPFN_Ctl3dSubclassDlg)( HWND, WORD );

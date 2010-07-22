@@ -30,7 +30,7 @@
 
 
 #ifdef __WINDOWS_386__
-#include <windows.h>
+#include "precomp.h"
 
 static HANDLE   dllCtl3d;
 

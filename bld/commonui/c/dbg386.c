@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <stdio.h>
-#include <windows.h>
 #include "wdebug.h"
 #include "di386.h"
 

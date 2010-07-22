@@ -29,13 +29,12 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <dos.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 #include "types.h"
 #include "seginfo.h"
 #include "segmem.h"

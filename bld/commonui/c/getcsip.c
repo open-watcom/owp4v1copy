@@ -29,9 +29,8 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <stdio.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 
 #define MAKECSIP( cs, ip ) (((DWORD)(cs) << 16L) + (DWORD)(ip))
 

@@ -29,23 +29,7 @@
 ****************************************************************************/
 
 
-#ifdef __OS2_PM__
-    #define INCL_PM
-    #define INCL_WINFRAMEMGR
-    #define INCL_NLS
-    #define INCL_GPILCIDS
-    #define INCL_GPIPRIMITIVES
-    #include <os2.h>
-    #define __FAR
-#else
-    #include <windows.h>
-    #ifdef __NT__
-        #ifndef _WIN32_IE
-            #define _WIN32_IE   0x0400
-        #endif
-        #include <commctrl.h>
-    #endif
-#endif
+#include "precomp.h"
 
 #include <string.h>
 #include <assert.h>

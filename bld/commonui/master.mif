@@ -64,6 +64,7 @@ objs += dbg386.obj   &
 !endif
 !endif
 
+extra_c_flags = -fh
 extra_c_flags_i86 = -3
 extra_c_flags_nt = -DNOUSE3D
 extra_c_flags_os2 = -D__OS2_PM__

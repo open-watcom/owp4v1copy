@@ -28,19 +28,13 @@
 *
 ****************************************************************************/
 
+
+#include "precomp.h"
+#ifdef __WINDOWS_386__
+    #include <malloc.h>
+#endif
 #include <string.h>
 #include <stdio.h>
-
-#ifdef __OS2_PM__
-    #define INCL_PM
-    #include "os2.h"
-#else
-    #define OEMRESOURCE
-    #include <windows.h>
-    #ifdef __WINDOWS_386__
-        #include <malloc.h>
-    #endif
-#endif
 
 #include "wmdisim.h"
 #include "mem.h"

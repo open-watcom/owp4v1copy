@@ -29,11 +29,10 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define INCLUDE_TOOLHELP_H
-#include <windows.h>
 
 /*
  * MyModuleFindHandle - wrapper for ModuleFindHandle

@@ -29,24 +29,10 @@
 ****************************************************************************/
 
 
-#ifdef __OS2_PM__
-    #define INCL_PM
-    #define INCL_WINFRAMEMGR
-    #define INCL_NLS
-    #define INCL_GPILCIDS
-    #define INCL_GPIPRIMITIVES
-    #include <os2.h>
-#else
-    #include <windows.h>
-    #ifdef __NT__
-        #include <commctrl.h>
-    #endif
-#endif
-
+#include "precomp.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "statwnd.h"
 #include "mem.h"
 
