@@ -194,7 +194,7 @@ gtentry     *   find_tag( gtentry * * dict, const char * name )
     gtentry     *   wk;
 
     for( wk = *dict; wk != NULL; wk = wk->next ) {
-        if( !strcmp( wk->name, name ) ) {
+        if( !stricmp( wk->name, name ) ) {
             break;
         }
     }

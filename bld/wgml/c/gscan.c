@@ -389,8 +389,10 @@ static void     scan_script( void )
 
             pchar = search_separator( buff2, CW_sep_char );
 
-            if( (pchar != NULL) && (*(pchar + 1) != '\0') ) {
-                split_input( buff2, pchar + 1 );// ignore CW_sep_char
+            if( pchar != NULL ) {
+                if( *(pchar + 1) != '\0' ) {    // only split if more follows
+                    split_input( buff2, pchar + 1 );// ignore CW_sep_char
+                }
                 *pchar= '\0';               // delete CW_sep_char
                 buff2_lg = strlen( buff2 ); // new length of first part
             }
