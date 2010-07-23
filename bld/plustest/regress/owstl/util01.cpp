@@ -35,11 +35,29 @@
 bool pair_test( )
 {
   std::pair< int, char > object1( 1, 'H' );
+  std::pair< int, char > object2( 0, 'H' );
+  std::pair< int, char > object3( 1, 'G' );
+
+  // Does std::make_pair do something reasonable?
   if( !( object1 == std::make_pair( 1, 'H' ) ) ) FAIL;
 
+  // Verify std::pair's relational operators.
+  if( !( object1 == object1 ) ) FAIL;
+  if(  ( object1 == object2 ) ) FAIL;
+  if(  ( object1 == object3 ) ) FAIL;
+  if( !( object2 <  object1 ) ) FAIL;
+  if( !( object3 <  object1 ) ) FAIL;
+  if( !( object2 <  object3 ) ) FAIL;
+
+  // Make sure the other relational operators can be instantiated properly.
+  if( !( object1 != object2 ) ) FAIL;
+  if( !( object1 >  object2 ) ) FAIL;
+  if(  ( object1 <= object2 ) ) FAIL;
+  if( !( object1 >= object2 ) ) FAIL;
+
   // This sort of thing comes up when map's value_type is used.
-  std::pair< const int, int > object2( std::make_pair( 1, 2 ) );
-  if( !( object2.first == 1 ) || !( object2.second == 2 ) ) FAIL;
+  std::pair< const int, int > object( std::make_pair( 1, 2 ) );
+  if( !( object.first == 1 ) || !( object.second == 2 ) ) FAIL;
 
   return true;
 }
