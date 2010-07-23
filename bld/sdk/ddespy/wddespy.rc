@@ -1,3 +1,4 @@
+#include <windows.h>
 #include "wddespy.h"
 #include "about.h"
 #include "banner.h"

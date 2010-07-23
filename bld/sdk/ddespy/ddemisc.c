@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include "wddespy.h"
 #include <io.h>
 #include <time.h>

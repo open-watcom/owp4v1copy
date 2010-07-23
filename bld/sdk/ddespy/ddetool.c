@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include "wddespy.h"
 
 typedef struct ddetoolinfo {

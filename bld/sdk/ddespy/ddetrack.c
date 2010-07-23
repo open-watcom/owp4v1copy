@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include "precomp.h"
 #include "wddespy.h"
 #include <string.h>
 #include <stdio.h>
