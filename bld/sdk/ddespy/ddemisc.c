@@ -38,14 +38,17 @@
 
 extern msglist DDEMsgs[1];
 
-void LogHeader( int f ) {
-
+/*
+ * LogHeader
+ */
+void LogHeader( int f )
+{
     char        buf[100];
     unsigned    i;
     time_t      tm;
 
     tm = time( NULL );
-    for( i=0; i< 80; i++ ) {
+    for( i = 0; i < 80; i++ ) {
         buf[i] = '-';
     }
     buf[i] = '\0';
@@ -54,16 +57,20 @@ void LogHeader( int f ) {
     RCsprintf( buf, STR_LOG_HEADER, asctime( localtime( &tm ) ) );
     write( f, buf, strlen( buf ) );
     write( f, "\r\n", 2 );
-    for( i=0; i< 80; i++ ) {
+    for( i = 0; i < 80; i++ ) {
         buf[i] = '-';
     }
     buf[i] = '\0';
     write( f, buf, strlen( buf ) );
     write( f, "\r\n", 2 );
-}
 
-void DumpHeader( FILE *fptr ) {
+} /* LogHeader */
 
+/*
+ * DumpHeader
+ */
+void DumpHeader( FILE *fptr )
+{
     time_t      tm;
     char        *str;
 
@@ -74,9 +81,14 @@ void DumpHeader( FILE *fptr ) {
     fprintf( fptr, str, ctime( &tm ) );
     str = GetRCString( STR_EVENT_LIST_LINE );
     fprintf( fptr, str );
-}
 
-BOOL InitGblStrings( void ) {
+} /* DumpHeader */
+
+/*
+ * InitGblStrings
+ */
+BOOL InitGblStrings( void )
+{
     BOOL        ret;
 
     ret = TRUE;
@@ -85,8 +97,14 @@ BOOL InitGblStrings( void ) {
         ret = InitSrchTable( Instance, DDEMsgs );
     }
     return( ret );
-}
 
-void FiniRCStrings( void ) {
+} /* InitGblStrings */
+
+/*
+ * FiniGblStrings
+ */
+void FiniRCStrings( void )
+{
     FreeRCString( AppName );
-}
+
+} /* FiniGblStrings */

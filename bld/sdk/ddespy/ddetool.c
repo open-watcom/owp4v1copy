@@ -37,18 +37,18 @@ typedef struct ddetoolinfo {
     BOOL                fixed;
     RECT                floatrect;
     HBITMAP             *bitmaps;
-}DDEToolBarInfo;
+} DDEToolBarInfo;
 
 typedef struct {
     char        *name;
     WORD        id;
     WORD        flags;
     int         tip_id;
-}DDEButtonInfo;
+} DDEButtonInfo;
 
 #define BUTTON_CNT              12
 
-static DDEButtonInfo ButInfo[ BUTTON_CNT ] = {
+static DDEButtonInfo ButInfo[BUTTON_CNT] = {
     "STRING",   DDEMENU_TRK_STR,        ITEM_STICKY,    STR_TIP_TRK_STR,
     "CONV",     DDEMENU_TRK_CONV,       ITEM_STICKY,    STR_TIP_TRK_CONV,
     "LINK",     DDEMENU_TRK_LINK,       ITEM_STICKY,    STR_TIP_TRK_LINK,
@@ -65,26 +65,23 @@ static DDEButtonInfo ButInfo[ BUTTON_CNT ] = {
 
 static DDEToolBarInfo   ToolBar;
 
-#define TOOL_BUTTON_WIDTH       ( 23 + 4 )
-#define TOOL_BUTTON_HITE        ( 19 + 4 )
-#define TOOL_SPACE              ( TOOL_BUTTON_WIDTH / 2 )
-#define TOOL_OUTLINE_WIDTH      ( TOOL_BUTTON_WIDTH / 10 )
-#define TOOL_OUTLINE_HITE       ( TOOL_BUTTON_HITE / 10 )
-#define TOOLBAR_HITE            ( TOOL_BUTTON_HITE + \
-                                  2 * TOOL_OUTLINE_HITE + 3 )
-#define TOOLBAR_MIN_WIDTH       ( TOOL_BUTTON_WIDTH + \
-                                  2 * TOOL_OUTLINE_WIDTH + 3 )
+#define TOOL_BUTTON_WIDTH       (23 + 4)
+#define TOOL_BUTTON_HITE        (19 + 4)
+#define TOOL_SPACE              (TOOL_BUTTON_WIDTH / 2)
+#define TOOL_OUTLINE_WIDTH      (TOOL_BUTTON_WIDTH / 10)
+#define TOOL_OUTLINE_HITE       (TOOL_BUTTON_HITE / 10)
+#define TOOLBAR_HITE            (TOOL_BUTTON_HITE + 2 * TOOL_OUTLINE_HITE + 3)
+#define TOOLBAR_MIN_WIDTH       (TOOL_BUTTON_WIDTH + 2 * TOOL_OUTLINE_WIDTH + 3)
 
 
 /*
- * ResizeForTB - Make room in the main window for the tool bar or
+ * resizeForTB - make room in the main window for the toolbar or
  *               remove the space when the toolbar is floating
- *      For fixed toolbar rect is the bounding rectangle of the bar
- *      otherwise rect should be NULL
+ *             - for fixed toolbar rect is the bounding rectangle of the bar
+ *             - otherwise rect should be NULL
  */
-
-static void ResizeForTB( RECT *area, HWND hwnd ) {
-
+static void resizeForTB( RECT *area, HWND hwnd )
+{
     DDEWndInfo          *info;
     RECT                winsize;
 
@@ -96,37 +93,38 @@ static void ResizeForTB( RECT *area, HWND hwnd ) {
         info->list.ypos = area->bottom - area->top;
     }
     ResizeListBox( winsize.right - winsize.left,
-                   winsize.bottom - winsize.top, &(info->list ) );
-}
+                   winsize.bottom - winsize.top, &info->list );
+
+} /* resizeForTB */
 
 /*
- * MyToolBarProc - hook message handler for the tool bar.
+ * MyToolBarProc - hook message handler for the toolbar
  */
-
-BOOL MyToolBarProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
+BOOL MyToolBarProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     MINMAXINFO  *minmax;
-//    HWND      toolhwnd;
+//  HWND        toolhwnd;
     HMENU       mh;
 
-    wparam=wparam;
+    wparam = wparam;
     switch( msg ) {
     case WM_CREATE:
-        mh = GetMenu( DDEMainWnd);
+        mh = GetMenu( DDEMainWnd );
         CheckMenuItem( mh, DDEMENU_TOOLBAR, MF_BYCOMMAND | MF_CHECKED );
         ConfigInfo.show_tb = TRUE;
         break;
-#if(0)
+#if 0
     case WM_LBUTTONDBLCLK:
-        /* flip the current state of the toolbar -
-         * if we are fixed then start to float or vice versa
+        /*
+         * Flip the current state of the toolbar.
+         * If we are fixed then start to float or vice versa.
          */
         ToolBar.fixed = !ToolBar.fixed;
         if( ToolBar.fixed ) {
             GetFixedTBRect( DDEMainWnd, &ToolBar.info.area );
             ToolBar.info.style = TOOLBAR_FIXED_STYLE;
             ToolBarDisplay( ToolBar.hdl, &ToolBar.info );
-            ResizeForTB( &ToolBar.info.area, DDEMainWnd );
+            resizeForTB( &ToolBar.info.area, DDEMainWnd );
         } else {
             ToolBar.info.area = ToolBar.floatrect;
             ToolBar.info.style = TOOLBAR_FLOAT_STYLE;
@@ -135,7 +133,7 @@ BOOL MyToolBarProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
                         ToolBar.info.area.right - ToolBar.info.area.left,
                         ToolBar.info.area.bottom - ToolBar.info.area.top,
                         TRUE );
-            ResizeForTB( NULL, DDEMainWnd );
+            resizeForTB( NULL, DDEMainWnd );
         }
         toolhwnd = ToolBarWindow( ToolBar.hdl );
         ShowWindow( toolhwnd, SW_NORMAL );
@@ -144,31 +142,36 @@ BOOL MyToolBarProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
 #endif
     case WM_MOVE:
     case WM_SIZE:
-        // Whenever we are moved or sized as a floating toolbar, we remember our position
-        // so that we can restore it when dbl. clicked
+        /*
+         * Whenever we are moved or sized as a floating toolbar, we remember our position
+         * so that we can restore it when double clicked.
+         */
         if( !ToolBar.fixed ) {
-            GetWindowRect( hwnd, &( ToolBar.floatrect ) );
+            GetWindowRect( hwnd, &ToolBar.floatrect );
         }
         break;
     case WM_GETMINMAXINFO:
         minmax = (MINMAXINFO *)lparam;
-        minmax->ptMinTrackSize.x = TOOLBAR_MIN_WIDTH +
-                                    3 * GetSystemMetrics( SM_CXFRAME );
+        minmax->ptMinTrackSize.x = TOOLBAR_MIN_WIDTH + 3 * GetSystemMetrics( SM_CXFRAME );
         break;
     case WM_DESTROY:
         if( IsWindowVisible( DDEMainWnd ) ) {
-            ResizeForTB( NULL, DDEMainWnd );
+            resizeForTB( NULL, DDEMainWnd );
         }
-        mh = GetMenu( DDEMainWnd);
+        mh = GetMenu( DDEMainWnd );
         CheckMenuItem( mh, DDEMENU_TOOLBAR, MF_BYCOMMAND | MF_UNCHECKED );
         ConfigInfo.show_tb = FALSE;
         break;
     }
     return( FALSE );
-}
 
-void GetFixedTBRect( HWND hwnd, RECT *rect ) {
+} /* MyToolBarProc */
 
+/*
+ * GetFixedTBRect
+ */
+void GetFixedTBRect( HWND hwnd, RECT *rect )
+{
     HDC         dc;
     POINT       org;
 
@@ -178,26 +181,28 @@ void GetFixedTBRect( HWND hwnd, RECT *rect ) {
     GetClientRect( hwnd, rect );
     rect->top += org.y;
     rect->bottom = rect->top + TOOLBAR_HITE;
-}
+
+} /* GetFixedTBRect */
 
 
 /*
  * showTBHint
  */
-static void showTBHint( HWND hwnd, UINT menuid, BOOL select ) {
-
+static void showTBHint( HWND hwnd, UINT menuid, BOOL select )
+{
     DDEWndInfo          *info;
 
     hwnd = hwnd;
     info = (DDEWndInfo *)GetWindowLong( DDEMainWnd, 0 );
     HintToolBar( info->hintbar, menuid, select );
-}
+
+} /* showTBHint */
 
 /*
- * MakeDDEToolBar - create the tool bar
+ * MakeDDEToolBar - create the toolbar
  */
-void MakeDDEToolBar( HWND hwnd ) {
-
+void MakeDDEToolBar( HWND hwnd )
+{
     HWND                toolhwnd;
     TOOLITEMINFO        item;
     WORD                i;
@@ -223,7 +228,7 @@ void MakeDDEToolBar( HWND hwnd ) {
 
     ToolBar.hdl = ToolBarInit( hwnd );
     ToolBarDisplay( ToolBar.hdl, &ToolBar.info );
-    ResizeForTB( &ToolBar.info.area, hwnd );
+    resizeForTB( &ToolBar.info.area, hwnd );
 
     ToolBar.bitmaps = MemAlloc( BUTTON_CNT * sizeof( HBITMAP ) );
     for( i=0; i < BUTTON_CNT; i++ ) {
@@ -246,40 +251,41 @@ void MakeDDEToolBar( HWND hwnd ) {
         item.flags = ButInfo[i].flags;
         ToolBarAddItem( ToolBar.hdl, &item );
     }
-//    ToolBarDisplay( ToolBar.hdl, &ToolBar.info );
+//  ToolBarDisplay( ToolBar.hdl, &ToolBar.info );
     toolhwnd = ToolBarWindow( ToolBar.hdl );
     if( show ) {
         ShowWindow( toolhwnd, SW_NORMAL );
         UpdateWindow( toolhwnd );
     } else {
         DestroyWindow( toolhwnd );
-        ResizeForTB( NULL, DDEMainWnd );
+        resizeForTB( NULL, DDEMainWnd );
     }
-}
+
+} /* MakeDDEToolBar */
 
 /*
- * DDEToolBarFini - destroy the tool bar and free memory associated with it
+ * DDEToolBarFini - destroy the toolbar and free memory associated with it
  */
-void DDEToolBarFini() {
-
+void DDEToolBarFini()
+{
     unsigned    i;
 
     ToolBarFini( ToolBar.hdl );
-    for( i=0; i < BUTTON_CNT; i++ ) {
+    for( i = 0; i < BUTTON_CNT; i++ ) {
         if( ToolBar.bitmaps[i] != NULL ) {
             DeleteObject( ToolBar.bitmaps[i] );
         }
     }
     MemFree( ToolBar.bitmaps );
-}
+
+} /* DDEToolBarFini */
 
 /*
- * ResizeTB - if the tool bar is fixed resize it when its 'owner'
- *              window is resized
+ * ResizeTB - if the toolbar is fixed resize it when its 'owner'
+ *            window is resized
  */
-
-void ResizeTB( HWND owner ) {
-
+void ResizeTB( HWND owner )
+{
     RECT        area;
     HWND        toolhwnd;
 
@@ -288,17 +294,17 @@ void ResizeTB( HWND owner ) {
         toolhwnd = ToolBarWindow( ToolBar.hdl );
         if( IsWindow( toolhwnd ) ) {
             MoveWindow( toolhwnd, area.left, area.top, area.right - area.left,
-                            area.bottom - area.top, TRUE );
+                        area.bottom - area.top, TRUE );
         }
     }
-}
+
+} /* ResizeTB */
 
 /*
  * ToggleTB - toggle the tool bar between shown and destroyed states
  */
-
-BOOL ToggleTB( HWND parent ) {
-
+BOOL ToggleTB( HWND parent )
+{
     HWND        hwnd;
 
     hwnd = ToolBarWindow( ToolBar.hdl );
@@ -315,7 +321,7 @@ BOOL ToggleTB( HWND parent ) {
         }
         ToolBarDisplay( ToolBar.hdl, &ToolBar.info );
         if( ToolBar.fixed ) {
-            ResizeForTB( &ToolBar.info.area, parent );
+            resizeForTB( &ToolBar.info.area, parent );
         }
         hwnd = ToolBarWindow( ToolBar.hdl );
         MoveWindow( hwnd, ToolBar.info.area.left, ToolBar.info.area.top,
@@ -325,17 +331,18 @@ BOOL ToggleTB( HWND parent ) {
         UpdateWindow( hwnd );
         return( FALSE );
     }
-}
+
+} /* ToggleTB */
 
 /*
- * DDESetStickyState - set the state of a sticky tool bar button
+ * DDESetStickyState - set the state of a sticky toolbar button
  */
-
-void DDESetStickyState( WORD id, BOOL isdown ) {
-
+void DDESetStickyState( WORD id, BOOL isdown )
+{
     if( isdown ) {
         ToolBarSetState( ToolBar.hdl, id, BUTTON_DOWN );
     } else {
         ToolBarSetState( ToolBar.hdl, id, BUTTON_UP );
     }
-}
+
+} /* DDESetStickyState */

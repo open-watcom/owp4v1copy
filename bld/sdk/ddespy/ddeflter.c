@@ -37,54 +37,59 @@ static struct {
     WORD        last;
 } FilterDlgInfo;
 
+
+static char     MsgFilter[MFILTER_LAST_MSG - MFILTER_FIRST_MSG + 1];
+static char     CBFilter[CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 1];
+
 /*
  * The Matching array matches the Filter array elements to the actual
  * message values.  For example to find if we are processing the WM_DDE_ACK
  * message find its index in the MsgMatching array then use that index to
  * access the MsgFilter array. If that element of the MsgFilter array is TRUE
- * we should process the message
+ * we should process the message.
  */
 
-static char     MsgFilter[ MFILTER_LAST_MSG - MFILTER_FIRST_MSG + 1];
-static WORD     MsgMatching[] = { WM_DDE_ACK,
-                                  WM_DDE_ADVISE,
-                                  WM_DDE_DATA,
-                                  WM_DDE_EXECUTE,
-                                  WM_DDE_POKE,
-                                  WM_DDE_REQUEST,
-                                  WM_DDE_TERMINATE,
-                                  WM_DDE_UNADVISE,
-                                  WM_DDE_INITIATE };
+static WORD MsgMatching[] = {
+    WM_DDE_ACK,
+    WM_DDE_ADVISE,
+    WM_DDE_DATA,
+    WM_DDE_EXECUTE,
+    WM_DDE_POKE,
+    WM_DDE_REQUEST,
+    WM_DDE_TERMINATE,
+    WM_DDE_UNADVISE,
+    WM_DDE_INITIATE
+};
 
-static char     CBFilter[ CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 1];
-static WORD     CBMatching[] = { XTYP_ADVSTART,
-                                  XTYP_ADVREQ,
-                                  XTYP_ADVDATA,
-                                  XTYP_CONNECT,
-                                  XTYP_ERROR,
-                                  XTYP_EXECUTE,
-                                  XTYP_POKE,
-                                  XTYP_REQUEST,
-                                  XTYP_ADVSTOP,
-                                  XTYP_UNREGISTER,
-                                  XTYP_CONNECT_CONFIRM,
-                                  XTYP_WILDCONNECT,
-                                  XTYP_DISCONNECT,
-                                  XTYP_XACT_COMPLETE,
-                                  XTYP_REGISTER };
+static WORD CBMatching[] = {
+    XTYP_ADVSTART,
+    XTYP_ADVREQ,
+    XTYP_ADVDATA,
+    XTYP_CONNECT,
+    XTYP_ERROR,
+    XTYP_EXECUTE,
+    XTYP_POKE,
+    XTYP_REQUEST,
+    XTYP_ADVSTOP,
+    XTYP_UNREGISTER,
+    XTYP_CONNECT_CONFIRM,
+    XTYP_WILDCONNECT,
+    XTYP_DISCONNECT,
+    XTYP_XACT_COMPLETE,
+    XTYP_REGISTER
+};
 
 
 /*
  * GetFilter - return a string representing the filter state to be
- *              stored in the .ini file
- *           -  msgfilter must be at least
- *                      MFILTER_LAST_MSG - MFILTER_FIRST_MSG + 2 bytes
- *           -  cbfilter must be at least
- *                      CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 2 bytes
+ *             stored in the .ini file
+ *           - msgfilter must be at least
+ *             MFILTER_LAST_MSG - MFILTER_FIRST_MSG + 2 bytes
+ *           - cbfilter must be at least
+ *             CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 2 bytes
  */
-
-void GetFilter( char *msgfilter, char *cbfilter ) {
-
+void GetFilter( char *msgfilter, char *cbfilter )
+{
     WORD        i;
 
     for( i = 0; i <= MFILTER_LAST_MSG - MFILTER_FIRST_MSG; i++ ) {
@@ -103,14 +108,14 @@ void GetFilter( char *msgfilter, char *cbfilter ) {
         }
     }
     cbfilter[i] = '\0';
-}
+
+} /* GetFilter */
 
 /*
  * SetFilter - set the filters based on a string read from the .ini file
  */
-
-void SetFilter( char *msgfilter, char *cbfilter ) {
-
+void SetFilter( char *msgfilter, char *cbfilter )
+{
     WORD        i;
 
     i = 0;
@@ -121,7 +126,9 @@ void SetFilter( char *msgfilter, char *cbfilter ) {
             MsgFilter[i] = FALSE;
         }
         i++;
-        if( i > MFILTER_LAST_MSG - MFILTER_FIRST_MSG ) break;
+        if( i > MFILTER_LAST_MSG - MFILTER_FIRST_MSG ) {
+            break;
+        }
     }
     i = 0;
     while( cbfilter[i] != '\0' ) {
@@ -131,17 +138,19 @@ void SetFilter( char *msgfilter, char *cbfilter ) {
             CBFilter[i] = FALSE;
         }
         i++;
-        if( i > CFILTER_LAST_MSG - CFILTER_FIRST_MSG ) break;
+        if( i > CFILTER_LAST_MSG - CFILTER_FIRST_MSG ) {
+            break;
+        }
     }
-}
+
+} /* SetFilter */
 
 /*
  * DoFilter - return TRUE if we want to process this message or FALSE
- *               otherwise
+ *            otherwise
  */
-
-BOOL DoFilter( WORD msg, WORD filter_type ) {
-
+BOOL DoFilter( WORD msg, WORD filter_type )
+{
     WORD        *match;
     char        *filter;
     WORD        i;
@@ -156,7 +165,9 @@ BOOL DoFilter( WORD msg, WORD filter_type ) {
         match = CBMatching;
         filter = CBFilter;
         limit = CFILTER_LAST_MSG - CFILTER_FIRST_MSG + 1;
-    } else return( FALSE );
+    } else {
+        return( FALSE );
+    }
     ret = FALSE;
     for( i = 0; i < limit; i++ ) {
         if( match[i] == msg ) {
@@ -166,17 +177,18 @@ BOOL DoFilter( WORD msg, WORD filter_type ) {
             break;
         }
     }
-    if( i >= limit ) return( TRUE );
+    if( i >= limit ) {
+        return( TRUE );
+    }
     return( ret );
-}
+
+} /* DoFilter */
 
 /*
  * FilterDlgProc - handle the dialogs to set message and callback
  *                 filters
  */
-
-BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, WORD msg,
-                                          UINT wparam, LONG lparam )
+BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     unsigned            i;
     WORD                cmd;
@@ -184,8 +196,10 @@ BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, WORD msg,
     switch( msg ) {
     case WM_INITDIALOG:
 
-        /* lparam is TRUE if this is a message filter dialog or
-         * FALSE if this is a callback filter dialog */
+        /*
+         * lparam is TRUE if this is a message filter dialog or
+         * FALSE if this is a callback filter dialog.
+         */
 
         if( lparam ) {
             FilterDlgInfo.filter = MsgFilter;
@@ -196,8 +210,8 @@ BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, WORD msg,
             FilterDlgInfo.first = CFILTER_FIRST_MSG;
             FilterDlgInfo.last = CFILTER_LAST_MSG;
         }
-        for( i=FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
-            if( FilterDlgInfo.filter[ i - FilterDlgInfo.first ] ) {
+        for( i = FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
+            if( FilterDlgInfo.filter[i - FilterDlgInfo.first] ) {
                 CheckDlgButton( hwnd, i, TRUE );
             }
         }
@@ -211,11 +225,11 @@ BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, WORD msg,
         cmd = LOWORD( wparam );
         switch( cmd ) {
         case IDOK:
-            for( i=FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
+            for( i = FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
                 if( IsDlgButtonChecked( hwnd, i ) ) {
-                    FilterDlgInfo.filter[ i - FilterDlgInfo.first ]  = 1;
+                    FilterDlgInfo.filter[i - FilterDlgInfo.first]  = 1;
                 } else {
-                    FilterDlgInfo.filter[ i - FilterDlgInfo.first ]  = 0;
+                    FilterDlgInfo.filter[i - FilterDlgInfo.first]  = 0;
                 }
             }
             EndDialog( hwnd, -1 );
@@ -225,13 +239,13 @@ BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, WORD msg,
             break;
         case CFILTER_ALL:
         case MFILTER_ALL:
-            for( i=FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
+            for( i = FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
                 CheckDlgButton( hwnd, i, TRUE );
             }
             break;
         case CFILTER_NONE:
         case MFILTER_NONE:
-            for( i=FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
+            for( i = FilterDlgInfo.first; i <= FilterDlgInfo.last; i++ ) {
                 CheckDlgButton( hwnd, i, FALSE );
             }
             break;
@@ -243,5 +257,5 @@ BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, WORD msg,
         return( FALSE );
     }
     return( TRUE );
-}
 
+} /* FilterDlgProc */
