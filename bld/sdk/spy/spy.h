@@ -35,10 +35,7 @@
     #define _WIN32_IE   0x0600
 #endif
 
-#include <windows.h>
-#ifdef __NT__
-    #include <commctrl.h>
-#endif
+#include "precomp.h"
 #include "bool.h"
 #define MSG_RC_BASE     0
 #include "rcstr.gh"

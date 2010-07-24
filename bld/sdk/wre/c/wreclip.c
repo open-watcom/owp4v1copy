@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include <limits.h>
 #include <string.h>
 #include <ddeml.h>

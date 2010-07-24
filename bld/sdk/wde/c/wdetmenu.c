@@ -29,8 +29,7 @@
 ****************************************************************************/
 
 
-#define OEMRESOURCE
-#include <windows.h>
+#include "precomp.h"
 
 #include "wdeglbl.h"
 #include "wde_rc.h"

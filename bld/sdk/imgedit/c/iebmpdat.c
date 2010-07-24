@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include "bitmap.h"
 #include "wrdll.h"
 #include "wrbitmap.h"

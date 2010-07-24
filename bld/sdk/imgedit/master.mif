@@ -58,62 +58,12 @@ extras = wincreat.obj title.obj winutils.obj
 .c : $(wimgedit_dir)/c
 !endif
 
-extra_c_flags = -DWIN_GUI -s
+extra_c_flags = -DWIN_GUI -s -fh
 !ifdef wpitest
 extra_c_flags += -d_WPI_TEST_
 !endif
 
 extra_c_flags_win = -zc
-
-extra_c_flags_about = -DNOUSE3D
-
-extra_c_flags_bits     = -fh=pch01.pch
-extra_c_flags_bkcolour = -fh=pch01.pch
-extra_c_flags_chgsize  = -fh=pch01.pch
-extra_c_flags_clip     = -fh=pch01.pch
-extra_c_flags_closeall = -fh=pch01.pch
-extra_c_flags_clrcntls = -fh=pch01.pch
-extra_c_flags_colours  = -fh=pch01.pch
-extra_c_flags_curclr   = -fh=pch01.pch
-extra_c_flags_drawproc = -fh=pch01.pch
-extra_c_flags_errors   = -fh=pch01.pch
-extra_c_flags_fill     = -fh=pch01.pch
-extra_c_flags_freehand = -fh=pch01.pch
-extra_c_flags_funcbar  = -fh=pch01.pch
-extra_c_flags_getdata  = -fh=pch02.pch
-extra_c_flags_hinttext = -fh=pch01.pch
-extra_c_flags_icon     = -fh=pch02.pch
-extra_c_flags_iconinfo = -fh=pch01.pch
-extra_c_flags_iebmpdat = -fh=pch02.pch
-extra_c_flags_ieclrpal = -fh=pch01.pch
-extra_c_flags_iectl3d  = -fh=pch01.pch
-extra_c_flags_iedde    = -fh=pch02.pch
-extra_c_flags_iedraw   = -fh=pch01.pch
-extra_c_flags_iefonts  = -fh=pch01.pch
-extra_c_flags_ieglob   = -fh=pch01.pch
-extra_c_flags_iemem    = -fh=pch02.pch
-extra_c_flags_ienew    = -fh=pch01.pch
-extra_c_flags_ieopen   = -fh=pch02.pch
-extra_c_flags_ieproc   = -fh=pch01.pch
-extra_c_flags_ieprofil = -fh=pch01.pch
-extra_c_flags_iesave   = -fh=pch02.pch
-extra_c_flags_iestatus = -fh=pch01.pch
-extra_c_flags_ietoolbr = -fh=pch01.pch
-extra_c_flags_ieutil   = -fh=pch01.pch
-extra_c_flags_ieviewin = -fh=pch01.pch
-extra_c_flags_imgdata  = -fh=pch01.pch
-extra_c_flags_imgedit  = -fh=pch01.pch
-extra_c_flags_modclrs  = -fh=pch02.pch
-extra_c_flags_pickbmp  = -fh=pch01.pch
-extra_c_flags_settings = -fh=pch01.pch
-extra_c_flags_snap     = -fh=pch01.pch
-extra_c_flags_title    = -fh=pch01.pch
-extra_c_flags_trnsform = -fh=pch01.pch
-extra_c_flags_undo     = -fh=pch01.pch
-extra_c_flags_wincreat = -fh=pch01.pch
-extra_c_flags_winutils = -fh=pch01.pch
-extra_c_flags_wpi_mem  = -fh=pch01.pch
-extra_c_flags_xorand   = -fh=pch01.pch
 
 libs = $(wres_lib) $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
 libs += $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib

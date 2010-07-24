@@ -30,9 +30,9 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include <stdio.h>
-#include <win1632.h>
+#include "win1632.h"
 #include "wglbl.h"
 #include "wmem.h"
 #include "wstat.h"

@@ -28,7 +28,10 @@
 *
 ****************************************************************************/
 
+
+#include "precomp.h"
 #include "imgedit.h"
+#include <shellapi.h>
 #include <io.h>
 #include <stdio.h>
 #include <stdarg.h>

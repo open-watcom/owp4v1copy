@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include <stdio.h>
 #include <string.h>
-#include <win1632.h>
+#include "win1632.h"
 #include "wreglbl.h"
 #include "wremem.h"
 #include "wrestat.h"

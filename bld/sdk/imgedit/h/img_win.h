@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#include <windows.h>
 #include "win1632.h"
 
 #define SELECTIMAGE             "SELECTIMAGE"

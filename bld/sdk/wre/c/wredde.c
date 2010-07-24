@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include <ddeml.h>
 
 #include "wreglbl.h"
@@ -278,7 +278,7 @@ Bool WREPokeData( HCONV conv, void *data, int size, Bool retry )
     UINT        err;
     Bool        timeout;
     Bool        ret;
-    UINT	tries;
+    UINT        tries;
 
     if( ( conv == (HCONV)NULL ) || ( data == NULL ) || ( size == 0 ) ) {
         return( FALSE );
@@ -288,7 +288,7 @@ Bool WREPokeData( HCONV conv, void *data, int size, Bool retry )
         tries = 8;
     else
         tries = 0;
-	
+        
     while( TRUE ) {
         ret = (Bool)
             DdeClientTransaction( (LPBYTE)data, size, conv, hDataItem,

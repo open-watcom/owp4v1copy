@@ -33,10 +33,9 @@
 // the following is a temporary measure to get around the fact
 // that winreg.h defines a type called ppvalue
 #define _WINREG_
-#define WIN32_LEAN_AND_MEAN
 
-#include <windows.h>
-#include <win1632.h>
+#include "precomp.h"
+#include "win1632.h"
 #include <stdlib.h>
 #include <string.h>
 

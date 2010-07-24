@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include "wresall.h"
 #include "wglbl.h"
 #include "wrglbl.h"

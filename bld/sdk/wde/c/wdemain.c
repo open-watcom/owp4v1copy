@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <windows.h>
+#include "precomp.h"
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
