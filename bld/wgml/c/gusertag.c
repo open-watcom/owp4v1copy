@@ -367,28 +367,37 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
             print_sym_dict( input_cbs->local_dict );
         }
-    } else {    // user-defined tag has no attributes
-        /*******************************************************************/
-        /*  check for tag end .                                            */
-        /*******************************************************************/
+    } else {                    // user-defined tag has no attributes
         p2 = p;
-        for( ; p < scan_stop; p++ ) {
-            if( *p == '.' ) {
-                tag_end_found = true;
-                break;
+        if( ge->tagflags & tag_texterr ) {  // no text allowed
+            // '.' or CW_sep_char immediately after the tag does not count as text
+            if( (*p == '.') || (*p = CW_sep_char ) ) {
+                p++;
+            }
+            while( *p == ' ' ) {    // spaces don't count as text
+                p++;
+            }
+            if( *p ) {                      // text found
+                tag_text_err( ge->name );
+                processed = false;
             }
         }
-        if( *p == '.' ) {                   // does text follow tag end
-            if( strlen( p + 1 ) > 0 ) {
-                if( ge->tagflags & tag_texterr ) { // no text allowed
-                    tag_text_err( ge->name );
-                    processed = false;
-                }
-            } else {
-                if( ge->tagflags & tag_textreq ) {  // reqrd text missing
-                    tag_text_req_err( ge->name );
-                    processed = false;
-                }
+        if( ge->tagflags & tag_textreq ) {  // text is required
+            // per wgml 4.0 behavior
+            if( *p == CW_sep_char ) {
+                processed = false;
+                return( processed );
+            }
+            // '.' immediately after the tag does not count as text
+            if( *p == '.' ) {
+                p++;
+            }
+            while( *p == ' ' ) {    // spaces don't count as text
+                p++;
+            }
+            if( !*p ) {                     // no text found
+                tag_text_req_err( ge->name );
+                processed = false;
             }
         }
         strcpy( token_buf, p2 + 1 );
