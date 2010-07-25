@@ -368,7 +368,6 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             print_sym_dict( input_cbs->local_dict );
         }
     } else {                    // user-defined tag has no attributes
-        p2 = p;
         if( ge->tagflags & tag_texterr ) {  // no text allowed
             // '.' or CW_sep_char immediately after the tag does not count as text
             if( (*p == '.') || (*p = CW_sep_char ) ) {
@@ -380,6 +379,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             if( *p ) {                      // text found
                 tag_text_err( ge->name );
                 processed = false;
+                return( processed );
             }
         }
         if( ge->tagflags & tag_textreq ) {  // text is required
@@ -398,9 +398,19 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             if( !*p ) {                     // no text found
                 tag_text_req_err( ge->name );
                 processed = false;
+                return( processed );
             }
         }
-        strcpy( token_buf, p2 + 1 );
+        // per wgml 4.0 behavior
+        if( *p == CW_sep_char ) {
+            processed = false;
+            return( processed );
+        }
+        // '.' immediately after the tag is not passed to the macro
+        if( *p == '.' ) {
+            p++;
+        }
+        strcpy( token_buf, p + 1 );
         rc = add_symvar( &loc_dict, "_", token_buf, no_subscript, local_var );
         p += strlen( token_buf );
 
