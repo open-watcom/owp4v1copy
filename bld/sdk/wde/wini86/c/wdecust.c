@@ -30,8 +30,8 @@
 ****************************************************************************/
 
 
-#include <windows.h>
-#include <win1632.h>
+#include "precomp.h"
+#include "win1632.h"
 #include "wdecust.h"
 
 #include <string.h>
