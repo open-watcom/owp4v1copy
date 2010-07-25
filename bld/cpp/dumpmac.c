@@ -72,10 +72,10 @@ void dumpheap( void )
 
 void PP_Dump_Macros( void )
 {
-    int         hash;
-    char        *endptr;
-    MACRO_ENTRY *me;
-    PPVALUE     val;
+    int             hash;
+    char            *endptr;
+    MACRO_ENTRY     *me;
+    PREPROC_VALUE   val;
 
     for( hash = 0; hash < HASH_SIZE; hash++ ) {
         for( me = PPHashTable[hash]; me; me = me->next ) {

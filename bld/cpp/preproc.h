@@ -74,13 +74,13 @@ typedef struct  file_list {
         char             buffer[PPBUFSIZE+2];
 } FILELIST;
 
-typedef struct pp_value {
+typedef struct preproc_value {
         int             type;   // PPTYPE_SIGNED or PPTYPE_UNSIGNED
         union {
             long int    ivalue;
             unsigned long uvalue;
         } val;
-} PPVALUE;
+} PREPROC_VALUE;
 
 #define PPTYPE_SIGNED   0
 #define PPTYPE_UNSIGNED 1
@@ -101,8 +101,8 @@ extern  char    *PP_ScanToken( char *__p, char *__token );
 extern  int      PP_ScanNextToken( char *__token );
 extern  char    *PP_SkipWhiteSpace( char *__p, char *__white_space );
 extern  char    *PP_ScanName( char *__p );
-extern  int     PPEvalExpr( char *__p, char **__endptr, PPVALUE *__val );
-extern  void    PP_ConstExpr( PPVALUE * );
+extern  int     PPEvalExpr( char *__p, char **__endptr, PREPROC_VALUE *__val );
+extern  void    PP_ConstExpr( PREPROC_VALUE * );
 extern  MACRO_TOKEN *PPNextToken(void);
 extern  MACRO_TOKEN *NextMToken(void);
 extern  void    DeleteNestedMacro(void);

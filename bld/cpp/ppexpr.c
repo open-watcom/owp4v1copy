@@ -34,26 +34,26 @@
 #include "preproc.h"
 
 
-void PP_ConstExpr( PPVALUE *val );
-void PP_Expr1( PPVALUE *val );
-void PP_Expr2( PPVALUE *val );
-void PP_Expr3( PPVALUE *val );
-void PP_Expr4( PPVALUE *val );
-void PP_Expr5( PPVALUE *val );
-void PP_Expr6( PPVALUE *val );
-void PP_Expr7( PPVALUE *val );
-void PP_Expr8( PPVALUE *val );
-void PP_Expr9( PPVALUE *val );
-void PP_Expr10( PPVALUE *val );
-void PP_Expr11( PPVALUE *val );
+void PP_ConstExpr( PREPROC_VALUE *val );
+void PP_Expr1( PREPROC_VALUE *val );
+void PP_Expr2( PREPROC_VALUE *val );
+void PP_Expr3( PREPROC_VALUE *val );
+void PP_Expr4( PREPROC_VALUE *val );
+void PP_Expr5( PREPROC_VALUE *val );
+void PP_Expr6( PREPROC_VALUE *val );
+void PP_Expr7( PREPROC_VALUE *val );
+void PP_Expr8( PREPROC_VALUE *val );
+void PP_Expr9( PREPROC_VALUE *val );
+void PP_Expr10( PREPROC_VALUE *val );
+void PP_Expr11( PREPROC_VALUE *val );
 void PP_AdvanceToken( void );
-void PP_Identifier( PPVALUE *val );
+void PP_Identifier( PREPROC_VALUE *val );
 long int PP_HexNumber( void );
-void PP_CharConst( PPVALUE *val );
-void PP_Constant( PPVALUE *val );
-void PP_Constant( PPVALUE *val );
+void PP_CharConst( PREPROC_VALUE *val );
+void PP_Constant( PREPROC_VALUE *val );
+void PP_Constant( PREPROC_VALUE *val );
 
-int PPEvalExpr( char *ptr, char **endptr, PPVALUE *val )
+int PPEvalExpr( char *ptr, char **endptr, PREPROC_VALUE *val )
 {
     int         value;
 
@@ -73,10 +73,10 @@ int PPEvalExpr( char *ptr, char **endptr, PPVALUE *val )
 }
 
 
-void PP_ConstExpr( PPVALUE *val )
+void PP_ConstExpr( PREPROC_VALUE *val )
 {
-    PPVALUE     value1;
-    PPVALUE     value2;
+    PREPROC_VALUE   value1;
+    PREPROC_VALUE   value2;
 
     PP_Expr1( val );
     if( PPTokenPtr[0] == '?' ) {
@@ -100,9 +100,9 @@ void PP_ConstExpr( PPVALUE *val )
 }
 
 
-void PP_Expr1( PPVALUE *val )
+void PP_Expr1( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr2( val );
     while( PPTokenPtr[0] == '|'  &&  PPTokenPtr[1] == '|' ) {
@@ -114,9 +114,9 @@ void PP_Expr1( PPVALUE *val )
 }
 
 
-void PP_Expr2( PPVALUE *val )
+void PP_Expr2( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr3( val );
     while( PPTokenPtr[0] == '&'  &&  PPTokenPtr[1] == '&' ) {
@@ -128,9 +128,9 @@ void PP_Expr2( PPVALUE *val )
 }
 
 
-void PP_Expr3( PPVALUE *val )
+void PP_Expr3( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr4( val );
     while( PPTokenPtr[0] == '|'  &&  PPTokenPtr[1] != '|' ) {
@@ -142,9 +142,9 @@ void PP_Expr3( PPVALUE *val )
 }
 
 
-void PP_Expr4( PPVALUE *val )
+void PP_Expr4( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr5( val );
     while( PPTokenPtr[0] == '^' ) {
@@ -156,9 +156,9 @@ void PP_Expr4( PPVALUE *val )
 }
 
 
-void PP_Expr5( PPVALUE *val )
+void PP_Expr5( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr6( val );
     while( PPTokenPtr[0] == '&'  &&  PPTokenPtr[1] != '&' ) {
@@ -170,9 +170,9 @@ void PP_Expr5( PPVALUE *val )
 }
 
 
-void PP_Expr6( PPVALUE *val )
+void PP_Expr6( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr7( val );
     for( ;; ) {
@@ -193,9 +193,9 @@ void PP_Expr6( PPVALUE *val )
 }
 
 
-void PP_Expr7( PPVALUE *val )
+void PP_Expr7( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr8( val );
     for( ;; ) {
@@ -234,9 +234,9 @@ void PP_Expr7( PPVALUE *val )
 }
 
 
-void PP_Expr8( PPVALUE *val )
+void PP_Expr8( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr9( val );
     for( ;; ) {
@@ -261,9 +261,9 @@ void PP_Expr8( PPVALUE *val )
 }
 
 
-void PP_Expr9( PPVALUE *val )
+void PP_Expr9( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr10( val );
     for( ;; ) {
@@ -284,9 +284,9 @@ void PP_Expr9( PPVALUE *val )
 }
 
 
-void PP_Expr10( PPVALUE *val )
+void PP_Expr10( PREPROC_VALUE *val )
 {
-    PPVALUE     val2;
+    PREPROC_VALUE   val2;
 
     PP_Expr11( val );
     for( ;; ) {
@@ -320,7 +320,7 @@ void PP_Expr10( PPVALUE *val )
 }
 
 
-void PP_Expr11( PPVALUE *val )
+void PP_Expr11( PREPROC_VALUE *val )
 {
 rescan:
     val->val.ivalue = 0;
@@ -418,7 +418,7 @@ long int PP_HexNumber( void )
     return( value );
 }
 
-void PP_CharConst( PPVALUE *val )
+void PP_CharConst( PREPROC_VALUE *val )
 {
     long int    value;
     char        c;
@@ -477,7 +477,7 @@ void PP_CharConst( PPVALUE *val )
     val->val.ivalue = value;
 }
 
-void PP_Constant( PPVALUE *val )
+void PP_Constant( PREPROC_VALUE *val )
 {
     long int    value;
     char        c;
@@ -525,7 +525,7 @@ void PP_Constant( PPVALUE *val )
     val->val.ivalue = value;
 }
 
-void PP_Identifier( PPVALUE *val )
+void PP_Identifier( PREPROC_VALUE *val )
 {
     long int    value;
     char        *ptr;

@@ -30,10 +30,6 @@
 ****************************************************************************/
 
 
-// the following is a temporary measure to get around the fact
-// that winreg.h defines a type called ppvalue
-#define _WINREG_
-
 #include "precomp.h"
 #include <stdlib.h>
 #include <string.h>
@@ -79,7 +75,7 @@ static void addSymbols( WRHashTable *table )
     int                 hash;
     MACRO_ENTRY         *me;
     char                *endptr;
-    PPVALUE             val;
+    PREPROC_VALUE       val;
     WRHashValue         value;
     WRHashEntry         *entry;
     BOOL                dup;

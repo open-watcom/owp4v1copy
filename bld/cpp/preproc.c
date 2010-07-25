@@ -797,7 +797,7 @@ void PP_Ifndef( char *ptr )
 
 int PPConstExpr( char *ptr )
 {
-    PPVALUE     value;
+    PREPROC_VALUE   value;
 
     PPTokenPtr = ptr;
     PPFlags |= PPFLAG_PREPROCESSING;
