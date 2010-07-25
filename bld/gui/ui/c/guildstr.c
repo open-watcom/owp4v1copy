@@ -43,6 +43,7 @@
 #include <unistd.h>
 
 #include "wressetr.h"
+#include "wresset2.h"
 
 #define NIL_HANDLE      ((int)-1)
 

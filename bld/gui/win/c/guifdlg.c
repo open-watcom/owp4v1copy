@@ -30,6 +30,14 @@
 ****************************************************************************/
 
 
+#include "guiwind.h"
+#ifndef __OS2_PM__
+    #if !defined( __NT__ ) && !defined( __WINDOWS_386__ ) && !defined( WILLOWS )
+        #pragma library( "commdlg.lib" );
+    #endif
+    #include <ctl3d.h>
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,18 +57,6 @@
 #include <dirent.h>
 #endif
 
-#ifndef __OS2_PM__
-    #if defined(__WINDOWS_386__)
-        #define INCLUDE_COMMDLG_H
-    #endif
-    #include <windows.h>
-    #if !defined(__NT__)  &&  !defined(__WINDOWS_386__) && !defined(WILLOWS)
-        #include <commdlg.h>
-        #pragma library( "commdlg.lib" );
-    #endif
-    #include <ctl3d.h>
-#endif
-#include "guiwind.h"
 #include "guidlg.h"
 #include "guifdlg.h"
 #include "guixutil.h"

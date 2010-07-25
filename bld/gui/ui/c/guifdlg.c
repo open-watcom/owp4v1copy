@@ -29,6 +29,8 @@
 ****************************************************************************/
 
 
+#include "guiwind.h"
+
 #if defined(__OS2__) || defined(__OS2_PM__)
     #ifndef OS2_INCLUDED
         #undef NULL
@@ -36,6 +38,7 @@
         #include <os2.h>
     #endif
 #elif defined(__NT__)
+    #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
 #elif defined(__RDOS__)
     #include "rdos.h"
@@ -68,7 +71,6 @@
     #include <dos.h>
 #endif
 #include "walloca.h"
-#include "guiwind.h"
 #include "guifdlg.h"
 #include "guidlg.h"
 #include "guistr.h"

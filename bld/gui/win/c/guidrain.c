@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
 #include "guiwind.h"
+#include <stdlib.h>
 
 
 extern  WPI_INST        GUIMainHInst;

@@ -87,10 +87,8 @@ extra_c_flags_os2 = -D__OS2_PM__
 extra_c_flags_trmem = $(trmem_cflags) -fh=$^&.pch
 
 # memory tracker cover routines
-extra_c_flags_guimem = $(trmem_cover_cflags) -fh=$^&.pch
+extra_c_flags_guimem = $(trmem_cover_cflags) -fh=guimem.pch
 
-extra_c_flags_guisdef += -fh=$^&.pch
-extra_c_flags_guifcrck += -fh=$^&.pch
 extra_c_flags_help += -fh=$^&.pch
 extra_c_flags_vvscroll += -fh=$^&.pch
 extra_c_flags_helpmenu += -fh=$^&.pch
@@ -104,15 +102,6 @@ extra_c_flags_search += -fh=gui02.pch
 extra_c_flags_guiextnm += -fh=gui03.pch
 extra_c_flags_helpopen += -fh=gui03.pch
 extra_c_flags_helpio += -fh=gui03.pch
-extra_c_flags_guirdlg += -fh=gui04.pch
-extra_c_flags_guirmenu += -fh=gui04.pch
-extra_c_flags_statwnd += -fh=gui05.pch
-extra_c_flags_toolbr += -fh=gui05.pch
-extra_c_flags_wmdisim += -fh=gui06.pch
-extra_c_flags_guifdlg += -fh=gui06.pch
-extra_c_flags_guihelp += -fh=gui07.pch
-extra_c_flags_guixmain += -fh=gui07.pch
-extra_c_flags_guidrain += -fh=gui07.pch
 !endif
 
 !ifeq sys_windowed 1

@@ -30,12 +30,12 @@
 ****************************************************************************/
 
 
+#include "guiwind.h"
 #include <stdlib.h>
 #if defined( __UNIX__ )
     #include "unsoasyc.h"
     #include "stdtypes.h"
 #endif
-#include "guiwind.h"
 
 
 // This makes sure that the main routine is actially linked in

@@ -41,18 +41,15 @@
     #define INCL_DOSMISC
     #include "os2.h"
 #else
-    #ifdef __WINDOWS_386__
-        #define INCLUDE_COMMDLG_H
-    #endif
+    #define INCLUDE_COMMDLG_H
     #define NOCOMM
+    #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
     #if defined( __UNIX__ )
         #include <wtypes.h>
         #include <windef.h>
     #endif
-    #if defined( TWIN )
-        #include <commdlg.h>
-    #endif
+    #include <commdlg.h>
 #endif
 
 #include "wpitypes.h"
