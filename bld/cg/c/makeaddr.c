@@ -42,8 +42,9 @@
 #include "cfloat.h"
 #include "feprotos.h"
 #include "types.h"
-
 #include "addrfold.h"
+#include "makeins.h"
+#include "display.h"
 
 static    pointer       *AddrNameFrl;
 
@@ -55,12 +56,8 @@ extern    block         *CurrBlock;
 extern  type_class_def  TypeClass(type_def*);
 extern  name            *SAllocTemp(type_class_def,type_length);
 extern  name            *SAllocUserTemp(pointer,type_class_def,type_length);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *AllocConst(pointer);
-extern  void            FreeIns(instruction*);
 extern  void            AddIns(instruction*);
-extern  name            *MakeDisplay(name*,int);
 extern  name            *BGNewTemp(type_def*);
 extern  name            *AllocIntConst(int);
 extern  name            *AllocS32Const(signed_32);
@@ -68,7 +65,6 @@ extern  name            *SAllocMemory(pointer,type_length,cg_class,type_class_de
 extern  name            *AllocTemp(type_class_def);
 extern  void            AllocALocal(name*);
 extern  byte            *Copy(void*,void*,uint);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  void            BGDone(an);
 extern  cg_type         NamePtrType( name *op );
 extern  name            *AllocRegName( hw_reg_set );

@@ -40,6 +40,7 @@
 #include "vergen.h"
 #include "zoiks.h"
 #include "score.h"
+#include "makeins.h"
 
 extern  hw_reg_set      *RegSets[];
 extern  proc_def        *CurrProc;
@@ -54,16 +55,13 @@ extern  void            SuffixIns(instruction*,instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *AllocIntConst(int);
 extern  void            UpdateLive(instruction*,instruction*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  void            DupSeg(instruction*,instruction*);
 extern  void            DelSeg(instruction*);
 extern  void            DeadInstructions(void);
 extern  bool            ChangeIns(instruction*,name*,name**,change_type);
-extern  void            FreeIns(instruction*);
 extern  bool            DoesSomething( instruction* );
 extern  name            *HighPart( name *, type_class_def );
 extern  name            *LowPart( name *, type_class_def );
-extern  void            FreeIns( instruction * );
 extern  hw_reg_set      FullReg( hw_reg_set );
 extern  bool            ReDefinedBy( instruction *, name * );
 extern  void            MoveSegRes( instruction *, instruction * );

@@ -34,6 +34,7 @@
 #include "cgdefs.h"
 #include "addrname.h"
 #include "tree.h"
+#include "treeconv.h"
 #include "zoiks.h"
 #include "cfloat.h"
 

@@ -38,8 +38,9 @@
 #include "objrep.h"
 #include "addrname.h"
 #include "cgmem.h"
-
 #include "addrfold.h"
+#include "makeins.h"
+#include "display.h"
 
 typedef struct frame_patch {
         struct frame_patch      *next;
@@ -51,12 +52,9 @@ extern  name            *GenIns(an);
 extern  name            *TempOffset(name*,type_length,type_class_def);
 extern  int             SizeDisplayReg(void);
 extern  hw_reg_set      AllCacheRegs(void);
-extern  instruction     *MakeNop(void);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  hw_reg_set      StackReg(void);
 extern  name            *AllocIndex(name*,name*,type_length,type_class_def);
 extern  void            AddIns(instruction*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *AllocTemp(type_class_def);
 extern  name            *AllocRegName(hw_reg_set);
 extern  hw_reg_set      DisplayReg(void);

@@ -43,11 +43,11 @@
 #include "regset.h"
 #include "rtclass.h"
 #include "zoiks.h"
+#include "makeins.h"
+#include "display.h"
 #define BY_CG
 #include "cgprotos.h"
 
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  label_handle    AskForNewLabel(void);
 extern  name            *SAllocMemory(pointer,type_length,cg_class,type_class_def,type_length);
 extern  name            *AddrConst(name*,segment_id,constant_class);
@@ -61,10 +61,7 @@ extern  seg_id          SetOP(seg_id);
 extern  type_class_def  TypeClass(type_def*);
 extern  void            AddIns(instruction*);
 extern  void            DataLabel(label_handle);
-extern  void            SaveDisplay(opcode_defs);
-extern  void            SetDisplay(name*);
 extern  name            *GenIns(an);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  name            *AllocS32Const(signed_32);
 extern  an              MakeTempAddr(name*,type_def*);
 extern  bool            AssgnParms(cn,bool);

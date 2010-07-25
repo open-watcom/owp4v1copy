@@ -39,6 +39,7 @@
 #include "vergen.h"
 #include "system.h"
 #include "zoiks.h"
+#include "makeins.h"
 
 extern  void            ChangeType(instruction*,type_class_def);
 extern  name            *IntEquivalent(name*);
@@ -46,16 +47,12 @@ extern  void            DupSegOp(instruction*,instruction*,int);
 extern  name            *AllocTemp(type_class_def);
 extern  opcode_entry    *CodeTable(instruction*);
 extern  bool            SameThing(name*,name*);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  instruction     *MoveConst(unsigned_32,name*,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  constant_defn   *GetFloat(name*,type_class_def);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  void            DupSegRes(instruction*,instruction*);
 extern  void            MoveSegOp(instruction*,instruction*,int);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  void            SuffixIns(instruction*,instruction*);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  void            HalfType(instruction*);
 extern  hw_reg_set      High32Reg(hw_reg_set);
 extern  hw_reg_set      High16Reg(hw_reg_set);
@@ -68,7 +65,6 @@ extern  name            *AddrConst(name*,int,constant_class);
 extern  name            *AllocIntConst(int);
 extern  name            *AllocUIntConst(uint);
 extern  name            *AllocConst(pointer);
-extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_class_def);
 extern  void            ReplIns(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            DupSeg(instruction*,instruction*);
@@ -77,7 +73,6 @@ extern  void            DelSeg(instruction*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  name            *AllocIntConst(int);
 extern  bool            Overlaps( name *, name * );
-extern  instruction     *MakeNop(void);
 extern  name            *LowPart( name *, type_class_def );
 extern  name            *HighPart( name *, type_class_def );
 extern  void            CnvOpToInt( instruction *, int );

@@ -38,6 +38,7 @@
 #include "vergen.h"
 #include "funits.h"
 #include "model.h"
+#include "makeins.h"
 
 
 extern  void            DoNothing(instruction*);
@@ -45,7 +46,6 @@ extern  name            *AllocRegName(hw_reg_set);
 extern  name            *DeAlias(name*);
 extern  name            *AllocS32Const(signed_32);
 extern  name            *AllocIntConst( int );
-extern  void            FreeIns(instruction*);
 extern  bool            VolatileIns(instruction *);
 extern  hw_reg_set      Low16Reg( hw_reg_set regs );
 extern  hw_reg_set      High16Reg( hw_reg_set regs );

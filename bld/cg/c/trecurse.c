@@ -36,6 +36,7 @@
 #include "typedef.h"
 #include "procdef.h"
 #include "dump.h"
+#include "makeins.h"
 
 extern proc_def         *CurrProc;
 extern block            *HeadBlock;
@@ -49,9 +50,6 @@ extern  label_handle    AskForNewLabel( void );
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            SuffixIns(instruction *,instruction *);
 extern  void            ReplIns(instruction *,instruction *);
-extern  void            FreeIns(instruction *);
-extern  instruction     *MakeMove(name *,name *,type_class_def );
-extern  instruction     *MakeConvert(name *,name *,type_class_def,type_class_def );
 extern  void            RemoveInputEdge( block_edge * );
 extern  void            PointEdge( block_edge *, block * );
 

@@ -39,7 +39,7 @@
 #include "tree.h"
 #include "offset.h"
 #include "seldef.h"
-
+#include "makeins.h"
 #include "s37sel.def"
 
 extern  void            HWIntGen(offset,int);
@@ -68,8 +68,6 @@ extern  seg_id          SetOP(seg_id);
 extern  type_def        *TypeAddress(cg_type);
 extern  name            *LoadTemp(name*,type_class_def);
 extern  int             SelCompare(signed_32,signed_32);
-extern  instruction     *NewIns(int);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  void            AddIns(instruction*);
 
 extern  char            OptForSize;

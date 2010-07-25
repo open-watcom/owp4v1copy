@@ -35,12 +35,11 @@
 #include "opcodes.h"
 #include "rttable.h"
 #include "rtclass.h"
+#include "makeins.h"
 
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
 extern  name            *AllocIntConst(int);
-extern  instruction     *NewIns(int);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  rt_class        AskHow(type_class_def,type_class_def);
 extern  label_handle    RTLabel(int);
 extern  hw_reg_set      FirstReg(reg_set_index);

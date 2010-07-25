@@ -34,6 +34,7 @@
 #include "opcodes.h"
 #include "cgmem.h"
 #include "procdef.h"
+#include "makeins.h"
 
 extern    block         *HeadBlock;
 extern    block         *BlockList;
@@ -42,7 +43,6 @@ extern    proc_def      *CurrProc;
 
 
 extern  void            TellScrapLabel( label_handle );
-extern  void            FreeIns( instruction * );
 extern  void            FreeABlock( block * );
 extern  instruction_id  Renumber( void );
 extern  void            RemoveEdge( block_edge * );

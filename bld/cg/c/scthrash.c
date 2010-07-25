@@ -36,17 +36,16 @@
 #include "pattern.h"
 #include "vergen.h"
 #include "score.h"
+#include "makeins.h"
 
 extern  void            ReplIns(instruction*,instruction*);
 extern  opcode_entry    *FindGenEntry(instruction*,bool*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  bool            IndexRegOk(hw_reg_set,bool);
 extern  byte            *Copy(void*,void*,uint);
-extern  instruction     *NewIns(int);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
-extern  void            FreeIns(instruction*);
 extern  bool            UnChangeable(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  hw_reg_set      HighReg(hw_reg_set);

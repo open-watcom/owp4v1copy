@@ -36,12 +36,12 @@
 #include "conflict.h"
 #include "procdef.h"
 #include "zoiks.h"
+#include "makeins.h"
 
 extern  conflict_node   *FindConflictNode(name*,block*,instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            PrefixInsRenum(instruction*,instruction*,bool);
-extern  instruction     *MakeNop(void);
 extern  void            Renumber(void);
 extern  int             NumOperands(instruction*);
 extern  bool            IsVolatile(name*);

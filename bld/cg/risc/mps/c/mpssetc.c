@@ -35,15 +35,13 @@
 #include "opcodes.h"
 #include "regset.h"
 #include "model.h"
+#include "makeins.h"
 
 extern  void            SuffixIns( instruction *, instruction * );
 extern  void            RemoveInputEdge( block_edge *);
-extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
 extern  void            FlipCond( instruction * );
 extern  name            *AllocTemp( type_class_def );
 extern  name            *AllocS32Const( signed_32 );
-extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
-extern  instruction     *MakeMove( name *, name *, type_class_def );
 extern  instruction     *rSWAPOPS( instruction *ins );
 extern  void            RemoveBlock( block * );
 

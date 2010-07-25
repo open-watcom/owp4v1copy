@@ -47,16 +47,12 @@
 #include "optask.h"
 #include "bgcall.h"
 #include "x87.h"
+#include "makeins.h"
 
 
 
 extern  label_handle    AskForSymLabel(pointer,cg_class);
-extern  instruction     *NewIns(int);
 extern  type_def        *QParmType(sym_handle,sym_handle,type_def*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
-extern  instruction     *MakeNop(void);
 extern  hw_reg_set      ParmReg(type_class_def,type_length,type_length,call_state*);
 extern  hw_reg_set      CallZap(call_state*);
 extern  type_length     ParmMem(type_length,type_length,call_state*);
@@ -85,7 +81,6 @@ extern  instruction     *PushOneParm(instruction*,name*,type_class_def,type_leng
 extern  bool            IsVolatile(name*);
 extern  void            TNZapParms(void);
 extern  name            *AllocS32Const(signed_32);
-extern  void            FreeIns(instruction*);
 extern  void            PushInSameBlock(instruction*);
 #if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
 extern  void            TellObjVirtFuncRef(void *);

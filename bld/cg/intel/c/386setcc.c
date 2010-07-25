@@ -36,16 +36,14 @@
 #include "regset.h"
 #include "model.h"
 #include "i64.h"
+#include "makeins.h"
 
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            RemoveInputEdge(block_edge *);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  void            FlipCond(instruction*);
 extern  name            *AllocTemp(type_class_def);
 extern  name            *AllocS32Const(signed_32);
 extern  name            *AllocS64Const( unsigned_32 low, unsigned_32 high );
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  void            RemoveBlock( block * );
 
 extern  block           *HeadBlock;

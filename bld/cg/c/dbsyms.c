@@ -46,6 +46,7 @@
 #include "types.h"
 #include "dbgstrct.h"
 #include "dbcue.h"
+#include "makeins.h"
 #define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
@@ -54,7 +55,6 @@
 #endif
 #include <string.h>
 
-extern  instruction     *MakeNop(void);
 extern  void            AddIns(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  seg_id          SetOP(seg_id);

@@ -41,14 +41,11 @@
 #include "model.h"
 #include "rttable.h"
 #include "rtclass.h"
+#include "makeins.h"
 
-extern  name    *       AllocS32Const( signed_32 );
-extern  name    *       AllocTemp(type_class_def);
-extern  instruction*    MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction*    MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction*    MakeConvert(name*,name*,type_class_def,type_class_def);
+extern  name            *AllocS32Const( signed_32 );
+extern  name            *AllocTemp(type_class_def);
 extern  void            PrefixIns(instruction*,instruction*);
-extern  instruction*    MakeMove(name*,name*,type_class_def);
 extern  void            ReplIns(instruction*,instruction*);
 extern  opcode_entry    *OpcodeTable( table_def );
 extern  void            UpdateLive(instruction*,instruction*);

@@ -41,6 +41,7 @@
 #include "model.h"
 #include "feprotos.h"
 #include <assert.h>
+#include "makeins.h"
 
 extern  block               *HeadBlock;
 extern  conflict_node       *ConfList;
@@ -50,9 +51,6 @@ extern  void            SuffixIns(instruction*,instruction*);
 extern  bool            IsIndexReg(hw_reg_set,type_class_def,bool);
 extern  reg_set_index   MarkIndex(instruction*,name*,bool);
 extern  void            PrefixIns(instruction*,instruction*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  name            *AllocTemp(type_class_def);
 extern  conflict_node   *NameConflict(instruction*,name*);
 extern  name            *IndexToTemp( instruction *, name * );

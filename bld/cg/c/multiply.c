@@ -32,14 +32,11 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
+#include "makeins.h"
 
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  name            *AllocIntConst(int);
 extern  name            *AllocTemp(type_class_def);
 extern  void            PrefixIns(instruction*,instruction*);
-extern  void            FreeIns(instruction*);
 extern  int             SubCost(void);
 extern  int             AddCost(void);
 extern  int             MulCost(unsigned_32);

@@ -40,6 +40,7 @@
 #include "model.h"
 #include "system.h"
 #include "zoiks.h"
+#include "makeins.h"
 
 extern  conflict_node   *GiveRegister(conflict_node*,bool);
 extern  conflict_node   *NameConflict(instruction*,name*);
@@ -53,13 +54,9 @@ extern  instruction     *ClrHighDbl(instruction*);
 extern  instruction     *ExtPush1(instruction*);
 extern  instruction     *ExtPush2(instruction*);
 extern  instruction     *HighCmp(instruction*);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  instruction     *MakeFNeg(instruction*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  instruction     *MakeU2(instruction*);
 extern  instruction     *MakeU4(instruction*);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  instruction     *MoveConst(unsigned_32,name*,type_class_def);
 extern  instruction     *Split4Neg(instruction*);
 extern  instruction     *SplitCPPush(instruction*);
@@ -95,7 +92,6 @@ extern  void            HalfType(instruction*);
 extern  void            MarkPossible(instruction*,name*,reg_set_index);
 extern  void            MoveSegOp(instruction*,instruction*,int);
 extern  void            MoveSegRes(instruction*,instruction*);
-extern  instruction     *NewIns(int);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            ReplIns(instruction*,instruction*);
 extern  void            RevCond(instruction*);

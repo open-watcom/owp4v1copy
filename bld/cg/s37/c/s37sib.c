@@ -35,13 +35,13 @@
 #include "opcodes.h"
 #include "s37sib.def"
 #include "cgmem.h"
+#include "makeins.h"
 
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  hw_reg_set      HighReg(hw_reg_set);
 extern  bool            IsRXInstruction(instruction*);
 extern  bool            IsIndexReg(hw_reg_set,type_class_def,bool);
-extern  void            FreeIns(instruction*);
 extern  instruction     *SIBPossibleIndex(instruction*,name*,name**,bool*,hw_reg_set,hw_reg_set,bool*,bool*);
 extern  void            ReplaceOperand(instruction*,name*,name*);
 extern  byte            *Copy(byte*,byte*,uint);

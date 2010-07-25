@@ -44,8 +44,9 @@
 #include "rtclass.h"
 #include "feprotos.h"
 #include "types.h"
-
+#include "makeins.h"
 #include "addrfold.h"
+#include "display.h"
 #include "bldins.h"
 
 
@@ -60,33 +61,23 @@ extern  void            Generate(bool);
 extern  void            EnLink(label_handle,bool);
 extern  label_handle    AskForNewLabel( void );
 extern  void            AddIns(instruction*);
-extern  instruction     *MakeNop( void );
-extern  void            BigLabel( void );
-extern  void            BigGoto(int);
 extern  bool            TGIsAddress( void );
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  name            *GenIns(an);
 extern  type_class_def  TypeClass(type_def*);
 extern  an              InsName(instruction*,type_def*);
 extern  an              MakePoints(an,type_def*);
 extern  void            FixCodePtr(an);
 extern  void            NamesCrossBlocks( void );
-extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_class_def);
 extern  an              MakeGets(an,an,type_def*);
 extern  an              AddrDuplicate(an);
 extern  an              AddrCopy(an);
 extern  void            AddrFree(an);
 extern  an              AddrSave(an);
 extern  void            AddrDemote(an);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *AllocIntConst(int);
 extern  name            *AllocS32Const(signed_32);
 extern  name            *AllocS64Const( unsigned_32 low, unsigned_32 high );
 extern  name            *AllocU64Const( unsigned_32 low, unsigned_32 high );
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
-extern  instruction     *MakeNary(opcode_defs,name*,name*,name*,type_class_def,type_class_def,int);
-extern  instruction     *NewIns(int);
 extern  name            *AllocTemp(type_class_def);
 extern  bool            BlkTooBig( void );
 extern  bool            NeedPtrConvert(an,type_def*);
@@ -234,7 +225,7 @@ static  cg_name Unary( cg_op op, an left, type_def *tipe ) {
     instruction *ins;
     an          res;
 
-    ins = MakeNary( op, GenIns( left ), NULL, NULL,
+    ins = MakeNary( (opcode_defs)op, GenIns( left ), NULL, NULL,
                     TypeClass( tipe ), TypeClass( left->tipe ), 1 );
     res = InsName( ins, tipe );
     AddIns( ins );
@@ -335,7 +326,7 @@ extern  bn      BGCompare( cg_op op, an left, an rite,
     BGDone( left );
     BGDone( rite );
     NamesCrossBlocks();
-    ins = MakeCondition( op, newleft, newrite, 0, 1, TypeClass( tipe ) );
+    ins = MakeCondition( (opcode_defs)op, newleft, newrite, 0, 1, TypeClass( tipe ) );
     AddIns( ins );
     GenBlock( CONDITIONAL, 2 );
     new = CGAlloc( sizeof( bool_node ) );
@@ -628,7 +619,7 @@ extern  an      BGBinary( cg_op op, an left,
     }
     if( result == NULL ) {
         left = CheckType( left, tipe );
-        ins = MakeBinary( op, GenIns( left ), GenIns( rite ),
+        ins = MakeBinary( (opcode_defs)op, GenIns( left ), GenIns( rite ),
                            NULL, TypeClass( tipe ) );
         result = InsName( ins, tipe );
         AddIns( ins );
@@ -661,11 +652,11 @@ extern  an      BGOpGets( cg_op op, an left, an rite,
         temp = AllocTemp( opclass );
         ins = MakeConvert( left_name, temp, opclass, class );
         AddIns( ins );
-        AddIns( MakeBinary( op, temp, GenIns( rite ), temp, opclass ) );
+        AddIns( MakeBinary( (opcode_defs)op, temp, GenIns( rite ), temp, opclass ) );
         ins = MakeConvert( temp, left_name, class, opclass );
         AddIns( ins );
     } else {
-        ins = MakeBinary( op, left_name, GenIns( rite ), left_name, opclass );
+        ins = MakeBinary( (opcode_defs)op, left_name, GenIns( rite ), left_name, opclass );
         if( tipe != optipe ) {
             ins->ins_flags |= INS_DEMOTED; /* its not quite the right type */
         }

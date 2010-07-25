@@ -36,6 +36,7 @@
 #include "pattern.h"
 #include "procdef.h"
 #include "zoiks.h"
+#include "makeins.h"
 
 typedef enum {
         CB_FOR_INS1             = 0x01,
@@ -52,7 +53,6 @@ extern    block         *HeadBlock;
 extern    conflict_node *ConfList;
 extern    bool          HaveLiveInfo;
 
-extern  void            FreeIns(instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  name            *DeAlias(name*);
 extern  int             CountIns(block*);

@@ -43,6 +43,7 @@
 #include "stackok.h"
 #include "zoiks.h"
 #include "cgaux.h"
+#include "makeins.h"
 
 extern  block           *MakeBlock(label_handle,block_num);
 extern  instruction     *DupInstrs(instruction*,instruction*,instruction*,induction*,signed_32);
@@ -54,8 +55,6 @@ extern  name            *DeAlias(name*);
 extern  name            *TempOffset(name *,type_length ,type_class_def );
 extern  name            *AllocTemp(type_class_def );
 extern  name            *SAllocIndex(name *,name *,type_length ,type_class_def ,type_length );
-extern  instruction     *MakeBinary(opcode_defs ,name *,name *,name *,type_class_def );
-extern  instruction     *MakeCondition(opcode_defs ,name *,name *,int,int,type_class_def );
 extern  name            *AllocS32Const(signed_32 );
 extern  void            SuffixIns(instruction *,instruction *);
 extern  name            *ScaleIndex(name *,name *,type_length ,type_class_def ,type_length ,int ,i_flags );
@@ -69,7 +68,6 @@ extern  void            MarkLoop( void );
 extern  void            UnMarkLoop( void );
 extern  void            MarkInvariants( void );
 extern  void            UnMarkInvariants( void );
-extern  instruction     *MakeMove( name *, name *, type_class_def );
 extern  instruction     *DupIns( instruction *, instruction *, name *, signed_32 );
 extern  void            RemoveBlock( block * );
 extern  void            FlipCond( instruction * );
@@ -78,7 +76,6 @@ extern  int             CountIns( block *);
 extern  void            MoveDownLoop( block * );
 extern  block           *ReGenBlock( block *, label_handle );
 extern  void            MakeJumpBlock( block *, block_edge * );
-extern  void            FreeIns( instruction * );
 extern  void            URBlip( void );
 
 extern type_class_def   Signed[];

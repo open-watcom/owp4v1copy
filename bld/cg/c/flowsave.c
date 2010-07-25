@@ -38,13 +38,13 @@
 #include "procdef.h"
 #include "cgmem.h"
 #include "model.h"
+#include "makeins.h"
 
 extern  bool            HaveDominatorInfo;
 extern  block           *HeadBlock;
 extern  hw_reg_set      PushRegs[];
 extern  proc_def        *CurrProc;
 
-extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
 extern  opcode_entry    *ResetGenEntry( instruction * );
 extern  void            PrefixIns( instruction *, instruction * );
 extern  void            SuffixIns( instruction *, instruction * );

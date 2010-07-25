@@ -41,7 +41,7 @@
 #include "cgaux.h"
 #include "rtclass.h"
 #include "zoiks.h"
-
+#include "makeins.h"
 #include "s37call.def"
 
 extern    type_def              *TypeNone;
@@ -51,13 +51,9 @@ extern  type_length             TypeClassSize[];
 
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *AllocTemp(type_class_def);
-extern  instruction     *NewIns(int);
 extern  temp_name       *BGNewTemp(type_def*);
 extern  type_def        *QParmType(type_def*);
 extern  name            *AllocUserTemp(pointer,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  void            BGDone(an);
 extern  an              MakeTempAddr(name*,type_def*);
 extern  an              MakeAddrName(cg_class,sym_handle,type_def*);
@@ -78,7 +74,6 @@ extern  hw_reg_set      StackReg(void);
 extern  hw_reg_set      WordReg(int);
 extern  hw_reg_set      FixedRegs(void);
 extern  type_length     PushSize(type_length);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  name            *AllocS32Const(signed_32);
 extern  name            *AllocIntConst(int);
 extern  void            FEMessage(int,pointer);

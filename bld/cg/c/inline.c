@@ -37,8 +37,8 @@
 #include "cgmem.h"
 #include "zoiks.h"
 #include "feprotos.h"
+#include "makeins.h"
 
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *GenIns(an);
 extern  name            *SAllocUserTemp(pointer,type_class_def,type_length);
 extern  label_handle    AskForNewLabel(void);

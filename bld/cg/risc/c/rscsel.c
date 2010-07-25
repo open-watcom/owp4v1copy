@@ -38,8 +38,8 @@
 #include "tree.h"
 #include "seldef.h"
 #include "types.h"
+#include "makeins.h"
 
-extern  instruction     *NewIns( int );
 extern  void            AddIns( instruction * );
 
 extern  type_length     TypeClassLength[];

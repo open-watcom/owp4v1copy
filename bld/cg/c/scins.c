@@ -39,9 +39,9 @@
 #include "procdef.h"
 #include "addrname.h"
 #include "x87.h"
+#include "makeins.h"
 
 
-extern  void            FreeIns(instruction*);
 extern  int             NumOperands(instruction*);
 extern  opcode_entry    *FindGenEntry(instruction*,bool*);
 extern  bool            IndexOkay(instruction*,name*);

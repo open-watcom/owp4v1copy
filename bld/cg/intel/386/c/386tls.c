@@ -41,6 +41,7 @@
 #include "rtclass.h"
 #include "zoiks.h"
 #include "feprotos.h"
+#include "makeins.h"
 
 extern  label_handle    RTLabel( int );
 extern  name            *AllocRegName( hw_reg_set );
@@ -50,12 +51,8 @@ extern  name            *AllocS32Const( signed_32 );
 extern  name            *AllocIndex( name *, name *, type_length, type_class_def );
 extern  name            *ScaleIndex( name *, name *,
                                 type_length, type_class_def, type_length, int, i_flags );
-extern  instruction     *MakeMove( name *, name *, type_class_def );
-extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
-extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
 extern  void            PrefixIns( instruction *, instruction * );
 extern  label_handle    RTLabel( int );
-extern  instruction     *NewIns( int );
 
 extern  type_length     TypeClassSize[];
 extern  proc_def        *CurrProc;

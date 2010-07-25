@@ -54,6 +54,8 @@
 #include "feprotos.h"
 #include "p5prof.h"
 #include "procdef.h"
+#include "addrname.h"
+#include "display.h"
 
 extern  void            DoAbsPatch(abspatch_handle*,int);
 extern  void            DoFunnyRef(int);
@@ -70,8 +72,6 @@ extern  void            GenRJmp(instruction*);
 extern  void            GenICall(instruction*);
 extern  void            GenRCall(instruction*);
 extern  void            GenCall(instruction*);
-extern  abspatch_handle *NextFramePatch( void );
-extern  bool            AskIsFrameIndex(name*);
 extern  void            GenCondJump(instruction*);
 extern  int             NumOperands(instruction*);
 extern  void            InputOC(any_oc*);

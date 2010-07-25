@@ -35,11 +35,11 @@
 #include "opcodes.h"
 #include "zerobits.h"
 #include "hostsys.h"
+#include "makeins.h"
 
 extern  bool            UnChangeable(instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  void            SCBlip(void);
-extern  void            FreeIns(instruction*);
 extern  bool            SideEffect(instruction*);
 extern  bool            DoesSomething(instruction*);
 extern  void            DoNothing(instruction*);

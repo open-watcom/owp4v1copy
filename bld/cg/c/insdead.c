@@ -36,9 +36,9 @@
 #include "procdef.h"
 #include "addrname.h"
 #include "x87.h"
+#include "makeins.h"
 
 
-extern  void            FreeIns(instruction*);
 extern  void            FreeAName(name*);
 extern  block           *TailBlocks(void);
 extern  bool            BreakExists(void);

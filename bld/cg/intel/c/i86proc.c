@@ -43,6 +43,8 @@
 #include "stackok.h"
 #include "zoiks.h"
 #include "feprotos.h"
+#include "addrname.h"
+#include "display.h"
 
 extern  void        OutDLLExport(uint,sym_handle);
 extern  void        GenLeaSP(long);
@@ -54,9 +56,7 @@ extern  void        GenCypWindowsProlog( void );
 extern  void        GenWindowsEpilog( void );
 extern  void        GenCypWindowsEpilog( void );
 extern  void        EmitRtnEnd( void );
-extern  abspatch_handle *NextFramePatch( void );
 extern  void        EmitEpiBeg( void );
-extern  void        PatchBigLabels(offset);
 extern  void        GenEnter(int,int);
 extern  void        GenUnkEnter(pointer,int);
 extern  void        GenRegAnd(hw_reg_set,type_length);

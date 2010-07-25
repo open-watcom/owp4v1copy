@@ -38,12 +38,11 @@
 #include "vergen.h"
 #include "model.h"
 #include "funits.h"
+#include "makeins.h"
 
 extern  name            *AllocTemp( type_class_def );
-extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
 extern  void            MoveSegOp( instruction *, instruction *, int );
 extern  void            PrefixIns( instruction *, instruction * );
-extern  instruction     *MakeMove( name *, name *, type_class_def );
 extern  void            DupSeg( instruction *, instruction * );
 extern  void            ReplIns( instruction *, instruction * );
 

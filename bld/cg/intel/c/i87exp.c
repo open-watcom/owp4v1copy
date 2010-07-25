@@ -46,6 +46,7 @@
 #include "funits.h"
 #include "feprotos.h"
 #include "x87.h"
+#include "makeins.h"
 
 
 extern  block           *HeadBlock;
@@ -63,13 +64,10 @@ extern  bool            DoesSomething(instruction*);
 extern  int             NumOperands(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  int             Count87Regs(hw_reg_set);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  name            *AllocIntConst(int);
 extern  void            PrefixIns(instruction*,instruction*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *AllocIndex(name*,name*,type_length,type_class_def);
 extern  void            ReplIns(instruction*,instruction*);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            DoNothing(instruction*);
 extern  name            *AllocTemp(type_class_def);

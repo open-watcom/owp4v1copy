@@ -43,6 +43,8 @@
 #include "cfloat.h"
 #include "feprotos.h"
 #include "x87.h"
+#include "makeins.h"
+#include "foldins.h"
 
 
 typedef enum {
@@ -62,11 +64,8 @@ static  bool            LeaveIndVars;
 
 extern  name            *ScaleIndex(name *,name *,type_length ,type_class_def ,type_length ,int ,i_flags );
 extern name             *AllocTemp(type_class_def);
-extern void             FreeIns(instruction*);
 extern void             PrefixIns(instruction*,instruction*);
 extern void             SuffixIns(instruction*,instruction*);
-extern instruction      *MakeMove(name*,name*,type_class_def);
-extern instruction      *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern name             *AllocConst(pointer);
 extern pointer          CnvCFToType(pointer,type_def*);
 extern type_def         *ClassType(type_class_def);
@@ -75,7 +74,6 @@ extern bool             InsDead(void);
 extern bool             LoadAToMove(instruction*);
 extern bool             Hoistable(instruction*,block*);
 extern void             SXBlip(void);
-extern instruction      *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  name            *STempOffset(name*,type_length,type_class_def,type_length);
 extern  name            *SAllocMemory(pointer,type_length,cg_class,type_class_def,type_length);
 extern  name            *AllocAddrConst(name*,int,constant_class,type_class_def);
@@ -83,7 +81,6 @@ extern  name            *AllocIntConst(int);
 extern  bool            DeadBlocks(void);
 extern  void            RemoveInputEdge(block_edge*);
 extern  byte            *Copy(void*,void*,uint);
-extern  instruction     *NewIns(int);
 extern  bool            DivIsADog(type_class_def);
 extern  bool            IsVolatile(name*);
 extern  bool            ReDefinedBy(instruction*,name*);
@@ -92,8 +89,6 @@ extern  void            MoveHead(block*,block*);
 extern  void            MakeFlowGraph(void);
 extern  bool            BlockTrim(void);
 extern  bool            PeepOpt(block*,block *(*)(block *,block *),block *,bool);
-extern  instruction     *FoldIns(instruction*);
-extern  bool            ConstFold(block*);
 extern  int             GetLog2(unsigned_32);
 extern  bool            IsSegReg(hw_reg_set);
 extern  void            FindReferences(void);

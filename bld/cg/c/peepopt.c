@@ -42,9 +42,9 @@
 #include "pattern.h"
 #include "score.h"
 #include "zoiks.h"
+#include "makeins.h"
 
 extern  name                    *AllocS32Const(signed_32);
-extern  void                    FreeIns(instruction*);
 extern  bool                    IsVolatile(name*);
 extern  bool                    InsOrderDependant(instruction*,instruction*);
 extern  bool                    ReDefinedBy( instruction *, name * );

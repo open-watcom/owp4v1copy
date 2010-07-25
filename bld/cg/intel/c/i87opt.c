@@ -43,6 +43,7 @@
 #include "zoiks.h"
 #include "funits.h"
 #include "x87.h"
+#include "makeins.h"
 
 
 extern  block           *HeadBlock;
@@ -60,10 +61,8 @@ extern  void            DoNothing(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  void            BGDone(an);
 extern  bool            ReDefinedBy(instruction*,name*);
-extern  instruction     *MakeNary(opcode_defs,name*,name*,name*,type_class_def,type_class_def,int);
 extern  void            AddIns(instruction*);
 extern  name            *BGNewTemp(type_def*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  type_class_def  TypeClass(type_def*);
 extern  bool            DoesSomething(instruction*);
 extern  void            ToRFld(instruction*);
@@ -86,7 +85,6 @@ extern  void            SuffixIns(instruction*,instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  void            PrefFXCH(instruction*,int);
 extern  void            Wait8087( void );
-extern  void            FreeIns(instruction*);
 extern  void            ReverseFPGen(instruction*);
 extern  bool            InsOrderDependant(instruction*,instruction*);
 extern  int             FPStkReq(instruction*);

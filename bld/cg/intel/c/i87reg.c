@@ -40,6 +40,7 @@
 #include "zoiks.h"
 #include "addrname.h"
 #include "x87.h"
+#include "makeins.h"
 
 extern  block           *HeadBlock;
 extern  proc_def        *CurrProc;
@@ -51,21 +52,18 @@ extern  conflict_node   *ConfList;
 
 extern  void            SuffixIns(instruction*,instruction*);
 extern  name            *AllocIntConst(int);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *TempOffset(name*,type_length,type_class_def);
 extern  conflict_node   *InMemory(conflict_node*);
 extern  conflict_node   *NameConflict(instruction*,name*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            MoveSegOp(instruction*,instruction*,int);
 extern  void            MoveSegRes(instruction*,instruction*);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  name            *AllocTemp(type_class_def);
 extern  bool            AssignARegister(conflict_node*,hw_reg_set);
 extern  conflict_node   *FindConflictNode(name*,block*,instruction*);
 extern  void            LiveInfoUpdate(void);
 extern  int             NumOperands(instruction *);
 extern  bool            ReDefinedBy(instruction*,name*);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  bool            DoesSomething(instruction*);
 

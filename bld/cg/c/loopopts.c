@@ -44,6 +44,7 @@
 #include "i64.h"
 #include "feprotos.h"
 #include "x87.h"
+#include "makeins.h"
 
 
 typedef struct block_list {
@@ -65,12 +66,6 @@ extern    type_length           TypeClassSize[];
 extern  name            *AllocS64Const(signed_32,signed_32);
 extern  bool            ReDefinedBy(instruction*,name*);
 extern  int             GetLog2(unsigned_32);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction     *MakeNop(void);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
-extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_class_def);
 extern  name            *AllocTemp(type_class_def);
 extern  name            *AllocConst(pointer);
 extern  name            *AllocS32Const(signed_32);
@@ -82,7 +77,6 @@ extern  void            PrefixIns(instruction*,instruction*);
 extern  void            PrefixInsRenum(instruction*,instruction*,bool);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            ReplIns(instruction*,instruction*);
-extern  void            FreeIns(instruction*);
 extern  bool            LoopInsDead(void);
 extern  bool            TempsOverlap(name*,name*);
 extern  bool            RepOp(name**,name*,name*);
@@ -96,7 +90,6 @@ extern  void            ConstToTemp(block*,block*,block*(*)(block*));
 extern  bool            SideEffect(instruction*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  int             CountIns(block*);
-extern  instruction     *NewIns(int);
 extern  byte            *Copy(void*,void*,uint);
 extern  void            PropIndexes(block*);
 extern  void            FixBlockIds(void);

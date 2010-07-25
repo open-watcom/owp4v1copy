@@ -37,13 +37,11 @@
 #include "vergen.h"
 #include "conflict.h"
 #include "cfloat.h"
+#include "makeins.h"
 
 extern  conflict_node   *GiveRegister(conflict_node*,bool);
 extern  conflict_node   *InMemory(conflict_node*);
 extern  conflict_node   *NameConflict(instruction*,name*);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  name            *AllocConst(pointer);
 extern  name            *AllocIntConst(int);
 extern  name            *AllocS32Const(signed_32);
@@ -63,7 +61,6 @@ extern  void            ReplIns(instruction*,instruction*);
 extern  void            RevCond(instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  hw_reg_set      HighReg(hw_reg_set);
-extern  instruction     *MakeNop(void);
 extern  bool            CheckIndecies(instruction*,hw_reg_set,hw_reg_set,name*);
 
 extern    reg_list      *RegSets[];

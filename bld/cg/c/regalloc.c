@@ -39,6 +39,8 @@
 #include "hostsys.h"
 #include "zoiks.h"
 #include "model.h"
+#include "makeins.h"
+#include "foldins.h"
 
 enum allocation_state {
     ALLOC_DONE,
@@ -56,7 +58,6 @@ extern  void            BuildNameTree(conflict_node*);
 extern  void            AxeDeadCode(void);
 extern  void            BurnNameTree(reg_tree*);
 extern  bool            WorthProlog(conflict_node*,hw_reg_set);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  void            DoNothing(instruction*);
 extern  int             ExpandOps(bool);
 extern  void            FindReferences(void);
@@ -94,7 +95,6 @@ extern  void            DBAllocReg(name*,name*);
 extern  void            MemConstTemp(conflict_node*);
 extern  void            ConstSavings(void);
 extern  void            RegInsDead(void);
-extern  instruction     *FoldIns( instruction * );
 extern  bool            IsUncacheableMemory( name * );
 extern  hw_reg_set      MustSaveRegs(void);
 extern  void            FreePossibleForAlias( conflict_node * );

@@ -40,6 +40,7 @@
 #include "seldef.h"
 #include "types.h"
 #include "cgswitch.h"
+#include "makeins.h"
 #define BY_CG
 #include "cgprotos.h"
 
@@ -82,7 +83,6 @@ extern  void            Gen1ByteValue(byte);
 extern  seg_id          AskCodeSeg(void);
 extern  signed_32       NumValues(select_list*,signed_32);
 extern  int             SelCompare(signed_32,signed_32);
-extern  instruction     *NewIns(int);
 extern  void            AddIns(instruction*);
 extern  an              BGInteger( signed_32, type_def * );
 extern  tn              TGBinary( cg_op, tn, tn, type_def * );

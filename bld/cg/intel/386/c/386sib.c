@@ -34,13 +34,13 @@
 #include "opcodes.h"
 #include "cgmem.h"
 #include "model.h"
+#include "makeins.h"
 
 extern  instruction     *SIBPossibleIndex( instruction *, name *, name **, bool *, hw_reg_set, hw_reg_set, bool *, bool * );
 extern  name            *AllocRegName( hw_reg_set );
 extern  name            *AllocIntConst( int );
 extern  name            *ScaleIndex( name *, name *, type_length, type_class_def, type_length, int, i_flags );
 extern  hw_reg_set      Low64Reg( hw_reg_set );
-extern  void            FreeIns( instruction * );
 extern  void            ReplaceOperand( instruction *, name *, name * );
 extern  byte            *Copy( byte *, byte *, uint );
 

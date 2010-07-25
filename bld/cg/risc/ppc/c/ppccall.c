@@ -41,6 +41,7 @@
 #include "zoiks.h"
 #include "regset.h"
 #include "bldins.h"
+#include "makeins.h"
 
 extern  bool            AssgnParms(cn,bool);
 extern  type_class_def  AddCallBlock(sym_handle,type_def*);
@@ -49,14 +50,10 @@ extern  name            *AllocRegName( hw_reg_set );
 extern  name            *SAllocIndex( name *, name *, type_length, type_class_def, type_length );
 extern  name            *AllocIndex( name *, name *, type_length, type_class_def );
 extern  void            AddCallIns( instruction *, cn );
-extern  instruction     *MakeMove( name *, name *, type_class_def );
-extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
 extern  void            AddIns( instruction * );
 extern  an              MakeTempAddr( name *, type_def * );
 extern  void            FreeCallNode( cn );
 extern  type_def        *QParmType( sym_handle, sym_handle, type_def * );
-extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
-extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
 extern  name            *AllocRegName( hw_reg_set );
 extern  name            *AllocS32Const( signed_32 );
 extern  type_length     PushSize( type_length );

@@ -37,12 +37,12 @@
 #include "procdef.h"
 #include "vergen.h"
 #include "opcodes.h"
+#include "makeins.h"
 
 extern  name            *AllocRegName( hw_reg_set );
 extern  name            *NearSegment( void );
 extern  hw_reg_set      HighReg( hw_reg_set );
 extern  hw_reg_set      LowReg( hw_reg_set );
-extern  void            FreeIns( instruction * );
 extern  bool            IsIndexReg( hw_reg_set, type_class_def, bool );
 
 

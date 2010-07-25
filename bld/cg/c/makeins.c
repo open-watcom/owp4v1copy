@@ -38,6 +38,7 @@
 #include "zoiks.h"
 #include "freelist.h"
 #include "conflict.h"
+#include "makeins.h"
 
 
 extern  void            DoNothing(instruction*);
@@ -47,8 +48,8 @@ static  pointer         *InsFrl;
 
 extern  conflict_node   *ConfList;
 
-extern  void    InitIns() {
-/**************************
+extern  void    InitIns( void ) {
+/********************************
     Initialize the free list of "instruction"
 */
 
@@ -56,7 +57,7 @@ extern  void    InitIns() {
 }
 
 
-extern  bool    InsFrlFree( ) {
+extern  bool    InsFrlFree( void ) {
 /******************************
     Free up the "instruction" free list.
 */
@@ -130,8 +131,8 @@ extern  instruction     *NewIns( int num ) {
 }
 
 
-extern  instruction     *MakeNop() {
-/***********************************
+extern  instruction     *MakeNop( void ) {
+/*****************************************
     Return an initialized "NOP" instruction
 */
 

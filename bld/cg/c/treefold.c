@@ -131,8 +131,8 @@ static int CmpType( type_def *tipe )
     return( ret );
 }
 
-static cmp_result CheckCmpRange( opcode_defs op, int op_type, cfloat *val )
-/*************************************************************************/
+static cmp_result CheckCmpRange( cg_op op, int op_type, cfloat *val )
+/*******************************************************************/
 /* Check if comparison 'op' of operand of type 'op_type' against constant
  * 'val' can be folded, eg. '(unsigned char)x <= 255'. Integer only, can
  * be used for bitfields (op_type contains number of bits).
@@ -1262,8 +1262,8 @@ extern  tn      FoldFlNot( tn left )
     return( fold );
 }
 
-extern  tn      FoldBitCompare( opcode_defs op, tn_btn left, tn rite )
-/********************************************************************/
+extern  tn      FoldBitCompare( cg_op op, tn_btn left, tn rite )
+/**************************************************************/
 {
     tn              fold;
     unsigned_32     new_cons;
@@ -1365,7 +1365,7 @@ static bool IsObjectAddr( tn tree )
     return( FALSE );
 }
 
-extern  tn      FoldCompare( opcode_defs op, tn left,
+extern  tn      FoldCompare( cg_op op, tn left,
                              tn rite, type_def *tipe )
 /****************************************************/
 {
@@ -1526,7 +1526,7 @@ static  bool    SimpleLeaf( tn tree )
 }
 
 
-extern  tn      FoldPostGetsCompare( opcode_defs op, tn left, tn rite, type_def *tipe )
+extern  tn      FoldPostGetsCompare( cg_op op, tn left, tn rite, type_def *tipe )
 /*************************************************************************************/
 {
     tn          compare;
@@ -1615,7 +1615,7 @@ static  an Flip( an name, bool op_false, bool op_true )
 
 
 
-extern  an FoldConsCompare( opcode_defs op, tn left,
+extern  an FoldConsCompare( cg_op op, tn left,
                                  tn rite, type_def *tipe )
 /********************************************************/
 {

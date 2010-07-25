@@ -39,6 +39,7 @@
 #include "regset.h"
 #include "model.h"
 #include "feprotos.h"
+#include "makeins.h"
 
 extern proc_def             *CurrProc;
 extern  block               *HeadBlock;
@@ -48,7 +49,6 @@ extern  opcode_defs         String[];
 extern  bool            IsIndexReg(hw_reg_set,type_class_def,bool);
 extern  bool            SegOver(name*);
 extern  conflict_node   *NameConflict(instruction*,name*);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *Addressable(name*,type_class_def);
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *AllocTemp(type_class_def);

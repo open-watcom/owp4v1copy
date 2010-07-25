@@ -40,7 +40,7 @@
 #include "model.h"
 #include "cgaux.h"
 #include "offset.h"
-
+#include "makeins.h"
 #include "s37index.def"
 
 extern  block               *HeadBlock;
@@ -49,8 +49,6 @@ extern  opcode_defs         String[];
 
 extern  bool            IsIndexReg(hw_reg_set,type_class_def,bool);
 extern  conflict_node   *NameConflict(instruction*,name*);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  name            *AllocAddrConst(name*,int,constant_class,type_class_def);
 extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
 extern  name            *AllocTemp(type_class_def);
@@ -66,7 +64,6 @@ extern  int             FEAttr(sym_handle);
 extern  pointer         FEAuxInfo(pointer,int);
 extern  name            *AllocRegName(hw_reg_set);
 extern  hw_reg_set      GblReg();
-extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *AllocIntConst(int);
 extern  hw_reg_set      WordReg(int);
 extern  void            GetRALN(name*,char*,char*);

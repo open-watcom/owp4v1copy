@@ -40,6 +40,7 @@
 #include "conflict.h"
 #include "seldef.h"
 #include "cgaux.h"
+#include "makeins.h"
 
 
 extern    hw_reg_set      *RegSets[];
@@ -52,20 +53,15 @@ extern  name            *AllocIntConst( int );
 extern  void            ReplIns( instruction *, instruction * );
 extern  void            SuffixIns( instruction *, instruction * );
 extern  void            MoveSegRes( instruction *, instruction * );
-extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
 extern  name            *AllocMemory( pointer, type_length, cg_class, type_class_def );
 extern  bool            SegIsSS( name * );
 extern  name            *GetSegment( name * );
 extern  void            DelSeg( instruction * );
-extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
-extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
 extern  void            PrefixIns( instruction *, instruction * );
 extern  void            MoveSegOp( instruction *, instruction *, int );
-extern  instruction     *MakeMove( name *, name *, type_class_def );
 extern  name            *AllocRegName( hw_reg_set );
 extern  rt_class        AskHow( type_class_def, type_class_def );
 extern  label_handle    AskRTLabel( sym_handle * );
-extern  instruction     *NewIns( int );
 extern  conflict_node   *NameConflict( instruction *, name * );
 extern  conflict_node   *InMemory( conflict_node * );
 extern  int             NumOperands( instruction * );

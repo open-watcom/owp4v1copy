@@ -40,6 +40,7 @@
 #include "zoiks.h"
 #include "cfloat.h"
 #include "conflict.h"
+#include "makeins.h"
 
 
 extern  void            ChangeType( instruction *, type_class_def );
@@ -49,15 +50,11 @@ extern  name            *AllocTemp( type_class_def );
 extern  opcode_entry    *CodeTable( instruction * );
 extern  bool            SameThing( name *, name * );
 extern  instruction     *MoveConst( unsigned_32, name *, type_class_def );
-extern  instruction     *MakeMove( name *, name *, type_class_def );
 extern  constant_defn   *GetFloat( name *, type_class_def );
 extern  void            UpdateLive( instruction *, instruction * );
 extern  void            DupSegRes( instruction *, instruction * );
 extern  void            MoveSegOp( instruction *, instruction *, int );
-extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
 extern  void            SuffixIns( instruction *, instruction * );
-extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
-extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
 extern  void            HalfType( instruction * );
 extern  hw_reg_set      High64Reg( hw_reg_set );
 extern  hw_reg_set      High48Reg( hw_reg_set );
@@ -74,7 +71,6 @@ extern  name            *AddrConst( name *, int, constant_class );
 extern  name            *AllocIntConst( int );
 extern  name            *AllocUIntConst( uint );
 extern  name            *AllocConst( pointer );
-extern  instruction     *MakeCondition( opcode_defs, name *, name *, int, int, type_class_def );
 extern  void            ReplIns( instruction *, instruction * );
 extern  void            PrefixIns( instruction *, instruction * );
 extern  void            DupSeg( instruction *, instruction * );
