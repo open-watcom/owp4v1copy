@@ -48,7 +48,11 @@
     #define INCLUDE_DDEML_H
     #define INCLUDE_SHELLAPI_H
     #define INCLUDE_TOOLHELP_H
+    #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
+    #include <commdlg.h>
+    #include <ddeml.h>
+    #include <shellapi.h>
     #include "win1632.h"
 #endif
 
