@@ -25,6 +25,6 @@ hp3 end
 :ehp1.
 :ehp1.
 :ehp0.
-:cmt hp3. activate for testing missing ehp3 tag at file end
+.im thpxsf2.gml
 .br text.
 :egdoc

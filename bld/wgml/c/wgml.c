@@ -438,16 +438,6 @@ static  void    proc_input( char * filename )
         if( ProcFlags.newLevelFile ) {
             continue;
         }
-        if( hilcount > -1 ) {           // hilighting still active
-            if( hil[hilcount].tag == -1 ) {
-                g_err_tag( "eSF" );     // :eSF expected
-            } else {
-                char tagn[TAG_NAME_LENGTH + 1] = { "eHPx" };
-
-                tagn[3] = '0' + hil[hilcount].tag;
-                g_err_tag( tagn );      // :eHPx expected
-            }
-        }
 
 #if 0
         if( ic->if_level > 0 ) {        // if .if active
@@ -468,6 +458,22 @@ static  void    proc_input( char * filename )
             scr_process_break();        // output last line if any
             if( GlobalFlags.lastpass && ProcFlags.doc_sect != doc_sect_egdoc ) {
                 finish_page();
+            }
+
+            /***************************************************************/
+            /*  Test for missing eXXX tags                           TBD   */
+            /*  at the moment hilighting only                              */
+            /***************************************************************/
+
+            if( hilcount > -1 ) {       // hilighting still active
+                if( hil[hilcount].tag == -1 ) {
+                    g_err_tag( "eSF" ); // :eSF expected
+                } else {
+                    char tagn[TAG_NAME_LENGTH + 1] = { "eHPx" };
+
+                    tagn[3] = '0' + hil[hilcount].tag;
+                    g_err_tag( tagn );  // :eHPx expected
+                }
             }
         }
         del_input_cb_entry();           // one level finished
