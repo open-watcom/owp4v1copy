@@ -996,6 +996,12 @@ static  void    KillArray( array_control *arr )
     CGFree( arr );
 }
 
+static  void    SetObjSrc( char *fname )
+/**************************************/
+{
+    PutObjRec( CMD_THEADR, fname, strlen( fname ) );
+}
+
 extern  void    ObjInit( void )
 /*****************************/
 {
@@ -1009,9 +1015,8 @@ extern  void    ObjInit( void )
     DataSize = 0;
     CurrFNo = 0;
     OpenObj();
+    SetObjSrc( FEAuxInfo( NULL, SOURCE_NAME ) );
     names = InitArray( sizeof( byte ), MODEST_HDR, INCREMENT_HDR );
-    OutName( FEAuxInfo( NULL, SOURCE_NAME ), names );
-    PutObjRec( CMD_THEADR, names->array, names->used );
 #ifdef _OMF_32
     if( _IsTargetModel( EZ_OMF ) || _IsTargetModel( FLAT_MODEL ) ) {
         names->used = 0;
@@ -1835,14 +1840,20 @@ static void FlushSelect( void )
 }
 
 
-static  void    NormalData( void )
-/********************************/
+static  void    FlushData( void )
+/*******************************/
 {
     GenComdef();
     CurrSeg->total_comdat_size += CurrSeg->comdat_size;
     EjectLEData();
     FlushLineNum();
     FlushSelect();
+}
+
+static  void    NormalData( void )
+/********************************/
+{
+    FlushData();
     CurrSeg->location = CurrSeg->max_written = CurrSeg->max_size;
     CurrSeg->comdat_size = 0;
     CurrSeg->comdat_label = NULL;
@@ -2193,11 +2204,7 @@ static  import_handle   GenImport( sym_handle sym, import_type kind )
 static  void    ComdatData( label_handle lbl, sym_handle sym )
 /************************************************************/
 {
-    GenComdef();
-    CurrSeg->total_comdat_size += CurrSeg->comdat_size;
-    EjectLEData();
-    FlushLineNum();
-    FlushSelect();
+    FlushData();
     CurrSeg->obj->lines_generated = FALSE;
     CurrSeg->location = CurrSeg->max_written = 0;
     CurrSeg->comdat_size = 0;
@@ -2664,14 +2671,9 @@ static  void    InitLineInfo( void )
 static  void    ChangeObjSrc( char *fname )
 /*****************************************/
 {
-    array_control       *names; /* for LNAMES*/
-
     FlushLineNum();
     InitLineInfo();
-    names = InitArray( sizeof( byte ), MODEST_HDR, INCREMENT_HDR );
-    OutName( fname, names );
-    PutObjRec( CMD_THEADR, names->array, names->used );
-    KillArray( names );
+    SetObjSrc( fname );
 }
 
 static  void    AddLineInfo( cg_linenum line, object *obj, offset lc )
