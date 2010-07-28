@@ -210,13 +210,17 @@ pick(   STR_HINT_ABOUT,
         "Display program information",
         "Display program information" )
 
+pick(   STR_HINT_SHOW_TOOLBAR,
+        "Display/hide the toolbar",
+        "Display/hide the toolbar" )
+
 pick(   STR_HINT_SHOW_HELP,
-        "Display/Hide this hint bar",
-        "Display/Hide this hint bar" );
+        "Display/hide the hint bar",
+        "Display/hide the hint bar" )
 
 pick(   STR_MESSAGE,
         "Message: %s",
-        "Message: %s" );
+        "Message: %s" )
 
 pick(   STR_HINT_HELP_CONTENTS,
         "Display help",
