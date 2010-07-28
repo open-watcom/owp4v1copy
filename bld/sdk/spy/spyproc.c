@@ -308,14 +308,13 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             hinthwnd = GetHintHwnd( StatusHdl );
             if( SpyMainWndInfo.show_hints ) {
                 CheckMenuItem( mh, SPY_SHOW_HELP, MF_CHECKED | MF_BYCOMMAND );
-                ShowWindow( hinthwnd, SW_SHOW );
+                showHintBar( hwnd );
             } else {
                 CheckMenuItem( mh, SPY_SHOW_HELP, MF_UNCHECKED | MF_BYCOMMAND );
                 ShowWindow( hinthwnd, SW_HIDE );
             }
             GetClientRect( hwnd, &area );
             ResizeSpyBox( area.right - area.left, area.bottom - area.top );
-            showHintBar( hwnd );
             break;
         case SPY_SHOW_TOOLBAR:
             SpyMainWndInfo.show_toolbar = !SpyMainWndInfo.show_toolbar;
@@ -568,11 +567,7 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         hinthwnd = GetHintHwnd( StatusHdl );
         MoveWindow( hinthwnd, area.left, area.top,
                     area.right - area.left, statusHite, TRUE );
-        if( SpyMainWndInfo.show_hints ) {
-            ResizeSpyBox( LOWORD( lparam ), HIWORD( lparam ) );
-        } else {
-            ResizeSpyBox( LOWORD( lparam ), HIWORD( lparam ) );
-        }
+        ResizeSpyBox( LOWORD( lparam ), HIWORD( lparam ) );
         ResizeSpyTool( LOWORD( lparam ), HIWORD( lparam ) );
         showHintBar( hwnd );
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
