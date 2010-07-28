@@ -170,7 +170,8 @@ typedef struct {
     int                 last_ypos;
     BOOL                on_top;
     BOOL                show_hints;
-}WndConfigInfo;
+    BOOL                show_toolbar;
+} WndConfigInfo;
 
 /*
  * globals
@@ -277,6 +278,8 @@ void CreateSpyTool( HWND parent );
 void DestroySpyTool( void );
 void SetOnOffTool( spystate ss );
 void ResizeSpyTool( WORD width, WORD height );
+void ShowSpyTool( BOOL show );
+void GetSpyToolRect( RECT *prect );
 
 /* spylog.c */
 void SpyLogTitle( int f );

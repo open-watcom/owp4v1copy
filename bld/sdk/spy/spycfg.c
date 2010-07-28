@@ -74,6 +74,7 @@ void LoadSpyConfig( char *fname )
         SpyMainWndInfo.ysize = 3 * (y / 4);
         SpyMainWndInfo.on_top = FALSE;
         SpyMainWndInfo.show_hints = TRUE;
+        SpyMainWndInfo.show_toolbar = TRUE;
 
         /* load configured values */
         SpyMainWndInfo.xpos = GetPrivateProfileInt( spyApp, "wnd_xpos",
@@ -89,6 +90,9 @@ void LoadSpyConfig( char *fname )
         SpyMainWndInfo.show_hints = GetPrivateProfileInt( spyApp, "show_hint",
                                                           SpyMainWndInfo.show_hints,
                                                           fname );
+        SpyMainWndInfo.show_toolbar = GetPrivateProfileInt( spyApp, "show_toolbar",
+                                                            SpyMainWndInfo.show_toolbar,
+                                                            fname );
     }
 
     /*
@@ -181,6 +185,8 @@ void SaveSpyConfig( char *fname )
         WritePrivateProfileString( spyApp, "wnd_topmost", buf, fname );
         itoa( SpyMainWndInfo.show_hints, buf, 10 );
         WritePrivateProfileString( spyApp, "show_hint", buf, fname );
+        itoa( SpyMainWndInfo.show_toolbar, buf, 10 );
+        WritePrivateProfileString( spyApp, "show_toolbar", buf, fname );
     }
 
     if( fname != iniPath || AutoSaveConfig ) {

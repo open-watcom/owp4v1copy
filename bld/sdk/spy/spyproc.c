@@ -249,6 +249,10 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         CreateSpyBox( hwnd );
         SetWindowLong( hwnd, 0, (DWORD)SpyListBox );
         CreateSpyTool( hwnd );
+        ShowSpyTool( SpyMainWndInfo.show_toolbar );
+        if( SpyMainWndInfo.show_toolbar ) {
+            CheckMenuItem( mh, SPY_SHOW_TOOLBAR, MF_CHECKED | MF_BYCOMMAND );
+        }
         LogInit( hwnd, Instance, SpyLogTitle );
         CheckMenuItem( SpyMenu, SPY_AUTO_SCROLL, MF_CHECKED );
         EnableMenuItem( SpyMenu, SPY_ADD_WINDOW, MF_GRAYED );
@@ -304,14 +308,25 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             if( SpyMainWndInfo.show_hints ) {
                 CheckMenuItem( mh, SPY_SHOW_HELP, MF_CHECKED | MF_BYCOMMAND );
                 ShowWindow( hinthwnd, SW_SHOW );
-            } else{
-                CheckMenuItem( mh, SPY_SHOW_HELP,
-                               MF_UNCHECKED | MF_BYCOMMAND );
+            } else {
+                CheckMenuItem( mh, SPY_SHOW_HELP, MF_UNCHECKED | MF_BYCOMMAND );
                 ShowWindow( hinthwnd, SW_HIDE );
             }
             GetClientRect( hwnd, &area );
             ResizeSpyBox( area.right - area.left, area.bottom - area.top );
             showHintBar( hwnd );
+            break;
+        case SPY_SHOW_TOOLBAR:
+            SpyMainWndInfo.show_toolbar = !SpyMainWndInfo.show_toolbar;
+            mh = GetMenu( hwnd );
+            if( SpyMainWndInfo.show_toolbar ) {
+                CheckMenuItem( mh, SPY_SHOW_TOOLBAR, MF_CHECKED | MF_BYCOMMAND );
+            } else {
+                CheckMenuItem( mh, SPY_SHOW_TOOLBAR, MF_UNCHECKED | MF_BYCOMMAND );
+            }
+            ShowSpyTool( SpyMainWndInfo.show_toolbar );
+            GetClientRect( hwnd, &area );
+            ResizeSpyBox( area.right - area.left, area.bottom - area.top );
             break;
         case SPY_TOP:
             SpyMainWndInfo.on_top = !SpyMainWndInfo.on_top;

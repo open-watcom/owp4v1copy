@@ -37,10 +37,10 @@
 
 #if defined( __NT__ )
     #define LISTBOX_X       6
-    #define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 6)
+    #define LISTBOX_Y       6
 #else
     #define LISTBOX_X       10
-    #define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 8)
+    #define LISTBOX_Y       10
 #endif
 
 static int          xChar, yChar;
@@ -297,11 +297,16 @@ void ResizeSpyBox( WORD width, WORD height )
     }
 #endif
     width -= 2 * LISTBOX_X;
-    nheight = height - ypos - LISTBOX_X;
+    nheight = height - (ypos + LISTBOX_Y);
 
     if( SpyMainWndInfo.show_hints ) {
         hinthwnd = GetHintHwnd( StatusHdl );
         GetWindowRect( hinthwnd, &area );
+        nheight -= area.bottom - area.top;
+    }
+    if( SpyMainWndInfo.show_toolbar ) {
+        GetSpyToolRect( &area );
+        ypos += area.bottom - area.top;
         nheight -= area.bottom - area.top;
     }
     if( nheight < 0 ) {
@@ -323,7 +328,7 @@ void ResizeSpyBox( WORD width, WORD height )
 /*
  * ResetSpyListBox - reset the current spy list box
  */
-void ResetSpyListBox( void  )
+void ResetSpyListBox( void )
 {
     RECT        r;
 

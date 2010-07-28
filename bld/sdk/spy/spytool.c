@@ -104,7 +104,7 @@ static void spyToolBarHint( HWND hwnd, UINT menuid, BOOL select ) {
 }
 
 /*
- * CreateSpyTool - create the spy listbox
+ * CreateSpyTool - create the spy toolbar
  */
 void CreateSpyTool( HWND parent )
 {
@@ -141,7 +141,20 @@ void CreateSpyTool( HWND parent )
 } /* CreateSpyTool */
 
 /*
- * ResizeSpyTool - resize tool bar
+ * ShowSpyTool - show or hide toolbar
+ */
+void ShowSpyTool( BOOL show )
+{
+    if( show ) {
+        ShowWindow( ToolBarWindow( toolBar ), SW_SHOW );
+    } else {
+        ShowWindow( ToolBarWindow( toolBar ), SW_HIDE );
+    }
+
+} /* ShowSpyTool */
+
+/*
+ * ResizeSpyTool - resize toolbar
  */
 void ResizeSpyTool( WORD width, WORD height )
 {
@@ -152,7 +165,16 @@ void ResizeSpyTool( WORD width, WORD height )
 } /* ResizeSpyTool */
 
 /*
- * DestroySpyTool - destroy the spy tool bar
+ * GetSpyToolRect - get toolbar position and size
+ */
+void GetSpyToolRect( RECT *prect )
+{
+    GetWindowRect( ToolBarWindow( toolBar ), prect );
+
+} /* GetSpyToolRect */
+
+/*
+ * DestroySpyTool - destroy the spy toolbar
  */
 void DestroySpyTool( void )
 {
