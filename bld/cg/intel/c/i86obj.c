@@ -343,31 +343,27 @@ static  index_rec       *AskSegIndex( seg_id seg )
 }
 
 
-static  void    NeedMore( array_control *arr, int more )
-/******************************************************/
+static  void    ReallocArray( array_control *arr, int need )
+/**********************************************************/
 {
     byte        *p;
-    unsigned    need;
     unsigned    new;
 
-    need = arr->used + more;
-    if( need > arr->alloc ) {
-        new = arr->alloc;
-        for( ;; ) {
-            new += arr->inc;
-            if( new >= need ) {
-                break;
-            }
+    new = arr->alloc;
+    for( ;; ) {
+        new += arr->inc;
+        if( new >= need ) {
+            break;
         }
-        p = CGAlloc( arr->entry * new );
-        Copy( arr->array, p, arr->entry * arr->used );
-        if( arr == Out ) {
-            OutBuff = p;
-        }
-        CGFree( arr->array );
-        arr->array = p;
-        arr->alloc = new;
     }
+    p = CGAlloc( arr->entry * new );
+    Copy( arr->array, p, arr->entry * arr->used );
+    if( arr == Out ) {
+        OutBuff = p;
+    }
+    CGFree( arr->array );
+    arr->array = p;
+    arr->alloc = new;
 }
 
 static  byte    SegmentAttr( byte align, seg_attr tipe, bool use_16 )
@@ -454,49 +450,93 @@ static array_control *InitArray( int size, int starting, int increment )
 }
 
 
-static  void    OutByte( byte value )
-/***********************************/
+static  void    OutByte( byte value, array_control *dest )
+/********************************************************/
 {
-    NeedMore( Out, 1 );
-    OutBuff[Out->used++] = value;
+    int     need;
+
+    need = dest->used + sizeof( byte );
+    if( need > dest->alloc ) {
+        ReallocArray( dest, need );
+    }
+    _ARRAY( dest, byte ) = value;
+    dest->used = need;
 }
 
-static  void    OutInt( int value )
-/*********************************/
+static  void    OutInt( int value, array_control *dest )
+/******************************************************/
 {
-    NeedMore( Out, sizeof( unsigned_16 ) );
-    *(unsigned_16 *)&OutBuff[Out->used] = _TargetInt( value );
-    Out->used += sizeof( unsigned_16 );
+    int     need;
+
+    need = dest->used + sizeof( unsigned_16 );
+    if( need > dest->alloc ) {
+        ReallocArray( dest, need );
+    }
+    _ARRAY( dest, unsigned_16 ) = _TargetInt( value );
+    dest->used = need;
 }
 
-static  void    OutOffset( offset value )
-/***************************************/
+static  void    OutLongInt( long value, array_control *dest )
+/***********************************************************/
 {
-    NeedMore( Out, sizeof( offset ) );
-    *(offset *)&OutBuff[Out->used] = _TargetOffset( value );
-    Out->used += sizeof( offset );
+    int     need;
+
+    need = dest->used + sizeof( unsigned_32 );
+    if( need > dest->alloc ) {
+        ReallocArray( dest, need );
+    }
+    _ARRAY( dest, unsigned_32 ) = _TargetLongInt( value );
+    dest->used = need;
+}
+
+static  void    OutOffset( offset value, array_control *dest )
+/************************************************************/
+{
+    int     need;
+
+    need = dest->used + sizeof( offset );
+    if( need > dest->alloc ) {
+        ReallocArray( dest, need );
+    }
+    _ARRAY( dest, offset ) = _TargetOffset( value );
+    dest->used = need;
 }
 
 #ifndef _OMF_32  // 32bit debug seg support dwarf,codview
-static  void    OutLongOffset( long_offset value )
-/************************************************/
+static  void    OutLongOffset( long_offset value, array_control *dest )
+/*********************************************************************/
 {
-    NeedMore( Out, sizeof( long_offset ) );
-    *(long_offset *)&OutBuff[Out->used] = _TargetLongInt( value );
-    Out->used += sizeof( long_offset );
+    int     need;
+
+    need = dest->used + sizeof( long_offset );
+    if( need > dest->alloc ) {
+        ReallocArray( dest, need );
+    }
+    _ARRAY( dest, long_offset ) = _TargetLongInt( value );
+    dest->used = need;
 }
 #endif
 
 static  void    OutIdx( int value, array_control *dest )
 /******************************************************/
 {
-    NeedMore( dest, 2 );
     if( value >= 128 ) {
-        _ARRAY( dest, byte ) = (value >> 8) | 0x80;
-        dest->used++;
+        OutByte( (value >> 8) | 0x80, dest );
     }
-    _ARRAY( dest, byte ) = value;
-    dest->used++;
+    OutByte( value, dest );
+}
+
+static  void    OutBuffer( char *name, unsigned len, array_control *dest )
+/************************************************************************/
+{
+    int     need;
+
+    need = dest->used + len;
+    if( need > dest->alloc ) {
+        ReallocArray( dest, need );
+    }
+    _CopyTrans( name, &_ARRAY( dest, char ), len );
+    dest->used = need;
 }
 
 static  cmd_omf    PickOMF( cmd_omf cmd )
@@ -534,14 +574,14 @@ static  void    DoASegDef( index_rec *rec, bool use_16 )
     obj->line_info = FALSE;
     Out = &obj->data;
     OutBuff = Out->array;
-    OutByte( rec->attr );
+    OutByte( rec->attr, Out );
 #ifdef _OMF_32
-    OutOffset( 0 );    /* segment size (for now)*/
+    OutOffset( 0, Out );    /* segment size (for now)*/
 #else  //SEG32DBG dwarf, codview
     if( rec->attr & SEG_USE_32 ) {
-        OutLongOffset( 0 ); /* segment size (for now)*/
+        OutLongOffset( 0, Out ); /* segment size (for now)*/
     } else {
-        OutOffset( 0 );    /* segment size (for now)*/
+        OutOffset( 0, Out );    /* segment size (for now)*/
     }
 #endif
     OutIdx( rec->nidx, Out );               /* segment name index*/
@@ -550,7 +590,7 @@ static  void    DoASegDef( index_rec *rec, bool use_16 )
 #ifdef _OMF_32
     if( _IsTargetModel( EZ_OMF ) ) {
         if( _IsntTargetModel( USE_32 ) || use_16 ) {
-            OutByte( 2 ); /* to indicate USE16 EXECUTE/READ */
+            OutByte( 2, Out ); /* to indicate USE16 EXECUTE/READ */
         }
     }
 #endif
@@ -570,8 +610,8 @@ static  void    DoASegDef( index_rec *rec, bool use_16 )
 #endif
     if( rec->exec ) {
         Out->used = 0;
-        OutInt( LINKER_COMMENT );
-        OutByte( LDIR_OPT_FAR_CALLS );
+        OutInt( LINKER_COMMENT, Out );
+        OutByte( LDIR_OPT_FAR_CALLS, Out );
         OutIdx( rec->sidx, Out );
         PutObjRec( CMD_COMENT, Out->array, Out->used );
     }
@@ -603,8 +643,7 @@ static void OutGroup( int sidx, array_control *group_def, int *index_p )
     if( *index_p == 0 ) {
         *index_p = ++GroupIndex;
     }
-    NeedMore( group_def, 1 );
-    _ARRAYOF( group_def, byte )[group_def->used++] = GRP_SEGIDX;
+    OutByte( GRP_SEGIDX, group_def );
     OutIdx( sidx, group_def );
 }
 
@@ -613,13 +652,17 @@ static void DoSegment( segdef *seg, array_control *dgroup_def, array_control *tg
 {
     index_rec   *rec;
     seg_id      old = 0;
+    int         need;
 
     rec = AskSegIndex( seg->id );
     if( rec == NULL ) {
         if( CurrSeg != NULL ) {
             old = CurrSeg->seg;
         }
-        NeedMore( SegInfo, 1 );
+        need = SegInfo->used + 1;
+        if( need > SegInfo->alloc ) {
+            ReallocArray( SegInfo, need );
+        }
         rec = &_ARRAYOF( SegInfo, index_rec )[SegInfo->used++];
         if( CurrSeg != NULL ) {
             // CurrSeg might have moved on us
@@ -803,11 +846,8 @@ static  void    OutName( char *name, void *dst )
             "exceeds allowed maximum." );
         FEMessage( MSG_INFO_PROC, name );
     }
-    NeedMore( dest, len + 1 );
-    _ARRAY( dest, char ) = len;
-    dest->used++;
-    _CopyTrans( name, &_ARRAY( dest, char ), len );
-    dest->used += len;
+    OutByte( len, dest );
+    OutBuffer( name, len, dest );
 }
 
 static  void    OutString( char *name, array_control *dest )
@@ -816,9 +856,7 @@ static  void    OutString( char *name, array_control *dest )
     int len;
 
     len = Length( name );
-    NeedMore( dest, len );
-    _CopyTrans( name, &_ARRAY( dest, char ), len );
-    dest->used += len;
+    OutBuffer( name, len, dest );
 }
 
 extern char GetMemModel( void )
@@ -881,8 +919,12 @@ extern seg_id DbgSegDef( char *seg_name, char *seg_class, int seg_modifier )
 /**************************************************************************/
 {
     index_rec   *rec;
+    int         need;
 
-    NeedMore( SegInfo, 1 );
+    need = SegInfo->used + 1;
+    if( need > SegInfo->alloc ) {
+        ReallocArray( SegInfo, need );
+    }
     rec = &_ARRAYOF( SegInfo, index_rec )[SegInfo->used++];
     rec->sidx = ++SegmentIndex;
     rec->cidx = GetNameIdx( seg_class, "", TRUE );
@@ -996,10 +1038,15 @@ static  void    KillArray( array_control *arr )
     CGFree( arr );
 }
 
-static  void    SetObjSrc( char *fname )
-/**************************************/
+static  void    SetObjSrc( char *fname, array_control *dest )
+/***********************************************************/
 {
-    PutObjRec( CMD_THEADR, fname, strlen( fname ) );
+    unsigned    start;
+
+    start = dest->used;
+    OutName( fname, dest );
+    PutObjRec( CMD_THEADR, _ARRAYOF( dest, byte ) + start, dest->used - start );
+    dest->used = start;
 }
 
 extern  void    ObjInit( void )
@@ -1015,14 +1062,12 @@ extern  void    ObjInit( void )
     DataSize = 0;
     CurrFNo = 0;
     OpenObj();
-    SetObjSrc( FEAuxInfo( NULL, SOURCE_NAME ) );
     names = InitArray( sizeof( byte ), MODEST_HDR, INCREMENT_HDR );
+    SetObjSrc( FEAuxInfo( NULL, SOURCE_NAME ), names );
 #ifdef _OMF_32
     if( _IsTargetModel( EZ_OMF ) || _IsTargetModel( FLAT_MODEL ) ) {
         names->used = 0;
-        NeedMore( names, sizeof( unsigned_16 ) );
-        _ARRAY( names, unsigned_16 ) = _TargetInt( PHAR_LAP_COMMENT );
-        names->used += sizeof( unsigned_16 );
+        OutInt( PHAR_LAP_COMMENT, names );
         if( _IsntTargetModel( EZ_OMF ) ) {
             OutString( "OS220", names );
         } else {
@@ -1033,46 +1078,30 @@ extern  void    ObjInit( void )
 #endif
 #ifndef _OMF_32
     names->used = 0;
-    NeedMore( names, sizeof( unsigned_16 ) );
-    _ARRAY( names, unsigned_16 ) = _TargetInt( DEBUG_COMMENT );
-    names->used += sizeof( unsigned_16 );
+    OutInt( DEBUG_COMMENT, names );
     PutObjRec( CMD_COMENT, names->array, names->used );
 #endif
 
     names->used = 0;
-    NeedMore( names, sizeof( unsigned_16 ) );
-    _ARRAY( names, unsigned_16 ) = _TargetInt( MODEL_COMMENT );
-    names->used += sizeof( unsigned_16 );
+    OutInt( MODEL_COMMENT, names );
     OutModel( names );
     PutObjRec( CMD_COMENT, names->array, names->used );
     if( _IsTargetModel( FLAT_MODEL ) && _IsModel( DBG_DF ) ) {
         names->used = 0;
-        NeedMore( names, sizeof( unsigned_16 ) );
-        _ARRAY( names, unsigned_16 ) = _TargetInt( LINKER_COMMENT );
-        names->used += sizeof( unsigned_16 );
-        NeedMore( names, sizeof( char ) );
-        _ARRAY( names, char ) = LDIR_FLAT_ADDRS;
-        names->used++;
+        OutInt( LINKER_COMMENT, names );
+        OutByte( LDIR_FLAT_ADDRS, names );
         PutObjRec( CMD_COMENT, names->array, names->used );
     }
     if( _IsntModel( DBG_DF | DBG_CV ) ) {
         names->used = 0;
-        NeedMore( names, sizeof( unsigned_16 ) );
-        _ARRAY( names, unsigned_16 ) = _TargetInt( LINKER_COMMENT );
-        names->used += sizeof( unsigned_16 );
-        NeedMore( names, sizeof( char ) );
-        _ARRAY( names, char ) = LDIR_SOURCE_LANGUAGE;
-        names->used++;
-        NeedMore( names, sizeof( char ) );
-        _ARRAY( names, char ) = DEBUG_MAJOR_VERSION;
-        names->used++;
-        NeedMore( names, sizeof( char ) );
+        OutInt( LINKER_COMMENT, names );
+        OutByte( LDIR_SOURCE_LANGUAGE, names );
+        OutByte( DEBUG_MAJOR_VERSION, names );
         if( _IsModel( DBG_TYPES | DBG_LOCALS ) ) {
-            _ARRAY( names, char ) = DEBUG_MINOR_VERSION;
+            OutByte( DEBUG_MINOR_VERSION, names );
         } else {
-            _ARRAY( names, char ) = 0;
+            OutByte( 0, names );
         }
-        names->used++;
         OutString( FEAuxInfo( NULL, SOURCE_LANGUAGE ), names );
         PutObjRec( CMD_COMENT, names->array, names->used );
     }
@@ -1082,22 +1111,14 @@ extern  void    ObjInit( void )
         depend = FEAuxInfo( depend, NEXT_DEPENDENCY );
         if( depend == NULL )
             break;
-        NeedMore( names, sizeof( unsigned_16 ) );
-        _ARRAY( names, unsigned_16 ) = _TargetInt( DEPENDENCY_COMMENT );
-        names->used += sizeof( unsigned_16 );
-        NeedMore( names, sizeof( unsigned_32 ) );
-        _ARRAY( names, unsigned_32 ) = _TargetLongInt(
-                *(unsigned_32 *)FEAuxInfo( depend, DEPENDENCY_TIMESTAMP )
-                          );
-        names->used += sizeof( unsigned_32 );
+        OutInt( DEPENDENCY_COMMENT, names );
+        OutLongInt( *(unsigned_32 *)FEAuxInfo( depend, DEPENDENCY_TIMESTAMP ), names );
         OutName( FEAuxInfo( depend, DEPENDENCY_NAME ), names );
         PutObjRec( CMD_COMENT, names->array, names->used );
         names->used = 0;
     }
     /* mark end of dependancy list */
-    NeedMore( names, sizeof( unsigned_16 ) );
-    _ARRAY( names, unsigned_16 ) = _TargetInt( DEPENDENCY_COMMENT );
-    names->used += sizeof( unsigned_16 );
+    OutInt( DEPENDENCY_COMMENT, names );
     PutObjRec( CMD_COMENT, names->array, names->used );
     names->used = 0;
 
@@ -1319,11 +1340,15 @@ static  void    SetPatches( void )
     temp_patch          *junk;
     array_control       *ctl;
     patch               *pat;
+    int                 need;
 
     curr_pat = CurrSeg->obj->patches;
     while( curr_pat != NULL ) {
         ctl = AskLblPatch( curr_pat->lbl );
-        NeedMore( ctl, 1 );
+        need = ctl->used + 1;
+        if( need > ctl->alloc ) {
+            ReallocArray( ctl, need );
+        }
         pat = &_ARRAYOF( ctl, patch )[ctl->used++];
         pat->ref = AskObjHandle();
         pat->where = curr_pat->pat.where;
@@ -1435,13 +1460,11 @@ extern  void    OutSelect( bool starts )
             Out = &obj->data;
             OutBuff = obj->data.array;
             Out->used = 0;
-            NeedMore( Out, sizeof( unsigned_16 ) );
-            _ARRAY( Out, unsigned_16 ) = _TargetInt( DISASM_COMMENT );
-            Out->used += sizeof( unsigned_16 );
+            OutInt( DISASM_COMMENT, Out );
 #ifdef _OMF_32
-            OutByte( DDIR_SCAN_TABLE_32  );
+            OutByte( DDIR_SCAN_TABLE_32, Out );
 #else
-            OutByte( DDIR_SCAN_TABLE  );
+            OutByte( DDIR_SCAN_TABLE, Out );
 #endif
             if( CurrSeg->comdat_label != NULL ) {
                 OutIdx( 0, Out );
@@ -1449,8 +1472,8 @@ extern  void    OutSelect( bool starts )
             } else {
                 OutIdx( SelIdx, Out );
             }
-            OutOffset( SelStart );
-            OutOffset( CurrSeg->location );
+            OutOffset( SelStart, Out );
+            OutOffset( CurrSeg->location, Out );
             PutObjRec( CMD_COMENT, Out->array, Out->used );
             Out->used = 0;
         }
@@ -1476,10 +1499,10 @@ static  void    OutLEDataStart( bool iterated )
             if( !(FEAttr( rec->comdat_symbol ) & FE_GLOBAL) ) {
                 flag |= 0x4;    /* local comdat */
             }
-            OutByte( flag );
-            OutByte( 0x10 );
-            OutByte( 0 );
-            OutOffset( rec->location );
+            OutByte( flag, Out );
+            OutByte( 0x10, Out );
+            OutByte( 0, Out );
+            OutOffset( rec->location, Out );
             OutIdx( 0, Out );
             if( rec->btype == BASE_GRP ) {
                 OutIdx( CurrSeg->base, Out );   /* group index*/
@@ -1491,12 +1514,12 @@ static  void    OutLEDataStart( bool iterated )
         } else { // LEDATA
             OutIdx( rec->sidx, Out );
 #ifdef _OMF_32
-            OutOffset( rec->location );
+            OutOffset( rec->location, Out );
 #else  //SEG32DBG dwarf, codview
             if( (rec->attr & SEG_USE_32 ) ) {
-                OutLongOffset( rec->location );
+                OutLongOffset( rec->location, Out );
             } else {
-                OutOffset( rec->location );
+                OutOffset( rec->location, Out );
             }
 #endif
         }
@@ -1602,19 +1625,15 @@ static  void    GenComdef( void )
         comdef = InitArray( sizeof( byte ), MODEST_EXP, INCREMENT_EXP );
         sym = CurrSeg->comdat_symbol;
         OutObjectName( sym, comdef );
-        NeedMore( comdef, 4 );
-        _ARRAY( comdef, unsigned_8 ) = 0; /* type index */
-        comdef->used += sizeof( unsigned_8 );
+        OutByte( 0, comdef ); /* type index */
         if( CurrSeg->btype == BASE_GRP && CurrSeg->base == DGroupIndex ) {
             type = COMDEF_NEAR;
         } else {
             type = COMDEF_FAR;
         }
-        _ARRAY( comdef, unsigned_8 ) = type; /* common type */
-        comdef->used += sizeof( unsigned_8 );
+        OutByte( type, comdef ); /* common type */
         if( type == COMDEF_FAR ) {
-            _ARRAY( comdef, unsigned_8 ) = 1; /* number of elements */
-            comdef->used += sizeof( unsigned_8 );
+            OutByte( 1, comdef ); /* number of elements */
         }
         /*
             Strictly speaking, this should be <= 0x80. However a number
@@ -1637,14 +1656,11 @@ static  void    GenComdef( void )
         }
         if( ind != 0 ) {
             /* multi-byte indicator */
-            _ARRAY( comdef, unsigned_8 ) = ind;
-            comdef->used += sizeof( unsigned_8 );
+            OutByte( ind, comdef );
         }
-        NeedMore( comdef, count );
         do {
             /* element size */
-            _ARRAY( comdef, unsigned_8 ) = size & 0xff;
-            comdef->used += sizeof( unsigned_8 );
+            OutByte( size, comdef );
             size >>= 8;
             --count;
         } while( count != 0 );
@@ -2039,9 +2055,7 @@ extern  void    ObjFini( void )
         lib = FEAuxInfo( lib, NEXT_LIBRARY );
         if( lib == NULL )
             break;
-        NeedMore( Imports, sizeof( unsigned_16 ) );
-        _ARRAY( Imports, unsigned_16 ) = _TargetInt( LIBNAME_COMMENT );
-        Imports->used += sizeof( unsigned_16 );
+        OutInt( LIBNAME_COMMENT, Imports );
         OutString( ( (char*)FEAuxInfo( lib, LIBRARY_NAME ) ) + 1, Imports );
         PutObjRec( CMD_COMENT, Imports->array, Imports->used );
         Imports->used = 0;
@@ -2142,9 +2156,7 @@ static  void    OutExport( sym_handle sym )
         OutIdx( obj->index, exp );      /* segment index*/
     }
     OutObjectName( sym, exp );
-    NeedMore( exp, sizeof( offset ) );
-    _ARRAY( exp, offset ) = _TargetOffset( CurrSeg->location );
-    exp->used += sizeof( offset );
+    OutOffset( CurrSeg->location, exp );
     OutIdx( 0, exp );                   /* type index*/
 }
 
@@ -2239,10 +2251,8 @@ static void     OutVirtFuncRef( sym_handle virt )
     Out = &obj->data;
     OutBuff = obj->data.array;
     Out->used = 0;
-    NeedMore( Out, sizeof( unsigned_16 ) );
-    _ARRAY( Out, unsigned_16 ) = _TargetInt( LINKER_COMMENT );
-    Out->used += sizeof( unsigned_16 );
-    OutByte( LDIR_VF_REFERENCE );
+    OutInt( LINKER_COMMENT, Out );
+    OutByte( LDIR_VF_REFERENCE, Out );
     OutIdx( extdef, Out );
     if( CurrSeg->comdat_symbol != NULL ) {
         OutIdx( 0, Out );
@@ -2260,19 +2270,17 @@ extern  void    OutDLLExport( uint words, sym_handle sym )
 {
     SetUpObj( FALSE );
     EjectLEData();
-    NeedMore( Out, sizeof( unsigned_16 ) );
-    _ARRAY( Out, unsigned_16 ) = _TargetInt( EXPORT_COMMENT );
-    Out->used += sizeof( unsigned_16 );
-    OutByte( 2 );
+    OutInt( EXPORT_COMMENT, Out );
+    OutByte( 2, Out );
 #if _TARGET & _TARG_IAPX86
-    OutByte( words );
+    OutByte( words, Out );
 #else
     // this should be 0 for everything except callgates to
     // 16-bit segments (from MS Knowledge Base)
-    OutByte( 0 );
+    OutByte( 0, Out );
 #endif
     OutObjectName( sym, Out );
-    OutByte( 0 );
+    OutByte( 0, Out );
     PutObjRec( CMD_COMENT, Out->array, Out->used );
     Out->used = 0;
     EjectLEData();
@@ -2416,6 +2424,7 @@ static void DoFix( int idx, bool rel, base_type base, fix_class class, int sidx 
     index_rec   *rec;
     byte        b;
     fix_class   class_flags;
+    int         need;
 
     b = rel ? LOCAT_REL : LOCAT_ABS;
     if( (class & F_MASK) == F_PTR && CurrSeg->data_in_code ) {
@@ -2456,8 +2465,12 @@ static void DoFix( int idx, bool rel, base_type base, fix_class class, int sidx 
     }
 #endif
     obj = CurrSeg->obj;
-    NeedMore( &obj->fixes, sizeof( fixup ) );
+    need = obj->fixes.used + sizeof( fixup );
+    if( need > obj->fixes.alloc ) {
+        ReallocArray( &obj->fixes, need );
+    }
     cursor = &_ARRAY( &obj->fixes, fixup );
+    obj->fixes.used = need;
     where = CurrSeg->location - obj->start;
     cursor->locatof = b + ( class << S_LOCAT_LOC ) + ( where >> 8 );
     cursor->fset = where;
@@ -2652,9 +2665,7 @@ static  void    InitLineInfo( void )
     }
     obj->line_info = FALSE;
     if( CurrSeg->comdat_label != NULL ) {
-        NeedMore( obj->lines, 1 );
-        _ARRAY( obj->lines, unsigned_8 ) = obj->lines_generated;
-        obj->lines->used += sizeof( unsigned_8 );
+        OutByte( obj->lines_generated, obj->lines );
         OutIdx( NeedComdatNidx( NORMAL ), obj->lines );
     } else {
         if( CurrSeg->btype == BASE_GRP ) {
@@ -2668,12 +2679,12 @@ static  void    InitLineInfo( void )
 
 
 
-static  void    ChangeObjSrc( char *fname )
-/*****************************************/
+static  void    ChangeObjSrc( char *fname, array_control *dest )
+/**************************************************************/
 {
     FlushLineNum();
     InitLineInfo();
-    SetObjSrc( fname );
+    SetObjSrc( fname, dest );
 }
 
 static  void    AddLineInfo( cg_linenum line, object *obj, offset lc )
@@ -2695,7 +2706,7 @@ static  void    AddLineInfo( cg_linenum line, object *obj, offset lc )
             if( info.fno != CurrFNo ) {
                 fname = SrcFNoFind( info.fno );
                 CurrFNo = info.fno;
-                ChangeObjSrc( fname );
+                ChangeObjSrc( fname, &obj->data );
             }
         }
         line = info.line;
@@ -2707,8 +2718,8 @@ static  void    AddLineInfo( cg_linenum line, object *obj, offset lc )
     obj->line_info = TRUE;
     Out = obj->lines;
     OutBuff = obj->lines->array;
-    OutInt( line );
-    OutOffset( lc );
+    OutInt( line, Out );
+    OutOffset( lc, Out );
     Out = old;
     OutBuff = old->array;
 }
@@ -2754,15 +2765,19 @@ static  void    SetMaxWritten( void )
 extern  void    OutDataByte( byte value )
 /***************************************/
 {
-    int i;
+    int     i;
+    int     need;
 
     SetPendingLine();
     CheckLEDataSize( sizeof( byte ), TRUE );
     i = CurrSeg->location - CurrSeg->obj->start + CurrSeg->data_prefix_size;
     IncLocation( sizeof( byte ) );
-    if( i >= Out->used ) {
-        NeedMore( Out, i - Out->used + sizeof( byte ) );
-        Out->used = i + sizeof( byte );
+    need = i + sizeof( byte );
+    if( need > Out->used ) {
+        if( need > Out->alloc ) {
+            ReallocArray( Out, need );
+        }
+        Out->used = need;
     }
     SetMaxWritten();
     OutBuff[i] = value;
@@ -2771,15 +2786,19 @@ extern  void    OutDataByte( byte value )
 extern  void    OutDataInt( int value )
 /*************************************/
 {
-    int i;
+    int     i;
+    int     need;
 
     SetPendingLine();
     CheckLEDataSize( sizeof( unsigned_16 ), TRUE );
     i = CurrSeg->location - CurrSeg->obj->start + CurrSeg->data_prefix_size;
     IncLocation( sizeof( unsigned_16 ) );
-    if( i + sizeof( unsigned_16 ) > Out->used ) {
-        NeedMore( Out, i - Out->used + sizeof( unsigned_16 ) );
-        Out->used = i + sizeof( unsigned_16 );
+    need = i + sizeof( unsigned_16 );
+    if( need > Out->used ) {
+        if( need > Out->alloc ) {
+            ReallocArray( Out, need );
+        }
+        Out->used = need;
     }
     SetMaxWritten();
     *(unsigned_16 *)&OutBuff[i] = _TargetInt( value );
@@ -2840,39 +2859,29 @@ static void DumpImportResolve( sym_handle sym, import_handle idx )
         type = (int) FEAuxInfo( sym, IMPORT_TYPE );
         switch( type ) {
         case IMPORT_IS_LAZY:
-            NeedMore( cmt, sizeof( unsigned_16 ) );
-            _ARRAY( cmt, unsigned_16 ) = _TargetInt( LAZY_EXTRN_COMMENT );
-            cmt->used += sizeof( unsigned_16 );
+            OutInt( LAZY_EXTRN_COMMENT, cmt );
             OutIdx( idx, cmt );
             OutIdx( def_idx, cmt );
             break;
         case IMPORT_IS_WEAK:
-            NeedMore( cmt, sizeof( unsigned_16 ) );
-            _ARRAY( cmt, unsigned_16 ) = _TargetInt( WEAK_EXTRN_COMMENT );
-            cmt->used += sizeof( unsigned_16 );
+            OutInt( WEAK_EXTRN_COMMENT, cmt );
             OutIdx( idx, cmt );
             OutIdx( def_idx, cmt );
             break;
         case IMPORT_IS_CONDITIONAL_PURE:
-            NeedMore( cmt, sizeof( unsigned_16 ) );
-            _ARRAY( cmt, unsigned_16 ) = _TargetInt( WEAK_EXTRN_COMMENT );
-            cmt->used += sizeof( unsigned_16 );
+            OutInt( WEAK_EXTRN_COMMENT, cmt );
             OutIdx( idx, cmt );
             OutIdx( def_idx, cmt );
             PutObjRec( CMD_COMENT, cmt->array, cmt->used );
             cmt->used = 0;
             /* fall through */
         case IMPORT_IS_CONDITIONAL:
-            NeedMore( cmt, sizeof( unsigned_16 ) );
-            _ARRAY( cmt, unsigned_16 ) = _TargetInt( LINKER_COMMENT );
-            cmt->used += sizeof( unsigned_16 );
-            NeedMore( cmt, sizeof( byte ) );
+            OutInt( LINKER_COMMENT, cmt );
             if( type == IMPORT_IS_CONDITIONAL ) {
-                _ARRAY( cmt, byte ) = LDIR_VF_TABLE_DEF;
+                OutByte( LDIR_VF_TABLE_DEF, cmt );
             } else {
-                _ARRAY( cmt, byte ) = LDIR_VF_PURE_DEF;
+                OutByte( LDIR_VF_PURE_DEF, cmt );
             }
-            cmt->used += sizeof( byte );
             OutIdx( idx, cmt );
             OutIdx( def_idx, cmt );
             cond = FEAuxInfo( sym, CONDITIONAL_IMPORT );
@@ -3007,9 +3016,7 @@ extern  void    OutBckExport( char *name, bool is_export )
         OutIdx( obj->index, exp );      /* segment index*/
     }
     OutName( name, exp );
-    NeedMore( exp, sizeof( offset ) );
-    _ARRAY( exp, offset ) = _TargetOffset( CurrSeg->location );
-    exp->used += sizeof( offset );
+    OutOffset( CurrSeg->location, exp );
     OutIdx( 0, exp );                   /* type index*/
 }
 
@@ -3092,6 +3099,7 @@ extern  void    OutDBytes( unsigned_32 len, byte *src )
     int         i;
     unsigned    max;
     unsigned    n;
+    int         need;
 
     SetPendingLine();
     CheckLEDataSize( sizeof( byte ), TRUE );
@@ -3103,9 +3111,12 @@ extern  void    OutDBytes( unsigned_32 len, byte *src )
         } else {
             n = len;
         }
-        NeedMore( Out, i - Out->used + n );
-        if( i + n >= Out->used ) {
-            Out->used = i + n;
+        need = i + n;
+        if( need > Out->used ) {
+            if( need > Out->alloc ) {
+                ReallocArray( Out, need );
+            }
+            Out->used = need;
         }
         IncLocation( n );
         SetMaxWritten();
@@ -3139,13 +3150,13 @@ extern  void    OutIBytes( byte pat, offset len )
         OutLEDataStart( TRUE );
 #ifdef _OMF_32
         if( _IsntTargetModel( EZ_OMF ) )
-            OutOffset( len );           /* repeat count */
+            OutOffset( len, Out );           /* repeat count */
         else
 #endif
-            OutInt( len );              /* repeat count*/
-        OutInt( 0 );                    /* nesting count*/
-        OutByte( 1 );                   /* pattern length*/
-        OutByte( pat );
+            OutInt( len, Out );              /* repeat count*/
+        OutInt( 0, Out );                    /* nesting count*/
+        OutByte( 1, Out );                   /* pattern length*/
+        OutByte( pat, Out );
         PutObjRec(
             PickOMF((CurrSeg->comdat_label!=NULL) ? CMD_COMDAT : CMD_LIDATA),
             obj->data.array, obj->data.used );
