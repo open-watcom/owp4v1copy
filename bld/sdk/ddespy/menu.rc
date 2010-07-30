@@ -15,9 +15,9 @@ BEGIN
         MENUITEM sp( "C&onfigure Log...",
                      "ログの設定(&o)..." ), DDEMENU_LOG_CONFIG
         MENUITEM SEPARATOR
-        MENUITEM sp( "&Font...",
+        MENUITEM sp( "Set &Font...",
                      "フォント(&F)..." ), DDEMENU_FONT
-        MENUITEM sp( "S&how Toolbar",
+        MENUITEM sp( "Show &Toolbar",
                      "ツ－ルバ－の表示(&h)" ), DDEMENU_TOOLBAR
         MENUITEM sp( "Show &Hint Bar",
                      "ヒントバ－の表示(&H)" ), DDEMENU_HINTBAR

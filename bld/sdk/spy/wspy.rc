@@ -32,7 +32,7 @@ BEGIN
         MENUITEM "&Configure Log ...", SPY_CONFIG_LOG
         MENUITEM SEPARATOR
         MENUITEM "Set &Font...", SPY_SET_FONT
-        MENUITEM "S&how Toolbar", SPY_SHOW_TOOLBAR
+        MENUITEM "Show &Toolbar", SPY_SHOW_TOOLBAR
         MENUITEM "Show &Hint Bar", SPY_SHOW_HELP
         MENUITEM "Always On &Top", SPY_TOP
         MENUITEM SEPARATOR
