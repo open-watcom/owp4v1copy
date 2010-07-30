@@ -228,11 +228,11 @@ pick(   STR_HINT_SAVE_AS,
         "イベントリストの情報を名前を付けてファイルに保存." )
 
 pick(   STR_HINT_LOG_FILE,
-        "Start/Stop logging monitored events to a file.",
+        "Start/stop logging monitored events to a file.",
         "モニタ－するイベントのファイルへのログの開始/終了." )
 
 pick(   STR_HINT_LOG_PAUSE,
-        "Pause/Resume logging monitored events to a file.",
+        "Pause/resume logging monitored events to a file.",
         "モニタ－するイベントのファイルへのログの停止/続行." )
 
 pick(   STR_HINT_LOG_CONFIG,
@@ -244,8 +244,12 @@ pick(   STR_HINT_FONT,
         "DDE Spyウィンドウのフォントの設定." )
 
 pick(   STR_HINT_TOOLBAR,
-        "Display/Hide the toolbar.",
+        "Display/hide the toolbar.",
         "ツ－ルバ－の表示." )
+
+pick(   STR_HINT_TOP,
+        "Ensure DDE Spy is never covered by other windows.",
+        "Ensure DDE Spy is never covered by other windows." )
 
 pick(   STR_HINT_EXIT,
         "Exit DDE Spy.",

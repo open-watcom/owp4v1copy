@@ -47,6 +47,7 @@ static const MenuItemHint menuHints[] = {
     DDEMENU_FONT,                   STR_HINT_FONT,
     DDEMENU_TOOLBAR,                STR_HINT_TOOLBAR,
     DDEMENU_HINTBAR,                STR_HINT_HINTBAR,
+    DDEMENU_TOP,                    STR_HINT_TOP,
     DDEMENU_EXIT,                   STR_HINT_EXIT,
     DDEMENU_CLEAR,                  STR_HINT_CLEAR,
     DDEMENU_MARK,                   STR_HINT_MARK,
@@ -247,6 +248,10 @@ BOOL __export FAR PASCAL DDEMainWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPA
             CheckMenuItem( mh, DDEMENU_SCREEN_OUT, MF_BYCOMMAND | MF_CHECKED );
         }
         hideHintBar( hwnd, info, !ConfigInfo.show_hints );
+        if( ConfigInfo.on_top ) {
+            CheckMenuItem( mh, DDEMENU_TOP, MF_CHECKED | MF_BYCOMMAND );
+            SetWindowPos( hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+        }
         break;
     case WM_MENUSELECT:
         HintMenuSelect( info->hintbar, hwnd, wparam, lparam );
@@ -332,6 +337,17 @@ BOOL __export FAR PASCAL DDEMainWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPA
         case DDEMENU_HINTBAR:
             ConfigInfo.show_hints = !ConfigInfo.show_hints;
             hideHintBar( hwnd, info, !ConfigInfo.show_hints );
+            break;
+        case DDEMENU_TOP:
+            ConfigInfo.on_top = !ConfigInfo.on_top;
+            mh = GetMenu( hwnd );
+            if( ConfigInfo.on_top ) {
+                CheckMenuItem( mh, DDEMENU_TOP, MF_CHECKED | MF_BYCOMMAND );
+                SetWindowPos( hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            } else {
+                CheckMenuItem( mh, DDEMENU_TOP, MF_UNCHECKED | MF_BYCOMMAND );
+                SetWindowPos( hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            }
             break;
         case DDEMENU_LOG_FILE:
             mh = GetMenu( hwnd );

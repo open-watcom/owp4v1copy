@@ -38,7 +38,7 @@
 #include "inipath.h"
 #include "watini.h"
 
-#define SECT_NAME       "WATCOM DDE Spy"
+#define SECT_NAME       "Open Watcom DDE Spy"
 
 #define MFILTER         "Msg_Filter"
 #define CFILTER         "CB_Filter"
@@ -64,6 +64,7 @@
 #define CFG_SCREEN      "screen_output"
 #define CFG_SHOW_TB     "show_toolbar"
 #define CFG_SHOW_HINTS  "show_hints"
+#define CFG_ON_TOP      "on_top"
 
 static char iniPath[_MAX_PATH];
 
@@ -77,6 +78,7 @@ static void setGlobalDefault( void )
     ConfigInfo.screen_out = TRUE;
     ConfigInfo.show_tb = TRUE;
     ConfigInfo.show_hints = TRUE;
+    ConfigInfo.on_top = FALSE;
 
 } /* setGlobalDefault */
 
@@ -195,6 +197,8 @@ void ReadConfig( void )
                                                ConfigInfo.show_tb, iniPath );
     ConfigInfo.show_hints = GetPrivateProfileInt( SECT_NAME, CFG_SHOW_HINTS,
                                                   ConfigInfo.show_hints, iniPath );
+    ConfigInfo.on_top = GetPrivateProfileInt( SECT_NAME, CFG_ON_TOP,
+                                              ConfigInfo.on_top, iniPath );
 
     /* window size/pos info */
     for( i = 0; i < NO_TRK_WND; i++ ) {
@@ -245,6 +249,7 @@ void SaveConfigFile( void )
     putProfileBool( CFG_SCREEN, ConfigInfo.screen_out );
     putProfileBool( CFG_SHOW_TB, ConfigInfo.show_tb );
     putProfileBool( CFG_SHOW_HINTS, ConfigInfo.show_hints );
+    putProfileBool( CFG_ON_TOP, ConfigInfo.on_top );
 
     /* window position/size information */
     for( i = 0; i < NO_TRK_WND; i++ ) {

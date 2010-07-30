@@ -74,6 +74,7 @@
 #define DDEMENU_TOOLBAR                 108
 #define DDEMENU_FONT                    109
 #define DDEMENU_HINTBAR                 102
+#define DDEMENU_TOP                     160
 
 #define DDEMENU_ABOUT                   130
 #define DDEMENU_HELP_CONTENTS           131
@@ -244,6 +245,7 @@ typedef struct ddeconfiginfo {
     BOOL                screen_out;
     BOOL                show_tb;
     BOOL                show_hints;
+    BOOL                on_top;
 } DDEConfigInfo;
 
 extern HANDLE           Instance;

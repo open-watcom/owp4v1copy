@@ -21,6 +21,8 @@ BEGIN
                      "ツ－ルバ－の表示(&h)" ), DDEMENU_TOOLBAR
         MENUITEM sp( "Show &Hint Bar",
                      "ヒントバ－の表示(&H)" ), DDEMENU_HINTBAR
+        MENUITEM sp( "Always On &Top",
+                     "Always On &Top" ), DDEMENU_TOP
         MENUITEM SEPARATOR
         MENUITEM sp( "E&xit",
                      "終了(&x)" ), DDEMENU_EXIT
