@@ -3,14 +3,14 @@ BEGIN
     POPUP sp( "&File",
               "&File" ) 
     BEGIN
-        MENUITEM sp( "&New ...\tCtrl+N",
-                     "&New ...\tCtrl+N" ), IMGED_NEW
-        MENUITEM sp( "&Open ...\tCtrl+O",
-                     "&Open ...\tCtrl+O" ), IMGED_OPEN
+        MENUITEM sp( "&New...\tCtrl+N",
+                     "&New...\tCtrl+N" ), IMGED_NEW
+        MENUITEM sp( "&Open...\tCtrl+O",
+                     "&Open...\tCtrl+O" ), IMGED_OPEN
         MENUITEM sp( "&Save\tCtrl+S",
                      "&Save\tCtrl+S" ), IMGED_SAVE
-        MENUITEM sp( "Save &As ...\tF12",
-                     "Save &As ...\tF12" ), IMGED_SAVE_AS
+        MENUITEM sp( "Save &As...\tF12",
+                     "Save &As...\tF12" ), IMGED_SAVE_AS
         MENUITEM SEPARATOR
         MENUITEM sp( "&Close\tShift+F10",
                      "&Close\tShift+F10" ), IMGED_CLOSE
@@ -71,18 +71,18 @@ BEGIN
                          "C&lockwise" ), IMGED_ROTATECL
         END
         MENUITEM SEPARATOR
-        MENUITEM sp( "&Add an Icon ...",
-                     "&Add an Icon ..." ), IMGED_NEWIMG
-        MENUITEM sp( "Select &Icon Image ...",
-                     "Select &Icon Image ..." ), IMGED_SELIMG
-        MENUITEM sp( "&Delete an Icon ...",
-                     "&Delete an Icon ..." ), IMGED_DELIMG
+        MENUITEM sp( "&Add an Icon...",
+                     "&Add an Icon..." ), IMGED_NEWIMG
+        MENUITEM sp( "Select &Icon Image...",
+                     "Select &Icon Image..." ), IMGED_SELIMG
+        MENUITEM sp( "&Delete an Icon...",
+                     "&Delete an Icon..." ), IMGED_DELIMG
     END
     POPUP sp( "&Options",
               "&Options" )
     BEGIN
-        MENUITEM sp( "&Current Settings ...\tCtrl+S",
-                     "&Current Settings ...\tCtrl+S" ), IMGED_SETTINGS
+        MENUITEM sp( "&Current Settings...\tCtrl+S",
+                     "&Current Settings...\tCtrl+S" ), IMGED_SETTINGS
         MENUITEM SEPARATOR
         MENUITEM sp( "&Grid\tCtrl+G",
                      "&Grid\tCtrl+G" ), IMGED_GRID
@@ -116,17 +116,17 @@ BEGIN
     POPUP sp( "&Palette",
               "&Palette" )
     BEGIN
-        MENUITEM sp( "&Edit Current Color ...",
-                     "&Edit Current Color ..." ), IMGED_CEDIT
+        MENUITEM sp( "&Edit Current Color...",
+                     "&Edit Current Color..." ), IMGED_CEDIT
         MENUITEM sp( "&Reset Current Palette",
                      "&Reset Current Palette" ), IMGED_CRESET
-        MENUITEM sp( "&Set Screen Color ...",
-                     "&Set Screen Color ..." ), IMGED_CSCREEN
+        MENUITEM sp( "&Set Screen Color...",
+                     "&Set Screen Color..." ), IMGED_CSCREEN
         MENUITEM SEPARATOR
-        MENUITEM sp( "&Load Color Palette ...",
-                     "&Load Color Palette ..." ), IMGED_LCOLOUR
-        MENUITEM sp( "Sa&ve Color Palette ...",
-                     "Sa&ve Color Palette ..." ), IMGED_SCOLOUR
+        MENUITEM sp( "&Load Color Palette...",
+                     "&Load Color Palette..." ), IMGED_LCOLOUR
+        MENUITEM sp( "Sa&ve Color Palette...",
+                     "Sa&ve Color Palette..." ), IMGED_SCOLOUR
         MENUITEM sp( "Res&tore Color Palette",
                      "Res&tore Color Palette" ), IMGED_RCOLOUR
     END
@@ -175,10 +175,16 @@ BEGIN
     POPUP sp( "&Help",
               "&Help" )
     BEGIN
-        MENUITEM sp( "&Help ...",
-                     "&Help ..." ), IMGED_HELP
-        MENUITEM sp( "&About ...",
-                     "&About ..." ), IMGED_ABOUT
+        MENUITEM sp( "&Contents",
+                     "&Contents" ), IMGED_HELP
+        MENUITEM sp( "&Search for Help On...",
+                     "&Search for Help On..." ), IMGED_HELP_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&How to Use Help",
+                     "&How to Use Help" ), IMGED_HELP_ON_HELP
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&About...",
+                     "&About..." ), IMGED_ABOUT
     END
 END
 
@@ -244,18 +250,18 @@ BEGIN
                          "C&lockwise" ), IMGED_ROTATECL
         END
         MENUITEM SEPARATOR
-        MENUITEM sp( "&Add an Icon ...",
-                     "&Add an Icon ..." ), IMGED_NEWIMG
-        MENUITEM sp( "Select &Icon Image ...",
-                     "Select &Icon Image ..." ), IMGED_SELIMG
-        MENUITEM sp( "&Delete an Icon ...",
-                     "&Delete an Icon ..." ), IMGED_DELIMG
+        MENUITEM sp( "&Add an Icon...",
+                     "&Add an Icon..." ), IMGED_NEWIMG
+        MENUITEM sp( "Select &Icon Image...",
+                     "Select &Icon Image..." ), IMGED_SELIMG
+        MENUITEM sp( "&Delete an Icon...",
+                     "&Delete an Icon..." ), IMGED_DELIMG
     END
     POPUP sp( "&Options",
               "&Options" )
     BEGIN
-        MENUITEM sp( "&Current Settings ...\tCtrl+S",
-                     "&Current Settings ...\tCtrl+S" ), IMGED_SETTINGS
+        MENUITEM sp( "&Current Settings...\tCtrl+S",
+                     "&Current Settings...\tCtrl+S" ), IMGED_SETTINGS
         MENUITEM SEPARATOR
         MENUITEM sp( "&Grid\tCtrl+G",
                      "&Grid\tCtrl+G" ), IMGED_GRID
@@ -289,17 +295,17 @@ BEGIN
     POPUP sp( "&Palette",
               "&Palette" )
     BEGIN
-        MENUITEM sp( "&Edit Current Color ...",
-                     "&Edit Current Color ..." ), IMGED_CEDIT
+        MENUITEM sp( "&Edit Current Color...",
+                     "&Edit Current Color..." ), IMGED_CEDIT
         MENUITEM sp( "&Reset Current Palette",
                      "&Reset Current Palette" ), IMGED_CRESET
-        MENUITEM sp( "&Set Screen Color ...",
-                     "&Set Screen Color ..." ), IMGED_CSCREEN
+        MENUITEM sp( "&Set Screen Color...",
+                     "&Set Screen Color..." ), IMGED_CSCREEN
         MENUITEM SEPARATOR
-        MENUITEM sp( "&Load Color Palette ...",
-                     "&Load Color Palette ..." ), IMGED_LCOLOUR
-        MENUITEM sp( "Sa&ve Color Palette ...",
-                     "Sa&ve Color Palette ..." ), IMGED_SCOLOUR
+        MENUITEM sp( "&Load Color Palette...",
+                     "&Load Color Palette..." ), IMGED_LCOLOUR
+        MENUITEM sp( "Sa&ve Color Palette...",
+                     "Sa&ve Color Palette..." ), IMGED_SCOLOUR
         MENUITEM sp( "Res&tore Color Palette",
                      "Res&tore Color Palette" ), IMGED_RCOLOUR
     END
@@ -343,10 +349,16 @@ BEGIN
     POPUP sp( "&Help",
               "&Help" )
     BEGIN
-        MENUITEM sp( "&Help ...",
-                     "&Help ..." ), IMGED_HELP
-        MENUITEM sp( "&About ...",
-                     "&About ..." ), IMGED_ABOUT
+        MENUITEM sp( "&Contents",
+                     "&Contents" ), IMGED_HELP
+        MENUITEM sp( "&Search for Help On...",
+                     "&Search for Help On..." ), IMGED_HELP_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&How to Use Help",
+                     "&How to Use Help" ), IMGED_HELP_ON_HELP
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&About...",
+                     "&About..." ), IMGED_ABOUT
     END
 END
 

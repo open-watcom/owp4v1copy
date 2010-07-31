@@ -43,6 +43,9 @@ static a_hint_text_line         hintText[ MAX_HINT ] = {
 ,   { IMGED_SAVE_AS,            WIE_HINT_IMGED_SAVE_AS          }
 ,   { IMGED_EXIT,               WIE_HINT_IMGED_EXIT             }
 ,   { IMGED_ABOUT,              WIE_HINT_IMGED_ABOUT            }
+,   { IMGED_HELP,               WIE_HINT_IMGED_HELP             }
+,   { IMGED_HELP_SEARCH,        WIE_HINT_IMGED_HELP_SEARCH      }
+,   { IMGED_HELP_ON_HELP,       WIE_HINT_IMGED_HELP_ON_HELP     }
 ,   { IMGED_REST,               WIE_HINT_IMGED_REST             }
 ,   { IMGED_LCOLOUR,            WIE_HINT_IMGED_LCOLOUR          }
 ,   { IMGED_SCOLOUR,            WIE_HINT_IMGED_SCOLOUR          }

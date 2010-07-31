@@ -41,7 +41,7 @@ typedef struct {
 
 #ifndef __OS2_PM__
 
-#define MAX_HINT        71
+#define MAX_HINT        74
 #define POPUP_START     59
 #define POPUP_COUNT     12
 

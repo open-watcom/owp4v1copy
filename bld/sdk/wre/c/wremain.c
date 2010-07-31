@@ -808,6 +808,16 @@ LRESULT WINEXPORT WREMainWndProc( HWND hWnd, UINT message,
                     pass_to_def = FALSE;
                     break;
 
+                case IDM_HELP_SEARCH:
+                    WREHelpSearchRoutine();
+                    pass_to_def = FALSE;
+                    break;
+
+                case IDM_HELP_ON_HELP:
+                    WREHelpOnHelpRoutine();
+                    pass_to_def = FALSE;
+                    break;
+
                 case IDM_ABOUT:
                     ai.owner = hWnd;
                     ai.inst = WREInst;
@@ -1189,3 +1199,14 @@ void CALLBACK WREHelpRoutine( void )
     }
 }
 
+void CALLBACK WREHelpSearchRoutine( void )
+{
+    if( !WHtmlHelp( WREMainWin, "resedt.chm", HELP_PARTIALKEY, (DWORD)"" ) ) {
+        WWinHelp( WREMainWin, "resedt.hlp", HELP_PARTIALKEY, (DWORD)"" );
+    }
+}
+
+void CALLBACK WREHelpOnHelpRoutine( void )
+{
+    WWinHelp( WREMainWin, "winhelp.hlp", HELP_HELPONHELP, 0 );
+}

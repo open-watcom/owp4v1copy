@@ -4,9 +4,9 @@ BEGIN
                    "&File" )
     BEGIN
         MENUITEM sp( "&New",
-                     "&New" )              IDM_NEW_RES
+                     "&New" )                      IDM_NEW_RES
         MENUITEM sp( "&Open...",
-                     "&Open..." )          IDM_OPEN_RES
+                     "&Open..." )                  IDM_OPEN_RES
         MENUITEM SEPARATOR
 #ifndef __NT__
         POPUP    sp( "Load &Custom Library",
@@ -46,10 +46,15 @@ BEGIN
     POPUP      sp( "&Help",
                    "&Help" )
     BEGIN
-        MENUITEM sp( "&Help",
-                     "&Help" ),                    IDM_HELP
+        MENUITEM sp( "&Contents",
+                     "&Contents" ),                IDM_HELP
+        MENUITEM sp( "&Search for Help On...",
+                     "&Search for Help On..." ),   IDM_HELP_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&How to Use Help",
+                     "&How to Use Help" ),         IDM_HELP_ON_HELP
         MENUITEM sp( "&About...",
-                     "&About..." ),     IDM_ABOUT
+                     "&About..." ),                IDM_ABOUT
     END
 END
 
@@ -59,13 +64,13 @@ BEGIN
                    "&File" )
     BEGIN
         MENUITEM sp( "&New",
-                     "&New" )              IDM_NEW_RES
+                     "&New" )                      IDM_NEW_RES
         MENUITEM sp( "&Open...",
-                     "&Open..." )          IDM_OPEN_RES
+                     "&Open..." )                  IDM_OPEN_RES
         MENUITEM sp( "&Save",
-                     "&Save" )             IDM_SAVE_RES
+                     "&Save" )                     IDM_SAVE_RES
         MENUITEM sp( "Save &As...",
-                     "Save &As..." )       IDM_SAVEAS_RES
+                     "Save &As..." )               IDM_SAVEAS_RES
         MENUITEM SEPARATOR
 #ifndef __NT__
         POPUP    sp( "Load &Custom Library",
@@ -183,7 +188,7 @@ BEGIN
                      "&Test Mode\tCtrl+T" ),       IDM_TEST_MODE
         MENUITEM SEPARATOR
         MENUITEM sp( "&Revert Dialog",
-                     "&Revert Dialog" )           IDM_DIALOG_RESTORE
+                     "&Revert Dialog" )            IDM_DIALOG_RESTORE
         MENUITEM SEPARATOR
         MENUITEM sp( "&New",
                      "&New" )                      IDM_DIALOG_NEW
@@ -291,10 +296,16 @@ BEGIN
     POPUP      sp( "&Help",
                    "&Help" )
     BEGIN
-        MENUITEM sp( "&Help",
-                     "&Help" ),                    IDM_HELP
+        MENUITEM sp( "&Contents",
+                     "&Contents" ),                IDM_HELP
+        MENUITEM sp( "&Search for Help On...",
+                     "&Search for Help On..." ),   IDM_HELP_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&How to Use Help",
+                     "&How to Use Help" ),         IDM_HELP_ON_HELP
+        MENUITEM SEPARATOR
         MENUITEM sp( "&About...",
-                     "&About..." ),     IDM_ABOUT
+                     "&About..." ),                IDM_ABOUT
     END
 END
 
@@ -307,7 +318,7 @@ BEGIN
                      "Clear Resource" )            IDM_DDE_CLEAR
         MENUITEM SEPARATOR
         MENUITEM sp( "&Update",
-                     "&Update" )           IDM_DDE_UPDATE_PRJ
+                     "&Update" )                   IDM_DDE_UPDATE_PRJ
         MENUITEM sp( "Save &As...",
                      "Save &As..." )               IDM_DIALOG_SAVEAS
         MENUITEM SEPARATOR
@@ -505,10 +516,15 @@ BEGIN
     POPUP      sp( "&Help",
                    "&Help" )
     BEGIN
-        MENUITEM sp( "&Help",
-                     "&Help" ),                    IDM_HELP
+        MENUITEM sp( "&Contents",
+                     "&Contents" ),                IDM_HELP
+        MENUITEM sp( "&Search for Help On...",
+                     "&Search for Help On..." ),   IDM_HELP_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&How to Use Help",
+                     "&How to Use Help" ),         IDM_HELP_ON_HELP
+        MENUITEM SEPARATOR
         MENUITEM sp( "&About...",
-                     "&About..." ),     IDM_ABOUT
+                     "&About..." ),                IDM_ABOUT
     END
 END
-

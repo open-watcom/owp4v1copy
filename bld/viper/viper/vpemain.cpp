@@ -930,10 +930,11 @@ void VpeMain::onPopup6( WPopupMenu* pop )
     pop->enableItem( isp, 0 ); //refresh
 }
 
-MenuPop VpeMain::popup7 = { "&Help", (cbp)&VpeMain::onPopup7, menu7, 3 };
+MenuPop VpeMain::popup7 = { "&Help", (cbp)&VpeMain::onPopup7, menu7, 4 };
 MenuData VpeMain::menu7[] = {
     "&Contents", (cbm)&VpeMain::helpContents, "List Open Watcom IDE help topics.", 0, NULL, NULL,
     "&Search for Help On...", (cbm)&VpeMain::helpSearch, "Search for help on a specific topic.", 0, NULL, NULL,
+    NULL, NULL, NULL, 0, NULL, NULL,
     "&How to Use Help", (cbm)&VpeMain::helpUsage, "Display information on how to use help.", 0, NULL, NULL
 };
 
@@ -941,8 +942,8 @@ void VpeMain::onPopup7( WPopupMenu* pop )
 {
     bool hp = ( _config->helpFile().size() > 0 );
     pop->enableItem( hp, 0 );                  //contents
-    pop->enableItem( hp , 1 );                 //search for help
-    pop->enableItem( hp , 2 );                 //help on help
+    pop->enableItem( hp, 1 );                  //search for help
+    pop->enableItem( hp, 3 );                  //help on help
     pop->enableItem( TRUE, 4 );                //about
 }
 

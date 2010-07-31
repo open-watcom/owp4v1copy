@@ -58,5 +58,7 @@ extern Bool      WdeIsDDE                ( void );
 extern Bool      WdeIsFirstInst          ( void );
 extern void      WdeEnableMenuInput      ( Bool enable );
 extern void CALLBACK WdeHelpRoutine      ( void );
+extern void CALLBACK WdeHelpSearchRoutine( void );
+extern void CALLBACK WdeHelpOnHelpRoutine( void );
 
 #endif

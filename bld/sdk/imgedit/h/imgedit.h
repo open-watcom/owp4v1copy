@@ -220,6 +220,8 @@ void IEEnableMenuInput( BOOL enable );
 MRESULT CALLBACK ImgEdFrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
                                                             WPI_PARAM2 lparam );
 extern void IEHelpRoutine( void );
+extern void IEHelpSearchRoutine( void );
+extern void IEHelpOnHelpRoutine( void );
 extern void CALLBACK IEHelpCallBack( void );
 
 /* ieclrpal.c */

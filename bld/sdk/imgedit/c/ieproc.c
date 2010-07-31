@@ -400,6 +400,14 @@ MRESULT CALLBACK ImgEdFrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
             IEHelpRoutine();
             break;
 
+        case IMGED_HELP_SEARCH:
+            IEHelpSearchRoutine();
+            break;
+
+        case IMGED_HELP_ON_HELP:
+            IEHelpOnHelpRoutine();
+            break;
+
         case IMGED_ABOUT:
 #ifndef __OS2_PM__
             ai.owner = hwnd;
@@ -722,6 +730,22 @@ void IEHelpRoutine( void )
     if( !WHtmlHelp( HMainWindow, "resimg.chm", HELP_CONTENTS, 0 ) ) {
         WWinHelp( HMainWindow, "resimg.hlp", HELP_CONTENTS, 0 );
     }
+#endif
+}
+
+void IEHelpSearchRoutine( void )
+{
+#ifndef __OS2_PM__
+    if( !WHtmlHelp( HMainWindow, "resimg.chm", HELP_PARTIALKEY, (DWORD)"" ) ) {
+        WWinHelp( HMainWindow, "resimg.hlp", HELP_PARTIALKEY, (DWORD)"" );
+    }
+#endif
+}
+
+void IEHelpOnHelpRoutine( void )
+{
+#ifndef __OS2_PM__
+    WWinHelp( HMainWindow, "winhelp.hlp", HELP_HELPONHELP, 0 );
 #endif
 }
 

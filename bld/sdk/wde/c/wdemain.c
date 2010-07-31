@@ -966,6 +966,16 @@ LRESULT WINEXPORT WdeMainWndProc( HWND hWnd, UINT message,
                     pass_to_def = FALSE;
                     break;
 
+                case IDM_HELP_SEARCH:
+                    WdeHelpSearchRoutine();
+                    pass_to_def = FALSE;
+                    break;
+
+                case IDM_HELP_ON_HELP:
+                    WdeHelpOnHelpRoutine();
+                    pass_to_def = FALSE;
+                    break;
+
                 case IDM_ABOUT:
                     ai.owner = hWnd;
                     ai.inst = hInstWde;
@@ -1472,3 +1482,14 @@ void CALLBACK WdeHelpRoutine( void )
     }
 }
 
+void CALLBACK WdeHelpSearchRoutine( void )
+{
+    if( !WHtmlHelp( hWinWdeMain, "resdlg.chm", HELP_PARTIALKEY, (DWORD)"" ) ) {
+        WWinHelp( hWinWdeMain, "resdlg.hlp", HELP_PARTIALKEY, (DWORD)"" );
+    }
+}
+
+void CALLBACK WdeHelpOnHelpRoutine( void )
+{
+    WWinHelp( hWinWdeMain, "winhelp.hlp", HELP_HELPONHELP, 0 );
+}

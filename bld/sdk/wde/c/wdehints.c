@@ -159,6 +159,8 @@ static WdeHintItem WdeHints[] =
 ,   { IDM_MDI_ARRANGE           , WDE_HINT_MDI_ARRANGE          }
 ,   { IDM_ABOUT                 , WDE_HINT_ABOUT                }
 ,   { IDM_HELP                  , WDE_HINT_HELP                 }
+,   { IDM_HELP_SEARCH           , WDE_HINT_HELP_SEARCH          }
+,   { IDM_HELP_ON_HELP          , WDE_HINT_HELP_ON_HELP         }
 ,   { IDM_DELETEOBJECT          , WDE_HINT_DELETEOBJECT         }
 ,   { IDM_CUTOBJECT             , WDE_HINT_CUTOBJECT            }
 ,   { IDM_PASTEOBJECT           , WDE_HINT_PASTEOBJECT          }

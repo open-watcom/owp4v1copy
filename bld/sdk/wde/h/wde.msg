@@ -232,11 +232,17 @@ pick(   WDE_HINT_MDI_ARRANGE,
         "Arrange resource icons.",
         "Arrange resource icons." )
 pick(   WDE_HINT_ABOUT,
-        "Display about box.",
-        "Display about box." )
+        "Display program information.",
+        "Display program information." )
 pick(   WDE_HINT_HELP,
-        "Display help text.",
-        "Display help text." )
+        "List Open Watcom Dialog Editor help topics.",
+        "List Open Watcom Dialog Editor help topics." )
+pick(   WDE_HINT_HELP_SEARCH,
+        "Search for help on a specific topic.",
+        "Search for help on a specific topic." )
+pick(   WDE_HINT_HELP_ON_HELP,
+        "Display information on how to use help.",
+        "Display information on how to use help." )
 pick(   WDE_HINT_DELETEOBJECT,
         "Delete selected object(s).",
         "Delete selected object(s)." )

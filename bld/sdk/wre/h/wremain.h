@@ -52,5 +52,7 @@ extern HMENU     WREGetMenuHandle        ( void );
 extern void      WREEnableMenus          ( Bool enable );
 extern void      WREResizeWindows        ( void );
 extern void CALLBACK WREHelpRoutine      ( void );
+extern void CALLBACK WREHelpSearchRoutine( void );
+extern void CALLBACK WREHelpOnHelpRoutine( void );
 
 #endif

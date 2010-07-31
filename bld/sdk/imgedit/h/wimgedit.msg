@@ -176,6 +176,15 @@ pick(   WIE_HINT_IMGED_EXIT,
 pick(   WIE_HINT_IMGED_ABOUT,
         "Display program information.",
         "Display program information." )
+pick(   WIE_HINT_IMGED_HELP,
+        "List Open Watcom Image Editor help topics.",
+        "List Open Watcom Image Editor help topics." )
+pick(   WIE_HINT_IMGED_HELP_SEARCH,
+        "Search for help on a specific topic.",
+        "Search for help on a specific topic." )
+pick(   WIE_HINT_IMGED_HELP_ON_HELP,
+        "Display information on how to use help.",
+        "Display information on how to use help." )
 pick(   WIE_HINT_IMGED_REST,
         "Restore image to opened form.",
         "Restore image to opened form." )

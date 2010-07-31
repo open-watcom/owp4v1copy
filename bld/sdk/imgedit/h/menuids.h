@@ -96,6 +96,8 @@
 #define IMGED_CSCREEN           2063
 #define IMGED_MAXIMIZE          2064
 #define IMGED_HELP              2065
+#define IMGED_HELP_SEARCH       2066
+#define IMGED_HELP_ON_HELP      2067
 
 // the following are special identifiers for DDE mode
 #define IMGED_DDE_UPDATE_PRJ    2080

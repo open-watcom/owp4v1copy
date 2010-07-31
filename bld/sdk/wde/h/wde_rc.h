@@ -162,5 +162,7 @@
 #define HELP_MENU          5
 #define IDM_ABOUT          190
 #define IDM_HELP           191
+#define IDM_HELP_SEARCH    192
+#define IDM_HELP_ON_HELP   193
 
 #endif

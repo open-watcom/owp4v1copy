@@ -115,6 +115,8 @@ static WREHintItem WREHints[] =
 ,   { IDM_MDI_ARRANGE           , WRE_HINT_MDI_ARRANGE          }
 ,   { IDM_ABOUT                 , WRE_HINT_ABOUT                }
 ,   { IDM_HELP                  , WRE_HINT_HELP                 }
+,   { IDM_HELP_SEARCH           , WRE_HINT_HELP_SEARCH          }
+,   { IDM_HELP_ON_HELP          , WRE_HINT_HELP_ON_HELP         }
 ,   { IDM_DELETE                , WRE_HINT_DELETE               }
 ,   { IDM_CUT                   , WRE_HINT_CUT                  }
 ,   { IDM_PASTE                 , WRE_HINT_PASTE                }
