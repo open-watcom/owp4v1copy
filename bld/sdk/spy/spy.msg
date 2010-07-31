@@ -115,124 +115,124 @@ pick(   STR_EMPTY_STATUS,
         " " )
 
 pick(   STR_HINT_SAVE,
-        "Save information in the event list to a file",
-        "Save information in the event list to a file" )
+        "Save information in the event list to a file.",
+        "Save information in the event list to a file." )
 
 pick(   STR_HINT_SAVE_AS,
-        "Save information in the event list to a file",
-        "Save information in the event list to a file" )
+        "Save information in the event list to a file.",
+        "Save information in the event list to a file." )
 
 pick(   STR_HINT_LOG,
-        "Start/Stop logging monitored events to a file",
-        "Start/Stop logging monitored events to a file" )
+        "Start/Stop logging monitored events to a file.",
+        "Start/Stop logging monitored events to a file." )
 
 pick(   STR_HINT_PAUSE_LOG,
-        "Pause/Resume logging monitored events to a file",
-        "Pause/Resume logging monitored events to a file" )
+        "Pause/Resume logging monitored events to a file.",
+        "Pause/Resume logging monitored events to a file." )
 
 pick(   STR_HINT_CONFIG_LOG,
-        "Configure the behavior of the logging function",
-        "Configure the behavior of the logging function" )
+        "Configure the behavior of the logging function.",
+        "Configure the behavior of the logging function." )
 
 pick(   STR_HINT_SET_FONT,
-        "Set the font for the Spy windows",
-        "Set the font for the Spy windows" )
+        "Set the font for the Spy windows.",
+        "Set the font for the Spy windows." )
 
 pick(   STR_HINT_TOP,
-        "Ensure Spy is never covered by other windows",
-        "Ensure Spy is never covered by other windows" )
+        "Ensure Spy is never covered by other windows.",
+        "Ensure Spy is never covered by other windows." )
 
 pick(   STR_HINT_EXIT,
-        "Exit Spy",
-        "Exit Spy" )
+        "Exit Spy.",
+        "Exit Spy." )
 
 pick(   STR_HINT_CLEAR_MESSAGES,
-        "Erase the information in the event list",
-        "Erase the information in the event list" )
+        "Erase the information in the event list.",
+        "Erase the information in the event list." )
 
 pick(   STR_HINT_AUTO_SCROLL,
-        "Scroll the display to show the newest events",
-        "Scroll the display to show the newest events" )
+        "Scroll the display to show the newest events.",
+        "Scroll the display to show the newest events." )
 
 pick(   STR_HINT_MARK,
-        "Put text in the event list",
-        "Put text in the event list" )
+        "Put text in the event list.",
+        "Put text in the event list." )
 
 pick(   STR_HINT_WINDOW,
-        "Select a single window to spy on",
-        "Select a single window to spy on" )
+        "Select a single window to spy on.",
+        "Select a single window to spy on." )
 
 pick(   STR_HINT_ADD_WINDOW,
-        "Select a window to spy on in addition to those already selected",
-        "Select a window to spy on in addition to those already selected" )
+        "Select a window to spy on in addition to those already selected.",
+        "Select a window to spy on in addition to those already selected." )
 
 pick(   STR_HINT_ALL_WINDOWS,
-        "Spy on all windows in the system",
-        "Spy on all windows in the system" )
+        "Spy on all windows in the system.",
+        "Spy on all windows in the system." )
 
 pick(   STR_HINT_OFFON,
-        "Pause/Resume spying",
-        "Pause/Resume spying" )
+        "Pause/resume spying.",
+        "Pause/resume spying." )
 
 pick(   STR_HINT_STOP,
-        "Stop spying",
-        "Stop spying" )
+        "Stop spying.",
+        "Stop spying." )
 
 pick(   STR_HINT_PEEK_WINDOW,
-        "Show style information about windows",
-        "Show style information about windows" )
+        "Show style information about windows.",
+        "Show style information about windows." )
 
 pick(   STR_HINT_SHOW_SELECTED_WINDOWS,
-        "Show a list of all windows in the system",
-        "Show a list of all windows in the system" )
+        "Show a list of all windows in the system.",
+        "Show a list of all windows in the system." )
 
 pick(   STR_HINT_MESSAGES_WATCH,
-        "Select messages to report on",
-        "Select messages to report on" )
+        "Select messages to report on.",
+        "Select messages to report on." )
 
 pick(   STR_HINT_MESSAGES_STOP,
-        "Select messages to stop on",
-        "Select messages to stop on" )
+        "Select messages to stop on.",
+        "Select messages to stop on." )
 
 pick(   STR_HINT_MESSAGES_ASCFG,
-        "Save the message confiratation on exit",
-        "Save the message confiratation on exit" )
+        "Save the message confiratation on exit.",
+        "Save the message confiratation on exit." )
 
 pick(   STR_HINT_MESSAGES_SAVE,
-        "Save the messages selected to watch and stop on",
-        "Save the messages selected to watch and stop on" )
+        "Save the messages selected to watch and stop on.",
+        "Save the messages selected to watch and stop on." )
 
 pick(   STR_HINT_MESSAGES_LOAD,
-        "Load a previously saved message configuration",
-        "Load a previously saved message configuration" )
+        "Load a previously saved message configuration.",
+        "Load a previously saved message configuration." )
 
 pick(   STR_HINT_ABOUT,
-        "Display program information",
-        "Display program information" )
+        "Display program information.",
+        "Display program information." )
 
 pick(   STR_HINT_SHOW_TOOLBAR,
-        "Display/hide the toolbar",
-        "Display/hide the toolbar" )
+        "Display/hide the toolbar.",
+        "Display/hide the toolbar." )
 
 pick(   STR_HINT_SHOW_HELP,
-        "Display/hide the hint bar",
-        "Display/hide the hint bar" )
+        "Display/hide the hint bar.",
+        "Display/hide the hint bar." )
 
 pick(   STR_MESSAGE,
         "Message: %s",
         "Message: %s" )
 
 pick(   STR_HINT_HELP_CONTENTS,
-        "Display help",
-        "Display help" )
+        "List Open Watcom Spy help topics.",
+        "List Open Watcom Spy help topics." )
 
 pick(   STR_HINT_HELP_SRCH,
-        "Search for help on a specific topic",
-        "Search for help on a specific topic" )
+        "Search for help on a specific topic.",
+        "Search for help on a specific topic." )
 
 pick(   STR_HINT_HELP_ON_HELP,
-        "Show information on using help",
-        "Show information on using help" )
+        "Display information on how to use help.",
+        "Display information on how to use help." )
 
 pick(   STR_TIP_ANOTHER_WINDOW,
         "Add Window",

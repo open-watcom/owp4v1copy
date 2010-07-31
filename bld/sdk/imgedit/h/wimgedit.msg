@@ -156,222 +156,222 @@ pick(   WIE_ERR_BAD_PALFILE,
 
 // hinttext.c
 pick(   WIE_SELECTSIMAGETOEDIT,
-        "Selects image to edit",
-        "Selects image to edit" )
+        "Select which image to edit.",
+        "Select which image to edit." )
 pick(   WIE_HINT_IMGED_NEW,
-        "Creates a new image",
-        "Creates a new image" )
+        "Create a new image.",
+        "Create a new image." )
 pick(   WIE_HINT_IMGED_OPEN,
-        "Opens an image",
-        "Opens an image" )
+        "Open an image.",
+        "Open an image." )
 pick(   WIE_HINT_IMGED_SAVE,
-        "Saves current image",
-        "Saves current image" )
+        "Save the current image.",
+        "Save the current image." )
 pick(   WIE_HINT_IMGED_SAVE_AS,
-        "Saves current image",
-        "Saves current image" )
+        "Save the current image with a new name.",
+        "Save the current image with a new name." )
 pick(   WIE_HINT_IMGED_EXIT,
-        "Exits the image editor",
-        "Exits the image editor" )
+        "Exit the Open Watcom Image Editor.",
+        "Exit the Open Watcom Image Editor." )
 pick(   WIE_HINT_IMGED_ABOUT,
-        "Describes the Open Watcom Image Editor",
-        "Describes the Open Watcom Image Editor" )
+        "Display program information.",
+        "Display program information." )
 pick(   WIE_HINT_IMGED_REST,
-        "Restores image to opened form",
-        "Restores image to opened form" )
+        "Restore image to opened form.",
+        "Restore image to opened form." )
 pick(   WIE_HINT_IMGED_LCOLOUR,
-        "Loads a color palette",
-        "Loads a color palette" )
+        "Load a color palette.",
+        "Load a color palette." )
 pick(   WIE_HINT_IMGED_SCOLOUR,
-        "Saves the current color palette",
-        "Saves the current color palette" )
+        "Save the current color palette.",
+        "Save the current color palette." )
 pick(   WIE_HINT_IMGED_RCOLOUR,
-        "Restores color palette to default",
-        "Restores color palette to default" )
+        "Restore color palette to default.",
+        "Restore color palette to default." )
 pick(   WIE_HINT_IMGED_CLOSE,
-        "Closes the current image",
-        "Closes the current image" )
+        "Close the current image.",
+        "Close the current image." )
 pick(   WIE_HINT_IMGED_ARRANGE,
-        "Arranges the icons",
-        "Arranges the icons" )
+        "Arrange the icons.",
+        "Arrange the icons." )
 pick(   WIE_HINT_IMGED_CLOSEALL,
-        "Closes all images",
-        "Closes all images" )
+        "Close all images.",
+        "Close all images." )
 pick(   WIE_HINT_IMGED_COLOUR,
-        "Toggles display of the color palette",
-        "Toggles display of the color palette" )
+        "Toggle display of the color palette.",
+        "Toggle display of the color palette." )
 pick(   WIE_HINT_IMGED_VIEW,
-        "Toggles display of the view window",
-        "Toggles display of the view window" )
+        "Toggle display of the view window.",
+        "Toggle display of the view window." )
 pick(   WIE_HINT_IMGED_TOOLBAR,
-        "Toggles display of the tool window",
-        "Toggles display of the tool window" )
+        "Toggle display of the tool window.",
+        "Toggle display of the tool window." )
 pick(   WIE_HINT_IMGED_FREEHAND,
-        "Draw freehand with pencil",
-        "Draw freehand with pencil" )
+        "Draw freehand with pencil.",
+        "Draw freehand with pencil." )
 pick(   WIE_HINT_IMGED_LINE,
-        "Draw lines",
-        "Draw lines" )
+        "Draw lines.",
+        "Draw lines." )
 pick(   WIE_HINT_IMGED_CIRCLEO,
-        "Draw outlined ellipses",
-        "Draw outlined ellipses" )
+        "Draw outlined ellipses.",
+        "Draw outlined ellipses." )
 pick(   WIE_HINT_IMGED_CIRCLEF,
-        "Draw filled ellipses",
-        "Draw filled ellipses" )
+        "Draw filled ellipses.",
+        "Draw filled ellipses." )
 pick(   WIE_HINT_IMGED_RECTO,
-        "Draw outlined rectangles",
-        "Draw outlined rectangles" )
+        "Draw outlined rectangles.",
+        "Draw outlined rectangles." )
 pick(   WIE_HINT_IMGED_RECTF,
-        "Draw filled rectangles",
-        "Draw filled rectangles" )
+        "Draw filled rectangles.",
+        "Draw filled rectangles." )
 pick(   WIE_HINT_IMGED_FILL,
-        "Fill area under the cursor",
-        "Fill area under the cursor" )
+        "Fill area under the cursor.",
+        "Fill area under the cursor." )
 pick(   WIE_HINT_IMGED_BRUSH,
-        "Draw freehand with wide brush",
-        "Draw freehand with wide brush" )
+        "Draw freehand with wide brush.",
+        "Draw freehand with wide brush." )
 pick(   WIE_HINT_IMGED_CLIP,
-        "Select region to edit",
-        "Select region to edit" )
+        "Select region to edit.",
+        "Select region to edit." )
 pick(   WIE_HINT_IMGED_HOTSPOT,
-        "Set hotspot location",
-        "Set hotspot location" )
+        "Set hotspot location.",
+        "Set hotspot location." )
 pick(   WIE_HINT_IMGED_2x2,
-        "Set brush size to 2x2 pixels",
-        "Set brush size to 2x2 pixels" )
+        "Set brush size to 2x2 pixels.",
+        "Set brush size to 2x2 pixels." )
 pick(   WIE_HINT_IMGED_3x3,
-        "Set brush size to 3x3 pixels",
-        "Set brush size to 3x3 pixels" )
+        "Set brush size to 3x3 pixels.",
+        "Set brush size to 3x3 pixels." )
 pick(   WIE_HINT_IMGED_4x4,
-        "Set brush size to 4x4 pixels",
-        "Set brush size to 4x4 pixels" )
+        "Set brush size to 4x4 pixels.",
+        "Set brush size to 4x4 pixels." )
 pick(   WIE_HINT_IMGED_5x5,
-        "Set brush size to 5x5 pixels",
-        "Set brush size to 5x5 pixels" )
+        "Set brush size to 5x5 pixels.",
+        "Set brush size to 5x5 pixels." )
 pick(   WIE_HINT_IMGED_TILE,
-        "Tile image windows",
-        "Tile image windows" )
+        "Tile image windows.",
+        "Tile image windows." )
 pick(   WIE_HINT_IMGED_NEWIMG,
-        "Add an icon to current icon file",
-        "Add an icon to current icon file" )
+        "Add an icon to current icon file.",
+        "Add an icon to current icon file." )
 pick(   WIE_HINT_IMGED_DELIMG,
-        "Delete an icon from current icon file",
-        "Delete an icon from current icon file" )
+        "Delete an icon from current icon file.",
+        "Delete an icon from current icon file." )
 pick(   WIE_HINT_IMGED_CASCADE,
-        "Cascade all the image windows",
-        "Cascade all the image windows" )
+        "Cascade all the image windows.",
+        "Cascade all the image windows." )
 pick(   WIE_HINT_IMGED_GRID,
-        "Toggles the displaying of the grid",
-        "Toggles the displaying of the grid" )
+        "Toggle display of the grid.",
+        "Toggle display of the grid." )
 pick(   WIE_HINT_IMGED_CLEAR,
-        "Clear image or selected area",
-        "Clear image or selected area" )
+        "Clear image or selected area.",
+        "Clear image or selected area." )
 pick(   WIE_HINT_IMGED_UNDO,
-        "Undoes the previous operation",
-        "Undoes the previous operation" )
+        "Undo the previous operation.",
+        "Undo the previous operation." )
 pick(   WIE_HINT_IMGED_REDO,
-        "Reperforms an undone operation",
-        "Reperforms an undone operation" )
+        "Reperform an undone operation.",
+        "Reperform an undone operation." )
 pick(   WIE_HINT_IMGED_CUT,
-        "Cuts selected area to clipboard",
-        "Cuts selected area to clipboard" )
+        "Cut selected area to clipboard.",
+        "Cut selected area to clipboard." )
 pick(   WIE_HINT_IMGED_COPY,
-        "Copies selected area to clipboard",
-        "Copies selected area to clipboard" )
+        "Copy selected area to clipboard.",
+        "Copy selected area to clipboard." )
 pick(   WIE_HINT_IMGED_PASTE,
-        "Pastes into current image",
-        "Pastes into current image" )
+        "Paste clipboard contents into current image.",
+        "Paste clipboard contents into current image." )
 pick(   WIE_HINT_IMGED_SNAP,
-        "Captures a bitmap from the desktop",
-        "Captures a bitmap from the desktop" )
+        "Capture a bitmap from the desktop.",
+        "Capture a bitmap from the desktop." )
 pick(   WIE_HINT_IMGED_RIGHT,
-        "Shifts the image right",
-        "Shifts the image right" )
+        "Shift the image right.",
+        "Shift the image right." )
 pick(   WIE_HINT_IMGED_LEFT,
-        "Shifts the image left",
-        "Shifts the image left" )
+        "Shift the image left.",
+        "Shift the image left." )
 pick(   WIE_HINT_IMGED_UP,
-        "Shifts the image up",
-        "Shifts the image up" )
+        "Shift the image up.",
+        "Shift the image up." )
 pick(   WIE_HINT_IMGED_DOWN,
-        "Shifts the image down",
-        "Shifts the image down" )
+        "Shift the image down.",
+        "Shift the image down." )
 pick(   WIE_HINT_IMGED_SELIMG,
-        "Selects icon from a multiple icon file",
-        "Selects icon from a multiple icon file" )
+        "Select icon from a multiple icon file.",
+        "Select icon from a multiple icon file." )
 pick(   WIE_HINT_IMGED_SQUARE,
-        "Maintains a square grid",
-        "Maintains a square grid" )
+        "Maintain a square grid.",
+        "Maintain a square grid." )
 pick(   WIE_HINT_IMGED_SIZE,
-        "Changes size of current image",
-        "Changes size of current image" )
+        "Change the size of the current image.",
+        "Change the size of the current image." )
 pick(   WIE_HINT_IMGED_SETTINGS,
-        "Displays the current settings",
-        "Displays the current settings" )
+        "Display the current settings.",
+        "Display the current settings." )
 pick(   WIE_HINT_IMGED_FLIPHORZ,
-        "Flips image over horizontal axis",
-        "Flips image over horizontal axis" )
+        "Flip image over horizontal axis.",
+        "Flip image over horizontal axis." )
 pick(   WIE_HINT_IMGED_FLIPVERT,
-        "Flips image over vertical axis",
-        "Flips image over vertical axis" )
+        "Flip image over vertical axis.",
+        "Flip image over vertical axis." )
 pick(   WIE_HINT_IMGED_ROTATECC,
-        "Rotates image counterclockwise",
-        "Rotates image counterclockwise" )
+        "Rotate image counterclockwise.",
+        "Rotate image counterclockwise." )
 pick(   WIE_HINT_IMGED_ROTATECL,
-        "Rotates image clockwise",
-        "Rotates image clockwise" )
+        "Rotate image clockwise.",
+        "Rotate image clockwise." )
 pick(   WIE_HINT_IMGED_CEDIT,
-        "Edits the current left color",
-        "Edits the current left color" )
+        "Edit the current left color.",
+        "Edit the current left color." )
 pick(   WIE_HINT_IMGED_CRESET,
-        "Restores palette to unedited form",
-        "Restores palette to unedited form" )
+        "Restore palette to unedited form.",
+        "Restore palette to unedited form." )
 pick(   WIE_HINT_IMGED_CSCREEN,
-        "Sets color to represent screen/inverse",
-        "Sets color to represent screen/inverse" )
+        "Set color to represent screen/inverse.",
+        "Set color to represent screen/inverse." )
 pick(   WIE_HINT_IMGED_MAXIMIZE,
-        "Maximizes the current edit window",
-        "Maximizes the current edit window" )
+        "Maximize the current edit window.",
+        "Maximize the current edit window." )
 pick(   WIE_HINT_IMGED_DDE_UPDATE_PRJ,
-        "Update the file with this resource",
-        "Update the file with this resource" )
+        "Update the file with this resource.",
+        "Update the file with this resource." )
     
 pick(   WIE_HINT_FILEMENU,
-        "File operations",
-        "File operations" )
+        "File operations.",
+        "File operations." )
 pick(   WIE_HINT_EDITMENU,
-        "Edit operations for current image",
-        "Edit operations for current image" )
+        "Edit operations for current image.",
+        "Edit operations for current image." )
 pick(   WIE_HINT_SHIFTMENU,
-        "Shifts the image",
-        "Shifts the image" )
+        "Shift the image.",
+        "Shift the image." )
 pick(   WIE_HINT_MIRRORMENU,
-        "Creates a mirror image",
-        "Creates a mirror image" )
+        "Create a mirror image.",
+        "Create a mirror image." )
 pick(   WIE_HINT_ROTATEMENU,
-        "Rotates image 90 degrees",
-        "Rotates image 90 degrees" )
+        "Rotate image 90 degrees.",
+        "Rotate image 90 degrees." )
 pick(   WIE_HINT_SETTINGSMENU,
-        "Settings for image editor session",
-        "Settings for image editor session" )
+        "Setting for image editor session.",
+        "Setting for image editor session." )
 pick(   WIE_HINT_BRUSHSIZEMENU,
-        "Set the size for the paint brush",
-        "Set the size for the paint brush" )
+        "Set the size for the paint brush.",
+        "Set the size for the paint brush." )
 pick(   WIE_HINT_PALETTEMENU,
-        "Perform color palette operations",
-        "Perform color palette operations" )
+        "Perform color palette operations.",
+        "Perform color palette operations." )
 pick(   WIE_HINT_DRAWTOOLSMENU,
-        "Selects tools with which to draw",
-        "Selects tools with which to draw" )
+        "Select tools with which to draw.",
+        "Select tools with which to draw." )
 pick(   WIE_HINT_ELLIPSEMENU,
-        "Ellipse drawing tool",
-        "Ellipse drawing tool" )
+        "Ellipse drawing tool.",
+        "Ellipse drawing tool." )
 pick(   WIE_HINT_RECTANGLEMENU,
-        "Rectangle drawing tool",
-        "Rectangle drawing tool" )
+        "Rectangle drawing tool.",
+        "Rectangle drawing tool." )
 pick(   WIE_HINT_HELPMENU,
-        "Provides help for Open Watcom image editor",
-        "Provides help for Open Watcom image editor" )
+        "Provides help for Open Watcom Image Editor.",
+        "Provides help for Open Watcom Image Editor." )
     
 // SNAP.C
 pick(   WIE_BMPSNAPPEDFROMDSKTOP,

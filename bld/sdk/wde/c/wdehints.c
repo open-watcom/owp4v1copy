@@ -105,6 +105,8 @@ static WdeHintItem WdeHints[] =
 ,   { IDM_SAME_WIDTH            , WDE_HINT_SAME_WIDTH           }
 ,   { IDM_SAME_HEIGHT           , WDE_HINT_SAME_HEIGHT          }
 ,   { IDM_SAME_SIZE             , WDE_HINT_SAME_SIZE            }
+,   { IDM_SPACE_HORZ            , WDE_HINT_SPACE_HORZ           }
+,   { IDM_SPACE_VERT            , WDE_HINT_SPACE_VERT           }
 ,   { IDM_SIZETOTEXT            , WDE_HINT_SIZETOTEXT           }
 ,   { IDM_GOTO_OBJECT           , WDE_HINT_GOTO_OBJECT          }
 ,   { IDM_DEFINEOBJECT          , WDE_HINT_DEFINEOBJECT         }
@@ -187,6 +189,7 @@ static WdePopupHintItem WdeResPopupHints[] =
 ,   { { 1, -1 },  NULL, WDE_HINT_EDITMENU               }
 ,   { { 1,  5 },  NULL, WDE_HINT_ALIGNMENU              }
 ,   { { 1,  6 },  NULL, WDE_HINT_SIZEMENU               }
+,   { { 1,  7 },  NULL, WDE_HINT_SPACEMENU              }
 ,   { { 1, 15 },  NULL, WDE_HINT_EDITSYMMENU            }
 ,   { { 2, -1 },  NULL, WDE_HINT_DIALOGMENU             }
 ,   { { 3, -1 },  NULL, WDE_HINT_CONTROLMENU            }

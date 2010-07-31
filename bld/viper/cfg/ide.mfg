@@ -2067,22 +2067,22 @@ Project
     Command "!RemakeAll foo"
     Hint "Mark all targets and their components for remake"
 
-  ToolItem 1009 Source  &Edit*  "Edit the selected source file" Edit
-  ToolItem 1010 Source  &Make   "Make the selected source file" "Make Source"
-  ToolItem 1004 Target  &Make   "Make the current target" "Make Target"
+  ToolItem 1009 Source  &Edit*  "Edit the selected source file." Edit
+  ToolItem 1010 Source  &Make   "Make the selected source file." "Make Source"
+  ToolItem 1004 Target  &Make   "Make the current target." "Make Target"
 :segment !C_FOR_PB
-  ToolItem 1008 Target  &Run    "Run the current target" Run
+  ToolItem 1008 Target  &Run    "Run the current target." Run
 :endsegment
-  ToolItem 1005 Target  "Local &Debug"  "Locally debug the current target" Debug
-  ToolItem 1014 Target  "Remote D&ebug"  "Remotely debug the current target" "Remote Debug"
+  ToolItem 1005 Target  "Local &Debug"  "Locally debug the current target." Debug
+  ToolItem 1014 Target  "Remote D&ebug"  "Remotely debug the current target." "Remote Debug"
 :segment !C_FOR_PB
-  ToolItem 1006 Target  &Browse "Browse the current target" Browse
-  ToolItem 1007 Target  Sam&ple "Run and sample the current target" Sample
-  ToolItem 1011 Target  Pro&file "Profile the current target" Profile
+  ToolItem 1006 Target  &Browse "Browse the current target." Browse
+  ToolItem 1007 Target  Sam&ple "Run and sample the current target." Sample
+  ToolItem 1011 Target  Pro&file "Profile the current target." Profile
 :endsegment
-  ToolItem 1003 Project &Make*  "Make all targets in the project" "Make All"
+  ToolItem 1003 Project &Make*  "Make all targets in the project." "Make All"
 :segment C_FOR_PB
-  ToolItem 1013 Project &PowerBuilder "Return to PowerBuilder"
+  ToolItem 1013 Project &PowerBuilder "Return to PowerBuilder."
 :endsegment
 
 MsgLog

@@ -96,7 +96,7 @@ BEGIN
     BEGIN
         sp( MENUITEM "&Contents",
                      "ñ⁄éü(&C)" ), DDEMENU_HELP_CONTENTS
-        MENUITEM sp( "&Search for Help on...",
+        MENUITEM sp( "&Search for Help On...",
                      "ÉLÅ|ÉèÅ|ÉhÇ≈åüçı(&S)" ), DDEMENU_HELP_SRCH
         MENUITEM SEPARATOR
         MENUITEM sp( "&How to Use Help",

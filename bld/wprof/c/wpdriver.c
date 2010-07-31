@@ -67,44 +67,44 @@ extern sio_data *   CurrSIOData;
 
 
 static gui_menu_struct fileMenu[] = {
-    { "&Open...", MENU_OPEN_SAMPLE, GUI_ENABLED, "Open a sample file" },
+    { "&Open...", MENU_OPEN_SAMPLE, GUI_ENABLED, "Open a sample file." },
     { "&Close", MENU_CLOSE_SAMPLE, GUI_ENABLED,
-                            "Close the current sample information" },
+                            "Close the current sample information." },
     { "", 0, GUI_SEPARATOR },
-    { "Op&tions...", MENU_OPTIONS, GUI_ENABLED, "Set Profiler Options" },
+    { "Op&tions...", MENU_OPTIONS, GUI_ENABLED, "Set profiler options." },
 #if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2__ ) && !defined( __UNIX__ )
-    { "S&ystem", MENU_SYSTEM, GUI_ENABLED, "Start an operating system shell" },
+    { "S&ystem", MENU_SYSTEM, GUI_ENABLED, "Start an operating system shell." },
 #endif
 #ifdef TRMEM
-    { "&Memory Usage(Debug)", MENU_MEMPRT, GUI_ENABLED, "Print out current memory usage" },
+    { "&Memory Usage(Debug)", MENU_MEMPRT, GUI_ENABLED, "Print out current memory usage." },
 #endif
     { "", 0, GUI_SEPARATOR },
-    { "E&xit", MENU_EXIT, GUI_ENABLED, "Exit the profiler" },
+    { "E&xit", MENU_EXIT, GUI_ENABLED, "Exit the Open Watcom Profiler." },
 };
 
 
 static gui_menu_struct convertMenu[] = {
     { "Current &Module...", MENU_CONVERT_MODULE, GUI_ENABLED,
-                            "Convert the current module" },
+                            "Convert the current module." },
     { "Current &Image...", MENU_CONVERT_IMAGE, GUI_ENABLED,
-                            "Convert the current image" },
+                            "Convert the current image." },
     { "&All Images...", MENU_CONVERT_ALL, GUI_ENABLED,
-                            "Convert all of the images" },
+                            "Convert all of the images." },
 };
 
 
 static gui_menu_struct helpMenu[] = {
     { "&Contents", MENU_HELP_CONTENTS, GUI_ENABLED,
-                            "Show help contents" },
+                            "List Open Watcom Profile help topics." },
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || defined( __OS2_PM__ )
-    { "&Search for Help on...", MENU_HELP_SEARCH, GUI_ENABLED,
-                            "Search help for a topic" },
+    { "&Search for Help On...", MENU_HELP_SEARCH, GUI_ENABLED,
+                            "Search for help on a specific topic." },
     { "", 0, GUI_SEPARATOR },
     { "&How to Use Help", MENU_HELP_ONHELP, GUI_ENABLED,
-                            "Show Help about Help" },
+                            "Display information on how to use help." },
 #endif
     { "", 0, GUI_SEPARATOR },
-    { "&About...", MENU_ABOUT, GUI_ENABLED, "Display program information" },
+    { "&About...", MENU_ABOUT, GUI_ENABLED, "Display program information." },
 };
 
 
@@ -112,13 +112,13 @@ gui_menu_struct WndMainMenu[] = {
     { "&File",  MENU_FILE, GUI_ENABLED,
       "", WndMenuFields( fileMenu ) },
     { "&Convert",  MENU_CONVERT, GUI_ENABLED,
-      "Convert the data to an output format", WndMenuFields( convertMenu ) },
+      "Convert the data to an output format.", WndMenuFields( convertMenu ) },
     { "&Windows", MENU_WINDOWS, GUI_ENABLED+GUI_MDIWINDOW,
-      "Select an active window" },
+      "Select an active window." },
     { "&Actions",  MENU_ACTIONS, GUI_ENABLED+WND_MENU_POPUP,
-      "Select an action for the active window", 0, 0 },
+      "Select an action for the active window.", 0, 0 },
     { "&Help",  MENU_HELP, GUI_ENABLED,
-      "Display profiler help", WndMenuFields( helpMenu ) },
+      "Display Open Watcom Profiler help.", WndMenuFields( helpMenu ) },
 };
 
 int WndNumMenus = { WndMenuSize( WndMainMenu ) };

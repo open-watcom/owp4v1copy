@@ -18,131 +18,131 @@ pick(   WRE_READYMSG,
 
 // WREHINTS.C
 pick(   WRE_HINT_NEW,
-        "Create a new file",
-        "Create a new file" )
+        "Create a new file.",
+        "Create a new file." )
 pick(   WRE_HINT_OPEN,
-        "Open a file",
-        "Open a file" )
+        "Open a file.",
+        "Open a file." )
 pick(   WRE_HINT_SAVE,
-        "Save this file",
-        "Save this file" )
+        "Save this file.",
+        "Save this file." )
 pick(   WRE_HINT_SAVEAS,
-        "Save this file as a different file",
-        "Save this file as a different file" )
+        "Save this file as a different file.",
+        "Save this file as a different file." )
 pick(   WRE_HINT_EXIT,
-        "Exit the Open Watcom Resource Editor",
-        "Exit the Open Watcom Resource Editor" )
+        "Exit the Open Watcom Resource Editor.",
+        "Exit the Open Watcom Resource Editor." )
 pick(   WRE_HINT_OPTIONS,
-        "Set program options",
-        "Set program options" )
+        "Set program options.",
+        "Set program options." )
 pick(   WRE_HINT_NEW_CURSOR,
-        "Create a new cursor resource",
-        "Create a new cursor resource" )
+        "Create a new cursor resource.",
+        "Create a new cursor resource." )
 pick(   WRE_HINT_NEW_BITMAP,
-        "Create a new bitmap resource",
-        "Create a new bitmap resource" )
+        "Create a new bitmap resource.",
+        "Create a new bitmap resource." )
 pick(   WRE_HINT_NEW_ICON,
-        "Create a new icon resource",
-        "Create a new icon resource" )
+        "Create a new icon resource.",
+        "Create a new icon resource." )
 pick(   WRE_HINT_NEW_MENU,
-        "Create a new menu resource",
-        "Create a new menu resource" )
+        "Create a new menu resource.",
+        "Create a new menu resource." )
 pick(   WRE_HINT_NEW_DIALOG,
-        "Create a new dialog resource",
-        "Create a new dialog resource" )
+        "Create a new dialog resource.",
+        "Create a new dialog resource." )
 pick(   WRE_HINT_NEW_STRING,
-        "Create a new string table resource",
-        "Create a new string table resource" )
+        "Create a new string table resource.",
+        "Create a new string table resource." )
 pick(   WRE_HINT_NEW_FONT,
-        "Create a new font resource",
-        "Create a new font resource" )
+        "Create a new font resource.",
+        "Create a new font resource." )
 pick(   WRE_HINT_NEW_ACCELERATOR,
-        "Create a new accelerator table resource",
-        "Create a new accelerator table resource" )
+        "Create a new accelerator table resource.",
+        "Create a new accelerator table resource." )
 pick(   WRE_HINT_NEW_RCDATA,
-        "Create a new user data resource",
-        "Create a new user data resource" )
+        "Create a new user data resource.",
+        "Create a new user data resource." )
 pick(   WRE_HINT_RES_SAVEAS,
-        "Save the current resource to a file",
-        "Save the current resource to a file" )
+        "Save the current resource to a file.",
+        "Save the current resource to a file." )
 pick(   WRE_HINT_RES_SAVE_INTO,
-        "Copy the current resource INTO another file",
-        "Copy the current resource INTO another file" )
+        "Copy the current resource INTO another file.",
+        "Copy the current resource INTO another file." )
 pick(   WRE_HINT_RES_EDIT,
-        "Edit the current resource",
-        "Edit the current resource" )
+        "Edit the current resource.",
+        "Edit the current resource." )
 pick(   WRE_HINT_RES_RENAME,
-        "Rename the current resource",
-        "Rename the current resource" )
+        "Rename the current resource.",
+        "Rename the current resource." )
 pick(   WRE_HINT_RES_MEM_FLAGS,
-        "Change a resources Memory\\Load flags",
-        "Change a resources Memory\\Load flags" )
+        "Change a resource's memory/load flags.",
+        "Change a resource's memory/load flags." )
 pick(   WRE_HINT_SHOW_RIBBON,
-        "Show/Hide Toolbar",
-        "Show/Hide Toolbar" )
+        "Show/hide the toolbar.",
+        "Show/hide the toolbar." )
 pick(   WRE_HINT_MDI_CASCADE,
-        "Cascade resource windows",
-        "Cascade resource windows" )
+        "Cascade resource windows.",
+        "Cascade resource windows." )
 pick(   WRE_HINT_MDI_TILEH,
-        "Tile resource windows horizontally",
-        "Tile resource windows horizontally" )
+        "Tile resource windows horizontally.",
+        "Tile resource windows horizontally." )
 pick(   WRE_HINT_MDI_TILEV,
-        "Tile resource windows vertically",
-        "Tile resource windows vertically" )
+        "Tile resource windows vertically.",
+        "Tile resource windows vertically." )
 pick(   WRE_HINT_MDI_ARRANGE,
-        "Arrange resource icons",
-        "Arrange resource icons" )
+        "Arrange resource icons.",
+        "Arrange resource icons." )
 pick(   WRE_HINT_ABOUT,
-        "Display about box",
-        "Display about box" )
+        "Display about box.",
+        "Display about box." )
 pick(   WRE_HINT_HELP,
-        "Display help text",
-        "Display help text" )
+        "Display help text.",
+        "Display help text." )
 pick(   WRE_HINT_DELETE,
-        "Delete selected object",
-        "Delete selected object" )
+        "Delete selected object.",
+        "Delete selected object." )
 pick(   WRE_HINT_CUT,
-        "Cut selected object to clipboard",
-        "Cut selected object to clipboard" )
+        "Cut selected object to clipboard.",
+        "Cut selected object to clipboard." )
 pick(   WRE_HINT_PASTE,
-        "Paste object from clipboard",
-        "Paste object from clipboard" )
+        "Paste object from clipboard.",
+        "Paste object from clipboard." )
 pick(   WRE_HINT_COPY,
-        "Copy selected object to clipboard",
-        "Copy selected object to clipboard" )
+        "Copy selected object to clipboard.",
+        "Copy selected object to clipboard." )
 pick(   WRE_HINT_FILEMENU,
-        "Create or open a new file",
-        "Create or open a new file" )
+        "Create or open a new file.",
+        "Create or open a new file." )
 pick(   WRE_HINT_EDITMENU,
-        "Edit selected resource",
-        "Edit selected resource" )
+        "Edit selected resource.",
+        "Edit selected resource." )
 pick(   WRE_HINT_RESMENU,
-        "Manipulate resources",
-        "Manipulate resources" )
+        "Manipulate resources.",
+        "Manipulate resources." )
 pick(   WRE_HINT_NEWMENU,
-        "Create new resources",
-        "Create new resources" )
+        "Create new resources.",
+        "Create new resources." )
 pick(   WRE_HINT_WINDOWMENU,
-        "Manipulate resource windows",
-        "Manipulate resource windows" )
+        "Manipulate resource windows.",
+        "Manipulate resource windows." )
 pick(   WRE_HINT_HELPMENU,
-        "Display help or program info",
-        "Display help or program info" )
+        "Display help or program information.",
+        "Display help or program information." )
 pick(   WRE_HINT_MDIMSG,
-        "Switch to Resource #%d",
-        "Switch to Resource #%d" )
+        "Switch to Resource #%d.",
+        "Switch to Resource #%d." )
 pick(   WRE_HINT_EDITSYMMENU,
-        "Load, edit, or write symbols",
-        "Load, edit, or write symbols" )
+        "Load, edit, or write symbols.",
+        "Load, edit, or write symbols." )
 pick(   WRE_HINT_LOAD_SYMBOLS,
-        "Load symbols from a file",
-        "Load symbols from a file" )
+        "Load symbols from a file.",
+        "Load symbols from a file." )
 pick(   WRE_HINT_VIEW_SYMBOLS,
-        "Edit symbols",
-        "Edit symbols" )
+        "Edit symbols.",
+        "Edit symbols." )
 pick(   WRE_HINT_WRITE_SYMBOLS,
-        "Write symbols to a file",
-        "Write symbols to a file" )
+        "Write symbols to a file.",
+        "Write symbols to a file." )
 
 // WRETOOLB.C
 pick(   WRE_SYSMENUMOVE,

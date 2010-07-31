@@ -8,82 +8,82 @@ pick(   W_STATUSNOTCREATED,
         "Could not create status line.",
         "Could not create status line." )
 pick(   W_READYMSG,
-        "Ready",
-        "Ready" )
+        "Ready.",
+        "Ready." )
 
 // WHINTS.C
 pick(   W_ACC_CLEAR,
-        "Clear the accelerator table",
-        "Clear the accelerator table" )
+        "Clear the accelerator table.",
+        "Clear the accelerator table." )
 pick(   W_ACC_UPDATE,
-        "Update the file with this accelerator table",
-        "Update the file with this accelerator table" )
+        "Update the file with this accelerator table.",
+        "Update the file with this accelerator table." )
 pick(   W_ACC_SAVE,
-        "Save this accelerator table",
-        "Save this accelerator table" )
+        "Save this accelerator table.",
+        "Save this accelerator table." )
 pick(   W_ACC_SAVEAS,
-        "Save this accelerator table to a different file",
-        "Save this accelerator table to a different file" )
+        "Save this accelerator table to a different file.",
+        "Save this accelerator table to a different file." )
 pick(   W_ACC_SAVEINTO,
-        "Copy this accelerator table into a different file",
-        "Copy this accelerator table into a different file" )
+        "Copy this accelerator table into a different file.",
+        "Copy this accelerator table into a different file." )
 pick(   W_ACC_EXIT,
-        "Exit the accelerator table editor",
-        "Exit the accelerator table editor" )
+        "Exit the accelerator table editor.",
+        "Exit the accelerator table editor." )
 pick(   W_ACC_CUT,
-        "Cut the accelerator table to the clipboard",
-        "Cut the accelerator table to the clipboard" )
+        "Cut the accelerator table to the clipboard.",
+        "Cut the accelerator table to the clipboard." )
 pick(   W_ACC_COPY,
-        "Copy the accelerator table to the clipboard",
-        "Copy the accelerator table to the clipboard" )
+        "Copy the accelerator table to the clipboard.",
+        "Copy the accelerator table to the clipboard." )
 pick(   W_ACC_PASTE,
-        "Paste the accelerator table from the clipboard",
-        "Paste the accelerator table from the clipboard" )
+        "Paste the accelerator table from the clipboard.",
+        "Paste the accelerator table from the clipboard." )
 pick(   W_ACC_DELETE,
-        "Delete an accelerator item from the accelerator",
-        "Delete an accelerator item from the accelerator" )
+        "Delete an accelerator item from the accelerator.",
+        "Delete an accelerator item from the accelerator." )
 pick(   W_ACC_SHOWRIBBON,
-        "Show/Hide the Toolbar",
-        "Show/Hide the Toolbar" )
+        "Show/hide the toolbar.",
+        "Show/hide the toolbar." )
 pick(   W_ACC_SYMBOLS,
-        "Edit Symbols",
-        "Edit Symbols" )
+        "Edit Symbols.",
+        "Edit Symbols." )
 pick(   W_ACC_LOAD_SYMBOLS,
-        "Load Symbols",
-        "Load Symbols" )
+        "Load Symbols.",
+        "Load Symbols." )
 pick(   W_ACC_RENAME,
-        "Rename the accelerator table",
-        "Rename the accelerator table" )
+        "Rename the accelerator table.",
+        "Rename the accelerator table." )
 pick(   W_ACC_MEM_FLAGS,
-        "Modify the accelerator table memory options",
-        "Modify the accelerator table memory options" )
+        "Modify the accelerator table memory options.",
+        "Modify the accelerator table memory options." )
 pick(   W_ACC_NEWITEM,
-        "Insert a new accelerator item",
-        "Insert a new accelerator item" )
+        "Insert a new accelerator item.",
+        "Insert a new accelerator item." )
 pick(   W_ACC_KEYVALUE,
-        "Set the accelerator item's key value with keyboard",
-        "Set the accelerator item's key value with keyboard" )
+        "Set the accelerator item's key value with keyboard.",
+        "Set the accelerator item's key value with keyboard." )
 pick(   W_ACC_ABOUT,
-        "Display the about box",
-        "Display the about box" )
+        "Display the about box.",
+        "Display the about box." )
 pick(   W_ACC_HELP,
-        "Display help text",
-        "Display help text" )
+        "Display help text.",
+        "Display help text." )
 pick(   W_ACC_FILEMENU,
-        "Clear or update the accelerator table",
-        "Clear or update the accelerator table" )
+        "Clear or update the accelerator table.",
+        "Clear or update the accelerator table." )
 pick(   W_ACC_EDITMENU,
-        "Edit the accelerator table and its items",
-        "Edit the accelerator table and its items" )
+        "Edit the accelerator table and its items.",
+        "Edit the accelerator table and its items." )
 pick(   W_ACC_RESMENU,
-        "Manipulate accelerator table settings",
-        "Manipulate accelerator table settings" )
+        "Manipulate accelerator table settings.",
+        "Manipulate accelerator table settings." )
 pick(   W_ACC_ACCMENU,
-        "Create accelerator items",
-        "Create accelerator items" )
+        "Create accelerator items.",
+        "Create accelerator items." )
 pick(   W_ACC_HELPMENU,
-        "Display help or editor info",
-        "Display help or editor info" )
+        "Display help or editor info.",
+        "Display help or editor info." )
 
 // WNEWITEM.C
 pick(   W_INVALIDACCEL,

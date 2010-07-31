@@ -8,8 +8,8 @@ pick(   W_STATUSNOTCREATED,
         "Could not create status line.",
         "Could not create status line." )
 pick(   W_READYMSG,
-        "Ready",
-        "Ready" )
+        "Ready.",
+        "Ready." )
 
 // WEDIT.C
 pick(   W_CHANGEMODIFIEDMENUITEM,
@@ -18,71 +18,71 @@ pick(   W_CHANGEMODIFIEDMENUITEM,
 
 // WHINTS.C
 pick(   W_STR_CLEAR,
-        "Clear the string table",
-        "Clear the string table" );
+        "Clear the string table.",
+        "Clear the string table." );
 pick(   W_STR_UPDATE,
-        "Update the file with this string table",
-        "Update the file with this string table" )
+        "Update the file with this string table.",
+        "Update the file with this string table." )
 pick(   W_STR_SAVE,
-        "Save this string table",
-        "Save this string table" )
+        "Save this string table.",
+        "Save this string table." )
 pick(   W_STR_SAVEAS,
-        "Save this string table to a different file",
-        "Save this string table to a different file" )
+        "Save this string table to a different file.",
+        "Save this string table to a different file." )
 pick(   W_STR_SAVEINTO,
-        "Copy this string table into a different file",
-        "Copy this string table into a different file" )
+        "Copy this string table into a different file.",
+        "Copy this string table into a different file." )
 pick(   W_STR_EXIT,
-        "Exit the string table editor",
-        "Exit the string table editor" )
+        "Exit the string table editor.",
+        "Exit the string table editor." )
 pick(   W_STR_CUT,
-        "Cut the string table to the clipboard",
-        "Cut the string table to the clipboard" )
+        "Cut the string table to the clipboard.",
+        "Cut the string table to the clipboard." )
 pick(   W_STR_COPY,
-        "Copy the string table to the clipbord",
-        "Copy the string table to the clipbord" )
+        "Copy the string table to the clipbord.",
+        "Copy the string table to the clipbord." )
 pick(   W_STR_PASTE,
-        "Paste the string table from the clipboard",
-        "Paste the string table from the clipboard" )
+        "Paste the string table from the clipboard.",
+        "Paste the string table from the clipboard." )
 pick(   W_STR_DELETE,
-        "Delete a string from the string table",
-        "Delete a string from the string table" )
+        "Delete a string from the string table.",
+        "Delete a string from the string table." )
 pick(   W_STR_SHOWRIBBON,
-        "Show/Hide the Toolbar",
-        "Show/Hide the Toolbar" )
+        "Show/hide the toolbar.",
+        "Show/hide the toolbar." )
 pick(   W_STR_SYMBOLS,
-        "Edit Symbols",
-        "Edit Symbols" )
+        "Edit Symbols.",
+        "Edit Symbols." )
 pick(   W_STR_LOAD_SYMBOLS,
-        "Load Symbols",
-        "Load Symbols" )
+        "Load Symbols.",
+        "Load Symbols." )
 pick(   W_STR_MEM_FLAGS,
-        "Modify the string table memory options",
-        "Modify the string table memory options" )
+        "Modify the string table memory options.",
+        "Modify the string table memory options." )
 pick(   W_STR_NEWITEM,
-        "Insert a new string",
-        "Insert a new string" )
+        "Insert a new string.",
+        "Insert a new string." )
 pick(   W_STR_ABOUT,
-        "Display the about box",
-        "Display the about box" )
+        "Display the about box.",
+        "Display the about box." )
 pick(   W_STR_HELP,
-        "Display help text",
-        "Display help text" )
+        "Display help text.",
+        "Display help text." )
 pick(   W_STR_FILEMENU,
-        "Clear or update the string table",
-        "Clear or update the string table" )
+        "Clear or update the string table.",
+        "Clear or update the string table." )
 pick(   W_STR_EDITMENU,
-        "Edit the string table and its items",
-        "Edit the string table and its items" )
+        "Edit the string table and its items.",
+        "Edit the string table and its items." )
 pick(   W_STR_RESMENU,
-        "Manipulate string table settings",
-        "Manipulate string table settings" )
+        "Manipulate string table settings.",
+        "Manipulate string table settings." )
 pick(   W_STR_STRMENU,
-        "Create string table items",
-        "Create string table items" )
+        "Create string table items.",
+        "Create string table items." )
 pick(   W_STR_HELPMENU,
-        "Display help or editor info",
-        "Display help or editor info" )
+        "Display help or editor info.",
+        "Display help or editor info." )
 
 // WRIBBON.C
 pick(   W_SHOWTOOLBAR,

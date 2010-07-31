@@ -28,284 +28,293 @@ pick(   WDE_READYMSG,
 
 // WREHINTS.C
 pick(   WDE_HINT_NEW_RES,
-        "Create a new resource",
-        "Create a new resource" )
+        "Create a new resource.",
+        "Create a new resource." )
 pick(   WDE_HINT_OPEN_RES,
-        "Open a file",
-        "Open a file" )
+        "Open a file.",
+        "Open a file." )
 pick(   WDE_HINT_SAVE_RES,
-        "Save this file",
-        "Save this file" )
+        "Save this file.",
+        "Save this file." )
 pick(   WDE_HINT_SAVEAS_RES,
-        "Save this file to a different file",
-        "Save this file to a different file" )
+        "Save this file to a different file.",
+        "Save this file to a different file." )
 pick(   WDE_HINT_MS_CUSTOM,
-        "Load a Microsoft custom control",
-        "Load a Microsoft custom control" )
+        "Load a Microsoft custom control.",
+        "Load a Microsoft custom control." )
 pick(   WDE_HINT_BOR_CUSTOM,
-        "Load a Borland custom control library",
-        "Load a Borland custom control library" )
+        "Load a Borland custom control library.",
+        "Load a Borland custom control library." )
 pick(   WDE_HINT_LOADLIB,
-        "Load a Windows DLL",
-        "Load a Windows DLL" )
+        "Load a Windows DLL.",
+        "Load a Windows DLL." )
 pick(   WDE_HINT_SELCUST1,
-        "Select custom control one",
-        "Select custom control one" )
+        "Select custom control one.",
+        "Select custom control one." )
 pick(   WDE_HINT_SELCUST2,
-        "Select custom control two",
-        "Select custom control two" )
+        "Select custom control two.",
+        "Select custom control two." )
 pick(   WDE_HINT_LOAD_SYMBOLS,
-        "Load symbols from a file",
-        "Load symbols from a file" )
+        "Load symbols from a file.",
+        "Load symbols from a file." )
 pick(   WDE_HINT_VIEW_SYMBOLS,
-        "Edit symbols",
-        "Edit symbols" )
+        "Edit symbols.",
+        "Edit symbols." )
 pick(   WDE_HINT_WRITE_SYMBOLS,
-        "Write symbols to a file",
-        "Write symbols to a file" )
+        "Write symbols to a file.",
+        "Write symbols to a file." )
 pick(   WDE_HINT_EXIT,
-        "Exit the Open Watcom Dialog Editor",
-        "Exit the Open Watcom Dialog Editor" )
+        "Exit the Open Watcom Dialog Editor.",
+        "Exit the Open Watcom Dialog Editor." )
 pick(   WDE_HINT_SAME_WIDTH,
-        "Change the width of selected objects",
-        "Change the width of selected objects" )
+        "Change the width of selected objects.",
+        "Change the width of selected objects." )
 pick(   WDE_HINT_SAME_HEIGHT,
-        "Change the height of selected objects",
-        "Change the height of selected objects" )
+        "Change the height of selected objects.",
+        "Change the height of selected objects." )
 pick(   WDE_HINT_SAME_SIZE,
-        "Change the size of selected objects",
-        "Change the size of selected objects" )
+        "Change the size of selected objects.",
+        "Change the size of selected objects." )
+pick(   WDE_HINT_SPACE_HORZ,
+        "Move selected objects so that they are spaced evenly in the horizontal direction.",
+        "Move selected objects so that they are spaced evenly in the horizontal direction." )
+pick(   WDE_HINT_SPACE_VERT,
+        "Move selected objects so that they are spaced evenly in the vertical direction.",
+        "Move selected objects so that they are spaced evenly in the vertical direciton." )
 pick(   WDE_HINT_SIZETOTEXT,
-        "Size the selected control to its text",
-        "Size the selected control to its text" )
+        "Size the selected control to its text.",
+        "Size the selected control to its text." )
 pick(   WDE_HINT_GOTO_OBJECT,
-        "Scroll the current object into view",
-        "Scroll the current object into view" )
+        "Scroll the current object into view.",
+        "Scroll the current object into view." )
 pick(   WDE_HINT_DEFINEOBJECT,
-        "Modify object attributes",
-        "Modify object attributes" )
+        "Modify object attributes.",
+        "Modify object attributes." )
 pick(   WDE_HINT_GEN_DEFINEOBJECT,
-        "Advanced modify object attributes",
-        "Advanced modify object attributes" )
+        "Advanced modify object attributes.",
+        "Advanced modify object attributes." )
 pick(   WDE_HINT_OPTIONS,
-        "Set program options",
-        "Set program options" )
+        "Set program options.",
+        "Set program options." )
 pick(   WDE_HINT_SELECT_DIALOG,
-        "Select dialog(s) from a resource",
-        "Select dialog(s) from a resource" )
+        "Select dialog(s) from a resource.",
+        "Select dialog(s) from a resource." )
 pick(   WDE_HINT_REMOVE_DIALOG,
-        "Remove dialog(s) from a resource",
-        "Remove dialog(s) from a resource" )
+        "Remove dialog(s) from a resource.",
+        "Remove dialog(s) from a resource." )
 pick(   WDE_HINT_DIALOG_RESTORE,
-        "Revert dialog to state after last save operation",
-        "Revert dialog to state after last save operation" )
+        "Revert dialog to state after last save operation.",
+        "Revert dialog to state after last save operation." )
 pick(   WDE_HINT_DIALOG_NEW,
-        "Create a new dialog",
-        "Create a new dialog" )
+        "Create a new dialog.",
+        "Create a new dialog." )
 pick(   WDE_HINT_DIALOG_SAVE,
-        "Save this dialog",
-        "Save this dialog" )
+        "Save this dialog.",
+        "Save this dialog." )
 pick(   WDE_HINT_DIALOG_SAVEAS,
-        "Save this dialog to a different file",
-        "Save this dialog to a different file" )
+        "Save this dialog to a different file.",
+        "Save this dialog to a different file." )
 pick(   WDE_HINT_DIALOG_SAVEINTO,
-        "Copy this dialog into a different file",
-        "Copy this dialog into a different file" )
+        "Copy this dialog into a different file.",
+        "Copy this dialog into a different file." )
 pick(   WDE_HINT_TEST_MODE,
-        "Test the current dialog",
-        "Test the current dialog" )
+        "Test the current dialog.",
+        "Test the current dialog." )
 pick(   WDE_HINT_SET_ORDER,
-        "Order the controls in the current dialog",
-        "Order the controls in the current dialog" )
+        "Order the controls in the current dialog.",
+        "Order the controls in the current dialog." )
 pick(   WDE_HINT_SET_TABS,
-        "Set tab stops in the current dialog",
-        "Set tab stops in the current dialog" )
+        "Set tab stops in the current dialog.",
+        "Set tab stops in the current dialog." )
 pick(   WDE_HINT_SET_GROUPS,
-        "Set groups in the current dialog",
-        "Set groups in the current dialog" )
+        "Set groups in the current dialog.",
+        "Set groups in the current dialog." )
 pick(   WDE_HINT_SELECT_MODE,
-        "Use pointer to select objects",
-        "Use pointer to select objects" )
+        "Use pointer to select objects.",
+        "Use pointer to select objects." )
 pick(   WDE_HINT_DIALOG_TOOL,
-        "Use pointer to create a dialog",
-        "Use pointer to create a dialog" )
+        "Use pointer to create a dialog.",
+        "Use pointer to create a dialog." )
 pick(   WDE_HINT_PBUTTON_TOOL,
-        "Use pointer to create a push button",
-        "Use pointer to create a push button" )
+        "Use pointer to create a push button.",
+        "Use pointer to create a push button." )
 pick(   WDE_HINT_CBUTTON_TOOL,
-        "Use pointer to create a check box",
-        "Use pointer to create a check box" )
+        "Use pointer to create a check box.",
+        "Use pointer to create a check box." )
 pick(   WDE_HINT_RBUTTON_TOOL,
-        "Use pointer to create a radio button",
-        "Use pointer to create a radio button" )
+        "Use pointer to create a radio button.",
+        "Use pointer to create a radio button." )
 pick(   WDE_HINT_GBUTTON_TOOL,
-        "Use pointer to create a group box",
-        "Use pointer to create a group box" )
+        "Use pointer to create a group box.",
+        "Use pointer to create a group box." )
 pick(   WDE_HINT_FRAME_TOOL,
-        "Use pointer to create a frame",
-        "Use pointer to create a frame" )
+        "Use pointer to create a frame.",
+        "Use pointer to create a frame." )
 pick(   WDE_HINT_TEXT_TOOL,
-        "Use pointer to create text",
-        "Use pointer to create text" )
+        "Use pointer to create text.",
+        "Use pointer to create text." )
 pick(   WDE_HINT_ICON_TOOL,
-        "Use pointer to create an icon",
-        "Use pointer to create an icon" )
+        "Use pointer to create an icon.",
+        "Use pointer to create an icon." )
 pick(   WDE_HINT_EDIT_TOOL,
-        "Use pointer to create an edit box",
-        "Use pointer to create an edit box" )
+        "Use pointer to create an edit box.",
+        "Use pointer to create an edit box." )
 pick(   WDE_HINT_LISTBOX_TOOL,
-        "Use pointer to create a list box",
-        "Use pointer to create a list box" )
+        "Use pointer to create a list box.",
+        "Use pointer to create a list box." )
 pick(   WDE_HINT_COMBOBOX_TOOL,
-        "Use pointer to create a combo box",
-        "Use pointer to create a combo box" )
+        "Use pointer to create a combo box.",
+        "Use pointer to create a combo box." )
 pick(   WDE_HINT_HSCROLL_TOOL,
-        "Use pointer to create a horizontal scroll bar",
-        "Use pointer to create a horizontal scroll bar" )
+        "Use pointer to create a horizontal scroll bar.",
+        "Use pointer to create a horizontal scroll bar." )
 pick(   WDE_HINT_VSCROLL_TOOL,
-        "Use pointer to create a vertical scroll bar",
-        "Use pointer to create a vertical scroll bar" )
+        "Use pointer to create a vertical scroll bar.",
+        "Use pointer to create a vertical scroll bar." )
 pick(   WDE_HINT_SIZEBOX_TOOL,
-        "Use pointer to create a size box",
-        "Use pointer to create a size box" )
+        "Use pointer to create a size box.",
+        "Use pointer to create a size box." )
 pick(   WDE_HINT_STATUSBAR_TOOL,
-        "Use pointer to create a status bar",
-        "Use pointer to create a status bar" )
+        "Use pointer to create a status bar.",
+        "Use pointer to create a status bar." )
 pick(   WDE_HINT_LISTVIEW_TOOL,
-        "Use pointer to create a list view",
-        "Use pointer to create a list view" )
+        "Use pointer to create a list view.",
+        "Use pointer to create a list view." )
 pick(   WDE_HINT_TREEVIEW_TOOL,
-        "Use pointer to create a tree view",
-        "Use pointer to create a tree view" )
+        "Use pointer to create a tree view.",
+        "Use pointer to create a tree view." )
 pick(   WDE_HINT_TABCNTL_TOOL,
-        "Use pointer to create a tab control",
-        "Use pointer to create a tab control" )
+        "Use pointer to create a tab control.",
+        "Use pointer to create a tab control." )
 pick(   WDE_HINT_ANIMATE_TOOL,
-        "Use pointer to create an animation control",
-        "Use pointer to create an animation control" )
+        "Use pointer to create an animation control.",
+        "Use pointer to create an animation control." )
 pick(   WDE_HINT_UPDOWN_TOOL,
-        "Use pointer to create an up/down control",
-        "Use pointer to create an up/down control" )
+        "Use pointer to create an up/down control.",
+        "Use pointer to create an up/down control." )
 pick(   WDE_HINT_TRACKBAR_TOOL,
-        "Use pointer to create a trackbar",
-        "Use pointer to create a trackbar" )
+        "Use pointer to create a trackbar.",
+        "Use pointer to create a trackbar." )
 pick(   WDE_HINT_PROGRESS_TOOL,
-        "Use pointer to create a progress bar",
-        "Use pointer to create a progress bar" )
+        "Use pointer to create a progress bar.",
+        "Use pointer to create a progress bar." )
 pick(   WDE_HINT_HOTKEY_TOOL,
-        "Use pointer to create a hot key control",
-        "Use pointer to create a hot key control" )
+        "Use pointer to create a hot key control.",
+        "Use pointer to create a hot key control." )
 pick(   WDE_HINT_HEADER_TOOL,
-        "Use pointer to create a header control",
-        "Use pointer to create a header control" )
+        "Use pointer to create a header control.",
+        "Use pointer to create a header control." )
 pick(   WDE_HINT_CUSTOM1_TOOL,
-        "Use pointer to create custom control one",
-        "Use pointer to create custom control one" )
+        "Use pointer to create custom control one.",
+        "Use pointer to create custom control one." )
 pick(   WDE_HINT_CUSTOM2_TOOL,
-        "Use pointer to create custom control two",
-        "Use pointer to create custom control two" )
+        "Use pointer to create custom control two.",
+        "Use pointer to create custom control two." )
 pick(   WDE_HINT_STICKY_TOOLS,
-        "Toggle select mode after create",
-        "Toggle select mode after create" )
+        "Toggle select mode after create.",
+        "Toggle select mode after create." )
 pick(   WDE_HINT_SHOW_TOOLS,
-        "Show/Hide Toolbox",
-        "Show/Hide Toolbox" )
+        "Show/hide the toolbox.",
+        "Show/hide the toolbox." )
 pick(   WDE_HINT_SHOW_RIBBON,
-        "Show/Hide Toolbar",
-        "Show/Hide Toolbar" )
+        "Show/hide the toolbar.",
+        "Show/hide the toolbar." )
 pick(   WDE_HINT_MDI_CASCADE,
-        "Cascade resource windows",
-        "Cascade resource windows" )
+        "Cascade resource windows.",
+        "Cascade resource windows." )
 pick(   WDE_HINT_MDI_TILEH,
-        "Tile resource windows horizontally",
-        "Tile resource windows horizontally" )
+        "Tile resource windows horizontally.",
+        "Tile resource windows horizontally." )
 pick(   WDE_HINT_MDI_TILEV,
-        "Tile resource windows vertically",
-        "Tile resource windows vertically" )
+        "Tile resource windows vertically.",
+        "Tile resource windows vertically." )
 pick(   WDE_HINT_MDI_ARRANGE,
-        "Arrange resource icons",
-        "Arrange resource icons" )
+        "Arrange resource icons.",
+        "Arrange resource icons." )
 pick(   WDE_HINT_ABOUT,
-        "Display about box",
-        "Display about box" )
+        "Display about box.",
+        "Display about box." )
 pick(   WDE_HINT_HELP,
-        "Display help text",
-        "Display help text" )
+        "Display help text.",
+        "Display help text." )
 pick(   WDE_HINT_DELETEOBJECT,
-        "Delete selected object(s)",
-        "Delete selected object(s)" )
+        "Delete selected object(s).",
+        "Delete selected object(s)." )
 pick(   WDE_HINT_CUTOBJECT,
-        "Cut selected object(s) to clipboard",
-        "Cut selected object(s) to clipboard" )
+        "Cut selected object(s) to clipboard.",
+        "Cut selected object(s) to clipboard." )
 pick(   WDE_HINT_PASTEOBJECT,
-        "Paste object(s) from clipboard",
-        "Paste object(s) from clipboard" )
+        "Paste object(s) from clipboard.",
+        "Paste object(s) from clipboard." )
 pick(   WDE_HINT_COPYOBJECT,
-        "Copy selected object(s) to clipboard",
-        "Copy selected object(s) to clipboard" )
+        "Copy selected object(s) to clipboard.",
+        "Copy selected object(s) to clipboard." )
 pick(   WDE_HINT_FMLEFT,
-        "Align the left sides of selected objects",
-        "Align the left sides of selected objects" )
+        "Align the left sides of selected objects.",
+        "Align the left sides of selected objects." )
 pick(   WDE_HINT_FMHCENTRE,
-        "Align the horizontal centres of selected objects",
-        "Align the horizontal centres of selected objects" )
+        "Align the horizontal centres of selected objects.",
+        "Align the horizontal centres of selected objects." )
 pick(   WDE_HINT_FMRIGHT,
-        "Align the right sides of selected objects",
-        "Align the right sides of selected objects" )
+        "Align the right sides of selected objects.",
+        "Align the right sides of selected objects." )
 pick(   WDE_HINT_FMTOP,
-        "Align the tops of the selected objects",
-        "Align the tops of the selected objects" )
+        "Align the tops of the selected objects.",
+        "Align the tops of the selected objects." )
 pick(   WDE_HINT_FMVCENTRE,
-        "Align the vertical centres of the selected objects",
-        "Align the vertical centres of the selected objects" )
+        "Align the vertical centres of the selected objects.",
+        "Align the vertical centres of the selected objects." )
 pick(   WDE_HINT_FMBOTTOM,
-        "Align the bottoms of the selected objects",
-        "Align the bottoms of the selected objects" )
+        "Align the bottoms of the selected objects.",
+        "Align the bottoms of the selected objects." )
 pick(   WDE_HINT_DDE_CLEAR,
-        "Clear the resource of all the displayed objects",
-        "Clear the resource of all the displayed objects" )
+        "Clear the resource of all the displayed objects.",
+        "Clear the resource of all the displayed objects." )
 pick(   WDE_HINT_DDE_UPDATE_PRJ,
-        "Update the file with this dialog",
-        "Update the file with this dialog" )
+        "Update the file with this dialog.",
+        "Update the file with this dialog." )
 pick(   WDE_HINT_FILEMENU,
-        "Create or open a new file",
-        "Create or open a new file" )
+        "Create or open a new file.",
+        "Create or open a new file." )
 pick(   WDE_HINT_LOADCUSTMENU,
-        "Load custom controls",
-        "Load custom controls" )
+        "Load custom controls.",
+        "Load custom controls." )
 pick(   WDE_HINT_EDITSYMMENU,
-        "Load, edit, or write symbols",
-        "Load, edit, or write symbols" )
+        "Load, edit, or write symbols.",
+        "Load, edit, or write symbols." )
 pick(   WDE_HINT_EDITMENU,
-        "Modify, align, or select objects",
-        "Modify, align, or select objects" )
+        "Modify, align, or select objects.",
+        "Modify, align, or select objects." )
 pick(   WDE_HINT_ALIGNMENU,
-        "Align select objects",
-        "Align select objects" )
+        "Align selected objects.",
+        "Align selected objects." )
 pick(   WDE_HINT_SIZEMENU,
-        "Size select objects",
-        "Size select objects" )
+        "Size selected objects.",
+        "Size selected objects." )
+pick(   WDE_HINT_SPACEMENU,
+        "Move selected objects so that they are spaced evenly.",
+        "Move selected objects so that they are spaced evenly." )
 pick(   WDE_HINT_DIALOGMENU,
-        "Test, revert, or save dialogs",
-        "Test, revert, or save dialogs" )
+        "Test, revert, or save dialogs.",
+        "Test, revert, or save dialogs." )
 pick(   WDE_HINT_CONTROLMENU,
-        "Select objects to create",
-        "Select objects to create" )
+        "Select objects to create.",
+        "Select objects to create." )
 pick(   WDE_HINT_COMMCONTROLMENU,
-        "Select common control objects to create",
-        "Select common control objects to create" )
+        "Select common control objects to create.",
+        "Select common control objects to create." )
 pick(   WDE_HINT_WINDOWMENU,
-        "Manipulate windows",
-        "Manipulate windows" )
+        "Manipulate windows.",
+        "Manipulate windows." )
 pick(   WDE_HINT_HELPMENU,
-        "Display help",
-        "Display help" )
+        "Display help.",
+        "Display help." )
 pick(   WDE_HINT_DDEFILEMENU,
-        "Clear or update a new file",
-        "Clear or update a new file" )
+        "Clear or update a new file.",
+        "Clear or update a new file." )
 pick(   WDE_HINT_MDIMSG,
-        "Switch to Resource #%d",
-        "Switch to Resource #%d" )
+        "Switch to Resource #%d.",
+        "Switch to Resource #%d." )
 
 // WDETOOLB.C
 pick(   WDE_SYSMENUMOVE,

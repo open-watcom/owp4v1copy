@@ -72,7 +72,7 @@ BEGIN
     POPUP "&Help"
     BEGIN
         MENUITEM "&Contents", SPY_HELP_CONTENTS
-        MENUITEM "&Search for Help on...", SPY_HELP_SRCH
+        MENUITEM "&Search for Help On...", SPY_HELP_SRCH
         MENUITEM SEPARATOR
         MENUITEM "&How to Use Help", SPY_HELP_ON_HELP
         MENUITEM SEPARATOR
