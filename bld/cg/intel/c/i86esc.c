@@ -88,7 +88,7 @@ extern  unsigned        SavePendingLine(unsigned);
 extern bool             AskIfUniqueLabel(label_handle);
 extern bool             UseImportForm(fe_attr);
 extern bool             AskIfCommonLabel(label_handle);
-extern void             OutSpecialCommon(int,fix_class,bool);
+extern void             OutSpecialCommon(import_handle,fix_class,bool);
 
 extern void             DoLblRef( label_handle lbl, seg_id seg, offset val,
                                                             escape_class kind );
@@ -411,7 +411,7 @@ static  void    OutCodeDisp( label_handle lbl, fix_class f,
             _OutFarOff( 0 );
         }
     } else if( AskIfCommonLabel( lbl ) ) {
-        OutSpecialCommon( (int)sym, f, rel );
+        OutSpecialCommon( (import_handle)sym, f, rel );
         _OutFarOff( 0 );
     } else if( sym != NULL && UseImportForm( FEAttr( sym ) ) ) { /* 90-05-22 */
         OutImport( sym, f, rel );
@@ -520,7 +520,7 @@ static  label_handle    ExpandObj( byte *cur, int explen ) {
                 val = 0;
             } else {
                 if( AskIfCommonLabel( lbl ) ) {
-                    OutSpecialCommon( (int)AskForLblSym( lbl ), class, rel );
+                    OutSpecialCommon( (import_handle)AskForLblSym( lbl ), class, rel );
                 } else {
                     OutReloc( seg, class, rel );
                 }
@@ -627,7 +627,7 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
             OutRTImport( (int)sym, F_OFFSET );
             lc = 0;
         } else if( AskIfCommonLabel( lbl ) ) {
-            OutSpecialCommon( (int)sym, F_OFFSET, FALSE );
+            OutSpecialCommon( (import_handle)sym, F_OFFSET, FALSE );
             lc = 0;
         } else if( sym != NULL && UseImportForm( FEAttr( sym ) ) ) {
             OutImport( sym, F_OFFSET, FALSE );

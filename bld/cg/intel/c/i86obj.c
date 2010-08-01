@@ -53,11 +53,11 @@
     #define _OMF_32
 #endif
 
-#define _NIDX_NULL      1   // segment NULL
-#define _NIDX_CODE      2   // segment "CODE"
-#define _NIDX_DATA      3   // segment "DATA"
-#define _NIDX_BSS       4   // segment "BSS"
-#define _NIDX_TLS       5   // segment "TLS"
+#define _NIDX_NULL      1   // lname ""
+#define _NIDX_CODE      2   // lname "CODE"
+#define _NIDX_DATA      3   // lname "DATA"
+#define _NIDX_BSS       4   // lname "BSS"
+#define _NIDX_TLS       5   // lname "TLS"
 
 #define MODEST_HDR      50
 #define INCREMENT_HDR   50
@@ -99,7 +99,7 @@ typedef struct line_num_entry {
 
 typedef struct lname_cache {
     struct lname_cache  *next;
-    unsigned            idx;
+    omf_idx             idx;
     unsigned_8          name[1];        /* var sized, first byte is length */
 } lname_cache;
 
@@ -136,7 +136,7 @@ extern  void            OpenObj( void );
 extern  char            *CopyStr(char*,char*);
 extern  void            EmptyQueue( void );
 extern  uint            Length(pointer);
-extern  void            TellCommonLabel(label_handle, int );
+extern  void            TellCommonLabel(label_handle,import_handle);
 extern  void            TellUnreachLabels(void);
 extern  void            KillLblRedirects( void );
 extern  void            DoOutObjectName(sym_handle,void(*)(char*,void*),void*,import_type);
@@ -166,12 +166,12 @@ extern  bool            Used87;
 extern  byte            OptForSize;
 
 /* Forward ref's */
-static  void            DumpImportResolve( sym_handle sym, import_handle idx );
+static  void            DumpImportResolve( sym_handle sym, omf_idx idx );
 
 static  array_control   *Out;
 static  byte            *OutBuff;
 static  bool            GenStaticImports;
-static  import_handle   ImportHdl;
+static  omf_idx         ImportHdl;
 static  array_control   *Imports;
 static  array_control   *SegInfo;
 static  abspatch        *AbsPatches;
@@ -182,29 +182,29 @@ static  long_offset     CodeSize;
 static  long_offset     DataSize;
 static  long_offset     DbgTypeSize;
 static  index_rec       *CurrSeg;
-static  int             GroupIndex;
-static  int             DGroupIndex;
-static  int             SegmentIndex;
-static  int             PrivateIndexRW;
-static  int             PrivateIndexRO;
-static  int             CodeGroupGIdx;
-static  int             CodeGroupNIdx;
+static  omf_idx         GroupIndex;
+static  omf_idx         DGroupIndex;
+static  omf_idx         SegmentIndex;
+static  omf_idx         PrivateIndexRW;
+static  omf_idx         PrivateIndexRO;
+static  omf_idx         CodeGroupGIdx;
+static  omf_idx         CodeGroupNIdx;
 static  char            CodeGroup[80];
 static  char            DataGroup[80];
 static  offset          SelStart;
-static  unsigned_16     SelIdx;
-static  unsigned        BackSegIdx = BACKSEGS;
-static  import_handle   FPPatchImp[FPP_NUMBER_OF_TYPES];
+static  omf_idx         SelIdx;
+static  seg_id          BackSegIdx = BACKSEGS;
+static  omf_idx         FPPatchImp[FPP_NUMBER_OF_TYPES];
 static  int             SegsDefd;
 static  bool            NoDGroup;
 static  short           CurrFNo;
 #ifdef _OMF_32
-static  int             FlatGIndex;
-static  int             FlatNIndex;
+static  omf_idx         FlatGIndex;
+static  omf_idx         FlatNIndex;
 #endif
-static  int             TLSGIndex;
+static  omf_idx         TLSGIndex;
 
-static  unsigned        NameIndex;
+static  omf_idx         NameIndex;
 static  lname_cache     *NameCache;
 static  lname_cache     *NameCacheDumped;
 
@@ -244,8 +244,8 @@ extern  void    InitSegDefs( void )
     BackSegIdx = BACKSEGS;
 }
 
-static unsigned GetNameIdx( char *name, char *suff, bool alloc )
-/**************************************************************/
+static omf_idx GetNameIdx( char *name, char *suff, bool alloc )
+/*************************************************************/
 {
     lname_cache         **owner;
     lname_cache         *curr;
@@ -517,8 +517,8 @@ static  void    OutLongOffset( long_offset value, array_control *dest )
 }
 #endif
 
-static  void    OutIdx( int value, array_control *dest )
-/******************************************************/
+static  void    OutIdx( omf_idx value, array_control *dest )
+/**********************************************************/
 {
     if( value >= 128 ) {
         OutByte( (value >> 8) | 0x80, dest );
@@ -620,8 +620,8 @@ static  void    DoASegDef( index_rec *rec, bool use_16 )
 }
 
 
-static  void    OutCGroup( int sidx )
-/***********************************/
+static  void    OutCGroup( omf_idx sidx )
+/***************************************/
 {
     byte        out[4];
     int         i;
@@ -637,8 +637,8 @@ static  void    OutCGroup( int sidx )
     PutObjRec( CMD_GRPDEF, out, ++i );
 }
 
-static void OutGroup( int sidx, array_control *group_def, int *index_p )
-/**********************************************************************/
+static void OutGroup( omf_idx sidx, array_control *group_def, omf_idx *index_p )
+/******************************************************************************/
 {
     if( *index_p == 0 ) {
         *index_p = ++GroupIndex;
@@ -963,13 +963,13 @@ static  void    DoSegGrpNames( array_control *dgroup_def, array_control *tgroup_
     segdef      *seg;
     segdef      *next;
     char        *dgroup;
-    unsigned    dgroup_idx;
+    omf_idx     dgroup_idx;
 
-    GetNameIdx( "", "", TRUE );
-    GetNameIdx( "CODE", "", TRUE );
-    GetNameIdx( "DATA", "", TRUE );
-    GetNameIdx( "BSS", "", TRUE );
-    GetNameIdx( "TLS", "", TRUE );
+    GetNameIdx( "", "", TRUE );     // _NIDX_NULL
+    GetNameIdx( "CODE", "", TRUE ); // _NIDX_CODE
+    GetNameIdx( "DATA", "", TRUE ); // _NIDX_DATA
+    GetNameIdx( "BSS", "", TRUE );  // _NIDX_BSS
+    GetNameIdx( "TLS", "", TRUE );  // _NIDX_TLS
 
 #ifdef _OMF_32
     if( _IsTargetModel( FLAT_MODEL ) && _IsntTargetModel( EZ_OMF ) ) {
@@ -1395,19 +1395,15 @@ static void     EjectLEData( void )
         SetPatches();
         SetAbsPatches();
         if( CurrSeg->comdat_label != NULL ) {
-            PutObjRec( PickOMF( CMD_COMDAT ), obj->data.array,
-                        obj->data.used );
+            PutObjRec( PickOMF( CMD_COMDAT ), obj->data.array, obj->data.used );
         } else {
 #ifdef _OMF_32
-            PutObjRec( PickOMF( CMD_LEDATA ), obj->data.array,
-                obj->data.used );
+            PutObjRec( PickOMF( CMD_LEDATA ), obj->data.array, obj->data.used );
 #else //SEG32DBG dwarf, codview
             if( (CurrSeg->attr & SEG_USE_32) && (_IsntTargetModel( EZ_OMF )) ) {
-                PutObjRec( CMD_LEDATA32, obj->data.array,
-                    obj->data.used );
+                PutObjRec( CMD_LEDATA32, obj->data.array, obj->data.used );
             } else {
-                PutObjRec( PickOMF( CMD_LEDATA ), obj->data.array,
-                    obj->data.used );
+                PutObjRec( PickOMF( CMD_LEDATA ), obj->data.array, obj->data.used );
             }
 #endif
         }
@@ -1430,11 +1426,11 @@ static void     EjectLEData( void )
 static void GetSymLName( char *name, void *nidx )
 /***********************************************/
 {
-    *(unsigned *)nidx = GetNameIdx( name, "", TRUE );
+    *(omf_idx *)nidx = GetNameIdx( name, "", TRUE );
 }
 
-static unsigned NeedComdatNidx( import_type kind )
-/************************************************/
+static omf_idx NeedComdatNidx( import_type kind )
+/***********************************************/
 {
     if( CurrSeg->comdat_nidx == 0 ) {
         DoOutObjectName( CurrSeg->comdat_symbol, GetSymLName,
@@ -1580,7 +1576,7 @@ extern  void    SetUpObj( bool is_data )
          return;
     }
     /* so that a call will always fit */
-    CheckLEDataSize( 4*sizeof( offset ), FALSE );
+    CheckLEDataSize( 4 * sizeof( offset ), FALSE );
     if( CurrSeg->exec ) {
         old_data = CurrSeg->data_in_code;
         CurrSeg->data_in_code = is_data;
@@ -2056,7 +2052,7 @@ extern  void    ObjFini( void )
         if( lib == NULL )
             break;
         OutInt( LIBNAME_COMMENT, Imports );
-        OutString( ( (char*)FEAuxInfo( lib, LIBRARY_NAME ) ) + 1, Imports );
+        OutString( ( (char *)FEAuxInfo( lib, LIBRARY_NAME ) ) + 1, Imports );
         PutObjRec( CMD_COMENT, Imports->array, Imports->used );
         Imports->used = 0;
     }
@@ -2178,11 +2174,11 @@ static  void    CheckImportSwitch( bool next_is_static )
 }
 
 
-static  import_handle   GenImport( sym_handle sym, import_type kind )
-/*******************************************************************/
+static  omf_idx     GenImport( sym_handle sym, import_type kind )
+/***************************************************************/
 {
-    import_handle       idx;
-    fe_attr             attr;
+    omf_idx         idx;
+    fe_attr         attr;
 
     idx = AskImportHandle( sym );
     if( idx == NOT_IMPORTED || kind == SPECIAL ) {
@@ -2226,8 +2222,7 @@ static  void    ComdatData( label_handle lbl, sym_handle sym )
         CurrSeg->comdat_symbol = sym;
     } else {
         NeedComdatNidx( SPECIAL );
-        CurrSeg->comdat_prefix_import =
-                GenImport( CurrSeg->comdat_symbol, SPECIAL );
+        CurrSeg->comdat_prefix_import = GenImport( CurrSeg->comdat_symbol, SPECIAL );
         TellCommonLabel( lbl, CurrSeg->comdat_prefix_import );
     }
     CurrSeg->need_base_set = TRUE;
@@ -2239,7 +2234,7 @@ static void     OutVirtFuncRef( sym_handle virt )
 /***********************************************/
 {
     object      *obj;
-    unsigned    extdef;
+    omf_idx     extdef;
 
     if( virt == NULL ) {
         extdef = 0;
@@ -2415,8 +2410,8 @@ extern  array_control   *InitPatch( void )
 }
 
 
-static void DoFix( int idx, bool rel, base_type base, fix_class class, int sidx )
-/*******************************************************************************/
+static void DoFix( omf_idx idx, bool rel, base_type base, fix_class class, omf_idx sidx )
+/***************************************************************************************/
 {
     fixup       *cursor;
     int         where;
@@ -2474,7 +2469,6 @@ static void DoFix( int idx, bool rel, base_type base, fix_class class, int sidx 
     where = CurrSeg->location - obj->start;
     cursor->locatof = b + ( class << S_LOCAT_LOC ) + ( where >> 8 );
     cursor->fset = where;
-    obj->fixes.used += sizeof( fixup );
     if( base != BASE_IMP ) {
         rec = AskIndexRec( sidx );
         /*
@@ -2488,7 +2482,7 @@ static void DoFix( int idx, bool rel, base_type base, fix_class class, int sidx 
     }
 #ifdef _OMF_32
     if( _IsTargetModel( FLAT_MODEL ) && _IsntTargetModel( EZ_OMF ) && (class != F_PTR) ) {
-        int             grp_idx;
+        omf_idx     grp_idx;
 
   #if 0
         /* only generate a normal style fixup for now */
@@ -2557,7 +2551,7 @@ extern  void    IncLocation( offset by )
                 CurrSeg->location = (long_offset)(-1);
             } else {
                 CurrSeg->max_size = (short_offset)(-1);
-                CurrSeg->location =  1L << 8*sizeof( short_offset );
+                CurrSeg->location =  1L << 8 * sizeof( short_offset );
             }
         }
     } else {
@@ -2590,7 +2584,7 @@ static  void    DecLocation( offset by )
 extern  void    OutFPPatch( fp_patches i )
 /****************************************/
 {
-    import_handle       idx;
+    omf_idx     idx;
 
     idx = FPPatchImp[i];
     if( idx == NOT_IMPORTED ) {
@@ -2611,11 +2605,11 @@ extern  void    OutFPPatch( fp_patches i )
             OutIdx( 0, Imports );           /* type index*/
         }
     }
-    CheckLEDataSize( 2*sizeof( offset ), TRUE );
+    CheckLEDataSize( 2 * sizeof( offset ), TRUE );
     DoFix( idx, FALSE, BASE_IMP, F_OFFSET, 0 );
     if( FPPatchAltName[i] != NULL ) {
         IncLocation( sizeof( byte ) );
-        DoFix( idx+1, FALSE, BASE_IMP, F_OFFSET, 0 );
+        DoFix( idx + 1, FALSE, BASE_IMP, F_OFFSET, 0 );
         DecLocation( sizeof( byte ) );
     }
 }
@@ -2628,7 +2622,7 @@ extern  void    OutPatch( label_handle lbl, patch_attr attr )
     object      *obj;
 
      /* careful, might be patching offset of seg:off*/
-    CheckLEDataSize( 3*sizeof( offset ), TRUE );
+    CheckLEDataSize( 3 * sizeof( offset ), TRUE );
     pat = CGAlloc( sizeof( temp_patch ));
     obj = CurrSeg->obj;
     pat->link = obj->patches;
@@ -2742,7 +2736,7 @@ static  void    SetPendingLine( void )
         AddLineInfo( line, obj, CurrSeg->location );
         return;
     }
-    old_line = (line_num_entry *)&_ARRAY(obj->lines,unsigned_16) - 1;
+    old_line = &_ARRAY( obj->lines, line_num_entry ) - 1;
     if( line == _HostInt( old_line->line ) )
         return;
     if( CurrSeg->location > _HostOffset( old_line->off ) ) {
@@ -2819,7 +2813,7 @@ extern  void    OutAbsPatch( abspatch *patch, patch_attr attr )
     object      *obj;
     long_offset value;
 
-    CheckLEDataSize( 2*sizeof( offset ), TRUE );
+    CheckLEDataSize( 2 * sizeof( offset ), TRUE );
     if( patch->flags & AP_HAVE_VALUE ) {
         value = patch->value;
         FreeAbsPatch( patch );
@@ -2841,13 +2835,13 @@ extern  void    OutAbsPatch( abspatch *patch, patch_attr attr )
 }
 
 
-static void DumpImportResolve( sym_handle sym, import_handle idx )
-/****************************************************************/
+static void DumpImportResolve( sym_handle sym, omf_idx idx )
+/**********************************************************/
 {
     sym_handle          def_resolve;
-    import_handle       def_idx;
+    omf_idx             def_idx;
     array_control       *cmt;
-    unsigned            nidx;
+    omf_idx             nidx;
     pointer             cond;
     int                 type;
 
@@ -2907,18 +2901,18 @@ extern  void    OutReloc( seg_id seg, fix_class class, bool rel )
 
     rec = AskSegIndex( seg );
     if( class == F_MS_OFFSET_32 ) {
-        CheckLEDataSize( 3*sizeof( long_offset ), TRUE );
+        CheckLEDataSize( 3 * sizeof( long_offset ), TRUE );
     } else {
-        CheckLEDataSize( 3*sizeof( offset ), TRUE );
+        CheckLEDataSize( 3 * sizeof( offset ), TRUE );
     }
     DoFix( rec->base, rel, rec->btype, class, rec->sidx );
 }
 
 
-extern  void    OutSpecialCommon( int imp_idx, fix_class class, bool rel )
-/************************************************************************/
+extern  void    OutSpecialCommon( import_handle imp_idx, fix_class class, bool rel )
+/**********************************************************************************/
 {
-    CheckLEDataSize( 3*sizeof( offset ), TRUE );
+    CheckLEDataSize( 3 * sizeof( offset ), TRUE );
     DoFix( imp_idx, rel, BASE_IMP, class, 0 );
 }
 
@@ -2952,7 +2946,7 @@ extern  void    OutImport( sym_handle sym, fix_class class, bool rel )
 extern  void    OutRTImportRel( int rtindex, fix_class class, bool rel )
 /**********************************************************************/
 {
-    import_handle       idx;
+    omf_idx     idx;
 
     idx = AskRTHandle( rtindex );
     if( idx == NOT_IMPORTED ) {
@@ -3023,7 +3017,7 @@ extern  void    OutBckExport( char *name, bool is_export )
 extern  void    OutBckImport( char *name, bck_info *bck, fix_class class )
 /************************************************************************/
 {
-    import_handle       idx;
+    omf_idx     idx;
 
     idx = bck->imp;
     if( idx == NOT_IMPORTED ) {
@@ -3321,7 +3315,7 @@ extern  segment_id      AskSegID( pointer hdl, cg_class class )
         }
         return( FESegID( hdl ) );
     case CG_BACK:
-        return( ((bck_info*)hdl)->seg );
+        return( ((bck_info *)hdl)->seg );
     case CG_TBL:
     case CG_VTB:
         return( AskCodeSeg() );

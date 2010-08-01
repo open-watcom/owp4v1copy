@@ -41,6 +41,7 @@
 #include "i64.h"
 #include "feprotos.h"
 #include "types.h"
+#include "treefold.h"
 
 typedef union i32 {
     signed_32   s;
@@ -1527,7 +1528,7 @@ static  bool    SimpleLeaf( tn tree )
 
 
 extern  tn      FoldPostGetsCompare( cg_op op, tn left, tn rite, type_def *tipe )
-/*************************************************************************************/
+/*******************************************************************************/
 {
     tn          compare;
     tn          temp;
