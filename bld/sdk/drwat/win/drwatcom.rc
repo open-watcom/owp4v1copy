@@ -25,8 +25,8 @@
  #define sp( s1, s2 ) s1
 #endif
 
-"APPLICON" ICON 10drwat.ico
-"ALERTICON" ICON 10err.ico
+"APPLICON" ICON "drwatcom.ico"
+"ALERTICON" ICON "err.ico"
 
 #include "menu.rc"
 

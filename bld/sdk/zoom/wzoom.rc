@@ -12,7 +12,7 @@
  #define sp( s1, s2 ) s1
 #endif
 
-"APPLICON" ICON 10zoom.ico
+"APPLICON" ICON "zoom.ico"
 
 #ifdef __NT__
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"

@@ -6,19 +6,19 @@
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
 #endif
 
-APPLICON    ICON    10spy.ico
-WINPICKICON ICON    10pick.ico
-MAGNIFY     BITMAP  10select.bmp
-PEEK        BITMAP  10peek.bmp
-MAGNO       BITMAP  10endspy.bmp
-OFF         BITMAP  10off.bmp
-ON          BITMAP  10on.bmp
-NOTONOFF    BITMAP  10onoff.bmp
-STOPMSG     BITMAP  10stopon.bmp
-WATCHMSG    BITMAP  10watch.bmp
-SHOWWIN     BITMAP  10winlst.bmp
-ERASE       BITMAP  10erase.bmp
-MARK        BITMAP  10mark.bmp
+"APPLICON"    ICON    "spy.ico"
+"WINPICKICON" ICON    "winpick.ico"
+"MAGNIFY"     BITMAP  "magnify.bmp"
+"PEEK"        BITMAP  "peek.bmp"
+"MAGNO"       BITMAP  "magno.bmp"
+"OFF"         BITMAP  "off.bmp"
+"ON"          BITMAP  "on.bmp"
+"NOTONOFF"    BITMAP  "notonoff.bmp"
+"STOPMSG"     BITMAP  "stopmsg.bmp"
+"WATCHMSG"    BITMAP  "watchmsg.bmp"
+"SHOWWIN"     BITMAP  "showwin.bmp"
+"ERASE"       BITMAP  "erase.bmp"
+"MARK"        BITMAP  "mark.bmp"
 
 SPYMENU MENU
 BEGIN

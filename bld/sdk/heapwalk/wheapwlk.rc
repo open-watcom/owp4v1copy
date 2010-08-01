@@ -12,7 +12,7 @@
  #define sp( s1, s2 ) s1
 #endif
 
-"APPLICON" ICON 10hw.ico
+"APPLICON" ICON "wheapwlk.ico"
 
 #include "menu.rc"
 

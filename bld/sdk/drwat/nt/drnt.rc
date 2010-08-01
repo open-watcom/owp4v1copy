@@ -39,8 +39,8 @@
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
 #endif
 
-"APPLICON" ICON "10drwat.ico"
-"ERRICON" ICON "10err.ico"
+"APPLICON" ICON "drwatcom.ico"
+"ERRICON" ICON "err.ico"
 
 #include "menu.rc"
 
