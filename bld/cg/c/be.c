@@ -68,7 +68,6 @@ extern  int             FStdOut();
 extern  char            *EnvVar(char*);
 
 extern  void            DumpTree(pointer);
-extern  uint            Length(char*);
 extern  char            *CopyStr(char*,char*);
 extern  byte            *Copy(void*,void*,uint);
 extern  void            exit(int);

@@ -88,7 +88,6 @@ extern  seg_id          AskCode16Seg( void );
 extern  sym_handle      AskForLblSym( label_handle );
 extern  label_handle    AskForLabel( sym_handle );
 extern  void            DoLblRef( label_handle, seg_id, offset, escape_class );
-extern  uint            Length( pointer );
 extern  bool            GetEnvVar( char *, char *, int );
 extern  int             CountIns( block *blk );
 

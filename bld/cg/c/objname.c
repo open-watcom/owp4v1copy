@@ -58,7 +58,6 @@
 #endif
 #include "langenv.h"
 
-extern  uint            Length(pointer);
 extern  char            *CopyStr(char*,char*);
 
 #define SPEC_PREFIX             ".PREFIX_DATA."

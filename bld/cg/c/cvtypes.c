@@ -60,7 +60,6 @@ static struct lf_info LFInfo[LFG_LAST] = {
 
 extern  void        FEPtrBase(sym_handle);
 extern  void        BuffWSLString(char*);
-extern  uint        Length(char*);
 extern  byte        *Copy(void*,void*,uint);
 extern  seg_id      SetOP(seg_id);
 extern  void        SetBigLocation( long_offset loc );

@@ -50,7 +50,6 @@
 #define BY_CG
 #include "cgprotos.h"
 
-extern  uint            Length(char*);
 extern  byte            *Copy(void*,void*,uint);
 extern  type_length     NewBase(name*);
 extern dw_loc_handle    DBGLoc2DF( dbg_loc loc );
