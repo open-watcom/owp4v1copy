@@ -357,8 +357,8 @@ pick( WNG_ATT_NAME,             "'%s' is not a valid attribute name",
 pick( ERR_ATT_REQ,              "For the tag '%s', the required attribute(s) %s have not been specified",
                                 "For the tag '%s', the required attribute(s) %s have not been specified" )
 
-pick( ERR_CW_UNRECOGNIZED,      "Unrecognized control word .%s",
-                                "Unrecognized control word .%s" )
+pick( ERR_CW_UNRECOGNIZED,      "Unrecognized SCRIPT control word or macro .%s",
+                                "Unrecognized SCRIPT control word or macro .%s" )
 
 pick( ERR_DC_OPT,               "Invalid / unimplemented .dc option %s",
                                 "Invalid / unimplemented .dc option %s" )
@@ -429,6 +429,9 @@ pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
 pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
                                 "'%s' tag only allowed in %s" )
 
+pick( ERR_TAG_STARTING,         "\tStarting tag '%s'",
+                                "\tStarting tag '%s'" )
+
 /* Error messages for use with xx_line_err() */
 
 pick( ERR_CHAR_ONLY,            "Only a single character is allowed",
@@ -436,10 +439,10 @@ pick( ERR_CHAR_ONLY,            "Only a single character is allowed",
 
 pick( ERR_CW_NOT_CHAR,          "A single character or a two character hexadecimal value must be specified",
                                 "A single character or a two character hexadecimal value must be specified")
-                                
+
 pick( ERR_DC_NOT_OFF,           "'OFF' is the only text value allowed",
                                 "'OFF' is the only text value allowed")
-                                
+
 pick( ERR_INV_CW_SEP,           "Invalid control word separator",
                                 "Invalid control word separator" )
 

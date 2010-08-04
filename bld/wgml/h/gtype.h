@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -229,9 +229,8 @@ typedef struct mac_entry {
     inp_line            *   macline;    // macro definition lines
     ulong                   lineno;     // lineno start of macro definition
     labelcb             *   label_cb;   // controlling label definitions
+    char                *   mac_file_name;  // file name macro definition
     char                    name[MAC_NAME_LENGTH + 1];  // macro name
-    char                    mac_file_name[1];   // file name macro definition
-                                            // var length
 } mac_entry;
 
 
@@ -247,9 +246,9 @@ typedef struct filecb {
     size_t          usedlen;            // used data of filebuf
     fpos_t          pos;                // position for reopen
     labelcb     *   label_cb;           // controlling label definitions
+    char        *   filename;           // full filename
     fflags          flags;
     char            fileattr[MAX_FILE_ATTR + 1];// T:xxxx
-    char            filename[1];        // full filename var length
 } filecb;
 
 /***************************************************************************/
@@ -767,36 +766,58 @@ typedef enum functs {
 typedef enum e_tags {
     t_NONE,
 #include "gtags.h"
-#include "gscrcws.h"
+//  #include "gscrcws.h" TBD
     t_MAX                               // the last one for range check
 } e_tags;
 
+
 /***************************************************************************/
-/*  stack of margins and other values for the nested tags et al            */
+/*  nesting stack for open tags even if input file is not active any more  */
+/***************************************************************************/
+
+typedef struct nest_stack {
+    struct  nest_stack  * prev;
+
+    uint32_t            lineno;         // lineno of :xl, :HPx :SF call
+    union {
+        char        *   filename;       // file name of :xl, :HPx :SF call
+        struct mt {
+            gtentry     *   tag_m;      // for usertag / macro
+            mac_entry   *   m;          // macro entry of :xl, :HPx :SF call
+        } mt;
+    } s;
+    i_flags             nest_flag;      // for selecting the union
+} nest_stack;
+
+/***************************************************************************/
+/*  stack of margins and other values for nested tags  incomplete TBD      */
 /***************************************************************************/
 
 typedef struct tag_cb {
-    struct  tag_cb   *   prev;
+    struct  tag_cb  *   prev;           // open tag chain
+    nest_stack      *   p_stack;        // calling chain for this tag
     uint32_t            left;           // margin
     uint32_t            right;          // margin
     uint32_t            post_skip;      // skip at tag end
     uint32_t            tsize;          // :dl
     uint8_t             headhi;         // :dl
     uint8_t             termhi;         // :dl :gl
-    bool                dl_break;       // :dl
-    bool                compact;        // :dl :gl :ol :sl :ul
-    e_tags              c_tag;
+    uint8_t             font;           // :HPx, :SF
+    bool                dl_break : 1;   // :dl
+    bool                compact  : 1;   // :dl :gl :ol :sl :ul
+    e_tags              c_tag;          // enum of tag
 } tag_cb;
 
+
 /***************************************************************************/
-/*  active hilighting levels (combined HPx and SF tags)                    */
+/*  for constructing a filename stack                                      */
 /***************************************************************************/
 
-typedef struct hi_level {
-    int     font;                       // save for previous font
-    int     tag;                        // -1 = :SF, 0 - 3 = :HPx
+typedef struct fnstack {
+    struct  fnstack * prev;
+    char    fn[1];                      // var length file name
+} fnstack;
 
-} hi_level;
 
 /***************************************************************************/
 /*  a single tab stop and an array of tab stops                            */

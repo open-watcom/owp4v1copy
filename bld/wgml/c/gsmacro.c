@@ -487,14 +487,13 @@ void    scr_dm( void )
 
         ProcFlags.in_macro_define = 0;
 
-        len = strlen( cb->s.f->filename );
-        me  = mem_alloc( len + sizeof( mac_entry ) );
+        me  = mem_alloc( sizeof( mac_entry ) );
         me->next = NULL;
         me->label_cb = NULL;
         strcpy( me->name, macname );
         me->macline = head;
         me->lineno = lineno_start;
-        strcpy( me->mac_file_name, cb->s.f->filename );
+        me->mac_file_name = cb->s.f->filename;
 
         add_macro_entry( &macro_dict, me );
 

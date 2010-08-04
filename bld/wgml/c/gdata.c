@@ -31,8 +31,10 @@
 #include    "findfile.h"
 
 #define global                          // allocate storage for global vars
+#define tag_strings                     // initialize tag names as strings
 #include    "gvars.h"
 #undef  global
+#undef tag_strings
 
 #include    "swchar.h"
 
@@ -57,6 +59,7 @@ void init_global_vars( void )
     opt_fonts           = NULL;         // option FONT parameters (linked list)
 
     input_cbs           = NULL;         // list of active input sources
+    fn_stack            = NULL;         // list of input filenames
     inc_level           = 0;            // include nesting level
     max_inc_level       = 0;            // maximum include level
     out_file            = NULL;         // output file name
@@ -142,7 +145,7 @@ void init_global_vars( void )
     buf_lines_cnt       = 0;
 
     g_skip_wgml4        = 0;
-    n_cb                = NULL;
+    nest_cb             = NULL;
 
 }
 
@@ -163,5 +166,4 @@ void init_pass_data( void )
     ProcFlags.justify   = ju_on;        // .ju on default
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
 
-    hilcount            = -1;           // no :HPx or :SF nesting active
 }

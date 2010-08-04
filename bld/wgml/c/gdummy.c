@@ -46,15 +46,15 @@ void    scr_dummy( void )
     char            cwcurr[4];          // control word string for msg
 
     cwcurr[0] = SCR_char;
-    cwcurr[1] = *(scan_restart + 1);
-    cwcurr[2] = *(scan_restart + 2);
+    cwcurr[1] = *(token_buf);
+    cwcurr[2] = *(token_buf + 1);
     cwcurr[3] = '\0';
 
     scan_restart = scan_stop + 1;
 
     g_warn( wng_unsupp_cw, cwcurr );
     wng_count++;
-    show_include_stack();
+    file_mac_info();
 }
 
 
@@ -69,7 +69,7 @@ void    gml_dummy( const gmltag * entry )
 
     g_warn( wng_unsupp_tag, entry->tagname );
     wng_count++;
-    show_include_stack();
+    file_mac_info();
 }
 
 /***************************************************************************/

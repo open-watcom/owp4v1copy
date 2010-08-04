@@ -66,6 +66,7 @@ global  char        *   dev_name;       // device defined_name
 global  opt_font    *   opt_fonts;      // option FONT parameters (linked list)
 
 global  inputcb     *   input_cbs;      // GML input stack (files + macros)
+global  fnstack     *   fn_stack;       // input filename stack
 global  char        *   out_file;       // output file name
 global  char        *   out_file_attr;  // output file attributes (T:2222)
 global  unsigned        inc_level;   // include nesting level 1 = MasterFname
@@ -278,16 +279,33 @@ global  int32_t     g_indentr;          // .in 2. value (right) default 0
 global  int32_t     g_cur_threshold;    // current widow threshold value
                                         // from layout (widow or heading)
 
-global  int         hilcount;           // :HPx :SF nesting level
-global  hi_level hil[20];               // "  savearea
-
-#define HILMAXIND  (int)(sizeof( hil ) / sizeof( hil[0] ) - 1)
-
-global  tag_cb  *   n_cb;               // infos about nested tags
+global  tag_cb  *   nest_cb;            // infos about nested tags
 global  tag_cb  *   tag_pool;           // list of reusable tag_cbs
 
 global  banner_lay_tag  * sect_ban_top[2];// top even / odd banner for curr sect
 global  banner_lay_tag  * sect_ban_bot[2];// bot even / odd banner for curr sect
+
+
+/***************************************************************************/
+/*  tagnames as strings for msg display                                    */
+/***************************************************************************/
+
+#define pickg( name, length, routine, flags )  { #name },
+
+global char str_tags[t_MAX + 1][10]
+#if defined(tag_strings)
+   = {
+     { "NONE" },
+#include "gtags.h"
+//  #include "gscrcws.h" TBD
+     { "MAX" }
+}
+#endif
+;
+#undef pickg
+#undef xmystr
+#undef mystr
+
 
 
 /***************************************************************************/

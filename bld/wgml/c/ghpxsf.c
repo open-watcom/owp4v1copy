@@ -33,27 +33,24 @@
 
 
 /***************************************************************************/
-/*  :HPx common processing                                                 */
+/*  :HPx :SF common processing                                             */
 /***************************************************************************/
 
-static void gml_hpx_common( const gmltag * entry, int level )
+static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
 {
     char    *   p;
-    char        tagn[TAG_NAME_LENGTH + 1];
 
-    if( hilcount >= HILMAXIND ) {
-        strcpy_s( tagn, sizeof( tagn ), entry->tagname );
-        g_err_tag( tagn );              // all levels active
-        return;
-    }
+    init_nest_cb();
+    nest_cb->p_stack = copy_to_nest_stack();
 
-    hilcount++;
-    hil[hilcount].tag = level;
     if( level >= wgml_font_cnt ) {      // invalid font use default
         level = 0;
     }
-    hil[hilcount].font = g_curr_font_num;   // save current font
+    nest_cb->font = level;
     g_curr_font_num = level;
+
+    nest_cb->c_tag = t;
+
     scan_err = false;
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
@@ -67,59 +64,108 @@ static void gml_hpx_common( const gmltag * entry, int level )
 
 /***************************************************************************/
 /*  :HP0  :HP1  :HP2  :HP3                                                 */
+/*                                                                         */
+/* Format: :HPn. (n=0,1,2,3)                                               */
+/* These tags start the highlighting of phrases at one of the four levels  */
+/* provided by GML. The actual highlighting to be performed is determined  */
+/* by the type of device for which the document is being formatted.        */
+/* Examples of highlighting include underlining, displaying in bold face,  */
+/* or using a different character shape (such as italics).                 */
+/* Highlighting may not be used when the GML layout explicitly determines  */
+/* the emphasis to be used, such as in the text of a heading.              */
+/* The highlighting tags are paragraph elements. They are used with text   */
+/* to create the content of a basic document element, such as a paragraph. */
+/* A corresponding :EHPn tag must be specified for each :HPn tag.          */
 /***************************************************************************/
 
 void    gml_hp0( const gmltag * entry )
 {
-    gml_hpx_common( entry, 0 );
+    gml_hp_sf_common( entry, 0, t_HP0 );
 }
 
 void    gml_hp1( const gmltag * entry )
 {
-    gml_hpx_common( entry, 1 );
+    gml_hp_sf_common( entry, 1, t_HP1 );
 }
 
 void    gml_hp2( const gmltag * entry )
 {
-    gml_hpx_common( entry, 2 );
+    gml_hp_sf_common( entry, 2, t_HP2 );
 }
 
 void    gml_hp3( const gmltag * entry )
 {
-    gml_hpx_common( entry, 3 );
+    gml_hp_sf_common( entry, 3, t_HP3 );
 }
 
-/***************************************************************************/
-/*  :eHPx tags                                                             */
-/***************************************************************************/
-
-void    gml_ehpx( const gmltag * entry )
+void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
 {
     char    *   p;
-    static char tagehpx[5] = { "eHPx" };
+    tag_cb  *   wk;
 
-    if( hilcount < 0 ) {
-        g_err_tag_no( "eHPx" );         // no eHPx expected
-    } else {
-        if( hil[hilcount].tag != entry->tagname[3] - '0' ) {
-            if( hil[hilcount].tag < 0 ) {
-                g_err_tag( "eSF" );     // :eSF expected
-            } else {
-                tagehpx[3] = '0' + hil[hilcount].tag;
-                g_err_tag( tagehpx );   // :eHPx expected
-            }
+    if( nest_cb->c_tag != t ) {         // unexpected exxx tag
+        if( nest_cb->c_tag == t_NONE ) {
+            g_err_tag_no( str_tags[t + 1] );// no exxx expected
         } else {
-            g_curr_font_num = hil[hilcount].font;
-            hilcount--;
-            scan_err = false;
-            p = scan_start;
-            if( *p == '.' ) p++;                // over '.'
-            if( *p ) {
-                process_text( p, g_curr_font_num );
-            }
+            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
+        }
+    } else {
+        wk = nest_cb;
+        nest_cb = nest_cb->prev;
+        add_tag_cb_to_pool( wk );
+        g_curr_font_num = nest_cb->font;
+        scan_err = false;
+        p = scan_start;
+        if( *p == '.' ) p++;            // over '.'
+        if( *p ) {
+            process_text( p, g_curr_font_num );
         }
     }
     scan_start = scan_stop + 1;
+}
+
+
+/***************************************************************************/
+/*                                                                         */
+/* EHP0, EHP1, EHP2, EHP3                                                  */
+/*                                                                         */
+/* Format: :eHPn. (n=0,1,2,3)                                              */
+/* These tags end the highlighting of phrases at one of the four levels    */
+/* provided by GML.                                                        */
+/* Each :ehpn tag must be preceded by a corresponding :hpn tag.            */
+/***************************************************************************/
+
+void    gml_ehp0( const gmltag * entry )
+{
+    gml_ehp_esf_common( entry, t_HP0 );
+}
+
+void    gml_ehp1( const gmltag * entry )
+{
+    gml_ehp_esf_common( entry, t_HP1 );
+}
+
+void    gml_ehp2( const gmltag * entry )
+{
+    gml_ehp_esf_common( entry, t_HP2 );
+}
+
+void    gml_ehp3( const gmltag * entry )
+{
+    gml_ehp_esf_common( entry, t_HP3 );
+}
+
+/***************************************************************************/
+/*  :esf tag processing                                                    */
+/*                                                                         */
+/*   Format: :eSF.                                                         */
+/*                                                                         */
+/*   This tag ends the highlighting of phrases started by the last :sf tag */
+/***************************************************************************/
+
+void    gml_esf( const gmltag * entry )
+{
+    gml_ehp_esf_common( entry, t_SF );
 }
 
 
@@ -135,9 +181,9 @@ void    gml_ehpx( const gmltag * entry )
 /*  character shape (such as italics).                                     */
 /*  The value of the font attribute is a non-negative integer number.      */
 /*  If the specified number is larger than the last defined font for the   */
-/*  document, font for zero is used.Highlighting may not be used when      */
+/*  document, font for zero is used. Highlighting may not be used when     */
 /*  the GML layout explicitly determines the emphasis to be used, such     */
-/*  as in the text of a heading.The set font tag is a paragraph element.   */
+/*  as in the text of a heading. The set font tag is a paragraph element.  */
 /*  It is used with text to create the content of a basic document element,*/
 /*  such as a paragraph. A corresponding :ESF tag must be specified for    */
 /*  each :SF tag.                                                          */
@@ -147,19 +193,8 @@ void    gml_sf( const gmltag * entry )
 {
     char    *   p;
     char    *   pe;
-    char        tagn[TAG_NAME_LENGTH + 1];
     long        font;
 
-    if( hilcount >= HILMAXIND ) {       // all hilite levels active
-        if( hil[hilcount].tag == -1 ) {
-            g_err_tag( "eSF" );         // :eSF expected
-        } else {
-            strcpy_s( tagn, sizeof( tagn ), "eHPx" );
-            tagn[3] = '0' +  hil[hilcount].tag;
-            g_err_tag( tagn );
-        }
-        return;
-    }
     p = scan_start;
     p++;
     while( *p == ' ' ) {
@@ -168,57 +203,16 @@ void    gml_sf( const gmltag * entry )
     if( !strnicmp( "font=", p, 5 ) ) {
         p += 5;
         font = strtol( p, &pe, 10 );
-
+        scan_start = pe;
         if( (font < 0) || (font >= wgml_font_cnt) ) {// invalid font use default
             font = 0;
         }
-        hilcount++;
-        hil[hilcount].font = g_curr_font_num;
-        hil[hilcount].tag = -1;         // :SF tag
-        g_curr_font_num = font;
-        scan_err = false;
-        p = pe;
-        if( *p == '.' ) p++;            // over '.'
-        if( *p ) {
-            process_text( p, g_curr_font_num );
-        }
+        gml_hp_sf_common( entry, font, t_SF );
     } else {
         err_count++;
         // AT-001 Required attribute not found
         g_err( err_att_missing );
         file_mac_info();
-    }
-    scan_start = scan_stop + 1;
-    return;
-}
-
-/***************************************************************************/
-/*  :esf tag processing                                                    */
-/*                                                                         */
-/*   Format: :eSF.                                                         */
-/*                                                                         */
-/*   This tag ends the highlighting of phrases started by the last :sf tag */
-/***************************************************************************/
-
-void    gml_esf( const gmltag * entry )
-{
-    char    *   p;
-
-    if( hilcount < 0 ) {
-        g_err_tag_no( "eSF" );          // no :eSF expected
-    } else {
-        if( hil[hilcount].tag != -1 ) {
-            g_err_tag( "eSF" );         // :eSF expected
-        } else {
-            g_curr_font_num = hil[hilcount].font;
-            hilcount--;
-            scan_err = false;
-            p = scan_start;
-            if( *p == '.' ) p++;        // over '.'
-            if( *p ) {
-                process_text( p, g_curr_font_num );
-            }
-        }
     }
     scan_start = scan_stop + 1;
     return;

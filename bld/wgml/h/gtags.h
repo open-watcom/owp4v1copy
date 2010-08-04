@@ -101,16 +101,16 @@
   pickg( HDREF,    5,      gml_dummy,      tag_out_txt )
 
   pickg( HP0,      3,      gml_hp0,        tag_out_txt )
-  pickg( EHP0,     4,      gml_ehpx,       tag_out_txt )
+  pickg( EHP0,     4,      gml_ehp0,       tag_out_txt )
 
   pickg( HP1,      3,      gml_hp1,        tag_out_txt )
-  pickg( EHP1,     4,      gml_ehpx,       tag_out_txt )
+  pickg( EHP1,     4,      gml_ehp1,       tag_out_txt )
 
   pickg( HP2,      3,      gml_hp2,        tag_out_txt )
-  pickg( EHP2,     4,      gml_ehpx,       tag_out_txt )
+  pickg( EHP2,     4,      gml_ehp2,       tag_out_txt )
 
   pickg( HP3,      3,      gml_hp3,        tag_out_txt )
-  pickg( EHP3,     4,      gml_ehpx,       tag_out_txt )
+  pickg( EHP3,     4,      gml_ehp3,       tag_out_txt )
 
   pickg( I1,       2,      gml_dummy,      tag_out_txt )
   pickg( I2,       2,      gml_dummy,      tag_out_txt )

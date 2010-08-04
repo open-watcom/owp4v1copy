@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -31,7 +31,7 @@
 *               alloc_text_chars        create a text_chars instance
 *               alloc_text_line         create a text_line instance
 *               add_text_line_to_pool   prepare reuse of a text_line instance
-*               add_tag_cb_to_pool      nested tag cb
+*               add_tag_cb_to_pool      add nested tag cb
 *               alloc_tag_cb            nested tag cb
 *               free_pool_storage       do free for all pools
 *
@@ -210,11 +210,16 @@ tag_cb  * alloc_tag_cb( void )
 
 void    add_tag_cb_to_pool( tag_cb * a_cb )
 {
+    nest_stack  *   ns;
+    nest_stack  *   nsv;
 
     if( a_cb == NULL ) {
         return;
     }
-
+    for( ns = a_cb->p_stack; ns != NULL; ns = nsv ) {
+        nsv = ns->prev;
+        mem_free( ns );
+    }
     a_cb->prev = tag_pool;
     tag_pool = a_cb;
 }

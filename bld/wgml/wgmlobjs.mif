@@ -55,6 +55,7 @@ gml_objs =  &
         gdocsect.obj &
         ghpxsf.obj   &
         ginclude.obj &
+        gnestut.obj  &
         gppcnote.obj &
         gset.obj     &
         gtagdict.obj &

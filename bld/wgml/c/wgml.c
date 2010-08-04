@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -145,6 +145,56 @@ static  void    set_default_extension( const char * masterfname )
 
 
 /***************************************************************************/
+/*  free input filenames                                                   */
+/***************************************************************************/
+
+static  void    free_filenames( void )
+{
+    fnstack * wk;
+    fnstack * wk1;
+
+    wk = fn_stack;
+    if( GlobalFlags.statistics ) {
+        out_msg( "\nInput filenames:\n" );
+    }
+    while( wk != NULL ) {
+        if( GlobalFlags.statistics ) {
+            out_msg( "    %s\n", wk->fn );
+        }
+        wk1 = wk->prev;
+        mem_free( wk );
+        wk = wk1;
+    }
+    if( GlobalFlags.statistics ) {
+        out_msg( "\n" );
+    }
+    fn_stack = NULL;
+    return;
+}
+
+
+/***************************************************************************/
+/*  construct input filename stack. It is only freed at program end        */
+/***************************************************************************/
+
+static  char    * reuse_filename( const char * fn )
+{
+    fnstack * fnwk;
+
+    for( fnwk = fn_stack; fnwk != NULL; fnwk = fnwk->prev ) {
+        if( !strcmp( fnwk->fn, fn ) ) {
+            return( fnwk->fn );         // filename is known
+        }
+    }
+
+    fnwk = mem_alloc( sizeof( fnstack ) + strlen( fn ) );
+    strcpy_s( fnwk->fn, 1 + strlen( fn ), fn );
+
+    fnwk->prev = fn_stack;
+    fn_stack = fnwk;
+    return( fnwk->fn );
+}
+/***************************************************************************/
 /*  add info about file  to LIFO list                                      */
 /***************************************************************************/
 
@@ -152,11 +202,12 @@ static  void    add_file_cb_entry( void )
 {
     filecb  *   new;
     inputcb *   nip;
-    size_t      fnlen;
 
-    fnlen = strlen( try_file_name );
-    new = mem_alloc( sizeof( filecb ) + fnlen );// count for terminating \0
-                                                //  is in filecb structure
+    new = mem_alloc( sizeof( filecb ) );
+    new->filename = reuse_filename( try_file_name );
+    mem_free( try_file_name );
+    try_file_name = NULL;
+
     nip = mem_alloc( sizeof( inputcb ) );
     nip->hidden_head = NULL;
     nip->hidden_tail = NULL;
@@ -172,9 +223,6 @@ static  void    add_file_cb_entry( void )
     new->linemin  = line_from;
     new->linemax  = line_to;
     new->label_cb = NULL;
-    strcpy_s( new->filename, fnlen + 1, try_file_name );
-    mem_free( try_file_name );
-    try_file_name = NULL;
 
     if( try_fp ) {
         new->flags = FF_open;
@@ -459,21 +507,13 @@ static  void    proc_input( char * filename )
             if( GlobalFlags.lastpass && ProcFlags.doc_sect != doc_sect_egdoc ) {
                 finish_page();
             }
-
             /***************************************************************/
-            /*  Test for missing eXXX tags                           TBD   */
-            /*  at the moment hilighting only                              */
+            /*  Test for missing eXXX tag                                  */
             /***************************************************************/
 
-            if( hilcount > -1 ) {       // hilighting still active
-                if( hil[hilcount].tag == -1 ) {
-                    g_err_tag( "eSF" ); // :eSF expected
-                } else {
-                    char tagn[TAG_NAME_LENGTH + 1] = { "eHPx" };
+            if( nest_cb->c_tag != t_NONE ) {
 
-                    tagn[3] = '0' + hil[hilcount].tag;
-                    g_err_tag( tagn );  // :eHPx expected
-                }
+                g_err_tag_nest( str_tags[nest_cb->c_tag + 1] );// eXXX expected
             }
         }
         del_input_cb_entry();           // one level finished
@@ -585,6 +625,7 @@ static  void    init_pass( void )
     post_space          = 0;
 
     init_tag_att();                     // reset last defined GML tag
+    init_nest_cb();
 
 }
 
@@ -672,11 +713,11 @@ int main( int argc, char * argv[] )
                 process_line_full( &t_line, false );
 
             }
-            while( n_cb != NULL ) {
-                tag_cb  *   cb = n_cb->prev;
+            while( nest_cb != NULL ) {
+                tag_cb  *   cb = nest_cb->prev;
 
-                add_tag_cb_to_pool( n_cb );
-                n_cb = cb;
+                add_tag_cb_to_pool( nest_cb );
+                nest_cb = cb;
             }
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
@@ -729,6 +770,7 @@ int main( int argc, char * argv[] )
 
     mem_free( cmdline );
     free_some_mem();
+    free_filenames();
 
     ff_teardown();                      // free memory allocated in findfunc
     cop_teardown();                     // free memory allocated in copfiles

@@ -80,6 +80,60 @@ void    file_mac_info( void )
     return;
 }
 
+
+/***************************************************************************/
+/*  display lineno of file/macro for open nested tags :sl :ol, ...         */
+/*                             and hilighting tags :HPx, :SF, ...          */
+/*   used if the corresponding end tag is missing                          */
+/***************************************************************************/
+
+void    file_mac_info_nest( void )
+{
+    char        linestr[MAX_L_AS_STR];
+    char        linemac[MAX_L_AS_STR];
+    nest_stack  *   nw;
+
+    if( input_cbs != NULL ) {
+        if( input_cbs->fmflags & II_macro ) {
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            utoa( input_cbs->s.m->mac->lineno, linemac, 10 );
+            g_info( err_inf_mac_def, linestr, input_cbs->s.m->mac->name,
+                    linemac, input_cbs->s.m->mac->mac_file_name);
+        } else {
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
+        }
+
+        g_info( err_tag_starting, str_tags[nest_cb->c_tag] );
+
+        nw = nest_cb->p_stack;
+        while( nw != NULL ) {
+            switch( nw->nest_flag & II_input ) {
+            case    II_file:
+                utoa( nw->lineno, linestr, 10 );
+                g_info( err_inf_line_file, linestr, nw->s.filename );
+                break;
+            case    II_tag :
+                g_info( err_inf_tag, nw->s.mt.tag_m->name );
+                // fallthrough
+            case    II_macro :
+                utoa( nw->lineno, linestr, 10 );
+                utoa( nw->s.mt.m->lineno, linemac, 10 );
+                g_info( err_inf_mac_def, linestr, nw->s.mt.m->name,
+                        linemac, nw->s.mt.m->mac_file_name);
+                break;
+            default:
+                g_info( err_inc_unknown );
+                break;
+            }
+            nw = nw->prev;
+            out_msg( "\n" );
+        }
+    }
+    out_msg( "\n" );
+    return;
+}
+
 void    att_val_err( char * attname )
 {
 //****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined
@@ -224,15 +278,30 @@ void    xx_err( const msg_ids errid )
 /***************************************************************************/
 /*  error msgs for missing or duplicate :XXX :eXXX tags                    */
 /***************************************************************************/
-
-void    g_err_tag( char * tag )
+static  void    g_err_tag_common( char * tag, bool nest )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
     sprintf_s( tagn, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag );
     g_err( err_tag_expected, tagn );
-    file_mac_info();
+    if( nest ) {
+        file_mac_info_nest();
+    } else {
+        file_mac_info();
+    }
     err_count++;
+    return;
+}
+
+void    g_err_tag( char * tag )
+{
+    g_err_tag_common( tag, 0 );         // 'normal' stack display
+    return;
+}
+
+void    g_err_tag_nest( char * tag )
+{
+    g_err_tag_common( tag, 1 );         // nested tag stack display
     return;
 }
 
@@ -242,7 +311,7 @@ void    g_err_tag_no( char * tag )
 
     sprintf_s( tagn, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag );
     g_err( err_tag_not_expected, tagn );
-    file_mac_info();
+    file_mac_info_nest();
     err_count++;
     return;
 }

@@ -124,6 +124,7 @@ extern  void    cw_err( void );
 extern  void    dc_opt_err( const msg_ids num, char * pa );
 extern  void    dc_opt_warn( char * pa );
 extern  void    file_mac_info( void );
+extern  void    file_mac_info_nest( void );
 extern  void    nottag_err( void );
 extern  void    numb_err( void );
 extern  void    parm_extra_err( char *cw, char *pa );
@@ -135,6 +136,7 @@ extern  void    xx_err( const msg_ids errid );
 extern  void    xx_line_err( const msg_ids errid, char * pa );
 extern  void    xx_opt_err( char *cw, char *pa );
 extern  void    g_err_tag( char *tagname );
+extern  void    g_err_tag_nest( char *tagname );
 extern  void    g_err_tag_no( char *tagname );
 extern  void    g_err_tag_prec( char *tagname );
 
@@ -174,6 +176,11 @@ extern  void        g_trmem_init( void );
 extern  void        g_trmem_prt_list( void );
 extern  void        g_trmem_close( void );
 extern  unsigned long   g_trmem_peak_usage( void );
+
+
+/* gnestut.c                          */
+extern  void            init_nest_cb( void );
+extern  nest_stack  *   copy_to_nest_stack( void );
 
 
 /* goptions.c                         */
