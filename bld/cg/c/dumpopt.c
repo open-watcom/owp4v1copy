@@ -208,6 +208,7 @@ extern  void    DumpOc( ins_entry *ins ) {
     DumpPtr( ins );
     DumpLiteral( " " );
     DumpString(  Names[ _Class( ins ) ] );
+    DumpLiteral( " " );
     if( _Class( ins ) != OC_INFO ) {
         CheckAttr( ins->oc.oc_entry.class );
     }
@@ -287,6 +288,7 @@ static  void    DoData( oc_entry *instr ) {
     len = 0;
     while( len < instr->reclen - sizeof( oc_header ) ) {
         DumpByte( instr->data[ len ] );
+        DumpLiteral( " " );
         ++len;
     }
 }
