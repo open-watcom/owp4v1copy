@@ -139,6 +139,7 @@
 .fnw _wclosedir                 closedir.gml    DOS       WIN32
 .fnu _uclosedir                 closedir.gml    DOS
 .fnc _cmdname                   _cmdname.gml    DOS QNX W WIN32
+.fnc _commit                    _commit.gml     DOS     W WIN32
 .fnc confstr                    confstr.gml         QXO
 .fnc console_active             con_actv.gml        QXO
 .fnc console_arm                con_arm.gml         QXO

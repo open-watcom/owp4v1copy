@@ -118,6 +118,7 @@ _WCRTLINK extern int  chsize(int __handle,long __size);
 _WCRTLINK extern int  _chsize(int __handle,long __size);
 _WCRTLINK extern int  close(int __handle);
 _WCRTLINK extern int  _close(int __handle);
+_WCRTLINK extern int  _commit(int __handle);
 _WCRTLINK extern int  creat(const char *__path,int __pmode);
 _WCRTLINK extern int  _creat(const char *__path,int __pmode);
 _WCRTLINK extern int  dup(int __handle);

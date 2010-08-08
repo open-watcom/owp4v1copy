@@ -1661,6 +1661,7 @@ filenames is also provided.
 .fdbeg
 .fd *fun="chsize" change the size of a file
 .fd *fun="close" close file
+.fd *fun="_commit" commit changes to disk
 .fd *fun="creat" create a file
 .fd *fun="dup" duplicate file &handle, get unused &handle number
 .fd *fun="dup2" duplicate file &handle, supply new &handle number

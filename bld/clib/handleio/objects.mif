@@ -16,6 +16,9 @@
 !inject _clse.obj    d16 d32                                                        w16 w32 osi
 !inject _clseos2.obj                                                o16 o32
 !inject _clsewnt.obj                     nt nta ntp
+!inject comit.obj    d16 d32                                                        w16 w32 osi
+!inject comitos2.obj                                                o16 o32
+!inject comitwnt.obj                     nt nta ntp
 !inject creat.obj    d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32 osi l32 lpc lmp
 !inject d2ttime.obj  d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 !inject dofilstr.obj                     nt nta ntp
