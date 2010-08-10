@@ -6725,7 +6725,7 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
     (BOOL)SNDMSG( x, TVM_EXPAND, (WPARAM)(p2), (LPARAM)(HTREEITEM)(p1) )
 #define TreeView_GetItemRect( x, p1, p2, p3 ) \
     ((*(HTREEITEM *)(p2) = p1), (BOOL)SNDMSG( x, TVM_GETITEMRECT, (WPARAM)(p3), \
-    (LPARAM)(RECT *)(p3) ))
+    (LPARAM)(RECT *)(p2) ))
 #define TreeView_GetCount( x ) \
     (UINT)SNDMSG( x, TVM_GETCOUNT, 0, 0L )
 #define TreeView_GetIndent( x ) \
