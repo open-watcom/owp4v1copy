@@ -131,7 +131,7 @@ CryptDecodeMessage@24
 CryptDecodeObject@28
 CryptDecodeObjectEx@32
 CryptDecryptAndVerifyMessageSignature@36
-CryptDecryptMessage@52
+CryptDecryptMessage@24
 CryptEncodeObject@20
 CryptEncodeObjectEx@28
 CryptEncryptMessage@28
