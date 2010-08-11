@@ -41,4 +41,4 @@ export OBJDIR=bootstrp
 export PREOBJDIR=prebuild
 
 # Invoke the script for the common environment
-source $OWROOT/cmnvars.sh
+. $OWROOT/cmnvars.sh

@@ -1,8 +1,8 @@
 #!/bin/sh
 if [ -f setvars ]; then
-    . setvars
+    . ./setvars
 else
-    . setvars.sh
+    . ./setvars.sh
 fi
 if [ ! -f $DEVDIR/build/binl/wtouch ]; then
     cp -p `which touch` $DEVDIR/build/binl/wtouch
