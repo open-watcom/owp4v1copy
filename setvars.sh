@@ -32,7 +32,7 @@ export DOC_BUILD=0      # Documentation building uses DOS programs.
 # Documentation related variables - none likely to work in Linux
 # set appropriate variables to blank for help compilers which you haven't installed
 # export WIN95HC=hcrtf
-# export OS2HC=ipfc
+export OS2HC=wipfc
 
 # Subdirectory to be used for bootstrapping
 export OBJDIR=bootstrp
