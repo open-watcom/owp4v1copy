@@ -42,9 +42,6 @@
 #elif defined( _M_IX86 )
   #include <i86.h>
 #endif
-#if defined( __DOS__ )
-  #include "nonibm.h"
-#endif
 
 #if defined( __OS2__ )
   #if defined( __386__ )
@@ -271,10 +268,6 @@ void    R_TrapInit( void ) {
     signal( SIGINT, BreakSignal );
 #endif
 #if defined( __DOS__ )
-    if( __NonIBM ) {
-        // Assume NEC
-        BreakVector = 0x06;
-    }
     CBSave = _dos_getvect( BreakVector );
     _dos_setvect( BreakVector, BreakHandler );
   #if defined( __386__ )

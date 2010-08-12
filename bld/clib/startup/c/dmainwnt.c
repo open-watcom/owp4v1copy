@@ -103,7 +103,6 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
             break;
         }
         // The following initializers are called: (in the CLIB run-time DLL):
-        //      __is_nonIBM
         //      __chk8087
         //      __verify_pentium_fdiv_bug
         //      __Init_Argv

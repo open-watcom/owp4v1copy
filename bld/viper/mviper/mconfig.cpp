@@ -48,7 +48,6 @@ extern "C" {
     #if defined( __WINDOWS__ ) || defined( __NT__ )
         #include <windows.h>    //temporary ?
     #endif
-    #include "nonibm.h"
 };
 
 #define MALLOC(s) (char*)malloc(s)
@@ -88,13 +87,8 @@ MConfig::MConfig( WFileName& filename, bool debug, HostType host )
 #ifdef __WINDOWS__
         _hostType = HOST_WINDOWS;
         if( __IsDBCS ) {
-            if( __NonIBM ) {
-                /* japanese windows on a nec 98 pc */
-                _hostType = HOST_NEC_WIN;
-            } else {
-                /* japanese windows on an IBM */
-                _hostType = HOST_J_WIN;
-            }
+            /* japanese windows on an IBM */
+            _hostType = HOST_J_WIN;
         } else {
             /* assume no DBCS win-os/2 */
             union {

@@ -33,11 +33,13 @@
 #include <signal.h>
 #include <string.h>
 #include <dos.h>
-#include "nonibm.h"
 #include "rtdata.h"
 #include "stacklow.h"
 #include "sigfunc.h"
 #include "_int23.h"
+
+/* Ctrl-Break vector (IBM compatible) */
+#define CTRL_BRK_VEC    0x1B
 
 typedef void (_WCINTERRUPT _WCFAR *pfun)( void );
 
@@ -219,15 +221,6 @@ void __restore_int23( void )
 
 void __restore_int_ctrl_break( void )
 {
-    int                 ctrlBreakVector;
-
-    /*** Support both NEC and IBM at runtime ***/
-    if( !__NonIBM ) {
-        ctrlBreakVector = 0x1B;
-    } else {
-        ctrlBreakVector = 0x06;
-    }
-
     if( __old_int_ctrl_break == 0 ) {
         return;
     }
@@ -237,19 +230,19 @@ void __restore_int_ctrl_break( void )
         __int23_exit = __null_int23_exit;
     }
 #if defined(__WINDOWS_386__)
-    TinySetVect( ctrlBreakVector, __old_int_ctrl_break );
+    TinySetVect( CTRL_BRK_VEC, __old_int_ctrl_break );
 #elif defined( __386__ )
     if( _IsPharLap() ) {
-        pharlap_rm_setvect( ctrlBreakVector, __old_int_ctrl_break );
-        pharlap_pm_setvect( ctrlBreakVector, __old_pm_int_ctrl_break );
+        pharlap_rm_setvect( CTRL_BRK_VEC, __old_int_ctrl_break );
+        pharlap_pm_setvect( CTRL_BRK_VEC, __old_pm_int_ctrl_break );
     } else if( __DPMI_hosted() == 1 ) {
-        DPMISetRealModeInterruptVector( ctrlBreakVector, __old_int_ctrl_break );
-        DPMISetPMInterruptVector( ctrlBreakVector, __old_pm_int_ctrl_break );
+        DPMISetRealModeInterruptVector( CTRL_BRK_VEC, __old_int_ctrl_break );
+        DPMISetPMInterruptVector( CTRL_BRK_VEC, __old_pm_int_ctrl_break );
     } else {
-        _dos_setvect( ctrlBreakVector, __old_int_ctrl_break );
+        _dos_setvect( CTRL_BRK_VEC, __old_int_ctrl_break );
     }
 #else
-    _dos_setvect( ctrlBreakVector, __old_int_ctrl_break );
+    _dos_setvect( CTRL_BRK_VEC, __old_int_ctrl_break );
 #endif
     __old_int_ctrl_break = 0;
 }
@@ -295,37 +288,28 @@ void __grab_int23( void )
 
 void __grab_int_ctrl_break( void )
 {
-    int                 ctrlBreakVector;
-
-    /*** Support both NEC and IBM at runtime ***/
-    if( !__NonIBM ) {
-        ctrlBreakVector = 0x1B;
-    } else {
-        ctrlBreakVector = 0x06;
-    }
-
     if( __old_int_ctrl_break == 0 ) {
 #if defined(__WINDOWS_386__)
-        __old_int_ctrl_break = _dos_getvect( ctrlBreakVector );
-        TinySetVect( ctrlBreakVector, (void (_WCNEAR *)(void))__int_ctrl_break_handler );
+        __old_int_ctrl_break = _dos_getvect( CTRL_BRK_VEC );
+        TinySetVect( CTRL_BRK_VEC, (void (_WCNEAR *)(void))__int_ctrl_break_handler );
 #elif defined( __386__ )
         if( _IsPharLap() ) {
-            __old_int_ctrl_break = pharlap_rm_getvect( ctrlBreakVector );
-            __old_pm_int_ctrl_break = pharlap_pm_getvect( ctrlBreakVector );
-            pharlap_setvect( ctrlBreakVector, (pfun) (void (_WCNEAR *)(void))__int_ctrl_break_handler );
+            __old_int_ctrl_break = pharlap_rm_getvect( CTRL_BRK_VEC );
+            __old_pm_int_ctrl_break = pharlap_pm_getvect( CTRL_BRK_VEC );
+            pharlap_setvect( CTRL_BRK_VEC, (pfun) (void (_WCNEAR *)(void))__int_ctrl_break_handler );
         } else if( __DPMI_hosted() == 1 ) {
             DPMILockLinearRegion((long)__int_ctrl_break_handler,
                 ((long)__restore_int23 - (long)__int_ctrl_break_handler));
-            __old_int_ctrl_break = DPMIGetRealModeInterruptVector( ctrlBreakVector );
-            __old_pm_int_ctrl_break = DPMIGetPMInterruptVector( ctrlBreakVector );
-            DPMISetPMInterruptVector( ctrlBreakVector, __int_ctrl_break_handler );
+            __old_int_ctrl_break = DPMIGetRealModeInterruptVector( CTRL_BRK_VEC );
+            __old_pm_int_ctrl_break = DPMIGetPMInterruptVector( CTRL_BRK_VEC );
+            DPMISetPMInterruptVector( CTRL_BRK_VEC, __int_ctrl_break_handler );
         } else {        /* what it used to do */
-            __old_int_ctrl_break = _dos_getvect( ctrlBreakVector );
-            _dos_setvect( ctrlBreakVector, __int_ctrl_break_handler );
+            __old_int_ctrl_break = _dos_getvect( CTRL_BRK_VEC );
+            _dos_setvect( CTRL_BRK_VEC, __int_ctrl_break_handler );
         }
 #else
-        __old_int_ctrl_break = _dos_getvect( ctrlBreakVector );
-        _dos_setvect( ctrlBreakVector, __int_ctrl_break_handler );
+        __old_int_ctrl_break = _dos_getvect( CTRL_BRK_VEC );
+        _dos_setvect( CTRL_BRK_VEC, __int_ctrl_break_handler );
 #endif
         if( __int23_exit == __null_int23_exit ) {
             __int23_exit = __restore_int_ctrl_break;

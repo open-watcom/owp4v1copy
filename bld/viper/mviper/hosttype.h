@@ -35,7 +35,7 @@ pick( HOST_NT,      'n',    "BATSERV.EXE",  "weditviw", TRUE,   "" )    // Windo
 pick( HOST_WINOS2,  's',    "BATSERV.EXE",  "epmlink",  TRUE,   "" )    // Win-OS/2
 pick( HOST_WIN95,   '9',    "BATSERV.EXE",  "weditviw", TRUE,   "" )    // Windows 95
 pick( HOST_J_WIN,   'j',    "BATCHBOX.PIF", "notepad",  FALSE,  "%f" )  // Japanese Windows 3.x on an IBM
-pick( HOST_NEC_WIN, '8',    "BATCHBOX.PIF", "notepad",  FALSE,  "%f" )  // Japanese Windows 3.x on a Nec98
+pick( HOST_NEC_WIN, '8',    "BATCHBOX.PIF", "notepad",  FALSE,  "%f" )  // Japanese Win 3.x on a NEC PC98; obsolete
 pick( HOST_AXP_NT,  'a',    "BATSERV.EXE",  "weditviw", TRUE,   "" )    // Dec Alpha (Windows NT)
 pick( HOST_DOS,     'd',    NULL,           NULL,       FALSE,  "" )    // DOS
 pick( HOST_LINUX,   'x',    NULL,           NULL,       FALSE,  "" )    // Linux

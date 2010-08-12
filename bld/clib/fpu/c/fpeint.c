@@ -30,20 +30,19 @@
 
 
 #include "variety.h"
-#include "nonibm.h"
 #include "rtinit.h"
 
 /*
  * This file can be used to customize numeric coprocessor interrupt
- * handling in the math libraries (MATH387R.LIB, MATH387S.LIB) for
+ * handling in the math libraries (math387r.lib, math387s.lib) for
  * NEC PC9800 series, Fujitsu, or IBM AT compatible PCs.
  *
- * Compile FPEINT.C as follows:
- *      To replace FPEINT in MATH387R.LIB
- *           wcc386p/r/ez fpeint /ox/w3/zq/zc/zl/d__NEC__/ms/3r/7
+ * Compile modified fpeint.c as follows:
+ *      To replace fpeint in math387r.lib
+ *           wcc386 -r -ox -w3 -zq -zc -zl -ms -3r -7 fpeint.c
  *           wlib math387r -+fpeint
- *      To replace FPEINT in MATH387S.LIB
- *           wcc386p/r/ez fpeint /ox/w3/zq/zc/zl/d__NEC__/ms/3s/7
+ *      To replace fpeint in math387s.lib
+ *           wcc386 -r -ox -w3 -zq -zc -zl -ms -3s -7 fpeint.c
  *           wlib math387s -+fpeint
  */
 
@@ -78,7 +77,7 @@
  *
  * -------------------------------------------------------------------
  *
- * For the NEC PC98 (286, 386), we use IRQ 8 (math coprocessor exception)
+ * For the NEC PC98, we would use IRQ 8 (math coprocessor exception)
  * Level     Function                                Vector Number
  * -----     --------
  * IRQ  0     Timer                                  08
@@ -103,14 +102,13 @@
  */
 
 /*
- * If IRQ_NUM is less than 8, we have a problem in the code (contact WATCOM)
+ * If IRQ_NUM is less than 8, we have a problem in the code.
  */
 
 
 _WCRTDATA extern char __FPE_int = 0;    /* Used for Rational Systems and Intel */
 #if defined(__386__)
 _WCRTDATA extern char __IRQ_num = 0;    /* Used for PharLap DOS Extender */
-_WCRTDATA extern char __IRQ_int = 0;    /* Used for Ergo DOS Extender */
 _WCRTDATA extern char __MST_pic = 0;    /* Master PIC port number */
 _WCRTDATA extern char __SLV_pic = 0;    /* Slave PIC port number */
 #endif
@@ -124,23 +122,12 @@ _WCRTDATA extern char __SLV_pic = 0;    /* Slave PIC port number */
 
 static void init_on_startup( void )
 {
-    if( !__NonIBM ) {       /* IBM */
-        __FPE_int = 0x02;               /* INT 0x02 */
-        #ifdef __386__
-            __IRQ_num = 0x0D;           /* IRQ 13 */
-            __IRQ_int = 0x75;           /* IRQ 13 vectored thru INT 0x75 */
-            __MST_pic = 0x20;           /* Master PIC port number */
-            __SLV_pic = 0xA0;           /* Slave PIC port number */
-        #endif
-    } else {                /* NEC */
-        __FPE_int = 0x10;               /* INT 0x10 */
-        #ifdef __386__
-            __IRQ_num = 0x08;           /* IRQ 8 */
-            __IRQ_int = 0x10;           /* IRQ 8 vectored thru INT 0x10 */
-            __MST_pic = 0x00;           /* Master PIC port number */
-            __SLV_pic = 0x08;           /* Slave PIC port number */
-        #endif
-    }
+    __FPE_int = 0x02;           /* INT 0x02 */
+#ifdef __386__
+    __IRQ_num = 0x0D;           /* IRQ 13 */
+    __MST_pic = 0x20;           /* Master PIC port number */
+    __SLV_pic = 0xA0;           /* Slave PIC port number */
+#endif
 }
 
 

@@ -104,7 +104,6 @@
 !inject mainrdu.obj                                                                                         rdu
 !inject mtype.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32                 rdu
 !inject nomem.obj        d32             nt nta ntp nvc     nvl         o32         w16 w32 osi             rdu
-!inject nonibm.obj   d16 d32             nt                         o16 o32         w16 w32                 rdu
 !inject nullargv.obj d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32 osi             rdu
 !inject onexit.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
 !inject os2fil64.obj                                                    o32
