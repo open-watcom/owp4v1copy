@@ -267,11 +267,6 @@ int global uiisdbcs( void )
     return( Pairs[0].start_range != 0 );
 }
 
-int global uionnec( void )
-{
-    return( FALSE );
-}
-
 int global uicharlen( int ch )
 {
     dbcs_pair           *p;

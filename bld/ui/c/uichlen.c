@@ -65,20 +65,6 @@ int global uiisdbcs( void )
 
 #endif
 
-#if defined( __AXP__ ) || defined( __UNIX__ )
-    int global uionnec( void )
-    {
-        return( 0 );
-    }
-#else
-    extern int __NonIBM;
-
-    int global uionnec( void )
-    {
-        return( __NonIBM );
-    }
-#endif
-
 #else
 
 int global uicharlen( int ch )
@@ -90,11 +76,6 @@ int global uicharlen( int ch )
 
 int global uiisdbcs( void )
 /*************************/
-{
-    return( 0 );
-}
-
-int global uionnec( void )
 {
     return( 0 );
 }

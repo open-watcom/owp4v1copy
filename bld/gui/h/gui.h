@@ -235,10 +235,6 @@ typedef enum {
         GUI_LAST_COLOUR = GUIEX_HIGHLIGHTTEXT
 } gui_colour;
 
-#define GUI_NORMAL GUI_BLACK            // for NEC PC
-#define GUI_REVERSE GUI_WHITE           // for NEC PC
-#define GUI_YELLOW GUI_BROWN            // for NEC PC
-
 typedef struct gui_colour_set {
     gui_colour fore;
     gui_colour back;

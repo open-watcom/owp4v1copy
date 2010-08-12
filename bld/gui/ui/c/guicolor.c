@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Default GUI colour set.
 *
 ****************************************************************************/
 
@@ -53,28 +52,7 @@ static gui_colour_set IBMDialColours[] = {
     { GUI_BRIGHT_WHITE, GUI_CYAN },     // GUI_DLG_BUTTON_ACTIVE_STANDOUT
 };
 
-// background == white means reverse, black means normal on NEC - uugh!
-static gui_colour_set NECDialColours[] = {
-    { GUI_GREEN,GUI_REVERSE },          // GUI_DLG_NORMAL,
-    { GUI_CYAN, GUI_REVERSE },          // GUI_DLG_FRAME,
-    { GUI_GREEN,GUI_REVERSE },          // GUI_DLG_SHADOW,
-    { GUI_CYAN, GUI_REVERSE },          // GUI_DLG_SCROLL_ICON,
-    { GUI_CYAN, GUI_REVERSE },          // GUI_DLG_SCROLL_BAR,
-    /* hot spot is inverted on purpose */
-    { GUI_WHITE, GUI_REVERSE },         // GUI_DLG_BUTTON_PLAIN,
-    { GUI_WHITE, GUI_NORMAL },          // GUI_DLG_BUTTON_STANDOUT,
-    { GUI_CYAN, GUI_REVERSE },          // GUI_DLG_BUTTON_ACTIVE,
-    { GUI_CYAN, GUI_NORMAL },           // GUI_DLG_BUTTON_ACTIVE_STANDOUT
-};
-
-extern int uionnec( void );
-
-static gui_colour_set *GetDialColours( void )
-{
-    return( uionnec() ? NECDialColours : IBMDialColours );
-}
-
-#define DialColours GetDialColours()
+#define DialColours IBMDialColours
 
 
 static gui_colour_set Normal = { NORMAL_FORE, NORMAL_BACK };

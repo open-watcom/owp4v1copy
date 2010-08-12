@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  draw various character graphics
+* Description:  Draw various character graphics.
 *
 ****************************************************************************/
 
@@ -45,8 +45,6 @@
 #include <string.h>
 #include "walloca.h"
 
-
-extern int uionnec( void );
 
 static unsigned char DrawIndex[] =
 {
@@ -148,15 +146,9 @@ void GUIInitDrawingChars( bool dbcs )
     #undef draw_pick
 #else
     if( dbcs ) {
-        if( uionnec() ) {
-            #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = d;
-            #include "guidraw.h"
-            #undef draw_pick
-        } else {
-            #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = c;
-            #include "guidraw.h"
-            #undef draw_pick
-        }
+        #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = c;
+        #include "guidraw.h"
+        #undef draw_pick
     } else {
         #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = b;
         #include "guidraw.h"

@@ -165,66 +165,17 @@ unsigned char UiDBCSChar[] = {
     'X',        /* UI_CHECK_MARK        */
 };
 
-unsigned char UiNECChar[] = {
-    '(',        /* UI_RADIO_LEFT        */
-    ')',        /* UI_RADIO_RIGHT       */
-    '*',        /* UI_RADIO_FULL        */
-    ' ',        /* UI_RADIO_EMPTY       */
-    '[',        /* UI_CHECKBOX_LEFT     */
-    ']',        /* UI_CHECKBOX_RIGHT    */
-    'X',        /* UI_CHECKBOX_FULL     */
-    ' ',        /* UI_CHECKBOX_EMPTY    */
-    0x07,               /* UI_BOX_TOP_LEFT      */
-    0x09,               /* UI_BOX_TOP_RIGHT     */
-    0x0f,               /* UI_BOX_BOTTOM_RIGHT  */
-    0x0c,               /* UI_BOX_BOTTOM_LEFT   */
-    0x02,               /* UI_BOX_TOP_LINE      */
-    0x04,               /* UI_BOX_RIGHT_LINE    */
-    0x02,               /* UI_BOX_BOTTOM_LINE   */
-    0x04,               /* UI_BOX_LEFT_LINE     */
-    ' ',                /* UI_SHADOW_BOTTOM     */
-    ' ',                /* UI_SHADOW_B_LEFT     */
-    ' ',                /* UI_SHADOW_RIGHT      */
-    ' ',                /* UI_SHADOW_B_RIGHT    */
-    0x05,               /* UI_SBOX_TOP_LEFT     */
-    0x08,               /* UI_SBOX_TOP_RIGHT    */
-    0x0d,               /* UI_SBOX_BOTTOM_RIGHT */
-    0x0a,               /* UI_SBOX_BOTTOM_LEFT  */
-    0x01,               /* UI_SBOX_TOP_LINE     */
-    0x03,               /* UI_SBOX_RIGHT_LINE   */
-    0x01,               /* UI_SBOX_BOTTOM_LINE  */
-    0x03,               /* UI_SBOX_LEFT_LINE    */
-    0x10,               /* UI_SBOX_LEFT_TACK    */
-    0x12,               /* UI_SBOX_RIGHT_TACK   */
-    0x01,               /* UI_SBOX_HORIZ_LINE   */
-
-    0x07,       /* UI_ARROW_DOWN        */
-    '>',        /* UI_POPUP_MARK        */
-    'X',        /* UI_CHECK_MARK        */
-};
-
 void intern DBCSCharacterMap( void )
 {
     if ( uiisdbcs() ) {
-        if( uionnec() ) {
-            memcpy( UiGChar, UiNECChar, sizeof( UiDBCSChar ) );
-            VertScrollFrame[0]  = 0x04;
-            HorzScrollFrame[0]  = 0x02;
-            SliderChar[0]       = 0x23;
-            LeftPoint[0]        = '<';
-            RightPoint[0]       = '>';
-            UpPoint[0]          = '^';
-            DownPoint[0]        = 'v';
-        } else {
-            memcpy( UiGChar, UiDBCSChar, sizeof( UiDBCSChar ) );
-            VertScrollFrame[0]  = 0x1A;
-            HorzScrollFrame[0]  = 0x1A;
-            SliderChar[0]       = 0x14;
-            LeftPoint[0]        = '<';
-            RightPoint[0]       = '>';
-            UpPoint[0]          = '^';
-            DownPoint[0]        = 'v';
-        }
+        memcpy( UiGChar, UiDBCSChar, sizeof( UiDBCSChar ) );
+        VertScrollFrame[0]  = 0x1A;
+        HorzScrollFrame[0]  = 0x1A;
+        SliderChar[0]       = 0x14;
+        LeftPoint[0]        = '<';
+        RightPoint[0]       = '>';
+        UpPoint[0]          = '^';
+        DownPoint[0]        = 'v';
     }
 }
 
