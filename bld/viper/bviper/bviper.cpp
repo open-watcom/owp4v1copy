@@ -81,24 +81,24 @@ static char* usage[] = {
     "  -r               - generate makefiles using release switch set.",
     "  -h host type     - generate makefiles for selected host.",
     "                     (default is current host)",
-    "                     0 - Windows 3.x",
-    "                     1 - OS/2 PM",
-    "                     2 - Windows NT",
-    "                     3 - Win-OS/2",
-    "                     4 - Windows 95",
-    "                     5 - Japanese Windows 3.x on an IBM",
-    "                     6 - Japanese Windows 3.x on a Nec98",
-    "                     7 - Dec Alpha (Windows NT)",
-    "                     8 - DOS",
-    "                     9 - Linux",
+    NULL
+};
+
+static char* usage_hosts[] = {
+    #undef pick
+    #define pick(enum,type,batchserv,editor,DLL,parms,descr) descr,
+    #include "hosttype.h"
     NULL
 };
 
 int main( int argc, char** argv )
 {
     if( argc <= 1 ) {
-        for( int i=0; usage[i]; i++ ) {
+        for( int i = 0; usage[i] != NULL; i++ ) {
             puts( usage[i] );
+        }
+        for( int i = 0; usage_hosts[i] != NULL; i++ ) {
+            printf( "                     %d - %s\n", i, usage_hosts[i] );
         }
     } else {
         VpeMain app( argc, argv );
