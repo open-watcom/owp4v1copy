@@ -26,11 +26,5 @@ ncurses_objs = &
     read_ent.obj
 
 
-ncurses.lib : $(ncurses_objs)
-!ifdef bootstrap
-    ar crs $@ $<
-!else
-    rm -f $^&.lbc
-    @for %i in ($<) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) @$^&.lbc
-!endif
+ncurses.lib : $(ncurses_objs) $(__MAKEFILES__)
+    $(librarian) $(libflags) $(ncurses_objs)
