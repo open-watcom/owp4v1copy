@@ -32,26 +32,17 @@ dwutils.obj
 
 inc_dirs = -I. -I"../h"
 
-!ifeq bootstrap 1
+dw.lib : dwabenum.gh $(objs) $(__MAKEFILES__)
+        $(librarian) $(libflags) $(objs)
 
-# to be fixed: wlib -fa produces a library that gnu ld can't read
-# can be a bug in wlib or in gnu ld, I don't know right now...
-dw.lib : dwabenum.gh $(objs)
-        ar crs $^@ $(objs)
-
-!else
-
+!ifndef bootstrap
 extra_c_flags = -s
-
-dw.lib : dwabenum.gh $(objs)
-        @%create tmp.lbc
-        @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) $(libflags) @tmp.lbc
-
 !endif
 
+extra_l_flags = op map
+
 ./dwmakeab.exe : dwmakeab.c
-    $(bld_cl) $(wcl_util_opts) $[@
+        $(bld_cl) $(wcl_util_opts) $[@
 
 dwabenum.gh dwabinfo.gh : ./dwmakeab.exe
         $[@
@@ -59,4 +50,4 @@ dwabenum.gh dwabinfo.gh : ./dwmakeab.exe
 dwabbrev.obj : dwabbrev.c dwabinfo.gh
 
 testcli.exe : testcli.obj testtest.obj testdump.obj dw.lib
-        $(linker) $(lflags) op quiet,map file testcli,testtest,testdump lib dw.lib
+        $(linker) $(lflags) file testcli.obj,testtest.obj,testdump.obj lib dw.lib

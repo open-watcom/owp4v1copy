@@ -12,11 +12,5 @@ orl_autodepends = .autodepend
 
 inc_dirs = -I"$(orl_dir)/h" -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h"
 
-orl.lib : $(orl_objs)
-!ifeq bootstrap 1
-        ar crs $^@ $(orl_objs)
-!else
-        @%create $^&.lbc
-        @for %i in ($(orl_objs)) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) @$^&.lbc
-!endif
+orl.lib : $(orl_objs) $(__MAKEFILES__)
+        $(librarian) $(libflags) $(orl_objs)

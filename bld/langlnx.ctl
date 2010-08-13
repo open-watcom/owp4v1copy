@@ -11,13 +11,13 @@ set WLINK_LNK=bootstrp.lnk
 # compiled using GNU make + gcc + ar
 [ INCLUDE <DEVDIR>/wmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
+[ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
 
 # compiled using wmake + gcc + ar/wlib
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/prereq.ctl ]
 [ INCLUDE <DEVDIR>/orl/prereq.ctl ]
-[ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
 [ INCLUDE <DEVDIR>/cfloat/prereq.ctl ]
 [ INCLUDE <DEVDIR>/owl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/dwarf/prereq.ctl ]

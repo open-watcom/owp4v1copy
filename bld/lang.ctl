@@ -20,6 +20,7 @@ echo Bootstrapping compiler using GNU tools...
 #
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
 [ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
+[ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
 [ INCLUDE <DEVDIR>/cc/wcl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
 [ INCLUDE <DEVDIR>/causeway/prereq.ctl ]
@@ -36,8 +37,6 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/ssl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstub/lang.ctl ]
 [ INCLUDE <DEVDIR>/wpack/prereq.ctl ]
-#        Prebuild new WLIB for build process
-[ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
 #        Prebuild POSIX tools for build process
 [ INCLUDE <DEVDIR>/posix/prereq.ctl ]
 #        Prebuild wres.lib and new WRC with OS/2 support for build process

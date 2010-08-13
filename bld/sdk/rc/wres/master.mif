@@ -23,10 +23,13 @@ memory_model_386 = $(model)
 objs = $(wres_core_objs) $(wres_more_objs)
 
 # options to use
+extra_c_flags = -DMICROSOFT
 !ifdef IS_GUI
-extra_c_flags = -DMICROSOFT -s -DWIN_GUI
-!else
-extra_c_flags = -DMICROSOFT -s
+extra_c_flags += -DWIN_GUI
+!endif
+
+!ifndef bootstrap
+extra_c_flags += -s
 !endif
 
 !ifeq convention stack
@@ -49,11 +52,5 @@ inc_dirs = -I"$(wres_dir)/h"
 
 # explicit rules
 
-wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
-!ifdef bootstrap
-    ar crs $@ $(objs)
-!else
-    %create $^&.lbc
-    @for %i in ($(objs)) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) @$^&.lbc
-!endif
+wres.lib : $(objs) $(__MAKEFILES__)
+    $(librarian) $(libflags) $(objs)

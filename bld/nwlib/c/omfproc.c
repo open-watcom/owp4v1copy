@@ -624,6 +624,7 @@ void OmfWriteImport( sym_file *sfile )
     memcpy( contents + 1, sfile->import->u.sym.symName, sym_len );
 #endif
     WriteOmfRecord( omfRec );
+    exp_len = 0;
     len = 2 + 2 + ( 1 + file_len ) + ( 1 + sym_len ) + 1;
     if( sfile->import->type == ORDINAL ) {
         len += 2;

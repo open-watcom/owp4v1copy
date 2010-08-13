@@ -5,22 +5,19 @@ proj_name       = wlib
 wlib_autodepends = .AUTODEPEND
 !endif
 
+!ifdef bootstrap
+no_libs    = 1
+!else ifdef prebuild
+no_libs    = 1
+!else ifeq release 0
 wlib_trmem = 1
+!endif
 
 suppress_bd = 1
 
 wlib_nosymfile = 1
 
-!ifdef bootstrap
-incl_msgtext = 1
-!ifdef wlib_dll
-!undef wlib_dll
-!endif
-!ifdef wlib_rtdll
-!undef wlib_rtdll
-!endif
-!else ifdef prebuild
-incl_msgtext = 1
+!ifdef no_libs
 !ifdef wlib_dll
 !undef wlib_dll
 !endif
@@ -34,6 +31,13 @@ incl_msgtext = 1
 !include deftarg.mif
 
 !include trmem.mif
+
+!ifdef no_libs
+!include $(orl_dir)/orlobjs.mif
+!else
+!include wres.mif
+!include $(orl_dir)/client.mif
+!endif
 
 ##########
 # objects
@@ -55,7 +59,6 @@ common_objs = &
     elfobjs.obj &
     orlrtns.obj &
     memfuncs.obj &
-    trmemcvr.obj &
     demangle.obj &
     omfutil.obj &
     coffwrt.obj &
@@ -64,24 +67,8 @@ common_objs = &
     ideentry.obj &
     $(trmem_objs)
 
-
-!ifdef prebuild
-
-!include $(orl_dir)/orlobjs.mif
-!ifdef incl_msgtext
+!ifdef no_libs
 common_objs += $(orl_objs)
-!else
-!include $(wres_dir)/wrobjs.mif
-common_objs += $(orl_objs) $(wres_core_objs)
-!endif
-
-!else
-
-!include $(orl_dir)/client.mif
-!ifndef incl_msgtext
-!include wres.mif
-!endif
-
 !endif
 
 drv_objs = maindrv.obj idedrv.obj idemsgfm.obj
@@ -101,18 +88,19 @@ external_dependencies = $(xlibs)
 external_dependencies += $(os2ldr)
 !endif
 
-!ifdef incl_msgtext
+!ifdef no_libs
 depends_exe = $(comp_objs_exe) $(external_dependencies)
+depends_dll = $(comp_objs_dll) $(external_dependencies)
 !else
 depends_exe = msg.gh wlib.res $(comp_objs_exe) $(external_dependencies)
+depends_dll = msg.gh $(comp_objs_dll) $(external_dependencies)
 !endif
-depends_dll = $(comp_objs_dll) $(external_dependencies)
 depends_drv = $(drv_objs)
 
 #########
 # cflags
 
-!ifdef incl_msgtext
+!ifdef no_libs
 extra_c_flags += -DINCL_MSGTEXT
 !endif
 
@@ -127,7 +115,6 @@ extra_c_flags += -DIDE_PGM
 extra_c_flags_ntdll    = -bd
 extra_c_flags_os2dll   = -bd
 extra_c_flags_trmem    = $(trmem_cflags)
-extra_c_flags_trmemcvr = $(trmem_cover_cflags)
 extra_c_flags_memfuncs = $(trmem_cover_cflags)
 extra_c_flags_idedrv   = -DSTATIC_LINKAGE
 
@@ -156,35 +143,26 @@ extra_rc_flags = $(extra_rc_flags_$(host_os))
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
 
-!ifeq bootstrap 1
-
-inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I..
-.c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
-.h: ../h;$(watcom_dir)/h
-defines = -DIDE_PGM -D__stdcall=
-comp_objs_exe += clibext.obj
-
-!else ifdef prebuild
-
-inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(wres_dir)/h" &
-  -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h" -I..
-.c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c;$(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c;$(wres_dir)/c;
-.h: ../h;$(watcom_dir)/h;$(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;
-
-!else
-
-inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
-.c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
+inc_dirs =  -I.. -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
+.c: ../c;$(lib_misc_dir)/c;$(watcom_dir)/c;$(trmem_dir)
 .h: ../h;$(watcom_dir)/h
 
+!ifdef no_libs
+inc_dirs += -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h"
+.c: $(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c;
+.h: $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;
 !endif
 
-!ifdef prebuild
-xlibs = 
-!else ifdef incl_msgtext
-xlibs = $(orl_lib)
+
+!ifdef bootstrap
+defines = -DIDE_PGM -D__stdcall=
+comp_objs_exe += clibext.obj
+!endif
+
+!ifdef no_libs
+xlibs =
 !else
-xlibs = $(orl_lib) $(wres_lib)
+xlibs += $(wres_lib) $(orl_lib)
 !endif
 
 !ifdef wlib_dll
@@ -195,7 +173,7 @@ wlib.exe: $(depends_drv) wlibd.lib drv.lnk
 !else
 
 wlib.exe: $(depends_exe) exe.lnk
-!ifeq bootstrap 1
+!ifdef bootstrap
     $(cc) -g -o $@ $(comp_objs_exe) $(xlibs)
 !else ifeq host_os osi
     $(linker) name $^&.rex @exe.lnk
@@ -204,7 +182,7 @@ wlib.exe: $(depends_exe) exe.lnk
 !else
     $(linker) name $@ @exe.lnk
 !endif
-!ifndef incl_msgtext
+!ifndef no_libs
     wstrip -q -a -r $@ . wlib.res
 !endif
 
