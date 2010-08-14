@@ -53,10 +53,7 @@ typedef uint_16             MenuFlags;
 
 #define MENUEX_VERSION_SIG  0x0001
 
-#if !defined( NATURAL_PACK )
 #include "pushpck1.h"
-#endif
-
 typedef struct MenuHeader {
     uint_16         Version;        /* currently 0 */
     uint_16         HeaderSize;     /* currently 0 */
@@ -110,10 +107,7 @@ typedef struct MenuExItem {
         MenuExItemPopupData     ExPopup;
     } Item;
 } MenuExItem;
-
-#if !defined( NATURAL_PACK )
 #include "poppck.h"
-#endif
 
 int ResWriteMenuItemNormal( const MenuItemNormal * curritem, uint_8 use_unicode,
                                                     WResFileID handle );

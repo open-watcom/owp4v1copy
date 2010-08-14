@@ -37,17 +37,11 @@
 
 #define STRTABLE_STRS_PER_BLOCK     16
 
-#if !defined( NATURAL_PACK )
 #include "pushpck1.h"
-#endif
-
 typedef struct StringTableBlock {
     WResIDName *                String[ STRTABLE_STRS_PER_BLOCK ];
 } StringTableBlock;
-
-#if !defined( NATURAL_PACK )
 #include "poppck.h"
-#endif
 
 extern void ResInitStringTableBlock( StringTableBlock * );
 extern void ResFreeStringTableBlock( StringTableBlock * );

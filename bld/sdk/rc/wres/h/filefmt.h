@@ -34,10 +34,7 @@
 
 #include "watcom.h"
 
-#if !defined( NATURAL_PACK )
 #include "pushpck1.h"
-#endif
-
 typedef struct WResHeader {
     uint_32     Magic[ 2 ];     /* must be WRESMAGIC0 and WRESMAGIC1 */
     uint_32     DirOffset;      /* offset to the start of the directory */
@@ -144,10 +141,7 @@ typedef struct WResLangInfo {
     uint_32             Offset; /* offset of resource body in file */
     uint_32             Length; /* length in bytes of resource body */
 } _WCUNALIGNED WResLangInfo;
-
-#if !defined( NATURAL_PACK )
 #include "poppck.h"
-#endif
 
 /* Wes uses this stuff in the resource editors - not really file formats, don't have to be packed */
 #define WRESMAXCHUNK  ( 31 * 1024 )

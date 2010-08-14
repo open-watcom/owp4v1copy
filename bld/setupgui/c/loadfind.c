@@ -34,10 +34,7 @@
 #include "phandle.h"
 
 
-#if !defined( NATURAL_PACK )
-    #include "pushpck1.h"
-#endif
-
+#include "pushpck1.h"
 typedef struct dbgheader {
     uint_16     signature;
     uint_8      exe_major_ver;
@@ -79,10 +76,7 @@ typedef struct {
     uint_32     ext_attrib;
     uint_32     offset;
 } zip_cdfh;
-
-#if !defined( NATURAL_PACK )
-    #include "poppck.h"
-#endif
+#include "poppck.h"
 
 #define VALID_SIGNATURE 0x8386
 #define FOX_SIGNATURE1  0x8300
