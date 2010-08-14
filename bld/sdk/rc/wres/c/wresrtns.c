@@ -28,16 +28,10 @@
 *
 ****************************************************************************/
 
-#ifdef __LINUX__
-#ifndef LINUX
-#define LINUX __LINUX__
-#endif
-#endif
 
 #include <unistd.h>
-
 #if defined( __UNIX__ )
-#include <fcntl.h>
+    #include <fcntl.h>
 #endif
 #include <stdlib.h>
 #include "wressetr.h"

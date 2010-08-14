@@ -31,15 +31,6 @@
 
 #include "wres.h"
 
-#if defined( __UNIX__ ) && !defined( BOOTSTRAP )
-#include "wreslang.h"
-
-res_language_enumeration _WResLanguage(void)
-{
-    return( RLE_ENGLISH );
-}
-#endif
-
 WResLangInfo * WResGetLangInfo( WResDirWindow currwind )
 /****************************************************/
 {
