@@ -938,6 +938,15 @@ typedef SecurityFunctionTableA  SecurityFunctionTable;
 typedef PSecurityFunctionTableA PSecurityFunctionTable;
 #endif
 
+/* Security initialization callback */
+typedef PSecurityFunctionTableA (SEC_ENTRY *INIT_SECURITY_INTERFACEA)( void );
+typedef PSecurityFunctionTableW (SEC_ENTRY *INIT_SECURITY_INTERFACEW)( void );
+#ifdef UNICODE
+    #define INIT_SECURITY_INTERFACE INIT_SECURITY_INTERFACEW
+#else
+    #define INIT_SECURITY_INTERFACE INIT_SECURITY_INTERFACEA
+#endif
+
 /* SASL authorization identifier state */
 typedef enum _SASL_AUTHZID_STATE {
     Sasl_AuthZIDForbidden   = 0,
