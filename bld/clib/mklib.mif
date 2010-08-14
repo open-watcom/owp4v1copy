@@ -1,6 +1,3 @@
-.before
-    @set include=
-
 all : $(objfiles) $(libname).lib .symbolic
     @%null
 

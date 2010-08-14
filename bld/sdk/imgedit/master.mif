@@ -88,9 +88,6 @@ inc_dirs += -I"$(misc_dir)" -I"$(wpi_dir)/h"
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
 
-.before:
-        @set include=
-
 !ifeq host_OS os2
 
 $(name).exe : $(name).res $(objs) $(libs)
