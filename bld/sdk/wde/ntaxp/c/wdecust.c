@@ -144,7 +144,7 @@ Bool WdeSetCurrentCustControl( int which )
     inst = WdeGetAppInstance();
     proc = MakeProcInstance( (FARPROC)WdeSelectCustProc, inst );
     if( proc == NULL ) {
-        WdeWriteTrail( "WdeSetCurrentCustomControl: MakeProcInstnce failed!" );
+        WdeWriteTrail( "WdeSetCurrentCustomControl: MakeProcInstance failed!" );
         return( FALSE );
     }
     ret = JDialogBoxParam( inst, "WdeSelectCustom", WdeGetMainWindowHandle(),
@@ -232,7 +232,7 @@ BOOL WdeLoadMSCustomControls( WdeCustLib *lib )
     info_proc = (LPFNCCINFO)GetProcAddress( lib->inst, "CustomControlInfoA" );
 
     if( info_proc == NULL ) {
-        info_proc = (LPFNCCINFO)GetProcAddress( lib->inst, "CustomControlInfoA" );
+        info_proc = (LPFNCCINFO)GetProcAddress( lib->inst, "CustomControlInfoW" );
         if( info_proc == NULL ) {
             WdeWriteTrail( "WdeLoadMSCustomControls: Info Proc not found!" );
         } else {
