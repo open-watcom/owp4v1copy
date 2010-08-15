@@ -54,9 +54,10 @@ extern void             StartupErr( char *err );
 extern char             *DupStr( char * );
 
 #ifdef ENABLE_TRAP_LOGGING
-extern int              OpenTrapTraceFile( const char * path );
+extern int              OpenTrapTraceFile( const char *path, bool flush_flag );
 extern int              CloseTrapTraceFile( void );
 extern char             *TrpDebugFile;
+extern bool             TrpDebugFileFlush;
 #endif
 
 extern system_config    SysConfig;
@@ -108,7 +109,7 @@ void InitTrap( char *trap_file )
 
 #ifdef ENABLE_TRAP_LOGGING
     if( TrpDebugFile )
-        OpenTrapTraceFile( TrpDebugFile );
+        OpenTrapTraceFile( TrpDebugFile, TrpDebugFileFlush );
 #endif
 
 /* Don't use TxtBuff except for error -- it may have a Finger message in it */

@@ -44,6 +44,7 @@ char                    *InitCmdList;
 char                    *TrpFile;
 #ifdef ENABLE_TRAP_LOGGING
 char                    *TrpDebugFile;
+bool                    TrpDebugFileFlush = FALSE;
 #endif
 
 /*

@@ -64,6 +64,7 @@ extern void             StartupErr( char *err );
 extern char             *TrpFile;
 #ifdef ENABLE_TRAP_LOGGING
 extern char             *TrpDebugFile;
+extern bool             TrpDebugFileFlush;
 #endif
 extern char             *InitCmdList;
 extern char             *InvokeFile;
@@ -110,6 +111,7 @@ static char OptNameTab[] = {
     "Help\0"
 #ifdef ENABLE_TRAP_LOGGING
     "TDebug\0"
+    "TFDebug\0"
 #endif
 };
 
@@ -141,6 +143,7 @@ enum { OPT_INVOKE=1,
        OPT_HELP,
 #ifdef ENABLE_TRAP_LOGGING
        OPT_TRAP_DEBUG,
+       OPT_TRAP_DEBUG_FLUSH,
 #endif
 };
 
@@ -461,9 +464,17 @@ static void ProcOptList( int pass )
             }
             break;
 #ifdef ENABLE_TRAP_LOGGING
-        case OPT_TRAP_DEBUG:
-            if( pass == 2 ) _Free( TrpDebugFile );
+        case OPT_TRAP_DEBUG_FLUSH:
+            if( pass == 2 )
+                _Free( TrpDebugFile );
             TrpDebugFile = GetFileName( pass );
+            TrpDebugFileFlush = TRUE;
+            break;
+        case OPT_TRAP_DEBUG:
+            if( pass == 2 )
+                _Free( TrpDebugFile );
+            TrpDebugFile = GetFileName( pass );
+            TrpDebugFileFlush = FALSE;
             break;
 #endif
         case OPT_REMOTE_FILES:

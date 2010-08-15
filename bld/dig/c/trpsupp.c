@@ -46,16 +46,18 @@
 #include <windows.h>
 #include <winbase.h>    /* For GetSystemTime */
 
-static FILE * TrapTraceFileHandle = NULL;
+static FILE *TrapTraceFileHandle    = NULL;
+static bool TrapTraceFileFlush      = FALSE;
 
-int OpenTrapTraceFile( const char * path )
+int OpenTrapTraceFile( const char *path, bool flush_flag )
 {
     if( TrapTraceFileHandle )
-        return -1;
+        return( -1 );
     if( NULL == ( TrapTraceFileHandle = fopen( path, "wb" ) ) )
-        return -1;
-    
-    return 0;
+        return( -1 );
+
+    TrapTraceFileFlush = flush_flag;
+    return( 0 );
 }
 
 int CloseTrapTraceFile( void )
@@ -144,7 +146,8 @@ unsigned TrapAccess( unsigned num_in_mx,  mx_entry *mx_in,
     mx_entry            in[1];
 #endif
 
-    if( ReqFunc == NULL ) return( REQUEST_FAILED );
+    if( ReqFunc == NULL )
+        return( REQUEST_FAILED );
 
 #if !defined(SERVER)
     switch( *(access_req *)mx_in[0].ptr ) {
@@ -228,7 +231,8 @@ unsigned TrapAccess( unsigned num_in_mx,  mx_entry *mx_in,
     }
 #endif
     len = ReqFuncProxy( num_in_mx, mx_in, num_out_mx, mx_out );
-    if( len == REQUEST_FAILED ) Failure();
+    if( len == REQUEST_FAILED )
+        Failure();
     Access();
 #if !defined(SERVER)
 #if defined(__WINDOWS__) && defined( _M_I86 )
@@ -241,8 +245,9 @@ unsigned TrapAccess( unsigned num_in_mx,  mx_entry *mx_in,
 unsigned ReqFuncProxy( unsigned num_in_mx, mx_entry * mx_in, unsigned num_out_mx, mx_entry * mx_out )
 {
     unsigned result;
-    
-    if( ReqFunc == NULL ) return( REQUEST_FAILED );
+
+    if( ReqFunc == NULL )
+        return( REQUEST_FAILED );
 
 #ifdef ENABLE_TRAP_LOGGING
     if( TrapTraceFileHandle ) {
@@ -250,27 +255,30 @@ unsigned ReqFuncProxy( unsigned num_in_mx, mx_entry * mx_in, unsigned num_out_mx
         unsigned short  rectype = 4;   /* Request */
         unsigned short  length = 0;
         SYSTEMTIME      st;
-        
+
         GetSystemTime(&st);
-        
+
         for( ix = 0 ; ix < num_in_mx ; ix++ ) {
             length += mx_in[ix].len;
         }
         fwrite( &rectype, sizeof( rectype ), 1, TrapTraceFileHandle );
-	    fwrite( &st.wHour, sizeof(WORD), 1, TrapTraceFileHandle );
-	    fwrite( &st.wMinute, sizeof(WORD), 1, TrapTraceFileHandle );
-	    fwrite( &st.wSecond, sizeof(WORD), 1, TrapTraceFileHandle );
-	    fwrite( &st.wMilliseconds, sizeof(WORD), 1, TrapTraceFileHandle );
-        
+        fwrite( &st.wHour, sizeof(WORD), 1, TrapTraceFileHandle );
+        fwrite( &st.wMinute, sizeof(WORD), 1, TrapTraceFileHandle );
+        fwrite( &st.wSecond, sizeof(WORD), 1, TrapTraceFileHandle );
+        fwrite( &st.wMilliseconds, sizeof(WORD), 1, TrapTraceFileHandle );
+
         fwrite( &length, sizeof( length ), 1, TrapTraceFileHandle );
         for( ix = 0 ; ix < num_in_mx ; ix++ ) {
             fwrite( mx_in[ix].ptr, mx_in[ix].len, 1, TrapTraceFileHandle );
         }
+        if( TrapTraceFileFlush ) {
+            fflush( TrapTraceFileHandle );
+        }
     }
-#endif    
+#endif
 
     result = ReqFunc( num_in_mx, mx_in, num_out_mx, mx_out );
-      
+
 #ifdef ENABLE_TRAP_LOGGING
     if( TrapTraceFileHandle ) {
         /* result is the length of data returned or REQUEST_FAILED */
@@ -280,27 +288,30 @@ unsigned ReqFuncProxy( unsigned num_in_mx, mx_entry * mx_in, unsigned num_out_mx
             unsigned short  rectype = 5;   /* reply*/
             unsigned short  length = result;
             SYSTEMTIME      st;
-        
+
             GetSystemTime(&st);
-            
+
             fwrite( &rectype, sizeof( rectype ), 1, TrapTraceFileHandle );
-    	    fwrite( &st.wHour, sizeof(WORD), 1, TrapTraceFileHandle );
-    	    fwrite( &st.wMinute, sizeof(WORD), 1, TrapTraceFileHandle );
-    	    fwrite( &st.wSecond, sizeof(WORD), 1, TrapTraceFileHandle );
-    	    fwrite( &st.wMilliseconds, sizeof(WORD), 1, TrapTraceFileHandle );
+            fwrite( &st.wHour, sizeof(WORD), 1, TrapTraceFileHandle );
+            fwrite( &st.wMinute, sizeof(WORD), 1, TrapTraceFileHandle );
+            fwrite( &st.wSecond, sizeof(WORD), 1, TrapTraceFileHandle );
+            fwrite( &st.wMilliseconds, sizeof(WORD), 1, TrapTraceFileHandle );
             fwrite( &length, sizeof( length ), 1, TrapTraceFileHandle );
 
             for( ix = 0 ; ix < num_out_mx ; ix++ ) {
                 unsigned to_write = __min( mx_out[ix].len, length );
                 fwrite( mx_out[ix].ptr, to_write, 1, TrapTraceFileHandle );
                 length -= to_write;
-                if( 0 == length )
+                if( 0 == length ) {
                     break;
+                }
             }
-        }        
+            if( TrapTraceFileFlush ) {
+                fflush( TrapTraceFileHandle );
+            }
+        }
     }
 #endif
 
-    return result;
+    return( result );
 }
-
