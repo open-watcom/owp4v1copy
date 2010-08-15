@@ -1,4 +1,4 @@
-WdeMenu MENU
+"WdeMenu" MENU
 BEGIN
     POPUP      sp( "&File",
                    "&File" )
@@ -58,7 +58,7 @@ BEGIN
     END
 END
 
-WdeResMenu MENU
+"WdeResMenu" MENU
 BEGIN
     POPUP      sp( "&File",
                    "&File" )
@@ -309,7 +309,7 @@ BEGIN
     END
 END
 
-WdeDDEMenu MENU
+"WdeDDEMenu" MENU
 BEGIN
     POPUP      sp( "&File",
                    "&File" )

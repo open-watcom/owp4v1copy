@@ -70,4 +70,3 @@ LIST *WdeGetCurrObjectList( void )
 
     return( olist );
 }
-

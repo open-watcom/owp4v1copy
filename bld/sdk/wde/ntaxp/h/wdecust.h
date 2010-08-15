@@ -34,7 +34,6 @@
 #define WDECUST_INCLUDED
 
 #include "wdeglbl.h"
-#include <windows.h>
 #include <custcntl.h>
 #include "list.def"
 #include "wderesiz.h"
@@ -44,7 +43,7 @@
 /****************************************************************************/
 /* we do not support UNICODE yet */
 #ifdef UNICODE
-#undef UNICODE
+    #undef UNICODE
 #endif
 
 #define WDE_PREVIEW_ID     -1
@@ -54,31 +53,31 @@
 /****************************************************************************/
 
 typedef struct WdeCustLibStruct {
-    HANDLE     inst;
-    Bool       nt_lib;
-    Bool       load_only;
-    char      *file_name;
-    LPCCINFO   lpcci;
-    UINT       num_classes;
+    HANDLE      inst;
+    Bool        nt_lib;
+    Bool        load_only;
+    char        *file_name;
+    LPCCINFO    lpcci;
+    UINT        num_classes;
 } WdeCustLib;
 
 typedef struct {
-    WdeCustLib *lib;
+    WdeCustLib  *lib;
     UINT        index;
 } WdeCurrCustControl;
 
 /****************************************************************************/
 /* function prototypes                                                      */
 /****************************************************************************/
-extern Bool     WdeIsCurrentCustControlSet( int which );
-extern Bool     WdeCustControlsLoaded     ( void );
-extern Bool    WdeIsBorBtnIDSupported    ( uint_16 );
-extern void    WdeGetCurrentCustControl  ( int, WdeCustLib **, UINT * );
-extern Bool    WdeSetCurrentCustControl  ( int );
-extern Bool    WdeLoadCustomLib          ( Bool, Bool );
-extern Bool    WdeFreeAllCustLibs        ( void );
-extern void    WdeFindClassInAllCustLibs ( char *, LIST ** );
-extern Bool    WdeFindLibIndexFromInfo   ( LPCCINFO, WdeCustLib **, UINT * );
-extern void    WdeMapCustomSize          ( UINT *w, UINT *h, WdeResizeRatio *r );
+extern Bool WdeIsCurrentCustControlSet( int which );
+extern Bool WdeCustControlsLoaded( void );
+extern Bool WdeIsBorBtnIDSupported( uint_16 );
+extern void WdeGetCurrentCustControl( int, WdeCustLib **, UINT * );
+extern Bool WdeSetCurrentCustControl( int );
+extern Bool WdeLoadCustomLib( Bool, Bool );
+extern Bool WdeFreeAllCustLibs( void );
+extern void WdeFindClassInAllCustLibs( char *, LIST ** );
+extern Bool WdeFindLibIndexFromInfo( LPCCINFO, WdeCustLib **, UINT * );
+extern void WdeMapCustomSize( UINT *w, UINT *h, WdeResizeRatio *r );
 
 #endif

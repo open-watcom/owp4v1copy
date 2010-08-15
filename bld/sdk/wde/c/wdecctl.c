@@ -58,4 +58,3 @@ void WdeInitCommonControls( void )
     }
 #endif
 }
-

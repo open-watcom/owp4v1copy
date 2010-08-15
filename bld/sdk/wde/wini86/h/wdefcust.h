@@ -42,9 +42,9 @@
 /****************************************************************************/
 /* function prototypes                                                      */
 /****************************************************************************/
-extern OBJPTR WINEXPORT  WdeCustomCreate1   ( OBJPTR, RECT *, OBJPTR );
-extern OBJPTR WINEXPORT  WdeCustomCreate2   ( OBJPTR, RECT *, OBJPTR );
-extern Bool              WdeCustomInit      ( Bool );
-extern void              WdeCustomFini      ( void );
+extern OBJPTR WINEXPORT WdeCustomCreate1( OBJPTR, RECT *, OBJPTR );
+extern OBJPTR WINEXPORT WdeCustomCreate2( OBJPTR, RECT *, OBJPTR );
+extern Bool             WdeCustomInit( Bool );
+extern void             WdeCustomFini( void );
 
 #endif

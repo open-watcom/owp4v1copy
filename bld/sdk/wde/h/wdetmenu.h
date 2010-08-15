@@ -44,9 +44,9 @@
 /****************************************************************************/
 /* function prototypes                                                      */
 /****************************************************************************/
-extern void WdeInitToolMenu     ( HINSTANCE, HMENU );
-extern void WdeFiniToolMenu     ( void );
+extern void WdeInitToolMenu( HINSTANCE, HMENU );
+extern void WdeFiniToolMenu( void );
 extern void WdeHandleMeasureItem( MEASUREITEMSTRUCT * );
-extern void WdeHandleDrawItem   ( DRAWITEMSTRUCT * );
+extern void WdeHandleDrawItem( DRAWITEMSTRUCT * );
 
 #endif

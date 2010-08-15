@@ -84,9 +84,8 @@ Bool WdeIsFileAnRCFile( char *name )
     WRFileType  file_type;
 
     file_type = WRGuessFileType( name );
-    if( ( file_type == WR_WIN_RC ) || ( file_type == WR_WIN_RC_DLG ) ) {
+    if( file_type == WR_WIN_RC || file_type == WR_WIN_RC_DLG ) {
         return( TRUE );
     }
     return( FALSE );
 }
-

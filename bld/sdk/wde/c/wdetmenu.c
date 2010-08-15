@@ -60,8 +60,7 @@ typedef struct {
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
-static WdeToolBitMapType WdeMenuBitmaps[] =
-{
+static WdeToolBitMapType WdeMenuBitmaps[] = {
     { "SelMode",        NULL, IDM_SELECT_MODE,   "" },
     { "StikMode",       NULL, IDM_STICKY_TOOLS,  "" },
     { "DiagMode",       NULL, IDM_DIALOG_TOOL,   "" },
@@ -89,33 +88,31 @@ static WdeToolBitMapType WdeMenuBitmaps[] =
     { "SameWidth",      NULL, IDM_SAME_WIDTH,    "" },
     { "SameHeight",     NULL, IDM_SAME_HEIGHT,   "" },
     { "SameSize",       NULL, IDM_SAME_SIZE,     "" },
-    { NULL,             NULL, -1,                "" },
+    { NULL,             NULL, -1,                "" }
 };
 
-void WdeInitToolMenu ( HINSTANCE inst, HMENU menu )
+void WdeInitToolMenu( HINSTANCE inst, HMENU menu )
 {
     int i;
 
-    for ( i=0; WdeMenuBitmaps[i].bmp; i++ ) {
-        WdeMenuBitmaps[i].hbmp = LoadBitmap ( inst, WdeMenuBitmaps[i].bmp );
+    for( i = 0; WdeMenuBitmaps[i].bmp != NULL; i++ ) {
+        WdeMenuBitmaps[i].hbmp = LoadBitmap( inst, WdeMenuBitmaps[i].bmp );
         GetMenuString( menu, WdeMenuBitmaps[i].id, WdeMenuBitmaps[i].string, 255,
                        MF_BYCOMMAND );
-        if ( WdeMenuBitmaps[i].hbmp != NULL ) {
-            ModifyMenu ( menu, WdeMenuBitmaps[i].id,
-                         MF_BYCOMMAND | MF_OWNERDRAW,
-                         WdeMenuBitmaps[i].id,
-                         (LPCSTR) &WdeMenuBitmaps[i] );
+        if( WdeMenuBitmaps[i].hbmp != NULL ) {
+            ModifyMenu( menu, WdeMenuBitmaps[i].id, MF_BYCOMMAND | MF_OWNERDRAW,
+                        WdeMenuBitmaps[i].id, (LPCSTR)&WdeMenuBitmaps[i] );
         }
     }
 }
 
-void WdeFiniToolMenu ( void )
+void WdeFiniToolMenu( void )
 {
     int i;
 
-    for ( i=0; WdeMenuBitmaps[i].bmp; i++ ) {
-        if ( WdeMenuBitmaps[i].hbmp != NULL ) {
-            DeleteObject ( WdeMenuBitmaps[i].hbmp );
+    for( i = 0; WdeMenuBitmaps[i].bmp != NULL; i++ ) {
+        if( WdeMenuBitmaps[i].hbmp != NULL ) {
+            DeleteObject( WdeMenuBitmaps[i].hbmp );
         }
     }
 }
@@ -140,8 +137,7 @@ void WdeHandleMeasureItem( MEASUREITEMSTRUCT *mis )
         GetObject( od_data->hbmp, sizeof( BITMAP ), &bm );
         hdc = GetDC( NULL );
         rc.left = rc.top = 0;
-        DrawText( hdc, od_data->string, -1, &rc,
-                  DT_LEFT | DT_SINGLELINE | DT_CALCRECT );
+        DrawText( hdc, od_data->string, -1, &rc, DT_LEFT | DT_SINGLELINE | DT_CALCRECT );
         ReleaseDC( NULL, hdc );
         mis->itemWidth = bm.bmWidth + check_bm.bmWidth + spacing + rc.right;
         mis->itemHeight = max( bm.bmHeight, rc.bottom );

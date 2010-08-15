@@ -53,26 +53,26 @@
 /****************************************************************************/
 /* macro definitions                                                        */
 /****************************************************************************/
-#define WDE_NUM_CUSTOMS  2
-#define WDE_CHECK_WHICH(w) (((w<0)||(w>=WDE_NUM_CUSTOMS)) ?FALSE :TRUE)
-#define WDE_PREVIEW_PAD  10
+#define WDE_NUM_CUSTOMS         2
+#define WDE_CHECK_WHICH( w )    (((w < 0) || (w >= WDE_NUM_CUSTOMS)) ? FALSE : TRUE)
+#define WDE_PREVIEW_PAD         10
 
 /****************************************************************************/
 /* external function prototypes                                             */
 /****************************************************************************/
-extern BOOL WINEXPORT WdeSelectCustProc    ( HWND, UINT, WPARAM, LPARAM );
+extern BOOL WINEXPORT WdeSelectCustProc( HWND, UINT, WPARAM, LPARAM );
 
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static BOOL        WdeLoadMSCustomControls    ( WdeCustLib * );
-static WdeCustLib *WdeAllocCustLib            ( void );
-static BOOL        WdeFreeCustLib             ( WdeCustLib * );
-static void        WdeFreeSelectWinCBox       ( HWND );
-static Bool        WdeSetSelectWinCBox        ( HWND, WdeCustLib * );
-static Bool        WdeSetSelectWin            ( HWND );
-static Bool        WdeSetCurrentControl       ( HWND, int );
-static Bool        WdePreviewSelected         ( HWND );
+static BOOL         WdeLoadMSCustomControls( WdeCustLib * );
+static WdeCustLib   *WdeAllocCustLib( void );
+static BOOL         WdeFreeCustLib( WdeCustLib * );
+static void         WdeFreeSelectWinCBox( HWND );
+static Bool         WdeSetSelectWinCBox( HWND, WdeCustLib * );
+static Bool         WdeSetSelectWin( HWND );
+static Bool         WdeSetCurrentControl( HWND, int );
+static Bool         WdePreviewSelected( HWND );
 
 /****************************************************************************/
 /* extern variables                                                         */
@@ -83,37 +83,36 @@ extern char     *WdeCustFilter;
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
-static HFONT WdeSelectFont      = NULL;
-static LIST *WdeCustomLibList   = NULL;
-static LIST *WdeLibList         = NULL;
+static HFONT    WdeSelectFont       = NULL;
+static LIST     *WdeCustomLibList   = NULL;
+static LIST     *WdeLibList         = NULL;
 
-WdeCurrCustControl WdeCurrControl[WDE_NUM_CUSTOMS]  =
-{
+WdeCurrCustControl WdeCurrControl[WDE_NUM_CUSTOMS]  = {
+    { NULL, 0 },
     { NULL, 0 }
-,   { NULL, 0 }
 };
 
-Bool WdeIsBorBtnIDSupported ( uint_16 id )
+Bool WdeIsBorBtnIDSupported( uint_16 id )
 {
     /* touch unused vars to get rid of warning */
-    _wde_touch(id);
+    _wde_touch( id );
 
-    return ( FALSE );
+    return( FALSE );
 }
 
-void WdeGetCurrentCustControl ( int which, WdeCustLib **lib, UINT *index )
+void WdeGetCurrentCustControl( int which, WdeCustLib **lib, UINT *index )
 {
-    if ( !WDE_CHECK_WHICH(which) ) {
-        WdeWriteTrail("WdeGetCurrentCustControl: bad which!");
+    if( !WDE_CHECK_WHICH( which ) ) {
+        WdeWriteTrail( "WdeGetCurrentCustControl: bad which!" );
         return;
     }
-    *lib   = WdeCurrControl[which].lib;
+    *lib = WdeCurrControl[which].lib;
     *index = WdeCurrControl[which].index;
 }
 
 Bool WdeIsCurrentCustControlSet( int which )
 {
-    if( WDE_CHECK_WHICH(which) ) {
+    if( WDE_CHECK_WHICH( which ) ) {
         if( WdeCurrControl[which].lib != NULL ) {
             return( TRUE );
         }
@@ -126,383 +125,365 @@ Bool WdeCustControlsLoaded( void )
     return( WdeCustomLibList != NULL );
 }
 
-Bool WdeSetCurrentCustControl ( int which )
+Bool WdeSetCurrentCustControl( int which )
 {
     int       ret;
     HINSTANCE inst;
     FARPROC   proc;
 
-    if ( WdeCustomLibList == NULL ) {
+    if( WdeCustomLibList == NULL ) {
         WdeSetStatusByID( -1, WDE_NOCUSTLOADED );
-        return ( TRUE );
+        return( TRUE );
     }
 
-    if ( !WDE_CHECK_WHICH(which) ) {
-        WdeWriteTrail("WdeSetCurrentCustControl: bad which!");
-        return ( FALSE );
+    if( !WDE_CHECK_WHICH( which ) ) {
+        WdeWriteTrail( "WdeSetCurrentCustControl: bad which!" );
+        return( FALSE );
     }
 
     inst = WdeGetAppInstance();
-
-    proc = MakeProcInstance ( (FARPROC) WdeSelectCustProc, inst );
-
-    if ( proc == NULL ) {
-        WdeWriteTrail("WdeSetCurrentCustomControl: MakeProcInstnce failed!");
-        return ( FALSE );
+    proc = MakeProcInstance( (FARPROC)WdeSelectCustProc, inst );
+    if( proc == NULL ) {
+        WdeWriteTrail( "WdeSetCurrentCustomControl: MakeProcInstnce failed!" );
+        return( FALSE );
     }
-
     ret = JDialogBoxParam( inst, "WdeSelectCustom", WdeGetMainWindowHandle(),
-                           (DLGPROC) proc, (LPARAM) &which );
-
+                           (DLGPROC)proc, (LPARAM)&which );
     FreeProcInstance( proc );
 
     /* if the window could not be created return FALSE */
-    if ( ret == -1 ) {
-        WdeWriteTrail("WdeSetCurrentCustomControl: "
-                      "Could not create selection window!");
-        return ( FALSE );
+    if( ret == -1 ) {
+        WdeWriteTrail( "WdeSetCurrentCustomControl: Could not create selection window!" );
+        return( FALSE );
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-Bool WdeLoadCustomLib ( Bool nt_lib, Bool load_only )
+Bool WdeLoadCustomLib( Bool nt_lib, Bool load_only )
 {
-    char              *name;
-    HINSTANCE          inst;
-    WdeCustLib        *lib;
-    BOOL               ret;
-    WdeGetFileStruct   gf;
+    char                *name;
+    HINSTANCE           inst;
+    WdeCustLib          *lib;
+    BOOL                ret;
+    WdeGetFileStruct    gf;
 
     gf.file_name = NULL;
-    gf.title     = WdeCustOpenTitle;
-    gf.filter    = WdeCustFilter;
+    gf.title = WdeCustOpenTitle;
+    gf.filter = WdeCustFilter;
 
-    name = WdeGetOpenFileName ( &gf );
+    name = WdeGetOpenFileName( &gf );
 
-    if ( !name ) {
-        return ( FALSE );
+    if( name == NULL ) {
+        return( FALSE );
     }
 
-    inst = LoadLibrary ( name );
+    inst = LoadLibrary( name );
 
-    if ( inst == (HANDLE) NULL ) {
-        WdeWriteTrail("WdeLoadCustomLib: LoadLibrary call failed!");
-        WdeMemFree ( name );
-        return ( FALSE );
+    if( inst == (HANDLE)NULL ) {
+        WdeWriteTrail( "WdeLoadCustomLib: LoadLibrary call failed!" );
+        WdeMemFree( name );
+        return( FALSE );
     }
 
-    lib = WdeAllocCustLib ();
-    if ( lib == NULL ) {
-        WdeWriteTrail("WdeLoadCustomLib: WdeAllocCustLib failed!");
-        WdeMemFree ( name );
-        FreeLibrary ( inst );
-        return ( FALSE );
+    lib = WdeAllocCustLib();
+    if( lib == NULL ) {
+        WdeWriteTrail( "WdeLoadCustomLib: WdeAllocCustLib failed!" );
+        WdeMemFree( name );
+        FreeLibrary( inst );
+        return( FALSE );
     }
 
-    lib->inst      = inst;
-    lib->nt_lib    = nt_lib;
+    lib->inst = inst;
+    lib->nt_lib = nt_lib;
     lib->load_only = load_only;
     lib->file_name = name;
 
-    if ( load_only ) {
+    if( load_only ) {
         WdeSetStatusByID( -1, WDE_LIBRARYLOADED );
         ret = TRUE;
     } else {
-        if ( nt_lib ) {
-            ret = WdeLoadMSCustomControls ( lib );
+        if( nt_lib ) {
+            ret = WdeLoadMSCustomControls( lib );
         } else {
             ret = TRUE;
         }
     }
 
-    if ( !ret ) {
-        WdeFreeCustLib ( lib );
-        return ( FALSE );
+    if( !ret ) {
+        WdeFreeCustLib( lib );
+        return( FALSE );
     }
 
-    if ( load_only ) {
-        WdeInsertObject ( &WdeLibList, (void *) lib );
+    if( load_only ) {
+        WdeInsertObject( &WdeLibList, (void *)lib );
     } else {
-        WdeInsertObject ( &WdeCustomLibList, (void *) lib );
+        WdeInsertObject( &WdeCustomLibList, (void *)lib );
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-BOOL WdeLoadMSCustomControls ( WdeCustLib *lib )
+BOOL WdeLoadMSCustomControls( WdeCustLib *lib )
 {
     LPFNCCINFO  info_proc;
     UINT        num_classes;
 
-    info_proc = (LPFNCCINFO)
-        GetProcAddress ( lib->inst, "CustomControlInfoA" );
+    info_proc = (LPFNCCINFO)GetProcAddress( lib->inst, "CustomControlInfoA" );
 
-    if ( info_proc == NULL ) {
-        info_proc = (LPFNCCINFO)
-            GetProcAddress( lib->inst, "CustomControlInfoA" );
-        if ( info_proc == NULL ) {
-            WdeWriteTrail("WdeLoadMSCustomControls: Info Proc not found!");
+    if( info_proc == NULL ) {
+        info_proc = (LPFNCCINFO)GetProcAddress( lib->inst, "CustomControlInfoA" );
+        if( info_proc == NULL ) {
+            WdeWriteTrail( "WdeLoadMSCustomControls: Info Proc not found!" );
         } else {
             WdeSetStatusByID( -1, WDE_UNICUSTNOTSUPPORTED );
         }
-        return ( FALSE );
+        return( FALSE );
     }
 
-    num_classes = (*info_proc) ( NULL );
+    num_classes = (*info_proc)( NULL );
 
-    if ( !num_classes ) {
-        WdeWriteTrail("WdeLoadMSCustomControls: Info Proc returned NULL!");
-        return ( FALSE );
+    if( num_classes == 0 ) {
+        WdeWriteTrail( "WdeLoadMSCustomControls: Info Proc returned NULL!" );
+        return( FALSE );
     }
 
-    lib->lpcci = (LPCCINFO) WdeMemAlloc ( sizeof(CCINFO) * num_classes );
-    if ( !lib->lpcci ) {
-        WdeWriteTrail("WdeLoadMSCustomControls: LPCCINFO alloc failed!");
-        return ( FALSE );
+    lib->lpcci = (LPCCINFO)WdeMemAlloc( sizeof( CCINFO ) * num_classes );
+    if( lib->lpcci == NULL ) {
+        WdeWriteTrail( "WdeLoadMSCustomControls: LPCCINFO alloc failed!" );
+        return( FALSE );
     }
-    memset ( lib->lpcci, 0, sizeof(CCINFO) * num_classes );
+    memset( lib->lpcci, 0, sizeof( CCINFO ) * num_classes );
 
-    lib->num_classes = (*info_proc) ( lib->lpcci );
+    lib->num_classes = (*info_proc)( lib->lpcci );
 
-    if (  lib->num_classes != num_classes ) {
-        WdeWriteTrail("WdeLoadMSCustomControls: LPCCINFO inconsistent!");
+    if( lib->num_classes != num_classes ) {
+        WdeWriteTrail( "WdeLoadMSCustomControls: LPCCINFO inconsistent!" );
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-WdeCustLib *WdeAllocCustLib ( void )
+WdeCustLib *WdeAllocCustLib( void )
 {
     WdeCustLib  *lib;
 
-    lib = (WdeCustLib *) WdeMemAlloc ( sizeof(WdeCustLib) );
+    lib = (WdeCustLib *)WdeMemAlloc( sizeof( WdeCustLib ) );
 
-    if ( lib == NULL ) {
-        WdeWriteTrail("WdeAllocCustLib: WdeCustLib alloc failed!");
-        return ( NULL );
+    if( lib == NULL ) {
+        WdeWriteTrail( "WdeAllocCustLib: WdeCustLib alloc failed!" );
+        return( NULL );
     }
 
-    memset ( lib, 0, sizeof(WdeCustLib) );
+    memset( lib, 0, sizeof( WdeCustLib ) );
 
-    WdeMemValidate ( lib );
+    WdeMemValidate( lib );
 
-    return ( lib );
+    return( lib );
 }
 
-Bool WdeFreeAllCustLibs ( void )
+Bool WdeFreeAllCustLibs( void )
 {
     LIST        *llist;
     WdeCustLib  *lib;
 
-    if ( WdeCustomLibList != NULL ) {
-        for ( llist = WdeCustomLibList; llist; llist = ListNext(llist) ) {
-            lib = (WdeCustLib *) ListElement(llist);
-            WdeFreeCustLib ( lib );
+    if( WdeCustomLibList != NULL ) {
+        for( llist = WdeCustomLibList; llist != NULL; llist = ListNext( llist ) ) {
+            lib = (WdeCustLib *)ListElement( llist );
+            WdeFreeCustLib( lib );
         }
-        ListFree ( WdeCustomLibList );
+        ListFree( WdeCustomLibList );
         WdeCustomLibList = NULL;
     }
 
-    if ( WdeLibList != NULL ) {
-        for ( llist = WdeLibList; llist; llist = ListNext(llist) ) {
-            lib = (WdeCustLib *) ListElement(llist);
-            WdeFreeCustLib ( lib );
+    if( WdeLibList != NULL ) {
+        for( llist = WdeLibList; llist != NULL; llist = ListNext( llist ) ) {
+            lib = (WdeCustLib *)ListElement( llist );
+            WdeFreeCustLib( lib );
         }
-        ListFree ( WdeLibList );
+        ListFree( WdeLibList );
         WdeLibList = NULL;
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-BOOL WdeFreeCustLib ( WdeCustLib *lib )
+BOOL WdeFreeCustLib( WdeCustLib *lib )
 {
-    if (lib != NULL) {
-        if ( lib->file_name != NULL ) {
-            WdeMemFree ( lib->file_name );
+    if( lib != NULL ) {
+        if( lib->file_name != NULL ) {
+            WdeMemFree( lib->file_name );
         }
-        if  ( lib->inst != NULL ) {
-            FreeLibrary ( lib->inst );
+        if( lib->inst != NULL ) {
+            FreeLibrary( lib->inst );
         }
-        if  ( lib->lpcci != NULL ) {
-            WdeMemFree ( lib->lpcci );
+        if( lib->lpcci != NULL ) {
+            WdeMemFree( lib->lpcci );
         }
-        WdeMemFree ( lib );
+        WdeMemFree( lib );
     } else {
-        WdeWriteTrail("WdeFreeCustLib: NULL lib!");
-        return ( FALSE );
+        WdeWriteTrail( "WdeFreeCustLib: NULL lib!" );
+        return( FALSE );
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-void WdeFindClassInAllCustLibs ( char *class, LIST **list )
+void WdeFindClassInAllCustLibs( char *class, LIST **list )
 {
     LIST        *llist;
     WdeCustLib  *lib;
-    UINT         i;
+    UINT        i;
 
-    if ( !list ) {
+    if( list == NULL ) {
         return;
     }
 
     *list = NULL;
 
-    if ( class ) {
-        for ( llist = WdeCustomLibList; llist; llist = ListNext(llist) ) {
-            if ( lib = (WdeCustLib *) ListElement(llist) ) {
-                for ( i=0; i<lib->num_classes; ++i ) {
-                    if ( !strcmpi ( class, lib->lpcci[i].szClass ) ) {
-                        ListAddElt( list, (void *) &(lib->lpcci[i]) );
+    if( class != NULL ) {
+        for( llist = WdeCustomLibList; llist != NULL; llist = ListNext( llist ) ) {
+            if( (lib = (WdeCustLib *)ListElement( llist )) != NULL ) {
+                for( i = 0; i < lib->num_classes; i++ ) {
+                    if( !strcmpi( class, lib->lpcci[i].szClass ) ) {
+                        ListAddElt( list, (void *)&lib->lpcci[i] );
                     }
                 }
             }
         }
     }
-
-    return;
 }
 
-Bool WdeFindLibIndexFromInfo ( LPCCINFO lpcci, WdeCustLib **lib,
-                               UINT *index )
+Bool WdeFindLibIndexFromInfo( LPCCINFO lpcci, WdeCustLib **lib, UINT *index )
 {
     LIST        *llist;
     WdeCustLib  *l;
-    UINT         i;
+    UINT        i;
 
-    if ( !lib || !index ) {
-        return ( FALSE );
+    if( lib == NULL || index == NULL ) {
+        return( FALSE );
     }
 
-    *lib   = NULL;
+    *lib = NULL;
     *index = 0;
 
-    if ( lpcci ) {
-        for ( llist = WdeCustomLibList; llist; llist = ListNext(llist) ) {
-            if ( l = (WdeCustLib *) ListElement(llist) ) {
-                for ( i=0; i<l->num_classes; ++i ) {
-                    if ( &(l->lpcci[i]) == lpcci ) {
-                        *lib   = l;
+    if( lpcci != NULL ) {
+        for( llist = WdeCustomLibList; llist != NULL; llist = ListNext( llist ) ) {
+            if( (l = (WdeCustLib *)ListElement( llist )) != NULL ) {
+                for( i = 0; i < l->num_classes; i++ ) {
+                    if( &l->lpcci[i] == lpcci ) {
+                        *lib = l;
                         *index = i;
-                        return ( TRUE );
+                        return( TRUE );
                     }
                 }
             }
         }
     }
 
-    return ( FALSE );
+    return( FALSE );
 }
 
-void WdeFreeSelectWinCBox ( HWND win )
+void WdeFreeSelectWinCBox( HWND win )
 {
     HWND                cbox;
     LRESULT             count;
-    WdeCurrCustControl *current;
+    WdeCurrCustControl  *current;
 
-    cbox = GetDlgItem ( win, IDB_CUST_DESC );
+    cbox = GetDlgItem( win, IDB_CUST_DESC );
 
-    count = SendMessage ( cbox, CB_GETCOUNT, 0, 0 );
+    count = SendMessage( cbox, CB_GETCOUNT, 0, 0 );
 
     if( count > 0 ) {
         do {
             current = (WdeCurrCustControl *)
-                SendMessage ( cbox, CB_GETITEMDATA, (WPARAM)count, 0 );
-            if( current ) {
+                SendMessage( cbox, CB_GETITEMDATA, (WPARAM)count, 0 );
+            if( current != NULL ) {
                 WdeMemFree( current );
-                SendMessage( cbox, CB_SETITEMDATA, count, (LPARAM) NULL );
+                SendMessage( cbox, CB_SETITEMDATA, count, (LPARAM)NULL );
             }
             count--;
         } while( count != 0 );
     }
-
-    return;
 }
 
-Bool WdeSetSelectWinCBox ( HWND cbox, WdeCustLib *lib )
+Bool WdeSetSelectWinCBox( HWND cbox, WdeCustLib *lib )
 {
-    WdeCurrCustControl *current;
+    WdeCurrCustControl  *current;
     UINT                i;
     LRESULT             index;
 
-    for ( i = 0; i < lib->num_classes; ++i ) {
-        current = (WdeCurrCustControl *)
-            WdeMemAlloc ( sizeof(WdeCurrCustControl) );
-        if ( !current ) {
-            WdeWriteTrail("WdeSetSelectWinCBox: alloc failed!");
-            return ( FALSE );
+    for( i = 0; i < lib->num_classes; i++ ) {
+        current = (WdeCurrCustControl *)WdeMemAlloc( sizeof( WdeCurrCustControl ) );
+        if( current == NULL ) {
+            WdeWriteTrail( "WdeSetSelectWinCBox: alloc failed!" );
+            return( FALSE );
         }
-        current->lib   = lib;
+        current->lib = lib;
         current->index = i;
-        index = SendMessage ( cbox, CB_ADDSTRING, 0, (LPARAM) (LPCSTR )
-                              lib->lpcci[i].szDesc );
+        index = SendMessage( cbox, CB_ADDSTRING, 0, (LPARAM)(LPCSTR)lib->lpcci[i].szDesc );
 
-        if ( ( index == CB_ERR ) || ( index == CB_ERRSPACE ) ) {
-            WdeWriteTrail("WdeSetSelectWinCBox: CB_ADDSTRING failed!");
-            WdeMemFree ( current );
-            return ( FALSE );
+        if( index == CB_ERR || index == CB_ERRSPACE ) {
+            WdeWriteTrail( "WdeSetSelectWinCBox: CB_ADDSTRING failed!" );
+            WdeMemFree( current );
+            return( FALSE );
         }
 
-        index = SendMessage ( cbox, CB_SETITEMDATA, index,
-                              (LPARAM) (DWORD) current );
+        index = SendMessage( cbox, CB_SETITEMDATA, index, (LPARAM)(DWORD)current );
 
-        if ( index == CB_ERR ) {
-            WdeWriteTrail("WdeSetSelectWinCBox: CB_SETITEMDATA failed!");
-            WdeMemFree ( current );
-            return ( FALSE );
+        if( index == CB_ERR ) {
+            WdeWriteTrail( "WdeSetSelectWinCBox: CB_SETITEMDATA failed!" );
+            WdeMemFree( current );
+            return( FALSE );
         }
-
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-Bool WdeSetSelectWin ( HWND win )
+Bool WdeSetSelectWin( HWND win )
 {
-    HWND            cbox;
-    LIST           *llist;
-    WdeCustLib     *lib;
+    HWND        cbox;
+    LIST        *llist;
+    WdeCustLib  *lib;
 
-    cbox = GetDlgItem ( win, IDB_CUST_DESC );
+    cbox = GetDlgItem( win, IDB_CUST_DESC );
 
-    if ( WdeCustomLibList ) {
-        for ( llist = WdeCustomLibList; llist; llist = ListNext(llist) ) {
-            lib = (WdeCustLib *) ListElement(llist);
-            if ( !WdeSetSelectWinCBox ( cbox, lib ) ) {
-                return ( FALSE );
+    if( WdeCustomLibList != NULL ) {
+        for( llist = WdeCustomLibList; llist != NULL; llist = ListNext( llist ) ) {
+            lib = (WdeCustLib *)ListElement( llist );
+            if( !WdeSetSelectWinCBox( cbox, lib ) ) {
+                return( FALSE );
             }
         }
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-Bool WdeSetCurrentControl ( HWND win, int which )
+Bool WdeSetCurrentControl( HWND win, int which )
 {
     LRESULT             index;
-    WdeCurrCustControl *current;
+    WdeCurrCustControl  *current;
 
-    index = SendDlgItemMessage ( win, IDB_CUST_DESC, CB_GETCOUNT, 0, 0 );
-    if ( !index || (index == CB_ERR) ) {
-        return ( TRUE );
+    index = SendDlgItemMessage( win, IDB_CUST_DESC, CB_GETCOUNT, 0, 0 );
+    if( index == 0 || index == CB_ERR ) {
+        return( TRUE );
     }
 
-    index = SendDlgItemMessage ( win, IDB_CUST_DESC, CB_GETCURSEL, 0, 0 );
+    index = SendDlgItemMessage( win, IDB_CUST_DESC, CB_GETCURSEL, 0, 0 );
 
     current = (WdeCurrCustControl *)
-        SendDlgItemMessage ( win, IDB_CUST_DESC, CB_GETITEMDATA,
-                             (WPARAM)index, 0 );
-
-    if ( current == NULL ) {
-        WdeWriteTrail("WdeSetCurrentControl: CB_GETITEMDATA failed!");
-        return ( FALSE );
+        SendDlgItemMessage( win, IDB_CUST_DESC, CB_GETITEMDATA, (WPARAM)index, 0 );
+    if( current == NULL ) {
+        WdeWriteTrail( "WdeSetCurrentControl: CB_GETITEMDATA failed!" );
+        return( FALSE );
     }
 
-    WdeCurrControl[which].lib   = current->lib;
+    WdeCurrControl[which].lib = current->lib;
     WdeCurrControl[which].index = current->index;
 
-    return ( TRUE );
+    return( TRUE );
 }
 
 void WdeMapCustomSize( UINT *w, UINT *h, WdeResizeRatio *r )
@@ -510,21 +491,21 @@ void WdeMapCustomSize( UINT *w, UINT *h, WdeResizeRatio *r )
     RECT                trect;
     DialogSizeInfo      dsize;
 
-    dsize.x      = 0;
-    dsize.y      = 0;
-    dsize.width  = *w;
+    dsize.x = 0;
+    dsize.y = 0;
+    dsize.width = *w;
     dsize.height = *h;
     WdeDialogToScreen( NULL, r, &dsize, &trect );
     *w = trect.right;
     *h = trect.bottom;
 }
 
-Bool WdePreviewSelected ( HWND win )
+Bool WdePreviewSelected( HWND win )
 {
-    WdeCurrCustControl *current;
+    WdeCurrCustControl  *current;
     LRESULT             index;
-    char               *class;
-    char               *caption;
+    char                *class;
+    char                *caption;
     HWND                pwin;
     HWND                parea;
     RECT                psize;
@@ -536,149 +517,140 @@ Bool WdePreviewSelected ( HWND win )
     UINT                pheight;
     WdeResizeRatio      resizer;
 
-    index = SendDlgItemMessage ( win, IDB_CUST_DESC, CB_GETCOUNT, 0, 0 );
-    if ( !index || (index == CB_ERR) ) {
-        return ( TRUE );
+    index = SendDlgItemMessage( win, IDB_CUST_DESC, CB_GETCOUNT, 0, 0 );
+    if( index == 0 || index == CB_ERR ) {
+        return( TRUE );
     }
 
-    parea = GetDlgItem ( win, IDB_CUST_PREVIEW );
+    parea = GetDlgItem( win, IDB_CUST_PREVIEW );
 
-    pwin = GetDlgItem ( win, WDE_PREVIEW_ID );
+    pwin = GetDlgItem( win, WDE_PREVIEW_ID );
     if ( pwin != NULL ) {
-        DestroyWindow ( pwin );
+        DestroyWindow( pwin );
     }
 
-    GetClientRect ( parea, &psize );
+    GetClientRect( parea, &psize );
 
-    InflateRect ( &psize, -WDE_PREVIEW_PAD, -WDE_PREVIEW_PAD );
+    InflateRect( &psize, -WDE_PREVIEW_PAD, -WDE_PREVIEW_PAD );
 
-    index = SendDlgItemMessage ( win, IDB_CUST_DESC, CB_GETCURSEL, 0, 0 );
+    index = SendDlgItemMessage( win, IDB_CUST_DESC, CB_GETCURSEL, 0, 0 );
 
     current = (WdeCurrCustControl *)
-        SendDlgItemMessage ( win, IDB_CUST_DESC, CB_GETITEMDATA,
-                             (WPARAM)index, 0 );
+        SendDlgItemMessage( win, IDB_CUST_DESC, CB_GETITEMDATA, (WPARAM)index, 0 );
 
-    if ( current == NULL ) {
-        WdeWriteTrail("WdePreviewSelected: CB_GETITEMDATA failed!");
-        return ( FALSE );
+    if( current == NULL ) {
+        WdeWriteTrail( "WdePreviewSelected: CB_GETITEMDATA failed!" );
+        return( FALSE );
     }
 
-    if ( current->lib->lpcci[current->index].flOptions & CCF_NOTEXT ) {
+    if( current->lib->lpcci[current->index].flOptions & CCF_NOTEXT ) {
         caption = NULL;
     } else {
         caption = current->lib->lpcci[current->index].szTextDefault;
     }
 
-    class   = current->lib->lpcci[current->index].szClass;
-    pstyle  = current->lib->lpcci[current->index].flStyleDefault;
+    class = current->lib->lpcci[current->index].szClass;
+    pstyle = current->lib->lpcci[current->index].flStyleDefault;
     pestyle = current->lib->lpcci[current->index].flExtStyleDefault;
-    pwidth  = current->lib->lpcci[current->index].cxDefault;
+    pwidth = current->lib->lpcci[current->index].cxDefault;
     pheight = current->lib->lpcci[current->index].cyDefault;
 
-    WdeGetResizerFromFont ( &resizer, "System", 10 );
+    WdeGetResizerFromFont( &resizer, "System", 10 );
 
     WdeMapCustomSize( &pwidth, &pheight, &resizer );
 
-    if ( pwidth > (psize.right - psize.left) ) {
+    if( pwidth > psize.right - psize.left ) {
         pwidth = psize.right - psize.left;
     }
 
-    if ( pheight > (psize.bottom - psize.top) ) {
+    if( pheight > psize.bottom - psize.top ) {
         pheight = psize.bottom - psize.top;
     }
 
     p.x = 0;
     p.y = 0;
 
-    SendDlgItemMessage ( win, IDB_CUST_CLASSNAME, WM_SETTEXT,
-                         0, (LPARAM) (LPCSTR ) class );
+    SendDlgItemMessage( win, IDB_CUST_CLASSNAME, WM_SETTEXT, 0, (LPARAM)(LPCSTR)class );
 
-    pstyle &= ( 0xffffffff ^ ( WS_POPUP | WS_VISIBLE | WS_TABSTOP ) );
+    pstyle &= ~(WS_POPUP | WS_VISIBLE | WS_TABSTOP);
     pstyle |= WS_CHILD;
 
-    pwin = CreateWindowEx ( pestyle, class, caption,
-                            pstyle, p.x, p.y, pwidth, pheight, win,
-                            (HMENU) WDE_PREVIEW_ID,
-                            WdeGetAppInstance(), NULL);
+    pwin = CreateWindowEx( pestyle, class, caption,
+                           pstyle, p.x, p.y, pwidth, pheight, win,
+                           (HMENU)WDE_PREVIEW_ID, WdeGetAppInstance(), NULL );
 
-    if ( pwin == NULL ) {
-        WdeWriteTrail("WdePreviewSelected: CreateWindow failed!");
-        return ( FALSE );
+    if( pwin == NULL ) {
+        WdeWriteTrail( "WdePreviewSelected: CreateWindow failed!" );
+        return( FALSE );
     }
 
-    GetClientRect ( pwin, &trect );
+    GetClientRect( pwin, &trect );
 
-    pwidth  = trect.right;
+    pwidth = trect.right;
     pheight = trect.bottom;
 
-    p.x = ( (psize.right - psize.left) - pwidth ) / 2 + WDE_PREVIEW_PAD;
-    p.y = ( (psize.bottom - psize.top) - pheight ) / 2 + WDE_PREVIEW_PAD;
+    p.x = ((psize.right - psize.left) - pwidth) / 2 + WDE_PREVIEW_PAD;
+    p.y = ((psize.bottom - psize.top) - pheight) / 2 + WDE_PREVIEW_PAD;
 
-    MapWindowPoints ( parea, win, &p, 1 );
+    MapWindowPoints( parea, win, &p, 1 );
 
-    SetWindowPos ( pwin, (HWND) NULL, p.x, p.y, 0, 0,
-                   SWP_NOZORDER | SWP_NOSIZE );
+    SetWindowPos( pwin, (HWND)NULL, p.x, p.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE );
 
-    ShowWindow ( pwin, SW_SHOW );
+    ShowWindow( pwin, SW_SHOW );
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-BOOL WINEXPORT WdeSelectCustProc ( HWND hDlg, UINT message,
-                                   WPARAM wParam, volatile LPARAM lParam )
+BOOL WINEXPORT WdeSelectCustProc( HWND hDlg, UINT message,
+                                  WPARAM wParam, volatile LPARAM lParam )
 {
     static int which = 0;
     BOOL       ret;
 
     ret = FALSE;
 
-    switch (message) {
+    switch( message ) {
+    case WM_SETFONT:
+        WdeSelectFont = (HFONT)wParam;
+        break;
 
-        case WM_SETFONT:
-            WdeSelectFont = (HFONT) wParam;
+    case WM_INITDIALOG:
+        which = *(int *)lParam;
+        if( !WdeSetSelectWin( hDlg ) ) {
+            WdeFreeSelectWinCBox( hDlg );
+            EndDialog( hDlg, FALSE );
+        }
+        SendDlgItemMessage( hDlg, IDB_CUST_DESC, CB_SETCURSEL, 0, 0 );
+        WdePreviewSelected( hDlg );
+        break;
+
+    case WM_COMMAND:
+        switch( LOWORD( wParam ) ) {
+        case IDB_HELP:
+            WinHelp( WdeGetMainWindowHandle(), "resdlg.hlp", HELP_CONTENTS, 0 );
             break;
 
-        case WM_INITDIALOG:
-            which = *( (int *) lParam );
-            if ( !WdeSetSelectWin ( hDlg ) ) {
-                WdeFreeSelectWinCBox ( hDlg );
-                EndDialog(hDlg, FALSE);
-            }
-            SendDlgItemMessage ( hDlg, IDB_CUST_DESC, CB_SETCURSEL, 0, 0 );
-            WdePreviewSelected ( hDlg );
+        case IDOK:
+            WdeSetCurrentControl( hDlg, which );
+            WdeFreeSelectWinCBox( hDlg );
+            EndDialog( hDlg, TRUE );
+            ret = TRUE;
             break;
 
-        case WM_COMMAND:
-            switch ( LOWORD(wParam) ) {
+        case IDCANCEL:
+            WdeFreeSelectWinCBox( hDlg );
+            EndDialog( hDlg, FALSE );
+            ret = TRUE;
+            break;
 
-                case IDB_HELP:
-                    WinHelp( WdeGetMainWindowHandle(), "resdlg.hlp",
-                             HELP_CONTENTS, 0 );
-                    break;
-
-                case IDOK:
-                    WdeSetCurrentControl ( hDlg, which );
-                    WdeFreeSelectWinCBox ( hDlg );
-                    EndDialog(hDlg, TRUE);
-                    ret  = TRUE;
-                    break;
-
-                case IDCANCEL:
-                    WdeFreeSelectWinCBox ( hDlg );
-                    EndDialog(hDlg, FALSE);
-                    ret  = TRUE;
-                    break;
-
-                case IDB_CUST_DESC:
-                    switch ( GET_WM_COMMAND_CMD(wParam,lParam) ) {
-                        case CBN_CLOSEUP:
-                            WdePreviewSelected ( hDlg );
-                            break;
-                    }
-
+        case IDB_CUST_DESC:
+            switch( GET_WM_COMMAND_CMD( wParam, lParam ) ) {
+            case CBN_CLOSEUP:
+                WdePreviewSelected( hDlg );
+                break;
             }
+        }
     }
 
-    return ( ret );
+    return( ret );
 }
-

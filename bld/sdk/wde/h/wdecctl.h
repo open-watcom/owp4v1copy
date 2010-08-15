@@ -34,7 +34,7 @@
 #define WDECCTL_INCLUDED
 
 #ifdef __NT__
-#include <commctrl.h>
+    #include <commctrl.h>
 #endif
 
 #ifndef STATUSCLASSNAME
@@ -65,7 +65,7 @@
 // **** the commctrl.h in lang does not define a non-uncode
 // **** version of the class string
 #ifdef UPDOWN_CLASS
-#undef UPDOWN_CLASS
+    #undef UPDOWN_CLASS
 #endif
 
 #ifndef UPDOWN_CLASS
@@ -124,7 +124,7 @@
     #endif
 #endif
 
-#if(WINVER < 0x0400)
+#if (WINVER < 0x0400)
 
 /*****************************/
 /* these come from WINUSER.H */
@@ -181,7 +181,7 @@
 #define SS_CENTERIMAGE      0x00000200L
 
 #ifndef DS_SETFOREGROUND
-#define DS_SETFOREGROUND    0x200L  /* not in win3.1 */
+    #define DS_SETFOREGROUND    0x200L  /* not in win3.1 */
 #endif
 
 #define DS_3DLOOK           0x0004L
@@ -213,7 +213,7 @@
 #define SBT_RTLREADING          0x0400
 
 #ifndef TBS_AUTOTICKS
-#define TBS_AUTOTICKS           0x0001
+    #define TBS_AUTOTICKS       0x0001
 #endif
 #define TBS_VERT                0x0002
 #define TBS_HORZ                0x0000

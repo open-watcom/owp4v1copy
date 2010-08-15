@@ -57,43 +57,42 @@
 /****************************************************************************/
 /* external function prototypes                                             */
 /****************************************************************************/
-extern BOOL WdeStatusWndProc ( HWND, unsigned, UINT, LONG );
+extern BOOL WdeStatusWndProc( HWND, unsigned, UINT, LONG );
 
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static Bool        WdeDisplayStatusText     ( char * );
+static Bool WdeDisplayStatusText( char * );
 
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
-static void      *WdeStatusBar   = NULL;
+static void      *WdeStatusBar = NULL;
 static HWND      WdeStatusWindow = NULL;
-static HFONT     WdeStatusFont   = NULL;
-static char      WdeStatusText[2*MAX_STATUS_TEXT+2] = { 0 };
-static char      WdeClearStatusText[7] =
-{
+static HFONT     WdeStatusFont = NULL;
+static char      WdeStatusText[2 * MAX_STATUS_TEXT + 2] = { 0 };
+static char      WdeClearStatusText[7] = {
     ' ', STATUS_ESC_CHAR, STATUS_NEXT_BLOCK,
     ' ', STATUS_ESC_CHAR, STATUS_NEXT_BLOCK,
     0
 };
 static int       WdeStatusDepth = 0;
 
-int WdeGetStatusDepth ( void )
+int WdeGetStatusDepth( void )
 {
-    return ( WdeStatusDepth );
+    return( WdeStatusDepth );
 }
 
-void WdeDestroyStatusLine ( void )
+void WdeDestroyStatusLine( void )
 {
-    if ( WdeStatusWindow != NULL ) {
-        DestroyWindow ( WdeStatusWindow );
+    if( WdeStatusWindow != NULL ) {
+        DestroyWindow( WdeStatusWindow );
         StatusWndDestroy( WdeStatusBar );
-        StatusWndFini ();
+        StatusWndFini();
     }
 
-    if ( WdeStatusFont != NULL ) {
-        DeleteObject ( WdeStatusFont );
+    if( WdeStatusFont != NULL ) {
+        DeleteObject( WdeStatusFont );
     }
 }
 
@@ -110,15 +109,15 @@ Bool WdeCreateStatusLine( HWND main, HINSTANCE inst )
     int                 point_size;
     Bool                use_default;
 
-    memset( &lf, 0, sizeof(LOGFONT) );
+    memset( &lf, 0, sizeof( LOGFONT ) );
     dc = GetDC( main );
     lf.lfWeight = FW_BOLD;
     use_default = TRUE;
 
     status_font = WdeAllocRCString( WDE_STATUSFONT );
-    if( status_font ) {
+    if( status_font != NULL ) {
         cp = (char *)_mbschr( (unsigned char *)status_font, '.' );
-        if( cp ) {
+        if( cp != NULL ) {
             *cp = '\0';
             strcpy( lf.lfFaceName, status_font );
             cp++;
@@ -151,8 +150,8 @@ Bool WdeCreateStatusLine( HWND main, HINSTANCE inst )
     WdeStatusBar = StatusWndStart();
 
     sbd.separator_width = STATUS_LINE_PAD;
-    sbd.width           = STATUS1_WIDTH;
-    sbd.width_is_percent= FALSE;
+    sbd.width = STATUS1_WIDTH;
+    sbd.width_is_percent = FALSE;
     sbd.width_is_pixels = TRUE;
 
     StatusWndSetSeparators( WdeStatusBar, 1, &sbd );
@@ -165,7 +164,7 @@ Bool WdeCreateStatusLine( HWND main, HINSTANCE inst )
     }
 
     /* set the text in the status window */
-    WdeSetStatusReadyText( );
+    WdeSetStatusReadyText();
 
     GetWindowRect( WdeStatusWindow, &rect );
     WdeStatusDepth = rect.bottom - rect.top;
@@ -174,12 +173,12 @@ Bool WdeCreateStatusLine( HWND main, HINSTANCE inst )
 }
 
 
-void WdeResizeStatusWindows ( RECT *rect )
+void WdeResizeStatusWindows( RECT *rect )
 {
-    if ( WdeStatusWindow ) {
-        MoveWindow ( WdeStatusWindow, 0,
-                     max ( 0, (rect->bottom - rect->top) - WdeStatusDepth ),
-                     (rect->right - rect->left), WdeStatusDepth, TRUE );
+    if( WdeStatusWindow != NULL ) {
+        MoveWindow( WdeStatusWindow, 0,
+                    max( 0, (rect->bottom - rect->top) - WdeStatusDepth ),
+                    rect->right - rect->left, WdeStatusDepth, TRUE );
     }
 }
 
@@ -209,34 +208,33 @@ Bool WdeSetStatusByID( DWORD id1, DWORD id2 )
 
     ret = WdeSetStatusText( str1, str2, TRUE );
 
-    if( str1 ) {
+    if( str1 != NULL ) {
         WdeFreeRCString( str1 );
     }
 
-    if( str2 ) {
+    if( str2 != NULL ) {
         WdeFreeRCString( str2 );
     }
 
     return( ret );
 }
 
-Bool WdeSetStatusText ( const char *status1, const char *status2,
-                        int redisplay )
+Bool WdeSetStatusText( const char *status1, const char *status2, int redisplay )
 {
-    int   len;
-    int   pos;
+    int len;
+    int pos;
 
     /* touch unused vars to get rid of warning */
-    _wde_touch(redisplay);
+    _wde_touch( redisplay );
 
-    if ( WdeStatusWindow == NULL ) {
-        return ( TRUE );
+    if( WdeStatusWindow == NULL ) {
+        return( TRUE );
     }
 
-    if ( status1 ) {
-        len = min ( strlen (status1), MAX_STATUS_TEXT );
-        if ( len ) {
-            memcpy ( WdeStatusText, status1, len );
+    if( status1 != NULL ) {
+        len = min( strlen( status1 ), MAX_STATUS_TEXT );
+        if( len != 0 ) {
+            memcpy( WdeStatusText, status1, len );
             pos = len;
         } else {
             WdeStatusText[0] = ' ';
@@ -246,58 +244,58 @@ Bool WdeSetStatusText ( const char *status1, const char *status2,
         pos = 0;
     }
 
-    if ( status2 ) {
+    if( status2 != NULL ) {
         WdeStatusText[pos++] = STATUS_ESC_CHAR;
         WdeStatusText[pos++] = STATUS_NEXT_BLOCK;
-        len = min ( strlen (status2), MAX_STATUS_TEXT );
-        if ( len ) {
-            memcpy ( WdeStatusText+pos, status2, len );
-            WdeStatusText[pos+len] = '\0';
+        len = min( strlen( status2 ), MAX_STATUS_TEXT );
+        if( len != 0 ) {
+            memcpy( WdeStatusText + pos, status2, len );
+            WdeStatusText[pos + len] = '\0';
         } else {
             WdeStatusText[pos++] = ' ';
-            WdeStatusText[pos]   = '\0';
+            WdeStatusText[pos] = '\0';
         }
     } else {
         WdeStatusText[pos++] = '\0';
     }
 
-    if ( status1 || status2 ) {
-        return ( WdeDisplayStatusText ( WdeStatusText ) );
+    if( status1 != NULL || status2 != NULL ) {
+        return( WdeDisplayStatusText( WdeStatusText ) );
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-Bool WdeDisplayStatusText ( char *str )
+Bool WdeDisplayStatusText( char *str )
 {
-    HDC    hdc;
+    HDC hdc;
 
-    if ( WdeStatusWindow ) {
-        hdc = GetDC ( WdeStatusWindow );
-        if ( hdc != (HDC)NULL ) {
-            if ( str ) {
-                StatusWndDrawLine ( WdeStatusBar, hdc, WdeStatusFont, str, -1 );
+    if( WdeStatusWindow != NULL ) {
+        hdc = GetDC( WdeStatusWindow );
+        if( hdc != (HDC)NULL ) {
+            if( str != NULL ) {
+                StatusWndDrawLine( WdeStatusBar, hdc, WdeStatusFont, str, -1 );
             } else {
-                StatusWndDrawLine ( WdeStatusBar, hdc, WdeStatusFont, WdeClearStatusText, -1 );
+                StatusWndDrawLine( WdeStatusBar, hdc, WdeStatusFont,
+                                   WdeClearStatusText, -1 );
             }
-            ReleaseDC ( WdeStatusWindow, hdc );
+            ReleaseDC( WdeStatusWindow, hdc );
         }
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-BOOL WdeStatusWndProc ( HWND hWnd, unsigned msg, UINT wParam, LONG lParam )
+BOOL WdeStatusWndProc( HWND hWnd, unsigned msg, UINT wParam, LONG lParam )
 {
     /* touch unused vars to get rid of warning */
-    _wde_touch(hWnd);
-    _wde_touch(wParam);
-    _wde_touch(lParam);
+    _wde_touch( hWnd );
+    _wde_touch( wParam );
+    _wde_touch( lParam );
 
-    if ( msg == WM_DESTROY ) {
+    if( msg == WM_DESTROY ) {
         WdeStatusWindow = NULL;
     }
 
     return( FALSE );
 }
-

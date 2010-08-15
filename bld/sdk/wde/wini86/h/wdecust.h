@@ -44,36 +44,34 @@
 #define WDE_PREVIEW_ID     -1
 
 #ifndef CCINFOORD
-#define CCINFOORD       2       /* information function ordinal */
+    #define CCINFOORD       2       /* information function ordinal */
 #endif
 
 #ifndef CCSTYLEORD
-#define CCSTYLEORD      3       /* styles function ordinal */
+    #define CCSTYLEORD      3       /* styles function ordinal */
 #endif
 
 #ifndef CCFLAGSORD
-#define CCFLAGSORD      4       /* translate flags function ordinal */
+    #define CCFLAGSORD      4       /* translate flags function ordinal */
 #endif
 
-#define CTLDATALENGTH   255
+#define CTLDATALENGTH       255
 
 /****************************************************************************/
 /* type definitions                                                         */
 /****************************************************************************/
 #ifdef STRICT
-typedef HGLOBAL   ( CALLBACK *LPFNLOADRES ) ( LPCSTR, LPCSTR );
-typedef BOOL      ( CALLBACK *LPFNEDITRES ) ( LPCSTR, LPCSTR );
+typedef HGLOBAL   (CALLBACK *LPFNLOADRES)( LPCSTR, LPCSTR );
+typedef BOOL      (CALLBACK *LPFNEDITRES)( LPCSTR, LPCSTR );
 #else
-typedef HGLOBAL   ( CALLBACK *LPFNLOADRES ) ( LPSTR, LPSTR );
-typedef BOOL      ( CALLBACK *LPFNEDITRES ) ( LPSTR, LPSTR );
+typedef HGLOBAL   (CALLBACK *LPFNLOADRES)( LPSTR, LPSTR );
+typedef BOOL      (CALLBACK *LPFNEDITRES)( LPSTR, LPSTR );
 #endif
 
-typedef HGLOBAL ( *WdeCustInfoProc )             ( void );
-typedef BOOL    ( CALLBACK *WdeCustStyleProc   ) ( HWND, HGLOBAL,
-                                                   LPFNSTRTOID, LPFNIDTOSTR );
-typedef UINT    ( CALLBACK *WdeCustFlagsProc   ) ( DWORD, LPSTR, UINT );
-typedef HGLOBAL ( CALLBACK *WdeListClassesProc ) ( LPSTR, UINT, LPFNLOADRES,
-                                                   LPFNEDITRES );
+typedef HGLOBAL (*WdeCustInfoProc)( void );
+typedef BOOL    (CALLBACK *WdeCustStyleProc)( HWND, HGLOBAL, LPFNSTRTOID, LPFNIDTOSTR );
+typedef UINT    (CALLBACK *WdeCustFlagsProc)( DWORD, LPSTR, UINT );
+typedef HGLOBAL (CALLBACK *WdeListClassesProc)( LPSTR, UINT, LPFNLOADRES, LPFNEDITRES );
 
 typedef struct {
     UINT       wType;                  /* type style           */
@@ -91,12 +89,12 @@ typedef struct {
 } WDECTLTYPE;
 
 typedef struct {
-    UINT         wVersion;              /* control version */
-    UINT         wCtlTypes;             /* control types */
-    char         szClass[CTLCLASS];     /* control class name */
-    char         szTitle[CTLTITLE];     /* control title */
-    char         szReserved[10];        /* reserved for future use */
-    WDECTLTYPE  Type[CTLTYPES];         /* Resource Workshop cntl type list */
+    UINT        wVersion;              /* control version */
+    UINT        wCtlTypes;             /* control types */
+    char        szClass[CTLCLASS];     /* control class name */
+    char        szTitle[CTLTITLE];     /* control title */
+    char        szReserved[10];        /* reserved for future use */
+    WDECTLTYPE  Type[CTLTYPES];        /* Resource Workshop cntl type list */
 } WDECTLINFO;
 
 typedef struct {
@@ -113,7 +111,7 @@ typedef struct {
      * CTLDATA field.
      */
     BYTE    CtlDataSize;              /* Control data Size     */
-    BYTE    CtlData[ CTLDATALENGTH];  /* Control data          */
+    BYTE    CtlData[CTLDATALENGTH];   /* Control data          */
 } WDECTLSTYLE;
 
 typedef struct {
@@ -129,23 +127,23 @@ typedef struct {
 } WdeBorlandClassList;
 
 typedef struct WdeCustLibStruct {
-    HINSTANCE  inst;
-    Bool       ms_lib;
-    Bool       load_only;
-    char      *file_name;
-    char      *info_name;
-    char      *style_name;
-    char      *flags_name;
-    LIST      *controls;
-    HGLOBAL    class_list;
+    HINSTANCE   inst;
+    Bool        ms_lib;
+    Bool        load_only;
+    char        *file_name;
+    char        *info_name;
+    char        *style_name;
+    char        *flags_name;
+    LIST        *controls;
+    HGLOBAL     class_list;
 } WdeCustLib;
 
 typedef struct WdeCustControlStruct {
-    Bool              ms_lib;
-    WdeCustLib       *lib;
-    WdeCustInfoProc   info_proc;
-    WdeCustStyleProc  style_proc;
-    WdeCustFlagsProc  flags_proc;
+    Bool                ms_lib;
+    WdeCustLib          *lib;
+    WdeCustInfoProc     info_proc;
+    WdeCustStyleProc    style_proc;
+    WdeCustFlagsProc    flags_proc;
     union {
         WDECTLINFO  bor;
         CTLINFO     ms;
@@ -153,22 +151,22 @@ typedef struct WdeCustControlStruct {
 } WdeCustControl;
 
 typedef struct {
-    WdeCustControl *control;
+    WdeCustControl  *control;
     UINT            type;
 } WdeCurrCustControl;
 
 /****************************************************************************/
 /* function prototypes                                                      */
 /****************************************************************************/
-extern Bool     WdeIsCurrentCustControlSet( int which );
-extern Bool     WdeCustControlsLoaded     ( void );
-extern void     WdeGetCurrentCustControl  ( int, WdeCustControl **, UINT * );
-extern Bool     WdeSetCurrentCustControl  ( int );
-extern Bool     WdeLoadCustomLib          ( Bool, Bool );
-extern Bool     WdeFreeAllCustLibs        ( void );
-extern void     WdeFindClassInAllCustLibs ( char *, LIST ** );
-extern void     WdeFreeCustRESProcs       ( void );
-extern Bool     WdeIsBorBtnIDSupported    ( uint_16 );
-extern void     WdeMapCustomSize          ( uint_32 *w, uint_32 *h, WdeResizeRatio *r );
+extern Bool WdeIsCurrentCustControlSet( int which );
+extern Bool WdeCustControlsLoaded( void );
+extern void WdeGetCurrentCustControl( int, WdeCustControl **, UINT * );
+extern Bool WdeSetCurrentCustControl( int );
+extern Bool WdeLoadCustomLib( Bool, Bool );
+extern Bool WdeFreeAllCustLibs( void );
+extern void WdeFindClassInAllCustLibs( char *, LIST ** );
+extern void WdeFreeCustRESProcs( void );
+extern Bool WdeIsBorBtnIDSupported( uint_16 );
+extern void WdeMapCustomSize( uint_32 *w, uint_32 *h, WdeResizeRatio *r );
 
 #endif
