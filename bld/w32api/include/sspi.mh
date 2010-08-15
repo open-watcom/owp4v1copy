@@ -939,12 +939,12 @@ typedef PSecurityFunctionTableA PSecurityFunctionTable;
 #endif
 
 /* Security initialization callback */
-typedef PSecurityFunctionTableA (SEC_ENTRY *INIT_SECURITY_INTERFACEA)( void );
-typedef PSecurityFunctionTableW (SEC_ENTRY *INIT_SECURITY_INTERFACEW)( void );
+typedef PSecurityFunctionTableA (SEC_ENTRY *INIT_SECURITY_INTERFACE_A)( void );
+typedef PSecurityFunctionTableW (SEC_ENTRY *INIT_SECURITY_INTERFACE_W)( void );
 #ifdef UNICODE
-    #define INIT_SECURITY_INTERFACE INIT_SECURITY_INTERFACEW
+    #define INIT_SECURITY_INTERFACE INIT_SECURITY_INTERFACE_W
 #else
-    #define INIT_SECURITY_INTERFACE INIT_SECURITY_INTERFACEA
+    #define INIT_SECURITY_INTERFACE INIT_SECURITY_INTERFACE_A
 #endif
 
 /* SASL authorization identifier state */
