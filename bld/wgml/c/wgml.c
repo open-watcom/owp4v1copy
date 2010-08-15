@@ -71,7 +71,7 @@ void g_banner( void )
 }
 
 /***************************************************************************/
-/*  Usage info TBD                                                         */
+/*  Usage info                                                             */
 /***************************************************************************/
 
 static void usage( void )
@@ -625,7 +625,6 @@ static  void    init_pass( void )
     post_space          = 0;
 
     init_tag_att();                     // reset last defined GML tag
-    init_nest_cb();
 
 }
 

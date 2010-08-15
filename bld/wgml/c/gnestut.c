@@ -47,17 +47,18 @@ void init_nest_cb( void )
     wk->prev = nest_cb;
     wk->c_tag = t_NONE;
     wk->p_stack = NULL;
+    wk->lay_tag = NULL;
 
     if( nest_cb == NULL ) {             // if first one set defaults
-        wk->left  = g_page_left_org;
-        wk->right = g_page_right_org;
-        wk->post_skip = 0;
-        wk->tsize = 0;
-        wk->termhi = 0;
-        wk->headhi = 0;
-        wk->dl_break = false;
-        wk->compact = false;
-        wk->font = g_curr_font_num;
+        wk->left_indent  = 0;
+        wk->right_indent = 0;
+        wk->post_skip    = 0;
+        wk->tsize        = 0;
+        wk->termhi       = 0;
+        wk->headhi       = 0;
+        wk->dl_break     = false;
+        wk->compact      = false;
+        wk->font         = g_curr_font_num;
     }
 
     nest_cb = wk;                       // new top of stack

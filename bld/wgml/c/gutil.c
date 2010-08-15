@@ -28,6 +28,8 @@
 *
 *               conv_hor_unit
 *               conv_vert_unit
+*               format_num
+*               int_to_roman
 *               skip_to_quote
 *               su_layout_special
 *               to_internal_SU
@@ -484,6 +486,173 @@ int32_t conv_vert_unit( su * s, uint8_t spc )
     return( ds );
 }
 
+
+/***************************************************************************/
+/*  format a number according to the num_style                             */
+/*                                                                         */
+/*  returns ptr to string or NULL if error                                 */
+/***************************************************************************/
+char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
+{
+    size_t      pos;
+    size_t      pos1;
+    char    *   p;
+    char    *   rp;
+    char        temp[MAX_L_AS_STR];
+    char        a1;
+    char        a2;
+    char        charbase;
+
+
+    p = temp;
+    pos = 0;
+    if( ns & xpa_style ) {
+        *p++ = '(';                     // start number with left paren
+        if( ++pos >= rsize ) {
+            return( NULL );             // result field overflow
+        }
+    }
+    if( ns & (a_style | b_style) ) {    // alphabetic limit 2 'digits'
+    /************************************************************************/
+    /*  Arbitrary limit Value 728 = 2 characters    extend if needed    TBD */
+    /************************************************************************/
+        if( n >= 27*27 || (n < 1) ) {   // only 2 letters supported
+            return( NULL );             // and numbers > zero
+        }
+        if( ns & a_style ) {
+            charbase = 'a' - 1;
+        } else {
+            charbase = 'A' - 1;
+        }
+    }
+    switch( ns & char1_style ) {
+    case a_style :                      // lower case alphabetic
+    case b_style :                      // UPPER case alphabetic
+        a1 = n / 27;
+        a2 = n % 27;
+        if( a1 > 0 ) {
+            *p++ = charbase + a1;
+            if( ++pos >= rsize ) {
+                return( NULL );         // result field overflow
+            }
+            *p++ = charbase + 1 + a2;
+            if( ++pos >= rsize ) {
+                return( NULL );         // result field overflow
+            }
+        } else {
+            *p++ = charbase + a2;
+            if( ++pos >= rsize ) {
+                return( NULL );         // result field overflow
+            }
+        }
+        break;
+    case h_style :                      // arabic
+        ultoa( n, p, 10 );
+        pos1 = strlen( p );
+        pos += pos1;
+        if( pos >= rsize ) {
+            return( NULL );             // result field overflow
+        }
+        p += pos1;
+        break;
+    case c_style :                      // lower case roman
+        rp = int_to_roman( n, p, rsize - pos );
+        if( rp == NULL ) {
+            return( NULL );             // field overflow
+        }
+        pos += strlen( rp );
+        p += pos1;
+        break;
+    case r_style :                      // UPPER case roman
+        rp = int_to_roman( n, p, rsize - pos );
+        if( rp == NULL ) {
+            return( NULL );             // field overflow
+        }
+        pos += strlen( rp );
+        p += pos1;
+        strupr( p );
+        break;
+    default:
+        out_msg( "Logic error in gutil.c (int_to_roman()\n" );
+        err_count++;
+        g_suicide();
+        break;
+    }
+
+    if( ns & xd_style ) {
+        *p++ = '.';                     // decimalpoint follows
+        if( ++pos >= rsize ) {
+            return( NULL );             // result field overflow
+        }
+    }
+    if( ns & xpb_style ) {
+        *p++ = ')';                     // right paren follows
+        if( ++pos >= rsize ) {
+            return( NULL );             // result field overflow
+        }
+    }
+    *p = '\0';                          // terminate string
+    strcpy( r, temp );                  // copy temp string to result
+    return( r );
+}
+
+/***************************************************************************/
+/*  convert integer to roman digits                                        */
+/***************************************************************************/
+
+char * int_to_roman( uint32_t n, char * r, size_t rsize )
+{
+    static const struct {
+        uint32_t    val;
+        uint32_t    val49;
+        char        ch;
+        char        ch49;
+    } i_2_r[] =
+                {
+                    { 1000, 900, 'm', 'c' },
+                    {  500, 400, 'd', 'c' },
+                    {  100,  90, 'd', 'x' },
+                    {   50,  40, 'l', 'x' },
+                    {   10,   9, 'x', 'i' },
+                    {    5,   4, 'v', 'i' },
+                    {    1,   1, 'i', 'i' }
+                };
+
+    size_t digit;
+    size_t pos;
+    char    * p = r;
+
+    *p = '\0';
+    if( (n < 1) || (n > 3999) ) {       // invalid out of range
+        return( NULL );
+    }
+
+    digit = 0;
+    pos = 0;
+    do {
+        while( n >= i_2_r[digit].val ) {
+            *p++ = i_2_r[digit].ch;
+            if( ++pos >= rsize ) {
+                return( NULL );         // result field overflow
+            }
+            n -= i_2_r[digit].val;
+        }
+        if( n >= i_2_r[digit].val49 ) {
+            *p++ = i_2_r[digit].ch49;
+            if( ++pos >= rsize ) {
+                return( NULL );         // result field overflow
+            }
+            *p++ = i_2_r[digit].ch;
+            if( ++pos >= rsize ) {
+                return( NULL );         // result field overflow
+            }
+            n -= i_2_r[digit].val49;
+        }
+        digit++;
+    } while( n > 0 );
+    *p = '\0';
+    return( r );
+}
 
 
 #if 0

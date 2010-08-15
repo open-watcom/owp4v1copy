@@ -1,7 +1,8 @@
 :cmt. included from txl2.gml
 :ul compact.
-:li.txl3 unordered 1
-:li.txl3 unordered 2
-.br
-no eUL in this file
-.br
+    :li.txl3 unordered 1 compact
+    :li.txl3 unordered 2 compact
+    :li.txl3 unordered 3 compact
+:lp.
+&gml.LP and eUL in this file
+:eul.

@@ -205,6 +205,7 @@ void    init_page_geometry( void )
     g_indent = 0;
     g_indentr = 0;
 
+    init_nest_cb();
 }
 
 

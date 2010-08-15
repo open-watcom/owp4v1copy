@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -280,7 +280,7 @@ static text_chars * wgml_tabs( text_chars * in_chars )
             start = i;
             for( i; i < count; i++ ) {
                 if( (c_text[i] == '\t') || (c_text[i] == tab_char) ) {
-                    break;                
+                    break;
                 }
             }
             c_count = i - start;
@@ -355,7 +355,7 @@ static uint32_t split_text( text_chars * in_chars, uint32_t limit )
     if( limit < in_chars->x_address ) {     // no characters will fit
         retval = in_chars->count;
     } else {                                // some characters might fit
-        t_limit = limit - in_chars->x_address;   
+        t_limit = limit - in_chars->x_address;
         if( in_chars->width > t_limit ) {   // more exact computation is needed
             t_count = t_limit / wgml_fonts[in_chars->font_number].default_width;
             t_width = cop_text_width( in_chars->text, t_count, \
@@ -375,7 +375,7 @@ static uint32_t split_text( text_chars * in_chars, uint32_t limit )
                     }
                 }
                 if( t_count == 0 ) { // no characters will fit
-                    retval = in_chars->count; 
+                    retval = in_chars->count;
                 } else if( t_count == in_chars->count ) {
                     retval = 0;         // all characters will fit
                 } else {                // some characters will fit
@@ -683,7 +683,7 @@ void    test_page_full( void )
         if( bin_driver->y_positive == 0x00 ) {
 
             if( g_cur_v_start - wgml_fonts[g_curr_font_num].line_height
-                    <= g_page_bottom ) {
+                    <  g_page_bottom ) {
                 newpage = widow_check();
                 if( !newpage ) {
                     finish_page();
@@ -837,7 +837,7 @@ void    process_text( char * text, uint8_t font_num )
             while( *p == ' ' ) {
                 post_space += wgml_fonts[font_num].spc_width;
                 p++;
-            }                    
+            }
         }
         ju_x_start = g_cur_h_start; // g_cur_h_start appears correct on entry
     } else {                        // subsequent phrase in paragraph
@@ -854,12 +854,12 @@ void    process_text( char * text, uint8_t font_num )
             }
             while( *p == ' ' ) {    // skip initial spaces
                 p++;
-            }                    
+            }
         } else {                    // ".co off": increment initial spacing
             while( *p == ' ' ) {
                 post_space += wgml_fonts[font_num].spc_width;
                 p++;
-            }                    
+            }
         }
     }
     h_char = NULL;
@@ -953,7 +953,7 @@ void    process_text( char * text, uint8_t font_num )
                         s_char = s_char->prev;
                         if( s_char == NULL ) break;
                     }
-                }            
+                }
 
                 /* Identify when s_char must be moved to a new line. */
 
@@ -979,7 +979,7 @@ void    process_text( char * text, uint8_t font_num )
                     if( (t_line.first == NULL) || \
                         ((t_line.last->x_address + t_line.last->width) \
                                                 == n_char->x_address) || \
-                            ((g_page_left + n_char->width) > g_page_right) ) {
+                            ((g_cur_left + n_char->width) > g_page_right) ) {
                         // find the split position with a hyphen's width
                         count = split_text( n_char, g_page_right - hy_width );
                         if( count == 0 ) { // n_char fits entirely
@@ -987,7 +987,7 @@ void    process_text( char * text, uint8_t font_num )
                         }
                         // if count == o_count, there is nothing to do
                         if( count != o_count ) { // split n_char with hyphenation
-                            // first attach n_char to tline                            
+                            // first attach n_char to tline
                             if( t_line.first == NULL ) {
                                 t_line.first = n_char;
                             } else {
@@ -996,7 +996,7 @@ void    process_text( char * text, uint8_t font_num )
                             }
                             t_line.last = n_char;
                             // now do the split
-                            n_char = alloc_text_chars( \ 
+                            n_char = alloc_text_chars( \
                                     &t_line.last->text[t_line.last->count], \
                                             count, t_line.last->font_number );
                             n_char->type = t_line.last->type;

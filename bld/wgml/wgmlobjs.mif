@@ -60,7 +60,8 @@ gml_objs =  &
         gset.obj     &
         gtagdict.obj &
         gtitle.obj   &
-        gusertag.obj
+        gusertag.obj &
+        gxl.obj
 
 #
 # layout tag scanning related

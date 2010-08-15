@@ -390,6 +390,7 @@ extern  void    gml_toc( const gmltag * entry )
 
 extern  void    gml_egdoc( const gmltag * entry )
 {
+    ProcFlags.test_widow = false;
     gml_doc_xxx( doc_sect_egdoc, true );
 }
 

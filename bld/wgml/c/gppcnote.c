@@ -45,7 +45,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
     scan_err = false;
     p = scan_start;
 
-    ProcFlags.keep_left_margin = false; // no special Note indent
+    ProcFlags.keep_left_margin = true;  //    special Note indent
     prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
 
     scr_process_break();
@@ -55,7 +55,8 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
         buf_lines_cnt = 0;
     }
 
-    g_cur_left = g_page_left + g_indent;// left start
+//  g_cur_left = g_page_left + g_indent;// left start    TBD
+    g_cur_left += g_indent;             // left start
                                         // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(p_pc->line_indent) );
 
@@ -68,7 +69,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
         skippost = 0;
     }
 
-    if( ProcFlags.page_started ) {      // TBD
+    if( ProcFlags.page_started ) {
         skippre = conv_vert_unit( &(p_pc->pre_skip), spacing );
         if( skippost > skippre ) {
             skippre = skippost;         // take maximum skip amount
@@ -259,7 +260,8 @@ extern  void    gml_note( const gmltag * entry )
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
 
-    g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent );
+//  g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent );
+    g_cur_left += conv_hor_unit( &layout_work.note.left_indent );
     g_cur_h_start = g_cur_left;
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent

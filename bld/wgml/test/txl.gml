@@ -1,5 +1,14 @@
-:cmt. test for nested lists :ol, :sl, :ul, :lp
+:cmt. test nested lists :ol, :sl, :ul 
+:cmt. item tags :LI and :LP
+:cmt. TBD  not yet :DL, :GL and subtags
 :LAYOUT.
+:LP
+        left_indent = 4
+        right_indent = 3 
+        line_indent = 2 
+        pre_skip = 1 
+        post_skip = 1 
+        spacing = 1 
 :DT
         font = 2
 :GT
@@ -25,7 +34,7 @@
 :OL
         level = 1
         left_indent = 2
-        right_indent = 0
+        right_indent = 15
         pre_skip = 0
         skip = 0
         spacing = 1
@@ -92,31 +101,40 @@
 :BODY.
 SL follows.
 :sl compact.
-:li.simple 1
-:li.simple 2
-.br
+    :li.simple 1 compact
+    :li.simple 2 compact
+:lp.
 OL follows.
-:ol.
-:li.ordered 1
-:li.ordered 2
-:lp.list part
-still list part
-still list part
-still list part
-still list part
-:li.ordered 3
+    :ol.
+.*      This is text before first &gml.li which extends over more 
+.*         than one line to see how it looks.
+        :li.ordered 1 no compact spacing 2 and some text to hit the right margin
+to see how a multi line list item looks
+        :li.ordered 2 no compact
+        :note. This is a note which extends over more than one line to see how it looks.
+    :lp.list part
+still list part still list part still list part still list part still list part
+still list part still list part still list part still list part still list part
+        :li.ordered 3 no compact
+    :ul
+        :li.ul with eul in txl2 include file
 .im txl2.gml
-
-:eol.
+    :eol.
+:LP.
 OL end.
-.br
+:LP.
 UL follows.
-:ul.
-:li.unordered 1
-:li.unordered 2
+    :ul.
+        :li.unordered 1 no compact
+        :li.unordered 2 no compact
+    :eul.
+:LP.UL end.
+    :li.simple 3 compact
+:ul   compact.
+:lp. ul compact started with &gml.LP as first item.
+:li. ul item 1
+:li. ul item 2
 :eul.
-UL end.
-:li.simple 3
 :esl.
 SL end.
 :EGDOC.

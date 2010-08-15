@@ -335,9 +335,10 @@ extern  void        titlep_output( void );
 extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
 
-/* gutils.c                           */
+/* gutil.c                            */
 extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
+extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 

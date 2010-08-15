@@ -173,64 +173,6 @@ void    add_to_sysdir( char * name, char char_val )
 }
 
 /***************************************************************************/
-/*  convert integer to roman digits                                        */
-/***************************************************************************/
-
-char * int_to_roman( uint32_t n, char * r, size_t rsize )
-{
-    static const struct {
-        uint32_t    val;
-        uint32_t    val49;
-        char        ch;
-        char        ch49;
-    } i_2_r[] =
-                {
-                    { 1000, 900, 'm', 'c' },
-                    {  500, 400, 'd', 'c' },
-                    {  100,  90, 'd', 'x' },
-                    {   50,  40, 'l', 'x' },
-                    {   10,   9, 'x', 'i' },
-                    {    5,   4, 'v', 'i' },
-                    {    1,   1, 'i', 'i' }
-                };
-
-    size_t digit;
-    size_t pos;
-    char    * p = r;
-
-    *p = '\0';
-    if( (n < 1) || (n > 3999) ) {       // invalid out of range
-        return( NULL );
-    }
-
-    digit = 0;
-    pos = 0;
-    do {
-        while( n >= i_2_r[digit].val ) {
-            *p++ = i_2_r[digit].ch;
-            if( ++pos >= rsize ) {
-                return( NULL );         // result field overflow
-            }
-            n -= i_2_r[digit].val;
-        }
-        if( n >= i_2_r[digit].val49 ) {
-            *p++ = i_2_r[digit].ch49;
-            if( ++pos >= rsize ) {
-                return( NULL );         // result field overflow
-            }
-            *p++ = i_2_r[digit].ch;
-            if( ++pos >= rsize ) {
-                return( NULL );         // result field overflow
-            }
-            n -= i_2_r[digit].val49;
-        }
-        digit++;
-    } while( n > 0 );
-    *p = '\0';
-    return( r );
-}
-
-/***************************************************************************/
 /*  error routine for referenced, but not yet implemented variables        */
 /***************************************************************************/
 
