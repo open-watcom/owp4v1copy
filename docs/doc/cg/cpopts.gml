@@ -555,6 +555,11 @@ continue processing files (ignore errors)
 output function declarations to .def
 :optref refid='SWv'.
 .do end
+.if &e'&$SWx eq 1 .do begin
+.note x
+ignore environment variables when searching for include files
+:optref refid='SWx'.
+.do end
 .if &e'&$SWzat eq 1 .do begin
 .note zat
 (C++ only) disable alternative tokens
@@ -3165,6 +3170,18 @@ filename as the C source file but with extension "&def".
 The "definitions" file may be used as an "include" file when compiling
 other modules in order to take advantage of the compiler's function
 and argument type checking.
+.do end
+.*
+.if &e'&$SWx eq 1 .do begin
+:OPT refid='SWx' name='x'.
+.ix 'options' 'x'
+The compiler ignores the
+.ev INCLUDE
+and
+.ev <os>_INCLUDE
+environment variables, if they exist, when searching for include files.
+See the section entitled :HDREF refid='wccinc'. for information on
+directory searching.
 .do end
 .*
 .if &e'&$SWzat eq 1 .do begin

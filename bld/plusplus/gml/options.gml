@@ -1029,6 +1029,11 @@
 :usage. set warning level to maximum setting
 :jusage. ŒxƒŒƒxƒ‹‚ğÅ‘åİ’è‚É‚µ‚Ü‚·
 
+:option. x
+:target. any
+:usage. ignore INCLUDE environment variable
+:jusage. ignore INCLUDE environment variable
+
 :option. xbnm
 :target. any
 :internal.

@@ -775,6 +775,11 @@ warn about problems with overlaid code
 set warning level to maximum setting
 :optref refid='SWwx'.
 .*
+.note x
+:CMT. .ix 'options' 'x'
+preprocessor ignores environment variables
+:optref refid='SWx'.
+.*
 .note xd
 :CMT. .ix 'options' 'xd'
 (C++ only) disable exception handling (default)

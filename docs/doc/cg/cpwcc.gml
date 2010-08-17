@@ -671,7 +671,8 @@ listed in the "i" path is searched (in the order that they were
 specified).
 .note
 .ix 'options' 'bt'
-Next, each directory listed in the
+.ix 'options' 'x'
+Next, if the "x" option was not specified, each directory listed in the
 .ev <os>_INCLUDE
 environment variable is searched (in the order that they were
 specified).
@@ -703,7 +704,7 @@ specified, or
 the "bt=OS2" option was explicitly specified.
 .endpoint
 .note
-Next, each directory listed in the
+Next, if the "x" option was not specified, each directory listed in the
 .ev &incvarup
 environment variable is searched (in the order that they were
 specified).

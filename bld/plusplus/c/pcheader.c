@@ -628,6 +628,7 @@ static boolean checkCompFlags( COMP_FLAGS *testflags )
     _VERIFY_FLAG( register_conventions );
     _VERIFY_FLAG( extensions_enabled );
     _VERIFY_FLAG( disable_ialias );
+    _VERIFY_FLAG( cpp_ignore_env );
     #undef _VERIFY_FLAG
     return( FALSE );
 }

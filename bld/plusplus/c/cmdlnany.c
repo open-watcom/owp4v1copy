@@ -497,6 +497,9 @@ int MergeIncludeFromEnv( char *env )
 {
     char *env_value;
 
+    if( CompFlags.cpp_ignore_env )
+        return( 0 );
+
     env_value = CppGetEnv( env );
     if( NULL != env_value ) {
         HFileAppend( env_value, strlen( env_value ) );
@@ -1288,6 +1291,9 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
     }
     if( data->we ) {
         CompFlags.warnings_cause_bad_exit = 1;
+    }
+    if( data->x ) {
+        CompFlags.cpp_ignore_env = 1;
     }
     if( data->xbnm ) {
         CompFlags.fixed_name_mangling = 1;
