@@ -146,6 +146,7 @@ struct  pheader {
     unsigned        cwd_len;        // length of current working directory
     unsigned        msgflags_len;   // length of MsgFlags array
     unsigned        disable_ialias;
+    unsigned        ignore_incpath;
 };
 
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
@@ -302,6 +303,7 @@ static void OutPutHeader( void )
         pch.msgflags_len  = 0;
     }
     pch.disable_ialias    = CompFlags.disable_ialias;
+    pch.ignore_incpath    = CompFlags.cpp_ignore_env;
     rc  = WritePHeader( &pch, sizeof( struct pheader ) );
     rc |= WritePHeader( PH_Buffer + sizeof( struct pheader ), pch.cwd_len );
     if( rc != 0 ) {
@@ -1870,6 +1872,11 @@ int UsePreCompiledHeader( const char *filename )
     }
     if( !SameCWD( p ) ) {
         PCHNote( PCHDR_DIFFERENT_CWD );
+        AbortPreCompiledHeader();
+        return( -1 );
+    }
+    if( CompFlags.cpp_ignore_env != pch.ignore_incpath ) {
+        PCHNote( PCHDR_INCFILE_DIFFERENT );
         AbortPreCompiledHeader();
         return( -1 );
     }

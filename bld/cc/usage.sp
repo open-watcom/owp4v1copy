@@ -231,6 +231,7 @@ Options:
 :segment Ti86
 -wo           warn about problems with overlaid code
 :endsegment
+-x            ignore INCLUDE environment variable
 -za           disable extensions (i.e., accept only ISO/ANSI C)
 -zc           place const data into the code segment
 :segment T386 | Ti86

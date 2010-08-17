@@ -823,6 +823,11 @@ void MergeInclude( void )
     char        *env_var;
     char        buff[128];
 
+    if( CompFlags.cpp_ignore_env ) {
+        CMemFree( SwData.sys_name );
+        return;
+    }
+
     switch( TargSys ) {
     case TS_CHEAP_WINDOWS:
     case TS_WINDOWS:
@@ -1415,6 +1420,7 @@ static void SetAutoDependBackSlash( void )
     DependForceSlash = '\\';
 }
 
+static void Set_X( void )           { CompFlags.cpp_ignore_env = 1; }
 static void Set_PIL( void )         { CompFlags.cpp_ignore_line = 1; }
 static void Set_PL( void )          { CompFlags.cpp_line_wanted = 1; }
 static void Set_NA( void )          { CompFlags.disable_ialias = 1; }
@@ -1439,6 +1445,7 @@ static void Set_OE( void )
     Inline_Threshold = OptValue;
     Toggles |= TOGGLE_INLINE;
 }
+
 #if _CPU == 8086 || _CPU == 386
 static void Set_OC( void )          { TargetSwitches |= NO_CALL_RET_TRANSFORM; }
 static void Set_OF( void )
@@ -1696,6 +1703,7 @@ static struct option const CFE_Options[] = {
     { "wo",     0,              Set_WO },
     { "wx",     0,              Set_WX },
     { "w=#",    0,              SetWarningLevel },
+    { "x",      0,              Set_X },
 #if _CPU == 386
     { "xgv",    0,              Set_XGV },
 #endif
