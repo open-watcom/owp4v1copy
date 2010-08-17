@@ -35,7 +35,6 @@ objs += about.obj    &
         getsaddr.obj &
         hint.obj     &
         inipath.obj  &
-        intdata.obj  &
         jdlg.obj     &
         ldstr.obj    &
         log.obj      &

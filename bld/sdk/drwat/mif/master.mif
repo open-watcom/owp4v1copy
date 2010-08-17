@@ -66,7 +66,7 @@ extra_proj_obj_nt += reg.obj
 !endif
 
 extra_proj_obj_win = globals.obj notify.obj winproc.obj debug.obj dump.obj &
-            win32app.obj lddips.obj stack.obj &
+            win32app.obj lddips.obj stack.obj intdata.obj &
             $(dis_objs)
 
 proj_obj =  listbox.obj log.obj stat.obj lognote.obj &
