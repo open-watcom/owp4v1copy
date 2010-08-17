@@ -13,7 +13,7 @@
   if( cpu == "386" )
     printf( "++'%s'.'%s'..'%s'\n", $1, ModuleName, parts[2] )
   else
-    printf( "++'%s'.'%s'\n", parts[1], ModuleName )
+    printf( "++'%s'.'%s'\n", parts[2], ModuleName )
   next
 }
 
