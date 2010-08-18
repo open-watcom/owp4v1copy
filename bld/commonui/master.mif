@@ -35,7 +35,6 @@ objs += about.obj    &
         getsaddr.obj &
         hint.obj     &
         inipath.obj  &
-        intdata.obj  &
         jdlg.obj     &
         ldstr.obj    &
         log.obj      &
@@ -55,6 +54,7 @@ objs += about.obj    &
 !ifeq host_cpu i86
 objs += dbg386.obj   &
         getcsip.obj  &
+        intdata.obj  &
         inth.obj     &
         ismod32.obj  &
         mythelp.obj  &
