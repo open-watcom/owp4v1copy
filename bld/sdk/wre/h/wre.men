@@ -1,4 +1,4 @@
-WREMenu MENU
+"WREMenu" MENU
 BEGIN
     POPUP      sp( "&File",
                    "&File" )
@@ -110,4 +110,3 @@ BEGIN
                      "&About ..." )                     IDM_ABOUT
     END
 END
-

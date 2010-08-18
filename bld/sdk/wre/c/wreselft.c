@@ -74,4 +74,3 @@ WRFileType WRESelectFileType( char *name, Bool is32bit )
 
     return( file_type );
 }
-

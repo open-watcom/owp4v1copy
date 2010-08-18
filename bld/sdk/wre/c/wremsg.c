@@ -45,12 +45,12 @@ void WREDisplayMsg( const char *msg )
 
     title = WREAllocRCString( WRE_MSGBOXTITLE );
 
-    if( !MessageBox( (HWND) NULL, msg, title,
+    if( !MessageBox( (HWND)NULL, msg, title,
                      MB_ICONEXCLAMATION | MB_OK | MB_TASKMODAL ) ) {
-        MessageBeep(-1);
+        MessageBeep( -1 );
     }
 
-    if( title ) {
+    if( title != NULL ) {
         WREFreeRCString( title );
     }
 }
@@ -83,11 +83,10 @@ void WREDisplayErrorMsg( DWORD msg )
 
     if( !RCMessageBox( (HWND)NULL , msg, title,
                        MB_ICONEXCLAMATION | MB_OK | MB_TASKMODAL ) ) {
-        MessageBeep(-1);
+        MessageBeep( -1 );
     }
 
-    if( title ) {
+    if( title != NULL ) {
         WREFreeRCString( title );
     }
 }
-

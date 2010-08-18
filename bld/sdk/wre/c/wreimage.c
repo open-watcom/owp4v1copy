@@ -64,25 +64,16 @@
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static  Bool    WREFindImageId          ( WRECurrentResInfo *image,
-                                          uint_16 type, uint_16 id,
-                                          WResLangType *ltype );
-static  Bool    WREAddCursorHotspot     ( BYTE **cursor, uint_32 *size,
-                                          CURSORHOTSPOT *hs );
-static  uint_16 WREFindUnusedImageId    ( WREResInfo *info, uint_16 start );
-static  Bool    WREGetAndAddCursorImage ( BYTE *data, WResDir dir,
-                                          CURSORDIRENTRY *cd, int ord );
-static  Bool    WREGetAndAddIconImage   ( BYTE *data, WResDir dir,
-                                          ICONDIRENTRY *id, int ord );
-static  Bool    WRECreateCursorResHeader( RESCURSORHEADER **rch,
-                                          uint_32 *rchsize, BYTE *data,
-                                          uint_32 data_size );
-static  Bool    WRECreateIconResHeader  ( RESICONHEADER **rih, uint_32 *rihsize,
-                                          BYTE *data, uint_32 data_size );
-//static        Bool    WREIsCorrectImageGroup  ( WRECurrentResInfo *group,
-//                                        uint_16 type, uint_16 id, Bool );
-//static        Bool    WREStripCursorHotspot   ( BYTE **cursor, uint_32 *size );
-//static        Bool    WREStripCursorDirectory ( BYTE **cursor, uint_32 *size );
+static Bool     WREFindImageId( WRECurrentResInfo *image, uint_16 type, uint_16 id, WResLangType *ltype );
+static Bool     WREAddCursorHotspot( BYTE **cursor, uint_32 *size, CURSORHOTSPOT *hs );
+static uint_16  WREFindUnusedImageId( WREResInfo *info, uint_16 start );
+static Bool     WREGetAndAddCursorImage( BYTE *data, WResDir dir, CURSORDIRENTRY *cd, int ord );
+static Bool     WREGetAndAddIconImage( BYTE *data, WResDir dir, ICONDIRENTRY *id, int ord );
+static Bool     WRECreateCursorResHeader( RESCURSORHEADER **rch, uint_32 *rchsize, BYTE *data, uint_32 data_size );
+static Bool     WRECreateIconResHeader( RESICONHEADER **rih, uint_32 *rihsize, BYTE *data, uint_32 data_size );
+//static Bool     WREIsCorrectImageGroup( WRECurrentResInfo *group, uint_16 type, uint_16 id, Bool );
+//static Bool     WREStripCursorHotspot( BYTE **cursor, uint_32 *size );
+//static Bool     WREStripCursorDirectory( BYTE **cursor, uint_32 *size );
 
 /****************************************************************************/
 /* static variables                                                         */
@@ -104,7 +95,7 @@ uint_16 WREFindUnusedImageId( WREResInfo *info, uint_16 start )
         rollover = TRUE;
     }
 
-    while( TRUE ) {
+    for( ;; ) {
         if( start > 0x7fff ) {
             if( !rollover ) {
                 rollover = TRUE;
@@ -129,23 +120,21 @@ uint_16 WREFindUnusedImageId( WREResInfo *info, uint_16 start )
     return( start );
 }
 
-Bool WREIsCorrectImageGroup( WRECurrentResInfo *group, uint_16 type,
-                             uint_16 id )
+Bool WREIsCorrectImageGroup( WRECurrentResInfo *group, uint_16 type, uint_16 id )
 {
     RESICONHEADER       *ih;
     RESCURSORHEADER     *ch;
     int                 i;
     Bool                ok;
 
-    ok = ( group && group->info && group->info->info && group->lang &&
-           ( ( type == (uint_16)RT_GROUP_ICON ) ||
-             ( type == (uint_16)RT_GROUP_CURSOR ) ) );
-
+    ok = (group != NULL && group->info != NULL && group->info->info != NULL &&
+          group->lang != NULL &&
+          (type == (uint_16)RT_GROUP_ICON || type == (uint_16)RT_GROUP_CURSOR));
 
     if( ok ) {
         if( group->lang->data == NULL ) {
             group->lang->data = WREGetCurrentResData( group );
-            ok = ( group->lang->data != NULL );
+            ok = (group->lang->data != NULL);
         }
     }
 
@@ -154,12 +143,12 @@ Bool WREIsCorrectImageGroup( WRECurrentResInfo *group, uint_16 type,
         if( type == (uint_16)RT_GROUP_ICON ) {
             ih = (RESICONHEADER *)group->lang->data;
             for( i = 0; !ok && i < ih->cwCount; i++ ) {
-                ok = ( id == (uint_16)ih->idEntries[i].wNameOrdinal );
+                ok = (id == (uint_16)ih->idEntries[i].wNameOrdinal);
             }
         } else {
             ch = (RESCURSORHEADER *)group->lang->data;
             for( i = 0; !ok && i < ch->cwCount; i++ ) {
-                ok = ( id == (uint_16)ch->cdEntries[i].wNameOrdinal );
+                ok = (id == (uint_16)ch->cdEntries[i].wNameOrdinal);
             }
         }
     }
@@ -172,7 +161,7 @@ Bool WREFindImageId( WRECurrentResInfo *image, uint_16 type, uint_16 id,
 {
     Bool                ok;
 
-    ok = ( image && image->info );
+    ok = (image != NULL && image->info != NULL);
 
     if( ok ) {
         ok = WRFindImageId( image->info->info, &image->type, &image->res,
@@ -192,7 +181,7 @@ Bool WREDeleteGroupImages( WRECurrentResInfo *group, uint_16 type )
 {
     Bool                ok;
 
-    ok = ( group && group->info && group->lang );
+    ok = (group != NULL && group->info != NULL && group->lang != NULL);
 
     if( ok ) {
         ok = WRDeleteGroupImages( group->info->info, group->lang, type );
@@ -203,12 +192,12 @@ Bool WREDeleteGroupImages( WRECurrentResInfo *group, uint_16 type )
 
 Bool WREAppendDataToData( BYTE **d1, uint_32 *d1size, BYTE *d2, uint_32 d2size )
 {
-    if( !d1 || !d1size || !d2 || !d2size ) {
+    if( d1 == NULL || d1size == NULL || d2 == NULL || d2size == 0 ) {
         return( FALSE );
     }
 
     *d1 = WREMemRealloc( *d1, *d1size + d2size );
-    if( !*d1 ) {
+    if( *d1 == NULL ) {
         return( FALSE );
     }
 
@@ -224,39 +213,37 @@ Bool WREAddCursorImageToData( WRECurrentResInfo *image, BYTE **data,
     int         hs_size; // size of hotspot info
     Bool        ok;
 
-    ok = ( image && image->info && image->info->info && image->lang &&
-           data && size && hotspot );
+    ok = (image != NULL && image->info != NULL && image->info->info != NULL &&
+          image->lang != NULL && data != NULL && size != NULL && hotspot != NULL);
 
     if( ok ) {
         if( image->lang->data == NULL ) {
             image->lang->data = WREGetCurrentResData( image );
-            ok = ( image->lang->data != NULL );
+            ok = (image->lang->data != NULL);
         }
     }
 
     if( ok ) {
-        hs_size = sizeof(CURSORHOTSPOT);
+        hs_size = sizeof( CURSORHOTSPOT );
         memcpy( hotspot, image->lang->data, hs_size );
-        ok = WREAppendDataToData( data, size,
-                                  (BYTE *)image->lang->data + hs_size,
+        ok = WREAppendDataToData( data, size, (BYTE *)image->lang->data + hs_size,
                                   image->lang->Info.Length - hs_size );
     }
 
     return( ok );
 }
 
-Bool WREAddIconImageToData( WRECurrentResInfo *image,
-                            BYTE **data, uint_32 *size )
+Bool WREAddIconImageToData( WRECurrentResInfo *image, BYTE **data, uint_32 *size )
 {
     Bool        ok;
 
-    ok = ( image && image->info && image->info->info && image->lang &&
-           data && size );
+    ok = (image != NULL && image->info != NULL && image->info->info != NULL &&
+          image->lang != NULL && data != NULL && size != NULL);
 
     if( ok ) {
         if( image->lang->data == NULL ) {
             image->lang->data = WREGetCurrentResData( image );
-            ok = ( image->lang->data != NULL );
+            ok = (image->lang->data != NULL);
         }
     }
 
@@ -268,8 +255,7 @@ Bool WREAddIconImageToData( WRECurrentResInfo *image,
     return( ok );
 }
 
-Bool WRECreateCursorDataFromGroup( WRECurrentResInfo *group,
-                                   BYTE **data, uint_32 *size )
+Bool WRECreateCursorDataFromGroup( WRECurrentResInfo *group, BYTE **data, uint_32 *size )
 {
     WRECurrentResInfo   image;
     WResLangType        lt;
@@ -281,13 +267,13 @@ Bool WRECreateCursorDataFromGroup( WRECurrentResInfo *group,
     int                 i;
     Bool                ok;
 
-    ok = ( group && group->info && group->info->info && group->lang &&
-           data && size );
+    ok = (group != NULL && group->info != NULL && group->info->info != NULL &&
+          group->lang != NULL && data != NULL && size != NULL);
 
     if( ok ) {
         if( group->lang->data == NULL ) {
             group->lang->data = WREGetCurrentResData( group );
-            ok = ( group->lang->data != NULL );
+            ok = (group->lang->data != NULL);
         }
     }
 
@@ -295,14 +281,14 @@ Bool WRECreateCursorDataFromGroup( WRECurrentResInfo *group,
         image.info = group->info;
         rch = (RESCURSORHEADER *)group->lang->data;
         *size = sizeof( CURSORHEADER );
-        *size += sizeof(CURSORDIRENTRY)*(rch->cwCount-1);
+        *size += sizeof( CURSORDIRENTRY ) * (rch->cwCount - 1);
         *data = (BYTE *)WREMemAlloc( *size );
         ch = (CURSORHEADER *)*data;
-        ok = ( *data != NULL );
+        ok = (*data != NULL);
     }
 
     if( ok ) {
-        memcpy( ch, rch, sizeof(WORD)*3 );
+        memcpy( ch, rch, sizeof( WORD ) * 3 );
     }
 
     if( ok ) {
@@ -316,7 +302,7 @@ Bool WRECreateCursorDataFromGroup( WRECurrentResInfo *group,
                 if( ok ) {
                     ch = (CURSORHEADER *)*data;
                     ch->cdEntries[i].bWidth = rch->cdEntries[i].bWidth;
-                    ch->cdEntries[i].bHeight = rch->cdEntries[i].bHeight/2;
+                    ch->cdEntries[i].bHeight = rch->cdEntries[i].bHeight / 2;
                     ch->cdEntries[i].bColorCount = 0;
                     ch->cdEntries[i].bReserved = 0;
                     ch->cdEntries[i].wXHotspot = hotspot.xHotspot;
@@ -339,8 +325,7 @@ Bool WRECreateCursorDataFromGroup( WRECurrentResInfo *group,
     return( ok );
 }
 
-Bool WRECreateIconDataFromGroup( WRECurrentResInfo *group,
-                                 BYTE **data, uint_32 *size )
+Bool WRECreateIconDataFromGroup( WRECurrentResInfo *group, BYTE **data, uint_32 *size )
 {
     WResLangType        lt;
     WRECurrentResInfo   image;
@@ -351,13 +336,13 @@ Bool WRECreateIconDataFromGroup( WRECurrentResInfo *group,
     int                 i;
     Bool                ok;
 
-    ok = ( group && group->info && group->info->info && group->lang &&
-           data && size );
+    ok = (group != NULL && group->info != NULL && group->info->info != NULL &&
+          group->lang != NULL && data != NULL && size != NULL);
 
     if( ok ) {
         if( group->lang->data == NULL ) {
             group->lang->data = WREGetCurrentResData( group );
-            ok = ( group->lang->data != NULL );
+            ok = (group->lang->data != NULL);
         }
     }
 
@@ -365,19 +350,19 @@ Bool WRECreateIconDataFromGroup( WRECurrentResInfo *group,
         image.info = group->info;
         rih = (RESICONHEADER *)group->lang->data;
         *size = sizeof( ICONHEADER );
-        *size += sizeof(ICONDIRENTRY)*(rih->cwCount-1);
+        *size += sizeof( ICONDIRENTRY ) * (rih->cwCount - 1);
         *data = (BYTE *)WREMemAlloc( *size );
         ih = (ICONHEADER *)*data;
-        ok = ( *data != NULL );
+        ok = (*data != NULL);
     }
 
     if( ok ) {
-        memcpy( ih, rih, sizeof(WORD)*3 );
+        memcpy( ih, rih, sizeof( WORD ) * 3 );
     }
 
     if( ok ) {
         for( i = 0; ok && i < rih->cwCount; i++ ) {
-            ord = (uint_16) rih->idEntries[i].wNameOrdinal;
+            ord = (uint_16)rih->idEntries[i].wNameOrdinal;
             lt = group->lang->Info.lang;
             ok = WREFindImageId( &image, (uint_16)RT_ICON, ord, &lt );
             if( ok ) {
@@ -411,8 +396,7 @@ Bool WRECreateIconDataFromGroup( WRECurrentResInfo *group,
     return( ok );
 }
 
-Bool WREGetAndAddCursorImage( BYTE *data, WResDir dir,
-                              CURSORDIRENTRY *cd, int ord )
+Bool WREGetAndAddCursorImage( BYTE *data, WResDir dir, CURSORDIRENTRY *cd, int ord )
 {
     BYTE                *cursor;
     int                 dup;
@@ -429,11 +413,11 @@ Bool WREGetAndAddCursorImage( BYTE *data, WResDir dir,
     tname = NULL;
     rname = NULL;
 
-    ok = ( data && dir && cd && cd->dwBytesInRes );
+    ok = (data != NULL && dir != NULL && cd != NULL && cd->dwBytesInRes != 0);
 
     if ( ok ) {
         cursor = (BYTE *)WREMemAlloc( cd->dwBytesInRes );
-        ok = ( cursor != NULL );
+        ok = (cursor != NULL);
     }
 
     if( ok ) {
@@ -446,12 +430,12 @@ Bool WREGetAndAddCursorImage( BYTE *data, WResDir dir,
 
     if( ok ) {
         tname = WResIDFromNum( (uint_16)RT_CURSOR );
-        ok = ( tname != NULL );
+        ok = (tname != NULL);
     }
 
     if( ok ) {
         rname = WResIDFromNum( ord );
-        ok = ( rname != NULL );
+        ok = (rname != NULL);
     }
 
     if( ok ) {
@@ -480,8 +464,7 @@ Bool WREGetAndAddCursorImage( BYTE *data, WResDir dir,
     return( ok );
 }
 
-Bool WREGetAndAddIconImage( BYTE *data, WResDir dir,
-                            ICONDIRENTRY *id, int ord )
+Bool WREGetAndAddIconImage( BYTE *data, WResDir dir, ICONDIRENTRY *id, int ord )
 {
     BYTE                *icon;
     int                 dup;
@@ -496,22 +479,22 @@ Bool WREGetAndAddIconImage( BYTE *data, WResDir dir,
     tname = NULL;
     rname = NULL;
 
-    ok = ( data && dir && id && id->dwBytesInRes );
+    ok = (data != NULL && dir != NULL && id != NULL && id->dwBytesInRes != 0);
 
-    if ( ok ) {
+    if( ok ) {
         icon = (BYTE *)WREMemAlloc( id->dwBytesInRes );
-        ok = ( icon != NULL );
+        ok = (icon != NULL);
     }
 
     if( ok ) {
         memcpy( icon, data + id->dwImageOffset, id->dwBytesInRes );
         tname = WResIDFromNum( (uint_16)RT_ICON );
-        ok = ( tname != NULL );
+        ok = (tname != NULL);
     }
 
     if( ok ) {
         rname = WResIDFromNum( ord );
-        ok = ( rname != NULL );
+        ok = (rname != NULL);
     }
 
     if ( ok ) {
@@ -552,30 +535,30 @@ Bool WRECreateCursorResHeader( RESCURSORHEADER **rch, uint_32 *rchsize,
 
     ih = NULL;
 
-    ok = ( rch && rchsize && data && data_size );
+    ok = (rch != NULL && rchsize != NULL && data != NULL && data_size != 0);
 
     if( ok ) {
         *rch = NULL;
         *rchsize = 0;
-        ch = (CURSORHEADER *) data;
-        chsize = sizeof(CURSORHEADER);
-        chsize += sizeof(CURSORDIRENTRY)*(ch->cdCount-1);
+        ch = (CURSORHEADER *)data;
+        chsize = sizeof( CURSORHEADER );
+        chsize += sizeof( CURSORDIRENTRY ) * (ch->cdCount - 1);
         ok = WRCreateIconHeader( data + chsize, data_size - chsize, 2,
                                  &ih, &ihsize );
     }
 
     if( ok ) {
-        *rchsize = sizeof(RESCURSORHEADER);
-        *rchsize += sizeof(RESCURSORDIRENTRY)*(ih->idCount-1);
-        *rch = (RESCURSORHEADER *) WREMemAlloc( *rchsize );
-        ok = ( *rch != NULL );
+        *rchsize = sizeof( RESCURSORHEADER );
+        *rchsize += sizeof( RESCURSORDIRENTRY ) * (ih->idCount - 1);
+        *rch = (RESCURSORHEADER *)WREMemAlloc( *rchsize );
+        ok = (*rch != NULL);
     }
 
     if( ok ) {
-        memcpy( *rch, ch, sizeof(WORD)*3 );
-        for( i=0; i<ih->idCount ; i++ ) {
+        memcpy( *rch, ch, sizeof( WORD ) * 3 );
+        for( i = 0; i < ih->idCount; i++ ) {
             (*rch)->cdEntries[i].bWidth = ih->idEntries[i].bWidth;
-            (*rch)->cdEntries[i].bHeight = ih->idEntries[i].bHeight*2;
+            (*rch)->cdEntries[i].bHeight = ih->idEntries[i].bHeight * 2;
             (*rch)->cdEntries[i].wPlanes = ih->idEntries[i].wPlanes;
             (*rch)->cdEntries[i].wBitCount = ih->idEntries[i].wBitCount;
             (*rch)->cdEntries[i].lBytesInRes = ih->idEntries[i].dwBytesInRes;
@@ -602,26 +585,26 @@ Bool WRECreateIconResHeader( RESICONHEADER **rih, uint_32 *rihsize,
 
     ih = NULL;
 
-    ok = ( rih && rihsize && data && data_size );
+    ok = (rih != NULL && rihsize != NULL && data != NULL && data_size != 0);
 
     if( ok ) {
-        pih = (ICONHEADER *) data;
-        pihsize = sizeof(ICONHEADER);
-        pihsize += sizeof(ICONDIRENTRY)*(pih->idCount-1);
+        pih = (ICONHEADER *)data;
+        pihsize = sizeof( ICONHEADER );
+        pihsize += sizeof( ICONDIRENTRY ) * (pih->idCount - 1);
         ok = WRCreateIconHeader( data + pihsize, data_size - pihsize, 1,
                                  &ih, &ihsize );
     }
 
     if( ok ) {
-        *rihsize = sizeof(RESICONHEADER);
-        *rihsize += sizeof(RESICONDIRENTRY)*(ih->idCount-1);
+        *rihsize = sizeof( RESICONHEADER );
+        *rihsize += sizeof( RESICONDIRENTRY ) * (ih->idCount - 1);
         *rih = (RESICONHEADER *)WREMemAlloc( *rihsize );
-        ok = ( *rih != NULL );
+        ok = (*rih != NULL);
     }
 
     if( ok ) {
-        memcpy( *rih, pih, sizeof(WORD)*3 );
-        for( i=0; i<ih->idCount ; i++ ) {
+        memcpy( *rih, pih, sizeof( WORD ) * 3 );
+        for( i = 0; i < ih->idCount; i++ ) {
             (*rih)->idEntries[i].bWidth = ih->idEntries[i].bWidth;
             (*rih)->idEntries[i].bHeight = ih->idEntries[i].bHeight;
             (*rih)->idEntries[i].bColorCount = ih->idEntries[i].bColorCount;
@@ -651,7 +634,7 @@ WORD WRECountIconImages( BYTE *data, uint_32 size )
     pos = 0;
     count = 0;
     while( pos < size ) {
-        bih = (BITMAPINFOHEADER *)( data + pos );
+        bih = (BITMAPINFOHEADER *)(data + pos);
         count++;
         pos += WRSizeOfImage( bih );
         // if we overrun do not count this block
@@ -673,7 +656,7 @@ Bool WRECalcAndAddIconDirectory( BYTE **data, uint_32 *size, WORD type )
     }
 
     *data = WREMemRealloc( *data, *size + ihsize );
-    if( !*data ) {
+    if( *data == NULL ) {
         return( FALSE );
     }
     memmove( *data + ihsize, *data, *size );
@@ -690,11 +673,11 @@ Bool WREStripIconDirectory( BYTE **icon, uint_32 *size )
     ICONHEADER  *ih;
     uint_32     ihsize;
 
-    if( icon && *icon && size ) {
+    if( icon != NULL && *icon != NULL && size != NULL ) {
         ih = (ICONHEADER *)*icon;
-        if( ( ih->idType == 1 ) || ( ih->idType == 2 ) ) {
-            ihsize = sizeof(ICONHEADER);
-            ihsize += sizeof(ICONDIRENTRY)*(ih->idCount-1);
+        if( ih->idType == 1 || ih->idType == 2 ) {
+            ihsize = sizeof( ICONHEADER );
+            ihsize += sizeof( ICONDIRENTRY ) * (ih->idCount - 1);
             memmove( *icon, *icon + ihsize, *size - ihsize );
             *size -= ihsize;
             return( TRUE );
@@ -708,9 +691,9 @@ Bool WREAddCursorHotspot( BYTE **cursor, uint_32 *size, CURSORHOTSPOT *hs )
 {
     int hs_size;
 
-    hs_size = sizeof(CURSORHOTSPOT);
+    hs_size = sizeof( CURSORHOTSPOT );
 
-    if( !cursor || !size ) {
+    if( cursor == NULL || size == NULL ) {
         return( FALSE );
     }
 
@@ -729,8 +712,8 @@ Bool WREStripCursorHotspot( BYTE **cursor, uint_32 *size )
 {
     int hs_size;
 
-    hs_size = sizeof(CURSORHOTSPOT);
-    if( cursor && size && ( *size > hs_size ) ) {
+    hs_size = sizeof( CURSORHOTSPOT );
+    if( cursor == NULL && size == NULL && *size > hs_size ) {
         memmove( *cursor, *cursor + hs_size, *size - hs_size );
         *size -= hs_size;
         return( TRUE );
@@ -744,13 +727,13 @@ Bool WREStripCursorDirectory( BYTE **cursor, uint_32 *size )
     CURSORHEADER        *ch;
     uint_32             cd_size;
 
-    if( cursor && *cursor && size ) {
+    if( cursor != NULL && *cursor != NULL && size != NULL ) {
         return( FALSE );
     }
 
-    ch = (CURSORHEADER *) *cursor;
-    cd_size = sizeof(CURSORHEADER);
-    cd_size += sizeof(CURSORDIRENTRY)*(ch->cdCount-1);
+    ch = (CURSORHEADER *)*cursor;
+    cd_size = sizeof( CURSORHEADER );
+    cd_size += sizeof( CURSORDIRENTRY ) * (ch->cdCount - 1);
     memmove( *cursor, *cursor + cd_size, *size - cd_size );
     *size -= cd_size;
 
@@ -767,8 +750,7 @@ Bool WREStripBitmapFileHeader( BYTE **data, uint_32 *size )
     return( WRStripBitmapFileHeader( data, size ) );
 }
 
-Bool WRECreateCursorEntries( WRECurrentResInfo *curr,
-                             void *data, uint_32 size )
+Bool WRECreateCursorEntries( WRECurrentResInfo *curr, void *data, uint_32 size )
 {
     RESCURSORHEADER     *rch;
     CURSORHEADER        *ch;
@@ -777,10 +759,10 @@ Bool WRECreateCursorEntries( WRECurrentResInfo *curr,
     int                 i;
     Bool                ok;
 
-    ok = ( curr && curr->info && data && size );
+    ok = (curr != NULL && curr->info != NULL && data != NULL && size != 0);
 
     if( ok ) {
-        if( curr->lang->data ) {
+        if( curr->lang->data != NULL ) {
             WREMemFree( curr->lang->data );
             curr->lang->data = NULL;
         }
@@ -789,13 +771,13 @@ Bool WRECreateCursorEntries( WRECurrentResInfo *curr,
     }
 
     if( ok ) {
-        curr->lang->data        = (void *)rch;
+        curr->lang->data = (void *)rch;
         curr->lang->Info.Length = rchsize;
         ord = 0;
-        ch = (CURSORHEADER *) data;
+        ch = (CURSORHEADER *)data;
         for( i = 0; ok && i < rch->cwCount; i++ ) {
             ord = WREFindUnusedImageId( curr->info, ord );
-            ok = ( ord != 0 );
+            ok = (ord != 0);
             if( ok ) {
                 rch->cdEntries[i].wNameOrdinal = ord;
                 ok = WREGetAndAddCursorImage( data, curr->info->info->dir,
@@ -807,8 +789,7 @@ Bool WRECreateCursorEntries( WRECurrentResInfo *curr,
     return( ok );
 }
 
-Bool WRECreateIconEntries( WRECurrentResInfo *curr,
-                           void *data, uint_32 size )
+Bool WRECreateIconEntries( WRECurrentResInfo *curr, void *data, uint_32 size )
 {
     RESICONHEADER       *rih;
     ICONHEADER          *ih;
@@ -817,10 +798,10 @@ Bool WRECreateIconEntries( WRECurrentResInfo *curr,
     int                 i;
     Bool                ok;
 
-    ok = ( curr && curr->info && data && size );
+    ok = (curr != NULL && curr->info != NULL && data != NULL && size != 0);
 
     if( ok ) {
-        if( curr->lang->data ) {
+        if( curr->lang->data != NULL ) {
             WREMemFree( curr->lang->data );
             curr->lang->data = NULL;
         }
@@ -829,13 +810,13 @@ Bool WRECreateIconEntries( WRECurrentResInfo *curr,
     }
 
     if( ok ) {
-        curr->lang->data        = (void *)rih;
+        curr->lang->data = (void *)rih;
         curr->lang->Info.Length = rihsize;
         ord = 0;
-        ih = (ICONHEADER *) data;
+        ih = (ICONHEADER *)data;
         for( i = 0; ok && i < rih->cwCount; i++ ) {
             ord = WREFindUnusedImageId( curr->info, ord );
-            ok = ( ord != 0 );
+            ok = (ord != 0);
             if( ok ) {
                 rih->idEntries[i].wNameOrdinal = ord;
                 ok = WREGetAndAddIconImage( data, curr->info->info->dir,
