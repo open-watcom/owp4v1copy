@@ -557,7 +557,7 @@ IDS_WRONGCHECKSUM=\
         //1"Invalid Checksum Error"\
         //2"不正なチェックサム・エラーInvalid Checksum Error"\
         //0
-IDS_CANTCREATEEFILE=\
+IDS_CANTCREATEFILE=\
         //1"Cannot create file %s."\
         //2"ファイル %s を作成できません。"\
         //0
