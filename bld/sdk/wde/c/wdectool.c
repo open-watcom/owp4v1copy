@@ -172,7 +172,7 @@ Bool WdeInitControls( HINSTANCE inst )
         return( FALSE );
     }
 
-    usingCommonControls = WdeUsingCommonControls();
+    usingCommonControls = IsCommCtrlLoaded();
 
     for( i = 0; i < NUM_TOOLS; i++ ) {
         if( WdeControlBits[i].flags & WCB_FLAG_COMMON_CONTROL ) {

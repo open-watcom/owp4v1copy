@@ -36,6 +36,7 @@
 
 #include "mem.h"
 #include "toolbr.h"
+#include "loadcc.h"
 
 typedef struct tool {
     struct tool *next;
@@ -111,9 +112,6 @@ static WPI_INST     appInst;
 #ifdef __OS2_PM__
 static WPI_PROC     oldFrameProc;
 #endif
-#ifdef __NT__
-static HINSTANCE    hInstCommCtrl;
-#endif
 
 static tool *currTool;
 static char currIsDown;
@@ -135,12 +133,6 @@ MRESULT CALLBACK    ToolBarWndProc( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 #ifdef __NT__
 LRESULT WINAPI      WinToolWndProc( HWND, UINT, WPARAM, LPARAM );
 LRESULT WINAPI      ToolContainerWndProc( HWND, UINT, WPARAM, LPARAM );
-#endif
-
-#ifdef __NT__
-typedef VOID    (WINAPI *PFNICC)( VOID );
-
-static PFNICC   pfnInitCommonControls;
 #endif
 
 /*
@@ -287,7 +279,7 @@ static void reinsertButtons( toolbar *bar )
     BITMAP      bm;
     int         n;
     TOOLINFO    ti;
-    if( hInstCommCtrl != NULL ) {
+    if( IsCommCtrlLoaded() ) {
         for( t = bar->tool_list; t != NULL; t = t->next ) {
             if( !(t->flags & ITEM_BLANK) ) {
                 GetObject( t->bitmap, sizeof( BITMAP ), &bm );
@@ -359,10 +351,7 @@ toolbar *ToolBarInit( HWND parent )
     appInst = instance;
 
 #ifdef __NT__
-    if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
-        pfnInitCommonControls = (PFNICC)GetProcAddress( hInstCommCtrl,
-                                                        "InitCommonControls" );
-        pfnInitCommonControls();
+    if( LoadCommCtrl() ) {
         if( !GetClassInfo( instance, containerClassName, &wc ) ) {
             wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
             wc.lpfnWndProc = (WNDPROC)ToolContainerWndProc;
@@ -433,9 +422,7 @@ toolbar *ToolBarInit( HWND parent )
         bar->owner = parent;
     }
 
-#ifdef __NT__
-    if( hInstCommCtrl == NULL ) {
-#endif
+    if( !IsCommCtrlLoaded() ) {
         if( !gdiObjectsCreated ) {
             blackPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_black );
             btnShadowPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_btnshadow );
@@ -445,9 +432,7 @@ toolbar *ToolBarInit( HWND parent )
             btnFaceBrush = _wpi_createsolidbrush( clr_btnface );
             gdiObjectsCreated = TRUE;
         }
-#ifdef __NT__
     }
-#endif
 
     return( bar );
 
@@ -460,9 +445,7 @@ toolbar *ToolBarInit( HWND parent )
  */
 void ToolBarChangeSysColors( COLORREF tbFace, COLORREF tbHighlight, COLORREF tbShadow )
 {
-#ifdef __NT__
-    if( hInstCommCtrl == NULL ) {
-#endif
+    if( !IsCommCtrlLoaded() ) {
         if( gdiObjectsCreated ) {
             DeleteObject( blackPen );
             DeleteObject( btnShadowPen );
@@ -482,9 +465,7 @@ void ToolBarChangeSysColors( COLORREF tbFace, COLORREF tbHighlight, COLORREF tbS
         btnColor = GetSysColor( COLOR_BTNFACE );
         btnFaceBrush = CreateSolidBrush( btnColor );
         gdiObjectsCreated = TRUE;
-#ifdef __NT__
     }
-#endif
 
 } /* ToolBarChangeSysColors */
 
@@ -574,7 +555,7 @@ void ToolBarAddItem( toolbar *bar, TOOLITEMINFO *info )
     }
 
 #ifdef __NT__
-    if( hInstCommCtrl != NULL ) {
+    if( IsCommCtrlLoaded() ) {
         if( !(info->flags & ITEM_BLANK) ) {
             GetObject( info->bmp, sizeof( BITMAP ), &bm );
             SendMessage( bar->hwnd, TB_SETBITMAPSIZE, 0,
@@ -621,7 +602,7 @@ void ToolBarSetState( toolbar *bar, WORD id, WORD state )
     tool        *t;
 
 #ifdef __NT__
-    if( hInstCommCtrl == NULL ) {
+    if( !IsCommCtrlLoaded() ) {
 #endif
         t = findTool( bar->tool_list, id );
         t->state = state;
@@ -647,7 +628,7 @@ WORD ToolBarGetState( toolbar *bar, WORD id )
     int         n;
     TBBUTTON    tbb;
 
-    if( hInstCommCtrl == NULL ) {
+    if( !IsCommCtrlLoaded() ) {
 #endif
         t = findTool( bar->tool_list, id );
         return( t->state );
@@ -671,7 +652,7 @@ BOOL ToolBarDeleteItem( toolbar *bar, WORD id )
 #ifdef __NT__
     int     n;
 
-    if( hInstCommCtrl == NULL ) {
+    if( !IsCommCtrlLoaded() ) {
 #endif
         t = findTool( bar->tool_list, id );
         if( t != NULL ) {
@@ -781,7 +762,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
 
 #ifndef __OS2_PM__
 #if defined( __NT__ )
-    if( hInstCommCtrl != NULL ) {
+    if( IsCommCtrlLoaded() ) {
         if( !bar->is_fixed ) {
             bar->container = CreateWindowEx( WS_EX_TOOLWINDOW, containerClassName, NULL,
                                              WS_VISIBLE | WS_CAPTION | WS_SYSMENU |
@@ -861,13 +842,9 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
      * Windows ignores the GETMINMAXINFO before the WM_CREATE or
      * something so we kluge it.
      */
-#ifdef __NT__
-    if( hInstCommCtrl == NULL ) {
-#endif
+    if( !IsCommCtrlLoaded() ) {
         MoveWindow( bar->hwnd, disp->area.left, disp->area.top, width, height, TRUE );
-#ifdef __NT__
     }
-#endif
 #else
     if( disp->is_fixed ) {
         parent = bar->owner;
@@ -1377,7 +1354,7 @@ BOOL HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 #ifdef __NT__
     POINT   pt;
     
-    if( hInstCommCtrl == NULL ) {
+    if( !IsCommCtrlLoaded() ) {
 #endif
         return( findToolAtPoint( bar, wparam, lparam ) != NULL );
 #ifdef __NT__
@@ -1402,7 +1379,7 @@ BOOL FindToolIDAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lpara
     POINT   pt;
     int     ret;
     
-    if( hInstCommCtrl == NULL ) {
+    if( !IsCommCtrlLoaded() ) {
 #endif
         ctool = findToolAtPoint( bar, wparam, lparam );
         if( ctool != NULL ) {
@@ -1713,7 +1690,7 @@ void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
     TBBUTTON    tbb;
     TBADDBITMAP tbab;
     
-    if( hInstCommCtrl == NULL ) {
+    if( !IsCommCtrlLoaded() ) {
 #endif
         t = findTool( bar->tool_list, id );
         if( t != NULL ) {

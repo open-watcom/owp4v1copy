@@ -33,6 +33,7 @@
 #ifndef WDECCTL_INCLUDED
 #define WDECCTL_INCLUDED
 
+#include "loadcc.h"
 #ifdef __NT__
     #include <commctrl.h>
 #endif
@@ -284,11 +285,5 @@
 #define ACS_AUTOPLAY            0x0004
 
 #endif
-
-/****************************************************************************/
-/* function prototypes                                                      */
-/****************************************************************************/
-extern Bool WdeUsingCommonControls( void );
-extern void WdeInitCommonControls( void );
 
 #endif

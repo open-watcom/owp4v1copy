@@ -329,7 +329,7 @@ Bool WdeInit( HINSTANCE app_inst )
         return( FALSE );
     }
 
-    WdeInitCommonControls();
+    LoadCommCtrl();
 
     return( TRUE );
 }

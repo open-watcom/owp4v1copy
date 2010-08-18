@@ -24,37 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Prototypes for dynamic loading of COMCTL32.DLL.
 *
 ****************************************************************************/
 
 
-#include "precomp.h"
+#ifndef _LOADCC_H_INCLUDED
+#define _LOADCC_H_INCLUDED
 
-#include "wdeglbl.h"
-#include "wdecctl.h"
+BOOL    LoadCommCtrl();
+BOOL    IsCommCtrlLoaded();
 
-#ifdef __NT__
-typedef VOID (WINAPI *PFNICC)( VOID );
-#endif
-
-static Bool usingCommonControls = FALSE;
-
-Bool WdeUsingCommonControls( void )
-{
-    return( usingCommonControls );
-}
-
-void WdeInitCommonControls( void )
-{
-#ifdef __NT__
-    HINSTANCE   hInstCommCtrl;
-    PFNICC      pfnICC;
-    if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
-        pfnICC = (PFNICC)GetProcAddress( hInstCommCtrl, "InitCommonControls" );
-        pfnICC();
-        usingCommonControls = TRUE;
-    }
-#endif
-}
+#endif /* _LOADCC_H_INCLUDED */

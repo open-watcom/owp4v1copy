@@ -55,7 +55,7 @@ OBJS =  wde_wres.obj wdealign.obj wdecsize.obj wdecust.obj  wdedebug.obj &
         wdetmenu.obj wdectool.obj wdezordr.obj wderibbn.obj &
         wdeselft.obj wdei2mem.obj wdeldres.obj wdesvres.obj wdesvobj.obj &
         wdestken.obj wdectl3d.obj wdesvdlg.obj wdedde.obj &
-        wdeclear.obj wdecurr.obj wdegoto.obj wdecctl.obj &
+        wdeclear.obj wdecurr.obj wdegoto.obj &
         wdefsbar.obj wdeflvw.obj wdeftvw.obj wdefhdr.obj wdeftabc.obj &
         wdefani.obj wdefupdn.obj wdeftrak.obj wdefprog.obj wdefhtky.obj &
         windlg.obj windlg32.obj &

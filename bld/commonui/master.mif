@@ -37,6 +37,7 @@ objs += about.obj    &
         inipath.obj  &
         jdlg.obj     &
         ldstr.obj    &
+        loadcc.obj   &
         log.obj      &
         mark.obj     &
         memwnd.obj   &

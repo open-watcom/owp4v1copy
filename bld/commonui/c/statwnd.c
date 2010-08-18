@@ -35,6 +35,7 @@
 #include <string.h>
 #include "statwnd.h"
 #include "mem.h"
+#include "loadcc.h"
 
 #ifndef MAX_SECTIONS
     #define MAX_SECTIONS    20
@@ -70,13 +71,6 @@ static BOOL                     hasGDIObjects = FALSE;
 static BOOL                     classRegistered;
 static WPI_INST                 classHandle;
 static statwnd                  *currentStatWnd;
-#ifdef __NT__
-static HINSTANCE                hInstCommCtrl;
-
-typedef VOID    (WINAPI *PFNICC)( VOID );
-
-static PFNICC   pfnInitCommonControls;
-#endif
 
 #if defined( __WINDOWS_386__ )
     #define CB      LONG FAR PASCAL
@@ -354,14 +348,9 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra,
     WNDCLASS    wc;
     int         rc;
 
-#ifdef __NT__
-    if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
-        pfnInitCommonControls = (PFNICC)GetProcAddress( hInstCommCtrl,
-                                                        "InitCommonControls" );
-        pfnInitCommonControls();
+    if( LoadCommCtrl() ) {
         return( 1 );
     } else {
-#endif
         if( !hasGDIObjects ) {
             colorButtonFace = GetSysColor( COLOR_BTNFACE );
             colorTextFace = GetSysColor( COLOR_BTNTEXT );
@@ -394,9 +383,7 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra,
             classRegistered = TRUE;
         }
         return( rc );
-#ifdef __NT__
     }
-#endif
 #else
     /* OS/2 PM version of the initialization */
     int         rc;
@@ -448,9 +435,7 @@ statwnd *StatusWndStart( void )
 void StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText,
                                COLORREF btnHighlight, COLORREF btnShadow )
 {
-#ifdef __NT__
-    if( hInstCommCtrl == NULL ) {
-#endif
+    if( !IsCommCtrlLoaded() ) {
         if( hasGDIObjects ) {
             _wpi_deleteobject( penLight );
             _wpi_deleteobject( penShade );
@@ -463,9 +448,7 @@ void StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText,
         penLight = _wpi_createpen( PS_SOLID, 1, btnHighlight );
         penShade = _wpi_createpen( PS_SOLID, 1, btnShadow );
         hasGDIObjects = TRUE;
-#ifdef __NT__
     }
-#endif
 }
 
 #ifdef __NT__
@@ -515,7 +498,7 @@ HWND StatusWndCreate( statwnd *sw, HWND parent, WPI_RECT *size, WPI_INST hinstan
     /* Win16 and Win32 version of creation */
     currentStatWnd = sw;
 #if defined( __NT__ )
-    if( hInstCommCtrl != NULL ) {
+    if( IsCommCtrlLoaded() ) {
         sw->win = CreateWindow( STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE |
                                 WS_CLIPSIBLINGS | SBARS_SIZEGRIP,
                                 0, 0, 0, 0, parent, NULL, hinstance, NULL );
@@ -702,7 +685,7 @@ void StatusWndDrawLine( statwnd *sw, WPI_PRES pres, WPI_FONT hfont, const char *
     sw->sectionDataFont = hfont;
 #endif
 #ifdef __NT__
-    if( hInstCommCtrl == NULL ) {
+    if( !IsCommCtrlLoaded() ) {
 #endif
         if( !initPRES( sw, pres ) ) {
             return;
@@ -797,7 +780,7 @@ void StatusWndSetSeparators( statwnd *sw, int num_items, status_block_desc *list
     sw->numSections = num_items;
 
 #ifdef __NT__
-    if( hInstCommCtrl != NULL && sw->win != NULL ) {
+    if( IsCommCtrlLoaded() && sw->win != NULL ) {
         updateParts( sw );
     }
 #endif
@@ -809,12 +792,9 @@ void StatusWndSetSeparators( statwnd *sw, int num_items, status_block_desc *list
  */
 int StatusWndGetHeight( statwnd *sw )
 {
-    sw = sw;
-#ifdef __NT__
-    if( hInstCommCtrl != NULL ) {
+    if( IsCommCtrlLoaded() ) {
         return( sw->wndHeight );
     }
-#endif
     return( 0 );
 }
 

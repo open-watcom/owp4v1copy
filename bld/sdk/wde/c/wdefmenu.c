@@ -99,19 +99,13 @@ void WdeEnableSelectCustCntl( HMENU menu )
 
 void WdeEnableCommonControlsMenu( HMENU menu )
 {
-    int         i;
-    Bool        enable;
+    int i;
 
     i = WdeIsCurrentMDIWindowZoomed() ? 1 : 0;
     menu = GetSubMenu( menu, TOOLS_MENU + i );
     menu = GetSubMenu( menu, COMM_CTRL_MENU );
 
-    enable = FALSE;
-    if( WdeUsingCommonControls() ) {
-        enable = TRUE;
-    }
-
-    WdeEnableAllMenuItems( menu, enable );
+    WdeEnableAllMenuItems( menu, IsCommCtrlLoaded() );
 }
 
 void WdeEnableCustCntlTools( HMENU menu )

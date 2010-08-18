@@ -39,6 +39,7 @@
 #ifdef __WIN__
     #include "filelist.h"
     #include "font.h"
+    #include "loadcc.h"
     #ifdef __NT__
         #include <commctrl.h>
     #endif
@@ -59,13 +60,6 @@ static char     *sString;
 static char     *origString;
 static char     *cTable;
 static bool     isFgrep, caseIgn;
-
-#if defined( __WIN__ ) && defined( __NT__ )
-typedef VOID (WINAPI *PFNICC)( VOID );
-
-static HINSTANCE    hInstCommCtrl = NULL;
-static PFNICC       pfnInitCommonControls = NULL;
-#endif
 
 /*
  * DoFGREP - do a fast grep
@@ -212,7 +206,7 @@ static void getOneFile( HWND dlg, char **files, int *count, bool leave )
 
     list_box = GetDlgItem( dlg, ID_FILE_LIST );
 #ifdef __NT__
-    if( pfnInitCommonControls != NULL ) {
+    if( IsCommCtrlLoaded() ) {
         i = SendMessage( list_box, LVM_GETNEXTITEM, (WPARAM)-1, LVNI_SELECTED );
     } else {
 #endif
@@ -226,7 +220,7 @@ static void getOneFile( HWND dlg, char **files, int *count, bool leave )
     } else {
         /* remove it from the list box */
 #ifdef __NT__
-        if( pfnInitCommonControls != NULL ) {
+        if( IsCommCtrlLoaded() ) {
             SendMessage( list_box, LVM_DELETEITEM, i, 0L );
             lvi.stateMask = LVIS_SELECTED;
             lvi.state = LVIS_SELECTED;
@@ -397,13 +391,7 @@ static vi_rc doGREP( char *dirlist )
     vi_rc       rc;
 
 #ifdef __NT__
-    if( hInstCommCtrl == NULL ) {
-        hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" );
-        pfnInitCommonControls = (PFNICC)GetProcAddress( hInstCommCtrl,
-                                                        "InitCommonControls" );
-    }
-    if( pfnInitCommonControls != NULL ) {
-        pfnInitCommonControls();
+    if( LoadCommCtrl() ) {
         grep_proc = (DLGPROC)MakeProcInstance( (FARPROC)GrepListProc95, InstanceHandle );
         rc = DialogBoxParam( InstanceHandle, "GREPLIST95", Root, grep_proc,
                              (LONG)(LPVOID)dirlist );
@@ -619,7 +607,7 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
                  * name is added to the list
                  */
 #ifdef __NT__
-                if( pfnInitCommonControls != NULL ) {
+                if( IsCommCtrlLoaded() ) {
                     lvi.mask = LVIF_TEXT;
                     lvi.iItem = SendMessage( wn, LVM_GETITEMCOUNT, 0, 0L );
                     lvi.iSubItem = 0;
