@@ -2937,7 +2937,7 @@ static void emulate_wgml( void )
 
     /* Allow input translation tests. */
 
-    cop_ti_table( "set ~", 5 );
+    cop_ti_table( "set ~" );
 
     /* First pass processing. */
     /* START processing.*/

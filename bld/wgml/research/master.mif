@@ -92,6 +92,7 @@ cop_common_objs = &
             gsymvar.obj   &
             gtagdict.obj  &
             gtxtpool.obj  &
+            gutil.obj     &
             outbuff.obj   &
             wgmlmsg.obj   &
             wgmlsupp.obj
