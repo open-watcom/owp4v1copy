@@ -273,7 +273,7 @@ global  uint32_t    post_space;         // spacing within a line
 global  uint32_t    pre_top_skip;       // .. formatting
 global  uint32_t    post_top_skip;      // .. formatting
 global  uint32_t    ju_x_start;         // .. formatting
- 
+
 global  uint32_t    g_indent;           // .in 1. value (left) default 0
 global  int32_t     g_indentr;          // .in 2. value (right) default 0
  
@@ -285,6 +285,8 @@ global  tag_cb  *   tag_pool;           // list of reusable tag_cbs
  
 global  banner_lay_tag  * sect_ban_top[2];// top even / odd banner for curr sect
 global  banner_lay_tag  * sect_ban_bot[2];// bot even / odd banner for curr sect
+ 
+global  uint32_t    msg_indent;         // indent for message output (to screen, not to device)
  
  
 /***************************************************************************/

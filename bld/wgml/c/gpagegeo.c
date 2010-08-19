@@ -89,6 +89,7 @@ void    init_page_geometry( void )
 
     g_page_left_org = max( lm + bin_device->x_offset, bin_device->x_start );
     g_page_left = g_page_left_org;
+    g_cur_left = g_page_left;           // set initial value
 
     g_page_right_org = min( rm + bin_device->x_offset, bin_device->page_width );
     g_page_right = g_page_right_org;

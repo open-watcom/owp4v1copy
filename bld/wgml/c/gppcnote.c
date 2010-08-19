@@ -55,9 +55,8 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
         buf_lines_cnt = 0;
     }
 
-//  g_cur_left = g_page_left + g_indent;// left start    TBD
-    g_cur_left += g_indent;             // left start
-                                        // possibly indent first line
+    g_cur_left = g_page_left + g_indent;    // left start
+                                            // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(p_pc->line_indent) );
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold

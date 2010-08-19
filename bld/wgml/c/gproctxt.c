@@ -960,7 +960,7 @@ void    process_text( char * text, uint8_t font_num )
                 if( s_char != NULL ) {
                     // t_line ends in a multi-part word or an empty text_chars
                     if( ((s_char != t_line.last) && \
-                        (!(g_page_left + n_char->width) > g_page_right)) || \
+                        (!(g_cur_left + n_char->width) > g_page_right)) || \
                                                 (s_char->count == 0) ) {
                         // s_char itself belongs to t_line
                         t_line.last = s_char;

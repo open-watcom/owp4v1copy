@@ -75,7 +75,6 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
     char            *   save;
     char            *   start;
     char            *   end;
-    static int          indent;
 
     switch( sev ) {
 #if 0
@@ -85,15 +84,15 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
 #endif
     case SEV_WARNING:
         prefix = "Warning!";
-        indent = 0;
+        msg_indent = 0;
         break;
     case SEV_ERROR:
         prefix = "Error!";
-        indent = 0;
+        msg_indent = 0;
         break;
     case SEV_FATAL_ERR:
         prefix = "Fatal Error!";
-        indent = 0;
+        msg_indent = 0;
         break;
     default:
         prefix = "";
@@ -123,35 +122,35 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         break;
     }
 
-    if( indent == 0 ) {    // save points to the ":" or is NULL
+    if( msg_indent == 0 ) {    // save points to the ":" or is NULL
         save = strchr( err_buf, ':' );
     }
 
     start = err_buf;
     if( supp_line ) {
-        if( (indent > 0) && (start[0] == '\t') ) {
-            start++;    // skip initial tab in favor of indent
+        if( (msg_indent > 0) && (start[0] == '\t') ) {
+            start++;    // skip initial tab in favor of msg_indent
         }
-        out_msg( "%*s%s\n", indent, "", start );
-        indent = 0;
+        out_msg( "%*s%s\n", msg_indent, "", start );
+        msg_indent = 0;
     } else {
-        while( strlen( start ) > MAX_LINE_LEN - indent ) {
-            end = start + MAX_LINE_LEN - indent;
+        while( strlen( start ) > MAX_LINE_LEN - msg_indent ) {
+            end = start + MAX_LINE_LEN - msg_indent;
             while( !isspace( *end ) && end > start ) end--;
             if( end != start )  {
                 *end = '\0';
             } else {
                 break;
             }
-            out_msg( "%*s%s\n", indent, "", start );
+            out_msg( "%*s%s\n", msg_indent, "", start );
             start = end + 1;
-            indent = len;
+            msg_indent = len;
         }
-        out_msg( "%*s%s\n", indent, "", start );
-        if( save != NULL ) {    // set indent for follow-on line
+        out_msg( "%*s%s\n", msg_indent, "", start );
+        if( save != NULL ) {    // set msg_indent for follow-on line
             save++;             // step over the ":"
             while( isspace( *save ) ) save++;   // step over any spaces
-            indent = save - err_buf;
+            msg_indent = save - err_buf;
         }
     }
 }

@@ -147,6 +147,7 @@ void init_global_vars( void )
     g_skip_wgml4        = 0;
     nest_cb             = NULL;
 
+    msg_indent          = 0;            // should be correct initial value
 }
 
 /***************************************************************************/
