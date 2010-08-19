@@ -1,11 +1,11 @@
 additional_cleanup = *.mod *.ref *.stb
 
 !ifeq host_os qnx
-clibdir = $(build_root)/clib/library/qnx.286/ms/clibs.lib
+clibdir = $(clib_dir)/library/qnx.286/ms/clibs.lib
 !else ifeq host_cpu i86
-clibdir = $(build_root)/clib/library/msdos.086/ms/clibs.lib
+clibdir = $(clib_dir)/library/msdos.086/ms/clibs.lib
 !else
-clibdir = $(build_root)/clib/library/msdos.386/ms_r/clib3r.lib
+clibdir = $(clib_dir)/library/msdos.386/ms_r/clib3r.lib
 !endif
 
 !ifeq host_os dos

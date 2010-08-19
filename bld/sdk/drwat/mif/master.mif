@@ -89,7 +89,7 @@ xlibs = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 #explicit rules
 ################
 
-$(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj) $(version_res_$(host_os)_$(host_cpu))
+$(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj) $(xlibs) $(version_res_$(host_os)_$(host_cpu))
         $(linker) @$(link_name)
 !ifdef version_res_$(host_os)_$(host_cpu)
         $(rc) -k $(proj_name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))

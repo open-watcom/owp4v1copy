@@ -9,10 +9,6 @@ symdump_autodepends = .autodepend
 .c: ..
 .h: ..
 
-obj             = .obj
-exe             = .exe
+objs = symdump.obj
 
-objs       =   symdump$(obj)
-
-symdump$(exe) : $(objs)
-        $(cl) $(clflags) $(objs) $(cl_libs)
+!include exetarg.mif

@@ -36,7 +36,7 @@ version_res_nt_386 = version.res
 xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib &
         $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
-$(name).exe : rcstr.gh $(objs) $(name).res $(version_res_$(host_os)_$(host_cpu))
+$(name).exe : rcstr.gh $(objs) $(xlibs) $(name).res $(version_res_$(host_os)_$(host_cpu))
         $(LINKER) $(lflags) name $^@ file { $(objs) } lib { $(xlibs) }
 !ifeq host_CPU axp
 !ifeq release 0

@@ -45,5 +45,5 @@ splitfil.exe : splitfil.obj
 genmkfil.exe : genmkfil.obj
     $(cl) $(clflags) $< $(cl_libs)
 
-uzip.exe : microzip.obj
-    $(cl) $(clflags) $< $(cl_libs) $(ziplib) ../zlib/osi$(host_cpu)/zlib.lib 
+uzip.exe : microzip.obj $(ziplib) ../zlib/osi$(host_cpu)/zlib.lib
+    $(cl) $(clflags) $< $(cl_libs)

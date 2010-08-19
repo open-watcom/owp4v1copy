@@ -29,7 +29,7 @@ inc_dirs = -I.. -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
 
-$(name).exe : rcstr.gh $(objs) $(name).res $(version_res_$(host_os)_$(host_cpu))
+$(name).exe : rcstr.gh $(objs) $(xlibs) $(name).res $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $(name).exe file { $(objs) } lib { $(xlibs) }
 !ifdef version_res_$(host_os)_$(host_cpu)
         $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))

@@ -8,11 +8,9 @@ inc_dirs = -I"../h"
 
 .c: ../c
 
-objs =                  &
-        dmpobj.obj      &
+objs =  dmpobj.obj      &
         objread.obj     &
         output.obj      &
         process.obj
 
-$(proj_name).exe : $(objs) $(cl_objs)
-        $(cl) $(clflags) $< $(cl_libs)
+!include exetarg.mif

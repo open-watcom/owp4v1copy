@@ -242,15 +242,17 @@ $(xname).exp : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
     wstrip -q -a -r $^@ . $(xname).res
 !else
 
+libs = $(wres_lib)
+
 !ifdef bootstrap
-$(xname).exe : $(objects) $(cl_objs) $(xname).res $(wres_lib) $(__MAKEFILES__)
-    $(cl) $(clflags) $(objects) $(cl_objs) $(cl_libs) $(wres_lib)
+$(xname).exe : $(objects) $(cl_objs) $(xname).res $(libs) $(__MAKEFILES__)
+    $(cl) $(clflags) $(objects) $(cl_objs) $(libs) $(cl_libs)
     wstrip -q -a -r $^@ . $(xname).res
 !else
-$(xname).exe : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
+$(xname).exe : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
     @%write tmp.lnk $(lflags)
     @for %i in ($(objects)) do @%append tmp.lnk file %i
-    @%append tmp.lnk lib $(wres_lib)
+    @for %i in ($(libs)) do @%append tmp.lnk lib %i
     $(linker) name $^@ @tmp.lnk
 !ifeq host_os win
     $(rc) $(xname).res $^@

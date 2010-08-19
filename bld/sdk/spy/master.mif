@@ -112,7 +112,7 @@ xlibs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib &
 all : $(wspy_to_build_$(host_os)) .SYMBOLIC
         @%null
 
-$(name).exe : $(objs) $(name).res $(dllname).lib $(version_res_$(host_os)_$(host_cpu))
+$(name).exe : $(objs) $(name).res $(dllname).lib $(xlibs) $(version_res_$(host_os)_$(host_cpu))
         %create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk file { $(objs) }
@@ -160,4 +160,3 @@ patch_level=0
 version.res: ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
         $[@ ../exever.rc version.rc $$ $(name) $(patch_level)
         $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
-

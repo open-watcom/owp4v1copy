@@ -1,3 +1,7 @@
+proj_name = objread
+
+objread_autodepends = .autodepend
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -7,9 +11,6 @@
 .c: $(orl_dir)/test/c;$(trmem_dir)
 .h: $(orl_dir)/test/h;$(trmem_dir)
 
-obj             = .obj
-exe             = .exe
-
 inc_dirs = -I"$(orl_dir)/h" -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(watcom_dir)/h" -I$(trmem_dir)
 
 !ifeq release 0
@@ -18,13 +19,11 @@ extra_c_flags_trmemcvr  = -dTRMEM -of+
 extra_c_flags_trmem     = -dTRMEM -of+
 !endif
 
-extra_l_flags           = library $(orl_lib)
-
-test_objs       =   test$(obj) &
-                    trmemcvr$(obj)
+objs = test.obj trmemcvr.obj
 !ifeq release 0
-test_objs       +=  trmem$(obj)
+objs += trmem.obj
 !endif
 
-objread$(exe) : $(test_objs) $(cl_objs) $(orl_lib)
-        $(cl) $(clflags) $(test_objs) $(cl_objs) $(orl_lib) $(cl_libs)
+libs = $(orl_lib)
+
+!include exetarg.mif

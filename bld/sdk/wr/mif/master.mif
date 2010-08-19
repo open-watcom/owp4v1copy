@@ -92,7 +92,7 @@ extra_c_flags_trmem = $(trmem_cflags)
 inc_dirs = -I. -I"../h" -I$(cpp_dir) -I"$(wres_dir)/h" -I"$(wrc_dir)/h"
 inc_dirs += -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
 
-xlibs = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
+xlibs = $(wres_lib) $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 
 #------------- LIB
 $(name).lib: $(name).dll $(__MAKEFILES__)
@@ -110,8 +110,8 @@ extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
 
-$(name).dll: $(__MAKEFILES__) ytab.gh wrcmsg.gh $(object) $(wres_lib) $(name).res $(version_res_$(host_os)_$(host_cpu))
-        $(linker) $(lflags) name $^@ lib $(wres_lib) file {$(object)} lib {$(xlibs)}
+$(name).dll: $(__MAKEFILES__) ytab.gh wrcmsg.gh $(object) $(xlibs) $(name).res $(version_res_$(host_os)_$(host_cpu))
+        $(linker) $(lflags) name $^@ file {$(object)} lib {$(xlibs)}
 !ifdef version_res_$(host_os)_$(host_cpu)
         $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else

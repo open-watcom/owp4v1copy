@@ -62,8 +62,7 @@ mem_objs = &
 objs = $(wv_objs) $(mem_objs)
 
 !ifeq sys_windowed 1
-wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
-commonui_lib = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
+libs = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
 !endif
 
 !ifndef bootstrap
@@ -114,8 +113,8 @@ inc_dirs = -I. -I"../h" -I"../../h" -I"$(help_dir)/h" -I"$(ui_dir)/h"
 .h:     ../h;../../h;$(wpi_dir)/h
 .msg:   ../../h
 
-$(name).lib : _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKEFILES__) $(wpi_lib)
-        $(librarian) $(libflags) $(objs) $(extra_objs) $(sysobjs) $(wpi_lib) $(commonui_lib)
+$(name).lib : _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(libs) $(__MAKEFILES__)
+        $(librarian) $(libflags) $(objs) $(extra_objs) $(sysobjs) $(libs)
 
 ./mkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
         $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@

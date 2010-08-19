@@ -121,11 +121,11 @@ cfcheck.exe : $(cfc_objs) $(__MAKEFILES__)
 cfparse.exe : $(cfp_objs) $(__MAKEFILES__)
     $(linker) name $^@ $(lflags) op map file { $(cfp_objs) }
  
-copparse.exe : $(copp_objs) $(__MAKEFILES__)
+copparse.exe : $(copp_objs) $(wgml_libs) $(__MAKEFILES__)
     $(linker) name $^@ $(lflags) op map lib { $(wgml_libs) } file { $(copp_objs) }
     wstrip -q -a -r $@ . wgml.res
  
-devldchk.exe : $(devld_objs) $(__MAKEFILES__)
+devldchk.exe : $(devld_objs) $(wgml_libs) $(__MAKEFILES__)
     $(linker) name $^@ $(lflags) op map lib { $(wgml_libs) } file { $(devld_objs) }
     wstrip -q -a -r $@ . wgml.res
  

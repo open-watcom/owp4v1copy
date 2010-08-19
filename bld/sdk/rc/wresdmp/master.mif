@@ -29,5 +29,4 @@ objs += trmemcvr.obj trmem.obj
 
 libs = $(wres_lib)
 
-$(proj_name).exe : $(objs)
-        $(linker) option quiet, map $(lflags) name $^. file { $< } library { $(libs) }
+!include exetarg.mif

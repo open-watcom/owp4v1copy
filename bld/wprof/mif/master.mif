@@ -77,7 +77,7 @@ version_res_nt_386 = version.res
 $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(cl_objs) $(wprof_libs) $(sys_libs) $(resfile)
     @rm -f finger.obj
     @%make finger.obj
-    $(cl) $(clflags) $(objs) $(sys_objs) $(dip_objs) $(mad_objs) finger.obj $(cl_objs) $(wprof_libs) $(sys_libs) $(cl_libs) $(wres_lib) -ldl
+    $(cl) $(clflags) $(objs) $(sys_objs) $(dip_objs) $(mad_objs) finger.obj $(cl_objs) $(wprof_libs) $(sys_libs) $(cl_libs) -ldl
     wstrip -q -a -r  $^@ . $(resfile)
 !else
 $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile) $(version_res_$(host_os)_$(host_cpu))

@@ -1,5 +1,7 @@
 proj_name = restest
 
+restest_autodepends = .AUTODEPEND
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -32,6 +34,8 @@ libs = version.lib
 !else
 libs = ver.lib
 !endif
+
+extra_l_flags = opt map
 
 $(proj_name).exe : $(objs) $(proj_name).res
         $(linker) $(lflags) name $^. file { $(objs) } lib { $(libs) }
