@@ -18,6 +18,7 @@ msgfiles = $(commonui_dir)/h/about.msg $(commonui_dir)/h/alias.msg &
            $(commonui_dir)/h/memwnd.msg $(commonui_dir)/h/savelbox.msg
 
 objs =  ctl3d32.obj  &
+        loadcc.obj   &
         mem.obj      &
         statwnd.obj  &
         toolbr.obj   &
@@ -37,7 +38,6 @@ objs += about.obj    &
         inipath.obj  &
         jdlg.obj     &
         ldstr.obj    &
-        loadcc.obj   &
         log.obj      &
         mark.obj     &
         memwnd.obj   &

@@ -422,7 +422,9 @@ toolbar *ToolBarInit( HWND parent )
         bar->owner = parent;
     }
 
+#ifdef __NT__
     if( !IsCommCtrlLoaded() ) {
+#endif
         if( !gdiObjectsCreated ) {
             blackPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_black );
             btnShadowPen = _wpi_createpen( PS_SOLID, BORDER_WIDTH( bar ), clr_btnshadow );
@@ -432,7 +434,9 @@ toolbar *ToolBarInit( HWND parent )
             btnFaceBrush = _wpi_createsolidbrush( clr_btnface );
             gdiObjectsCreated = TRUE;
         }
+#ifdef __NT__
     }
+#endif
 
     return( bar );
 
@@ -445,7 +449,9 @@ toolbar *ToolBarInit( HWND parent )
  */
 void ToolBarChangeSysColors( COLORREF tbFace, COLORREF tbHighlight, COLORREF tbShadow )
 {
+#ifdef __NT__
     if( !IsCommCtrlLoaded() ) {
+#endif
         if( gdiObjectsCreated ) {
             DeleteObject( blackPen );
             DeleteObject( btnShadowPen );
@@ -465,7 +471,9 @@ void ToolBarChangeSysColors( COLORREF tbFace, COLORREF tbHighlight, COLORREF tbS
         btnColor = GetSysColor( COLOR_BTNFACE );
         btnFaceBrush = CreateSolidBrush( btnColor );
         gdiObjectsCreated = TRUE;
+#ifdef __NT__
     }
+#endif
 
 } /* ToolBarChangeSysColors */
 
@@ -761,7 +769,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     height = _wpi_getheightrect( disp->area );
 
 #ifndef __OS2_PM__
-#if defined( __NT__ )
+#ifdef __NT__
     if( IsCommCtrlLoaded() ) {
         if( !bar->is_fixed ) {
             bar->container = CreateWindowEx( WS_EX_TOOLWINDOW, containerClassName, NULL,
@@ -842,9 +850,13 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
      * Windows ignores the GETMINMAXINFO before the WM_CREATE or
      * something so we kluge it.
      */
+#ifdef __NT__
     if( !IsCommCtrlLoaded() ) {
+#endif
         MoveWindow( bar->hwnd, disp->area.left, disp->area.top, width, height, TRUE );
+#ifdef __NT__
     }
+#endif
 #else
     if( disp->is_fixed ) {
         parent = bar->owner;
@@ -1353,7 +1365,7 @@ BOOL HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
 #ifdef __NT__
     POINT   pt;
-    
+
     if( !IsCommCtrlLoaded() ) {
 #endif
         return( findToolAtPoint( bar, wparam, lparam ) != NULL );
@@ -1378,7 +1390,7 @@ BOOL FindToolIDAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lpara
 #ifdef __NT__
     POINT   pt;
     int     ret;
-    
+
     if( !IsCommCtrlLoaded() ) {
 #endif
         ctool = findToolAtPoint( bar, wparam, lparam );
@@ -1592,7 +1604,7 @@ LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     DWORD           pos;
     POINT           pt;
     RECT            rc;
-    
+
     bar = (struct toolbar *)GetProp( hwnd, "bar" );
     switch( msg ) {
     case WM_MOUSEMOVE:
@@ -1689,7 +1701,7 @@ void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
     int         n;
     TBBUTTON    tbb;
     TBADDBITMAP tbab;
-    
+
     if( !IsCommCtrlLoaded() ) {
 #endif
         t = findTool( bar->tool_list, id );
@@ -1827,7 +1839,7 @@ HBITMAP TB_CreateTransparentBitmap( HBITMAP hBitmap, int width, int height )
     HBITMAP hOldBitmap1;
     HBITMAP hOldBitmap2;
     HBITMAP hNewBitmap;
-    
+
     hDC1 = CreateCompatibleDC( NULL );
     hOldBitmap1 = SelectObject( hDC1, hBitmap );
     hDC2 = CreateCompatibleDC( hDC1 );

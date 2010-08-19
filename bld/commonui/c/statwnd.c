@@ -57,7 +57,7 @@ typedef struct statwnd {
 } statwnd;
 
 static char                     *className = "StatusWnd";
-#if defined( __NT__ )
+#ifdef __NT__
 static HFONT                    systemDataFont;
 #endif
 static HPEN                     penLight;
@@ -138,7 +138,7 @@ static char initPRES( statwnd *sw, WPI_PRES pres )
     if( sw->sectionDataFont == NULL ) {
         return( FALSE );
     }
-#if defined( __NT__ )
+#ifdef __NT__
     oldFont = _wpi_selectfont( pres, systemDataFont );
 #else
     oldFont = _wpi_selectfont( pres, sw->sectionDataFont );
@@ -300,7 +300,7 @@ CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
         }
         _wpi_endpaint( hwnd, pres, &ps );
         break;
-#if defined( __NT__ )
+#ifdef __NT__
     case WM_SYSCOLORCHANGE:
         if( hasGDIObjects ) {
             DeleteObject( penLight );
@@ -317,7 +317,7 @@ CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
         break;
 #endif
     case WM_ERASEBKGND:
-#if defined( __NT__ )
+#ifdef __NT__
         if( colorButtonFace != GetSysColor( COLOR_BTNFACE ) ) {
             /*
              * If WM_SYSCOLORCHANGE message is not received by this window, we
@@ -348,9 +348,11 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra,
     WNDCLASS    wc;
     int         rc;
 
+#ifdef __NT__
     if( LoadCommCtrl() ) {
         return( 1 );
     } else {
+#endif
         if( !hasGDIObjects ) {
             colorButtonFace = GetSysColor( COLOR_BTNFACE );
             colorTextFace = GetSysColor( COLOR_BTNTEXT );
@@ -383,7 +385,9 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra,
             classRegistered = TRUE;
         }
         return( rc );
+#ifdef __NT__
     }
+#endif
 #else
     /* OS/2 PM version of the initialization */
     int         rc;
@@ -435,7 +439,9 @@ statwnd *StatusWndStart( void )
 void StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText,
                                COLORREF btnHighlight, COLORREF btnShadow )
 {
+#ifdef __NT__
     if( !IsCommCtrlLoaded() ) {
+#endif
         if( hasGDIObjects ) {
             _wpi_deleteobject( penLight );
             _wpi_deleteobject( penShade );
@@ -448,7 +454,9 @@ void StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText,
         penLight = _wpi_createpen( PS_SOLID, 1, btnHighlight );
         penShade = _wpi_createpen( PS_SOLID, 1, btnShadow );
         hasGDIObjects = TRUE;
+#ifdef __NT__
     }
+#endif
 }
 
 #ifdef __NT__
@@ -497,7 +505,7 @@ HWND StatusWndCreate( statwnd *sw, HWND parent, WPI_RECT *size, WPI_INST hinstan
 #ifndef __OS2_PM__
     /* Win16 and Win32 version of creation */
     currentStatWnd = sw;
-#if defined( __NT__ )
+#ifdef __NT__
     if( IsCommCtrlLoaded() ) {
         sw->win = CreateWindow( STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE |
                                 WS_CLIPSIBLINGS | SBARS_SIZEGRIP,
@@ -523,7 +531,7 @@ HWND StatusWndCreate( statwnd *sw, HWND parent, WPI_RECT *size, WPI_INST hinstan
                             lpvParam );
 #endif
     if( sw->win != NULL ) {
-#if defined( __NT__ )
+#ifdef __NT__
        if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
            /* New shell active, Win95 or later */
            systemDataFont = (HFONT) GetStockObject( DEFAULT_GUI_FONT );
@@ -679,7 +687,7 @@ void StatusWndDrawLine( statwnd *sw, WPI_PRES pres, WPI_FONT hfont, const char *
     int         curr_block;
 
     curr_block = 0;
-#if defined( __NT__ )
+#ifdef __NT__
     sw->sectionDataFont = systemDataFont;
 #else
     sw->sectionDataFont = hfont;
@@ -792,9 +800,11 @@ void StatusWndSetSeparators( statwnd *sw, int num_items, status_block_desc *list
  */
 int StatusWndGetHeight( statwnd *sw )
 {
+#ifdef __NT__
     if( IsCommCtrlLoaded() ) {
         return( sw->wndHeight );
     }
+#endif
     return( 0 );
 }
 

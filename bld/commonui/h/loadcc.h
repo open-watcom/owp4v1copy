@@ -32,7 +32,7 @@
 #ifndef _LOADCC_H_INCLUDED
 #define _LOADCC_H_INCLUDED
 
-BOOL    LoadCommCtrl();
-BOOL    IsCommCtrlLoaded();
+extern int      LoadCommCtrl( void );
+extern int      IsCommCtrlLoaded( void );
 
 #endif /* _LOADCC_H_INCLUDED */

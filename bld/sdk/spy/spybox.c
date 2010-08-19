@@ -212,7 +212,9 @@ void CreateSpyBox( HWND parent )
     UpdateWindow( SpyListBox );
     SetMonoFont( SpyListBox );
 
+#ifdef __NT__
     if( !IsCommCtrlLoaded() ) {
+#endif
         SpyListBoxTitle = CreateWindow(
             "STATIC",                   /* Window class name */
             TitleBar,                   /* Window caption */
@@ -228,7 +230,9 @@ void CreateSpyBox( HWND parent )
         ShowWindow( SpyListBoxTitle, SW_NORMAL );
         UpdateWindow( SpyListBoxTitle );
         SetMonoFont( SpyListBoxTitle );
+#ifdef __NT__
     }
+#endif
 
 } /* CreateSpyBox */
 
@@ -280,9 +284,13 @@ void ResizeSpyBox( WORD width, WORD height )
     HWND        hinthwnd;
 
     ypos = LISTBOX_Y;
+#ifdef __NT__
     if( !IsCommCtrlLoaded() ) {
+#endif
         ypos += yChar + 3;
+#ifdef __NT__
     }
+#endif
     width -= 2 * LISTBOX_X;
     nheight = height - (ypos + LISTBOX_Y);
 
