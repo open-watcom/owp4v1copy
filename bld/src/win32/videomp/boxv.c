@@ -158,15 +158,15 @@ v_mode          mode_1024_768_16 = {
 };
 
 v_mode          mode_640_480_32 = {
-    0x124, 640, 480, 32, 1, &vga_regs_ext
+    0x129, 640, 480, 32, 1, &vga_regs_ext
 };
 
 v_mode          mode_800_600_32 = {
-    0x138, 800, 600, 32, 1, &vga_regs_ext
+    0x12E, 800, 600, 32, 1, &vga_regs_ext
 };
 
 v_mode          mode_1024_768_32 = {
-    0x117, 1024, 768, 32, 1, &vga_regs_ext
+    0x138, 1024, 768, 32, 1, &vga_regs_ext
 };
 
 v_mode          *mode_list[] = {
