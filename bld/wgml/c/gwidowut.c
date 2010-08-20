@@ -25,7 +25,9 @@
 *  ========================================================================
 *
 * Description:  WGML helper functions for widow processing
-*
+*                       add_line_to_buf_lines
+*                       out_buf_lines
+*                       widow_check
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -69,6 +71,7 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
     text_line   *   tline;
     text_line   *   wline;
     int32_t         delta;
+    uint32_t        last_y_address;
 
     if( *b_lines == NULL ) {
         return;
@@ -85,7 +88,7 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
         while( tline != NULL ) {        // set y_addr(s) on new page
             tline->y_address += delta;
             if( tline->next == NULL ) {
-                wline = tline;          // remember last line
+                last_y_address = tline->y_address;    // remember last y_addr
             }
             tline = tline->next;
         }
@@ -106,9 +109,9 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
     }
     if( newpage ) {                     // correction for vertical position
         if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start = wline->y_address;
+            g_cur_v_start = last_y_address;
         } else {
-            g_cur_v_start = wline->y_address;
+            g_cur_v_start = last_y_address;
         }
     }
     wline = *b_lines;
@@ -131,7 +134,7 @@ bool    widow_check( void )
     bool newpage = false;
 
     if( buf_lines != NULL ) {           // lines buffered
-        if( buf_lines_cnt <= g_cur_threshold ) {
+        if( buf_lines_cnt < g_cur_threshold ) {
             newpage = true;             // prevent widow, new page
         }
         out_buf_lines( &buf_lines, newpage );

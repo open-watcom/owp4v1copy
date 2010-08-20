@@ -33,8 +33,6 @@
 #include    "gvars.h"
 
 
-extern void    start_line_with_string( char * p, uint8_t font );
-
 
 /***************************************************************************/
 /*  end_lp  processing as if the non existant :eLP tag was seen            */

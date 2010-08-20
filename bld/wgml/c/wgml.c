@@ -605,7 +605,7 @@ static  void    init_pass( void )
 //      free_dict( &global_dict );      // free dictionaries
 //      free_macro_dict( &macro_dict );
         free_tag_dict( &tag_dict );
-
+        init_nest_cb();
     } else {
         GlobalFlags.firstpass = 1;
     }
@@ -724,7 +724,7 @@ int main( int argc, char * argv[] )
             g_info( INF_PASS_2, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 
-//          if( GlobalFlags.research ) {// TBD
+//          if( GlobalFlags.research && (pass < passes) ) { // TBD
 //              g_trmem_prt_list();     // show allocated memory at pass end
 //          }
 

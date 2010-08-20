@@ -341,6 +341,7 @@ extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
 extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
+extern  void        start_line_with_string( char * text, uint8_t font_num );
 
 
 /* gwidowut.c                         */

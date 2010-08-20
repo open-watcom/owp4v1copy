@@ -171,6 +171,7 @@ void    scr_in( void )
     g_indentr = newindentr;
 
     g_page_right = g_page_right_org + g_indentr;
+    ProcFlags.keep_left_margin = false;
     set_h_start();                      // apply new values
     ProcFlags.test_widow = true;        // activate widow test
     post_skip = &layout_work.p.pre_skip;// use :p pre_skip??? TBD

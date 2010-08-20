@@ -1,9 +1,8 @@
 .* test for a not quite simple GML document this is work in progress
 .* will be included from the tsimp00.gml - tsimp99.gml files
 .gt 123 add willi
-.dm willi /:p/
-.* the following .ty will crash because &sysresh has not yet a value assigned
-.*ty sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
+.dm willi /:p/&*/
+.ty start sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 :gdoc sec='top secret'
 :frontm
 :titlep
@@ -30,7 +29,8 @@
 .ty in body sysenv &$env
 .ty sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 .*im tgeov
-.*:123
+:cmt.:123. The &gml.123 tag is ignored as comment.
+.*:123. The line will be split and the &gml.123 usertag called?
 :p
 This :HP2.test:eHP2. fragment. :hp1.111.:hp1.xxx:ehp1.:ehp1.
 .br;This line contains a :HP1.highlighted phrase:eHP1. with external spaces.
@@ -51,10 +51,10 @@ and :HP3.hi3:EHP3. without colon
  A :HP1.p:EHP1.aragraph with text. And some more for line overflow.
 .br
 .co off
-test line one
-
-test line two
-
+test line one, followed by an empty line concat is off
+ 
+test line two, followed by an empty line concat is off 
+ 
 ============================ 11:43:59 H:\ow\bld =============================
 .br .co on
 Languages Build: rel2
@@ -86,7 +86,7 @@ WATCOM points to: H:\ow\rel2
 .in +1 0
 .ty 10 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 10** REL2 rule
-
+ 
 11======================= 11:43:59 H:\ow\bld\cc\wcl =========================
 .in * 15
 .ty 12 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm

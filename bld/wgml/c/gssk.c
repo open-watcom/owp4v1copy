@@ -239,6 +239,7 @@ void    scr_sk( void )
         }
         ProcFlags.test_widow = false;   // terminate widow test
     }
+    scr_process_break();
 
     /***********************************************************************/
     /*  hack to mimick wgml4: for .sk N with a positive value              */

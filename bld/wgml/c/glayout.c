@@ -74,7 +74,7 @@ void    gml_layout( const gmltag * entry )
 
         while( !ProcFlags.reprocess_line  ) {
             eat_lay_sub_tag();
-            if( strnicmp( ":elayout", buff2, sizeof( ":elayout" ) ) ) {
+            if( strnicmp( ":elayout", buff2, 8 ) ) {
                 ProcFlags.reprocess_line = false;   // not :elayout, go on
             }
         }

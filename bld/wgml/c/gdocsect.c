@@ -29,9 +29,9 @@
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /*  error routine for wrong sequence of doc section tags                   */
 /***************************************************************************/
@@ -54,26 +54,26 @@ static  void    g_err_doc_sect( doc_section  ds )
             "INDEX",
             "eGDOC"
         };
-
+ 
     err_count++;
     scan_err = true;
     g_err( err_doc_sect, sect[ds] );
     file_mac_info();
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  set banner pointers for specified doc section                          */
 /***************************************************************************/
 void set_section_banners( doc_section ds )
 {
     banner_lay_tag  * ban;
-
+ 
     /***********************************************************************/
     /*  transform doc_section enum into ban_doc_sect enum                  */
     /***********************************************************************/
     static const ban_docsect sect_2_bansect[doc_sect_egdoc + 1] = {
-
+ 
         no_ban,                         // doc_sect_none,
         no_ban,                         // doc_sect_gdoc,
         no_ban,                         // doc_sect_frontm,
@@ -89,7 +89,7 @@ void set_section_banners( doc_section ds )
         index_ban,                      // doc_sect_index,
         no_ban                          // doc_sect_egdoc
     };
-
+ 
 /* not yet coded banner place values               TBD
                not all are document section related
     head0_ban,
@@ -105,10 +105,10 @@ void set_section_banners( doc_section ds )
     max_ban
 } ban_docsect;
 ****************/
-
+ 
     sect_ban_top[0] = sect_ban_top[1] = NULL;
     sect_ban_bot[0] = sect_ban_bot[1] = NULL;
-
+ 
     ban = layout_work.banner;
     while( ban != NULL ) {              // for all banners
         if( ban->docsect == sect_2_bansect[ds] ) {  // if our doc section
@@ -119,14 +119,14 @@ void set_section_banners( doc_section ds )
             case   topodd_place :
                 sect_ban_top[1] = ban;
                 break;
-
+ 
             case   bottom_place :
                 sect_ban_bot[0] = ban;
                 /* fallthru*/
             case   botodd_place :
                 sect_ban_bot[1] = ban;
                 break;
-
+ 
             case   topeven_place :
                 sect_ban_top[0] = ban;
                 break;
@@ -140,12 +140,12 @@ void set_section_banners( doc_section ds )
         ban = ban->next;
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*    finish page processing                                               */
 /***************************************************************************/
-
+ 
 void    finish_page( void )
 {
     if( ProcFlags.page_started ) {      // any output for page?
@@ -158,31 +158,31 @@ void    finish_page( void )
     ProcFlags.top_ban_proc = false;
     ProcFlags.test_widow = false;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*    prepare_doc_sect true section start                             TBD  */
 /***************************************************************************/
-
+ 
 void    prepare_doc_sect( doc_section ds )
 {
     int         ind;
     uint32_t    v_start;
     uint32_t    h_start;
-
+ 
     if( ProcFlags.prep_section ) {
         return;                         // once is enough
     }
     ProcFlags.prep_section = true;
     ProcFlags.keep_left_margin = false;
-
+ 
     if( ds != doc_sect_body ) {
         out_msg( "prepare_doc_sect possibly incomplete\n" );
     }
     if( ds == doc_sect_none ) {
         ds = doc_sect_body;      // if text without section start assume body
     }
-
+ 
     switch( ds ) {
     case   doc_sect_body:
         if( layout_work.body.page_reset  ) {
@@ -217,16 +217,16 @@ void    prepare_doc_sect( doc_section ds )
     default:
         break;
     }
-
+ 
     ind = page & 1;
     h_start = g_page_left_org;
     if( sect_ban_top[ind] != NULL ) {
         v_start = ban_top_pos( sect_ban_top[ind] );
-
+ 
     } else {
         v_start = g_page_top;
     }
-
+ 
     if( GlobalFlags.lastpass ) {
         if( ProcFlags.fb_position_done ) {
             fb_new_section( v_start );
@@ -238,7 +238,7 @@ void    prepare_doc_sect( doc_section ds )
     g_cur_v_start = v_start;
     g_cur_h_start = h_start;
     out_ban_top( sect_ban_top[ind] );
-
+ 
     if( sect_ban_bot[ind] != NULL ) {
         if( bin_driver->y_positive == 0 ) {
             g_page_bottom = g_page_bottom_org
@@ -250,19 +250,19 @@ void    prepare_doc_sect( doc_section ds )
     } else {
         g_page_bottom = g_page_bottom_org;
     }
-
+    g_cur_left = g_page_left_org;
     g_cur_h_start = g_page_left_org +
                     conv_hor_unit( &layout_work.p.line_indent );// TBD
 }
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /*          routine to process document section change                     */
 /***************************************************************************/
 static  void    gml_doc_xxx( doc_section ds, bool eject )
 {
-
+ 
     if( ProcFlags.doc_sect >= ds ) {    // wrong sequence of sections
         g_err_doc_sect( ds );
     } else {
@@ -271,18 +271,18 @@ static  void    gml_doc_xxx( doc_section ds, bool eject )
         }
         ProcFlags.doc_sect = ds;
     }
-
+ 
     set_section_banners( ds );
-
+ 
     ProcFlags.prep_section = false;     // do real section start later
-
+ 
     spacing = layout_work.defaults.spacing;
     g_curr_font_num = layout_work.defaults.font;
     scan_start = scan_stop + 1;
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  Document section tags                                                  */
 /*                                                                         */
@@ -300,74 +300,75 @@ static  void    gml_doc_xxx( doc_section ds, bool eject )
 /*  :INDEX     optional                                                    */
 /*  :EGDOC     optional                                                    */
 /***************************************************************************/
-
+ 
 extern  void    gml_abstract( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_abstract, layout_work.abstract.page_eject );
     spacing = layout_work.abstract.spacing;
 }
-
+ 
 extern  void    gml_appendix( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_appendix, layout_work.appendix.page_eject );
     spacing = layout_work.appendix.spacing;
 }
-
+ 
 extern  void    gml_backm( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_backm, layout_work.backm.page_eject );
 }
-
+ 
 extern  void    gml_body( const gmltag * entry )
 {
 //  static su skip_TBD = { "1", 1, 0, 0, 0, false, SU_chars_lines };
-
+ 
     gml_doc_xxx( doc_sect_body, layout_work.body.page_eject );
-
+ 
     ProcFlags.just_override = true;     // justify for first line ?? TBD
+    g_cur_left = g_page_left;
     g_cur_h_start = g_page_left
                     + conv_hor_unit( &layout_work.p.line_indent );
     spacing = layout_work.defaults.spacing;
-
+ 
     pre_top_skip = 0;
     post_top_skip = 0;
     post_skip = NULL;
-
+ 
     /***********************************************************************/
     /*  for 1. body page try H0   skip or others                           */
     /***********************************************************************/
-
+ 
 //  post_skip = &layout_work.hx[0].pre_top_skip;// TBD
 //  post_skip = &layout_work.p.pre_skip;// TBD
 //  post_skip = &skip_TBD;              // TBD
-
+ 
 //  ProcFlags.para_line1 = true;        // simulate :P start  ?? TBD
 }
-
+ 
 extern  void    gml_figlist( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_figlist, false );
     spacing = layout_work.figlist.spacing;
 }
-
+ 
 extern  void    gml_frontm( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_frontm, true );
     spacing = layout_work.defaults.spacing;
 }
-
+ 
 extern  void    gml_index( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_index, layout_work.index.page_eject );
     spacing = layout_work.index.spacing;
 }
-
+ 
 extern  void    gml_preface( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_preface, layout_work.preface.page_eject );
     spacing = layout_work.preface.spacing;
 }
-
+ 
 extern  void    gml_titlep( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_titlep, true );
@@ -376,36 +377,36 @@ extern  void    gml_titlep( const gmltag * entry )
     post_skip = NULL;
     spacing = layout_work.titlep.spacing;
 }
-
+ 
 extern  void    gml_etitlep( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_etitlep, false );
 }
-
+ 
 extern  void    gml_toc( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_toc, true );
     spacing = layout_work.toc.spacing;
 }
-
+ 
 extern  void    gml_egdoc( const gmltag * entry )
 {
     ProcFlags.test_widow = false;
     gml_doc_xxx( doc_sect_egdoc, true );
 }
-
+ 
 /***************************************************************************/
 /*  :gdoc sec='TOP secret, destroy before reading'                         */
 /***************************************************************************/
-
+ 
 extern  void    gml_gdoc( const gmltag * entry )
 {
     char        *   p;
-
+ 
     scan_err = false;
     p = scan_start;
     if( *p ) p++;
-
+ 
     while( *p == ' ' ) {                // over WS to attribute
         p++;
     }
@@ -414,7 +415,7 @@ extern  void    gml_gdoc( const gmltag * entry )
            strnicmp( "sec=", p, 4 )) ) {
         char        quote;
         char    *   valstart;
-
+ 
         p += 3;
         while( *p == ' ' ) {
             p++;
@@ -436,13 +437,13 @@ extern  void    gml_gdoc( const gmltag * entry )
             ++p;
         }
         *p = '\0';
-
+ 
         add_symvar( &global_dict, "$sec", valstart, no_subscript, 0 );
     } else {
         add_symvar( &global_dict, "$sec", "", no_subscript, 0 );// set nullstring
     }
-
+ 
     gml_doc_xxx( doc_sect_gdoc, true );
     return;
 }
-
+ 

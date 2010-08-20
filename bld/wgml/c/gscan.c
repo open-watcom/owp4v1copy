@@ -478,6 +478,11 @@ static void     scan_script( void )
                     } else {
                         scan_start = p; // script controlword found, process
                         if( scr_tags[k].cwflags & cw_break ) {
+                            if( buf_lines_cnt > 0 ) {   // widow lines
+                                out_buf_lines( &buf_lines, false );
+                                buf_lines_cnt = 0;
+                            }
+                            ProcFlags.test_widow = false;
                             scr_process_break();// output incomplete line, if any
                         }
                         scr_tags[k].tagproc();

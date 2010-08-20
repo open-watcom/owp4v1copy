@@ -96,7 +96,7 @@
   picks( if, scr_if,    0                  )// if
   picks( il, scr_dummy, cw_break+cw_o_t    )// indent line
   picks( im, scr_im,    0                  )// imbed
-  picks( in, scr_in,    cw_break           )// indent
+  picks( in, scr_in,    cw_break+cw_o_t    )// indent
   picks( ir, scr_dummy, cw_break+cw_o_t    )// indent right
   picks( ix, scr_ix,    0                  )// index
   picks( ju, scr_ju,    cw_break+cw_o_t    )// justify

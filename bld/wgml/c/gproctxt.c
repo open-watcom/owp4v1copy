@@ -738,7 +738,7 @@ void    process_line_full( text_line * a_line, bool justify )
                     ProcFlags.test_widow = false;
                 }
             } else {
-                if( g_cur_v_start < g_page_bottom + widow ) {
+                if( g_cur_v_start < g_page_bottom - widow ) {
                     ProcFlags.test_widow = false;
                 }
             }
@@ -756,6 +756,9 @@ void    process_line_full( text_line * a_line, bool justify )
         }
     }
     if( !ProcFlags.test_widow ) {
+
+        out_buf_lines( &buf_lines, false );
+
         if( GlobalFlags.lastpass ) {
             if( input_cbs->fmflags & II_research ) {
                 test_out_t_line( a_line );
@@ -826,6 +829,16 @@ void    process_text( char * text, uint8_t font_num )
     static      text_type   typ = norm;
     static      text_type   typn = norm;
 
+            /***************************************************************/
+            /*  we need a started section for text output                  */
+            /*                                                             */
+            /***************************************************************/
+    if( !ProcFlags.prep_section ) {
+        if( ProcFlags.doc_sect == doc_sect_none ) {
+            ProcFlags.doc_sect = doc_sect_body; // our default section
+        }
+        prepare_doc_sect( ProcFlags.doc_sect );
+    }
     p = text;
     if( t_line.first == NULL ) {    // first phrase in paragraph
         post_space = 0;
@@ -845,7 +858,8 @@ void    process_text( char * text, uint8_t font_num )
             if( post_space == 0 ) {
                 // compute initial spacing if needed; .ct may affect this
                 if( (*p == ' ') || ((input_cbs->fmflags & II_sol) && \
-                                    (ju_x_start < t_line.last->x_address)) ) {
+//                                  (ju_x_start < t_line.last->x_address)) ) {
+                                    (ju_x_start <= t_line.last->x_address)) ) {
                     post_space = wgml_fonts[font_num].spc_width;
                     if( is_stop_char( t_line.last->text[t_line.last->count - 1] ) ) {
                          post_space += wgml_fonts[font_num].spc_width;
@@ -1154,20 +1168,25 @@ void    process_text( char * text, uint8_t font_num )
         pword = p + 1;               // new word start or end of input record
         n_char = NULL;
     }
+
+    /***********************************************************************/
+    /*  for .co off and if the input line contains only spaces,            */
+    /*  ensure an empty output line as wgml 4.0 does                       */
+    /***********************************************************************/
+    if( !ProcFlags.concat && (post_space > 0) && (t_line.first == NULL) ) {
+        if( bin_driver->y_positive == 0x00 ) {
+            g_cur_v_start -= wgml_fonts[font_num].line_height;
+        } else {
+            g_cur_v_start += wgml_fonts[font_num].line_height ;
+        }
+    }
+
     if( t_line.first != NULL ) {        // something in the line
         ProcFlags.page_started = true;
 
         if( !ProcFlags.concat ) {
             if( input_cbs->fmflags & II_eol ) {
-                scr_process_break();    // TBD
-#if 0
-                process_line_full( &t_line, (ProcFlags.justify > ju_off) );
-                if( !ProcFlags.page_started ) {
-                    document_new_page();
-                    document_top_banner();
-                }
-                set_h_start();
-#endif
+                scr_process_break();
             }
         }
     }

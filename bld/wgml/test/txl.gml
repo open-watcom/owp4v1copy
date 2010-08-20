@@ -99,12 +99,13 @@
 :eLAYOUT.
 :GDOC.
 :BODY.
-SL follows.
+:p.
+&gml.SL follows.
 :sl compact.
     :li.simple 1 compact
     :li.simple 2 compact
 :lp.
-OL follows.
+&gml.OL follows.
     :ol.
 .*      This is text before first &gml.li which extends over more 
 .*         than one line to see how it looks.
@@ -121,14 +122,14 @@ still list part still list part still list part still list part still list part
 .im txl2.gml
     :eol.
 :LP.
-OL end.
+&gml.OL end.
 :LP.
-UL follows.
+&gml.UL follows.
     :ul.
         :li.unordered 1 no compact
         :li.unordered 2 no compact
     :eul.
-:LP.UL end.
+:LP.&gml.UL end.
     :li.simple 3 compact
 :ul   compact.
 :lp. ul compact started with &gml.LP as first item.
@@ -136,5 +137,5 @@ UL follows.
 :li. ul item 2
 :eul.
 :esl.
-SL end.
+&gml.SL end.
 :EGDOC.
