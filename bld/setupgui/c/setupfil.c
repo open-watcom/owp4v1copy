@@ -33,18 +33,16 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#if defined( __DOS__ ) || defined( __WINDOWS__ )
-    #include <dos.h>
-#endif
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
-#if defined( __WINDOWS__ ) || defined( __NT__ )
+#if defined( __DOS__ )
+    #include <dos.h>
+#elif defined( __WINDOWS__ ) || defined( __NT__ )
     #include <windows.h>
-#endif
-#if defined( __OS2__ )
+#elif defined( __OS2__ )
     #define INCL_DOSMISC
     #include <os2.h>
 #endif
@@ -89,8 +87,6 @@
 extern int              GetOptionVarValue( vhandle var_handle, bool is_minimal );
 extern bool             CheckForceDLLInstall( char *name );
 
-extern vhandle          UnInstall;
-
 static char             new_val[MAXENVVAR + 1];
 
 #if defined( __NT__ )
@@ -112,12 +108,35 @@ static char     OrigAutoExec[] = "?:\\AUTOEXEC.BAT";
 static char     OrigConfig[] = "?:\\CONFIG.SYS";
 #endif
 
-static bool GetOldConfigFileDir( char *newauto, const char *drive_path )
-/**********************************************************************/
+static short GetBootDrive( void )
+/*******************************/
+{
+#ifdef __OS2__
+    UCHAR           DataBuf[10];
+    APIRET          rc;
+
+    rc = DosQuerySysInfo( QSV_BOOT_DRIVE, QSV_BOOT_DRIVE, DataBuf, sizeof( DataBuf ) );
+    if( rc != 0 ) {
+        printf("DosQuerySysInfo error: return code = %ld ",rc);
+    }
+    return( *(unsigned long *)DataBuf );
+#elif defined( __DOS__ )
+    union REGS  r;
+
+    r.w.ax = 0x3305;
+    intdos( &r, &r );
+    return( r.h.dl );
+#else
+    return( 0 );
+#endif
+}
+
+static bool GetOldConfigFileDir( char *newauto, const char *drive_path, bool uninstall )
+/**************************************************************************************/
 {
     char        drive[_MAX_DRIVE];
 
-    if( VarGetIntVal( UnInstall ) ) {
+    if( uninstall ) {
         _splitpath( drive_path, drive, NULL, NULL, NULL );
         if( drive[0] == '\0' ) {
             _fullpath( newauto, drive_path, _MAX_PATH );
@@ -129,6 +148,19 @@ static bool GetOldConfigFileDir( char *newauto, const char *drive_path )
     }
 
     return( TRUE );
+}
+
+static char *StrNDup( char *str, size_t len )
+/*******************************************/
+{
+    char                *new;
+
+    new = GUIMemAlloc( len + 1 );
+    if( new != NULL ) {
+        memcpy( new, str, len );
+        new[len] = '\0';
+    }
+    return( new );
 }
 
 static void NoDupPaths( char *new_value, char *old_value, char delim )
@@ -187,48 +219,13 @@ static void NoDupPaths( char *new_value, char *old_value, char delim )
 
 #if defined( _M_IX86 )
 
-static short GetBootDrive( void )
-{
-#ifdef __OS2__
-    UCHAR           DataBuf[10];
-    APIRET          rc;
-
-    rc = DosQuerySysInfo( QSV_BOOT_DRIVE, QSV_BOOT_DRIVE, DataBuf, sizeof( DataBuf ) );
-    if( rc != 0 ) {
-        printf("DosQuerySysInfo error: return code = %ld ",rc);
-    }
-    return( *(unsigned long *)DataBuf );
-#elif defined( __DOS__ )
-    union REGS  r;
-
-    r.w.ax = 0x3305;
-    intdos( &r, &r );
-    return( r.h.dl );
-#else
-    return( 0 );
-#endif
-}
-
-static char *StrNDup( char *str, size_t len )
-/*******************************************/
-{
-    char                *new;
-
-    new = GUIMemAlloc( len + 1 );
-    if( new != NULL ) {
-        memcpy( new, str, len );
-        new[len] = '\0';
-    }
-    return( new );
-}
-
-static void cmdline_modify_var( char *buf, const char *env_var, char *env_val, append_mode append )
-/*************************************************************************************************/
+static void cmdline_modify_var( char *buf, const char *env_var, char *env_val, append_mode append, bool uninstall )
+/*****************************************************************************************************************/
 {
 #if !( defined( __OS2__ ) || defined( __UNIX__ ) )
     if( GetVariableIntVal( "IsOS2DosBox" ) == 1 || stricmp( env_var, "PATH" ) != 0 ) {
 #endif
-        if( VarGetIntVal( UnInstall ) ) {
+        if( uninstall ) {
             sprintf( buf, SET_VAR_SET, env_var, env_val );
         } else if( append == AM_AFTER ) {
             sprintf( buf, SETENV "%s=%s" PATH_SEP "%s\n", env_var, env_val, new_val );
@@ -239,7 +236,7 @@ static void cmdline_modify_var( char *buf, const char *env_var, char *env_val, a
         }
 #if !( defined( __OS2__ ) || defined( __UNIX__ ) )
     } else {    // handle PATH specially
-        if( VarGetIntVal( UnInstall ) ) {
+        if( uninstall ) {
             sprintf( buf, "PATH %s" PATH_SEP "\n", env_val );
         } else if( append == AM_AFTER ) {
             sprintf( buf, "PATH %s" PATH_SEP "%s" PATH_SEP "\n", env_val, new_val );
@@ -272,8 +269,8 @@ static void cmdline_create_var( char *buf, const char *env_var, append_mode appe
 #endif
 }
 
-static void CheckEnvironmentLine( char *buf, int num, bool *Found )
-/*****************************************************************/
+static void CheckEnvironmentLine( char *buf, int num, bool *Found, bool uninstall )
+/*********************************************************************************/
 {
     int                 i;
     append_mode         append;
@@ -283,10 +280,7 @@ static void CheckEnvironmentLine( char *buf, int num, bool *Found )
     char                *env_var;
     const char          *new_var;
     char                env_val[MAXENVVAR];
-    bool                uninstall;
     bool                found;
-
-    uninstall = VarGetIntVal( UnInstall );
 
     do {
         found = FALSE;
@@ -320,7 +314,7 @@ static void CheckEnvironmentLine( char *buf, int num, bool *Found )
             if( stricmp( env_var, new_var ) == 0 ) {
                 // found an environment variable, replace its value
                 NoDupPaths( new_val, env_val, PATH_SEP_CHAR );
-                cmdline_modify_var( buf, env_var, env_val, append );
+                cmdline_modify_var( buf, env_var, env_val, append, uninstall );
                 Found[i] = TRUE;
                 found = TRUE;
                 break;
@@ -337,9 +331,6 @@ static void FinishEnvironmentLines( FILE *fp, char *buf, int num, bool *Found )
     append_mode         append;
     const char          *new_var;
 
-    if( VarGetIntVal( UnInstall ) )
-        return;
-
     for( i = 0; i < num; ++i ) {
         if( Found[i] || !SimCheckEnvironmentCondition( i ) )
             continue;
@@ -347,7 +338,7 @@ static void FinishEnvironmentLines( FILE *fp, char *buf, int num, bool *Found )
         append = SimGetEnvironmentStrings( i, &new_var, new_val );
         cmdline_create_var( buf, new_var, append );
         Found[i] = TRUE;
-        CheckEnvironmentLine( buf, num, Found );
+        CheckEnvironmentLine( buf, num, Found, FALSE );
         if( buf[0] != '\0' ) {
             fputs( buf, fp );
         }
@@ -356,9 +347,9 @@ static void FinishEnvironmentLines( FILE *fp, char *buf, int num, bool *Found )
 
 
 static bool ModFile( char *orig, char *new,
-                     void (*func)( char *, int, bool * ),
+                     void (*func)( char *, int, bool *, bool ),
                      void (*finish)( FILE *, char *, int, bool * ),
-                     size_t num, size_t num_env )
+                     size_t num, size_t num_env, bool uninstall )
 /*****************************************************************/
 {
     FILE                *fp1, *fp2;
@@ -401,9 +392,9 @@ static bool ModFile( char *orig, char *new,
         for( line = envbuf; isspace( *line ); ++line );
         // don't process empty lines but keep them in new file
         if( line[0] != '\0' ) {
-            func( line, num, Found );
+            func( line, num, Found, uninstall );
             if( num_env ) {
-                CheckEnvironmentLine( line, num_env, FoundEnv );
+                CheckEnvironmentLine( line, num_env, FoundEnv, uninstall );
             }
         }
         if( fputs( envbuf, fp2 ) < 0 ) {
@@ -411,16 +402,18 @@ static bool ModFile( char *orig, char *new,
             return( FALSE );
         }
     }
-    // handle any remaining variables
-    finish( fp2, envbuf, num, Found );
+    fclose( fp1 );
+    if( !uninstall ) {
+        // handle any remaining variables
+        finish( fp2, envbuf, num, Found );
+        FinishEnvironmentLines( fp2, envbuf, num_env, FoundEnv );
+    }
     if( num ) {
         GUIMemFree( Found );
     }
     if( num_env ) {
-        FinishEnvironmentLines( fp2, envbuf, num_env, FoundEnv );
         GUIMemFree( FoundEnv );
     }
-    fclose( fp1 );
     if( fclose( fp2 ) != 0 ) {
         MsgBox( NULL, "IDS_ERROR_CLOSING", GUI_OK, new );
         return( FALSE );
@@ -431,8 +424,8 @@ static bool ModFile( char *orig, char *new,
 
 #ifndef __OS2__
 
-static void CheckAutoLine( char *buf, int num, bool *Found )
-/**********************************************************/
+static void CheckAutoLine( char *buf, int num, bool *Found, bool uninstall )
+/**************************************************************************/
 {
     int                 i;
     append_mode         append;
@@ -441,13 +434,10 @@ static void CheckAutoLine( char *buf, int num, bool *Found )
     unsigned            len;
     char                *env_var;
     char                env_val[MAXENVVAR];
-    bool                uninstall;
     bool                found;
     char                fname[_MAX_FNAME];
     char                fext[_MAX_EXT];
     const char          *new_var;
-
-    uninstall = VarGetIntVal( UnInstall );
 
     do {
         found = FALSE;
@@ -499,7 +489,7 @@ static void CheckAutoLine( char *buf, int num, bool *Found )
             if( stricmp( env_var, new_var ) == 0 ) {
                 // found an environment variable, replace its value
                 NoDupPaths( new_val, env_val, PATH_SEP_CHAR );
-                cmdline_modify_var( buf, env_var, env_val, append );
+                cmdline_modify_var( buf, env_var, env_val, append, uninstall );
                 Found[i] = TRUE;
                 found = TRUE;
                 break;
@@ -516,9 +506,6 @@ static void FinishAutoLines( FILE *fp, char *buf, int num, bool *Found )
     append_mode         append;
     const char          *new_var;
 
-    if( VarGetIntVal( UnInstall ) )
-        return;
-
     for( i = 0; i < num; ++i ) {
         if( Found[i] || !SimCheckAutoExecCondition( i ) )
             continue;
@@ -526,7 +513,7 @@ static void FinishAutoLines( FILE *fp, char *buf, int num, bool *Found )
         append = SimGetAutoExecStrings( i, &new_var, new_val );
         cmdline_create_var( buf, new_var, append );
         Found[i] = TRUE;
-        CheckAutoLine( buf, num, Found );
+        CheckAutoLine( buf, num, Found, FALSE );
         if( buf[0] != '\0' ) {
             fputs( buf, fp );
         }
@@ -539,21 +526,21 @@ static void FinishAutoLines( FILE *fp, char *buf, int num, bool *Found )
 }
 
 
-static bool ModAuto( char *orig, char *new )
-/******************************************/
+static bool ModAuto( char *orig, char *new, bool uninstall )
+/**********************************************************/
 {
     int         num_auto;
     int         num_env;
 
     num_auto = SimNumAutoExec();
     num_env = SimNumEnvironment();
-    return( ModFile( orig, new, CheckAutoLine, FinishAutoLines, num_auto, num_env ) );
+    return( ModFile( orig, new, CheckAutoLine, FinishAutoLines, num_auto, num_env, uninstall ) );
 }
 
 #endif
 
-static void CheckConfigLine( char *buf, int num, bool *Found )
-/************************************************************/
+static void CheckConfigLine( char *buf, int num, bool *Found, bool uninstall )
+/****************************************************************************/
 {
     int                 i;
     append_mode         append;
@@ -561,12 +548,9 @@ static void CheckConfigLine( char *buf, int num, bool *Found )
     char                *cfg_var;
     char                cfg_val[MAXENVVAR];
     unsigned            len;
-    bool                uninstall;
     bool                found;
     bool                have_set;
     const char          *new_var;
-
-    uninstall = VarGetIntVal( UnInstall );
 
     do {
         found = FALSE;
@@ -647,9 +631,6 @@ static void FinishConfigLines( FILE *fp, char *buf, int num, bool *Found )
     append_mode         append;
     const char          *new_var;
 
-    if( VarGetIntVal( UnInstall ) )
-        return;
-
     for( i = 0; i < num; ++i ) {
         if( Found[i] || !SimCheckConfigCondition( i ) )
             continue;
@@ -670,15 +651,15 @@ static void FinishConfigLines( FILE *fp, char *buf, int num, bool *Found )
         }
 #endif
         Found[i] = TRUE;
-        CheckConfigLine( buf, num, Found );
+        CheckConfigLine( buf, num, Found, FALSE );
         if( buf[0] != '\0' ) {
             fputs( buf, fp );
         }
     }
 }
 
-static bool ModConfig( char *orig, char *new )
-/********************************************/
+static bool ModConfig( char *orig, char *new, bool uninstall )
+/************************************************************/
 {
     int         num_cfg;
     int         num_env;
@@ -692,7 +673,7 @@ static bool ModConfig( char *orig, char *new )
     if( num_cfg == 0 && num_env == 0 ) {
          return( TRUE );
     }
-    return( ModFile( orig, new, CheckConfigLine, FinishConfigLines, num_cfg, num_env ) );
+    return( ModFile( orig, new, CheckConfigLine, FinishConfigLines, num_cfg, num_env, uninstall ) );
 }
 
 static void ReplaceExt( char *filename, char *new_ext )
@@ -722,8 +703,8 @@ static void BackupName( char *filename )
     }
 }
 
-extern bool ModifyAutoExec( void )
-/********************************/
+extern bool ModifyAutoExec( bool uninstall )
+/******************************************/
 {
     int                 num_auto;
     int                 num_cfg;
@@ -840,14 +821,14 @@ extern bool ModifyAutoExec( void )
         if( DoCopyFile( OrigAutoExec, newauto, FALSE ) != CFE_NOERROR ) {
             MsgBox( NULL, "IDS_ERRORBACKAUTO", GUI_OK );
         } else {
-            if( !ModAuto( newauto, OrigAutoExec ) ) {
+            if( !ModAuto( newauto, OrigAutoExec, uninstall ) ) {
                 return( FALSE );
             }
         }
         if( DoCopyFile( OrigConfig, newcfg, FALSE ) != CFE_NOERROR ) {
             MsgBox( NULL, "IDS_ERRORBACKCONFIG", GUI_OK );
         } else {
-            if( !ModConfig( newcfg, OrigConfig ) ) {
+            if( !ModConfig( newcfg, OrigConfig, uninstall ) ) {
                 return( FALSE );
             }
         }
@@ -855,7 +836,7 @@ extern bool ModifyAutoExec( void )
         if( DoCopyFile( OrigConfig, newcfg, FALSE ) != CFE_NOERROR ) {
             MsgBox( NULL, "IDS_ERRORBACKCONFIG", GUI_OK );
         } else {
-            if( !ModConfig( newcfg, OrigConfig ) ) {
+            if( !ModConfig( newcfg, OrigConfig, uninstall ) ) {
                 return( FALSE );
             }
             MsgBox( NULL, "IDS_OS2CONFIGSYS", GUI_OK );
@@ -866,7 +847,7 @@ extern bool ModifyAutoExec( void )
     } else {
         // place modifications in AUTOEXEC.NEW and CONFIG.NEW
 #ifndef __OS2__
-        GetOldConfigFileDir( newauto, OrigAutoExec );
+        GetOldConfigFileDir( newauto, OrigAutoExec, uninstall );
         strcat( newauto, &OrigAutoExec[2] );
 #if defined(__NT__)
         ReplaceExt( newauto, "W95" );
@@ -874,7 +855,7 @@ extern bool ModifyAutoExec( void )
         ReplaceExt( newauto, "DOS" );
 #endif
 #endif
-        GetOldConfigFileDir( newcfg, OrigConfig );
+        GetOldConfigFileDir( newcfg, OrigConfig, uninstall );
         strcat( newcfg, &OrigConfig[2] );
 #if defined( __OS2__ )
         ReplaceExt( newcfg, "OS2" );
@@ -886,15 +867,15 @@ extern bool ModifyAutoExec( void )
 
 #ifdef __OS2__
         MsgBox( NULL, "IDS_NEWCONFIGSYS", GUI_OK, newcfg );
-        if( !ModConfig( OrigConfig, newcfg ) ) {
+        if( !ModConfig( OrigConfig, newcfg, uninstall ) ) {
             return( FALSE );
         }
 #else
         MsgBox( NULL, "IDS_NEWAUTOEXEC", GUI_OK, newauto, newcfg );
-        if( !ModAuto( OrigAutoExec, newauto ) ) {
+        if( !ModAuto( OrigAutoExec, newauto, uninstall ) ) {
             return( FALSE );
         }
-        if( !ModConfig( OrigConfig, newcfg ) ) {
+        if( !ModConfig( OrigConfig, newcfg, uninstall ) ) {
             return( FALSE );
         }
 #endif
@@ -1298,21 +1279,18 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
 
 #if defined( __NT__ )
 
-static bool ModEnv( int num_env )
-/*******************************/
+static bool ModEnv( int num_env, bool uninstall )
+/***********************************************/
 {
     BOOL                err = FALSE;
     int                 i, j, k, rc;
     append_mode         append;
     DWORD               oldvar_len, oldval_len;
     DWORD               type, old_type;
-    bool                uninstall;
     char                old_var[MAXBUF];
     char                old_val[MAXENVVAR];
     char                envbuf[MAXENVVAR + 1];
     const char          *new_var;
-
-    uninstall = VarGetIntVal( UnInstall );
 
     for( i = 0; i < num_env; i ++ ) {
         if( !uninstall && !SimCheckEnvironmentCondition( i ) )
@@ -1381,8 +1359,8 @@ static bool ModEnv( int num_env )
     return( !err );
 }
 
-extern bool ModifyConfiguration( void )
-/*************************************/
+extern bool ModifyConfiguration( bool uninstall )
+/***********************************************/
 {
     size_t              num_env;
     int                 mod_type;
@@ -1419,7 +1397,7 @@ extern bool ModifyConfiguration( void )
         RegLocation[LOCAL_MACHINE].key_is_open = FALSE;
     }
 
-    if( RegLocation[LOCAL_MACHINE].key_is_open && !VarGetIntVal( UnInstall ) ) {
+    if( RegLocation[LOCAL_MACHINE].key_is_open && !uninstall ) {
         if( DoDialog( "ModifyEnvironment" ) == DLG_CAN ) {
             return( FALSE );
         }
@@ -1435,7 +1413,7 @@ extern bool ModifyConfiguration( void )
         mod_type = MOD_LATER;
     } else {
         mod_type = MOD_IN_PLACE;
-        if( VarGetIntVal( UnInstall ) ) { //Clean up everywhere
+        if( uninstall ) { //Clean up everywhere
             RegLocation[LOCAL_MACHINE].modify = TRUE;
             RegLocation[CURRENT_USER].modify  = TRUE;
         } else if( GetVariableIntVal( "ModMachine" ) == 1 ) {
@@ -1448,13 +1426,13 @@ extern bool ModifyConfiguration( void )
     }
 
     if( mod_type == MOD_IN_PLACE ) {
-        bRet = ModEnv( num_env );
+        bRet = ModEnv( num_env, uninstall );
         // indicate config files were modified if and only if we got this far
         ConfigModified = TRUE;
     } else {  // handle MOD_LATER case
         found = GUIMemAlloc( num_env * sizeof( bool ) );
         memset( found, FALSE, num_env * sizeof( bool ) );
-        GetOldConfigFileDir( changes, GetVariableStrVal( "DstDir" ) );
+        GetOldConfigFileDir( changes, GetVariableStrVal( "DstDir" ), uninstall );
         strcat( changes, "\\CHANGES.ENV" );
         MsgBox( NULL, "IDS_CHANGES", GUI_OK, changes );
         fp = fopen( changes, "wt" );

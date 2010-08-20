@@ -156,18 +156,18 @@ extern bool ModifyStartup( bool uninstall )
 //    if( !uninstall ) {
 #if defined( __NT__ )
 #ifdef __AXP__
-    ret = ModifyConfiguration();
+    ret = ModifyConfiguration( uninstall );
 #else
     if( GetVariableIntVal( "IsWin95" ) != 0 ) {
-        ret = ModifyAutoExec();
+        ret = ModifyAutoExec( uninstall );
     } else {
-        ret = ModifyConfiguration();
+        ret = ModifyConfiguration( uninstall );
     }
 #endif
 #elif defined( __UNIX__ )
-//    ret = ModifyAutoExec();
+//    ret = ModifyAutoExec( uninstall );
 #else
-    ret = ModifyAutoExec();
+    ret = ModifyAutoExec( uninstall );
 #endif
 //    }
     return( ret );

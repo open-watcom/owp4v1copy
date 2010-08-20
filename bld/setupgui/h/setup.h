@@ -117,8 +117,8 @@ extern gui_message_return CheckInstallDLL( char*, vhandle );
 extern gui_message_return CheckInstallNLM( char*, vhandle );
 extern bool             IsNLMNewerThanExistingNLM(char *name);
 extern bool             CreatePMInfo( bool );
-extern bool             ModifyConfiguration( void );
-extern bool             ModifyAutoExec( void );
+extern bool             ModifyConfiguration( bool );
+extern bool             ModifyAutoExec( bool );
 extern bool             GenerateBatchFile( bool );
 #if defined( __NT__ )
 extern bool             GetRegString( HKEY, char *, char *, char *, DWORD );
