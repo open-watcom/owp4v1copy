@@ -1,15 +1,34 @@
 /*
- * Mode list for the video miniport.
+ * Video miniport static data.
  */
 
 #include <miniport.h>
 #include <ntddvdeo.h>
+#include <video.h>
 #include "videomp.h"
 
 #if defined(ALLOC_PRAGMA)
 #pragma data_seg("PAGE")
 #endif
 
+/*
+ * Legacy resources claimed by the device.
+ *
+ *               RangeStart        RangeLength
+ *               |                 |      RangeInIoSpace
+ *               |                 |      |  RangeVisible
+ *         +-----+-----+           |      |  |  RangeShareable
+ *        low         high         |      |  |  |  RangePassive
+ *         v           v           v      v  v  v  v
+ */
+VIDEO_ACCESS_RANGE  LegacyRanges[] = {
+    { 0x000001CC, 0x00000000, 0x00000002, 1, 1, 1, 0 }, /* 0x1CC-0x1CD */
+    { 0x000003B0, 0x00000000, 0x0000000C, 1, 1, 1, 0 }, /* 0x3B0-0x3BB */
+    { 0x000003C0, 0x00000000, 0x00000020, 1, 1, 1, 0 }, /* 0x3C0-0x3DF */
+    { 0x000A0000, 0x00000000, 0x00020000, 0, 0, 1, 0},  /* 0xA0000-0xBFFFF */
+};
+
+ULONG   ulNumLegacyRanges = sizeof( LegacyRanges ) / sizeof( VIDEO_ACCESS_RANGE );
 
 /* Mode table */
 VIDEOMP_MODE    VideoModes[] = {

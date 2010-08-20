@@ -22,7 +22,7 @@ vidmini.Display   = 11  ; system32
 %BOXV% = BOXV.Mfg
 
 [BOXV.Mfg]
-%BOXV% driver = vidmini, PCI\VEN_80EE&DEV_BEEF
+%BOXV% SVGA = vidmini, PCI\VEN_80EE&DEV_BEEF
 
 
 ;

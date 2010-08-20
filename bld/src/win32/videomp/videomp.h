@@ -22,6 +22,8 @@ typedef struct {
     PUCHAR              IOAddrVGA;              /* VGA I/O ports mapping */
 } HW_DEV_EXT, *PHW_DEV_EXT;
 
-/* Variables defined in modedata.c */
-extern VIDEOMP_MODE     VideoModes[];
-extern ULONG            ulAllModes;
+/* Variables defined in vidmpdat.c */
+extern VIDEOMP_MODE         VideoModes[];
+extern ULONG                ulAllModes;
+extern VIDEO_ACCESS_RANGE   LegacyRanges[];
+extern ULONG                ulNumLegacyRanges;

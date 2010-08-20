@@ -48,7 +48,7 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
 #define NUM_ACCESS_RANGES   2
     VIDEO_ACCESS_RANGE accessRange[NUM_ACCESS_RANGES] = {
         /* StartLo     StartHi     Len      IO Vis Shr */
-        {0X000001CC, 0x00000000, 0x00000002, 1, 1, 0},   // I/O
+        {0x000001CC, 0x00000000, 0x00000002, 1, 1, 0},   // I/O
         {0xE0000000, 0x00000000, 0x00400000, 0, 1, 0}    // Framebuffer
     };
 
@@ -505,6 +505,10 @@ ULONG DriverEntry( PVOID Context1, PVOID Context2 )
     hwInitData.HwGetPowerState           = HwGetPowerState;
     hwInitData.HwSetPowerState           = HwSetPowerState;
     hwInitData.HwGetVideoChildDescriptor = HwGetChildDesc;
+
+    /* Report legacy resources. */
+    hwInitData.HwLegacyResourceList  = LegacyRanges;
+    hwInitData.HwLegacyResourceCount = ulNumLegacyRanges;
 
     /* Report the device extension size. */
     hwInitData.HwDeviceExtensionSize = sizeof( HW_DEV_EXT );
