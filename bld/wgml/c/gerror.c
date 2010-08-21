@@ -122,7 +122,7 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         break;
     }
 
-    if( msg_indent == 0 ) {    // save points to the ":" or is NULL
+    if( !supp_line ) {    // save points to the ":" or is NULL
         save = strchr( err_buf, ':' );
     }
 
@@ -182,7 +182,7 @@ void g_warn( const msg_ids num, ... )
 }
 
 /***************************************************************************/
-/*  informational msg                                                      */
+/*  informational msg (general)                                            */
 /***************************************************************************/
 
 void g_info( const msg_ids num, ... )
@@ -190,6 +190,20 @@ void g_info( const msg_ids num, ... )
     va_list args;
 
     va_start( args, num );
+    g_msg_var( num, SEV_INFO, args );
+    va_end( args );
+}
+
+/***************************************************************************/
+/*  informational msg forced to left margin                                */
+/***************************************************************************/
+
+void g_info_lm( const msg_ids num, ... )
+{
+    va_list args;
+
+    va_start( args, num );
+    msg_indent = 0;
     g_msg_var( num, SEV_INFO, args );
     va_end( args );
 }

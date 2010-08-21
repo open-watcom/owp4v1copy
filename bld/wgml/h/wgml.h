@@ -114,6 +114,7 @@ extern  void    out_msg( const char * fmt, ... );
 extern  void    g_err( const msg_ids err, ... );
 extern  void    g_warn( const msg_ids err, ... );
 extern  void    g_info( const msg_ids err, ... );
+extern  void    g_info_lm( const msg_ids err, ... );
 extern  void    g_suicide( void );
 
 
