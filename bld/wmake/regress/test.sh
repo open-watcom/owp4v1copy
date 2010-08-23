@@ -9,6 +9,8 @@ if [ "$1" == "" ]; then
     usage
 fi
 
+export LC_MESSAGES=en_US
+
 rm -f error.out
 
 # Make sure the utilities exist
