@@ -803,7 +803,7 @@ static int tool_exec( tool_type utl, char *p1, char *p2 )
 /*******************************************************/
 {
     int     rc;
-    
+
     FindToolPath( utl );
     if( !Flags.be_quiet ) {
         if( p2 == NULL ) {
@@ -813,11 +813,7 @@ static int tool_exec( tool_type utl, char *p1, char *p2 )
         }
     }
     fflush( NULL );
-    if( p2 == NULL ) {
-        rc = spawnlp( P_WAIT, tools[utl].path, tools[utl].name, p1, NULL );
-    } else {
-        rc = spawnlp( P_WAIT, tools[utl].path, tools[utl].name, p1, p2, NULL );
-    }
+    rc = spawnlp( P_WAIT, tools[utl].path, tools[utl].name, p1, p2, NULL );
     if( rc != 0 ) {
         if( (rc == -1) || (rc == 255) ) {
             PrintMsg( WclMsgs[UNABLE_TO_INVOKE_EXE], tools[utl].path );
