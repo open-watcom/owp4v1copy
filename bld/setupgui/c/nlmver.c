@@ -187,13 +187,13 @@ gui_message_return CheckInstallNLM( char *name, vhandle var_handle )
         if( CheckNewer( unpacked_as, temp ) ) {
             chmod( name, S_IRWXU | S_IRWXG | S_IRWXO );
             DoCopyFile( unpacked_as, name, FALSE );
-            remove( unpacked_as );
             strcpy( temp, fname );
             strcat( temp, "_NLM_installed" );
             SetVariableByName( temp, "1" );
             SetVariableByHandle( var_handle, temp );
         }
     }
+    remove( unpacked_as );
     return( GUI_RET_OK );
 }
 
