@@ -38,7 +38,11 @@ bld_sys         = linuxmips
 !else
 bld_sys         = linux
 !endif
+!ifdef bootstrap
 bld_incs        = $(bld_extra_incs) -I$(hdr_dir)/linux -I$(watcom_dir)/h
+!else
+bld_incs        = $(bld_extra_incs) -I$(lang_root)/lh -I$(watcom_dir)/h
+!endif
 lang_bin        = $(lang_root)/binl
 nlang_bin       = $(nlang_root)/binl
 lang_dll        = $(lang_root)/binl
