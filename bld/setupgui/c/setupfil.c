@@ -154,6 +154,7 @@ static bool GetOldConfigFileDir( char *newauto, const char *drive_path, bool uni
     return( TRUE );
 }
 
+#if defined( _M_IX86 )
 static char *StrNDup( char *str, size_t len )
 /*******************************************/
 {
@@ -166,6 +167,7 @@ static char *StrNDup( char *str, size_t len )
     }
     return( new );
 }
+#endif
 
 #endif  // !__UNIX__
 
@@ -282,7 +284,7 @@ static void modify_value_libpath( char *val_before, char *val_after, char *new_v
     }
 }
 
-#if !defined( __UNIX__ )
+#if !defined( __UNIX__ ) && defined( _M_IX86 )
 static var_type parse_line( char *line, char *name, char **value, var_type vt_setenv )
 /************************************************************************************/
 {
