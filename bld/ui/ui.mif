@@ -113,10 +113,3 @@ sample.exe : sample.obj sampdial.obj $(name).lib
         $(linker) $(lflags) op q,m,st=32k library $(name).lib n sample f sample, sampdial
 !endif
 
-make: .SYMBOLIC
-    %create mkmk.cmd
-    @%append mkmk.cmd  -c & -m objfiles.mif -q 50
-    @%append mkmk.cmd  nopath ../c/*.c c/*.c h/*.h ../h/*.h  path
-    @%append mkmk.cmd  -i.h -isample.c -isampdial.c -isamplew.c
-    mkmk @mkmk.cmd
-    erase mkmk.cmd

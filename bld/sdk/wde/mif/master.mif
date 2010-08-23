@@ -5,8 +5,7 @@ name = wde
 wde_autodepends = .AUTODEPEND
 !endif 
 
-.EXTENSIONS: .res
-.EXTENSIONS: .rc
+.EXTENSIONS: .res .rc
 
 wde_winver =
 
@@ -21,7 +20,7 @@ memory_model_i86 = l
 WINDOWS=1
 !include wres.mif
 
-extra_c_flags     = -DWIN_GUI -s
+extra_c_flags     = -DWIN_GUI -s -fh
 
 extra_c_flags_win = -zu-zw-zc
 
@@ -63,99 +62,7 @@ OBJS =  wde_wres.obj wdealign.obj wdecsize.obj wdecust.obj  wdedebug.obj &
 
 extra_c_flags_nt    = -DNOUSE3D
 
-extra_c_flags_wde_wres= -fh
-extra_c_flags_wdealign= -fh
-extra_c_flags_wdecsize= -fh
-extra_c_flags_wdecust= -fh
-extra_c_flags_wdedebug= -fh
-extra_c_flags_wdedefin= -fh
-extra_c_flags_wdeedit= -fh
-extra_c_flags_wdefbase= -fh
-extra_c_flags_wdefbutt= -fh
-extra_c_flags_wdefcbox= -fh
-extra_c_flags_wdefcntl= -fh
-extra_c_flags_wdefcust= -fh
-extra_c_flags_wdefdiag= -fh
-extra_c_flags_wdefdlg= -fh
-extra_c_flags_wdefedit= -fh
-extra_c_flags_wdefinit= -fh
-extra_c_flags_wdeflbox= -fh
-extra_c_flags_wdefmenu= -fh
-extra_c_flags_wdefont= -fh
-extra_c_flags_wdefordr= -fh
-extra_c_flags_wdefscrl= -fh
-extra_c_flags_wdefstat= -fh
-extra_c_flags_wdefutil= -fh
-extra_c_flags_wdegeted= -fh
-extra_c_flags_wdegetfn= -fh
-extra_c_flags_wdehash= -fh
-
-extra_c_flags_wdehints= -fh
-extra_c_flags_wdeinfo= -fh
-extra_c_flags_wdelist= -fh
-extra_c_flags_wdemain= -fh
-extra_c_flags_wdemsgbx= -fh
-extra_c_flags_wdeopts= -fh
-extra_c_flags_wderes= -fh
-
-extra_c_flags_wderesin= -fh
-extra_c_flags_wdesdlg= -fh
-
-extra_c_flags_wdesdup= -fh
-extra_c_flags_wdestat= -fh
-
-extra_c_flags_wdestyle= -fh
-extra_c_flags_wdesym=
-
-extra_c_flags_wdetest= -fh
-extra_c_flags_wdetfile= -fh
-extra_c_flags_wdetoolb= -fh
-extra_c_flags_wdeppmem= -fh
-extra_c_flags_wdemem= -fh
-extra_c_flags_wdewait= -fh
-extra_c_flags_wdedefsz= -fh
-extra_c_flags_wdetxtsz= -fh
-extra_c_flags_wdetmenu= -fh
-extra_c_flags_wdectool= -fh
-extra_c_flags_wdezordr= -fh
-extra_c_flags_wderibbn= -fh
-extra_c_flags_wdeselft= -fh
-extra_c_flags_wdei2mem= -fh
-extra_c_flags_wdeldres= -fh
-extra_c_flags_wdesvres= -fh
-extra_c_flags_wdesvobj= -fh
-extra_c_flags_wdestken= -fh
-extra_c_flags_wdectl3d= -fh
-extra_c_flags_wdesvdlg= -fh
-extra_c_flags_wdedde= -fh
-extra_c_flags_wdeclear= -fh
-extra_c_flags_wdecurr= -fh
-extra_c_flags_wdegoto= -fh
-extra_c_flags_wdecctl= -fh
-extra_c_flags_wdefsbar= -fh
-extra_c_flags_wdeflvw= -fh
-extra_c_flags_wdeftvw= -fh
-extra_c_flags_wdefhdr= -fh
-extra_c_flags_wdeftabc= -fh
-extra_c_flags_wdefani= -fh
-extra_c_flags_wdefupdn= -fh
-extra_c_flags_wdeftrak= -fh
-extra_c_flags_wdefprog= -fh
-extra_c_flags_wdefhtky= -fh
-extra_c_flags_windlg= -fh
-extra_c_flags_windlg32= -fh
-
-extra_c_flags_toolbr= -fh
-extra_c_flags_statwnd= -fh
-extra_c_flags_ldstr= -fh
-extra_c_flags_wwinhelp= -fh
-extra_c_flags_jdlg= -fh
-extra_c_flags_about= -DWRCTL3D -fh
-
-commonui_lib = $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib
-fmedit_lib = $(fmedit_dir)/$(host_os)$(host_cpu)/fmedit.lib
-wr_lib = $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
-wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+extra_c_flags_about= -DWRCTL3D
 
 # where to look for various files
 .c : c;../c;$(cpp_dir)
@@ -164,19 +71,16 @@ inc_dirs  = -Ih -I"../h" -I"$(fmedit_dir)/dev" -I"$(wres_dir)/h"
 inc_dirs += -I"$(wr_dir)/h" -I"$(cpp_dir)" -I"$(wpi_dir)/h" -I"$(misc_dir)"
 inc_dirs += -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
 
-all : $(name).exe .SYMBOLIC
-        @%null
-
-deps: .SYMBOLIC
-        @echo making dependencies...
-        @errout ..\bin\mkwdedep > $(nulldevice)
-
-extra_l_flags = op map, symfile
+extra_l_flags = op map,symfile
 extra_l_flags_nt = op stack=100k, heap=16k commit heap=8k
 extra_l_flags_win  = op stack=32k, rwr
 extra_l_flags_win += library commdlg, ddeml
 
-xlibs = $(wres_lib) $(fmedit_lib) $(wr_lib) $(wpi_lib) $(commonui_lib)
+xlibs = $(fmedit_dir)/$(host_os)$(host_cpu)/fmedit.lib &
+        $(wr_dir)/$(host_os)$(host_cpu)/wr.lib &
+        $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib &
+        $(commonui_dir)/$(host_os)$(host_cpu)/commonui.lib &
+        $(wres_lib)
 
 # systems where version resource must be added to .EXE
 version_res_nt_386 = version.res
