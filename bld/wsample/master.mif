@@ -120,8 +120,6 @@ nlm_imports = &
     ImportSymbol &
     Free
 
-description = 'Open Watcom Sampler V2.2'
-
 extra_l_flags = op symfile,map
 extra_l_flags_os2_i86 = lib os2.lib op stack=4k, newfiles
 extra_l_flags_os2 = $(extra_l_flags_os2_$(host_cpu))
@@ -201,15 +199,16 @@ $(xname).exp : $(objects) $(libs) $(__MAKEFILES__)
 libs = ../../clib/library/nw_clib.386/ms_s/clib3s.lib &
     $(wres_lib)
 
-$(xname).nlm : $(xname).res $(objects) $(libs) $(__MAKEFILES__)
+$(xname).nlm : $(xname).res $(objects) $(libs) nversion.tmp $(__MAKEFILES__)
     @%write $(%debug) tmp.lnk name $^@
     @%append tmp.lnk option osname='Novell NLM'
-    @%append tmp.lnk format novell nlm $(description)
+    @%append tmp.lnk format novell nlm 'Open Watcom Sampler'
     @%append tmp.lnk debug novell
     @%append tmp.lnk debug all
     @%append tmp.lnk option map
     @%append tmp.lnk option stack=10k
     @%append tmp.lnk option nodefault
+    @%append tmp.lnk @nversion.tmp
     @for %i in ($objects) do @%append tmp.lnk file %i
     @for %i in ($(nlm_imports)) do @%append tmp.lnk import %i
     @%append tmp.lnk import @$(ow_nwoss_root)/common/imp/owclib.imp
@@ -262,6 +261,12 @@ $(xname).exe : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
 !endif
 
 !endif
+
+./mknver.exe: $(watcom_dir)/c/mknver.c $(watcom_dir)/h/banner.h
+        $(bld_cl) $(wcl_util_opts) -I"$(watcom_dir)/h" $[@
+
+nversion.tmp: ./mknver.exe
+    	$[@ $^@
 
 !ifeq host_os win
 $(xname).res : ../h/wsamplew.rc ../h/wsampres.rc ../h/wsamplew.ico ../h/wsample.rc ../h/wmsg.h ../h/wsample.msg

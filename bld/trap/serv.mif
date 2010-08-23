@@ -49,13 +49,13 @@ sys_x86_nlm     = form novell nlm $(description) &
                         op start = _PreludeHook &
                         op exit = _LibCPostlude &
                         op screenname 'none' &
-                        @./nversion.tmp &
+                        @nversion.tmp &
                         file $(%NOVELLNDK)/../libc/imports/libcpre.obj
 !else
 sys_x86_nlm     = form novell nlm $(description) &
                         libpath $(lang_root)/lib386 &
                         op st=8k &
-                        @./nversion.tmp &
+                        @nversion.tmp &
                         import @$(trap_dir)/common/nlm/trap.imp &
                         op nodef
 !endif

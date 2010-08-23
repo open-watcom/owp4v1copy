@@ -156,10 +156,6 @@ extra_a_flags_misc7386 = -fpi87
 extra_libs += dbgstr.lib
 !endif
 
-!ifeq host_os nov
-mknver_c = $(trap_dir)/c/mknver.c
-!endif
-
 !ifeq release 0
 default_targ    = d
 !else
@@ -175,10 +171,9 @@ trperr_h = _err.gh
 jtrperr_h = _jerr.gh
 mkstr_c = $(trap_dir)/c/mkstr.c
 trap_msg = $(trap_dir)/h/trap.msg
+
 !ifeq host_os nov
-nversion_tmp = ./nversion.tmp
-!else
-nversion_tmp =
+extra_deps = nversion.tmp
 !endif
 
 w : .SYMBOLIC $(trperr_h) #$(jtrperr_h)
@@ -190,15 +185,6 @@ d : .SYMBOLIC $(trperr_h) $(jtrperr_h)
 ./mkstr.exe: $(mkstr_c) $(trap_msg)
         $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" $[@
 
-!ifeq host_os nov
-
-$(nversion_tmp): ./mknver.exe
-    $[@ $^@
-
-./mknver.exe: $(mknver_c) .AUTODEPEND
-        $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" -I"$(watcom_dir)/h" $[@
-!endif
-
 $(trperr_h) : ./mkstr.exe
         $[@ $^@
 
@@ -207,6 +193,12 @@ $(trperr_h) : ./mkstr.exe
 
 $(jtrperr_h) : ./jmkstr.exe
         $[@ $^@
+
+./mknver.exe: $(watcom_dir)/c/mknver.c $(watcom_dir)/h/banner.h
+        $(bld_cl) $(wcl_util_opts) -I"$(watcom_dir)/h" $[@
+
+nversion.tmp: ./mknver.exe
+    	$[@ $^@
 
 !ifndef extra_dobjs
 extra_dobjs = $(extra_objs)
@@ -220,7 +212,7 @@ objs = $($(which)_common_objs) mxutil.obj $(remote_objs) $(extra_dobjs)
 
 !ifndef substitute_linker
 
-$(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__) $(nversion_tmp)
+$(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
         %create $^&.lnk
         @%append $^&.lnk $(mode_lflags)
         @%append $^&.lnk op map name $^@
