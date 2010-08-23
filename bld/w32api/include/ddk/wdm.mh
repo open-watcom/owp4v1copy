@@ -4489,6 +4489,8 @@ typedef struct _XSTATE_SAVE {
         };
         XSTATE_CONTEXT  XStateContext;
     };
+#else
+    ULONG   dummy;
 #endif
 } XSTATE_SAVE;
 typedef XSTATE_SAVE *PXSTATE_SAVE;

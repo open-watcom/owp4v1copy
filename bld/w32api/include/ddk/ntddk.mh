@@ -4852,11 +4852,11 @@ BOOLEAN NTAPI   PshedIsSystemWheaEnabled( VOID );
 NTSTATUS NTAPI  PshedRegisterPlugin( PWHEA_PSHED_PLUGIN_REGISTRATION_PACKET );
 BOOLEAN NTAPI   PshedSynchronizeExecution( PWHEA_ERROR_SOURCE_DESCRIPTOR, PKSYNCHRONIZE_ROUTINE, PVOID );
 
+#ifdef _X86_
 /* Functions implemented with inline assembly code */
 PKPCR   KeGetCurrentKPCR( void );
 
 /* Inline assembly implementation of functions defined above */
-#ifdef _X86_
     #pragma aux KeGetCurrentKPCR = \
         "mov eax, fs:[0x18]" \
         value [eax];
