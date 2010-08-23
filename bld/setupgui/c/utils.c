@@ -128,7 +128,7 @@ extern bool ModifyEnvironment( bool uninstall )
     if( !ret ) {                   // create folder and icons
         gui_message_return  gui_ret;
 
-        if( VarGetIntVal( UnInstall ) != 0 ) {
+        if( uninstall != 0 ) {
             gui_ret = MsgBox( NULL, "IDS_PMREMNOGOOD", GUI_YES_NO );
         } else {
             gui_ret = MsgBox( NULL, "IDS_PMADDNOGOOD", GUI_YES_NO );
@@ -1638,32 +1638,6 @@ int UnPackHook( int filenum, int subfilenum, char *name )
     if( SimSubFileIsNLM( filenum, subfilenum ) ) {
         NewFileToCheck( name, FALSE );
        _splitpath( name, drive, dir, fname, ext );
-        _makepath( name, drive, dir, fname, "._N_" );
-        return( 1 );
-    } else if( SimSubFileIsDLL( filenum, subfilenum ) ) {
-        NewFileToCheck( name, TRUE );
-#ifdef EXTRA_CAUTIOUS_FOR_DLLS
-        if( !IsPatch ) {
-            _splitpath( name, drive, dir, fname, ext );
-            _makepath( name, drive, dir, fname, "._D_" );
-        }
-#endif
-        return( 1 );
-    }
-    return( 0 );
-}
-
-int DeleteHook( int filenum, int subfilenum, char *name )
-/*******************************************************/
-{
-    char        drive[_MAX_DRIVE];
-    char        dir[_MAX_DIR];
-    char        fname[_MAX_FNAME];
-    char        ext[_MAX_EXT];
-
-    if( SimSubFileIsNLM( filenum, subfilenum ) ) {
-        NewFileToCheck( name, FALSE );
-        _splitpath( name, drive, dir, fname, ext );
         _makepath( name, drive, dir, fname, "._N_" );
         return( 1 );
     } else if( SimSubFileIsDLL( filenum, subfilenum ) ) {

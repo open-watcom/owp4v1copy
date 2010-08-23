@@ -57,32 +57,32 @@
 #if defined( __UNIX__ )
     #define SETENV          "export "
     #define SETENV_LEN      7
-    #define BATCHEXT        ".sh"
     #define PATH_SEP        ":"
     #define PATH_SEP_CHAR   ':'
-    #define PATH_VAR_AFTER  "export PATH=$PATH:%s\n"
-    #define PATH_VAR_BEFORE "export PATH=%s:$PATH\n"
-    #define PATH_VAR_SET    "export PATH=%s\n"
-    #define SET_VAR_AFTER   SETENV "%s=$%s:%s\n"
-    #define SET_VAR_BEFORE  SETENV "%s=%s:$%s\n"
-    #define SET_VAR_SET     SETENV "%s=%s\n"
+    #define ENV_NAME        "$%s"
 #else
     #define SETENV          "SET "
     #define SETENV_LEN      4
     #define PATH_SEP        ";"
     #define PATH_SEP_CHAR   ';'
-    #define PATH_VAR_AFTER  "PATH %%PATH%%;%s\n"
-    #define PATH_VAR_BEFORE "PATH %s;%%PATH%%\n"
-    #define PATH_VAR_SET    "PATH %s\n"
-    #define SET_VAR_AFTER   SETENV "%s=%%%s%%;%s\n"
-    #define SET_VAR_BEFORE  SETENV "%s=%s;%%%s%%\n"
-    #define SET_VAR_SET     SETENV "%s=%s\n"
-    #if defined( __OS2__ )
-        #define BATCHEXT    ".cmd"
-    #else
-        #define BATCHEXT    ".bat"
-    #endif
+    #define ENV_NAME        "%%%s%%"
 #endif
+
+#if defined( __UNIX__ )
+    #define BATCHEXT        ".sh"
+#elif defined( __OS2__ )
+    #define BATCHEXT        ".cmd"
+#else
+    #define BATCHEXT        ".bat"
+#endif
+
+typedef enum {
+    VAR_SETENV_ASSIGN,  // format is 'SETENV NAME = VALUE' and inf var name is "NAME"
+    VAR_ASSIGN_SETENV,  // format is 'SETENV NAME = VALUE' and inf var name is "SETENV NAME"
+    VAR_ASSIGN,         // format is 'NAME = VALUE"
+    VAR_CMD,            // format is 'NAME VALUE"
+    VAR_ERROR,
+} var_type;
 
 extern int              GetOptionVarValue( vhandle var_handle, bool is_minimal );
 extern bool             CheckForceDLLInstall( char *name );
@@ -104,9 +104,10 @@ static struct reg_location {
 #if !defined( __OS2__ )
 static char     *WinDotCom = NULL;
 #endif
+
 static char     OrigAutoExec[] = "?:\\AUTOEXEC.BAT";
 static char     OrigConfig[] = "?:\\CONFIG.SYS";
-#endif
+
 
 static short GetBootDrive( void )
 /*******************************/
@@ -130,6 +131,9 @@ static short GetBootDrive( void )
     return( 0 );
 #endif
 }
+
+#endif  // _M_IX86
+
 
 static bool GetOldConfigFileDir( char *newauto, const char *drive_path, bool uninstall )
 /**************************************************************************************/
@@ -163,12 +167,13 @@ static char *StrNDup( char *str, size_t len )
     return( new );
 }
 
-static void NoDupPaths( char *new_value, char *old_value, char delim )
+#endif  // !__UNIX__
+
+static void NoDupPaths( char *old_value, char *new_value, char delim )
 /********************************************************************/
 {
     char        *semi;
     char        *dup;
-    char        *p;
     char        *look;
     int         len;
     char        *new_curr;
@@ -188,10 +193,9 @@ static void NoDupPaths( char *new_value, char *old_value, char delim )
                 } else {
                     look = dup + len;
                 }
-            } else if( dup[len] == '\0' || dup[len] == '\n' ) {
+            } else if( dup[len] == '\0' ) {
                 if( dup == old_value ) {
-                    dup[0] = dup[len];
-                    dup[1] = '\0';
+                    dup[0] = '\0';
                 } else if( dup[-1] == delim ) {
                     memmove( dup - 1, dup + len, strlen( dup + len ) + 1 );
                 } else {
@@ -206,10 +210,7 @@ static void NoDupPaths( char *new_value, char *old_value, char delim )
         *semi = delim;
         new_curr = semi + 1;
     }
-    p = strchr( old_value, '\n' );
-    if( p != NULL && p[1] == '\0' )
-        *p = '\0';
-    if( *old_value != '\0' ) {
+    if( old_value[0] != '\0' ) {
         len = strlen( old_value );
         if( old_value[len - 1] == delim ) {
             old_value[len - 1] = '\0';
@@ -217,138 +218,274 @@ static void NoDupPaths( char *new_value, char *old_value, char delim )
     }
 }
 
-#if defined( _M_IX86 )
-
-static void cmdline_modify_var( char *buf, const char *env_var, char *env_val, append_mode append, bool uninstall )
-/*****************************************************************************************************************/
+static void modify_value( char *value, char *new_value, append_mode append, bool uninstall )
+/******************************************************************************************/
 {
-#if !( defined( __OS2__ ) || defined( __UNIX__ ) )
-    if( GetVariableIntVal( "IsOS2DosBox" ) == 1 || stricmp( env_var, "PATH" ) != 0 ) {
-#endif
-        if( uninstall ) {
-            sprintf( buf, SET_VAR_SET, env_var, env_val );
-        } else if( append == AM_AFTER ) {
-            sprintf( buf, SETENV "%s=%s" PATH_SEP "%s\n", env_var, env_val, new_val );
-        } else if( append == AM_BEFORE ) {
-            sprintf( buf, SETENV "%s=%s" PATH_SEP "%s\n", env_var, new_val, env_val );
-        } else {
-            sprintf( buf, SET_VAR_SET, env_var, new_val );
-        }
-#if !( defined( __OS2__ ) || defined( __UNIX__ ) )
-    } else {    // handle PATH specially
-        if( uninstall ) {
-            sprintf( buf, "PATH %s" PATH_SEP "\n", env_val );
-        } else if( append == AM_AFTER ) {
-            sprintf( buf, "PATH %s" PATH_SEP "%s" PATH_SEP "\n", env_val, new_val );
-        } else if( append == AM_BEFORE ) {
-            sprintf( buf, "PATH %s" PATH_SEP "%s" PATH_SEP "\n", new_val, env_val );
-        } else {
-            sprintf( buf, "PATH %s" PATH_SEP "\n", new_val );
-        }
-    }
-#endif
-}
+    char    buf[MAXENVVAR + 1];
 
-static void cmdline_create_var( char *buf, const char *env_var, append_mode append )
-/**********************************************************************************/
-{
-#if !( defined( __OS2__ ) || defined( __UNIX__ ) )
-    if( GetVariableIntVal( "IsOS2DosBox" ) == 1 || stricmp( env_var, "PATH" ) != 0 ) {
-#endif
-        sprintf( buf, SET_VAR_SET, env_var, new_val );
-#if !( defined( __OS2__ ) || defined( __UNIX__ ) )
-    } else {    // handle PATH specially
+    NoDupPaths( value, new_value, PATH_SEP_CHAR );
+    if( !uninstall ) {
         if( append == AM_AFTER ) {
-            sprintf( buf, PATH_VAR_AFTER, new_val );
+            sprintf( buf, "%s" PATH_SEP "%s", value, new_value );
+            strcpy( value, buf );
         } else if( append == AM_BEFORE ) {
-            sprintf( buf, PATH_VAR_BEFORE, new_val );
+            sprintf( buf, "%s" PATH_SEP "%s", new_value, value );
+            strcpy( value, buf );
         } else {
-            sprintf( buf, PATH_VAR_SET, new_val );
+            strcpy( value, new_value );
+        }
+    }
+}
+
+static void output_line( char *buf, var_type vt, const char *name, char *value )
+/******************************************************************************/
+{
+    if( value[0] == '\0' )
+        vt = VAR_ERROR;
+    switch( vt ) {
+    case VAR_SETENV_ASSIGN:
+        sprintf( buf, SETENV "%s=%s", name, value );
+        break;
+    case VAR_ASSIGN:
+    case VAR_ASSIGN_SETENV:
+        sprintf( buf, "%s=%s", name, value );
+        break;
+    case VAR_CMD:
+        sprintf( buf, "%s %s", name, value );
+        break;
+    case VAR_ERROR:
+        buf[0] = '\0';
+        break;
+    default:
+        break;
+    }
+}
+
+static void modify_value_libpath( char *val_before, char *val_after, char *new_value, append_mode append )
+/********************************************************************************************************/
+{
+    char    buf[MAXENVVAR + 1];
+
+    if( append == AM_AFTER ) {
+        NoDupPaths( val_before, new_value, PATH_SEP_CHAR );
+        NoDupPaths( val_after, new_value, PATH_SEP_CHAR );
+        sprintf( buf, "%s" PATH_SEP "%s", val_after, new_value );
+        strcpy( val_after, buf );
+    } else if( append == AM_BEFORE ) {
+        NoDupPaths( val_before, new_value, PATH_SEP_CHAR );
+        NoDupPaths( val_after, new_value, PATH_SEP_CHAR );
+        sprintf( buf, "%s" PATH_SEP "%s", new_value, val_before );
+        strcpy( val_before, buf );
+    } else {
+        strcpy( val_before, new_value );
+        val_after[0] = '\0';
+    }
+}
+
+#if !defined( __UNIX__ )
+static var_type parse_line( char *line, char *name, char **value, var_type vt_setenv )
+/************************************************************************************/
+{
+    char        c;
+    var_type    vt;
+
+    // parsed line formats
+    // SETENV NAME = VALUE
+    // NAME = VALUE
+    // NAME VALUE
+    *name = '\0';
+    while( isspace( *line ) )
+        ++line;
+    if( memicmp( line, SETENV, SETENV_LEN ) == 0 ) {
+        line += SETENV_LEN;
+        while( isspace( *line ) )
+            ++line;
+        if( vt_setenv == VAR_ASSIGN_SETENV ) {
+            strcpy( name, SETENV );
+            name += SETENV_LEN;
+        }
+        vt = vt_setenv;
+    } else {
+        vt = VAR_ASSIGN;
+    }
+    for( c = *line; c != '\0' && !isspace( c ) && c != '='; c = *(++line) ) {
+        *(name++) = c;
+    }
+    *name = '\0';
+    while( isspace( *line ) )
+        ++line;
+    if( *line == '=' ) {
+        ++line;
+        while( isspace( *line ) )
+            ++line;
+        *value = line;
+    } else if( vt == vt_setenv ) {
+        *value = NULL;
+        vt = VAR_ERROR;
+    } else {
+        *value = line;
+        vt = VAR_CMD;
+    }
+    return( vt );
+}
+#endif
+
+static var_type getEnvironVarType( const char *new_var )
+/******************************************************/
+{
+    var_type        vt;
+
+    vt = VAR_SETENV_ASSIGN;
+#ifndef __UNIX__
+#ifndef __OS2__
+    if( GetVariableIntVal( "IsOS2DosBox" ) == 1 ) {
+#endif
+        // OS/2
+        if( stricmp( new_var, "LIBPATH" ) == 0 ) {
+            vt = VAR_ASSIGN;
+        }
+#ifndef __OS2__
+    } else {
+        // DOS, WINDOWS, NT
+        if( stricmp( new_var, "PATH" ) == 0 ) {
+            vt = VAR_CMD;
         }
     }
 #endif
+#endif
+    return( vt );
 }
 
-static void CheckEnvironmentLine( char *buf, int num, bool *Found, bool uninstall )
-/*********************************************************************************/
+#if !defined( __UNIX__ ) && defined( _M_IX86 )
+static void CheckEnvironmentLine( char *line, int num, bool *Found, bool uninstall )
+/**********************************************************************************/
 {
     int                 i;
     append_mode         append;
     char                *p;
-    char                *q;
-    unsigned            len;
     char                *env_var;
     const char          *new_var;
     char                env_val[MAXENVVAR];
-    bool                found;
+    var_type            vt;
+    bool                modified;
 
-    do {
-        found = FALSE;
-        if( memicmp( buf, SETENV, SETENV_LEN ) == 0 ) {
-            p = strchr( buf, '=' );
-            if( p == NULL )
-                return;
-            q = buf + SETENV_LEN;
-            while( isspace( *q ) )
-                ++q;
-            len = p - q;
-            while( len > 0 && isspace( q[len - 1] ) )
-                --len;
-            env_var = StrNDup( q, len );
-            ++p;
-            while( isspace( *p ) )
-                ++p;
-            strcpy( env_val, p );
-        } else if( memicmp( buf, "PATH ", 5 ) == 0 || memicmp( buf, "PATH=", 5 ) == 0 ) {
-            env_var = StrNDup( "PATH", 4 );
-            strcpy( env_val, buf + 5 );
-        } else {
-            return;     // not an environment variable setting
+    vt = parse_line( line, env_val, &p, VAR_SETENV_ASSIGN );
+    switch( vt ) {
+    case VAR_SETENV_ASSIGN:
+        break;
+    case VAR_ASSIGN:
+        if( memicmp( env_val, "LIBPATH", 7 ) == 0 )
+            break;
+        // fall down
+    case VAR_CMD:
+        if( memicmp( env_val, "PATH", 4 ) == 0 )
+            break;
+        return;
+    default:
+        return;
+    }
+    env_var = StrNDup( env_val, strlen( env_val ) );
+    strcpy( env_val, p );
+
+    modified = FALSE;
+    for( i = 0; i < num; ++i ) {
+        if( Found[i] || !uninstall && !SimCheckEnvironmentCondition( i ) )
+            continue;
+        append = SimGetEnvironmentStrings( i, &new_var, new_val );
+        if( stricmp( env_var, new_var ) == 0 ) {
+            // found an environment variable, replace its value
+            Found[i] = TRUE;
+            modify_value( env_val, new_val, append, uninstall );
+            modified = TRUE;
         }
-
-        for( i = 0; i < num; ++i ) {
-            if( Found[i] || !uninstall && !SimCheckEnvironmentCondition( i ) )
-                continue;
-
-            append = SimGetEnvironmentStrings( i, &new_var, new_val );
-            if( stricmp( env_var, new_var ) == 0 ) {
-                // found an environment variable, replace its value
-                NoDupPaths( new_val, env_val, PATH_SEP_CHAR );
-                cmdline_modify_var( buf, env_var, env_val, append, uninstall );
-                Found[i] = TRUE;
-                found = TRUE;
-                break;
-            }
-        }
-        GUIMemFree( env_var );
-    } while( found );
+    }
+    if( modified ) {
+        output_line( line, vt, env_var, env_val );
+    }
+    GUIMemFree( env_var );
 }
+#endif
 
-static void FinishEnvironmentLines( FILE *fp, char *buf, int num, bool *Found )
-/*****************************************************************************/
+static void FinishEnvironmentLines( FILE *fp, char *line, int num, bool *Found, bool batch )
+/******************************************************************************************/
 {
     int                 i;
+    int                 j;
     append_mode         append;
     const char          *new_var;
+    const char          *cur_var;
+    char                env_val[MAXENVVAR];
+    bool                libpath_batch;
+    char                *val_before;
+    char                *val_after;
 
     for( i = 0; i < num; ++i ) {
         if( Found[i] || !SimCheckEnvironmentCondition( i ) )
             continue;
-
         append = SimGetEnvironmentStrings( i, &new_var, new_val );
-        cmdline_create_var( buf, new_var, append );
-        Found[i] = TRUE;
-        CheckEnvironmentLine( buf, num, Found, FALSE );
-        if( buf[0] != '\0' ) {
-            fputs( buf, fp );
+        libpath_batch = FALSE;
+        if( batch ) {
+            if( stricmp( new_var, "LIBPATH" ) == 0 ) {
+                libpath_batch = TRUE;
+                strcpy( line, "SET BEGINLIBPATH=" );
+                val_before = line + 17;
+                strcpy( env_val, "SET ENDLIBPATH=" );
+                val_after = env_val + 15;
+                if( append == AM_AFTER ) {
+                    strcpy( val_after, new_val );
+                } else {
+                    strcpy( val_before, new_val );
+                }
+            } else if( append == AM_AFTER ) {
+                sprintf( env_val, ENV_NAME PATH_SEP "%s", new_var, new_val );
+            } else if( append == AM_BEFORE ) {
+                sprintf( env_val, "%s" PATH_SEP ENV_NAME, new_val, new_var );
+            } else {
+                strcpy( env_val, new_val );
+            }
+        } else {
+            strcpy( env_val, new_val );
+        }
+        for( j = i + 1; j < num; ++j ) {
+            if( Found[j] || !SimCheckEnvironmentCondition( j ) )
+                continue;
+            append = SimGetEnvironmentStrings( j, &cur_var, new_val );
+            if( stricmp( cur_var, new_var ) == 0 ) {
+                Found[j] = TRUE;
+                if( libpath_batch ) {
+                    modify_value_libpath( val_before, val_after, new_val, append );
+                } else {
+                    modify_value( env_val, new_val, append, FALSE );
+                }
+            }
+        }
+        if( libpath_batch ) {
+            if( val_before[0] != '\0' ) {
+                fputs( line, fp );
+                fputc( '\n', fp );
+            }
+            if( val_after[0] != '\0' ) {
+                fputs( env_val, fp );
+                fputc( '\n', fp );
+            }
+        } else {
+            output_line( line, getEnvironVarType( new_var ), new_var, env_val );
+            if( line[0] != '\0' ) {
+                fputs( line, fp );
+                fputc( '\n', fp );
+            }
         }
     }
 }
 
 
+#if !defined( __UNIX__ )
+
+#if defined( _M_IX86 )
+
 static bool ModFile( char *orig, char *new,
                      void (*func)( char *, int, bool *, bool ),
-                     void (*finish)( FILE *, char *, int, bool * ),
+                     void (*finish)( FILE *, char *, int, bool *, bool ),
                      size_t num, size_t num_env, bool uninstall )
 /*****************************************************************/
 {
@@ -386,17 +523,23 @@ static bool ModFile( char *orig, char *new,
         memset( FoundEnv, 0, num_env * sizeof( bool ) );
     }
     while( fgets( envbuf, MAXENVVAR, fp1 ) != NULL ) {
-        if( strchr( envbuf, '\n' ) == 0 ) {
-            strcat( envbuf, "\n" );
+        line = strchr( envbuf, '\n' );
+        if( line != NULL ) {
+            *line = '\0';
         }
-        for( line = envbuf; isspace( *line ); ++line );
         // don't process empty lines but keep them in new file
+        for( line = envbuf; isspace( *line ); ++line );
         if( line[0] != '\0' ) {
             func( line, num, Found, uninstall );
             if( num_env ) {
                 CheckEnvironmentLine( line, num_env, FoundEnv, uninstall );
             }
+            if( line[0] == '\0' ) {
+                // skip removed lines
+                continue;
+            }
         }
+        strcat( envbuf, "\n" );
         if( fputs( envbuf, fp2 ) < 0 ) {
             MsgBox( NULL, "IDS_ERROR_WRITING", GUI_OK, new );
             return( FALSE );
@@ -405,8 +548,8 @@ static bool ModFile( char *orig, char *new,
     fclose( fp1 );
     if( !uninstall ) {
         // handle any remaining variables
-        finish( fp2, envbuf, num, Found );
-        FinishEnvironmentLines( fp2, envbuf, num_env, FoundEnv );
+        finish( fp2, envbuf, num, Found, FALSE );
+        FinishEnvironmentLines( fp2, envbuf, num_env, FoundEnv, FALSE );
     }
     if( num ) {
         GUIMemFree( Found );
@@ -424,102 +567,107 @@ static bool ModFile( char *orig, char *new,
 
 #ifndef __OS2__
 
-static void CheckAutoLine( char *buf, int num, bool *Found, bool uninstall )
-/**************************************************************************/
+static var_type getAutoVarType( const char *new_var )
+/***************************************************/
+{
+    var_type        vt;
+
+    if( memicmp( new_var, SETENV, SETENV_LEN ) == 0 ) {
+        vt = VAR_ASSIGN_SETENV;
+    } else {
+        vt = VAR_CMD;
+    }
+    return( vt );
+}
+
+static void CheckAutoLine( char *line, int num, bool *Found, bool uninstall )
+/***************************************************************************/
 {
     int                 i;
     append_mode         append;
     char                *p;
-    char                *q;
-    unsigned            len;
     char                *env_var;
     char                env_val[MAXENVVAR];
-    bool                found;
     char                fname[_MAX_FNAME];
     char                fext[_MAX_EXT];
     const char          *new_var;
+    var_type            vt;
+    bool                modified;
 
-    do {
-        found = FALSE;
-        if( memicmp( buf, SETENV, SETENV_LEN ) == 0 ) {
-            p = strchr( buf, '=' );
-            if( p == NULL )
+    vt = parse_line( line, env_val, &p, VAR_ASSIGN_SETENV );
+    switch( vt ) {
+    case VAR_ASSIGN_SETENV:
+        break;
+    case VAR_CMD:
+        if( memicmp( env_val, "PATH", 4 ) == 0 )
+            return;
+        if( !uninstall ) {
+            _splitpath( env_val, NULL, NULL, fname, fext );
+            if( stricmp( fname, "win" ) == 0
+              && ( stricmp( fext, ".com" ) == 0 || fext[0] == '\0' ) ) {
+                WinDotCom = StrNDup( line, strlen( line ) );
+                line[0] = '\0';
                 return;
-            q = buf + SETENV_LEN;
-            while( isspace( *q ) )
-                ++q;
-            len = p - q;
-            while( len > 0 && isspace( q[len - 1] ) )
-                --len;
-            env_var = StrNDup( q, len );
-            ++p;
-            while( isspace( *p ) )
-                ++p;
-            strcpy( env_val, p );
-        } else if( memicmp( buf, "PATH ", 5 ) == 0 || memicmp( buf, "PATH=", 5 ) == 0 ) {
-            env_var = StrNDup( "PATH", 4 );
-            strcpy( env_val, buf + 5 );
-        } else {
-            if( !uninstall ) {
-                p = strchr( buf, ' ' );
-                if( p != NULL )
-                    *p = '\0';
-                q = strchr( buf, '\n' );
-                if( q != NULL )
-                    *q = '\0';
-                _splitpath( buf, NULL, NULL, fname, fext );
-                if( p != NULL )
-                    *p = ' ';
-                if( q != NULL )
-                    *q = '\n';
-                if( stricmp( fname, "win" ) == 0 &&
-                    (stricmp( fext, ".com" ) == 0 || fext[0] == '\0') ) {
-                    GUIStrDup( buf, &WinDotCom );
-                    buf[0] = '\0';
-                }
-            }
-            return;     // not an environment variable setting
-        }
-
-        for( i = 0; i < num; ++i ) {
-            if( Found[i] || !uninstall && !SimCheckAutoExecCondition( i ) )
-                continue;
-
-            append = SimGetAutoExecStrings( i, &new_var, new_val );
-            if( stricmp( env_var, new_var ) == 0 ) {
-                // found an environment variable, replace its value
-                NoDupPaths( new_val, env_val, PATH_SEP_CHAR );
-                cmdline_modify_var( buf, env_var, env_val, append, uninstall );
-                Found[i] = TRUE;
-                found = TRUE;
-                break;
             }
         }
-        GUIMemFree( env_var );
-    } while( found );
+        break;
+    default:
+        return;
+    }
+    env_var = StrNDup( env_val, strlen( env_val ) );
+    strcpy( env_val, p );
+
+    modified = FALSE;
+    for( i = 0; i < num; ++i ) {
+        if( Found[i] || !uninstall && !SimCheckAutoExecCondition( i ) )
+            continue;
+        append = SimGetAutoExecStrings( i, &new_var, new_val );
+        if( stricmp( env_var, new_var ) == 0 ) {
+            // found an command, replace its value
+            Found[i] = TRUE;
+            modify_value( env_val, new_val, append, uninstall );
+            modified = TRUE;
+        }
+    }
+    if( modified ) {
+        output_line( line, vt, env_var, env_val );
+    }
+    GUIMemFree( env_var );
 }
 
-static void FinishAutoLines( FILE *fp, char *buf, int num, bool *Found )
-/**********************************************************************/
+static void FinishAutoLines( FILE *fp, char *line, int num, bool *Found, bool batch )
+/***********************************************************************************/
 {
     int                 i;
+    int                 j;
     append_mode         append;
     const char          *new_var;
+    const char          *cur_var;
+    char                env_val[MAXENVVAR];
 
     for( i = 0; i < num; ++i ) {
         if( Found[i] || !SimCheckAutoExecCondition( i ) )
             continue;
-
         append = SimGetAutoExecStrings( i, &new_var, new_val );
-        cmdline_create_var( buf, new_var, append );
-        Found[i] = TRUE;
-        CheckAutoLine( buf, num, Found, FALSE );
-        if( buf[0] != '\0' ) {
-            fputs( buf, fp );
+        strcpy( env_val, new_val );
+        for( j = i + 1; j < num; ++j ) {
+            if( Found[j] || !SimCheckAutoExecCondition( j ) )
+                continue;
+            append = SimGetAutoExecStrings( j, &cur_var, new_val );
+            if( stricmp( cur_var, new_var ) == 0 ) {
+                Found[j] = TRUE;
+                modify_value( env_val, new_val, append, FALSE );
+            }
+        }
+        output_line( line, getAutoVarType( new_var ), new_var, env_val );
+        if( line[0] != '\0' ) {
+            fputs( line, fp );
+            fputc( '\n', fp );
         }
     }
     if( WinDotCom != NULL ) {
         fputs( WinDotCom, fp );
+        fputc( '\n', fp );
         GUIMemFree( WinDotCom );
         WinDotCom = NULL;
     }
@@ -531,129 +679,130 @@ static bool ModAuto( char *orig, char *new, bool uninstall )
 {
     int         num_auto;
     int         num_env;
+    bool        rc;
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
+    int         isOS2DosBox;
+#endif
 
     num_auto = SimNumAutoExec();
     num_env = SimNumEnvironment();
-    return( ModFile( orig, new, CheckAutoLine, FinishAutoLines, num_auto, num_env, uninstall ) );
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
+    isOS2DosBox = GetVariableIntVal( "IsOS2DosBox" );
+    SetVariableByName( "IsOS2DosBox", "0" );
+#endif
+    rc = ModFile( orig, new, CheckAutoLine, FinishAutoLines, num_auto, num_env, uninstall );
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
+    SetVariableByName( "IsOS2DosBox", ( isOS2DosBox ) ? "1" : "0" );
+#endif
+    return( rc );
 }
 
 #endif
 
-static void CheckConfigLine( char *buf, int num, bool *Found, bool uninstall )
-/****************************************************************************/
+static var_type getConfigVarType( const char *new_var )
+/*****************************************************/
 {
-    int                 i;
-    append_mode         append;
-    char                *p, *q;
-    char                *cfg_var;
-    char                cfg_val[MAXENVVAR];
-    unsigned            len;
-    bool                found;
-    bool                have_set;
-    const char          *new_var;
+    var_type        vt;
 
-    do {
-        found = FALSE;
-        have_set = FALSE;
-        if( memicmp( buf, SETENV, SETENV_LEN ) == 0 ) {
-            have_set = TRUE;
-            p = strchr( buf, '=' );
-            if( p == NULL )
-                return;
-            q = buf + SETENV_LEN;
-            while( isspace( *q ) )
-                ++q;
-            len = p - q;
-            while( len > 0 && isspace( q[len - 1] ) )
-                --len;
-            cfg_var = StrNDup( q, len );
-            ++p;
-            while( isspace( *p ) )
-                ++p;
-            strcpy( cfg_val, p );
-        } else {
-            p = strchr( buf, '=' );
-            if( p == NULL )
-                return;
-            q = p - 1;  // trim blanks
-            while( q > buf && *q == ' ' )
-                --q;
-            cfg_var = StrNDup( buf, q - buf + 1 );
-            ++p;
-            while( *p == ' ' )
-                ++p;
-            strcpy( cfg_val, p );
-        }
-
-        for( i = 0; i < num; ++i ) {
-            if( Found[i] || !uninstall && !SimCheckConfigCondition( i ) )
-                continue;
-
-            append = SimGetConfigStrings( i, &new_var, new_val );
-            if( stricmp( cfg_var, new_var ) == 0 ) {
-                // found an environment variable, replace its value
-                if( isdigit( cfg_val[0] ) ) { // for files=20, buffers=30 etc
-                    if( !uninstall && atoi( new_val ) > atoi( cfg_val ) ) {
-                        sprintf( buf, "%s=%s\n", cfg_var, new_val );
-                    }
-                } else if( stricmp( cfg_var, "run" ) == 0 ) {
-                    // if already there, just mark it as found
-                    if( memicmp( cfg_val, new_val, strlen( new_val ) ) == 0 ) { // nyi - do splitpath
-                        sprintf( buf, "%sRUN=%s\n", uninstall ? "REM " : "", new_val );
-                    } else {
-                        continue;
-                    }
-                } else {
-                    NoDupPaths( new_val, cfg_val, PATH_SEP_CHAR );
-                    if( uninstall ) {
-                        sprintf( buf, "%s%s=%s\n", have_set ? SETENV : "", cfg_var, cfg_val );
-                    } else if( append == AM_AFTER ) {
-                        sprintf( buf, "%s%s=%s" PATH_SEP "%s\n", have_set ? SETENV : "", cfg_var, cfg_val, new_val );
-                    } else if( append == AM_BEFORE ) {
-                        sprintf( buf, "%s%s=%s" PATH_SEP "%s\n", have_set ? SETENV : "", cfg_var, new_val, cfg_val );
-                    } else {
-                        sprintf( buf, "%s%s=%s\n", have_set ? SETENV : "", cfg_var, new_val );
-                    }
-                }
-                Found[i] = TRUE;
-                found = TRUE;
-                break;
-            }
-        }
-        GUIMemFree( cfg_var );
-    } while( found );
+    if( memicmp( new_var, SETENV, SETENV_LEN ) == 0 ) {
+        vt = VAR_ASSIGN_SETENV;
+    } else {
+        vt = VAR_ASSIGN;
+    }
+    return( vt );
 }
 
-static void FinishConfigLines( FILE *fp, char *buf, int num, bool *Found )
-/************************************************************************/
+static void CheckConfigLine( char *line, int num, bool *Found, bool uninstall )
+/*****************************************************************************/
 {
     int                 i;
     append_mode         append;
+    char                *p;
+    char                *cfg_var;
+    char                cfg_val[MAXENVVAR];
+    var_type            vt;
     const char          *new_var;
+    bool                run_find;
+    bool                run_found;
+    bool                modified;
+
+    vt = parse_line( line, cfg_val, &p, VAR_ASSIGN_SETENV );
+    switch( vt ) {
+    case VAR_ASSIGN_SETENV:
+    case VAR_ASSIGN:
+        break;
+    default:
+        return;
+    }
+    cfg_var = StrNDup( cfg_val, strlen( cfg_val ) );
+    strcpy( cfg_val, p );
+
+    run_find = ( stricmp( cfg_var, "RUN" ) == 0 );
+    modified = FALSE;
+    run_found = FALSE;
+    for( i = 0; i < num; ++i ) {
+        if( Found[i] || !uninstall && !SimCheckConfigCondition( i ) )
+            continue;
+        append = SimGetConfigStrings( i, &new_var, new_val );
+        if( stricmp( cfg_var, new_var ) == 0 ) {
+            // found an variable
+            if( run_find ) {
+                // found RUN variable
+                if( memicmp( cfg_val, new_val, strlen( new_val ) ) == 0 ) {
+                    // if already there, just mark it as found
+                    Found[i] = TRUE;
+                    run_found = TRUE;
+                }
+                continue;
+            }
+            if( isdigit( *cfg_val ) ) { // for files=20, linefers=30 etc
+                if( uninstall || atoi( new_val ) <= atoi( cfg_val ) ) {
+                    Found[i] = TRUE;
+                    continue;
+                }
+            }
+            Found[i] = TRUE;
+            // replace its value
+            modify_value( cfg_val, new_val, append, uninstall );
+            modified = TRUE;
+        }
+    }
+    if( run_found && uninstall ) {
+        output_line( line, vt, "REM RUN", cfg_val );
+    } else if( modified ) {
+        output_line( line, vt, cfg_var, cfg_val );
+    }
+    GUIMemFree( cfg_var );
+}
+
+static void FinishConfigLines( FILE *fp, char *line, int num, bool *Found, bool batch )
+/*************************************************************************************/
+{
+    int                 i;
+    int                 j;
+    append_mode         append;
+    const char          *new_var;
+    const char          *cur_var;
+    char                env_val[MAXENVVAR];
 
     for( i = 0; i < num; ++i ) {
         if( Found[i] || !SimCheckConfigCondition( i ) )
             continue;
         append = SimGetConfigStrings( i, &new_var, new_val );
-#ifndef __OS2__
-        if( GetVariableIntVal( "IsOS2DosBox" ) == 1 ) {
-#endif
-            if( stricmp( new_var, "LIBPATH" ) == 0 ) {
-                sprintf( buf, "%s=%s\n", new_var, new_val );
-            } else if( stricmp( new_var, "RUN"  ) == 0 ) {
-                sprintf( buf, "%s=%s\n", new_var, new_val );
-            } else {
-                sprintf( buf, SET_VAR_SET, new_var, new_val );
+        strcpy( env_val, new_val );
+        for( j = i + 1; j < num; ++j ) {
+            if( Found[j] || !SimCheckConfigCondition( j ) )
+                continue;
+            append = SimGetConfigStrings( j, &cur_var, new_val );
+            if( stricmp( cur_var, new_var ) == 0 ) {
+                Found[j] = TRUE;
+                modify_value( env_val, new_val, append, FALSE );
             }
-#ifndef __OS2__
-        } else {
-            sprintf( buf, "%s=%s\n", new_var, new_val );
         }
-#endif
-        Found[i] = TRUE;
-        CheckConfigLine( buf, num, Found, FALSE );
-        if( buf[0] != '\0' ) {
-            fputs( buf, fp );
+        output_line( line, getConfigVarType( new_var ), new_var, env_val );
+        if( line[0] != '\0' ) {
+            fputs( line, fp );
+            fputc( '\n', fp );
         }
     }
 }
@@ -665,10 +814,14 @@ static bool ModConfig( char *orig, char *new, bool uninstall )
     int         num_env;
 
     num_cfg = SimNumConfig();
-#ifdef __OS2__
-    num_env = SimNumEnvironment();
-#else
-    num_env = 0;
+#ifndef __OS2__
+    if( GetVariableIntVal( "IsOS2DosBox" ) == 1 ) {
+#endif
+        num_env = SimNumEnvironment();
+#ifndef __OS2__
+    } else {
+        num_env = 0;
+    }
 #endif
     if( num_cfg == 0 && num_env == 0 ) {
          return( TRUE );
@@ -768,17 +921,17 @@ extern bool ModifyAutoExec( bool uninstall )
             MsgBox( NULL, "IDS_CANTFINDCONFIGSYS", GUI_OK );
             return( FALSE );
         }
+        strcpy( newcfg, GetVariableStrVal("CfgDir") );
+        OrigConfig[0] = newcfg[0];
+        OrigAutoExec[0] = OrigConfig[0];
         if( GetVariableIntVal( "CfgFileCreate" ) != 0 ) {
             fp = fopen( OrigConfig, "wt" );
             if( fp == NULL ) {
                 MsgBox( NULL, "IDS_CANTCREATEFILE", GUI_OK, OrigConfig );
-                return( FALSE );
+            } else {
+                fclose( fp );
             }
-            fclose( fp );
         }
-        strcpy( newcfg, GetVariableStrVal("CfgDir") );
-        OrigConfig[0] = newcfg[0];
-        OrigAutoExec[0] = OrigConfig[0];
     }
 #ifndef __OS2__
     SetVariableByName( "FileToFind", "AUTOEXEC.BAT" );
@@ -788,16 +941,16 @@ extern bool ModifyAutoExec( bool uninstall )
             MsgBox( NULL, "IDS_CANTFINDAUTOEXEC", GUI_OK );
             return( FALSE );
         }
+        strcpy( newcfg, GetVariableStrVal("CfgDir") );
+        OrigAutoExec[0] = newcfg[0];
         if( GetVariableIntVal( "CfgFileCreate" ) != 0 ) {
             fp = fopen( OrigAutoExec, "wt" );
             if( fp == NULL ) {
                 MsgBox( NULL, "IDS_CANTCREATEFILE", GUI_OK, OrigAutoExec );
-                return( FALSE );
+            } else {
+                fclose( fp );
             }
-            fclose( fp );
         }
-        strcpy( newcfg, GetVariableStrVal("CfgDir") );
-        OrigAutoExec[0] = newcfg[0];
     }
 #endif
 
@@ -904,13 +1057,15 @@ static char *ReplaceVarsInplace( char *buff, bool dorealloc )
     p = buff;
     bufflen = strlen( buff );
     while( *p != '\0' ) {
-        if( *p++ != '%' ) continue;
+        if( *p++ != '%' )
+            continue;
         if( *p == '%' ) {
             memmove( p - 1, p, strlen( p ) + 1 );
             continue;
         }
         e = strchr( p, '%' );
-        if( e == NULL ) break;
+        if( e == NULL )
+            break;
         memcpy( varname, p, e - p );
         varname[e - p] = '\0';
         for( ;; ) {     // loop for multiple '?' operators
@@ -1289,7 +1444,6 @@ static bool ModEnv( int num_env, bool uninstall )
     DWORD               type, old_type;
     char                old_var[MAXBUF];
     char                old_val[MAXENVVAR];
-    char                envbuf[MAXENVVAR + 1];
     const char          *new_var;
 
     for( i = 0; i < num_env; i ++ ) {
@@ -1323,22 +1477,8 @@ static bool ModEnv( int num_env, bool uninstall )
                                         strlen( new_val ) + 1 );
                 }
             } else if( rc == 0 ) {
-                NoDupPaths( new_val, old_val, PATH_SEP_CHAR );
-                if( uninstall ) {
-                    if( append == AM_OVERWRITE ) {
-//                        envbuf[0] = '\0';
-                        sprintf( envbuf, "%s", old_val );
-                    } else {
-                        sprintf( envbuf, "%s", old_val );
-                    }
-                } else if( append == AM_AFTER ) {
-                    sprintf( envbuf, "%s;%s", old_val, new_val );
-                } else if( append == AM_BEFORE ) {
-                    sprintf( envbuf, "%s;%s", new_val, old_val );
-                } else {
-                    sprintf( envbuf, "%s", new_val );
-                }
-                if( *envbuf == '\0' ) {
+                modify_value( old_val, new_val, append, uninstall );
+                if( old_val[0] == '\0' ) {
                     rc = RegDeleteValue( RegLocation[j].key, new_var );
                 } else {
                     rc = RegQueryValueEx( RegLocation[j].key, new_var, NULL, &old_type, NULL, NULL );
@@ -1347,8 +1487,8 @@ static bool ModEnv( int num_env, bool uninstall )
                     } else {
                         type = REG_SZ;
                     }
-                    rc = RegSetValueEx( RegLocation[j].key, new_var, 0, type, (LPCBYTE)envbuf,
-                                        strlen( envbuf ) + 1 );
+                    rc = RegSetValueEx( RegLocation[j].key, new_var, 0, type, (LPCBYTE)old_val,
+                                        strlen( old_val ) + 1 );
                 }
             }
             if( rc != 0 ) {
@@ -1370,7 +1510,6 @@ extern bool ModifyConfiguration( bool uninstall )
     bool                bRet;
     const char          *env_var;
     const char          *new_var;
-    char                buf[MAXENVVAR + 1];
     char                envbuf[MAXENVVAR + 1];
     bool                *found;
     append_mode         append;
@@ -1452,20 +1591,12 @@ extern bool ModifyConfiguration( bool uninstall )
                 }
                 sprintf( envbuf, "%s", new_val );
                 for( j = i + 1; j < num_env; ++j ) {
-                    if( !SimCheckEnvironmentCondition( j ) )
+                    if( found[j] || !SimCheckEnvironmentCondition( j ) )
                         continue;
                     append = SimGetEnvironmentStrings( j, &env_var, new_val );
                     if( stricmp( env_var, new_var ) == 0 ) {
                         found[j] = TRUE;
-                        if( append == AM_AFTER ) {
-                            strcpy( buf, envbuf );
-                            sprintf( envbuf, "%s;%s", buf, new_val );
-                        } else if( append == AM_BEFORE ) {
-                            strcpy( buf, envbuf );
-                            sprintf( envbuf, "%s;%s", new_val, buf );
-                        } else {
-                            sprintf( envbuf, "%s", new_val );
-                        }
+                        modify_value( envbuf, new_val, append, uninstall );
                     }
                 }
                 fprintf( fp, "\n    %s\n", envbuf );
@@ -1537,22 +1668,23 @@ extern bool ModifyRegAssoc( bool uninstall )
 extern bool GenerateBatchFile( bool uninstall )
 /*********************************************/
 {
-    size_t              num_env;
+    size_t              num;
     char                batch_file[_MAX_PATH];
     FILE                *fp;
-    int                 i;
-    const char          *new_var;
-    append_mode         append;
     char                drive[_MAX_DRIVE];
     char                dir[_MAX_DIR];
     char                fname[_MAX_FNAME];
     char                ext[_MAX_EXT];
+    bool                *found;
+    char                buf[MAXENVVAR + 1];
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
+    int                 isOS2DosBox;
+#endif
 
-    num_env = SimNumEnvironment();
     strcpy( batch_file, GetVariableStrVal( "BatchFileName" ) );
     ReplaceVarsInplace( batch_file, FALSE );
     _splitpath( batch_file, drive, dir, fname, ext );
-    if( *ext == '\0' ) {
+    if( ext[0] == '\0' ) {
         strcpy( ext, BATCHEXT );
     }
     _makepath( batch_file, drive, dir, fname, ext );
@@ -1567,19 +1699,20 @@ extern bool GenerateBatchFile( bool uninstall )
             fprintf( fp, "@echo off\n" );
 #endif
             fprintf( fp, "echo %s\n", GetVariableStrVal( "BatchFileCaption" ) );
-            for( i = 0; i < num_env; i++ ) {
-                if( !SimCheckEnvironmentCondition( i ) ) {
-                    continue;
-                }
-                append = SimGetEnvironmentStrings( i, &new_var, new_val );
-                if( append == AM_AFTER ) {
-                    fprintf( fp, SET_VAR_AFTER, new_var, new_var, new_val );
-                } else if( append == AM_BEFORE ) {
-                    fprintf( fp, SET_VAR_BEFORE, new_var, new_val, new_var );
-                } else {
-                    fprintf( fp, SET_VAR_SET, new_var, new_val );
-                }
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
+            isOS2DosBox = GetVariableIntVal( "IsOS2DosBox" );
+            SetVariableByName( "IsOS2DosBox", "0" );
+#endif
+            num = SimNumEnvironment();
+            if( num > 0 ) {
+                found = GUIMemAlloc( num * sizeof( bool ) );
+                memset( found, FALSE, num * sizeof( bool ) );
+                FinishEnvironmentLines( fp, buf, num, found, TRUE );
+                GUIMemFree( found );
             }
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
+            SetVariableByName( "IsOS2DosBox", ( isOS2DosBox ) ? "1" : "0" );
+#endif
             fclose( fp );
         }
     }

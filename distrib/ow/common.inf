@@ -76,12 +76,10 @@ dialog=hnewinst.dlg
 dialog=htarget.dlg
 dialog=hother.dlg
 dialog=hhelpfil.dlg
-cfg=++LIBPATH=%DstDir%\BINP\DLL,                IsOS2 IsOS2DosBox |
-cfg=++LIBPATH=%CDDir%\BINP\DLL,                 IsOS2 IsOS2DosBox | MinimalInstall
-cfg=++HELP=%DstDir%\BINP\HELP,                  IsOS2 IsOS2DosBox |
-cfg=++HELP=%CDDir%\BINP\HELP,                   IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
-cfg=++BOOKSHELF=%DstDir%\BINP\HELP,             IsOS2 IsOS2DosBox |
-cfg=++BOOKSHELF=%CDDir%\BINP\HELP,              IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
+cfg=++SET HELP=%CDDir%\BINP\HELP,               IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
+cfg=++SET HELP=%DstDir%\BINP\HELP,              IsOS2 IsOS2DosBox |
+cfg=++SET BOOKSHELF=%CDDir%\BINP\HELP,          IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
+cfg=++SET BOOKSHELF=%DstDir%\BINP\HELP,         IsOS2 IsOS2DosBox |
 cfg=RUN=%DstDir%\BINP\BATSERV.EXE,              IsOS2DosBox ?%DstDir%\binp\batserv.exe
 cfg=RUN=%DstDir%\BINP\NMPBIND.EXE,              IsOS2 IsOS2DosBox | ?%DstDir%\binp\nmpbind.exe
 cfg=FILES=20,                                   IsDOS IsWin |
@@ -91,10 +89,12 @@ env=+PATH=%DstDir%\BINB,                        false
 env=++PATH=%CDDir%\BINW,                        IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | MinimalInstall
 env=++PATH=%DstDir%\BINW,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
 env=++PATH=%CDDir%\BINP,                        IsOS2 IsOS2DosBox | MinimalInstall
-env=++PATH=%CDDir%\BINNT,                       IsWin95 IsWinNT | MinimalInstall
 env=++PATH=%DstDir%\BINP,                       IsOS2 IsOS2DosBox |
+env=++PATH=%CDDir%\BINNT,                       IsWin95 IsWinNT | MinimalInstall
 env=++PATH=%DstDir%\BINNT,                      IsWin95 IsWinNT |
 env=++PATH=%DstDir%/binl,                       IsLinux
+env=++LIBPATH=%CDDir%\BINP\DLL,                 IsOS2 IsOS2DosBox | MinimalInstall
+env=++LIBPATH=%DstDir%\BINP\DLL,                IsOS2 IsOS2DosBox |
 env=++INCLUDE=%CDDir%\H\OS2,                    IsOS2 IsOS2DosBox | MinimalInstall
 env=++INCLUDE=%DstDir%\H\OS2,                   IsOS2 IsOS2DosBox |
 env=++INCLUDE=%CDDir%\H\WIN,                    IsWin MinimalInstall
@@ -116,7 +116,7 @@ env=++FINCLUDE=%CDDir%\SRC\FORTRAN\DOS,         IsDOS MinimalInstall ?%CDDir%\bi
 env=++FINCLUDE=%DstDir%\SRC\FORTRAN\DOS,        IsDOS ?%DstDir%\binw\wfc386.exe
 env=++FINCLUDE=%CDDir%\SRC\FORTRAN,             IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | MinimalInstall ?%CDDir%\binw\wfc386.exe
 env=++FINCLUDE=%DstDir%\SRC\FORTRAN,            IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | ?%DstDir%\binw\wfc386.exe
-env=WATCOM=%OWDir%,                             IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
+env=WATCOM=%OWDir%,                             IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT IsLinux | | | | | |
 env=EDPATH=%OWDir%\EDDAT,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
 env=EDPATH=%OWDir%/eddat,                       IsLinux
 env=WWINHELP=%HDir%\BINW,                       IsDOS IsWin IsWin95 IsWinNT | | | MinimalInstall helpfiles ! SrcIsCD & |
