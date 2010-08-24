@@ -65,7 +65,7 @@ $(libdllname).lib : $(dllname).lbc
     $(librarian) $(libflags) @$(dllname).lbc
 
 $(dllname).lbc : $(dllname).imp $(rtdll_dir)/proclbc.awk $(static_objs)
-    $(awk) -f $(rtdll_dir)/proclbc.awk -v OS=$(host_os) -v BR=$(br_suffix) -v LSTFILE="../../../brfunc.lst" $(dllname).imp > $@
+    $(awk) -f $(rtdll_dir)/proclbc.awk -v OS=$(host_os) -v BR=$(br_suffix) -v LSTFILE="$(rtdll_dir)/brfunc.lst" $(dllname).imp > $@
     @for %i in ($(static_objs)) do @%append $@ +%i
 
 !ifeq system winnt
@@ -88,7 +88,7 @@ $(dllname).imp : $(version_res_$(host_os)_$(host_cpu)) $(dll_objs) $(dll_libs) $
 $(dllname).lnk : $(dll_def) $(__MAKEFILES__)
     %create $@
     @%append $@ $(lflags_dll)
-    @%append $@ op map $(dllbase) 
+    @%append $@ op map $(dllbase)
     @for %i in ($(dll_objs)) do @%append $@ file %i
     @for %i in ($(dll_def)) do @%append $@ export { @%i }
     @for %i in ($(dll_libs) $(extra_libs)) do @%append $@ lib %i
