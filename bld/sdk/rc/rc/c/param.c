@@ -951,7 +951,9 @@ extern void ScanParamShutdown( void )
     if( CmdLineParms.CPPArgs != NULL ) {
         RcMemFree( CmdLineParms.CPPArgs );
     }
-    RcMemFree( NewIncludeDirs );
+    if( NewIncludeDirs != NULL ) {
+        RcMemFree( NewIncludeDirs );
+    }
     while( CmdLineParms.ExtraResFiles != NULL ) {
         tmpres = CmdLineParms.ExtraResFiles;
         CmdLineParms.ExtraResFiles = CmdLineParms.ExtraResFiles->next;
