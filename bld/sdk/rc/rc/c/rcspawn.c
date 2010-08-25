@@ -24,58 +24,40 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  RCSpawn() and RCSuicide() routines
 *
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdarg.h>
+#include <stdlib.h>
+#include <setjmp.h>
+#include "rcspawn.h"
 
-#include "errprt.h"
+static  jmp_buf *RCSpawnStack = NULL;
 
-// these functions are in rcdll.c for the DLL version
-int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
+
+int     RCSpawn( void (*fn)( void ) )
+/***********************************/
 {
-    int         err;
-    int         rc = 0;
-    va_list     args;
-    char        *fmt;
+    jmp_buf     *save_env;
+    jmp_buf     env;
+    int         status;
 
-    if( info->flags & OUTFLAG_FILE ) {
-        err = fprintf( fp, "%s(%d): ", info->file, info->lineno );
-        if( err < 0 ) {
-            return( err );
-        }
-        rc += err;
+    save_env = RCSpawnStack;
+    RCSpawnStack = env;
+    status = setjmp( env );
+    if( status == 0 ) {
+        (*fn)();
     }
-    switch( info->severity ) {
-    case SEV_WARNING:
-        fmt = "Warning! %d: ";
-        break;
-    case SEV_ERROR:
-        fmt = "Error! %d: ";
-        break;
-    case SEV_FATAL_ERR:
-        fmt = "Fatal Error! %d: ";
-        break;
-    default:
-        fmt = "%d: ";
-        break;
-    }
-    err = fprintf( fp, fmt, info->errid );
-    if( err < 0 )
-        return( err );
-    rc += err;
-    va_start( args, format );
-    err = vfprintf( fp, format, args );
-    va_end( args );
-    if( err < 0 )
-        return( err );
-    return( rc + err );
+    RCSpawnStack = save_env;
+    return( status );
 }
 
-void InitOutPutInfo( OutPutInfo *info ) {
-    info->flags = 0;
+
+void    RCSuicide( int rc )
+/*************************/
+{
+    if( RCSpawnStack == NULL )
+        exit( -1 );
+    longjmp( RCSpawnStack, rc );
 }

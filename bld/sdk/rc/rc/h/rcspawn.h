@@ -24,58 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  RCSpawn() and RCSuicide() routines
 *
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdarg.h>
-
-#include "errprt.h"
-
-// these functions are in rcdll.c for the DLL version
-int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
-{
-    int         err;
-    int         rc = 0;
-    va_list     args;
-    char        *fmt;
-
-    if( info->flags & OUTFLAG_FILE ) {
-        err = fprintf( fp, "%s(%d): ", info->file, info->lineno );
-        if( err < 0 ) {
-            return( err );
-        }
-        rc += err;
-    }
-    switch( info->severity ) {
-    case SEV_WARNING:
-        fmt = "Warning! %d: ";
-        break;
-    case SEV_ERROR:
-        fmt = "Error! %d: ";
-        break;
-    case SEV_FATAL_ERR:
-        fmt = "Fatal Error! %d: ";
-        break;
-    default:
-        fmt = "%d: ";
-        break;
-    }
-    err = fprintf( fp, fmt, info->errid );
-    if( err < 0 )
-        return( err );
-    rc += err;
-    va_start( args, format );
-    err = vfprintf( fp, format, args );
-    va_end( args );
-    if( err < 0 )
-        return( err );
-    return( rc + err );
-}
-
-void InitOutPutInfo( OutPutInfo *info ) {
-    info->flags = 0;
-}
+extern int     RCSpawn( void (*fn)( void ) );
+#if defined(__WATCOMC__)
+#pragma aux RCSuicide aborts;
+#endif
+extern void    RCSuicide( int );

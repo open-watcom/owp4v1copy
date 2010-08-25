@@ -35,11 +35,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#include <setjmp.h>
 
 #include "global.h"    /* this is a WRC header file */
 #include "rcio.h"      /* this is a WRC header file */
 #include "pass2.h"     /* this is a WRC header file */
+#include "rcspawn.h"   /* this is a WRC header file */
 
 #include "wrglbl.h"
 #include "wrmain.h"
@@ -71,17 +71,16 @@ extern HANDLE_INFO           Instance;
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static int WRExecRCPass2       ( void );
-static int WRPass2             ( void );
-static int WRSaveResourceToEXE ( WRInfo *, int, WRFileType );
+static int  WRExecRCPass2       ( void );
+static void WRPass2             ( void );
+static int  WRSaveResourceToEXE ( WRInfo *, int, WRFileType );
 
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
-jmp_buf RC_Dead_env;
 
 /* this function duplicates Pass2 in rc.c of the WRC project */
-int WRPass2 ( void )
+static void WRPass2 ( void )
 {
     int ok;
 
@@ -99,24 +98,14 @@ int WRPass2 ( void )
 
         RcPass2IoShutdown ( ok );
     }
-
-    return ( ok );
+    if( !ok ) {
+        RCSuicide( 1 );
+    }
 }
 
 int WRExecRCPass2 ( void )
 {
-    int     ret;
-    int    ok;
-
-    ret = setjmp ( RC_Dead_env );
-
-    if ( ret ) {
-        ok = FALSE;
-    } else {
-        ok = WRPass2 ();
-    }
-
-    return ( ok );
+    return ( RCSpawn( WRPass2 ) );
 }
 
 int WRSaveResourceToWin16EXE ( WRInfo *info, int backup )
@@ -214,7 +203,7 @@ int WRSaveResourceToEXE ( WRInfo *info, int backup, WRFileType ttype )
         } else {
             strcpy ( CmdLineParms.OutExeFileName, info->file_name );
         }
-        ok = WRExecRCPass2 ();
+        ok = ( WRExecRCPass2() == 0 );
     }
 
     if ( tmp_res ) {

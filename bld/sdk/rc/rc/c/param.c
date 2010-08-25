@@ -50,6 +50,8 @@
 # define PATH_SPLIT_S       ";"     /* path seperator in string form        */
 #endif
 
+extern void AddNewIncludeDirs( const char * arg );
+
 /* forward declaration */
 static bool scanEnvVar( const char *varname, int *nofilenames );
 
@@ -112,29 +114,6 @@ static void SetDBChars( const uint_8 *bytes ) {
     }
 }
 
-#if(0)
-static char *fixNewDirs( char *arg ) {
-/************************************/
-    char        *ret;
-    char        *src;
-    char        *dst;
-
-    src = arg;
-    ret = RcMemMalloc( strlen( src ) + 1 );
-    dst = ret;
-    while( *src != '\0' ) {
-        if( !isspace( *src ) ) {
-            *dst = *src;
-            dst++;
-        }
-        src++;
-    }
-    *dst = '\0';
-    RcMemFree( arg );
-    return( ret );
-}
-#endif
-
 static bool scanString( char *buf, const char *str, unsigned len )
 /*****************************************************************/
 {
@@ -155,35 +134,6 @@ static bool scanString( char *buf, const char *str, unsigned len )
     *buf = '\0';
     return( have_quote );
 }
-
-extern void AddNewIncludeDirs( const char * arg )
-/***********************************************/
-{
-    int     len;
-    int     oldlen;
-
-    len = strlen( arg );
-    if (len == 0) {
-        return;
-    }
-
-    if (NewIncludeDirs == NULL) {
-        /* + 1 for the '\0' */
-        NewIncludeDirs = RcMemMalloc( len + 1 );
-        NewIncludeDirs[ 0 ] = '\0';
-        oldlen = 0;
-    } else {
-        /* + 2 for the '\0' and the ';' */
-        oldlen = strlen( NewIncludeDirs );
-        NewIncludeDirs = RcMemRealloc( NewIncludeDirs, oldlen + len + 2 );
-        strcat( NewIncludeDirs + oldlen , PATH_SPLIT_S );
-        oldlen ++; //for the semicolon
-    }
-    if( scanString( NewIncludeDirs + oldlen, arg, len + 1 ) ) {
-        RcError( ERR_UNMATCHED_QUOTE_ON_CMD_LINE );
-    }
-//    NewIncludeDirs = fixNewDirs( NewIncludeDirs );
-} /* AddNewIncludeDirs */
 
 static bool ScanMultiOptArg( const char * arg )
 /*********************************************/

@@ -41,26 +41,8 @@
 
 #define MAX_OPEN_FILES          100
 
-static int              openFileList[ MAX_OPEN_FILES ];
-
-extern  long            FileShift;
-
-#ifndef WR_COMPILED
-struct WResRoutines WResRtns = {
-    RcOpen,         /* from above */
-    RcClose,
-    RcWrite,
-    RcRead,
-    RcSeek,
-    RcTell,
-    RcMemMalloc,    /* from rcmem.h */
-    RcMemFree
-};
-#endif
-
-
-#define RC_MAX_FILES   20
-#define RC_BUFFER_SIZE 0x4000   /* 16k */
+#define RC_MAX_FILES            20
+#define RC_BUFFER_SIZE          0x4000   /* 16k */
 
 typedef struct RcBuffer {
     int         Count;          /* number of characters in buffer */
@@ -101,9 +83,11 @@ typedef struct RcFileEntry {
     RcBuffer *  Buffer;          // If NULL, entry is a normal file (not used yet)
 } RcFileEntry;
 
-static RcFileEntry RcFileList[ RC_MAX_FILES ];
+extern  long            FileShift;
 
-static int RcFindIndex(int fileno );
+static int              openFileList[ MAX_OPEN_FILES ];
+static RcFileEntry      RcFileList[ RC_MAX_FILES ];
+static int              RcFindIndex(int fileno );
 
 static RcBuffer * NewRcBuffer( void )
 /***********************************/

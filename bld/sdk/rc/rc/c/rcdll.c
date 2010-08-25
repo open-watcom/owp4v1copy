@@ -31,7 +31,6 @@
 
 
 #include <stdio.h>
-#include <setjmp.h>
 #include <string.h>
 #include <stdarg.h>
 #include <malloc.h>
@@ -60,7 +59,6 @@
 static IDECBHdl         cbHandle;
 static IDECallBacks    *cbList;
 static IDEInitInfo     *initInfo;
-jmp_buf                 DLL_JumpPt;
 char                    ImageName[ _MAX_PATH ];
 
 /* forward declaration */
@@ -151,11 +149,7 @@ IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char *opts, IDEBool *
         argc ++;
     }
     argv[ argc ] = NULL;        // last element of the array must be NULL
-    ret = setjmp( DLL_JumpPt );
-    if( ret == 0 ) {
-        ret = Dllmain( argc, argv );
-    }
-
+    ret = Dllmain( argc, argv );
     flushPrintf();
     FreeGlobs();
     RcMemFree( argv );
@@ -175,6 +169,10 @@ void IDEDLL_EXPORT IDEFreeHeap( void )
 void IDEDLL_EXPORT IDEFiniDLL( IDEDllHdl hdl )
 /********************************************/
 {
+}
+
+void InitOutPutInfo( OutPutInfo *info ) {
+    info->flags = 0;
 }
 
 #define PRINTF_BUF_SIZE         2048
@@ -229,6 +227,7 @@ void setPrintInfo( IDEMsgInfo *buf, OutPutInfo *src, char *msg ) {
         }
     }
 }
+
 
 int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
 /*********************************************************************/

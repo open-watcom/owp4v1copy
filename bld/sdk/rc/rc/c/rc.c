@@ -55,6 +55,11 @@
 #ifdef DLL_COMPILE
 #include "rcdll.h"
 #endif
+#include "rcspawn.h"
+#include "iortns.h"
+
+
+WResSetRtns(RcOpen,RcClose,RcRead,RcWrite,RcSeek,RcTell,RcMemMalloc,RcMemFree);
 
 static bool CreatePreprocFile( void ) {
     int         hdl;
@@ -88,7 +93,7 @@ static bool CreatePreprocFile( void ) {
     return( error );
 }
 
-static int Pass1( void )
+static void Pass1( void )
 /**********************/
 {
     int     noerror;
@@ -112,16 +117,17 @@ static int Pass1( void )
         RcPass1IoShutdown();
         noerror = !ErrorHasOccured;
     }
-
-    return( noerror );
+    if( !noerror ) {
+        RCSuicide( 1 );
+    }
 } /* Pass1 */
 
 /* Please note that this function is vital to the resource editors. Thusly
  * any changes made to Pass2 should cause the notification of the
  * resource editor dude.
  */
-static int Pass2( void )
-/**********************/
+static void Pass2( void )
+/***********************/
 {
     int     noerror;
 
@@ -147,8 +153,9 @@ static int Pass2( void )
         }
         RcPass2IoShutdown( noerror );
     }
-
-    return( noerror );
+    if( !noerror ) {
+        RCSuicide( 1 );
+    }
 } /* Pass2 */
 
 #ifdef DLL_COMPILE
@@ -158,7 +165,7 @@ int main( int argc, char * argv[] )
 #endif
 /***************************************/
 {
-    bool    noerror;
+    int     rc = 0;
 
 #ifndef DLL_COMPILE
     RcMemInit();
@@ -169,19 +176,19 @@ int main( int argc, char * argv[] )
 #endif
     if( !InitRcMsgs( argv[0] ) ) return( 1 );
 
-    noerror = ScanParams( argc, argv );
-    if (!CmdLineParms.Quiet) {
+    rc = ( ScanParams( argc, argv ) == 0 );
+    if( !CmdLineParms.Quiet ) {
         RcIoPrintBanner();
     }
-    if (CmdLineParms.PrintHelp) {
+    if( CmdLineParms.PrintHelp ) {
         RcIoPrintHelp( argv[0] );
     }
 
-    if (noerror && !CmdLineParms.Pass2Only) {
-        noerror = Pass1();
+    if( rc == 0 && !CmdLineParms.Pass2Only ) {
+        rc = RCSpawn( Pass1 );
     }
-    if (noerror && !CmdLineParms.Pass1Only && !CmdLineParms.PreprocessOnly ) {
-        noerror = Pass2();
+    if( rc == 0 && !CmdLineParms.Pass1Only && !CmdLineParms.PreprocessOnly ) {
+        rc = RCSpawn( Pass2 );
     }
 
     FiniTable();
@@ -191,9 +198,9 @@ int main( int argc, char * argv[] )
     RcMemShutdown();
 #endif
 
-    if (noerror) {
-        return( 0 );
-    } else {
+    if( rc ) {
         return( 1 );
+    } else {
+        return( 0 );
     }
 } /* main */

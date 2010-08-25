@@ -33,6 +33,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 #include "wrmaini.h"
 #include "wrmsg.h"
 #include "wrcmsg.gh"
@@ -59,19 +60,44 @@ int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
 {
     int         err;
     va_list     args;
+    char        *fmt;
+    char        *p;
 
-    info = info;
     fp = fp;
-
-    va_start( args, format );
-    err = vsprintf( buf, format, args );
-    va_end( args );
-
-    if( err > 0 ) {
-        WRDisplayRCMsg ( buf );
+    p = buf;
+    if( info->flags & OUTFLAG_FILE ) {
+        err = sprintf( p, "%s(%d): ", info->file, info->lineno );
+        if( err < 0 )
+            return( err );
+        p += err;
     }
-
-    return( err );
+    switch( info->severity ) {
+    case SEV_WARNING:
+        fmt = "Warning! %d: ";
+        break;
+    case SEV_ERROR:
+        fmt = "Error! %d: ";
+        break;
+    case SEV_FATAL_ERR:
+        fmt = "Fatal Error! %d: ";
+        break;
+    default:
+        fmt = "%d: ";
+        break;
+    }
+    err = sprintf( p, fmt, info->errid );
+    if( err < 0 )
+        return( err );
+    p += err;
+    va_start( args, format );
+    err = vsprintf( p, format, args );
+    va_end( args );
+    if( err < 0 )
+        return( err );
+    p += err;
+    if( p > buf )
+        WRDisplayRCMsg ( buf );
+    return( p - buf );
 }
 
 int GetRcMsg( unsigned resid, char *buff, unsigned buff_len )
@@ -86,4 +112,3 @@ int GetRcMsg( unsigned resid, char *buff, unsigned buff_len )
 void InitOutPutInfo( OutPutInfo *info ) {
     info->flags = 0;
 }
-

@@ -47,7 +47,7 @@ WRC_USE_TRMEM = 1
 !endif
 
 objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj errors.obj         &
-        errprt.obj exeobj.obj exeres.obj exeres2.obj exerespe.obj       &
+        exeobj.obj exeres.obj exeres2.obj exerespe.obj       &
         exereslx.obj exelxobj.obj exeseg.obj exeutil.obj global.obj     &
         layer0.obj param.obj pass2.obj rc.obj rcio.obj                  &
         rcmem.obj rcstr.obj ppalloc.obj scan.obj scan2.obj semaccel.obj &
@@ -57,10 +57,12 @@ objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj errors.obj         &
         semraw.obj semsingl.obj semstr.obj dbtable.obj                  &
         preproc.obj ppexpr.obj ppmacro.obj tmpctl.obj autodep.obj       &
         rcldstr.obj rcalloc1.obj rcalloc0.obj sharedio.obj semresfl.obj &
-        semutil.obj leadbyte.obj
+        semutil.obj leadbyte.obj rcspawn.obj incdirs.obj
 
 !ifeq sys_dll 1
 objs += rcdll.obj libmain.obj idemsgpr.obj
+!else
+objs += errprt.obj
 !endif
 
 !ifdef incl_msgtext
@@ -142,7 +144,7 @@ $(name)e.exe : $(res_depends) $(objs) $(wres_lib)
         $(linker) $(lflags) name $^&.rex file { $(objs) } lib {$(wres_lib)}
         $(w32bind) $^&.rex $@ $(os2ldr)
         @rm -f $^&e.rex
-!else	
+!else
         $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
 !endif
 !ifndef incl_msgtext

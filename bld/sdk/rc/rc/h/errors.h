@@ -42,7 +42,6 @@ enum msg_num {
 #define MSG_LANG_SPACING        1000
 #include "rcmsg.gh"
 #endif
-#undef ERRITEM
 
 enum {
     INTERR_UNKNOWN_RCSTATUS,
