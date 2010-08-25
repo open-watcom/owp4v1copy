@@ -193,7 +193,6 @@ extern int              OSCorrupted( void );
 extern RET_T            TouchFile( const char *name );
 extern BOOLEAN          IdenticalAutoDepTimes( time_t, time_t );
 extern void             InitHardErr( void );
-extern DLL_CMD          *OSFindDLL( char const *cmd_name );
 extern void             OSLoadDLL( char *cmd, char *dll_name, char *ent_name );
 extern DLL_CMD          *OSFindDLL( char const *cmd_name );
 extern int              OSExecDLL( DLL_CMD *dll, char const *cmd_args );
