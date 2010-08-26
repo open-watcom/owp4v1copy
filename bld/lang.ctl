@@ -79,8 +79,8 @@ echo Bootstrapping compiler using GNU tools...
 #        DWARF must be done early so that DWARF library users are up-to-date
 [ INCLUDE <DEVDIR>/dwarf/lang.ctl ]
 #
-# Hack for build OW 1.9 by OW 1.8 
-# build new linker which is able to create executable 
+# Hack for build OW 1.9 by OW 1.8
+# build new linker which is able to create executable
 # format not available in OW 1.8 linker (RDOS target)
 [ INCLUDE <DEVDIR>/wl/prereq.ctl ]
 #
@@ -134,7 +134,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/plusplus/cpplib/lang.ctl ]
 [ INCLUDE <DEVDIR>/wclass/lang.ctl ]
 #        rtdll must be made after all other libraries
-[ INCLUDE <DEVDIR>/rtdll/lang.ctl ]
+#[ INCLUDE <DEVDIR>/rtdll/lang.ctl ]
 #
 #        Now let's build the utilities and other stuff
 #

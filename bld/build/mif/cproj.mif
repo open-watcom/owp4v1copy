@@ -11,7 +11,7 @@ bootstrapmode = 1
 !endif
 
 # define OW build windows version for Win32 platform
-# Now it is setup to 0x400 
+# Now it is setup to 0x400
 # to be OK for Windows 95 and Windows NT
 #
 !ifdef $(proj_name)_win32ver
@@ -457,17 +457,17 @@ inc_path        = $(inc_dirs) $(inc_dirs_$(host_os)) $(inc_dirs_sys) -I$(watcom_
 
 !endif
 
-rtdll_clib_os2_386     = $(rtdll_dir)/clib/os2.386/mf_r
-rtdll_clib_nt_386      = $(rtdll_dir)/clib/winnt.386/mf_r
+rtdll_clib_os2_386     = $(clib_dir)/rtdll/os2.386/mf_r
+rtdll_clib_nt_386      = $(clib_dir)/rtdll/winnt.386/mf_r
 
-rtdll_mathlib_os2_386  = $(rtdll_dir)/mathlib/os2.386/mf_r
-rtdll_mathlib_nt_386   = $(rtdll_dir)/mathlib/winnt.386/mf_r
+rtdll_mathlib_os2_386  = $(mathlib_dir)/rtdll/os2.386/mf_r
+rtdll_mathlib_nt_386   = $(mathlib_dir)/rtdll/winnt.386/mf_r
 
-rtdll_mathlib7_os2_386 = $(rtdll_dir)/mathlib/os2.387/mf_r
-rtdll_mathlib7_nt_386  = $(rtdll_dir)/mathlib/winnt.387/mf_r
+rtdll_mathlib7_os2_386 = $(mathlib_dir)/rtdll/os2.387/mf_r
+rtdll_mathlib7_nt_386  = $(mathlib_dir)/rtdll/winnt.387/mf_r
 
-rtdll_cpplib_os2_386   = $(rtdll_dir)/cpplib/os2.386/mf_r
-rtdll_cpplib_nt_386    = $(rtdll_dir)/cpplib/winnt.386/mf_r
+rtdll_cpplib_os2_386   = $(cpplib_dir)/rtdll/os2.386/mf_r
+rtdll_cpplib_nt_386    = $(cpplib_dir)/rtdll/winnt.386/mf_r
 
 rtdll_libpath = &
     $(rtdll_clib_$(host_os)_$(host_cpu)) &

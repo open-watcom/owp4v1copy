@@ -21,6 +21,8 @@ rtdll_host_os_linux   =linux
 host_OS=$(rtdll_host_os_$(system))
 
 !include cproj.mif
+!include deftarg.mif
+!include defrule.mif
 
 !include $(rtdll_dir)/dllname.mif
 !include $(rtdll_dir)/dllbase.mif
@@ -100,5 +102,3 @@ $(dllname).lnk : $(dll_def) $(__MAKEFILES__)
 version.res: ./genverrc.exe ../verinfo.rc
     $[@ ../verinfo.rc version.rc $$ $(dllname) $(patch_level)
     $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
-
-!include $(rtdll_dir)/clean.mif

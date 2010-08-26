@@ -105,6 +105,20 @@ cdsay .
     <CPCMD> winnt.386/mf_smt/plbxmt3s.lib        <RELROOT>/lib386/nt/
     <CPCMD> winnt.386/mf_smt/plibmt3s.lib        <RELROOT>/lib386/nt/
 
+    <CPCMD> rtdll/winnt.386/mf_r/plb*.lib       <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_r/plbrdll.lib    <RELROOT>/lib386/nt/plbrdllx.lib
+    <CPCMD> rtdll/winnt.386/mf_r/plb*.dll       <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_r/plb*.sym       <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_rd/plb*.lib      <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_rd/plbrdlld.lib  <RELROOT>/lib386/nt/plbrdlxd.lib
+    <CPCMD> rtdll/winnt.386/mf_rd/plb*.dll      <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_rp/plb*.lib      <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_rp/plb*.dll      <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_s/plb*.lib       <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_s/plbsdll.lib    <RELROOT>/lib386/nt/plbsdllx.lib
+    <CPCMD> rtdll/winnt.386/mf_s/plb*.dll       <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_s/plb*.sym       <RELROOT>/binnt/
+
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> os2.386/mf_r/plbx3r.lib              <RELROOT>/lib386/os2/
     <CPCMD> os2.386/mf_r/plib3r.lib              <RELROOT>/lib386/os2/
@@ -114,6 +128,18 @@ cdsay .
     <CPCMD> os2.386/mf_rmt/plibmt3r.lib          <RELROOT>/lib386/os2/
     <CPCMD> os2.386/mf_smt/plbxmt3s.lib          <RELROOT>/lib386/os2/
     <CPCMD> os2.386/mf_smt/plibmt3s.lib          <RELROOT>/lib386/os2/
+
+    <CPCMD> rtdll/os2.386/mf_r/plb*.lib         <RELROOT>/lib386/os2/
+    <CPCMD> rtdll/os2.386/mf_r/plbrdll.lib      <RELROOT>/lib386/os2/plbrdllx.lib
+    <CPCMD> rtdll/os2.386/mf_r/plb*.dll         <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_r/plb*.sym         <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_rd/plb*.lib        <RELROOT>/lib386/os2/
+    <CPCMD> rtdll/os2.386/mf_rd/plbrdlld.lib    <RELROOT>/lib386/os2/plbrdlxd.lib
+    <CPCMD> rtdll/os2.386/mf_rd/plb*.dll        <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_s/plb*.lib         <RELROOT>/lib386/os2/
+    <CPCMD> rtdll/os2.386/mf_s/plbsdll.lib      <RELROOT>/lib386/os2/plbsdllx.lib
+    <CPCMD> rtdll/os2.386/mf_s/plb*.dll         <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_s/plb*.sym         <RELROOT>/binp/dll/
 
   [ IFDEF (os_nov "") <2*> ]
     <CPCMD> complex/netware.386/ms_s/cplx3s.lib  <RELROOT>/lib386/netware/

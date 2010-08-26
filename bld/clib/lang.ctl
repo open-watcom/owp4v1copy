@@ -78,6 +78,16 @@ cdsay .
     <CPCMD> startup/library/os2.386/mf_r/binmode.obj        <RELROOT>/lib386/os2/binmode.obj
     <CPCMD> startup/library/os2.386/mf_r/commode.obj        <RELROOT>/lib386/os2/commode.obj
 
+    # run-time DLL version
+    <CPCMD> rtdll/os2.386/mf_r/clb*.lib                     <RELROOT>/lib386/os2/
+    <CPCMD> rtdll/os2.386/mf_r/clb*.dll                     <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_r/clb*.sym                     <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_rd/clb*.lib                    <RELROOT>/lib386/os2/
+    <CPCMD> rtdll/os2.386/mf_rd/clb*.dll                    <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_s/clb*.lib                     <RELROOT>/lib386/os2/
+    <CPCMD> rtdll/os2.386/mf_s/clb*.dll                     <RELROOT>/binp/dll/
+    <CPCMD> rtdll/os2.386/mf_s/clb*.sym                     <RELROOT>/binp/dll/
+
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> library/windows.086/mc/clibc.lib                <RELROOT>/lib286/win/clibc.lib
     <CPCMD> library/windows.086/ml/clibl.lib                <RELROOT>/lib286/win/clibl.lib
@@ -99,6 +109,18 @@ cdsay .
 
     <CPCMD> startup/library/winnt.386/mf_r/binmode.obj      <RELROOT>/lib386/nt/binmode.obj
     <CPCMD> startup/library/winnt.386/mf_r/commode.obj      <RELROOT>/lib386/nt/commode.obj
+
+    # run-time DLL version
+    <CPCMD> rtdll/winnt.386/mf_r/clb*.lib                   <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_r/clb*.dll                   <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_r/clb*.sym                   <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_rd/clb*.lib                  <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_rd/clb*.dll                  <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_rp/clb*.lib                  <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_rp/clb*.dll                  <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_s/clb*.lib                   <RELROOT>/lib386/nt/
+    <CPCMD> rtdll/winnt.386/mf_s/clb*.dll                   <RELROOT>/binnt/
+    <CPCMD> rtdll/winnt.386/mf_s/clb*.sym                   <RELROOT>/binnt/
 
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> library/linux.386/mf_r/clib3r.lib               <RELROOT>/lib386/linux/clib3r.lib
