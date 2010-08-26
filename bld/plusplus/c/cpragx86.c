@@ -757,32 +757,32 @@ static int insertFixups( VBUF *src_code )
 #endif
                 switch( fix->fixup_type ) {
                 case FIX_FPPATCH:
-                    *dst++ = fix->offset;
+                    dst[len++] = fix->offset;
                     break;
                 case FIX_SEG:
                     if( name == NULL ) {
                         // special case for floating point fixup
                         if( ( src[0] == 0x90 ) && ( src[1] == 0x9B ) ) {
                            // inline assembler FWAIT instruction 0x90, 0x9b
-                            *dst++ = FIX_FPP_WAIT;
+                            dst[len++] = FIX_FPP_WAIT;
                         } else if( src[0] == 0x9b && (src[1] & 0xd8) == 0xd8 ) {
                            // FWAIT as first byte and FPU instruction opcode as second byte
-                            *dst++ = FIX_FPP_NORMAL;
+                            dst[len++] = FIX_FPP_NORMAL;
                         } else if( src[0] == 0x9b && (src[2] & 0xd8) == 0xd8 ) {
                            // FWAIT as first byte and FPU instruction opcode as third byte
                            // second byte should be segment override prefix
                             switch( src[1] ) {
-                            case PREFIX_ES: *dst++ = FIX_FPP_ES;    break;
-                            case PREFIX_CS: *dst++ = FIX_FPP_CS;    break;
-                            case PREFIX_SS: *dst++ = FIX_FPP_SS;    break;
-                            case PREFIX_DS: *dst++ = FIX_FPP_DS;    break;
-                            case PREFIX_GS: *dst++ = FIX_FPP_GS;    break;
-                            case PREFIX_FS: *dst++ = FIX_FPP_FS;    break;
-                            default: --dst; break;  // skip FP patch
+                            case PREFIX_ES: dst[len++] = FIX_FPP_ES;    break;
+                            case PREFIX_CS: dst[len++] = FIX_FPP_CS;    break;
+                            case PREFIX_SS: dst[len++] = FIX_FPP_SS;    break;
+                            case PREFIX_DS: dst[len++] = FIX_FPP_DS;    break;
+                            case PREFIX_GS: dst[len++] = FIX_FPP_GS;    break;
+                            case PREFIX_FS: dst[len++] = FIX_FPP_FS;    break;
+                            default: --len; break;  // skip FP patch
                             }
                         } else {
                             // skip FP patch
-                            --dst;
+                            --len;
                         }
                     } else {
                         skip = 2;
