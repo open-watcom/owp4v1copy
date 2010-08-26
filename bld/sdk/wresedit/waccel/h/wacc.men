@@ -1,4 +1,4 @@
-WMainMenu MENU
+"WMainMenu" MENU
 BEGIN
     POPUP      sp( "&File",
                    "&File" )
@@ -63,7 +63,7 @@ BEGIN
     END
 END
 
-WSOMenu MENU
+"WSOMenu" MENU
 BEGIN
     POPUP      sp( "&File",
                    "&File" )

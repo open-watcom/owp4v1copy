@@ -60,4 +60,3 @@ Bool WDoesEditHaveFocus( void )
     focus = GetFocus();
     return( WIsEdit( focus ) );
 }
-

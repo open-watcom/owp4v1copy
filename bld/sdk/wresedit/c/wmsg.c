@@ -45,10 +45,10 @@ void WDisplayMsg( const char *msg )
 
     if( !MessageBox( (HWND) NULL, msg, title,
                      MB_ICONEXCLAMATION | MB_OK | MB_TASKMODAL ) ) {
-        MessageBeep(-1);
+        MessageBeep( -1 );
     }
 
-    if( title ) {
+    if( title != NULL ) {
         WFreeRCString( title );
     }
 }
@@ -81,11 +81,10 @@ void WDisplayErrorMsg( DWORD msg )
 
     if( !RCMessageBox( (HWND)NULL , msg, title,
                        MB_ICONEXCLAMATION | MB_OK | MB_TASKMODAL ) ) {
-        MessageBeep(-1);
+        MessageBeep( -1 );
     }
 
-    if( title ) {
+    if( title != NULL ) {
         WFreeRCString( title );
     }
 }
-

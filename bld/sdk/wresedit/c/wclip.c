@@ -73,7 +73,7 @@ Bool WGetClipData( HWND main, UINT fmt, void *_data, uint_32 *dsize )
     hclipdata = (HANDLE)NULL;
     clipbd_open = FALSE;
     mem = NULL;
-    ok = ( fmt && data && dsize );
+    ok = (fmt != 0 && data != NULL && dsize != NULL);
 
     if( ok ) {
         ok = OpenClipboard( main );
@@ -82,17 +82,17 @@ Bool WGetClipData( HWND main, UINT fmt, void *_data, uint_32 *dsize )
     if( ok ) {
         clipbd_open = TRUE;
         hclipdata = GetClipboardData( fmt );
-        ok = ( hclipdata != NULL );
+        ok = (hclipdata != NULL);
     }
 
     if( ok ) {
         mem = GlobalLock( hclipdata );
-        ok = ( mem != NULL );
+        ok = (mem != NULL);
     }
 
     if( ok ) {
         *dsize = (uint_32)GlobalSize( hclipdata );
-        ok = ( *dsize != 0 );
+        ok = (*dsize != 0);
     }
 
     if( ok ) {
@@ -104,7 +104,7 @@ Bool WGetClipData( HWND main, UINT fmt, void *_data, uint_32 *dsize )
 
     if( ok ) {
         *data = WMemAlloc( *dsize );
-        ok = ( *data != NULL );
+        ok = (*data != NULL);
     }
 
     if( ok ) {
@@ -112,7 +112,7 @@ Bool WGetClipData( HWND main, UINT fmt, void *_data, uint_32 *dsize )
     }
 
     if( !ok ) {
-        if( *data ) {
+        if( *data != NULL ) {
             WMemFree( *data );
             *data = NULL;
             *dsize = 0;
@@ -144,12 +144,12 @@ Bool WCopyClipData( HWND main, UINT fmt, void *data, uint_32 dsize )
     hmem = (HGLOBAL)NULL;
     mem = NULL;
 
-    ok = ( fmt && data && dsize );
+    ok = (fmt != 0 && data != NULL && dsize != 0);
 
     if( ok ) {
         inst = WGetEditInstance();
         hdsp_bitmap = LoadBitmap( inst, "PrivateFmt" );
-        ok = ( hdsp_bitmap != (HBITMAP)NULL );
+        ok = (hdsp_bitmap != (HBITMAP)NULL);
     }
 
     if( ok ) {
@@ -159,12 +159,12 @@ Bool WCopyClipData( HWND main, UINT fmt, void *data, uint_32 dsize )
     if( ok ) {
         clipbd_open = TRUE;
         hmem = GlobalAlloc( GMEM_MOVEABLE, dsize );
-        ok = ( hmem != (HGLOBAL)NULL );
+        ok = (hmem != (HGLOBAL)NULL);
     }
 
     if( ok ) {
         mem = GlobalLock( hmem );
-        ok = ( mem != NULL );
+        ok = (mem != NULL);
     }
 
     if( ok ) {
@@ -196,4 +196,3 @@ Bool WCopyClipData( HWND main, UINT fmt, void *data, uint_32 dsize )
 
     return( ok );
 }
-

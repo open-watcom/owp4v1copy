@@ -56,18 +56,18 @@
 /****************************************************************************/
 /* external function prototypes                                             */
 /****************************************************************************/
-extern BOOL WStatusWndProc ( HWND, unsigned, UINT, LONG );
+extern BOOL WStatusWndProc( HWND, unsigned, UINT, LONG );
 
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static Bool   WDisplayStatusText ( wstatbar * );
+static Bool WDisplayStatusText( wstatbar * );
 
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
-static int       WStatusDepth  = 0;
-static HFONT     WStatusFont   = NULL;
+static int      WStatusDepth  = 0;
+static HFONT    WStatusFont   = NULL;
 
 Bool WInitStatusLines( HINSTANCE inst )
 {
@@ -80,15 +80,15 @@ Bool WInitStatusLines( HINSTANCE inst )
     int                 point_size;
     Bool                use_default;
 
-    memset ( &lf, 0, sizeof(LOGFONT) );
-    dc = GetDC ( (HWND)NULL );
+    memset( &lf, 0, sizeof( LOGFONT ) );
+    dc = GetDC( (HWND)NULL );
     lf.lfWeight = FW_BOLD;
     use_default = TRUE;
 
     status_font = WAllocRCString( W_STATUSFONT );
-    if( status_font ) {
+    if( status_font != NULL ) {
         cp = (char *)_mbschr( (unsigned char const *)status_font, '.' );
-        if( cp ) {
+        if( cp != NULL ) {
             *cp = '\0';
             strcpy( lf.lfFaceName, status_font );
             cp++;
@@ -103,12 +103,12 @@ Bool WInitStatusLines( HINSTANCE inst )
         point_size = STATUS_POINTSIZE;
     }
 
-    lf.lfHeight = -MulDiv( point_size, GetDeviceCaps ( dc, LOGPIXELSY ), 72 );
-    WStatusFont = CreateFontIndirect ( &lf );
-    old_font = SelectObject ( dc, WStatusFont );
-    GetTextMetrics ( dc, &tm );
-    SelectObject ( dc, old_font );
-    ReleaseDC ( (HWND)NULL, dc );
+    lf.lfHeight = -MulDiv( point_size, GetDeviceCaps( dc, LOGPIXELSY ), 72 );
+    WStatusFont = CreateFontIndirect( &lf );
+    old_font = SelectObject( dc, WStatusFont );
+    GetTextMetrics( dc, &tm );
+    SelectObject( dc, old_font );
+    ReleaseDC( (HWND)NULL, dc );
 
     WStatusDepth = tm.tmHeight + STATUS_LINE_PAD + VERT_BORDER * 2;
 
@@ -119,59 +119,58 @@ Bool WInitStatusLines( HINSTANCE inst )
 
 void WFiniStatusLines( void )
 {
-    if( WStatusFont != (HFONT) NULL ) {
+    if( WStatusFont != (HFONT)NULL ) {
         DeleteObject( WStatusFont );
     }
 
     StatusWndFini();
 }
 
-int WGetStatusDepth ( void )
+int WGetStatusDepth( void )
 {
-    return ( WStatusDepth );
+    return( WStatusDepth );
 }
 
-void WResizeStatusWindows ( wstatbar *wsb, RECT *rect )
+void WResizeStatusWindows( wstatbar *wsb, RECT *rect )
 {
-    if ( wsb->win ) {
-        MoveWindow ( wsb->win, 0,
-                     max ( 0, (rect->bottom - rect->top) - WStatusDepth ),
-                     (rect->right - rect->left), WStatusDepth, TRUE );
+    if( wsb->win != NULL ) {
+        MoveWindow( wsb->win, 0, max( 0, (rect->bottom - rect->top) - WStatusDepth ),
+                    rect->right - rect->left, WStatusDepth, TRUE );
     }
 }
 
-void WDestroyStatusLine ( wstatbar *wsb )
+void WDestroyStatusLine( wstatbar *wsb )
 {
-    if ( wsb ) {
-        StatusWndDestroy ( wsb->stat );
-        WMemFree ( wsb );
+    if( wsb != NULL ) {
+        StatusWndDestroy( wsb->stat );
+        WMemFree( wsb );
     }
 }
 
-wstatbar *WCreateStatusLine ( HWND parent, HINSTANCE inst )
+wstatbar *WCreateStatusLine( HWND parent, HINSTANCE inst )
 {
-    wstatbar          *wsb;
-    RECT               rect;
-    status_block_desc  sbd;
+    wstatbar            *wsb;
+    RECT                rect;
+    status_block_desc   sbd;
 
-    wsb = (wstatbar *) WMemAlloc ( sizeof(wstatbar) );
-    if ( wsb ) {
-        wsb->stat = StatusWndStart ();
-        if ( !wsb->stat ) {
-            return ( NULL );
+    wsb = (wstatbar *)WMemAlloc( sizeof( wstatbar ) );
+    if( wsb != NULL ) {
+        wsb->stat = StatusWndStart();
+        if( wsb->stat == NULL ) {
+            return( NULL );
         }
     } else {
-        return ( NULL );
+        return( NULL );
     }
 
-    GetClientRect ( parent, &rect );
+    GetClientRect( parent, &rect );
 
     rect.top = rect.bottom - WStatusDepth;
 
-    sbd.separator_width   = STATUS_LINE_PAD;
-    sbd.width             = STATUS1_WIDTH;
-    sbd.width_is_percent  = FALSE;
-    sbd.width_is_pixels   = TRUE;
+    sbd.separator_width = STATUS_LINE_PAD;
+    sbd.width = STATUS1_WIDTH;
+    sbd.width_is_percent = FALSE;
+    sbd.width_is_pixels = TRUE;
 
     StatusWndSetSeparators( wsb->stat, 1, &sbd );
 
@@ -215,43 +214,43 @@ Bool WSetStatusByID( wstatbar *wsb, DWORD id1, DWORD id2 )
 
     ret = WSetStatusText( wsb, str1, str2 );
 
-    if( str1 ) {
+    if( str1 != NULL ) {
         WFreeRCString( str1 );
     }
 
-    if( str2 ) {
+    if( str2 != NULL ) {
         WFreeRCString( str2 );
     }
 
     return( ret );
 }
 
-Bool WSetStatusText ( wstatbar *wsb, const char *s1, const char *s2 )
+Bool WSetStatusText( wstatbar *wsb, const char *s1, const char *s2 )
 {
-    int            len;
-    int            pos;
-    WMenuEditInfo *einfo;
+    int             len;
+    int             pos;
+    WMenuEditInfo   *einfo;
 
-    if ( !wsb ) {
-        einfo = WGetCurrentEditInfo ();
-        if ( einfo ) {
+    if( wsb == NULL ) {
+        einfo = WGetCurrentEditInfo();
+        if( einfo != NULL ) {
             wsb = einfo->wsb;
-            if ( !wsb ) {
-                return ( FALSE );
+            if( wsb == NULL ) {
+                return( FALSE );
             }
         } else {
-            return ( FALSE );
+            return( FALSE );
         }
     }
 
-    if ( wsb->win == (HWND) NULL ) {
-        return ( TRUE );
+    if( wsb->win == (HWND)NULL ) {
+        return( TRUE );
     }
 
-    if ( s1 ) {
-        len = min ( strlen (s1), MAX_STATUS_TEXT );
-        if ( len ) {
-            memcpy ( wsb->text, s1, len );
+    if( s1 != NULL ) {
+        len = min( strlen( s1 ), MAX_STATUS_TEXT );
+        if( len != 0 ) {
+            memcpy( wsb->text, s1, len );
             pos = len;
         } else {
             wsb->text[0] = ' ';
@@ -261,49 +260,48 @@ Bool WSetStatusText ( wstatbar *wsb, const char *s1, const char *s2 )
         pos = 0;
     }
 
-    if ( s2 ) {
+    if( s2 != NULL ) {
         wsb->text[pos++] = STATUS_ESC_CHAR;
         wsb->text[pos++] = STATUS_NEXT_BLOCK;
-        len = min ( strlen (s2), MAX_STATUS_TEXT );
-        if ( len ) {
-            memcpy ( wsb->text+pos, s2, len );
-            wsb->text[pos+len] = '\0';
+        len = min( strlen( s2 ), MAX_STATUS_TEXT );
+        if( len != 0 ) {
+            memcpy( wsb->text + pos, s2, len );
+            wsb->text[pos + len] = '\0';
         } else {
             wsb->text[pos++] = ' ';
-            wsb->text[pos]   = '\0';
+            wsb->text[pos] = '\0';
         }
     } else {
         wsb->text[pos++] = '\0';
     }
 
-    if ( s1 || s2 ) {
-        return ( WDisplayStatusText ( wsb ) );
+    if( s1 != NULL || s2 != NULL ) {
+        return( WDisplayStatusText( wsb ) );
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
 
-BOOL WStatusWndProc ( HWND hWnd, unsigned msg, UINT wParam, LONG lParam )
+BOOL WStatusWndProc( HWND hWnd, unsigned msg, UINT wParam, LONG lParam )
 {
     /* touch unused vars to get rid of warning */
-    _wtouch(hWnd);
-    _wtouch(wParam);
-    _wtouch(lParam);
-    _wtouch(msg);
+    _wtouch( hWnd );
+    _wtouch( wParam );
+    _wtouch( lParam );
+    _wtouch( msg );
 
     return( FALSE );
 }
 
-Bool WDisplayStatusText ( wstatbar *wsb )
+Bool WDisplayStatusText( wstatbar *wsb )
 {
-    HDC    hdc;
+    HDC hdc;
 
-    hdc = GetDC ( wsb->win );
-    if ( hdc != (HDC)NULL ) {
-        StatusWndDrawLine ( wsb->stat, hdc, WStatusFont, wsb->text, -1 );
-        ReleaseDC ( wsb->win, hdc );
+    hdc = GetDC( wsb->win );
+    if( hdc != (HDC)NULL ) {
+        StatusWndDrawLine( wsb->stat, hdc, WStatusFont, wsb->text, -1 );
+        ReleaseDC( wsb->win, hdc );
     }
 
-    return ( TRUE );
+    return( TRUE );
 }
-

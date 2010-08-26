@@ -43,4 +43,3 @@ char *WResIDNameToStr( WResIDName *name )
 {
     return( WRWResIDNameToStr( name ) );
 }
-

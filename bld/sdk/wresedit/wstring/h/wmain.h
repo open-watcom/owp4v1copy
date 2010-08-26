@@ -46,13 +46,13 @@
 /****************************************************************************/
 /* function prototypes                                                      */
 /****************************************************************************/
-extern WStringEditInfo *WGetCurrentEditInfo     ( void );
-extern void             WSetCurrentEditInfo     ( WStringEditInfo * );
-extern HMENU            WGetMenuHandle          ( WStringEditInfo * );
-extern void             WResizeWindows          ( WStringEditInfo * );
-extern char            *WCreateEditTitle        ( WStringEditInfo * );
-extern void             WSetEditTitle           ( WStringEditInfo * );
-extern void             WHandleRename           ( WStringEditInfo *einfo );
-extern void CALLBACK    WStrHelpRoutine         ( void );
+extern WStringEditInfo  *WGetCurrentEditInfo( void );
+extern void             WSetCurrentEditInfo( WStringEditInfo * );
+extern HMENU            WGetMenuHandle( WStringEditInfo * );
+extern void             WResizeWindows( WStringEditInfo * );
+extern char             *WCreateEditTitle( WStringEditInfo * );
+extern void             WSetEditTitle( WStringEditInfo * );
+extern void             WHandleRename( WStringEditInfo *einfo );
+extern void CALLBACK    WStrHelpRoutine( void );
 
 #endif

@@ -46,21 +46,21 @@
 /****************************************************************************/
 typedef struct wstatbar {
     void    *stat;
-    char    text[2*MAX_STATUS_TEXT+2];
+    char    text[2 * MAX_STATUS_TEXT + 2];
     HWND    win;
 } wstatbar;
 
 /****************************************************************************/
 /* function prototypes                                                      */
 /****************************************************************************/
-extern Bool      WInitStatusLines     ( HINSTANCE );
-extern void      WFiniStatusLines     ( void );
-extern int       WGetStatusDepth      ( void );
-extern void      WResizeStatusWindows ( wstatbar *, RECT * );
-extern void      WDestroyStatusLine   ( wstatbar * );
-extern wstatbar *WCreateStatusLine    ( HWND, HINSTANCE );
-extern Bool      WSetStatusText       ( wstatbar *, const char *, const char * );
-extern Bool      WSetStatusReadyText  ( wstatbar *wsb );
-extern Bool      WSetStatusByID       ( wstatbar *wsb, DWORD id1, DWORD id2 );
+extern Bool     WInitStatusLines( HINSTANCE );
+extern void     WFiniStatusLines( void );
+extern int      WGetStatusDepth( void );
+extern void     WResizeStatusWindows( wstatbar *, RECT * );
+extern void     WDestroyStatusLine( wstatbar * );
+extern wstatbar *WCreateStatusLine( HWND, HINSTANCE );
+extern Bool     WSetStatusText( wstatbar *, const char *, const char * );
+extern Bool     WSetStatusReadyText( wstatbar *wsb );
+extern Bool     WSetStatusByID( wstatbar *wsb, DWORD id1, DWORD id2 );
 
 #endif
