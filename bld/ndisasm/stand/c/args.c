@@ -135,9 +135,9 @@ static char *skipToNextArg( char * cmd ) {
 
 static char *getFileName( char *start, char *following )
 {
-    int		length;
-    char *	name;
-    char *	tmp;
+    int         length;
+    char *      name;
+    char *      tmp;
 
     length = following - start;
     tmp = (char *) MemAlloc( length + 1 );
@@ -174,7 +174,7 @@ static void composeFileNames( bool list_file )
         ObjFileName = (char *) MemAlloc( length + strlen( OBJ_FILE_EXTENSION ) + 1 );
         _makepath( ObjFileName, drive, dir, file_name, OBJ_FILE_EXTENSION );
     } // else file name has an extension - leave as is
-#endif    
+#endif
     if( list_file ) {
         if( ListFileName == NULL ) {
             length = strlen( drive ) + strlen( dir ) + strlen( dir ) +
@@ -253,6 +253,9 @@ void HandleArgs( char *cmd )
                         case 'r':
                             DFormat ^= DFF_SYMBOLIC_REG;
                             ++cmd;
+                            break;
+                        case 'f':
+                            Options |= PRINT_FPU_EMU_FIXUP;
                             break;
                         case 'i':
                             DFormat ^= DFF_X86_ALT_INDEXING;

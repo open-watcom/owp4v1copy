@@ -46,6 +46,6 @@ extern orl_sec_offset   HandleRefInData( ref_entry, void *, bool );
 extern return_val       DumpASMDataFromSection( unsigned_8 *, orl_sec_offset,
                                                 orl_sec_offset, label_entry *,
                                                 ref_entry *, section_ptr );
-extern int              SkipRef( ref_entry );
+extern char             *SkipRef( ref_entry );
 
 #endif

@@ -164,8 +164,9 @@ typedef enum {
     FORM_ASM            = 0x01,
     PRINT_PUBLICS       = 0x01<<1,
     PRINT_EXTERNS       = 0x01<<2,
-    NODEMANGLE_NAMES    = 0x01<<3,
-    METAWARE_COMPATIBLE = 0x01<<4,
+    PRINT_FPU_EMU_FIXUP = 0x01<<3,
+    NODEMANGLE_NAMES    = 0x01<<4,
+    METAWARE_COMPATIBLE = 0x01<<5,
 } wd_options;
 
 typedef int_16 buffer_position;

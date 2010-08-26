@@ -85,12 +85,14 @@ write assembly instructions only to the listing file
 :CMT. UNIX-style assembly syntax
 .note e
 include list of external names
+.note ff
+print FPU emulator fixups as comment line
+.note fi
+use alternate indexing format [80(x)86 only]
 .note fp
 do not use instruction name pseudonyms
 .note fr
 do not use register name pseudonyms [Alpha only]
-.note fi
-use alternate indexing format [80(x)86 only]
 .note fu
 instructions/registers in upper case
 .note i=<char>
@@ -301,6 +303,34 @@ counter values indicating where the symbol is referenced.
 .np
 The "e" option is ignored when the "a" option is specified.
 .*
+.section The FPU emulator fixups Option - "ff"
+.*
+.np
+.ix '&discmdup options' 'ff'
+The "ff" option causes the FPU emulator fixups will be printed as
+comment line before Intel FPU instruction.
+.millust begin
+    ; FPU fixup FIDRQQ
+    fld         tbyte ptr [bx]
+.millust end
+.*
+.section The Alternate Addressing Form Option - "fi"
+.*
+.np
+.ix '&discmdup options' 'fi'
+The "fi" option causes an alternate syntactical form of the based or
+indexed addressing mode of the 80x86 to be used in an instruction.
+For example, the following form is used by default for Intel
+instructions.
+.millust begin
+mov ax,-2[bp]
+.millust end
+.pc
+If the "fi" option is specified, the following form is used.
+.millust begin
+mov ax,[bp-2]
+.millust end
+.*
 .section The No Instruction Name Pseudonyms Option - "fp"
 .*
 .np
@@ -319,23 +349,6 @@ By default, AXP register names are emitted in pseudonym form.
 The &wasname accepts register pseudonyms.
 The "fr" option instructs the &disname to display register names in
 their non-pseudonym form.
-.*
-.section The Alternate Addressing Form Option - "fi"
-.*
-.np
-.ix '&discmdup options' 'fi'
-The "fi" option causes an alternate syntactical form of the based or
-indexed addressing mode of the 80x86 to be used in an instruction.
-For example, the following form is used by default for Intel
-instructions.
-.millust begin
-mov ax,-2[bp]
-.millust end
-.pc
-If the "fi" option is specified, the following form is used.
-.millust begin
-mov ax,[bp-2]
-.millust end
 .*
 .section The Uppercase Instructions/Registers Option - "fu"
 .*

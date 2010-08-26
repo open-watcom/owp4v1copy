@@ -308,7 +308,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
                                  flags );
             }
             break;
-        
+
         case ORL_RELOC_TYPE_REL_32_NOADJ:
             // this is a little kluge because Brian's ELF files seem to have
             // -4 in the implicit addend for calls and such BBB May 09, 1997
@@ -535,6 +535,7 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
     scantab_ptr         st;
     int                 is_intel;
     sa_disasm_struct    sds;
+    char                *FPU_fixup;
 
     routineBase = 0;
     st = sec->scan;
@@ -582,8 +583,14 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
         }
         // data may not be listed in scan table, but a fixup at this offset will
         // give it away
-        while( data.r_entry &&
-              ( (data.r_entry->offset < data.loop) || SkipRef(data.r_entry)) ) {
+        while( data.r_entry && ( data.r_entry->offset < data.loop ) ) {
+            data.r_entry = data.r_entry->next;
+        }
+        FPU_fixup = NULL;
+        if( data.r_entry && data.r_entry->offset == data.loop
+          && (FPU_fixup = SkipRef( data.r_entry )) != NULL ) {
+            if( (Options & PRINT_FPU_EMU_FIXUP) == 0 )
+                FPU_fixup = NULL;
             data.r_entry = data.r_entry->next;
         }
         if( data.r_entry && ( data.r_entry->offset == data.loop ) ) {
@@ -620,6 +627,12 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
             }
         }
         DisFormat( &DHnd, &data, &decoded, DFormat, name, ops );
+        if( FPU_fixup != NULL ) {
+            if( !(DFormat & DFF_ASM) ) {
+                BufferStore( "%*s ", PREFIX_SIZE - 1, "" );
+            }
+            BufferStore( "    %sFPU fixup %s\n", CommentString, FPU_fixup );
+        }
         if( !(DFormat & DFF_ASM) ) {
             unsigned_64     *tmp_64;
             unsigned_32     *tmp_32;
@@ -630,11 +643,11 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
             tmp_16 = (unsigned_16 *)(contents + data.loop);
             if( DHnd.need_bswap ) {
                 switch( DisInsSizeInc( &DHnd ) ) {
-                //case 8: SWAP_64( *tmp_64 ); 
+                //case 8: SWAP_64( *tmp_64 );
                 //    break;
-                case 4: SWAP_32( *tmp_32 ); 
+                case 4: SWAP_32( *tmp_32 );
                     break;
-                case 2: SWAP_16( *tmp_16 ); 
+                case 2: SWAP_16( *tmp_16 );
                     break;
                 default:
                     break;

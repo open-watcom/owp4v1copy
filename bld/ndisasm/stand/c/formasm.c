@@ -875,13 +875,15 @@ return_val BssASMSection( section_ptr sec, orl_sec_size size, unsigned pass )
     }
 }
 
-int SkipRef( ref_entry r_entry )
+char *SkipRef( ref_entry r_entry )
 {
+    hash_data   *data_ptr;
+
     if( SkipRefTable && ( r_entry->label->type == LTYP_EXTERNAL_NAMED ) ) {
-        if( HashTableQuery( SkipRefTable,
-                            (hash_value)(r_entry->label->label.name) ) ) {
-            return( 1 );
+        data_ptr = HashTableQuery( SkipRefTable, (hash_value)(r_entry->label->label.name) );
+        if( data_ptr != NULL ) {
+            return( (char *)*data_ptr );
         }
     }
-    return( 0 );
+    return( NULL );
 }
