@@ -64,7 +64,7 @@ typedef struct {
 /* static function prototypes                                               */
 /****************************************************************************/
 static WHintItem    *WGetHintItem( int id );
-static void         WHandlePopupHint( wstatbar *, HMENU, HMENU );
+static void         WHandlePopupHint( WStatBar *, HMENU, HMENU );
 static DWORD        WGetPopupHint( WPopupHintItem *, int, HMENU );
 static Bool         WInitHintItems( int, HMENU, WPopupHintItem * );
 
@@ -106,7 +106,7 @@ static WPopupHintItem WPopupHints[] = {
 
 #define NUM_POPUPS (sizeof( WPopupHints ) / sizeof( WPopupHintItem ))
 
-void WHandleMenuSelect( wstatbar *wsb, HMENU menu, WPARAM wParam,
+void WHandleMenuSelect( WStatBar *wsb, HMENU menu, WPARAM wParam,
                         LPARAM lParam )
 {
     HMENU   popup;
@@ -133,7 +133,7 @@ void WHandleMenuSelect( wstatbar *wsb, HMENU menu, WPARAM wParam,
     }
 }
 
-void WDisplayHint( wstatbar *wsb, int id )
+void WDisplayHint( WStatBar *wsb, int id )
 {
     WHintItem *hint;
 
@@ -169,7 +169,7 @@ DWORD WGetPopupHint( WPopupHintItem *items, int num, HMENU popup )
     return( 0L );
 }
 
-void WHandlePopupHint( wstatbar *wsb, HMENU menu, HMENU popup )
+void WHandlePopupHint( WStatBar *wsb, HMENU menu, HMENU popup )
 {
     DWORD       hint;
 

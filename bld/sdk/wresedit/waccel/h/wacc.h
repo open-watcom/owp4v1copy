@@ -79,7 +79,7 @@ typedef struct WAccelEditInfo {
     int                 current_pos;
     HWND                win;
     HWND                edit_dlg;
-    wstatbar            *wsb;
+    WStatBar            *wsb;
     WToolBar            *ribbon;
     Bool                show_ribbon;
     char                *file_name;

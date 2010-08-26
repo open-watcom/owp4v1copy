@@ -61,7 +61,7 @@ extern BOOL WStatusWndProc( HWND, unsigned, UINT, LONG );
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static Bool WDisplayStatusText( wstatbar * );
+static Bool WDisplayStatusText( WStatBar * );
 
 /****************************************************************************/
 /* static variables                                                         */
@@ -131,7 +131,7 @@ int WGetStatusDepth( void )
     return( WStatusDepth );
 }
 
-void WResizeStatusWindows( wstatbar *wsb, RECT *rect )
+void WResizeStatusWindows( WStatBar *wsb, RECT *rect )
 {
     if( wsb->win != NULL ) {
         MoveWindow( wsb->win, 0, max( 0, (rect->bottom - rect->top) - WStatusDepth ),
@@ -139,7 +139,7 @@ void WResizeStatusWindows( wstatbar *wsb, RECT *rect )
     }
 }
 
-void WDestroyStatusLine( wstatbar *wsb )
+void WDestroyStatusLine( WStatBar *wsb )
 {
     if( wsb != NULL ) {
         StatusWndDestroy( wsb->stat );
@@ -147,13 +147,13 @@ void WDestroyStatusLine( wstatbar *wsb )
     }
 }
 
-wstatbar *WCreateStatusLine( HWND parent, HINSTANCE inst )
+WStatBar *WCreateStatusLine( HWND parent, HINSTANCE inst )
 {
-    wstatbar            *wsb;
+    WStatBar            *wsb;
     RECT                rect;
     status_block_desc   sbd;
 
-    wsb = (wstatbar *)WMemAlloc( sizeof( wstatbar ) );
+    wsb = (WStatBar *)WMemAlloc( sizeof( WStatBar ) );
     if( wsb != NULL ) {
         wsb->stat = StatusWndStart();
         if( wsb->stat == NULL ) {
@@ -188,13 +188,13 @@ wstatbar *WCreateStatusLine( HWND parent, HINSTANCE inst )
     return( wsb );
 }
 
-Bool WSetStatusReadyText( wstatbar *wsb )
+Bool WSetStatusReadyText( WStatBar *wsb )
 {
     WSetStatusText( wsb, NULL, "" );
     return( WSetStatusByID( wsb, W_READYMSG, -1 ) );
 }
 
-Bool WSetStatusByID( wstatbar *wsb, DWORD id1, DWORD id2 )
+Bool WSetStatusByID( WStatBar *wsb, DWORD id1, DWORD id2 )
 {
     char        *str1;
     char        *str2;
@@ -225,7 +225,7 @@ Bool WSetStatusByID( wstatbar *wsb, DWORD id1, DWORD id2 )
     return( ret );
 }
 
-Bool WSetStatusText( wstatbar *wsb, const char *s1, const char *s2 )
+Bool WSetStatusText( WStatBar *wsb, const char *s1, const char *s2 )
 {
     int             len;
     int             pos;
@@ -293,7 +293,7 @@ BOOL WStatusWndProc( HWND hWnd, unsigned msg, UINT wParam, LONG lParam )
     return( FALSE );
 }
 
-Bool WDisplayStatusText( wstatbar *wsb )
+Bool WDisplayStatusText( WStatBar *wsb )
 {
     HDC hdc;
 

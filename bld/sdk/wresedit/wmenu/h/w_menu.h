@@ -82,7 +82,7 @@ typedef struct WMenuEditInfo {
     HWND        win;
     HWND        edit_dlg;
     HWND        preview_window;
-    wstatbar    *wsb;
+    WStatBar    *wsb;
     WToolBar    *ribbon;
     Bool        show_ribbon;
     char        *file_name;
