@@ -52,16 +52,50 @@
 #include "preproc.h"
 #include "dbtable.h"
 #include "rclayer0.h"
-#ifdef DLL_COMPILE
-#include "rcdll.h"
-#endif
+#include "tmpctl.h"
+#include "loadstr.h"
 #include "rcspawn.h"
 #include "iortns.h"
 
 
 WResSetRtns(RcOpen,RcClose,RcRead,RcWrite,RcSeek,RcTell,RcMemMalloc,RcMemFree);
 
-static bool CreatePreprocFile( void ) {
+int InitGlobs( char *fname )
+/**************************/
+{
+    memset( &CmdLineParms, 0, sizeof( struct RCParams ) );
+    memset( &CurrResFile, 0, sizeof( RcResFileID ) );
+    memset( &Pass2Info, 0, sizeof( RcPass2Info ) );
+    NewIncludeDirs = NULL;
+    ErrorHasOccured = false;
+    memset( CharSet, 0, sizeof( CharSet ) );
+    memset( &Instance, 0, sizeof( HANDLE_INFO ) );
+    TmpCtlInitStatics();
+    Layer0InitStatics();
+    SemanticInitStatics();
+    ErrorInitStatics();
+    SharedIOInitStatics();
+    ScanInitStatics();
+    AutoDepInitStatics();
+    DbtableInitStatics();
+    LoadstrInitStatics();
+    WriteInitStatics();
+    PreprocVarInit();
+    PPMacroVarInit();
+    ParseInitStatics();
+    return( InitRcMsgs( fname ) );
+}
+
+void FiniGlobs( void )
+/********************/
+{
+    FiniTable();
+    FiniRcMsgs();
+    ScanParamShutdown();
+}
+
+static bool CreatePreprocFile( void )
+{
     int         hdl;
     bool        error;
     int         ch;
@@ -93,7 +127,7 @@ static bool CreatePreprocFile( void ) {
     return( error );
 }
 
-static void Pass1( void )
+static int Pass1( void )
 /**********************/
 {
     int     noerror;
@@ -117,17 +151,15 @@ static void Pass1( void )
         RcPass1IoShutdown();
         noerror = !ErrorHasOccured;
     }
-    if( !noerror ) {
-        RCSuicide( 1 );
-    }
-} /* Pass1 */
+    return( noerror );
+}
 
 /* Please note that this function is vital to the resource editors. Thusly
  * any changes made to Pass2 should cause the notification of the
  * resource editor dude.
  */
-static void Pass2( void )
-/***********************/
+static int Pass2( void )
+/**********************/
 {
     int     noerror;
 
@@ -153,54 +185,24 @@ static void Pass2( void )
         }
         RcPass2IoShutdown( noerror );
     }
-    if( !noerror ) {
-        RCSuicide( 1 );
-    }
-} /* Pass2 */
+    return( noerror );
+}
 
-#ifdef DLL_COMPILE
-int Dllmain( int argc, char * argv[] )
-#else
-int main( int argc, char * argv[] )
-#endif
-/***************************************/
+void RCmain( void )
+/*****************/
 {
-    int     rc = 0;
+    int     noerror = TRUE;
 
-#ifndef DLL_COMPILE
-    RcMemInit();
-    Layer0InitStatics();
 #if !defined(__UNIX__) && !defined(__OSI__) /* _grow_handles doesn't work yet */
     _grow_handles(100);
 #endif
-#endif
-    if( !InitRcMsgs( argv[0] ) ) return( 1 );
-
-    rc = ( ScanParams( argc, argv ) == 0 );
-    if( !CmdLineParms.Quiet ) {
-        RcIoPrintBanner();
+    if ( !CmdLineParms.Pass2Only) {
+        noerror = Pass1();
     }
-    if( CmdLineParms.PrintHelp ) {
-        RcIoPrintHelp( argv[0] );
+    if( noerror && !CmdLineParms.Pass1Only && !CmdLineParms.PreprocessOnly ) {
+        noerror = Pass2();
     }
-
-    if( rc == 0 && !CmdLineParms.Pass2Only ) {
-        rc = RCSpawn( Pass1 );
+    if( !noerror ) {
+        RCSuicide( 1 );
     }
-    if( rc == 0 && !CmdLineParms.Pass1Only && !CmdLineParms.PreprocessOnly ) {
-        rc = RCSpawn( Pass2 );
-    }
-
-    FiniTable();
-#ifndef DLL_COMPILE
-    ScanParamShutdown();
-    FiniRcMsgs();
-    RcMemShutdown();
-#endif
-
-    if( rc ) {
-        return( 1 );
-    } else {
-        return( 0 );
-    }
-} /* main */
+}

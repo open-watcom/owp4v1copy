@@ -30,21 +30,11 @@
 ****************************************************************************/
 
 
-#ifndef RCDLL_INCLUDED
-#define RCDLL_INCLUDED
+#include <stdio.h>
+#include "rcio.h"
 
-#include <setjmp.h>
-#include "idedll.h"
-
-#define RC_BUFFER_SIZE     1024
-
-extern char     ImageName[ _MAX_PATH ];
-
-extern int Dllmain( int argc, char *argv[] );
-IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char *opts, IDEBool *fatalerr );
-IDEBool IDEDLL_EXPORT IDEInitDLL( IDECBHdl hdl, IDECallBacks *cb, IDEDllHdl *info );
-unsigned IDEDLL_EXPORT IDEGetVersion( void );
-void IDEDLL_EXPORT IDEFiniDLL( IDEDllHdl hdl );
-
-#endif
-
+char *RcGetEnv( const char *name )
+/********************************/
+{
+    return( getenv( name ) );
+}

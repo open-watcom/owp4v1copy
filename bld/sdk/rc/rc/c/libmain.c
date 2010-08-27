@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DLL main procedure
 *
 ****************************************************************************/
 
@@ -36,43 +35,32 @@
 #else
 #include <windows.h>
 #endif
-#include "rcdll.h"
 
 #ifdef __NT__
 
 BOOL WINAPI LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
-/*********************************************************************/
+/**************************************************************/
 {
     inst = inst;
     reason = reason;
     ptr = ptr;
-
-    if( ImageName[0] == '\0' ) {
-        GetModuleFileName( inst, ImageName, sizeof( ImageName ) );
-    }
-
     return( TRUE );
 }
 
 #elif defined(__WINDOWS__)
 
-int WINAPI LibMain( HANDLE inst, WORD wDataSeg, WORD wHeapSize,
-                        LPSTR lpszCmdLine )
+int WINAPI LibMain( HANDLE inst, WORD wDataSeg, WORD wHeapSize, LPSTR lpszCmdLine )
+/*********************************************************************************/
 {
     wDataSeg = wDataSeg;
     wHeapSize = wHeapSize;
     lpszCmdLine = lpszCmdLine;
     inst = inst;
-
-    if( ImageName[0] == '\0' ) {
-        GetModuleFileName( inst, ImageName, sizeof( ImageName ) );
-    }
-
     return( 1 );
 }
 
 int WINAPI WEP( int res )
-/***************************/
+/***********************/
 {
     res = res;
 
@@ -81,7 +69,9 @@ int WINAPI WEP( int res )
 
 #else
 
-unsigned APIENTRY LibMain( unsigned hmod, unsigned termination ) {
+unsigned APIENTRY LibMain( unsigned hmod, unsigned termination )
+/**************************************************************/
+{
 /*
     if( termination != 0 ) {
         return( __dll_terminate() );

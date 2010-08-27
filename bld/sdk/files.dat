@@ -5,6 +5,9 @@
     type="e" dir="binnt"	usr="wrc.exe"	cond="wnttarg wintarg | os2targ | wnthost"
     type="e" dir="binl"	usr="wrc"	cond="wnttarg wintarg | os2targ | lnxhost"
     type="e" dir="axpnt"	usr="wrc.exe"	cond="alphahost" where="ac"
+    type="d" dir="binp/dll" usr="wrcd.dll"   cond="wnttarg wintarg | os2targ | os2host"
+    type="d" dir="binnt"    usr="wrcd.dll"   cond="wnttarg wintarg | os2targ | wnthost"
+
     type="e" dir="binnt" usr="mkcdpg.exe" cond="wnthost"
     type="e" dir="axpnt" usr="mkcdpg.exe" cond="alphahost" where="ac"
 
@@ -69,7 +72,7 @@
     type="d" dir="binw"	usr="fmedit.dll"	cond="winhost"	where="c f77"
     type="d" dir="binnt"	usr="fmedit.dll"	cond="wnthost"
     type="d" dir="axpnt"	usr="fmedit.dll"	cond="alphahost" where="ac"
-# .UNI files    
+# .UNI files
     type="s" dir="binw"	usr="kanji.uni"		where="c f77 ac" old="binb"
     type="s" dir="binw"	usr="1250.uni"		where="c f77 ac"
     type="s" dir="binw"	usr="1251.uni"		where="c f77 ac"

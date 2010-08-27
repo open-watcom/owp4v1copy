@@ -30,6 +30,6 @@
 ****************************************************************************/
 
 
-int InitRcMsgs( char *dllname );
-int GetRcMsg( unsigned, char *, unsigned );
-void FiniRcMsgs( void );
+extern int  InitRcMsgs( char * );
+extern int  GetRcMsg( unsigned, char *, unsigned );
+extern void FiniRcMsgs( void );

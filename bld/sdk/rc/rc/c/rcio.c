@@ -79,14 +79,6 @@
  extern char    *_Copyright;
 #endif
 
-#if !defined( DLL_COMPILE )
-extern char *RcGetEnv( const char *name )
-/****************************************/
-{
-    return( getenv( name ) );
-}
-#endif
-
 static void MakeTmpInSameDir( const char * dirfile, char * outfile, char * ext )
 /******************************************************************************/
 {

@@ -14,12 +14,10 @@ sys_windowed = 1
 .EXTENSIONS: .res .rc
 
 !ifeq host_os nt
-wspy_dll_prefix = nt
+dllname = ntspyhk
 !else
-wspy_dll_prefix = w
+dllname = wspyhk
 !endif
-
-dllname = $(wspy_dll_prefix)spyhk
 
 objs_win = spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj &
@@ -50,8 +48,7 @@ dll_debug_axp           = debug codeview
 
 extra_l_flags_win = option stack=9k, heapsize=2k lib $(dllname).lib
 
-extra_l_flags_nt  = option stack=100k option heapsize=2k &
-                    lib $(dllname).lib
+extra_l_flags_nt  = option stack=100k option heapsize=2k lib $(dllname).lib
 
 extra_l_flags     = option map
 !ifeq host_cpu  386

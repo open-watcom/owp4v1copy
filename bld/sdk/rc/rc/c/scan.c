@@ -41,7 +41,6 @@
 #include "scan.h"
 #include "keyword.h"
 #include "depend.h"
-//#include "rcdll.h"
 #include "errprt.h"
 
 #ifdef SCANDEBUG

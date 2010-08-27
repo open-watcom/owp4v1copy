@@ -24,58 +24,51 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  resource compiler mainline
 *
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#ifdef __WATCOMC__
+#include <process.h>
+#else
+#include "clibext.h"
+#endif
+#include "idedrv.h"
 
-#include "errprt.h"
 
-// these functions are in rcdll.c for the DLL version
-int RcMsgFprintf( FILE *fp, OutPutInfo *info, const char *format, ... )
+static IDEDRV info = {
+    "wrcd.dll"
+};
+
+int main( int count, char *args[] )
+/*********************************/
 {
-    int         err;
-    int         rc = 0;
-    va_list     args;
-    char        *fmt;
+    int retcode;
+#ifndef __UNIX__
+    int len;
+    char *cmd_line;
+#endif
 
-    if( info->flags & OUTFLAG_FILE ) {
-        err = fprintf( fp, "%s(%d): ", info->file, info->lineno );
-        if( err < 0 ) {
-            return( err );
-        }
-        rc += err;
+#ifndef __WATCOMC__
+    _argv = args;
+    _argc = count;
+#endif
+#ifndef __UNIX__
+    count = count;
+    args = args;
+    len = _bgetcmd( NULL, 0 ) + 1;
+    cmd_line = malloc( len );
+    _bgetcmd( cmd_line, len );
+    retcode = IdeDrvExecDLL( &info, cmd_line );
+    free( cmd_line );
+#else
+    retcode = IdeDrvExecDLLArgv( &info, count, args );
+#endif
+    if( retcode != IDEDRV_ERR_INIT_EXEC ) {
+        IdeDrvUnloadDLL( &info );               // UNLOAD THE DLL
     }
-    switch( info->severity ) {
-    case SEV_WARNING:
-        fmt = "Warning! %d: ";
-        break;
-    case SEV_ERROR:
-        fmt = "Error! %d: ";
-        break;
-    case SEV_FATAL_ERR:
-        fmt = "Fatal Error! %d: ";
-        break;
-    default:
-        fmt = "%d: ";
-        break;
-    }
-    err = fprintf( fp, fmt, info->errid );
-    if( err < 0 )
-        return( err );
-    rc += err;
-    va_start( args, format );
-    err = vfprintf( fp, format, args );
-    va_end( args );
-    if( err < 0 )
-        return( err );
-    return( rc + err );
-}
-
-void InitOutPutInfo( OutPutInfo *info ) {
-    info->flags = 0;
+    return( retcode );
 }

@@ -50,7 +50,10 @@ static char *StringTable[] = {
     #include "rc.msg"
 };
 
-int InitRcMsgs( char *dllname ) { return( 1 ); }
+int InitRcMsgs( char *fname )
+{
+    return( 1 );
+}
 
 int GetRcMsg( unsigned resid, char *buff, unsigned buff_len )
 {
@@ -66,51 +69,41 @@ void FiniRcMsgs( void ) {}
 
 static unsigned MsgShift;
 
-int InitRcMsgs( char *dllname )
+int InitRcMsgs( char *fname )
 {
     int         error;
-    char        fname[_MAX_PATH];
     WResFileID  (*oldopen) (const char *, int, ...);
+    char        testbuf[1];
 
     error = FALSE;
-#ifdef DLL_COMPILE
-    if( dllname == NULL ) {
-#else
-    dllname = dllname; // get rid of unref'd warning
-    if( _cmdname( fname ) == NULL ) {
-#endif
+
+    Instance.filename = fname;
+
+    /* swap open functions so this file handle is not buffered.
+        * This makes it easier for layer0 to fool WRES into thinking
+        * that the resource information starts at offset 0 */
+    oldopen = WResRtns.open;
+    WResRtns.open = open;
+    OpenResFile( &Instance );
+    WResRtns.open = oldopen;
+
+    if( Instance.handle == -1 )
         error = TRUE;
-    } else {
-#ifdef DLL_COMPILE
-        strcpy( fname, dllname );
-#endif
-        Instance.filename = fname;
-
-        /* swap open functions so this file handle is not buffered.
-         * This makes it easier for layer0 to fool WRES into thinking
-         * that the resource information starts at offset 0 */
-        oldopen = WResRtns.open;
-        WResRtns.open = open;
-        OpenResFile( &Instance );
-        WResRtns.open = oldopen;
-
-        if( Instance.handle == -1 ) error = TRUE;
-        if( !error ) {
-            RegisterOpenFile( Instance.handle );
-            error = FindResources( &Instance );
-        }
-        if( !error ) {
-            error = InitResources( &Instance );
-        }
-        MsgShift = WResLanguage() * MSG_LANG_SPACING;
-        if( !error && !GetRcMsg( USAGE_MSG_FIRST, fname, sizeof( fname ) ) ) {
-            error = TRUE;
-        }
+    if( !error ) {
+        RegisterOpenFile( Instance.handle );
+        error = FindResources( &Instance );
+    }
+    if( !error ) {
+        error = InitResources( &Instance );
+    }
+    MsgShift = WResLanguage() * MSG_LANG_SPACING;
+    if( !error && !GetRcMsg( USAGE_MSG_FIRST, testbuf, sizeof( testbuf ) ) ) {
+        error = TRUE;
     }
     if( error ) {
-        if( Instance.handle != -1 ) CloseResFile( &Instance );
+        if( Instance.handle != -1 )
+            CloseResFile( &Instance );
         RcFatalError( ERR_RCSTR_NOT_FOUND );
-//      return( 0 );
     }
     return( 1 );
 }
@@ -124,7 +117,8 @@ int GetRcMsg( unsigned resid, char *buff, unsigned buff_len )
     return( 1 );
 }
 
-void FiniRcMsgs( void ) {
+void FiniRcMsgs( void )
+{
     CloseResFile( &Instance );
 }
 

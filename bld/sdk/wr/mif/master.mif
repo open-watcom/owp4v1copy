@@ -34,13 +34,13 @@ object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
             wrrnames.obj wrhash.obj wredit.obj wrutil.obj &
             $(trmem_objs) &
             preproc.obj ppexpr.obj ppmacro.obj &
-            rcerrprt.obj &
+            rcerrprt.obj rcgetenv.obj &
             wrstubs.obj &
             pass2.obj exeseg.obj exeres.obj rcstr.obj ppalloc.obj &
             exeutil.obj exeobj.obj exerespe.obj rcio.obj semutil.obj &
             global.obj semstr.obj semsingl.obj semantic.obj semraw.obj &
-            errors.obj tmpctl.obj autodep.obj layer0.obj param.obj &
-            dbtable.obj sharedio.obj rcspawn.obj incdirs.obj
+            errors.obj tmpctl.obj autodep.obj layer0.obj incdirs.obj &
+            dbtable.obj sharedio.obj rcspawn.obj
 
 msgfiles = $(wrc_dir)/h/rc.msg ../h/wr.msg
 
@@ -49,41 +49,7 @@ extra_c_flags     = -DWIN_GUI -DWR_COMPILED -s
 extra_c_flags_win = -zu-zw-zc
 
 # wr objects
-extra_c_flags_rcerrprt = -fh
-extra_c_flags_wrmain = -fh
 extra_c_flags_wrmem = -bd $(trmem_cover_cflags)
-extra_c_flags_wrmsg = -fh
-extra_c_flags_wrfindt = -fh
-extra_c_flags_wrtmpfil = -fh
-extra_c_flags_wrrdw16 = -fh
-extra_c_flags_wrrdwnt = -fh
-extra_c_flags_wrrdres = -fh
-extra_c_flags_wrimg = -fh
-extra_c_flags_wrsvexe = -fh
-extra_c_flags_wrsvres = -fh
-extra_c_flags_wridfile = -fh
-extra_c_flags_wrinfo = -fh
-extra_c_flags_wrstrdup = -fh
-extra_c_flags_wrrcmem = -fh
-extra_c_flags_wrlist = -fh
-extra_c_flags_wrdel = -fh
-extra_c_flags_wrstr = -fh
-extra_c_flags_wrclean = -fh
-extra_c_flags_wrdata = -fh
-extra_c_flags_wrnamoor = -fh
-extra_c_flags_wrwresid = -fh
-extra_c_flags_wrselft = -fh
-extra_c_flags_wrmemf = -fh
-extra_c_flags_wrdmsg = -fh
-extra_c_flags_wrctl3d = -fh
-extra_c_flags_wrbitmap = -fh
-extra_c_flags_wricon = -fh
-extra_c_flags_wr_wres = -fh
-extra_c_flags_wrselimg = -fh
-extra_c_flags_wrrnames = -fh
-extra_c_flags_wrhash = -fh
-extra_c_flags_wredit = -fh
-extra_c_flags_wrutil = -fh
 
 extra_c_flags_trmem = $(trmem_cflags)
 

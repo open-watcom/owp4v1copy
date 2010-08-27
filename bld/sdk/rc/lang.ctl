@@ -37,16 +37,24 @@ cdsay .
 
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> <PROJDIR>/rc/dos386/wrce.exe        <RELROOT>/binw/wrc.exe
+    <CPCMD> <PROJDIR>/rc/dos386/wrce.sym        <RELROOT>/binw/wrc.sym
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <PROJDIR>/rc/os2386/wrce.exe        <RELROOT>/binp/wrc.exe
-    <CPCMD> <PROJDIR>/rc/os2386.dll/wrce.dll    <RELROOT>/binp/dll/wrc.dll
+    <CPCMD> <PROJDIR>/rc/os2386.dll/wrce.exe    <RELROOT>/binp/wrc.exe
+    <CPCMD> <PROJDIR>/rc/os2386.dll/wrce.sym    <RELROOT>/binp/wrc.sym
+    <CPCMD> <PROJDIR>/rc/os2386.dll/wrcde.dll   <RELROOT>/binp/dll/wrcd.dll
+    <CPCMD> <PROJDIR>/rc/os2386.dll/wrcde.sym   <RELROOT>/binp/dll/wrcd.sym
     <CPCMD> <PROJDIR>/exedmp/os2386/exedmp.exe  <RELROOT>/binp/exedmp.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <PROJDIR>/rc/nt386/wrce.exe         <RELROOT>/binnt/wrc.exe
-    <CPCMD> <PROJDIR>/rc/nt386.dll/wrce.dll     <RELROOT>/binnt/wrc.dll
-    <CPCMD> <PROJDIR>/rc/nt386rt.dll/wrce.dll   <RELROOT>/binnt/rtdll/wrc.dll
+    <CPCMD> <PROJDIR>/rc/nt386.dll/wrce.exe     <RELROOT>/binnt/wrc.exe
+    <CPCMD> <PROJDIR>/rc/nt386.dll/wrce.sym     <RELROOT>/binnt/wrc.sym
+    <CPCMD> <PROJDIR>/rc/nt386.dll/wrcde.dll    <RELROOT>/binnt/wrcd.dll
+    <CPCMD> <PROJDIR>/rc/nt386.dll/wrcde.sym    <RELROOT>/binnt/wrcd.sym
+    <CPCMD> <PROJDIR>/rc/nt386rt.dll/wrce.exe   <RELROOT>/binnt/rtdll/wrc.exe
+    <CPCMD> <PROJDIR>/rc/nt386rt.dll/wrce.sym   <RELROOT>/binnt/rtdll/wrc.sym
+    <CPCMD> <PROJDIR>/rc/nt386rt.dll/wrcde.dll  <RELROOT>/binnt/rtdll/wrcd.dll
+    <CPCMD> <PROJDIR>/rc/nt386rt.dll/wrcde.sym  <RELROOT>/binnt/rtdll/wrcd.sym
     <CPCMD> <PROJDIR>/mkcdpg/nt386/mkcdpg.exe   <RELROOT>/binnt/mkcdpg.exe
     <CPCMD> <PROJDIR>/exedmp/nt386/exedmp.exe   <RELROOT>/binnt/exedmp.exe
 
