@@ -85,9 +85,14 @@ wcl_util_opts = $(def_fpu_flags_$(host_os)_$(host_cpu)) -ox -w8 -fo=.obj -fe=$^@
 wcl_util_opts = $(def_fpu_flags_$(host_os)_$(host_cpu)) -ox -w8 -fe=$^@
 !endif
 
-#common bootstrap definitions for Linux
-!ifdef __LINUX__
+# bootstrap overrides
+######################
 !ifdef bootstrap
+
+#
+# common bootstrap definitions for Linux
+#
+!ifdef __LINUX__
 
 cc = gcc
 cpp = gcc
@@ -122,19 +127,17 @@ $(cppflags_$(host_cpu)) -D_WCUNALIGNED="__attribute__((packed))" &
 cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -pipe -O -o $@
 
 # options for single source utility compilations
-wcl_util_opts = $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
+wcl_util_opts = $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@
 
 # options for linking via cc
 clflags = -o $@
 cl_objs = clibext.obj
 .c : $(watcom_dir)/c
 
-!endif
-!endif
-
-#common definitions for targeting QNX Neutrino
-!ifeq host_os nto
-!ifdef bootstrap
+#
+# common definitions for targeting QNX Neutrino
+#
+!else ifeq host_os nto
 
 cc = qcc
 cpp = qcc
@@ -168,7 +171,7 @@ cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -pipe -O -o $@
 
 !ifdef __QNX__
 # options for single source utility compilations
-wcl_util_opts = $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
+wcl_util_opts = $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@
 !endif
 
 # options for linking via cc
@@ -177,4 +180,6 @@ cl_objs = clibext.obj
 .c : $(watcom_dir)/c
 
 !endif
+
 !endif
+######################

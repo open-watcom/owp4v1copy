@@ -5,9 +5,7 @@ proj_name       = wlib
 wlib_autodepends = .AUTODEPEND
 !endif
 
-!ifdef bootstrap
-no_libs    = 1
-!else ifdef prebuild
+!if defined(bootstrap) || defined(prebuild)
 no_libs    = 1
 !else ifeq release 0
 wlib_trmem = 1
@@ -70,44 +68,24 @@ common_objs = &
 !ifdef no_libs
 common_objs += $(orl_objs)
 !endif
-
-drv_objs = maindrv.obj idedrv.obj idemsgfm.obj
-
-exe_objs = maindrv.obj idedrv.obj idemsgfm.obj
+!ifdef bootstrap
+common_objs += clibext.obj
+!endif
 
 dll_objs_nt = ntdll.obj
 dll_objs_os2 = os2dll.obj
 
-dll_objs = $(dll_objs_$(host_os))
-
-comp_objs_exe = $(common_objs) $(exe_objs)
-comp_objs_dll = $(common_objs) $(dll_objs)
-
-external_dependencies = $(xlibs)
-!ifeq host_os osi
-external_dependencies += $(os2ldr)
-!endif
-
-!ifdef no_libs
-depends_exe = $(comp_objs_exe) $(external_dependencies)
-depends_dll = $(comp_objs_dll) $(external_dependencies)
-!else
-depends_exe = msg.gh wlib.res $(comp_objs_exe) $(external_dependencies)
-depends_dll = msg.gh $(comp_objs_dll) $(external_dependencies)
-!endif
-depends_drv = $(drv_objs)
+drv_objs = maindrv.obj idedrv.obj idemsgfm.obj
+exe_objs = $(common_objs) $(drv_objs)
+dll_objs = $(common_objs) $(dll_objs_$(host_os))
 
 #########
 # cflags
 
+extra_c_flags =
 !ifdef no_libs
 extra_c_flags += -DINCL_MSGTEXT
 !endif
-
-!ifeq release 0
-extra_c_flags += -D__DEBUG__
-!endif
-
 !ifndef wlib_dll
 extra_c_flags += -DIDE_PGM
 !endif
@@ -153,28 +131,36 @@ inc_dirs += -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h"
 .h: $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;
 !endif
 
-
-!ifdef bootstrap
-defines = -DIDE_PGM -D__stdcall=
-comp_objs_exe += clibext.obj
+!ifndef no_libs
+xlibs = $(wres_lib) $(orl_lib)
 !endif
 
+!ifeq host_os osi
+external_dependencies = $(os2ldr)
+!endif
+
+depends_drv = $(drv_objs) wlibd.lib drv.lnk
 !ifdef no_libs
-xlibs =
+depends_exe = $(exe_objs) $(external_dependencies)
+depends_dll = $(dll_objs) $(external_dependencies) dll.lnk
 !else
-xlibs += $(wres_lib) $(orl_lib)
+depends_exe = msg.gh wlib.res $(exe_objs) $(xlibs) $(external_dependencies)
+depends_dll = msg.gh wlib.res $(dll_objs) $(xlibs) $(external_dependencies) dll.lnk
+!endif
+!ifndef bootstrap
+depends_exe += exe.lnk
 !endif
 
 !ifdef wlib_dll
 
-wlib.exe: $(depends_drv) wlibd.lib drv.lnk
+wlib.exe: $(depends_drv) $(__MAKEFILES__)
     $(linker) name $@ @drv.lnk
 
 !else
 
-wlib.exe: $(depends_exe) exe.lnk
+wlib.exe: $(depends_exe) $(__MAKEFILES__)
 !ifdef bootstrap
-    $(cc) -g -o $@ $(comp_objs_exe) $(xlibs)
+    $(cc) -g -o $@ $(exe_objs) $(xlibs)
 !else ifeq host_os osi
     $(linker) name $^&.rex @exe.lnk
     $(w32bind) $^&.rex $@ $(os2ldr)
@@ -188,18 +174,23 @@ wlib.exe: $(depends_exe) exe.lnk
 
 !endif
 
-wlibd.dll: msg.gh $(depends_dll) $(version_res_$(host_os)_$(host_cpu)) wlib.res dll.lnk
+wlibd.dll: $(depends_dll) $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
     $(linker) name $@ @dll.lnk
 !ifdef version_res_$(host_os)_$(host_cpu)
     $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
+!ifndef no_libs
     wstrip -q -a -r $@ . wlib.res
+!endif
 
 wlibd.lib: wlibd.dll
     $(librarian) $(libflags) +$[@
 
 drv.lnk : $(__MAKEFILES__)
     @%write $@ $(lflags)
+!ifdef wlib_rtdll
+    @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
     @for %i in ($(drv_objs)) do @%append $@ file %i
     @%append $@ lib wlibd.lib
 
@@ -208,7 +199,7 @@ exe.lnk : $(__MAKEFILES__)
 !ifdef wlib_rtdll
     @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
 !endif
-    @for %i in ($(comp_objs_exe)) do @%append $@ file %i
+    @for %i in ($(exe_objs)) do @%append $@ file %i
     @for %i in ($(xlibs)) do @%append $@ lib %i
 
 dll.lnk : $(__MAKEFILES__)
@@ -216,7 +207,7 @@ dll.lnk : $(__MAKEFILES__)
 !ifdef wlib_rtdll
     @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
 !endif
-    @for %i in ($(comp_objs_dll)) do @%append $@ file %i
+    @for %i in ($(dll_objs)) do @%append $@ file %i
     @for %i in ($(xlibs)) do @%append $@ lib %i
 
 ./mkstr.exe : ../mkstr.c ../wlib.msg

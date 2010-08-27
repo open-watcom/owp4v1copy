@@ -3,8 +3,13 @@ name = wrc
 
 dll_name = wrcd
 
-!if defined(bootstrap) || defined(prebuild)
+!ifdef bootstrap
 incl_msgtext = 1
+!else ifdef prebuild
+incl_msgtext = 1
+!endif
+
+!ifdef incl_msgtext
 !ifdef wrc_dll
 !undef wrc_dll
 !endif
@@ -67,35 +72,28 @@ objs_drv = maindrv.obj idedrv.obj idemsgfm.obj
 objs_dll = $(common_objs)
 objs_exe = $(common_objs) $(objs_drv)
 
-
-!ifdef incl_msgtext
-res_depends =
-!else
-res_depends = rcmsg.gh wrc.res
-!endif
-
 !ifeq release 0
 splice_opts = -kDEBUG
 !endif
 
-# defines
-#########
-defines     = -DYYDEBUG -DSCANDEBUG
+# global defines
+################
+rc_defines     = -DYYDEBUG -DSCANDEBUG
 !ifdef incl_msgtext
-defines    += -DINCL_MSGTEXT
-!endif
-!ifeq host_os nt
-defines    += -DNT_HOSTED
-!endif
-!if !defined(wrc_dll) && !defined(wrc_rtdll)
-defines    += -DIDE_PGM
+rc_defines    += -DINCL_MSGTEXT
 !endif
 
 # cflags stuff
 ###############
-extra_c_flags    = $(defines)
+extra_c_flags   = $(rc_defines)
+!ifeq host_os nt
+extra_c_flags   += -DNT_HOSTED
+!endif
+!ifndef wrc_dll
+extra_c_flags   += -DIDE_PGM
+!endif
 
-!if defined(wrc_dll) || defined(wrc_rtdll)
+!ifdef wrc_dll
 extra_c_flags_ideentry = -bd
 !endif
 extra_c_flags_rcalloc0 = $(TRACK_MEM_OPTS)
@@ -134,16 +132,28 @@ inc_dirs = -I. -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(fe_misc_dir)/h" -I"$(cpp_
 
 xlibs = $(wres_lib)
 
+depends_drv = $(objs_drv) $(dll_name).lib drv.lnk
+!ifdef incl_msgtext
+depends_dll = $(objs_dll) $(xlibs) dll.lnk
+depends_exe = $(objs_exe) $(xlibs)
+!else
+depends_dll = rcmsg.gh $(name).res $(objs_dll) $(xlibs) dll.lnk
+depends_exe = rcmsg.gh $(name).res $(objs_exe) $(xlibs)
+!endif
+!ifndef bootstrap
+depends_exe += exe.lnk
+!endif
+
 # explicit rules
 
-!if defined(wrc_dll) || defined(wrc_rtdll)
+!ifdef wrc_dll
 
-$(name)e.exe : $(objs_drv) $(dll_name).lib drv.lnk $(__MAKEFILES__)
+$(name)e.exe : $(depends_drv) $(__MAKEFILES__)
         $(linker) name $@ @drv.lnk
 
 !else
 
-$(name)e.exe : $(res_depends) $(objs_exe) $(xlibs) exe.lnk $(__MAKEFILES__)
+$(name)e.exe : $(depends_exe) $(__MAKEFILES__)
 !ifdef bootstrap
         $(cc) -o $@ $(objs_exe) $(xlibs)
 !else ifeq host_os osi
@@ -159,18 +169,23 @@ $(name)e.exe : $(res_depends) $(objs_exe) $(xlibs) exe.lnk $(__MAKEFILES__)
 
 !endif
 
-$(dll_name)e.dll : $(res_depends) $(objs_dll) $(xlibs) $(version_res_$(host_os)_$(host_cpu)) dll.lnk $(__MAKEFILES__)
+$(dll_name)e.dll : $(depends_dll) $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
         $(linker) name $@ @dll.lnk
 !ifdef version_res_$(host_os)_$(host_cpu)
         $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
+!ifndef incl_msgtext
         wstrip -q -a -r $@ . $(name).res
+!endif
 
 $(dll_name).lib : $(dll_name)e.dll
         $(librarian) $(libflags) +$[@
 
 drv.lnk : $(__MAKEFILES__)
         @%write $@ $(lflags)
+!ifdef wrc_rtdll
+        @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
         @for %i in ($(objs_drv)) do @%append $@ file %i
         @%append $@ lib $(dll_name).lib
 
@@ -225,7 +240,7 @@ rcmsg.gh : rcmsg1.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 $(name).res : ../rc.rc rcmsg.gh .AUTODEPEND
-        $(rc_aui) -ad $(extra_rc_flags_$(host_os)) $(defines) -I../h $[@ -fo=$^@
+        $(rc_aui) -ad $(extra_rc_flags_$(host_os)) $(rc_defines) -I../h $[@ -fo=$^@
 
 keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND
 
