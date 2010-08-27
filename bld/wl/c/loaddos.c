@@ -135,6 +135,7 @@ static unsigned long WriteDOSData( unsigned_32 mz_hdr_size )
     Root->sect_addr = Groups->grp_addr;
 
 /* write groups and relocations */
+    root_size = 0;
     for( group = Groups; group != NULL; ) {
         sect = group->section;
         CurrSect = sect;

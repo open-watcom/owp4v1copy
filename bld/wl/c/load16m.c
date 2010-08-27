@@ -49,14 +49,14 @@
 #include "ring.h"
 
 
-/* Notes: 
+/* Notes:
  *  - Currently we only support RSI-1 style relocations (2 segments, one containing
  * fixup segment values and the other offsets, presumably limited to 32K relocs).
- * Newer tools create RSI-2 style relocations in slightly more complex format - a word 
- * containing segment value, a word containing count, and specified number of word-sized 
+ * Newer tools create RSI-2 style relocations in slightly more complex format - a word
+ * containing segment value, a word containing count, and specified number of word-sized
  * offsets, repeated for each segment to be fixed up. RSI-2 style relocs may span multiple
  * segments (huge seg). Support for RSI-2 could be added relatively easily.
- *   - It might be good to default to 'AUTO' (ie. relocatable) modules, since 
+ *   - It might be good to default to 'AUTO' (ie. relocatable) modules, since
  * non-relocatable DOS/16M modules only run on VCPI or raw systems, not DPMI.
  */
 
@@ -195,7 +195,7 @@ static unsigned GetRelocBlock( reloc_addr **reloc_data )
                 return( 2 );
             } else {
                 qsort( *reloc_data, num_relocs, sizeof( reloc_addr ), cmp_reloc_entry );
-                // TODO: number of extra reloc segments should be 
+                // TODO: number of extra reloc segments should be
                 // properly calculated, now only one is set
                 // (max. relocs are nearly 2^15 items)
                 return( 1 );
@@ -207,13 +207,13 @@ static unsigned GetRelocBlock( reloc_addr **reloc_data )
 }
 
 // There are two types of relocations for DOS/16M. Old style or RSI-1 relocs
-// are stored internally in one virtual memory block, with the segment selectors 
-// being stored in the first half of the memory block, and the segment offsets 
+// are stored internally in one virtual memory block, with the segment selectors
+// being stored in the first half of the memory block, and the segment offsets
 // being stored in the second half. These are limited to 32K relocs.
 // Newer style or "huge" RSI-2 relocs are stored in one or more consecutive
 // segments. First is the selector, then a count word, followed by offsets within
 // the selector. This sequence is repeated for other selectors. The last selector
-// in the list has bit 1 set (selector numbers are multiples of 8 so the 
+// in the list has bit 1 set (selector numbers are multiples of 8 so the
 // low four bits are unused).
 
 static unsigned_32 Write16MRelocs( reloc_addr *reloc_data )
@@ -295,6 +295,7 @@ extern void Fini16MLoadFile( void )
     memset( &exe_head, 0, sizeof( exe_head ) );
     hdr_size = sizeof( exe_head ) + (NumGroups + extra_sels) * sizeof( gdt_info );
     hdr_size = MAKE_PARA( hdr_size );
+    reloc_size = 0;
     exe_size = Write16MData( hdr_size );
     if( extra_sels ) {
         reloc_size = Write16MRelocs( reloc_data );
@@ -355,7 +356,7 @@ extern unsigned ToD16MSel( unsigned seg_num )
 /*******************************************/
 {
     unsigned_32    x;
-    
+
     LastSel = FmtData.u.d16m.selstart + ( seg_num - 1 ) * sizeof( gdt_info );
     for( x = 0xA000; LastSel >= x; x += 0x200 ) {   // check for reserved selector
         LastSel += sizeof( gdt_info );

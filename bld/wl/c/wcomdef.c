@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: COMDEF -- support for Microsoft COMDEFs 
+* Description: COMDEF -- support for Microsoft COMDEFs
 *
 ****************************************************************************/
 
@@ -153,6 +153,7 @@ static unsigned_32 GetLeaf( void )
     unsigned char       leaf;
     unsigned_32         value;
 
+    value = 0;
     leaf = *ObjBuff++;
     if( leaf <= COMDEF_LEAF_SIZE ) {
         value = leaf;

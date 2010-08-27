@@ -355,6 +355,7 @@ static void WriteOS2Resources( int reshandle, WResDir inRes, ResTable *outRes )
     if( inRes == NULL ) return;
     outRes_off = NullAlign(align) >> shift_count;
     /* walk through the WRes directory */
+    exe_type = NULL;
     wind = WResFirstResource( inRes );
     while( !WResIsEmptyWindow( wind ) ) {
         lang = WResGetLangInfo( wind );
@@ -827,9 +828,9 @@ void FiniOS2LoadFile( void )
     entry_export        *exp;
     unsigned long       imageguess;     // estimated length of the image
     unsigned            pad_len;
-    WResDir             inRes;     // Directory of resources to read
-    int                 resHandle;     // Handle for resources file
-    ResTable            outRes;  // Resources to go out
+    WResDir             inRes;          // Directory of resources to read
+    int                 resHandle = 0;  // Handle for resources file
+    ResTable            outRes;         // Resources to go out
 
     stub_len = Write_Stub_File( STUB_ALIGN );
     temp = sizeof( os2_exe_header );

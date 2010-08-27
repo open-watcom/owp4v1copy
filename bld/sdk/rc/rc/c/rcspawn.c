@@ -44,7 +44,7 @@ int     RCSpawn( void (*fn)( void ) )
     int         status;
 
     save_env = RCSpawnStack;
-    RCSpawnStack = env;
+    RCSpawnStack = &env;
     status = setjmp( env );
     if( status == 0 ) {
         (*fn)();
@@ -59,5 +59,5 @@ void    RCSuicide( int rc )
 {
     if( RCSpawnStack == NULL )
         exit( -1 );
-    longjmp( RCSpawnStack, rc );
+    longjmp( *RCSpawnStack, rc );
 }

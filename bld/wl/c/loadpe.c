@@ -335,6 +335,7 @@ static void WriteDataPages( pe_header *header, pe_object *object )
     unsigned_32 size_v;
     unsigned_32 size_ph;
 
+    linear = 0;
     header->code_base = 0xFFFFFFFFUL;
     header->data_base = 0xFFFFFFFFUL;
     for( group = Groups; group != NULL; group = group->next_group) {
@@ -553,7 +554,7 @@ static void WriteExportInfo( pe_header *header, pe_object *object )
     unsigned_16         ord;
     pe_va               eat;
     unsigned            next_ord;
-    unsigned            high_ord;
+    unsigned            high_ord = 0;
     unsigned            num_entries;
 
     strncpy( object->name, ".edata", PE_OBJ_NAME_LEN );
@@ -1340,7 +1341,7 @@ static void CreateIDataSection( void )
     PrepareToc();
     if( 0 != CalcIDataSize() ) {
         IDataGroup = GetGroup( IDataGrpName );
-        class = FindClass( Root, CoffIDataSegName, 1, 0 );
+        class = FindClass( Root, CoffIDataSegName, TRUE, FALSE );
         class->flags |= CLASS_IDATA | CLASS_LXDATA_SEEN;
         sdata = AllocSegData();
         sdata->length = IData.total_size;

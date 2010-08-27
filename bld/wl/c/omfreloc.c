@@ -172,6 +172,7 @@ static void GetFrame( unsigned frame, frame_spec *refframe )
     segnode     *seg;
     unsigned    index;
 
+    index = 0;
     if( frame < FRAME_LOC ) {
         index = GetIdx();
     }
