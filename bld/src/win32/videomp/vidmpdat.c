@@ -22,7 +22,7 @@
  *         v           v           v      v  v  v  v
  */
 VIDEO_ACCESS_RANGE  LegacyRanges[] = {
-    { 0x000001CC, 0x00000000, 0x00000002, 1, 1, 1, 0 }, /* 0x1CC-0x1CD */
+    { 0x000001CE, 0x00000000, 0x00000002, 1, 1, 1, 0 }, /* 0x1CE-0x1CF */
     { 0x000003B0, 0x00000000, 0x0000000C, 1, 1, 1, 0 }, /* 0x3B0-0x3BB */
     { 0x000003C0, 0x00000000, 0x00000020, 1, 1, 1, 0 }, /* 0x3C0-0x3DF */
     { 0x000A0000, 0x00000000, 0x00020000, 0, 0, 1, 0 }  /* 0xA0000-0xBFFFF */
@@ -247,6 +247,9 @@ VIDEOMP_MODE    VideoModes[] = {
 
 ULONG   ulAllModes = sizeof( VideoModes ) / sizeof( VIDEOMP_MODE );
 
+/* Video Port interface version. Needs to be global because DriverEntry can
+ * no longer pass context information to HwVidFindAdapter. */
+ULONG   PortVersion;
 
 #if defined( ALLOC_PRAGMA )
 #pragma data_seg()

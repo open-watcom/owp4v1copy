@@ -40,16 +40,11 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
     PWSTR                   pwszDesc;
     ULONG                   cbDesc;
 
-    //@todo: abstract this
-    /* NB: There is a conflict with some versions of vga.sys which trap
-     * accesses to ports 0x1CE-0x1CF used on old ATI cards.
-     */
-    //@todo: what do we really do about the port conflict?
 #define NUM_ACCESS_RANGES   2
     VIDEO_ACCESS_RANGE accessRange[NUM_ACCESS_RANGES] = {
-        /* StartLo     StartHi     Len      IO Vis Shr */
-        {0x000001CC, 0x00000000, 0x00000002, 1, 1, 0},   // I/O
-        {0xE0000000, 0x00000000, 0x00400000, 0, 1, 0}    // Framebuffer
+        /* StartLo     StartHi     Len       IO Vis Shr */
+        { 0x000001CE, 0x00000000, 0x00000002, 1, 1, 0 },    /* I/O ports */
+        { 0xE0000000, 0x00000000, 0x00400000, 0, 1, 0 }     /* Framebuffer */
     };
 
     VideoDebugPrint( (1, "videomp: HwVidFindAdapter\n") );
@@ -59,6 +54,14 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
         return( ERROR_INVALID_PARAMETER );
     }
 
+    /* Some versions of vga.sys trap accesses to ports 0x1CE-0x1CF used on
+     * old ATI cards. On Windows 2000 and later we can report legacy
+     * resources to resolve this conflict. On NT 4 and older, we use a hack
+     * and claim other, non-conflicting ports.
+     */
+    if( PortVersion < VP_VER_W2K )
+        accessRange[0].RangeStart = RtlConvertUlongToLargeInteger( 0x1CC );
+ 
     /* Check for a conflict in case someone else claimed our resources. */
     status = VideoPortVerifyAccessRanges( HwDevExt, NUM_ACCESS_RANGES, accessRange );
     if( status != NO_ERROR ) {
@@ -83,14 +86,11 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
     pExt->PhysicalFrameAddress.LowPart  = 0xE0000000;
 
 
-    //
-    // Map all of our ranges into system virtual address space.
-    // IMPORTANT !!!
-    // This is dependant on the order of the virtual addresses in the
-    // HwDevExt to be the same as the order of the entries in the
-    // access range structure.
-    //
-
+    /*
+     * Map all memory and I/O ranges into system virtual address space.
+     * NB: The virtual addresses in the HwDevExt must match the number
+     * and type of AccessRange entries.
+     */
     pVirtAddr = &pExt->IoPorts;
 
     /* Attempt to claim and map the memory and I/O address ranges. */
@@ -243,10 +243,7 @@ BOOLEAN HwVidStartIO( PVOID HwDevExt, PVIDEO_REQUEST_PACKET ReqPkt )
     case IOCTL_VIDEO_SET_CURRENT_MODE:
         VideoDebugPrint( (2, "SET_CURRENT_MODE\n") );
 
-        // verify data
-        // WARNING: Make sure it is one of the valid modes on the list
-        // calculated using the monitor information.
-
+        /* Ensure the mode is valid. */
         modeNumber = ((PVIDEO_MODE)(ReqPkt->InputBuffer))->RequestedMode;
 
         if( (modeNumber > ulAllModes) || (!VideoModes[modeNumber].bValid) ) {
@@ -261,7 +258,8 @@ BOOLEAN HwVidStartIO( PVOID HwDevExt, PVIDEO_REQUEST_PACKET ReqPkt )
 
     case IOCTL_VIDEO_RESET_DEVICE:
         VideoDebugPrint( (2, "RESET_DEVICE\n") );
-        BOXV_ext_disable( pExt );
+	/* Not calling the following routine avoids some visual glitches. */
+        /* BOXV_ext_disable( pExt ); */
         break;
 
     case IOCTL_VIDEO_MAP_VIDEO_MEMORY:
@@ -479,6 +477,18 @@ VP_STATUS HwGetChildDesc( PVOID HwDevExt, PVIDEO_CHILD_ENUM_INFO ChildEnumInfo,
     return( ERROR_NO_MORE_DEVICES );
 }
 
+/* Reset the adapter into a VGA-compatible state. */
+BOOLEAN HwVidResetHw( PVOID HwDevExt, ULONG Columns, ULONG Rows )
+{
+    PHW_DEV_EXT     pExt = HwDevExt;
+
+    VideoDebugPrint( (1, "videomp: HwVidResetHw\n") );
+
+    BOXV_ext_disable( pExt );
+    /* Indicate that we didn't actually set the requested text mode. */
+    return( FALSE );
+}
+
 /* Standard NT driver initialization entry point. */
 ULONG DriverEntry( PVOID Context1, PVOID Context2 )
 {
@@ -498,8 +508,7 @@ ULONG DriverEntry( PVOID Context1, PVOID Context2 )
     /* There's no interrupt or timer callback. */
     hwInitData.HwInterrupt   = NULL;
     hwInitData.HwTimer       = NULL;
-    /* Reset callback isn't necessary because INT 10h text mode set works. */
-    hwInitData.HwResetHw     = NULL;
+    hwInitData.HwResetHw     = HwVidResetHw;
 
     /* Power and child device management callbacks were added in NT 5.0. */
     hwInitData.HwGetPowerState           = HwGetPowerState;
@@ -516,8 +525,8 @@ ULONG DriverEntry( PVOID Context1, PVOID Context2 )
     /* Refer to the CurrentControlSet\Services\xxx\Device0 registry key. */
     hwInitData.StartingDeviceNumber = 0;
 
-    /* It's technically PCI, but old NT versions know nothing about that. */
-    hwInitData.AdapterInterfaceType = Isa;
+    /* Later NT versions support PCI; recent versions ignore this entirely */
+    hwInitData.AdapterInterfaceType = PCIBus;
 
     /* The PsGetVersion function was not available in NT 3.x. We therefore 
      * implement a poor man's version detection by successively reducing the
@@ -527,11 +536,12 @@ ULONG DriverEntry( PVOID Context1, PVOID Context2 )
         /* First try with NT 5.1 (Windows XP) structure size. */
         VideoDebugPrint( (1, "videomp: Trying DDI 5.1 HwInitDataSize\n") );
         hwInitData.HwInitDataSize = SIZE_OF_WXP_VIDEO_HW_INITIALIZATION_DATA;
+        PortVersion = VP_VER_XP;
         status = VideoPortInitialize( Context1, Context2, &hwInitData, NULL );
         if( status != STATUS_REVISION_MISMATCH ) {
             /* If status is anything other than a version mismatch, don't
-             * try calling VideoPortInitialize again. The call either
-             * succeeded or failed for some reason whe can't easily fix.
+             * try calling VideoPortInitialize again. The call may have
+             * succeeded, or it failed for some reason whe can't easily fix.
              */
             break;
         }
@@ -539,6 +549,7 @@ ULONG DriverEntry( PVOID Context1, PVOID Context2 )
         /* Try the NT 5.0 (Windows 2000) structure size. */
         VideoDebugPrint( (1, "videomp: Trying DDI 5.0 HwInitDataSize\n") );
         hwInitData.HwInitDataSize = SIZE_OF_W2K_VIDEO_HW_INITIALIZATION_DATA;
+        PortVersion = VP_VER_W2K;
         status = VideoPortInitialize( Context1, Context2, &hwInitData, NULL );
         if( status != STATUS_REVISION_MISMATCH ) {
             break;
@@ -547,14 +558,17 @@ ULONG DriverEntry( PVOID Context1, PVOID Context2 )
         /* Try the NT 4.0 (and also NT 3.51) structure size. */
         VideoDebugPrint( (1, "videomp: Trying DDI 4.0 HwInitDataSize\n") );
         hwInitData.HwInitDataSize = SIZE_OF_NT4_VIDEO_HW_INITIALIZATION_DATA;
+        PortVersion = VP_VER_NT4;
         status = VideoPortInitialize( Context1, Context2, &hwInitData, NULL );
         if( status != STATUS_REVISION_MISMATCH ) {
             break;
         }
 
-        /* Try the original NT 3.1/3.5 HwInitDataSize. */
+        /* Try the original NT 3.1/3.5 HwInitDataSize. No PCI support. */
         VideoDebugPrint( (1, "videomp: Trying DDI 3.1 HwInitDataSize\n") );
         hwInitData.HwInitDataSize = offsetof( VIDEO_HW_INITIALIZATION_DATA, HwResetHw );
+        hwInitData.AdapterInterfaceType = Isa;
+        PortVersion = VP_VER_NT31;
         status = VideoPortInitialize( Context1, Context2, &hwInitData, NULL );
     } while( 0 );
     VideoDebugPrint( (1, "videomp: VideoPortInitialize rc=%08x\n", status ) );

@@ -21,9 +21,9 @@ interface.
 
  Supported Windows Versions
 
- The miniport supports all Windows NT versions from 3.1 to 5.0 (Windows 2000).
+ The miniport supports all Windows NT versions from 3.1 to 5.1 (Windows 2003).
 Windows XP and above ships with a VGA/VESA driver which provides similar
-functionality.
+functionality, but blocks power management.
 
 
  Installation
@@ -31,7 +31,7 @@ functionality.
  The installation method depends on Windows version used. For Windows NT 3.1,
 the Setup applet must be used. For all other versions, the display property
 dialog should be used. There are two versions of the INF file: oemsetup.inf
-for Windows NT 3.x and vidmini.inf for Windows NT 4 and Windows 2000. For
+for Windows NT 3.x and vidmini.inf for Windows NT 4 and later versions. For
 Windows NT 3.x, the framebuf.dll library provided on the NT installation
 media is required. For Windows NT 4.0 and later, framebuf.dll is already
 preinstalled on the system.
