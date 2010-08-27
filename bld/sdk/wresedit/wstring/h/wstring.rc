@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "sys_rc.h"
 #include "rcstr.gh"
+#include "uistr.gh"
 #include "about.h"
 #include "banner.h"
 #include "w.rc"
@@ -41,6 +42,7 @@ END
 STRINGTABLE
 BEGIN
     #include "rcstrmsg.gh"
+    #include "uistrmsg.gh"
 END
 
 #include "wstring.men"
