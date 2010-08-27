@@ -191,18 +191,20 @@ static int RCMainLine( const char *opts, int argc, char **argv )
             }
         }
         if( initInfo != NULL && initInfo->ver > 1 && initInfo->cmd_line_has_files ) {
-            infile[0] = '\"';
-            ideCb->GetInfo( cbHandle, IDE_GET_SOURCE_FILE, 0, (unsigned long)(infile + 1) );
-            strcat( infile, "\"" );
-            argv[argc++] = infile;
-            if( pass1 ) {
-                strcpy( outfile, "-fo=\"" );
-            } else {
-                strcpy( outfile, "-fe=\"" );
+            if( !ideCb->GetInfo( cbHandle, IDE_GET_SOURCE_FILE, 0, (unsigned long)(infile + 1) ) ) {
+                infile[0] = '\"';
+                strcat( infile, "\"" );
+                argv[argc++] = infile;
             }
-            ideCb->GetInfo( cbHandle, IDE_GET_TARGET_FILE, 0, (unsigned long)outfile + 5 );
-            strcat( outfile, "\"" );
-            argv[argc++] = outfile;
+            if( !ideCb->GetInfo( cbHandle, IDE_GET_TARGET_FILE, 0, (unsigned long)outfile + 5 ) ) {
+                if( pass1 ) {
+                    strcpy( outfile, "-fo=\"" );
+                } else {
+                    strcpy( outfile, "-fe=\"" );
+                }
+                strcat( outfile, "\"" );
+                argv[argc++] = outfile;
+            }
         }
         if( initInfo != NULL && initInfo->ignore_env ) {
             argv[argc++] = "-x";
