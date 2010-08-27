@@ -60,8 +60,8 @@
 
 WResSetRtns(RcOpen,RcClose,RcRead,RcWrite,RcSeek,RcTell,RcMemMalloc,RcMemFree);
 
-int InitGlobs( char *fname )
-/**************************/
+void InitGlobs( void )
+/********************/
 {
     memset( &CmdLineParms, 0, sizeof( struct RCParams ) );
     memset( &CurrResFile, 0, sizeof( RcResFileID ) );
@@ -83,14 +83,12 @@ int InitGlobs( char *fname )
     PreprocVarInit();
     PPMacroVarInit();
     ParseInitStatics();
-    return( InitRcMsgs( fname ) );
 }
 
 void FiniGlobs( void )
 /********************/
 {
     FiniTable();
-    FiniRcMsgs();
     ScanParamShutdown();
 }
 

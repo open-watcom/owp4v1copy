@@ -71,16 +71,18 @@ extern HANDLE_INFO           Instance;
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static int  WRExecRCPass2       ( void );
-static void WRPass2             ( void );
-static int  WRSaveResourceToEXE ( WRInfo *, int, WRFileType );
+static int WRExecRCPass2       ( void );
+static int WRPass2             ( void );
+static int WRSaveResourceToEXE ( WRInfo *, int, WRFileType );
 
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
 
+jmp_buf     jmpbuf_RCFatalError;
+
 /* this function duplicates Pass2 in rc.c of the WRC project */
-static void WRPass2 ( void )
+int WRPass2 ( void )
 {
     int ok;
 
@@ -98,14 +100,24 @@ static void WRPass2 ( void )
 
         RcPass2IoShutdown ( ok );
     }
-    if( !ok ) {
-        RCSuicide( 1 );
-    }
+
+    return ( ok );
 }
 
 int WRExecRCPass2 ( void )
 {
-    return ( RCSpawn( WRPass2 ) );
+    int     ret;
+    int    ok;
+
+    ret = setjmp ( &jmpbuf_RCFatalError );
+
+    if ( ret ) {
+        ok = FALSE;
+    } else {
+        ok = WRPass2 ();
+    }
+
+    return ( ok );
 }
 
 int WRSaveResourceToWin16EXE ( WRInfo *info, int backup )
@@ -203,7 +215,7 @@ int WRSaveResourceToEXE ( WRInfo *info, int backup, WRFileType ttype )
         } else {
             strcpy ( CmdLineParms.OutExeFileName, info->file_name );
         }
-        ok = ( WRExecRCPass2() == 0 );
+        ok = WRExecRCPass2 ();
     }
 
     if ( tmp_res ) {

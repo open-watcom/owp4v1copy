@@ -30,10 +30,10 @@
 
 
 #include <stdlib.h>
-#include <setjmp.h>
 #include "rcspawn.h"
 
-static  jmp_buf *RCSpawnStack = NULL;
+
+static  jmp_buf *RCSpawnStack = jmpbuf_RCFatalError;
 
 
 int     RCSpawn( void (*fn)( void ) )
@@ -53,11 +53,8 @@ int     RCSpawn( void (*fn)( void ) )
     return( status );
 }
 
-
 void    RCSuicide( int rc )
 /*************************/
 {
-    if( RCSpawnStack == NULL )
-        exit( -1 );
     longjmp( *RCSpawnStack, rc );
 }

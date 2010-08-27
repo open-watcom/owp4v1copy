@@ -34,7 +34,6 @@
 #include <stdarg.h>
 #include <string.h>
 #include <malloc.h>
-#include <setjmp.h>
 #ifdef __WATCOMC__
 #include <process.h>
 #else
@@ -47,12 +46,15 @@
 #include "rcmem.h"
 #include "clibint.h"
 #include "rcspawn.h"
+#include "rcldstr.h"
 
 #define PRINTF_BUF_SIZE         2048
 
-extern int  InitGlobs( const char *name );
+extern void InitGlobs( void );
 extern void FiniGlobs( void );
 extern void RCmain( void );
+
+jmp_buf     jmpbuf_RCFatalError;
 
 static IDECBHdl         cbHandle;
 static IDECallBacks     *ideCb;
@@ -162,7 +164,7 @@ static int RCMainLine( const char *opts, int argc, char **argv )
     char        outfile[ _MAX_PATH + 6 ]; // +6 for -fo="" or -fe=""
     bool        pass1;
     unsigned    i;
-    int         rc = 0;
+    int         rc;
 #if defined( IDE_PGM )
     char        ImageName[_MAX_PATH];
 #else
@@ -176,56 +178,61 @@ static int RCMainLine( const char *opts, int argc, char **argv )
 #else
     ImageName = _LpDllName;
 #endif
-    InitGlobs( ImageName );
-    if( opts != NULL ) {
-        str = opts;
-        argc = ParseEnvVar( str, NULL, NULL );
-        argv = RcMemMalloc( ( argc + 4 ) * sizeof( char * ) );
-        cmdbuf = RcMemMalloc( strlen( str ) + argc + 1 );
-        ParseEnvVar( str, argv, cmdbuf );
-        pass1 = FALSE;
-        for( i=0; i < argc; i++ ) {
-            if( argv[i] != NULL && !stricmp( argv[i], "-r" ) ) {
-                pass1 = TRUE;
-                break;
-            }
-        }
-        if( initInfo != NULL && initInfo->ver > 1 && initInfo->cmd_line_has_files ) {
-            if( !ideCb->GetInfo( cbHandle, IDE_GET_SOURCE_FILE, 0, (unsigned long)(infile + 1) ) ) {
-                infile[0] = '\"';
-                strcat( infile, "\"" );
-                argv[argc++] = infile;
-            }
-            if( !ideCb->GetInfo( cbHandle, IDE_GET_TARGET_FILE, 0, (unsigned long)outfile + 5 ) ) {
-                if( pass1 ) {
-                    strcpy( outfile, "-fo=\"" );
-                } else {
-                    strcpy( outfile, "-fe=\"" );
-                }
-                strcat( outfile, "\"" );
-                argv[argc++] = outfile;
-            }
-        }
-        if( initInfo != NULL && initInfo->ignore_env ) {
-            argv[argc++] = "-x";
-        }
-        argv[argc] = NULL;        // last element of the array must be NULL
-    }
-    if( !ScanParams( argc, argv ) ) {
-        rc = 1;
-    }
-    if (!CmdLineParms.Quiet) {
-        RcIoPrintBanner();
-    }
-    if (CmdLineParms.PrintHelp) {
-        RcIoPrintHelp( ImageName );
-    }
+    InitGlobs();
+    rc = setjmp( &jmpbuf_RCFatalError );
     if( rc == 0 ) {
-        rc = RCSpawn( RCmain );
-    }
-    if( opts != NULL ) {
-        RcMemFree( argv );
-        RcMemFree( cmdbuf );
+        InitRcMsgs( ImageName );
+        if( opts != NULL ) {
+            str = opts;
+            argc = ParseEnvVar( str, NULL, NULL );
+            argv = RcMemMalloc( ( argc + 4 ) * sizeof( char * ) );
+            cmdbuf = RcMemMalloc( strlen( str ) + argc + 1 );
+            ParseEnvVar( str, argv, cmdbuf );
+            pass1 = FALSE;
+            for( i=0; i < argc; i++ ) {
+                if( argv[i] != NULL && !stricmp( argv[i], "-r" ) ) {
+                    pass1 = TRUE;
+                    break;
+                }
+            }
+            if( initInfo != NULL && initInfo->ver > 1 && initInfo->cmd_line_has_files ) {
+                if( !ideCb->GetInfo( cbHandle, IDE_GET_SOURCE_FILE, 0, (unsigned long)(infile + 1) ) ) {
+                    infile[0] = '\"';
+                    strcat( infile, "\"" );
+                    argv[argc++] = infile;
+                }
+                if( !ideCb->GetInfo( cbHandle, IDE_GET_TARGET_FILE, 0, (unsigned long)outfile + 5 ) ) {
+                    if( pass1 ) {
+                        strcpy( outfile, "-fo=\"" );
+                    } else {
+                        strcpy( outfile, "-fe=\"" );
+                    }
+                    strcat( outfile, "\"" );
+                    argv[argc++] = outfile;
+                }
+            }
+            if( initInfo != NULL && initInfo->ignore_env ) {
+                argv[argc++] = "-x";
+            }
+            argv[argc] = NULL;        // last element of the array must be NULL
+        }
+        if( !ScanParams( argc, argv ) ) {
+            rc = 1;
+        }
+        if (!CmdLineParms.Quiet) {
+            RcIoPrintBanner();
+        }
+        if (CmdLineParms.PrintHelp) {
+            RcIoPrintHelp( ImageName );
+        }
+        if( rc == 0 ) {
+            rc = RCSpawn( RCmain );
+        }
+        if( opts != NULL ) {
+            RcMemFree( argv );
+            RcMemFree( cmdbuf );
+        }
+        FiniRcMsgs();
     }
     FiniGlobs();
     flushPrintf();
