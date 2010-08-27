@@ -793,7 +793,7 @@ void AddSym( char *name, symbol_strength strength, unsigned char info )
 }
 
 
-#ifdef __DEBUG__
+#ifndef NDEBUG
 void DumpFileTable( void )
 {
     sym_file    *sfile;
@@ -855,7 +855,7 @@ void DumpHashTable( void )
     }
     printf( "----------------------------------------------------------\n" );
 }
-#endif // __DEBUG__
+#endif // !NDEBUG
 
 
 bool RemoveObjectSymbols( char *name )
@@ -965,7 +965,7 @@ void OmfMKImport( arch_header *arch, importType type,
 }
 
 void CoffMKImport( arch_header *arch, importType type,
-                   long ordinal, char *DLLname, char *symName, 
+                   long ordinal, char *DLLname, char *symName,
                    char *exportedName, processor_type processor )
 {
     if( Options.elf_found ) {

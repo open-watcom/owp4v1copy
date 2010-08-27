@@ -36,7 +36,7 @@
 #endif
 #include <banner.h>
 
-#if defined(__DEBUG__) && defined(_BANEXTRA)
+#if !defined( NDEBUG ) && defined( _BANEXTRA )
 #undef  _BANEXTRA
 #define _BANEXTRA _BANEXSHORT
 #endif
@@ -234,7 +234,7 @@ void Banner()
 {
     IDEMsgInfo          msg_info;
     static char *bannerText[] = {
-#ifdef __DEBUG__
+#ifndef NDEBUG
 banner1w( "Library Manager", _WLIB_VERSION_ ) " [Internal Development]",
 #else
 banner1w( "Library Manager", _WLIB_VERSION_ ),

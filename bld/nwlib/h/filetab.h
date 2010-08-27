@@ -122,7 +122,7 @@ extern void WriteFileTable( void );
 extern void WriteFile( sym_file *sfile );
 extern void AddSym( char *name, symbol_strength strength, unsigned char info );
 
-#ifdef __DEBUG__
+#ifndef NDEBUG
 extern void DumpFileTable( void );
 extern void DumpHashTable( void );
 #endif
