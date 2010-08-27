@@ -238,3 +238,4 @@ pick(   W_TIP_NEWITEM,
         "Insert New Item",
         "Insert New Item" )
 
+#include "w.msg"

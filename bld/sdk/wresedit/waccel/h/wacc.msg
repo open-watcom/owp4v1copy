@@ -218,3 +218,4 @@ pick(   W_TIP_KEYVALUE,
         "Select Key Value",
         "Select Key Value" )
 
+#include "w.msg"

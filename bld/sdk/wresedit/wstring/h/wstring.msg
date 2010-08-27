@@ -195,3 +195,5 @@ pick(   W_QUERYREPLACESTRING,
 pick(   W_INSERTNEWSTRING,
         "Insert new string",
         "Insert new string" )
+
+#include "w.msg"
