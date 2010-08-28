@@ -285,10 +285,10 @@ dis_handler_return PPCMath( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[2].base = code.i.lo.math.rB + DR_PPC_r0;
 
     if( code.i.lo.math.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
     if( code.i.lo.math.OE ) {
-        ins->flags |= DIF_PPC_OE;
+        ins->flags.u.ppc |= DIF_PPC_OE;
     }
     return( DHR_DONE );
 }
@@ -317,7 +317,7 @@ dis_handler_return PPCMathab( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[0] = ins->op[1];
     ins->op[1] = ins->op[2];
 
-    ins->flags &= ~DIF_PPC_OE;
+    ins->flags.u.ppc &= ~DIF_PPC_OE;
     return( DHR_DONE );
 }
 dis_handler_return PPCMathda( dis_handle *h, void *d, dis_dec_ins *ins )
@@ -327,7 +327,7 @@ dis_handler_return PPCMathda( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 2;
 
     if( ins->type == DI_PPC_clcs ) {
-        ins->flags &= ~DIF_PPC_OE;
+        ins->flags.u.ppc &= ~DIF_PPC_OE;
     }
 
     return( DHR_DONE );
@@ -339,7 +339,7 @@ dis_handler_return PPCMathdb( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 2;
     ins->op[1] = ins->op[2];
 
-    ins->flags &= ~DIF_PPC_OE;
+    ins->flags.u.ppc &= ~DIF_PPC_OE;
     return( DHR_DONE );
 }
 dis_handler_return PPCMath2( dis_handle *h, void *d, dis_dec_ins *ins )
@@ -352,7 +352,7 @@ dis_handler_return PPCMath2( dis_handle *h, void *d, dis_dec_ins *ins )
     temp = ins->op[0];
     ins->op[0] = ins->op[1];
     ins->op[1] = temp;
-    ins->flags &= ~DIF_PPC_OE;
+    ins->flags.u.ppc &= ~DIF_PPC_OE;
     return( DHR_DONE );
 }
 dis_handler_return PPCMathsa( dis_handle *h, void *d, dis_dec_ins *ins )
@@ -435,7 +435,7 @@ static void PPCDoFloat( dis_dec_ins *ins, const int *order )
     }
     ins->num_ops = operand;
     if( code.i.lo.general.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
 }
 dis_handler_return PPCFloat( dis_handle *h, void *d, dis_dec_ins *ins )
@@ -620,7 +620,7 @@ dis_handler_return PPCMem2( dis_handle *h, void *d, dis_dec_ins *ins )
         break;
     }
     if( code.i.lo.math.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
 
     return( DHR_DONE );
@@ -682,7 +682,7 @@ dis_handler_return PPCBranch( dis_handle *h, void *d, dis_dec_ins *ins )
     code.full = ins->opcode;
 
     if( code.i.lo.branch.LK ) {
-        ins->flags |= DIF_PPC_LK;
+        ins->flags.u.ppc |= DIF_PPC_LK;
     }
     magic = 2;
     switch( ins->type ) {
@@ -691,7 +691,7 @@ dis_handler_return PPCBranch( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_PPC_bc:
         magic++; // magic=1 for b, 3 for bc
         if( code.b.AA ) {
-            ins->flags |= DIF_PPC_AA;
+            ins->flags.u.ppc |= DIF_PPC_AA;
             ins->op[magic-1].type = DO_ABSOLUTE;
         } else {
             ins->op[magic-1].type = DO_RELATIVE;
@@ -782,7 +782,7 @@ dis_handler_return PPCCondition( dis_handle *h, void *d, dis_dec_ins *ins )
     }
 
     if( code.i.lo.general.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
     return( DHR_DONE );
 }
@@ -869,7 +869,7 @@ dis_handler_return PPCShiftImmed( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[2].value = code.i.lo.general.third;
 
     if( code.i.lo.general.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
     return( DHR_DONE );
 }
@@ -883,7 +883,7 @@ dis_handler_return PPCShiftImmedD( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[2].value = code.i.lo.xs_form.sh | (code.i.lo.xs_form.sh_5 << 5);
 
     if( code.i.lo.general.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
     return( DHR_DONE );
 }
@@ -913,7 +913,7 @@ dis_handler_return PPCRotate( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[4].value = code.i.lo.general.first;
 
     if( code.i.lo.general.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
     return( DHR_DONE );
 }
@@ -930,7 +930,7 @@ dis_handler_return PPCRotateD( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[3].value = code.i.lo.mds_form.mb;
 
     if( code.i.lo.general.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
     return( DHR_DONE );
 }
@@ -951,7 +951,7 @@ dis_handler_return PPCRotateImmD( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[3].value = code.i.lo.mds_form.mb;
 
     if( code.i.lo.general.Rc ) {
-        ins->flags |= DIF_PPC_RC;
+        ins->flags.u.ppc |= DIF_PPC_RC;
     }
     return( DHR_DONE );
 }
@@ -1348,10 +1348,10 @@ static unsigned PPCFlagHook( dis_handle *h, void *d, dis_dec_ins *ins,
     char *p;
 
     p = name;
-    if( ins->flags & DIF_PPC_OE ) *p++ = 'o';
-    if( ins->flags & DIF_PPC_RC ) *p++ = '.';
-    if( ins->flags & DIF_PPC_LK ) *p++ = 'l';
-    if( ins->flags & DIF_PPC_AA ) *p++ = 'a';
+    if( ins->flags.u.ppc & DIF_PPC_OE ) *p++ = 'o';
+    if( ins->flags.u.ppc & DIF_PPC_RC ) *p++ = '.';
+    if( ins->flags.u.ppc & DIF_PPC_LK ) *p++ = 'l';
+    if( ins->flags.u.ppc & DIF_PPC_AA ) *p++ = 'a';
     *p='\0';
     return( p-name );
 }

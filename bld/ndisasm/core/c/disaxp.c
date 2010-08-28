@@ -230,7 +230,7 @@ dis_handler_return AXPOperateV( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     AXPOperate( h, d, ins );
     if( ins->opcode & (1 << 11) ) {
-        ins->flags |= DIF_AXP_V;
+        ins->flags.u.axp |= DIF_AXP_V;
     }
     return( DHR_DONE );
 }
@@ -260,10 +260,10 @@ dis_handler_return AXPFPConvert( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].type = DO_REG;
     ins->op[1].base = code.fp_operate.rc + DR_AXP_f0;
     if( ins->opcode & (1 << 13) ) {
-        ins->flags |= DIF_AXP_V;
+        ins->flags.u.axp |= DIF_AXP_V;
     }
     if( ins->opcode & (1 << 14) ) {
-        ins->flags |= DIF_AXP_S;
+        ins->flags.u.axp |= DIF_AXP_S;
     }
     ins->num_ops = 2;
     return( DHR_DONE );
@@ -282,28 +282,28 @@ static dis_handler_return SetIEEEFlags( dis_dec_ins *ins )
     }
     if( code.fp_operate.trp & 0x1 ) {
         if( code.fp_operate.fnc == 0xf ) {
-            ins->flags |= DIF_AXP_V;
+            ins->flags.u.axp |= DIF_AXP_V;
         } else {
-            ins->flags |= DIF_AXP_U;
+            ins->flags.u.axp |= DIF_AXP_U;
         }
     }
     if( code.fp_operate.trp & 0x2 ) {
-        ins->flags |= DIF_AXP_I;
+        ins->flags.u.axp |= DIF_AXP_I;
     }
     if( code.fp_operate.trp & 0x4 ) {
-        ins->flags |= DIF_AXP_S;
+        ins->flags.u.axp |= DIF_AXP_S;
     }
     switch( code.fp_operate.rnd ) {
     case 0x0:
-        ins->flags |= DIF_AXP_C;
+        ins->flags.u.axp |= DIF_AXP_C;
         break;
     case 0x1:
-        ins->flags |= DIF_AXP_M;
+        ins->flags.u.axp |= DIF_AXP_M;
         break;
     case 0x2:
         break;
     case 0x3:
-        ins->flags |= DIF_AXP_D;
+        ins->flags.u.axp |= DIF_AXP_D;
         break;
     }
     return( DHR_DONE );
@@ -338,9 +338,9 @@ dis_handler_return AXPIEEEConvert( dis_handle *h, void *d, dis_dec_ins *ins )
 dis_handler_return AXPVAXOperate( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     AXPFPOperate( h, d, ins );
-    if( !(ins->opcode & (1UL << (7+5))) ) ins->flags |= DIF_AXP_C;
-    if(   ins->opcode & (1UL << (8+5))  ) ins->flags |= DIF_AXP_U;
-    if(   ins->opcode & (1UL << (10+5)) ) ins->flags |= DIF_AXP_S;
+    if( !(ins->opcode & (1UL << (7+5))) ) ins->flags.u.axp |= DIF_AXP_C;
+    if(   ins->opcode & (1UL << (8+5))  ) ins->flags.u.axp |= DIF_AXP_U;
+    if(   ins->opcode & (1UL << (10+5)) ) ins->flags.u.axp |= DIF_AXP_S;
     return( DHR_DONE );
 }
 
@@ -353,9 +353,9 @@ dis_handler_return AXPVAXConvert( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[0].base = code.fp_operate.rb + DR_AXP_f0;
     ins->op[1].type = DO_REG;
     ins->op[1].base = code.fp_operate.rc + DR_AXP_f0;
-    if( !(ins->opcode & (1UL << (7+5))) ) ins->flags |= DIF_AXP_C;
-    if(   ins->opcode & (1UL << (8+5))  ) ins->flags |= DIF_AXP_V;
-    if(   ins->opcode & (1UL << (10+5)) ) ins->flags |= DIF_AXP_S;
+    if( !(ins->opcode & (1UL << (7+5))) ) ins->flags.u.axp |= DIF_AXP_C;
+    if(   ins->opcode & (1UL << (8+5))  ) ins->flags.u.axp |= DIF_AXP_V;
+    if(   ins->opcode & (1UL << (10+5)) ) ins->flags.u.axp |= DIF_AXP_S;
     return( DHR_DONE );
 }
 
@@ -486,9 +486,9 @@ static unsigned AXPInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         break;
     case DI_AXP_SUBS:
         if( ins->op[0].base == DR_AXP_f31 ) {
-            if( (ins->flags == DIF_NONE) ||
-                (ins->flags == (DIF_AXP_S | DIF_AXP_U) ) ||
-                (ins->flags == (DIF_AXP_S | DIF_AXP_U | DIF_AXP_I ) ) ) {
+            if( (ins->flags.u.axp == DIF_NONE) ||
+                (ins->flags.u.axp == (DIF_AXP_S | DIF_AXP_U) ) ||
+                (ins->flags.u.axp == (DIF_AXP_S | DIF_AXP_U | DIF_AXP_I ) ) ) {
                 new = "negs";
                 ins->op[0] = ins->op[1];
                 ins->op[1] = ins->op[2];
@@ -498,9 +498,9 @@ static unsigned AXPInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         break;
     case DI_AXP_SUBT:
         if( ins->op[0].base == DR_AXP_f31 ) {
-            if( (ins->flags == DIF_NONE) ||
-                (ins->flags == (DIF_AXP_S | DIF_AXP_U) ) ||
-                (ins->flags == (DIF_AXP_S | DIF_AXP_U | DIF_AXP_I ) ) ) {
+            if( (ins->flags.u.axp == DIF_NONE) ||
+                (ins->flags.u.axp == (DIF_AXP_S | DIF_AXP_U) ) ||
+                (ins->flags.u.axp == (DIF_AXP_S | DIF_AXP_U | DIF_AXP_I ) ) ) {
                 new = "negt";
                 ins->op[0] = ins->op[1];
                 ins->op[1] = ins->op[2];
@@ -524,15 +524,15 @@ static unsigned AXPFlagHook( dis_handle *h, void *d, dis_dec_ins *ins,
     char        *p;
 
     p = name;
-    if( ins->flags != DIF_NONE ) {
+    if( ins->flags.u.axp != DIF_NONE ) {
         *p++ = '/';
-        if( ins->flags & DIF_AXP_C ) *p++ = 'c';
-        if( ins->flags & DIF_AXP_D ) *p++ = 'd';
-        if( ins->flags & DIF_AXP_I ) *p++ = 'i';
-        if( ins->flags & DIF_AXP_M ) *p++ = 'm';
-        if( ins->flags & DIF_AXP_S ) *p++ = 's';
-        if( ins->flags & DIF_AXP_U ) *p++ = 'u';
-        if( ins->flags & DIF_AXP_V ) *p++ = 'v';
+        if( ins->flags.u.axp & DIF_AXP_C ) *p++ = 'c';
+        if( ins->flags.u.axp & DIF_AXP_D ) *p++ = 'd';
+        if( ins->flags.u.axp & DIF_AXP_I ) *p++ = 'i';
+        if( ins->flags.u.axp & DIF_AXP_M ) *p++ = 'm';
+        if( ins->flags.u.axp & DIF_AXP_S ) *p++ = 's';
+        if( ins->flags.u.axp & DIF_AXP_U ) *p++ = 'u';
+        if( ins->flags.u.axp & DIF_AXP_V ) *p++ = 'v';
         *p = '\0';
     }
     return( p - name );

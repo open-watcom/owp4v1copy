@@ -363,7 +363,7 @@ mad_disasm_control DisasmControl( mad_disasm_data *dd, mad_registers const *mr )
 
     switch( dd->ins.type ) {
     case DI_PPC_b:
-        if( dd->ins.flags & DIF_PPC_LK ) {
+        if( dd->ins.flags.u.ppc & DIF_PPC_LK ) {
             c = MDC_CALL;
         } else {
             c = MDC_JUMP;
@@ -378,7 +378,7 @@ mad_disasm_control DisasmControl( mad_disasm_data *dd, mad_registers const *mr )
             return( c | MDC_TAKEN_FORWARD );
         }
     case DI_PPC_bc:
-        if( dd->ins.flags & DIF_PPC_LK ) {
+        if( dd->ins.flags.u.ppc & DIF_PPC_LK ) {
             c = MDC_CALL;
         } else {
             c = MDC_JUMP;
@@ -389,14 +389,14 @@ mad_disasm_control DisasmControl( mad_disasm_data *dd, mad_registers const *mr )
         }
         return( c | Cond( dd, mr, v ) );
     case DI_PPC_bcctr:
-        if( dd->ins.flags & DIF_PPC_LK ) {
+        if( dd->ins.flags.u.ppc & DIF_PPC_LK ) {
             c = MDC_CALL;
         } else {
             c = MDC_JUMP;
         }
         return( c | Cond( dd, mr, mr->ppc.ctr.u._32[I64LO32] ) );
     case DI_PPC_bclr:
-        if( dd->ins.flags & DIF_PPC_LK ) {
+        if( dd->ins.flags.u.ppc & DIF_PPC_LK ) {
             c = MDC_CALL;
         } else {
             c = MDC_RET;

@@ -64,7 +64,7 @@ void DoCode( mad_disasm_data *dd, int big )
 {
     DisDecodeInit( &DH, &dd->ins );
     dd->addr = DbgAddr;
-    dd->ins.flags = ( big ) ? DIF_X86_USE32_FLAGS : 0;
+    dd->ins.flags.u.x86 = ( big ) ? DIF_X86_USE32_FLAGS : DIF_NONE;
     DisDecode( &DH, dd, &dd->ins );
 }
 
@@ -304,23 +304,23 @@ mad_disasm_control DisasmControl( mad_disasm_data *dd, const mad_registers *mr )
                 : ( MDC_SYSCALL|MDC_CONDITIONAL|MDC_TAKEN_NOT ) );
     case DI_X86_loopnz:
         val= mr->x86.cpu.ecx;
-        if( !( dd->ins.flags & DIF_X86_OPND_LONG ) )
+        if( !( dd->ins.flags.u.x86 & DIF_X86_OPND_LONG ) )
             val &= 0xffff;
         return Cond( dd, ( mr->x86.cpu.efl & FLG_Z ) == 0 && val != 1 );
     case DI_X86_loopz:
         val= mr->x86.cpu.ecx;
-        if( !( dd->ins.flags & DIF_X86_OPND_LONG ) )
+        if( !( dd->ins.flags.u.x86 & DIF_X86_OPND_LONG ) )
             val &= 0xffff;
         return Cond( dd, ( mr->x86.cpu.efl & FLG_Z ) != 0 && val != 1 );
     case DI_X86_loop:
         val= mr->x86.cpu.ecx;
-        if( !( dd->ins.flags & DIF_X86_OPND_LONG ) )
+        if( !( dd->ins.flags.u.x86 & DIF_X86_OPND_LONG ) )
             val &= 0xffff;
         return Cond( dd, val != 1 );
     case DI_X86_jcxz:
     case DI_X86_jecxz:
         val= mr->x86.cpu.ecx;
-        if( !( dd->ins.flags & DIF_X86_OPND_LONG ) )
+        if( !( dd->ins.flags.u.x86 & DIF_X86_OPND_LONG ) )
             val &= 0xffff;
         return Cond( dd, val == 0 );
     default:
@@ -369,7 +369,7 @@ mad_status DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, const mad_registers *m
             /* memory indirect jump/call */
             DoDisasmMemRefWalk( dd, FindCallTarget, mr, &DbgAddr );
 
-            if( dd->ins.flags & DIF_X86_OPND_LONG ) {
+            if( dd->ins.flags.u.x86 & DIF_X86_OPND_LONG ) {
                 next->mach.offset = GetDataLong();
                 if( dd->ins.op[ OP_1 ].ref_type == DRT_X86_FARPTR48 ) {
                     next->mach.segment = (unsigned_16)GetDataWord();
@@ -386,7 +386,7 @@ mad_status DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, const mad_registers *m
     case MDC_SYSRET:
     case MDC_RET:
         DbgAddr = GetRegSP( mr );
-        if( dd->ins.flags & DIF_X86_OPND_LONG ) {
+        if( dd->ins.flags.u.x86 & DIF_X86_OPND_LONG ) {
             next->mach.offset = GetDataLong();
         } else {
             next->mach.offset = (unsigned_16)GetDataWord();
@@ -442,17 +442,17 @@ static dword RegValue( const mad_registers *mr, int idx )
 
 int GetSegRegOverride( mad_disasm_data *dd, dis_operand *op )
 {
-    if( dd->ins.flags & DIF_X86_CS ) {
+    if( dd->ins.flags.u.x86 & DIF_X86_CS ) {
         return( DR_X86_cs );
-    } else if( dd->ins.flags & DIF_X86_DS ) {
+    } else if( dd->ins.flags.u.x86 & DIF_X86_DS ) {
         return( DR_X86_ds );
-    } else if( dd->ins.flags & DIF_X86_ES ) {
+    } else if( dd->ins.flags.u.x86 & DIF_X86_ES ) {
         return( DR_X86_es );
-    } else if( dd->ins.flags & DIF_X86_FS ) {
+    } else if( dd->ins.flags.u.x86 & DIF_X86_FS ) {
         return( DR_X86_fs );
-    } else if( dd->ins.flags & DIF_X86_GS ) {
+    } else if( dd->ins.flags.u.x86 & DIF_X86_GS ) {
         return( DR_X86_gs );
-    } else if( dd->ins.flags & DIF_X86_SS ) {
+    } else if( dd->ins.flags.u.x86 & DIF_X86_SS ) {
         return( DR_X86_ss );
     } else {
         switch( op->base ) {
@@ -521,7 +521,7 @@ walk_result MemReference( int opnd, mad_disasm_data *dd, MEMREF_WALKER *wk, cons
     } else {
         addr.mach.segment = RegValue( mr, GetSegRegOverride( dd, op ) );
     }
-    if( dd->ins.flags & DIF_X86_ADDR_LONG ) {
+    if( dd->ins.flags.u.x86 & DIF_X86_ADDR_LONG ) {
         addr.mach.offset &= ~(dword)0;
     } else {
         addr.mach.offset &= ~(word)0;
@@ -585,15 +585,15 @@ walk_result DoDisasmMemRefWalk( mad_disasm_data *dd, MEMREF_WALKER *wk, const ma
     switch( dd->ins.type ) {
     case DI_X86_ret:
     case DI_X86_ret2:
-        th = (dd->ins.flags & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR;
+        th = (dd->ins.flags.u.x86 & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR;
         break;
     case DI_X86_retf:
     case DI_X86_retf2:
-        th = (dd->ins.flags & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR;
+        th = (dd->ins.flags.u.x86 & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR;
         break;
     case DI_X86_iret:
     case DI_X86_iretd:
-        th = (dd->ins.flags & DIF_X86_OPND_LONG) ? X86T_IRET32 : X86T_IRET16;
+        th = (dd->ins.flags.u.x86 & DIF_X86_OPND_LONG) ? X86T_IRET32 : X86T_IRET16;
         break;
     case DI_X86_pop:
     case DI_X86_pop2:
@@ -605,11 +605,11 @@ walk_result DoDisasmMemRefWalk( mad_disasm_data *dd, MEMREF_WALKER *wk, const ma
     case DI_X86_popf:
     case DI_X86_popfd:
     case DI_X86_leave:
-        th = (dd->ins.flags & DIF_X86_OPND_LONG) ? X86T_DWORD : X86T_WORD;
+        th = (dd->ins.flags.u.x86 & DIF_X86_OPND_LONG) ? X86T_DWORD : X86T_WORD;
         break;
     case DI_X86_popa:
     case DI_X86_popad:
-        th = (dd->ins.flags & DIF_X86_OPND_LONG) ? X86T_POPAD : X86T_POPA;
+        th = (dd->ins.flags.u.x86 & DIF_X86_OPND_LONG) ? X86T_POPAD : X86T_POPA;
         break;
     default:
         break;
@@ -914,20 +914,20 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
             size = 4;
             break;
         default:
-            size = (ins->flags & DIF_X86_OPND_LONG) ? 4 : 2;
+            size = (ins->flags.u.x86 & DIF_X86_OPND_LONG) ? 4 : 2;
         }
         MCTypeInfoForHost( MTK_INTEGER, size , &mti );
         MCTypeToString( dd->radix, &mti, &op->value, &max, p );
         break;
     case DO_RELATIVE:
         val.mach.offset += op->value;
-        MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR , MLK_CODE, max, p );
+        MCAddrToString( val, (ins->flags.u.x86 & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR , MLK_CODE, max, p );
         break;
     case DO_ABSOLUTE:
         if( op->type & DO_EXTRA ) {
             val.mach.offset = op->value;
             val.mach.segment = op->extra;
-            MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR , MLK_CODE, max, p );
+            MCAddrToString( val, (ins->flags.u.x86 & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR , MLK_CODE, max, p );
             break;
         }
         /* fall through for LEA instruction */
@@ -935,7 +935,7 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
     case DO_MEMORY_REL:
         if( op->base == DR_NONE && op->index == DR_NONE ) {
             // direct memory address
-            MCTypeInfoForHost( MTK_INTEGER, (ins->flags & DIF_X86_ADDR_LONG) ? 4 : 2 , &mti );
+            MCTypeInfoForHost( MTK_INTEGER, (ins->flags.u.x86 & DIF_X86_ADDR_LONG) ? 4 : 2 , &mti );
             MCTypeToString( dd->radix, &mti, &op->value, &max, p );
         } else if( op->value == 0 ) {
             // don't output zero disp in indirect memory address

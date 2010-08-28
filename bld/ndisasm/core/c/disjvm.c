@@ -135,7 +135,7 @@ dis_handler_return JVMIInc( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     ins->num_ops = 2;
     ins->op[0].type = DO_MEMORY_ABS;
-    if( ins->flags & DIF_JVM_WIDE ) {
+    if( ins->flags.u.jvm & DIF_JVM_WIDE ) {
         ins->op[0].value = 0 | GetUShort( d, ins->size + 1 );
         ins->size += 1;
     } else {
@@ -149,7 +149,7 @@ dis_handler_return JVMIInc( dis_handle *h, void *d, dis_dec_ins *ins )
 
 dis_handler_return JVMWIndex( dis_handle *h, void *d, dis_dec_ins *ins )
 {
-    if( ins->flags & DIF_JVM_WIDE ) {
+    if( ins->flags.u.jvm & DIF_JVM_WIDE ) {
         return( JVMUShort( h, d, ins ) );
     } else {
         return( JVMUByte( h, d, ins ) );
@@ -161,7 +161,7 @@ dis_handler_return JVMWide( dis_handle *h, void *d, dis_dec_ins *ins )
     //this affects the following iload,lload,fload,dload,aload,istore,
     //lstore,fstore,dstore,astore,iinc,ret instructions.
     ins->op[0].extra = GetUByte( d, 1 );
-    ins->flags |= DIF_JVM_WIDE;
+    ins->flags.u.jvm |= DIF_JVM_WIDE;
     ins->size += 1;
     return( DHR_CONTINUE );
 }

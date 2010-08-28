@@ -465,7 +465,7 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op_num,
         if( pd->r_entry != NULL ) {
             /* if there is an override we must avoid the frame
              */
-            if( ( ins->flags & DIS_X86_SEG_OR ) && IsIntelx86() ) {
+            if( ( ins->flags.u.x86 & DIS_X86_SEG_OR ) && IsIntelx86() ) {
                 rf |= RFLAG_NO_FRAME;
             }
             len = HandleAReference( op->value, ins->size, rf,
@@ -531,7 +531,7 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
     dis_dec_ins         decoded;
     char                name[ MAX_INS_NAME ];
     char                ops[ MAX_OBJ_NAME + 24 ];       // at most 1 label/relocation per instruction, plus room for registers, brackets and other crap
-    unsigned            flags;
+    dis_inst_flags      flags;
     scantab_ptr         st;
     int                 is_intel;
     sa_disasm_struct    sds;
@@ -559,11 +559,11 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
     PrintHeader( sec );
     if( size && sec_label_list )
         PrintAssumeHeader( sec );
-    flags = 0;
+    flags.u.all = 0;
     if( GetMachineType() == ORL_MACHINE_TYPE_I386 ) {
         if( ( GetFormat() != ORL_OMF ) ||
             ( ORLSecGetFlags( sec->shnd ) & ORL_SEC_FLAG_USE_32 ) ) {
-            flags = DIF_X86_USE32_FLAGS;
+            flags.u.all = DIF_X86_USE32_FLAGS;
         }
         is_intel = 1;
     } else {
@@ -607,7 +607,7 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
             MixSource( data.loop );
         }
         DisDecodeInit( &DHnd, &decoded );
-        decoded.flags |= flags;
+        decoded.flags.u.all |= flags.u.all;
         sds.offs = data.loop;
         DisDecode( &DHnd, &sds, &decoded );
         if( sec_label_list ) {

@@ -118,7 +118,7 @@ return_val DoPass1( orl_sec_handle shnd, unsigned_8 *contents, orl_sec_size size
     return_val                          error;
     unsigned                            i;
     ref_entry                           r_entry;
-    unsigned                            flags;
+    dis_inst_flags                      flags;
     orl_sec_offset                      op_pos;
     int                                 is_intel;
     int                                 adjusted;
@@ -132,11 +132,11 @@ return_val DoPass1( orl_sec_handle shnd, unsigned_8 *contents, orl_sec_size size
         r_entry = NULL;
     }
 
-    flags = 0;
+    flags.u.all = 0;
     if( GetMachineType() == ORL_MACHINE_TYPE_I386 ) {
         if( ( GetFormat() != ORL_OMF ) ||
             ( ORLSecGetFlags( shnd ) & ORL_SEC_FLAG_USE_32 ) ) {
-            flags = DIF_X86_USE32_FLAGS;
+            flags.u.all = DIF_X86_USE32_FLAGS;
         }
         is_intel = 1;
     } else {
@@ -176,7 +176,7 @@ return_val DoPass1( orl_sec_handle shnd, unsigned_8 *contents, orl_sec_size size
         }
 
         DisDecodeInit( &DHnd, &decoded );
-        decoded.flags |= flags;
+        decoded.flags.u.all |= flags.u.all;
         sds.offs = loop;
         dr = DisDecode( &DHnd, &sds, &decoded );
         // if an invalid instruction was found, there is nothing we can do.
@@ -260,7 +260,7 @@ return_val DoPass1( orl_sec_handle shnd, unsigned_8 *contents, orl_sec_size size
                             // relative memory references if no relocation is present!
                             if( GetMachineType() == ORL_MACHINE_TYPE_AMD64 ) {
                                 decoded.op[i].value += decoded.size;
-                                
+
                                 // I don't know if this is neccessary, but it will generate
                                 // labels for memory references if no symbol is present
                                 // (ex: executable file)

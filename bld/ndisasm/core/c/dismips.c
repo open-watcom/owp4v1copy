@@ -124,9 +124,9 @@ typedef union {
 } mips_ins;
 
 
-static dis_format_flags MIPSFloatFmt( unsigned_32 fmt )
+static dis_inst_flags_mips MIPSFloatFmt( unsigned_32 fmt )
 {
-    dis_format_flags    flags;
+    dis_inst_flags_mips     flags;
 
     switch( fmt ) {
     case 16:
@@ -145,7 +145,7 @@ static dis_format_flags MIPSFloatFmt( unsigned_32 fmt )
         flags = DIF_MIPS_FF_PS;
         break;
     default:
-        flags = 0;
+        flags = DIF_NONE;
     }
     return( flags );
 }
@@ -165,7 +165,7 @@ dis_handler_return MIPSJType( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[0].value = code.jtype.target << 2;
     ins->num_ops = 1;
     if( code.jtype.op & 1 )
-        ins->flags |= DIF_MIPS_LINK;
+        ins->flags.u.mips |= DIF_MIPS_LINK;
     return( DHR_DONE );
 }
 
@@ -400,7 +400,7 @@ dis_handler_return MIPSJump2( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].type = DO_REG;
     ins->op[1].base = code.rtype.rs + DR_MIPS_r0;
     ins->num_ops = 2;
-    ins->flags |= DIF_MIPS_LINK;
+    ins->flags.u.mips |= DIF_MIPS_LINK;
     return( DHR_DONE );
 }
 
@@ -415,9 +415,9 @@ dis_handler_return MIPSBranch1( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
     ins->num_ops = 2;
     if( code.itype.rt & 0x10 )
-        ins->flags |= DIF_MIPS_LINK;
+        ins->flags.u.mips |= DIF_MIPS_LINK;
     if( code.itype.rt & 0x02 )
-        ins->flags |= DIF_MIPS_LIKELY;
+        ins->flags.u.mips |= DIF_MIPS_LIKELY;
     return( DHR_DONE );
 }
 
@@ -434,7 +434,7 @@ dis_handler_return MIPSBranch2( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[2].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
     ins->num_ops = 3;
     if( code.itype.op & 0x10 )
-        ins->flags |= DIF_MIPS_LIKELY;
+        ins->flags.u.mips |= DIF_MIPS_LIKELY;
     return( DHR_DONE );
 }
 
@@ -449,7 +449,7 @@ dis_handler_return MIPSBranch3( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
     ins->num_ops = 2;
     if( code.itype.op & 0x10 )
-        ins->flags |= DIF_MIPS_LIKELY;
+        ins->flags.u.mips |= DIF_MIPS_LIKELY;
     return( DHR_DONE );
 }
 
@@ -476,7 +476,7 @@ dis_handler_return MIPSFPUOp2( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].type = DO_REG;
     ins->op[1].base = code.frtype.fs + DR_MIPS_f0;
     ins->num_ops = 2;
-    ins->flags = MIPSFloatFmt( code.frtype.fmt );
+    ins->flags.u.mips = MIPSFloatFmt( code.frtype.fmt );
     return( DHR_DONE );
 }
 
@@ -492,7 +492,7 @@ dis_handler_return MIPSFPUOp3( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[2].type = DO_REG;
     ins->op[2].base = code.frtype.ft + DR_MIPS_f0;
     ins->num_ops = 3;
-    ins->flags = MIPSFloatFmt( code.frtype.fmt );
+    ins->flags.u.mips = MIPSFloatFmt( code.frtype.fmt );
     return( DHR_DONE );
 }
 
@@ -506,7 +506,7 @@ dis_handler_return MIPSFPUCmp( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[1].type = DO_REG;
     ins->op[1].base = code.frtype.ft + DR_MIPS_f0;
     ins->num_ops = 2;
-    ins->flags = MIPSFloatFmt( code.frtype.fmt );
+    ins->flags.u.mips = MIPSFloatFmt( code.frtype.fmt );
     return( DHR_DONE );
 }
 
@@ -537,7 +537,7 @@ dis_handler_return MIPSBranchCop( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[0].value = (SEX( code.itype.immediate, 15 ) + 1) * sizeof( unsigned_32 );
     ins->num_ops = 1;
     if( code.itype.rt & 0x10 )
-        ins->flags |= DIF_MIPS_LIKELY;
+        ins->flags.u.mips |= DIF_MIPS_LIKELY;
     return( DHR_DONE );
 }
 
@@ -609,13 +609,13 @@ static unsigned MIPSFlagHook( dis_handle *h, void *d, dis_dec_ins *ins,
     char        *p;
 
     p = name;
-    if( ins->flags & DIF_MIPS_FF_FLAGS ) {
+    if( ins->flags.u.mips & DIF_MIPS_FF_FLAGS ) {
         *p++ = '.';
-        if( ins->flags & DIF_MIPS_FF_S ) *p++ = 's';
-        if( ins->flags & DIF_MIPS_FF_D ) *p++ = 'd';
-        if( ins->flags & DIF_MIPS_FF_W ) *p++ = 'w';
-        if( ins->flags & DIF_MIPS_FF_L ) *p++ = 'l';
-        if( ins->flags & DIF_MIPS_FF_PS ) { *p++ = 'p'; *p++ = 's'; }
+        if( ins->flags.u.mips & DIF_MIPS_FF_S ) *p++ = 's';
+        if( ins->flags.u.mips & DIF_MIPS_FF_D ) *p++ = 'd';
+        if( ins->flags.u.mips & DIF_MIPS_FF_W ) *p++ = 'w';
+        if( ins->flags.u.mips & DIF_MIPS_FF_L ) *p++ = 'l';
+        if( ins->flags.u.mips & DIF_MIPS_FF_PS ) { *p++ = 'p'; *p++ = 's'; }
         *p = '\0';
     }
     return( p - name );

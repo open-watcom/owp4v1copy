@@ -142,7 +142,7 @@ mad_status DIGENTRY MITraceSimulate( mad_trace_data *td, mad_disasm_data *dd, ma
             new = reg->u._32[I64LO32];
         }
 
-        if( dd->ins.flags & DIF_MIPS_LINK ) {
+        if( dd->ins.flags.u.mips & DIF_MIPS_LINK ) {
             // note that linking conditonal jumps unconditionally update r31!
             if( dd->ins.type == DI_MIPS_JALR )
                 base = dd->ins.op[0].base;  // 'jalr' may update any register

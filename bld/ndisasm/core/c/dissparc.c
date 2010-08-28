@@ -69,7 +69,7 @@ dis_handler_return SPARCBranch( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->op[0].type = DO_RELATIVE;
     ins->op[0].value = ( SEX( code.branch.disp22, 21 ) ) * sizeof( ins->opcode );
     if( code.branch.anul != 0 ) {
-        ins->flags |= DIF_SPARC_ANUL;
+        ins->flags.u.sparc |= DIF_SPARC_ANUL;
     }
     ins->num_ops = 1;
     return( DHR_DONE );
@@ -177,7 +177,7 @@ dis_handler_return SPARCFPop2( dis_handle *h, void *d, dis_dec_ins *ins )
 
     code.full = _SparcIns( ins->opcode );
     if( code.op3opf.opcode_3 == 0x35 ) {
-        // fcmp 
+        // fcmp
         ins->op[ 0 ].type = DO_REG;
         ins->op[ 0 ].base = _SparcFReg( code.op3opf.rs1 );
         ins->op[ 1 ].type = DO_REG;
