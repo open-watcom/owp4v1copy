@@ -150,6 +150,9 @@ pick(   W_RESHASNONAME,
 pick(   W_RESDUPNAMEINFILE,
         "There is already a resource of that name in the file.",
         "There is already a resource of that name in the file." )
+pick(   W_ACCELISEMPTY,
+        "The accelerator table is empty.",
+        "The accelerator table is empty." )
 
 // WMAIN.C
 pick(   W_ACCELAPPTITLE,

@@ -158,6 +158,9 @@ pick(   W_SAVERESFILTER,
 pick(   W_NORESOLVEDUPS,
         "Could not resolve duplicate string entries in the target file.",
         "Could not resolve duplicate string entries in the target file." )
+pick(   W_STRINGTABLEISEMPTY,
+        "The string table is empty.",
+        "The string table is empty." )
 
 // WMAIN.C
 pick(   W_STRINGAPPTITLE,

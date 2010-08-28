@@ -144,6 +144,9 @@ Bool WSaveObject( WAccelEditInfo *einfo, Bool get_name, Bool save_into )
         data_saved = TRUE;
         WMakeDataFromAccelTable( einfo->tbl, &einfo->info->data, &einfo->info->data_size );
         ok = (einfo->info->data != NULL && einfo->info->data_size != 0);
+        if( !ok ) {
+            WDisplayErrorMsg( W_ACCELISEMPTY );
+        }
     }
 
     if( ok ) {

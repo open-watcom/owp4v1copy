@@ -137,6 +137,9 @@ Bool WSaveObject( WStringEditInfo *einfo, Bool get_name, Bool save_into )
     if( ok ) {
         idata = WMakeSaveData( einfo->tbl );
         ok = (idata != NULL);
+        if( !ok ) {
+            WDisplayErrorMsg( W_STRINGTABLEISEMPTY );
+        }
     }
 
     if( ok ) {
