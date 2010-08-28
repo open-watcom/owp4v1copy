@@ -267,6 +267,15 @@ Bool WGetKeyPressProc( WAccelEditInfo *einfo, UINT message, WPARAM wParam, LPARA
             ret = TRUE;
         }
         break;
+    case WM_LBUTTONDOWN:
+    case WM_RBUTTONDOWN:
+    case WM_MBUTTONDOWN:
+    case WM_NCLBUTTONDOWN:
+    case WM_NCRBUTTONDOWN:
+    case WM_NCMBUTTONDOWN:
+        /* abort if the user clicks the mouse */
+        ret = TRUE;
+        break;
     }
 
     return( ret );
