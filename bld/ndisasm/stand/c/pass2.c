@@ -522,6 +522,28 @@ static void processDataInCode( section_ptr sec, unsigned_8 *contents, struct pas
     data->loop = offset;
 }
 
+static char *processFpuEmulatorFixup( ref_entry *r, orl_sec_offset loop )
+{
+    char    *fixup;
+
+    if( *r != NULL && (*r)->offset == loop ) {
+        fixup = SkipRef( *r );
+        if( fixup != NULL ) {
+            *r = (*r)->next;
+            // there can be second fixup per instruction with 1 byte offset
+            // it must be skipped too, displayed is first only
+            // first one is significant, second one is segment override only
+            if( *r && SkipRef( *r ) != NULL && ( (*r)->offset == loop + 1 ) ) {
+                *r = (*r)->next;
+            }
+            if( Options & PRINT_FPU_EMU_FIXUP ) {
+                return( fixup );
+            }
+        }
+    }
+    return( NULL );
+}
+
 num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
                     label_list sec_label_list, ref_list sec_ref_list )
 // perform pass 2 on one section
@@ -586,13 +608,7 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
         while( data.r_entry && ( data.r_entry->offset < data.loop ) ) {
             data.r_entry = data.r_entry->next;
         }
-        FPU_fixup = NULL;
-        if( data.r_entry && data.r_entry->offset == data.loop
-          && (FPU_fixup = SkipRef( data.r_entry )) != NULL ) {
-            if( (Options & PRINT_FPU_EMU_FIXUP) == 0 )
-                FPU_fixup = NULL;
-            data.r_entry = data.r_entry->next;
-        }
+        FPU_fixup = processFpuEmulatorFixup( &data.r_entry, data.loop );
         if( data.r_entry && ( data.r_entry->offset == data.loop ) ) {
             if( is_intel || IsDataReloc( data.r_entry ) ) {
                 // we just skip the data
