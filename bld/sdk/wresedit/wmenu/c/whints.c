@@ -100,6 +100,8 @@ static WHintItem WHints[] = {
     { IDM_MENU_NEWSEPARATOR,    W_MENU_NEWSEPARATOR   },
     { IDM_MENU_ABOUT,           W_MENU_ABOUT          },
     { IDM_HELP,                 W_MENU_HELP           },
+    { IDM_HELP_SEARCH,          W_MENU_HELP_SEARCH    },
+    { IDM_HELP_ON_HELP,         W_MENU_HELP_ON_HELP   },
     { -1,                       0                     }
 };
 

@@ -63,11 +63,17 @@ pick(   W_STR_NEWITEM,
         "Insert a new string.",
         "Insert a new string." )
 pick(   W_STR_ABOUT,
-        "Display the about box.",
-        "Display the about box." )
+        "Display program information.",
+        "Display program information." )
 pick(   W_STR_HELP,
-        "Display help text.",
-        "Display help text." )
+        "List Open Watcom String Editor help topics.",
+        "List Open Watcom String Editor help topics." )
+pick(   W_STR_HELP_SEARCH,
+        "Search for help on a specific topic.",
+        "Search for help on a specific topic." )
+pick(   W_STR_HELP_ON_HELP,
+        "Display information on how to use help.",
+        "Display information on how to use help." )
 pick(   W_STR_FILEMENU,
         "Clear or update the string table.",
         "Clear or update the string table." )

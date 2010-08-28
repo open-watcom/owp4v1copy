@@ -64,11 +64,17 @@ pick(   W_ACC_KEYVALUE,
         "Set the accelerator item's key value with keyboard.",
         "Set the accelerator item's key value with keyboard." )
 pick(   W_ACC_ABOUT,
-        "Display the about box.",
-        "Display the about box." )
+        "Display program information.",
+        "Display program information." )
 pick(   W_ACC_HELP,
-        "Display help text.",
-        "Display help text." )
+        "List Open Watcom Accelerator Editor help topics.",
+        "List Open Watcom Accelerator Editor help topics." )
+pick(   W_ACC_HELP_SEARCH,
+        "Search for help on a specific topic.",
+        "Search for help on a specific topic." )
+pick(   W_ACC_HELP_ON_HELP,
+        "Display information on how to use help.",
+        "Display information on how to use help." )
 pick(   W_ACC_FILEMENU,
         "Clear or update the accelerator table.",
         "Clear or update the accelerator table." )

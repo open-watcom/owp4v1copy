@@ -79,11 +79,17 @@ pick(   W_MENU_NEWSEPARATOR,
         "Insert a new menu separator.",
         "Insert a new menu separator." )
 pick(   W_MENU_ABOUT,
-        "Display the about box.",
-        "Display the about box." )
+        "Display program information.",
+        "Display program information." )
 pick(   W_MENU_HELP,
-        "Display help text.",
-        "Display help text." )
+        "List Open Watcom Menu Editor help topics.",
+        "List Open Watcom Menu Editor help topics." )
+pick(   W_MENU_HELP_SEARCH,
+        "Search for help on a specific topic.",
+        "Search for help on a specific topic." )
+pick(   W_MENU_HELP_ON_HELP,
+        "Display information on how to use help.",
+        "Display information on how to use help." )
 pick(   W_MENU_FILEMENU,
         "Clear or update the menu resource.",
         "Clear or update the menu resource." )

@@ -93,6 +93,8 @@ static WHintItem WHints[] = {
     { IDM_ACC_KEYVALUE,     W_ACC_KEYVALUE      },
     { IDM_ACC_ABOUT,        W_ACC_ABOUT         },
     { IDM_HELP,             W_ACC_HELP          },
+    { IDM_HELP_SEARCH,      W_ACC_HELP_SEARCH   },
+    { IDM_HELP_ON_HELP,     W_ACC_HELP_ON_HELP  },
     { -1,                   0                   }
 };
 

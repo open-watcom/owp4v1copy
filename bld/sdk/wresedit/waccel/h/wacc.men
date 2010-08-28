@@ -56,8 +56,14 @@ BEGIN
     POPUP      sp( "&Help",
                    "&Help" )
     BEGIN
-        MENUITEM sp( "&Help",
-                     "&Help" )                  IDM_HELP
+        MENUITEM sp( "&Contents",
+                     "&Contents" )              IDM_HELP
+        MENUITEM sp( "&Search for Help On...",
+                     "&Search for Help On..." ) IDM_HELP_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&How to Use Help",
+                     "&How to Use Help" )       IDM_HELP_ON_HELP
+        MENUITEM SEPARATOR
         MENUITEM sp( "&About...",
                      "&About..." )              IDM_ACC_ABOUT
     END
@@ -122,10 +128,15 @@ BEGIN
     POPUP      sp( "&Help",
                    "&Help" )
     BEGIN
-        MENUITEM sp( "&Help",
-                     "&Help" )                  IDM_HELP
+        MENUITEM sp( "&Contents",
+                     "&Contents" )              IDM_HELP
+        MENUITEM sp( "&Search for Help On...",
+                     "&Search for Help On..." ) IDM_HELP_SEARCH
+        MENUITEM SEPARATOR
+        MENUITEM sp( "&How to Use Help",
+                     "&How to Use Help" )       IDM_HELP_ON_HELP
+        MENUITEM SEPARATOR
         MENUITEM sp( "&About...",
                      "&About..." )              IDM_ACC_ABOUT
     END
 END
-

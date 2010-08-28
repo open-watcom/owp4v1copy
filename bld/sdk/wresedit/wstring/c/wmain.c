@@ -853,6 +853,16 @@ LRESULT WINEXPORT WMainWndProc( HWND hWnd, UINT message,
             pass_to_def = FALSE;
             break;
 
+        case IDM_HELP_SEARCH:
+            WStrHelpSearchRoutine();
+            pass_to_def = FALSE;
+            break;
+
+        case IDM_HELP_ON_HELP:
+            WStrHelpOnHelpRoutine();
+            pass_to_def = FALSE;
+            break;
+
         case IDM_STR_ABOUT:
             ai.owner = hWnd;
             ai.inst = WGetEditInstance();
@@ -1145,5 +1155,27 @@ void CALLBACK WStrHelpRoutine( void )
         if( !WHtmlHelp( einfo->win, "resstr.chm", HELP_CONTENTS, 0 ) ) {
             WWinHelp( einfo->win, "resstr.hlp", HELP_CONTENTS, 0 );
         }
+    }
+}
+
+void CALLBACK WStrHelpSearchRoutine( void )
+{
+    WStringEditInfo     *einfo;
+
+    einfo = WGetCurrentEditInfo();
+    if( einfo != NULL ) {
+        if( !WHtmlHelp( einfo->win, "resstr.chm", HELP_PARTIALKEY, (DWORD)"" ) ) {
+            WWinHelp( einfo->win, "resstr.hlp", HELP_PARTIALKEY, (DWORD)"" );
+        }
+    }
+}
+
+void CALLBACK WStrHelpOnHelpRoutine( void )
+{
+    WStringEditInfo     *einfo;
+
+    einfo = WGetCurrentEditInfo();
+    if( einfo != NULL ) {
+        WWinHelp( einfo->win, "winhelp.hlp", HELP_HELPONHELP, 0 );
     }
 }

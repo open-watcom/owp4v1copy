@@ -90,7 +90,9 @@ static WHintItem WHints[] = {
     { IDM_STR_NEWITEM,      W_STR_NEWITEM         },
     { IDM_STR_ABOUT,        W_STR_ABOUT           },
     { IDM_HELP,             W_STR_HELP            },
-    { -1,                   0                     },
+    { IDM_HELP_SEARCH,      W_STR_HELP_SEARCH     },
+    { IDM_HELP_ON_HELP,     W_STR_HELP_ON_HELP    },
+    { -1,                   0                     }
 };
 
 static WPopupHintItem WPopupHints[] = {
