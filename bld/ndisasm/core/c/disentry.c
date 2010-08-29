@@ -250,7 +250,7 @@ char *DisOpFormat( dis_handle *h, void *d, dis_dec_ins *ins, dis_format_flags fl
     const char chLbrac = ( h->cpu == DISCPU_sparc ) ? '[' : '(';
     const char chRbrac = ( h->cpu == DISCPU_sparc ) ? ']' : ')';
 
-    
+
     // BartoszP 23.10.2005
     // for SPARC architecture DO_IMMED value could not be emited before
     // other arguments (registers) so we should dissassembly like:
@@ -291,7 +291,7 @@ char *DisOpFormat( dis_handle *h, void *d, dis_dec_ins *ins, dis_format_flags fl
                 }
             } else {
                 // SPARC stuff
-                if( ins->op[i].index != DR_NONE 
+                if( ins->op[i].index != DR_NONE
                      && ( DO_MEMORY_ABS == (ins->op[i].type & DO_MASK ) ) ) {
                     // ASI stuff
                 } else if( ins->op[i].index == DR_NONE
@@ -354,7 +354,11 @@ dis_return DisFormat( dis_handle *h, void *d, dis_dec_ins *ins_p,
         if( p != opers )
             *p++ = ' ';
         len = h->d->post_op_hook( h, d, &ins, flags, i, p );
-        p += len;
+        if( len ) {
+            p += len;
+        } else if( p != opers ) {
+            --p;
+        }
         *p = '\0';
     }
     return( DR_OK );
