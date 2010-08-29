@@ -7,7 +7,7 @@ tmp_file = tmp.tmp
 
 .obj.dis:
     @set ERROR_MSG=failure to decode $[@
-    @wdis -l=$@ -a $[@
+    @wdis -l=$@ -a -ff $[@
     @set ESM_CHECK=%null
     @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
     $(%ESM_CHECK)
@@ -19,7 +19,7 @@ tmp_file = tmp.tmp
 
 .obj.dib:
     @set ERROR_MSG=failure to decode $[@
-    @wdis -l=$@ $[@
+    @wdis -l=$@ -ff $[@
     @set ESM_CHECK=%null
     @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dib $^&.esm
     $(%ESM_CHECK)
