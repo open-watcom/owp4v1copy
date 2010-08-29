@@ -163,12 +163,14 @@ static void freePublics( void ) {
     label_list_ptr      ptr;
 
     ptr = Publics.label_lists;
-    while( ptr ) {
+    while( ptr != NULL ) {
         Publics.label_lists = Publics.label_lists->next;
         MemFree( ptr );
         ptr = Publics.label_lists;
     }
-    MemFree( Publics.public_symbols );
+    if( Publics.public_symbols != NULL ) {
+        MemFree( Publics.public_symbols );
+    }
 }
 
 void FreeHashTables( void )

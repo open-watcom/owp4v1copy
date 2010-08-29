@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Standalone disassembler mainline. 
+* Description:  Standalone disassembler mainline.
 *
 ****************************************************************************/
 
@@ -397,10 +397,9 @@ void PrintTail( section_ptr sec )
 }
 
 
-static unsigned DoPrintLinePrefix( void *data, orl_sec_offset off, orl_sec_offset total,
+static void DoPrintLinePrefix( void *data, orl_sec_offset off, orl_sec_offset total,
                         unsigned item_size, unsigned len )
 {
-    unsigned    amount;
     unsigned    done;
     union {
         unsigned_8      u8;
@@ -410,46 +409,52 @@ static unsigned DoPrintLinePrefix( void *data, orl_sec_offset off, orl_sec_offse
 
 
     if( total >= 0x10000 ) {
-        amount = BufferStore( "%08X   ", off );
+        BufferStore( "%08X", off );
     } else {
-        amount = BufferStore( "%04X   ", off );
+        BufferStore( "%04X", off );
+    }
+    if( len ) {
+        BufferConcat( " " );
     }
     for( done = 0; done < len; done += item_size ) {
+        BufferConcat( " " );
         if( off >= total ) {
-            item_size = 1;
-            BufferConcat( "   " );
+            switch( item_size ) {
+            case 1:
+                BufferConcat( "  " );
+                break;
+            case 2:
+                BufferConcat( "    " );
+                break;
+            case 4:
+                BufferConcat( "        " );
+                break;
+            }
         } else {
             p = (void *)((unsigned_8 *)data + off);
             switch( item_size ) {
             case 1:
-                amount += BufferStore( " %02X", p->u8 );
+                BufferStore( "%02X", p->u8 );
                 break;
             case 2:
-                amount += BufferStore( " %04X", p->u16 );
+                BufferStore( "%04X", p->u16 );
                 break;
             case 4:
-                amount += BufferStore( " %08X", p->u32 );
+                BufferStore( "%08X", p->u32 );
                 break;
             }
         }
         off += item_size;
     }
-    return( amount );
+    return;
 }
 
-#define PREFIX_SIZE     30
 
 void PrintLinePrefix( void *data, orl_sec_offset off, orl_sec_offset total,
                         unsigned item_size, unsigned len )
 {
-    unsigned amount;
-
-    amount = DoPrintLinePrefix( data, off, total, item_size, len );
-    if( amount >= PREFIX_SIZE ) {
-        BufferStore( "\n" );
-        amount = 0;
-    }
-    BufferStore( "%*s ", (PREFIX_SIZE - 1) - amount, "" );
+    DoPrintLinePrefix( data, off, total, item_size, len );
+    BufferAlignToTab( PREFIX_SIZE_TABS );
 }
 
 

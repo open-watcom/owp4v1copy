@@ -57,24 +57,26 @@ void CreatePublicsArray( void )
     label_entry         entry;
     int                 index = 0;
 
-    Publics.public_symbols = (label_entry *) MemAlloc( sizeof( label_entry ) * Publics.number );
-    ptr = Publics.label_lists;
-    while( ptr ) {
-        entry = ptr->list->first;
-        while( entry ) {
-            while( entry && ( entry->type == LTYP_SECTION ||
-                        entry->binding == ORL_SYM_BINDING_LOCAL ) ) {
+    if( Publics.number ) {
+        Publics.public_symbols = (label_entry *) MemAlloc( sizeof( label_entry ) * Publics.number );
+        ptr = Publics.label_lists;
+        while( ptr ) {
+            entry = ptr->list->first;
+            while( entry ) {
+                while( entry && ( entry->type == LTYP_SECTION ||
+                            entry->binding == ORL_SYM_BINDING_LOCAL ) ) {
+                    entry = entry->next;
+                }
+                if( !entry ) break;
+                Publics.public_symbols[index] = entry;
+                index++;
                 entry = entry->next;
             }
-            if( !entry ) break;
-            Publics.public_symbols[index] = entry;
-            index++;
-            entry = entry->next;
+            ptr = ptr->next;
         }
-        ptr = ptr->next;
+        // now sort!
+        qsort( Publics.public_symbols, Publics.number, sizeof( label_entry * ), alpha_compare );
     }
-    // now sort!
-    qsort( Publics.public_symbols, Publics.number, sizeof( label_entry * ), alpha_compare );
 }
 
 void PrintPublics( void ) {

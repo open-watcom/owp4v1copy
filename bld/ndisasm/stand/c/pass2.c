@@ -558,6 +558,7 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
     int                 is_intel;
     sa_disasm_struct    sds;
     char                *FPU_fixup;
+    int                 pos_tabs;
 
     routineBase = 0;
     st = sec->scan;
@@ -645,9 +646,9 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
         DisFormat( &DHnd, &data, &decoded, DFormat, name, ops );
         if( FPU_fixup != NULL ) {
             if( !(DFormat & DFF_ASM) ) {
-                BufferStore( "%*s ", PREFIX_SIZE - 1, "" );
+                BufferAlignToTab( PREFIX_SIZE_TABS );
             }
-            BufferStore( "    %sFPU fixup %s\n", CommentString, FPU_fixup );
+            BufferStore( "\t%sFPU fixup %s\n", CommentString, FPU_fixup );
         }
         if( !(DFormat & DFF_ASM) ) {
             unsigned_64     *tmp_64;
@@ -669,11 +670,16 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
                     break;
                 }
             }
-            PrintLinePrefix( contents, data.loop, size,
-                             DisInsSizeInc( &DHnd ), decoded.size );
+            PrintLinePrefix( contents, data.loop, size, DisInsSizeInc( &DHnd ), decoded.size );
         }
-        BufferStore( "    %*s %s", -DisInsNameMax( &DHnd ), name, ops );
-        BufferStore("\n");
+        BufferStore( "\t%s", name );
+        pos_tabs = ( DisInsNameMax( &DHnd ) + TAB_WIDTH ) / TAB_WIDTH + 1;
+        if( !(DFormat & DFF_ASM) ) {
+            pos_tabs += PREFIX_SIZE_TABS;
+        }
+        BufferAlignToTab( pos_tabs );
+        BufferConcat( ops );
+        BufferConcatNL();
         BufferPrint();
     }
     if( sec_label_list ) {
