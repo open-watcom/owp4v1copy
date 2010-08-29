@@ -37,12 +37,6 @@
 extern void __int7( void );
 #pragma aux __int7 "*";
 
-extern int __no87;
-#pragma aux __no87 "*";
-
-extern unsigned char __8087;
-#pragma aux __8087 "*";
-
 extern  int gorealmode( void );
 #pragma aux gorealmode = \
         "mov ah,30h" \
