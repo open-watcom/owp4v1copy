@@ -173,8 +173,8 @@ static void AutoGroupSect( section *sec )
     offset          new_size;
     offset          align_size;
     unsigned        num_segs;
-    bool            lastseg;    // TRUE iff this should be last seg in group.
-    offset          limit;
+    bool            lastseg = FALSE;    // TRUE iff this should be last seg in group.
+    offset          limit = 0;
 
     CurrentSeg = NULL;
     size = 0;
@@ -374,11 +374,11 @@ static void FindSplitGroups( void )
 {
     group_entry     *group;
 
-    if( !(FmtData.type & MK_OVERLAYS) )
-        return;
-    for( group = Groups; group != NULL; group = group->next_group ) {
-        if( Ring2Lookup( group->leaders, CheckGroupSplit, group->section ) ) {
-            LnkMsg( ERR+MSG_OVL_GROUP_SPLIT, "s", group->sym->name );
+    if( FmtData.type & MK_OVERLAYS ) {
+        for( group = Groups; group != NULL; group = group->next_group ) {
+            if( Ring2Lookup( group->leaders, CheckGroupSplit, group->section ) ) {
+                LnkMsg( ERR+MSG_OVL_GROUP_SPLIT, "s", group->sym->name );
+            }
         }
     }
 }

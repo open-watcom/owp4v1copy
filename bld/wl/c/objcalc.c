@@ -946,7 +946,7 @@ static void DefinePublics( void )
     }
     StartMapSort();
     ProcPubs( Root->mods, Root );
-    if( FmtData.type & MK_REAL_MODE ) {
+    if( FmtData.type & MK_OVERLAYS ) {
         ProcOvlSectPubs( Root );
     }
     ProcPubs( LibModules, Root );

@@ -68,6 +68,5 @@ extern void             NumberSections( void );
 extern void             FillOutFilePtrs( void );
 extern void             TryDefVector( symbol * );
 extern void             TryUseVector( symbol *, extnode * );
-extern section          *GetOvlSect( char * );
 extern void             OvlPass2( void );
 extern virt_mem         GetLoadObjTarget( segdata * );

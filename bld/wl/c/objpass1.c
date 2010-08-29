@@ -520,21 +520,18 @@ void AddSegment( segdata *sd, class_entry *class )
     }
 }
 
-class_entry *FindClass( section *sect, char *name, bool is32bit,
-                                bool iscode )
-/*********************************************************************/
+class_entry *FindClass( section *sect, char *name, bool is32bit, bool iscode )
+/****************************************************************************/
 {
     class_entry     *currclass;
     class_entry     *lastclass;
     unsigned        namelen;
+    class_status    cls_is32bit;
 
-    if( is32bit )
-        is32bit = CLASS_32BIT;
-
+    cls_is32bit = ( is32bit ) ? CLASS_32BIT : 0;
     lastclass = sect->classlist;
     for( currclass = sect->classlist; currclass != NULL; currclass = currclass->next_class ) {
-        if( stricmp( currclass->name, name ) == 0
-                        && !((currclass->flags & CLASS_32BIT) ^ is32bit) ) {
+        if( stricmp( currclass->name, name ) == 0 && (currclass->flags & CLASS_32BIT) == cls_is32bit ) {
             return( currclass );
         }
         lastclass = currclass;
@@ -688,10 +685,10 @@ void AddToGroup( group_entry *group, seg_leader *seg )
                                    seg->group->sym->name, group->sym->name );
         return;
     }
-    if( (group->leaders != NULL) &&
+    if( ( group->leaders != NULL ) &&
         ( (group->leaders->info & USE_32) != (seg->info & USE_32) ) &&
         !( (FmtData.type & MK_OS2_FLAT) && FmtData.u.os2.mixed1632 ) &&
-        !(FmtData.type & MK_RAW)) {
+        !(FmtData.type & MK_RAW) ) {
 
         char    *segname_16;
         char    *segname_32;
@@ -801,7 +798,11 @@ static segdata *GetSegment( char *seg_name, char *class_name, char *group_name,
     segdata             *sdata;
     seg_leader          *leader;
 
-    sect = GetOvlSect( class_name );
+    if( FmtData.type & MK_OVERLAYS ) {
+        sect = CheckOvlSect( class_name );
+    } else {
+        sect = Root;
+    }
     class = FindClass( sect, class_name, !use_16, FALSE );
     info = 0;
     sdata = AllocSegData();
@@ -1023,7 +1024,7 @@ static symbol **GetVFList( symbol *defsym, symbol *mainsym, bool generate,
         condsym = FindISymbol( name );
         if( condsym == NULL ) {
             condsym = MakeWeakExtdef( name, defsym );
-        } else if( (condsym->info & SYM_DEFINED) && !IS_SYM_COMMUNAL(condsym) ) {
+        } else if( (condsym->info & SYM_DEFINED) && !IS_SYM_COMMUNAL( condsym ) ) {
             generate = FALSE;
             if( mainsym == NULL ) {
                 break;

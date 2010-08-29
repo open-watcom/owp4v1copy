@@ -123,20 +123,6 @@ void TryUseVector( symbol *sym, extnode *newnode )
     }
 }
 
-section *GetOvlSect( char *clname )
-/*****************************************/
-/* Pick the right section for this segment, based on its class */
-{
-    section             *sect;
-
-    if( !(FmtData.type & MK_OVERLAYS) ) {
-        sect = Root;
-    } else {
-        sect = CheckOvlSect( clname );
-    }
-    return( sect );
-}
-
 static void PSection( section *sec )
 /***********************************/
 {

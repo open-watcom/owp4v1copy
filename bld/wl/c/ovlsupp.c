@@ -154,13 +154,8 @@ static void DoSecPubs( section *sec )
 void ProcOvlSectPubs( section *sec )
 /*****************************************/
 {
-    mod_entry   *next;
-
-    if( sec->u.dist_mods != NULL ) {
-        for( CurrMod = sec->u.dist_mods; CurrMod != NULL; CurrMod = next ) {
-            next = CurrMod->x.next;
-            DoPubs( sec );
-        }
+    for( CurrMod = sec->u.dist_mods; CurrMod != NULL; CurrMod = CurrMod->x.next ) {
+        DoPubs( sec );
     }
 }
 
@@ -691,7 +686,7 @@ void OvlPass1( void )
     OvlVecEnd = DefISymbol( _OvlVecEndName );
 
     OvlSeg = InitLeader( "" );
-    OvlSeg->class = FindClass( Root, OvlMgrClass, 0, 1 );
+    OvlSeg->class = FindClass( Root, OvlMgrClass, FALSE, TRUE );
     OvlSeg->combine = COMBINE_INVALID;
     OvlSegData = AllocSegData();
     OvlSegData->u.leader = OvlSeg;
