@@ -5378,7 +5378,7 @@ typedef PIMAGE_TLS_DIRECTORY32  PIMAGE_TLS_DIRECTORY;
 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
     union {
         DWORD   Characteristics;
-        DWORD   OrdinalFirstThunk;
+        DWORD   OriginalFirstThunk;
     };
     DWORD   TimeDateStamp;
     DWORD   ForwarderChain;
