@@ -226,9 +226,9 @@ static void     SrchInit( a_window *wnd )
 
     SrchFreeFound( srch );
     srch->max_mod_name = 0;
-    srch->ignore_case = SrchIgnoreCase;
-    srch->use_rx = SrchRX;
-    strcpy( srch->magic_str, SrchMagicChars );
+    srch->ignore_case = WndGetSrchIgnoreCase();
+    srch->use_rx = WndGetSrchRX();
+    strcpy( srch->magic_str, WndGetSrchMagicChars() );
     srch->walk( srch );
     if( srch->num_rows != 0 ) {
         qsort( srch->found, srch->num_rows, sizeof( found_item ), FoundCompare );
@@ -252,7 +252,7 @@ static void     SrchMenuItem( a_window *wnd, unsigned id, int row, int piece )
     case MENU_SEARCH_SOURCE:
         new = WndModInspect( srch->found[ row ].mod );
         if( new == NULL ) break;
-        SrchIgnoreCase = srch->ignore_case;
+        WndSetSrchIgnoreCase( srch->ignore_case );
         WndSetMagicStr( srch->use_rx ? srch->magic_str : LIT( Empty ) );
         WndSetSrchItem( new, srch->expr );
         WndSearch( new, TRUE, 1 );

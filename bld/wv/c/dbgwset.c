@@ -116,7 +116,7 @@ static unsigned         TabInterval = 8;
 
 extern void DClickSet( void )
 {
-    unsigned new;
+    unsigned    new;
     unsigned    old;
 
     old = SetCurrRadix( 10 );
@@ -639,16 +639,16 @@ extern void SearchSet( void )
         Scan();
         switch( ScanCmd( SearchSettings ) ) {
         case SEARCH_IGNORE:
-            SrchIgnoreCase = TRUE;
+            WndSetSrchIgnoreCase( TRUE );
             break;
         case SEARCH_RESPECT:
-            SrchIgnoreCase = FALSE;
+            WndSetSrchIgnoreCase( FALSE );
             break;
         case SEARCH_RX:
-            SrchRX = TRUE;
+            WndSetSrchRX( TRUE );
             break;
         case SEARCH_NORX:
-            SrchRX = FALSE;
+            WndSetSrchRX( FALSE );
             break;
         default:
             Error( ERR_LOC, LIT( ERR_BAD_SUBCOMMAND ), GetCmdName( CMD_SET ) );
@@ -656,9 +656,10 @@ extern void SearchSet( void )
         }
     }
     if( ScanItem( TRUE, &start, &len ) ) {
-        if( len > MAX_MAGIC_STR ) len = MAX_MAGIC_STR;
-        memcpy( SrchMagicChars, start, len );
-        SrchMagicChars[len] = '\0';
+        char    c = start[len];
+        start[len] = '\0';
+        WndSetSrchMagicChars( start );
+        start[len] = c;
     }
     ReqEOC();
 }
@@ -671,12 +672,12 @@ extern void SearchConf( void )
     ptr = TxtBuff;
     *ptr++ = '/';
     ptr = GetCmdEntry( SearchSettings,
-                       SrchIgnoreCase ? SEARCH_IGNORE : SEARCH_RESPECT, ptr );
+                       WndGetSrchIgnoreCase() ? SEARCH_IGNORE : SEARCH_RESPECT, ptr );
     *ptr++ = '/';
     ptr = GetCmdEntry( SearchSettings,
-                       SrchRX ? SEARCH_RX : SEARCH_NORX, ptr );
+                       WndGetSrchRX() ? SEARCH_RX : SEARCH_NORX, ptr );
     ptr = StrCopy( " {", ptr );
-    ptr = StrCopy( SrchMagicChars, ptr );
+    ptr = StrCopy( WndGetSrchMagicChars(), ptr );
     ptr = StrCopy( "}", ptr );
     ConfigLine( TxtBuff );
 }

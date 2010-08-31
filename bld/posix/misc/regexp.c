@@ -67,7 +67,6 @@
 #include <ctype.h>
 #ifdef UNIX
     #include "clibext.h"
-//    #include "wndregx.h"
 #endif
 #include "../h/regexp.h"
 

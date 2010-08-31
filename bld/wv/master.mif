@@ -271,16 +271,14 @@ extra_c_flags_dos += $(extra_c_flags_dos_$(host_cpu))
 extra_c_flags_trmem = $(trmem_cflags)
 extra_c_flags_dynmem = $(trmem_cover_cflags)
 
-extra_c_flags_regexp = -fi=wndregx.h
-
 extra_c_flags_nt += -DENABLE_TRAP_LOGGING
 
 # inc_dirs
 ###########
 inc_dirs = -I. -I"$(wv_dir)/h" -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"
 !ifndef dll
-inc_dirs += -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(ui_dir)/h" -I"$(posix_dir)/h"
-inc_dirs += -I"$(posix_dir)/h" -I"$(gui_dir)/ui/h" -I"$(help_dir)/h"
+inc_dirs += -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(ui_dir)/h"
+inc_dirs += -I"$(gui_dir)/ui/h" -I"$(help_dir)/h"
 !endif
 !if "$(host_os)" == "linux" || "$(host_os)" == "bsd" || "$(host_os)" == "osx"
 inc_dirs += -I"$(ncurses_dir)/h"

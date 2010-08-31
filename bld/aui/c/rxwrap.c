@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Wrapper for regexp.c module. 
+* Description:  Wrapper for regexp.c module.
 *
 ****************************************************************************/
 
 
-#include "wndregx.h"
+#include "rxwrap.h"
 #include "../../posix/misc/regexp.c"
