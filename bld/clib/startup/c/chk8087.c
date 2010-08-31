@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of __chk8087 and other FPU.
+* Description:  Implementation of __chk8087 and other FPU support routines.
 *
 ****************************************************************************/
 
@@ -61,7 +61,6 @@ extern unsigned short __dos87emucall;
 extern void __init_80x87( void );
 #if defined( __DOS_086__ )
 #pragma aux __init_80x87 "*" =      \
-        ".8087"                     \
         "cmp    __dos87real,0"      \
         "jz     l1"                 \
         "finit"                     \
@@ -73,13 +72,12 @@ extern void __init_80x87( void );
 "l2:" ;
 #else
 #pragma aux __init_80x87 "*" =      \
-        ".8087"                     \
         "fninit"                    \
         "fwait"                     \
         "fldcw  __8087cw" ;
 #endif
 
-/* 0 => no 8087; 2 => 8087,287; 3=>387 */
+/* 0 => no 8087; 2 => 8087,287; 3 => 387 */
 extern unsigned char _WCI86NEAR __x87id( void );
 #pragma aux __x87id "*";
 
@@ -91,56 +89,54 @@ extern void __frstor( _87state * );
 #if defined( __386__ )
 
 #pragma aux __fsave =   \
-    ".387"              \
     "fsave [eax]"       \
     parm routine [eax];
 
 #pragma aux __frstor =  \
-    ".387"              \
     "frstor [eax]"      \
     parm routine [eax];
 
 #else   /* __286__ */
 
   #if defined( __BIG_DATA__ )
-    #pragma aux __fsave =                                           \
-    0x53            /* push    bx                           */      \
-    0x1e            /* push    ds                           */      \
-    0x8e 0xda       /* mov     ds,dx                        */      \
-    0x8b 0xd8       /* mov     bx,ax                        */      \
-    0x9b 0xdd 0x37  /* fsave   [bx]                         */      \
-    0x90 0x9b       /* fwait                                */      \
-    0x1f            /* pop     ds                           */      \
-    0x5b            /* pop     bx                           */      \
+    #pragma aux __fsave =   \
+    "push    bx"            \
+    "push    ds"            \
+    "mov     ds,dx"         \
+    "mov     bx,ax"         \
+    "fsave   [bx]"          \
+    "fwait"                 \
+    "pop     ds"            \
+    "pop     bx"            \
     parm routine [dx ax];
   #else
-    #pragma aux __fsave =                                           \
-    0x53            /* push    bx                           */      \
-    0x8b 0xd8       /* mov     bx,ax                        */      \
-    0x9b 0xdd 0x37  /* fsave   [bx]                         */      \
-    0x90 0x9b       /* fwait                                */      \
-    0x5b            /* pop     bx                           */      \
+    #pragma aux __fsave =   \
+    "push    bx"            \
+    "mov     bx,ax"         \
+    "fsave   [bx]"          \
+    "fwait"                 \
+    "pop     bx"            \
     parm routine [ax];
   #endif
 
   #if defined( __BIG_DATA__ )
-    #pragma aux __frstor =                                          \
-    0x53            /* push    bx                           */      \
-    0x1e            /* push    ds                           */      \
-    0x8e 0xda       /* mov     ds,dx                        */      \
-    0x8b 0xd8       /* mov     bx,ax                        */      \
-    0x9b 0xdd 0x27  /* frstor  [bx]                         */      \
-    0x90 0x9b       /* fwait                                */      \
-    0x1f            /* pop     ds                           */      \
-    0x5b            /* pop     bx                           */      \
+    #pragma aux __frstor =  \
+    "push    bx"            \
+    "push    ds"            \
+    "mov     ds,dx"         \
+    "mov     bx,ax"         \
+    "frstor  [bx]"          \
+    "fwait"                 \
+    "pop     ds"            \
+    "pop     bx"            \
     parm routine [dx ax];
   #else
-    #pragma aux __frstor =                                          \
-    0x53            /* push    bx                           */      \
-    0x8b 0xd8       /* mov     bx,ax                        */      \
-    0x9b 0xdd 0x27  /* frstor  [bx]                         */      \
-    0x90 0x9b       /* fwait                                */      \
-    0x5b            /* pop     bx                           */      \
+    #pragma aux __frstor =  \
+    "push    bx"            \
+    "mov     bx,ax"         \
+    "frstor  [bx]"          \
+    "fwait"                 \
+    "pop     bx"            \
     parm routine [ax];
   #endif
 
@@ -268,7 +264,7 @@ extern void __chk8087( void )
     }
 }
 
-#elif defined( __NT__ )
+#elif defined( __NT__ ) || defined( __RDOS__ )
 
 void __chk8087( void )
 /********************/
@@ -342,16 +338,6 @@ void __chk8087( void )
         _RWD_8087 = 0;               /* then we want to pretend that the */
         _RWD_real87 = 0;             /* coprocessor doesn't exist */
     }
-}
-
-#elif defined( __RDOS__ )
-
-void __chk8087( void )
-/********************/
-{
-    _RWD_real87 = __x87id();
-    _RWD_8087 = _RWD_real87;
-    __init_8087();
 }
 
 #endif
