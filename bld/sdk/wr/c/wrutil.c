@@ -45,7 +45,7 @@ static int WRCountChars( unsigned char *str, char c )
 
     count = 0;
 
-    while( str && *str ) {
+    while( str != NULL && *str != '\0' ) {
         str = _mbschr( str, c );
         if( str != NULL ) {
             count++;
@@ -60,7 +60,7 @@ static int WRCountCharsString( unsigned char *str, unsigned char *s )
 {
     int     count;
 
-    if( !str || !s ) {
+    if( str == NULL || s == NULL ) {
         return( 0 );
     }
 
@@ -84,7 +84,7 @@ char *WR_EXPORT WRConvertStringFrom( char *_str, char *_from, char *to )
     unsigned char   *str = (unsigned char *)_str;
     unsigned char   *from = (unsigned char *)_from;
 
-    if( !str || !from || !to ) {
+    if( str == NULL || from == NULL || to == NULL ) {
         return( NULL );
     }
     len = strlen( _str ) + WRCountCharsString( str, from ) + 1;
@@ -97,16 +97,16 @@ char *WR_EXPORT WRConvertStringFrom( char *_str, char *_from, char *to )
     for( ; *str != '\0'; str = _mbsinc( str ) ) {
         s = _mbschr( from, *str );
         if( s != NULL ) {
-            new[ pos++ ] = '\\';
-            new[ pos++ ] = to[ s - from ];
+            new[pos++] = '\\';
+            new[pos++] = to[s - from];
         } else {
-            new[ pos++ ] = str[ 0 ];
-            if( _mbislead( str[ 0 ] ) ) {
-                new[ pos++ ] = str[ 1 ];
+            new[pos++] = str[0];
+            if( _mbislead( str[0] ) ) {
+                new[pos++] = str[1];
             }
         }
     }
-    new[ pos ] = '\0';
+    new[pos] = '\0';
 
     return( new );
 }
@@ -132,16 +132,16 @@ char *WR_EXPORT WRConvertFrom( char *_str, char from, char to )
     pos = 0;
     for( ; *str != '\0'; str = _mbsinc( str ) ) {
         if( *str == from ) {
-            new[ pos++ ] = '\\';
-            new[ pos++ ] = to;
+            new[pos++] = '\\';
+            new[pos++] = to;
         } else {
-            new[ pos++ ] = str[ 0 ];
-            if( _mbislead( str[ 0 ] ) ) {
-                new[ pos++ ] = str[ 1 ];
+            new[pos++] = str[0];
+            if( _mbislead( str[0] ) ) {
+                new[pos++] = str[1];
             }
         }
     }
-    new[ pos ] = '\0';
+    new[pos] = '\0';
 
     return( new );
 }
@@ -166,18 +166,18 @@ char *WR_EXPORT WRConvertTo( char *_str, char to, char from )
 
     pos = 0;
     for( ; *str != '\0'; str = _mbsinc( str ) ) {
-        if( !_mbislead( str[ 0 ] ) && !_mbislead( str[ 1 ] ) &&
-            ( str[ 0 ] == '\\' ) && ( str[ 1 ] == from ) ) {
-            new[ pos++ ] = to;
+        if( !_mbislead( str[0] ) && !_mbislead( str[1] ) &&
+            str[0] == '\\' && str[1] == from ) {
+            new[pos++] = to;
             str++;
         } else {
-            new[ pos++ ] = str[ 0 ];
-            if( _mbislead( str[ 0 ] ) ) {
-                new[ pos++ ] = str[ 1 ];
+            new[pos++] = str[0];
+            if( _mbislead( str[0] ) ) {
+                new[pos++] = str[1];
             }
         }
     }
-    new[ pos ] = '\0';
+    new[pos] = '\0';
 
     return( new );
 }
@@ -192,7 +192,7 @@ char * WR_EXPORT WRConvertStringTo( char *_str, char *to, char *_from )
     unsigned char   *str = (unsigned char *)_str;
     unsigned char   *from = (unsigned char *)_from;
 
-    if( !str || !to || !from ) {
+    if( str == NULL || to == NULL || from == NULL ) {
         return( NULL );
     }
 
@@ -204,18 +204,18 @@ char * WR_EXPORT WRConvertStringTo( char *_str, char *to, char *_from )
 
     pos = 0;
     for( ; *str != '\0'; str = _mbsinc( str ) ) {
-        if( !_mbislead( str[ 0 ] ) && !_mbislead( str[ 1 ] ) &&
-            ( str[ 0 ] == '\\' ) && ( s = _mbschr( from, str[ 1 ] ) ) != NULL ) {
-            new[ pos++ ] = to[ s - from ];
+        if( !_mbislead( str[0] ) && !_mbislead( str[1] ) &&
+            str[0] == '\\' && (s = _mbschr( from, str[1] )) != NULL ) {
+            new[pos++] = to[s - from];
             str++;
         } else {
-            new[ pos++ ] = str[ 0 ];
-            if( _mbislead( str[ 0 ] ) ) {
-                new[ pos++ ] = str[ 1 ];
+            new[pos++] = str[0];
+            if( _mbislead( str[0] ) ) {
+                new[pos++] = str[1];
             }
         }
     }
-    new[ pos ] = '\0';
+    new[pos] = '\0';
 
     return( new );
 }
@@ -227,7 +227,7 @@ void WR_EXPORT WRMassageFilter( char *_filter )
 
     sep = '\t';
 
-    while( filter && *filter ) {
+    while( filter != NULL && *filter != '\0' ) {
         filter = _mbschr( filter, sep );
         if( filter != NULL ) {
             *filter = '\0';
@@ -236,16 +236,15 @@ void WR_EXPORT WRMassageFilter( char *_filter )
     }
 }
 
-#if defined(__NT__)
-#ifndef MB_ERR_INVALID_CHARS
-#define MB_ERR_INVALID_CHARS 0x00000000
-#endif
+#if defined( __NT__ )
+    #ifndef MB_ERR_INVALID_CHARS
+        #define MB_ERR_INVALID_CHARS 0x00000000
+    #endif
 #endif
 
-#if defined(__NT__)
+#if defined( __NT__ )
 
 int WR_EXPORT WRmbcs2unicodeBuf( char *src, char *dest, int len )
-/***************************************************************/
 {
     uint_16     *new;
     int         len1, len2;
@@ -267,7 +266,7 @@ int WR_EXPORT WRmbcs2unicodeBuf( char *src, char *dest, int len )
     len1 *= sizeof( WCHAR );
 
     // if len is -1 then dont bother checking the buffer length
-    if( ( len != -1 ) && ( len1 > len ) ) {
+    if( len != -1 && len1 > len ) {
         return( FALSE );
     }
 
@@ -288,7 +287,6 @@ int WR_EXPORT WRmbcs2unicodeBuf( char *src, char *dest, int len )
 }
 
 int WR_EXPORT WRunicode2mbcsBuf( char *src, char *dest, int len )
-/***************************************************************/
 {
     int         len1, len2;
 
@@ -307,7 +305,7 @@ int WR_EXPORT WRunicode2mbcsBuf( char *src, char *dest, int len )
     }
 
     // if len is -1 then dont bother checking the buffer length
-    if( ( len != -1 ) && ( len1 > len ) ) {
+    if( len != -1 && len1 > len ) {
         return( FALSE );
     }
 
@@ -325,7 +323,6 @@ int WR_EXPORT WRunicode2mbcsBuf( char *src, char *dest, int len )
 }
 
 int WR_EXPORT WRmbcs2unicode( char *src, char **dest, int *len )
-/**************************************************************/
 {
     uint_16     *new;
     int         len1, len2;
@@ -372,7 +369,6 @@ int WR_EXPORT WRmbcs2unicode( char *src, char **dest, int *len )
 }
 
 int WR_EXPORT WRunicode2mbcs( char *src, char **dest, int *len )
-/**************************************************************/
 {
     char        *new;
     int         len1, len2;
@@ -421,7 +417,6 @@ int WR_EXPORT WRunicode2mbcs( char *src, char **dest, int *len )
 #else
 
 int WR_EXPORT WRmbcs2unicodeBuf( char *src, char *dest, int len )
-/***************************************************************/
 {
     uint_16     *new;
     int         len1, len2;
@@ -438,14 +433,14 @@ int WR_EXPORT WRmbcs2unicodeBuf( char *src, char *dest, int len )
     len1 *= 2;
 
     // if len is -1 then dont bother checking the buffer length
-    if( ( len != -1 ) && ( len1 > len ) ) {
+    if( len != -1 && len1 > len ) {
         return( FALSE );
     }
 
     new = (uint_16 *)dest;
 
     if( src != NULL ) {
-        for( len2 = len1/2; len2 >= 0; len2-- ) {
+        for( len2 = len1 / 2; len2 >= 0; len2-- ) {
             new[len2] = (uint_16)src[len2];
         }
     } else {
@@ -456,7 +451,6 @@ int WR_EXPORT WRmbcs2unicodeBuf( char *src, char *dest, int len )
 }
 
 int WR_EXPORT WRunicode2mbcsBuf( char *src, char *dest, int len )
-/***************************************************************/
 {
     uint_16     *uni_str;
     int         len1, len2;
@@ -473,7 +467,7 @@ int WR_EXPORT WRunicode2mbcsBuf( char *src, char *dest, int len )
     }
 
     // if len is -1 then dont bother checking the buffer length
-    if( ( len != -1 ) && ( len1 > len ) ) {
+    if( len != -1 && len1 > len ) {
         return( FALSE );
     }
 
@@ -490,7 +484,6 @@ int WR_EXPORT WRunicode2mbcsBuf( char *src, char *dest, int len )
 }
 
 int WR_EXPORT WRmbcs2unicode( char *src, char **dest, int *len )
-/**************************************************************/
 {
     uint_16     *new;
     int         len1;
@@ -515,7 +508,7 @@ int WR_EXPORT WRmbcs2unicode( char *src, char **dest, int *len )
     }
 
     if( src != NULL ) {
-        for( len1 = *len/2; len1 >= 0; len1-- ) {
+        for( len1 = *len / 2; len1 >= 0; len1-- ) {
             new[len1] = (uint_16)src[len1];
         }
     } else {
@@ -528,7 +521,6 @@ int WR_EXPORT WRmbcs2unicode( char *src, char **dest, int *len )
 }
 
 int WR_EXPORT WRunicode2mbcs( char *src, char **dest, int *len )
-/**************************************************************/
 {
     char        *new;
     uint_16     *uni_str;
@@ -581,10 +573,10 @@ char * WR_EXPORT WRWResIDNameToStr( WResIDName *name )
     if( name != NULL ) {
         /* alloc space for the string and a \0 char at the end */
         string = WRMemAlloc( name->NumChars + 1 );
-        if( string != NULL) {
+        if( string != NULL ) {
             /* copy the string */
             memcpy( string, name->Name, name->NumChars );
-            string[ name->NumChars ] = '\0';
+            string[name->NumChars] = '\0';
         }
     }
 
@@ -602,7 +594,7 @@ int WR_EXPORT WRStrlen32( char *str )
 
     len = 0;
     word = (uint_16 *)str;
-    while( *word ) {
+    while( *word != 0 ) {
         len += 2;
         word++;
     }
@@ -618,7 +610,7 @@ int WR_EXPORT WRStrlen( char *str, int is32bit )
         len = WRStrlen32( str );
     } else {
         len = 0;
-        if( str ) {
+        if( str != NULL ) {
             len = strlen( str );
         }
     }
@@ -639,8 +631,8 @@ int WR_EXPORT WRFindFnOffset( char *_name )
 
     cp = name;
     last = name;
-    while( *cp ) {
-        if( !_mbislead( *cp ) && ( *cp == ':' || *cp == '\\' ) ) {
+    while( *cp != NULL ) {
+        if( !_mbislead( *cp ) && (*cp == ':' || *cp == '\\') ) {
             last = cp + 1;
         }
         cp = _mbsinc( cp );
@@ -654,4 +646,3 @@ int WR_EXPORT WRFindFnOffset( char *_name )
 
     return( offset );
 }
-

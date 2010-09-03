@@ -19,4 +19,3 @@ END
 #include "memflags.dlg"
 #include "editsym.dlg"
 #include "addsym.dlg"
-

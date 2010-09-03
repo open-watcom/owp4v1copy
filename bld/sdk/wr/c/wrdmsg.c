@@ -58,7 +58,7 @@
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
-static  LIST    *WRDialogList   = NULL;
+static LIST *WRDialogList = NULL;
 
 void WRDialogMsgInit( void )
 {
@@ -88,11 +88,10 @@ int WR_EXPORT WRIsWRDialogMsg( MSG *msg )
 
     for( item = WRDialogList; item != NULL ; item = ListNext( item ) ) {
         hdlg = (HWND)(DWORD)ListElement( item );
-        if( ( hdlg != (HWND)NULL ) && IsDialogMessage( hdlg, msg ) ) {
+        if( hdlg != (HWND)NULL && IsDialogMessage( hdlg, msg ) ) {
             return( TRUE );
         }
     }
 
     return( FALSE );
 }
-

@@ -51,25 +51,25 @@
 /* static variables                                                         */
 /****************************************************************************/
 
-char *WRStrDup ( const char *src )
+char *WRStrDup( const char *src )
 {
     char *dest;
 
-    if ( src ) {
-        if ( dest = WRMemAlloc ( strlen ( src ) + 1 ) ) {
-            strcpy ( dest, src );
+    if( src != NULL ) {
+        if( (dest = WRMemAlloc( strlen( src ) + 1 )) != NULL ) {
+            strcpy( dest, src );
         }
     } else {
-        return ( NULL );
+        return( NULL );
     }
 
-    return ( dest );
+    return( dest );
 }
 
 char *WRCopyString( char *mem, char *str, int len )
 {
     memcpy( mem, str, len );
-    return( mem+len );
+    return( mem + len );
 }
 
 BOOL WRIsStrSpace( char *_s )
@@ -78,7 +78,7 @@ BOOL WRIsStrSpace( char *_s )
 
     if( s != NULL ) {
         for( ; *s != '\0'; s = _mbsinc( s ) ) {
-            if( _mbclen( s ) != 1 || ( _mbclen( s ) == 1 && !isspace( *s ) ) ) {
+            if( _mbclen( s ) != 1 || (_mbclen( s ) == 1 && !isspace( *s )) ) {
                 return( FALSE );
             }
         }
@@ -92,7 +92,7 @@ BOOL WRStrHasSpace( char *_s )
 
     if( s != NULL ) {
         for( ; *s != '\0'; s = _mbsinc( s ) ) {
-            if( ( _mbclen( s ) == 1 ) && isspace( *s ) ) {
+            if( _mbclen( s ) == 1 && isspace( *s ) ) {
                 return( TRUE );
             }
         }
@@ -111,8 +111,9 @@ void WRStripStr( char *_s )
         last_space = NULL;
         last_nonspace = NULL;
         for( p = s; *p != '\0'; p = _mbsinc( p ) ) {
-            if( ( _mbclen( p ) == 1 ) && isspace( *p ) ) {
-                if( !last_space || ( last_nonspace && ( last_nonspace > last_space ) ) ) {
+            if( _mbclen( p ) == 1 && isspace( *p ) ) {
+                if( last_space == NULL ||
+                    (last_nonspace != NULL && (last_nonspace > last_space) ) ) {
                     last_space = p;
                 }
             } else {
@@ -127,17 +128,17 @@ void WRStripStr( char *_s )
 
         // string has is all spaces
         if( last_space == NULL ) {
-            s[ 0 ] = '\0';
+            s[0] = '\0';
             return;
         }
 
         if( last_space > last_nonspace ) {
-            last_space[ 0 ] = '\0';
+            last_space[0] = '\0';
         }
 
         // find first non-whitespace char
         for( p = s; *p != '\0'; p = _mbsinc( p ) ) {
-            if( _mbclen( p ) != 1 || ( _mbclen( p ) == 1 && !isspace( *p ) ) ) {
+            if( _mbclen( p ) != 1 || (_mbclen( p ) == 1 && !isspace( *p )) ) {
                 break;
             }
         }

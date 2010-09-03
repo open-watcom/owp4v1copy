@@ -44,29 +44,30 @@
 
 static _trmem_hdl   TRMemHandle;
 static int          TRFileHandle;   /* stream to put output on */
-static void TRPrintLine( int *, const char * buff, size_t len );
+
+static void TRPrintLine( int *handle, const char *buff, size_t len );
 
 /* extern to avoid problems with taking address and overlays */
-extern void TRPrintLine( int * handle, const char * buff, size_t len )
-/********************************************************************/
+extern void TRPrintLine( int *handle, const char *buff, size_t len )
+/******************************************************************/
 {
     write( *handle, buff, len );
 }
 
 #endif
 
-void WRMemOpen ( void )
+void WRMemOpen( void )
 {
 #ifdef TRMEM
     TRFileHandle = STDERR_FILENO;
     TRMemHandle = _trmem_open( malloc, free, realloc, _expand,
-            &TRFileHandle, TRPrintLine,
-            _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
-            _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
+                               &TRFileHandle, TRPrintLine,
+                               _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
+                               _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
 #endif
 }
 
-void WRMemClose ( void )
+void WRMemClose( void )
 {
 #ifdef TRMEM
     _trmem_close( TRMemHandle );
@@ -109,7 +110,7 @@ void WR_EXPORT WRMemFree( void *ptr )
 #endif
 }
 
-void * WR_EXPORT WRMemRealloc ( void *ptr, size_t size )
+void * WR_EXPORT WRMemRealloc( void *ptr, size_t size )
 {
 #ifdef TRMEM
     return( _trmem_realloc( ptr, size, _trmem_guess_who(), TRMemHandle ) );
@@ -118,50 +119,50 @@ void * WR_EXPORT WRMemRealloc ( void *ptr, size_t size )
 #endif
 }
 
-int WR_EXPORT WRMemValidate ( void *ptr )
+int WR_EXPORT WRMemValidate( void *ptr )
 {
 #ifdef TRMEM
     return( _trmem_validate( ptr, _trmem_guess_who(), TRMemHandle ) );
 #else
-    _wtouch(ptr);
-    return ( TRUE );
+    _wtouch( ptr );
+    return( TRUE );
 #endif
 }
 
-int WR_EXPORT WRMemChkRange ( void *start, size_t len )
+int WR_EXPORT WRMemChkRange( void *start, size_t len )
 {
 #ifdef TRMEM
     return( _trmem_chk_range( start, len, _trmem_guess_who(), TRMemHandle ) );
 #else
-    _wtouch(start);
-    _wtouch(len);
-    return ( TRUE );
+    _wtouch( start );
+    _wtouch( len );
+    return( TRUE );
 #endif
 }
 
-void WR_EXPORT WRMemPrtUsage ( void )
+void WR_EXPORT WRMemPrtUsage( void )
 {
 #ifdef TRMEM
     _trmem_prt_usage( TRMemHandle );
 #endif
 }
 
-unsigned WR_EXPORT WRMemPrtList ( void )
+unsigned WR_EXPORT WRMemPrtList( void )
 {
 #ifdef TRMEM
     return( _trmem_prt_list( TRMemHandle ) );
 #else
-    return ( 0 );
+    return( 0 );
 #endif
 }
 
-/* functions to replace those in mem.c in SDK/MISC */
+/* functions to replace those in mem.c in commonui */
 
 void MemStart( void )
 {
 #ifndef __386__
 #ifndef __ALPHA__
-    __win_alloc_flags   = GMEM_MOVEABLE | GMEM_SHARE;
+    __win_alloc_flags = GMEM_MOVEABLE | GMEM_SHARE;
     __win_realloc_flags = GMEM_MOVEABLE | GMEM_SHARE;
 #endif
 #endif
@@ -177,7 +178,7 @@ void *MemAlloc( size_t size )
     p = malloc( size );
 #endif
 
-    if( p ) {
+    if( p != NULL ) {
         memset( p, 0, size );
     }
 
@@ -205,4 +206,3 @@ void MemFree( void *ptr )
     free( ptr );
 #endif
 }
-
