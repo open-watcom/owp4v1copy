@@ -103,17 +103,14 @@ extra_c_flags_idedrv   = -DSTATIC_LINKAGE
 
 # lflags stuff
 ###############
-extra_l_flags = option map
-
-extra_l_flags_osi = option symfile
-extra_l_flags_os2 = option modname=$(name)
-extra_l_flags_nt  = option modname=$(name)
+extra_l_flags = option map, symfile
 
 # DLL lflags stuff
 ##################
-extra_l_flags_dll = option map, modname=$(dll_name)
+extra_l_flags_dll = option map, symfile
 
-extra_l_flags_dll_nt += option offset=0x69800000
+extra_l_flags_dll_nt  += option modname='$(dll_name).dll', offset=0x69800000
+extra_l_flags_dll_os2 += option modname='$(dll_name)'
 
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
