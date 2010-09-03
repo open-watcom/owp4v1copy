@@ -265,7 +265,7 @@ BOOL WRGetWinInfo( HWND hDlg, WRSFT *sft )
     } else if( IsDlgButtonChecked( hDlg, IDM_FTDLL ) ) {
         ft = 2;
     } else {
-        ft = 666;
+        ft = -1;
     }
 
     if( IsDlgButtonChecked( hDlg, IDM_TSWIN ) ) {
@@ -273,10 +273,10 @@ BOOL WRGetWinInfo( HWND hDlg, WRSFT *sft )
     } else if( IsDlgButtonChecked( hDlg, IDM_TSWINNT ) ) {
         ts = 1;
     } else {
-        ts = 666;
+        ts = -1;
     }
 
-    if( ft ) {
+    if( ft != 0 ) {
         rf = 0;
     } else {
         if( IsDlgButtonChecked( hDlg, IDM_RFWAT ) ) {
@@ -284,11 +284,11 @@ BOOL WRGetWinInfo( HWND hDlg, WRSFT *sft )
         } else if( IsDlgButtonChecked( hDlg, IDM_RFMS ) ) {
             rf = 1;
         } else {
-            rf = 666;
+            rf = -1;
         }
     }
 
-    if( ft != 666 && ts != 666 && rf != 666 ) {
+    if( ft >= 0 && ts >= 0 && rf >= 0 ) {
         sft->file_type = WRFTARRAY[ft][ts][rf];
     } else {
         sft->file_type = WR_DONT_KNOW;
