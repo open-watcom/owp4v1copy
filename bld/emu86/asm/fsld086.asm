@@ -38,27 +38,64 @@ __EmuFSLD proc  near
         push    SI              ; ...
         mov     SI,BX           ; get address for result
 endif
-        mov     BX,DX           ; get exponent
-        shl     BX,1            ; BH has exponent
-        cmp     BH,0            ; if exponent not zero
-        _if     ne              ; then
-          mov   BL,BH           ; - move exponent to bottom
-          mov   BH,0            ; - zero high part
-          add   BX,3FFFh-007Fh  ; - change bias to temp real format
-          shl   BX,1            ; - move left to accept the sign bit
-          shl   DX,1            ; - get sign bit
-          rcr   BX,1            ; - move it in with exponent
-          mov   DH,DL           ; - align fraction
-          mov   DL,AH           ; - ...
-          mov   AH,AL           ; - ...
-          mov   AL,0            ; - ...
-          stc                   ; - set implied one bit
-          rcr   DH,1            ; - ...
-        _else                   ; else (number is 0)
-          sub   AX,AX           ; - zero registers
-          mov   DX,AX           ; - ...
-          mov   DX,BX           ; - ...
-        _endif                  ; endif
+        mov     BL,DH           ; get exponent
+        mov     BH,DL           ; ...
+        mov     DH,DL           ; align fraction
+        mov     DL,AH           ; ...
+        mov     AH,AL           ; ...
+        mov     AL,0            ; ...
+        _shl    BH,1            ; align exponent
+        _rcl    BL,1            ; ...
+        pushf                   ; save sign (Carry flag)
+        _guess xx1              ; guess: normal number
+          and     BX,0FFh       ; if exponent not zero
+          _quif e               ; - quit if denormal number
+          _guess xx2            ; - guess: normal number
+            cmp   BL,0FFh       ; - - quit if NaN or infinity
+            _quif e             ; - - ...
+            add   BX,3FFFh-7Fh  ; - - change bias to temp real format
+          _admit                ; - guess: NaN or infinity
+            or    BH,7Fh        ; - - set exponent to all one's
+            test  DX,7FFFh      ; - - if high word is 0
+            _if   e             ; - - then
+              or    AX,AX       ; - - - ...
+              _quif e, xx2      ; - - - if fraction is 0, then its a infinity
+            _endif              ; - - endif
+            push  AX            ; - - - save AX
+            push  DX            ; - - - save DX
+            push  BX            ; - - - save BX
+            push  CX            ; - - - save CX
+            call  F8InvalidOp   ; - - - indicate "Invalid" exception
+            pop   CX            ; - - - restore CX
+            pop   BX            ; - - - restore BX
+            pop   DX            ; - - - restore DX
+            pop   AX            ; - - - restore AX
+            or    DH,40h        ; - - - indicate QNaN
+          _endguess             ; - endguess
+          or    DH,80h          ; - turn on implied one bit
+        _admit                  ; admit: denormal number or zero
+          or    DX,DX           ; - if high word is 0
+          _if   e               ; - then
+            or    AX,AX         ; - - check low word
+            _quif e, xx1        ; - - quit if number is zero
+          _endif                ; - endif
+          or    BX,3FFFh-7Fh+1  ; - set exponent
+          or    DX,DX           ; - - quit if top word is not 0
+          _if   e               ; - - then
+            xchg  DX,AX         ; - - shift number left 16 bits
+            sub   BX,16         ; - - adjust exponent
+          _endif                ; - - endif
+          _loop                 ; - loop (normalize number)
+            or    DX,DX         ; - - quit if top bit is on
+            _quif s             ; - - ...
+            _shl  AX,1          ; - - shift number left 1 bit
+            _rcl  DX,1          ; - - ...
+            dec   BX            ; - - decrement exponent
+          _endloop              ; - endloop
+        _endguess               ; endguess
+        _shl    BX,1            ; get result sign
+        popf                    ; - get sign (Carry flag)
+        rcr     BX,1            ; - get sign back to BX
 ifdef _BUILDING_MATHLIB
         pop     BP              ; fetch pointer to return
         mov     8[BP],BX        ; save exponent

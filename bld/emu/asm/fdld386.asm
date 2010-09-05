@@ -67,37 +67,36 @@ endif
         mov     ECX,EDX                 ; get exponent and sign
         shld    EDX,EAX,11              ; shift fraction left 11 bits
         shl     EAX,11                  ; ...
-        _guess                          ; guess: a normal number
+        _guess xx1                      ; guess: a normal number
           sar   ECX,32-12               ; - shift exponent to bottom
           and   CX,07FFh                ; - isolate exponent
           _quif e                       ; - quit if denormal number
-          _guess                        ; - guess: normal number
+          _guess xx2                    ; - guess: normal number
             cmp   CX,07FFh              ; - - quit if infinity or NaN
             _quif e                     ; - - ...
             add   CX,3FFFh-03FFh        ; - - change bias to temp real format
-          _admit                        ; - guess: NaN
-            mov   CX,7FFFh              ; - - set exponent for infinity or NaN
+          _admit                        ; - guess: NaN or infinity
+            or    CH,07Fh               ; - - set exponent for infinity or NaN
             test  EDX,7FFFFFFFh         ; - - check for infinity
             _if   e                     ; - - if top part is 0
               or    EAX,EAX             ; - - - check low word
+              _quif e, xx2              ; - - - quit if infinity
             _endif                      ; - - endif
-            _quif e                     ; - - quit if infinity
             push  EDX                   ; - - save EDX
             push  EAX                   ; - - save EAX
             call  F8InvalidOp           ; - - indicate "Invalid" exception
             pop   EAX                   ; - - restore EAX
             pop   EDX                   ; - - restore EDX
-            or    EDX,40000000h         ; - - indicate NaN
+            or    EDX,40000000h         ; - - indicate QNaN
           _endguess                     ; - endguess
           or    EDX,80000000h           ; - turn on implied 1 bit
-        _admit                          ; guess: zero
-          or    EDX,EDX                 ; - quit if non-zero
-          _quif ne                      ; - ...
-          or    EAX,EAX                 ; - ...
-          _quif ne                      ; - ...
-          sub   ECX,ECX                 ; - set exponent and sign to 0
-        _admit                          ; admit: denormal number
-          mov   CX,3C01h                ; - set exponent
+        _admit                          ; admit: denormal number or zero
+          or    EDX,EDX                 ; - check for zero
+          _if e                         ; - if top part is 0
+            or  EAX,EAX                 ; - - check low word
+            _quif e, xx1                ; - - quit if zero
+          _endif                        ; - endif
+          or    CX,3FFFh-3FFh+1         ; - set exponent
           or    EDX,EDX                 ; - if high word is zero
           _if   e                       ; - then
             xchg  EAX,EDX               ; - - shift number left 32 bits

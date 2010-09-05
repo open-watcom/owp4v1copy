@@ -35,6 +35,8 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
+        xref    F8InvalidOp
+
         modstart    fsld386, dword
 
 
@@ -60,32 +62,46 @@ else
 __EmuFSLD proc  near
 endif
         push    ECX                     ; save ECX
-        push    EBX                     ; save EBX
-        mov     EBX,EDX                 ; save address of long double
-        sub     EDX,EDX                 ; zero rest of fraction
         mov     ECX,EAX                 ; get exponent and sign
-        sar     ECX,32-9                ; shift to bottom
-        and     CX,00FFh                ; isolate exponent
-        _if     ne                      ; if not 0
-          shl   EAX,8                   ; - shift fraction into place
+        shl     EAX,8                   ; shift fraction into place
+        _guess                          ; guess: normal number
+          sar     ECX,32-9              ; - shift to bottom
+          sub     CH,CH                 ; - isolate exponent
+          or      CL,CL                 ; - isolate exponent
+          _quif e                       ; - quit if denormal number
           _guess                        ; - guess: normal number
             cmp   CL,0FFh               ; - - quit if NaN or infinity
             _quif e                     ; - - ...
-            add   CX,3FFFh-007Fh        ; - - change bias to temp real format
-          _admit                        ; - guess: NaN
-            mov   CH,0FFh               ; - - set exponent to all one's
-            and   EAX,7FFFFFFFh         ; - - isolate fraction bits
+            add   CX,3FFFh-7Fh          ; - - change bias to temp real format
+          _admit                        ; - guess: NaN or infinity
+            or    CH,07Fh               ; - - set exponent to all one's
+            test  EAX,7FFFFFFFh         ; - - isolate fraction bits
             _quif e                     ; - - quit if infinity
-            or    EAX,40000000h         ; - - indicate NaN
+            push  EDX                   ; - - save EDX
+            push  EAX                   ; - - save EAX
+            call  F8InvalidOp           ; - - indicate "Invalid" exception
+            pop   EAX                   ; - - restore EAX
+            pop   EDX                   ; - - restore EDX
+            or    EAX,40000000h         ; - - indicate QNaN
           _endguess                     ; - endguess
-          _shl  ECX,1                   ; - get sign
-          rcr   CX,1                    ; - place in top bit
           or    EAX,80000000h           ; - turn on implied 1 bit
-        _endif                          ; endif
-        mov     [EBX],EDX               ; store number
-        mov     4[EBX],EAX              ; ...
-        mov     8[EBX],CX               ; ...
-        pop     EBX                     ; restore EBX
+        _admit                          ; admit: denormal number or zero
+          or    EAX,EAX                 ; - ...
+          _quif e                       ; - quit if zero
+          or    CX,3FFFh-7Fh+1          ; - set exponent
+          _loop                         ; - loop (normalize number)
+            or    EAX,EAX               ; - - quit if top bit is on
+            _quif s                     ; - - ...
+            _shl  EAX,1                 ; - - shift number left 1 bit
+            dec   CX                    ; - - decrement exponent
+          _endloop                      ; - endloop
+        _endguess                       ; endguess
+        mov     4[EDX],EAX              ; ...
+        sub     EAX,EAX
+        mov     [EDX],EAX               ; store number
+        _shl    ECX,1                   ; get sign
+        rcr     CX,1                    ; place in top bit
+        mov     8[EDX],CX               ; ...
         pop     ECX                     ; restore ECX
         ret                             ; return
 ifdef _BUILDING_MATHLIB
