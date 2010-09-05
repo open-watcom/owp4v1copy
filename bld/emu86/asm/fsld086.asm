@@ -5,6 +5,8 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
+        xref    F8InvalidOp
+
         modstart    fsld086, word
 
 
