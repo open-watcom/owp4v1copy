@@ -21,10 +21,10 @@ $(libname).lib : $(objs) $(libs) $(__MAKEFILES__)
 
 .c.obj : .autodepend
 !ifeq verbose 1
-    *$(cc) $[@ -I"$(include_c_path)" $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
+    *$(cc) $[@ $(include_c_path) $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
 !else
     @echo mlib_cc $@
-    @*$(cc) $[@ -I"$(include_c_path)" $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
+    @*$(cc) $[@ $(include_c_path) $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
 !endif
 
 .asm.obj : .autodepend
