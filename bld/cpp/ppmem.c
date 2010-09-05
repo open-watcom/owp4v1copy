@@ -34,9 +34,9 @@
 //  Any project that includes this pre-processor will probably substitute
 //  their own support for these routines.
 //
+#include "preproc.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "preproc.h"
 
 void *PP_Malloc( unsigned size )
 {

@@ -102,9 +102,9 @@ extra_c_flags_trmem     = -fh=trmem.pch $(as_trmem)
 extra_c_flags_asytab    = -fh=asytab.pch $(as_yydebug)
 extra_c_flags_aslexyy   = -fh=aslexyy.pch
 extra_c_flags_preproc   = -fh=preproc.pch
-extra_c_flags_ppexpr    = -fh=ppexpr.pch
-extra_c_flags_ppmacro   = -fh=ppmacro.pch
-extra_c_flags_ppmem     = -fh=ppmem.pch
+extra_c_flags_ppexpr    = -fh=preproc.pch
+extra_c_flags_ppmacro   = -fh=preproc.pch
+extra_c_flags_ppmem     = -fh=preproc.pch
 
 extra_c_flags_asexpr    = -fh
 extra_c_flags_asopernd  = -fh

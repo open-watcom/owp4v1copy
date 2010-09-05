@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include "preproc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +37,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
-#include "preproc.h"
 
 #if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"

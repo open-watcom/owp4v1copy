@@ -35,9 +35,9 @@ TRMEM   += -DTRMEM
 extra_c_flags_trmem = $(TRMEM)
 extra_c_flags_trmemcvr = $(TRMEM)
 
-extra_c_flags_preproc = -zm
-extra_c_flags_ppexpr = -zm
-extra_c_flags_ppmacro = -zm
+extra_c_flags_preproc = -zm -fh=preproc.pch
+extra_c_flags_ppexpr = -zm -fh=preproc.pch
+extra_c_flags_ppmacro = -zm -fh=preproc.pch
 
 OBJS =  wde_wres.obj wdealign.obj wdecsize.obj wdecust.obj  wdedebug.obj &
         wdedefin.obj wdeedit.obj  wdefbase.obj wdefbutt.obj wdefcbox.obj &
@@ -61,8 +61,6 @@ OBJS =  wde_wres.obj wdealign.obj wdecsize.obj wdecust.obj  wdedebug.obj &
         preproc.obj ppexpr.obj ppmacro.obj
 
 extra_c_flags_nt    = -DNOUSE3D
-
-extra_c_flags_about= -DWRCTL3D
 
 # where to look for various files
 .c : c;../c;$(cpp_dir)
