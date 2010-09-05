@@ -117,10 +117,12 @@ typedef struct cvt_info {
 #if defined( _M_I86 )
 typedef long_double __based( __segname( "_STACK" ) )    *ld_arg;
 typedef double      __based( __segname( "_STACK" ) )    *dbl_arg;
+typedef float       __based( __segname( "_STACK" ) )    *flt_arg;
 typedef char        __based( __segname( "_STACK" ) )    *buf_arg;
 #else
 typedef long_double _WCNEAR                             *ld_arg;
 typedef double      _WCNEAR                             *dbl_arg;
+typedef float       _WCNEAR                             *flt_arg;
 typedef char        _WCNEAR                             *buf_arg;
 #endif
 
@@ -142,9 +144,9 @@ _WMRTLINK extern void  __cnvs2d( char *buf, double *value );
 _WMRTLINK extern int   __cnvd2f( double *src, float *tgt );
 #ifdef _LONG_DOUBLE_
 extern  void    __iLDFD( ld_arg, dbl_arg );
-extern  void    __iLDFS(long_double _WCNEAR *, float _WCNEAR *);
+extern  void    __iLDFS( ld_arg, flt_arg );
 extern  void    __iFDLD( dbl_arg, ld_arg );
-extern  void    __iFSLD(float _WCNEAR *,long_double _WCNEAR *);
+extern  void    __iFSLD( flt_arg, ld_arg );
 extern  long    __LDI4( ld_arg );
 extern  void    __I4LD( long, ld_arg );
 extern  void    __U4LD(unsigned long,long_double _WCNEAR *);
