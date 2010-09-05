@@ -30,9 +30,6 @@
 
 
 #include "preproc.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #define PPT_UNEXPANDABLE_ID     PPT_LAST_TOKEN
 

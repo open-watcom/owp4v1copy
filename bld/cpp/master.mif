@@ -16,6 +16,8 @@ dumpmac_objs    = dumpmac.obj $(common_objs)
 
 targets         = mkmk.exe testpp.exe dumpmac.exe
 
+extra_c_flags = -fh
+
 all: $(targets) .SYMBOLIC
 
 mkmk.exe : $(mkmk_objs)

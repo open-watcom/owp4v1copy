@@ -35,8 +35,6 @@
 //  their own support for these routines.
 //
 #include "preproc.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 void *PP_Malloc( unsigned size )
 {

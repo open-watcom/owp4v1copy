@@ -29,13 +29,10 @@
 *
 ****************************************************************************/
 
-#include <stdio.h>
+#include "preproc.h"
 #if !defined( __UNIX__ ) || defined( __WATCOMC__ )
     #include <conio.h>
 #endif
-#include <stdlib.h>
-#include "preproc.h"
-#include <malloc.h>
 
 extern char PreProcChar;
 

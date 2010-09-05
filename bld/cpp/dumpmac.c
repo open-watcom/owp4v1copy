@@ -29,10 +29,7 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "preproc.h"
-#include <malloc.h>
 
 
 void dumpheap( void )
