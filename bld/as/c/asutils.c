@@ -46,6 +46,7 @@ extern FILE     *ErrorFile;
 extern jmp_buf  AsmParse;
 
 unsigned        ErrorLimit = 20;        // default error limit
+unsigned        WarningLevel = 1;       // default warning level = 1
 bool            DoReport;
 char            AsResBuffer[ MAX_RESOURCE_SIZE ];
 

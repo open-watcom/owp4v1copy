@@ -48,6 +48,7 @@ extern char AsResBuffer[ MAX_RESOURCE_SIZE ];
 
 #ifdef _STANDALONE_
 extern unsigned ErrorLimit;
+extern unsigned WarningLevel;
 
 extern void Banner( void );
 extern void Usage( void );

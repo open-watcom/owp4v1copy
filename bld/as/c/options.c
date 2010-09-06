@@ -31,6 +31,7 @@
 
 
 #include "as.h"
+#include <ctype.h>
 #include "preproc.h"
 #include "banner.h"
 
@@ -124,8 +125,10 @@ extern bool OptionsInit( int argc, char **argv ) {
 
 #ifdef AS_ALPHA
     s = "__WASAXP__=" BANSTR( _BANVER ) ;
-#else
+#elif defined( AS_PPC )
     s = "__WASPPC__=" BANSTR( _BANVER ) ;
+#elif defined( AS_MIPS )
+    s = "__WASMPS__=" BANSTR( _BANVER ) ;
 #endif
     maxNumPredefines = argc + 2; // version macro and extra null at the end
     if( !optionsPredefine( s ) )
@@ -201,12 +204,16 @@ extern bool OptionsInit( int argc, char **argv ) {
                 break;
             case 'w':
                 s = &argv[0][2];
-                switch( *s ) {
-                case 'e':
-                    _SetOption( WARNING_ERROR );
-                    break;
-                default:
-                    goto errInvalid;
+                if( isdigit( *s ) ) {
+                    WarningLevel = strtoul( &argv[0][2], &s, 10 );
+                } else {
+                    switch( *s ) {
+                    case 'e':
+                        _SetOption( WARNING_ERROR );
+                        break;
+                    default:
+                        goto errInvalid;
+                    }
                 }
                 break;
             case 'z':
