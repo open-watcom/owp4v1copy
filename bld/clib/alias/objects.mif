@@ -1,5 +1,4 @@
-# during 'clean' processing objs.mif is already deleted
-!ifndef %ALIASGEN_CLEAN
+!if exist(../../../objs.mif)
 !   include ../../../objs.mif
 !endif
 !include ../../../../objlist.mif

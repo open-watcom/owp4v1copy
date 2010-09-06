@@ -98,9 +98,6 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-# ALIASGEN_CLEAN takes care of no longer trying to !include the not existing
-# file objs.mif in projects clib/alias and mathlib/alias
-    set ALIASGEN_CLEAN=1
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
 
 [ BLOCK . . ]
