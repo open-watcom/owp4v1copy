@@ -81,17 +81,19 @@ void DoDebugMsg( const char *format, ... )
 }
 #endif
 
-void AsmNote( int msgnum, ... )
-/*****************************/
+void AsmNote( int level, int msgnum, ... )
+/****************************************/
 {
     va_list args1, args2;
 
-    va_start( args1, msgnum );
-    va_start( args2, msgnum );
+    if( level <= WngLevel ) {
+        va_start( args1, msgnum );
+        va_start( args2, msgnum );
 
-    PrtMsg1( "Note!", msgnum, args1, args2 );
-    va_end( args1 );
-    va_end( args2 );
+        PrtMsg1( "Note!", msgnum, args1, args2 );
+        va_end( args1 );
+        va_end( args2 );
+    }
 }
 
 void AsmErr( int msgnum, ... )

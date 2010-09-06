@@ -105,7 +105,7 @@ static void jumpExtend( int far_flag )
         }
     }
 
-    AsmWarn( 4, EXTENDING_JUMP );
+    AsmNote( 4, EXTENDING_JUMP );
 
     getJumpNegation( AsmBuffer[i]->u.token, buffer, MAX_LINE_LEN );
     if( far_flag ) {
@@ -154,7 +154,7 @@ static void FarCallToNear( void )
         }
     }
     if( Parse_Pass == PASS_2 )
-        AsmWarn( 4, CALL_FAR_TO_NEAR );
+        AsmNote( 4, CALL_FAR_TO_NEAR );
     InputQueueLine( "PUSH CS" );
 #if defined( _STANDALONE_ )
     if( Options.mode & MODE_IDEAL ) {
