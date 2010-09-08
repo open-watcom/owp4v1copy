@@ -172,16 +172,8 @@ dll.lnk: $(__MAKEFILES__)
 #################
 # auxiliary rules
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res : ./genverrc.exe ../h/wlver.rc
-        $[@ ../h/wlver.rc version.rc $$ wlink $(patch_level)
-	$(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_dll = wlinkd
+!include verrc.mif
 
 wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
         $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$^@

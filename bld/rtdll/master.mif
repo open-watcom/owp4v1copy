@@ -96,9 +96,6 @@ $(dllname).lnk : $(dll_def) $(__MAKEFILES__)
     @for %i in ($(dll_libs) $(extra_libs)) do @%append $@ lib %i
     @%append $@ $(lnk_alias)
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-    $(bld_cl) $(wcl_util_opts) -d_VERSION=$(bld_ver) $[@
-
-version.res: ./genverrc.exe ../verinfo.rc
-    $[@ ../verinfo.rc version.rc $$ $(dllname) $(patch_level)
-    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_dll_skel = ../verinfo.rc
+verrc_dll      = $(dllname)
+!include verrc.mif

@@ -111,14 +111,4 @@ ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
 $(name).res: ../h/wr.rc .AUTODEPEND
         $(rc) $(rc_flags) -ad $(inc_path) -DWR_COMPILED $[@ -fo=$^@
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../h/version.rc version.rc $$ $(name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
-
+!include verrc.mif

@@ -243,13 +243,5 @@ keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND
 
 keyword2.obj : keyword2.c keyword2.gh weights2.gh .AUTODEPEND
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../h/version.rc
-        $[@ ../h/version.rc version.rc $$ $(name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_dll = wrcd
+!include verrc.mif

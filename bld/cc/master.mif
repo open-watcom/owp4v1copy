@@ -267,6 +267,10 @@ usage01.int : ./usageenc.exe ../jusage.sp
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) ../jusage.sp usageenc.int
         $[@ usageenc.int usage01.int
 
+verrc_dll_skel = ../rc/r_$(host_os)$(host_cpu).rc
+verrc_dll      = $(dll_name)
+!include verrc.mif
+
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c $(cl_objs)
         $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
 
@@ -279,16 +283,9 @@ msgtxt.gh msgdefs.gh msgattr.gh errors01.int : ./msgencod.exe ../gml/cerrs.gml
 $(intname)01.int : ./intlbin.exe errors01.int usage01.int
         $[@ $(intname)
 
-./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
 !ifndef patch_level
 patch_level=0
 !endif
-
-version.res : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
-        $[@ $]@ version.rc $$ $(dll_name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 
 ./mkopcod1.exe: $(wasm_dir)/mkopcod1.c $(wasm_dir)/mkopcode.h $(cl_objs)
         $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)

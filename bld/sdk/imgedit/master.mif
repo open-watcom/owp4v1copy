@@ -86,7 +86,7 @@ inc_dirs += -I"$(commonui_dir)/h" -I"$(commonui_dir)/$(host_os)$(host_cpu)"
 inc_dirs += -I"$(misc_dir)" -I"$(wpi_dir)/h"
 
 # systems where version resource must be added to .EXE
-version_res_nt_386 = version.res
+version_res_nt_386 = exever.res
 
 !ifeq host_OS os2
 
@@ -123,16 +123,6 @@ rcstrmsg.gh : $(wimgedit_dir)/h/wimgedit.msg
 $(name).res : ../res/$(name).rc rcstr.gh
         $(rc) $(rc_flags) -ad -zk0 -I"$(wimgedit_dir)/res" $(inc_path) $[@ -fo=$^@
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../res/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../res/exever.rc version.rc $$ $(name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+!include verrc.mif
 
 !endif
-

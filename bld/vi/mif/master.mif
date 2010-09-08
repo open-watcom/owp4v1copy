@@ -80,7 +80,7 @@ bindextra = -d$(vi_dir)\dat\winbind.dat
 
 # systems where version resources must be added to .EXE
 !ifdef sys_windowed
-version_res_nt_386 = version.res
+version_res_nt_386 = exever.res
 !endif
 
 !ifdef bootstrap
@@ -105,17 +105,8 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
 !endif
 !endif
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../win/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../win/exever.rc version.rc $$ $(proj_name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
-
+verrc_exe_skel = ../win/exever.rc
+!include verrc.mif
 
 !ifeq host_os win
 !ifeq host_cpu i86

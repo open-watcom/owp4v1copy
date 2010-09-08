@@ -67,7 +67,7 @@ LIBS = &
     $(wres_lib)
 
 # systems where version resource must be added to .EXE
-version_res_nt_386 = version.res
+version_res_nt_386 = exever.res
 
 all: $(prereq_ide_h) $(name).exe
 
@@ -93,16 +93,8 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../nt/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../nt/exever.rc version.rc $$ $(name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_exe = $(name)
+!include verrc.mif
 
 !ifdef prereq_ide_h
 $(prereq_ide_h): .ALWAYS

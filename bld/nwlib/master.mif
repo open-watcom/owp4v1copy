@@ -219,13 +219,5 @@ msg.gh : ./mkstr.exe
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
     $(rc_aui) $(extra_rc_flags) $[@ -fo=$@
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-    $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res : ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
-    $[@ ../h/version.rc version.rc $$ wlibd $(patch_level)
-    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_dll = wlibd
+!include verrc.mif

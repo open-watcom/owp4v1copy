@@ -79,13 +79,4 @@ rcstr.gh: rcstrmsg.gh
 rcstrmsg.gh: ../h/$(name).msg
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../h/version.rc version.rc $$ $(name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+!include verrc.mif

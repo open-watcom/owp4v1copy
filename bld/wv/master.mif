@@ -370,7 +370,7 @@ resname=$+$(resname)$-dll
 resfile = $(resname).res
 
 # systems where version resource must be added to .EXE
-version_res_nt_386 = version.res
+version_res_nt_386 = exever.res
 
 !ifdef bootstrap
 $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs)
@@ -626,16 +626,8 @@ japhis.dlg : $(hdir)/japhis.dlg
         parsedlg $(pmfontj) $[@ japhis.dlg
 !endif
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe $(hdir)/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ $(hdir)/exever.rc version.rc $$ $(proj_name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_exe_skel = $(hdir)/exever.rc
+!include verrc.mif
 
 ####################
 

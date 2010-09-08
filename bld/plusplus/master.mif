@@ -371,16 +371,9 @@ asmops.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
 asmopsd.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
     $[@ $(wasm_dir)/inlnops.tok $@
  
-./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
-    $(bld_cl) -D_VERSION=$(bld_ver) $[@ $(wcl_util_opts)
- 
-!ifndef patch_level
-patch_level=0
-!endif
- 
-version.res : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
-    $[@ $]@ version.rc $$ $(dll_name) $(patch_level)
-    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_dll_skel = ../rc/r_$(host_os)$(host_cpu).rc
+verrc_dll      = $(dll_name)
+!include verrc.mif
  
 !ifeq target_cpu axp
  

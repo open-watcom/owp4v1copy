@@ -69,7 +69,7 @@ rcinclude= -I. -I"../h" -I"$(dig_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)" -I"$(gu
 inc_dirs = -I"../h" -I"$(wsample_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(trmem_dir)" -I"$(dig_dir)/h"
 
 # systems where version resource must be added to .EXE
-version_res_nt_386 = version.res
+version_res_nt_386 = exever.res
 
 # explicit rules
 #################
@@ -123,14 +123,4 @@ auistr.gh : $(aui_dir)/h/aui.msg ./auimkstr.exe
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../h/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../h/exever.rc version.rc $$ $(proj_name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
-
+!include verrc.mif
