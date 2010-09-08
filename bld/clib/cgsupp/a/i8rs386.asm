@@ -53,19 +53,23 @@ include struct.inc
 
         defpe   __U8RS
 
-        mov     ecx,ebx         ; get shift-count into cl
-        and     cl,03fH         ; get mod 64 shift count
-        test    cl,020H         ; see if count >= 32
-        jnz     L1
-        shrd    eax,edx,cl
-        shr     edx,cl
-        ret                     ; and return!!!
+        mov     ecx,ebx         ; get shift-count into ecx
+        cmp     ecx,040H        ; check if shift-count >= 64
+        jl      L1              ; then
+        xor     edx,edx         ; result is 0
+        xor     eax,eax         ;
+        ret
 
-L1:
-        mov     eax,edx
-        sub     ecx,020H        ; knock off 32-bits of shifting
+L1:     test    cl,020H         ; check if shift-count < 32
+        jnz     L2              ; then
+        shrd    eax,edx,cl      ; full 64-bit shift
+        shr     edx,cl          ;
+        ret
+
+L2:     mov     eax,edx         ; shift hi into lo (1st 32 bits now shifted)
+        sub     cl,020H         ; knock off 32-bits of shifting
+        shr     eax,cl          ; shift lo-word
         xor     edx,edx         ; zero extend result
-        shr     eax,cl
         ret
 
         endproc __U8RS
@@ -74,16 +78,20 @@ L1:
 
         defpe   __I8RS
 
-        mov     ecx,ebx         ; get shift-count into cl
-        and     cl,03fH         ; get mod 64 shift count
-        test    cl,020H         ; see if count >= 32
-        jnz     L2
-        shrd    eax,edx,cl
-        sar     edx,cl
-        ret                     ; and return!!!
+        mov     ecx,ebx         ; get shift-count into ecx
+        cmp     ecx,040H        ; check if shift-count >= 64
+        jl      L3              ; then
+        sar     edx,31          ; sign extend hi-word
+        mov     eax,edx         ; duplicate to lo-word
+        ret
 
-L2:
-        mov     eax,edx         ; shift hi into lo (1st 32 bits now shifted)
+L3:     test    cl,020H         ; check if shift-count < 32
+        jnz     L4              ; then
+        shrd    eax,edx,cl      ; full 64-bit shift
+        sar     edx,cl          ;
+        ret
+
+L4:     mov     eax,edx         ; shift hi into lo (1st 32 bits now shifted)
         sub     cl,020H         ; knock off 32-bits of shifting
         sar     edx,31          ; sign extend hi-word
         sar     eax,cl          ; shift remaining part
@@ -97,20 +105,24 @@ L2:
         defpe   __I8LS
         defpe   __U8LS
 
-        mov     ecx,ebx         ; get shift-count into cl
-        and     cl,03fH         ; get mod 64 shift count
-        test    cl,020H         ; see if count >= 32
-        jnz     L3
-        shld    edx,eax,cl
-        shl     eax,cl
-        ret                     ; and return!!!
+        mov     ecx,ebx         ; get shift-count into ecx
+        cmp     ecx,040H        ; check if shift-count >= 64
+        jl      L5              ; then
+        xor     edx,edx         ; result is 0
+        xor     eax,eax         ;
+        ret
 
-L3:
-        mov     edx,eax         ; shift lo into hi (1st 32 bits now shifted)
+L5:     test    cl,020H         ; check if shift-count < 32
+        jnz     L6              ; then
+        shld    edx,eax,cl      ; full 64-bit shift
+        shl     eax,cl          ;
+        ret
+
+L6:     mov     edx,eax         ; shift lo into hi (1st 32 bits now shifted)
         sub     cl,020H         ; knock off 32-bits of shifting
         xor     eax,eax         ; lo 32 bits are now zero
         shl     edx,cl          ; shift remaining part
-        ret                     ; and return!!!
+        ret
 
         endproc __U8LS
         endproc __I8LS
