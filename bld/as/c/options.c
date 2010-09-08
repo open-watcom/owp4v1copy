@@ -136,6 +136,7 @@ extern bool OptionsInit( int argc, char **argv ) {
 
     while( *argv ) {
         if( argv[0][0] == '-' || argv[0][0] == '/' ) {
+            s = &argv[0][2];
             switch( argv[0][1] ) {
             case 'b':
             case 'B':
@@ -143,16 +144,19 @@ extern bool OptionsInit( int argc, char **argv ) {
                 break;
             case 'd':
             case 'D':
-                if( !optionsPredefine( &argv[0][2] ) ) goto errInvalid;
+                if( isdigit( *s ) ) {
+                    DebugLevel = strtoul( s, &s, 10 );
+                } else if( !optionsPredefine( s ) ) {
+                    goto errInvalid;
+                }
                 break;
             case 'e':
-                if( !argv[0][2] ) goto errInvalid;
-                ErrorLimit = strtoul( &argv[0][2], &s, 10 );
-                if( *s ) goto errInvalid;
+                if( *s == '\0' ) goto errInvalid;
+                ErrorLimit = strtoul( s, &s, 10 );
+                if( *s != '\0' ) goto errInvalid;
                 break;
             case 'f':
             case 'F':
-                s = &argv[0][2];
                 switch( *s ) {
                 case 'o':
                     ++s;
@@ -170,7 +174,6 @@ extern bool OptionsInit( int argc, char **argv ) {
                 break;
             case 'i':
             case 'I':
-                s = &argv[0][2];
                 if( *s == '=' ) {
                     ++s;
                 }
@@ -186,7 +189,6 @@ extern bool OptionsInit( int argc, char **argv ) {
                 }
                 break;
             case 'o':
-                s = &argv[0][2];
                 switch( *s ) {
                 case 'c':
                     _SetOption( OBJ_COFF );
@@ -203,9 +205,8 @@ extern bool OptionsInit( int argc, char **argv ) {
                 _SetOption( BE_QUIET );
                 break;
             case 'w':
-                s = &argv[0][2];
                 if( isdigit( *s ) ) {
-                    WarningLevel = strtoul( &argv[0][2], &s, 10 );
+                    WarningLevel = strtoul( s, &s, 10 );
                 } else {
                     switch( *s ) {
                     case 'e':
@@ -217,7 +218,6 @@ extern bool OptionsInit( int argc, char **argv ) {
                 }
                 break;
             case 'z':
-                s = &argv[0][2];
                 switch( *s ) {
                 case 'q':
                     _SetOption( BE_QUIET );
@@ -228,7 +228,6 @@ extern bool OptionsInit( int argc, char **argv ) {
                 break;
 #ifndef NDEBUG
             case 'v':
-                s = &argv[0][2];
                 while( *s ) {
                     switch( *s ) {
                     case 'p':
