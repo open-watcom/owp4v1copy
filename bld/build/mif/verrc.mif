@@ -2,10 +2,10 @@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
 !ifeq verbose 1
-        $(bld_cl) $(cl_opts) -D_VERSION=$(bld_ver) $<
+        $(bld_cl) $(wcl_util_opts) -D_VERSION=$(bld_ver) $<
 !else
         @echo cl -D_VERSION=$(bld_ver) $@
-        @$(bld_cl) $(cl_opts) -D_VERSION=$(bld_ver) $<
+        @$(bld_cl) $(wcl_util_opts) -D_VERSION=$(bld_ver) $<
 !endif
 
 # Default names and values
