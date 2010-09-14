@@ -29,7 +29,7 @@
 *
 ****************************************************************************/
 
-#include <windows.h>
+#include "vi.h"
 #include <stdio.h>
 #include <string.h>
 #include "ctltype.h"
