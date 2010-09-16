@@ -28,28 +28,28 @@
 
 #define RDOS_SIGN    0x5A1E75D4
 
-struct TRdosObjectHeader
+typedef struct TRdosObjectHeader
 {
     long sign;
     long len;
     short int type;
     unsigned short int crc;    
-};
+} TRdosObjectHeader;
 
-struct TRdosSimpleDeviceHeader
+typedef struct TRdosSimpleDeviceHeader
 {
     short int StartIp;
-};
+} TRdosSimpleDeviceHeader;
 
-struct TRdosDeviceHeader
+typedef struct TRdosDeviceHeader
 {
     short int Size;
     short int Sel;
     short int StartIp;
     char NameParam;
-};
+} TRdosDeviceHeader;
 
-struct TRdosOldFileHeader
+typedef struct TRdosOldFileHeader
 {
     char Base[8];
     char Ext[3];
@@ -59,9 +59,9 @@ struct TRdosOldFileHeader
     short int Date;
     short int Cluster;
     int Size;
-};
+} TRdosOldFileHeader;
 
-struct TRdosFileHeader
+typedef struct TRdosFileHeader
 {
     int Size;
     unsigned long LsbTime;
@@ -69,6 +69,7 @@ struct TRdosFileHeader
     int FileSize;
     char Attrib;
     char FileName;
-};
+} TRdosFileHeader;
 
 #endif
+
