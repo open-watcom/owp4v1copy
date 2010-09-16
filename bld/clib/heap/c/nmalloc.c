@@ -70,14 +70,8 @@ _WCRTLINK void *malloc( size_t amount )
 _WCRTLINK void _WCNEAR *_nmalloc( size_t amt )
 {
     void *ptr;
-    unsigned size;
 
-    size = amt;
-    size--;
-    size &= 0xFFFFF000;
-    size += 0x1000;
-
-    ptr = RdosAllocateMem( size );
+    ptr = RdosAllocateDebugMem( size );
     
     return( (void _WCNEAR *)ptr );
 }    

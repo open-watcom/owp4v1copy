@@ -56,7 +56,7 @@ struct miniheapblkp _WCNEAR     *__MiniHeapFreeRover;
 
 _WCRTLINK void _nfree( void _WCNEAR *stg )
 {
-    RdosFreeMem( stg );
+    RdosFreeDebugMem( stg );
 }
 
 #else

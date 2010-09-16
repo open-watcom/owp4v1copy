@@ -228,7 +228,7 @@
 #define CallGate_xms_handler 0x9a 198 0 0 0 2 0
 #define CallGate_ems_handler 0x9a 199 0 0 0 2 0
 
-#define CallGate_test 0x9a 200 0 0 0 2 0
+#define CallGate_update_rtc 0x9a 200 0 0 0 2 0
 
 #define CallGate_resize_flat_linear 0x9a 201 0 0 0 2 0
 
@@ -317,7 +317,6 @@
 #define CallGate_write_ini 0x9a 14 1 0 0 2 0
 #define CallGate_delete_ini 0x9a 15 1 0 0 2 0
 
-#define CallGate_app_debug 0x9a 16 1 0 0 2 0
 #define CallGate_get_version 0x9a 17 1 0 0 2 0
 
 #define CallGate_enable_status_led 0x9a 18 1 0 0 2 0
@@ -481,4 +480,30 @@
 
 #define CallGate_get_cpu_version 0x9a 128 1 0 0 2 0
 #define CallGate_get_options 0x9a 129 1 0 0 2 0
+
+#define CallGate_fork 0x9a 130 1 0 0 2 0
+
+#define CallGate_get_processor_id 0x9a 131 1 0 0 2 0
+
+#define CallGate_create_user_read_write_section 0x9a 132 1 0 0 2 0
+#define CallGate_delete_user_read_write_section 0x9a 133 1 0 0 2 0
+#define CallGate_enter_user_read_section 0x9a 134 1 0 0 2 0
+#define CallGate_leave_user_read_section 0x9a 135 1 0 0 2 0
+#define CallGate_enter_user_write_section 0x9a 136 1 0 0 2 0
+#define CallGate_leave_user_write_section 0x9a 137 1 0 0 2 0
+
+#define CallGate_power_failure 0x9a 138 1 0 0 2 0
+
+#define CallGate_define_fault_save 0x9a 139 1 0 0 2 0
+#define CallGate_get_fault_thread_state 0x9a 140 1 0 0 2 0
+#define CallGate_get_fault_thread_tss 0x9a 141 1 0 0 2 0
+#define CallGate_clear_fault_save 0x9a 142 1 0 0 2 0
+
+#define CallGate_get_free_handle_mem 0x9a 143 1 0 0 2 0
+
+#define CallGate_get_image_header 0x9a 144 1 0 0 2 0
+#define CallGate_get_image_data 0x9a 145 1 0 0 2 0
+
+#define CallGate_allocate_debug_app_mem 0x9a 146 1 0 0 2 0
+#define CallGate_free_debug_app_mem 0x9a 147 1 0 0 2 0
 

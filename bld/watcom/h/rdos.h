@@ -18,6 +18,8 @@
 extern "C" {
 #endif
 
+#include "rdoshdr.h"
+
 #ifdef __WATCOMC__
 
 #include "rdu.h"
@@ -236,7 +238,9 @@ void RDOSAPI RdosSetBackColor(int color);
 
 void *RDOSAPI RdosAllocateMem(int Size);
 void RDOSAPI RdosFreeMem(void *ptr);
-int RDOSAPI RdosAppDebug();
+
+void *RDOSAPI RdosAllocateDebugMem(int Size);
+void RDOSAPI RdosFreeDebugMem(void *ptr);
 
 long RDOSAPI RdosGetThreadLinear(int Thread, int Sel, long Offset);
 int RDOSAPI RdosReadThreadMem(int Thread, int Sel, long Offset, char *Buf, int Size);
@@ -251,6 +255,7 @@ int RDOSAPI RdosGetFreeSmallKernelLinear();
 int RDOSAPI RdosGetFreeBigKernelLinear();
 
 int RDOSAPI RdosGetFreeHandles();
+int RDOSAPI RdosGetFreeHandleMem();
 
 int RDOSAPI RdosGetMaxComPort();
 int RDOSAPI RdosOpenCom(char ID, long BaudRate, char Parity, char DataBits, char StopBits, int SendBufSize, int RecBufSize); 
@@ -307,11 +312,20 @@ int RDOSAPI RdosOpenDir(const char *PathName);
 void RDOSAPI RdosCloseDir(int Handle);
 int RDOSAPI RdosReadDir(int Handle, int EntryNr, int MaxNameSize, char *PathName, long *FileSize, int *Attribute, unsigned long *MsbTime, unsigned long *LsbTime);
 
+void RDOSAPI RdosDefineFaultSave(int DiscNr, long StartSector, long Sectors);
+void RDOSAPI RdosClearFaultSave();
+int RDOSAPI RdosGetFaultThreadState(int ThreadNr, ThreadState *State);
+int RDOSAPI RdosGetFaultThreadTss(int ThreadNr, Tss *tss);
+
 int RDOSAPI RdosGetThreadState(int ThreadNr, ThreadState *State);
 int RDOSAPI RdosSuspendThread(int Thread);
 int RDOSAPI RdosSuspendAndSignalThread(int Thread);
 
+int RDOSAPI RdosGetImageHeader(int Adapter, int Entry, TRdosObjectHeader *Header);
+int RDOSAPI RdosGetImageData(int Adapter, int Entry, void *Buf);
+
 void RDOSAPI RdosCpuReset();
+int RDOSAPI RdosPowerFailure();
 int RDOSAPI RdosGetCpuVersion(char *VendorStr, int *FeatureFlags, int *freq);
 void RDOSAPI RdosGetVersion(int *Major, int *Minor, int *Release);
 void RDOSAPI RdosCreateThread(void (*Start)(void *Param), const char *Name, void *Param, int StackSize);
@@ -321,6 +335,7 @@ int RDOSAPI RdosGetThreadHandle();
 int RDOSAPI RdosExec(const char *prog, const char *param, const char *options);
 int RDOSAPI RdosSpawn(const char *prog, const char *param, const char *startdir, const char *env, const char *options, int *thread);
 int RDOSAPI RdosSpawnDebug(const char *prog, const char *param, const char *startdir, const char *env, const char *options, int *thread);
+int RDOSAPI RdosFork(const char *name, const char *options);
 void RDOSAPI RdosUnloadExe(int ExitCode);
 void RDOSAPI RdosFreeProcessHandle(int handle);
 int RDOSAPI RdosGetProcessExitCode(int handle);
@@ -815,8 +830,15 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_free_app_mem  \
     parm [edx];
 
-#pragma aux RdosAppDebug = \
-    CallGate_app_debug;
+#pragma aux RdosAllocateDebugMem = \
+    CallGate_allocate_debug_app_mem  \
+    ValidateEdx \
+    parm [eax]  \
+    value [edx];
+
+#pragma aux RdosFreeDebugMem = \
+    CallGate_free_debug_app_mem  \
+    parm [edx];
 
 #pragma aux RdosGetThreadLinear = \
     CallGate_get_thread_linear  \
@@ -1129,6 +1151,49 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 // ReadDir here
 
+#pragma aux RdosDefineFaultSave = \
+    CallGate_define_fault_save  \
+    parm [eax] [edx] [ecx];
+
+#pragma aux RdosClearFaultSave = \
+    CallGate_clear_fault_save;
+
+#pragma aux RdosGetImageHeader = \
+    CallGate_get_image_header  \
+    CarryToBool \
+    parm [eax] [edx] [edi] \
+    value [eax];
+
+#pragma aux RdosGetImageData = \
+    CallGate_get_image_data  \
+    CarryToBool \
+    parm [eax] [edx] [edi] \
+    value [eax];
+
+#pragma aux RdosGetFaultThreadState = \
+    CallGate_get_fault_thread_state  \
+    CarryToBool \
+    parm [eax] [edi] \
+    value [eax];
+
+#pragma aux RdosGetFaultThreadTss = \
+    CallGate_get_fault_thread_tss  \
+    CarryToBool \
+    parm [eax] [edi] \
+    value [eax];
+
+#pragma aux RdosGetImageHeader = \
+    CallGate_get_image_header  \
+    CarryToBool \
+    parm [eax] [edx] [edi] \
+    value [eax];
+
+#pragma aux RdosGetImageData = \
+    CallGate_get_image_data  \
+    CarryToBool \
+    parm [eax] [edx] [edi] \
+    value [eax];
+
 #pragma aux RdosGetThreadState = \
     CallGate_get_thread_state  \
     CarryToBool \
@@ -1149,6 +1214,11 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosCpuReset = \
     CallGate_cpu_reset;
+
+#pragma aux RdosPowerFailure = \
+    CallGate_power_failure \
+    "movzx eax,ax"  \
+    value [eax];
 
 #pragma aux RdosGetVersion = \
     CallGate_get_version  \
@@ -1186,6 +1256,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_get_exit_code  \
     "movzx eax,ax"  \
     parm [esi] [edi] [ebx] \
+    value [eax];
+
+#pragma aux RdosFork = \
+    CallGate_fork  \
+    "movsx eax,ax"  \
+    parm [esi] [edi] \
     value [eax];
 
 #pragma aux RdosUnloadExe = \
@@ -1243,6 +1319,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov eax,esi" \
     "mov edx,edi" \
     CallGate_update_time  \
+    CallGate_update_rtc  \
     parm [edi] [esi] \
     modify [eax edx esi edi];
 
@@ -1466,6 +1543,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGetFreeHandles = \
     CallGate_get_free_handles  \
     "movzx eax,ax"  \
+    value [eax];
+
+#pragma aux RdosGetFreeHandleMem = \
+    CallGate_get_free_handle_mem  \
     value [eax];
 
 #pragma aux RdosCreateWait = \
@@ -2779,8 +2860,15 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_free_app_mem  \
     parm [es];
 
-#pragma aux RdosAppDebug = \
-    CallGate_app_debug;
+#pragma aux RdosAllocateDebugMem = \
+    CallGate_allocate_debug_app_mem  \
+    ValidateDx \
+    parm [eax]  \
+    value [es];
+
+#pragma aux RdosFreeDebugMem = \
+    CallGate_free_debug_app_mem  \
+    parm [es];
 
 /* continue from here */
 
@@ -3095,6 +3183,25 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 // ReadDir here
 
+#pragma aux RdosDefineFaultSave = \
+    CallGate_define_fault_save  \
+    parm [eax] [edx] [ecx];
+
+#pragma aux RdosClearFaultSave = \
+    CallGate_clear_fault_save;
+
+#pragma aux RdosGetFaultThreadState = \
+    CallGate_get_fault_thread_state  \
+    CarryToBool \
+    parm [eax] [edi] \
+    value [eax];
+
+#pragma aux RdosGetFaultThreadTss = \
+    CallGate_get_fault_thread_tss  \
+    CarryToBool \
+    parm [eax] [edi] \
+    value [eax];
+
 #pragma aux RdosGetThreadState = \
     CallGate_get_thread_state  \
     CarryToBool \
@@ -3115,6 +3222,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosCpuReset = \
     CallGate_cpu_reset;
+
+#pragma aux RdosPowerFailure = \
+    CallGate_power_failure \
+    value [ax];
 
 #pragma aux RdosGetCpuVersion = \
     CallGate_get_cpu_version  \
@@ -3148,6 +3259,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_get_exit_code  \
     "movzx eax,ax"  \
     parm [esi] [edi] [ebx] \
+    value [eax];
+
+#pragma aux RdosFork = \
+    CallGate_fork  \
+    "movsx eax,ax"  \
+    parm [esi] [edi] \
     value [eax];
 
 #pragma aux RdosUnloadExe = \
@@ -3204,6 +3321,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov eax,esi" \
     "mov edx,edi" \
     CallGate_update_time  \
+    CallGate_update_rtc  \
     parm [edi] [esi] \
     modify [eax edx esi edi];
 
@@ -3427,6 +3545,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGetFreeHandles = \
     CallGate_get_free_handles  \
     "movzx eax,ax"  \
+    value [eax];
+
+#pragma aux RdosGetFreeHandleMem = \
+    CallGate_get_free_handle_mem  \
     value [eax];
 
 #pragma aux RdosCreateWait = \
@@ -4425,3 +4547,4 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #endif
 
 #endif
+
