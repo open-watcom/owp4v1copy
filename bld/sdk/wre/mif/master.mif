@@ -74,7 +74,7 @@ extra_l_flags_nt = op stack=100k,heap=16k commit heap=8k
 extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 
 # systems where version resource must be added to .EXE
-version_res_nt_386 = version.res
+version_res_nt_386 = exever.res
 
 # explicit rules
 #################
@@ -99,14 +99,4 @@ rcstrmsg.gh: ../h/wre.msg $(msgfiles)
 $(name).res: ../h/$(name).rc .AUTODEPEND
         $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level=0
-!endif
-
-version.res: ./genverrc.exe ../h/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../h/exever.rc version.rc $$ $(name) $(patch_level)
-        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
-
+!include verrc.mif
