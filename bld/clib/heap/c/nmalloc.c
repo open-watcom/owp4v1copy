@@ -71,7 +71,7 @@ _WCRTLINK void _WCNEAR *_nmalloc( size_t amt )
 {
     void *ptr;
 
-    ptr = RdosAllocateDebugMem( size );
+    ptr = RdosAllocateDebugMem( amt );
     
     return( (void _WCNEAR *)ptr );
 }    
