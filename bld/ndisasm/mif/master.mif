@@ -70,11 +70,17 @@ stand_objs      = args.obj &
 
 disasm_objs = $(stand_objs) $(dis_objs) demangle.obj $(trmem_objs)
 
-$(exe_name) : $(proj_name).res $(dis_prereq) $(disasm_objs) $(cl_objs) $(pre_deps_$(host_os)) $(xlibs)
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
+$(exe_name) : $(proj_name).res $(dis_prereq) $(disasm_objs) $(cl_objs) $(pre_deps_$(host_os)) $(xlibs) $(version_res_$(host_os)_$(host_cpu))
         $(cl) $(clflags) $(disasm_objs) $(cl_objs) $(xlibs) $(cl_libs)
 !ifeq host_os osi
         $(w32bind) $^&.rex $@ $(os2ldr)
         rm -f $^&.rex
+!endif
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
         wstrip -q -a -r $@ . $^&.res
 
@@ -92,3 +98,5 @@ msg.gh : ./mkstr.exe wdis.msg
 
 wdis.u : ./mkuse.exe wdis.msg
         $[@ $^@
+
+!include verrc.mif

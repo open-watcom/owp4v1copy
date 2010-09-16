@@ -46,8 +46,18 @@ extra_l_flags = op map
 
 .c: ../c;../../c;$(posix_dir)/misc;$(watcom_dir)/c;$(trmem_dir)
 
-$(name) : $(extra_deps) $(objs)
+# systems where version resources must be added to .EXE
+!ifndef prebuild
+version_res_nt_386 = exever.res
+!endif
+
+$(name) : $(extra_deps) $(objs) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(objs)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
+
+!include verrc.mif
 
 owcchelp.gh: ../owcchelp.sp
         wsplice "-f\"%s\"," $< $@

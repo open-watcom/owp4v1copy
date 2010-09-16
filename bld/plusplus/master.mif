@@ -196,7 +196,10 @@ depends_drv = $(pre_obj_deps) $(drv_objs)
  
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
- 
+
+# systems where version resources must be added to .EXE
+exe_version_res_nt_386 = exever.res
+
 #
 # create compiler
 #
@@ -208,18 +211,24 @@ target : .symbolic $(exe_name).exe
 #
 !ifdef plusplus_dll
  
-$(exe_name).exe : $(depends_drv) $(dll_name).lib drv.lnk
+$(exe_name).exe : $(exe_version_res_$(host_os)_$(host_cpu)) $(depends_drv) $(dll_name).lib drv.lnk
     $(linker) name $@ @drv.lnk
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
+!endif
  
 !else
  
-$(exe_name).exe : $(depends_exe) exe.lnk
+$(exe_name).exe : $(exe_version_res_$(host_os)_$(host_cpu)) $(depends_exe) exe.lnk
 !ifeq host_os osi
     $(linker) name $^&.rex @exe.lnk
     $(w32bind) $^&.rex $@ $(os2ldr)
     @rm -f $^&.rex
 !else
     $(linker) name $@ @exe.lnk
+!ifeq exe_version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 !ifeq host_os qnx
 !ifeq release 1
     serialize $@ wpp
@@ -371,8 +380,8 @@ asmops.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
 asmopsd.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
     $[@ $(wasm_dir)/inlnops.tok $@
  
-verrc_dll_skel = ../rc/r_$(host_os)$(host_cpu).rc
-verrc_dll      = $(dll_name)
+verrc_dll = $(dll_name)
+verrc_exe = $(exe_name)
 !include verrc.mif
  
 !ifeq target_cpu axp

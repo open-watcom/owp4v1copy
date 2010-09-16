@@ -29,8 +29,10 @@ dll_name = wccd$(target_cpu)c
 # internal module name may be required to match file name on some platforms.
 !ifeq target_cpu i86
 realdllname = wccd
+realexename = wcc
 !else
 realdllname = wccd$(target_cpu)
+realexename = wcc$(target_cpu)
 !endif
 
 # international data file name
@@ -134,6 +136,9 @@ depends_drv = $(pre_obj_deps) $(drv_objs)
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
 
+# systems where version resources must be added to .EXE
+exe_version_res_nt_386 = exever.res
+
 !ifdef bootstrap
 
 exe_objs += clibext.obj
@@ -151,8 +156,11 @@ comp_objs_dll = $(common_objs) $(dll_objs)
 
 !ifdef cc_dll
 
-$(exe_name).exe : $(drv_objs) $(dll_name).lib drv.lnk
+$(exe_name).exe : $(drv_objs) $(dll_name).lib $(exe_version_res_$(host_os)_$(host_cpu)) drv.lnk
         $(linker) name $@ @drv.lnk
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 !else
 
@@ -165,6 +173,9 @@ $(exe_name).exe: $(depends_exe) exe.lnk
         @rm -f $^&.rex
 !else	
         $(linker) name $@ @exe.lnk
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 !ifeq host_os qnx
         serialize $@ wcc
 !endif
@@ -267,8 +278,8 @@ usage01.int : ./usageenc.exe ../jusage.sp
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) ../jusage.sp usageenc.int
         $[@ usageenc.int usage01.int
 
-verrc_dll_skel = ../rc/r_$(host_os)$(host_cpu).rc
-verrc_dll      = $(dll_name)
+verrc_dll = $(realdllname)
+verrc_exe = $(realexename)
 !include verrc.mif
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c $(cl_objs)
@@ -282,10 +293,6 @@ msgtxt.gh msgdefs.gh msgattr.gh errors01.int : ./msgencod.exe ../gml/cerrs.gml
 
 $(intname)01.int : ./intlbin.exe errors01.int usage01.int
         $[@ $(intname)
-
-!ifndef patch_level
-patch_level=0
-!endif
 
 ./mkopcod1.exe: $(wasm_dir)/mkopcod1.c $(wasm_dir)/mkopcode.h $(cl_objs)
         $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)

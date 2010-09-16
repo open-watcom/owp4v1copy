@@ -119,7 +119,14 @@ extra_rc_flags_linux = -D__UNIX__
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
 # systems where version resources must be added to .DLL
+!ifndef prebuild
 version_res_nt_386 = version.res
+!endif
+
+# systems where version resources must be added to .EXE
+!ifndef prebuild
+exe_version_res_nt_386 = exever.res
+!endif
 
 inc_dirs =  -I.. -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
 .c: ../c;$(lib_misc_dir)/c;$(watcom_dir)/c;$(trmem_dir)
@@ -153,8 +160,11 @@ depends_exe += exe.lnk
 
 !ifdef wlib_dll
 
-wlib.exe: $(depends_drv) $(__MAKEFILES__)
+wlib.exe: $(depends_drv) $(exe_version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
     $(linker) name $@ @drv.lnk
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 !else
 
@@ -167,6 +177,9 @@ wlib.exe: $(depends_exe) $(__MAKEFILES__)
     @rm -f $^&.rex
 !else
     $(linker) name $@ @exe.lnk
+!endif
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
 !endif
 !ifndef no_libs
     wstrip -q -a -r $@ . wlib.res

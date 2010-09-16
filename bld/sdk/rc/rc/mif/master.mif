@@ -113,7 +113,14 @@ extra_l_flags_dll_nt  += option modname='$(dll_name).dll', offset=0x69800000
 extra_l_flags_dll_os2 += option modname='$(dll_name)'
 
 # systems where version resources must be added to .DLL
+!ifndef prebuild
 version_res_nt_386 = version.res
+!endif
+
+# systems where version resources must be added to .EXE
+!ifndef prebuild
+exe_version_res_nt_386 = exever.res
+!endif
 
 extra_rc_flags_os2 = -D__OS2__
 extra_rc_flags_nt  = -D__NT__
@@ -145,12 +152,15 @@ depends_exe += exe.lnk
 
 !ifdef wrc_dll
 
-$(name)e.exe : $(depends_drv) $(__MAKEFILES__)
+$(name)e.exe : $(depends_drv) $(exe_version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
         $(linker) name $@ @drv.lnk
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 !else
 
-$(name)e.exe : $(depends_exe) $(__MAKEFILES__)
+$(name)e.exe : $(depends_exe) $(exe_version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
 !ifdef bootstrap
         $(cc) -o $@ $(objs_exe) $(xlibs)
 !else ifeq host_os osi
@@ -159,6 +169,9 @@ $(name)e.exe : $(depends_exe) $(__MAKEFILES__)
         @rm -f $^&e.rex
 !else
         $(linker) name $@ @exe.lnk
+!endif
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
 !endif
 !ifndef incl_msgtext
         wstrip -q -a -r $@ . $(name).res

@@ -119,21 +119,30 @@ extra_rc_flags = $(extra_rc_flags_$(host_os))
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
 
+# systems where version resources must be added to .EXE
+exe_version_res_nt_386 = exever.res
+
 #################
 # explicit rules
 
 !ifdef wlink_dll
 
-wl.exe : $(drv_objs) wlinkd.lib drv.lnk
+wl.exe : $(drv_objs) wlinkd.lib $(exe_version_res_$(host_os)_$(host_cpu)) drv.lnk
     $(linker) name $@ @drv.lnk
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 !else
 
-wl.exe : wlink.res $(comp_objs_exe) $(xlibs) exe.lnk
+wl.exe : wlink.res $(comp_objs_exe) $(xlibs) $(exe_version_res_$(host_os)_$(host_cpu)) exe.lnk
 !ifeq bootstrap 1
     $(cc) -o $@ $(comp_objs_exe) $(xlibs)
 !else
     $(linker) name $@ @exe.lnk
+!endif
+!ifdef exe_version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
 !endif
     wstrip -q -a -r $@ . wlink.res
 !endif

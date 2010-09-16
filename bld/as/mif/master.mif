@@ -132,6 +132,11 @@ extra_c_flags_options   = -fh
 libs = $(owl_lib) $(wres_lib)
 !endif
 
+# rcflags
+##########
+
+extra_rc_flags = $(as_extra_defines)
+
 # splice options
 ##################
 !ifndef inline_as
@@ -182,11 +187,17 @@ $(asi_lib_j) : $(asi_lib) asmsgj.obj
         $(librarian) $(libflags) +$[@ -asmsg.obj +asmsgj.obj
 !endif
 
-$(name).exe : msg.gh $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(name).res
+# systems where version resource must be added to .EXE
+version_res_nt_386 = exever.res
+
+$(name).exe : msg.gh $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(name).res $(version_res_$(host_os)_$(host_cpu))
         $(cl) $(clflags) $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(cl_libs)
 !ifeq host_os osi
         $(w32bind) $^&.rex $^@ $(os2ldr)
         @rm -f $^&.rex
+!endif
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $(name).exe
 !endif
         wstrip -q -a -r $@ . $(name).res
 
@@ -194,6 +205,8 @@ $(name).exe : msg.gh $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(name).res
 $(name).res : as.rc msg.gh
         $(rc_aui) $(as_extra_defines) $(dbg_extra_defines) $[@ -fo=$^@
 !endif
+
+!include verrc.mif
 
 msg.gh : ./mkstrid.exe
         $[@ $^@

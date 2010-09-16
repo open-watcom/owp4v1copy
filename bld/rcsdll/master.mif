@@ -45,5 +45,13 @@ rcsdll.lib: $(OBJS)
     $(librarian) $(libflags) @$^&.lbc
 !endif
 
-rcsdll.dll : $(OBJS)
+# systems where version resources must be added to .DLL
+version_res_nt_386 = version.res
+
+rcsdll.dll : $(OBJS) $(version_res_$(host_os)_$(host_cpu))
     $(linker) name $@ $(lflags) file {$(OBJS)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
+
+!include verrc.mif

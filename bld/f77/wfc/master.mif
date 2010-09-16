@@ -65,7 +65,10 @@ extra_l_flags_nt = op stack=1024k commit stack=32k
 
 flibs = $(wres_lib) $(dwarf_dw_lib) $(asminline_lib)
 
-$(target_exe).exe : $(asminline_deps) $(fobjs) errmsg.res $(cg_deps) $(flibs)
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
+$(target_exe).exe : $(asminline_deps) $(fobjs) errmsg.res $(cg_deps) $(flibs) $(version_res_$(host_os)_$(host_cpu))
     %create $^&.lnk
     @for %i in ($(fobjs)) do @%append $^&.lnk file %i
     @for %i in ($(flibs)) do @%append $^&.lnk lib %i
@@ -78,6 +81,9 @@ $(target_exe).exe : $(asminline_deps) $(fobjs) errmsg.res $(cg_deps) $(flibs)
 !else    
     @%append $^&.lnk name $@
     $(linker) $(lflags) @$^&.lnk
+!endif
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
     wstrip -q -a -r $@ . errmsg.res
 
@@ -100,3 +106,6 @@ asmopsd.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
 
 msg.gh : $(wasm_dir)/h/asmshare.msg
     $(awk) -v base=MSG_RC_BASE -f $(misc_dir)/makemsg.awk $[@ > $^@
+
+verrc_exe = $(target_exe)
+!include verrc.mif

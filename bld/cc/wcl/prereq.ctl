@@ -27,28 +27,28 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
-    wmake -h -f ../dosi86.386/makefile
+    wmake -h -f ../dosi86.386/makefile prebuild=1
     <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
-    wmake -h -f ../os2386.386/makefile
+    wmake -h -f ../os2386.386/makefile prebuild=1
     <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
-    wmake -h -f ../nt386.386/makefile
+    wmake -h -f ../nt386.386/makefile prebuild=1
     <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> ntaxp ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
-    wmake -h -f ../ntaxp.axp/makefile
+    wmake -h -f ../ntaxp.axp/makefile prebuild=1
     <CPCMD> wcl386.exe <OWBINDIR>/bwcl386.exe
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
@@ -56,7 +56,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     echo Building the wcl bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
-    wmake -h -f ../linux386.386/makefile
+    wmake -h -f ../linux386.386/makefile bootstrap=1
     <CPCMD> wcl386.exe <OWBINDIR>/bwcl386
     <CPCMD> wcl386.exe <OWBINDIR>/wcl386
 
@@ -64,7 +64,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 #==================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
-    wmake -h -f ../linux386.386/makefile
+    wmake -h -f ../linux386.386/makefile prebuild=1
     <CPCMD> wcl386.exe <OWBINDIR>/bwcl386
 
 [ BLOCK . . ]

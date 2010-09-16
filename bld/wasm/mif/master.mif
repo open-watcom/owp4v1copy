@@ -113,7 +113,12 @@ proj_obj += clibext.obj
 res_objs = $(name).res
 !endif
 
-$(name).exe : usage.msg asmops.gh asmopsd.gh wmpmsg.gh $(res_objs) $(proj_obj) $(__MAKEFILES__)
+# systems where version resources must be added to .EXE
+!ifndef prebuild
+version_res_nt_386 = exever.res
+!endif
+
+$(name).exe : usage.msg asmops.gh asmopsd.gh wmpmsg.gh $(res_objs) $(proj_obj) $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
 !ifdef bootstrap
         $(cl) -o $@ $(proj_obj) $(libs)
 !else
@@ -129,9 +134,14 @@ $(name).exe : usage.msg asmops.gh asmopsd.gh wmpmsg.gh $(res_objs) $(proj_obj) $
         $(linker) @$^&.lnk
 !endif
 !endif
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 !ifdef res_objs
         wstrip -a -r -q $@ . $(res_objs)
 !endif
+
+!include verrc.mif
 
 ###################################################################
 # resource stuff
