@@ -92,10 +92,20 @@ objs =  madimp.obj $(dis_objs) $(imp_objs)
 
 # explicit rules
 ##################
+
+# systems where version resources must be added to .DLL
+version_res_nt_386 = version.res
+
 !ifdef bootstrap
 $(lib_name) : $(dis_prereq) $(objs) $(cl_libs) $(__MAKEFILES__)
         $(cl) -shared -fPIC $(clflags) $(objs) $(cl_libs)
 !else
-$(lib_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
+$(lib_name) : $(dis_prereq) $(objs) $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
         $(linker) name $^@ $(lflags_dll) file {$(objs)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
+!endif
+
+verrc_dll = $(name)
+!include verrc.mif

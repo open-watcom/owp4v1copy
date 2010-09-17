@@ -380,6 +380,9 @@ $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs)
 $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifneq sys_windowed 1
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
         wstrip -q -a -r $^@ . $(resfile)
 !else
 !ifdef version_res_$(host_os)_$(host_cpu)
@@ -626,7 +629,11 @@ japhis.dlg : $(hdir)/japhis.dlg
         parsedlg $(pmfontj) $[@ japhis.dlg
 !endif
 
-verrc_exe_skel = $(hdir)/exever.rc
+!ifeq sys_windowed 1
+verrc_exe = wdw
+!else
+verrc_exe = wd
+!endif
 !include verrc.mif
 
 ####################

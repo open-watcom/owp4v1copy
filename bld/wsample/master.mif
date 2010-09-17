@@ -160,6 +160,9 @@ inc_dirs += -I"$(dig_dir)/h" -I"../h"
 .asm: ../asm
 !endif
 
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
 rsidir = $(tools_root)
 
 !ifeq target rsi
@@ -248,7 +251,7 @@ $(xname).exe : $(objects) $(cl_objs) $(xname).res $(libs) $(__MAKEFILES__)
     $(cl) $(clflags) $(objects) $(cl_objs) $(libs) $(cl_libs)
     wstrip -q -a -r $^@ . $(xname).res
 !else
-$(xname).exe : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
+$(xname).exe : $(objects) $(xname).res $(libs) $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
     @%write tmp.lnk $(lflags)
     @for %i in ($(objects)) do @%append tmp.lnk file %i
     @for %i in ($(libs)) do @%append tmp.lnk lib %i
@@ -256,6 +259,9 @@ $(xname).exe : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
 !ifeq host_os win
     $(rc) $(xname).res $^@
 !else
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
     wstrip -q -a -r $^@ . $(xname).res
 !endif
 !endif
@@ -274,3 +280,5 @@ $(xname).res : ../h/wsamplew.rc ../h/wsampres.rc ../h/wsamplew.ico ../h/wsample.
 $(xname).res : ../h/wsample.rc ../h/wmsg.h ../h/wsample.msg
 !endif
     $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@
+
+!include verrc.mif

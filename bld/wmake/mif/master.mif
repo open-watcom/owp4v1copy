@@ -98,8 +98,15 @@ extra_l_flags_dos = $(extra_l_flags_dos_$(host_cpu))
 
 libs = $(wres_lib) $(orl_lib)
 
-$(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(__MAKEFILES__)
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
+$(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
         $(linker) $(lflags) FILE {$(objs)} LIBRARY {$(libs)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
+
 #
 # If the linker files were different (i.e. if we needed a QNX version),
 # the copy would be replaced by a separate link. CSK
@@ -129,6 +136,8 @@ usageend.gh : usage.rc usagej.rc
 #       wsplice -k$(OS) -kENGLISH -f "%s"..\h\usage.sp -o "%n%n%n%n%n%n%n%n%n%n" usage.h
 #       wsplice -f "$#define USAGE_LN_%$# (USAGE_BASE+%$#)%+" usage.h usage.h
 #       wsplice -f "%s%+"usage.h -o "$#define USAGE_LAST (USAGE_BASE+%$#)" usage.h
+
+!include verrc.mif
 
 ##############################################################################
 # special case targets

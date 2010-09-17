@@ -19,8 +19,14 @@ objs =               &
 
 dependants = wtouch.res $(objs) $(wres_lib)
 
-$(proj_name).exe : $(dependants)
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
+$(proj_name).exe : $(dependants) $(version_res_$(host_os)_$(host_cpu))
         $(linker) option quiet $(lflags) name $^@ file { $(objs) } lib $(wres_lib)
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
         wstrip -q -a -r $(proj_name).exe . $(proj_name).res
 
 $(proj_name).res : $(proj_name).rc $(proj_name).msg usage.rc usagej.rc msg.gh
@@ -34,3 +40,5 @@ usagej.rc : usage.sp
 
 msg.gh : $(proj_name).msg
         $(awk) -v base=MSG_RC_BASE -f $(misc_dir)/makemsg.awk $[@ > $^@
+
+!include verrc.mif

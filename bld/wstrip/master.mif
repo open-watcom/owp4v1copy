@@ -34,13 +34,19 @@ objs += clibext.obj
 
 dependants = msg.gh $(objs) $(res_$(host_os)) $(wres_lib)
 
-$(proj_name).exe : $(dependants)
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
+$(proj_name).exe : $(dependants) $(version_res_$(host_os)_$(host_cpu))
 !ifdef bootstrap
         $(cc) $(objs) -o $@ $(wres_lib)
         ./$@ -q -a -r $^@ strip2.exe $(res_$(host_os)) > /dev/null; true
         mv strip2.exe $@
 !else
         $(linker) option quiet $(lflags) name $^. file { $(objs) } lib $(wres_lib)
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
         wstrip -q -a -r $^@ . $(res_$(host_os))
 !endif
 
@@ -64,3 +70,6 @@ qusage.rc : usage.sp
 
 qwstrip.u : usage.sp
         wsplice -kENGLISH -kQNX -t8 -u $[@ $^@
+
+verrc_exe = wstrip
+!include verrc.mif
