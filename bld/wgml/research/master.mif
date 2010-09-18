@@ -56,14 +56,18 @@ cop_common_objs = &
             devfuncs.obj  &
             findfile.obj  &
             gargutil.obj  &
+            gbanner.obj   &
             gdata.obj     &
+	    gdocsect.obj  &
             gerror.obj    &
             gerrorxx.obj  &
             getnum.obj    &
             gmacdict.obj  &
             gmemory.obj   &
+            gproctxt.obj  &
             gresrch.obj   &
             gprocess.obj  &
+	    gsbr.obj	  &
             gsetvar.obj   &
             gsfc2d.obj    &
             gsfc2x.obj    &
@@ -88,11 +92,13 @@ cop_common_objs = &
             gsix.obj      &
             gsmacro.obj   &
             gspe.obj      &
+	    gssk.obj	  &
             gsyssym.obj   &
             gsymvar.obj   &
             gtagdict.obj  &
             gtxtpool.obj  &
             gutil.obj     &
+	    gwidowut.obj  &
             outbuff.obj   &
             wgmlmsg.obj   &
             wgmlsupp.obj
