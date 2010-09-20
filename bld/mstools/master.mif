@@ -51,3 +51,9 @@ optparsc.gh optparsh.gh : ./optencod.exe ../gml/ms.gml
 #
 ./optencod.exe : $(fe_misc_dir)/c/optencod.c
         $(bld_cl) $(wcl_util_opts) -I"$(fe_misc_dir)/h" -I"$(watcom_dir)/h" $[@
+
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
+verrc_exe = $(name)
+!include verrc.mif

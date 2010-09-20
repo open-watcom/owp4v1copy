@@ -39,4 +39,8 @@ objs =                  &
 	dumphll.obj     &
 	coff.obj
 
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
 !include exetarg.mif
+!include verrc.mif

@@ -1,3 +1,5 @@
+name = link
+
 !ifneq host_os nt
 !   error Unknown OS.
 !endif
@@ -34,8 +36,11 @@ inc_dirs += -I"$(lib_misc_dir)/h" -I"$(orl_dir)/h"
 # Instructions for building the executables.
 #
 
-link.exe :  $(linkstub_objs)
+link.exe :  $(linkstub_objs) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(linkstub_objs)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 link386.exe :  $(link_hdrs) $(link386_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(link386_objs)} library {$(link_common_libs)}

@@ -175,6 +175,9 @@ inc_dirs += -I"$(build_root)/bdiff/h" -I$(trmem_dir) -I"$(libzip_dir)/lib"
 # explicit rules
 ##################
 
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
 !ifeq host_os win
 
 all : virgin.exe setup.exe csetup.exe f77setup.exe .SYMBOLIC
@@ -210,10 +213,14 @@ setup.exe: $(gendeps) setupui.res
 
 all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
 
-setup.exe: virgin.exe setup.res
+setup.exe: virgin.exe $(version_res_$(host_os)_$(host_cpu)) setup.res
     cp $[@ $^@ > $(nulldevice)
     cp $[&.sym $^&.sym > $(nulldevice)
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc_out) $]@ $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
+!else
     $(rc_out) $]@ $^@
+!endif
 
 virgin.exe: $(gendeps)
     $(linker) name $^@ @setup.lnk
@@ -315,7 +322,11 @@ dosstub.exe : dosstub.c
     rm $^*.rex
 !else
     cp virgin.exe $^@
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc_out) $]@ $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
+!else
     $(rc_out) $]@ $^@
+!endif
 !endif
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
@@ -324,6 +335,8 @@ dosstub.exe : dosstub.c
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
     $[@ $^@ $(gui_msg_id_modifier)
 
+verrc_exe = setup
+!include verrc.mif
 
 # additional dependencies for implicit rules
 ############################################

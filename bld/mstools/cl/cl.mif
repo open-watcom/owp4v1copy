@@ -1,3 +1,4 @@
+name = cl
 
 #
 # Define the name(s) of the program(s) to build.
@@ -25,8 +26,11 @@ clppc_hdrs      = optpppch.gh
 # Instructions for building the executables.
 #
 
-cl.exe :  $(clstub_objs)
+cl.exe :  $(clstub_objs) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(clstub_objs)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 cl386.exe :  $(cl386_hdrs) $(cl386_objs)
         $(linker) $(lflags) name $^@ file {$(cl386_objs)}

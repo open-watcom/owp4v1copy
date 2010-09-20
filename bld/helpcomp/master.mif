@@ -35,4 +35,10 @@ objs =                  &
         compress.obj    &
         parsing.obj
 
+# systems where version resources must be added to .EXE
+!ifndef prebuild
+version_res_nt_386 = exever.res
+!endif
+
 !include exetarg.mif
+!include verrc.mif

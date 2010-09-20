@@ -31,5 +31,13 @@ tagobjs=element.obj text.obj entity.obj punct.obj whtspc.obj word.obj tag.obj ac
         lp.obj note.obj nt.obj ol.obj p.obj parml.obj pbutton.obj rm.obj sl.obj table.obj&
         title.obj ul.obj warning.obj xmp.obj
 
-wipfc.exe : $(objs) $(objobjs) $(tagobjs)
+# systems where version resources must be added to .EXE
+version_res_nt_386 = exever.res
+
+wipfc.exe : $(objs) $(objobjs) $(tagobjs) $(version_res_$(host_os)_$(host_cpu))
     $(linker) $(lflags) name $@ file {$(objs) $(objobjs) $(tagobjs)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
+
+!include verrc.mif

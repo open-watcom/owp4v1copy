@@ -1,3 +1,5 @@
+name = rc
+
 done: rc.exe
 
 !include ../../master.mif
@@ -13,6 +15,8 @@ extra_c_flags_rc = $(targdef)
 # Instructions for building the executable.
 #
 
-rc.exe :  $(rc_hdrs) $(rc_objs)
+rc.exe :  $(rc_hdrs) $(rc_objs) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(rc_objs)}
-
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif

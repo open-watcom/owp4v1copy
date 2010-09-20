@@ -1,3 +1,4 @@
+name = lib
 
 !ifneq host_os nt
 !   error Unknown OS.
@@ -35,8 +36,11 @@ inc_dirs +=  -I"$(lib_misc_dir)/h" -I"$(orl_dir)/h"
 # Instructions for building the executable.
 #
 
-lib.exe :  $(libstub_objs)
+lib.exe :  $(libstub_objs) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(libstub_objs)}
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 lib386.exe :  $(lib_hdrs) $(lib386_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(lib386_objs)} library {$(lib_common_libs)}

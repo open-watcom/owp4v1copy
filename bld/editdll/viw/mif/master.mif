@@ -19,18 +19,29 @@ extra_l_flags = op map, verbose, static, heapsize=8k
 extra_l_flags_win = initinstance memory op stack=20k, rwr lib ddeml export WEP RESIDENT
 extra_l_flags_nt = initinstance terminstance op stack=40k
 
+# systems where version resources must be added to .DLL
+version_res_nt_386 = version.res
+
 all: weditviw.dll wedit.lib .SYMBOLIC
 
-wedit.dll : weditviw.obj dll.lnk
+wedit.dll : weditviw.obj dll.lnk $(version_res_$(host_os)_$(host_cpu))
         $(linker) name $^@ @dll.lnk file $[@
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
 wedit.lib : wedit.dll
         $(librarian) $(libflags) +$[@
 
-weditviw.dll : weditviw.obj dll.lnk
+weditviw.dll : weditviw.obj dll.lnk $(version_res_$(host_os)_$(host_cpu))
         $(linker) name $^@ @dll.lnk file $[@
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+!endif
 	
 dll.lnk : $(__MAKEFILES__)
         @%write $@ $(lflags)
 	@%append $@ option description 'Open Watcom Editor DLL for VIW'
 
+verrc_dll = weditviw
+!include verrc.mif
