@@ -353,13 +353,5 @@ $(statname).lib: $(static_objs)
 owf.res: ../lib/owf.rc .AUTODEPEND
     $(rc) $(rc_flags) -ad -zk0 $(inc_path) -I../include $[@ -fo=$^@
 
-./genverrc.exe: $(dev_dir)/builder/c/genverrc.c
-    $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
-
-!ifndef patch_level
-patch_level = 0
-!endif
-
-version.res: ./genverrc.exe ../version.rc $(dev_dir)/builder/c/genverrc.c
-    $[@ ../version.rc version.rc $$ $(dllname) $(patch_level)
-    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+verrc_dll = $(dllname)
+!include verrc.mif

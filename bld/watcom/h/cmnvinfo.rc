@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "banner.h"
 
 #ifndef VERINFO_FILEVERSION
     #error You must define VERINFO_FILEVERSION.
@@ -45,7 +46,12 @@ BEGIN
             VALUE "FileDescription", VERINFO_FILEDESCRIPTION_STR "\0"
             VALUE "FileVersion", VERINFO_FILEVERSION_STR "\0"
             VALUE "InternalName", VERINFO_INTERNALNAME_STR "\0"
-            VALUE "LegalCopyright", "Portions Copyright \251 2002 Sybase, Inc.\0"
+            VALUE "LegalCopyright", "Copyright \251 2002-" CURR_YEAR
+                                    " Open Watcom Contributors. "
+#ifndef VERINFO_NO_SYBASE
+                                    "Portions Copyright \251 2002 Sybase, Inc. "
+#endif
+                                    "All Rights Reserved.\0"
 #ifdef VERINFO_EXE
             VALUE "OriginalFilename", VERINFO_INTERNALNAME_STR ".exe\0"
 #else

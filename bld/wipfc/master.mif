@@ -32,7 +32,9 @@ tagobjs=element.obj text.obj entity.obj punct.obj whtspc.obj word.obj tag.obj ac
         title.obj ul.obj warning.obj xmp.obj
 
 # systems where version resources must be added to .EXE
+!ifndef prebuild
 version_res_nt_386 = exever.res
+!endif
 
 wipfc.exe : $(objs) $(objobjs) $(tagobjs) $(version_res_$(host_os)_$(host_cpu))
     $(linker) $(lflags) name $@ file {$(objs) $(objobjs) $(tagobjs)}
