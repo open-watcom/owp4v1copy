@@ -34,6 +34,7 @@
 #include "imgedit.h"
 #include "ietoolbr.h"
 #include "ieprofil.h"
+#include "loadcc.h"
 
 int TBWidth = TB_WIDTH;
 int TBHeight = TB_HEIGHT;
@@ -154,7 +155,7 @@ void InitTools( HWND hparent )
     //TBHeight = TB_HEIGHT - 2 + 2 * _wpi_getsystemmetrics(SM_CYBORDER);
 
 #ifdef __NT__
-    if( GetModuleHandle( "COMCTL32.DLL" ) != NULL ) {
+    if( IsCommCtrlLoaded() ) {
         TBWidth = TB_WIDTHCC;
         TBHeight = TB_HEIGHTCC;
     }
