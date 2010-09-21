@@ -124,14 +124,14 @@ rcstrmsg.gh : ../drwatcom.msg
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 !endif
 
-./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+./genverrc.exe : $(dev_dir)/builder/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
 
 !ifndef patch_level
 patch_level=0
 !endif
 
-version.res: ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
+version.res: ./genverrc.exe ../exever.rc $(dev_dir)/builder/c/genverrc.c
         $[@ ../exever.rc version.rc $$ $(proj_name) $(patch_level)
         $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 

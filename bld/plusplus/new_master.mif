@@ -395,7 +395,7 @@ asmops.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
 asmopsd.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
     $[@ $(wasm_dir)/inlnops.tok $@
  
-./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
+./genverrc.exe: $(dev_dir)/builder/c/genverrc.c
     $(bld_cl) -D_VERSION=$(bld_ver) $[@ $(wcl_util_opts)
  
 !ifndef patch_level
