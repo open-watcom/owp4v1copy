@@ -8,7 +8,7 @@ additional_cleanup= proctab.c ytab.h awk.c
 !include defrule.mif
 !include deftarg.mif
 
-all : cdsay.exe sweep.exe wsplice.exe comstrip.exe aliasgen.exe &
+all : cdsay.exe sweep.exe wsplice.exe comstrip.exe aliasgen.exe genverrc.exe &
 !ifndef __UNIX__
     diff.exe awk.exe sed.exe &
 !endif

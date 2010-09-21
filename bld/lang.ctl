@@ -43,8 +43,6 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 #        Prebuild parsedlg tool for build process
 [ INCLUDE <DEVDIR>/parsedlg/prereq.ctl ]
-#        Prebuild fe_misc tools for build process
-[ INCLUDE <DEVDIR>/fe_misc/prereq.ctl ]
 #
 #        Before building anything for real, create up-to-date header files
 #
