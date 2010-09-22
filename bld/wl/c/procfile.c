@@ -590,7 +590,7 @@ char *IdentifyObject( file_list *list, unsigned long *loc,
     name = NULL;
     *size = 0;
     if( list->status & STAT_AR_LIB ) {
-        ar_loc = *loc + (*loc & 1); /* AR headers are word aligned. */
+        ar_loc = MAKE_EVEN( *loc );     /* AR headers are word aligned. */
         ar_hdr = CacheRead( list, ar_loc, sizeof( ar_header ) );
         ar_loc += sizeof( ar_header );
         name = GetARName( ar_hdr, list, &ar_loc );
@@ -602,7 +602,7 @@ char *IdentifyObject( file_list *list, unsigned long *loc,
             ObjFormat |= FMT_OMF;
             name = GetOMFName( list, loc );
             if( list->status & STAT_AR_LIB ) {
-                *loc = ar_loc; /* restore the location */
+                *loc = ar_loc;          /* Restore the location. */
             }
         }
     }
