@@ -583,21 +583,27 @@ char *IdentifyObject( file_list *list, unsigned long *loc,
                               unsigned long *size )
 /*****************************************************************/
 {
-    ar_header   *ar_hdr;
-    char        *name;
+    ar_header       *ar_hdr;
+    char            *name;
+    unsigned long   ar_loc;
 
     name = NULL;
     *size = 0;
     if( list->status & STAT_AR_LIB ) {
-        ar_hdr = CacheRead( list, *loc, sizeof( ar_header ) );
-        *loc += sizeof( ar_header );
-        name = GetARName( ar_hdr, list, loc );
+        ar_loc = *loc + (*loc & 1); /* AR headers are word aligned. */
+        ar_hdr = CacheRead( list, ar_loc, sizeof( ar_header ) );
+        ar_loc += sizeof( ar_header );
+        name = GetARName( ar_hdr, list, &ar_loc );
         *size = GetARValue( ar_hdr->size, AR_SIZE_LEN );
+        *loc = ar_loc;
     }
     if( !IsORL( list, *loc ) ) {
         if( IsOMF( list, *loc ) ) {
             ObjFormat |= FMT_OMF;
             name = GetOMFName( list, loc );
+            if( list->status & STAT_AR_LIB ) {
+                *loc = ar_loc; /* restore the location */
+            }
         }
     }
     return( name );
