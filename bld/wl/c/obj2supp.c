@@ -1039,6 +1039,12 @@ static void PatchData( fix_data *fix )
         fix->value += GET_U32( data );
         break;
     }
+    /* Catch the ELF FIX_NOADJ cases CheckSpecials didn't handle. */
+    /* NB: Other fixup types besides LX imports likely need the same treatment. */
+    if( (fix->type & FIX_NOADJ) && fix->imported && (FmtData.type & MK_OS2_FLAT) ) {
+        fix->value += CalcFixupSize( fix->type );
+        fix->type  &= FIX_NOADJ;    /* This flag isn't interesting anymore. */
+    }
     if( fix->value != 0 )
         fix->additive = TRUE;
     if( fix->type & FIX_REL )
