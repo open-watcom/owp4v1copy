@@ -39,6 +39,7 @@
 #include "cmdphar.h"
 #include "cmddos.h"
 #include "cmdzdos.h"
+#include "cmdrdv.h"
 #include "cmdraw.h"
 #include "cmd16m.h"
 #include "cmdline.h"
@@ -307,6 +308,9 @@ parse_entry    Models[] = {
 #endif
 #ifdef _ZDOS
     "ZDos",         &ProcZdos,          MK_ZDOS, 0,
+#endif
+#ifdef _RDOS
+    "RDos",         &ProcRdos,          MK_RDOS, 0,
 #endif
 #ifdef _RAW
     "Raw",          &ProcRaw,           MK_RAW, 0,
@@ -601,6 +605,12 @@ parse_entry ZdosOptions[] = {
     "SYS",          &ProcZdosSYS,           MK_ZDOS, 0,
     "HWD",          &ProcZdosHWD,           MK_ZDOS, 0,
     "FSD",          &ProcZdosFSD,           MK_ZDOS, 0,
+    NULL };
+#endif
+
+#ifdef _RDOS
+parse_entry RdosOptions[] = {
+    "DEV",          &ProcRdosDev,           MK_RDOS, 0,
     NULL };
 #endif
 

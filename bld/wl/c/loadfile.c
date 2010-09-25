@@ -59,6 +59,7 @@
 #include "loadqnx.h"
 #include "loadelf.h"
 #include "loadzdos.h"
+#include "loadrdv.h"
 #include "loadraw.h"
 #include "loadfile.h"
 #include "objstrip.h"
@@ -172,6 +173,10 @@ void FiniLoadFile( void )
     } else if( FmtData.type & MK_ZDOS ) {
         FiniZdosLoadFile();
 #endif
+#ifdef _RDOS
+    } else if( FmtData.type & MK_RDOS ) {
+        FiniRdosLoadFile();
+#endif
 #ifdef _RAW
     } else if( FmtData.type & MK_RAW ) {
         FiniRawLoadFile();
@@ -252,7 +257,7 @@ void GetStkAddr( void )
                 PhoneyStack();
             } else
 #endif
-            if( !(FmtData.type & (MK_COM|MK_PE|MK_QNX|MK_ELF)) ) {
+            if( !(FmtData.type & (MK_COM|MK_PE|MK_QNX|MK_ELF|MK_RDOS)) ) {
                 LnkMsg( WRN+MSG_STACK_NOT_FOUND, NULL );
                 StackAddr.seg = 0;
                 StackAddr.off = 0;

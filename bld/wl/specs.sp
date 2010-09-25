@@ -739,3 +739,10 @@ system begin rdos_dll
     format windows pe rdos dll ^
 :endsegment
 end
+system begin rdos_dev
+:segment Pspecs
+    wcc -bt=rdos_dev
+:elsesegment Pwlsystem
+    format rdos dev ^
+:endsegment
+end

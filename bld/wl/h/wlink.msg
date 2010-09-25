@@ -634,29 +634,45 @@ pick(    MSG_WIN_VXD_HELP_19,   "            | (\"MOVeable\" | \"FIXed\") | \"DI
  *  Zdos help screen: max 16 lines (from 0 to 15).
  *  To start a new page, leave a line undefined or define an empty line.
  */
-pick(	 MSG_ZDOS_HELP_0,	" " ,
-				" " )
-pick(	 MSG_ZDOS_HELP_1,	"commands valid for the ZDOS executable formats only:" ,
-				"ZDOS 実行可能形式に対してのみ有効なオプション:" )
-pick(	 MSG_ZDOS_HELP_2,	" " ,
-				" " )
-pick(	 MSG_ZDOS_HELP_3,	"form      ::= \"ZDos\" [\"SYS\" | \"HWD\" | \"FSD\"]" ,
+pick(    MSG_ZDOS_HELP_0,       " " ,
+                                " " )
+pick(    MSG_ZDOS_HELP_1,       "commands valid for the ZDOS executable formats only:" ,
+                                "ZDOS 実行可能形式に対してのみ有効なオプション:" )
+pick(    MSG_ZDOS_HELP_2,       " " ,
+                                " " )
+pick(    MSG_ZDOS_HELP_3,       "form      ::= \"ZDos\" [\"SYS\" | \"HWD\" | \"FSD\"]" ,
                                 "form      ::= \"ZDos\" [\"SYS\" | \"HWD\" | \"FSD\"]" )
-pick(	 MSG_ZDOS_HELP_4,	" " ,
-				" " )
+pick(    MSG_ZDOS_HELP_4,       " " ,
+                                " " )
 /*
  *  Raw help screen: max 16 lines (from 0 to 15).
  *  To start a new page, leave a line undefined or define an empty line.
  */
-pick(	 MSG_RAW_HELP_0,	" " ,
-				" " )
-pick(	 MSG_RAW_HELP_1,	"commands valid for the RAW executable formats only:" ,
-				"RAW 実行可能形式に対してのみ有効なオプション:" )
-pick(	 MSG_RAW_HELP_2,	" " ,
-				" " )
-pick(	 MSG_RAW_HELP_3,	"form      ::= \"Raw\" (\"BIN\" | \"HEX\")" ,
+pick(    MSG_RAW_HELP_0,        " " ,
+                                " " )
+pick(    MSG_RAW_HELP_1,        "commands valid for the RAW executable formats only:" ,
+                                "RAW 実行可能形式に対してのみ有効なオプション:" )
+pick(    MSG_RAW_HELP_2,        " " ,
+                                " " )
+pick(    MSG_RAW_HELP_3,        "form      ::= \"Raw\" (\"BIN\" | \"HEX\")" ,
                                 "form      ::= \"Raw\" (\"SYS\" | \"HEX\")" )
-pick(    MSG_RAW_HELP_4,	"option    ::= \"OFFset=\"n" ,
-                           	"option    ::= \"OFFset=\"n" )
-pick(	 MSG_RAW_HELP_5,	" " ,
-				" " )
+pick(    MSG_RAW_HELP_4,        "option    ::= \"OFFset=\"n" ,
+                                "option    ::= \"OFFset=\"n" )
+pick(    MSG_RAW_HELP_5,        " " ,
+                                " " )
+                                
+/*
+ *  Zdos help screen: max 16 lines (from 0 to 15).
+ *  To start a new page, leave a line undefined or define an empty line.
+ */
+pick(    MSG_RDOS_HELP_0,       " " ,
+                                " " )
+pick(    MSG_RDOS_HELP_1,       "commands valid for the RDOS executable formats only:" ,
+                                "RDOS 実行可能形式に対してのみ有効なオプション:" )
+pick(    MSG_RDOS_HELP_2,       " " ,
+                                " " )
+pick(    MSG_RDOS_HELP_3,       "form      ::= \"RDos\" [\"DEV\"]" ,
+                                "form      ::= \"RDos\" [\"DEV\"]" )
+pick(    MSG_RDOS_HELP_4,       " " ,
+                                " " )
+

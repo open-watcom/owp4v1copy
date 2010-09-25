@@ -80,6 +80,7 @@ static bool             ProcWindowsHelp( void );
 static bool             ProcWinVxdHelp( void );
 static bool             ProcNTHelp( void );
 static bool             ProcZdosHelp( void );
+static bool             ProcRdosHelp( void );
 static bool             ProcRawHelp( void );
 static void             WriteHelp( unsigned first_ln, unsigned last_ln, bool prompt );
 
@@ -108,6 +109,9 @@ static  parse_entry   FormatHelp[] = {
 #endif
 #ifdef _ZDOS
     "ZDos",         ProcZdosHelp,           MK_ALL,     0,
+#endif
+#ifdef _RDOS
+    "RDos",         ProcRdosHelp,           MK_ALL,     0,
 #endif
 #ifdef _RAW
     "Raw",          ProcRawHelp,            MK_ALL,     0,
@@ -421,6 +425,9 @@ static void DisplayOptions( void )
 #ifdef _ZDOS
     WriteHelp( MSG_ZDOS_HELP_0, MSG_ZDOS_HELP_15, isout );
 #endif
+#ifdef _RDOS
+    WriteHelp( MSG_RDOS_HELP_0, MSG_RDOS_HELP_15, isout );
+#endif
 #ifdef _RAW
     WriteHelp( MSG_RAW_HELP_0, MSG_RAW_HELP_15, isout );
 #endif
@@ -524,6 +531,16 @@ static bool ProcZdosHelp( void )
 {
     WriteGenHelp();
     WriteHelp( MSG_ZDOS_HELP_0, MSG_ZDOS_HELP_15, CmdFlags & CF_TO_STDOUT );
+    return( TRUE );
+}
+#endif
+
+#ifdef _RDOS
+static bool ProcRdosHelp( void )
+/*****************************/
+{
+    WriteGenHelp();
+    WriteHelp( MSG_RDOS_HELP_0, MSG_RDOS_HELP_15, CmdFlags & CF_TO_STDOUT );
     return( TRUE );
 }
 #endif

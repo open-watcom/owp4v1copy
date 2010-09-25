@@ -177,6 +177,7 @@ extern parse_entry SegModel[];
 extern parse_entry CommitKeywords[];
 extern parse_entry ELFFormatKeywords[];
 extern parse_entry ZdosOptions[];
+extern parse_entry RdosOptions[];
 extern parse_entry RawOptions[];
 extern parse_entry OrderOpts[];
 extern parse_entry OrderClassOpts[];

@@ -50,7 +50,8 @@ typedef enum exe_format {       // there is a corresp. table in MSG.C
     MK_WIN_VXD          = 0x00010000,
     MK_DOS16M           = 0x00020000,
     MK_ZDOS             = 0x00040000,
-    MK_RAW              = 0x00080000
+    MK_RAW              = 0x00080000,
+    MK_RDOS             = 0x00100000
 } exe_format;
 
 #define MK_DOS       (MK_OVERLAYS | MK_DOS_EXE | MK_COM)
@@ -62,21 +63,21 @@ typedef enum exe_format {       // there is a corresp. table in MSG.C
 #define MK_OS2       (MK_OS2_16BIT | MK_OS2_LE | MK_OS2_LX)
 #define MK_PHAR_LAP  (MK_PHAR_SIMPLE|MK_PHAR_FLAT|MK_PHAR_REX|MK_PHAR_MULTISEG)
 #define MK_QNX       (MK_QNX_16 | MK_QNX_FLAT)
-#define MK_386       (MK_PHAR_LAP | MK_NOVELL | MK_QNX | MK_OS2_LE | MK_OS2_LX | MK_PE | MK_ELF | MK_WIN_VXD | MK_ZDOS | MK_RAW)
-#define MK_286       (MK_DOS | MK_OS2_16BIT | MK_DOS16M)
+#define MK_386       (MK_PHAR_LAP | MK_NOVELL | MK_QNX | MK_OS2_LE | MK_OS2_LX | MK_PE | MK_ELF | MK_WIN_VXD | MK_ZDOS | MK_RAW | MK_RDOS)
+#define MK_286       (MK_DOS | MK_OS2_16BIT | MK_DOS16M | MK_RDOS)
 /* MK_OS2_LE, MK_OS2_LX, MK_WIN_VXD and MK_PE are not treated as FLAT internally */
 #define MK_FLAT      (MK_PHAR_SIMPLE | MK_PHAR_FLAT | MK_PHAR_REX | MK_ZDOS | MK_RAW)
 #define MK_ALLOW_32  (MK_PHAR_LAP | MK_OS2_LE | MK_OS2_LX | MK_NOVELL | MK_QNX | MK_PE | MK_ELF | MK_WIN_VXD | MK_ZDOS | MK_RAW)
-#define MK_ALLOW_16  (MK_286 | MK_PHAR_FLAT | MK_OS2 | MK_QNX | MK_PE | MK_WIN_VXD | MK_RAW)
+#define MK_ALLOW_16  (MK_286 | MK_PHAR_FLAT | MK_OS2 | MK_QNX | MK_PE | MK_WIN_VXD | MK_RAW | MK_RDOS)
 #define MK_ID_SPLIT  (MK_NOVELL)
 #define MK_REAL_MODE (MK_DOS)
 #define MK_PROT_MODE (~MK_REAL_MODE)
-#define MK_SEGMENTED (MK_286 | MK_OS2 | MK_PHAR_MULTISEG)
+#define MK_SEGMENTED (MK_286 | MK_OS2 | MK_PHAR_MULTISEG | MK_RDOS)
 #define MK_IMPORTS   (MK_NOVELL | MK_OS2 | MK_PE | MK_ELF)
 #define MK_SPLIT_DATA (MK_ELF | MK_PE)
 #define MK_LINEARIZE (MK_ELF | MK_PE)
 #define MK_END_PAD   (MK_DOS)
-#define MK_ALL       (0x000FFFFF)
+#define MK_ALL       (0x001FFFFF)
 
 #define IS_PPC_PE   ( LinkState & HAVE_PPC_CODE && FmtData.type & MK_PE )
 #define IS_PPC_OS2   0//( LinkState & HAVE_PPC_CODE && FmtData.type & MK_OS2 )
