@@ -86,5 +86,9 @@ GLOB f_handle       TempFile;
 GLOB mod_entry *    FakeModule;     // Module containing all the extra sections
 GLOB unsigned_32    NumImports;
 GLOB unsigned_32    NumExports;
+#ifdef _RDOS
+GLOB unsigned_32    RdosCodeSel;
+GLOB unsigned_32    RdosDataSel;
+#endif
 
 #undef GLOB
