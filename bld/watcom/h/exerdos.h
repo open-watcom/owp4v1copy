@@ -31,17 +31,33 @@
 
 #ifndef _EXERDOS_H
 
-/* RDOS .rdv device file header */
+/* 16-bit RDOS .rdv device file header */
 /* =================== */
 
 typedef struct rdos_dev16_header {
-    unsigned_16         signature;      /* signature to mark valid EXE file */
+    unsigned_16         signature;      /* signature to mark valid RDV file */
     unsigned_16         IP;             /* initial value for IP             */
-    unsigned_16         file_size;      /* number of bytes in code segment  */
-    unsigned_16         chk_sum;        /* check sum                        */
+    unsigned_16         code_size;      /* number of bytes in code segment  */
+    unsigned_16         code_sel;       /* code selector allocated */
+    unsigned_16         data_size;      /* number of bytes in data segment  */
+    unsigned_16         data_sel;       /* data selector allocated */
 } rdos_dev16_header;
 
-#define RDOS_SIGNATURE   0x4452         /* RD */
+#define RDOS_SIGNATURE_16    0x3652     /* R6 */
+
+/* 32-bit RDOS .rdv device file header */
+/* =================== */
+
+typedef struct rdos_dev32_header {
+    unsigned_16         signature;      /* signature to mark valid RDV file */
+    unsigned_32         EIP;            /* initial value for EIP            */
+    unsigned_32         code_size;      /* number of bytes in code segment  */
+    unsigned_16         code_sel;       /* code selector allocated */
+    unsigned_32         data_size;      /* number of bytes in code segment  */
+    unsigned_16         data_sel;       /* data selector allocated */
+} rdos_dev32_header;
+
+#define RDOS_SIGNATURE_32    0x3252     /* R2 */
 
 #define _EXERDOS_H
 #endif

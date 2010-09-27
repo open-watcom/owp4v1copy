@@ -244,6 +244,10 @@ parse_entry     MainOptions[] = {
     "DATASize",     &ProcDataSize,      MK_DOS16M, 0,
     "EXTended",     &ProcExtended,      MK_DOS16M, 0,
 #endif
+#ifdef _RDOS
+    "CODESelector", &ProcRdosCodeSel,   MK_RDOS, 0,
+    "DATASelector", &ProcRdosDataSel,   MK_RDOS, 0,
+#endif
     "NORelocs",     &ProcNoRelocs,      (MK_QNX | MK_DOS16M  | MK_PE | MK_ELF), 0,
     "LOnglived",    &ProcLongLived,     MK_QNX, 0,
     "PRIVilege",    &ProcQNXPrivilege,  MK_QNX, 0,

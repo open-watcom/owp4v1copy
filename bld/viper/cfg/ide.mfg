@@ -35,7 +35,7 @@ rem     ov OS/2 Virtual device
 rem     rp RDOS, PE executable
 rem     rn RDOS, NE executable (not yet supported)
 rem     rd RDOS, DOS executable (not yet supported)
-rem     rk RDOS, kernel-mode device driver (not yet supported)
+rem     rk RDOS, .rdv kernel-mode device driver
 rem     wm Windows 3.x MFC 2.X application, static linkage
 rem     wa Windows 3.x MFC 2.X application, DLL linkage
 rem     wp Windows 3.x PowerBuilder DLL
@@ -591,7 +591,8 @@ Tool WCG "Code Generator"
     CSwitch 0, n????, "", -bt=nt, ON
     CSwitch 0, l????, "", -bt=netware, ON
     CSwitch 0, x????, "", -bt=linux, ON
-    CSwitch 0, r????, "", -bt=rdos, ON
+    CSwitch 0, rp???, "", -bt=rdos, ON
+    CSwitch 0, rk???, "", -bt=rdos_dev, ON
     CSwitch 0, ?????, "", -fo=.obj, ON
 :segment C_FOR_PB
     CSwitch 1, n?2d?, "32-bit flat model", -mf, ON
@@ -601,15 +602,19 @@ Tool WCG "Code Generator"
         RSwitch 1, ??A??, "Compiler default", , ON
         RSwitch 1, ?????, "Compiler default", , OFF
         RSwitch 1, dc6e?, "Small model", -ms, ON
+        RSwitch 1, rk6??, "Small model", -ms, ON
         RSwitch 1, ??6??, "Small model", -ms, OFF
         RSwitch 1, ??6??, "Medium model", -mm, OFF
         RSwitch 1, ??6??, "Compact model", -mc, OFF
         RSwitch 1, dc6e?, "Large model", -ml, OFF
+        RSwitch 1, rk6??, "Large model", -ml, OFF
         RSwitch 1, ??6??, "Large model", -ml, ON
         RSwitch 1, ??6??, "Huge model", -mh, OFF
         RSwitch 1, l?2??, "32-bit flat model", -mf, OFF
+        RSwitch 1, rk2??, "32-bit flat model", -mf, OFF
         RSwitch 1, ??2??, "32-bit flat model", -mf, ON
         RSwitch 1, l?2??, "32-bit small model", -ms, ON
+        RSwitch 1, rk2??, "32-bit small model", -ms, ON
         RSwitch 1, ??2??, "32-bit small model", -ms, OFF
 :endsegment
     CSwitch 1, wp6d?, "", -ml, ON
@@ -917,16 +922,20 @@ Tool WASM "Assembler"
   Family "Memory Model and Processor"
     RGroup "Memory model"
         RSwitch 0, ??6??, "Tiny model", -mt, OFF
+        RSwitch 0, rk6??, "Small model", -ms, ON
         RSwitch 0, ??6??, "Small model", -ms, OFF
         RSwitch 0, ??6??, "Medium model", -mm, OFF
         RSwitch 0, ??6??, "Compact model", -mc, OFF
+        RSwitch 0, rk6??, "Large model", -ml, OFF
         RSwitch 0, ??6??, "Large model", -ml, ON
         RSwitch 0, ??6??, "Huge model", -mh, OFF
         RSwitch 0, ??2??, "32-bit flat model", -mf, ON
         RSwitch 0, ??2??, "32-bit small model", -ms, OFF
     RGroup "Target processor"
+        RSwitch 1, rk6??, "8086", ,  OFF
         RSwitch 1, ??6??, "8086", ,  ON
         RSwitch 1, ??6??, "80186", -1, OFF
+        RSwitch 1, rk6??, "80286", -2, ON
         RSwitch 1, ??6??, "80286", -2, OFF
         RSwitch 1, ??6??, "80386", -3, OFF
         RSwitch 1, ??6??, "80486", -4, OFF
@@ -1050,8 +1059,9 @@ rem Other Netware variations?
     VSwitch  1, ds2??, "System:", sys, " ", ONE, REQ, x32sv
     VSwitch  1, ds2??, "System:", sys, " ", ONE, REQ, x32s
     VSwitch  1, x?2??, "System:", sys, " ", ONE, REQ, linux
-    VSwitch  1, r?2e?, "System:", sys, " ", ONE, REQ, rdos
-    VSwitch  1, r?2d?, "System:", sys, " ", ONE, REQ, rdos_dll
+    VSwitch  1, rp2e?, "System:", sys, " ", ONE, REQ, rdos
+    VSwitch  1, rp2d?, "System:", sys, " ", ONE, REQ, rdos_dll
+    VSwitch  1, rk???, "System:", sys, " ", ONE, REQ, rdos_dev
     CSwitch  1, d?2d?, " Link DLL", , ON
     CSwitch  1, w?2d?, " Link DLL", , ON
     CSwitch  1, w?6d?, " Link DLL", , ON
@@ -1077,7 +1087,9 @@ rem    CSwitch  1, x??d?, " Link DLL", , ON
     VSwitch  1, ?????, "Stack:", "op st", =, ONE, REQ, ""
     VSwitch  1, wm?e?, "Heap:", "op heap", =, ONE, REQ, 1K
     VSwitch  1, wa?e?, "Heap:", "op heap", =, ONE, REQ, 1K
-    VSwitch  1, r????, "Image base:", "op offset", =, ONE, REQ, ""
+    VSwitch  1, rp???, "Image base:", "op offset", =, ONE, REQ, ""
+    VSwitch  1, rk???, "Code selector:", "op codesel", =, ONE, REQ, ""
+    VSwitch  1, rk???, "Data selector:", "op datasel", =, ONE, REQ, ""
     VSwitch  1, ?????, "Other options(,):",,, MULTI, REQ, ""
     CSwitch  1, ?????, "Map file", "op m", ON
     CSwitch  1, l????, "Incremental linking", "op inc", OFF
@@ -1108,7 +1120,7 @@ rem    CSwitch  1, x??d?, " Link DLL", , ON
     VSwitch  1, x????, "Import names(,):", imp, " ", ONE, REQ, ""
     VSwitch  1, dx???, "Import names(,):", imp, " ", ONE, REQ, ""
     VSwitch  1, dy???, "Import names(,):", imp, " ", ONE, REQ, ""
-    VSwitch  1, r????, "Import names(,):", imp, " ", ONE, REQ, ""
+    VSwitch  1, rp???, "Import names(,):", imp, " ", ONE, REQ, ""
     VSwitch  1, w????, "Export names(,):", exp, " ", MULTI, REQ, ""
     VSwitch  1, n????, "Export names(,):", exp, " ", MULTI, REQ, ""
     VSwitch  1, o????, "Export names(,):", exp, " ", MULTI, REQ, ""
@@ -1116,7 +1128,7 @@ rem    CSwitch  1, x??d?, " Link DLL", , ON
     VSwitch  1, x????, "Export names(,):", exp, " ", MULTI, REQ, ""
     VSwitch  1, dx???, "Export names(,):", exp, " ", MULTI, REQ, ""
     VSwitch  1, dy???, "Export names(,):", exp, " ", MULTI, REQ, ""
-    VSwitch  1, r????, "Export names(,):", exp, " ", MULTI, REQ, ""
+    VSwitch  1, rp???, "Export names(,):", exp, " ", MULTI, REQ, ""
   Family Advanced
     CSwitch  0, ?????, "Verbose map file", "op v", OFF
     RGroup "Case-sensitive link"
@@ -1606,7 +1618,7 @@ Rule NEXE, WINLINK, n??e?
   Command "!endif"
   Command " *$<#WLINK> @$'.lk1"
 
-Rule REXE, WINLINK, r??e?
+Rule REXE, WINLINK, rp?e?
   Target *.exe
   Autodepend
   Symbol FIL, *.obj
@@ -1622,6 +1634,16 @@ Rule REXE, WINLINK, r??e?
   Command "!ifneq BLANK \"$<RES!>\""
   Command " @%append $*.lk1 $<RES,>"
   Command "!endif"
+  Command " *$<#WLINK> @$'.lk1"
+
+Rule REXE, WINLINK, rk?e?
+  Target *.rdv
+  Autodepend
+  Symbol FIL, *.obj
+  Symbol LIBR, *.lib
+  Symbol DLL, *.dll
+  Command " @%write $*.lk1 $<FIL,>"
+  Command " @%append $*.lk1 $<LIBR,>"
   Command " *$<#WLINK> @$'.lk1"
 
 Rule NMEXEACTIONS, ,nm???
@@ -1684,7 +1706,7 @@ Rule LNX, WLINK, x?2e?
 
 rem --All Other Executables--
 Rule EXE, WLINK, ???e?
-  Target *.exe, *.exp, *.com
+  Target *.exe, *.exp, *.com *.rdv
   Autodepend
   Symbol FIL, *.obj
   Symbol LIBR, *.lib
@@ -1870,7 +1892,7 @@ Rule LIB, WLIB, ???s?
 :endsegment
 ::
 Rule TMAKEABLES
-  Target *.exe *.exp *.com *.nlm *. *.elf *.dll *.a *.so *.lib *.hlp *.inf
+  Target *.exe *.exp *.com *.rdv *.nlm *. *.elf *.dll *.a *.so *.lib *.hlp *.inf
   Action &Make WMAKE OKFORMASK
     HotKey PLAIN F4
     Command "!Make $<#> $@"
@@ -1896,7 +1918,7 @@ Rule PBDLL, , wp6d?
   Hint "Invoke the debugger on the target executable"
 
 Rule EXES, , ???e?
-  Target *.exe *.exp *.com *.elf
+  Target *.exe *.exp *.com *.rdv *.elf
   Action &Run RUN
     HotKey CTRL R
     Command "$<#>"

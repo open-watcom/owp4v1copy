@@ -54,6 +54,7 @@
 #include "loadnov.h"
 #include "loadelf.h"
 #include "loadzdos.h"
+#include "loadrdv.h"
 #include "symtrace.h"
 #include "objnode.h"
 #include "objio.h"
@@ -353,6 +354,10 @@ static void ResetMisc( void )
     // set case sensitivity for symbols
     ResetSym();
     SetSymCase();
+#ifdef _RDOS
+    RdosCodeSel = 0;
+    RdosDataSel = 0;
+#endif    
 }
 
 static void DoDefaultSystem( void )

@@ -63,3 +63,17 @@ extern bool ProcRdosDev( void )
         FmtData.osname = "RDOS Device driver";
     return( TRUE );
 }
+
+bool ProcRdosCodeSel( void )
+/***************************/
+/* process CODESelector option */
+{
+    return( GetLong( &RdosCodeSel ) );
+}
+
+bool ProcRdosDataSel( void )
+/***************************/
+/* process DataSelector option */
+{
+    return( GetLong( &RdosDataSel ) );
+}

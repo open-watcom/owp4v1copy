@@ -32,3 +32,5 @@
 
 extern bool ProcRdos( void );
 extern bool ProcRdosDev( void );
+extern bool ProcRdosCodeSel( void );
+extern bool ProcRdosDataSel( void );

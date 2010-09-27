@@ -72,18 +72,23 @@ void FiniRdosLoadFile( void )
 /* terminate writing of load file */
 {
     unsigned_32         hdr_size;
-    unsigned_16         file_size;
+    unsigned_16         code_size;
+    unsigned_16         temp16;
     rdos_dev16_header   exe_head;
 
     hdr_size = sizeof( rdos_dev16_header );
     SeekLoad( hdr_size );
     Root->u.file_loc = hdr_size;
-    file_size = WriteRDOSData( hdr_size );
+    code_size = WriteRDOSData( hdr_size );
     DBIWrite();
     SeekLoad( 0 );
-    _HostU16toTarg( RDOS_SIGNATURE, exe_head.signature );
+    _HostU16toTarg( RDOS_SIGNATURE_16, exe_head.signature );
     _HostU16toTarg( StartInfo.addr.off, exe_head.IP );
-    _HostU16toTarg( file_size, exe_head.file_size );
-    _HostU16toTarg( 0, exe_head.chk_sum );
+    _HostU16toTarg( code_size, exe_head.code_size );
+    temp16 = (unsigned_16)RdosCodeSel;
+    _HostU16toTarg( temp16, exe_head.code_sel );
+    _HostU16toTarg( 0, exe_head.data_size );
+    temp16 = (unsigned_16)RdosDataSel;
+    _HostU16toTarg( temp16, exe_head.data_sel );
     WriteLoad( &exe_head, sizeof( rdos_dev16_header ) );
 }
