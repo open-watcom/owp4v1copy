@@ -35,7 +35,7 @@ typedef struct {
 #ifndef __OS2_PM__
     DWORD       hint;
 #else
-    char        text[ HINT_TEXT_LEN ];
+    char        text[HINT_TEXT_LEN];
 #endif
 } a_hint_text_line;
 

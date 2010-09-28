@@ -36,12 +36,12 @@
 #include "ieprofil.h"
 
 static int              showState = SW_SHOWNORMAL;
-static COLORREF         bkgroundColour = BK_WHITE;
+static COLORREF         bkgroundColor = BK_WHITE;
 static HWND             hViewWindow;
 static BOOL             fOneViewWindow = TRUE;
 
 /*
- * drawBorder - Draws the border for the view window.
+ * drawBorder - draw the border for the view window
  */
 static void drawBorder( img_node *node )
 {
@@ -63,28 +63,28 @@ static void drawBorder( img_node *node )
     int         bottom;
 
     presborder = _wpi_getpres( node->viewhwnd );
-#if defined (__NT__)
-    hwhitepen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNHIGHLIGHT) );
-    hblackpen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNTEXT) );
+#if defined( __NT__ )
+    hwhitepen = _wpi_createpen( PS_SOLID, 0, GetSysColor( COLOR_BTNHIGHLIGHT ) );
+    hblackpen = _wpi_createpen( PS_SOLID, 0, GetSysColor( COLOR_BTNTEXT ) );
 #else
     hwhitepen = _wpi_createpen( PS_SOLID, 0, CLR_WHITE );
     hblackpen = _wpi_createpen( PS_SOLID, 0, CLR_BLACK );
 #endif
 
-    GetClientRect(node->viewhwnd, &rcclient);
+    GetClientRect( node->viewhwnd, &rcclient );
     width = _wpi_getwidthrect( rcclient );
     height = _wpi_getheightrect( rcclient );
 
-    if (node->imgtype != BITMAP_IMG) {
-#if defined (__NT__)
-        hgraypen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNSHADOW) );
+    if( node->imgtype != BITMAP_IMG ) {
+#if defined( __NT__ )
+        hgraypen = _wpi_createpen( PS_SOLID, 0, GetSysColor( COLOR_BTNSHADOW ) );
 #else
         hgraypen = _wpi_createpen( PS_SOLID, 0, CLR_DARKGRAY );
 #endif
-        holdpen = _wpi_selectobject(presborder, hgraypen );
+        holdpen = _wpi_selectobject( presborder, hgraypen );
 
-#if defined (__NT__)
-        hnewbrush = _wpi_createsolidbrush( GetSysColor(COLOR_BTNFACE) );
+#if defined( __NT__ )
+        hnewbrush = _wpi_createsolidbrush( GetSysColor( COLOR_BTNFACE ) );
 #else
         hnewbrush = _wpi_createsolidbrush( CLR_PALEGRAY );
 #endif
@@ -97,12 +97,12 @@ static void drawBorder( img_node *node )
         _wpi_rectangle( presborder, 0, top, width, bottom );
 
         /*
-         * Draws black border and selected background colour in the view window
+         * Draw black border and selected background color in the view window.
          */
         _wpi_selectobject( presborder, hblackpen );
         _wpi_selectobject( presborder, holdbrush );
         _wpi_deleteobject( hnewbrush );
-        hnewbrush = _wpi_createsolidbrush( bkgroundColour );
+        hnewbrush = _wpi_createsolidbrush( bkgroundColor );
         _wpi_selectobject( presborder, hnewbrush );
 
         top = BORDER_WIDTH - 1;
@@ -112,12 +112,12 @@ static void drawBorder( img_node *node )
 #ifndef __NT__
         /*
          * Draw the border relative to the size of the object being displayed,
-         * not the window containing it
+         * not the window containing it.
          */
         _wpi_rectangle( presborder, BORDER_WIDTH - 1, top,
-                                    node->width + BORDER_WIDTH + 1, top + node->height + 2 );
+                        node->width + BORDER_WIDTH + 1, top + node->height + 2 );
 #endif
-        _wpi_selectobject(presborder, holdbrush );
+        _wpi_selectobject( presborder, holdbrush );
         _wpi_selectobject( presborder, holdpen );
         _wpi_deleteobject( hnewbrush );
     } else {
@@ -129,18 +129,19 @@ static void drawBorder( img_node *node )
         hnewbrush = _wpi_createsolidbrush( CLR_PALEGRAY );
         holdbrush = _wpi_selectobject( presborder, hnewbrush );
 
-        _wpi_rectangle(presborder, 0, 0, width+1, BORDER_WIDTH+1);
-        _wpi_rectangle(presborder, 0, 0, BORDER_WIDTH+1, height+1);
-        _wpi_rectangle(presborder, 0, height-BORDER_WIDTH, width+1, height+1);
-        _wpi_rectangle(presborder, width-BORDER_WIDTH, 0, width+1, height+1);
+        _wpi_rectangle( presborder, 0, 0, width + 1, BORDER_WIDTH + 1 );
+        _wpi_rectangle( presborder, 0, 0, BORDER_WIDTH + 1, height + 1 );
+        _wpi_rectangle( presborder, 0, height - BORDER_WIDTH, width + 1, height + 1 );
+        _wpi_rectangle( presborder, width - BORDER_WIDTH, 0, width + 1, height + 1 );
 
         _wpi_selectobject( presborder, holdbrush );
         _wpi_deleteobject( hnewbrush );
         _wpi_selectobject( presborder, holdpen );
         _wpi_deleteobject( hgraypen );
 #else
-#if defined (__NT__)
-        hgraypen = _wpi_createpen( PS_INSIDEFRAME, BORDER_WIDTH, GetSysColor(COLOR_BTNFACE) );
+#if defined( __NT__ )
+        hgraypen = _wpi_createpen( PS_INSIDEFRAME, BORDER_WIDTH,
+                                   GetSysColor( COLOR_BTNFACE ) );
 #else
         hgraypen = _wpi_createpen( PS_INSIDEFRAME, BORDER_WIDTH, CLR_PALEGRAY );
 #endif
@@ -148,7 +149,7 @@ static void drawBorder( img_node *node )
         nullbrush = _wpi_createnullbrush();
         holdbrush = _wpi_selectbrush( presborder, nullbrush );
 
-        _wpi_rectangle(presborder, 0, 0, rcclient.right, rcclient.bottom);
+        _wpi_rectangle( presborder, 0, 0, rcclient.right, rcclient.bottom );
         _wpi_getoldbrush( presborder, holdbrush );
         _wpi_selectobject( presborder, holdpen );
         _wpi_deleteobject( hgraypen );
@@ -156,8 +157,8 @@ static void drawBorder( img_node *node )
 #endif
 
         nullbrush = _wpi_createnullbrush();
-#if defined (__NT__)
-        hgraypen = _wpi_createpen( PS_SOLID, 0, GetSysColor(COLOR_BTNSHADOW) );
+#if defined( __NT__ )
+        hgraypen = _wpi_createpen( PS_SOLID, 0, GetSysColor( COLOR_BTNSHADOW ) );
 #else
         hgraypen = _wpi_createpen( PS_SOLID, 0, CLR_DARKGRAY );
 #endif
@@ -177,10 +178,10 @@ static void drawBorder( img_node *node )
 #ifndef __NT__
         /*
          * Draw the border relative to the size of the object being displayed,
-         * not the window containing it
+         * not the window containing it.
          */
         _wpi_rectangle( presborder, BORDER_WIDTH - 1, top,
-                                    node->width + BORDER_WIDTH + 1, top + node->height + 2 );
+                        node->width + BORDER_WIDTH + 1, top + node->height + 2 );
 #endif
 
         _wpi_selectobject( presborder, holdpen );
@@ -194,7 +195,7 @@ static void drawBorder( img_node *node )
 #ifndef __NT__
     holdpen = _wpi_selectobject( presborder, hwhitepen );
 
-    _wpi_setpoint( &pt, 0, height-1 );
+    _wpi_setpoint( &pt, 0, height - 1 );
     _wpi_cvth_pt( &pt, height );
     _wpi_movetoex( presborder, &pt, NULL );
 
@@ -228,10 +229,11 @@ static void drawBorder( img_node *node )
     _wpi_deleteobject( hwhitepen );
     _wpi_deleteobject( hblackpen );
     _wpi_releasepres( node->viewhwnd, presborder );
+
 } /* drawBorder */
 
 /*
- * redrawViewWnd - processes the WM_PAINT message for the view windows.
+ * redrawViewWnd - process the WM_PAINT message for the view windows
  */
 static void redrawViewWnd( HWND hwnd )
 {
@@ -245,7 +247,9 @@ static void redrawViewWnd( HWND hwnd )
     PAINTSTRUCT ps;
 
     node = SelectFromViewHwnd( hwnd );
-    if (!node) return;
+    if( node == NULL ) {
+        return;
+    }
 
     hps = _wpi_beginpaint( hwnd, NULL, &ps );
 
@@ -257,57 +261,57 @@ static void redrawViewWnd( HWND hwnd )
     oldbitmap = _wpi_selectbitmap( mempres, bitmap );
 
     _wpi_bitblt( pres, BORDER_WIDTH, BORDER_WIDTH, node->width, node->height,
-                                                mempres, 0, 0, SRCCOPY );
+                 mempres, 0, 0, SRCCOPY );
     _wpi_getoldbitmap( mempres, oldbitmap );
     _wpi_deletebitmap( bitmap );
     _wpi_deletecompatiblepres( mempres, memdc );
 
     _wpi_releasepres( hwnd, pres );
     _wpi_endpaint( hwnd, hps, &ps );
+
 } /* redrawViewWnd */
 
 /*
- * ViewEnumProc - enumerates the child windows and shows the view window
- *                for each window.
+ * ViewEnumProc - enumerate the child windows and show the view window
+ *                for each window
  */
 BOOL CALLBACK ViewEnumProc( HWND hwnd, LONG lparam )
 {
     lparam = lparam;
 
-    if ( _wpi_getowner(hwnd) ) {
-        return 1;
+    if( _wpi_getowner( hwnd ) ) {
+        return( TRUE );
     }
 
-    if ( _wpi_isiconic(hwnd) ) {
-        return 1;
+    if( _wpi_isiconic( hwnd ) ) {
+        return( TRUE );
     } else {
         SendMessage( hwnd, UM_SHOWVIEWWINDOW, 0, 0L );
     }
-    return 1;
+    return( TRUE );
+
 } /* ViewEnumProc */
 
 /*
- * CreateViewWin - Creates the view window
+ * CreateViewWin - create the view window
  */
 HWND CreateViewWin( int width, int height )
 {
     HWND        hwnd;
 #ifdef __OS2_PM__
-    hwnd = PMCreateViewWin(hViewWindow, fOneViewWindow, &showState, width,
-                                                                height );
+    hwnd = PMCreateViewWin( hViewWindow, fOneViewWindow, &showState, width, height );
 #else
-    hwnd = WinCreateViewWin(hViewWindow, fOneViewWindow, &showState, width,
-                                                                height);
+    hwnd = WinCreateViewWin( hViewWindow, fOneViewWindow, &showState, width, height );
 #endif
     return( hwnd );
 
 } /* CreateViewWin */
 
 /*
- * ViewWindowProc - Window procedure for the view window.
+ * ViewWindowProc - window procedure for the view window
  */
-MRESULT CALLBACK ViewWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
-                                                        WPI_PARAM2 lparam )
+MRESULT CALLBACK ViewWindowProc( HWND hwnd, WPI_MSG msg,
+                                 WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
     static HMENU                sysmenu;
     static HWND                 hframe;
@@ -336,19 +340,19 @@ MRESULT CALLBACK ViewWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
 
     case WM_PAINT:
         redrawViewWnd( hwnd );
-        return 0;
+        return( 0 );
 
     case WM_MOVE:
-        _wpi_getwindowrect( _wpi_getframe(hwnd), &rcview );
+        _wpi_getwindowrect( _wpi_getframe( hwnd ), &rcview );
         _wpi_getrectvalues( rcview, &left, &top, &right, &bottom );
         ImgedConfigInfo.view_xpos = (short)left;
         ImgedConfigInfo.view_ypos = (short)top;
         break;
 
     case WM_CLOSE:
-        hmenu = GetMenu(_wpi_getframe(HMainWindow));
-        if (fOneViewWindow) {
-            CheckViewItem(hmenu);
+        hmenu = GetMenu( _wpi_getframe( HMainWindow ) );
+        if( fOneViewWindow ) {
+            CheckViewItem( hmenu );
         } else {
             PrintHintTextByID( WIE_USEOPTIONSTOHIDEALL, NULL );
         }
@@ -361,20 +365,19 @@ MRESULT CALLBACK ViewWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     default:
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
     }
-    return(0);
+    return( 0 );
 
 } /* ViewWindowProc */
 
 /*
- * CheckViewItem - This procedure handles when the view window option is
- *                 selected from the menu.
+ * CheckViewItem - handle when the view window option is selected from the menu
  */
 void CheckViewItem( HMENU hmenu )
 {
     WPI_ENUMPROC        fp_enum;
 
-    if ( _wpi_isitemchecked(hmenu, IMGED_VIEW) ) {
-        _wpi_checkmenuitem(hmenu, IMGED_VIEW, MF_UNCHECKED, FALSE);
+    if( _wpi_isitemchecked( hmenu, IMGED_VIEW ) ) {
+        _wpi_checkmenuitem( hmenu, IMGED_VIEW, MF_UNCHECKED, FALSE );
         showState = SW_HIDE;
         ImgedConfigInfo.show_state &= ~SET_SHOW_VIEW;
     } else {
@@ -383,77 +386,84 @@ void CheckViewItem( HMENU hmenu )
         ImgedConfigInfo.show_state |= SET_SHOW_VIEW;
     }
 
-    if ( !hViewWindow ) return;
+    if( hViewWindow == NULL ) {
+        return;
+    }
 
-    ShowWindow( _wpi_getframe(hViewWindow), showState );
-    if ( _wpi_iswindow(Instance, ClientWindow) ) {
+    ShowWindow( _wpi_getframe( hViewWindow ), showState );
+    if( _wpi_iswindow( Instance, ClientWindow ) ) {
         fp_enum = _wpi_makeenumprocinstance( ViewEnumProc, Instance );
         _wpi_enumchildwindows( ClientWindow, fp_enum, 0L );
         _wpi_freeprocinstance( fp_enum );
     }
+
 } /* CheckViewItem */
 
 /*
- * GetBkColour - returns the selected background colour.
+ * GetViewBkColor - return the selected background color
  */
-COLORREF GetBkColour( void )
+COLORREF GetViewBkColor( void )
 {
-    return( bkgroundColour );
-} /* GetBkColour */
+    return( bkgroundColor );
+
+} /* GetViewBkColor */
 
 /*
- * BkColourEnumProc - used to change the background colour of all mdi
- *                    children
+ * BkColorEnumProc - used to change the background color of all MDI children
  */
-BOOL CALLBACK BkColourEnumProc( HWND hwnd, LONG lparam )
+BOOL CALLBACK BkColorEnumProc( HWND hwnd, LONG lparam )
 {
     img_node    *node;
 
     lparam = lparam;
 
-    if (_wpi_getowner(hwnd)) {
-        return 1;
+    if( _wpi_getowner( hwnd ) ) {
+        return( TRUE );
     }
 
-    if ( _wpi_isiconic(hwnd) ) {
-        return 1;
+    if( _wpi_isiconic( hwnd ) ) {
+        return( TRUE );
     }
-    node = SelectImage( _wpi_getclient(hwnd) );
-    if (!node) return 1;
-    if (node->imgtype == BITMAP_IMG) {
-        return 1;
+    node = SelectImage( _wpi_getclient( hwnd ) );
+    if( node == NULL ) {
+        return( TRUE );
     }
-    InvalidateRect( _wpi_getclient(hwnd), NULL, FALSE );
+    if( node->imgtype == BITMAP_IMG ) {
+        return( TRUE );
+    }
+    InvalidateRect( _wpi_getclient( hwnd ), NULL, FALSE );
     InvalidateRect( node->viewhwnd, NULL, FALSE );
-    return 1;
-} /* BkColourEnumProc */
+    return( TRUE );
+
+} /* BkColorEnumProc */
 
 /*
- * SetBkColour - Sets the back ground colour (and appropriate inverse)
+ * SetViewBkColor - set the background color (and appropriate inverse)
  */
-void SetBkColour( COLORREF colour )
+void SetViewBkColor( COLORREF color )
 {
     WPI_ENUMPROC        fp_enum;
 
-    if (colour == bkgroundColour) {
+    if( color == bkgroundColor ) {
         return;
     }
 
-    bkgroundColour = colour;
-    if ( !(_wpi_iswindow(Instance, hViewWindow)) ) {
+    bkgroundColor = color;
+    if( !_wpi_iswindow( Instance, hViewWindow ) ) {
         return;
     }
-    InvalidateRect(hViewWindow, NULL, TRUE);
+    InvalidateRect( hViewWindow, NULL, TRUE );
 
-    fp_enum = _wpi_makeenumprocinstance( BkColourEnumProc, Instance );
+    fp_enum = _wpi_makeenumprocinstance( BkColorEnumProc, Instance );
     _wpi_enumchildwindows( ClientWindow, fp_enum, 0L );
     _wpi_freeprocinstance( fp_enum );
-} /* SetBkColour */
+
+} /* SetViewBkColor */
 
 /*
- * ResetViewWindow - When a new mdi child is activated, we reset the position
- *                   of the view window.  First we check if only 1 view
- *                   window is being shown, or all of them.
+ * ResetViewWindow - when a new MDI child is activated, reset the position
+ *                   of the view window
+ *                 - first check if only 1 view window is being shown, or all of them
  */
 void ResetViewWindow( HWND hwnd )
 {
@@ -467,15 +477,15 @@ void ResetViewWindow( HWND hwnd )
     HWND        currentframe;
 
     hframe = _wpi_getframe( hwnd );
-    if (hViewWindow) {
+    if( hViewWindow != NULL ) {
         currentframe = _wpi_getframe( hViewWindow );
     } else {
         currentframe = NULL;
     }
 
-    if (fOneViewWindow) {
+    if( fOneViewWindow ) {
         _wpi_getwindowrect( hframe, &newloc );
-        if (hViewWindow) {
+        if( hViewWindow != NULL ) {
             _wpi_getwindowrect( currentframe, &currentloc );
             ShowWindow( currentframe, SW_HIDE );
         } else {
@@ -483,13 +493,9 @@ void ResetViewWindow( HWND hwnd )
         }
         _wpi_getrectvalues( currentloc, &left, &top, &right, &bottom );
 
-        SetWindowPos(hframe,
-                     NULL,
-                     left,
-                     top,
-                     _wpi_getwidthrect(newloc),
-                     _wpi_getheightrect(newloc),
-                     SWP_MOVE | SWP_SIZE | SWP_NOZORDER | SWP_HIDEWINDOW);
+        SetWindowPos( hframe, NULL, left, top,
+                     _wpi_getwidthrect( newloc ), _wpi_getheightrect( newloc ),
+                     SWP_MOVE | SWP_SIZE | SWP_NOZORDER | SWP_HIDEWINDOW );
         hViewWindow = hwnd;
         ShowWindow( hframe, showState );
     } else {
@@ -500,23 +506,27 @@ void ResetViewWindow( HWND hwnd )
 #ifndef __OS2_PM__
     RedrawWindow( hwnd, NULL, NULL, RDW_UPDATENOW );
 #endif
+
 } /* ResetViewWindow */
 
 /*
- * HideViewWindow - Hides the view window when a draw pad is minimized.
+ * HideViewWindow - hide the view window when a draw pad is minimized
  */
 void HideViewWindow( HWND hwnd )
 {
     img_node    *node;
 
-    node = SelectImage(hwnd);
-    if (!node) return;
-    ShowWindow( _wpi_getframe(node->viewhwnd), SW_HIDE );
+    node = SelectImage( hwnd );
+    if( node == NULL ) {
+        return;
+    }
+    ShowWindow( _wpi_getframe( node->viewhwnd ), SW_HIDE );
+
 } /* HideViewWindow */
 
 /*
- * RePositionViewWnd - Repositions the size of the window (for when a
- *                     different icon is selected.
+ * RePositionViewWnd - reposition the size of the window (for when a
+ *                     different icon is selected)
  */
 void RePositionViewWnd( img_node *node )
 {
@@ -532,40 +542,30 @@ void RePositionViewWnd( img_node *node )
     frame = _wpi_getframe( node->viewhwnd );
     _wpi_getwindowrect( frame, &location );
 
-    h_adj = 2 * _wpi_getsystemmetrics(SM_CXDLGFRAME) + 2 * BORDER_WIDTH;
-    v_adj = 2 * _wpi_getsystemmetrics(SM_CYDLGFRAME) +
+    h_adj = 2 * _wpi_getsystemmetrics( SM_CXDLGFRAME ) + 2 * BORDER_WIDTH;
+    v_adj = 2 * _wpi_getsystemmetrics( SM_CYDLGFRAME ) +
 #ifndef __NT__
-                _wpi_getsystemmetrics(SM_CYCAPTION) + 2 * BORDER_WIDTH - 1;
+                _wpi_getsystemmetrics( SM_CYCAPTION ) + 2 * BORDER_WIDTH - 1;
 #else
-                _wpi_getsystemmetrics(SM_CYSMCAPTION) + 2 * BORDER_WIDTH - 1;
+                _wpi_getsystemmetrics( SM_CYSMCAPTION ) + 2 * BORDER_WIDTH - 1;
 #endif
-    _wpi_getrectvalues(location, &left, &top, &right, &bottom);
+    _wpi_getrectvalues( location, &left, &top, &right, &bottom );
 #ifdef __OS2_PM__
-    SetWindowPos(frame,
-                 NULL,
-                 left,
-                 bottom,
-                 h_adj + node->width,
-                 v_adj + node->height,
-                 SWP_SIZE | SWP_MOVE | SWP_NOZORDER | SWP_HIDEWINDOW);
+    SetWindowPos( frame, NULL, left, bottom, h_adj + node->width, v_adj + node->height,
+                 SWP_SIZE | SWP_MOVE | SWP_NOZORDER | SWP_HIDEWINDOW );
 #else
-    SetWindowPos(node->viewhwnd,
-                 NULL,
-                 left,
-                 top,
-                 h_adj + node->width,
-                 v_adj + node->height,
-                 SWP_SIZE | SWP_MOVE | SWP_NOZORDER | SWP_HIDEWINDOW);
+    SetWindowPos( node->viewhwnd, NULL, left, top, h_adj + node->width, v_adj + node->height,
+                 SWP_SIZE | SWP_MOVE | SWP_NOZORDER | SWP_HIDEWINDOW );
 #endif
     hViewWindow = node->viewhwnd;
     ShowWindow( frame, showState );
     SetFocus( HMainWindow );
     InvalidateRect( hViewWindow, NULL, TRUE );
+
 } /* RePositionViewWnd */
 
 /*
- * SetViewWindow - sets whether there is a single view window or multiple
- *                  ones.
+ * SetViewWindow - set whether there is a single view window or multiple ones
  */
 void SetViewWindow( BOOL justone )
 {
@@ -574,8 +574,8 @@ void SetViewWindow( BOOL justone )
 
     fOneViewWindow = justone;
 
-    if (!justone) {
-        if ( _wpi_iswindow(Instance, ClientWindow) ) {
+    if( !justone ) {
+        if( _wpi_iswindow( Instance, ClientWindow ) ) {
             fp_enum = _wpi_makeenumprocinstance( ViewEnumProc, Instance );
             _wpi_enumchildwindows( ClientWindow, fp_enum, 0L );
             _wpi_freeprocinstance( fp_enum );
@@ -583,30 +583,33 @@ void SetViewWindow( BOOL justone )
     } else {
         prev_show_state = showState;
         showState = SW_HIDE;
-        if ( _wpi_iswindow(Instance, ClientWindow) ) {
+        if( _wpi_iswindow( Instance, ClientWindow ) ) {
             fp_enum = _wpi_makeenumprocinstance( ViewEnumProc, Instance );
             _wpi_enumchildwindows( ClientWindow, fp_enum, 0L );
             _wpi_freeprocinstance( fp_enum );
         }
         showState = prev_show_state;
-        if ( _wpi_iswindow(Instance, hViewWindow) ) {
-            ShowWindow(hViewWindow, showState);
+        if( _wpi_iswindow( Instance, hViewWindow ) ) {
+            ShowWindow( hViewWindow, showState );
         }
     }
+
 } /* SetViewWindow */
 
 /*
- * ShowViewWindows - toggles the showing of multiple view windows.
+ * ShowViewWindows - toggle the showing of multiple view windows
  */
 void ShowViewWindows( HWND hwnd )
 {
     img_node    *node;
 
     node = GetImageNode( hwnd );
-    if (!node) return;
+    if( node == NULL ) {
+        return;
+    }
 
-    if (fOneViewWindow) {
-        if (hViewWindow != node->viewhwnd) {
+    if( fOneViewWindow ) {
+        if( hViewWindow != node->viewhwnd ) {
             ShowWindow( node->viewhwnd, SW_HIDE );
         } else {
             ShowWindow( node->viewhwnd, showState );
@@ -614,14 +617,14 @@ void ShowViewWindows( HWND hwnd )
     } else {
         ShowWindow( node->viewhwnd, showState );
     }
+
 } /* ShowViewWindows */
 
 /*
- * IsOneViewWindow - returns TRUE if there is only 1 view window or FALSE
- *                   otherwise
+ * IsOneViewWindow - return TRUE if there is only 1 view window or FALSE otherwise
  */
 BOOL IsOneViewWindow( void )
 {
     return( fOneViewWindow );
-} /* IsOneViewWindow */
 
+} /* IsOneViewWindow */

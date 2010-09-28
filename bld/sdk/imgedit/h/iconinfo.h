@@ -44,4 +44,3 @@ typedef struct {
     short       height;
     short       bitcount;
 } icon_info_struct;
-

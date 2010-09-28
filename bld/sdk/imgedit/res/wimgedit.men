@@ -1,4 +1,4 @@
-IMGEDMENU MENU
+"IMGEDMENU" MENU
 BEGIN
     POPUP sp( "&File",
               "&File" ) 
@@ -109,7 +109,7 @@ BEGIN
         MENUITEM sp( "Show &Tool Window\tF6",
                      "Show &Tool Window\tF6" ), IMGED_TOOLBAR
         MENUITEM sp( "Show Color &Palette\tF7",
-                     "Show Color &Palette\tF7" ), IMGED_COLOUR
+                     "Show Color &Palette\tF7" ), IMGED_COLOR
         MENUITEM sp( "Show &View Window(s)\tF8",
                      "Show &View Window(s)\tF8" ), IMGED_VIEW
     END
@@ -124,11 +124,11 @@ BEGIN
                      "&Set Screen Color..." ), IMGED_CSCREEN
         MENUITEM SEPARATOR
         MENUITEM sp( "&Load Color Palette...",
-                     "&Load Color Palette..." ), IMGED_LCOLOUR
+                     "&Load Color Palette..." ), IMGED_LCOLOR
         MENUITEM sp( "Sa&ve Color Palette...",
-                     "Sa&ve Color Palette..." ), IMGED_SCOLOUR
+                     "Sa&ve Color Palette..." ), IMGED_SCOLOR
         MENUITEM sp( "Res&tore Color Palette",
-                     "Res&tore Color Palette" ), IMGED_RCOLOUR
+                     "Res&tore Color Palette" ), IMGED_RCOLOR
     END
     POPUP sp( "&Tools",
               "&Tools" )
@@ -188,7 +188,7 @@ BEGIN
     END
 END
 
-IMGEDDDEMENU MENU
+"IMGEDDDEMENU" MENU
 BEGIN
     POPUP sp( "&File",
               "&File" ) 
@@ -288,7 +288,7 @@ BEGIN
         MENUITEM sp( "Show &Tool Window\tF6",
                      "Show &Tool Window\tF6" ), IMGED_TOOLBAR
         MENUITEM sp( "Show Color &Palette\tF7",
-                     "Show Color &Palette\tF7" ), IMGED_COLOUR
+                     "Show Color &Palette\tF7" ), IMGED_COLOR
         MENUITEM sp( "Show &View Window(s)\tF8",
                      "Show &View Window(s)\tF8" ), IMGED_VIEW
     END
@@ -303,11 +303,11 @@ BEGIN
                      "&Set Screen Color..." ), IMGED_CSCREEN
         MENUITEM SEPARATOR
         MENUITEM sp( "&Load Color Palette...",
-                     "&Load Color Palette..." ), IMGED_LCOLOUR
+                     "&Load Color Palette..." ), IMGED_LCOLOR
         MENUITEM sp( "Sa&ve Color Palette...",
-                     "Sa&ve Color Palette..." ), IMGED_SCOLOUR
+                     "Sa&ve Color Palette..." ), IMGED_SCOLOR
         MENUITEM sp( "Res&tore Color Palette",
-                     "Res&tore Color Palette" ), IMGED_RCOLOUR
+                     "Res&tore Color Palette" ), IMGED_RCOLOR
     END
     POPUP sp( "&Tools",
               "&Tools" )
@@ -361,4 +361,3 @@ BEGIN
                      "&About..." ), IMGED_ABOUT
     END
 END
-

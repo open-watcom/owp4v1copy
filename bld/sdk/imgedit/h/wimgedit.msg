@@ -108,7 +108,7 @@ pick(   WIE_ERR_256CLR_BITMAP,
 pick(   WIE_ERR_BAD_BITMAP_FILE,
         "'%s' could not be opened.",
         "'%s' could not be opened." )
-pick(   WIE_ERR_TOO_MANY_COLOURS,
+pick(   WIE_ERR_TOO_MANY_COLORS,
         "'Cannot edit images with greater than 256 colors.",
         "'Cannot edit images with greater than 256 colors." )
 pick(   WIE_ERR_BAD_BITMAP_DATA,
@@ -188,13 +188,13 @@ pick(   WIE_HINT_IMGED_HELP_ON_HELP,
 pick(   WIE_HINT_IMGED_REST,
         "Restore image to opened form.",
         "Restore image to opened form." )
-pick(   WIE_HINT_IMGED_LCOLOUR,
+pick(   WIE_HINT_IMGED_LCOLOR,
         "Load a color palette.",
         "Load a color palette." )
-pick(   WIE_HINT_IMGED_SCOLOUR,
+pick(   WIE_HINT_IMGED_SCOLOR,
         "Save the current color palette.",
         "Save the current color palette." )
-pick(   WIE_HINT_IMGED_RCOLOUR,
+pick(   WIE_HINT_IMGED_RCOLOR,
         "Restore color palette to default.",
         "Restore color palette to default." )
 pick(   WIE_HINT_IMGED_CLOSE,
@@ -206,7 +206,7 @@ pick(   WIE_HINT_IMGED_ARRANGE,
 pick(   WIE_HINT_IMGED_CLOSEALL,
         "Close all images.",
         "Close all images." )
-pick(   WIE_HINT_IMGED_COLOUR,
+pick(   WIE_HINT_IMGED_COLOR,
         "Toggle display of the color palette.",
         "Toggle display of the color palette." )
 pick(   WIE_HINT_IMGED_VIEW,
@@ -576,64 +576,64 @@ pick(   WIE_FILLTEXT,
         "Fill:" )
 
 // ICONINFO.C
-pick(   WIE_16COLOUR32X32,
+pick(   WIE_16COLOR32X32,
         "32x32, 16 Color",
         "32x32, 16 Color" )
-pick(   WIE_2COLOUR32X32,
+pick(   WIE_2COLOR32X32,
         "32x32,  2 Color",
         "32x32,  2 Color" )
-pick(   WIE_2COLOUR32X16,
+pick(   WIE_2COLOR32X16,
         "32x16,  2 Color",
         "32x16,  2 Color" )
-pick(   WIE_16COLOUR16X16,
+pick(   WIE_16COLOR16X16,
         "16x16, 16 Color",
         "16x16, 16 Color" )
-pick(   WIE_2COLOUR16X16,
+pick(   WIE_2COLOR16X16,
         "16x16,  2 Color",
         "16x16,  2 Color" )
-pick(   WIE_256COLOUR48X48,
+pick(   WIE_256COLOR48X48,
         "48x48, 256 Color",
         "48x48, 256 Color" )
-pick(   WIE_16COLOUR48X48,
+pick(   WIE_16COLOR48X48,
         "48x48,  16 Color",
         "48x48,  16 Color" )
-pick(   WIE_16COLOUR24X24,
+pick(   WIE_16COLOR24X24,
         "24x24,  16 Color",
         "24x24,  16 Color" )
 
-pick(   WIE_256COLOUR32X32,
+pick(   WIE_256COLOR32X32,
         "32x32, 256 Color",
         "32x32, 256 Color" )
-pick(   WIE_256COLOUR16X16,
+pick(   WIE_256COLOR16X16,
         "16x16, 256 Color",
         "16x16, 256 Color" )
 
-pick(   WIE_2COLOUR64X64,
+pick(   WIE_2COLOR64X64,
         "64x64,   2 Color",
         "64x64,   2 Color" )
-pick(   WIE_16COLOUR64X64,
+pick(   WIE_16COLOR64X64,
         "64x64,  16 Color",
         "64x64,  16 Color" )
-pick(   WIE_256COLOUR64X64,
+pick(   WIE_256COLOR64X64,
         "64x64, 256 Color",
         "64x64, 256 Color" )
-pick(   WIE_2COLOUR96X96,
+pick(   WIE_2COLOR96X96,
         "96x96,   2 Color",
         "96x96,   2 Color" )
-pick(   WIE_16COLOUR96X96,
+pick(   WIE_16COLOR96X96,
         "96x96,  16 Color",
         "96x96,  16 Color" )
-pick(   WIE_256COLOUR96X96,
+pick(   WIE_256COLOR96X96,
         "96x96, 256 Color",
         "96x96, 256 Color" )
 
-pick(   WIE_TRUECOLOUR32X32,
+pick(   WIE_TRUECOLOR32X32,
         "32x32, True Color",
         "32x32, True Color" )
-pick(   WIE_TRUECOLOUR16X16,
+pick(   WIE_TRUECOLOR16X16,
         "16x16, True Color",
         "16x16, True Color" )
-pick(   WIE_TRUECOLOUR48X48,
+pick(   WIE_TRUECOLOR48X48,
         "48x48, True Color",
         "48x48, True Color" )
 
@@ -717,10 +717,10 @@ pick(   WIE_NOTIMPLEMENTED,
         "Not implemented." )
 
 // MODCLRS.C
-pick(   WIE_COLOURPALETTEMODIFIED,
+pick(   WIE_COLORPALETTEMODIFIED,
         "Color Palette modified",
         "Color Palette modified" )
-pick(   WIE_COLOURPALETTERESTORED,
+pick(   WIE_COLORPALETTERESTORED,
         "Color Palette restored",
         "Color Palette restored" )
     
@@ -847,4 +847,3 @@ pick(   WIE_TIP_ROTATECL,
 pick(   WIE_TIP_ROTATECC,
         "Rotate Counterclockwise",
         "Rotate Counterclockwise" )
-

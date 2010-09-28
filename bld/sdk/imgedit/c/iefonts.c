@@ -43,7 +43,7 @@
 #define STATUS_POINTSIZE        8
 
 /*
- * CreateStatusFont - creates the font used in the status window
+ * CreateStatusFont - create the font used in the status window
  */
 void CreateStatusFont( void )
 {
@@ -54,15 +54,15 @@ void CreateStatusFont( void )
     int                 point_size;
     BOOL                use_default;
 
-    memset( &lf, 0, sizeof(LOGFONT) );
+    memset( &lf, 0, sizeof( LOGFONT ) );
     dc = GetDC( (HWND)NULL );
     lf.lfWeight = FW_NORMAL;
     use_default = TRUE;
 
     status_font = IEAllocRCString( WIE_STATUSFONT );
-    if( status_font ) {
+    if( status_font != NULL ) {
         cp = (char *)_mbschr( (unsigned char *)status_font, '.' );
-        if( cp ) {
+        if( cp != NULL ) {
             *cp = '\0';
             strcpy( lf.lfFaceName, status_font );
             cp++;
@@ -80,5 +80,5 @@ void CreateStatusFont( void )
     lf.lfHeight = -MulDiv( point_size, GetDeviceCaps( dc, LOGPIXELSY ), 72 );
     SmallFont = CreateFontIndirect( &lf );
     ReleaseDC( (HWND)NULL, dc );
-}
 
+} /* CreateStatusFont */

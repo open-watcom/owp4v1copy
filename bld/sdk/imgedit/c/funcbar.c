@@ -61,7 +61,7 @@ static button           toolList[] = {
 };
 
 /*
- * addFunctionButton - adds a button to the function bar.
+ * addFunctionButton - add a button to the function bar
  */
 static void addFunctionButton( button *tb, BOOL is_sticky )
 {
@@ -72,10 +72,10 @@ static void addFunctionButton( button *tb, BOOL is_sticky )
     info.id = tb->id;
     info.flags = ITEM_DOWNBMP;
 
-    if (is_sticky) {
+    if( is_sticky ) {
         info.flags |= ITEM_STICKY;
     }
-    if (tb->has_down) {
+    if( tb->has_down ) {
         tb->downbmp = _wpi_loadbitmap( Instance, tb->downname );
     } else {
         tb->downbmp = tb->hbmp;
@@ -92,7 +92,7 @@ static void addFunctionButton( button *tb, BOOL is_sticky )
 } /* addFunctionButton */
 
 /*
- * addItems - adds the buttons to the function bar
+ * addItems - add the buttons to the function bar
  */
 void addItems( void )
 {
@@ -103,107 +103,111 @@ void addItems( void )
     tii.blank_space = 5;
 
     if( ImgedIsDDE ) {
-        addFunctionButton( &(toolList[10]), FALSE );
-        addFunctionButton( &(toolList[20]), FALSE );
+        addFunctionButton( &toolList[10], FALSE );
+        addFunctionButton( &toolList[20], FALSE );
     } else {
-        for (i=0; i < 3; ++i) {
-            addFunctionButton( &(toolList[i]), FALSE );
+        for( i = 0; i < 3; i++ ) {
+            addFunctionButton( &toolList[i], FALSE );
         }
         ToolBarAddItem( functionBar, &tii );
     }
 
-    addFunctionButton( &(toolList[3]), TRUE );
-    addFunctionButton( &(toolList[4]), FALSE );
+    addFunctionButton( &toolList[3], TRUE );
+    addFunctionButton( &toolList[4], FALSE );
     ToolBarAddItem( functionBar, &tii );
 
-    for (i=5; i < 8; ++i) {
-        addFunctionButton( &(toolList[i]), FALSE );
+    for( i = 5; i < 8; i++ ) {
+        addFunctionButton( &toolList[i], FALSE );
     }
 
     ToolBarAddItem( functionBar, &tii );
-    for (i=8; i < 10; ++i) {
-        addFunctionButton( &(toolList[i]), FALSE );
+    for( i = 8; i < 10; i++ ) {
+        addFunctionButton( &toolList[i], FALSE );
     }
 
     ToolBarAddItem( functionBar, &tii );
 
     if( ImgedIsDDE ) {
-        addFunctionButton( &(toolList[11]), FALSE );
+        addFunctionButton( &toolList[11], FALSE );
     } else {
-        for (i=10; i < 12; ++i) {
-            addFunctionButton( &(toolList[i]), FALSE );
+        for( i = 10; i < 12; i++ ) {
+            addFunctionButton( &toolList[i], FALSE );
         }
     }
 
     ToolBarAddItem( functionBar, &tii );
-    for (i=12; i < 16; ++i) {
-        addFunctionButton( &(toolList[i]), FALSE );
+    for( i = 12; i < 16; i++ ) {
+        addFunctionButton( &toolList[i], FALSE );
     }
 
     ToolBarAddItem( functionBar, &tii );
-    for (i=16; i < 20; ++i) {
-        addFunctionButton( &(toolList[i]), FALSE );
+    for (i = 16; i < 20; i++ ) {
+        addFunctionButton( &toolList[i], FALSE );
     }
+
 } /* addItems */
 
+/*
+ * FunctionBarHelpProc
+ */
 void FunctionBarHelpProc( HWND hwnd, WPI_PARAM1 wparam, BOOL pressed )
 {
-    hwnd=hwnd;
+    hwnd = hwnd;
     if( pressed ) {
         ShowHintText( wparam );
     } else {
         SetHintText( " " );
     }
-}
+
+} /* FunctionBarHelpProc */
 
 /*
- * FunctionBarProc - hook function which intercepts messages to the tool bar.
+ * FunctionBarProc - hook function which intercepts messages to the toolbar
  */
-BOOL FunctionBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
-                                                        WPI_PARAM2 lparam )
+BOOL FunctionBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
     short               i;
     static BOOL         gridButtonDown = FALSE;
 
     hwnd = hwnd;
 
-    switch(msg) {
+    switch( msg ) {
     case WM_CREATE:
         break;
 
     case WM_USER:
-        if (!lparam) {
+        if( !lparam ) {
             ShowHintText( wparam );
         }
 
-        if( LOWORD(wparam) == IMGED_GRID ) {
-            ToolBarSetState( functionBar, LOWORD(wparam), BUTTON_DOWN );
+        if( LOWORD( wparam ) == IMGED_GRID ) {
+            ToolBarSetState( functionBar, LOWORD( wparam ), BUTTON_DOWN );
         } else {
-            return 1;
+            return( 1 );
         }
         break;
 
     case WM_COMMAND:
-        if( LOWORD(wparam) == IMGED_GRID ) {
+        if( LOWORD( wparam ) == IMGED_GRID ) {
             if( !gridButtonDown ) {
-                gridButtonDown  = TRUE;
+                gridButtonDown = TRUE;
             } else {
-                gridButtonDown  = FALSE;
+                gridButtonDown = FALSE;
             }
-            if( !HMainWindow ) {
+            if( HMainWindow == NULL ) {
                 break;
             }
-            CheckGridItem( _wpi_getmenu(_wpi_getframe(HMainWindow)) );
+            CheckGridItem( _wpi_getmenu( _wpi_getframe( HMainWindow ) ) );
             return( 1 );
         }
 
-        ToolBarSetState(functionBar, LOWORD(wparam), BUTTON_UP);
+        ToolBarSetState( functionBar, LOWORD( wparam ), BUTTON_UP );
         break;
 
     case WM_DESTROY:
-        for( i=0; i < NUMBER_OF_FUNCTIONS; ++i ) {
+        for( i = 0; i < NUMBER_OF_FUNCTIONS; i++ ) {
             _wpi_deletebitmap( toolList[i].hbmp );
-            if ( toolList[i].has_down ) {
+            if( toolList[i].has_down ) {
                 _wpi_deletebitmap( toolList[i].downbmp );
             }
         }
@@ -214,12 +218,12 @@ BOOL FunctionBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
 } /* FunctionBarProc */
 
 /*
- * InitFunctionBar - Initializes the tool bar at the top of the image editor.
+ * InitFunctionBar - initializes the toolbar at the top of the image editor
  */
 void InitFunctionBar( HWND hparent )
 {
-    WPI_POINT           buttonsize = {FUNC_BUTTON_WIDTH, FUNC_BUTTON_HEIGHT};
-    WPI_POINT           border = {FUNC_BORDER_X, FUNC_BORDER_Y};
+    WPI_POINT           buttonsize = { FUNC_BUTTON_WIDTH, FUNC_BUTTON_HEIGHT };
+    WPI_POINT           border = { FUNC_BORDER_X, FUNC_BORDER_Y };
     WPI_RECT            functionbar_loc;
     TOOLDISPLAYINFO     tdi;
     WPI_RECT            rect;
@@ -230,14 +234,14 @@ void InitFunctionBar( HWND hparent )
     width = _wpi_getwidthrect( rect );
     height = _wpi_getheightrect( rect );
 
-    _wpi_setwrectvalues( &(functionbar_loc), 0, 0, max(MIN_WIDTH, width),
-                                                    FUNC_BUTTON_HEIGHT + 5 );
-    _wpi_cvth_rect( &(functionbar_loc), height );
+    _wpi_setwrectvalues( &functionbar_loc, 0, 0, max( MIN_WIDTH, width ),
+                         FUNC_BUTTON_HEIGHT + 5 );
+    _wpi_cvth_rect( &functionbar_loc, height );
 #ifdef __OS2_PM__
     functionbar_loc.yBottom += 1;
 #endif
 
-    functionBar = ToolBarInit(hparent);
+    functionBar = ToolBarInit( hparent );
     tdi.button_size = buttonsize;
     tdi.border_size = border;
     tdi.area = functionbar_loc;
@@ -249,7 +253,7 @@ void InitFunctionBar( HWND hparent )
     tdi.is_fixed = 1;
     tdi.use_tips = 1;
 
-    ToolBarDisplay(functionBar, &tdi);
+    ToolBarDisplay( functionBar, &tdi );
 
     addItems();
     hFunctionBar = ToolBarWindow( functionBar );
@@ -258,18 +262,20 @@ void InitFunctionBar( HWND hparent )
     _wpi_updatewindow( hFunctionBar );
 
     GrayEditOptions();
+
 } /* InitFunctionBar */
 
 /*
- * CloseFunctionBar - Call the clean up routine.
+ * CloseFunctionBar - call the clean up routine
  */
 void CloseFunctionBar( void )
 {
     ToolBarFini( functionBar );
+
 } /* CloseFunctionBar */
 
 /*
- * ResizeFunctionBar - handles the resizing of the function bar.
+ * ResizeFunctionBar - handle the resizing of the function bar
  */
 void ResizeFunctionBar( WPI_PARAM2 lparam )
 {
@@ -277,49 +283,51 @@ void ResizeFunctionBar( WPI_PARAM2 lparam )
     int         top;
     int         bottom;
     HWND        hwnd;
+#ifdef __OS2_PM__
+    short       height;
+    WPI_RECT    rect;
+#endif
 
-    if (!hFunctionBar) {
+    if( hFunctionBar == NULL ) {
         return;
     }
 #ifndef __OS2_PM__
     width = max( MIN_WIDTH, LOWORD( lparam ) );
     top = 0;
-    bottom = FUNC_BUTTON_HEIGHT+5;
+    bottom = FUNC_BUTTON_HEIGHT + 5;
 #else
     width = max( MIN_WIDTH, SHORT1FROMMP( lparam ) );
 
-    {
-        short           height;
-        WPI_RECT        rect;
-
-        _wpi_getclientrect( HMainWindow, &rect );
-        height = _wpi_getheightrect( rect );
-        /*
-         * these are actually switched but it's necessary for the setwindowpos
-         * macro
-         */
-        bottom = _wpi_cvth_y( 0, height );
-        top = _wpi_cvth_y( FUNC_BUTTON_HEIGHT+3, height );
-    }
+    _wpi_getclientrect( HMainWindow, &rect );
+    height = _wpi_getheightrect( rect );
+    /*
+     * These are actually switched, but it's necessary for the _wpi_setwindowpos macro.
+     */
+    bottom = _wpi_cvth_y( 0, height );
+    top = _wpi_cvth_y( FUNC_BUTTON_HEIGHT + 3, height );
 #endif
 
     hwnd = ToolBarWindow( functionBar );
     _wpi_setwindowpos( hwnd, HWND_TOP, 0, top, width, bottom,
-                        SWP_SHOWWINDOW | SWP_MOVE | SWP_SIZE );
+                       SWP_SHOWWINDOW | SWP_MOVE | SWP_SIZE );
+
 } /* ResizeFunctionBar */
 
 /*
- * PressGridButton - (de)presses the grid button as necessary.
+ * PressGridButton - (de)press the grid button as necessary
  */
 void PressGridButton( void )
 {
-    if (!functionBar) return;
-
-    if (ImgedConfigInfo.grid_on) {
-        ToolBarSetState(functionBar, IMGED_GRID, BUTTON_DOWN);
-    } else {
-        ToolBarSetState(functionBar, IMGED_GRID, BUTTON_UP);
+    if( functionBar == NULL ) {
+        return;
     }
+
+    if( ImgedConfigInfo.grid_on ) {
+        ToolBarSetState( functionBar, IMGED_GRID, BUTTON_DOWN );
+    } else {
+        ToolBarSetState( functionBar, IMGED_GRID, BUTTON_UP );
+    }
+
 } /* PressGridButton */
 
 /*
@@ -329,7 +337,7 @@ int GetFunctionBarHeight( void )
 {
     WPI_RECT    rect;
 
-    if( !functionBar ) {
+    if( functionBar == NULL ) {
         return( 0 );
     }
 

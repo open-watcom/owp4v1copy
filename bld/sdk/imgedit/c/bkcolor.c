@@ -34,47 +34,49 @@
 #include "imgedit.h"
 #include "ieclrpal.h"
 
-static palette_box      screenColour;
-static palette_box      inverseColour;
-static palette_box      availColour[16];
+static palette_box      screenColor;
+static palette_box      inverseColor;
+static palette_box      availColor[16];
 
 /*
- * displayColours - display the colours.
+ * displayColors - display the colors
  */
-static void displayColours( HWND hwnd )
+static void displayColors( HWND hwnd )
 {
     short       i;
     WPI_PRES    pres;
     HWND        currentwnd;
 
-    inverseColour.colour = GetInverseColour( screenColour.colour );
+    inverseColor.color = GetInverseColor( screenColor.color );
 
     currentwnd = _wpi_getdlgitem( hwnd, BK_CURRENT );
 
     pres = _wpi_getpres( currentwnd );
     _wpi_torgbmode( pres );
-    DisplayColourBox( pres, &screenColour );
-    DisplayColourBox( pres, &inverseColour );
+    DisplayColorBox( pres, &screenColor );
+    DisplayColorBox( pres, &inverseColor );
 
-    for (i=0; i < 16; ++i) {
-        DisplayColourBox( pres, &availColour[i] );
+    for( i = 0; i < 16; i++ ) {
+        DisplayColorBox( pres, &availColor[i] );
     }
     _wpi_releasepres( currentwnd, pres );
-} /* displayColours */
+
+} /* displayColors */
 
 /*
- * showColours - displays the colours to choose from
+ * showColors - displays the colors to choose from
  */
-static void showColours( HWND hwnd )
+static void showColors( HWND hwnd )
 {
-    InitFromColourPalette( &screenColour, &inverseColour, &availColour );
-    displayColours(hwnd);
-} /* showColours */
+    InitFromColorPalette( &screenColor, &inverseColor, &availColor );
+    displayColors( hwnd );
+
+} /* showColors */
 
 /*
- * selectColour - select the colour.
+ * selectColor - select the color
  */
-static void selectColour( WPI_POINT *pt, HWND hwnd )
+static void selectColor( WPI_POINT *pt, HWND hwnd )
 {
     int         i;
     WPI_PRES    pres;
@@ -88,38 +90,39 @@ static void selectColour( WPI_POINT *pt, HWND hwnd )
     _wpi_mapwindowpoints( hwnd, currentwnd, pt, 1 );
 
     _wpi_torgbmode( pres );
-    for (i=0; i < 16; ++i) {
-        top = availColour[i].box.top;
-        bottom = availColour[i].box.bottom;
+    for( i = 0; i < 16; i++ ) {
+        top = availColor[i].box.top;
+        bottom = availColor[i].box.bottom;
 
-        top = _wpi_cvth_y( top, 2*SQR_SIZE );
-        bottom = _wpi_cvth_y( bottom, 2*SQR_SIZE );
-        _wpi_setintwrectvalues(&wrect, availColour[i].box.left, top,
-                                            availColour[i].box.right, bottom);
-        if ( _wpi_ptinrect(&wrect, *pt) ) {
-            screenColour.colour = availColour[i].colour;
-            DisplayColourBox( pres, &screenColour );
+        top = _wpi_cvth_y( top, 2 * SQR_SIZE );
+        bottom = _wpi_cvth_y( bottom, 2 * SQR_SIZE );
+        _wpi_setintwrectvalues( &wrect, availColor[i].box.left, top,
+                                        availColor[i].box.right, bottom );
+        if( _wpi_ptinrect( &wrect, *pt ) ) {
+            screenColor.color = availColor[i].color;
+            DisplayColorBox( pres, &screenColor );
 
-            inverseColour.colour = GetInverseColour( screenColour.colour );
-            DisplayColourBox( pres, &inverseColour );
+            inverseColor.color = GetInverseColor( screenColor.color );
+            DisplayColorBox( pres, &inverseColor );
             break;
         }
     }
     _wpi_releasepres( currentwnd, pres );
-} /* selectColour */
+
+} /* selectColor */
 
 /*
- * SelColourProc - Select the colour to represent the background.
+ * SelColorProc - select the color to represent the background
  */
-WPI_DLGRESULT CALLBACK SelColourProc(HWND hwnd, WPI_MSG msg,
-                                        WPI_PARAM1 wparam, WPI_PARAM2 lparam)
+WPI_DLGRESULT CALLBACK SelColorProc( HWND hwnd, WPI_MSG msg,
+                                     WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 {
     PAINTSTRUCT         ps;
     WPI_POINT           pt;
     WPI_PRES            pres;
 
     if( _wpi_dlg_command( hwnd, &msg, &wparam, &lparam ) ) {
-        switch( LOWORD(wparam) ) {
+        switch( LOWORD( wparam ) ) {
         case IDOK:
             _wpi_enddialog( hwnd, IDOK );
             break;
@@ -138,7 +141,7 @@ WPI_DLGRESULT CALLBACK SelColourProc(HWND hwnd, WPI_MSG msg,
     } else {
         switch( msg ) {
         case WM_INITDIALOG:
-            showColours(hwnd);
+            showColors( hwnd );
             return( TRUE );
 
 #ifndef __OS2_PM__
@@ -149,7 +152,7 @@ WPI_DLGRESULT CALLBACK SelColourProc(HWND hwnd, WPI_MSG msg,
 
         case WM_LBUTTONDOWN:
             IMGED_MAKEPOINT( wparam, lparam, pt );
-            selectColour( &pt, hwnd );
+            selectColor( &pt, hwnd );
             break;
 
         case WM_PAINT:
@@ -157,7 +160,7 @@ WPI_DLGRESULT CALLBACK SelColourProc(HWND hwnd, WPI_MSG msg,
 #ifdef __OS2_PM__
             WinFillRect( pres, &ps, CLR_PALEGRAY );
 #endif
-            displayColours( hwnd );
+            displayColors( hwnd );
             _wpi_endpaint( hwnd, pres, &ps );
             _wpi_setfocus( hwnd );
             break;
@@ -166,31 +169,33 @@ WPI_DLGRESULT CALLBACK SelColourProc(HWND hwnd, WPI_MSG msg,
             _wpi_enddialog( hwnd, IDCANCEL );
             break;
         default:
-            return( _wpi_defdlgproc(hwnd, msg, wparam, lparam) );
+            return( _wpi_defdlgproc( hwnd, msg, wparam, lparam ) );
         }
     }
     _wpi_dlgreturn( FALSE );
-} /* SelColourProc */
+
+} /* SelColorProc */
 
 /*
- * ChooseBkColour - Choose the colour to represent the background
+ * ChooseBkColor - choose the color to represent the background
  */
-void ChooseBkColour( void )
+void ChooseBkColor( void )
 {
     WPI_PROC            fp;
     int                 button_type;
 
-    screenColour.colour = GetBkColour();
-    fp = _wpi_makeprocinstance( (WPI_PROC)SelColourProc, Instance );
-    button_type = _wpi_dialogbox( HMainWindow, fp, Instance, SELBKCOLOUR, 0L );
+    screenColor.color = GetViewBkColor();
+    fp = _wpi_makeprocinstance( (WPI_PROC)SelColorProc, Instance );
+    button_type = _wpi_dialogbox( HMainWindow, fp, Instance, SELBKCOLOR, 0L );
     _wpi_freeprocinstance( fp );
 
-    if (button_type == IDCANCEL) {
+    if( button_type == IDCANCEL ) {
         return;
     }
 
-    SetBkColour( screenColour.colour );
-    SetScreenClr( screenColour.colour );
+    SetViewBkColor( screenColor.color );
+    SetScreenClr( screenColor.color );
     PrintHintTextByID( WIE_NEWBKCOLORSELECTED, NULL );
-} /* ChooseBkColour */
+
+} /* ChooseBkColor */
 

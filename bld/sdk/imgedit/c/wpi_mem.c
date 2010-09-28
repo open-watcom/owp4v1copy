@@ -40,6 +40,7 @@
 void * _wpi_malloc( size_t size )
 {
     return( MemAlloc( size ) );
+
 } /* _wpi_malloc */
 
 /*
@@ -48,5 +49,5 @@ void * _wpi_malloc( size_t size )
 void _wpi_free( void * ptr )
 {
     MemFree( ptr );
-} /* _wpi_free */
 
+} /* _wpi_free */

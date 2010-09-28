@@ -7,71 +7,71 @@
 #include "rcstr.gh"
 #include "uistr.gh"
 
-APPLICON        ICON    wimgedit.ico
-APPLBITMAP      BITMAP  wimgedit.bmp
+"APPLICON"      ICON    "wimgedit.ico"
+"APPLBITMAP"    BITMAP  "wimgedit.bmp"
 
-IconIcon        ICON    icon.ico
-BitmapIcon      ICON    bitmap.ico
-CursorIcon      ICON    cursor.ico
+"IconIcon"      ICON    "icon.ico"
+"BitmapIcon"    ICON    "bitmap.ico"
+"CursorIcon"    ICON    "cursor.ico"
 
-PaintBrush      CURSOR  paintb.cur
-PencilCursor    CURSOR  pencil.cur
-CrossHairs      CURSOR  crosshrs.cur
-FillCursor      CURSOR  fill.cur
-HotSpotCur      CURSOR  hotspot.cur
-PointCursor     CURSOR  pasteptr.cur
-HandCursor      CURSOR  hand.cur
+"PaintBrush"    CURSOR  "paintb.cur"
+"PencilCursor"  CURSOR  "pencil.cur"
+"CrossHairs"    CURSOR  "crosshrs.cur"
+"FillCursor"    CURSOR  "fill.cur"
+"HotSpotCur"    CURSOR  "hotspot.cur"
+"PointCursor"   CURSOR  "pasteptr.cur"
+"HandCursor"    CURSOR  "hand.cur"
 
-OPENBMP         BITMAP  open.bmp
-NEWBMP          BITMAP  new.bmp
-SAVEBMP         BITMAP  save.bmp
-GRIDBMP         BITMAP  grid.bmp
-GRIDDBMP        BITMAP  gridd.bmp
-MAXIMIZEBMP     BITMAP  maxmize.bmp
-MAXIMIZEDBMP    BITMAP  maxmized.bmp
-CUTBMP          BITMAP  cut.bmp
-COPYBMP         BITMAP  copy.bmp
-PASTEBMP        BITMAP  paste.bmp
-UNDOBMP         BITMAP  undo.bmp
-REDOBMP         BITMAP  redo.bmp
-CLEARBMP        BITMAP  clear.bmp
-SNAPBMP         BITMAP  snap.bmp
-RIGHTBMP        BITMAP  right.bmp
-LEFTBMP         BITMAP  left.bmp
-UPBMP           BITMAP  up.bmp
-DOWNBMP         BITMAP  down.bmp
-HFLIPBMP        BITMAP  fliph.bmp
-HFLIPDBMP       BITMAP  fliphd.bmp
-VFLIPBMP        BITMAP  flipv.bmp
-VFLIPDBMP       BITMAP  flipvd.bmp
-CLROTBMP        BITMAP  rotcl.bmp
-CLROTDBMP       BITMAP  rotcld.bmp
-CCROTBMP        BITMAP  rotcc.bmp
-CCROTDBMP       BITMAP  rotccd.bmp
+"OPENBMP"       BITMAP  "open.bmp"
+"NEWBMP"        BITMAP  "new.bmp"
+"SAVEBMP"       BITMAP  "save.bmp"
+"GRIDBMP"       BITMAP  "grid.bmp"
+"GRIDDBMP"      BITMAP  "gridd.bmp"
+"MAXIMIZEBMP"   BITMAP  "maxmize.bmp"
+"MAXIMIZEDBMP"  BITMAP  "maxmized.bmp"
+"CUTBMP"        BITMAP  "cut.bmp"
+"COPYBMP"       BITMAP  "copy.bmp"
+"PASTEBMP"      BITMAP  "paste.bmp"
+"UNDOBMP"       BITMAP  "undo.bmp"
+"REDOBMP"       BITMAP  "redo.bmp"
+"CLEARBMP"      BITMAP  "clear.bmp"
+"SNAPBMP"       BITMAP  "snap.bmp"
+"RIGHTBMP"      BITMAP  "right.bmp"
+"LEFTBMP"       BITMAP  "left.bmp"
+"UPBMP"         BITMAP  "up.bmp"
+"DOWNBMP"       BITMAP  "down.bmp"
+"HFLIPBMP"      BITMAP  "fliph.bmp"
+"HFLIPDBMP"     BITMAP  "fliphd.bmp"
+"VFLIPBMP"      BITMAP  "flipv.bmp"
+"VFLIPDBMP"     BITMAP  "flipvd.bmp"
+"CLROTBMP"      BITMAP  "rotcl.bmp"
+"CLROTDBMP"     BITMAP  "rotcld.bmp"
+"CCROTBMP"      BITMAP  "rotcc.bmp"
+"CCROTDBMP"     BITMAP  "rotccd.bmp"
 
-PENCIL          BITMAP  pencil.bmp
-PENCILD         BITMAP  pencild.bmp
-LINE            BITMAP  line.bmp
-LINED           BITMAP  lined.bmp
-CIRCLEO         BITMAP  circleo.bmp
-CIRCLEOD        BITMAP  circleod.bmp
-CIRCLEF         BITMAP  circlef.bmp
-CIRCLEFD        BITMAP  circlefd.bmp
-RECTO           BITMAP  recto.bmp
-RECTOD          BITMAP  rectod.bmp
-RECTF           BITMAP  rectf.bmp
-RECTFD          BITMAP  rectfd.bmp
-FILL            BITMAP  fill.bmp
-FILLD           BITMAP  filld.bmp
-BRUSH           BITMAP  brush.bmp
-BRUSHD          BITMAP  brushd.bmp
-CLPRECT         BITMAP  clprect.bmp
-CLPRECTD        BITMAP  clprectd.bmp
-HOTSPOT         BITMAP  hotspot.bmp
-HOTSPOTD        BITMAP  hotspotd.bmp
+"PENCIL"        BITMAP  "pencil.bmp"
+"PENCILD"       BITMAP  "pencild.bmp"
+"LINE"          BITMAP  "line.bmp"
+"LINED"         BITMAP  "lined.bmp"
+"CIRCLEO"       BITMAP  "circleo.bmp"
+"CIRCLEOD"      BITMAP  "circleod.bmp"
+"CIRCLEF"       BITMAP  "circlef.bmp"
+"CIRCLEFD"      BITMAP  "circlefd.bmp"
+"RECTO"         BITMAP  "recto.bmp"
+"RECTOD"        BITMAP  "rectod.bmp"
+"RECTF"         BITMAP  "rectf.bmp"
+"RECTFD"        BITMAP  "rectfd.bmp"
+"FILL"          BITMAP  "fill.bmp"
+"FILLD"         BITMAP  "filld.bmp"
+"BRUSH"         BITMAP  "brush.bmp"
+"BRUSHD"        BITMAP  "brushd.bmp"
+"CLPRECT"       BITMAP  "clprect.bmp"
+"CLPRECTD"      BITMAP  "clprectd.bmp"
+"HOTSPOT"       BITMAP  "hotspot.bmp"
+"HOTSPOTD"      BITMAP  "hotspotd.bmp"
 
-Accelerators ACCELERATORS
-{
+"Accelerators" ACCELERATORS
+BEGIN
     "^N", IMGED_NEW
     "^O", IMGED_OPEN
     "^S", IMGED_SAVE
@@ -97,11 +97,11 @@ Accelerators ACCELERATORS
     "^S", IMGED_SETTINGS
     "^M", IMGED_MAXIMIZE
     VK_F6, IMGED_TOOLBAR, VIRTKEY
-    VK_F7, IMGED_COLOUR, VIRTKEY
+    VK_F7, IMGED_COLOR, VIRTKEY
     VK_F8, IMGED_VIEW, VIRTKEY
     VK_F5, IMGED_CASCADE, VIRTKEY, SHIFT
     VK_F4, IMGED_TILE, VIRTKEY, SHIFT
-}
+END
 
 #undef pick
 #undef sp

@@ -46,11 +46,11 @@ static char imgedSection[] = "WATCOM Image Editor";
 static char iniPath[_MAX_PATH] = WATCOM_INI;
 
 /*
- * setDefaultValues - sets the default values of ImgedConfigInfo structure.
+ * setDefaultValues - set the default values of ImgedConfigInfo structure
  */
 static void setDefaultValues( settings_info *info )
 {
-    int         x,y;
+    int         x, y;
 
     /* save settings */
     info->settings = SET_SAVE_ALL;
@@ -63,40 +63,35 @@ static void setDefaultValues( settings_info *info )
     ImgedConfigInfo.width = x;
 #ifdef __OS2_PM__
     ImgedConfigInfo.y_pos = y / 5;
-    ImgedConfigInfo.height = 4 * ( y / 5 );
+    ImgedConfigInfo.height = 4 * (y / 5);
 #else
     ImgedConfigInfo.y_pos = 0;
-    ImgedConfigInfo.height = 4 * ( y / 5 );
+    ImgedConfigInfo.height = 4 * (y / 5);
 #endif
     ImgedConfigInfo.ismaximized = FALSE;
 
-    ImgedConfigInfo.tool_xpos = ImgedConfigInfo.x_pos +
-                                        ImgedConfigInfo.width - TBWidth - 2;
+    ImgedConfigInfo.tool_xpos = ImgedConfigInfo.x_pos + ImgedConfigInfo.width - TBWidth - 2;
     ImgedConfigInfo.tool_ypos = ImgedConfigInfo.y_pos +
-                            _wpi_getsystemmetrics(SM_CYCAPTION) +
-                            _wpi_getsystemmetrics(SM_CYMENU ) +
-                            FUNCTIONBAR_WIDTH + 2;
+        _wpi_getsystemmetrics( SM_CYCAPTION ) + _wpi_getsystemmetrics( SM_CYMENU ) +
+        FUNCTIONBAR_WIDTH + 2;
 
-    ImgedConfigInfo.pal_xpos = ImgedConfigInfo.x_pos +
-                                        ImgedConfigInfo.width - CP_WIDTH - 2;
+    ImgedConfigInfo.pal_xpos = ImgedConfigInfo.x_pos + ImgedConfigInfo.width - CP_WIDTH - 2;
 #ifdef __OS2_PM__
     ImgedConfigInfo.pal_ypos = ImgedConfigInfo.y_pos + STATUS_WIDTH;
 #else
-    ImgedConfigInfo.pal_ypos = ImgedConfigInfo.y_pos +
-                                        ImgedConfigInfo.height -
-                                        StatusWidth - CP_HEIGHT - 2;
+    ImgedConfigInfo.pal_ypos = ImgedConfigInfo.y_pos + ImgedConfigInfo.height -
+        StatusWidth - CP_HEIGHT - 2;
 #endif
 
     ImgedConfigInfo.view_xpos = VIEWIN_XPOS;
     ImgedConfigInfo.view_ypos = ImgedConfigInfo.y_pos +
-                            _wpi_getsystemmetrics(SM_CYCAPTION) +
-                            _wpi_getsystemmetrics(SM_CYMENU ) +
-                            FUNCTIONBAR_WIDTH + 2;
+        _wpi_getsystemmetrics( SM_CYCAPTION ) + _wpi_getsystemmetrics( SM_CYMENU ) +
+        FUNCTIONBAR_WIDTH + 2;
 
     /* other settings */
     ImgedConfigInfo.show_state = SET_SHOW_TOOL | SET_SHOW_CLR | SET_SHOW_VIEW;
     info->paste = SET_PASTE_STR;
-    info->rotate =  10 + SET_ROT_SIMPLE;        // 10 means keep area
+    info->rotate = 10 + SET_ROT_SIMPLE;        // 10 means keep area
     info->viewwnd = SET_VIEW_1;
     info->wrapshift = TRUE;
     ImgedConfigInfo.shift = 1;
@@ -106,16 +101,17 @@ static void setDefaultValues( settings_info *info )
 
     strcpy( info->opendir, "" );
     strcpy( info->savedir, "" );
-    sprintf( info->colour, "%ld", WHITE );
+    sprintf( info->color, "%ld", WHITE );
+
 } /* setDefaultValues */
 
 /*
- * loadPositionValues - loads the position values from the ini file.
+ * loadPositionValues - load the position values from the configuration file
  */
 static void loadPositionValues( HINI hini )
 {
     int         sysbox_width;
-    int         x,y;
+    int         x, y;
 
     x = _wpi_getsystemmetrics( SM_CXSCREEN );
     y = _wpi_getsystemmetrics( SM_CYSCREEN );
@@ -123,96 +119,94 @@ static void loadPositionValues( HINI hini )
 
     /* position of main window */
     ImgedConfigInfo.x_pos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_xpos", ImgedConfigInfo.x_pos, iniPath );
-
+        "wnd_xpos", ImgedConfigInfo.x_pos, iniPath );
     ImgedConfigInfo.y_pos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_ypos", ImgedConfigInfo.y_pos, iniPath );
+        "wnd_ypos", ImgedConfigInfo.y_pos, iniPath );
     ImgedConfigInfo.width = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_width", ImgedConfigInfo.width, iniPath );
+        "wnd_width", ImgedConfigInfo.width, iniPath );
     ImgedConfigInfo.height = _wpi_getprivateprofileint( hini, imgedSection,
-                        "wnd_height", ImgedConfigInfo.height, iniPath );
-    ImgedConfigInfo.ismaximized = _wpi_getprivateprofileint( hini,
-        imgedSection, "ismaximized", ImgedConfigInfo.ismaximized, iniPath );
+        "wnd_height", ImgedConfigInfo.height, iniPath );
+    ImgedConfigInfo.ismaximized = _wpi_getprivateprofileint( hini, imgedSection,
+        "ismaximized", ImgedConfigInfo.ismaximized, iniPath );
 
     /* location of the tool window */
     ImgedConfigInfo.tool_xpos = _wpi_getprivateprofileint( hini, imgedSection,
-                    "tool_xpos", ImgedConfigInfo.tool_xpos, iniPath );
+        "tool_xpos", ImgedConfigInfo.tool_xpos, iniPath );
     ImgedConfigInfo.tool_ypos = _wpi_getprivateprofileint( hini, imgedSection,
-                    "tool_ypos", ImgedConfigInfo.tool_ypos, iniPath );
+        "tool_ypos", ImgedConfigInfo.tool_ypos, iniPath );
 
-    /* location of the colour palette */
+    /* location of the color palette */
     ImgedConfigInfo.pal_xpos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "pal_xpos", ImgedConfigInfo.pal_xpos, iniPath );
+        "pal_xpos", ImgedConfigInfo.pal_xpos, iniPath );
     ImgedConfigInfo.pal_ypos = _wpi_getprivateprofileint( hini, imgedSection,
-                        "pal_ypos", ImgedConfigInfo.pal_ypos, iniPath );
+        "pal_ypos", ImgedConfigInfo.pal_ypos, iniPath );
 
     /* location of the view window */
     ImgedConfigInfo.view_xpos = _wpi_getprivateprofileint( hini, imgedSection,
-                "view_xpos", ImgedConfigInfo.view_xpos, iniPath );
+        "view_xpos", ImgedConfigInfo.view_xpos, iniPath );
     ImgedConfigInfo.view_ypos = _wpi_getprivateprofileint( hini, imgedSection,
-                "view_ypos", ImgedConfigInfo.view_ypos, iniPath );
+        "view_ypos", ImgedConfigInfo.view_ypos, iniPath );
     /*
-     * now we want to make sure nothing is off the screen!
+     * Now we want to make sure nothing is off the screen!
      */
-    if (ImgedConfigInfo.x_pos + ImgedConfigInfo.width > x) {
+    if( ImgedConfigInfo.x_pos + ImgedConfigInfo.width > x ) {
         ImgedConfigInfo.width = x - ImgedConfigInfo.x_pos - 2;
     }
-    if (ImgedConfigInfo.y_pos + ImgedConfigInfo.height > y) {
+    if( ImgedConfigInfo.y_pos + ImgedConfigInfo.height > y ) {
         ImgedConfigInfo.height = y - ImgedConfigInfo.y_pos - 2;
     }
-    if (ImgedConfigInfo.tool_xpos > x - sysbox_width - 2) {
+    if( ImgedConfigInfo.tool_xpos > x - sysbox_width - 2 ) {
         ImgedConfigInfo.tool_xpos = x - TBWidth - 1;
     }
-    if (ImgedConfigInfo.tool_ypos > y - sysbox_width - 2) {
+    if( ImgedConfigInfo.tool_ypos > y - sysbox_width - 2 ) {
         ImgedConfigInfo.tool_ypos = y - TBHeight - 1;
     }
-    if (ImgedConfigInfo.pal_xpos > x - sysbox_width - 2) {
+    if( ImgedConfigInfo.pal_xpos > x - sysbox_width - 2 ) {
         ImgedConfigInfo.pal_xpos = x - CP_WIDTH - 1;
     }
-    if (ImgedConfigInfo.pal_ypos > y - sysbox_width - 2) {
+    if( ImgedConfigInfo.pal_ypos > y - sysbox_width - 2 ) {
         ImgedConfigInfo.pal_ypos = y - CP_HEIGHT - 1;
     }
-    if (ImgedConfigInfo.view_xpos > x - sysbox_width - 2) {
+    if( ImgedConfigInfo.view_xpos > x - sysbox_width - 2 ) {
         ImgedConfigInfo.view_xpos = x - sysbox_width - 5;
     }
-    if (ImgedConfigInfo.pal_ypos > y - sysbox_width - 2) {
+    if( ImgedConfigInfo.pal_ypos > y - sysbox_width - 2 ) {
         ImgedConfigInfo.pal_ypos = y - sysbox_width - 5;
     }
-    hini = hini;
+
 } /* loadPositionValues */
 
 /*
- * loadSettings - loads the settings for the image editor (not including
- *                position.
+ * loadSettings - loads the settings for the image editor (not including position)
  */
 static void loadSettings( settings_info *info, HINI hini )
 {
     ImgedConfigInfo.show_state = _wpi_getprivateprofileint( hini,
-        imgedSection, "show_state", ImgedConfigInfo.show_state, iniPath);
+        imgedSection, "show_state", ImgedConfigInfo.show_state, iniPath );
 
-    info->paste = _wpi_getprivateprofileint( hini, imgedSection, "paste",
-                                                info->paste, iniPath );
-    info->rotate = _wpi_getprivateprofileint( hini, imgedSection, "rotate",
-                                info->rotate, iniPath );
+    info->paste = _wpi_getprivateprofileint( hini, imgedSection,
+        "paste", info->paste, iniPath );
+    info->rotate = _wpi_getprivateprofileint( hini, imgedSection,
+        "rotate", info->rotate, iniPath );
     info->viewwnd = _wpi_getprivateprofileint( hini, imgedSection,
-                                "view_window", info->viewwnd, iniPath );
+        "view_window", info->viewwnd, iniPath );
     info->wrapshift = _wpi_getprivateprofileint( hini, imgedSection,
-                                "wrapshift", info->wrapshift, iniPath );
+        "wrapshift", info->wrapshift, iniPath );
     _wpi_getprivateprofilestring( hini, imgedSection, "open_dir",
-                    info->opendir, info->opendir, _MAX_PATH, iniPath );
+        info->opendir, info->opendir, _MAX_PATH, iniPath );
     _wpi_getprivateprofilestring( hini, imgedSection, "save_dir",
-                    info->savedir, info->savedir, _MAX_PATH, iniPath );
-    _wpi_getprivateprofilestring( hini, imgedSection, "screen_colour",
-                    info->colour, info->colour, 10, iniPath );
+        info->savedir, info->savedir, _MAX_PATH, iniPath );
+    _wpi_getprivateprofilestring( hini, imgedSection, "screen_color",
+        info->color, info->color, 10, iniPath );
     ImgedConfigInfo.shift = _wpi_getprivateprofileint( hini, imgedSection,
-                        "shift_amt", ImgedConfigInfo.shift, iniPath );
-    ImgedConfigInfo.square_grid = _wpi_getprivateprofileint( hini,
-        imgedSection,"square_grid", ImgedConfigInfo.square_grid, iniPath );
+        "shift_amt", ImgedConfigInfo.shift, iniPath );
+    ImgedConfigInfo.square_grid = _wpi_getprivateprofileint( hini, imgedSection,
+        "square_grid", ImgedConfigInfo.square_grid, iniPath );
     ImgedConfigInfo.brush_size = _wpi_getprivateprofileint( hini,
         imgedSection, "brush_size", ImgedConfigInfo.brush_size, iniPath);
     ImgedConfigInfo.grid_on = _wpi_getprivateprofileint( hini, imgedSection,
-                        "grid_on", ImgedConfigInfo.grid_on, iniPath );
-    hini = hini;
+        "grid_on", ImgedConfigInfo.grid_on, iniPath );
+
 } /* loadSettings */
 
 /*
@@ -224,7 +218,7 @@ void LoadImgedConfig( void )
     HINI                handle_inifile;
 
 #ifdef __NT__
-    GetConfigFilePath( iniPath, sizeof(iniPath) );
+    GetConfigFilePath( iniPath, sizeof( iniPath ) );
     strcat( iniPath, "\\" WATCOM_INI );
 #endif    
     setDefaultValues( &info );
@@ -232,30 +226,30 @@ void LoadImgedConfig( void )
     /*
      * Image editor will ALWAYS maintain this setting ... which determines
      * whether or not all other settings will be saved.  Note that the
-     * PM version opens the ini file and the win version stores the info
-     * in some kind of cache
+     * PM version opens the configuration file and the Windows version stores
+     * the information in some kind of cache.
      */
     handle_inifile = _wpi_openinifile( Instance, iniPath );
     info.settings = _wpi_getprivateprofileint( handle_inifile, imgedSection,
-                            "profile", info.settings, iniPath );
+                                               "profile", info.settings, iniPath );
 
-    if (info.settings & SET_SAVE_POS) {
+    if( info.settings & SET_SAVE_POS ) {
         loadPositionValues( handle_inifile );
     }
 
-    if (info.settings & SET_SAVE_SET) {
+    if( info.settings & SET_SAVE_SET ) {
         loadSettings( &info, handle_inifile );
     }
     _wpi_closeinifile( handle_inifile );
     SetSettingsDlg( &info );
     SetInitialOpenDir( info.opendir );
     SetInitialSaveDir( info.savedir );
-    SetInitScreenColour( atol(info.colour) );
+    SetInitScreenColor( atol( info.color ) );
 
 } /* LoadImgedConfig */
 
 /*
- * savePositionValues - saves the window position values.
+ * savePositionValues - save the window position values
  */
 static void savePositionValues( HINI hini )
 {
@@ -263,7 +257,7 @@ static void savePositionValues( HINI hini )
 
     itoa( ImgedConfigInfo.ismaximized, buf, 10 );
     _wpi_writeprivateprofilestring( hini, imgedSection, "ismaximized", buf, iniPath );
-    if ( !ImgedConfigInfo.ismaximized ) {
+    if( !ImgedConfigInfo.ismaximized ) {
         itoa( ImgedConfigInfo.x_pos, buf, 10 );
         _wpi_writeprivateprofilestring( hini, imgedSection, "wnd_xpos", buf, iniPath );
         itoa( ImgedConfigInfo.y_pos, buf, 10 );
@@ -280,7 +274,7 @@ static void savePositionValues( HINI hini )
     itoa( ImgedConfigInfo.tool_ypos, buf, 10 );
     _wpi_writeprivateprofilestring( hini, imgedSection, "tool_ypos", buf, iniPath );
 
-    /* colour palette window position */
+    /* color palette window position */
     itoa( ImgedConfigInfo.pal_xpos, buf, 10 );
     _wpi_writeprivateprofilestring( hini, imgedSection, "pal_xpos", buf, iniPath );
     itoa( ImgedConfigInfo.pal_ypos, buf, 10 );
@@ -291,12 +285,11 @@ static void savePositionValues( HINI hini )
     _wpi_writeprivateprofilestring( hini, imgedSection, "view_xpos", buf, iniPath );
     itoa( ImgedConfigInfo.view_ypos, buf, 10 );
     _wpi_writeprivateprofilestring( hini, imgedSection, "view_ypos", buf, iniPath );
-    hini = hini;
+
 } /* savePositionValues */
 
 /*
- * saveSettings - saves the settings of the current session (not including
- *                position).
+ * saveSettings - save the settings of the current session (not including position)
  */
 static void saveSettings( settings_info *info, HINI hini )
 {
@@ -318,19 +311,16 @@ static void saveSettings( settings_info *info, HINI hini )
     _wpi_writeprivateprofilestring( hini, imgedSection, "wrapshift", buf, iniPath );
     itoa( ImgedConfigInfo.grid_on, buf, 10 );
     _wpi_writeprivateprofilestring( hini, imgedSection, "grid_on", buf, iniPath );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "screen_colour",
-                                                info->colour, iniPath );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "open_dir",
-                                                info->opendir, iniPath );
-    _wpi_writeprivateprofilestring( hini, imgedSection, "save_dir",
-                                                info->savedir, iniPath );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "screen_color", info->color, iniPath );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "open_dir", info->opendir, iniPath );
+    _wpi_writeprivateprofilestring( hini, imgedSection, "save_dir", info->savedir, iniPath );
 
     /*
-     * save the show state of the tool window, colour palette, view window.
+     * save the show state of the tool window, color palette, view window.
      */
     itoa( ImgedConfigInfo.show_state, buf, 10 );
     _wpi_writeprivateprofilestring( hini, imgedSection, "show_state", buf, iniPath );
-    hini = hini;
+
 } /* saveSettings */
 
 /*
@@ -343,21 +333,20 @@ void SaveImgedConfig( void )
     HINI                handle_inifile;
 
     GetSettings( &info );
-    sprintf(info.colour, "%ld", GetBkColour());
+    sprintf( info.color, "%ld", GetViewBkColor() );
     strcpy( info.opendir, GetInitOpenDir() );
     strcpy( info.savedir, GetInitSaveDir() );
 
     handle_inifile = _wpi_openinifile( Instance, iniPath );
     itoa( info.settings, buf, 10 );
-    _wpi_writeprivateprofilestring( handle_inifile, imgedSection, "profile",
-                                                        buf, iniPath);
-    if (info.settings & SET_SAVE_POS) {
+    _wpi_writeprivateprofilestring( handle_inifile, imgedSection, "profile", buf, iniPath );
+    if( info.settings & SET_SAVE_POS ) {
         savePositionValues( handle_inifile );
     }
 
-    if (info.settings & SET_SAVE_SET) {
+    if( info.settings & SET_SAVE_SET ) {
         saveSettings( &info, handle_inifile );
     }
     _wpi_closeinifile( handle_inifile );
-} /* SaveImgedConfig */
 
+} /* SaveImgedConfig */

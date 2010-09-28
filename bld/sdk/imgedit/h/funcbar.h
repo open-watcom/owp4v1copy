@@ -31,6 +31,7 @@
 
 
 #ifndef __OS2_PM__
+
 typedef struct {
     char        *name;
     int         id;
@@ -43,17 +44,15 @@ typedef struct {
 
 #define NONE                    ""
 #ifdef __NT__
-#define FUNC_BUTTON_WIDTH       26      // add 4 because it's the magic number
+    #define FUNC_BUTTON_WIDTH   26      // add 4 because it's the magic number
+    #define FUNC_BUTTON_HEIGHT  22      // ditto
 #else
-#define FUNC_BUTTON_WIDTH       25      // add 3 because it's the magic number
-#endif
-#ifdef __NT__
-#define FUNC_BUTTON_HEIGHT      22      // ditto
-#else
-#define FUNC_BUTTON_HEIGHT      21      // ditto
+    #define FUNC_BUTTON_WIDTH   25      // add 3 because it's the magic number
+    #define FUNC_BUTTON_HEIGHT  21      // ditto
 #endif
 
 #else
+
 typedef struct {
     int         name;
     int         id;
@@ -73,4 +72,4 @@ typedef struct {
 #define NUMBER_OF_FUNCTIONS     20
 #define FUNC_BORDER_X           2
 #define FUNC_BORDER_Y           1
-#define MIN_WIDTH               (35+NUMBER_OF_FUNCTIONS*FUNC_BUTTON_WIDTH)
+#define MIN_WIDTH               (35 + NUMBER_OF_FUNCTIONS * FUNC_BUTTON_WIDTH)
