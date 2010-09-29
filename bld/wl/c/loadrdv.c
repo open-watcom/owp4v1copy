@@ -47,61 +47,19 @@
 #include "dbgall.h"
 #include "loadrdv.h"
 
-static unsigned_16  CodeSeg = 0;
-static unsigned_16  DataSeg = 0;
-static unsigned_16  CodeSize = 0;
-static unsigned_16  DataSize = 0;
-static int          CodePos = 0;
-static int          DataPos = 0;
+static unsigned_32  CodeSize = 0;
+static unsigned_32  DataSize = 0;
 
-static bool RelocWalkFn( void *data, unsigned_32 size, void *ctx )
-/****************************************************************/
-{
-    int                 pos;
-    int                 i;
-    dos_addr            *reloc = (dos_addr *)data;
-//    unsigned_16         seg;
-
-    for( i = size; i > 0; i -= sizeof(dos_addr) ) {
-        pos = 0;
-        if( reloc->seg == CodeSeg )
-            pos = CodePos;
-        if( reloc->seg == DataSeg )
-            pos = DataPos;
-        if( pos ) {
-            pos += reloc->off;
-            Root->outfile->file_loc = pos;
-/*            SeekLoad( pos );            
-            ReadLoad( &seg, sizeof(seg) );
-            if( seg == CodeSeg ) {
-                seg = RdosCodeSel;
-                SeekLoad( pos );
-                WriteLoad( &seg, sizeof(seg) );
-            }
-            if( seg == DataSeg ) {
-                seg = RdosDataSel;
-                SeekLoad( pos );            
-                WriteLoad( &seg, sizeof(seg) );
-            } */
-        }
-        reloc++;
-    }
-
-    return( FALSE );   /* don't stop walking */
-}
-
-static unsigned long WriteRDOSData( unsigned_32 hdr_size )
+static void WriteRDOSData( void )
 /**********************************************************/
 /* copy code from extra memory to loadfile */
 {
     group_entry         *group;
     SECTION             *sect;
-    RELOC_INFO          *relocs;
     struct seg_leader   *leader;
     SEGDATA             *piece;
     int                 iscode;
     int                 isdata;
-    unsigned_32         file_size = 0;
 
     DEBUG(( DBG_BASE, "Writing data" ));
     OrderGroups( CompareDosSegments );
@@ -120,14 +78,10 @@ static unsigned long WriteRDOSData( unsigned_32 hdr_size )
             if( leader && leader->size ) {
                 piece = leader->pieces; 
                 if( piece ) {
-                    if( piece->iscode ) {
-                        CodeSeg = leader->seg_addr.seg;
-                        CodePos = Root->outfile->file_loc;
+                    if( piece->iscode && ( leader->seg_addr.seg == RdosCodeSeg ) ) {
                         iscode = 1;
                     }
-                    if( piece->isidata || piece->isuninit ) {
-                        DataSeg = leader->seg_addr.seg;
-                        DataPos = Root->outfile->file_loc;
+                    if( ( piece->isidata || piece->isuninit ) && ( leader->seg_addr.seg == RdosDataSeg ) ) {
                         isdata = 1;
                     }
                 }
@@ -138,42 +92,73 @@ static unsigned long WriteRDOSData( unsigned_32 hdr_size )
         WriteDOSGroup( group );
         if( group->totalsize > group->size )
             PadLoad( group->totalsize - group->size );
-        file_size += group->totalsize;
         if( iscode )
             CodeSize += group->totalsize;
         if( isdata )
             DataSize += group->totalsize;
         group = group->next_group;
     }
+}
 
-    relocs = Root->reloclist;
-    if( Root->relocs )
-        WalkRelocList( &relocs, RelocWalkFn, 0 );
+void GetRdosSegs( void )
+/* resolve RDOS code & data segments */
+{
+    group_entry         *group;
+    struct seg_leader   *leader;
+    SEGDATA             *piece;
+    int                 iscode;
+    int                 isdata;
 
-    return( file_size );
+    leader = 0;
+
+    for( group = Groups; group != NULL; ) {
+        if( leader != group->leaders ) {
+            iscode = 0;
+            isdata = 0;
+            leader = group->leaders;
+            if( leader && leader->size ) {
+                piece = leader->pieces; 
+                if( piece ) {
+                    if( piece->iscode )
+                        RdosCodeSeg = leader->seg_addr.seg;
+                    if( piece->isidata || piece->isuninit )
+                        RdosDataSeg = leader->seg_addr.seg;
+                }
+            }
+        }
+        group = group->next_group;
+    }
+}
+
+static void WriteHeader16( void )
+/* write 16-bit device header */
+{
+    rdos_dev16_header   exe_head;
+    unsigned_16         temp16;
+
+    SeekLoad( 0 );
+    _HostU16toTarg( RDOS_SIGNATURE_16, exe_head.signature );
+    _HostU16toTarg( StartInfo.addr.off, exe_head.IP );
+    temp16 = (unsigned_16)CodeSize;
+    _HostU16toTarg( temp16, exe_head.code_size );
+    temp16 = (unsigned_16)RdosCodeSel;
+    _HostU16toTarg( temp16, exe_head.code_sel );
+    temp16 = (unsigned_16)DataSize;
+    _HostU16toTarg( temp16, exe_head.data_size );
+    temp16 = (unsigned_16)RdosDataSel;
+    _HostU16toTarg( temp16, exe_head.data_sel );
+    WriteLoad( &exe_head, sizeof( rdos_dev16_header ) );
 }
 
 void FiniRdosLoadFile( void )
 /* terminate writing of load file */
 {
     unsigned_32         hdr_size;
-    unsigned_16         code_size;
-    unsigned_16         temp16;
-    rdos_dev16_header   exe_head;
 
     hdr_size = sizeof( rdos_dev16_header );
     SeekLoad( hdr_size );
     Root->u.file_loc = hdr_size;
-    code_size = WriteRDOSData( hdr_size );
+    WriteRDOSData();
     DBIWrite();
-    SeekLoad( 0 );
-    _HostU16toTarg( RDOS_SIGNATURE_16, exe_head.signature );
-    _HostU16toTarg( StartInfo.addr.off, exe_head.IP );
-    _HostU16toTarg( code_size, exe_head.code_size );
-    temp16 = (unsigned_16)RdosCodeSel;
-    _HostU16toTarg( temp16, exe_head.code_sel );
-    _HostU16toTarg( 0, exe_head.data_size );
-    temp16 = (unsigned_16)RdosDataSel;
-    _HostU16toTarg( temp16, exe_head.data_sel );
-    WriteLoad( &exe_head, sizeof( rdos_dev16_header ) );
+    WriteHeader16();
 }

@@ -89,6 +89,8 @@ GLOB unsigned_32    NumExports;
 #ifdef _RDOS
 GLOB unsigned_32    RdosCodeSel;
 GLOB unsigned_32    RdosDataSel;
+GLOB segment        RdosCodeSeg;
+GLOB segment        RdosDataSeg;
 #endif
 
 #undef GLOB

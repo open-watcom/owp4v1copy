@@ -256,6 +256,10 @@ static void DoLink( char *cmdline )
     GetStkAddr();
     GetStartAddr();
     PostAddrCalcFormatSpec();
+#ifdef _RDOS
+    if( FmtData.type & MK_RDOS )
+        GetRdosSegs();
+#endif    
     CheckErr();
     InitLoadFile();
     ObjPass2();
@@ -357,6 +361,8 @@ static void ResetMisc( void )
 #ifdef _RDOS
     RdosCodeSel = 0;
     RdosDataSel = 0;
+    RdosCodeSeg = 0;
+    RdosDataSeg = 0;
 #endif    
 }
 

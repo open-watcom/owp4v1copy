@@ -30,3 +30,4 @@
 ****************************************************************************/
 
 extern void FiniRdosLoadFile( void );
+extern void GetRdosSegs( void );

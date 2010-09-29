@@ -1081,8 +1081,20 @@ static void PatchData( fix_data *fix )
         }
         if( FmtData.type & (MK_DOS16M | MK_PHAR_MULTISEG) ) {
             PUT_U16( data, fix->tgt_addr.seg );
-        } else if( fix->done || (FmtData.type & (MK_QNX | MK_DOS)) ) {
-            if( isdbi && (LinkFlags & CV_DBI_FLAG) ) {    // FIXME
+        } else if( fix->done || (FmtData.type & (MK_QNX | MK_DOS | MK_RDOS)) ) {
+            if( FmtData.type & MK_RDOS ) {
+                segval = GET_U16( data ) + fix->tgt_addr.seg;
+                if( segval == RdosCodeSeg ) {
+                    segval = RdosCodeSel;
+                } else if( segval == RdosDataSeg ) {
+                    segval = RdosDataSel;
+                } else {
+                    LnkMsg( LOC+ERR+MSG_BAD_RELOC_TYPE, NULL );
+                }
+                if( segval == 0 ) {            
+                    LnkMsg( LOC+ERR+MSG_BAD_RELOC_TYPE, NULL );
+                }
+            } else if( isdbi && (LinkFlags & CV_DBI_FLAG) ) {    // FIXME
                 segval = FindGroupIdx( fix->tgt_addr.seg );
             } else if( fix->type & FIX_ABS ) {
                 /* MASM 5.1 stuffs abs seg length in displacement; ignore it like LINK. */
