@@ -51,3 +51,4 @@ extern int      DwarfCountDebugSections( void );
 extern offset   DwarfWriteElf( offset curr_off, stringtable *strtab,
                                 Elf32_Shdr *dbgsecbegin );
 extern offset   DwarfWriteTrailer(offset);
+extern void *   DwarfGetLineInfo( unsigned_32 *size );

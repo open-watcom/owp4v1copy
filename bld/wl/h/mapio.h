@@ -40,6 +40,7 @@ extern void     WritePubHead( void );
 extern void     WritePubModHead( void );
 extern void     WriteOvlHead( void );
 extern void     WriteModSegs( void );
+extern void     WriteMapLines( void );
 extern void     ProcUndefined( symbol * );
 extern void     RecordTracedSym( symbol * );
 extern void     WriteUndefined( void );

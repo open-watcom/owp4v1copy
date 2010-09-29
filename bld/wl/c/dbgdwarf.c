@@ -205,6 +205,18 @@ void DwarfInitModule( mod_entry *mod )
     memset( mod->d.d, 0, sizeof( dwarfmodinfo ) );
 }
 
+void *DwarfGetLineInfo( unsigned_32 *size )
+/*******************************************/
+{
+    if( SectionTable[SECT_DEBUG_LINE].size ) {
+        *size = SectionTable[SECT_DEBUG_LINE].size;
+        return( (void *)SectionTable[SECT_DEBUG_LINE].addr );
+    } else {
+        *size = 0;
+        return( NULL );
+    }
+}
+
 void DwarfP1ModuleScanned( void )
 /**************************************/
 {

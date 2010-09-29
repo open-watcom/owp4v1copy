@@ -957,6 +957,7 @@ static void DefinePublics( void )
     if( MapFlags & MAP_FLAG ) {
         if( MapFlags & MAP_VERBOSE ) {
             WriteModSegs();
+            WriteMapLines();
         }
         StopMapBuffering();
     }
