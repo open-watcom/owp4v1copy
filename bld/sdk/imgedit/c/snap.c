@@ -57,6 +57,8 @@ static HWND     snapWindow;
 
 void AbortSnap( HWND hwnd );
 
+#ifdef __NT__
+
 /*
  * deskTopWindowHook
  */
@@ -73,6 +75,8 @@ static BOOL deskTopWindowHook( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     return( FALSE );
 
 } /* deskTopWindowHook */
+
+#endif
 
 /*
  * redrawPrevRegion - redraw the previously selected region
