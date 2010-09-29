@@ -45,7 +45,7 @@ static int              rightColorIndex;
 /*
  * chooseThePalette - check the number of colors and decide which palette we need
  */
-void chooseThePalette( int num_of_colors )
+static void chooseThePalette( int num_of_colors )
 {
     switch( num_of_colors ) {
     case 2:
@@ -65,7 +65,7 @@ void chooseThePalette( int num_of_colors )
  * getColorIndex - given a color, return the index of that color in the current palette
  *               - return -1 if the color is not found in the palette
  */
-int getColorIndex( COLORREF color )
+static int getColorIndex( COLORREF color )
 {
     int         i;
 

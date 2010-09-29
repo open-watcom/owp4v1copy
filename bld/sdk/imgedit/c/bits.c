@@ -46,7 +46,7 @@ static COLORREF         colorPalette[16] = {
 /*
  * getTheBitmapBits - different for PM and Windows
  */
-void getTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
+static void getTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
 {
     _wpi_getbitmapbits( bitmap, bcount, bits );
 
@@ -57,7 +57,7 @@ void getTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
 /*
  * getTheBitmapBits - different for PM and Windows
  */
-void getTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
+static void getTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
 {
     BITMAP              bm;
     BITMAPINFO          *bmi;
@@ -246,9 +246,9 @@ void MySetPixel( bitmap_bits *bits, int x, int y, COLORREF color )
 #ifdef __OS2_PM__
 
 /*
- * setTheBitmapBits - sets bits for Windows
+ * setTheBitmapBits - set bits for PM
  */
-void setTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
+static void setTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
 {
     _wpi_setbitmapbits( bitmap, bcount, bits );
 
@@ -257,9 +257,9 @@ void setTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
 #else
 
 /*
- * setTheBitmapBits - sets bits for Windows
+ * setTheBitmapBits - set bits for Windows
  */
-void setTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
+static void setTheBitmapBits( HBITMAP bitmap, long bcount, BYTE *bits )
 {
     BITMAP              bm;
     BITMAPINFO          *bmi;

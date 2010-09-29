@@ -89,7 +89,7 @@ static void paintColors( HWND hwnd )
 /*
  * paintScreen - paint the screen and inverse window
   */
-void paintScreen( HWND hwnd )
+static void paintScreen( HWND hwnd )
 {
     WPI_PRES    pres;
     PAINTSTRUCT ps;
@@ -213,7 +213,7 @@ static void selectColor( WPI_POINT *pt, int mousebutton )
 /*
  * selectScreen - selects the screen color
  */
-void selectScreen( WPI_POINT *pt, int mousebutton )
+static void selectScreen( WPI_POINT *pt, int mousebutton )
 {
     WPI_RECT    wrect;
     int         top;

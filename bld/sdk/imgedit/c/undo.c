@@ -51,7 +51,7 @@ static void setBaseImage( img_node *node, an_undo_stack *stack )
 /*
  * moveToUndo - move the top of the redo stack to the top of the undo stack
  */
-void moveToUndo( an_undo_stack *stack )
+static void moveToUndo( an_undo_stack *stack )
 {
     an_undo_node        *new_redo_top;
 
@@ -78,7 +78,7 @@ void moveToUndo( an_undo_stack *stack )
 /*
  * copyBitmaps - copy the XOR and the AND bitmaps
  */
-void copyBitmaps( img_node *node, HBITMAP xorbitmap, HBITMAP andbitmap )
+static void copyBitmaps( img_node *node, HBITMAP xorbitmap, HBITMAP andbitmap )
 {
     WPI_PRES            pres;
     HDC                 destdc;
@@ -131,7 +131,7 @@ static void deleteRedoStack( an_undo_stack *stack )
 /*
  * addToRedo - add a node to the redo stack
  */
-void addToRedo( an_undo_stack *stack )
+static void addToRedo( an_undo_stack *stack )
 {
     if( stack == NULL ) {
         return;
@@ -193,7 +193,7 @@ static an_undo_stack *getStack( HWND hwnd )
  * checkIfSaved - check if the image is saved or not (by the number of
  *                undo's on the undo stack).
  */
-void checkIfSaved( img_node *node )
+static void checkIfSaved( img_node *node )
 {
     BOOL                issaved_flag;
     an_undo_stack       *stack;

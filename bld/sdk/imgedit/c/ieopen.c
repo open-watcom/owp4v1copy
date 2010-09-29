@@ -440,9 +440,9 @@ BOOL ReadIconFromData( void *data, char *fname, WRInfo *info, WResLangNode *lnod
 } /* ReadIconFromData */
 
 /*
- * DoReadCursor
+ * doReadCursor
  */
-BOOL DoReadCursor( char *fname, an_img_file *cursorfile, an_img *cursor,
+BOOL doReadCursor( char *fname, an_img_file *cursorfile, an_img *cursor,
                    WRInfo *info, WResLangNode *lnode )
 {
     img_node            node;
@@ -486,7 +486,7 @@ BOOL DoReadCursor( char *fname, an_img_file *cursorfile, an_img *cursor,
 
     return( TRUE );
 
-} /* DoReadCursor */
+} /* doReadCursor */
 
 /*
  * readInCursorFile - read the cursor file and set up structures
@@ -512,7 +512,7 @@ static BOOL readInCursorFile( char *fname )
     cursor = ImgResourceToImg( fp, cursorfile, 0 );
     fclose( fp );
 
-    return( DoReadCursor( fname, cursorfile, cursor, NULL, NULL ) );
+    return( doReadCursor( fname, cursorfile, cursor, NULL, NULL ) );
 
 } /* readInCursorFile */
 
@@ -535,7 +535,7 @@ BOOL ReadCursorFromData( void *data, char *fname, WRInfo *info,
     }
     cursor = ImgResourceToImgData( (BYTE *)data, &pos, cursorfile, 0 );
 
-    ret = DoReadCursor( fname, cursorfile, cursor, info, lnode );
+    ret = doReadCursor( fname, cursorfile, cursor, info, lnode );
 
     if( ret ) {
         SetupMenuAfterOpen();

@@ -94,7 +94,7 @@ static void addFunctionButton( button *tb, BOOL is_sticky )
 /*
  * addItems - add the buttons to the function bar
  */
-void addItems( void )
+static void addItems( void )
 {
     TOOLITEMINFO        tii;
     int                 i;

@@ -60,7 +60,7 @@ void AbortSnap( HWND hwnd );
 /*
  * deskTopWindowHook
  */
-BOOL deskTopWindowHook( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
+static BOOL deskTopWindowHook( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 {
     hwnd = hwnd;
     lparam = lparam;
@@ -77,7 +77,7 @@ BOOL deskTopWindowHook( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 /*
  * redrawPrevRegion - redraw the previously selected region
  */
-void redrawPrevRegion( void )
+static void redrawPrevRegion( void )
 {
     int         prevROP2;
     HDC         hdc;

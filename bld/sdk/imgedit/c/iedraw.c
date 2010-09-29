@@ -406,9 +406,9 @@ void DrawSinglePoint( HWND hwnd, WPI_POINT *pt, short mousebutton )
 } /* DrawSinglePoint */
 
 /*
- * drawPt - actually draw the point on the drawing region (uses LineDDA)
+ * DrawPt - actually draw the point on the drawing region (uses LineDDA)
  */
-void CALLBACK drawPt( int xpos, int ypos, WPI_PARAM2 lparam )
+void CALLBACK DrawPt( int xpos, int ypos, WPI_PARAM2 lparam )
 {
     HBRUSH      colorbrush;
     HBRUSH      oldbrush;
@@ -517,7 +517,7 @@ void CALLBACK drawPt( int xpos, int ypos, WPI_PARAM2 lparam )
         }
     }
 
-} /* drawPt */
+} /* DrawPt */
 
 /*
  * Paint - when the mouse button is down, we want to paint on the drawing area
@@ -544,7 +544,7 @@ void Paint( HWND hwnd, WPI_POINT *start_pt, WPI_POINT *end_pt, int mousebutton )
 
     currentMouseButton = mousebutton;
     SET_HWND_PARAM2( lparam, hwnd );
-    fp = _wpi_makelineddaprocinstance( drawPt, Instance );
+    fp = _wpi_makelineddaprocinstance( DrawPt, Instance );
     _wpi_linedda( s_pt.x, s_pt.y, e_pt.x, e_pt.y, (WPI_LINEDDAPROC)fp, lparam );
     _wpi_freeprocinstance( fp );
 

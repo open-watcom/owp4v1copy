@@ -295,7 +295,7 @@ static BOOL getSaveFName( char *fname, int imgtype )
 /*
  * saveBitmapFile - get the bitmap data and save it in fname
  */
-BOOL saveBitmapFile( img_node *node )
+static BOOL saveBitmapFile( img_node *node )
 {
     BITMAPFILEHEADER    bmfh;
     BITMAPINFO          *bmi;
@@ -451,7 +451,7 @@ BOOL SaveBitmapToData( img_node *node, BYTE **data, uint_32 *size )
  * saveImgFile - save the image (icon or cursor) file
  *             - note that node points to the "root" of the icon nodes
  */
-BOOL saveImgFile( img_node *node )
+static BOOL saveImgFile( img_node *node )
 {
     an_img_file         *img_file;
     an_img_resource     img_res;
@@ -624,7 +624,7 @@ BOOL saveImgFile( img_node *node )
 /*
  * getSaveImgDataLength
  */
-int getSaveImgDataLength( img_node *node, an_img_file *img_file,
+static int getSaveImgDataLength( img_node *node, an_img_file *img_file,
                           BITMAPINFOHEADER *imginfo, long imgfile_size )
 {
     img_node            *currentimage;

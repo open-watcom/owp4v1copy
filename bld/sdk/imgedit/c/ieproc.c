@@ -194,7 +194,7 @@ static void resizeClientArea( WPI_PARAM2 mp2 )
 /*
  * checkBrushItem - check the brush size item in the main menu
  */
-void checkBrushItem( HMENU hmenu, int newitem )
+static void checkBrushItem( HMENU hmenu, int newitem )
 {
     int         i;
     int         brush_size = 2;
