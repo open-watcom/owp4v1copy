@@ -270,7 +270,7 @@ $(hbook).chm $(hbook).chi : ../html/$(hbook).htm
 
 .EXTENSIONS: .ps .bmp
 
-$(hbook).ps : make_tmp $(book_objs) $(book_objs_ps) $(proj_objs)
+$(hbook).ps : $(book_objs) $(book_objs_ps) $(proj_objs)
     @set GMLINC=tmp;$(book_incs);$(whelp_incs);$(gml_incs)
 !ifeq docs_verbose 1
     @echo GMLINC=tmp;$(book_incs);$(whelp_incs);$(gml_incs)
@@ -278,13 +278,12 @@ $(hbook).ps : make_tmp $(book_objs) $(book_objs_ps) $(proj_objs)
     %make prepare_wgml_opts
     -$(wgml) "$(book_src) ( file $(optfile_wgml)"
 
-make_tmp: .symbolic
-    @if not exist tmp mkdir tmp
-
 .bmp: $(book_bmroot)
 .ps: tmp
 
+#Portability FIXME: that mkdir command may only work on MS platforms
 .bmp.ps:
+    @if not exist tmp mkdir tmp
     bmp2eps -c $< tmp$(SL)$^@
 
 ####################################################
