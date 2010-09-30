@@ -60,6 +60,8 @@ typedef struct {
     uint_16                     segment;
     uint_16                     col;
     uint_8                      is_stmt : 1;
+    uint_8                      is_32 : 1;
+    uint_8                      has_seg : 1;
     uint_8                      basic_block : 1;
     uint_8                      end_sequence : 1;
 } line_state_info;
@@ -457,12 +459,22 @@ static void dump_state( line_state_info *state )
 {
     char str[40];
 
-    if( state->segment == 0 ) {
-        sprintf( str, "%6d %08hX ", state->line, state->address );
-        BufWrite( str, strlen( str ) );
+    if( state->has_seg ) {
+        if( state->is_32 ) {
+            sprintf( str, "%5d %04hX:%08hX ", state->line, state->segment, state->address );
+            BufWrite( str, strlen( str ) );
+        } else {
+            sprintf( str, "%5d %04hX:%04hX ", state->line, state->segment, state->address );
+            BufWrite( str, strlen( str ) );
+        }
     } else {
-        sprintf( str, "%5d %04hX:%08hX ", state->line, state->segment, state->address );
-        BufWrite( str, strlen( str ) );
+        if( state->is_32 ) { 
+            sprintf( str, "%6d %08hX ", state->line, state->address );
+            BufWrite( str, strlen( str ) );
+        } else {
+            sprintf( str, "%6d %04hX ", state->line, state->address );
+            BufWrite( str, strlen( str ) );
+        }
     }
     state->col++;
     if( state->col == 4) {
@@ -543,6 +555,8 @@ void WriteMapLines( void )
 
     while( p - input < length ) {
         state.col = 0;
+        state.is_32 = 0;
+        state.has_seg = 0;
         unit_length = GET_U32( p );
         p += sizeof( uint_32 );
         unit_base = p;
@@ -607,8 +621,10 @@ void WriteMapLines( void )
                 case DW_LNE_set_address:
                     if( op_len == 4 ) {
                         tmp = GET_U32( p );
+                        state.is_32 = 1;
                     } else if( op_len == 2 ) {
                         tmp = GET_U16( p );
+                        state.is_32 = 0;
                     } else {
                         tmp = 0xffffffff;
                     }
@@ -616,6 +632,7 @@ void WriteMapLines( void )
                     p += op_len;
                     break;
                 case DW_LNE_set_segment:
+                    state.has_seg = 1;
                     if( op_len == 4 ) {
                         tmp = GET_U32( p );
                     } else if( op_len == 2 ) {

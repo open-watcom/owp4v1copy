@@ -958,6 +958,9 @@ static void DefinePublics( void )
         if( MapFlags & MAP_VERBOSE ) {
             WriteModSegs();
         }
+        if( !( MapFlags & MAP_LINES ) ) {
+            StopMapBuffering();
+        }
     }
     FindFloatSyms();
 }
@@ -969,8 +972,8 @@ void FiniMap( void )
     if( MapFlags & MAP_FLAG ) {
         if( MapFlags & MAP_LINES ) {
             WriteMapLines();
+            StopMapBuffering();
         }
-        StopMapBuffering();
     }
 }
 
