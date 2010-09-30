@@ -847,3 +847,6 @@ pick(   WIE_TIP_ROTATECL,
 pick(   WIE_TIP_ROTATECC,
         "Rotate Counterclockwise",
         "Rotate Counterclockwise" )
+pick(   WIE_TIP_UPDATE,
+        "Update",
+        "Update" )

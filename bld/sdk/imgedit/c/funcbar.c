@@ -34,59 +34,99 @@
 #include "imgedit.h"
 #include "funcbar.h"
 
+#define NUM_TOOLS       26
+#define NUM_TOOLS_DDE   23
+
 static void             *functionBar;
 static HWND             hFunctionBar = NULL;
-static button           toolList[] = {
-    { NEWBMP, IMGED_NEW, FALSE, NONE, 0, 0, WIE_TIP_NEW },
-    { OPENBMP, IMGED_OPEN, FALSE, NONE, 0, 0, WIE_TIP_OPEN },
-    { SAVEBMP, IMGED_SAVE, FALSE, NONE, 0, 0, WIE_TIP_SAVE },
-    { GRIDBMP, IMGED_GRID, TRUE, GRIDDBMP, 0, 0, WIE_TIP_GRID },
-    { MAXIMIZEBMP, IMGED_MAXIMIZE, TRUE, MAXIMIZEDBMP, 0, 0, WIE_TIP_MAXIMIZE },
-    { CUTBMP, IMGED_CUT, FALSE, NONE, 0, 0, WIE_TIP_CUT },
-    { COPYBMP, IMGED_COPY, FALSE, NONE, 0, 0, WIE_TIP_COPY },
-    { PASTEBMP, IMGED_PASTE, FALSE, NONE, 0, 0, WIE_TIP_PASTE },
-    { UNDOBMP, IMGED_UNDO, FALSE, NONE, 0, 0, WIE_TIP_UNDO },
-    { REDOBMP, IMGED_REDO, FALSE, NONE, 0, 0, WIE_TIP_REDO },
-    { CLEARBMP, IMGED_CLEAR, FALSE, NONE, 0, 0, WIE_TIP_CLEAR },
-    { SNAPBMP, IMGED_SNAP, FALSE, NONE, 0, 0, WIE_TIP_SNAP },
-    { RIGHTBMP, IMGED_RIGHT, FALSE, NONE, 0, 0, WIE_TIP_RIGHT },
-    { LEFTBMP, IMGED_LEFT, FALSE, NONE, 0, 0, WIE_TIP_LEFT },
-    { UPBMP, IMGED_UP, FALSE, NONE, 0, 0, WIE_TIP_UP },
-    { DOWNBMP, IMGED_DOWN, FALSE, NONE, 0, 0, WIE_TIP_DOWN },
-    { HFLIPBMP, IMGED_FLIPHORZ, TRUE, HFLIPDBMP, 0, 0, WIE_TIP_FLIPHORZ },
-    { VFLIPBMP, IMGED_FLIPVERT, TRUE, VFLIPDBMP, 0, 0, WIE_TIP_FLIPVERT },
-    { CLROTBMP, IMGED_ROTATECL, TRUE, CLROTDBMP, 0, 0, WIE_TIP_ROTATECL },
-    { CCROTBMP, IMGED_ROTATECC, TRUE, CCROTDBMP, 0, 0, WIE_TIP_ROTATECC },
-    { SAVEBMP, IMGED_DDE_UPDATE_PRJ, FALSE, NONE, 0, 0, -1 }
+
+static button           toolList[NUM_TOOLS] = {
+    { NEWBMP,       IMGED_NEW,      FALSE,  NONE,           0, 0, WIE_TIP_NEW       },
+    { OPENBMP,      IMGED_OPEN,     FALSE,  NONE,           0, 0, WIE_TIP_OPEN      },
+    { SAVEBMP,      IMGED_SAVE,     FALSE,  NONE,           0, 0, WIE_TIP_SAVE      },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { GRIDBMP,      IMGED_GRID,     TRUE,   GRIDDBMP,       0, 0, WIE_TIP_GRID      },
+    { MAXIMIZEBMP,  IMGED_MAXIMIZE, FALSE,  MAXIMIZEDBMP,   0, 0, WIE_TIP_MAXIMIZE  },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { CUTBMP,       IMGED_CUT,      FALSE,  NONE,           0, 0, WIE_TIP_CUT       },
+    { COPYBMP,      IMGED_COPY,     FALSE,  NONE,           0, 0, WIE_TIP_COPY      },
+    { PASTEBMP,     IMGED_PASTE,    FALSE,  NONE,           0, 0, WIE_TIP_PASTE     },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { UNDOBMP,      IMGED_UNDO,     FALSE,  NONE,           0, 0, WIE_TIP_UNDO      },
+    { REDOBMP,      IMGED_REDO,     FALSE,  NONE,           0, 0, WIE_TIP_REDO      },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { CLEARBMP,     IMGED_CLEAR,    FALSE,  NONE,           0, 0, WIE_TIP_CLEAR     },
+    { SNAPBMP,      IMGED_SNAP,     FALSE,  NONE,           0, 0, WIE_TIP_SNAP      },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { RIGHTBMP,     IMGED_RIGHT,    FALSE,  NONE,           0, 0, WIE_TIP_RIGHT     },
+    { LEFTBMP,      IMGED_LEFT,     FALSE,  NONE,           0, 0, WIE_TIP_LEFT      },
+    { UPBMP,        IMGED_UP,       FALSE,  NONE,           0, 0, WIE_TIP_UP        },
+    { DOWNBMP,      IMGED_DOWN,     FALSE,  NONE,           0, 0, WIE_TIP_DOWN      },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { HFLIPBMP,     IMGED_FLIPHORZ, FALSE,  HFLIPDBMP,      0, 0, WIE_TIP_FLIPHORZ  },
+    { VFLIPBMP,     IMGED_FLIPVERT, FALSE,  VFLIPDBMP,      0, 0, WIE_TIP_FLIPVERT  },
+    { CLROTBMP,     IMGED_ROTATECL, FALSE,  CLROTDBMP,      0, 0, WIE_TIP_ROTATECL  },
+    { CCROTBMP,     IMGED_ROTATECC, FALSE,  CCROTDBMP,      0, 0, WIE_TIP_ROTATECC  }
 };
 
+static button           toolListDDE[NUM_TOOLS_DDE] = {
+    { CLEARBMP,     IMGED_CLEAR,    FALSE,  NONE,           0, 0, WIE_TIP_CLEAR     },
+    { SAVEBMP,      IMGED_DDE_UPDATE_PRJ, FALSE, NONE,      0, 0, WIE_TIP_UPDATE    },
+    { GRIDBMP,      IMGED_GRID,     FALSE,  GRIDDBMP,       0, 0, WIE_TIP_GRID      },
+    { MAXIMIZEBMP,  IMGED_MAXIMIZE, FALSE,  MAXIMIZEDBMP,   0, 0, WIE_TIP_MAXIMIZE  },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { CUTBMP,       IMGED_CUT,      FALSE,  NONE,           0, 0, WIE_TIP_CUT       },
+    { COPYBMP,      IMGED_COPY,     FALSE,  NONE,           0, 0, WIE_TIP_COPY      },
+    { PASTEBMP,     IMGED_PASTE,    FALSE,  NONE,           0, 0, WIE_TIP_PASTE     },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { UNDOBMP,      IMGED_UNDO,     FALSE,  NONE,           0, 0, WIE_TIP_UNDO      },
+    { REDOBMP,      IMGED_REDO,     FALSE,  NONE,           0, 0, WIE_TIP_REDO      },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { SNAPBMP,      IMGED_SNAP,     FALSE,  NONE,           0, 0, WIE_TIP_SNAP      },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { RIGHTBMP,     IMGED_RIGHT,    FALSE,  NONE,           0, 0, WIE_TIP_RIGHT     },
+    { LEFTBMP,      IMGED_LEFT,     FALSE,  NONE,           0, 0, WIE_TIP_LEFT      },
+    { UPBMP,        IMGED_UP,       FALSE,  NONE,           0, 0, WIE_TIP_UP        },
+    { DOWNBMP,      IMGED_DOWN,     FALSE,  NONE,           0, 0, WIE_TIP_DOWN      },
+    { NONE,         0,              FALSE,  NONE,           0, 0, -1                },
+    { HFLIPBMP,     IMGED_FLIPHORZ, FALSE,  HFLIPDBMP,      0, 0, WIE_TIP_FLIPHORZ  },
+    { VFLIPBMP,     IMGED_FLIPVERT, FALSE,  VFLIPDBMP,      0, 0, WIE_TIP_FLIPVERT  },
+    { CLROTBMP,     IMGED_ROTATECL, FALSE,  CLROTDBMP,      0, 0, WIE_TIP_ROTATECL  },
+    { CCROTBMP,     IMGED_ROTATECC, FALSE,  CCROTDBMP,      0, 0, WIE_TIP_ROTATECC  }
+};
+    
 /*
  * addFunctionButton - add a button to the function bar
  */
-static void addFunctionButton( button *tb, BOOL is_sticky )
+static void addFunctionButton( button *tb )
 {
     TOOLITEMINFO        info;
 
-    tb->hbmp = _wpi_loadbitmap( Instance, tb->name );
-    info.bmp = tb->hbmp;
-    info.id = tb->id;
-    info.flags = ITEM_DOWNBMP;
+    if( tb->id > 0 ) {
+        tb->hbmp = _wpi_loadbitmap( Instance, tb->name );
+        info.bmp = tb->hbmp;
+        info.id = tb->id;
+        info.flags = ITEM_DOWNBMP;
 
-    if( is_sticky ) {
-        info.flags |= ITEM_STICKY;
-    }
-    if( tb->has_down ) {
-        tb->downbmp = _wpi_loadbitmap( Instance, tb->downname );
-    } else {
-        tb->downbmp = tb->hbmp;
-    }
-    if( tb->tip_id >= 0 ) {
-        _wpi_loadstring( Instance, tb->tip_id, info.tip, MAX_TIP );
-    } else {
-        info.tip[0] = '\0';
-    }
+        if( tb->sticky ) {
+            info.flags |= ITEM_STICKY;
+        }
+        if( tb->downbmp != NONE ) {
+            tb->downbmp = _wpi_loadbitmap( Instance, tb->downname );
+        } else {
+            tb->downbmp = tb->hbmp;
+        }
+        if( tb->tip_id >= 0 ) {
+            _wpi_loadstring( Instance, tb->tip_id, info.tip, MAX_TIP );
+        } else {
+            info.tip[0] = '\0';
+        }
 
-    info.depressed = tb->downbmp;
+        info.depressed = tb->downbmp;
+    } else {
+        info.flags = ITEM_BLANK;
+        info.blank_space = 5;
+    };
     ToolBarAddItem( functionBar, &info );
 
 } /* addFunctionButton */
@@ -96,53 +136,16 @@ static void addFunctionButton( button *tb, BOOL is_sticky )
  */
 static void addItems( void )
 {
-    TOOLITEMINFO        tii;
-    int                 i;
-
-    tii.flags = ITEM_BLANK;
-    tii.blank_space = 5;
+    int i;
 
     if( ImgedIsDDE ) {
-        addFunctionButton( &toolList[10], FALSE );
-        addFunctionButton( &toolList[20], FALSE );
-    } else {
-        for( i = 0; i < 3; i++ ) {
-            addFunctionButton( &toolList[i], FALSE );
+        for( i = 0; i < NUM_TOOLS_DDE; i++ ) {
+            addFunctionButton( &toolListDDE[i] );
         }
-        ToolBarAddItem( functionBar, &tii );
-    }
-
-    addFunctionButton( &toolList[3], TRUE );
-    addFunctionButton( &toolList[4], FALSE );
-    ToolBarAddItem( functionBar, &tii );
-
-    for( i = 5; i < 8; i++ ) {
-        addFunctionButton( &toolList[i], FALSE );
-    }
-
-    ToolBarAddItem( functionBar, &tii );
-    for( i = 8; i < 10; i++ ) {
-        addFunctionButton( &toolList[i], FALSE );
-    }
-
-    ToolBarAddItem( functionBar, &tii );
-
-    if( ImgedIsDDE ) {
-        addFunctionButton( &toolList[11], FALSE );
     } else {
-        for( i = 10; i < 12; i++ ) {
-            addFunctionButton( &toolList[i], FALSE );
+        for( i = 0; i < NUM_TOOLS; i++ ) {
+            addFunctionButton( &toolList[i] );
         }
-    }
-
-    ToolBarAddItem( functionBar, &tii );
-    for( i = 12; i < 16; i++ ) {
-        addFunctionButton( &toolList[i], FALSE );
-    }
-
-    ToolBarAddItem( functionBar, &tii );
-    for (i = 16; i < 20; i++ ) {
-        addFunctionButton( &toolList[i], FALSE );
     }
 
 } /* addItems */
@@ -205,10 +208,23 @@ BOOL FunctionBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
         break;
 
     case WM_DESTROY:
-        for( i = 0; i < NUMBER_OF_FUNCTIONS; i++ ) {
-            _wpi_deletebitmap( toolList[i].hbmp );
-            if( toolList[i].has_down ) {
-                _wpi_deletebitmap( toolList[i].downbmp );
+        if( ImgedIsDDE ) {
+            for( i = 0; i < NUM_TOOLS_DDE; i++ ) {
+                if( toolListDDE[i].name != NONE ) {
+                    _wpi_deletebitmap( toolListDDE[i].hbmp );
+                }
+                if( toolListDDE[i].downbmp != NONE ) {
+                    _wpi_deletebitmap( toolListDDE[i].downbmp );
+                }
+            }
+        } else {
+            for( i = 0; i < NUM_TOOLS; i++ ) {
+                if( toolList[i].name != NONE ) {
+                    _wpi_deletebitmap( toolList[i].hbmp );
+                }
+                if( toolList[i].downbmp != NONE ) {
+                    _wpi_deletebitmap( toolList[i].downbmp );
+                }
             }
         }
         break;

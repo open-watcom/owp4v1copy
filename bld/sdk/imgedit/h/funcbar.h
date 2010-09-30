@@ -35,14 +35,14 @@
 typedef struct {
     char        *name;
     int         id;
-    BOOL        has_down;
+    BOOL        sticky;
     char        *downname;
     HBITMAP     hbmp;
     HBITMAP     downbmp;
     int         tip_id;
 } button;
 
-#define NONE                    ""
+#define NONE                    NULL
 #ifdef __NT__
     #define FUNC_BUTTON_WIDTH   26      // add 4 because it's the magic number
     #define FUNC_BUTTON_HEIGHT  22      // ditto
@@ -56,7 +56,7 @@ typedef struct {
 typedef struct {
     int         name;
     int         id;
-    BOOL        has_down;
+    BOOL        sticky;
     int         downname;
     HBITMAP     hbmp;
     HBITMAP     downbmp;
