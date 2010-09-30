@@ -311,8 +311,8 @@ void PushToolButton( WORD cmdid )
 {
     if( cmdid != currentTool ) {
         ToolBarSetState( toolBar, currentTool, BUTTON_UP );
-        ToolBarSetState( toolBar, cmdid, BUTTON_DOWN );
-        currentTool = cmdid;
     }
+    ToolBarSetState( toolBar, cmdid, BUTTON_DOWN );
+    currentTool = cmdid;
 
 } /* PushToolButton */
