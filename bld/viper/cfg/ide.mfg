@@ -1092,6 +1092,7 @@ rem    CSwitch  1, x??d?, " Link DLL", , ON
     VSwitch  1, rk???, "Data selector:", "op datasel", =, ONE, REQ, ""
     VSwitch  1, ?????, "Other options(,):",,, MULTI, REQ, ""
     CSwitch  1, ?????, "Map file", "op m", ON
+    CSwitch  1, ?????, "Line numbers in map file", "op maplines", OFF
     CSwitch  1, l????, "Incremental linking", "op inc", OFF
     CSwitch  1, d?6??, "Incremental linking", "op inc", OFF
     CSwitch  1, ????w, "Incremental linking", "op inc", OFF
