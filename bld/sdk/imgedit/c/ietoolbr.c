@@ -39,11 +39,21 @@
 int TBWidth = TB_WIDTH;
 int TBHeight = TB_HEIGHT;
 
-static HBITMAP          hToolBmp[NUMBER_OF_TOOLS];
-static HBITMAP          hToolDep[NUMBER_OF_TOOLS];
-static void             *tool_Bar;
+static void             *toolBar;
 static WORD             currentTool;
 static BOOL             hotspotPresent = FALSE;
+static button_bitmaps   bitmaps[NUMBER_OF_TOOLS] = {
+    { CLPRECT,  CLPRECTD,   NULL, NULL },
+    { PENCIL,   PENCILD,    NULL, NULL },
+    { LINE,     LINED,      NULL, NULL },
+    { BRUSH,    BRUSHD,     NULL, NULL },
+    { CIRCLEO,  CIRCLEOD,   NULL, NULL },
+    { CIRCLEF,  CIRCLEFD,   NULL, NULL },
+    { RECTO,    RECTOD,     NULL, NULL },
+    { RECTF,    RECTFD,     NULL, NULL },
+    { FILL,     FILLD,      NULL, NULL },
+    { HOTSPOT,  HOTSPOTD,   NULL, NULL }
+};
 
 /*
  * ToolBarHelpProc
@@ -96,15 +106,15 @@ BOOL ToolBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
         }
 
         id = LOWORD( wparam );
-        ToolBarSetState( tool_Bar, id, lparam ? BUTTON_UP : BUTTON_DOWN );
+        ToolBarSetState( toolBar, id, lparam ? BUTTON_UP : BUTTON_DOWN );
         if( id != currentTool ) {
             if( lparam ) {
-                ToolBarSetState( tool_Bar, currentTool, BUTTON_DOWN );
+                ToolBarSetState( toolBar, currentTool, BUTTON_DOWN );
             } else {
-                ToolBarSetState( tool_Bar, currentTool, BUTTON_UP );
+                ToolBarSetState( toolBar, currentTool, BUTTON_UP );
             }
         } else {
-            ToolBarSetState( tool_Bar, currentTool, BUTTON_DOWN );
+            ToolBarSetState( toolBar, currentTool, BUTTON_DOWN );
             if( !lparam ) {
                 currentTool = id;
             }
@@ -125,8 +135,8 @@ BOOL ToolBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 
     case WM_DESTROY:
         for( i = 0; i < NUMBER_OF_TOOLS; i++ ) {
-            _wpi_deletebitmap( hToolBmp[i] );
-            _wpi_deletebitmap( hToolDep[i] );
+            _wpi_deletebitmap( bitmaps[i].hToolBmp );
+            _wpi_deletebitmap( bitmaps[i].hToolDep );
         }
         break;
 
@@ -166,28 +176,12 @@ void InitTools( HWND hparent )
                                       (IMGED_DIM)(ImgedConfigInfo.tool_xpos + TBWidth),
                                       (IMGED_DIM)(ImgedConfigInfo.tool_ypos + TBHeight) );
 
-    hToolBmp[0] = _wpi_loadbitmap( Instance, CLPRECT );
-    hToolDep[0] = _wpi_loadbitmap( Instance, CLPRECTD );
-    hToolBmp[1] = _wpi_loadbitmap( Instance, PENCIL );
-    hToolDep[1] = _wpi_loadbitmap( Instance, PENCILD );
-    hToolBmp[2] = _wpi_loadbitmap( Instance, LINE );
-    hToolDep[2] = _wpi_loadbitmap( Instance, LINED );
-    hToolBmp[3] = _wpi_loadbitmap( Instance, BRUSH );
-    hToolDep[3] = _wpi_loadbitmap( Instance, BRUSHD );
-    hToolBmp[4] = _wpi_loadbitmap( Instance, CIRCLEO );
-    hToolDep[4] = _wpi_loadbitmap( Instance, CIRCLEOD );
-    hToolBmp[5] = _wpi_loadbitmap( Instance, CIRCLEF );
-    hToolDep[5] = _wpi_loadbitmap( Instance, CIRCLEFD );
-    hToolBmp[6] = _wpi_loadbitmap( Instance, RECTO );
-    hToolDep[6] = _wpi_loadbitmap( Instance, RECTOD );
-    hToolBmp[7] = _wpi_loadbitmap( Instance, RECTF );
-    hToolDep[7] = _wpi_loadbitmap( Instance, RECTFD );
-    hToolBmp[8] = _wpi_loadbitmap( Instance, FILL );
-    hToolDep[8] = _wpi_loadbitmap( Instance, FILLD );
-    hToolBmp[9] = _wpi_loadbitmap( Instance, HOTSPOT );
-    hToolDep[9] = _wpi_loadbitmap( Instance, HOTSPOTD );
+    for( i = 0; i < NUMBER_OF_TOOLS; i++ ) {
+        bitmaps[i].hToolBmp = _wpi_loadbitmap( Instance, bitmaps[i].pszToolBmp );
+        bitmaps[i].hToolDep = _wpi_loadbitmap( Instance, bitmaps[i].pszToolDep );
+    }
 
-    tool_Bar = ToolBarInit( hparent );
+    toolBar = ToolBarInit( hparent );
     tdi.button_size = buttonsize;
     tdi.border_size = border;
     tdi.area = toolbar_loc;
@@ -199,9 +193,9 @@ void InitTools( HWND hparent )
     tdi.foreground = (HBITMAP)0;
     tdi.is_fixed = FALSE;
 
-    ToolBarDisplay( tool_Bar, &tdi );
+    ToolBarDisplay( toolBar, &tdi );
 
-    htoolbar = ToolBarWindow( tool_Bar );
+    htoolbar = ToolBarWindow( toolBar );
     if( htoolbar != (HWND)NULL ) {
         RECT    rect;
         int     w, h;
@@ -220,17 +214,17 @@ void InitTools( HWND hparent )
     tii.flags = ITEM_DOWNBMP | ITEM_STICKY;
 
     for( i = 0; i < NUMBER_OF_TOOLS - 1; i++ ) {
-        tii.bmp = hToolBmp[i];
+        tii.bmp = bitmaps[i].hToolBmp;
         tii.id = i + IMGED_CLIP;
-        tii.depressed = hToolDep[i];
-        ToolBarAddItem( tool_Bar, &tii );
+        tii.depressed = bitmaps[i].hToolDep;
+        ToolBarAddItem( toolBar, &tii );
     }
 
     hmenu = _wpi_getmenu( _wpi_getframe( HMainWindow ) );
     if( ImgedConfigInfo.show_state & SET_SHOW_TOOL ) {
         CheckToolbarItem( hmenu );
     }
-    ToolBarSetState( tool_Bar, IMGED_FREEHAND, BUTTON_DOWN );
+    ToolBarSetState( toolBar, IMGED_FREEHAND, BUTTON_DOWN );
     SetToolType( IMGED_FREEHAND );
     _wpi_enablemenuitem( hmenu, IMGED_HOTSPOT, FALSE, FALSE );
     SendMessage( htoolbar, WM_SIZE, 0, 0 );
@@ -244,7 +238,7 @@ void CheckToolbarItem( HMENU hmenu )
 {
     HWND        htoolbar;
 
-    htoolbar = ToolBarWindow( tool_Bar );
+    htoolbar = ToolBarWindow( toolBar );
 
     if( _wpi_isitemchecked( hmenu, IMGED_TOOLBAR ) ) {
         _wpi_checkmenuitem( hmenu, IMGED_TOOLBAR, MF_UNCHECKED, FALSE );
@@ -264,7 +258,7 @@ void CheckToolbarItem( HMENU hmenu )
  */
 void CloseToolBar( void )
 {
-    ToolBarFini( tool_Bar );
+    ToolBarFini( toolBar );
 
 } /* CloseToolBar */
 
@@ -280,11 +274,11 @@ void AddHotSpotTool( BOOL faddhotspot )
         if( hotspotPresent ) {
             return;
         }
-        tii.bmp = hToolBmp[9];
+        tii.bmp = bitmaps[9].hToolBmp;
         tii.id = IMGED_HOTSPOT;
         tii.flags = ITEM_DOWNBMP | ITEM_STICKY;
-        tii.depressed = hToolDep[9];
-        ToolBarAddItem( tool_Bar, &tii );
+        tii.depressed = bitmaps[9].hToolDep;
+        ToolBarAddItem( toolBar, &tii );
         hotspotPresent = TRUE;
         if( HMainWindow != NULL ) {
             hmenu = _wpi_getmenu( _wpi_getframe( HMainWindow ) );
@@ -294,11 +288,11 @@ void AddHotSpotTool( BOOL faddhotspot )
         if( !hotspotPresent ) {
             return;
         }
-        ToolBarDeleteItem( tool_Bar, IMGED_HOTSPOT );
+        ToolBarDeleteItem( toolBar, IMGED_HOTSPOT );
         if( currentTool == IMGED_HOTSPOT ) {
             currentTool = IMGED_FREEHAND;
             SetToolType( (int)currentTool );
-            ToolBarSetState( tool_Bar, currentTool, BUTTON_DOWN );
+            ToolBarSetState( toolBar, currentTool, BUTTON_DOWN );
         }
         hotspotPresent = FALSE;
         if( HMainWindow != NULL ) {
@@ -306,7 +300,7 @@ void AddHotSpotTool( BOOL faddhotspot )
             _wpi_enablemenuitem( hmenu, IMGED_HOTSPOT, FALSE, FALSE );
         }
     }
-    UpdateToolBar( tool_Bar );
+    UpdateToolBar( toolBar );
 
 } /* AddHotSpotTool */
 
@@ -316,8 +310,8 @@ void AddHotSpotTool( BOOL faddhotspot )
 void PushToolButton( WORD cmdid )
 {
     if( cmdid != currentTool ) {
-        ToolBarSetState( tool_Bar, currentTool, BUTTON_UP );
-        ToolBarSetState( tool_Bar, cmdid, BUTTON_DOWN );
+        ToolBarSetState( toolBar, currentTool, BUTTON_UP );
+        ToolBarSetState( toolBar, cmdid, BUTTON_DOWN );
         currentTool = cmdid;
     }
 
