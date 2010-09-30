@@ -154,6 +154,7 @@ parse_entry     Directives[] = {
 
 parse_entry     MainOptions[] = {
     "Map",          &ProcMap,           MK_ALL, 0,
+    "MAPLines",     &ProcMapLines,      MK_ALL, 0,
     "STack",        &ProcStack,         MK_ALL, 0,
     "NODefaultlibs",&ProcNoDefLibs,     MK_ALL, CF_NO_DEF_LIBS,
     "Quiet",        &ProcQuiet,         MK_ALL, 0,

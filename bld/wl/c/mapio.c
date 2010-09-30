@@ -48,8 +48,6 @@
 #include "ring.h"
 #include "mapio.h"
 
-/* this code is not yet tested
-
 #include "dwarf.h"
 
 extern void *   DwarfGetLineInfo( unsigned_32 *size );
@@ -60,12 +58,11 @@ typedef struct {
     uint_32                     line;
     uint_32                     column;
     uint_16                     segment;
+    uint_16                     col;
     uint_8                      is_stmt : 1;
     uint_8                      basic_block : 1;
     uint_8                      end_sequence : 1;
-} state_info;
-
-*/
+} line_state_info;
 
 #undef pick
 #define pick( num, string ) string
@@ -87,7 +84,6 @@ static  clock_t         ClockTicks;
 static  bool            Absolute_Seg;
 static bool             Buffering;  // buffering on/off.
 static int              BufferSize;          // # of chars in buffer.
-
 
 void ResetMapIO( void )
 /****************************/
@@ -445,9 +441,7 @@ void WriteModSegs( void )
     WalkMods( WriteVerbMod );
 }
 
-/* this code is not yet tested
-
-static void init_state( state_info *state, int default_is_stmt )
+static void init_state( line_state_info *state, int default_is_stmt )
 {
     state->address = 0;
     state->segment = 0;
@@ -459,13 +453,22 @@ static void init_state( state_info *state, int default_is_stmt )
     state->end_sequence = 0;
 }
 
-static void dump_state( state_info *state )
+static void dump_state( line_state_info *state )
 {
-    if( state->segment != 0 ) {
-        WriteMap( "%04hX:", state->segment );
+    char str[40];
+
+    if( state->segment == 0 ) {
+        sprintf( str, "%6d %08hX ", state->line, state->address );
+        BufWrite( str, strlen( str ) );
+    } else {
+        sprintf( str, "%5d %04hX:%08hX ", state->line, state->segment, state->address );
+        BufWrite( str, strlen( str ) );
     }
-    WriteMap( "%08hX ", state->address );
-    WriteMap( "%d ", state->line );
+    state->col++;
+    if( state->col == 4) {
+        WriteMapNL( 1 );
+        state->col = 0;
+    }
 }
 
 uint_8 *DecodeULEB128( const uint_8 *input, uint_32 *value )
@@ -526,7 +529,7 @@ void WriteMapLines( void )
     int                         line_base;
     int_32                      itmp;
     int                         default_is_stmt;
-    state_info                  state;
+    line_state_info             state;
     uint                        min_instr;
     uint_32                     unit_length;
     uint_8                      *unit_base;
@@ -539,7 +542,8 @@ void WriteMapLines( void )
     p = input;
 
     while( p - input < length ) {
-        unit_length = *(uint_32 *)p;
+        state.col = 0;
+        unit_length = GET_U32( p );
         p += sizeof( uint_32 );
         unit_base = p;
 
@@ -554,7 +558,7 @@ void WriteMapLines( void )
         line_base = *(int_8 *)p;
         p += 1;
 
-        line_range = *(uint_8 *)p;
+        line_range = GET_U8( p );
         p += 1;
 
         opcode_base = *p;
@@ -574,12 +578,16 @@ void WriteMapLines( void )
         }
         p++;
         while( *p != 0 ) {
+            WriteMapNL( 1 );
+            WriteMap( "Line numbers for %s.obj", p );
+            WriteMapNL( 1 );
             p += strlen( (char *)p ) + 1;
             p = DecodeULEB128( p, &directory );
             p = DecodeULEB128( p, &mod_time );
             p = DecodeULEB128( p, &file_length );
             if( p - input >= length ) return;
         }
+        
         p++;
         init_state( &state, default_is_stmt );
         while( p - unit_base < unit_length ) {
@@ -593,15 +601,14 @@ void WriteMapLines( void )
                 switch( op_code ) {
                 case DW_LNE_end_sequence:
                     state.end_sequence = 1;
-                    dump_state( &state );
                     init_state( &state, default_is_stmt );
                     p+= op_len;
                     break;
                 case DW_LNE_set_address:
                     if( op_len == 4 ) {
-                        tmp = *(uint_32 *)p;
+                        tmp = GET_U32( p );
                     } else if( op_len == 2 ) {
-                        tmp = *(uint_16 *)p;
+                        tmp = GET_U16( p );
                     } else {
                         tmp = 0xffffffff;
                     }
@@ -610,9 +617,9 @@ void WriteMapLines( void )
                     break;
                 case DW_LNE_set_segment:
                     if( op_len == 4 ) {
-                        tmp = *(uint_32 *)p;
+                        tmp = GET_U32( p );
                     } else if( op_len == 2 ) {
-                        tmp = *(uint_16 *)p;
+                        tmp = GET_U16( p );
                     } else {
                         tmp = 0xffffffff;
                     }
@@ -664,7 +671,7 @@ void WriteMapLines( void )
                     state.address += ( ( 255 - opcode_base ) / line_range ) * min_instr;
                     break;
                 case DW_LNS_fixed_advance_pc:
-                    tmp = *(uint_16 *)p;
+                    tmp = GET_U16( p );
                     p += sizeof( uint_16 );
                     state.address += tmp;
                     break;
@@ -677,19 +684,13 @@ void WriteMapLines( void )
                 op_code -= opcode_base;
                 state.line += line_base + op_code % line_range;
                 state.address += ( op_code / line_range ) * min_instr;
+                dump_state( &state );
                 state.basic_block = 0;
             }
-            WriteMapNL( 1 );
         }
         free( opcode_lengths  );
         WriteMapNL( 1 );
     }    
-}
-
-*/
-
-void WriteMapLines( void )
-{
 }
 
 static bool CheckSymRecList( void *_info, void *sym )

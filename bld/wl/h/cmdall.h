@@ -74,6 +74,7 @@ extern bool     ProcModTrace( void );
 extern bool     ProcStart( void );
 
 extern bool     ProcMap( void );
+extern bool     ProcMapLines( void );
 extern bool     ProcStack( void );
 extern bool     ProcNoDefLibs( void );
 extern bool     ProcQuiet( void );

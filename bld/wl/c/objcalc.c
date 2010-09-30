@@ -957,11 +957,21 @@ static void DefinePublics( void )
     if( MapFlags & MAP_FLAG ) {
         if( MapFlags & MAP_VERBOSE ) {
             WriteModSegs();
+        }
+    }
+    FindFloatSyms();
+}
+
+void FiniMap( void )
+/*******************************/
+/* Finish map processing */
+{
+    if( MapFlags & MAP_FLAG ) {
+        if( MapFlags & MAP_LINES ) {
             WriteMapLines();
         }
         StopMapBuffering();
     }
-    FindFloatSyms();
 }
 
 void ProcPubs( mod_entry *head, section *sect )

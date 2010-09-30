@@ -64,3 +64,4 @@ extern void     DoPubs( section * );
 extern void     SetSegFlags( seg_flags * );
 extern void     CalcSegSizes( void );
 extern void     ConvertToFrame( targ_addr *, segment, bool );
+extern void     FiniMap( void );

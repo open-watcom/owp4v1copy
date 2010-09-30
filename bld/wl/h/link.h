@@ -78,7 +78,8 @@ typedef enum mapflag {
     MAP_SORT            = 0x0008,       // sort symbols in the map file
     MAP_ALPHA           = 0x0010,       // sort symbols in alphabetical order
     MAP_GLOBAL          = 0x0020,       // sort symbols globally.
-    MAP_VERBOSE         = 0x0040
+    MAP_VERBOSE         = 0x0040,       // verbose mode
+    MAP_LINES           = 0x0080        // put line numbers in map file
 } mapflag;
 
 typedef unsigned long stateflag;

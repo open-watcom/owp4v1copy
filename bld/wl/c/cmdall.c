@@ -599,6 +599,14 @@ bool ProcMap( void )
     return( TRUE );
 }
 
+bool ProcMapLines( void )
+/*************************/
+/* process MAPLINES option */
+{
+    MapFlags |= MAP_LINES;
+    return( TRUE );
+}
+
 bool ProcStack( void )
 /***************************/
 /* process STACK option */

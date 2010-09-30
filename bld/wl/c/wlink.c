@@ -263,6 +263,7 @@ static void DoLink( char *cmdline )
     CheckErr();
     InitLoadFile();
     ObjPass2();
+    FiniMap();
     CheckErr();
     FiniLoadFile();
     WritePermData();
