@@ -47,6 +47,7 @@ static DWORD lastTickReset;
 
 static HANDLE hSerial = INVALID_HANDLE_VALUE;
 static int comPortNumber = 1;
+static char comPortName[64];
 
 //////////////////////////////////////////////////////////////////////////
 // Read and write caches to reduce the number of ReadFile and WriteFile
@@ -89,10 +90,13 @@ unsigned WaitCount( void )
 char *InitSys( void )
 {
     DCB             devCon;
-    char            deviceFileName[20];
+    char            deviceFileName[64];
     COMMTIMEOUTS    timeouts = { MAXDWORD, MAXDWORD, 1, 0, 0 };
 
-    sprintf( deviceFileName, "\\\\.\\COM%d", comPortNumber );
+    if( comPortNumber )
+        sprintf( deviceFileName, "\\\\.\\COM%d", comPortNumber );
+    else
+        strncpy( deviceFileName, comPortName, sizeof( deviceFileName ) );
 
     Trace( "InitSys: '%s'\n", deviceFileName );
 
@@ -113,37 +117,41 @@ char *InitSys( void )
         return NULL;
     }
 
-    // Set up a big RX buffer
-    if( !SetupComm( hSerial, 1000, 1000 ) ) {
-        // This odd circumstance seems to occur if the port has been assigned to a printer
-        Trace( "InitSys: Setupcom failed '%s'\n", deviceFileName );
-        CloseHandle( hSerial );
-        hSerial = INVALID_HANDLE_VALUE;
-        return NULL;
+    // Set up comm parameters if it's a real port and not a pipe
+    if( comPortNumber ) {
+        // Set up a big RX buffer
+        if( !SetupComm( hSerial, 1000, 1000 ) ) {
+            // This odd circumstance seems to occur if the port has been
+            // assigned to a printer
+            Trace( "InitSys: Setupcom failed '%s'\n", deviceFileName );
+            CloseHandle( hSerial );
+            hSerial = INVALID_HANDLE_VALUE;
+            return NULL;
+        }
+        
+        // Configure the serial port
+        GetCommState(hSerial, &devCon);
+        
+        devCon.BaudRate = 9600;
+        devCon.ByteSize = 8;
+        devCon.Parity = NOPARITY;
+        devCon.StopBits = ONESTOPBIT;
+        devCon.fParity = FALSE;
+        
+        devCon.fDsrSensitivity = FALSE;
+        devCon.fDtrControl = FALSE;
+        devCon.fRtsControl = RTS_CONTROL_DISABLE;
+        devCon.fOutxCtsFlow = FALSE;
+        devCon.fOutxDsrFlow = FALSE;
+        devCon.fInX = FALSE;
+        devCon.fOutX = FALSE;
+        SetCommState(hSerial, &devCon);
+        
+        SetCommTimeouts(hSerial, &timeouts);
+        
+        EscapeCommFunction(hSerial, SETDTR);
+        EscapeCommFunction(hSerial, SETRTS);
     }
-
-    // Configure the serial port
-    GetCommState(hSerial, &devCon);
-
-    devCon.BaudRate = 9600;
-    devCon.ByteSize = 8;
-    devCon.Parity = NOPARITY;
-    devCon.StopBits = ONESTOPBIT;
-    devCon.fParity = FALSE;
-
-    devCon.fDsrSensitivity = FALSE;
-    devCon.fDtrControl = FALSE;
-    devCon.fRtsControl = RTS_CONTROL_DISABLE;
-    devCon.fOutxCtsFlow = FALSE;
-    devCon.fOutxDsrFlow = FALSE;
-    devCon.fInX = FALSE;
-    devCon.fOutX = FALSE;
-    SetCommState(hSerial, &devCon);
-
-    SetCommTimeouts(hSerial, &timeouts);
-
-    EscapeCommFunction(hSerial, SETDTR);
-    EscapeCommFunction(hSerial, SETRTS);
 
     return( NULL );
 }
@@ -280,6 +288,14 @@ char *ParsePortSpec( char **spec )
         if( ch >= '1' && ch <= '9' ) {
             comPortNumber = ch - '0';
             ch = *++*spec;
+        } else if( ch == '\\' ) {
+            char    *d;
+
+            comPortNumber = 0;
+            d = comPortName;
+            while( **spec )
+                *d++ = *(*spec)++;
+            ch = '\0';
         }
         if( ch != '\0' && ch != '.' )
             return( TRP_ERR_invalid_serial_port_number );
