@@ -1619,7 +1619,11 @@ Rule NEXE, WINLINK, n??e?
   Command "!endif"
   Command " *$<#WLINK> @$'.lk1"
 
-Rule REXE, WINLINK, rp?e?
+Tool RDOSLINK "RDOS Linking"
+  IncludeTool WLINK
+  IncludeTool WRC2
+
+Rule REXE, RDOSLINK, rp?e?
   Target *.exe
   Autodepend
   Symbol FIL, *.obj
@@ -1637,12 +1641,14 @@ Rule REXE, WINLINK, rp?e?
   Command "!endif"
   Command " *$<#WLINK> @$'.lk1"
 
-Rule REXE, WINLINK, rk?e?
+Tool RDEVLINK "RDOS Device Linking"
+  IncludeTool WLINK
+
+Rule RDEXE, RDEVLINK, rk?e?
   Target *.rdv
   Autodepend
   Symbol FIL, *.obj
   Symbol LIBR, *.lib
-  Symbol DLL, *.dll
   Command " @%write $*.lk1 $<FIL,>"
   Command " @%append $*.lk1 $<LIBR,>"
   Command " *$<#WLINK> @$'.lk1"
@@ -1707,7 +1713,7 @@ Rule LNX, WLINK, x?2e?
 
 rem --All Other Executables--
 Rule EXE, WLINK, ???e?
-  Target *.exe, *.exp, *.com *.rdv
+  Target *.exe, *.exp, *.com
   Autodepend
   Symbol FIL, *.obj
   Symbol LIBR, *.lib
