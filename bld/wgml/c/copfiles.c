@@ -1408,10 +1408,10 @@ void cop_ti_table( char * p )
                         *p = '\0';
                         xx_line_err( err_char_only, pa );
                         return;
+                    } else {
+                        ProcFlags.in_trans = true;
+                        in_esc = *pa;
                     }
-
-                    ProcFlags.in_trans = true;
-                    in_esc = *pa;
 
                     while( *p && *p == ' ' ) {  // text or '\0'
                         p++;
