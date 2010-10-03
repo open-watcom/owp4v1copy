@@ -144,11 +144,13 @@ scr_objs =  &
         gsix.obj     &
         gsli.obj     &
         gsmacro.obj  &
+        gspacp.obj   &
         gspe.obj     &
         gspu.obj     &
         gssk.obj     &
         gstitr.obj   &
-        gsty.obj
+        gsty.obj     &
+        gsus.obj
 
 objs = $(common_objs) $(scr_objs) $(gml_objs) $(lay_objs) $(dev_objs)
 

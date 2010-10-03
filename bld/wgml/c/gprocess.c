@@ -139,6 +139,8 @@ static void split_at_GML_tag( void )
 {
     char    *   p2;
     char    *   pchar;
+    char        c;
+    size_t      toklen;
 
     if( *buff2 == GML_char ) {
         if( !strnicmp( (buff2 + 1), "CMT", 3 ) &&
@@ -148,7 +150,7 @@ static void split_at_GML_tag( void )
     }
 
     /***********************************************************************/
-    /*  Look for GML tag start char(s) until a probably valid tag is found */
+    /*  Look for GML tag start char(s) until a known tag is found          */
     /*  then split the line                                                */
     /***********************************************************************/
     pchar = strchr( buff2 + 1, GML_char );
@@ -156,21 +158,38 @@ static void split_at_GML_tag( void )
         while( *(pchar + 1) == GML_char ) {
             pchar++;                    // handle repeated GML_chars
         }
-        for( p2 = pchar + 1; (p2 < (buff2 + buf_size))
-            && is_id_char( *p2 ); p2++ )
-            /* empty */ ;
+        for( p2 = pchar + 1;
+             is_id_char( *p2 ) && (p2 < (buff2 + buf_size));
+             p2++ ) /* empty loop */ ;
 
         if( (p2 > pchar + 1)
-            && ((*p2 == '.') || (*p2 == ' ') || (*p2 == '\0' ) ) ) {// 'good' tag end
+            && ((*p2 == '.') ||
+                (*p2 == ' ') ||
+                (*p2 == '\0' ) ||
+                (*p2 == GML_char) ) ) { // 'good' tag end
 
-            split_input( buff2, pchar );// split line
-            buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
-            if( ProcFlags.literal ) {   // if literal active
-                if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
-                    li_cnt++;
+            c = *p2;
+            *p2 = '\0';                 // null terminate string
+            toklen = p2 - pchar - 1;
+
+            /***************************************************************/
+            /* Verify valid user or system tag                             */
+            /***************************************************************/
+            if( (find_tag( &tag_dict, pchar + 1 ) != NULL) ||
+                (find_sys_tag( pchar + 1, toklen ) != NULL) ) {
+
+                *p2 = c;
+
+                split_input( buff2, pchar );// split line
+                buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
+                if( ProcFlags.literal ) {   // if literal active
+                    if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
+                        li_cnt++;
+                    }
                 }
+                break;                      // we did a split stop now
             }
-            break;                      // we did a split stop now
+            *p2 = c;
         }
         pchar = strchr( pchar + 1, GML_char );  // try next GMLchar
     }

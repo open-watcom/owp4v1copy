@@ -174,11 +174,13 @@ void    add_to_sysdir( char * name, char char_val )
 
 /***************************************************************************/
 /*  error routine for referenced, but not yet implemented variables        */
+/*  the msg is only output for the first reference of every variable       */
 /***************************************************************************/
 
-static void var_wng( char * varname )
+static void var_wng( char * varname, symvar * e )
 {
     if( !ProcFlags.no_var_impl_err ) {  // for full dict print no err msg
+        e->varfunc = NULL;              // deactivate after first warning
         wng_count++;
         g_warn( err_var_not_impl, varname );
         file_mac_info();
@@ -193,19 +195,19 @@ static void var_wng( char * varname )
 
 static void sysadfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysadevenfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysadoddfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -217,13 +219,13 @@ static void sysapagefun( symvar * e )   // absolute page
 
 static void sysbefun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysbfontsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -235,31 +237,31 @@ static void sysbmfun( symvar * e )
 
 static void sysbofun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysbxfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysbxcharfun( symvar * e )  // box char always UNDefined TBD
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysccfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syscccfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -271,13 +273,13 @@ static void syscdfun( symvar * e )      // column count
 
 static void syscdcountfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syscharsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -299,25 +301,25 @@ static void syscofun( symvar * e )      // .co status
 
 static void syscontfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syscpfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syscpagesfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syscpcfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -329,25 +331,25 @@ static void syscpifun( symvar * e )     // cpi chars per inch
 
 static void sysdfontsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysdhsetfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysdpagefun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysduplexfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -359,19 +361,19 @@ static void sysenvfun( symvar * e )     // never seen another value TBD
 
 static void sysfbfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysfbcfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysfbffun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -391,13 +393,13 @@ static void sysfilefun( symvar * e )    // name of current input file/macro
 
 static void sysfkfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysfkcfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -415,7 +417,7 @@ static void sysfmfun( symvar * e )
 
 static void sysfnfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -441,7 +443,7 @@ static void sysfnamfun( symvar * e )  // name of current input file not macro
 
 static void sysfncfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -465,13 +467,13 @@ static void sysfnumfun( symvar * e )// lineno of current input file not macro
 
 static void sysfontsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysfsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -483,7 +485,7 @@ static void sysgutterfun( symvar * e )  // gutter
 
 static void syshifun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -495,37 +497,37 @@ static void syshmfun( symvar * e )
 
 static void syshnfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syshncfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syshsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syshyfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syshycfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syshyphfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -543,19 +545,19 @@ static void sysinrfun( symvar * e )     // .in indentr indent right value
 
 static void sysirfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysixjfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysixreffun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -589,7 +591,7 @@ static void syslifun( symvar * e )      // SCRIPT control word start char
 
 static void syslinbfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -624,61 +626,61 @@ static void syslnumfun( symvar * e )  // lineno of current input file / macro
 
 static void syslsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syslstfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysmcfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysmcsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysnodeidfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysoffun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysofflinefun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysonlinefun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysoocfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysoutfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -749,25 +751,25 @@ static void syspgnumrdfun( symvar * e ) // roman page no.
 
 static void syspifun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syspixfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysplfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysplsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -785,37 +787,37 @@ static void sysppagefun( symvar * e )   // page no
 
 static void sysprsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysprtfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syspsfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syspwfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysquietfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
-static void sysrbfun( symvar * e )
-{
-    var_wng( e->name );
+static void sysrbfun( symvar * e )      // required blank
+{                                       // can't get any functionality TBD
+    var_wng( e->name, e );
     return;
 };
 
@@ -839,25 +841,25 @@ static void sysresvfun( symvar * e )    // vert base units
 
 static void sysretfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysrmnestfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysscfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysscreenfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -880,31 +882,31 @@ static void sysseqnofun( symvar * e )   // seqno current input record
 
 static void sysskcondfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysslfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysspcondfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syssufun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syssysfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -922,7 +924,7 @@ static void systbfun( symvar * e )     // current user-defined tab character
 
 static void systermtfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
@@ -934,19 +936,19 @@ static void systmfun( symvar * e )
 
 static void sysuseridfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void syswdfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 
 static void sysxtextfun( symvar * e )
 {
-    var_wng( e->name );
+    var_wng( e->name, e );
     return;
 };
 

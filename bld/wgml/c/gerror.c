@@ -44,6 +44,8 @@ static  char    str_buf[MAX_ERR_LEN + 2];
 void g_suicide( void )
 {
     out_msg( "\n\nWGML suicide\n\n" );
+    flushall();                         // TBD
+    fcloseall();                        // TBD
     if( environment ) {
         longjmp( *environment, 1 );
     }

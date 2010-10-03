@@ -29,16 +29,16 @@
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
-
-
+ 
+ 
 /***************************************************************************/
 /*  calc author position   ( vertical )                                    */
 /***************************************************************************/
-
+ 
 static  void    calc_author_pos( int8_t font, int8_t line_spc, bool first )
 {
     int32_t height  = wgml_fonts[font].line_height;
-
+ 
     if( !ProcFlags.page_started ) {
         g_cur_v_start = g_page_top;
     }
@@ -78,26 +78,28 @@ static  void    calc_author_pos( int8_t font, int8_t line_spc, bool first )
     }
     return;
 }
-
+ 
 /***************************************************************************/
 /*  prepare author line                                                    */
 /***************************************************************************/
-
+ 
 static void prep_author_line( text_line * p_line, char * p )
 {
     text_chars  *   curr_t;
     uint32_t        h_left;
     uint32_t        h_right;
     uint32_t        curr_x;
-
+ 
     h_left = g_page_left + conv_hor_unit( &layout_work.author.left_adjust );
     h_right = g_page_right - conv_hor_unit( &layout_work.author.right_adjust );
-
+ 
     if( *p ) {
         curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
     } else {
         curr_t = alloc_text_chars( "author", 7, g_curr_font_num );
     }
+    curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
+ 
     intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
@@ -120,14 +122,14 @@ static void prep_author_line( text_line * p_line, char * p )
     }
     curr_t->x_address = curr_x;
     ju_x_start = curr_x;
-
+ 
     return;
 }
-
+ 
 /***************************************************************************/
 /*  :author tag                                                             */
 /***************************************************************************/
-
+ 
 void    gml_author( const gmltag * entry )
 {
     char        *   p;
@@ -136,8 +138,9 @@ void    gml_author( const gmltag * entry )
     int8_t          font_save;
     int32_t         rc;
     symsub      *   authorval;
-
-    if( ProcFlags.doc_sect != doc_sect_titlep ) {
+ 
+    if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
+          (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
         err_count++;
         show_include_stack();
@@ -155,32 +158,32 @@ void    gml_author( const gmltag * entry )
             *(authorval->value) = 0;
         }
     }
-
-    prepare_doc_sect( doc_sect_titlep );// if not already done
-
+ 
+    start_doc_sect();                   // if not already done
+ 
     p_line.first = NULL;
     p_line.next  = NULL;
-
+ 
     a_spacing = layout_work.titlep.spacing;
-
+ 
     font_save = g_curr_font_num;
     g_curr_font_num = layout_work.author.font;
-
+ 
     calc_author_pos( g_curr_font_num, a_spacing, !ProcFlags.author_tag_seen );
     p_line.y_address = g_cur_v_start;
     p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
-
+ 
     prep_author_line( &p_line, p );
-
+ 
     ProcFlags.page_started = true;
     process_line_full( &p_line, false );
     g_curr_font_num = font_save;
-
+ 
     if( p_line.first != NULL) {
         add_text_chars_to_pool( &p_line );
     }
     ProcFlags.page_started = true;
-
+ 
     ProcFlags.author_tag_seen = true;
     scan_start = scan_stop + 1;
 }

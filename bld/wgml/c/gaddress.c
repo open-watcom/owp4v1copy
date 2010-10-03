@@ -30,20 +30,20 @@
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
- 
+
 static  bool            first_aline;    // special for first :ALINE
 static  text_line   *   adr_lines = NULL;   // collect :ALINEs
 static  int8_t          a_spacing;      // spacing between adr lines
 static  int8_t          font_save;      // save for font
- 
- 
+
+
 /***************************************************************************/
 /*  calc aline position   ( vertical )                                     */
 /***************************************************************************/
- 
+
 static void calc_aline_pos( int8_t font, int8_t line_spc, bool first )
 {
- 
+
     if( first ) {                       // first aline of current :ADDRESS
         if( !ProcFlags.page_started ) {
             if( bin_driver->y_positive == 0 ) {
@@ -73,19 +73,22 @@ static void calc_aline_pos( int8_t font, int8_t line_spc, bool first )
     }
     return;
 }
- 
+
 /***************************************************************************/
 /*  output collected :ALINEs                                               */
 /***************************************************************************/
- 
+
 static  void    output_addresslines( bool newpage )
 {
     text_line   *   tline;
- 
+
+    if( adr_lines == NULL ) {
+        return;                         // no stored lines
+    }
     if( newpage ) {                  // not enough space on page  put on next
         finish_page();
         document_new_page();
- 
+
         first_aline = true;
         tline = adr_lines;
         while( tline != NULL ) {        // recalc y_addr on new page
@@ -95,7 +98,7 @@ static  void    output_addresslines( bool newpage )
             tline = tline->next;
         }
     }
- 
+    ProcFlags.page_started = true;
     if( GlobalFlags.lastpass ) {        // now really output the lines
         tline = adr_lines;
         while( tline != NULL ) {
@@ -113,15 +116,16 @@ static  void    output_addresslines( bool newpage )
         add_text_line_to_pool( tline );
     }
 }
- 
- 
+
+
 /***************************************************************************/
 /*  :ADDRESS                                                               */
 /***************************************************************************/
- 
+
 extern  void    gml_address( const gmltag * entry )
 {
-    if( ProcFlags.doc_sect != doc_sect_titlep ) {
+    if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
+          (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
         err_count++;
         show_include_stack();
@@ -134,51 +138,53 @@ extern  void    gml_address( const gmltag * entry )
     adr_lines = NULL;
     font_save = g_curr_font_num;
     g_curr_font_num = layout_work.address.font;
- 
+
 //    spacing = layout_work.titlep.spacing;
     scan_start = scan_stop + 1;
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  :eADDRESS                                                              */
 /***************************************************************************/
- 
+
 extern  void    gml_eaddress( const gmltag * entry )
 {
- 
+
     if( !ProcFlags.address_active ) {   // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
     }
- 
+
     output_addresslines( false );
- 
+
     g_curr_font_num = font_save;
     ProcFlags.address_active = false;
     scan_start = scan_stop + 1;
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  prepare address line for output                                        */
 /***************************************************************************/
- 
+
 static void prep_aline( text_line * p_line, char * p )
 {
     text_chars  *   curr_t;
     uint32_t        h_left;
     uint32_t        h_right;
- 
+
     h_left = g_page_left + conv_hor_unit( &layout_work.address.left_adjust );
     h_right = g_page_right - conv_hor_unit( &layout_work.address.right_adjust );
- 
+
     if( *p ) {
         curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
     } else {
         curr_t = alloc_text_chars( "aline", 5, g_curr_font_num );   // dummy
     }
+    curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
+
     intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
@@ -199,21 +205,21 @@ static void prep_aline( text_line * p_line, char * p )
     } else if( layout_work.address.page_position == pos_right ) {
         curr_t->x_address = h_right - curr_t->width;
     }
- 
+
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  add address line to adresslines                                        */
 /***************************************************************************/
- 
+
 static void add_aline( text_line * ad_line )
 {
     text_line   *   p_line;
- 
+
     ProcFlags.page_started = true;
- 
+
     if( adr_lines == NULL ) {
         adr_lines = ad_line;
         ju_x_start = ad_line->first->x_address;
@@ -224,21 +230,22 @@ static void add_aline( text_line * ad_line )
         }
         p_line->next = ad_line;
     }
- 
+
     set_h_start();
     return;
 }
- 
+
 /***************************************************************************/
 /*  :ALINE tag                                                             */
 /***************************************************************************/
- 
+
 void    gml_aline( const gmltag * entry )
 {
     char        *   p;
     text_line   *   ad_line;
- 
-    if( ProcFlags.doc_sect != doc_sect_titlep ) {
+
+    if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
+          (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
         err_count++;
         show_include_stack();
@@ -248,17 +255,17 @@ void    gml_aline( const gmltag * entry )
     }
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
- 
+
     ad_line = alloc_text_line();
- 
+
     if( first_aline ) {
-        prepare_doc_sect( doc_sect_titlep );// if not already done
+        start_doc_sect();               // if not already done
         a_spacing = layout_work.titlep.spacing;
         g_curr_font_num = layout_work.address.font;
     }
- 
+
     calc_aline_pos( g_curr_font_num, a_spacing, first_aline );
- 
+
     if( bin_driver->y_positive == 0 ) {
         if( g_cur_v_start < g_page_bottom ) {
             output_addresslines( true );
@@ -272,12 +279,12 @@ void    gml_aline( const gmltag * entry )
     }
     ad_line->y_address = g_cur_v_start;
     ad_line->line_height = wgml_fonts[g_curr_font_num].line_height;
- 
+
     prep_aline( ad_line, p );
- 
+
     add_aline( ad_line );
- 
+
     first_aline = false;
     scan_start = scan_stop + 1;
 }
- 
+

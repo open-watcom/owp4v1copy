@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -106,7 +106,7 @@ extern  void    init_def_lay( void );
 /* gdocsect.c                           */
 extern  void    set_section_banners( doc_section ds );
 extern  void    finish_page( void );
-extern  void    prepare_doc_sect( doc_section ds );
+extern  void    start_doc_sect( void );
 
 
 /* gerror.c                             */
@@ -239,7 +239,8 @@ extern  void    scr_process_break( void );
 
 
 /* gscan.c                            */
-extern  void    scan_line( void );
+extern  const   gmltag * find_sys_tag( char * token, size_t toklen );
+extern  void             scan_line( void );
 
 
 /* gsfuncs.c                          */
@@ -341,6 +342,7 @@ extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
 extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
+extern  int32_t     len_to_trail_space( char p[] , int32_t len );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 extern  void        start_line_with_string( char * text, uint8_t font_num );
 

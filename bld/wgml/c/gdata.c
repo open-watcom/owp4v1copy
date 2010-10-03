@@ -145,7 +145,7 @@ void init_global_vars( void )
     buf_lines_cnt       = 0;
 
     g_skip_wgml4        = 0;
-    nest_cb             = NULL;
+    nest_cb             = NULL;         // no nested tags
 
     msg_indent          = 0;            // should be correct initial value
 }
@@ -166,5 +166,7 @@ void init_pass_data( void )
     ProcFlags.concat    = true;         // .co on default
     ProcFlags.justify   = ju_on;        // .ju on default
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
+    ProcFlags.doc_sect_nxt  = doc_sect_none;// no document section yet
+    ProcFlags.in_trans  = (in_esc != ' ');// translation wanted
 
 }

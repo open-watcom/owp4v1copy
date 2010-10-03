@@ -42,6 +42,7 @@
 #include "gtype.h"
 #include "gtypelay.h"
  
+#pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
 global struct tm        doc_tm;         // document time/date
  
 global  jmp_buf     *   environment;    // var for GSuicide()
@@ -141,10 +142,30 @@ global  struct GlobalFlags {
     unsigned        freec         : 1;
     unsigned        freed         : 1;
     unsigned        freee         : 1;
-    unsigned        research      : 1;  // -r option research mode output
+    unsigned        research      : 1;  // -r global research mode output
 } GlobalFlags;                          // Global flags
  
 global struct ProcFlags {
+    doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
+    doc_section     doc_sect_nxt;       // next section (tag already seen)
+    doc_section     header_sect;        // header      placeholder for now    TBD
+    doc_section     header_sect_nxt;    // header nxt  placeholder for now    TBD
+    unsigned        start_section  : 1; // start section call done
+ 
+    unsigned        researchfile   : 1;// research for one file ( -r filename )
+ 
+    unsigned        fb_document_done : 1;// true if fb_document() called
+    unsigned        fb_position_done : 1;// 1. pos on new page done
+    unsigned        page_started    : 1;// we have something for the curr page
+    unsigned        top_ban_proc    : 1;// top_banner processed for page
+    unsigned        para_started    : 1;// paragraph not empty
+    unsigned        line_started    : 1;// we have something for current line
+    unsigned        just_override   : 1;// current line is to be justified
+ 
+    unsigned        title_tag_seen  : 1;// remember first :TITLE tag
+    unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
+    unsigned        address_active  : 1;// within :ADDRESS tag
+    unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
     unsigned        CW_sep_ignore   : 1;// .' in col 1-2
@@ -152,43 +173,27 @@ global struct ProcFlags {
     unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
     unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
-    unsigned        goto_active     : 1;// processing .go label
- 
     unsigned        substituted     : 1;// variable substituted in current line
     unsigned        unresolved      : 1;// variable found, but not yet resolved
     unsigned        late_subst      : 1;// special variable found &gml, &amp,
     unsigned        literal         : 1;// .li is active
+    unsigned        concat          : 1;// .co ON if set
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
-    unsigned        concat          : 1;// .co ON if set
-    unsigned        just_override   : 1;// current line is to be justified
+    unsigned        sk_cond         : 1;// .sk n C found
+ 
+    unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
+    unsigned        test_widow      : 1;// for preventing widow lines
+    unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
+    unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
  
     unsigned        layout          : 1;// within :layout tag and sub tags
     unsigned        lay_specified   : 1;// LAYOUT option or :LAYOUT tag seen
-    unsigned        hx_level        : 3;// 0 - 6  active Hx :layout sub tag
     unsigned        banner          : 1;// within layout banner definition
     unsigned        banregion       : 1;// within layout banregion definition
-    unsigned        researchfile    : 1;// research for one file ( -r filename )
- 
-    unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
-    unsigned        fb_document_done : 1;// true if fb_document() called
-    unsigned        fb_position_done : 1;// 1. pos on new page done
-    unsigned        prep_section    : 1;// need prep section call
-    unsigned        title_tag_seen  : 1;// remember first :TITLE tag
-    unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
-    unsigned        page_started    : 1;// we have something for the curr page
-    unsigned        line_started    : 1;// we have something for current line
- 
-    unsigned        top_ban_proc    : 1;// top_banner is processed
-    unsigned        address_active  : 1;// within :ADDRESS tag
-    unsigned        sk_cond         : 1;// .sk n C found
-    unsigned        test_widow      : 1;// for preventing widow lines
- 
-    unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
-    unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen  
- 
-    doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
+    unsigned        hx_level        : 3;// 0 - 6  active Hx :layout sub tag
     lay_sub         lay_xxx         : 8;// active :layout sub tag
+ 
     ju_enum         justify         : 8;// .ju on half off ...
  
 } ProcFlags;                            // processing flags
@@ -273,7 +278,7 @@ global  uint32_t    post_space;         // spacing within a line
 global  uint32_t    pre_top_skip;       // .. formatting
 global  uint32_t    post_top_skip;      // .. formatting
 global  uint32_t    ju_x_start;         // .. formatting
-
+ 
 global  uint32_t    g_indent;           // .in 1. value (left) default 0
 global  int32_t     g_indentr;          // .in 2. value (right) default 0
  
@@ -332,7 +337,8 @@ global  tab_list        def_tabs;   // tabs at columns 6, 11, 16, ..., 81
 /* Layout attribute names as character strings                             */
 /*  array initialized in glconvrt.c                                        */
 /*  longest attribute name is extract_threshold  (=17)                     */
-/**************************** ....+....1....+.. ****************************/
+/*                            ....+....1....+..                            */
+/***************************************************************************/
 extern  const   char    att_names[e_dummy_max + 1][18];
  
  

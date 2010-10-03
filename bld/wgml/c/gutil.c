@@ -30,6 +30,7 @@
 *               conv_vert_unit
 *               format_num
 *               int_to_roman
+*               len_to_trail_space
 *               skip_to_quote
 *               su_layout_special
 *               to_internal_SU
@@ -41,6 +42,21 @@
 
 #include "wgml.h"
 #include "gvars.h"
+
+
+/***************************************************************************/
+/* return length of string without trailing spaces                         */
+/* return 1 for all blank string                                           */
+/***************************************************************************/
+
+int32_t     len_to_trail_space( char *p , int32_t len )
+{
+    int32_t len_b = len;
+
+    while( (len_b > 0) && (p[--len_b] == ' ') ) /* empty */;
+    len_b++;
+    return( max( len_b, 1 ) );
+}
 
 
 char    *skip_to_quote( char * p, char quote )

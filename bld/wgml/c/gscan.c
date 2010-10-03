@@ -246,16 +246,6 @@ static void scan_gml( void )
                             scan_start = scan_stop + 1;
                             break;
                         }
-
-                        /***************************************************/
-                        /*  if this is the first tag which produces output */
-                        /* set page geometry and margins from layout       */
-                        /***************************************************/
-                        if( !ProcFlags.fb_document_done &&
-                            gml_tags[k].tagflags & tag_out_txt ) {
-
-                            do_layout_end_processing();
-                        }
                         *p = csave;
 
                         gml_tags[k].gmlproc( &gml_tags[k] );
@@ -765,12 +755,6 @@ void    scan_line( void )
             if( ProcFlags.layout ) {    // LAYOUT active: process attributes
                 lay_tags[lay_ind].gmlproc( &lay_tags[lay_ind] );
             } else {
-                if( !ProcFlags.fb_document_done ) {
-                    /***************************************************/
-                    /*  text starts without any tag or control word    */
-                    /***************************************************/
-                    do_layout_end_processing();
-                }
                 // processs (remaining) text
                 process_text( scan_start, g_curr_font_num );
             }
@@ -798,3 +782,25 @@ void    scan_line( void )
     }
 }
 
+
+
+/***************************************************************************/
+/*  search gml tag entry for given token                                   */
+/*                                                                         */
+/*  return ptr to entry if found, else NULL                                */
+/*                                                                         */
+/***************************************************************************/
+
+gmltag  const   *   find_sys_tag( char * token, size_t toklen )
+{
+    int k;
+
+    for( k = 0; k < GML_TAGMAX; ++k ) {
+        if( toklen == gml_tags[k].taglen ) {
+            if( !stricmp( gml_tags[k].tagname, token ) ) {
+                return( &gml_tags[k] );
+            }
+        }
+    }
+    return( NULL );                     // not found
+}

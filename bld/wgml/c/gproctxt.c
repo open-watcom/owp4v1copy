@@ -621,6 +621,7 @@ void document_top_banner( void )
     g_cur_h_start = g_page_left_org;
     g_cur_left    = g_page_left_org;
     out_ban_top( sect_ban_top[page & 1] );
+    ProcFlags.page_started = true;
 }
 
 /***************************************************************************/
@@ -713,8 +714,8 @@ void    process_line_full( text_line * a_line, bool justify )
     if( (a_line == NULL) || (a_line->first == NULL) ) { // why are we called?
         return;
     }
-    if( !ProcFlags.prep_section ) {
-        prepare_doc_sect( ProcFlags.doc_sect );
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
     }
 
     /***********************************************************************/
@@ -833,11 +834,8 @@ void    process_text( char * text, uint8_t font_num )
             /*  we need a started section for text output                  */
             /*                                                             */
             /***************************************************************/
-    if( !ProcFlags.prep_section ) {
-        if( ProcFlags.doc_sect == doc_sect_none ) {
-            ProcFlags.doc_sect = doc_sect_body; // our default section
-        }
-        prepare_doc_sect( ProcFlags.doc_sect );
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
     }
     p = text;
     if( t_line.first == NULL ) {    // first phrase in paragraph
@@ -1076,7 +1074,7 @@ void    process_text( char * text, uint8_t font_num )
                 }
                 //reset n_char for the next pass of the loop
                 n_char->width = text_chars_width( n_char->text, \
-                n_char->count, n_char->font_number );
+                                    n_char->count, n_char->font_number );
             }
         } else { // concatenation is off
             count = split_text( n_char, g_page_right );
@@ -1123,7 +1121,9 @@ void    process_text( char * text, uint8_t font_num )
         // adding n_chars to t_line is always correct at this point
         if( t_line.first == NULL ) {    // first element in output line
             calc_skip();
-            test_page_full();
+            if( ProcFlags.page_started ) {  // try TBD
+                test_page_full();
+            }
             if( !ProcFlags.top_ban_proc ) {
                 document_new_page();
                 document_top_banner();
@@ -1148,6 +1148,7 @@ void    process_text( char * text, uint8_t font_num )
 
         g_cur_h_start = t_line.last->x_address + t_line.last->width;
         ProcFlags.page_started = true;
+        ProcFlags.para_started = true;
 
         // exit at end of text unless at end of input line
         if( !(input_cbs->fmflags & II_eol) && !*p ) {
@@ -1183,6 +1184,7 @@ void    process_text( char * text, uint8_t font_num )
 
     if( t_line.first != NULL ) {        // something in the line
         ProcFlags.page_started = true;
+        ProcFlags.para_started = true;
 
         if( !ProcFlags.concat ) {
             if( input_cbs->fmflags & II_eol ) {

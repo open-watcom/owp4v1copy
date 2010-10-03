@@ -98,7 +98,7 @@ void    gml_hp3( const gmltag * entry )
     gml_hp_sf_common( entry, 3, t_HP3 );
 }
 
-void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
+static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
 {
     char    *   p;
     tag_cb  *   wk;

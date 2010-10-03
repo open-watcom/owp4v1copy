@@ -927,8 +927,6 @@ static void set_outfile( option * opt )
 
         split_attr_file( out_file, attrwork, sizeof( attrwork ) );
         if( attrwork[0] ) {
-            g_warn( WNG_FILEATTR_IGNORED, attrwork, out_file );
-            wng_count++;
             len = 1 + strlen( attrwork );
             out_file_attr = mem_alloc( len );
             strcpy_s( out_file_attr, len, attrwork );

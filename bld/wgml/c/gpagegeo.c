@@ -243,29 +243,3 @@ void    do_layout_end_processing( void )
 
 }
 
-
-/***************************************************************************/
-/*  set page position per section                                   TBD    */
-/***************************************************************************/
-
-void    set_page_position( doc_section ds )
-{
-    page++;
-    lc = lcmax;
-    line = 0;
-    g_cur_h_start = g_page_left_org + bin_device->x_offset;
-    if( bin_driver->y_positive == 0x00 ) {
-        g_cur_v_start = g_page_top - (1 * wgml_fonts[g_curr_font_num].line_height);
-    } else {
-        g_cur_v_start = g_page_top + (0 * wgml_fonts[g_curr_font_num].line_height);
-    }
-    switch( ds ) {
-    case   doc_sect_none:               // treat as body
-    case   doc_sect_body:
-        break;
-    default:
-        out_msg( "set_page_position unimplemented doc_section\n" );
-        break;
-    }
-}
-

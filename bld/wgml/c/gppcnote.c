@@ -46,7 +46,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
     p = scan_start;
 
     ProcFlags.keep_left_margin = true;  //    special Note indent
-    prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
+    start_doc_sect();                   // if not already done
 
     scr_process_break();
 
@@ -71,7 +71,11 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
     }
 
     if( ProcFlags.page_started ) {
-        skippre = conv_vert_unit( &(p_pc->pre_skip), spacing );
+        if( ProcFlags.para_started ) {
+            skippre = conv_vert_unit( &(p_pc->pre_skip), spacing );
+        } else {
+            skippre = 0;
+        }
         if( skippost > skippre ) {
             skippre = skippost;         // take maximum skip amount
         }
@@ -106,8 +110,10 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
     if( *p == '.' ) p++;                // over '.'
     if( *p ) {
         process_text( p, g_curr_font_num );
+        ProcFlags.para_started = true;
+    } else {
+        ProcFlags.para_started = false;
     }
-
     post_skip = &(p_pc->post_skip);
 
     scan_start = scan_stop + 1;
@@ -143,7 +149,7 @@ extern  void    gml_note( const gmltag * entry )
     scan_err = false;
     p = scan_start;
 
-    prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
+    start_doc_sect();                   // if not already done
 
     scr_process_break();
 

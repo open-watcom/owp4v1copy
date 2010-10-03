@@ -116,14 +116,14 @@ static char * subst_1var( char * pout, char * pvar, size_t len )
             while( *pchar ) {
                 *pout++ = *pchar++;
             }
-            *pout = '\0';
         }
     }
+    *pout = '\0';
     return( pout );
 }
 
 /***************************************************************************/
-/*  substitute vars in ban region                                          */
+/*  substitute vars in ban region buffer                                   */
 /***************************************************************************/
 
 static void substitute_vars( char * pbuf, char * pin, size_t length )
@@ -148,6 +148,7 @@ static void substitute_vars( char * pbuf, char * pin, size_t length )
                     p++;
                 }
             }
+            len = k;
             if( *p == '.' ) {
                 *p = '\0';
                 pout = subst_1var( pout, pvar, p - pvar );
@@ -159,6 +160,7 @@ static void substitute_vars( char * pbuf, char * pin, size_t length )
             }
         }
     }
+    *pout = '\0';
     return;
 }
 
@@ -167,7 +169,7 @@ static void substitute_vars( char * pbuf, char * pin, size_t length )
 /*  prepare 1 or more text_chars with region content                       */
 /*                                                                         */
 /*  More than 1 ban_region may be specified for a banner in :LAYOUT        */
-/*  but only the first is processed                                   TBD  */
+/*  but only the first is processed                   TBD if really needed */
 /***************************************************************************/
 
 static void content_reg( banner_lay_tag * ban )
@@ -183,6 +185,7 @@ static void content_reg( banner_lay_tag * ban )
     switch( ban->region->contents.content_type ) {
     case   string_content:
         pbuf = mem_alloc( buf_size );
+        *pbuf = '\0';
         if( ban->region->script_format ) {
 
             /***************************************************************/
@@ -635,7 +638,7 @@ static void content_reg( banner_lay_tag * ban )
 /*  output top / bottom banner      incomplete    TBD                      */
 /*  only the first banregion is output                                     */
 /***************************************************************************/
-static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
+static  void    out_ban_common( banner_lay_tag * ban, bool top )
 {
     text_chars      *   curr_t;
     text_chars      *   curr_p;
@@ -647,6 +650,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
     uint32_t            curr_x;
     int                 k;
 
+    ProcFlags.top_ban_proc = top;       // set for top banner
     if( ban == NULL ) {
         return;
     }
@@ -673,10 +677,10 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         if( ban_line.first == NULL ) {
             ban_line.first = reg_text[k];
             ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
-            if( bottom ) {
-                g_cur_v_start = ban_bot_pos( ban );
-            } else {
+            if( top ) {
                 g_cur_v_start = ban_top_pos( ban );
+            } else {
+                g_cur_v_start = ban_bot_pos( ban );
             }
             ban_line.y_address = g_cur_v_start;
         } else {
@@ -745,7 +749,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
                 if( curr_p->count < 2) {// sanity check
                    break;
                 }
-                curr_p->count -= 1;     // truncate text
+                curr_p->count -= 1;     // truncate text, adjust width
                 curr_p->width -= wgml_fonts[curr_p->font_number].width_table
                                                  [curr_p->text[curr_p->count]];
             }
@@ -760,7 +764,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
         ban_line.first = NULL;
     }
     g_curr_font_num = layout_work.defaults.font;
-    if( !bottom ) {                    // for top banner calculate text start
+    if( top ) {                        // for top banner calculate text start
 
     /***********************************************************************/
     /*  for page 1, the textarea starts 1 line deeper than for following   */
@@ -797,13 +801,11 @@ static  void    out_ban_common( banner_lay_tag * ban, bool bottom )
 /***************************************************************************/
 void    out_ban_top( banner_lay_tag * ban )
 {
-    out_ban_common( ban, false );       // false for top banner
-    ProcFlags.top_ban_proc = true;
+    out_ban_common( ban, true );        // true for top banner
 }
 
 void    out_ban_bot( banner_lay_tag * ban )
 {
-    out_ban_common( ban, true );        // true for bottom banner
-    ProcFlags.top_ban_proc = false;
+    out_ban_common( ban, false );       // false for bottom banner
 }
 

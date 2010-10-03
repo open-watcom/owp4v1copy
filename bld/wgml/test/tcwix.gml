@@ -1,7 +1,6 @@
 .* test for .ix controlword
 .* comment the next 2 lines for wgml4.0
-.dm br /.ty BR/
-.dm pa /.ty PA/
+:set symbol='willi' value='emil'
 :gdoc
 :body
 :H0 id="H01".Header 0 title
@@ -9,7 +8,7 @@
 .ix "i1" "i2" "i3" "extra parameter"
 .pa
 .* comment the next line for wgml4.0
-.ix "i1" "i2" "i3" extra parameters
+.ix "i1" "i2" "i3";.cm extra parameters
 .ix "a1" "a2"
 .ix "b1" "b2"
 .ix "a10" "a21"

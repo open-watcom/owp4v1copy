@@ -105,7 +105,7 @@ static uint8_t             ti_table[0x100]; // .TI-controlled translation table
  * Returns:
  *      the same length in horizontal_base_units.
  */
- 
+
 static uint32_t scale_basis_to_horizontal_base_units( uint32_t in_units, \
                                                        wgml_font * in_font )
 {
@@ -113,7 +113,7 @@ static uint32_t scale_basis_to_horizontal_base_units( uint32_t in_units, \
     uint64_t    units;
     uint32_t    width;
 
-    /* The conversion is done using this formula: 
+    /* The conversion is done using this formula:
      * horizontal_base_units * font_height/100 * in_units
      * ------------------------------------------------
      *                     scale_basis
@@ -221,7 +221,7 @@ static void compute_metrics( wgml_font * in_font )
             if( (height % 7200) >= 3600 ) glyph_height++;
 
             /* The value of font_space is the difference between the computed
-             * value of font_height and the value of glyph_height. 
+             * value of font_height and the value of glyph_height.
              */
 
             in_font->line_space = in_font->line_height - glyph_height;
@@ -896,12 +896,12 @@ void cop_setup( void )
         wgml_fonts[i].line_height = 0;
         wgml_fonts[i].line_space = 0;
         wgml_fonts[i].spc_width = 0;
-        for( j = 0; j < 0x100; j++ ) { 
+        for( j = 0; j < 0x100; j++ ) {
             wgml_fonts[i].width_table[j] = 0;
         }
         wgml_fonts[i].font_resident = 'n';
         wgml_fonts[i].shift_count = 0;
-        for( j = 0; j < 0x04; j++ ) { 
+        for( j = 0; j < 0x04; j++ ) {
             wgml_fonts[i].shift_height[j] = '\0';
         }
     }
@@ -1209,7 +1209,7 @@ void cop_setup( void )
      * "Device Unit" ("DV") Horizontal Space Units, and record the width of
      * the space character for quick reference. It is not clear if this is
      * actually necessary, but it is a bit faster than using the width_table
-     * directly. 
+     * directly.
      */
 
     for( i = 0; i < wgml_font_cnt; i++ ) {
@@ -1229,7 +1229,7 @@ void cop_setup( void )
                                     scale_basis_to_horizontal_base_units( \
                         wgml_fonts[i].bin_font->width->table[j], &wgml_fonts[i] );
                 }
-            }                
+            }
         }
         wgml_fonts[i].dv_base = wgml_fonts[i].width_table['0'];
         wgml_fonts[i].em_base = wgml_fonts[i].width_table['M'];
@@ -1341,7 +1341,7 @@ void cop_teardown( void )
  *          quite small, and the cost of determining whether or not the
  *          bin_font contains a width table must be considered.
  */
- 
+
 uint32_t cop_text_width( uint8_t * text, uint32_t count, uint8_t font )
 {
     int             i;
@@ -1411,7 +1411,7 @@ void cop_ti_table( char * p )
                     }
 
                     ProcFlags.in_trans = true;
-                    in_esc = *cur_token->text;
+                    in_esc = *pa;
 
                     while( *p && *p == ' ' ) {  // text or '\0'
                         p++;
@@ -1424,7 +1424,7 @@ void cop_ti_table( char * p )
                     if( len > 0 ) {     // additional text not allowed
                         *p = '\0';
                         xx_line_err( err_char_only, p );
-                        return; 
+                        return;
                     }
                     return;     // done if was ".ti set"
                 } else {
@@ -1559,7 +1559,7 @@ void fb_document( void )
  *      This function should be used for new document pages within a section,
  *      except as documented in the Wiki. The function fb_new_section() should
  *      be used at the start of each new section, and elsewhere as documented
- *      in the Wiki. 
+ *      in the Wiki.
  */
 
 void fb_document_page( void )

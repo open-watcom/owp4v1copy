@@ -31,16 +31,16 @@
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /*  end_lp  processing as if the non existant :eLP tag was seen            */
 /***************************************************************************/
 static  void    end_lp( void )
 {
     tag_cb  *   wk;
-
+ 
     if( nest_cb->c_tag == t_LP ) {      // terminate current :LP
         post_skip = &(((lp_lay_tag *)(nest_cb->lay_tag))->post_skip);
         wk = nest_cb;
@@ -48,23 +48,23 @@ static  void    end_lp( void )
         add_tag_cb_to_pool( wk );
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  :SL, ... common processing                                             */
 /***************************************************************************/
-
+ 
 static void gml_xl_lp_common( const gmltag * entry, e_tags t )
 {
     char        *   p;
-
+ 
     end_lp();                           // terminate :LP if active
-
+ 
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
-
+ 
     nest_cb->c_tag = t;
-
+ 
     scan_err = false;
     p = scan_start;
     if( *p == '.' ) p++;                // possible tag end
@@ -77,9 +77,9 @@ static void gml_xl_lp_common( const gmltag * entry, e_tags t )
     }
     return;
 }
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /* Format:  :DL [compact]                                                  */
 /*              [break]                                                    */
@@ -114,12 +114,12 @@ static void gml_xl_lp_common( const gmltag * entry, e_tags t )
 /* attribute is not specified.                                             */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    gml_dl( const gmltag * entry )  // not tested TBD
 {
     char    *   p;
     bool        compact;
-
+ 
     p = scan_start;
     p++;
     while( *p == ' ' ) {
@@ -130,13 +130,13 @@ void    gml_dl( const gmltag * entry )  // not tested TBD
         scan_start = p + 7;
     }
     gml_xl_lp_common( entry, t_DL );
-
-
+ 
+ 
     scan_start = scan_stop + 1;
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* Format:  :GL [compact] [termhi=term-highlight].                         */
 /*                                                                         */
@@ -154,12 +154,12 @@ void    gml_dl( const gmltag * entry )  // not tested TBD
 /* Non-negative integer numbers are valid highlighting values.             */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    gml_gl( const gmltag * entry )  // not tested TBD
 {
     char    *   p;
     bool        compact;
-
+ 
     p = scan_start;
     p++;
     while( *p == ' ' ) {
@@ -170,12 +170,12 @@ void    gml_gl( const gmltag * entry )  // not tested TBD
         scan_start = p + 7;
     }
     gml_xl_lp_common( entry, t_GL );
-
-
+ 
+ 
     scan_start = scan_stop + 1;
     return;
 }
-
+ 
 /***************************************************************************/
 /*Format: :OL [compact].                                                   */
 /*                                                                         */
@@ -190,12 +190,12 @@ void    gml_gl( const gmltag * entry )  // not tested TBD
 /*suppressed. The compact attribute is one of the few WATCOM Script/GML    */
 /*attributes which does not have an attribute value associated with it.    */
 /***************************************************************************/
-
+ 
 void    gml_ol( const gmltag * entry )
 {
     char    *   p;
     bool        compact;
-
+ 
     p = scan_start + 1;
     while( *p == ' ' ) {
         p++;
@@ -207,22 +207,22 @@ void    gml_ol( const gmltag * entry )
         compact = false;
     }
     gml_xl_lp_common( entry, t_OL );
-
+ 
     nest_cb->compact = compact;
-
+ 
     nest_cb->li_number    = 0;
     nest_cb->left_indent  = conv_hor_unit( &layout_work.ol.left_indent );
     nest_cb->right_indent = conv_hor_unit( &layout_work.ol.right_indent );
     nest_cb->lay_tag      = &layout_work.ol;
-
+ 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
-
+ 
     scan_start = scan_stop + 1;
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* Format:  :SL [compact].                                                 */
 /*                                                                         */
@@ -236,12 +236,12 @@ void    gml_ol( const gmltag * entry )
 /* attributes which does not have an attribute value associated with it.   */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    gml_sl( const gmltag * entry )
 {
     char    *   p;
     bool        compact;
-
+ 
     p = scan_start;
     p++;
     while( *p == ' ' ) {
@@ -252,21 +252,21 @@ void    gml_sl( const gmltag * entry )
         scan_start = p + 7;
     }
     gml_xl_lp_common( entry, t_SL );
-
+ 
     nest_cb->compact = compact;
-
+ 
     nest_cb->li_number    = 0;
     nest_cb->left_indent  = conv_hor_unit( &layout_work.sl.left_indent );
     nest_cb->right_indent = conv_hor_unit( &layout_work.sl.right_indent );
     nest_cb->lay_tag      = &layout_work.sl;
-
+ 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
-
+ 
     scan_start = scan_stop + 1;
     return;
 }
-
+ 
 /***************************************************************************/
 /* Format:  :UL [compact].                                                 */
 /*                                                                         */
@@ -283,12 +283,12 @@ void    gml_sl( const gmltag * entry )
 /* with it.                                                                */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    gml_ul( const gmltag * entry )
 {
     char    *   p;
     bool        compact;
-
+ 
     p = scan_start;
     p++;
     while( *p == ' ' ) {
@@ -299,37 +299,37 @@ void    gml_ul( const gmltag * entry )
         scan_start = p + 7;
     }
     gml_xl_lp_common( entry, t_UL );
-
+ 
     nest_cb->compact = compact;
-
+ 
     nest_cb->li_number    = 0;
     nest_cb->left_indent  = conv_hor_unit( &layout_work.ul.left_indent );
     nest_cb->right_indent = conv_hor_unit( &layout_work.ul.right_indent );
     nest_cb->lay_tag      = &layout_work.ul;
-
+ 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
-
+ 
     scan_start = scan_stop + 1;
     return;
 }
-
+ 
 /***************************************************************************/
 /*  common :eXXX processing                                                */
 /***************************************************************************/
-
+ 
 void    gml_exl_common( const gmltag * entry, e_tags t )
 {
     char    *   p;
     tag_cb  *   wk;
-
+ 
     if( ProcFlags.test_widow ) {
         out_buf_lines( &buf_lines, false );
         buf_lines_cnt = 0;
         ProcFlags.test_widow = 0;
     }
     process_line_full( &t_line, false );
-
+ 
     if( nest_cb->c_tag != t ) {         // unexpected exxx tag
         if( nest_cb->c_tag == t_NONE ) {
             g_err_tag_no( str_tags[t + 1] );// no exxx expected, no tag active
@@ -352,8 +352,8 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
     }
     scan_start = scan_stop + 1;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* Format:  :eDL.                                                          */
 /*                                                                         */
@@ -385,17 +385,17 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
 /* corresponding :UL tag must be previously specified for each :eUL tag.   */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    gml_edl( const gmltag * entry ) // not tested TBD
 {
     gml_exl_common( entry, t_DL );
 }
-
+ 
 void    gml_egl( const gmltag * entry ) // not tested TBD
 {
     gml_exl_common( entry, t_GL );
 }
-
+ 
 void    gml_eol( const gmltag * entry )
 {
     end_lp();
@@ -404,7 +404,7 @@ void    gml_eol( const gmltag * entry )
     }
     gml_exl_common( entry, t_OL );
 }
-
+ 
 void    gml_esl( const gmltag * entry )
 {
     end_lp();
@@ -413,7 +413,7 @@ void    gml_esl( const gmltag * entry )
     }
     gml_exl_common( entry, t_SL );
 }
-
+ 
 void    gml_eul( const gmltag * entry )
 {
     end_lp();
@@ -422,12 +422,12 @@ void    gml_eul( const gmltag * entry )
     }
     gml_exl_common( entry, t_UL );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* :LI within :OL tag                                                      */
 /***************************************************************************/
-
+ 
 static  void    gml_li_ol( const gmltag * entry )
 {
     char        *   p;
@@ -437,10 +437,10 @@ static  void    gml_li_ol( const gmltag * entry )
     int32_t         skipsk;
     uint32_t        num_len;
     char            charnumber[MAX_L_AS_STR];
-
+ 
     scan_err = false;
     p = scan_start;
-
+ 
     nest_cb->li_number++;
     pn = format_num( nest_cb->li_number, charnumber, MAX_L_AS_STR,
                      ((ol_lay_tag *)(nest_cb->lay_tag))->number_style );
@@ -452,16 +452,16 @@ static  void    gml_li_ol( const gmltag * entry )
         *(pn + 1) = 0;
         num_len = 1;
     }
-
-    prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
-
+ 
+    start_doc_sect();                   // if not already done
+ 
     scr_process_break();
-
+ 
     if( ProcFlags.test_widow ) {
         out_buf_lines( &buf_lines, false );  // lines are no widows
         buf_lines_cnt = 0;
     }
-
+ 
     spacing = ((ol_lay_tag *)(nest_cb->lay_tag))->spacing;
     if( post_skip != NULL ) {
         skippost = conv_vert_unit( post_skip, spacing );
@@ -507,20 +507,20 @@ static  void    gml_li_ol( const gmltag * entry )
         }
     }
     post_skip = NULL;
-
+ 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-
+ 
     g_cur_left = nest_cb->lm + nest_cb->left_indent;
     g_cur_h_start = g_cur_left;
     g_page_right = nest_cb->rm - nest_cb->right_indent;
-
+ 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
-
+ 
     start_line_with_string( charnumber, g_curr_font_num );
     g_cur_h_start = g_cur_left +
         conv_hor_unit( &(((ol_lay_tag *)(nest_cb->lay_tag))->align) );
-
+ 
     if( t_line.last != NULL ) {
         g_cur_left += t_line.last->width + post_space;
     }
@@ -530,7 +530,7 @@ static  void    gml_li_ol( const gmltag * entry )
     }
     g_cur_h_start = g_cur_left;
     ju_x_start = g_cur_h_start;
-
+ 
     spacing = ((ol_lay_tag *)(nest_cb->lay_tag))->spacing;
     g_curr_font_num = ((ol_lay_tag *)(nest_cb->lay_tag))->font;
     if( *p == '.' ) p++;                // over '.'
@@ -538,36 +538,36 @@ static  void    gml_li_ol( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
-
+ 
     ProcFlags.need_li_lp = false;       // 1. item in list processed
     scan_start = scan_stop + 1;
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* :LI within :SL tag                                                      */
 /***************************************************************************/
-
+ 
 static  void    gml_li_sl( const gmltag * entry )
 {
     char        *   p;
     int32_t         skippre;
     int32_t         skippost;
     int32_t         skipsk;
-
+ 
     scan_err = false;
     p = scan_start;
-
-    prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
-
+ 
+    start_doc_sect();                   // if not already done
+ 
     scr_process_break();
-
+ 
     if( ProcFlags.test_widow ) {
         out_buf_lines( &buf_lines, false );  // lines are no widows
         buf_lines_cnt = 0;
     }
-
+ 
     spacing = ((sl_lay_tag *)(nest_cb->lay_tag))->spacing;
     if( post_skip != NULL ) {
         skippost = conv_vert_unit( post_skip, spacing );
@@ -612,19 +612,19 @@ static  void    gml_li_sl( const gmltag * entry )
         }
     }
     post_skip = NULL;
-
+ 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-
+ 
     g_cur_left = nest_cb->lm + nest_cb->left_indent;
     g_cur_h_start = g_cur_left;
     g_page_right = nest_cb->rm - nest_cb->right_indent;
-
+ 
     post_space = 0;
     g_cur_h_start = g_cur_left;
     ju_x_start = g_cur_h_start;
-
+ 
     spacing = ((sl_lay_tag *)(nest_cb->lay_tag))->spacing;
     g_curr_font_num = ((sl_lay_tag *)(nest_cb->lay_tag))->font;
     if( *p == '.' ) p++;                // over '.'
@@ -632,17 +632,17 @@ static  void    gml_li_sl( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
-
+ 
     ProcFlags.need_li_lp = false;
     scan_start = scan_stop + 1;
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* :LI within :UL tag                                                      */
 /***************************************************************************/
-
+ 
 static  void    gml_li_ul( const gmltag * entry )
 {
     char        *   p;
@@ -650,10 +650,10 @@ static  void    gml_li_ul( const gmltag * entry )
     int32_t         skippost;
     int32_t         skipsk;
     char            bullet[2];
-
+ 
     scan_err = false;
     p = scan_start;
-
+ 
     if( ((ul_lay_tag *)(nest_cb->lay_tag))->bullet_translate ) {
         bullet[0] = cop_in_trans( ((ul_lay_tag *)(nest_cb->lay_tag))->bullet,
                             ((ul_lay_tag *)(nest_cb->lay_tag))->bullet_font );
@@ -661,16 +661,16 @@ static  void    gml_li_ul( const gmltag * entry )
         bullet[0] = ((ul_lay_tag *)(nest_cb->lay_tag))->bullet;
     }
     bullet[1] = 0;
-
-    prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
-
+ 
+    start_doc_sect();                   // if not already done
+ 
     scr_process_break();
-
+ 
     if( ProcFlags.test_widow ) {
         out_buf_lines( &buf_lines, false );  // lines are no widows
         buf_lines_cnt = 0;
     }
-
+ 
     spacing = ((ul_lay_tag *)(nest_cb->lay_tag))->spacing;
     if( post_skip != NULL ) {
         skippost = conv_vert_unit( post_skip, spacing );
@@ -716,20 +716,20 @@ static  void    gml_li_ul( const gmltag * entry )
         }
     }
     post_skip = NULL;
-
+ 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-
+ 
     g_cur_left = nest_cb->lm + nest_cb->left_indent;
     g_cur_h_start = g_cur_left;
     g_page_right = nest_cb->rm - nest_cb->right_indent;
-
+ 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
-
+ 
     start_line_with_string( bullet, g_curr_font_num );
     g_cur_h_start = g_cur_left +
         conv_hor_unit( &(((ul_lay_tag *)(nest_cb->lay_tag))->align) );
-
+ 
     if( t_line.last != NULL ) {
         g_cur_left += t_line.last->width + post_space;
     }
@@ -739,7 +739,7 @@ static  void    gml_li_ul( const gmltag * entry )
     }
     g_cur_h_start = g_cur_left;
     ju_x_start = g_cur_h_start;
-
+ 
     spacing = ((ul_lay_tag *)(nest_cb->lay_tag))->spacing;
     g_curr_font_num = ((ul_lay_tag *)(nest_cb->lay_tag))->font;
     if( *p == '.' ) p++;                // over '.'
@@ -747,14 +747,14 @@ static  void    gml_li_ul( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text fullows
     }
-
+ 
     ProcFlags.need_li_lp = false;
     scan_start = scan_stop + 1;
     return;
 }
-
-
-
+ 
+ 
+ 
 /****************************************************************************/
 /*Format: :LI [id='id-name'].<paragraph elements>                           */
 /*                           <basic document elements>                      */
@@ -767,13 +767,13 @@ static  void    gml_li_ul( const gmltag * entry )
 /*identifier name is used when processing a list item reference, and must   */
 /*be unique within the document.                                            */
 /****************************************************************************/
-
+ 
 void    gml_li( const gmltag * entry )
 {
     if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
         end_lp();
     }
-
+ 
     switch( nest_cb->c_tag ) {
     case t_OL :
         gml_li_ol( entry );
@@ -797,8 +797,8 @@ void    gml_li( const gmltag * entry )
     }
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* :LP                                                                     */
 /***************************************************************************/
@@ -808,31 +808,31 @@ void    gml_lp( const gmltag * entry )
     int32_t         skippre;
     int32_t         skippost;
     int32_t         skipsk;
-
+ 
     scan_err = false;
     p = scan_start;
-
+ 
     gml_xl_lp_common( entry, t_LP );
-
+ 
     nest_cb->compact = false;
-
+ 
     nest_cb->li_number    = 0;
     nest_cb->left_indent  = conv_hor_unit( &layout_work.lp.left_indent );
     nest_cb->right_indent = conv_hor_unit( &layout_work.lp.right_indent );
     nest_cb->lay_tag      = &layout_work.lp;
-
+ 
     nest_cb->lm = nest_cb->prev->lm + nest_cb->prev->left_indent;
     nest_cb->rm = nest_cb->prev->rm - nest_cb->prev->right_indent;
-
-    prepare_doc_sect( ProcFlags.doc_sect ); // if not already done
-
+ 
+    start_doc_sect();                   // if not already done
+ 
     scr_process_break();
-
+ 
     if( ProcFlags.test_widow ) {
         out_buf_lines( &buf_lines, false );  // lines are no widows
         buf_lines_cnt = 0;
     }
-
+ 
     spacing = ((lp_lay_tag *)(nest_cb->lay_tag))->spacing;
     if( post_skip != NULL ) {
         skippost = conv_vert_unit( post_skip, spacing );
@@ -870,28 +870,28 @@ void    gml_lp( const gmltag * entry )
         }
     }
     post_skip = NULL;
-
+ 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-
+ 
     g_cur_left = nest_cb->lm + nest_cb->left_indent;// left start
                                         // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(layout_work.lp.line_indent) );
-
+ 
     g_page_right = nest_cb->rm - nest_cb->right_indent;
-
+ 
     ju_x_start = g_cur_h_start;
-
+ 
     spacing = ((lp_lay_tag *)(nest_cb->lay_tag))->spacing;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
-
+ 
     ProcFlags.need_li_lp = false;       // :LI or :LP seen
     scan_start = scan_stop + 1;
     return;
 }
-
+ 

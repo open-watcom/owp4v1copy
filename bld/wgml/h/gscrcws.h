@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -55,7 +55,7 @@
   picks( cl, scr_dummy, cw_break+cw_o_t    )// column length
 //picks( cm, scr_dummy, 0                  )// comment ----- handled differently
   picks( co, scr_co,    cw_break+cw_o_t    )// concatenate
-  picks( cp, scr_dummy, cw_break+cw_o_t    )// conditional page
+  picks( cp, scr_cp,    cw_break+cw_o_t    )// conditional page
   picks( cs, scr_dummy, cw_o_t             )// conditional section
   picks( ct, scr_dummy, cw_o_t             )// continued text
   picks( cw, scr_cw,    0                  )// control word separator
@@ -116,7 +116,7 @@
   picks( oj, scr_dummy, cw_break+cw_o_t    )// out justify
   picks( oo, scr_dummy, cw_o_t             )// output overlay
   picks( ov, scr_dummy, cw_o_t             )// ovrlay
-  picks( pa, scr_dummy, cw_break+cw_o_t    )// page eject
+  picks( pa, scr_pa,    cw_break+cw_o_t    )// page eject
   picks( pe, scr_pe,    0                  )// perform
   picks( pf, scr_dummy, 0                  )// previous font
   picks( ph, scr_dummy, 0                  )// photo font
@@ -164,9 +164,9 @@
   picks( ul, scr_dummy, cw_o_t             )// underline
   picks( un, scr_dummy, cw_break+cw_o_t    )// undent
   picks( up, scr_dummy, cw_o_t             )// uppercase
-  picks( us, scr_dummy, cw_o_t             )// underscore
+  picks( us, scr_us,    cw_o_t             )// underscore
   picks( wd, scr_dummy, 0                  )// widow
-  picklab( .., scr_label, 0                  )
+  picklab( .., scr_label, 0                )
 
 #undef picks
 #undef picklab

@@ -25,9 +25,6 @@
 *  ========================================================================
 *
 * Description:  WGML top level driver module and file I/O.
-*               not yet functional
-*
-*
 *
 *   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
 *   as found on www.cbttape.org files 280 - 288
@@ -503,16 +500,12 @@ static  void    proc_input( char * filename )
         }
 #endif
         if( inc_level == 1 ) {          // EOF for master file end
-            scr_process_break();        // output last line if any
-            if( GlobalFlags.lastpass && ProcFlags.doc_sect != doc_sect_egdoc ) {
-                finish_page();
-            }
+            finish_page();
+
             /***************************************************************/
             /*  Test for missing eXXX tag                                  */
             /***************************************************************/
-
             if( nest_cb->c_tag != t_NONE ) {
-
                 g_err_tag_nest( str_tags[nest_cb->c_tag + 1] );// eXXX expected
             }
         }

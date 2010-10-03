@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WGML tags :TITLE processing
+* Description:  WGML tag :TITLE processing
 *
 ****************************************************************************/
 #include    "wgml.h"
@@ -102,6 +102,9 @@ static void prep_title_line( text_line * p_line, char * p )
     } else {
         curr_t = alloc_text_chars( "title", 6, g_curr_font_num );
     }
+
+    curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
+
     intrans( curr_t->text, &curr_t->count, g_curr_font_num );
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
@@ -129,6 +132,7 @@ static void prep_title_line( text_line * p_line, char * p )
     return;
 }
 
+
 /***************************************************************************/
 /*  :TITLE tag                                                             */
 /***************************************************************************/
@@ -140,7 +144,8 @@ void    gml_title( const gmltag * entry )
     int8_t          t_spacing;
     int8_t          font_save;
 
-    if( ProcFlags.doc_sect != doc_sect_titlep ) {
+    if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
+          (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
         err_count++;
         show_include_stack();
@@ -195,7 +200,7 @@ void    gml_title( const gmltag * entry )
         }
     }
 
-    prepare_doc_sect( doc_sect_titlep );// if not already done
+    start_doc_sect();                   // if not already done
 
     p_line.first = NULL;
     p_line.next  = NULL;

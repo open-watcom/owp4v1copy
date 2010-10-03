@@ -1,14 +1,14 @@
-:cmt. test nested lists :ol, :sl, :ul 
+:cmt. test nested lists :ol, :sl, :ul
 :cmt. item tags :LI and :LP
 :cmt. TBD  not yet :DL, :GL and subtags
 :LAYOUT.
 :LP
         left_indent = 4
-        right_indent = 3 
-        line_indent = 2 
-        pre_skip = 1 
-        post_skip = 1 
-        spacing = 1 
+        right_indent = 3
+        line_indent = 2
+        pre_skip = 1
+        post_skip = 1
+        spacing = 1
 :DT
         font = 2
 :GT
@@ -99,23 +99,28 @@
 :eLAYOUT.
 :GDOC.
 :BODY.
+.ty body  in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
 :p.
 &gml.SL follows.
+.ty p     in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
 :sl compact.
     :li.simple 1 compact
+.ty li sl in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
     :li.simple 2 compact
 :lp.
 &gml.OL follows.
     :ol.
-.*      This is text before first &gml.li which extends over more 
+.*      This is text before first &gml.li which extends over more
 .*         than one line to see how it looks.
         :li.ordered 1 no compact spacing 2 and some text to hit the right margin
 to see how a multi line list item looks
+.ty li ol in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
         :li.ordered 2 no compact
         :note. This is a note which extends over more than one line to see how it looks.
     :lp.list part
 still list part still list part still list part still list part still list part
 still list part still list part still list part still list part still list part
+.ty lp    in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
         :li.ordered 3 no compact
     :ul
         :li.ul with eul in txl2 include file
@@ -138,4 +143,5 @@ still list part still list part still list part still list part still list part
 :eul.
 :esl.
 &gml.SL end.
+.ty end  in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
 :EGDOC.
