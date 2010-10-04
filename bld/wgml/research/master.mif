@@ -9,15 +9,16 @@ wgml_research_autodepends = .AUTODEPEND
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
+!include ..\..\wgmlobjs.mif
 !include wres.mif
- 
+
 inc_dirs = -I"../h;../../h;$(wres_dir)/h;$(wrc_dir)/h"
  
 .c: ../c;../../c;$(watcom_dir)/c
  
 wgml_libs = $(wres_lib)
  
-common_objs = &
+research_common_objs = &
             cmdlhelp.obj  &
             common.obj    &
             dfinterp.obj  &
@@ -25,7 +26,7 @@ common_objs = &
             research.obj
  
 cf_common_objs = &
-            $(common_objs) &
+            $(research_common_objs) &
             cfdir.obj     &
             cfdev.obj     &
             cfdrv.obj     &
@@ -45,63 +46,35 @@ cfp_objs = &
             cfputils.obj
  
 cop_common_objs = &
-            $(common_objs) &
-            copdev.obj    &
-            copdir.obj    &
-            copdrv.obj    &
-            copfiles.obj  &
-            copfon.obj    &
-            copfunc.obj   &
-            cophdr.obj    &
-            devfuncs.obj  &
+            $(research_common_objs) &
+            $(scr_objs)   &
+	    $(gml_objs)   &
+	    $(lay_objs)   &
+	    $(dev_objs)   &
             findfile.obj  &
             gargutil.obj  &
-            gbanner.obj   &
             gdata.obj     &
-	    gdocsect.obj  &
+            gdeflay.obj   &
+            gdummy.obj    &
             gerror.obj    &
             gerrorxx.obj  &
             getnum.obj    &
             gmacdict.obj  &
             gmemory.obj   &
+            goptions.obj  &
+            gpagegeo.obj  &
+            gprocess.obj  &
             gproctxt.obj  &
             gresrch.obj   &
-            gprocess.obj  &
-	    gsbr.obj	  &
-            gsetvar.obj   &
-            gsfc2d.obj    &
-            gsfc2x.obj    &
-            gsfd2c.obj    &
-            gsfdelst.obj  &
-            gsfindex.obj  &
-            gsfinsrt.obj  &
-            gsfleft.obj   &
-            gsflngth.obj  &
-            gsflowup.obj  &
-            gsfmin.obj    &
-            gsfright.obj  &
-            gsfstrip.obj  &
-            gsfsubst.obj  &
-            gsftrans.obj  &
-            gsfveclp.obj  &
-            gsfwidth.obj  &
-            gsfwordx.obj  &
-            gsfuncs.obj   &
-            gsfunelu.obj  &
-            gsgoto.obj    &
-            gsix.obj      &
-            gsmacro.obj   &
-            gspe.obj      &
-	    gssk.obj	  &
-            gsyssym.obj   &
+            gscan.obj     &
             gsymvar.obj   &
-            gtagdict.obj  &
+            gsyssym.obj   &
             gtxtpool.obj  &
             gutil.obj     &
 	    gwidowut.obj  &
-            outbuff.obj   &
             wgmlmsg.obj   &
-            wgmlsupp.obj
+            wgmlsupp.obj  &
+            wgmlsup2.obj
  
 copp_objs = &
             $(cop_common_objs) &
@@ -112,7 +85,7 @@ devld_objs = &
             devldchk.obj
  
 ff_objs = &
-            $(common_objs) &
+            $(research_common_objs) &
             findfunc.obj
  
 outc_objs = &
