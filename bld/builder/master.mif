@@ -83,3 +83,12 @@ cdsay.exe : cdsay.obj equals.obj
 langdat.exe : langdat.obj utils.obj $(sys_$(host_os))
 rm.exe: rm.obj getopt.obj quit.obj lineprt.obj alloc.obj filerx.obj &
         regexp.obj fnlower.obj die.obj isdotdot.obj
+
+genverrc.exe: genverrc.c
+        $(bld_cl) $(wcl_util_opts) -D_VERSION=$(bld_ver) $<
+!ifndef __$(host_os)__                  # Don't copy unless host_os=build_os
+!else ifdef __UNIX__
+        cp   $^. $(%OWBINDIR)/$^&       # Remove .exe working name
+!else
+        copy $^. $(%OWBINDIR) > nul     # MS-influenced command noisy
+!endif
