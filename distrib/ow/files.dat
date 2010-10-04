@@ -58,6 +58,7 @@
 [ INCLUDE <DEVDIR>/causeway/files.dat ]
 [ INCLUDE <DEVDIR>/wipfc/files.dat ]
 [ INCLUDE <DEVDIR>/redist/files.dat ]
+[ INCLUDE <DEVDIR>/uninstal/files.dat ]
 [ INCLUDE readme.dat ]
 
 # Currently Missing:

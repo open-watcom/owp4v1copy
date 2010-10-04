@@ -314,6 +314,9 @@ re2c_dir        = $(dev_dir)/re2c
 !ifndef fmedit_dir
 fmedit_dir      = $(dev_dir)/fmedit
 !endif
+!ifndef uninstal_dir
+uninstal_dir    = $(dev_dir)/uninstal
+!endif
 !ifndef libzip_dir
 libzip_dir      = $(contrib_dir)/libzip
 !endif
@@ -640,6 +643,9 @@ cw_dir          = $(dev_dir)\causeway
 !endif
 !ifndef fmedit_dir
 fmedit_dir      = $(dev_dir)\fmedit
+!endif
+!ifndef uninstal_dir
+uninstal_dir    = $(dev_dir)\uninstal
 !endif
 !ifndef libzip_dir
 libzip_dir      = $(contrib_dir)\libzip
