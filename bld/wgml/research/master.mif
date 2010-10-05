@@ -73,9 +73,8 @@ cop_common_objs = &
             gutil.obj     &
 	    gwidowut.obj  &
             wgmlmsg.obj   &
-            wgmlsupp.obj  &
-            wgmlsup2.obj
- 
+            wgmlsupp.obj
+
 copp_objs = &
             $(cop_common_objs) &
             copparse.obj
