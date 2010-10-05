@@ -31,6 +31,8 @@
 *                   free_some_mem()
 *                   get_line()
 *                   get_macro_line()
+*                   g_banner()
+*                   inc_inc_level()
 *                   my_exit()
 *                   reopen_inc_fp()
 *                   show_include_stack()
@@ -42,6 +44,47 @@
 
 #include "wgml.h"
 #include "gvars.h"
+#include "banner.h"
+
+
+#define mystr(x)            # x
+#define xmystr(s)           mystr(s)
+
+#define CRLF            "\n"
+
+
+/***************************************************************************/
+/*  Output Banner if wanted and not yet done                               */
+/***************************************************************************/
+
+void g_banner( void )
+{
+    if( !(GlobalFlags.bannerprinted | GlobalFlags.quiet) ) {
+        out_msg( banner1w( "Script/GML", _WGML_VERSION_ ) CRLF );
+        out_msg( banner2a() CRLF );
+        out_msg( banner3 CRLF );
+        out_msg( banner3a CRLF );
+        out_msg( "Compiled with WATCOMC "xmystr(__WATCOMC__)
+                 " "__DATE__" "__TIME__ CRLF);
+#ifdef  TRMEM
+        out_msg( "Compiled with TRMEM memory tracker (trmem)" CRLF );
+#endif
+        GlobalFlags.bannerprinted = 1;
+    }
+}
+
+
+/***************************************************************************/
+/*  increment include level                                                */
+/***************************************************************************/
+
+void    inc_inc_level( void )
+{
+    inc_level++;                        // start new level
+    if( inc_level > max_inc_level ) {
+        max_inc_level = inc_level;      // record highest level
+    }
+}
 
 
 /***************************************************************************/
