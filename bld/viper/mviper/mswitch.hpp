@@ -53,6 +53,7 @@ WCLASS MSwitch : public WObject
         void name( WString& name ) { name = _text; }
         WString& text() { return _text; }
         void getTag( WString& tag );
+        void getCompatibleTag( WString& tag );
         virtual void displayText( WString& s );
 
         MSwitch* addSwitch( WVList& list, const char* mask );
@@ -65,6 +66,7 @@ WCLASS MSwitch : public WObject
         int             _panel;
         WString         _mask;
         WString         _text;
+        WString         _compatibleText;
 };
 
 #endif
