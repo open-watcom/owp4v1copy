@@ -123,6 +123,7 @@ extern bool             GenerateBatchFile( bool );
 #if defined( __NT__ )
 extern bool             GetRegString( HKEY, char *, char *, char *, DWORD );
 extern bool             ModifyRegAssoc( bool );
+extern bool             AddToUninstallList( bool );
 #endif
 extern long             GetODBCUsage( void );
 extern void             SetODBCUsage( long );

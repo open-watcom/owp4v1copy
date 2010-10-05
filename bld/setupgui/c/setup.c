@@ -125,6 +125,13 @@ static bool SetupOperations()
         }
     }
 
+    // Add uninstaller to Add/Remove Programs
+    if( GetVariableIntVal( "DoUninstall" ) == 1 ) {
+        if( !ModifyUninstall( uninstall ) ) {
+            return( FALSE );
+        }
+    }
+
     DoSpawn( WHEN_END );
 
     return( TRUE );

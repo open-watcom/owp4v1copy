@@ -32,6 +32,7 @@
 extern bool             ModifyEnvironment( bool );
 extern bool             ModifyStartup( bool );
 extern bool             ModifyAssociations( bool );
+extern bool             ModifyUninstall( bool );
 extern bool             SpawnNextScript( );
 extern COPYFILE_ERROR   DoCopyFile( const char *, char *, int );
 extern bool             CopyAllFiles( void );

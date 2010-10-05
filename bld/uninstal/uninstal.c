@@ -38,6 +38,7 @@
 #include "progress.h"
 
 #define CHECK_FILE_NAME "owsetenv.bat"
+#define UNINSTALL_NAME  "Open Watcom"
 
 /*
  * DeleteFolder - delete all files in a folder
@@ -192,6 +193,13 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
      */
     MoveFileEx( szExePath, NULL, MOVEFILE_DELAY_UNTIL_REBOOT );
     MoveFileEx( szInstallPath, NULL, MOVEFILE_DELAY_UNTIL_REBOOT );
+
+    /*
+     * Remove the uninstaller from the Add/Remove Programs list.
+     */
+    RegDeleteKey( HKEY_LOCAL_MACHINE,
+                  "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
+                  UNINSTALL_NAME );
 
     /*
      * Take away the progress dialog.

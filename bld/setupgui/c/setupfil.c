@@ -1665,6 +1665,47 @@ extern bool ModifyRegAssoc( bool uninstall )
     return( TRUE );
 }
 
+extern bool AddToUninstallList( bool uninstall )
+/**********************************************/
+{
+    HKEY        hkey;
+    const char  *val;
+    DWORD       major, minor, dw;
+    char        keyname[256];
+
+    sprintf( keyname, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%s",
+             GetVariableStrVal( "UninstallKeyName" ) );
+    if( !uninstall ) {
+        RegCreateKey( HKEY_LOCAL_MACHINE, keyname, &hkey );
+        val = GetVariableStrVal( "UninstallDisplayName" );
+        RegSetValueEx( hkey, "DisplayName", 0L, REG_SZ, val, strlen( val ) + 1 );
+        val = GetVariableStrVal( "UninstallCommand" );
+        RegSetValueEx( hkey, "UninstallString", 0L, REG_SZ, val, strlen( val ) + 1 );
+        val = GetVariableStrVal( "UninstallIcon" );
+        RegSetValueEx( hkey, "DisplayIcon", 0L, REG_SZ, val, strlen( val ) + 1 );
+        val = GetVariableStrVal( "UninstallCompany" );
+        RegSetValueEx( hkey, "Publisher", 0L, REG_SZ, val, strlen( val ) + 1 );
+        val = GetVariableStrVal( "UninstallHelpURL" );
+        RegSetValueEx( hkey, "HelpLink", 0L, REG_SZ, val, strlen( val ) + 1 );
+        major = GetVariableIntVal( "UninstallMajorVersion" );
+        RegSetValueEx( hkey, "VersionMajor", 0L, REG_DWORD, (LPBYTE)&major, sizeof( DWORD ) );
+        minor = GetVariableIntVal( "UninstallMinorVersion" );
+        RegSetValueEx( hkey, "VersionMinor", 0L, REG_DWORD, (LPBYTE)&minor, sizeof( DWORD ) );
+        sprintf( keyname, "%d.%d", major, minor );
+        RegSetValueEx( hkey, "DisplayVersion", 0L, REG_SZ, keyname, strlen( keyname ) + 1 );
+        val = GetVariableStrVal( "DstDir" );
+        RegSetValueEx( hkey, "InstallLocation", 0L, REG_SZ, val, strlen( val ) + 1 );
+        dw = 1L;
+        RegSetValueEx( hkey, "NoModify", 0L, REG_DWORD, (LPBYTE)&dw, sizeof( DWORD ) );
+        RegSetValueEx( hkey, "NoRepair", 0L, REG_DWORD, (LPBYTE)&dw, sizeof( DWORD ) );
+        RegCloseKey( hkey );
+    } else {
+        RegDeleteKey( hkey, keyname );
+    }
+    
+    return( TRUE );
+}
+
 #endif
 
 extern bool GenerateBatchFile( bool uninstall )

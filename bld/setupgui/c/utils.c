@@ -183,6 +183,16 @@ extern bool ModifyAssociations( bool uninstall )
 #endif
 }
 
+extern bool ModifyUninstall( bool uninstall )
+/*******************************************/
+{
+#ifdef __NT__
+    return( AddToUninstallList( uninstall ) );
+#else
+    return( TRUE );
+#endif
+}
+
 typedef struct {
     unsigned long long  free_space;
     unsigned long       cluster_size;
