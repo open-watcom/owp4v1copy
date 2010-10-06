@@ -32,11 +32,20 @@ cl.exe :  $(clstub_objs) $(version_res_$(host_os)_$(host_cpu))
         $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
 
-cl386.exe :  $(cl386_hdrs) $(cl386_objs)
+cl386.exe :  $(cl386_hdrs) $(cl386_objs) $(ver386_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(cl386_objs)}
+!ifdef ver386_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(ver386_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
-claxp.exe :  $(claxp_hdrs) $(claxp_objs)
+claxp.exe :  $(claxp_hdrs) $(claxp_objs) $(veraxp_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(claxp_objs)}
+!ifdef veraxp_res_$(host_os)_$(host_cpu) $^@
+        $(rc) -k $(veraxp_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
-clppc.exe :  $(clppc_hdrs) $(clppc_objs)
+clppc.exe :  $(clppc_hdrs) $(clppc_objs) $(verppc_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(clppc_objs)}
+!ifdef verppc_res_$(host_os)_$(host_cpu) $^@
+        $(rc) -k $(verppc_res_$(host_os)_$(host_cpu)) $^@
+!endif

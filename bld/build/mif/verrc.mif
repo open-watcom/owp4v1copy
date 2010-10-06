@@ -34,6 +34,54 @@ verrc_exe_out = exever.res
 verrc_exe = $(proj_name)
 !endif
 
+!ifndef verrc386_exe_skel
+verrc386_exe_skel = ../ver386.rc
+!endif
+
+!ifndef verrc386_exe_int
+verrc386_exe_int = ver386.grc
+!endif
+
+!ifndef verrc386_exe_out
+verrc386_exe_out = ver386.res
+!endif
+
+!ifndef verrc386_exe
+verrc386_exe = $(proj_name)386
+!endif
+
+!ifndef verrcaxp_exe_skel
+verrcaxp_exe_skel = ../veraxp.rc
+!endif
+
+!ifndef verrcaxp_exe_int
+verrcaxp_exe_int = veraxp.grc
+!endif
+
+!ifndef verrcaxp_exe_out
+verrcaxp_exe_out = veraxp.res
+!endif
+
+!ifndef verrcaxp_exe
+verrcaxp_exe = $(proj_name)axp
+!endif
+
+!ifndef verrcppc_exe_skel
+verrcppc_exe_skel = ../verppc.rc
+!endif
+
+!ifndef verrcppc_exe_int
+verrcppc_exe_int = verppc.grc
+!endif
+
+!ifndef verrcppc_exe_out
+verrcppc_exe_out = verppc.res
+!endif
+
+!ifndef verrcppc_exe
+verrcppc_exe = $(proj_name)ppc
+!endif
+
 !ifndef patch_level
 patch_level = 0
 !endif
@@ -46,6 +94,36 @@ $(verrc_exe_out): $(verrc_exe_skel)
         @genverrc $]@ $(verrc_exe_int) $$ $(verrc_exe) $(patch_level)
         @echo rc $@
         @$(rc) $(rc_flags) $(inc_path) $(verrc_exe_int) -fo=$^@
+!endif
+
+$(verrc386_exe_out): $(verrc386_exe_skel)
+!ifeq verbose 1
+        genverrc $]@ $(verrc386_exe_int) $$ $(verrc386_exe) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) $(verrc386_exe_int) -fo=$^@
+!else
+        @genverrc $]@ $(verrc386_exe_int) $$ $(verrc386_exe) $(patch_level)
+        @echo rc $@
+        @$(rc) $(rc_flags) $(inc_path) $(verrc386_exe_int) -fo=$^@
+!endif
+
+$(verrcaxp_exe_out): $(verrcaxp_exe_skel)
+!ifeq verbose 1
+        genverrc $]@ $(verrcaxp_exe_int) $$ $(verrcaxp_exe) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) $(verrcaxp_exe_int) -fo=$^@
+!else
+        @genverrc $]@ $(verrcaxp_exe_int) $$ $(verrcaxp_exe) $(patch_level)
+        @echo rc $@
+        @$(rc) $(rc_flags) $(inc_path) $(verrcaxp_exe_int) -fo=$^@
+!endif
+
+$(verrcppc_exe_out): $(verrcppc_exe_skel)
+!ifeq verbose 1
+        genverrc $]@ $(verrcppc_exe_int) $$ $(verrcppc_exe) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) $(verrcppc_exe_int) -fo=$^@
+!else
+        @genverrc $]@ $(verrcppc_exe_int) $$ $(verrcppc_exe) $(patch_level)
+        @echo rc $@
+        @$(rc) $(rc_flags) $(inc_path) $(verrcppc_exe_int) -fo=$^@
 !endif
 
 $(verrc_dll_out): $(verrc_dll_skel)

@@ -42,11 +42,20 @@ lib.exe :  $(libstub_objs) $(version_res_$(host_os)_$(host_cpu))
         $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
 
-lib386.exe :  $(lib_hdrs) $(lib386_objs) $(lib_common_libs)
+lib386.exe :  $(lib_hdrs) $(lib386_objs) $(lib_common_libs) $(ver386_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(lib386_objs)} library {$(lib_common_libs)}
+!ifdef ver386_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(ver386_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
-libaxp.exe :  $(lib_hdrs) $(libaxp_objs) $(lib_common_libs)
+libaxp.exe :  $(lib_hdrs) $(libaxp_objs) $(lib_common_libs) $(veraxp_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(libaxp_objs)} library {$(lib_common_libs)}
+!ifdef veraxp_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(veraxp_res_$(host_os)_$(host_cpu)) $^@
+!endif
 
-libppc.exe :  $(lib_hdrs) $(libppc_objs) $(lib_common_libs)
+libppc.exe :  $(lib_hdrs) $(libppc_objs) $(lib_common_libs) $(verppc_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ file {$(libppc_objs)} library {$(lib_common_libs)}
+!ifdef verppc_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(verppc_res_$(host_os)_$(host_cpu)) $^@
+!endif
