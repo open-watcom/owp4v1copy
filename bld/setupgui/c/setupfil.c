@@ -1671,18 +1671,20 @@ extern bool AddToUninstallList( bool uninstall )
     HKEY        hkey;
     const char  *val;
     DWORD       major, minor, dw;
-    char        keyname[256];
+    char        buf[256];
 
-    sprintf( keyname, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%s",
+    sprintf( buf, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%s",
              GetVariableStrVal( "UninstallKeyName" ) );
     if( !uninstall ) {
-        RegCreateKey( HKEY_LOCAL_MACHINE, keyname, &hkey );
+        RegCreateKey( HKEY_LOCAL_MACHINE, buf, &hkey );
         val = GetVariableStrVal( "UninstallDisplayName" );
         RegSetValueEx( hkey, "DisplayName", 0L, REG_SZ, val, strlen( val ) + 1 );
-        val = GetVariableStrVal( "UninstallCommand" );
-        RegSetValueEx( hkey, "UninstallString", 0L, REG_SZ, val, strlen( val ) + 1 );
-        val = GetVariableStrVal( "UninstallIcon" );
-        RegSetValueEx( hkey, "DisplayIcon", 0L, REG_SZ, val, strlen( val ) + 1 );
+        strcpy( buf, GetVariableStrVal( "UninstallCommand" ) );
+        ReplaceVarsInplace( buf, FALSE );
+        RegSetValueEx( hkey, "UninstallString", 0L, REG_SZ, buf, strlen( val ) + 1 );
+        strcpy( buf, GetVariableStrVal( "UninstallIcon" ) );
+        ReplaceVarsInplace( buf, FALSE );
+        RegSetValueEx( hkey, "DisplayIcon", 0L, REG_SZ, buf, strlen( val ) + 1 );
         val = GetVariableStrVal( "UninstallCompany" );
         RegSetValueEx( hkey, "Publisher", 0L, REG_SZ, val, strlen( val ) + 1 );
         val = GetVariableStrVal( "UninstallHelpURL" );
@@ -1691,8 +1693,8 @@ extern bool AddToUninstallList( bool uninstall )
         RegSetValueEx( hkey, "VersionMajor", 0L, REG_DWORD, (LPBYTE)&major, sizeof( DWORD ) );
         minor = GetVariableIntVal( "UninstallMinorVersion" );
         RegSetValueEx( hkey, "VersionMinor", 0L, REG_DWORD, (LPBYTE)&minor, sizeof( DWORD ) );
-        sprintf( keyname, "%d.%d", major, minor );
-        RegSetValueEx( hkey, "DisplayVersion", 0L, REG_SZ, keyname, strlen( keyname ) + 1 );
+        sprintf( buf, "%d.%d", major, minor );
+        RegSetValueEx( hkey, "DisplayVersion", 0L, REG_SZ, buf, strlen( buf ) + 1 );
         val = GetVariableStrVal( "DstDir" );
         RegSetValueEx( hkey, "InstallLocation", 0L, REG_SZ, val, strlen( val ) + 1 );
         dw = 1L;
@@ -1700,7 +1702,7 @@ extern bool AddToUninstallList( bool uninstall )
         RegSetValueEx( hkey, "NoRepair", 0L, REG_DWORD, (LPBYTE)&dw, sizeof( DWORD ) );
         RegCloseKey( hkey );
     } else {
-        RegDeleteKey( hkey, keyname );
+        RegDeleteKey( hkey, buf );
     }
     
     return( TRUE );
