@@ -38,6 +38,9 @@
 #include "aboutdlg.h"
 #include "win.h"
 #include <assert.h>
+#ifdef __NT__
+    #include <commctrl.h>
+#endif
 
 /*
  * WriteText - write a length specified string to a window
@@ -522,6 +525,9 @@ char *windowName[] = {
     "CommandWindow",
     "StatusWnd",
     "WTool",
+#ifdef __NT__
+    STATUSCLASSNAME,
+#endif
 #if 0
     EditorName,         // nothing to change
     "Edit Container"    // should use standard Windows colour for this
