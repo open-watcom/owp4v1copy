@@ -1,9 +1,8 @@
 # WGML object files
 #
-# common objects
+# common objects       wgml.obj is kept separate
 #
 common_objs =  &
-        wgml.obj     &
         wgmlsupp.obj &
         findfile.obj &
         gargutil.obj &
@@ -152,6 +151,6 @@ scr_objs =  &
         gsty.obj     &
         gsus.obj
 
-objs = $(common_objs) $(scr_objs) $(gml_objs) $(lay_objs) $(dev_objs)
+objs = wgml.obj $(common_objs) $(scr_objs) $(gml_objs) $(lay_objs) $(dev_objs)
 
 
