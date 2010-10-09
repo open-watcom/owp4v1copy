@@ -27,17 +27,18 @@
 * Description:  WGML tag :BINCLUDE processing
 *
 ****************************************************************************/
-//#include    "wgml.h"
+#include    "wgml.h"
 //#include    "findfile.h"
 //#include    "gvars.h"
 
 
 /***************************************************************************/
-/*  :BINCLUDE tag                                                             */
+/*  :BINCLUDE tag                                                          */
 /***************************************************************************/
 
 void    gml_binclude( const gmltag * entry )
 {
+out_msg( "gml_binclude() invoked!\n");
 //    char        *   p;
 //    text_line       p_line;
 //    int8_t          t_spacing;
@@ -128,5 +129,5 @@ void    gml_binclude( const gmltag * entry )
 
 //    ProcFlags.title_tag_seen = true;
 //    scan_start = scan_stop + 1;
-//}
+}
 

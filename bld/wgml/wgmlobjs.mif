@@ -48,10 +48,12 @@ gml_objs =  &
         gaddress.obj &
         gauthor.obj  &
         gbanner.obj  &
+        gbinclud.obj &
         gcmt.obj     &
         gdate.obj    &
         gdocnum.obj  &
         gdocsect.obj &
+        ggraphic.obj &
         ghpxsf.obj   &
         ginclude.obj &
         gnestut.obj  &

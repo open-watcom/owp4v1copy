@@ -52,7 +52,7 @@
   pickg( APPENDIX, 8,      gml_appendix,   0 )
   pickg( AUTHOR,   6,      gml_author,     tag_out_txt )
   pickg( BACKM,    5,      gml_backm,      0 )
-  pickg( BINCLUDE, 8,      gml_dummy,      0 )
+  pickg( BINCLUDE, 8,      gml_binclude,   0 )
   pickg( BODY,     4,      gml_body,       0 )
 
   pickg( CIT,      3,      gml_dummy,      tag_out_txt )
@@ -90,7 +90,7 @@
   pickg( EGL,      3,      gml_egl,        tag_out_txt )
 
   pickg( GD,       2,      gml_dummy,      tag_out_txt )
-  pickg( GRAPHIC,  7,      gml_dummy,      tag_out_txt )
+  pickg( GRAPHIC,  7,      gml_graphic,    tag_out_txt )
   pickg( GT,       2,      gml_dummy,      tag_out_txt )
   pickg( H0,       2,      gml_dummy,      tag_out_txt )
   pickg( H1,       2,      gml_dummy,      tag_out_txt )
