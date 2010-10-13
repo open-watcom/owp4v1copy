@@ -29,7 +29,7 @@
 ****************************************************************************/
 #include    "wgml.h"
 //#include    "findfile.h"
-//#include    "gvars.h"
+#include    "gvars.h"
 
 
 /***************************************************************************/
@@ -38,18 +38,16 @@
 
 void    gml_binclude( const gmltag * entry )
 {
-out_msg( "gml_binclude() invoked!\n");
 //    char        *   p;
 //    text_line       p_line;
 //    int8_t          t_spacing;
 //    int8_t          font_save;
 
-//    if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
-//          (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
-//        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
-//        err_count++;
-//        show_include_stack();
-//    }
+    if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
+        if( (ProcFlags.doc_sect_nxt < doc_sect_gdoc) ) {
+            xx_tag_err( err_tag_before_gdoc, entry->tagname );
+        }
+    }
 //    p = scan_start;
 //    if( *p && *p != '.' ) p++;
 
@@ -100,7 +98,7 @@ out_msg( "gml_binclude() invoked!\n");
 //        }
 //    }
 
-//    start_doc_sect();                   // if not already done
+    start_doc_sect();                   // if not already done
 
 //    p_line.first = NULL;
 //    p_line.next  = NULL;
@@ -128,6 +126,7 @@ out_msg( "gml_binclude() invoked!\n");
 //    ProcFlags.page_started = true;
 
 //    ProcFlags.title_tag_seen = true;
-//    scan_start = scan_stop + 1;
+    scan_start = scan_stop + 1;
+//out_msg( "gml_binclude() invoked!\n");
 }
 

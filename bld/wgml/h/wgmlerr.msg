@@ -429,6 +429,9 @@ pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
 pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
                                 "'%s' tag only allowed in %s" )
 
+pick( ERR_TAG_BEFORE_GDOC,      "%s tag must appear after the GDOC tag",
+                                "%s tag must appear after the GDOC tag" )
+
 pick( ERR_TAG_STARTING,         "\tStarting tag '%s'",
                                 "\tStarting tag '%s'" )
 

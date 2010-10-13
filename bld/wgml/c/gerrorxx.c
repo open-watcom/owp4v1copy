@@ -247,6 +247,14 @@ void    tag_text_req_err( char * tagname )
 }
 
 
+void    xx_tag_err( const msg_ids errid, char const *cw )
+{
+    err_count++;
+    g_err( errid, cw );
+    file_mac_info();
+    return;
+}
+
 void    xx_opt_err( char *cw, char *pa )
 {
     err_count++;

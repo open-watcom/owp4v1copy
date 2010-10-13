@@ -361,6 +361,9 @@ void    start_doc_sect( void )
             h_spc    = spacing;         // standard spacing
         }
         break;
+    case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
+        page_e   = ej_yes;
+        break;
     case   doc_sect_abstract:
         page_r   = layout_work.abstract.page_reset;
         page_e   = layout_work.abstract.page_eject;
@@ -507,6 +510,7 @@ void    start_doc_sect( void )
     if( header ) {
         doc_header( p_sk, top_sk, h_string, font, h_spc );
     }
+
     ProcFlags.para_started = false;
 }
 
