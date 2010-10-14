@@ -43,8 +43,17 @@ struct machine_state {
 };
 
 typedef unsigned_8 thread_state_enum; enum {
-    THD_THAW,
+                  /* states for clients that freeze execution */
+    THD_THAW,                  
     THD_FREEZE,
+                  /* states for clients that only freeze debugged threads */
+    THD_WAIT,                   /* waiting for a timeout      */
+    THD_SIGNAL,                 /* waiting for a signal       */
+    THD_KEYBOARD,               /* waiting for keyboard input */
+    THD_BLOCKED,                /* blocked on a resource      */
+    THD_RUN,                    /* running or ready to run    */
+    THD_DEBUG,                  /* thread is in a debug-state */   
+                  /* special dead state */
     THD_DEAD = 0x40
 };
 
