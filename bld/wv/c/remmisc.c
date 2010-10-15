@@ -50,6 +50,7 @@ extern bool             InitEnvSupp( void );
 extern bool             InitOvlSupp( void );
 extern bool             InitThreadSupp( void );
 extern bool             InitCapabilities( void );
+extern bool             InitAsyncSupp( void );
 extern void             StartupErr( char *err );
 extern char             *DupStr( char * );
 
@@ -85,6 +86,7 @@ void InitSuppServices( void )
         InitEnvSupp();
         InitThreadSupp();
         InitOvlSupp();
+        InitAsyncSupp();
         InitCapabilities();
     }
 }

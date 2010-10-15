@@ -110,6 +110,7 @@ engine_objs = &
         remfile.obj &
         remthrd.obj &
         removl.obj &
+        remasync.obj &
         ldsupp.obj &
         doserr.obj &
         diginter.obj &

@@ -112,7 +112,7 @@
     #elif defined(MSJXTRAP)
         #define WANT_FILE_INFO
         #define WANT_ENV
-        #define WANT_ASYNC
+        #undef  WANT_ASYNC
         #define WANT_FILE
         #undef  WANT_OVL
         #define WANT_THREAD
@@ -130,7 +130,7 @@
     #else
         #define WANT_FILE_INFO
         #define WANT_ENV
-        #define WANT_ASYNC
+        #undef  WANT_ASYNC
         #define WANT_FILE
         #undef  WANT_OVL
         #define WANT_THREAD
