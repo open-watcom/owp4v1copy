@@ -253,8 +253,20 @@ unsigned ReqFile_string_to_fullpath( void )
     if( access( fullname, 0 ) == 0 )
         ret->err = 0;
     else {
-        ret->err = MSG_FILE_NOT_FOUND;
-        *fullname = 0;
+        _makepath( fullname, drive, dir, fname, "exe" );
+
+        if( access( fullname, 0 ) == 0 )
+            ret->err = 0;
+        else {
+            _makepath( fullname, drive, dir, fname, "dll" );
+
+            if( access( fullname, 0 ) == 0 )
+                ret->err = 0;
+            else {
+                ret->err = MSG_FILE_NOT_FOUND;
+                *fullname = 0;
+            }
+        }
     }
         
     return( sizeof( *ret ) + strlen( fullname ) + 1 );
