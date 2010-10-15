@@ -24,6 +24,7 @@ extra_objs = &
         accenv.obj &
         accbrwat.obj &
         accrun.obj &
+        accasync.obj &
         accregs.obj &
         accmap.obj &
         accredir.obj &

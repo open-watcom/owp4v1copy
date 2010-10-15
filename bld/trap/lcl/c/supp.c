@@ -115,6 +115,13 @@ static unsigned (* const CapabilitiesRequests[])(void) = {
 };
 #endif
 
+#if defined(WANT_ASYNC)
+static unsigned (* const AsyncRequests[])(void) = {
+        ReqAsync_go,
+        ReqAsync_step,
+};
+#endif
+
 #if defined(WANT_RDOS_DEBUG)
 static unsigned (* const RdosRequests[])(void) = {
         ReqRdos_poll,
@@ -147,6 +154,9 @@ static const service_entry Services[] = {
 #endif
 #if defined(WANT_CAPABILITIES)
     { CAPABILITIES_SUPP_NAME,    CapabilitiesRequests },
+#endif
+#if defined(WANT_ASYNC)
+    { ASYNC_SUPP_NAME, AsyncRequests },
 #endif
 #if defined(WANT_RDOS_DEBUG)
     { RDOS_SUPP_NAME, RdosRequests },

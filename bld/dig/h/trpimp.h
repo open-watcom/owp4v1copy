@@ -190,7 +190,7 @@
 #elif defined(__RDOS__)
     #define     WANT_FILE_INFO
     #define     WANT_ENV
-    #undef      WANT_ASYNC
+    #define     WANT_ASYNC
     #define     WANT_FILE
     #undef      WANT_OVL
     #define     WANT_THREAD
@@ -263,11 +263,8 @@ extern unsigned  ReqEnv_setvar(void);
 #ifdef WANT_ASYNC
 #include "trpasync.h"
 
-extern unsigned  ReqAsync_go(void);
-extern unsigned  ReqAsync_stop(void);
-extern unsigned  ReqAsync_interrupt(void);
-extern unsigned  ReqAsync_poll(void);
-extern unsigned  ReqAsync_check(void);
+extern unsigned ReqAsync_go(void);
+extern unsigned ReqAsync_step(void);
 
 #endif
 
