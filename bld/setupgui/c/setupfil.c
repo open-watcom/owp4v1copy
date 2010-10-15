@@ -1681,10 +1681,10 @@ extern bool AddToUninstallList( bool uninstall )
         RegSetValueEx( hkey, "DisplayName", 0L, REG_SZ, val, strlen( val ) + 1 );
         strcpy( buf, GetVariableStrVal( "UninstallCommand" ) );
         ReplaceVarsInplace( buf, FALSE );
-        RegSetValueEx( hkey, "UninstallString", 0L, REG_SZ, buf, strlen( val ) + 1 );
+        RegSetValueEx( hkey, "UninstallString", 0L, REG_SZ, buf, strlen( buf ) + 1 );
         strcpy( buf, GetVariableStrVal( "UninstallIcon" ) );
         ReplaceVarsInplace( buf, FALSE );
-        RegSetValueEx( hkey, "DisplayIcon", 0L, REG_SZ, buf, strlen( val ) + 1 );
+        RegSetValueEx( hkey, "DisplayIcon", 0L, REG_SZ, buf, strlen( buf ) + 1 );
         val = GetVariableStrVal( "UninstallCompany" );
         RegSetValueEx( hkey, "Publisher", 0L, REG_SZ, val, strlen( val ) + 1 );
         val = GetVariableStrVal( "UninstallHelpURL" );
