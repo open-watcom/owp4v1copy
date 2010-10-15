@@ -142,7 +142,8 @@ unsigned ReqThread_get_next( void )
                 list = THD_KEYBOARD;
         }
     }    
-    ret->thread = list;
+    ret->thread = id;
+    ret->state = list;
 
     return( sizeof( *ret ) );
 }
