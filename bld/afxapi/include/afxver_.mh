@@ -30,8 +30,9 @@
 
 #define BASED_CODE
 
-// AFX calling convention
-#define AFXAPI  __stdcall
+// AFX calling conventions
+#define AFXAPI      __stdcall
+#define AFX_CDECL   __cdecl
 
 #ifdef _DEBUG
     #define AfxDebugBreak() ::DebugBreak()

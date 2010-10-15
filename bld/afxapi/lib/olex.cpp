@@ -24,25 +24,45 @@
 *
 *  ========================================================================
 *
-* Description:  Master header for Application Framework source.
+* Description:  Implementation of COleException and AfxThrowOleException.
 *
 ****************************************************************************/
 
 
-// Always use the latest version numbers when compiling the library itself.
-#undef WINVER
-#undef _WIN32_WINNT
-#undef _WIN32_IE
-#define WINVER          0x0600
-#define _WIN32_WINNT    0x0600
-#define _WIN32_IE       0x0700
+#include "stdafx.h"
 
-// Skip over the #pragma extref directive in afx.h when compiling the library itself.
-#define __AFX_INTERNAL__
+IMPLEMENT_DYNAMIC( COleException, CException )
 
-#include <afx.h>
-#include <afxwin.h>
-#include <afxext.h>
-#include <afxcmn.h>
-#include <afxdisp.h>
-#include <afxpriv.h>
+COleException::COleException()
+/****************************/
+{
+    m_sc = S_OK;
+}
+
+BOOL COleException::GetErrorMessage( LPTSTR lpszError, UINT nMaxError, PUINT pnHelpContext )
+/******************************************************************************************/
+{
+    if( pnHelpContext != NULL ) {
+        *pnHelpContext = 0;
+    }
+    if( lpszError == NULL || nMaxError == 0 ) {
+        return( TRUE );
+    }
+    return( ::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, m_sc, LANG_SYSTEM_DEFAULT,
+                             lpszError, nMaxError, NULL ) != 0 );
+}
+
+SCODE PASCAL COleException::Process( CException *pAnyException )
+/**************************************************************/
+{
+    ASSERT( pAnyException != NULL );
+    if( pAnyException->IsKindOf( RUNTIME_CLASS( COleException ) ) ) {
+        return( ((COleException *)pAnyException)->m_sc );
+    } else if( pAnyException->IsKindOf( RUNTIME_CLASS( CMemoryException ) ) ) {
+        return( E_OUTOFMEMORY );
+    } else if( pAnyException->IsKindOf( RUNTIME_CLASS( CNotSupportedException ) ) ) {
+        return( E_NOTIMPL );
+    } else {
+        return( E_UNEXPECTED );
+    }
+}

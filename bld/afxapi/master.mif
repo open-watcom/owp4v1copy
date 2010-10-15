@@ -26,6 +26,8 @@ headers =               &
         afxcview.h      &
         afxcview.inl    &
         afxdd_.h        &
+        afxdisp.h       &
+        afxdisp.inl     &
         afxdlgs.h       &
         afxdlgs.inl     &
         afxdll_.h       &
@@ -124,6 +126,7 @@ objs =                  &
         dc.obj          &
         debug.obj       &
         dialog.obj      &
+        dispdrvr.obj    &
         dlgbar.obj      &
         dockbar.obj     &
         dockcont.obj    &
@@ -166,6 +169,7 @@ objs =                  &
         inline2.obj     &
         inline3.obj     &
         inline4.obj     &
+        inline5.obj     &
 !endif
         invargx.obj     &
         ipaddctl.obj    &
@@ -200,6 +204,8 @@ objs =                  &
         obarr.obj       &
         object.obj      &
         oblist.obj      &
+        oledispx.obj    &
+        olex.obj        &
         pagectrl.obj    &
         pagesdlg.obj    &
         paintdc.obj     &

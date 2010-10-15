@@ -40,6 +40,7 @@ test_exes  = &
     cmd02.$(exe) &
     wnd01.$(exe) &
     wnd02.$(exe) &
+    disp01.$(exe)
 
 
 ext = $(ext_$(arch))

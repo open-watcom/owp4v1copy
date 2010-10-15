@@ -24,25 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  Master header for Application Framework source.
+* Description:  Out-of-line expansion of inline functions for the debug
+*               build of the Application Framework.
 *
 ****************************************************************************/
 
 
-// Always use the latest version numbers when compiling the library itself.
-#undef WINVER
-#undef _WIN32_WINNT
-#undef _WIN32_IE
-#define WINVER          0x0600
-#define _WIN32_WINNT    0x0600
-#define _WIN32_IE       0x0700
+#include "stdafx.h"
 
-// Skip over the #pragma extref directive in afx.h when compiling the library itself.
-#define __AFX_INTERNAL__
+#ifndef _DEBUG
+    #error Only the debug build should contain inline5.cpp.
+#endif
 
-#include <afx.h>
-#include <afxwin.h>
-#include <afxext.h>
-#include <afxcmn.h>
-#include <afxdisp.h>
-#include <afxpriv.h>
+#undef AFX_INLINE
+#define AFX_INLINE
+#include <afxdisp.inl>
