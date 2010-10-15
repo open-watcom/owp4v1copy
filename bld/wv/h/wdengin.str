@@ -195,6 +195,7 @@ wdpick( Thread_Not_Exist,
 wdpick( Current,
        "current",
        "jcurrent" )//dbgwthrd
+
 wdpick( Dead,
        "dead",
        "jdead" ) //dbgwthrd dbgmisc
@@ -206,6 +207,30 @@ wdpick( Frozen,
 wdpick( Runnable,
        "runnable",
        "jrunnable" ) //dbgwthrd dbgmisc
+
+wdpick( Wait,
+       "wait",
+       "jwait" ) //dbgwthrd dbgmisc
+
+wdpick( Signal,
+       "signal",
+       "jsignal" ) //dbgwthrd dbgmisc
+
+wdpick( Keyboard,
+       "keyboard",
+       "jkeyboard" ) //dbgwthrd dbgmisc
+
+wdpick( Blocked,
+       "blocked",
+       "jblocked" ) //dbgwthrd dbgmisc
+
+wdpick( Executing,
+       "executing",
+       "jexecuting" ) //dbgwthrd dbgmisc
+
+wdpick( Debug,
+       "debug",
+       "jdebug" ) //dbgwthrd dbgmisc
 
 
 // strings used by the variable display window
