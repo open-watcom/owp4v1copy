@@ -33,7 +33,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include "stdrdos.h"
+#include "rdos.h"
 #include "debug.h"
+
+#define THD_WAIT        2
+#define THD_SIGNAL      3
+#define THD_KEYBOARD    4
+#define THD_BLOCKED     5
+#define THD_RUN         6
+#define THD_DEBUG       7
 
 unsigned ReqThread_freeze( void )
 {
@@ -90,6 +98,11 @@ unsigned ReqThread_get_next( void )
     thread_get_next_req *acc;
     thread_get_next_ret *ret;
     struct TDebug       *obj;
+    int                 id;
+    char                list = THD_BLOCKED;
+    int                 ok;
+    int                 i;
+    struct ThreadState  state;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -98,7 +111,38 @@ unsigned ReqThread_get_next( void )
 
     obj = GetCurrentDebug();
 	if (obj)
-        ret->thread = GetNextThread( obj, acc->thread );
+        id = GetNextThread( obj, acc->thread );
+    else
+        id = 0;
+
+    if( id ) {
+        ok = FALSE;    
+        for ( i = 0; i < 256 && !ok; i++ ) {
+            RdosGetThreadState(i, &state);
+            if (state.ID == id)
+                ok = TRUE;
+        }
+        if (ok) {
+            if (strstr(state.List, "Ready"))
+                list = THD_RUN;
+
+            if (strstr(state.List, "Run"))
+                list = THD_RUN;
+                
+            if (strstr(state.List, "Debug"))
+                list = THD_DEBUG;
+                
+            if (strstr(state.List, "Wait"))
+                list = THD_WAIT;
+
+            if (strstr(state.List, "Signal"))
+                list = THD_SIGNAL;
+
+            if (strstr(state.List, "Keyboard"))
+                list = THD_KEYBOARD;
+        }
+    }    
+    ret->thread = list;
 
     return( sizeof( *ret ) );
 }
