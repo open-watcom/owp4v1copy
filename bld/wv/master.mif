@@ -157,6 +157,7 @@ ui_objs = &
         dlgvarx.obj &
         dlgcmd.obj &
         dlgnewws.obj &
+        dlgasync.obj &
         wndhelp.obj &
         wndmenu.obj &
         dbgwfpu.obj &
@@ -533,6 +534,7 @@ rcfiles = &
     $(hdir)/dlgvarx.h &
     $(hdir)/dlgwind.h &
     $(hdir)/dlgstk.h &
+    $(hdir)/dlgasync.h &
     dlgayn.dlg &
     dlgbrk.dlg &
     dlgcmd.dlg &
@@ -544,6 +546,7 @@ rcfiles = &
     dlgwind.dlg &
     dlgstk.dlg &
     dlghis.dlg &
+    dlgasync.dlg &
     japayn.dlg &
     japbrk.dlg &
     japcmd.dlg &
@@ -606,6 +609,8 @@ dlgstk.dlg : $(hdir)/dlgstk.dlg
         parsedlg $(pmfont) $[@ dlgstk.dlg
 dlghis.dlg : $(hdir)/dlghis.dlg
         parsedlg $(pmfont) $[@ dlghis.dlg
+dlgasync.dlg : $(hdir)/dlgasync.dlg
+        parsedlg $(pmfont) $[@ dlgasync.dlg
 japayn.dlg : $(hdir)/japayn.dlg
         parsedlg $(pmfontj) $[@ japayn.dlg
 japbrk.dlg : $(hdir)/japbrk.dlg
