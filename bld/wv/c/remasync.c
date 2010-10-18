@@ -31,9 +31,31 @@
 
 #include <string.h>
 #include "dbgdefn.h"
+#include "dbgreg.h"
+#include "dbgerr.h"
+#include "dbgio.h"
+#include "dbgmem.h"
+#include "dbgtoggl.h"
+#include "dbginfo.h"
 #include "trpcore.h"
 #include "trpasync.h"
-#include "dbgio.h"
+#include "mad.h"
+#include "dui.h"
+
+extern void             RestoreHandlers( void );
+extern void             GrabHandlers( void );
+extern void             GetSysConfig( void );
+extern void             CheckMADChange( void );
+extern dtid_t           RemoteSetThread( dtid_t );
+
+#if defined(__GUI__) && defined(__OS2__)
+extern unsigned         OnAnotherThread( unsigned(*)(), unsigned, void *, unsigned, void * );
+#else
+#define                 OnAnotherThread( a,b,c,d,e ) a( b,c,d,e )
+#endif
+
+extern machine_state    *DbgRegs;
+extern system_config    SysConfig;
 
 extern trap_shandle GetSuppId( char * );
 
@@ -54,4 +76,48 @@ bool InitAsyncSupp( void )
 bool HaveRemoteAsync( void )
 {
     return( SuppAsyncId != 0 );
+}
+
+unsigned MakeAsyncRun( bool single )
+{
+    async_go_req        acc;
+    async_go_ret        ret;
+    addr_ptr            tmp;
+
+    if( SuppAsyncId == 0 ) return( 0 );
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppAsyncId;
+
+    if( single )
+        acc.req = REQ_ASYNC_GO;
+    else
+        acc.req = REQ_ASYNC_STEP;
+
+    RestoreHandlers();
+    DUIExitCriticalSection();
+    
+    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
+
+    CONV_LE_32( ret.stack_pointer.offset );
+    CONV_LE_16( ret.stack_pointer.segment );
+    CONV_LE_32( ret.program_counter.offset );
+    CONV_LE_16( ret.program_counter.segment );
+    CONV_LE_16( ret.conditions );
+    DUIEnterCriticalSection();
+    GrabHandlers();
+    if( ret.conditions & COND_CONFIG ) {
+        GetSysConfig();
+        CheckMADChange();
+    }
+    DbgRegs->mad = SysConfig.mad;
+    /* Use 'tmp' because of alignment problems */
+    tmp = ret.stack_pointer;
+    MADRegSpecialSet( MSR_SP, &DbgRegs->mr, &tmp );
+    tmp = ret.program_counter;
+    MADRegSpecialSet( MSR_IP, &DbgRegs->mr, &tmp );
+    if( ret.conditions & COND_THREAD ) {
+        DbgRegs->tid = RemoteSetThread( 0 );
+    }
+    return( ret.conditions );
 }
