@@ -1377,31 +1377,6 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     }
 }
 
-#if defined(__NT__) || defined(WILLOWS)
-VOID CALLBACK GUITimerProc( HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime )
-{
-    gui_window *wnd;
-    gui_timer_event timer;
-
-    uMsg = uMsg; dwTime = dwTime;
-    wnd = GUIGetWindow( hwnd );
-    if( wnd != NULL ) {
-        timer.id = idEvent;
-        GUIEVENTWND( wnd, GUI_TIMER_EVENT, &timer );
-    }
-}
-
-void GUIStartTimer( gui_window *wnd, int id, int msec )
-{
-    SetTimer( wnd->hwnd, id, msec, GUITimerProc );
-}
-
-void GUIStopTimer( gui_window *wnd, int id )
-{
-    KillTimer( wnd->hwnd, id );
-}
-#endif
-
 #ifdef __OS2_PM__
 WPI_MRESULT CALLBACK GUIFrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
                                    WPI_PARAM2 lparam )

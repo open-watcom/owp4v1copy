@@ -42,6 +42,8 @@
 enum {
     REQ_ASYNC_GO,               /* 00 */
     REQ_ASYNC_STEP,             /* 01 */
+    REQ_ASYNC_POLL,             /* 02 */
+    REQ_ASYNC_STOP,             /* 03 */
 };
 
 
@@ -58,8 +60,20 @@ typedef struct {
     unsigned_16         conditions;
 } _WCUNALIGNED async_go_ret;
 
+/*=================== REQ_ASYNC_STEP ===================*/
+
 typedef async_go_req     async_step_req;
 typedef async_go_ret     async_step_ret;
+
+/*=================== REQ_ASYNC_POLL ===================*/
+
+typedef async_go_req     async_poll_req;
+typedef async_go_ret     async_poll_ret;
+
+/*=================== REQ_ASYNC_STOP ===================*/
+
+typedef async_go_req     async_stop_req;
+typedef async_go_ret     async_stop_ret;
 
 #pragma pack( pop )
 

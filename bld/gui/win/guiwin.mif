@@ -38,6 +38,7 @@ sysobjs = guixscal.obj &
           guisysin.obj &
           guisysfi.obj &
           guisystr.obj &
+          guitimer.obj &
           guixwind.obj &
           guixmain.obj &
 	  guidrain.obj &

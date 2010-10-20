@@ -111,6 +111,10 @@ extern void             PopInpStack( void );
 extern void             ProcACmd( void );
 extern bool             SymUserModLoad( char *fname, address *loadaddr );
 extern bool             SymUserModUnload( char *fname );
+extern bool             HaveRemoteAsync( void );
+extern unsigned         MakeAsyncRun( bool single );
+extern unsigned         DlgAsyncRun( void );
+
 
 extern input_stack      *InpStack;
 extern machine_state    *DbgRegs;
@@ -321,6 +325,21 @@ typedef enum {
     ES_FORCE_BREAK
 } execute_state;
 
+static unsigned DoRun( bool step )
+{
+    unsigned     conditions;
+    
+    if( HaveRemoteAsync() ) {
+        conditions = MakeAsyncRun( step );
+        if( conditions & COND_RUNNING ) {
+            conditions = DlgAsyncRun();
+        }
+    } else {
+        conditions = MakeProgRun( step );
+    }
+    return( conditions );
+}
+
 unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
 {
     bool                have_brk_at_ip;
@@ -339,7 +358,9 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
     first_time = TRUE;
     es = ES_NORMAL;
     run_conditions = 0;
-    DUIPlayDead( TRUE );
+    if( !HaveRemoteAsync() ) {
+        DUIPlayDead( TRUE );
+    }
     for( ;; ) {
         switch( es ) {
         case ES_FORCE_BREAK:
@@ -401,11 +422,11 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
             /* fall through */
         case MTRH_STEP:
             /* only updates stack/execution */
-            conditions = MakeProgRun( TRUE );
+            conditions = DoRun( TRUE );
             break;
         default:
             /* only updates stack/execution */
-            conditions = MakeProgRun( FALSE  );
+            conditions = DoRun( FALSE  );
             break;
         }
         if( _IsOn( SW_EXECUTE_LONG ) ) {

@@ -42,8 +42,6 @@
 #include "mad.h"
 #include "dui.h"
 
-extern void             RestoreHandlers( void );
-extern void             GrabHandlers( void );
 extern void             GetSysConfig( void );
 extern void             CheckMADChange( void );
 extern dtid_t           RemoteSetThread( dtid_t );
@@ -75,7 +73,11 @@ bool InitAsyncSupp( void )
 
 bool HaveRemoteAsync( void )
 {
+#if defined( __NT__ ) && defined( __GUI__ )     /* only available on selected hosts for now */
     return( SuppAsyncId != 0 );
+#else
+    return( FALSE );
+#endif
 }
 
 unsigned MakeAsyncRun( bool single )
@@ -90,34 +92,122 @@ unsigned MakeAsyncRun( bool single )
     acc.supp.id = SuppAsyncId;
 
     if( single )
-        acc.req = REQ_ASYNC_GO;
-    else
         acc.req = REQ_ASYNC_STEP;
+    else
+        acc.req = REQ_ASYNC_GO;
 
-    RestoreHandlers();
-    DUIExitCriticalSection();
-    
     OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
-
-    CONV_LE_32( ret.stack_pointer.offset );
-    CONV_LE_16( ret.stack_pointer.segment );
-    CONV_LE_32( ret.program_counter.offset );
-    CONV_LE_16( ret.program_counter.segment );
     CONV_LE_16( ret.conditions );
-    DUIEnterCriticalSection();
-    GrabHandlers();
-    if( ret.conditions & COND_CONFIG ) {
-        GetSysConfig();
-        CheckMADChange();
+
+    if( ret.conditions & COND_RUNNING ) {
+        ret.stack_pointer.offset = 0;
+        ret.stack_pointer.segment = 0;
+        ret.program_counter.offset = 0;
+        ret.program_counter.segment = 0;
+    } else {
+        CONV_LE_32( ret.stack_pointer.offset );
+        CONV_LE_16( ret.stack_pointer.segment );
+        CONV_LE_32( ret.program_counter.offset );
+        CONV_LE_16( ret.program_counter.segment );
+        if( ret.conditions & COND_CONFIG ) {
+            GetSysConfig();
+            CheckMADChange();
+        }
+        DbgRegs->mad = SysConfig.mad;
+        /* Use 'tmp' because of alignment problems */
+        tmp = ret.stack_pointer;
+        MADRegSpecialSet( MSR_SP, &DbgRegs->mr, &tmp );
+        tmp = ret.program_counter;
+        MADRegSpecialSet( MSR_IP, &DbgRegs->mr, &tmp );
+        if( ret.conditions & COND_THREAD ) {
+            DbgRegs->tid = RemoteSetThread( 0 );
+        }
     }
-    DbgRegs->mad = SysConfig.mad;
-    /* Use 'tmp' because of alignment problems */
-    tmp = ret.stack_pointer;
-    MADRegSpecialSet( MSR_SP, &DbgRegs->mr, &tmp );
-    tmp = ret.program_counter;
-    MADRegSpecialSet( MSR_IP, &DbgRegs->mr, &tmp );
-    if( ret.conditions & COND_THREAD ) {
-        DbgRegs->tid = RemoteSetThread( 0 );
+    return( ret.conditions );
+}
+
+unsigned PollAsync( )
+{
+    async_poll_req      acc;
+    async_poll_ret      ret;
+    addr_ptr            tmp;
+
+    if( SuppAsyncId == 0 ) return( 0 );
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppAsyncId;
+
+    acc.req = REQ_ASYNC_POLL;
+
+    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_16( ret.conditions );
+
+    if( ret.conditions & COND_RUNNING ) {
+        ret.stack_pointer.offset = 0;
+        ret.stack_pointer.segment = 0;
+        ret.program_counter.offset = 0;
+        ret.program_counter.segment = 0;
+    } else {
+        CONV_LE_32( ret.stack_pointer.offset );
+        CONV_LE_16( ret.stack_pointer.segment );
+        CONV_LE_32( ret.program_counter.offset );
+        CONV_LE_16( ret.program_counter.segment );
+        if( ret.conditions & COND_CONFIG ) {
+            GetSysConfig();
+            CheckMADChange();
+        }
+        DbgRegs->mad = SysConfig.mad;
+        /* Use 'tmp' because of alignment problems */
+        tmp = ret.stack_pointer;
+        MADRegSpecialSet( MSR_SP, &DbgRegs->mr, &tmp );
+        tmp = ret.program_counter;
+        MADRegSpecialSet( MSR_IP, &DbgRegs->mr, &tmp );
+        if( ret.conditions & COND_THREAD ) {
+            DbgRegs->tid = RemoteSetThread( 0 );
+        }
+    }
+    return( ret.conditions );
+}
+
+unsigned StopAsync( )
+{
+    async_stop_req      acc;
+    async_stop_ret      ret;
+    addr_ptr            tmp;
+
+    if( SuppAsyncId == 0 ) return( 0 );
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppAsyncId;
+
+    acc.req = REQ_ASYNC_STOP;
+
+    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_16( ret.conditions );
+
+    if( ret.conditions & COND_RUNNING ) {
+        ret.stack_pointer.offset = 0;
+        ret.stack_pointer.segment = 0;
+        ret.program_counter.offset = 0;
+        ret.program_counter.segment = 0;
+    } else {
+        CONV_LE_32( ret.stack_pointer.offset );
+        CONV_LE_16( ret.stack_pointer.segment );
+        CONV_LE_32( ret.program_counter.offset );
+        CONV_LE_16( ret.program_counter.segment );
+        if( ret.conditions & COND_CONFIG ) {
+            GetSysConfig();
+            CheckMADChange();
+        }
+        DbgRegs->mad = SysConfig.mad;
+        /* Use 'tmp' because of alignment problems */
+        tmp = ret.stack_pointer;
+        MADRegSpecialSet( MSR_SP, &DbgRegs->mr, &tmp );
+        tmp = ret.program_counter;
+        MADRegSpecialSet( MSR_IP, &DbgRegs->mr, &tmp );
+        if( ret.conditions & COND_THREAD ) {
+            DbgRegs->tid = RemoteSetThread( 0 );
+        }
     }
     return( ret.conditions );
 }

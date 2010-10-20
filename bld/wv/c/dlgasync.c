@@ -35,7 +35,11 @@
 #include "dbgerr.h"
 #include "dbgtoggl.h"
 #include "dlgasync.h"
+#include "trapbrk.h"
 #include "string.h"
+
+extern unsigned PollAsync( void );
+extern unsigned StopAsync( void );
 
 OVL_EXTERN bool AsyncEvent( gui_window * gui, gui_event gui_ev, void * param )
 {
@@ -45,12 +49,20 @@ OVL_EXTERN bool AsyncEvent( gui_window * gui, gui_event gui_ev, void * param )
     dlg = GUIGetExtra( gui );
     switch( gui_ev ) {
     case GUI_INIT_DIALOG:
+        dlg->cond = 0;
         GUISetFocus( gui, CTL_ASYNC_STOP );
+        return( TRUE );
+    case GUI_TIMER_EVENT:
+        dlg->cond = PollAsync();
+        if( !( dlg->cond & COND_RUNNING ) ) {
+            GUICloseDialog( gui );
+        }
         return( TRUE );
     case GUI_CONTROL_CLICKED :
         GUI_GETID( param, id );
         switch( id ) {
         case CTL_ASYNC_STOP:
+            dlg->cond = StopAsync();
             GUICloseDialog( gui );
             return( TRUE );
         }
@@ -67,9 +79,10 @@ static void DoDlgAsync( dlg_async  *pdlg )
     ResDlgOpen( &AsyncEvent, pdlg, DIALOG_ASYNC_RUN );
 }
 
-extern  void    DlgAsyncRun( void )
+extern unsigned DlgAsyncRun( void )
 {
     dlg_async        dlg;
-
+    
     DoDlgAsync( &dlg );
+    return( dlg.cond ); 
 }

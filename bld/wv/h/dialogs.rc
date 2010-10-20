@@ -33,4 +33,5 @@
     #include "dlgwind.dlg"
     #include "dlgstk.dlg"
     #include "dlghis.dlg"
+    #include "dlgasync.dlg"
 #endif

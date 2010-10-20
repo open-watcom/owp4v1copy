@@ -224,16 +224,3 @@ bool GUIIsFirstInstance( void )
 {
     return( TRUE );
 }
-
-#if defined(__NT__) || defined(WILLOWS)
-void GUIStartTimer( gui_window *wnd, int id, int msec )
-{
-    //stub
-}
-
-void GUIStopTimer( gui_window *wnd, int id )
-{
-    //stub
-}
-#endif
-

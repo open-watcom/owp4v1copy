@@ -93,6 +93,39 @@ extern char             *Format( char *, char *, ... );
 
 extern void             InitSuppServices( void );
 
+#define TIMER_ID        200
+#define TIMER_MS        250
+
+/* disable until later 
+#if defined( __NT__ ) && defined( __GUI__ )
+
+VOID CALLBACK WdTimerProc( HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime )
+{
+}
+
+static void StartTimer( void )
+{
+    SetTimer( 0, TIMER_ID, TIMER_MS, WdTimerProc );
+}
+
+static void StopTimer( void )
+{
+    KillTimer( 0, TIMER_ID );
+}
+
+#endif
+
+*/
+
+static void StartTimer( void )
+{
+}
+
+static void StopTimer( void )
+{
+}
+
+
 
 void DUIUpdate( update_list flags )
 {
@@ -153,6 +186,7 @@ void DUIInit( void )
     TellWinHandle();
 #endif
     if( WndMain != NULL ) WndSetIcon( WndMain, &MainIcon );
+    StartTimer();
     InitHelp();
     InitGadget();
     InitPaint();
@@ -162,6 +196,7 @@ void DUIInit( void )
 
 void DUIFini( void )
 {
+    StopTimer();
     WndFiniHistory( SrchHistory );
     WndFiniHistory( CmdHistory );
     FiniMacros();

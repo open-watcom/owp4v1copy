@@ -24,18 +24,42 @@
 *
 *  ========================================================================
 *
-* Description:  Async program running dialog
+* Description:  GUI library timer callbacks
 *
 ****************************************************************************/
 
 
-#define DIALOG_ASYNC_RUN 3012
+#include "guiwind.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "guixutil.h"
 
-#define CTL_ASYNC_STOP  101
+/* include from the app */
+extern void GUITimer( void );
 
-#ifndef RC
-    typedef struct dlg_async {
-        unsigned cond;
-    } dlg_async;
+#if defined(__NT__) || defined(WILLOWS)
+VOID CALLBACK GUITimerProc( HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime )
+{
+    gui_window *wnd;
+    gui_timer_event timer;
+
+    uMsg = uMsg; dwTime = dwTime;
+    wnd = GUIGetWindow( hwnd );
+    if( wnd == NULL ) {
+        GUITimer();
+    } else {
+        timer.id = idEvent;
+        GUIEVENTWND( wnd, GUI_TIMER_EVENT, &timer );
+    }
+}
+
+void GUIStartTimer( gui_window *wnd, int id, int msec )
+{
+    SetTimer( wnd->hwnd, id, msec, GUITimerProc );
+}
+
+void GUIStopTimer( gui_window *wnd, int id )
+{
+    KillTimer( wnd->hwnd, id );
+}
 #endif
-
