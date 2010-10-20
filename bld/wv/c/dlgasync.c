@@ -38,51 +38,53 @@
 #include "trapbrk.h"
 #include "string.h"
 
+static gui_window   *AsyncWnd = 0;
+static dlg_async    dlg;
+    
+
 extern unsigned PollAsync( void );
 extern unsigned StopAsync( void );
+
+void AsyncNotify( void )
+{
+   if( AsyncWnd ) {
+        dlg.cond = PollAsync();
+        if( !( dlg.cond & COND_RUNNING ) ) {
+            GUICloseDialog( AsyncWnd );
+        }
+    }
+}
 
 OVL_EXTERN bool AsyncEvent( gui_window * gui, gui_event gui_ev, void * param )
 {
     unsigned            id;
-    dlg_async           *dlg;
 
-    dlg = GUIGetExtra( gui );
     switch( gui_ev ) {
     case GUI_INIT_DIALOG:
-        dlg->cond = 0;
+        dlg.cond = 0;
         GUISetFocus( gui, CTL_ASYNC_STOP );
-        return( TRUE );
-    case GUI_TIMER_EVENT:
-        dlg->cond = PollAsync();
-        if( !( dlg->cond & COND_RUNNING ) ) {
-            GUICloseDialog( gui );
-        }
+        AsyncWnd = gui;
         return( TRUE );
     case GUI_CONTROL_CLICKED :
         GUI_GETID( param, id );
         switch( id ) {
         case CTL_ASYNC_STOP:
-            dlg->cond = StopAsync();
+            AsyncWnd = 0;
+            dlg.cond = StopAsync();
             GUICloseDialog( gui );
             return( TRUE );
         }
         return( FALSE );
     case GUI_DESTROY:
+        AsyncWnd = 0;
         return( TRUE );
     }
 
     return( FALSE );
 }
 
-static void DoDlgAsync( dlg_async  *pdlg )
-{
-    ResDlgOpen( &AsyncEvent, pdlg, DIALOG_ASYNC_RUN );
-}
-
 extern unsigned DlgAsyncRun( void )
 {
-    dlg_async        dlg;
-    
-    DoDlgAsync( &dlg );
+    ResDlgOpen( &AsyncEvent, 0, DIALOG_ASYNC_RUN );
     return( dlg.cond ); 
 }

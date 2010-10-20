@@ -93,38 +93,42 @@ extern char             *Format( char *, char *, ... );
 
 extern void             InitSuppServices( void );
 
+extern void             AsyncNotify( void );
+
+void GUITimer( void )
+{
+    AsyncNotify();
+}
+
+#if defined( __NT__ ) && defined( __GUI__ )
+
 #define TIMER_ID        200
 #define TIMER_MS        250
 
-/* disable until later 
-#if defined( __NT__ ) && defined( __GUI__ )
-
-VOID CALLBACK WdTimerProc( HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime )
-{
-}
+extern void GUIStartTimer( gui_window *wnd, int id, int msec );
+extern void GUIStopTimer( gui_window *wnd, int id );
 
 static void StartTimer( void )
 {
-    SetTimer( 0, TIMER_ID, TIMER_MS, WdTimerProc );
+    GUIStartTimer( 0, TIMER_ID, TIMER_MS );
 }
 
 static void StopTimer( void )
 {
-    KillTimer( 0, TIMER_ID );
+    GUIStopTimer( 0, TIMER_ID );
+}
+
+#else
+
+static void StartTimer( void )
+{
+}
+
+static void StopTimer( void )
+{
 }
 
 #endif
-
-*/
-
-static void StartTimer( void )
-{
-}
-
-static void StopTimer( void )
-{
-}
-
 
 
 void DUIUpdate( update_list flags )

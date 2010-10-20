@@ -55,11 +55,17 @@ VOID CALLBACK GUITimerProc( HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime )
 
 void GUIStartTimer( gui_window *wnd, int id, int msec )
 {
-    SetTimer( wnd->hwnd, id, msec, GUITimerProc );
+    if( wnd )
+        SetTimer( wnd->hwnd, id, msec, GUITimerProc );
+    else
+        SetTimer( 0, id, msec, GUITimerProc );
 }
 
 void GUIStopTimer( gui_window *wnd, int id )
 {
-    KillTimer( wnd->hwnd, id );
+    if( wnd )
+        KillTimer( wnd->hwnd, id );
+    else
+        KillTimer( 0, id );
 }
 #endif
