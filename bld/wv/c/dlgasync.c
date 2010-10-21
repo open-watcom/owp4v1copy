@@ -40,7 +40,8 @@
 
 static gui_window   *AsyncWnd = 0;
 static dlg_async    dlg;
-    
+
+extern void uidorefresh( void );    
 
 extern unsigned PollAsync( void );
 extern unsigned StopAsync( void );
@@ -51,6 +52,10 @@ void AsyncNotify( void )
         dlg.cond = PollAsync();
         if( !( dlg.cond & COND_RUNNING ) ) {
             GUICloseDialog( AsyncWnd );
+            AsyncWnd = 0;
+#ifdef __RDOS__
+            uidorefresh();
+#endif
         }
     }
 }

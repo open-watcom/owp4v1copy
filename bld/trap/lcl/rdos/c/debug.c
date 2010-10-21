@@ -91,7 +91,9 @@ struct TExceptionEvent
 
 static struct TDebug    *DebugArr[MAX_DEBUG_THREADS];
 static int              ThreadArr[MAX_DEBUG_THREADS]; 
-
+static int              HasBreak = FALSE;
+static int              BreakSel;
+static long             BreakOffset;
 
 struct TDebug *GetCurrentDebug()
 {
@@ -1178,5 +1180,79 @@ void Trace( struct TDebug *obj )
 
             RdosWaitForever( obj->UserWait );
         }
+    }
+}
+
+int AsyncGo( struct TDebug *obj, int ms )
+{
+    void *wait;
+    
+    if( obj->CurrentThread ) {
+        RdosResetSignal( obj->UserSignal );
+
+        SetupGo( obj->CurrentThread );
+        ActivateBreaks( obj->CurrentThread, obj->BreakList );
+        RdosContinueDebugEvent( obj->FHandle, obj->CurrentThread->ThreadID);
+
+        wait = RdosWaitTimeout( obj->UserWait, ms );
+        if (wait)
+            return( TRUE );
+        else
+            return( FALSE );
+    }
+    return( TRUE );
+}
+
+int AsyncTrace( struct TDebug *obj, int ms )
+{
+    char    Instr[2] = {0, 0};
+    int     ok = TRUE;
+    void    *wait;
+
+    if( obj->CurrentThread ) {
+        BreakSel = obj->CurrentThread->Cs;
+        BreakOffset = obj->CurrentThread->Eip;
+
+        ReadMem( obj->CurrentThread, BreakSel, BreakOffset, Instr, 2 );
+
+        if ( Instr[0] == 0xF && Instr[1] == 0xB ) {
+            BreakOffset += 7;
+            AddBreak( obj, BreakSel, BreakOffset );
+            ok = AsyncGo( obj, ms );
+            if( ok ) {
+                ClearBreak( obj, BreakSel, BreakOffset );
+            } else {
+                HasBreak = TRUE;
+            }
+            return( ok );
+        } else {
+            RdosResetSignal( obj->UserSignal );
+
+            SetupTrace( obj->CurrentThread );
+            RdosContinueDebugEvent( obj->FHandle, obj->CurrentThread->ThreadID);
+
+            wait = RdosWaitTimeout( obj->UserWait, ms );
+            if (wait)
+                return( TRUE );
+            else
+                return( FALSE );
+        }
+    }
+    return( TRUE );
+}
+
+int AsyncPoll( struct TDebug *obj, int ms )
+{
+    void    *wait;
+
+    wait = RdosWaitTimeout( obj->UserWait, ms );
+    if (wait) {
+        if( HasBreak ) {
+            ClearBreak( obj, BreakSel, BreakOffset );
+            HasBreak = FALSE;
+        }
+        return( TRUE );
+    } else {
+        return( FALSE );
     }
 }

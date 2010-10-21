@@ -186,6 +186,10 @@ void WaitForLoad( struct TDebug *obj );
 void Go( struct TDebug *obj );
 void Trace( struct TDebug *obj );
 
+int AsyncGo( struct TDebug *obj, int ms );
+int AsyncTrace( struct TDebug *obj, int ms );
+int AsyncPoll( struct TDebug *obj, int ms );
+
 int HasThreadChange( struct TDebug *obj );
 void ClearThreadChange( struct TDebug *obj );
 

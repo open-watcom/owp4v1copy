@@ -265,6 +265,8 @@ extern unsigned  ReqEnv_setvar(void);
 
 extern unsigned ReqAsync_go(void);
 extern unsigned ReqAsync_step(void);
+extern unsigned ReqAsync_poll(void);
+extern unsigned ReqAsync_stop(void);
 
 #endif
 

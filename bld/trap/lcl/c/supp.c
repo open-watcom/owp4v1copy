@@ -119,6 +119,8 @@ static unsigned (* const CapabilitiesRequests[])(void) = {
 static unsigned (* const AsyncRequests[])(void) = {
         ReqAsync_go,
         ReqAsync_step,
+        ReqAsync_poll,
+        ReqAsync_stop,
 };
 #endif
 
