@@ -85,6 +85,13 @@ static unsigned (* const ThreadRequests[])(void) = {
 };
 #endif
 
+#if defined(WANT_RUN_THREAD)
+static unsigned (* const RunThreadRequests[])(void) = {
+        ReqRunThread_stop,
+        ReqRunThread_signal_stop,
+};
+#endif
+
 #if defined(WANT_RFX)
 static unsigned (* const RFXRequests[])(void) = {
         ReqRfx_rename,
@@ -124,12 +131,6 @@ static unsigned (* const AsyncRequests[])(void) = {
 };
 #endif
 
-#if defined(WANT_RDOS_DEBUG)
-static unsigned (* const RdosRequests[])(void) = {
-        ReqRdos_poll,
-};
-#endif
-
 typedef struct {
     const char *name;
     const void *vectors;
@@ -151,6 +152,9 @@ static const service_entry Services[] = {
 #if defined(WANT_THREAD)
     { THREAD_SUPP_NAME, ThreadRequests },
 #endif
+#if defined(WANT_RUN_THREAD)
+    { RUN_THREAD_SUPP_NAME, RunThreadRequests },
+#endif
 #if defined(WANT_RFX)
     { RFX_SUPP_NAME,    RFXRequests },
 #endif
@@ -159,9 +163,6 @@ static const service_entry Services[] = {
 #endif
 #if defined(WANT_ASYNC)
     { ASYNC_SUPP_NAME, AsyncRequests },
-#endif
-#if defined(WANT_RDOS_DEBUG)
-    { RDOS_SUPP_NAME, RdosRequests },
 #endif
     { NULL,             NULL }
 };

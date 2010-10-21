@@ -24,19 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  RDOS specific supplementary functions
+* Description:  Popup menus for non-blocking thread environments
 *
 ****************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "stdrdos.h"
 
-unsigned ReqRdos_poll( void )
-{
-    rdos_poll_ret  *ret;
-
-    ret = GetOutPtr( 0 );
-    ret->running = 0;
-    return( sizeof( *ret ) );
-}
+MENU_ITEM( MENU_RUN_THREAD_CHANGE_TO,       XSwitch_to )
+MENU_ITEM( MENU_RUN_THREAD_STOP,            XStop  )
+MENU_ITEM( MENU_RUN_THREAD_SIGNAL_STOP,     XSignal_and_stop  )

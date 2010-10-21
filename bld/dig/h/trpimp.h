@@ -49,6 +49,7 @@
         #undef          WANT_FILE
         #undef          WANT_OVL
         #undef          WANT_THREAD
+        #undef          WANT_RUN_THREAD
         #undef          WANT_RFX
     #elif defined(DOSXTRAP)
         /* real mode trap file talking to protected mode helper */
@@ -58,6 +59,7 @@
         #define         WANT_FILE
         #undef          WANT_OVL
         #undef          WANT_THREAD
+        #undef          WANT_RUN_THREAD
         #define         WANT_RFX
     #else
         /* straight dos */
@@ -67,6 +69,7 @@
         #define         WANT_FILE
         #define         WANT_OVL
         #undef          WANT_THREAD
+        #undef          WANT_RUN_THREAD
         #define         WANT_RFX
     #endif
     #define     TRAPENTRY TRAPFAR __saveregs
@@ -77,6 +80,7 @@
     #define         WANT_FILE
     #undef          WANT_OVL
     #define         WANT_THREAD
+    #undef          WANT_RUN_THREAD
     #define         WANT_RFX
     #define         TRAPENTRY TRAPFAR __saveregs
 #elif defined(__OS2V2__) || defined(__OS2__) && !defined(__I86__)
@@ -87,6 +91,7 @@
         #define     WANT_FILE
         #undef      WANT_OVL
         #undef      WANT_THREAD
+        #undef      WANT_RUN_THREAD
         #undef      WANT_RFX
         #define     TRAPENTRY TRAPFAR
     #else
@@ -96,6 +101,7 @@
         #define     WANT_FILE
         #undef      WANT_OVL
         #define     WANT_THREAD
+        #undef      WANT_RUN_THREAD
         #define     WANT_RFX
         #define     TRAPENTRY TRAPFAR
     #endif
@@ -107,6 +113,7 @@
         #define WANT_FILE
         #undef  WANT_OVL
         #define WANT_THREAD
+        #undef  WANT_RUN_THREAD
         #undef  WANT_RFX
         #define TRAPENTRY TRAPFAR
     #elif defined(MSJXTRAP)
@@ -116,6 +123,7 @@
         #define WANT_FILE
         #undef  WANT_OVL
         #define WANT_THREAD
+        #undef  WANT_RUN_THREAD
         #undef  WANT_RFX
         #define TRAPENTRY TRAPFAR
     #elif defined(ELFCORE)
@@ -125,6 +133,7 @@
         #define WANT_FILE
         #undef  WANT_OVL
         #undef  WANT_THREAD
+        #undef  WANT_RUN_THREAD
         #undef  WANT_RFX
         #define TRAPENTRY TRAPFAR
     #else
@@ -134,6 +143,7 @@
         #define WANT_FILE
         #undef  WANT_OVL
         #define WANT_THREAD
+        #undef  WANT_RUN_THREAD
         #undef  WANT_RFX
         #define WANT_CAPABILITIES
         #define TRAPENTRY TRAPFAR
@@ -145,6 +155,7 @@
     #define     WANT_FILE
     #undef      WANT_OVL
     #undef      WANT_THREAD
+    #undef      WANT_RUN_THREAD
     #define     WANT_RFX
     #define     TRAPENTRY TRAPFAR __pascal
 #elif defined(__QNX__)
@@ -154,6 +165,7 @@
     #define     WANT_FILE
     #undef      WANT_OVL
     #define     WANT_THREAD
+    #undef      WANT_RUN_THREAD
     #undef      WANT_RFX
     #ifdef __WATCOMC__
         #define     TRAPENTRY TRAPFAR __saveregs
@@ -167,6 +179,7 @@
     #define     WANT_FILE
     #undef      WANT_OVL
     #undef      WANT_THREAD     // TODO: Want this later for Linux!
+    #undef      WANT_RUN_THREAD
     #undef      WANT_RFX        // TODO: Want this later for Linux!
     #define     TRAPENTRY TRAPFAR
 #elif defined(__UNIX__)
@@ -176,6 +189,7 @@
     #define     WANT_FILE
     #undef      WANT_OVL
     #undef      WANT_THREAD
+    #undef      WANT_RUN_THREAD
     #undef      WANT_RFX
     #define     TRAPENTRY TRAPFAR
 #elif defined(__NETWARE__)
@@ -185,6 +199,7 @@
     #define     WANT_FILE
     #undef      WANT_OVL
     #define     WANT_THREAD
+    #undef      WANT_RUN_THREAD
     #undef      WANT_RFX
     #define     TRAPENTRY TRAPFAR
 #elif defined(__RDOS__)
@@ -194,9 +209,9 @@
     #define     WANT_FILE
     #undef      WANT_OVL
     #define     WANT_THREAD
+    #undef      WANT_RUN_THREAD
     #undef      WANT_RFX
     #define     WANT_CAPABILITIES
-    #define     WANT_RDOS_DEBUG
     #define     TRAPENTRY TRAPFAR
 #else
     #error Unknown operating system
@@ -310,6 +325,14 @@ extern unsigned ReqThread_get_extra(void);
 
 #endif
 
+#ifdef WANT_RUN_THREAD
+#include "trprtrd.h"
+
+extern unsigned ReqRunThread_stop(void);
+extern unsigned ReqRunThread_signal_stop(void);
+
+#endif
+
 #ifdef WANT_RFX
 #include "trprfx.h"
 
@@ -339,13 +362,6 @@ extern unsigned ReqCapabilities_get_8b_bp(void);
 extern unsigned ReqCapabilities_set_8b_bp(void);
 extern unsigned ReqCapabilities_get_exact_bp(void);
 extern unsigned ReqCapabilities_set_exact_bp(void);
-
-#endif
-
-#ifdef WANT_RDOS_DEBUG
-#include "trprdos.h"
-
-extern unsigned ReqRdos_poll(void);
 
 #endif
 

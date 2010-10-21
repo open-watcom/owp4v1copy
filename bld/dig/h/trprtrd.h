@@ -24,30 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:  RDOS debugging supplementary requests.
+* Description:  Supplementary non-blocking thread functions
 *
 ****************************************************************************/
 
 
-#ifndef TRPRDOS_H
+#ifndef TRPRTRD_H
 
 #include "trptypes.h"
 
 #pragma pack( push, 1 )
 
-#define RDOS_SUPP_NAME                "Rdos"
+#define RUN_THREAD_SUPP_NAME                "RunThread"
 
 enum {
-    REQ_RDOS_POLL,              /* 00 */
+    REQ_RUN_THREAD_STOP,              /* 00 */
+    REQ_RUN_THREAD_SIGNAL_STOP,       /* 01 */
 };
 
+/*=================== REQ_RUN_THREAD_STOP ===================*/
 
 typedef struct {
-    unsigned_8          running;
-} rdos_poll_ret;
+    supp_prefix         supp;
+    access_req          req;
+    trap_thandle        thread;
+} _WCUNALIGNED thread_stop_req;
+
+
+/*=================== REQ_RUN_THREAD_SIGNAL_STOP ============*/
+
+typedef struct {
+    supp_prefix         supp;
+    access_req          req;
+    trap_thandle        thread;
+} _WCUNALIGNED thread_signal_stop_req;
+
 
 #pragma pack( pop )
 
-#define TRPRDOS_H
+#define TRPRTRD_H
 
 #endif
