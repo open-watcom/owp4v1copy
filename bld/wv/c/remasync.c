@@ -73,7 +73,10 @@ bool InitAsyncSupp( void )
 
 bool HaveRemoteAsync( void )
 {
-#if defined( __NT__ ) && defined( __GUI__ )     /* only available on selected hosts for now */
+     /* only available on selected hosts for now */
+#if defined( __NT__ ) && defined( __GUI__ )
+    return( SuppAsyncId != 0 );
+#elif defined( __RDOS__ )
     return( SuppAsyncId != 0 );
 #else
     return( FALSE );

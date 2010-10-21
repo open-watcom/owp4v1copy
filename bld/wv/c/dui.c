@@ -95,6 +95,8 @@ extern void             InitSuppServices( void );
 
 extern void             AsyncNotify( void );
 
+#define TIMER_MS        250
+
 void GUITimer( void )
 {
     AsyncNotify();
@@ -103,7 +105,6 @@ void GUITimer( void )
 #if defined( __NT__ ) && defined( __GUI__ )
 
 #define TIMER_ID        200
-#define TIMER_MS        250
 
 extern void GUIStartTimer( gui_window *wnd, int id, int msec );
 extern void GUIStopTimer( gui_window *wnd, int id );
@@ -116,6 +117,20 @@ static void StartTimer( void )
 static void StopTimer( void )
 {
     GUIStopTimer( 0, TIMER_ID );
+}
+
+#elif defined( __RDOS__ )
+
+extern void uitimer( void ( *proc )(), int ms );
+
+static void StartTimer( void )
+{
+    uitimer( GUITimer, TIMER_MS );
+}
+
+static void StopTimer( void )
+{
+    uitimer( 0, 0 );
 }
 
 #else

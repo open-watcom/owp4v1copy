@@ -39,6 +39,15 @@
 extern EVENT    Event;
 extern int      WaitHandle;
 
+static void     ( *Callback )() = 0;
+static int      TimerPeriodMs = 0;
+
+void global uitimer( void ( *proc )(), int ms )
+{
+    Callback = proc;
+    TimerPeriodMs = ms;
+}
+
 void global uiflush( void )
 {
     Event = EV_NO_EVENT;
@@ -66,30 +75,39 @@ EVENT global uieventsource( int update )
         ev = forcedevent();
         if( ev > EV_NO_EVENT ) break;
 
-        proc = RdosWaitTimeout( WaitHandle, 25 );
-        if( proc != 0) {
-            ev = (*proc)();
-            if( ev > EV_NO_EVENT ) break;
-        }
-        
-        if( ReturnIdle ) {
-            ReturnIdle--;
-            return( EV_IDLE );
+        if( Callback && TimerPeriodMs ) {
+            proc = RdosWaitTimeout( WaitHandle, TimerPeriodMs );
+            if( proc == 0) {
+                (*Callback)();
+            } else {
+                ev = (*proc)();
+                if( ev > EV_NO_EVENT ) break;
+            }
         } else {
-            if( update ) uirefresh();
-            if( uiclock() - start >= UIData->tick_delay ) {
-                return( EV_CLOCK_TICK );
-            } else if( UIData->busy_wait ) {
-                return( EV_SINK );
+            proc = RdosWaitTimeout( WaitHandle, 25 );
+            if( proc != 0) {
+                ev = (*proc)();
+                if( ev > EV_NO_EVENT ) break;
+            }
+        
+            if( ReturnIdle ) {
+                ReturnIdle--;
+                return( EV_IDLE );
+            } else {
+                if( update ) uirefresh();
+                if( uiclock() - start >= UIData->tick_delay ) {
+                    return( EV_CLOCK_TICK );
+                } else if( UIData->busy_wait ) {
+                    return( EV_SINK );
+                }
+            }
+
+            proc = RdosWaitTimeout( WaitHandle, 250 );
+            if( proc != 0) {
+                ev = (*proc)();
+                if( ev > EV_NO_EVENT ) break;
             }
         }
-
-        proc = RdosWaitForever( WaitHandle );
-        if( proc != 0) {
-            ev = (*proc)();
-            if( ev > EV_NO_EVENT ) break;
-        }
-
     }
     ReturnIdle = 1;
     return( ev );
