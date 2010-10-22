@@ -109,6 +109,7 @@ engine_objs = &
         remenv.obj &
         remfile.obj &
         remthrd.obj &
+        remrtrd.obj &
         removl.obj &
         remasync.obj &
         ldsupp.obj &

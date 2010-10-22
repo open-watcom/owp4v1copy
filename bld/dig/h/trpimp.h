@@ -209,7 +209,7 @@
     #define     WANT_FILE
     #undef      WANT_OVL
     #define     WANT_THREAD
-    #undef      WANT_RUN_THREAD
+    #define     WANT_RUN_THREAD
     #undef      WANT_RFX
     #define     WANT_CAPABILITIES
     #define     TRAPENTRY TRAPFAR
@@ -328,6 +328,9 @@ extern unsigned ReqThread_get_extra(void);
 #ifdef WANT_RUN_THREAD
 #include "trprtrd.h"
 
+extern unsigned ReqRunThread_info(void);
+extern unsigned ReqRunThread_get_next(void);
+extern unsigned ReqRunThread_get_runtime(void);
 extern unsigned ReqRunThread_stop(void);
 extern unsigned ReqRunThread_signal_stop(void);
 

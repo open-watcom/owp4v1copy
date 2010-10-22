@@ -87,6 +87,9 @@ static unsigned (* const ThreadRequests[])(void) = {
 
 #if defined(WANT_RUN_THREAD)
 static unsigned (* const RunThreadRequests[])(void) = {
+        ReqRunThread_info,
+        ReqRunThread_get_next,
+        ReqRunThread_get_runtime,
         ReqRunThread_stop,
         ReqRunThread_signal_stop,
 };

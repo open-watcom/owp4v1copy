@@ -38,26 +38,76 @@
 #define RUN_THREAD_SUPP_NAME                "RunThread"
 
 enum {
-    REQ_RUN_THREAD_STOP,              /* 00 */
-    REQ_RUN_THREAD_SIGNAL_STOP,       /* 01 */
+    REQ_RUN_THREAD_INFO,            /* 00 */
+    REQ_RUN_THREAD_GET_NEXT,        /* 01 */
+    REQ_RUN_THREAD_GET_RUNTIME,     /* 02 */
+    REQ_RUN_THREAD_STOP,            /* 03 */
+    REQ_RUN_THREAD_SIGNAL_STOP,     /* 04 */
 };
+
+/*=================== REQ_RUN_THREAD_INFO ===================*/
+
+#define RUN_THREAD_INFO_TYPE_NONE       0
+#define RUN_THREAD_INFO_TYPE_NAME       1
+#define RUN_THREAD_INFO_TYPE_STATE      2
+#define RUN_THREAD_INFO_TYPE_CS_EIP     3
+#define RUN_THREAD_INFO_TYPE_EXTRA      4
+
+typedef struct {
+    supp_prefix         supp;
+    access_req          req;
+    unsigned_16         col;        /* column in thread list to get info about */
+} _WCUNALIGNED run_thread_info_req;
+
+typedef struct {
+    unsigned_8          info;       /* type of info to present */
+    unsigned_16         width;      /* width to display results in */
+    /* followed by header string */
+} run_thread_info_ret;
+
+/*=================== REQ_RUN_THREAD_GET_NEXT ===================*/
+
+typedef struct {
+    supp_prefix         supp;
+    access_req          req;
+    unsigned_32         thread;     /* thread to ask about */
+} _WCUNALIGNED run_thread_get_next_req;
+
+typedef struct {
+    unsigned_32         thread;     /* next thread */
+    /* followed by thread-name/id string */
+} run_thread_get_next_ret;
+
+/*=================== REQ_RUN_THREAD_GET_RUNTIME ===================*/
+
+typedef struct {
+    supp_prefix         supp;
+    access_req          req;
+    unsigned_32         thread;     /* thread to ask about */
+} _WCUNALIGNED run_thread_get_runtime_req;
+
+typedef struct {
+    unsigned_8          state;      /* thread state */
+    unsigned_16         cs;         /* current cs, if any */
+    unsigned_32         eip;        /* current eip, if any */
+    /* followed by thread-extra (for instance, execution time) string */
+} run_thread_get_runtime_ret;
 
 /*=================== REQ_RUN_THREAD_STOP ===================*/
 
 typedef struct {
     supp_prefix         supp;
     access_req          req;
-    trap_thandle        thread;
-} _WCUNALIGNED thread_stop_req;
-
+    unsigned_32         thread;     /* thread to stop */
+} _WCUNALIGNED run_thread_stop_req;
 
 /*=================== REQ_RUN_THREAD_SIGNAL_STOP ============*/
 
 typedef struct {
     supp_prefix         supp;
     access_req          req;
-    trap_thandle        thread;
-} _WCUNALIGNED thread_signal_stop_req;
+    unsigned_32         thread;     /* thread to signal and stop */
+} _WCUNALIGNED run_thread_signal_stop_req;
 
 
 #pragma pack( pop )

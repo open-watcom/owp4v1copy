@@ -49,6 +49,7 @@ extern bool             InitFileInfoSupp( void );
 extern bool             InitEnvSupp( void );
 extern bool             InitOvlSupp( void );
 extern bool             InitThreadSupp( void );
+extern bool             InitRunThreadSupp( void );
 extern bool             InitCapabilities( void );
 extern bool             InitAsyncSupp( void );
 extern void             StartupErr( char *err );
@@ -85,6 +86,7 @@ void InitSuppServices( void )
         InitFileInfoSupp();
         InitEnvSupp();
         InitThreadSupp();
+        InitRunThreadSupp();
         InitOvlSupp();
         InitAsyncSupp();
         InitCapabilities();

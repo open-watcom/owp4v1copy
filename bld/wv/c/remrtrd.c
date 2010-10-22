@@ -24,35 +24,42 @@
 *
 *  ========================================================================
 *
-* Description:  Non-blocking thread functions
+* Description:  Interface for non-blocking thread services
 *
 ****************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "stdrdos.h"
 
-unsigned ReqRunThread_info( void )
+#include "dbgdefn.h"
+#include "dbgreg.h"
+#include "trpcore.h"
+#include "trprtrd.h"
+#include "dbgio.h"
+
+extern trap_shandle     GetSuppId( char * );
+
+static trap_shandle     SuppRunThreadId;
+
+#define SUPP_THREAD_SERVICE( in, request )      \
+        in.supp.core_req        = REQ_PERFORM_SUPPLEMENTARY_SERVICE;    \
+        in.supp.id              = SuppRunThreadId; \
+        in.req                  = request;
+
+
+bool InitRunThreadSupp( void )
 {
-    return( 0 );
+    SuppRunThreadId = GetSuppId( RUN_THREAD_SUPP_NAME );
+    if( SuppRunThreadId == 0 ) return( FALSE );
+    return( TRUE );
 }
 
-unsigned ReqRunThread_get_next( void )
+bool HaveRemoteRunThread( void )
 {
-    return( 0 );
-}
-
-unsigned ReqRunThread_get_runtime( void )
-{
-    return( 0 );
-}
-
-unsigned ReqRunThread_stop( void )
-{
-    return( 0 );
-}
-
-unsigned ReqRunThread_signal_stop( void )
-{
-    return( 0 );
+     /* only available on selected hosts for now */
+#if defined( __NT__ ) && defined( __GUI__ )
+    return( SuppRunThreadId != 0 );
+#elif defined( __RDOS__ )
+    return( SuppRunThreadId != 0 );
+#else
+    return( FALSE );
+#endif
 }
