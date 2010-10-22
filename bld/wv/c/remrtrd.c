@@ -35,15 +35,23 @@
 #include "trprtrd.h"
 #include "dbgio.h"
 
+#define DEFAULT_TID     1
+
 extern trap_shandle     GetSuppId( char * );
+extern void             CheckForNewThreads( bool set_exec );
+extern void             GetSysConfig( void );
+extern void             CheckMADChange( void );
+
+#if defined(__GUI__) && defined(__OS2__)
+extern unsigned         OnAnotherThread( unsigned(*)(), unsigned, void *, unsigned, void * );
+#else
+#define                 OnAnotherThread( a,b,c,d,e ) a( b,c,d,e )
+#endif
+
+extern machine_state    *DbgRegs;
+extern system_config    SysConfig;
 
 static trap_shandle     SuppRunThreadId;
-
-#define SUPP_THREAD_SERVICE( in, request )      \
-        in.supp.core_req        = REQ_PERFORM_SUPPLEMENTARY_SERVICE;    \
-        in.supp.id              = SuppRunThreadId; \
-        in.req                  = request;
-
 
 bool InitRunThreadSupp( void )
 {
@@ -62,4 +70,96 @@ bool HaveRemoteRunThread( void )
 #else
     return( FALSE );
 #endif
+}
+
+bool RemoteGetRunThreadInfo( int row, char *infotype, int *width, char *header, int maxsize )
+{
+    mx_entry            in[1];
+    mx_entry            out[2];
+    run_thread_info_req acc;
+    run_thread_info_ret ret;
+
+    if( SuppRunThreadId == 0 ) return( FALSE );
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_INFO;
+    acc.col = row;
+    ret.info = 0;
+
+    in[0].ptr = &acc;
+    in[0].len = sizeof( acc );
+    out[0].ptr = &ret;
+    out[0].len = sizeof( ret );
+    out[1].ptr = header;
+    out[1].len = maxsize;
+    TrapAccess( 1, &in, 2, &out );
+
+    if( ret.info ) {
+        *infotype = ret.info;
+        *width = ret.width;
+        return( TRUE );
+    } else
+        return( FALSE );
+}
+
+dtid_t RemoteGetNextRunThread( dtid_t tid )
+{
+    run_thread_get_next_req acc;
+    run_thread_get_next_ret ret;
+
+    if( SuppRunThreadId == 0 ) return( tid == 0 ? DEFAULT_TID : 0 );
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_GET_NEXT;
+    acc.thread = tid;
+    TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
+    return( ret.thread );
+}
+
+void RemotePollRunThread( void )
+{
+    run_thread_poll_req      acc;
+    run_thread_poll_ret      ret;
+
+    if( SuppRunThreadId == 0 ) return;
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_POLL;
+
+    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_16( ret.conditions );
+
+    if( ret.conditions & COND_CONFIG ) {
+        GetSysConfig();
+        CheckMADChange();
+    }
+    if( ret.conditions & COND_THREAD ) {
+        CheckForNewThreads( TRUE );
+    }
+}
+
+void RemoteUpdateRunThread( void )
+{
+    run_thread_poll_req      acc;
+    run_thread_poll_ret      ret;
+
+    if( SuppRunThreadId == 0 ) return;
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_POLL;
+
+    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_16( ret.conditions );
+
+    if( ret.conditions & COND_CONFIG ) {
+        GetSysConfig();
+        CheckMADChange();
+    }
+    if( ret.conditions & COND_THREAD ) {
+        CheckForNewThreads( TRUE );
+    }
 }

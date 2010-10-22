@@ -587,6 +587,9 @@ static thread_state     *AddThread( dtid_t tid, unsigned state )
     strcpy( thd->name, name );
     thd->tid = tid;
     thd->state = state;
+    thd->cs = 0;
+    thd->eip = 0;
+    thd->extra[0] = 0;
     return( thd );
 }
 

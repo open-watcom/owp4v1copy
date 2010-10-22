@@ -41,8 +41,9 @@ enum {
     REQ_RUN_THREAD_INFO,            /* 00 */
     REQ_RUN_THREAD_GET_NEXT,        /* 01 */
     REQ_RUN_THREAD_GET_RUNTIME,     /* 02 */
-    REQ_RUN_THREAD_STOP,            /* 03 */
-    REQ_RUN_THREAD_SIGNAL_STOP,     /* 04 */
+    REQ_RUN_THREAD_POLL,            /* 03 */
+    REQ_RUN_THREAD_STOP,            /* 04 */
+    REQ_RUN_THREAD_SIGNAL_STOP,     /* 05 */
 };
 
 /*=================== REQ_RUN_THREAD_INFO ===================*/
@@ -92,6 +93,17 @@ typedef struct {
     unsigned_32         eip;        /* current eip, if any */
     /* followed by thread-extra (for instance, execution time) string */
 } run_thread_get_runtime_ret;
+
+/*=================== REQ_RUN_THREAD_POLL ===================*/
+
+typedef struct {
+    supp_prefix         supp;
+    access_req          req;
+} run_thread_poll_req;
+
+typedef struct {
+    unsigned_16         conditions;
+} _WCUNALIGNED run_thread_poll_ret;
 
 /*=================== REQ_RUN_THREAD_STOP ===================*/
 

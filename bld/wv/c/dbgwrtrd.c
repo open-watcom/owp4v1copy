@@ -24,40 +24,58 @@
 *
 *  ========================================================================
 *
-* Description:  Non-blocking thread functions
+* Description:  Non-blocking debug window
 *
 ****************************************************************************/
 
-#include <stdio.h>
+
+#include "dbgdefn.h"
+#include "dbginfo.h"
+#include "dbgwind.h"
+#include "dbgreg.h"
+#include <string.h>
 #include <stdlib.h>
-#include "stdrdos.h"
 
-unsigned ReqRunThread_info( void )
-{
-    return( 0 );
-}
+extern bool             RemoteGetRunThreadInfo( int row, char *infotype, int *width, char *header, int maxsize );
 
-unsigned ReqRunThread_get_next( void )
-{
-    return( 0 );
-}
+extern bool             IsThdCurr( thread_state *thd );
+extern void             MakeThdCurr( thread_state * );
+extern void             RemoteThdName( dtid_t, char * );
+extern void             SetUnderLine( a_window *, wnd_line_piece * );
+extern void             DbgUpdate( update_list );
 
-unsigned ReqRunThread_get_runtime( void )
-{
-    return( 0 );
-}
+extern thread_state     *HeadThd;
+extern char             *TxtBuff;
 
-unsigned ReqRunThread_poll( void )
-{
-    return( 0 );
-}
+#include "menudef.h"
+static gui_menu_struct TrdMenu[] = {
+    #include "menurtrd.h"
+};
 
-unsigned ReqRunThread_stop( void )
-{
-    return( 0 );
-}
+#define TITLE_SIZE      2
 
-unsigned ReqRunThread_signal_stop( void )
+#define MAX_PIECE_COUNT     4
+#define MAX_HEADER_SIZE     80
+
+static int      PieceCount = 0;
+static char     Indents[MAX_PIECE_COUNT];
+static char     InfoType[MAX_PIECE_COUNT];
+static char     HeaderArr[MAX_PIECE_COUNT][MAX_HEADER_SIZE + 1];
+
+void InitRunThreadWnd()
 {
-    return( 0 );
+    int     Width;
+    bool    ok;
+
+    PieceCount = 0;
+    Indents[0] = 0;
+    
+    for(i  = 0; i < MAX_PIECE_COUNT; i++ ) {
+        ok = RemoteGetRunThreadInfo( i, &Info[PieceCount], &Width, HeaderArr[PieceCount], MAX_HEADER_SIZE );
+        if( ok ) {
+            Indents[PieceCount + 1] = Indents[PieceCount] + (char)Width;
+            PieceCount++;
+        } else
+            break;
+    }
 }

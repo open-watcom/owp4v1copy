@@ -40,7 +40,6 @@
 extern bool             IsThdCurr( thread_state *thd );
 extern void             MakeThdCurr( thread_state * );
 extern void             RemoteThdName( dtid_t, char * );
-extern void             FormThdState( thread_state *, char * );
 extern void             SetUnderLine( a_window *, wnd_line_piece * );
 extern char             *CnvULongHex( unsigned long value, char *p );
 extern void             DbgUpdate( update_list );

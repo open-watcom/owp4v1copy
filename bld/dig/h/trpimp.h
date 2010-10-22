@@ -331,6 +331,7 @@ extern unsigned ReqThread_get_extra(void);
 extern unsigned ReqRunThread_info(void);
 extern unsigned ReqRunThread_get_next(void);
 extern unsigned ReqRunThread_get_runtime(void);
+extern unsigned ReqRunThread_poll(void);
 extern unsigned ReqRunThread_stop(void);
 extern unsigned ReqRunThread_signal_stop(void);
 

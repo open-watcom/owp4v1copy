@@ -32,6 +32,8 @@
 
 #include "madregs.h"
 
+#define MAX_THD_EXTRA_SIZE      40
+
 typedef unsigned long           dtid_t;
 
 struct machine_state {
@@ -62,5 +64,8 @@ struct thread_state {
     thread_state        *link;
     dtid_t              tid;
     thread_state_enum   state;
+    unsigned_16         cs;
+    unsigned_32         eip;
+    char                extra[MAX_THD_EXTRA_SIZE + 1];
     char                name[1];        /* variable size */
 };

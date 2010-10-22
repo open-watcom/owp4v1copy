@@ -90,6 +90,7 @@ static unsigned (* const RunThreadRequests[])(void) = {
         ReqRunThread_info,
         ReqRunThread_get_next,
         ReqRunThread_get_runtime,
+        ReqRunThread_poll,
         ReqRunThread_stop,
         ReqRunThread_signal_stop,
 };
