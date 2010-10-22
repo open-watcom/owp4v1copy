@@ -94,12 +94,14 @@ extern char             *Format( char *, char *, ... );
 extern void             InitSuppServices( void );
 
 extern void             AsyncNotify( void );
+extern void             RunThreadNotify( void );
 
 #define TIMER_MS        250
 
 void GUITimer( void )
 {
     AsyncNotify();
+    RunThreadNotify();
 }
 
 #if defined( __NT__ ) && defined( __GUI__ )

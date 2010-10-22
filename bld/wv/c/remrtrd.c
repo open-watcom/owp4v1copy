@@ -48,6 +48,8 @@ extern unsigned         OnAnotherThread( unsigned(*)(), unsigned, void *, unsign
 #define                 OnAnotherThread( a,b,c,d,e ) a( b,c,d,e )
 #endif
 
+extern void             InitRunThreadWnd();
+
 extern machine_state    *DbgRegs;
 extern system_config    SysConfig;
 
@@ -57,6 +59,7 @@ bool InitRunThreadSupp( void )
 {
     SuppRunThreadId = GetSuppId( RUN_THREAD_SUPP_NAME );
     if( SuppRunThreadId == 0 ) return( FALSE );
+    InitRunThreadWnd();
     return( TRUE );
 }
 
@@ -141,25 +144,29 @@ void RemotePollRunThread( void )
     }
 }
 
-void RemoteUpdateRunThread( void )
+void RemoteUpdateRunThread( thread_state *thd )
 {
-    run_thread_poll_req      acc;
-    run_thread_poll_ret      ret;
+    mx_entry                        in[1];
+    mx_entry                        out[2];
+    run_thread_get_runtime_req      acc;
+    run_thread_get_runtime_ret      ret;
 
     if( SuppRunThreadId == 0 ) return;
 
     acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
     acc.supp.id = SuppRunThreadId;
-    acc.req = REQ_RUN_THREAD_POLL;
+    acc.req = REQ_RUN_THREAD_GET_RUNTIME;
+    acc.thread = thd->tid;
 
-    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, sizeof( ret ), &ret );
-    CONV_LE_16( ret.conditions );
+    in[0].ptr = &acc;
+    in[0].len = sizeof( acc );
+    out[0].ptr = &ret;
+    out[0].len = sizeof( ret );
+    out[1].ptr = thd->extra;
+    out[1].len = MAX_THD_EXTRA_SIZE;
+    TrapAccess( 1, &in, 2, &out );
 
-    if( ret.conditions & COND_CONFIG ) {
-        GetSysConfig();
-        CheckMADChange();
-    }
-    if( ret.conditions & COND_THREAD ) {
-        CheckForNewThreads( TRUE );
-    }
+    thd->state = ret.state;
+    thd->cs = ret.cs;
+    thd->eip = ret.eip;    
 }

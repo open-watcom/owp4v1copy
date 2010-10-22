@@ -183,6 +183,7 @@ ui_objs = &
         dbgwtogl.obj &
         dbgwvar.obj &
         dbgwthrd.obj &
+        dbgwrtrd.obj &
         dlgwind.obj &
         dbgwdata.obj &
         dlgoptn.obj &

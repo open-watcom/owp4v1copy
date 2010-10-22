@@ -102,6 +102,7 @@ extern bool             DlgCodeAddr( char *title, address *value );
 extern bool             DlgDataAddr( char *title, address *value );
 extern void             WndAddrInspect( address addr );
 extern void             RegFindData( mad_type_kind kind, mad_reg_set_data const **pdata );
+extern bool             HaveRemoteRunThread( void );
 
 extern address          NilAddr;
 extern debug_level      DbgLevel;
@@ -754,7 +755,10 @@ extern bool     WndMainMenuProc( a_window *wnd, unsigned id )
         WndClassInspect( WND_FPU );
         break;
     case MENU_MAIN_OPEN_THREADS:
-        WndClassInspect( WND_THREAD );
+        if( HaveRemoteRunThread() )
+            WndClassInspect( WND_RUN_THREAD );
+        else
+            WndClassInspect( WND_THREAD );        
         break;
     case MENU_MAIN_OPEN_FUNCTIONS:
         wnd = WndClassInspect( WND_GBLFUNCTIONS );

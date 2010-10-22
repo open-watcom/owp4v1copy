@@ -618,6 +618,16 @@ MENU_STR( XThaw,
         "j&Thaw",
         "Allow the selected thread to execute.",
         "jAllow the selected thread to execute." )
+MENU_STR( XStop,
+        "S&top",
+        "jS&top",
+        "Stop thread.",
+        "jStop thread." )
+MENU_STR( XSignal_and_stop,
+        "S&ignal and stop",
+        "jS&ignal and stop",
+        "Signal and stop thread.",
+        "jSignal and stop thread." )
 
 // - toolbar menu items
 
