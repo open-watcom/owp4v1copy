@@ -205,7 +205,7 @@ void WriteGroups( void )
         WriteMapNL( 1 );
         for( currgrp = Groups; currgrp != NULL; currgrp = currgrp->next_group ) {
             if( !currgrp->isautogrp ) { /* if not an autogroup */
-                WriteFormat( 0, currgrp->sym->name );
+                WriteFormat( 0, "%s", currgrp->sym->name );
                 WriteFormat( 32, "%a", &currgrp->grp_addr );
                 WriteFormat( 53, "%h", currgrp->totalsize );
                 WriteMapNL( 1 );
@@ -220,8 +220,8 @@ static void WriteAbsSeg( void *_leader )
     seg_leader *leader = _leader;
 
     if( leader->info & SEG_ABSOLUTE ) {
-        WriteFormat( 0, leader->segname );
-        WriteFormat( 24, leader->class->name );
+        WriteFormat( 0, "%s", leader->segname );
+        WriteFormat( 24, "%s", leader->class->name );
         WriteFormat( 40, "%a", &leader->seg_addr );
         WriteFormat( 60, "%h", leader->size );
         WriteMapNL( 1 );
@@ -234,10 +234,10 @@ static void WriteNonAbsSeg( void *_seg )
     seg_leader *seg = _seg;
 
     if( !(seg->info & SEG_ABSOLUTE) ) {
-        WriteFormat( 0, seg->segname );
-        WriteFormat( 23, seg->class->name );
+        WriteFormat( 0, "%s", seg->segname );
+        WriteFormat( 23, "%s", seg->class->name );
         if( seg->group != NULL ) {
-            WriteFormat( 38, seg->group->sym->name );
+            WriteFormat( 38, "%s", seg->group->sym->name );
         }
         WriteFormat( 53, "%a", &seg->seg_addr );
         WriteFormat( 69, "%h", seg->size );
@@ -401,8 +401,8 @@ static void WriteVerbSeg( void *_seg )
     leader = seg->u.leader;
     if( leader->class->flags & CLASS_DEBUG_INFO )
         return;
-    WriteFormat( 16, leader->segname );
-    WriteFormat( 38, leader->class->name );
+    WriteFormat( 16, "%s", leader->segname );
+    WriteFormat( 38, "%s", leader->class->name );
     if( leader->info & SEG_ABSOLUTE ) {
         star = '*';
     } else {
@@ -429,7 +429,7 @@ static void WriteVerbMod( mod_entry *mod )
 /****************************************/
 {
     if( (mod->modinfo & MOD_NEED_PASS_2) && mod->segs != NULL ) {
-        WriteFormat( 0, mod->name );
+        WriteFormat( 0, "%s", mod->name );
         if( strlen( mod->name ) > 15 )
             WriteMapNL( 1 );
         Ring2Walk( mod->segs, WriteVerbSeg );
