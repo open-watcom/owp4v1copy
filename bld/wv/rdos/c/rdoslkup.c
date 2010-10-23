@@ -41,7 +41,7 @@ int EnvLkup( char *src, char *dst, int max_len )
     int handle;
     int size;
 
-    handle = RdosOpenSysEnv();
+    handle = RdosOpenProcessEnv();
     size = RdosFindEnvVar( handle, src, dst );
     RdosCloseEnv( handle );
 

@@ -50,6 +50,8 @@
 #elif defined( __NT__ )
     #define PRIMARY_PATH    "binnt"
     #define SECONDARY_PATH  "binw"
+#elif defined( __RDOS__ )
+    #define PRIMARY_PATH    "rdos"
 #else
     #define PRIMARY_PATH    "binw"
 #endif
