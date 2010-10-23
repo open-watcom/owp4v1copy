@@ -45,6 +45,9 @@ extern void             SetUnderLine( a_window *, wnd_line_piece * );
 extern void             DbgUpdate( update_list );
 extern bool             HaveRemoteRunThread( void );
 extern void             RemotePollRunThread( void );
+extern void             MakeRunThdCurr( thread_state * );
+extern void             RemoteStopThread( thread_state *thd );
+extern void             RemoteSignalStopThread( thread_state *thd );
 
 extern thread_state     *HeadThd;
 extern char             *TxtBuff;
@@ -139,8 +142,43 @@ static void     RunTrdMenuItem( a_window *wnd, unsigned id, int row, int piece )
     case MENU_INITIALIZE:
         if( thd == NULL ) {
             WndMenuGrayAll( wnd );
+        } else {
+            switch( thd->state ) {
+            case THD_SIGNAL:
+                WndMenuEnable( wnd, MENU_RUN_THREAD_STOP, TRUE );
+                WndMenuEnable( wnd, MENU_RUN_THREAD_SIGNAL_STOP, TRUE );
+                WndMenuEnable( wnd, MENU_RUN_THREAD_CHANGE_TO, FALSE );
+                break;
+
+            case THD_DEBUG:
+                WndMenuEnable( wnd, MENU_RUN_THREAD_STOP, FALSE );
+                WndMenuEnable( wnd, MENU_RUN_THREAD_SIGNAL_STOP, FALSE );
+                WndMenuEnable( wnd, MENU_RUN_THREAD_CHANGE_TO, TRUE );
+                break;
+
+            case THD_RUN:
+            case THD_WAIT:
+            case THD_BLOCKED:
+                WndMenuEnable( wnd, MENU_RUN_THREAD_STOP, TRUE );
+                WndMenuEnable( wnd, MENU_RUN_THREAD_SIGNAL_STOP, FALSE );
+                WndMenuEnable( wnd, MENU_RUN_THREAD_CHANGE_TO, FALSE );
+                break;
+
+            default:
+                WndMenuGrayAll( wnd );
+                break;
+            }                    
         }
         return;
+    case MENU_RUN_THREAD_STOP:
+        RemoteStopThread( thd );
+        break;
+    case MENU_RUN_THREAD_SIGNAL_STOP:
+        RemoteSignalStopThread( thd );
+        break;
+    case MENU_RUN_THREAD_CHANGE_TO:
+        MakeRunThdCurr( thd );
+        break;
     }
     DbgUpdate( UP_THREAD_STATE );
 }
@@ -285,7 +323,7 @@ void RunThreadNotify( void )
             for( thd = HeadThd; thd != NULL; thd = thd->link ) {
                 RemoteUpdateRunThread( thd );
             }
-            RunTrdRefresh( RunThreadWnd );
+            WndRepaint( RunThreadWnd );
         }
     }
 }

@@ -312,10 +312,20 @@ unsigned ReqRunThread_get_name( void )
 
 unsigned ReqRunThread_stop( void )
 {
+    run_thread_stop_req     *acc;
+
+    acc = GetInPtr( 0 );
+
+    RdosSuspendThread( acc->thread );
     return( 0 );
 }
 
 unsigned ReqRunThread_signal_stop( void )
 {
+    run_thread_signal_stop_req     *acc;
+
+    acc = GetInPtr( 0 );
+
+    RdosSuspendAndSignalThread( acc->thread );
     return( 0 );
 }

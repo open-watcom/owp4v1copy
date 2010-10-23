@@ -214,3 +214,31 @@ dtid_t RemoteSetRunThread( dtid_t tid )
 
     return( RemoteSetRunThreadWithErr( tid, &err ) );
 }
+
+void RemoteStopThread( thread_state *thd )
+{
+    run_thread_stop_req      acc;
+
+    if( SuppRunThreadId == 0 ) return;
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_STOP;
+    acc.thread = thd->tid;
+
+    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, 0, NULL );
+}
+
+void RemoteSignalStopThread( thread_state *thd )
+{
+    run_thread_signal_stop_req      acc;
+
+    if( SuppRunThreadId == 0 ) return;
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_SIGNAL_STOP;
+    acc.thread = thd->tid;
+
+    OnAnotherThread( TrapSimpAccess, sizeof( acc ), &acc, 0, NULL );
+}
