@@ -30,11 +30,62 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "stdrdos.h"
+#include "rdos.h"
+
+#define THD_WAIT        2
+#define THD_SIGNAL      3
+#define THD_KEYBOARD    4
+#define THD_BLOCKED     5
+#define THD_RUN         6
+#define THD_DEBUG       7
 
 unsigned ReqRunThread_info( void )
 {
-    return( 0 );
+    run_thread_info_req *acc;
+    run_thread_info_ret *ret;
+    char                *header_txt;
+
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+
+    header_txt = GetOutPtr( sizeof( *ret ) );
+
+    switch( acc->col )
+    {
+    case 0:
+        ret->info = RUN_THREAD_INFO_TYPE_NAME;
+        ret->width = 25;
+        strcpy( header_txt, "Name" );
+        break;
+
+    case 1:
+        ret->info = RUN_THREAD_INFO_TYPE_EXTRA;
+        ret->width = 21;
+        strcpy( header_txt, "                Time" );
+        break;
+
+    case 2:
+        ret->info = RUN_THREAD_INFO_TYPE_STATE;
+        ret->width = 10;
+        strcpy( header_txt, "State" );
+        break;
+
+    case 3:
+        ret->info = RUN_THREAD_INFO_TYPE_CS_EIP;
+        ret->width = 15;
+        strcpy( header_txt, "cs:eip" );
+        break;
+
+    default:
+        ret->info = RUN_THREAD_INFO_TYPE_NONE;
+        ret->width = 0;
+        *header_txt = 0;
+        break;
+    }
+
+    return( sizeof( *ret ) + strlen( header_txt ) + 1 );
 }
 
 unsigned ReqRunThread_get_next( void )
@@ -44,12 +95,153 @@ unsigned ReqRunThread_get_next( void )
 
 unsigned ReqRunThread_get_runtime( void )
 {
-    return( 0 );
+    run_thread_get_runtime_req *acc;
+    run_thread_get_runtime_ret *ret;
+    int                        ok;
+    int                        i;
+    struct ThreadState         state;
+    char                       *time_txt;
+    char                       tempstr[10];
+    int                        day;
+    int                        hour;
+    int                        min;
+    int                        sec;
+    int                        milli;
+    int                        micro;
+    int                        started;
+
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+
+    time_txt = GetOutPtr( sizeof( *ret ) );
+
+    ok = FALSE;
+
+    for( i = 0; i < 256 && !ok; i++ ) {
+        RdosGetThreadState( i, &state );
+        if (state.ID == acc->thread) {
+            ok = TRUE;
+        }
+    }
+
+    ret->state = THD_BLOCKED;
+    ret->cs = 0;
+    ret->eip = 0;
+    *time_txt = 0;
+
+    if (ok) {
+        if( strstr( state.List, "Ready" ) )
+            ret->state = THD_RUN;
+
+        if( strstr( state.List, "Run" ) )
+            ret->state = THD_RUN;
+                
+        if( strstr( state.List, "Debug" ) )
+            ret->state = THD_DEBUG;
+                
+        if( strstr( state.List, "Wait" ) )
+            ret->state = THD_WAIT;
+
+        if( strstr( state.List, "Signal" ) )
+            ret->state = THD_SIGNAL;
+
+        if( strstr( state.List, "Keyboard" ) )
+            ret->state = THD_KEYBOARD;
+
+        ret->cs = state.Sel;
+        ret->eip = state.Offset;
+
+        day = state.MsbTime / 24;
+        hour = state.MsbTime % 24;
+        RdosDecodeLsbTics(state.LsbTime, &min, &sec, &milli, &micro);
+
+        started = FALSE;
+        if( day ) {
+            sprintf( time_txt, "%3d ", day );
+            started = TRUE;
+        } else {
+            strcpy( time_txt, "    ");
+        }
+
+        if( hour || started ) {
+            if( started )
+                sprintf( tempstr, "%02d.", hour );
+            else
+                sprintf( tempstr, "%2d.", hour );
+            strcat( time_txt, tempstr );
+            started = TRUE;
+        } else {
+            strcat( time_txt, "   " );
+        }
+
+        if( min || started ) {
+            if( started )
+                sprintf( tempstr, "%02d.", min );
+            else
+                sprintf( tempstr, "%2d.", min );
+            strcat( time_txt, tempstr );
+            started = TRUE;
+        } else {
+            strcat( time_txt, "   " );
+        }
+
+        if( sec || started ) {
+            if( started )
+               sprintf( tempstr, "%02d,", sec );
+            else
+               sprintf( tempstr, "%2d,", sec );
+            strcat( time_txt, tempstr );
+            started = TRUE;
+        } else {
+            strcat( time_txt, "   " );
+        }
+
+        if( milli || started ) {
+            if( started )
+                sprintf( tempstr, "%03d ", milli );
+            else
+                sprintf( tempstr, "%3d ", milli );
+            strcat( time_txt, tempstr );
+            started = TRUE;
+        } else {
+            strcat( time_txt, "    " );
+        }
+
+        if( started )
+            sprintf( tempstr, "%03d", micro );
+        else 
+            sprintf( tempstr, "%3d", micro );
+        strcat( time_txt, tempstr );
+    }
+    return( sizeof( *ret ) + strlen( time_txt ) + 1 );
 }
 
 unsigned ReqRunThread_poll( void )
 {
-    return( 0 );
+    struct TDebug           *obj;
+    run_thread_poll_ret     *ret;
+
+    ret = GetOutPtr( 0 );
+    ret->conditions = 0;
+
+    obj = GetCurrentDebug();
+
+	if (obj) {
+
+        if( IsTerminated( obj ) )
+	        ret->conditions |= COND_TERMINATE;
+
+        if( HasThreadChange( obj ) ) {
+            ClearThreadChange( obj );
+			ret->conditions |= COND_THREAD;
+		}
+
+        if( HasModuleChange( obj ) ) {
+            ClearModuleChange( obj );
+			ret->conditions |= COND_LIBRARIES;
+		}
+    }
+    return( sizeof( *ret ) );
 }
 
 unsigned ReqRunThread_stop( void )

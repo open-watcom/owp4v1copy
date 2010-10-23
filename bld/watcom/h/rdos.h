@@ -14,6 +14,8 @@
 #ifndef _RDOS_H
 #define _RDOS_H
 
+#pragma pack( push, 1 )
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4545,6 +4547,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #endif
 
 #endif
+
+#pragma pack( pop )
 
 #endif
 
