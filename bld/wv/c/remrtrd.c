@@ -170,3 +170,47 @@ void RemoteUpdateRunThread( thread_state *thd )
     thd->cs = ret.cs;
     thd->eip = ret.eip;    
 }
+
+//NYI: We don't know the size of the incoming name. Now assume max is 80.
+#define MAX_THD_NAME_LEN       80
+
+void RemoteRunThdName( dtid_t tid, char *name )
+{
+    run_thread_get_name_req        acc;
+
+    if( SuppRunThreadId == 0 ) {
+        *name = NULLCHAR;
+        return;
+    }
+
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_GET_NAME;
+    acc.thread = tid;
+    TrapSimpAccess( sizeof( acc ), &acc, MAX_THD_NAME_LEN, name );
+}
+
+dtid_t RemoteSetRunThreadWithErr( dtid_t tid, unsigned *err )
+{
+    run_thread_set_req      acc;
+    run_thread_set_ret      ret;
+
+    if( SuppRunThreadId == 0 ) return( DEFAULT_TID );
+    acc.supp.core_req = REQ_PERFORM_SUPPLEMENTARY_SERVICE;
+    acc.supp.id = SuppRunThreadId;
+    acc.req = REQ_RUN_THREAD_SET;
+    acc.thread = tid;
+    TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
+    if( ret.err != 0 ) {
+        *err = StashErrCode( ret.err, OP_REMOTE );
+        return( 0 );
+    }
+    return( ret.old_thread );
+}
+
+dtid_t RemoteSetRunThread( dtid_t tid )
+{
+    unsigned            err;
+
+    return( RemoteSetRunThreadWithErr( tid, &err ) );
+}

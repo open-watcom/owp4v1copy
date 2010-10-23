@@ -30,7 +30,6 @@ extra_objs = &
         accredir.obj &
         accmem.obj &
         accrtrd.obj &
-        thread.obj &
         supphdlr.obj &
         supp.obj &
         core.obj

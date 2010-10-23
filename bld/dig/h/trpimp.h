@@ -208,7 +208,7 @@
     #define     WANT_ASYNC
     #define     WANT_FILE
     #undef      WANT_OVL
-    #define     WANT_THREAD
+    #undef      WANT_THREAD
     #define     WANT_RUN_THREAD
     #undef      WANT_RFX
     #define     WANT_CAPABILITIES
@@ -332,6 +332,8 @@ extern unsigned ReqRunThread_info(void);
 extern unsigned ReqRunThread_get_next(void);
 extern unsigned ReqRunThread_get_runtime(void);
 extern unsigned ReqRunThread_poll(void);
+extern unsigned ReqRunThread_set(void);
+extern unsigned ReqRunThread_get_name(void);
 extern unsigned ReqRunThread_stop(void);
 extern unsigned ReqRunThread_signal_stop(void);
 

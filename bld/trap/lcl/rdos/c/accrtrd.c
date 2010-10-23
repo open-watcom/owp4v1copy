@@ -57,7 +57,7 @@ unsigned ReqRunThread_info( void )
     case 0:
         ret->info = RUN_THREAD_INFO_TYPE_NAME;
         ret->width = 25;
-        strcpy( header_txt, "Name" );
+        strcpy( header_txt, "ID   Name" );
         break;
 
     case 1:
@@ -90,7 +90,19 @@ unsigned ReqRunThread_info( void )
 
 unsigned ReqRunThread_get_next( void )
 {
-    return( 0 );
+    run_thread_get_next_req *acc;
+    run_thread_get_next_ret *ret;
+    struct TDebug           *obj;
+
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+    ret->thread = 0;
+
+    obj = GetCurrentDebug();
+	if (obj)
+        ret->thread = GetNextThread( obj, acc->thread );
+
+    return( sizeof( *ret ) );
 }
 
 unsigned ReqRunThread_get_runtime( void )
@@ -242,6 +254,60 @@ unsigned ReqRunThread_poll( void )
 		}
     }
     return( sizeof( *ret ) );
+}
+
+unsigned ReqRunThread_set( void )
+{
+    run_thread_set_req      *acc;
+    run_thread_set_ret      *ret;
+    struct TDebug           *obj;
+    struct TDebugThread     *t = 0;
+
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+
+    ret->old_thread = 0;
+    ret->err = 0;
+
+    obj = GetCurrentDebug();
+	if (obj)
+	    t = obj->CurrentThread;
+
+	if( t )
+	    ret->old_thread = t->ThreadID;
+
+    if( obj && acc->thread != 0 )
+        SetCurrentThread( obj, acc->thread );
+
+    return( sizeof( *ret ) );
+}
+
+unsigned ReqRunThread_get_name( void )
+{
+    run_thread_get_name_req *acc;
+    char                    *name;
+    struct TDebug           *obj;
+    struct TDebugThread     *t = 0;
+
+    acc = GetInPtr( 0 );
+    name = GetOutPtr( 0 );
+    strcpy( name, "" );
+
+    if( acc->thread == 0 )
+        strcpy( name, "Name" );
+    else {
+        obj = GetCurrentDebug();
+	    if (obj) {
+            t = LockThread( obj, acc->thread );
+
+            if( t )
+                sprintf( name, "%04hX %s", t->ThreadID, t->ThreadName );
+
+            UnlockThread( obj );
+        }
+    }
+
+    return( strlen( name ) + 1 );
 }
 
 unsigned ReqRunThread_stop( void )

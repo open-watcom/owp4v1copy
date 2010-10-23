@@ -75,8 +75,13 @@ extern unsigned         RemoteReadUserKey( unsigned );
 extern void             ReadDbgRegs( void );
 extern void             WriteDbgRegs( void );
 extern dtid_t           RemoteGetNextThread( dtid_t, unsigned * );
+extern bool             HaveRemoteRunThread( void );
+extern dtid_t           RemoteGetNextRunThread( dtid_t tid );
+extern void             RemoteUpdateRunThread( thread_state *thd );
 extern dtid_t           RemoteSetThreadWithErr( dtid_t, unsigned * );
+extern dtid_t           RemoteSetRunThreadWithErr( dtid_t, unsigned * );
 extern void             RemoteThdName( dtid_t, char * );
+extern void             RemoteRunThdName( dtid_t, char * );
 extern void             TraceKill( void );
 extern unsigned         SetCurrRadix( unsigned );
 extern address          ReturnAddress( void );
@@ -525,6 +530,34 @@ void MakeThdCurr( thread_state *thd )
 }
 
 
+void MakeRunThdCurr( thread_state *thd )
+{
+    unsigned    err;
+
+    if( !AdvMachState( ACTION_THREAD_CHANGE ) ) return;
+    // NYI - PUI - record the thread change?
+    WriteDbgRegs();
+    if( RemoteSetRunThreadWithErr( thd->tid, &err ) == 0 ) {
+        Error( ERR_NONE, LIT( ERR_NO_MAKE_CURR_THREAD ), thd->tid, err );
+    }
+    DbgRegs->tid = thd->tid;
+    ReadDbgRegs();
+    SetCodeDot( GetRegIP() );
+    DbgUpdate( UP_REG_CHANGE | UP_CSIP_CHANGE | UP_THREAD_STATE );
+}
+
+
+dtid_t RemoteSetThread( dtid_t tid )
+{
+    unsigned            err;
+
+    if( HaveRemoteRunThread() )
+        return( RemoteSetRunThreadWithErr( tid, &err ) );
+    else
+        return( RemoteSetThreadWithErr( tid, &err ) );
+}
+
+
 static void ThdCmd( thread_state *thd, enum thread_cmds cmd )
 {
     unsigned    up;
@@ -579,7 +612,10 @@ static thread_state     *AddThread( dtid_t tid, unsigned state )
         }
         owner = &thd->link;
     }
-    RemoteThdName( tid, name );
+    if( HaveRemoteRunThread() )
+        RemoteRunThdName( tid, name );
+    else
+        RemoteThdName( tid, name );
     _Alloc( thd, sizeof( thread_state ) + strlen( name ) );
     if( thd == NULL ) return( NULL );
     thd->link = *owner;
@@ -657,21 +693,44 @@ static void KillDeadThreads( void )
     }
 }
 
-void CheckForNewThreads( bool set_exec )
+static void RefreshThreads( bool set_exec )
 {
     dtid_t              tid;
     thread_state        *thd;
     unsigned            state;
 
-    if( set_exec ) ExecThd = NULL;
     tid = 0;
-    MarkThreadsDead();
     for( ;; ) {
         tid = RemoteGetNextThread( tid, &state );
         if( tid == 0 ) break;
         thd = AddThread( tid, state );
         if( set_exec && thd != NULL && thd->tid == DbgRegs->tid ) ExecThd = thd;
     }
+}
+
+static void RefreshRunThreads( bool set_exec )
+{
+    dtid_t              tid;
+    thread_state        *thd;
+
+    tid = 0;
+    for( ;; ) {
+        tid = RemoteGetNextRunThread( tid );        
+        if( tid == 0 ) break;
+        thd = AddThread( tid, 0 );
+        RemoteUpdateRunThread( thd );
+        if( set_exec && thd != NULL && thd->tid == DbgRegs->tid ) ExecThd = thd;
+    }
+}
+
+void CheckForNewThreads( bool set_exec )
+{
+    if( set_exec ) ExecThd = NULL;
+    MarkThreadsDead();
+    if( HaveRemoteRunThread() ) 
+        RefreshRunThreads( set_exec );
+    else
+        RefreshThreads( set_exec );
     KillDeadThreads();
     _SwitchOff( SW_THREAD_EXTRA_CHANGED );
 }

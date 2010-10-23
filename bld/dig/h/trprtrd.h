@@ -42,8 +42,10 @@ enum {
     REQ_RUN_THREAD_GET_NEXT,        /* 01 */
     REQ_RUN_THREAD_GET_RUNTIME,     /* 02 */
     REQ_RUN_THREAD_POLL,            /* 03 */
-    REQ_RUN_THREAD_STOP,            /* 04 */
-    REQ_RUN_THREAD_SIGNAL_STOP,     /* 05 */
+    REQ_RUN_THREAD_SET,             /* 04 */
+    REQ_RUN_THREAD_GET_NAME,        /* 05 */
+    REQ_RUN_THREAD_STOP,            /* 06 */
+    REQ_RUN_THREAD_SIGNAL_STOP,     /* 07 */
 };
 
 /*=================== REQ_RUN_THREAD_INFO ===================*/
@@ -76,7 +78,6 @@ typedef struct {
 
 typedef struct {
     unsigned_32         thread;     /* next thread */
-    /* followed by thread-name/id string */
 } run_thread_get_next_ret;
 
 /*=================== REQ_RUN_THREAD_GET_RUNTIME ===================*/
@@ -104,6 +105,29 @@ typedef struct {
 typedef struct {
     unsigned_16         conditions;
 } _WCUNALIGNED run_thread_poll_ret;
+
+/*=================== REQ_RUN_THREAD_SET ===================*/
+
+typedef struct {
+    supp_prefix         supp;
+    access_req          req;
+    unsigned_32         thread;
+} _WCUNALIGNED run_thread_set_req;
+
+typedef struct {
+    trap_error          err;
+    unsigned_32         old_thread;
+} _WCUNALIGNED run_thread_set_ret;
+
+/*=================== REQ_RUN_THREAD_GET_NAME ===================*/
+
+typedef struct {
+    supp_prefix         supp;
+    access_req          req;
+    unsigned_32         thread;
+} _WCUNALIGNED run_thread_get_name_req;
+
+/* return for REQ_RUN_THREAD_GET_NAME is a string with the thread name info */
 
 /*=================== REQ_RUN_THREAD_STOP ===================*/
 
