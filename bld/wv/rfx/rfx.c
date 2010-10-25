@@ -732,11 +732,11 @@ int main( int argc, char **argv )
 {
 
     TxtBuff = DbgAlloc( 512 );
+    SysFileInit();
     if( argc < 2 || argv[1][0] == '?' ) {
         Usage();
         return( 1 );
     }
-    SysFileInit();
     PathInit();
     InitTrap( argv[1] );
     if( !InitFileSupp() || !InitRFXSupp() ) {
