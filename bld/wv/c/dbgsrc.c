@@ -54,9 +54,10 @@ extern void             DbgUpdate( update_list );
 extern bool             IsAbsolutePath( char *path );
 
 
-extern char_ring *SrcSpec;
-extern char      *TxtBuff;
-extern tokens     CurrToken;
+extern char_ring        *SrcSpec;
+extern char             *TxtBuff;
+extern tokens           CurrToken;
+extern image_entry      *DbgImageList;
 
 static char AddTab[] = { "Add\0" };
 
@@ -209,11 +210,14 @@ void *OpenSrcFile( cue_handle *ch )
     void        *hndl;
     char_ring   *path;
     char        *p;
+    char        *q;
     char        *d;
     char        *rem_name;
     bool        used_star;
     unsigned    len;
     char        *buff;
+    mod_handle  mod;
+    image_entry *image;
 
     len = CueFile( ch, NULL, 0 ) + 1;
     _AllocA( buff, len );
@@ -267,6 +271,45 @@ void *OpenSrcFile( cue_handle *ch )
         }
         hndl = FOpenSource( TxtBuff, CueMod( ch ), CueFileId( ch ) );
         if( hndl != NULL ) return( hndl );
+    }
+    if( ch == NULL ) return( NULL ); else mod = CueMod( ch );
+    for( image = DbgImageList; image; image = image->link ) {
+        if( image->dip_handle == ( mod & 0xFFFF0000 ) ) {
+            break;
+        }
+    }
+    if( image ) {
+        d = TxtBuff;
+        q = image->image_name;
+        p = q + strlen( q );
+        while( p != q ) {
+            if( *p == '/' || *p == '\\' ) {
+                p++;
+                break;
+            } else {
+                p--;
+            }
+        }
+        while( p != q ) {
+            *d = *q;
+            d++;
+            q++;
+        }
+        if( !IsAbsolutePath( buff ) ) {
+            StrCopy( buff, d );
+            p = TxtBuff + strlen( TxtBuff );
+            hndl = FOpenSource( TxtBuff, CueMod( ch ), CueFileId( ch ) );
+            if( hndl != NULL ) return( hndl );
+            StrCopy( ".asm", p );
+            hndl = FOpenSource( TxtBuff, CueMod( ch ), CueFileId( ch ) );
+            if( hndl != NULL ) return( hndl );
+            StrCopy( ".c", p );
+            hndl = FOpenSource( TxtBuff, CueMod( ch ), CueFileId( ch ) );
+            if( hndl != NULL ) return( hndl );
+            StrCopy( ".cpp", p );
+            hndl = FOpenSource( TxtBuff, CueMod( ch ), CueFileId( ch ) );
+            if( hndl != NULL ) return( hndl );
+        }
     }
     return( NULL );
 }
