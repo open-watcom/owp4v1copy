@@ -593,7 +593,7 @@ void WriteMapLines( void )
         p++;
         while( *p != 0 ) {
             WriteMapNL( 1 );
-            WriteMap( "Line numbers for %s.obj", p );
+            WriteMap( "Line numbers for %s", p );
             WriteMapNL( 1 );
             p += strlen( (char *)p ) + 1;
             p = DecodeULEB128( p, &directory );
