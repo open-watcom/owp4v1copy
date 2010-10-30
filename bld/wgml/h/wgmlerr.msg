@@ -204,8 +204,14 @@ pick( INF_MAC_LINE,             "\tLine %s of macro '%s'",
 pick( INF_FILE_LINE,            "\tLine %s of file '%s'",
                                 "\tLine %s of file '%s'" )
 
+pick( ERR_EQ_MISSING,           "Missing required equals sign",
+                                "Missing required equals sign" )
+
 pick( ERR_ATT_MISSING,          "Required attribute not found",
                                 "Required attribute not found" )
+
+pick( ERR_ATT_VAL_MISSING,      "Missing attribute value",
+                                "Missing attribute value" )
 
 pick( ERR_SYM_LONG,             "Symbol name too long '%s'",
                                 "Symbol name too long '%s'" )
@@ -435,8 +441,6 @@ pick( ERR_TAG_BEFORE_GDOC,      "%s tag must appear after the GDOC tag",
 pick( ERR_TAG_STARTING,         "\tStarting tag '%s'",
                                 "\tStarting tag '%s'" )
 
-/* Error messages for use with xx_line_err() */
-
 pick( ERR_CHAR_ONLY,            "Only a single character is allowed",
                                 "Only a single character is allowed")
 
@@ -448,4 +452,22 @@ pick( ERR_DC_NOT_OFF,           "'OFF' is the only text value allowed",
 
 pick( ERR_INV_CW_SEP,           "Invalid control word separator",
                                 "Invalid control word separator" )
+
+pick( WNG_REC_TYPE_BINCLUDE,    "BINCLUDE tag treats all record types as '(t)'",
+                                "BINCLUDE tag treats all record types as '(t)'" )
+
+pick( WNG_REC_TYPE_GRAPHIC,     "GRAPHIC tag ignores record types",
+                                "GRAPHIC tag ignores record types" )
+
+pick( ERR_INV_DEPTH_GRAPHIC,    "The GRAPHIC depth must be greater than zero",
+                                "The GRAPHIC depth must be greater than zero" )
+
+pick( ERR_INV_WIDTH_GRAPHIC,    "The GRAPHIC width must be greater than zero",
+                                "The GRAPHIC width must be greater than zero" )
+
+pick( ERR_INV_ATT_VAL,          "Invalid attribute value",
+                                "Invalid attribute value" )
+
+pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
+                                "Number is too large or contains invalid characters" )
 

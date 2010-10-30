@@ -54,6 +54,8 @@ global  char        *   scan_restart;   // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
 global  char        *   tok_start;      // start of scanned token
 global  size_t          arg_flen;       // arg length
+global  size_t          val_len;        // value length
+global  char        *   val_start;      // value start
  
 global  int             switch_char;    // DOS switch character
 global  char        *   alt_ext;        // alternate extension
@@ -181,6 +183,7 @@ global struct ProcFlags {
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
     unsigned        sk_cond         : 1;// .sk n C found
+    unsigned        tag_end_found   : 1;// '.' ending tag found
  
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        test_widow      : 1;// for preventing widow lines

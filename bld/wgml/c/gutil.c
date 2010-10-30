@@ -34,6 +34,7 @@
 *               skip_to_quote
 *               su_layout_special
 *               to_internal_SU
+*               att_val_to_SU
 *               start_line_with_string
 *
 ****************************************************************************/
@@ -43,6 +44,9 @@
 #include "wgml.h"
 #include "gvars.h"
 
+#define MAX_WH_CNT 4
+#define MAX_WD_CNT 2
+#define MAX_UNIT_CNT 2
 
 /***************************************************************************/
 /* return length of string without trailing spaces                         */
@@ -120,6 +124,7 @@ static  bool    su_layout_special( char * * scanp, su * converted )
 }
 
 /***************************************************************************/
+/*  copies converted->su_txt from scanp                                    */
 /*  conversion routines for Horizontal / Vertical space units              */
 /*  Accepted formats:                                                      */
 /*       1234        assume chars / lines                                  */
@@ -343,6 +348,276 @@ bool    to_internal_SU( char * * scanp, su * converted )
         }
     } else {                            // no decimals
         if( pu != NULL ) {              // but unit specified twice?
+            return( converterror );
+        }
+    }
+
+    /***********************************************************************/
+    /*  check for valid unit                                               */
+    /***********************************************************************/
+    if( unit[1] == '\0' ) {           // single letter unit
+        switch( unit[0] ) {
+        case 'i' :
+            s->su_u = SU_inch;
+            break;
+        case 'd' :
+            s->su_u = SU_dv;
+            break;
+        case 'm' :
+            s->su_u = SU_ems;
+            break;
+        case 'c' :
+            s->su_u = SU_cicero;
+            break;
+        case 'p' :
+            s->su_u = SU_pica;
+            break;
+        case '\0' :                     // no unit is characters or lines
+            s->su_u = SU_chars_lines;
+            break;
+        default:
+            return( converterror );
+            break;
+        }
+    } else {                            // two letter unit
+        if( unit[1] == 'm' ) {          // cm, mm ?
+            if( unit[0] == 'c' ) {
+                s->su_u = SU_cm;
+            } else if( unit[0] == 'm' ) {
+                s->su_u = SU_mm;
+            } else {                    // invalid unit
+                return( converterror );
+            }
+        } else {                        // invalid unit
+            return( converterror );
+        }
+    }
+
+    s->su_inch = 0;
+    s->su_mm   = 0;
+    k = 1;
+    if( pd1 != NULL ) {
+        if( pdn - pd1 == 1 ) {
+            k = 10;                 // only 0.1 digit
+        }
+    }
+    switch( s->su_u ) {
+    // the relative units are only stored, not converted
+    case SU_chars_lines :
+    case SU_dv :
+    case SU_ems :
+        if( wd != 0 ) {                 // no decimals allowed
+            return( converterror );
+        }
+        break;
+    case SU_inch :                      // inch, cm, mm valid with decimals
+        s->su_mm   = (wh * 100L + wd * k) * 2540L;
+        s->su_inch = (wh * 100L + wd * k) *  100L;
+        break;
+    case SU_cm :
+        s->su_mm   = (wh * 100L + wd * k) * 1000L;
+        s->su_inch = s->su_mm * 10L / 254L;
+        break;
+    case SU_mm :
+        s->su_mm   = (wh * 100L + wd * k) *  100L;
+        s->su_inch = s->su_mm * 10L / 254L;
+        break;
+    case SU_cicero :
+    case SU_pica :                      // pica / Cicero
+        if( wd > 11 ) {
+            div = ldiv( wd, 12L);
+            wh += div.quot;
+            wd = div.rem;
+        }
+        s->su_inch = wh * 10000L / 6L + wd * 10000L / 72L;
+        s->su_mm = s->su_inch * 254L / 10L;
+        break;
+    default:
+        break;
+    }
+    if( sign == '-' ) {
+        s->su_inch  = -s->su_inch;
+        s->su_mm    = -s->su_mm;
+        s->su_whole = -s->su_whole;
+    }
+    converterror = false;
+    return( converterror );
+}
+
+/***************************************************************************/
+/*  use val_start/val_len to identify the value                            */
+/*  conversion routines for Horizontal / Vertical space units              */
+/*  Accepted formats:                                                      */
+/*       1234        assume chars / lines                                  */
+/*       8m          Ems                                                   */
+/*       22Dv        Device units                                          */
+/*                                                                         */
+/*       12.34i      inch             (1 inch = 2.54cm)                    */
+/*                      The exact definition of Cicero and Pica (points)   */
+/*                      differs between Europe and USA,                    */
+/*                      so until a better solution turns up:               */
+/*       5C11        Cicero  + points (12 points = 1C = 1/6 inch)          */
+/*       6p10        Pica    + points (12 points = 1P = 1/6 inch)          */
+/*       5.23cm      centimeter                                            */
+/*       6.75mm      millimeter                                            */
+/*                                                                         */
+/*    the absolute units (the last 5) will be stored                       */
+/*    in 0.0001 millimeter units and 0.0001 inch units,                    */
+/*    the relative ones (the first 3) will not be converted.               */
+/*                                                                         */
+/* extension for layout :BANREGION indent, hoffset and width attributes:   */
+/*      symbolic units without a numeric value                             */
+/*                                                                         */
+/*                                                                         */
+/*                                                                         */
+/*    returns  filled structure su, returncode false                       */
+/*               or  returncode true in case of error                      */
+/***************************************************************************/
+
+bool    att_val_to_SU( su * converted )
+{
+    bool        converterror = true;
+    char    *   p;                      // source of value text
+    char    *   pd1;                    // ptr to 0.1 decimal
+    char    *   pdn;                    // ptr to last digit +1
+    char    *   pp;                     // save value of p before proceding
+    char    *   ps;                     // destination for value text
+    char    *   pu;                     // ptr to trailing unit
+    char        sign;
+    char        unit[4];
+    ldiv_t      div;
+    long        k;
+    long        wh;
+    long        wd;
+    su      *   s;
+
+    if( (val_len + 1) > MAX_SU_CHAR ) {             // won't fit
+        xx_line_err( err_inv_att_val, val_start );
+        scan_start = scan_stop + 1;
+        return( converterror );
+    }
+    unit[3] = '\0';
+    unit[2] = '\0';
+    unit[1] = '\0';
+    unit[0] = '\0';
+    s = converted;
+    p = val_start;
+    pp = NULL;
+    ps = s->su_txt;
+    *ps = '\0';
+    wd = 0;
+    wh = 0;
+
+    s->su_u = SU_undefined;
+    if( *p == '+' ) {                   // not allowed with tags
+        xx_line_err( err_inv_att_val, val_start );
+        scan_start = scan_stop + 1;
+        return( converterror );
+    } else if( *p == '-' ) {            // not relative, just negative
+        sign = *p;
+        *ps++ = *p++;
+        if( *p == '+' || *p == '-' ) {  // only one sign is allowed
+            xx_line_err( err_inv_att_val, val_start );
+            scan_start = scan_stop + 1;
+            return( converterror );
+        }
+    } else {
+        sign = '+';
+    }
+    if( (p - val_start) > val_len ) {   // value end reached, not valid 
+        xx_line_err( err_inv_att_val, val_start );
+        scan_start = scan_stop + 1;
+        return( converterror );
+    }
+    s->su_relative = false;             // no relative positioning with tags
+
+    /***********************************************************************/
+    /*  Special for layout :BANREGION                                      */
+    /***********************************************************************/
+
+    if( isalpha( *p ) ) {
+        converterror = su_layout_special( &p, converted );
+        if( !converterror ) {
+            return( converterror );         // layout special ok
+        }
+    }
+
+    pp = p;
+    while( (*p >= '0') && (*p <= '9') ) {   // whole part
+        wh = (10 * wh) + (*p - '0');
+        *ps++ = *p++;
+        if( (p - val_start) > val_len ) {  // value end reached
+            break;
+        }
+    }
+    if( (p - pp) > MAX_WH_CNT ) {           // too many digits in whole part
+        xx_line_err( err_inv_att_val, val_start );
+        scan_start = scan_stop + 1;
+        return( converterror );
+    }
+
+    pp = p;
+    if( ((p - val_start) < val_len) && *p == '.' ) {   // check for decimal point
+        *ps++ = *p++;
+        pd1 = p;                            // remember start of decimals
+        while( *p >= '0' && *p <= '9' ) {   // decimal part
+            wd = 10 * wd + *p - '0';
+            *ps++ = *p++;
+            if( (p - val_start) > val_len ) {  // value end reached
+                break;
+            }
+        }
+        if( (p - pd1) > MAX_WD_CNT ) {       // too many digits in decimal part
+            xx_line_err( err_inv_att_val, pd1 );
+            scan_start = scan_stop + 1;
+            return( converterror );
+        }
+        pdn = p;
+    }
+
+    k = 0;
+    pu = p;
+    while( *p && isalpha( *p ) ) {
+        unit[k++] = tolower( *p );          // save Unit
+        *ps++ = *p++;
+        if( (p - val_start) > val_len ) {  // value end reached
+            break;
+        }
+        if( k > MAX_UNIT_CNT ) {
+            xx_line_err( err_inv_att_val, pu );
+            scan_start = scan_stop + 1;
+            return( converterror );
+        }
+    }
+    pd1 = NULL;
+    pdn = NULL;
+
+    *ps = '\0';
+    if( (p - val_start) < val_len ) {     // value continues on
+        xx_line_err( err_inv_att_val, p );
+        scan_start = scan_stop + 1;
+        return( converterror );
+    }
+    s->su_whole = wh;
+    s->su_dec   = wd;
+
+    if( k == 0 ) {                      // no trailing unit
+        pu = NULL;
+    } else {
+        if( pu == pp ) {                // no decimals, no unit
+            pu = NULL;
+        }
+    }
+    if( ((pp - val_start) < val_len) && (*pp == '.') ) {   // dec point found
+        if( pu == NULL ) {              // need trailing unit
+            xx_line_err( err_inv_att_val, pp + 1 );
+            scan_start = scan_stop + 1;
+            return( converterror );
+        }
+    } else {                            // no decimals
+        if( pu != NULL ) {              // but unit specified twice?
+            xx_line_err( err_inv_att_val, pu ); // can this still be reached?
+            scan_start = scan_stop + 1;
             return( converterror );
         }
     }

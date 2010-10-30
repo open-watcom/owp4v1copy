@@ -137,6 +137,7 @@ extern  void    xx_err( const msg_ids errid );
 extern  void    xx_line_err( const msg_ids errid, char * pa );
 extern  void    xx_opt_err( char *cw, char *pa );
 extern  void    xx_tag_err( const msg_ids errid, char const * cw );
+extern  void    xx_warn( const msg_ids errid );
 extern  void    g_err_tag( char *tagname );
 extern  void    g_err_tag_nest( char *tagname );
 extern  void    g_err_tag_no( char *tagname );
@@ -319,6 +320,8 @@ extern  void        print_tag_dict( gtentry * dict );
 extern  void        print_tag_entry( gtentry * entry );
 extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 
+/* gtagutil.c                         */
+extern  char    *   get_att_value( char * p );
 
 /* gtxtpool.c                         */
 extern  void        add_text_chars_to_pool( text_line * a_line );
@@ -345,6 +348,7 @@ extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  int32_t     len_to_trail_space( char p[] , int32_t len );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
+extern  bool        att_val_to_SU( su * spaceunit );
 extern  void        start_line_with_string( char * text, uint8_t font_num );
 
 

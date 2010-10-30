@@ -166,7 +166,7 @@ void    cw_err( void )
 
 void    dc_opt_warn( char *pa )
 {
-    err_count++;
+    wng_count++;
     g_warn( err_dc_opt, pa );
     file_mac_info();
     show_line_error( pa );
@@ -279,6 +279,14 @@ void    xx_err( const msg_ids errid )
 {
     err_count++;
     g_err( errid );
+    file_mac_info();
+    return;
+}
+
+void    xx_warn( const msg_ids errid )
+{
+    wng_count++;
+    g_warn( errid );
     file_mac_info();
     return;
 }

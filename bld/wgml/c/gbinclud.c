@@ -27,6 +27,8 @@
 * Description:  WGML tag :BINCLUDE processing
 *
 ****************************************************************************/
+#define __STDC_WANT_LIB_EXT1__  1
+#include <string.h>
 #include    "wgml.h"
 //#include    "findfile.h"
 #include    "gvars.h"
@@ -38,95 +40,127 @@
 
 void    gml_binclude( const gmltag * entry )
 {
-//    char        *   p;
-//    text_line       p_line;
-//    int8_t          t_spacing;
-//    int8_t          font_save;
+    bool        depth_found             = false;
+    bool        file_found              = false;
+    bool        has_rec_type            = false;
+    bool        reposition;
+    bool        reposition_found        = false;
+    char        file[FILENAME_MAX];
+    char        rt_buff[MAX_FILE_ATTR];
+    char    *   p;
+    su          cur_su;
+    uint32_t    depth;
 
     if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
         if( (ProcFlags.doc_sect_nxt < doc_sect_gdoc) ) {
             xx_tag_err( err_tag_before_gdoc, entry->tagname );
+            scan_start = scan_stop + 1;
+            return;
         }
     }
-//    p = scan_start;
-//    if( *p && *p != '.' ) p++;
-
-//    while( *p == ' ' ) {                // over WS to attribute
-//        p++;
-//    }
-//    if( *p &&
-//        ! (strnicmp( "stitle ", p, 7 ) &&   // look for stitle
-//           strnicmp( "stitle=", p, 7 )) ) {
-//        char        quote;
-//        char    *   valstart;
-
-//        p += 6;
-//        while( *p == ' ' ) {
-//            p++;
-//        }
-//        if( *p == '=' ) {
-//            p++;
-//            while( *p == ' ' ) {
-//                p++;
-//            }
-//        }
-//        if( *p == '"' || *p == '\'' ) {
-//            quote = *p;
-//            ++p;
-//        } else {
-//            quote = ' ';
-//        }
-//        valstart = p;
-//        while( *p && *p != quote ) {
-//            ++p;
-//        }
-//        *p = '\0';
-//        if( !ProcFlags.title_tag_seen ) {// first stitle goes into dictionary
-//            add_symvar( &global_dict, "$stitle", valstart, no_subscript, 0 );
-//        }
-//        p++;
-//    } else {
-//        if( !ProcFlags.title_tag_seen ) {
-//            add_symvar( &global_dict, "$stitle", "", no_subscript, 0 );// set nullstring
-//        }
-//    }
-
-//    if( *p == '.' ) p++;                // over '.'
-//    if( !ProcFlags.title_tag_seen ) {
-//        if( *p ) {                      // first title goes into dictionary
-//            add_symvar( &global_dict, "$title", p, no_subscript, 0 );
-//        }
-//    }
-
+    file[0] = '\0';
+    rt_buff[0] = '\0';
+    p = scan_start;
+    for( ;; ) {
+        while( *p == ' ' ) {            // over WS to attribute
+            p++;
+        }
+        if( *p == '\0' ) {              // end of line: get new line
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line( true ) ) {      // next line for missing attribute
+ 
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
+                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        ProcFlags.tag_end_found = true; 
+                        break;          
+                    } else {
+                        p = scan_start; // new line is part of current tag
+                        continue;
+                    }
+                }
+            }
+        }
+        if( !strnicmp( "file", p, 4 ) ) {
+            p += 4;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            file_found = true;
+            memcpy_s( file, FILENAME_MAX, val_start, val_len );
+            if( val_len < FILENAME_MAX ) {
+                file[val_len] = '\0';
+            } else {
+                file[FILENAME_MAX - 1] = '\0';
+            }
+            split_attr_file( file, rt_buff, MAX_FILE_ATTR );
+            if( (rt_buff[0] != '\0') ) {
+                has_rec_type = true;
+                if( rt_buff[0] != 't' ) {
+                    xx_warn( wng_rec_type_binclude );
+                }
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "depth", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            depth_found = true;
+            if( att_val_to_SU( &cur_su ) ) {
+                return;
+            }
+            depth = conv_vert_unit( &cur_su, spacing );
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "reposition", p, 10 ) ) {
+            p += 10;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            reposition_found = true;
+            if( !strnicmp( "start", val_start, 5 ) ) {
+                reposition = true;  // moving following text down by depth
+            } else if( !strnicmp( "end", val_start, 3 ) ) {
+                reposition = false; // device at proper position after insertion
+            } else {
+                xx_line_err( err_inv_att_val, val_start );
+                scan_start = scan_stop + 1;
+                return;
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else {    // no match = end-of-tag in wgml 4.0
+            ProcFlags.tag_end_found = true;
+            break;
+        }
+    }
+    // detect missing required attributes
+    if( !depth_found || !file_found || !reposition_found ) {
+        xx_err( err_att_missing );
+        scan_start = scan_stop + 1;
+        return;
+    }
+out_msg( ":BINCLUDE file name: %s\n", file );
+out_msg( ":BINCLUDE depth: %i\n", depth );
+if( reposition ) {
+    out_msg( ":BINCLUDE reposition: start\n" );
+} else {
+    out_msg( ":BINCLUDE reposition: end\n" );
+}
     start_doc_sect();                   // if not already done
 
-//    p_line.first = NULL;
-//    p_line.next  = NULL;
-//    p_line.last  = NULL;
+/// now call the implementation code, once it is written.
 
-//    t_spacing = layout_work.titlep.spacing;
-
-//    font_save = g_curr_font_num;
-//    g_curr_font_num = layout_work.title.font;
-
-//    p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
-
-//    calc_title_pos( g_curr_font_num, t_spacing, !ProcFlags.title_tag_seen );
-//    p_line.y_address = g_cur_v_start;
-
-//    prep_title_line( &p_line, p );
-
-//    ProcFlags.page_started = true;
-//    process_line_full( &p_line, false );
-//    g_curr_font_num = font_save;
-
-//    if( p_line.first != NULL) {
-//        add_text_chars_to_pool( &p_line );
-//    }
-//    ProcFlags.page_started = true;
-
-//    ProcFlags.title_tag_seen = true;
     scan_start = scan_stop + 1;
-//out_msg( "gml_binclude() invoked!\n");
 }
 

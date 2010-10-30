@@ -27,10 +27,11 @@
 * Description:  WGML tag :GRAPHIC processing
 *
 ****************************************************************************/
+#define __STDC_WANT_LIB_EXT1__  1
+#include <string.h>
 #include    "wgml.h"
 //#include    "findfile.h"
 #include    "gvars.h"
-
 
 /***************************************************************************/
 /*  :GRAPHIC tag                                                           */
@@ -38,66 +39,176 @@
 
 void    gml_graphic( const gmltag * entry )
 {
-//    char        *   p;
-//    text_line       p_line;
-//    int8_t          t_spacing;
-//    int8_t          font_save;
+    bool        depth_found             = false;
+    bool        file_found              = false;
+    char        file[FILENAME_MAX];
+    char        rt_buff[MAX_FILE_ATTR];
+    char    *   p;
+    char    *   pa;
+    su          cur_su;
+    uint32_t    depth;
+    uint32_t    scale                   = 100;
+    // the initial value of width is only correct for one-column pages.
+    uint32_t    width                   = g_net_page_width;
+    uint32_t    xoff                    = g_cur_h_start;
+    uint32_t    yoff                    = 0;
 
     if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
         if( (ProcFlags.doc_sect_nxt < doc_sect_gdoc) ) {
             xx_tag_err( err_tag_before_gdoc, entry->tagname );
+            scan_start = scan_stop + 1;
+            return;
         }
     }
-//    p = scan_start;
-//    if( *p && *p != '.' ) p++;
-
-//    while( *p == ' ' ) {                // over WS to attribute
-//        p++;
-//    }
-//    if( *p &&
-//        ! (strnicmp( "stitle ", p, 7 ) &&   // look for stitle
-//           strnicmp( "stitle=", p, 7 )) ) {
-//        char        quote;
-//        char    *   valstart;
-
-//        p += 6;
-//        while( *p == ' ' ) {
-//            p++;
-//        }
-//        if( *p == '=' ) {
-//            p++;
-//            while( *p == ' ' ) {
-//                p++;
-//            }
-//        }
-//        if( *p == '"' || *p == '\'' ) {
-//            quote = *p;
-//            ++p;
-//        } else {
-//            quote = ' ';
-//        }
-//        valstart = p;
-//        while( *p && *p != quote ) {
-//            ++p;
-//        }
-//        *p = '\0';
-//        if( !ProcFlags.title_tag_seen ) {// first stitle goes into dictionary
-//            add_symvar( &global_dict, "$stitle", valstart, no_subscript, 0 );
-//        }
-//        p++;
-//    } else {
-//        if( !ProcFlags.title_tag_seen ) {
-//            add_symvar( &global_dict, "$stitle", "", no_subscript, 0 );// set nullstring
-//        }
-//    }
-
-//    if( *p == '.' ) p++;                // over '.'
-//    if( !ProcFlags.title_tag_seen ) {
-//        if( *p ) {                      // first title goes into dictionary
-//            add_symvar( &global_dict, "$title", p, no_subscript, 0 );
-//        }
-//    }
-
+    file[0] = '\0';
+    rt_buff[0] = '\0';
+    p = scan_start;
+    for( ;; ) {
+        while( *p == ' ' ) {            // over WS to attribute
+            p++;
+        }
+        if( *p == '\0' ) {              // end of line: get new line
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line( true ) ) {      // next line for missing attribute
+ 
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
+                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        ProcFlags.tag_end_found = true; 
+                        break;          
+                    } else {
+                        p = scan_start; // new line is part of current tag
+                        continue;
+                    }
+                }
+            }
+        }
+        if( !strnicmp( "file", p, 4 ) ) {
+            p += 4;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            file_found = true;
+            memcpy_s( file, FILENAME_MAX, val_start, val_len );
+            if( val_len < FILENAME_MAX ) {
+                file[val_len] = '\0';
+            } else {
+                file[FILENAME_MAX - 1] = '\0';
+            }
+            split_attr_file( file, rt_buff, sizeof( rt_buff ) );
+            if( (rt_buff[0] != '\0') ) {
+                xx_warn( wng_rec_type_graphic );
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "depth", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            depth_found = true;
+            if( att_val_to_SU( &cur_su ) ) {
+                return;
+            }
+            depth = conv_vert_unit( &cur_su, spacing );
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "width", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            if( !strnicmp( "page", val_start, 4 ) ) {
+                // default value is the correct value to use
+            } else if( !strnicmp( "column", val_start, 6 ) ) {
+                // default value is the correct value to use
+            } else {    // value actually specifies the width
+                pa = val_start;
+                if( att_val_to_SU( &cur_su ) ) {
+                    return;
+                }
+                width = conv_hor_unit( &cur_su );
+                if( depth == 0 ) {
+                    xx_line_err( err_inv_width_graphic, pa );
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "scale", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            pa = val_start;
+            scale = 0;
+            while( (*pa >= '0') && (*pa <= '9') ) { // convert to number
+                scale = (10 * scale) + (*pa - '0');
+                pa++;
+                if( (pa - val_start) > val_len ) {  // value end reached
+                    break;
+                }
+            }
+            if( (pa - val_start) < val_len ) {      // value continues on
+                xx_line_err( err_num_too_large, val_start );
+                scan_start = scan_stop + 1;
+                return;
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "xoff", p, 4 ) ) {
+            p += 4;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            if( att_val_to_SU( &cur_su ) ) {
+                return;
+            }
+            xoff = conv_hor_unit( &cur_su );
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "yoff", p, 4 ) ) {
+            p += 4;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            if( att_val_to_SU( &cur_su ) ) {
+                return;
+            }
+            yoff = conv_vert_unit( &cur_su, spacing );
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else {    // no match = end-of-tag in wgml 4.0
+            ProcFlags.tag_end_found = true;
+            break;
+        }
+    }
+    if( !depth_found || !file_found ) { // detect missing required attributes
+        xx_err( err_att_missing );
+        scan_start = scan_stop + 1;
+        return;
+    }
+out_msg( ":GRAPHIC file name: %s\n", file );
+out_msg( ":GRAPHIC depth: %i\n", depth );
+out_msg( ":GRAPHIC width: %i\n", width );
+out_msg( ":GRAPHIC scale: %i\n", scale );
+out_msg( ":GRAPHIC xoff:  %i\n", xoff );
+out_msg( ":GRAPHIC yoff:  %i\n", yoff );
     start_doc_sect();                   // if not already done
 
 //    p_line.first = NULL;
@@ -127,6 +238,6 @@ void    gml_graphic( const gmltag * entry )
 
 //    ProcFlags.title_tag_seen = true;
     scan_start = scan_stop + 1;
-//out_msg( "gml_graphic() invoked!\n");
+//out_msg( ":GRAPHIC file name: %s\n", val_start);
 }
 
