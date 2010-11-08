@@ -1213,9 +1213,25 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 } else if( sym->state == SYM_STRUCT ) {
                     token_1->value = sym->total_size;
                 } else if( sym->mem_type == MT_NEAR ) {
-                    token_1->value = 0xFF02;
+                    if( sym->segment ) {
+                        if( ((dir_node *)sym->segment)->e.seginfo->use_32 ) {
+                            token_1->value = 0xFF04;
+                        } else {
+                            token_1->value = 0xFF02;
+                        }
+                    } else {
+                        token_1->value = 0xFF02;
+                    }
                 } else if( sym->mem_type == MT_FAR ) {
-                    token_1->value = 0xFF04;
+                    if( sym->segment ) {
+                        if( ((dir_node *)sym->segment)->e.seginfo->use_32 ) {
+                            token_1->value = 0xFF06;
+                        } else {
+                            token_1->value = 0xFF04;
+                        }
+                    } else {
+                        token_1->value = 0xFF04;
+                    }
                 } else {
                     token_1->value = sym->first_size;
                 }
