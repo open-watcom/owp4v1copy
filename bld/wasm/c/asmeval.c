@@ -1227,10 +1227,10 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                         if( ((dir_node *)sym->segment)->e.seginfo->use_32 ) {
                             token_1->value = 0xFF06;
                         } else {
-                            token_1->value = 0xFF04;
+                            token_1->value = 0xFF05;
                         }
                     } else {
-                        token_1->value = 0xFF04;
+                        token_1->value = 0xFF05;
                     }
                 } else {
                     token_1->value = sym->first_size;
