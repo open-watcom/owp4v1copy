@@ -33,6 +33,14 @@
 #include "wgml.h"
 #include "gvars.h"
 
+typedef struct {
+    locflags    location;
+    char        tagname[TAG_NAME_LENGTH + 1];
+} loc_to_name;
+
+#define L2N_ENTRIES 2
+static loc_to_name  l2n_names[L2N_ENTRIES] = { { address_tag, "EADDRESS" },
+                                                { titlep_tag, "ETITLEP" } };
 
 /***************************************************************************/
 /*  display offending text line and mark the offending token               */
@@ -43,6 +51,7 @@ static void show_line_error( char * pa )
     char    *   buf = NULL;
     int         cnt;
 
+    msg_indent = 0;
     cnt = pa - buff2;   // number of characters before the offending input
     cnt ++;             // allow space for "*" at start of offending input
     buf = (char *) mem_alloc( cnt + 1 );
@@ -52,6 +61,7 @@ static void show_line_error( char * pa )
     out_msg( "%s\n", buff2 );
     out_msg( "%s\n", buf );
     mem_free( buf );
+    out_msg( "\n" );
     return;
 }
 
@@ -89,8 +99,8 @@ void    file_mac_info( void )
 
 void    file_mac_info_nest( void )
 {
-    char        linestr[MAX_L_AS_STR];
-    char        linemac[MAX_L_AS_STR];
+    char            linestr[MAX_L_AS_STR];
+    char            linemac[MAX_L_AS_STR];
     nest_stack  *   nw;
 
     if( input_cbs != NULL ) {
@@ -111,7 +121,7 @@ void    file_mac_info_nest( void )
             switch( nw->nest_flag & II_input ) {
             case    II_file:
                 utoa( nw->lineno, linestr, 10 );
-                g_info( err_inf_line_file, linestr, nw->s.filename );
+                g_info( inf_file_line, linestr, nw->s.filename );
                 break;
             case    II_tag :
                 g_info( err_inf_tag, nw->s.mt.tag_m->name );
@@ -130,7 +140,6 @@ void    file_mac_info_nest( void )
             out_msg( "\n" );
         }
     }
-    out_msg( "\n" );
     return;
 }
 
@@ -298,7 +307,7 @@ static  void    g_err_tag_common( char * tag, bool nest )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
-    sprintf_s( tagn, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag );
+    sprintf_s( tagn, TAG_NAME_LENGTH + 1, "%s", tag );
     g_err( err_tag_expected, tagn );
     if( nest ) {
         file_mac_info_nest();
@@ -318,6 +327,26 @@ void    g_err_tag( char * tag )
 void    g_err_tag_nest( char * tag )
 {
     g_err_tag_common( tag, 1 );         // nested tag stack display
+    return;
+}
+
+void    g_err_tag_rsloc( locflags inloc )
+{
+    char    *   tag_name    = NULL;
+    int         i;
+    
+    for( i = 0; i < L2N_ENTRIES; i++ ) {
+        if( l2n_names[i].location == inloc ) {
+            tag_name = l2n_names[i].tagname;
+            break;
+        }
+    }
+    if( tag_name == NULL ) {        // should never happen, make internal error?
+        tag_name = "unknown";
+    }
+    g_err_tag_common( tag_name, 1 );
+    show_line_error( scan_start );  // works when used only in gscan.c
+
     return;
 }
 

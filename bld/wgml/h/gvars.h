@@ -56,6 +56,7 @@ global  char        *   tok_start;      // start of scanned token
 global  size_t          arg_flen;       // arg length
 global  size_t          val_len;        // value length
 global  char        *   val_start;      // value start
+global  locflags        rs_loc;         // restricted location
  
 global  int             switch_char;    // DOS switch character
 global  char        *   alt_ext;        // alternate extension
@@ -301,7 +302,7 @@ global  uint32_t    msg_indent;         // indent for message output (to screen,
 /*  tagnames as strings for msg display                                    */
 /***************************************************************************/
  
-#define pickg( name, length, routine, flags )  { #name },
+#define pickg( name, length, routine, gmlflags, locflags )  { #name },
  
 global char str_tags[t_MAX + 1][10]
 #if defined(tag_strings)

@@ -161,6 +161,6 @@ if( reposition ) {
 
 /// now call the implementation code, once it is written.
 
-    scan_start = scan_stop + 1;
+    scan_start = scan_stop + 1;         // skip following text
 }
 

@@ -49,6 +49,8 @@ void init_global_vars( void )
     GlobalFlags.wscript = 1;            // (w)script support + warnings
     GlobalFlags.warning = 1;
 
+    rs_loc              = 0;            // restricted location
+
     try_file_name       = NULL;
 
     master_fname        = NULL;         // Master input file name
@@ -168,5 +170,4 @@ void init_pass_data( void )
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
     ProcFlags.doc_sect_nxt  = doc_sect_none;// no document section yet
     ProcFlags.in_trans  = (in_esc != ' ');// translation wanted
-
 }

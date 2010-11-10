@@ -438,8 +438,8 @@ pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
 pick( ERR_TAG_BEFORE_GDOC,      "%s tag must appear after the GDOC tag",
                                 "%s tag must appear after the GDOC tag" )
 
-pick( ERR_TAG_STARTING,         "\tStarting tag '%s'",
-                                "\tStarting tag '%s'" )
+pick( ERR_TAG_STARTING,         "\tStarting %s tag on",
+                                "\tStarting %s tag on" )
 
 pick( ERR_CHAR_ONLY,            "Only a single character is allowed",
                                 "Only a single character is allowed")
@@ -470,4 +470,8 @@ pick( ERR_INV_ATT_VAL,          "Invalid attribute value",
 
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
+
+pick( ERR_DOC_SEC_EXPECTED,     "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX or BACKM tag",
+                                "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX or BACKM tag" )
+
 

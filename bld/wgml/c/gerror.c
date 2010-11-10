@@ -134,7 +134,6 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
             start++;    // skip initial tab in favor of msg_indent
         }
         out_msg( "%*s%s\n", msg_indent, "", start );
-        msg_indent = 0;
     } else {
         while( strlen( start ) > MAX_LINE_LEN - msg_indent ) {
             end = start + MAX_LINE_LEN - msg_indent;

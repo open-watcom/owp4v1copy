@@ -140,6 +140,7 @@ extern  void    xx_tag_err( const msg_ids errid, char const * cw );
 extern  void    xx_warn( const msg_ids errid );
 extern  void    g_err_tag( char *tagname );
 extern  void    g_err_tag_nest( char *tagname );
+extern  void    g_err_tag_rsloc( locflags inloc );
 extern  void    g_err_tag_no( char *tagname );
 extern  void    g_err_tag_prec( char *tagname );
 
@@ -373,7 +374,7 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
 #ifdef pickg
     #undef pickg
 #endif
-#define pickg( name, length, routine, flags )  extern void routine( const gmltag * entry );
+#define pickg( name, length, routine, gmlflags, locflags )  extern void routine( const gmltag * entry );
 
 #include "gtags.h"
 

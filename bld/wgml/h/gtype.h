@@ -363,22 +363,32 @@ typedef struct scrtag {
 /***************************************************************************/
 
 typedef enum {
-    tag_only     = 1,                   // tag without any attribute
-    tag_basic    = 2,                   // basic elements possible on tag line.
-    tag_text     = 4,                   // text line possible
-    etag_req     = 8,                   // eTAG required
-    etag_opt     = 16,                  // eTAG optional
-    tag_is_basic = 32,                  // basic tag
-    tag_layout   = 64,                  // tag valid in layout
-    tag_out_txt  = 128                  // tag produces output text
+    tag_only        = 1,                // tag without any attribute
+    tag_basic       = 2,                // basic elements possible on tag line.
+    tag_text        = 4,                // text line possible
+    etag_req        = 8,                // eTAG required
+    etag_opt        = 16,               // eTAG optional
+    tag_is_general  = 32,               // general tag
+    tag_layout      = 64,               // tag valid in layout
+    tag_out_txt     = 128,              // tag produces output text
 } gmlflags;
 
+/**************************************************************************/
+/* When assigned to rs_loc, limits tags allowed to those with the         */
+/* corresponding flag set in gmltag.taglocs.                              */
+/**************************************************************************/
+
+typedef enum {
+    titlep_tag   = 1,                   // tag allowed in TITLEP section
+    address_tag  = 2,                   // tag allowed in ADDRESS section
+} locflags;
 
 typedef struct gmltag {
    char             tagname[TAG_NAME_LENGTH + 1];
    size_t           taglen;
    void             (*gmlproc)( const struct gmltag * entry );
    gmlflags         tagflags;
+   locflags         taglocs;
 } gmltag;
 
 
@@ -755,7 +765,7 @@ typedef enum functs {
 /***************************************************************************/
 
 #undef pickg
-#define pickg( name, length, routine, flags )  t_##name,
+#define pickg( name, length, routine, gmlflags, locflags )  t_##name,
 
 #undef picklab
 #define picklab( name, routine, flags )  t_label,

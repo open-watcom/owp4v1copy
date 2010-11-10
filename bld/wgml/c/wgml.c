@@ -674,6 +674,7 @@ int main( int argc, char * argv[] )
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
             }
+            msg_indent = 0;
             g_info( INF_PASS_2, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 

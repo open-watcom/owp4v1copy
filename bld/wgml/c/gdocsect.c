@@ -30,6 +30,8 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
+uint32_t        titlep_lineno;      // TITLEP tag line number
+
 /***************************************************************************/
 /*  error routine for wrong sequence of doc section tags                   */
 /***************************************************************************/
@@ -363,6 +365,10 @@ void    start_doc_sect( void )
         break;
     case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
         page_e   = ej_yes;
+        init_nest_cb();
+        nest_cb->p_stack = copy_to_nest_stack();
+        nest_cb->c_tag = t_TITLEP;
+        nest_cb->p_stack->lineno = titlep_lineno; // correct line number
         break;
     case   doc_sect_abstract:
         page_r   = layout_work.abstract.page_reset;
@@ -643,11 +649,27 @@ extern  void    gml_titlep( const gmltag * entry )
     post_top_skip = 0;
     post_skip = NULL;
     spacing = layout_work.titlep.spacing;
+    rs_loc = titlep_tag;
+    if( input_cbs->fmflags & II_file ) {    // save line number
+        titlep_lineno = input_cbs->s.f->lineno;
+    } else if( input_cbs->fmflags & II_macro ) {
+        titlep_lineno = input_cbs->s.m->lineno;
+    } else {
+        titlep_lineno = 0;                  // not clear what to do here
+    }
 }
 
 extern  void    gml_etitlep( const gmltag * entry )
 {
+    tag_cb  *   wk;
+
     gml_doc_xxx( doc_sect_etitlep );
+    rs_loc = 0;
+    titlep_lineno = 0;
+
+    wk = nest_cb;
+    nest_cb = nest_cb->prev;
+    add_tag_cb_to_pool( wk );
 }
 
 extern  void    gml_toc( const gmltag * entry )

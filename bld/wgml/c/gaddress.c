@@ -36,7 +36,6 @@ static  text_line   *   adr_lines = NULL;   // collect :ALINEs
 static  int8_t          a_spacing;      // spacing between adr lines
 static  int8_t          font_save;      // save for font
 
-
 /***************************************************************************/
 /*  calc aline position   ( vertical )                                     */
 /***************************************************************************/
@@ -129,15 +128,19 @@ extern  void    gml_address( const gmltag * entry )
         g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
         err_count++;
         show_include_stack();
-    }
-    if( ProcFlags.address_active ) {    // nested :ADDRESS tag
-        g_err_tag( "eADDRESS" );
+        scan_start = scan_stop + 1;
+        return;
     }
     ProcFlags.address_active = true;
     first_aline = true;
     adr_lines = NULL;
     font_save = g_curr_font_num;
     g_curr_font_num = layout_work.address.font;
+    rs_loc = address_tag;
+
+    init_nest_cb();
+    nest_cb->p_stack = copy_to_nest_stack();
+    nest_cb->c_tag = t_ADDRESS;
 
 //    spacing = layout_work.titlep.spacing;
     scan_start = scan_stop + 1;
@@ -151,15 +154,23 @@ extern  void    gml_address( const gmltag * entry )
 
 extern  void    gml_eaddress( const gmltag * entry )
 {
+    tag_cb  *   wk;
 
     if( !ProcFlags.address_active ) {   // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
+        scan_start = scan_stop + 1;
+        return;
     }
 
     output_addresslines( false );
 
     g_curr_font_num = font_save;
     ProcFlags.address_active = false;
+    rs_loc = titlep_tag;
+    wk = nest_cb;
+    nest_cb = nest_cb->prev;
+    add_tag_cb_to_pool( wk );
+
     scan_start = scan_stop + 1;
     return;
 }

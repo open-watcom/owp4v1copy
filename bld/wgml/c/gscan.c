@@ -40,12 +40,12 @@
 /*    GML tags                                                             */
 /***************************************************************************/
 
-#define pickg( name, length, routine, flags) { #name, length, routine, flags },
+#define pickg( name, length, routine, gmlflags, locflags) { #name, length, routine, gmlflags, locflags },
 
 static  const   gmltag  gml_tags[] = {
 
 #include "gtags.h"
-    { "   ", 0, NULL, 0 }               // end
+    { "   ", 0, NULL, 0, 0 }            // end
 
 };
 
@@ -248,8 +248,19 @@ static void scan_gml( void )
                         }
                         *p = csave;
 
-                        gml_tags[k].gmlproc( &gml_tags[k] );
-
+                        if( rs_loc == 0 ) {
+                            // no restrictions: do them all
+                            gml_tags[k].gmlproc( &gml_tags[k] );
+                        } else if( (gml_tags[k].taglocs & rs_loc) != 0 ) {
+                            // tag allowed in this restricted location
+                            gml_tags[k].gmlproc( &gml_tags[k] );
+                        } else if( (gml_tags[k].tagflags & tag_is_general) != 0 ) {
+                            // tag allowed everywhere
+                            gml_tags[k].gmlproc( &gml_tags[k] );
+                        } else {
+                            start_doc_sect();   // if not already done
+                            g_err_tag_rsloc( rs_loc );
+                        }
                         processed = true;
                         if( *scan_start == '.' ) {
                             scan_start++;
@@ -756,7 +767,12 @@ void    scan_line( void )
                 lay_tags[lay_ind].gmlproc( &lay_tags[lay_ind] );
             } else {
                 // processs (remaining) text
-                process_text( scan_start, g_curr_font_num );
+                if( rs_loc > 0 ) {
+                    start_doc_sect();   // if not already done
+                    g_err_tag_rsloc( rs_loc );
+                } else {
+                    process_text( scan_start, g_curr_font_num );
+                }
             }
         }
 

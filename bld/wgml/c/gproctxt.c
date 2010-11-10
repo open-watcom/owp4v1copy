@@ -830,12 +830,22 @@ void    process_text( char * text, uint8_t font_num )
     static      text_type   typ = norm;
     static      text_type   typn = norm;
 
-            /***************************************************************/
-            /*  we need a started section for text output                  */
-            /*                                                             */
-            /***************************************************************/
+    /*******************************************************************/
+    /*  we need a started section for text output                      */
+    /*  note: ProcFlags.doc_sect will be doc_sect_body                 */
+    /*******************************************************************/
     if( !ProcFlags.start_section ) {
         start_doc_sect();
+    }
+    /*******************************************************************/
+    /* no text between :GDOC and the first of :ABSTRACT, :PREFACE,     */
+    /* :BODY, :APPENDIX, or :BACKM except between :TITLEP and :eTITLEP */
+    /*******************************************************************/
+    if( ProcFlags.doc_sect < doc_sect_abstract ) {
+        if( ProcFlags.doc_sect != doc_sect_titlep ) {
+            xx_line_err( err_doc_sec_expected, text );
+            return;
+        }
     }
     p = text;
     if( t_line.first == NULL ) {    // first phrase in paragraph

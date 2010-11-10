@@ -237,7 +237,10 @@ out_msg( ":GRAPHIC yoff:  %i\n", yoff );
 //    ProcFlags.page_started = true;
 
 //    ProcFlags.title_tag_seen = true;
-    scan_start = scan_stop + 1;
+    if( *p == '.' ) {
+        p++;
+    }
+    scan_start = p;                 // process following text
 //out_msg( ":GRAPHIC file name: %s\n", val_start);
 }
 
