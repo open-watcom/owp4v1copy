@@ -58,7 +58,7 @@
   pickg( CIT,      3,      gml_dummy,      tag_out_txt, 0 )
   pickg( ECIT,     4,      gml_dummy,      tag_out_txt, 0 )
 
-  pickg( CMT,      3,      gml_cmt,        tag_only,    0 )
+  pickg( CMT,      3,      gml_cmt,        tag_only | tag_is_general,   0 )
   pickg( DATE,     4,      gml_date,       tag_out_txt, titlep_tag )
   pickg( DD,       2,      gml_dummy,      tag_out_txt, 0 )
   pickg( DDHD,     4,      gml_dummy,      tag_out_txt, 0 )
