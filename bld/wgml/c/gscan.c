@@ -743,6 +743,9 @@ void    scan_line( void )
         }
         cc = pos;
     }
+    while( *scan_start == ' ' ) {   // handle indented layout tags
+        scan_start++;
+    }
     if( cc == pos ) {
         if( *scan_start == SCR_char ) {
             if( ProcFlags.late_subst ) {
