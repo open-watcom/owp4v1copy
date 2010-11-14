@@ -41,7 +41,7 @@
     #error macro pickg not defined
 #endif
 //       tagname  tagname  routinename     gmlflags locflags
-//                length
+// upper case     length
 
   pickg( ABSTRACT, 8,      gml_abstract,   0,   0 )
 
@@ -92,13 +92,13 @@
   pickg( GD,       2,      gml_dummy,      tag_out_txt, 0 )
   pickg( GRAPHIC,  7,      gml_graphic,    tag_out_txt, titlep_tag | address_tag )
   pickg( GT,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( H0,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( H1,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( H2,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( H3,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( H4,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( H5,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( H6,       2,      gml_dummy,      tag_out_txt, 0 )
+  pickg( H0,       2,      gml_h0,         0,           0 )
+  pickg( H1,       2,      gml_h1,         0,           0 )
+  pickg( H2,       2,      gml_h2,         0,           0 )
+  pickg( H3,       2,      gml_h3,         0,           0 )
+  pickg( H4,       2,      gml_h4,         0,           0 )
+  pickg( H5,       2,      gml_h5,         0,           0 )
+  pickg( H6,       2,      gml_h6,         0,           0 )
   pickg( HDREF,    5,      gml_dummy,      tag_out_txt, 0 )
 
   pickg( HP0,      3,      gml_hp0,        tag_out_txt, 0 )

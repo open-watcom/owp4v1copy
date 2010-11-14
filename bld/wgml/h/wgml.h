@@ -92,6 +92,7 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban );
 extern  uint32_t    ban_bot_pos( banner_lay_tag * ban );
 extern  void        out_ban_bot( banner_lay_tag * ban );
 extern  void        out_ban_top( banner_lay_tag * ban );
+extern  void        set_banners( void );
 
 
 /* gdata.c                              */
@@ -301,6 +302,7 @@ extern void     free_dict( symvar * * dict );
 extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      find_symvar_l( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f );
+extern int      add_symvar_addr( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f, symsub * * sub );
 extern void     print_sym_dict( symvar * dict );
 extern void     reset_auto_inc_dict( symvar * dict );
 

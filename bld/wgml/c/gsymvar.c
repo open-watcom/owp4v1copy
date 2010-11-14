@@ -150,7 +150,7 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
 {
     symvar  *   wk;
     inputcb *   incbs;
-    int         rc = 0;
+    int         rc;
 
     rc = find_symvar( dict, name, sub, symsubval );
     if( rc ) {
@@ -165,12 +165,12 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
                 wk = incbs->local_dict;
                 rc = find_symvar( &wk, name, sub, symsubval );
                 if( rc ) {
-                    return( rc );       // found variable
+                    break;              // found variable
                 }
             }
         }
     }
-    return( rc );                       // not found
+    return( rc );
 }
 
 
@@ -259,7 +259,7 @@ static  bool    check_subscript( sub_index sub )
 /*           the subscripts are added in ascending order                   */
 /***************************************************************************/
 
-static bool add_symvar_sub( symvar * var, char * val, sub_index sub )
+static bool add_symvar_sub( symvar * var, char * val, sub_index sub, symsub * * nsub )
 {
     symsub  *   newsub;
     symsub  *   ws;
@@ -326,6 +326,7 @@ static bool add_symvar_sub( symvar * var, char * val, sub_index sub )
         }
         strcpy_s( newsub->value, strlen( val ) + 1, val );
     }
+    *nsub = newsub;
     return( true );
 }
 
@@ -374,10 +375,12 @@ static void add_symsym( symvar * * dict, char * name, symbol_flags f, symvar * *
 
 
 /***************************************************************************/
-/*  add_symvar  add symbol with subscript and value                        */
+/*  add_symvar_addr  add symbol with subscript and value                   */
+/*  with    returning ptr to symsub entry                                  */
 /***************************************************************************/
 
-int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f )
+int add_symvar_addr( symvar * * dict, char * name, char * val,
+                     sub_index subscript, symbol_flags f, symsub * * sub )
 {
     symvar  *   new = NULL;
     symsub  *   newsub = NULL;
@@ -391,21 +394,21 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
         switch ( rc ) {
         case -1 :                       // deleted symbol found
             new->flags &= ~deleted;     // reset deleted switch
-            ok = add_symvar_sub( new, val, subscript );
+            ok = add_symvar_sub( new, val, subscript, sub );
             if( !ok ) {
                 rc = 3;
             }
             break;
         case 0 :                        // nothing found
             add_symsym( dict, name, f, &new );
-            ok = add_symvar_sub( new, val, subscript );
+            ok = add_symvar_sub( new, val, subscript, sub );
             if( !ok ) {
                 rc = 3;
             }
             break;
         case 1 :                        // symbol found, but not subscript
             newsub->base->flags &= ~deleted;// reset deleted switch
-            ok = add_symvar_sub( newsub->base, val, subscript );
+            ok = add_symvar_sub( newsub->base, val, subscript, sub );
             if( !ok ) {
                 rc = 3;
             }
@@ -420,6 +423,7 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
                 }
                 strcpy_s( newsub->value, strlen( val ) + 1, val );
             }
+            *sub = newsub;
             break;
         default:
             g_err( err_logic_err, __FILE__ );
@@ -430,6 +434,19 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
         }
     }
     return( rc );
+}
+
+
+/***************************************************************************/
+/*  add_symvar  add symbol with subscript and value                        */
+/*  without returning ptr to symsub entry                                  */
+/***************************************************************************/
+
+int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f )
+{
+    symsub  *   newsub;
+
+    return( add_symvar_addr( dict, name, val, subscript, f, &newsub ) );
 }
 
 /***************************************************************************/

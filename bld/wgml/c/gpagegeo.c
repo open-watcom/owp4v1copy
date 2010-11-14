@@ -237,9 +237,9 @@ void    do_layout_end_processing( void )
 
         fb_document();                 // DOCUMENT :PAUSE & :INIT processing.
         ProcFlags.fb_document_done = true;
+
+        set_banners();                  // prepare banners for selection
     }
-
-    set_section_banners( doc_sect_body );   // set body default banners
-
 }
+
 

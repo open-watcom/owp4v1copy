@@ -344,7 +344,7 @@ static  void    proc_input( char * filename )
                     show_include_stack();
                     continue;           // don't start new include level
                 } else {                // master file included from cmdline
-                    g_info( INF_INCLUDED, "cmdline" );
+                    g_info( inf_included, "cmdline" );
                     break;              // no input file leave loop
                 }
             }
@@ -465,7 +465,7 @@ static  void    proc_input( char * filename )
             /***************************************************************/
             /*  Test for missing eXXX tag                                  */
             /***************************************************************/
-            if( nest_cb->c_tag != t_NONE ) {
+            if( (nest_cb != NULL) && (nest_cb->c_tag != t_NONE) ) {
                 g_err_tag_nest( str_tags[nest_cb->c_tag + 1] );// eXXX expected
             }
         }
@@ -622,7 +622,7 @@ int main( int argc, char * argv[] )
 
     tok_count = proc_options( cmdline );
     init_sysparm( cmdline, banner1w( "Script/GML", _WGML_VERSION_ ) );
-    /* don't mem_free cmdline now it is used for sysparm variable */
+    /* don't mem_free cmdline now as it is used for sysparm variable */
     g_banner();
     if( tok_count < 4 ) {               // file ( device xyz   is minimum
         usage();                        // display usage and exit

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -35,6 +35,135 @@
 
 static  text_line       ban_line;       // for constructing banner line
 static  text_chars  *   reg_text[3];    // 3 possible ban region parts
+
+static  banner_lay_tag  *   ban_top[max_ban][2];
+static  banner_lay_tag  *   ban_bot[max_ban][2];
+
+/***************************************************************************/
+/*  Split banregion into left middle right part if region is script format */
+/***************************************************************************/
+static  void    preprocess_script_region( banner_lay_tag * ban ) {
+    char    *   pl;
+    char        sep;
+    int         k;
+
+    if( (ban->region->contents.content_type == string_content)
+        && ban->region->script_format ) {
+
+            /***************************************************************/
+            /*  script format is a 3 part region: left middle right        */
+            /*  first char is separator char                               */
+            /*  /left//right/  empty middle part in this case              */
+            /***************************************************************/
+
+
+            /***************************************************************/
+            /*  preprocess script format banner region for speed           */
+            /***************************************************************/
+        pl = ban->region->contents.string;
+        sep = *pl;                      // first char is separator
+                                        // isolate region parts
+        for( k = 0; k < 3; ++k ) {      // left, center, right
+            pl++;
+            if( k == 2 ) {// special hack for right part without success
+                while( *pl == ' ' ) {
+                    pl++;               // remove leading spaces
+                }           // still not quite the same result as wgml4   TBD
+            }
+            ban->region->script_region[k].string = pl;
+            while( *pl &&  *pl != sep ) {
+                pl++;
+            }
+            ban->region->script_region[k].len =  pl -
+                ban->region->script_region[k].string ;
+
+            if( ban->region->script_region[k].len == 0 ) {
+                ban->region->script_region[k].string = NULL;
+            } else {
+                *pl = '\0';             // null terminate
+            }
+        }
+    }
+}
+
+
+/***************************************************************************/
+/*  set banner pointers                                                    */
+/***************************************************************************/
+void set_banners( void )
+{
+    banner_lay_tag  *   ban;
+    int                 k;
+
+    static const struct {
+        ban_docsect     ban_tag;
+        e_tags          tag;
+    }  ban_2_tag[max_ban] =  {
+        { no_ban,       t_NONE     },   // dummy
+        { abstract_ban, t_ABSTRACT },
+        { appendix_ban, t_APPENDIX },
+        { backm_ban,    t_BACKM    },
+        { body_ban,     t_BODY     },
+        { figlist_ban,  t_FIGLIST  },
+        { head0_ban,    t_H0       },
+        { head1_ban,    t_H1       },
+        { head2_ban,    t_H2       },
+        { head3_ban,    t_H3       },
+        { head4_ban,    t_H4       },
+        { head5_ban,    t_H5       },
+        { head6_ban,    t_H6       },
+        { letfirst_ban, t_NONE     },   // dummy
+        { letlast_ban,  t_NONE     },   // dummy
+        { letter_ban,   t_NONE     },   // dummy
+        { index_ban,    t_INDEX    },
+        { preface_ban,  t_PREFACE  },
+        { toc_ban,      t_TOC      },
+    };
+
+    for( k = 0; k < max_ban; k++ ) {    // init banner list
+        ban_top[k][0] = ban_top[k][1] = NULL;
+        ban_bot[k][0] = ban_bot[k][1] = NULL;
+    }
+
+    for( ban = layout_work.banner; ban != NULL; ban = ban->next ) {
+
+        if( ban->docsect > no_ban && ban->docsect < max_ban ) {
+            for( k = 0; k < max_ban; k++ ) {
+                if( ban->docsect == ban_2_tag[k].ban_tag ) {// tag found
+                    switch( ban->place ) {
+                    case   top_place :
+                        ban_top[k][0] = ban;
+                        ban_top[k][1] = ban;
+                        break;
+                    case   bottom_place :
+                        ban_bot[k][0] = ban;
+                        ban_bot[k][1] = ban;
+                        break;
+
+                    case   topodd_place :
+                        ban_top[k][1] = ban;
+                        break;
+                    case   topeven_place :
+                        ban_top[k][0] = ban;
+                        break;
+
+                    case   botodd_place :
+                        ban_bot[k][1] = ban;
+                        break;
+                    case   boteven_place :
+                        ban_bot[k][0] = ban;
+                        break;
+                    default:
+                        break;
+                    }
+                    preprocess_script_region( ban );
+                    break;              // tag for banner found
+                }
+            }
+        }
+    }
+}
+
 
 /***************************************************************************/
 /*  calc banner top  region position                                       */
@@ -176,58 +305,15 @@ static void content_reg( banner_lay_tag * ban )
 {
     text_chars  *   curr_t;
     char        *   pbuf;
-    char        *   pl;
     symsub      *   symsubval;
     int             k;
     int             rc;
-    char            sep;
 
     switch( ban->region->contents.content_type ) {
     case   string_content:
         pbuf = mem_alloc( buf_size );
         *pbuf = '\0';
         if( ban->region->script_format ) {
-
-            /***************************************************************/
-            /*  script format is a 3 part region: left middle right        */
-            /*  first char is separator char                               */
-            /*  /left//right/  empty middle part in this case              */
-            /***************************************************************/
-
-
-            /***************************************************************/
-            /*  preprocess script format banner region for speed           */
-            /*  if not already done                                        */
-            /***************************************************************/
-            if( ban->region->script_region[0].len +
-                ban->region->script_region[1].len +
-                ban->region->script_region[2].len == 0 ) {
-
-                pl = ban->region->contents.string;
-                sep = *pl;              // first char is separator
-                                            // isolate region parts
-                for( k = 0; k < 3; ++k ) {  // left, center, right
-                    pl++;
-                    if( k == 2 ) {// special hack for right part without success
-                        while( *pl == ' ' ) {
-                            pl++;       // remove leading spaces
-                        }   // still not quite the same result as wgml4   TBD
-                    }
-                    ban->region->script_region[k].string = pl;
-                    while( *pl &&  *pl != sep ) {
-                        pl++;
-                    }
-                    ban->region->script_region[k].len =  pl -
-                        ban->region->script_region[k].string ;
-
-                    if( ban->region->script_region[k].len == 0 ) {
-                        ban->region->script_region[k].string = NULL;
-                    } else {
-                        *pl = '\0';     // null terminate
-                    }
-                }
-            }
-
             /***************************************************************/
             /*  substitute variables and create text_chars instances       */
             /***************************************************************/
@@ -281,7 +367,6 @@ static void content_reg( banner_lay_tag * ban )
 
         mem_free( pbuf );
         break;
-
     case author_content :
         rc = find_symvar( &global_dict, "$author", no_subscript, &symsubval );
         if( rc == 2 ) {
@@ -661,7 +746,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
     ban_line.first = NULL;
 
-
     /* calc banner horizontal margins */
     ban_left  = g_page_left_org + conv_hor_unit( &(ban->left_adjust) );
     ban_right = g_page_right_org - conv_hor_unit( &(ban->right_adjust) );
@@ -743,8 +827,8 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         /*  truncate the left part(s) in case of overlap                   */
         /*******************************************************************/
         curr_p = ban_line.first;
-        curr_t = curr_p->next;
-        while( curr_t != NULL ) {
+
+        for( curr_t = curr_p->next; curr_t != NULL; curr_t = curr_t->next ) {
             while( (curr_p->x_address + curr_p->width) > curr_t->x_address ) {
                 if( curr_p->count < 2) {// sanity check
                    break;
@@ -754,7 +838,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                                                  [curr_p->text[curr_p->count]];
             }
             curr_p = curr_t;
-            curr_t = curr_t->next;
         }
         fb_output_textline( &ban_line );
     }

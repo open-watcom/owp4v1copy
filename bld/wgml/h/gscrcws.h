@@ -34,6 +34,7 @@
 #endif
 //  control  routine    flags
 //     word  name
+// lower case
 
   picks( ad, scr_dummy, cw_break           )// adjust
   picks( ap, scr_ap,    0                  )// append

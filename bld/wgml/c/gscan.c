@@ -58,7 +58,7 @@ static  const   gmltag  gml_tags[] = {
 /*    GML layout tags                                                      */
 /***************************************************************************/
 
-#define pick( name, length, routine, flags) { name, length, routine, flags },
+#define pick( name, length, routine, flags) { #name, length, routine, flags },
 
 static  const   gmltag  lay_tags[] = {
 
@@ -110,6 +110,7 @@ static void scan_gml( void )
     gtentry     *   ge;                 // GML user tag entry
     mac_entry   *   me;                // script macro for processing GML tag
     char            linestr[MAX_L_AS_STR];
+    char            tok_upper[TAG_NAME_LENGTH];
 
     cb = input_cbs;
 
@@ -199,10 +200,16 @@ static void scan_gml( void )
 
         }
     } else {
+
+        for( k = 0; k <= toklen; k++ ) {
+            tok_upper[k] = toupper( *(tok_start + 1 + k) );
+        }
+        tok_upper[k] = '\0';
+
         if( ProcFlags.layout ) {        // different tags within :LAYOUT
             for( k = 0; k < LAY_TAGMAX; ++k ) {
                 if( toklen == lay_tags[k].taglen ) {
-                    if( !stricmp( lay_tags[k].tagname, tok_start + 1 ) ) {
+                    if( !strcmp( lay_tags[k].tagname, tok_upper ) ) {
                         *p = csave;
                         lay_ind = -1;   // process tag not attribute
 
@@ -220,7 +227,7 @@ static void scan_gml( void )
             if( !processed ) {          // check for gml only tag in :LAYOUT
                 for( k = 0; k < GML_TAGMAX; ++k ) {
                     if( toklen == gml_tags[k].taglen ) {
-                        if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
+                        if( !strcmp( gml_tags[k].tagname, tok_upper ) ) {
                             g_err( err_gml_in_lay, gml_tags[k].tagname );
                             err_count++;
                             file_mac_info();
@@ -234,9 +241,9 @@ static void scan_gml( void )
         } else {                        // not within :LAYOUT
             for( k = 0; k < GML_TAGMAX; ++k ) {
                 if( toklen == gml_tags[k].taglen ) {
-                    if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
+                    if( !strcmp( gml_tags[k].tagname, tok_upper ) ) {
                         if( GlobalFlags.firstpass &&
-                            !stricmp(tok_start + 1, "LAYOUT" ) &&
+                            !strcmp(tok_upper, "LAYOUT" ) &&
                             ProcFlags.fb_document_done  ) {
 
                             g_err( err_lay_too_late );
@@ -272,7 +279,7 @@ static void scan_gml( void )
             if( !processed ) {         // check for layout tag in normal text
                 for( k = 0; k < LAY_TAGMAX; ++k ) {
                     if( toklen == lay_tags[k].taglen ) {
-                        if( !stricmp( lay_tags[k].tagname, tok_start + 1 ) ) {
+                        if( !strcmp( lay_tags[k].tagname, tok_upper ) ) {
                             g_err( err_lay_in_gml, lay_tags[k].tagname );
                             err_count++;
                             file_mac_info();
@@ -461,7 +468,8 @@ static void     scan_script( void )
 
         if( toklen == SCR_KW_LENGTH ) {
             for( k = 0; k < SCR_TAGMAX; ++k ) {
-                if( !stricmp( scr_tags[k].tagname, token_buf ) ) {
+                if( !strcmp( scr_tags[k].tagname, token_buf ) ) {
+#if 0
                     if( !ProcFlags.fb_document_done &&
                           scr_tags[k].cwflags & cw_o_t ) {
 
@@ -471,8 +479,9 @@ static void     scan_script( void )
                         /***************************************************/
                         do_layout_end_processing();
                     }
+#endif
                     if( ProcFlags.literal  ) {  // .li active
-                        if( !stricmp( token_buf, "li" ) ) { // .li
+                        if( !strcmp( token_buf, "li" ) ) {  // .li
                             scan_start = p; // found, process
                             scr_tags[k].tagproc();
                         }
@@ -802,7 +811,7 @@ void    scan_line( void )
 
 /***************************************************************************/
 /*  search gml tag entry for given token                                   */
-/*                                                                         */
+/*  This is for system (predefined) tags only                              */
 /*  return ptr to entry if found, else NULL                                */
 /*                                                                         */
 /***************************************************************************/

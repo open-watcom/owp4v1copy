@@ -396,6 +396,9 @@ pick( WNG_UNSUPP_TAG,           "Unsupported GML tag: ':%s'",
 pick( WNG_UNSUPP_ATT,           "Unsupported GML attribute: '%s'",
                                 "Unsupported GML attribute: '%s'" )
 
+pick( WNG_NOT_YET_SUPP_ATT,     "Not yet supported GML attribute: '%s'",
+                                "Not yet supported GML attribute: '%s'" )
+
 pick( WNG_UNSUPP_LAY,           "Unsupported GML layout tag: ':%s'",
                                 "Unsupported GML layout tag: ':%s'" )
 

@@ -170,4 +170,18 @@ void init_pass_data( void )
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
     ProcFlags.doc_sect_nxt  = doc_sect_none;// no document section yet
     ProcFlags.in_trans  = (in_esc != ' ');// translation wanted
+    layout_work.hx[0].headn = 0;        // reset used header headn numbers
+    layout_work.hx[1].headn = 0;
+    layout_work.hx[2].headn = 0;
+    layout_work.hx[3].headn = 0;
+    layout_work.hx[4].headn = 0;
+    layout_work.hx[5].headn = 0;
+    layout_work.hx[6].headn = 0;
+    layout_work.hx[0].headnsub = NULL;   // and symvar values
+    layout_work.hx[1].headnsub = NULL;
+    layout_work.hx[2].headnsub = NULL;
+    layout_work.hx[3].headnsub = NULL;
+    layout_work.hx[4].headnsub = NULL;
+    layout_work.hx[5].headnsub = NULL;
+    layout_work.hx[6].headnsub = NULL;
 }

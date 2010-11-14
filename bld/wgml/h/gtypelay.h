@@ -79,6 +79,7 @@ typedef enum bf_place {
  
 /***************************************************************************/
 /*  definitions for docsect for :BANNER tag                                */
+/*     document sections and :Hx tags                                      */
 /***************************************************************************/
  
 typedef enum ban_docsect {
@@ -345,6 +346,8 @@ typedef struct hx_lay_tag {
     su              pre_skip;           // vertical space unit
     su              post_skip;          // vertical space unit
     su              align;              // horizontal space unit
+    int32_t         headn;              // holds current number if numbered
+    symsub      *   headnsub;           // ptr to $HEADNUMx symvar entry
     int8_t          spacing;            // positive integer
     int8_t          font;               // non-negative integer
     int8_t          number_font;        // non-negative integer

@@ -90,12 +90,12 @@ static  void    put_lay_abspref( FILE * layfile, abspref_lay_tag * ap,
             o_yes_no( layfile, curr, &ap->header );
             break;
         case   e_abstract_string:
-            if( *name == 'A' ) {
+            if( *name == 'A' ) {        // :Abstract output
                 o_xx_string( layfile, curr, &ap->string );
             }
             break;
         case   e_preface_string:
-            if( *name == 'P' ) {
+            if( *name == 'P' ) {        // :Preface output
                 o_xx_string( layfile, curr, &ap->string );
             }
             break;
@@ -1987,10 +1987,10 @@ static  void    put_layout( char * name, layout_data * lay )
     }
 
     fprintf_s( layfile, ":LAYOUT\n" );
-    if( GlobalFlags.research ) {
+//  if( GlobalFlags.research ) {
         find_symvar( &global_dict, "$version", no_subscript, &sversion );
         fprintf_s( layfile, ":cmt. Created with %s\n", sversion->value );
-    }
+//  }
 
     put_lay_page( layfile, lay );
     put_lay_default( layfile, lay );

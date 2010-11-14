@@ -278,7 +278,6 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
     } else {
         g_cur_v_start += header_post_sk;
     }
-    post_skip = NULL;
 }
 
 
@@ -489,6 +488,10 @@ void    start_doc_sect( void )
         break;
     default:
         new_section( ds );
+        if( first_section ) {
+            page++;
+            document_new_position();
+        }
         break;
     }
 

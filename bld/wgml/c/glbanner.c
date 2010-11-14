@@ -225,7 +225,7 @@ void    lay_banner( const gmltag * entry )
         init_banner_wk( &wk );
     } else {
         if( !strnicmp( ":banner", buff2, sizeof( ":banner" ) ) ) {
-            err_count++;
+            err_count++;                // nested :banner
             g_err( err_nested_lay, entry->tagname );
             file_mac_info();
 
@@ -268,10 +268,10 @@ void    lay_banner( const gmltag * entry )
                     case   e_docsect:
                         cvterr = i_docsect( p, curr, &wk.docsect );
                         break;
-                    case   e_refplace:  // not in banner struct
+                    case   e_refplace:  // not stored in banner struct
                         cvterr = i_place( p, curr, &refplace );
                         break;
-                    case   e_refdoc:    // not in banner struct
+                    case   e_refdoc:    // not stored in banner struct
                         cvterr = i_docsect( p, curr, &refdoc );
                         break;
                     default:
@@ -364,28 +364,27 @@ void    lay_banner_end_prepare( void )
     }
     del_ban = NULL;
     if( (sum_count == 2) && (wk.place != no_place) && (wk.docsect != no_ban) ) {
-        banwk = layout_work.banner;     // banner delete request
-
-        while( banwk != NULL ) {
+                                        // banner delete request
+        for( banwk = layout_work.banner;  banwk != NULL; banwk = banwk->next ) {
             if( (banwk->place == wk.place) && (banwk->docsect == wk.docsect) ) {
                 del_ban = banwk;        // found banner to delete
                 break;
             } else {
                 prev_ban = banwk;
-                banwk = banwk->next;
             }
         }
         banner_delete_req = true;     // remember delete request
     }
     if( !banner_delete_req ) {          // no delete request
         if( (ref_ban == NULL && sum_count != 5) ||  // not all atts specified
-            (ref_ban != NULL && (wk.place == no_place || wk.docsect == no_ban)) ) {
+            (wk.place == no_place || wk.docsect == no_ban) ) {
             err_count++;
             g_err( err_att_missing );
             file_mac_info();
         }
     }
 }
+
 
 /***************************************************************************/
 /*  lay_ebanner                                                            */
