@@ -76,13 +76,17 @@ void dump_raw_cpuid( void )
 
     /* Obtain the number of Extended CPUID leaves. */
     cpu_id( cpu_info, 0x80000000 );
-    max_id = cpu_info[0] - 0x80000000;
+    max_id = cpu_info[0] ? cpu_info[0] - 0x80000000 : 0;
 
-    printf( "Extended CPUID Information (%d leaves):\n", max_id + 1 );
-    for( i = 0; i <= max_id; ++i ) {
-        cpu_id( cpu_info, 0x80000000 + i );
-        printf( "Ext Leaf %02d: %08x %08x %08x %08x\n", i,
-                cpu_info[0], cpu_info[1], cpu_info[2], cpu_info[3] );
+    if( max_id ) {
+        printf( "Extended CPUID Information (%d leaves):\n", max_id + 1 );
+        for( i = 0; i <= max_id; ++i ) {
+            cpu_id( cpu_info, 0x80000000 + i );
+            printf( "Ext Leaf %02d: %08x %08x %08x %08x\n", i,
+                    cpu_info[0], cpu_info[1], cpu_info[2], cpu_info[3] );
+        }
+    } else {
+        printf( "No Extended CPUID Information.\n" );
     }
 }
 
@@ -126,7 +130,7 @@ void print_cpuid( int verbose )
 
     /* Obtain the brand string, if available. */
     cpu_id( cpu_info, 0x80000000 );
-    max_ext_id = cpu_info[0] - 0x80000000;
+    max_ext_id = cpu_info[0] ? cpu_info[0] - 0x80000000 : 0;
     if( max_ext_id > 4 ) {
         for( i = 0; i < 3; ++i ) {
             cpu_id( cpu_info, 0x80000002 + i );
