@@ -721,7 +721,6 @@ static void set_if_then_do( void )
 
 void    scan_line( void )
 {
-    char        *   save;
     condcode        cc;
     ifcb        *   cb;
 
@@ -743,10 +742,6 @@ void    scan_line( void )
             scr_process_break();
         }
         cc = pos;
-    }
-    save = scan_start;
-    while( *scan_start == ' ' ) {   // skip spaces before indented tags
-        scan_start++;
     }
     if( cc == pos ) {
         if( *scan_start == SCR_char ) {
