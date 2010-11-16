@@ -748,9 +748,6 @@ void    scan_line( void )
     while( *scan_start == ' ' ) {   // skip spaces before indented tags
         scan_start++;
     }
-    if( *scan_start == '\0' ) {     // restore spaces if line was empty
-        scan_start = save;
-    }
     if( cc == pos ) {
         if( *scan_start == SCR_char ) {
             if( ProcFlags.late_subst ) {
