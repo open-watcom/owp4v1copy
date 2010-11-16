@@ -721,6 +721,7 @@ static void set_if_then_do( void )
 
 void    scan_line( void )
 {
+    char        *   save;
     condcode        cc;
     ifcb        *   cb;
 
@@ -743,8 +744,12 @@ void    scan_line( void )
         }
         cc = pos;
     }
-    while( *scan_start == ' ' ) {   // handle indented layout tags
+    save = scan_start;
+    while( *scan_start == ' ' ) {   // check for indented tags
         scan_start++;
+    }
+    if( *scan_start != GML_char ) { // restore spaces if not a tag
+        scan_start = save;
     }
     if( cc == pos ) {
         if( *scan_start == SCR_char ) {
