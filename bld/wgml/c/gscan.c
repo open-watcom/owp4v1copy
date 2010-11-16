@@ -745,10 +745,10 @@ void    scan_line( void )
         cc = pos;
     }
     save = scan_start;
-    while( *scan_start == ' ' ) {   // check for indented tags
+    while( *scan_start == ' ' ) {   // skip spaces before indented tags
         scan_start++;
     }
-    if( *scan_start != GML_char ) { // restore spaces if not a tag
+    if( *scan_start == '\0' ) {     // restore spaces if line was empty
         scan_start = save;
     }
     if( cc == pos ) {
