@@ -63,7 +63,7 @@ static  const   gmltag  gml_tags[] = {
 static  const   gmltag  lay_tags[] = {
 
 #include "gtagslay.h"
-    { "   ", 0, NULL, 0 }               // end
+    { "   ", 0, NULL, 0, 0 }            // end
 
 };
 
@@ -824,6 +824,27 @@ gmltag  const   *   find_sys_tag( char * token, size_t toklen )
         if( toklen == gml_tags[k].taglen ) {
             if( !stricmp( gml_tags[k].tagname, token ) ) {
                 return( &gml_tags[k] );
+            }
+        }
+    }
+    return( NULL );                     // not found
+}
+
+/***************************************************************************/
+/*  search gml layout tag entry for given token                            */
+/*  This is for layout tags only                                           */
+/*  return ptr to entry if found, else NULL                                */
+/*                                                                         */
+/***************************************************************************/
+
+gmltag  const   *   find_lay_tag( char * token, size_t toklen )
+{
+    int k;
+
+    for( k = 0; k < LAY_TAGMAX; ++k ) {
+        if( toklen == lay_tags[k].taglen ) {
+            if( !stricmp( lay_tags[k].tagname, token ) ) {
+                return( &lay_tags[k] );
             }
         }
     }

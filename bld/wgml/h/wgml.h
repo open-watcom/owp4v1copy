@@ -243,6 +243,7 @@ extern  void    scr_process_break( void );
 
 
 /* gscan.c                            */
+extern  const   gmltag * find_lay_tag( char * token, size_t toklen );
 extern  const   gmltag * find_sys_tag( char * token, size_t toklen );
 extern  void             scan_line( void );
 

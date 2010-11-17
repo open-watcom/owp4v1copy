@@ -137,6 +137,7 @@ static  void    split_input_var( char * buf, char * split_pos, char * part2 )
 /***************************************************************************/
 static void split_at_GML_tag( void )
 {
+    char    *   p;
     char    *   p2;
     char    *   pchar;
     char        c;
@@ -176,11 +177,22 @@ static void split_at_GML_tag( void )
             /* Verify valid user or system tag                             */
             /***************************************************************/
             if( (find_tag( &tag_dict, pchar + 1 ) != NULL) ||
-                (find_sys_tag( pchar + 1, toklen ) != NULL) ) {
+                (find_sys_tag( pchar + 1, toklen ) != NULL) ||
+                (find_lay_tag( pchar + 1, toklen ) != NULL) ) {
 
                 *p2 = c;
 
                 split_input( buff2, pchar );// split line
+                // remove spaces before tags at sol in restricted sections
+                if( (rs_loc > 0) && (input_cbs->fmflags & II_sol) ) {
+                    p = buff2;
+                    while( *p == ' ' ) {
+                        p++;
+                    }
+                    if( *p == '\0') {   // first part is all spaces
+                        buff2[0] = '\0';
+                    }
+                }
                 buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
                 if( ProcFlags.literal ) {   // if literal active
                     if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
