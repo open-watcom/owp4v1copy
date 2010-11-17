@@ -1,6 +1,6 @@
 .* test document with some sections changes
 .* and &amp.h0 - &amp.h6 headers
-.se fil=&'left(&sysfnam,&'pos('.',&sysfnam)-1)
+.se fil=&'left(&sysfnam,&'lastpos('.',&sysfnam)-1)
 :cmt. construct extensions for wgml4 and new wgml layout files
 .if &'left('&sysversion',1) = 'O' .se lext=loy
 .el .se lext=lo4
@@ -153,13 +153,15 @@
 :H2 id='body21'.H2 1 in Body
 :cmt. :h1 id='meinlangernamealsId'.Is was?
 :p.
+.li on
 :hp1.HP1 text in input line one.:ehp1.
-:hp2.HP2 text:ehp2.
+    :hp2.HP2 text:ehp2.
 :hp3.HP3 text:ehp3.
 .br
 .us us text us
 no more us text
 .br
+.li off
 :H2 id='body22'.H2 2 in Body
 More text in another line two
 More text in another line three
@@ -179,7 +181,12 @@ More text in another line eight
 More text in another line nine
 .br
 .se pe=0
-.pe 100
+.pe 50
+.se pe=&pe.+1;   (&pe.). Performed line with a count of 100.
+:fn
+This is a footnote to watch what happens to a long footnote in Multicolumn mode
+:efn
+.pe 50
 .se pe=&pe.+1;   (&pe.). Performed line with a count of 100.
 .im ts.gml
 .cp 18

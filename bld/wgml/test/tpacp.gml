@@ -1,5 +1,5 @@
 .* test for .pa and .cp
-.se fil=&'left(&sysfnam,&'pos('.',&sysfnam)-1)
+.se fil=&'left(&sysfnam,&'lastpos('.',&sysfnam)-1)
 :layout
 :BANNER
         left_adjust = 0

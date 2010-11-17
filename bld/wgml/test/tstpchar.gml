@@ -1,5 +1,5 @@
 .* test for gml stop characters
-.se fil=&'left(&sysfnam,&'pos('.',&sysfnam)-1)
+.se fil=&'left(&sysfnam,&'lastpos('.',&sysfnam)-1)
 :layout
 :convert file="&fil..lay".
 :elayout

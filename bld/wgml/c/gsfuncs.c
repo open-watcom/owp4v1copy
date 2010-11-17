@@ -39,7 +39,7 @@
 /***************************************************************************/
 
 #define pick( name, length, parms, optparms, routine ) \
-            { name, length, parms, optparms, routine },
+            { #name, length, parms, optparms, routine },
 
 static  const   scrfunc scr_functions[] = {
 
