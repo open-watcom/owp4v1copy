@@ -92,6 +92,11 @@ char * get_att_value( char * p )
             ++p;
         }
         val_len = p - val_start;    // up to (not including) final quote
+        if( *p != quote ) {         // terminating quote not found
+            xx_line_err( err_att_val_open, val_start - 1 );
+            scan_start = scan_stop + 1;
+            return( p );
+        }
         ++p;                        // over final quote
     } else {
         val_start = p;

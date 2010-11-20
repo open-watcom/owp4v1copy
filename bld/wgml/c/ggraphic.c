@@ -50,8 +50,8 @@ void    gml_graphic( const gmltag * entry )
     uint32_t    scale                   = 100;
     // the initial value of width is only correct for one-column pages.
     uint32_t    width                   = g_net_page_width;
-    uint32_t    xoff                    = g_cur_h_start;
-    uint32_t    yoff                    = 0;
+    int32_t     xoff                    = g_cur_h_start;
+    int32_t     yoff                    = 0;
 
     if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
         if( (ProcFlags.doc_sect_nxt < doc_sect_gdoc) ) {
@@ -112,7 +112,7 @@ void    gml_graphic( const gmltag * entry )
                 break;
             }
             depth_found = true;
-            if( att_val_to_SU( &cur_su ) ) {
+            if( att_val_to_SU( &cur_su, true ) ) {
                 return;
             }
             depth = conv_vert_unit( &cur_su, spacing );
@@ -131,7 +131,7 @@ void    gml_graphic( const gmltag * entry )
                 // default value is the correct value to use
             } else {    // value actually specifies the width
                 pa = val_start;
-                if( att_val_to_SU( &cur_su ) ) {
+                if( att_val_to_SU( &cur_su, true ) ) {
                     return;
                 }
                 width = conv_hor_unit( &cur_su );
@@ -151,6 +151,11 @@ void    gml_graphic( const gmltag * entry )
                 break;
             }
             pa = val_start;
+            if( (*pa == '+') || (*pa == '-') ) {  // signs not allowed
+                xx_line_err( err_num_too_large, pa );
+                scan_start = scan_stop + 1;
+                return;
+            }
             scale = 0;
             while( (*pa >= '0') && (*pa <= '9') ) { // convert to number
                 scale = (10 * scale) + (*pa - '0');
@@ -158,6 +163,11 @@ void    gml_graphic( const gmltag * entry )
                 if( (pa - val_start) > val_len ) {  // value end reached
                     break;
                 }
+            }
+            if( scale > 0x7fffffff ) {              // wgml 4.0 limit
+                xx_line_err( err_num_too_large, val_start );
+                scan_start = scan_stop + 1;
+                return;
             }
             if( (pa - val_start) < val_len ) {      // value continues on
                 xx_line_err( err_num_too_large, val_start );
@@ -173,7 +183,7 @@ void    gml_graphic( const gmltag * entry )
             if( val_start == NULL ) {
                 break;
             }
-            if( att_val_to_SU( &cur_su ) ) {
+            if( att_val_to_SU( &cur_su, false ) ) {
                 return;
             }
             xoff = conv_hor_unit( &cur_su );
@@ -186,7 +196,7 @@ void    gml_graphic( const gmltag * entry )
             if( val_start == NULL ) {
                 break;
             }
-            if( att_val_to_SU( &cur_su ) ) {
+            if( att_val_to_SU( &cur_su, false ) ) {
                 return;
             }
             yoff = conv_vert_unit( &cur_su, spacing );

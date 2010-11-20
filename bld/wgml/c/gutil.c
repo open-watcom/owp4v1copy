@@ -44,10 +44,6 @@
 #include "wgml.h"
 #include "gvars.h"
 
-#define MAX_WH_CNT 4
-#define MAX_WD_CNT 2
-#define MAX_UNIT_CNT 2
-
 /***************************************************************************/
 /* return length of string without trailing spaces                         */
 /* return 1 for all blank string                                           */
@@ -446,6 +442,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
 
 /***************************************************************************/
 /*  use val_start/val_len to identify the value                            */
+/*  only intended to work with tag attribute values, not control word data */
 /*  conversion routines for Horizontal / Vertical space units              */
 /*  Accepted formats:                                                      */
 /*       1234        assume chars / lines                                  */
@@ -474,17 +471,19 @@ bool    to_internal_SU( char * * scanp, su * converted )
 /*               or  returncode true in case of error                      */
 /***************************************************************************/
 
-bool    att_val_to_SU( su * converted )
+bool    att_val_to_SU( su * converted, bool pos )
 {
-    bool        converterror = true;
-    char    *   p;                      // source of value text
-    char    *   pd1;                    // ptr to 0.1 decimal
-    char    *   pdn;                    // ptr to last digit +1
-    char    *   pp;                     // save value of p before proceding
-    char    *   ps;                     // destination for value text
-    char    *   pu;                     // ptr to trailing unit
+    bool        converterror    = true;
+    bool        is_cp           = false;
+    char    *   p               = NULL; // source of value text
+    char    *   pd              = NULL; // ptr to decimal point
+    char    *   pd1             = NULL; // ptr to 0.1 decimal
+    char    *   pdn             = NULL; // ptr to last digit +1
+    char    *   ps              = NULL; // destination for value text
+    char    *   pu              = NULL; // ptr to trailing unit
     char        sign;
     char        unit[4];
+    int         i;
     ldiv_t      div;
     long        k;
     long        wh;
@@ -502,7 +501,6 @@ bool    att_val_to_SU( su * converted )
     unit[0] = '\0';
     s = converted;
     p = val_start;
-    pp = NULL;
     ps = s->su_txt;
     *ps = '\0';
     wd = 0;
@@ -510,22 +508,27 @@ bool    att_val_to_SU( su * converted )
 
     s->su_u = SU_undefined;
     if( *p == '+' ) {                   // not allowed with tags
-        xx_line_err( err_inv_att_val, val_start );
+        xx_line_err( err_inv_att_val, p );
         scan_start = scan_stop + 1;
         return( converterror );
     } else if( *p == '-' ) {            // not relative, just negative
+        if( pos ) {                     // value must be positive
+            xx_line_err( err_inv_att_val, p );
+            scan_start = scan_stop + 1;
+            return( converterror );
+        }
         sign = *p;
         *ps++ = *p++;
         if( *p == '+' || *p == '-' ) {  // only one sign is allowed
-            xx_line_err( err_inv_att_val, val_start );
+            xx_line_err( err_inv_att_val, p );
             scan_start = scan_stop + 1;
             return( converterror );
         }
     } else {
         sign = '+';
     }
-    if( (p - val_start) > val_len ) {   // value end reached, not valid 
-        xx_line_err( err_inv_att_val, val_start );
+    if( (p - val_start) >= val_len ) {  // value end reached, not valid 
+        xx_line_err( err_inv_att_val, p );
         scan_start = scan_stop + 1;
         return( converterror );
     }
@@ -542,84 +545,61 @@ bool    att_val_to_SU( su * converted )
         }
     }
 
-    pp = p;
-    while( (*p >= '0') && (*p <= '9') ) {   // whole part
-        wh = (10 * wh) + (*p - '0');
-        *ps++ = *p++;
-        if( (p - val_start) > val_len ) {  // value end reached
-            break;
-        }
-    }
-    if( (p - pp) > MAX_WH_CNT ) {           // too many digits in whole part
-        xx_line_err( err_inv_att_val, val_start );
-        scan_start = scan_stop + 1;
-        return( converterror );
-    }
-
-    pp = p;
-    if( ((p - val_start) < val_len) && *p == '.' ) {   // check for decimal point
-        *ps++ = *p++;
-        pd1 = p;                            // remember start of decimals
-        while( *p >= '0' && *p <= '9' ) {   // decimal part
-            wd = 10 * wd + *p - '0';
+    for( i = 0; i < 4; i++ ) {              // max four digits in whole part
+        if( (*p >= '0') && (*p <= '9') ) {  
+            wh = (10 * wh) + (*p - '0');
             *ps++ = *p++;
-            if( (p - val_start) > val_len ) {  // value end reached
-                break;
-            }
         }
-        if( (p - pd1) > MAX_WD_CNT ) {       // too many digits in decimal part
-            xx_line_err( err_inv_att_val, pd1 );
-            scan_start = scan_stop + 1;
-            return( converterror );
-        }
-        pdn = p;
-    }
-
-    k = 0;
-    pu = p;
-    while( *p && isalpha( *p ) ) {
-        unit[k++] = tolower( *p );          // save Unit
-        *ps++ = *p++;
-        if( (p - val_start) > val_len ) {  // value end reached
+        if( (p - val_start) > val_len ) {   // value end reached
             break;
         }
-        if( k > MAX_UNIT_CNT ) {
-            xx_line_err( err_inv_att_val, pu );
-            scan_start = scan_stop + 1;
-            return( converterror );
-        }
     }
-    pd1 = NULL;
-    pdn = NULL;
-
-    *ps = '\0';
-    if( (p - val_start) < val_len ) {     // value continues on
+    if( (*p >= '0') && (*p <= '9') ) {      // too many digits in whole part
         xx_line_err( err_inv_att_val, p );
         scan_start = scan_stop + 1;
         return( converterror );
     }
-    s->su_whole = wh;
-    s->su_dec   = wd;
 
-    if( k == 0 ) {                      // no trailing unit
-        pu = NULL;
-    } else {
-        if( pu == pp ) {                // no decimals, no unit
-            pu = NULL;
+    if( ((p - val_start) < val_len) && *p == '.' ) {   // check for decimal point
+        pd = p;
+        *ps++ = *p++;
+        pd1 = p;                            // remember start of decimals
+        for( i = 0; i < 2; i++ ) {          // max two digits in decimals
+            if( (*p >= '0') && (*p <= '9') ) {  
+                wd = 10 * wd + *p - '0';
+                *ps++ = *p++;
+                if( (p - val_start) > val_len ) {  // value end reached
+                    break;
+                }
+            }
+        }
+        pdn = p;
+        if( pd1 == p ) {                        // no decimals
+            pd1 = NULL;
+            pdn = NULL;
+        }
+        if( (*p >= '0') && (*p <= '9') ) {      // too many digits in decimals
+            xx_line_err( err_inv_att_val, pdn );
+            scan_start = scan_stop + 1;
+            return( converterror );
         }
     }
-    if( ((pp - val_start) < val_len) && (*pp == '.') ) {   // dec point found
-        if( pu == NULL ) {              // need trailing unit
-            xx_line_err( err_inv_att_val, pp + 1 );
-            scan_start = scan_stop + 1;
-            return( converterror );
+
+    k = 0;
+    pu = p;
+    for( i = 0; i < 2; i++ ) {                  // max two characters in unit
+        if( *p && isalpha( *p ) ) {
+            unit[k++] = tolower( *p );          // save Unit
+            *ps++ = *p++;
+            if( (p - val_start) > val_len ) {   // value end reached
+                break;
+            }
         }
-    } else {                            // no decimals
-        if( pu != NULL ) {              // but unit specified twice?
-            xx_line_err( err_inv_att_val, pu ); // can this still be reached?
-            scan_start = scan_stop + 1;
-            return( converterror );
-        }
+    }
+    if( *p && isalpha( *p ) ) {             // too many characters in unit
+        xx_line_err( err_inv_att_val, p );
+        scan_start = scan_stop + 1;
+        return( converterror );
     }
 
     /***********************************************************************/
@@ -635,17 +615,26 @@ bool    att_val_to_SU( su * converted )
             break;
         case 'm' :
             s->su_u = SU_ems;
+            if( pd != NULL ) {          // no decimals with "M"
+                xx_line_err( err_inv_att_val, pd );
+                scan_start = scan_stop + 1;
+                return( converterror );
+            }
             break;
         case 'c' :
             s->su_u = SU_cicero;
+            is_cp = true;
             break;
         case 'p' :
             s->su_u = SU_pica;
+            is_cp = true;
             break;
         case '\0' :                     // no unit is characters or lines
             s->su_u = SU_chars_lines;
             break;
         default:
+            xx_line_err( err_inv_att_val, pu );
+            scan_start = scan_stop + 1;
             return( converterror );
             break;
         }
@@ -656,9 +645,50 @@ bool    att_val_to_SU( su * converted )
             } else if( unit[0] == 'm' ) {
                 s->su_u = SU_mm;
             } else {                    // invalid unit
+                xx_line_err( err_inv_att_val, pu );
+                scan_start = scan_stop + 1;
                 return( converterror );
             }
         } else {                        // invalid unit
+            xx_line_err( err_inv_att_val, pu );
+            scan_start = scan_stop + 1;
+            return( converterror );
+        }
+    }
+
+    if( is_cp ) {       // "C" and "P" can be followed by max four digits
+        for( i = 0; i < 4; i++ ) {
+            if( (*p >= '0') && (*p <= '9') ) {  
+                wd = (10 * wd) + (*p - '0');
+                *ps++ = *p++;
+            }
+            if( (p - val_start) > val_len ) {   // value end reached
+                break;
+            }
+        }
+    }
+    if( (*p >= '0') && (*p <= '9') ) {      // too many digits after "C" or "P"
+        xx_line_err( err_inv_att_val, p );
+        scan_start = scan_stop + 1;
+        return( converterror );
+    }
+
+    *ps = '\0';
+    if( (p - val_start) < val_len ) {     // value continues on: it shouldn't
+        xx_line_err( err_inv_att_val, p );
+        scan_start = scan_stop + 1;
+        return( converterror );
+    }
+    s->su_whole = wh;
+    s->su_dec   = wd;
+
+    if( k == 0 ) {                      // no trailing unit
+        pu = NULL;
+    }
+    if( pd != NULL ) {                  // dec point found
+        if( pu == NULL ) {              // need trailing unit
+            xx_line_err( err_inv_att_val, pd );
+            scan_start = scan_stop + 1;
             return( converterror );
         }
     }
@@ -677,6 +707,8 @@ bool    att_val_to_SU( su * converted )
     case SU_dv :
     case SU_ems :
         if( wd != 0 ) {                 // no decimals allowed
+            xx_line_err( err_inv_att_val, pd + 1 );
+            scan_start = scan_stop + 1;
             return( converterror );
         }
         break;

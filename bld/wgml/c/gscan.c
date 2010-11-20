@@ -266,7 +266,7 @@ static void scan_gml( void )
                             gml_tags[k].gmlproc( &gml_tags[k] );
                         } else {
                             start_doc_sect();   // if not already done
-                            g_err_tag_rsloc( rs_loc );
+                            g_err_tag_rsloc( rs_loc, tok_start );
                         }
                         processed = true;
                         if( *scan_start == '.' ) {
@@ -744,6 +744,7 @@ void    scan_line( void )
         cc = pos;
     }
     if( cc == pos ) {
+        // detection of SCR_char/GML_char must precede late substitution
         if( *scan_start == SCR_char ) {
             if( ProcFlags.late_subst ) {
                 process_late_subst();   // substitute &gml, &amp, ...
@@ -778,7 +779,7 @@ void    scan_line( void )
                 // processs (remaining) text
                 if( rs_loc > 0 ) {
                     start_doc_sect();   // if not already done
-                    g_err_tag_rsloc( rs_loc );
+                    g_err_tag_rsloc( rs_loc, scan_start );
                 } else {
                     process_text( scan_start, g_curr_font_num );
                 }

@@ -141,7 +141,7 @@ extern  void    xx_tag_err( const msg_ids errid, char const * cw );
 extern  void    xx_warn( const msg_ids errid );
 extern  void    g_err_tag( char *tagname );
 extern  void    g_err_tag_nest( char *tagname );
-extern  void    g_err_tag_rsloc( locflags inloc );
+extern  void    g_err_tag_rsloc( locflags inloc, char *pa );
 extern  void    g_err_tag_no( char *tagname );
 extern  void    g_err_tag_prec( char *tagname );
 
@@ -352,7 +352,7 @@ extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  int32_t     len_to_trail_space( char p[] , int32_t len );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
-extern  bool        att_val_to_SU( su * spaceunit );
+extern  bool        att_val_to_SU( su * spaceunit, bool pos );
 extern  void        start_line_with_string( char * text, uint8_t font_num );
 
 

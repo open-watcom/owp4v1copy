@@ -330,7 +330,7 @@ void    g_err_tag_nest( char * tag )
     return;
 }
 
-void    g_err_tag_rsloc( locflags inloc )
+void    g_err_tag_rsloc( locflags inloc, char *pa )
 {
     char    *   tag_name    = NULL;
     int         i;
@@ -345,7 +345,7 @@ void    g_err_tag_rsloc( locflags inloc )
         tag_name = "unknown";
     }
     g_err_tag_common( tag_name, 1 );
-    show_line_error( scan_start );  // works when used only in gscan.c
+    show_line_error( pa );
 
     return;
 }

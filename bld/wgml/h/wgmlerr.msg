@@ -213,6 +213,9 @@ pick( ERR_ATT_MISSING,          "Required attribute not found",
 pick( ERR_ATT_VAL_MISSING,      "Missing attribute value",
                                 "Missing attribute value" )
 
+pick( ERR_ATT_VAL_OPEN,         "Missing or invalid closing quote on attribute",
+                                "Missing or invalid closing quote on attribute")
+
 pick( ERR_SYM_LONG,             "Symbol name too long '%s'",
                                 "Symbol name too long '%s'" )
 
