@@ -326,7 +326,7 @@ global char str_tags[t_MAX + 1][10]
 
 global  int32_t         lay_ind;// index into lay_tab for attribute processing
 global  layout_data     layout_work;    // layout used for formatting
-global  char        *   lay_file;       // layout file specified on cmdline
+global  laystack    *   lay_files;      // layout file(s) specified on cmdline
 
 
 /***************************************************************************/

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -882,24 +882,35 @@ static void set_layout( option * opt )
 {
     int     len;
     char    attrwork[MAX_FILE_ATTR];
+    struct  laystack    * laywk;
+    struct  laystack    * laywork;
+
 
     if( tokennext == NULL || tokennext->bol || is_option() == true ) {
         g_err( err_miss_inv_opt_value, opt->option, "" );
         err_count++;
-        lay_file = NULL;
     } else {
         len = tokennext->toklen;
-        lay_file = mem_alloc( len + 1 );
+        laywk = mem_alloc( sizeof( laystack ) + len );
 
-        memcpy_s( lay_file, len + 1, tokennext->token, len );
-        *(lay_file + len) = '\0';
+        memcpy_s( laywk->layfn, len + 1, tokennext->token, len );
+        *(laywk->layfn + len) = '\0';
+        laywk->next = NULL;
 
-        split_attr_file( lay_file, attrwork, sizeof( attrwork ) );
+        split_attr_file( laywk->layfn, attrwork, sizeof( attrwork ) );
         if( attrwork[0] ) {
-            g_warn( wng_fileattr_ignored, attrwork, out_file );
+            g_warn( wng_fileattr_ignored, attrwork, laywk->layfn );
             wng_count++;
         }
-        ProcFlags.lay_specified = true;
+        if( lay_files == NULL ) {       // first file
+            lay_files = laywk;
+        } else {
+            for( laywork = lay_files; laywork->next != NULL;
+                 laywork = laywork->next ) {
+                /*empty */;
+            }
+            laywork->next = laywk;
+        }
         tokennext = tokennext->nxt;
     }
 }

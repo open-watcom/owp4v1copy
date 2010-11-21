@@ -308,10 +308,10 @@ static void remove_indentation( void )
 
 static  void    proc_input( char * filename )
 {
-    ifcb    *   ic;
-    filecb  *   cb;
-
-    char        attrwork[32];
+    ifcb        *   ic;
+    filecb      *   cb;
+    laystack    *   curr_lay_file;
+    char            attrwork[32];
 
     ProcFlags.newLevelFile = 1;
     strcpy_s( token_buf, buf_size, filename );
@@ -363,11 +363,15 @@ static  void    proc_input( char * filename )
 
             /***************************************************************/
             /*  If ( LAYOUT file option specified, then process            */
-            /*  layout file first ( before master file )                   */
+            /*  layout file(s)   before master file                        */
             /***************************************************************/
 
-            if( (lay_file != NULL) && (inc_level == 1) && (cb->lineno == 0) ) {
-                strcpy_s( token_buf, buf_size, lay_file );
+//            if( (lay_files != NULL) && (inc_level == 1) && (cb->lineno == 0) ) {
+            if( (lay_files != NULL) && (inc_level == 1) ) {
+                curr_lay_file = lay_files;
+                strcpy_s( token_buf, buf_size, lay_files->layfn );
+                lay_files = curr_lay_file->next;
+                mem_free( curr_lay_file );
                 ProcFlags.newLevelFile = 1; // start a new include FILE level
                 continue;               // with cmdline    layout option file
             }
@@ -395,7 +399,7 @@ static  void    proc_input( char * filename )
             }
 
             if( !get_line( true ) ) {
-                if( ProcFlags.goto_active ) {
+                if( ProcFlags.goto_active ) {   // goto active at EOF
                     char    linestr[MAX_L_AS_STR];
 
                     ProcFlags.goto_active = false;
@@ -474,6 +478,14 @@ static  void    proc_input( char * filename )
         if( inc_level == 0 ) {          // EOF for master document file
             break;
         }
+        if( lay_files != NULL ) {   // any more  LAYfiles
+            curr_lay_file = lay_files;
+            strcpy_s( token_buf, buf_size, lay_files->layfn );
+            lay_files = curr_lay_file->next;
+            mem_free( curr_lay_file );
+            ProcFlags.newLevelFile = 1; // start a new include file level
+            continue;                   // with cmdline layout option file
+        }
         if( input_cbs->fmflags & II_file ) {
             if( GlobalFlags.inclist ) {
                 char    linestr[MAX_L_AS_STR];
@@ -487,7 +499,7 @@ static  void    proc_input( char * filename )
                 g_info( inf_curr_input, "macro", input_cbs->s.m->mac->name );
             }
         }
-    }
+    }                                   // for loop
 }
 
 

@@ -118,7 +118,7 @@ void init_global_vars( void )
     line_pool           = NULL;
 
 
-    lay_file            = NULL;         // filename from ( LAYout option
+    lay_files           = NULL;         // filename(s) from ( LAYout option
 
     index_dict          = NULL;
 

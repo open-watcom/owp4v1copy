@@ -834,6 +834,16 @@ typedef struct fnstack {
 
 
 /***************************************************************************/
+/*  for cmdline specified layout files stack (FIFO)                        */
+/***************************************************************************/
+
+typedef struct laystack {
+    struct  laystack * next;
+    char    layfn[1];                   // var length file name
+} laystack;
+
+
+/***************************************************************************/
 /*  a single tab stop and an array of tab stops                            */
 /***************************************************************************/
 

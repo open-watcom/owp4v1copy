@@ -236,8 +236,14 @@ void    free_some_mem( void )
     if( dev_name != NULL ) {
         mem_free( dev_name );
     }
-    if( lay_file != NULL ) {
-        mem_free( lay_file );
+    if( lay_files != NULL ) {
+        laystack * lwk;
+
+        while( lay_files != NULL ) {
+            lwk = lay_files->next;
+            mem_free( lay_files );
+            lay_files = lwk;
+        }
     }
     if( out_file != NULL ) {
         mem_free( out_file );
@@ -307,7 +313,7 @@ static  void    get_macro_line( void )
 /*                                                                         */
 /*  returns  false for EOF                                                 */
 /***************************************************************************/
-bool    get_line( bool research )
+bool    get_line( bool display_line )
 {
     filecb      *   cb;
     char        *   p;
@@ -441,7 +447,8 @@ bool    get_line( bool research )
     }
 
     if( !(input_cbs->fmflags & II_eof) ) {
-        if( research && GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+        if( display_line && GlobalFlags.firstpass
+            && input_cbs->fmflags & II_research ) {
             printf( "%s\n", buff2 );
         }
     }

@@ -32,25 +32,25 @@
 *                   o_xxxx               output routines
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 static char  const      stryes[] =  { "yes" };
 static char  const      strno[]  =  { "no" };
- 
+
 /***************************************************************************/
 /*  document sections for banner definition                                */
 /***************************************************************************/
- 
+
 typedef struct  ban_sections {
     char            name[12];
     size_t          len;
     ban_docsect     type;
 } ban_sections;
- 
+
 static  const   ban_sections    doc_sections[max_ban] = {
     { "???",      3, no_ban        },
     { "abstract", 8, abstract_ban  },
@@ -72,13 +72,13 @@ static  const   ban_sections    doc_sections[max_ban] = {
     { "preface",  7, preface_ban   },
     { "toc",      3, toc_ban       }
 };
- 
+
 typedef struct  content_names {
     char                name[12];
     size_t              len;
     content_enum        type;
 } content_names;
- 
+
 static  const   content_names   content_text[max_content] =  {
     { "none",      4, no_content        },
     { "author",    6, author_content    },
@@ -120,13 +120,13 @@ static  const   content_names   content_text[max_content] =  {
     { "time",      4, time_content      },
     { "tophead",   7, tophead_content   }
 };
- 
- 
+
+
 /***************************************************************************/
 /*  read and ignore lines until a tag starts in col 1                      */
 /*  then set reprocess switch  and return                                  */
 /***************************************************************************/
- 
+
 void    eat_lay_sub_tag( void )
 {
      while( get_line( false ) ) {
@@ -136,8 +136,8 @@ void    eat_lay_sub_tag( void )
          }
      }
 }
- 
- 
+
+
 /***************************************************************************/
 /*  parse lines like right_margin = '7i'                                   */
 /*              or   right_margin='7i'                                     */
@@ -146,23 +146,23 @@ void    eat_lay_sub_tag( void )
 /*  rc = no  in case of error                                              */
 /*  rc = omit if nothing found                                             */
 /***************************************************************************/
- 
+
 condcode    get_lay_sub_and_value( att_args * args )
 {
     char        *   p;
     char            quote;
     condcode        rc;
- 
+
     p = scan_start;
     rc = no;
- 
+
     while( *p == ' ' ) {                // over WS to start of name
         p++;
     }
     args->start[0] = p;
     args->len[0] = -1;                  // switch for scanning error
     args->len[1] = -1;                  // switch for scanning error
- 
+
     while( *p && is_lay_att_char( *p ) ) {
         p++;
     }
@@ -179,11 +179,11 @@ condcode    get_lay_sub_and_value( att_args * args )
         file_mac_info();
         return( rc );
     }
- 
+
     while( *p && *p == ' ' ) {          // over WS to =
         p++;
     }
- 
+
     if(*p && *p == '=' ) {
         p++;
         while( *p == ' ' ) {            // over WS to attribute value
@@ -195,9 +195,9 @@ condcode    get_lay_sub_and_value( att_args * args )
         file_mac_info();
         return( no );                   // parsing err '=' missing
     }
- 
+
     args->start[1] = p;
- 
+
     if( is_quote_char( *p ) ) {
         quote = *p;
         ++p;
@@ -213,7 +213,7 @@ condcode    get_lay_sub_and_value( att_args * args )
         p++;                            // over terminating quote
     }
     args->len[1] = p - args->start[1];
- 
+
     if( args->len[1] < 1 ) {            // attribute value length
         err_count++;
         g_err( err_att_val_inv );
@@ -221,18 +221,21 @@ condcode    get_lay_sub_and_value( att_args * args )
     } else {
         rc = pos;
     }
+    if( *p == '.' ) {                   // TBD
+        p++;                            // try to get over trailing .
+    }                                   // for doc\gml\nb7x9lay.gml line 331
     scan_start = p;
     return( rc );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  case                                                                   */
 /***************************************************************************/
 bool    i_case( char * p, lay_att curr, case_t * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !strnicmp( "mixed", p, 5 ) ) {
         *tm = case_mixed;
@@ -248,11 +251,11 @@ bool    i_case( char * p, lay_att curr, case_t * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_case( FILE * f, lay_att curr, case_t * tm )
 {
     char    * p;
- 
+
     if( *tm == case_mixed ) {
         p = "mixed";
     } else if( *tm == case_lower ) {
@@ -265,8 +268,8 @@ void    o_case( FILE * f, lay_att curr, case_t * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  single character                                                       */
 /***************************************************************************/
@@ -279,14 +282,14 @@ bool    i_char( char * p, lay_att curr, char * tm )
     }
     return( false );
 }
- 
+
 void    o_char( FILE * f, lay_att curr, char * tm )
 {
     fprintf_s( f, "        %s = '%c'\n", att_names[curr], *tm );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  contents for banregion    only unquoted                                */
 /***************************************************************************/
@@ -294,7 +297,7 @@ bool    i_content( char * p, lay_att curr, content * tm )
 {
     bool        cvterr;
     int         k;
- 
+
     cvterr = false;
     tm->content_type = no_content;
     for( k = no_content; k < max_content; ++k ) {
@@ -312,12 +315,12 @@ bool    i_content( char * p, lay_att curr, content * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_content( FILE * f, lay_att curr, content * tm )
 {
     const   char    * p;
     char            c   = '\0';
- 
+
     if( tm->content_type >= no_content && tm->content_type < max_content) {
         p = tm->string;
         if( tm->content_type == string_content ) { // user string with quotes
@@ -339,8 +342,8 @@ void    o_content( FILE * f, lay_att curr, content * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  default frame                                                          */
 /***************************************************************************/
@@ -348,7 +351,7 @@ bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
 {
     bool        cvterr;
     int         len;
- 
+
     cvterr = false;
     if( !strnicmp( "none", p, 4 ) ) {
         tm->type = none;
@@ -378,12 +381,12 @@ bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
         file_mac_info();
     }
     return( cvterr );
- 
+
 }
- 
+
 void    o_default_frame( FILE * f, lay_att curr, def_frame * tm )
 {
- 
+
     switch( tm->type ) {
     case   none:
         fprintf_s( f, "        %s = none\n", att_names[curr] );
@@ -403,10 +406,10 @@ void    o_default_frame( FILE * f, lay_att curr, def_frame * tm )
     }
     return;
 }
- 
- 
- 
- 
+
+
+
+
 /***************************************************************************/
 /*  docsect  refdoc                                                        */
 /***************************************************************************/
@@ -414,7 +417,7 @@ bool    i_docsect( char * p, lay_att curr, ban_docsect * tm )
 {
     bool        cvterr;
     int         k;
- 
+
     cvterr = false;
     *tm = no_ban;
     for( k = no_ban; k < max_ban; ++k ) {
@@ -431,11 +434,11 @@ bool    i_docsect( char * p, lay_att curr, ban_docsect * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_docsect( FILE * f, lay_att curr, ban_docsect * tm )
 {
     const   char    * p;
- 
+
     if( *tm >= no_ban && *tm < max_ban) {
         p = doc_sections[*tm].name;
     } else {
@@ -444,15 +447,15 @@ void    o_docsect( FILE * f, lay_att curr, ban_docsect * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  frame  rule or none                                                    */
 /***************************************************************************/
 bool    i_frame( char * p, lay_att curr, bool * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !strnicmp( "none", p, 4 ) ) {
         *tm = false;
@@ -465,13 +468,13 @@ bool    i_frame( char * p, lay_att curr, bool * tm )
         cvterr = true;
     }
     return( cvterr );
- 
+
 }
- 
+
 void    o_frame( FILE * f, lay_att curr, bool * tm )
 {
     char    * p;
- 
+
     if( *tm ) {
         p = "rule";
     } else {
@@ -480,29 +483,29 @@ void    o_frame( FILE * f, lay_att curr, bool * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  integer routines                                                       */
 /***************************************************************************/
 bool    i_int32( char * p, lay_att curr, int32_t * tm )
 {
- 
+
     *tm = strtol( p, NULL, 10 );
     return( false );
 }
- 
+
 void    o_int32( FILE * f, lay_att curr, int32_t * tm )
 {
- 
+
     fprintf_s( f, "        %s = %ld\n", att_names[curr], *tm );
     return;
 }
- 
+
 bool    i_int8( char * p, lay_att curr, int8_t * tm )
 {
     int32_t     wk;
- 
+
     wk = strtol( p, NULL, 10 );
     if( abs( wk ) > 255 ) {
         return( true );
@@ -510,23 +513,23 @@ bool    i_int8( char * p, lay_att curr, int8_t * tm )
     *tm = wk;
     return( false );
 }
- 
+
 void    o_int8( FILE * f, lay_att curr, int8_t * tm )
 {
     int     wk = *tm;
- 
+
     fprintf_s( f, "        %s = %d\n", att_names[curr], wk );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  number form                                                            */
 /***************************************************************************/
 bool    i_number_form( char * p, lay_att curr, num_form * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !strnicmp( "none", p, 4 ) ) {
         *tm = num_none;
@@ -542,11 +545,11 @@ bool    i_number_form( char * p, lay_att curr, num_form * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_number_form( FILE * f, lay_att curr, num_form * tm )
 {
     char    * p;
- 
+
     if( *tm == num_none ) {
         p = "none";
     } else if( *tm == num_prop ) {
@@ -559,8 +562,8 @@ void    o_number_form( FILE * f, lay_att curr, num_form * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  number style                                                           */
 /***************************************************************************/
@@ -569,7 +572,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
     bool        cvterr;
     num_style   wk = 0;
     char        c;
- 
+
     cvterr = false;
     c = tolower( *p );
     switch( c ) {                       // first letter
@@ -592,7 +595,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
         cvterr = true;
         break;
     }
- 
+
     p++;
     if( !cvterr && *p ) {               // second letter
         c = tolower( *p );
@@ -633,12 +636,12 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_number_style( FILE * f, lay_att curr, num_style * tm )
 {
     char        str[4];
     char    *    p;
- 
+
     p = str;
     if( *tm & h_style ) {
         *p = 'h';
@@ -657,7 +660,7 @@ void    o_number_style( FILE * f, lay_att curr, num_style * tm )
         p++;
     }
     *p = '\0';
- 
+
     if( *tm & xd_style ) {
         *p = 'd';
         p++;
@@ -679,15 +682,15 @@ void    o_number_style( FILE * f, lay_att curr, num_style * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], str );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  page eject                                                             */
 /***************************************************************************/
 bool    i_page_eject( char * p, lay_att curr, page_ej * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !stricmp( strno, p ) ) {
         *tm = ej_no;
@@ -705,11 +708,11 @@ bool    i_page_eject( char * p, lay_att curr, page_ej * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_page_eject( FILE * f, lay_att curr, page_ej * tm )
 {
     const   char    *   p;
- 
+
     if( *tm == ej_no ) {
         p = strno;
     } else if( *tm == ej_yes ) {
@@ -724,15 +727,15 @@ void    o_page_eject( FILE * f, lay_att curr, page_ej * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  page position                                                          */
 /***************************************************************************/
 bool    i_page_position( char * p, lay_att curr, page_pos * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !strnicmp( "left", p, 4 ) ) {
         *tm = pos_left;
@@ -748,11 +751,11 @@ bool    i_page_position( char * p, lay_att curr, page_pos * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_page_position( FILE * f, lay_att curr, page_pos * tm )
 {
     char    * p;
- 
+
     if( *tm == pos_left ) {
         p = "left";
     } else if( *tm == pos_right ) {
@@ -765,15 +768,15 @@ void    o_page_position( FILE * f, lay_att curr, page_pos * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  place                                                                  */
 /***************************************************************************/
 bool    i_place( char * p, lay_att curr, bf_place * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !strnicmp( "topeven", p, 7 ) ) {
         *tm = topeven_place;
@@ -797,11 +800,11 @@ bool    i_place( char * p, lay_att curr, bf_place * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_place( FILE * f, lay_att curr, bf_place * tm )
 {
     char    * p;
- 
+
     if( *tm == top_place ) {
         p = "top";
     } else if( *tm == bottom_place ) {
@@ -822,15 +825,15 @@ void    o_place( FILE * f, lay_att curr, bf_place * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  pouring                                                                */
 /***************************************************************************/
 bool    i_pouring( char * p, lay_att curr, reg_pour * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !strnicmp( "none", p, 4 ) ) {
         *tm = no_pour;
@@ -858,11 +861,11 @@ bool    i_pouring( char * p, lay_att curr, reg_pour * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_pouring( FILE * f, lay_att curr, reg_pour * tm )
 {
     char    * p;
- 
+
     if( *tm == no_pour ) {
         p = "none";
     } else if( *tm == last_pour ) {
@@ -887,20 +890,20 @@ void    o_pouring( FILE * f, lay_att curr, reg_pour * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  Space unit                                                             */
 /***************************************************************************/
 bool    i_space_unit( char * p, lay_att curr, su * tm )
 {
- 
+
     return( to_internal_SU( &p, tm ) );
 }
- 
+
 void    o_space_unit( FILE * f, lay_att curr, su * tm )
 {
- 
+
     if( tm->su_u == SU_chars_lines || tm->su_u == SU_undefined ||
         tm->su_u >= SU_lay_left ) {
         fprintf_s( f, "        %s = %s\n", att_names[curr], tm->su_txt );
@@ -909,8 +912,8 @@ void    o_space_unit( FILE * f, lay_att curr, su * tm )
     }
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  xx_string  for :NOTE and others                                        */
 /***************************************************************************/
@@ -918,12 +921,15 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
 {
     bool        cvterr;
     int         len;
- 
+
     cvterr = false;
     len = strlen( p );
     if( is_quote_char( *p ) ) {
         while( len > 1 && *(p + len - 1) == ' ' ) {
             len--;                      // ignore trailing spaces if quoted
+        }
+        if( *(p + len - 1) == '.' ) {       // allow terminator
+            len--;
         }
     }
     if( *p != *(p + len - 1) ) {
@@ -943,14 +949,14 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_xx_string( FILE * f, lay_att curr, xx_str * tm )
 {
- 
+
     fprintf_s( f, "        %s = \"%s\"\n", att_names[curr], tm );
     return;
 }
- 
+
 /***************************************************************************/
 /*  date_form      stored as string perhaps better other type    TBD       */
 /***************************************************************************/
@@ -958,19 +964,19 @@ bool    i_date_form( char * p, lay_att curr, xx_str * tm )
 {
     return( i_xx_string( p, curr, tm ) );
 }
- 
+
 void    o_date_form( FILE * f, lay_att curr, xx_str * tm )
 {
     o_xx_string( f, curr, tm );
 }
- 
+
 /***************************************************************************/
 /*  Yes or No  as bool result                                              */
 /***************************************************************************/
 bool    i_yes_no( char * p, lay_att curr, bool * tm )
 {
     bool        cvterr;
- 
+
     cvterr = false;
     if( !strnicmp( strno, p, 2 ) ) {
         *tm = false;
@@ -984,11 +990,11 @@ bool    i_yes_no( char * p, lay_att curr, bool * tm )
     }
     return( cvterr );
 }
- 
+
 void    o_yes_no( FILE * f, lay_att curr, bool * tm )
 {
     char    const   *   p;
- 
+
     if( *tm == 0 ) {
         p = strno;
     } else {
@@ -997,4 +1003,4 @@ void    o_yes_no( FILE * f, lay_att curr, bool * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
- 
+
