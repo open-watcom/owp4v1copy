@@ -477,7 +477,12 @@ pick( ERR_INV_ATT_VAL,          "Invalid attribute value",
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
 
-pick( ERR_DOC_SEC_EXPECTED,     "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX or BACKM tag",
+pick( ERR_DOC_SEC_EXPECTED_1,   "Expecting a FRONTM, BODY, APPENDIX or BACKM tag",
+                                "Expecting a FRONTM, BODY, APPENDIX or BACKM tag" )
+
+pick( ERR_DOC_SEC_EXPECTED_2,   "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX or BACKM tag",
                                 "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX or BACKM tag" )
 
-
+pick( ERR_EOF_EXPECTED,         "Expecting the end of the file",
+                                "Expecting the end of the file" )
+                                

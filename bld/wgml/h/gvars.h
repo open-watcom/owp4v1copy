@@ -153,6 +153,7 @@ global struct ProcFlags {
     doc_section     doc_sect_nxt;       // next section (tag already seen)
     doc_section     header_sect;        // header      placeholder for now    TBD
     doc_section     header_sect_nxt;    // header nxt  placeholder for now    TBD
+    unsigned        frontm_seen    : 1; // FRONTM tag seen
     unsigned        start_section  : 1; // start section call done
 
     unsigned        researchfile   : 1;// research for one file ( -r filename )

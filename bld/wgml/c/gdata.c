@@ -154,6 +154,7 @@ void init_global_vars( void )
 
 /***************************************************************************/
 /*  ProcFlags are initialized at each document pass start                  */
+/*  As are at least some system symbols                                    */
 /***************************************************************************/
 
 void init_pass_data( void )
@@ -169,6 +170,7 @@ void init_pass_data( void )
     ProcFlags.justify   = ju_on;        // .ju on default
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
     ProcFlags.doc_sect_nxt  = doc_sect_none;// no document section yet
+    ProcFlags.frontm_seen  = false;     // FRONTM not yet seen
     ProcFlags.in_trans  = (in_esc != ' ');// translation wanted
     layout_work.hx[0].headn = 0;        // reset used header headn numbers
     layout_work.hx[1].headn = 0;
@@ -184,4 +186,9 @@ void init_pass_data( void )
     layout_work.hx[4].headnsub = NULL;
     layout_work.hx[5].headnsub = NULL;
     layout_work.hx[6].headnsub = NULL;
+
+    tm = (bin_device->vertical_base_units * 6 ) / LPI;  // top margin &systm
+    bm = tm;                                            // bottom margin &sysbm
+    hm = bin_device->vertical_base_units / LPI;         // heading margin &syshm
+    fm = hm;                                            // footing margin &sysfm
 }

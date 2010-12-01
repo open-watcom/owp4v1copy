@@ -842,7 +842,7 @@ void    process_text( char * text, uint8_t font_num )
     /*******************************************************************/
     if( ProcFlags.doc_sect < doc_sect_abstract ) {
         if( ProcFlags.doc_sect != doc_sect_titlep ) {
-            xx_line_err( err_doc_sec_expected, text );
+            xx_line_err( err_doc_sec_expected_2, text );
             return;
         }
     }

@@ -561,6 +561,14 @@ static  void    gml_doc_xxx( doc_section ds )
 
 extern  void    gml_abstract( const gmltag * entry )
 {
+    if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
+        xx_line_err( err_eof_expected, tok_start );
+        return;
+    }
+    if( !ProcFlags.frontm_seen ) {
+        xx_line_err( err_doc_sec_expected_1, tok_start );
+        return;
+    }
     gml_doc_xxx( doc_sect_abstract );
     spacing = layout_work.abstract.spacing;
     g_cur_left = g_page_left;
@@ -575,6 +583,10 @@ extern  void    gml_appendix( const gmltag * entry )
     }
     gml_doc_xxx( doc_sect_appendix );
     spacing = layout_work.appendix.spacing;
+    ProcFlags.frontm_seen = false;  // no longer in FRONTM section
+    if( !ProcFlags.fb_document_done ) { // the very first section/page
+        do_layout_end_processing();
+    }
 }
 
 extern  void    gml_backm( const gmltag * entry )
@@ -583,6 +595,10 @@ extern  void    gml_backm( const gmltag * entry )
         finish_page();
     }
     gml_doc_xxx( doc_sect_backm );
+    ProcFlags.frontm_seen = false;  // no longer in FRONTM section
+    if( !ProcFlags.fb_document_done ) { // the very first section/page
+        do_layout_end_processing();
+    }
 }
 
 extern  void    gml_body( const gmltag * entry )
@@ -613,6 +629,10 @@ extern  void    gml_body( const gmltag * entry )
 //  post_skip = &skip_TBD;              // TBD
 
 //  ProcFlags.para_line1 = true;        // simulate :P start  ?? TBD
+    ProcFlags.frontm_seen = false;      // no longer in FRONTM section
+    if( !ProcFlags.fb_document_done ) { // the very first section/page
+        do_layout_end_processing();
+    }
 }
 
 extern  void    gml_figlist( const gmltag * entry )
@@ -625,10 +645,23 @@ extern  void    gml_frontm( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_frontm );
     spacing = layout_work.defaults.spacing;
+    if( !ProcFlags.fb_document_done ) { // the very first section/page
+        do_layout_end_processing();
+    }
+    ProcFlags.frontm_seen = true;
 }
 
 extern  void    gml_index( const gmltag * entry )
 {
+    if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
+        xx_line_err( err_eof_expected, tok_start );
+        return;
+    }
+    if( !((ProcFlags.doc_sect == doc_sect_backm) ||
+          (ProcFlags.doc_sect_nxt == doc_sect_backm)) ) {
+        xx_line_err( err_doc_sec_expected_1, tok_start );
+        return;
+    }
     if( layout_work.index.page_eject ) {
         finish_page();
     }
@@ -638,6 +671,14 @@ extern  void    gml_index( const gmltag * entry )
 
 extern  void    gml_preface( const gmltag * entry )
 {
+    if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
+        xx_line_err( err_eof_expected, tok_start );
+        return;
+    }
+    if( !ProcFlags.frontm_seen ) {
+        xx_line_err( err_doc_sec_expected_1, tok_start );
+        return;
+    }
     if( layout_work.preface.page_eject ) {
         finish_page();
     }
@@ -647,6 +688,14 @@ extern  void    gml_preface( const gmltag * entry )
 
 extern  void    gml_titlep( const gmltag * entry )
 {
+    if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
+        xx_line_err( err_eof_expected, tok_start );
+        return;
+    }
+    if( !ProcFlags.frontm_seen ) {
+        xx_line_err( err_doc_sec_expected_1, tok_start );
+        return;
+    }
     gml_doc_xxx( doc_sect_titlep );
     pre_top_skip = 0;
     post_top_skip = 0;
@@ -670,9 +719,11 @@ extern  void    gml_etitlep( const gmltag * entry )
     rs_loc = 0;
     titlep_lineno = 0;
 
-    wk = nest_cb;
-    nest_cb = nest_cb->prev;
-    add_tag_cb_to_pool( wk );
+    if( nest_cb != NULL ) { // guard against no FRONTM, empty TITLEP section
+        wk = nest_cb;
+        nest_cb = nest_cb->prev;
+        add_tag_cb_to_pool( wk );
+    }
 }
 
 extern  void    gml_toc( const gmltag * entry )
@@ -683,6 +734,7 @@ extern  void    gml_toc( const gmltag * entry )
 
 extern  void    gml_egdoc( const gmltag * entry )
 {
+    start_doc_sect();                   // if not already done
     finish_page();
     ProcFlags.test_widow = false;
     gml_doc_xxx( doc_sect_egdoc );
@@ -737,6 +789,9 @@ extern  void    gml_gdoc( const gmltag * entry )
     }
 
     gml_doc_xxx( doc_sect_gdoc );
+    if( !ProcFlags.fb_document_done ) { // the very first section/page
+        do_layout_end_processing();
+    }
     return;
 }
 

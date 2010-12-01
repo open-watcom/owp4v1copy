@@ -48,6 +48,7 @@
 void    init_page_geometry( void )
 {
     int         k;
+    uint32_t    top_margin;
 #if 0                                   // activate for multi column TBD
     uint32_t    offset;
 #endif
@@ -71,15 +72,7 @@ void    init_page_geometry( void )
     g_curr_font_num = layout_work.defaults.font;
 //  g_line_skip =  spacing * wgml_fonts[g_curr_font_num].line_height;// ??? TBD
 
-    tm = conv_vert_unit( &layout_work.page.top_margin, 1 );// top margin &systm
-#if 0
-    if( !strnicmp( bin_device->driver_name, "psdrv", 5 ) && tm == 0 ) {
-        tm = g_resv;        // hack to get the same value as wgml 4       TBD
-    }
-#endif
-    bm = tm;                            // bottom margin &sysbm
-    hm = wgml_fonts[g_curr_font_num].line_height;   // heading margin &syshm
-    fm = wgml_fonts[g_curr_font_num].line_height;   // footing margin &sysfm
+    top_margin = conv_vert_unit_rdd( &layout_work.page.top_margin, 1 );
 
     lm = conv_hor_unit( &layout_work.page.left_margin )
          - bin_device->x_offset;        // left margin &syspagelm
@@ -97,14 +90,15 @@ void    init_page_geometry( void )
     g_net_page_width = rm - lm;
     g_ll = g_net_page_width * CPI / bin_device->horizontal_base_units; // &sysll
 
+    g_page_depth = conv_vert_unit_rdd( &layout_work.page.depth, 1 )
+                   - bin_device->y_offset;  // &syspaged
+
     if( bin_driver->y_positive == 0 ) {
-        g_page_depth = conv_vert_unit( &layout_work.page.depth, 1 )
-                       - bin_device->y_offset;  // &syspaged
-        if( tm == 0 ) {                 // without top margin 1 line down
+        if( top_margin == 0 ) {             // without top margin 1 line down
             g_page_top = bin_device->y_start;
 //                       - g_max_line_height;   // start of text area TBD
         } else {
-            g_page_top = min( bin_device->page_depth - tm,
+            g_page_top = min( bin_device->page_depth - top_margin,
                               bin_device->y_start );// start of text area
         }
 
@@ -116,10 +110,7 @@ void    init_page_geometry( void )
         lcmax = 1 + (g_net_page_height + bin_device->y_offset)
                  / wgml_fonts[g_curr_font_num].line_height;   // usable no of lines
     } else {
-        g_page_depth = conv_vert_unit( &layout_work.page.depth, 1 )// &syspaged
-                       - bin_device->y_offset + 1;// make the wgml 4 value TBD
-
-        g_page_top = max( tm, bin_device->y_start );
+        g_page_top = max( top_margin, bin_device->y_start );
 
         if( bin_device->y_offset > 0) {
             g_page_bottom = min( g_page_top + g_page_depth, bin_device->y_offset );
@@ -164,8 +155,8 @@ void    init_page_geometry( void )
 
 //  if( GlobalFlags.firstpass && GlobalFlags.research ) {  // show values TBD
     if( GlobalFlags.firstpass                         ) {
-        out_msg( "\ntm:%d lm:%d rm:%d depth:%d\n\n", tm, lm, rm,
-                 g_page_depth );
+        out_msg( "\ntm:%d lm:%d rm:%d top margin:%d depth:%d\n\n", tm, lm, rm,
+                 top_margin, g_page_depth );
 
         out_msg( "dev:%s page_w:%d page_d:%d hor_u:%d ver_u:%d x_s:%d y_s:%d"
                  " x_o:%d y_o:%d\n\n",

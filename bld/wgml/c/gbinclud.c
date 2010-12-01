@@ -116,7 +116,7 @@ void    gml_binclude( const gmltag * entry )
             if( att_val_to_SU( &cur_su, true ) ) {
                 return;
             }
-            depth = conv_vert_unit( &cur_su, spacing );
+            depth = conv_vert_unit_rdd( &cur_su, spacing );
             if( ProcFlags.tag_end_found ) {
                 break;
             }

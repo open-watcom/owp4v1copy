@@ -812,6 +812,66 @@ int32_t conv_vert_unit( su * s, uint8_t spc )
 
 
 /***************************************************************************/
+/*  value returned is rounded as wgml 4.0 appears to do it                 */
+/***************************************************************************/
+
+int32_t conv_vert_unit_rdd( su * s, uint8_t spc )
+{
+    int32_t    ds;
+    int32_t    fp;
+    int32_t    inches;
+    uint8_t space;
+
+    if( spc > 0 ) {                     // if spacing valid use it
+        space = spc;
+    } else {
+        space = spacing;                // else default
+    }
+    switch( s->su_u ) {
+    case SU_chars_lines :
+        // no decimals, no rounding
+        ds = space * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        break;
+    case SU_dv :
+    case SU_ems :
+        // no decimals, no rounding
+        ds = s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        break;
+    case SU_inch :
+    case SU_cm :
+    case SU_mm :
+    case SU_cicero :
+    case SU_pica :
+        if ( s->su_inch == 0 ) {    // no rounding if the value is "0"
+            ds = 0;
+            break;
+        }
+        // The * and/or / operators work differently with negative operands
+        if( s->su_inch > 0 ) {
+            ds = (int64_t)((s->su_inch * bin_device->vertical_base_units) / 10000L);
+            fp = (int64_t)((s->su_inch * bin_device->vertical_base_units) % 10000L);
+            if ( fp > 5000 ) {
+                ds++;
+            }
+        } else {
+            inches = -s->su_inch;   // positive value needed for this to work
+            ds = (int64_t)((inches * bin_device->vertical_base_units) / 10000L);
+            fp = (int64_t)((inches * bin_device->vertical_base_units) % 10000L);
+            ds = -ds;               // must be negative
+            if ( fp < 5000 ) {
+                ds++;
+            }
+        }
+        break;
+    default:
+        ds = 0;
+        break;
+    }
+    return( ds );
+}
+
+
+/***************************************************************************/
 /*  format a number according to the num_style                             */
 /*                                                                         */
 /*  returns ptr to string or NULL if error                                 */

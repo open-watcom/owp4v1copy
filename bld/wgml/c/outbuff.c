@@ -257,7 +257,9 @@ static void ob_insert_ps_cmd( uint8_t * in_block, size_t count )
 
     /* If the buffer is full, flush it. */
 
-    if( buffout.current == buffout.length ) ob_flush();
+    if( buffout.current == buffout.length ) {
+        ob_flush();
+    }
 
     /* Start at the beginning of text_block. */
 
@@ -269,12 +271,16 @@ static void ob_insert_ps_cmd( uint8_t * in_block, size_t count )
 
         /* If the entire text_block will now fit, exit the loop. */
 
-        if( text_count <= difference ) break;
+        if( text_count <= difference ) {
+            break;
+        }
 
         /* Insert any initial spaces. */
 
         while( in_block[current] == ' ' ) {
-            if( difference == 0 ) break;
+            if( difference == 0 ) {
+                break;
+            }
             buffout.text[buffout.current] = ' ';
             buffout.current++;
             current++;
@@ -289,8 +295,24 @@ static void ob_insert_ps_cmd( uint8_t * in_block, size_t count )
             continue;
         }
 
-        /* Since in_block[current] now points at a non-space character,
-         * an initial space will not cause the program to loop endlessly.
+        /* Adjust difference for any terminal spaces. */
+
+        while( in_block[current + difference] == ' ' ) {
+            if( difference == 0 ) {
+                break;
+            }
+            difference--;
+        } 
+
+        /* If difference is "0", the buffer is full. */
+
+        if( difference == 0 ) {
+            ob_flush();
+            continue;
+        }
+
+        /* Both in_block[current] and in_block[current + difference] now point
+         * at a non-space character. Both conditions prevent looping.
          */
 
         while( in_block[current + difference] != ' ' ) {
