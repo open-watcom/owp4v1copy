@@ -33,9 +33,13 @@
 #include <stdlib.h>
 #include <setjmp.h>
 #include <string.h>
+#include <stddef.h>
 
 #include "wdglb.h"
 #include "wdfunc.h"
+
+/* Check for a very old NE module with shorter header. */
+#define IS_OLD_NE( x )      (x.segment_off < offsetof( os2_exe_header, align ))
 
 static  char    *os2_exe_msg[] = {
     "2link version                                         = ",
@@ -60,6 +64,10 @@ static  char    *os2_exe_msg[] = {
     "2offset of beg of imported names table                = ",
     "4offset of nonresident names table (rel file)         = ",
     "2number of movable entry points listed in entry table = ",
+    NULL
+};
+
+static  char    *os2_exe_msg_new[] = {
     "2alignment shift count (0 => 9)                       = ",
     "2number of resource segments (OS/2 only)              = ",
     "1target OS (1==OS/2, 2==Windows, 3==DOS4, 4==Win386)  = ",
@@ -281,7 +289,7 @@ bool Dmp_os2_head( void )
     if( Os2_head.signature != OS2_SIGNATURE_WORD ) {
         return( 0 );
     }
-    if( Os2_head.align == 0 ) {
+    if( IS_OLD_NE( Os2_head ) || Os2_head.align == 0 ) {
         Os2_head.align = 9;
     }
     Banner( "New EXE Header (OS/2 or Windows)" );
@@ -290,6 +298,9 @@ bool Dmp_os2_head( void )
     Wdputslc( "H\n" );
     Wdputslc( "\n" );
     Dump_header( (char *)&Os2_head.version, os2_exe_msg );
+    if( !IS_OLD_NE( Os2_head ) ) {
+        Dump_header( (char *)&Os2_head.align, os2_exe_msg_new );
+    }
     dmp_mod_flag_ne( Os2_head.info, Os2_head.target );
     Dmp_seg_tab();
     Dmp_resrc_tab();

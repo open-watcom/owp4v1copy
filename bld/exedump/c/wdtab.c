@@ -79,20 +79,28 @@ static unsigned_8 dmp_res_nonres_nam( void )
             Wdputs( resident );
         }
         Wdputslc( "\n" );
-    }
-    return( len );
+        /* Length byte + string + ordinal. */
+        return( sizeof( unsigned_8 ) + len + sizeof( unsigned_16 ) );
+    } else
+        return( 0 );
 }
 
 /*
  * Dump the Resident or Nonresident Names Tables
  */
-static void dmp_res_nonres_tab( unsigned_32 res_nam_tab )
-/*******************************************************/
+static void dmp_res_nonres_tab( unsigned_32 res_nam_tab , unsigned_32 tab_len )
+/*****************************************************************************/
 {
+    unsigned_32     tab_off;
+    unsigned_32     entry_len;
+
     if( res_nam_tab <= New_exe_off ) return;
     Wlseek( res_nam_tab );
-    while( dmp_res_nonres_nam() )
-        ;
+    tab_off = 0;
+    do {
+        entry_len = dmp_res_nonres_nam();
+        tab_off += entry_len;
+    } while( entry_len && (tab_off < tab_len) );
 }
 
 /*
@@ -463,14 +471,15 @@ void Dmp_ne_tbls( void )
 {
     prs_ent_tab( New_exe_off + Os2_head.entry_off, Os2_head.entry_size );
     Banner( "Resident Names Table" );
-    dmp_res_nonres_tab( New_exe_off + Os2_head.resident_off );
+    dmp_res_nonres_tab( New_exe_off + Os2_head.resident_off, 
+                        Os2_head.module_off - Os2_head.resident_off );
     dmp_mod_ref_tab( New_exe_off + Os2_head.module_off, Os2_head.modrefs );
     if( Os2_head.import_off != Os2_head.entry_off )
         dmp_import_tab( New_exe_off + Os2_head.import_off );
     dmp_entry_tab();
     Wdputslc( "\n" );
     Banner( "Nonresident Names Table" );
-    dmp_res_nonres_tab( Os2_head.nonres_off );
+    dmp_res_nonres_tab( Os2_head.nonres_off, Os2_head.nonres_size );
     Dmp_relocs();
 }
 
@@ -483,7 +492,8 @@ void Dmp_le_lx_tbls( void )
     unsigned_32     size;
 
     Banner( "Resident Names Table" );
-    dmp_res_nonres_tab( New_exe_off + Os2_386_head.resname_off );
+    dmp_res_nonres_tab( New_exe_off + Os2_386_head.resname_off,
+                        Os2_386_head.entry_off - Os2_386_head.resname_off );
     Dmp_fixpage_tab( New_exe_off + Os2_386_head.fixpage_off,
                     Os2_386_head.fixrec_off - Os2_386_head.fixpage_off );
     Dmp_fixrec_tab( New_exe_off + Os2_386_head.fixrec_off );
@@ -503,7 +513,7 @@ void Dmp_le_lx_tbls( void )
     dmp_ent_tab( New_exe_off + Os2_386_head.entry_off );
     Wdputslc( "\n" );
     Banner( "Nonresident Names Table" );
-    dmp_res_nonres_tab( Os2_386_head.nonres_off );
+    dmp_res_nonres_tab( Os2_386_head.nonres_off, Os2_386_head.nonres_size );
 }
 
 static void dump_exports( void )
