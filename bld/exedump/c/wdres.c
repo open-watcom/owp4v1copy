@@ -261,6 +261,7 @@ static void dmp_resrc_tab_win( void )
             return;
         }
         dmp_resrc_type_nam( res_type );
+        Wlseek( offset );
         dmp_resrc_ent( res_group.num_resources );
         offset += res_group.num_resources * sizeof( resource_record );
         Wdputslc( "\n" );
