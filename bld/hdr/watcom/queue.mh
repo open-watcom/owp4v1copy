@@ -13,11 +13,27 @@
 
 :include cpponly.sp
 
+#ifndef _ALGORITHM_INCLUDED
+  #include <algorithm>
+#endif
+
 #ifndef _DEQUE_INCLUDED
- #include <deque>
+  #include <deque>
+#endif
+
+#ifndef _FUNCTIONAL_INCLUDED
+  #include <functional>
+#endif
+
+#ifndef _VECTOR_INCLUDED
+  #include <vector>
 #endif
 
 namespace std {
+
+    // =====
+    // Queue
+    // =====
 
     template< class Type, class Container = deque< Type > >
     class queue {
@@ -71,9 +87,9 @@ namespace std {
         bool           _Sane( ) const;
     };
 
-    // =========================
+    // -------------------------
     // Member functions of queue
-    // =========================
+    // -------------------------
 
     template< class Type, class Container >
     inline queue< Type, Container >::queue( const Container &other ) : c( other )
@@ -163,9 +179,9 @@ namespace std {
         return( c._Sane( ) );
     }
 
-    // ==============================
+    // ------------------------------
     // Ordinary functions using queue
-    // ==============================
+    // ------------------------------
 
     template< class Type, class Container >
     inline
@@ -208,6 +224,135 @@ namespace std {
     {
         return( (y.c < x.c) || (x.c == y.c) );
     }
+
+
+    // ==============
+    // Priority Queue
+    // ==============
+
+    template< class Type,
+              class Container = vector< Type >,
+              class Compare = less< Container::value_type > >
+    class priority_queue {
+    public:
+        typedef typename Container::value_type      value_type;
+        typedef typename Container::reference       reference;
+        typedef typename Container::const_reference const_reference;
+        typedef typename Container::size_type       size_type;
+        typedef          Container                  container_type;
+
+    protected:
+        Container c;
+        Compare   comp;
+
+    public:
+        explicit priority_queue( const Compare &comparison_object = Compare( ),
+                                 const Container &backing_container = Container( ) );
+
+        template< class InputIterator >
+        priority_queue( InputIterator first,
+                        InputIterator last,
+                        const Compare &comparison_object = Compare( ),
+                        const Container &backing_container = Container( ) )
+            : comp( comparison_object), c( backing_container )
+        {
+            c.insert( c.end( ), first, last );
+            make_heap( c.begin( ), c.end( ), comp );
+        }
+
+        bool empty( ) const;
+        size_type size( ) const;
+        const_reference top( ) const;
+        void push( const value_type &item );
+        void pop( );
+        void swap( priority_queue &other );
+    };
+
+    // ----------------------------------
+    // Member functions of priority_queue
+    // ----------------------------------
+
+    template< class Type, class Container, class Compare >
+    inline
+    priority_queue< Type, Container, Compare >::priority_queue(
+        const Compare &comparison_object,
+        const Container &backing_container ) : comp( comparison_object), c( backing_container )
+    {
+        make_heap( c.begin( ), c.end( ), comp );
+    }
+
+    // empty( )
+    // ********
+    template< class Type, class Container, class Compare >
+    inline bool priority_queue< Type, Container, Compare >::empty( ) const
+    {
+        return( c.empty( ) );
+    }
+
+    // size( )
+    // *******
+    template< class Type, class Container, class Compare >
+    inline
+    priority_queue< Type, Container, Compare>::size_type
+        priority_queue< Type, Container, Compare>::size( ) const
+    {
+        return( c.size( ) );
+    }
+
+    // top( )
+    // ******
+    template< class Type, class Container, class Compare >
+    inline
+    priority_queue< Type, Container, Compare >::const_reference
+        priority_queue< Type, Container, Compare >::top( ) const
+    {
+        return( c.front( ) );
+    }
+
+    // push( )
+    // *******
+    template< class Type, class Container, class Compare >
+    inline
+    void priority_queue< Type, Container, Compare >::push( const value_type &item )
+    {
+        c.push_back( item );
+        push_heap( c.begin( ), c.end( ), comp );
+    }
+
+    // pop( )
+    // ******
+    template< class Type, class Container, class Compare >
+    inline
+    void priority_queue< Type, Container, Compare >::pop( )
+    {
+        pop_heap( c.begin( ), c.end( ), comp );
+        c.pop_back( );
+    }
+
+    // swap( )
+    // *******
+    template< class Type, class Container, class Compare >
+    inline
+    void priority_queue< Type, Container, Compare >::swap( priority_queue &other )
+    {
+        using std::swap;
+        swap( comp, other.comp );
+        c.swap( other.c );
+    }
+
+    // ---------------------------------------
+    // Ordinary functions using priority_queue
+    // ---------------------------------------
+
+    #ifdef _NEVER
+    template< class Type, class Container, class Compare >
+    inline
+    void swap( priority_queue< Type, Container, Compare > &x,
+               priority_queue< Type, Container, Compare > &y )
+    {
+        x.swap( y );
+    }
+    #endif
 
 } // namespace std
 

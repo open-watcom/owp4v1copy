@@ -93,6 +93,51 @@ bool relational_test( )
 }
 
 
+bool basic_priority_test( )
+{
+    int raw_values[] = { 1, 3, 5, 2, 4, 6 };
+    std::priority_queue< int > q1;
+    std::priority_queue< int > q2( raw_values, raw_values + 6 );
+
+    // FIXME: It should be possible to instantiate priority_queue with deque containers.
+    std::priority_queue< int, std::vector< int >, std::greater< int > >
+        q3( raw_values, raw_values + 6 );
+
+    if( q1.size( ) != 0 ) FAIL;
+    if( q2.size( ) != 6 ) FAIL;
+    if( q3.size( ) != 6 ) FAIL;
+
+    if( !q1.empty( ) ) FAIL;
+    if(  q2.empty( ) ) FAIL;
+    if(  q3.empty( ) ) FAIL;
+
+    if( q2.top( ) != 6 ) FAIL;
+    if( q3.top( ) != 1 ) FAIL;
+
+    // Push some items into q1.
+    for( int *p = raw_values; p != raw_values + 6; ++p ) {
+        q1.push( *p );
+    }
+    if( q1.size( ) != 6 || q1.empty( ) ) FAIL;
+
+    // Pop those items out of q1 and verify the order.
+    for( int i = 6; i >= 1; --i ) {
+        if( q1.top( ) != i ) FAIL;
+        q1.pop( );
+    }
+    if( q1.size( ) != 0 || !q1.empty( ) ) FAIL;
+
+    // Try swapping two priority queues.
+    // FIXME: Waiting for the container swap functions in the standard namespace to work.
+    // std::swap( q1, q2 );
+    q1.swap( q2 );
+    if( q1.size( ) != 6 || q1.top( ) != 6 ) FAIL;
+    if( q2.size( ) != 0 ) FAIL;
+
+    return( true );
+}
+
+
 int main( )
 {
     int rc = 0;
@@ -102,6 +147,7 @@ int main( )
         if( !basic_test< std::deque< int > >( )  || !heap_ok( "t01" ) ) rc = 1;
         if( !basic_test< std::list< int > >( )   || !heap_ok( "t02" ) ) rc = 1;
         if( !relational_test( )                  || !heap_ok( "t03" ) ) rc = 1;
+        if( !basic_priority_test( )              || !heap_ok( "t04" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
