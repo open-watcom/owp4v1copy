@@ -322,6 +322,84 @@ bool equal_test( )
 }
 
 
+bool search_test( )
+{
+    using std::search;
+
+    int  haystack[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    int  needle1[]  = { 7, 8,  9 };
+    int  needle2[]  = { 7, 8, 10 };
+    int *result;
+
+    // Normal case; search string found.
+    result = search( FwdIt<int>(haystack), FwdIt<int>(haystack + 10),
+                     FwdIt<int>(needle1),  FwdIt<int>(needle1 + 3) ).get( );
+    if( result != haystack + 7 ) FAIL;
+
+    // Normal case; search string not found.
+    result = search( FwdIt<int>(haystack), FwdIt<int>(haystack + 10),
+                     FwdIt<int>(needle2),  FwdIt<int>(needle2 + 3) ).get( );
+    if( result != haystack + 10 ) FAIL;
+
+    // Search string only one item long.
+    result = search( FwdIt<int>(haystack), FwdIt<int>(haystack + 10),
+                     FwdIt<int>(needle1),  FwdIt<int>(needle1 + 1) ).get( );
+    if( result != haystack + 7 ) FAIL;
+
+    // Search string zero items long. Is the behavior actually correct? Standard unclear.
+    result = search( FwdIt<int>(haystack), FwdIt<int>(haystack + 10),
+                     FwdIt<int>(needle1),  FwdIt<int>(needle1) ).get( );
+    if( result != haystack + 10 ) FAIL;
+
+    // Target string one item long.
+    result = search( FwdIt<int>(haystack), FwdIt<int>(haystack + 1),
+                     FwdIt<int>(needle1),  FwdIt<int>(needle1 + 3) ).get( );
+    if( result != haystack + 1 ) FAIL;
+
+    // Target string zero items long.
+    result = search( FwdIt<int>(haystack), FwdIt<int>(haystack),
+                     FwdIt<int>(needle1),  FwdIt<int>(needle1 + 3) ).get( );
+    if ( result != haystack ) FAIL;
+
+    return( true );
+}
+
+
+bool search_n_test( )
+{
+    using std::search_n;
+
+    int haystack[] = { 0, 1, 2, 3, 4, 5, 6, 7, 7, 7 };
+    int *result;
+
+    // Normal case; search string found.
+    result = search_n( FwdIt<int>(haystack), FwdIt<int>(haystack + 10), 3, 7 ).get( );
+    if( result != haystack + 7 ) FAIL;
+
+    // Normal case; search string not found.
+    result = search_n( FwdIt<int>(haystack), FwdIt<int>(haystack + 10), 4, 7 ).get( );
+    if( result != haystack + 10 ) FAIL;
+
+    // Search string only one item long.
+    result = search_n( FwdIt<int>(haystack), FwdIt<int>(haystack + 10), 1, 7 ).get( );
+    if( result != haystack + 7 ) FAIL;
+
+    // Search string zero items long. Is the behavior actually correct? Standard unclear.
+    result = search_n( FwdIt<int>(haystack), FwdIt<int>(haystack + 10), 0, 7 ).get( );
+    if( result != haystack + 10 ) FAIL;
+
+    // Target string one item long.
+    result = search_n( FwdIt<int>(haystack), FwdIt<int>(haystack + 1), 3, 7 ).get( );
+    if( result != haystack + 1 ) FAIL;
+
+    // Target string zero items long.
+    result = search_n( FwdIt<int>(haystack), FwdIt<int>(haystack), 3, 7 ).get( );
+    if ( result != haystack ) FAIL;
+
+    return( true );
+}
+
+
 int main( )
 {
   int rc = 0;
@@ -333,9 +411,11 @@ int main( )
     if( !find_end_test( )       || !heap_ok( "t03" ) ) rc = 1;
     if( !find_first_of_test( )  || !heap_ok( "t04" ) ) rc = 1;
     if( !adjacent_find_test( )  || !heap_ok( "t05" ) ) rc = 1;
-    if( !count_test( )       || !heap_ok( "t06" ) ) rc = 1;
+    if( !count_test( )          || !heap_ok( "t06" ) ) rc = 1;
     if( !mismatch_test( )       || !heap_ok( "t07" ) ) rc = 1;
     if( !equal_test( )          || !heap_ok( "t08" ) ) rc = 1;
+    if( !search_test( )         || !heap_ok( "t09" ) ) rc = 1;
+    if( !search_n_test( )       || !heap_ok( "t10" ) ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";

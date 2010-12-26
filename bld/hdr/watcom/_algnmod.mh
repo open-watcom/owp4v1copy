@@ -289,6 +289,108 @@ namespace std {
         return( true );
     }
 
+    // search( Forward1, Forward1, Forward2, Forward2 )
+    // ************************************************
+    template< class ForwardIterator1, class ForwardIterator2 >
+    ForwardIterator1
+      search( ForwardIterator1 first1,
+              ForwardIterator1 last1,
+              ForwardIterator2 first2,
+              ForwardIterator2 last2 )
+    {
+        typedef typename iterator_traits< ForwardIterator1 >::value_type value_type1;
+        typedef typename iterator_traits< ForwardIterator2 >::value_type value_type2;
+
+        // std::equal_to can only compare items of the same type.
+        struct equal_items {
+            bool operator( )( const value_type1 &x, const value_type2 &y )
+                { return( x == y ); }
+        };
+        return search( first1, last1, first2, last2, equal_items( ) );
+    }
+
+    // search( Forward1, Forward1, Forward2, Forward2, BinaryPredicate )
+    // *****************************************************************
+    template< class ForwardIterator1, class ForwardIterator2, class BinaryPredicate >
+    ForwardIterator1
+      search( ForwardIterator1 first1,
+              ForwardIterator1 last1,
+              ForwardIterator2 first2,
+              ForwardIterator2 last2,
+              BinaryPredicate pred )
+    {
+        ForwardIterator1 a;
+        ForwardIterator2 b;
+        while( first1 != last1 ) {
+            // Find first item that matches
+            while( pred( *first1, *first2 ) == false ) {
+                ++first1;
+                if( first1 == last1 ) return( last1 );
+            }
+            // See if other items match.
+            a = first1;
+            b = first2;
+            do {
+                ++a;
+                ++b;
+                if( b == last2 ) {
+                    return( first1 );
+                }
+                if( a == last1 ) return( last1 );
+            } while( pred(*a,*b) );
+            ++first1;
+        }
+        return( last1 );
+    }
+
+    // search_n( ForwardIterator, ForwardIterator, Size, Type )
+    // ********************************************************
+    template< class ForwardIterator, class Size, class Type >
+    ForwardIterator
+      search_n( ForwardIterator first,
+                ForwardIterator last,
+                Size            count,
+                const Type     &value )
+    {
+        typedef typename iterator_traits< ForwardIterator >::value_type value_type;
+
+        // std::equal_to can only compare items of the same type.
+        struct equal_items {
+            bool operator( )( const value_type &x, const Type &y )
+                { return( x == y ); }
+        };
+        return search_n( first, last, count, value, equal_items( ) );
+    }
+
+    // search_n( ForwardIterator, ForwardIterator, Size, Type, BinaryPredicate )
+    // *************************************************************************
+    template< class ForwardIterator, class Size, class Type, class BinaryPredicate >
+    ForwardIterator
+      search_n( ForwardIterator first,
+                ForwardIterator last,
+                Size            count,
+                const Type     &value,
+                BinaryPredicate pred )
+    {
+        while( first != last ) {
+            // Find first item that matches.
+            while( pred( *first, value) == false ) {
+                ++first;
+                if( first == last ) return( last );
+            }
+            // See if other items match.
+            ForwardIterator a = first;
+            Size cnt = count;
+            do {
+                ++a;
+                if ( --cnt == 0 ) return( first );
+                if ( a == last ) return( last );
+            } while ( pred( *a, value ) );
+            ++first;
+        }
+        return( last );
+    }
+
 } // namespace std
 
 #endif
