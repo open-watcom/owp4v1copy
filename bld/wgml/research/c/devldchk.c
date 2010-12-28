@@ -104,7 +104,6 @@ static void display_binary_device_library( void )
         else out_msg( "Yes\n" );
         out_msg( "  Font resident:      %c\n", wgml_fonts[i].font_resident );
         out_msg( "  Default Width:      %i\n", wgml_fonts[i].default_width );
-        out_msg( "  'DV' base:          %i\n", wgml_fonts[i].dv_base );
         out_msg( "  'Em' base:          %i\n", wgml_fonts[i].em_base );
         out_msg( "  Font height:        %i\n", wgml_fonts[i].font_height );
         out_msg( "  Font space:         %i\n", wgml_fonts[i].font_space );
@@ -227,8 +226,8 @@ int main()
 
         current->nxt = NULL;
         current->font = 11;
-        current->name = (char *) mem_alloc( sizeof( "tfon09" ) + 1 );
-        strcpy_s( current->name,  sizeof( "tfon09" ) + 1, "tfon09" );
+        current->name = (char *) mem_alloc( sizeof( "tfon08" ) + 1 );
+        strcpy_s( current->name,  sizeof( "tfon08" ) + 1, "tfon08" );
         current->style = (char *) mem_alloc( sizeof( "plain" ) + 1 );
         strcpy_s( current->style, sizeof( "plain" ) + 1, "plain" );
         current->space = 0;
@@ -241,8 +240,8 @@ int main()
 
         current->nxt = NULL;
         current->font = 12;
-        current->name = (char *) mem_alloc( sizeof( "tfon10" ) + 1 );
-        strcpy_s( current->name,  sizeof( "tfon10" ) + 1, "tfon10" );
+        current->name = (char *) mem_alloc( sizeof( "tfon09" ) + 1 );
+        strcpy_s( current->name,  sizeof( "tfon09" ) + 1, "tfon09" );
         current->style = (char *) mem_alloc( sizeof( "bold" ) + 1 );
         strcpy_s( current->style, sizeof( "bold" ) + 1, "bold" );
         current->space = 0;
