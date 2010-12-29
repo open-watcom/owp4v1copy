@@ -61,6 +61,45 @@ static bool is_divisible( int x, int y )
 }
 
 
+bool all_of_test( )
+{
+    int a1[] = { 1, 2, 3, 4 };
+    int a2[] = { 1, 3, 5, 7 };
+
+    if(  std::all_of( InpIt<int>( a1 ), InpIt<int>( a1 + 4 ), is_odd ) ) FAIL;
+    if( !std::all_of( InpIt<int>( a2 ), InpIt<int>( a2 + 4 ), is_odd ) ) FAIL;
+    if( !std::all_of( InpIt<int>( a1 ), InpIt<int>( a1 + 0 ), is_odd ) ) FAIL;
+
+    return( true );
+}
+
+
+bool any_of_test( )
+{
+    int a1[] = { 1, 2, 3, 4 };
+    int a2[] = { 2, 4, 6, 8 };
+
+    if( !std::any_of( InpIt<int>( a1 ), InpIt<int>( a1 + 4 ), is_odd ) ) FAIL;
+    if(  std::any_of( InpIt<int>( a2 ), InpIt<int>( a2 + 4 ), is_odd ) ) FAIL;
+    if(  std::any_of( InpIt<int>( a1 ), InpIt<int>( a1 + 0 ), is_odd ) ) FAIL;
+
+    return( true );
+}
+
+
+bool none_of_test( )
+{
+    int a1[] = { 1, 2, 3, 4 };
+    int a2[] = { 2, 4, 6, 8 };
+
+    if(  std::none_of( InpIt<int>( a1 ), InpIt<int>( a1 + 4 ), is_odd ) ) FAIL;
+    if( !std::none_of( InpIt<int>( a2 ), InpIt<int>( a2 + 4 ), is_odd ) ) FAIL;
+    if( !std::none_of( InpIt<int>( a1 ), InpIt<int>( a1 + 0 ), is_odd ) ) FAIL;
+
+    return( true );
+}
+
+
 bool for_each_test( )
 {
     char str[] = { 'h', 'e', 'l', 'l', 'o', '\0' };
@@ -402,29 +441,32 @@ bool search_n_test( )
 
 int main( )
 {
-  int rc = 0;
-  int original_count = heap_count( );
+    int rc = 0;
+    int original_count = heap_count( );
 
-  try {
-    if( !for_each_test( )       || !heap_ok( "t01" ) ) rc = 1;
-    if( !find_test( )           || !heap_ok( "t02" ) ) rc = 1;
-    if( !find_end_test( )       || !heap_ok( "t03" ) ) rc = 1;
-    if( !find_first_of_test( )  || !heap_ok( "t04" ) ) rc = 1;
-    if( !adjacent_find_test( )  || !heap_ok( "t05" ) ) rc = 1;
-    if( !count_test( )          || !heap_ok( "t06" ) ) rc = 1;
-    if( !mismatch_test( )       || !heap_ok( "t07" ) ) rc = 1;
-    if( !equal_test( )          || !heap_ok( "t08" ) ) rc = 1;
-    if( !search_test( )         || !heap_ok( "t09" ) ) rc = 1;
-    if( !search_n_test( )       || !heap_ok( "t10" ) ) rc = 1;
-  }
-  catch( ... ) {
-    std::cout << "Unexpected exception of unexpected type.\n";
-    rc = 1;
-  }
+    try {
+        if( !all_of_test( )         || !heap_ok( "t01" ) ) rc = 1;
+        if( !any_of_test( )         || !heap_ok( "t02" ) ) rc = 1;
+        if( !none_of_test( )        || !heap_ok( "t03" ) ) rc = 1;
+        if( !for_each_test( )       || !heap_ok( "t04" ) ) rc = 1;
+        if( !find_test( )           || !heap_ok( "t05" ) ) rc = 1;
+        if( !find_end_test( )       || !heap_ok( "t06" ) ) rc = 1;
+        if( !find_first_of_test( )  || !heap_ok( "t07" ) ) rc = 1;
+        if( !adjacent_find_test( )  || !heap_ok( "t08" ) ) rc = 1;
+        if( !count_test( )          || !heap_ok( "t09" ) ) rc = 1;
+        if( !mismatch_test( )       || !heap_ok( "t10" ) ) rc = 1;
+        if( !equal_test( )          || !heap_ok( "t11" ) ) rc = 1;
+        if( !search_test( )         || !heap_ok( "t12" ) ) rc = 1;
+        if( !search_n_test( )       || !heap_ok( "t13" ) ) rc = 1;
+    }
+    catch( ... ) {
+        std::cout << "Unexpected exception of unexpected type.\n";
+        rc = 1;
+    }
 
-  if( heap_count( ) != original_count ) {
-    std::cout << "Possible memory leak!\n";
-    rc = 1;
-  }
-  return( rc );
+    if( heap_count( ) != original_count ) {
+        std::cout << "Possible memory leak!\n";
+        rc = 1;
+    }
+    return( rc );
 }

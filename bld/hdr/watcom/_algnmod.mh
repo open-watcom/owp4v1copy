@@ -25,6 +25,42 @@
 
 namespace std {
 
+    // all_of( InputIterator, InputIterator, Predicate )
+    // *************************************************
+    template< class InputIterator, class Predicate >
+    bool all_of( InputIterator first, InputIterator last, Predicate pred )
+    {
+        while( first != last ) {
+            if ( pred( *first ) == false ) return( false );
+            ++first;
+        }
+        return( true );
+    }
+
+    // any_of( InputIterator, InputIterator, Predicate )
+    // *************************************************
+    template< class InputIterator, class Predicate >
+    bool any_of( InputIterator first, InputIterator last, Predicate pred )
+    {
+        while( first != last ) {
+            if ( pred( *first ) == true ) return( true );
+            ++first;
+        }
+        return( false );
+    }
+
+    // none_of( InputIterator, InputIterator, Predicate )
+    // **************************************************
+    template< class InputIterator, class Predicate >
+    bool none_of( InputIterator first, InputIterator last, Predicate pred )
+    {
+        while( first != last ) {
+            if ( pred( *first ) == true ) return( false );
+            ++first;
+        }
+        return( true );
+    }
+
     // for_each( InputIterator, InputIterator, Function )
     // **************************************************
     template< class InputIterator, class Function >
