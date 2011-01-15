@@ -216,8 +216,8 @@ BOOL CArchive::ReadString( CString &rString )
         }
         szBuff[nCur] = ch;
         nCur++;
-        if( nCur == 128 ) {
-            szBuff[128] = _T('\0');
+        if( nCur == 127 ) {
+            szBuff[127] = _T('\0');
             rString += szBuff;
             nCur = 0;
         }
