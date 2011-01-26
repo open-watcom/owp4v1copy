@@ -485,4 +485,11 @@ pick( ERR_DOC_SEC_EXPECTED_2,   "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX 
 
 pick( ERR_EOF_EXPECTED,         "Expecting the end of the file",
                                 "Expecting the end of the file" )
-                                
+
+pick( ERR_PAGE_DEPTH_TOO_SMALL, "The page depth is too small when adjusted for the unprintable area of the device page",
+                                "The page depth is too small when adjusted for the unprintable area of the device page" )
+
+pick( ERR_PAGE_DEPTH_TOO_BIG,   "The page depth is larger than the printable area of the device page",
+                                "The page depth is larger than the printable area of the device page" )
+
+

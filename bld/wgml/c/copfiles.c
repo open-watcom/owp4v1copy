@@ -37,7 +37,6 @@
 *                   fb_hline()
 *                   fb_new_section()
 *                   fb_output_textline()
-*                   fb_position()
 *                   fb_start()
 *                   fb_vline()
 *               plus these static variables:
@@ -889,7 +888,6 @@ void cop_setup( void )
         wgml_fonts[i].font_style = NULL;
         wgml_fonts[i].outtrans = NULL;
         wgml_fonts[i].default_width = 0;
-        wgml_fonts[i].dv_base = 0;
         wgml_fonts[i].em_base = 0;
         wgml_fonts[i].font_height = 0;
         wgml_fonts[i].font_space = 0;
@@ -1187,7 +1185,7 @@ void cop_setup( void )
         /* Verify that all line_height fields have the same value. */
 
         test_height = wgml_fonts[0].line_height;
-        for( i = 1; i < wgml_font_cnt; i++ ) {
+        for( i = 1; i < wgml_font_cnt - gen_cnt; i++ ) {
             if( test_height != wgml_fonts[i].line_height ) {
                 out_msg( "     Computed line height values for devices\n" );
                 out_msg( "     which rely on :NEWLINE blocks must be the\n" );
@@ -1231,7 +1229,6 @@ void cop_setup( void )
                 }
             }
         }
-        wgml_fonts[i].dv_base = wgml_fonts[i].width_table['0'];
         wgml_fonts[i].em_base = wgml_fonts[i].width_table['M'];
         wgml_fonts[i].spc_width = wgml_fonts[i].width_table[' '];
     }
@@ -1514,8 +1511,6 @@ void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len
 
 void fb_document( void )
 {
-    uint32_t    page_top;
-
     /* Interpret the DOCUMENT :PAUSE block. */
 
     if( bin_device->pauses.document_pause != NULL ) \
@@ -1534,20 +1529,9 @@ void fb_document( void )
 
     df_populate_driver_table();
 
-    /* Initialize page_top.
-     * Eventually, page_top (or its functionality) will become a global
-     * variable initialized and used by the document layout code. The reason
-     * for this is that, if y_positive is "0", then the correct value is the
-     * top of the document page, which can only be determined from the page
-     * depth given in the :LAYOUT section (:PAGE attribute depth). The value
-     * computed here is the top of the device page.
-     */
-
-    page_top = bin_device->y_start;
-
     /* Set up for the first document page. */
 
-    df_initialize_pages( page_top );
+    df_initialize_pages();
 
     return;
 }
@@ -1683,37 +1667,6 @@ void fb_output_textline( text_line * out_line )
         fb_subsequent_text_line_pass( out_line, i );
     }
 
-    return;
-}
-
-/* Function fb_position().
- * Initializes the print head position by calling two helper functions, which
- * allows them to use the internals of the interpreter module. This function
- * is extremely specialized.
- *
- * Parameters:
- *      h_start contains the horizontal position.
- *      v_start contains the vertical position.
- *
- * Notes:
- *      This function performs the first initial vertical positioning, as
- *          described in the Wiki.
- *      This is called at most twice: once to set the left margin at the
- *          start of document processing, and once if the first element is a
- *          paragraph (:P.) which has an indent.
- *      The initial vertical positioning should only be done the first time:
- *          v_start should have the same value on the second invocation as it
- *          did on the first.
- *      The initial horizontal positioning will behave slightly differently
- *          the first and second time this function is called.
- *      The internal state is updated without regard to whether any function
- *          blocks, or which function blocks, are interpreted.
- */
-
-void fb_position( uint32_t h_start, uint32_t v_start )
-{
-    df_set_vertical( v_start );
-    df_set_horizontal( h_start );
     return;
 }
 

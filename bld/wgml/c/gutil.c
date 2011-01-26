@@ -28,6 +28,7 @@
 *
 *               conv_hor_unit
 *               conv_vert_unit
+*               conv_vert_unit_rdd
 *               format_num
 *               int_to_roman
 *               len_to_trail_space
@@ -356,9 +357,6 @@ bool    to_internal_SU( char * * scanp, su * converted )
         case 'i' :
             s->su_u = SU_inch;
             break;
-        case 'd' :
-            s->su_u = SU_dv;
-            break;
         case 'm' :
             s->su_u = SU_ems;
             break;
@@ -384,6 +382,10 @@ bool    to_internal_SU( char * * scanp, su * converted )
             } else {                    // invalid unit
                 return( converterror );
             }
+        } else if( unit[0] == 'd' ) {   // dv ?
+            if( unit[1] == 'v' ) {
+                s->su_u = SU_dv;
+            }
         } else {                        // invalid unit
             return( converterror );
         }
@@ -400,11 +402,12 @@ bool    to_internal_SU( char * * scanp, su * converted )
     switch( s->su_u ) {
     // the relative units are only stored, not converted
     case SU_chars_lines :
-    case SU_dv :
     case SU_ems :
         if( wd != 0 ) {                 // no decimals allowed
             return( converterror );
         }
+        break;
+    case SU_dv :                        // decimals are allowed for dv
         break;
     case SU_inch :                      // inch, cm, mm valid with decimals
         s->su_mm   = (wh * 100L + wd * k) * 2540L;
@@ -418,14 +421,24 @@ bool    to_internal_SU( char * * scanp, su * converted )
         s->su_mm   = (wh * 100L + wd * k) *  100L;
         s->su_inch = s->su_mm * 10L / 254L;
         break;
-    case SU_cicero :
-    case SU_pica :                      // pica / Cicero
+    case SU_cicero :                    // cicero
         if( wd > 11 ) {
             div = ldiv( wd, 12L);
             wh += div.quot;
             wd = div.rem;
         }
         s->su_inch = wh * 10000L / 6L + wd * 10000L / 72L;
+        s->su_inch = (int64_t)s->su_inch * 10656L / 10000L;
+        s->su_mm = s->su_inch * 254L / 10L;
+        break;
+    case SU_pica :                      // pica
+        if( wd > 11 ) {
+            div = ldiv( wd, 12L);
+            wh += div.quot;
+            wd = div.rem;
+        }
+        s->su_inch = wh * 10000L / 6L + wd * 10000L / 72L;
+        s->su_inch = (int64_t)s->su_inch * 9978L / 10000L;
         s->su_mm = s->su_inch * 254L / 10L;
         break;
     default:
@@ -549,6 +562,8 @@ bool    att_val_to_SU( su * converted, bool pos )
         if( (*p >= '0') && (*p <= '9') ) {  
             wh = (10 * wh) + (*p - '0');
             *ps++ = *p++;
+        } else {
+            break;
         }
         if( (p - val_start) > val_len ) {   // value end reached
             break;
@@ -568,9 +583,11 @@ bool    att_val_to_SU( su * converted, bool pos )
             if( (*p >= '0') && (*p <= '9') ) {  
                 wd = 10 * wd + *p - '0';
                 *ps++ = *p++;
-                if( (p - val_start) > val_len ) {  // value end reached
-                    break;
-                }
+            } else {
+                break;
+            }
+            if( (p - val_start) > val_len ) {  // value end reached
+                break;
             }
         }
         pdn = p;
@@ -591,9 +608,11 @@ bool    att_val_to_SU( su * converted, bool pos )
         if( *p && isalpha( *p ) ) {
             unit[k++] = tolower( *p );          // save Unit
             *ps++ = *p++;
-            if( (p - val_start) > val_len ) {   // value end reached
-                break;
-            }
+        } else {
+            break;
+        }
+        if( (p - val_start) > val_len ) {   // value end reached
+            break;
         }
     }
     if( *p && isalpha( *p ) ) {             // too many characters in unit
@@ -609,9 +628,6 @@ bool    att_val_to_SU( su * converted, bool pos )
         switch( unit[0] ) {
         case 'i' :
             s->su_u = SU_inch;
-            break;
-        case 'd' :
-            s->su_u = SU_dv;
             break;
         case 'm' :
             s->su_u = SU_ems;
@@ -648,6 +664,10 @@ bool    att_val_to_SU( su * converted, bool pos )
                 xx_line_err( err_inv_att_val, pu );
                 scan_start = scan_stop + 1;
                 return( converterror );
+            }
+        } else if( unit[0] == 'd' ) {   // dv ?
+            if( unit[1] == 'v' ) {
+                s->su_u = SU_dv;
             }
         } else {                        // invalid unit
             xx_line_err( err_inv_att_val, pu );
@@ -704,13 +724,8 @@ bool    att_val_to_SU( su * converted, bool pos )
     switch( s->su_u ) {
     // the relative units are only stored, not converted
     case SU_chars_lines :
-    case SU_dv :
     case SU_ems :
-        if( wd != 0 ) {                 // no decimals allowed
-            xx_line_err( err_inv_att_val, pd + 1 );
-            scan_start = scan_stop + 1;
-            return( converterror );
-        }
+    case SU_dv :
         break;
     case SU_inch :                      // inch, cm, mm valid with decimals
         s->su_mm   = (wh * 100L + wd * k) * 2540L;
@@ -724,14 +739,24 @@ bool    att_val_to_SU( su * converted, bool pos )
         s->su_mm   = (wh * 100L + wd * k) *  100L;
         s->su_inch = s->su_mm * 10L / 254L;
         break;
-    case SU_cicero :
-    case SU_pica :                      // pica / Cicero
+    case SU_cicero :                    // cicero
         if( wd > 11 ) {
             div = ldiv( wd, 12L);
             wh += div.quot;
             wd = div.rem;
         }
         s->su_inch = wh * 10000L / 6L + wd * 10000L / 72L;
+        s->su_inch = (int64_t)s->su_inch * 10656L / 10000L;
+        s->su_mm = s->su_inch * 254L / 10L;
+        break;
+    case SU_pica :                      // pica
+        if( wd > 11 ) {
+            div = ldiv( wd, 12L);
+            wh += div.quot;
+            wd = div.rem;
+        }
+        s->su_inch = wh * 10000L / 6L + wd * 10000L / 72L;
+        s->su_inch = (int64_t)s->su_inch * 9978L / 10000L;
         s->su_mm = s->su_inch * 254L / 10L;
         break;
     default:
@@ -754,15 +779,17 @@ bool    att_val_to_SU( su * converted, bool pos )
 
 int32_t conv_hor_unit( su * s )
 {
-    int32_t    ds;
+    int32_t     ds;
 
     switch( s->su_u ) {
     case SU_chars_lines :
-        ds = s->su_whole * bin_device->horizontal_base_units / CPI;
+        ds = s->su_whole * (int32_t)bin_device->horizontal_base_units / CPI;
         break;
     case SU_dv :
+        ds = s->su_whole;
+        break;
     case SU_ems :
-        ds = s->su_whole * wgml_fonts[g_curr_font_num].default_width;
+        ds = s->su_whole * wgml_fonts[g_curr_font_num].em_base;
         break;
     case SU_inch :
     case SU_cm :
@@ -790,11 +817,11 @@ int32_t conv_vert_unit( su * s, uint8_t spc )
     }
     switch( s->su_u ) {
     case SU_chars_lines :
+    case SU_ems :
         ds = space * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
         break;
     case SU_dv :
-    case SU_ems :
-        ds = s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        ds = s->su_whole;
         break;
     case SU_inch :
     case SU_cm :
@@ -817,10 +844,9 @@ int32_t conv_vert_unit( su * s, uint8_t spc )
 
 int32_t conv_vert_unit_rdd( su * s, uint8_t spc )
 {
-    int32_t    ds;
-    int32_t    fp;
-    int32_t    inches;
-    uint8_t space;
+    int32_t     ds;
+    int32_t     fp;
+    uint8_t     space;
 
     if( spc > 0 ) {                     // if spacing valid use it
         space = spc;
@@ -829,36 +855,37 @@ int32_t conv_vert_unit_rdd( su * s, uint8_t spc )
     }
     switch( s->su_u ) {
     case SU_chars_lines :
-        // no decimals, no rounding
+    case SU_ems :
+        // no decimals, use spacing, round negative values down
         ds = space * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        if( ds < 0 ) {
+            ds++;
+        }
         break;
     case SU_dv :
-    case SU_ems :
-        // no decimals, no rounding
-        ds = s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        // no decimals, no spacing, round negative values down
+        ds = s->su_whole;
+        if( ds < 0 ) {
+            ds++;
+        }
         break;
     case SU_inch :
     case SU_cm :
     case SU_mm :
     case SU_cicero :
     case SU_pica :
-        if ( s->su_inch == 0 ) {    // no rounding if the value is "0"
+        if ( s->su_inch == 0 ) {    // if the value is "0", ds is "0"
             ds = 0;
             break;
         }
-        // The * and/or / operators work differently with negative operands
+        ds = (int64_t)s->su_inch * bin_device->vertical_base_units / 10000L;
+        fp = (int64_t)s->su_inch * bin_device->vertical_base_units % 10000L;
         if( s->su_inch > 0 ) {
-            ds = (int64_t)((s->su_inch * bin_device->vertical_base_units) / 10000L);
-            fp = (int64_t)((s->su_inch * bin_device->vertical_base_units) % 10000L);
             if ( fp > 5000 ) {
                 ds++;
             }
-        } else {
-            inches = -s->su_inch;   // positive value needed for this to work
-            ds = (int64_t)((inches * bin_device->vertical_base_units) / 10000L);
-            fp = (int64_t)((inches * bin_device->vertical_base_units) % 10000L);
-            ds = -ds;               // must be negative
-            if ( fp < 5000 ) {
+        } else {    
+            if ( -fp < 5000 ) { // fp is negative, but must compare as positive
                 ds++;
             }
         }

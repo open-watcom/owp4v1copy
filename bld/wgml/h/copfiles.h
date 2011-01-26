@@ -566,7 +566,6 @@ typedef struct {
     fontstyle_block     *   font_style;
     outtrans_block      *   outtrans;
     uint32_t                default_width;
-    uint32_t                dv_base;
     uint32_t                em_base;
     uint32_t                font_height;
     uint32_t                font_space;
@@ -616,13 +615,13 @@ extern void                 fb_document_page( void );
 extern void                 fb_finish( void );
 extern void                 fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
 extern void                 fb_output_textline( text_line * out_line );
-extern void                 fb_position( uint32_t h_start, uint32_t v_start );
 extern void                 fb_start( void );
 extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
 
 /* devfuncs.c                          */
 extern void                 fb_absoluteaddress( void );
 extern void                 fb_new_section( uint32_t v_start );
+extern void                 fb_position( uint32_t h_start, uint32_t v_start );
 
 /* outbuff.c                           */
 extern void                 cop_tr_table( char * p );

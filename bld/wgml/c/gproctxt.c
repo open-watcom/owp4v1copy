@@ -721,9 +721,17 @@ void    process_line_full( text_line * a_line, bool justify )
     /*  adjust vertical position from upper to lower border of line        */
     /***********************************************************************/
     if( bin_driver->y_positive == 0x00 ) {
-        a_line->y_address -= a_line->line_height;
+        if( a_line->y_address >= g_page_top ) {
+            a_line->y_address -= max( wgml_fonts[0].line_height, a_line->line_height );
+        } else {
+            a_line->y_address -= a_line->line_height;
+        }
     } else {
-        a_line->y_address += a_line->line_height;
+        if( a_line->y_address <= g_page_top ) {
+            a_line->y_address += max( wgml_fonts[0].line_height, a_line->line_height );
+        } else {
+            a_line->y_address += a_line->line_height;
+        }
     }
     g_cur_v_start = a_line->y_address;
  

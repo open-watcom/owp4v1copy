@@ -199,6 +199,8 @@ void    gml_graphic( const gmltag * entry )
             if( att_val_to_SU( &cur_su, false ) ) {
                 return;
             }
+yoff = conv_vert_unit( &cur_su, spacing );
+out_msg( ":GRAPHIC yoff (not rounded):  %i\n", yoff );
             yoff = conv_vert_unit_rdd( &cur_su, spacing );
             if( ProcFlags.tag_end_found ) {
                 break;

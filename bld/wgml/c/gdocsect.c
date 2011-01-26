@@ -287,11 +287,17 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
 
 static void document_new_position( void )
 {
+    uint32_t    top_pos;
 
     if( sect_ban_top[page & 1] != NULL ) {
-        g_cur_v_start = ban_top_pos( sect_ban_top[page & 1] );
+        top_pos = ban_top_pos( sect_ban_top[page & 1] );
     } else {
-        g_cur_v_start = g_page_top;
+        top_pos = g_page_top;
+    }
+    if( bin_driver->y_positive == 0x00 ) {
+        g_cur_v_start = g_page_top - wgml_fonts[0].line_height;
+    } else {
+        g_cur_v_start = g_page_top + wgml_fonts[0].line_height;
     }
     g_cur_h_start = g_page_left_org;
 
@@ -303,6 +309,7 @@ static void document_new_position( void )
             ProcFlags.fb_position_done = true;
         }
     }
+    g_cur_v_start = g_page_top; // reset so first line positioning is correct
     return;
 }
 
@@ -313,17 +320,20 @@ static void document_new_position( void )
 
 void    start_doc_sect( void )
 {
-    int         ind;
-    page_ej     page_e;
-    bool        header;
-    bool        page_r;
-    xx_str  *   h_string;
-    su      *   top_sk;
-    su      *   p_sk;
-    int8_t      font;
-    int8_t      h_spc;
-    doc_section ds;
-    bool        first_section;
+    bool                first_section;
+    bool                header;
+    bool                page_r;
+    doc_section         ds;
+    int                 ind;
+    int8_t              font;
+    int8_t              h_spc;
+    page_ej             page_e;
+    region_lay_tag  *   cur_reg;
+    su              *   p_sk;
+    su              *   top_sk;
+    uint32_t            bot_ban_depth;
+    uint32_t            bot_ban_line;
+    xx_str  *           h_string;
 
     if( ProcFlags.start_section ) {
         return;                         // once is enough
@@ -500,14 +510,26 @@ void    start_doc_sect( void )
     /***********************************************************************/
 
     ind = page & 1;
-
     if( sect_ban_bot[ind] != NULL ) {
+        if( sect_ban_bot[ind]->depth.su_u == SU_chars_lines ) {
+            cur_reg = sect_ban_bot[ind]->region;
+            bot_ban_line = 0;
+            while( cur_reg != NULL ) {
+                if( bot_ban_line < wgml_fonts[cur_reg->font].line_height ) {
+                    bot_ban_line = wgml_fonts[cur_reg->font].line_height;
+                }
+                cur_reg = cur_reg->next;
+            }
+            bot_ban_depth = sect_ban_bot[ind]->depth.su_whole * bot_ban_line;
+        } else { 
+            bot_ban_depth = conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
+        }
         if( bin_driver->y_positive == 0 ) {
             g_page_bottom = g_page_bottom_org
-                            + conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
+                            + bot_ban_depth;
         } else {
             g_page_bottom = g_page_bottom_org
-                            - conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
+                            - bot_ban_depth;
         }
     } else {
         g_page_bottom = g_page_bottom_org;

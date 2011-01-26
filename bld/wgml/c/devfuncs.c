@@ -31,8 +31,6 @@
 *                   df_interpret_driver_functions()
 *                   df_populate_device_table()
 *                   df_populate_driver_table()
-*                   df_set_horizontal()
-*                   df_set_vertical()
 *                   df_setup()
 *                   df_teardown()
 *                   fb_enterfont()
@@ -41,9 +39,10 @@
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
 *                   fb_subsequent_text_line_pass()
-*               and two functions declared in copfiles.h:
+*               and these functions declared in copfiles.h:
 *                   fb_absoluteaddress()
 *                   fb_new_section()
+*                   fb_position()
 *               as well as a macro:
 *                   MAX_FUNC_INDEX
 *               some local typedefs and structs:
@@ -68,7 +67,6 @@
 *                   line_pass_number
 *                   pages
 *                   page_start
-*                   set_margin
 *                   shift_done
 *                   space_chars
 *                   tab_width
@@ -79,7 +77,6 @@
 *                   uline
 *                   uscore_char
 *                   uscore_chars
-*                   v_start
 *                   wgml_header
 *                   x_address
 *                   x_size
@@ -236,12 +233,10 @@ static bool             uline                   = false;
 static bool             at_start                = true;
 static bool             htab_done               = false;
 static bool             page_start              = false;
-static bool             set_margin              = false;
 static bool             shift_done              = false;
 static page_state       current_state           = { 0, 0, 0 };
 static page_state       desired_state           = { 0, 0, 0 };
 static uint32_t         line_pass_number        = 0;
-static uint32_t         v_start                 = 0;
 
 /* These are used to hold values returned by device functions. */
 
@@ -3206,7 +3201,7 @@ static void fb_normal_vertical_positioning( void )
                 /* y_address is formed by subtraction. */
                 /* This should not be possible, but leave it for now. */
 
-                current_state.y_address = (v_start + 1) - (desired_pages * \
+                current_state.y_address = (y_address + 1) - (desired_pages * \
                                                     bin_device->page_depth);
             } else {
 
@@ -3225,7 +3220,6 @@ static void fb_normal_vertical_positioning( void )
 
         if( at_start ) {
             at_start = false;
-            set_margin = true;
         }
 
         /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
@@ -3335,18 +3329,13 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
 /*  Global function definitions. */
 
 /* Function df_initialize_pages().
- * Ensures pages is 0, sets v_start to the parameter's value, and then
- * uses df_increment_pages() to onitializes pages and set the state
- * variables to the top of a new document page.
- *
- * Parameter:
- *      in_v_start contains the vertical location of the top of a
- *          document page.
+ * Initialize pages to zero and then invokes df_increment_pages() to
+ * initialize pages and set the state variables to the top of the first
+ * document page.
  */
 
-void df_initialize_pages( uint32_t in_v_start )
+void df_initialize_pages( void )
 {
-    v_start = in_v_start;
     pages = 0;
     df_increment_pages();
     return;
@@ -3361,11 +3350,12 @@ void df_increment_pages( void )
 {
     pages++;
     desired_state.x_address = bin_device->x_start;
-    desired_state.y_address = v_start;
+    desired_state.y_address = bin_device->y_start;
     current_state.x_address = bin_device->x_start;
-    current_state.y_address = v_start;
+    current_state.y_address = bin_device->y_start;
+    x_address = bin_device->x_start;
+    y_address = bin_device->y_start;
     page_start = true;
-    y_address = v_start;
     apage = pages;  // Update wgml system symbol sysapage.
     return;
 }
@@ -3445,97 +3435,6 @@ void df_populate_device_table( void )
 void df_populate_driver_table( void )
 {
     driver_function_table[0x1D] = &df_flushpage;
-    return;
-}
-
-/* Function df_set_horizontal().
- * Does the horizontal positioning for fb_position(). This function is extremely
- * specialized and should not be called by any function other than
- * fb_position(). 
- *
- * Parameter:
- *      h_start contains the new value for current_state.x_address
- *      and x_address.
- */
-
-void df_set_horizontal( uint32_t h_start )
-{
-    bool    fontstyle = false;
-
-    /* If set_margin is set to "true", then determine whether a :FONTSTYLE
-     * block for line pass 1 for font 0 exists. If set_margin is set to "false",
-     * then the :FONTSTYLE block will be treated as not existing whether it
-     * exists or not.
-     */
-
-    if( set_margin ) {
-        if( wgml_fonts[0].font_style != NULL ) {
-            if( wgml_fonts[0].font_style->lineprocs !=NULL ) {
-                fontstyle = true;
-            }
-        }
-    }
-
-    /* If the :FONTSTYLE block exists, interpret the :ENDVALUE block. */
-
-    if( fontstyle ) {
-        df_interpret_driver_functions( \
-                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
-    }
-
-    /* Set the variables whether the :FONTSTYLE block exists or not. */
-
-    desired_state.x_address = h_start;
-    x_address = h_start;
-
-    /* If the :FONTSTYLE block exists, interpret the :STARTVALUE block and
-     * the :FIRSTVALUE block.
-     */
-
-    if( fontstyle ) {
-        df_interpret_driver_functions( \
-                    wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
-        fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
-    }
-
-    return;
-}
-
-/* Function df_set_vertical().
- * Does the vertical positioning for fb_position(). This function is extremely
- * specialized and should not be called by any function other than
- * fb_position(). 
- *
- * Parameter:
- *      in_v_start contains the new value for current_state.y_address.
- *
- * Globals Modified:
- *      current_state.y_address is set to bin_device->y_start.
- *      desired_state.y_address is set to v_start.
- *      y_address is set to bin_device->y_start.
- *
- * Note:
- *      if the second call to fb_position() occurs nothing happens. This
- *      avoids resetting the value returned by %x_address() to
- *      bin_device->x_start on the second call. This also effectively forces
- *      in_v_start to be the same on both calls.
- */
-
-void df_set_vertical( uint32_t in_v_start )
-{
-    static  uint8_t count   = 0;
-
-    count++;
-    if( count == 1 ) {
-        current_state.y_address = bin_device->y_start;
-        desired_state.y_address = in_v_start;
-        y_address = current_state.y_address;
-        if( in_v_start == v_start ) {
-            set_margin = true;
-        } else {
-            fb_normal_vertical_positioning();
-        }
-    }
     return;
 }
 
@@ -3965,6 +3864,57 @@ void fb_new_section( uint32_t v_start )
 
     active_font = save_font;
 
+    return;
+}
+
+/* Function fb_position().
+ * Initializes the print head position. This function is very specialized.
+ *
+ * Parameters:
+ *      h_start contains the horizontal position.
+ *      v_start contains the vertical position.
+ *
+ * Globals Modified:
+ *      desired_state.x_address is set to h_start.
+ *      desired_state.y_address is set to v_start.
+ *      x_address is set to h_start
+ *      y_address is set to v_start
+ *
+ * Notes:
+ *      This function performs the first initial vertical positioning, as
+ *          described in the Wiki.
+ *      This is intended to be called only once, at the start of document
+ *          processing.
+ *      The internal state is updated without regard to whether any function
+ *          blocks, or which function blocks, are interpreted.
+ */
+
+void fb_position( uint32_t h_start, uint32_t v_start )
+{
+    /* Set the desired state. */
+
+    desired_state.x_address = h_start;
+    desired_state.y_address = v_start;
+    y_address = v_start;
+
+    /* Do the vertical positioning if appropriate. */
+
+    if( current_state.y_address != v_start ) {
+        fb_normal_vertical_positioning();
+    }
+
+    /* If the :FONTSTYLE block exists, interpret the appropriate blocks. */
+
+    if( wgml_fonts[0].font_style != NULL ) {
+        if( wgml_fonts[0].font_style->lineprocs !=NULL ) {
+            df_interpret_driver_functions( \
+                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+            x_address = h_start;    // to match wgml 4.0
+            df_interpret_driver_functions( \
+                    wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+            fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
+        }
+    }
     return;
 }
 

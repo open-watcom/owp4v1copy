@@ -32,8 +32,6 @@
 *                   df_new_section()
 *                   df_populate_device_table()
 *                   df_populate_driver_table()
-*                   df_set_horizontal()
-*                   df_set_vertical()
 *                   df_setup()
 *                   df_teardown()
 *                   fb_enterfont()
@@ -57,15 +55,13 @@
 #ifdef  __cplusplus
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
-extern void df_initialize_pages( uint32_t in_page_top );
+extern void df_initialize_pages( void );
 extern void df_increment_pages( void );
 extern void df_interpret_device_functions( uint8_t * in_function );
 extern void df_interpret_driver_functions( uint8_t * in_function );
 extern void df_new_section( uint32_t v_start );
 extern void df_populate_device_table( void );
 extern void df_populate_driver_table( void );
-extern void df_set_horizontal( uint32_t h_start );
-extern void df_set_vertical( uint32_t v_start );
 extern void df_setup( void );
 extern void df_teardown( void );
 extern void fb_enterfont( void );

@@ -187,9 +187,9 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
     }
 
     if( bin_driver->y_positive == 0 ) {
-        v_pos = bin_device->y_start - reg_off;
+        v_pos = g_page_top - reg_off;
     } else {
-        v_pos = bin_device->y_start + reg_off;
+        v_pos = g_page_top + reg_off;
     }
     return( v_pos );
 }
@@ -211,6 +211,7 @@ extern  uint32_t    ban_bot_pos( banner_lay_tag * ban )
     } else {
         vpos = bin_device->y_start + g_page_depth - ban_depth
                + conv_vert_unit( &(ban->region->voffset), 1 );
+        vpos--; // produces same result as wgml 4.0
     }
     return( vpos );
 }
@@ -811,6 +812,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     /*******************************************************************/
     /*  adjust vertical position from upper to lower border of line    */
     /*******************************************************************/
+
     if( bin_driver->y_positive == 0x00 ) {
         ban_line.y_address -= ban_line.line_height;
         g_cur_v_start -= ban_line.line_height;
@@ -818,6 +820,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         ban_line.y_address += ban_line.line_height;
         g_cur_v_start += ban_line.line_height;
     }
+
     if( GlobalFlags.lastpass && ban_line.first != NULL) {
         if( input_cbs->fmflags & II_research ) {
             test_out_t_line( &ban_line );

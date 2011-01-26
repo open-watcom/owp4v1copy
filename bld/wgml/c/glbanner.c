@@ -392,7 +392,8 @@ void    lay_banner_end_prepare( void )
 
 void    lay_ebanner( const gmltag * entry )
 {
-    banner_lay_tag      * banwk;
+    banner_lay_tag  *   banwk;
+    region_lay_tag  *   reg;
 
     ProcFlags.lay_xxx = el_zero;        // banner no longer active
 
@@ -406,7 +407,19 @@ void    lay_ebanner( const gmltag * entry )
 
         lay_banner_end_prepare();       // if not yet done
         if( banner_delete_req ) {       // delete request
-            if( (del_ban != NULL) && (del_ban->region == NULL) ) {
+            /* While the documentation requires the banner regions to be
+             * deleted first, wgml 4.0 does not. It will delete a banner even
+             * though the banner regions still exist.
+             */
+            if( del_ban != NULL ) {
+
+                while( del_ban->region != NULL) {
+                    reg = del_ban->region;
+                    del_ban->region = del_ban->region->next;
+                    mem_free( reg );
+                    reg = NULL;
+                }
+
                 if( prev_ban != NULL ) {
                     prev_ban->next = del_ban->next;
                 } else {

@@ -48,7 +48,11 @@
 void    init_page_geometry( void )
 {
     int         k;
+    uint32_t    page_depth_org;
+    uint32_t    net_top_margin;
+    uint32_t    net_y_start;
     uint32_t    top_margin;
+    uint32_t    y_start_correction;
 #if 0                                   // activate for multi column TBD
     uint32_t    offset;
 #endif
@@ -72,8 +76,6 @@ void    init_page_geometry( void )
     g_curr_font_num = layout_work.defaults.font;
 //  g_line_skip =  spacing * wgml_fonts[g_curr_font_num].line_height;// ??? TBD
 
-    top_margin = conv_vert_unit_rdd( &layout_work.page.top_margin, 1 );
-
     lm = conv_hor_unit( &layout_work.page.left_margin )
          - bin_device->x_offset;        // left margin &syspagelm
 
@@ -90,33 +92,42 @@ void    init_page_geometry( void )
     g_net_page_width = rm - lm;
     g_ll = g_net_page_width * CPI / bin_device->horizontal_base_units; // &sysll
 
-    g_page_depth = conv_vert_unit_rdd( &layout_work.page.depth, 1 )
-                   - bin_device->y_offset;  // &syspaged
+    top_margin = conv_vert_unit_rdd( &layout_work.page.top_margin, 1 );
 
+    page_depth_org = conv_vert_unit_rdd( &layout_work.page.depth, 1 );
+    if( bin_device->y_offset > page_depth_org ) {
+        xx_err( err_page_depth_too_small ); // candidate Severe Error
+        g_suicide();                        // no recovery possible
+    } else {
+        g_page_depth = page_depth_org - bin_device->y_offset;  // &syspaged
+    }
+    if( bin_device->y_offset < top_margin ) {
+        net_top_margin = top_margin - bin_device->y_offset;
+    } else {
+        net_top_margin = 0;
+    }
     if( bin_driver->y_positive == 0 ) {
-        if( top_margin == 0 ) {             // without top margin 1 line down
-            g_page_top = bin_device->y_start;
-//                       - g_max_line_height;   // start of text area TBD
+        g_page_top = bin_device->y_start - net_top_margin;
+        if( g_page_depth > bin_device->y_start ) {
+            /* see Wiki for discussion, wgml 4.0 differs here */
+            xx_err( err_page_depth_too_big );   // candidate Severe Error
+            g_suicide();                        // no recovery possible
         } else {
-            g_page_top = min( bin_device->page_depth - top_margin,
-                              bin_device->y_start );// start of text area
+            g_page_bottom = bin_device->y_start - g_page_depth;// end of text area
         }
-
-        g_page_bottom = max( bin_device->y_start - g_page_depth,
-                             bin_device->y_offset );// end of text area
-
         g_net_page_height = g_page_top - g_page_bottom;
 
         lcmax = 1 + (g_net_page_height + bin_device->y_offset)
                  / wgml_fonts[g_curr_font_num].line_height;   // usable no of lines
     } else {
-        g_page_top = max( top_margin, bin_device->y_start );
-
-        if( bin_device->y_offset > 0) {
-            g_page_bottom = min( g_page_top + g_page_depth, bin_device->y_offset );
+        net_y_start = max( bin_device->y_start, net_top_margin );
+        if( bin_device->y_start > net_top_margin ) {
+            y_start_correction = min( bin_device->y_start - net_top_margin, wgml_fonts[g_curr_font_num].line_height );
         } else {
-            g_page_bottom = g_page_top + g_page_depth;
+            y_start_correction = 0;
         }
+        g_page_top = net_y_start - y_start_correction;
+        g_page_bottom = g_page_top + g_page_depth;
 
         g_net_page_height = g_page_bottom - g_page_top;
         lcmax = g_net_page_height;
@@ -173,11 +184,10 @@ void    init_page_geometry( void )
         out_msg( "default font number:%d font_count:%d\n", g_curr_font_num,
                  wgml_font_cnt );
         for( k = 0; k < wgml_font_cnt; ++k ) {
-            out_msg( "font:%d def_width:%d dv:%d em:%d font_h:%d font_s:%d"
+            out_msg( "font:%d def_width:%d em:%d font_h:%d font_s:%d"
                      " line_h:%d line_s:%d spc_w:%d\n",
                      k,
                      wgml_fonts[k].default_width,
-                     wgml_fonts[k].dv_base,
                      wgml_fonts[k].em_base,
                      wgml_fonts[k].font_height,
                      wgml_fonts[k].font_space,
