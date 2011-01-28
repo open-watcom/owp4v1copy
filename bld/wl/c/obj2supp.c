@@ -1084,10 +1084,10 @@ static void PatchData( fix_data *fix )
         } else if( fix->done || (FmtData.type & (MK_QNX | MK_DOS | MK_RDOS)) ) {
             if( FmtData.type & MK_RDOS ) {
                 segval = GET_U16( data ) + fix->tgt_addr.seg;
-                if( segval == RdosCodeSeg ) {
-                    segval = RdosCodeSel;
-                } else if( segval == RdosDataSeg ) {
-                    segval = RdosDataSel;
+                if( segval == FmtData.u.rdos.code_seg ) {
+                    segval = FmtData.u.rdos.code_sel;
+                } else if( segval == FmtData.u.rdos.data_seg ) {
+                    segval = FmtData.u.rdos.data_sel;
                 } else {
                     LnkMsg( LOC+ERR+MSG_BAD_RELOC_TYPE, NULL );
                 }

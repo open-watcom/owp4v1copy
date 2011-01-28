@@ -359,12 +359,6 @@ static void ResetMisc( void )
     // set case sensitivity for symbols
     ResetSym();
     SetSymCase();
-#ifdef _RDOS
-    RdosCodeSel = 0;
-    RdosDataSel = 0;
-    RdosCodeSeg = 0;
-    RdosDataSeg = 0;
-#endif    
 }
 
 static void DoDefaultSystem( void )

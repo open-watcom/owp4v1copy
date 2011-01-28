@@ -67,7 +67,7 @@ typedef enum exe_format {       // there is a corresp. table in MSG.C
 #define MK_286       (MK_DOS | MK_OS2_16BIT | MK_DOS16M | MK_RDOS)
 /* MK_OS2_LE, MK_OS2_LX, MK_WIN_VXD and MK_PE are not treated as FLAT internally */
 #define MK_FLAT      (MK_PHAR_SIMPLE | MK_PHAR_FLAT | MK_PHAR_REX | MK_ZDOS | MK_RAW)
-#define MK_ALLOW_32  (MK_PHAR_LAP | MK_OS2_LE | MK_OS2_LX | MK_NOVELL | MK_QNX | MK_PE | MK_ELF | MK_WIN_VXD | MK_ZDOS | MK_RAW)
+#define MK_ALLOW_32  (MK_PHAR_LAP | MK_OS2_LE | MK_OS2_LX | MK_NOVELL | MK_QNX | MK_PE | MK_ELF | MK_WIN_VXD | MK_ZDOS | MK_RAW | MK_RDOS)
 #define MK_ALLOW_16  (MK_286 | MK_PHAR_FLAT | MK_OS2 | MK_QNX | MK_PE | MK_WIN_VXD | MK_RAW | MK_RDOS)
 #define MK_ID_SPLIT  (MK_NOVELL)
 #define MK_REAL_MODE (MK_DOS)
@@ -216,6 +216,16 @@ struct fmt_elf_data {
     unsigned            exportallsyms : 1;
 };
 
+// linker specific RDOS device driver data
+
+struct fmt_rdos_data {
+    unsigned_32     code_sel;
+    unsigned_32     data_sel;
+    segment         code_seg;
+    segment         data_seg;
+    char            bitness;
+};
+
 #define NO_BASE_SPEC    ((offset)-1UL)
 
 struct fmt_data {
@@ -228,6 +238,7 @@ struct fmt_data {
         struct  fmt_nov_data    nov;
         struct  fmt_qnx_data    qnx;
         struct  fmt_elf_data    elf;
+        struct  fmt_rdos_data   rdos;
     }               u;
     seg_leader      *dgroupsplitseg;
     offset          bsspad;

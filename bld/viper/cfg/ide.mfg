@@ -592,7 +592,8 @@ Tool WCG "Code Generator"
     CSwitch 0, l????, "", -bt=netware, ON
     CSwitch 0, x????, "", -bt=linux, ON
     CSwitch 0, rp???, "", -bt=rdos, ON
-    CSwitch 0, rk???, "", -bt=rdos_dev, ON
+    CSwitch 0, rk6??, "", -bt=rdos_dev16, ON
+    CSwitch 0, rk2??, "", -bt=rdos_dev32, ON
     CSwitch 0, ?????, "", -fo=.obj, ON
 :segment C_FOR_PB
     CSwitch 1, n?2d?, "32-bit flat model", -mf, ON
@@ -1061,7 +1062,8 @@ rem Other Netware variations?
     VSwitch  1, x?2??, "System:", sys, " ", ONE, REQ, linux
     VSwitch  1, rp2e?, "System:", sys, " ", ONE, REQ, rdos
     VSwitch  1, rp2d?, "System:", sys, " ", ONE, REQ, rdos_dll
-    VSwitch  1, rk???, "System:", sys, " ", ONE, REQ, rdos_dev
+    VSwitch  1, rk6??, "System:", sys, " ", ONE, REQ, rdos_dev16
+    VSwitch  1, rk2??, "System:", sys, " ", ONE, REQ, rdos_dev32
     CSwitch  1, d?2d?, " Link DLL", , ON
     CSwitch  1, w?2d?, " Link DLL", , ON
     CSwitch  1, w?6d?, " Link DLL", , ON

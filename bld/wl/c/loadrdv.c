@@ -78,10 +78,10 @@ static void WriteRDOSData( void )
             if( leader && leader->size ) {
                 piece = leader->pieces; 
                 if( piece ) {
-                    if( piece->iscode && ( leader->seg_addr.seg == RdosCodeSeg ) ) {
+                    if( piece->iscode && ( leader->seg_addr.seg == FmtData.u.rdos.code_seg ) ) {
                         iscode = 1;
                     }
-                    if( ( piece->isidata || piece->isuninit ) && ( leader->seg_addr.seg == RdosDataSeg ) ) {
+                    if( ( piece->isidata || piece->isuninit ) && ( leader->seg_addr.seg == FmtData.u.rdos.data_seg ) ) {
                         isdata = 1;
                     }
                 }
@@ -120,9 +120,9 @@ void GetRdosSegs( void )
                 piece = leader->pieces; 
                 if( piece ) {
                     if( piece->iscode )
-                        RdosCodeSeg = leader->seg_addr.seg;
+                        FmtData.u.rdos.code_seg = leader->seg_addr.seg;
                     if( piece->isidata || piece->isuninit )
-                        RdosDataSeg = leader->seg_addr.seg;
+                        FmtData.u.rdos.data_seg = leader->seg_addr.seg;
                 }
             }
         }
@@ -141,16 +141,37 @@ static void WriteHeader16( void )
     _HostU16toTarg( StartInfo.addr.off, exe_head.IP );
     temp16 = (unsigned_16)CodeSize;
     _HostU16toTarg( temp16, exe_head.code_size );
-    temp16 = (unsigned_16)RdosCodeSel;
+    temp16 = (unsigned_16)FmtData.u.rdos.code_sel;
     _HostU16toTarg( temp16, exe_head.code_sel );
     temp16 = (unsigned_16)DataSize;
     _HostU16toTarg( temp16, exe_head.data_size );
-    temp16 = (unsigned_16)RdosDataSel;
+    temp16 = (unsigned_16)FmtData.u.rdos.data_sel;
     _HostU16toTarg( temp16, exe_head.data_sel );
     WriteLoad( &exe_head, sizeof( rdos_dev16_header ) );
 }
 
-void FiniRdosLoadFile( void )
+static void WriteHeader32( void )
+/* write 32-bit device header */
+{
+    rdos_dev32_header   exe_head;
+    unsigned_16         temp16;
+    unsigned_32         temp32;
+
+    SeekLoad( 0 );
+    _HostU16toTarg( RDOS_SIGNATURE_32, exe_head.signature );
+    _HostU32toTarg( StartInfo.addr.off, exe_head.EIP );
+    temp32 = (unsigned_32)CodeSize;
+    _HostU32toTarg( temp32, exe_head.code_size );
+    temp16 = (unsigned_16)FmtData.u.rdos.code_sel;
+    _HostU16toTarg( temp16, exe_head.code_sel );
+    temp32 = (unsigned_32)DataSize;
+    _HostU32toTarg( temp32, exe_head.data_size );
+    temp16 = (unsigned_16)FmtData.u.rdos.data_sel;
+    _HostU16toTarg( temp16, exe_head.data_sel );
+    WriteLoad( &exe_head, sizeof( rdos_dev32_header ) );
+}
+
+void FiniRdosLoadFile16( void )
 /* terminate writing of load file */
 {
     unsigned_32         hdr_size;
@@ -161,4 +182,24 @@ void FiniRdosLoadFile( void )
     WriteRDOSData();
     DBIWrite();
     WriteHeader16();
+}
+
+void FiniRdosLoadFile32( void )
+/* terminate writing of load file */
+{
+    unsigned_32         hdr_size;
+
+    hdr_size = sizeof( rdos_dev32_header );
+    SeekLoad( hdr_size );
+    Root->u.file_loc = hdr_size;
+    WriteRDOSData();
+    DBIWrite();
+    WriteHeader32();
+}
+
+void FiniRdosLoadFile( void )
+/* terminate writing of load file */
+{
+    if( FmtData.u.rdos.bitness == 16 ) FiniRdosLoadFile16();
+    if( FmtData.u.rdos.bitness == 32 ) FiniRdosLoadFile32();
 }

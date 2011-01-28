@@ -47,6 +47,24 @@
 #include "cmdline.h"
 #include "cmdrdv.h"
 
+void SetRdosFmt( void )
+/*********************/
+// set up the structures needed to be able to process something in RDOS mode.
+{
+    if( LinkState & FMT_INITIALIZED ) return;
+    LinkState |= FMT_INITIALIZED;
+    FmtData.u.rdos.code_seg = 0;
+    FmtData.u.rdos.data_seg = 0;
+    FmtData.u.rdos.code_sel = 0;
+    FmtData.u.rdos.data_sel = 0;
+    FmtData.u.rdos.bitness = 16;
+}
+
+void FreeRdosFmt( void )
+/**********************/
+{
+}
+
 extern bool ProcRdos( void )
 /*************************/
 {
@@ -55,12 +73,23 @@ extern bool ProcRdos( void )
     return( TRUE );
 }
 
-extern bool ProcRdosDev( void )
+extern bool ProcRdosDev16( void )
 /*************************/
 {
     Extension = E_RDV;
+    FmtData.u.rdos.bitness = 16;
     if( FmtData.osname == NULL )
-        FmtData.osname = "RDOS Device driver";
+        FmtData.osname = "16-bit RDOS Device driver";
+    return( TRUE );
+}
+
+extern bool ProcRdosDev32( void )
+/*************************/
+{
+    Extension = E_RDV;
+    FmtData.u.rdos.bitness = 32;
+    if( FmtData.osname == NULL )
+        FmtData.osname = "32-bit RDOS Device driver";
     return( TRUE );
 }
 
@@ -68,12 +97,12 @@ bool ProcRdosCodeSel( void )
 /***************************/
 /* process CODESelector option */
 {
-    return( GetLong( &RdosCodeSel ) );
+    return( GetLong( &FmtData.u.rdos.code_sel ) );
 }
 
 bool ProcRdosDataSel( void )
 /***************************/
 /* process DataSelector option */
 {
-    return( GetLong( &RdosDataSel ) );
+    return( GetLong( &FmtData.u.rdos.data_sel ) );
 }
