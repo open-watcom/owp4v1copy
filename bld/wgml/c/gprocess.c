@@ -141,6 +141,7 @@ static void split_at_GML_tag( void )
     char    *   p2;
     char    *   pchar;
     char        c;
+    bool        layoutsw;
     size_t      toklen;
 
     if( *buff2 == GML_char ) {
@@ -182,26 +183,36 @@ static void split_at_GML_tag( void )
 
                 *p2 = c;
 
-                split_input( buff2, pchar );// split line
+                if( input_cbs->fmflags & II_sol ) {
                 // remove spaces before tags at sol in restricted sections
-                if( (rs_loc > 0) && (input_cbs->fmflags & II_sol) ) {
-                    p = buff2;
-                    while( *p == ' ' ) {
-                        p++;
+                // in or just before LAYOUT tag
+                    layoutsw = ProcFlags.layout;
+                    if( !layoutsw && (strncmp( "LAYOUT", pchar + 1, 6 ) == 0 ) ) {
+                        layoutsw = true;
                     }
-                    if( *p == '\0') {   // first part is all spaces
-                        buff2[0] = '\0';
+                    if( (rs_loc > 0) || layoutsw ) {
+                        p = buff2;
+                        while( *p == ' ' ) {
+                            p++;
+                        }
+                        if( p == pchar ) {  // only leading blanks
+                            memmove_s( buff2, buf_size, pchar, buf_size - (p - buff2) );
+                            buff2_lg = strnlen_s( buff2, buf_size );// new length
+                            pchar = strchr( buff2 + 1, GML_char );  // try next GMLchar
+                            continue;       // dummy split done try again
+                        }
                     }
                 }
-                buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
+                split_input( buff2, pchar );// split line
                 if( ProcFlags.literal ) {   // if literal active
                     if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
                         li_cnt++;
                     }
                 }
-                break;                      // we did a split stop now
+                break;                  // we did a split stop now
+            } else {
+                *p2 = c;
             }
-            *p2 = c;
         }
         pchar = strchr( pchar + 1, GML_char );  // try next GMLchar
     }
