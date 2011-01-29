@@ -173,6 +173,8 @@
     #endif
 #elif defined(__RDOS__)
     #define __PROTECT_MODE__
+#elif defined(__RDOS_DEV__)
+    #define __PROTECT_MODE__
 #else
     #error unable to configure operating system and processor
 #endif

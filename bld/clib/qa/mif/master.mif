@@ -44,7 +44,7 @@
 # LNX   Linux (386)             lnx_3r
 #                               lnx_3s
 # RDOS  RDOS (32-bit app)       rdos_3r
-# RDOS                          rdos_3s
+# RDOSDEV RDOS (32-bit device)  rdosdev_3r
 
 # Attempt to build without cproj.mif; for use with other Watcom versions.
 !ifdef no_cproj
@@ -87,6 +87,7 @@ cwexes     = cw_3r.exe cw_3s.exe
 plsexes    = pls_3s.exe pls_3r.exe
 x32exes    = x32_3s.exe x32_3r.exe
 rdosexes   = rdos_3r.exe rdos_3s.exe
+rdosdevexes= rdosdev_3r.exe
 w16exes    = win_s.exe win_c.exe win_m.exe win_l.exe
 w386exes   = w386_3s.exe w386_3r.exe
 os2exes    = os2_s.exe os2_c.exe os2_m.exe os2_l.exe os2_h.exe os2_mt.exe
@@ -106,7 +107,7 @@ dosexes += x32_3s.exe x32_3r.exe
 
 
 exes = &
-    $(dosexes) $(cwexes) $(d4gexes) $(rdosexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntaxpexes) # $(wntwexes)
+    $(dosexes) $(cwexes) $(d4gexes) $(rdosexes) $(rdosdevexes) $(winexes) $(os2exes) $(os3exes) $(wntexes) $(wntaxpexes) # $(wntwexes)
 
 all : .symbolic $(exes)
 
@@ -224,6 +225,11 @@ rdos_3r.exe : $(srcfile)
 rdos_3s.exe : $(srcfile)
     $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3s -bt=rdos $(c_dbg_flags)
     wlink SYSTEM rdos $(link_opts) $(link_i86) FILE $^*.obj
+    @rm *.obj
+
+rdosdev_3r.exe : $(srcfile)
+    $(cc_386) $[@ $(comp_opts) $(comp_i86) -mf -3r -bt=rdos_dev $(c_dbg_flags)
+    wlink SYSTEM rdos dev32 $(link_opts) $(link_i86) FILE $^*.obj
     @rm *.obj
 
 d4g_3s.exe : $(srcfile)

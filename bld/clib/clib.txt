@@ -88,7 +88,8 @@ Previously Implemented Changes:
         QNX 32          - nameq32
         NetWare         - namenov
         Linux           - namelnx
-        RDOS            - namerdu
+        RDOS app        - namerdu
+        RDOS device     - namerdk
     This leads to some slightly cramped names, but the intention is to have all
     source for a given function in one directory. A grep utility can be easily
     used to locate all the files that contain the function.
@@ -126,7 +127,8 @@ Previously Implemented Changes:
         time            - time functions
         win386          - Win386 support routines
         _dos            - MS-DOS functions
-        rdos            - RDOS related functions
+        rdos            - RDOS application related functions
+        rdosdev         - RDOS device driver related functions
     This is based on the Overview section of the C Library Reference.
     Files that are specific to one platform, and have no analog on any
     other platform will be located the platform specific area.
@@ -150,6 +152,7 @@ Previously Implemented Changes:
         Kanji 32        - register ms, stack ms
         Linux           - register ms, stack ms
         RDOS            - register mf, stack mf
+        RDOS dev        - register ms, 32-bit
     Some of these target systems are really -mf but we are building -ms.
     This is to avoid problems with calling into the -ms math library.
     It means that all calls out to user code (including startup) must
@@ -229,6 +232,8 @@ Previously Implemented Changes:
             ms_r ms_s
         rdos.386\
             mf_r mf_s
+        rdosdev.386\
+            ms_r
 
 8.  The makefile systems is organized around a tree structure.
 
@@ -516,3 +521,13 @@ C include:              ..\h \clib\h \hdr\dos
 C flags:                -bt=rdos -bm
                         -3r
                         -3s
+
+==============================================================================
+RDOS dev Settings:
+============
+wasm flags:             -bt=rdos_dev
+                        -3r
+C include:              ..\h \clib\h \hdr\dos
+                        \watcom\h
+C flags:                -bt=rdos_dev -bm
+                        -3r

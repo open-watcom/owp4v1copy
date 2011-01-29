@@ -120,18 +120,19 @@ memory_model_i86 = l
 !endif
 model_switch_i86 = -m$(memory_model_i86)
 
-default_memory_model_386_dos   = s
-default_memory_model_386_zdos  = s
-default_memory_model_386_qnx   = s
-default_memory_model_386_nov   = s
-default_memory_model_386_osi   = s
-default_memory_model_386_win   = f
-default_memory_model_386_os2   = f
-default_memory_model_386_nt    = f
-default_memory_model_386_linux = f
-default_memory_model_386_nto   = f
-default_memory_model_386_rdos  = f
-default_memory_model_386_      = f
+default_memory_model_386_dos     = s
+default_memory_model_386_zdos    = s
+default_memory_model_386_qnx     = s
+default_memory_model_386_nov     = s
+default_memory_model_386_osi     = s
+default_memory_model_386_rdosdev = s
+default_memory_model_386_win     = f
+default_memory_model_386_os2     = f
+default_memory_model_386_nt      = f
+default_memory_model_386_linux   = f
+default_memory_model_386_nto     = f
+default_memory_model_386_rdos    = f
+default_memory_model_386_        = f
 
 !ifndef memory_model_386
 memory_model_386 = $(default_memory_model_386_$(host_os))
@@ -167,6 +168,7 @@ cflags_osi      = -bt=osi
 cflags_dos      = -bt=dos
 cflags_zdos     = -bt=zdos
 cflags_rdos     = -bt=rdos -bm
+cflags_rdosdev  = -bt=rdos_dev -bm
 cflags_nov      = -bt=netware
 cflags_linux    = -bt=linux
 
@@ -240,7 +242,8 @@ def_fpu_flags_zdos_386  = -fpc
   ######
 def_fpu_flags_nto_386   = -fpi
 
-def_fpu_flags_rdos_386  = -fpi
+def_fpu_flags_rdos_386    = -fpi
+def_fpu_flags_rdosdev_386 = -fpi
 
 !ifdef fpu_flags_$(host_os)_$(host_cpu)
 fpu_flags = $(fpu_flags_$(host_os)_$(host_cpu))
@@ -261,6 +264,7 @@ clflags_dos_i86    = -l=dos
 clflags_dos_386    = -l=dos4g
 clflags_zdos_386   = -l=zdos
 clflags_rdos_386   = -l=rdos
+clflags_rdosdev_386= -l=rdos_dev
 clflags_nov_386    = -l=netware
 clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linuxppc
@@ -299,29 +303,31 @@ aflags_osi      = -bt=osi
 aflags_dos      = -bt=dos
 aflags_zdos     = -bt=zdos
 aflags_rdos     = -bt=rdos
+aflags_rdosdev  = -bt=rdos_dev
 aflags_nov      = -bt=netware
 aflags_linux    = -bt=linux
 
 proj_a_flags     = $(extra_a_flags) $(extra_a_flags_$(host_cpu)) $(extra_a_flags_$(host_os))
 aflags           = $(aflags_all) $(aflags_$(host_cpu)) $(aflags_$(host_os)) $(proj_a_flags)
 
-lflags_dos_i86   = sys dos
-lflags_nt_axp    = sys ntaxp
-lflags_nt_386    = sys nt
-lflags_os2_386   = sys os2v2
-lflags_os2_i86   = sys os2 pmc
-lflags_dos_386   = sys dos4g
-lflags_zdos_386  = sys zdos
-lflags_rdos_386  = sys rdos
-lflags_qnx_386   = sys qnx386 flat
-lflags_qnx_i86   = sys qnx
-lflags_win_386   = sys win386
-lflags_win_i86   = sys windows
-lflags_nov_386   = sys novell
-lflags_osi_386   = sys osi
-lflags_linux_386 = sys linux
-lflags_linux_ppc = sys linuxppc
-lflags_linux_mps = sys linuxmips
+lflags_dos_i86     = sys dos
+lflags_nt_axp      = sys ntaxp
+lflags_nt_386      = sys nt
+lflags_os2_386     = sys os2v2
+lflags_os2_i86     = sys os2 pmc
+lflags_dos_386     = sys dos4g
+lflags_zdos_386    = sys zdos
+lflags_rdos_386    = sys rdos
+lflags_rdosdev_386 = sys rdos dev32
+lflags_qnx_386     = sys qnx386 flat
+lflags_qnx_i86     = sys qnx
+lflags_win_386     = sys win386
+lflags_win_i86     = sys windows
+lflags_nov_386     = sys novell
+lflags_osi_386     = sys osi
+lflags_linux_386   = sys linux
+lflags_linux_ppc   = sys linuxppc
+lflags_linux_mps   = sys linuxmips
 
 lflags_dll_dos_386   = sys cwdllr
 lflags_dll_rdos_386  = sys rdos dll

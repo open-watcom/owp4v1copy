@@ -22,6 +22,7 @@ include_c_linux    = -I"$(hdr_dir)/linux"
 include_c_windows  = -I"$(hdr_dir)/dos" -I"$(dev_dir)/w16api/wini86"
 include_c_winnt    = -I"$(hdr_dir)/dos" -I"$(dev_dir)/w32api/nt"
 include_c_rdos     = -I"$(hdr_dir)/dos"
+include_c_rdosdev  = -I"$(hdr_dir)/dos"
 !else
 include_c_generic  = -I"$(%WATCOM)/h"
 include_c_kanji    = -I"$(%WATCOM)/h"
@@ -44,6 +45,7 @@ include_c_winnt_axp= $(inc_dirs_sys_nt)
 include_c_winnt_ppc= $(inc_dirs_sys_nt)
 include_c_winnt    = $(inc_dirs_sys_nt) -I"$(%WATCOM)/h"
 include_c_rdos     = -I"$(hdr_dir)/dos"
+include_c_rdosdev  = -I"$(hdr_dir)/dos"
 !endif
 
 include_c_path = $(include_default) $(include_c_$(system)) $(include_watcom)

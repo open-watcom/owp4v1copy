@@ -28,6 +28,7 @@ objs_linux_386    = $(l32)
 objs_linux_ppc    = $(lpc)
 objs_linux_mps    = $(lmp)
 objs_rdos_386     = $(rdu)
+objs_rdosdev_386  = $(rdk)
 
 !ifeq objsuffix files
 objfiles = $+ $(objs_$(system)_$(processor)) $-
@@ -65,6 +66,7 @@ objs_linux_386    =
 objs_linux_ppc    =
 objs_linux_mps    =
 objs_rdos_386     =
+objs_rdosdev_386  =
 
 d16 =
 d32 =
@@ -91,4 +93,5 @@ l32 =
 lpc =
 lmp =
 rdu =
+rdk =
 
