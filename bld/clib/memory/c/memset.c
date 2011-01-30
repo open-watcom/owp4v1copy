@@ -57,7 +57,7 @@ extern  void    *__set386( void *, int, unsigned );
 _WCRTLINK VOID_WC_TYPE *__F_NAME(memset,wmemset)( VOID_WC_TYPE *dst, INT_WC_TYPE c, size_t len )
 {
 #if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86)
-    #if defined(__386__)
+    #if defined(__386__) && defined(__SMALL_DATA__)
         return( __set386( dst, c, len ) );
     #else
         return( _inline_memset( dst, c, len ) );

@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#if defined(__386__)
+#if defined(__386__) && defined(__SMALL_DATA__)
 extern  void    movefwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len);
 #pragma aux     movefwd =  \
         0x06            /* push es   */\
@@ -63,6 +63,40 @@ extern  void    movebwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len
         0x07            /* pop es */\
         0xfc            /* cld */\
         parm [dx edi] [esi] [ecx] \
+        modify exact [edi esi ecx];
+#define HAVE_MOVEFWBW
+
+#elif defined(__386__) && defined(__BIG_DATA__)
+
+extern  void    movefwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len);
+#pragma aux     movefwd =  \
+        0x1e            /* push ds */ \
+        0x8e 0xda       /* mov ds,dx */ \
+        0x51            /* push ecx  */\
+        0xc1 0xe9 0x02  /* shr ecx,2 */\
+        0xf3 0xa5       /* rep movsd */\
+        0x59            /* pop ecx   */\
+        0x83 0xe1 0x03  /* and ecx,3 */\
+        0xf3 0xa4       /* rep movsb */\
+        0x1f            /* pop ds */ \
+        parm [es edi] [dx esi] [ecx] \
+        modify exact [edi esi ecx];
+extern  void    movebwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len);
+#pragma aux     movebwd =  \
+        0x1e            /* push ds */ \
+        0x8e 0xda       /* mov ds,dx */ \
+        0xfd            /* std */\
+        0x4e            /* dec esi */\
+        0x4f            /* dec edi */\
+        0xd1 0xe9       /* shr ecx,1 */\
+        0x66 0xf3 0xa5  /* rep movsw */\
+        0x11 0xc9       /* adc ecx,ecx */\
+        0x46            /* inc esi */\
+        0x47            /* inc edi */\
+        0x66 0xf3 0xa4  /* rep movsb */\
+        0x1f            /* pop ds */ \
+        0xfc            /* cld */\
+        parm [es edi] [dx esi] [ecx] \
         modify exact [edi esi ecx];
 #define HAVE_MOVEFWBW
 
