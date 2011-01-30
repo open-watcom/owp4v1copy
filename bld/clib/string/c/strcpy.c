@@ -39,7 +39,8 @@
 
 extern CHAR_TYPE *__strcpy( CHAR_TYPE *dst, const CHAR_TYPE *src );
 #if defined(__386__)
- #pragma aux __strcpy = \
+ #if defined(__SMALL_DATA__)
+  #pragma aux __strcpy = \
         "       push    eax"      \
         "L1:    mov     cl,[edx]" \
         "       mov     [eax],cl" \
@@ -53,6 +54,37 @@ extern CHAR_TYPE *__strcpy( CHAR_TYPE *dst, const CHAR_TYPE *src );
         "       jne     L1"       \
         "L2:    pop     eax"      \
         parm [eax] [edx] value [eax] modify exact [eax edx ecx];
+ #else  // compact or large
+  #pragma aux __strcpy = \
+        "       push    ds"       \
+        "       push    edi"       \
+        "       mov     ds,dx"    \
+        "       test    esi,1"     \
+        "       je      L1"       \
+        "       lodsb"            \
+        "       stosb"            \
+        "       cmp     al,0"     \
+        "       je      L3"       \
+        "L1:    mov     ax,[esi]"  \
+        "       test    al,al"    \
+        "       je      L2"       \
+        "       stosw"            \
+        "       test    ah,ah"    \
+        "       je      L3"       \
+        "       mov     ax,2[esi]" \
+        "       test    al,al"    \
+        "       je      L2"       \
+        "       stosw"            \
+        "       add     esi,4"     \
+        "       test    ah,ah"    \
+        "       jne     L1"       \
+        "       je      L3"       \
+        "L2:    stosb"            \
+        "L3:    pop     eax"       \
+        "       mov     dx,es"    \
+        "       pop     ds"       \
+        parm [es edi] [dx esi] value [dx eax] modify exact [esi edi];
+ #endif
 #elif defined( _M_I86 )
  #if defined(__SMALL_DATA__)
   #pragma aux __strcpy = \

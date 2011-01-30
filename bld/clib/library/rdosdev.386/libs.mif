@@ -5,6 +5,7 @@ libs = $+ &
     $(pfx__)alias$(__sfx) &
     $(pfx__)char$(__sfx) &
     $(pfx__)memory$(__sfx) &
+    $(pfx__)string$(__sfx) &
     $-
 
 pfx__ =
