@@ -152,7 +152,7 @@ Previously Implemented Changes:
         Kanji 32        - register ms, stack ms
         Linux           - register ms, stack ms
         RDOS            - register mf, stack mf
-        RDOS dev        - register ms, 32-bit
+        RDOS dev        - register mc, 32-bit
     Some of these target systems are really -mf but we are building -ms.
     This is to avoid problems with calling into the -ms math library.
     It means that all calls out to user code (including startup) must
@@ -525,9 +525,9 @@ C flags:                -bt=rdos -bm
 ==============================================================================
 RDOS dev Settings:
 ============
-wasm flags:             -bt=rdos_dev
+wasm flags:             -bt=rdosdev
                         -3r
 C include:              ..\h \clib\h \hdr\dos
                         \watcom\h
-C flags:                -bt=rdos_dev -bm
+C flags:                -bt=rdosdev -bm -zu
                         -3r

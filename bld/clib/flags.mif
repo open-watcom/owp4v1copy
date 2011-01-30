@@ -66,6 +66,7 @@ sw_c_086_mh = -mh$(sw_c_bigdata)$(sw_c_bigcode)
 sw_c_286_mh = -mh$(sw_c_bigdata)$(sw_c_bigcode)
 sw_c_386_ms = -ms$(sw_c_$(convention))$(sw_c_386_ms_$(system))
 sw_c_386_mf = -mf$(sw_c_$(convention))
+sw_c_386_mc = -mc$(sw_c_$(convention))$(sw_c_386_mc_$(system))
 sw_c_axp_   =
 sw_c_ppc_   =
 sw_c_mps_   =
@@ -103,6 +104,7 @@ sw_a_086_mh = -mh-nt=_TEXT
 sw_a_286_mh = -mh-nt=_TEXT
 sw_a_386_ms = -ms$(sw_a_$(convention))
 sw_a_386_mf = -mf$(sw_a_$(convention))
+sw_a_386_mc = -mc$(sw_a_$(convention))
 sw_a_386_   =
 sw_a_axp_   =
 sw_a_ppc_   =
@@ -116,7 +118,7 @@ sw_c_msdos_086    = -oax
 sw_c_msdos_286    = -oax
 sw_c_msdos_386    = -oaxt
 sw_c_rdos_386     = -oaxt-bm
-sw_c_rdosdev_386  = -oaxt-bm
+sw_c_rdosdev_386  = -oaxt-bm-zu
 sw_c_nw_clib_386  = -oaxt-bm -D__far= -D__near= -D_NETWARE_CLIB
 sw_c_nw_clibl_386 = -oaxt-bm -D__far= -D__near= -D_NETWARE_CLIB -D_THIN_LIB
 sw_c_nw_libc_386  = -oaxt-bm -D__far= -D__near= -D_NETWARE_LIBC

@@ -1,6 +1,6 @@
-#pmake: build flat register 32bit rdosdev threading dll alias iX86 static os_rdosdev cpu_386
+#pmake: build compact register 32bit rdosdev threading dll char iX86 static os_rdosdev cpu_386
 processor=386
-model=ms
+model=mc
 system=rdosdev
 linkage=static
 convention=register

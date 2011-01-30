@@ -14,6 +14,6 @@ bt_windows    =$(bt_windows_$(processor)) -bt=windows -DSTRICT
 bt_winnt      =-bt=nt $(win32ver)
 bt_linux      =-bt=linux
 bt_rdos       =-bt=rdos
-bt_rdosdev    =-bt=rdos_dev
+bt_rdosdev    =-bt=rdosdev
 
 build_target = $(bt_$(system))

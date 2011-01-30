@@ -93,9 +93,7 @@ type="l"    dir="lib386/rdos"   usr="clib3s.lib"    cond="rdostarg 3s"      wher
 type="s"    dir="lib386/rdos"   usr="binmode.obj"   cond="rdostarg"         where="c f77"
 type="s"    dir="lib386/rdos"   usr="commode.obj"   cond="rdostarg"         where="c f77"
 
-type="l"    dir="lib386/rdosdev" usr="clib3r.lib"   cond="rdosdevtarg 3r"   where="c f77 ac"
-type="s"    dir="lib386/rdosdev" usr="binmode.obj"  cond="rdosdevtarg"      where="c f77"
-type="s"    dir="lib386/rdosdev" usr="commode.obj"  cond="rdosdevtarg"      where="c f77"
+type="l"    dir="lib386/rdosdev" usr="clib.lib"     cond="rdosdevtarg mc"   where="c f77 ac"
 
 # RTDLL import libraries
 type="l"    dir="lib386/nt"     usr="clbrdll.lib"   cond="wnttarg 3r"       where="c f77 ac"    desc="C DLL Runtime Libraries"

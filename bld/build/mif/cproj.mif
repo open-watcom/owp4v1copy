@@ -125,7 +125,7 @@ default_memory_model_386_zdos    = s
 default_memory_model_386_qnx     = s
 default_memory_model_386_nov     = s
 default_memory_model_386_osi     = s
-default_memory_model_386_rdosdev = s
+default_memory_model_386_rdosdev = c
 default_memory_model_386_win     = f
 default_memory_model_386_os2     = f
 default_memory_model_386_nt      = f
@@ -168,7 +168,7 @@ cflags_osi      = -bt=osi
 cflags_dos      = -bt=dos
 cflags_zdos     = -bt=zdos
 cflags_rdos     = -bt=rdos -bm
-cflags_rdosdev  = -bt=rdos_dev -bm
+cflags_rdosdev  = -bt=rdosdev -bm -zu
 cflags_nov      = -bt=netware
 cflags_linux    = -bt=linux
 
@@ -264,7 +264,7 @@ clflags_dos_i86    = -l=dos
 clflags_dos_386    = -l=dos4g
 clflags_zdos_386   = -l=zdos
 clflags_rdos_386   = -l=rdos
-clflags_rdosdev_386= -l=rdos_dev
+clflags_rdosdev_386= -l=rdosdev
 clflags_nov_386    = -l=netware
 clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linuxppc
@@ -303,7 +303,7 @@ aflags_osi      = -bt=osi
 aflags_dos      = -bt=dos
 aflags_zdos     = -bt=zdos
 aflags_rdos     = -bt=rdos
-aflags_rdosdev  = -bt=rdos_dev
+aflags_rdosdev  = -bt=rdosdev
 aflags_nov      = -bt=netware
 aflags_linux    = -bt=linux
 
