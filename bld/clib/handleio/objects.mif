@@ -1,5 +1,5 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
-#==========================================================================================================
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
+#==================================================================================================================
 !inject 64lseek.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject 64_lseek.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject 64fillen.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
@@ -32,7 +32,8 @@
 !inject finfoptr.obj                     nt nta ntp
 !inject fileinfo.obj                     nt nta ntp
 !inject filelen.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-!inject fileno.obj   d16 d32             nt nta ntp nvc ncl nvl nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
+!inject fileno.obj   d16 d32             nt nta ntp nvc ncl nvl nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
+!inject filerdk.obj                                                                                             rdk
 !inject filerdu.obj                                                                                         rdu
 !inject fstat.obj    d16 d32                                                        w16 w32 osi
 !inject fstatos2.obj                                                o16 o32
@@ -56,8 +57,8 @@
 !inject openwnt.obj                      nt nta ntp
 !inject oshdl.obj    d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32
 !inject pipe.obj                         nt nta ntp                 o16 o32
-!inject plusfsta.obj d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu
-!inject plusopen.obj d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu
+!inject plusfsta.obj d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu rdk
+!inject plusopen.obj d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu rdk
 !inject qread.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 !inject qreadunx.obj                                                        q16 q32             l32 lpc lmp
 !inject qwrit.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
@@ -68,8 +69,8 @@
 !inject stiomode.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi             
 !inject tell.obj     d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject ucreat.obj   d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
-!inject umask.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32                  rdu
-!inject umaskval.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi              rdu
+!inject umask.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32                  rdu rdk
+!inject umaskval.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi              rdu rdk
 !inject umkfilst.obj                     nt nta ntp
 !inject unlck.obj    d16 d32                                        o16 o32         w16 w32
 !inject unlckqnx.obj                                                        q16 q32
