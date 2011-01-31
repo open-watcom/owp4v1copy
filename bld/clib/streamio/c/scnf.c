@@ -31,7 +31,7 @@
 
 #define __LONG_LONG_SUPPORT__
 
-#if !defined( __NETWARE__ ) && !defined( __UNIX__ ) && !defined( __RDOS__ )
+#if !defined( __NETWARE__ ) && !defined( __UNIX__ ) && !defined( __RDOS__ ) && !defined( __RDOSDEV__ )
     #define USE_MBCS_TRANSLATION
 #endif
 

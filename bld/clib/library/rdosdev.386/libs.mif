@@ -9,6 +9,8 @@ libs = $+ &
     $(pfx__)math$(__sfx) &
     $(pfx__)memory$(__sfx) &
     $(pfx__)misc$(__sfx) &
+    $(pfx__)search$(__sfx) &
+    $(pfx__)streamio$(__sfx) &
     $(pfx__)string$(__sfx) &
     $-
 
