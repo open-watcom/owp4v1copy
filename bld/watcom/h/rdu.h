@@ -11,7 +11,6 @@
 *
 ****************************************************************************/
 
-
 #define CallGate_allocate_dos_mem 0x9a 0 0 0 0 2 0
 #define CallGate_allocate_local_mem 0x9a 1 0 0 0 2 0
 #define CallGate_free_mem 0x9a 2 0 0 0 2 0
@@ -205,10 +204,6 @@
 #define CallGate_write_com 0x9a 176 0 0 0 2 0
 #define CallGate_set_dtr 0x9a 177 0 0 0 2 0
 #define CallGate_reset_dtr 0x9a 178 0 0 0 2 0
-
-#define CallGate_init_printer 0x9a 179 0 0 0 2 0
-#define CallGate_check_printer 0x9a 180 0 0 0 2 0
-#define CallGate_write_printer 0x9a 181 0 0 0 2 0
 
 #define CallGate_set_cursor_position 0x9a 182 0 0 0 2 0
 #define CallGate_get_cursor_position 0x9a 183 0 0 0 2 0
@@ -507,3 +502,32 @@
 #define CallGate_allocate_debug_app_mem 0x9a 146 1 0 0 2 0
 #define CallGate_free_debug_app_mem 0x9a 147 1 0 0 2 0
 
+#define CallGate_get_key_layout 0x9a 148 1 0 0 2 0
+#define CallGate_set_key_layout 0x9a 149 1 0 0 2 0
+
+#define CallGate_get_device_info 0x9a 150 1 0 0 2 0
+#define CallGate_get_selector_info 0x9a 151 1 0 0 2 0
+
+#define CallGate_set_code_break 0x9a 152 1 0 0 2 0
+#define CallGate_set_read_data_break 0x9a 153 1 0 0 2 0
+#define CallGate_set_write_data_break 0x9a 154 1 0 0 2 0
+#define CallGate_clear_break 0x9a 155 1 0 0 2 0
+
+#define CallGate_get_max_printer 0x9a 156 1 0 0 2 0
+#define CallGate_open_printer 0x9a 157 1 0 0 2 0
+#define CallGate_close_printer 0x9a 158 1 0 0 2 0
+
+#define CallGate_is_printer_jammed 0x9a 159 1 0 0 2 0
+#define CallGate_is_printer_paper_low 0x9a 160 1 0 0 2 0
+#define CallGate_is_printer_paper_end 0x9a 161 1 0 0 2 0
+#define CallGate_is_printer_ok 0x9a 162 1 0 0 2 0
+#define CallGate_is_printer_head_lifted 0x9a 163 1 0 0 2 0
+#define CallGate_has_printer_paper_in_presenter 0x9a 164 1 0 0 2 0
+
+#define CallGate_print_test 0x9a 165 1 0 0 2 0
+
+#define CallGate_create_printer_bitmap 0x9a 166 1 0 0 2 0
+#define CallGate_print_bitmap 0x9a 167 1 0 0 2 0
+
+#define CallGate_present_printer_media 0x9a 168 1 0 0 2 0
+#define CallGate_eject_printer_media 0x9a 169 1 0 0 2 0

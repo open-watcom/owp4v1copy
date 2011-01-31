@@ -238,6 +238,8 @@ void RDOSAPI RdosMoveSprite(int handle, int x, int y);
 void RDOSAPI RdosSetForeColor(int color);
 void RDOSAPI RdosSetBackColor(int color);
 
+#ifdef __RDOS__     // these are only available in user-mode
+
 void *RDOSAPI RdosAllocateMem(int Size);
 void RDOSAPI RdosFreeMem(void *ptr);
 
@@ -250,6 +252,18 @@ int RDOSAPI RdosWriteThreadMem(int Thread, int Sel, long Offset, char *Buf, int 
 int RDOSAPI RdosGetDebugThread();
 void RDOSAPI RdosGetThreadTss(int Thread, Tss *tss);
 void RDOSAPI RdosSetThreadTss(int Thread, Tss *tss);
+
+int RDOSAPI RdosSetCodeBreak(int Thread, int Reg, void *Address);
+int RDOSAPI RdosSetReadDataBreak(int Thread, int Reg, void *Address, int Size);
+int RDOSAPI RdosSetWriteDataBreak(int Thread, int Reg, void *Address, int Size);
+void RDOSAPI RdosClearBreak(int Thread, int Reg);
+
+void RDOSAPI RdosDebugTrace();
+void RDOSAPI RdosDebugPace();
+void RDOSAPI RdosDebugGo();
+void RDOSAPI RdosDebugNext();
+
+#endif
 
 int RDOSAPI RdosGetFreePhysical();
 int RDOSAPI RdosGetFreeGdt();
@@ -276,6 +290,21 @@ void RDOSAPI RdosResetRts(int Handle);
 int RDOSAPI RdosGetReceiveBufferSpace(int Handle);
 int RDOSAPI RdosGetSendBufferSpace(int Handle);
 void RDOSAPI RdosWaitForSendCompletedCom(int Handle);
+
+int RDOSAPI RdosGetMaxPrinters();
+int RDOSAPI RdosOpenPrinter(char ID);
+void RDOSAPI RdosClosePrinter(int Handle);
+int RDOSAPI RdosIsPrinterJammed(int Handle);
+int RDOSAPI RdosIsPrinterPaperLow(int Handle);
+int RDOSAPI RdosIsPrinterPaperEnd(int Handle);
+int RDOSAPI RdosIsPrinterOk(int Handle);
+int RDOSAPI RdosIsPrinterHeadLifted(int Handle);
+int RDOSAPI RdosHasPrinterPaperInPresenter(int Handle);
+void RDOSAPI RdosPrintTest(int Handle);
+int RDOSAPI RdosCreatePrinterBitmap(int Handle, int Height);
+void RDOSAPI RdosPrintBitmap(int Handle, int Bitmap);
+void RDOSAPI RdosPresentPrinterMedia(int Handle, int Length);
+void RDOSAPI RdosEjectPrinterMedia(int Handle);
 
 int RDOSAPI RdosOpenFile(const char *FileName, char Access);
 int RDOSAPI RdosCreateFile(const char *FileName, int Attrib);
@@ -314,6 +343,8 @@ int RDOSAPI RdosOpenDir(const char *PathName);
 void RDOSAPI RdosCloseDir(int Handle);
 int RDOSAPI RdosReadDir(int Handle, int EntryNr, int MaxNameSize, char *PathName, long *FileSize, int *Attribute, unsigned long *MsbTime, unsigned long *LsbTime);
 
+#ifdef __RDOS__     // these are only available in user-mode
+
 void RDOSAPI RdosDefineFaultSave(int DiscNr, long StartSector, long Sectors);
 void RDOSAPI RdosClearFaultSave();
 int RDOSAPI RdosGetFaultThreadState(int ThreadNr, ThreadState *State);
@@ -323,8 +354,13 @@ int RDOSAPI RdosGetThreadState(int ThreadNr, ThreadState *State);
 int RDOSAPI RdosSuspendThread(int Thread);
 int RDOSAPI RdosSuspendAndSignalThread(int Thread);
 
+#endif
+
 int RDOSAPI RdosGetImageHeader(int Adapter, int Entry, TRdosObjectHeader *Header);
 int RDOSAPI RdosGetImageData(int Adapter, int Entry, void *Buf);
+int RDOSAPI RdosGetDeviceInfo(int CodeSel, char *Name, unsigned int *CodeSize, unsigned short int *DataSel, unsigned int *DataSize);
+
+int RDOSAPI RdosGetSelectorInfo(int CodeSel, int *Limit, int *Bitness);
 
 void RDOSAPI RdosCpuReset();
 int RDOSAPI RdosPowerFailure();
@@ -334,6 +370,9 @@ void RDOSAPI RdosCreateThread(void (*Start)(void *Param), const char *Name, void
 void RDOSAPI RdosCreatePrioThread(void (*Start)(void *Param), int Prio, const char *Name, void *Param, int StackSize);
 void RDOSAPI RdosTerminateThread();
 int RDOSAPI RdosGetThreadHandle();
+
+#ifdef __RDOS__     // these are only available in user-mode
+
 int RDOSAPI RdosExec(const char *prog, const char *param, const char *options);
 int RDOSAPI RdosSpawn(const char *prog, const char *param, const char *startdir, const char *env, const char *options, int *thread);
 int RDOSAPI RdosSpawnDebug(const char *prog, const char *param, const char *startdir, const char *env, const char *options, int *thread);
@@ -343,6 +382,9 @@ void RDOSAPI RdosFreeProcessHandle(int handle);
 int RDOSAPI RdosGetProcessExitCode(int handle);
 void RDOSAPI RdosAddWaitForProcessEnd(int Handle, int ProcessHandle, void *ID);
 int RDOSAPI RdosShowExceptionText();
+
+#endif
+
 void RDOSAPI RdosWaitMilli(int ms);
 void RDOSAPI RdosWaitMicro(int us);
 void RDOSAPI RdosWaitUntil(unsigned long msb, unsigned long lsb);
@@ -433,6 +475,8 @@ void RDOSAPI RdosReplyMailslot(const void *Msg, int Size);
 void RDOSAPI RdosSetFocus(char FocusKey);
 char RDOSAPI RdosGetFocus();
 
+int RDOSAPI RdosSetKeyMap(const char *MapName);
+void RDOSAPI RdosGetKeyMap(char *MapName);
 void RDOSAPI RdosClearKeyboard();
 int RDOSAPI RdosPollKeyboard();
 int RDOSAPI RdosReadKeyboard();
@@ -489,6 +533,8 @@ int RDOSAPI RdosCreateCrc(unsigned short int CrcPoly);
 void RDOSAPI RdosCloseCrc(int Handle);
 unsigned short int RDOSAPI RdosCalcCrc(int Handle, unsigned short int CrcVal, const char *Buf, int Size);
 
+#ifdef __RDOS__     // these are only available in user-mode
+
 int RDOSAPI RdosGetModuleHandle();
 const char *RDOSAPI RdosGetExeName();
 const char *RDOSAPI RdosGetCmdLine();
@@ -507,6 +553,8 @@ char RDOSAPI RdosGetDebugEvent(int handle, int *thread);
 void RDOSAPI RdosGetDebugEventData(int handle, void *buf);
 void RDOSAPI RdosClearDebugEvent(int handle);
 void RDOSAPI RdosContinueDebugEvent(int handle, int thread);
+
+#endif
 
 int RDOSAPI RdosOpenAdc(int channel);
 void RDOSAPI RdosCloseAdc(int handle);
@@ -872,6 +920,40 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_set_thread_tss  \
     parm [ebx] [edi];
 
+#pragma aux RdosDebugTrace = \
+    CallGate_debug_trace;
+
+#pragma aux RdosDebugPace = \
+    CallGate_debug_pace;
+
+#pragma aux RdosDebugGo = \
+    CallGate_debug_go;
+
+#pragma aux RdosDebugNext = \
+    CallGate_debug_next;
+
+#pragma aux RdosSetCodeBreak = \
+    CallGate_set_code_break  \
+    CarryToBool \
+    parm [ebx] [eax] [edi] \
+    value [eax];
+
+#pragma aux RdosSetReadDataBreak = \
+    CallGate_set_read_data_break  \
+    CarryToBool \
+    parm [ebx] [eax] [edi] [ecx] \
+    value [eax];
+
+#pragma aux RdosSetWriteDataBreak = \
+    CallGate_set_write_data_break  \
+    CarryToBool \
+    parm [ebx] [eax] [edi] [ecx] \
+    value [eax];
+
+#pragma aux RdosClearBreak = \
+    CallGate_clear_break  \
+    parm [ebx] [eax];
+
 #pragma aux RdosGetFreePhysical = \
     CallGate_get_free_physical  \
     value [eax];
@@ -965,6 +1047,85 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosWaitForSendCompletedCom = \
     CallGate_wait_for_send_completed_com  \
+    parm [ebx];
+
+#pragma aux RdosGetMaxPrinters = \
+    CallGate_get_max_printer  \
+    "movzx eax,al"  \
+    value [eax];
+
+#pragma aux RdosOpenPrinter = \
+    CallGate_open_printer  \
+    ValidateHandle  \
+    parm [al]  \
+    value [ebx];
+
+#pragma aux RdosClosePrinter = \
+    CallGate_close_printer  \
+    parm [ebx];
+
+#pragma aux RdosIsPrinterJammed = \
+    CallGate_is_printer_jammed  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterPaperLow = \
+    CallGate_is_printer_paper_low  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterPaperEnd = \
+    CallGate_is_printer_paper_end  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterOk = \
+    CallGate_is_printer_ok  \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterHeadLifted = \
+    CallGate_is_printer_head_lifted  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosHasPrinterPaperInPresenter = \
+    CallGate_has_printer_paper_in_presenter  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosPrintTest = \
+    CallGate_print_test  \
+    parm [ebx];
+
+#pragma aux RdosCreatePrinterBitmap = \
+    CallGate_create_printer_bitmap  \
+    "mov ebx,eax" \
+    ValidateHandle \
+    parm [ebx] [edx] \
+    value [ebx];
+
+#pragma aux RdosPrintBitmap = \
+    CallGate_print_bitmap  \
+    parm [ebx] [eax];
+
+#pragma aux RdosPresentPrinterMedia = \
+    CallGate_present_printer_media  \
+    parm [ebx] [eax];
+
+#pragma aux RdosEjectPrinterMedia = \
+    CallGate_eject_printer_media  \
     parm [ebx];
 
 #pragma aux RdosOpenFile = \
@@ -1172,6 +1333,28 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [eax] [edx] [edi] \
     value [eax];
 
+#pragma aux RdosGetDeviceInfo = \
+    "push edx" \
+    CallGate_get_device_info  \
+    "mov [ecx],eax" \
+    CarryToBool \
+    "mov [esi],edx" \
+    "pop edx" \
+    "mov [edx],bx" \
+    parm [ebx] [edi] [ecx] [edx] [esi] \
+    modify [ebx edx] \
+    value [eax];
+
+#pragma aux RdosGetSelectorInfo = \
+    CallGate_get_selector_info  \
+    "mov [esi],ecx" \
+    "movzx eax,al" \
+    "mov [edi],eax" \
+    CarryToBool \
+    parm [bx] [esi] [edi] \
+    modify [ecx] \
+    value [eax];
+
 #pragma aux RdosGetFaultThreadState = \
     CallGate_get_fault_thread_state  \
     CarryToBool \
@@ -1182,18 +1365,6 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_get_fault_thread_tss  \
     CarryToBool \
     parm [eax] [edi] \
-    value [eax];
-
-#pragma aux RdosGetImageHeader = \
-    CallGate_get_image_header  \
-    CarryToBool \
-    parm [eax] [edx] [edi] \
-    value [eax];
-
-#pragma aux RdosGetImageData = \
-    CallGate_get_image_data  \
-    CarryToBool \
-    parm [eax] [edx] [edi] \
     value [eax];
 
 #pragma aux RdosGetThreadState = \
@@ -1805,7 +1976,16 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetFocus = \
     CallGate_get_focus  \
-    value [al];
+
+#pragma aux RdosSetKeyMap = \
+    CallGate_set_key_layout \
+    CarryToBool \
+    parm [edi] \
+    value [eax];
+
+#pragma aux RdosGetKeyMap = \
+    CallGate_get_key_layout \
+    parm [edi];
 
 #pragma aux RdosClearKeyboard = \
     CallGate_flush_keyboard;
@@ -2631,33 +2811,33 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_play_fm_note \
     parm [ebx] [8087] [eax] [edx] [ecx];
 
-#else
+#elif __COMPACT__
  
-/* 16-bit compiler */
+/* 32-bit compact memory model (device-drivers) */
 
-// check carry flag, and set ax=0 if set and ax=1 if clear
-#define CarryToBool 0x73 4 0x33 0xC0 0xEB 3 0xB8 1 0
+// check carry flag, and set eax=0 if set and eax=1 if clear
+#define CarryToBool 0x73 4 0x33 0xC0 0xEB 5 0xB8 1 0 0 0
 
-// check carry flag, and set bx=0
-#define ValidateHandle 0x73 2 0x33 0xDB
+// check carry flag, and set ebx=0 if set and ebx=bx if clear
+#define ValidateHandle 0x73 2 0x33 0xDB 0xF 0xB7 0xDB
 
-// check carry flag, and set ax=0 if set
-#define ValidateAx 0x73 2 0x33 0xC0
+// check carry flag, and set eax=0 if set
+#define ValidateEax 0x73 2 0x33 0xC0
 
-// check carry flag, and set cx=0 if set
-#define ValidateCx 0x73 2 0x33 0xC9
+// check carry flag, and set ecx=0 if set
+#define ValidateEcx 0x73 2 0x33 0xC9
 
-// check carry flag, and set dx=0 if set
-#define ValidateDx 0x73 2 0x33 0xD2
+// check carry flag, and set edx=0 if set
+#define ValidateEdx 0x73 2 0x33 0xD2
 
-// check carry flag, and set si=0 if set
-#define ValidateSi 0x73 2 0x33 0xF6
+// check carry flag, and set esi=0 if set
+#define ValidateEsi 0x73 2 0x33 0xF6
 
-// check carry flag, and set di=0 if set
-#define ValidateDi 0x73 2 0x33 0xFF
+// check carry flag, and set edi=0 if set
+#define ValidateEdi 0x73 2 0x33 0xFF
 
-// check disc id, set to -1 on carry
-#define ValidateDisc 0x73 2 0xB0 0xFF
+// check disc id, set to -1 on carry, extend to eax
+#define ValidateDisc 0x73 2 0xB0 0xFF 0xF 0xBE 0xC0
 
 #pragma aux RdosDebug = \
     "int 3";
@@ -2685,139 +2865,102 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     value [edx] \
     modify [eax];
 
-#pragma aux RdosSetTextMode = \
-    "mov ax,3"  \
-    CallGate_set_video_mode  \
-    modify [ax];
-
-#pragma aux RdosSetVideoMode = \
-    "push bp" \
-    "push si" \
-    "push di" \
-    "push ax" \
-    "mov bx,ax" \
-    "mov ax,[bx]" \
-    "push cx" \
-    "mov bx,cx" \
-    "mov cx,[bx]" \
-    "push dx" \
-    "mov bx,dx" \
-    "mov dx,[bx]" \
-    CallGate_get_video_mode \
-    ValidateAx \
-    CallGate_set_video_mode  \
-    "pop bp" \
-    "mov [bp],dx" \
-    "pop bp" \
-    "mov [bp],cx" \
-    "pop bp" \
-    "mov [bp],ax" \
-    "pop bp" \
-    "mov [bp],edi" \
-    "mov [bp+4],es" \
-    "pop bp" \
-    "mov [bp],si" \
-    "pop bp" \
-    ValidateHandle \
-    parm [ax] [cx] [dx] [si] [di] \
-    value [bx] \
-    modify [ax cx dx si edi es];
-
 #pragma aux RdosSetClipRect = \
     CallGate_set_clip_rect  \
-    parm [bx] [cx] [dx] [si] [di];
+    parm [ebx] [ecx] [edx] [esi] [edi];
 
 #pragma aux RdosClearClipRect = \
     CallGate_clear_clip_rect  \
-    parm [bx];
+    parm [ebx];
 
 #pragma aux RdosSetDrawColor = \
     CallGate_set_drawcolor  \
-    parm [bx] [eax];
+    parm [ebx] [eax];
 
 #pragma aux RdosSetLGOP = \
     CallGate_set_lgop  \
-    parm [bx] [ax];
+    parm [ebx] [eax];
 
 #pragma aux RdosSetHollowStyle = \
     CallGate_set_hollow_style  \
-    parm [bx];
+    parm [ebx];
 
 #pragma aux RdosSetFilledStyle = \
     CallGate_set_filled_style  \
-    parm [bx];
+    parm [ebx];
 
 #pragma aux RdosOpenFont = \
     CallGate_open_font  \
     ValidateHandle \
-    parm [ax]  \
-    value [bx];
+    parm [eax]  \
+    value [ebx];
 
 #pragma aux RdosCloseFont = \
     CallGate_close_font  \
-    parm [bx];
+    parm [ebx];
 
 #pragma aux RdosGetStringMetrics = \
     CallGate_get_string_metrics  \
-    "mov bx,ax" \
-    "mov [bx],cx" \
-    "mov [si],dx" \
-    parm [bx] [es di] [ax] [si] \
-    modify [bx cx dx];
+    "movzx ecx,cx" \
+    "movzx edx,dx" \
+    "mov es:[eax],ecx" \
+    "mov fs:[esi],edx" \
+    parm [ebx] [edi] [es eax] [fs esi] \
+    modify [ecx edx];
 
 #pragma aux RdosSetFont = \
     CallGate_set_font  \
-    parm [bx] [ax];
+    parm [ebx] [eax];
 
 #pragma aux RdosGetPixel = \
     CallGate_get_pixel  \
-    parm [bx] [cx] [dx]  \
+    parm [ebx] [ecx] [edx]  \
     value [eax];
 
 #pragma aux RdosSetPixel = \
     CallGate_set_pixel  \
-    parm [bx] [cx] [dx];
+    parm [ebx] [ecx] [edx];
 
 // Blit here
 // DrawMask here
 
 #pragma aux RdosDrawLine = \
     CallGate_draw_line  \
-    parm [bx] [cx] [dx] [si] [di];
+    parm [ebx] [ecx] [edx] [esi] [edi];
 
 #pragma aux RdosDrawString = \
     CallGate_draw_string  \
-    parm [bx] [cx] [dx] [es di];
+    parm [ebx] [ecx] [edx] [es edi];
 
 #pragma aux RdosDrawRect = \
     CallGate_draw_rect  \
-    parm [bx] [cx] [dx] [si] [di];
+    parm [ebx] [ecx] [edx] [esi] [edi];
 
 #pragma aux RdosDrawEllipse = \
     CallGate_draw_ellipse  \
-    parm [bx] [cx] [dx] [si] [di];
+    parm [ebx] [ecx] [edx] [esi] [edi];
 
 #pragma aux RdosCreateBitmap = \
     CallGate_create_bitmap  \
     ValidateHandle \
-    parm [ax] [cx] [dx] \
-    value [bx];
+    parm [eax] [ecx] [edx] \
+    value [ebx];
 
 #pragma aux RdosDuplicateBitmapHandle = \
     CallGate_dup_bitmap_handle  \
     ValidateHandle  \
-    parm [bx]  \
-    value [bx];
+    parm [ebx]  \
+    value [ebx];
 
 #pragma aux RdosCloseBitmap = \
     CallGate_close_bitmap  \
-    parm ebx];
+    parm [ebx];
 
 #pragma aux RdosCreateStringBitmap = \
     CallGate_create_string_bitmap  \
     ValidateHandle  \
-    parm [bx] [es di]    \
-    value [bx];
+    parm [ebx] [es edi]    \
+    value [ebx];
 
 
 // GetBitmapInfo here
@@ -2825,84 +2968,32 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosCreateSprite = \
     CallGate_create_sprite  \
     ValidateHandle  \
-    parm [bx] [cx] [dx] [ax]    \
-    value [bx];
+    parm [ebx] [ecx] [edx] [eax]    \
+    value [ebx];
 
 #pragma aux RdosCloseSprite = \
     CallGate_close_sprite  \
-    parm [bx];
+    parm [ebx];
 
 #pragma aux RdosShowSprite = \
     CallGate_show_sprite  \
-    parm [bx];
+    parm [ebx];
 
 #pragma aux RdosHideSprite = \
     CallGate_hide_sprite  \
-    parm [bx];
+    parm [ebx];
 
 #pragma aux RdosMoveSprite = \
     CallGate_move_sprite  \
-    parm [bx] [cx] [dx];
+    parm [ebx] [ecx] [edx];
 
 #pragma aux RdosSetForeColor = \
     CallGate_set_forecolor  \
-    parm [ax];
+    parm [eax];
 
 #pragma aux RdosSetBackColor = \
     CallGate_set_backcolor  \
-    parm [ax];
-
-#pragma aux RdosAllocateMem = \
-    CallGate_allocate_app_mem  \
-    ValidateDx \
-    parm [eax]  \
-    value [es];
-
-#pragma aux RdosFreeMem = \
-    CallGate_free_app_mem  \
-    parm [es];
-
-#pragma aux RdosAllocateDebugMem = \
-    CallGate_allocate_debug_app_mem  \
-    ValidateDx \
-    parm [eax]  \
-    value [es];
-
-#pragma aux RdosFreeDebugMem = \
-    CallGate_free_debug_app_mem  \
-    parm [es];
-
-/* continue from here */
-
-#pragma aux RdosGetThreadLinear = \
-    CallGate_get_thread_linear  \
-    ValidateDx \
-    parm [ebx] [edx] [esi] \
-    value [edx];
-
-#pragma aux RdosReadThreadMem = \
-    CallGate_read_thread_mem  \
-    parm [ebx] [edx] [esi] [edi] [ecx] \
-    value [eax];
-
-#pragma aux RdosWriteThreadMem = \
-    CallGate_write_thread_mem  \
-    parm [ebx] [edx] [esi] [edi] [ecx] \
-    value [eax];
-
-#pragma aux RdosGetDebugThread = \
-    CallGate_get_debug_thread  \
-    ValidateAx \
-    "movzx eax,ax"  \
-    value [eax];
-
-#pragma aux RdosGetThreadTss = \
-    CallGate_get_thread_tss  \
-    parm [ebx] [edi];
-
-#pragma aux RdosSetThreadTss = \
-    CallGate_set_thread_tss  \
-    parm [ebx] [edi];
+    parm [eax];
 
 #pragma aux RdosGetFreePhysical = \
     CallGate_get_free_physical  \
@@ -2985,13 +3076,13 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetReceiveBufferSpace = \
     CallGate_get_com_receive_space  \
-    ValidateAx \
+    ValidateEax \
     parm [ebx]  \
     value [eax];
 
 #pragma aux RdosGetSendBufferSpace = \
     CallGate_get_com_send_space  \
-    ValidateAx \
+    ValidateEax \
     parm [ebx]  \
     value [eax];
 
@@ -2999,16 +3090,95 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_wait_for_send_completed_com  \
     parm [ebx];
 
+#pragma aux RdosGetMaxPrinters = \
+    CallGate_get_max_printer  \
+    "movzx eax,al"  \
+    value [eax];
+
+#pragma aux RdosOpenPrinter = \
+    CallGate_open_printer  \
+    ValidateHandle  \
+    parm [al]  \
+    value [ebx];
+
+#pragma aux RdosClosePrinter = \
+    CallGate_close_printer  \
+    parm [ebx];
+
+#pragma aux RdosIsPrinterJammed = \
+    CallGate_is_printer_jammed  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterPaperLow = \
+    CallGate_is_printer_paper_low  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterPaperEnd = \
+    CallGate_is_printer_paper_end  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterOk = \
+    CallGate_is_printer_ok  \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsPrinterHeadLifted = \
+    CallGate_is_printer_head_lifted  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosHasPrinterPaperInPresenter = \
+    CallGate_has_printer_paper_in_presenter  \
+    "cmc" \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosPrintTest = \
+    CallGate_print_test  \
+    parm [ebx];
+
+#pragma aux RdosCreatePrinterBitmap = \
+    CallGate_create_printer_bitmap  \
+    "mov ebx,eax" \
+    ValidateHandle \
+    parm [ebx] [edx] \
+    value [ebx];
+
+#pragma aux RdosPrintBitmap = \
+    CallGate_print_bitmap  \
+    parm [ebx] [eax];
+
+#pragma aux RdosPresentPrinterMedia = \
+    CallGate_present_printer_media  \
+    parm [ebx] [eax];
+
+#pragma aux RdosEjectPrinterMedia = \
+    CallGate_eject_printer_media  \
+    parm [ebx];
+
 #pragma aux RdosOpenFile = \
     CallGate_open_file  \
     ValidateHandle  \
-    parm [edi] [cl] \
+    parm [es edi] [cl] \
     value [ebx];
 
 #pragma aux RdosCreateFile = \
     CallGate_create_file  \
     ValidateHandle  \
-    parm [edi] [ecx] \
+    parm [es edi] [ecx] \
     value [ebx];
 
 #pragma aux RdosCloseFile = \
@@ -3030,7 +3200,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetFileSize = \
     CallGate_get_file_size  \
-    ValidateAx \
+    ValidateEax \
     parm [ebx]  \
     value [eax];
 
@@ -3040,7 +3210,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     
 #pragma aux RdosGetFilePos = \
     CallGate_get_file_pos  \
-    ValidateAx \
+    ValidateEax \
     parm [ebx]  \
     value [eax];
 
@@ -3050,21 +3220,21 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     
 #pragma aux RdosReadFile = \
     CallGate_read_file  \
-    ValidateAx \
-    parm [ebx] [edi] [ecx]  \
+    ValidateEax \
+    parm [ebx] [es edi] [ecx]  \
     value [eax];
 
 #pragma aux RdosWriteFile = \
     CallGate_write_file  \
-    ValidateAx \
-    parm [ebx] [edi] [ecx]  \
+    ValidateEax \
+    parm [ebx] [es edi] [ecx]  \
     value [eax];
 
 #pragma aux RdosGetFileTime = \
     CallGate_get_file_time  \
-    "mov [esi],edx" \
-    "mov [edi],eax" \
-    parm [ebx] [esi] [edi]  \
+    "mov fs:[esi],edx" \
+    "mov es:[edi],eax" \
+    parm [ebx] [fs esi] [es edi]  \
     modify [eax edx];
 
 #pragma aux RdosSetFileTime = \
@@ -3080,19 +3250,19 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosCreateNamedMapping = \
     CallGate_create_named_mapping  \
     ValidateHandle  \
-    parm [edi] [eax]  \
+    parm [es edi] [eax]  \
     value [ebx];
 
 #pragma aux RdosCreateNamedFileMapping = \
     CallGate_create_named_file_mapping  \
     ValidateHandle  \
-    parm [edi] [eax] [ebx]  \
+    parm [es edi] [eax] [ebx]  \
     value [ebx];
 
 #pragma aux RdosOpenNamedMapping = \
     CallGate_open_named_mapping  \
     ValidateHandle  \
-    parm [edi] \
+    parm [es edi] \
     value [ebx];
 
 #pragma aux RdosSyncMapping = \
@@ -3105,7 +3275,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosMapView = \
     CallGate_map_view  \
-    parm [ebx] [eax] [edi] [ecx];
+    parm [ebx] [eax] [es edi] [ecx];
 
 #pragma aux RdosUnmapView = \
     CallGate_unmap_view  \
@@ -3125,58 +3295,58 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGetCurDir = \
     CallGate_get_cur_dir  \
     CarryToBool \
-    parm [eax] [edi]  \
+    parm [eax] [es edi]  \
     value [eax];
 
 #pragma aux RdosSetCurDir = \
     CallGate_set_cur_dir  \
     CarryToBool \
-    parm [edi]  \
+    parm [es edi]  \
     value [eax];
 
 #pragma aux RdosMakeDir = \
     CallGate_make_dir  \
     CarryToBool \
-    parm [edi]  \
+    parm [es edi]  \
     value [eax];
 
 #pragma aux RdosRemoveDir = \
     CallGate_remove_dir  \
     CarryToBool \
-    parm [edi]  \
+    parm [es edi]  \
     value [eax];
 
 #pragma aux RdosRenameFile = \
     CallGate_rename_file  \
     CarryToBool \
-    parm [edi] [esi]  \
+    parm [es edi] [ds esi]  \
     value [eax];
 
 #pragma aux RdosDeleteFile = \
     CallGate_delete_file  \
     CarryToBool \
-    parm [edi]  \
+    parm [es edi]  \
     value [eax];
 
 #pragma aux RdosGetFileAttribute = \
     CallGate_get_file_attribute  \
     "movzx ecx,cx"  \
-    "mov [eax],ecx" \
+    "mov fs:[eax],ecx" \
     CarryToBool \
-    parm [edi] [eax]  \
+    parm [es edi] [fs eax]  \
     value [eax] \
     modify [ecx];
 
 #pragma aux RdosSetFileAttribute = \
     CallGate_set_file_attribute  \
     CarryToBool \
-    parm [edi] [ecx] \
+    parm [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosOpenDir = \
     CallGate_open_dir  \
     ValidateHandle \
-    parm [edi]  \
+    parm [es edi]  \
     value [ebx];
 
 #pragma aux RdosCloseDir = \
@@ -3185,41 +3355,38 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 // ReadDir here
 
-#pragma aux RdosDefineFaultSave = \
-    CallGate_define_fault_save  \
-    parm [eax] [edx] [ecx];
-
-#pragma aux RdosClearFaultSave = \
-    CallGate_clear_fault_save;
-
-#pragma aux RdosGetFaultThreadState = \
-    CallGate_get_fault_thread_state  \
+#pragma aux RdosGetImageHeader = \
+    CallGate_get_image_header  \
     CarryToBool \
-    parm [eax] [edi] \
+    parm [eax] [edx] [es edi] \
     value [eax];
 
-#pragma aux RdosGetFaultThreadTss = \
-    CallGate_get_fault_thread_tss  \
+#pragma aux RdosGetImageData = \
+    CallGate_get_image_data  \
     CarryToBool \
-    parm [eax] [edi] \
+    parm [eax] [edx] [es edi] \
     value [eax];
 
-#pragma aux RdosGetThreadState = \
-    CallGate_get_thread_state  \
+#pragma aux RdosGetDeviceInfo = \
+    "push edx" \
+    CallGate_get_device_info  \
+    "mov [ecx],eax" \
     CarryToBool \
-    parm [eax] [edi] \
+    "mov gs:[esi],edx" \
+    "pop edx" \
+    "mov fs:[edx],bx" \
+    parm [ebx] [es edi] [ds ecx] [fs edx] [gs esi] \
+    modify [ebx edx] \
     value [eax];
 
-#pragma aux RdosSuspendThread = \
-    CallGate_suspend_thread  \
+#pragma aux RdosGetSelectorInfo = \
+    CallGate_get_selector_info  \
+    "mov fs:[esi],ecx" \
+    "movzx eax,al" \
+    "mov es:[edi],eax" \
     CarryToBool \
-    parm [eax] \
-    value [eax];
-
-#pragma aux RdosSuspendAndSignalThread = \
-    CallGate_suspend_and_signal_thread  \
-    CarryToBool \
-    parm [eax] \
+    parm [bx] [fs esi] [es edi] \
+    modify [ecx] \
     value [eax];
 
 #pragma aux RdosCpuReset = \
@@ -3227,26 +3394,27 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosPowerFailure = \
     CallGate_power_failure \
-    value [ax];
-
-#pragma aux RdosGetCpuVersion = \
-    CallGate_get_cpu_version  \
-    "movzx  eax,al" \
-    "mov [esi],edx" \
-    "mov [ecx],ebx" \
-    parm [edi] [esi] [ecx] \
+    "movzx eax,ax"  \
     value [eax];
 
 #pragma aux RdosGetVersion = \
     CallGate_get_version  \
     "movzx edx,dx"  \
-    "mov [ebx],edx" \
+    "mov gs:[ebx],edx" \
     "movzx  eax,ax" \
-    "mov [esi],eax" \
+    "mov fs:[esi],eax" \
     "movzx ecx,cx"  \
-    "mov [edi],ecx" \
-    parm [ebx] [esi] [edi]  \
+    "mov es:[edi],ecx" \
+    parm [gs ebx] [fs esi] [es edi]  \
     modify [eax ecx edx];
+
+#pragma aux RdosGetCpuVersion = \
+    CallGate_get_cpu_version  \
+    "movzx  eax,al" \
+    "mov fs:[esi],edx" \
+    "mov gs:[ecx],ebx" \
+    parm [es edi] [fs esi] [gs ecx] \
+    value [eax];
 
 #pragma aux RdosTerminateThread = \
     CallGate_terminate_thread;
@@ -3254,40 +3422,6 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGetThreadHandle = \
     CallGate_get_thread \
     "movzx eax,ax"  \
-    value [eax];
-
-#pragma aux RdosExec = \
-    CallGate_load_exe  \
-    CallGate_get_exit_code  \
-    "movzx eax,ax"  \
-    parm [esi] [edi] [ebx] \
-    value [eax];
-
-#pragma aux RdosFork = \
-    CallGate_fork  \
-    "movsx eax,ax"  \
-    parm [esi] [edi] \
-    value [eax];
-
-#pragma aux RdosUnloadExe = \
-    CallGate_unload_exe  \
-    parm [eax];
-
-#pragma aux RdosFreeProcessHandle = \
-    CallGate_free_proc_handle  \
-    parm [bx];
-
-#pragma aux RdosAddWaitForProcessEnd = \
-    CallGate_add_wait_for_proc_end  \
-    parm [bx] [ax] [ecx];
-
-#pragma aux RdosGetProcessExitCode = \
-    CallGate_get_proc_exit_code  \
-    parm [bx]  \
-    value [ax];
-
-#pragma aux RdosShowExceptionText = \
-    CallGate_show_exception_text  \
     value [eax];
 
 #pragma aux RdosWaitMilli = \
@@ -3304,16 +3438,16 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetSysTime = \
     CallGate_get_system_time  \
-    "mov [esi],edx" \
-    "mov [edi],eax" \
-    parm [esi] [edi] \
+    "mov fs:[esi],edx" \
+    "mov es:[edi],eax" \
+    parm [fs esi] [es edi] \
     modify [eax edx];
 
 #pragma aux RdosGetTime = \
     CallGate_get_time  \
-    "mov [esi],edx" \
-    "mov [edi],eax" \
-    parm [esi] [edi] \
+    "mov fs:[esi],edx" \
+    "mov es:[edi],eax" \
+    parm [fs esi] [es edi] \
     modify [eax edx];
 
 #pragma aux RdosSetTime = \
@@ -3381,9 +3515,9 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_time_to_binary  \
     "pop ecx" \
     "pop ebx" \
-    "mov [ebx],edx" \
-    "mov [ecx],eax" \
-    parm [si] [di] [ebx] [ecx] \
+    "mov fs:[ebx],edx" \
+    "mov es:[ecx],eax" \
+    parm [si] [di] [fs ebx] [es ecx] \
     modify [eax edx];
 
 #pragma aux RdosTicsToDosTimeDate = \
@@ -3400,9 +3534,9 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "shl bl,2" \
     "shl bx,3" \
     "or bl,al" \
-    "mov [esi],dx" \
-    "mov [edi],bx" \
-    parm [edx] [eax] [esi] [edi] \
+    "mov fs:[esi],dx" \
+    "mov es:[edi],bx" \
+    parm [edx] [eax] [fs esi] [es edi] \
     modify [eax ebx ecx edx];
 
 #pragma aux RdosDecodeMsbTics = \
@@ -3411,32 +3545,32 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "xor eax,eax" \
     CallGate_binary_to_time  \
     "movzx eax,bh" \
-    "mov [edi],eax" \
+    "mov es:[edi],eax" \
     "movzx eax,cl" \
     "mov [esi],eax" \
     "movzx eax,ch" \
     "pop ecx" \
     "pop ebx" \
-    "mov [ecx],eax" \
+    "mov gs:[ecx],eax" \
     "movzx eax,dx" \
-    "mov [ebx],eax" \
-    parm [edx] [ebx] [ecx] [esi] [edi] \
+    "mov fs:[ebx],eax" \
+    parm [edx] [fs ebx] [gs ecx] [ds esi] [es edi] \
     modify [eax edx];
 
 #pragma aux RdosDecodeLsbTics = \
     "mov edx,60" \
     "mul edx" \
-    "mov [ebx],edx" \
+    "mov fs:[ebx],edx" \
     "mov edx,60" \
     "mul edx" \
-    "mov [ecx],edx" \
+    "mov gs:[ecx],edx" \
     "mov edx,1000" \
     "mul edx" \
     "mov [esi],edx" \
     "mov edx,1000" \
     "mul edx" \
-    "mov [edi],edx" \
-    parm [eax] [ebx] [ecx] [esi] [edi] \
+    "mov es:[edi],edx" \
+    parm [eax] [fs ebx] [gs ecx] [ds esi] [es edi] \
     modify [eax edx];
 
 #pragma aux RdosCodeMsbTics = \
@@ -3471,9 +3605,9 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     modify [ebx ecx edx];
 
 #pragma aux RdosAddTics = \
-    "add [esi],eax" \
-    "adc [edi],0"  \
-    parm [edi] [esi] [eax];
+    "add fs:[esi],eax" \
+    "adc es:[edi],0"  \
+    parm [es edi] [fs esi] [eax];
 
 #pragma aux RdosAddMicro = \
     "mov edx,1193"  \
@@ -3481,44 +3615,44 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "xor edx,edx" \
     "mov ebx,1000" \
     "idiv ebx" \
-    "add [esi],eax" \
-    "adc dword ptr [edi],0"  \
-    parm [edi] [esi] [eax] \
+    "add fs:[esi],eax" \
+    "adc dword ptr es:[edi],0"  \
+    parm [es edi] [fs esi] [eax] \
     modify [eax ebx edx];
 
 #pragma aux RdosAddMilli = \
     "mov edx,1193"  \
     "imul edx"  \
-    "add [esi],eax" \
-    "adc [edi],edx"  \
-    parm [edi] [esi] [eax] \
+    "add fs:[esi],eax" \
+    "adc es:[edi],edx"  \
+    parm [es edi] [fs esi] [eax] \
     modify [eax edx];
 
 #pragma aux RdosAddSec = \
     "mov edx,1193046"  \
     "imul edx"  \
-    "add [esi],eax" \
-    "adc [edi],edx"  \
-    parm [edi] [esi] [eax] \
+    "add fs:[esi],eax" \
+    "adc es:[edi],edx"  \
+    parm [es edi] [fs esi] [eax] \
     modify [eax edx];
 
 #pragma aux RdosAddMin = \
     "mov edx,1193046*60"  \
     "imul edx"  \
-    "add [esi],eax" \
-    "adc [edi],edx"  \
-    parm [edi] [esi] [eax] \
+    "add fs:[esi],eax" \
+    "adc es:[edi],edx"  \
+    parm [es edi] [fs esi] [eax] \
     modify [eax edx];
 
 #pragma aux RdosAddHour = \
-    "add [edi],eax"  \
-        parm [edi] [esi] [eax];
+    "add es:[edi],eax"  \
+     parm [es edi] [fs esi] [eax];
 
 #pragma aux RdosAddDay = \
     "mov edx,24"  \
     "imul edx"  \
-    "add [edi],eax"  \
-    parm [edi] [esi] [eax] \
+    "add es:[edi],eax"  \
+    parm [es edi] [fs esi] [eax] \
     modify [eax edx];
 
 #pragma aux RdosSyncTime = \
@@ -3569,7 +3703,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosWaitForever = \
     CallGate_wait_no_timeout  \
-    ValidateCx \
+    ValidateEcx \
     parm [ebx] \
     value [ecx]
 
@@ -3584,14 +3718,14 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "pop ecx"   \
     "adc edx,ecx"   \
     CallGate_wait_timeout  \
-    ValidateCx \
+    ValidateEcx \
     parm [ebx] [eax] \
     value [ecx] \
     modify [eax edx];
 
 #pragma aux RdosWaitUntilTimeout = \
     CallGate_wait_timeout  \
-    ValidateCx \
+    ValidateEcx \
     parm [ebx] [edx] [eax] \
     value [ecx];
 
@@ -3656,12 +3790,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosNameToIp = \
     CallGate_name_to_ip  \
-    parm [edi] \
+    parm [es edi] \
     value [edx];
 
 #pragma aux RdosIpToName = \
     CallGate_ip_to_name  \
-    parm [edx] [edi] [ecx] \
+    parm [edx] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosCreateTcpListen = \
@@ -3725,34 +3859,40 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [ebx] \
     value [eax];
 
+#pragma aux RdosIsTcpConnectionIdle = \
+    CallGate_is_tcp_connection_idle  \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
 #pragma aux RdosGetRemoteTcpConnectionIP = \
     CallGate_get_remote_tcp_connection_ip  \
-    ValidateAx \
+    ValidateEax \
     parm [ebx] \
     value [eax];
 
 #pragma aux RdosGetRemoteTcpConnectionPort = \
     CallGate_get_remote_tcp_connection_port  \
     "movzx eax,ax"\
-    ValidateAx \
+    ValidateEax \
     parm [ebx] \
     value [eax];
 
 #pragma aux RdosGetLocalTcpConnectionPort = \
     CallGate_get_local_tcp_connection_port  \
     "movzx eax,ax"\
-    ValidateAx \
+    ValidateEax \
     parm [ebx] \
     value [eax];
 
 #pragma aux RdosReadTcpConnection = \
     CallGate_read_tcp_connection  \
-    parm [ebx] [edi] [ecx] \
+    parm [ebx] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosWriteTcpConnection = \
     CallGate_write_tcp_connection  \
-    parm [ebx] [edi] [ecx] \
+    parm [ebx] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosPollTcpConnection = \
@@ -3763,13 +3903,13 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGetLocalMailslot = \
     CallGate_get_local_mailslot  \
     ValidateHandle \
-    parm [edi] \
+    parm [es edi] \
     value [ebx];
 
 #pragma aux RdosGetRemoteMailslot = \
     CallGate_get_remote_mailslot  \
     ValidateHandle \
-    parm [edx] [edi] \
+    parm [edx] [es edi] \
     value [ebx];
 
 #pragma aux RdosFreeMailslot = \
@@ -3778,22 +3918,22 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosSendMailslot = \
     CallGate_send_mailslot  \
-    ValidateCx \
-    parm [ebx] [esi] [ecx] [edi] [eax] \
+    ValidateEcx \
+    parm [ebx] [ds esi] [ecx] [es edi] [eax] \
     value [ecx];
 
 #pragma aux RdosDefineMailslot = \
     CallGate_define_mailslot  \
-    parm [edi] [ecx];
+    parm [es edi] [ecx];
 
 #pragma aux RdosReceiveMailslot = \
     CallGate_receive_mailslot  \
-    parm [edi] \
+    parm [es edi] \
     value [ecx];
 
 #pragma aux RdosReplyMailslot = \
     CallGate_reply_mailslot  \
-    parm [edi] [ecx];
+    parm [es edi] [ecx];
 
 #pragma aux RdosSetFocus = \
     CallGate_set_focus  \
@@ -3801,7 +3941,16 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetFocus = \
     CallGate_get_focus  \
-    value [al];
+
+#pragma aux RdosSetKeyMap = \
+    CallGate_set_key_layout \
+    CarryToBool \
+    parm [es edi] \
+    value [eax];
+
+#pragma aux RdosGetKeyMap = \
+    CallGate_get_key_layout \
+    parm [es edi];
 
 #pragma aux RdosClearKeyboard = \
     CallGate_flush_keyboard;
@@ -3831,16 +3980,16 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "push ecx" \
     CallGate_peek_key_event  \
     "movzx eax,ax" \
-    "mov [ebx],eax" \
+    "mov fs:[ebx],eax" \
     "movzx eax,cx" \
     "pop ecx" \
-    "mov [ecx],eax" \
+    "mov gs:[ecx],eax" \
     "movzx eax,dl" \
     "mov [esi],eax" \
     "movzx eax,dh" \
-    "mov [edi],eax" \
+    "mov es:[edi],eax" \
     CarryToBool \
-    parm [ebx] [ecx] [esi] [edi] \
+    parm [fs ebx] [gs ecx] [ds esi] [es edi] \
     value [eax] \
     modify [dx];
 
@@ -3848,16 +3997,16 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "push ecx" \
     CallGate_read_key_event  \
     "movzx eax,ax" \
-    "mov [ebx],eax" \
+    "mov fs:[ebx],eax" \
     "movzx eax,cx" \
     "pop ecx" \
-    "mov [ecx],eax" \
+    "mov gs:[ecx],eax" \
     "movzx eax,dl" \
     "mov [esi],eax" \
     "movzx eax,dh" \
-    "mov [edi],eax" \
+    "mov es:[edi],eax" \
     CarryToBool \
-    parm [ebx] [ecx] [esi] [edi] \
+    parm [fs ebx] [gs ecx] [ds esi] [es edi] \
     value [eax] \
     modify [dx];
 
@@ -3870,10 +4019,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGetMousePosition = \
     CallGate_get_mouse_position \
     "movzx ecx,cx" \
-    "mov [esi],ecx" \
+    "mov fs:[esi],ecx" \
     "movzx edx,dx" \
-    "mov [edi],edx" \
-    parm [esi] [edi] \
+    "mov es:[edi],edx" \
+    parm [fs esi] [es edi] \
     modify [ecx edx];
 
 #pragma aux RdosSetMousePosition = \
@@ -3901,46 +4050,46 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGetLeftButtonPressPosition = \
     CallGate_get_left_button_press_position \
     "movzx ecx,cx" \
-    "mov [esi],ecx" \
+    "mov fs:[esi],ecx" \
     "movzx edx,dx" \
-    "mov [edi],edx" \
-    parm [esi] [edi] \
+    "mov es:[edi],edx" \
+    parm [fs esi] [es edi] \
     modify [ecx edx];
 
 #pragma aux RdosGetRightButtonPressPosition = \
     CallGate_get_right_button_press_position \
     "movzx ecx,cx" \
-    "mov [esi],ecx" \
+    "mov fs:[esi],ecx" \
     "movzx edx,dx" \
-    "mov [edi],edx" \
-    parm [esi] [edi] \
+    "mov es:[edi],edx" \
+    parm [fs esi] [es edi] \
     modify [ecx edx];
 
 #pragma aux RdosGetLeftButtonReleasePosition = \
     CallGate_get_left_button_release_position \
     "movzx ecx,cx" \
-    "mov [esi],ecx" \
+    "mov fs:[esi],ecx" \
     "movzx edx,dx" \
-    "mov [edi],edx" \
-    parm [esi] [edi] \
+    "mov es:[edi],edx" \
+    parm [fs esi] [es edi] \
     modify [ecx edx];
 
 #pragma aux RdosGetRightButtonReleasePosition = \
     CallGate_get_right_button_release_position \
     "movzx ecx,cx" \
-    "mov [esi],ecx" \
+    "mov fs:[esi],ecx" \
     "movzx edx,dx" \
-    "mov [edi],edx" \
-    parm [esi] [edi] \
+    "mov es:[edi],edx" \
+    parm [fs esi] [es edi] \
     modify [ecx edx];
 
 #pragma aux RdosGetCursorPosition = \
     CallGate_get_cursor_position \
     "movzx ecx,cx" \
-    "mov [esi],ecx" \
+    "mov fs:[esi],ecx" \
     "movzx edx,dx" \
-    "mov [edi],edx" \
-    parm [edi] [esi] \
+    "mov es:[edi],edx" \
+    parm [es edi] [fs esi] \
     modify [ecx edx];
 
 #pragma aux RdosSetCursorPosition = \
@@ -3953,15 +4102,15 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosWriteSizeString = \
     CallGate_write_size_string \
-    parm [edi] [ecx];
+    parm [es edi] [ecx];
 
 #pragma aux RdosWriteString = \
     CallGate_write_asciiz  \
-    parm [edi];
+    parm [es edi];
 
 #pragma aux RdosReadLine = \
     CallGate_read_con  \
-    parm [edi] [ecx] \
+    parm [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosPing = \
@@ -3996,30 +4145,30 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_get_disc_info  \
     "pop ebx" \
     "movzx ecx,cx" \
-    "mov [ebx],ecx" \
+    "mov fs:[ebx],ecx" \
     "pop ebx" \
-    "mov [ebx],edx" \
+    "mov gs:[ebx],edx" \
     "pop ebx" \
     "movzx esi,si" \
-    "mov [ebx],esi" \
+    "mov ds:[ebx],esi" \
     "pop ebx" \
     "movzx edi,di" \
-    "mov [ebx],edi" \
+    "mov es:[ebx],edi" \
     CarryToBool \
-    parm [eax] [ecx] [edx] [esi] [edi] \
+    parm [eax] [fs ecx] [gs edx] [ds esi] [es edi] \
     value [eax] \
     modify [ebx ecx edx esi edi];
 
 #pragma aux RdosReadDisc = \
     CallGate_read_disc  \
     CarryToBool \
-    parm [eax] [edx] [edi] [ecx] \
+    parm [eax] [edx] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosWriteDisc = \
     CallGate_write_disc  \
     CarryToBool \
-    parm [eax] [edx] [edi] [ecx] \
+    parm [eax] [edx] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosGetRdfsInfo = \
@@ -4028,7 +4177,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov gs,ax" \
     CallGate_get_rdfs_info  \
     "pop gs" \
-    parm [esi] [edi] [ebx] \
+    parm [ds esi] [es edi] [gs ebx] \
     modify [ax];
 
 #pragma aux RdosDemandLoadDrive = \
@@ -4038,7 +4187,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosFormatDrive = \
     CallGate_format_drive  \
     ValidateDisc \
-    parm [eax] [edx] [ecx] [edi] \
+    parm [eax] [edx] [ecx] [es edi] \
     value [eax];
 
 #pragma aux RdosAllocateFixedDrive = \
@@ -4059,36 +4208,36 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetDriveInfo = \
     CallGate_get_drive_info  \
-    "mov [ebx],eax" \
+    "mov gs:[ebx],eax" \
     "movzx ecx,cx" \
-    "mov [esi],ecx" \
-    "mov [edi],edx" \
+    "mov fs:[esi],ecx" \
+    "mov es:[edi],edx" \
     CarryToBool \
-    parm [eax] [ebx] [esi] [edi] \
+    parm [eax] [gs ebx] [fs esi] [es edi] \
     value [eax] \
     modify [ecx edx];
 
 #pragma aux RdosGetDriveDiscParam = \
     CallGate_get_drive_disc_param  \
     "movzx eax,al" \
-    "mov [ebx],eax" \
-    "mov [esi],edx" \
-    "mov [edi],ecx" \
+    "mov gs:[ebx],eax" \
+    "mov fs:[esi],edx" \
+    "mov es:[edi],ecx" \
     CarryToBool \
-    parm [eax] [ebx] [esi] [edi] \
+    parm [eax] [gs ebx] [fs esi] [es edi] \
     value [eax] \
     modify [ecx edx];
 
 #pragma aux RdosCreateFileDrive = \
     CallGate_create_file_drive  \
     CarryToBool \
-    parm [eax] [ecx] [esi] [edi] \
+    parm [eax] [ecx] [ds esi] [es edi] \
     value [eax];
 
 #pragma aux RdosOpenFileDrive = \
     CallGate_open_file_drive  \
     CarryToBool \
-    parm [eax] [edi] \
+    parm [eax] [es edi] \
     value [eax];
 
 #pragma aux RdosCreateCrc = \
@@ -4103,81 +4252,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosCalcCrc = \
     CallGate_calc_crc  \
-    parm [ebx] [ax] [edi] [ecx] \
+    parm [ebx] [ax] [es edi] [ecx] \
     value [ax];
-
-#pragma aux RdosGetModuleHandle = \
-    "mov eax,fs:[0x24]" \
-    value [eax];
-
-#pragma aux RdosGetExeName = \
-    CallGate_get_exe_name  \
-    ValidateDi \
-    value [edi];
-
-#pragma aux RdosGetCmdLine = \
-    CallGate_get_cmd_line  \
-    ValidateDi \
-    value [edi];
-
-#pragma aux RdosGetOptions = \
-    CallGate_get_options  \
-    ValidateDi \
-    value [edi];
-
-#pragma aux RdosLoadDll = \
-    CallGate_load_dll  \
-    ValidateHandle \
-    parm [edi] \
-    value [ebx];
-
-#pragma aux RdosFreeDll = \
-    CallGate_free_dll  \
-    parm [ebx];
-
-#pragma aux RdosGetModuleName = \
-    CallGate_get_module_name  \
-    ValidateAx \
-    parm [ebx] [edi] [ecx] \
-    value [eax];
-
-// ReadResource here
-// ReadBinaryResource here
-
-#pragma aux RdosGetModuleProc = \
-    CallGate_get_module_proc  \
-    ValidateSi \
-    parm [ebx] [edi] \
-    value [esi];
-
-#pragma aux RdosGetModuleFocusKey = \
-    CallGate_get_module_focus_key  \
-    parm [ebx] \
-    value [al];
-
-#pragma aux RdosAddWaitForDebugEvent = \
-    CallGate_add_wait_for_debug_event  \
-    parm [ebx] [eax] [ecx];
-
-#pragma aux RdosGetDebugEvent = \
-    CallGate_get_debug_event  \
-    "movzx eax,ax" \
-    "mov [esi],eax" \
-    parm [ebx] [esi] \
-    value [bl] \
-    modify [eax];
-
-#pragma aux RdosGetDebugEventData = \
-    CallGate_get_debug_event_data  \
-    parm [ebx] [edi];
-
-#pragma aux RdosClearDebugEvent = \
-    CallGate_clear_debug_event  \
-    parm [ebx];
-
-#pragma aux RdosContinueDebugEvent = \
-    CallGate_continue_debug_event  \
-    parm [ebx] [eax];
 
 #pragma aux RdosOpenAdc = \
     CallGate_open_adc  \
@@ -4202,9 +4278,9 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov dh,cl" \
     CallGate_read_serial_lines  \
     "movzx eax,al" \
-    "mov [esi],eax" \
+    "mov fs:[esi],eax" \
     CarryToBool \
-    parm [ecx] [esi] \
+    parm [ecx] [fs esi] \
     value [eax] \
     modify [dh];
 
@@ -4221,10 +4297,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_read_serial_val  \
     "pushf" \
     "shl eax,8" \
-    "mov [esi],eax" \
+    "mov fs:[esi],eax" \
     "popf" \
     CarryToBool \
-    parm [ecx] [edx] [esi] \
+    parm [ecx] [edx] [fs esi] \
     value [eax] \
     modify [dh];
 
@@ -4240,9 +4316,9 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosReadSerialRaw = \
     "mov dh,cl" \
     CallGate_read_serial_val  \
-    "mov [esi],eax" \
+    "mov fs:[esi],eax" \
     CarryToBool \
-    parm [ecx] [edx] [esi] \
+    parm [ecx] [edx] [fs esi] \
     value [eax] \
     modify [dh];
 
@@ -4270,16 +4346,16 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosAddEnvVar = \
     CallGate_add_env_var \
-    parm [ebx] [esi] [edi];
+    parm [ebx] [ds esi] [es edi];
 
 #pragma aux RdosDeleteEnvVar = \
     CallGate_delete_env_var \
-    parm [ebx] [esi];
+    parm [ebx] [ds esi];
 
 #pragma aux RdosFindEnvVar = \
     CallGate_find_env_var \
     CarryToBool \
-    parm [ebx] [esi] [edi] \
+    parm [ebx] [ds esi] [es edi] \
     value [eax];
 
 #pragma aux RdosGetEnvSize = \
@@ -4291,12 +4367,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "xor ax,ax" \
     "mov es:[edi],ax" \
     CallGate_get_env_data \
-    parm [ebx] [edi] \
+    parm [ebx] [es edi] \
     modify [ax];
 
 #pragma aux RdosSetEnvData = \
     CallGate_set_env_data \
-    parm [ebx] [edi];
+    parm [ebx] [es edi];
 
 #pragma aux RdosOpenSysIni = \
     CallGate_open_sys_ini \
@@ -4306,7 +4382,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosOpenIni = \
     CallGate_open_ini \
     ValidateHandle \
-    parm [edi] \
+    parm [es edi] \
     value [ebx];
 
 #pragma aux RdosCloseIni = \
@@ -4316,7 +4392,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosGotoIniSection = \
     CallGate_goto_ini_section \
     CarryToBool \
-    parm [ebx] [edi] \
+    parm [ebx] [es edi] \
     value [eax];
 
 #pragma aux RdosRemoveIniSection = \
@@ -4328,19 +4404,19 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosReadIni = \
     CallGate_read_ini \
     CarryToBool \
-    parm [ebx] [esi] [edi] [ecx] \
+    parm [ebx] [ds esi] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosWriteIni = \
     CallGate_write_ini \
     CarryToBool \
-    parm [ebx] [esi] [edi] \
+    parm [ebx] [ds esi] [es edi] \
     value [eax];
 
 #pragma aux RdosDeleteIni = \
     CallGate_delete_ini \
     CarryToBool \
-    parm [ebx] [esi] \
+    parm [ebx] [es esi] \
     value [eax];
 
 #pragma aux RdosEnableStatusLED = \
@@ -4368,12 +4444,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetUsbDevice = \
     CallGate_get_usb_device \
-    parm [ebx] [eax] [edi] [ecx] \
+    parm [ebx] [eax] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosGetUsbConfig = \
     CallGate_get_usb_config \
-    parm [ebx] [eax] [edx] [edi] [ecx] \
+    parm [ebx] [eax] [edx] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosOpenUsbPipe = \
@@ -4400,21 +4476,21 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosWriteUsbControl = \
     CallGate_write_usb_control \
-    parm [ebx] [edi] [ecx];
+    parm [ebx] [es edi] [ecx];
 
 #pragma aux RdosReqUsbData = \
     CallGate_req_usb_data \
-    parm [ebx] [ecx];
+    parm [ebx] [es edi] [ecx];
 
-#pragma aux RdosGetUsbData = \
-    CallGate_get_usb_data \
+#pragma aux RdosGetUsbDataSize = \
+    CallGate_get_usb_data_size \
     "movzx eax,ax" \
-    parm [ebx] [edi] [ecx] \
+    parm [ebx] \
     value [eax];
 
 #pragma aux RdosWriteUsbData = \
     CallGate_write_usb_data \
-    parm [ebx] [edi] [ecx];
+    parm [ebx] [es edi] [ecx];
 
 #pragma aux RdosReqUsbStatus = \
     CallGate_req_usb_status \
@@ -4424,9 +4500,14 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_write_usb_status \
     parm [ebx];
 
-#pragma aux RdosIsUsbPipeIdle = \
-    CallGate_is_usb_pipe_idle \
-    "cmc" \
+#pragma aux RdosIsUsbTransactionDone = \
+    CallGate_is_usb_trans_done \
+    CarryToBool \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosWasUsbTransactionOk = \
+    CallGate_was_usb_trans_ok \
     CarryToBool \
     parm [ebx] \
     value [eax];
@@ -4455,45 +4536,123 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosReadICSPData = \
     CallGate_read_icsp_data \
-    "mov [edi],eax" \
+    "mov es:[edi],eax" \
     CarryToBool \
-    parm [ebx] [edi] \
+    parm [ebx] [es edi] \
     value [eax];
+
+#pragma aux RdosSetCodecGpio0 = \
+    CallGate_set_codec_gpio0 \
+    parm [eax] \
+    modify [eax];
 
 #pragma aux RdosGetMasterVolume = \
     CallGate_get_master_volume \
-    "movzx ebx,al" \
-    "mov [esi],ebx" \
-    "movzx ebx,ah" \
-    "mov [edi],ebx" \    
-    parm [esi] [edi] \
-    modify [eax ebx];
+    "mov cx,ax" \
+    "mov dl,0x7F" \
+    "sub dl,al" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov fs:[esi],eax" \    
+    "mov dl,0x7F" \
+    "sub dl,ch" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov es:[edi],eax" \    
+    parm [fs esi] [es edi] \
+    modify [eax cx edx];
 
 #pragma aux RdosSetMasterVolume = \
-    "mov ah,dl" \
+    "mov ecx,edx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bl,0x7F" \
+    "sub bl,al" \
+    "adc bl,0" \
+    "mov eax,ecx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bh,0x7F" \
+    "sub bh,al" \
+    "adc bh,0" \
+    "mov ax,bx" \
     CallGate_set_master_volume \
     parm [eax] [edx] \
-    modify [eax];
+    modify [eax ebx ecx edx esi];
 
 #pragma aux RdosGetLineOutVolume = \
     CallGate_get_line_out_volume \
-    "movzx ebx,al" \
-    "mov [esi],ebx" \
-    "movzx ebx,ah" \
-    "mov [edi],ebx" \    
-    parm [esi] [edi] \
-    modify [eax ebx];
+    "mov cx,ax" \
+    "mov dl,0x7F" \
+    "sub dl,al" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov fs:[esi],eax" \    
+    "mov dl,0x7F" \
+    "sub dl,ch" \
+    "movsx edx,dl" \ 
+    "mov eax,200" \
+    "imul edx" \
+    "sar eax,8" \
+    "mov es:[edi],eax" \    
+    parm [fs esi] [es edi] \
+    modify [eax cx edx];
 
 #pragma aux RdosSetLineOutVolume = \
-    "mov ah,dl" \
+    "mov ecx,edx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bl,0x7F" \
+    "sub bl,al" \
+    "adc bl,0" \
+    "mov eax,ecx" \
+    "mov esi,eax" \
+    "xor edx,edx" \
+    "shl eax,8" \
+    "sbb edx,0" \
+    "mov esi,200" \
+    "idiv esi" \
+    "mov bh,0x7F" \
+    "sub bh,al" \
+    "adc bh,0" \
+    "mov ax,bx" \
     CallGate_set_line_out_volume \
     parm [eax] [edx] \
-    modify [eax];
+    modify [eax ebx ecx edx esi];
 
 #pragma aux RdosCreateAudioOutChannel = \
+    "push eax" \
+    "mov eax,edx" \
+    "shl eax,16" \
+    "xor edx,edx" \
+    "mov ebx,100" \
+    "div ebx" \
+    "sub eax,1" \
+    "adc eax,0" \
+    "mov dx,ax" \
+    "pop eax" \
     CallGate_create_audio_out_channel \
     ValidateHandle \
     parm [eax] [ecx] [edx] \
+    modify [ebx] \
     value [ebx];
 
 #pragma aux RdosCloseAudioOutChannel = \
@@ -4502,7 +4661,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosWriteAudio = \
     CallGate_write_audio \
-    parm [ebx] [ecx] [esi] [edi];
+    parm [ebx] [ecx] [ds esi] [es edi];
 
 #pragma aux RdosOpenFm = \
     CallGate_open_fm \
@@ -4543,6 +4702,37 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosPlayFmNote = \
     CallGate_play_fm_note \
     parm [ebx] [8087] [eax] [edx] [ecx];
+
+#else
+ 
+/* 16-bit compiler */
+
+// check carry flag, and set ax=0 if set and ax=1 if clear
+#define CarryToBool 0x73 4 0x33 0xC0 0xEB 3 0xB8 1 0
+
+// check carry flag, and set bx=0
+#define ValidateHandle 0x73 2 0x33 0xDB
+
+// check carry flag, and set ax=0 if set
+#define ValidateAx 0x73 2 0x33 0xC0
+
+// check carry flag, and set cx=0 if set
+#define ValidateCx 0x73 2 0x33 0xC9
+
+// check carry flag, and set dx=0 if set
+#define ValidateDx 0x73 2 0x33 0xD2
+
+// check carry flag, and set si=0 if set
+#define ValidateSi 0x73 2 0x33 0xF6
+
+// check carry flag, and set di=0 if set
+#define ValidateDi 0x73 2 0x33 0xFF
+
+// check disc id, set to -1 on carry
+#define ValidateDisc 0x73 2 0xB0 0xFF
+
+
+// removed as it is not up-to-date!!
 
 #endif
 
