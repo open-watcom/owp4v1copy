@@ -13,8 +13,10 @@ libname_register =3r
 libname_stack    =3s
 libname_386_ms =$(libname_$(convention))
 libname_386_mf =$(libname_$(convention))
+libname_386_mc =$(libname_$(convention))
 libname_387_ms =$(libname_$(convention))
 libname_387_mf =$(libname_$(convention))
+libname_387_mc =$(libname_$(convention))
 libname_ =
 
 !ifdef base_libname
