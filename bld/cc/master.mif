@@ -164,7 +164,7 @@ $(exe_name).exe : $(drv_objs) $(dll_name).lib $(exe_version_res_$(host_os)_$(hos
 
 !else
 
-$(exe_name).exe: $(depends_exe) exe.lnk
+$(exe_name).exe: $(depends_exe) exe.lnk $(exe_version_res_$(host_os)_$(host_cpu))
 !ifdef bootstrap
         $(cc) $(ldflags) -o $@ $(comp_objs_exe) $(xlibs) $(libs) $(cg_deps)
 !else ifeq host_os osi
