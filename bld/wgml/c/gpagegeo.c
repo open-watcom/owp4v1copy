@@ -51,6 +51,7 @@ void    init_page_geometry( void )
     uint32_t    page_depth_org;
     uint32_t    net_top_margin;
     uint32_t    net_y_start;
+    uint32_t    rm_test;
     uint32_t    top_margin;
     uint32_t    y_start_correction;
 #if 0                                   // activate for multi column TBD
@@ -78,16 +79,38 @@ void    init_page_geometry( void )
 
     lm = conv_hor_unit( &layout_work.page.left_margin )
          - bin_device->x_offset;        // left margin &syspagelm
+    if( lm < 0 ) {                      // wgml 4.0 limits value
+        lm = 0;
+    }
 
     rm = conv_hor_unit( &layout_work.page.right_margin )
          - bin_device->x_offset;        // right margin &syspagerm
 
-    g_page_left_org = max( lm + bin_device->x_offset, bin_device->x_start );
-    g_page_left = g_page_left_org;
-    g_cur_left = g_page_left;           // set initial value
+    rm_test = bin_device->horizontal_base_units / 4;
+    if( (bin_device->horizontal_base_units % 4) > 0 ) {
+        rm_test++;                          // round up if any remainder
+    }
+    if( rm < rm_test ) {                    // wgml 4.0 limits value
+        xx_err( err_right_margin_2_small ); // candidate Severe Error
+        g_suicide();                        // no recovery possible
+    }
 
-    g_page_right_org = min( rm + bin_device->x_offset, bin_device->page_width );
+    g_page_left_org = max( lm + bin_device->x_start, bin_device->x_start );
+    g_page_left = g_page_left_org;
+    g_cur_left = g_page_left;               // set initial value
+
+    g_page_right_org = min( rm + bin_device->x_start, bin_device->page_width );
     g_page_right = g_page_right_org;
+
+    if( g_page_right < bin_device->page_width ) {// output must appear on page
+        xx_err( err_margins_inverted );     // candidate Severe Error
+        g_suicide();                        // no recovery possible
+    }
+
+    if( g_page_left <= g_page_right ) {     // margins cannot be inverted
+        xx_err( err_margins_inverted );     // candidate Severe Error
+        g_suicide();                        // no recovery possible
+    }
 
     g_net_page_width = rm - lm;
     g_ll = g_net_page_width * CPI / bin_device->horizontal_base_units; // &sysll

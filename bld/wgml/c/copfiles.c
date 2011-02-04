@@ -278,9 +278,7 @@ static cop_device * get_cop_device( char const * in_name )
     /* Acquire the file, if it exists. */
 
     if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
-        out_msg( "The file for the device %s was not found\n", in_name );
-        err_count++;
-        g_suicide();
+        return( out_device );
     }
 
     /* Determine if the file encodes a :DEVICE block. */
@@ -353,9 +351,7 @@ static cop_driver * get_cop_driver( char const * in_name )
     /* Acquire the file, if it exists. */
 
     if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
-        out_msg( "The file for the driver %s was not found\n", in_name );
-        err_count++;
-        g_suicide();
+        return( out_driver );
     }
 
     /* Determine if the file encodes a :DRIVER block. */
@@ -428,9 +424,7 @@ static cop_font * get_cop_font( char const * in_name )
     /* Acquire the file, if it exists. */
 
     if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
-        out_msg( "The file for the font '%s' was not found\n", in_name );
-        err_count++;
-        g_suicide();
+        return( out_font );
     }
 
     /* Determine if the file encodes a :FONT block. */

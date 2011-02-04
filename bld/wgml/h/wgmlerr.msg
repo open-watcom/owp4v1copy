@@ -459,6 +459,8 @@ pick( ERR_DC_NOT_OFF,           "'OFF' is the only text value allowed",
 pick( ERR_INV_CW_SEP,           "Invalid control word separator",
                                 "Invalid control word separator" )
 
+/* BINCLUDE/GRAPHIC-specific error messages */
+
 pick( WNG_REC_TYPE_BINCLUDE,    "BINCLUDE tag treats all record types as '(t)'",
                                 "BINCLUDE tag treats all record types as '(t)'" )
 
@@ -471,11 +473,15 @@ pick( ERR_INV_DEPTH_GRAPHIC,    "The GRAPHIC depth must be greater than zero",
 pick( ERR_INV_WIDTH_GRAPHIC,    "The GRAPHIC width must be greater than zero",
                                 "The GRAPHIC width must be greater than zero" )
 
+/* Attribute/value parsing error messages */
+
 pick( ERR_INV_ATT_VAL,          "Invalid attribute value",
                                 "Invalid attribute value" )
 
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
+
+/* Document structure error messages */
 
 pick( ERR_DOC_SEC_EXPECTED_1,   "Expecting a FRONTM, BODY, APPENDIX or BACKM tag",
                                 "Expecting a FRONTM, BODY, APPENDIX or BACKM tag" )
@@ -486,10 +492,20 @@ pick( ERR_DOC_SEC_EXPECTED_2,   "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX 
 pick( ERR_EOF_EXPECTED,         "Expecting the end of the file",
                                 "Expecting the end of the file" )
 
+/* Page Geometry error messages. */
+
+pick( ERR_MARGINS_INVERTED,     "The right margin must be greater than the left margin",
+                                "The right margin must be greater than the left margin" )
+
 pick( ERR_PAGE_DEPTH_TOO_SMALL, "The page depth is too small when adjusted for the unprintable area of the device page",
                                 "The page depth is too small when adjusted for the unprintable area of the device page" )
 
 pick( ERR_PAGE_DEPTH_TOO_BIG,   "The page depth is larger than the printable area of the device page",
                                 "The page depth is larger than the printable area of the device page" )
 
+pick( ERR_RIGHT_MARGIN_TOO_BIG, "The layout right margin is greater than the device page width",
+                                "The layout right margin is greater than the device page width" )
+
+pick( ERR_RIGHT_MARGIN_2_SMALL, "The right margin is too small when adjusted for the uprintable area of the device page",
+                                "The right margin is too small when adjusted for the uprintable area of the device page" )
 
