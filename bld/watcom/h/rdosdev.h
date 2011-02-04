@@ -25,6 +25,16 @@ extern "C" {
 // special user-mode gates
 
 #define UserGate_free_mem 0x9a 2 0 0 0 2 0
+#define UserGate_create_thread 0x9a 28 0 0 0 2 0
+
+// structures
+
+struct TKernelSection
+{
+    long value;
+    short int list;
+};
+
 
 // function definitions
 
@@ -76,6 +86,39 @@ void *RdosAllocateFixedProcessMem(int sel, long size);
 long RdosAllocatePhysical();
 long RdosAllocateMultiplePhysical(int pages);
 void RdosFreePhysical(long ads);
+
+long RdosGetApicId();
+int RdosGetProcessor();
+void RdosResumeProcessor(int processor);
+void RdosPreemptProcessor(int processor);
+void RdosSendNmi(int processor);
+
+void RdosLockScheduler();
+void RdosUnlockScheduler();
+
+void RdosInitKernelSection(struct TKernelSection *section);
+void RdosEnterKernelSection(struct TKernelSection *section);
+void RdosLeaveKernelSection(struct TKernelSection *section);
+
+void RdosClearSignal();
+void RdosSignal(int thread);
+void RdosWaitForSignal();
+void RdosWaitForSignalWithTimeout(long msb, long lsb);
+
+void RdosCreateKernelThread(
+            int prio, 
+            int stack, 
+            void __far (*dest)(void *parm), 
+            const char *name,
+            void *parm);
+
+void RdosCreateKernelProcess(
+            int prio, 
+            int stack, 
+            void __far (*dest)(void *parm), 
+            const char *name,
+            void *parm);
+
  
 /* 32-bit compact memory model (device-drivers) */
 
@@ -309,6 +352,113 @@ void RdosFreePhysical(long ads);
 #pragma aux RdosFreePhysical = \
     OsGate_allocate_physical  \
     parm [eax];
+
+#pragma aux RdosGetApicId = \
+    OsGate_get_apic_id  \
+    value [edx];
+
+#pragma aux RdosGetProcessor = \
+    "push fs" \
+    OsGate_get_processor  \
+    "mov eax,fs" \
+    "pop fs" \
+    value [eax];
+
+#pragma aux RdosResumeProcessor = \
+    "push fs" \
+    "mov fs,ax" \
+    OsGate_resume_processor  \
+    "pop fs" \
+    parm [eax];
+
+#pragma aux RdosPreemptProcessor = \
+    "push fs" \
+    "mov fs,ax" \
+    OsGate_preempt_processor  \
+    "pop fs" \
+    parm [eax];
+
+#pragma aux RdosSendNmi = \
+    "push fs" \
+    "mov fs,ax" \
+    OsGate_send_nmi  \
+    "pop fs" \
+    parm [eax];
+
+#pragma aux RdosLockScheduler = \
+    OsGate_lock_task; 
+
+#pragma aux RdosUnlockScheduler = \
+    OsGate_unlock_task; 
+
+#pragma aux RdosInitKernelSection = \
+    "mov dword ptr es:[edi],0" \
+    "mov word ptr es:[edi+4],0" \
+    parm [es edi]; 
+
+#pragma aux RdosEnterKernelSection = \
+    " lock sub dword ptr es:[edi],1" \
+    " jc short enter_done" \
+    " push ds" \
+    " push esi" \
+    " mov esi,es" \
+    " mov ds,esi" \
+    " mov esi,edi" \
+    " add esi,4" \
+    OsGate_enter_section \
+    " pop esi" \
+    " pop ds" \
+    "enter_done: " \
+    parm [es edi]; 
+
+#pragma aux RdosLeaveKernelSection = \
+    " lock add dword ptr es:[edi],1" \
+    " jc short leave_done" \
+    " push ds" \
+    " push esi" \
+    " mov esi,es" \
+    " mov ds,esi" \
+    " mov esi,edi" \
+    " add esi,4" \
+    OsGate_leave_section \
+    " pop esi" \
+    " pop ds" \
+    "leave_done: " \
+    parm [es edi]; 
+
+#pragma aux RdosClearSignal = \
+    OsGate_clear_signal; 
+
+#pragma aux RdosSignal = \
+    OsGate_signal \
+    parm [ebx]; 
+
+#pragma aux RdosWaitForSignal = \
+    OsGate_wait_for_signal; 
+
+#pragma aux RdosWaitForSignalWithTimeout = \
+    OsGate_wait_for_signal_timeout \
+    parm [edx] [eax]; 
+
+#pragma aux RdosCreateKernelThread = \
+    "push ds" \
+    "mov edx,fs" \
+    "mov ds,edx" \
+    "movzx eax,al" \
+    UserGate_create_thread \
+    "pop ds" \
+    parm [eax] [ecx] [fs esi] [es edi] [gs ebx] \
+    modify [edx];
+
+#pragma aux RdosCreateKernelProcess = \
+    "push ds" \
+    "mov edx,fs" \
+    "mov ds,edx" \
+    "movzx eax,al" \
+    OsGate_create_process \
+    "pop ds" \
+    parm [eax] [ecx] [fs esi] [es edi] [gs ebx] \
+    modify [edx];
 
 #ifdef __cplusplus
 }
