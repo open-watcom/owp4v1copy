@@ -102,12 +102,12 @@ void    init_page_geometry( void )
     g_page_right_org = min( rm + bin_device->x_start, bin_device->page_width );
     g_page_right = g_page_right_org;
 
-    if( g_page_right < bin_device->page_width ) {// output must appear on page
+    if( g_page_right > bin_device->page_width ) {// output must appear on page
         xx_err( err_margins_inverted );     // candidate Severe Error
         g_suicide();                        // no recovery possible
     }
 
-    if( g_page_left <= g_page_right ) {     // margins cannot be inverted
+    if( g_page_left >= g_page_right ) {     // margins cannot be inverted
         xx_err( err_margins_inverted );     // candidate Severe Error
         g_suicide();                        // no recovery possible
     }
