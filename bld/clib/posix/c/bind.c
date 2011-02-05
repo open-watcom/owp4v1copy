@@ -32,7 +32,7 @@
 #include <sys/socket.h>
 #include "linuxsys.h"
 
-_WCRTLINK int bind( int sockfd, struct sockaddr *my_addr, socklen_t addrlen )
+_WCRTLINK int bind( int sockfd, const struct sockaddr *my_addr, socklen_t addrlen )
 {
     unsigned long args[3];
     args[0] = (unsigned long)sockfd;
