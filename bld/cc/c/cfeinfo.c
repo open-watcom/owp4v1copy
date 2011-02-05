@@ -204,7 +204,11 @@ struct inline_funcs *IF_Lookup( char *name )
                 ifunc = ZP_Data_Functions;
             }
   #else
-            ifunc = SBigData_Functions;
+            if( TargetSwitches & FLOATING_DS ) {
+                ifunc = SBigData_Functions;
+            } else {
+                ifunc = SBigDataNoDs_Functions;
+            }
   #endif
         }
         while( ifunc->name ) {
@@ -232,7 +236,11 @@ struct inline_funcs *IF_Lookup( char *name )
             ifunc = DP_Data_Functions;
         }
   #else
-        ifunc = BigData_Functions;
+        if( TargetSwitches & FLOATING_DS ) {
+            ifunc = BigData_Functions;
+        } else {
+            ifunc = BigDataNoDs_Functions;
+        }
   #endif
     }
     while( ifunc->name ) {

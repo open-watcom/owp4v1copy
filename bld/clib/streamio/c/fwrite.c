@@ -46,10 +46,6 @@ _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )
 {
     size_t      count;
     unsigned    oflag;
-#ifdef __RDOSDEV__
-    char       *cbuf;
-    int         i;
-#endif
 
     _ValidFile( fp, 0 );
     _AccessFile( fp );
@@ -102,18 +98,9 @@ _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )
                 if( bytes > bytes_left ) {
                     bytes = bytes_left;
                 }
-#ifdef __RDOSDEV__
-                cbuf = (char *)buf;
-                for( i = 0; i < bytes; i++ ) {
-                    *fp->_ptr = *cbuf;
-                    cbuf++;
-                    fp->_ptr++;
-                }
-#else
                 memcpy( fp->_ptr, buf, bytes );
                 fp->_ptr += bytes;
                 fp->_cnt += bytes;
-#endif                
                 fp->_flag |= _DIRTY;
                 if( (fp->_cnt == fp->_bufsize) || (fp->_flag & _IONBF) ) {
                     __flush(fp);

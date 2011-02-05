@@ -53,7 +53,9 @@ global  struct  inline_funcs    DP_Data_Functions[];
 #else
 global  struct  inline_funcs    Flat_Functions[];
 global  struct  inline_funcs    BigData_Functions[];
+global  struct  inline_funcs    BigDataNoDs_Functions[];
 global  struct  inline_funcs    SBigData_Functions[];
+global  struct  inline_funcs    SBigDataNoDs_Functions[];
 #endif
 global  struct  inline_funcs    Common_Functions[];
 global  struct  inline_funcs    _8087_Functions[];

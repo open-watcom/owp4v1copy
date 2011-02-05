@@ -174,6 +174,12 @@ static hw_reg_set P_ESEDI_DSESI[]    = {
     HW_D( HW_EMPTY )
 };
 
+static hw_reg_set P_DXEDI_CL[]= {
+    HW_D_2( HW_DX, HW_EDI ),
+    HW_D( HW_CL ),
+    HW_D( HW_EMPTY )
+};
+
 static hw_reg_set P_DXEDI_CXESI_EAX[]= {
     HW_D_2( HW_DX, HW_EDI ),
     HW_D_2( HW_CX, HW_ESI ),
@@ -392,6 +398,15 @@ struct  inline_funcs SBigData_Functions[] = {
     { NULL }
 };
 
+struct  inline_funcs SBigDataNoDs_Functions[] = {
+    { "strcpy", &DP_strcpy, DP_strcpy_parms, DP_strcpy_ret, DP_strcpy_saves },
+    { "strcmp", &DP_strcmp, DP_strcmp_parms, DP_strcmp_ret, DP_strcmp_saves },
+    { "strcat", &DP_strcat, DP_strcat_parms, DP_strcat_ret, DP_strcat_saves },
+    { "memset", &DP_memset, DP_memset_parms, DP_memset_ret, DP_memset_saves },
+    { "memcpy", &DP_memcpy, DP_memcpy_parms, DP_memcpy_ret, DP_memcpy_saves },
+    { NULL }
+};
+
 struct  inline_funcs Flat_Functions[] = {
     { "strcmp", &F_strcmp, F_strcmp_parms, F_strcmp_ret, F_strcmp_saves },
     { ".stosd", &F_stosd,  F_stosd_parms,  F_stosd_ret,  F_stosd_saves  },
@@ -410,6 +425,22 @@ struct  inline_funcs BigData_Functions[] = {
     { "memcmp", &BD_memcmp, BD_memcmp_parms, BD_memcmp_ret, BD_memcmp_saves },
     { "memset", &BD_memset, BD_memset_parms, BD_memset_ret, BD_memset_saves },
     { "memchr", &BD_memchr, BD_memchr_parms, BD_memchr_ret, BD_memchr_saves },
+    { ".stosd", &BD_stosd,  BD_stosd_parms,  BD_stosd_ret,  BD_stosd_saves  },
+    { ".stosw", &BD_stosw,  BD_stosw_parms,  BD_stosw_ret,  BD_stosw_saves  },
+    { ".stoswb",&BD_stoswb, BD_stoswb_parms, BD_stoswb_ret, BD_stoswb_saves },
+    { NULL }
+ };
+
+struct  inline_funcs BigDataNoDs_Functions[] = {
+    { "strlen", &DP_strlen, DP_strlen_parms, DP_strlen_ret, DP_strlen_saves },
+    { "strcpy", &DP_strcpy, DP_strcpy_parms, DP_strcpy_ret, DP_strcpy_saves },
+    { "strcmp", &DP_strcmp, DP_strcmp_parms, DP_strcmp_ret, DP_strcmp_saves },
+    { "strcat", &DP_strcat, DP_strcat_parms, DP_strcat_ret, DP_strcat_saves },
+    { "strchr", &DP_strchr, DP_strchr_parms, DP_strchr_ret, DP_strchr_saves },
+    { "memcpy", &DP_memcpy, DP_memcpy_parms, DP_memcpy_ret, DP_memcpy_saves },
+    { "memcmp", &DP_memcmp, DP_memcmp_parms, DP_memcmp_ret, DP_memcmp_saves },
+    { "memset", &DP_memset, DP_memset_parms, DP_memset_ret, DP_memset_saves },
+    { "memchr", &DP_memchr, DP_memchr_parms, DP_memchr_ret, DP_memchr_saves },
     { ".stosd", &BD_stosd,  BD_stosd_parms,  BD_stosd_ret,  BD_stosd_saves  },
     { ".stosw", &BD_stosw,  BD_stosw_parms,  BD_stosw_ret,  BD_stosw_saves  },
     { ".stoswb",&BD_stoswb, BD_stoswb_parms, BD_stoswb_ret, BD_stoswb_saves },

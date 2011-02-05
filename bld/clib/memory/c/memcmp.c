@@ -38,7 +38,7 @@
 
 _WCRTLINK int __F_NAME(memcmp,wmemcmp)( const VOID_WC_TYPE *in_s1, const VOID_WC_TYPE *in_s2, size_t len )
 {
-#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86) && !defined(__RDOSDEV__)
+#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86)
     return( _inline_memcmp( in_s1, in_s2, len ) );
 #else
     const CHAR_TYPE *s1 = in_s1;

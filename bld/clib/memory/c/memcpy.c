@@ -38,7 +38,7 @@
 
 _WCRTLINK VOID_WC_TYPE *__F_NAME(memcpy,wmemcpy)( VOID_WC_TYPE *in_dst, const VOID_WC_TYPE *in_src, size_t len )
 {
-#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86) && !defined(__RDOSDEV__)
+#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86)
     return( _inline_memcpy( in_dst, in_src, len ) );
 #else
     CHAR_TYPE           *dst = in_dst;

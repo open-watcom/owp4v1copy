@@ -329,6 +329,28 @@ beginb  BD_strchr
         sub     edx,edx                 ; ...
 endb    BD_strchr
 
+
+defsb   DP_strchr
+        db      "/* cx:edi strchr( dx:edi, cl ) zaps edi,edx,eax */",0
+        db      "#define DP_strchr_ret   HW_D_2( HW_DX, HW_EDI )",0
+        db      "#define DP_strchr_parms P_DXEDI_CL",0
+        db      "#define DP_strchr_saves HW_NotD_3( HW_EDI, HW_EDX, HW_EAX )",0
+        db      0
+beginb  DP_strchr
+        push    ds
+        mov     ds,edx
+        _loop                           ; loop
+          mov   al,[edi]                ; - get char from src
+          cmp   al,cl                   ; - quit if char found
+          je    short E_DP_strchr       ; - ...
+          inc   edi                     ; - increment pointer
+          cmp   al,0                    ; - check for end of string
+        _until  e                       ; until end of string
+        sub     edi,edi                 ; return NULL
+        sub     edx,edx                 ; ...
+        pop     ds
+endb    DP_strchr
+
 ;=======================================================================
 
 defsb   C_strcpy
@@ -1375,6 +1397,7 @@ _Functions:
         func    C_strchr
         func    S_strchr
         func    BD_strchr
+        func    DP_strchr
 
         func    C_div
         func    S_memset
