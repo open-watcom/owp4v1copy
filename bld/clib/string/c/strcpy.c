@@ -58,7 +58,7 @@ extern CHAR_TYPE *__strcpy( CHAR_TYPE *dst, const CHAR_TYPE *src );
   #pragma aux __strcpy = \
         "       push    ds"       \
         "       push    edi"       \
-        "       mov     ds,dx"    \
+        "       mov     ds,edx"    \
         "       test    esi,1"     \
         "       je      L1"       \
         "       lodsb"            \
@@ -81,9 +81,9 @@ extern CHAR_TYPE *__strcpy( CHAR_TYPE *dst, const CHAR_TYPE *src );
         "       je      L3"       \
         "L2:    stosb"            \
         "L3:    pop     eax"       \
-        "       mov     dx,es"    \
+        "       mov     edx,es"    \
         "       pop     ds"       \
-        parm [es edi] [dx esi] value [dx eax] modify exact [esi edi];
+        parm [es edi] [edx esi] value [dx eax] modify exact [esi edi];
  #endif
 #elif defined( _M_I86 )
  #if defined(__SMALL_DATA__)

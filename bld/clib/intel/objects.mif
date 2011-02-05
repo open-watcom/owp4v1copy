@@ -24,11 +24,11 @@
 !inject outp.obj     d16 d32             nt         nvc     nvl     o16 o32 q16 q32 w16 w32     l32         rdu rdk
 !inject outpw.obj    d16 d32             nt         nvc     nvl     o16 o32 q16 q32 w16 w32     l32         rdu rdk
 !inject outpd.obj        d32             nt         nvc     nvl         o32     q32     w32     l32         rdu rdk
-!inject p5prof.obj       d32             nt         nvc     nvl         o32     q32         osi l32         rdu rdk
-!inject p5prof2.obj      d32             nt                             o32     q32         osi l32         rdu rdk
-!inject prfalloc.obj     d32             nt                             o32     q32         osi l32         rdu rdk
-!inject profilog.obj     d32             nt                             o32     q32         osi l32         rdu rdk
-!inject p5psegs.obj      d32             nt         nvc     nvl         o32     q32         osi l32         rdu rdk
+!inject p5prof.obj       d32             nt         nvc     nvl         o32     q32         osi l32         rdu
+!inject p5prof2.obj      d32             nt                             o32     q32         osi l32         rdu
+!inject prfalloc.obj     d32             nt                             o32     q32         osi l32         rdu
+!inject profilog.obj     d32             nt                             o32     q32         osi l32         rdu
+!inject p5psegs.obj      d32             nt         nvc     nvl         o32     q32         osi l32         rdu
 !inject save8087.obj d16 d32             nt         nvc ncl nvl nll o16 o32         w16 w32                 rdu rdk
 !inject segread.obj  d16 d32             nt         nvc     nvl     o16 o32 q16 q32 w16 w32     l32         rdu rdk
 !inject sound.obj    d16 d32                                                q16 q32 w16 w32

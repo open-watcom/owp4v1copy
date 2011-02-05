@@ -46,7 +46,7 @@
  _WCRTLINK int __F_NAME(strcmp,wcscmp)( const CHAR_TYPE *s, const CHAR_TYPE *t )
 #endif
 {
-#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86)
+#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86) && !defined(__RDOSDEV__)
     return( _inline_strcmp( s, t ) );
 #else
     for( ; *s == *t; s++, t++ )

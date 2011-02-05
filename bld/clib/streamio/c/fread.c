@@ -50,6 +50,9 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
 {
     unsigned char   *buf = _buf;
     size_t          len_read;
+#ifdef __RDOSDEV__    
+    int             i;
+#endif
 
     _ValidFile( fp, 0 );
     _AccessFile( fp );
@@ -89,9 +92,17 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
                 if( bytes > bytes_left ) {
                     bytes = bytes_left;
                 }
+#ifdef __RDOSDEV__ 
+                for( i = 0; i < bytes; i++ ) {
+                    *buf = *fp->_ptr;
+                    buf++;
+                    fp->_ptr++;
+                }                
+#else               
                 memcpy( buf, fp->_ptr, bytes );
                 fp->_ptr += bytes;
                 buf += bytes;
+#endif                
                 fp->_cnt -= bytes;
                 bytes_left -= bytes;
                 len_read += bytes;

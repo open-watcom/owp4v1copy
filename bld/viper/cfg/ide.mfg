@@ -511,8 +511,10 @@ Tool WCG "Code Generator"
         RSwitch 0, ?????, "Inline Pentium instructions", -fp5, OFF
         RSwitch 0, ?????, "Inline Pentium Pro instructions", -fp6, OFF
     RGroup "Floating-point model"
+        RSwitch 1, r????, "Compiler default", , OFF
         RSwitch 1, ?????, "Compiler default", , ON
         RSwitch 1, ?????, "Inline with emulator", -fpi, OFF
+        RSwitch 1, r????, "Inline with coprocessor", -fpi87, ON
         RSwitch 1, ?????, "Inline with coprocessor", -fpi87, OFF
         RSwitch 1, ?????, "Floating-point calls", -fpc, OFF
     RGroup "Floating-point rounding"
@@ -522,12 +524,16 @@ Tool WCG "Code Generator"
 :segment !C_FOR_PB
   Family "Register Usage"
     RGroup "DS register"
+        RSwitch 0, rk2e?, "Compiler default", , OFF
         RSwitch 0, ?????, "Compiler default", , ON
+        RSwitch 0, rk2e?, "DS pegged to DGROUP", -zdp, ON
         RSwitch 0, ?????, "DS pegged to DGROUP", -zdp, OFF
         RSwitch 0, ?????, "DS can float", -zdf, OFF
     RGroup "FS register"
+        RSwitch 0, rk2e?, "Compiler default", , OFF
         RSwitch 0, ?????, "Compiler default", , ON
         RSwitch 0, ?????, "FS cannot be used", -zfp, OFF
+        RSwitch 0, rk2e?, "FS can be used", -zff, ON
         RSwitch 0, ?????, "FS can be used", -zff, OFF
     RGroup "GS register"
         RSwitch 0, ?????, "Compiler default", , ON
@@ -548,7 +554,7 @@ Tool WCG "Code Generator"
 :endsegment
 :segment !C_FOR_PB | FOR_WIN
     CSwitch 1, ??6d?, "", -zu, ON
-    CSwitch 1, rk2e?, "", -zu, ON
+    CSwitch 1, rk2e?, "SS not assumed equal to DS", -zu, ON
     CSwitch 1, ???e?, "SS not assumed equal to DS", -zu, OFF
     CSwitch 1, ???s?, "SS not assumed equal to DS", -zu, OFF
 :endsegment
@@ -837,9 +843,11 @@ Tool WFOR "Fortran Compiler"
       RSwitch 1, ?????, "Inline Pentium instructions", -fp5, OFF
       RSwitch 1, ?????, "Inline Pentium Pro instructions", -fp6, OFF
     RGroup "Floating-point model"
+      RSwitch 1, r????, "Compiler default", , OFF
       RSwitch 1, ?????, "Compiler default", , ON
       RSwitch 1, ?????, "Floating-point calls", -fpc, OFF
       RSwitch 1, ?????, "Emulate 80x87 instructions", -fpi, OFF
+      RSwitch 1, r????, "Inline 80x87 instructions", -fpi87, ON
       RSwitch 1, ?????, "Inline 80x87 instructions", -fpi87, OFF
     CSwitch 1, ?????, "80x87 reverse compatibility", -fpr OFF
   Family "Code Generation Option"
@@ -969,8 +977,10 @@ Tool WASM "Assembler"
         RSwitch 1, ?????, "Inline Pentium instructions", -fp5, OFF
         RSwitch 1, ?????, "Inline Pentium Pro instructions", -fp6, OFF
     RGroup "Floating-point model"
+        RSwitch 1, r????, "Compiler default", , OFF
         RSwitch 1, ?????, "Compiler default", , ON
         RSwitch 1, ?????, "Inline with emulator", -fpi, OFF
+        RSwitch 1, r????, "Inline with coprocessor", -fpi87, ON
         RSwitch 1, ?????, "Inline with coprocessor", -fpi87, OFF
         RSwitch 1, ?????, "Floating-point calls", -fpc, OFF
   Family Debugging

@@ -41,7 +41,7 @@
 _WCRTLINK CHAR_TYPE *__F_NAME(strcat,wcscat)( CHAR_TYPE *dst, const CHAR_TYPE *t )
 {
 
-#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86)
+#if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86) && !defined(__RDOSDEV__)
     return( _inline_strcat( dst, t ) );
 #else
     CHAR_TYPE   *s;

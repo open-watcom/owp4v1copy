@@ -3317,9 +3317,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     value [eax];
 
 #pragma aux RdosRenameFile = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_rename_file  \
     CarryToBool \
-    parm [es edi] [ds esi]  \
+    "pop ds" \
+    parm [es edi] [edx esi]  \
     value [eax];
 
 #pragma aux RdosDeleteFile = \
@@ -3368,6 +3371,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     value [eax];
 
 #pragma aux RdosGetDeviceInfo = \
+    "push ds" \
+    "mov ds,eax" \
     "push edx" \
     CallGate_get_device_info  \
     "mov [ecx],eax" \
@@ -3375,7 +3380,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov gs:[esi],edx" \
     "pop edx" \
     "mov fs:[edx],bx" \
-    parm [ebx] [es edi] [ds ecx] [fs edx] [gs esi] \
+    "pop ds" \
+    parm [ebx] [es edi] [eax ecx] [fs edx] [gs esi] \
     modify [ebx edx] \
     value [eax];
 
@@ -3540,6 +3546,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     modify [eax ebx ecx edx];
 
 #pragma aux RdosDecodeMsbTics = \
+    "push ds" \
+    "mov ds,eax" \
     "push ebx" \
     "push ecx" \
     "xor eax,eax" \
@@ -3554,10 +3562,13 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov gs:[ecx],eax" \
     "movzx eax,dx" \
     "mov fs:[ebx],eax" \
-    parm [edx] [fs ebx] [gs ecx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [edx] [fs ebx] [gs ecx] [eax esi] [es edi] \
     modify [eax edx];
 
 #pragma aux RdosDecodeLsbTics = \
+    "push ds" \
+    "mov ds,edx" \
     "mov edx,60" \
     "mul edx" \
     "mov fs:[ebx],edx" \
@@ -3570,7 +3581,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "mov edx,1000" \
     "mul edx" \
     "mov es:[edi],edx" \
-    parm [eax] [fs ebx] [gs ecx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [eax] [fs ebx] [gs ecx] [edx esi] [es edi] \
     modify [eax edx];
 
 #pragma aux RdosCodeMsbTics = \
@@ -3917,9 +3929,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [ebx];
 
 #pragma aux RdosSendMailslot = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_send_mailslot  \
     ValidateEcx \
-    parm [ebx] [ds esi] [ecx] [es edi] [eax] \
+    "pop ds" \
+    parm [ebx] [edx esi] [ecx] [es edi] [eax] \
     value [ecx];
 
 #pragma aux RdosDefineMailslot = \
@@ -3977,6 +3992,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     modify [dh];
 
 #pragma aux RdosPeekKeyEvent = \
+    "push ds" \
+    "mov ds,edx" \
     "push ecx" \
     CallGate_peek_key_event  \
     "movzx eax,ax" \
@@ -3989,11 +4006,14 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "movzx eax,dh" \
     "mov es:[edi],eax" \
     CarryToBool \
-    parm [fs ebx] [gs ecx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [fs ebx] [gs ecx] [edx esi] [es edi] \
     value [eax] \
     modify [dx];
 
 #pragma aux RdosReadKeyEvent = \
+    "push ds" \
+    "mov ds,edx" \
     "push ecx" \
     CallGate_read_key_event  \
     "movzx eax,ax" \
@@ -4006,7 +4026,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "movzx eax,dh" \
     "mov es:[edi],eax" \
     CarryToBool \
-    parm [fs ebx] [gs ecx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [fs ebx] [gs ecx] [edx esi] [es edi] \
     value [eax] \
     modify [dx];
 
@@ -4138,6 +4159,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     value [eax];
 
 #pragma aux RdosGetDiscInfo = \
+    "push ds" \
+    "mov ds,edx" \
     "push edi" \
     "push esi" \
     "push edx" \
@@ -4155,7 +4178,8 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "movzx edi,di" \
     "mov es:[ebx],edi" \
     CarryToBool \
-    parm [eax] [fs ecx] [gs edx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [eax] [fs ecx] [gs edx] [edx esi] [es edi] \
     value [eax] \
     modify [ebx ecx edx esi edi];
 
@@ -4173,11 +4197,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetRdfsInfo = \
     "push gs" \
-    "mov ax,ds" \
-    "mov gs,ax" \
+    "mov gs,edx" \
     CallGate_get_rdfs_info  \
     "pop gs" \
-    parm [ds esi] [es edi] [gs ebx] \
+    parm [edx esi] [es edi] [gs ebx] \
     modify [ax];
 
 #pragma aux RdosDemandLoadDrive = \
@@ -4229,9 +4252,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     modify [ecx edx];
 
 #pragma aux RdosCreateFileDrive = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_create_file_drive  \
     CarryToBool \
-    parm [eax] [ecx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [eax] [ecx] [edx esi] [es edi] \
     value [eax];
 
 #pragma aux RdosOpenFileDrive = \
@@ -4345,17 +4371,26 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [ebx];
 
 #pragma aux RdosAddEnvVar = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_add_env_var \
-    parm [ebx] [ds esi] [es edi];
+    "pop ds" \
+    parm [ebx] [edx esi] [es edi];
 
 #pragma aux RdosDeleteEnvVar = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_delete_env_var \
-    parm [ebx] [ds esi];
+    "pop ds" \
+    parm [ebx] [edx esi];
 
 #pragma aux RdosFindEnvVar = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_find_env_var \
     CarryToBool \
-    parm [ebx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [ebx] [edx esi] [es edi] \
     value [eax];
 
 #pragma aux RdosGetEnvSize = \
@@ -4402,15 +4437,21 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     value [eax];
 
 #pragma aux RdosReadIni = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_read_ini \
     CarryToBool \
-    parm [ebx] [ds esi] [es edi] [ecx] \
+    "pop ds" \
+    parm [ebx] [edx esi] [es edi] [ecx] \
     value [eax];
 
 #pragma aux RdosWriteIni = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_write_ini \
     CarryToBool \
-    parm [ebx] [ds esi] [es edi] \
+    "pop ds" \
+    parm [ebx] [edx esi] [es edi] \
     value [eax];
 
 #pragma aux RdosDeleteIni = \
@@ -4660,8 +4701,11 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [ebx];
 
 #pragma aux RdosWriteAudio = \
+    "push ds" \
+    "mov ds,edx" \
     CallGate_write_audio \
-    parm [ebx] [ecx] [ds esi] [es edi];
+    "pop ds" \
+    parm [ebx] [ecx] [edx esi] [es edi];
 
 #pragma aux RdosOpenFm = \
     CallGate_open_fm \
