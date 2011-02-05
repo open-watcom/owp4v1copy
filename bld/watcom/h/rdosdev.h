@@ -36,6 +36,16 @@ struct TKernelSection
 };
 
 
+// callback pragmas
+
+typedef void (__rdos_thread_callback)(void *);
+
+#pragma aux __rdos_thread_callback "*" \
+                    parm caller [gs ebx] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+
 // function definitions
 
 int RdosIsValidOsGate(int gate);
@@ -108,14 +118,14 @@ void RdosWaitForSignalWithTimeout(long msb, long lsb);
 void RdosCreateKernelThread(
             int prio, 
             int stack, 
-            void __far (*dest)(void *parm), 
+            __rdos_thread_callback *startup, 
             const char *name,
             void *parm);
 
 void RdosCreateKernelProcess(
             int prio, 
             int stack, 
-            void __far (*dest)(void *parm), 
+            __rdos_thread_callback *startup, 
             const char *name,
             void *parm);
 
@@ -162,11 +172,11 @@ void RdosCreateKernelProcess(
 
 #pragma aux RdosPointerToSelector = \
     "movzx ebx,dx" \
-    parm [dx eax] \
+    parm [edx eax] \
     value [ebx];
 
 #pragma aux RdosPointerToOffset = \
-    parm [dx eax] \
+    parm [edx eax] \
     value [eax];
 
 #pragma aux RdosAllocateGdt = \
