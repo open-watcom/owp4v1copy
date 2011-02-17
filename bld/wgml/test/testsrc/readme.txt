@@ -1,15 +1,15 @@
 I. Directory "testlib"
-   A. Test Device Description
-   B. File Names
-   C. Include Files
-   D. Test Device Structure Mapping
+    A. Test Device Description
+    B. File Names
+    C. Include Files
+    D. Test Device Structure Mapping
 II. Test Device Output
-   A. What Is An "Instance"?
-   B. Default Font Linkages
-   C. Determining Word Length
+    A. What Is An "Instance"?
+    B. Default Font Linkages
+    C. Determining Word Length
 III. Directory "testsrc"
-   A. Using gendev Directly
-   B. Using wmake
+    A. Using gendev Directly
+    B. Using wmake
 IV. The "Memory Exhausted" Error
 
 I. Directory "testsrc"
@@ -17,7 +17,7 @@ I. Directory "testsrc"
 This directory will contain the source for the four test devices found in the
 planned directory "testlib".
 
-   A. Test Device Description
+    A. Test Device Description
 
 The four test devices are:
 
@@ -37,7 +37,7 @@ PSSPEC -- This is, essentially, the PS device using the test blocks instead of
           It is useful in determining exactly how large each word is, as each 
           word is output separately.
 
-   B. File Names
+    B. File Names
 
 This table gives the defined names and member names for the DEVICE and DRIVER 
 blocks. The source file names are the same as the member names.
@@ -93,7 +93,7 @@ PSSPEC:
  8           | pssfon08      | psspecfon08
  9           | pssfon09      | psspecfon09
 
-   C. Include Files
+    C. Include Files
 
 Unless otherwise noted, all four test devices use the include file.
 
@@ -113,7 +113,7 @@ DRV04.INC -- ABSOLUTEADDRESS, HLINE, VLINE, and DBOX for all but TEST01
 No include files are used with fonts, in part to allow individual fonts to be
 reconfigured as needed for testing.
 
-   D. Test Device Structure Mapping
+    D. Test Device Structure Mapping
 
 Blocks are shown in the order used in the Wiki. Where multiple instances are
 allowed, all instances are in the file indicated. The fields with "--" 
@@ -174,7 +174,7 @@ because these values are all "0" at this point. The values shown are from
 device functions %font_number(), %pages() and (forming the Location) 
 %x_address(), %y_address(). The "Instance" is discussed next.
 
-   A. What Is An "Instance"?
+    A. What Is An "Instance"?
 
 The concept of "instance" was developed to solve a problem: how to identify
 which NEWPAGE blocks were being interpreted for a device page and which for a
@@ -190,7 +190,7 @@ text appears on which page, and whether a given NEWPAGE block was done as part
 of the same instance as the corresponding DEVICE_PAGE or a DOCUMENT_PAGE PAUSE 
 block.
 
-   B. Default Font Linkages
+    B. Default Font Linkages
 
 The DEVICEFONT block associates fontname, fontswitch, and fontpause by name; 
 the DEFAULTFONT block associates fontname with the font number. FONTPAUSE and 
@@ -233,7 +233,7 @@ of the blocks in a LINEPASS block (STARTVALUE, FIRSTWORD, STARTWORD, ENDWORD,
 and ENDVALUE). All FONTSTYLE blocks also implement the FONTSTYLE (that is, the 
 not-in-a-LINEPROC) STARTVALUE and ENDVALUE blocks.
 
-   C. Determining Word Length
+    C. Determining Word Length
 
 Consider the output which surrounds each bit of text:
 
@@ -316,8 +316,62 @@ default font (that is, PSSFON00) and an HP1/eHP1 (that is, PSSFON01) phrase
 would allow very precise control.
 
 III. Directory "testsrc"
-   A. Using gendev Directly
-   B. Using wmake
+
+Directory testsrc is actually intended not so much to be used as to illustrate
+how the actual syslib used by the Open Watcom build process could be added to
+the build system. Of course, actually doing this would require the recovery 
+of the missing source files for some of the items in that directory, and a 
+decision as to whether or not to move the source to a syssrc directory (which
+appears to be standard wgml practice), and whether the WHELP device should be
+moved to this library or left where it is, so this is only a demo of one part
+of the puzzle.
+
+    A. Using gendev Directly
+
+To use gendev 4.1 directly, the source files must be accessible. The environment 
+variable GMLINC is intended to be used for this purpose. The rest of this
+discussion presumes that gendev 4.1 can find the source files; if it cannot, 
+then it will not create the binary device library under any conditions.
+
+The environment variable GMLLIB is checked by gendev 4.1. If there is none, 
+then gendev 4.1 will simply create the binary device library in the directory 
+in which it was invoked. If environment variable GMLLIB does exist but does not 
+include the directory in which gendev 4.1 was invoked, this warning message 
+results:
+
+SN--082: Current disk location and library path do not match
+
+However, gendev 4.1 will still create the bindary device library in the 
+directory it is run in.
+
+    B. Using wmake
+
+The makefile provided has the usual facilities:
+
+1. Invoking "wmake" by itself causes each binary file encoding a DEVICE, DRIVER,
+or FONT block to be checked and recreated if the source is newer.
+2. Invoking "wmake <name>" causes <name>.cop to be recreated, usually only if 
+the source is newer. "wmake genall", in contrast, will always run gendev 4.1 
+with the genall.pcd file.
+3. Invoking "wmake clean" deletes all of the COP files.
+
+After a "wmake clean", a simple "wmake" will cause each COP file to be 
+recreated individually; "wmake genall" will cause all of them to be recreated
+in one invocation of gendev 4.1. 
+
+A brief note on genall.pcd: testing with an earlier version of the test 
+devices showed that, if a device providing fewer DEFAULTFONT blocks is listed
+in genall.pcd after one providing more DEFAULTFONT blocks, then gendev will 
+create the larger number of DEFAULTFONT blocks for the device providing the 
+smaller number, but the extras will have junk in them. wgml 4.0 will not, in
+this case, use font 0 if one of the extras is used, but instead will attempt
+to use the data provided by gendev 4.1, with disasterous results.
+
+The point is that, if wgml 4.0 behaves really oddly after editing a test 
+device, one thing to check is how many fonts gendev produced for it. The 
+devldchk research program can be used for this purpose; if it shows more
+DEFAULTFONT blocks than defined by the device, changing the order in which the
+device files are processed in genall.pcd should solve the problem.
 
 IV. The "Memory Exhausted" Error
 
@@ -375,7 +429,9 @@ The type code can be decoded using the Designators section located here:
 http://www.openwatcom.org/index.php/Meta_Data#Designators_2
 
 This lists the designators for more than just CodeBlocks. A CodeBlock 0x04 
-encodes an ENDVALUE block which is not in a LINEPROC block.
+encodes an ENDVALUE block which is not in a LINEPROC block. Searching on 
+"codeblock" should produce a link to this section (among many others) 
+even if it is moved.
 
 Since the designator is the first byte of the CodeBlock, the solution is to
 find the immediately preceding CodeBlock (in this case, CodeBlock 0) and 
@@ -403,15 +459,14 @@ used to recreate the binary file. It may, of course, create another problem,
 so the use of cfparse must continue until no such messages appear. This should 
 allow wgml 4.0 to use the device.
 
-Use of
+When modifying the include files and/or solving this problem the use of
 
 gendev genall
 
-is recommended because most of these errors will affect all four devices and 
-be fixed by modifying one or another %image() statement inside an include 
-file. Nonetheless, once the problems are solved, each device should be checked
-since some of them have blocks containing device functions that other devices
-lack.
+is recommended because most of these errors will affect more than one of the
+test devices. Once the problems are solved, each device should still be checked
+individually since some of them have blocks containing device functions that 
+other devices lack.
 
 Depending on the situation, it may be necessary to add a space character to
 a different line, so some flexibility is needed. These space characters will 
