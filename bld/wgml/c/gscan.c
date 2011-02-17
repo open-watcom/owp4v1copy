@@ -771,7 +771,7 @@ void    scan_line( void )
 
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
             if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
-                g_info( inf_text_line, scan_start );
+                g_info_lm( inf_text_line, scan_start );
             }
             if( ProcFlags.layout ) {    // LAYOUT active: process attributes
                 lay_tags[lay_ind].gmlproc( &lay_tags[lay_ind] );
@@ -797,7 +797,7 @@ void    scan_line( void )
             }
         }
     } else if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
-        g_info( inf_skip_line );
+        g_info_lm( inf_skip_line );
     }
     if( ProcFlags.literal ) {
         if( li_cnt < LONG_MAX ) {   // we decrement, do not wait for .li OFF

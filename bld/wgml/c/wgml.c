@@ -53,11 +53,11 @@ static void usage( void )
 
     kscreen = 0;
     for( k = inf_use_start; k <= inf_use_end; k++ ) {
-        g_info( k );
+        g_info_lm( k );
         if( isatty( fileno( stdin ) ) ) {
             if( kscreen == 22 ) {
                 kscreen = 0;
-                g_info( inf_pause );
+                g_info_lm( inf_pause );
                 getchar();
             } else {
                 kscreen++;
@@ -358,7 +358,7 @@ static  void    proc_input( char * filename )
                 cb->fileattr[0] = '\0';
             }
             if( GlobalFlags.inclist ) {
-                g_info( inf_curr_input, "file", cb->filename );
+                g_info_lm( inf_curr_input, "file", cb->filename );
             }
 
             /***************************************************************/
@@ -492,11 +492,11 @@ static  void    proc_input( char * filename )
 
                 cb = input_cbs->s.f;
                 utoa( cb->lineno, linestr, 10 );
-                g_info( inf_curr_line, cb->filename, linestr );
+                g_info_lm( inf_curr_line, cb->filename, linestr );
             }
         } else {
             if( GlobalFlags.inclist ) {
-                g_info( inf_curr_input, "macro", input_cbs->s.m->mac->name );
+                g_info_lm( inf_curr_input, "macro", input_cbs->s.m->mac->name );
             }
         }
     }                                   // for loop
@@ -513,23 +513,23 @@ static  void    print_stats( clock_t duration_ticks )
     ldiv_t      hour_min;
     ldiv_t      sec_frac;
 
-    g_info( inf_stat_1 );
+    g_info_lm( inf_stat_1 );
 
     utoa( max_inc_level, linestr, 10 );
-    g_info( inf_stat_2, linestr );
+    g_info_lm( inf_stat_2, linestr );
 
     utoa( err_count, linestr, 10 );
-    g_info( inf_stat_3, linestr );
+    g_info_lm( inf_stat_3, linestr );
 
     utoa( wng_count, linestr, 10 );
-    g_info( inf_stat_4, linestr );
+    g_info_lm( inf_stat_4, linestr );
 
     utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
-    g_info( inf_stat_5, linestr );
+    g_info_lm( inf_stat_5, linestr );
 
     #ifdef TRMEM
         utoa( g_trmem_peak_usage(), linestr, 10 );
-        g_info( inf_stat_6, linestr );
+        g_info_lm( inf_stat_6, linestr );
     #endif
 
     // convert duration from clock ticks to HH:MM:SS.hh
@@ -537,7 +537,7 @@ static  void    print_stats( clock_t duration_ticks )
     sec_frac  = ldiv( duration_ticks, CLOCKS_PER_SEC );
     sprintf_s( linestr, sizeof( linestr ), "%02lu:%02lu:%02lu.%02lu\0",
         hour_min.quot, hour_min.rem, sec_frac.quot % 60, sec_frac.rem / 10 );
-    g_info( inf_stat_7, linestr );
+    g_info_lm( inf_stat_7, linestr );
 }
 
 
@@ -630,7 +630,7 @@ int main( int argc, char * argv[] )
     cmdline = mem_alloc( cmdlen );
     _bgetcmd( cmdline, cmdlen );
 
-    g_info( INF_CMDLINE, cmdline );
+    g_info_lm( INF_CMDLINE, cmdline );
 
     tok_count = proc_options( cmdline );
     init_sysparm( cmdline, banner1w( "Script/GML", _WGML_VERSION_ ) );
@@ -663,7 +663,7 @@ int main( int argc, char * argv[] )
             init_pass();
             utoa( pass, passnoval->value, 10 ); // fill current passno
 
-            g_info( INF_PASS_1, passnoval->value, passofval->value,
+            g_info_lm( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 //          if( GlobalFlags.research ) {
 //              g_trmem_prt_list();     // TBD
@@ -687,7 +687,7 @@ int main( int argc, char * argv[] )
                 print_sym_dict( global_dict );
             }
             msg_indent = 0;
-            g_info( INF_PASS_2, passnoval->value, passofval->value,
+            g_info_lm( INF_PASS_2, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 
 //          if( GlobalFlags.research && (pass < passes) ) { // TBD
@@ -695,7 +695,7 @@ int main( int argc, char * argv[] )
 //          }
 
             if( !GlobalFlags.lastpass && (err_count > 0) ) {
-                g_info( inf_error_stop, passes - pass > 1 ? "es" : "" );
+                g_info_lm( inf_error_stop, passes - pass > 1 ? "es" : "" );
                 break;                  // errors found stop now
             }
         }
@@ -716,6 +716,9 @@ int main( int argc, char * argv[] )
 
         print_macro_dict( macro_dict, true );
 
+        if( tag_dict != NULL ) {
+            print_tag_dict( tag_dict );
+        }
         print_single_funcs_research();
         free_single_funcs_research();
 
@@ -724,9 +727,6 @@ int main( int argc, char * argv[] )
 
         if( global_dict != NULL ) {
             print_sym_dict( global_dict );
-        }
-        if( tag_dict != NULL ) {
-            print_tag_dict( tag_dict );
         }
         print_sym_dict( sys_dict );
     }
