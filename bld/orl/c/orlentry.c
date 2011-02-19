@@ -147,6 +147,7 @@ orl_file_format ORLFileIdentify( orl_handle orl_hnd, void * file )
     machine_type = *( (uint_16 *) magic );
     switch( machine_type ) {
     case IMAGE_FILE_MACHINE_I860:
+    case IMAGE_FILE_MACHINE_I386A:
     case IMAGE_FILE_MACHINE_I386:
     case IMAGE_FILE_MACHINE_R3000:
     case IMAGE_FILE_MACHINE_R4000:

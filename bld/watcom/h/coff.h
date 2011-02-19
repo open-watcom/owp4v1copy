@@ -145,12 +145,13 @@ typedef struct {
 // CPU types
 enum {
     IMAGE_FILE_MACHINE_UNKNOWN          = 0,
-    IMAGE_FILE_MACHINE_I386             = 0x014c, // Intel 386.
+    IMAGE_FILE_MACHINE_I386             = 0x014c, // Intel 386 (Sys V).
     IMAGE_FILE_MACHINE_I860             = 0x014d, // Intel 860.
     IMAGE_FILE_MACHINE_R3000            = 0x0162, // MIPS little-endian, 0x160 big-endian
     IMAGE_FILE_MACHINE_R4000            = 0x0166, // MIPS little-endian
     IMAGE_FILE_MACHINE_R10000           = 0x0168, // MIPS little-endian
     IMAGE_FILE_MACHINE_WCEMIPSV2        = 0x0169, // MIPS little-endian WCE v2
+    IMAGE_FILE_MACHINE_I386A            = 0x0175, // Intel 386 (AIX).
     IMAGE_FILE_MACHINE_ALPHA            = 0x0184, // Alpha_AXP
     IMAGE_FILE_MACHINE_POWERPC          = 0x01F0, // IBM PowerPC Little-Endian
     IMAGE_FILE_MACHINE_SH3              = 0x01a2, // SH3 little-endian

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Load COFF Object into memory structures for next processing
-*
+* Description:  Load COFF object file into memory for processing.
 *
 ****************************************************************************/
 
@@ -61,6 +60,7 @@ static int determine_file_specs( coff_file_handle coff_file_hnd,
             coff_file_hnd->machine_type = ORL_MACHINE_TYPE_I860;
             break;
         case IMAGE_FILE_MACHINE_I386:
+        case IMAGE_FILE_MACHINE_I386A:
             coff_file_hnd->machine_type = ORL_MACHINE_TYPE_I386;
             break;
         case IMAGE_FILE_MACHINE_R3000:
@@ -349,6 +349,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
             coff_reloc_sec_hnd->hdr = NULL;
             coff_reloc_sec_hnd->assoc.reloc.orig_sec = coff_file_hnd->coff_sec_hnd[loop];
             coff_reloc_sec_hnd->assoc.reloc.relocs = NULL;
+            coff_reloc_sec_hnd->align = 4;
             coff_file_hnd->coff_sec_hnd[loop]->assoc.normal.reloc_sec = coff_reloc_sec_hnd;
             coff_file_hnd->coff_sec_hnd[coff_file_hnd->num_sections + reloc_secs_created - 1] = coff_reloc_sec_hnd;
         }
@@ -373,6 +374,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
     coff_file_hnd->symbol_table->assoc.normal.reloc_sec = NULL;
     coff_file_hnd->symbol_table->type = ORL_SEC_TYPE_SYM_TABLE;
     coff_file_hnd->symbol_table->flags = ORL_SEC_FLAG_NONE;
+    coff_file_hnd->symbol_table->align = 4;
     coff_file_hnd->coff_sec_hnd[coff_file_hnd->num_sections + reloc_secs_created] = coff_file_hnd->symbol_table;
     loop++;
     // create the string table section
@@ -395,6 +397,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
     coff_file_hnd->string_table->assoc.normal.reloc_sec = NULL;
     coff_file_hnd->string_table->type = ORL_SEC_TYPE_STR_TABLE;
     coff_file_hnd->string_table->flags = ORL_SEC_FLAG_NONE;
+    coff_file_hnd->string_table->align = 4;
     coff_file_hnd->coff_sec_hnd[coff_file_hnd->num_sections + reloc_secs_created + 1] = coff_file_hnd->string_table;
     _ClientFree( coff_file_hnd, reloc_sec_offset );
     _ClientFree( coff_file_hnd, reloc_sec_size );
