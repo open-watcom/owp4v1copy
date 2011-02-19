@@ -691,6 +691,9 @@ static void WriteFixupInfo( pe_header *header, pe_object *object )
     object->flags = PE_OBJ_INIT_DATA | PE_OBJ_READABLE | PE_OBJ_DISCARDABLE;
     size = 0;
     count = 0;
+    /* When using non-default object alignment, groups and pages need
+     * not be in sync at all.
+     */
     for( group = Groups; group != NULL; group = group->next_group ) {
         reloclist = group->g.grp_relocs;
         if( reloclist != NULL ) {
