@@ -422,11 +422,11 @@ static void * objRead( void *hdl, size_t len )
 
     ptr = TRMemAlloc( sizeof( *buffList ) + len - 1 );
     ptr->next = buffList;
-    buffList = ptr;
     if( read( (int)hdl, ptr->buff, len ) != len ) {
         TRMemFree( ptr );
         return( NULL );
     }
+    buffList = ptr;
     return( ptr->buff );
 }
 
