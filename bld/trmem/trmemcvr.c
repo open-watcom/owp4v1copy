@@ -144,6 +144,12 @@ extern int TRMemValidate( void * ptr )
     return( _trmem_validate( ptr, _trmem_guess_who(), TRMemHandle ) );
 }
 
+extern int TRMemValidateAll( void )
+/*********************************/
+{
+    return( _trmem_validate_all( TRMemHandle ) );
+}
+
 extern int TRMemChkRange( void * start, size_t len )
 /**************************************************/
 {

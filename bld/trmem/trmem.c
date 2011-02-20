@@ -97,8 +97,9 @@ msg(PRT_LIST_3,         "%C %D %U %L %X" );
 
 #undef msg
 
-#define ALLOC_BYTE      0xA5
-#define FREED_BYTE      0xBD
+#define ALLOC_BYTE      0xCC    /* Filler for memory allocated by user. */
+#define MARKER_BYTE     0xA5    /* End-of-block marker to detect overruns. */
+#define FREED_BYTE      0xBD    /* Filler for freed memory. */
 
 /*
    SIZE_DELTA is the maximum allowed difference between the requested size
@@ -473,7 +474,8 @@ void *_trmem_alloc( size_t size, _trmem_who who, _trmem_hdl hdl )
     }
     mem = hdl->alloc( size + 1 );
     if( mem != NULL ) {
-        MEMSET( mem, ALLOC_BYTE, size + 1 );
+        MEMSET( mem, ALLOC_BYTE, size );
+        *(unsigned char *)_PtrAdd( mem, size ) = MARKER_BYTE;
         tr = allocEntry( hdl );
         if( tr != NULL ) {
             tr->mem = mem;
@@ -513,7 +515,7 @@ static int isValidChunk( entry_ptr tr, const char *rtn,
     }
 #endif
 #endif
-    if( *(unsigned char *)_PtrAdd( mem, size ) != ALLOC_BYTE ) {
+    if( *(unsigned char *)_PtrAdd( mem, size ) != MARKER_BYTE ) {
         trPrt( hdl, MSG_OVERRUN_ALLOCATION, rtn, who, mem, tr->who, size );
         return( 0 );
     }
@@ -605,7 +607,8 @@ static void * ChangeAlloc( void *old, size_t size, _trmem_who who,
         }
         new_block = fn( NULL, size + 1 );
         if( new_block != NULL ) {
-            MEMSET( new_block, ALLOC_BYTE, size + 1 );
+            MEMSET( new_block, ALLOC_BYTE, size );
+            *(unsigned char *)_PtrAdd( new_block, size ) = MARKER_BYTE;
             tr = allocEntry( hdl );
             if( tr != NULL ) {
                 tr->mem = new_block;
@@ -637,10 +640,9 @@ static void * ChangeAlloc( void *old, size_t size, _trmem_who who,
     }
     old_size = getSize( tr );
     if( size > old_size ) {
-        MEMSET(_PtrAdd( new_block, old_size ), ALLOC_BYTE, size + 1 - old_size);
-    } else {
-        *(unsigned char *)_PtrAdd( new_block, size ) = ALLOC_BYTE;
+        MEMSET(_PtrAdd( new_block, old_size ), ALLOC_BYTE, size - old_size);
     }
+    *(unsigned char *)_PtrAdd( new_block, size ) = MARKER_BYTE;
     hdl->mem_used -= old_size;
     hdl->mem_used += size;
     if( hdl->mem_used > hdl->max_mem ) {

@@ -79,6 +79,9 @@ extern unsigned TRMemPrtList( void );
 /* check that ptr is valid */
 extern int      TRMemValidate( void * ptr );
 
+/* check that the heap is valid */
+extern int      TRMemValidateAll( void );
+
 /* check that the len locations starting at start are properly allocated */
 extern int      TRMemChkRange( void * start, size_t len );
 
