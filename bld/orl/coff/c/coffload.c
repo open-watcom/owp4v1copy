@@ -32,6 +32,14 @@
 #include "coffload.h"
 #include "coffimpl.h"
 
+/* This is a hack for a flaw in wlib. Because wlib does not keep track
+ * of member sizes, one can't tell if a read past the end of file occurred.
+ * Unfortunately for COFF, it is impossible to tell whether a string table
+ * is present or not except by attempting to read its size. If we read
+ * some ridiculously large value, it's the start of the next member.
+ */
+#define MAX_STRTAB_SIZE     0x1000000   /* 16MB */
+
 static char SectionNames[3][COFF_SEC_NAME_LEN] =
     { ".rel", ".symtab", ".strtab" };
 
@@ -390,7 +398,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
     coff_file_hnd->string_table->name = SectionNames[2];    // ".strtab"
     coff_file_hnd->string_table->name_alloced = COFF_FALSE;
     coff_file_hnd->string_table->relocs_done = COFF_FALSE;
-    coff_file_hnd->string_table->size = 4; // accurately determined later
+    coff_file_hnd->string_table->size = 0;  // determined later
     coff_file_hnd->string_table->base = 0;
     coff_file_hnd->string_table->offset = coff_file_hnd->symbol_table->offset + coff_file_hnd->symbol_table->size;
     coff_file_hnd->string_table->hdr = NULL;
@@ -420,6 +428,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     pe_header *         pe_hdr;
     char *              PE;
     orl_file_offset     PEoffset = 0;
+    orl_sec_size        *string_sec_size;
 
     pe_hdr = _ClientRead( coff_file_hnd, 2 );
     _ClientSeek( coff_file_hnd, -2, SEEK_CUR );
@@ -499,21 +508,24 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
         return( ORL_ERROR );
     }
     loop_limit = coff_file_hnd->num_sections;
+    // read string table; always follows the symbol table, but may not exist
     if( last_sec_hnd == coff_file_hnd->string_table ) {
+        // read the string table size; if that fails, there isn't any
         if( f_hdr->sym_table ) {
-            memcpy( &(last_sec_hnd->size),
-                    coff_file_hnd->rest_of_file_buffer + last_sec_hnd->offset - coff_file_hnd->initial_size,
-                    sizeof( coff_sec_size ) );
+            string_sec_size = _ClientRead( coff_file_hnd, sizeof( coff_sec_size ) );
+            if( string_sec_size ) {
+                last_sec_hnd->size = *string_sec_size;
+            }
         }
-        if( last_sec_hnd->size < 4 ) {
+        if( last_sec_hnd->size <= sizeof( coff_sec_size ) 
+         || last_sec_hnd->size > MAX_STRTAB_SIZE ) {
             last_sec_hnd->size = 0;
         }
         if( last_sec_hnd->size != 0 ) {
             last_sec_hnd->size -= sizeof( coff_sec_size );
         }
         if( last_sec_hnd->size > 0 && last_sec_hnd->offset != 0 ) {
-            if( last_sec_hnd->offset == buf_size +
-                        coff_file_hnd->initial_size - 4 ) {
+            if( last_sec_hnd->offset == buf_size + coff_file_hnd->initial_size ) {
                 last_sec_hnd->contents = _ClientRead( coff_file_hnd,
                                                   last_sec_hnd->size );
                 coff_file_hnd->size += last_sec_hnd->size;
@@ -542,7 +554,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     }
     if( last_sec_hnd != coff_file_hnd->string_table ) {
         memcpy( &(coff_file_hnd->string_table->size),
-                 coff_file_hnd->string_table->contents, sizeof(coff_sec_size) );
+                 coff_file_hnd->string_table->contents, sizeof( coff_sec_size ) );
         if( coff_file_hnd->string_table->size != 0 ) {
             coff_file_hnd->string_table->size -= sizeof( coff_sec_size );
             coff_file_hnd->string_table->contents += sizeof( coff_sec_size );
