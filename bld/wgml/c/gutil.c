@@ -540,7 +540,7 @@ bool    att_val_to_SU( su * converted, bool pos )
     } else {
         sign = '+';
     }
-    if( (p - val_start) >= val_len ) {  // value end reached, not valid 
+    if( (p - val_start) >= val_len ) {  // value end reached, not valid
         xx_line_err( err_inv_att_val, p );
         scan_start = scan_stop + 1;
         return( converterror );
@@ -559,7 +559,7 @@ bool    att_val_to_SU( su * converted, bool pos )
     }
 
     for( i = 0; i < 4; i++ ) {              // max four digits in whole part
-        if( (*p >= '0') && (*p <= '9') ) {  
+        if( (*p >= '0') && (*p <= '9') ) {
             wh = (10 * wh) + (*p - '0');
             *ps++ = *p++;
         } else {
@@ -580,7 +580,7 @@ bool    att_val_to_SU( su * converted, bool pos )
         *ps++ = *p++;
         pd1 = p;                            // remember start of decimals
         for( i = 0; i < 2; i++ ) {          // max two digits in decimals
-            if( (*p >= '0') && (*p <= '9') ) {  
+            if( (*p >= '0') && (*p <= '9') ) {
                 wd = 10 * wd + *p - '0';
                 *ps++ = *p++;
             } else {
@@ -678,7 +678,7 @@ bool    att_val_to_SU( su * converted, bool pos )
 
     if( is_cp ) {       // "C" and "P" can be followed by max four digits
         for( i = 0; i < 4; i++ ) {
-            if( (*p >= '0') && (*p <= '9') ) {  
+            if( (*p >= '0') && (*p <= '9') ) {
                 wd = (10 * wd) + (*p - '0');
                 *ps++ = *p++;
             }
@@ -884,7 +884,7 @@ int32_t conv_vert_unit_rdd( su * s, uint8_t spc )
             if ( fp > 5000 ) {
                 ds++;
             }
-        } else {    
+        } else {
             if ( -fp < 5000 ) { // fp is negative, but must compare as positive
                 ds++;
             }
@@ -966,22 +966,22 @@ char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
         }
         p += pos1;
         break;
-    case c_style :                      // lower case roman
+    case r_style :                      // lower case roman
         rp = int_to_roman( n, p, rsize - pos );
         if( rp == NULL ) {
             return( NULL );             // field overflow
         }
-        pos += strlen( rp );
+        pos1 = strlen( rp );
         p += pos1;
         break;
-    case r_style :                      // UPPER case roman
+    case c_style :                      // UPPER case roman
         rp = int_to_roman( n, p, rsize - pos );
         if( rp == NULL ) {
             return( NULL );             // field overflow
         }
-        pos += strlen( rp );
-        p += pos1;
         strupr( p );
+        pos1 = strlen( rp );
+        p += pos1;
         break;
     default:
         out_msg( "Logic error in gutil.c (int_to_roman()\n" );
