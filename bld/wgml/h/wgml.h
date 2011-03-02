@@ -48,7 +48,7 @@
 
 #include "gtype.h"
 #include "gtypelay.h"
-#include "copfiles.h"                   // for text_line and text_vars
+#include "copfiles.h"       // mostly for access to bin_device & wgml_fonts
 
 
 #ifdef  __cplusplus
@@ -58,18 +58,27 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 
 //================= Function Prototypes ========================
 
-/* wgmlsupp.c                          */
-extern  bool    free_resources( errno_t in_errno );
-extern  void    free_some_mem( void );
-extern  void    free_layout_banner( void );
-extern  void    g_banner( void );
-// extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
-extern  bool    get_line( bool researchoutput );
-extern  void    inc_inc_level( void );
+/* copfiles.c                          */
+extern uint8_t              cop_in_trans( uint8_t in_char, uint8_t font );
+extern void                 cop_setup( void );
+extern void                 cop_teardown( void );
+extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint8_t font );
+extern void                 cop_ti_table( char * p );
+extern void                 fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
+extern void                 fb_document( void );
+extern void                 fb_document_page( void );
+extern void                 fb_finish( void );
+extern void                 fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
+extern void                 fb_output_textline( text_line * out_line );
+extern void                 fb_start( void );
+extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
 
-#pragma aux     my_exit aborts;
-extern  void    my_exit( int );
-extern  void    show_include_stack( void );
+
+/* devfuncs.c                          */
+extern void                 fb_absoluteaddress( void );
+extern void                 fb_new_section( uint32_t v_start );
+extern void                 fb_position( uint32_t h_start, uint32_t v_start );
+
 
 /* gargutil.c                           */
 extern  void        garginit( void );
@@ -208,8 +217,6 @@ extern  void    split_input_LIFO( char * buf, char * split_pos );
 
 
 /* gproctxt.c              TBD        */
-extern  void    add_text_chars_to_pool( text_line * a_line );
-extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
 extern  void    do_justify( uint32_t left_m, uint32_t right_m, text_line * line );
 extern  void    document_new_page( void );
 extern  void    document_top_banner( void );
@@ -328,13 +335,15 @@ extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 extern  char    *   get_att_value( char * p );
 
 /* gtxtpool.c                         */
-extern  void        add_text_chars_to_pool( text_line * a_line );
-extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
-extern  void        add_text_line_to_pool( text_line * a_line );
-extern  text_line * alloc_text_line( void );
-extern  tag_cb    * alloc_tag_cb( void );
-extern  void        add_tag_cb_to_pool( tag_cb * cb );
-extern  void        free_pool_storage( void );
+extern  void            add_text_chars_to_pool( text_line * a_line );
+extern  text_chars  *   alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
+extern  void            add_text_line_to_pool( text_line * a_line );
+extern  text_line   *   alloc_text_line( void );
+extern  void            add_doc_el_to_pool( doc_element * a_element );
+extern  doc_element *   alloc_doc_el( void );
+extern  void            add_tag_cb_to_pool( tag_cb * cb );
+extern  tag_cb      *   alloc_tag_cb( void );
+extern  void            free_pool_storage( void );
 
 
 /* gtitlepo.c                         */
@@ -363,12 +372,30 @@ extern  void        out_buf_lines( text_line * * lines, bool newpage );
 extern  bool        widow_check( void );
 
 
+/* outbuff.c                           */
+extern void                 cop_tr_table( char * p );
+
+
 /* wgmlmsg.c                          */
 extern  int     init_msgs( void );
 extern  void    fini_msgs( void );
 extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
 //extern  void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info, char *types, ... );
 //extern  void Msg_Put_Args( char message[], MSG_ARG_LIST *arg_info, char *types, va_list *args );
+
+
+/* wgmlsupp.c                          */
+extern  bool    free_resources( errno_t in_errno );
+extern  void    free_some_mem( void );
+extern  void    free_layout_banner( void );
+extern  void    g_banner( void );
+// extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
+extern  bool    get_line( bool researchoutput );
+extern  void    inc_inc_level( void );
+
+#pragma aux     my_exit aborts;
+extern  void    my_exit( int );
+extern  void    show_include_stack( void );
 
 
 /*

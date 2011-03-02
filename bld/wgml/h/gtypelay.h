@@ -787,6 +787,11 @@ typedef struct script_ban_reg {         // for script format region
  
 typedef struct region_lay_tag {
     struct region_lay_tag       *   next;   // next banner region
+    uint32_t        reg_indent;         // value of 'indent' in base units
+    uint32_t        reg_hoffset;        // value of 'hoffset' in base units
+    uint32_t        reg_width;          // value of 'width' in base units
+    uint32_t        reg_voffset;        // value of 'voffset' in base units
+    uint32_t        reg_depth;          // value of 'depth' in base units
     su              indent;             // horizontal space unit or keywords
     su              hoffset;            // horizontal space unit or keywords
     su              width;              // horizontal space unit or extend
@@ -809,6 +814,10 @@ typedef struct region_lay_tag {
 typedef struct banner_lay_tag {
     struct banner_lay_tag   *   next;   // next banner
     region_lay_tag          *   region; // banner region
+    region_lay_tag          *   top_line;// region containing top line in banner
+    uint32_t        ban_left_adjust;    // value of 'left_adjust' in base units
+    uint32_t        ban_right_adjust;   // value of 'right_adjust' in base units
+    uint32_t        ban_depth;          // value of 'depth' in base units
     su              left_adjust;        // horizontal space unit
     su              right_adjust;       // horizontal space unit
     su              depth;              // vertical space unit

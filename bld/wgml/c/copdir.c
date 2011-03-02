@@ -35,12 +35,11 @@
 ****************************************************************************/
 
 
+#include "wgml.h"
 #include "copdir.h"
-#include "copfiles.h"
 #include "cophdr.h"
 #include "findfile.h"
 #include "gvars.h"
-#include "wgml.h"
 
 /* Global function definitions. */
 

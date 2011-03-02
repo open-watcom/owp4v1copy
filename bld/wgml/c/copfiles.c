@@ -65,16 +65,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-/* Allocate storage for global variables. */
-
 #define global
-#include "copfiles.h"
+#include "copfiles.h"   // ensures globals are allocated
 #undef  global
 
-/* copfiles.h is included by several of these headers. If it is not included
- * first, its guard will prevent the global variables from being allocated.
- */
-
+#include "wgml.h"
 #include "copdev.h"
 #include "copdrv.h"
 #include "copfon.h"
@@ -83,7 +78,6 @@
 #include "findfile.h"
 #include "gvars.h"
 #include "outbuff.h"
-#include "wgml.h"
 
 /* Static data. */
 

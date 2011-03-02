@@ -33,8 +33,6 @@
 #ifndef COPDRV_H_INCLUDED
 #define COPDRV_H_INCLUDED
 
-#include "copfiles.h"
-
 /* Function declarations */
 
 #ifdef  __cplusplus

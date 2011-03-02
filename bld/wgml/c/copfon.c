@@ -35,10 +35,10 @@
 *
 ****************************************************************************/
 
+#include "wgml.h"
 #include "copfon.h"
 #include "copfunc.h"
 #include "gvars.h"
-#include "wgml.h"
 
 /*  Local macros */
 

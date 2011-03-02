@@ -27,12 +27,14 @@
 * Description:  WGML utility functions for alloc / free / reuse of
 *                           different structs
 *
+*               add_doc_el_to_pool      prepare reuse of doc_element instance(s)
+*               add_tag_cb_to_pool      add nested tag cb
 *               add_text_chars_to_pool  prepare reuse of text_chars instance(s)
+*               add_text_line_to_pool   prepare reuse of a text_line instance(s)
+*               alloc_doc_el            create a document_element instance
+*               alloc_tag_cb            nested tag cb
 *               alloc_text_chars        create a text_chars instance
 *               alloc_text_line         create a text_line instance
-*               add_text_line_to_pool   prepare reuse of a text_line instance
-*               add_tag_cb_to_pool      add nested tag cb
-*               alloc_tag_cb            nested tag cb
 *               free_pool_storage       do free for all pools
 *
 ****************************************************************************/
@@ -170,6 +172,56 @@ void    add_text_line_to_pool( text_line * a_line )
 
     a_line->next = line_pool;
     line_pool = a_line;
+}
+
+
+/***************************************************************************/
+/*  allocate / reuse a doc_element instance                                */
+/***************************************************************************/
+
+doc_element * alloc_doc_el( void )
+{
+    doc_element *   curr;
+    doc_element *   prev;
+    int             k;
+
+    curr = doc_el_pool;
+    if( curr != NULL ) {                // there is one to use
+        doc_el_pool = curr->next;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( doc_element ) );
+
+        doc_el_pool = mem_alloc( sizeof( *prev ) );
+        prev = doc_el_pool;
+        for( k = 0; k < 10; k++ ) {     // alloc 10 text_lines if pool empty
+            prev->next = mem_alloc( sizeof( *prev ) );
+            prev = prev->next;
+        }
+        prev->next = NULL;
+    }
+
+    curr->next = NULL;
+    curr->pre_skip = 0;
+    curr->pre_top_skip = 0;
+    curr->type = el_text;
+
+    return( curr );
+}
+
+
+/***************************************************************************/
+/*  add a doc_element instance to free pool for reuse                      */
+/***************************************************************************/
+
+void    add_doc_el_to_pool( doc_element * a_element )
+{
+
+    if( a_element == NULL ) {
+        return;
+    }
+
+    a_element->next = doc_el_pool;
+    doc_el_pool = a_element;
 }
 
 

@@ -48,8 +48,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "copfiles.h"
-
 /* Function declarations. */
 
 #ifdef  __cplusplus

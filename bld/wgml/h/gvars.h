@@ -231,9 +231,13 @@ global  uint8_t     in_esc;             // input escape char from .ti
 global  uint32_t    inter_tab;          // distance between default tabs
 global  char        tab_char;           // tab character from .tb
 
-global text_line    t_line;             // for constructing output line
-global text_chars * text_pool;          // for reuse of text_chars structs
-global text_line  * line_pool;          // for reuse of text_line structs
+// the document page and related items
+global doc_page         t_page;         // for constructing output page
+global doc_column       n_column;       // for deferred elements
+global text_line        t_line;         // for constructing output line
+global text_chars   *   text_pool;      // for reuse of text_chars structs
+global text_line    *   line_pool;      // for reuse of text_line structs
+global doc_element  *   doc_el_pool;    // for reuse of doc_element structs
 
 global text_line  * buf_lines;          // buffering paragraph / widow lines
 global int32_t      buf_lines_cnt;      // line count for buf_lines

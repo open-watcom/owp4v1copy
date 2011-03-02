@@ -48,8 +48,7 @@
  
 #include "wgml.h"
 #include "gvars.h"
-#include "outbuff.h"
- 
+
  
 /***************************************************************************/
 /*  puncadj modelled after the host ASM sources to get the same horizontal */

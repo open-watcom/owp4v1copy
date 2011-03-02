@@ -32,8 +32,6 @@
 
 #include "wgml.h"
 #include "gvars.h"
-#include "copfiles.h"
-#include "outbuff.h"
 
 
 /***************************************************************************/

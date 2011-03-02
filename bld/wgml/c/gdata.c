@@ -112,11 +112,24 @@ void init_global_vars( void )
 
     in_esc              = ' ';
     tab_char            = 0x09;
+
+    t_page.main_top     = 0;
+    t_page.topban       = NULL;
+    t_page.page_width   = NULL;
+    t_page.main         = NULL;
+    t_page.botban       = NULL;
+    n_column.fig_top    = 0;
+    n_column.fn_top     = 0;
+    n_column.main_top   = 0;
+    n_column.top_fig    = NULL;
+    n_column.main       = NULL;
+    n_column.bot_fig    = NULL;
+    n_column.footnote   = NULL;
     t_line.first        = NULL;
     t_line.y_address    = 0;
     text_pool           = NULL;
     line_pool           = NULL;
-
+    doc_el_pool         = NULL;
 
     lay_files           = NULL;         // filename(s) from ( LAYout option
 

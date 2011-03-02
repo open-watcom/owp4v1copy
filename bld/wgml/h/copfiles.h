@@ -26,8 +26,6 @@
 *
 * Description:  Declares the items needed to parse and interpret the
 *               information from .COP files:
-*               an enum:
-*                   text_type
 *               the structs:
 *                   cop_device
 *                       box_block
@@ -65,8 +63,6 @@
 *                           translation
 *                       width_block
 *                   record_buffer
-*                   text_chars
-*                   text_line
 *                   wgml_font
 *               the variables:
 *                   bin_device
@@ -75,24 +71,6 @@
 *                   ps_device
 *                   wgml_font_cnt
 *                   wgml_fonts
-*               the functions:
-*                   cop_in_trans()
-*                   cop_setup()
-*                   cop_teardown()
-*                   cop_text_width()
-*                   cop_ti_table()
-*                   cop_tr_table()
-*                   fb_absoluteaddress()
-*                   fb_dbox()
-*                   fb_document()
-*                   fb_document_page()
-*                   fb_finish()
-*                   fb_hline()
-*                   fb_new_section()
-*                   fb_output_textline()
-*                   fb_position()
-*                   fb_start()
-*                   fb_vline()
 *
 * Note:         The field names are intended to correspond to the field names
 *               shown in the Wiki. The Wiki structs are named when the structs
@@ -106,14 +84,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-
-/* enum definition. */
-
-typedef enum {
-    norm = 0,
-    sup,
-    sub
-} text_type;
 
 /* struct declarations. */
 
@@ -533,30 +503,6 @@ typedef struct {
     uint8_t         *   text;
 } record_buffer;
 
-/* This struct implements the text_chars struct in the Wiki. */
-
-typedef struct text_chars {
-    struct  text_chars  *   next;
-    struct  text_chars  *   prev;
-            uint32_t        x_address;
-            uint32_t        width;
-            uint16_t        count;
-            uint16_t        length;
-            text_type       type;
-            uint8_t         font_number;
-            uint8_t         text[1];
-} text_chars;
-
-/* This struct implements the text_line struct in the Wiki. */
-
-typedef struct text_line {
-    struct  text_line   *   next;
-            uint32_t        line_height;
-            uint32_t        y_address;
-            text_chars  *   first;
-            text_chars  *   last;
-} text_line;
-
 /* This struct implements the wgml_font struct in the Wiki. */
 
 typedef struct {
@@ -595,39 +541,5 @@ global wgml_font    *   wgml_fonts;     // the available fonts
 /* Reset so can be reused with other headers. */
 
 #undef global
-
-/* Function declarations. */
-
-#ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode. */
-#endif
-
-/* copfiles.c                          */
-
-extern uint8_t              cop_in_trans( uint8_t in_char, uint8_t font );
-extern void                 cop_setup( void );
-extern void                 cop_teardown( void );
-extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint8_t font );
-extern void                 cop_ti_table( char * p );
-extern void                 fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
-extern void                 fb_document( void );
-extern void                 fb_document_page( void );
-extern void                 fb_finish( void );
-extern void                 fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
-extern void                 fb_output_textline( text_line * out_line );
-extern void                 fb_start( void );
-extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
-
-/* devfuncs.c                          */
-extern void                 fb_absoluteaddress( void );
-extern void                 fb_new_section( uint32_t v_start );
-extern void                 fb_position( uint32_t h_start, uint32_t v_start );
-
-/* outbuff.c                           */
-extern void                 cop_tr_table( char * p );
-
-#ifdef  __cplusplus
-}   /* End of "C" linkage for C++. */
-#endif
 
 #endif  /* COPFILE_H_INCLUDED */

@@ -509,3 +509,8 @@ pick( ERR_RIGHT_MARGIN_TOO_BIG, "The layout right margin is greater than the dev
 pick( ERR_RIGHT_MARGIN_2_SMALL, "The right margin is too small when adjusted for the uprintable area of the device page",
                                 "The right margin is too small when adjusted for the uprintable area of the device page" )
 
+/* banner error messages (simplified) */
+
+pick( ERR_BANREG_TOO_DEEP,      "Banner region exceeds banner depth",
+                                "Banner region exceeds banner depth" )
+

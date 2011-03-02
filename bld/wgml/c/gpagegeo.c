@@ -33,7 +33,6 @@
 #include "wgml.h"
 #include "gvars.h"
 
-
 /***************************************************************************/
 /*   The page geometry and margins are set up here to match the wgml 4     */
 /*  behaviour. Some values are guesswork and some are hardcoded, if no     */
@@ -233,6 +232,68 @@ void    init_page_geometry( void )
     init_nest_cb();
 }
 
+/***************************************************************************/
+/*  Computes non-attribute fields, checks for one logic error              */
+/*  Not finished: unchecked errors exist                                   */
+/***************************************************************************/
+
+static void finish_banners( void )
+{
+    banner_lay_tag  *   cur_ban;
+    region_lay_tag  *   cur_reg;
+    region_lay_tag  *   top_line_reg;
+    uint8_t             s_font;
+    uint32_t            ban_line;
+    uint32_t            max_reg_depth;
+    uint32_t            max_reg_font;
+    uint32_t            min_top_line;
+
+    s_font = g_curr_font_num;
+    for( cur_ban = layout_work.banner; cur_ban != NULL; cur_ban = cur_ban->next ) {
+        ban_line = 0;
+        max_reg_depth = 0;
+        max_reg_font = 0;
+        min_top_line = -1;  // start at very large positive number
+        top_line_reg = NULL;
+        for( cur_reg = cur_ban->region; cur_reg != NULL; cur_reg = cur_reg->next ) {
+            g_curr_font_num = s_font;    // horizontal attributes use default font
+            cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent );
+            cur_reg->reg_hoffset = conv_hor_unit( &cur_reg->hoffset );
+            cur_reg->reg_width = conv_hor_unit( &cur_reg->width );
+
+            g_curr_font_num = cur_reg->font; // vertical attributes use the banregion font
+            cur_reg->reg_voffset = conv_vert_unit( &cur_reg->voffset, 1 );
+            cur_reg->reg_depth = conv_vert_unit( &cur_reg->depth, 1 );
+
+            if( max_reg_depth < cur_reg->reg_voffset + cur_reg->reg_depth ) {
+                max_reg_depth = cur_reg->reg_voffset + cur_reg->reg_depth;
+            }
+            if( ban_line < wgml_fonts[cur_reg->font].line_height ) {
+                max_reg_font = cur_reg->font;
+                ban_line = wgml_fonts[max_reg_font].line_height;
+            }
+            if( min_top_line > cur_reg->reg_voffset + cur_reg->reg_depth ) {
+                min_top_line = cur_reg->reg_voffset + cur_reg->reg_depth;
+                top_line_reg = cur_reg;
+            }
+        }
+        g_curr_font_num = s_font;        // horizontal attributes use default font
+        cur_ban->ban_left_adjust = conv_hor_unit( &cur_ban->left_adjust );
+        cur_ban->ban_right_adjust = conv_hor_unit( &cur_ban->right_adjust );
+
+        g_curr_font_num = max_reg_font;  // vertical attribute uses the largest banregion font
+        cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1 );
+
+        cur_ban->top_line = top_line_reg;
+
+        if( cur_ban->ban_depth < max_reg_depth ) {
+            xx_err( err_banreg_too_deep );
+            cur_ban->ban_depth = max_reg_depth;
+        }
+    }
+    g_curr_font_num = s_font;
+    return;
+}
 
 /***************************************************************************/
 /*  Layout end processing / document start processing                      */
@@ -242,7 +303,6 @@ void    init_page_geometry( void )
 
 void    do_layout_end_processing( void )
 {
-
     /***********************************************************************/
     /*  init_page_geometry must be called before fb_document(), as the     */
     /*  sysvars &SYSPAGERM and &SYSPAGED are used in document :init        */
@@ -250,13 +310,20 @@ void    do_layout_end_processing( void )
     /***********************************************************************/
     init_page_geometry();
 
-    /* fb_document() needs to be done on the first pass only, but
-     * also needs to be done immediately after the :ELAYOUT. tag.
-     * This means that it may need to be relocated when layout
-     * processing is implemented.
-     */
-
     if( GlobalFlags.firstpass == 1) {
+        /*******************************************************************/
+        /*  This should be where all processing required after all LAYOUT  */
+        /*  blocks have been processed. Since the LAYOUT blocks are only   */
+        /*  processed on the first pass, this processing is similarly      */
+        /*  restricted to the first pass.                                  */
+        /*******************************************************************/
+
+        finish_banners();
+
+        /*******************************************************************/
+        /*  This should be a good place to start document processing.      */
+        /*  This processing is also restricted to the first pass.          */
+        /*******************************************************************/
         out_msg( "Formatting document\n" );
 
         fb_document();                 // DOCUMENT :PAUSE & :INIT processing.

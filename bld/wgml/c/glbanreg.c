@@ -235,6 +235,11 @@ static  void    init_banregion_wk( region_lay_tag * reg )
     char        z0[2] = "0";
 
     reg->next = NULL;
+    reg->reg_indent = 0;
+    reg->reg_hoffset = 0;
+    reg->reg_width = 0;
+    reg->reg_voffset = 0;
+    reg->reg_depth = 0;
     p = &z0;
     to_internal_SU( &p, &(reg->indent) );
     p = &z0;

@@ -860,4 +860,75 @@ typedef struct {
     tab_stop       *    tabs;
 } tab_list;
 
+/***************************************************************************/
+/*  word, line, page, column, element items                                */
+/*  Note: to be expanded as needed, and it will need expansion!            */
+/***************************************************************************/
+
+typedef enum {
+    norm = 0,       // normal text
+    sup,            // superscript text
+    sub             // subscript text
+} text_type;
+
+typedef struct text_chars {
+    struct  text_chars  *   next;
+    struct  text_chars  *   prev;
+            uint32_t        x_address;
+            uint32_t        width;
+            uint16_t        count;
+            uint16_t        length;
+            text_type       type;
+            uint8_t         font_number;
+            uint8_t         text[1];
+} text_chars;
+
+typedef struct text_line {
+    struct  text_line   *   next;
+            uint32_t        line_height;
+            uint32_t        y_address;
+            text_chars  *   first;
+            text_chars  *   last;
+} text_line;
+
+typedef enum {
+    el_text,        // text element
+} element_type;
+
+// struct oc_element; // Forward declaration (uncomment when needed)
+
+typedef struct {
+    uint32_t        depth;
+    text_line   *   first;
+} text_element;
+
+typedef struct doc_element {
+    struct  doc_element *   next;
+            uint32_t        indent;
+            uint32_t        pre_skip;
+            uint32_t        pre_top_skip;
+    union {
+            text_element    text;
+    } element;
+            element_type    type;   // placement avoids padding warning
+} doc_element;
+
+typedef struct {
+    uint32_t        fig_top;
+    uint32_t        fn_top;
+    uint32_t        main_top;
+    doc_element *   top_fig;
+    doc_element *   main;
+    doc_element *   bot_fig;
+    doc_element *   footnote;
+} doc_column;
+
+typedef struct {
+    uint32_t        main_top;
+    doc_column  *   topban;
+    doc_column  *   page_width;
+    doc_column  *   main;
+    doc_column  *   botban;
+} doc_page;
+
 #endif                                  // GTYPE_H_INCLUDED

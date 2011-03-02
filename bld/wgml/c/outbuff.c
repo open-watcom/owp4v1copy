@@ -32,7 +32,7 @@
 *                   ob_insert_ps_text_start()
 *                   ob_setup()
 *                   ob_teardown()
-*               and this function declared in copfile.h:
+*               and this function declared in wgml.h:
 *                   cop_tr_table()
 *               as well as these local variables:
 *                   buffout
@@ -62,10 +62,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "copfiles.h"
+#include "wgml.h"
 #include "gvars.h"
 #include "outbuff.h"
-#include "wgml.h"
 
 /* Local variable declaration. */
 

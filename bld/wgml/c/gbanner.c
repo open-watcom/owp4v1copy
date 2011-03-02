@@ -166,7 +166,8 @@ void set_banners( void )
 
 
 /***************************************************************************/
-/*  calc banner top  region position                                       */
+/*  calc banner top region position                                        */
+/*  this may or may not be the first region listed!                        */
 /***************************************************************************/
 
 extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
@@ -176,10 +177,10 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
     uint32_t            reg_off;
     int32_t             skip;
 
-    ban_depth = conv_vert_unit( &(ban->depth), 1 );
-    reg_off = conv_vert_unit( &(ban->region->voffset), 1 );
+    ban_depth = ban->ban_depth;
+    reg_off = ban->top_line->reg_voffset;
 
-    skip = ban_depth - reg_off - wgml_fonts[ban->region->font].line_height;
+    skip = ban_depth - reg_off - wgml_fonts[ban->top_line->font].line_height;
     if( skip > 0 ) {               // if region start is not last banner line
         post_top_skip = skip;           // reserve space
     } else {
@@ -195,7 +196,8 @@ extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
 }
 
 /***************************************************************************/
-/*  calc banner bottom  region position                                    */
+/*  calc banner bottom region position                                    */
+/*  this may or may not be the first region listed!                        */
 /***************************************************************************/
 
 extern  uint32_t    ban_bot_pos( banner_lay_tag * ban )
@@ -203,14 +205,14 @@ extern  uint32_t    ban_bot_pos( banner_lay_tag * ban )
     uint32_t    vpos;
     uint32_t    ban_depth;
 
-    ban_depth = conv_vert_unit( &ban->depth, 1 );
+    ban_depth = ban->ban_depth;
 
     if( bin_driver->y_positive == 0 ) {
         vpos = bin_device->y_start - g_page_depth + ban_depth
-               - conv_vert_unit( &(ban->region->voffset), 1 );
+               - ban->top_line->reg_voffset;
     } else {
         vpos = bin_device->y_start + g_page_depth - ban_depth
-               + conv_vert_unit( &(ban->region->voffset), 1 );
+               + ban->top_line->reg_voffset;
         vpos--; // produces same result as wgml 4.0
     }
     return( vpos );
@@ -748,8 +750,8 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     ban_line.first = NULL;
 
     /* calc banner horizontal margins */
-    ban_left  = g_page_left_org + conv_hor_unit( &(ban->left_adjust) );
-    ban_right = g_page_right_org - conv_hor_unit( &(ban->right_adjust) );
+    ban_left  = g_page_left_org + ban->ban_left_adjust;
+    ban_right = g_page_right_org - ban->ban_right_adjust;
 
     content_reg( ban );
     curr_x = 0;
@@ -780,7 +782,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
         h_left  = ban_left;
         h_right = ban_right;
-        reg_indent = conv_hor_unit( &(ban->region->indent) );
+        reg_indent = ban->region->reg_indent;
         if( ban->region->hoffset.su_u >= SU_lay_left  ) {   // symbolic
             if( ban->region->hoffset.su_u == SU_lay_left ) {
                 h_left += reg_indent;
@@ -790,7 +792,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                 h_left += reg_indent;
             }
         } else {                            // in horiz space units
-            h_left = reg_indent + conv_hor_unit( &(ban->region->hoffset) );
+            h_left = reg_indent + ban->region->reg_hoffset;
         }
 
         if( ban->region->region_position == pos_center || k == 1) {

@@ -30,6 +30,7 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
+
 uint32_t        titlep_lineno;      // TITLEP tag line number
 
 /***************************************************************************/
@@ -287,17 +288,29 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
 
 static void document_new_position( void )
 {
-    uint32_t    top_pos;
+    region_lay_tag  *   top_reg;
+    uint32_t            top_pos;
+
+    /* The value used for fb_position() should be the first line of text,
+     * even if that is from a TITLE tag (top banners do not apply to TITLEP).
+     * This handles documents starting with banners and text only.
+     */
 
     if( sect_ban_top[page & 1] != NULL ) {
-        top_pos = ban_top_pos( sect_ban_top[page & 1] );
+        top_reg = sect_ban_top[page & 1]->top_line;
+        if( bin_driver->y_positive == 0x00 ) {
+            top_pos = g_page_top - top_reg->reg_depth;
+        } else {
+            top_pos = g_page_top + top_reg->reg_depth;
+        }
+        g_cur_v_start = top_pos;
     } else {
         top_pos = g_page_top;
-    }
-    if( bin_driver->y_positive == 0x00 ) {
-        g_cur_v_start = g_page_top - wgml_fonts[0].line_height;
-    } else {
-        g_cur_v_start = g_page_top + wgml_fonts[0].line_height;
+        if( bin_driver->y_positive == 0x00 ) {
+            g_cur_v_start = g_page_top - wgml_fonts[0].line_height;
+        } else {
+            g_cur_v_start = g_page_top + wgml_fonts[0].line_height;
+        }
     }
     g_cur_h_start = g_page_left_org;
 
@@ -305,11 +318,11 @@ static void document_new_position( void )
         if( ProcFlags.fb_position_done ) {
             fb_new_section( g_cur_v_start );
         } else {
-            fb_position( g_page_left_org, g_cur_v_start );
+            fb_position( g_cur_h_start, g_cur_v_start );
             ProcFlags.fb_position_done = true;
         }
     }
-    g_cur_v_start = g_page_top; // reset so first line positioning is correct
+    g_cur_v_start = top_pos; // reset so first line positioning is correct
     return;
 }
 
@@ -328,11 +341,8 @@ void    start_doc_sect( void )
     int8_t              font;
     int8_t              h_spc;
     page_ej             page_e;
-    region_lay_tag  *   cur_reg;
     su              *   p_sk;
     su              *   top_sk;
-    uint32_t            bot_ban_depth;
-    uint32_t            bot_ban_line;
     xx_str  *           h_string;
 
     if( ProcFlags.start_section ) {
@@ -373,7 +383,7 @@ void    start_doc_sect( void )
         }
         break;
     case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
-        page_e   = ej_yes;
+        page_e = ej_yes;
         init_nest_cb();
         nest_cb->p_stack = copy_to_nest_stack();
         nest_cb->c_tag = t_TITLEP;
@@ -508,28 +518,14 @@ void    start_doc_sect( void )
     /***********************************************************************/
     /*  set page bottom limit                                              */
     /***********************************************************************/
-
     ind = page & 1;
     if( sect_ban_bot[ind] != NULL ) {
-        if( sect_ban_bot[ind]->depth.su_u == SU_chars_lines ) {
-            cur_reg = sect_ban_bot[ind]->region;
-            bot_ban_line = 0;
-            while( cur_reg != NULL ) {
-                if( bot_ban_line < wgml_fonts[cur_reg->font].line_height ) {
-                    bot_ban_line = wgml_fonts[cur_reg->font].line_height;
-                }
-                cur_reg = cur_reg->next;
-            }
-            bot_ban_depth = sect_ban_bot[ind]->depth.su_whole * bot_ban_line;
-        } else { 
-            bot_ban_depth = conv_vert_unit( &sect_ban_bot[ind]->depth, 0 );
-        }
         if( bin_driver->y_positive == 0 ) {
             g_page_bottom = g_page_bottom_org
-                            + bot_ban_depth;
+                            + sect_ban_bot[ind]->ban_depth;
         } else {
             g_page_bottom = g_page_bottom_org
-                            - bot_ban_depth;
+                            - sect_ban_bot[ind]->ban_depth;
         }
     } else {
         g_page_bottom = g_page_bottom_org;

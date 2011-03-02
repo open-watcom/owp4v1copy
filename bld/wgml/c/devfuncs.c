@@ -39,7 +39,7 @@
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
 *                   fb_subsequent_text_line_pass()
-*               and these functions declared in copfiles.h:
+*               and these functions declared in wgml.h:
 *                   fb_absoluteaddress()
 *                   fb_new_section()
 *                   fb_position()
@@ -176,10 +176,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "wgml.h"
 #include "devfuncs.h"
 #include "gvars.h"
 #include "outbuff.h"
-#include "wgml.h"
 
 /* Macros. */
 

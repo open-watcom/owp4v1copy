@@ -53,18 +53,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "wgml.h"
 #include "banner.h"
 #include "common.h"
 #include "copdev.h"
 #include "copdrv.h"
-#include "copfiles.h"
 #include "copfon.h"
 #include "cophdr.h"
 #include "dfinterp.h"
 #include "findfile.h"
 #include "gvars.h"
 #include "research.h"
-#include "wgml.h"
 
 /*  Local variables. */
 

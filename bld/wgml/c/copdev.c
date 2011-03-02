@@ -40,9 +40,9 @@
 #define __STDC_WANT_LIB_EXT1__  1
 #include <string.h>
 
+#include "wgml.h"
 #include "copdev.h"
 #include "copfunc.h"
-#include "wgml.h"
 
 /* Local macros. */
 

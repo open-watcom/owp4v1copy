@@ -269,6 +269,27 @@ void    free_some_mem( void )
     if( workbuf != NULL ) {
         mem_free( workbuf );
     }
+    if( t_page.topban != NULL) {
+        mem_free( t_page.topban );
+    }
+    if( t_page.page_width != NULL) {
+        mem_free( t_page.page_width );
+    }
+    if( t_page.main != NULL) {
+        mem_free( t_page.main );
+    }
+    if( t_page.botban != NULL) {
+        mem_free( t_page.botban );
+    }
+    if( n_column.main != NULL) {
+        mem_free( n_column.main );
+    }
+    if( n_column.bot_fig != NULL) {
+        mem_free( n_column.bot_fig );
+    }
+    if( n_column.bot_fig != NULL) {
+        mem_free( n_column.bot_fig );
+    }
     free_layout_banner();
 
     free_pool_storage();
