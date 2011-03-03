@@ -228,6 +228,16 @@ extern  void    set_h_start( void );
 extern  void    test_page_full( void );
 
 
+/* grefdict.c                         */
+extern  void        add_ref_entry( ref_entry * * dict, ref_entry * me );
+extern  void        init_ref_dict( ref_entry * * dict );
+extern  void        free_ref_dict( ref_entry * * dict );
+extern  void        print_ref_dict( ref_entry * dict, const char * type );
+extern  ref_entry * find_refid( ref_entry * dict, char const * id );
+extern  void        init_ref_entry( ref_entry * re, char * id, size_t len );
+extern  void        fill_id( ref_entry * re, char * id, size_t len );
+
+
 /* gresrch.c                          */
 extern  void    add_GML_tag_research( char * tag );
 extern  void    free_GML_tags_research( void );

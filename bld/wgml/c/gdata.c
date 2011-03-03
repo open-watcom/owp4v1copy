@@ -139,6 +139,9 @@ void init_global_vars( void )
     init_macro_dict( &macro_dict );
     init_tag_dict( &tag_dict );
     init_sys_dict( &sys_dict );
+    init_ref_dict( &ref_dict );
+    init_ref_dict( &fig_dict );
+    init_ref_dict( &fn_dict );
 
     tagname[0]          = '*';          // last defined GML tag name none
     tag_entry           = NULL;         // ... entry in tag_dict

@@ -59,6 +59,10 @@
 #define VAL_LENGTH      10              // max length for attribute value
                                         // longer strings will be allocated
 
+#define ID_LEN          15              // length of refids wgml 4 gives a warning
+                                        // for lengths > 7 but processes it
+                                        // we try with truncating at 15
+
 #define SYM_NAME_LENGTH 10              // symbol name length
 #define MAC_NAME_LENGTH 8               // macro name length
 #define MAX_MAC_PARMS   32              // maximum macro parm count
@@ -604,8 +608,8 @@ typedef enum {
 
 typedef struct ix_e_blk {               // entry for pagenos
     struct ix_e_blk * next;             // next entries (if any)
-    uint32_t        freelen;            // remainig len of etext
-    char            refs[reflen];       // the pagenos   3, 5, 8, 9, ...
+    uint32_t        freelen;            // remaining length for refs ..
+    char            refs[reflen];       // .. refs pagenos   3, 5, 8, 9, ...
 } ix_e_blk;
 
 typedef struct ix_h_blk {               // header with index text
@@ -930,5 +934,20 @@ typedef struct {
     doc_column  *   main;
     doc_column  *   botban;
 } doc_page;
+
+/***************************************************************************/
+/*  reference entry for reference dictionaries                             */
+/*   used for :Hx, :FIG, :FN                                               */
+/***************************************************************************/
+typedef struct ref_entry {
+    struct ref_entry    *   next;
+    uint32_t                lineno;     // input lineno of :Hx :FIG :FN
+                                        // used for checking duplicate ID
+    uint32_t                pageno;     // output page of :Hx or :FIG
+    uint32_t                number;     // figure or footnote number
+    char                    id[ID_LEN+1];   // reference id
+                                        // filled with '\0' up to ID_LEN
+    char                *   text_cap;   // text line or figcap text
+} ref_entry;
 
 #endif                                  // GTYPE_H_INCLUDED

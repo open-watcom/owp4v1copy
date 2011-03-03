@@ -123,6 +123,9 @@ global  symvar      *   global_dict;    // global symbol dictionary
 global  symvar      *   sys_dict;       // global system symbol dictionary
 global  mac_entry   *   macro_dict;     // macro dictionary
 global  gtentry     *   tag_dict;       // user tag dictionary
+global  ref_entry   *   ref_dict;       // reference id dictionary :Hx tags
+global  ref_entry   *   fig_dict;       // reference id dictionary :FIG tags
+global  ref_entry   *   fn_dict;        // reference id dictionary :FN tags
 
 global  char            research_file_name[48]; // filename for research
 global  ulong           research_from;  // line no start for research output

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2010 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2011 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -26,8 +26,9 @@
 *
 * Description:  WGML tags :H0 :H1 :H2 :H3 :H4 :H5 :H6 processing
 *
-*                         stitle attribute not implemented
-*                         other   options TBD
+*                  stitle= not implemented, not used in OW documentation
+*
+*                  incomplete heading output TBD
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -98,13 +99,19 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
 {
     char    *   p;
     char    *   pa;
+    char    *   pe;
     char    *   headp;
     char        quote;
+    char        c;
     bool        idseen;
     bool        stitleseen;
     int         rc;
     size_t      headlen;
+    size_t      txtlen;
+    size_t      len;
     char        hnumstr[64];
+    ref_entry   *   re;
+    ref_entry   *   rwk;
     static char hxstring[4] = ":HX";
     static char htextx[8] = "$htextX";
     static char headx[7]  = "$headX";
@@ -155,6 +162,7 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     idseen = false;
     stitleseen = false;
     p = scan_start;
+    re = NULL;
 
     /***********************************************************************/
     /*  Scan attributes  for :Hx                                           */
@@ -183,12 +191,17 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
             while( *p == ' ' ) {
                 p++;
             }
-            quote = *p;
             if( is_quote_char( *p ) ) {
+                quote = *p;
                 p++;
+            } else {
+                quote = '\0';
             }
             pa = p;
             while( *p && (*p != quote) ) {
+                p++;
+            }
+            if( is_quote_char( *p ) ) {
                 p++;
             }
 #if 0
@@ -205,41 +218,65 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
             continue;
         }
 
+        /*******************************************************************/
+        /*  ID='xxxxxxxx'                                                  */
+        /*******************************************************************/
+
         if( !strnicmp( "id=", p, 3 ) ) {
             p += 3;
-            idseen = true;
-
-            /***************************************************************/
-            /*  Although currently unsupported scan id='xxx'        TBD    */
-            /***************************************************************/
-            g_warn( wng_not_yet_supp_att, "id" );   // TBD
-            wng_count++;
-            file_mac_info();
 
             while( *p == ' ' ) {
                 p++;
             }
-            quote = *p;
             if( is_quote_char( *p ) ) {
+                quote = *p;
                 p++;
+            } else {
+                quote = '\0';
             }
             pa = p;
-            while( *p && (*p != quote) ) {
+            while( *p && is_id_char( *p ) ) {
                 p++;
             }
-#if 0
-            len = min( 7, p - pa );     // restrict length
+
+            len = p - pa;
             pe = pa + len;
             c = *pe;
-            *pe = '\0';
-                                        // processing TBD
-
-            *pe = c;
-#endif
-            if( *p == quote ) {
-                p++;
+            if( GlobalFlags.firstpass && (len > 7) ) {// wgml 4 warning level
+                *pe = '\0';
+                g_warn( wng_id_xxx, pa );
+                g_info( inf_id_len );
+                file_mac_info();
+                wng_count++;
+                *pe = c;
             }
 
+            /***************************************************************/
+            /*  restrict the length to ID_LEN (15) in the hope that no     */
+            /*  truncation occurs                                          */
+            /*  wgml4 warns about ids of more than 7 chars, but processes  */
+            /*  much longer ids                                  TBD       */
+            /***************************************************************/
+
+            len = min( ID_LEN, p - pa );// restrict length
+
+            if( len > 0 ) {
+                idseen = true;          // valid id attribute found
+                pe = pa + len;
+                c = *pe;
+                *pe = '\0';
+
+                if( re == NULL ) {      // prepare reference entry
+                    re = mem_alloc( sizeof( ref_entry ) );
+                    init_ref_entry( re, pa, len );
+                } else {
+                    fill_id( re, pa, len );
+                }
+                *pe = c;
+            }
+            if( *p && (quote == *p) ) {
+                p++;
+            }
             scan_start = p;
             continue;
         }
@@ -252,10 +289,10 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     if( *p == '.' ) {                   // tag end ?
         p++;
     }
-/******************************************************************************/
-/*   Now set the global vars $headx, $headnumx, $htextx                       */
-/*                                                                            */
-/******************************************************************************/
+    /************************************************************************/
+    /*   Now set the global vars $headx, $headnumx, $htextx                 */
+    /*                                                                      */
+    /************************************************************************/
     if( *p ) {                          // text line follows
         while( *p == ' ' ) {            // ignore leading blanks
             p++;
@@ -265,8 +302,8 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
         rc = add_symvar( &global_dict, htextx, p, no_subscript, 0 );
     }
     update_headnumx( hx_lvl, &hnumstr, sizeof( hnumstr ) );
-
-    headlen = strlen( hnumstr) + strlen( p ) + 2;
+    txtlen = strlen( p );
+    headlen = strlen( hnumstr) + txtlen + 2;
     headp = mem_alloc( headlen );
     if( layout_work.hx[hx_lvl].number_form != num_none ) {
         strcpy_s( headp, headlen, hnumstr); // numbered header
@@ -276,7 +313,44 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     }
     strcat_s( headp, headlen, p );
     rc = add_symvar( &global_dict, headx, headp, no_subscript, 0 );
+
+    out_msg( " %s\n", headp );          // always verbose output ? TBD
+
     mem_free( headp );
+
+    /***********************************************************************/
+    /*  if id  specified put it into reference dict                        */
+    /***********************************************************************/
+    if( idseen ) {
+        rwk = find_refid( ref_dict, re->id );
+        if( !rwk ) {                    // new entry
+            if( txtlen > 0 ) {          // text line not empty
+                re->text_cap = mem_alloc( txtlen + 1 );
+                strcpy_s( re->text_cap, txtlen + 1, p );
+            }
+            add_ref_entry( &ref_dict, re );
+            re = NULL;                  // free will be done via dictionary
+        } else {
+            /***************************************************************/
+            /*  test for duplicate id                                      */
+            /***************************************************************/
+            if( re->lineno != rwk->lineno ) {
+                g_err( wng_id_xxx, re->id );
+                g_info( inf_id_duplicate );
+                file_mac_info();
+                err_count++;
+            }
+            // anything more to do if not first pass ??? TBD
+            if( re->text_cap != NULL ) {
+                mem_free( re->text_cap );   // no longer needed
+            }
+            mem_free( re );             // no longer needed
+        }
+    }
+
+    /***********************************************************************/
+    /*  creation of actual heading TBD                                     */
+    /***********************************************************************/
 
     scan_start = scan_stop + 1;
     return;

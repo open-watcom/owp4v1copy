@@ -18,6 +18,7 @@ common_objs =  &
         gpagegeo.obj &
         gprocess.obj &
         gproctxt.obj &
+        grefdict.obj &
         gresrch.obj  &
         gscan.obj    &
         gsymvar.obj  &
@@ -64,7 +65,8 @@ gml_objs =  &
         gtagutil.obj &
         gtitle.obj   &
         gusertag.obj &
-        gxl.obj
+        gxl.obj      &
+        gxxref.obj
 
 #
 # layout tag scanning related

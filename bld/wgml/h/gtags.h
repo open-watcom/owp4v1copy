@@ -99,7 +99,7 @@
   pickg( H4,       2,      gml_h4,         0,           0 )
   pickg( H5,       2,      gml_h5,         0,           0 )
   pickg( H6,       2,      gml_h6,         0,           0 )
-  pickg( HDREF,    5,      gml_dummy,      tag_out_txt, 0 )
+  pickg( HDREF,    5,      gml_hdref,      tag_out_txt, 0 )
 
   pickg( HP0,      3,      gml_hp0,        tag_out_txt, 0 )
   pickg( EHP0,     4,      gml_ehp0,       tag_out_txt, 0 )

@@ -257,6 +257,15 @@ void    free_some_mem( void )
     if( macro_dict != NULL ) {
         free_macro_dict( &macro_dict );
     }
+    if( ref_dict != NULL ) {
+        free_ref_dict( &ref_dict );
+    }
+    if( fig_dict != NULL ) {
+        free_ref_dict( &fig_dict );
+    }
+    if( fn_dict != NULL ) {
+        free_ref_dict( &fn_dict );
+    }
     if( tag_dict != NULL ) {
         free_tag_dict( &tag_dict );
     }

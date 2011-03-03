@@ -715,6 +715,9 @@ int main( int argc, char * argv[] )
         free_SCR_tags_research();
 
         print_macro_dict( macro_dict, true );
+        print_ref_dict( ref_dict, "HDREF" );
+        print_ref_dict( fig_dict, "FIGREF" );
+        print_ref_dict( fn_dict, "FNREF" );
 
         if( tag_dict != NULL ) {
             print_tag_dict( tag_dict );

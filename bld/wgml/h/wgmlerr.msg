@@ -351,6 +351,18 @@ pick( ERR_AUTO_ATT,             "Cannot specify the automatic attribute '%s'",
 pick( ERR_ATT_LEN_INV,          "Length value too large",
                                 "Length value too large" )
 
+pick( WNG_ID_XXX,               "For id '%s'",
+                                "For id '%s'" )
+
+pick( INF_ID_LEN,               "Identifier name should have no more than seven characters",
+                                "Identifier name should have no more than seven characters" )
+
+pick( INF_ID_DUPLICATE,         "Duplicate heading id",
+                                "Duplicate heading id" )
+
+pick( INF_ID_UNKNOWN,           "Heading id not defined",
+                                "Heading id not defined" )
+
 pick( ERR_ATT_VAL,              "Value '%s' for the '%s' attribute is not defined",
                                 "Value '%s' for the '%s' attribute is not defined" )
 
