@@ -71,4 +71,7 @@ repe cmps byte ptr cs:[bx],[bx]
 repe cmps word ptr cs:[bx],[bx]
 repe cmps dword ptr cs:[bx],[bx]
 
+repe cmps byte ptr cs:[si],word ptr es:[di]
+repe cmps dword ptr cs:[esi],word ptr es:[edi]
+
 end

@@ -602,6 +602,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
 /* Perform the operation between token_1 and token_2 */
 {
     struct asm_sym      *sym;
+    asm_token           reg_token;
 
     token_1->string = NULL;
 
@@ -948,6 +949,29 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                     AsmError( ILLEGAL_USE_OF_REGISTER );
                 token_1->type = EXPR_UNDEF;
                 return( ERROR );
+            }
+            /* Quick fix for MOVS/CMPS/SCAS. These instruction do not allow
+             * a segment override for the the destination. If ES is used for
+             * the [E]DI operand, ignore it; actual overrides are rejected.
+             */
+            switch( Code->info.token ) {
+            case T_MOVS:
+            case T_CMPS:
+            case T_SCAS:
+                reg_token = AsmBuffer[token_2->base_reg]->u.token;
+                if( (reg_token == T_DI) || (reg_token == T_EDI) ) {
+                    if( AsmBuffer[token_1->base_reg]->u.token == T_ES ) {
+                        token_1->base_reg = token_2->override;
+                        break;
+                    }
+                    if( error_msg )
+                        AsmError( ILLEGAL_USE_OF_REGISTER );
+                    token_1->type = EXPR_UNDEF;
+                    return( ERROR );
+                }
+                break;
+            default:
+                break;
             }
             token_2->override = token_1->base_reg;
             token_2->indirect |= token_1->indirect;
