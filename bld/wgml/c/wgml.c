@@ -510,10 +510,20 @@ static  void    proc_input( char * filename )
 static  void    print_stats( clock_t duration_ticks )
 {
     char        linestr[30];
+    char        linestr2[30];
     ldiv_t      hour_min;
     ldiv_t      sec_frac;
 
-    g_info_lm( inf_stat_1 );
+    g_info_lm( inf_stat_0 );
+
+    utoa( pass, linestr, 10 );
+    if( pass == passes ) {
+        linestr2[0] = '\0';
+    } else {
+        strcpy( linestr2, "of " );
+        utoa( passes, linestr2 + 3, 10 );
+    }
+    g_info_lm( inf_stat_1, linestr, linestr2 );
 
     utoa( max_inc_level, linestr, 10 );
     g_info_lm( inf_stat_2, linestr );
@@ -603,6 +613,7 @@ int main( int argc, char * argv[] )
     int         cmdlen;
     jmp_buf     env;
     int         tok_count;
+    int         passcount;
     clock_t     start_time;
     clock_t     end_time;
 
@@ -613,7 +624,7 @@ int main( int argc, char * argv[] )
     }
 
     start_time = clock();               // remember start time
-
+    passcount = 0;
     g_trmem_init();                     // init memory tracker if necessary
 
     init_global_vars();
@@ -693,7 +704,7 @@ int main( int argc, char * argv[] )
 //          if( GlobalFlags.research && (pass < passes) ) { // TBD
 //              g_trmem_prt_list();     // show allocated memory at pass end
 //          }
-
+            passcount = pass;
             if( !GlobalFlags.lastpass && (err_count > 0) ) {
                 g_info_lm( inf_error_stop, passes - pass > 1 ? "es" : "" );
                 break;                  // errors found stop now
@@ -744,6 +755,7 @@ int main( int argc, char * argv[] )
     cop_teardown();                     // free memory allocated in copfiles
 
     end_time = clock();                 // get end time
+    pass = passcount;
     print_stats( end_time - start_time );
 
     fini_msgs();                        // end of msg resources

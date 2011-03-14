@@ -83,7 +83,7 @@ void    out_buf_lines( text_line * * b_lines, bool newpage )
         document_top_banner();
 
         tline = *b_lines;
-        delta = g_page_top - tline->y_address - tline->line_height;// vertical adjust value
+        delta = g_cur_v_start - tline->y_address - tline->line_height;// vertical adjust value
 
         while( tline != NULL ) {        // set y_addr(s) on new page
             tline->y_address += delta;

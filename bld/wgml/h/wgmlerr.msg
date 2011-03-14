@@ -69,26 +69,29 @@ pick( INF_INDENT_REM,           "%s<< Indent removed",
 pick( INF_INCLUDED,             "\tIncluded from %s",
                                 "\tIncluded from %s" )
 
-pick( INF_STAT_1,               "Statistics:",
+pick( INF_STAT_0,               "Statistics:",
                                 "Statistics:" )
 
-pick( INF_STAT_2,               "  Max inc level:   %6s",
-                                "  Max inc level:   %6s" )
+pick( INF_STAT_1,               "Completed passes:   %6s %s",
+                                "Completed passes:   %6s %s" )
 
-pick( INF_STAT_3,               "    Error count:   %6s",
-                                "    Error count:   %6s" )
+pick( INF_STAT_2,               "   Max inc level:   %6s",
+                                "   Max inc level:   %6s" )
 
-pick( INF_STAT_4,               "  Warning count:   %6s",
-                                "  Warning count:   %6s" )
+pick( INF_STAT_3,               "     Error count:   %6s",
+                                "     Error count:   %6s" )
 
-pick( INF_STAT_5,               "     Returncode:   %6s",
-                                "     Returncode:   %6s" )
+pick( INF_STAT_4,               "   Warning count:   %6s",
+                                "   Warning count:   %6s" )
 
-pick( INF_STAT_6,               "   Memory usage:   %6s",
-                                "   Memory usage:   %6s" )
+pick( INF_STAT_5,               "      Returncode:   %6s",
+                                "      Returncode:   %6s" )
 
-pick( INF_STAT_7,               "Time to process: %s",
-                                "Time to process: %s" )
+pick( INF_STAT_6,               "    Memory usage:   %6s",
+                                "    Memory usage:   %6s" )
+
+pick( INF_STAT_7,               " Time to process: %s",
+                                "Time to process:  %s" )
 
 pick( INF_CMDLINE,              "cmdline=%s",
                                 "cmdline=%s" )

@@ -253,10 +253,10 @@ static void finish_banners( void )
         ban_line = 0;
         max_reg_depth = 0;
         max_reg_font = 0;
-        min_top_line = -1;  // start at very large positive number
+        min_top_line = UINT32_MAX;      // start at very large positive number
         top_line_reg = NULL;
         for( cur_reg = cur_ban->region; cur_reg != NULL; cur_reg = cur_reg->next ) {
-            g_curr_font_num = s_font;    // horizontal attributes use default font
+            g_curr_font_num = s_font;   // horizontal attributes use default font
             cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent );
             cur_reg->reg_hoffset = conv_hor_unit( &cur_reg->hoffset );
             cur_reg->reg_width = conv_hor_unit( &cur_reg->width );
@@ -277,11 +277,11 @@ static void finish_banners( void )
                 top_line_reg = cur_reg;
             }
         }
-        g_curr_font_num = s_font;        // horizontal attributes use default font
+        g_curr_font_num = s_font;       // horizontal attributes use default font
         cur_ban->ban_left_adjust = conv_hor_unit( &cur_ban->left_adjust );
         cur_ban->ban_right_adjust = conv_hor_unit( &cur_ban->right_adjust );
 
-        g_curr_font_num = max_reg_font;  // vertical attribute uses the largest banregion font
+        g_curr_font_num = max_reg_font; // vertical attribute uses the largest banregion font
         cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1 );
 
         cur_ban->top_line = top_line_reg;

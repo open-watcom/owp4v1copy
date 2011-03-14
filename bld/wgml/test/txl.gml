@@ -2,12 +2,20 @@
 :cmt. item tags :LI and :LP
 :cmt. TBD  not yet :DL, :GL and subtags
 :LAYOUT.
+:P
+        line_indent = 0
+        pre_skip = 1
+        post_skip = 0
+:PC
+        line_indent = 6
+        pre_skip = 1
+        post_skip = 0
 :LP
         left_indent = 4
         right_indent = 3
         line_indent = 2
         pre_skip = 1
-        post_skip = 1
+        post_skip = 0
         spacing = 1
 :DT
         font = 2
@@ -26,7 +34,7 @@
         level = 1
         left_indent = 2
         right_indent = 0
-        pre_skip = 0
+        pre_skip = 1
         skip = 0
         spacing = 1
         post_skip = 0
@@ -35,7 +43,7 @@
         level = 1
         left_indent = 2
         right_indent = 15
-        pre_skip = 0
+        pre_skip = 1
         skip = 0
         spacing = 1
         post_skip = 0
@@ -47,7 +55,7 @@
         level = 1
         left_indent = 2
         right_indent = 0
-        pre_skip = 0
+        pre_skip = 1
         skip = 0
         spacing = 1
         post_skip = 0
@@ -96,6 +104,7 @@
         contents = '/&$amp.$htext1.// &$amp.$pgnuma./'
 :eBANREGION
 :eBANNER
+:convert file='txl.lay'.
 :eLAYOUT.
 :GDOC.
 :BODY.
@@ -140,6 +149,8 @@ still list part still list part still list part still list part still list part
 :lp. ul compact started with &gml.LP as first item.
 :li. ul item 1
 :li. ul item 2
+:li. ul item 3
+:li. ul item 4
 :eul.
 :esl.
 &gml.SL end.

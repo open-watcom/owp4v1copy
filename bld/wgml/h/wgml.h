@@ -209,6 +209,10 @@ extern  void    init_page_geometry( void );
 extern  void    set_page_position( doc_section ds );
 
 
+/* gppcnote.c                         */
+extern  void    proc_p_pc( p_lay_tag * p_pc );
+
+
 /* gprocess.c                         */
 extern  void    process_late_subst( void );
 extern  void    process_line( void );

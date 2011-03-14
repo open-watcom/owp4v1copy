@@ -27,11 +27,10 @@
 * Description:  WGML tags :OL, :SL, :UL  :DL, :GL  and corresponding
 *                         :eXX processing
 *                         :LI and :LP processing
-*
+*               only some of the attributes are supported   TBD
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
- 
  
  
 /***************************************************************************/
@@ -130,6 +129,7 @@ void    gml_dl( const gmltag * entry )  // not tested TBD
         scan_start = p + 7;
     }
     gml_xl_lp_common( entry, t_DL );
+    nest_cb->lay_tag = &layout_work.dl;
  
  
     scan_start = scan_stop + 1;
@@ -170,6 +170,7 @@ void    gml_gl( const gmltag * entry )  // not tested TBD
         scan_start = p + 7;
     }
     gml_xl_lp_common( entry, t_GL );
+    nest_cb->lay_tag = &layout_work.gl;
  
  
     scan_start = scan_stop + 1;
@@ -338,8 +339,19 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
         }
     } else {
         g_cur_left = nest_cb->lm;
+        g_cur_h_start = nest_cb->lm;
         g_page_right = nest_cb->rm;
+        post_skip = &(((lp_lay_tag *)(nest_cb->lay_tag))->post_skip);
         wk = nest_cb;
+ 
+        /*******************************************************************/
+        /*  If this is the last nested tag, simulate a :PC tag             */
+        /*  at least the pre_skip value ist used by wgml4.0                */
+        /*  so let's do the same                                           */
+        /*******************************************************************/
+        if( nest_cb->prev->c_tag == t_NONE ) {
+            proc_p_pc( &(layout_work.pc) );
+        }
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );
         g_curr_font_num = nest_cb->font;

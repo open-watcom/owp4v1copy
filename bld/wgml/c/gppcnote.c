@@ -27,49 +27,49 @@
 * Description:  WGML tags :P, :PC and :NOTE processing
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include    "wgml.h"
 #include    "gvars.h"
-
+ 
 /***************************************************************************/
 /*  :P.perhaps paragraph elements                                          */
 /***************************************************************************/
-static  void    proc_p_pc( p_lay_tag * p_pc )
+void    proc_p_pc( p_lay_tag * p_pc )
 {
     char        *   p;
     int32_t         skippre;
     int32_t         skippost;
-
+ 
     scan_err = false;
     p = scan_start;
-
+ 
     ProcFlags.keep_left_margin = true;  //    special Note indent
     start_doc_sect();                   // if not already done
-
+ 
     scr_process_break();
-
+ 
     if( ProcFlags.test_widow ) {
         out_buf_lines( &buf_lines, false ); // lines are no widows
         buf_lines_cnt = 0;
     }
-
+ 
     if( nest_cb->c_tag == t_NONE ) {
         g_cur_left = g_page_left + g_indent;// left start    TBD
     }
                                             // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(p_pc->line_indent) );
-
+ 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
-
+ 
     if( post_skip != NULL ) {
         skippost = conv_vert_unit( post_skip, spacing );
         post_skip = NULL;
     } else {
         skippost = 0;
     }
-
+ 
     if( ProcFlags.page_started ) {
         if( ProcFlags.para_started ) {
             skippre = conv_vert_unit( &(p_pc->pre_skip), spacing );
@@ -103,10 +103,10 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
             }
         }
     }
-
+ 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-
+ 
     if( *p == '.' ) p++;                // over '.'
     if( *p ) {
         process_text( p, g_curr_font_num );
@@ -115,11 +115,11 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
         ProcFlags.para_started = false;
     }
     post_skip = &(p_pc->post_skip);
-
+ 
     scan_start = scan_stop + 1;
     return;
 }
-
+ 
 /***************************************************************************/
 /*  :P.perhaps paragraph elements                                          */
 /***************************************************************************/
@@ -127,7 +127,7 @@ extern  void    gml_p( const gmltag * entry )
 {
     proc_p_pc( &layout_work.p );
 }
-
+ 
 /***************************************************************************/
 /*  :PC.perhaps paragraph elements                                         */
 /***************************************************************************/
@@ -135,7 +135,7 @@ extern  void    gml_pc( const gmltag * entry )
 {
     proc_p_pc( &layout_work.pc );
 }
-
+ 
 /***************************************************************************/
 /*  :NOTE.perhaps paragraph elements                                       */
 /***************************************************************************/
@@ -145,19 +145,19 @@ extern  void    gml_note( const gmltag * entry )
     int32_t        skippre;
     int32_t        skippost;
     int32_t        skipsk;
-
+ 
     scan_err = false;
     p = scan_start;
-
+ 
     start_doc_sect();                   // if not already done
-
+ 
     scr_process_break();
-
+ 
     if( ProcFlags.test_widow ) {
         out_buf_lines( &buf_lines, false );  // lines are no widows
         buf_lines_cnt = 0;
     }
-
+ 
     if( post_skip != NULL ) {
         skippost = conv_vert_unit( post_skip, spacing );
     } else {
@@ -194,17 +194,17 @@ extern  void    gml_note( const gmltag * entry )
         }
     }
     post_skip = NULL;
-
+ 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
-
+ 
     if( nest_cb->c_tag == t_NONE ) {
         g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent );
     } else {
         g_cur_left += conv_hor_unit( &layout_work.note.left_indent );
     }
     g_cur_h_start = g_cur_left;
-
+ 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     start_line_with_string( layout_work.note.string, layout_work.note.font );
     if( t_line.last != NULL ) {
@@ -213,7 +213,7 @@ extern  void    gml_note( const gmltag * entry )
     post_space = 0;
     g_cur_h_start = g_cur_left;
     ju_x_start = g_cur_h_start;
-
+ 
     spacing = layout_work.note.spacing;
     g_curr_font_num = layout_work.defaults.font;
     if( *p == '.' ) p++;                // over '.'
@@ -221,9 +221,9 @@ extern  void    gml_note( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
-
+ 
     post_skip = &(layout_work.note.post_skip);
-
+ 
     scan_start = scan_stop + 1;
     return;
 }
