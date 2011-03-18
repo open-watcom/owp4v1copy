@@ -10,7 +10,6 @@
 *
 ****************************************************************************/
 
-
 #ifndef _RDOSDEV_H
 #define _RDOSDEV_H
 
@@ -27,6 +26,43 @@ extern "C" {
 #define UserGate_free_mem 0x9a 2 0 0 0 2 0
 #define UserGate_create_thread 0x9a 28 0 0 0 2 0
 
+// callback pragmas
+
+typedef void __far (__rdos_thread_callback)(void *);
+
+#pragma aux __rdos_thread_callback "*" \
+                    parm caller [gs ebx] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_timer_callback)(int sel, unsigned long expire_msb, unsigned long expire_lsb);
+
+#pragma aux __rdos_timer_callback "*" \
+                    parm caller [ecx] [edx] [eax] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_wait_callback)(int wait_obj);
+
+#pragma aux __rdos_wait_callback "*" \
+                    parm caller [es] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_hook_callback)();
+
+#pragma aux __rdos_hook_callback "*" \
+                    parm caller \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_hook_state_callback)(int thread, char *buf);
+
+#pragma aux __rdos_hook_state_callback "*" \
+                    parm caller [ebx] [es edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
 // structures
 
 struct TKernelSection
@@ -35,20 +71,20 @@ struct TKernelSection
     short int list;
 };
 
-
-// callback pragmas
-
-typedef void (__rdos_thread_callback)(void *);
-
-#pragma aux __rdos_thread_callback "*" \
-                    parm caller [gs ebx] \
-                    value struct routine [eax] \
-                    modify [eax ebx ecx edx esi edi]
-
+struct TWaitHeader
+{
+    __rdos_wait_callback *init_proc;
+    __rdos_wait_callback *abort_proc;
+    __rdos_wait_callback *clear_proc;
+    __rdos_wait_callback *idle_proc;
+};
 
 // function definitions
 
 int RdosIsValidOsGate(int gate);
+
+void RdosReturnOk();
+void RdosReturnFail();
 
 void *RdosSelectorToPointer(int sel);
 void *RdosSelectorOffsetToPointer(int sel, long offset);
@@ -81,14 +117,31 @@ void RdosSetThreadPhysicalPage(int thread, long linear, long page);
 int RdosAllocateBigGlobalSelector(long size);
 int RdosAllocateSmallGlobalSelector(long size);
 
+int RdosAllocateBigLocalSelector(long size);
+int RdosAllocateSmallLocalSelector(long size);
+int RdosAllocateSmallKernelSelector(long size);
+
 void *RdosAllocateBigGlobalMem(long size);
 void *RdosAllocateSmallGlobalMem(long size);
 
-long RdosAllocateBigGlobalLinear(long size);
-long RdosAllocateSmallGlobalLinear(long size);
+void *RdosAllocateBigLocalMem(long size);
+void *RdosAllocateSmallLocalMem(long size);
+void *RdosAllocateSmallKernelMem(long size);
 
 void RdosFreeMem(int sel);
+
+long RdosAllocateBigGlobalLinear(long size);
+long RdosAllocateSmallGlobalLinear(long size);
+long RdosAllocateLocalLinear(long size);
+long RdosAllocateDebugLocalLinear(long size);
+long RdosAllocateVmLinear(long size);
+
+int RdosReserveLocalLinear(long linear, long size);
+
 void RdosFreeLinear(long linear, long size);
+
+long RdosUsedSmallGlobalMem();
+long RdosUsedBigGlobalMem();
 
 void *RdosAllocateFixedSystemMem(int sel, long size);
 void *RdosAllocateFixedProcessMem(int sel, long size);
@@ -97,23 +150,34 @@ long RdosAllocatePhysical();
 long RdosAllocateMultiplePhysical(int pages);
 void RdosFreePhysical(long ads);
 
+void RdosStartTimer(    int sel_id, 
+                        unsigned long expire_msb, 
+                        unsigned long expire_lsb,
+                        __rdos_timer_callback *callb_proc,
+                        int callb_sel);
+
+void RdosStopTimer(     int sel_id);
+
 long RdosGetApicId();
 int RdosGetProcessor();
-void RdosResumeProcessor(int processor);
-void RdosPreemptProcessor(int processor);
+int RdosGetProcessorNum(int num);
 void RdosSendNmi(int processor);
-
-void RdosLockScheduler();
-void RdosUnlockScheduler();
-
-void RdosInitKernelSection(struct TKernelSection *section);
-void RdosEnterKernelSection(struct TKernelSection *section);
-void RdosLeaveKernelSection(struct TKernelSection *section);
+void RdosSendInt(int processor, int int_num);
 
 void RdosClearSignal();
 void RdosSignal(int thread);
 void RdosWaitForSignal();
 void RdosWaitForSignalWithTimeout(long msb, long lsb);
+
+int RdosAddWait(int space_needed, int wait_handle, struct TWaitHeader *wait_table);
+void RdosSignalWait(int wait_obj);
+
+void RdosInitKernelSection(struct TKernelSection *section);
+void RdosEnterKernelSection(struct TKernelSection *section);
+void RdosLeaveKernelSection(struct TKernelSection *section);
+
+void RdosLockScheduler();
+void RdosUnlockScheduler();
 
 void RdosCreateKernelThread(
             int prio, 
@@ -129,6 +193,13 @@ void RdosCreateKernelProcess(
             const char *name,
             void *parm);
 
+void RdosHookInitTasking(__rdos_hook_callback *callb_proc);
+void RdosHookCreateProcess(__rdos_hook_callback *callb_proc);
+void RdosHookTerminateProcess(__rdos_hook_callback *callb_proc);
+void RdosHookCreateThread(__rdos_hook_callback *callb_proc);
+void RdosHookTerminateThread(__rdos_hook_callback *callb_proc);
+
+void RdosHookState(__rdos_hook_state_callback *callb_proc);
  
 /* 32-bit compact memory model (device-drivers) */
 
@@ -158,6 +229,12 @@ void RdosCreateKernelProcess(
     CarryToBool \
     parm [eax] \
     value [eax];
+
+#pragma aux RdosReturnOk = \
+    "clc" ;
+
+#pragma aux RdosReturnFail = \
+    "stc" ;
 
 #pragma aux RdosSelectorToPointer = \
     "mov dx,bx" \
@@ -293,6 +370,30 @@ void RdosCreateKernelProcess(
     parm [eax]  \
     value [ebx];
 
+#pragma aux RdosAllocateBigLocalSelector = \
+    "push es" \
+    OsGate_allocate_big_mem  \
+    "mov ebx,es" \
+    "pop es" \
+    parm [eax]  \
+    value [ebx];
+
+#pragma aux RdosAllocateSmallLocalSelector = \
+    "push es" \
+    OsGate_allocate_small_mem  \
+    "mov ebx,es" \
+    "pop es" \
+    parm [eax]  \
+    value [ebx];
+
+#pragma aux RdosAllocateSmallKernelSelector = \
+    "push es" \
+    OsGate_allocate_small_kernel_mem  \
+    "mov ebx,es" \
+    "pop es" \
+    parm [eax]  \
+    value [ebx];
+
 #pragma aux RdosAllocateBigGlobalMem = \
     "push es" \
     OsGate_allocate_global_mem  \
@@ -311,6 +412,40 @@ void RdosCreateKernelProcess(
     parm [eax]  \
     value [dx eax];
 
+#pragma aux RdosAllocateBigLocalMem = \
+    "push es" \
+    OsGate_allocate_big_mem  \
+    "mov dx,es" \
+    "xor eax,eax" \
+    "pop es" \
+    parm [eax]  \
+    value [dx eax];
+
+#pragma aux RdosAllocateSmallLocalMem = \
+    "push es" \
+    OsGate_allocate_small_mem  \
+    "mov dx,es" \
+    "xor eax,eax" \
+    "pop es" \
+    parm [eax]  \
+    value [dx eax];
+
+#pragma aux RdosAllocateSmallKernelMem = \
+    "push es" \
+    OsGate_allocate_small_kernel_mem  \
+    "mov dx,es" \
+    "xor eax,eax" \
+    "pop es" \
+    parm [eax]  \
+    value [dx eax];
+
+#pragma aux RdosFreeMem = \
+    "push es" \
+    "mov es,bx" \
+    UserGate_free_mem  \
+    "pop es" \
+    parm [ebx];
+
 #pragma aux RdosAllocateBigGlobalLinear = \
     OsGate_allocate_big_linear  \
     parm [eax]  \
@@ -321,16 +456,38 @@ void RdosCreateKernelProcess(
     parm [eax]  \
     value [edx];
 
-#pragma aux RdosFreeMem = \
-    "push es" \
-    "mov es,bx" \
-    UserGate_free_mem  \
-    "pop es" \
-    parm [ebx];
+#pragma aux RdosAllocateLocalLinear = \
+    OsGate_allocate_local_linear  \
+    parm [eax]  \
+    value [edx];
+
+#pragma aux RdosAllocateDebugLocalLinear = \
+    OsGate_allocate_debug_local_linear  \
+    parm [eax]  \
+    value [edx];
+
+#pragma aux RdosAllocateVmLinear = \
+    OsGate_allocate_debug_vm_linear  \
+    parm [eax]  \
+    value [edx];
+
+#pragma aux RdosReserveLocalLinear = \
+    OsGate_reserve_local_linear  \
+    CarryToBool \
+    parm [edx] [eax] \
+    value [eax];
 
 #pragma aux RdosFreeLinear = \
     OsGate_free_linear  \
     parm [edx] [ecx];
+
+#pragma aux RdosUsedBigGlobalMem = \
+    OsGate_used_big_linear  \
+    value [eax];
+
+#pragma aux RdosUsedSmallGlobalMem = \
+    OsGate_used_small_linear  \
+    value [eax];
 
 #pragma aux RdosAllocateFixedSystemMem = \
     "push es" \
@@ -363,6 +520,14 @@ void RdosCreateKernelProcess(
     OsGate_allocate_physical  \
     parm [eax];
 
+#pragma aux RdosStartTimer = \
+    OsGate_start_timer  \
+    parm [ebx] [edx] [eax] [es edi] [ecx];
+
+#pragma aux RdosStopTimer = \
+    OsGate_stop_timer  \
+    parm [ebx];
+
 #pragma aux RdosGetApicId = \
     OsGate_get_apic_id  \
     value [edx];
@@ -374,32 +539,62 @@ void RdosCreateKernelProcess(
     "pop fs" \
     value [eax];
 
-#pragma aux RdosResumeProcessor = \
+#pragma aux RdosGetProcessorNum = \
     "push fs" \
-    "mov fs,ax" \
-    OsGate_resume_processor  \
+    OsGate_get_processor_num  \
+    "mov eax,fs" \
     "pop fs" \
-    parm [eax];
-
-#pragma aux RdosPreemptProcessor = \
-    "push fs" \
-    "mov fs,ax" \
-    OsGate_preempt_processor  \
-    "pop fs" \
-    parm [eax];
+    parm [eax] \
+    value [eax];
 
 #pragma aux RdosSendNmi = \
     "push fs" \
-    "mov fs,ax" \
+    "mov fs,bx" \
     OsGate_send_nmi  \
     "pop fs" \
-    parm [eax];
+    parm [ebx];
+
+#pragma aux RdosSendInt = \
+    "push fs" \
+    "mov fs,bx" \
+    OsGate_send_int  \
+    "pop fs" \
+    parm [ebx] [eax];
 
 #pragma aux RdosLockScheduler = \
     OsGate_lock_task; 
 
 #pragma aux RdosUnlockScheduler = \
     OsGate_unlock_task; 
+
+#pragma aux RdosClearSignal = \
+    OsGate_clear_signal; 
+
+#pragma aux RdosSignal = \
+    OsGate_signal \
+    parm [ebx]; 
+
+#pragma aux RdosWaitForSignal = \
+    OsGate_wait_for_signal; 
+
+#pragma aux RdosWaitForSignalWithTimeout = \
+    OsGate_wait_for_signal_timeout \
+    parm [edx] [eax]; 
+
+#pragma aux RdosAddWait = \
+    "push es" \
+    OsGate_add_wait \
+    "mov eax,es" \
+    "pop es" \
+    parm [eax] [ebx] [es edi] \
+    value [eax];
+
+#pragma aux RdosSignalWait = \
+    "push es" \
+    "mov es,eax" \
+    OsGate_signal_wait \
+    "pop es" \
+    parm [eax];
 
 #pragma aux RdosInitKernelSection = \
     "mov dword ptr es:[edi],0" \
@@ -436,20 +631,6 @@ void RdosCreateKernelProcess(
     "leave_done: " \
     parm [es edi]; 
 
-#pragma aux RdosClearSignal = \
-    OsGate_clear_signal; 
-
-#pragma aux RdosSignal = \
-    OsGate_signal \
-    parm [ebx]; 
-
-#pragma aux RdosWaitForSignal = \
-    OsGate_wait_for_signal; 
-
-#pragma aux RdosWaitForSignalWithTimeout = \
-    OsGate_wait_for_signal_timeout \
-    parm [edx] [eax]; 
-
 #pragma aux RdosCreateKernelThread = \
     "push ds" \
     "mov edx,fs" \
@@ -469,6 +650,30 @@ void RdosCreateKernelProcess(
     "pop ds" \
     parm [eax] [ecx] [fs esi] [es edi] [gs ebx] \
     modify [edx];
+
+#pragma aux RdosHookInitTasking = \
+    OsGate_hook_init_tasking \
+    parm [es edi];
+
+#pragma aux RdosHookCreateProcess = \
+    OsGate_hook_create_process \
+    parm [es edi];
+
+#pragma aux RdosHookTerminateProcess = \
+    OsGate_hook_terminate_process \
+    parm [es edi];
+
+#pragma aux RdosHookCreateThread = \
+    OsGate_hook_create_thread \
+    parm [es edi];
+
+#pragma aux RdosHookTerminateThread = \
+    OsGate_hook_terminate_thread \
+    parm [es edi];
+
+#pragma aux RdosHookState = \
+    OsGate_hook_state \
+    parm [es edi];
 
 #ifdef __cplusplus
 }
