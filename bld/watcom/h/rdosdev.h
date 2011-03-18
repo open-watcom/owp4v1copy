@@ -467,7 +467,7 @@ void RdosHookState(__rdos_hook_state_callback *callb_proc);
     value [edx];
 
 #pragma aux RdosAllocateVmLinear = \
-    OsGate_allocate_debug_vm_linear  \
+    OsGate_allocate_vm_linear  \
     parm [eax]  \
     value [edx];
 
