@@ -25,11 +25,11 @@ usr="enti0938.txt"
 #WIPFC UTF-8 data files
 [ DEFAULT type="s" dir="wipfc" cond="wnthost os2host alphahost lnxhost | | | os2targ" where="c f77 ac" ]
 
-usr="de_DE.UTF-8.nls"
-usr="en_GB.UTF-8.nls"
-usr="en_US.UTF-8.nls"
-usr="fr_CA.UTF-8.nls"
-usr="fr_FR.UTF-8.nls"
-usr="ja_JA.UTF-8.nls"
+usr="deDEUTF8.nls"
+usr="enGBUTF8.nls"
+usr="enUSUTF8.nls"
+usr="frCAUTF8.nls"
+usr="frFRUTF8.nls"
+usr="jaJAUTF8.nls"
 usr="enti0000.txt"
 
