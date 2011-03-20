@@ -66,12 +66,12 @@ void Nls::setCodePage( int cp )
 #else
         path += '/';
 #endif
-    path += "entit";
+    path += "enti";
     if( cp == 850 || cp == 437)
-        path += "y";
+        path += "ty";
     else {
         char code[ 5 ];
-        std::snprintf( code, 4, "%4.4d", cp );
+        std::snprintf( code, 5, "%04.4d", cp );
         path.append( code, 4 );
     }
     path += ".txt";

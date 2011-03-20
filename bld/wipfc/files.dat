@@ -8,7 +8,7 @@ usr="wipfc.exe"     dir="binp"  cond="os2host os2targ"              where="c f77
 usr="wipfc"         dir="binl"  cond="lnxhost os2targ"              where="c f77"
 
 # WIPFC data files
-[ DEFAULT type="s" dir="wipfc" cond="os2targ"	where="c f77 ac" ]
+[ DEFAULT type="s" dir="wipfc" cond="os2targ"   where="c f77 ac" ]
 
 usr="de_DE.nls"
 usr="en_GB.nls"
@@ -18,6 +18,6 @@ usr="fr_FR.nls"
 usr="ja_JA.nls"
 usr="xx_YY.nls"
 usr="entity.txt"
-usr="entit932.txt"
-usr="entit934.txt"
-usr="entit938.txt"
+usr="enti0932.txt"
+usr="enti0934.txt"
+usr="enti0938.txt"
