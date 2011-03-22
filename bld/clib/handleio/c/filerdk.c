@@ -32,6 +32,7 @@
 #include "variety.h"
 #include "widechar.h"
 #include <rdos.h>
+#include <rdosdev.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>

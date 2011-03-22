@@ -53,6 +53,8 @@
 #define OsGate_write_thread_selector 0x3E 0x67 0x9a 38 0 0 0 2 0
 #define OsGate_read_thread_segment 0x3E 0x67 0x9a 39 0 0 0 2 0
 #define OsGate_write_thread_segment 0x3E 0x67 0x9a 40 0 0 0 2 0
+#define OsGate_install_device_file 0x3E 0x67 0x9a 41 0 0 0 2 0
+#define OsGate_check_device_file 0x3E 0x67 0x9a 42 0 0 0 2 0
 #define OsGate_set_page_emulate 0x3E 0x67 0x9a 43 0 0 0 2 0
 #define OsGate_hook_page 0x3E 0x67 0x9a 45 0 0 0 2 0
 #define OsGate_unhook_page 0x3E 0x67 0x9a 46 0 0 0 2 0
@@ -179,8 +181,8 @@
 #define OsGate_enter_dpmi 0x3E 0x67 0x9a 170 0 0 0 2 0
 #define OsGate_enter_dos16 0x3E 0x67 0x9a 171 0 0 0 2 0
 #define OsGate_enter_dos32 0x3E 0x67 0x9a 172 0 0 0 2 0
-#define OsGate_register_device 0x3E 0x67 0x9a 173 0 0 0 2 0
-#define OsGate_check_device 0x3E 0x67 0x9a 174 0 0 0 2 0
+#define OsGate_register_dos_device 0x3E 0x67 0x9a 173 0 0 0 2 0
+#define OsGate_check_dos_device 0x3E 0x67 0x9a 174 0 0 0 2 0
 
 #define OsGate_hook_open_app 0x3E 0x67 0x9a 177 0 0 0 2 0
 #define OsGate_hook_close_app 0x3E 0x67 0x9a 178 0 0 0 2 0
@@ -386,8 +388,6 @@
 #define OsGate_alias_module_handle 0x3E 0x67 0x9a 85 1 0 0 2 0
 
 #define OsGate_thread_to_sel 0x3E 0x67 0x9a 86 1 0 0 2 0
-
-#define OsGate_hook_shift_keys 0x3E 0x67 0x9a 87 1 0 0 2 0
 
 #define OsGate_stop_usb_req 0x3E 0x67 0x9a 88 1 0 0 2 0
 

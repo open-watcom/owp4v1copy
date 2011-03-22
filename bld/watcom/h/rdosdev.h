@@ -63,6 +63,20 @@ typedef void __far (__rdos_hook_state_callback)(int thread, char *buf);
                     value struct routine [eax] \
                     modify [eax ebx ecx edx esi edi]
 
+typedef void __far (__rdos_irq_callback)();
+
+#pragma aux __rdos_irq_callback "*" \
+                    parm caller \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_handle_delete_callback)(int handle);
+
+#pragma aux __rdos_handle_delete_callback "*" \
+                    parm caller [ebx] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
 // structures
 
 struct TKernelSection
@@ -77,6 +91,12 @@ struct TWaitHeader
     __rdos_wait_callback *abort_proc;
     __rdos_wait_callback *clear_proc;
     __rdos_wait_callback *idle_proc;
+};
+
+struct THandleHeader
+{
+    short int sign;
+    short int handle;
 };
 
 // function definitions
@@ -199,7 +219,39 @@ void RdosHookTerminateProcess(__rdos_hook_callback *callb_proc);
 void RdosHookCreateThread(__rdos_hook_callback *callb_proc);
 void RdosHookTerminateThread(__rdos_hook_callback *callb_proc);
 
+void RdosHookOpenApp(__rdos_hook_callback *callb_proc);
+void RdosHookCloseApp(__rdos_hook_callback *callb_proc);
+
+void RdosHookEnableFocus(__rdos_hook_callback *callb_proc);
+void RdosHookLostFocus(__rdos_hook_callback *callb_proc);
+void RdosHookGotFocus(__rdos_hook_callback *callb_proc);
+
 void RdosHookState(__rdos_hook_state_callback *callb_proc);
+
+void RdosSendEoi(int irq);
+int RdosIsIrqFree(int irq);
+
+void RdosRequestPrivateIrqHandler(int irq, __rdos_irq_callback *irq_proc);
+void RdosReleasePrivateIrqHandler(int irq);
+void RdosRequestSharedIrqHandler(int irq, __rdos_irq_callback *irq_proc);
+
+void RdosSetupIrqDetect();
+int RdosPollIrqDetect();
+
+struct THandleHeader *RdosAllocateHandle(short int signature, int size);
+void RdosFreeHandle(struct THandleHeader *handle_data);
+struct THandleHeader *RdosDerefHandle(short int signature, int handle);
+void RdosRegisterHandle(short int signature, __rdos_handle_delete_callback *delete_proc);
+
+int RdosLockSysEnv();
+void RdosUnlockSysEnv();
+int RdosLockProcEnv();
+void RdosUnlockProcEnv();
+
+int RdosGetFocusThread();
+char RdosGetThreadFocusKey(int thread);
+long RdosAllocateFocusLinear(int size);
+void RdosAllocateFixedFocusMem(int size, int local_sel, int focus_sel);
  
 /* 32-bit compact memory model (device-drivers) */
 
@@ -671,9 +723,120 @@ void RdosHookState(__rdos_hook_state_callback *callb_proc);
     OsGate_hook_terminate_thread \
     parm [es edi];
 
+#pragma aux RdosHookOpenApp = \
+    OsGate_hook_open_app \
+    parm [es edi];
+
+#pragma aux RdosHookCloseApp = \
+    OsGate_hook_close_app \
+    parm [es edi];
+
+#pragma aux RdosHookEnableFocus = \
+    OsGate_hook_enable_focus \
+    parm [es edi];
+
+#pragma aux RdosHookGotFocus = \
+    OsGate_hook_got_focus \
+    parm [es edi];
+
+#pragma aux RdosHookLostFocus = \
+    OsGate_hook_lost_focus \
+    parm [es edi];
+
 #pragma aux RdosHookState = \
     OsGate_hook_state \
     parm [es edi];
+
+#pragma aux RdosSendEoi = \
+    OsGate_send_eoi \
+    parm [eax];
+
+#pragma aux RdosIsIrqFree = \
+    OsGate_is_irq_free \
+    CarryToBool \    
+    parm [eax] \
+    value [eax];
+
+#pragma aux RdosRequestPrivateIrqHandler = \
+    OsGate_request_private_irq_handler \
+    parm [eax] [es edi];
+
+#pragma aux RdosReleasePrivateIrqHandler = \
+    OsGate_release_private_irq_handler \
+    parm [eax];
+
+#pragma aux RdosRequestSharedIrqHandler = \
+    OsGate_request_shared_irq_handler \
+    parm [eax] [es edi];
+
+#pragma aux RdosSetupIrqDetect = \
+    OsGate_setup_irq_detect;
+
+#pragma aux RdosPollIrqDetect = \
+    OsGate_setup_irq_detect \
+    value [eax];
+
+#pragma aux RdosAllocateHandle = \
+    "push ds" \
+    OsGate_allocate_handle \
+    "mov dx,ds" \
+    "pop ds" \
+    parm [ax] [ecx] \
+    value [dx ebx];
+
+#pragma aux RdosFreeHandle = \
+    "push ds" \
+    "mov ds,dx" \
+    OsGate_free_handle \
+    "pop ds" \
+    parm [dx ebx];
+
+#pragma aux RdosDerefHandle = \
+    "push ds" \
+    OsGate_allocate_handle \
+    "mov dx,ds" \
+    "pop ds" \
+    parm [ax] [ebx] \
+    value [dx ebx];
+
+#pragma aux RdosRegisterHandle = \
+    OsGate_register_handle \
+    parm [ax] [es edi];
+
+#pragma aux RdosLockSysEnv = \
+    OsGate_lock_sys_env \
+    value [ebx];
+
+#pragma aux RdosUnlockSysEnv = \
+    OsGate_unlock_sys_env;
+
+#pragma aux RdosLockProcEnv = \
+    OsGate_lock_proc_env \
+    value [ebx];
+
+#pragma aux RdosUnlockProcEnv = \
+    OsGate_unlock_proc_env;
+
+#pragma aux RdosGetFocusThread = \
+    OsGate_get_focus_thread \
+    "movzx eax,ax" \
+    value [eax];
+
+#pragma aux RdosGetThreadFocusKey = \
+    OsGate_get_thread_focus_key \
+    parm [ebx] \
+    value [al];
+
+#pragma aux RdosAllocateFocusLinear = \
+    OsGate_allocate_focus_linear \
+    parm [eax] \
+    value [edx];
+
+#pragma aux RdosAllocateFixedFocusMem = \
+    "push es" \
+    OsGate_allocate_fixed_focus_mem \
+    "pop es" \
+    parm [eax] [ebx] [edx];
 
 #ifdef __cplusplus
 }
