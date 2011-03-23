@@ -35,5 +35,7 @@ extern void FreeRdosFmt( void );
 extern bool ProcRdos( void );
 extern bool ProcRdosDev16( void );
 extern bool ProcRdosDev32( void );
+extern bool ProcRdosBin16( void );
+extern bool ProcRdosBin32( void );
 extern bool ProcRdosCodeSel( void );
 extern bool ProcRdosDataSel( void );

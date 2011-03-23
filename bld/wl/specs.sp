@@ -766,3 +766,19 @@ system begin rdosdev
     format rdos dev32 ^
 :endsegment
 end
+system begin rdos_bin32
+:segment Pspecs
+    wcc -bt=rdos_bin32
+:elsesegment Pwlsystem
+    option osname='RDOS'
+    libpath %WATCOM%/lib386
+    format rdos bin32 ^
+:endsegment
+end
+system begin rdos_bin16
+:segment Pspecs
+    wcc -bt=rdos_bin16
+:elsesegment Pwlsystem
+    format rdos bin16 ^
+:endsegment
+end

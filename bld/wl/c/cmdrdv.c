@@ -93,6 +93,26 @@ extern bool ProcRdosDev32( void )
     return( TRUE );
 }
 
+extern bool ProcRdosBin16( void )
+/*************************/
+{
+    Extension = E_BIN;
+    FmtData.u.rdos.bitness = 16;
+    if( FmtData.osname == NULL )
+        FmtData.osname = "16-bit RDOS Binary";
+    return( TRUE );
+}
+
+extern bool ProcRdosBin32( void )
+/*************************/
+{
+    Extension = E_BIN;
+    FmtData.u.rdos.bitness = 32;
+    if( FmtData.osname == NULL )
+        FmtData.osname = "32-bit RDOS Binary";
+    return( TRUE );
+}
+
 bool ProcRdosCodeSel( void )
 /***************************/
 /* process CODESelector option */

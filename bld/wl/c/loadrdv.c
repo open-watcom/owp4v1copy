@@ -32,6 +32,7 @@
 #include <string.h>
 #include "linkstd.h"
 #include <exerdos.h>
+#include "command.h"
 #include "pcobj.h"
 #include "newmem.h"
 #include "msg.h"
@@ -176,12 +177,18 @@ void FiniRdosLoadFile16( void )
 {
     unsigned_32         hdr_size;
 
-    hdr_size = sizeof( rdos_dev16_header );
-    SeekLoad( hdr_size );
-    Root->u.file_loc = hdr_size;
+    if( Extension == E_RDV ) {
+        hdr_size = sizeof( rdos_dev16_header );
+        SeekLoad( hdr_size );
+        Root->u.file_loc = hdr_size;
+    } else
+        Root->u.file_loc = 0;
+
     WriteRDOSData();
     DBIWrite();
-    WriteHeader16();
+
+    if( Extension == E_RDV )
+        WriteHeader16();
 }
 
 void FiniRdosLoadFile32( void )
@@ -189,12 +196,18 @@ void FiniRdosLoadFile32( void )
 {
     unsigned_32         hdr_size;
 
-    hdr_size = sizeof( rdos_dev32_header );
-    SeekLoad( hdr_size );
-    Root->u.file_loc = hdr_size;
+    if( Extension == E_RDV ) {
+        hdr_size = sizeof( rdos_dev32_header );
+        SeekLoad( hdr_size );
+        Root->u.file_loc = hdr_size;
+    } else
+        Root->u.file_loc = 0;
+
     WriteRDOSData();
     DBIWrite();
-    WriteHeader32();
+
+    if( Extension == E_RDV )
+        WriteHeader32();
 }
 
 void FiniRdosLoadFile( void )

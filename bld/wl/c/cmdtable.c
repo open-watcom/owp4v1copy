@@ -617,6 +617,8 @@ parse_entry ZdosOptions[] = {
 parse_entry RdosOptions[] = {
     "DEV16",          &ProcRdosDev16,       MK_RDOS, 0,
     "DEV32",          &ProcRdosDev32,       MK_RDOS, 0,
+    "BIN16",          &ProcRdosBin16,       MK_RDOS, 0,
+    "BIN32",          &ProcRdosBin32,       MK_RDOS, 0,
     NULL };
 #endif
 
