@@ -37,5 +37,6 @@ extern bool ProcRdosDev16( void );
 extern bool ProcRdosDev32( void );
 extern bool ProcRdosBin16( void );
 extern bool ProcRdosBin32( void );
+extern bool ProcRdosMboot( void );
 extern bool ProcRdosCodeSel( void );
 extern bool ProcRdosDataSel( void );

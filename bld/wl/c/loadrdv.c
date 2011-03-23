@@ -51,6 +51,21 @@
 static unsigned_32  CodeSize = 0;
 static unsigned_32  DataSize = 0;
 
+#define MB_BASE 0x110000
+
+struct mb_header
+{
+    unsigned_32 mb_magic;
+    unsigned_32 mb_flags;
+    unsigned_32 mb_checksum;
+    unsigned_32 mb_header_addr;
+    unsigned_32 mb_load_addr;
+    unsigned_32 mb_load_end_addr;
+    unsigned_32 mb_bss_end_addr;
+    unsigned_32 mb_entry_addr;
+};
+
+
 static void WriteRDOSData( void )
 /**********************************************************/
 /* copy code from extra memory to loadfile */
@@ -172,6 +187,25 @@ static void WriteHeader32( void )
     WriteLoad( &exe_head, sizeof( rdos_dev32_header ) );
 }
 
+static void WriteMbootHeader( void )
+/* write multiboot header */
+{
+    struct mb_header   mb_head;
+    unsigned_32         temp32;
+
+    SeekLoad( 0 );
+    _HostU32toTarg(0x1BADB002, mb_head.mb_magic );
+    _HostU32toTarg(0x00010001, mb_head.mb_flags );
+    _HostU32toTarg(0x00000000, mb_head.mb_checksum );
+    _HostU32toTarg(MB_BASE, mb_head.mb_header_addr );
+    _HostU32toTarg(MB_BASE, mb_head.mb_load_addr );
+    _HostU32toTarg(0x00000000, mb_head.mb_load_end_addr );
+    _HostU32toTarg(0x00000000, mb_head.mb_bss_end_addr );
+    temp32 = MB_BASE + StartInfo.addr.off;
+    _HostU32toTarg(temp32, mb_head.mb_entry_addr );
+    WriteLoad( &mb_head, sizeof( struct mb_header ) );
+}
+
 void FiniRdosLoadFile16( void )
 /* terminate writing of load file */
 {
@@ -181,14 +215,24 @@ void FiniRdosLoadFile16( void )
         hdr_size = sizeof( rdos_dev16_header );
         SeekLoad( hdr_size );
         Root->u.file_loc = hdr_size;
-    } else
-        Root->u.file_loc = 0;
+    } else {
+        if( FmtData.u.rdos.mboot ) {
+            hdr_size = sizeof( struct mb_header );
+            SeekLoad( hdr_size );
+            Root->u.file_loc = hdr_size;
+        } else
+            Root->u.file_loc = 0;
+    }
 
     WriteRDOSData();
     DBIWrite();
 
     if( Extension == E_RDV )
         WriteHeader16();
+    else {
+        if( FmtData.u.rdos.mboot )
+            WriteMbootHeader(); 
+    }   
 }
 
 void FiniRdosLoadFile32( void )

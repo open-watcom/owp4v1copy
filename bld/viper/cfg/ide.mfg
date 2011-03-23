@@ -37,6 +37,7 @@ rem     rn RDOS, NE executable (not yet supported)
 rem     rd RDOS, DOS executable (not yet supported)
 rem     rk RDOS, .rdv kernel-mode device driver
 rem     rb RDOS, .bin binary file
+rem     rm RDOS, multiboot stub
 rem     wm Windows 3.x MFC 2.X application, static linkage
 rem     wa Windows 3.x MFC 2.X application, DLL linkage
 rem     wp Windows 3.x PowerBuilder DLL
@@ -604,6 +605,7 @@ Tool WCG "Code Generator"
     CSwitch 0, rk2??, "", -bt=rdosdev, ON
     CSwitch 0, rb6??, "", -bt=rdos_bin16, ON
     CSwitch 0, rb2??, "", -bt=rdos_bin32, ON
+    CSwitch 0, rm6??, "", -bt=rdos_mboot, ON
     CSwitch 0, ?????, "", -fo=.obj, ON
 :segment C_FOR_PB
     CSwitch 1, n?2d?, "32-bit flat model", -mf, ON
@@ -615,12 +617,14 @@ Tool WCG "Code Generator"
         RSwitch 1, dc6e?, "Small model", -ms, ON
         RSwitch 1, rk6??, "Small model", -ms, ON
         RSwitch 1, rb6??, "Small model", -ms, ON
+        RSwitch 1, rm6??, "Small model", -ms, ON
         RSwitch 1, ??6??, "Small model", -ms, OFF
         RSwitch 1, ??6??, "Medium model", -mm, OFF
         RSwitch 1, ??6??, "Compact model", -mc, OFF
         RSwitch 1, dc6e?, "Large model", -ml, OFF
         RSwitch 1, rk6??, "Large model", -ml, OFF
         RSwitch 1, rb6??, "Large model", -ml, OFF
+        RSwitch 1, rm6??, "Large model", -ml, OFF
         RSwitch 1, ??6??, "Large model", -ml, ON
         RSwitch 1, ??6??, "Huge model", -mh, OFF
         RSwitch 1, l?2??, "32-bit flat model", -mf, OFF
@@ -939,11 +943,13 @@ Tool WASM "Assembler"
         RSwitch 0, ??6??, "Tiny model", -mt, OFF
         RSwitch 0, rk6??, "Small model", -ms, ON
         RSwitch 0, rb6??, "Small model", -ms, ON
+        RSwitch 0, rm6??, "Small model", -ms, ON
         RSwitch 0, ??6??, "Small model", -ms, OFF
         RSwitch 0, ??6??, "Medium model", -mm, OFF
         RSwitch 0, ??6??, "Compact model", -mc, OFF
         RSwitch 0, rk6??, "Large model", -ml, OFF
         RSwitch 0, rb6??, "Large model", -ml, OFF
+        RSwitch 0, rm6??, "Large model", -ml, OFF
         RSwitch 0, ??6??, "Large model", -ml, ON
         RSwitch 0, ??6??, "Huge model", -mh, OFF
         RSwitch 0, ??2??, "32-bit flat model", -mf, ON
@@ -951,11 +957,13 @@ Tool WASM "Assembler"
     RGroup "Target processor"
         RSwitch 1, rk6??, "8086", ,  OFF
         RSwitch 1, rb6??, "8086", ,  OFF
+        RSwitch 1, rm6??, "8086", ,  OFF
         RSwitch 1, ??6??, "8086", ,  ON
         RSwitch 1, ??6??, "80186", -1, OFF
         RSwitch 1, rk6??, "80286", -2, ON
         RSwitch 1, ??6??, "80286", -2, OFF
         RSwitch 1, rb6??, "80386", -3, ON
+        RSwitch 1, rm6??, "80386", -3, ON
         RSwitch 1, ??6??, "80386", -3, OFF
         RSwitch 1, ??6??, "80486", -4, OFF
         RSwitch 1, ??6??, "Pentium", -5, OFF
@@ -1086,6 +1094,7 @@ rem Other Netware variations?
     VSwitch  1, rk2??, "System:", sys, " ", ONE, REQ, rdosdev
     VSwitch  1, rb6??, "System:", sys, " ", ONE, REQ, rdos_bin16
     VSwitch  1, rb2??, "System:", sys, " ", ONE, REQ, rdos_bin32
+    VSwitch  1, rm6??, "System:", sys, " ", ONE, REQ, rdos_mboot
     CSwitch  1, d?2d?, " Link DLL", , ON
     CSwitch  1, w?2d?, " Link DLL", , ON
     CSwitch  1, w?6d?, " Link DLL", , ON
@@ -1681,6 +1690,18 @@ Tool RBINLINK "RDOS Binary Linking"
   IncludeTool WLINK
 
 Rule RBEXE, RBINLINK, rb?e?
+  Target *.bin
+  Autodepend
+  Symbol FIL, *.obj
+  Symbol LIBR, *.lib
+  Command " @%write $*.lk1 $<FIL,>"
+  Command " @%append $*.lk1 $<LIBR,>"
+  Command " *$<#WLINK> @$'.lk1"
+
+Tool RMBOOTLINK "RDOS Multiboot Stub Linking"
+  IncludeTool WLINK
+
+Rule RMEXE, RMBOOTLINK, rm6e?
   Target *.bin
   Autodepend
   Symbol FIL, *.obj

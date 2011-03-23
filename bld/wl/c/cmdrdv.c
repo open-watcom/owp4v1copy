@@ -58,6 +58,7 @@ void SetRdosFmt( void )
     FmtData.u.rdos.code_sel = 0;
     FmtData.u.rdos.data_sel = 0;
     FmtData.u.rdos.bitness = 16;
+    FmtData.u.rdos.mboot = 0;
 }
 
 void FreeRdosFmt( void )
@@ -110,6 +111,17 @@ extern bool ProcRdosBin32( void )
     FmtData.u.rdos.bitness = 32;
     if( FmtData.osname == NULL )
         FmtData.osname = "32-bit RDOS Binary";
+    return( TRUE );
+}
+
+extern bool ProcRdosMboot( void )
+/*************************/
+{
+    Extension = E_BIN;
+    FmtData.u.rdos.bitness = 16;
+    FmtData.u.rdos.mboot = 1;
+    if( FmtData.osname == NULL )
+        FmtData.osname = "RDOS Multiboot Stub";
     return( TRUE );
 }
 

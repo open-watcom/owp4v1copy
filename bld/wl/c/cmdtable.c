@@ -619,6 +619,7 @@ parse_entry RdosOptions[] = {
     "DEV32",          &ProcRdosDev32,       MK_RDOS, 0,
     "BIN16",          &ProcRdosBin16,       MK_RDOS, 0,
     "BIN32",          &ProcRdosBin32,       MK_RDOS, 0,
+    "MBOOT",          &ProcRdosMboot,       MK_RDOS, 0,
     NULL };
 #endif
 

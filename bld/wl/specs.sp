@@ -782,3 +782,10 @@ system begin rdos_bin16
     format rdos bin16 ^
 :endsegment
 end
+system begin rdos_mboot
+:segment Pspecs
+    wcc -bt=rdos_mboot
+:elsesegment Pwlsystem
+    format rdos mboot ^
+:endsegment
+end
