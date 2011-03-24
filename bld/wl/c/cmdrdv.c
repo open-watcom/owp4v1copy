@@ -79,6 +79,7 @@ extern bool ProcRdosDev16( void )
 {
     Extension = E_RDV;
     FmtData.u.rdos.bitness = 16;
+    FmtData.u.rdos.mboot = 0;
     if( FmtData.osname == NULL )
         FmtData.osname = "16-bit RDOS Device driver";
     return( TRUE );
@@ -89,6 +90,7 @@ extern bool ProcRdosDev32( void )
 {
     Extension = E_RDV;
     FmtData.u.rdos.bitness = 32;
+    FmtData.u.rdos.mboot = 0;
     if( FmtData.osname == NULL )
         FmtData.osname = "32-bit RDOS Device driver";
     return( TRUE );
@@ -99,6 +101,7 @@ extern bool ProcRdosBin16( void )
 {
     Extension = E_BIN;
     FmtData.u.rdos.bitness = 16;
+    FmtData.u.rdos.mboot = 0;
     if( FmtData.osname == NULL )
         FmtData.osname = "16-bit RDOS Binary";
     return( TRUE );
@@ -109,6 +112,7 @@ extern bool ProcRdosBin32( void )
 {
     Extension = E_BIN;
     FmtData.u.rdos.bitness = 32;
+    FmtData.u.rdos.mboot = 0;
     if( FmtData.osname == NULL )
         FmtData.osname = "32-bit RDOS Binary";
     return( TRUE );

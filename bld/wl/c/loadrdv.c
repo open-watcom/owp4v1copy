@@ -91,7 +91,7 @@ static void WriteRDOSData( void )
             iscode = 0;
             isdata = 0;
             leader = group->leaders;
-            if( leader && leader->size ) {
+            if( leader && leader->size && Extension == E_RDV ) {
                 piece = leader->pieces; 
                 if( piece ) {
                     if( piece->iscode && ( leader->seg_addr.seg == FmtData.u.rdos.code_seg ) ) {
@@ -105,9 +105,16 @@ static void WriteRDOSData( void )
         }
         sect = group->section;
         CurrSect = sect;
-        WriteDOSGroup( group );
-        if( group->totalsize > group->size )
-            PadLoad( group->totalsize - group->size );
+
+        if( Extension == E_RDV) {
+            WriteDOSGroup( group );
+            if( group->totalsize > group->size )
+                PadLoad( group->totalsize - group->size );
+        } else {
+            if( group->totalsize )
+                WriteDOSGroup( group );
+        }
+                
         if( iscode )
             CodeSize += group->totalsize;
         if( isdata )
@@ -220,8 +227,10 @@ void FiniRdosLoadFile16( void )
             hdr_size = sizeof( struct mb_header );
             SeekLoad( hdr_size );
             Root->u.file_loc = hdr_size;
-        } else
+        } else {
             Root->u.file_loc = 0;
+            SeekLoad( 0 );
+        }
     }
 
     WriteRDOSData();
@@ -244,8 +253,10 @@ void FiniRdosLoadFile32( void )
         hdr_size = sizeof( rdos_dev32_header );
         SeekLoad( hdr_size );
         Root->u.file_loc = hdr_size;
-    } else
+    } else {
+        SeekLoad( 0 );
         Root->u.file_loc = 0;
+    }
 
     WriteRDOSData();
     DBIWrite();
