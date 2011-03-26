@@ -28,6 +28,13 @@ extern "C" {
 
 // callback pragmas
 
+typedef void __far (__rdos_swap_callback)(char level);
+
+#pragma aux __rdos_swap_callback "*" \
+                    parm caller [al] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
 typedef void __far (__rdos_thread_callback)(void *);
 
 #pragma aux __rdos_thread_callback "*" \
@@ -77,6 +84,97 @@ typedef void __far (__rdos_handle_delete_callback)(int handle);
                     value struct routine [eax] \
                     modify [eax ebx ecx edx esi edi]
 
+typedef void __far (__rdos_net_prot_callback)(int size, short int packet_type, void *ads, int selector);
+
+#pragma aux __rdos_net_prot_callback "*" \
+                    parm caller [ecx] [dx] [ds esi] [es] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_net_preview_callback)();
+
+#pragma aux __rdos_net_preview_callback "*" \
+                    parm caller \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef char* __far (__rdos_net_receive_callback)(int size, char *buf);
+
+#pragma aux __rdos_net_receive_callback "*" \
+                    parm caller [ecx] [es edi] \
+                    value struct routine [es edi] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_net_remove_callback)(int size);
+
+#pragma aux __rdos_net_remove_callback "*" \
+                    parm caller [ecx] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef char* __far (__rdos_net_get_buf_callback)(int size);
+
+#pragma aux __rdos_net_get_buf_callback "*" \
+                    parm caller [ecx] \
+                    value struct routine [es edi] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_net_send_callback)(int size, short int packet_type, void *dest_ads, int buf_sel);
+
+#pragma aux __rdos_net_send_callback "*" \
+                    parm caller [ecx] [dx] [ds esi] [es] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef char* __far (__rdos_net_address_callback)();
+
+#pragma aux __rdos_net_address_callback "*" \
+                    parm caller \
+                    value struct routine [es edi] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_net_get_address_callback)(int buf_sel);
+
+#pragma aux __rdos_net_get_address_callback "*" \
+                    parm caller [es] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_disc_assign_callback)();
+
+#pragma aux __rdos_disc_assign_callback "*" \
+                    parm caller \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_drive_assign_callback)(int disc_handle);
+
+#pragma aux __rdos_drive_assign_callback "*" \
+                    parm caller [ebx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_drive_mount_callback)(int disc_handle);
+
+#pragma aux __rdos_drive_mount_callback "*" \
+                    parm caller [ebx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_drive_erase_callback)(int disc_handle, int start_sector, int sector_count);
+
+#pragma aux __rdos_drive_erase_callback "*" \
+                    parm caller [ebx] [edx] [ecx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_disc_change_callback)(int disc_sel);
+
+#pragma aux __rdos_disc_change_callback "*" \
+                    parm caller [fs]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
 // structures
 
 struct TKernelSection
@@ -97,6 +195,26 @@ struct THandleHeader
 {
     short int sign;
     short int handle;
+};
+
+struct TNetDriverTable
+{
+    __rdos_net_preview_callback *preview_proc;
+    __rdos_net_receive_callback *receive_proc;
+    __rdos_net_remove_callback *remove_proc;
+    __rdos_net_get_buf_callback *get_buf_proc;
+    __rdos_net_send_callback *send_proc;
+    __rdos_net_address_callback *address_proc;
+    __rdos_net_get_address_callback *get_address_proc;
+};
+
+struct TDiscSystemHeader
+{
+    __rdos_disc_assign_callback *disc_assign_proc;
+    __rdos_drive_assign_callback *drive_assign1_proc;
+    __rdos_drive_assign_callback *drive_assign2_proc;
+    __rdos_drive_mount_callback *mount_proc;
+    __rdos_drive_erase_callback *erase_proc;
 };
 
 // function definitions
@@ -169,6 +287,8 @@ void *RdosAllocateFixedProcessMem(int sel, long size);
 long RdosAllocatePhysical();
 long RdosAllocateMultiplePhysical(int pages);
 void RdosFreePhysical(long ads);
+
+void RdosRegisterSwapProc(__rdos_swap_callback *callb_proc);
 
 void RdosStartTimer(    int sel_id, 
                         unsigned long expire_msb, 
@@ -252,7 +372,53 @@ int RdosGetFocusThread();
 char RdosGetThreadFocusKey(int thread);
 long RdosAllocateFocusLinear(int size);
 void RdosAllocateFixedFocusMem(int size, int local_sel, int focus_sel);
- 
+
+void RdosRegisterNetClass(char class_id, int ads_size, void *broadcast_ads);
+int RdosRegisterNetProtocol(int ads_size, short int packet_type, void *my_ads, __rdos_net_prot_callback *packet_callb);
+int RdosRegisterNetDriver(char class_id, int max_size, struct TNetDriverTable *table, const char *name); 
+
+void RdosHookInitDisc(struct TDiscSystemHeader *disc_table);
+int RdosInstallDisc(int disc_handle, int read_ahead, int *disc_nr);
+void RdosRegisterDiscChange(__rdos_disc_change_callback *callb_proc);
+void RdosStartDisc(int disc_sel);
+void RdosStopDisc(int disc_sel);
+void RdosSetDiscParam(  int disc_sel, 
+                        int bytes_per_sector, 
+                        int sectors_per_unit,
+                        int units,
+                        int bios_sectors_per_cyl,
+                        int bios_heads); 
+
+void RdosWaitForDiscRequest(int disc_sel);
+long RdosGetDiscRequest(int disc_sel);
+long RdosPollDiscRequest(int disc_sel);
+void RdosDiscRequestCompleted(int disc_sel, long disc_handle);
+long RdosNewDiscRequest(int disc_sel, int sector, int unit);
+long RdosLockDiscRequest(int disc_sel, int sector, int unit);
+void RdosModifyDiscRequest(long disc_handle);
+void RdosUnlockDiscRequest(long disc_handle);
+int RdosGetDiscRequestArray(int disc, int max_entries, long **req_array);
+
+void RdosOpenDrive(int drive, int disc_nr, int start_sector, int sector_count);
+void RdosCloseDrive(int drive);
+void RdosFlushDrive(int drive);
+int RdosGetDriveParam(int drive, int *read_ahead, int *sector_per_unit, int *units);
+int RdosLockSector(int drive, int sector, void **data);
+void RdosUnlockSector(int handle);
+void RdosModifySector(int handle);
+void RdosFlushSector(int handle);
+int RdosNewSector(int drive, int sector, void **data);
+int RdosReqSector(int drive, int sector, void *data);
+int RdosDefineSector(int drive, int sector, void *data);
+void RdosWaitForSector(int handle);
+
+int RdosCreateDiscSeq(int max_entries);
+void RdosModifySeqSector(int seq_handle, int handle);
+void RdosPerformDiscSeq(int seq_handle);
+
+void RdosEraseSectors(int drive, int start_sector, int sector_count);
+void RdosResetDrive(int drive);
+
 /* 32-bit compact memory model (device-drivers) */
 
 // check carry flag, and set eax=0 if set and eax=1 if clear
@@ -572,6 +738,10 @@ void RdosAllocateFixedFocusMem(int size, int local_sel, int focus_sel);
     OsGate_allocate_physical  \
     parm [eax];
 
+#pragma aux RdosRegisterSwapProc = \
+    OsGate_register_swap_proc  \
+    parm [es edi];
+
 #pragma aux RdosStartTimer = \
     OsGate_start_timer  \
     parm [ebx] [edx] [eax] [es edi] [ecx];
@@ -837,6 +1007,198 @@ void RdosAllocateFixedFocusMem(int size, int local_sel, int focus_sel);
     OsGate_allocate_fixed_focus_mem \
     "pop es" \
     parm [eax] [ebx] [edx];
+
+#pragma aux RdosRegisterNetClass = \
+    "push ds" \
+    "mov ds,dx" \
+    OsGate_register_net_class \
+    "pop ds" \
+    parm [al] [ecx] [dx esi];
+
+#pragma aux RdosRegisterNetProtocol = \
+    "push ds" \
+    "mov ds,bx" \
+    OsGate_register_net_protocol \
+    "pop ds" \
+    parm [ecx] [dx] [bx esi] [es edi] \
+    value [ebx];
+
+#pragma aux RdosRegisterNetDriver = \
+    "push ds" \
+    "mov ds,dx" \
+    OsGate_register_net_protocol \
+    "pop ds" \
+    parm [al] [ecx] [dx esi] [es edi] \
+    value [ebx];
+
+#pragma aux RdosHookInitDisc = \
+    OsGate_hook_init_disc \
+    parm [es edi];
+
+#pragma aux RdosInstallDisc = \
+    OsGate_install_disc \
+    "movzx eax,al" \
+    "mov es:[edi],eax" \
+    "movzx ebx,bx" \
+    parm [ebx] [ecx] [es edi] \
+    value [ebx] \
+    modify [eax];
+
+#pragma aux RdosRegisterDiscChange = \
+    OsGate_register_disc_change \
+    parm [es edi];
+
+#pragma aux RdosStartDisc = \
+    OsGate_start_disc \
+    parm [ebx];
+
+#pragma aux RdosStopDisc = \
+    OsGate_stop_disc \
+    parm [ebx];
+
+#pragma aux RdosSetDiscParam = \
+    OsGate_set_disc_param \
+    parm [ebx] [ecx] [eax] [edx] [esi] [edi];
+
+#pragma aux RdosWaitForDiscRequest = \
+    OsGate_wait_for_disc_request \
+    parm [ebx];
+
+#pragma aux RdosGetDiscRequest = \
+    OsGate_get_disc_request \
+    parm [ebx] \
+    value [edi];
+
+#pragma aux RdosPollDiscRequest = \
+    OsGate_poll_disc_request \
+    parm [ebx] \
+    value [edi];
+
+#pragma aux RdosDiscRequestCompleted = \
+    OsGate_disc_request_completed \
+    parm [ebx] [edi];
+
+#pragma aux RdosNewDiscRequest = \
+    OsGate_new_disc_request \
+    parm [ebx] [eax] [edx] \
+    value [edi];
+
+#pragma aux RdosLockDiscRequest = \
+    OsGate_lock_disc_request \
+    parm [ebx] [eax] [edx] \
+    value [edi];
+
+#pragma aux RdosModifyDiscRequest = \
+    OsGate_modify_disc_request \
+    parm [edi];
+
+#pragma aux RdosUnlockDiscRequest = \
+    OsGate_unlock_disc_request \
+    parm [edi];
+
+#pragma aux RdosGetDiscRequestArray = \
+    OsGate_get_disc_request_array \
+    "mov es:[edi],esi" \
+    "mov esi,0x20" \
+    "mov es:[edi+4],esi" \
+    parm [ebx] [ecx] [es edi] \
+    value [ecx] \
+    modify [esi];
+
+#pragma aux RdosOpenDrive = \
+    "mov ah,bl" \
+    OsGate_open_drive \
+    parm [eax] [ebx] [edx] [ecx] \
+    modify [eax];
+
+#pragma aux RdosCloseDrive = \
+    OsGate_close_drive \
+    parm [eax];
+
+#pragma aux RdosFlushDrive = \
+    OsGate_flush_drive \
+    parm [eax];
+
+#pragma aux RdosGetDriveParam = \
+    "push edi" \
+    "push esi" \
+    OsGate_flush_drive \
+    "mov gs:[edx],eax" \
+    "movzx eax,si" \
+    "pop esi" \
+    "mov fs:[esi],eax" \
+    "movzx eax,di" \
+    "pop edi" \
+    "mov es:[edi],eax" \
+    parm [eax] [gs edx] [fs esi] [es edi] \
+    value [ecx] \
+    modify [eax];
+
+#pragma aux RdosLockSector = \
+    OsGate_lock_sector \
+    "mov es:[edi],esi" \
+    "mov esi,0x20" \
+    "mov es:[edi+4],esi" \
+    parm [eax] [edx] [es edi] \
+    value [ebx] \
+    modify [esi];
+
+#pragma aux RdosUnlockSector = \
+    OsGate_unlock_sector \
+    parm [ebx];
+
+#pragma aux RdosModifySector = \
+    OsGate_modify_sector \
+    parm [ebx];
+
+#pragma aux RdosFlushSector = \
+    OsGate_flush_sector \
+    parm [ebx];
+
+#pragma aux RdosNewSector = \
+    OsGate_new_sector \
+    "mov es:[edi],esi" \
+    "mov esi,0x20" \
+    "mov es:[edi+4],esi" \
+    parm [eax] [edx] [es edi] \
+    value [ebx] \
+    modify [esi];
+
+#pragma aux RdosReqSector = \
+    OsGate_req_sector \
+    parm [eax] [edx] [es esi] \
+    value [ebx];
+
+#pragma aux RdosDefineSector = \
+    OsGate_define_sector \
+    parm [eax] [edx] [es esi] \
+    value [ebx];
+
+#pragma aux RdosWaitForSector = \
+    OsGate_wait_for_sector \
+    parm [edx];
+
+#pragma aux RdosCreateDiscSeq = \
+    OsGate_create_disc_seq \
+    "movzx eax,ax" \
+    parm [ecx] \
+    value [eax];
+
+#pragma aux RdosModifySeqSector = \
+    OsGate_modify_seq_sector \
+    parm [eax] [ebx];
+
+#pragma aux RdosPerformDiscSeq = \
+    OsGate_perform_disc_seq \
+    parm [eax];
+
+#pragma aux RdosEraseSectors = \
+    OsGate_erase_sectors \
+    parm [eax] [edx] [ecx];
+
+#pragma aux RdosResetDrive = \
+    OsGate_reset_drive \
+    parm [eax];
 
 #ifdef __cplusplus
 }
