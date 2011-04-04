@@ -140,6 +140,27 @@ typedef void __far (__rdos_net_get_address_callback)(int buf_sel);
                     value struct routine [eax] \
                     modify [eax ebx ecx edx esi edi]
 
+typedef void __far (__rdos_net_broadcast_callback)(int class_sel, int driver_handle);
+
+#pragma aux __rdos_net_broadcast_callback "*" \
+                    parm caller [ds] [fs] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_ip_callback)(short int opt_size, int data_size, long source_ip, char *opt_data, char *ip_data);
+
+#pragma aux __rdos_ip_callback "*" \
+                    parm caller [ax] [ecx] [edx] [ds esi] [es edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_dhcp_option_callback)(int size, char *data);
+
+#pragma aux __rdos_dhcp_option_callback "*" \
+                    parm caller [ecx] [es edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
 typedef void __far (__rdos_disc_assign_callback)();
 
 #pragma aux __rdos_disc_assign_callback "*" \
@@ -172,6 +193,181 @@ typedef void __far (__rdos_disc_change_callback)(int disc_sel);
 
 #pragma aux __rdos_disc_change_callback "*" \
                     parm caller [fs]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_init_fs_callback)();
+
+#pragma aux __rdos_init_fs_callback "*" \
+                    parm caller  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_format_callback)(void *drive_data, char *fs_name, int sectors);
+
+#pragma aux __rdos_fs_format_callback "*" \
+                    parm caller [fs edx] [es edi] [ecx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void * __far (__rdos_fs_mount_callback)(void *drive_data);
+
+#pragma aux __rdos_fs_mount_callback "*" \
+                    parm caller [fs edx] \
+                    value struct routine [ds esi] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_flush_callback)(void *fs_data);
+
+#pragma aux __rdos_fs_flush_callback "*" \
+                    parm caller [ds esi]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_dismount_callback)(void *fs_data);
+
+#pragma aux __rdos_fs_dismount_callback "*" \
+                    parm caller [ds esi]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef long __far (__rdos_fs_info_callback)(void *fs_data);
+
+#pragma aux __rdos_fs_info_callback "*" \
+                    parm caller [ds esi]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef int __far (__rdos_fs_allocate_dir_sel_callback)(void *fs_data, char drive, int parent_dir_sel, int parent_dir_entry);
+
+#pragma aux __rdos_fs_allocate_dir_sel_callback "*" \
+                    parm caller [ds esi] [al] [ebx] [edx]  \
+                    value struct routine [ebx] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_free_dir_sel_callback)(void *fs_data, int dir_sel);
+
+#pragma aux __rdos_fs_free_dir_sel_callback "*" \
+                    parm caller [ds esi] [ebx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_cache_dir_callback)(void *fs_data, int dir_sel, int dir_entry);
+
+#pragma aux __rdos_fs_cache_dir_callback "*" \
+                    parm caller [ds esi] [ebx] [edx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_update_dir_callback)(void *fs_data, int dir_dir_entry);
+
+#pragma aux __rdos_fs_update_dir_callback "*" \
+                    parm caller [ds esi] [edx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_update_file_callback)(void *fs_data, int dir_file_entry);
+
+#pragma aux __rdos_fs_update_file_callback "*" \
+                    parm caller [ds esi] [edx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef long __far (__rdos_fs_create_dir_callback)(void *fs_data, char *name, int dir_sel);
+
+#pragma aux __rdos_fs_create_dir_callback "*" \
+                    parm caller [ds esi] [es edi] [ebx]  \
+                    value struct routine [edx] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_delete_dir_callback)(void *fs_data, int dir_sel, int dir_entry);
+
+#pragma aux __rdos_fs_delete_dir_callback "*" \
+                    parm caller [ds esi] [ebx] [edx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_delete_file_callback)(void *fs_data, int dir_sel, int dir_entry);
+
+#pragma aux __rdos_fs_delete_file_callback "*" \
+                    parm caller [ds esi] [ebx] [edx]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_rename_file_callback)(char *from, char *to);
+
+#pragma aux __rdos_fs_rename_file_callback "*" \
+                    parm caller [fs esi] [es edi]  \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef int __far (__rdos_fs_create_file_callback)(void *fs_data, char *name, int dir_sel, int attrib);
+
+#pragma aux __rdos_fs_create_file_callback "*" \
+                    parm caller [ds esi] [es edi] [ebx] [ecx] \
+                    value struct routine [edx] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef int __far (__rdos_fs_get_ioctl_callback)(void *fs_data, int file_sel);
+
+#pragma aux __rdos_fs_get_ioctrl_callback "*" \
+                    parm caller [ds esi] [ebx] \
+                    value struct routine [edx] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_set_file_size_callback)(void *fs_data, int file_sel, int size);
+
+#pragma aux __rdos_fs_set_file_size_callback "*" \
+                    parm caller [ds esi] [ebx] [edx] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef int __far (__rdos_fs_read_file_callback)(void *fs_data, int file_sel, int start, int size, char *buf);
+
+#pragma aux __rdos_fs_read_file_callback "*" \
+                    parm caller [ds esi] [ebx] [edx] [ecx] [es edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef int __far (__rdos_fs_write_file_callback)(void *fs_data, int file_sel, int start, int size, char *buf);
+
+#pragma aux __rdos_fs_write_file_callback "*" \
+                    parm caller [ds esi] [ebx] [edx] [ecx] [es edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef int __far (__rdos_fs_allocate_file_list_callback)(void *fs_data, int file_sel);
+
+#pragma aux __rdos_fs_allocate_file_list_callback "*" \
+                    parm caller [ds esi] [ebx] \
+                    value struct routine [edi] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_free_file_list_callback)(void *fs_data, int file_list);
+
+#pragma aux __rdos_fs_free_file_list_callback "*" \
+                    parm caller [ds esi] [edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_read_block_callback)(void *fs_data, int file_sel, int start, int size, int file_list);
+
+#pragma aux __rdos_fs_read_block_callback "*" \
+                    parm caller [ds esi] [ebx] [edx] [ecx] [edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_fs_write_block_callback)(void *fs_data, int file_sel, int start, int size, int file_list);
+
+#pragma aux __rdos_fs_write_block_callback "*" \
+                    parm caller [ds esi] [ebx] [edx] [ecx] [edi] \
+                    value struct routine [eax] \
+                    modify [eax ebx ecx edx esi edi]
+
+typedef void __far (__rdos_usb_state_callback)(int controller, char device);
+
+#pragma aux __rdos_usb_state_callback "*" \
+                    parm caller [ebx] [al] \
                     value struct routine [eax] \
                     modify [eax ebx ecx edx esi edi]
 
@@ -215,6 +411,33 @@ struct TDiscSystemHeader
     __rdos_drive_assign_callback *drive_assign2_proc;
     __rdos_drive_mount_callback *mount_proc;
     __rdos_drive_erase_callback *erase_proc;
+};
+
+struct TFileSystemTable
+{
+    __rdos_fs_format_callback *format_proc;
+    __rdos_fs_mount_callback *mount_proc;
+    __rdos_fs_flush_callback *flush_proc;
+    __rdos_fs_dismount_callback *dismount_proc;
+    __rdos_fs_info_callback *info_proc;
+    __rdos_fs_allocate_dir_sel_callback *allocate_dir_sel_proc;
+    __rdos_fs_free_dir_sel_callback *free_dir_sel_proc;
+    __rdos_fs_cache_dir_callback *cache_dir_proc;
+    __rdos_fs_update_dir_callback *update_dir_proc;
+    __rdos_fs_update_file_callback *update_file_proc;
+    __rdos_fs_create_dir_callback *create_dir_proc;
+    __rdos_fs_delete_dir_callback *delete_dir_proc;
+    __rdos_fs_delete_file_callback *delete_file_proc;
+    __rdos_fs_rename_file_callback *rename_file_proc;
+    __rdos_fs_create_file_callback *create_file_proc;
+    __rdos_fs_get_ioctl_callback *get_ioctl_proc;
+    __rdos_fs_set_file_size_callback *set_file_size_proc;
+    __rdos_fs_read_file_callback *read_file_proc;
+    __rdos_fs_write_file_callback *write_file_proc;
+    __rdos_fs_allocate_file_list_callback *allocate_file_list_proc;
+    __rdos_fs_free_file_list_callback *free_file_list_proc;
+    __rdos_fs_read_block_callback *read_block_proc;
+    __rdos_fs_write_block_callback *write_block_proc;
 };
 
 // function definitions
@@ -333,6 +556,8 @@ void RdosCreateKernelProcess(
             const char *name,
             void *parm);
 
+int RdosThreadToSel(int thread_id);
+
 void RdosHookInitTasking(__rdos_hook_callback *callb_proc);
 void RdosHookCreateProcess(__rdos_hook_callback *callb_proc);
 void RdosHookTerminateProcess(__rdos_hook_callback *callb_proc);
@@ -377,6 +602,25 @@ void RdosRegisterNetClass(char class_id, int ads_size, void *broadcast_ads);
 int RdosRegisterNetProtocol(int ads_size, short int packet_type, void *my_ads, __rdos_net_prot_callback *packet_callb);
 int RdosRegisterNetDriver(char class_id, int max_size, struct TNetDriverTable *table, const char *name); 
 
+void RdosNetBroadcast(__rdos_net_broadcast_callback *callb_proc);
+void RdosNetReceived(int prot_handle);
+void RdosHookIp(char protocol, __rdos_ip_callback *callb_proc);
+
+char *RdosCreateIpHeader(char protocol, char ttl, int data_size, long dest_ip, void *options);
+void RdosSendIp(char *data);
+
+char *RdosCreateBroadcastIp(char protocol, char ttl, int data_size, int driver_sel, void *options);
+void RdosSendBroadcastIp(char *data, int driver_sel);
+
+void RdosAddDhcpOption(char option_code, __rdos_dhcp_option_callback *callb_proc);
+
+int RdosGetIpCacheSel(long ip);
+char *RdosGetIpCacheHostName(long ip);
+long RdosGetHostTimeout(int cache_sel);
+void RdosUpdateRoundTripTime(int cache_sel, long time);
+
+int RdosQueryUdp(long timeout_ms, short int dest_port, long ip, char *buf, int size, char **answer_buf);
+
 void RdosHookInitDisc(struct TDiscSystemHeader *disc_table);
 int RdosInstallDisc(int disc_handle, int read_ahead, int *disc_nr);
 void RdosRegisterDiscChange(__rdos_disc_change_callback *callb_proc);
@@ -418,6 +662,70 @@ void RdosPerformDiscSeq(int seq_handle);
 
 void RdosEraseSectors(int drive, int start_sector, int sector_count);
 void RdosResetDrive(int drive);
+
+void RdosHookInitFileSystem(__rdos_dhcp_option_callback *callb_proc);
+void RdosRegisterFileSystem(char *name, struct TFileSystemTable *table);
+void RdosInstallFileSystem(int drive, char *name);
+void RdosDemandLoadFileSystem(int drive);
+int RdosIsFileSystemAvailable(char *name);
+void RdosFormatFileSystem(int drive, char *name, void *mount_data);
+void RdosStartFileSystem(int drive, int sectors, void *mount_data);
+void RdosStopFileSystem(int drive);
+
+int RdosGetFileListEntry(int file_sel, int pos);
+void RdosFreeFileListEntry(int file_sel, int file_list);
+
+int RdosCacheDir(int dir_sel, int dir_entry);
+void RdosInsertDirEntry(int dir_sel, int dir_entry);
+void RdosInsertFileEntry(int dir_sel, int file_entry);
+
+int RdosGetFileInfo(int handle, char *access, char *drive, int *file_sel);
+int RdosDuplFileInfo(char access, char drive, int file_sel);
+
+void RdosInitMouse();
+void RdosUpdateMouse(int button_state, int delta_x, int delta_y);
+void RdosInvertMouse(int delta_x, int delta_y);
+void RdosSetMouse(int button_state, int x, int y);
+void RdosSetMouseLimit(int max_x, int max_y);
+
+void RdosAddComPort(int controller, int device, int com_sel);
+void RdosReserveComLine(char port);
+void RdosDeviceSetDtr(char port);
+void RdosDeviceResetDtr(char port);
+char RdosWaitForLineStateChange(char port);
+char RdosGetLineState(char port);
+
+void RdosInitUsbDevice(int usb_dev_sel);
+void RdosNotifyUsbAttach(int usb_dev_sel, char port, char speed);
+void RdosNotifyUsbDetach(int usb_dev_sel, char port);
+
+void RdosHookUsbAttach(__rdos_usb_state_callback *callb_proc);
+void RdosHookUsbDetach(__rdos_usb_state_callback *callb_proc);
+
+int RdosCreateUsbReq(int pipe_handle);
+void RdosAddWriteUsbControlReq(int req_handle, int size, int sel);
+void RdosAddWriteUsbDataReq(int req_handle, int size, int sel);
+void RdosAddReadUsbDataReq(int req_handle, int size, int sel);
+void RdosAddUsbStatusInReq(int req_handle);
+void RdosAddUsbStatusOutReq(int req_handle);
+void RdosStartUsbReq(int req_handle, int signal_thread_sel, int out_buf_size);
+void RdosStopUsbReq(int req_handle);
+int RdosIsUsbReqStarted(int req_handle);
+int RdosIsUsbReqReady(int req_handle);
+int RdosGetUsbReqData(int req_handle);
+void RdosCloseUsbReq(int req_handle);
+
+short int RdosReadCodec(int reg);
+void RdosWriteCodec(int reg, short int val);
+
+short int RdosGetAudioDacRate();
+void RdosSetAudioDacRate(short int rate);
+short int RdosGetAudioAdcRate();
+void RdosSetAudioAdcRate(short int rate);
+
+void RdosOpenAudioOut(short int rate);
+void RdosCloseAudioOut();
+void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 /* 32-bit compact memory model (device-drivers) */
 
@@ -873,6 +1181,12 @@ void RdosResetDrive(int drive);
     parm [eax] [ecx] [fs esi] [es edi] [gs ebx] \
     modify [edx];
 
+#pragma aux RdosThreadToSel = \
+    OsGate_thread_to_sel \
+    "movzx ebx,bx" \
+    parm [ebx] \
+    value [ebx];
+
 #pragma aux RdosHookInitTasking = \
     OsGate_hook_init_tasking \
     parm [es edi];
@@ -1030,6 +1344,83 @@ void RdosResetDrive(int drive);
     "pop ds" \
     parm [al] [ecx] [dx esi] [es edi] \
     value [ebx];
+
+#pragma aux RdosNetBroadcast = \
+    OsGate_net_broadcast \
+    parm [es edi];
+
+#pragma aux RdosNetReceived = \
+    OsGate_net_received \
+    parm [ebx];
+
+#pragma aux RdosHookIp = \
+    OsGate_hook_ip \
+    parm [al] [es edi];
+
+#pragma aux RdosCreateIpHeader = \
+    "push ds" \
+    "mov ds,bx" \
+    OsGate_create_ip_header \
+    "pop ds" \
+    parm [al] [ah] [ecx] [edx] [bx esi] \
+    value [es edi];
+
+#pragma aux RdosSendIp = \
+    OsGate_send_ip_data \
+    parm [es edi];
+
+#pragma aux RdosCreateBroadcastIp = \
+    "push ds" \
+    "mov ds,bx" \
+    OsGate_create_broadcast_ip \
+    "pop ds" \
+    parm [al] [ah] [ecx] [fs] [bx esi] \
+    value [es edi];
+
+#pragma aux RdosSendBroadcastIp = \
+    OsGate_send_broadcast_ip \
+    parm [es edi] [fs];
+
+#pragma aux RdosAddDhcpOption = \
+    OsGate_add_dhcp_option \
+    parm [al] [es edi];
+
+#pragma aux RdosGetIpCacheSel = \
+    "push es" \
+    OsGate_lookup_ip_cache \
+    "mov eax,es" \
+    "pop es" \
+    parm [edx] \
+    value [eax];
+
+#pragma aux RdosGetIpCacheHostName = \
+    OsGate_lookup_ip_cache \
+    parm [edx] \
+    value [es edi];
+
+#pragma aux RdosGetHostTimeout = \
+    "push ds" \
+    "mov ds,bx" \
+    OsGate_get_host_timeout \
+    "pop ds" \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosUpdateRoundTripTime = \
+    "push ds" \
+    "mov ds,bx" \
+    OsGate_update_round_trip_time \
+    "pop ds" \
+    parm [ebx] [eax];
+
+#pragma aux RdosQueryUdp = \
+    OsGate_query_udp \
+    "mov fs:[esi],edi" \
+    "mov fs:[esi+04],es" \
+    "movzx ecx,cx" \
+    parm [eax] [bx] [edx] [es edi] [ecx] [fs esi] \
+    value [ecx] \
+    modify [es esi];
 
 #pragma aux RdosHookInitDisc = \
     OsGate_hook_init_disc \
@@ -1199,6 +1590,255 @@ void RdosResetDrive(int drive);
 #pragma aux RdosResetDrive = \
     OsGate_reset_drive \
     parm [eax];
+
+#pragma aux RdosHookInitFileSystem = \
+    OsGate_hook_init_file_system \
+    parm [es edi];
+
+#pragma aux RdosRegisterFileSystem = \
+    "push ds" \
+    "mov ds,dx" \
+    OsGate_register_file_system \
+    "pop ds" \
+    parm [dx esi] [es edi];
+
+#pragma aux RdosInstallFileSystem = \
+    OsGate_install_file_system \
+    parm [eax] [es edi];
+
+#pragma aux RdosDemandLoadFileSystem = \
+    OsGate_demand_load_file_system \
+    parm [eax];
+
+#pragma aux RdosIsFileSystemAvailable = \
+    OsGate_is_file_system_available \
+    CarryToBool \        
+    parm [es edi] \
+    value [eax];
+
+#pragma aux RdosFormatFileSystem = \
+    OsGate_format_file_system \
+    parm [eax] [es edi] [fs edx];
+
+#pragma aux RdosStartFileSystem = \
+    OsGate_start_file_system \
+    parm [eax] [ecx] [fs edx];
+
+#pragma aux RdosStopFileSystem = \
+    OsGate_stop_file_system \
+    parm [eax];
+
+#pragma aux RdosGetFileListEntry = \
+    OsGate_get_file_list_entry \
+    parm [ebx] [edx] \
+    value [eax];
+
+#pragma aux RdosFreeFileListEntry = \
+    OsGate_free_file_list_entry \
+    parm [ebx] [edi];
+
+#pragma aux RdosCacheDir = \
+    OsGate_cache_dir \
+    parm [ebx] [edx] \
+    value [ebx];
+
+#pragma aux RdosInsertDirEntry = \
+    OsGate_insert_dir_entry \
+    parm [ebx] [edx];
+
+#pragma aux RdosInsertFileEntry = \
+    OsGate_insert_file_entry \
+    parm [ebx] [edx];
+
+#pragma aux RdosGetFileInfo = \
+    OsGate_get_file_info \
+    CarryToBool \        
+    "mov es:[edi],cl" \
+    "mov fs:[esi],ch" \
+    "movzx eax,ax" \
+    "mov gs:[ebx],eax" \
+    parm [ebx] [es edi] [fs esi] [gs ebx] \
+    value [eax] \
+    modify [ecx];
+
+#pragma aux RdosDuplFileInfo = \
+    OsGate_dupl_file_info \
+    parm [cl] [ch] [eax] \
+    value [ebx];
+
+#pragma aux RdosInitMouse = \
+    OsGate_init_mouse;
+
+#pragma aux RdosUpdateMouse = \
+    OsGate_update_mouse \
+    parm [eax] [ecx] [edx];
+
+#pragma aux RdosInvertMouse = \
+    OsGate_invert_mouse \
+    parm [ecx] [edx];
+
+#pragma aux RdosSetMouse = \
+    OsGate_set_mouse \
+    parm [eax] [ecx] [edx];
+
+#pragma aux RdosSetMouseLimit = \
+    OsGate_set_mouse_limit \
+    parm [ecx] [edx];
+
+#pragma aux RdosAddComPort = \
+    "push ds" \
+    "mov ds,ebx" \
+    OsGate_add_com_port \
+    "pop ds" \
+    parm [ebx] [eax] [edx];
+
+#pragma aux RdosReserveComLine = \
+    OsGate_reserve_com_line \
+    parm [al];
+
+#pragma aux RdosDeviceSetDtr = \
+    OsGate_device_set_dtr \
+    parm [al];
+
+#pragma aux RdosDeviceResetDtr = \
+    OsGate_device_reset_dtr \
+    parm [al];
+
+#pragma aux RdosWaitForLineStateChange = \
+    OsGate_wait_for_line_state \
+    parm [al] \
+    value [al];
+
+#pragma aux RdosGetLineState = \
+    OsGate_get_line_state \
+    parm [al] \
+    value [al];
+
+#pragma aux RdosInitUsbDevice = \
+    "push ds" \
+    "mov ds,edx" \
+    OsGate_init_usb_device \
+    "pop ds" \
+    parm [edx];
+
+#pragma aux RdosNotifyUsbAttach = \
+    "push ds" \
+    "mov ds,edx" \
+    OsGate_notify_usb_attach \
+    "pop ds" \
+    parm [edx] [al] [ah];
+
+#pragma aux RdosNotifyUsbDetach = \
+    "push ds" \
+    "mov ds,edx" \
+    OsGate_notify_usb_detach \
+    "pop ds" \
+    parm [edx] [al];
+
+#pragma aux RdosHookUsbAttach = \
+    OsGate_hook_usb_attach \
+    parm [es edi];
+
+#pragma aux RdosHookUsbDetach = \
+    OsGate_hook_usb_detach \
+    parm [es edi];
+
+#pragma aux RdosCreateUsbReq = \
+    OsGate_create_usb_req \
+    parm [ebx] \
+    value [ebx];
+
+#pragma aux RdosAddWriteUsbControlReq = \
+    OsGate_add_write_usb_control_req \
+    parm [ebx] [ecx] [es];
+
+#pragma aux RdosAddWriteUsbDataReq = \
+    OsGate_add_write_usb_data_req \
+    parm [ebx] [ecx] [es];
+
+#pragma aux RdosAddReadUsbDataReq = \
+    OsGate_add_read_usb_data_req \
+    parm [ebx] [ecx] [es];
+
+#pragma aux RdosAddUsbStatusInReq = \
+    OsGate_add_usb_status_in_req \
+    parm [ebx];
+
+#pragma aux RdosAddUsbStatusOutReq = \
+    OsGate_add_usb_status_out_req \
+    parm [ebx];
+
+#pragma aux RdosStartUsbReq = \
+    OsGate_start_usb_req \
+    parm [ebx] [eax] [ecx];
+
+#pragma aux RdosStopUsbReq = \
+    OsGate_stop_usb_req \
+    parm [ebx];
+
+#pragma aux RdosIsUsbReqStarted = \
+    OsGate_is_usb_req_started \
+    CarryToBool \        
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosIsUsbReqReady = \
+    OsGate_is_usb_req_ready \
+    CarryToBool \        
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosGetUsbReqData = \
+    OsGate_get_usb_req_data \
+    "movzx ecx,cx" \
+    parm [ebx] \
+    value [ecx];
+
+#pragma aux RdosCloseUsbReq = \
+    OsGate_close_usb_req \
+    parm [ebx];
+
+#pragma aux RdosReadCodec = \
+    OsGate_read_codec \
+    parm [ebx] \
+    value [ax];
+
+#pragma aux RdosWriteCodec = \
+    OsGate_write_codec \
+    parm [ebx] [ax];
+
+#pragma aux RdosGetAudioDacRate = \
+    OsGate_get_audio_dac_rate \
+    value [ax];
+
+#pragma aux RdosSetAudioDacRate = \
+    OsGate_set_audio_dac_rate \
+    parm [ax];
+
+#pragma aux RdosGetAudioAdcRate = \
+    OsGate_get_audio_adc_rate \
+    value [ax];
+
+#pragma aux RdosSetAudioAdcRate = \
+    OsGate_set_audio_adc_rate \
+    parm [ax];
+
+#pragma aux RdosOpenAudioOut = \
+    OsGate_open_audio_out \
+    parm [ax];
+
+#pragma aux RdosCloseAudioOut = \
+    OsGate_close_audio_out;
+
+#pragma aux RdosSendAudioOut = \
+    "push ds" \
+    "push es" \
+    "mov ds,eax" \
+    "mov es,edx" \
+    OsGate_send_audio_out \
+    "pop es" \    
+    "pop ds" \    
+    parm [eax] [edx] [ecx];
 
 #ifdef __cplusplus
 }
