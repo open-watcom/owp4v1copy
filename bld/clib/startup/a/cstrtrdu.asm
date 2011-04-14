@@ -219,9 +219,10 @@ CPUExceptionHandler:
 	call RaiseException
 ;
     mov eax,-1
-	db 9Ah                  ; call to UnloadExe
+	db 67h                  ; call to UnloadExe
+	db 9Ah
 	dd unload_exe_nr
-	dw 2
+	dw 3
 
 ueSs    EQU 36
 ueEsp   EQU 32
@@ -252,9 +253,10 @@ UnwindException:
 	jmp short ChainDebugger
 
 TestDebugger:
-	db 9Ah                  ; call to RdosShowExceptionText
+	db 67h                  ; call to RdosShowExceptionText
+	db 9Ah
 	dd show_exception_text_nr
-	dw 2
+	dw 3
 	or eax,eax
 	jz ChainDebugger
 ;
@@ -265,9 +267,10 @@ TestDebugger:
 ChainDebugger:
 	mov eax,[ebp].ueCode
 	mov eax,[4*eax].ECodeTab
-	db 9Ah                  ; call to NotifyPeException
+	db 67h                  ; call to NotifyPeException
+	db 9Ah
 	dd notify_pe_exception_nr
-	dw 2
+	dw 3
 	pop eax
 	pop ds
 	pop ebp
@@ -552,9 +555,10 @@ InitException   proc
 	xor al,al
 
 GetOldExc:
-	db 9Ah                  ; call to RdosGetException
+	db 67h                  ; call to RdosGetException
+	db 9Ah
 	dd get_exception_nr
-	dw 2
+	dw 3
 	mov [edx], edi
 	mov [edx+4], es
 	add edx, 8
@@ -568,9 +572,10 @@ GetOldExc:
 	mov edi,OFFSET Exc00
 
 SetNewExc:
-	db 9Ah                  ; call to RdosSetException
+	db 67h                  ; call to RdosSetException
+	db 9Ah
 	dd set_exception_nr
-	dw 2
+	dw 3
 	inc al
 	add edi,OFFSET Exc01 - OFFSET Exc00
 	cmp al, 01Fh
