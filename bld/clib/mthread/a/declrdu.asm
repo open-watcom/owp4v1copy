@@ -51,15 +51,12 @@ wait_milli_nr	            = 25
 create_thread_nr            = 28
 terminate_thread_nr         = 29
 
-; Call gate segment declaration
-CGATE           SEGMENT AT 2
-ORG     wait_milli_nr
-wait_milli          label byte
-ORG     create_thread_nr
-create_thread       label byte
-ORG     terminate_thread_nr
-terminate_thread    label byte
-CGATE           ENDS
+UserGate macro gate_nr
+	db 67h
+	db 9Ah
+	dd gate_nr
+	dw 3
+	    endm
 
 DGROUP          GROUP   CONST,CONST2,_DATA,_BSS
 
@@ -125,7 +122,7 @@ __tls_set_done:
     ret
 
 __task_end:
-        call far ptr terminate_thread   ; won't return
+    UserGate terminate_thread_nr   ; won't return
 
 __task_start:
 	mov ax,ds
@@ -150,10 +147,10 @@ __create_thread:
 	mov fs:__pv_arbitrary,eax
 	mov bx,fs
 	mov ax,2
-	call far ptr create_thread
+	UserGate create_thread_nr
 ;
 	mov eax,10
-	call far ptr wait_milli
+	UserGate wait_milli_nr
 ;
 	popad
 	pop ds
