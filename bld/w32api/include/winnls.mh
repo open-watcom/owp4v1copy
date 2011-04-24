@@ -1039,6 +1039,9 @@ WINBASEAPI int WINAPI       ResolveLocaleName( LPCWSTR, LPWSTR, int );
 
 /* Functions in NORMALIZ.DLL */
 #if (WINVER >= 0x0600)
+WINNORMALIZEAPI int WINAPI  IdnToAscii( DWORD, LPCWSTR, int, LPWSTR, int );
+WINNORMALIZEAPI int WINAPI  IdnToNameprepUnicode( DWORD, LPCWSTR, int, LPWSTR, int );
+WINNORMALIZEAPI int WINAPI  IdnToUnicode( DWORD, LPCWSTR, int, LPWSTR, int );
 WINNORMALIZEAPI BOOL WINAPI IsNormalizedString( NORM_FORM, LPCWSTR, int );
 WINNORMALIZEAPI int WINAPI  NormalizeString( NORM_FORM, LPCWSTR, int, LPWSTR, int );
 #endif
