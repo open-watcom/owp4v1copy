@@ -48,7 +48,7 @@ static void processFTS8( FILE *in, FILE *out )
             fprintf( out, "    Is RLE-encoded using method %d, and present on the following pages:\n", fgetc( in ) );
             count2 = 0;
             items = 1;
-            while( count2 < d.size - sizeof( unsigned char ) - sizeof( FTS8Data ) ) {
+            while( count2 < d.size - sizeof( uint8_t ) - sizeof( FTS8Data ) ) {
                 uint8_t byte = fgetc( in );
                 ++count2;
                 if( byte == 0x80 ) {
@@ -56,7 +56,7 @@ static void processFTS8( FILE *in, FILE *out )
                     uint16_t count3;
                     byte = fgetc( in );
                     fread(&bytes, sizeof( uint16_t ), 1, in );
-                    count2 += sizeof( unsigned char ) + sizeof( uint16_t );
+                    count2 += sizeof( uint8_t ) + sizeof( uint16_t );
                     for( count3 = 0; count3 < bytes; count3++, items++ ) {
                         fprintf( out, "%s ", bstring( byte ) );
                         if( !( items & 7 ) )
@@ -154,16 +154,17 @@ static void processFTS16( FILE *in, FILE *out )
     FTS16Data   d;
     uint32_t    nextPos = Hdr.searchOffset;
     size_t      count1 = 0;
-    size_t      count2;
-    size_t      items;
+    size_t      count2 = 0;
+    size_t      items = 1;
     uint16_t    word;
     while( nextPos < Hdr.searchOffset + Hdr.searchSize ) {
         fseek( in, nextPos, SEEK_SET );
-        fread( &d, sizeof( FTS8Data ), 1, in );
+        fread( &d, sizeof( FTS16Data ), 1, in );
         nextPos += d.size;
-        fprintf( out, "  Record #%u\n", count1++ );
+        fprintf( out, "  Record #%u ([%ls])\n",count1, Vocabulary[ count1 ] );
+        ++count1;
         fprintf( out, "    FTS16Data.size:        %4.4x (%u)\n", d.size, d.size );
-        fprintf( out, "    FTS16Data.compression: %4.2x (%u)\n", d.compression, d.compression );
+        fprintf( out, "    FTS16Data.compression: %4.4x (%u)\n", d.compression, d.compression );
         switch( d.compression ) {
         case NONE:
             fputs( "    Is present on no page\n", out );
@@ -174,6 +175,8 @@ static void processFTS16( FILE *in, FILE *out )
         case RLE:
 #ifdef DECODE_RLE
             fprintf( out, "    Is RLE-encoded using method %d, and present on the following pages:\n", fgetc( in ) );
+            count2 = 0;
+            items = 1;
             while( count2 < d.size - sizeof( uint8_t ) - sizeof( FTS16Data ) ) {
                 uint8_t byte = fgetc( in );
                 ++count2;

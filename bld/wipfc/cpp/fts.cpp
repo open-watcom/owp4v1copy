@@ -99,10 +99,10 @@ void FTSElement::build()
         else
             score[ 4 ] = static_cast< size_t >( -1 );
         size_t index = 0;
-        size_t value = score[ 0 ];
+        dataSize = score[ 0 ];
         for( size_t count = 1; count < sizeof( score ) / sizeof( size_t ); ++count ) {
-            if( score[ count ] < value ) {
-                value = score[ count ];
+            if( score[ count ] < dataSize ) {
+                dataSize = score[ count ];
                 index = count;
             }
         }
