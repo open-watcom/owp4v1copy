@@ -21,12 +21,7 @@ dig_os = os2v2
 
 inc_dirs = -I.. -I"$(wv_dir)/h" -I"$(dig_dir)/h"
 
-extra_c_flags = -s -dBUILD_RFX
-!ifeq machine fmr
-extra_c_flags += -d_FMR_PC
-!else ifeq machine nec
-extra_c_flags += -d_NEC_PC
-!endif
+extra_c_flags = -s -DBUILD_RFX
 
 extra_l_flags = op map
 
@@ -56,7 +51,7 @@ rfx.exe : litdef.gh $(objs)
 
 .str: $(wv_dir)/h
 
-.c: ../$(host_os)$(host_cpu);..;$(wv_dir)/$(host_os)/c;$(wv_dir)/c;$(dig_srcs)
+.c: ../$(host_os)$(host_cpu);..;$(wv_dir)/$(host_os)/c;$(wv_dir)/c;$(dig_srcs);../../win/c
 
 .asm: ../$(host_os)i86
 
@@ -65,4 +60,3 @@ rfx.exe : litdef.gh $(objs)
 
 litdef.gh : ./mkstr.exe
         $[@ $^@
-
