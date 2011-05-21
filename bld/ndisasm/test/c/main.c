@@ -118,7 +118,7 @@ int main( void )
     radix = 16;
     cpu = DISCPU_none;
     format = DFF_NONE;
-    flag = DIF_NONE;
+    flag.u.all = DIF_NONE;
     for( ;; ) {
         printf("Enter a byte sequence or '?' for help:\n");
         gets( op_buff );
@@ -139,7 +139,7 @@ int main( void )
                 cpu = DISCPU_none;
             }
         } else if( memcmp( op_buff, "flag", 4 ) == 0 ) {
-            flag = strtoul( &op_buff[5], NULL, 16 );
+            flag.u.all = strtoul( &op_buff[5], NULL, 16 );
         } else if( memcmp( op_buff, "format", 6 ) == 0 ) {
             format = strtoul( &op_buff[7], NULL, 16 );
         } else if( memcmp( op_buff, "radix", 5 ) == 0 ) {
