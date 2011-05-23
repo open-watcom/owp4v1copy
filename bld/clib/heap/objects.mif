@@ -1,5 +1,5 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
-#======================================================================================================
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
+#==========================================================================================================
 !inject allocseg.obj d16                                    o16     q16     w16
 !inject ambsptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
 !inject amblksiz.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
@@ -57,6 +57,8 @@
 !inject nmsize.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
 !inject nrealloc.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
 !inject qallflgs.obj                                                q16 q32
+!inject rdfree.obj                                                                                      rdk
+!inject rdmalloc.obj                                                                                    rdk
 !inject sbrk.obj     d16                                    o16     q16 q32 w16
 !inject sbrk386.obj      d32                                    o32             w32 osi
 !inject sbrklnx.obj                                                                     l32 lpc lmp
