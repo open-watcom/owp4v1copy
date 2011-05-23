@@ -53,7 +53,7 @@
     extern char _WCI86FAR * _WCI86FAR __pascal GetDOSEnvironment( void );
 #endif
 
-#ifdef __RDOS__
+#if defined( __RDOS__ ) || defined( __RDOSDEV__ )
 #include <rdos.h>
 #endif
 
@@ -150,6 +150,17 @@ void __setenvp( void )
         RdosGetEnvData( handle, startp );
         RdosCloseEnv( handle );
     }
+    #elif defined(__RDOSDEV__)
+    {
+        int handle;
+        int size;
+
+        handle = RdosOpenSysEnv();
+        size = RdosGetEnvSize( handle );        
+        startp = allocate( size );
+        RdosGetEnvData( handle, startp );
+        RdosCloseEnv( handle );
+    }
     #elif defined( _M_I86 )
         startp = MK_FP( *(unsigned short _WCI86FAR *)(MK_FP(_RWD_psp, 0x2c)), 0 );
     #else
@@ -188,7 +199,7 @@ void __setenvp( void )
         }
     }
 
-#ifdef __RDOS__
+#if defined( __RDOS__ ) || defined( __RDOSDEV__ )
     lib_free( startp );
 #endif
 

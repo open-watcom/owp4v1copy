@@ -1,30 +1,31 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
 #======================================================================================================
-!inject clearenv.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu
+!inject clearenv.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu rdk
 !inject crtwenv.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-!inject environ.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32     l32 lpc lmp rdu
-!inject envptr.obj   d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32                 rdu
-!inject getenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32 osi l32 lpc lmp rdu
-!inject getenv_s.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
+!inject environ.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32     l32 lpc lmp rdu rdk
+!inject envptr.obj   d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32                 rdu rdk
+!inject getenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32 osi l32 lpc lmp rdu rdk
+!inject getenv_s.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
 !inject gtcmddos.obj d16 d32                                                w16
 !inject gtcmd.obj                        nt nta ntp nvc nvl o16 o32             w32 osi
 !inject gtcmdunx.obj                                                q16 q32             l32 lpc lmp
 !inject gtcmdrdu.obj                                                                                rdu
+!inject gtcmdrdk.obj                                                                                    rdk
 !inject gtpid.obj    d16 d32                                                w16     osi
 !inject gtpidos2.obj                                        o16 o32
 !inject gtpidw32.obj                                                            w32
 !inject gtpidwnt.obj                     nt nta ntp
-!inject gtpidrdu.obj                                                                                rdu
+!inject gtpidrd.obj                                                                                 rdu rdk
 !inject isatt.obj    d16 d32                                                w16 w32 osi
 !inject isattos2.obj                                        o16 o32
 !inject isattwnt.obj                     nt nta ntp
 !inject isattlnx.obj                                                                    l32 lpc lmp
-!inject isattrdu.obj                                                                                rdu
-!inject putenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32     l32 lpc lmp rdu
-!inject searchen.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
-!inject setenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32     l32 lpc lmp rdu
-!inject setenvp.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32     l32 lpc lmp rdu
-!inject stksize.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
+!inject isattrd.obj                                                                                 rdu rdk
+!inject putenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32     l32 lpc lmp rdu rdk
+!inject searchen.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
+!inject setenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32     l32 lpc lmp rdu rdk
+!inject setenvp.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32     l32 lpc lmp rdu rdk
+!inject stksize.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
 !inject ugetenv.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject uputenv.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject usrchen.obj  d16 d32             nt nta ntp         o16 o32         w16 w32 osi

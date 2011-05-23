@@ -47,10 +47,9 @@
     #include "wenviron.h"
     #include <wctype.h>
 #endif
-#ifdef __RDOS__
+#if defined( __RDOS__ ) || defined( __RDOSDEV__ )
     #include <rdos.h>
 #endif
-
 
 extern int __putenv( const char *env_string );
 extern int __wputenv( const wchar_t *env_string );
@@ -84,7 +83,7 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
     size_t              len;
     BOOL                osRc;
 #endif
-#ifdef __RDOS__
+#if defined( __RDOS__ ) || defined( __RDOSDEV__ )
     CHAR_TYPE           *name;
     CHAR_TYPE           *value;
     CHAR_TYPE           *p;
@@ -93,7 +92,7 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
 #endif
 
     /*** Update the process environment if using Win32 ***/
-#if defined(__NT__) || defined(__RDOS__) 
+#if defined(__NT__) || defined(__RDOS__) || defined(__RDOSDEV__)
     /*** Validate the input string ***/
     p = __F_NAME(_mbschr,wcschr)( env_string, STRING( '=' ) );
     if( p == NULL ) return( -1 );           /* must have form name=value */
@@ -135,13 +134,19 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
     RdosDeleteEnvVar( handle, name );
     RdosAddEnvVar( handle, name, value );
     RdosCloseEnv( handle );        
+#endif
 
+#ifdef __RDOSDEV__
+    handle = RdosOpenSysEnv();
+    RdosDeleteEnvVar( handle, name );
+    RdosAddEnvVar( handle, name, value );
+    RdosCloseEnv( handle );        
 #endif
     
     lib_free( name );
     lib_free( value );
 
-#ifndef __RDOS__
+#if !defined( __RDOS__ ) && !defined( __RDOSDEV__ )
     if( osRc == FALSE ) {
         if( value == NULL ) {
             // we couldn't find the envvar but since we are deleting it,
@@ -179,7 +184,7 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
         __set_errno( ERANGE );
         return( -1 );
     }
-#ifdef __RDOS__
+#if defined( __RDOS__ ) || defined( __RDOSDEV__ )
     rc = 0;
 #else    
     rc = __F_NAME(__wputenv,__putenv)( otherStr );

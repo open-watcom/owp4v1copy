@@ -6,6 +6,7 @@ libs = $+ &
     $(pfx__)char$(__sfx) &
     $(pfx__)convert$(__sfx) &
     $(pfx__)direct$(__sfx) &
+    $(pfx__)environ$(__sfx) &
     $(pfx__)handleio$(__sfx) &
     $(pfx__)intel$(__sfx) &
     $(pfx__)math$(__sfx) &
