@@ -17,6 +17,7 @@ libs = $+ &
     $(pfx__)search$(__sfx) &
     $(pfx__)streamio$(__sfx) &
     $(pfx__)string$(__sfx) &
+    $(pfx__)time$(__sfx) &
     $-
 
 pfx__ =
