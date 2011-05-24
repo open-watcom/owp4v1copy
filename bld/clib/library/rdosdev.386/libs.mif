@@ -15,6 +15,7 @@ libs = $+ &
     $(pfx__)math$(__sfx) &
     $(pfx__)memory$(__sfx) &
     $(pfx__)misc$(__sfx) &
+    $(pfx__)process$(__sfx) &
     $(pfx__)rdosdev$(__sfx) &
     $(pfx__)search$(__sfx) &
     $(pfx__)streamio$(__sfx) &

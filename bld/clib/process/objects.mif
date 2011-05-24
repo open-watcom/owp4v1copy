@@ -1,16 +1,16 @@
 # Note: Still need to clone the Linux stuff from QNX. Only the basic stuff is here for now
 #       just top get it compiling.
 #
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu
-#======================================================================================================
-!inject cenvarg.obj  d16 d32             nt nta ntp         o16 o32                                 rdu
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
+#==========================================================================================================
+!inject cenvarg.obj  d16 d32             nt nta ntp         o16 o32                                 rdu rdk
 !inject cwaitos2.obj                                        o16 o32
 !inject cwaitwnt.obj                     nt nta ntp
 !inject delay.obj    d16 d32                                                w16
 !inject delayos2.obj                                        o16 o32
 !inject delayw32.obj                                                            w32
 !inject delaywnt.obj                     nt nta ntp
-!inject delayrdu.obj                                                                                rdu
+!inject delayrd.obj                                                                                 rdu rdk
 !inject doexec.obj   d16
 !inject doexerdu.obj                                                                                rdu
 !inject dospnos2.obj                                        o16 o32
@@ -62,7 +62,7 @@
 !inject sleeplnx.obj                                                                    l32 lpc lmp
 !inject sleepos2.obj                                        o16 o32
 !inject sleepwnt.obj                     nt nta ntp
-!inject sleeprdu.obj                                                                                rdu
+!inject sleeprd.obj                                                                                 rdu rdk
 !inject spawn086.obj d16
 !inject spawn386.obj     d32
 !inject spl.obj      d16 d32             nt nta ntp         o16 o32                                 rdu

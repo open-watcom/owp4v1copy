@@ -151,7 +151,7 @@ int __F_NAME(__cenvarg,__wcenvarg)(
     len += _MAX_PATH2 + 3;
 #elif defined( __OS2__ )
     len += _MAX_PATH2 + 1;
-#elif defined( __RDOS__ )
+#elif defined( __RDOS__ ) || defined( __RDOSDEV__ )
     len += _MAX_PATH2 + 1;
 #else
     if( len > 126 ) {
@@ -201,7 +201,7 @@ void __F_NAME(__ccmdline,__wccmdline)( CHAR_TYPE *path, const CHAR_TYPE * const 
 	p = stpcpy( p, path );
 	if( path[0] != '"' ) *p++ = '"';
 	*p++ = ' ';
-#elif defined( __RDOS__ )
+#elif defined( __RDOS__ ) || defined( __RDOSDEV__ )
         /* RDOS wants: arguments '\0' */
         path = path;
 #else
@@ -226,7 +226,7 @@ void __F_NAME(__ccmdline,__wccmdline)( CHAR_TYPE *path, const CHAR_TYPE * const 
     *p = 0;
 #elif defined( __NT__ )
     *p = 0;
-#elif defined( __RDOS__ )
+#elif defined( __RDOS__ ) || defined( __RDOSDEV__ )
     *p = 0;
 #else
     if( just_args ) {
