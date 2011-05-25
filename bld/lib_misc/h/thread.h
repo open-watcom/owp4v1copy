@@ -66,6 +66,8 @@
 #elif defined(__LINUX__)
 // TODO: Linux thread stuff goes here!
   #include <sys/types.h>
+#elif defined(__RDOSDEV__)
+  #include <rdosdev.h>
 #else
   #include "sigdefn.h"
 #endif
@@ -91,6 +93,8 @@ typedef struct  semaphore_object {
     // TODO: Linux semaphore goes here!
   #elif defined(__RDOS__)
         int             semaphore; // RDOS only have critical sections, which should work
+  #elif defined(__RDOSDEV__)
+        struct TKernelSection semaphore;
   #else
         unsigned long   semaphore;
   #endif
@@ -141,7 +145,7 @@ struct wcpp_thread_ctl {
 /* stack checking routine assumes "__stklowP" is first field */
 typedef struct thread_data {
     unsigned                    __stklowP;
-    #if !defined(__QNX__) && !defined(__LINUX__)
+    #if !defined(__QNX__) && !defined(__LINUX__) && !defined(__RDOSDEV__)
         int                     __errnoP;
         int                     __doserrnoP;
     #endif
@@ -154,7 +158,7 @@ typedef struct thread_data {
     char                        __asctimeP[26];
     char                        __allocated;    // vs auto
     char                        __resize;       // storage has realloc pending
-    #if !defined(__QNX__) && !defined(__LINUX__)
+    #if !defined(__QNX__) && !defined(__LINUX__) && !defined(__RDOSDEV__)
         __EXCEPTION_RECORD      *xcpt_handler;
         sigtab                  signal_table[__SIGLAST+1];
     #endif

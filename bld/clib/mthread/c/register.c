@@ -60,6 +60,13 @@ _WCRTLINK int _beginthread( thread_fn *start_addr,
 {
     return( __BeginThread( start_addr, thread_name, stack_size, arglist ) );
 }
+#elif defined( __RDOSDEV__ )
+_WCRTLINK int _beginthread( thread_fn *start_addr, int prio,
+                        const char *thread_name,
+                        unsigned stack_size, void *arglist )
+{
+    return( __BeginThread( start_addr, prio, thread_name, stack_size, arglist ) );
+}
 #else
 _WCRTLINK int _beginthread( thread_fn *start_addr, void *stack_bottom,
                         unsigned stack_size, void *arglist )

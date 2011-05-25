@@ -186,6 +186,7 @@ _WCRTLINK void __CloseSemaphore( semaphore_object *obj )
                 #elif defined( __RDOS__ )
                     RdosDeleteSection( obj->semaphore );
                     obj->semaphore = 0;
+                #elif defined( __RDOSDEV__ )
                 #else
                     DosCloseMutexSem( obj->semaphore );
                 #endif
@@ -228,6 +229,8 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                             // TODO: Access semaphore under Linux!
                         #elif defined( __RDOS__ )
                             obj->semaphore = RdosCreateSection();
+                        #elif defined( __RDOSDEV__ )
+                            RdosInitKernelSection(&obj->semaphore);
                         #else
                             DosCreateMutexSem( NULL, &obj->semaphore, 0, FALSE );
                         #endif
@@ -255,6 +258,8 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                 // TODO: Wait for semaphore under Linux!
             #elif defined( __RDOS__ )
                 RdosEnterSection( obj->semaphore );
+            #elif defined( __RDOSDEV__ )
+                RdosEnterKernelSection( &obj->semaphore );
             #else
                 DosRequestMutexSem( obj->semaphore, SEM_INDEFINITE_WAIT );
             #endif
@@ -291,6 +296,8 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object *obj )
                     // TODO: Relase semaphore under Linux!
                 #elif defined( __RDOS__ )
                     RdosLeaveSection( obj->semaphore );
+                #elif defined( __RDOSDEV__ )
+                    RdosLeaveKernelSection( &obj->semaphore );
                 #else
                     DosReleaseMutexSem( obj->semaphore );
                 #endif
@@ -458,6 +465,8 @@ struct thread_data *__MultipleThread( void )
         if( tdata == NULL )
             tdata = __GetThreadData();
         return( tdata );
+    #elif defined( __RDOSDEV__ )
+        return( NULL );
     #else
         return( __ThreadData[GetCurrentThreadId()].data );
     #endif
@@ -796,6 +805,9 @@ void __InitMultipleThread( void )
             InitSemaphore.initialized = 1;
             __AddThreadData( __FirstThreadData->thread_id, __FirstThreadData );
             __tls_set_value( __TlsIndex, __FirstThreadData );
+        #elif defined( __RDOSDEV__ )
+            RdosInitKernelSection( &InitSemaphore.semaphore );
+            InitSemaphore.initialized = 1;
         #else
             DosCreateMutexSem( NULL, &InitSemaphore.semaphore, 0, FALSE );
             InitSemaphore.initialized = 1;

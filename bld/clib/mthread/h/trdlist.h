@@ -78,6 +78,11 @@
   #pragma aux __tls_set_value "*" parm [ecx] [eax] modify [edx];
   #pragma aux __create_thread "*" parm [edx] [edi] [eax] [ecx];
 
+#elif defined( __RDOSDEV__ )
+  #include <rdos.h>
+  #include <rdosdev.h>
+  #define TID int
+  #define GetCurrentThreadId() (RdosGetThreadHandle())
 #else
   #define INCL_DOSSEMAPHORES
   #define INCL_DOSPROCESS
@@ -93,8 +98,8 @@
   #endif
 #endif
 
-#if !defined( __QNX__ ) && !defined(__LINUX__)
-// QNX doesn't maintain a list of allocated thread data blocks
+#if !defined( __QNX__ ) && !defined(__LINUX__) && !defined(__RDOSDEV__)
+// QNX and RDOS device-drivers doesn't maintain a list of allocated thread data blocks
 
 
 // lookup thread data
