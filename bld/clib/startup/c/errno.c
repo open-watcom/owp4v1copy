@@ -66,7 +66,7 @@ _WCRTLINK int *__get_errno_ptr( void )
 
 #include "errorno.h"
 
-#if !defined( __SW_BM )
+#if !defined( __SW_BM ) || defined( __RDOSDEV__ )
     _WCRTDATA int               errno;
     _WCRTDATA int               _doserrno;
 #endif
