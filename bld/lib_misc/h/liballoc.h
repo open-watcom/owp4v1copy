@@ -63,6 +63,20 @@
     extern void *_NW_realloc( void *ptr,size_t size);
     #endif
     extern void _NW_free( void *ptr );
+#elif defined(__RDOSDEV__)
+    #define lib_malloc( x ) malloc( x )
+    #define lib_free( x ) free( x )
+    #define lib_realloc( x, y ) realloc( x, y )
+
+    #define lib_nmalloc( x ) malloc( x )
+    #define lib_nfree( x ) free( x )
+    #define lib_nrealloc( x, y ) realloc( x, y )
+
+    #define lib_fmalloc( x ) malloc( x )
+    #define lib_ffree( x ) free( x )
+    #define lib_frealloc( x, y ) realloc( x, y )
+
+    #define lib_calloc( x, y ) calloc( x, y )
 #else
     #define lib_malloc( x ) malloc( x )
     #define lib_free( x ) free( x )

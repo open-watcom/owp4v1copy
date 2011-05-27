@@ -181,6 +181,7 @@
 !inject xmsgwin.obj                                                                 w16 w32
 !inject xmsgwnt.obj                      nt nta ntp
 !inject xmsgrdu.obj                                                                                         rdu
+!inject xmsgrdk.obj                                                                                             rdk
 !inject ___argc.obj  d16 d32             nt nta ntp                 o16 o32         w16 w32 osi             rdu rdk
 !inject ___wargc.obj                     nt nta ntp                     o32
 

@@ -55,8 +55,8 @@ extern void __CMain( void );
 #pragma aux __CMain  "*"
 #pragma aux __RdosMain  "*"
 
-extern void _exit_( unsigned ret_code );
-#pragma aux _exit_  "*" parm routine [eax]
+extern void _cexit_( unsigned ret_code );
+#pragma aux _cexit_  "*" parm routine [eax]
 
 static void __NullAccessRtn( int handle )
 {
@@ -122,5 +122,5 @@ void __RdosMain()
 
 _WCRTLINK void __exit( unsigned ret_code )
 {
-    _exit_( ret_code );  // A device-driver should never clean-up rtns, so just exit!
+    _cexit_( ret_code );  // A device-driver should never clean-up rtns, so just exit!
 }

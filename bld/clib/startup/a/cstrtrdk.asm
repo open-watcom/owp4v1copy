@@ -56,9 +56,9 @@ _TEXT   segment use32 word public 'CODE'
 
         assume  cs:_TEXT
 
-public _exit_
+public _cexit_
 
-_exit_ proc near
+_cexit_ proc near
     mov edx,SEG _DATA
     mov ds,edx
     mov dx,ds:ExitSs
@@ -78,7 +78,7 @@ _exit_far:
 
 _exit_done:
     ret    
-_exit_ endp
+_cexit_ endp
          
 public _cstart_
 
@@ -91,7 +91,7 @@ _cstart_ proc  near
 
     sub ebp,ebp                 ; ebp=0 indicate end of ebp chain
     call __RdosMain
-    jmp _exit_    
+    jmp _cexit_    
 
     dd ___begtext              ; make sure dead code elimination
 ;
