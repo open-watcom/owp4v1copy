@@ -40,6 +40,7 @@
 !inject cstrwwna.obj                        nta ntp
 !inject cstrwwnt.obj                     nt
 !inject cstrwaxp.obj                        nta ntp
+!inject cstrtrdk.obj                                                                                            rdk
 !inject cstrtrdu.obj                                                                                        rdu
 !inject cvtbuf.obj   d16 d32 dpm         nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
 !inject ddgrpo32.obj                                                    o32
@@ -52,6 +53,7 @@
 !inject dmainwnt.obj                     nt nta ntp
 !inject dmainrdu.obj                                                                                        rdu
 !inject emainrdu.obj                                                                                        rdu
+!inject mainrdk.obj                                                                                             rdk
 !inject dpmihost.obj     d32
 !inject hpgrw086.obj d16
 !inject lmaino32.obj                                                    o32
@@ -148,6 +150,7 @@
 !inject stkwnt.obj                       nt
 !inject stkl32.obj                                                                              l32
 !inject stkrdu.obj                                                                                          rdu
+!inject stkrdk.obj                                                                                              rdk
 !inject stubwep.obj                                                                 w16
 !inject tnkcdo32.obj                                                    o32
 !inject tnksto32.obj                                                    o32

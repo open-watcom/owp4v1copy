@@ -60,7 +60,7 @@
 void    __CommonInit( void )
 /**************************/
 {
-#if !defined(__NETWARE__) && !defined(__NT__)
+#if !defined(__NETWARE__) && !defined(__NT__) && !defined(__RDOSDEV__)
     _amblksiz = 32 * 1024;      /* set minimum memory block allocation */
 #endif
 

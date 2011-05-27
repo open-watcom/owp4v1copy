@@ -12,7 +12,9 @@ libs = $+ &
     $(pfx__)handleio$(__sfx) &
     $(pfx__)heap$(__sfx) &
     $(pfx__)intel$(__sfx) &
+    $(pfx__)kanji$(__sfx) &
     $(pfx__)math$(__sfx) &
+    $(pfx__)mbyte$(__sfx) &
     $(pfx__)memory$(__sfx) &
     $(pfx__)misc$(__sfx) &
     $(pfx__)mthread$(__sfx) &
