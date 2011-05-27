@@ -19,6 +19,7 @@ libs = $+ &
     $(pfx__)process$(__sfx) &
     $(pfx__)rdosdev$(__sfx) &
     $(pfx__)search$(__sfx) &
+    $(pfx__)startup$(__sfx) &
     $(pfx__)streamio$(__sfx) &
     $(pfx__)string$(__sfx) &
     $(pfx__)time$(__sfx) &

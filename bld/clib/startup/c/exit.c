@@ -61,7 +61,7 @@ _WCRTLINK extern void (*__process_fini)( unsigned, unsigned );
 #endif
 
 
-#if !defined(__UNIX__) && !defined(__WINDOWS_386__) && !defined(__RDOS__)
+#if !defined(__UNIX__) && !defined(__WINDOWS_386__) && !defined(__RDOS__) && !defined(__RDOSDEV__)
 void    __null_int23_exit( void ) {}              /* SIGNAL needs it */
 void    (*__int23_exit)( void ) = __null_int23_exit;
 static void _null_exit_rtn( void ) {}
@@ -75,7 +75,7 @@ _WCRTLINK void exit( int status )
         _WindowsExitRtn();
     }
 #endif
-#if !defined(__UNIX__) && !defined(__WINDOWS_386__) && !defined(__RDOS__)
+#if !defined(__UNIX__) && !defined(__WINDOWS_386__) && !defined(__RDOS__) && !defined(__RDOSDEV__)
     (*__int23_exit)();
 #endif
 #if defined(__UNIX__)
@@ -115,7 +115,7 @@ _WCRTLINK void _UnloadCLib( void )
 
 _WCRTLINK void _exit( int status )
 {
-#if !defined(__UNIX__) && !defined(__WINDOWS_386__) && !defined(__RDOS__)
+#if !defined(__UNIX__) && !defined(__WINDOWS_386__) && !defined(__RDOS__) && !defined(__RDOSDEV__)
     (*__int23_exit)();
     (*__FPE_handler_exit)();
 #endif

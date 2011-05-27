@@ -44,6 +44,9 @@
         #define _DOSERRNO       _doserrno
 
     #endif
+#elif defined(__RDOSDEV__)
+    #define _ERRNO  errno
+    #define _DOSERRNO       _doserrno    
 #else
     // QNX errno is magically multithread aware
     // What does NETWARE do?

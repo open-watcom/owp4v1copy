@@ -274,6 +274,15 @@ void __chk8087( void )
     __init_8087();
 }
 
+#elif defined( __RDOSDEV__ )
+
+void __chk8087( void )
+/********************/
+{
+    _RWD_real87 = 1;
+    _RWD_8087 = _RWD_real87;
+}
+
 #elif defined( __DOS__ )
 
 void __chk8087( void )
