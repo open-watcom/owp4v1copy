@@ -32,11 +32,7 @@
 #ifndef _THRDREG_H_INCLUDED
 #define _THRDREG_H_INCLUDED
 
-#ifdef __RDOSDEV__
-typedef void thread_fn( void _WCI86FAR * );
-#else
 typedef void _WCI86FAR thread_fn( void _WCI86FAR * );
-#endif
 
 #if defined(_M_IX86)
     #include "extfunc.h"

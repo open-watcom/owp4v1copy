@@ -36,7 +36,7 @@
 #include "variety.h"
 
 #if defined(_M_IX86)
-    #if !defined(__WINDOWS__)
+    #if !defined(__WINDOWS__) && !(defined(__RDOSDEV__) && defined(__SW_ZDP))
         #if defined(__BIG_DATA__)
             #define __DS        ds
         #endif
