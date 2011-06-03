@@ -953,9 +953,6 @@ STATIC FLIST *GetInlineFile( char **commandIn )
                 current->next = NULL;
                 index = index + offset;
                 start = index + 2;
-            } 
-            if ( cmdText[index + 1] != NULLCHAR ) {
-                ++index;
             }
         }
         ++index;
