@@ -345,6 +345,7 @@ static int try_open( char * prefix, char * filename )
     /* Try to open the file. Return 0 on failure. */
 
     for( ;; ) {
+        strlwr( buff );                 // for the sake of linux use lower only
         erc = fopen_s( &fp, buff, "rb" );
         if( erc == 0 ) break;
         if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) break;
