@@ -8,6 +8,7 @@ common_objs =  &
         gargutil.obj &
         gdata.obj    &
         gdeflay.obj  &
+	gdocpage.obj &
         gdummy.obj   &
         gerror.obj   &
         gerrorxx.obj &
@@ -25,7 +26,6 @@ common_objs =  &
         gsyssym.obj  &
         gtxtpool.obj &
         gutil.obj    &
-        gwidowut.obj &
         wgmlmsg.obj
 
 #
@@ -157,6 +157,5 @@ scr_objs =  &
         gsty.obj     &
         gsus.obj
 
-objs = wgml.obj $(common_objs) $(scr_objs) $(gml_objs) $(lay_objs) $(dev_objs)
-
+objs = wgml.obj $(common_objs) $(scr_objs) $(gml_objs) $(lay_objs) $(dev_objs)	
 

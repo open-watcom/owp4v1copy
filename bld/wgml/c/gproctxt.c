@@ -26,19 +26,15 @@
 *
 * Description:  WGML Process text not tags / controlwords
 *
-*
-*               process_text            control routine
-*               document_new_page       start a new page
-*               document_top_banner     output top banner
 *               do_justify              insert spaces between words
 *               intrans                 perform input translation
 *               next_tab                finds next tab stop
-*               process_line_full
+*               process_line_full       process text line into t_element
+*               process_text            form input text into output text lines
 *               puncadj                 insert spaces after .:?
 *               set_h_start             set horizontal start postion
-*               set_v_start             set vertical start position
+*               set_v_positions         set vertical positions in an element list
 *               split_text              split text at given position
-*               test_page_full          test if page_bottom reached
 *               text_chars_width        width to first wgml tab
 *               wgml_tabs               expands wgml tabs
 *
@@ -595,51 +591,12 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
 
 /***************************************************************************/
-/*  start a new document page                                              */
-/***************************************************************************/
-
-void document_new_page( void )
-{
-    if( GlobalFlags.lastpass ) {
-       fb_document_page();
-    }
-    page++;
-    ProcFlags.page_started = false;     // ? TBD
-    post_skip = NULL;                   // TBD
-    g_cur_v_start = g_page_top_org;
-}
-
-
-/***************************************************************************/
-/*  output top banner                                                      */
-/***************************************************************************/
-
-void document_top_banner( void )
-{
-    uint32_t    hs;
-    uint32_t    hl;
-
-    if( ProcFlags.keep_left_margin ) {
-        hs = g_cur_h_start;
-        hl = g_cur_left;
-    }
-    g_cur_h_start = g_page_left_org;
-    g_cur_left    = g_page_left_org;
-    out_ban_top( sect_ban_top[page & 1] );
-    ProcFlags.page_started = true;
-    if( ProcFlags.keep_left_margin ) {
-        g_cur_h_start = hs;
-        g_cur_left = hl;
-    }
-}
-
-/***************************************************************************/
 /*  if input translation is active                                         */
 /*      look for input escape char and translate the following char,       */
 /*      delete the escape char                                             */
 /***************************************************************************/
 
-void    intrans( char * data, uint16_t * len, uint8_t font )
+void intrans( char * data, uint16_t * len, uint8_t font )
 {
     char    *   ps;                     // source ptr
     char    *   pt;                     // target ptr
@@ -672,6 +629,7 @@ void    intrans( char * data, uint16_t * len, uint8_t font )
 /***************************************************************************/
 /*  set position                                                           */
 /***************************************************************************/
+
 void set_h_start( void )
 {
     if( !ProcFlags.keep_left_margin ) {
@@ -681,44 +639,13 @@ void set_h_start( void )
 
 }
 
-/***************************************************************************/
-/*  test whether page is full and finish page                              */
-/***************************************************************************/
-
-void    test_page_full( void )
-{
-    bool newpage;
-
-    if( ProcFlags.page_started ) {
-        if( bin_driver->y_positive == 0x00 ) {
-
-            if( g_cur_v_start < g_page_bottom ) {
-                newpage = widow_check();
-                if( !newpage ) {
-                    finish_page();
-                }
-            }
-        } else {
-//          if( g_cur_v_start + wgml_fonts[g_curr_font_num].line_height
-            if( g_cur_v_start >= g_page_bottom ) { // TBD
-                newpage = widow_check();
-                if( !newpage ) {
-                    finish_page();
-                }
-            }
-        }
-    }
-}
-
 
 /***************************************************************************/
-/*                                                                         */
+/* finalize line and place into t_element                                  */
 /***************************************************************************/
 
 void    process_line_full( text_line * a_line, bool justify )
 {
-    int32_t     widow;
-
     if( (a_line == NULL) || (a_line->first == NULL) ) { // why are we called?
         return;
     }
@@ -726,77 +653,31 @@ void    process_line_full( text_line * a_line, bool justify )
         start_doc_sect();
     }
 
-    /***********************************************************************/
-    /*  adjust vertical position from upper to lower border of line        */
-    /***********************************************************************/
-    if( bin_driver->y_positive == 0x00 ) {
-        if( a_line->y_address >= g_page_top ) {
-            a_line->y_address -= max( wgml_fonts[0].line_height, a_line->line_height );
-        } else {
-            a_line->y_address -= a_line->line_height;
-        }
+    if( justify && GlobalFlags.lastpass && !ProcFlags.literal
+                                         && ProcFlags.justify > ju_off ) {
+        do_justify( ju_x_start, g_page_right, a_line );
+    }
+
+    if( t_element == NULL ) {
+        t_element = alloc_doc_el( el_text );
+        t_element->subs_skip = g_subs_skip;
+        t_element->top_skip = g_top_skip;
+        t_element->depth = a_line->line_height + g_spacing;
+        t_element->element.text.overprint = ProcFlags.overprint;
+        ProcFlags.overprint = false;
+        t_element->element.text.spacing = g_spacing;
+        t_element->element.text.first = a_line;
+        t_el_last = t_element->element.text.first;
     } else {
-        if( a_line->y_address <= g_page_top ) {
-            a_line->y_address += max( wgml_fonts[0].line_height, a_line->line_height );
-        } else {
-            a_line->y_address += a_line->line_height;
-        }
+        t_element->depth += a_line->line_height + t_element->element.text.spacing;
+        t_el_last->next = a_line;
+        t_el_last = t_el_last->next;
     }
-    g_cur_v_start = a_line->y_address;
 
-    if( ProcFlags.test_widow ) {
-        if( buf_lines == NULL ) {       // no buffered lines
-            // if outside of widow area, reset widow test
-
-            widow = g_cur_threshold * wgml_fonts[g_curr_font_num].line_height;
-
-            if( bin_driver->y_positive == 0x00 ) {
-                if( g_cur_v_start > g_page_bottom + widow ) {
-                    ProcFlags.test_widow = false;
-                }
-            } else {
-                if( g_cur_v_start < g_page_bottom - widow ) {
-                    ProcFlags.test_widow = false;
-                }
-            }
-        }
-        if( ProcFlags.test_widow ) {    // inside widow area, buffer line
-            if( justify && GlobalFlags.lastpass && !ProcFlags.literal
-                                     && ProcFlags.justify > ju_off ) {
-                do_justify( ju_x_start, g_page_right, a_line );
-//              if( input_cbs->fmflags & II_research ) {// TBD
-//                  test_out_t_line( a_line );
-//              }
-            }
-            add_line_to_buf_lines( &buf_lines, a_line );
-            buf_lines_cnt++;
-        }
-    }
-    if( !ProcFlags.test_widow ) {
-
-        out_buf_lines( &buf_lines, false );
-
-        if( GlobalFlags.lastpass ) {
-            if( input_cbs->fmflags & II_research ) {
-                test_out_t_line( a_line );
-            }
-            if( justify && !ProcFlags.literal && ProcFlags.justify > ju_off ) {
-                do_justify( ju_x_start, g_page_right, a_line );
-                if( input_cbs->fmflags & II_research ) {
-                    test_out_t_line( a_line );
-                }
-            }
-            fb_output_textline( a_line );
-        }
-        add_text_chars_to_pool( a_line );
-    }
-    a_line->first = NULL;
     ProcFlags.line_started = false;     // line is now empty
     ProcFlags.just_override = true;     // justify for following lines
 
     set_h_start();
-
-    test_page_full();
 }
 
 
@@ -864,7 +745,10 @@ void    process_text( char * text, uint8_t font_num )
         }
     }
     p = text;
-    if( t_line.first == NULL ) {    // first phrase in paragraph
+    if( t_line == NULL ) {
+        t_line = alloc_text_line();
+    }
+    if( t_line->first == NULL ) {    // first phrase in paragraph
         post_space = 0;
         if( ProcFlags.concat ) {    // ".co on": skip initial spaces
             while( *p == ' ' ) {
@@ -882,9 +766,9 @@ void    process_text( char * text, uint8_t font_num )
             if( post_space == 0 ) {
                 // compute initial spacing if needed; .ct may affect this
                 if( (*p == ' ') || ((input_cbs->fmflags & II_sol) && \
-                                    (ju_x_start <= t_line.last->x_address)) ) {
+                                    (ju_x_start <= t_line->last->x_address)) ) {
                     post_space = wgml_fonts[font_num].spc_width;
-                    if( is_stop_char( t_line.last->text[t_line.last->count - 1] ) ) {
+                    if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                          post_space += wgml_fonts[font_num].spc_width;
                     }
                 }
@@ -984,7 +868,7 @@ void    process_text( char * text, uint8_t font_num )
 
             while( !tabbing && (n_char->x_address + n_char->width > \
                                                             g_page_right) ) {
-                s_char = t_line.last; // find multipart words
+                s_char = t_line->last; // find multipart words
                 if( s_char != NULL ) {
                     while( g_cur_h_start == (s_char->x_address + \
                                                         s_char->width) ) {
@@ -998,16 +882,16 @@ void    process_text( char * text, uint8_t font_num )
 
                 if( s_char != NULL ) {
                     // t_line ends in a multi-part word or an empty text_chars
-                    if( ((s_char != t_line.last) && \
+                    if( ((s_char != t_line->last) && \
                         (!(g_cur_left + n_char->width) > g_page_right)) || \
                                                 (s_char->count == 0) ) {
                         // s_char itself belongs to t_line
-                        t_line.last = s_char;
+                        t_line->last = s_char;
                         s_char = s_char->next;
                         if( s_char != NULL ) {
                             s_char->prev = NULL;
                         }
-                        t_line.last->next = NULL;
+                        t_line->last->next = NULL;
                     } else { // s_char will not be used; this prevents a loop
                         s_char = NULL;
                     }
@@ -1015,8 +899,8 @@ void    process_text( char * text, uint8_t font_num )
 
                 if( s_char == NULL ) { // append n_char to t_line & split it
                     // these conditions determine if n_char is to be split
-                    if( (t_line.first == NULL) || \
-                        ((t_line.last->x_address + t_line.last->width) \
+                    if( (t_line->first == NULL) || \
+                        ((t_line->last->x_address + t_line->last->width) \
                                                 == n_char->x_address) || \
                             ((g_cur_left + n_char->width) > g_page_right) ) {
                         // find the split position with a hyphen's width
@@ -1027,48 +911,45 @@ void    process_text( char * text, uint8_t font_num )
                         // if count == o_count, there is nothing to do
                         if( count != o_count ) { // split n_char with hyphenation
                             // first attach n_char to tline
-                            if( t_line.first == NULL ) {
-                                t_line.first = n_char;
+                            if( t_line->first == NULL ) {
+                                t_line->first = n_char;
                             } else {
-                                n_char->prev = t_line.last;
-                                t_line.last->next = n_char;
+                                n_char->prev = t_line->last;
+                                t_line->last->next = n_char;
                             }
-                            t_line.last = n_char;
+                            t_line->last = n_char;
                             // now do the split
                             n_char = alloc_text_chars( \
-                                    &t_line.last->text[t_line.last->count], \
-                                            count, t_line.last->font_number );
-                            n_char->type = t_line.last->type;
-                            t_line.last = wgml_tabs( t_line.last );
-                            if( t_line.line_height < wgml_fonts[font_num].line_height ) {
-                                t_line.line_height = wgml_fonts[font_num].line_height;
+                                    &t_line->last->text[t_line->last->count], \
+                                            count, t_line->last->font_number );
+                            n_char->type = t_line->last->type;
+                            t_line->last = wgml_tabs( t_line->last );
+                            if( t_line->line_height < wgml_fonts[font_num].line_height ) {
+                                t_line->line_height = wgml_fonts[font_num].line_height;
                             }
                             // each line must have its own hyphen
                             h_char = alloc_text_chars( "-", 1, 0 );
                             h_char->type = norm;
                             h_char->width = hy_width;
 
-                            h_char->x_address = t_line.last->x_address \
-                                                    + t_line.last->width;
-                            h_char->prev = t_line.last;
-                            t_line.last->next = h_char;
-                            t_line.last = h_char;
+                            h_char->x_address = t_line->last->x_address \
+                                                    + t_line->last->width;
+                            h_char->prev = t_line->last;
+                            t_line->last->next = h_char;
+                            t_line->last = h_char;
                             h_char = NULL;
 
-                            if( t_line.line_height < wgml_fonts[font_num].line_height ) {
-                                t_line.line_height = wgml_fonts[font_num].line_height;
+                            if( t_line->line_height < wgml_fonts[font_num].line_height ) {
+                                t_line->line_height = wgml_fonts[font_num].line_height;
                             }
                         }
                     }
                 }
 
-                if( t_line.first != NULL ) { // t_line is ready for output
-                    process_line_full( &t_line, ProcFlags.concat
+                if( t_line->first != NULL ) { // t_line is ready for output
+                    process_line_full( t_line, ProcFlags.concat
                                       && (ProcFlags.justify > ju_off) );
-                    if( !ProcFlags.page_started ) {
-                        document_new_page();    // page was full, start new one
-                        document_top_banner();
-                    }
+                    t_line = NULL;
                     set_h_start();
                     n_char->x_address = g_cur_h_start;
                 }
@@ -1076,22 +957,22 @@ void    process_text( char * text, uint8_t font_num )
                 if( s_char == NULL ) {
                     n_char->x_address = g_cur_h_start;
                 } else {
-                    t_line.first = s_char;
-                    t_line.last = s_char;
+                    t_line->first = s_char;
+                    t_line->last = s_char;
                     // s_chars must be repositioned to the start of the line
                     offset = s_char->x_address - g_cur_h_start;
                     s_char->x_address = g_cur_h_start;
-                    if( t_line.line_height < wgml_fonts[font_num].line_height ) {
-                        t_line.line_height = wgml_fonts[font_num].line_height;
+                    if( t_line->line_height < wgml_fonts[font_num].line_height ) {
+                        t_line->line_height = wgml_fonts[font_num].line_height;
                     }
                     // now reposition the remainder of the list
                     s_char = s_char->next;
                     while( s_char != NULL ) {
-                        t_line.last = s_char;
+                        t_line->last = s_char;
                         s_char->x_address -= offset;
                         g_cur_h_start = s_char->x_address;
-                        if( t_line.line_height < wgml_fonts[font_num].line_height ) {
-                            t_line.line_height = wgml_fonts[font_num].line_height;
+                        if( t_line->line_height < wgml_fonts[font_num].line_height ) {
+                            t_line->line_height = wgml_fonts[font_num].line_height;
                         }
                         s_char = s_char->next;
                     }
@@ -1109,33 +990,28 @@ void    process_text( char * text, uint8_t font_num )
             while( count > 0 ) {
                 // if count == o_count, nothing will fit: there is nothing to do
                 if( count != o_count ) {    // attach n_chars to t_line
-                    if( t_line.first == NULL ) {
-                        calc_skip();
-                        test_page_full();
-                        if( !ProcFlags.top_ban_proc ) {
-                            document_new_page();
-                            document_top_banner();
-                        }
-                        t_line.first = n_char;
-                        t_line.y_address = g_cur_v_start;
-                        t_line.line_height = wgml_fonts[font_num].line_height;
+                    if( t_line->first == NULL ) {
+                        t_line->first = n_char;
+                        t_line->y_address = g_cur_v_start;
+                        t_line->line_height = wgml_fonts[font_num].line_height;
                         ju_x_start = n_char->x_address;
                         ProcFlags.line_started = true;
                     } else {
-                        t_line.last->next = n_char;
-                        n_char->prev = t_line.last;
-                        if( t_line.line_height < wgml_fonts[font_num].line_height ) {
-                            t_line.line_height = wgml_fonts[font_num].line_height;
+                        t_line->last->next = n_char;
+                        n_char->prev = t_line->last;
+                        if( t_line->line_height < wgml_fonts[font_num].line_height ) {
+                            t_line->line_height = wgml_fonts[font_num].line_height;
                         }
                     }
-                    t_line.last = n_char;
+                    t_line->last = n_char;
                     // reset n_chars to contain the rest of the split text
                     n_char = alloc_text_chars( \
-                        &t_line.last->text[t_line.last->count], count, \
-                                                    t_line.last->font_number );
-                    t_line.last = wgml_tabs( t_line.last );
+                        &t_line->last->text[t_line->last->count], count, \
+                                                    t_line->last->font_number );
+                    t_line->last = wgml_tabs( t_line->last );
                     // process the full text_line
-                    process_line_full( &t_line, false );
+                    process_line_full( t_line, false );
+                    t_line = NULL;
                     // reset n_char and count
                     set_h_start();
                     n_char->x_address = g_cur_h_start;
@@ -1146,35 +1022,28 @@ void    process_text( char * text, uint8_t font_num )
             }
         }
         // adding n_chars to t_line is always correct at this point
-        if( t_line.first == NULL ) {    // first element in output line
-            calc_skip();
-            if( ProcFlags.page_started ) {  // try TBD
-                test_page_full();
-            }
-            if( !ProcFlags.top_ban_proc ) {
-                document_new_page();
-                document_top_banner();
-            }
-            t_line.first = n_char;
-            t_line.y_address = g_cur_v_start;
-            t_line.line_height = wgml_fonts[font_num].line_height;
+        if( t_line == NULL ) {
+            t_line = alloc_text_line();
+        }
+        if( t_line->first == NULL ) {    // first element in output line
+            t_line->first = n_char;
+            t_line->line_height = wgml_fonts[font_num].line_height;
             ju_x_start = n_char->x_address;
             ProcFlags.line_started = true;
         } else {
-            t_line.last->next = n_char;
-            n_char->prev = t_line.last;
-            if( t_line.line_height < wgml_fonts[font_num].line_height ) {
-                t_line.line_height = wgml_fonts[font_num].line_height;
+            t_line->last->next = n_char;
+            n_char->prev = t_line->last;
+            if( t_line->line_height < wgml_fonts[font_num].line_height ) {
+                t_line->line_height = wgml_fonts[font_num].line_height;
             }
         }
-        t_line.last = wgml_tabs( n_char );
+        t_line->last = wgml_tabs( n_char );
         // set tabbing true if n_char contained at least one wgml tab
-        if( n_char != t_line.last ) {
+        if( n_char != t_line->last ) {
             tabbing = true;
         }
 
-        g_cur_h_start = t_line.last->x_address + t_line.last->width;
-        ProcFlags.page_started = true;
+        g_cur_h_start = t_line->last->x_address + t_line->last->width;
         ProcFlags.para_started = true;
 
         // exit at end of text unless at end of input line
@@ -1182,7 +1051,7 @@ void    process_text( char * text, uint8_t font_num )
             break;
         }
         post_space = wgml_fonts[font_num].spc_width;
-        if( is_stop_char( t_line.last->text[t_line.last->count - 1] ) ) {
+        if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
              post_space += wgml_fonts[font_num].spc_width;
         }
         if( ProcFlags.concat ) {     // ignore multiple blanks in concat mode
@@ -1197,25 +1066,25 @@ void    process_text( char * text, uint8_t font_num )
         n_char = NULL;
     }
 
+#if 0
     /***********************************************************************/
     /*  for .co off and if the input line contains only spaces,            */
     /*  ensure an empty output line as wgml 4.0 does                       */
     /***********************************************************************/
-    if( !ProcFlags.concat && (post_space > 0) && (t_line.first == NULL) ) {
-        if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start -= wgml_fonts[font_num].line_height;
-        } else {
-            g_cur_v_start += wgml_fonts[font_num].line_height ;
-        }
-    }
 
-    if( t_line.first != NULL ) {        // something in the line
-        ProcFlags.page_started = true;
+    if( !ProcFlags.concat && (post_space > 0) && (t_line->first == NULL) ) {
+        g_skip++;
+    }
+#endif
+
+    if( t_line->first != NULL ) {        // something in the line
         ProcFlags.para_started = true;
 
         if( !ProcFlags.concat ) {
             if( input_cbs->fmflags & II_eol ) {
-                scr_process_break();
+                process_line_full( t_line, false );
+                t_line = NULL;
+                set_h_start();
             }
         }
     }

@@ -147,24 +147,6 @@ void set_section_banners( doc_section ds )
 
 
 /***************************************************************************/
-/*    finish page processing                                               */
-/***************************************************************************/
-
-void    finish_page( void )
-{
-    if( ProcFlags.page_started ) {      // any output for page?
-        if( t_line.first != NULL ) {    // incomplete line
-            process_line_full( &t_line, false );
-        }
-        out_ban_bot( sect_ban_bot[page & 1] );  // possible bottom banner
-        ProcFlags.page_started = false;
-    }
-    ProcFlags.top_ban_proc = false;
-    ProcFlags.test_widow = false;
-}
-
-
-/***************************************************************************/
 /*  set some values for new section                                        */
 /***************************************************************************/
 
@@ -186,9 +168,8 @@ static  void    finish_page_section( doc_section ds, bool eject )
 {
     if( eject ) {
         g_skip = 0;                     // ignore remaining skip value
-        g_skip_wgml4 = 0;
     }
-    finish_page();
+    last_page_out();
     new_section( ds );
 }
 
@@ -198,86 +179,48 @@ static  void    finish_page_section( doc_section ds, bool eject )
 /***************************************************************************/
 
 static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
-                            int8_t font, int8_t spc )
+                            int8_t font, int8_t spc, bool no_eject )
 {
-    text_chars  *   curr_t;
-    text_line       hd_line;
-    uint32_t        pre_top_sk;
-    uint32_t        post_sk;
-    uint32_t        header_post_sk;
-    int32_t         h_left;
-    int8_t          s_font;
-
-    post_sk = 0;
-    if( post_skip != NULL ) {
-        if( ProcFlags.page_started ) {  // ignore post skip at page start
-            post_sk = conv_vert_unit( post_skip, spacing );
-        }
-        post_skip = NULL;
-    }
+    doc_element     *   cur_el;
+    int8_t              s_font;
+    int32_t             h_left;
+    text_chars      *   curr_t;
+    text_line       *   hd_line;
 
     s_font = g_curr_font_num;
     g_curr_font_num = font;
-    if( top_sk != NULL ) {
-        pre_top_sk = conv_vert_unit( top_sk, spc );
-    } else {
-        pre_top_sk = 0;
-    }
-    if( p_sk != NULL ) {
-        header_post_sk = conv_vert_unit( top_sk, spc );
-    } else {
-        header_post_sk = 0;
-    }
     g_curr_font_num = s_font;
 
-    /***********************************************************************/
-    /*  MERGING pre top skip with previous post skip  HOW?       TBD       */
-    /*  for now it is added                                                */
-    /***********************************************************************/
-    pre_top_sk += post_sk;
-
-    if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -= pre_top_sk;
-    } else {
-        g_cur_v_start += pre_top_sk;
-    }
+    set_skip_vars( NULL, top_sk, p_sk, spc, g_curr_font_num );
 
     curr_t = alloc_text_chars( h_string, strlen( h_string ), font );
-    hd_line.first = curr_t;
     curr_t->width = cop_text_width( curr_t->text, curr_t->count, font );
-
-    hd_line.line_height = wgml_fonts[font].line_height;
-    hd_line.y_address = g_cur_v_start;
-
     h_left = g_page_left +(g_page_right - g_page_left - curr_t->width) / 2;
     curr_t->x_address = h_left;
 
-    /*******************************************************************/
-    /*  adjust vertical position from upper to lower border of line    */
-    /*******************************************************************/
-    if( bin_driver->y_positive == 0x00 ) {
-        hd_line.y_address -= hd_line.line_height;
-        g_cur_v_start -= hd_line.line_height;
-    } else {
-        hd_line.y_address += hd_line.line_height;
-        g_cur_v_start += hd_line.line_height;
-    }
-    if( GlobalFlags.lastpass && hd_line.first != NULL) {
+    hd_line = alloc_text_line();
+    hd_line->first = curr_t;
+    hd_line->line_height = wgml_fonts[font].line_height;
+
+    if( GlobalFlags.lastpass && hd_line->first != NULL) {
         if( input_cbs->fmflags & II_research ) {
-            test_out_t_line( &hd_line );
+            test_out_t_line( hd_line );
         }
-        fb_output_textline( &hd_line );
-    }
+        cur_el = alloc_doc_el( el_text );
+        cur_el->depth = hd_line->line_height;
+        cur_el->subs_skip = g_subs_skip;
+        cur_el->top_skip = g_top_skip;
+        cur_el->element.text.overprint = ProcFlags.overprint;
+        ProcFlags.overprint = false;
+        cur_el->element.text.spacing = g_spacing;
+        cur_el->element.text.first = hd_line;
+        hd_line = NULL;
 
-    if( hd_line.first != NULL) {
-        add_text_chars_to_pool( &hd_line );
-        hd_line.first = NULL;
-    }
-
-    if( bin_driver->y_positive == 0x00 ) {
-        g_cur_v_start -= header_post_sk;
-    } else {
-        g_cur_v_start += header_post_sk;
+        if( no_eject ) {
+            insert_col_main( cur_el );
+        } else {
+            insert_page_width( cur_el );
+        }
     }
 }
 
@@ -299,9 +242,9 @@ static void document_new_position( void )
     if( sect_ban_top[page & 1] != NULL ) {
         top_reg = sect_ban_top[page & 1]->top_line;
         if( bin_driver->y_positive == 0x00 ) {
-            top_pos = g_page_top - top_reg->reg_depth;
+            top_pos = g_page_top_org - top_reg->reg_depth;
         } else {
-            top_pos = g_page_top + top_reg->reg_depth;
+            top_pos = g_page_top_org + top_reg->reg_depth;
         }
         g_cur_v_start = top_pos;
     } else {
@@ -335,15 +278,16 @@ void    start_doc_sect( void )
 {
     bool                first_section;
     bool                header;
+    bool                no_eject;
     bool                page_r;
     doc_section         ds;
-    int                 ind;
     int8_t              font;
     int8_t              h_spc;
     page_ej             page_e;
     su              *   p_sk;
     su              *   top_sk;
-    xx_str  *           h_string;
+    uint32_t            ind;
+    xx_str          *   h_string;
 
     if( ProcFlags.start_section ) {
         return;                         // once is enough
@@ -354,9 +298,10 @@ void    start_doc_sect( void )
 
     first_section = (ProcFlags.doc_sect == doc_sect_none);
 
-    header = false;              // no header string (ABSTRACT, ... )  output
-    page_r = false;                     // no page number reset
-    page_e = ej_no;                     // no page eject
+    header = false;                 // no header string (ABSTRACT, ... )  output
+    no_eject = false;               // eject is default
+    page_r = false;                 // no page number reset
+    page_e = ej_no;                 // no page eject
     ProcFlags.start_section = true;
     ProcFlags.keep_left_margin = false;
     ds = ProcFlags.doc_sect_nxt;        // new section
@@ -454,10 +399,12 @@ void    start_doc_sect( void )
         break;
     }
 
+    full_page_out();                    // ensure are on last page
     switch( page_e ) {                  // page eject requested
     case ej_yes :
         if( ProcFlags.page_started ) {
             finish_page_section( ds, true );
+            document_new_page();
         } else {
             new_section( ds );
         }
@@ -466,11 +413,13 @@ void    start_doc_sect( void )
         }
         if( first_section ) {
             page++;
+            reset_t_page();
             document_new_position();
         } else {
+#if 0
             document_new_page();
+#endif
         }
-        document_top_banner();
         break;
     case ej_odd :
         if( ProcFlags.page_started || !(page & 1) ) {
@@ -478,15 +427,19 @@ void    start_doc_sect( void )
             if( page_r ) {
                 page = 0;
             }
+#if 0
             document_new_page();
+#endif
             document_new_position();
-            document_top_banner();
             if( !(page & 1) ) {
-                finish_page();
+                full_page_out();
+#if 0
                 document_new_page();
+#endif
                 document_new_position();
-                document_top_banner();
             }
+        } else {
+            no_eject = true;
         }
         break;
     case ej_even :
@@ -495,49 +448,54 @@ void    start_doc_sect( void )
             if( page_r ) {
                 page = 0;
             }
+#if 0
             document_new_page();
+#endif
             document_new_position();
-            document_top_banner();
             if( (page & 1) ) {
-                finish_page();
+                full_page_out();
+#if 0
                 document_new_page();
+#endif
                 document_new_position();
-                document_top_banner();
             }
+        } else {
+            no_eject = true;
         }
         break;
     default:
         new_section( ds );
         if( first_section ) {
             page++;
+            reset_t_page();
             document_new_position();
         }
+        no_eject = true;
         break;
     }
-
-    /***********************************************************************/
-    /*  set page bottom limit                                              */
-    /***********************************************************************/
-    ind = page & 1;
-    if( sect_ban_bot[ind] != NULL ) {
-        if( bin_driver->y_positive == 0 ) {
-            g_page_bottom = g_page_bottom_org
-                            + sect_ban_bot[ind]->ban_depth;
+    if( no_eject ) {
+        /****************************************************/
+        /*  set page bottom banner/limit for new section    */
+        /****************************************************/
+        ind = page & 1;
+        t_page.bottom_banner = sect_ban_bot[ind];
+        if( sect_ban_bot[ind] != NULL ) {
+            if( bin_driver->y_positive == 0 ) {
+                g_page_bottom = g_page_bottom_org + sect_ban_bot[ind]->ban_depth;
+            } else {
+                g_page_bottom = g_page_bottom_org - sect_ban_bot[ind]->ban_depth;
+            }
         } else {
-            g_page_bottom = g_page_bottom_org
-                            - sect_ban_bot[ind]->ban_depth;
+            g_page_bottom = g_page_bottom_org;
         }
-    } else {
-        g_page_bottom = g_page_bottom_org;
     }
     g_cur_left = g_page_left_org;
     g_cur_h_start = g_page_left_org +
                     conv_hor_unit( &layout_work.p.line_indent );// TBD
 
     if( header ) {
-        doc_header( p_sk, top_sk, h_string, font, h_spc );
+        doc_header( p_sk, top_sk, h_string, font, h_spc, no_eject );
     }
-
     ProcFlags.para_started = false;
 }
 
@@ -596,9 +554,6 @@ extern  void    gml_abstract( const gmltag * entry )
 
 extern  void    gml_appendix( const gmltag * entry )
 {
-    if( layout_work.appendix.page_eject ) {
-        finish_page();
-    }
     gml_doc_xxx( doc_sect_appendix );
     spacing = layout_work.appendix.spacing;
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
@@ -609,9 +564,6 @@ extern  void    gml_appendix( const gmltag * entry )
 
 extern  void    gml_backm( const gmltag * entry )
 {
-    if( layout_work.backm.page_eject ) {
-        finish_page();
-    }
     gml_doc_xxx( doc_sect_backm );
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
     if( !ProcFlags.fb_document_done ) { // the very first section/page
@@ -621,32 +573,13 @@ extern  void    gml_backm( const gmltag * entry )
 
 extern  void    gml_body( const gmltag * entry )
 {
-//  static su skip_TBD = { "1", 1, 0, 0, 0, false, SU_chars_lines };
-
-    if( layout_work.body.page_eject ) {
-        finish_page();
-    }
     gml_doc_xxx( doc_sect_body );
 
     ProcFlags.just_override = true;     // justify for first line ?? TBD
     g_cur_left = g_page_left;
     g_cur_h_start = g_page_left
                     + conv_hor_unit( &layout_work.p.line_indent );
-    spacing = layout_work.defaults.spacing;
 
-    pre_top_skip = 0;
-    post_top_skip = 0;
-    post_skip = NULL;
-
-    /***********************************************************************/
-    /*  for 1. body page try H0   skip or others                           */
-    /***********************************************************************/
-
-//  post_skip = &layout_work.hx[0].pre_top_skip;// TBD
-//  post_skip = &layout_work.p.pre_skip;// TBD
-//  post_skip = &skip_TBD;              // TBD
-
-//  ProcFlags.para_line1 = true;        // simulate :P start  ?? TBD
     ProcFlags.frontm_seen = false;      // no longer in FRONTM section
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
@@ -680,9 +613,6 @@ extern  void    gml_index( const gmltag * entry )
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
     }
-    if( layout_work.index.page_eject ) {
-        finish_page();
-    }
     gml_doc_xxx( doc_sect_index );
     spacing = layout_work.index.spacing;
 }
@@ -696,9 +626,6 @@ extern  void    gml_preface( const gmltag * entry )
     if( !ProcFlags.frontm_seen ) {
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
-    }
-    if( layout_work.preface.page_eject ) {
-        finish_page();
     }
     gml_doc_xxx( doc_sect_preface );
     spacing = layout_work.preface.spacing;
@@ -715,10 +642,11 @@ extern  void    gml_titlep( const gmltag * entry )
         return;
     }
     gml_doc_xxx( doc_sect_titlep );
-    pre_top_skip = 0;
-    post_top_skip = 0;
-    post_skip = NULL;
     spacing = layout_work.titlep.spacing;
+
+    add_symvar( &global_dict, "$stitle", "", no_subscript, 0 );// set nullstring
+    add_symvar( &global_dict, "$title", "", no_subscript, 0 );// set nullstring
+
     rs_loc = titlep_tag;
     if( input_cbs->fmflags & II_file ) {    // save line number
         titlep_lineno = input_cbs->s.f->lineno;
@@ -753,9 +681,9 @@ extern  void    gml_toc( const gmltag * entry )
 extern  void    gml_egdoc( const gmltag * entry )
 {
     start_doc_sect();                   // if not already done
-    finish_page();
     ProcFlags.test_widow = false;
     gml_doc_xxx( doc_sect_egdoc );
+    scr_process_break();
 }
 
 /***************************************************************************/

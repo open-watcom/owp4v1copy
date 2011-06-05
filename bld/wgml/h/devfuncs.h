@@ -34,6 +34,7 @@
 *                   df_populate_driver_table()
 *                   df_setup()
 *                   df_teardown()
+*                   fb_empty_text_line()
 *                   fb_enterfont()
 *                   fb_first_text_line_pass()
 *                   fb_init()
@@ -62,6 +63,7 @@ extern void df_populate_device_table( void );
 extern void df_populate_driver_table( void );
 extern void df_setup( void );
 extern void df_teardown( void );
+extern void fb_empty_text_line( text_line * out_line );
 extern void fb_enterfont( void );
 extern void fb_first_text_line_pass( text_line * out_line );
 extern void fb_init( init_block * in_block );

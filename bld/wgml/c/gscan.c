@@ -486,10 +486,6 @@ static void     scan_script( void )
                     } else {
                         scan_start = p; // script controlword found, process
                         if( scr_tags[k].cwflags & cw_break ) {
-                            if( buf_lines_cnt > 0 ) {   // widow lines
-                                out_buf_lines( &buf_lines, false );
-                                buf_lines_cnt = 0;
-                            }
                             ProcFlags.test_widow = false;
                             scr_process_break();// output incomplete line, if any
                         }
@@ -736,8 +732,10 @@ void    scan_line( void )
     if( !ProcFlags.literal ) {
         cc = mainif();
     } else {
-        if( t_line.first != NULL ) {
-            scr_process_break();
+        if( t_line != NULL ) {
+            if( t_line->first != NULL ) {
+                scr_process_break();
+            }
         }
         cc = pos;
     }
@@ -789,9 +787,11 @@ void    scan_line( void )
         /* text on the same inputline and .co off is in effect, ensure the */
         /* line is output                                                  */
         /*******************************************************************/
-        if( !ProcFlags.concat && t_line.first != NULL ) {
-            if( input_cbs->fmflags & II_eol ) {
-                scr_process_break();    // TBD
+        if( t_line != NULL ) {
+            if( !ProcFlags.concat && t_line->first != NULL ) {
+                if( input_cbs->fmflags & II_eol ) {
+                    scr_process_break();    // TBD
+                }
             }
         }
     } else if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {

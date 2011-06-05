@@ -32,27 +32,6 @@
  
  
 /***************************************************************************/
-/*  calc date position   ( vertical )                                      */
-/***************************************************************************/
- 
-static  void    calc_date_pos( int8_t font, int8_t d_spacing )
-{
- 
-/***************************************************************************/
-/*  pre_skip is always used, even at top of page, in contrary to the docs  */
-/***************************************************************************/
- 
-    if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -=
-                conv_vert_unit( &layout_work.date.pre_skip, d_spacing );
-    } else {
-        g_cur_v_start +=
-                conv_vert_unit( &layout_work.date.pre_skip, d_spacing );
-    }
-    return;
-}
- 
-/***************************************************************************/
 /*  prepare date line                                                      */
 /***************************************************************************/
  
@@ -109,8 +88,8 @@ static void prep_date_line( text_line * p_line, char * p )
 void    gml_date( const gmltag * entry )
 {
     char        *   p;
-    text_line       p_line;
-    int8_t          font;
+    doc_element *   cur_el;
+    text_line   *   p_line;
     int8_t          d_spacing;
     int8_t          font_save;
  
@@ -120,42 +99,52 @@ void    gml_date( const gmltag * entry )
         err_count++;
         show_include_stack();
     }
-    p = scan_start;
-    if( *p && *p != '.' ) {
-        out_msg( "gdate.c TBD\n" );
+
+    if( ProcFlags.date_tag_seen ) {     // only one DATE tag allowed
+        xx_line_err( err_2nd_date, buff2 );
     }
-    p++;                                           // over . to optional date
+
+    ProcFlags.date_tag_seen = true;
+    p = scan_start;
+    if( *p && *p == '.' ) p++;          // over . to docnum
+
+    while( *p == ' ' ) {                // over WS to attribute
+        p++;
+    }
+
     if( *p ) {                                              // date specified
         add_symvar( &global_dict, "date", p, no_subscript, 0 );
     }
  
     start_doc_sect();                   // if not already done
  
-    p_line.first = NULL;
-    p_line.next  = NULL;
-    p_line.last  = NULL;
- 
+    p_line = alloc_text_line();
+    p_line->line_height = wgml_fonts[layout_work.docnum.font].line_height;
+
+    prep_date_line( p_line, p );
+
     d_spacing = layout_work.titlep.spacing;
- 
-    font = layout_work.date.font;
- 
     font_save = g_curr_font_num;
-    g_curr_font_num = font;
-    p_line.line_height = wgml_fonts[font].line_height;
+    g_curr_font_num = layout_work.date.font;
+
+    /************************************************************/
+    /*  pre_skip is treated as pre_top_skip because it is       */
+    /*  always used at the top of the page, despite the docs    */
+    /************************************************************/
+    set_skip_vars( NULL, &layout_work.date.pre_skip, NULL, d_spacing, 
+                       g_curr_font_num );
  
-    calc_date_pos( font, d_spacing );
-    p_line.y_address = g_cur_v_start;
- 
-    prep_date_line( &p_line, p );
- 
-    ProcFlags.page_started = true;
-    process_line_full( &p_line, false );
+    cur_el = alloc_doc_el( el_text );
+    cur_el->depth = p_line->line_height + g_spacing;
+    cur_el->subs_skip = g_subs_skip;
+    cur_el->top_skip = g_top_skip;
+    cur_el->element.text.overprint = ProcFlags.overprint;
+    ProcFlags.overprint = false;
+    cur_el->element.text.spacing = g_spacing;
+    cur_el->element.text.first = p_line;
+    p_line = NULL;
+    insert_col_main( cur_el );
+
     g_curr_font_num = font_save;
- 
-    if( p_line.first != NULL) {
-        add_text_chars_to_pool( &p_line );
-    }
-    ProcFlags.page_started = true;
- 
     scan_start = scan_stop + 1;
 }

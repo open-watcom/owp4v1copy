@@ -41,7 +41,6 @@ static  void    end_lp( void )
     tag_cb  *   wk;
  
     if( nest_cb->c_tag == t_LP ) {      // terminate current :LP
-        post_skip = &(((lp_lay_tag *)(nest_cb->lay_tag))->post_skip);
         wk = nest_cb;
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );
@@ -324,12 +323,13 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
     char    *   p;
     tag_cb  *   wk;
  
-    if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false );
-        buf_lines_cnt = 0;
-        ProcFlags.test_widow = 0;
+    process_line_full( t_line, false );
+    t_line = NULL;
+    if( t_element != NULL ) {
+        insert_col_main( t_element );
     }
-    process_line_full( &t_line, false );
+    t_element = NULL;
+    t_el_last = NULL;
  
     if( nest_cb->c_tag != t ) {         // unexpected exxx tag
         if( nest_cb->c_tag == t_NONE ) {
@@ -341,17 +341,8 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
         g_cur_left = nest_cb->lm;
         g_cur_h_start = nest_cb->lm;
         g_page_right = nest_cb->rm;
-        post_skip = &(((lp_lay_tag *)(nest_cb->lay_tag))->post_skip);
+
         wk = nest_cb;
- 
-        /*******************************************************************/
-        /*  If this is the last nested tag, simulate a :PC tag             */
-        /*  at least the pre_skip value ist used by wgml4.0                */
-        /*  so let's do the same                                           */
-        /*******************************************************************/
-        if( nest_cb->prev->c_tag == t_NONE ) {
-            proc_p_pc( &(layout_work.pc) );
-        }
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );
         g_curr_font_num = nest_cb->font;
@@ -412,7 +403,9 @@ void    gml_eol( const gmltag * entry )
 {
     end_lp();
     if( nest_cb->c_tag == t_OL ) {
-        post_skip = &(((ol_lay_tag *)(nest_cb->lay_tag))->post_skip);
+        set_skip_vars( NULL, NULL,
+                       &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip,
+                       1, g_curr_font_num );
     }
     gml_exl_common( entry, t_OL );
 }
@@ -421,7 +414,9 @@ void    gml_esl( const gmltag * entry )
 {
     end_lp();
     if( nest_cb->c_tag == t_SL ) {
-        post_skip = &(((sl_lay_tag *)(nest_cb->lay_tag))->post_skip);
+        set_skip_vars( NULL, NULL,
+                       &((sl_lay_tag *)(nest_cb->lay_tag))->post_skip,
+                       1, g_curr_font_num );
     }
     gml_exl_common( entry, t_SL );
 }
@@ -430,7 +425,9 @@ void    gml_eul( const gmltag * entry )
 {
     end_lp();
     if( nest_cb->c_tag == t_UL ) {
-        post_skip = &(((ul_lay_tag *)(nest_cb->lay_tag))->post_skip);
+        set_skip_vars( NULL, NULL,
+                       &((ul_lay_tag *)(nest_cb->lay_tag))->post_skip,
+                       1, g_curr_font_num );
     }
     gml_exl_common( entry, t_UL );
 }
@@ -444,9 +441,6 @@ static  void    gml_li_ol( const gmltag * entry )
 {
     char        *   p;
     char        *   pn;
-    int32_t         skippre;
-    int32_t         skippost;
-    int32_t         skipsk;
     uint32_t        num_len;
     char            charnumber[MAX_L_AS_STR];
  
@@ -468,58 +462,19 @@ static  void    gml_li_ol( const gmltag * entry )
     start_doc_sect();                   // if not already done
  
     scr_process_break();
- 
-    if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false );  // lines are no widows
-        buf_lines_cnt = 0;
-    }
- 
-    spacing = ((ol_lay_tag *)(nest_cb->lay_tag))->spacing;
-    if( post_skip != NULL ) {
-        skippost = conv_vert_unit( post_skip, spacing );
-    } else {
-        skippost = 0;
-    }
-    skipsk = calc_skip_value();   // pending .sk value?
+
     g_curr_font_num = ((ol_lay_tag *)(nest_cb->lay_tag))->number_font;
-    if( ProcFlags.page_started ) {
-        if( ProcFlags.need_li_lp ) {    // first :li for this list
-            skippre = conv_vert_unit(
-                      &(((ol_lay_tag *)(nest_cb->lay_tag))->pre_skip), spacing );
-        } else if( !nest_cb->compact ) {
-            skippre = conv_vert_unit(
-                      &(((ol_lay_tag *)(nest_cb->lay_tag))->skip), spacing );
-        } else {
-            skippre = 0;
-        }
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
-        }
-        if( skipsk > skippre ) {
-            skippre = skipsk;           // take maximum skip amount
-        }
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippre < g_cur_v_start ) {
-                g_cur_v_start -= skippre;
-            } else {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            }
-        } else {
-            g_cur_v_start += skippre;
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippost > 0 ) {
-                g_cur_v_start -= skippost;
-            }
-        } else {
-            if( skippost > 0 ) {
-                g_cur_v_start += skippost;
-            }
-        }
+
+    if( ProcFlags.need_li_lp ) {        // first :li for this list
+        set_skip_vars( &((ol_lay_tag *)(nest_cb->lay_tag))->pre_skip, NULL, 
+                       NULL, 1, g_curr_font_num );
+    } else if( !nest_cb->compact ) {
+        set_skip_vars( &((ol_lay_tag *)(nest_cb->lay_tag))->skip, NULL, 
+                       NULL, 1, g_curr_font_num );
+    } else {                            // compact
+        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
     }
-    post_skip = NULL;
- 
+
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
@@ -533,8 +488,10 @@ static  void    gml_li_ol( const gmltag * entry )
     g_cur_h_start = g_cur_left +
         conv_hor_unit( &(((ol_lay_tag *)(nest_cb->lay_tag))->align) );
  
-    if( t_line.last != NULL ) {
-        g_cur_left += t_line.last->width + post_space;
+    if( t_line != NULL ) {
+        if( t_line->last != NULL ) {
+            g_cur_left += t_line->last->width + post_space;
+        }
     }
     post_space = 0;
     if( g_cur_h_start > g_cur_left ) {
@@ -564,67 +521,25 @@ static  void    gml_li_ol( const gmltag * entry )
 static  void    gml_li_sl( const gmltag * entry )
 {
     char        *   p;
-    int32_t         skippre;
-    int32_t         skippost;
-    int32_t         skipsk;
- 
+
     scan_err = false;
     p = scan_start;
  
     start_doc_sect();                   // if not already done
  
     scr_process_break();
- 
-    if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false );  // lines are no widows
-        buf_lines_cnt = 0;
+
+    if( ProcFlags.need_li_lp ) {        // first :li for this list
+        set_skip_vars( &((sl_lay_tag *)(nest_cb->lay_tag))->pre_skip, NULL, 
+                       NULL, 1, g_curr_font_num );
+    } else if( !nest_cb->compact ) {
+        set_skip_vars( &((sl_lay_tag *)(nest_cb->lay_tag))->skip, NULL, 
+                       NULL, 1, g_curr_font_num );
+    } else {                            // compact
+        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
     }
- 
+
     spacing = ((sl_lay_tag *)(nest_cb->lay_tag))->spacing;
-    if( post_skip != NULL ) {
-        skippost = conv_vert_unit( post_skip, spacing );
-    } else {
-        skippost = 0;
-    }
-    skipsk = calc_skip_value();   // pending .sk value?
-    if( ProcFlags.page_started ) {
-        if( ProcFlags.need_li_lp ) {    // first :li for this list
-            skippre = conv_vert_unit(
-                      &(((sl_lay_tag *)(nest_cb->lay_tag))->pre_skip), spacing );
-        } else if( !nest_cb->compact ) {
-            skippre = conv_vert_unit(
-                      &(((sl_lay_tag *)(nest_cb->lay_tag))->skip), spacing );
-        } else {
-            skippre = 0;
-        }
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
-        }
-        if( skipsk > skippre ) {
-            skippre = skipsk;           // take maximum skip amount
-        }
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippre < g_cur_v_start ) {
-                g_cur_v_start -= skippre;
-            } else {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            }
-        } else {
-            g_cur_v_start += skippre;
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippost > 0 ) {
-                g_cur_v_start -= skippost;
-            }
-        } else {
-            if( skippost > 0 ) {
-                g_cur_v_start += skippost;
-            }
-        }
-    }
-    post_skip = NULL;
- 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
@@ -658,9 +573,6 @@ static  void    gml_li_sl( const gmltag * entry )
 static  void    gml_li_ul( const gmltag * entry )
 {
     char        *   p;
-    int32_t         skippre;
-    int32_t         skippost;
-    int32_t         skipsk;
     char            bullet[2];
  
     scan_err = false;
@@ -677,58 +589,20 @@ static  void    gml_li_ul( const gmltag * entry )
     start_doc_sect();                   // if not already done
  
     scr_process_break();
- 
-    if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false );  // lines are no widows
-        buf_lines_cnt = 0;
+
+    if( ProcFlags.need_li_lp ) {        // first :li for this list
+        set_skip_vars( &((ul_lay_tag *)(nest_cb->lay_tag))->pre_skip, NULL, 
+                       NULL, 1, g_curr_font_num );
+    } else if( !nest_cb->compact ) {
+        set_skip_vars( &((ul_lay_tag *)(nest_cb->lay_tag))->skip, NULL, 
+                       NULL, 1, g_curr_font_num );
+    } else {                            // compact
+        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
     }
- 
+
+
     spacing = ((ul_lay_tag *)(nest_cb->lay_tag))->spacing;
-    if( post_skip != NULL ) {
-        skippost = conv_vert_unit( post_skip, spacing );
-    } else {
-        skippost = 0;
-    }
-    skipsk = calc_skip_value();   // pending .sk value?
     g_curr_font_num = ((ul_lay_tag *)(nest_cb->lay_tag))->bullet_font;
-    if( ProcFlags.page_started ) {
-        if( ProcFlags.need_li_lp ) {    // first :li for this list
-            skippre = conv_vert_unit(
-                      &(((ul_lay_tag *)(nest_cb->lay_tag))->pre_skip), spacing );
-        } else if( !nest_cb->compact ) {
-            skippre = conv_vert_unit(
-                      &(((ul_lay_tag *)(nest_cb->lay_tag))->skip), spacing );
-        } else {
-            skippre = 0;
-        }
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
-        }
-        if( skipsk > skippre ) {
-            skippre = skipsk;           // take maximum skip amount
-        }
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippre < g_cur_v_start ) {
-                g_cur_v_start -= skippre;
-            } else {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            }
-        } else {
-            g_cur_v_start += skippre;
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippost > 0 ) {
-                g_cur_v_start -= skippost;
-            }
-        } else {
-            if( skippost > 0 ) {
-                g_cur_v_start += skippost;
-            }
-        }
-    }
-    post_skip = NULL;
- 
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
@@ -741,9 +615,11 @@ static  void    gml_li_ul( const gmltag * entry )
     start_line_with_string( bullet, g_curr_font_num );
     g_cur_h_start = g_cur_left +
         conv_hor_unit( &(((ul_lay_tag *)(nest_cb->lay_tag))->align) );
- 
-    if( t_line.last != NULL ) {
-        g_cur_left += t_line.last->width + post_space;
+
+    if( t_line != NULL ) { 
+        if( t_line->last != NULL ) {
+            g_cur_left += t_line->last->width + post_space;
+        }
     }
     post_space = 0;
     if( g_cur_h_start > g_cur_left ) {
@@ -817,13 +693,36 @@ void    gml_li( const gmltag * entry )
 void    gml_lp( const gmltag * entry )
 {
     char        *   p;
-    int32_t         skippre;
-    int32_t         skippost;
-    int32_t         skipsk;
- 
+    su          *   list_skip_su;
+    su          *   lp_skip_su;
+    su          *   pre_skip_su;
+
     scan_err = false;
     p = scan_start;
  
+    switch( nest_cb->c_tag ) {
+    case t_OL :
+        list_skip_su = &((ol_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+        break;
+    case t_SL :
+        list_skip_su = &((sl_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+        break;
+    case t_UL :
+        list_skip_su = &((ul_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+        break;
+#if 0
+    case t_DL :             // TBD
+        list_skip_su = ((dl_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+        break;
+    case t_GL :             // TBD
+        list_skip_su = ((gl_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+        break;
+#endif
+    default:
+        break;
+    }
+    lp_skip_su = &layout_work.lp.pre_skip;
+
     gml_xl_lp_common( entry, t_LP );
  
     nest_cb->compact = false;
@@ -839,54 +738,22 @@ void    gml_lp( const gmltag * entry )
     start_doc_sect();                   // if not already done
  
     scr_process_break();
- 
-    if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false );  // lines are no widows
-        buf_lines_cnt = 0;
-    }
- 
+
     spacing = ((lp_lay_tag *)(nest_cb->lay_tag))->spacing;
-    if( post_skip != NULL ) {
-        skippost = conv_vert_unit( post_skip, spacing );
-    } else {
-        skippost = 0;
-    }
-    skipsk = calc_skip_value();         // pending .sk value?
-    if( ProcFlags.page_started ) {
-        skippre = conv_vert_unit(
-                    &(((lp_lay_tag *)(nest_cb->lay_tag))->pre_skip), spacing );
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
-        }
-        if( skipsk > skippre ) {
-            skippre = skipsk;           // take maximum skip amount
-        }
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippre < g_cur_v_start ) {
-                g_cur_v_start -= skippre;
-            } else {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            }
-        } else {
-            g_cur_v_start += skippre;
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippost > 0 ) {
-                g_cur_v_start -= skippost;
-            }
-        } else {
-            if( skippost > 0 ) {
-                g_cur_v_start += skippost;
-            }
-        }
-    }
-    post_skip = NULL;
- 
+
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
- 
+
+    if( ProcFlags.need_li_lp ) {        // :LP first tag in list
+        pre_skip_su = greater_su( lp_skip_su, list_skip_su, spacing );
+    } else {
+        pre_skip_su = &((lp_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+    }
+    set_skip_vars( NULL, pre_skip_su,
+                   &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip,
+                   1, g_curr_font_num );
+
     g_cur_left = nest_cb->lm + nest_cb->left_indent;// left start
                                         // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(layout_work.lp.line_indent) );
@@ -895,7 +762,6 @@ void    gml_lp( const gmltag * entry )
  
     ju_x_start = g_cur_h_start;
  
-    spacing = ((lp_lay_tag *)(nest_cb->lay_tag))->spacing;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {

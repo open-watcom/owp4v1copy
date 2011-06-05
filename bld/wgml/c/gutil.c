@@ -30,6 +30,7 @@
 *               conv_vert_unit
 *               conv_vert_unit_rdd
 *               format_num
+*               greater_su
 *               int_to_roman
 *               len_to_trail_space
 *               skip_to_quote
@@ -1007,6 +1008,29 @@ char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
     return( r );
 }
 
+
+/***************************************************************************/
+/*  return the parameter which has the larger value                        */
+/*  initially for LP, should also be needed for FIGCAP                     */
+/*  these are intended to be vertical values                               */
+/***************************************************************************/
+
+su * greater_su( su * su_a, su * su_b, uint8_t spacing )
+{
+    uint32_t    val_a;
+    uint32_t    val_b;
+
+    val_a = conv_vert_unit( su_a, spacing );
+    val_b = conv_vert_unit( su_b, spacing );
+
+    if( val_a > val_b ) {
+        return( su_a );
+    } else {
+        return( su_b );
+    }
+}
+
+
 /***************************************************************************/
 /*  convert integer to roman digits                                        */
 /***************************************************************************/
@@ -1088,8 +1112,6 @@ void    start_line_with_string( char * text, uint8_t font_num )
         }
     }
 
-    test_page_full();
-
     n_char = alloc_text_chars( text, count, font_num );
 
     n_char->x_address = g_cur_h_start;
@@ -1102,35 +1124,31 @@ void    start_line_with_string( char * text, uint8_t font_num )
     /***********************************************************/
 
     if( n_char->x_address + n_char->width > g_page_right ) {
-        process_line_full( &t_line, ProcFlags.concat );
-        if( !ProcFlags.page_started ) {
-            document_new_page();// page full, start new one
-            document_top_banner();
-        }
+        process_line_full( t_line, ProcFlags.concat );
+        t_line = alloc_text_line();
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
         set_h_start();
         n_char->x_address = g_cur_h_start;
     }
 
-    if( t_line.first == NULL ) {        // first element in output line
-        calc_skip();
-        test_page_full();
-        if( !ProcFlags.top_ban_proc ) {
-            document_new_page();
-            document_top_banner();
-        }
-        t_line.first = n_char;
-        t_line.y_address = g_cur_v_start;
-        t_line.line_height = wgml_fonts[font_num].line_height;
+    if( t_line == NULL ) {
+        t_line = alloc_text_line();
+    }
+
+    if( t_line->first == NULL ) {        // first element in output line
+        t_line->first = n_char;
+        t_line->line_height = wgml_fonts[font_num].line_height;
         ju_x_start = n_char->x_address;
         ProcFlags.line_started = true;
     } else {
-        t_line.last->next = n_char;
-        n_char->prev = t_line.last;
+        t_line->last->next = n_char;
+        n_char->prev = t_line->last;
     }
-    t_line.last  = n_char;
+    t_line->last  = n_char;
 
     g_cur_h_start = n_char->x_address + n_char->width;
-    ProcFlags.page_started = true;
     post_space = post_space * wgml_fonts[layout_work.defaults.font].spc_width;
 }
 

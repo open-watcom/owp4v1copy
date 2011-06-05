@@ -1,4 +1,3 @@
-
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -96,16 +95,47 @@ void    scr_br( void )
 
 
 /***************************************************************************/
-/*  output incomplete line if any                                          */
+/*  insert incomplete line if any into t_element                           */
+/*  insert t_element into t_page and reset it to NULL                      */
 /***************************************************************************/
 
 void  scr_process_break( void )
 {
-    if( t_line.first != NULL ) {
-        process_line_full( &t_line, false );
-        set_h_start();
+    if( t_line != NULL ) {
+        if( t_line->first != NULL ) {
+            process_line_full( t_line, false );
+            t_line = NULL;
+            set_h_start();
+        }
     }
-    return;
+    if( t_element != NULL ) {
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
+    } else {                        // empty element needed?
+        if( ProcFlags.empty_doc_el ) {
 
+            t_element = alloc_doc_el( el_text );
+            t_element->depth = wgml_fonts[g_curr_font_num].line_height + g_spacing;
+            t_element->subs_skip = g_subs_skip;
+            t_element->top_skip = g_top_skip;
+            t_element->element.text.overprint = ProcFlags.overprint;
+            ProcFlags.overprint = false;
+            t_element->element.text.first = alloc_text_line();
+            t_element->element.text.first->line_height =
+                                        wgml_fonts[g_curr_font_num].line_height;
+            t_element->element.text.first->first = NULL;
+            t_element->element.text.spacing = g_spacing;
+            insert_col_main( t_element );
+
+            t_element = NULL;
+            t_el_last = NULL;
+
+            ProcFlags.para_started = false;
+        }
+    }
+    ProcFlags.empty_doc_el = false;
+
+    return;
 }
 

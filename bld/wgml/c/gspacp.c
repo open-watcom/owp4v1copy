@@ -124,23 +124,20 @@ void    scr_pa( void )
         }
         /* fallthru for NOSTART */
     case 0 :
-        finish_page();                  // default action
+        full_page_out();                // default action
         document_new_page();
-        document_top_banner();
-        ProcFlags.page_started = true;
         break;
     case 3 :
         if( !strnicmp( "ODD", pa, 3 ) ) {
-            if( ProcFlags.page_started || !(page & 1) ) {
-                finish_page();
+            if( (n_page.col_top != NULL) || (n_page.col_main != NULL)
+            || (n_page.col_bot != NULL) || (n_page.col_fn != NULL)
+            || !(page & 1) ) {
+
+                full_page_out();
                 document_new_page();
-                document_top_banner();
-                ProcFlags.page_started = true;
                 if( !(page & 1) ) {
-                    finish_page();
+                    full_page_out();
                     document_new_page();
-                    document_top_banner();
-                    ProcFlags.page_started = true;
                 }
             }
         } else {
@@ -149,16 +146,15 @@ void    scr_pa( void )
         break;
     case 4 :
         if( !strnicmp( "EVEN", pa, 4 ) ) {
-            if( ProcFlags.page_started || (page & 1) ) {
-                finish_page();
+            if( (n_page.col_top != NULL) || (n_page.col_main != NULL)
+            || (n_page.col_bot != NULL) || (n_page.col_fn != NULL)
+            || (page & 1) ) {
+
+                full_page_out();
                 document_new_page();
-                document_top_banner();
-                ProcFlags.page_started = true;
                 if( (page & 1) ) {
-                    finish_page();
+                    full_page_out();
                     document_new_page();
-                    document_top_banner();
-                    ProcFlags.page_started = true;
                 }
             }
         } else {
@@ -307,10 +303,8 @@ void    scr_cp( void )
                     }
                 }
                 if( newpage ) {
-                    finish_page();
+                    full_page_out();
                     document_new_page();
-                    document_top_banner();
-                    ProcFlags.page_started = true;
                 }
             }
             scan_restart = gn.argstart;

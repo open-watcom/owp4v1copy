@@ -1627,9 +1627,8 @@ void fb_output_textline( text_line * out_line )
 
     current = out_line->first;
     if( current == NULL ) {
-        out_msg( "wgml internal error: output line with no text\n" );
-        err_count++;
-        g_suicide();
+        fb_empty_text_line( out_line );
+        return;
     }
 
     /* Determine the number of passes. */

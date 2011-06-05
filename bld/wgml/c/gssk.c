@@ -1,4 +1,3 @@
-
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -28,7 +27,6 @@
 * Description: implement .sk (skip)  script control word
 *              and helper functions
 *
-*              calc_skip               calculate .sk skip amount
 *              calc_skip_value
 *
 *  comments are from script-tso.txt
@@ -41,69 +39,15 @@
 
 
 /***************************************************************************/
-/*  .sk adjust                                                             */
-/*                                                                         */
-/*   g_skip_wgml4 contains  correction to mimick wgml4                TBD  */
-/*                                                                         */
-/***************************************************************************/
-void    calc_skip( void )
-{
-    int32_t     skip_value;
-
-    if( g_skip == 0 ) {
-        g_skip_wgml4 = 0;
-        ProcFlags.sk_cond = false;
-        return;
-    }
-    if( g_skip < 0 ) {                  // overprint
-        if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start += wgml_fonts[g_curr_font_num].line_height;
-//      } else {
-//          g_cur_v_start -= wgml_fonts[g_curr_font_num].line_height; // TBD
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            skip_value = g_skip * wgml_fonts[g_curr_font_num].line_height
-                       - g_skip_wgml4;
-            if( skip_value >= g_cur_v_start - g_page_bottom ) {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            } else {
-                g_cur_v_start -= skip_value;
-            }
-        } else {
-            g_cur_v_start += g_skip * wgml_fonts[g_curr_font_num].line_height;
-        }
-    }
-
-    g_skip = 0;
-    g_skip_wgml4 = 0;
-    ProcFlags.sk_cond = false;
-}
-
-
-/***************************************************************************/
-/*                                                                         */
 /*   calc_skip_value                                                       */
-/*   used for sequences such as    .sk 5                                   */
-/*                                 :p.                                     */
+/*   used by set_skip_vars()                                               */
 /***************************************************************************/
 int32_t calc_skip_value( void )
 {
     int32_t     skip_value;
 
-    if( g_skip < 1 ) {
-        skip_value = g_skip;
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            skip_value = g_skip * wgml_fonts[g_curr_font_num].line_height
-                       - g_skip_wgml4;
-        } else {
-            skip_value = g_skip * wgml_fonts[g_curr_font_num].line_height;
-        }
-    }
+    skip_value = (g_skip * bin_device->vertical_base_units ) / LPI;
     g_skip = 0;
-    g_skip_wgml4 = 0;
-    ProcFlags.sk_cond = false;
     return( skip_value );
 }
 
@@ -211,11 +155,13 @@ void    scr_sk( void )
         while( *p == ' ' ) {
             p++;
         }
+#if 0
         if( toupper( *p ) == 'C' ) {
             if( skip > 0 ) {
                 ProcFlags.sk_cond = true;   // conditional skip
             }
         }
+#endif
     }
     if( skip < 0 ) {                    // no skip value specified
         skip = 1;                       // set default value
@@ -223,38 +169,22 @@ void    scr_sk( void )
         skip = sign * skip;             // apply sign
     }
     skip = skip * spc;                  // apply spacing
-    if( skip < -1 ) {                   // overprint
-        skip = -1;                      // .. only current line possible
+    if( skip <= -1 ) {
+        ProcFlags.overprint = true;     // enable overprint
+    } else {
+        if( g_skip > skip ) {           // merge with existing value
+            skip = g_skip;
+        }
+        ProcFlags.overprint = false;    // disable overprint
     }
-
     /***********************************************************************/
     /*  if testing for widows is active,  cancel test and output           */
     /*  buffered lines on this page                                        */
     /***********************************************************************/
     if( ProcFlags.test_widow ) {
-        if( buf_lines_cnt > 0 ) {
-            out_buf_lines( &buf_lines, false );
-            buf_lines_cnt = 0;
-        }
         ProcFlags.test_widow = false;   // terminate widow test
     }
     scr_process_break();
-
-    /***********************************************************************/
-    /*  hack to mimick wgml4: for .sk N with a positive value              */
-    /*  wgml4 skips less than N * line_height for device PS                */
-    /*  difference is -1 for .sk  1 - 3                                    */
-    /*                -2          4 - 6                                    */
-    /*                -3          7 - 9                                    */
-    /*                 ...                                                 */
-    /***********************************************************************/
-    if( skip > 0 ) {
-        g_skip_wgml4 = 1 + (skip - 1) / 3;
-
-    } else {
-        g_skip_wgml4 = 0;
-    }
-
     g_skip = skip;
 
     scan_restart = scan_stop + 1;

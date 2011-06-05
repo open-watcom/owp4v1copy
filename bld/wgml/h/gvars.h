@@ -169,9 +169,14 @@ global struct ProcFlags {
     unsigned        line_started    : 1;// we have something for current line
     unsigned        just_override   : 1;// current line is to be justified
 
-    unsigned        title_tag_seen  : 1;// remember first :TITLE tag
     unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
     unsigned        address_active  : 1;// within :ADDRESS tag
+    unsigned        date_tag_seen   : 1;// :DATE is allowed only once
+    unsigned        docnum_tag_seen : 1;// :DOCNUM is allowed only once
+    unsigned        stitle_seen     : 1;// remember first stitle value
+    unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
+    unsigned        title_text_seen : 1;// remember first :TITLE tag text 
+    unsigned        empty_doc_el    : 1;// empty doc element allowed
     unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
@@ -187,7 +192,10 @@ global struct ProcFlags {
     unsigned        concat          : 1;// .co ON if set
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
+#if 0
     unsigned        sk_cond         : 1;// .sk n C found
+#endif
+    unsigned        overprint       : 1;// .sk -1 active or not
     unsigned        tag_end_found   : 1;// '.' ending tag found
 
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
@@ -235,15 +243,16 @@ global  uint32_t    inter_tab;          // distance between default tabs
 global  char        tab_char;           // tab character from .tb
 
 // the document page and related items
+global doc_element  *   t_element;      // the current element for main
+global text_line    *   t_el_last;      // attachment point to t_element
 global doc_page         t_page;         // for constructing output page
-global doc_column       n_column;       // for deferred elements
-global text_line        t_line;         // for constructing output line
+global doc_next_page    n_page;         // for deferred elements
+global text_line    *   t_line;         // for constructing output line
 global text_chars   *   text_pool;      // for reuse of text_chars structs
 global text_line    *   line_pool;      // for reuse of text_line structs
+global ban_column   *   ban_col_pool;   // for reuse of ban_column structs
+global doc_column   *   doc_col_pool;   // for reuse of doc_column structs
 global doc_element  *   doc_el_pool;    // for reuse of doc_element structs
-
-global text_line  * buf_lines;          // buffering paragraph / widow lines
-global int32_t      buf_lines_cnt;      // line count for buf_lines
 
 /***************************************************************************/
 /*  some globals which are to be redesigned when the :LAYOUT tag is coded. */
@@ -264,7 +273,7 @@ global  uint32_t    g_page_top_org;
 global  uint32_t    g_page_depth;
 global  uint32_t    g_max_char_width;
 global  uint32_t    g_max_line_height;
-global  uint32_t    g_net_page_height;
+global  uint32_t    g_net_page_depth;
 global  uint32_t    g_net_page_width;
 
 global  int32_t     g_resh;             // horiz base units
@@ -280,15 +289,14 @@ global  uint32_t    g_offset[9];        // column start offset
 global  uint32_t    g_line_skip;        // skip for current line
 global  uint32_t    g_line_top;         // top of current line
 
-global  uint32_t    spacing;            // spacing between lines
-// global  su      *   pre_skip;        // possible pre_skip
-global  su      *   post_skip;          // possible post_skip
+global  uint32_t    g_post_skip;        // post_skip
+global  uint32_t    g_subs_skip;        // subs_skip
+global  uint32_t    g_top_skip;         // top_skip
+global  uint32_t    g_spacing;          // spacing (in vertical base units)
 global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
-global  int32_t     g_skip_wgml4;       // >0 for work around wgml4 .sk bug ?
+global  uint32_t    spacing;            // spacing between lines (line count)
 
 global  uint32_t    post_space;         // spacing within a line
-global  uint32_t    pre_top_skip;       // .. formatting
-global  uint32_t    post_top_skip;      // .. formatting
 global  uint32_t    ju_x_start;         // .. formatting
 
 global  uint32_t    g_indent;           // .in 1. value (left) default 0

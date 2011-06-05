@@ -27,11 +27,15 @@
 * Description:  WGML utility functions for alloc / free / reuse of
 *                           different structs
 *
+*               add_ban_col_to_pool     prepare reuse of ban_column instance(s)
+*               add_doc_col_to_pool     prepare reuse of doc_column instance(s)
 *               add_doc_el_to_pool      prepare reuse of doc_element instance(s)
 *               add_tag_cb_to_pool      add nested tag cb
 *               add_text_chars_to_pool  prepare reuse of text_chars instance(s)
 *               add_text_line_to_pool   prepare reuse of a text_line instance(s)
-*               alloc_doc_el            create a document_element instance
+*               alloc_ban_col           create a ban_column instance
+*               alloc_doc_col           create a doc_column instance
+*               alloc_doc_el            create a doc_element instance
 *               alloc_tag_cb            nested tag cb
 *               alloc_text_chars        create a text_chars instance
 *               alloc_text_line         create a text_line instance
@@ -43,7 +47,6 @@
 
 #include "wgml.h"
 #include "gvars.h"
-
 
 /***************************************************************************/
 /*  allocate / reuse and init a text_chars instance                        */
@@ -116,13 +119,11 @@ void    add_text_chars_to_pool( text_line * a_line )
         return;
     }
     // free text_chars in pool only have a valid next ptr
-    if( text_pool == NULL ) {
-        text_pool = a_line->first;
-    } else {
-        for( tw = text_pool; tw->next != NULL; tw = tw->next )
-            ;                           // empty
-        tw->next = a_line->first;
-    }
+
+    for( tw = a_line->first; tw->next != NULL; tw = tw->next ); //empty
+    tw->next = text_pool;
+    text_pool = a_line->first;
+
 }
 
 
@@ -151,9 +152,11 @@ text_line   * alloc_text_line( void )
         prev->next = NULL;
     }
 
-    curr->next = NULL;
     curr->first = NULL;
     curr->last = NULL;
+    curr->line_height = 0;
+    curr->next = NULL;
+    curr->y_address = 0;
 
     return( curr );
 }
@@ -176,10 +179,104 @@ void    add_text_line_to_pool( text_line * a_line )
 
 
 /***************************************************************************/
+/*  allocate / reuse a ban_column instance                                 */
+/***************************************************************************/
+
+ban_column * alloc_ban_col( void )
+{
+    ban_column  *   curr;
+    ban_column  *   prev;
+    int             k;
+
+    curr = ban_col_pool;
+    if( curr != NULL ) {                // there is one to use
+        ban_col_pool = curr->next;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( ban_column ) );
+
+        ban_col_pool = mem_alloc( sizeof( *prev ) );
+        prev = ban_col_pool;
+        for( k = 0; k < 10; k++ ) {     // alloc 10 ban_columnss if pool empty
+            prev->next = mem_alloc( sizeof( *prev ) );
+            prev = prev->next;
+        }
+        prev->next = NULL;
+    }
+
+    curr->next = NULL;
+    curr->first = NULL;
+
+    return( curr );
+}
+
+
+/***************************************************************************/
+/*  add a ban_column instance to free pool for reuse                       */
+/***************************************************************************/
+
+void add_ban_col_to_pool( ban_column * a_column )
+{
+
+    if( a_column == NULL ) {
+        return;
+    }
+
+    a_column->next = ban_col_pool;
+    ban_col_pool = a_column;
+}
+
+
+/***************************************************************************/
+/*  allocate / reuse a doc_column instance                                 */
+/***************************************************************************/
+
+doc_column * alloc_doc_col( void )
+{
+    doc_column  *   curr;
+
+    curr = doc_col_pool;
+    if( curr != NULL ) {                // there is one to use
+        doc_col_pool = curr->next;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( doc_column ) );
+
+        doc_col_pool = mem_alloc( sizeof( doc_column ) );
+        doc_col_pool->next = NULL;
+    }
+
+    curr->next = NULL;
+    curr->fig_top = g_page_bottom;
+    curr->fn_top = g_page_bottom;
+    curr->main_top = t_page.main_top;
+    curr->main = NULL;
+    curr->bot_fig = NULL;
+    curr->footnote = NULL;
+
+    return( curr );
+}
+
+
+/***************************************************************************/
+/*  add a doc_column instance to free pool for reuse                       */
+/***************************************************************************/
+
+void add_doc_col_to_pool( doc_column * a_column )
+{
+
+    if( a_column == NULL ) {
+        return;
+    }
+
+    a_column->next = doc_col_pool;
+    doc_col_pool = a_column;
+}
+
+
+/***************************************************************************/
 /*  allocate / reuse a doc_element instance                                */
 /***************************************************************************/
 
-doc_element * alloc_doc_el( void )
+doc_element * alloc_doc_el(  element_type type )
 {
     doc_element *   curr;
     doc_element *   prev;
@@ -201,9 +298,20 @@ doc_element * alloc_doc_el( void )
     }
 
     curr->next = NULL;
-    curr->pre_skip = 0;
-    curr->pre_top_skip = 0;
-    curr->type = el_text;
+    curr->depth = 0;
+    curr->top_skip = 0;
+    curr->subs_skip = 0;
+    curr->type = type;
+
+    switch( type ) {
+    case el_text :
+        curr->element.text.overprint = false;
+        curr->element.text.spacing = 0;
+        curr->element.text.first = NULL;
+        break;
+    default :
+        xx_err( err_intern );
+    }
 
     return( curr );
 }
@@ -292,14 +400,26 @@ void    free_pool_storage( void )
         v = wv;
     }
 
-    for( v = t_line.first; v != NULL; ) {
-        wv = ( (text_chars *) v)->next;
+    for( v = line_pool; v != NULL; ) {
+        wv = ( (text_line *) v)->next;
         mem_free( v );
         v = wv;
     }
 
-    for( v = line_pool; v != NULL; ) {
-        wv = ( (text_line *) v)->next;
+    for( v = ban_col_pool; v != NULL; ) {
+        wv = ( (ban_column *) v)->next;
+        mem_free( v );
+        v = wv;
+    }
+
+    for( v = doc_col_pool; v != NULL; ) {
+        wv = ( (doc_column *) v)->next;
+        mem_free( v );
+        v = wv;
+    }
+
+    for( v = doc_el_pool; v != NULL; ) {
+        wv = ( (doc_element *) v)->next;
         mem_free( v );
         v = wv;
     }

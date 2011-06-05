@@ -529,3 +529,17 @@ pick( ERR_RIGHT_MARGIN_2_SMALL, "The right margin is too small when adjusted for
 pick( ERR_BANREG_TOO_DEEP,      "Banner region exceeds banner depth",
                                 "Banner region exceeds banner depth" )
 
+pick( ERR_HEADING_TOO_DEEP,     "Heading is too large for the output page",
+                                "Heading is too large for the output page")
+
+pick( ERR_TEXT_LINE_TOO_DEEP,   "Output line is too large to fit on a page",
+                                "Output line is too large to fit on a page")
+                                
+/* title page error messages */
+
+pick( ERR_2ND_DATE,             "Date already defined",
+                                "Date already defined")
+
+pick( ERR_2ND_DOCNUM,           "Document number already defined",
+                                "Document number already defined")
+

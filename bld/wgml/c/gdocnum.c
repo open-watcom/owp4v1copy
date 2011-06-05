@@ -30,23 +30,7 @@
 #include    "wgml.h"
 #include    "gvars.h"
  
-/***************************************************************************/
-/*  calc docnum position  ( vertical )                                     */
-/***************************************************************************/
- 
-static  void    calc_docnum_pos( int8_t font, int8_t d_spacing )
-{
- 
-    if( bin_driver->y_positive == 0 ) {
-        g_cur_v_start -=
-            conv_vert_unit( &layout_work.docnum.pre_skip, d_spacing );
-    } else {
-        g_cur_v_start +=
-            conv_vert_unit( &layout_work.docnum.pre_skip, d_spacing );
-    }
-    return;
-}
- 
+
 /***************************************************************************/
 /*  prepare docnum line                                                    */
 /***************************************************************************/
@@ -108,7 +92,8 @@ static void prep_docnum_line( text_line * p_line, char * p )
 void    gml_docnum( const gmltag * entry )
 {
     char        *   p;
-    text_line       p_line;
+    doc_element *   cur_el;
+    text_line   *   p_line;
     int8_t          d_spacing;
     int8_t          font_save;
     int32_t         rc;
@@ -121,11 +106,18 @@ void    gml_docnum( const gmltag * entry )
         err_count++;
         show_include_stack();
     }
-    p = scan_start;
-    if( *p && *p != '.' ) {
-        out_msg( "gdocnum.c TBD\n" );
+
+    if( ProcFlags.docnum_tag_seen ) {   // only one DOCNUM tag allowed
+        xx_line_err( err_2nd_docnum, buff2 );
     }
-    p++;                                // over . to docnum
+
+    ProcFlags.docnum_tag_seen = true;
+    p = scan_start;
+    if( *p && *p == '.' ) p++;          // over . to docnum
+
+    while( *p == ' ' ) {                // over WS to attribute
+        p++;
+    }
     rc = find_symvar( &sys_dict, "$docnum", no_subscript, &docnumval );
     if( *p ) {                          // docnum specified
         strcpy_s( docnumval->value, 60, p );
@@ -134,32 +126,34 @@ void    gml_docnum( const gmltag * entry )
     }
  
     start_doc_sect();                   // if not already done
- 
-    p_line.first = NULL;
-    p_line.next  = NULL;
-    p_line.last  = NULL;
-    p_line.line_height = wgml_fonts[layout_work.docnum.font].line_height;
+
+    p_line = alloc_text_line();
+    p_line->line_height = wgml_fonts[layout_work.docnum.font].line_height;
+    prep_docnum_line( p_line, docnumval->value );
  
     d_spacing = layout_work.titlep.spacing;
- 
     font_save = g_curr_font_num;
     g_curr_font_num = layout_work.docnum.font;
+
+    /************************************************************/
+    /*  pre_skip is treated as pre_top_skip because it is       */
+    /*  always used at the top of the page, despite the docs    */
+    /************************************************************/
+
+    set_skip_vars( NULL, &layout_work.docnum.pre_skip, NULL, d_spacing, 
+                       g_curr_font_num );
  
-    calc_docnum_pos( g_curr_font_num, d_spacing );
-    p_line.y_address = g_cur_v_start;
- 
-    prep_docnum_line( &p_line, docnumval->value );
- 
-    ProcFlags.page_started = true;
- 
-    process_line_full( &p_line, false );
- 
+    cur_el = alloc_doc_el( el_text );
+    cur_el->depth = p_line->line_height + g_spacing;
+    cur_el->subs_skip = g_subs_skip;
+    cur_el->top_skip = g_top_skip;
+    cur_el->element.text.overprint = ProcFlags.overprint;
+    ProcFlags.overprint = false;
+    cur_el->element.text.spacing = g_spacing;
+    cur_el->element.text.first = p_line;
+    p_line = NULL;
+    insert_col_main( cur_el );
+
     g_curr_font_num = font_save;
- 
-    if( p_line.first != NULL) {
-        add_text_chars_to_pool( &p_line );
-    }
-    ProcFlags.page_started = true;
- 
     scan_start = scan_stop + 1;
 }

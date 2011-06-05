@@ -464,7 +464,7 @@ static  void    proc_input( char * filename )
         }
 #endif
         if( inc_level == 1 ) {          // EOF for master file end
-            finish_page();
+            last_page_out();
 
             /***************************************************************/
             /*  Test for missing eXXX tag                                  */
@@ -681,13 +681,8 @@ int main( int argc, char * argv[] )
 //          }
 
             proc_input( master_fname );
+            scr_process_break();
 
-
-            if( t_line.first != NULL ) {// output last line (if any)
-
-                process_line_full( &t_line, false );
-
-            }
             while( nest_cb != NULL ) {
                 tag_cb  *   cb = nest_cb->prev;
 
@@ -764,7 +759,12 @@ int main( int argc, char * argv[] )
     g_trmem_prt_list();            // all memory freed if no output from call
     g_trmem_close();
 
-    my_exit( err_count ? 8 : wng_count ? 4 : 0 );
+/// test
+    for( ; ; );
+
+/// test
+
+///    my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                    // never reached, but makes compiler happy
 }
 

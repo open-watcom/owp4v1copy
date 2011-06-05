@@ -113,26 +113,35 @@ void init_global_vars( void )
     in_esc              = ' ';
     tab_char            = 0x09;
 
-    t_page.main_top     = 0;
-    t_page.topban       = NULL;
-    t_page.page_width   = NULL;
-    t_page.main         = NULL;
-    t_page.botban       = NULL;
-    n_column.fig_top    = 0;
-    n_column.fn_top     = 0;
-    n_column.main_top   = 0;
-    n_column.top_fig    = NULL;
-    n_column.main       = NULL;
-    n_column.bot_fig    = NULL;
-    n_column.footnote   = NULL;
-    t_line.first        = NULL;
-    t_line.y_address    = 0;
-    text_pool           = NULL;
-    line_pool           = NULL;
-    doc_el_pool         = NULL;
+    t_element               = NULL;
+    t_el_last               = NULL;
+    t_page.main_top         = 0;
+    t_page.max_depth        = 0;
+    t_page.cur_depth        = 0;
+    t_page.last_col_main    = NULL;
+    t_page.last_col_bot     = NULL;
+    t_page.last_col_fn      = NULL;
+    t_page.top_banner       = NULL;
+    t_page.bottom_banner    = NULL;
+    t_page.top_ban          = NULL;
+    t_page.page_width       = NULL;
+    t_page.main             = NULL;
+    t_page.bot_ban          = NULL;
+    n_page.last_col_top     = NULL;
+    n_page.last_col_main    = NULL;
+    n_page.last_col_bot     = NULL;
+    n_page.last_col_fn      = NULL;
+    n_page.col_top          = NULL;
+    n_page.col_main         = NULL;
+    n_page.col_bot          = NULL;
+    n_page.col_fn           = NULL;
+    t_line                  = NULL;
+    text_pool               = NULL;
+    line_pool               = NULL;
+    doc_el_pool             = NULL;
 
     lay_files           = NULL;         // filename(s) from ( LAYout option
-
+ 
     index_dict          = NULL;
 
     init_dict( &global_dict );
@@ -156,13 +165,11 @@ void init_global_vars( void )
     buff2               = mem_alloc( buf_size );
     workbuf             = mem_alloc( buf_size );
 
-    post_skip           = NULL;         // no post skip for first :P aragraph
     post_space          = 0;            // experimental
-
-    buf_lines           = NULL;         // no buffered widow line(s)
-    buf_lines_cnt       = 0;
-
-    g_skip_wgml4        = 0;
+    g_post_skip         = 0;
+    g_subs_skip         = 0;
+    g_top_skip          = 0;
+    g_spacing           = 0;
     nest_cb             = NULL;         // no nested tags
 
     msg_indent          = 0;            // should be correct initial value

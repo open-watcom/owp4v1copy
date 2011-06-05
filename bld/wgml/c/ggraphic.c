@@ -234,21 +234,21 @@ out_msg( ":GRAPHIC yoff:  %i\n", yoff );
 
 //    p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
 
-//    calc_title_pos( g_curr_font_num, t_spacing, !ProcFlags.title_tag_seen );
+//    calc_title_pos( g_curr_font_num, t_spacing, !ProcFlags.title_text_seen );
 //    p_line.y_address = g_cur_v_start;
 
 //    prep_title_line( &p_line, p );
 
-//    ProcFlags.page_started = true;
+//    ProcFlags.page_started = true;    -- do not activate?
 //    process_line_full( &p_line, false );
 //    g_curr_font_num = font_save;
 
 //    if( p_line.first != NULL) {
 //        add_text_chars_to_pool( &p_line );
 //    }
-//    ProcFlags.page_started = true;
+//    ProcFlags.page_started = true;    -- do not activate?
 
-//    ProcFlags.title_tag_seen = true;
+//    ProcFlags.title_text_seen = true;
     if( *p == '.' ) {
         p++;
     }

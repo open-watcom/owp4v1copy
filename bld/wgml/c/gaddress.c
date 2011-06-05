@@ -32,89 +32,8 @@
 #include    "gvars.h"
 
 static  bool            first_aline;    // special for first :ALINE
-static  text_line   *   adr_lines = NULL;   // collect :ALINEs
 static  int8_t          a_spacing;      // spacing between adr lines
 static  int8_t          font_save;      // save for font
-
-/***************************************************************************/
-/*  calc aline position   ( vertical )                                     */
-/***************************************************************************/
-
-static void calc_aline_pos( int8_t font, int8_t line_spc, bool first )
-{
-
-    if( first ) {                       // first aline of current :ADDRESS
-        if( !ProcFlags.page_started ) {
-            if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start = g_page_top - wgml_fonts[font].line_height
-                        - conv_vert_unit( &layout_work.address.pre_skip, line_spc );
-            } else {
-                g_cur_v_start = g_page_top + wgml_fonts[font].line_height
-                        + conv_vert_unit( &layout_work.address.pre_skip, line_spc );
-            }
-        } else {
-            if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start -= wgml_fonts[font].line_height +
-                    conv_vert_unit( &layout_work.address.pre_skip, line_spc );
-            } else {
-                g_cur_v_start += wgml_fonts[font].line_height +
-                    conv_vert_unit( &layout_work.address.pre_skip, line_spc );
-            }
-        }
-    } else {
-        if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= wgml_fonts[font].line_height +
-                             conv_vert_unit( &layout_work.aline.skip, line_spc );
-        } else {
-            g_cur_v_start += wgml_fonts[font].line_height +
-                             conv_vert_unit( &layout_work.aline.skip, line_spc );
-        }
-    }
-    return;
-}
-
-/***************************************************************************/
-/*  output collected :ALINEs                                               */
-/***************************************************************************/
-
-static  void    output_addresslines( bool newpage )
-{
-    text_line   *   tline;
-
-    if( adr_lines == NULL ) {
-        return;                         // no stored lines
-    }
-    if( newpage ) {                  // not enough space on page  put on next
-        finish_page();
-        document_new_page();
-
-        first_aline = true;
-        tline = adr_lines;
-        while( tline != NULL ) {        // recalc y_addr on new page
-            calc_aline_pos( tline->first->font_number, a_spacing, first_aline );
-            first_aline = false;
-            tline->y_address = g_cur_v_start;
-            tline = tline->next;
-        }
-    }
-    ProcFlags.page_started = true;
-    if( GlobalFlags.lastpass ) {        // now really output the lines
-        tline = adr_lines;
-        while( tline != NULL ) {
-            if( input_cbs->fmflags & II_research ) {
-                test_out_t_line( tline );
-            }
-            fb_output_textline( tline );
-            tline = tline->next;
-        }
-    }
-    while( adr_lines != NULL ) {        // reuse memory
-        tline = adr_lines;
-        adr_lines = adr_lines->next;
-        add_text_chars_to_pool( tline );
-        add_text_line_to_pool( tline );
-    }
-}
 
 
 /***************************************************************************/
@@ -133,7 +52,6 @@ extern  void    gml_address( const gmltag * entry )
     }
     ProcFlags.address_active = true;
     first_aline = true;
-    adr_lines = NULL;
     font_save = g_curr_font_num;
     g_curr_font_num = layout_work.address.font;
     rs_loc = address_tag;
@@ -142,7 +60,16 @@ extern  void    gml_address( const gmltag * entry )
     nest_cb->p_stack = copy_to_nest_stack();
     nest_cb->c_tag = t_ADDRESS;
 
-//    spacing = layout_work.titlep.spacing;
+    spacing = layout_work.titlep.spacing;
+
+    /************************************************************/
+    /*  pre_skip is treated as pre_top_skip because             */
+    /*  it is always used at the top of the page                */
+    /*  this is not what the docs say                           */
+    /************************************************************/
+
+    set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, spacing, 
+                       g_curr_font_num );
     scan_start = scan_stop + 1;
     return;
 }
@@ -161,9 +88,6 @@ extern  void    gml_eaddress( const gmltag * entry )
         scan_start = scan_stop + 1;
         return;
     }
-
-    output_addresslines( false );
-
     g_curr_font_num = font_save;
     ProcFlags.address_active = false;
     rs_loc = titlep_tag;
@@ -189,11 +113,7 @@ static void prep_aline( text_line * p_line, char * p )
     h_left = g_page_left + conv_hor_unit( &layout_work.address.left_adjust );
     h_right = g_page_right - conv_hor_unit( &layout_work.address.right_adjust );
 
-    if( *p ) {
-        curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
-    } else {
-        curr_t = alloc_text_chars( "aline", 5, g_curr_font_num );   // dummy
-    }
+    curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
     curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
 
     intrans( curr_t->text, &curr_t->count, g_curr_font_num );
@@ -222,37 +142,13 @@ static void prep_aline( text_line * p_line, char * p )
 
 
 /***************************************************************************/
-/*  add address line to adresslines                                        */
-/***************************************************************************/
-
-static void add_aline( text_line * ad_line )
-{
-    text_line   *   p_line;
-
-    ProcFlags.page_started = true;
-
-    if( adr_lines == NULL ) {
-        adr_lines = ad_line;
-        ju_x_start = ad_line->first->x_address;
-    } else {
-        p_line = adr_lines;
-        while( p_line->next != NULL ) {
-            p_line = p_line->next;
-        }
-        p_line->next = ad_line;
-    }
-
-    set_h_start();
-    return;
-}
-
-/***************************************************************************/
 /*  :ALINE tag                                                             */
 /***************************************************************************/
 
 void    gml_aline( const gmltag * entry )
 {
     char        *   p;
+    doc_element *   cur_el;
     text_line   *   ad_line;
 
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
@@ -267,33 +163,38 @@ void    gml_aline( const gmltag * entry )
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
 
+    start_doc_sect();               // if not already done
+    a_spacing = layout_work.titlep.spacing;
+    g_curr_font_num = layout_work.address.font;
+    if( !first_aline ) {
+
+        /************************************************************/
+        /*  skip is treated as pre_top_skip because                 */
+        /*  it is always used at the top of the page                */
+        /*  this is not what the docs say                           */
+        /************************************************************/
+
+        set_skip_vars( NULL, &layout_work.aline.skip, NULL, a_spacing, 
+                       g_curr_font_num );
+    }
+
     ad_line = alloc_text_line();
-
-    if( first_aline ) {
-        start_doc_sect();               // if not already done
-        a_spacing = layout_work.titlep.spacing;
-        g_curr_font_num = layout_work.address.font;
-    }
-
-    calc_aline_pos( g_curr_font_num, a_spacing, first_aline );
-
-    if( bin_driver->y_positive == 0 ) {
-        if( g_cur_v_start < g_page_bottom ) {
-            output_addresslines( true );
-            calc_aline_pos( g_curr_font_num, a_spacing, first_aline );
-        }
-    } else {
-        if( g_cur_v_start > g_page_bottom ) {
-            output_addresslines( true );
-            calc_aline_pos( g_curr_font_num, a_spacing, first_aline );
-        }
-    }
-    ad_line->y_address = g_cur_v_start;
     ad_line->line_height = wgml_fonts[g_curr_font_num].line_height;
 
-    prep_aline( ad_line, p );
+    if( *p ) {
+        prep_aline( ad_line, p );
+    }
 
-    add_aline( ad_line );
+    cur_el = alloc_doc_el( el_text );
+    cur_el->depth = ad_line->line_height + g_spacing;
+    cur_el->subs_skip = g_subs_skip;
+    cur_el->top_skip = g_top_skip;
+    cur_el->element.text.overprint = ProcFlags.overprint;
+    ProcFlags.overprint = false;
+    cur_el->element.text.spacing = g_spacing;
+    cur_el->element.text.first = ad_line;
+    ad_line = NULL;
+    insert_col_main( cur_el );
 
     first_aline = false;
     scan_start = scan_stop + 1;

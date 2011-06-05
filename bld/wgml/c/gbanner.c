@@ -166,59 +166,6 @@ void set_banners( void )
 
 
 /***************************************************************************/
-/*  calc banner top region position                                        */
-/*  this may or may not be the first region listed!                        */
-/***************************************************************************/
-
-extern  uint32_t    ban_top_pos( banner_lay_tag * ban )
-{
-    uint32_t            ban_depth;
-    uint32_t            v_pos;
-    uint32_t            reg_off;
-    int32_t             skip;
-
-    ban_depth = ban->ban_depth;
-    reg_off = ban->top_line->reg_voffset;
-
-    skip = ban_depth - reg_off - wgml_fonts[ban->top_line->font].line_height;
-    if( skip > 0 ) {               // if region start is not last banner line
-        post_top_skip = skip;           // reserve space
-    } else {
-        post_top_skip = 0;
-    }
-
-    if( bin_driver->y_positive == 0 ) {
-        v_pos = g_page_top - reg_off;
-    } else {
-        v_pos = g_page_top + reg_off;
-    }
-    return( v_pos );
-}
-
-/***************************************************************************/
-/*  calc banner bottom region position                                    */
-/*  this may or may not be the first region listed!                        */
-/***************************************************************************/
-
-extern  uint32_t    ban_bot_pos( banner_lay_tag * ban )
-{
-    uint32_t    vpos;
-    uint32_t    ban_depth;
-
-    ban_depth = ban->ban_depth;
-
-    if( bin_driver->y_positive == 0 ) {
-        vpos = bin_device->y_start - g_page_depth + ban_depth
-               - ban->top_line->reg_voffset;
-    } else {
-        vpos = bin_device->y_start + g_page_depth - ban_depth
-               + ban->top_line->reg_voffset;
-        vpos--; // produces same result as wgml 4.0
-    }
-    return( vpos );
-}
-
-/***************************************************************************/
 /*  substitute a variable in ban region text                               */
 /***************************************************************************/
 
@@ -722,12 +669,14 @@ static void content_reg( banner_lay_tag * ban )
     return;
 }
 
+
 /***************************************************************************/
 /*  output top / bottom banner      incomplete    TBD                      */
 /*  only the first banregion is output                                     */
 /***************************************************************************/
 static  void    out_ban_common( banner_lay_tag * ban, bool top )
 {
+    ban_column      *   last;
     text_chars      *   curr_t;
     text_chars      *   curr_p;
     uint32_t            ban_left;
@@ -739,10 +688,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     int                 k;
 
     ProcFlags.top_ban_proc = top;       // set for top banner
-    if( ban == NULL ) {
-        return;
-    }
-
     reg_text[0] = NULL;
     reg_text[1] = NULL;
     reg_text[2] = NULL;
@@ -764,12 +709,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         if( ban_line.first == NULL ) {
             ban_line.first = reg_text[k];
             ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
-            if( top ) {
-                g_cur_v_start = ban_top_pos( ban );
-            } else {
-                g_cur_v_start = ban_bot_pos( ban );
-            }
-            ban_line.y_address = g_cur_v_start;
         } else {
             ban_line.last->next = reg_text[k];
             reg_text[k]->prev = ban_line.last;
@@ -811,18 +750,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         curr_x += curr_t->width;
 
     }
-    /*******************************************************************/
-    /*  adjust vertical position from upper to lower border of line    */
-    /*******************************************************************/
-
-    if( bin_driver->y_positive == 0x00 ) {
-        ban_line.y_address -= ban_line.line_height;
-        g_cur_v_start -= ban_line.line_height;
-    } else {
-        ban_line.y_address += ban_line.line_height;
-        g_cur_v_start += ban_line.line_height;
-    }
-
     if( GlobalFlags.lastpass && ban_line.first != NULL) {
         if( input_cbs->fmflags & II_research ) {
             test_out_t_line( &ban_line );
@@ -844,56 +771,57 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
             }
             curr_p = curr_t;
         }
-        fb_output_textline( &ban_line );
-    }
 
-    if( ban_line.first != NULL) {
-        add_text_chars_to_pool( &ban_line );
+        /*  insert ban_line into t_page                                 */
+        /*  this will do multiple columns, but not in sorted order      */
+        /*  ban_line is taken to be a linked list of text_lines when    */
+        /*  a banregion has depth > 1 and enough text to fill the       */
+        /*  first line                                                  */
+        /*  this will need adjustment as banner output is enhanced      */
+        if( top ) {
+            if( t_page.top_ban == NULL ) {
+                t_page.top_ban = alloc_ban_col();
+                last = t_page.top_ban;
+            } else {
+                for( ; last->next != NULL; last = last->next );
+                last->next = alloc_ban_col();
+                last = last->next;
+            }
+        } else {
+            if( t_page.bot_ban == NULL ) {
+                t_page.bot_ban = alloc_ban_col();
+                last = t_page.bot_ban;
+            } else {
+                for( ; last->next != NULL; last = last->next );
+                last->next = alloc_ban_col();
+                last = last->next;
+            }
+        }
+        last->first = alloc_doc_el( el_text );
+        last->first->top_skip = ban->top_line->reg_voffset;
+        last->first->element.text.first = alloc_text_line();
+
+        last->first->element.text.first->next = ban_line.next;
+        last->first->element.text.first->line_height = ban_line.line_height;
+        last->first->element.text.first->y_address = ban_line.y_address;
+        last->first->element.text.first->first = ban_line.first;
+        last->first->element.text.first->last = ban_line.last;
         ban_line.first = NULL;
     }
+
     g_curr_font_num = layout_work.defaults.font;
-    if( top ) {                        // for top banner calculate text start
-
-    /***********************************************************************/
-    /*  for page 1, the textarea starts 1 line deeper than for following   */
-    /*  pages                                                       TBD    */
-    /***********************************************************************/
-
-        if( post_top_skip == 0 ) {
-            if( post_skip != NULL ) {
-                uint32_t pskip = conv_vert_unit( post_skip, 0 );
-
-                if( pskip > 0 ) {
-                    post_top_skip += pskip;
-                }
-                post_skip = NULL;
-            } else {
-                post_top_skip = 0;
-            }
-        } else {
-            if( page > 1 ) {            // hack for page 1    TBD
-                 post_top_skip = 0;
-            }
-        }
-        if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= post_top_skip;
-        } else {
-            g_cur_v_start += post_top_skip;
-        }
-        post_top_skip = 0;
-    }
 }
 
 /***************************************************************************/
-/*  output top or bottom  banner                                           */
+/*  output top or bottom banner                                            */
 /***************************************************************************/
-void    out_ban_top( banner_lay_tag * ban )
+void    out_ban_top( void )
 {
-    out_ban_common( ban, true );        // true for top banner
+    out_ban_common( t_page.top_banner, true );      // true for top banner
 }
 
-void    out_ban_bot( banner_lay_tag * ban )
+void    out_ban_bot( void )
 {
-    out_ban_common( ban, false );       // false for bottom banner
+    out_ban_common( t_page.bottom_banner, false );  // false for bottom banner
 }
 

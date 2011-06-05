@@ -902,38 +902,64 @@ typedef enum {
 // struct oc_element; // Forward declaration (uncomment when needed)
 
 typedef struct {
-    uint32_t        depth;
+    uint32_t        spacing;
     text_line   *   first;
+    bool            overprint;      // placement avoids padding warning
 } text_element;
 
 typedef struct doc_element {
     struct  doc_element *   next;
-            uint32_t        indent;
-            uint32_t        pre_skip;
-            uint32_t        pre_top_skip;
+            uint32_t        depth;
+            uint32_t        subs_skip;
+            uint32_t        top_skip;
     union {
             text_element    text;
     } element;
             element_type    type;   // placement avoids padding warning
 } doc_element;
 
-typedef struct {
-    uint32_t        fig_top;
-    uint32_t        fn_top;
-    uint32_t        main_top;
-    doc_element *   top_fig;
-    doc_element *   main;
-    doc_element *   bot_fig;
-    doc_element *   footnote;
+typedef struct ban_column {
+    struct  ban_column  *   next;
+    doc_element         *   first;
+} ban_column;
+
+typedef struct doc_column {
+    struct  doc_column  *   next;
+            uint32_t        fig_top;
+            uint32_t        fn_top;
+            uint32_t        main_top;
+            doc_element *   main;
+            doc_element *   bot_fig;
+            doc_element *   footnote;
 } doc_column;
 
+struct banner_lay_tag;  // avoids include circularity with gtypelay.h
+
 typedef struct {
-    uint32_t        main_top;
-    doc_column  *   topban;
-    doc_column  *   page_width;
-    doc_column  *   main;
-    doc_column  *   botban;
+            uint32_t            main_top;
+            uint32_t            max_depth;
+            uint32_t            cur_depth;
+            doc_element     *   last_col_main;
+            doc_element     *   last_col_bot;
+            doc_element     *   last_col_fn;
+    struct  banner_lay_tag  *   top_banner;
+    struct  banner_lay_tag  *   bottom_banner;
+            ban_column      *   top_ban;
+            doc_element     *   page_width;
+            doc_column      *   main;
+            ban_column      *   bot_ban;
 } doc_page;
+
+typedef struct {
+            doc_element     *   last_col_top;
+            doc_element     *   last_col_main;
+            doc_element     *   last_col_bot;
+            doc_element     *   last_col_fn;
+            doc_element     *   col_top;
+            doc_element     *   col_main;
+            doc_element     *   col_bot;
+            doc_element     *   col_fn;
+} doc_next_page;
 
 /***************************************************************************/
 /*  reference entry for reference dictionaries                             */

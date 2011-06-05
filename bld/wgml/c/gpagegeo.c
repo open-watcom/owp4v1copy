@@ -137,9 +137,9 @@ void    init_page_geometry( void )
         } else {
             g_page_bottom = bin_device->y_start - g_page_depth;// end of text area
         }
-        g_net_page_height = g_page_top - g_page_bottom;
+        g_net_page_depth = g_page_top - g_page_bottom;
 
-        lcmax = 1 + (g_net_page_height + bin_device->y_offset)
+        lcmax = 1 + (g_net_page_depth + bin_device->y_offset)
                  / wgml_fonts[g_curr_font_num].line_height;   // usable no of lines
     } else {
         net_y_start = max( bin_device->y_start, net_top_margin );
@@ -151,8 +151,8 @@ void    init_page_geometry( void )
         g_page_top = net_y_start - y_start_correction;
         g_page_bottom = g_page_top + g_page_depth;
 
-        g_net_page_height = g_page_bottom - g_page_top;
-        lcmax = g_net_page_height;
+        g_net_page_depth = g_page_bottom - g_page_top;
+        lcmax = g_net_page_depth;
     }
 
     g_page_bottom_org = g_page_bottom;// save for possible bot banner calculation
@@ -218,12 +218,11 @@ void    init_page_geometry( void )
                      wgml_fonts[k].spc_width
                    );
         }
-
         out_msg( "\npage top:%d bottom:%d left:%d right:%d lines:%d\n",
                  g_page_top, g_page_bottom, g_page_left, g_page_right, lcmax );
         out_msg(
-           "page net heigth:%d width:%d line height:%d char width:%d\n\n",
-                  g_net_page_height, g_net_page_width, g_max_line_height,
+           "page net depth:%d width:%d line height:%d char width:%d\n\n",
+                  g_net_page_depth, g_net_page_width, g_max_line_height,
                   g_max_char_width );
     }
     g_indent = 0;
@@ -304,25 +303,28 @@ static void finish_banners( void )
 void    do_layout_end_processing( void )
 {
     /***********************************************************************/
-    /*  init_page_geometry must be called before fb_document(), as the     */
-    /*  sysvars &SYSPAGERM and &SYSPAGED are used in document :init        */
-    /*  for device PS                                                      */
+    /*  Since the LAYOUT blocks are only processed on the first pass, this */
+    /*  function is similarly restricted to the first pass.                */
     /***********************************************************************/
-    init_page_geometry();
 
     if( GlobalFlags.firstpass == 1) {
-        /*******************************************************************/
-        /*  This should be where all processing required after all LAYOUT  */
-        /*  blocks have been processed. Since the LAYOUT blocks are only   */
-        /*  processed on the first pass, this processing is similarly      */
-        /*  restricted to the first pass.                                  */
-        /*******************************************************************/
 
+        /*******************************************************************/
+        /*  init_page_geometry must be called first since many items used  */
+        /*  in the subsequent functions are initialized here, as are the   */
+        /*  sysvars &SYSPAGERM and &SYSPAGED which are used in document    */
+        /*  :init for device PS                                            */
+        /*******************************************************************/
+        init_page_geometry();
+
+        /*******************************************************************/
+        /*  This should be where all processing and error-checking         */
+        /*  required after all LAYOUT blocks have been processed is done.  */
+        /*******************************************************************/
         finish_banners();
 
         /*******************************************************************/
-        /*  This should be a good place to start document processing.      */
-        /*  This processing is also restricted to the first pass.          */
+        /*  This is a good place to start document processing.             */
         /*******************************************************************/
         out_msg( "Formatting document\n" );
 

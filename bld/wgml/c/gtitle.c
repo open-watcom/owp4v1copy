@@ -33,58 +33,8 @@
 
 
 /***************************************************************************/
-/*  calc title position   ( vertical )                                     */
-/***************************************************************************/
-
-void    calc_title_pos( int8_t font, int8_t t_spacing, bool first )
-{
-    int32_t height  = wgml_fonts[font].line_height;
-
-    if( first ) {
-        if( !ProcFlags.page_started ) {
-            if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start = g_page_top
-                    - conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
-            } else {
-                g_cur_v_start = g_page_top
-                    + conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
-            }
-        } else {
-            if( bin_driver->y_positive == 0 ) {
-                g_cur_v_start -=
-                    conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
-            } else {
-                g_cur_v_start +=
-                    conv_vert_unit( &layout_work.title.pre_top_skip, t_spacing );
-            }
-        }
-    } else {
-        if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -= conv_vert_unit( &layout_work.title.skip, t_spacing );
-        } else {
-            g_cur_v_start += conv_vert_unit( &layout_work.title.skip, t_spacing );
-        }
-    }
-    if( ProcFlags.page_started ) {
-        if( bin_driver->y_positive == 0 ) {
-            if( g_cur_v_start - height < g_page_bottom ) {
-                finish_page();
-                document_new_page();
-                calc_title_pos( font, t_spacing, true );// 1 recursion
-            }
-        } else {
-            if( g_cur_v_start + height > g_page_bottom ) {
-                finish_page();
-                document_new_page();
-                calc_title_pos( font, t_spacing, true );// 1 recursion
-            }
-        }
-    }
-    return;
-}
-
-/***************************************************************************/
 /*  prepare title line                                                     */
+/*  Note: only used when text exists                                       */
 /***************************************************************************/
 
 static void prep_title_line( text_line * p_line, char * p )
@@ -97,15 +47,11 @@ static void prep_title_line( text_line * p_line, char * p )
     h_left = g_page_left + conv_hor_unit( &layout_work.title.left_adjust );
     h_right = g_page_right - conv_hor_unit( &layout_work.title.right_adjust );
 
-    if( *p ) {
-        curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
-    } else {
-        curr_t = alloc_text_chars( "title", 6, g_curr_font_num );
-    }
-
+    curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
     curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
 
     intrans( curr_t->text, &curr_t->count, g_curr_font_num );
+    curr_t->font_number = layout_work.title.font;
     curr_t->width = cop_text_width( curr_t->text, curr_t->count,
                                     g_curr_font_num );
     while( curr_t->width > (h_right - h_left) ) {   // too long for line
@@ -140,7 +86,8 @@ static void prep_title_line( text_line * p_line, char * p )
 void    gml_title( const gmltag * entry )
 {
     char        *   p;
-    text_line       p_line;
+    doc_element *   cur_el;
+    text_line   *   p_line      = NULL;
     int8_t          t_spacing;
     int8_t          font_save;
 
@@ -183,18 +130,15 @@ void    gml_title( const gmltag * entry )
             ++p;
         }
         *p = '\0';
-        if( !ProcFlags.title_tag_seen ) {// first stitle goes into dictionary
+        if( !ProcFlags.stitle_seen ) {  // first stitle goes into dictionary
             add_symvar( &global_dict, "$stitle", valstart, no_subscript, 0 );
+            ProcFlags.stitle_seen = true;
         }
         p++;
-    } else {
-        if( !ProcFlags.title_tag_seen ) {
-            add_symvar( &global_dict, "$stitle", "", no_subscript, 0 );// set nullstring
-        }
     }
 
     if( *p == '.' ) p++;                // over '.'
-    if( !ProcFlags.title_tag_seen ) {
+    if( !ProcFlags.title_text_seen ) {
         if( *p ) {                      // first title goes into dictionary
             add_symvar( &global_dict, "$title", p, no_subscript, 0 );
         }
@@ -202,31 +146,34 @@ void    gml_title( const gmltag * entry )
 
     start_doc_sect();                   // if not already done
 
-    p_line.first = NULL;
-    p_line.next  = NULL;
-    p_line.last  = NULL;
-
-    t_spacing = layout_work.titlep.spacing;
-
     font_save = g_curr_font_num;
     g_curr_font_num = layout_work.title.font;
-
-    p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
-
-    calc_title_pos( g_curr_font_num, t_spacing, !ProcFlags.title_tag_seen );
-    p_line.y_address = g_cur_v_start;
-
-    prep_title_line( &p_line, p );
-
-    ProcFlags.page_started = true;
-    process_line_full( &p_line, false );
-    g_curr_font_num = font_save;
-
-    if( p_line.first != NULL) {
-        add_text_chars_to_pool( &p_line );
+    t_spacing = layout_work.titlep.spacing;
+    if( !ProcFlags.title_tag_top ) {
+        set_skip_vars( NULL, &layout_work.title.pre_top_skip, NULL, t_spacing, 
+                       g_curr_font_num );
+        ProcFlags.title_tag_top = true;
+    } else {
+        set_skip_vars( &layout_work.title.skip, NULL, NULL, t_spacing, 
+                       g_curr_font_num );
     }
-    ProcFlags.page_started = true;
+    
+    p_line = alloc_text_line();
+    p_line->line_height = wgml_fonts[g_curr_font_num].line_height;
+    if( *p ) {
+        prep_title_line( p_line, p );
+    }
+    cur_el = alloc_doc_el( el_text );
+    cur_el->depth = p_line->line_height + g_spacing;
+    cur_el->subs_skip = g_subs_skip;
+    cur_el->top_skip = g_top_skip;
+    cur_el->element.text.overprint = ProcFlags.overprint;
+    ProcFlags.overprint = false;
+    cur_el->element.text.spacing = g_spacing;
+    cur_el->element.text.first = p_line;
+    p_line = NULL;
+    insert_col_main( cur_el );
 
-    ProcFlags.title_tag_seen = true;
+    g_curr_font_num = font_save;
     scan_start = scan_stop + 1;
 }

@@ -30,55 +30,7 @@
 #include    "wgml.h"
 #include    "gvars.h"
  
- 
-/***************************************************************************/
-/*  calc author position   ( vertical )                                    */
-/***************************************************************************/
- 
-static  void    calc_author_pos( int8_t font, int8_t line_spc, bool first )
-{
-    int32_t height  = wgml_fonts[font].line_height;
- 
-    if( !ProcFlags.page_started ) {
-        g_cur_v_start = g_page_top;
-    }
-    if( first ) {
-        if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -=
-                    conv_vert_unit( &layout_work.author.pre_skip, line_spc );
-        } else {
-            g_cur_v_start +=
-                    conv_vert_unit( &layout_work.author.pre_skip, line_spc );
-        }
-    } else {
-        if( bin_driver->y_positive == 0 ) {
-            g_cur_v_start -=
-                    conv_vert_unit( &layout_work.author.skip, line_spc );
-        } else {
-            g_cur_v_start +=
-                    conv_vert_unit( &layout_work.author.skip, line_spc );
-        }
-    }
-    if( ProcFlags.page_started ) {
-        if( bin_driver->y_positive == 0 ) {
-            if( g_cur_v_start - height < g_page_bottom ) {
-                finish_page();
-                document_new_page();
-                calc_author_pos( font, line_spc,
-                    !ProcFlags.author_tag_seen & first );   // 1 recursion
-            }
-        } else {
-            if( g_cur_v_start + height > g_page_bottom ) {
-                finish_page();
-                document_new_page();
-                calc_author_pos( font, line_spc,
-                    !ProcFlags.author_tag_seen & first );   // 1 recursion
-            }
-        }
-    }
-    return;
-}
- 
+
 /***************************************************************************/
 /*  prepare author line                                                    */
 /***************************************************************************/
@@ -93,11 +45,7 @@ static void prep_author_line( text_line * p_line, char * p )
     h_left = g_page_left + conv_hor_unit( &layout_work.author.left_adjust );
     h_right = g_page_right - conv_hor_unit( &layout_work.author.right_adjust );
  
-    if( *p ) {
-        curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
-    } else {
-        curr_t = alloc_text_chars( "author", 7, g_curr_font_num );
-    }
+    curr_t = alloc_text_chars( p, strlen( p ), g_curr_font_num );
     curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
  
     intrans( curr_t->text, &curr_t->count, g_curr_font_num );
@@ -133,7 +81,8 @@ static void prep_author_line( text_line * p_line, char * p )
 void    gml_author( const gmltag * entry )
 {
     char        *   p;
-    text_line       p_line;
+    doc_element *   cur_el;
+    text_line   *   p_line;
     int8_t          a_spacing;
     int8_t          font_save;
     int32_t         rc;
@@ -146,10 +95,11 @@ void    gml_author( const gmltag * entry )
         show_include_stack();
     }
     p = scan_start;
-    if( *p && *p != '.' ) {
-        out_msg( "gauthor.c TBD\n" );
+    if( *p && *p == '.' ) p++;          // over . to docnum
+
+    while( *p == ' ' ) {                // over WS to attribute
+        p++;
     }
-    p++;                                // over . to author name
     if( !ProcFlags.author_tag_seen ) {
         rc = find_symvar( &sys_dict, "$author", no_subscript, &authorval );
         if( *p ) {                      // author specified
@@ -160,30 +110,43 @@ void    gml_author( const gmltag * entry )
     }
  
     start_doc_sect();                   // if not already done
- 
-    p_line.first = NULL;
-    p_line.next  = NULL;
- 
-    a_spacing = layout_work.titlep.spacing;
- 
+
     font_save = g_curr_font_num;
     g_curr_font_num = layout_work.author.font;
- 
-    calc_author_pos( g_curr_font_num, a_spacing, !ProcFlags.author_tag_seen );
-    p_line.y_address = g_cur_v_start;
-    p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
- 
-    prep_author_line( &p_line, p );
- 
-    ProcFlags.page_started = true;
-    process_line_full( &p_line, false );
-    g_curr_font_num = font_save;
- 
-    if( p_line.first != NULL) {
-        add_text_chars_to_pool( &p_line );
+    a_spacing = layout_work.titlep.spacing;
+
+    /************************************************************/
+    /*  pre_skip and skip are treated as pre_top_skip because   */
+    /*  they are always used at the top of the page             */
+    /*  this is not what the docs say, at least about pre_skip  */
+    /************************************************************/
+
+    if( !ProcFlags.author_tag_seen ) {
+        set_skip_vars( NULL, &layout_work.author.pre_skip, NULL, a_spacing, 
+                        g_curr_font_num );
+    } else {
+        set_skip_vars( NULL, &layout_work.author.skip, NULL, a_spacing, 
+                        g_curr_font_num );
     }
-    ProcFlags.page_started = true;
- 
+
+    p_line = alloc_text_line();
+    p_line->line_height = wgml_fonts[g_curr_font_num].line_height;
+    if( *p ) {
+        prep_author_line( p_line, p );
+    }
+
+    cur_el = alloc_doc_el( el_text );
+    cur_el->depth = p_line->line_height + g_spacing;
+    cur_el->subs_skip = g_subs_skip;
+    cur_el->top_skip = g_top_skip;
+    cur_el->element.text.overprint = ProcFlags.overprint;
+    ProcFlags.overprint = false;
+    cur_el->element.text.spacing = g_spacing;
+    cur_el->element.text.first = p_line;
+    p_line = NULL;
+    insert_col_main( cur_el );
+
+    g_curr_font_num = font_save;
     ProcFlags.author_tag_seen = true;
     scan_start = scan_stop + 1;
 }

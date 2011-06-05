@@ -97,10 +97,8 @@ extern  void        unquote_if_quoted( char * * a, char * * z );
 
 
 /* gbanner.c                            */
-extern  uint32_t    ban_top_pos( banner_lay_tag * ban );
-extern  uint32_t    ban_bot_pos( banner_lay_tag * ban );
-extern  void        out_ban_bot( banner_lay_tag * ban );
-extern  void        out_ban_top( banner_lay_tag * ban );
+extern  void        out_ban_bot( void );
+extern  void        out_ban_top( void );
 extern  void        set_banners( void );
 
 
@@ -113,9 +111,23 @@ extern  void    init_pass_data( void );
 extern  void    init_def_lay( void );
 
 
+/* gdocpage.c                           */
+extern  void            clear_doc_element( doc_element * element );
+extern  void            document_new_page( void );
+extern  void            full_page_out( void );
+extern  void            insert_col_bot( doc_element * a_element );
+extern  void            insert_col_fn( doc_element * a_element );
+extern  void            insert_col_main( doc_element * a_element );
+extern  void            insert_col_top( doc_element * a_element );
+extern  void            insert_page_width( doc_element * a_element );
+extern  void            last_page_out( void );
+extern  void            reset_t_page( void );
+extern  void            set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, uint8_t font );
+extern  void            text_page_out( void );
+
+
 /* gdocsect.c                           */
 extern  void    set_section_banners( doc_section ds );
-extern  void    finish_page( void );
 extern  void    start_doc_sect( void );
 
 
@@ -220,16 +232,13 @@ extern  void    split_input( char * buf, char * split_pos );
 extern  void    split_input_LIFO( char * buf, char * split_pos );
 
 
-/* gproctxt.c              TBD        */
-extern  void    do_justify( uint32_t left_m, uint32_t right_m, text_line * line );
-extern  void    document_new_page( void );
-extern  void    document_top_banner( void );
-extern  void    intrans( char * data, uint16_t * len, uint8_t font );
-extern  void    process_line_full( text_line * a_line, bool justify );
-extern  void    process_text( char * text, uint8_t font_num );
-extern  text_chars * process_word( char * text, size_t count, uint8_t font_num );
-extern  void    set_h_start( void );
-extern  void    test_page_full( void );
+/* gproctxt.c                        */
+extern  void            do_justify( uint32_t left_m, uint32_t right_m, text_line * line );
+extern  void            intrans( char * data, uint16_t * len, uint8_t font );
+extern  void            process_line_full( text_line * a_line, bool justify );
+extern  void            process_text( char * text, uint8_t font_num );
+extern  text_chars  *   process_word( char * text, size_t count, uint8_t font_num );
+extern  void            set_h_start( void );
 
 
 /* grefdict.c                         */
@@ -349,15 +358,19 @@ extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 extern  char    *   get_att_value( char * p );
 
 /* gtxtpool.c                         */
-extern  void            add_text_chars_to_pool( text_line * a_line );
-extern  text_chars  *   alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
-extern  void            add_text_line_to_pool( text_line * a_line );
-extern  text_line   *   alloc_text_line( void );
-extern  void            add_doc_el_to_pool( doc_element * a_element );
-extern  doc_element *   alloc_doc_el( void );
-extern  void            add_tag_cb_to_pool( tag_cb * cb );
-extern  tag_cb      *   alloc_tag_cb( void );
-extern  void            free_pool_storage( void );
+extern  void                add_text_chars_to_pool( text_line * a_line );
+extern  text_chars      *   alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
+extern  void                add_text_line_to_pool( text_line * a_line );
+extern  text_line       *   alloc_text_line( void );
+extern  void                add_ban_col_to_pool( ban_column * a_column );
+extern  ban_column      *   alloc_ban_col( void );
+extern  void                add_doc_col_to_pool( doc_column * a_column );
+extern  doc_column      *   alloc_doc_col( void );
+extern  void                add_doc_el_to_pool( doc_element * a_element );
+extern  doc_element     *   alloc_doc_el( element_type type );
+extern  void                add_tag_cb_to_pool( tag_cb * cb );
+extern  tag_cb          *   alloc_tag_cb( void );
+extern  void                free_pool_storage( void );
 
 
 /* gtitlepo.c                         */
@@ -373,17 +386,12 @@ extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
 extern  int32_t     conv_vert_unit_rdd( su * spaceunit, uint8_t spacing );
 extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
+extern  su      *   greater_su( su * su_a, su * su_b, uint8_t spacing );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  int32_t     len_to_trail_space( char p[] , int32_t len );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 extern  bool        att_val_to_SU( su * spaceunit, bool pos );
 extern  void        start_line_with_string( char * text, uint8_t font_num );
-
-
-/* gwidowut.c                         */
-extern  void        add_line_to_buf_lines( text_line * * lines, text_line * a_line );
-extern  void        out_buf_lines( text_line * * lines, bool newpage );
-extern  bool        widow_check( void );
 
 
 /* outbuff.c                           */

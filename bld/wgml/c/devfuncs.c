@@ -33,6 +33,7 @@
 *                   df_populate_driver_table()
 *                   df_setup()
 *                   df_teardown()
+*                   fb_empty_text_line()
 *                   fb_enterfont()
 *                   fb_first_text_line_pass()
 *                   fb_init()
@@ -3533,6 +3534,38 @@ void fb_absoluteaddress( void )
     df_interpret_driver_functions( bin_driver->absoluteaddress.text );
     current_state.x_address = desired_state.x_address;
     current_state.y_address = desired_state.y_address;    
+    return;
+}
+
+/* Function fb_empty_text_line().
+ * Sets the internal and device states appropriately for an empty line.
+ *
+ * Parameter:
+ *      out_line points to a text_line instance which has no text but which
+ *          does have vertical positioning information.
+ *
+ * Note:
+ *      This function is to be used only by fb_output_text() and is extremely
+ *          specialized. The effect is that the vertical position specified 
+ *          is used to update the internal and device states.
+ *      This function was added only when its need became clear while
+ *          implementing page-based output.
+ */
+
+void fb_empty_text_line( text_line * out_line )
+{
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    /* Update the internal state for the new text_line. */
+
+    desired_state.y_address = out_line->y_address;
+
+    /* Perform the Normal Vertical Positioning. */
+
+    fb_normal_vertical_positioning();
+
     return;
 }
 

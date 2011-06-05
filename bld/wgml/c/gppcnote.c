@@ -32,16 +32,14 @@
  
 #include    "wgml.h"
 #include    "gvars.h"
- 
+
 /***************************************************************************/
 /*  :P.perhaps paragraph elements                                          */
 /***************************************************************************/
 void    proc_p_pc( p_lay_tag * p_pc )
 {
     char        *   p;
-    int32_t         skippre;
-    int32_t         skippost;
- 
+
     scan_err = false;
     p = scan_start;
  
@@ -49,12 +47,6 @@ void    proc_p_pc( p_lay_tag * p_pc )
     start_doc_sect();                   // if not already done
  
     scr_process_break();
- 
-    if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false ); // lines are no widows
-        buf_lines_cnt = 0;
-    }
- 
     if( nest_cb->c_tag == t_NONE ) {
         g_cur_left = g_page_left + g_indent;// left start    TBD
     }
@@ -63,59 +55,17 @@ void    proc_p_pc( p_lay_tag * p_pc )
  
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
  
-    if( post_skip != NULL ) {
-        skippost = conv_vert_unit( post_skip, spacing );
-        post_skip = NULL;
-    } else {
-        skippost = 0;
-    }
- 
-    if( ProcFlags.page_started ) {
-        if( ProcFlags.para_started ) {
-            skippre = conv_vert_unit( &(p_pc->pre_skip), spacing );
-        } else {
-            skippre = 0;
-        }
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
-        }
-        skippost = calc_skip_value();   // pending .sk value?
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
-        }
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippre < g_cur_v_start ) {
-                g_cur_v_start -= skippre;
-            } else {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            }
-        } else {
-            g_cur_v_start += skippre;
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippost > 0 ) {
-                g_cur_v_start -= skippost;
-            }
-        } else {
-            if( skippost > 0 ) {
-                g_cur_v_start += skippost;
-            }
-        }
-    }
- 
+    if( *p == '.' ) p++;                // over '.'
+
+    set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), spacing,
+                    g_curr_font_num );
+
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
-    if( *p == '.' ) p++;                // over '.'
-    if( *p ) {
-        process_text( p, g_curr_font_num );
-        ProcFlags.para_started = true;
-    } else {
-        ProcFlags.para_started = false;
-    }
-    post_skip = &(p_pc->post_skip);
- 
+    process_text( p, g_curr_font_num );
+    ProcFlags.para_started = true;
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -126,6 +76,7 @@ void    proc_p_pc( p_lay_tag * p_pc )
 extern  void    gml_p( const gmltag * entry )
 {
     proc_p_pc( &layout_work.p );
+    ProcFlags.empty_doc_el = true;  // for next break, not this tag's break
 }
  
 /***************************************************************************/
@@ -142,59 +93,20 @@ extern  void    gml_pc( const gmltag * entry )
 extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
-    int32_t        skippre;
-    int32_t        skippost;
-    int32_t        skipsk;
- 
+    int8_t          font_save;
+
     scan_err = false;
     p = scan_start;
  
     start_doc_sect();                   // if not already done
  
     scr_process_break();
- 
-    if( ProcFlags.test_widow ) {
-        out_buf_lines( &buf_lines, false );  // lines are no widows
-        buf_lines_cnt = 0;
-    }
- 
-    if( post_skip != NULL ) {
-        skippost = conv_vert_unit( post_skip, spacing );
-    } else {
-        skippost = 0;
-    }
-    skipsk = calc_skip_value();   // pending .sk value?
+
+    font_save = g_curr_font_num;
     g_curr_font_num = layout_work.note.font;
-    if( ProcFlags.page_started ) {
-        skippre = conv_vert_unit( &(layout_work.note.pre_skip), spacing );
-        if( skippost > skippre ) {
-            skippre = skippost;         // take maximum skip amount
-        }
-        if( skipsk > skippre ) {
-            skippre = skipsk;           // take maximum skip amount
-        }
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippre < g_cur_v_start ) {
-                g_cur_v_start -= skippre;
-            } else {
-                g_cur_v_start = g_page_bottom - 1;  // force new page
-            }
-        } else {
-            g_cur_v_start += skippre;
-        }
-    } else {
-        if( bin_driver->y_positive == 0x00 ) {
-            if( skippost > 0 ) {
-                g_cur_v_start -= skippost;
-            }
-        } else {
-            if( skippost > 0 ) {
-                g_cur_v_start += skippost;
-            }
-        }
-    }
-    post_skip = NULL;
- 
+    set_skip_vars( &layout_work.note.pre_skip, NULL, &layout_work.note.post_skip,
+                    spacing, g_curr_font_num );
+
     ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
@@ -207,8 +119,10 @@ extern  void    gml_note( const gmltag * entry )
  
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     start_line_with_string( layout_work.note.string, layout_work.note.font );
-    if( t_line.last != NULL ) {
-        g_cur_left += t_line.last->width + post_space;
+    if( t_line != NULL ) {
+        if( t_line->last != NULL ) {
+            g_cur_left += t_line->last->width + post_space;
+        }
     }
     post_space = 0;
     g_cur_h_start = g_cur_left;
@@ -221,9 +135,7 @@ extern  void    gml_note( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
- 
-    post_skip = &(layout_work.note.post_skip);
- 
+    g_curr_font_num = font_save;
     scan_start = scan_stop + 1;
     return;
 }

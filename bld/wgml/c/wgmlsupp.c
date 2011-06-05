@@ -278,27 +278,63 @@ void    free_some_mem( void )
     if( workbuf != NULL ) {
         mem_free( workbuf );
     }
-    if( t_page.topban != NULL) {
-        mem_free( t_page.topban );
+    if( t_line != NULL ) {
+        add_text_chars_to_pool( t_line );
+        add_text_line_to_pool( t_line );
     }
-    if( t_page.page_width != NULL) {
-        mem_free( t_page.page_width );
+    if( t_element != NULL ) {
+        clear_doc_element( t_element );
     }
-    if( t_page.main != NULL) {
-        mem_free( t_page.main );
+    if( t_page.top_ban != NULL ) {
+        if( t_page.top_ban->first != NULL ) {
+            clear_doc_element( t_page.top_ban->first );
+            add_doc_el_to_pool( t_page.top_ban->first );
+        }
+        add_ban_col_to_pool( t_page.top_ban );
     }
-    if( t_page.botban != NULL) {
-        mem_free( t_page.botban );
+    if( t_page.page_width != NULL ) {
+        clear_doc_element( t_page.page_width );
+        add_doc_el_to_pool( t_page.page_width );
     }
-    if( n_column.main != NULL) {
-        mem_free( n_column.main );
+    if( t_page.main != NULL ) {
+        if( t_page.main->main != NULL ) {
+            clear_doc_element( t_page.main->main );
+            add_doc_el_to_pool( t_page.main->main );
+        }
+        if( t_page.main->bot_fig != NULL ) {
+            clear_doc_element( t_page.main->bot_fig );
+            add_doc_el_to_pool( t_page.main->bot_fig );
+        }
+        if( t_page.main->footnote != NULL ) {
+            clear_doc_element( t_page.main->footnote );
+            add_doc_el_to_pool( t_page.main->footnote );
+        }
+        add_doc_col_to_pool( t_page.main );
     }
-    if( n_column.bot_fig != NULL) {
-        mem_free( n_column.bot_fig );
+    if( t_page.bot_ban != NULL ) {
+        if( t_page.bot_ban->first != NULL ) {
+            clear_doc_element( t_page.bot_ban->first );
+            add_doc_el_to_pool( t_page.bot_ban->first );
+        }
+        add_ban_col_to_pool( t_page.bot_ban );
     }
-    if( n_column.bot_fig != NULL) {
-        mem_free( n_column.bot_fig );
+    if( n_page.col_top != NULL ) {
+        clear_doc_element( n_page.col_top );
+        add_doc_el_to_pool( n_page.col_top );
     }
+    if( n_page.col_main != NULL ) {
+        clear_doc_element( n_page.col_main );
+        add_doc_el_to_pool( n_page.col_main );
+    }
+    if( n_page.col_bot != NULL ) {
+        clear_doc_element( n_page.col_bot );
+        add_doc_el_to_pool( n_page.col_bot );
+    }
+    if( n_page.col_fn != NULL ) {
+        clear_doc_element( n_page.col_fn );
+        add_doc_el_to_pool( n_page.col_fn );
+    }
+
     free_layout_banner();
 
     free_pool_storage();
@@ -445,8 +481,9 @@ bool    get_line( bool display_line )
 
                 if( buff2_lg == 0 ) {   // empty line
                     g_skip = 1;
-                    g_skip_wgml4 = 0;
+#if 0
                     ProcFlags.sk_cond = true;   // prepare simulated .sk 1 C
+#endif
                 }
             }
         }
