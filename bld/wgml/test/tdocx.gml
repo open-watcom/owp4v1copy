@@ -188,7 +188,7 @@ This is a footnote to watch what happens to a long footnote in Multicolumn mode
 :efn
 .pe 50
 .se pe=&pe.+1;   (&pe.). Performed line with a count of 100.
-.im ts.gml
+.im ts.inc
 .cp 18
 .br
 After cp
