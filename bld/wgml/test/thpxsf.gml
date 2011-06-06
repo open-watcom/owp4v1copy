@@ -25,6 +25,6 @@ hp3 end
 :ehp1.
 :ehp1.
 :ehp0.
-.im thpxsf2.gml
+.im thpxsf2.inc
 .br text.
 :egdoc

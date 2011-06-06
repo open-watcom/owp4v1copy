@@ -1,56 +1,47 @@
-.* test for linecounter and other variables
-.im tsimplei.lay
-:layout
-:default
- spacing = 2
-:elayout
-.*
-.dm lc begin
-.ty &*   SYSLC = &SYSLC     SYSLINE = &SYSLINE     SYSLST = &SYSLST
-.dm lc end
-.*
-.*tm 8
-.lc 0
+.* test for a not quite simple GML document this is work in progress
+.* will be included from the tsimp00.gml - tsimp99.gml files
+.gt 123 add willi
+.dm willi /:p/&*/
+.ty start sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 :gdoc sec='top secret'
-.lc 1
 :frontm
 :titlep
-.lc t1
 :title stitle='simple doc'.Simple Document
-.lc t2
 :title stitle='simple doc2'.Simple Document Title 2
+.ty title sysin=&$in  sysinr=&$inr sysir=&$ir sysll=&$ll lm=&$pagelm rm=&$pagerm
 :docnum.SIMPLE 7
 :date.Date was 11.11.2009
 :author.First Author
 :author.My Second Personality
-.lc ae
 :address.
 :aline.address 1 1
 :aline.address 1 2
-:cmt.aline.address 2 1
-:cmt.aline.address 2 2
 :eaddress.
-.lc ade
+:address.
+:aline.address 2 1
+:aline.address 2 2
+:eaddress.
+:address.
+:eaddress.
 :etitlep
-.lc te
 :body
+.se syshtext0='SYSHTEXT0 Dummy'
 .ty in body sysenv &$env
-.lc 2
+.ty sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
+.*im tgeov
+:cmt.:123. The &gml.123 tag is ignored as comment.
+.*:123. The line will be split and the &gml.123 usertag called?
 :p
-This :HP2.test:eHP2. fragment.
-.lc 2a
+This :HP2.test:eHP2. fragment. :hp1.111.:hp1.xxx:ehp1.:ehp1.
+.br;This line contains a :HP1.highlighted phrase:eHP1. with external spaces.
 .br
-.*im ts.gml
-.lc 3
 Here we have some text to fill the line. Let it overflow, just to see
-how wgml 4.0 and our new wgml handle line overflow to see the differences
-in the output.
-.co on
-.lc 4
+whether wgml 4.0 and our new wgml handle line overflow and to see the
+differences in the output.
+.*co on
 :p
 Hopefully no differences! :12345 test for undefined user tag. More text
 to make a true line overflow for a 2 line paragraph.
-.lc 5
 .*im tgeov
 .ty &amp.sysju=&sysju   &amp.sysco=&sysco  c2d(&amp.sysrb)=&'c2d(&sysrb.)
 :P.:HP1.hi1::EHP1.
@@ -60,35 +51,48 @@ and :HP3.hi3:EHP3. without colon
  A :HP1.p:EHP1.aragraph with text. And some more for line overflow.
 .br
 .co off
-test paragraph one
-
-test paragraph two
-
-.lc 6
+test line one, followed by an empty line concat is off
+ 
+test line two, followed by an empty line concat is off 
+ 
 ============================ 11:43:59 H:\ow\bld =============================
 .br .co on
 Languages Build: rel2
-.br
+.sk 0
 WATCOM points to: H:\ow\rel2
 .br
 **** REL2 rule
 .br
 01====================== 11:43:59 H:\ow\bld\builder =========================
+.sk -1
 02====================== 11:43:59 H:\ow\bld\builder =========================
 03=================== 11:43:59 H:\ow\bld\builder\os2386 =====================
-.sk 2
+.sk 10
 04====================== 11:43:59 H:\ow\bld\builder =========================
-.lc 10
-.sk
+.sk 10
 05====================== 11:43:59 H:\ow\bld\builder =========================
-06** REL2 rule
+.sk 3
+:p
+0601 REL2 rule 0602 REL2 rule 0603 REL2 rule 0604 REL2 rule 0605 REL2 rule
+0611 REL2 rule 0612 REL2 rule 0613 REL2 rule 0614 REL2 rule 0615 REL2 rule
+0621 REL2 rule 0622 REL2 rule 0623 REL2 rule 0624 REL2 rule 0625 REL2 rule
+0631 REL2 rule 0632 REL2 rule 0633 REL2 rule 0634 REL2 rule
+.sk
 07======================= 11:43:59 H:\ow\bld\pmake ==========================
+.in 0.15i -2.8cm
 08=================== 11:43:59 H:\ow\bld\pmake\prebuild =====================
 09======================= 11:43:59 H:\ow\bld\pmake ==========================
+.ty 09 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
+.in +1 0
+.ty 10 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 10** REL2 rule
+ 
 11======================= 11:43:59 H:\ow\bld\cc\wcl =========================
+.in * 15
+.ty 12 sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
 12================== 11:43:59 H:\ow\bld\cc\wcl\prebuild =====================
 13======================= 11:43:59 H:\ow\bld\cc\wcl =========================
+.in 0 0
 14** REL2 rule
 15====================== 11:43:59 H:\ow\bld\w32loadr ========================
 16====================== 11:43:59 H:\ow\bld\w32loadr ========================
@@ -166,7 +170,8 @@ WATCOM points to: H:\ow\rel2
 88** REL2 rule last text record
 .se $apage=100
 .ty sysapage  &SYSAPAGE
-.im ts.inc
+.ty sysin=&$in  sysinr=&$inr  sysir=&$ir  sysll=&$ll  lm=&$pagelm rm=&$pagerm
+.if &$passno = &$passof .im ts.gml
 :p
 :appendix
 .ty in appendix sysenv &$env

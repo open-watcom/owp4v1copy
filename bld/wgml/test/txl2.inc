@@ -1,4 +1,4 @@
-:cmt. included by txl.gml 
+:cmt. included by txl.gml
 :cmt. test with tag and corresponding etag in different files
     :li.item in include file
 :eul.
@@ -8,5 +8,5 @@
 :LP.&gml.LP
 no eSL in this file txl2 and some text to fill the line and create an overflow
 .br
-.im txl3.gml
+.im txl3.inc
 :esl.
