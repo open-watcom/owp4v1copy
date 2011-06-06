@@ -168,6 +168,7 @@ static void split_at_GML_tag( void )
             && ((*p2 == '.') ||
                 (*p2 == ' ') ||
                 (*p2 == '\0' ) ||
+                (*p2 == '\t' ) ||
                 (*p2 == GML_char) ) ) { // 'good' tag end
 
             c = *p2;
