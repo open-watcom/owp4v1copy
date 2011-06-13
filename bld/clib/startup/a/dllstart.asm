@@ -227,10 +227,10 @@ around: mov     si,DGROUP               ; set DS to DGROUP
 
         mov     es,esi                  ; - call DLL exit code
         xor     ebp,ebp
-        mov     ___Argc,1
-        call    __CMain
+        mov     ___Argc,1               ; indicate termination
+        call    __CMain                 ; call DLL init code
         xor     eax,eax
-        jmp     exit_code_eax
+        jmp     error_exit_code_eax
 
 init_DLL:
         mov     dx,78h                  ; - see if Rational DOS/4G
@@ -369,8 +369,8 @@ zerobss:mov     dl,cl                   ; save bottom 2 bits of count in edx
         mov     eax,0FFH                ; run all initalizers
         call    __InitRtns              ; call initializer routines
         sub     ebp,ebp                 ; ebp=0 indicate end of ebp chain
-        mov     ___Argc,0               ; call DLL init code
-        call    __CMain
+        mov     ___Argc,0               ; indicate initialization
+        call    __CMain                 ; call DLL init code
 __DLLstart_ endp
 
 ;       don't touch AL in __exit, it has the return code
