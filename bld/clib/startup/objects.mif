@@ -55,6 +55,8 @@
 !inject emainrdu.obj                                                                                        rdu
 !inject mainrdk.obj                                                                                             rdk
 !inject dpmihost.obj     d32
+!inject dllmncwd.obj     d32
+!inject dmaincwd.obj     d32
 !inject hpgrw086.obj d16
 !inject lmaino32.obj                                                    o32
 !inject lmainwnt.obj                     nt nta ntp
