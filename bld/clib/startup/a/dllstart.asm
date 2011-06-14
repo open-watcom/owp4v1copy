@@ -397,7 +397,9 @@ nextc:  lodsb                           ; get char
 exit_code_eax:
         or      eax,eax
         je      do_exit
+        push    eax                     ; don't destroy error code
         call    __CommonTerm            ; terminate the runtime
+        pop     eax
 
 do_exit:
         mov     si,DGROUP
