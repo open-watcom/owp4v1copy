@@ -33,6 +33,7 @@
 #include "initfini.h"
 #include "rtdata.h"
 #include <malloc.h>
+#include <i86.h>
 
 extern  int     DllMain( int termination, void *reserved );
 extern  void    __CommonInit( void );
@@ -44,6 +45,7 @@ void    (*__int23_exit)( void ) = __null_int23_exit;
 void __CommonTerm( void )
 {
     struct _heapinfo    hinfo;
+    void _WCNEAR        *moffs;
 
     /* Run the normal termination first. */
     (*__int23_exit)();
@@ -55,8 +57,10 @@ void __CommonTerm( void )
     for( ;; ) {
         if( _heapwalk( &hinfo ) != _HEAPOK )
             break;
-        if( hinfo._useflag )
-            free( (char *)hinfo._pentry + sizeof( void * ) );
+        if( hinfo._useflag ) {
+            moffs = (void _WCNEAR *)FP_OFF( hinfo._pentry );
+            free( (char *)moffs + sizeof( void * ) );
+        }
     }
     /* Return freed memory back to the OS. */
     _heapshrink();
