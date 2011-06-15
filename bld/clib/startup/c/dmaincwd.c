@@ -39,8 +39,7 @@ extern  int     DllMain( int termination, void *reserved );
 extern  void    __CommonInit( void );
 
 /* Perhaps this should be abstracted out of exit.c? */
-void    __null_int23_exit( void ) {}              /* SIGNAL needs it */
-void    (*__int23_exit)( void ) = __null_int23_exit;
+extern  void    (*__int23_exit)( void );
 
 void __CommonTerm( void )
 {

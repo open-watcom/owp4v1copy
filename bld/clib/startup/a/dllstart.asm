@@ -141,11 +141,13 @@ _DATA    segment dword public 'DATA'
         public  __D16Infoseg
         public  __x386_zero_base_selector
         public  __init_387_emulator
+        public  "C",__int23_exit
 
 __D16Infoseg                dw  0020h   ; DOS/4G kernel segment
 __x386_zero_base_selector   dw  0       ; base 0 selector for X-32VM
 
 __init_387_emulator         dd  0       ; prevent emulator even with -fpi
+__int23_exit                dd  __null_int23_exit
 
 caller_stack    label   fword
 caller_esp      dd      0
@@ -419,6 +421,12 @@ __saved_DS  dw  0               ; save area for DS for interrupt routines
 public "C",__GETDSEnd_
 __GETDSEnd_ label byte
 __GETDS endp
+
+        align   4
+__null_int23_exit proc near
+public "C",__null_int23_exit
+        ret
+__null_int23_exit endp
 
 _TEXT   ends
 
