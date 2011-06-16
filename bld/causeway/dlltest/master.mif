@@ -12,6 +12,10 @@ dlltest_autodepends = .AUTODEPEND
 
 .c : ..
 
+# Force uptodate libs to be picked up
+.before
+    @set WATCOM=$(%RELROOT)
+
 inc_dirs = -I"../../inc"
 
 lflags_dos_386     = sys causeway opt stub=../../cw32/dosi86/cwstub.exe
