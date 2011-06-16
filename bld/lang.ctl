@@ -61,7 +61,6 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/wpi/lang.ctl ]
 [ INCLUDE <DEVDIR>/commonui/lang.ctl ]
 #
-[ INCLUDE <DEVDIR>/causeway/lang.ctl ]
 #        SDK must be done after DISASM?
 [ INCLUDE <DEVDIR>/sdk/lang.ctl ]
 #        Librariess for different program are next
@@ -102,6 +101,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/nwlib/lang.ctl ]
 #        RCSDLL must be before VI and VIPER
 [ INCLUDE <DEVDIR>/rcsdll/lang.ctl ]
+[ INCLUDE <DEVDIR>/causeway/lang.ctl ]
 #
 #       Now build the compilers
 #
