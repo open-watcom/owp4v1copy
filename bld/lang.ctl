@@ -8,6 +8,7 @@ set FULLBUILD=1
 cdsay .
 
 echo Languages Build: <1> <2> <3>
+echo Building WATCOM on <BLD_HOST>, using WATCOM from <WATCOM>
 
 [ BLOCK <BUILDMODE> bootstrap ]
 #==============================
