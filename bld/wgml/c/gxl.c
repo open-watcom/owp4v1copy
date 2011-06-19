@@ -34,6 +34,26 @@
  
  
 /***************************************************************************/
+/*  copy_su is a utility function used by the gml_eXX functions            */
+/***************************************************************************/
+static su * copy_su( su * in_su )
+{
+    su  *   out_su;
+ 
+    out_su = (su *) mem_alloc( sizeof( su ) );
+    strcpy_s( out_su->su_txt, MAX_SU_CHAR, in_su->su_txt );
+    out_su->su_whole = in_su->su_whole;
+    out_su->su_dec = in_su->su_dec;
+    out_su->su_inch = in_su->su_inch;
+    out_su->su_mm = in_su->su_mm;
+    out_su->su_relative = in_su->su_relative;
+    out_su->su_u = in_su->su_u;
+
+    return( out_su );
+}
+ 
+ 
+/***************************************************************************/
 /*  end_lp  processing as if the non existant :eLP tag was seen            */
 /***************************************************************************/
 static  void    end_lp( void )
@@ -394,44 +414,47 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
  
 void    gml_eol( const gmltag * entry )
 {
-    tag_cb  *   save_cb;
+    e_tags      c_tag;
+    su      *   post_skip;
     
     end_lp();
-    save_cb = nest_cb;
+    c_tag = nest_cb->c_tag;
+    post_skip = copy_su( &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip );
     gml_exl_common( entry, t_OL );
-    if( save_cb->c_tag == t_OL ) {
-        set_skip_vars( NULL, NULL,
-                       &((ol_lay_tag *)(save_cb->lay_tag))->post_skip,
-                       1, g_curr_font_num );
+    if( c_tag == t_OL ) {
+        set_skip_vars( NULL, NULL, post_skip, 1, g_curr_font_num );
     }
+    mem_free( post_skip);
 }
  
 void    gml_esl( const gmltag * entry )
 {
-    tag_cb  *   save_cb;
-
+    e_tags      c_tag;
+    su      *   post_skip;
+    
     end_lp();
-    save_cb = nest_cb;
+    c_tag = nest_cb->c_tag;
+    post_skip = copy_su( &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip );
     gml_exl_common( entry, t_SL );
-    if( save_cb->c_tag == t_SL ) {
-        set_skip_vars( NULL, NULL,
-                       &((sl_lay_tag *)(save_cb->lay_tag))->post_skip,
-                       1, g_curr_font_num );
+    if( c_tag == t_SL ) {
+        set_skip_vars( NULL, NULL, post_skip, 1, g_curr_font_num );
     }
+    mem_free( post_skip);
 }
  
 void    gml_eul( const gmltag * entry )
 {
-    tag_cb  *   save_cb;
-
+    e_tags      c_tag;
+    su      *   post_skip;
+    
     end_lp();
-    save_cb = nest_cb;
+    c_tag = nest_cb->c_tag;
+    post_skip = copy_su( &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip );
     gml_exl_common( entry, t_UL );
-    if( save_cb->c_tag == t_UL ) {
-        set_skip_vars( NULL, NULL,
-                       &((ul_lay_tag *)(save_cb->lay_tag))->post_skip,
-                       1, g_curr_font_num );
+    if( c_tag == t_UL ) {
+        set_skip_vars( NULL, NULL, post_skip, 1, g_curr_font_num );
     }
+    mem_free( post_skip);
 }
  
  
