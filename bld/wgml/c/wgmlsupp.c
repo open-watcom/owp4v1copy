@@ -480,7 +480,7 @@ bool    get_line( bool display_line )
                 (input_cbs->fmflags & II_eol) ) {
 
                 if( buff2_lg == 0 ) {   // empty line
-                    g_skip = 1;
+                    blank_lines += 1;
 #if 0
                     ProcFlags.sk_cond = true;   // prepare simulated .sk 1 C
 #endif

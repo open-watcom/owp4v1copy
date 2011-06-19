@@ -186,6 +186,7 @@ void    gml_aline( const gmltag * entry )
     }
 
     cur_el = alloc_doc_el( el_text );
+    cur_el->blank_lines = g_blank_lines;
     cur_el->depth = ad_line->line_height + g_spacing;
     cur_el->subs_skip = g_subs_skip;
     cur_el->top_skip = g_top_skip;

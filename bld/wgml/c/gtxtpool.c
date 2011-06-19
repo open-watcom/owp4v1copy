@@ -298,9 +298,10 @@ doc_element * alloc_doc_el(  element_type type )
     }
 
     curr->next = NULL;
+    curr->blank_lines = 0;
     curr->depth = 0;
-    curr->top_skip = 0;
     curr->subs_skip = 0;
+    curr->top_skip = 0;
     curr->type = type;
 
     switch( type ) {

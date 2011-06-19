@@ -166,6 +166,8 @@ void init_global_vars( void )
     workbuf             = mem_alloc( buf_size );
 
     post_space          = 0;            // experimental
+
+    g_blank_lines       = 0;
     g_post_skip         = 0;
     g_subs_skip         = 0;
     g_top_skip          = 0;

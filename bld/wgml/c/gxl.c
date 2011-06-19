@@ -323,14 +323,7 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
     char    *   p;
     tag_cb  *   wk;
  
-    process_line_full( t_line, false );
-    t_line = NULL;
-    if( t_element != NULL ) {
-        insert_col_main( t_element );
-    }
-    t_element = NULL;
-    t_el_last = NULL;
- 
+    scr_process_break();
     if( nest_cb->c_tag != t ) {         // unexpected exxx tag
         if( nest_cb->c_tag == t_NONE ) {
             g_err_tag_no( str_tags[t + 1] );// no exxx expected, no tag active
@@ -401,35 +394,44 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
  
 void    gml_eol( const gmltag * entry )
 {
+    tag_cb  *   save_cb;
+    
     end_lp();
-    if( nest_cb->c_tag == t_OL ) {
+    save_cb = nest_cb;
+    gml_exl_common( entry, t_OL );
+    if( save_cb->c_tag == t_OL ) {
         set_skip_vars( NULL, NULL,
-                       &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip,
+                       &((ol_lay_tag *)(save_cb->lay_tag))->post_skip,
                        1, g_curr_font_num );
     }
-    gml_exl_common( entry, t_OL );
 }
  
 void    gml_esl( const gmltag * entry )
 {
+    tag_cb  *   save_cb;
+
     end_lp();
-    if( nest_cb->c_tag == t_SL ) {
+    save_cb = nest_cb;
+    gml_exl_common( entry, t_SL );
+    if( save_cb->c_tag == t_SL ) {
         set_skip_vars( NULL, NULL,
-                       &((sl_lay_tag *)(nest_cb->lay_tag))->post_skip,
+                       &((sl_lay_tag *)(save_cb->lay_tag))->post_skip,
                        1, g_curr_font_num );
     }
-    gml_exl_common( entry, t_SL );
 }
  
 void    gml_eul( const gmltag * entry )
 {
+    tag_cb  *   save_cb;
+
     end_lp();
-    if( nest_cb->c_tag == t_UL ) {
+    save_cb = nest_cb;
+    gml_exl_common( entry, t_UL );
+    if( save_cb->c_tag == t_UL ) {
         set_skip_vars( NULL, NULL,
-                       &((ul_lay_tag *)(nest_cb->lay_tag))->post_skip,
+                       &((ul_lay_tag *)(save_cb->lay_tag))->post_skip,
                        1, g_curr_font_num );
     }
-    gml_exl_common( entry, t_UL );
 }
  
  

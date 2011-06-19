@@ -660,6 +660,7 @@ void    process_line_full( text_line * a_line, bool justify )
 
     if( t_element == NULL ) {
         t_element = alloc_doc_el( el_text );
+        t_element->blank_lines = g_blank_lines;
         t_element->subs_skip = g_subs_skip;
         t_element->top_skip = g_top_skip;
         t_element->depth = a_line->line_height + g_spacing;
@@ -990,6 +991,9 @@ void    process_text( char * text, uint8_t font_num )
             while( count > 0 ) {
                 // if count == o_count, nothing will fit: there is nothing to do
                 if( count != o_count ) {    // attach n_chars to t_line
+                    if( t_line == NULL ) {
+                        t_line = alloc_text_line();
+                    }
                     if( t_line->first == NULL ) {
                         t_line->first = n_char;
                         t_line->y_address = g_cur_v_start;
@@ -1066,16 +1070,14 @@ void    process_text( char * text, uint8_t font_num )
         n_char = NULL;
     }
 
-#if 0
     /***********************************************************************/
     /*  for .co off and if the input line contains only spaces,            */
     /*  ensure an empty output line as wgml 4.0 does                       */
     /***********************************************************************/
 
     if( !ProcFlags.concat && (post_space > 0) && (t_line->first == NULL) ) {
-        g_skip++;
+        blank_lines++;
     }
-#endif
 
     if( t_line->first != NULL ) {        // something in the line
         ProcFlags.para_started = true;
