@@ -190,23 +190,34 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
     s_font = g_curr_font_num;
     g_curr_font_num = font;
     g_curr_font_num = s_font;
-
     set_skip_vars( NULL, top_sk, p_sk, spc, g_curr_font_num );
 
-    curr_t = alloc_text_chars( h_string, strlen( h_string ), font );
-    curr_t->width = cop_text_width( curr_t->text, curr_t->count, font );
-    h_left = g_page_left +(g_page_right - g_page_left - curr_t->width) / 2;
-    curr_t->x_address = h_left;
+    if( (h_string == NULL) || (*h_string == '\0') ||
+        (*h_string == ' ') || (*h_string == '\t')  ) {
+    
+        /********************************************************/
+        /*  header contained "yes" but the string was empty:    */
+        /*  the OW docs do this with APPENDIX for PS/PDF output */
+        /********************************************************/
 
-    hd_line = alloc_text_line();
-    hd_line->first = curr_t;
-    hd_line->line_height = wgml_fonts[font].line_height;
+        hd_line = alloc_text_line();    // defaults work
+    } else {
+        curr_t = alloc_text_chars( h_string, strlen( h_string ), font );
+        curr_t->width = cop_text_width( curr_t->text, curr_t->count, font );
+        h_left = g_page_left +(g_page_right - g_page_left - curr_t->width) / 2;
+        curr_t->x_address = h_left;
 
-    if( GlobalFlags.lastpass && hd_line->first != NULL) {
+        hd_line = alloc_text_line();
+        hd_line->first = curr_t;
+        hd_line->line_height = wgml_fonts[font].line_height;
+    }
+
+    if( GlobalFlags.lastpass ) {
         if( input_cbs->fmflags & II_research ) {
             test_out_t_line( hd_line );
         }
         cur_el = alloc_doc_el( el_text );
+        cur_el->blank_lines = g_blank_lines;
         cur_el->depth = hd_line->line_height;
         cur_el->subs_skip = g_subs_skip;
         cur_el->top_skip = g_top_skip;
