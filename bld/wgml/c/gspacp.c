@@ -124,21 +124,16 @@ void    scr_pa( void )
         }
         /* fallthru for NOSTART */
     case 0 :
-        full_page_out();                // default action
-        document_new_page();
+        last_page_out();                // default action
+        reset_t_page();
         break;
     case 3 :
         if( !strnicmp( "ODD", pa, 3 ) ) {
-            if( (n_page.col_top != NULL) || (n_page.col_main != NULL)
-            || (n_page.col_bot != NULL) || (n_page.col_fn != NULL)
-            || !(page & 1) ) {
-
-                full_page_out();
-                document_new_page();
-                if( !(page & 1) ) {
-                    full_page_out();
-                    document_new_page();
-                }
+            last_page_out();
+            reset_t_page();
+            if( (page & 1) ) {          // next page would be even
+                last_page_out();
+                reset_t_page();
             }
         } else {
             xx_opt_err( cwcurr, pa );
@@ -146,16 +141,11 @@ void    scr_pa( void )
         break;
     case 4 :
         if( !strnicmp( "EVEN", pa, 4 ) ) {
-            if( (n_page.col_top != NULL) || (n_page.col_main != NULL)
-            || (n_page.col_bot != NULL) || (n_page.col_fn != NULL)
-            || (page & 1) ) {
-
-                full_page_out();
-                document_new_page();
-                if( (page & 1) ) {
-                    full_page_out();
-                    document_new_page();
-                }
+            last_page_out();
+            reset_t_page();
+            if( !(page & 1) ) {         // next page would be odd
+                last_page_out();
+                reset_t_page();
             }
         } else {
             xx_opt_err( cwcurr, pa );
@@ -259,7 +249,6 @@ void    scr_cp( void )
     getnum_block    gn;
     condcode        cc;
     char            cwcurr[4];
-    bool            newpage;
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'c';
@@ -290,21 +279,10 @@ void    scr_cp( void )
             scan_restart = scan_stop +1;
         } else {
             if( gn.result > 0 ) {       // ignore values < 1
-                newpage = false;
-                if( bin_driver->y_positive == 0x00 ) {
-                    if( g_cur_v_start < g_page_bottom +
-                        gn.result * wgml_fonts[g_curr_font_num].line_height ) {
-                        newpage = true;
-                    }
-                } else {
-                    if( g_cur_v_start > g_page_bottom -
-                        gn.result * wgml_fonts[g_curr_font_num].line_height ) {
-                        newpage = true;
-                    }
-                }
-                if( newpage ) {
-                    full_page_out();
-                    document_new_page();
+                if( ((gn.result * wgml_fonts[g_curr_font_num].line_height) +
+                                t_page.cur_depth) > t_page.max_depth ) {
+                    last_page_out();
+                    reset_t_page();
                 }
             }
             scan_restart = gn.argstart;

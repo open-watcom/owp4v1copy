@@ -137,6 +137,7 @@ void    gml_author( const gmltag * entry )
 
     cur_el = alloc_doc_el( el_text );
     cur_el->blank_lines = g_blank_lines;
+    g_blank_lines = 0;
     cur_el->depth = p_line->line_height + g_spacing;
     cur_el->subs_skip = g_subs_skip;
     cur_el->top_skip = g_top_skip;

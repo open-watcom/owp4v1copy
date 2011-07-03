@@ -289,7 +289,6 @@ void    start_doc_sect( void )
 {
     bool                first_section;
     bool                header;
-    bool                no_eject;
     bool                page_r;
     doc_section         ds;
     int8_t              font;
@@ -310,7 +309,6 @@ void    start_doc_sect( void )
     first_section = (ProcFlags.doc_sect == doc_sect_none);
 
     header = false;                 // no header string (ABSTRACT, ... )  output
-    no_eject = false;               // eject is default
     page_r = false;                 // no page number reset
     page_e = ej_no;                 // no page eject
     ProcFlags.start_section = true;
@@ -413,101 +411,89 @@ void    start_doc_sect( void )
     full_page_out();                    // ensure are on last page
     switch( page_e ) {                  // page eject requested
     case ej_yes :
-        if( ProcFlags.page_started ) {
-            finish_page_section( ds, true );
-            document_new_page();
-        } else {
-            new_section( ds );
-        }
-        if( page_r ) {
-            page = 0;
-        }
-        if( first_section ) {
-            page++;
+        if( first_section ) {           // nothing precedes the first section
             reset_t_page();
             document_new_position();
         } else {
-#if 0
-            document_new_page();
-#endif
+            finish_page_section( ds, true );
+            if( page_r ) {
+                page = 0;
+            }
+            reset_t_page();
         }
         break;
     case ej_odd :
-        if( ProcFlags.page_started || !(page & 1) ) {
+        if( first_section ) {           // nothing precedes the first section
+            reset_t_page();
+            document_new_position();
+            if( !(apage & 1) ) {        // first page would be even
+                last_page_out();        // emit empty page
+            }
+        } else {
+            if( !(apage & 1) ) {        // first page would be even
+                last_page_out();        // emit last page in old section
+                reset_t_page();         // give old section a new last page
+            }
             finish_page_section( ds, true );
             if( page_r ) {
                 page = 0;
             }
-#if 0
-            document_new_page();
-#endif
-            document_new_position();
-            if( !(page & 1) ) {
-                full_page_out();
-#if 0
-                document_new_page();
-#endif
-                document_new_position();
-            }
-        } else {
-            no_eject = true;
+            reset_t_page();
         }
         break;
     case ej_even :
-        if( ProcFlags.page_started || (page & 1) ) {
+        if( first_section ) {           // nothing precedes the first section
+            reset_t_page();
+            document_new_position();
+            if( (apage & 1) ) {         // first page will be odd
+                last_page_out();        // emit empty page
+            }
+        } else {
+            if( (apage & 1) ) {         // first page will be odd
+                last_page_out();        // emit last page in old section
+                reset_t_page();         // give old section a new last page
+            }
             finish_page_section( ds, true );
             if( page_r ) {
                 page = 0;
             }
-#if 0
-            document_new_page();
-#endif
-            document_new_position();
-            if( (page & 1) ) {
-                full_page_out();
-#if 0
-                document_new_page();
-#endif
-                document_new_position();
-            }
-        } else {
-            no_eject = true;
+            reset_t_page();
         }
         break;
-    default:
+    default:                        //  ej_no
         new_section( ds );
         if( first_section ) {
-            page++;
             reset_t_page();
             document_new_position();
-        }
-        no_eject = true;
-        break;
-    }
-    if( no_eject ) {
-        /****************************************************/
-        /*  set page bottom banner/limit for new section    */
-        /****************************************************/
-        ind = page & 1;
-        t_page.bottom_banner = sect_ban_bot[ind];
-        if( sect_ban_bot[ind] != NULL ) {
-            if( bin_driver->y_positive == 0 ) {
-                g_page_bottom = g_page_bottom_org + sect_ban_bot[ind]->ban_depth;
-            } else {
-                g_page_bottom = g_page_bottom_org - sect_ban_bot[ind]->ban_depth;
-            }
         } else {
-            g_page_bottom = g_page_bottom_org;
+
+            /****************************************************/
+            /*  set page bottom banner/limit for new section    */
+            /****************************************************/
+
+            ind = !(page & 1);
+            t_page.bottom_banner = sect_ban_bot[ind];
+            if( sect_ban_bot[ind] != NULL ) {
+                if( bin_driver->y_positive == 0 ) {
+                    g_page_bottom = g_page_bottom_org + sect_ban_bot[ind]->ban_depth;
+                } else {
+                    g_page_bottom = g_page_bottom_org - sect_ban_bot[ind]->ban_depth;
+                }
+            } else {
+                g_page_bottom = g_page_bottom_org;
+            }
         }
+        break;
     }
     g_cur_left = g_page_left_org;
     g_cur_h_start = g_page_left_org +
                     conv_hor_unit( &layout_work.p.line_indent );// TBD
 
     if( header ) {
-        doc_header( p_sk, top_sk, h_string, font, h_spc, no_eject );
+        doc_header( p_sk, top_sk, h_string, font, h_spc, page_e == ej_no );
     }
     ProcFlags.para_started = false;
+    ProcFlags.doc_sect = ds;
 }
 
 
@@ -556,6 +542,10 @@ extern  void    gml_abstract( const gmltag * entry )
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
     }
+    if( blank_lines > 0 ) {
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+    }
+    scr_process_break();
     gml_doc_xxx( doc_sect_abstract );
     spacing = layout_work.abstract.spacing;
     g_cur_left = g_page_left;
@@ -565,6 +555,10 @@ extern  void    gml_abstract( const gmltag * entry )
 
 extern  void    gml_appendix( const gmltag * entry )
 {
+    if( blank_lines > 0 ) {
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+    }
+    scr_process_break();
     gml_doc_xxx( doc_sect_appendix );
     spacing = layout_work.appendix.spacing;
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
@@ -575,6 +569,10 @@ extern  void    gml_appendix( const gmltag * entry )
 
 extern  void    gml_backm( const gmltag * entry )
 {
+    if( blank_lines > 0 ) {
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+    }
+    scr_process_break();
     gml_doc_xxx( doc_sect_backm );
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
     if( !ProcFlags.fb_document_done ) { // the very first section/page
@@ -584,6 +582,10 @@ extern  void    gml_backm( const gmltag * entry )
 
 extern  void    gml_body( const gmltag * entry )
 {
+    if( blank_lines > 0 ) {
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+    }
+    scr_process_break();
     gml_doc_xxx( doc_sect_body );
 
     ProcFlags.just_override = true;     // justify for first line ?? TBD
@@ -638,6 +640,10 @@ extern  void    gml_preface( const gmltag * entry )
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
     }
+    if( blank_lines > 0 ) {
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+    }
+    scr_process_break();
     gml_doc_xxx( doc_sect_preface );
     spacing = layout_work.preface.spacing;
 }
@@ -691,10 +697,15 @@ extern  void    gml_toc( const gmltag * entry )
 
 extern  void    gml_egdoc( const gmltag * entry )
 {
-    start_doc_sect();                   // if not already done
+    if( blank_lines > 0 ) {
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+    }
+    scr_process_break();                // outputs last element in file
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();               // if not already done
+    }
     ProcFlags.test_widow = false;
     gml_doc_xxx( doc_sect_egdoc );
-    scr_process_break();
 }
 
 /***************************************************************************/

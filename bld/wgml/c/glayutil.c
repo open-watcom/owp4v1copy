@@ -692,7 +692,7 @@ bool    i_page_eject( char * p, lay_att curr, page_ej * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( strno, p ) ) {
+    if( !strnicmp( strno, p, 2 ) ) {
         *tm = ej_no;
     } else if( !strnicmp( stryes, p, 3 ) ) {
         *tm = ej_yes;

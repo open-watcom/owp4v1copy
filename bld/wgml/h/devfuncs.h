@@ -25,7 +25,6 @@
 *  ========================================================================
 *
 * Description:  Declares the functions used to interpret function blocks:
-*                   df_initialize_pages()
 *                   df_increment_pages()
 *                   df_interpret_device_functions()
 *                   df_interpret_driver_functions()
@@ -54,13 +53,13 @@
 #ifdef  __cplusplus
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
-extern void df_initialize_pages( void );
-extern void df_increment_pages( void );
+extern void df_start_page( void );
 extern void df_interpret_device_functions( uint8_t * in_function );
 extern void df_interpret_driver_functions( uint8_t * in_function );
 extern void df_new_section( uint32_t v_start );
 extern void df_populate_device_table( void );
 extern void df_populate_driver_table( void );
+extern void df_start_page( void );
 extern void df_setup( void );
 extern void df_teardown( void );
 extern void fb_empty_text_line( text_line * out_line );

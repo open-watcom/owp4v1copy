@@ -25,13 +25,12 @@
 *  ========================================================================
 *
 * Description:  Implements the functions declared in devfuncs.h:
-*                   df_initialize_pages()
-*                   df_increment_pages()
 *                   df_interpret_device_functions()
 *                   df_interpret_driver_functions()
 *                   df_populate_device_table()
 *                   df_populate_driver_table()
 *                   df_setup()
+*                   df_start_page()
 *                   df_teardown()
 *                   fb_empty_text_line()
 *                   fb_enterfont()
@@ -245,7 +244,6 @@ static char         *   date_val                = NULL;
 static char         *   time_val                = NULL;
 static char             wgml_header[]           = "V4.0 PC/DOS";
 static uint32_t         font_number             = 0;
-static uint32_t         pages                   = 0;
 static uint32_t         tab_width               = 0;
 static uint32_t         thickness               = 0;
 static uint32_t         x_address               = 0;
@@ -1101,7 +1099,7 @@ static void * df_page_width( void )
  
 static void * df_pages( void )
 {
-    return( (void *) pages );
+    return( (void *) apage );
 }
 
 /* Function df_tab_width().
@@ -3329,27 +3327,12 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
 
 /*  Global function definitions. */
 
-/* Function df_initialize_pages().
- * Initialize pages to zero and then invokes df_increment_pages() to
- * initialize pages and set the state variables to the top of the first
- * document page.
+/* Function df_start_page().
+ * Sets the state variables to the top of a new document page.
  */
 
-void df_initialize_pages( void )
+void df_start_page( void )
 {
-    pages = 0;
-    df_increment_pages();
-    return;
-}
-
-/* Function df_increment_pages().
- * Increments pages and sets the state variables to the top of a new
- * document page.
- */
-
-void df_increment_pages( void )
-{
-    pages++;
     desired_state.x_address = bin_device->x_start;
     desired_state.y_address = bin_device->y_start;
     current_state.x_address = bin_device->x_start;
@@ -3357,7 +3340,6 @@ void df_increment_pages( void )
     x_address = bin_device->x_start;
     y_address = bin_device->y_start;
     page_start = true;
-    apage = pages;  // Update wgml system symbol sysapage.
     return;
 }
 
@@ -3878,7 +3860,7 @@ void fb_new_section( uint32_t v_start )
 
     /* Set up for a new document page. */
 
-    df_increment_pages();
+    df_start_page();
 
     /* Do the initial vertical positioning for the section. Now that .sk -1
      * is supported, this must not be done if a :NEWLINE with advance 0

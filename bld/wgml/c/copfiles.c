@@ -1519,7 +1519,7 @@ void fb_document( void )
 
     /* Set up for the first document page. */
 
-    df_initialize_pages();
+    df_start_page();
 
     return;
 }
@@ -1551,7 +1551,7 @@ void fb_document_page( void )
 
     /* Set up for a new document page. */
 
-    df_increment_pages();
+    df_start_page();
 
     return;
 }

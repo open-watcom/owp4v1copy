@@ -661,6 +661,7 @@ void    process_line_full( text_line * a_line, bool justify )
     if( t_element == NULL ) {
         t_element = alloc_doc_el( el_text );
         t_element->blank_lines = g_blank_lines;
+        g_blank_lines = 0;
         t_element->subs_skip = g_subs_skip;
         t_element->top_skip = g_top_skip;
         t_element->depth = a_line->line_height + g_spacing;

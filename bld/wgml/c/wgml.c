@@ -464,8 +464,7 @@ static  void    proc_input( char * filename )
         }
 #endif
         if( inc_level == 1 ) {          // EOF for master file end
-            last_page_out();
-
+            last_page_out();            // forces final page(s) out
             /***************************************************************/
             /*  Test for missing eXXX tag                                  */
             /***************************************************************/
@@ -681,7 +680,6 @@ int main( int argc, char * argv[] )
 //          }
 
             proc_input( master_fname );
-            scr_process_break();
 
             while( nest_cb != NULL ) {
                 tag_cb  *   cb = nest_cb->prev;

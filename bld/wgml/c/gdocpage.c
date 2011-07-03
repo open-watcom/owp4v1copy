@@ -27,7 +27,6 @@
 * Description:  Page-oriented output
 *
 *               clear_doc_element       return all text_lines/text_chars to pools
-*               document_new_page       start a new page
 *               do_ban_column_out       output text from one or more ban_columns
 *               do_doc_column_out       output text from one or more doc_columns
 *               do_el_list_out          output text from an array of element lists
@@ -38,7 +37,7 @@
 *               insert_col_main         insert doc_element into t_page.main->main
 *               insert_col_top          insert doc_element into top of t_page.main->main
 *               insert_page_width       insert doc_element into t_page.full_page
-*               last_page_out           force output of the current page
+*               last_page_out           force output of all remaining pages
 *               reset_t_page            reset t_page and related externs
 *               set_skip_vars           merge the various skips into the externs
 *               set_v_positions         set vertical positions in an element list
@@ -270,6 +269,14 @@ static void do_page_out( void )
     uint32_t    hs;
     uint32_t    hl;
 
+    /* Set up for the new page */
+
+    if( apage && GlobalFlags.lastpass ) {   // don't do before first page
+       fb_document_page();                  // NEWPAGE is interpreted here
+    }
+    apage++;
+    page++;
+
     /* Get the banner text into the proper sections */
 
 // this was document_top_banner()
@@ -370,11 +377,7 @@ static bool split_element( doc_element * a_element, uint32_t req_depth )
             }
         }
 
-/// this is useful for now, but should not be needed.
-/// triggered with a NULL element with depth 0.
-/// of course it fits, why does it exist?
-        if( last == NULL ) {        // all lines fit
-            out_msg( "Element fit when thought to be too large.\n" );
+        if( last == NULL ) {        // all lines fit; unlikely, but seen
             break;
         }
 
@@ -415,7 +418,7 @@ static void update_t_page( void )
     doc_element *   cur_el;
     uint32_t        depth;
 
-    document_new_page();
+    reset_t_page();
 
     /*  some section headings are placed in t_page.page_width when          */
     /*  processed. One FIG in n_page.col_top goes into t_page.page_width    */
@@ -639,21 +642,6 @@ void clear_doc_element( doc_element * element )
     }
 
     return;
-}
-
-
-/***************************************************************************/
-/*  start a new document page                                              */
-/***************************************************************************/
-
-void document_new_page( void )
-{
-    if( GlobalFlags.lastpass ) {
-       fb_document_page();
-    }
-    page++;
-
-    reset_t_page();
 }
 
 
@@ -1030,8 +1018,8 @@ void reset_t_page( void )
     uint32_t    bottom_depth;
     uint32_t    top_depth;
 
-    t_page.top_banner = sect_ban_top[page & 1];
-    t_page.bottom_banner = sect_ban_bot[page & 1];
+    t_page.top_banner = sect_ban_top[!(page & 1)];
+    t_page.bottom_banner = sect_ban_bot[!(page & 1)];
 
     if( t_page.top_banner != NULL ) {
         top_depth = t_page.top_banner->ban_depth;
