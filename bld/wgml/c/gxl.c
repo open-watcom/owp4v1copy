@@ -85,13 +85,14 @@ static void gml_xl_lp_common( const gmltag * entry, e_tags t )
  
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    if( t != t_LP ) {                   // text only allowed for :LP
-        if( *p ) {                      // no text allowed
-            g_err_tag_nest( str_tags[t_LI] );   // :LI expected
+    if( *p == '.' ) p++;                    // possible tag end
+    if( t != t_LP ) {                       // text only allowed for :LP
+        ProcFlags.need_li_lp = true;        // :LI or :LP  next
+        start_doc_sect();                   // if not already done
+        scr_process_break();
+        if( *p ) {
+            process_text( p, g_curr_font_num );
         }
-        ProcFlags.need_li_lp = true;    // :LI or :LP  next
-        scan_start = scan_stop + 1;
     }
     return;
 }
@@ -149,8 +150,7 @@ void    gml_dl( const gmltag * entry )  // not tested TBD
     }
     gml_xl_lp_common( entry, t_DL );
     nest_cb->lay_tag = &layout_work.dl;
- 
- 
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -190,8 +190,7 @@ void    gml_gl( const gmltag * entry )  // not tested TBD
     }
     gml_xl_lp_common( entry, t_GL );
     nest_cb->lay_tag = &layout_work.gl;
- 
- 
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -226,6 +225,9 @@ void    gml_ol( const gmltag * entry )
     } else {
         compact = false;
     }
+    if( ProcFlags.need_li_lp ) {
+        xx_nest_err( err_no_li_lp );
+    }
     gml_xl_lp_common( entry, t_OL );
  
     nest_cb->compact = compact;
@@ -237,7 +239,7 @@ void    gml_ol( const gmltag * entry )
  
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
- 
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -271,6 +273,9 @@ void    gml_sl( const gmltag * entry )
         compact = true;
         scan_start = p + 7;
     }
+    if( ProcFlags.need_li_lp ) {
+        xx_nest_err( err_no_li_lp );
+    }
     gml_xl_lp_common( entry, t_SL );
  
     nest_cb->compact = compact;
@@ -282,7 +287,7 @@ void    gml_sl( const gmltag * entry )
  
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
- 
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -318,6 +323,9 @@ void    gml_ul( const gmltag * entry )
         compact = true;
         scan_start = p + 7;
     }
+    if( ProcFlags.need_li_lp ) {
+        xx_nest_err( err_no_li_lp );
+    }
     gml_xl_lp_common( entry, t_UL );
  
     nest_cb->compact = compact;
@@ -329,7 +337,7 @@ void    gml_ul( const gmltag * entry )
  
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
- 
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -366,6 +374,8 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
             process_text( p, g_curr_font_num );
         }
     }
+
+    ProcFlags.need_li_lp = false;        // :LI or :LP no longer needed
     scan_start = scan_stop + 1;
 }
  
@@ -472,6 +482,12 @@ static  void    gml_li_ol( const gmltag * entry )
     scan_err = false;
     p = scan_start;
  
+    if( nest_cb == NULL ) {
+        xx_nest_err( err_li_lp_no_list );   // tag must in found in a list
+        scan_start = scan_stop + 1;
+        return;
+    }
+
     nest_cb->li_number++;
     pn = format_num( nest_cb->li_number, charnumber, MAX_L_AS_STR,
                      ((ol_lay_tag *)(nest_cb->lay_tag))->number_style );
@@ -500,7 +516,6 @@ static  void    gml_li_ol( const gmltag * entry )
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
     }
 
-    ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
     g_cur_left = nest_cb->lm + nest_cb->left_indent;
@@ -529,11 +544,11 @@ static  void    gml_li_ol( const gmltag * entry )
     g_curr_font_num = ((ol_lay_tag *)(nest_cb->lay_tag))->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
+    ProcFlags.need_li_lp = false;       // 1. item in list processed
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
- 
-    ProcFlags.need_li_lp = false;       // 1. item in list processed
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -550,6 +565,12 @@ static  void    gml_li_sl( const gmltag * entry )
     scan_err = false;
     p = scan_start;
  
+    if( nest_cb == NULL ) {
+        xx_nest_err( err_li_lp_no_list );   // tag must in found in a list
+        scan_start = scan_stop + 1;
+        return;
+    }
+
     start_doc_sect();                   // if not already done
  
     scr_process_break();
@@ -566,7 +587,6 @@ static  void    gml_li_sl( const gmltag * entry )
 
     spacing = ((sl_lay_tag *)(nest_cb->lay_tag))->spacing;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
-    ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
     g_cur_left = nest_cb->lm + nest_cb->left_indent;
@@ -581,11 +601,11 @@ static  void    gml_li_sl( const gmltag * entry )
     g_curr_font_num = ((sl_lay_tag *)(nest_cb->lay_tag))->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
+    ProcFlags.need_li_lp = false;
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
- 
-    ProcFlags.need_li_lp = false;
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -603,6 +623,12 @@ static  void    gml_li_ul( const gmltag * entry )
     scan_err = false;
     p = scan_start;
  
+    if( nest_cb == NULL ) {
+        xx_nest_err( err_li_lp_no_list );   // tag must in found in a list
+        scan_start = scan_stop + 1;
+        return;
+    }
+
     if( ((ul_lay_tag *)(nest_cb->lay_tag))->bullet_translate ) {
         bullet[0] = cop_in_trans( ((ul_lay_tag *)(nest_cb->lay_tag))->bullet,
                             ((ul_lay_tag *)(nest_cb->lay_tag))->bullet_font );
@@ -628,7 +654,6 @@ static  void    gml_li_ul( const gmltag * entry )
 
     spacing = ((ul_lay_tag *)(nest_cb->lay_tag))->spacing;
     g_curr_font_num = ((ul_lay_tag *)(nest_cb->lay_tag))->bullet_font;
-    ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
     g_cur_left = nest_cb->lm + nest_cb->left_indent;
@@ -657,11 +682,11 @@ static  void    gml_li_ul( const gmltag * entry )
     g_curr_font_num = ((ul_lay_tag *)(nest_cb->lay_tag))->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
+    ProcFlags.need_li_lp = false;
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text fullows
     }
- 
-    ProcFlags.need_li_lp = false;
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -725,6 +750,12 @@ void    gml_lp( const gmltag * entry )
     scan_err = false;
     p = scan_start;
  
+    if( nest_cb == NULL ) {
+        xx_nest_err( err_li_lp_no_list );   // tag must in found in a list
+        scan_start = scan_stop + 1;
+        return;
+    }
+
     switch( nest_cb->c_tag ) {
     case t_OL :
         list_skip_su = &((ol_lay_tag *)(nest_cb->lay_tag))->pre_skip;
@@ -767,7 +798,6 @@ void    gml_lp( const gmltag * entry )
     spacing = ((lp_lay_tag *)(nest_cb->lay_tag))->spacing;
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
-    ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
 
     if( ProcFlags.need_li_lp ) {        // :LP first tag in list
@@ -789,11 +819,11 @@ void    gml_lp( const gmltag * entry )
  
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
+    ProcFlags.need_li_lp = false;       // :LI or :LP seen
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
- 
-    ProcFlags.need_li_lp = false;       // :LI or :LP seen
+
     scan_start = scan_stop + 1;
     return;
 }

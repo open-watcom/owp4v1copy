@@ -156,6 +156,7 @@ extern  void    tag_text_err( char * tagname );
 extern  void    tag_text_req_err( char * tagname );
 extern  void    xx_err( const msg_ids errid );
 extern  void    xx_line_err( const msg_ids errid, char * pa );
+extern  void    xx_nest_err( const msg_ids errid );
 extern  void    xx_opt_err( char *cw, char *pa );
 extern  void    xx_tag_err( const msg_ids errid, char const * cw );
 extern  void    xx_warn( const msg_ids errid );

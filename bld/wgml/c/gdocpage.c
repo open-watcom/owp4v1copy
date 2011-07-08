@@ -87,7 +87,7 @@ static void do_el_list_out( doc_element * array, uint8_t count )
                     }
                     break;
                 default :
-                    xx_err( err_intern );
+                    g_err( err_intern, __FILE__, __LINE__ );
                 }
             }
             save = cur_el->next;
@@ -151,7 +151,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         default :
-            xx_err( err_intern );
+            g_err( err_intern, __FILE__, __LINE__ );
         }
     }
 
@@ -295,14 +295,11 @@ static void do_page_out( void )
         g_cur_h_start = hs;
         g_cur_left = hl;
     }
+// end of former document_top_banner()
 
-// this was finish_page()
     if( t_page.bottom_banner != NULL ) {
         out_ban_bot();
     }
-    ProcFlags.top_ban_proc = false;
-    ProcFlags.test_widow = false;
-// end of (surviving) code from finish_page()
 
     /* Output the page section by section */
 
@@ -400,7 +397,7 @@ static bool split_element( doc_element * a_element, uint32_t req_depth )
         
         break;
     default :
-        xx_err( err_intern ) ;
+        g_err( err_intern, __FILE__, __LINE__ );
     }
     return( splittable );
 }
@@ -434,7 +431,7 @@ static void update_t_page( void )
             // add code for FIG when needed
             case el_text :  // all elements should be FIGs
             default :
-                xx_err( err_intern );
+                g_err( err_intern, __FILE__, __LINE__ );
             }
         }
     }
@@ -450,7 +447,7 @@ static void update_t_page( void )
             // add code for FIG when needed
             case el_text :  // all elements should be FIGs
             default :
-                xx_err( err_intern );
+                g_err( err_intern, __FILE__, __LINE__ );
             }
         } 
     }
@@ -476,7 +473,7 @@ static void update_t_page( void )
         // add code for FIG & entrained footnotes when needed
         case el_text :  // all elements should be FIGs or footnotes
         default :
-            xx_err( err_intern );
+            g_err( err_intern, __FILE__, __LINE__ );
         }
     }
 
@@ -489,7 +486,7 @@ static void update_t_page( void )
         // add code for footnotes when needed
         case el_text :  // all elements should be footnotes
         default :
-            xx_err( err_intern );
+            g_err( err_intern, __FILE__, __LINE__ );
         }
     }
 
@@ -637,7 +634,7 @@ void clear_doc_element( doc_element * element )
             }
             break;
         default :
-            xx_err( err_intern );
+            g_err( err_intern, __FILE__, __LINE__ );
         }
     }
 
@@ -981,7 +978,7 @@ void insert_page_width( doc_element * a_element )
                     t_page.main_top += depth;
                 }
             } else {        // discard second section heading
-                xx_err( err_intern );
+                g_err( err_intern, __FILE__, __LINE__ );
             }        
         } else {
             xx_err( err_heading_too_deep );
@@ -989,7 +986,7 @@ void insert_page_width( doc_element * a_element )
         }
         break;
     default:
-        xx_err( err_intern );
+        g_err( err_intern, __FILE__, __LINE__ );
     }
 
     return;

@@ -6,8 +6,8 @@
  *
  *      japanese is provided as the templates use it
  */
-pick( ERR_INTERN,               "Internal Error",
-                                "Internal Error" )
+pick( ERR_INTERN,               "Internal Error: File %s, Line %i",
+                                "Internal Error: File %s, Line %i" )
 
 pick( ERR_STR_NOT_FOUND,        "Resourcestring not found",
                                 "Resourcestring not found" )
@@ -450,6 +450,9 @@ pick( ERR_TAG_EXPECTED,         "Expecting %s tag",
 pick( ERR_TAG_NOT_EXPECTED,     "Not expecting %s tag",
                                 "Not expecting %s tag" )
 
+pick( ERR_TAG_NOT_TEXT,         "Expecting a GML tag, found text",
+                                "Expecting a GML tag, found text" )
+
 pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
                                 "Missing preceding %s tag" )
 
@@ -542,4 +545,12 @@ pick( ERR_2ND_DATE,             "Date already defined",
 
 pick( ERR_2ND_DOCNUM,           "Document number already defined",
                                 "Document number already defined")
+
+/* list error message */
+
+pick( ERR_NO_LI_LP,             "LI or LP tag must follow the start of a list",
+                                "LI or LP tag must follow the start of a list")
+
+pick( ERR_LI_LP_NO_LIST,        "LI or LP tag only allowed in a list",
+                                "LI or LP tag only allowed in a list" )
 

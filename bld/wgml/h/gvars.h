@@ -164,8 +164,6 @@ global struct ProcFlags {
     unsigned        fb_document_done : 1;// true if fb_document() called
     unsigned        fb_position_done : 1;// 1. pos on new page done
     unsigned        page_started    : 1;// we have something for the curr page
-    unsigned        top_ban_proc    : 1;// top_banner processed for page
-    unsigned        para_started    : 1;// paragraph not empty
     unsigned        line_started    : 1;// we have something for current line
     unsigned        just_override   : 1;// current line is to be justified
 
@@ -199,7 +197,6 @@ global struct ProcFlags {
     unsigned        tag_end_found   : 1;// '.' ending tag found
 
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
-    unsigned        test_widow      : 1;// for preventing widow lines
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
 
@@ -285,9 +282,6 @@ global  uint32_t    g_ll;               // line length
 global  uint32_t    g_cd;               // no of columns
 global  uint32_t    g_gutter;           // space between columns
 global  uint32_t    g_offset[9];        // column start offset
-
-global  uint32_t    g_line_skip;        // skip for current line
-global  uint32_t    g_line_top;         // top of current line
 
 global  uint32_t    blank_lines;        // blank lines (line count)
 global  uint32_t    g_blank_lines;      // blank lines (in vertical base units)

@@ -173,7 +173,6 @@ void    scr_in( void )
     g_page_right = g_page_right_org + g_indentr;
     ProcFlags.keep_left_margin = false;
     set_h_start();                      // apply new values
-    ProcFlags.test_widow = true;        // activate widow test
     scan_restart = p;
     return;
 }

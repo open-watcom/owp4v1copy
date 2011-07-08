@@ -492,7 +492,6 @@ void    start_doc_sect( void )
     if( header ) {
         doc_header( p_sk, top_sk, h_string, font, h_spc, page_e == ej_no );
     }
-    ProcFlags.para_started = false;
     ProcFlags.doc_sect = ds;
 }
 
@@ -704,7 +703,6 @@ extern  void    gml_egdoc( const gmltag * entry )
     if( !ProcFlags.start_section ) {
         start_doc_sect();               // if not already done
     }
-    ProcFlags.test_widow = false;
     gml_doc_xxx( doc_sect_egdoc );
 }
 

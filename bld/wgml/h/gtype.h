@@ -377,14 +377,20 @@ typedef enum {
     tag_out_txt     = 128,              // tag produces output text
 } gmlflags;
 
-/**************************************************************************/
-/* When assigned to rs_loc, limits tags allowed to those with the         */
-/* corresponding flag set in gmltag.taglocs.                              */
-/**************************************************************************/
+/************************************************************************/
+/*  Restricted location tags:                                           */
+/*      When assigned to rs_loc, limits tags allowed to those with the  */
+/*      corresponding flag set in gmltag.taglocs.                       */
+/*  Special use tags:                                                   */
+/*      li_lp_tag is used with ProcFlags.need_li_lp.                    */
+/************************************************************************/
 
 typedef enum {
-    titlep_tag   = 1,                   // tag allowed in TITLEP section
-    address_tag  = 2,                   // tag allowed in ADDRESS section
+    /*  restricted location tags */
+    titlep_tag  = 1,                    // tag allowed in TITLEP section
+    address_tag = 2,                    // tag allowed in ADDRESS section
+    /*  special use tags */
+    li_lp_tag   = 4,                    // marks LI and LP tags
 } locflags;
 
 typedef struct gmltag {

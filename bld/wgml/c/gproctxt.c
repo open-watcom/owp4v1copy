@@ -1049,7 +1049,6 @@ void    process_text( char * text, uint8_t font_num )
         }
 
         g_cur_h_start = t_line->last->x_address + t_line->last->width;
-        ProcFlags.para_started = true;
 
         // exit at end of text unless at end of input line
         if( !(input_cbs->fmflags & II_eol) && !*p ) {
@@ -1080,8 +1079,10 @@ void    process_text( char * text, uint8_t font_num )
         blank_lines++;
     }
 
-    if( t_line->first != NULL ) {        // something in the line
-        ProcFlags.para_started = true;
+    if( t_line->first != NULL ) {           // something in the line
+        if( ProcFlags.need_li_lp ) {        // no text allowed!
+            xx_err( err_tag_not_text );
+        }
 
         if( !ProcFlags.concat ) {
             if( input_cbs->fmflags & II_eol ) {

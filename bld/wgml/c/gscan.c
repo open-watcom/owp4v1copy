@@ -253,8 +253,12 @@ static void scan_gml( void )
                         }
                         *p = csave;
 
-                        if( rs_loc == 0 ) {
+                        if( (rs_loc == 0) && !ProcFlags.need_li_lp ) {
                             // no restrictions: do them all
+                            gml_tags[k].gmlproc( &gml_tags[k] );
+                        } else if( ProcFlags.need_li_lp &&
+                                ((gml_tags[k].taglocs & li_lp_tag) != 0) ) {
+                            // tag is LP or LI
                             gml_tags[k].gmlproc( &gml_tags[k] );
                         } else if( (gml_tags[k].taglocs & rs_loc) != 0 ) {
                             // tag allowed in this restricted location
@@ -264,7 +268,11 @@ static void scan_gml( void )
                             gml_tags[k].gmlproc( &gml_tags[k] );
                         } else {
                             start_doc_sect();   // if not already done
-                            g_err_tag_rsloc( rs_loc, tok_start );
+                            if( ProcFlags.need_li_lp ) {
+                                xx_nest_err( err_no_li_lp );
+                            } else {            // rs_loc > 0
+                                g_err_tag_rsloc( rs_loc, tok_start );
+                            }
                         }
                         processed = true;
                         if( *scan_start == '.' ) {
@@ -486,7 +494,6 @@ static void     scan_script( void )
                     } else {
                         scan_start = p; // script controlword found, process
                         if( scr_tags[k].cwflags & cw_break ) {
-                            ProcFlags.test_widow = false;
                             scr_process_break();// output incomplete line, if any
                         }
                         scr_tags[k].tagproc();

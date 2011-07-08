@@ -264,6 +264,15 @@ void    xx_tag_err( const msg_ids errid, char const *cw )
     return;
 }
 
+void    xx_nest_err( const msg_ids errid )
+{
+    err_count++;
+    g_err( errid );
+    file_mac_info_nest();
+    return;
+}
+
+
 void    xx_opt_err( char *cw, char *pa )
 {
     err_count++;

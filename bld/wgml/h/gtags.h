@@ -124,9 +124,9 @@
   pickg( INDEX,    5,      gml_index,      tag_out_txt, 0 )
   pickg( IREF,     4,      gml_dummy,      tag_out_txt, 0 )
   pickg( LAYOUT,   6,      gml_layout,     0,   0 )
-  pickg( LI,       2,      gml_li,         tag_out_txt, 0 )
+  pickg( LI,       2,      gml_li,         tag_out_txt, li_lp_tag )
   pickg( LIREF,    5,      gml_dummy,      tag_out_txt, 0 )
-  pickg( LP,       2,      gml_lp,         tag_out_txt, 0 )
+  pickg( LP,       2,      gml_lp,         tag_out_txt, li_lp_tag )
 
   pickg( LQ,       2,      gml_dummy,      tag_out_txt, 0 )
   pickg( ELQ,      3,      gml_dummy,      tag_out_txt, 0 )

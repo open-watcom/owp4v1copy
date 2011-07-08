@@ -687,7 +687,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     uint32_t            curr_x;
     int                 k;
 
-    ProcFlags.top_ban_proc = top;       // set for top banner
     reg_text[0] = NULL;
     reg_text[1] = NULL;
     reg_text[2] = NULL;

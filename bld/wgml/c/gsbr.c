@@ -132,7 +132,6 @@ void  scr_process_break( void )
         t_element = NULL;
         t_el_last = NULL;
 
-        ProcFlags.para_started = false;
     } else if( g_blank_lines > 0 ) {              // blank lines at end of section?
         t_element = alloc_doc_el( el_text );
         t_element->depth = wgml_fonts[g_curr_font_num].line_height + g_spacing;
@@ -152,7 +151,6 @@ void  scr_process_break( void )
         t_element = NULL;
         t_el_last = NULL;
 
-        ProcFlags.para_started = false;
     }
     ProcFlags.empty_doc_el = false;
 

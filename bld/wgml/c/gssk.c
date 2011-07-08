@@ -177,13 +177,7 @@ void    scr_sk( void )
         }
         ProcFlags.overprint = false;    // disable overprint
     }
-    /***********************************************************************/
-    /*  if testing for widows is active,  cancel test and output           */
-    /*  buffered lines on this page                                        */
-    /***********************************************************************/
-    if( ProcFlags.test_widow ) {
-        ProcFlags.test_widow = false;   // terminate widow test
-    }
+
     scr_process_break();
     g_skip = skip;
 

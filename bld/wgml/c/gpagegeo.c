@@ -74,7 +74,6 @@ void    init_page_geometry( void )
             g_max_line_height = wgml_fonts[k].line_height;
     }
     g_curr_font_num = layout_work.defaults.font;
-//  g_line_skip =  spacing * wgml_fonts[g_curr_font_num].line_height;// ??? TBD
 
     lm = conv_hor_unit( &layout_work.page.left_margin )
          - bin_device->x_offset;        // left margin &syspagelm

@@ -60,11 +60,9 @@ void    proc_p_pc( p_lay_tag * p_pc )
     set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), spacing,
                     g_curr_font_num );
 
-    ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
     process_text( p, g_curr_font_num );
-    ProcFlags.para_started = true;
 
     scan_start = scan_stop + 1;
     return;
@@ -107,7 +105,6 @@ extern  void    gml_note( const gmltag * entry )
     set_skip_vars( &layout_work.note.pre_skip, NULL, &layout_work.note.post_skip,
                     spacing, g_curr_font_num );
 
-    ProcFlags.test_widow = true;        // prevent possible widows
     post_space = 0;
  
     if( nest_cb->c_tag == t_NONE ) {
