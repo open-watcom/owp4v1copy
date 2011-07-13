@@ -34,26 +34,6 @@
  
  
 /***************************************************************************/
-/*  copy_su is a utility function used by the gml_eXX functions            */
-/***************************************************************************/
-static su * copy_su( su * in_su )
-{
-    su  *   out_su;
- 
-    out_su = (su *) mem_alloc( sizeof( su ) );
-    strcpy_s( out_su->su_txt, MAX_SU_CHAR, in_su->su_txt );
-    out_su->su_whole = in_su->su_whole;
-    out_su->su_dec = in_su->su_dec;
-    out_su->su_inch = in_su->su_inch;
-    out_su->su_mm = in_su->su_mm;
-    out_su->su_relative = in_su->su_relative;
-    out_su->su_u = in_su->su_u;
-
-    return( out_su );
-}
- 
- 
-/***************************************************************************/
 /*  end_lp  processing as if the non existant :eLP tag was seen            */
 /***************************************************************************/
 static  void    end_lp( void )
@@ -351,7 +331,7 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
     char    *   p;
     tag_cb  *   wk;
  
-    scr_process_break();
+//    scr_process_break();
     if( nest_cb->c_tag != t ) {         // unexpected exxx tag
         if( nest_cb->c_tag == t_NONE ) {
             g_err_tag_no( str_tags[t + 1] );// no exxx expected, no tag active
@@ -424,47 +404,32 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
  
 void    gml_eol( const gmltag * entry )
 {
-    e_tags      c_tag;
-    su      *   post_skip;
-    
-    end_lp();
-    c_tag = nest_cb->c_tag;
-    post_skip = copy_su( &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip );
-    gml_exl_common( entry, t_OL );
-    if( c_tag == t_OL ) {
-        set_skip_vars( NULL, NULL, post_skip, 1, g_curr_font_num );
+    scr_process_break();
+    if( nest_cb->c_tag == t_OL ) {
+        set_skip_vars( NULL, NULL,
+            &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font_num );
     }
-    mem_free( post_skip);
+    gml_exl_common( entry, t_OL );
 }
  
 void    gml_esl( const gmltag * entry )
 {
-    e_tags      c_tag;
-    su      *   post_skip;
-    
-    end_lp();
-    c_tag = nest_cb->c_tag;
-    post_skip = copy_su( &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip );
-    gml_exl_common( entry, t_SL );
-    if( c_tag == t_SL ) {
-        set_skip_vars( NULL, NULL, post_skip, 1, g_curr_font_num );
+    scr_process_break();
+    if( nest_cb->c_tag == t_SL ) {
+        set_skip_vars( NULL, NULL,
+            &((sl_lay_tag *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font_num );
     }
-    mem_free( post_skip);
+    gml_exl_common( entry, t_SL );
 }
  
 void    gml_eul( const gmltag * entry )
 {
-    e_tags      c_tag;
-    su      *   post_skip;
-    
-    end_lp();
-    c_tag = nest_cb->c_tag;
-    post_skip = copy_su( &((ol_lay_tag *)(nest_cb->lay_tag))->post_skip );
-    gml_exl_common( entry, t_UL );
-    if( c_tag == t_UL ) {
-        set_skip_vars( NULL, NULL, post_skip, 1, g_curr_font_num );
+    scr_process_break();
+    if( nest_cb->c_tag == t_UL ) {
+        set_skip_vars( NULL, NULL,
+            &((ul_lay_tag *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font_num );
     }
-    mem_free( post_skip);
+    gml_exl_common( entry, t_UL );
 }
  
  
