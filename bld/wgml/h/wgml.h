@@ -113,6 +113,7 @@ extern  void    init_def_lay( void );
 
 /* gdocpage.c                           */
 extern  void            clear_doc_element( doc_element * element );
+extern  void            do_page_out( void );
 extern  void            full_page_out( void );
 extern  void            insert_col_bot( doc_element * a_element );
 extern  void            insert_col_fn( doc_element * a_element );

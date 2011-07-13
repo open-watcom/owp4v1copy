@@ -749,7 +749,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         curr_x += curr_t->width;
 
     }
-    if( GlobalFlags.lastpass && ban_line.first != NULL) {
+    if( ban_line.first != NULL) {
         if( input_cbs->fmflags & II_research ) {
             test_out_t_line( &ban_line );
         }

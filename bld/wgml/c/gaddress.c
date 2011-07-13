@@ -70,6 +70,9 @@ extern  void    gml_address( const gmltag * entry )
 
     set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, spacing, 
                        g_curr_font_num );
+
+    ProcFlags.group_elements = true;
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -95,6 +98,30 @@ extern  void    gml_eaddress( const gmltag * entry )
     nest_cb = nest_cb->prev;
     add_tag_cb_to_pool( wk );
 
+    /*  place the accumulated ALINES on the proper page */
+
+    ProcFlags.group_elements = false;
+    t_doc_el_group.depth += (t_doc_el_group.first->blank_lines +
+                            t_doc_el_group.first->subs_skip);
+
+    if( (t_doc_el_group.depth + t_page.cur_depth) > t_page.max_depth ) {
+        /*  the block won't fit on this page */
+
+        if( t_doc_el_group.depth  <= t_page.max_depth ) {
+            /*  the block will on the next page */
+
+            do_page_out();
+            reset_t_page();
+        }
+    }
+
+    while( t_doc_el_group.first != NULL ) {
+        insert_col_main( t_doc_el_group.first );
+        t_doc_el_group.first = t_doc_el_group.first->next;
+    }
+
+    t_doc_el_group.depth    = 0;
+    t_doc_el_group.last     = NULL;
     scan_start = scan_stop + 1;
     return;
 }

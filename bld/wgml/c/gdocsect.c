@@ -169,8 +169,8 @@ static  void    finish_page_section( doc_section ds, bool eject )
     if( eject ) {
         g_skip = 0;                     // ignore remaining skip value
     }
-    last_page_out();
     new_section( ds );
+    do_page_out();
 }
 
 
@@ -212,26 +212,25 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
         hd_line->line_height = wgml_fonts[font].line_height;
     }
 
-    if( GlobalFlags.lastpass ) {
-        if( input_cbs->fmflags & II_research ) {
-            test_out_t_line( hd_line );
-        }
-        cur_el = alloc_doc_el( el_text );
-        cur_el->blank_lines = g_blank_lines;
-        cur_el->depth = hd_line->line_height;
-        cur_el->subs_skip = g_subs_skip;
-        cur_el->top_skip = g_top_skip;
-        cur_el->element.text.overprint = ProcFlags.overprint;
-        ProcFlags.overprint = false;
-        cur_el->element.text.spacing = g_spacing;
-        cur_el->element.text.first = hd_line;
-        hd_line = NULL;
+    if( input_cbs->fmflags & II_research ) {
+        test_out_t_line( hd_line );
+    }
+    cur_el = alloc_doc_el( el_text );
+    cur_el->blank_lines = g_blank_lines;
+    g_blank_lines = 0;
+    cur_el->depth = hd_line->line_height;
+    cur_el->subs_skip = g_subs_skip;
+    cur_el->top_skip = g_top_skip;
+    cur_el->element.text.overprint = ProcFlags.overprint;
+    ProcFlags.overprint = false;
+    cur_el->element.text.spacing = g_spacing;
+    cur_el->element.text.first = hd_line;
+    hd_line = NULL;
 
-        if( no_eject ) {
-            insert_col_main( cur_el );
-        } else {
-            insert_page_width( cur_el );
-        }
+    if( no_eject ) {
+        insert_col_main( cur_el );
+    } else {
+        insert_page_width( cur_el );
     }
 }
 
@@ -408,64 +407,48 @@ void    start_doc_sect( void )
         break;
     }
 
-    full_page_out();                    // ensure are on last page
-    switch( page_e ) {                  // page eject requested
-    case ej_yes :
-        if( first_section ) {           // nothing precedes the first section
-            reset_t_page();
-            document_new_position();
-        } else {
-            finish_page_section( ds, true );
-            if( page_r ) {
-                page = 0;
-            }
-            reset_t_page();
+    if( first_section ) {               // nothing precedes the first section
+        if( page_e == ej_even ) {
+            do_page_out();             // apage of first page is odd
+            page = 0;                   // restart page for first text page
         }
-        break;
-    case ej_odd :
-        if( first_section ) {           // nothing precedes the first section
-            reset_t_page();
-            document_new_position();
-            if( !(apage & 1) ) {        // first page would be even
-                last_page_out();        // emit empty page
-            }
-        } else {
-            if( !(apage & 1) ) {        // first page would be even
-                last_page_out();        // emit last page in old section
-                reset_t_page();         // give old section a new last page
-            }
-            finish_page_section( ds, true );
-            if( page_r ) {
-                page = 0;
-            }
-            reset_t_page();
-        }
-        break;
-    case ej_even :
-        if( first_section ) {           // nothing precedes the first section
-            reset_t_page();
-            document_new_position();
-            if( (apage & 1) ) {         // first page will be odd
-                last_page_out();        // emit empty page
-            }
-        } else {
-            if( (apage & 1) ) {         // first page will be odd
-                last_page_out();        // emit last page in old section
-                reset_t_page();         // give old section a new last page
-            }
-            finish_page_section( ds, true );
-            if( page_r ) {
-                page = 0;
-            }
-            reset_t_page();
-        }
-        break;
-    default:                        //  ej_no
         new_section( ds );
-        if( first_section ) {
+        reset_t_page();
+        document_new_position();        // first text page ready for content
+    } else {
+        full_page_out();                // ensure are on last page
+        switch( page_e ) {              // page eject requested
+        case ej_yes :
+            finish_page_section( ds, true );// emit last page in old section
+            if( page_r ) {
+                page = 0;
+            }
             reset_t_page();
-            document_new_position();
-        } else {
+            break;
+        case ej_odd :
+            if( !(apage & 1) ) {        // first page would be even
+                do_page_out();         // emit last page in old section
+                reset_t_page();
+            }
+            finish_page_section( ds, true );// emit last page in old section
+            if( page_r ) {
+                page = 0;
+            }
+            reset_t_page();
+            break;
+        case ej_even :
+            if( (apage & 1) ) {         // first page will be odd
+                do_page_out();         // emit last page in old section
+                reset_t_page();
+            }
+            finish_page_section( ds, true );// emit last page in old section
+            if( page_r ) {
+                page = 0;
+            }
+            reset_t_page();
+            break;
+        default:                        //  ej_no
+            new_section( ds );
 
             /****************************************************/
             /*  set page bottom banner/limit for new section    */
@@ -482,8 +465,8 @@ void    start_doc_sect( void )
             } else {
                 g_page_bottom = g_page_bottom_org;
             }
+            break;
         }
-        break;
     }
     g_cur_left = g_page_left_org;
     g_cur_h_start = g_page_left_org +

@@ -115,6 +115,9 @@ void init_global_vars( void )
 
     t_element               = NULL;
     t_el_last               = NULL;
+    t_doc_el_group.depth    = 0;
+    t_doc_el_group.first    = NULL;
+    t_doc_el_group.last     = NULL;
     t_page.main_top         = 0;
     t_page.max_depth        = 0;
     t_page.cur_depth        = 0;

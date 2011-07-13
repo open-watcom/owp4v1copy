@@ -124,15 +124,15 @@ void    scr_pa( void )
         }
         /* fallthru for NOSTART */
     case 0 :
-        last_page_out();                // default action
+        do_page_out();                 // default action
         reset_t_page();
         break;
     case 3 :
         if( !strnicmp( "ODD", pa, 3 ) ) {
-            last_page_out();
+            do_page_out();
             reset_t_page();
             if( (page & 1) ) {          // next page would be even
-                last_page_out();
+                do_page_out();
                 reset_t_page();
             }
         } else {
@@ -141,10 +141,10 @@ void    scr_pa( void )
         break;
     case 4 :
         if( !strnicmp( "EVEN", pa, 4 ) ) {
-            last_page_out();
+            do_page_out();
             reset_t_page();
             if( !(page & 1) ) {         // next page would be odd
-                last_page_out();
+                do_page_out();
                 reset_t_page();
             }
         } else {
@@ -281,7 +281,7 @@ void    scr_cp( void )
             if( gn.result > 0 ) {       // ignore values < 1
                 if( ((gn.result * wgml_fonts[g_curr_font_num].line_height) +
                                 t_page.cur_depth) > t_page.max_depth ) {
-                    last_page_out();
+                    do_page_out();
                     reset_t_page();
                 }
             }

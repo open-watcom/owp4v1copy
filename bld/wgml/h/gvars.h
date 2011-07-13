@@ -175,6 +175,7 @@ global struct ProcFlags {
     unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
     unsigned        title_text_seen : 1;// remember first :TITLE tag text 
     unsigned        empty_doc_el    : 1;// empty doc element allowed
+    unsigned        group_elements  : 1;// currently grouping doc_elements
     unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
@@ -240,6 +241,7 @@ global  uint32_t    inter_tab;          // distance between default tabs
 global  char        tab_char;           // tab character from .tb
 
 // the document page and related items
+global doc_el_group     t_doc_el_group; // for accumulating a group of doc_elements
 global doc_element  *   t_element;      // the current element for main
 global text_line    *   t_el_last;      // attachment point to t_element
 global doc_page         t_page;         // for constructing output page

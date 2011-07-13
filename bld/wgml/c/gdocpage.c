@@ -260,79 +260,6 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
 
 
 /***************************************************************************/
-/*  actually output t_page to the device                                   */
-/***************************************************************************/
-
-static void do_page_out( void )
-{
-// these were in document_top_banner()
-    uint32_t    hs;
-    uint32_t    hl;
-
-    /* Set up for the new page */
-
-    if( apage && GlobalFlags.lastpass ) {   // don't do before first page
-       fb_document_page();                  // NEWPAGE is interpreted here
-    }
-    apage++;
-    page++;
-
-    /* Get the banner text into the proper sections */
-
-// this was document_top_banner()
-    if( ProcFlags.keep_left_margin ) {
-        hs = g_cur_h_start;
-        hl = g_cur_left;
-    }
-    g_cur_h_start = g_page_left_org;
-    g_cur_left    = g_page_left_org;
-
-    if( t_page.top_banner != NULL ) {
-        out_ban_top();
-    }
-
-    if( ProcFlags.keep_left_margin ) {
-        g_cur_h_start = hs;
-        g_cur_left = hl;
-    }
-// end of former document_top_banner()
-
-    if( t_page.bottom_banner != NULL ) {
-        out_ban_bot();
-    }
-
-    /* Output the page section by section */
-
-    ProcFlags.page_started = false;
-    if( t_page.top_ban != NULL ) {
-        do_ban_column_out( t_page.top_ban, g_page_top_org );
-        add_ban_col_to_pool( t_page.top_ban );
-        t_page.top_ban = NULL;
-    }
-
-    if( t_page.page_width != NULL ) {
-        set_v_positions( t_page.page_width, g_page_top );
-        do_el_list_out( t_page.page_width, 1 );
-        t_page.page_width = NULL;
-    }
-
-    if( t_page.main != NULL ) {
-        do_doc_column_out( t_page.main, t_page.main_top );
-        add_doc_col_to_pool( t_page.main );
-        t_page.main = NULL;
-    }
-
-    if( t_page.bot_ban != NULL ) {
-        do_ban_column_out( t_page.bot_ban, g_page_bottom );
-        add_ban_col_to_pool( t_page.bot_ban );
-        t_page.bot_ban = NULL;
-    }
-
-    return;
-}
-
-
-/***************************************************************************/
 /*  split one doc_element into two                                         */
 /*  the first doc_element returned will fit in the depth specified         */
 /*  the return value will be false if the doc_element could not be split   */
@@ -643,6 +570,79 @@ void clear_doc_element( doc_element * element )
 
 
 /***************************************************************************/
+/*  actually output t_page to the device                                   */
+/***************************************************************************/
+
+void do_page_out( void )
+{
+// these were in document_top_banner()
+    uint32_t    hs;
+    uint32_t    hl;
+
+    /* Set up for the new page */
+
+    if( apage && GlobalFlags.lastpass ) {   // don't do before first page
+       fb_document_page();                  // NEWPAGE is interpreted here
+    }
+    apage++;
+    page++;
+
+    /* Get the banner text into the proper sections */
+
+// this was document_top_banner()
+    if( ProcFlags.keep_left_margin ) {
+        hs = g_cur_h_start;
+        hl = g_cur_left;
+    }
+    g_cur_h_start = g_page_left_org;
+    g_cur_left    = g_page_left_org;
+
+    if( t_page.top_banner != NULL ) {
+        out_ban_top();
+    }
+
+    if( ProcFlags.keep_left_margin ) {
+        g_cur_h_start = hs;
+        g_cur_left = hl;
+    }
+// end of former document_top_banner()
+
+    if( t_page.bottom_banner != NULL ) {
+        out_ban_bot();
+    }
+
+    /* Output the page section by section */
+
+    ProcFlags.page_started = false;
+    if( t_page.top_ban != NULL ) {
+        do_ban_column_out( t_page.top_ban, g_page_top_org );
+        add_ban_col_to_pool( t_page.top_ban );
+        t_page.top_ban = NULL;
+    }
+
+    if( t_page.page_width != NULL ) {
+        set_v_positions( t_page.page_width, g_page_top );
+        do_el_list_out( t_page.page_width, 1 );
+        t_page.page_width = NULL;
+    }
+
+    if( t_page.main != NULL ) {
+        do_doc_column_out( t_page.main, t_page.main_top );
+        add_doc_col_to_pool( t_page.main );
+        t_page.main = NULL;
+    }
+
+    if( t_page.bot_ban != NULL ) {
+        do_ban_column_out( t_page.bot_ban, g_page_bottom );
+        add_ban_col_to_pool( t_page.bot_ban );
+        t_page.bot_ban = NULL;
+    }
+
+    return;
+}
+
+
+/***************************************************************************/
 /*  output all full pages                                                  */
 /*  t_page will not be empty but n_page will be empty on return            */
 /***************************************************************************/
@@ -801,6 +801,24 @@ void insert_col_main( doc_element * a_element )
     bool        splittable;
     uint32_t    cur_skip;
     uint32_t    depth;
+
+    /****************************************************************/
+    /*  alternate procesing: accumulate elements for later          */
+    /*  submission                                                  */
+    /*  used currenlty by ADDRESS/eADDRESS                          */
+    /****************************************************************/
+
+    if( ProcFlags.group_elements ) {
+        if( t_doc_el_group.first == NULL ) {
+            t_doc_el_group.first = a_element;
+            t_doc_el_group.last = t_doc_el_group.first;
+        } else {
+            t_doc_el_group.last->next = a_element;
+            t_doc_el_group.last = t_doc_el_group.last->next;
+        }
+        t_doc_el_group.depth += a_element->depth;
+        return;
+    }
 
     /****************************************************************/
     /*  test version until things get a bit more clear              */

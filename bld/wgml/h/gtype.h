@@ -925,6 +925,12 @@ typedef struct doc_element {
             element_type    type;   // placement avoids padding warning
 } doc_element;
 
+typedef struct doc_el_group {
+    uint32_t        depth;
+    doc_element *   first;
+    doc_element *   last;
+} doc_el_group;
+
 typedef struct ban_column {
     struct  ban_column  *   next;
     doc_element         *   first;
