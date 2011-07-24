@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linker symbol table structures.
 *
 ****************************************************************************/
 
-
-//  Linker symbol table structures
 
 typedef enum {
 
@@ -47,6 +44,7 @@ typedef enum {
     ST_FIND             = 0x08,         // just looking for the symbol
     ST_REFERENCE        = 0x10,         // mark symbol as referenced
     ST_DEFINE           = 0x20,         // mark symbol as defined
+    ST_NONUNIQUE        = 0x40,         // duplicate names allowed
     ST_DEFINE_SYM       = 0x26          // frequently used combo
 } sym_flags;
 

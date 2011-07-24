@@ -987,7 +987,12 @@ static symbol *DoSymOp( sym_flags op, char *symname, unsigned length )
     }
     if( op & ST_STATIC ) {
         hash = StaticHashFn( symname, searchlen );
-        sym = StaticSearchSym( symname, hash, searchlen );
+        /* If symbol isn't unique, don't look for duplicates. */
+        if( (op & (ST_CREATE | ST_STATIC | ST_NONUNIQUE)) ==
+                  (ST_CREATE | ST_STATIC | ST_NONUNIQUE) )
+            sym = NULL;
+        else
+            sym = StaticSearchSym( symname, hash, searchlen );
     } else {
         hash = GlobalHashFn( symname, searchlen );
         sym = GlobalSearchSym( symname, hash, searchlen );

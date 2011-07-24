@@ -615,7 +615,7 @@ static orl_return ProcSymbol( orl_symbol_handle symhdl )
         binding = ORLSymbolGetBinding( symhdl );
         symop = ST_CREATE;
         if( binding == ORL_SYM_BINDING_LOCAL ) {
-            symop |= ST_STATIC;
+            symop |= ST_STATIC | ST_NONUNIQUE;
         }
         if( type & ORL_SYM_TYPE_UNDEFINED && binding != ORL_SYM_BINDING_ALIAS ){
             symop |= ST_REFERENCE;
