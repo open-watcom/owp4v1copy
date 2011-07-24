@@ -258,10 +258,16 @@ orl_reloc_type CoffConvertRelocType( coff_file_handle coff_file_hnd, coff_reloc_
         }
     } else if( coff_file_hnd->machine_type == ORL_MACHINE_TYPE_AMD64 ) {
         switch( coff_type ) {
+            case IMAGE_REL_AMD64_ABSOLUTE:
+                return( ORL_RELOC_TYPE_ABSOLUTE );
             case IMAGE_REL_AMD64_REL32:              // 32-Bit PC-relative offset
                 return( ORL_RELOC_TYPE_REL_32 );
             case IMAGE_REL_AMD64_ADDR32:
                 return( ORL_RELOC_TYPE_WORD_32 );
+            case IMAGE_REL_AMD64_ADDR32NB:
+                return( ORL_RELOC_TYPE_WORD_32_NB );
+            case IMAGE_REL_AMD64_ADDR64:
+                return( ORL_RELOC_TYPE_WORD_64 );
             case IMAGE_REL_AMD64_REL32_1:
                 return( ORL_RELOC_TYPE_REL_32_ADJ1 );
             case IMAGE_REL_AMD64_REL32_2:
@@ -272,6 +278,8 @@ orl_reloc_type CoffConvertRelocType( coff_file_handle coff_file_hnd, coff_reloc_
                 return( ORL_RELOC_TYPE_REL_32_ADJ4 );
             case IMAGE_REL_AMD64_REL32_5:
                 return( ORL_RELOC_TYPE_REL_32_ADJ5 );
+            case IMAGE_REL_AMD64_SECREL:
+                return( ORL_RELOC_TYPE_SEC_REL );
             default:
                 return( ORL_RELOC_TYPE_NONE );
         }
