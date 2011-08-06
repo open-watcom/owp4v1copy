@@ -20,12 +20,15 @@ cdsay .
 #========================
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> <DEVDIR>/sdk/wr/wini86/wr.dll        <RELROOT>/binw/wr.dll
+    <CPCMD> <DEVDIR>/sdk/wr/wini86/wr.sym        <RELROOT>/binw/wr.sym
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/sdk/wr/nt386/wr.dll         <RELROOT>/binnt/wr.dll
+    <CPCMD> <DEVDIR>/sdk/wr/nt386/wr.sym         <RELROOT>/binnt/wr.sym
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/sdk/wr/ntaxp/wr.dll         <RELROOT>/axpnt/wr.dll
+    <CPCMD> <DEVDIR>/sdk/wr/ntaxp/wr.sym         <RELROOT>/axpnt/wr.sym
 
 [ BLOCK <1> clean ]
 #==================
