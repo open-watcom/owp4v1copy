@@ -33,7 +33,7 @@ extra_c_flags_win += -d_WPI_TEST_
 .h : $(wpi_dir)/h
 
 #-------- OBJECTS
-objs_win = wpi_win.obj
+objs_win = wpi_win.obj wpi_wfnf.obj
 objs_os2 = wpi_os2.obj wpi_arc.obj wpi_fntf.obj wpi_line.obj wpi_dbcs.obj &
            wpi_ffnt.obj wpi_libs.obj wpi_inif.obj wpi_file.obj
 objs_nt = wpi_win.obj

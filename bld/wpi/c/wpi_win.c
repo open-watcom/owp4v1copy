@@ -452,20 +452,3 @@ int _wpi_dlg_command( HWND dlg_hld, WPI_MSG *msg, WPI_PARAM1 *parm1,
 
     return( FALSE );
 } /* _wpi_dlg_command */
-
-int _wpi_getmetricpointsize( WPI_PRES pres, WPI_TEXTMETRIC *tm,
-                                            int *pix_size, int *match_num )
-/*************************************************************************/
-{
-    int                 logpixelsy;
-    int                 pointsize;
-
-    *pix_size = _wpi_metricheight( *tm ) - _wpi_metricileading( *tm );
-    *match_num = 0;
-
-    logpixelsy = GetDeviceCaps( pres, LOGPIXELSY );
-    pointsize = (int)((float)( (float)( (*pix_size) * 72.0 ) /
-                                                (float)logpixelsy ) + .5 );
-    return( pointsize );
-} /* _wpi_getmetricpointsize */
-
