@@ -824,6 +824,7 @@ void FiniOS2LoadFile( void )
     group_entry         *group;
     unsigned_32         stub_len;
     unsigned_32         dgroup_size;
+    unsigned_32         dgroup_total;
     unsigned long       size;
     entry_export        *exp;
     unsigned long       imageguess;     // estimated length of the image
@@ -950,9 +951,6 @@ void FiniOS2LoadFile( void )
             exe_head.info |= OS2_INIT_INSTANCE;
         }
     }
-    if( LinkState & LINK_ERROR ) {
-        exe_head.info |= OS2_LINK_ERROR;
-    }
     exe_head.adsegnum = adseg;
     exe_head.heap = FmtData.u.os2.heapsize;
 /*
@@ -1014,6 +1012,26 @@ void FiniOS2LoadFile( void )
         }
     } else {
         exe_head.expver = 0;
+    }
+    /* Check default data segment size. On OS/2, data segment + heap + stack
+     * may be up to 64K. On Windows, the max is about 0xfffe. Windows may also
+     * tweak the default heap/stack size so this check isn't bulletproof.
+     */
+    dgroup_total = dgroup_size + exe_head.stack + exe_head.heap;
+    if( FmtData.type & MK_WINDOWS ) {
+        if( dgroup_total > (MAX_DGROUP_SIZE - 3) ) {
+            LnkMsg( FTL+MSG_DEFDATA_TOO_BIG, "l",
+                    dgroup_total - MAX_DGROUP_SIZE + 3 );
+        }
+    } else {
+        if( dgroup_total > MAX_DGROUP_SIZE ) {
+            LnkMsg( FTL+MSG_DEFDATA_TOO_BIG, "l",
+                    dgroup_total - MAX_DGROUP_SIZE );
+        }
+    }
+
+    if( LinkState & LINK_ERROR ) {
+        exe_head.info |= OS2_LINK_ERROR;
     }
     SeekLoad( stub_len );
     WriteLoad( &exe_head, sizeof( os2_exe_header ) );

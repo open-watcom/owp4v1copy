@@ -339,3 +339,5 @@ pick(    MSG_IMPORT_LOCAL,          "locally defined symbol %s imported" ,
                      "locally defined symbol %s imported" )
 pick(    MSG_STACK_SMALL,           "stack size is less than %d bytes" ,
                      "stack size is less than %d bytes" )
+pick(    MSG_DEFDATA_TOO_BIG,       "default data segment exceeds maximum size by %l bytes" ,
+                    "default data segment exceeds maximum size by %l bytes" )

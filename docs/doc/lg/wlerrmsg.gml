@@ -1642,6 +1642,14 @@ The stack size for an executable specified through OPTION STACK is very small.
 There is a high probability that the program will not work correctly. Consider
 specifying a greater stack size.
 .*
+.errnote 3173 default data segment exceeds maximum size by %l bytes
+.np
+The default data segment size in a NE format executable (16-bit OS/2 or
+Windows) exceeds the maximum allowed size. The default data segment includes
+the data segment plus default stack size plus default heap size. The total
+size must be 64K or less for OS/2 executables and 65,533 bytes or less for
+Windows executables.
+.*
 .if &e'&dohelp eq 0 .do begin
 .endnote
 .do end
