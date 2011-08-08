@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Watcom wdebug VxD for Win16 interface.
 *
 ****************************************************************************/
 
@@ -168,12 +167,14 @@ extern short RaiseInterruptInVM( _dword, _word );       /* 34 */
         parm [cx] [es bx];
 
 #pragma aux GetDebugRegister = \
+        ".386" \
         "mov ax,0fa04h" \
         "int 2fh" \
         "mov  dword ptr es:[di], ebx" \
         parm [cx] [es di] value[ax] modify[bx];
 
 #pragma aux SetDebugRegister = \
+        ".386" \
         "mov ax,0fa05h" \
         "mov  ebx, dword ptr es:[di]" \
         "int 2fh" \
@@ -186,6 +187,7 @@ extern short RaiseInterruptInVM( _dword, _word );       /* 34 */
         parm [es bx] [cx] [dx] value[ax];
 
 #pragma aux QuitSampler = \
+        ".386" \
         "mov ax,0fa07h" \
         "int 2fh" \
         "mov dword ptr es:[bx],eax" \
@@ -197,12 +199,14 @@ extern short RaiseInterruptInVM( _dword, _word );       /* 34 */
         value [ax];
 
 #pragma aux StopSampler =  \
+        ".386" \
         "mov ax,0fa09h" \
         "int 2fh" \
         "mov dword ptr es:[bx],eax" \
         parm [es bx] modify[ax];
 
 #pragma aux GetCurrTick =  \
+        ".386" \
         "mov ax,0fa0ah" \
         "int 2fh" \
         "mov dword ptr es:[bx],eax" \
@@ -224,6 +228,7 @@ extern short RaiseInterruptInVM( _dword, _word );       /* 34 */
         value [ax];
 
 #pragma aux GetSample0Tick =  \
+        ".386" \
         "mov ax,0fa0dh" \
         "int 2fh" \
         "mov dword ptr es:[bx],eax" \
@@ -280,6 +285,7 @@ extern short RaiseInterruptInVM( _dword, _word );       /* 34 */
         parm [cx bx] value[ax];
 
 #pragma aux MyID =  \
+        ".386" \
         "mov ax,0fa19h" \
         "int 2fh" \
         "mov dword ptr es:[bx],eax" \

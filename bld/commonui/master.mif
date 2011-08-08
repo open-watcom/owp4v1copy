@@ -66,11 +66,10 @@ objs += dbg386.obj   &
 !endif
 
 extra_c_flags = -fh
-extra_c_flags_i86 = -3
 extra_c_flags_nt = -DNOUSE3D
 extra_c_flags_os2 = -D__OS2_PM__
 extra_c_flags_win_i86 = -zu -zw -zc
-extra_c_flags_386 = -wcd310
+extra_c_flags_win_386 = -wcd310
 
 inc_dirs = -I"../h" -I"$(wpi_dir)/h" $(dis_includes)
 
