@@ -206,6 +206,12 @@ void ExitEditor( int rc )
     FiniCFName();
     miscGlobalsFini();
     ChangeDirectory( HomeDirectory );
+#if defined( __NT__ ) && !defined( __WIN__ )
+    {
+        extern HANDLE OutputHandle;
+        SetConsoleActiveScreenBuffer( GetStdHandle( STD_OUTPUT_HANDLE ) );
+    }
+#endif
     MemFree( HomeDirectory );
     MemFree( CurrentDirectory );
 #if defined( VI_RCS )
