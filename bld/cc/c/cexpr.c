@@ -1897,26 +1897,7 @@ local TREEPTR GenNextParm( TREEPTR tree, TYPEPTR **plistptr )
         if( parm_typ != NULL ) {
             parm_typ = SkipTypeFluff( parm_typ );
             if( parm_typ != typ ) {
-                if( parm_typ->decl_type == TYPE_POINTER  && /* 08-jun-89 */
-                    typ->decl_type != TYPE_POINTER ) {
-                    if( tree->op.opr == OPR_PUSHINT ) {
-                        if( tree->op.long_value == 0 ) { /* 22-sep-89 */
-                            typ = parm_typ;
-                            tree = FixupAss( tree, typ );
-                        }
-                    }
-                } else if( typ->decl_type != TYPE_POINTER ||/* 26-may-89 */
-                    parm_typ->decl_type == TYPE_POINTER ) { /* 04-jun-89 */
-                    typ = parm_typ;
-                    switch( typ->decl_type ) {      /* 25-may-91 */
-                    case TYPE_STRUCT:
-                    case TYPE_UNION:
-                        break;
-                    default:
-                        tree = FixupAss( tree, typ );
-                        break;
-                    }
-                }
+                tree = FixupAss( tree, parm_typ );
             }
             ++*plistptr;
         }

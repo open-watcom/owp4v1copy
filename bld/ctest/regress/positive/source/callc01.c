@@ -41,8 +41,27 @@ __declspec(__stdcall) void ** test2( char p1, short p2, int p3, long p4, long lo
     return 0;
 }
 
+/* Ensure that a call to a prototyped function correctly converts argument
+ * types. Watcom C at least since version 9.0 failed to properly convert
+ * certain declared argument / actual parameter type combinations, resulting
+ * in passing too much or not enough data to the callee. See Bug 1082.
+ */
+
+int fn1( void *pv, int i )
+{
+    return( i == 0x55AA );
+}
+
+int fn2( long long ll, int i )
+{
+    return( i == 0x55AA );
+}
+
 int main( void )
 {
+    unsigned long   ul = 0xCCCCCCCC;
+    void            *pv = NULL;
+
     x1 = test1;
     x1( 1, 2, 3, 4, 5 );
     if( res[0] != 1 ) fail( __LINE__ );
@@ -64,6 +83,8 @@ int main( void )
     if( res[2] != 3 ) fail( __LINE__ );
     if( res[3] != 4 ) fail( __LINE__ );
     if( res[4] != 5 ) fail( __LINE__ );
+    if( !fn1( ul, 0x55AA ) ) fail( __LINE__ );
+    if( !fn2( pv, 0x55AA ) ) fail( __LINE__ );
     _PASS;
 }
 
