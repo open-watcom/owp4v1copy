@@ -662,7 +662,7 @@ local int GetByteSeq( byte_seq **code )
     for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
 #if _CPU == 8086
-            AsmLine( Buffer, use_fpu_emu );
+            AsmLine( Buffer, GET_FPU_EMU( ProcRevision ) );
             use_fpu_emu = FALSE;
 #else
             AsmLine( Buffer, FALSE );
