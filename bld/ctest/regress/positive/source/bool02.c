@@ -2,8 +2,9 @@
 #include <stdbool.h>
 
 /* 
- * Test of conversion from / to _Bool bit-fields. Note that this test is written
- * such that it will fail unless it's built with -za99.
+ * Test of conversion from / to _Bool bit-fields and other types. Note that
+ * this test is written such that it will fail unless it's built with -za99.
+ * This mostly tests bugs fixed after version 1.9.
  */
 
 #define TRUE    1
@@ -29,7 +30,10 @@ struct bit3 {
 int main( void ) 
 {
     bool                bol;
+    float               f;
     double              d;
+    void                *p;
+    long double         ld;
     signed long long    slli;
     unsigned long long  ulli;
     signed long         sli;
@@ -40,6 +44,7 @@ int main( void )
     unsigned char       uc;
     char                c;
 
+    /* Test various _Bool bit-field functionality. */
     if( func_bol( FALSE ) == TRUE ) fail( __LINE__ );
     if( func_bol( TRUE ) != TRUE ) fail( __LINE__ );
     if( func_bol( -3 ) != TRUE ) fail( __LINE__ );
@@ -73,6 +78,7 @@ int main( void )
     if( bitz.b2  != 1 ) fail( __LINE__ );
     if( bitz.b2 == bitz.ibf ) fail( __LINE__ );
 
+    /* Test conversions from _Bool to integer types. */
     slli = (  signed long long int)(bool)1u;
     ulli = (unsigned long long int)(bool)1u;
     if( slli != ulli ) fail( __LINE__ );
@@ -156,6 +162,59 @@ int main( void )
      c = bitz.b3;
     if( c == uc ) fail( __LINE__ );
     if( c == sc ) fail( __LINE__ );
+
+    /* Test floating-point to _Bool conversions comparisons. */
+    ld = 15.0;
+    f = 4.0f;
+
+    if( true == ld ) fail( __LINE__ );
+    if( true != (bool)ld ) fail( __LINE__ );
+    if( false == ld ) fail( __LINE__ );
+    if( false == (bool)ld ) fail( __LINE__ );
+
+    if( true == d ) fail( __LINE__ );
+    if( true != (bool)d ) fail( __LINE__ );
+    if( false == d ) fail( __LINE__ );
+    if( false == (bool)d ) fail( __LINE__ );
+
+    if( true == f ) fail( __LINE__ );
+    if( true != (bool)f ) fail( __LINE__ );
+    if( false == f ) fail( __LINE__ );
+    if( false == (bool)f ) fail( __LINE__ );
+
+    d = 0.0;
+    if( true == d ) fail( __LINE__ );
+    if( true == (bool)d ) fail( __LINE__ );
+    if( false != d ) fail( __LINE__ );
+    if( false != (bool)d ) fail( __LINE__ );
+
+    /* A quick check of the same for integers. */
+    si = 8;
+    if( true == si ) fail( __LINE__ );
+    if( true != (bool)si ) fail( __LINE__ );
+    if( false == si ) fail( __LINE__ );
+    if( false == (bool)si ) fail( __LINE__ );
+
+    si = 0;
+    if( true == si ) fail( __LINE__ );
+    if( true == (bool)si ) fail( __LINE__ );
+    if( false != si ) fail( __LINE__ );
+    if( false != (bool)si ) fail( __LINE__ );
+
+#if 0 // not yet
+    /* And pointers, too. */
+    p = (void *)8;
+    if( true == p ) fail( __LINE__ );
+    if( true != (bool)p ) fail( __LINE__ );
+    if( false == p ) fail( __LINE__ );
+    if( false == (bool)p ) fail( __LINE__ );
+
+    p = 0;
+    if( true == p ) fail( __LINE__ );
+    if( true == (bool)p ) fail( __LINE__ );
+    if( false != p ) fail( __LINE__ );
+    if( false != (bool)p ) fail( __LINE__ );
+#endif
 
     _PASS;
 }

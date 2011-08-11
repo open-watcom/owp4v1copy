@@ -1756,6 +1756,10 @@ convert:                                /* moved here 30-aug-89 */
                     opnd = BaseConv( newtyp, opnd );
                 }
             }
+            if( cnv == S2B ) {
+                // Conversion to _Bool needs special treatment
+                opnd = BoolConv( newtyp, opnd );
+            }
             if( cast_op  ||  cnv != P2P ) {
 /* convert: moved 30-aug-89 */
                 if( opnd->op.opr == OPR_PUSHINT ||
