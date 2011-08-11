@@ -1435,9 +1435,9 @@ TREEPTR AsgnOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         SetSymAssigned( op1 );
         typ = TypeOf( op1 );
         op2 = RValue( op2 );
+        ParmAsgnCheck( typ, op2, 0 );
         op2 = BaseConv( typ, op2 );
         op2 = BoolConv( typ, op2 );
-        ParmAsgnCheck( typ, op2, 0 );
         if( opr == T_ASSIGN_LAST ) opr = T_EQUAL;
         op1_class = ExprTypeClass( typ );
         op2_class = ExprTypeClass( op2->expr_type );
