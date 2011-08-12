@@ -201,7 +201,6 @@ int main( void )
     if( false != si ) fail( __LINE__ );
     if( false != (bool)si ) fail( __LINE__ );
 
-#if 0 // not yet
     /* And pointers, too. */
     p = (void *)8;
     if( true == p ) fail( __LINE__ );
@@ -214,7 +213,13 @@ int main( void )
     if( true == (bool)p ) fail( __LINE__ );
     if( false != p ) fail( __LINE__ );
     if( false != (bool)p ) fail( __LINE__ );
-#endif
+
+    /* Quick check of _Bool to pointer conversion. */
+    bol = false;
+    p = (bool)&f;
+    if( (int)p != 1 ) fail( __LINE__ );
+    p = bol;
+    if( p != 0 ) fail( __LINE__ );
 
     _PASS;
 }
