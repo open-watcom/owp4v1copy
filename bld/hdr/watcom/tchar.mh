@@ -76,7 +76,6 @@ typedef wchar_t TCHAR;
 #define _sntprintf      _snwprintf
 #define _vtprintf       vwprintf
 #define _vftprintf      vfwprintf
-#define _vstprintf      vswprintf
 #define _vsntprintf     _vsnwprintf
 #define _tscanf         wscanf
 #define _ftscanf        fwscanf
