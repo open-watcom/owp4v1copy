@@ -229,6 +229,81 @@ static void reverseAndBits( int width, int height, BYTE *bits )
 
 } /* reverseAndBits */
 
+void dropBitmapPadding(an_img *img, BITMAPINFOHEADER *h, WORD org_and_sz, WORD org_xor_sz)
+{
+    if( h->biWidth == 16 && h->biHeight == 16 ) {
+        int ii, jj;
+
+        /*
+         * fix the AND size that was double above and drop every other
+         * pair of bytes from the AND mask
+        */
+        // img->and_size /= 2;
+        img->and_size = org_and_sz;
+        for( ii = 0, jj = 0; ii < img->and_size; ) {
+            img->and_mask[ii] = img->and_mask[jj];
+            img->and_mask[ii + 1] = img->and_mask[jj + 1];
+            ii += 2;
+            jj += 4;
+        }
+        if( h->biBitCount == 1 ) {
+            /* do the same for the XOR size and mask */
+            img->xor_size = org_xor_sz;
+            for( ii = 0, jj = 0; ii < img->xor_size; ) {
+                img->xor_mask[ii] = img->xor_mask[jj];
+                img->xor_mask[ii + 1] = img->xor_mask[jj + 1];
+                ii += 2;
+                jj += 4;
+            }
+        }
+
+    } else if( h->biWidth == 24 || h->biWidth == 48 ) {
+        int ii, jj;
+
+        /*
+         * fix the AND size that was increased above and drop every other
+         * pair of bytes from the AND mask
+        */
+        img->and_size = org_and_sz;
+        if( h->biWidth == 48 ) {  /* don't shift bytes if its 24x24 */
+            for( ii = 0, jj = 0; ii < img->and_size; ) {
+                img->and_mask[ii] = img->and_mask[jj];
+                img->and_mask[ii + 1] = img->and_mask[jj + 1];
+                img->and_mask[ii + 2] = img->and_mask[jj + 2];
+                if( h->biWidth == 48 ) {
+                    img->and_mask[ii + 3] = img->and_mask[jj + 3];
+                    img->and_mask[ii + 4] = img->and_mask[jj + 4];
+                    img->and_mask[ii + 5] = img->and_mask[jj + 5];
+                    ii += 6;
+                    jj += 8;
+                } else {
+                    ii += 3;
+                    jj += 4;
+                }
+            }
+            if( h->biBitCount == 1 ) {
+                /* do the same for the XOR size and mask */
+                // img->xor_size = img->xor_size * 3 / 4;
+                img->xor_size = org_xor_sz;
+                for( ii = 0, jj = 0; ii < img->xor_size; ) {
+                    img->xor_mask[ii] = img->xor_mask[jj];
+                    img->xor_mask[ii + 1] = img->xor_mask[jj + 1];
+                    img->xor_mask[ii + 2] = img->xor_mask[jj + 2];
+                    if( h->biWidth == 48 ) {
+                        img->xor_mask[ii + 3] = img->xor_mask[jj + 3];
+                        img->xor_mask[ii + 4] = img->xor_mask[jj + 4];
+                        img->xor_mask[ii + 5] = img->xor_mask[jj + 5];
+                        ii += 6;
+                        jj += 8;
+                    } else {
+                        ii += 3;
+                        jj += 4;
+                    }
+                }
+            }
+        }
+    }
+}
 /*
  * ImgResourceToImg - take an image file and creates an image structure
  *                    from the i'th image in the file
@@ -292,81 +367,8 @@ an_img *ImgResourceToImg( FILE *fp, an_img_file *img_file, unsigned i )
         img->and_mask = (unsigned char *)img->xor_mask + img->xor_size;
         fseek( fp, res->DIB_offset + BITMAP_SIZE( h ), SEEK_SET );
         fread( img->xor_mask, img->xor_size + img->and_size, 1, fp );
-
-        if( img_file->type == ICON_FILE_TYPE ) {
-            if( h->biWidth == 16 && h->biHeight == 16 ) {
-                int ii, jj;
-
-                /*
-                 * fix the AND size that was double above and drop every other
-                 * pair of bytes from the AND mask
-                */
-                // img->and_size /= 2;
-                img->and_size = original_and_size;
-                for( ii = 0, jj = 0; ii < img->and_size; ) {
-                    img->and_mask[ii] = img->and_mask[jj];
-                    img->and_mask[ii + 1] = img->and_mask[jj + 1];
-                    ii += 2;
-                    jj += 4;
-                }
-                if( h->biBitCount == 1 ) {
-                    /* do the same for the XOR size and mask */
-                    img->xor_size = original_xor_size;
-                    for( ii = 0, jj = 0; ii < img->xor_size; ) {
-                        img->xor_mask[ii] = img->xor_mask[jj];
-                        img->xor_mask[ii + 1] = img->xor_mask[jj + 1];
-                        ii += 2;
-                        jj += 4;
-                    }
-                }
-
-            } else if( h->biWidth == 24 || h->biWidth == 48 ) {
-                int ii, jj;
-
-                /*
-                 * fix the AND size that was increased above and drop every other
-                 * pair of bytes from the AND mask
-                */
-                img->and_size = original_and_size;
-                if( h->biWidth == 48 ) {  /* don't shift bytes if its 24x24 */
-                    for( ii = 0, jj = 0; ii < img->and_size; ) {
-                        img->and_mask[ii] = img->and_mask[jj];
-                        img->and_mask[ii + 1] = img->and_mask[jj + 1];
-                        img->and_mask[ii + 2] = img->and_mask[jj + 2];
-                        if( h->biWidth == 48 ) {
-                            img->and_mask[ii + 3] = img->and_mask[jj + 3];
-                            img->and_mask[ii + 4] = img->and_mask[jj + 4];
-                            img->and_mask[ii + 5] = img->and_mask[jj + 5];
-                            ii += 6;
-                            jj += 8;
-                        } else {
-                            ii += 3;
-                            jj += 4;
-                        }
-                    }
-                    if( h->biBitCount == 1 ) {
-                        /* do the same for the XOR size and mask */
-                        // img->xor_size = img->xor_size * 3 / 4;
-                        img->xor_size = original_xor_size;
-                        for( ii = 0, jj = 0; ii < img->xor_size; ) {
-                            img->xor_mask[ii] = img->xor_mask[jj];
-                            img->xor_mask[ii + 1] = img->xor_mask[jj + 1];
-                            img->xor_mask[ii + 2] = img->xor_mask[jj + 2];
-                            if( h->biWidth == 48 ) {
-                                img->xor_mask[ii + 3] = img->xor_mask[jj + 3];
-                                img->xor_mask[ii + 4] = img->xor_mask[jj + 4];
-                                img->xor_mask[ii + 5] = img->xor_mask[jj + 5];
-                                ii += 6;
-                                jj += 8;
-                            } else {
-                                ii += 3;
-                                jj += 4;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        if( img_file->type == ICON_FILE_TYPE )
+            dropBitmapPadding( img, h, original_and_size, original_xor_size );
         reverseAndBits( h->biWidth, h->biHeight, img->and_mask );
         return( img );
     }
@@ -380,6 +382,7 @@ an_img *ImgResourceToImgData( BYTE *data, unsigned *pos, an_img_file *img_file, 
     BITMAPINFO          *bm;
     BITMAPINFOHEADER    *h;
     an_img              *img;
+    WORD                original_and_size, original_xor_size;
 
     if( data == NULL || pos == NULL ) {
         return( NULL );
@@ -401,10 +404,35 @@ an_img *ImgResourceToImgData( BYTE *data, unsigned *pos, an_img_file *img_file, 
         h->biSizeImage = BITS_INTO_BYTES( h->biWidth * h->biBitCount, h->biHeight );
         img->xor_size = h->biSizeImage;
         img->and_size = BITS_INTO_BYTES( h->biWidth, h->biHeight );
+        original_and_size = img->and_size;   /* save the sizes for later */
+        original_xor_size = img->xor_size;
+
+        /*
+         * See the same code in preceding function.
+         */
+        if( img_file->type == ICON_FILE_TYPE ) {
+            /* 16x16 - double AND size, and XOR size if monochrome */
+            if( h->biWidth == 16 && h->biHeight == 16 ) {
+                img->and_size *= 2;
+                if( h->biBitCount == 1 ) {
+                    img->xor_size *= 2;
+                }
+
+            /* 24x24, 48x48 - increase AND size, and XOR size if monochrome */
+            } else if( h->biWidth == 24 || h->biWidth == 48 ) {
+                img->and_size = img->and_size * 4 / 3;
+                if( h->biBitCount == 1 ) {
+                    img->xor_size = img->xor_size * 4 / 3;
+                }
+            }
+        }
+
         img->xor_mask = MemAlloc( img->xor_size + img->and_size );
         img->and_mask = (unsigned char *)img->xor_mask + img->xor_size;
         *pos = res->DIB_offset + BITMAP_SIZE( h );
         memcpy( img->xor_mask, data + *pos, img->xor_size + img->and_size );
+        if( img_file->type == ICON_FILE_TYPE )
+            dropBitmapPadding( img, h, original_and_size, original_xor_size );
         reverseAndBits( h->biWidth, h->biHeight, img->and_mask );
         return( img );
     }
