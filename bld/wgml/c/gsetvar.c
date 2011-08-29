@@ -55,7 +55,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     while( *p && *p == ' ' ) {          // skip over spaces
         p++;
     }
-    if( *p == '"' || *p == '\'' ) {
+    if( *p == d_q || *p == s_q || *p == l_q ) {
         quote = *p++;
     } else {
         quote = '\0';

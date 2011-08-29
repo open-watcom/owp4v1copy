@@ -364,8 +364,8 @@ static void add_symsym( symvar * * dict, char * name, symbol_flags f, symvar * *
     newsub->subscript = 0;
     newsub->value     = mem_alloc( 12 + 1 );// for min subscript as string
                                         // -1000000
-    newsub->value[0]  = '0';
-    newsub->value[1]  = '\0';
+    *(newsub->value)  = '0';
+    *(newsub->value + 1) = '\0';
 
     *n = new;
     new->next = *dict;

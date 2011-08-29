@@ -36,8 +36,8 @@ pick( INF_USE_OPR4,    "\tShow substituted lines:",
 pick( INF_USE_OPSUB,   "\t>V>line with variables substituted<V<",
                        "\t>V>line with variables substituted<V<" )
 
-pick( INF_USE_OPRES,   "\t)T)resulting text line after macro / tag processing(V(",
-                       "\t)T)resulting text line after macro / tag processing(V(" )
+pick( INF_USE_OPRES,   "\t)T)resulting text line after macro / tag processing(T(",
+                       "\t)T)resulting text line after macro / tag processing(T(" )
 
 pick( INF_USE_BL1,     " ", " " )
 

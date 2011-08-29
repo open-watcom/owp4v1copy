@@ -68,6 +68,7 @@ static cmd_tok  *   tokennext;
 
 static bool         is_option( void ); // used before defined
 
+
 /***************************************************************************/
 /*  free storage for tokens at specified include level                     */
 /***************************************************************************/
@@ -1716,12 +1717,17 @@ static cmd_tok  *process_master_filename( cmd_tok * tok )
 
 /***************************************************************************/
 /*  process command line and option files                                  */
+/*                                                                         */
+/*  for a cmdline like wgml "file.gml ( dev ps" where the quotes are part  */
+/*  of the cmdline, special processing, the OW doc build needs it.         */
 /***************************************************************************/
 
 int proc_options( char * string )
 {
     int         tokcount;
     cmd_tok *   tok;
+    char    *   s_after_dq;
+    char    *   p;
     bool        sol;                    // start of line switch
     char        c;
     char        linestr[MAX_L_AS_STR];
@@ -1730,7 +1736,23 @@ int proc_options( char * string )
     level = 0;                     // option file include level: 0 == cmdline
     buffers[0] = NULL;
     cmd_tokens[0] = NULL;
-    tokcount = split_tokens( string );
+
+    while( *string == ' ' ) {
+        string++;
+    }
+    s_after_dq = string;                // assume no starting quote
+    if( *string == d_q ) {              // take care of possible quotes
+        for( p = string + 1; *p; p++ )  /* empty */ ;
+        p--;
+        while( *p == ' ' ) {            // ignore trailing spaces
+            p--;
+        }
+        if( *p == d_q ) {               // ending quote
+            *p = '\0';                  // remove
+            s_after_dq = string + 1;    // start after leading quote
+        }
+    }
+    tokcount = split_tokens( s_after_dq );
     utoa( tokcount, linestr, 10 );
     g_info_lm( inf_cmdline_tok_cnt, linestr );
 

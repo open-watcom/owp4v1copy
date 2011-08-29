@@ -317,6 +317,7 @@ void    scr_cw( void )
 /***************************************************************************/
 /*  scr_dc    implement .dc define character control word                  */
 /*              only some options are implemented                    TBD   */
+/*              the STOP option is accepted, but ignored                   */
 /***************************************************************************/
 
 void    scr_dc( void )
@@ -328,7 +329,7 @@ void    scr_dc( void )
     int             k;
     char    string[2] = { 0, 0 };
     int             opt;
-    static const char   options[4] [5] = { "cw", "gml", "tb" };
+    static const char   options[5] [5] = { "cw", "gml", "tb", "stop" };
                                         // please add new options at end
     int             max_opt = sizeof( options) / sizeof( options[0] );
 
@@ -420,13 +421,13 @@ void    scr_dc( void )
             if( len == 3 ) {
                 if( strnicmp( pa, "OFF", len ) ) {
                     *p = '\0';
-                    xx_line_err( err_dc_not_off, pa );   // only OFF is valid
+                    xx_line_err( err_dc_not_off, pa );  // only OFF is valid
                     return;
                 }
-                c = 0x09;                   // OFF is 0x09
+                c = 0x09;               // OFF is 0x09
             } else {
                 *p = '\0';
-                xx_line_err( err_dc_not_off, pa );   // only OFF is valid
+                xx_line_err( err_dc_not_off, pa );  // only OFF is valid
                 return;
             }
         } else {
@@ -438,6 +439,18 @@ void    scr_dc( void )
         add_to_sysdir( "$tb", tab_char );
         add_to_sysdir( "$tab", tab_char );
         break;
+    case 4 :                            // STOP option   DUMMY processing
+
+/***************************************************************************/
+/*  this is done to allow OW help processing to continue instead of exit   */
+/*  due to premature output of text '.dc stop off' from              TBD   */
+/*        docs\doc\whelp\whelp.gml line 765                                */
+/*                                                                         */
+/***************************************************************************/
+
+        scan_restart = pa + len;
+        /* fall thru */
+
     default:                            // unknown / unimplemented option
         *p = '\0';
         dc_opt_warn( pa );

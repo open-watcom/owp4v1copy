@@ -84,6 +84,7 @@ char parse_char( char * pa, int len )
 bool    is_quote_char( char c )
 {
     if( c == s_q || c == d_q || c == slash || c == excl  || c == cent ||
+        ((c == l_q) && (c != CW_sep_char)) ||
         c == not_c || c == vbar1 || c == vbar2 ) {
         return( true );
     } else {
