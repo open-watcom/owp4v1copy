@@ -113,9 +113,9 @@ void    init_page_geometry( void )
     g_net_page_width = rm - lm;
     g_ll = g_net_page_width * CPI / bin_device->horizontal_base_units; // &sysll
 
-    top_margin = conv_vert_unit_rdd( &layout_work.page.top_margin, 1 );
+    top_margin = conv_vert_unit( &layout_work.page.top_margin, 1 );
 
-    page_depth_org = conv_vert_unit_rdd( &layout_work.page.depth, 1 );
+    page_depth_org = conv_vert_unit( &layout_work.page.depth, 1 );
     if( bin_device->y_offset > page_depth_org ) {
         xx_err( err_page_depth_too_small ); // candidate Severe Error
         g_suicide();                        // no recovery possible

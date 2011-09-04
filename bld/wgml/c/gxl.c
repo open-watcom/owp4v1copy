@@ -67,7 +67,9 @@ static void gml_xl_lp_common( const gmltag * entry, e_tags t )
     p = scan_start;
     if( *p == '.' ) p++;                    // possible tag end
     if( t != t_LP ) {                       // text only allowed for :LP
-        ProcFlags.need_li_lp = true;        // :LI or :LP  next
+        if( t != t_DL && t != t_GL ) {      // DL/GL don't require LI/LP
+            ProcFlags.need_li_lp = true;    // :LI or :LP  next
+        }
         start_doc_sect();                   // if not already done
         scr_process_break();
         if( *p ) {
@@ -127,9 +129,20 @@ void    gml_dl( const gmltag * entry )  // not tested TBD
     if( !strnicmp( "compact", p, 7 ) ) {
         compact = true;
         scan_start = p + 7;
+    } else {
+        compact = false;
     }
     gml_xl_lp_common( entry, t_DL );
-    nest_cb->lay_tag = &layout_work.dl;
+
+    nest_cb->compact = compact;
+ 
+    nest_cb->li_number    = 0;
+    nest_cb->left_indent  = conv_hor_unit( &layout_work.dl.left_indent );
+    nest_cb->right_indent = conv_hor_unit( &layout_work.dl.right_indent );
+    nest_cb->lay_tag      = &layout_work.dl;
+
+    nest_cb->lm = g_cur_left;
+    nest_cb->rm = g_page_right;
 
     scan_start = scan_stop + 1;
     return;
@@ -167,9 +180,20 @@ void    gml_gl( const gmltag * entry )  // not tested TBD
     if( !strnicmp( "compact", p, 7 ) ) {
         compact = true;
         scan_start = p + 7;
+    } else {
+        compact = false;
     }
     gml_xl_lp_common( entry, t_GL );
-    nest_cb->lay_tag = &layout_work.gl;
+
+    nest_cb->compact = compact;
+ 
+    nest_cb->li_number    = 0;
+    nest_cb->left_indent  = conv_hor_unit( &layout_work.gl.left_indent );
+    nest_cb->right_indent = conv_hor_unit( &layout_work.gl.right_indent );
+    nest_cb->lay_tag      = &layout_work.gl;
+
+    nest_cb->lm = g_cur_left;
+    nest_cb->rm = g_page_right;
 
     scan_start = scan_stop + 1;
     return;
@@ -331,7 +355,10 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
     char    *   p;
     tag_cb  *   wk;
  
-//    scr_process_break();
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+ 
     if( nest_cb->c_tag != t ) {         // unexpected exxx tag
         if( nest_cb->c_tag == t_NONE ) {
             g_err_tag_no( str_tags[t + 1] );// no exxx expected, no tag active
@@ -394,11 +421,21 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
  
 void    gml_edl( const gmltag * entry ) // not tested TBD
 {
+    scr_process_break();
+    if( nest_cb->c_tag == t_DL ) {
+        set_skip_vars( NULL, NULL,
+            &((dl_lay_tag *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font_num );
+    }
     gml_exl_common( entry, t_DL );
 }
  
 void    gml_egl( const gmltag * entry ) // not tested TBD
 {
+    scr_process_break();
+    if( nest_cb->c_tag == t_GL ) {
+        set_skip_vars( NULL, NULL,
+            &((gl_lay_tag *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font_num );
+    }
     gml_exl_common( entry, t_GL );
 }
  
@@ -669,6 +706,7 @@ static  void    gml_li_ul( const gmltag * entry )
 /*item, and may only be used when the list item is in an ordered list. The  */
 /*identifier name is used when processing a list item reference, and must   */
 /*be unique within the document.                                            */
+/*wgml 4.0 does not allow LI inside a DL or GL, but does produce an error   */
 /****************************************************************************/
  
 void    gml_li( const gmltag * entry )
@@ -689,10 +727,10 @@ void    gml_li( const gmltag * entry )
         break;
 #if 0
     case t_DL :
-        gml_li_dl( entry );             // TBD
+        gml_li_dl( entry );             // error message here?
         break;
     case t_GL :
-        gml_li_gl( entry );
+        gml_li_gl( entry );             // error message here?
         break;
 #endif
     default:
@@ -705,6 +743,7 @@ void    gml_li( const gmltag * entry )
 /***************************************************************************/
 /* :LP                                                                     */
 /***************************************************************************/
+
 void    gml_lp( const gmltag * entry )
 {
     char        *   p;
@@ -731,14 +770,12 @@ void    gml_lp( const gmltag * entry )
     case t_UL :
         list_skip_su = &((ul_lay_tag *)(nest_cb->lay_tag))->pre_skip;
         break;
-#if 0
     case t_DL :             // TBD
-        list_skip_su = ((dl_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+        list_skip_su = &((dl_lay_tag *)(nest_cb->lay_tag))->pre_skip;
         break;
     case t_GL :             // TBD
-        list_skip_su = ((gl_lay_tag *)(nest_cb->lay_tag))->pre_skip;
+        list_skip_su = &((gl_lay_tag *)(nest_cb->lay_tag))->pre_skip;
         break;
-#endif
     default:
         break;
     }

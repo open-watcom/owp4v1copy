@@ -385,7 +385,6 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 /* gutil.c                            */
 extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
-extern  int32_t     conv_vert_unit_rdd( su * spaceunit, uint8_t spacing );
 extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  su      *   greater_su( su * su_a, su * su_b, uint8_t spacing );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );

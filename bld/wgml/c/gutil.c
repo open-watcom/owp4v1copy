@@ -28,7 +28,6 @@
 *
 *               conv_hor_unit
 *               conv_vert_unit
-*               conv_vert_unit_rdd
 *               format_num
 *               greater_su
 *               int_to_roman
@@ -808,43 +807,6 @@ int32_t conv_hor_unit( su * s )
 
 int32_t conv_vert_unit( su * s, uint8_t spc )
 {
-    int32_t    ds;
-    uint8_t space;
-
-    if( spc > 0 ) {                     // if spacing valid use it
-        space = spc;
-    } else {
-        space = spacing;                // else default
-    }
-    switch( s->su_u ) {
-    case SU_chars_lines :
-    case SU_ems :
-        ds = space * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
-        break;
-    case SU_dv :
-        ds = s->su_whole;
-        break;
-    case SU_inch :
-    case SU_cm :
-    case SU_mm :
-    case SU_cicero :
-    case SU_pica :
-        ds = (int64_t)s->su_inch * bin_device->vertical_base_units / 10000L;
-        break;
-    default:
-        ds = 0;
-        break;
-    }
-    return( ds );
-}
-
-
-/***************************************************************************/
-/*  value returned is rounded as wgml 4.0 appears to do it                 */
-/***************************************************************************/
-
-int32_t conv_vert_unit_rdd( su * s, uint8_t spc )
-{
     int32_t     ds;
     int32_t     fp;
     uint8_t     space;
@@ -1126,9 +1088,6 @@ void    start_line_with_string( char * text, uint8_t font_num )
     if( n_char->x_address + n_char->width > g_page_right ) {
         process_line_full( t_line, ProcFlags.concat );
         t_line = alloc_text_line();
-        insert_col_main( t_element );
-        t_element = NULL;
-        t_el_last = NULL;
         set_h_start();
         n_char->x_address = g_cur_h_start;
     }
