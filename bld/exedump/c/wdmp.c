@@ -75,6 +75,8 @@ static void dmp_exe( void )
         } else if( dos_dmp == 3 ) {
             if( Dmp_d16m_head() ) {
                 /* done */
+            } else if( Dmp_phar_head() ) {
+                /* done */
             } else {
                 Wdputslc( "No protected mode executable found\n" );
             }

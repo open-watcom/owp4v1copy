@@ -363,7 +363,7 @@ bool Dmp_phar_head( void )
 {
     unsigned_32     offset;
 
-    Wlseek( 0 );
+    Wlseek( New_exe_off );
     Wread( &Phar_head, sizeof( simple_header ) );
     if( Phar_head.signature == SIMPLE_SIGNATURE ) {
         Banner( "Pharlap EXE Header" );
@@ -386,7 +386,7 @@ bool Dmp_phar_head( void )
         }
         return( 1 );
     }
-    Wlseek( 0 );
+    Wlseek( New_exe_off );
     Wread( &Phar_ext_head, sizeof( Phar_ext_head.signature ) );
     if( Phar_ext_head.signature == EXTENDED_SIGNATURE ) {
         Wread( (char *)&Phar_ext_head + sizeof( Phar_ext_head.signature ),
