@@ -21,8 +21,8 @@ bldsrc_dir=..$(SL)..$(SL)bld
 !include ../mif/depends.mif
 !include ../mif/books.mif
 
-# if set to 1 then wgml displays warnings and statistics
-docs_verbose=0
+# If 'verbose' is set to 1, wgml displays warnings and statistics.
+# The default is a quiet build.
 
 #############################################################
 #
@@ -115,7 +115,7 @@ OS2_TK = dummy
 !ifdef dep_$(dotarget)
 .BEFORE
     @set GMLLIB=$(gml_lib);
-!ifeq docs_verbose 1
+!ifeq verbose 1
     @echo GMLLIB=$(gml_lib);
 !endif
 !ifneq header 1
@@ -272,7 +272,7 @@ $(hbook).chm $(hbook).chi : ../html/$(hbook).htm
 
 $(hbook).ps : $(book_objs) $(book_objs_ps) $(proj_objs)
     @set GMLINC=tmp;$(book_incs);$(whelp_incs);$(gml_incs)
-!ifeq docs_verbose 1
+!ifeq verbose 1
     @echo GMLINC=tmp;$(book_incs);$(whelp_incs);$(gml_incs)
 !endif
     %make prepare_wgml_opts
@@ -477,7 +477,7 @@ prepare_wgml_opts : .PROCEDURE
 #
 # details about wgml processing
 #
-!ifeq docs_verbose 1
+!ifeq verbose 1
     @%append $(optfile_wgml) ( verbose
     @%append $(optfile_wgml) ( statistics
 !else
@@ -512,7 +512,7 @@ compile_gml_to_xxx : .PROCEDURE
     @if not exist $*.tbl @%create $*.tbl
     @if not exist $*.kw @%create $*.kw
     @set GMLINC=.;$(whelp_incs);$(gml_lib);$(hlp_incs);$(book_incs);$(gml_incs);
-!ifeq docs_verbose 1
+!ifeq verbose 1
     @echo GMLINC=.;$(whelp_incs);$(gml_lib);$(hlp_incs);$(book_incs);$(gml_incs);
 !endif
     @%make prepare_wgml_opts
