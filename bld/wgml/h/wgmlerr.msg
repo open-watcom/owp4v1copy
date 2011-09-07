@@ -141,8 +141,8 @@ pick( INF_SUBST_LINE,           ">-V->%s<-V-<",
 pick( INF_TEXT_LINE,            ")-T-)%s(-T-(",
                                 ")-T-)%s(-T-(" )
 
-pick( INF_SKIP_LINE,            "Skip line",
-                                "Skip line" )
+pick( INF_SKIP_LINE,            "--- Skip line ---",
+                                "--- Skip line ---" )
 
 pick( ERR_MISS_INV_OPT_VALUE,   "Invalid / missing option value for %s: %s",
                                 "Invalid / missing option value for %s: %s" )
@@ -537,7 +537,7 @@ pick( ERR_HEADING_TOO_DEEP,     "Heading is too large for the output page",
 
 pick( ERR_TEXT_LINE_TOO_DEEP,   "Output line is too large to fit on a page",
                                 "Output line is too large to fit on a page")
-                                
+
 /* title page error messages */
 
 pick( ERR_2ND_DATE,             "Date already defined",

@@ -304,6 +304,53 @@ static void remove_indentation( void )
 
 
 /***************************************************************************/
+/*  test_macro_xxxx test for  special processing within false branch of    */
+/* .if control word                                                        */
+/*  ProcFlags.in_macro_define is abused as switch as no                    */
+/*  'real' macro definition is possible in this case                       */
+/*                                                                         */
+/* .dm macname begin                                                       */
+/*   all lines in between are ignored without any processing               */
+/* .dm macname end                                                         */
+/***************************************************************************/
+
+static bool test_macro_xxxx( char const * beginend )
+{
+    char        cw[3];
+    char        c;
+    char    *   p;
+
+    if( *buff2 == SCR_char ) {// only test script control words
+
+        p = buff2 + 1;
+        if( (*p == SCR_char)  || (*p == '\'') ) {
+            p++;
+        }
+        cw[0] = tolower( *p++ );
+        cw[1] = tolower( *p++ );
+        c = *p++;
+
+        cw[2] = '\0';
+        if( c == '\0' || c == ' ' ) {
+            if( !strcmp( cw, "dm" ) ) {
+                while( *p && *p == ' ' ) {  // find macroname
+                    p++;
+                }
+                while( *p && *p != ' ' ) {
+                    p++;
+                }
+                while( *p && *p == ' ' ) {  // find begin end
+                    p++;
+                }
+                return(  !strnicmp( p, beginend, strlen( beginend ) ) );
+            }
+        }
+    }
+    return(false );
+}
+
+
+/***************************************************************************/
 /*  process the input file                                                 */
 /***************************************************************************/
 
@@ -313,6 +360,8 @@ static  void    proc_input( char * filename )
     filecb      *   cb;
     laystack    *   curr_lay_file;
     char            attrwork[32];
+    ifcb            ic_work;
+    condcode        cc;
 
     ProcFlags.newLevelFile = 1;
     strcpy_s( token_buf, buf_size, filename );
@@ -438,6 +487,43 @@ static  void    proc_input( char * filename )
                 }
                 ProcFlags.goto_active = false;
             }
+
+            /***************************************************************/
+            /*  suppress some processing for line to be skipped            */
+            /*  and not .if .th .el .do control line                       */
+            /*  special handling for define macro inside false branch      */
+            /*  (ignore all up to .dm end)                                */
+            /***************************************************************/
+
+            if( !ProcFlags.literal ) {
+                ic_work = *ic;          // create a copy of if control block
+
+                if( ProcFlags.in_macro_define ) {
+                    if( test_macro_xxxx( "end" ) ) {
+                        ProcFlags.in_macro_define = false;
+                    }
+                }
+                if( ProcFlags.in_macro_define ) {
+                    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+                        g_info_lm( inf_skip_line );
+                    }
+                    continue;           // skip processing
+                }
+
+                set_if_then_do( &ic_work );
+                cc = test_process( &ic_work );
+                if( cc != pos ) {
+                    if( test_macro_xxxx( "begin" ) ) {
+                        ProcFlags.in_macro_define = true;
+                    }
+                    if( input_cbs->fmflags & II_research &&
+                        GlobalFlags.firstpass ) {
+                        g_info_lm( inf_skip_line );
+                    }
+                    continue;           // skip processing
+                }
+            }
+
             process_line();             // substitute variables + functions
             scan_line();
 
@@ -449,21 +535,6 @@ static  void    proc_input( char * filename )
             continue;
         }
 
-#if 0
-        if( ic->if_level > 0 ) {        // if .if active
-            err_count++;
-            if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_IF_LEVEL nesting\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
-            } else {
-                out_msg( "ERR_IF_LEVEL nesting\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
-            }
-            show_include_stack();
-        }
-#endif
         if( inc_level == 1 ) {          // EOF for master file end
             last_page_out();            // forces final page(s) out
             /***************************************************************/
@@ -763,7 +834,7 @@ int main( int argc, char * argv[] )
 
 /// test
 
-///    my_exit( err_count ? 8 : wng_count ? 4 : 0 );
+    my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                    // never reached, but makes compiler happy
 }
 

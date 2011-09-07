@@ -201,6 +201,7 @@ static condcode gargterm( termcb * t )
     cc = getnum ( &gn );                // try to get numeric value
     if( cc == notnum ) {
         t->numeric = false;
+        t->term_number = 0;
 
         cc = getqst();                  // try quoted string
         if( cc == no ) {                // not quoted
@@ -386,7 +387,9 @@ void    scr_if( void )
 
     cb = input_cbs->if_cb;              // get .if control block
 
-    cb->if_flags[cb->if_level].ifcwte = false;// no .th .el yet
+    cb->if_flags[cb->if_level].ifcwte = false;  // no .th .el yet
+    cb->if_flags[cb->if_level].iftrue = false;  // cond not yet true
+    cb->if_flags[cb->if_level].iffalse = false; // cond not yet false
 
 
     for( ;; ) {                         // evaluate if conditions

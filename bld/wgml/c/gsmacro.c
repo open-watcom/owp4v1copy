@@ -79,6 +79,7 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
         new->flags      = FF_tag;
         nip->fmflags    = II_tag;
     }
+    nip->fmflags |= input_cbs->fmflags & II_research;   // copy research mode
 
     nip->prev = input_cbs;
     input_cbs = nip;
@@ -502,6 +503,7 @@ void    scr_dm( void )
             g_info( inf_mac_defined, macname, linestr );
         }
     } else {
+        ProcFlags.in_macro_define = 0;
         err_count++;
         g_err( err_mac_def_logic, macname );
         free_lines( head );

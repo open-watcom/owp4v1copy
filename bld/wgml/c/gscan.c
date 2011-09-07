@@ -164,6 +164,7 @@ static void scan_gml( void )
         ge = find_tag( &tag_dict, tok_start + 1 );
     }
     processed = false;
+    me = NULL;
     if( ge != NULL ) {                  // GML user defined Tag found
         *p = csave;
         if( ge->tagflags & tag_off ) {  // inactive, treat as text
@@ -194,11 +195,29 @@ static void scan_gml( void )
             return;
         } else {
 
-            processed = process_tag( ge, me );
+        /*******************************************************************/
+        /*  The following is to prevent an endless loop                    */
+        /*  Example from ow documentation:                                 */
+        /*  .gt ZH1 add zh1                                                */
+        /*  .gt H1 add zh1                                                 */
+        /*  .dm zh1 begin                                                  */
+        /*  ...                                                            */
+        /*  :H1      <---- overridden gml tag                              */
+        /*  ...                                                            */
+        /*  .dm zh1 end                                                    */
+        /*                                                                 */
+        /*  we call the predefined :H1  instead                            */
+        /*******************************************************************/
 
+            if( (cb->fmflags & II_tag) && (cb->s.m->mac == me) ) {
+                me = NULL;
+            }
         }
+    }
+    if( me != NULL ) {                  // usertag and coresponding macro ok
+        processed = process_tag( ge, me );
     } else {
-
+        *p ='\0';
         for( k = 0; k <= toklen; k++ ) {
             tok_upper[k] = toupper( *(tok_start + 1 + k) );
         }
@@ -510,6 +529,7 @@ static void     scan_script( void )
     scan_start = scan_restart;
 }
 
+
 /***************************************************************************/
 /*  logic for decision on skipping or processing line depending on         */
 /*  the current state of the .if .th .el .do  controlwords encountered     */
@@ -518,18 +538,18 @@ static void     scan_script( void )
 /*  file cbt284.011                                                        */
 /***************************************************************************/
 
-static  condcode    mainif( void)
+//#define DEBTESTPROC             // to reduce test output don't define this
+
+condcode    test_process( ifcb * cb )
 {
     condcode    cc;
-    ifcb    *   cb;
     char        linestr[MAX_L_AS_STR];
 
-    cb = input_cbs->if_cb;
     cc = no;
-#if 0
-    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+#ifdef DEBTESTPROC
+    if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
         out_msg( "ANF mainif L %d t %d, f %d"
-                " th(%d)  el(%d)  do(%d) last(%d) cwif,do,te(%d,%d,%d)\n",
+                " th(%d) el(%d) do(%d) last(%d) cwif,do,te(%d,%d,%d)\n",
                  cb->if_level,
                  cb->if_flags[cb->if_level].iftrue,
                  cb->if_flags[cb->if_level].iffalse,
@@ -550,6 +570,7 @@ static  condcode    mainif( void)
         cb->if_flags[cb->if_level].iflast = false;  // reset first switch
         cb->if_flags[cb->if_level].ifthen = true;   // treat as then
     }
+
 //mnif01
     if( cb->if_flags[cb->if_level].ifcwif ) {   // .if
 //mnif03
@@ -558,6 +579,7 @@ static  condcode    mainif( void)
 
             cc = pos;
         } else {
+
 //mnif03a
             while( cb->if_level > 0 ) { // pop one level
                 cb->if_level--;
@@ -567,39 +589,45 @@ static  condcode    mainif( void)
             }
             cc = pos;                   // .do or all popped
         }
-#if 0
-        if( GlobalFlags.research && GlobalFlags.firstpass ) {
-            out_msg( "END mainif L %d t %d, f %d"
-                    " th(%d)  el(%d)  do(%d) last(%d)\n",
+
+#ifdef DEBTESTPROC
+        if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
+            out_msg( "EX1 mainif L %d t %d, f %d"
+                    " th(%d) el(%d) do(%d) last(%d) %s\n",
                      cb->if_level,
                      cb->if_flags[cb->if_level].iftrue,
                      cb->if_flags[cb->if_level].iffalse,
                      cb->if_flags[cb->if_level].ifthen,
                      cb->if_flags[cb->if_level].ifelse,
                      cb->if_flags[cb->if_level].ifdo,
-                     cb->if_flags[cb->if_level].iflast );
+                     cb->if_flags[cb->if_level].iflast,
+                     cc == pos ? "pos" : "no" );
         }
 #endif
         return( cc );
+
     } else {                            // not .if
+
 //mnif01 cont.
         if( cb->if_flags[cb->if_level].ifcwdo ) {   // if  .do
             cc = pos;
-#if 0
-            if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                out_msg( "END mainif L %d t %d, f %d"
-                        " th(%d)  el(%d)  do(%d) last(%d)\n",
+#ifdef DEBTESTPROC
+            if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
+                out_msg( "Edo mainif L %d t %d, f %d"
+                        " th(%d) el(%d) do(%d) last(%d) %s\n",
                          cb->if_level,
                          cb->if_flags[cb->if_level].iftrue,
                          cb->if_flags[cb->if_level].iffalse,
                          cb->if_flags[cb->if_level].ifthen,
                          cb->if_flags[cb->if_level].ifelse,
                          cb->if_flags[cb->if_level].ifdo,
-                         cb->if_flags[cb->if_level].iflast );
+                         cb->if_flags[cb->if_level].iflast,
+                         cc == pos ? "pos" : "no" );
             }
 #endif
             return( cc );
         }
+
         if( cb->if_flags[cb->if_level].ifthen
             || cb->if_flags[cb->if_level].ifelse ) {// object of .th or .el
 //mnif05
@@ -651,7 +679,7 @@ static  condcode    mainif( void)
             }
         }
     }
-    if( cc == no ) {
+    if( cc == no ) {                    // cc not set program logic error
         if( input_cbs->fmflags & II_macro ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             g_err( err_if_intern, linestr, "macro", input_cbs->s.m->mac->name );
@@ -665,52 +693,64 @@ static  condcode    mainif( void)
         }
         err_count++;
     }
-#if 0
-    if( GlobalFlags.research && GlobalFlags.firstpass ) {
-        out_msg( "END mainif L %d t %d, f %d"
-                " th(%d)  el(%d)  do(%d) last(%d)\n",
+#ifdef DEBTESTPROC
+    if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
+        out_msg( "EX3 mainif L %d t %d, f %d"
+                " th(%d) el(%d) do(%d) last(%d) %s\n",
                  cb->if_level,
                  cb->if_flags[cb->if_level].iftrue,
                  cb->if_flags[cb->if_level].iffalse,
                  cb->if_flags[cb->if_level].ifthen,
                  cb->if_flags[cb->if_level].ifelse,
                  cb->if_flags[cb->if_level].ifdo,
-                 cb->if_flags[cb->if_level].iflast );
+                 cb->if_flags[cb->if_level].iflast,
+                 cc == pos ? "pos" : "no" );
     }
 #endif
     return( cc );
 
 }
+#undef DEBTESTPROC
 
 
 /***************************************************************************/
 /*  first pass at script control words .if .th .el .do                     */
 /*                                                                         */
-/*  This is needed for routine mainif() above                              */
+/*  This is needed for routine test_process above                          */
 /*                                                                         */
 /***************************************************************************/
 
-static void set_if_then_do( void )
+void set_if_then_do( ifcb * cb )
 {
     char        cw[3];
-    ifcb    *   cb = input_cbs->if_cb;
+    char        c;
 
-    if( (*(buff2 + 1) == SCR_char)  ||  // ..CW
-        (*(buff2 + 1) == '\'') ) {      // .'CW
-        cw[0] = tolower( *(buff2 + 2) );// copy possible controlword
-        cw[1] = tolower( *(buff2 + 3) );
-    } else {                            // .CW
-        cw[0] = tolower( *(buff2 + 1) );// copy possible controlword
-        cw[1] = tolower( *(buff2 + 2) );
-    }
-    cw[2] = '\0';
+    cb->if_flags[cb->if_level].ifcwte = false;  // reset
+    cb->if_flags[cb->if_level].ifcwdo = false;  // .. current
+    cb->if_flags[cb->if_level].ifcwif = false;  // .... if, then, else, do
 
-    if( !strcmp( cw, "if" ) ) {
-        cb->if_flags[cb->if_level].ifcwif = true;
-    } else if( !strcmp( cw, "do" ) ) {
-        cb->if_flags[cb->if_level].ifcwdo = true;
-    } else if( !strcmp( cw, "th" ) || !strcmp( cw, "el" ) ) {
-        cb->if_flags[cb->if_level].ifcwte = true;
+    if( *buff2 == SCR_char ) {          // only test script control words
+        cw[0] = '\0';
+        if( (*(buff2 + 1) == SCR_char)  ||  // ..CW
+            (*(buff2 + 1) == '\'') ) {  // .'CW
+            cw[0] = tolower( *(buff2 + 2) );// copy possible controlword
+            cw[1] = tolower( *(buff2 + 3) );
+            c = *(buff2 + 4);
+        } else {                        // .CW
+            cw[0] = tolower( *(buff2 + 1) );// copy possible controlword
+            cw[1] = tolower( *(buff2 + 2) );
+            c = *(buff2 + 3);
+        }
+        cw[2] = '\0';
+        if( c == '\0' || c == ' ' ) {
+            if( !strcmp( cw, "if" ) ) {
+                cb->if_flags[cb->if_level].ifcwif = true;
+            } else if( !strcmp( cw, "do" ) ) {
+                cb->if_flags[cb->if_level].ifcwdo = true;
+            } else if( !strcmp( cw, "th" ) || !strcmp( cw, "el" ) ) {
+                cb->if_flags[cb->if_level].ifcwte = true;
+            }
+        }
     }
 }
 
@@ -733,11 +773,9 @@ void    scan_line( void )
     cb->if_flags[cb->if_level].ifcwdo = false;  // .. current
     cb->if_flags[cb->if_level].ifcwif = false;  // .... if, then, else, do
 
-    if( !ProcFlags.literal && (*scan_start == SCR_char) ) {
-        set_if_then_do();
-    }
     if( !ProcFlags.literal ) {
-        cc = mainif();
+        set_if_then_do( cb );
+        cc = test_process( cb );
     } else {
         if( t_line != NULL ) {
             if( t_line->first != NULL ) {

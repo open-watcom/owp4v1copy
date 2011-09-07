@@ -277,6 +277,8 @@ extern  void    scr_process_break( void );
 extern  const   gmltag * find_lay_tag( char * token, size_t toklen );
 extern  const   gmltag * find_sys_tag( char * token, size_t toklen );
 extern  void             scan_line( void );
+extern  void             set_if_then_do( ifcb * cb );
+extern  condcode         test_process( ifcb * cb );
 
 
 /* gsfuncs.c                          */

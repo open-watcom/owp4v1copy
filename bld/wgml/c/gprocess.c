@@ -495,7 +495,7 @@ void        process_line( void )
                         pw++;           // skip 1 CW_sep_char
                     }
                     strcpy( p2, pw );   // copy value
-                    p2 += strlen( pw );
+                    p2 += strlen(pw);
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
                     }
@@ -503,7 +503,16 @@ void        process_line( void )
                 }
             } else {                    // variable not found
                 if( (symvar_entry.flags & local_var )  // local var not found
-                    && (input_cbs->fmflags & II_macro) ) {// .. and inside macro
+                    ) {
+
+ // TBD
+
+//                  && (input_cbs->fmflags & II_macro) ) {// .. and inside macro
+
+
+
+
+
                     if( (symvar_entry.name[0] == '\0') &&
                         (*pchar == ampchar) ) { // only &* as var name
                                                 // followed by another var
@@ -818,7 +827,7 @@ void        process_late_subst( void )
                         pw++;           // skip 1 CW_sep_char
                     }
                     strcpy( p2, pw );   // copy value
-                    p2 += strlen( pw );
+                    p2 += strlen(pw);
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
                     }

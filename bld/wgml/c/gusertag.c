@@ -194,10 +194,14 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     p = tok_start + ge->namelen + 1;    // over tagname
 
     if( ge->attribs != NULL ) {     // only process attributes if they exist
-        while( *p == ' ' ) {            // not yet end of tag, process attributes
+        while( *p == ' ' ) {        // not yet end of tag, process attributes
 
-            while( *p == ' ' ) {            // over WS to attribute
+            while( *p == ' ' ) {        // over WS to attribute
                 p++;
+            }
+            if( *p == '.' ) {
+                tag_end_found = true;
+                break;
             }
             p2 = token_buf;
             while( is_id_char( *p ) ) {
@@ -212,10 +216,10 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                         break;
                     }
 
-                    if( *p == '=' ) {       // value follows
+                    if( *p == '=' ) {   // value follows
                         ga->attflags |= att_proc_val;
 
-                        p++;                // over =
+                        p++;            // over =
                         p2 = token_buf;
                         if( is_quote_char( *p ) ) {
                             quote = *p++;
@@ -223,7 +227,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                                 *p2++ = *p++;
                             }
                             if( *p == quote ) {
-                                p++;        // over ending quote
+                                p++;    // over ending quote
                             }
                         } else {
                             quote = '\0';
@@ -259,7 +263,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                     break;
                 }
             }
-            if( ga == NULL ) {              // attribute not found
+            if( ga == NULL ) {          // attribute not found
                 char        linestr[MAX_L_AS_STR];
 
                 processed = false;
@@ -280,7 +284,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             /*  check for tag end .                                        */
             /***************************************************************/
             if( *p == ' ' ) {
-                continue;                   // not yet at buffer / tag end
+                continue;               // not yet at buffer / tag end
             }
             if( *p != '.' ) {
                 if( get_line( true ) ) {
@@ -310,7 +314,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                 }
             }
         }
-        if( *token_buf != '\0' ) {          // some req attr missing
+        if( *token_buf != '\0' ) {      // some req attr missing
             char        linestr[MAX_L_AS_STR];
 
         // the errmsg in wgml 4.0 is wrong, it shows the macroname, not tag.
@@ -332,7 +336,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             show_include_stack();
         }
 
-        if( *p == '.' ) {                   // does text follow tag end
+        if( *p == '.' ) {               // does text follow tag end
             if( strlen( p + 1 ) > 0 ) {
                 if( ge->tagflags & tag_texterr ) { // no text allowed
                     tag_text_err( ge->name );
@@ -349,7 +353,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             p += strlen( token_buf );
         }
 
-        scan_start = p + 1;                 // all processed
+        scan_start = p + 1;             // all processed
         /*******************************************************************/
         /*  add standard symbols to dict                                   */
         /*******************************************************************/
@@ -360,23 +364,23 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         rc = add_symvar( &loc_dict, "_n", longwork, no_subscript, local_var );
 
 
-        add_macro_cb_entry( me, ge );       // prepare GML macro as input
+        add_macro_cb_entry( me, ge );   // prepare GML macro as input
         input_cbs->local_dict = loc_dict;
-        inc_inc_level();                    // start new include level
+        inc_inc_level();                // start new include level
 
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
             print_sym_dict( input_cbs->local_dict );
         }
-    } else {                    // user-defined tag has no attributes
+    } else {                            // user-defined tag has no attributes
         if( ge->tagflags & tag_texterr ) {  // no text allowed
             // '.' or CW_sep_char immediately after the tag does not count as text
             if( (*p == '.') || (*p == CW_sep_char ) ) {
                 p++;
             }
-            while( *p == ' ' ) {    // spaces don't count as text
+            while( *p == ' ' ) {        // spaces don't count as text
                 p++;
             }
-            if( *p ) {                      // text found
+            if( *p ) {                  // text found
                 tag_text_err( ge->name );
                 processed = false;
                 return( processed );
@@ -392,10 +396,10 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             if( *p == '.' ) {
                 p++;
             }
-            while( *p == ' ' ) {    // spaces don't count as text
+            while( *p == ' ' ) {        // spaces don't count as text
                 p++;
             }
-            if( !*p ) {                     // no text found
+            if( !*p ) {                 // no text found
                 tag_text_req_err( ge->name );
                 processed = false;
                 return( processed );
@@ -414,7 +418,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         rc = add_symvar( &loc_dict, "_", token_buf, no_subscript, local_var );
         p += strlen( token_buf );
 
-        scan_start = p + 1;                 // all processed
+        scan_start = p + 1;             // all processed
         /*******************************************************************/
         /*  add standard symbols to dict                                   */
         /*******************************************************************/
@@ -425,9 +429,9 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         rc = add_symvar( &loc_dict, "_n", longwork, no_subscript, local_var );
 
 
-        add_macro_cb_entry( me, ge );       // prepare GML macro as input
+        add_macro_cb_entry( me, ge );   // prepare GML macro as input
         input_cbs->local_dict = loc_dict;
-        inc_inc_level();                    // start new include level
+        inc_inc_level();                // start new include level
 
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
             print_sym_dict( input_cbs->local_dict );
