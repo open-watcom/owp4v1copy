@@ -299,7 +299,7 @@ int BOXV_mode_set( void *cx, int mode_no )
         vid_outw( cx, VBE_DISPI_IOPORT_DATA, 0 );
         /* Enable the extended display registers. */
         vid_outw( cx, VBE_DISPI_IOPORT_INDEX, VBE_DISPI_INDEX_ENABLE );
-        vid_outw( cx, VBE_DISPI_IOPORT_DATA, VBE_DISPI_ENABLED );
+        vid_outw( cx, VBE_DISPI_IOPORT_DATA, VBE_DISPI_ENABLED | VBE_DISPI_8BIT_DAC );
     }
 
     vgarg = mode->vgaregs;
