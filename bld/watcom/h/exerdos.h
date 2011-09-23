@@ -28,8 +28,9 @@
 *
 ****************************************************************************/
 
-
 #ifndef _EXERDOS_H
+
+#pragma pack( push, 1 )
 
 /* 16-bit RDOS .rdv device file header */
 /* =================== */
@@ -60,4 +61,7 @@ typedef struct rdos_dev32_header {
 #define RDOS_SIGNATURE_32    0x3252     /* R2 */
 
 #define _EXERDOS_H
+
+#pragma pack( pop )
+
 #endif
