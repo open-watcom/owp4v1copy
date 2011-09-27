@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 #include "linkstd.h"
 #include <exerdos.h>
@@ -65,10 +64,8 @@ struct mb_header
     unsigned_32 mb_entry_addr;
 };
 
-
-static void WriteRDOSData( void )
+static void WriteRDOSCode( void )
 /**********************************************************/
-/* copy code from extra memory to loadfile */
 {
     group_entry         *group;
     SECTION             *sect;
@@ -77,7 +74,7 @@ static void WriteRDOSData( void )
     int                 iscode;
     int                 isdata;
 
-    DEBUG(( DBG_BASE, "Writing data" ));
+    DEBUG(( DBG_BASE, "Writing code" ));
     OrderGroups( CompareDosSegments );
     CurrSect = Root;        // needed for WriteInfo.
 
@@ -106,19 +103,70 @@ static void WriteRDOSData( void )
         sect = group->section;
         CurrSect = sect;
 
-        if( Extension == E_RDV) {
+        if( iscode ) {
+            sect->u.file_loc = CodeSize;
             WriteDOSGroup( group );
             if( group->totalsize > group->size )
                 PadLoad( group->totalsize - group->size );
-        } else {
-            if( group->totalsize )
-                WriteDOSGroup( group );
-        }
-                
-        if( iscode )
             CodeSize += group->totalsize;
-        if( isdata )
+            SeekLoad( Root->outfile->file_loc );
+        }                
+        group = group->next_group;
+    }
+}
+
+static void WriteRDOSData( void )
+/**********************************************************/
+/* copy code from extra memory to loadfile */
+{
+    group_entry         *group;
+    SECTION             *sect;
+    struct seg_leader   *leader;
+    SEGDATA             *piece;
+    int                 iscode;
+    int                 isdata;
+
+    DEBUG(( DBG_BASE, "Writing data" ));
+
+/* write groups and relocations */
+    for( group = Groups; group != NULL; ) {
+        if( leader != group->leaders ) {
+            iscode = 0;
+            isdata = 0;
+            leader = group->leaders;
+            if( leader && leader->size && Extension == E_RDV ) {
+                piece = leader->pieces; 
+                if( piece ) {
+                    if( piece->iscode && ( leader->seg_addr.seg == FmtData.u.rdos.code_seg ) ) {
+                        iscode = 1;
+                    }
+                    if( ( piece->isidata || piece->isuninit ) && ( leader->seg_addr.seg == FmtData.u.rdos.data_seg ) ) {
+                        isdata = 1;
+                    }
+                }
+            }
+        }
+        sect = group->section;
+        CurrSect = sect;
+
+        if( isdata ) {
+            sect->u.file_loc = CodeSize + DataSize;
+
+            if( StackSegPtr != NULL ) {
+                if( group->totalsize - group->size < StackSize ) {
+                    StackSize = group->totalsize - group->size;
+                    group->totalsize = group->size;
+                } else {
+                    group->totalsize -= StackSize;
+                }
+            }
+
+            WriteDOSGroup( group );
+            if( group->totalsize > group->size )
+                PadLoad( group->totalsize - group->size );
             DataSize += group->totalsize;
+            SeekLoad( Root->outfile->file_loc );
+        }                
         group = group->next_group;
     }
 }
@@ -233,6 +281,7 @@ void FiniRdosLoadFile16( void )
         }
     }
 
+    WriteRDOSCode();
     WriteRDOSData();
     DBIWrite();
 
@@ -258,6 +307,7 @@ void FiniRdosLoadFile32( void )
         Root->u.file_loc = 0;
     }
 
+    WriteRDOSCode();
     WriteRDOSData();
     DBIWrite();
 
