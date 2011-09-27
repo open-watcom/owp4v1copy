@@ -49,6 +49,8 @@
 
 static unsigned_32  CodeSize = 0;
 static unsigned_32  DataSize = 0;
+static unsigned_32  HeaderSize = 0;
+
 
 #define MB_BASE 0x110000
 
@@ -104,12 +106,12 @@ static void WriteRDOSCode( void )
         CurrSect = sect;
 
         if( iscode ) {
-            sect->u.file_loc = CodeSize;
+            sect->u.file_loc = HeaderSize + CodeSize;
             WriteDOSGroup( group );
             if( group->totalsize > group->size )
                 PadLoad( group->totalsize - group->size );
+
             CodeSize += group->totalsize;
-            SeekLoad( Root->outfile->file_loc );
         }                
         group = group->next_group;
     }
@@ -150,7 +152,7 @@ static void WriteRDOSData( void )
         CurrSect = sect;
 
         if( isdata ) {
-            sect->u.file_loc = CodeSize + DataSize;
+            sect->u.file_loc = HeaderSize + CodeSize + DataSize;
 
             if( StackSegPtr != NULL ) {
                 if( group->totalsize - group->size < StackSize ) {
@@ -165,7 +167,6 @@ static void WriteRDOSData( void )
             if( group->totalsize > group->size )
                 PadLoad( group->totalsize - group->size );
             DataSize += group->totalsize;
-            SeekLoad( Root->outfile->file_loc );
         }                
         group = group->next_group;
     }
@@ -264,17 +265,15 @@ static void WriteMbootHeader( void )
 void FiniRdosLoadFile16( void )
 /* terminate writing of load file */
 {
-    unsigned_32         hdr_size;
-
     if( Extension == E_RDV ) {
-        hdr_size = sizeof( rdos_dev16_header );
-        SeekLoad( hdr_size );
-        Root->u.file_loc = hdr_size;
+        HeaderSize = sizeof( rdos_dev16_header );
+        SeekLoad( HeaderSize );
+        Root->u.file_loc = HeaderSize;
     } else {
         if( FmtData.u.rdos.mboot ) {
-            hdr_size = sizeof( struct mb_header );
-            SeekLoad( hdr_size );
-            Root->u.file_loc = hdr_size;
+            HeaderSize = sizeof( struct mb_header );
+            SeekLoad( HeaderSize );
+            Root->u.file_loc = HeaderSize;
         } else {
             Root->u.file_loc = 0;
             SeekLoad( 0 );
@@ -296,12 +295,10 @@ void FiniRdosLoadFile16( void )
 void FiniRdosLoadFile32( void )
 /* terminate writing of load file */
 {
-    unsigned_32         hdr_size;
-
     if( Extension == E_RDV ) {
-        hdr_size = sizeof( rdos_dev32_header );
-        SeekLoad( hdr_size );
-        Root->u.file_loc = hdr_size;
+        HeaderSize = sizeof( rdos_dev32_header );
+        SeekLoad( HeaderSize );
+        Root->u.file_loc = HeaderSize;
     } else {
         SeekLoad( 0 );
         Root->u.file_loc = 0;
@@ -310,6 +307,8 @@ void FiniRdosLoadFile32( void )
     WriteRDOSCode();
     WriteRDOSData();
     DBIWrite();
+
+    CodeSize += 0x10;           // this is a fix to make offsets into data segment correct
 
     if( Extension == E_RDV )
         WriteHeader32();

@@ -31,26 +31,79 @@
 .387
 .386p
 
-include xinit.inc
+include exitwmsg.inc
 
         assume  nothing
 
         extrn   __RdosMain              : near
         extrn   __FiniRtns              : near
 
-        extrn   _edata                  : byte  ; end of DATA (start of BSS)
-        extrn   _end                    : byte  ; end of BSS (start of STACK)
-
-        extrn   ___begtext              : near
-
         assume  nothing
+
+DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,XIB,XI,XIE,YIB,YI,YIE
+
+BEGTEXT segment use32 word public 'CODE'
+        assume  cs:BEGTEXT
+forever label   near
+        int     3h
+        jmp     short forever
+        ; NOTE that __begtext needs to be at offset 3
+        ; don't move it.  i.e. don't change any code before here.
+___begtext label byte
+        nop
+        nop
+        nop
+        nop
+        public ___begtext
+        assume  cs:nothing
+BEGTEXT ends
+
+_NULL   segment para public 'DATA'
+__nullarea label word
+        db      01h,01h,01h,00h
+        public  __nullarea
+
+_NULL   ends
+
+_AFTERNULL segment word public 'DATA'
+end_null dw      0                       ; nullchar for string at address 0
+_AFTERNULL ends
+
+CONST   segment word public 'DATA'
+NullAssign      db      '*** NULL assignment detected',0
+CONST   ends
+
+XIB     segment word public 'DATA'
+_Start_XI label byte
+        public  "C",_Start_XI
+XIB     ends
+XI      segment word public 'DATA'
+XI      ends
+XIE     segment word public 'DATA'
+_End_XI label byte
+        public  "C",_End_XI
+XIE     ends
+
+YIB     segment word public 'DATA'
+_Start_YI label byte
+        public  "C",_Start_YI
+YIB     ends
+YI      segment word public 'DATA'
+YI      ends
+YIE     segment word public 'DATA'
+_End_YI label byte
+        public  "C",_End_YI
+YIE     ends
 
 _DATA   segment use32 public 'DATA'
 
 ExitSs          dw 0
-ExitEsp         dd 0
+ExitEsp         dd 055AA77BBh
 
 _DATA   ends
+
+DATA    segment word public 'DATA'
+DATA    ends
 
 _TEXT   segment use32 word public 'CODE'
 
@@ -94,6 +147,7 @@ _cstart_ proc  near
     jmp _cexit_    
 
     dd ___begtext              ; make sure dead code elimination
+
 ;
 ; copyright message
 ;
