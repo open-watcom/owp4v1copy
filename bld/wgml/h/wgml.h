@@ -59,25 +59,25 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 //================= Function Prototypes ========================
 
 /* copfiles.c                          */
-extern uint8_t              cop_in_trans( uint8_t in_char, uint8_t font );
-extern void                 cop_setup( void );
-extern void                 cop_teardown( void );
-extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint8_t font );
-extern void                 cop_ti_table( char * p );
-extern void                 fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
-extern void                 fb_document( void );
-extern void                 fb_document_page( void );
-extern void                 fb_finish( void );
-extern void                 fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
-extern void                 fb_output_textline( text_line * out_line );
-extern void                 fb_start( void );
-extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
+extern uint8_t      cop_in_trans( uint8_t in_char, uint8_t font );
+extern void         cop_setup( void );
+extern void         cop_teardown( void );
+extern uint32_t     cop_text_width( uint8_t * text, uint32_t count, uint8_t font );
+extern void         cop_ti_table( char * p );
+extern void         fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
+extern void         fb_document( void );
+extern void         fb_document_page( void );
+extern void         fb_finish( void );
+extern void         fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
+extern void         fb_output_textline( text_line * out_line );
+extern void         fb_start( void );
+extern void         fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
 
 
 /* devfuncs.c                          */
-extern void                 fb_absoluteaddress( void );
-extern void                 fb_new_section( uint32_t v_start );
-extern void                 fb_position( uint32_t h_start, uint32_t v_start );
+extern void         fb_absoluteaddress( void );
+extern void         fb_new_section( uint32_t v_start );
+extern void         fb_position( uint32_t h_start, uint32_t v_start );
 
 
 /* gargutil.c                           */
@@ -397,8 +397,9 @@ extern  void        start_line_with_string( char * text, uint8_t font_num );
 
 
 /* outbuff.c                           */
-extern void                 cop_tr_table( char * p );
-
+extern void     cop_tr_table( char * p );
+extern void     ob_binclude( binclude_element * in_el );
+extern void     ob_graphic( graphic_element * in_el );
 
 /* wgmlmsg.c                          */
 extern  int     init_msgs( void );

@@ -79,6 +79,14 @@ static void do_el_list_out( doc_element * array, uint8_t count )
         while( cur_el != NULL ) {
             if( i == 0 ) {      // restrict output to first column, for now
                 switch( cur_el->type ) {
+                case el_binc :
+                    ob_binclude( &cur_el->element.binc );
+                    break;
+                case el_graph :
+                    if( ps_device ) {   // no action for character devices
+                        ob_graphic( &cur_el->element.graph );
+                    }
+                    break;
                 case el_text :
                     if( GlobalFlags.lastpass ) {
                         for( cur_line = cur_el->element.text.first; cur_line != NULL; cur_line = cur_line ->next ) {
@@ -114,7 +122,10 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
     g_cur_v_start = v_start;
     
     for( cur_el = list; cur_el != NULL; cur_el = cur_el->next ) {
-        cur_spacing = cur_el->blank_lines + cur_el->element.text.spacing;
+        cur_spacing = cur_el->blank_lines;
+        if( cur_el->type == el_text ) {
+            cur_spacing += cur_el->element.text.spacing;
+        }
         if( !ProcFlags.page_started ) {
             if( cur_el->blank_lines > 0 ) {
                 cur_spacing = cur_el->blank_lines + cur_el->subs_skip;
@@ -126,6 +137,38 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         }
 
         switch( cur_el->type ) {
+        case el_binc :
+            cur_el->element.binc.at_top = !ProcFlags.page_started &&
+                                          (t_page.top_banner == NULL);
+            ProcFlags.page_started = true;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_spacing;
+            } else {
+                g_cur_v_start += cur_spacing;
+            }
+            cur_el->element.binc.y_address = g_cur_v_start;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_el->depth;
+            } else {
+                g_cur_v_start += cur_el->depth;
+            }
+            break;
+        case el_graph :
+            cur_el->element.graph.at_top = !ProcFlags.page_started &&
+                                          (t_page.top_banner == NULL);
+            ProcFlags.page_started = true;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_spacing;
+            } else {
+                g_cur_v_start += cur_spacing;
+            }
+            cur_el->element.graph.y_address = g_cur_v_start;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_el->depth;
+            } else {
+                g_cur_v_start += cur_el->depth;
+            }
+            break;
         case el_text :
             for( cur_line = cur_el->element.text.first; cur_line != NULL;
                                                 cur_line = cur_line->next ) {
@@ -282,6 +325,10 @@ static bool split_element( doc_element * a_element, uint32_t req_depth )
     switch( a_element->type ) {
     // add code for other element types; FIGs are documented to split only
     // when they will not fit by themselves on a page
+    case el_binc :  // given how BINCLUDE/GRAPHIC work, this seems reasonable 
+    case el_graph :
+        splittable = false;     
+        break;
     case el_text :
         for( cur_line = a_element->element.text.first; cur_line != NULL;
                                 cur_line = cur_line->next ) {
@@ -551,6 +598,9 @@ void clear_doc_element( doc_element * element )
 
     for( cur_el = element; cur_el != NULL; cur_el = cur_el->next ) {
         switch( cur_el->type ) {
+        case el_binc :
+        case el_graph :
+            break;      // should be nothing to do
         case el_text :
             cur_line = cur_el->element.text.first;
             while( cur_line != NULL ) {

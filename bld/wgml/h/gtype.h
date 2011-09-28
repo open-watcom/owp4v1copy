@@ -903,27 +903,52 @@ typedef struct text_line {
 } text_line;
 
 typedef enum {
+    el_binc,        // BINCLUDE element
+    el_graph,       // GRAPHIC element
     el_text,        // text element
 } element_type;
 
 // struct oc_element; // Forward declaration (uncomment when needed)
 
 typedef struct {
+    uint32_t    cur_left;
+    uint32_t    depth;
+    uint32_t    y_address;
+    bool        at_top;
+    bool        has_rec_type;
+    char        file[FILENAME_MAX];     // placement avoids padding warning
+} binclude_element;
+
+typedef struct {
+    uint32_t    cur_left;
+    uint32_t    depth;
+    uint32_t    scale;
+    uint32_t    width;
+    uint32_t    y_address;
+    int32_t     xoff;
+    int32_t     yoff;
+    bool        at_top;
+    char        file[FILENAME_MAX];     // placement avoids padding warning
+} graphic_element;
+
+typedef struct {
     uint32_t        spacing;
     text_line   *   first;
-    bool            overprint;      // placement avoids padding warning
+    bool            overprint;          // placement avoids padding warning
 } text_element;
 
 typedef struct doc_element {
     struct  doc_element *   next;
-            uint32_t        blank_lines;
-            uint32_t        depth;
-            uint32_t        subs_skip;
-            uint32_t        top_skip;
+            uint32_t            blank_lines;
+            uint32_t            depth;
+            uint32_t            subs_skip;
+            uint32_t            top_skip;
     union {
-            text_element    text;
+            text_element        text;
+            binclude_element    binc;
+            graphic_element     graph;
     } element;
-            element_type    type;   // placement avoids padding warning
+            element_type        type;   // placement avoids padding warning
 } doc_element;
 
 typedef struct doc_el_group {

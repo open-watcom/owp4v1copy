@@ -290,7 +290,7 @@ doc_element * alloc_doc_el(  element_type type )
 
         doc_el_pool = mem_alloc( sizeof( *prev ) );
         prev = doc_el_pool;
-        for( k = 0; k < 10; k++ ) {     // alloc 10 text_lines if pool empty
+        for( k = 0; k < 10; k++ ) {     // alloc 10 doc_els if pool empty
             prev->next = mem_alloc( sizeof( *prev ) );
             prev = prev->next;
         }
@@ -305,6 +305,25 @@ doc_element * alloc_doc_el(  element_type type )
     curr->type = type;
 
     switch( type ) {
+    case el_binc :
+        curr->element.binc.cur_left = 0;
+        curr->element.binc.depth = 0;
+        curr->element.binc.y_address = 0;
+        curr->element.binc.at_top = false;
+        curr->element.binc.has_rec_type = false;
+        curr->element.binc.file[0] = '\0';
+        break;
+    case el_graph :
+        curr->element.graph.cur_left = 0;
+        curr->element.graph.depth = 0;
+        curr->element.graph.scale = 0;
+        curr->element.graph.width = 0;
+        curr->element.graph.y_address = 0;
+        curr->element.graph.xoff = 0;
+        curr->element.graph.yoff = 0;
+        curr->element.graph.at_top = false;
+        curr->element.graph.file[0] = '\0';
+        break;
     case el_text :
         curr->element.text.overprint = false;
         curr->element.text.spacing = 0;

@@ -469,9 +469,7 @@ void    start_doc_sect( void )
         }
     }
     g_cur_left = g_page_left_org;
-    g_cur_h_start = g_page_left_org +
-                    conv_hor_unit( &layout_work.p.line_indent );// TBD
-
+    g_cur_h_start = g_page_left_org + g_indent;
     if( header ) {
         doc_header( p_sk, top_sk, h_string, font, h_spc, page_e == ej_no );
     }

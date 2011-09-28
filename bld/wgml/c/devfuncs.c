@@ -32,9 +32,11 @@
 *                   df_setup()
 *                   df_start_page()
 *                   df_teardown()
+*                   fb_binclude_support()
 *                   fb_empty_text_line()
 *                   fb_enterfont()
 *                   fb_first_text_line_pass()
+*                   fb_graphic_support()
 *                   fb_init()
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
@@ -3519,6 +3521,49 @@ void fb_absoluteaddress( void )
     return;
 }
 
+/* Function fb_binclude_support().
+ * Outputs the prefix for BINCLUDE when depth > 0.
+ *
+ * This function is extremely specialized.
+ */
+
+void fb_binclude_support( binclude_element * in_el )
+{
+    if( in_el->at_top ) {
+        desired_state.y_address = bin_device->y_start;
+        if( in_el->depth == 0 ) {
+            desired_state.x_address = bin_device->x_start;
+        } else {
+            desired_state.x_address = in_el->cur_left;
+        }
+    } else {
+        if( in_el->depth == 0 ) {
+            desired_state.x_address = current_state.x_address;
+            desired_state.y_address = current_state.y_address;
+        } else {
+            desired_state.x_address = in_el->cur_left;
+            desired_state.y_address = in_el->y_address;
+        }
+    }
+    if( ps_device ) {   // always do ABSOLUTEADDRESS block
+        y_address = desired_state.y_address;
+        fb_initial_horizontal_positioning();
+    } else {            
+        if( in_el->depth > 0 ) {    // do nothing when depth == 0
+            if( current_state.y_address == desired_state.y_address ) {
+                fb_overprint_vertical_positioning();
+                page_start = false;
+            } else {
+                fb_normal_vertical_positioning();
+            }
+            current_state.x_address = bin_device->x_start;
+            fb_initial_horizontal_positioning();
+        }
+    }
+
+    return;
+}
+
 /* Function fb_empty_text_line().
  * Sets the internal and device states appropriately for an empty line.
  *
@@ -3681,6 +3726,27 @@ void fb_first_text_line_pass( text_line * out_line )
 
     return;
 }
+
+
+/* Function fb_graphic_support().
+ * Sets the start position for GRAPHIC for the PS device.
+ *
+ * This function is extremely specialized.
+ */
+ 
+void fb_graphic_support( graphic_element * in_el ) {
+    if( in_el->at_top ) {
+        desired_state.y_address = bin_device->y_start;
+    } else {
+        desired_state.y_address = in_el->y_address;
+    }
+    desired_state.x_address = in_el->cur_left;
+    y_address = desired_state.y_address;
+    fb_initial_horizontal_positioning();
+
+    return;
+}
+
 
 /* Function fb_init().
  * Interprets the :INIT block, which can contain multiple function blocks of two

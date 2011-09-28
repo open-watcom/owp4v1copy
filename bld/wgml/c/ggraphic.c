@@ -39,18 +39,19 @@
 
 void    gml_graphic( const gmltag * entry )
 {
-    bool        depth_found             = false;
-    bool        file_found              = false;
-    char        file[FILENAME_MAX];
-    char        rt_buff[MAX_FILE_ATTR];
-    char    *   p;
-    char    *   pa;
-    su          cur_su;
-    uint32_t    depth;
-    uint32_t    scale                   = 100;
+    bool            depth_found             = false;
+    bool            file_found              = false;
+    char            file[FILENAME_MAX];
+    char            rt_buff[MAX_FILE_ATTR];
+    char        *   p;
+    char        *   pa;
+    doc_element *   cur_el;
+    su              cur_su;
+    uint32_t        depth;
+    uint32_t        scale                   = 100;
     // the initial value of width is only correct for one-column pages.
     uint32_t    width                   = g_net_page_width;
-    int32_t     xoff                    = g_cur_h_start;
+    int32_t     xoff                    = 0;
     int32_t     yoff                    = 0;
 
     if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
@@ -199,8 +200,6 @@ void    gml_graphic( const gmltag * entry )
             if( att_val_to_SU( &cur_su, false ) ) {
                 return;
             }
-yoff = conv_vert_unit( &cur_su, spacing );
-out_msg( ":GRAPHIC yoff (not rounded):  %i\n", yoff );
             yoff = conv_vert_unit( &cur_su, spacing );
             if( ProcFlags.tag_end_found ) {
                 break;
@@ -215,44 +214,36 @@ out_msg( ":GRAPHIC yoff (not rounded):  %i\n", yoff );
         scan_start = scan_stop + 1;
         return;
     }
-out_msg( ":GRAPHIC file name: %s\n", file );
-out_msg( ":GRAPHIC depth: %i\n", depth );
-out_msg( ":GRAPHIC width: %i\n", width );
-out_msg( ":GRAPHIC scale: %i\n", scale );
-out_msg( ":GRAPHIC xoff:  %i\n", xoff );
-out_msg( ":GRAPHIC yoff:  %i\n", yoff );
+
+    scr_process_break();                // flush existing text
     start_doc_sect();                   // if not already done
 
-//    p_line.first = NULL;
-//    p_line.next  = NULL;
-//    p_line.last  = NULL;
+    cur_el = alloc_doc_el(  el_graph );
+    cur_el->depth = depth;              // always used with GRAPHIC
+    if( !ps_device ) {                  // character devices ignore SK & post_skip
+        g_skip = 0;
+        g_post_skip = 0;
+    }
+    set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
+    cur_el->blank_lines = g_blank_lines;
+    g_blank_lines = 0;
+    cur_el->subs_skip = g_subs_skip;
+    g_subs_skip = 0;
+    cur_el->top_skip = g_top_skip;
+    g_top_skip = 0;
+    cur_el->element.graph.cur_left = g_cur_h_start;
+    cur_el->element.graph.depth = depth;
+    cur_el->element.graph.scale = scale;
+    cur_el->element.graph.width = width;
+    cur_el->element.graph.xoff = xoff;
+    cur_el->element.graph.yoff = yoff;
+    strncpy_s( cur_el->element.graph.file, FILENAME_MAX, file, FILENAME_MAX );
 
-//    t_spacing = layout_work.titlep.spacing;
+    insert_col_main( cur_el );
 
-//    font_save = g_curr_font_num;
-//    g_curr_font_num = layout_work.title.font;
-
-//    p_line.line_height = wgml_fonts[g_curr_font_num].line_height;
-
-//    calc_title_pos( g_curr_font_num, t_spacing, !ProcFlags.title_text_seen );
-//    p_line.y_address = g_cur_v_start;
-
-//    prep_title_line( &p_line, p );
-
-//    ProcFlags.page_started = true;    -- do not activate?
-//    process_line_full( &p_line, false );
-//    g_curr_font_num = font_save;
-
-//    if( p_line.first != NULL) {
-//        add_text_chars_to_pool( &p_line );
-//    }
-//    ProcFlags.page_started = true;    -- do not activate?
-
-//    ProcFlags.title_text_seen = true;
     if( *p == '.' ) {
         p++;
     }
-    scan_start = p;                 // process following text
-//out_msg( ":GRAPHIC file name: %s\n", val_start);
+    scan_start = p;                 // process following text    
 }
 

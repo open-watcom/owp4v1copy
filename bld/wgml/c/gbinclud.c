@@ -40,16 +40,17 @@
 
 void    gml_binclude( const gmltag * entry )
 {
-    bool        depth_found             = false;
-    bool        file_found              = false;
-    bool        has_rec_type            = false;
-    bool        reposition;
-    bool        reposition_found        = false;
-    char        file[FILENAME_MAX];
-    char        rt_buff[MAX_FILE_ATTR];
-    char    *   p;
-    su          cur_su;
-    uint32_t    depth;
+    bool            depth_found             = false;
+    bool            file_found              = false;
+    bool            has_rec_type            = false;
+    bool            reposition;
+    bool            reposition_found        = false;
+    char            file[FILENAME_MAX];
+    char            rt_buff[MAX_FILE_ATTR];
+    char        *   p;
+    doc_element *   cur_el;
+    su              depth_su;
+    uint32_t        depth;
 
     if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
         if( (ProcFlags.doc_sect_nxt < doc_sect_gdoc) ) {
@@ -113,10 +114,10 @@ void    gml_binclude( const gmltag * entry )
                 break;
             }
             depth_found = true;
-            if( att_val_to_SU( &cur_su, true ) ) {
+            if( att_val_to_SU( &depth_su, true ) ) {
                 return;
             }
-            depth = conv_vert_unit( &cur_su, spacing );
+            depth = conv_vert_unit( &depth_su, spacing );
             if( ProcFlags.tag_end_found ) {
                 break;
             }
@@ -150,16 +151,27 @@ void    gml_binclude( const gmltag * entry )
         scan_start = scan_stop + 1;
         return;
     }
-out_msg( ":BINCLUDE file name: %s\n", file );
-out_msg( ":BINCLUDE depth: %i\n", depth );
-if( reposition ) {
-    out_msg( ":BINCLUDE reposition: start\n" );
-} else {
-    out_msg( ":BINCLUDE reposition: end\n" );
-}
+
+    scr_process_break();                // flush existing text
     start_doc_sect();                   // if not already done
 
-/// now call the implementation code, once it is written.
+    cur_el = alloc_doc_el(  el_binc );
+    if( reposition && depth ) {
+        cur_el->depth = depth;          // otherwise, it will be "0"
+    }
+    if( depth > 0 ) {
+        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
+        cur_el->blank_lines = g_blank_lines;
+        g_blank_lines = 0;
+        cur_el->subs_skip = g_subs_skip;
+        cur_el->top_skip = g_top_skip;
+    }
+    cur_el->element.binc.depth = depth;
+    cur_el->element.binc.cur_left = g_cur_h_start;
+    cur_el->element.binc.has_rec_type = has_rec_type;
+    strncpy_s( cur_el->element.binc.file, FILENAME_MAX, file, FILENAME_MAX );
+
+    insert_col_main( cur_el );
 
     scan_start = scan_stop + 1;         // skip following text
 }

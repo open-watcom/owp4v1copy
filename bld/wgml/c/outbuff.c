@@ -32,9 +32,12 @@
 *                   ob_insert_ps_text_start()
 *                   ob_setup()
 *                   ob_teardown()
-*               and this function declared in wgml.h:
+*               and these functions declared in wgml.h:
 *                   cop_tr_table()
+*                   ob_binclude()
+*                   ob_graphic()
 *               as well as these local variables:
+*                   binc_buff
 *                   buffout
 *                   translated
 *                   out_file_fb
@@ -63,11 +66,14 @@
 #include <string.h>
 
 #include "wgml.h"
+#include "devfuncs.h"
+#include "findfile.h"
 #include "gvars.h"
 #include "outbuff.h"
 
 /* Local variable declaration. */
 
+static record_buffer    binc_buff   = { 0, 0, NULL };
 static record_buffer    buffout     = { 0, 0, NULL };
 static record_buffer    translated  = { 0, 0, NULL };
 static FILE         *   out_file_fb;
@@ -1058,6 +1064,51 @@ void cop_tr_table( char * p )
     return;
 }
 
+/* Function ob_binclude().
+ * This function implements the action of BINCLUDE.
+ */
+
+void ob_binclude( binclude_element * in_el )
+{
+    uint32_t    count;
+
+    if( search_file_in_dirs( in_el->file, "", "", ds_doc_spec ) ) {
+        fb_binclude_support( in_el );
+        fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
+        buffout.current = 0;
+        
+        if( in_el->has_rec_type ) {
+            count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
+            while( count == buffout.length ) {
+                buffout.current = count;
+                fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
+                count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
+            }
+            buffout.current = count;
+            fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
+            buffout.current = 0;
+        } else {
+            count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, try_fp );
+            while( count == binc_buff.length ) {
+                binc_buff.current = count;
+                fwrite( binc_buff.text, sizeof( uint8_t ), binc_buff.current, out_file_fb );
+                ob_flush();
+                count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, try_fp );
+            }
+            binc_buff.current = count;
+            fwrite( binc_buff.text, sizeof( uint8_t ), binc_buff.current, out_file_fb );
+            if( in_el->depth > 0 ) {
+                ob_flush();
+            }
+        }
+
+    } else {
+        xx_tag_err( err_file_not_found, in_el->file );
+    }
+
+    return;
+}
+
 /* Function ob_flush().
  * This function actually flushes the output buffer to the output device/file.
  *
@@ -1066,11 +1117,6 @@ void cop_tr_table( char * p )
  *          the explicit emission of "\r\n" for non-Linux versions. For Linux,
  *          "\n" is emitted, but, since I am not able to test the Linux version,
  *          it is not possible to tell is this is correct.
- *      Since PostScript is a printer language, it is possible that it will
- *          require "\r\n" even under Linux, even in a software interpreter.
- *          Then again, the Linux version of Ghostscript, for example, may
- *          well expect "\n". It is possible, then, that the Linux code will
- *          need to distinguish between PS and other devices.
  */
 
 void ob_flush( void )
@@ -1083,6 +1129,70 @@ void ob_flush( void )
 #else
     fprintf_s( out_file_fb, "\r\n" );
 #endif
+    return;
+}
+
+/* Function ob_graphic().
+ * This function implements the action of GRAPHIC for the PS device.
+ */
+
+void ob_graphic( graphic_element * in_el )
+{
+    char        begindoc[] = "%%BeginDocument: ";
+    char        enddoc[] = "%%EndDocument";
+    char        graphobj[] = "/graphobj save def /showpage { } def";
+    char        restore[] = "graphobj restore";
+    size_t      ps_size;
+    uint32_t    count;
+
+    if( search_file_in_dirs( in_el->file, "", "", ds_doc_spec ) ) {
+        fb_graphic_support( in_el );
+        ob_flush();
+
+        ps_size = strlen( graphobj );
+        strcpy_s( buffout.text, buffout.length, graphobj );
+        buffout.current = ps_size;
+        ob_flush();
+
+        memset( buffout.text, buffout.length, '\0' );
+        ps_size = sprintf_s( buffout.text, buffout.length,
+                  "%d %d %d %d %d %d %d graphhead",
+                  in_el->cur_left, in_el->y_address, in_el->width, in_el->depth,
+                  in_el->xoff, -1 * (in_el->depth + in_el->yoff), in_el->scale );
+        buffout.current = strlen( buffout.text );
+        ob_flush();
+
+        ps_size = strlen( begindoc );
+        strcpy_s( buffout.text, buffout.length, begindoc );
+        buffout.current = ps_size;
+        strcpy_s( buffout.text + ps_size, buffout.length - ps_size, in_el->file );
+        buffout.current = strlen( buffout.text );
+        ob_flush();
+
+        count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
+        while( count == buffout.length ) {
+            buffout.current = count;
+            fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
+            count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
+        }
+        buffout.current = count;
+        fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
+        buffout.current = 0;
+
+        ps_size = strlen( enddoc );
+        strcpy_s( buffout.text, buffout.length, enddoc );
+        buffout.current = ps_size;
+        ob_flush();
+
+        ps_size = strlen( restore );
+        strcpy_s( buffout.text, buffout.length, restore );
+        buffout.current = ps_size;
+        ob_flush();
+
+    } else {
+        xx_tag_err( err_file_not_found, in_el->file );
+    }
+
     return;
 }
 
@@ -1215,6 +1325,10 @@ void ob_setup( void )
 
     /* Initialize the local variables. */
 
+    binc_buff.current = 0;
+    binc_buff.length = 80;
+    binc_buff.text = (uint8_t *) mem_alloc( binc_buff.length );
+
     buffout.current = 0;
     buffout.length = strtoul( &out_file_attr[2], NULL, 0 );
     if( errno == ERANGE ) {
@@ -1255,6 +1369,11 @@ void ob_setup( void )
 
 void ob_teardown( void )
 {
+    if( binc_buff.text != NULL ) {
+        mem_free( binc_buff.text );
+        binc_buff.text = NULL;
+    }
+
     if( buffout.text != NULL ) {
         mem_free( buffout.text );
         buffout.text = NULL;
