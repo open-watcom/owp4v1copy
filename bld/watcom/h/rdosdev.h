@@ -23,8 +23,8 @@ extern "C" {
 
 // special user-mode gates
 
-#define UserGate_free_mem 0x9a 2 0 0 0 2 0
-#define UserGate_create_thread 0x9a 28 0 0 0 2 0
+#define UserGate_free_mem 0x3e 0x67 0x9a 2 0 0 0 2 0
+#define UserGate_create_thread 0x3e 0x67 0x9a 28 0 0 0 2 0
 
 // callback pragmas
 

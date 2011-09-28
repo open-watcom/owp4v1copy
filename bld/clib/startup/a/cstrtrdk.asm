@@ -98,7 +98,7 @@ YIE     ends
 _DATA   segment use32 public 'DATA'
 
 ExitSs          dw 0
-ExitEsp         dd 055AA77BBh
+ExitEsp         dd 0
 
 _DATA   ends
 
