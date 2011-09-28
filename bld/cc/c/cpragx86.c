@@ -946,6 +946,7 @@ void PragAux( void )
     struct {
         unsigned    f_call   : 1;
         unsigned    f_loadds : 1;
+        unsigned    f_rdosdev: 1;
         unsigned    f_export : 1;
         unsigned    f_parm   : 1;
         unsigned    f_value  : 1;
@@ -964,6 +965,7 @@ void PragAux( void )
     PragObjNameInfo( &AuxInfo.objname );
     have.f_call   = 0;
     have.f_loadds = 0;
+    have.f_rdosdev = 0;
     have.f_export = 0;
     have.f_parm   = 0;
     have.f_value  = 0;
@@ -984,6 +986,9 @@ void PragAux( void )
         } else if( !have.f_loadds && PragRecog( "loadds" ) ) {
             AuxInfo.cclass |= LOAD_DS_ON_ENTRY;
             have.f_loadds = 1;
+        } else if( !have.f_rdosdev && PragRecog( "rdosdev" ) ) {
+            AuxInfo.cclass |= LOAD_RDOSDEV_ON_ENTRY;
+            have.f_rdosdev = 1;
         } else if( !have.f_export && PragRecog( "export" ) ) {
             AuxInfo.cclass |= DLL_EXPORT;
             have.f_export = 1;

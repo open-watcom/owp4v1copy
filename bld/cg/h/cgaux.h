@@ -93,7 +93,7 @@ typedef enum  {
     #error too many attributes
 #endif
 
-typedef unsigned long call_class;
+typedef unsigned long long call_class;
 typedef unsigned long byte_seq_len;
 
 #include "cgauxa.h"
