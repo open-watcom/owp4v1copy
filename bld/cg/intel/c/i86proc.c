@@ -55,6 +55,8 @@ extern  void        GenWindowsProlog( void );
 extern  void        GenCypWindowsProlog( void );
 extern  void        GenWindowsEpilog( void );
 extern  void        GenCypWindowsEpilog( void );
+extern  void        GenRdosdevProlog( void );
+extern  void        GenRdosdevEpilog( void );
 extern  void        EmitRtnEnd( void );
 extern  void        EmitEpiBeg( void );
 extern  void        GenEnter(int,int);
@@ -452,7 +454,7 @@ static  bool    NeedStackCheck( void )
 static void DoStackCheck( void ) {
 /**************************/
 
-    if( CurrProc->prolog_state & GENERATE_THUNK_PROLOG )
+    if( CurrProc->prolog_state & ( GENERATE_THUNK_PROLOG | GENERATE_RDOSDEV_PROLOG ) )
         return;
     #if _TARGET & _TARG_80386
     if( CurrProc->prolog_state & GENERATE_GROW_STACK ) {
@@ -643,6 +645,10 @@ extern  void    GenProlog( void ) {
     CodeLabel( label, DepthAlign( PROC_ALIGN ) );
 
     attr = FEAttr( AskForLblSym( origlabel ) );
+
+    if( CurrProc->prolog_state & GENERATE_RDOSDEV_PROLOG ) {
+        GenRdosdevProlog();
+    }
 
     #if _TARGET & _TARG_80386
     if( ( attr & FE_NAKED ) == EMPTY ) {
@@ -1226,6 +1232,9 @@ static  void    DoEpilog( void ) {
                     QuickSave( HW_BP, OP_POP );
                 }
             }
+        }
+        if( CurrProc->prolog_state & GENERATE_RDOSDEV_PROLOG ) {
+            GenRdosdevEpilog();
         }
     }
 

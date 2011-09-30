@@ -167,6 +167,9 @@ extern  type_class_def  CallState( aux_handle aux,
         if( cclass & TOUCH_STACK ) {
             CurrProc->prolog_state |= GENERATE_TOUCH_STACK;
         }
+        if( cclass & LOAD_RDOSDEV_ON_ENTRY ) {
+            CurrProc->prolog_state |= GENERATE_RDOSDEV_PROLOG;
+        }
     }
     class = ReturnClass( tipe, state->attr );
     i = 0;
