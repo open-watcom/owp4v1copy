@@ -274,7 +274,7 @@ pick(    MSG_DOS_HELP_3,    "option    ::= \"FULLHeader\" | \"PACKCode=\"n | \"P
  *  OS2 help screen: max 32 lines (from 0 to 31).
  *  To start a new page, leave a line undefined or define an empty line.
  */
-pick(    MSG_OS2_HELP_0,    "\ncommands valid for the OS/2 and DOS/4G Systems executable formats only:\n" ,
+pick(    MSG_OS2_HELP_0,    "\ncommands valid for the OS/2 and DOS/4G executable formats only:\n" ,
                 "\nOS/2実行可能形式に対してのみ有効なコマンド:\n" )
 pick(    MSG_OS2_HELP_1,    "form      ::= \"OS2\" [\"FLat\"|\"LE\"|\"LX\"] [\"PHYSdevice\" | \"VIRTdevice\"" ,
                 "form      ::= \"OS2\" [\"FLat\"|\"LE\"|\"LX\"] [\"PHYSdevice\" | \"VIRTdevice\"" )
