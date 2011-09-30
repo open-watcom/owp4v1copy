@@ -119,8 +119,19 @@ static mad_trace_how DoTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_tr
 {
     switch( tk ) {
     case MTRK_OUT:
-        BreakRet( td, dd, mr );
-        return( MTRH_BREAK );
+        switch( td->prev_ins_type ) {
+        case DI_X86_ret:
+        case DI_X86_ret2:
+        case DI_X86_iret:
+        case DI_X86_iretd:
+        case DI_X86_retf:
+        case DI_X86_retf2:
+            BreakRet( td, dd, mr );
+            return( MTRH_BREAK );
+        default:
+            break;
+        }
+        return( MTRH_STEP );
     case MTRK_INTO:
         return( MTRH_STEP );
     case MTRK_OVER:
