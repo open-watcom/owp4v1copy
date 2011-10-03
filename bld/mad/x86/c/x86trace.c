@@ -119,7 +119,7 @@ static mad_trace_how DoTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_tr
 {
     switch( tk ) {
     case MTRK_OUT:
-        switch( td->prev_ins_type ) {
+        switch( dd->ins.type ) {
         case DI_X86_ret:
         case DI_X86_ret2:
         case DI_X86_iret:
