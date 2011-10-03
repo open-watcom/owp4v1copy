@@ -2343,6 +2343,20 @@ extern  void    GenRdosdevProlog( void ) {
     _Emit;
 
     _Code;
+    LayOpbyte( 0x6 );              /*      push    es        */
+    _Emit;
+
+    _Code;
+    LayOpbyte( 0xf );              /*      push    fs        */
+    AddByte( 0xa0 );
+    _Emit;
+
+    _Code;
+    LayOpbyte( 0xf );              /*      push    gs        */
+    AddByte( 0xa8 );
+    _Emit;
+
+    _Code;
     LayOpbyte( 0x68 );             /*      push    DGROUP    */
     ILen += WORD_SIZE;
     DoSegRef( AskBackSeg() );
@@ -2354,6 +2368,20 @@ extern  void    GenRdosdevProlog( void ) {
 
 extern  void    GenRdosdevEpilog( void ) {
 /****************************************/
+
+    _Code;
+    LayOpbyte( 0xf );              /*      pop     gs      */
+    AddByte( 0xa9 );
+    _Emit;
+
+    _Code;
+    LayOpbyte( 0xf );              /*      pop     fs      */
+    AddByte( 0xa1 );
+    _Emit;
+
+    _Code;
+    LayOpbyte( 0x7 );              /*      pop     es      */
+    _Emit;
 
     _Code;
     LayOpbyte( 0x1f );             /*      pop     ds      */
