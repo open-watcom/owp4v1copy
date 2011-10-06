@@ -38,11 +38,19 @@ extern const char __based(__segname("_CONST")) __Alphabet[];
 typedef unsigned __based(__segname("_STACK")) *uint_stk_ptr;
 
 unsigned long __uldiv( unsigned long, uint_stk_ptr );
-#if defined(__386__)
+#if defined(__386__) && defined(__SMALL_DATA__)
     #pragma aux __uldiv = \
         "xor edx,edx" \
         "div dword ptr [ebx]" \
         "mov [ebx],edx" \
+        parm caller [eax] [ebx] \
+        modify exact [eax edx] \
+        value [eax];
+#elif defined( __386__ ) && defined(__BIG_DATA__)
+    #pragma aux __uldiv = \
+        "xor edx,edx" \
+        "div dword ptr ss:[ebx]" \
+        "mov ss:[ebx],edx" \
         parm caller [eax] [ebx] \
         modify exact [eax edx] \
         value [eax];

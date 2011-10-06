@@ -41,7 +41,7 @@ typedef unsigned __based(__segname("_STACK")) *uint_stk_ptr;
 
 #if defined( _M_IX86 )
 unsigned long long __ulldiv( unsigned long long, uint_stk_ptr );
-#if defined(__386__)
+#if defined(__386__) && defined(__SMALL_DATA__)
     #pragma aux __ulldiv = \
         "xor ecx,ecx"     /* set high word of quotient to 0 */ \
         "cmp edx,dword ptr[ebx]" /* if quotient will be >= 4G */ \
@@ -54,6 +54,20 @@ unsigned long long __ulldiv( unsigned long long, uint_stk_ptr );
       "less4g:"           \
         "div dword ptr[ebx]" /* calculate low part */ \
         "mov [ebx],edx"   /* store remainder */ \
+        parm [eax edx] [ebx] value [eax ecx];
+#elif defined( __386__ )  && defined(__BIG_DATA__)
+    #pragma aux __ulldiv = \
+        "xor ecx,ecx"     /* set high word of quotient to 0 */ \
+        "cmp edx,dword ptr ss:[ebx]" /* if quotient will be >= 4G */ \
+        "jb less4g"       /* then */ \
+        "mov ecx,eax"     /* - save low word of dividend */ \
+        "mov eax,edx"     /* - get high word of dividend */ \
+        "xor edx,edx"     /* - zero high part */ \
+        "div dword ptr ss:[ebx]"  /* - divide into high part of dividend */ \
+        "xchg eax,ecx"    /* - swap high part of quot,low word of dvdnd */ \
+      "less4g:"           \
+        "div dword ptr ss:[ebx]" /* calculate low part */ \
+        "mov ss:[ebx],edx"   /* store remainder */ \
         parm [eax edx] [ebx] value [eax ecx];
 #elif defined( _M_I86 )  && defined(__BIG_DATA__)
     #pragma aux __ulldiv = \

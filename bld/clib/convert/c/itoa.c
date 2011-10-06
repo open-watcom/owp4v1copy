@@ -39,11 +39,19 @@ typedef unsigned __based(__segname("_STACK")) *uint_stk_ptr;
 
 #if defined(__WATCOMC__)
 unsigned __udiv( unsigned, uint_stk_ptr );
-#if defined(__386__)
+#if defined(__386__) && defined(__SMALL_DATA__)
     #pragma aux __udiv = \
         "xor edx,edx" \
         "div dword ptr [ebx]" \
         "mov [ebx],eax" \
+        parm caller [eax] [ebx] \
+        modify exact [eax edx] \
+        value [edx];
+#elif defined( __386__ ) && defined(__BIG_DATA__)
+    #pragma aux __udiv = \
+        "xor edx,edx" \
+        "div dword ptr ss:[ebx]" \
+        "mov ss:[ebx],eax" \
         parm caller [eax] [ebx] \
         modify exact [eax edx] \
         value [edx];
