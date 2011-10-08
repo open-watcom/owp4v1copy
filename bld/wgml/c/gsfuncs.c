@@ -95,8 +95,11 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                     ((cm2 == ampchar) && isalpha( cm1 )) ) {// &X' sequence
                             /* no instring change */
                 } else {
+                    if( c != slash ) {  // hack for testing TBD
+
                     instring[paren_level] = true;
                     quotechar[paren_level] = c;
+                    }
                 }
             } else {
                 switch( c ) {

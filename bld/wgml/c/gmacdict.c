@@ -80,7 +80,7 @@ static  void    free_macro_entry_short( mac_entry * me )
     if( me != NULL ) {
         cb = me->label_cb;
         if( GlobalFlags.research ) {
-            print_labels( cb );         // print label info
+            print_labels( cb, me->name );   // print label info
         }
         while( cb != NULL ) {
             me->label_cb = cb->prev;
@@ -112,7 +112,7 @@ void    free_macro_entry( mac_entry * * dict, mac_entry * me )
     if( me != NULL ) {
         cb = me->label_cb;
         if( GlobalFlags.research ) {
-            print_labels( cb );         // print label info
+            print_labels( cb, me->name );// print label info
         }
         while( cb != NULL ) {
             me->label_cb = cb->prev;

@@ -488,10 +488,10 @@ void    scr_go( void )
 
 
 /***************************************************************************/
-/*  print list of defined label for current file                           */
+/*  print list of defined labels for macro or file                         */
 /***************************************************************************/
 
-void        print_labels( labelcb * lcb )
+void        print_labels( labelcb * lcb, char * name )
 {
     static const char   fill[10] = "         ";
     size_t              len;
@@ -499,7 +499,7 @@ void        print_labels( labelcb * lcb )
 
     lb = lcb;
     if( lb != NULL ) {
-        out_msg( "\nList of defined labels for current input:\n\n");
+        out_msg( "\nList of defined labels for %s:\n\n", name);
         while( lb != NULL ) {
             len = strlen( lb->label_name );
             out_msg( "Label='%s'%s at line %d\n", lb->label_name, &fill[len],

@@ -250,13 +250,13 @@ static  void    del_input_cb_entry( void )
         if( wk->s.f->flags & FF_open ) {// close file if neccessary
             fclose( wk->s.f->fp );
         }
-        lw = wk->s.f->label_cb;         // free labels
+        lw = wk->s.f->label_cb;
         if( GlobalFlags.research ) {
-            print_labels( lw );         // print labels
+            print_labels( lw, wk->s.f->filename );  // print labels
         }
         while( lw != NULL ) {
            wk->s.f->label_cb = lw->prev;
-           mem_free( lw );
+           mem_free( lw );              // free labels
            lw = wk->s.f->label_cb;
         }
         mem_free( wk->s.f );
@@ -351,6 +351,38 @@ static bool test_macro_xxxx( char const * beginend )
 
 
 /***************************************************************************/
+/*  test for comment  .* .cm :cmt                                          */
+/*  returns true if  comment found                                         */
+/***************************************************************************/
+
+static  bool    test_comment( void )
+{
+
+    if( *buff2 == SCR_char ) {          // test for .*  .cm
+        if( ( *(buff2 + 1) == '*')
+             || ( (tolower( *(buff2 + 1) ) == 'c') &&
+                  (tolower( *(buff2 + 2) ) == 'm') &&
+                  (*(buff2+3) == ' ')
+                )
+        ) {
+           return( true );
+        }
+    } else {                            // test for :cmt
+        if( (*buff2 == GML_char) &&
+            (tolower( *(buff2 + 1) ) == 'c') &&
+            (tolower( *(buff2 + 2) ) == 'm') &&
+            (tolower( *(buff2 + 3) ) == 't')
+        ) {
+            if( (*(buff2 + 4) == ' ') ||
+                (*(buff2 + 4) == '.')  ) {
+                return( true );
+            }
+        }
+    }
+    return( false );
+}
+
+/***************************************************************************/
 /*  process the input file                                                 */
 /***************************************************************************/
 
@@ -437,15 +469,11 @@ static  void    proc_input( char * filename )
         /*******************************************************************/
 
         while( !(input_cbs->fmflags & II_eof) ) {
+
             ic = input_cbs->if_cb;      // .if .th .el controlblock
 
-            if( !ProcFlags.keep_ifstate ) {
-                if( ic->if_level > 0 ) {// if .if active
-                    if( ic->if_flags[ic->if_level].ifelse // after else
-                        && !ic->if_flags[ic->if_level].ifdo ) {// no do group
-                        ic->if_level--; // pop .if stack one level
-                    }
-                }
+            if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                show_ifcb( "procin 1", ic );
             }
 
             if( !get_line( true ) ) {
@@ -470,14 +498,6 @@ static  void    proc_input( char * filename )
                 }
                 break;                  // EOF
             }
-            if( !ProcFlags.keep_ifstate ) {
-                if( !ic->if_flags[ic->if_level].ifdo ) {  // no do group
-                    ic->if_flags[ic->if_level].ifthen = false;// not in then
-                    ic->if_flags[ic->if_level].ifelse = false;// not in else
-                }
-            } else {
-                ProcFlags.keep_ifstate = false;
-            }
 
             remove_indentation();       // ".  .  .  .cw"  becomes ".cw"
 
@@ -486,6 +506,36 @@ static  void    proc_input( char * filename )
                     continue;           // skip processing
                 }
                 ProcFlags.goto_active = false;
+            }
+
+            if( test_comment() ) {      // minimal processing for comment
+                continue;
+            }
+            if( !ProcFlags.keep_ifstate ) {
+                if( ic->if_level > 0 ) {// if .if active
+                    if( ic->if_flags[ic->if_level].ifelse // after else
+                        && !ic->if_flags[ic->if_level].ifdo ) {// no do group
+
+                        ic->if_level--; // pop .if stack one level
+
+                        if( GlobalFlags.firstpass &&
+                            input_cbs->fmflags & II_research ) {
+                            show_ifcb( "procin -1", ic );
+                        }
+                    }
+                }
+                if( !ic->if_flags[ic->if_level].ifdo ) {  // no do group
+
+                    ic->if_flags[ic->if_level].ifthen = false;// not in then
+                    ic->if_flags[ic->if_level].ifelse = false;// not in else
+
+                    if( GlobalFlags.firstpass &&
+                        input_cbs->fmflags & II_research ) {
+                        show_ifcb( "procin 2", ic );
+                    }
+                }
+            } else {
+                ProcFlags.keep_ifstate = false;
             }
 
             /***************************************************************/
@@ -531,7 +581,7 @@ static  void    proc_input( char * filename )
                 break;            // imbed and friends found, start new level
             }
         }
-        if( ProcFlags.newLevelFile ) {
+        if( ProcFlags.newLevelFile ) {  // include / imbed new file
             continue;
         }
 

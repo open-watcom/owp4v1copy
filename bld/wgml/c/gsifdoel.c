@@ -65,6 +65,29 @@ typedef enum logop {
 } logop;
 
 
+/***************************************************************************/
+/*  show current .if control block for debugging                           */
+/***************************************************************************/
+
+void    show_ifcb( char * txt, ifcb * cb ) {
+
+    out_msg( "%-8s L%d tf%d%d"
+            " th%d el%d do%d cw(l,i,te,d) %d,%d,%d,%d kp %d\n",
+             txt,
+             cb->if_level,
+             cb->if_flags[cb->if_level].iftrue,
+             cb->if_flags[cb->if_level].iffalse,
+
+             cb->if_flags[cb->if_level].ifthen,
+             cb->if_flags[cb->if_level].ifelse,
+             cb->if_flags[cb->if_level].ifdo,
+             cb->if_flags[cb->if_level].iflast,
+             cb->if_flags[cb->if_level].ifcwif,
+             cb->if_flags[cb->if_level].ifcwte,
+             cb->if_flags[cb->if_level].ifcwdo,
+             ProcFlags.keep_ifstate
+          );
+}
 
 /***************************************************************************/
 /* gargrelop   scan for relation operator in .if statement                 */
@@ -213,7 +236,7 @@ static condcode gargterm( termcb * t )
             }
         }
         // prepare string   quoted or unquoted
-        t->term_string  = mem_alloc( arg_flen +1 );
+        t->term_string  = mem_alloc( arg_flen + 1 );
         strncpy_s( t->term_string, arg_flen + 1, tok_start, arg_flen );
         t->term_length  = arg_flen;
     } else {
@@ -386,11 +409,7 @@ void    scr_if( void )
     garginit();                         // find end of control word
 
     cb = input_cbs->if_cb;              // get .if control block
-
-    cb->if_flags[cb->if_level].ifcwte = false;  // no .th .el yet
-    cb->if_flags[cb->if_level].iftrue = false;  // cond not yet true
-    cb->if_flags[cb->if_level].iffalse = false; // cond not yet false
-
+    cb->if_flags[cb->if_level].ifcwif = false;  // reset cwif switch
 
     for( ;; ) {                         // evaluate if conditions
 
@@ -438,6 +457,9 @@ void    scr_if( void )
                 memset( &cb->if_flags[cb->if_level], '\0',
                         sizeof( cb->if_flags[cb->if_level] ) );
                 cb->if_flags[cb->if_level].iflast = true;
+                cb->if_flags[cb->if_level].ifcwte = false;  // no .th .el yet
+                cb->if_flags[cb->if_level].iftrue = false;  // cond not yet true
+                cb->if_flags[cb->if_level].iffalse = false; // cond not yet false
             } else {
                 scan_err = true;
                 g_err( err_if_nesting );
@@ -527,12 +549,15 @@ void    scr_if( void )
         }
     }
     if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
-        out_msg( "\t.if is %s Level %d\n"
+          show_ifcb( "if", cb );
+#if 0
+          out_msg( "\t.if is %s Level %d\n"
                  "\t.ifcb iftrue %d, iffalse %d\n",
                  totalcondition ? "true " : "false",
                  cb->if_level,
                  cb->if_flags[cb->if_level].iftrue,
                  cb->if_flags[cb->if_level].iffalse );
+#endif
     }
 
     if( *scan_start ) {                 // rest of line is not empty
@@ -584,6 +609,7 @@ void    scr_th( void )
     char        linestr[MAX_L_AS_STR];
 
     scan_err = false;
+    cb->if_flags[cb->if_level].ifcwte = false;
     if( !cb->if_flags[cb->if_level].iflast
 
         || !(cb->if_flags[cb->if_level].iftrue
@@ -602,6 +628,7 @@ void    scr_th( void )
             utoa( input_cbs->s.f->lineno, linestr, 10 );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
+        show_ifcb( "then", cb );
         show_include_stack();
         err_count++;
         return;
@@ -609,6 +636,7 @@ void    scr_th( void )
     cb->if_flags[cb->if_level].iflast = false;
     cb->if_flags[cb->if_level].ifthen = true;
     ProcFlags.keep_ifstate = true;
+    show_ifcb( "then", cb );
 
     garginit();                         // find end of control word
 
@@ -656,6 +684,7 @@ void    scr_el( void )
 
     scan_err = false;
     cb->if_flags[cb->if_level].iflast = false;
+    cb->if_flags[cb->if_level].ifcwte = false;
 
     if( !(cb->if_flags[cb->if_level].iftrue
           || cb->if_flags[cb->if_level].iffalse)
@@ -673,12 +702,14 @@ void    scr_el( void )
             utoa( input_cbs->s.f->lineno, linestr, 10 );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
+        show_ifcb( "else", cb );
         show_include_stack();
         err_count++;
         return;
     }
     cb->if_flags[cb->if_level].ifelse = true;
     ProcFlags.keep_ifstate = true;
+    show_ifcb( "else", cb );
 
     garginit();                         // find end of control word
 
@@ -724,6 +755,7 @@ void    scr_do( void )
     garginit();                         // find end of control word
     cc = getarg();
 
+    cb->if_flags[cb->if_level].ifcwdo = false;
     if( cc == omit || !strnicmp( tok_start, "begin", 5 )) {
 
         if( !(cb->if_flags[cb->if_level].ifthen
@@ -739,11 +771,13 @@ void    scr_do( void )
                 utoa( input_cbs->s.f->lineno, linestr, 10 );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
+            show_ifcb( "dobegin", cb );
             show_include_stack();
             err_count++;
             return;
         }
         cb->if_flags[cb->if_level].ifdo = true;
+        show_ifcb( "dobegin", cb );
         scan_restart = scan_stop + 1;
         return;
     } else {
@@ -755,11 +789,12 @@ void    scr_do( void )
                          cb->if_flags[cb->if_level].iftrue,
                          cb->if_flags[cb->if_level].iffalse );
             }
-            do {
+            do {                            // loop for last active .do begin
 
                 if( cb->if_flags[cb->if_level].ifdo ) {
 
                     cb->if_flags[cb->if_level].ifdo = false;
+                    show_ifcb( "doend", cb );
                     scan_restart = scan_stop + 1;
                     return;
                 }
@@ -777,6 +812,7 @@ void    scr_do( void )
                         utoa( input_cbs->s.f->lineno, linestr, 10 );
                         g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                     }
+                    show_ifcb( "doend", cb );
                     show_include_stack();
                     err_count++;
                     return;
@@ -805,6 +841,7 @@ void    scr_do( void )
             return;
         }
     }
+    show_ifcb( "do xx", cb );
     scan_restart = scan_stop + 1;
     return;
 }

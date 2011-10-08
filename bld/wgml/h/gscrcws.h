@@ -28,18 +28,18 @@
 *               only control words with a routine name other than scr_dummy
 *               are processed so far
 ****************************************************************************/
-
+ 
 #ifndef picks
     #error macro picks not defined
 #endif
 //  control  routine    flags
 //     word  name
 // lower case
-
+ 
   picks( ad, scr_dummy, cw_break           )// adjust
   picks( ap, scr_ap,    0                  )// append
   picks( bc, scr_dummy, cw_o_t             )// balance columns
-  picks( bd, scr_dummy, cw_o_t             )// bold
+  picks( bd, scr_us,    cw_o_t             )// bold dummy treat as underscore TBD
   picks( bf, scr_dummy, cw_o_t             )// begin font
   picks( bi, scr_dummy, cw_o_t             )// bold italic
   picks( bl, scr_dummy, cw_break+cw_o_t    )// blank line
@@ -168,6 +168,6 @@
   picks( us, scr_us,    cw_o_t             )// underscore
   picks( wd, scr_dummy, 0                  )// widow
   picklab( .., scr_label, 0                )
-
+ 
 #undef picks
 #undef picklab

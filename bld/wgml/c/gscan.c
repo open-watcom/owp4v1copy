@@ -538,31 +538,22 @@ static void     scan_script( void )
 /*  file cbt284.011                                                        */
 /***************************************************************************/
 
-//#define DEBTESTPROC             // to reduce test output don't define this
+#define DEBTESTPROC             // to reduce test output don't define this
 
 condcode    test_process( ifcb * cb )
 {
     condcode    cc;
     char        linestr[MAX_L_AS_STR];
 
-    cc = no;
 #ifdef DEBTESTPROC
+    int     start_level = cb->if_level;
+
     if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
-        out_msg( "ANF mainif L %d t %d, f %d"
-                " th(%d) el(%d) do(%d) last(%d) cwif,do,te(%d,%d,%d)\n",
-                 cb->if_level,
-                 cb->if_flags[cb->if_level].iftrue,
-                 cb->if_flags[cb->if_level].iffalse,
-                 cb->if_flags[cb->if_level].ifthen,
-                 cb->if_flags[cb->if_level].ifelse,
-                 cb->if_flags[cb->if_level].ifdo,
-                 cb->if_flags[cb->if_level].iflast,
-                 cb->if_flags[cb->if_level].ifcwif,
-                 cb->if_flags[cb->if_level].ifcwdo,
-                 cb->if_flags[cb->if_level].ifcwte
-              );
+        show_ifcb( "Anf teif", cb );
     }
 #endif
+
+    cc = no;
 //mainif
     if( cb->if_flags[cb->if_level].iflast   // 1. rec after .if
         && !cb->if_flags[cb->if_level].ifcwte) {// not .th or .el
@@ -591,17 +582,11 @@ condcode    test_process( ifcb * cb )
         }
 
 #ifdef DEBTESTPROC
-        if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
-            out_msg( "EX1 mainif L %d t %d, f %d"
-                    " th(%d) el(%d) do(%d) last(%d) %s\n",
-                     cb->if_level,
-                     cb->if_flags[cb->if_level].iftrue,
-                     cb->if_flags[cb->if_level].iffalse,
-                     cb->if_flags[cb->if_level].ifthen,
-                     cb->if_flags[cb->if_level].ifelse,
-                     cb->if_flags[cb->if_level].ifdo,
-                     cb->if_flags[cb->if_level].iflast,
-                     cc == pos ? "pos" : "no" );
+        if( GlobalFlags.research && GlobalFlags.firstpass &&
+            (start_level || cb->if_level) ) {
+            char * txt = (cc == pos ? "EX1 pos" : "EX1 no" );
+
+            show_ifcb( txt, cb );
         }
 #endif
         return( cc );
@@ -612,17 +597,11 @@ condcode    test_process( ifcb * cb )
         if( cb->if_flags[cb->if_level].ifcwdo ) {   // if  .do
             cc = pos;
 #ifdef DEBTESTPROC
-            if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
-                out_msg( "Edo mainif L %d t %d, f %d"
-                        " th(%d) el(%d) do(%d) last(%d) %s\n",
-                         cb->if_level,
-                         cb->if_flags[cb->if_level].iftrue,
-                         cb->if_flags[cb->if_level].iffalse,
-                         cb->if_flags[cb->if_level].ifthen,
-                         cb->if_flags[cb->if_level].ifelse,
-                         cb->if_flags[cb->if_level].ifdo,
-                         cb->if_flags[cb->if_level].iflast,
-                         cc == pos ? "pos" : "no" );
+            if( GlobalFlags.research && GlobalFlags.firstpass &&
+                (start_level || cb->if_level) ) {
+                char * txt = (cc == pos ? "Edo pos" : "Edo no" );
+
+                show_ifcb( txt, cb );
             }
 #endif
             return( cc );
@@ -694,17 +673,11 @@ condcode    test_process( ifcb * cb )
         err_count++;
     }
 #ifdef DEBTESTPROC
-    if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
-        out_msg( "EX3 mainif L %d t %d, f %d"
-                " th(%d) el(%d) do(%d) last(%d) %s\n",
-                 cb->if_level,
-                 cb->if_flags[cb->if_level].iftrue,
-                 cb->if_flags[cb->if_level].iffalse,
-                 cb->if_flags[cb->if_level].ifthen,
-                 cb->if_flags[cb->if_level].ifelse,
-                 cb->if_flags[cb->if_level].ifdo,
-                 cb->if_flags[cb->if_level].iflast,
-                 cc == pos ? "pos" : "no" );
+    if( GlobalFlags.research && GlobalFlags.firstpass &&
+        (start_level || cb->if_level) ) {
+        char * txt = (cc == pos ? "EX3 pos" : "EX3 no" );
+
+        show_ifcb( txt, cb );
     }
 #endif
     return( cc );
@@ -724,10 +697,6 @@ void set_if_then_do( ifcb * cb )
 {
     char        cw[3];
     char        c;
-
-    cb->if_flags[cb->if_level].ifcwte = false;  // reset
-    cb->if_flags[cb->if_level].ifcwdo = false;  // .. current
-    cb->if_flags[cb->if_level].ifcwif = false;  // .... if, then, else, do
 
     if( *buff2 == SCR_char ) {          // only test script control words
         cw[0] = '\0';
@@ -768,10 +737,6 @@ void    scan_line( void )
     cb         = input_cbs->if_cb;
     scan_start = buff2;
     scan_stop  = buff2 + buff2_lg;
-
-    cb->if_flags[cb->if_level].ifcwte = false;  // reset
-    cb->if_flags[cb->if_level].ifcwdo = false;  // .. current
-    cb->if_flags[cb->if_level].ifcwif = false;  // .... if, then, else, do
 
     if( !ProcFlags.literal ) {
         set_if_then_do( cb );

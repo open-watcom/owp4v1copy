@@ -237,8 +237,12 @@ static void split_at_CW_sep_char( char * splitpos ) {
         if( splitpos == NULL ) {        // splitpos not yet known
             splitpos = strchr( buff2 + 2, CW_sep_char );
         }
-
         if( (splitpos != NULL) && (*(splitpos + 1) != '\0') ) {
+            if( (*(splitpos - 1) == '\'') && (*(splitpos +- 1) == '\'') ) {
+            ;// hack for testing macro repchars docs\doc\hlp\fmtmacro.gml(174)
+                                        // don't split &'index("&x.",';')
+            } else
+
             if( *(splitpos + 1) != CW_sep_char ) {
                 split_input( buff2, splitpos + 1 );// split after CW_sep_char
 
