@@ -11,12 +11,563 @@
 *
 ****************************************************************************/
 
+#define usergate_allocate_dos_mem 0
+#define usergate_allocate_local_mem 1
+#define usergate_free_mem 2
+#define usergate_available_small_local_linear 3
+#define usergate_used_local_linear 4
+#define usergate_available_vm_linear 5
+#define usergate_used_vm_linear 6
+
+#define usergate_reserve_pe_mem 7
+#define usergate_set_flat_linear_valid 8
+#define usergate_set_flat_linear_invalid 9
+#define usergate_set_flat_linear_read 10
+#define usergate_set_flat_linear_readwrite 11
+
+#define usergate_get_raw_switch_ads 12
+#define usergate_raw_switch 13
+#define usergate_get_exception 14
+#define usergate_set_exception 15
+#define usergate_get_pm_int 16
+#define usergate_set_pm_int 17
+#define usergate_get_vm_int 18
+#define usergate_set_vm_int 19
+#define usergate_dpmi_int 20
+#define usergate_dpmi_call_int 21
+#define usergate_dpmi_call 22
+#define usergate_allocate_vm_callback 23
+#define usergate_free_vm_callback 24
+
+#define usergate_wait_milli 25
+#define usergate_wait_micro 26
+#define usergate_wait_until 27
+#define usergate_create_thread 28
+#define usergate_terminate_thread 29
+#define usergate_get_thread 30
+#define usergate_swap 31
+
+#define usergate_create_user_section 32
+#define usergate_create_blocked_user_section 33
+#define usergate_delete_user_section 34
+#define usergate_enter_user_section 35
+#define usergate_leave_user_section 36
+
+#define usergate_get_local_mailslot 37
+#define usergate_get_remote_mailslot 38
+#define usergate_free_mailslot 39
+#define usergate_send_mailslot 40
+#define usergate_define_mailslot 41
+#define usergate_receive_mailslot 42
+#define usergate_reply_mailslot 43
+
+#define usergate_load_exe 44
+#define usergate_spawn_exe 45
+#define usergate_unload_exe 46
+#define usergate_get_exit_code 47
+#define usergate_get_exe_name 48
+#define usergate_get_cmd_line 49
+#define usergate_get_env 50
+#define usergate_load_dll 51
+#define usergate_free_dll 52
+#define usergate_get_module_proc 53
+#define usergate_get_module_resource 54
+#define usergate_get_module_name 55
+#define usergate_get_module 56
+#define usergate_allocate_app_mem 57
+#define usergate_free_app_mem 58
+#define usergate_get_psp_sel 59
+
+#define usergate_get_debug_thread 61
+#define usergate_debug_trace 62
+#define usergate_debug_pace 63
+#define usergate_debug_go 64
+#define usergate_debug_next 65
+
+#define usergate_add_wait_for_debug_event 66
+#define usergate_get_debug_event_data 67
+#define usergate_continue_debug_event 68
+#define usergate_notify_pe_exception 70
+#define usergate_read_thread_mem 71
+#define usergate_write_thread_mem 72
+#define usergate_get_thread_tss 73
+#define usergate_set_thread_tss 74
+
+#define usergate_get_cpu_time 75
+#define usergate_get_system_time 76
+#define usergate_get_time 77
+#define usergate_time_to_system_time 78
+#define usergate_system_time_to_time 79
+#define usergate_days_in_month 80
+#define usergate_adjust_time 81
+#define usergate_passed_days 82
+#define usergate_time_to_binary 83
+#define usergate_binary_to_time 84
+#define usergate_sync_time 85
+
+#define usergate_set_focus 86
+#define usergate_enable_focus 87
+
+#define usergate_get_dns 88
+#define usergate_get_ppp_dns 89
+#define usergate_open_tcp_connection 90
+#define usergate_wait_for_tcp_connection 92
+#define usergate_close_tcp_connection 93
+#define usergate_delete_tcp_connection 94
+#define usergate_is_tcp_connection_closed 95
+#define usergate_abort_tcp_connection 96
+#define usergate_read_tcp_connection 97
+#define usergate_write_tcp_connection 98
+#define usergate_push_tcp_connection 99
+#define usergate_get_ip_address 100
+#define usergate_name_to_ip 101
+#define usergate_ip_to_name 102
+#define usergate_ping 103
+
+#define usergate_get_disc_info 104
+#define usergate_format_drive 105
+#define usergate_get_rdfs_info 106
+#define usergate_read_disc 107
+#define usergate_write_disc 108
+#define usergate_get_drive_info 109
+
+#define usergate_set_cur_drive 110
+#define usergate_get_cur_drive 111
+#define usergate_set_cur_dir 112
+#define usergate_get_cur_dir 113
+#define usergate_make_dir 114
+#define usergate_remove_dir 115
+#define usergate_rename_file 116
+#define usergate_delete_file 117
+#define usergate_get_file_attribute 118
+#define usergate_set_file_attribute 119
+#define usergate_open_dir 120
+#define usergate_close_dir 121
+#define usergate_read_dir 122
+
+#define usergate_open_file 123
+#define usergate_create_file 124
+#define usergate_close_file 125
+#define usergate_dupl_file 126
+#define usergate_get_ioctl_data 127
+#define usergate_get_file_size 128
+#define usergate_set_file_size 129
+#define usergate_get_file_pos 130
+#define usergate_set_file_pos 131
+#define usergate_get_file_time 132
+#define usergate_set_file_time 133
+#define usergate_read_file 134
+#define usergate_write_file 135
+#define usergate_read_con 136
+
+#define usergate_create_mapping 137
+#define usergate_create_named_mapping 138
+#define usergate_create_file_mapping 139
+#define usergate_create_named_file_mapping 140
+#define usergate_open_named_mapping 141
+#define usergate_sync_mapping 142
+#define usergate_close_mapping 143
+#define usergate_map_view 144
+#define usergate_unmap_view 145
+
+#define usergate_read_keyboard 146
+#define usergate_poll_keyboard 147
+#define usergate_flush_keyboard 148
+#define usergate_get_keyboard_state 151
+
+#define usergate_show_mouse 152
+#define usergate_hide_mouse 153
+#define usergate_get_mouse_position 154
+#define usergate_set_mouse_position 155
+#define usergate_set_mouse_window 156
+#define usergate_set_mouse_mickey 157
+#define usergate_get_left_button 158
+#define usergate_get_right_button 159
+#define usergate_get_left_button_press_position 160
+#define usergate_get_right_button_press_position 161
+#define usergate_get_left_button_release_position 162
+#define usergate_get_right_button_release_position 163
+#define usergate_hook_mouse 164
+#define usergate_unhook_mouse 165
+
+#define usergate_lock_cd 166
+#define usergate_unlock_cd 167
+#define usergate_eject_cd 168
+#define usergate_insert_cd 169
+
+#define usergate_open_com 170
+#define usergate_close_com 171
+#define usergate_flush_com 172
+#define usergate_add_wait_for_com 174
+#define usergate_read_com 175
+#define usergate_write_com 176
+#define usergate_set_dtr 177
+#define usergate_reset_dtr 178
+
+#define usergate_set_cursor_position 182
+#define usergate_get_cursor_position 183
+#define usergate_write_char 184
+#define usergate_write_asciiz 185
+#define usergate_write_size_string 186
+
+#define usergate_set_video_mode 187
+#define usergate_set_vga_mode 188
+#define usergate_set_forecolor 189
+#define usergate_set_backcolor 190
+#define usergate_get_string_metrics 193
+#define usergate_set_font 194
+#define usergate_get_video_mode 195
+#define usergate_draw_string 197
+
+#define usergate_xms_handler 198
+#define usergate_ems_handler 199
+
+#define usergate_update_rtc 200
+
+#define usergate_resize_flat_linear 201
+
+#define usergate_set_drawcolor 202
+#define usergate_set_lgop 203
+#define usergate_set_hollow_style 204
+#define usergate_set_filled_style 205
+#define usergate_get_pixel 206
+#define usergate_set_pixel 207
+#define usergate_draw_line 208
+#define usergate_draw_rect 209
+#define usergate_draw_ellipse 210
+#define usergate_create_bitmap 211
+#define usergate_close_bitmap 212
+#define usergate_blit 213
+#define usergate_open_font 215
+#define usergate_close_font 216
+#define usergate_create_string_bitmap 217
+#define usergate_get_bitmap_info 218
+#define usergate_draw_mask 219
+
+#define usergate_create_sprite 220
+#define usergate_close_sprite 221
+#define usergate_show_sprite 222
+#define usergate_hide_sprite 223
+#define usergate_move_sprite 224
+
+#define usergate_dup_bitmap_handle 225
+#define usergate_set_clip_rect 226
+#define usergate_clear_clip_rect 227
+
+#define usergate_set_rts 228
+#define usergate_reset_rts 229
+#define usergate_get_com_receive_space 230
+#define usergate_get_com_send_space 231
+
+#define usergate_get_char_attrib 232
+
+#define usergate_create_wait 233
+#define usergate_close_wait 234
+#define usergate_is_wait_idle 235
+#define usergate_wait_no_timeout 236
+#define usergate_wait_timeout 237
+#define usergate_stop_wait 238
+#define usergate_add_wait_for_keyboard 239
+
+#define usergate_peek_key_event 240
+#define usergate_read_key_event 241
+
+#define usergate_add_wait_for_mouse 242
+#define usergate_remove_wait 243
+
+#define usergate_add_wait_for_adc 244
+#define usergate_open_adc 245
+#define usergate_close_adc 246
+#define usergate_define_adc_time 247
+#define usergate_read_adc 248
+
+#define usergate_free_v86 249
+
+#define usergate_read_serial_lines 250
+#define usergate_toggle_serial_line 251
+
+#define usergate_read_serial_val 252
+#define usergate_write_serial_val 253
+
+#define usergate_create_file_drive 254
+#define usergate_open_file_drive 255
+
+#define usergate_dos_ext_exec 256
+
+#define usergate_open_sys_env 257
+#define usergate_open_proc_env 258
+#define usergate_close_env 259
+#define usergate_add_env_var 260
+#define usergate_delete_env_var 261
+#define usergate_find_env_var 262
+#define usergate_get_env_data 263
+#define usergate_set_env_data 264
+
+#define usergate_open_sys_ini 265
+#define usergate_close_ini 266
+#define usergate_goto_ini_section 267
+#define usergate_remove_ini_section 268
+#define usergate_read_ini 269
+#define usergate_write_ini 270
+#define usergate_delete_ini 271
+
+#define usergate_get_version 273
+
+#define usergate_enable_status_led 274
+#define usergate_disable_status_led 275
+
+#define usergate_start_watchdog 276
+#define usergate_kick_watchdog 277
+
+#define usergate_erase_disc_sectors 278
+
+#define usergate_enable_cts 280
+#define usergate_disable_cts 281
+
+#define usergate_wait_for_send_completed_com 282
+
+#define usergate_add_wait_for_tcp_connection 283
+
+#define usergate_get_remote_tcp_connection_ip 284
+#define usergate_get_remote_tcp_connection_port 285
+#define usergate_get_local_tcp_connection_port 286
+
+#define usergate_enable_auto_rts 287
+#define usergate_disable_auto_rts 288
+
+#define usergate_put_keyboard_code 289
+
+#define usergate_poll_tcp_connection 290
+
+#define usergate_create_signal 291
+#define usergate_free_signal 292
+#define usergate_add_wait_for_signal 293
+#define usergate_set_signal 294
+#define usergate_reset_signal 295
+#define usergate_is_signalled 296
+
+#define usergate_get_drive_disc_param 297
+
+#define usergate_get_ide_disc 298
+#define usergate_get_floppy_disc 299
+#define usergate_demand_load_drive 300
+#define usergate_set_disc_info 301
+
+#define usergate_get_thread_state 302
+#define usergate_suspend_thread 303
+#define usergate_resume_thread 304
+
+#define usergate_update_time 305
+
+#define usergate_allocate_static_drive 306
+#define usergate_allocate_fixed_drive 307
+#define usergate_allocate_dynamic_drive 308
+
+#define usergate_get_focus 309
+
+#define usergate_add_wait_for_tcp_listen 310
+#define usergate_create_tcp_listen 311
+#define usergate_get_tcp_listen 312
+#define usergate_close_tcp_listen 313
+
+#define usergate_get_random 314
+
+#define usergate_suspend_and_signal_thread 315
+
+#define usergate_start_net_capture 316
+#define usergate_stop_net_capture 317
+
+#define usergate_create_crc 318
+#define usergate_close_crc 319
+#define usergate_calc_crc 320
+
+#define usergate_get_usb_device 321
+#define usergate_get_usb_config 322
+
+#define usergate_open_usb_pipe 323
+#define usergate_close_usb_pipe 324
+#define usergate_add_wait_for_usb_pipe 325
+#define usergate_req_usb_data 326
+#define usergate_get_usb_data_size 327
+#define usergate_write_usb_data 328
+#define usergate_req_usb_status 329
+#define usergate_write_usb_status 330
+#define usergate_write_usb_control 331
+#define usergate_lock_usb_pipe 333
+#define usergate_unlock_usb_pipe 334
+
+#define usergate_get_max_com_port 335
+
+#define usergate_config_usb_device 336
+
+#define usergate_start_usb_transaction 337
+
+#define usergate_open_ini 338
+
+#define usergate_open_icsp 339
+#define usergate_close_icsp 340
+#define usergate_write_icsp_cmd 341
+#define usergate_write_icsp_data 342
+#define usergate_read_icsp_data 343
+
+#define usergate_get_gateway 344
+
+#define usergate_get_free_physical 345
+#define usergate_get_free_gdt 346
+#define usergate_available_big_linear 347
+#define usergate_available_small_linear 348
+
+#define usergate_get_ip_mask 349
+
+#define usergate_get_master_volume 350
+#define usergate_set_master_volume 351
+
+#define usergate_get_line_out_volume 352
+#define usergate_set_line_out_volume 353
+
+#define usergate_create_audio_out_channel 354
+#define usergate_close_audio_out_channel 355
+#define usergate_write_audio 356
+
+#define usergate_stop_watchdog 357
+
+#define usergate_is_valid_usergate 358
+
+#define usergate_open_fm 359
+#define usergate_close_fm 360
+#define usergate_fm_wait 361
+#define usergate_create_fm_instrument 362
+#define usergate_free_fm_instrument 363
+#define usergate_set_fm_attack 364
+#define usergate_set_fm_sustain 365
+#define usergate_set_fm_release 366
+#define usergate_play_fm_note 367
+
+#define usergate_get_thread_linear 368
+#define usergate_get_current_module 369
+
+#define usergate_get_module_focus_key 370
+
+#define usergate_get_debug_event 371
+#define usergate_clear_debug_event 372
+
+#define usergate_get_free_handles 373
+
+#define usergate_get_env_size 374
+
+#define usergate_show_exception_text 375
+
+#define usergate_get_watchdog_tics 376
+
+#define usergate_is_usb_trans_done 377
+#define usergate_was_usb_trans_ok 378
+
+#define usergate_is_tcp_connection_idle 379
+
+#define usergate_set_codec_gpio0 380
+
+#define usergate_free_proc_handle 381
+#define usergate_add_wait_for_proc_end 382
+#define usergate_get_proc_exit_code 383
+
+#define usergate_get_cpu_version 384
+#define usergate_get_options 385
+
+#define usergate_fork 386
+
+#define usergate_get_core_id 387
+
+#define usergate_create_user_read_write_section 388
+#define usergate_delete_user_read_write_section 389
+#define usergate_enter_user_read_section 390
+#define usergate_leave_user_read_section 391
+#define usergate_enter_user_write_section 392
+#define usergate_leave_user_write_section 393
+
+#define usergate_power_failure 394
+
+#define usergate_define_fault_save 395
+#define usergate_get_fault_thread_state 396
+#define usergate_get_fault_thread_tss 397
+#define usergate_clear_fault_save 398
+
+#define usergate_get_free_handle_mem 399
+
+#define usergate_get_image_header 400
+#define usergate_get_image_data 401
+
+#define usergate_allocate_debug_app_mem 402
+#define usergate_free_debug_app_mem 403
+
+#define usergate_get_key_layout 404
+#define usergate_set_key_layout 405
+
+#define usergate_get_device_info 406
+#define usergate_get_selector_info 407
+
+#define usergate_set_code_break 408
+#define usergate_set_read_data_break 409
+#define usergate_set_write_data_break 410
+#define usergate_clear_break 411
+
+#define usergate_get_max_printer 412
+#define usergate_open_printer 413
+#define usergate_close_printer 414
+
+#define usergate_is_printer_jammed 415
+#define usergate_is_printer_paper_low 416
+#define usergate_is_printer_paper_end 417
+#define usergate_is_printer_ok 418
+#define usergate_is_printer_head_lifted 419
+#define usergate_has_printer_paper_in_presenter 420
+
+#define usergate_print_test 421
+
+#define usergate_create_printer_bitmap 422
+#define usergate_print_bitmap 423
+
+#define usergate_present_printer_media 424
+#define usergate_eject_printer_media 425
+
+#define usergate_wait_for_print 426
+
+#define usergate_has_audio 427
+
+#define usergate_available_big_local_linear 428
+
+#define usergate_get_allocated_usb_blocks 429
+#define usergate_get_usb_close_count 430
+
+#define usergate_reset_usb_pipe 431
+
+#define usergate_add_syslog 432
+#define usergate_open_syslog 433
+#define usergate_close_syslog 434
+#define usergate_add_wait_for_syslog 435
+#define usergate_get_syslog 436
+
+#define usergate_soft_reset 437
+#define usergate_hard_reset 438
+
+#define usergate_is_emergency_stopped 439
+
+#define usergate_load_device32 440
+
+#define usergate_debug_run 441
+
+#define usergate_test_gate 442
+
+#define usergate_get_acpi_status 443
+#define usergate_get_acpi_device 444
+#define usergate_get_cpu_temperature 445
+#define usergate_get_acpi_object 446
+
 #ifdef __FLAT__
 
 #define CallGate_allocate_dos_mem 0x67 0x9a 0 0 0 0 3 0
 #define CallGate_allocate_local_mem 0x67 0x9a 1 0 0 0 3 0
 #define CallGate_free_mem 0x67 0x9a 2 0 0 0 3 0
-#define CallGate_available_local_linear 0x67 0x9a 3 0 0 0 3 0
+#define CallGate_available_small_local_linear 0x67 0x9a 3 0 0 0 3 0
 #define CallGate_used_local_linear 0x67 0x9a 4 0 0 0 3 0
 #define CallGate_available_vm_linear 0x67 0x9a 5 0 0 0 3 0
 #define CallGate_used_vm_linear 0x67 0x9a 6 0 0 0 3 0
@@ -80,7 +631,6 @@
 #define CallGate_free_app_mem 0x67 0x9a 58 0 0 0 3 0
 #define CallGate_get_psp_sel 0x67 0x9a 59 0 0 0 3 0
 
-#define CallGate_get_debug_tss 0x67 0x9a 60 0 0 0 3 0
 #define CallGate_get_debug_thread 0x67 0x9a 61 0 0 0 3 0
 #define CallGate_debug_trace 0x67 0x9a 62 0 0 0 3 0
 #define CallGate_debug_pace 0x67 0x9a 63 0 0 0 3 0
@@ -324,8 +874,6 @@
 
 #define CallGate_erase_disc_sectors 0x67 0x9a 22 1 0 0 3 0
 
-#define CallGate_cpu_reset 0x67 0x9a 23 1 0 0 3 0
-
 #define CallGate_enable_cts 0x67 0x9a 24 1 0 0 3 0
 #define CallGate_disable_cts 0x67 0x9a 25 1 0 0 3 0
 
@@ -480,7 +1028,7 @@
 
 #define CallGate_fork 0x67 0x9a 130 1 0 0 3 0
 
-#define CallGate_get_processor_id 0x67 0x9a 131 1 0 0 3 0
+#define CallGate_get_core_id 0x67 0x9a 131 1 0 0 3 0
 
 #define CallGate_create_user_read_write_section 0x67 0x9a 132 1 0 0 3 0
 #define CallGate_delete_user_read_write_section 0x67 0x9a 133 1 0 0 3 0
@@ -534,16 +1082,45 @@
 #define CallGate_present_printer_media 0x67 0x9a 168 1 0 0 3 0
 #define CallGate_eject_printer_media 0x67 0x9a 169 1 0 0 3 0
 
-#define CallGate_test_gate 0x67 0x9a 170 1 0 0 3 0
+#define CallGate_wait_for_print 0x67 0x9a 170 1 0 0 3 0
 
 #define CallGate_has_audio 0x67 0x9a 171 1 0 0 3 0
+
+#define CallGate_available_big_local_linear 0x67 0x9a 172 1 0 0 3 0
+
+#define CallGate_get_allocated_usb_blocks 0x67 0x9a 173 1 0 0 3 0
+#define CallGate_get_usb_close_count 0x67 0x9a 174 1 0 0 3 0
+
+#define CallGate_reset_usb_pipe 0x67 0x9a 175 1 0 0 3 0
+
+#define CallGate_add_syslog 0x67 0x9a 176 1 0 0 3 0
+#define CallGate_open_syslog 0x67 0x9a 177 1 0 0 3 0
+#define CallGate_close_syslog 0x67 0x9a 178 1 0 0 3 0
+#define CallGate_add_wait_for_syslog 0x67 0x9a 179 1 0 0 3 0
+#define CallGate_get_syslog 0x67 0x9a 180 1 0 0 3 0
+
+#define CallGate_soft_reset 0x67 0x9a 181 1 0 0 3 0
+#define CallGate_hard_reset 0x67 0x9a 182 1 0 0 3 0
+
+#define CallGate_is_emergency_stopped 0x67 0x9a 183 1 0 0 3 0
+
+#define CallGate_load_device32 0x67 0x9a 184 1 0 0 3 0
+
+#define CallGate_debug_run 0x67 0x9a 185 1 0 0 3 0
+
+#define CallGate_test_gate 0x67 0x9a 186 1 0 0 3 0
+
+#define CallGate_get_acpi_status 0x67 0x9a 187 1 0 0 3 0
+#define CallGate_get_acpi_device 0x67 0x9a 188 1 0 0 3 0
+#define CallGate_get_cpu_temperature 0x67 0x9a 189 1 0 0 3 0
+#define CallGate_get_acpi_object 0x67 0x9a 190 1 0 0 3 0
 
 #else
 
 #define CallGate_allocate_dos_mem 0x3e 0x67 0x9a 0 0 0 0 3 0
 #define CallGate_allocate_local_mem 0x3e 0x67 0x9a 1 0 0 0 3 0
 #define CallGate_free_mem 0x3e 0x67 0x9a 2 0 0 0 3 0
-#define CallGate_available_local_linear 0x3e 0x67 0x9a 3 0 0 0 3 0
+#define CallGate_available_small_local_linear 0x3e 0x67 0x9a 3 0 0 0 3 0
 #define CallGate_used_local_linear 0x3e 0x67 0x9a 4 0 0 0 3 0
 #define CallGate_available_vm_linear 0x3e 0x67 0x9a 5 0 0 0 3 0
 #define CallGate_used_vm_linear 0x3e 0x67 0x9a 6 0 0 0 3 0
@@ -607,7 +1184,6 @@
 #define CallGate_free_app_mem 0x3e 0x67 0x9a 58 0 0 0 3 0
 #define CallGate_get_psp_sel 0x3e 0x67 0x9a 59 0 0 0 3 0
 
-#define CallGate_get_debug_tss 0x3e 0x67 0x9a 60 0 0 0 3 0
 #define CallGate_get_debug_thread 0x3e 0x67 0x9a 61 0 0 0 3 0
 #define CallGate_debug_trace 0x3e 0x67 0x9a 62 0 0 0 3 0
 #define CallGate_debug_pace 0x3e 0x67 0x9a 63 0 0 0 3 0
@@ -851,8 +1427,6 @@
 
 #define CallGate_erase_disc_sectors 0x3e 0x67 0x9a 22 1 0 0 3 0
 
-#define CallGate_cpu_reset 0x3e 0x67 0x9a 23 1 0 0 3 0
-
 #define CallGate_enable_cts 0x3e 0x67 0x9a 24 1 0 0 3 0
 #define CallGate_disable_cts 0x3e 0x67 0x9a 25 1 0 0 3 0
 
@@ -1007,7 +1581,7 @@
 
 #define CallGate_fork 0x3e 0x67 0x9a 130 1 0 0 3 0
 
-#define CallGate_get_processor_id 0x3e 0x67 0x9a 131 1 0 0 3 0
+#define CallGate_get_core_id 0x3e 0x67 0x9a 131 1 0 0 3 0
 
 #define CallGate_create_user_read_write_section 0x3e 0x67 0x9a 132 1 0 0 3 0
 #define CallGate_delete_user_read_write_section 0x3e 0x67 0x9a 133 1 0 0 3 0
@@ -1061,8 +1635,37 @@
 #define CallGate_present_printer_media 0x3e 0x67 0x9a 168 1 0 0 3 0
 #define CallGate_eject_printer_media 0x3e 0x67 0x9a 169 1 0 0 3 0
 
-#define CallGate_test_gate 0x3e 0x67 0x9a 170 1 0 0 3 0
+#define CallGate_wait_for_print 0x3e 0x67 0x9a 170 1 0 0 3 0
 
 #define CallGate_has_audio 0x3e 0x67 0x9a 171 1 0 0 3 0
+
+#define CallGate_available_big_local_linear 0x3e 0x67 0x9a 172 1 0 0 3 0
+
+#define CallGate_get_allocated_usb_blocks 0x3e 0x67 0x9a 173 1 0 0 3 0
+#define CallGate_get_usb_close_count 0x3e 0x67 0x9a 174 1 0 0 3 0
+
+#define CallGate_reset_usb_pipe 0x3e 0x67 0x9a 175 1 0 0 3 0
+
+#define CallGate_add_syslog 0x3e 0x67 0x9a 176 1 0 0 3 0
+#define CallGate_open_syslog 0x3e 0x67 0x9a 177 1 0 0 3 0
+#define CallGate_close_syslog 0x3e 0x67 0x9a 178 1 0 0 3 0
+#define CallGate_add_wait_for_syslog 0x3e 0x67 0x9a 179 1 0 0 3 0
+#define CallGate_get_syslog 0x3e 0x67 0x9a 180 1 0 0 3 0
+
+#define CallGate_soft_reset 0x3e 0x67 0x9a 181 1 0 0 3 0
+#define CallGate_hard_reset 0x3e 0x67 0x9a 182 1 0 0 3 0
+
+#define CallGate_is_emergency_stopped 0x3e 0x67 0x9a 183 1 0 0 3 0
+
+#define CallGate_load_device32 0x3e 0x67 0x9a 184 1 0 0 3 0
+
+#define CallGate_debug_run 0x3e 0x67 0x9a 185 1 0 0 3 0
+
+#define CallGate_test_gate 0x3e 0x67 0x9a 186 1 0 0 3 0
+
+#define CallGate_get_acpi_status 0x3e 0x67 0x9a 187 1 0 0 3 0
+#define CallGate_get_acpi_device 0x3e 0x67 0x9a 188 1 0 0 3 0
+#define CallGate_get_cpu_temperature 0x3e 0x67 0x9a 189 1 0 0 3 0
+#define CallGate_get_acpi_object 0x3e 0x67 0x9a 190 1 0 0 3 0
 
 #endif

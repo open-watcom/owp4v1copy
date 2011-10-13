@@ -23,10 +23,12 @@ extern "C" {
 
 // special user-mode gates
 
-#define UserGate_free_mem 0x3e 0x67 0x9a 2 0 0 0 2 0
-#define UserGate_create_thread 0x3e 0x67 0x9a 28 0 0 0 2 0
+#define UserGate_free_mem 0x3e 0x67 0x9a 2 0 0 0 3 0
+#define UserGate_create_thread 0x3e 0x67 0x9a 28 0 0 0 3 0
 
 // callback pragmas
+
+typedef void __far (__rdos_gate_callback)();
 
 typedef void __far (__rdos_swap_callback)(char level);
 
@@ -373,6 +375,11 @@ typedef void __far (__rdos_usb_state_callback)(int controller, char device);
 
 // structures
 
+struct TSpinlock
+{
+    short int value;
+};
+
 struct TKernelSection
 {
     long value;
@@ -442,13 +449,35 @@ struct TFileSystemTable
 
 // function definitions
 
+int RdosGetGateDs();
+int RdosGetGateEs();
+int RdosGetGateFs();
+int RdosGetGateGs();
+
+void RdosSetSuccess();
+void RdosSetFailure();
+
+void RdosExtendAx();
+void RdosExtendBx();
+void RdosExtendCx();
+void RdosExtendDx();
+void RdosExtendSi();
+void RdosExtendDi();
+
+void RdosSaveEax();
+void RdosRestoreEax();
+
 int RdosIsValidOsGate(int gate);
+void RdosRegisterOsGate(int gate, __rdos_gate_callback *callb_proc, const char *name);
+void RdosRegisterBimodalUserGate(int gate, __rdos_gate_callback *callb_proc, const char *name);
+void RdosRegisterUserGate(int gate, __rdos_gate_callback *callb_proc16, __rdos_gate_callback *callb_proc32, const char *name);
 
 void RdosReturnOk();
 void RdosReturnFail();
 
 void *RdosSelectorToPointer(int sel);
 void *RdosSelectorOffsetToPointer(int sel, long offset);
+void *RdosLinearToPointer(int linear);
 int RdosPointerToSelector(void *ptr);
 int RdosPointerToOffset(void *ptr);
 
@@ -535,9 +564,14 @@ void RdosWaitForSignalWithTimeout(long msb, long lsb);
 int RdosAddWait(int space_needed, int wait_handle, struct TWaitHeader *wait_table);
 void RdosSignalWait(int wait_obj);
 
+void RdosInitSpinlock(struct TSpinlock *spinlock);
+short int RdosRequestSpinlock(struct TSpinlock *spinlock);
+void RdosReleaseSpinlock(struct TSpinlock *spinlock, short int flags);
+
 void RdosInitKernelSection(struct TKernelSection *section);
 void RdosEnterKernelSection(struct TKernelSection *section);
 void RdosLeaveKernelSection(struct TKernelSection *section);
+int RdosCondEnterKernelSection(struct TKernelSection *section, int mswait);
 
 void RdosLockScheduler();
 void RdosUnlockScheduler();
@@ -576,9 +610,9 @@ void RdosHookState(__rdos_hook_state_callback *callb_proc);
 void RdosSendEoi(int irq);
 int RdosIsIrqFree(int irq);
 
-void RdosRequestPrivateIrqHandler(int irq, __rdos_irq_callback *irq_proc);
+void RdosRequestPrivateIrqHandler(int irq, __rdos_irq_callback *irq_proc, int ds_sel);
 void RdosReleasePrivateIrqHandler(int irq);
-void RdosRequestSharedIrqHandler(int irq, __rdos_irq_callback *irq_proc);
+void RdosRequestSharedIrqHandler(int irq, __rdos_irq_callback *irq_proc, int ds_sel);
 
 void RdosSetupIrqDetect();
 int RdosPollIrqDetect();
@@ -682,6 +716,14 @@ void RdosInsertFileEntry(int dir_sel, int file_entry);
 int RdosGetFileInfo(int handle, char *access, char *drive, int *file_sel);
 int RdosDuplFileInfo(char access, char drive, int file_sel);
 
+char RdosReadPciByte(char bus, char dev, char func, char reg);
+short int RdosReadPciWord(char bus, char dev, char func, char reg);
+long RdosReadPciDword(char bus, char dev, char func, char reg);
+
+void RdosWritePciByte(char bus, char dev, char func, char reg, char val);
+void RdosWritePciWord(char bus, char dev, char func, char reg, short int val);
+void RdosWritePciDword(char bus, char dev, char func, char reg, long val);
+
 void RdosInitMouse();
 void RdosUpdateMouse(int button_state, int delta_x, int delta_y);
 void RdosInvertMouse(int delta_x, int delta_y);
@@ -750,11 +792,83 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 // check carry flag, and set edi=0 if set
 #define ValidateEdi 0x73 2 0x33 0xFF
 
+#pragma aux RdosGetGateDs = \
+    "mov eax,[ebp+16]" \
+    value [eax];
+
+#pragma aux RdosGetGateEs = \
+    "mov eax,[ebp+12]" \
+    value [eax];
+
+#pragma aux RdosGetGateFs = \
+    "mov eax,[ebp+8]" \
+    value [eax];
+
+#pragma aux RdosGetGateGs = \
+    "mov eax,[ebp+4]" \
+    value [eax];
+
+#pragma aux RdosSetSuccess = \
+    "clc";
+
+#pragma aux RdosSetFailure = \
+    "stc";
+
+#pragma aux RdosSaveEax = \
+    "push eax";
+
+#pragma aux RdosRestoreEax = \
+    "pop eax";
+
+#pragma aux RdosExtendAx = \
+    "movzx eax,ax";
+
+#pragma aux RdosExtendBx = \
+    "movzx ebx,bx";
+
+#pragma aux RdosExtendCx = \
+    "movzx ecx,cx";
+
+#pragma aux RdosExtendDx = \
+    "movzx edx,dx";
+
+#pragma aux RdosExtendSi = \
+    "movzx esi,si";
+
+#pragma aux RdosExtendDi = \
+    "movzx edi,di";
+
 #pragma aux RdosIsValidOsGate = \
     OsGate_is_valid_osgate  \
     CarryToBool \
     parm [eax] \
     value [eax];
+
+#pragma aux RdosRegisterOsGate = \
+    "push ds" \
+    "push cs" \
+    "pop ds" \
+    OsGate_register_osgate  \
+    "pop ds" \
+    parm [eax] [esi] [es edi];
+
+#pragma aux RdosRegisterBimodalUserGate = \
+    "push ds" \
+    "push cs" \
+    "pop ds" \
+    "xor dx,dx" \
+    OsGate_register_bimodal_usergate  \
+    "pop ds" \
+    parm [eax] [esi] [es edi];
+
+#pragma aux RdosRegisterUserGate = \
+    "push ds" \
+    "push cs" \
+    "pop ds" \
+    "xor dx,dx" \
+    OsGate_register_usergate  \
+    "pop ds" \
+    parm [eax] [ebx] [esi] [es edi];
 
 #pragma aux RdosReturnOk = \
     "clc" ;
@@ -771,6 +885,11 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 #pragma aux RdosSelectorOffsetToPointer = \
     "mov dx,bx" \
     parm [ebx] [eax] \
+    value [dx eax];
+
+#pragma aux RdosLinearToPointer = \
+    "mov dx,0x20" \
+    parm [eax] \
     value [dx eax];
 
 #pragma aux RdosPointerToSelector = \
@@ -966,10 +1085,17 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     value [dx eax];
 
 #pragma aux RdosFreeMem = \
+    "push ax" \
     "push es" \
     "mov es,bx" \
     UserGate_free_mem  \
-    "pop es" \
+    "pop ax" \
+    "verr ax" \
+    "jz short es_load" \
+    "xor ax,ax" \
+    "es_load: " \
+    "mov es,ax" \
+    "pop ax" \
     parm [ebx];
 
 #pragma aux RdosAllocateBigGlobalLinear = \
@@ -1062,21 +1188,6 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     OsGate_get_apic_id  \
     value [edx];
 
-#pragma aux RdosGetProcessor = \
-    "push fs" \
-    OsGate_get_processor  \
-    "mov eax,fs" \
-    "pop fs" \
-    value [eax];
-
-#pragma aux RdosGetProcessorNum = \
-    "push fs" \
-    OsGate_get_processor_num  \
-    "mov eax,fs" \
-    "pop fs" \
-    parm [eax] \
-    value [eax];
-
 #pragma aux RdosSendNmi = \
     "push fs" \
     "mov fs,bx" \
@@ -1126,6 +1237,37 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     "pop es" \
     parm [eax];
 
+#pragma aux RdosInitSpinlock = \
+    "mov word ptr es:[edi],0" \
+    parm [es edi]; 
+
+#pragma aux RdosRequestSpinlock = \
+    "pushf" \
+    "rs_lock: " \    
+    "mov ax,es:[edi]" \
+    "or ax,ax" \
+    "je short rs_get" \
+    "sti" \
+    0xF3 0x90 \
+    "jmp rs_lock" \
+    "rs_get: " \
+    "cli" \
+    "inc ax" \
+    "xchg ax,es:[edi]" \
+    "or ax,ax" \
+    "je rs_done" \
+    "jmp rs_lock" \
+    "rs_done: "\
+    "pop ax" \
+    parm [es edi] \
+    value [ax];
+
+#pragma aux RdosReleaseSpinlock = \
+    "push ax" \
+    "mov word ptr es:[edi],0" \
+    "popf" \
+    parm [es edi] [ax]; 
+
 #pragma aux RdosInitKernelSection = \
     "mov dword ptr es:[edi],0" \
     "mov word ptr es:[edi+4],0" \
@@ -1160,6 +1302,27 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     " pop ds" \
     "leave_done: " \
     parm [es edi]; 
+
+#pragma aux RdosCondEnterKernelSection = \
+    " lock sub dword ptr es:[edi],1" \
+    " jc short enter_ok" \
+    " push ds" \
+    " push esi" \
+    " mov esi,es" \
+    " mov ds,esi" \
+    " mov esi,edi" \
+    " add esi,4" \
+    OsGate_cond_enter_section \
+    " pop esi" \
+    " pop ds" \
+    "jc enter_ok" \
+    "xor eax,eax" \
+    "jmp enter_leave" \
+    "enter_ok: " \
+    "mov eax,1" \
+    "enter_leave: "\
+    parm [es edi] [eax] \
+    value [eax];
 
 #pragma aux RdosCreateKernelThread = \
     "push ds" \
@@ -1242,16 +1405,22 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     value [eax];
 
 #pragma aux RdosRequestPrivateIrqHandler = \
+    "push ds" \
+    "mov ds,ebx" \
     OsGate_request_private_irq_handler \
-    parm [eax] [es edi];
+    "pop ds" \
+    parm [eax] [es edi] [ebx];
 
 #pragma aux RdosReleasePrivateIrqHandler = \
     OsGate_release_private_irq_handler \
     parm [eax];
 
 #pragma aux RdosRequestSharedIrqHandler = \
+    "push ds" \
+    "mov ds,ebx" \
     OsGate_request_shared_irq_handler \
-    parm [eax] [es edi];
+    "pop ds" \
+    parm [eax] [es edi] [ebx];
 
 #pragma aux RdosSetupIrqDetect = \
     OsGate_setup_irq_detect;
@@ -1665,6 +1834,33 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     OsGate_dupl_file_info \
     parm [cl] [ch] [eax] \
     value [ebx];
+
+#pragma aux RdosReadPciByte = \
+    OsGate_read_pci_byte \
+    parm [bh] [bl] [ch] [cl] \
+    value [al];
+
+#pragma aux RdosReadPciWord = \
+    OsGate_read_pci_word \
+    parm [bh] [bl] [ch] [cl] \
+    value [ax];
+
+#pragma aux RdosReadPciDword = \
+    OsGate_read_pci_dword \
+    parm [bh] [bl] [ch] [cl] \
+    value [eax];
+
+#pragma aux RdosWritePciByte = \
+    OsGate_write_pci_byte \
+    parm [bh] [bl] [ch] [cl] [al];
+
+#pragma aux RdosWritePciWord = \
+    OsGate_write_pci_word \
+    parm [bh] [bl] [ch] [cl] [ax];
+
+#pragma aux RdosWritePciDword = \
+    OsGate_write_pci_dword \
+    parm [bh] [bl] [ch] [cl] [eax];
 
 #pragma aux RdosInitMouse = \
     OsGate_init_mouse;

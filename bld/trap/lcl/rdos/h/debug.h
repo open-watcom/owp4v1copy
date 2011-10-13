@@ -41,6 +41,7 @@ struct TDebugBreak
 	int Sel;
 	long Offset;
     char Instr;
+    int UseHw;
     struct TDebugBreak *Next;
 };
 
@@ -59,12 +60,6 @@ struct TDebugThread
     long Eip;
     short int Cs;
 
-    long Esp0;
-    long Ess0;
-    long Esp1;
-    long Ess1;
-    long Esp2;
-    long Ess2;
     long Cr3;
     long Eflags;
     long Eax;
@@ -89,17 +84,16 @@ struct TDebugThread
     long MathTag;
     long MathEip;
     short int MathCs;
-    char MathOp[2];
     long MathDataOffs;
-    long MathDataSel;
+    short int MathDataSel;
     long double St[8];
 
     struct TDebugThread *Next;
 
     int FDebug;
-	int FHasBreak;
-	int FHasTrace;
-	int FHasException;
+    int FHasBreak;
+    int FHasTrace;
+    int FHasException;
     int FWasTrace;        
 };
 
@@ -127,6 +121,9 @@ struct TDebugModule
     unsigned int ImageBase;
 	unsigned int ImageSize;
 	unsigned int ObjectRva;
+	unsigned short int CodeSel;
+	unsigned short int DataSel;
+	unsigned int DataSize;
 
     int FNew;
 
@@ -157,6 +154,15 @@ struct TDebug
     int FThreadChanged;
     int FModuleChanged;
 
+    int FWaitLoad;
+
+    int FConfigChange;
+    int FMemoryModel;
+    
+    int FAsyncBreak;
+    int FAsyncSel;
+    long FAsyncOffset;
+
 };
 
 // TDebug methods
@@ -179,7 +185,7 @@ void UnlockThread( struct TDebug *obj );
 struct TDebugModule *LockModule( struct TDebug *obj, int Handle );
 void UnlockModule( struct TDebug *obj );
 
-void AddBreak( struct TDebug *obj, int Sel, long Offset );
+void AddBreak( struct TDebug *obj, int Sel, long Offset, int Hw );
 void ClearBreak( struct TDebug *obj, int Sel, long Offset );
 
 void WaitForLoad( struct TDebug *obj );
@@ -196,6 +202,10 @@ void ClearThreadChange( struct TDebug *obj );
 int HasModuleChange( struct TDebug *obj );
 void ClearModuleChange( struct TDebug *obj );
 
+int HasConfigChange( struct TDebug *obj );
+void ClearConfigChange( struct TDebug *obj );
+
 int IsTerminated( struct TDebug *obj );
+void ExitAsync( struct TDebug *obj );
 
 #endif

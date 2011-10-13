@@ -47,7 +47,7 @@ unsigned ReqSet_break( void )
     obj = GetCurrentDebug();
 
     if( obj )
-        AddBreak( obj, acc->break_addr.segment, acc->break_addr.offset );
+        AddBreak( obj, acc->break_addr.segment, acc->break_addr.offset, FALSE );
 
     return( sizeof( *ret ) );
 }

@@ -48,24 +48,31 @@ unsigned ReqAsync_go( void )
 
     obj = GetCurrentDebug();
 
-	if (obj) {
-	    ok = AsyncGo( obj, 250 );
+    if (obj) {
+        thread = obj->CurrentThread;
+	ok = AsyncGo( obj, 250 );
 
         if( ok ) {
             if( IsTerminated( obj ) )
-	    		ret->conditions |= COND_TERMINATE;
+	        ret->conditions |= COND_TERMINATE;
 
             if( HasThreadChange( obj ) ) {
                 ClearThreadChange( obj );
-			    ret->conditions |= COND_THREAD;
-		    }
+                thread = GetCurrentThread( obj );
+                SetCurrentDebug( obj );
+                ret->conditions |= COND_THREAD;
+            }
 
             if( HasModuleChange( obj ) ) {
                 ClearModuleChange( obj );
-			    ret->conditions |= COND_LIBRARIES;
-		    }
+                ret->conditions |= COND_LIBRARIES;
+            }
 
-            thread = obj->CurrentThread;
+            if ( HasConfigChange( obj ) ) {
+                ClearConfigChange( obj );
+                ret->conditions |= COND_CONFIG;
+            }
+
             if( thread ) {
                 if( HasBreakOccurred( thread ) )
                     ret->conditions |= COND_BREAK;
@@ -109,25 +116,32 @@ unsigned ReqAsync_step( void )
 
     obj = GetCurrentDebug();
 
-	if (obj) {
-	    ok = AsyncTrace( obj, 250 );
+    if (obj) {
+        thread = obj->CurrentThread;
+        ok = AsyncTrace( obj, 250 );
 
         if( ok ) {
 
             if( IsTerminated( obj ) )
-	    		ret->conditions |= COND_TERMINATE;
+	    	ret->conditions |= COND_TERMINATE;
 
             if( HasThreadChange( obj ) ) {
                 ClearThreadChange( obj );
-			    ret->conditions |= COND_THREAD;
-		    }
+                thread = GetCurrentThread( obj );
+                SetCurrentDebug( obj );
+	        ret->conditions |= COND_THREAD;
+            }
 
             if( HasModuleChange( obj ) ) {
                 ClearModuleChange( obj );
-			    ret->conditions |= COND_LIBRARIES;
-		    }
+	        ret->conditions |= COND_LIBRARIES;
+            }
 
-            thread = obj->CurrentThread;
+            if ( HasConfigChange( obj ) ) {
+                ClearConfigChange( obj );
+                ret->conditions |= COND_CONFIG;
+            }
+
             if( thread ) {
                 if( HasBreakOccurred( thread ) )
                     ret->conditions |= COND_BREAK;
@@ -171,25 +185,31 @@ unsigned ReqAsync_poll( void )
 
     obj = GetCurrentDebug();
 
-	if (obj) {
-	    ok = AsyncPoll( obj, 250 );
+    if (obj) {
+	ok = AsyncPoll( obj, 250 );
 
         if( ok ) {
 
             if( IsTerminated( obj ) )
-	    		ret->conditions |= COND_TERMINATE;
+	    	ret->conditions |= COND_TERMINATE;
 
             if( HasThreadChange( obj ) ) {
                 ClearThreadChange( obj );
-			    ret->conditions |= COND_THREAD;
-		    }
+                thread = GetCurrentThread( obj );
+                SetCurrentDebug( obj );
+	        ret->conditions |= COND_THREAD;
+            }
 
             if( HasModuleChange( obj ) ) {
                 ClearModuleChange( obj );
-			    ret->conditions |= COND_LIBRARIES;
-		    }
+	        ret->conditions |= COND_LIBRARIES;
+            }
 
-            thread = obj->CurrentThread;
+            if ( HasConfigChange( obj ) ) {
+                ClearConfigChange( obj );
+                ret->conditions |= COND_CONFIG;
+            }
+
             if( thread ) {
                 if( HasBreakOccurred( thread ) )
                     ret->conditions |= COND_BREAK;
@@ -223,6 +243,7 @@ unsigned ReqAsync_poll( void )
 
 unsigned ReqAsync_stop( void )
 {
+    struct TDebug           *obj;
     async_go_ret            *ret;
 
     ret = GetOutPtr( 0 );
@@ -231,6 +252,11 @@ unsigned ReqAsync_stop( void )
     ret->stack_pointer.offset = 0;
     ret->program_counter.segment = 0;
     ret->stack_pointer.segment = 0;
+
+    obj = GetCurrentDebug();
+
+    if (obj)
+        ExitAsync( obj );
 
     return( sizeof( *ret ) );
 }
