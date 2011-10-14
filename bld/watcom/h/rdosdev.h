@@ -23,8 +23,8 @@ extern "C" {
 
 // special user-mode gates
 
-#define UserGate_free_mem 0x3e 0x67 0x9a 2 0 0 0 2 0
-#define UserGate_create_thread 0x3e 0x67 0x9a 28 0 0 0 2 0
+#define UserGate_free_mem 0x3e 0x67 0x9a 2 0 0 0 3 0
+#define UserGate_create_thread 0x3e 0x67 0x9a 28 0 0 0 3 0
 
 // callback pragmas
 
@@ -1085,17 +1085,17 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     value [dx eax];
 
 #pragma aux RdosFreeMem = \
-    "push ax" \
+    "push eax" \
     "push es" \
     "mov es,bx" \
     UserGate_free_mem  \
-    "pop ax" \
+    "pop eax" \
     "verr ax" \
     "jz short es_load" \
     "xor ax,ax" \
     "es_load: " \
     "mov es,ax" \
-    "pop ax" \
+    "pop eax" \
     parm [ebx];
 
 #pragma aux RdosAllocateBigGlobalLinear = \
