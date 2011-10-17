@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Low level screen output and DBCS setup routines.
 *
 ****************************************************************************/
 
@@ -188,17 +187,35 @@ typedef struct {
     unsigned char       end_range;
 } dbcs_pair;
 
+/* Some DOS environments ignore INT 21h, fn 63h altogether (NTVDM).
+ * Others return success but do not modify DS:SI (US DOS 3.x). We need
+ * to return a dummy DBCS pair table in that case.
+ */
 #ifndef __386__
 
-extern dbcs_pair far *  dbcs_vector_table( void );
-#pragma aux             dbcs_vector_table = \
+extern dbcs_pair far *  dos_dbcs_vector_table( void );
+#pragma aux             dos_dbcs_vector_table = \
         "push ds"       \
+        "xor ax,ax"     /* pre-set DS:SI to zero */ \
+        "mov ds,ax"     \
+        "mov si,ax"     \
         "mov ax,6300h"  /* get DBCS vector table */ \
         "int 21h"       \
         "mov di,ds"     \
         "pop ds"        \
         value           [di si] \
         modify          [ax];
+
+dbcs_pair far * intern dbcs_vector_table( void )
+/***************************************************/
+{
+    static dbcs_pair    dbcs_dummy = { 0, 0 };
+    dbcs_pair far       *dbcs_table;
+
+    if( UIData->colour == M_MONO ) return( &dbcs_dummy );
+    dbcs_table = dos_dbcs_vector_table();
+    return( dbcs_table ? dbcs_table : &dbcs_dummy );
+}
 
 #else
 
@@ -231,7 +248,7 @@ dbcs_pair far * intern dbcs_vector_table( void )
         memset( &dblock, 0, sizeof( dblock ) );
         dblock.eax = 0x6300;                    /* get DBCS vector table */
         DPMISimulateRealModeInterrupt( 0x21, 0, 0, &dblock );
-        if( (dblock.flags & 1) == 0 ) {
+        if( (dblock.flags & 1) == 0 && dblock.ds ) {
             return( firstmeg( dblock.ds, dblock.esi ) );
         }
     }

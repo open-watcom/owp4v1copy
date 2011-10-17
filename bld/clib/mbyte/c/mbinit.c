@@ -231,9 +231,9 @@ int __mbinit( int codepage )
 #if defined(__DOS__) && !defined(__OSI__)
 #ifndef __386__
 
-// for some unknown reason NT DPMI returns for DOS service 6300h
-// Carry=0, odd SI value and DS stay unchanged
-// this case is also tested as wrong int 21h result
+// Some DOS implementation do nothing but do not return an error (NTVDM).
+// Some versions report success but do not modify registers (US DOS 3.3).
+// We set DS to zero and if it stays unchanged, consider that a failure.
 #if 1
 #pragma aux             dos_get_dbcs_lead_table = \
         "push ds"       \
@@ -357,7 +357,7 @@ unsigned short _WCFAR *dos_get_dbcs_lead_table( void )
         memset( &dblock, 0, sizeof( dblock ) );
         dblock.eax = 0x6300;                /* get DBCS vector table */
         DPMISimulateRealModeInterrupt( 0x21, 0, 0, &dblock );
-        if( (dblock.flags & 1) == 0 ) {
+        if( (dblock.flags & 1) == 0 && dblock.ds ) {
             return( MK_FP( _ExtenderRealModeSelector,
                            (((unsigned)dblock.ds)<<4) + dblock.esi ) );
         }
