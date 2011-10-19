@@ -54,6 +54,9 @@ unsigned ReqAddr_info( void )
 
 unsigned ReqMachine_data()
 {
+    int                 sel;
+    int                 size;
+    int                 bitness;
     machine_data_req    *acc;
     machine_data_ret    *ret;
     union {
@@ -63,9 +66,23 @@ unsigned ReqMachine_data()
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     data = GetOutPtr( sizeof( *ret ) );
-    ret->cache_start = 0;
-    ret->cache_end = 0xFFFFFFFF;
-    data->u8 = 1;
+
+    sel = acc->addr.segment;
+
+    if( RdosGetSelectorInfo( sel, &size, &bitness ) ) {
+        if( size > 0xFFFF )
+            bitness = 32;
+        ret->cache_start = 0;
+        ret->cache_end = size;
+        if( bitness == 16 )            
+            data->u8 = 0;
+        else
+            data->u8 = 1;
+    } else {
+        ret->cache_start = 0;
+        ret->cache_end = 0xFFFFFFFF;
+        data->u8 = 1;
+    }
     return( sizeof( *ret ) + sizeof( data->u8 ) );
 }
 

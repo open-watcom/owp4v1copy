@@ -40,14 +40,24 @@ unsigned ReqSet_break( void )
     set_break_req   *acc;
     set_break_ret   *ret;
     struct TDebug   *obj;
+    int             sel;
+    int             offset;
+    int             hw;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
+    sel = acc->break_addr.segment;
+    offset = acc->break_addr.offset;
+
+    if ( (sel & 3 ) == 0 )
+        hw = TRUE;
+    else
+        hw = FALSE;
 
     obj = GetCurrentDebug();
 
     if( obj )
-        AddBreak( obj, acc->break_addr.segment, acc->break_addr.offset, FALSE );
+        AddBreak( obj, sel, offset, hw );
 
     return( sizeof( *ret ) );
 }
