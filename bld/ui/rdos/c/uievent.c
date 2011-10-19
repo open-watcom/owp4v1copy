@@ -49,187 +49,8 @@ unsigned long global uiclock( void );
 #define KEY_ALT_PRESSED		0x2
 #define KEY_SHIFT_PRESSED	0x1
 
-#define VK_BACK           0x08
-#define VK_TAB            0x09
-#define VK_CLEAR          0x0C
-#define VK_RETURN         0x0D
-#define VK_SHIFT          0x10
-#define VK_CONTROL        0x11
-#define VK_MENU           0x12
-#define VK_PAUSE          0x13
-#define VK_CAPITAL        0x14
-#define VK_ESCAPE         0x1B
-#define VK_SPACE          0x20
-#define VK_PRIOR          0x21
-#define VK_NEXT           0x22
-#define VK_END            0x23
-#define VK_HOME           0x24
-#define VK_LEFT           0x25
-#define VK_UP             0x26
-#define VK_RIGHT          0x27
-#define VK_DOWN           0x28
-#define VK_SELECT         0x29
-#define VK_PRINT          0x2A
-#define VK_EXECUTE        0x2B
-#define VK_SNAPSHOT       0x2C
-#define VK_INSERT         0x2D
-#define VK_DELETE         0x2E
-#define VK_HELP           0x2F
-#define VK_0              '0'
-#define VK_1              '1'
-#define VK_2              '2'
-#define VK_3              '3'
-#define VK_4              '4
-#define VK_5              '5'
-#define VK_6              '6'
-#define VK_7              '7'
-#define VK_8              '8'
-#define VK_9              '9'
-#define VK_A              'A'
-#define VK_B              'B'
-#define VK_C              'C'
-#define VK_D              'D'
-#define VK_E              'E'
-#define VK_F              'F'
-#define VK_G              'G'
-#define VK_H              'H'
-#define VK_I              'I'
-#define VK_J              'J'
-#define VK_K              'K'
-#define VK_L              'L'
-#define VK_M              'M'
-#define VK_N              'N'
-#define VK_O              'O'
-#define VK_P              'P'
-#define VK_Q              'Q'
-#define VK_R              'R'
-#define VK_S              'S'
-#define VK_T              'T'
-#define VK_U              'U'
-#define VK_V              'V'
-#define VK_W              'W'
-#define VK_X              'X'
-#define VK_Y              'Y'
-#define VK_Z              'Z
-#define VK_LWIN           0x5B
-#define VK_RWIN           0x5C
-#define VK_APPS           0x5D
-#define VK_NUMPAD0        0x60
-#define VK_NUMPAD1        0x61
-#define VK_NUMPAD2        0x62
-#define VK_NUMPAD3        0x63
-#define VK_NUMPAD4        0x64
-#define VK_NUMPAD5        0x65
-#define VK_NUMPAD6        0x66
-#define VK_NUMPAD7        0x67
-#define VK_NUMPAD8        0x68
-#define VK_NUMPAD9        0x69
-#define VK_MULTIPLY       0x6A
-#define VK_ADD            0x6B
-#define VK_SEPARATOR      0x6C
-#define VK_SUBTRACT       0x6D
-#define VK_DECIMAL        0x6E
-#define VK_DIVIDE         0x6F
-#define VK_F1             0x70
-#define VK_F2             0x71
-#define VK_F3             0x72
-#define VK_F4             0x73
-#define VK_F5             0x74
-#define VK_F6             0x75
-#define VK_F7             0x76
-#define VK_F8             0x77
-#define VK_F9             0x78
-#define VK_F10            0x79
-#define VK_F11            0x7A
-#define VK_F12            0x7B
-#define VK_F13            0x7C
-#define VK_F14            0x7D
-#define VK_F15            0x7E
-#define VK_F16            0x7F
-#define VK_F17            0x80
-#define VK_F18            0x81
-#define VK_F19            0x82
-#define VK_F20            0x83
-#define VK_F21            0x84
-#define VK_F22            0x85
-#define VK_F23            0x86
-#define VK_F24            0x87
-#define VK_NUMLOCK        0x90
-#define VK_SCROLL         0x91
-#define VK_LSHIFT         0xA0
-#define VK_RSHIFT         0xA1
-#define VK_LCONTROL       0xA2
-#define VK_RCONTROL       0xA3
-#define VK_LMENU          0xA4
-#define VK_RMENU          0xA5
-
 int                  WaitHandle;
 
-typedef struct {
-    short int vk;
-    short int reg;
-    short int shift;
-    short int ctrl;
-    short int alt;
-} map;
-
-static const map events[] = {
-    { VK_BACK, EV_RUB_OUT, EV_RUB_OUT, EV_RUB_OUT, EV_RUB_OUT },
-    { VK_TAB, EV_TAB_FORWARD, EV_TAB_BACKWARD, EV_CTRL_TAB, EV_TAB_FORWARD },
-    { VK_RETURN, EV_ENTER, EV_ENTER, EV_ENTER, EV_ENTER },
-    { VK_ESCAPE, EV_ESCAPE, EV_ESCAPE, EV_ESCAPE, EV_ESCAPE },
-    { VK_PRIOR, EV_PAGE_UP, EV_PAGE_UP, EV_CTRL_PGUP, EV_ALT_PGUP },
-    { VK_NEXT, EV_PAGE_DOWN, EV_PAGE_DOWN, EV_CTRL_PGDN, EV_ALT_PGDN },
-    { VK_END, EV_END, EV_END, EV_CTRL_END, EV_ALT_END },
-    { VK_HOME, EV_HOME, EV_HOME, EV_CTRL_HOME, EV_ALT_HOME },
-    { VK_LEFT, EV_CURSOR_LEFT, EV_CURSOR_LEFT, EV_CTRL_LEFT, EV_CURSOR_LEFT },
-    { VK_UP, EV_CURSOR_UP, EV_CURSOR_UP, EV_CTRL_UP, EV_CURSOR_UP },
-    { VK_RIGHT, EV_CURSOR_RIGHT, EV_CURSOR_RIGHT, EV_CTRL_RIGHT, EV_CURSOR_RIGHT },
-    { VK_DOWN, EV_CURSOR_DOWN, EV_CURSOR_DOWN, EV_CTRL_DOWN, EV_CURSOR_DOWN },
-    { VK_INSERT, EV_INSERT, EV_INSERT, EV_CTRL_INSERT, EV_ALT_INSERT},
-    { VK_DELETE, EV_DELETE, EV_DELETE, EV_CTRL_DELETE, EV_ALT_DELETE },
-    { 'A', 'a', 'A', 'A'-'A'+1, EV_ALT_A },
-    { 'B', 'b', 'B', 'B'-'A'+1, EV_ALT_B },
-    { 'C', 'c', 'C', 'C'-'A'+1, EV_ALT_C },
-    { 'D', 'd', 'D', 'D'-'A'+1, EV_ALT_D },
-    { 'E', 'e', 'E', 'E'-'A'+1, EV_ALT_E },
-    { 'F', 'f', 'F', 'F'-'A'+1, EV_ALT_F },
-    { 'G', 'g', 'G', 'G'-'A'+1, EV_ALT_G },
-    { 'H', 'h', 'H', 'H'-'A'+1, EV_ALT_H },
-    { 'I', 'i', 'I', 'I'-'A'+1, EV_ALT_I },
-    { 'J', 'j', 'J', 'J'-'A'+1, EV_ALT_J },
-    { 'K', 'k', 'K', 'K'-'A'+1, EV_ALT_K },
-    { 'L', 'l', 'L', 'L'-'A'+1, EV_ALT_L },
-    { 'M', 'm', 'M', 'M'-'A'+1, EV_ALT_M },
-    { 'N', 'n', 'N', 'N'-'A'+1, EV_ALT_N },
-    { 'O', 'o', 'O', 'O'-'A'+1, EV_ALT_O },
-    { 'P', 'p', 'P', 'P'-'A'+1, EV_ALT_P },
-    { 'Q', 'q', 'Q', 'Q'-'A'+1, EV_ALT_Q },
-    { 'R', 'r', 'R', 'R'-'A'+1, EV_ALT_R },
-    { 'S', 's', 'S', 'S'-'A'+1, EV_ALT_S },
-    { 'T', 't', 'T', 'T'-'A'+1, EV_ALT_T },
-    { 'U', 'u', 'U', 'U'-'A'+1, EV_ALT_U },
-    { 'V', 'v', 'V', 'V'-'A'+1, EV_ALT_V },
-    { 'W', 'w', 'W', 'W'-'A'+1, EV_ALT_W },
-    { 'X', 'x', 'X', 'X'-'A'+1, EV_ALT_X },
-    { 'Y', 'y', 'Y', 'Y'-'A'+1, EV_ALT_Y },
-    { 'Z', 'z', 'Z', 'Z'-'A'+1, EV_ALT_Z },
-    { VK_F1, EV_FUNC( 1 ), EV_SHIFT_FUNC( 1 ), EV_CTRL_FUNC( 1 ), EV_ALT_FUNC( 1 ) },
-    { VK_F2, EV_FUNC( 2 ), EV_SHIFT_FUNC( 2 ), EV_CTRL_FUNC( 2 ), EV_ALT_FUNC( 2 ) },
-    { VK_F3, EV_FUNC( 3 ), EV_SHIFT_FUNC( 3 ), EV_CTRL_FUNC( 3 ), EV_ALT_FUNC( 3 ) },
-    { VK_F4, EV_FUNC( 4 ), EV_SHIFT_FUNC( 4 ), EV_CTRL_FUNC( 4 ), EV_ALT_FUNC( 4 ) },
-    { VK_F5, EV_FUNC( 5 ), EV_SHIFT_FUNC( 5 ), EV_CTRL_FUNC( 5 ), EV_ALT_FUNC( 5 ) },
-    { VK_F6, EV_FUNC( 6 ), EV_SHIFT_FUNC( 6 ), EV_CTRL_FUNC( 6 ), EV_ALT_FUNC( 6 ) },
-    { VK_F7, EV_FUNC( 7 ), EV_SHIFT_FUNC( 7 ), EV_CTRL_FUNC( 7 ), EV_ALT_FUNC( 7 ) },
-    { VK_F8, EV_FUNC( 8 ), EV_SHIFT_FUNC( 8 ), EV_CTRL_FUNC( 8 ), EV_ALT_FUNC( 8 ) },
-    { VK_F9, EV_FUNC( 9 ), EV_SHIFT_FUNC( 9 ), EV_CTRL_FUNC( 9 ), EV_ALT_FUNC( 9 ) },
-    { VK_F10, EV_FUNC( 10 ), EV_SHIFT_FUNC( 10 ), EV_CTRL_FUNC( 10 ), EV_ALT_FUNC( 10 ) },
-    { VK_F11, EV_FUNC_11, EV_SHIFT_FUNC_11, EV_CTRL_FUNC_11, EV_ALT_FUNC_11 },
-    { VK_F12, EV_FUNC_12, EV_SHIFT_FUNC_12, EV_CTRL_FUNC_12, EV_ALT_FUNC_12 }
-};
-
-
-static unsigned char        ShftState;
 static int                  KeyInstalled;
 
 static ORD                  currMouseRow;
@@ -242,48 +63,27 @@ extern bool                 MouseOn;
 extern bool                 MouseInstalled;
 extern unsigned short int   MouseStatus;
 
-static void setshiftstate( bool has_shift, bool has_ctrl, bool has_alt )
-{
-    ShftState = 0;
-    if( has_shift ) {
-        ShftState |= S_SHIFT;
-    }
-    if( has_ctrl ) {
-        ShftState |= S_CTRL;
-    }
-    if( has_alt ) {
-        ShftState |= S_ALT;
-    }
-}
+static          EVENT                   EventsPress[]   = {
+                EV_SHIFT_PRESS,
+                EV_ALT_PRESS,
+                EV_CTRL_PRESS,
+                EV_NO_EVENT,
+                EV_SCROLL_PRESS,
+                EV_NO_EVENT,
+                EV_CAPS_PRESS,
+                EV_NUM_PRESS
+};
 
-int CompareEvents( const void *p1, const void *p2 )
-{
-    return( ((map*)p1)->vk - ((map*)p2)->vk );
-}
-
-static int IsStdKey( int ExtKey, int VirtualKey )
-{
-    if (ExtKey & 0x8000)
-        return FALSE;
-
-    switch (VirtualKey)
-    {
-        case VK_SHIFT:
-        case VK_CONTROL:
-        case VK_MENU:
-        case VK_CAPITAL:
-        case VK_LWIN:
-        case VK_RWIN:
-        case VK_LSHIFT:
-        case VK_RSHIFT:
-        case VK_LCONTROL:
-        case VK_RCONTROL:
-        case VK_LMENU:
-        case VK_RMENU:
-            return FALSE;
-    }
-    return TRUE;
-}
+static          EVENT                   EventsRelease[] = {
+                EV_SHIFT_RELEASE,
+                EV_ALT_RELEASE,
+                EV_CTRL_RELEASE,
+                EV_NO_EVENT,
+                EV_SCROLL_RELEASE,
+                EV_NO_EVENT,
+                EV_CAPS_RELEASE,
+                EV_NUM_RELEASE
+};
 
 static EVENT KeyEventProc()
 {
@@ -291,45 +91,63 @@ static EVENT KeyEventProc()
     int                 keystate;
     int                 vk;
     int                 scan;
-    EVENT               ascii;
-    bool                has_alt, has_shift, has_ctrl;
-    map                 *ev;
-    map                 what;
+    unsigned char       key;
+    unsigned char       ascii;
+    EVENT               ev;
+    unsigned char       changed;
 
     if( RdosReadKeyEvent( &ext, &keystate, &vk, &scan ) ) {
-        ascii = ext & 0x7F;
-        has_shift = keystate & KEY_SHIFT_PRESSED;
-        has_ctrl = keystate & KEY_CTRL_PRESSED;
-        has_alt = keystate & KEY_ALT_PRESSED;
-        setshiftstate( has_shift, has_ctrl, has_alt );
-        what.vk = (short int)vk;
-
-        if( IsStdKey( ext, vk ) ) {
-            ev = bsearch( &what, events, sizeof( events )/sizeof( map ),
-                      sizeof( what ), CompareEvents );
-            if( ev != NULL ) {
-                if( has_shift ) {
-                    ascii = ev->shift;
-                } else if( has_ctrl ) {
-                    ascii = ev->ctrl;
-                } else if( has_alt ) {
-                    ascii = ev->alt;
-                } else {
-                    ascii = ev->reg;
-                }
-            } else if( ascii == 0 ) {
-                ascii = EV_NO_EVENT;
-            }
-        } else
-            return( EV_NO_EVENT );
-
-        if( ascii > EV_NO_EVENT ) {
-            uihidemouse();
+        ascii = ext;
+        if( scan != 0 && ascii == 0xe0 ) {  /* extended keyboard */
+            ascii = 0;
         }
-        return( ascii );
-
-    } else
-        return( EV_NO_EVENT );
+        /* ignore shift key for numeric keypad if numlock is not on */
+        if( scan + 0x100 >= EV_HOME && scan + 0x100 <= EV_DELETE ) {
+            if( ( keystate & KEY_NUM_ACTIVE ) == 0 ) {
+                if( ( keystate & KEY_SHIFT_PRESSED ) != 0 ) {
+                    ascii = 0;      /* wipe out digit */
+                }
+            }
+        }
+        if( ascii == 0 ) {
+            ev = 0x100 + scan;
+        } else {
+            ev = ascii;
+            if( ( keystate & KEY_ALT_PRESSED ) && ( ascii == ' ' ) ) {
+                ev = EV_ALT_SPACE;
+            } else if( scan != 0 ) {
+                switch( ev + 0x100 ) {
+                case EV_RUB_OUT:
+                case EV_TAB_FORWARD:
+                case EV_RETURN:
+                case EV_ESCAPE:
+                    ev += 0x100;
+                    break;
+                }
+            }
+        }
+    } else {
+        changed = ( keystate ^ UIData->old_shift );
+        if( changed != 0 ) {
+            key = 0;
+            scan = 1;
+            while( scan < 256 ) {
+                if( ( changed & scan ) != 0 ) {
+                    if( ( keystate & scan ) != 0 ) {
+                        UIData->old_shift |= scan;
+                        return( EventsPress[ key ] );
+                    } else {
+                        UIData->old_shift &= ~scan;
+                        return( EventsRelease[ key ] );
+                    }
+                }
+                scan <<= 1;
+                ++key;
+            }
+        }
+        ev = EV_NO_EVENT;
+    }
+    return( ev );
 }
 
 static EVENT MouseEventProc()
@@ -479,5 +297,26 @@ void intern checkmouse( unsigned short *pstatus, MOUSEORD *prow,
 unsigned char global uicheckshift( void )
 /***************************************/
 {
-    return( ShftState );
+    unsigned char kst = 0;
+    int state = RdosGetKeyboardState();
+    
+    if( state & KEY_NUM_ACTIVE )
+        kst |= 0x20;
+
+    if( state & KEY_CAPS_ACTIVE )
+        kst |= 0x40;
+
+    if( state & KEY_SCROLL_PRESSED )
+        kst |= 0x10;
+
+    if( state & KEY_CTRL_PRESSED )
+        kst |= 0x4;
+
+    if( state & KEY_ALT_PRESSED )
+        kst |= 0x8;
+
+    if( state & KEY_SHIFT_PRESSED )
+        kst |= 0x1;
+
+    return kst;
 }
