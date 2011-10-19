@@ -4966,4 +4966,6 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #endif
 
+#pragma pack( pop )
+
 #endif
