@@ -97,23 +97,13 @@ void intern finibios( void )
 void intern physupdate( SAREA *area )
 {
     int i;
-    int j;
     int pos;
-    short int ach;
     short int *bufptr = (short int *)UIData->screen.origin;
 
     for( i = 0; i < area->height; i++ ) {
-        RdosSetCursorPosition( i + area->row, area->col );
         pos = UIData->width * (i + area->row) + area->col;
         bufptr = (short int *)UIData->screen.origin + pos;
-
-        for( j = 0; j < area->width; j++ ) {
-            ach = *bufptr;
-            RdosSetForeColor( ( ach >> 8 ) & 0xF );
-            RdosSetBackColor( ( ach >> 12 ) & 0xF );
-            RdosWriteChar( ach & 0xFF );
-            bufptr++;
-        }
+        RdosWriteAttributeString( i + area->row, area->col, bufptr, area->width );
     }    
 }
 

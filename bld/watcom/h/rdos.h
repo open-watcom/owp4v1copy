@@ -510,6 +510,7 @@ void RDOSAPI RdosGetCursorPosition(int *Row, int *Col);
 void RDOSAPI RdosSetCursorPosition(int Row, int Col);
 void RDOSAPI RdosWriteChar(char ch);
 void RDOSAPI RdosWriteSizeString(const char *Buf, int Size);
+void RDOSAPI RdosWriteAttributeString(int Row, int Col, const short int *Buf, int Size);
 void RDOSAPI RdosWriteString(const char *Buf);
 int RDOSAPI RdosReadLine(char *Buf, int MaxSize);
 
@@ -2212,6 +2213,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosWriteSizeString = \
     CallGate_write_size_string \
     parm [edi] [ecx];
+
+#pragma aux RdosWriteAttributeString = \
+    CallGate_write_attrib_string \
+    parm [edx] [eax] [edi] [ecx];
 
 #pragma aux RdosWriteString = \
     CallGate_write_asciiz  \
@@ -4271,6 +4276,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosWriteSizeString = \
     CallGate_write_size_string \
     parm [es edi] [ecx];
+
+#pragma aux RdosWriteAttributeString = \
+    CallGate_write_attrib_string \
+    parm [edx] [eax] [es edi] [ecx];
 
 #pragma aux RdosWriteString = \
     CallGate_write_asciiz  \
