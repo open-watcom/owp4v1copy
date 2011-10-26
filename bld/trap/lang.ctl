@@ -140,6 +140,8 @@ cdsay .
     <CPCMD> <DEVDIR>/trap/lcl/rdos/std/std.sym                      <RELROOT>/rdos/
     <CPCMD> <DEVDIR>/trap/tcp/rdos.srv/tcpserv.exe                  <RELROOT>/rdos/
     <CPCMD> <DEVDIR>/trap/tcp/rdos.srv/tcpserv.sym                  <RELROOT>/rdos/
+    <CPCMD> <DEVDIR>/trap/ser/rdos.srv/serserv.exe                  <RELROOT>/rdos/
+    <CPCMD> <DEVDIR>/trap/ser/rdos.srv/serserv.sym                  <RELROOT>/rdos/
 
 [ BLOCK <1> clean ]
 #==================

@@ -102,3 +102,4 @@ type="e" dir="nlm"	usr="novserv4.nlm"	cond="nlmtarg"				where="c f77"
 # RDOS
 type="d" dir="rdos"	usr="std.dll"		cond="rdoshost rdostarg |"		where="c ac f77"
 type="e" dir="rdos"	usr="tcpserv.exe"	cond="rdostarg"				where="c ac f77"
+type="e" dir="rdos"	usr="serserv.exe"	cond="rdostarg"				where="c ac f77"

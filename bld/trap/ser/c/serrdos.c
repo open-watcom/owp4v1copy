@@ -73,6 +73,7 @@ char *InitSys( void )
         RdosSetDtr( hSerial );
         RdosSetRts( hSerial );
     }
+    currentBaudRateIndex = -1;
     return( NULL );
 }
 
