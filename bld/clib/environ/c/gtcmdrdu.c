@@ -48,6 +48,9 @@ _WCRTLINK int _bgetcmd( char *buffer, int len )
     if( !cmd )
         return( 0 );
 
+    while( *cmd != ' ' && *cmd != '\t' )
+        ++cmd;
+
     while( *cmd == ' ' || *cmd == '\t' )
         ++cmd;
 
