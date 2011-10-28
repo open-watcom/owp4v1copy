@@ -243,20 +243,20 @@ unsigned ReqAsync_poll( void )
 
 unsigned ReqAsync_stop( void )
 {
-    struct TDebug           *obj;
+/*    struct TDebug           *obj; */
     async_go_ret            *ret;
 
     ret = GetOutPtr( 0 );
-    ret->conditions = COND_TERMINATE;
+    ret->conditions = COND_STOP;
     ret->program_counter.offset = 0;
     ret->stack_pointer.offset = 0;
     ret->program_counter.segment = 0;
     ret->stack_pointer.segment = 0;
 
-    obj = GetCurrentDebug();
+/*  obj = GetCurrentDebug();
 
     if (obj)
-        ExitAsync( obj );
+        ExitAsync( obj ); */
 
     return( sizeof( *ret ) );
 }

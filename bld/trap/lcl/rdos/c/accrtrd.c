@@ -270,11 +270,11 @@ unsigned ReqRunThread_set( void )
     ret->err = 0;
 
     obj = GetCurrentDebug();
-	if (obj)
-	    t = obj->CurrentThread;
+    if (obj )
+        t = obj->CurrentThread;
 
-	if( t )
-	    ret->old_thread = t->ThreadID;
+    if( t )
+	ret->old_thread = t->ThreadID;
 
     if( obj && acc->thread != 0 )
         SetCurrentThread( obj, acc->thread );
