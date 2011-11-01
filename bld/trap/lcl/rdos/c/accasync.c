@@ -57,10 +57,13 @@ unsigned ReqAsync_go( void )
 	        ret->conditions |= COND_TERMINATE;
 
             if( HasThreadChange( obj ) ) {
-                ClearThreadChange( obj );
-                thread = GetCurrentThread( obj );
-                SetCurrentDebug( obj );
                 ret->conditions |= COND_THREAD;
+                thread = GetNewThread( obj );
+                if( thread ) {
+                    SetCurrentThread( obj, thread->ThreadID );
+                    SetCurrentDebug( obj );
+                }
+                ClearThreadChange( obj );
             }
 
             if( HasModuleChange( obj ) ) {
@@ -126,10 +129,13 @@ unsigned ReqAsync_step( void )
 	    	ret->conditions |= COND_TERMINATE;
 
             if( HasThreadChange( obj ) ) {
+                ret->conditions |= COND_THREAD;
+                thread = GetNewThread( obj );
+                if( thread ) {
+                    SetCurrentThread( obj, thread->ThreadID );
+                    SetCurrentDebug( obj );
+                }
                 ClearThreadChange( obj );
-                thread = GetCurrentThread( obj );
-                SetCurrentDebug( obj );
-	        ret->conditions |= COND_THREAD;
             }
 
             if( HasModuleChange( obj ) ) {
@@ -194,10 +200,13 @@ unsigned ReqAsync_poll( void )
 	    	ret->conditions |= COND_TERMINATE;
 
             if( HasThreadChange( obj ) ) {
+                ret->conditions |= COND_THREAD;
+                thread = GetNewThread( obj );
+                if( thread ) {
+                    SetCurrentThread( obj, thread->ThreadID );
+                    SetCurrentDebug( obj );
+                }
                 ClearThreadChange( obj );
-                thread = GetCurrentThread( obj );
-                SetCurrentDebug( obj );
-	        ret->conditions |= COND_THREAD;
             }
 
             if( HasModuleChange( obj ) ) {
@@ -243,7 +252,6 @@ unsigned ReqAsync_poll( void )
 
 unsigned ReqAsync_stop( void )
 {
-/*    struct TDebug           *obj; */
     async_go_ret            *ret;
 
     ret = GetOutPtr( 0 );
@@ -252,11 +260,6 @@ unsigned ReqAsync_stop( void )
     ret->stack_pointer.offset = 0;
     ret->program_counter.segment = 0;
     ret->stack_pointer.segment = 0;
-
-/*  obj = GetCurrentDebug();
-
-    if (obj)
-        ExitAsync( obj ); */
 
     return( sizeof( *ret ) );
 }

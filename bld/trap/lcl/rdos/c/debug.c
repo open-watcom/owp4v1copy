@@ -787,6 +787,7 @@ void InitDebug( struct TDebug *obj, const char *Program, const char *Param, cons
     obj->ThreadList = 0;
     obj->ModuleList = 0;
     obj->CurrentThread = 0;
+    obj->NewThread = 0;
     obj->BreakList = 0;
 
     obj->FThreadChanged = FALSE;
@@ -957,12 +958,13 @@ void WaitForLoad( struct TDebug *obj )
 
 int HasThreadChange( struct TDebug *obj )
 {
-    return obj->FThreadChanged;
+    return obj->FThreadChanged || obj->NewThread;
 }
 
 void ClearThreadChange( struct TDebug *obj )
 {
     obj->FThreadChanged = FALSE;
+    obj->NewThread = 0;
 }
 
 int HasModuleChange( struct TDebug *obj )
@@ -998,6 +1000,11 @@ struct TDebugModule *GetMainModule( struct TDebug *obj )
 struct TDebugThread *GetCurrentThread( struct TDebug *obj )
 {
     return obj->CurrentThread;
+}
+
+struct TDebugThread *GetNewThread( struct TDebug *obj )
+{
+    return obj->NewThread;
 }
 
 void SetCurrentThread( struct TDebug *obj, int ThreadID )
@@ -1438,6 +1445,7 @@ static void HandleTerminateProcess( struct TDebug *obj, int exitcode )
     }
 
     obj->CurrentThread = 0;
+    obj->NewThread = 0;
     obj->FThreadChanged = TRUE;
     obj->FModuleChanged = TRUE;
 
@@ -1548,14 +1556,8 @@ static void SignalDebugData( struct TDebug *obj )
         case EVENT_TERMINATE_THREAD:
             HandleTerminateThread( obj, thread );
             obj->FThreadChanged = TRUE;
-            if( !obj->CurrentThread ) {
-                obj->CurrentThread = obj->ThreadList;
-                while( obj->CurrentThread && !IsDebug( obj->CurrentThread ) )
-                    obj->CurrentThread = obj->CurrentThread->Next;
-
-                if (!obj->CurrentThread)
-                    obj->CurrentThread = obj->ThreadList;
-            }
+            if( obj->CurrentThread->ThreadID == thread )
+                obj->CurrentThread = 0;
             break;
 
         case EVENT_TERMINATE_PROCESS:
@@ -1591,10 +1593,8 @@ static void SignalDebugData( struct TDebug *obj )
 
             if( thread != obj->CurrentThread->ThreadID ) {
                 newt = LockThread( obj, thread );
-                if( newt ) {
-                    obj->CurrentThread = newt;
-                    obj->FThreadChanged = TRUE;
-                }
+                if( newt )
+                    obj->NewThread = newt;
                 UnlockThread( obj );
             }
             UpdateModules( obj );

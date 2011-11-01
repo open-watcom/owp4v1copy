@@ -136,14 +136,15 @@ struct TDebug
 {
     char *FProgram;
     char *FParam;
-	char *FStartDir;
-	int FHandle;
+    char *FStartDir;
+    int FHandle;
 
-	int FSection;
+    int FSection;
 
     struct TDebugThread *CurrentThread;
-	struct TDebugThread *ThreadList;
-	struct TDebugModule *ModuleList;
+    struct TDebugThread *NewThread;
+    struct TDebugThread *ThreadList;
+    struct TDebugModule *ModuleList;
 
     struct TDebugBreak *BreakList;
 
@@ -178,6 +179,7 @@ int GetNextModule( struct TDebug *obj, int Module );
     
 struct TDebugThread *GetCurrentThread( struct TDebug *obj );
 void SetCurrentThread( struct TDebug *obj, int ThreadID );
+struct TDebugThread *GetNewThread( struct TDebug *obj );
 
 struct TDebugThread *LockThread( struct TDebug *obj, int ThreadID );
 void UnlockThread( struct TDebug *obj );

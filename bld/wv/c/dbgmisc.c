@@ -535,8 +535,6 @@ void MakeRunThdCurr( thread_state *thd )
     unsigned    err;
 
     if( !AdvMachState( ACTION_THREAD_CHANGE ) ) return;
-    // NYI - PUI - record the thread change?
-    WriteDbgRegs();
     if( RemoteSetRunThreadWithErr( thd->tid, &err ) == 0 ) {
         Error( ERR_NONE, LIT( ERR_NO_MAKE_CURR_THREAD ), thd->tid, err );
     }

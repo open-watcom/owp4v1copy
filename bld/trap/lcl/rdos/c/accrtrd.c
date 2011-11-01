@@ -231,6 +231,7 @@ unsigned ReqRunThread_get_runtime( void )
 unsigned ReqRunThread_poll( void )
 {
     struct TDebug           *obj;
+    struct TDebugThread     *thread = 0;
     run_thread_poll_ret     *ret;
 
     ret = GetOutPtr( 0 );
@@ -238,20 +239,25 @@ unsigned ReqRunThread_poll( void )
 
     obj = GetCurrentDebug();
 
-	if (obj) {
+    if (obj) {
 
         if( IsTerminated( obj ) )
-	        ret->conditions |= COND_TERMINATE;
+	    ret->conditions |= COND_TERMINATE;
 
         if( HasThreadChange( obj ) ) {
+            ret->conditions |= COND_THREAD;
+            thread = GetNewThread( obj );
+            if( thread ) {
+                SetCurrentThread( obj, thread->ThreadID );
+                SetCurrentDebug( obj );
+            }
             ClearThreadChange( obj );
-			ret->conditions |= COND_THREAD;
-		}
+        }
 
         if( HasModuleChange( obj ) ) {
             ClearModuleChange( obj );
-			ret->conditions |= COND_LIBRARIES;
-		}
+            ret->conditions |= COND_LIBRARIES;
+        }
     }
     return( sizeof( *ret ) );
 }
@@ -276,8 +282,10 @@ unsigned ReqRunThread_set( void )
     if( t )
 	ret->old_thread = t->ThreadID;
 
-    if( obj && acc->thread != 0 )
+    if( obj && acc->thread != 0 ) {
         SetCurrentThread( obj, acc->thread );
+        SetCurrentDebug( obj );
+    }
 
     return( sizeof( *ret ) );
 }
