@@ -33,6 +33,8 @@
 #include "uidef.h"
 #include "uimouse.h"
 
+static int MouseOn = FALSE;
+
 void global uisetmouse( MOUSEORD row, MOUSEORD col )
 /**************************************************/
 {
@@ -43,8 +45,15 @@ void global uisetmouse( MOUSEORD row, MOUSEORD col )
 void global uimouse( int func )
 /*****************************/
 {
-    if( func == MOUSE_ON )
-        RdosShowMouse();
-    else
-        RdosHideMouse();
+    if( func == MOUSE_ON ) {
+        if( !MouseOn ) {
+            RdosShowMouse();
+            MouseOn = TRUE;
+        }
+    } else {
+        if( MouseOn ) {
+            RdosHideMouse();
+            MouseOn = FALSE;
+        }
+    }
 }

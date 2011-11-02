@@ -40,8 +40,5 @@ void intern vertretrace( void ) {}
 
 bool intern issnow( BUFFER *bptr )
 {
-    if( isscreen( bptr ) ) {
-        uioffmouse();
-    }
     return( FALSE );
 }
