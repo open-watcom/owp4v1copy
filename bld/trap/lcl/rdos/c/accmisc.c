@@ -239,10 +239,12 @@ unsigned ReqWrite_io( void )
 
 unsigned ReqSet_user_screen( void )
 {
+    SetUserScreen();
     return( 0 );
 }
 
 unsigned ReqSet_debug_screen( void )
 {
+    SetDebugScreen();
     return( 0 );
 }

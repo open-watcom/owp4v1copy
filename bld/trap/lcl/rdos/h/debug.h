@@ -190,6 +190,9 @@ void UnlockModule( struct TDebug *obj );
 void AddBreak( struct TDebug *obj, int Sel, long Offset, int Hw );
 void ClearBreak( struct TDebug *obj, int Sel, long Offset );
 
+void SetDebugScreen();
+void SetUserScreen();
+
 void WaitForLoad( struct TDebug *obj );
 void Go( struct TDebug *obj );
 void Trace( struct TDebug *obj );

@@ -1273,16 +1273,24 @@ void DoGo( struct TDebug *obj )
     }
 }
 
+void SetUserScreen()
+{
+    if( DebugKey )
+        RdosSetFocus( DebugKey );
+}
+
+void SetDebugScreen()
+{
+    if( SelfKey )
+        RdosSetFocus( SelfKey );
+}
+
 void Go( struct TDebug *obj )
 {
     if( obj->CurrentThread ) {
-        if( DebugKey )
-            RdosSetFocus( DebugKey );
         RdosResetSignal( obj->UserSignal );
         DoGo( obj );
         RdosWaitForever( obj->UserWait );
-        if( SelfKey )
-            RdosSetFocus( SelfKey );
     }
 }
 
@@ -1293,9 +1301,6 @@ void Trace( struct TDebug *obj )
     long Offset;
 
     if( obj->CurrentThread ) {
-        if( DebugKey )
-            RdosSetFocus( DebugKey );
-            
         Sel = obj->CurrentThread->Cs;
         Offset = obj->CurrentThread->Eip;
 
@@ -1311,8 +1316,6 @@ void Trace( struct TDebug *obj )
             DoTrace( obj );
             RdosWaitForever( obj->UserWait );
         }
-        if( SelfKey )
-            RdosSetFocus( SelfKey );
     }
 }
 
@@ -1321,16 +1324,11 @@ int AsyncGo( struct TDebug *obj, int ms )
     void *wait;
     
     if( obj->CurrentThread ) {
-        if( DebugKey )
-            RdosSetFocus( DebugKey );
-            
         RdosResetSignal( obj->UserSignal );
         DoGo( obj );
 
         wait = RdosWaitTimeout( obj->UserWait, ms );
         if ( wait ) {
-            if( SelfKey )
-                RdosSetFocus( SelfKey );
             return( TRUE );
         }
         else
@@ -1346,9 +1344,6 @@ int AsyncTrace( struct TDebug *obj, int ms )
     void    *wait;
 
     if( obj->CurrentThread ) {
-        if( DebugKey )
-            RdosSetFocus( DebugKey );
-
         BreakSel = obj->CurrentThread->Cs;
         BreakOffset = obj->CurrentThread->Eip;
 
@@ -1363,8 +1358,6 @@ int AsyncTrace( struct TDebug *obj, int ms )
             } else {
                 HasBreak = TRUE;
             }
-            if( ok && SelfKey )
-                RdosSetFocus( SelfKey );
             return( ok );
         } else {
             RdosResetSignal( obj->UserSignal );
@@ -1372,8 +1365,6 @@ int AsyncTrace( struct TDebug *obj, int ms )
 
             wait = RdosWaitTimeout( obj->UserWait, ms );
             if( wait ) {
-                if( SelfKey )
-                    RdosSetFocus( SelfKey );
                 return( TRUE );
             }
             else
@@ -1389,8 +1380,6 @@ int AsyncPoll( struct TDebug *obj, int ms )
 
     wait = RdosWaitTimeout( obj->UserWait, ms );
     if (wait) {
-        if( SelfKey )
-            RdosSetFocus( SelfKey );
         if( HasBreak ) {
             ClearBreak( obj, BreakSel, BreakOffset );
             HasBreak = FALSE;
