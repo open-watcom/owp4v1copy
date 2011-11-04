@@ -85,10 +85,15 @@ static orl_sec_handle FindSec( obj_file *ofile, char *name )
         if( !stricmp( ".edata", name ) ) {
             export_table_rva = ORLExportTableRVA( ofile->orl );
 
-            if( export_table_rva != 0L ) {
-                ORLFileScan( ofile->orl, NULL, FindExportTableHelper );
+            if( export_table_rva == 0L ) {
+                FatalError( ERR_NO_EXPORTS, ofile->hdl->name );
             }
 
+            ORLFileScan( ofile->orl, NULL, FindExportTableHelper );
+        }
+
+        if( found_sec_handle == 0 ) {
+            FatalError( ERR_NO_EXPORTS, ofile->hdl->name );
         }
     }
 
@@ -145,7 +150,6 @@ static bool elfAddImport( arch_header *arch, libfile io )
     _splitpath( oldname, NULL, NULL, NULL, arch->name + strlen( arch->name ) );
 
     export_sec = FindSec( ofile, ".exports" );
-    if( export_sec == 0L ) return( FALSE );
     ORLSecGetContents( export_sec, (unsigned_8 **)&export_table );
     export_size = (Elf32_Word) ORLSecGetSize( export_sec ) / sizeof( Elf32_Export );
     sym_sec = ORLSecGetSymbolTable( export_sec );
@@ -369,7 +373,6 @@ static void peAddImport( arch_header *arch, libfile io )
         FatalError( ERR_CANT_READ, io->name, "Not an AXP or PPC DLL" );
     }
     export_sec = FindSec( ofile, ".edata" );
-    if( export_sec == 0L) return;
     ORLSecGetContents( export_sec, (unsigned_8 **)&edata );
     export_base = ORLSecGetBase( export_sec );
 
