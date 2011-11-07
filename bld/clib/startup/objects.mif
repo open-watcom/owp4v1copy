@@ -218,6 +218,7 @@
 !inject wildwarg.obj                     nt nta ntp                     o32
 !inject wmndwnt.obj                      nt nta ntp
 !inject wmndwwnt.obj                     nt nta ntp
+!inject resstub.obj                                                                                         rdu
 
 objsuffix=files
 !include ../../../../objlist.mif

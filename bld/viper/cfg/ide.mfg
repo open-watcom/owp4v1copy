@@ -1907,7 +1907,11 @@ Rule RDLL, WLINK, r??d?
   Symbol LIBR, *.lib
   Symbol RES, *.res
   Symbol DLL, *.dll
+  Command "!ifneq BLANK \"$<FIL!>\""
   Command " @%write $*.lk1 $<FIL,>"
+  Command "!else"
+  Command " @%write $*.lk1 FIL $(%watcom)/lib386/rdos/resstub.obj"
+  Command "!endif"
   Command " @%append $*.lk1 $<LIBR,>"
   Command "!ifneq BLANK \"$<DLL!>\""
   Command " *wlib -q -n -b $*.imp $<DLL!>"
@@ -1917,7 +1921,9 @@ Rule RDLL, WLINK, r??d?
   Command " @%append $*.lk1 $<RES,>"
   Command "!endif"
   Command " *$<#> @$'.lk1"
+  Command "!ifneq BLANK \"$<FIL!>\""
   Command " wlib -q -n -b $*.lib +$*.dll"
+  Command "!endif"
 
 rem Rule LNXDLL, WLINK, x??d?
 rem   Target *.dll

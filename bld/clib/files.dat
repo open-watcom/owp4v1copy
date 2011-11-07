@@ -92,6 +92,7 @@ type="l"    dir="lib386/rdos"   usr="clib3r.lib"    cond="rdostarg 3r"      wher
 type="l"    dir="lib386/rdos"   usr="clib3s.lib"    cond="rdostarg 3s"      where="c f77 ac"
 type="s"    dir="lib386/rdos"   usr="binmode.obj"   cond="rdostarg"         where="c f77"
 type="s"    dir="lib386/rdos"   usr="commode.obj"   cond="rdostarg"         where="c f77"
+type="s"    dir="lib386/rdos"   usr="resstub.obj"   cond="rdostarg"         where="c f77"
 
 type="l"    dir="lib386/rdosdev" usr="clib3r.lib"   cond="rdostarg"         where="c f77 ac"
 

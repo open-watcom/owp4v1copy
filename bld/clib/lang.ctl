@@ -165,6 +165,7 @@ cdsay .
 
     <CPCMD> startup/library/rdos.386/mf_r/binmode.obj       <RELROOT>/lib386/rdos/binmode.obj
     <CPCMD> startup/library/rdos.386/mf_r/commode.obj       <RELROOT>/lib386/rdos/commode.obj
+    <CPCMD> startup/library/rdos.386/mf_r/resstub.obj       <RELROOT>/lib386/rdos/resstub.obj
   [ ENDIF]
 
 
