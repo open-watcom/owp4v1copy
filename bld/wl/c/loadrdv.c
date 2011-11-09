@@ -85,8 +85,10 @@ static void WriteBinData( void )
         sect = group->section;
         CurrSect = sect;
 
-        if( group->totalsize )
+        if( group->totalsize ) {
             WriteDOSGroup( group );
+            CodeSize += group->totalsize;
+        }
         group = group->next_group;
     }
 }
@@ -272,17 +274,19 @@ static void WriteMbootHeader( void )
 /* write multiboot header */
 {
     struct mb_header   mb_head;
-    unsigned_32         temp32;
+    unsigned_32        temp32;
+    unsigned_32        linear = MB_BASE;
 
     SeekLoad( 0 );
     _HostU32toTarg(0x1BADB002, mb_head.mb_magic );
     _HostU32toTarg(0x00010001, mb_head.mb_flags );
-    _HostU32toTarg(0x00000000, mb_head.mb_checksum );
-    _HostU32toTarg(MB_BASE, mb_head.mb_header_addr );
-    _HostU32toTarg(MB_BASE, mb_head.mb_load_addr );
-    _HostU32toTarg(0x00000000, mb_head.mb_load_end_addr );
-    _HostU32toTarg(0x00000000, mb_head.mb_bss_end_addr );
-    temp32 = MB_BASE + StartInfo.addr.off;
+    _HostU32toTarg(0xE4514FFD, mb_head.mb_checksum );
+    _HostU32toTarg(linear, mb_head.mb_header_addr );
+    _HostU32toTarg(linear, mb_head.mb_load_addr );
+    linear += CodeSize + sizeof( struct mb_header );
+    _HostU32toTarg(linear, mb_head.mb_load_end_addr );
+    _HostU32toTarg(linear, mb_head.mb_bss_end_addr );
+    temp32 = MB_BASE + StartInfo.addr.off + sizeof( struct mb_header );
     _HostU32toTarg(temp32, mb_head.mb_entry_addr );
     WriteLoad( &mb_head, sizeof( struct mb_header ) );
 }
