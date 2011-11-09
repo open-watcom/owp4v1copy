@@ -66,6 +66,31 @@ struct mb_header
     unsigned_32 mb_entry_addr;
 };
 
+static void WriteBinData( void )
+/**********************************************************/
+/* copy code from extra memory to loadfile */
+{
+    group_entry         *group;
+    SECTION             *sect;
+
+    DEBUG(( DBG_BASE, "Writing data" ));
+    OrderGroups( CompareDosSegments );
+    CurrSect = Root;        // needed for WriteInfo.
+
+    Root->outfile->file_loc = Root->u.file_loc;
+    Root->sect_addr = Groups->grp_addr;
+
+/* write groups and relocations */
+    for( group = Groups; group != NULL; ) {
+        sect = group->section;
+        CurrSect = sect;
+
+        if( group->totalsize )
+            WriteDOSGroup( group );
+        group = group->next_group;
+    }
+}
+
 static void WriteRDOSCode( void )
 /**********************************************************/
 {
@@ -269,6 +294,10 @@ void FiniRdosLoadFile16( void )
         HeaderSize = sizeof( rdos_dev16_header );
         SeekLoad( HeaderSize );
         Root->u.file_loc = HeaderSize;
+        WriteRDOSCode();
+        WriteRDOSData();
+        DBIWrite();
+        WriteHeader16();
     } else {
         if( FmtData.u.rdos.mboot ) {
             HeaderSize = sizeof( struct mb_header );
@@ -278,18 +307,11 @@ void FiniRdosLoadFile16( void )
             Root->u.file_loc = 0;
             SeekLoad( 0 );
         }
-    }
-
-    WriteRDOSCode();
-    WriteRDOSData();
-    DBIWrite();
-
-    if( Extension == E_RDV )
-        WriteHeader16();
-    else {
+        WriteBinData();
+        DBIWrite();
         if( FmtData.u.rdos.mboot )
             WriteMbootHeader(); 
-    }   
+    }
 }
 
 void FiniRdosLoadFile32( void )
@@ -299,19 +321,17 @@ void FiniRdosLoadFile32( void )
         HeaderSize = sizeof( rdos_dev32_header );
         SeekLoad( HeaderSize );
         Root->u.file_loc = HeaderSize;
+        WriteRDOSCode();
+        WriteRDOSData();
+        DBIWrite();
+        CodeSize += 0x10;           // this is a fix to make offsets into data segment correct
+        WriteHeader32();
     } else {
         SeekLoad( 0 );
         Root->u.file_loc = 0;
+        WriteBinData();
+        DBIWrite();
     }
-
-    WriteRDOSCode();
-    WriteRDOSData();
-    DBIWrite();
-
-    CodeSize += 0x10;           // this is a fix to make offsets into data segment correct
-
-    if( Extension == E_RDV )
-        WriteHeader32();
 }
 
 void FiniRdosLoadFile( void )
