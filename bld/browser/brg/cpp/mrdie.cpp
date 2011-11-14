@@ -115,7 +115,7 @@ MergeDIE::operator const MergeOffset&() const
 MergeDIE::operator const char*() const
 //------------------------------------
 {
-    static char buffer[ 1024 ];
+    static char buffer[ 512 * 4 ];  //Must be larger than mrfile.h's MERGEFILESTRBUF
     char *      off = buffer;
     int         len;
 

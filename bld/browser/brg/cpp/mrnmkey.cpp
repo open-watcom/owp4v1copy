@@ -71,7 +71,7 @@ MergeNameKey::MergeNameKey( const MergeNameKey& other )
 const char * MergeNameKey::getString() const
 //------------------------------------------
 {
-    const   int     BufSize = 512;
+    const   int     BufSize = 512 * 4;  //Must be larger than mrfile.h's MERGEFILESTRBUF
     static  char    buffer[ BufSize ];
     const char *    nm;
 

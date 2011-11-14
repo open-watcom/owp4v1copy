@@ -69,7 +69,10 @@ private:
 
 static MemoryPool PatriciaNode::_nodePool( sizeof( PatriciaNode ),
                                             "PatriciaNode", 16 );
-static StringPool PatriciaNode::_stringPool( 1024, "PatriciaNode" );
+
+//Note: The StringPool block size must be larger than MERGEFILESTRBUF defined
+//in mrfile.h
+static StringPool PatriciaNode::_stringPool( 512 * 4, "PatriciaNode" );
 
 PatriciaNode::PatriciaNode()
         : _bitPos( -1 )

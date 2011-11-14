@@ -40,7 +40,7 @@
 #include "chfile.h"
 
 
-#define MERGEFILESTRBUF 512
+#define MERGEFILESTRBUF (512 * 3)
 
 class MergeFile : public ElfFile {
 public:
