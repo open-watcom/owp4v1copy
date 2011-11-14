@@ -86,15 +86,22 @@ MergeRelocate::~MergeRelocate()
 void MergeRelocate::addReloc( MergeOffset & off, MergeDIE * replacer )
 //--------------------------------------------------------------------
 {
-    _replacedDies[ off.fileIdx ]->insert( off.offset, replacer );
+//    _replacedDies[ off.fileIdx ]->insert( off.offset, replacer );
 
     #if ( INSTRUMENTS == INSTRUMENTS_FULL_LOGGING )
+        MergeDIE * replaced = getReloc( off );
         Log.printf( "    reloc from %s %s to ",
-                        ((const MergeNameKey&)(*replaced)).getString(),
-                        ((const MergeOffset&)(*replaced)).getString() );
-        Log.printf( "%s %s\n", ((const MergeNameKey&)(*replacer)).getString(),
-                        ((const MergeOffset&)(*replacer)).getString() );
+//                        ((const MergeNameKey&)(*replaced)).getString(),
+//                        ((const MergeOffset&)(*replaced)).getString() );
+                        ( replaced != NULL ) ? replaced->name().getString() : "NULL",
+                        ( replaced != NULL ) ? replaced->offset().getString() : "NULL" );
+//        Log.printf( "%s %s\n", ((const MergeNameKey&)(*replacer)).getString(),
+//                        ((const MergeOffset&)(*replacer)).getString() );
+        Log.printf( "%s %s\n",
+                        ( replacer != NULL ) ? replacer->name().getString() : "NULL",
+                        ( replacer != NULL ) ? replacer->offset().getString() : "NULL" );
     #endif
+    _replacedDies[ off.fileIdx ]->insert( off.offset, replacer );
 }
 
 
