@@ -42,7 +42,7 @@ MergeNameKey::MergeNameKey()
 }
 
 MergeNameKey::MergeNameKey( uint_32 tag, bool ext,
-                            const MergeStringHdl& name, uint_16 unique )
+                            const MergeStringHdl& name, uint_32 unique )
                 : _tag( tag )
                 , _extern( ext )
                 , _name( name )
@@ -52,7 +52,7 @@ MergeNameKey::MergeNameKey( uint_32 tag, bool ext,
 }
 
 MergeNameKey::MergeNameKey( uint_32 tag, bool ext,
-                            const char * name, uint_16 unique )
+                            const char * name, uint_32 unique )
                 : _tag( tag )
                 , _extern( ext )
                 , _name( name )
@@ -77,7 +77,7 @@ const char * MergeNameKey::getString() const
 
     nm = _name.getString();
 
-    sprintf( buffer, "<%#x,%s,\"%s\",%u>", _tag, (_extern) ? "extern" : "static",
+    sprintf( buffer, "<%#x,%s,\"%s\",%lu>", _tag, (_extern) ? "extern" : "static",
                 (nm == NULL) ? "<NULL>" : nm, _unique );
     return buffer;
 }

@@ -129,7 +129,7 @@ MergeDIE::operator const char*() const
     len = sprintf( off, "sib:%s,", _sibling.getString() );
     off += len;
 
-    len = sprintf( off, "%s,len:%d,occ:%u]",
+    len = sprintf( off, "%s,len:%d,occ:%lu]",
             definition() ? "<definition>" : "<declaration>", _length, _occurs );
 
     return buffer;
@@ -144,7 +144,7 @@ MergeDIE * MergeDIE::collision( DIETree * tree )
     MergeDIE *      other;
     MergeDIE *      first;
     int             i;
-    uint_16         unique;
+    uint_32         unique;
 
     first = tree->find( _nameKey );
 
@@ -153,8 +153,8 @@ MergeDIE * MergeDIE::collision( DIETree * tree )
         return this;
     }
 
-    _nameKey._unique = (uint_16) (first->_occurs + 1);
-    _occurs = (uint_16) (first->_occurs + 1);
+    _nameKey._unique = (uint_32) (first->_occurs + 1);
+    _occurs = (uint_32) (first->_occurs + 1);
 
     if( _nameKey._name.getString() == NULL ) {
         // don't merge NULL names -- this wastes space!
