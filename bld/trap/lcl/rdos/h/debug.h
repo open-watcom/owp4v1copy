@@ -38,11 +38,21 @@ void SetCurrentDebug( struct TDebug *obj );
 
 struct TDebugBreak
 {
-	int Sel;
-	long Offset;
+    int Sel;
+    long Offset;
     char Instr;
     int UseHw;
     struct TDebugBreak *Next;
+};
+
+// TDebugWatch data
+
+struct TDebugWatch
+{
+    int Sel;
+    long Offset;
+    int Size;
+    struct TDebugWatch *Next;
 };
 
 // TDebugThread data
@@ -147,6 +157,7 @@ struct TDebug
     struct TDebugModule *ModuleList;
 
     struct TDebugBreak *BreakList;
+    struct TDebugWatch *WatchList;
 
     int UserSignal;
     int UserWait;
@@ -189,6 +200,9 @@ void UnlockModule( struct TDebug *obj );
 
 void AddBreak( struct TDebug *obj, int Sel, long Offset, int Hw );
 void ClearBreak( struct TDebug *obj, int Sel, long Offset );
+
+void AddWatch( struct TDebug *obj, int Sel, long Offset, int Size );
+void ClearWatch( struct TDebug *obj, int Sel, long Offset, int Size );
 
 void SetDebugScreen();
 void SetUserScreen();

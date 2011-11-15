@@ -81,14 +81,25 @@ unsigned ReqSet_watch( void )
 {
     set_watch_req   *acc;
     set_watch_ret   *ret;
+    struct TDebug   *obj;
+    int             sel;
+    int             offset;
+    int             size;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    ret->multiplier = 100000;
 
-/* not yet implemented */
-    
-    ret->err = 1;
+    sel = acc->watch_addr.segment;
+    offset = acc->watch_addr.offset;
+    size = acc->size;
+
+    obj = GetCurrentDebug();
+
+    if( obj )
+        AddWatch( obj, sel, offset, size );
+
+    ret->multiplier = 100000 | USING_DEBUG_REG;
+    ret->err = 0;
 
     return( sizeof( *ret ) );
 }
@@ -96,10 +107,14 @@ unsigned ReqSet_watch( void )
 unsigned ReqClear_watch( void )
 {
     clear_watch_req *acc;
+    struct TDebug   *obj;
 
     acc = GetInPtr( 0 );
 
-/* not yet implemented */
+    obj = GetCurrentDebug();
+
+    if( obj )
+        ClearWatch( obj, acc->watch_addr.segment, acc->watch_addr.offset, acc->size );
 
     return( 0 );
 }
