@@ -174,7 +174,7 @@ condcode    scr_index( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
             pn++;
         }
         if( pn > pneedlend ) {
-            index = ph - phay;          // found, set index
+            index = ph - phay - needle_len + 1; // found, set index
             break;
         }
     }
