@@ -10,7 +10,6 @@
 *
 ****************************************************************************/
 
-
 #ifndef _RDOS_H
 #define _RDOS_H
 
@@ -696,7 +695,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #define ValidateDisc 0x73 2 0xB0 0xFF 0xF 0xBE 0xC0
 
 #pragma aux RdosDebug = \
-    "int 3";
+    CallGate_debug_break;
 
 #pragma aux RdosLoad32 = \
     CallGate_load_device32  \
