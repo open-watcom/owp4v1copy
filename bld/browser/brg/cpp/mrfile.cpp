@@ -333,7 +333,7 @@ void MergeFile::writeSLEB128( int_32 sleb )
 
             #if INSTRUMENTS
                 if( (buf - buffer) > MaxULEBLen ) {
-                    Log.printf( "! WriteSLEB128 overrun buffer!\n" );
+                    Log.printf( "** WriteSLEB128 buffer overrun! **\n" );
                     InternalAssert( 0 );
                 }
             #endif

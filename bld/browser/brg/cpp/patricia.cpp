@@ -105,7 +105,7 @@ static inline ubit PatriciaNode::getBit( const char * str, uint len,
 //------------------------------------------------------------------
 {
     #if (INSTRUMENTS == INSTRUMENTS_FULL_LOGGING)
-        Log.printf( "\"%s\", bp=%d, %#x, %d, %#x = %#x\n", str, bitPos, *(str + (bitPos / 8)),
+        Log.printf( "\"%s\", bitPos=%d, %#x, %d, %#x = %#x\n", str, bitPos, *(str + (bitPos / 8)),
                                     bitPos % 8, (0x80 >> (bitPos % 8)),
                                     *(str + (bitPos / 8)) & (0x80 >> (bitPos % 8)) );
     #endif

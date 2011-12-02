@@ -153,7 +153,7 @@ void MergeRefSection::scanFile( MergeFile * file, uint_8 indx,
 
             #if INSTRUMENTS
             if( die == NULL ) {
-                Log.printf( "Could not find user die <%hd|%#lx>!\n", indx, user );
+                Log.printf( "Could not find user DIE <Target: %hd, source: %#lx>!\n", indx, user );
             }
             #endif
 
@@ -236,8 +236,8 @@ void MergeRefSection::scanFile( MergeFile * file, uint_8 indx,
 
             #if INSTRUMENTS
             if( die == NULL ) {
-                Log.printf( "Could not find dependant die <%hd|%#lx>!\n", indx, dependant );
-                Log.printf( "   user == <%hd|%#lx>!", indx, user );
+                Log.printf( "Could not find dependant die <Target: %hd, dependent: %#lx>!\n", indx, dependant );
+                Log.printf( "   user == <Target: %hd, source: %#lx>!", indx, user );
 
                 MergeDIE *  usedie;
                 usedie = _info.getReloc().getReloc( MergeOffset( indx, user ) );

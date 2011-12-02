@@ -83,7 +83,7 @@ void MergeInfoSection::print()
 //----------------------------
 {
     Log.printf( "\nMergeInfoSection\n----------------\n" );
-//    Log.printf( "   _diesByName:         %u entries\n", _diesByName->entries() );
+//    Log.printf( "     _diesByName: %5u entries\n", _diesByName->entries() );
 
 }
 #endif
@@ -167,7 +167,9 @@ void MergeInfoSection::readCompUnitHdr( MergeFile * file, MergeOffset& moff )
                         sizeof( MergeCompunitHdr ) );
 
     #if INSTRUMENTS
-    Log.printf( "%s:  length %lx   version %d   abbrev %lx   address size %hx\n", file->getFileName(), _compunitHdr->_infoLength, _compunitHdr->_version, _compunitHdr->_abbrevIdx, _compunitHdr->_addressSize );
+    Log.printf( "%s:  length = %lx, version = %d, abbrev = %lx, address size = %hx\n",
+    file->getFileName(), _compunitHdr->_infoLength, _compunitHdr->_version, _compunitHdr->_abbrevIdx,
+    _compunitHdr->_addressSize );
     #endif
 
     // read the compunit and all its children

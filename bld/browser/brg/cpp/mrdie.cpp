@@ -119,17 +119,17 @@ MergeDIE::operator const char*() const
     char *      off = buffer;
     int         len;
 
-    len = sprintf( off, "[nm:%s,off:%s,nw:%#lx,",
+    len = sprintf( off, "[name: %s, old offset: %s, new offset: %#lx, ",
             _nameKey.getString(), _offset.getString(), _newOffset );
     off += len;
 
-    len = sprintf( off, "ch:%s,", _firstChild.getString() );
+    len = sprintf( off, "child: %s, ", _firstChild.getString() );
     off += len;
 
-    len = sprintf( off, "sib:%s,", _sibling.getString() );
+    len = sprintf( off, "sib: %s, ", _sibling.getString() );
     off += len;
 
-    len = sprintf( off, "%s,len:%d,occ:%lu]",
+    len = sprintf( off, "%s, length: %d, occurs: %lu]",
             definition() ? "<definition>" : "<declaration>", _length, _occurs );
 
     return buffer;
@@ -172,7 +172,7 @@ MergeDIE * MergeDIE::collision( DIETree * tree )
 
         if( _parent != other->_parent ) {
             #if (INSTRUMENTS == INSTRUMENTS_FULL_LOGGING)
-            Log.printf( "  not joined as parents not equal -- %p != %p\n",
+            Log.printf( "  Not joined because parents are not equal -- %p != %p\n",
                         _parent, other->_parent );
             #endif
             continue;
@@ -233,7 +233,7 @@ void MergeDIE::setNewOff( MergeInfoSection * sect, uint_32 & newOffset,
     }
 
     #if (INSTRUMENTS == INSTRUMENTS_FULL_LOGGING)
-        Log.printf( "%s at %lx\n", offset().getString(), newOffset );
+        Log.printf( "Old offset %s now at %lx\n", offset().getString(), newOffset );
     #endif
 
     _flags._assigned = 1;
@@ -346,7 +346,7 @@ void MergeDIE::writeSelf( MergeInfoSection * sect, MergeFile & outFile,
 
     #if INSTRUMENTS
     if( _newOffset != outFile.tell( DR_DEBUG_INFO ) ) {
-        Log.printf( "die not at right new offset! actually %lx, should be %lx, %s\n", outFile.tell( DR_DEBUG_INFO ), _newOffset, (const char *)(*this) );
+        Log.printf( "DIE not at correct new offset! Is actually %lx, should be %lx, %s\n", outFile.tell( DR_DEBUG_INFO ), _newOffset, (const char *)(*this) );
     }
     #endif
     InternalAssert( _newOffset == outFile.tell( DR_DEBUG_INFO ) );

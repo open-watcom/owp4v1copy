@@ -77,7 +77,7 @@ const char * MergeNameKey::getString() const
 
     nm = _name.getString();
 
-    sprintf( buffer, "<%#x,%s,\"%s\",%lu>", _tag, (_extern) ? "extern" : "static",
+    sprintf( buffer, "<Tag: %#x, %s, Name: \"%s\", %lu>", _tag, (_extern) ? "extern" : "static",
                 (nm == NULL) ? "<NULL>" : nm, _unique );
     return buffer;
 }

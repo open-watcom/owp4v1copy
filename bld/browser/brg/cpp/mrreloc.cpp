@@ -68,10 +68,10 @@ MergeRelocate::~MergeRelocate()
 
     #if INSTRUMENTS
     Log.printf( "\nMergeRelocate\n--------------\n" );
-    Log.printf( "   _replacedDies:       %u entries\n", _numFiles );
+    Log.printf( "   _replacedDies: %5u entries\n", _numFiles );
     for( i = 0; i < _numFiles; i += 1 ) {
         WCValHashDict<uint_32,MergeDIE *> * dict( _replacedDies[ i ] );
-        Log.printf( "       [ %3d ]:         %u entries, loaded %%%3.2f\n", i, dict->entries(), 100.0 * ((double)dict->entries() / (double)dict->buckets()) );
+        Log.printf( "         [ %3d ]: %5u entries, loaded %3.1f%%\n", i, dict->entries(), 100.0 * ((double)dict->entries() / (double)dict->buckets()) );
     }
     #endif
 
