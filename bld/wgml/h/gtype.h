@@ -858,11 +858,16 @@ typedef struct laystack {
 /*  a single tab stop and an array of tab stops                            */
 /***************************************************************************/
 
+typedef enum {
+    al_center,
+    al_left,
+    al_right,
+} alignment;
+
 typedef struct {
     uint32_t            column;
-//    char        *       fill_str; multi-char fill string: only use if needed
-    char                alignment;
-    char                fill_char;
+    alignment           alignment;
+    uint8_t             fill_char;
 } tab_stop;
 
 typedef struct {

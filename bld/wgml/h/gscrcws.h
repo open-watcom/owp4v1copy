@@ -149,7 +149,7 @@
   picks( sv, scr_dummy, 0                  )// spelling verification
   picks( sx, scr_dummy, cw_break+cw_o_t    )// split text
   picks( sy, scr_dummy, 0                  )// system command
-  picks( tb, scr_dummy, cw_break+cw_o_t    )// define tab stops
+  picks( tb, scr_tb,    cw_break+cw_o_t    )// define tab stops
   picks( tc, scr_dummy, cw_break           )// table of contents
   picks( te, scr_dummy, 0                  )// terminal input
   picks( th, scr_th,    0                  )// then

@@ -696,7 +696,6 @@ void cop_setup( void )
     int                 i;
     int                 j;
     opt_font        *   cur_opt         = NULL;
-    uint32_t            first_tab;
     wgml_font           def_font;
 
     /* A "device" option must have been processed,
@@ -1223,22 +1222,29 @@ void cop_setup( void )
 
     /* Initialize the default tabs and related extern variables. */
 
-    first_tab = (6 * (bin_device->horizontal_base_units / 10)) - 1;
-    inter_tab = 5 * (bin_device->horizontal_base_units / 10);
+    tab_col = bin_device->horizontal_base_units / 10;
+    first_tab = (6 * tab_col) - 1;
+    inter_tab = 5 * tab_col;
 
     def_tabs.tabs = mem_alloc( TAB_COUNT * sizeof( tab_stop ) );
     def_tabs.length = TAB_COUNT;
     def_tabs.tabs[0].column = first_tab;
     def_tabs.tabs[0].fill_char = ' ';
-    def_tabs.tabs[0].alignment = ' ';
+    def_tabs.tabs[0].alignment = al_left;
     for( i = 1; i < def_tabs.length; i++ ) {
         def_tabs.tabs[i].column = def_tabs.tabs[i - 1].column + inter_tab;
         def_tabs.tabs[i].fill_char = ' ';
-        def_tabs.tabs[i].alignment = ' ';
+        def_tabs.tabs[i].alignment = al_left;
     }
     def_tabs.current = def_tabs.length;
 
     cur_tabs = &def_tabs;
+
+    /* Initialize user_tabs. */
+
+    user_tabs.tabs = mem_alloc( TAB_COUNT * sizeof( tab_stop ) );
+    user_tabs.length = TAB_COUNT;
+    user_tabs.current = 0;
 
     /* Initialize the dependent modules. */
 
@@ -1295,6 +1301,13 @@ void cop_teardown( void )
     if( def_tabs.tabs != NULL ) {
         mem_free( def_tabs.tabs );
         def_tabs.tabs = NULL;
+    }
+
+    /* Free user_tabs.tabs. */
+
+    if( user_tabs.tabs != NULL ) {
+        mem_free( user_tabs.tabs );
+        user_tabs.tabs = NULL;
     }
 
     cur_tabs = NULL;

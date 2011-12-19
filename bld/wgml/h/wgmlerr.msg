@@ -499,6 +499,34 @@ pick( ERR_INV_ATT_VAL,          "Invalid attribute value",
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
 
+/* General parsing error messages */
+
+pick( ERR_RIGHT_DELIM,          "Right string delimiter missing",
+                                "Right string delimiter missing" )
+
+/* Control word TB value error messages */
+
+pick( ERR_INV_TAB_STOP,         "Invalid tab-stop position",
+                                "Invalid tab-stop position" )
+
+pick( ERR_INV_TEXT_AFTER_TAB,   "Invalid text after tab information",
+                                "Invalid text after tab information" )
+
+pick( ERR_INV_TEXT_BEFORE_TAB,  "Invalid text before tab position",
+                                "Invalid text before tab position" )
+
+pick( ERR_TAB_STOP_ORDER,       "Tab-stop positions not in ascending order",
+                                "Tab-stop positions not in ascending order" )
+
+pick( ERR_TAB_CHAR,             "Tab character defined by control word TB SET must be one character",
+                                "Tab character defined by control word TB SET must be one character" )
+
+pick( ERR_TAB_ALIGN_CHAR,       "Character alignment is not supported with control word TB",
+                                "Character alignment is not supported with control word TB" )
+
+pick( ERR_TAB_FILL_STRING,      "Fill strings are not supported with control word TB",
+                                "Fill strings are not supported with control word TB" )
+
 /* Document structure error messages */
 
 pick( ERR_DOC_SEC_EXPECTED_1,   "Expecting a FRONTM, BODY, APPENDIX or BACKM tag",

@@ -237,8 +237,10 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input escape char from .ti
 
-global  uint32_t    inter_tab;          // distance between default tabs
-global  char        tab_char;           // tab character from .tb
+global  uint32_t        first_tab;      // first default top position
+global  uint32_t        inter_tab;      // distance between default tabs
+global  char            tab_char;       // tab character from .tb
+global  uint32_t        tab_col;        // width of one column, as used with tabs
 
 // the document page and related items
 global doc_el_group     t_doc_el_group; // for accumulating a group of doc_elements
@@ -349,7 +351,7 @@ global  laystack    *   lay_files;      // layout file(s) specified on cmdline
 
 global  tab_list    *   cur_tabs;   // initially set to &def_tabs
 global  tab_list        def_tabs;   // tabs at columns 6, 11, 16, ..., 81
-//global  tab_list        user_tabs;   // will be used for .tb <n ...> tabs
+global  tab_list        user_tabs;  // for tabs defined by control word TB
 
 /***************************************************************************/
 /* Layout attribute names as character strings                             */
