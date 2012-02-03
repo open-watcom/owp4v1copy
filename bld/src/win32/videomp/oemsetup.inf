@@ -562,7 +562,10 @@ finish_InstallOption = +
 
 
 [Files-DisplayDLLs]
-framebuf = 2,framebuf.dll , SIZE=999
+; Because this .INF script appears to be unable to copy from two different
+; drives, we can't ask the user to insert the NT CD-ROM with framebuf.dll;
+; the user must manually copy it alongside the video miniport.
+framebuf = 1,framebuf.dll , SIZE=999
 
 [Files-DisplayMiniportDrivers]
 boxv = 1,boxvideo.sys , SIZE=999
