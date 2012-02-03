@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Register window layout and sizing.
 *
 ****************************************************************************/
 
@@ -179,9 +178,11 @@ static bool RegResize( a_window *wnd )
     WndFree( reg->indents );
     reg->indents = WndMustAlloc( reg->count * sizeof( *reg->indents ) );
 
+    // For each column
     for( i = 0; i < reg->up; ++i ) {
         reg->indents[i].descript = 0;
         reg->indents[i].value = 0;
+        // Calc max widths for column
         for( j = i; j < reg->count; j += reg->up ) {
             if( reg->info[j].max_extent > reg->indents[i].value ) {
                 reg->indents[i].value = reg->info[j].max_extent;
@@ -191,16 +192,23 @@ static bool RegResize( a_window *wnd )
             }
         }
     }
+    // Calc indents for each column
     indent = 0;
     value = 0;
     descript = 0;
+    // For each column
     for( i = 0; i < reg->up; ++i ) {
         value = reg->indents[i].value;
         descript = reg->indents[i].descript;
         reg->indents[i].descript = indent;
         reg->indents[i].value = indent + descript;
         indent += value + descript;
+#if ( defined( __GUI__ ) && defined( __OS2__ ) )
+        // OS/2 PM GUI needs more space between columns
+        indent += space;
+#endif
     }
+    // Copy indents to all registers by column
     for( i = reg->up; i < reg->count; ++i ) {
         reg->indents[i] = reg->indents[i % reg->up];
     }
