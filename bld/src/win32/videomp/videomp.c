@@ -17,6 +17,14 @@
 #include "boxv.h"
 
 
+/* RGB color channel constants. */
+typedef enum {
+    CHANNEL_RED,
+    CHANNEL_GREEN,
+    CHANNEL_BLUE
+} COLOR_CHANNEL;
+
+
 #if defined( ALLOC_PRAGMA )
 #pragma alloc_text( PAGE, DriverEntry )
 #pragma alloc_text( PAGE, HwVidFindAdapter )
@@ -24,6 +32,57 @@
 #pragma alloc_text( PAGE, HwVidStartIO )
 #endif
 
+
+/* Calculate pitch based on scanline length and bit depth. */
+static ULONG vmpPitchByBpp( ULONG Length, UCHAR Bpp )
+{
+    ULONG   ulPitch = 0;
+
+    switch( Bpp ) {
+    case 4:
+        ulPitch = (Length + 1) / 2;
+        break;
+    case 8:
+        ulPitch = Length;
+        break;
+    case 15:
+    case 16:
+        ulPitch = Length * 2;
+        break;
+    case 24:
+        ulPitch = Length * 3;
+        break;
+    case 32:
+        ulPitch = Length * 4;
+        break;
+    }
+    return( ulPitch );
+}
+
+
+/* Validate a given mode and set the appropriate flag. Note that the
+ * validation criteria are somewhat arbitrary.
+ */
+static void vmpValidateMode( PVIDEOMP_MODE Mode, ULONG FramebufLen )
+{
+    ULONG   ulModeMem;
+
+    Mode->bValid = FALSE;
+
+    do {
+        /* Horizontal resolution should be divisible by 8. */
+        if( Mode->HorzRes % 8)
+            break;
+        
+        /* Validate memory requirements. */
+        ulModeMem = vmpPitchByBpp( Mode->HorzRes, Mode->Bpp ) * Mode->VertRes;
+        if( ulModeMem > FramebufLen )
+            break;
+
+        /* Passed all checks, mode is valid. */
+        Mode->bValid = TRUE;
+    } while( 0 );
+}
 
 /* Determine whether the supported adapter is present. Note that this 
  * function is not allowed to change the state of the adapter!
@@ -81,7 +140,6 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
 
     /* Describe the framebuffer. */
     //@TODO: abstract this!!
-    pExt->FramebufLen                   = 0x400000;
     pExt->PhysicalFrameAddress.HighPart = 0;
     pExt->PhysicalFrameAddress.LowPart  = 0xE0000000;
 
@@ -105,7 +163,7 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
     }
 
     /* Verify that supported hardware is present. */
-    chip_id = BOXV_detect( pExt );
+    chip_id = BOXV_detect( pExt, &pExt->FramebufLen );
     if( !chip_id ) {
         /* If supported hardware was not found, free allocated resources. */
         pVirtAddr = &pExt->IoPorts;
@@ -128,11 +186,9 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
     pExt->NumValidModes     = 0;
 
     for( i = 0; i < ulAllModes; ++i ) {
-        VideoModes[i].modeInformation.ModeIndex = i;
-        if( VideoModes[i].ulModeId ) {
-            VideoModes[i].bValid = TRUE;
+        vmpValidateMode( &VideoModes[i], pExt->FramebufLen );
+        if( VideoModes[i].bValid )
             ++pExt->NumValidModes;
-        }
     }
 
     /* Only one adapter supported, no need to call us again. */
@@ -176,6 +232,84 @@ BOOLEAN HwVidInitialize( PVOID HwDevExt )
     return( TRUE );
 }
 
+
+/* Determine pixel mask given color depth and color channel. */
+static ULONG vmpMaskByBpp( UCHAR Bpp, COLOR_CHANNEL Channel )
+{
+    ULONG   ulMask;
+
+    switch( Bpp ) {
+    case 24:
+    case 32:
+        ulMask = 0x00FF0000 >> (Channel * 8);
+        break;
+    case 15:
+        ulMask = 0x00007C00 >> (Channel * 5);
+        break;
+    case 16:
+        switch( Channel ) {
+        case CHANNEL_RED:
+            ulMask = 0x0000F800;
+            break;
+        case CHANNEL_GREEN:
+            ulMask = 0x000007E0;
+            break;
+        case CHANNEL_BLUE:
+            ulMask = 0x0000001F;
+            break;
+        }
+        break;
+    case 4:
+    case 8:
+    default:
+        ulMask = 0;     /* Palettized modes don't have a mask. */
+    }
+
+    return( ulMask );
+}
+
+/* Fill out NT specific video mode information struct based on resolution
+ * and color depth.
+ */
+static void vmpFillModeInfo( PVIDEO_MODE_INFORMATION ModeInfo, USHORT HRes, USHORT VRes, UCHAR Bpp)
+{
+    /* First the basic mode information. */
+    ModeInfo->Length          = sizeof( VIDEO_MODE_INFORMATION );
+    ModeInfo->ModeIndex       = 0;      /* Filled in later. */
+    ModeInfo->VisScreenWidth  = HRes;   /* Horizontal resolution in pixels. */
+    ModeInfo->VisScreenHeight = VRes;   /* Vertical resolution in pixels. */
+
+    /* Assume no rounding is necessary. */
+    ModeInfo->ScreenStride    = vmpPitchByBpp( HRes, Bpp );
+
+    ModeInfo->NumberOfPlanes  = 1;      /* Always one plane - packed pixel only. */
+    ModeInfo->BitsPerPlane    = Bpp;    /* Number of bits per pixel. */
+    ModeInfo->Frequency       = 60;     /* Irrelevant; just make something up. */
+
+    /* Screen size is made up, but should correspond to aspect ratio. */
+    ModeInfo->XMillimeter     = 320;
+    ModeInfo->YMillimeter     = ModeInfo->XMillimeter * VRes / HRes;
+
+    /* The DAC always works with 8 bits per channel. */
+    ModeInfo->NumberRedBits   = 8;      /* Red pixels in DAC. */
+    ModeInfo->NumberGreenBits = 8;      /* Green pixels in DAC. */
+    ModeInfo->NumberBlueBits  = 8;      /* Blue pixels in DAC. */
+
+    /* Pixel mask depends on color depth. */
+    ModeInfo->RedMask         = vmpMaskByBpp( Bpp, CHANNEL_RED );
+    ModeInfo->GreenMask       = vmpMaskByBpp( Bpp, CHANNEL_GREEN );
+    ModeInfo->BlueMask        = vmpMaskByBpp( Bpp, CHANNEL_BLUE );
+
+    /* Mode attributes are only different for 8bpp modes. */
+    ModeInfo->AttributeFlags      = VIDEO_MODE_GRAPHICS | VIDEO_MODE_COLOR;
+    if( Bpp <= 8 )
+        ModeInfo->AttributeFlags |= VIDEO_MODE_PALETTE_DRIVEN | VIDEO_MODE_MANAGED_PALETTE;
+
+    /* Strictly speaking, the following don't need to be filled out. */
+    ModeInfo->VideoMemoryBitmapWidth       = 0;
+    ModeInfo->VideoMemoryBitmapHeight      = 0;
+    ModeInfo->DriverSpecificAttributeFlags = 0;
+}
 
 /* Main I/O request handler routine. */
 BOOLEAN HwVidStartIO( PVOID HwDevExt, PVIDEO_REQUEST_PACKET ReqPkt )
@@ -221,7 +355,10 @@ BOOLEAN HwVidStartIO( PVOID HwDevExt, PVIDEO_REQUEST_PACKET ReqPkt )
             modeInfo = ReqPkt->OutputBuffer;
             for( i = 0; i < ulAllModes; ++i ) {
                 if( VideoModes[i].bValid ) {
-                    *modeInfo = VideoModes[i].modeInformation;
+                    vmpFillModeInfo( modeInfo, VideoModes[i].HorzRes,
+                                     VideoModes[i].VertRes, VideoModes[i].Bpp );
+                    modeInfo->ModeIndex = i; //VideoModes[i].modeInformation.ModeIndex;
+
                     modeInfo++;
                 }
             }
@@ -235,7 +372,11 @@ BOOLEAN HwVidStartIO( PVOID HwDevExt, PVIDEO_REQUEST_PACKET ReqPkt )
         } else {
             ReqPkt->StatusBlock->Information = sizeof( VIDEO_MODE_INFORMATION );
             modeInfo  = ReqPkt->OutputBuffer;
-            *modeInfo = VideoModes[pExt->CurrentModeNumber].modeInformation;
+            vmpFillModeInfo( modeInfo, 
+                             VideoModes[pExt->CurrentModeNumber].HorzRes,
+                             VideoModes[pExt->CurrentModeNumber].VertRes,
+                             VideoModes[pExt->CurrentModeNumber].Bpp );
+            modeInfo->ModeIndex = pExt->CurrentModeNumber; //VideoModes[pExt->CurrentModeNumber].modeInformation.ModeIndex;
         }
 
         break;
@@ -251,7 +392,9 @@ BOOLEAN HwVidStartIO( PVOID HwDevExt, PVIDEO_REQUEST_PACKET ReqPkt )
             break;
         }
 
-        BOXV_mode_set( pExt, VideoModes[modeNumber].ulModeId );
+        BOXV_ext_mode_set( pExt, VideoModes[modeNumber].HorzRes, 
+                           VideoModes[modeNumber].VertRes, VideoModes[modeNumber].Bpp,
+                           VideoModes[modeNumber].HorzRes, VideoModes[modeNumber].VertRes );
 
         pExt->CurrentModeNumber = modeNumber;
         break;
@@ -321,7 +464,7 @@ BOOLEAN HwVidStartIO( PVOID HwDevExt, PVIDEO_REQUEST_PACKET ReqPkt )
             break;
         }
 
-        if( VideoModes[pExt->CurrentModeNumber].modeInformation.BitsPerPlane == 8 ) {
+        if( VideoModes[pExt->CurrentModeNumber].Bpp == 8 ) {
             BOXV_dac_set( pExt, clutBuffer->FirstEntry, clutBuffer->NumEntries,
                           clutBuffer->LookupTable );
         }

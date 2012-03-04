@@ -43,12 +43,15 @@
     "VirtualBox 640x480x8"             = boxv,      8,  640, 480, 60, 0
     "VirtualBox 800x600x8"             = boxv,      8,  800, 600, 60, 0
     "VirtualBox 1024x768x8"            = boxv,      8, 1024, 768, 60, 0
+    "VirtualBox 1152x864x8"            = boxv,      8, 1152, 864, 60, 0
     "VirtualBox 640x480x16"            = boxv,     16,  640, 480, 60, 0
     "VirtualBox 800x600x16"            = boxv,     16,  800, 600, 60, 0
     "VirtualBox 1024x768x16"           = boxv,     16, 1024, 768, 60, 0
+    "VirtualBox 1152x864x16"           = boxv,     16, 1152, 864, 60, 0
     "VirtualBox 640x480x32"            = boxv,     32,  640, 480, 60, 0
     "VirtualBox 800x600x32"            = boxv,     32,  800, 600, 60, 0
     "VirtualBox 1024x768x32"           = boxv,     32, 1024, 768, 60, 0
+    "VirtualBox 1152x864x32"           = boxv,     32, 1152, 864, 60, 0
 
 ;
 ; This maps detected options into the options we support
@@ -90,12 +93,15 @@
     "VirtualBox 640x480x8"     =  "VirtualBox 640x480, 256 colors"
     "VirtualBox 800x600x8"     =  "VirtualBox 800x600, 256 colors"
     "VirtualBox 1024x768x8"    =  "VirtualBox 1024x768, 256 colors"
+    "VirtualBox 1152x864x8"    =  "VirtualBox 1152x864, 256 colors"
     "VirtualBox 640x480x16"    =  "VirtualBox 640x480, 64K colors"
     "VirtualBox 800x600x16"    =  "VirtualBox 800x600, 64K colors"
     "VirtualBox 1024x768x16"   =  "VirtualBox 1024x768, 64K colors"
+    "VirtualBox 1152x864x16"   =  "VirtualBox 1152x864, 64K colors"
     "VirtualBox 640x480x32"    =  "VirtualBox 640x480, True Color"
     "VirtualBox 800x600x32"    =  "VirtualBox 800x600, True Color"
     "VirtualBox 1024x768x32"   =  "VirtualBox 1024x768, True Color"
+    "VirtualBox 1152x864x32"   =  "VirtualBox 1152x864, True Color"
 
 ;---------------------------------------------------------------------------
 ; 1. Identify

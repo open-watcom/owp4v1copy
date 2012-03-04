@@ -13,7 +13,8 @@ typedef struct {
 } BOXV_mode_t;
 
 extern void BOXV_mode_enumerate( void *cx, int (cb)( void *cx, BOXV_mode_t *mode ) );
-extern int  BOXV_detect( void *cx );
+extern int  BOXV_detect( void *cx, unsigned long *vram_size );
+extern int  BOXV_ext_mode_set( void *cx, int xres, int yres, int bpp, int v_xres, int v_yres );
 extern int  BOXV_mode_set( void *cx, int mode_no );
 extern int  BOXV_dac_set( void *cx, unsigned start, unsigned count, void *pal );
 extern int  BOXV_ext_disable( void *cx );

@@ -11,11 +11,11 @@
 
 /* Video mode description structure */
 typedef struct {
-    ULONG                   ulModeId;           /* Internal mode ID */
-    BOOLEAN                 bValid;             /* Flag to filter out modes */
-    VIDEO_MODE_INFORMATION  modeInformation;    /* NT style video mode data */
+    USHORT              HorzRes;                /* Horizontal resolution */
+    USHORT              VertRes;                /* Vertical resolution */
+    UCHAR               Bpp;                    /* Bits per pixel */
+    BOOLEAN             bValid;                 /* Valid mode flag */
 } VIDEOMP_MODE, *PVIDEOMP_MODE;
-
 
 /* The device extension - private miniport data */
 typedef struct {

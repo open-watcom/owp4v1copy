@@ -35,3 +35,10 @@ static unsigned vid_inw( void *cx, unsigned port )
 
     return( VideoPortReadPortUshort( (PUSHORT)(pExt->IOAddrVGA + port) ) );
 }
+
+static unsigned vid_ind( void *cx, unsigned port )
+{
+    PHW_DEV_EXT     pExt = cx;
+
+    return( VideoPortReadPortUlong( (PULONG)(pExt->IOAddrVGA + port) ) );
+}
