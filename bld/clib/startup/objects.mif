@@ -140,7 +140,8 @@
 !inject stjmpaxp.obj                        nta
 !inject stjmpmps.obj                                                                                    lmp
 !inject stjmp086.obj d16                                            o16     q16     w16
-!inject stjmp386.obj     d32             nt         nvc     nvl nll     o32     q32     w32 osi l32         rdu rdk
+!inject stjmp386.obj     d32             nt         nvc     nvl nll     o32     q32     w32 osi l32         rdu
+!inject stjmps32.obj                                                                                            rdk
 !inject stjpxaxp.obj                        nta
 !inject stk086.obj   d16                                                            w16
 !inject stk386.obj       d32                                                            w32 osi
