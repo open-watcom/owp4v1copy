@@ -1277,7 +1277,7 @@ static uint32_t oc_text_chars_width( uint8_t * text, uint32_t count, \
 }
 
 /* Function oc_tab_position().
- * Determines the position of a wgml tab stop.
+ * Determines the position of a (default) wgml tab stop.
  *
  * Parameter:
  *      cur_pos contains the current horizontal position on the line.
@@ -1297,7 +1297,7 @@ static uint32_t oc_tab_position( uint32_t cur_pos )
 
     /* Resize tab_list if necessary. */
 
-    last_tab = cur_tabs->tabs[cur_tabs->current - 1].column;
+    last_tab = def_tabs.tabs[def_tabs.current - 1].column;
     if( cur_pos > last_tab ) {
 
         /* Compute the minimum number of additional tab stops needed. */
@@ -1307,8 +1307,8 @@ static uint32_t oc_tab_position( uint32_t cur_pos )
 
         /* See if additional space is needed. */
 
-        if( (cur_tabs->tabs[cur_tabs->current - 1].column + req_count) > \
-                                                        cur_tabs->length ) {
+        if( (def_tabs.tabs[def_tabs.current - 1].column + req_count) > \
+                                                        def_tabs.length ) {
 
             /* Compute the new size. The intent is to add enough tabs not
              * only for the current value, but for up to TAB_COUNT - 1 more.
@@ -1317,28 +1317,28 @@ static uint32_t oc_tab_position( uint32_t cur_pos )
             req_count /= TAB_COUNT;
             req_count++;
 
-            req_length = cur_tabs->length + (req_count * TAB_COUNT);
-            cur_tabs->tabs = mem_realloc( cur_tabs->tabs, \
+            req_length = def_tabs.length + (req_count * TAB_COUNT);
+            def_tabs.tabs = mem_realloc( def_tabs.tabs, \
                                         req_length * sizeof( tab_stop ) );
-            cur_tabs->length = req_length;
+            def_tabs.length = req_length;
         }
 
         /* Set tabs up to the last available position in the hpos array. */
 
-        for( i = cur_tabs->current; i < cur_tabs->length; i++ ) {
-            cur_tabs->tabs[i].column = cur_tabs->tabs[i - 1].column + \
+        for( i = def_tabs.current; i < def_tabs.length; i++ ) {
+            def_tabs.tabs[i].column = def_tabs.tabs[i - 1].column + \
                                                                     inter_tab;
-            cur_tabs->tabs[i].fill_char = ' ';
-            cur_tabs->tabs[i].alignment = ' ';
+            def_tabs.tabs[i].fill_char = ' ';
+            def_tabs.tabs[i].alignment = al_left;
         }
-        cur_tabs->current = cur_tabs->length;
+        def_tabs.current = def_tabs.length;
     }
 
     /* Skip all tab stops to the left of cur_pos. */
 
-    for( i = 0; i < cur_tabs->current; i++ ) {
-        if( cur_pos < cur_tabs->tabs[i].column ) {
-            retval = cur_tabs->tabs[i].column;
+    for( i = 0; i < def_tabs.current; i++ ) {
+        if( cur_pos < def_tabs.tabs[i].column ) {
+            retval = def_tabs.tabs[i].column;
             break;
         }
     }

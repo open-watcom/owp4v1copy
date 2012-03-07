@@ -178,7 +178,6 @@ void    scr_tb( void )
         }
     } else {
         user_tabs.current = 0;              // clear user_tabs
-        cur_tabs = &def_tabs;               // restore default tabs
         p = pa;                             // reset to start of first tab
 
         if( *p ) {                          // tab stop list
@@ -197,11 +196,13 @@ void    scr_tb( void )
 
                 // Parse fill chars/strings
 
+
                 if( (*p != '+') && !isdigit(*p) ) { // potential fill char
                     if( (*p == '\'') || (*p == '"') || (*p == '/') ) {
                         quote = *p;         // initial quote found
                         p++;                // should be fill char
-                        if( !*p ) {             // ' " or / only
+                        if( !*p || (*p == ' ') ||
+                            (*p == '+') || isdigit(*p) ) { // ' " or / only before tab stop position
                             xx_line_err( err_right_delim, pa );
                             continue;
                         }
@@ -276,8 +277,10 @@ void    scr_tb( void )
                         t_pos *= tab_col;
                         user_tabs.tabs[i].column = t_pos;
                     }
-                    if( user_tabs.tabs[i].column <= user_tabs.tabs[i-1].column ) {
-                        xx_line_err( err_tab_stop_order, pa );
+                    if( i > 0 ) {
+                        if( user_tabs.tabs[i].column <= user_tabs.tabs[i-1].column ) {
+                            xx_line_err( err_tab_stop_order, pa );
+                        }
                     }
                     user_tabs.current++;
                 }
@@ -332,9 +335,6 @@ void    scr_tb( void )
                 }
             }
         }
-    }
-    if( user_tabs.current > 0 ) {           // user tabs found
-        cur_tabs = &user_tabs;              // use user_tabs
     }
 
     scan_restart = scan_stop + 1;

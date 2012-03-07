@@ -1238,8 +1238,6 @@ void cop_setup( void )
     }
     def_tabs.current = def_tabs.length;
 
-    cur_tabs = &def_tabs;
-
     /* Initialize user_tabs. */
 
     user_tabs.tabs = mem_alloc( TAB_COUNT * sizeof( tab_stop ) );
@@ -1309,8 +1307,6 @@ void cop_teardown( void )
         mem_free( user_tabs.tabs );
         user_tabs.tabs = NULL;
     }
-
-    cur_tabs = NULL;
 
     /* Release any memory allocated by the dependent modules. */
 

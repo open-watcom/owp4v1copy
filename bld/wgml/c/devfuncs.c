@@ -440,6 +440,10 @@ static void output_spaces( uint32_t count )
         for( i = 0; i < space_chars.length; i++ ) space_chars.text[i] = ' ';
     }
 
+    if( !text_out_open && ps_device ) {
+        ob_insert_ps_text_start();
+        text_out_open = true;
+    }
     ob_insert_block( space_chars.text, count, true, true, active_font );
     current_state.x_address = desired_state.x_address;
 
@@ -508,26 +512,9 @@ static void post_text_output( void )
     char    shift_neg[]     = "neg ";
     char    shift_rmoveto[] = "0 exch rmoveto ";
     char    shift_scale[]   = " 1 .7 div dup scale ";
-    char    shwd_suffix[]   = " shwd ";
-    char    sd_suffix[]     = " sd ";
     size_t  ps_size;
 
     if( ps_device ) {
-
-        /* If the ")" is combined with the suffix, then the space will be
-         * skipped when it should not be.
-         */
-
-        ob_insert_block( ")", 1, false, false, active_font );
-
-        if( htab_done ) {
-            ps_size = strlen( sd_suffix );
-            ob_insert_block( sd_suffix, ps_size, false, false, active_font );
-        } else {
-            ps_size = strlen( shwd_suffix );
-            ob_insert_block( shwd_suffix, ps_size, false, false, active_font );
-        }
-
         if( shift_done ) {
 
             /* Emit the appropriate post-subscript/superscript sequence. */
@@ -653,13 +640,8 @@ static void pre_text_output( void )
                 g_suicide();
             }
         }
-
-        /* Emit the initial "(" */
-
-        ob_insert_ps_text_start();
     }
     current_state.type = desired_state.type;
-    text_out_open = true;
 
     return;
 }
@@ -779,9 +761,20 @@ static void * df_dotab( void )
 
             /* Perform the %dotab() horizontal positioning. */
 
-            if( !text_out_open ) pre_text_output();
+            if( !text_out_open ) {
+                pre_text_output();
+                if( ps_device ) {
+                    ob_insert_ps_text_start();
+                    text_out_open = true;
+                }
+            }
             output_spaces( spaces );
-            if( text_out_open ) post_text_output();
+            if( text_out_open ) {
+                if( ps_device ) {
+                    ob_insert_ps_text_end( htab_done, active_font );
+                }
+                post_text_output();
+            }
             tab_width = 0;
         }
     }
@@ -2437,11 +2430,21 @@ static void fb_firstword( line_proc * in_block )
 {
     if( in_block->firstword == NULL ) {
         if( in_block->startword != NULL ) {
-            if( text_out_open ) post_text_output();
+            if( text_out_open ) {
+                if( ps_device ) {
+                    ob_insert_ps_text_end( htab_done, active_font );
+                }
+                post_text_output();
+            }
             df_interpret_driver_functions( in_block->startword->text );
         }
     } else {
-        if( text_out_open ) post_text_output();
+        if( text_out_open ) {
+            if( ps_device ) {
+                ob_insert_ps_text_end( htab_done, active_font );
+            }
+            post_text_output();
+        }
         df_interpret_driver_functions( in_block->firstword->text );
     }
 
@@ -2653,7 +2656,12 @@ static void fb_font_switch( void )
 
 static void fb_htab( void )
 {
-    if( text_out_open ) post_text_output();
+    if( text_out_open ) {
+        if( ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+        }
+        text_out_open = false;
+    }
     df_interpret_driver_functions( bin_driver->htab.text );
     htab_done = true;
     current_state.x_address = desired_state.x_address;
@@ -2780,12 +2788,22 @@ static void fb_first_text_chars( text_chars * in_chars, \
      */
 
     if( font_switch_needed ) {
-        if( text_out_open ) post_text_output();
+        if( text_out_open ) {
+            if( ps_device ) {
+                ob_insert_ps_text_end( htab_done, active_font );
+            }
+            post_text_output();
+        }
         fb_font_switch();
     } else {
         if( wgml_fonts[font_number].font_style != NULL ) {
             if( wgml_fonts[font_number].font_style->startvalue != NULL ) {
-                if( text_out_open ) post_text_output();
+                if( text_out_open ) {
+                    if( ps_device ) {
+                        ob_insert_ps_text_end( htab_done, active_font );
+                    }
+                    post_text_output();
+                }
                 df_interpret_driver_functions( \
                         wgml_fonts[font_number].font_style->startvalue->text );
             }
@@ -2799,17 +2817,34 @@ static void fb_first_text_chars( text_chars * in_chars, \
 
     if( in_lineproc == NULL ) {
         textpass = true;
+        if( !text_out_open ) {
+            pre_text_output();
+        }
     } else {
         if( in_lineproc->startvalue != NULL ) {
-            if( text_out_open ) post_text_output();
+            if( text_out_open ) {
+                if( ps_device ) {
+                    ob_insert_ps_text_end( htab_done, active_font );
+                }
+                post_text_output();
+            }
             df_interpret_driver_functions( in_lineproc->startvalue->text );
         }
 
         fb_firstword( in_lineproc );
 
+        if( !text_out_open ) {
+            pre_text_output();
+        }
+
         if( !font_switch_needed ) {
             if( in_lineproc->startword != NULL ) {
-                if( text_out_open ) post_text_output();
+                if( text_out_open ) {
+                    if( ps_device ) {
+                        ob_insert_ps_text_end( htab_done, active_font );
+                    }
+                    post_text_output();
+                }
                 df_interpret_driver_functions( in_lineproc->startword->text );
             }
         }
@@ -2839,15 +2874,18 @@ static void fb_first_text_chars( text_chars * in_chars, \
 
     if( textpass ) {
         fb_initial_horizontal_positioning();
-        if( !text_out_open ) pre_text_output();
+        if( !text_out_open && ps_device ) {
+            ob_insert_ps_text_start();
+            text_out_open = true;
+        }
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
 
-        /* Checking htab_done here causes discrepancies between our output
-         * and wgml 4.0's output.
-         */
-
-        if( undo_shift && text_out_open ) post_text_output();
+        if( undo_shift && text_out_open && ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+            htab_done = false;
+            text_out_open = false;
+        }
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -2855,14 +2893,16 @@ static void fb_first_text_chars( text_chars * in_chars, \
      */
 
     if( uline ) {
-        if( !text_out_open ) pre_text_output();
+        if( !text_out_open && ps_device ) {
+            ob_insert_ps_text_start();
+            text_out_open = true;
+        }
         output_uscores( in_chars );
-
-        /* Checking htab_done here causes discrepancies between our output
-         * and wgml 4.0's output.
-         */
-
-        if( undo_shift && text_out_open ) post_text_output();
+        if( undo_shift && text_out_open && ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+            htab_done = false;
+            text_out_open = false;
+        }
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2871,10 +2911,18 @@ static void fb_first_text_chars( text_chars * in_chars, \
     x_address = current_state.x_address;
 
     if( in_lineproc != NULL ) {
-        if( text_out_open ) post_text_output();
         if( in_lineproc->endword != NULL ) {
+            if( text_out_open && ps_device ) {
+                ob_insert_ps_text_end( htab_done, active_font );
+                htab_done = false;
+                text_out_open = false;
+            }
             df_interpret_driver_functions( in_lineproc->endword->text );
         }
+    }
+
+    if( undo_shift ) {
+        post_text_output();
     }
 
     return;
@@ -2908,7 +2956,12 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
 
     /* Do the font switch, which is needed by definition. */
 
-    if( text_out_open ) post_text_output();
+    if( text_out_open ) {
+        if( ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+        }
+        post_text_output();
+    }
     fb_font_switch();
 
     /* If there is no :LINEPROC block, then set textpass to "true"; if there
@@ -2918,12 +2971,25 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
 
     if( in_lineproc == NULL ) {
         textpass = true;
+        if( !text_out_open ) {
+            pre_text_output();
+        }
     } else {
         if( in_lineproc->startvalue != NULL ) {
-            if( text_out_open ) post_text_output();
+            if( text_out_open ) {
+                if( ps_device ) {
+                    ob_insert_ps_text_end( htab_done, active_font );
+                }
+                post_text_output();
+            }
             df_interpret_driver_functions( in_lineproc->startvalue->text );
         }
         fb_firstword( in_lineproc );
+
+        if( !text_out_open ) {
+            pre_text_output();
+        }
+
     }
 
     /* Note that gendev ensures that %textpass() and %ulineon()/%ulineoff()
@@ -2950,15 +3016,18 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
 
     if( textpass ) {
         fb_internal_horizontal_positioning();
-        if( !text_out_open ) pre_text_output();
+        if( !text_out_open && ps_device ) {
+            ob_insert_ps_text_start();
+            text_out_open = true;
+        }
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
 
-        /* Checking htab_done here causes discrepancies between our output
-         * and wgml 4.0's output.
-         */
-
-        if( undo_shift && text_out_open ) post_text_output();
+        if( undo_shift && text_out_open && ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+            htab_done = false;
+            text_out_open = false;
+        }
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -2966,14 +3035,16 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
      */
 
     if( uline ) {
-        if( !text_out_open ) pre_text_output();
+        if( !text_out_open && ps_device ) {
+            ob_insert_ps_text_start();
+            text_out_open = true;
+        }
         output_uscores( in_chars );
-
-        /* Checking htab_done here causes discrepancies between our output
-         * and wgml 4.0's output.
-         */
-
-        if( undo_shift && text_out_open ) post_text_output();
+        if( undo_shift && text_out_open && ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+            htab_done = false;
+            text_out_open = false;
+        }
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2982,10 +3053,18 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
     x_address = current_state.x_address;
 
     if( in_lineproc != NULL ) {
-        if( text_out_open ) post_text_output();
         if( in_lineproc->endword != NULL ) {
+            if( text_out_open && ps_device ) {
+                ob_insert_ps_text_end( htab_done, active_font );
+                htab_done = false;
+                text_out_open = false;
+            }
             df_interpret_driver_functions( in_lineproc->endword->text );
         }
+    }
+
+    if( undo_shift ) {
+        post_text_output();
     }
 
     return;
@@ -3256,9 +3335,12 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
      * started or a new font was encountered. 
      */
 
+    if( !text_out_open ) {
+        pre_text_output();
+    }
+
     if( in_lineproc != NULL ) {
         if( in_lineproc->startword != NULL ) {
-            if( text_out_open ) post_text_output();
             df_interpret_driver_functions( in_lineproc->startword->text );
         }
     }
@@ -3287,15 +3369,18 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
 
     if( textpass ) {
         fb_internal_horizontal_positioning();
-        if( !text_out_open ) pre_text_output();
+        if( !text_out_open && ps_device ) {
+            ob_insert_ps_text_start();
+            text_out_open = true;
+        }
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
+        if( undo_shift && text_out_open && ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+            htab_done = false;
+            text_out_open = false;
+        }
 
-        /* Checking htab_done here causes discrepancies between our output
-         * and wgml 4.0's output.
-         */
-
-        if( undo_shift && text_out_open ) post_text_output();
     }
 
     /* If uline is "true", then emit the underscore characters. %dotab() must
@@ -3303,14 +3388,16 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
      */
 
     if( uline ) {
-        if( !text_out_open ) pre_text_output();
+        if( !text_out_open && ps_device ) {
+            ob_insert_ps_text_start();
+            text_out_open = true;
+        }
         output_uscores( in_chars );
-
-        /* Checking htab_done here causes discrepancies between our output
-         * and wgml 4.0's output.
-         */
-
-        if( undo_shift && text_out_open ) post_text_output();
+        if( undo_shift && text_out_open && ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+            htab_done = false;
+            text_out_open = false;
+        }
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -3319,9 +3406,17 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
     x_address = current_state.x_address;
 
     if( in_lineproc != NULL ) {
-        if( text_out_open ) post_text_output();
         if( in_lineproc->endword != NULL ) \
+            if( text_out_open && ps_device ) {
+                ob_insert_ps_text_end( htab_done, active_font );
+                htab_done = false;
+                text_out_open = false;
+            }
             df_interpret_driver_functions( in_lineproc->endword->text );
+    }
+
+    if( undo_shift ) {
+        post_text_output();
     }
 
     return;
@@ -3722,7 +3817,12 @@ void fb_first_text_line_pass( text_line * out_line )
 
     /* Close text output if still open at end of line. */
 
-    if( text_out_open ) post_text_output();
+    if( text_out_open ) {
+        if( ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+        }
+        post_text_output();
+    }
 
     return;
 }
@@ -3872,7 +3972,12 @@ void fb_lineproc_endvalue( void )
     }
 
     if( textpass || uline ) {
-        if( text_out_open ) post_text_output();
+        if( text_out_open ) {
+            if( ps_device ) {
+                ob_insert_ps_text_end( htab_done, active_font );
+            }
+            post_text_output();
+        }
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[font_number].font_style->\
                                 lineprocs[line_pass_number].endvalue != NULL ) {
@@ -4143,7 +4248,12 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
 
     /* Close text output if still open at end of line. */
 
-    if( text_out_open ) post_text_output();
+    if( text_out_open ) {
+        if( ps_device ) {
+            ob_insert_ps_text_end( htab_done, active_font );
+        }
+        post_text_output();
+    }
 
     return;
 }

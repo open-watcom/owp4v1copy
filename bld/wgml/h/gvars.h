@@ -346,10 +346,9 @@ global  laystack    *   lay_files;      // layout file(s) specified on cmdline
 
 
 /***************************************************************************/
-/* Pointer to current set of tabs and the tab lists.                       */
+/* The tab lists.                                                          */
 /***************************************************************************/
 
-global  tab_list    *   cur_tabs;   // initially set to &def_tabs
 global  tab_list        def_tabs;   // tabs at columns 6, 11, 16, ..., 81
 global  tab_list        user_tabs;  // for tabs defined by control word TB
 

@@ -29,6 +29,7 @@
 *                   ob_flush()
 *                   ob_insert_block()
 *                   ob_insert_byte()
+*                   ob_insert_ps_text_end()
 *                   ob_insert_ps_text_start()
 *                   ob_setup()
 *                   ob_teardown()
@@ -1254,14 +1255,44 @@ void ob_insert_byte( uint8_t in_char )
     return;
 }
 
+/* Function ob_insert_ps_text_end().
+ * This function inserts the text end character and output macro for the PS
+ * device.
+ *
+ * Parameter:
+ *  htab_done indicates whether "sd" or "shwd" is to be used
+ *
+ * Note:
+ *      This is only called for the PS device, to insert the ")" and the
+ *      appropriate macro after text.
+ */
+
+void ob_insert_ps_text_end( bool htab_done, uint32_t font )
+{
+    char    shwd_suffix[]   = ") shwd ";
+    char    sd_suffix[]     = ") sd ";
+    size_t  ps_size;
+
+    if( htab_done ) {
+        ps_size = strlen( sd_suffix );
+        ob_insert_block( sd_suffix, ps_size, false, false, font );
+    } else {
+        ps_size = strlen( shwd_suffix );
+        ob_insert_block( shwd_suffix, ps_size, false, false, font );
+    }
+
+    return;
+}
+
+
 /* Function ob_insert_ps_text_start().
  * This function inserts the text start character for the PS device.
  *
  * Note:
- *      This is only called by pre_text_output() for the PS device, to insert
- *      the "(" before text. It turns out that ending the record with "("
- *      results in the newline produced by ob_flush() appearing as an extra
- *      space in the document, and that this is not how it is done by wgml 4.0.
+ *      This is only called for the PS device, to insert the "(" before text.
+ *      It turns out that ending the record with "(" results in the newline
+ *      produced by ob_flush() appearing as an extra space in the document,
+ *      and that this is not how it is done by wgml 4.0.
  */
 
 void ob_insert_ps_text_start( void )
