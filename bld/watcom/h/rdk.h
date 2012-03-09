@@ -39,8 +39,6 @@
 #define osgate_create_call_gate_sel16 24
 #define osgate_create_call_gate_sel32 25
 #define osgate_create_task_gate_sel 26
-#define osgate_create_int_gate_sel 27
-#define osgate_create_trap_gate_sel 28
 #define osgate_selector_to_segment 29
 #define osgate_segment_to_selector 30
 #define osgate_free_selector 31
@@ -89,8 +87,12 @@
 #define osgate_init_trap_gates 75
 #define osgate_init_tss_gates 76
 
+#define osgate_setup_int_gate 77
+#define osgate_setup_trap_gate 78
+
 #define osgate_wake_thread 79
 #define osgate_sleep_thread 80
+#define osgate_irq_schedule 81
 #define osgate_clear_signal 83
 #define osgate_signal 84
 #define osgate_wait_for_signal 85
@@ -99,7 +101,7 @@
 #define osgate_cond_enter_section 88
 #define osgate_start_timer 89
 #define osgate_stop_timer 90
-#define osgate_debug_break 92
+#define osgate_debug_exc_break 92
 #define osgate_hook_create_thread 93
 #define osgate_hook_create_process 94
 #define osgate_hook_terminate_thread 95
@@ -133,9 +135,6 @@
 
 #define osgate_hook_in 122
 #define osgate_hook_out 123
-
-#define osgate_request_private_irq_handler 124
-#define osgate_release_private_irq_handler 125
 
 #define osgate_disable_all_irq 126
 
@@ -256,6 +255,7 @@
 #define osgate_cache_dir 240
 #define osgate_insert_dir_entry 241
 #define osgate_insert_file_entry 242
+#define osgate_hook_file_system_started 243
 
 #define osgate_get_file_info 247
 #define osgate_dupl_file_info 248
@@ -318,8 +318,6 @@
 
 #define osgate_register_swap_proc 294
 
-#define osgate_is_irq_free 295
-
 #define osgate_setup_irq_detect 296
 #define osgate_poll_irq_detect 297
 
@@ -331,8 +329,6 @@
 
 #define osgate_init_usb_device 301
 #define osgate_notify_usb_attach 302
-
-#define osgate_request_shared_irq_handler 303
 
 #define osgate_notify_usb_detach 304
 
@@ -409,12 +405,7 @@
 
 #define osgate_get_apic_id 357
 
-#define osgate_enter_int 358
-#define osgate_leave_int 359
-
 #define osgate_debug_exception 360
-
-#define osgate_start_ap_cores 361
 
 #define osgate_create_core 362
 #define osgate_get_core_num 363
@@ -426,9 +417,10 @@
 
 #define osgate_get_core 368
 #define osgate_get_core_count 369
-#define osgate_start_core 370
+#define osgate_run_ap_core 370
 
-#define osgate_timer_expired 371
+#define osgate_preempt_timer_expired 371
+#define osgate_timer_expired 372
 
 #define osgate_reload_sys_timer 373
 #define osgate_start_sys_timer 374
@@ -449,6 +441,8 @@
 
 #define osgate_get_pci_irq 382
 
+#define osgate_preempt_expired 383
+
 #define osgate_send_eoi 384
 #define osgate_send_int 385
 #define osgate_send_nmi 386
@@ -468,11 +462,11 @@
 #define osgate_delete_sys_env_var 396
 #define osgate_find_sys_env_var 397
 
-#define osgate_has_apic_mem 398
-#define osgate_has_apic_msr 399
+#define osgate_start_preempt_timer 398
+#define osgate_reload_preempt_timer 399
 
-#define osgate_start_clock 400
-#define osgate_sync_clock 401
+#define osgate_start_sys_preempt_timer 400
+#define osgate_reload_sys_preempt_timer 401
 
 #define osgate_flush_tlb 402
 
@@ -480,6 +474,32 @@
 
 #define osgate_hook_net_link_up 404
 #define osgate_req_arp 405
+
+#define osgate_begin_disc_handler 406
+#define osgate_end_disc_handler 407
+
+#define osgate_hook_init_pci 408
+
+#define osgate_get_msi_param 409
+
+#define osgate_allocate_ints 410
+#define osgate_free_int 411
+
+#define osgate_get_acpi_pci_device_name 412
+#define osgate_get_acpi_pci_device_info 413
+#define osgate_get_acpi_pci_device_irq 414
+
+#define osgate_start_core 415
+#define osgate_shutdown_core 416
+
+#define osgate_update_pstate 417
+
+#define osgate_enter_c3 418
+
+#define osgate_get_pci_msi 419
+#define osgate_setup_pci_msi 420
+#define osgate_request_msi_handler 421
+#define osgate_request_irq_handler 422
 
 
 
@@ -512,8 +532,6 @@
 #define OsGate_create_call_gate_sel16 0x3E 0x67 0x9a 24 0 0 0 2 0
 #define OsGate_create_call_gate_sel32 0x3E 0x67 0x9a 25 0 0 0 2 0
 #define OsGate_create_task_gate_sel 0x3E 0x67 0x9a 26 0 0 0 2 0
-#define OsGate_create_int_gate_sel 0x3E 0x67 0x9a 27 0 0 0 2 0
-#define OsGate_create_trap_gate_sel 0x3E 0x67 0x9a 28 0 0 0 2 0
 #define OsGate_selector_to_segment 0x3E 0x67 0x9a 29 0 0 0 2 0
 #define OsGate_segment_to_selector 0x3E 0x67 0x9a 30 0 0 0 2 0
 #define OsGate_free_selector 0x3E 0x67 0x9a 31 0 0 0 2 0
@@ -562,8 +580,12 @@
 #define OsGate_init_trap_gates 0x3E 0x67 0x9a 75 0 0 0 2 0
 #define OsGate_init_tss_gates 0x3E 0x67 0x9a 76 0 0 0 2 0
 
+#define OsGate_setup_int_gate 0x3E 0x67 0x9a 77 0 0 0 2 0
+#define OsGate_setup_trap_gate 0x3E 0x67 0x9a 78 0 0 0 2 0
+
 #define OsGate_wake_thread 0x3E 0x67 0x9a 79 0 0 0 2 0
 #define OsGate_sleep_thread 0x3E 0x67 0x9a 80 0 0 0 2 0
+#define OsGate_irq_schedule 0x3E 0x67 0x9a 81 0 0 0 2 0
 #define OsGate_clear_signal 0x3E 0x67 0x9a 83 0 0 0 2 0
 #define OsGate_signal 0x3E 0x67 0x9a 84 0 0 0 2 0
 #define OsGate_wait_for_signal 0x3E 0x67 0x9a 85 0 0 0 2 0
@@ -572,7 +594,7 @@
 #define OsGate_cond_enter_section 0x3E 0x67 0x9a 88 0 0 0 2 0
 #define OsGate_start_timer 0x3E 0x67 0x9a 89 0 0 0 2 0
 #define OsGate_stop_timer 0x3E 0x67 0x9a 90 0 0 0 2 0
-#define OsGate_debug_break 0x3E 0x67 0x9a 92 0 0 0 2 0
+#define OsGate_debug_exc_break 0x3E 0x67 0x9a 92 0 0 0 2 0
 #define OsGate_hook_create_thread 0x3E 0x67 0x9a 93 0 0 0 2 0
 #define OsGate_hook_create_process 0x3E 0x67 0x9a 94 0 0 0 2 0
 #define OsGate_hook_terminate_thread 0x3E 0x67 0x9a 95 0 0 0 2 0
@@ -606,9 +628,6 @@
 
 #define OsGate_hook_in 0x3E 0x67 0x9a 122 0 0 0 2 0
 #define OsGate_hook_out 0x3E 0x67 0x9a 123 0 0 0 2 0
-
-#define OsGate_request_private_irq_handler 0x3E 0x67 0x9a 124 0 0 0 2 0
-#define OsGate_release_private_irq_handler 0x3E 0x67 0x9a 125 0 0 0 2 0
 
 #define OsGate_disable_all_irq 0x3E 0x67 0x9a 126 0 0 0 2 0
 
@@ -729,6 +748,7 @@
 #define OsGate_cache_dir 0x3E 0x67 0x9a 240 0 0 0 2 0
 #define OsGate_insert_dir_entry 0x3E 0x67 0x9a 241 0 0 0 2 0
 #define OsGate_insert_file_entry 0x3E 0x67 0x9a 242 0 0 0 2 0
+#define OsGate_hook_file_system_started 0x3E 0x67 0x9a 243 0 0 0 2 0
 
 #define OsGate_get_file_info 0x3E 0x67 0x9a 247 0 0 0 2 0
 #define OsGate_dupl_file_info 0x3E 0x67 0x9a 248 0 0 0 2 0
@@ -791,8 +811,6 @@
 
 #define OsGate_register_swap_proc 0x3E 0x67 0x9a 38 1 0 0 2 0
 
-#define OsGate_is_irq_free 0x3E 0x67 0x9a 39 1 0 0 2 0
-
 #define OsGate_setup_irq_detect 0x3E 0x67 0x9a 40 1 0 0 2 0
 #define OsGate_poll_irq_detect 0x3E 0x67 0x9a 41 1 0 0 2 0
 
@@ -804,8 +822,6 @@
 
 #define OsGate_init_usb_device 0x3E 0x67 0x9a 45 1 0 0 2 0
 #define OsGate_notify_usb_attach 0x3E 0x67 0x9a 46 1 0 0 2 0
-
-#define OsGate_request_shared_irq_handler 0x3E 0x67 0x9a 47 1 0 0 2 0
 
 #define OsGate_notify_usb_detach 0x3E 0x67 0x9a 48 1 0 0 2 0
 
@@ -882,12 +898,7 @@
 
 #define OsGate_get_apic_id 0x3E 0x67 0x9a 101 1 0 0 2 0
 
-#define OsGate_enter_int 0x3E 0x67 0x9a 102 1 0 0 2 0
-#define OsGate_leave_int 0x3E 0x67 0x9a 103 1 0 0 2 0
-
 #define OsGate_debug_exception 0x3E 0x67 0x9a 104 1 0 0 2 0
-
-#define OsGate_start_ap_cores 0x3E 0x67 0x9a 105 1 0 0 2 0
 
 #define OsGate_create_core 0x3E 0x67 0x9a 106 1 0 0 2 0
 #define OsGate_get_core_num 0x3E 0x67 0x9a 107 1 0 0 2 0
@@ -899,9 +910,10 @@
 
 #define OsGate_get_core 0x3E 0x67 0x9a 112 1 0 0 2 0
 #define OsGate_get_core_count 0x3E 0x67 0x9a 113 1 0 0 2 0
-#define OsGate_start_core 0x3E 0x67 0x9a 114 1 0 0 2 0
+#define OsGate_run_ap_core 0x3E 0x67 0x9a 114 1 0 0 2 0
 
-#define OsGate_timer_expired 0x3E 0x67 0x9a 115 1 0 0 2 0
+#define OsGate_preempt_timer_expired 0x3E 0x67 0x9a 115 1 0 0 2 0
+#define OsGate_timer_expired 0x3E 0x67 0x9a 116 1 0 0 2 0
 
 #define OsGate_reload_sys_timer 0x3E 0x67 0x9a 117 1 0 0 2 0
 #define OsGate_start_sys_timer 0x3E 0x67 0x9a 118 1 0 0 2 0
@@ -922,6 +934,8 @@
 
 #define OsGate_get_pci_irq 0x3E 0x67 0x9a 126 1 0 0 2 0
 
+#define OsGate_preempt_expired 0x3E 0x67 0x9a 127 1 0 0 2 0
+
 #define OsGate_send_eoi 0x3E 0x67 0x9a 128 1 0 0 2 0
 #define OsGate_send_int 0x3E 0x67 0x9a 129 1 0 0 2 0
 #define OsGate_send_nmi 0x3E 0x67 0x9a 130 1 0 0 2 0
@@ -941,11 +955,11 @@
 #define OsGate_delete_sys_env_var 0x3E 0x67 0x9a 140 1 0 0 2 0
 #define OsGate_find_sys_env_var 0x3E 0x67 0x9a 141 1 0 0 2 0
 
-#define OsGate_has_apic_mem 0x3E 0x67 0x9a 142 1 0 0 2 0
-#define OsGate_has_apic_msr 0x3E 0x67 0x9a 143 1 0 0 2 0
+#define OsGate_start_preempt_timer 0x3E 0x67 0x9a 142 1 0 0 2 0
+#define OsGate_reload_preempt_timer 0x3E 0x67 0x9a 143 1 0 0 2 0
 
-#define OsGate_start_clock 0x3E 0x67 0x9a 144 1 0 0 2 0
-#define OsGate_sync_clock 0x3E 0x67 0x9a 145 1 0 0 2 0
+#define OsGate_start_sys_preempt_timer 0x3E 0x67 0x9a 144 1 0 0 2 0
+#define OsGate_reload_sys_preempt_timer 0x3E 0x67 0x9a 145 1 0 0 2 0
 
 #define OsGate_flush_tlb 0x3E 0x67 0x9a 146 1 0 0 2 0
 
@@ -953,3 +967,30 @@
 
 #define OsGate_hook_net_link_up 0x3E 0x67 0x9a 148 1 0 0 2 0
 #define OsGate_req_arp 0x3E 0x67 0x9a 149 1 0 0 2 0
+
+#define OsGate_begin_disc_handler 0x3E 0x67 0x9a 150 1 0 0 2 0
+#define OsGate_end_disc_handler 0x3E 0x67 0x9a 151 1 0 0 2 0
+
+#define OsGate_hook_init_pci 0x3E 0x67 0x9a 152 1 0 0 2 0
+
+#define OsGate_get_msi_param 0x3E 0x67 0x9a 153 1 0 0 2 0
+
+#define OsGate_allocate_ints 0x3E 0x67 0x9a 154 1 0 0 2 0
+#define OsGate_free_int 0x3E 0x67 0x9a 155 1 0 0 2 0
+
+#define OsGate_get_acpi_pci_device_name 0x3E 0x67 0x9a 156 1 0 0 2 0
+#define OsGate_get_acpi_pci_device_info 0x3E 0x67 0x9a 157 1 0 0 2 0
+#define OsGate_get_acpi_pci_device_irq 0x3E 0x67 0x9a 158 1 0 0 2 0
+
+#define OsGate_start_core 0x3E 0x67 0x9a 159 1 0 0 2 0
+#define OsGate_shutdown_core 0x3E 0x67 0x9a 160 1 0 0 2 0
+
+#define OsGate_update_pstate 0x3E 0x67 0x9a 161 1 0 0 2 0
+
+#define OsGate_enter_c3 0x3E 0x67 0x9a 162 1 0 0 2 0
+
+#define OsGate_get_pci_msi 0x3E 0x67 0x9a 163 1 0 0 2 0
+#define OsGate_setup_pci_msi 0x3E 0x67 0x9a 164 1 0 0 2 0
+#define OsGate_request_msi_handler 0x3E 0x67 0x9a 165 1 0 0 2 0
+#define OsGate_request_irq_handler 0x3E 0x67 0x9a 166 1 0 0 2 0
+

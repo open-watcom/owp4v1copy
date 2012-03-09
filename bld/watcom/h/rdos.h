@@ -180,11 +180,11 @@ typedef struct _EXCEPTION_POINTERS {
 
 // API functions
 
-void RDOSAPI RdosTestGate(const char *name);
+void RDOSAPI RdosTestGate(int val);
 
 #pragma aux RdosTestGate = \
     CallGate_test_gate \
-    parm [edi];
+    parm [eax];
 
 void RDOSAPI RdosDebug();
 void RDOSAPI RdosLoad32();
@@ -192,12 +192,23 @@ void RDOSAPI RdosLoad32();
 short int RDOSAPI RdosSwapShort(short int val);
 long RDOSAPI RdosSwapLong(long val);
 
+int RDOSAPI RdosGetCharSize(const char *str);
+
 long RDOSAPI RdosGetLongRandom();
 long RDOSAPI RdosGetRandom(long range);
 
 long RDOSAPI RdosGetAcpiStatus();
+int RDOSAPI RdosGetAcpiObject(int Index, char *AcpiName);
+int RDOSAPI RdosGetAcpiMethod(int Object, int Index, char *AcpiName);
 int RDOSAPI RdosGetAcpiDevice(int Index, char *AcpiName);
-int RDOSAPI RdosGetAcpiObject(int Device, int Index, char *AcpiName);
+int RDOSAPI RdosGetAcpiDeviceIrq(int Device, int Index, int *Share, int *Polarity, int *TriggerMode);
+int RDOSAPI RdosGetAcpiDeviceIo(int Device, int Index, int *Start, int *End);
+int RDOSAPI RdosGetAcpiDeviceMem(int Device, int Index, int *Start, int *End);
+int RDOSAPI RdosGetPciDeviceName(int Index, char *AcpiName);
+int RDOSAPI RdosGetPciDeviceInfo(int Index, int *Bus, int *Device, int *Function);
+int RDOSAPI RdosGetPciDeviceVendor(int Index, int *Vendor, int *Device);
+int RDOSAPI RdosGetPciDeviceClass(int Index, int *Class, int *Subclass);
+int RDOSAPI RdosGetPciDeviceIrq(int Index);
 int RDOSAPI RdosGetCpuTemperature();
 
 void RDOSAPI RdosSetTextMode();
@@ -208,7 +219,7 @@ void RDOSAPI RdosSetDrawColor(int handle, int color);
 void RDOSAPI RdosSetLGOP(int handle, int lgop);
 void RDOSAPI RdosSetHollowStyle(int handle);
 void RDOSAPI RdosSetFilledStyle(int handle);
-int RDOSAPI RdosOpenFont(int height);
+int RDOSAPI RdosOpenFont(int id, int height);
 void RDOSAPI RdosCloseFont(int font);
 void RDOSAPI RdosGetStringMetrics(int font, const char *str, int *width, int *height);
 void RDOSAPI RdosSetFont(int handle, int font);
@@ -366,6 +377,7 @@ int RDOSAPI RdosGetDeviceInfo(int CodeSel, char *Name, unsigned int *CodeSize, u
 
 int RDOSAPI RdosGetSelectorInfo(int CodeSel, int *Limit, int *Bitness);
 
+int RDOSAPI RdosHasHardReset();
 void RDOSAPI RdosSoftReset();
 void RDOSAPI RdosHardReset();
 int RDOSAPI RdosPowerFailure();
@@ -376,6 +388,10 @@ void RDOSAPI RdosCreateThread(void (*Start)(void *Param), const char *Name, void
 void RDOSAPI RdosCreatePrioThread(void (*Start)(void *Param), int Prio, const char *Name, void *Param, int StackSize);
 void RDOSAPI RdosTerminateThread();
 int RDOSAPI RdosGetThreadHandle();
+
+int RDOSAPI RdosHasGlobalTimer();
+int RDOSAPI RdosGetCoreLoad(int Core, long long *NullTics, long long *CoreTics);
+int RDOSAPI RdosGetCoreDuty(int Core, long long *CoreTics, long long *TotalTics);
 
 #ifdef __RDOS__     // these are only available in user-mode
 
@@ -564,6 +580,8 @@ void RDOSAPI RdosContinueDebugEvent(int handle, int thread);
 
 #endif
 
+void RDOSAPI RdosRemoteDebug(long IP);
+
 int RDOSAPI RdosOpenSyslog();
 void RDOSAPI RdosCloseSyslog(int handle);
 int RDOSAPI RdosGetSyslog(int handle, int *severity, unsigned long *msb, unsigned long *lsb, char *buf, int size);
@@ -625,6 +643,12 @@ void RDOSAPI RdosReqUsbStatus(int Handle);
 void RDOSAPI RdosWriteUsbStatus(int Handle);
 int RDOSAPI RdosIsUsbTransactionDone(int Handle);
 int RDOSAPI RdosWasUsbTransactionOk(int Handle);
+
+int RDOSAPI RdosOpenHid(int Controller, int Device);
+void RDOSAPI RdosCloseHid(int handle);
+int RDOSAPI RdosGetHidPipe(int Handle);
+int RDOSAPI RdosReadHid(int Handle, char *buf, int size);
+int RDOSAPI RdosWriteHid(int Handle, const char *buf, int size);
 
 int RDOSAPI RdosGetAllocatedUsbBlocks();
 int RDOSAPI RdosGetUsbCloseCount();
@@ -712,6 +736,23 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [eax]   \
     value [eax];
 
+#pragma aux RdosGetCharSize = \
+    "mov al,1" \
+    "mov ah,[edi]" \
+    "test ah,80h" \
+    "jz size_ok" \
+    "inc al" \
+    "test ah,20h" \
+    "jz size_ok" \
+    "inc al" \
+    "test ah,10h" \
+    "jz size_ok" \
+    "inc al" \
+    "size_ok: " \
+    "movzx eax,al" \
+    parm [edi]   \
+    value [eax];
+
 #pragma aux RdosGetLongRandom = \
     CallGate_get_random  \
     value [eax];
@@ -730,18 +771,168 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     "AcpiDone: " \
     value [eax];
 
+#pragma aux RdosGetAcpiObject = \
+    CallGate_get_acpi_object  \
+    CarryToBool \
+    parm [eax] [edi] \
+    value [eax];
+
+#pragma aux RdosGetAcpiMethod = \
+    CallGate_get_acpi_method  \
+    CarryToBool \
+    parm [eax] [edx] [edi] \
+    value [eax];
+
 #pragma aux RdosGetAcpiDevice = \
     CallGate_get_acpi_device  \
     CarryToBool \
     parm [eax] [edi] \
     value [eax];
 
-#pragma aux RdosGetAcpiObject = \
-    CallGate_get_acpi_object  \
-    CarryToBool \
-    parm [eax] [edx] [edi] \
+#pragma aux RdosGetAcpiDeviceIrq = \
+    "push ecx" \
+    "push edx" \
+    CallGate_get_acpi_device_irq  \
+    "jc IrqFail" \
+    "movzx ecx,ah" \
+    "mov [ebx],ecx" \
+    "movzx ecx,dl" \
+    "mov [esi],ecx" \
+    "movzx ecx,dh" \
+    "mov [edi],ecx" \
+    "movzx eax,al" \
+    "jmp IrqDone" \
+    "IrqFail:" \
+    "mov eax,-1" \
+    "IrqDone:" \
+    "pop edx" \
+    "pop ecx" \
+    parm [eax] [edx] [ebx] [esi] [edi] \
     value [eax];
 
+#pragma aux RdosGetAcpiDeviceIo = \
+    "push ecx" \
+    "push edi" \
+    "push esi" \
+    CallGate_get_acpi_device_io  \
+    "jc IoFail" \
+    "movzx eax,si" \
+    "pop esi" \
+    "mov [esi],eax" \
+    "movzx eax,di" \
+    "pop edi" \
+    "mov [edi],eax" \
+    "movzx eax,cx" \
+    "jmp IoDone" \
+    "IoFail:" \
+    "pop esi" \
+    "pop edi" \
+    "xor eax,eax" \
+    "IoDone:" \
+    "pop ecx" \
+    parm [eax] [edx] [esi] [edi] \
+    value [eax];
+
+#pragma aux RdosGetAcpiDeviceMem = \
+    "push ecx" \
+    "push edi" \
+    "push esi" \
+    CallGate_get_acpi_device_mem  \
+    "jc MemFail" \
+    "mov eax,esi" \
+    "pop esi" \
+    "mov [esi],eax" \
+    "mov eax,edi" \
+    "pop edi" \
+    "mov [edi],eax" \
+    "mov eax,ecx" \
+    "jmp MemDone" \
+    "MemFail:" \
+    "pop esi" \
+    "pop edi" \
+    "xor eax,eax" \
+    "MemDone:" \
+    "pop ecx" \
+    parm [eax] [edx] [esi] [edi] \
+    value [eax];
+    
+#pragma aux RdosGetPciDeviceName = \
+    CallGate_get_pci_device_name  \
+    CarryToBool \
+    parm [eax] [edi] \
+    value [eax];
+
+#pragma aux RdosGetPciDeviceInfo = \
+    "push ecx" \
+    "push ebx" \
+    "push esi" \
+    CallGate_get_pci_device_info  \
+    "jc Fail" \
+    "movzx eax,bh" \
+    "pop esi" \
+    "mov [esi],eax" \
+    "movzx eax,bl" \
+    "pop ebx" \
+    "mov [ebx],eax" \
+    "movzx eax,ch" \
+    "pop ecx" \
+    "mov [ecx],eax" \
+    "mov eax,1" \
+    "jmp Done" \
+    "Fail:" \
+    "pop esi" \
+    "pop ebx" \
+    "pop ecx" \
+    "xor eax,eax" \
+    "Done:" \
+    parm [eax] [esi] [ebx] [ecx] \
+    value [eax];
+
+#pragma aux RdosGetPciDeviceVendor = \
+    "push edx" \
+    CallGate_get_pci_device_vendor  \
+    "jc Fail" \
+    "movzx eax,ax" \
+    "mov [esi],eax" \
+    "movzx edx,dx" \
+    "mov [edi],edx" \
+    "mov eax,1" \
+    "jmp Done" \
+    "Fail:" \
+    "xor eax,eax" \
+    "Done:" \
+    "pop edx" \    
+    parm [eax] [esi] [edi] \
+    value [eax];
+
+#pragma aux RdosGetPciDeviceClass = \
+    CallGate_get_pci_device_class  \
+    "jc Fail" \
+    "push edx" \
+    "movzx edx,ah" \
+    "mov [esi],edx" \
+    "movzx edx,al" \
+    "mov [edi],edx" \
+    "mov eax,1" \
+    "pop edx" \
+    "jmp Done" \
+    "Fail:" \
+    "xor eax,eax" \
+    "Done:" \
+    parm [eax] [esi] [edi] \
+    value [eax];
+
+#pragma aux RdosGetPciDeviceIrq = \
+    CallGate_get_pci_device_irq  \
+    "jc Fail" \
+    "movzx eax,al" \
+    "jmp Done" \
+    "Fail:" \
+    "mov eax,-1" \
+    "Done:" \
+    parm [eax] \
+    value [eax];
+    
 #pragma aux RdosGetCpuTemperature = \
     CallGate_get_cpu_temperature  \
     "jnc TempDone" \
@@ -814,7 +1005,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosOpenFont = \
     CallGate_open_font  \
     ValidateHandle \
-    parm [eax]  \
+    parm [edx] [eax]  \
     value [ebx];
 
 #pragma aux RdosCloseFont = \
@@ -966,6 +1157,10 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosSetThreadTss = \
     CallGate_set_thread_tss  \
     parm [ebx] [edi];
+
+#pragma aux RdosRemoteDebug = \
+    CallGate_remote_debug  \
+    parm [edx];
 
 #pragma aux RdosDebugTrace = \
     CallGate_debug_trace;
@@ -1447,6 +1642,11 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [eax] \
     value [eax];
 
+#pragma aux RdosHasHardReset = \
+    CallGate_has_hard_reset \
+    CarryToBool \
+    value [eax];
+
 #pragma aux RdosSoftReset = \
     CallGate_soft_reset;
 
@@ -1462,6 +1662,33 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_is_emergency_stopped \
     CarryToBool \    
     value [eax];
+
+#pragma aux RdosHasGlobalTimer = \
+    CallGate_has_global_timer \
+    CarryToBool \    
+    value [eax];
+
+#pragma aux RdosGetCoreLoad = \
+    CallGate_get_core_load \
+    "mov [esi],ebx" \
+    "mov [esi+4],ecx" \
+    "mov [edi],eax" \
+    "mov [edi+4],edx" \
+    CarryToBool \    
+    parm [eax] [esi] [edi] \
+    value [eax] \
+    modify [ebx ecx edx];
+
+#pragma aux RdosGetCoreDuty = \
+    CallGate_get_core_duty \
+    "mov [esi],eax" \
+    "mov [esi+4],edx" \
+    "mov [edi],ebx" \
+    "mov [edi+4],ecx" \
+    CarryToBool \    
+    parm [eax] [esi] [edi] \
+    value [eax] \
+    modify [ebx ecx edx];
 
 #pragma aux RdosGetVersion = \
     CallGate_get_version  \
@@ -2659,11 +2886,13 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 
 #pragma aux RdosGetUsbDevice = \
     CallGate_get_usb_device \
+    ValidateEax \
     parm [ebx] [eax] [edi] [ecx] \
     value [eax];
 
 #pragma aux RdosGetUsbConfig = \
     CallGate_get_usb_config \
+    ValidateEax \
     parm [ebx] [eax] [edx] [edi] [ecx] \
     value [eax];
 
@@ -2739,6 +2968,39 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_get_usb_close_count \
     value [eax];
 
+#pragma aux RdosOpenHid = \
+    CallGate_open_hid \
+    ValidateHandle \
+    parm [ebx] [eax] \
+    value [ebx];
+
+#pragma aux RdosCloseHid = \
+    CallGate_close_hid \
+    parm [ebx];
+
+#pragma aux RdosGetHidPipe = \
+    CallGate_get_hid_pipe \
+    "jc Fail" \
+    "movzx eax,al" \
+    "jmp Done" \
+    "Fail:" \
+    "xor eax,eax" \
+    "Done:" \
+    parm [ebx] \
+    value [eax];
+
+#pragma aux RdosReadHid = \
+    CallGate_read_hid \
+    CarryToBool \
+    parm [ebx] [edi] [ecx] \
+    value [eax];
+
+#pragma aux RdosWriteHid = \
+    CallGate_write_hid \
+    CarryToBool \
+    parm [ebx] [edi] [ecx] \
+    value [eax];
+    
 #pragma aux RdosOpenICSP = \
     CallGate_open_icsp \
     ValidateHandle \
@@ -2981,6 +3243,23 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     parm [eax]   \
     value [eax];
 
+#pragma aux RdosGetCharSize = \
+    "mov al,1" \
+    "mov ah,es:[edi]" \
+    "test ah,80h" \
+    "jz size_ok" \
+    "inc al" \
+    "test ah,20h" \
+    "jz size_ok" \
+    "inc al" \
+    "test ah,10h" \
+    "jz size_ok" \
+    "inc al" \
+    "size_ok: " \
+    "movzx eax,al" \
+    parm [es edi]   \
+    value [eax];
+
 #pragma aux RdosGetLongRandom = \
     CallGate_get_random  \
     value [eax];
@@ -3019,7 +3298,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosOpenFont = \
     CallGate_open_font  \
     ValidateHandle \
-    parm [eax]  \
+    parm [edx] [eax]  \
     value [ebx];
 
 #pragma aux RdosCloseFont = \
@@ -3549,6 +3828,33 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_is_emergency_stopped \
     CarryToBool \    
     value [eax];
+
+#pragma aux RdosHasGlobalTimer = \
+    CallGate_has_global_timer \
+    CarryToBool \    
+    value [eax];
+
+#pragma aux RdosGetCoreLoad = \
+    CallGate_get_core_load \
+    "mov fs:[esi],ebx" \
+    "mov fs:[esi+4],ecx" \
+    "mov es:[edi],eax" \
+    "mov es:[edi+4],edx" \
+    CarryToBool \    
+    parm [eax] [fs esi] [es edi] \
+    value [eax] \
+    modify [ebx ecx edx];
+
+#pragma aux RdosGetCoreDuty = \
+    CallGate_get_core_duty \
+    "mov fs:[esi],eax" \
+    "mov fs:[esi+4],edx" \
+    "mov es:[edi],ebx" \
+    "mov es:[edi+4],ecx" \
+    CarryToBool \    
+    parm [eax] [fs esi] [es edi] \
+    value [eax] \
+    modify [ebx ecx edx];
 
 #pragma aux RdosGetVersion = \
     CallGate_get_version  \

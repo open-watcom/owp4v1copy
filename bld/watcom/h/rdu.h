@@ -45,7 +45,6 @@
 #define usergate_create_thread 28
 #define usergate_terminate_thread 29
 #define usergate_get_thread 30
-#define usergate_swap 31
 
 #define usergate_create_user_section 32
 #define usergate_create_blocked_user_section 33
@@ -558,13 +557,40 @@
 #define usergate_test_gate 442
 
 #define usergate_get_acpi_status 443
-#define usergate_get_acpi_device 444
+#define usergate_get_acpi_object 444
 #define usergate_get_cpu_temperature 445
-#define usergate_get_acpi_object 446
+#define usergate_get_acpi_method 446
 
 #define usergate_write_attrib_string 447
 
 #define usergate_debug_break 448
+
+#define usergate_has_hard_reset 449
+
+#define usergate_get_acpi_device 450
+#define usergate_get_acpi_device_irq 451
+#define usergate_get_acpi_device_io 452
+#define usergate_get_acpi_device_mem 453
+
+#define usergate_get_pci_device_name 454
+#define usergate_get_pci_device_info 455
+#define usergate_get_pci_device_vendor 456
+#define usergate_get_pci_device_class 457
+#define usergate_get_pci_device_irq 458
+
+#define usergate_open_hid 459
+#define usergate_close_hid 460
+#define usergate_get_hid_pipe 461
+
+#define usergate_get_core_load 462
+#define usergate_get_core_duty 463
+
+#define usergate_has_global_timer 464
+
+#define usergate_remote_debug 465
+
+#define usergate_read_hid 466
+#define usergate_write_hid 467
 
 
 
@@ -604,7 +630,6 @@
 #define CallGate_create_thread 0x67 0x9a 28 0 0 0 3 0
 #define CallGate_terminate_thread 0x67 0x9a 29 0 0 0 3 0
 #define CallGate_get_thread 0x67 0x9a 30 0 0 0 3 0
-#define CallGate_swap 0x67 0x9a 31 0 0 0 3 0
 
 #define CallGate_create_user_section 0x67 0x9a 32 0 0 0 3 0
 #define CallGate_create_blocked_user_section 0x67 0x9a 33 0 0 0 3 0
@@ -1117,13 +1142,40 @@
 #define CallGate_test_gate 0x67 0x9a 186 1 0 0 3 0
 
 #define CallGate_get_acpi_status 0x67 0x9a 187 1 0 0 3 0
-#define CallGate_get_acpi_device 0x67 0x9a 188 1 0 0 3 0
+#define CallGate_get_acpi_object 0x67 0x9a 188 1 0 0 3 0
 #define CallGate_get_cpu_temperature 0x67 0x9a 189 1 0 0 3 0
-#define CallGate_get_acpi_object 0x67 0x9a 190 1 0 0 3 0
+#define CallGate_get_acpi_method 0x67 0x9a 190 1 0 0 3 0
 
 #define CallGate_write_attrib_string 0x67 0x9a 191 1 0 0 3 0
 
 #define CallGate_debug_break 0x67 0x9a 192 1 0 0 3 0
+
+#define CallGate_has_hard_reset 0x67 0x9a 193 1 0 0 3 0
+
+#define CallGate_get_acpi_device 0x67 0x9a 194 1 0 0 3 0
+#define CallGate_get_acpi_device_irq 0x67 0x9a 195 1 0 0 3 0
+#define CallGate_get_acpi_device_io 0x67 0x9a 196 1 0 0 3 0
+#define CallGate_get_acpi_device_mem 0x67 0x9a 197 1 0 0 3 0
+
+#define CallGate_get_pci_device_name 0x67 0x9a 198 1 0 0 3 0
+#define CallGate_get_pci_device_info 0x67 0x9a 199 1 0 0 3 0
+#define CallGate_get_pci_device_vendor 0x67 0x9a 200 1 0 0 3 0
+#define CallGate_get_pci_device_class 0x67 0x9a 201 1 0 0 3 0
+#define CallGate_get_pci_device_irq 0x67 0x9a 202 1 0 0 3 0
+
+#define CallGate_open_hid 0x67 0x9a 203 1 0 0 3 0
+#define CallGate_close_hid 0x67 0x9a 204 1 0 0 3 0
+#define CallGate_get_hid_pipe 0x67 0x9a 205 1 0 0 3 0
+
+#define CallGate_get_core_load 0x67 0x9a 206 1 0 0 3 0
+#define CallGate_get_core_duty 0x67 0x9a 207 1 0 0 3 0
+
+#define CallGate_has_global_timer 0x67 0x9a 208 1 0 0 3 0
+
+#define CallGate_remote_debug 0x67 0x9a 209 1 0 0 3 0
+
+#define CallGate_read_hid 0x67 0x9a 210 1 0 0 3 0
+#define CallGate_write_hid 0x67 0x9a 211 1 0 0 3 0
 
 #else
 
@@ -1161,7 +1213,6 @@
 #define CallGate_create_thread 0x3e 0x67 0x9a 28 0 0 0 3 0
 #define CallGate_terminate_thread 0x3e 0x67 0x9a 29 0 0 0 3 0
 #define CallGate_get_thread 0x3e 0x67 0x9a 30 0 0 0 3 0
-#define CallGate_swap 0x3e 0x67 0x9a 31 0 0 0 3 0
 
 #define CallGate_create_user_section 0x3e 0x67 0x9a 32 0 0 0 3 0
 #define CallGate_create_blocked_user_section 0x3e 0x67 0x9a 33 0 0 0 3 0
@@ -1674,12 +1725,39 @@
 #define CallGate_test_gate 0x3e 0x67 0x9a 186 1 0 0 3 0
 
 #define CallGate_get_acpi_status 0x3e 0x67 0x9a 187 1 0 0 3 0
-#define CallGate_get_acpi_device 0x3e 0x67 0x9a 188 1 0 0 3 0
+#define CallGate_get_acpi_object 0x3e 0x67 0x9a 188 1 0 0 3 0
 #define CallGate_get_cpu_temperature 0x3e 0x67 0x9a 189 1 0 0 3 0
-#define CallGate_get_acpi_object 0x3e 0x67 0x9a 190 1 0 0 3 0
+#define CallGate_get_acpi_method 0x3e 0x67 0x9a 190 1 0 0 3 0
 
 #define CallGate_write_attrib_string 0x3e 0x67 0x9a 191 1 0 0 3 0
 
 #define CallGate_debug_break 0x3e 0x67 0x9a 192 1 0 0 3 0
+
+#define CallGate_has_hard_reset 0x3e 0x67 0x9a 193 1 0 0 3 0
+
+#define CallGate_get_acpi_device 0x3e 0x67 0x9a 194 1 0 0 3 0
+#define CallGate_get_acpi_device_irq 0x3e 0x67 0x9a 195 1 0 0 3 0
+#define CallGate_get_acpi_device_io 0x3e 0x67 0x9a 196 1 0 0 3 0
+#define CallGate_get_acpi_device_mem 0x3e 0x67 0x9a 197 1 0 0 3 0
+
+#define CallGate_get_pci_device_name 0x3e 0x67 0x9a 198 1 0 0 3 0
+#define CallGate_get_pci_device_info 0x3e 0x67 0x9a 199 1 0 0 3 0
+#define CallGate_get_pci_device_vendor 0x3e 0x67 0x9a 200 1 0 0 3 0
+#define CallGate_get_pci_device_class 0x3e 0x67 0x9a 201 1 0 0 3 0
+#define CallGate_get_pci_device_irq 0x3e 0x67 0x9a 202 1 0 0 3 0
+
+#define CallGate_open_hid 0x3e 0x67 0x9a 203 1 0 0 3 0
+#define CallGate_close_hid 0x3e 0x67 0x9a 204 1 0 0 3 0
+#define CallGate_get_hid_pipe 0x3e 0x67 0x9a 205 1 0 0 3 0
+
+#define CallGate_get_core_load 0x3e 0x67 0x9a 206 1 0 0 3 0
+#define CallGate_get_core_duty 0x3e 0x67 0x9a 207 1 0 0 3 0
+
+#define CallGate_has_global_timer 0x3e 0x67 0x9a 208 1 0 0 3 0
+
+#define CallGate_remote_debug 0x3e 0x67 0x9a 209 1 0 0 3 0
+
+#define CallGate_read_hid 0x3e 0x67 0x9a 210 1 0 0 3 0
+#define CallGate_write_hid 0x3e 0x67 0x9a 211 1 0 0 3 0
 
 #endif
