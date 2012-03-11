@@ -71,11 +71,13 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
     char    cm1;
     char    cm2;
     bool    finished;
+    bool    test_for_quote;             // only at first char after ( or ,
 
     paren_level = 0;
     quotechar[paren_level] ='\0';
     instring[paren_level] = false;
     finished = false;
+    test_for_quote = true;
     cm1 = '\0';
     cm2 = '\0';
     for(  ; *pchar != '\0' ; pchar++ ) {
@@ -90,21 +92,21 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                 instring[paren_level] = false;
             }
         } else {
-            if( is_quote_char( c ) ) {
+            if( test_for_quote && is_quote_char( c ) ) {
                 if( (cm1 == ampchar) || // &' sequence
                     ((cm2 == ampchar) && isalpha( cm1 )) ) {// &X' sequence
                             /* no instring change */
                 } else {
-                    if( c != slash ) {  // hack for testing TBD
-
                     instring[paren_level] = true;
                     quotechar[paren_level] = c;
-                    }
                 }
+                test_for_quote = false;
             } else {
+                test_for_quote = false;
                 switch( c ) {
                 case    '(' :
                     paren_level++;
+                    test_for_quote = true;
                     if( paren_level < max_paren ) {
                         instring[paren_level] = false;
                     } else {
@@ -122,6 +124,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                     if( paren_level == 0 ) {
                         finished = true;
                     }
+                    test_for_quote = true;
                     break;
                 default:
                     break;
@@ -133,6 +136,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
         }
     }
     return( pchar );
+#undef max_paren
 }
 
 

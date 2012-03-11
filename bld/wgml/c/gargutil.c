@@ -131,6 +131,9 @@ void    garginitdot( void )
 /***************************************************************************/
 /*  scan blank delimited argument perhaps quoted                           */
 /*                                                                         */
+/* extension: if unquoted and equalsign, then quoted parm allowed          */
+/*            *var="value "                                                */
+/*                                                                         */
 /***************************************************************************/
 
 condcode    getarg( void )
@@ -138,7 +141,10 @@ condcode    getarg( void )
     condcode    cc;
     char    *   p;
     char        quote;
+    char        valquote;
     bool        quoted;
+    bool        valquoted;
+
 
     if( scan_stop <= scan_start ) {     // already at end
         cc = omit;                      // arg omitted
@@ -152,10 +158,12 @@ condcode    getarg( void )
         }
 
         quote = '\0';
+        valquote = '\0';
         quoted = false;
+        valquoted = false;
         tok_start = p;
 
-        if( is_quote_char( *p ) ) {
+        if( is_quote_char( *p ) ) {     // arg starts with quote
             quote = *p;
             p++;
             quoted = true;
@@ -165,7 +173,7 @@ condcode    getarg( void )
         }
         for( ; p <= scan_stop; p++ ) {
 
-            if( *p == ' ' && quote == '\0' ) {
+            if( *p == ' ' && quote == '\0' ) {  // unquoted, blank is end
                 break;
             }
             if( *p == quote ) {
@@ -173,6 +181,20 @@ condcode    getarg( void )
             }
             if( *p == '\0' ) {
                 break;
+            }
+            if( quote == '\0' && (*p == '=') && is_quote_char( *(p+1) ) ) {
+                valquoted = true;
+                valquote = *(p+1);
+                p += 2;
+                for( ; p <= scan_stop; p++ ) {
+                    if( *p == valquote ) {
+                        p++;
+                        break;
+                    }
+                    if( *p == '\0' ) {
+                        break;
+                    }
+                }
             }
         }
         if( quoted ) {

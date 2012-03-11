@@ -208,85 +208,98 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                 *p2++ = *p++;
             }
             *p2 = '\0';
-            for( ga = ge->attribs; ga != NULL; ga = ga->next ) { // for all attrs
-                if( !stricmp( ga->name, token_buf ) ) {
-                    ga->attflags |= att_proc_seen;  // attribute specified
-                    if( ga->attflags & att_auto ) {
-                        auto_att_err();
+            if( p2 != token_buf ) {     // ignore nullstring
+                for( ga = ge->attribs; ga != NULL; ga = ga->next ) {// all attrs
+                    if( !stricmp( ga->name, token_buf ) ) {
+                        ga->attflags |= att_proc_seen; // attribute specified
+                        if( ga->attflags & att_auto ) {
+                            auto_att_err();
+                            break;
+                        }
+
+                        if( *p == '=' ) {   // value follows
+                            ga->attflags |= att_proc_val;
+
+                            p++;        // over =
+                            p2 = token_buf;
+                            if( is_quote_char( *p ) ) {
+                                quote = *p++;
+                                while( *p && *p != quote ) {// quoted value
+                                    *p2++ = *p++;
+                                }
+                                if( *p == quote ) {
+                                    p++;// over ending quote
+                                }
+                            } else {
+                                quote = '\0';
+                                while( *p && (*p != ' ') && (*p != '.') ) {
+                                    *p2++ = *p++;
+                                }
+                            }
+                            *p2 = '\0';
+                            if( ga->attflags & att_off ) {// attribute inactive
+                                continue;
+                            }
+                            if( ga->attflags & att_upper ) {// uppercase option
+                                strupr( token_buf );
+                            }
+
+                            scan_err = check_att_value( ga );
+
+                        } else {// special for range set default2 if no value
+                            if( ga->attflags & att_range ) {
+                                for( gaval = ga->vals; gaval != NULL;
+                                     gaval = gaval->next ) {
+                                     if( gaval->valflags & val_range ) {
+                                        break;
+                                     }
+                                }
+                                if( gaval != NULL ) {
+                                     sprintf( token_buf, "%d",
+                                              gaval->a.range[3] );
+                                     rc = add_symvar( &loc_dict, ga->name,
+                                                      token_buf, no_subscript,
+                                                      local_var );
+                                }
+                            }
+                        }
                         break;
                     }
+                }
+                if( ga == NULL ) {      // attribute Not found
+                    char        linestr[MAX_L_AS_STR];
 
-                    if( *p == '=' ) {   // value follows
-                        ga->attflags |= att_proc_val;
-
-                        p++;            // over =
-                        p2 = token_buf;
-                        if( is_quote_char( *p ) ) {
-                            quote = *p++;
-                            while( *p && *p != quote ) {// quoted value
-                                *p2++ = *p++;
-                            }
-                            if( *p == quote ) {
-                                p++;    // over ending quote
-                            }
-                        } else {
-                            quote = '\0';
-                            while( *p && (*p != ' ') && (*p != '.') ) {
-                                *p2++ = *p++;
-                            }
-                        }
-                        *p2 = '\0';
-                        if( ga->attflags & att_off ) {  // attribute inactive
-                            continue;
-                        }
-                        if( ga->attflags & att_upper ) {// uppercase option
-                            strupr( token_buf );
-                        }
-
-                        scan_err = check_att_value( ga );
-
-                    } else {        // special for range set default2 if no value
-                        if( ga->attflags & att_range ) {
-                            for( gaval = ga->vals; gaval != NULL;
-                                 gaval = gaval->next ) {
-                                 if( gaval->valflags & val_range ) {
-                                    break;
-                                 }
-                            }
-                            if( gaval != NULL ) {
-                                 sprintf( token_buf, "%d", gaval->a.range[3] );
-                                 rc = add_symvar( &loc_dict, ga->name, token_buf,
-                                                  no_subscript, local_var );
-                            }
-                        }
+                    processed = false;
+                    wng_count++;
+                    //***WARNING*** SC--040: 'abd' is not a valid attribute name
+                    g_warn( wng_att_name, token_buf );
+                    if( input_cbs->fmflags & II_macro ) {
+                        utoa( input_cbs->s.m->lineno, linestr, 10 );
+                        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
+                    } else {
+                        utoa( input_cbs->s.f->lineno, linestr, 10 );
+                        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                     }
-                    break;
+                    show_include_stack();
                 }
             }
-            if( ga == NULL ) {          // attribute not found
-                char        linestr[MAX_L_AS_STR];
-
-                processed = false;
-                wng_count++;
-                //***WARNING*** SC--040: 'abd' is not a valid attribute name
-                g_warn( wng_att_name, token_buf );
-                if( input_cbs->fmflags & II_macro ) {
-                    utoa( input_cbs->s.m->lineno, linestr, 10 );
-                    g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-                } else {
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
-                    g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-                }
-                show_include_stack();
-            }
-
             /***************************************************************/
             /*  check for tag end .                                        */
             /***************************************************************/
             if( *p == ' ' ) {
                 continue;               // not yet at buffer / tag end
             }
-            if( *p != '.' ) {
+#if 0
+            /***************************************************************/
+            /*  continue scanning for attriutes on next line if not tag end*/
+            /*  This does not work for constructs such as                  */
+            /*                                                             */
+            /*  :hdref refid=diffs                                         */
+            /*  .bd to determine if you need to recompile your application.*/
+            /*  from docs\doc\gs\intro.gml line 37 f                       */
+            /***************************************************************/
+
+            if( *p != '.' ) { //
                 if( get_line( true ) ) {
                     p = buff2;
                 } else {
@@ -295,6 +308,11 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             } else {
                 tag_end_found = true;
             }
+#else
+            if( (*p == '.') || (*p == '\0') ) {
+                tag_end_found = true;
+            }
+#endif
         }
 
         /*******************************************************************/
