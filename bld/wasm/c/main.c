@@ -86,7 +86,6 @@ static struct SWData {
 #define MAX_NESTING 15
 #define BUF_SIZE 512
 
-static char             ParamBuf[ BUF_SIZE ];
 static unsigned char    SwitchChar;
 static unsigned         OptValue;
 static char             *OptScanPtr;
@@ -133,11 +132,17 @@ static char *CopyOfParm( void )
 /*****************************/
 {
     unsigned    len;
-
+    char *newbuf;
+    
     len = OptScanPtr - OptParm;
-    memcpy( ParamBuf, OptParm, len );
-    ParamBuf[ len ] = '\0';
-    return( ParamBuf );
+    if( len < ( BUF_SIZE - 1 ) ) {
+        // make sure allocated is at least as long as ParamBuf used to be
+        len = BUF_SIZE - 1;
+    }
+    newbuf = AsmAlloc( len + 1 );
+    memcpy( newbuf, OptParm, len );
+    newbuf[ len ] = '\0';
+    return( newbuf );
 }
 
 static void StripQuotes( char *fname )
@@ -201,19 +206,25 @@ static void SetCPUPMC( void )
             if( SWData.cpu >= 2 ) { // set protected mode
                 SWData.protect_mode = TRUE;
             } else {
-                MsgPrintf1( MSG_CPU_OPTION_INVALID, CopyOfParm() );
+                char *parm = CopyOfParm();
+                MsgPrintf1( MSG_CPU_OPTION_INVALID, parm );
+                AsmFree(parm);
             }
         } else if( *tmp == 'r' ) {
             if( SWData.cpu >= 3 ) { // set register based calling convention
                 Options.watcom_parms_passed_by_regs = TRUE;
             } else {
-                MsgPrintf1( MSG_CPU_OPTION_INVALID, CopyOfParm() );
+                char *parm = CopyOfParm();
+                MsgPrintf1( MSG_CPU_OPTION_INVALID, parm );
+                AsmFree(parm);
             }
         } else if( *tmp == 's' ) {
             if( SWData.cpu >= 3 ) { // set stack based calling convention
                 Options.watcom_parms_passed_by_regs = FALSE;
             } else {
-                MsgPrintf1( MSG_CPU_OPTION_INVALID, CopyOfParm() );
+                char *parm = CopyOfParm();
+                MsgPrintf1( MSG_CPU_OPTION_INVALID, parm );
+                AsmFree(parm);
             }
         } else if( *tmp == '"' ) {      // set default mangler
             char *dest;
@@ -230,7 +241,9 @@ static void SetCPUPMC( void )
             }
             *dest = NULLC;
         } else {
-            MsgPrintf1( MSG_UNKNOWN_OPTION, CopyOfParm() );
+            char *parm = CopyOfParm();
+            MsgPrintf1( MSG_UNKNOWN_OPTION, parm );
+            AsmFree(parm);
             exit( 1 );
         }
     }
@@ -389,7 +402,7 @@ static void add_constant( char *string )
     StoreConstant( string, tmp, FALSE ); // don't allow it to be redef'd
 }
 
-static void get_fname( char *token, int type )
+static void get_fname( char *token_arg, int type )
 /********************************************/
 /*
  * figure out the source file name & store it in AsmFiles
@@ -400,8 +413,16 @@ static void get_fname( char *token, int type )
     char        msgbuf[80];
     PGROUP      pg;
     PGROUP      def;
+    char        *token;
 
     /* get filename for source file */
+    if ( NULL == token_arg ) {
+        /* get name directly from command name */
+        token = GetAFileName(); 
+    } else {
+        /* use name as passed by argument */
+        token = token_arg;
+    }
 
     if( type == ASM ) {
         if( token == NULL ) {
@@ -498,6 +519,9 @@ static void get_fname( char *token, int type )
         AsmFiles.fname[type] = AsmAlloc( strlen( name ) + 1 );
         strcpy( AsmFiles.fname[type], name );
     }
+    if ( NULL == token_arg ) {
+        AsmFree( token ); /* allocated by GetAFileName() */
+    }
 }
 
 static void set_some_kinda_name( char token, char *name )
@@ -546,25 +570,25 @@ static void Set_C( void ) { Options.output_comment_data_in_code_records = FALSE;
 
 static void Set_D( void ) { Options.debug_flag = (OptValue != 0) ? TRUE : FALSE; }
 
-static void DefineMacro( void ) { add_constant( CopyOfParm() ); }
+static void DefineMacro( void ) { char *parm = CopyOfParm(); add_constant( parm ); AsmFree( parm ); }
 
 static void SetErrorLimit( void ) { Options.error_limit = OptValue; }
 
 static void SetStopEnd( void ) { Options.stop_at_end = TRUE; }
 
-static void Set_FR( void ) { get_fname( GetAFileName(), ERR ); }
+static void Set_FR( void ) { get_fname( NULL, ERR ); }
 
 static void Set_FI( void ) { ForceInclude = GetAFileName(); }
 
-static void Set_FL( void ) { get_fname( GetAFileName(), LST ); Options.write_listing = TRUE; }
+static void Set_FL( void ) { get_fname( NULL, LST ); Options.write_listing = TRUE; }
 
-static void Set_FO( void ) { get_fname( GetAFileName(), OBJ ); }
+static void Set_FO( void ) { get_fname( NULL, OBJ ); }
 
-static void SetInclude( void ) { AddStringToIncludePath( GetAFileName() ); }
+static void SetInclude( void ) { char *fname = GetAFileName(); AddStringToIncludePath( fname ); AsmFree( fname ); }
 
 static void Set_S( void ) { Options.sign_value = TRUE; }
 
-static void Set_N( void ) { set_some_kinda_name( OptValue, CopyOfParm() ); }
+static void Set_N( void ) { char *parm = CopyOfParm(); set_some_kinda_name( OptValue, parm ); AsmFree( parm ); }
 
 static void Set_O( void ) { Options.allow_c_octals = TRUE; }
 
@@ -736,6 +760,9 @@ static void free_names( void )
     if( Options.text_seg != NULL ) {
         AsmFree( Options.text_seg );
     }
+    if( NULL != ForceInclude ) {
+        AsmFree(ForceInclude);
+    }
 }
 
 static void main_init( void )
@@ -781,7 +808,7 @@ static void open_files( void )
     DelErrFile();
 }
 
-static char *CollectEnvOrFileName( char *str )
+static char *CollectEnvOrFileName( char *str, char **paramBuf )
 /********************************************/
 {
     char        *env;
@@ -789,7 +816,10 @@ static char *CollectEnvOrFileName( char *str )
 
     while( *str == ' ' || *str == '\t' )
         ++str;
-    env = ParamBuf;
+    *paramBuf = AsmAlloc(strlen(str) + 2);
+    /* *paramBuf needs to be freed by the caller */
+    env = *paramBuf;
+    
     for( ;; ) {
         ch = *str;
         if( ch == '\0' )
@@ -811,7 +841,7 @@ static char *CollectEnvOrFileName( char *str )
     return( str );
 }
 
-static char *ReadIndirectFile( void )
+static char *ReadIndirectFile( char *indirect_file_name )
 /***********************************/
 {
     char        *env;
@@ -821,7 +851,7 @@ static char *ReadIndirectFile( void )
     char        ch;
 
     env = NULL;
-    handle = open( ParamBuf, O_RDONLY | O_BINARY );
+    handle = open( indirect_file_name, O_RDONLY | O_BINARY );
     if( handle != -1 ) {
         len = filelength( handle );
         env = AsmAlloc( len + 1 );
@@ -967,13 +997,16 @@ static int ProcOptions( char *str, int *level )
             while( *str == ' ' || *str == '\t' )
                 ++str;
             if( *str == '@' && *level < MAX_NESTING ) {
-                save[(*level)++] = CollectEnvOrFileName( str + 1 );
+                char *env_or_filename;
+                
+                save[(*level)++] = CollectEnvOrFileName( str + 1, &env_or_filename);
                 buffers[*level] = NULL;
-                str = getenv( ParamBuf );
+                str = getenv( env_or_filename );
                 if( str == NULL ) {
-                    str = ReadIndirectFile();
+                    str = ReadIndirectFile(env_or_filename);
                     buffers[*level] = str;
                 }
+                AsmFree(env_or_filename);
                 if( str != NULL )
                     continue;
                 str = save[--(*level)];
@@ -1151,7 +1184,9 @@ static void do_init_stuff( char **cmdline )
     AsmBufferInit();
     strcpy( buff, "__WASM__=" BANSTR( _BANVER ) );
     add_constant( buff );
-    ForceInclude = getenv( "FORCE" );
+    env = getenv( "FORCE" );
+    if( env )
+        ForceInclude = AsmAlloc( strlen( env ) + 1 );
     do_envvar_cmdline( "WASM" );
     parse_cmdline( cmdline );
     set_build_target();
