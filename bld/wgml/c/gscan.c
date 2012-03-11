@@ -548,7 +548,8 @@ condcode    test_process( ifcb * cb )
 #ifdef DEBTESTPROC
     int     start_level = cb->if_level;
 
-    if( GlobalFlags.research && GlobalFlags.firstpass && cb->if_level ) {
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+        && cb->if_level ) {
         show_ifcb( "Anf teif", cb );
     }
 #endif
@@ -582,8 +583,8 @@ condcode    test_process( ifcb * cb )
         }
 
 #ifdef DEBTESTPROC
-        if( GlobalFlags.research && GlobalFlags.firstpass &&
-            (start_level || cb->if_level) ) {
+        if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+            && (start_level || cb->if_level) ) {
             char * txt = (cc == pos ? "EX1 pos" : "EX1 no" );
 
             show_ifcb( txt, cb );
@@ -597,8 +598,8 @@ condcode    test_process( ifcb * cb )
         if( cb->if_flags[cb->if_level].ifcwdo ) {   // if  .do
             cc = pos;
 #ifdef DEBTESTPROC
-            if( GlobalFlags.research && GlobalFlags.firstpass &&
-                (start_level || cb->if_level) ) {
+        if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+                && (start_level || cb->if_level) ) {
                 char * txt = (cc == pos ? "Edo pos" : "Edo no" );
 
                 show_ifcb( txt, cb );
@@ -673,8 +674,8 @@ condcode    test_process( ifcb * cb )
         err_count++;
     }
 #ifdef DEBTESTPROC
-    if( GlobalFlags.research && GlobalFlags.firstpass &&
-        (start_level || cb->if_level) ) {
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+        && (start_level || cb->if_level) ) {
         char * txt = (cc == pos ? "EX3 pos" : "EX3 no" );
 
         show_ifcb( txt, cb );

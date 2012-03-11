@@ -70,23 +70,24 @@ typedef enum logop {
 /***************************************************************************/
 
 void    show_ifcb( char * txt, ifcb * cb ) {
-
-    out_msg( "%-8s L%d tf%d%d"
-            " th%d el%d do%d cw(l,i,te,d) %d,%d,%d,%d kp %d\n",
+    if( cb->if_level ) {
+        out_msg( "%-8s %dL%d %c%c %s %s %s cw(l,i,te,d) %d,%d,%d,%d kp %d\n",
              txt,
+             inc_level,
              cb->if_level,
-             cb->if_flags[cb->if_level].iftrue,
-             cb->if_flags[cb->if_level].iffalse,
+             cb->if_flags[cb->if_level].iftrue?'t':' ',
+             cb->if_flags[cb->if_level].iffalse?'f':' ',
 
-             cb->if_flags[cb->if_level].ifthen,
-             cb->if_flags[cb->if_level].ifelse,
-             cb->if_flags[cb->if_level].ifdo,
+             cb->if_flags[cb->if_level].ifthen?"th":"  ",
+             cb->if_flags[cb->if_level].ifelse?"el":"  ",
+             cb->if_flags[cb->if_level].ifdo?"do":"  ",
              cb->if_flags[cb->if_level].iflast,
              cb->if_flags[cb->if_level].ifcwif,
              cb->if_flags[cb->if_level].ifcwte,
              cb->if_flags[cb->if_level].ifcwdo,
              ProcFlags.keep_ifstate
           );
+    }
 }
 
 /***************************************************************************/
@@ -709,8 +710,9 @@ void    scr_el( void )
     }
     cb->if_flags[cb->if_level].ifelse = true;
     ProcFlags.keep_ifstate = true;
-    show_ifcb( "else", cb );
-
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+        show_ifcb( "else", cb );
+    }
     garginit();                         // find end of control word
 
     while( *scan_start == ' ' ) {
@@ -777,24 +779,25 @@ void    scr_do( void )
             return;
         }
         cb->if_flags[cb->if_level].ifdo = true;
-        show_ifcb( "dobegin", cb );
+        if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+            show_ifcb( "dobegin", cb );
+        }
         scan_restart = scan_stop + 1;
         return;
     } else {
         if( !strnicmp( tok_start, "end", 3 )) {
             if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
-                out_msg( "\t.do end Level %d\n"
-                         "\t.ifcb iftrue %d, iffalse %d\n",
-                         cb->if_level,
-                         cb->if_flags[cb->if_level].iftrue,
-                         cb->if_flags[cb->if_level].iffalse );
+                show_ifcb( "doend", cb );
             }
             do {                            // loop for last active .do begin
 
                 if( cb->if_flags[cb->if_level].ifdo ) {
 
                     cb->if_flags[cb->if_level].ifdo = false;
-                    show_ifcb( "doend", cb );
+                    if( input_cbs->fmflags & II_research &&
+                        GlobalFlags.firstpass ) {
+                        show_ifcb( "doend", cb );
+                    }
                     scan_restart = scan_stop + 1;
                     return;
                 }
@@ -819,6 +822,7 @@ void    scr_do( void )
                 }
 
             } while( cb->if_level-- > 0 );
+#if 0
             if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
                 out_msg( "\t.do end Level %d\n"
                          "\t.ifcb iftrue %d, iffalse %d\n",
@@ -826,6 +830,7 @@ void    scr_do( void )
                          cb->if_flags[cb->if_level].iftrue,
                          cb->if_flags[cb->if_level].iffalse );
             }
+#endif
         } else {
             scan_err = true;
             g_err( err_if_do_fun );
@@ -841,7 +846,9 @@ void    scr_do( void )
             return;
         }
     }
-    show_ifcb( "do xx", cb );
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+        show_ifcb( "do xx", cb );
+    }
     scan_restart = scan_stop + 1;
     return;
 }
