@@ -68,7 +68,7 @@ extern  void    gml_address( const gmltag * entry )
     /*  this is not what the docs say                           */
     /************************************************************/
 
-    set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, spacing, 
+    set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, spacing,
                        g_curr_font_num );
 
     ProcFlags.group_elements = true;
@@ -101,8 +101,10 @@ extern  void    gml_eaddress( const gmltag * entry )
     /*  place the accumulated ALINES on the proper page */
 
     ProcFlags.group_elements = false;
-    t_doc_el_group.depth += (t_doc_el_group.first->blank_lines +
-                            t_doc_el_group.first->subs_skip);
+    if( t_doc_el_group.first != NULL ) {
+        t_doc_el_group.depth += (t_doc_el_group.first->blank_lines +
+                                t_doc_el_group.first->subs_skip);
+    }
 
     if( (t_doc_el_group.depth + t_page.cur_depth) > t_page.max_depth ) {
         /*  the block won't fit on this page */
@@ -201,7 +203,7 @@ void    gml_aline( const gmltag * entry )
         /*  this is not what the docs say                           */
         /************************************************************/
 
-        set_skip_vars( NULL, &layout_work.aline.skip, NULL, a_spacing, 
+        set_skip_vars( NULL, &layout_work.aline.skip, NULL, a_spacing,
                        g_curr_font_num );
     }
 

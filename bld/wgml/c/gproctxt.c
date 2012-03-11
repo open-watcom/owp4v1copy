@@ -27,7 +27,7 @@
 * Description:  WGML Process text not tags / controlwords
 *
 *               do_c_chars              generate c_chars for wgml_tabs
-*               do_fc_comp              compute data used by fill_chars 
+*               do_fc_comp              compute data used by fill_chars
 *               do_justify              insert spaces between words
 *               intrans                 perform input translation
 *               next_tab                finds next tab stop
@@ -332,7 +332,7 @@ static void wgml_tabs( void )
     int                     i;
     text_chars          *   c_chars     = NULL;     // current text_chars
     text_chars          *   in_chars    = t_line->last; // text_chars being processed
-    text_chars          *   c_multi;                // used to traverse parts of multipart word    
+    text_chars          *   c_multi;                // used to traverse parts of multipart word
     text_chars          *   s_multi     = in_chars; // first part of multipart word
     uint8_t             *   in_text     = in_chars->text;
     uint32_t                in_count    = in_chars->count;
@@ -372,7 +372,7 @@ static void wgml_tabs( void )
         text_found = false;
     }
     if( t_count == 0 ) {            // first character is tab character
-        tab_chars.first = NULL;     
+        tab_chars.first = NULL;
         tab_chars.last = NULL;
         next_tab();
         c_font = in_chars->font_number;
@@ -402,7 +402,7 @@ static void wgml_tabs( void )
                 tab_chars.first->prev = NULL;
                 tab_chars.last->next = NULL;
                 add_text_chars_to_pool( &tab_chars );
-                tab_chars.first = NULL;     
+                tab_chars.first = NULL;
                 tab_chars.last = NULL;
                 t_line->last = in_chars->prev;
                 if( t_line->last == NULL ) {
@@ -474,14 +474,14 @@ static void wgml_tabs( void )
                 // split the width as evenly as possible
                 g_cur_h_start = g_page_left + c_stop->column - (m_width / 2);
             } else {    // find the next tab stop; this one won't do
-                skip_tab = true; 
+                skip_tab = true;
             }
             break;
         case al_right:
             if( gap_start < (g_page_left + c_stop->column + tab_col - m_width) ) {
                 g_cur_h_start = g_page_left + c_stop->column + tab_col - m_width;
             } else {    // find the next tab stop; this one won't do
-                skip_tab = true; 
+                skip_tab = true;
             }
             break;
         default:
@@ -553,8 +553,8 @@ static void wgml_tabs( void )
             }
 
             if( c_stop->fill_char != ' ' ) {
-                c_chars = do_c_chars( c_chars, in_chars, NULL, fill_count, 
-                                        fill_start, fill_width * fill_count, 
+                c_chars = do_c_chars( c_chars, in_chars, NULL, fill_count,
+                                        fill_start, fill_width * fill_count,
                                         c_font, c_type );
                 c_chars->count = fill_count;
                 memset( c_chars->text, c_stop->fill_char, fill_count );
@@ -564,7 +564,7 @@ static void wgml_tabs( void )
                 tab_chars.last = c_chars;
             }
 
-            if( c_font != s_multi->font_number ) { 
+            if( c_font != s_multi->font_number ) {
 #if 0
                 c_chars = do_c_chars( c_chars, in_chars, NULL, 0,
                                 g_cur_h_start, 0, c_font, s_multi->type );
@@ -1205,10 +1205,12 @@ void    process_text( char * text, uint8_t font_num )
         }
         // remove end-of-line spaces if .co off
         if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
-            if (n_char->count > 0 ) {   // TBD test prevent addr exception
-                while( n_char->text[--n_char->count] == ' ' );
+//          if( (n_char->count > 0) && (n_char->text[n_char->count] == ' ') ) {
+            if( n_char->text[n_char->count] == ' ' ) {
+                while( n_char->text[n_char->count] == ' ' ) n_char->count--;
                 n_char->count++;
-                n_char->width = text_chars_width( n_char->text, n_char->count, font_num );
+                n_char->width = text_chars_width( n_char->text, n_char->count,
+                                                  font_num );
             }
         }
         g_cur_h_start += post_space;
