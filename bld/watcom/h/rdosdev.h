@@ -467,6 +467,8 @@ void RdosExtendDi();
 void RdosSaveEax();
 void RdosRestoreEax();
 
+void RdosCrashGate();
+
 int RdosIsValidOsGate(int gate);
 void RdosRegisterOsGate(int gate, __rdos_gate_callback *callb_proc, const char *name);
 void RdosRegisterBimodalUserGate(int gate, __rdos_gate_callback *callb_proc, const char *name);
@@ -551,10 +553,13 @@ void RdosStartTimer(    int sel_id,
 void RdosStopTimer(     int sel_id);
 
 long RdosGetApicId();
-int RdosGetProcessor();
-int RdosGetProcessorNum(int num);
-void RdosSendNmi(int processor);
-void RdosSendInt(int processor, int int_num);
+int RdosGetCoreCount();
+int RdosGetCore();
+int RdosGetCoreNum(int num);
+void RdosStartCore(int core);
+void RdosSendNmi(int core);
+void RdosSendInt(int core, int int_num);
+void RdosEnterC3();
 
 void RdosClearSignal();
 void RdosSignal(int thread);
@@ -610,9 +615,7 @@ void RdosHookState(__rdos_hook_state_callback *callb_proc);
 void RdosSendEoi(int irq);
 int RdosIsIrqFree(int irq);
 
-void RdosRequestPrivateIrqHandler(int irq, __rdos_irq_callback *irq_proc, int ds_sel);
-void RdosReleasePrivateIrqHandler(int irq);
-void RdosRequestSharedIrqHandler(int irq, __rdos_irq_callback *irq_proc, int ds_sel);
+void RdosRequestIrqHandler(int irq, int prio, __rdos_irq_callback *irq_proc, int ds_sel);
 
 void RdosSetupIrqDetect();
 int RdosPollIrqDetect();
@@ -901,6 +904,9 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     parm [edx eax] \
     value [eax];
 
+#pragma aux RdosCrashGate = \
+    OsGate_crash_gate;
+
 #pragma aux RdosAllocateGdt = \
     OsGate_allocate_gdt  \
     "movzx ebx,bx" \
@@ -1188,6 +1194,16 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     OsGate_get_apic_id  \
     value [edx];
 
+#pragma aux RdosStartCore = \
+    "push fs" \
+    "mov fs,bx" \
+    OsGate_start_core  \
+    "pop fs" \
+    parm [ebx];
+
+#pragma aux RdosEnterC3 = \
+    OsGate_enter_c3;
+
 #pragma aux RdosSendNmi = \
     "push fs" \
     "mov fs,bx" \
@@ -1281,7 +1297,6 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     " mov esi,es" \
     " mov ds,esi" \
     " mov esi,edi" \
-    " add esi,4" \
     OsGate_enter_section \
     " pop esi" \
     " pop ds" \
@@ -1296,7 +1311,6 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     " mov esi,es" \
     " mov ds,esi" \
     " mov esi,edi" \
-    " add esi,4" \
     OsGate_leave_section \
     " pop esi" \
     " pop ds" \
@@ -1311,7 +1325,6 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     " mov esi,es" \
     " mov ds,esi" \
     " mov esi,edi" \
-    " add esi,4" \
     OsGate_cond_enter_section \
     " pop esi" \
     " pop ds" \
@@ -1398,29 +1411,13 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     OsGate_send_eoi \
     parm [eax];
 
-#pragma aux RdosIsIrqFree = \
-    OsGate_is_irq_free \
-    CarryToBool \    
-    parm [eax] \
-    value [eax];
-
-#pragma aux RdosRequestPrivateIrqHandler = \
+#pragma aux RdosRequestIrqHandler = \
     "push ds" \
     "mov ds,ebx" \
-    OsGate_request_private_irq_handler \
+    "mov ah,dl" \
+    OsGate_request_irq_handler \
     "pop ds" \
-    parm [eax] [es edi] [ebx];
-
-#pragma aux RdosReleasePrivateIrqHandler = \
-    OsGate_release_private_irq_handler \
-    parm [eax];
-
-#pragma aux RdosRequestSharedIrqHandler = \
-    "push ds" \
-    "mov ds,ebx" \
-    OsGate_request_shared_irq_handler \
-    "pop ds" \
-    parm [eax] [es edi] [ebx];
+    parm [eax] [edx] [es edi] [ebx];
 
 #pragma aux RdosSetupIrqDetect = \
     OsGate_setup_irq_detect;
@@ -1428,6 +1425,44 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 #pragma aux RdosPollIrqDetect = \
     OsGate_setup_irq_detect \
     value [eax];
+
+#pragma aux RdosGetApicId = \
+    OsGate_get_apic_id \
+    value [edx];
+
+#pragma aux RdosGetCoreCount = \
+    OsGate_get_core_count \
+    "movzx ecx,cx" \
+    value [ecx];
+
+#pragma aux RdosGetCore = \
+    "push fs" \
+    OsGate_get_core \
+    "mov eax,fs" \
+    "pop fs" \
+    value [eax];
+
+#pragma aux RdosGetCoreNum = \
+    "push fs" \
+    OsGate_get_core_num \
+    "mov eax,fs" \
+    "pop fs" \
+    parm [eax] \
+    value [eax];
+
+#pragma aux RdosSendNmi = \
+    "push fs" \
+    "mov fs,eax" \
+    OsGate_send_nmi \
+    "pop fs" \
+    parm [eax];
+
+#pragma aux RdosSendInt = \
+    "push fs" \
+    "mov fs,edx" \
+    OsGate_send_int \
+    "pop fs" \
+    parm [edx] [eax];
 
 #pragma aux RdosAllocateHandle = \
     "push ds" \
