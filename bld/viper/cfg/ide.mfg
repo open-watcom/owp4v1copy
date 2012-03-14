@@ -1323,6 +1323,7 @@ Tool WRC "Resource Compiler"
     CSwitch 1, ?????, "Do not preprocess the file", -zn, OFF
     CSwitch 1, ?????, "Quiet operation", -q, ON
     CSwitch 1, ?????, "Output autodepend info", -ad, ON
+    CSwitch 1, r????, "UTF-8", -zu, ON
 
 Tool WRC2 "Resource Compiler (pass 2)"
   Family Resource

@@ -89,6 +89,7 @@ struct RCParams {
     unsigned    FindAndReplace;         /* a check to see whether for this option */
     unsigned    Prepend;
     unsigned    DBCharSupport   : 3;    /* which of the zk switches is set */
+    unsigned    Utf8Format      : 1;    /* specifies that resource strings are UTF-8 */
     unsigned    SegmentSorting;         /* which segment sorting method to use */
     int         TargetOS;
     char        InFileName[ _MAX_PATH ];

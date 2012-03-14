@@ -475,6 +475,9 @@ static bool ScanOptionsArg( const char * arg )
                 break;
             }
             break;
+        case 'u':
+            CmdLineParms.Utf8Format = TRUE;
+            break;
         default:
             RcError( ERR_UNKNOWN_MULT_OPTION, arg - 1 );
             contok = FALSE;
@@ -676,6 +679,7 @@ static void defaultParms( void )
     CmdLineParms.NoPreprocess = FALSE;
     CmdLineParms.GenAutoDep = FALSE;
     CmdLineParms.PreprocessOnly = FALSE;
+    CmdLineParms.Utf8Format = FALSE;
     CmdLineParms.ExtraResFiles = NULL;
     CmdLineParms.FindReplaceStrings = NULL;
     #ifdef __OSI__

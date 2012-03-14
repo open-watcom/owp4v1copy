@@ -450,6 +450,9 @@ pick(   USAGE_MSG_38,
 pick(   USAGE_MSG_39,
         "-zm            - output Microsoft/IBM format .res files",
         "-zm            - output Microsoft/IBM format .res files" )
+pick(   USAGE_MSG_40,
+        "-zu            - strings are UTF-8 coded",
+        "-zu            - strings are UTF-8 coded" )
 pick(   USAGE_MSG_LAST,
         "-zn            - don't preprocess the file",
         "-zn            - don't preprocess the file" )

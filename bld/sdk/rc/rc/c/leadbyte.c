@@ -30,10 +30,13 @@
 ****************************************************************************/
 
 
+#include "param.h"
 #include "leadbyte.h"
 
 #ifdef NT_HOSTED
 #include <windows.h>
+
+struct RCParams     CmdLineParms;
 
 void SetDBRange( unsigned from, unsigned to );
 
@@ -61,7 +64,10 @@ int NativeDBStringToUnicode( int len, const char *str, char *buf ) {
         } else {
             outlen = len * 2;
         }
-        ret = MultiByteToWideChar( CP_ACP, 0, str, len, (LPWSTR)buf, outlen );
+        if( CmdLineParms.Utf8Format )
+            ret = MultiByteToWideChar( CP_UTF8, 0, str, len, (LPWSTR)buf, outlen );
+        else
+            ret = MultiByteToWideChar( CP_ACP, 0, str, len, (LPWSTR)buf, outlen );
     } else {
         ret = 0;
     }
