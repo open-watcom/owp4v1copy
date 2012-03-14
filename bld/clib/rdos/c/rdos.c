@@ -187,12 +187,16 @@ int RdosReadDir( int Handle, int EntryNr, int MaxNameSize, char *PathName, long 
 
 int RdosReadResource( int handle, int ID, char *Buf, int Size )
 {
-    char *RcPtr = 0;
+    unsigned short int *RcPtr = 0;
     int RcSize;
     int ok;
     int i;
-    char *src;
+    int len = 0;
+    unsigned short int *src;
     char *dst;
+    unsigned int unicode;
+    unsigned short int low;
+    unsigned short int high;
     
     if( handle == 0 ) {
         _asm {
@@ -219,19 +223,75 @@ int RdosReadResource( int handle, int ID, char *Buf, int Size )
         RcSize = 0;
 
     if( RcSize ) {
-        if (RcSize > Size)
-            RcSize = Size;
-
         src = RcPtr;
         dst = Buf;
         for( i = 0; i < RcSize; i++ ) {
-            *dst = *src;
-            dst++;
-            src += 2;
+            low = *src;
+            src++;
+            if( low < 0x80 ) {
+                if( len < Size ) {
+                    *dst = (char)low;
+                    len++;
+                    dst++;
+                }
+            }
+            else {
+                if( low >= 0xD800 && low < 0xDC00) {
+                    high = *src;
+                    src++;
+                    low -= 0xD800;
+                    unicode = low << 10;
+
+                    if (high < 0xDC00 || high >= 0xE000)
+                        high = 0;
+                    else
+                        high -= 0xDC00;
+
+                    unicode += high;
+                    unicode += 0x10000;
+                } else
+                    unicode = low;
+
+                if( unicode < 0x800) {
+                    if( len + 2 <= Size ) {
+                        *dst = 0xC0 + (char)((unicode >> 6) & 0x1F);
+                        dst++;
+                        *dst = 0x80 + (char)(unicode & 0x3F);
+                        dst++;
+                        len += 2;
+                    }
+                } 
+                else {
+                    if( unicode < 0x10000) {
+                        if( len + 3 <= Size ) {
+                            *dst = 0xE0 + (char)((unicode >> 12) & 0xF);
+                            dst++;
+                            *dst = 0x80 + (char)((unicode >> 6) & 0x3F);
+                            dst++;
+                            *dst = 0x80 + (char)(unicode & 0x3F);
+                            dst++;
+                            len += 3;
+                        }
+                    } 
+                    else {
+                        if( len + 4 <= Size ) {
+                            *dst = 0xF0 + (char)((unicode >> 18) & 0x7);
+                            dst++;
+                            *dst = 0x80 + (char)((unicode >> 12) & 0x3F);
+                            dst++;
+                            *dst = 0x80 + (char)((unicode >> 6) & 0x3F);
+                            dst++;
+                            *dst = 0x80 + (char)(unicode & 0x3F);
+                            dst++;
+                            len += 4;
+                        }
+                    }
+                }                                
+            }
         }            
     }    
 
-    return( RcSize );
+    return( len );
 }
 
 int RdosReadBinaryResource( int handle, int ID, char *Buf, int Size )

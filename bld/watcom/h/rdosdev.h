@@ -1,14 +1,3 @@
-/****************************************************************************
-*
-*                            Open Watcom Project
-*
-*  Copyright (c) 2009-2011 The Open Watcom Contributors. All Rights Reserved.
-*
-*  ========================================================================
-*
-* Description:  RDOS kernel-mode header file
-*
-****************************************************************************/
 
 #ifndef _RDOSDEV_H
 #define _RDOSDEV_H
@@ -382,8 +371,9 @@ struct TSpinlock
 
 struct TKernelSection
 {
-    long value;
+    short int value;
     short int list;
+    short int lock;
 };
 
 struct TWaitHeader
@@ -1290,7 +1280,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     parm [es edi]; 
 
 #pragma aux RdosEnterKernelSection = \
-    " lock sub dword ptr es:[edi],1" \
+    " lock sub word ptr es:[edi],1" \
     " jc short enter_done" \
     " push ds" \
     " push esi" \
@@ -1304,7 +1294,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     parm [es edi]; 
 
 #pragma aux RdosLeaveKernelSection = \
-    " lock add dword ptr es:[edi],1" \
+    " lock add word ptr es:[edi],1" \
     " jc short leave_done" \
     " push ds" \
     " push esi" \
@@ -1318,7 +1308,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     parm [es edi]; 
 
 #pragma aux RdosCondEnterKernelSection = \
-    " lock sub dword ptr es:[edi],1" \
+    " lock sub word ptr es:[edi],1" \
     " jc short enter_ok" \
     " push ds" \
     " push esi" \
