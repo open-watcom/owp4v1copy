@@ -27,6 +27,7 @@ typedef struct {
     ULONG               NumValidModes;          /* Number of valid modes */
     ULONG               NumMonitors;            /* Number of attached monitors */
     PUCHAR              IOAddrVGA;              /* VGA I/O ports mapping */
+    ULONG               ulSlot;                 /* PCI slot the adapter is in. */
     ULONG               PortVersion;            /* Video Port version */
 } HW_DEV_EXT, *PHW_DEV_EXT;
 

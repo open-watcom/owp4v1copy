@@ -25,7 +25,11 @@ boxvideo.sys : $(OBJS) $(__MAKEFILES__) videomp.res
       segment class CODE nonpageable, class DATA nonpageable &
       file { $OBJS } libpath $(LIBS) lib videoprt resource videomp.res
 
-#      option start='_DriverEntry@8', alignment=0x20, objalign=0x20 &
+# Normally we would like to use the following:
+#      option alignment=0x20, objalign=0x20
+# but that causes the driver image to fail loading on old NT releases;
+# the driver is small enough that it's not worth the trouble
+
 videomp.res : videomp.rc
     $(RC) $(RCFLAGS) $(INCS) $<
 

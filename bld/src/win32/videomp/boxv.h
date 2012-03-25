@@ -2,6 +2,10 @@
  * Public interface to the boxv library.
  */
 
+/* PCI vendor and device IDs. */
+#define BOXV_PCI_VEN    0x80EE
+#define BOXV_PCI_DEV    0xBEEF
+
 /* A structure describing mode information. Note: The mode numbers
  * usually match VBE, but this should not be relied upon.
  */

@@ -17,6 +17,9 @@
 #include "boxv.h"
 
 
+/* Number of PCI access ranges. */
+#define NUM_PCI_RANGES      3
+
 /* RGB color channel constants. */
 typedef enum {
     CHANNEL_RED,
@@ -98,9 +101,14 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
     ULONG                   cbVramSize;
     PWSTR                   pwszDesc;
     ULONG                   cbDesc;
+    VIDEO_ACCESS_RANGE      pciAccessRanges[NUM_PCI_RANGES];
+    USHORT                  usVendorId = BOXV_PCI_VEN;
+    USHORT                  usDeviceId = BOXV_PCI_DEV;
+    ULONG                   ulSlot = 0;
 
+    //@todo: The framebuffer address should not be hardcoded for non-PCI access
 #define NUM_ACCESS_RANGES   2
-    VIDEO_ACCESS_RANGE accessRange[NUM_ACCESS_RANGES] = {
+    VIDEO_ACCESS_RANGE accessRanges[NUM_ACCESS_RANGES] = {
         /* StartLo     StartHi     Len       IO Vis Shr */
         { 0x000001CE, 0x00000000, 0x00000002, 1, 1, 0 },    /* I/O ports */
         { 0xE0000000, 0x00000000, 0x00400000, 0, 1, 0 }     /* Framebuffer */
@@ -113,16 +121,41 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
         return( ERROR_INVALID_PARAMETER );
     }
 
+    /* If PCI is supported, query the bus for resource mappings. */
+    if( ConfigInfo->AdapterInterfaceType == PCIBus ) {
+        /* Ask for bus specific access ranges. */
+        VideoPortZeroMemory( pciAccessRanges, sizeof( pciAccessRanges ) );
+        status = VideoPortGetAccessRanges( HwDevExt, 0, NULL,
+                                           NUM_PCI_RANGES, pciAccessRanges,
+                                           &usVendorId, &usDeviceId, &ulSlot );
+        if( status == NO_ERROR ) {
+            VideoDebugPrint( (1, "videomp: Found adapter in PCI slot %d\n", ulSlot) );
+            pExt->ulSlot = ulSlot;
+            /* The framebuffer is in the first slot of the PCI ranges. Copy
+             * the data into the access ranges we're going to request.
+             */
+            accessRanges[1].RangeStart  = pciAccessRanges[0].RangeStart;
+            accessRanges[1].RangeLength = pciAccessRanges[0].RangeLength;
+        } else {
+            /* On NT versions without PCI support, we won't even attempt this.
+             * So if we tried to query the PCI device and failed to find it, 
+             * it really isn't there and we have to give up. 
+             */
+            VideoDebugPrint( (1, "videomp: PCI adapter not found\n") );
+            return( ERROR_DEV_NOT_EXIST );
+        }
+    }
+
     /* Some versions of vga.sys trap accesses to ports 0x1CE-0x1CF used on
      * old ATI cards. On Windows 2000 and later we can report legacy
      * resources to resolve this conflict. On NT 4 and older, we use a hack
      * and claim other, non-conflicting ports.
      */
     if( PortVersion < VP_VER_W2K )
-        accessRange[0].RangeStart = RtlConvertUlongToLargeInteger( 0x1CC );
+        accessRanges[0].RangeStart = RtlConvertUlongToLargeInteger( 0x1CC );
  
     /* Check for a conflict in case someone else claimed our resources. */
-    status = VideoPortVerifyAccessRanges( HwDevExt, NUM_ACCESS_RANGES, accessRange );
+    status = VideoPortVerifyAccessRanges( HwDevExt, NUM_ACCESS_RANGES, accessRanges );
     if( status != NO_ERROR ) {
         return( status );
     }
@@ -138,10 +171,8 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
     ConfigInfo->VdmPhysicalVideoMemoryAddress.HighPart = 0;
     ConfigInfo->VdmPhysicalVideoMemoryLength           = 0;
 
-    /* Describe the framebuffer. */
-    //@TODO: abstract this!!
-    pExt->PhysicalFrameAddress.HighPart = 0;
-    pExt->PhysicalFrameAddress.LowPart  = 0xE0000000;
+    /* Describe the framebuffer. We claimed the range already. */
+    pExt->PhysicalFrameAddress = accessRanges[1].RangeStart;
 
 
     /*
@@ -154,9 +185,9 @@ VP_STATUS HwVidFindAdapter( PVOID HwDevExt, PVOID HwContext, PWSTR ArgumentStrin
     /* Attempt to claim and map the memory and I/O address ranges. */
     for( i = 0; i < NUM_ACCESS_RANGES; ++i, ++pVirtAddr ) {
         *pVirtAddr = VideoPortGetDeviceBase( pExt, 
-                                             accessRange[i].RangeStart,
-                                             accessRange[i].RangeLength,
-                                             accessRange[i].RangeInIoSpace );
+                                             accessRanges[i].RangeStart,
+                                             accessRanges[i].RangeLength,
+                                             accessRanges[i].RangeInIoSpace );
         if( *pVirtAddr == NULL ) {
             return( ERROR_INVALID_PARAMETER );
         }
