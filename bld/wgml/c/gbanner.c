@@ -798,6 +798,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         }
         last->first = alloc_doc_el( el_text );
         last->first->top_skip = ban->top_line->reg_voffset;
+        last->first->subs_skip = ban->top_line->reg_voffset;
         last->first->element.text.first = alloc_text_line();
 
         last->first->element.text.first->next = ban_line.next;

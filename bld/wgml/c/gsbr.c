@@ -127,6 +127,7 @@ void  scr_process_break( void )
                                         wgml_fonts[g_curr_font_num].line_height;
         t_element->element.text.first->first = NULL;
         t_element->element.text.spacing = g_spacing;
+        ProcFlags.skips_valid = false;
         insert_col_main( t_element );
 
         t_element = NULL;
@@ -146,6 +147,7 @@ void  scr_process_break( void )
                                         wgml_fonts[g_curr_font_num].line_height;
         t_element->element.text.first->first = NULL;
         t_element->element.text.spacing = g_spacing;
+        ProcFlags.skips_valid = false;
         insert_col_main( t_element );
 
         t_element = NULL;
@@ -153,6 +155,7 @@ void  scr_process_break( void )
 
     }
     ProcFlags.empty_doc_el = false;
+    c_stop = NULL;
 
     return;
 }

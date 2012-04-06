@@ -1173,6 +1173,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     g_blank_lines = blank_lines * wgml_fonts[font].line_height;
     blank_lines = 0;
     g_spacing = (spacing - 1) * wgml_fonts[font].line_height;
+    ProcFlags.skips_valid = true;
 
     return;
 }

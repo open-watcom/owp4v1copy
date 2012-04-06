@@ -225,6 +225,7 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
     ProcFlags.overprint = false;
     cur_el->element.text.spacing = g_spacing;
     cur_el->element.text.first = hd_line;
+    ProcFlags.skips_valid = false;
     hd_line = NULL;
 
     if( no_eject ) {

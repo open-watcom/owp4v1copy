@@ -196,6 +196,7 @@ global struct ProcFlags {
 #endif
     unsigned        overprint       : 1;// .sk -1 active or not
     unsigned        tag_end_found   : 1;// '.' ending tag found
+    unsigned        skips_valid     : 1;// controls set_skip_vars() useage
 
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
@@ -237,6 +238,7 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input escape char from .ti
 
+global  tab_stop    *   c_stop;         // current tab_stop
 global  uint32_t        first_tab;      // first default top position
 global  uint32_t        inter_tab;      // distance between default tabs
 global  char            tab_char;       // tab character from .tb

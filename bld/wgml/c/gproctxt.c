@@ -35,7 +35,6 @@
 *               process_text            form input text into output text lines
 *               puncadj                 insert spaces after .:?
 *               set_h_start             set horizontal start postion
-*               set_v_positions         set vertical positions in an element list
 *               split_text              split text at given position
 *               text_chars_width        width to first wgml tab
 *               wgml_tabs               expands wgml tabs
@@ -48,7 +47,6 @@
 #include "gvars.h"
 
 static  bool            tabbing     = false;    // current tab exists
-static  tab_stop    *   c_stop      = NULL;     // current tab_stop
 static  uint32_t        fill_count  = 0;        // fill char count
 static  uint32_t        fill_start  = 0;        // fill string starting position
 static  uint32_t        fill_width  = 0;        // fill string width
@@ -330,6 +328,7 @@ static void wgml_tabs( void )
 {
     bool                    skip_tab    = false;    // skip current tab
     int                     i;
+    int32_t                 offset      = 0;        // offset for position adjustment
     text_chars          *   c_chars     = NULL;     // current text_chars
     text_chars          *   in_chars    = t_line->last; // text_chars being processed
     text_chars          *   c_multi;                // used to traverse parts of multipart word
@@ -337,7 +336,6 @@ static void wgml_tabs( void )
     uint8_t             *   in_text     = in_chars->text;
     uint32_t                in_count    = in_chars->count;
     uint32_t                m_width;                // multi-part word width
-    uint32_t                ow_count;               // total count of multipart word
     uint32_t                t_count     = 0;        // text count
     uint32_t                t_start;                // text start
     uint32_t                t_width;                // text width
@@ -374,6 +372,19 @@ static void wgml_tabs( void )
     if( t_count == 0 ) {            // first character is tab character
         tab_chars.first = NULL;
         tab_chars.last = NULL;
+
+        if( (input_cbs->fmflags & II_sol) &&
+            (in_chars->x_address > g_cur_left) ) {  // start of line beginning with spaces
+            if( ProcFlags.concat ) {
+                g_cur_h_start = g_cur_left;
+            } else {
+                g_cur_h_start = in_chars->x_address;
+            }
+            c_chars = do_c_chars( c_chars, in_chars, &in_text[0], t_count,
+                            g_cur_h_start, in_chars->width,
+                            in_chars->font_number, in_chars->type );
+        }
+
         next_tab();
         c_font = in_chars->font_number;
         c_type = in_chars->type;
@@ -453,14 +464,7 @@ static void wgml_tabs( void )
             m_width = t_width;
         } else {                        // get sizing for total word
             c_multi = in_chars;         // start at end
-            ow_count = t_count;
-            m_width = cop_text_width( &in_text[t_start], t_count, \
-                                                    in_chars->font_number );
-            while( c_multi != s_multi ) {
-                c_multi = c_multi->prev;
-                ow_count += c_multi->count;
-                m_width += c_multi->width;
-            }
+            m_width = (s_multi->x_address + s_multi->width) - (in_chars->x_address );
         }
         // set text start position and accept/reject current tab stop
         switch( c_stop->alignment ) {
@@ -565,10 +569,6 @@ static void wgml_tabs( void )
             }
 
             if( c_font != s_multi->font_number ) {
-#if 0
-                c_chars = do_c_chars( c_chars, in_chars, NULL, 0,
-                                g_cur_h_start, 0, c_font, s_multi->type );
-#endif
                 c_chars = do_c_chars( c_chars, in_chars, NULL, 0,
                                 g_cur_h_start, 0, c_font, c_type );
                 if( tab_chars.first == NULL) {
@@ -597,12 +597,14 @@ static void wgml_tabs( void )
                     tab_chars.last->next = s_multi;
                     c_chars = NULL;
                 }
+
+                offset = g_cur_h_start - s_multi->x_address;
                 c_multi = s_multi;
                 while( c_multi != NULL ) {  // adjust starting positions
-                    c_multi->x_address = g_cur_h_start;
-                    g_cur_h_start += c_multi->width;
+                    c_multi->x_address += offset;
                     c_multi = c_multi->next;
                 }
+                g_cur_h_start = in_chars->x_address;
             }
 
             // the text positioned by the tab stop
@@ -1018,6 +1020,10 @@ void    process_line_full( text_line * a_line, bool justify )
 
     if( t_element == NULL ) {
         t_element = alloc_doc_el( el_text );
+
+        if( !ProcFlags.skips_valid) {
+            set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
+        }
         t_element->blank_lines = g_blank_lines;
         g_blank_lines = 0;
         t_element->subs_skip = g_subs_skip;
@@ -1028,6 +1034,7 @@ void    process_line_full( text_line * a_line, bool justify )
         t_element->element.text.spacing = g_spacing;
         t_element->element.text.first = a_line;
         t_el_last = t_element->element.text.first;
+        ProcFlags.skips_valid = false;
     } else {
         t_element->depth += a_line->line_height + t_element->element.text.spacing;
         t_el_last->next = a_line;
@@ -1036,7 +1043,7 @@ void    process_line_full( text_line * a_line, bool justify )
 
     ProcFlags.line_started = false;     // line is now empty
     ProcFlags.just_override = true;     // justify for following lines
-    tabbing = false;          // tabbing ends when line committed
+    tabbing = false;                    // tabbing ends when line committed
 
     set_h_start();
 }
@@ -1051,6 +1058,16 @@ text_chars * process_word( char * pword, size_t count, uint8_t font_num )
     text_chars  *   n_char;
 
     n_char = alloc_text_chars( pword, count, font_num );
+    // remove end-of-line spaces if .co off before input translation
+    if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
+        if( n_char->text[n_char->count - 1] == ' ' ) {
+            while( n_char->text[n_char->count - 1] == ' ' ) {
+                n_char->count--;
+            }
+            n_char->width = text_chars_width( n_char->text, n_char->count,
+                                                            font_num );
+        }
+    }
     intrans( n_char->text, &n_char->count, font_num );
     if( n_char->count == 0 ) {
         n_char->width = 0;
@@ -1087,24 +1104,56 @@ void    process_text( char * text, uint8_t font_num )
     static      text_type   typ = norm;
     static      text_type   typn = norm;
 
-    /*******************************************************************/
-    /*  we need a started section for text output                      */
-    /*  note: ProcFlags.doc_sect will be doc_sect_body                 */
-    /*******************************************************************/
+    /********************************************************************/
+    /*  we need a started section for text output                       */
+    /*  note: ProcFlags.doc_sect will be doc_sect_body                  */
+    /********************************************************************/
+
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
-    /*******************************************************************/
-    /* no text between :GDOC and the first of :ABSTRACT, :PREFACE,     */
-    /* :BODY, :APPENDIX, or :BACKM except between :TITLEP and :eTITLEP */
-    /*******************************************************************/
+
+    /********************************************************************/
+    /*  no text between :GDOC and the first of :ABSTRACT, :PREFACE,     */
+    /*  :BODY, :APPENDIX, or :BACKM except between :TITLEP and :eTITLEP */
+    /********************************************************************/
+
     if( ProcFlags.doc_sect < doc_sect_abstract ) {
         if( ProcFlags.doc_sect != doc_sect_titlep ) {
             xx_line_err( err_doc_sec_expected_2, text );
             return;
         }
     }
+
+    /********************************************************************/
+    /*  force a break in when certain conditions involving new input    */
+    /*  lines, user tabs, and a tab character in the input              */
+    /*  Note: this only works if the tab is in the first logical record */
+    /********************************************************************/
+
     p = text;
+    while( *p ) {                       // locate the first wgml tab, if any
+        if( (*p == '\t') || (*p == tab_char) ) {
+            break;
+        }
+        p++;
+    }
+    count = p - text;
+    p = text;                           // restore p to start of text
+    
+    if( count != strlen( p ) ) {        // tab character found in input text
+        if( c_stop != NULL ) {          // current tab stop exists
+            if( user_tabs.current > 0 ) {     //  user tabs exist
+                if( input_cbs->fmflags & II_sol ) {   // at start of input line
+                    if( (c_stop->column >=
+                        user_tabs.tabs[user_tabs.current - 1].column) ||
+                        (*p == '\t') || (*p == tab_char) ) {    // the final test
+                            scr_process_break();        // treat new line as break
+                    }
+                }
+            }
+        }
+    }
     if( t_line == NULL ) {
         t_line = alloc_text_line();
     }
@@ -1172,7 +1221,6 @@ void    process_text( char * text, uint8_t font_num )
 
                 n_char = process_word( pword, count, font_num );
                 n_char->type = typ;
-//                n_char->t_flags = 0; // TBD
             }
             typ = typn;
             p += 2;
@@ -1200,18 +1248,7 @@ void    process_text( char * text, uint8_t font_num )
             count = p - pword;          // no of bytes
             n_char = process_word( pword, count, font_num );
             n_char->type = typ;
-//            n_char->t_flags = 0;      // TBD
             typ = typn;
-        }
-        // remove end-of-line spaces if .co off
-        if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
-//          if( (n_char->count > 0) && (n_char->text[n_char->count] == ' ') ) {
-            if( n_char->text[n_char->count] == ' ' ) {
-                while( n_char->text[n_char->count] == ' ' ) n_char->count--;
-                n_char->count++;
-                n_char->width = text_chars_width( n_char->text, n_char->count,
-                                                  font_num );
-            }
         }
         g_cur_h_start += post_space;
         n_char->x_address = g_cur_h_start;
@@ -1219,7 +1256,6 @@ void    process_text( char * text, uint8_t font_num )
             tabbing = false;
             post_space = 0;
         }
-        input_cbs->fmflags &= ~II_sol;  // no longer at start of line
         o_count = n_char->count;        // catches special case below
 
         if( ProcFlags.concat ) {
@@ -1412,7 +1448,6 @@ void    process_text( char * text, uint8_t font_num )
         }
         // recognize spaces at actual end-of-line or if current char is space
         if( ((input_cbs->fmflags & II_eol) && !*p) || (*p == ' ' ) ) {
-            tabbing = false;
             post_space = wgml_fonts[font_num].spc_width;
             if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                  post_space += wgml_fonts[font_num].spc_width;

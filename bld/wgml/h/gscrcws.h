@@ -162,7 +162,7 @@
   picks( ty, scr_ty,    0                  )// type
   picks( uc, scr_dummy, cw_o_t             )// underscore and capitalize
   picks( ud, scr_dummy, cw_o_t             )// underscore definition
-  picks( ul, scr_dummy, cw_o_t             )// underline
+  picks( ul, scr_us,    cw_o_t             )// underline (same as us)
   picks( un, scr_dummy, cw_break+cw_o_t    )// undent
   picks( up, scr_dummy, cw_o_t             )// uppercase
   picks( us, scr_us,    cw_o_t             )// underscore

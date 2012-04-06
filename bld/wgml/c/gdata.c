@@ -113,6 +113,8 @@ void init_global_vars( void )
     in_esc              = ' ';
     tab_char            = 0x09;
 
+    c_stop              = NULL;
+
     t_element               = NULL;
     t_el_last               = NULL;
     t_doc_el_group.depth    = 0;

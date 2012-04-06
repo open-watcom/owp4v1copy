@@ -125,14 +125,16 @@
 
 void    scr_tb( void )
 {
-    bool        relative;
-    char    *   p;
-    char    *   pa;
-    char    *   pb;
-    char        quote;
-    int         i;
-    int         len;
-    uint32_t    t_pos;
+    bool            relative;
+    char        *   p;
+    char        *   pa;
+    char        *   pb;
+    char            quote;
+    condcode        cc;
+    getnum_block    t_pos;
+    int             i;
+    int             len;
+    tab_list        old_tabs;
 
     p = scan_start;
     while( *p && (*p != ' ') ) {            // over tb
@@ -180,89 +182,108 @@ void    scr_tb( void )
         user_tabs.current = 0;              // clear user_tabs
         p = pa;                             // reset to start of first tab
 
-        if( *p ) {                          // tab stop list
+        while( *p ) {                       // tab stop start
             if( user_tabs.current == user_tabs.length) {
+                old_tabs.tabs = user_tabs.tabs;
                 user_tabs.length += TAB_COUNT;  // add space for new tab stops
-                user_tabs.tabs = mem_realloc( user_tabs.tabs,
-                                 user_tabs.length * sizeof( tab_stop ) );
+                user_tabs.tabs = mem_alloc( user_tabs.length *
+                                            sizeof( tab_stop ) );
+                for( i = 0; i < user_tabs.current; i++ ) {
+                    user_tabs.tabs[i].column = old_tabs.tabs[i].column;
+                    user_tabs.tabs[i].fill_char = old_tabs.tabs[i].fill_char;
+                    user_tabs.tabs[i].alignment = old_tabs.tabs[i].alignment;
+                }
             }
-            while( *p ) {                   // tab stop start
-                i = user_tabs.current;      // initialize (not done elsewhere)
-                user_tabs.tabs[i].column = 0;
-                user_tabs.tabs[i].fill_char = ' ';
-                user_tabs.tabs[i].alignment = al_left;
-                quote = ' ';
-                pa = p;
+            i = user_tabs.current;          // initialize (not done elsewhere)
+            user_tabs.tabs[i].column = 0;
+            user_tabs.tabs[i].fill_char = ' ';
+            user_tabs.tabs[i].alignment = al_left;
+            quote = ' ';
+            pa = p;
 
-                // Parse fill chars/strings
+            // Parse fill chars/strings
 
-
-                if( (*p != '+') && !isdigit(*p) ) { // potential fill char
-                    if( (*p == '\'') || (*p == '"') || (*p == '/') ) {
-                        quote = *p;         // initial quote found
-                        p++;                // should be fill char
-                        if( !*p || (*p == ' ') ||
-                            (*p == '+') || isdigit(*p) ) { // ' " or / only before tab stop position
-                            xx_line_err( err_right_delim, pa );
-                            continue;
-                        }
-                    }
-                    user_tabs.tabs[i].fill_char = *p;
-                    pb = p;                 // save position if not fill char
-                    p++;                    // should be end delimiter
-                    if( !*p ) {             // 'c "c or /c only
+            if( (*p != '+') && !isdigit(*p) ) { // potential fill char
+                if( (*p == '\'') || (*p == '"') || (*p == '/') ) {
+                    quote = *p;                 // initial quote found
+                    p++;                        // should be fill char
+                    if( !*p || (*p == ' ') ||
+                        (*p == '+') || isdigit(*p) ) { // ' " or / only before tab stop position
                         xx_line_err( err_right_delim, pa );
                         continue;
                     }
+                }
+                user_tabs.tabs[i].fill_char = *p;
+                pb = p;                 // save position if not fill char
+                p++;                    // should be end delimiter
+                if( !*p ) {             // 'c "c or /c only
+                    xx_line_err( err_right_delim, pa );
+                    continue;
+                }
                     
-                    /* fill strings are not allowed -- yet */
+                /* fill strings are not allowed -- yet */
 
-                    if( ((quote == ' ') && (*p == '/')) ||
-                        ((quote != ' ') && (*p == quote)) ) {
-                        p++;                // final quote found
-                    } else {
-                        if( quote != ' ' ) {// quoted value started
-                            while( *p ) {   // find final quote
-                                if( *p == quote ) {
-                                    break;
-                                }
-                                p++;
-                            }
-                            if( *p == quote ) {     // found: fill string
-                                xx_line_err( err_tab_fill_string, pa );
-                                user_tabs.tabs[i].fill_char = ' ';
-                            } else if( *p ) {       // not found: format error
-                                xx_line_err( err_right_delim, pa );
-                                user_tabs.tabs[i].fill_char = ' ';
-                            }
-                        } else {                    // format error
-                            xx_line_err( err_inv_text_before_tab, pa );
-                            user_tabs.tabs[i].fill_char = ' ';
-                            p = pb;                 // restore position: not fill char
-                        }
-                    }
-                }
-
-                // Parse the tab stop position
-
-                if( (*p != '+') && !isdigit(*p) ) { // skip to tab position start
-                    while( *p && (*p != '+') && !isdigit(*p) ) {
-                        p++;
-                    }
-                }
-                pa = p;                             // tab position start
-                if( *p == '+' ) {
-                    relative = true;
-                    p++;
+                if( ((quote == ' ') && (*p == '/')) ||
+                                       ((quote != ' ') && (*p == quote)) ) {
+                    p++;                // final quote found
                 } else {
-                    relative = false;
+                    if( quote != ' ' ) {// quoted value started
+                        while( *p ) {   // find final quote
+                            if( *p == quote ) {
+                                break;
+                            }
+                            p++;
+                        }
+                        if( *p == quote ) { // found: fill string
+                            xx_line_err( err_tab_fill_string, pa );
+                            user_tabs.tabs[i].fill_char = ' ';
+                        } else if( *p ) {   // not found: format error
+                            xx_line_err( err_right_delim, pa );
+                            user_tabs.tabs[i].fill_char = ' ';
+                        }
+                    } else {                // format error
+                        xx_line_err( err_inv_text_before_tab, pa );
+                        user_tabs.tabs[i].fill_char = ' ';
+                        p = pb;             // restore position: not fill char
+                    }
                 }
-                t_pos = 0;
-                while( *p && isdigit( *p ) ) {
-                    t_pos = (10 * t_pos) + (*p - '0');
-                    p++;
-                }
-                if( t_pos == 0 ) {
+            }
+
+            // Parse the tab stop position
+
+            while( *p && (*p == ' ') ) {
+                p++;
+            }
+            pa = p;                             // tab position start
+
+            t_pos.ignore_blanks = false;
+            t_pos.argstart = p;
+            while( *p && (*p != ' ') ) {        // tab position end plus 1
+                p++;
+            }
+            if( *p && (p > pa) ) {              // as needed by getnum
+                p--;                            // *p is last character of tab stop
+            }
+            while( (p != pa) && !isdigit( *p ) ) { // back up over alignment 
+                p--;
+            }
+            pb = p + 1;
+            t_pos.argstop = p;
+            cc = getnum( &t_pos );
+            p = pb;                             // alignment start
+            if( t_pos.num_sign == ' ' ) {
+                relative = false;
+            } else {
+                if( t_pos.num_sign == '+' ) {
+                    relative = true;
+                } else {
+                    xx_line_err( err_inv_tab_stop, pa );
+                }                    
+            }
+            if( cc == notnum ) {
+                xx_line_err( err_inv_text_before_tab, pa );
+            } else {
+                if( t_pos.result <= 0 ) {
                     if( relative ) {
                         xx_line_err( err_tab_stop_order, pa );
                     } else {
@@ -270,69 +291,70 @@ void    scr_tb( void )
                     }
                 } else {
                     if( relative && ( i > 0) ) {
-                        t_pos *= tab_col;
-                        user_tabs.tabs[i].column = user_tabs.tabs[i-1].column + t_pos;
+                        t_pos.result *= tab_col;
+                        user_tabs.tabs[i].column = user_tabs.tabs[i-1].column +
+                                                   t_pos.result;
                     } else {
-                        t_pos --;
-                        t_pos *= tab_col;
-                        user_tabs.tabs[i].column = t_pos;
+                        t_pos.result --;
+                        t_pos.result *= tab_col;
+                        user_tabs.tabs[i].column = t_pos.result;
                     }
-                    if( i > 0 ) {
-                        if( user_tabs.tabs[i].column <= user_tabs.tabs[i-1].column ) {
-                            xx_line_err( err_tab_stop_order, pa );
-                        }
-                    }
-                    user_tabs.current++;
                 }
+                if( !relative && (i > 0) ) {
+                    if( user_tabs.tabs[i].column <= user_tabs.tabs[i-1].column ) {
+                        xx_line_err( err_tab_stop_order, pa );
+                    }
+                }
+                user_tabs.current++;
+            }
 
-                // Parse the alignment 
+            // Parse the alignment 
 
-                user_tabs.tabs[i].alignment = al_left;
-                if( *p && (*p != ' ') ) {           // space ends tab stop
+            user_tabs.tabs[i].alignment = al_left;
+            if( *p && (*p != ' ') ) {           // space ends tab stop
 
-                    /* alignment characters are not allowed -- yet */
+            /* alignment characters are not allowed -- yet */
 
-                    pa = p;                         // potential alignment start
-                    if( (*p == 'c') || (*p == 'C') ) {                       
-                        user_tabs.tabs[i].alignment = al_center;
-                        p++;
-                    } else if( (*p == 'l') || (*p == 'L') ) {                       
-                        user_tabs.tabs[i].alignment = al_left;
-                        p++;
-                    } else if( (*p == 'r') || (*p == 'R') ) {                       
-                        user_tabs.tabs[i].alignment = al_right;
-                        p++;
-                    } else if( pa[i] == '\'' ) {    // possible alignment character
-                        p++;
-                        if( !*p || (*p != ' ') ) {  // not end of tab stop
-                            if( !*p ) {             // ' only
-                                xx_line_err( err_right_delim, pa );
-                            }
-                            p++;
-                            if( !*p ) {             // 'c only
-                                xx_line_err( err_right_delim, pa );
-                            } else if( *p == '\'' ) {   // definite alignment character
-                                xx_line_err( err_tab_align_char, pa );
-                            } else {                // 'cc with or without more text
-                                xx_line_err( err_right_delim, pa );
-                            }                    
-                        } else {                        // something else
-                            xx_line_err( err_inv_text_after_tab, pa );
+                pa = p;                         // potential alignment start
+                if( (*p == 'c') || (*p == 'C') ) {                       
+                    user_tabs.tabs[i].alignment = al_center;
+                    p++;
+                } else if( (*p == 'l') || (*p == 'L') ) {                       
+                    user_tabs.tabs[i].alignment = al_left;
+                    p++;
+                } else if( (*p == 'r') || (*p == 'R') ) {                       
+                    user_tabs.tabs[i].alignment = al_right;
+                    p++;
+                } else if( *p == '\'' ) {       // possible alignment character
+                    p++;
+                    if( !*p || (*p != ' ') ) {  // not end of tab stop
+                        if( !*p ) {             // ' only
+                            xx_line_err( err_right_delim, pa );
                         }
                         p++;
-                    } else {                        // something else
+                        if( !*p ) {             // 'c only
+                            xx_line_err( err_right_delim, pa );
+                        } else if( *p == '\'' ) {   // definite alignment character
+                            xx_line_err( err_tab_align_char, pa );
+                        } else {                // 'cc with or without more text
+                            xx_line_err( err_right_delim, pa );
+                        }                    
+                    } else {                    // something else
                         xx_line_err( err_inv_text_after_tab, pa );
-                        p++;
                     }
-                }
-                if( *p != ' ' ) {
-                    while( *p && (*p != ' ') ) {    // find end of tab stop
-                        p++;
-                    }
-                }
-                while( *p && (*p == ' ') ) {        // find next tab position
+                    p++;
+                } else {                        // something else
+                    xx_line_err( err_inv_text_after_tab, pa );
                     p++;
                 }
+            }
+            if( *p != ' ' ) {
+                while( *p && (*p != ' ') ) {    // find end of tab stop
+                    p++;
+                }
+            }
+            while( *p && (*p == ' ') ) {        // find next tab position
+                p++;
             }
         }
     }

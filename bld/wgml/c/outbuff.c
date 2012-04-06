@@ -1269,10 +1269,17 @@ void ob_insert_byte( uint8_t in_char )
 
 void ob_insert_ps_text_end( bool htab_done, uint32_t font )
 {
-    char    shwd_suffix[]   = ") shwd ";
-    char    sd_suffix[]     = ") sd ";
+    char    shwd_suffix[]   = "shwd ";
+    char    sd_suffix[]     = "sd ";
     size_t  ps_size;
 
+    ob_insert_block( ")", 1, false, false, font );
+
+    if( buffout.current == buffout.length ) {
+        ob_flush();
+    } else {
+    ob_insert_block( " ", 1, false, false, font );
+    }
     if( htab_done ) {
         ps_size = strlen( sd_suffix );
         ob_insert_block( sd_suffix, ps_size, false, false, font );

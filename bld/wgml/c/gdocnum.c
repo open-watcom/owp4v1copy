@@ -153,6 +153,7 @@ void    gml_docnum( const gmltag * entry )
     ProcFlags.overprint = false;
     cur_el->element.text.spacing = g_spacing;
     cur_el->element.text.first = p_line;
+    ProcFlags.skips_valid = false;
     p_line = NULL;
     insert_col_main( cur_el );
 

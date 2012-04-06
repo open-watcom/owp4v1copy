@@ -237,6 +237,7 @@ void    gml_graphic( const gmltag * entry )
     cur_el->element.graph.width = width;
     cur_el->element.graph.xoff = xoff;
     cur_el->element.graph.yoff = yoff;
+    ProcFlags.skips_valid = false;
     strncpy_s( cur_el->element.graph.file, FILENAME_MAX, file, FILENAME_MAX );
 
     insert_col_main( cur_el );
