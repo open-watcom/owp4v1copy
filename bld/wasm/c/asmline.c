@@ -537,24 +537,25 @@ static bool CheckHaveSeg( void )
     return( FALSE );
 }
 
-void AddStringToIncludePath( char *string )
-/*****************************************/
+void AddItemToIncludePath( char *string, int len )
+/************************************************/
 {
-    char *tmp;
+    char    *tmp;
+    int     len1;
 
-    while( isspace( *string ) )
-        string++;
     if( IncludePath == NULL ) {
         IncludePath = AsmAlloc( strlen( string ) + 1 );
-        strcpy( IncludePath, string );
+        memcpy( IncludePath, string, len );
+        IncludePath[len] = '\0';
     } else {
-        tmp = IncludePath;
-        IncludePath = AsmAlloc( strlen( tmp ) + strlen( INCLUDE_PATH_DELIM ) +
-                                strlen( string ) + 1 );
-        strcpy( IncludePath, tmp );
-        strcat( IncludePath, INCLUDE_PATH_DELIM );
-        strcat( IncludePath, string );
-        AsmFree( tmp );
+        len1 = strlen( IncludePath );
+        tmp = AsmAlloc( len1 + 1 + len + 1 );
+        memcpy( tmp, IncludePath, len1 );
+        memcpy( tmp + len1, INCLUDE_PATH_DELIM, 1 );
+        memcpy( tmp + len1 + 1, string, len );
+        tmp[len1 + 1 + len] = '\0';
+        AsmFree( IncludePath );
+        IncludePath = tmp;
     }
 }
 

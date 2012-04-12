@@ -41,7 +41,7 @@ extern int      InputQueueFile( char *path );
 extern char     *ReadTextLine( char *string );
 extern void     PushMacro( const char *name, bool hidden );
 extern char     *ScanLine( char *line, int len );
-extern void     AddStringToIncludePath( char *string );
+extern void     AddItemToIncludePath( char *string, int len );
 extern void     FreeIncludePath( void );
 
 extern char     *CurrString;    // Current Input Line
