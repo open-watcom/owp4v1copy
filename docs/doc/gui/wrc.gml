@@ -124,7 +124,7 @@ verbose: print grammar rules as they are reduced
 verbose: print both tokens and grammar rules
 .point &sw.x
 ignore the INCLUDE environment variable
-.point &sw.zk{0,1,2}
+.point &sw.zk{0,1,2,3}
 double-byte character support:
 .begpoint $compact
 .point 0:
@@ -133,7 +133,11 @@ double-byte character support:
 Chinese/Taiwanese (for Windows only)
 .point 2:
 Korean (for Windows only)
+.point 3:
+Simplified Chinese (for Windows only)
 .endpoint
+.point &sw.zku8
+Unicode UTF-8 character support
 .point &sw.zm
 output Microsoft/IBM format
 .fi &sysper.RES
@@ -461,12 +465,12 @@ the
 .fi &sysper.RC
 file. This option affects pass one only.
 .*
-.point &sw.zk{0,1,2}
+.point &sw.zk{0,1,2,3}
 Strings contained in resources in the
 .fi &sysper.RC
 file are assumed to contain double byte characters from the
 appropriate character sets.
-Although these options allow strings to contain double byte
+Although these options allow strings to contain multi-byte
 characters the names of resources in the resource script file must
 contain only standard ASCII characters in the range 0-127 (inclusive).
 This option affects pass one only.
@@ -478,7 +482,12 @@ Possible settings are:
 Chinese/Taiwanese (for Windows only)
 .point 2:
 Korean (for Windows only)
+.point 3:
+Simplified Chinese (for Windows only)
 .endpoint
+.*
+.point &sw.zku8
+Unicode UTF-8 character support
 .*
 .point &sw.zm
 This option causes &wrccmdup to output a Microsoft/IBM format

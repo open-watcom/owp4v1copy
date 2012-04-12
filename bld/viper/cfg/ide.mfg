@@ -1302,12 +1302,13 @@ Tool WRC "Resource Compiler"
         RSwitch  0, o????, "OS/2", -bt=os2, ON
         RSwitch  0, r????, "RDOS", -bt=nt, ON
 :endsegment
-    RGroup "Double byte character support"
+    RGroup "Multi-byte character support"
         RSwitch  0, ?????, "Single byte characters only", , ON
         RSwitch  0, ?????, "Kanji", -zk0, OFF
         RSwitch  0, ?????, "Traditional Chinese", -zk1, OFF
-        RSwitch  0, ?????, "Simplified Chinese", -zk3, OFF
         RSwitch  0, ?????, "Korean", -zk2, OFF
+        RSwitch  0, ?????, "Simplified Chinese", -zk3, OFF
+        RSwitch  0, ?????, "Unicode UTF-8", -zku8, OFF
     VSwitch 1, wa???, "Macro definitions:", -d, , MULTI, REQ, "_AFXDLL"
     VSwitch 1, na???, "Macro definitions:", -d, , MULTI, REQ, "_AFXDLL WIN32 _WIN32 __NT__"
     VSwitch 1, no???, "Macro definitions:", -d, , MULTI, REQ, "_AFXDLL _UNICODE WIN32 _WIN32 __NT__"
@@ -1323,7 +1324,6 @@ Tool WRC "Resource Compiler"
     CSwitch 1, ?????, "Do not preprocess the file", -zn, OFF
     CSwitch 1, ?????, "Quiet operation", -q, ON
     CSwitch 1, ?????, "Output autodepend info", -ad, ON
-    CSwitch 1, r????, "UTF-8", -zu, ON
 
 Tool WRC2 "Resource Compiler (pass 2)"
   Family Resource

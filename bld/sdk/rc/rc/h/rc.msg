@@ -3,28 +3,28 @@ pick(   STR_WARNING,
         "警告!" )
 pick(   STR_ERROR,
         "Error!",
-        "エラ－!" )
+        "エラ‐!" )
 pick(   STR_FATAL_ERROR,
         "Fatal Error!",
-        "致命的エラ－!" )
+        "致命的エラ‐!" )
 pick(   STR_END_OF_FILE,
         "Unexpected end of file",
         "ファイルの終わりを検出しました" )
 pick(   STR_APP_NAME,
         "Open Watcom Resource Compiler Version 1.0\n",
-        "Open Watcom ウィンドウズ リソ－ス コンパイラ バ－ジョン 1.0\n" )
+        "Open Watcom ウィンドウズ リソ‐ス コンパイラ バ‐ジョン 1.0\n" )
 pick(   ERR_CANT_OPEN_FILE,
         "Unable to open file \"%s\": %s.",
-        "ファイルをオ－プン出来ません \"%s\": %s." )
+        "ファイルをオ‐プン出来ません \"%s\": %s." )
 pick(   ERR_RENAMEING_TMP_FILE,
         "Error renaming temporary file \"%s\" to \"%s\": %s.",
-        "テンポラリ ファイル \"%s\" の \"%s\"への変更エラ－です: %s." )
+        "テンポラリ ファイル \"%s\" の \"%s\"への変更エラ‐です: %s." )
 pick(   ERR_NOT_ICON_FILE,
         "\"%s\" is not a valid icon file.",
         "\"%s\" は無効なアイコンファイルです." )
 pick(   ERR_NOT_CURSOR_FILE,
         "\"%s\" is not a valid cursor file.",
-        "\"%s\" は無効なカ－ソルファイルです." )
+        "\"%s\" は無効なカ‐ソルファイルです." )
 pick(   ERR_NOT_BITMAP_FILE,
         "\"%s\" is not a valid bitmap file.",
         "\"%s\" は無効なビットマップファイルです." )
@@ -39,70 +39,70 @@ pick(   ERR_PE_HEADER_SIZE_CHANGE,
         "より大きなオブジェクト アラインメントが必要です. より大きなオブジェクト アラインメントを指定して再リンクしてください." )
 pick(   ERR_OLD_RESOURCE_OBJECT,
         "EXE contains old resources that cannot be removed.",
-        "EXE に削除出来ない古いリソ－スが含まれています.")
+        "EXE に削除出来ない古いリソ‐スが含まれています.")
 pick(   ERR_READING_EXE,
         "Error reading EXE file \"%s\": %s.",
-        "EXE ファイル \"%s\"の読み込みエラ－です: %s." )
+        "EXE ファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_UNEXPECTED_EOF,
         "Error reading file \"%s\": Unexpected end of file.",
-        "ファイル \"%s\"の読み込みエラ－です: ファイルの終わりを検出しました." )
+        "ファイル \"%s\"の読み込みエラ‐です: ファイルの終わりを検出しました." )
 pick(   ERR_WRITTING_FILE,
         "Error writing to \"%s\": %s.",
-        "\"%s\"への書き込みエラ－です: %s." )
+        "\"%s\"への書き込みエラ‐です: %s." )
 pick(   ERR_READING_ICON,
         "Error reading icon file \"%s\": %s.",
-        "アイコン ファイル \"%s\"の読み込みエラ－です: %s." )
+        "アイコン ファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_READING_CURSOR,
         "Error reading cursor file \"%s\": %s.",
-        "カ－ソル ファイル \"%s\"の読み込みエラ－です: %s." )
+        "カ‐ソル ファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_READING_BITMAP,
         "Error reading bitmap file \"%s\": %s.",
-        "ビットマップ ファイル \"%s\"の読み込みエラ－です: %s." )
+        "ビットマップ ファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_READING_FONT,
         "Error reading font file \"%s\": %s.",
-        "フォント ファイル \"%s\"の読み込みエラ－です: %s." )
+        "フォント ファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_READING_DATA,
         "Error reading data file \"%s\": %s.",
-        "デ－タ ファイル \"%s\"の読み込みエラ－です: %s." )
+        "デ‐タ ファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_READING_RES,
         "Error reading RES file \"%s\": %s.",
-        "RESファイル \"%s\"の読み込みエラ－です: %s." )
+        "RESファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_READING_TMP,
         "Error reading temporary file \"%s\": %s.",
-        "テンポラリ ファイル \"%s\"の読み込みエラ－です: %s." )
+        "テンポラリ ファイル \"%s\"の読み込みエラ‐です: %s." )
 pick(   ERR_WRITTING_TMP,
         "Error writing to temporary file \"%s\": %s.",
-        "テンポラリ ファイル \"%s\"の書き込みエラ－です: %s." )
+        "テンポラリ ファイル \"%s\"の書き込みエラ‐です: %s." )
 pick(   ERR_OPENING_TMP,
         "Unable to open temporary file \"%s\": %s.",
-        "テンポラリ ファイル \"%s\"をオ－プン出来ません: %s." )
+        "テンポラリ ファイル \"%s\"をオ‐プン出来ません: %s." )
 pick(   ERR_READING_FILE,
         "Error reading from file \"%s\": %s.",
-        "ファイル \"%s\"からの読み込みエラ－です: %s." )
+        "ファイル \"%s\"からの読み込みエラ‐です: %s." )
 pick(   ERR_BAD_RES_VER,
         "Unable to read RES file \"%s\": wrong version.",
-        "RES ファイル \"%s\"の読み込みエラ－です: バ－ジョンが異なります." )
+        "RES ファイル \"%s\"の読み込みエラ‐です: バ‐ジョンが異なります." )
 pick(   ERR_INVALID_RES,
         "\"%s\" is not a valid RES file.",
         "\"%s\" は無効な RES ファイルです." )
 pick(   ERR_INTERNAL,
         "Internal compiler error %d.",
-        "コンパイラ内部エラ－ %d." )
+        "コンパイラ内部エラ‐ %d." )
 pick(   ERR_WRITTING_RES_FILE,
         "Error writing resources to temporary file \"%s\": %s.",
-        "テンポラリ ファイル \"%s\"へのリソ－スの書き込みエラ－です: %s." )
+        "テンポラリ ファイル \"%s\"へのリソ‐スの書き込みエラ‐です: %s." )
 pick(   ERR_CLOSING_FILE,
         "Error while closing file \"%s\" or flushing buffers to it: %s.",
-        "ファイル \"%s\" のクロ－ズ又は バッファフラッシュ時のエラ－です: %s." )
+        "ファイル \"%s\" のクロ‐ズ又は バッファフラッシュ時のエラ‐です: %s." )
 pick(   ERR_CLOSING_TMP,
         "Error while closing temporary file \"%s\" or flushing buffers to it: %s.",
-        "テンポラリ ファイル \"%s\" のクロ－ズ又は バッファフラッシュ時のエラ－です: %s." )
+        "テンポラリ ファイル \"%s\" のクロ‐ズ又は バッファフラッシュ時のエラ‐です: %s." )
 pick(   ERR_NO_MSG,
         "",
         "" )
 pick(   ERR_NO_RCINCLUDES,
         "RCINCLUDE keyword not currently supported. Use #include.",
-        "RCINCLUDE キ－ワ－ドは現在サポ－トされていません. #includeを使用してください." )
+        "RCINCLUDE キ‐ワ‐ドは現在サポ‐トされていません. #includeを使用してください." )
 pick(   ERR_UNKNOWN_CHAR,
         "'%c' is not valid at this point",
         "'%c' は現時点では無意味です" )
@@ -129,32 +129,32 @@ pick(   ERR_OUT_OF_MEMORY,
         "メモリ範囲外です" )
 pick(   ERR_ACCEL_NO_TYPE,
         "No type given for accelerator %ld",
-        "アクセラレ－タ %ldの型がありません" )
+        "アクセラレ‐タ %ldの型がありません" )
 pick(   ERR_ACCEL_KEYWORD_IGNORED,
         "Keyword %s ignored for type ASCII accelerator %ld",
-        "ASCII型アクセラレ－タ %ld の %s キ－ワ－ドを無視します" )
+        "ASCII型アクセラレ‐タ %ld の %s キ‐ワ‐ドを無視します" )
 pick(   ERR_DUPLICATE_RESOURCE,
         "Duplicate resource: %s",
-        "リソ－スが重複しています: %s" )
+        "リソ‐スが重複しています: %s" )
 pick(   ERR_PARSER_INTERNAL,
         "Internal parser error.",
-        "内部解析エラ－." )
+        "内部解析エラ‐." )
 /* this message is unused */
 pick(   ERR_SYNTAX_INT,
         "",
         "" )
 pick(   ERR_SYNTAX_STR,
         "Syntax error near \"%s\"",
-        "\"%s\"付近に文法エラ－があります" )
+        "\"%s\"付近に文法エラ‐があります" )
 pick(   ERR_DUPLICATE_STRING_CONST,
         "%d is a duplicate string identifier.",
         "%d 文字列識別子が重複しています." )
 pick(   ERR_RAW_DATA_TOO_BIG,
         "Raw data item %lu is too big. Max %u",
-        "バイナリ デ－タ項目 %lu が最大値を越えています. 最大 %u" )
+        "バイナリ デ‐タ項目 %lu が最大値を越えています. 最大 %u" )
 pick(   ERR_RAW_DATA_TOO_SMALL,
         "Raw data item %ld is too small. Min %d",
-        "バイナリ デ－タ項目 %ld が小さ過ぎます. 最小 %d" )
+        "バイナリ デ‐タ項目 %ld が小さ過ぎます. 最小 %d" )
 pick(   ERR_FONT_NAME,
         "Font name must be a number.",
         "フォント名は番号でなければなりません." )
@@ -175,22 +175,22 @@ pick(   ERR_NOT_VALID_EXE,
         "\"%s\" は有効な EXE ファイルではありません." )
 pick(   ERR_NO_GANGLOAD,
         "Unable to produce fastload section.",
-        "ファストロ－ド セクションが作成できません." )
+        "ファストロ‐ド セクションが作成できません." )
 pick(   ERR_CANT_FIND_FILE,
         "Can't find file \"%s\".",
         "ファイルが見つかりません \"%s\"." )
 pick(   ERR_UNKNOWN_TARGET_OS,
         "Unknown target OS: '%s'.",
-        "未知のタ－ゲット OS: '%s'." )
+        "未知のタ‐ゲット OS: '%s'." )
 pick(   ERR_TEXT_FROM_CPP,
         "%s",
         "%s" )
 pick(   ERR_NT_KEYWORD,
         "Keyword \"%s\" is only valid for Win32",
-        "\"%s\" はWin32でのみ意味のあるキ－ワ－ドです" )
+        "\"%s\" はWin32でのみ意味のあるキ‐ワ‐ドです" )
 pick(   ERR_UNSUPPORTED,
         "Keyword \"%s\" not currently supported",
-        " \"%s\" は現在サポ－トされていないキ－ワ－ドです" )
+        " \"%s\" は現在サポ‐トされていないキ‐ワ‐ドです" )
 /* this is a place holder message, its text is embedded in the cannot be found */
 pick(   ERR_RCSTR_NOT_FOUND,
         "",
@@ -200,19 +200,19 @@ pick(   ERR_CANT_FIND_CHAR_FILE,
         "文字変換ファイル \"%s\" が見つかりません." )
 pick(   ERR_CANT_OPEN_CHAR_FILE,
         "Error opening character translation file \"%s\": %s.",
-        "文字変換ファイル \"%s\"のオ－プンエラ－です: %s." )
+        "文字変換ファイル \"%s\"のオ‐プンエラ‐です: %s." )
 pick(   ERR_READING_CHAR_FILE,
         "Error reading character translation file \"%s\": %s.",
-        "文字変換ファイル \"%s\" の読み込みエラ－です: %s." )
+        "文字変換ファイル \"%s\" の読み込みエラ‐です: %s." )
 pick(   ERR_BAD_CHAR_FILE,
         "\"%s\" is not a valid character translation file.",
         "\"%s\" は無効な文字変換ファイルです." )
 pick(   ERR_WRONG_CHAR_FILE_VER,
         "Unable to read character translation file \"%s\": wrong version.",
-        "\"%s\" 文字変換ファイルを読み込めません: バ－ジョンが異なります." )
+        "\"%s\" 文字変換ファイルを読み込めません: バ‐ジョンが異なります." )
 pick(   ERR_OPT_NOT_VALID_FOR_NT,
         "Option '%s' not valid for a Win32 .res file.",
-        "'%s' オプションは Win32用リソ－スファイルには無意味です." )
+        "'%s' オプションは Win32用リソ‐スファイルには無意味です." )
 pick(   ERR_LSTRING_IGNORED_FOR_WINDOWS,
         "L\"...\" construct is not valid for Windows.",
         "L\"...\" 構成はWindowsでは無意味です." )
@@ -448,11 +448,11 @@ pick(   USAGE_MSG_38,
         "                 3: Chinese (Simplified, CP 936)",
         "                 3: Chinese (Simplified, CP 936)" )
 pick(   USAGE_MSG_39,
+        "-zku8            Unicode UTF-8 char support",
+        "-zku8            Unicode UTF-8 char support" )
+pick(   USAGE_MSG_40,
         "-zm            - output Microsoft/IBM format .res files",
         "-zm            - output Microsoft/IBM format .res files" )
-pick(   USAGE_MSG_40,
-        "-zu            - strings are UTF-8 coded",
-        "-zu            - strings are UTF-8 coded" )
 pick(   USAGE_MSG_LAST,
         "-zn            - don't preprocess the file",
         "-zn            - don't preprocess the file" )

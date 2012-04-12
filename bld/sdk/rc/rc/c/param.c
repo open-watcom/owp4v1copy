@@ -444,7 +444,7 @@ static bool ScanOptionsArg( const char * arg )
         */
         case 'k':
             arg++;
-            switch( *arg ) {
+            switch( tolower( *arg ) ) {
             case '1':
                 SetDBRange( 0x81, 0xfe );
                 CmdLineParms.DBCharSupport = DB_TRADITIONAL_CHINESE;
@@ -464,7 +464,12 @@ static bool ScanOptionsArg( const char * arg )
                 SetDBRange( 0xe0, 0xfc );
                 CmdLineParms.DBCharSupport = DB_KANJI;
                 break;
-//          case 'u':
+            case 'u':
+                if( arg[1] == '8' ) {
+                    arg++;
+                    CmdLineParms.DBCharSupport = MB_UTF8;
+                    break;
+                }
                 //
                 // NYI - set up a new code page
                 //
@@ -474,9 +479,6 @@ static bool ScanOptionsArg( const char * arg )
                 contok = FALSE;
                 break;
             }
-            break;
-        case 'u':
-            CmdLineParms.Utf8Format = TRUE;
             break;
         default:
             RcError( ERR_UNKNOWN_MULT_OPTION, arg - 1 );
@@ -679,7 +681,6 @@ static void defaultParms( void )
     CmdLineParms.NoPreprocess = FALSE;
     CmdLineParms.GenAutoDep = FALSE;
     CmdLineParms.PreprocessOnly = FALSE;
-    CmdLineParms.Utf8Format = FALSE;
     CmdLineParms.ExtraResFiles = NULL;
     CmdLineParms.FindReplaceStrings = NULL;
     #ifdef __OSI__
@@ -726,13 +727,77 @@ int NativeDBStringToUnicode( int len, const char *str, char *buf ) {
 }
 #endif
 
+static int getcharUTF8( const char **p, uint_32 *c )
+{
+    int     len;
+    int     i;
+    uint_32 value;
+
+    value = *c;
+    if( (value & 0xE0) == 0xC0 ) {
+        len = 1;
+        value &= 0x1F;
+    } else if( (value & 0xF0) == 0xE0 ) {
+        len = 2;
+        value &= 0x0F;
+    } else if( (value & 0xF8) == 0xF0 ) {
+        len = 3;
+        value &= 0x07;
+    } else if( (value & 0xFC) == 0xF8 ) {
+        len = 4;
+        value &= 0x03;
+    } else if( (value & 0xFE) == 0xFC ) {
+        len = 5;
+        value &= 0x01;
+    } else {
+        return( 0 );
+    }
+    for( i = 0; i < len; ++i ) {
+        value = ( value << 6 ) + ( **p & 0x3F );
+        (*p)++;
+    }
+    *c = value;
+    return( len );
+}
+
+
+int UTF8StringToUnicode( int len, const char *str, char *buf )
+/************************************************************/
+{
+    int             ret;
+    unsigned        outlen;
+    uint_32         unicode;
+    int             i;
+
+    ret = 0;
+    if( len > 0 ) {
+        if( buf == NULL ) {
+            outlen = 0;
+        } else {
+            outlen = len;
+        }
+        for( i = 0; i < len; i++ ) {
+            unicode = (unsigned char)*str++;
+            i += getcharUTF8( &str, &unicode );
+            if( ret < outlen ) {
+                *buf++ = unicode;
+                *buf++ = unicode >> 8;
+                ret++;
+            }
+        }
+    }
+    return( ret * 2 );
+}
+
 static void getCodePage( void ) {
 /********************************/
 
     RcStatus            ret;
     char                path[ _MAX_PATH ];
 
-    if( CmdLineParms.CodePageFile[0] != '\0' ) {
+    if( CmdLineParms.DBCharSupport == MB_UTF8 ) {
+        ConvToUnicode = UTF8StringToUnicode;
+    } else if( CmdLineParms.CodePageFile[0] != '\0' ) {
         ret = OpenTable( CmdLineParms.CodePageFile, path );
         switch( ret ) {
         case RS_FILE_NOT_FOUND:
