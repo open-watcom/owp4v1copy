@@ -544,7 +544,7 @@ void AddItemToIncludePath( char *string, int len )
     int     len1;
 
     if( IncludePath == NULL ) {
-        IncludePath = AsmAlloc( strlen( string ) + 1 );
+        IncludePath = AsmAlloc( len + 1 );
         memcpy( IncludePath, string, len );
         IncludePath[len] = '\0';
     } else {
