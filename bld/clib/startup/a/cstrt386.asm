@@ -48,7 +48,7 @@
 include xinit.inc
 
 FLG_NO87    equ 1
-FLG_LFN     equ 100h
+FLG_LFN     equ 1
 
         assume  nothing
 
@@ -310,17 +310,15 @@ noparm: sub     al,al
         push    edi                     ; save pointer to pgm name
         push    edx                     ; save ds(stored in dx)
         mov     ds,es:word ptr _Envptr+4 ; get segment addr of environment area
-                                        ; WARNING! The __sys_init_387_emulator
-                                        ; routine (dosinite.asm) needs ebp to
-                                        ; be nonzero if and only if NO87 set
-        mov     ebp,FLG_LFN             ; assume 'no87=' and 'lfn=n' env. var. not present
+        mov     bl,0                    ; assume 'no87=' env. var. not present
+        mov     bh,FLG_LFN              ; assume 'lfn=n' env. var. not present
 L1:     mov     eax,[esi]               ; get first 4 characters
         or      eax,20202020h           ; map to lower case
         cmp     eax,37386f6eh           ; check for 'no87'
         jne     short L2                ; skip to next test if not 'no87'
         cmp     byte ptr 4[esi],'='     ; make sure next char is '='
         jne     short L4                ; no
-        or      ebp,FLG_NO87            ; - indicate 'no87' was present
+        or      bl,FLG_NO87             ; - indicate 'no87' was present
         jmp     L4
 L2:     cmp     eax,3d6e666ch           ; check for 'lfn='
         jne     short L4                ; skip if not 'lfn='
@@ -328,7 +326,7 @@ L2:     cmp     eax,3d6e666ch           ; check for 'lfn='
         or      al,20h                  ; map to lower case
         cmp     al,'n'                  ; make sure next char is 'n'
         jne     short L4                ; no
-        and     ebp,not FLG_LFN         ; indicate no 'lfn=n' present
+        and     bh,not FLG_LFN          ; indicate no 'lfn=n' present
 L4:     cmp     byte ptr [esi],0        ; end of string ?
         lodsb
         jne     L4                      ; until end of string
@@ -345,14 +343,12 @@ L5:     cmp     byte ptr [esi],0        ; end of pgm name ?
         jne     L5                      ; until end of pgm name
         pop     ds                      ; restore ds
         pop     esi                     ; restore address of pgm name
-        mov     ebx,esp                 ; end of stack in data segment
 
         assume  ds:DGROUP
-        mov     eax,ebp
-        and     ebp,FLG_NO87            ; only leave the NO87 bit in ebp
-        mov     __no87,al               ; set state of "NO87" enironment var
-        and     __uselfn,ah             ; set "LFN" support status
+        mov     __no87,bl               ; set state of "NO87" enironment var
+        and     __uselfn,bh             ; set "LFN" support status
         mov     _STACKLOW,edi           ; save low address of stack
+        mov     ebx,esp                 ; end of stack in data segment
         mov     _dynend,ebx             ; set top of dynamic memory area
 
         mov     ecx,offset DGROUP:_end  ; end of _BSS segment (start of STACK)
@@ -377,9 +373,9 @@ zerobss:mov     dl,cl                   ; save bottom 2 bits of count in edx
         and     al,0F0H
         mov     _LpCmdLine,eax          ; save command line address
         mov     _LpPgmName,esi          ; save program name address
+        sub     ebp,ebp                 ; ebp=0 indicate end of ebp chain
         mov     eax,0FFH                ; run all initalizers
         call    __InitRtns              ; call initializer routines
-        sub     ebp,ebp                 ; ebp=0 indicate end of ebp chain
         call    __CMain
 _cstart_ endp
 

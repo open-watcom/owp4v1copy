@@ -41,6 +41,7 @@ extrn   __hook387   : near
 extrn   __unhook387 : near
 
 _DATA segment dword public 'DATA'
+    extrn   __no87          : byte
     extrn   __8087          : byte
     extrn   __8087cw        : word
     extrn   "C",_Extender   : byte
@@ -69,8 +70,6 @@ MP  equ 02h
 EM  equ 04h
 ET  equ 10h
 
-;   ebp is not 0 if NO87 environment variable is present
-
 public  __sys_init_387_emulator
 __sys_init_387_emulator proc near
     push    es                          ; save some registers
@@ -81,11 +80,12 @@ __sys_init_387_emulator proc near
     push    eax                         ; get some stack space
     fnstcw  [esp]                       ; store control word in memory
     pop eax                             ; get CW into ax
+    mov al,__no87
     cmp ah,03h                          ; coprocessor is present
     _if ne                              ; if no coprocessor
-      inc   ebp                         ; - pretend NO87 was set
+      inc   al                          ; - pretend NO87 was set
     _endif                              ; endif
-    or  ebp,ebp                         ; if we want emulation
+    or  al,al                           ; if we want emulation
     _if ne                              ; then
       call  hook_in_emulator            ; - then hook in emulator
     _endif                              ; endif
