@@ -69,7 +69,7 @@ extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  cg_name         TmpVal(tmp_handle,cg_type);
 extern  cg_type         CmplxBaseType(cg_type);
 
-extern  unsigned_8      CGFlags;
+extern  cgflags_t       CGFlags;
 
 static  obj_ptr         WarpReturn;
 

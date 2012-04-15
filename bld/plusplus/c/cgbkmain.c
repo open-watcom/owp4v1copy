@@ -63,6 +63,7 @@
 #include "fmtsym.h"
 #include "floatsup.h"
 #include "rtti.h"
+#include "cgdllcli.h"
 
 #ifndef NDEBUG
 #include "pragdefn.h"
@@ -3346,69 +3347,75 @@ void CgBackEnd(                 // BACK-END CONTROLLER
     }
 #endif
     CtxSetContext( CTX_CG_FUNC );
-    cg_info = BEInitCg( GenSwitches, TargetSwitches, OptSize, CpuSwitches );
-    if( ! cg_info.success ) {
+    if( BEDLLLoad( NULL ) ) {
+        cg_info = BEInitCg( GenSwitches, TargetSwitches, OptSize, CpuSwitches );
+        if( ! cg_info.success ) {
+            CErr1( ERR_CODEGEN_CANT_INITIALIZE );
+            CSuicide();
+#ifndef NDEBUG
+        } else if( cg_info.version.revision != II_REVISION ) {
+            CFatal( "Incorrect Code Generator version" );
+#endif
+        } else {
+            ExitPointAcquire( cgback );
+            SegmentCgInit();
+            BEStart();
+            CgBackStatHandlesInit();
+            thisSym = AllocSymbol();
+            thisSym->id = SC_AUTO;
+            cdtorSym = AllocSymbol();
+            cdtorSym->id = SC_AUTO;
+            statics = NULL;
+            if( GenSwitches & DBG_DF ){
+                DwarfDebugInit();
+                DwarfDebugEmit();
+            }else{
+                SymbolicDebugInit();
+                SymbolicDebugEmit();
+            }
+#ifdef FASTCG
+            if( GenSwitches & NO_OPTIMIZATION ) {
+                extern void InitExpressCode(int,int);
+                InitExpressCode( SEG_CONST2, 1 );
+            }
+#endif
+//            MstabInit();
+            CgioWalkFiles( &process_virtual_file );
+            writeVirtualFile( data_file );
+//            MstabGenerate();
+            do {
+                CgCmdsGenerate();
+                ThrowRoGen();
+                BeGenTypeSignatures();
+                sig_thunk_genned = FALSE;
+                BeGenRttiInfo();
+                CgioWalkThunks( &process_thunk );
+            } while( sig_thunk_genned );
+            freeObjTables();
+            CgioWalkFiles( &CgioFreeFile );
+            if( GenSwitches & DBG_DF ){
+                DwarfDebugFini();
+            }else{
+                SymbolicDebugFini();
+            }
+            CtxSetContext( CTX_CG_OPT );
+            if( ErrCount != 0 ) {
+                BEAbort();
+            }
+            BEStop();
+            // BEStop() can generate some back handles that must be freed
+            CgBackFreeFileHandles();
+            StringWalk( &undefine_string_const );
+            CgBackStatHandlesFini();
+            BEFiniCg();
+            ExitPointRelease( cgback );
+            FreeSymbol( thisSym );
+            FreeSymbol( cdtorSym );
+        }
+        BEDLLUnload();
+    } else {
         CErr1( ERR_CODEGEN_CANT_INITIALIZE );
         CSuicide();
-#ifndef NDEBUG
-    } else if( cg_info.version.revision != II_REVISION ) {
-        CFatal( "Incorrect Code Generator version" );
-#endif
-    } else {
-        ExitPointAcquire( cgback );
-        SegmentCgInit();
-        BEStart();
-        CgBackStatHandlesInit();
-        thisSym = AllocSymbol();
-        thisSym->id = SC_AUTO;
-        cdtorSym = AllocSymbol();
-        cdtorSym->id = SC_AUTO;
-        statics = NULL;
-        if( GenSwitches & DBG_DF ){
-            DwarfDebugInit();
-            DwarfDebugEmit();
-        }else{
-            SymbolicDebugInit();
-            SymbolicDebugEmit();
-        }
-#ifdef FASTCG
-        if( GenSwitches & NO_OPTIMIZATION ) {
-            extern void InitExpressCode(int,int);
-            InitExpressCode( SEG_CONST2, 1 );
-        }
-#endif
-//      MstabInit();
-        CgioWalkFiles( &process_virtual_file );
-        writeVirtualFile( data_file );
-//      MstabGenerate();
-        do {
-            CgCmdsGenerate();
-            ThrowRoGen();
-            BeGenTypeSignatures();
-            sig_thunk_genned = FALSE;
-            BeGenRttiInfo();
-            CgioWalkThunks( &process_thunk );
-        } while( sig_thunk_genned );
-        freeObjTables();
-        CgioWalkFiles( &CgioFreeFile );
-        if( GenSwitches & DBG_DF ){
-            DwarfDebugFini();
-        }else{
-            SymbolicDebugFini();
-        }
-        CtxSetContext( CTX_CG_OPT );
-        if( ErrCount != 0 ) {
-            BEAbort();
-        }
-        BEStop();
-        // BEStop() can generate some back handles that must be freed
-        CgBackFreeFileHandles();
-        StringWalk( &undefine_string_const );
-        CgBackStatHandlesFini();
-        BEFiniCg();
-        ExitPointRelease( cgback );
-        FreeSymbol( thisSym );
-        FreeSymbol( cdtorSym );
     }
 }
 

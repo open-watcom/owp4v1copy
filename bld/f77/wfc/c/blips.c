@@ -41,7 +41,7 @@
 
 #include <string.h>
 
-extern  unsigned_8      CGFlags;
+extern  cgflags_t       CGFlags;
 
 
 void    SendBlip(void) {

@@ -61,7 +61,7 @@ extern  aux_info        IFInfo;
 extern  aux_info        RtVarInfo;
 extern  aux_info        RtStopInfo;
 extern  aux_info        CoRtnInfo;
-extern  unsigned_8      CGFlags;
+extern  cgflags_t       CGFlags;
 
 typedef struct rt_rtn {
     char        __FAR *name;

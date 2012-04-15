@@ -95,7 +95,7 @@ extern  void            FiniEMS(void);
 
 extern  global_seg      *CurrGSeg;
 extern  global_seg      *GlobalSeg;
-extern  unsigned_8      CGFlags;
+extern  cgflags_t       CGFlags;
 extern  aux_info        FortranInfo;
 extern  aux_info        DefaultInfo;
 extern  character_set   CharSetInfo;

@@ -62,7 +62,7 @@ extern  aux_info        *AuxLookupName( char *, int );
 
 #if _CPU == 386 || _CPU == 8086
 
-extern  unsigned_8      CGFlags;
+extern  cgflags_t       CGFlags;
 
 #if _CPU == 386
 

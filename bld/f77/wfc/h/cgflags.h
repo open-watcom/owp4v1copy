@@ -30,12 +30,14 @@
 ****************************************************************************/
 
 
-#define CG_INIT                 0x01    // BEInit() succeeded
-#define CG_BLIPS                0x02    // "blips" on the screen
-#define CG_FATAL                0x04    // fata error issued by code generator
-#define CG_MEM_LOW_ISSUED       0x08    // "low on memory" message isuued
-#define CG_STARTED              0x10    // code generator is started
-#define CG_USED_80x87           0x20    // code generated used 80x87
-#define CG_HAS_PROGRAM          0x40    // file contains PROGRAM
-#define CG_FP_MODEL_80x87       0x80    // floating-point model generates 80x87
-                                        // instructions
+typedef enum {
+    CG_LOADED           = 0x0001,    // BEDLLLoad() succeeded
+    CG_INIT             = 0x0002,    // BEInit() succeeded
+    CG_BLIPS            = 0x0004,    // "blips" on the screen
+    CG_FATAL            = 0x0008,    // fata error issued by code generator
+    CG_MEM_LOW_ISSUED   = 0x0010,    // "low on memory" message isuued
+    CG_STARTED          = 0x0020,    // code generator is started
+    CG_USED_80x87       = 0x0040,    // code generated used 80x87
+    CG_HAS_PROGRAM      = 0x0080,    // file contains PROGRAM
+    CG_FP_MODEL_80x87   = 0x0100,    // floating-point model generates 80x87 instructions
+} cgflags_t;

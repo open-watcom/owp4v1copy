@@ -57,7 +57,7 @@ extern  void            DefaultLibInfo(void);
 extern  void            SubAuxInit(void);
 extern  void            SubAuxFini(void);
 
-extern  unsigned_8      CGFlags;
+extern  cgflags_t       CGFlags;
 
 
 void            TDProgInit( void ) {
