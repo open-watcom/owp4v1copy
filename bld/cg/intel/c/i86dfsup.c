@@ -53,7 +53,6 @@
 #include "dw.h"
 #include "dwarf.h"
 #include "dfdbg.h"
-#define BY_CG
 #include "cgprotos.h"
 
 #if _TARGET & _TARG_IAPX86

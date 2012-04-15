@@ -38,8 +38,6 @@
 #include "cfloat.h"
 #include "cgaux.h"
 #include "cgdll.h"
-
-#define BY_CG
 #include "cgprotos.h"
 #include "feprotos.h"
 

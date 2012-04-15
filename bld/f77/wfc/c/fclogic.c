@@ -40,7 +40,6 @@
 #include "emitobj.h"
 #include "fctypes.h"
 #include "cgswitch.h"
-#define  BY_CLI
 #include "cgprotos.h"
 
 

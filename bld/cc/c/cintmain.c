@@ -40,7 +40,6 @@
   #include "ostype.h"
 #endif
 #include "cgdefs.h"
-#define BY_CLI
 #include "feprotos.h"
 
 void ResetHandlers( void )

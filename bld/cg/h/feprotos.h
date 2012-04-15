@@ -50,7 +50,7 @@ typedef struct fe_interface {
 
 extern fe_interface *FEFuncTable;
 
-#ifndef BY_CLI
+#ifdef BY_CG
 #include "feprotos.gh"
 #endif
 

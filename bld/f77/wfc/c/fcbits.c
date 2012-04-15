@@ -38,7 +38,6 @@
 #include "cgdefs.h"
 #include "cg.h"
 #include "cgswitch.h"
-#define  BY_CLI
 #include "cgprotos.h"
 #include "emitobj.h"
 #include "fctypes.h"

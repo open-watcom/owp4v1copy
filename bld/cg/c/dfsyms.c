@@ -55,7 +55,6 @@
 #include "dwarf.h"
 #include "dfdbg.h"
 #include "dbcue.h"
-#define BY_CG
 #include "cgprotos.h"
 #include "feprotos.h"
 

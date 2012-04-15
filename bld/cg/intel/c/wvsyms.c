@@ -47,7 +47,6 @@
 #include "types.h"
 #include "dbgstrct.h"
 #include "wvdbg.h"
-#define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
 

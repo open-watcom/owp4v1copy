@@ -43,7 +43,6 @@
 #include "zoiks.h"
 #include "cvdbg.h"
 #include "dbgstrct.h"
-#define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
 

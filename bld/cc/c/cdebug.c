@@ -33,7 +33,6 @@
 #include "standard.h"
 #include "cgdefs.h"
 #include "cgswitch.h"
-#define BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
 #include "cgen.h"

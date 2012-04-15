@@ -37,7 +37,6 @@
 #include "standard.h"
 #include "cgaux.h"
 #include "langenv.h"
-#define BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
 

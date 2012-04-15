@@ -47,7 +47,6 @@
 #include "dbgstrct.h"
 #include "dbcue.h"
 #include "makeins.h"
-#define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
 #ifndef NDEBUG

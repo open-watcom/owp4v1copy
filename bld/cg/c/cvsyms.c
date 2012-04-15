@@ -51,7 +51,6 @@
 #include <setjmp.h>
 #include <stdlib.h>
 #include "cvdbg.h"
-#define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
 

@@ -40,7 +40,6 @@
 #include "cgdefs.h"
 #include "cgmisc.h"
 #include "cgdllcli.h"
-#define BY_CLI
 #include "feprotos.h"
 
 extern  void    SetNoCurrInc( void ); // no curr inc

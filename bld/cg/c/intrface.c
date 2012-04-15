@@ -46,8 +46,6 @@
 #include "zoiks.h"
 #include "cgaux.h"
 #include "types.h"
-
-#define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
 

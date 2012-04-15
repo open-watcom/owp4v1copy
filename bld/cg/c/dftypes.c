@@ -47,7 +47,6 @@
 #include <string.h>
 #include "dw.h"
 #include "dwarf.h"
-#define BY_CG
 #include "cgprotos.h"
 
 extern  byte            *Copy(void*,void*,uint);

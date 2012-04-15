@@ -38,6 +38,8 @@
 #undef IGNORE
 #endif
 
+#undef BY_CG
+
 #include "standard.h"
 #include "coderep.h"
 #include "targsys.h"
@@ -46,7 +48,6 @@
 #include "cgmisc.h"
 #include "cgdllcli.h"
 
-#define BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
 

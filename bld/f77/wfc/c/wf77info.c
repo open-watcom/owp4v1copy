@@ -63,7 +63,6 @@
 
 #include "cg.h"
 #include "cgswitch.h"
-#define  BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
 

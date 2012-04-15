@@ -35,7 +35,6 @@
 #include "cgswitch.h"
 #include "pragdefn.h"
 #include "cgdllcli.h"
-#define BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
 #include "cgen.h"

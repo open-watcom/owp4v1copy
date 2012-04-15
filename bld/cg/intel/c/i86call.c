@@ -45,7 +45,6 @@
 #include "zoiks.h"
 #include "makeins.h"
 #include "display.h"
-#define BY_CG
 #include "cgprotos.h"
 
 extern  label_handle    AskForNewLabel(void);

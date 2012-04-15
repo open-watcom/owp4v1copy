@@ -43,7 +43,6 @@
 #include "cfloat.h"
 #include "targsys.h"
 #include "cgaux.h"
-#define BY_CG
 #include "feprotos.h"
 #include "cgprotos.h"
 #ifndef NDEBUG

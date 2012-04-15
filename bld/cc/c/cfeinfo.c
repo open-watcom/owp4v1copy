@@ -42,7 +42,6 @@
 #include <sys/stat.h>
 #include "autodept.h"
 #include "langenv.h"
-#define BY_CLI
 #include "feprotos.h"
 
 #define TRUNC_SYMBOL_HASH_LEN        4

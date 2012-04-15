@@ -41,7 +41,6 @@
 #include "fcodes.h"
 #include "emitobj.h"
 #include "cgswitch.h"
-#define  BY_CLI
 #include "cgprotos.h"
 
 
