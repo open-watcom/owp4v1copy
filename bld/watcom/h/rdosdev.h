@@ -534,8 +534,8 @@ void RdosFreePhysical(long ads);
 
 void RdosRegisterSwapProc(__rdos_swap_callback *callb_proc);
 
-void RdosStartTimer(    int sel_id, 
-                        unsigned long expire_msb, 
+void RdosStartTimer(    int sel_id,
+                        unsigned long expire_msb,
                         unsigned long expire_lsb,
                         __rdos_timer_callback *callb_proc,
                         int callb_sel);
@@ -572,16 +572,16 @@ void RdosLockScheduler();
 void RdosUnlockScheduler();
 
 void RdosCreateKernelThread(
-            int prio, 
-            int stack, 
-            __rdos_thread_callback *startup, 
+            int prio,
+            int stack,
+            __rdos_thread_callback *startup,
             const char *name,
             void *parm);
 
 void RdosCreateKernelProcess(
-            int prio, 
-            int stack, 
-            __rdos_thread_callback *startup, 
+            int prio,
+            int stack,
+            __rdos_thread_callback *startup,
             const char *name,
             void *parm);
 
@@ -627,7 +627,7 @@ void RdosAllocateFixedFocusMem(int size, int local_sel, int focus_sel);
 
 void RdosRegisterNetClass(char class_id, int ads_size, void *broadcast_ads);
 int RdosRegisterNetProtocol(int ads_size, short int packet_type, void *my_ads, __rdos_net_prot_callback *packet_callb);
-int RdosRegisterNetDriver(char class_id, int max_size, struct TNetDriverTable *table, const char *name); 
+int RdosRegisterNetDriver(char class_id, int max_size, struct TNetDriverTable *table, const char *name);
 
 void RdosNetBroadcast(__rdos_net_broadcast_callback *callb_proc);
 void RdosNetReceived(int prot_handle);
@@ -653,12 +653,12 @@ int RdosInstallDisc(int disc_handle, int read_ahead, int *disc_nr);
 void RdosRegisterDiscChange(__rdos_disc_change_callback *callb_proc);
 void RdosStartDisc(int disc_sel);
 void RdosStopDisc(int disc_sel);
-void RdosSetDiscParam(  int disc_sel, 
-                        int bytes_per_sector, 
+void RdosSetDiscParam(  int disc_sel,
+                        int bytes_per_sector,
                         int sectors_per_unit,
                         int units,
                         int bios_sectors_per_cyl,
-                        int bios_heads); 
+                        int bios_heads);
 
 void RdosWaitForDiscRequest(int disc_sel);
 long RdosGetDiscRequest(int disc_sel);
@@ -871,7 +871,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosSelectorToPointer = \
     "mov dx,bx" \
-    "xor eax,eax" \    
+    "xor eax,eax" \
     parm [ebx] \
     value [dx eax];
 
@@ -949,31 +949,31 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosCreateCallGateSelector = \
     "push ds" \
-    "push ax" \
-    "mov ax,cs" \
-    "mov ds,ax" \
+    "push eax" \
+    "mov eax,cs" \
+    "mov ds,eax" \
+    "pop eax" \
     OsGate_create_call_gate_sel32  \
-    "pop ax" \
     "pop ds" \
     parm [ebx] [esi] [ecx];
 
-#pragma aux RdosCreateCallGateSelector = \
+#pragma aux RdosCreateIntGateSelector = \
     "push ds" \
-    "push ax" \
-    "mov ax,cs" \
-    "mov ds,ax" \
-    OsGate_create_call_gate_sel32  \
-    "pop ax" \
+    "push eax" \
+    "mov eax,cs" \
+    "mov ds,eax" \
+    "pop eax" \
+    OsGate_setup_int_gate  \
     "pop ds" \
     parm [eax] [ebx] [esi];
 
 #pragma aux RdosCreateTrapGateSelector = \
     "push ds" \
-    "push ax" \
-    "mov ax,cs" \
-    "mov ds,ax" \
-    OsGate_create_call_gate_sel32  \
-    "pop ax" \
+    "push eax" \
+    "mov eax,cs" \
+    "mov ds,eax" \
+    "pop eax" \
+    OsGate_setup_trap_gate  \
     "pop ds" \
     parm [eax] [ebx] [esi];
 
@@ -1083,14 +1083,14 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 #pragma aux RdosFreeMem = \
     "push eax" \
     "push es" \
-    "mov es,bx" \
+    "mov es,ebx" \
     UserGate_free_mem  \
     "pop eax" \
     "verr ax" \
     "jz short es_load" \
-    "xor ax,ax" \
+    "xor eax,eax" \
     "es_load: " \
-    "mov es,ax" \
+    "mov es,eax" \
     "pop eax" \
     parm [ebx];
 
@@ -1186,7 +1186,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosStartCore = \
     "push fs" \
-    "mov fs,bx" \
+    "mov fs,ebx" \
     OsGate_start_core  \
     "pop fs" \
     parm [ebx];
@@ -1196,37 +1196,37 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosSendNmi = \
     "push fs" \
-    "mov fs,bx" \
+    "mov fs,ebx" \
     OsGate_send_nmi  \
     "pop fs" \
     parm [ebx];
 
 #pragma aux RdosSendInt = \
     "push fs" \
-    "mov fs,bx" \
+    "mov fs,ebx" \
     OsGate_send_int  \
     "pop fs" \
     parm [ebx] [eax];
 
 #pragma aux RdosLockScheduler = \
-    OsGate_lock_task; 
+    OsGate_lock_task;
 
 #pragma aux RdosUnlockScheduler = \
-    OsGate_unlock_task; 
+    OsGate_unlock_task;
 
 #pragma aux RdosClearSignal = \
-    OsGate_clear_signal; 
+    OsGate_clear_signal;
 
 #pragma aux RdosSignal = \
     OsGate_signal \
-    parm [ebx]; 
+    parm [ebx];
 
 #pragma aux RdosWaitForSignal = \
-    OsGate_wait_for_signal; 
+    OsGate_wait_for_signal;
 
 #pragma aux RdosWaitForSignalWithTimeout = \
     OsGate_wait_for_signal_timeout \
-    parm [edx] [eax]; 
+    parm [edx] [eax];
 
 #pragma aux RdosAddWait = \
     "push es" \
@@ -1245,11 +1245,11 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosInitSpinlock = \
     "mov word ptr es:[edi],0" \
-    parm [es edi]; 
+    parm [es edi];
 
 #pragma aux RdosRequestSpinlock = \
     "pushf" \
-    "rs_lock: " \    
+    "rs_lock: " \
     "mov ax,es:[edi]" \
     "or ax,ax" \
     "je short rs_get" \
@@ -1272,12 +1272,12 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     "push ax" \
     "mov word ptr es:[edi],0" \
     "popf" \
-    parm [es edi] [ax]; 
+    parm [es edi] [ax];
 
 #pragma aux RdosInitKernelSection = \
     "mov dword ptr es:[edi],0" \
     "mov word ptr es:[edi+4],0" \
-    parm [es edi]; 
+    parm [es edi];
 
 #pragma aux RdosEnterKernelSection = \
     " lock sub word ptr es:[edi],1" \
@@ -1291,7 +1291,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     " pop esi" \
     " pop ds" \
     "enter_done: " \
-    parm [es edi]; 
+    parm [es edi];
 
 #pragma aux RdosLeaveKernelSection = \
     " lock add word ptr es:[edi],1" \
@@ -1305,7 +1305,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     " pop esi" \
     " pop ds" \
     "leave_done: " \
-    parm [es edi]; 
+    parm [es edi];
 
 #pragma aux RdosCondEnterKernelSection = \
     " lock sub word ptr es:[edi],1" \
@@ -1464,7 +1464,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosFreeHandle = \
     "push ds" \
-    "mov ds,dx" \
+    "mov ds,edx" \
     OsGate_free_handle \
     "pop ds" \
     parm [dx ebx];
@@ -1518,14 +1518,14 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosRegisterNetClass = \
     "push ds" \
-    "mov ds,dx" \
+    "mov ds,edx" \
     OsGate_register_net_class \
     "pop ds" \
     parm [al] [ecx] [dx esi];
 
 #pragma aux RdosRegisterNetProtocol = \
     "push ds" \
-    "mov ds,bx" \
+    "mov ds,ebx" \
     OsGate_register_net_protocol \
     "pop ds" \
     parm [ecx] [dx] [bx esi] [es edi] \
@@ -1533,7 +1533,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosRegisterNetDriver = \
     "push ds" \
-    "mov ds,dx" \
+    "mov ds,edx" \
     OsGate_register_net_protocol \
     "pop ds" \
     parm [al] [ecx] [dx esi] [es edi] \
@@ -1553,7 +1553,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosCreateIpHeader = \
     "push ds" \
-    "mov ds,bx" \
+    "mov ds,ebx" \
     OsGate_create_ip_header \
     "pop ds" \
     parm [al] [ah] [ecx] [edx] [bx esi] \
@@ -1565,7 +1565,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosCreateBroadcastIp = \
     "push ds" \
-    "mov ds,bx" \
+    "mov ds,ebx" \
     OsGate_create_broadcast_ip \
     "pop ds" \
     parm [al] [ah] [ecx] [fs] [bx esi] \
@@ -1594,7 +1594,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosGetHostTimeout = \
     "push ds" \
-    "mov ds,bx" \
+    "mov ds,ebx" \
     OsGate_get_host_timeout \
     "pop ds" \
     parm [ebx] \
@@ -1602,7 +1602,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosUpdateRoundTripTime = \
     "push ds" \
-    "mov ds,bx" \
+    "mov ds,ebx" \
     OsGate_update_round_trip_time \
     "pop ds" \
     parm [ebx] [eax];
@@ -1791,7 +1791,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosRegisterFileSystem = \
     "push ds" \
-    "mov ds,dx" \
+    "mov ds,edx" \
     OsGate_register_file_system \
     "pop ds" \
     parm [dx esi] [es edi];
@@ -1806,7 +1806,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosIsFileSystemAvailable = \
     OsGate_is_file_system_available \
-    CarryToBool \        
+    CarryToBool \
     parm [es edi] \
     value [eax];
 
@@ -1846,7 +1846,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosGetFileInfo = \
     OsGate_get_file_info \
-    CarryToBool \        
+    CarryToBool \
     "mov es:[edi],cl" \
     "mov fs:[esi],ch" \
     "movzx eax,ax" \
@@ -1999,13 +1999,13 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosIsUsbReqStarted = \
     OsGate_is_usb_req_started \
-    CarryToBool \        
+    CarryToBool \
     parm [ebx] \
     value [eax];
 
 #pragma aux RdosIsUsbReqReady = \
     OsGate_is_usb_req_ready \
-    CarryToBool \        
+    CarryToBool \
     parm [ebx] \
     value [eax];
 
@@ -2057,8 +2057,8 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     "mov ds,eax" \
     "mov es,edx" \
     OsGate_send_audio_out \
-    "pop es" \    
-    "pop ds" \    
+    "pop es" \
+    "pop ds" \
     parm [eax] [edx] [ecx];
 
 #ifdef __cplusplus
