@@ -126,12 +126,12 @@ typedef struct _d16regs {
 
 #define D16_PACKAGES_DEFINED    /* Avoid package.h inclusion */
 
-typedef unsigned long ACTION_RETURN;
-typedef ACTION_RETURN (FarPtr ACTION)();
+typedef unsigned long   ACTION_RETURN;
+typedef ACTION_RETURN   CDECL_FAR16 ACTION();
 
 typedef struct action_pack {
     char FP16   action_name;
-    ACTION FP16 action;
+    ACTION      *action;
 } ACTION_PACK;
 
 typedef struct package {
@@ -191,10 +191,10 @@ typedef /* _Packed */ struct {
     USHORT     delay_286;       /* 286 switch delay */
     USHORT     delay_386;       /* 386 switch delay */
     SHORT      switch_control;  /* Switch flags - see below */
-    CHAR FP16  (_cdecl FP16 D16MStkP)();    /* D16MoveStack routine */
-    USHORT     (_cdecl FP16 D16ToRMP)();    /* D16ToReal routine */
-    SHORT      (_cdecl FP16 D16ToPMP)();    /* D16ToProtected (real ptr) */
-    SHORT      (_cdecl FP16 D16rmInP)(int, D16REGS FP16, D16REGS FP16);
+    CHAR FP16  (CDECL_FP16 D16MStkP)();    /* D16MoveStack routine */
+    USHORT     (CDECL_FP16 D16ToRMP)();    /* D16ToReal routine */
+    SHORT      (CDECL_FP16 D16ToPMP)();    /* D16ToProtected (real ptr) */
+    SHORT      (CDECL_FP16 D16rmInP)(int, D16REGS FP16, D16REGS FP16);
                                             /* D16rmInterrupt routine */
     USHORT     bannerp;         /* Banner display flag */
     SELECTOR   D16rdata;        /* Real mode data segment */
@@ -230,7 +230,7 @@ typedef /* _Packed */ struct {
 #define D16misc_AT_compat   0x01    /* IBM PC/AT compatible system */
 #define D16misc_extra_mem   0x02    /* Extra memory just under 16MB used */
 #define D16misc_pluto       0x04    /* Plutonium kernel */
-#define D16misc_DVX	        0x80    /* DesqView/X */
+#define D16misc_DVX         0x80    /* DesqView/X */
 
 /* D16INFO.switch_control bits */
 #define SwCtrl_A20          0x01    /* Disable A20 on 386s in real mode */
@@ -286,16 +286,16 @@ extern "C" {
 
 #undef  FP_SEG
 #undef  FP_OFF
-#define FP_SEG(p)	(*((USHORT FP16) &(p) + 1))
-#define FP_OFF(p)	(*(USHORT FP16) &(p))
+#define FP_SEG(p)   (*((USHORT FP16) &(p) + 1))
+#define FP_OFF(p)   (*(USHORT FP16) &(p))
 
-#define NULL_PTR	((void *)0)
-#define NULL_SEGREG	0
+#define NULL_PTR    ((void *)0)
+#define NULL_SEGREG 0
 
-#define acc_ref_bit     1   /* Descriptor referenced bit */
+#define acc_ref_bit 1   /* Descriptor referenced bit */
 
-#define RSIAPI	__cdecl __loadds __far
-#define RSIRTN	__cdecl __far
+#define RSIAPI      __cdecl __loadds __far
+#define RSIRTN      __cdecl __far
 
 #ifdef KERNEL
 extern int __cdecl _intflag( int );
