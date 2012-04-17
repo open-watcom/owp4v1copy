@@ -353,11 +353,3 @@ IDEBool IDEDLL_EXPORT IDEPassInitInfo( IDEDllHdl hdl, IDEInitInfo *info )
     }
     return( FALSE );
 }
-
-#ifdef CAUSEWAY
-void main( void )
-{
-    // Causeway DLL initialization
-}
-#endif
-

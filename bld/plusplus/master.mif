@@ -293,7 +293,6 @@ dll.lnk : $(__MAKEFILES__)
 !endif
     @for %i in ($(comp_objs_dll)) do @%append $@ file %i
     @for %i in ($(xlibs)) do @%append $@ library %i
-    @%append $@ reference __DLLstart_
 !ifeq release 0
     @%append $@ $(cg_debug_libs)
 !else
