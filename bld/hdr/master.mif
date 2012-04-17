@@ -15,10 +15,6 @@ csplice = wsplice -i.. $($(system)_options) $(options_c_$^&) ../common.sp $[@ $^
 .EXTENSIONS
 .EXTENSIONS : . .h .hpp .cnv .mh .mhp
 
-#
-# Handle C++ and cname style headers through .default command.
-#
-
 all : $($(system)_files) .symbolic
     @%null
 
@@ -38,6 +34,9 @@ qnx_path   = ../quantum
 .mh.cnv:
         $(splice)
 
+#
+# Handle C++ and cname style headers (files without extension)
+#
 .mh.:
         $(psplice)
 
@@ -49,7 +48,7 @@ sys/time.h : ../quantum/sys_time.mh $(packll)
         $(splice)
 !endif
 !ifeq system linux
-sys/time.h : linux/sys_time.mh ../crwat.sp ../readonly.sp $(cplus) $(packlnxk)
+sys/time.h : sys_time.mh ../crwatcnt.sp ../readonly.sp $(cplus) $(packlnxk)
         $(splice)
 !endif
 #
@@ -57,6 +56,9 @@ sys/time.h : linux/sys_time.mh ../crwat.sp ../readonly.sp $(cplus) $(packlnxk)
 #
 !ifeq system dos
 sys/utime.h : dos/sys_utim.mh ../crwat.sp ../readonly.sp
+        $(splice)
+
+sys/time.h : sys_time.mh ../crwatcnt.sp ../readonly.sp $(cplus) $(packll)
         $(splice)
 !endif
 

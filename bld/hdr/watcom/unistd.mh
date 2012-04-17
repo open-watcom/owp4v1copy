@@ -15,9 +15,7 @@
  #include <io.h>
 #endif
 :elsesegment
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
+:include systypes.sp
 :endsegment
 
 :include cpluspro.sp
@@ -28,9 +26,7 @@
 #endif
 
 :endsegment
-:include wchar_t.sp
-
-:segment !DOS
+:segment QNX | LINUX
 :include null.sp
 
 /* Symbolic constants for the access() function */
@@ -55,7 +51,6 @@
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
 
-:segment QNX | LINUX
 /* Compile-time Symbolic Constants for Portability Specifications */
 
 #undef  _POSIX_JOB_CONTROL              /* no job control                   */
@@ -97,76 +92,61 @@
 #define _PC_DOS_SHARE           10  /* test for dos share support   */
 #define _PC_DOS_LOCKS           11  /* test for dos locking support */
 
-:include posixext.sp
-
-_WCRTDATA extern int    optind;     /*  index of current option being scanned */
-_WCRTDATA extern char   *optarg;    /*  points to optional argument */
-_WCRTDATA extern int    opterr;     /*  print|don't print error message */
-_WCRTDATA extern int    optopt;     /*  offending letter when error detected */
-
 /* Symbolic constants for confstr */
 
 #define _CS_PATH            1
-
-:include extepi.sp
-:endsegment
 
 /*
  *  POSIX 1003.1 Prototypes
  */
 
-:segment QNX | LINUX
 :include unixext.sp
 _WCRTLINK extern void   _exit( int __status );
 :include extepi.sp
-:endsegment
 
 _WCRTLINK extern int    access( const char *__path, int __mode );
 :segment QNX
 #if defined(__386__)
 :endsegment
-:segment QNX | LINUX
 _WCRTLINK extern int    brk(void *endds);
 _WCRTLINK extern void   _WCNEAR *sbrk(int incr);
-:endsegment
 :segment QNX
 #endif
 :endsegment
-_WCRTLINK extern int    chdir( const char *__path );
 _WCRTLINK extern pid_t  clone( int __flags, void *__child_stack );
 _WCRTLINK extern int    close( int __fildes );
 _WCRTLINK extern int    dup( int __fildes );
-_WCRTLINK extern char   *getcwd( char *__buf, size_t __size );
-_WCRTLINK extern char   *_getcwd( char *__buf, size_t __size );
-_WCRTLINK extern pid_t  getpid( void );
 _WCRTLINK extern int    isatty( int __fildes );
 _WCRTLINK extern off_t  lseek( int __fildes, off_t __offset, int __whence );
 _WCRTLINK extern ssize_t read( int __fildes, void *__buffer, size_t __len );
-_WCRTLINK extern int    rmdir( const char *__path );
-:segment QNX | LINUX
 #if !(defined(SYSV) || defined(BSD) || defined(XENIX) || defined(_UNIX_H_INCLUDED))
-:endsegment
 _WCRTLINK extern int    setmode( int __handle, int __mode );
-:segment QNX | LINUX
 #endif
-:endsegment
-_WCRTLINK extern unsigned int sleep( unsigned int __seconds );
 _WCRTLINK extern int    unlink( const char *__path );
 _WCRTLINK extern ssize_t write( int __fildes, const void *__buf, size_t __len );
-:segment QNX | LINUX
 _WCRTLINK extern unsigned alarm( unsigned int __seconds );
 _WCRTLINK extern int    chown( const char *__path, uid_t __owner, gid_t __group );
+:segment LINUX
+_WCRTLINK extern int    lchown( const char *__path, uid_t __owner, gid_t __group );
+:endsegment
 _WCRTLINK extern int    chroot(const char *__path);
 _WCRTLINK extern int    dup2( int __fildes, int __fildes2 );
 _WCRTLINK extern int    fchown( int __fildes, uid_t __owner, gid_t __group );
 _WCRTLINK extern int    fdatasync( int __fildes );
-_WCRTLINK extern int    fsync( int __fildes );
 _WCRTLINK extern pid_t  fork( void );
+:segment LINUX
+#if defined( __386__ )
+_WCRTLINK extern pid_t  vfork( void );
+#pragma aux vfork modify [edx];
+#endif
+:endsegment
 _WCRTLINK extern long   fpathconf( int __fildes, int __name );
+_WCRTLINK extern int    fsync( int __filedes );
 _WCRTLINK extern gid_t  getegid( void );
 _WCRTLINK extern uid_t  geteuid( void );
 _WCRTLINK extern gid_t  getgid( void );
 _WCRTLINK extern int    getgroups( int __gidsetsize, gid_t __grouplist[] );
+_WCRTLINK extern int    gethostname( char *__name, size_t __len );
 _WCRTLINK extern char   *getlogin( void );
 _WCRTLINK extern pid_t  getpgrp( void );
 _WCRTLINK extern pid_t  getppid( void );
@@ -191,7 +171,6 @@ _WCRTLINK extern long   sysconf( int __name );
 _WCRTLINK extern pid_t  tcgetpgrp( int __fildes );
 _WCRTLINK extern int    tcsetpgrp( int __fildes, pid_t __pgrp_id );
 _WCRTLINK extern char   *ttyname( int __fildes );
-:endsegment
 :segment QNX
 _WCRTLINK extern int    mkdir( const char *__path, mode_t __mode );
 _WCRTLINK extern int    mknod( const char *__path, mode_t __mode, int __dev );
@@ -202,15 +181,6 @@ _WCRTLINK extern int    umount( const char *__special );
 :segment LINUX
 _WCRTLINK extern int    truncate( const char *__path, off_t __length );
 _WCRTLINK extern int    ftruncate( int __fd, off_t __length );
-
-/* the following are also in process.h, but they are expected to be here */
-_WCRTLINK extern int    execl( const char *__path, const char *__arg0, ... );
-_WCRTLINK extern int    execle( const char *__path, const char *__arg0, ... );
-_WCRTLINK extern int    execlp( const char *__file, const char *__arg0, ... );
-_WCRTLINK extern int    execv( const char *__path, const char *const __argv[] );
-_WCRTLINK extern int    execve( const char *__path, const char *const __argv[],
-                            const char *const __envp[] );
-_WCRTLINK extern int    execvp( const char *__file, const char *const __argv[] );
 
 :endsegment
 
@@ -237,35 +207,22 @@ _WCRTLINK extern int    qnx_setids( pid_t pid, int id, unsigned subtype );
 _WCRTLINK extern int    qnx_sync( nid_t nid );
 _WCRTLINK extern int    unlock( int __fildes, long __offset, long __nbytes );
 :endsegment
-
 :include extepi.sp
 
-:segment QNX | LINUX
-:include posixext.sp
-_WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *__optstring );
-_WCRTLINK extern char   *basename( char *__fname );
 _WCRTLINK extern size_t confstr( int, char*, size_t );
-_WCRTLINK extern int    fnmatch( const char *__pattern, const char *__string, int __flag );
+:include posixext.sp
+_WCRTLINK extern char   *basename( char *__fname );
 _WCRTLINK extern off_t  ltrunc( int __fildes, off_t __offset, int __origin );
-_WCRTLINK extern int    putenv( const char *__estring );
-
-/* Globals used and set by getopt() */
-_WCRTDATA extern char   *optarg;
-:: split into three separate lines because of a bug in stupid C++ compiler
-_WCRTDATA extern int    optind;
-_WCRTDATA extern int    opterr;
-_WCRTDATA extern int    optopt;
 :include extepi.sp
 
-:endsegment
 :segment LINUX
 /* These are Linux specific */
 
 _WCRTLINK extern int    ioperm( unsigned long __from, unsigned long __num, int __turn_on );
 _WCRTLINK extern int    iopl( int __level );
 _WCRTLINK extern int    nice( int __val );
-_WCRTLINK extern void   usleep( unsigned long __usec );
 _WCRTLINK extern int    _llseek( unsigned int __fildes, unsigned long __hi, unsigned long __lo, loff_t *__res, unsigned int __whence);
+
 :endsegment
 :segment QNX
 #if defined(__386__)
@@ -278,18 +235,33 @@ extern ssize_t __far_write(int __fildes,void __far *__buffer,size_t __len);
 
 :endsegment
 :endsegment
-:segment DOS
-_WCRTLINK extern int    fsync( int __filedes );
+_WCRTLINK extern int    chdir( const char *__path );
+/* the following are also in process.h, but they are expected to be here */
+_WCRTLINK extern int    execl( const char *__path, const char *__arg0, ... );
+_WCRTLINK extern int    execle( const char *__path, const char *__arg0, ... );
+_WCRTLINK extern int    execlp( const char *__file, const char *__arg0, ... );
+_WCRTLINK extern int    execv( const char *__path, const char *const __argv[] );
+_WCRTLINK extern int    execve( const char *__path, const char *const __argv[], const char *const __envp[] );
+_WCRTLINK extern int    execvp( const char *__file, const char *const __argv[] );
+
+_WCRTLINK extern char   *getcwd( char *__buf, size_t __size );
+_WCRTLINK extern char   *_getcwd( char *__buf, size_t __size );
 _WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *__optstring );
+:segment DOS
+_WCRTLINK extern int    getpid( void );
+:endsegment
+:segment QNX | LINUX
+_WCRTLINK extern pid_t  getpid( void );
+:endsegment
+_WCRTLINK extern int    rmdir( const char *__path );
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
+_WCRTLINK extern int    usleep( unsigned long __usec );
 
 /* Globals used and set by getopt() */
 _WCRTDATA extern char   *optarg;
-:: split into three separate lines because of a bug in stupid C++ compiler
 _WCRTDATA extern int    optind;
 _WCRTDATA extern int    opterr;
 _WCRTDATA extern int    optopt;
-:endsegment
 
 :include cplusepi.sp
 

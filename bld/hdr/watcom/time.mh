@@ -60,9 +60,7 @@ using std::time;
 :include owrtlink.sp
 
 :segment QNX | LINUX
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
+:include systypes.sp
 
 :endsegment
 :segment CNAME
@@ -140,7 +138,6 @@ struct itimercb {
 };
 #endif
 
-
 /*  Clock types */
 #define CLOCK_REALTIME          0
 
@@ -199,6 +196,7 @@ _WCRTLINK extern int     nanosleep( const struct timespec *rqtp, struct timespec
 :endsegment
 :segment CNAME
 namespace std {
+
 :endsegment
 struct tm {
     int  tm_sec;    /* seconds after the minute -- [0,61] */
@@ -211,13 +209,7 @@ struct tm {
     int  tm_yday;   /* days since January 1     -- [0,365]*/
     int  tm_isdst;  /* Daylight Savings Time flag */
 };
-:segment CNAME
-}
-:endsegment
 
-:segment CNAME
-namespace std {
-:endsegment
 _WCRTLINK extern char         *asctime( const struct tm *__timeptr );
 _WCRTLINK extern clock_t      clock( void );
 _WCRTLINK extern char         *ctime( const time_t *__timer );
@@ -230,10 +222,11 @@ _WCRTLINK extern time_t       time( time_t *__timer );
 :segment !NO_WIDECHAR
 _WCRTLINK extern size_t       wcsftime( wchar_t *, size_t, const wchar_t *, const struct tm * );
 :endsegment
-:segment CNAME
-}
-:endsegment
 
+:segment CNAME
+} // namespace std
+
+:endsegment
 :segment !CNAME
 #define difftime( t1, t0 )  ( ( double ) ( t1 ) - ( double ) ( t0 ) )
 :endsegment
@@ -260,11 +253,23 @@ _WCRTLINK extern char        *_asctime( const std::tm *__timeptr, char *__buf );
 _WCRTLINK extern char        *_ctime( const std::time_t *__timer, char *__buf );
 _WCRTLINK extern std::tm     *_gmtime( const std::time_t *__timer, std::tm *__tmbuf );
 _WCRTLINK extern std::tm     *_localtime( const std::time_t *__timer, std::tm *__tmbuf );
+:segment LINUX
+_WCRTLINK extern char        *asctime_r( const std::tm *__timeptr, char *__buf );
+_WCRTLINK extern char        *ctime_r( const std::time_t *__timer, char *__buf );
+_WCRTLINK extern std::tm     *gmtime_r( const std::time_t *__timer, std::tm *__tmbuf );
+_WCRTLINK extern std::tm     *localtime_r( const std::time_t *__timer, std::tm *__tmbuf );
+:endsegment
 :elsesegment
 _WCRTLINK extern char        *_asctime( const struct tm *__timeptr, char *__buf );
 _WCRTLINK extern char        *_ctime( const time_t *__timer, char *__buf );
 _WCRTLINK extern struct tm   *_gmtime( const time_t *__timer, struct tm *__tmbuf );
 _WCRTLINK extern struct tm   *_localtime( const time_t *__timer, struct tm *__tmbuf );
+:segment LINUX
+_WCRTLINK extern char        *asctime_r( const struct tm *__timeptr, char *__buf );
+_WCRTLINK extern char        *ctime_r( const time_t *__timer, char *__buf );
+_WCRTLINK extern struct tm   *gmtime_r( const time_t *__timer, struct tm *__tmbuf );
+_WCRTLINK extern struct tm   *localtime_r( const time_t *__timer, struct tm *__tmbuf );
+:endsegment
 :endsegment
 _WCRTLINK extern char        *_strdate( char *__buf );
 _WCRTLINK extern char        *_strtime( char *__buf );
@@ -306,7 +311,7 @@ _WCRTLINK extern char   **__get_tzname_ptr( void );
 #elif defined(__SW_BR) || defined(_RTDLL)
  #define tzname  tzname_br
 #endif
-_WCRTDATA extern char   *tzname[2];             /*  time zone names */
+_WCRTDATA extern char * _WCDATA tzname[2];  /*  time zone names */
 
 :segment QNX | LINUX
 :include ext.sp
@@ -321,8 +326,8 @@ _WCRTLINK extern int    *__get_daylight_ptr( void );
  #define timezone       timezone_br
  #define daylight       daylight_br
 #endif
-_WCRTDATA extern long   timezone;               /* # of seconds from GMT */
-_WCRTDATA extern int    daylight;               /* d.s.t. indicator */
+_WCRTDATA extern long   _WCDATA timezone;   /* # of seconds from GMT */
+_WCRTDATA extern int    _WCDATA daylight;   /* d.s.t. indicator */
 :segment QNX | LINUX
 
 :include extepi.sp

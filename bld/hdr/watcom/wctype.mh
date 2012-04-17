@@ -50,9 +50,8 @@ using std::wctype;
 using std::towlower;
 using std::towupper;
 
-:: Now the extensions section.
-// C99 functions in ctype.h that are currently considered extensions.
-:include ext.sp
+:: C99 functions in ctype.h that are currently considered extensions.
+:include extc99.sp
 using std::iswblank;
 :include extepi.sp
 
@@ -107,8 +106,8 @@ _WCRTLINK extern wint_t   towlower( wint_t __wc );
 _WCRTLINK extern wint_t   towupper( wint_t __wc );
 _WCRTLINK extern wctrans_t wctrans( const char *__property );
 
-/* These names are in ctype.h according to C99. */
-:include ext.sp
+:: C99 functions in ctype.h that are currently considered extensions.
+:include extc99.sp
 _WCRTLINK extern int      iswblank( wint_t __wc );
 :include extepi.sp
 :segment CNAME

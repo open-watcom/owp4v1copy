@@ -46,6 +46,15 @@ _WCRTLINK extern int vcscanf( const char *__format, __va_list __arg );
  #endif
 #endif
 
+#if defined(_M_IX86)
+ #define _inp   inp
+ #define _inpw  inpw
+ #define _inpd  inpd
+ #define _outp  outp
+ #define _outpw outpw
+ #define _outpd outpd
+#endif
+
 :include cplusepi.sp
 
 #endif

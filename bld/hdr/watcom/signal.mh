@@ -38,9 +38,9 @@ using std::raise;
 :include owrtlink.sp
 
 :segment QNX | LINUX
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
+:include systypes.sp
+
+::#include <time.h>  // for siginfo.h
 
 :endsegment
 :: Only need extern "C" in csignal
@@ -58,7 +58,6 @@ typedef int sig_atomic_t;
 
 typedef void (*__sig_func)( int );
 :segment LINUX
-typedef __sig_func __sighandler_t;
 
 :include incdir.sp
 #include _ARCH_INCLUDE(signal.h)
@@ -67,6 +66,8 @@ typedef __sig_func __sighandler_t;
 
 :include pshpackl.sp
 
+::#include _ARCH_INCLUDE(siginfo.h)
+typedef struct siginfo siginfo_t;
 #include _ARCH_INCLUDE(sigposix.h)
 
 :include poppack.sp
@@ -190,9 +191,9 @@ typedef void (__SIG_FAR *__far_sig_func)( int );
 #define _SIGMAX     32
 :elsesegment
 
-#define SIG_IGN         ((__sig_func) 1)
-#define SIG_DFL         ((__sig_func) 2)
-#define SIG_ERR         ((__sig_func) 3)
+#define SIG_IGN         ((__sig_func)1)
+#define SIG_DFL         ((__sig_func)2)
+#define SIG_ERR         ((__sig_func)3)
 
 #define SIGABRT 1
 #define SIGFPE  2
@@ -243,6 +244,10 @@ _WCRTLINK extern int  sigismember( const sigset_t *__set, int __signo );
 _WCRTLINK extern int  sigpending( sigset_t *__set );
 _WCRTLINK extern int  sigprocmask( int __how, const sigset_t *__set, sigset_t *__oset );
 _WCRTLINK extern int  sigsuspend( const sigset_t *sigmask );
+_WCRTLINK extern int  siginterrupt( int __signo, int __flag );
+_WCRTLINK extern int  sigwait( const sigset_t *__set, int *__sig );
+_WCRTLINK extern int  sigwaitinfo( const sigset_t *__set, siginfo_t *__info );
+_WCRTLINK extern int  sigtimedwait( const sigset_t *__set, siginfo_t *__info, const struct timespec *__timeout );
 :include extepi.sp
 
 :endsegment

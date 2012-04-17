@@ -11,9 +11,7 @@
 :include owrtlink.sp
 
 :segment LINUX | QNX
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
+:include systypes.sp
 
 :endsegment
 :include cpluspro.sp
@@ -178,26 +176,6 @@ typedef struct flock {
 #define _O_BINARY       0x0200  /* binary file */
 #define O_EXCL          0x0400  /* exclusive open */
 #define _O_EXCL         0x0400  /* exclusive open */
-
-:elsesegment SNAP | SNAPDRV
-:include pshpackl.sp
-
-#ifndef __OS_IMPORTS_H
- #include <os/imports.h>
-#endif
-
-/* Flags are defined based on the flags in <os/imports.h> */
-
-#define O_RDONLY        ___O_RDONLY
-#define O_WRONLY        ___O_WRONLY
-#define O_RDWR          ___O_RDWR
-
-#define O_BINARY        ___O_BINARY
-#define O_TEXT          ___O_TEXT
-#define O_CREAT         ___O_CREAT
-#define O_EXCL          ___O_EXCL
-#define O_TRUNC         ___O_TRUNC
-#define O_APPEND        ___O_APPEND
 
 :endsegment
 /*

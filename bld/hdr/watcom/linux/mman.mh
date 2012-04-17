@@ -10,9 +10,7 @@
 
 :include owrtlink.sp
 
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
+:include systypes.sp
 
 :include cpluspro.sp
 

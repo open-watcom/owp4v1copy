@@ -40,8 +40,8 @@ using std::tolower;
 using std::toupper;
 
 :: Now the extensions section.
-// C99 functions in ctype.h that are currently considered extensions.
-:include ext.sp
+:: C99 functions in ctype.h that are currently considered extensions.
+:include extc99.sp
 using std::isblank;
 :include extepi.sp
 
@@ -82,8 +82,8 @@ _WCRTLINK extern int    isxdigit(int);
 _WCRTLINK extern int    tolower(int);
 _WCRTLINK extern int    toupper(int);
 
-/* These names are in ctype.h according to C99. */
-:include ext.sp
+:: C99 functions in ctype.h that are currently considered extensions.
+:include extc99.sp
 _WCRTLINK extern int    isblank(int);
 :include extepi.sp
 
@@ -91,14 +91,12 @@ _WCRTLINK extern int    isblank(int);
 } // namespace std
 
 :endsegment
-:segment !SNAP & !SNAPDRV
 /* These names are not in ctype.h according to C99. */
 _WCRTLINK extern int    _tolower(int);
 _WCRTLINK extern int    _toupper(int);
 _WCRTLINK extern int    __iscsymf(int);
 _WCRTLINK extern int    __iscsym(int);
 
-:endsegment
 :include ext.sp
  _WCRTLINK extern int   isleadbyte(int);
  _WCRTLINK extern int   isascii(int);
@@ -129,15 +127,13 @@ _WCRTDATA extern const unsigned char _WCDATA _IsTable[257];
 #define isupper(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _UPPER)
 #define isxdigit(__c) ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _XDIGT)
 
-:include ext.sp
+:include extc99.sp
 #define isblank(__c)  (((__c)==' ')||((__c)=='\t'))
 :include extepi.sp
 
 :endsegment
-:segment !SNAP & !SNAPDRV
 #define __iscsymf(__c) (isalpha(__c)||((__c)=='_'))
 #define __iscsym(__c)  (isalnum(__c)||((__c)=='_'))
-:endsegment
 #endif
 
 #define iscsym        __iscsym

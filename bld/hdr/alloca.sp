@@ -2,9 +2,11 @@
  _WCRTLINK extern void  *alloca(_w_size_t __size);
  _WCRTLINK extern void  *_alloca(_w_size_t __size);
  _WCRTLINK extern unsigned stackavail( void );
+ _WCRTLINK extern unsigned _stackavail( void );
  #ifdef _M_IX86
   extern void  *__doalloca(_w_size_t __size);
   #pragma aux stackavail __modify __nomemory;
+  #pragma aux _stackavail __modify __nomemory;
 
   #define __ALLOCA_ALIGN( s )   (((s)+(sizeof(int)-1))&~(sizeof(int)-1))
   #define __alloca( s )         __doalloca(__ALLOCA_ALIGN(s))

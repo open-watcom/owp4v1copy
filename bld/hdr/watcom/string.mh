@@ -15,7 +15,7 @@
  *
  * Description: This header is part of the C/C++ standard library. It
  *              declares functions for manipulating null terminated arrays
- *              of characters. 
+ *              of characters.
  ***************************************************************************/
 :segment CNAME
 #ifndef _CSTRING_INCLUDED
@@ -129,6 +129,7 @@ using std::wcsxfrm;
 
 :segment CNAME
 namespace std {
+
 :endsegment
 _WCIRTLINK extern void    *memchr( const void *__s, int __c, size_t __n );
 _WCIRTLINK extern int     memcmp( const void *__s1, const void *__s2, size_t __n );
@@ -162,10 +163,11 @@ _WCRTLINK  extern size_t  strspn( const char *__s1, const char *__s2 );
 _WCRTLINK  extern char    *strstr( const char *__s1, const char *__s2 );
 _WCRTLINK  extern char    *strtok( char *__s1, const char *__s2 );
 _WCRTLINK  extern size_t  strxfrm( char *__s1, const char *__s2, size_t __n );
+
 :segment CNAME
 } // namespace std
-:endsegment
 
+:endsegment
 _WCRTLINK  extern int _stricoll( const char *__s1, const char *__s2 );
 _WCRTLINK  extern int _strncoll( const char *__s1, const char *__s2, _w_size_t __n );
 _WCRTLINK  extern int _strnicoll( const char *__s1, const char *__s2, _w_size_t __n );
@@ -304,6 +306,7 @@ _WCRTLINK extern _w_size_t strlcpy( char *__s1, const char *__s2, _w_size_t __n 
 :segment !NO_WIDECHAR
 :segment CNAME
 namespace std {
+
 :endsegment
 _WCRTLINK extern wchar_t  *wcscat( wchar_t *, const wchar_t * );
 _WCRTLINK extern wchar_t  *wcschr( const wchar_t *, wint_t );
@@ -321,10 +324,11 @@ _WCRTLINK extern size_t   wcsspn( const wchar_t *, const wchar_t * );
 _WCRTLINK extern wchar_t  *wcsstr( const wchar_t *, const wchar_t * );
 _WCRTLINK extern wchar_t  *wcstok( wchar_t *, const wchar_t *, wchar_t ** );
 _WCRTLINK extern size_t   wcsxfrm( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+
 :segment CNAME
 } // namespace std
-:endsegment
 
+:endsegment
 _WCRTLINK extern int      wcscmpi( const wchar_t *, const wchar_t * );
 _WCRTLINK extern wchar_t  *wcserror( int );
 #if defined(__NT__)
@@ -483,7 +487,9 @@ namespace _watcom {
 
   };
   typedef std::basic_string< char, ichar_traits > istring;
+
 } // namespace _watcom
+
 :include namwat.sp
 
 namespace std {

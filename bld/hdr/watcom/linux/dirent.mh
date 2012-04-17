@@ -10,9 +10,7 @@
 
 :include owrtlink.sp
 
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
+:include systypes.sp
 
 #define _DIRBUF  8  /*  Max number of dir entries buffered  */
 
@@ -31,10 +29,10 @@ struct dirent {
     unsigned short  d_reclen;
 :: d_type field is not used by linux kernel
 ::    unsigned char   d_type;
-    char            d_name[256];		/* We must not include limits.h! */
+    char            d_name[256];    /* We must not include limits.h! */
 };
 
-#define d_fileno	d_ino	/* Backwards compatibility.  */
+#define d_fileno    d_ino   /* Backwards compatibility.  */
 
 /* This is the data type of directory stream objects.
  * The actual structure is opaque to users.

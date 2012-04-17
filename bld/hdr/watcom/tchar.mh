@@ -76,20 +76,12 @@ typedef wchar_t TCHAR;
 #define _sntprintf      _snwprintf
 #define _vtprintf       vwprintf
 #define _vftprintf      vfwprintf
-#define _vsntprintf     _vsnwprintf
 #define _tscanf         wscanf
 #define _ftscanf        fwscanf
 #define _stscanf        swscanf
-
-#if defined(__cplusplus) && defined(__INLINE_FUNCTIONS__)
-inline int _vstprintf( wchar_t *__p1, const wchar_t *__p2, __va_list __p3 ) {
-    return( vswprintf( __p1, 32767, __p2, __p3 ) );
-}
-#else
-#define _vstprintf(__p1,__p2,__p3)  vswprintf((__p1),32767,(__p2),(__p3))
-#endif
-_WCRTLINK extern int _stprintf(wchar_t *, const wchar_t *, ...);
-
+#define _vsntprintf     _vsnwprintf
+#define _vstprintf      _vswprintf
+#define _stprintf       _swprintf
 
 /* Unformatted i/o */
 
@@ -107,7 +99,6 @@ _WCRTLINK extern int _stprintf(wchar_t *, const wchar_t *, ...);
 #define _putts          _putws
 #define _ungettc        ungetwc
 
-
 /* String conversion functions */
 
 #define _tcstod         wcstod
@@ -119,7 +110,6 @@ _WCRTLINK extern int _stprintf(wchar_t *, const wchar_t *, ...);
 #define _ultot          _ultow
 #define _ttoi           _wtoi
 #define _ttol           _wtol
-
 
 /* String functions */
 
@@ -161,7 +151,6 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 #define _tcsncicoll     _wcsnicoll
 #define _tcsnicoll      _wcsnicoll
 
-
 /* Execute functions */
 
 #define _texecl         _wexecl
@@ -184,7 +173,6 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 
 #define _tsystem        _wsystem
 
-
 /* Time functions */
 
 #define _tasctime       _wasctime
@@ -193,7 +181,6 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 #define _tstrtime       _wstrtime
 #define _tutime         _wutime
 #define _tcsftime       wcsftime
-
 
 /* Directory functions */
 
@@ -207,10 +194,9 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 #define _trewinddir     _wrewinddir
 #define _trmdir         _wrmdir
 
-
 /* Directory struct */
-#define _tdirent        _wdirent
 
+#define _tdirent        _wdirent
 
 /* Environment/Path functions */
 
@@ -221,7 +207,6 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 #define _tsearchenv     _wsearchenv
 #define _tsplitpath     _wsplitpath
 
-
 /* Stdio functions */
 
 #define _tfdopen        _wfdopen
@@ -230,7 +215,6 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 #define _tfreopen       _wfreopen
 #define _tperror        _wperror
 #define _ttmpnam        _wtmpnam
-
 
 /* Io functions */
 
@@ -250,7 +234,6 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 #define _tfinddata_t    _wfinddata_t
 #define _tfinddatai64_t _wfinddatai64_t
 
-
 /* Stat functions */
 
 #define _tstat          _wstat
@@ -258,11 +241,9 @@ inline wchar_t *_tcstok( wchar_t *__p1, const wchar_t *__p2 ) {
 #define _tfstat         _wfstat
 #define _tfstati64      _wfstati64
 
-
 /* Setlocale functions */
 
 #define _tsetlocale     _wsetlocale
-
 
 /* Redundant "logical-character" mappings */
 
@@ -298,7 +279,6 @@ inline int _tccmp( const wchar_t *__p1, const wchar_t *__p2 ) {
 #define _tccpy(__p1,__p2) ((*(__p1) = *(__p2)))
 #define _tccmp(__p1,__p2) ((*(__p1))-(*(__p2)))
 #endif
-
 
 /* ctype functions */
 
@@ -390,7 +370,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define __targc         __argc
 #define __targv         __argv
 
-
 /* Formatted i/o */
 
 #define _tprintf        printf
@@ -404,7 +383,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tscanf         scanf
 #define _ftscanf        fscanf
 #define _stscanf        sscanf
-
 
 /* Unformatted i/o */
 
@@ -422,7 +400,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _putts          puts
 #define _ungettc        ungetc
 
-
 /* String conversion functions */
 
 #define _tcstod         strtod
@@ -435,7 +412,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _ttoi           atoi
 #define _ttol           atol
 
-
 /* String functions */
 
 #define _tcscat         strcat
@@ -443,7 +419,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tcslen         strlen
 #define _tcsxfrm        strxfrm
 #define _tcsdup         _strdup
-
 
 /* Execute functions */
 
@@ -467,7 +442,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 
 #define _tsystem        system
 
-
 /* Time functions */
 
 #define _tasctime       asctime
@@ -476,7 +450,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tstrtime       strtime
 #define _tutime         utime
 #define _tcsftime       strftime
-
 
 /* Directory functions */
 
@@ -490,10 +463,9 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _trewinddir     rewinddir
 #define _trmdir         rmdir
 
-
 /* Directory struct */
-#define _tdirent        dirent
 
+#define _tdirent        dirent
 
 /* Environment/Path functions */
 
@@ -504,7 +476,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tsearchenv     searchenv
 #define _tsplitpath     _splitpath
 
-
 /* Stdio functions */
 
 #define _tfdopen        fdopen
@@ -513,7 +484,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tfreopen       freopen
 #define _tperror        perror
 #define _ttmpnam        tmpnam
-
 
 /* Io functions */
 
@@ -533,13 +503,11 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tfinddata_t    _finddata_t
 #define _tfinddatai64_t _finddatai64_t
 
-
 /* ctype functions */
 
 #define _istascii       isascii
 #define _istcntrl       iscntrl
 #define _istxdigit      isxdigit
-
 
 /* Stat functions */
 
@@ -547,7 +515,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tstati64       _stati64
 #define _tfstat         fstat
 #define _tfstati64      _fstati64
-
 
 /* Setlocale functions */
 
@@ -609,14 +576,12 @@ typedef char            TCHAR;
 #define _tcsncicoll _mbsnicoll
 #define _tcsnicoll  _mbsnbicoll
 
-
 /* "logical-character" mappings */
 
 #define _tcsclen    _mbslen
 #define _tcsnccat   _mbsncat
 #define _tcsnccpy   _mbsncpy
 #define _tcsncset   _mbsnset
-
 
 /* MBCS-specific mappings */
 
@@ -739,7 +704,6 @@ inline int _tcsnicoll( const char *__p1, const char *__p2, size_t __l ) {
                          (const unsigned char *)__p2, __l ) );
 }
 
-
 /* "logical-character" mappings */
 
 inline size_t _tcsclen( const char *__p ) {
@@ -756,7 +720,6 @@ inline char *_tcsnccpy( char *__p1, const char *__p2, size_t __l ) {
 inline char *_tcsncset( char *__p, unsigned int __c, size_t __l ) {
     return( (char *)_mbsnset( (unsigned char *)__p, __c, __l ) );
 }
-
 
 /* MBCS-specific mappings */
 
@@ -837,14 +800,12 @@ _WCRTLINK extern int _tcsncoll(const char *, const char *, size_t);
 _WCRTLINK extern int _tcsncicoll(const char *, const char *, size_t);
 _WCRTLINK extern int _tcsnicoll(const char *, const char *, size_t);
 
-
 /* "logical-character" mappings */
 
 _WCRTLINK extern size_t _tcsclen(const char *);
 _WCRTLINK extern char *_tcsnccat(char *, const char *, size_t);
 _WCRTLINK extern char *_tcsnccpy(char *, const char *, size_t);
 _WCRTLINK extern char *_tcsncset(char *, unsigned int, size_t);
-
 
 /* MBCS-specific mappings */
 
@@ -866,7 +827,6 @@ _WCRTLINK extern int _tccmp(const char *, const char *);
 #endif
 
 #endif
-
 
 /* ctype functions */
 
@@ -938,7 +898,6 @@ typedef char            TCHAR;
 #define _tcsncicoll     _strnicoll
 #define _tcsnicoll      _strnicoll
 
-
 /* "logical-character" mappings */
 
 #define _tcsclen        strlen
@@ -973,7 +932,6 @@ inline int _tccmp( const char *__p1, const char *__p2 ) {
 #define _tccpy(__p1,__p2) ((*(__p1) = *(__p2)))
 #define _tccmp(__p1,__p2) (((unsigned char)*(__p1))-((unsigned char)*(__p2)))
 #endif
-
 
 /* ctype functions */
 

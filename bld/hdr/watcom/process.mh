@@ -15,9 +15,7 @@
 
 :endsegment
 :segment QNX | LINUX
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
+:include systypes.sp
 
 :endsegment
 :include cpluspro.sp
@@ -31,8 +29,7 @@ _WCRTLINK extern int execl( const char *__path, const char *__arg0, ... );
 _WCRTLINK extern int execle( const char *__path, const char *__arg0, ... );
 _WCRTLINK extern int execlp( const char *__file, const char *__arg0, ... );
 _WCRTLINK extern int execv( const char *__path, const char *const __argv[] );
-_WCRTLINK extern int execve( const char *__path, const char *const __argv[],
-                            const char *const __envp[] );
+_WCRTLINK extern int execve( const char *__path, const char *const __argv[], const char *const __envp[] );
 _WCRTLINK extern int execvp( const char *__file, const char *const __argv[] );
 
 :segment QNX | LINUX
@@ -95,7 +92,18 @@ _WCRTLINK extern int execvpe( const char *__file, const char *const __argv[],
  #pragma intrinsic(_beginthread);
  _WCRTLINK extern void _endthread( void );
 :elsesegment
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+#if defined(_M_I86)
+ _WCRTLINK extern int _WCFAR  _beginthread(
+    void (_WCFAR *__start_address)(void _WCFAR *),
+    void _WCFAR *__stack_bottom, unsigned __stack_size, void _WCFAR *__arglist );
+ #pragma intrinsic(_beginthread);
+ _WCRTLINK extern void _WCFAR _endthread( void );
+ #ifndef __SW_ZU
+  _WCRTLINK void _WCFAR *__chkstack( void _WCFAR * );
+  #define _beginthread( __sa, __sb, __ss, __al ) \
+          _beginthread( __sa, __chkstack(__sb), __ss, __al )
+ #endif
+#else
  #if defined(__NT__)
   _WCRTLINK extern unsigned long _beginthread(
                 void (*__start_address)(void *),
@@ -123,20 +131,9 @@ _WCRTLINK extern int execvpe( const char *__file, const char *const __argv[],
   #pragma intrinsic(_beginthread);
  #endif
  _WCRTLINK extern void _endthread( void );
-#else
- _WCRTLINK extern int _WCFAR  _beginthread(
-    void (_WCFAR *__start_address)(void _WCFAR *),
-    void _WCFAR *__stack_bottom, unsigned __stack_size, void _WCFAR *__arglist );
- #pragma intrinsic(_beginthread);
- _WCRTLINK extern void _WCFAR _endthread( void );
- #ifndef __SW_ZU
-  _WCRTLINK void _WCFAR *__chkstack( void _WCFAR * );
-  #define _beginthread( __sa, __sb, __ss, __al ) \
-          _beginthread( __sa, __chkstack(__sb), __ss, __al )
- #endif
 :endsegment
 #endif
-:segment !QNX
+:segment DOS | LINUX
 
 /* values for __action_code used with cwait() */
 
@@ -246,8 +243,10 @@ _WCRTLINK extern int    _wsystem( const wchar_t *__cmd );
  #endif
 #endif
 _WCRTLINK extern int    getpid( void );
+_WCRTLINK extern int    _getpid( void );
 _WCRTLINK extern int    wait( int *__status );
-:elsesegment QNX | LINUX
+:endsegment
+:segment QNX | LINUX
 _WCRTLINK extern pid_t  getpid( void );
 _WCRTLINK extern pid_t  wait( int *__status );
 :endsegment

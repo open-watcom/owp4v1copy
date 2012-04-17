@@ -36,8 +36,8 @@
 #define SIGPROF     29  /* Profiling alarm clock (4.2 BSD).  */
 #define SIGXCPU     30  /* CPU limit exceeded (4.2 BSD).  */
 #define SIGXFSZ     31  /* File size limit exceeded (4.2 BSD).  */
+#define _SIGMAX     32
 
-/* These should not be considered constants from userland.  */
 #define SIGRTMIN    32
 #define SIGRTMAX    _NSIG
 
@@ -82,4 +82,3 @@
 #define SIG_UNBLOCK     2   /* for unblocking signals */
 #define SIG_SETMASK     3   /* for setting the signal mask */
 #define SIG_SETMASK32   256 /* Goodie from SGI for BSD compatibility: set only the low 32 bit of the sigset. */
-

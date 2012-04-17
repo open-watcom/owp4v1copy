@@ -23,8 +23,8 @@
 ::
 :: NB: bld/lib_misc/h/variety.h needs to be kept in sync with this file
 
-#ifndef _COMDEF_H_INCLUDED
-#define _COMDEF_H_INCLUDED
+#ifndef __COMDEF_H_INCLUDED
+#define __COMDEF_H_INCLUDED
 
 :include readonly.sp
 
@@ -82,6 +82,15 @@
   #define _WCINTERRUPT
   #define _WCUNALIGNED __unaligned
  #elif defined(__PPC__)
+  #define _WCNEAR
+  #define _WCFAR
+  #define _WCHUGE
+  #define _WCI86NEAR
+  #define _WCI86FAR
+  #define _WCI86HUGE
+  #define _WCINTERRUPT
+  #define _WCUNALIGNED __unaligned
+ #elif defined(__MIPS__)
   #define _WCNEAR
   #define _WCFAR
   #define _WCHUGE

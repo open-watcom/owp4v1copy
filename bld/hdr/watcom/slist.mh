@@ -4,7 +4,7 @@
 :keep CPP_HDR
 :include crwatcnt.sp
 //
-// Description: This header is part of the OW extentions to the standard 
+// Description: This header is part of the OW extentions to the standard
 //              library. It provides a single link list container.
 ///////////////////////////////////////////////////////////////////////////
 #ifndef _SLIST_INCLUDED
@@ -39,6 +39,7 @@
 #endif
 
 namespace _watcom {
+
 /* ==================================================================
  * slist class template
  * see list and SGI slist for inspiration
@@ -99,7 +100,7 @@ public:
     };
     // end of iterators
     //-----------------------------------------------------------------
-    
+
 public:
     // construct/copy/destroy
     explicit slist( A const & a = A() ) : mSize(0), nmem(a) { first = NULL; }
@@ -117,7 +118,7 @@ public:
         { helper_assign( f, l, std::tr1::is_integral< InputIt >::type() ); }
     void assign( size_type, T const & );
     allocator_type get_allocator() const { allocator_type a(nmem); return( a ); }
-    
+
     // iterators
     iterator        begin() { return( iterator( first ) ); }
     const_iterator  begin() const { return( const_iterator( first ) ); }
@@ -127,21 +128,20 @@ public:
     const_iterator  cend() const{ return( const_iterator( 0 ) ); }
     iterator        previous( iterator it )
                     { return( previous(it.self) ); } //special for SLL
-    const_iterator  previous( const_iterator it ) const 
+    const_iterator  previous( const_iterator it ) const
                     { return( previous(it.self) ); }; //special for SLL
-    
+
     // capacity
     bool        empty() const { return( mSize == 0 ); }
     size_type   size() const { return mSize; }
     size_type   max_size() const;
     void        resize( size_type, T );
     void        resize( size_type s ) { resize( s, T() ); }
-    
-    
+
     // access
     reference       front() { return( first->value ); }
     const_reference front() const { return( first->value ); }
-    
+
     // modifiers
     void pop_front();
     void push_front( T const & v );
@@ -150,7 +150,7 @@ public:
     iterator insert( const_iterator, T const & );
     //iterator insert( const_iterator, T&& );
     void insert( const_iterator, size_type, T const & );
-    template< class InputIt > 
+    template< class InputIt >
         void insert( const_iterator it, InputIt f, InputIt l )
         { helper_insert( it, f, l, std::tr1::is_integral< InputIt >::type() ); }
     iterator insert_after( const_iterator, T const & ); //special for SLL
@@ -158,7 +158,7 @@ public:
     template< class InputIt >
         void insert_after( const_iterator it, InputIt f, InputIt l )
         { helper_insert_after( it, f, l, std::tr1::is_integral< InputIt >::type() ); }
-    
+
     iterator erase( const_iterator );
     iterator erase( const_iterator, const_iterator );
     iterator erase_after( const_iterator ); //special for SLL
@@ -166,7 +166,7 @@ public:
     //void swap( slist<T,A>&& );
     void swap( slist<T,A>& );
     void clear();
-    
+
     //operations
     void splice( const_iterator, slist& );
     void splice( const_iterator, slist&, const_iterator );
@@ -180,7 +180,7 @@ public:
     void merge( slist<T,A>& other ) { merge( other, std::less< T >() ); }
     void sort() { sort( std::less< T >() ); }
     void reverse();
-    
+
     template< class U, class V >
     friend bool operator==( slist<U,V> const & a, slist<U,V> const & b );
     template< class U, class V >
@@ -193,16 +193,16 @@ public:
     friend bool operator<( slist<U,V> const & a, slist<U,V> const & b );
     template< class U, class V >
     friend bool operator>( slist<U,V> const & a, slist<U,V> const & b );
-    
+
     //OW special
     bool _Sane();
-    
+
 /* ------------------------------------------------------------------
  * remove_if( Predicate )
  * inline due to missing compiler feature
  * exception safety: strong only if Predicate can't throw
  */
-template< class Predicate > 
+template< class Predicate >
 void remove_if( Predicate pred )
 {
     n_ptr p = first;
@@ -292,25 +292,24 @@ void merge( slist<T,A>& other, Compare cmp )
             t = t->fwd;
         }
     };
-    
+
     // do tails
     if( o ) m->fwd = o;
     if( t ) m->fwd = t;
-    
+
     // fix sizes and unlink other
     mSize += other.mSize;
     other.mSize = 0;
     other.first = 0;
 }
-    
-    
+
 /* ------------------------------------------------------------------
  * sort( compare )
  * inline due to missing compiler feature
  *
  * following is a list of reasons for the features used in this vesion
  * of merge sort:
- * > iterative : 
+ * > iterative :
  *          to over come additional call overhead of iterative version
  *          and give the optimiser more of a chance to do it's stuff
  * > same walk order as an iterative implementation :
@@ -319,8 +318,8 @@ void merge( slist<T,A>& other, Compare cmp )
  *          cache usage as there is good locality of visiting the nodes
  * > take as much sorted list in one go:
  *          instead dividing down to list of size 1 and then merging
- *          take as much sorted list as possible in one go and then merge 
- *          these sublist.  This gives a massive improvement on 
+ *          take as much sorted list as possible in one go and then merge
+ *          these sublist.  This gives a massive improvement on
  *          lists that are already (partially) sorted in exchange for
  *          a few (my limited testing surgests 2-5%) extra comparisions
  *          when presented with random data
@@ -333,30 +332,30 @@ template< class Compare >
 void sort( Compare cmp )
 {
     if( mSize < 2 ) return;
-    
+
     struct StackData{
         n_ptr data;
         int depth;
     };
-    
+
     // Ideally stack would be log2 of current container size
-    // but don't want dynamic alloc overhead, thus a little memory 
+    // but don't want dynamic alloc overhead, thus a little memory
     // is wasted here but in most cases it will be insignificant.
-    // Do log2 of max_size() instead - this is currently making 
+    // Do log2 of max_size() instead - this is currently making
     // somewhat dodgey assumptions
-    StackData stack[ std::numeric_limits< difference_type >::digits - 
+    StackData stack[ std::numeric_limits< difference_type >::digits -
                      _ow::log2_floor< sizeof( T ) >::value ];
     int top = 0; // index the empty top element which is next to be filled
     bool input_done = false;
     n_ptr input = first; // keep track of next element of unsorted data
-    
+
     do{
         if( (top >= 2 && stack[top-1].depth == stack[top-2].depth) || input_done ){
-            // merge top two 
+            // merge top two
             n_ptr a,b,prev,merged;
             a = stack[top-2].data;
             b = stack[top-1].data;
-            
+
             // compare the first a or b separately to set up head
             if( cmp( b->value, a->value ) ){
                 merged = b;
@@ -384,7 +383,7 @@ void sort( Compare cmp )
             // link in tails
             if( a ) prev->fwd = a;
             if( b ) prev->fwd = b;
-            
+
             // replace stack entry
             stack[top-2].data = merged;
             stack[top-2].depth++;
@@ -443,7 +442,7 @@ void sort( Compare cmp )
     }while( top != 1 || !input_done );
     first = stack[0].data;
 }
-    
+
 private:
     size_type mSize;    // so counting is fast
     n_ptr first;        // single linked listed with first element held here (no sentinals)
@@ -452,7 +451,7 @@ private:
     inline n_ptr make( size_type, T const &, n_ptr& );  // make a number of new nodes
 
     /* ------------------------------------------------------------------
-     * make_from 
+     * make_from
      * make a list of nodes holding [ *f, *l )
      * set c to number of elements and ft to first node and return last node
      * for use by strong safe functions
@@ -463,7 +462,7 @@ private:
         ft = 0;
         c = 0;
         if( f == l ) return( 0 );
-        try{ 
+        try{
             // do first element
             ft = nmem.allocate( 1 );
             nmem.construct( ft, Node(*f) );
@@ -527,7 +526,7 @@ private:
         size_type c;
         n_ptr n;
         n_ptr e = make_from( f, l, n, c );
-        
+
         if( cit.self == first ){
             e->fwd = first;
             first = n;
@@ -557,7 +556,6 @@ private:
     }
 
 }; //end class slist
-
 
 /* ------------------------------------------------------------------
  * previous(n_ptr) private
@@ -613,7 +611,7 @@ slist<T,A>::n_ptr slist<T,A>::copy( n_ptr src, size_type i )
         while( a ){
             n = dst->fwd;
             //last element might have been alloced but not constructed
-            if( c ) nmem.destroy( dst ); 
+            if( c ) nmem.destroy( dst );
             nmem.deallocate( dst, 1 );
             dst = n;
             c--;
@@ -621,7 +619,7 @@ slist<T,A>::n_ptr slist<T,A>::copy( n_ptr src, size_type i )
         }
         throw;
     }
-    
+
     n->fwd=0;
     return dst;
 }
@@ -663,7 +661,6 @@ slist<T,A>::n_ptr slist<T,A>::make( size_type i, T const & t, n_ptr& f )
     return( l );
 }
 
-
 /* ------------------------------------------------------------------
  * ctor( size_type n )
  * construct list with n default constructed elements
@@ -684,8 +681,6 @@ slist<T,A>::slist( slist const & that ) : mSize( that.mSize )
 {
     first = copy( that.first, mSize );
 }
-
-
 
 /* ------------------------------------------------------------------
  * assignment operator
@@ -719,11 +714,11 @@ void slist<T,A>::assign( size_type s, T const & t )
 }
 
 /* ------------------------------------------------------------------
- * max_size 
+ * max_size
  */
 template< class T, class A >
 typename slist<T,A>::size_type slist<T,A>::max_size() const
-{ 
+{
     return( std::numeric_limits< difference_type >::max() /
             sizeof( T ) ); // hmm
 }
@@ -734,7 +729,7 @@ typename slist<T,A>::size_type slist<T,A>::max_size() const
  */
 template< class T, class A >
 void slist<T,A>::resize( size_type s, T t )
-{   
+{
     if( s == 0 ){
         clear();
     }else if( s < mSize ){
@@ -813,13 +808,13 @@ slist<T,A>::iterator slist<T,A>::insert( const_iterator it , T const & v )
         nmem.deallocate( n, 1 );
         throw;
     }
-    
+
     if( it.self == first ){
         n->fwd = first;
         first = n;
     }else{
         n_ptr p = previous( it.self );
-        
+
         n->fwd = p->fwd;
         p->fwd = n;
     }
@@ -860,7 +855,7 @@ void slist<T,A>::insert( const_iterator cit, size_type s, T const & t )
     if( s == 0 ) return;
     n_ptr n;
     n_ptr e = make( s, t, n );
-    
+
     n_ptr l = cit.self;
     if( l == first ){
         e->fwd = first;
@@ -884,13 +879,12 @@ void slist<T,A>::insert_after( const_iterator cit, size_type s, T const & t )
     if( s == 0 ) return;
     n_ptr n;
     n_ptr e = make( s, t, n );
-    
+
     n_ptr o = cit.self;
     e->fwd = o->fwd;
     o->fwd = n;
     mSize += s;
 }
-
 
 /* ------------------------------------------------------------------
  * erase( iterator )
@@ -939,7 +933,7 @@ template< class T, class A >
 slist<T,A>::iterator slist<T,A>::erase( const_iterator fit, const_iterator lit )
 {
     n_ptr b,del;
-    
+
     if( fit.self == first ) {
         del = fit.self;
         while( del != lit.self ){
@@ -983,7 +977,6 @@ slist<T,A>::iterator slist<T,A>::erase_after( const_iterator fit, const_iterator
     return( s );
 }
 
-
 /* ------------------------------------------------------------------
  * swap
  * exception safety : no throw
@@ -998,7 +991,6 @@ void slist<T,A>::swap( slist& other )
     mSize = other.mSize;
     other.mSize = tempi;
 }
-
 
 /* ------------------------------------------------------------------
  * clear
@@ -1027,7 +1019,7 @@ template< class T, class A >
 void slist<T,A>::splice( const_iterator it, slist& that )
 {
     if( that.mSize == 0 ) return;
-    
+
     // link this to start of that
     n_ptr n = it.self;
     if( n == first ){
@@ -1036,14 +1028,14 @@ void slist<T,A>::splice( const_iterator it, slist& that )
         n_ptr p = previous( n );
         p->fwd = that.first;
     }
-    
+
     // find end of that and link to rest of this
     n_ptr e = that.first;
     while( e->fwd ) e = e->fwd;
     e->fwd = n;
-    
+
     mSize += that.mSize;
-    
+
     // remove links from that
     that.mSize = 0;
     that.first = 0;
@@ -1061,24 +1053,24 @@ void slist<T,A>::splice( const_iterator dst, slist& that, const_iterator src )
     // check not splicing on top of itself
     if( ( this == &that ) &&
         ( src.self == dst.self || src.self->fwd == dst.self ) ) return;
-    
+
     // unlink src from src container
     if( src.self == that.first ){
         that.first = src.self->fwd;
     }else{
         that.previous( src.self )->fwd = src.self->fwd;
     }
-    
+
     // link in new node
     if( dst.self == first ){
         first = src.self;
     }else{
         previous( dst.self )->fwd = src.self;
     }
-    
+
     // link back in the tail of this list
     src.self->fwd = dst.self;
-    
+
     --that.mSize;
     ++mSize;
 }
@@ -1099,18 +1091,18 @@ void slist<T,A>:: splice_after( const_iterator dst, slist& that, const_iterator 
     // check not splicing on top of itself
     if( src.self->fwd == dst.self->fwd ||
         src.self->fwd == src.self ) return;
-    
+
     // link in ++src node after dst ( can't be first node )
     n_ptr spliceme = src.self->fwd;
     n_ptr tail = dst.self->fwd;
     dst.self->fwd = spliceme;
-    
+
     // unlink ++src from src container ( can't be first node or end )
     src.self->fwd = src.self->fwd->fwd;
-    
+
     // link back in the tail of this list
     spliceme->fwd = tail;
-    
+
     --that.mSize;
     ++mSize;
 }
@@ -1138,13 +1130,12 @@ void slist<T,A>::splice_after( const_iterator dst, slist& that,
         that.mSize -= c;
         mSize += c;
     }
-    
+
     n_ptr tail = dst.self->fwd;             //save tail
     dst.self->fwd = b4_first.self->fwd;     //splice in
     b4_first.self->fwd = b4_last.self->fwd; //splice out
     b4_last.self->fwd = tail;               //join tail
-    
-    
+
 }
 
 /* ------------------------------------------------------------------
@@ -1178,8 +1169,6 @@ void slist<T,A>::remove( T const & v )
     };
 }
 
-
-
 /* ------------------------------------------------------------------
  * reverse( )
  * exception safety: strong
@@ -1199,7 +1188,6 @@ void slist<T,A>::reverse( )
     first = p;
 }
 
-
 /* ------------------------------------------------------------------
  * _Sane
  * check internal structure of list ok
@@ -1214,7 +1202,7 @@ bool slist<T,A>::_Sane()
         n = n->fwd;
     }
     if( n != NULL ) return( false );
-    
+
     return( true );
 }
 
@@ -1280,8 +1268,6 @@ void swap( slist<T,A> const & x, slist<T,A> const & y )
 }
 //template< class T, class A> void swap( slist<T,A> const &&, slist<T,A> const & );
 //template< class T, class A> void swap( slist<T,A> const &, slist<T,A> const && );
-
-
 
 } // namespace _watcom
 

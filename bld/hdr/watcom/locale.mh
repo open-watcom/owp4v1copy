@@ -70,6 +70,7 @@ using std::localeconv;
 
 :segment CNAME
 namespace std {
+
 :endsegment
 struct lconv {
         char *decimal_point;
@@ -94,10 +95,11 @@ struct lconv {
 
 _WCRTLINK extern char    *setlocale( int __category,const char *__locale );
 _WCRTLINK extern struct lconv *localeconv(void);
+
 :segment CNAME
 } // namespace std
-:endsegment
 
+:endsegment
 :segment !NO_WIDECHAR
 _WCRTLINK extern wchar_t *_wsetlocale( int __category,const wchar_t *__locale );
 :endsegment

@@ -4,28 +4,28 @@
 :include crwatcnt.sp
  */
 
-#ifndef __LFNDOS_H_INCLUDED
-#define __LFNDOS_H_INCLUDED
+#ifndef _SYS__LFNDOS_H_INCLUDED
+#define _SYS__LFNDOS_H_INCLUDED
 
 :include readonly.sp
 
 #if defined(__WATCOM_LFN__) && defined(__DOS__)
  #if defined(_M_I86)
   #if defined(__MEDIUM__)
-   #pragma library ( "doslfnm.lib" )
+   #pragma library ( "doslfnm" )
   #elif defined(__COMPACT__)
-   #pragma library ( "doslfnc.lib" )
+   #pragma library ( "doslfnc" )
   #elif defined(__LARGE__)
-   #pragma library ( "doslfnl.lib" )
+   #pragma library ( "doslfnl" )
   #elif defined(__HUGE__)
-   #pragma library ( "doslfnh.lib" )
+   #pragma library ( "doslfnh" )
   #else
-   #pragma library ( "doslfns.lib" )
+   #pragma library ( "doslfns" )
   #endif
  #elif defined(__SW_3S)
-  #pragma library ( "doslfn3s.lib" )
+  #pragma library ( "doslfn3s" )
  #else
-  #pragma library ( "doslfn3r.lib" )
+  #pragma library ( "doslfn3r" )
  #endif
 #endif
 

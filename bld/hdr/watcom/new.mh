@@ -48,7 +48,7 @@ extern void operator delete( void * );
 extern void operator delete []( void * );
 _WPRTLINK extern PFV set_new_handler( PFV );
 _WPRTLINK extern PFU _set_new_handler( PFU );
-:segment !QNX
+:segment DOS | LINUX
 #if defined(__SW_BR)
  _WPRTLINK extern _PUP _set_op_new( _PUP );
  _WPRTLINK extern _PUP _set_op_new_array( _PUP );

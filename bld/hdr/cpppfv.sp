@@ -13,7 +13,7 @@
  #define _PNH_DEFINED_
  typedef int (*_PNH)( unsigned );
 #endif
-:segment !QNX
+:segment DOS | LINUX
 #ifdef __SW_BR
  #ifndef _PPV_DEFINED
  #define _PPV_DEFINED

@@ -3,8 +3,8 @@
  *
 :include crwat.sp
  */
-#ifndef __TIMEB_H_INCLUDED
-#define __TIMEB_H_INCLUDED
+#ifndef _SYS_TIMEB_H_INCLUDED
+#define _SYS_TIMEB_H_INCLUDED
 
 :include readonly.sp
 

@@ -1,6 +1,6 @@
-#define SIG_ERR     ((__sighandler_t)-1)
-#define SIG_DFL     ((__sighandler_t)0)
-#define SIG_IGN     ((__sighandler_t)1)
+#define SIG_ERR     ((__sig_func)-1)
+#define SIG_DFL     ((__sig_func)0)
+#define SIG_IGN     ((__sig_func)1)
 
 #define SIGHUP      1   /* hangup */
 #define SIGINT      2   /* interrupt */
@@ -25,6 +25,8 @@
 #define SIGTTIN     21  /* attempted background tty read */
 #define SIGTTOU     22  /* attempted background tty write */
 #define SIGURG      23  /* urgent condition on I/O channel */
+#define SIGXCPU     24  /* CPU time limit exceeded */
+#define SIGXFSZ     25  /* file size limit exceeded */
 #define SIGVTALRM   26  /* virtual alarm clock */
 #define SIGPROF     27  /* profiler */
 #define SIGWINCH    28  /* window change */
@@ -33,6 +35,9 @@
 #define SIGPWR      30  /* power-fail restart */
 #define SIGSYS      31  /* bad argument to system call */
 #define _SIGMAX     32
+
+#define SIGRTMIN    32
+#define SIGRTMAX    _NSIG
 
 /* sigprocmask() flags */
 #define SIG_BLOCK   0

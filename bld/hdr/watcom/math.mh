@@ -50,8 +50,8 @@ using std::sqrt;
 using std::tan;
 using std::tanh;
 
-// C99 functions in math.h that are currently considered extensions.
-:include ext.sp
+:: C99 functions in math.h that are currently considered extensions.
+:include extc99.sp
 using std::acosh;
 using std::asinh;
 using std::atanh;
@@ -125,6 +125,7 @@ _WMRTDATA extern const float    __f_posqnan;
 
 :segment CNAME
 namespace std {
+
 :endsegment
 _WMRTLINK extern double ceil( double __x );
 _WMRTLINK extern double floor( double __x );
@@ -153,10 +154,20 @@ _WMIRTLINK extern double sinh( double __x );
 _WMIRTLINK extern double sqrt( double __x );
 _WMIRTLINK extern double tan( double __x );
 _WMIRTLINK extern double tanh( double __x );
+
+:: C99 functions in math.h that are currently considered extensions.
+:include extc99.sp
+_WMRTLINK extern double acosh( double __x );
+_WMRTLINK extern double asinh( double __x );
+_WMRTLINK extern double atanh( double __x );
+_WMRTLINK extern double hypot( double __x, double __y );
+_WMRTLINK extern double log2( double __x );
+:include extepi.sp
+
 :segment CNAME
 } // namespace std
-:endsegment
 
+:endsegment
 :include ext.sp
 ::
 :: Begin of extension section
@@ -174,18 +185,6 @@ struct complex {
         double  x;
         double  y;
 };
-:endsegment
-
-:segment CNAME
-namespace std {
-:endsegment
-_WMRTLINK extern double acosh( double __x );
-_WMRTLINK extern double asinh( double __x );
-_WMRTLINK extern double atanh( double __x );
-_WMRTLINK extern double hypot( double __x, double __y );
-_WMRTLINK extern double log2( double __x );
-:segment CNAME
-}
 :endsegment
 
 _WMRTLINK extern double cabs( struct _complex );
@@ -229,13 +228,11 @@ _WMRTLINK extern int    matherr( struct _exception * );
 _WMRTLINK extern double _matherr( struct _exception * );
 _WMRTLINK extern void   _set_matherr( int (*rtn)( struct _exception * ) );
 
-:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
 _WCRTLINK extern int _dmsbintoieee( double *__x, double *__y );
 _WCRTLINK extern int _fieeetomsbin( float *__x, float *__y );
 _WCRTLINK extern int _fmsbintoieee( float *__x, float *__y );
 
-:endsegment
 ::
 :: End of extension section
 ::
@@ -275,6 +272,7 @@ namespace std {
 #define _CMATH_AUX_INCLUDED
 
 namespace std {
+
   // double
   inline double abs( double __x ) { return( fabs( __x ) ); }
   inline double pow( double __x, int __y )
@@ -355,6 +353,7 @@ namespace std {
   inline long double sqrt ( long double __x ) { return( sqrt ( (double)__x ) ); }
   inline long double tan  ( long double __x ) { return( tan  ( (double)__x ) ); }
   inline long double tanh ( long double __x ) { return( tanh ( (double)__x ) ); }
+
 } // namespace std
 
 #endif

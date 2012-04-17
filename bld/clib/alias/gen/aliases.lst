@@ -60,9 +60,6 @@ getpid          getpid          _getpid         d16 d32 nt  nta ntp         o16 
 getws_          getws           _getws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 gmtm_r          _gmtime         gmtime_r                                                                l32 lpc lmp
 i64toa          lltoa           _i64toa         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
-inpd__          inpd            _inpd               d32 nt          nvc nvl     o32     q32     w32     l32         rdu rdk
-inpw__          inpw            _inpw           d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
-inp___          inp             _inp            d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
 isatty          isatty          _isatty         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 iscsyf          __iscsymf       iscsymf         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 iscsym          __iscsym        iscsym          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
@@ -87,9 +84,6 @@ mbsnic          _mbsnicmp       _mbsnicoll      d16 d32 nt  nta ntp         o16 
 memicm          memicmp         _memicmp        d16 d32 nt  nta ntp         o16 o32         w16 w32     l32         rdu rdk
 mkdir_          mkdir           _mkdir          d16 d32 nt  nta ntp         o16 o32         w16 w32                 rdu rdk
 open__          open            _open           d16 d32 nt  nta ntp         o16 o32         w16 w32                 rdu rdk
-outpd_          outpd           _outpd              d32 nt          nvc nvl     o32     q32     w32     l32         rdu rdk
-outpw_          outpw           _outpw          d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
-outp__          outp            _outp           d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
 putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu rdk
 putws_          putws           _putws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 read__          read            _read           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk

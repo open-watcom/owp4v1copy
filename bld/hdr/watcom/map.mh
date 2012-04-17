@@ -34,6 +34,7 @@
 #endif
 
 namespace std {
+
 /* ==================================================================
  * class map
  */
@@ -54,7 +55,7 @@ public:
     typedef typename Allocator::const_reference     const_reference;
     typedef typename Allocator::pointer             pointer;
     typedef typename Allocator::const_pointer       const_pointer;
-    
+
     class value_compare : public binary_function< value_type, value_type, bool >{
         friend class map;
         protected:
@@ -78,16 +79,16 @@ public:
          Allocator const & a )// = Allocator() )
             : Implementation( first, last, c, a )
             { }
-            
+
     map( map const & x ) : Implementation( x ) { };
-    
+
     ~map(){}
-    
+
     map& operator=( map const & x ){Implementation::operator=( x ); return( *this );}
-    
+
     //element access (not in common with set)
     Type& operator[](Key const &);
-    
+
     //iterators
     //typedef Implementation::iterator iterator;
     //typedef something const_iterator;
@@ -95,7 +96,7 @@ public:
     //typedef something difference_type;
     //typedef std::reverse_iterator<iterator>         reverse_iterator;
     //typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
-    
+
     /* ---------------------------------------------------------------
      * This is the interface defined in 14482 standard
      * it is inherited from the implementation
@@ -108,11 +109,11 @@ public:
     const_reverse_iterator rbegin() const;
     reverse_iterator rend();
     const_reverse_iterator rend() const;
-    
+
     bool empty() const;
     size_type size() const;
     size_type max_size() const;
-    
+
     Type& operator[](const key_type& x);
     pair<iterator,bool> insert(const value_type& v);
     iterator insert(iterator position, const value_type& x);
@@ -126,7 +127,7 @@ public:
 
     key_compare key_comp() const;
     value_compare value_comp() const;
-    
+
     iterator find(const key_type& k);
     const_terator find(const key_type& x) const;
     size_type count(const key_type& x) const;
@@ -137,8 +138,6 @@ public:
     pair<iterato,iterator> equal_range(const key_type& x);
     pair<const_iterator,const_iterator> equal_range(const key_type& x) const;
     */
-    
-    
 
 }; //end template class map
 
@@ -191,15 +190,6 @@ template<class Key, class Type, class Compare, class Allocator>
     void swap(map<Key,Type,Compare,Allocator>& x,
               map<Key,Type,Compare,Allocator>& y);
 
-
-
-
-
-
-
-
-
-
 /* ==================================================================
  * class multimap
  */
@@ -220,7 +210,7 @@ public:
     typedef typename Allocator::const_reference     const_reference;
     typedef typename Allocator::pointer             pointer;
     typedef typename Allocator::const_pointer       const_pointer;
-    
+
     class value_compare : public binary_function< value_type, value_type, bool >{
         friend class multimap;
         protected:
@@ -231,14 +221,14 @@ public:
                 return comp(x.first, y.first);
             }
     };
-    
+
     explicit multimap( const Compare& c = Compare(),
                        const Allocator& a = Allocator() ) : Implementation( c, a ) {}
 
     multimap( multimap const & that ) : Implementation(that) {}
     ~multimap() {}
     multimap& operator=( multimap const & x ){Implementation::operator=( x ); return( *this );}
-        
+
 }; //end template class multimap
 
 } // namespace std

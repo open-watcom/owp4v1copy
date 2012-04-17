@@ -19,6 +19,7 @@
 #endif
 
 namespace std {
+
 /*===================================================================
  * stack template adaptor
  */
@@ -39,7 +40,7 @@ public:
     void                push( value_type const & v )
                                         { c.push_back( v ); }
     void                pop()           { c.pop_back(); }
-    
+
     bool                _Sane()         { return( c._Sane() ); }
 };
 

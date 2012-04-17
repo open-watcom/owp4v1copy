@@ -7,8 +7,8 @@
 :include crwat.sp
 :endsegment
  */
-#ifndef __TYPES_H_INCLUDED
-#define __TYPES_H_INCLUDED
+#ifndef _SYS_TYPES_H_INCLUDED
+#define _SYS_TYPES_H_INCLUDED
 
 :include readonly.sp
 

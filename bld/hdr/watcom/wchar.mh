@@ -37,6 +37,7 @@ using std::tm;              // <= Fix me?
 #define _WCTYPE_T_DEFINED
 #define _WCTYPE_T_DEFINED_
 using std::wint_t;
+using std::wctype_t;
 #endif
 
 // C99 functions in wchar.h
@@ -126,7 +127,7 @@ using std::towupper;
  #include <io.h>
 #endif
 
-#ifndef _STAT_H_INCLUDED
+#ifndef _SYS_STAT_H_INCLUDED
  #include <sys/stat.h>
 #endif
 
@@ -194,6 +195,7 @@ using std::towupper;
 
 :segment CNAME
 namespace std {
+
 :endsegment
 typedef int mbstate_t;
 
@@ -213,9 +215,7 @@ _WCRTLINK extern int      mbsinit( const mbstate_t *__ps );
 _WCRTLINK extern size_t   mbsrtowcs( wchar_t *__dst, const char **__src, size_t __n, mbstate_t *__ps );
 _WCRTLINK extern wint_t   putwc( wint_t __wc, FILE *__strm );
 _WCRTLINK extern wint_t   putwchar( wint_t __wc );
-#ifndef swprintf
 _WCRTLINK extern int      swprintf( wchar_t *__s, size_t __n, const wchar_t *__format, ... );
-#endif
 _WCRTLINK extern int      swscanf( const wchar_t *__s, const wchar_t *__format, ... );
 _WCRTLINK extern wint_t   ungetwc( wint_t __wc, FILE *__strm );
 _WCRTLINK extern int      vfwprintf( FILE *__strm, const wchar_t *__format, va_list __arg );
@@ -254,10 +254,11 @@ _WCRTLINK extern wchar_t  *wmemmove( wchar_t *__s1, const wchar_t *__s2, size_t 
 _WCRTLINK extern wchar_t  *wmemset( wchar_t *__s, wchar_t __wc, size_t __n );
 _WCRTLINK extern int      wprintf( const wchar_t *__format, ... );
 _WCRTLINK extern int      wscanf( const wchar_t *__format, ... );
+
 :segment CNAME
 } // namespace std
-:endsegment
 
+:endsegment
 _WCRTLINK extern wchar_t  *_wcsdup( const wchar_t * );
 _WCRTLINK extern int      _wcsicmp( const wchar_t *, const wchar_t * );
 _WCRTLINK extern wchar_t  *_wcslwr( wchar_t * );
@@ -288,6 +289,7 @@ _WCRTLINK extern wchar_t  *_wtempnam( wchar_t *__dir, wchar_t *__prefix );
 
 :segment CNAME
 namespace std {
+
 :endsegment
 _WCRTLINK extern int      iswalnum( wint_t __wc );
 _WCRTLINK extern int      iswalpha( wint_t __wc );
@@ -305,11 +307,10 @@ _WCRTLINK extern int      iswctype( wint_t __wc, wctype_t __desc );
 _WCRTLINK extern wctype_t wctype( const char *__property );
 _WCRTLINK extern wint_t   towlower( wint_t __wc );
 _WCRTLINK extern wint_t   towupper( wint_t __wc );
-:segment CNAME
-} // namespace std
-:endsegment
 
 :segment CNAME
+} // namespace std
+
 :: C99 says this function is named mbsinit.
 _WCRTLINK extern int     sisinit( const std::mbstate_t *__ps );
 

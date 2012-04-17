@@ -31,3 +31,27 @@
 #define SOCK_PACKET     10
 #define SOCK_MAX        (SOCK_PACKET+1)
 
+/* For shutdown(2) */
+#define SHUT_RD         0    /* further receives are disallowed */
+#define SHUT_WR         1    /* further sends are disallowed */
+#define SHUT_RDWR       2    /* further sends and receives are disallowed */
+
+/* Flags for send(2) and recv(2) */
+#define MSG_OOB         0x1
+#define MSG_PEEK        0x2
+#define MSG_DONTROUTE   0x4
+#define MSG_TRYHARD     0x4
+#define MSG_CTRUNC      0x8
+#define MSG_PROBE       0x10
+#define MSG_TRUNC       0x20
+#define MSG_DONTWAIT    0x40
+#define MSG_EOR         0x80
+#define MSG_WAITALL     0x100
+#define MSG_FIN         0x200
+#define MSG_SYN         0x400
+#define MSG_CONFIRM     0x800
+#define MSG_RST         0x1000
+#define MSG_ERRQUEUE    0x2000
+#define MSG_NOSIGNAL    0x4000
+#define MSG_MORE        0x8000
+#define MSG_EOF         MSG_FIN

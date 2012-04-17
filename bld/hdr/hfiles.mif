@@ -121,6 +121,7 @@
 !inject queue.h                               hqnx
 !inject random           noext hcpp
 !inject regex.h                               hqnx
+!inject sched.h                          hlnx
 !inject search.h                    hdos hlnx hqnx
 !inject semaphor.h                            hqnx
 !inject set              noext hcpp
@@ -195,6 +196,7 @@
 !inject sys/qioctl.h                          hqnx
 !inject sys/qnx_glob.h                        hqnx
 !inject sys/qnxterm.h                         hqnx
+!inject sys/resource.h                   hlnx
 !inject sys/seginfo.h                         hqnx
 !inject sys/select.h                          hqnx
 !inject sys/sendmx.h                          hqnx
@@ -210,7 +212,7 @@
 !inject sys/sysi86.h                          hqnx
 !inject sys/sysmips.h                    hlnx
 !inject sys/termio.h                          hqnx
-!inject sys/time.h                       hlnx hqnx
+!inject sys/time.h                  hdos hlnx hqnx
 !inject sys/timeb.h                 hdos hlnx hqnx
 !inject sys/timers.h                          hqnx
 !inject sys/times.h                      hlnx hqnx

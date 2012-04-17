@@ -1,4 +1,4 @@
-:segment !QNX & !LINUX
+:segment DOS
 /* macros for MS compatibility */
 #ifndef _CRTAPI1
  #define _CRTAPI1

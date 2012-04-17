@@ -14,8 +14,6 @@
 
 :include sizet.sp
 
-:include wchar_t.sp
-
 :include null.sp
 
 :include mbmax.sp
@@ -88,8 +86,8 @@ _WCRTLINK extern int    _ismbdxdigit( unsigned int __ch );
  #define __MBCSIsTable __MBCSIsTable_br
  #define __IsDBCS      __IsDBCS_br
 #endif
-_WCRTDATA extern unsigned char __MBCSIsTable[257];
-_WCRTDATA extern int           __IsDBCS;
+_WCRTDATA extern unsigned char _WCDATA __MBCSIsTable[257];
+_WCRTDATA extern int           _WCDATA __IsDBCS;
 
 /* Flag used in __MBCSIsTable table */
 #ifndef _MB_TABLE_FLAGS_DEFINED
