@@ -69,35 +69,35 @@ extern  struct thread_data *    __MultipleThread();
 
 #else
 
-unsigned                _STACKLOW;
+unsigned        _STACKLOW;
 
 #endif
 
 /* global data */
 
-int  __far *            _threadid;
-char __far *            _LpCmdLine;     /* pointer to command line */
-char __far *            _LpPgmName;     /* pointer to program name */
-unsigned                _dynend;
-unsigned                _curbrk;
-unsigned                _STACKTOP;
-unsigned short          _HShift;
-int                     _cbyte;     /* used by getch, getche */
-int                     _cbyte2;    /* used by getch */
-unsigned char __near    _osmajor;
-unsigned char __near    _osminor;
-unsigned char __near    _osmode;
+int             _WCI86FAR *_threadid;
+char            _WCI86FAR *_LpCmdLine;  /* pointer to command line */
+char            _WCI86FAR *_LpPgmName;  /* pointer to program name */
+unsigned        _dynend;
+unsigned        _curbrk;
+unsigned        _STACKTOP;
+unsigned char   _HShift;
+int             _cbyte;     /* used by getch, getche */
+int             _cbyte2;    /* used by getch */
+unsigned char   _WCDATA _osmajor;
+unsigned char   _WCDATA _osminor;
+unsigned char   _WCDATA _osmode;
 #if defined(__SW_BD)
 #include <setjmp.h>
-jmp_buf                 JmpBuff;
-int                     RetCode;
+jmp_buf         JmpBuff;
+int             RetCode;
 #endif
 #if !defined(__SW_BM)
-int                     _nothread;
+int             _nothread;
 #endif
 
 /* End of static data - used in OS/2 DLL to find beginning of near heap */
-extern char             end;
+extern char     end;
 
 void __far __null_FPE_handler( void )
 {
@@ -110,10 +110,12 @@ extern  int _CMain( void );
 #pragma aux _OS2Main "_*" parm caller [ dx ax ] [ cx bx ];
 
 
-int _OS2Main( char far *stklow, char far * stktop,
-               unsigned envseg, unsigned cmdoff )
-/*************************************************/
+int _OS2Main( char _WCI86FAR *stklow, char _WCI86FAR *stktop,
+                        unsigned envseg, unsigned cmdoff )
+/***********************************************************/
 {
+    USHORT      shftval;
+
     cmdoff = cmdoff;    /* supress warnings */
     envseg = envseg;
     stktop = stktop;
@@ -127,7 +129,8 @@ int _OS2Main( char far *stklow, char far * stktop,
     _STACKTOP = FP_OFF( stktop );
     _curbrk = _dynend = _STACKTOP;
 #endif
-    DosGetHugeShift( (PUSHORT)&_HShift );
+    DosGetHugeShift( (PUSHORT)&shftval );
+    _HShift = shftval;
     DosGetMachineMode( (PBYTE)&_osmode );
     {
     unsigned short      version;
@@ -143,8 +146,8 @@ int _OS2Main( char far *stklow, char far * stktop,
 #else
     /* copy progname and arguments to bottom of stack */
     {
-    char                far *src;
-    char                far *pgmp;
+    char    _WCI86FAR *src;
+    char    _WCI86FAR *pgmp;
 
     src = MK_FP( envseg, cmdoff );
     _LpPgmName = stklow;

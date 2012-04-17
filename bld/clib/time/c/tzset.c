@@ -75,10 +75,10 @@ struct tm       __end_dst = {   /* end of daylight savings */
 static char     stzone[TZNAME_MAX + 1] = "EST";       /* place to store names */
 static char     dtzone[TZNAME_MAX + 1] = "EDT";       /* place to store names */
 
-_WCRTDATA char  *tzname[2] = { stzone, dtzone };
+_WCRTDATA char  * _WCDATA tzname[2] = { stzone, dtzone };
 
-_WCRTDATA long  timezone = 5L * 60L * 60L;      /* seconds from GMT */
-_WCRTDATA int   daylight = 1;                   /* d.s.t. indicator */
+_WCRTDATA long  _WCDATA timezone = 5L * 60L * 60L;      /* seconds from GMT */
+_WCRTDATA int   _WCDATA daylight = 1;                   /* d.s.t. indicator */
 int             __dst_adjust = 60 * 60;         /* daylight adjustment */
 
 static struct {

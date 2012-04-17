@@ -41,6 +41,9 @@
 #include "exitwmsg.h"
 #include "fileacc.h"
 #include "initfini.h"
+#if !defined(_THIN_LIB)
+#include "initarg.h"
+#endif
 
 #define MAX_CMDLINE     500
 
@@ -70,10 +73,6 @@ extern long                 _StartNLM( void *, void *, unsigned char *,
                                        int (*)() );
 static void                 InitStackLow( void );
 
-#if !defined(_THIN_LIB)
-extern char                 *_LpPgmName;
-extern char                 *_LpCmdLine;
-#endif
 extern int                  _edata;
 extern int                  _end;
 #if !defined(_THIN_LIB)

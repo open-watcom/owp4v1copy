@@ -33,4 +33,4 @@
 #include <mbstring.h>
 #include "rtinit.h"
 
-_WCRTDATA int                   __IsDBCS;
+_WCRTDATA int _WCDATA __IsDBCS = 0;

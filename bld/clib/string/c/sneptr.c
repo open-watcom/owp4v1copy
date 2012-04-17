@@ -32,11 +32,8 @@
 #include "variety.h"
 #include <stdlib.h>
 #include "rtdata.h"
+#include "errstr.h"
 
-#ifdef __NETWARE__
-_WCRTDATA extern int _WCNEAR    sys_nerr;   /* # of entries in sys_errlist array */
-#define _sys_nerr               sys_nerr
-#endif
 
 _WCRTLINK int *__get_sys_nerr_ptr( void )
 {

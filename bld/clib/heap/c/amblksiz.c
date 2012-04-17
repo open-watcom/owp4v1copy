@@ -35,14 +35,14 @@
 #include <limits.h>
 
 #if defined(__NT__)
-_WCRTDATA unsigned _WCNEAR _amblksiz = 64*1024;
+_WCRTDATA unsigned _WCDATA _amblksiz = 64*1024;
 #elif defined(__WINDOWS_386__)
-_WCRTDATA unsigned _WCNEAR _amblksiz = 32*1024;
+_WCRTDATA unsigned _WCDATA _amblksiz = 32*1024;
 #elif defined(__WINDOWS__)
-_WCRTDATA unsigned _WCNEAR _amblksiz = 8*1024;
+_WCRTDATA unsigned _WCDATA _amblksiz = 8*1024;
 #elif INT_MAX < 65535
-_WCRTDATA unsigned _WCNEAR _amblksiz = 16;
+_WCRTDATA unsigned _WCDATA _amblksiz = 16;
 #else
-_WCRTDATA unsigned _WCNEAR _amblksiz = 4*1024;
+_WCRTDATA unsigned _WCDATA _amblksiz = 4*1024;
 #endif
 

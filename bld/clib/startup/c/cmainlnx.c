@@ -36,11 +36,10 @@
 #include "thread.h"
 #include "rtdata.h"
 #include "linuxsys.h"
+#include "initarg.h"
 
 int     _argc;                      /* argument count  */
 char    **_argv;                    /* argument vector */
-
-extern  char        *_LpPgmName;
 
 extern int main( int, char **, char ** );
 

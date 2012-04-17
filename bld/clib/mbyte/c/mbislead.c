@@ -34,7 +34,7 @@
 #include "mbchar.h"
 #include "rtinit.h"
 
-_WCRTDATA unsigned char         __MBCSIsTable[257];
+_WCRTDATA unsigned char _WCDATA __MBCSIsTable[257];
 
 /**
  * Determine whether or not the specified byte is a lead byte.

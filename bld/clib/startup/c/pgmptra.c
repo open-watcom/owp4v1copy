@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-#include "variety.h"
-#include <stdlib.h>
+#include "widechar.h"
+#include "initarg.h"
 
 
 /* Implementation note:
@@ -40,7 +40,5 @@
  * to have identical function. The _LpPgmName global could be renamed, but
  * it was deemed more expedient to add an alias for it.
  */
-
-_WCRTDATA extern char _WCI86FAR *_LpPgmName;
 
 #pragma alias( _pgmptr, _LpPgmName )

@@ -32,17 +32,8 @@
 #include "variety.h"
 #include <stdlib.h>
 
-/* Temp Hack Alert! The conditional below needs to be removed once 1.8
- * is released (same with wpgmptr.c). ../register.def and ../stack.def
- * need to be modified to uncomment _pgmptr and _wpgmptr references.
- */
-#if __WATCOMC__ < 1280
-_WCRTDATA extern char _WCI86FAR *_LpPgmName;
-#undef  _pgmptr
-#define _pgmptr _LpPgmName
-#endif
 
-_WCRTLINK char _WCI86FAR **__get_pgmptr_ptr( void )
+_WCRTLINK char **__get_pgmptr_ptr( void )
 {
     return( &_pgmptr );
 }

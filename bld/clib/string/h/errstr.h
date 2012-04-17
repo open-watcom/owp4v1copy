@@ -28,18 +28,12 @@
 *
 ****************************************************************************/
 
+#ifdef __NETWARE__
 
-#if defined(__NETWARE__) || defined(__WIDECHAR__)
-
-extern int _WCNEAR      sys_nerr;
-extern char             *sys_errlist[];
+extern int      sys_nerr;
+extern char     *sys_errlist[];
 #define _sys_nerr       sys_nerr
 #define _sys_errlist    sys_errlist
-
-#else
-
-extern char             *_sys_errlist[];
-extern int _WCNEAR      _sys_nerr;
 
 #endif
 

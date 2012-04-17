@@ -39,11 +39,10 @@
 #endif
 #include "errstr.h"
 
-
-#ifndef __WIDECHAR__
+#if !defined( __NETWARE__ ) && !defined( __WIDECHAR__ )
 
 #ifdef __LINUX__
-char *_sys_errlist[] = {
+_WCRTDATA char * _WCDATA _sys_errlist[] = {
     /*  0   EOK             */ "No error",
     /*  1   EPERM           */ "Operation not permitted",
     /*  2   ENOENT          */ "No such file or directory",
@@ -173,7 +172,7 @@ char *_sys_errlist[] = {
     /* if more are added, be sure to update _sys_nerr accordingly */
 };
 #else
-char *_sys_errlist[] = {
+_WCRTDATA char * _WCDATA _sys_errlist[] = {
     /* 0    EZERO           */  "No error",
     /* 1    ENOENT          */  "No such file or directory",
     /* 2    E2BIG           */  "Arg list too big",
@@ -219,7 +218,7 @@ char *_sys_errlist[] = {
 };
 #endif
 
-int _WCNEAR _sys_nerr = ( sizeof( _sys_errlist ) / sizeof( *_sys_errlist ) );
+_WCRTDATA int _WCDATA _sys_nerr = ( sizeof( _sys_errlist ) / sizeof( *_sys_errlist ) );
 
 #endif
 

@@ -32,11 +32,7 @@
 #include "variety.h"
 #include <stdlib.h>
 #include "rtdata.h"
-
-#ifdef __NETWARE__
-_WCRTDATA extern char           *sys_errlist[]; /* strerror error message table */
-#define _sys_errlist            sys_errlist
-#endif
+#include "errstr.h"
 
 _WCRTLINK char *(*__get_sys_errlist_ptr( void ))[]
 {
