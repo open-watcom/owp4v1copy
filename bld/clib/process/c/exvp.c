@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <process.h>
 #include "rtdata.h"
-#include "wenviron.h"
+#include "_environ.h"
 
 _WCRTLINK int __F_NAME(execvp,_wexecvp)( const CHAR_TYPE *file, const CHAR_TYPE * const *argv )
     {

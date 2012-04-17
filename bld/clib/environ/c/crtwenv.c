@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include "liballoc.h"
 #include "rtdata.h"
-#include "wenviron.h"
+#include "_environ.h"
 
 
 void __create_wide_environment( void )

@@ -24,26 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of spawnvp() and _wspawnvp().
+* Description:  Implementation of __wputenv().
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "widechar.h"
-#include <stdlib.h>
-#include <process.h>
-#include "rtdata.h"
-#include "_environ.h"
-
-
-_WCRTLINK int __F_NAME(spawnvp,_wspawnvp)( int mode, const CHAR_TYPE *file, const CHAR_TYPE *const argv[] )
-{
-#ifdef __WIDECHAR__
-    if( _RWD_wenviron == NULL )
-        __create_wide_environment();
-    return( _wspawnvpe( mode, file, argv, (const CHAR_TYPE **)_RWD_wenviron ) );
-#else
-    return( spawnvpe( mode, file, argv, (const CHAR_TYPE **)_RWD_environ ) );
-#endif
-}
+// this file should remain an indirected file
+// it is done this way to support the reuse of the source file
+#define __WIDECHAR__
+#undef __INLINE_FUNCTIONS__
+#include "_putenv.c"

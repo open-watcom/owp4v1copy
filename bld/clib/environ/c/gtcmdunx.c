@@ -29,15 +29,15 @@
 ****************************************************************************/
 
 
-#include "variety.h"
+#include "widechar.h"
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
+#include "initarg.h"
 #ifdef __WATCOMC__  // Needs to be built with other tools for clibext
     #include <process.h>
 #endif
 
-extern  char    **_argv;                /* argument vector */
 
 _WCRTLINK int (_bgetcmd)( char *buffer, int len )
 {

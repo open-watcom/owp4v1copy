@@ -34,28 +34,26 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <env.h>
+#include <string.h>
 #if !defined(__UNIX__)
     #include <dos.h>
 #endif
-#include <env.h>
-#include "liballoc.h"
-#include <string.h>
-#include "filestr.h"
-#include "rtdata.h"
 #if defined(__OS2__)
     #define INCL_DOSMISC
     #include <wos2.h>
-#endif
-#if defined(__NT__)
+#elif defined(__NT__)
     #include <windows.h>
+#elif defined( __RDOS__ ) || defined( __RDOSDEV__ )
+    #include <rdos.h>
 #endif
+#include "liballoc.h"
+#include "filestr.h"
+#include "rtdata.h"
 #if defined(__WINDOWS__)
     extern char _WCI86FAR * _WCI86FAR __pascal GetDOSEnvironment( void );
 #endif
 
-#if defined( __RDOS__ ) || defined( __RDOSDEV__ )
-#include <rdos.h>
-#endif
 
 #if !defined(__NETWARE__) && !defined(__LINUX__)
 static char *_free_ep;
@@ -66,21 +64,21 @@ static void *(_WCI86NEAR allocate)( size_t amt )
     void                *ptr;
     void _WCI86NEAR     *nptr;
 
-    #if defined(__OS2_286__)
-        if( _osmode == DOS_MODE ) {
-            ptr = nptr = lib_nmalloc( amt );
-            if( nptr == NULL ) {
-                ptr = lib_malloc( amt );
-            }
-        } else {
-            ptr = lib_malloc( amt );
-        }
-    #else
+  #if defined(__OS2_286__)
+    if( _osmode == DOS_MODE ) {
         ptr = nptr = lib_nmalloc( amt );
         if( nptr == NULL ) {
             ptr = lib_malloc( amt );
         }
-    #endif
+    } else {
+        ptr = lib_malloc( amt );
+    }
+  #else
+    ptr = nptr = lib_nmalloc( amt );
+    if( nptr == NULL ) {
+        ptr = lib_malloc( amt );
+    }
+  #endif
     return( ptr );
 }
 #else
@@ -90,29 +88,31 @@ static void *(_WCI86NEAR allocate)( size_t amt )
 
 void __setenvp( void )
 {
-#if defined(__NETWARE__) || defined(__RDOSDEV__)
+#if defined(__NETWARE__)
     // no environment support
 #elif defined(__LINUX__)
     char    **argep;
     int     count;
 
-    argep = _RWD_environ;
+    if( _RWD_environ != NULL )
+        return;
+    argep = (char **)_Envptr;
     while ( *argep != NULL )
         argep++;
-    count = argep - _RWD_environ;
-    argep = lib_malloc( (count + 1) * sizeof(char *) + count * sizeof(char) );
-    memcpy( argep, _RWD_environ, (count + 1) * sizeof(char *) );
-    _RWD_env_mask = (char *) &argep[ count + 1 ];
-    memset( _RWD_env_mask, 0, (count) * sizeof(char) );
+    count = argep - (char **)_Envptr;
+    argep = lib_malloc( ( count + 1 ) * sizeof( char * ) + count * sizeof( char ) );
+    memcpy( argep, _Envptr, ( count + 1 ) * sizeof( char * ) );
+    _RWD_env_mask = (char *)&argep[count + 1];
+    memset( _RWD_env_mask, 0, count * sizeof( char ) );
     _RWD_environ = argep;
 #else
-    #if defined(__WINDOWS_386__) || defined(__DOS_386__)
-        char        _WCFAR *startp;
-        char        _WCFAR *p;
-    #else
-        char        _WCI86FAR *startp;
-        char        _WCI86FAR *p;
-    #endif
+  #if defined(__WINDOWS_386__) || defined(__DOS_386__)
+    char    _WCFAR *startp;
+    char    _WCFAR *p;
+  #else
+    char    _WCI86FAR *startp;
+    char    _WCI86FAR *p;
+  #endif
     char    *ep;
     char    *my_env_mask;
     char    **my_environ;
@@ -122,39 +122,49 @@ void __setenvp( void )
 
     /* if we are already initialized, then return */
     if( _RWD_environ != NULL ) return;           /* 10-jun-90 */
-    #if defined(__WARP__)
-        startp = _RWD_Envptr;
-    #elif defined(__OS2_286__)
+  #if defined(__WARP__)
+    startp = _RWD_Envptr;
+  #elif defined(__OS2_286__)
     {
         unsigned short  seg;
 
         DosGetEnv( (PUSHORT)&seg, (PUSHORT)&count );
         startp = MK_FP( seg, 0 );
     }
-    #elif defined(__WINDOWS__)
+  #elif defined(__WINDOWS__)
     {
         unsigned long tmp;
 
         tmp = (unsigned long)GetDOSEnvironment();
-        startp = MK_FP( (unsigned short)(tmp >> 16),
-                        (unsigned long) (tmp & 0xFFFF ));
+        startp = MK_FP( (unsigned short)( tmp >> 16 ), (unsigned long)( tmp & 0xFFFF ) );
     }
-    #elif defined(__RDOS__)
+  #elif defined(__RDOS__)
     {
         int handle;
         int size;
 
         handle = RdosOpenProcessEnv();
-        size = RdosGetEnvSize( handle );        
-        startp = allocate( size );
+        size = RdosGetEnvSize( handle );
+        startp = lib_malloc( size );
         RdosGetEnvData( handle, startp );
         RdosCloseEnv( handle );
     }
-    #elif defined( _M_I86 )
-        startp = MK_FP( *(unsigned short _WCI86FAR *)(MK_FP(_RWD_psp, 0x2c)), 0 );
-    #else
-        startp = _RWD_Envptr;                                   /* 13-mar-91 */
-    #endif
+  #elif defined(__RDOSDEV__)
+    {
+        int handle;
+        int size;
+
+        handle = RdosOpenSysEnv();
+        size = RdosGetEnvSize( handle );
+        startp = lib_malloc( size );
+        RdosGetEnvData( handle, startp );
+        RdosCloseEnv( handle );
+    }
+  #elif defined( _M_I86 )
+    startp = MK_FP( *(unsigned short _WCI86FAR *)( MK_FP( _RWD_psp, 0x2c ) ), 0 );
+  #else
+    startp = _RWD_Envptr;                                   /* 13-mar-91 */
+  #endif
     count = 0;
     p = startp;
     while( *p ) {
@@ -166,11 +176,11 @@ void __setenvp( void )
     if( ep_size == 0 ) {
         ep_size = 1;
     }
-    ep = (char *)allocate( ep_size );
-    if( ep ) {
-        env_size = (count + 1) * sizeof(char *) + count * sizeof(char);
-        my_environ = (char **)allocate( env_size );
-        if( my_environ ) {
+    ep = allocate( ep_size );
+    if( ep != NULL ) {
+        env_size = ( count + 1 ) * sizeof( char * ) + count * sizeof( char );
+        my_environ = allocate( env_size );
+        if( my_environ != NULL ) {
             _RWD_environ = my_environ;
             p = startp;
             _free_ep = ep;
@@ -180,26 +190,27 @@ void __setenvp( void )
                     ;
             }
             *my_environ++ = NULL;
-            _RWD_env_mask = my_env_mask = (char *) my_environ;
-            for( ; count; count-- )
+            _RWD_env_mask = my_env_mask = (char *)my_environ;
+            for( ; count; count-- ) {
                 *my_env_mask++ = 0;
+            }
         } else {
             lib_free( ep );
         }
     }
 
-#if defined( __RDOS__ ) || defined( __RDOSDEV__ )
+  #if defined( __RDOS__ ) || defined( __RDOSDEV__ )
     lib_free( startp );
-#endif
+  #endif
 
     /*** Handle the C_FILE_INFO entry ***/
-    #ifdef __USE_POSIX_HANDLE_STRINGS
-        __ParsePosixHandleStr();
-    #endif
+  #ifdef __USE_POSIX_HANDLE_STRINGS
+    __ParsePosixHandleStr();
+  #endif
 #endif
 }
 
-#if !defined(__NETWARE__) && !defined(__LINUX__)
+#if !defined(__NETWARE__)
 
 void __freeenvp( void )
 {
@@ -208,10 +219,12 @@ void __freeenvp( void )
         lib_free( _RWD_environ );
         _RWD_environ = NULL;
     }
+  #if !defined(__LINUX__)
     if( _free_ep ) {
         lib_free( _free_ep );
         _free_ep = NULL;
     }
+  #endif
 }
 
 #endif

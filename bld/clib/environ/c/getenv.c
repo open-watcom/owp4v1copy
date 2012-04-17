@@ -24,70 +24,27 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of getenv().
+* Description:  Implementation of (_w)getenv().
 *
 ****************************************************************************/
 
 
-#include "variety.h"
 #include "widechar.h"
 #include <mbstring.h>
-#include <stdlib.h>
 #include <string.h>
-#include "rtdata.h"
 #ifdef __WIDECHAR__
-    #include "wenviron.h"
+    #include <wctype.h>
 #endif
-
-#if defined(__UNIX__)
-    #ifdef __WIDECHAR__
-        #define CMP_FUNC        wcsncmp
-    #else
-        #define CMP_FUNC        strncmp
-    #endif
-#else
-    #define CMP_FUNC        _wcsnicmp
-#endif
-
-#if !defined(__UNIX__) && !defined(__WIDECHAR__) && !defined(__NETWARE__)
-
-_WCRTLINK char *getenv( const char *name )
-{
-    char        **envp;
-    char        *p;
-
-    /*** Find the environment string ***/
-    __ptr_check( name, 0 );
-    envp = _RWD_environ;
-    if( (envp != NULL) && (name != NULL) ) {
-        for( ; p = *envp; ++envp ) {
-            const char  *s = name;
-
-            while( *p != '\0' ) {   /* simple check is sufficient for p, not s */
-                if ( _mbterm( s ) ) {
-                    if( *p == '=' )  return( p + 1 );
-                    break;
-                }
-                if ( _mbctoupper( _mbsnextc( p ) ) != _mbctoupper( _mbsnextc( s ) ) )
-                    break;
-                p = _mbsinc( p );   /* skip over character */
-                s = _mbsinc( s );   /* skip over character */
-            }
-        }
-    }
-    return( NULL );                 /* not found */
-}
-
-#else
+#include "rtdata.h"
+#include "_environ.h"
 
 _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
 {
-  #ifdef __NETWARE__
+#ifdef __NETWARE__
     name = name;
-  #else
+#else
     CHAR_TYPE       **envp;
     CHAR_TYPE       *p;
-    int             len;
 
   #ifdef __WIDECHAR__
     if( _RWD_wenviron == NULL ) {
@@ -99,17 +56,26 @@ _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
     __ptr_check( name, 0 );
     envp = __F_NAME(_RWD_environ,_RWD_wenviron);
     if( (envp != NULL) && (name != NULL) ) {
-        len = __F_NAME(strlen,wcslen)( name );
         for( ; p = *envp; ++envp ) {
-            if( CMP_FUNC( p, name, len ) == 0 ) {
-                if( p[len] == STRING( '=' ) ) {
-                    return( &p[len+1] );
+            const CHAR_TYPE     *s = name;
+
+            while( !_TCSTERM( p ) ) {
+                if( _TCSTERM( s ) ) {
+                    if( _TCSNEXTC( p ) == STRING( '=' ) )
+                        return( _TCSINC( p ) );
+                    break;
                 }
+  #if defined(__UNIX__)
+                if( _TCSCMP( p, s ) )
+  #else
+                if( _TCSICMP( p, s ) )
+  #endif
+                    break;
+                p = _TCSINC( p );   /* skip over character */
+                s = _TCSINC( s );   /* skip over character */
             }
         }
     }
-  #endif
+#endif
     return( NULL );                 /* not found */
 }
-
-#endif

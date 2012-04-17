@@ -24,26 +24,64 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of spawnvp() and _wspawnvp().
+* Description:  Implementation for __(w)putenv().
 *
 ****************************************************************************/
 
 
-#include "variety.h"
 #include "widechar.h"
-#include <stdlib.h>
-#include <process.h>
+#include <string.h>
+#include <ctype.h>
+#include <mbstring.h>
+#include <errno.h>
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#endif
+#ifdef __NT__
+    #include <windows.h>
+    #include "libwin32.h"
+#elif defined( __RDOS__ ) || defined( __RDOSDEV__ )
+    #include <rdos.h>
+#endif
+#include "liballoc.h"
 #include "rtdata.h"
+#include "seterrno.h"
 #include "_environ.h"
 
 
-_WCRTLINK int __F_NAME(spawnvp,_wspawnvp)( int mode, const CHAR_TYPE *file, const CHAR_TYPE *const argv[] )
+int __F_NAME(__putenv,__wputenv)( const CHAR_TYPE *env_string )
 {
-#ifdef __WIDECHAR__
-    if( _RWD_wenviron == NULL )
-        __create_wide_environment();
-    return( _wspawnvpe( mode, file, argv, (const CHAR_TYPE **)_RWD_wenviron ) );
+#ifdef __NETWARE__
+    env_string = env_string;
+    return( -1 );
 #else
-    return( spawnvpe( mode, file, argv, (const CHAR_TYPE **)_RWD_environ ) );
+    int                 index = -1;
+    const CHAR_TYPE     *p;
+    int                 delete_var;
+
+    if( env_string == NULL || _TCSTERM( env_string ) )
+        return( index );
+    // handle NAME=STRING
+    for( p = _TCSINC( env_string ); !_TCSTERM( p ); p = _TCSINC( p ) ) {    // (used under NT)
+        if( _TCSNEXTC( p ) == STRING( '=' ) ) {
+            break;
+        }
+    }
+    if( _TCSTERM( p ) )
+        return( index ); /* <name> with no '=' is illegal */
+    delete_var = ( _TCSTERM( _TCSINC( p ) ) );
+    index = __F_NAME(__findenv,__wfindenv)( env_string, delete_var );
+    if( delete_var )
+        return( 0 );
+    if( index == -1 ) {
+        return( index );
+    }
+    if( index > 0 ) {
+        ((const CHAR_TYPE **)__F_NAME(_RWD_environ,_RWD_wenviron))[index - 1] = env_string;
+  #ifndef __WIDECHAR__
+        _RWD_env_mask[index - 1] = 0;     /* indicate not alloc'd */
+  #endif
+    }
+    return( 0 );
 #endif
 }

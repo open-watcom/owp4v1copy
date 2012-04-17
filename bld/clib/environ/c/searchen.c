@@ -32,7 +32,6 @@
 ****************************************************************************/
 
 
-#include "variety.h"
 #include "widechar.h"
 #undef __INLINE_FUNCTIONS__
 #include <stdio.h>
@@ -44,9 +43,7 @@
 #include <string.h>
 #include "rtdata.h"
 #include "seterrno.h"
-#ifdef __WIDECHAR__
-    #include "wenviron.h"
-#endif
+#include "_environ.h"
 
 #if defined(__UNIX__)
     #define PATH_SEPARATOR STRING('/')
