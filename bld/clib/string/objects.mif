@@ -90,7 +90,6 @@
 !inject strerr_s.obj d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi l32 lpc lmp rdu rdk
 !inject strnln_s.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
 !inject strtok_s.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
-!inject u_stprtf.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject ubprintf.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject urstrdat.obj                        nta ntp
 !inject urstrcat.obj                        nta ntp

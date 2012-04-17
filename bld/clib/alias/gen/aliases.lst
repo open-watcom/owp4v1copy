@@ -27,6 +27,7 @@
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
 ###########################################################################################################################
 access          access          _access         d16 d32 nt  nta ntp         o16 o32         w16 w32                 rdu rdk
+asct_r          _asctime        asctime_r                                                               l32 lpc lmp
 atoi64          atoll           _atoi64         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 chdir_          chdir           _chdir          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 chmod_          chmod           _chmod          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
@@ -34,6 +35,7 @@ chsize          chsize          _chsize         d16 d32 nt  nta ntp         o16 
 close_          close           _close          d16 d32 nt  nta ntp         o16 o32         w16 w32                 rdu rdk
 creat_          creat           _creat          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 cstrdu          __clib_strdup   strdup          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp rdu rdk
+ctim_r          _ctime          ctime_r                                                                 l32 lpc lmp
 cwait_          cwait           _cwait                  nt  nta ntp         o16 o32                                 rdu rdk
 cwcsdu          __clib_wcsdup   _wcsdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 dopen_          _hdopen         _dopen          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
@@ -47,13 +49,20 @@ fileno          fileno          _fileno         d16 d32 nt  nta ntp         o16 
 flelen          filelength      _filelength     d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 fputch          fputchar        _fputchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 fputwc          fputwchar       _fputwchar      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
+fseeko          fseek           fseeko                                                                  l32 lpc lmp
 fstat_          fstat           _fstat          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
+ftello          ftell           ftello                                                                  l32 lpc lmp
 ftime_          ftime           _ftime          d16 d32 nt  nta ntp         o16 o32 q16 q21 w16 w32 osi l32         rdu rdk
 getche          getche          _getche         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 getch_          getch           _getch          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 getcwd          getcwd          _getcwd         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
+getpid          getpid          _getpid         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 getws_          getws           _getws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
+gmtm_r          _gmtime         gmtime_r                                                                l32 lpc lmp
 i64toa          lltoa           _i64toa         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
+inpd__          inpd            _inpd               d32 nt          nvc nvl     o32     q32     w32     l32         rdu rdk
+inpw__          inpw            _inpw           d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
+inp___          inp             _inp            d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
 isatty          isatty          _isatty         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 iscsyf          __iscsymf       iscsymf         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 iscsym          __iscsym        iscsym          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
@@ -62,6 +71,7 @@ ismbbk          _ismbbkalpha    _ismbbkalnum    d16 d32 nt  nta ntp         o16 
 itoa__          itoa            _itoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 itow__          _itow           _witoa          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 kbhit_          kbhit           _kbhit          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
+lctm_r          _localtime      localtime_r                                                             l32 lpc lmp
 lltoa_          lltoa           _lltoa          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32         rdu rdk
 lockin          locking         _locking        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32         rdu rdk
 lseek_          lseek           _lseek          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
@@ -77,10 +87,14 @@ mbsnic          _mbsnicmp       _mbsnicoll      d16 d32 nt  nta ntp         o16 
 memicm          memicmp         _memicmp        d16 d32 nt  nta ntp         o16 o32         w16 w32     l32         rdu rdk
 mkdir_          mkdir           _mkdir          d16 d32 nt  nta ntp         o16 o32         w16 w32                 rdu rdk
 open__          open            _open           d16 d32 nt  nta ntp         o16 o32         w16 w32                 rdu rdk
-putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32         rdu rdk
+outpd_          outpd           _outpd              d32 nt          nvc nvl     o32     q32     w32     l32         rdu rdk
+outpw_          outpw           _outpw          d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
+outp__          outp            _outp           d16 d32 nt          nvc nvl o16 o32 q16 q32 w16 w32     l32         rdu rdk
+putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32 lpc lmp rdu rdk
 putws_          putws           _putws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 read__          read            _read           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 rmdir_          rmdir           _rmdir          d16 d32 nt  nta ntp         o16 o32         w16 w32                 rdu rdk
+setenv          setenv          _setenv         d16 d32 nt  nta ntp         o16 o32 q16     w16 w32     l32 lpc lmp rdu rdk
 setmod          setmode         _setmode        d16 d32 nt  nta ntp nvc nvl o16 o32         w16 w32                 rdu rdk
 sopen_          sopen           _sopen          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk
 stat__          stat            _stat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi             rdu rdk

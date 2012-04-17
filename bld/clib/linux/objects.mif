@@ -7,6 +7,7 @@
 !inject chdir.obj                                                                               l32 lpc lmp
 !inject chmod.obj                                                                               l32 lpc lmp
 !inject chown.obj                                                                               l32 lpc lmp
+!inject chroot.obj                                                                              l32 lpc lmp
 !inject clone.obj                                                                               l32 lpc lmp
 !inject close.obj                                                                               l32 lpc lmp
 !inject dup.obj                                                                                 l32 lpc lmp
@@ -24,24 +25,30 @@
 !inject getegid.obj                                                                             l32 lpc lmp
 !inject geteuid.obj                                                                             l32 lpc lmp
 !inject getgid.obj                                                                              l32 lpc lmp
+!inject gethname.obj                                                                            l32 lpc lmp
 !inject getitimr.obj                                                                            l32 lpc lmp
 !inject getpgrp.obj                                                                             l32 lpc lmp
 !inject getpid.obj                                                                              l32 lpc lmp
+!inject getpname.obj                                                                            l32 lpc lmp
 !inject getppid.obj                                                                             l32 lpc lmp
+!inject getrlim.obj                                                                             l32 lpc lmp
 !inject gettmofd.obj                                                                            l32 lpc lmp
 !inject getuid.obj                                                                              l32 lpc lmp
 !inject ioctl.obj                                                                               l32 lpc lmp
 !inject ioperm.obj                                                                              l32 lpc lmp
 !inject iopl.obj                                                                                l32
 !inject kill.obj                                                                                l32 lpc lmp
+!inject lchown.obj                                                                              l32 lpc lmp
 !inject link.obj                                                                                l32 lpc lmp
 !inject lstat.obj                                                                               l32 lpc lmp
 !inject lstat64.obj                                                                             l32     lmp
 !inject mkdir.obj                                                                               l32 lpc lmp
+!inject mkfifo.obj                                                                              l32 lpc lmp
 !inject mknod.obj                                                                               l32 lpc lmp
 !inject mprotect.obj                                                                            l32 lpc lmp
 !inject nanoslp.obj                                                                             l32 lpc lmp
 !inject nice.obj                                                                                l32 lpc lmp
+!inject pause.obj                                                                               l32 lpc lmp
 !inject pipe.obj                                                                                l32 lpc
 !inject pipemps.obj                                                                                     lmp
 !inject ptrace.obj                                                                              l32 lpc lmp
@@ -49,6 +56,7 @@
 !inject readlink.obj                                                                            l32 lpc lmp
 !inject rename.obj                                                                              l32 lpc lmp
 !inject rmdir.obj                                                                               l32 lpc lmp
+!inject schyield.obj                                                                            l32 lpc lmp
 !inject select.obj                                                                              l32 lpc lmp
 !inject setegid.obj                                                                             l32 lpc lmp
 !inject seteuid.obj                                                                             l32 lpc lmp
@@ -57,12 +65,18 @@
 !inject setpgid.obj                                                                             l32 lpc lmp
 !inject setregid.obj                                                                            l32 lpc lmp
 !inject setreuid.obj                                                                            l32 lpc lmp
+!inject setrlim.obj                                                                             l32 lpc lmp
 !inject setsid.obj                                                                              l32 lpc lmp
 !inject settmofd.obj                                                                            l32 lpc lmp
 !inject setuid.obj                                                                              l32 lpc lmp
 !inject sigact.obj                                                                              l32 lpc lmp
+!inject siginter.obj                                                                            l32 lpc lmp
 !inject signal.obj                                                                              l32 lpc lmp
 !inject sigpmask.obj                                                                            l32 lpc lmp
+!inject sigsusp.obj                                                                             l32 lpc lmp
+!inject sigtdwai.obj                                                                            l32 lpc lmp
+!inject sigwait.obj                                                                             l32 lpc lmp
+!inject sigwinfo.obj                                                                            l32 lpc lmp
 !inject sockcall.obj                                                                            l32 lpc lmp
 !inject stat.obj                                                                                l32 lpc lmp
 !inject stat64.obj                                                                              l32     lmp
@@ -78,7 +92,9 @@
 !inject umask.obj                                                                               l32 lpc lmp
 !inject uname.obj                                                                               l32 lpc lmp
 !inject unlink.obj                                                                              l32 lpc lmp
+!inject usleep.obj                                                                              l32 lpc lmp
 !inject utime.obj                                                                               l32 lpc lmp
+!inject vfork.obj                                                                               l32
 !inject wait.obj                                                                                l32 lpc lmp
 !inject waitpid.obj                                                                             l32 lpc lmp
 !inject write.obj                                                                               l32 lpc lmp
