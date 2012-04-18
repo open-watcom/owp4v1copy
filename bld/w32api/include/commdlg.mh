@@ -299,7 +299,7 @@
     #define PSD_INWININIINTLMEASURE             0x00000000L
     #define PSD_MINMARGINS                      0x00000001L
     #define PSD_MARGINS                         0x00000002L
-    #define PSD_INTHOUSANDSOFINCHES             0x00000004L
+    #define PSD_INTHOUSANDTHSOFINCHES           0x00000004L
     #define PSD_INHUNDREDTHSOFMILLIMETERS       0x00000008L
     #define PSD_DISABLEMARGINS                  0x00000010L
     #define PSD_DISABLEPRINTER                  0x00000020L
