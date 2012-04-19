@@ -103,7 +103,11 @@ char __syserr92[] = "Disc quota exceeded (EDQUOT)";
 char __syserr93[] = "RVD related disk error (EVDBAD)";
 char __syserr94[] = "Out of remote working directory stuctures (ENORMTWD)";
 
+#if __WATCOMC__ > 1290
+char * _WCDATA SYS_ERRLIST[] = {
+#else
 char *SYS_ERRLIST[] = {
+#endif
     __syserr00,  __syserr01,  __syserr02,  __syserr03,  __syserr04, 
     __syserr05,  __syserr06,  __syserr07,  __syserr08,  __syserr09, 
     __syserr10,  __syserr11,  __syserr12,  __syserr13,  __syserr14, 
@@ -124,4 +128,3 @@ char *SYS_ERRLIST[] = {
     __syserr85,  __syserr86,  __syserr87,  __syserr88,  __syserr89, 
     __syserr90,  __syserr91,  __syserr92,  __syserr93,  __syserr94, 
 };
-
