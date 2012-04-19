@@ -42,7 +42,7 @@
     #include "clibext.h"
 #else
 
-#ifndef _COMDEF_H_INCLUDED
+#ifndef __COMDEF_H_INCLUDED
      #include <_comdef.h>
 #endif
 
