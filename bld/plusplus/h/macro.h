@@ -84,7 +84,10 @@ typedef enum macro_flags {
 
 typedef struct macro_entry MEDEFN, *MEPTR;
 struct macro_entry {
-    MEPTR       next_macro;     /* next macro in this hash chain */
+    union {
+        MEPTR       next_macro; /* next macro in this hash chain */
+        unsigned    pch_hash;
+    } u;
     TOKEN_LOCN  defn;           /* where it was defined */
     uint_16     macro_defn;     /* offset to defn, 0 ==> special macro name*/
     uint_16     macro_len;      /* length of macro definition */

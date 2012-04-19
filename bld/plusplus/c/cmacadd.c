@@ -161,24 +161,24 @@ void MacroWriteBrinf            // WRITE MACROS TO BRINF
 
 pch_status PCHWriteMacros( void )
 {
-    unsigned i;
+    unsigned hashval;
     unsigned wlen;
     MEPTR curr;
     MEPTR next;
     SRCFILE save_defn_src_file;
 
-    for( i = 0; i < MACRO_HASH_SIZE; ++i ) {
-        RingIterBeg( macroHashTable[ i ], curr ) {
-            next = curr->next_macro;
+    for( hashval = 0; hashval < MACRO_HASH_SIZE; ++hashval ) {
+        RingIterBeg( macroHashTable[hashval], curr ) {
+            next = curr->u.next_macro;
             curr->macro_flags &= ~MFLAG_PCH_TEMPORARY_FLAGS;
             wlen = curr->macro_len;
-            curr->next_macro = (MEPTR) i;
+            curr->u.pch_hash = hashval;
             save_defn_src_file = curr->defn.src_file;
             curr->defn.src_file = SrcFileGetIndex( save_defn_src_file );
             PCHWriteUInt( wlen );
             PCHWrite( curr, wlen );
             curr->defn.src_file = save_defn_src_file;
-            curr->next_macro = next;
+            curr->u.next_macro = next;
         } RingIterEnd( curr )
     }
     wlen = 0;
@@ -215,12 +215,12 @@ static void writeMacroCheck( MEPTR curr, void *data )
     unsigned wlen;
     MEPTR next;
 
-    next = curr->next_macro;
+    next = curr->u.next_macro;
     wlen = curr->macro_len;
-    curr->next_macro = (MEPTR) *phash;
+    curr->u.pch_hash = *phash;
     PCHWriteUInt( wlen );
     PCHWrite( curr, wlen );
-    curr->next_macro = next;
+    curr->u.next_macro = next;
 }
 
 static void forAllMacrosDefinedBeforeFirstInclude( void (*rtn)( MEPTR, void * ),
@@ -314,7 +314,7 @@ boolean PCHVerifyMacroCheck(    // READ AND VERIFY MACRO CHECK INFO FROM PCHDR
         rlen = PCHReadUInt();
         if( rlen == 0 ) break;
         PCHRead( pch_macro, rlen );
-        pch_hash = (unsigned) pch_macro->next_macro;
+        pch_hash = pch_macro->u.pch_hash;
         //printf( "pch mac: %s\n", pch_macro->macro_name );
         matched_macro = NULL;
         RingIterBeg( macroHashTable[pch_hash], new_macro ) {
@@ -422,8 +422,8 @@ pch_status PCHReadMacros( void )
         mac_dest = macroAllocateInSeg( mlen );
         PCHRead( mac_dest, mlen );
         curr = (MEPTR) mac_dest;
-        hash = (unsigned) curr->next_macro;
-        curr->next_macro = NULL;
+        hash = curr->u.pch_hash;
+        curr->u.next_macro = NULL;
         curr->defn.src_file = SrcFileMapIndex( curr->defn.src_file );
         RingAppend( &macroHashTable[ hash ], curr );
     }
