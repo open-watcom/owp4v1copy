@@ -337,20 +337,11 @@ xlat.gh : ./mktrans.exe ../h/ctokens.h keywords.gh ytab.gh
     $[@ $]@ $@
  
 ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
-!ifneq release 0
     $(byacc) -b -d -f -t -u $[@ $]@ >y.out
-!else
 # The -p and -s switches are v. useful when debugging parser but gen large file!
-    $(byacc) -b -d -f -t -u -p -s $[@ $]@ >y.out
-!endif
-# For some reason yacc delivers slightly different results on Linux?
-!ifdef __LINUX__
-!else
-    # comment out the next line during testing of grammar changes
-!ifneq release 0   # debug yacc output may not match stored output
+#    $(byacc) -b -d -f -t -u -p -s $[@ $]@ >y.out
+# comment out the next line during testing of grammar changes
     diff y.out ../y/check.out
-!endif
-!endif
     rm -f ytab.gh
     cp ytab.h ytab.gh
     rm -f ytab.h

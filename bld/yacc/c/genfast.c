@@ -259,21 +259,20 @@ static int cmp_action( const void *v1, const void *v2 )
 
     ne1 = s1->num_entries;
     ne2 = s2->num_entries;
-    if( ne1 == 0 ) {
-        if( ne2 == 0 ) {
-            return( 0 );
-        }
-        return( 1 );
-    }
-    if( ne2 == 0 ) {
-        return( -1 );
-    }
     mx1 = s1->max;
     mx2 = s2->max;
     mn1 = s1->min;
     mn2 = s2->min;
-    n1 = ( mx1 - mn1 ) + 1;
-    n2 = ( mx2 - mn2 ) + 1;
+    if( ne1 == 0 ) {
+        n1 = 0;
+    } else {
+        n1 = ( mx1 - mn1 ) + 1;
+    }
+    if( ne2 == 0 ) {
+        n2 = 0;
+    } else {
+        n2 = ( mx2 - mn2 ) + 1;
+    }
     if( n1 < n2 ) {
         return( 1 );
     }
@@ -291,6 +290,12 @@ static int cmp_action( const void *v1, const void *v2 )
     }
     if( mx1 > mx2 ) {
         return( 1 );
+    }
+    if( s1->index < s2->index ) {
+        return( 1 );
+    }
+    if( s1->index > s2->index ) {
+        return( -1 );
     }
     return( 0 );
 }
