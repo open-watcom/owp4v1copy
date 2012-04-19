@@ -77,7 +77,11 @@ int __pull_neterr_module = 0;
  */
 int errno_s = 0;
 
-int NEAR _WCDATA SYS_NERR = sizeof(SYS_ERRLIST) / sizeof(SYS_ERRLIST[0]);
+#ifdef __WATCOMC__
+int _WCDATA SYS_NERR = sizeof(SYS_ERRLIST) / sizeof(SYS_ERRLIST[0]);
+#else
+int NEAR SYS_NERR = sizeof(SYS_ERRLIST) / sizeof(SYS_ERRLIST[0]);
+#endif
 
 void perror (const char *str)
 {
