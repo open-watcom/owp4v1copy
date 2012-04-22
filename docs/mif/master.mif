@@ -4,7 +4,7 @@
 SL=/
 CPYCMD=cp
 RENCMD=mv
-LOWERC=echo
+LOWERC=$#
 !else
 SL=\
 CPYCMD=copy
@@ -18,6 +18,6 @@ all: .SYMBOLIC $(books)
     @%null
 
 $(books) : .SYMBOLIC
-    @wmake -h -f ../mif/onebook.mif hbook=$@ dotarget=$(dotarget) header=$(header) verbose=$(verbose)
+    @wmake -h -f ../mif/onebook.mif hbook=$@ dotarget=$(dotarget) header=$(header)
 
 !include ../mif/clean.mif

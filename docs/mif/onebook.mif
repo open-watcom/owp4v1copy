@@ -23,6 +23,11 @@ bldsrc_dir=..$(SL)..$(SL)bld
 
 # If 'verbose' is set to 1, wgml displays warnings and statistics.
 # The default is a quiet build.
+doc_verbose = $(verbose)
+# 'DOC_QUIET' is used by build server to disable documentation verbose output.
+!ifeq %DOC_QUIET 1
+doc_verbose = 0
+!endif
 
 #############################################################
 #
@@ -478,7 +483,7 @@ prepare_wgml_opts : .PROCEDURE
 #
 # details about wgml processing
 #
-!ifeq verbose 1
+!ifeq doc_verbose 1
     @%append $(optfile_wgml) ( verbose
     @%append $(optfile_wgml) ( statistics
 !else

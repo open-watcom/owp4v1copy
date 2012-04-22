@@ -105,7 +105,7 @@ sub make_build_batch
         if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
         elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
         elsif (/$setenv DOC_BUILD/i) {
-            if ($pass1)           { print BATCH "$setenv DOC_BUILD=1\n"; }
+            if ($pass1)           { print BATCH "$setenv DOC_BUILD=1\n$setenv DOC_QUIET=1\n"; }
             else                  { print BATCH "$setenv DOC_BUILD=0\n"; }
         } elsif (/$setenv GHOSTSCRIPT/i) {
             if ($pass1)           { print BATCH "$setenv GHOSTSCRIPT=", $GHOSTSCRIPT, "\n"; }
