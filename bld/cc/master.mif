@@ -286,7 +286,7 @@ verrc_exe = $(realexename)
         $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
 
 msgtxt.gh msgdefs.gh msgattr.gh errors01.int : ./msgencod.exe ../gml/cerrs.gml
-        $[@ -i -ip -q -g ../gml/cerrs.gml msgtxt.gh msgdefs.gh msgattr.gh
+        $[@ -s -i -ip -q -g ../gml/cerrs.gml msgtxt.gh msgdefs.gh msgattr.gh
 
 ./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
         $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)

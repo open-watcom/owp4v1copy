@@ -308,15 +308,11 @@ dll.lnk : $(__MAKEFILES__)
 wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
     $[@ wpp$(target_cpu)
  
-#!ifeq release 1
-#msgencod_opts = -w
-#!endif
- 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
     $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
  
 errmsgs1.gh errmsgs2.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
-    $[@ $(msgencod_opts) -i -q ../gml/messages.gml errmsgs1.gh errmsgs2.gh errlevel.gh
+    $[@ -s -i -q ../gml/messages.gml errmsgs1.gh errmsgs2.gh errlevel.gh
  
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
     $(bld_cl) $[@ $(wcl_util_opts)
