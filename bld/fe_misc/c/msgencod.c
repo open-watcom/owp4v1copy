@@ -183,6 +183,7 @@ static struct {
     unsigned    ignore_prefix : 1;  // - ignore matching XXX_ prefix with message type
     unsigned    warnings_always_rebuild:1;//- warnings gen files with old dates
                                     //   to constantly force rebuilds
+    unsigned    no_warn     : 1;    // - don't print warning messages
 } flags;
 
 typedef enum {
@@ -269,10 +270,12 @@ static void warn( char *f, ... ) {
 
     ++warnings;
     va_start( args, f );
-    if( line ) {
-        printf( "%s(%u): Warning! W000: ", fname, line );
+    if( !flags.no_warn ) {
+        if( line ) {
+            printf( "%s(%u): Warning! W000: ", fname, line );
+        }
+        vprintf( f, args );
     }
-    vprintf( f, args );
     va_end( args );
 }
 
@@ -307,9 +310,14 @@ static void initFILE( FILE **f, char *n, char *m ) {
     }
 }
 
-static void processOptions( char **argv ) {
+static void processOptions( char **argv )
+{
     if( strcmp( *argv, "-w" ) == 0 ) {
         flags.warnings_always_rebuild = 1;
+        ++argv;
+    }
+    if( strcmp( *argv, "-s" ) == 0 ) {
+        flags.no_warn = 1;
         ++argv;
     }
     if( strcmp( *argv, "-i" ) == 0 ) {
@@ -1067,7 +1075,6 @@ static void writeExtraDefs( FILE *fp ) {
 static void writeMsgH( void ) {
     MSGSYM *m;
 
-    fputs( "#pragma read_only_file;\n", o_msgh );
     if( ! flags.gen_pick ) {
         for( m = messageSyms; m != NULL; m = m->next ) {
             fputs( "#define ", o_msgh );
@@ -1386,7 +1393,6 @@ static void writeMsgC( void ) {
 static void writeLevH( void ) {
     MSGSYM *m;
 
-    fputs( "#pragma read_only_file;\n", o_levh );
     fputs( "#ifndef MSG_CONST\n", o_levh );
     fputs( "#define MSG_CONST const\n", o_levh );
     fputs( "#endif\n", o_levh );
@@ -1503,7 +1509,7 @@ int main( int argc, char **argv ) {
     int defs_ok = _LANG_DEFS_OK();
 
     if( argc < 5 || argc > 10 ) {
-        fatal( "usage: msgencod [-w] [-i] [-ip] [-q] [-p] <gml> <msgc> <msgh> <levh>" );
+        fatal( "usage: msgencod [-w] [-s] [-i] [-ip] [-q] [-p] <gml> <msgc> <msgh> <levh>" );
     }
     if( ! defs_ok ) {
         fatal( "language index mismatch" );
