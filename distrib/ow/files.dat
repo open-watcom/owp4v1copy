@@ -59,7 +59,7 @@
 [ INCLUDE <DEVDIR>/wipfc/files.dat ]
 [ INCLUDE <DEVDIR>/redist/files.dat ]
 [ INCLUDE <DEVDIR>/uninstal/files.dat ]
-[ INCLUDE readme.dat ]
+[ INCLUDE <OWROOT>/distrib/ow/readme.dat ]
 
 # Currently Missing:
 #-------------------------------------

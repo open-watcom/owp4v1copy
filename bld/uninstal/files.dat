@@ -1,2 +1,2 @@
 [DEFAULT]
-usr="uninstal.exe"  dir="."
+type="e"    usr="uninstal.exe"  dir="."

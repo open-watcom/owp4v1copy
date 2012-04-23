@@ -52,13 +52,16 @@ int add_files( struct zip *archive, const char *list_fname, char *dir )
     FILE                *f;
     char                srcname[FILENAME_MAX];
     int                 retval;
+    char                *curr_dir;
 
     if( (f = fopen( list_fname, "r" )) == NULL ) {
         fprintf( stderr, "failed to open list '%s': %s\n",
                 list_fname, strerror( errno ) );
         return( -1 );
     }
+    curr_dir = NULL;
     if( dir != NULL ) {
+        curr_dir = getcwd( NULL, 0 );
         chdir( dir );
     }
     /* Loop over list, add individual files */
@@ -79,6 +82,10 @@ int add_files( struct zip *archive, const char *list_fname, char *dir )
                     srcname, zip_strerror( archive ) );
             retval = -1;
         }
+    }
+    if( curr_dir != NULL ) {
+        chdir( curr_dir );
+        free( curr_dir );
     }
     fclose( f );
     return( retval );

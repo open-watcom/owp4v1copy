@@ -123,7 +123,7 @@ unsigned                MaxDiskFiles;
 int                     FillFirst = 1;
 int                     Lang = 1;
 int                     Upgrade = FALSE;
-char                    *Include;
+LIST                    *Include = NULL;
 const char              MkdiskInf[] = "mkdisk.inf";
 
 
@@ -247,7 +247,14 @@ int CheckParms( int *pargc, char **pargv[] )
                 new->item = strdup( &(*pargv)[1][2] );
                 AddToList( new, &AppSection );
             } else if( tolower( (*pargv)[1][1] ) == 'i' ) {
-                Include = (*pargv)[1]+2;
+                new = malloc( sizeof( LIST ) );
+                if( new == NULL ) {
+                    printf( "\nOut of memory\n" );
+                    exit( 1 );
+                }
+                new->next = NULL;
+                new->item = strdup( &(*pargv)[1][2] );
+                AddToList( new, &Include );
             } else if( tolower( (*pargv)[1][1] ) == 'u' ) {
                 Upgrade = TRUE;
             } else {
@@ -715,8 +722,8 @@ static FILE *PathOpen( char *name )
     char        buf[_MAX_PATH];
 
     fp = fopen( name, "r" );
-    if( fp == NULL && Include != NULL ) {
-        _makepath( buf, NULL, Include, name, NULL );
+    for( p = Include; p != NULL && fp == NULL; p = p->next ) {
+        _makepath( buf, NULL, p->item, name, NULL );
         fp = fopen( buf, "r" );
     }
     if( fp == NULL ) {
@@ -887,7 +894,7 @@ void ReadInfFile()
     FILE                *fp;
     char                ver_buf[ 80 ];
 
-    fp = fopen( MkdiskInf, "r" );
+    fp = PathOpen( MksetupInf );
     if( fp == NULL ) {
         printf( "Cannot open '%s'\n", MkdiskInf );
         return;

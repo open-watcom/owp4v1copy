@@ -181,7 +181,7 @@ static void PushInclude( const char *name )
     strcpy( new->name, name );
     _splitpath2( name, buff, &drive, &dir, &fn, &ext );
     _makepath( dir_name, drive, dir, NULL, NULL );
-    if( SysChdir( dir_name ) != 0 ) {
+    if( chdir( dir_name ) != 0 ) {
         Fatal( "Could not chdir to '%s': %s\n", dir_name, strerror( errno ) );
     }
     getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
@@ -198,7 +198,7 @@ static bool PopInclude( void )
     if( IncludeStk == NULL ) {
         return( FALSE );
     }
-    SysChdir( IncludeStk->cwd );
+    chdir( IncludeStk->cwd );
     return( TRUE );
 }
 
@@ -675,7 +675,6 @@ int main( int argc, char *argv[] )
     ctl_file    *next;
     char        *p;
 
-    SysInit( argc, argv );
     ProcessOptions( argv + 1 );
     if( Product == NULL ) {
         printf( "langdat warning: no product specified, processing all entries\n" );

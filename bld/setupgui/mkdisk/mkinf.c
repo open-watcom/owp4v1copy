@@ -129,7 +129,7 @@ static int                  Upgrade = FALSE;
 static int                  Verbose = FALSE;
 static int                  IgnoreMissingFiles = FALSE;
 static int                  CreateMissingFiles = FALSE;
-static char                 *Include;
+static LIST                 *Include = NULL;
 static const char           MksetupInf[] = "mksetup.inf";
 
 
@@ -232,7 +232,14 @@ int CheckParms( int *pargc, char **pargv[] )
                 new->item = strdup( &(*pargv)[1][2] );
                 AddToList( new, &AppSection );
             } else if( tolower( (*pargv)[1][1] ) == 'i' ) {
-                Include = (*pargv)[1]+2;
+                new = malloc( sizeof( LIST ) );
+                if( new == NULL ) {
+                    printf( "\nOut of memory\n" );
+                    exit( 1 );
+                }
+                new->next = NULL;
+                new->item = strdup( &(*pargv)[1][2] );
+                AddToList( new, &Include );
             } else if( tolower( (*pargv)[1][1] ) == 'u' ) {
                 Upgrade = TRUE;
             } else if( tolower( (*pargv)[1][1] ) == 'v' ) {
@@ -251,7 +258,7 @@ int CheckParms( int *pargc, char **pargv[] )
     argc = *pargc;
     argv = *pargv;
     if( argc != 4 ) {
-        printf( "Usage: mksetup [-options] <product> <file_list> <rel_root>\n\n" );
+        printf( "Usage: mkinf [-options] <product> <file_list> <rel_root>\n\n" );
         printf( "Supported options (case insensitive):\n" );
         printf( "-v         verbose operation\n" );
         printf( "-i<path>   include path for setup scripts\n" );
@@ -843,15 +850,16 @@ int ReadList( FILE *fp )
           ( new->item = strdup( buf + sizeof( string ) - 1 ) ) != NULL )
 
 
-static FILE *PathOpen( char *name )
-/*********************************/
+static FILE *PathOpen( const char *name )
+/***************************************/
 {
     FILE        *fp;
+    LIST        *p;
     char        buf[_MAX_PATH];
 
     fp = fopen( name, "r" );
-    if( fp == NULL && Include != NULL ) {
-        _makepath( buf, NULL, Include, name, NULL );
+    for( p = Include; p != NULL && fp == NULL; p = p->next ) {
+        _makepath( buf, NULL, p->item, name, NULL );
         fp = fopen( buf, "r" );
     }
     if( fp == NULL ) {
@@ -1020,7 +1028,7 @@ void ReadInfFile( void )
     FILE                *fp;
     char                ver_buf[ 80 ];
 
-    fp = fopen( MksetupInf, "r" );
+    fp = PathOpen( MksetupInf );
     if( fp == NULL ) {
         printf( "Cannot open '%s'\n", MksetupInf );
         return;
@@ -1467,8 +1475,10 @@ int main( int argc, char *argv[] )
     ok = CheckForDuplicateFiles();
     if( !ok ) return( 1 );
     fclose( fp );
-    printf( "Making script...\n" );
-    MakeScript();
-    MakeLaundryList();
+    if( !CreateMissingFiles ) {
+        printf( "Making script...\n" );
+        MakeScript();
+        MakeLaundryList();
+    }
     return( 0 );
 }

@@ -30,9 +30,9 @@ commands = mkexezip.exe uzip.exe splitfil.exe packsize.exe genmkfil.exe langdat.
 all : $(commands) .SYMBOLIC
 
 .c.exe:
-    $(bld_cl) $<
+    $(bld_cl) -fe=$@ $<
 
 langdat.exe : langdat.c $(dev_dir)/builder/c/utils.c
 
-uzip.exe : microzip.c $(ziplib) $(zlib)
-    $(bld_cl) $<
+uzip.exe: microzip.c $(ziplib) $(zlib)
+    $(bld_cl) -fe=$@ $<
