@@ -1,6 +1,4 @@
-#pmake/50: build docs ps pdf
-
-# postscript files need to be created before pdf files
+#pmake: nobuild docs ps pdf
 
 dotarget=ps
 

@@ -43,9 +43,9 @@ my($bldbase);
 my($bldlast);
 my($build_platform);
 
-if( $#ARGV == -1 ) {
+if ($#ARGV == -1) {
     Common::read_config( "config.txt" );
-} elsif( $#ARGV == 0 ) {
+} elsif ($#ARGV == 0) {
     Common::read_config( $ARGV[0] );
 } else {
     print "Usage: dobuild [config_file]\n";
@@ -54,21 +54,18 @@ if( $#ARGV == -1 ) {
 
 my $home           = $Common::config{"HOME"};
 my $OW             = $Common::config{"OW"};
-my $report_archive = $Common::config{"REPORTS"};
-my $GHOSTSCRIPT    = $Common::config{"GHOSTSCRIPT"};
-my $SNAPSHOTPATH   = $Common::config{"SNAPSHOTPATH"};
 
-if( $^O eq "MSWin32" ) {
+if ($^O eq "MSWin32") {
     $OStype = "WIN32";
     $ext    = "bat";
     $setenv = "set";
     $build_platform = "win32-x86";
-} elsif( $^O eq "linux" ) {
+} elsif ($^O eq "linux") {
     $OStype = "UNIX";
     $ext    = "sh";
     $setenv = "export";
     $build_platform = "linux-x86";
-} elsif( $^O eq "os2" ) {
+} elsif ($^O eq "os2") {
     $OStype = "OS2";
     $ext    = "cmd";
     $setenv = "set";
@@ -105,24 +102,38 @@ sub make_build_batch
         if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
         elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
         elsif (/$setenv DOC_BUILD/i) {
-            if ($pass1)           { print BATCH "$setenv DOC_BUILD=1\n$setenv DOC_QUIET=1\n"; }
+            if ($pass1)           { print BATCH "$setenv DOC_BUILD=1\n"; }
             else                  { print BATCH "$setenv DOC_BUILD=0\n"; }
-        } elsif (/$setenv GHOSTSCRIPT/i) {
-            if ($pass1)           { print BATCH "$setenv GHOSTSCRIPT=", $GHOSTSCRIPT, "\n"; }
-            else                  { print BATCH; }
+        } elsif (/$setenv GHOSTSCRIPTPATH/i) {
+            if ($pass1){
+                if ($Common::config{"GHOSTSCRIPTPATH"} ne "") {
+                    print BATCH "$setenv GHOSTSCRIPTPATH=", $Common::config{"GHOSTSCRIPTPATH"}, "\n";
+                }
+            } else                { print BATCH; }
+        } elsif (/$setenv WIN95HC/i) {
+        } elsif (/$setenv HHC/i) {
         } else                    { print BATCH; }
     }
     close(INPUT);
     # Add additional commands to do the build.
+    if ($pass1) {
+        if ($Common::config{"WIN95HC"} ne "") {
+            print BATCH "$setenv WIN95HC=", $Common::config{"WIN95HC"}, "\n";
+        }
+        if ($Common::config{"HHC"} ne "") {
+            print BATCH "$setenv HHC=", $Common::config{"HHC"}, "\n";
+        }
+    }
+    print BATCH "$setenv DOC_QUIET=1\n";
     print BATCH "\n";
     # Create fresh builder tools, to prevent lockup build server 
     # if builder tools from previous build are somehow broken
     print BATCH "cd $OW\ncd bld\n";
-    if( $^O eq "MSWin32" ) {
+    if ($^O eq "MSWin32") {
         print BATCH "cd builder\ncd nt386\n";
-    } elsif( $^O eq "linux" ) {
+    } elsif ($^O eq "linux") {
         print BATCH "cd builder\ncd linux386\n";
-    } elsif( $^O eq "os2" ) {
+    } elsif ($^O eq "os2") {
         print BATCH "cd builder\ncd os2386\n";
     }
     print BATCH "wmake -h clean\n";
@@ -136,11 +147,11 @@ sub make_build_batch
     print BATCH "builder -i clean\n";
     # Create new builder tools, previous clean removed them.
     print BATCH "cd $OW\ncd bld\n";
-    if( $^O eq "MSWin32" ) {
+    if ($^O eq "MSWin32") {
         print BATCH "cd builder\ncd nt386\n";
-    } elsif( $^O eq "linux" ) {
+    } elsif ($^O eq "linux") {
         print BATCH "cd builder\ncd linux386\n";
-    } elsif( $^O eq "os2" ) {
+    } elsif ($^O eq "os2") {
         print BATCH "cd builder\ncd os2386\n";
     }
     print BATCH "wmake -h\n";
@@ -174,7 +185,7 @@ sub make_test_batch
 
     # Add additional commands to do the testing.
     print BATCH "\n";
-    if( $^O eq "MSWin32" ) {
+    if ($^O eq "MSWin32") {
         print BATCH "$setenv EXTRA_ARCH=i86\n\n";
     }
     print BATCH "cd $OW\ncd bld\ncd ctest\n";
@@ -207,7 +218,8 @@ sub make_installer_batch
     close(INPUT);
     # Add additional commands to do installers.
     print BATCH "\n";
-    print BATCH "$setenv RELROOT=", $SNAPSHOTPATH, "\n";
+    $relsubdir = "pass1";
+    print BATCH "$setenv RELROOT=", get_reldir(), "\n";
     if ($OStype eq "UNIX") {
         # set up max open file handle to be enough for uzip
         print BATCH "ulimit -n 4096\n";
@@ -215,10 +227,7 @@ sub make_installer_batch
     print BATCH "\n";
     print BATCH "cd $OW\ncd distrib\ncd ow\n";
     print BATCH "builder missing\n";
-    print BATCH "builder rel2 os_dos\n";
-    print BATCH "builder rel2 os_nt\n";
-    print BATCH "builder rel2 os_os2\n";
-    print BATCH "builder rel2 os_linux\n";
+    print BATCH "builder rel2\n";
     close(BATCH);
     # On Windows it has no efect
     chmod 0777, $build_installer_name;
@@ -370,7 +379,7 @@ if ($home eq $OW) {
 
 my $shortdate_stamp = get_shortdate();
 my $date_stamp = get_date();
-my $report_directory = "$report_archive\/$shortdate_stamp";
+my $report_directory = $Common::config{"REPORTS"}, "\/$shortdate_stamp";
 if (!stat($report_directory)) {
     mkdir($report_directory);
 }
@@ -390,7 +399,7 @@ open(SYNC, "p4 sync $OW\/... |");
 while (<SYNC>) {
     my @fields = split;
     my $loc = Common::remove_OWloc($fields[-1]);
-    if( $loc ne "" ) {
+    if ($loc ne "") {
         push(@p4_messages, sprintf("%-8s %s", $fields[2], $loc));
     } else {
         push(@p4_messages, sprintf("%s", $_));
@@ -456,9 +465,8 @@ close(REPORT);
 if (($pass1_result eq "success") &&
     ($pass2_result eq "success")) {
 
-    system("$rotate_batch_name");
-    if (defined $SNAPSHOTPATH) {
-        make_installer_batch();
-        system("$build_installer_name");
+    make_installer_batch();
+    if (system("$build_installer_name") == 0) {
+        system("$rotate_batch_name");
     }
 }

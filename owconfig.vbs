@@ -53,9 +53,6 @@ Else
     WScript.StdOut.Write "Checking for hcrtf... "
     HcrtfPath = FindFile("hcrtf.exe")
     WScript.StdOut.WriteLine HcrtfPath
-    WScript.StdOut.Write "Checking for ipfc... "
-    IpfcPath = FindFile("ipfc.exe")
-    WScript.StdOut.WriteLine IpfcPath
     WScript.StdOut.Write "Checking for hhc... "
     HhcPath = FindFile("hhc.exe")
     WScript.StdOut.WriteLine HhcPath
@@ -101,12 +98,6 @@ Else
         OutFile.WriteLine "set PATH=%PATH%;" + HcrtfPath
     Else
         OutFile.WriteLine "set WIN95HC="
-    End If
-    If Len(IpfcPath) > 0 Then
-        OutFile.WriteLine "set OS2HC=ipfc"
-        OutFile.WriteLine "set PATH=%PATH%;" + IpfcPath
-    Else
-        OutFile.WriteLine "set OS2HC="
     End If
     If Len(HhcPath) > 0 Then
         OutFile.WriteLine "set HHC=hhc"

@@ -15,11 +15,11 @@ OW=C:\OW
 WATCOM=C:\WATCOM
 
 # PATH required by GhostScript for PDF creation on used host OS
-GHOSTSCRIPT=c:\gs\gs7.04\bin;c:\gs\gs7.04\lib
+GHOSTSCRIPTPATH=c:\gs\gs7.04\bin;c:\gs\gs7.04\lib
 
-# The location where WWW snapshot is placed, there will be created installers
-# If SNAPSHOTPATH is not defined then no installers will be created
-#SNAPSHOTPATH=\www\snapshot
+# Programs for creation Windows help on used host OS
+WIN95HC=hcrtf
+HHC=hhc
 
 # File holding the baseline build results. Relative to HOME.
 BLDBASE=bldbase.txt
