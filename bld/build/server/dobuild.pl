@@ -379,7 +379,7 @@ if ($home eq $OW) {
 
 my $shortdate_stamp = get_shortdate();
 my $date_stamp = get_date();
-my $report_directory = $Common::config{"REPORTS"}, "\/$shortdate_stamp";
+my $report_directory = "$Common::config{"REPORTS"}\/$shortdate_stamp";
 if (!stat($report_directory)) {
     mkdir($report_directory);
 }
