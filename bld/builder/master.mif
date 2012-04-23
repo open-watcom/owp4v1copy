@@ -13,7 +13,7 @@ all : cdsay.exe sweep.exe wsplice.exe comstrip.exe aliasgen.exe genverrc.exe &
     diff.exe awk.exe sed.exe &
 !endif
 !ifndef bootstrap
-    langdat.exe mksetup.exe wgrep.exe builder.exe &
+    wgrep.exe builder.exe &
 !ifndef __UNIX__
     rm.exe
 !endif
@@ -81,7 +81,5 @@ builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj equals
 !endif
 
 cdsay.exe : cdsay.obj equals.obj
-langdat.exe : langdat.obj utils.obj $(sys_$(host_os))
 rm.exe: rm.obj getopt.obj quit.obj lineprt.obj alloc.obj filerx.obj &
         regexp.obj fnlower.obj die.obj isdotdot.obj
-
