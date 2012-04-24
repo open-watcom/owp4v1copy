@@ -120,7 +120,7 @@ wgml_target=$(dotarget)
 
 !ifdef dep_$(dotarget)
 .BEFORE
-    @set GMLLIB=$(gml_lib:/=\);
+    @set GMLLIB=$(gml_lib:/=\)
 !ifeq verbose 1
     @echo GMLLIB=$(%GMLLIB)
 !endif
@@ -165,6 +165,7 @@ $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
     wine cmd /c $(wine_hc_batch)
 !else
     $(hc_nt) -xn $*.hpj
+    $(LOWERC) $@ $@        # change file name to lower case
 !endif
 
 $(hbook).hpj : $(proj_objs)
@@ -214,7 +215,7 @@ $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .ihp .ib
 
-$(hbook).ihp : $(hbook).ib $(hbook).h
+$(hbook).ihp : $(hbook).ib
     hcdos -h 25 -w 80 $(hbook).ib $(hbook).ihp
 
 $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
