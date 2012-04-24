@@ -21,7 +21,7 @@ REM placeholder
 REM placeholder
 
 REM Change this to the PATH required by GhostScript for PDF creation on used host OS (optional)
-set GHOSTSCRIPT=c:\gs\gs7.04
+set GHOSTSCRIPTPATH=c:\gs\gs7.04
 
 REM Modifications beyond this point should not be necessary
 
@@ -36,8 +36,8 @@ set DOC_BUILD=1
 
 REM Documentation related variables
 REM set appropriate variables to blank for help compilers which you haven't installed
-set WIN95HC=hcrtf
-set OS2HC=ipfc
+rem set WIN95HC=hcrtf
+rem set HHC=hhc
 
 REM Set up default path information variable
 if "%DEFPATH%" == "" set DEFPATH=%PATH%
@@ -58,10 +58,8 @@ set BUILDER_CTL=lang.ctl
 set DEVDIR=%OWROOT%\bld
 REM Subdirectory to be used for bootstrapping/prebuild binaries
 set OWBINDIR=%DEVDIR%\build\bin
-set DISTROOT=%OWROOT%\distrib
 set RELROOT=%OWROOT%\rel2
 set DWATCOM=%WATCOM%
-set DOC_ROOT=%OWROOT%\docs
 set INCLUDE=%WATCOM%\h;%WATCOM%\h\win
 set EDPATH=%WATCOM%\eddat
 set PATH=%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binw;%DOC_ROOT%\cmds;%DEFPATH%

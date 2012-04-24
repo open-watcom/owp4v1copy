@@ -10,19 +10,19 @@
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DOC_ROOT>/dos/*.ihp        <RELROOT>/binw/
-    <CPCMD> <DOC_ROOT>/win/*.hlp        <RELROOT>/binw/
-    <CPCMD> <DOC_ROOT>/os2/*.inf        <RELROOT>/binp/help/
-    <CPCMD> <DOC_ROOT>/os2/*.hlp        <RELROOT>/binp/help/
-    <CCCMD> <DOC_ROOT>/nt/*.hlp         <RELROOT>/binnt/
-    <CCCMD> <DOC_ROOT>/nt/*.cnt         <RELROOT>/binnt/
-    <CCCMD> <DOC_ROOT>/htmlhelp/*.chi   <RELROOT>/binnt/help/
-    <CCCMD> <DOC_ROOT>/htmlhelp/*.chm   <RELROOT>/binnt/help/
-    <CCCMD> <DOC_ROOT>/pdf/*.pdf        <RELROOT>/docs/
-    <CPCMD> <DOC_ROOT>/readme.txt       <RELROOT>/readme.txt
-    <CPCMD> <DOC_ROOT>/freadme.txt      <RELROOT>/freadme.txt
-    <CPCMD> <DOC_ROOT>/areadme.txt      <RELROOT>/areadme.txt
-    <CPCMD> <DOC_ROOT>/instlic.txt      <RELROOT>/instlic.txt
+    <CPCMD> dos/*.ihp       <RELROOT>/binw/
+    <CPCMD> win/*.hlp       <RELROOT>/binw/
+    <CPCMD> os2/*.inf       <RELROOT>/binp/help/
+    <CPCMD> os2/*.hlp       <RELROOT>/binp/help/
+    <CCCMD> nt/*.hlp        <RELROOT>/binnt/
+    <CCCMD> nt/*.cnt        <RELROOT>/binnt/
+    <CCCMD> htmlhelp/*.chi  <RELROOT>/binnt/help/
+    <CCCMD> htmlhelp/*.chm  <RELROOT>/binnt/help/
+    <CCCMD> pdf/*.pdf       <RELROOT>/docs/
+    <CPCMD> readme.txt      <RELROOT>/readme.txt
+    <CPCMD> freadme.txt     <RELROOT>/freadme.txt
+    <CPCMD> areadme.txt     <RELROOT>/areadme.txt
+    <CPCMD> instlic.txt     <RELROOT>/instlic.txt
     cdsay .
 
 [ BLOCK <1> clean ]

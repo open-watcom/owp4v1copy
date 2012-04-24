@@ -18,14 +18,11 @@ set BUILDER_CTL=lang.ctl
 set DEVDIR=%OWROOT%\bld
 REM Subdirectory to be used for bootstrapping/prebuild binaries
 set OWBINDIR=%DEVDIR%\build\binp
-set DISTROOT=%OWROOT%\distrib
 set RELROOT=%OWROOT%\rel2
 set DWATCOM=%WATCOM%
-set DOC_ROOT=%OWROOT%\docs
 set INCLUDE=%WATCOM%\h;%WATCOM%\h\os2
 set EDPATH=%WATCOM%\eddat
-set WIPFC=%DEVDIR%\wipfc\helper
-set PATH=%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binp;%WATCOM%\binw;%DOC_ROOT%\cmds;%OS2TKROOT%\bin;%DEFPATH%
+set PATH=%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binp;%WATCOM%\binw;%OS2TKROOT%\bin;%DEFPATH%
 
 echo Open Watcom compiler build environment
 

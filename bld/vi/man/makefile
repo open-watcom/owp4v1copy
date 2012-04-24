@@ -6,11 +6,11 @@ host_cpu = 386
 # There should be settings for supported building platforms
 #
 !ifeq %build_platform dos386
-wgml = $(%DOC_ROOT)\gml\dos\wgml
+wgml = $(%OWROOT)\docs\gml\dos\wgml
 !else ifeq %build_platform os2386
-wgml = $(%DOC_ROOT)\gml\os2\wgml
+wgml = $(%OWROOT)\docs\gml\os2\wgml
 !else ifeq %build_platform nt386
-wgml = $(%DOC_ROOT)\gml\dos\wgml
+wgml = $(%OWROOT)\docs\gml\dos\wgml
 !else
 !error Unsupported building platform !!!!!!
 !endif
@@ -18,8 +18,8 @@ wgml = $(%DOC_ROOT)\gml\dos\wgml
 optsfile=wgmlopts.tmp
 
 .before
-    set GMLLIB=$(%DOC_ROOT)\gml\syslib;
-    set GMLINC=.;pict;$(%DOC_ROOT)\doc\gml;
+    set GMLLIB=$(%OWROOT)\docs\gml\syslib;
+    set GMLINC=.;pict;$(%OWROOT)\docs\doc\gml;
     set GMLPAG=%TEMP%
 
 all : vi.ps .SYMBOLIC

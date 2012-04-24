@@ -18,14 +18,11 @@ export DEVDIR=$OWROOT/bld
 
 # Subdirectory to be used for bootstrapping/prebuild binaries
 export OWBINDIR=$DEVDIR/build/binl
-export DISTROOT=$OWROOT/distrib
 export RELROOT=$OWROOT/rel2
 export DWATCOM=$WATCOM
-export DOC_ROOT=$OWROOT/docs
 export INCLUDE=$WATCOM/lh
 export EDPATH=$WATCOM/eddat
-export WIPFC=$DEVDIR/wipfc/helper
-export PATH=$OWBINDIR:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
+export PATH=$OWBINDIR:$OWROOT/bat:$WATCOM/binl:$DEFPATH
 
 echo Open Watcom compiler build environment
 

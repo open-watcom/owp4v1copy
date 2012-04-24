@@ -94,11 +94,11 @@ dep_pdf = $(hbook).pdf
 # There should be settings for supported building platforms
 #
 !ifeq %build_platform dos386
-wgml = $(%DOC_ROOT)\gml\dos\wgml
+wgml = ..\gml\dos\wgml
 !else ifeq %build_platform os2386
-wgml = $(%DOC_ROOT)\gml\os2\wgml
+wgml = ..\gml\os2\wgml
 !else ifeq %build_platform nt386
-wgml = $(%DOC_ROOT)\gml\dos\wgml
+wgml = ..\gml\dos\wgml
 !else ifeq %build_platform linux386
 wgml = dosemu -dumb $(dosemu_wgml_batch)
 !else

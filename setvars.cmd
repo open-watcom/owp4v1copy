@@ -21,7 +21,7 @@ REM Change this to point to your OS/2 Toolkit directory
 set OS2TKROOT=c:\Toolkit
 
 REM Change this to the PATH required by GhostScript for PDF creation on used host OS (optional)
-set GHOSTSCRIPT=c:\gs\gs7.04
+set GHOSTSCRIPTPATH=c:\gs\gs7.04
 
 REM Set this variable to 1 to get debug build
 set DEBUG_BUILD=0
@@ -34,8 +34,8 @@ set DOC_BUILD=1
 
 REM Documentation related variables
 REM set appropriate variables to blank for help compilers which you haven't installed
-set WIN95HC=
-set OS2HC=ipfc
+rem set WIN95HC=hcrtf
+rem set HHC=hhc
 
 REM Subdirectory to be used for bootstrapping
 set OBJDIR=bootstrp

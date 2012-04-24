@@ -44,13 +44,13 @@ drv_page =	&
 #-------------------------------------------------------
 
 !ifeq %build_platform dos386
-gendev = $(%DOC_ROOT)\gml\dos\gendev
+gendev = $(%OWROOT)\docs\gml\dos\gendev
 
 !else ifeq %build_platform os2386
-gendev = $(%DOC_ROOT)\gml\os2\gendev
+gendev = $(%OWROOT)\docs\gml\os2\gendev
 
 !else ifeq %build_platform nt386
-gendev = $(%DOC_ROOT)\gml\dos\gendev
+gendev = $(%OWROOT)\docs\gml\dos\gendev
 
 !else ifeq %build_platform linux386
 
@@ -64,7 +64,7 @@ $(dosemu_gendev_batch): $(__MAKEFILES__)
     @%create $@
     @%append $@ unix -s GMLLIB
     @%append $@ unix -s GMLINC
-    @%append $@ $(%DOC_ROOT)\gml\dos\gendev.exe "%1 %2 %3 %4 %5 %6 %7 %8"
+    @%append $@ $(%OWROOT)\docs\gml\dos\gendev.exe "%1 %2 %3 %4 %5 %6 %7 %8"
     @%append $@ exitemu
 %make $(dosemu_gendev_batch)
 
@@ -80,7 +80,7 @@ gendev = dosemu -dumb $(dosemu_wgml_batch)
 #-------------------------------------------------------
 
 .before:
-        set GMLLIB=$(%owroot)\bld\wgml\test\testlib
+        set GMLLIB=$(%OWROOT)\bld\wgml\test\testlib
 	set GMLINC=..\testsrc
 
 #-------------------------------------------------------

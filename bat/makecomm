@@ -241,14 +241,6 @@ lib_drv = $(build_root)
 inc_drv = $(tools_root)
 obj_drv = $(build_root)
 
-#
-# for creating on-line help
-#
-docs_root = $(%DOC_ROOT)
-gml_root  = $(docs_root)\gml
-gmllib    = $(docs_root)\gml\syslib
-windev_dir= $(tools_root)\windev
-
 !else
 
 tools_root      = $(%TOOLDR)/tools
@@ -429,13 +421,5 @@ os2286=$(lang_root)/lib286/os2/os2.lib
 lib_drv = $(build_root)
 inc_drv = $(tools_root)
 obj_drv = $(build_root)
-
-#
-# for creating on-line help
-#
-docs_root = $(%DOC_ROOT)
-gml_root  = $(docs_root)/gml
-gmllib    = $(docs_root)/gml/syslib
-windev_dir= $(tools_root)/windev
 
 !endif
