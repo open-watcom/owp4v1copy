@@ -7,6 +7,8 @@ sys_windowed = 1
 viper_autodepends = .autodepend
 !endif
 
+docs_root = $(%OWROOT)/docs
+
 additional_cleanup = &
     $(docs_root)/os2/ide.h &
     $(docs_root)/win/ide.h &
@@ -99,10 +101,10 @@ verrc_exe = $(name)
 !ifdef prereq_ide_h
 $(prereq_ide_h): .ALWAYS
 curr_dir=$+$(%cwd)$-
-!ifeq %BUILD_PLATFORM dos386
-        @cd $(docs_root)\$(host_os)
+!ifdef __UNIX__
+        @cd $(docs_root:\=/)\$(host_os)
 !else
-        @cd $(docs_root)/$(host_os)
+        @cd $(docs_root:/=\)/$(host_os)
 !endif
         @wmake -h hbook=ide header=1
         @cd $(curr_dir)
