@@ -2,7 +2,7 @@
 REM *****************************************************************
 REM build.cmd - build Open Watcom using selected compiler
 REM
-REM will build the builder, wattcp, watcom and installer
+REM will build the builder, wattcp, watcom
 REM
 REM combined OS/2, eCS and Windows version
 REM
@@ -16,6 +16,7 @@ REM Call without parms for "builder rel2" operation -> build
 REM Call with clean for "builder clean"  operation  -> build clean
 REM --> requires a customized setvars.bat/cmd named myvars.cmd
 REM --> set WATCOM to the existing OW 1.x installation
+REM   always do a make clean for wattcp
 REM *****************************************************************
 setlocal
 if [%1] == [self] goto self
@@ -73,15 +74,11 @@ rem start with the builder
 REM wattcp is needed for debugger remote server tcpserv
    cd %devdir%
    cd ..\contrib\wattcp\src
+   wmake clean -ms
    wmake %makeclean% -ms
 
 REM now we can start the builder with 9 generations of logfiles
    cd %devdir%
-   builder %target% -b 9
-
-REM build the installer, REM next 3 lines if not wanted
-   cd %devdir%
-   cd setupgui
    builder %target% -b 9
 
 :EOF
