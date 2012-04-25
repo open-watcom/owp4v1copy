@@ -102,9 +102,9 @@ verrc_exe = $(name)
 $(prereq_ide_h): .ALWAYS
 curr_dir=$+$(%cwd)$-
 !ifdef __UNIX__
-        @cd $(docs_root:\=/)\$(host_os)
+        @cd $(docs_root:\=/)/$(host_os)
 !else
-        @cd $(docs_root:/=\)/$(host_os)
+        @cd $(docs_root:/=\)\$(host_os)
 !endif
         @wmake -h hbook=ide header=1
         @cd $(curr_dir)
