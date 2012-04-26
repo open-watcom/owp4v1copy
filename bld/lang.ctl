@@ -184,7 +184,9 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/wipfc/lang.ctl ]
 [ INCLUDE <DEVDIR>/uninstal/lang.ctl ]
 [ INCLUDE <DEVDIR>/setupgui/lang.ctl ]
+[ BLOCK <DOC_BUILD> 1 ]
 [ INCLUDE <OWROOT>/docs/lang.ctl ]
+[ BLOCK . . ]
 #
 #        Do CDSAY to see end time
 #

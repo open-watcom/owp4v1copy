@@ -76,9 +76,10 @@ if ($^O eq "MSWin32") {
     exit 1;
 }
 
-my $build_batch_name     = "$home\/buildtmp.$ext";
-my $build_installer_name = "$home\/bldinst.$ext";
-my $test_batch_name      = "$home\/testtmp.$ext";
+my $build_batch_name     = "$home\/build.$ext";
+my $docs_batch_name      = "$home\/docsbld.$ext";
+my $build_installer_name = "$home\/instbld.$ext";
+my $test_batch_name      = "$home\/test.$ext";
 my $rotate_batch_name    = "$home\/rotate.$ext";
 my $setvars              = "$OW\/setvars.$ext";
 
@@ -101,31 +102,13 @@ sub make_build_batch
         s/\r?\n/\n/;
         if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
         elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
-        elsif (/$setenv DOC_BUILD/i) {
-            if ($pass1)           { print BATCH "$setenv DOC_BUILD=1\n"; }
-            else                  { print BATCH "$setenv DOC_BUILD=0\n"; }
-        } elsif (/$setenv GHOSTSCRIPTPATH/i) {
-            if ($pass1){
-                if ($Common::config{"GHOSTSCRIPTPATH"} ne "") {
-                    print BATCH "$setenv GHOSTSCRIPTPATH=", $Common::config{"GHOSTSCRIPTPATH"}, "\n";
-                }
-            } else                { print BATCH; }
-        } elsif (/$setenv WIN95HC/i) {
-        } elsif (/$setenv HHC/i) {
-        } else                    { print BATCH; }
+        else                      { print BATCH; }
     }
     close(INPUT);
     # Add additional commands to do the build.
-    if ($pass1) {
-        if ($Common::config{"WIN95HC"} ne "") {
-            print BATCH "$setenv WIN95HC=", $Common::config{"WIN95HC"}, "\n";
-        }
-        if ($Common::config{"HHC"} ne "") {
-            print BATCH "$setenv HHC=", $Common::config{"HHC"}, "\n";
-        }
-    }
+    print BATCH "$setenv RELROOT=", get_reldir(), "\n";
+    print BATCH "$setenv DOC_BUILD=0\n";
     print BATCH "$setenv DOC_QUIET=1\n";
-    print BATCH "\n";
     # Create fresh builder tools, to prevent lockup build server 
     # if builder tools from previous build are somehow broken
     print BATCH "cd $OW\ncd bld\n";
@@ -139,9 +122,7 @@ sub make_build_batch
     print BATCH "wmake -h clean\n";
     print BATCH "wmake -h\n";
     # Remove release directory.
-    print BATCH "$setenv RELROOT=", get_reldir(), "\n";
     print BATCH "rm -rf ", get_reldir(), "\n";
-    print BATCH "\n";
     # Clean previous build.
     print BATCH "cd $OW\ncd bld\n";
     print BATCH "builder -i clean\n";
@@ -169,6 +150,41 @@ sub make_build_batch
     close(BATCH);
     # On Windows it has no efect
     chmod 0777, $build_batch_name;
+}
+
+sub make_docs_batch
+{
+    open(BATCH, ">$docs_batch_name") || die "Unable to open $docs_batch_name file.";
+    open(INPUT, "$setvars") || die "Unable to open $setvars file.";
+    while (<INPUT>) {
+        s/\r?\n/\n/;
+        if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
+        elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
+        elsif (/$setenv GHOSTSCRIPTPATH/i) { ; }
+        elsif (/$setenv WIN95HC/i) { ; }
+        elsif (/$setenv HHC/i)    { ; }
+        else                      { print BATCH; }
+    }
+    close(INPUT);
+    # Add additional commands to do the build.
+    print BATCH "$setenv RELROOT=", get_reldir(), "\n";
+    if ($Common::config{"GHOSTSCRIPTPATH"} ne "") {
+        print BATCH "$setenv GHOSTSCRIPTPATH=", $Common::config{"GHOSTSCRIPTPATH"}, "\n";
+    }
+    if ($Common::config{"WIN95HC"} ne "") {
+        print BATCH "$setenv WIN95HC=", $Common::config{"WIN95HC"}, "\n";
+    }
+    if ($Common::config{"HHC"} ne "") {
+        print BATCH "$setenv HHC=", $Common::config{"HHC"}, "\n";
+    }
+    print BATCH "$setenv DOC_QUIET=1\n";
+    # Start build process.
+    print BATCH "cd $OW\ncd docs\n";
+    print BATCH "builder -i clean\n";
+    print BATCH "builder -i pass1\n";
+    close(BATCH);
+    # On Windows it has no efect
+    chmod 0777, $docs_batch_name;
 }
 
 sub make_test_batch
@@ -217,14 +233,11 @@ sub make_installer_batch
     }
     close(INPUT);
     # Add additional commands to do installers.
-    print BATCH "\n";
-    $relsubdir = "pass1";
     print BATCH "$setenv RELROOT=", get_reldir(), "\n";
     if ($OStype eq "UNIX") {
         # set up max open file handle to be enough for uzip
         print BATCH "ulimit -n 4096\n";
     }
-    print BATCH "\n";
     print BATCH "cd $OW\ncd distrib\ncd ow\n";
     print BATCH "builder missing\n";
     print BATCH "builder rel2\n";
@@ -367,6 +380,57 @@ sub run_build
     }
 }
 
+sub run_docs_build
+{
+    make_docs_batch();
+    print REPORT "CLEAN+BUILD STARTED  : ", get_datetime(), "\n";
+    if (system($docs_batch_name) != 0) {
+        print REPORT "clean+build failed!\n\n";
+        return "fail";
+    } else {
+        print REPORT "CLEAN+BUILD COMPLETED: ", get_datetime(), "\n\n";
+        # Analyze build result.
+        Common::process_summary($buildlog, $bldlast);
+        # If 'compare' fails, end now. Don't test if there was a build failure.
+        if (Common::process_compare($bldbase, $bldlast, \*REPORT)) {
+            return "fail";
+        } else {
+            return "success";
+        }
+    }
+}
+
+sub p4_sync
+{
+    #force all files update to head
+    #open(SYNC, "p4 sync -f $OW\/...#head |");
+
+    open(SYNC, "p4 sync $OW\/... |");
+    while (<SYNC>) {
+        my @fields = split;
+        my $loc = Common::remove_OWloc($fields[-1]);
+        if( $loc ne "" ) {
+            push(@p4_messages, sprintf("%-8s %s", $fields[2], $loc));
+        } else {
+            push(@p4_messages, sprintf("%s", $_));
+        }
+    }
+    if (!close(SYNC)) {
+        print REPORT "p4 failed!\n";
+        close(REPORT);
+        exit 1;
+    }
+    print REPORT "'p4 sync' Successful (messages below).\n";
+    open(LEVEL, "p4 counters|");
+    while (<LEVEL>) {
+        if (/^change = (.*)/) {
+            print REPORT "\tBuilding through change: $1\n";
+        }
+    }
+    close(LEVEL);
+    print REPORT "\n";
+}
+
 #######################
 #      Main Script
 #######################
@@ -392,33 +456,7 @@ print REPORT "=====================================\n\n";
 # Do a p4 sync to get the latest changes.
 #########################################
 
-#force all files update to head
-#open(SYNC, "p4 sync -f $OW\/...#head |");
-
-open(SYNC, "p4 sync $OW\/... |");
-while (<SYNC>) {
-    my @fields = split;
-    my $loc = Common::remove_OWloc($fields[-1]);
-    if ($loc ne "") {
-        push(@p4_messages, sprintf("%-8s %s", $fields[2], $loc));
-    } else {
-        push(@p4_messages, sprintf("%s", $_));
-    }
-}
-if (!close(SYNC)) {
-    print REPORT "p4 failed!\n";
-    close(REPORT);
-    exit 1;
-}
-print REPORT "'p4 sync' Successful (messages below).\n";
-open(LEVEL, "p4 counters|");
-while (<LEVEL>) {
-    if (/^change = (.*)/) {
-        print REPORT "\tBuilding through change: $1\n";
-    }
-}
-close(LEVEL);
-print REPORT "\n";
+p4_sync();
 
 ############################################################
 #
@@ -426,11 +464,15 @@ print REPORT "\n";
 #
 ############################################################
 
+print REPORT "\n";
+print REPORT "Compilers and Tools (pass 1)\n";
+print REPORT "============================\n\n";
+
 $WATCOM    = $Common::config{"WATCOM"};
 $relsubdir = "pass1";
 $buildlog  = "$OW\/bld\/pass1.log";
-$bldbase   = "$home\/$Common::config{'BLDBASE'}";
-$bldlast   = "$home\/$Common::config{'BLDLAST'}";
+$bldbase   = "$home\/$Common::config{'BLDBASE1'}";
+$bldlast   = "$home\/$Common::config{'BLDLAST1'}";
 
 my $pass1_result = run_build();
 
@@ -453,6 +495,24 @@ $bldlast   = "$home\/$Common::config{'BLDLAST2'}";
 
 my $pass2_result = run_build();
 
+############################################################
+#
+#  Build the Documentation
+#
+############################################################
+
+print REPORT "\n";
+print REPORT "Documentation Build\n";
+print REPORT "===================\n\n";
+
+$WATCOM    = $Common::config{"WATCOM"};
+$relsubdir = "pass1";
+$buildlog  = "$OW\/docs\/pass1.log";
+$bldbase   = "$home\/$Common::config{'BLDBASED'}";
+$bldlast   = "$home\/$Common::config{'BLDLASTD'}";
+
+my $docs_result = run_docs_build();
+
 # Display p4 sync messages for reference.
 ##########################################
 
@@ -463,8 +523,10 @@ close(REPORT);
 # Rotate the freshly built system into position on the web site.
 ################################################################
 if (($pass1_result eq "success") &&
-    ($pass2_result eq "success")) {
+    ($pass2_result eq "success") &&
+    ($docs_result eq "success")) {
 
+    $relsubdir = "pass1";
     make_installer_batch();
     if (system("$build_installer_name") == 0) {
         system("$rotate_batch_name");
