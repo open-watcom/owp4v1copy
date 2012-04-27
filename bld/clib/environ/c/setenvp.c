@@ -44,8 +44,11 @@
     #include <wos2.h>
 #elif defined(__NT__)
     #include <windows.h>
-#elif defined( __RDOS__ ) || defined( __RDOSDEV__ )
+#elif defined( __RDOS__)
     #include <rdos.h>
+#elif defined( __RDOSDEV__)
+    #include <rdos.h>
+    #include <rdosdev.h>
 #endif
 #include "liballoc.h"
 #include "filestr.h"
@@ -89,8 +92,6 @@ static void *(_WCI86NEAR allocate)( size_t amt )
 void __setenvp( void )
 {
 #if defined(__NETWARE__)
-    // no environment support
-#elif defined(__RDOSDEV__)
     // no environment support
 #elif defined(__LINUX__)
     char    **argep;
@@ -150,6 +151,36 @@ void __setenvp( void )
         startp = lib_malloc( size );
         RdosGetEnvData( handle, startp );
         RdosCloseEnv( handle );
+    }
+  #elif defined(__RDOSDEV__)
+    {
+        int sel;
+        char *ptr;
+        char *src;
+        char *dst;
+        int size;
+
+        sel = RdosLockSysEnv();
+        ptr = RdosSelectorToPointer( sel);
+
+        size = 0;
+        src = ptr;
+        for( ;; ) {
+            while( *src ) {
+                src++;
+                size++;
+            }        
+            src++;
+            size++;
+
+            if( *src == 0)
+                break;
+        }
+        size++;
+        
+        startp = lib_malloc( size );
+        memcpy( startp, ptr, size );
+        RdosUnlockSysEnv();
     }
   #elif defined( _M_I86 )
     startp = MK_FP( *(unsigned short _WCI86FAR *)( MK_FP( _RWD_psp, 0x2c ) ), 0 );
