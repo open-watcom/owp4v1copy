@@ -157,7 +157,6 @@ void __setenvp( void )
         int sel;
         char *ptr;
         char *src;
-        char *dst;
         int size;
 
         sel = RdosLockSysEnv();
