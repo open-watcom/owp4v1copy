@@ -2333,12 +2333,6 @@ extern  void    GenRdosdevProlog( void ) {
 /****************************************/
 
     _Code;
-    LayOpbyte( 0xf );              /*      movzx esp,sp      */
-    AddByte( 0xb7 );
-    AddByte( 0xe4 );
-    _Emit;
-
-    _Code;
     LayOpbyte( 0x1e );             /*      push    ds        */
     _Emit;
 
