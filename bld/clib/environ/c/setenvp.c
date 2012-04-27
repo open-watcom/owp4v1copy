@@ -90,6 +90,8 @@ void __setenvp( void )
 {
 #if defined(__NETWARE__)
     // no environment support
+#elif defined(__RDOSDEV__)
+    // no environment support
 #elif defined(__LINUX__)
     char    **argep;
     int     count;
@@ -144,17 +146,6 @@ void __setenvp( void )
         int size;
 
         handle = RdosOpenProcessEnv();
-        size = RdosGetEnvSize( handle );
-        startp = lib_malloc( size );
-        RdosGetEnvData( handle, startp );
-        RdosCloseEnv( handle );
-    }
-  #elif defined(__RDOSDEV__)
-    {
-        int handle;
-        int size;
-
-        handle = RdosOpenSysEnv();
         size = RdosGetEnvSize( handle );
         startp = lib_malloc( size );
         RdosGetEnvData( handle, startp );
