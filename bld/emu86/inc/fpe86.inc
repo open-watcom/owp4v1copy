@@ -266,29 +266,35 @@ endif
 ;       exception handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-        xdefp   F8DivZero
-F8DivZero proc  near
+        xdefp   FPDivZero
+FPDivZero proc  near
+        push    ax
         mov     AL,SW_ZE                ; indicate zero divide
         mov     AH,FPE_ZERODIVIDE       ; ...
         call    __Exception_HNDLR       ; process exception
+        pop     ax
         ret                             ; return
-F8DivZero endp
+FPDivZero endp
 
-        xdefp   F8InvalidOp
-F8InvalidOp proc near
+        xdefp   FPInvalidOp
+FPInvalidOp proc near
+        push    ax
         mov     AL,SW_IE                ; indicate invalid operation
         mov     AH,FPE_INVALID          ; ...
         call    __Exception_HNDLR       ; process exception
+        pop     ax
         ret                             ; return
-F8InvalidOp endp
+FPInvalidOp endp
 
-        xdefp   F8OverFlow
-F8OverFlow proc near
+        xdefp   FPOverFlow
+FPOverFlow proc near
+        push    ax
         mov     AL,SW_OE                ; get OVERFLOW mask
         mov     AH,FPE_OVERFLOW         ; set OVERFLOW exception code
         call    __Exception_HNDLR       ; process exception
+        pop     ax
         ret                             ; return
-F8OverFlow endp
+FPOverFlow endp
 
         xdefp   __Exception_HNDLR
 ;

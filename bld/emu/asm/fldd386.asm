@@ -35,8 +35,8 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8DivZero
-        xref    F8InvalidOp
+        xref    FPDivZero
+        xref    FPInvalidOp
 
         modstart    fldd386, dword
 
@@ -175,12 +175,12 @@ divnan2:sub     ESI,10000h      ; readjust high exponent
             mov   EAX,ESI               ; - - get exponent
             _shl  AX,1                  ; - - place sign in carry
             _quif ne                    ; - - quit if op1 not 0
-            call  F8InvalidOp           ; - - indicate invalid operation
+            call  FPInvalidOp           ; - - indicate invalid operation
             mov   EDX,0C0000000h        ; - - return NaN
             sub   EAX,EAX               ; - - ...
             mov   SI,0FFFFh             ; - - ...
           _admit                        ; - admit: zero divide
-            call  F8DivZero             ; - - invoke zero divide exception
+            call  FPDivZero             ; - - invoke zero divide exception
             mov   EDX,80000000h         ; - - return signed infinity
             sub   EAX,EAX               ; - - ...
             or    SI,7FFFh              ; - - ...

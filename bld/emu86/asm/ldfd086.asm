@@ -12,7 +12,7 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8OverFlow
+        xref    FPOverFlow
 
         modstart    ldfd086, word
 
@@ -162,15 +162,7 @@ endif
         or      AX,7FF0h        ; set infinity (or NaN)
         cmp     DI,87FEh        ; if not infinity or NaN
         _if     ne              ; then (overflow)
-          push  AX              ; - save it
-          push  DX              ; - save it
-          push  BX              ; - save it
-          push  CX              ; - save it
-          call  F8OverFlow      ; - set OVERFLOW exception
-          pop   CX              ; - restore it
-          pop   BX              ; - restore it
-          pop   DX              ; - restore it
-          pop   AX              ; - restore it
+          call  FPOverFlow      ; - set OVERFLOW exception
         _endif                  ; endif
 if EMUL_VERSION eq 0
 _ret_ldfd:                      ; function epilogue

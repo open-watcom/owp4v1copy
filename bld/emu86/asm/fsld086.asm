@@ -5,7 +5,7 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8InvalidOp
+        xref    FPInvalidOp
 
         modstart    fsld086, word
 
@@ -63,15 +63,7 @@ endif
               or    AX,AX       ; - - - ...
               _quif e, xx2      ; - - - if fraction is 0, then its a infinity
             _endif              ; - - endif
-            push  AX            ; - - - save AX
-            push  DX            ; - - - save DX
-            push  BX            ; - - - save BX
-            push  CX            ; - - - save CX
-            call  F8InvalidOp   ; - - - indicate "Invalid" exception
-            pop   CX            ; - - - restore CX
-            pop   BX            ; - - - restore BX
-            pop   DX            ; - - - restore DX
-            pop   AX            ; - - - restore AX
+            call  FPInvalidOp   ; - - - indicate "Invalid" exception
             or    DH,40h        ; - - - indicate QNaN
           _endguess             ; - endguess
           or    DH,80h          ; - turn on implied one bit

@@ -5,8 +5,8 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8DivZero
-        xref    F8InvalidOp
+        xref    FPDivZero
+        xref    FPInvalidOp
 
         modstart    fldd086, word
 
@@ -89,12 +89,12 @@ endif
             mov   CX,AX         ; - - get sign+exponent
             _shl  CX,1          ; - - place sign in carry
             _quif ne            ; - - quit if not 0
-            call  F8InvalidOp   ; - - process exception
+            call  FPInvalidOp   ; - - process exception
             mov   SI,0FFFFh     ; - - return NaN
             mov   AX,0C000h     ; - - ...
           _admit                ; - admit: divide by 0
             mov   SI,AX         ; - - get exponent+sign of op1
-            call  F8DivZero     ; - - process exception
+            call  FPDivZero     ; - - process exception
             or    SI,7FFFh      ; - - return signed infinity
             mov   AX,8000h      ; - - ...
           _endguess             ; - endguess

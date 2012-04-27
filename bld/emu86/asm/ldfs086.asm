@@ -5,7 +5,7 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8OverFlow
+        xref    FPOverFlow
 
         modstart    ldfs086, word
 
@@ -114,9 +114,7 @@ endif
         _shl    AX,1            ; get sign ...
         mov     DX,7F80H shl 1  ; set infinity
         rcr     DX,1            ; ... into exponent word
-        push    DX              ; save dx
-        call    F8OverFlow      ; set OVERFLOW exception
-        pop     DX              ; restore dx
+        call    FPOverFlow      ; set OVERFLOW exception
         sub     AX,AX           ; set rest of fraction to 0
 ifdef _BUILDING_MATHLIB
 _ret_ldfs:                      ; function epilogue

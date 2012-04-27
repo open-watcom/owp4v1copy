@@ -35,7 +35,7 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8InvalidOp
+        xref    FPInvalidOp
 
         modstart    fsld386, dword
 
@@ -77,11 +77,7 @@ endif
             or    CH,07Fh               ; - - set exponent to all one's
             test  EAX,7FFFFFFFh         ; - - isolate fraction bits
             _quif e                     ; - - quit if infinity
-            push  EDX                   ; - - save EDX
-            push  EAX                   ; - - save EAX
-            call  F8InvalidOp           ; - - indicate "Invalid" exception
-            pop   EAX                   ; - - restore EAX
-            pop   EDX                   ; - - restore EDX
+            call  FPInvalidOp           ; - - indicate "Invalid" exception
             or    EAX,40000000h         ; - - indicate QNaN
           _endguess                     ; - endguess
           or    EAX,80000000h           ; - turn on implied 1 bit

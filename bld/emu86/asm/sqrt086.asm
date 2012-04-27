@@ -341,8 +341,8 @@ EMUL_VERSION equ 1
 include xception.inc
 include fstatus.inc
 
-        xref    F8InvalidOp
-        xref    F8OverFlow
+        xref    FPInvalidOp
+        xref    FPOverFlow
 
 include ldfd086.asm
 include fdld086.asm

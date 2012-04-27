@@ -34,7 +34,7 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8InvalidOp
+        xref    FPInvalidOp
 
         modstart    fdld386, dword
 
@@ -82,11 +82,7 @@ endif
               or    EAX,EAX             ; - - - check low word
               _quif e, xx2              ; - - - quit if infinity
             _endif                      ; - - endif
-            push  EDX                   ; - - save EDX
-            push  EAX                   ; - - save EAX
-            call  F8InvalidOp           ; - - indicate "Invalid" exception
-            pop   EAX                   ; - - restore EAX
-            pop   EDX                   ; - - restore EDX
+            call  FPInvalidOp           ; - - indicate "Invalid" exception
             or    EDX,40000000h         ; - - indicate QNaN
           _endguess                     ; - endguess
           or    EDX,80000000h           ; - turn on implied 1 bit

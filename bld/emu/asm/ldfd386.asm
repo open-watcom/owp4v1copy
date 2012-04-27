@@ -35,7 +35,7 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    F8OverFlow
+        xref    FPOverFlow
 
         modstart    ldfd386, dword
 
@@ -140,11 +140,7 @@ endif
           or    EDX,7FF00000h           ; - set exponent
           cmp   CX,43FFh                ; - quit if infinity or NaN
           _quif e                       ; - ...
-          push  EDX                     ; - save EDX
-          push  EAX                     ; - save EAX
-          call  F8OverFlow              ; - set OVERFLOW exception
-          pop   EAX                     ; - restore EAX
-          pop   EDX                     ; - restore EDX
+          call  FPOverFlow              ; - set OVERFLOW exception
         _endguess                       ; endguess
 ifdef _BUILDING_MATHLIB
         pop     ESI                     ; restore address of double
