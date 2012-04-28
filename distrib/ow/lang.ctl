@@ -26,9 +26,9 @@ echo Installer Build: <1> <2> <3> <4> <5>
     # buildable on each host platform
     #########################################################
     langdat c
-    mksetup -x -i../include c filelist <RELROOT>
+    mkinf -x -i../include c filelist <RELROOT>
     langdat f77
-    mksetup -x -i../include f77 filelist <RELROOT>
+    mkinf -x -i../include f77 filelist <RELROOT>
     rm filelist
 
 [ BLOCK . . ]
