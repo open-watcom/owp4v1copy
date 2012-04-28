@@ -125,6 +125,7 @@ done1:      jmp   sqrt9                 ; - - and return
           dec   DX              ; - set DX back to -1
           cmp   BX,SI           ; - if next word is -1
           _if   e               ; - then
+            pop   DX            ; - - remove guard word from stack
             cmp   BP,SI         ; - - if third word is also -1
             _if   e             ; - - then
               cmp   DI,SI       ; - - - if last word is -1
@@ -132,7 +133,6 @@ done1:      jmp   sqrt9                 ; - - and return
                 jmp   sqrt8     ; - - - - ...
               _endif            ; - - - endif
             _endif              ; - - endif
-            pop   AX            ; - - get guard word
             mov   CX,BX         ; - - get second word
             mov   BX,BP         ; - - get third word
             mov   AX,DI         ; - - get last word
