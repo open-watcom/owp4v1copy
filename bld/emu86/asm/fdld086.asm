@@ -1,38 +1,23 @@
-ifndef EMUL_VERSION
 ifdef _BUILDING_MATHLIB
-EMUL_VERSION equ 0
-else
-EMUL_VERSION equ 1
-endif
-endif
-
-if EMUL_VERSION eq 0
 
 include mdef.inc
 include struct.inc
 include xception.inc
 
-        xref    FPInvalidOp
-
         modstart    fdld086, word
-
-
-        xdefp   __iFDLD
-else
-        xdefp   __EmuFDLD
 endif
 
+        xref    FPInvalidOp
+
+;
 ;       convert double to long double
+;
+ifdef _BUILDING_MATHLIB
 ; input:
-;if EMUL_VERSION eq 0
 ;       SS:AX           pointer to double
 ;       SS:DX           pointer to long double to be filled in
-;else
-;       AX:BX:CX:DX     double
-;       DS:SI           pointer to long double to be filled in
-;endif
-
-if EMUL_VERSION eq 0
+;
+        xdefp   __iFDLD
 __iFDLD  proc
         push    BX              ; save BX
         push    CX              ; save CX
@@ -45,6 +30,11 @@ __iFDLD  proc
         mov     BX,4[BP]        ; ...
         mov     AX,6[BP]        ; ...
 else
+; input:
+;       AX:BX:CX:DX     double
+;       DS:SI           pointer to long double to be filled in
+;
+        xdefp   __EmuFDLD
 __EmuFDLD  proc    near
         push    DI              ; save DI
 endif
@@ -122,7 +112,7 @@ endif
         _endguess               ; endguess
         popf                    ; get sign (Carry flag)
         rcr     DI,1            ; get sign back to DI
-if EMUL_VERSION eq 0
+ifdef _BUILDING_MATHLIB
         pop     BP              ; fetch return pointer
         mov     0[BP],DX        ; store number
         mov     2[BP],CX        ; ...
@@ -135,6 +125,11 @@ if EMUL_VERSION eq 0
         pop     BX              ; restore BX
         ret                     ; return
 __iFDLD  endp
+
+        endmod
+
+        endf    equ end
+
 else
         mov     0[SI],DX        ; store number
         mov     2[SI],CX        ; ...
@@ -144,14 +139,7 @@ else
         pop     DI              ; restore DI
         ret                     ; return
 __EmuFDLD  endp
-endif
 
-if EMUL_VERSION eq 0
-
-        endmod
-
-        endf    equ end
-else
         endf    equ <>
 
 endif
