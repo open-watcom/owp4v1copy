@@ -167,6 +167,7 @@ static void PushInclude( const char *name )
     char        *fn;
     char        *ext;
     char        dir_name[_MAX_PATH];
+    int         len;
 
     new = Alloc( sizeof( *new ) );
     new->prev = IncludeStk;
@@ -181,6 +182,16 @@ static void PushInclude( const char *name )
     strcpy( new->name, name );
     _splitpath2( name, buff, &drive, &dir, &fn, &ext );
     _makepath( dir_name, drive, dir, NULL, NULL );
+    /* _makepath add trailing path separator
+       it must be removed for chdir          */
+    len = strlen( dir_name );
+#ifdef __UNIX__
+    if( len > 1 && dir_name[len - 1] == '/' ) {
+#else
+    if( len > 1 && dir_name[len - 2] != ':' && dir_name[len - 1] == '\\' ) {
+#endif
+        dir_name[len - 1] = '\0';
+    }
     if( chdir( dir_name ) != 0 ) {
         Fatal( "Could not chdir to '%s': %s\n", dir_name, strerror( errno ) );
     }
