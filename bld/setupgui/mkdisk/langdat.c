@@ -188,7 +188,8 @@ static void PushInclude( const char *name )
 #ifdef __UNIX__
     if( len > 1 && dir_name[len - 1] == '/' ) {
 #else
-    if( len > 1 && dir_name[len - 2] != ':' && dir_name[len - 1] == '\\' ) {
+    if( len > 1 && dir_name[len - 2] != ':' &&
+        (dir_name[len - 1] == '\\' || dir_name[len - 1] == '/') ) {
 #endif
         dir_name[len - 1] = '\0';
     }
