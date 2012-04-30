@@ -1882,7 +1882,12 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     if( percent_cmd ) {
         return( percentCmd( cmdname, arg ) );
     }
-    if( hasMetas( cmd ) && comnum != COM_FOR ) {
+    /*
+     * The SET command must be handled locally to have any effect. Consider
+     * `Path=C:\Program Files (x86)\foo' which will be detected as containing
+     * metacharacters. Stupid Microsoft...
+     */
+    if( hasMetas( cmd ) && comnum != COM_SET && comnum != COM_FOR ) {
         flags |= FLAG_SHELL; /* pass to shell because of '>','<' or '|' */
     }
     if( ( flags & FLAG_ENV_ARGS ) != 0 && ( flags & FLAG_SHELL ) == 0 ) {
