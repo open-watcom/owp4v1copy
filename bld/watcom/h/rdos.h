@@ -101,7 +101,7 @@ typedef struct Tss
     short int MathCs;
     long MathDataOffs;
     short int MathDataSel;
-    xreal st[8];
+    real_math st[8];
     char WcSpace[16];
 } Tss;
 
