@@ -23,12 +23,16 @@ extern "C" {
 
 #ifdef __WATCOMC__
 
+#include "machtype.h"
 #include "rdu.h"
 #define RDOSAPI
+
+#define real_math   xreal
 
 #else
 
 #define RDOSAPI __stdcall
+#define real_math   long double
 
 #endif
 
@@ -97,7 +101,7 @@ typedef struct Tss
     short int MathCs;
     long MathDataOffs;
     short int MathDataSel;
-    long double st[8];
+    xreal st[8];
     char WcSpace[16];
 } Tss;
 
@@ -180,11 +184,10 @@ typedef struct _EXCEPTION_POINTERS {
 
 // API functions
 
-void RDOSAPI RdosTestGate(int val);
+void RDOSAPI RdosTestGate();
 
 #pragma aux RdosTestGate = \
-    CallGate_test_gate \
-    parm [eax];
+    CallGate_test_gate;
 
 void RDOSAPI RdosDebug();
 void RDOSAPI RdosLoad32();
@@ -219,6 +222,10 @@ void RDOSAPI RdosSetDrawColor(int handle, int color);
 void RDOSAPI RdosSetLGOP(int handle, int lgop);
 void RDOSAPI RdosSetHollowStyle(int handle);
 void RDOSAPI RdosSetFilledStyle(int handle);
+
+int RDOSAPI RdosAnsiToUtf8(const char *AnsiStr, char *Utf8Str, int BufferSize);
+int RDOSAPI RdosUtf8ToAnsi(const char *Utf8Str, char *AnsiStr, int BufferSize);
+
 int RDOSAPI RdosOpenFont(int id, int height);
 void RDOSAPI RdosCloseFont(int font);
 void RDOSAPI RdosGetStringMetrics(int font, const char *str, int *width, int *height);
@@ -308,6 +315,7 @@ void RDOSAPI RdosWaitForSendCompletedCom(int Handle);
 int RDOSAPI RdosGetMaxPrinters();
 int RDOSAPI RdosOpenPrinter(char ID);
 void RDOSAPI RdosClosePrinter(int Handle);
+int RDOSAPI RdosGetPrinterName(int Handle, char *NameBuf);
 int RDOSAPI RdosIsPrinterJammed(int Handle);
 int RDOSAPI RdosIsPrinterPaperLow(int Handle);
 int RDOSAPI RdosIsPrinterPaperEnd(int Handle);
@@ -647,7 +655,7 @@ int RDOSAPI RdosWasUsbTransactionOk(int Handle);
 int RDOSAPI RdosOpenHid(int Controller, int Device);
 void RDOSAPI RdosCloseHid(int handle);
 int RDOSAPI RdosGetHidPipe(int Handle);
-int RDOSAPI RdosReadHid(int Handle, char *buf, int size);
+int RDOSAPI RdosReadHid(int Handle, char *buf, int size, int ms);
 int RDOSAPI RdosWriteHid(int Handle, const char *buf, int size);
 
 int RDOSAPI RdosGetAllocatedUsbBlocks();
@@ -1002,6 +1010,16 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_set_filled_style  \
     parm [ebx];
 
+#pragma aux RdosAnsiToUtf8 = \
+    CallGate_ansi_to_utf8  \
+    parm [esi] [edi] [ecx]  \
+    value [eax];
+
+#pragma aux RdosUtf8ToAnsi = \
+    CallGate_utf8_to_ansi  \
+    parm [esi] [edi] [ecx]  \
+    value [eax];
+
 #pragma aux RdosOpenFont = \
     CallGate_open_font  \
     ValidateHandle \
@@ -1316,6 +1334,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosClosePrinter = \
     CallGate_close_printer  \
     parm [ebx];
+
+#pragma aux RdosGetPrinterName = \
+    CallGate_get_printer_name  \
+    CarryToBool \
+    parm [ebx] [edi] \
+    value [eax];
 
 #pragma aux RdosIsPrinterJammed = \
     CallGate_is_printer_jammed  \
@@ -2992,7 +3016,7 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosReadHid = \
     CallGate_read_hid \
     CarryToBool \
-    parm [ebx] [edi] [ecx] \
+    parm [ebx] [edi] [ecx] [eax] \
     value [eax];
 
 #pragma aux RdosWriteHid = \
@@ -3295,6 +3319,24 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
     CallGate_set_filled_style  \
     parm [ebx];
 
+#pragma aux RdosAnsiToUtf8 = \
+    "push ds" \
+    "mov eax,fs" \
+    "mov ds,eax" \ 
+    CallGate_ansi_to_utf8  \
+    "pop ds" \
+    parm [fs esi] [es edi] [ecx]  \
+    value [eax];
+
+#pragma aux RdosUtf8ToAnsi = \
+    "push ds" \
+    "mov eax,fs" \
+    "mov ds,eax" \ 
+    CallGate_utf8_to_ansi  \
+    "pop ds" \
+    parm [fs esi] [es edi] [ecx]  \
+    value [eax];
+
 #pragma aux RdosOpenFont = \
     CallGate_open_font  \
     ValidateHandle \
@@ -3518,6 +3560,12 @@ void RDOSAPI RdosPlayFmNote(int Handle, long double Freq, int PeakLeftVolume, in
 #pragma aux RdosClosePrinter = \
     CallGate_close_printer  \
     parm [ebx];
+
+#pragma aux RdosGetPrinterName = \
+    CallGate_get_printer_name  \
+    CarryToBool \
+    parm [ebx] [es edi] \
+    value [eax];
 
 #pragma aux RdosIsPrinterJammed = \
     CallGate_is_printer_jammed  \

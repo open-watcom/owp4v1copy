@@ -31,6 +31,8 @@
 #ifndef _DEBUG_H
 #define _DEBUG_H
 
+#include "rdos.h"
+
 struct TDebug *GetCurrentDebug();
 void SetCurrentDebug( struct TDebug *obj );
 
@@ -96,7 +98,7 @@ struct TDebugThread
     short int MathCs;
     long MathDataOffs;
     short int MathDataSel;
-    long double St[8];
+    real_math St[8];
 
     struct TDebugThread *Next;
 

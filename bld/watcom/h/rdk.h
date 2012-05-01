@@ -260,7 +260,7 @@
 #define osgate_get_file_info 247
 #define osgate_dupl_file_info 248
 
-#define osgate_get_char_mask 250
+#define osgate_get_utf8_bitmap 250
 #define osgate_register_video_mode 251
 
 #define osgate_init_mouse 252
@@ -500,6 +500,7 @@
 #define osgate_setup_pci_msi 420
 #define osgate_request_msi_handler 421
 #define osgate_request_irq_handler 422
+#define osgate_request_pci_irq_handler 423
 
 
 
@@ -753,7 +754,7 @@
 #define OsGate_get_file_info 0x3E 0x67 0x9a 247 0 0 0 2 0
 #define OsGate_dupl_file_info 0x3E 0x67 0x9a 248 0 0 0 2 0
 
-#define OsGate_get_char_mask 0x3E 0x67 0x9a 250 0 0 0 2 0
+#define OsGate_get_utf8_bitmap 0x3E 0x67 0x9a 250 0 0 0 2 0
 #define OsGate_register_video_mode 0x3E 0x67 0x9a 251 0 0 0 2 0
 
 #define OsGate_init_mouse 0x3E 0x67 0x9a 252 0 0 0 2 0
@@ -993,4 +994,5 @@
 #define OsGate_setup_pci_msi 0x3E 0x67 0x9a 164 1 0 0 2 0
 #define OsGate_request_msi_handler 0x3E 0x67 0x9a 165 1 0 0 2 0
 #define OsGate_request_irq_handler 0x3E 0x67 0x9a 166 1 0 0 2 0
+#define OsGate_request_pci_irq_handler 0x3E 0x67 0x9a 167 1 0 0 2 0
 
