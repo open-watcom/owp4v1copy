@@ -32,7 +32,7 @@ extra_c_flags = -D__OS_$(host_os)__ -DSTANDALONE_RX
 extra_c_flags_genverrc = -D_VERSION=$(bld_ver)
 
 !ifdef bootstrap
-inc_dirs += -I../h
+inc_dirs += -I"../h"
 .c : $(watcom_dir)/c
 builder.exe : clibext.obj
 sweep.exe : sweep.obj clibext.obj
