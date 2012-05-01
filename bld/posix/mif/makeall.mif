@@ -5,25 +5,15 @@ clean : .symbolic
 
 !else
 
-!ifdef prebuild
-!include $(posix_dir)/mif/bld_cmds.mif
-!else
 !include $(posix_dir)/mif/commands.mif
-!endif
 !include $(posix_dir)/mif/targos.mif
 !include $(posix_dir)/mif/common.mif
-
-!ifdef __UNIX__
-altposixlibdir=$(posix_dir)/misc/$(targos)/ms
-!else
-altposixlibdir=$(posix_dir)\misc\$(targos)\ms
-!endif
 
 all : lib $(commands) .symbolic
         @%null
 
 lib : .symbolic $(__MAKEFILES__)
-curr_dir_all=$+ $(%cwd) $-
+curr_dir_all=$+ $(%CWD) $-
         @cd $(posixlibdir)
         !@wmake -h release=$(release)
 !ifeq targos dos
@@ -37,31 +27,26 @@ curr_dir_all=$+ $(%cwd) $-
 
 $(commands) : .symbolic $(__MAKEFILES__)
         !@wmake -h targos=$(targos) make_all=1 release=$(release) -f $(posix_dir)/src/$^@/makefile
-!ifdef install
-        @wstrip $^@.exe $(install)/$^@.exe
-        @wtouch -f $^@.exe $(install)/$^@.exe
-!endif
 
 clean : .symbolic
+curr_dir_all=$+ $(%CWD) $-
         @echo clean $(posixlibdir)
-curr_dir_all=$+ $(%cwd) $-
         @cd $(posixlibdir)
         rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
 !ifeq targos dos
         @echo clean $(altposixlibdir)
-curr_dir_all=$+ $(%cwd) $-
         @cd $(altposixlibdir)
         rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
 !else ifeq targos dosos2
         @echo clean $(altposixlibdir)
-curr_dir_all=$+ $(%cwd) $-
         @cd $(altposixlibdir)
         rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
 !endif
         @cd $(curr_dir_all)
+!if defined(bootstrap) || defined(prebuild)
+        @for %i in ($(commands)) do rm -f $(%OWBINDIR)/%i.exe
+!else
         @echo clean $(curr_dir_all)
         rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
-!ifdef prebuild
-        @for %i in ($(commands)) do rm -f $(%OWBINDIR)/%i.exe
 !endif
 !endif

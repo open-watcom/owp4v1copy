@@ -51,17 +51,23 @@ memory_model_i86=$(model)
 memory_model_386=$(model)
 
 !ifdef __UNIX__
-!ifeq targos ntaxp
-posixlibdir=$(posix_dir)/misc/$(targos)/_s
+libpath = $(posix_dir)/misc/$(targos)/
 !else
-posixlibdir=$(posix_dir)/misc/$(targos)/m$(model)
+libpath = $(posix_dir)\misc\$(targos)\
 !endif
-!else
+
+alt_model_dos_s    = mc
+alt_model_dosos2_s = mc
+alt_model_dos_c    = ms
+alt_model_dosos2_c = ms
+
 !ifeq targos ntaxp
-posixlibdir=$(posix_dir)\misc\$(targos)\_s
-!else
-posixlibdir=$(posix_dir)\misc\$(targos)\m$(model)
+posixlibdir=$(libpath)_s
+!else 
+posixlibdir=$(libpath)m$(model)
 !endif
+!ifdef alt_model_$(targos)_$(model)
+altposixlibdir=$(libpath)$(alt_model_$(targos)_$(model))
 !endif
 
 !include cproj.mif
