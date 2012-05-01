@@ -74,8 +74,7 @@ rem start with the builder
 REM wattcp is needed for debugger remote server tcpserv
    cd %devdir%
    cd ..\contrib\wattcp\src
-   wmake clean -ms
-   wmake %makeclean% -ms
+   wmake %makeclean%
 
 REM now we can start the builder with 9 generations of logfiles
    cd %devdir%
