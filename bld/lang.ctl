@@ -32,6 +32,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/re2c/prereq.ctl ]
 # [ INCLUDE <DEVDIR>/wgml/prereq.ctl ]
 [ INCLUDE <DEVDIR>/whpcvt/prereq.ctl ]
+[ INCLUDE <DEVDIR>/omftools/prereq.ctl ]
 [ INCLUDE <DEVDIR>/helpcomp/prereq.ctl ]
 [ INCLUDE <DEVDIR>/hcdos/prereq.ctl ]
 [ INCLUDE <DEVDIR>/bmp2eps/prereq.ctl ]
