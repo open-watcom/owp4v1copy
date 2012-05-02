@@ -8,8 +8,6 @@ set PROJDIR=<CWD>
 
 cdsay .
 
-[ INCLUDE prereq.ctl ]
-
 [ BLOCK <1> build rel2 ]
 #=======================
     cd <PROJDIR>/../pgchart
