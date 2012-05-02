@@ -73,8 +73,6 @@ def_fpu_flags_dos_i86 = -fpc
 extra_c_flags = -zm -s
 
 extra_c_flags_language = -wcd=202
-extra_c_flags_pcbuf = -wcd=106
-extra_c_flags_timer = -wcd=124
 
 inc_dirs = -I"$(contrib_dir)/wattcp/inc"
 

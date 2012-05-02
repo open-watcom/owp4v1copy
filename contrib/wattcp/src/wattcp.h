@@ -76,7 +76,7 @@ typedef int (*sol_upcall)   (void *socket, int icmp_type);
 #if (DOSX)
 #define MAX_FRAGMENTS    45UL
 #else
-#define MAX_FRAGMENTS    30UL
+#define MAX_FRAGMENTS    22UL
 #endif
 
 /* This should really be a function of current MAC-driver

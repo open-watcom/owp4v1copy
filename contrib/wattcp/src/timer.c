@@ -273,9 +273,9 @@ struct timeval timeval_diff (const struct timeval *a, const struct timeval *b)
 {
   struct timeval d;
 
-  d.tv_sec  = (long)(a->tv_sec - b->tv_sec);
+  d.tv_sec  = a->tv_sec - b->tv_sec;
   d.tv_usec = a->tv_usec - b->tv_usec;
-  if( d.tv_sec < 0 ) {
+  if( a->tv_sec < b->tv_sec ) {
     if( d.tv_usec > 0 ) {
       d.tv_sec++;
       d.tv_usec -= 1000000L;
