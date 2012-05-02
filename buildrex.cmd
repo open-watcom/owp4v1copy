@@ -2,7 +2,7 @@
 /*                                                                         */
 /*  buildrex.cmd - build Open Watcom using selected compiler               */
 /*                                                                         */
-/*  will build (or clean) the builder, wattcp, watcom and installer        */
+/*  will build (or clean) the builder, watcom and installer                */
 /*                                                                         */
 /*  combined OS/2 and Windows version                                      */
 /*                                                                         */
@@ -98,10 +98,6 @@ Call Procsetvar  /* process setvar commandlist */
 /* builder is first */
 Call Directory owroot"\bld\builder\"builderdir
 "wmake" makeclean
-
-/* wattcp is needed for debugger remote server tcpserv */
-Call Directory owroot"\contrib\wattcp\src"
-"wmake" makeclean "-ms"
 
 /* now we can start the builder with 9 generations of logfiles */
 Call Directory owroot"\bld"

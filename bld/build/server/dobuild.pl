@@ -136,10 +136,6 @@ sub make_build_batch
         print BATCH "cd builder\ncd os2386\n";
     }
     print BATCH "wmake -h\n";
-    # Recreate Watcom DOS TCP/IP library.
-    print BATCH "cd $OW\ncd contrib\ncd wattcp\ncd src\n";
-    print BATCH "wmake -h clean\n";
-    print BATCH "wmake -h -ms\n";
     # Start build process.
     print BATCH "cd $OW\ncd bld\n";
     if ($pass1) {

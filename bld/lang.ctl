@@ -136,6 +136,8 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/wclass/lang.ctl ]
 #        rtdll must be made after all other libraries
 #[ INCLUDE <DEVDIR>/rtdll/lang.ctl ]
+#        WATTCP library must be build before TRAP
+[ INCLUDE <DEVDIR>/wattcp/lang.ctl ]
 #
 #        Now let's build the utilities and other stuff
 #
