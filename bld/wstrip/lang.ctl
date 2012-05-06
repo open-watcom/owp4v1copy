@@ -19,22 +19,22 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <DEVDIR>/wstrip/dosi86/strip.exe    <RELROOT>/binw/wstrip.exe
+    <CPCMD> <DEVDIR>/wstrip/dosi86/wstripx.exe    <RELROOT>/binw/wstrip.exe
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <DEVDIR>/wstrip/os2386/strip.exe    <RELROOT>/binp/wstrip.exe
+    <CPCMD> <DEVDIR>/wstrip/os2386/wstripx.exe    <RELROOT>/binp/wstrip.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/wstrip/nt386/strip.exe     <RELROOT>/binnt/wstrip.exe
+    <CPCMD> <DEVDIR>/wstrip/nt386/wstripx.exe     <RELROOT>/binnt/wstrip.exe
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> <DEVDIR>/wstrip/linux386/strip.exe  <RELROOT>/binl/wstrip
+    <CPCMD> <DEVDIR>/wstrip/linux386/wstripx.exe  <RELROOT>/binl/wstrip
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <DEVDIR>/wstrip/ntaxp/strip.exe     <RELROOT>/axpnt/wstrip.exe
+    <CPCMD> <DEVDIR>/wstrip/ntaxp/wstripx.exe     <RELROOT>/axpnt/wstrip.exe
 
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> <DEVDIR>/wstrip/qnx386/strip.exe    <RELROOT>/qnx/binq/wstrip.
+    <CPCMD> <DEVDIR>/wstrip/qnx386/wstripx.exe    <RELROOT>/qnx/binq/wstrip.
 
 [ BLOCK <1> clean ]
 #==================

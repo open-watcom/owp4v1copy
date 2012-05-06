@@ -62,7 +62,7 @@ rcaui           = *wrc
 
 !ifdef $(proj_name)_release
 release = $($(proj_name)_release)
-!else ifeq debug_build 1
+!else ifeq %DEBUG_BUILD 1
 release = 0
 !else
 release = 1
@@ -105,13 +105,19 @@ mode_aflags   = -d2
 mode_lflags   = $(ldebug_fmt) all
 mode_clflags  = $(cldebug_fmt) -d2
 !endif
+mode_lflags  += op nored
+!ifdef __UNIX__
+mode_clflags   += -\"op nored\"
+!else
+mode_clflags   += -"op nored"
+!endif
 
 !ifndef $(proj_name)_nosymfile
-mode_lflags    += option symfile
+mode_lflags    += op symfile
 !ifdef __UNIX__
-mode_clflags   += -\"option symfile\"
+mode_clflags   += -\"op symf\"
 !else
-mode_clflags   += -"option symfile"
+mode_clflags   += -"op symf"
 !endif
 !endif
 
@@ -138,6 +144,8 @@ default_memory_model_386_        = f
 memory_model_386 = $(default_memory_model_386_$(host_os))
 !endif
 model_switch_386 = -m$(memory_model_386)
+
+cl_model_switch  = $(model_switch_$(host_cpu))
 
 !ifdef __UNIX__
 cflags_all      =-w8 -we $(mode_cflags) -fo=.obj
@@ -251,6 +259,8 @@ fpu_flags = $(fpu_flags_$(host_os)_$(host_cpu))
 fpu_flags = $(def_fpu_flags_$(host_os)_$(host_cpu))
 !endif
 
+cl_fpu_flags = $(fpu_flags)
+
 clflags_nt_386     = -l=nt $(win32ver)
 clflags_nt_axp     = -l=ntaxp $(win32ver)
 clflags_win_i86    = -l=windows -DSTRICT
@@ -277,11 +287,13 @@ clflags_exe = $(clflags_exe_$(host_os)_$(host_cpu))
 clflags_exe = -fe=$@
 !endif
 
+clflags_all      = $(mode_clflags) $(cl_model_switch) $(cl_fpu_flags)
+
 proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os)) $(extra_c_flags_$(host_os)_$(host_cpu))
 cflags           = $(cflags_all) $(fpu_flags) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(cflags_$(host_os)_$(host_cpu)) $(proj_c_flags)
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
-clflags          = $(mode_clflags) $(clflags_$(host_os)_$(host_cpu)) $(model_switch_$(host_cpu)) $(extra_cl_flags) $(clflags_exe) -fm
+clflags          = $(clflags_all) $(clflags_$(host_os)_$(host_cpu)) $(extra_cl_flags) $(clflags_exe) -fm
 
 !ifdef __UNIX__
 aflags_all      = -we $(mode_aflags) -fo=.obj
@@ -412,8 +424,11 @@ rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)/h -zk0 -r
 rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)\h -zk0 -r
 !endif
 
+# options used for processing source code with Japanese DBCS characters
+c_japan_charset = -zk0
+
 # options used for preprocessing source code only
-preproc_opts    = -p -zk0 $[@
+preproc_opts    = -p $[@
 
 !include bhost.mif
 !include local.mif

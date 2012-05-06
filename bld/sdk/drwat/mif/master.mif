@@ -119,9 +119,9 @@ rcstr.gh : rcstrmsg.gh
 
 rcstrmsg.gh : ../drwatcom.msg
 !ifeq drwatcom_95 1
-        $(cc) $(preproc_opts) $(inc_path) -DCHICAGO -fo=$^@
+        $(cc) $(preproc_opts) $(c_japan_charset) $(inc_path) -DCHICAGO -fo=$^@
 !else
-        $(cc) $(preproc_opts) $(inc_path) -fo=$^@
+        $(cc) $(preproc_opts) $(c_japan_charset) $(inc_path) -fo=$^@
 !endif
 
 !include verrc.mif

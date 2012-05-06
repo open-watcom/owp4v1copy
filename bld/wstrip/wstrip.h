@@ -30,11 +30,17 @@
 ****************************************************************************/
 
 
-#define MSG_USE_BASE    100
+#if defined( INCL_MSGTEXT )
 
-#define MSG_LANG_SPACING        1000
+enum msg_num {
+#define pick( id, en, jp )  id,
+#include "wstrip.msg"
+#undef pick
+};
 
-#define MSG_USE_E_BASE  (MSG_USE_BASE + RLE_ENGLISH*MSG_LANG_SPACING)
-#define MSG_USE_J_BASE  (MSG_USE_BASE + RLE_JAPANESE*MSG_LANG_SPACING)
+#else
 
-#include "msg.gh"
+#define MSG_LANG_SPACING    1000
+#include "wstrip.gh"
+
+#endif

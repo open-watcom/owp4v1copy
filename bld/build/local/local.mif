@@ -108,6 +108,9 @@ cppflags_386  = -D_M_IX86 -D__386__
 cppflags_ppc  = -D__PPC__
 cppflags_mips = -D__MIPS__ -Umips
 
+# options used for processing source code with Japanese DBCS characters
+c_japan_charset = -finput-charset=CP932
+
 # options used for preprocessing source code only
 preproc_opts  = -E $[@
 
@@ -153,6 +156,9 @@ librarian += -fa
 cppflags_386  = -D_M_IX86 -D__386__
 cppflags_ppc  = -D__PPC__
 cppflags_mips = -D__MIPS__ -Umips
+
+# options used for processing source code with Japanese DBCS characters
+c_japan_charset = -finput-charset=CP932
 
 # options used for preprocessing source code only
 preproc_opts = -E $[@
