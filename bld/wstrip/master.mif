@@ -18,6 +18,8 @@ inc_dirs = -I. -I"$(dip_dir)/watcom/h"
 
 .c .rc .msg .sp: ..
 
+.c : $(watcom_dir)/c
+
 rc_defines_linux = -DRC_UNIX
 rc_defines_qnx   = -DRC_UNIX
 
