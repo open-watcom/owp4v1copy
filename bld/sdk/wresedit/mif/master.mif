@@ -77,6 +77,6 @@ rcstr.gh: rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh: ../h/$(name).msg
-        $(cc) $(preproc_opts) $(c_japan_charset) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@
+        $(cc) $(preproc_opts) $(c_japan_charset) -I"$(sdk_dir)/misc" $(inc_path) $[@ -fo=$^@
 
 !include verrc.mif

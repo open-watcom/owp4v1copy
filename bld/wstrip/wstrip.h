@@ -41,6 +41,6 @@ enum msg_num {
 #else
 
 #define MSG_LANG_SPACING    1000
-#include "wstrip.gh"
+#include "msg.gh"
 
 #endif

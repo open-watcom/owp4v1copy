@@ -106,7 +106,7 @@ rcstr.gh: rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : ../h/wde.msg
-        $(cc) $(preproc_opts) $(c_japan_charset) $(inc_path) -fo=$^@
+        $(cc) $(preproc_opts) $(c_japan_charset) $(inc_path) $[@ -fo=$^@
 
 $(name).res: ../h/$(name).rc .AUTODEPEND
         $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@

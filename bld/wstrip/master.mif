@@ -56,15 +56,13 @@ $(name).exe : $(dependants) $(objs) $(version_res_$(host_os)_$(host_cpu))
 !endif
 !endif
 
-msg.gh : ../wstrip.msg
+msg.gh : wstrip.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 wstrip.gh : ../wstrip.msg
-        $(cc) $(preproc_opts) $(c_japan_charset) $(rc_defines_$(host_os)) -fo=wstrip.tmp
-        $(awk) -f $(misc_dir)/msgtoh.awk wstrip.tmp > $^@
-        @rm -f wstrip.tmp
+        $(cc) $(preproc_opts) $(c_japan_charset) $(rc_defines_$(host_os)) $[@ -fo=$@
 
-wstrip.res : ../wstrip.rc wstrip.gh
+wstrip.res : ../wstrip.rc msg.gh
         $(rc_aui) -ad $(rc_defines_$(host_os)) $(inc_dirs) $[@ -fo=$^@
 
 verrc_exe = wstrip

@@ -85,7 +85,7 @@ rc_defines    += -DINCL_MSGTEXT
 
 # cflags stuff
 ###############
-extra_c_flags   = $(rc_defines)
+extra_c_flags   = $(rc_defines) $(cc_japan_charset)
 !ifeq host_os nt
 extra_c_flags   += -DNT_HOSTED
 !endif
@@ -243,8 +243,8 @@ weights2.gh keyword2.gh : ./findhash.exe ../hash/rcos2.key
         @cp weights.gh weights2.gh
         @rm -f weights.gh
 
-rcmsg1.gh : ../h/rcmsg.h ../h/rc.msg
-        $(cc) $(preproc_opts) $(cflags) -fo=$@
+rcmsg1.gh : ../h/rc.msg
+        $(cc) $(preproc_opts) $(cflags) $[@ -fo=$@
 
 rcmsg.gh : rcmsg1.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@

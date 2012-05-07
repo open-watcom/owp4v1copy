@@ -108,11 +108,11 @@ cppflags_386  = -D_M_IX86 -D__386__
 cppflags_ppc  = -D__PPC__
 cppflags_mips = -D__MIPS__ -Umips
 
-# options used for processing source code with Japanese DBCS characters
+# options used for setup source code Japanese DBCS character set
 c_japan_charset = -finput-charset=CP932
 
-# options used for preprocessing source code only
-preproc_opts  = -E $[@
+# options for preprocessing source code
+preproc_opts  = -E
 
 # $(inc_dirs_lang_$(host_os)) must be defined to override default OW headers
 inc_dirs_lang_linux =
@@ -157,11 +157,11 @@ cppflags_386  = -D_M_IX86 -D__386__
 cppflags_ppc  = -D__PPC__
 cppflags_mips = -D__MIPS__ -Umips
 
-# options used for processing source code with Japanese DBCS characters
+# options used for setup source code Japanese DBCS character set
 c_japan_charset = -finput-charset=CP932
 
-# options used for preprocessing source code only
-preproc_opts = -E $[@
+# options for preprocessing source code
+preproc_opts  = -E
 
 # $(inc_dirs_lang_$(host_os)) must be defined to override default OW headers
 inc_dirs_lang_nto =

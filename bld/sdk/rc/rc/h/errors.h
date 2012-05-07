@@ -33,10 +33,10 @@
 #ifdef WR_COMPILED
 #include "wrcmsg.gh"
 #elif defined( INCL_MSGTEXT )
-#undef pick
-#define pick( id, en, jp )  id,
 enum msg_num {
+#define pick( id, en, jp )  id,
     #include "rc.msg"
+#undef pick
 };
 #else
 #define MSG_LANG_SPACING        1000

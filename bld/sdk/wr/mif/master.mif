@@ -100,7 +100,7 @@ wrcmsg.gh: wrtemp.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 wrtemp.gh: ../h/master.msg $(msgfiles)
-        $(cc) $(preproc_opts) $(c_japan_charset) $(cflags) $(inc_path) -fo=$^@
+        $(cc) $(preproc_opts) $(c_japan_charset) $(cflags) $(inc_path) $[@ -fo=$^@
 
 ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         $(byacc) -d -b $[@ $(wrc_dir)/y/yydriver.c >$(nulldevice)

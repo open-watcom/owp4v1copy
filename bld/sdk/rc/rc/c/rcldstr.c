@@ -43,11 +43,10 @@
 
 #if defined( INCL_MSGTEXT )
 
-#undef pick
-#define pick( id, en, jp )  en,
-
 static char *StringTable[] = {
+#define pick( id, en, jp )  en,
     #include "rc.msg"
+#undef pick
 };
 
 int InitRcMsgs( char *fname )
