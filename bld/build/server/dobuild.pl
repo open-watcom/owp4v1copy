@@ -82,6 +82,30 @@ my $build_installer_name = "$home\/instbld.$ext";
 my $test_batch_name      = "$home\/test.$ext";
 my $rotate_batch_name    = "$home\/rotate.$ext";
 my $setvars              = "$OW\/setvars.$ext";
+my $prev_changeno_name   = "$home\/changeno.txt";
+my $prev_changeno        = "0";
+my $prev_report_stamp    = "";
+my $build_needed         = 1;
+
+sub get_prev_changeno
+{
+    my @fields;
+    open(CHNGNO, "$prev_changeno_name") || return;
+    while (<CHNGNO>) {
+        s/\r?\n/\n/;
+        @fields = split;
+        $prev_changeno = $fields[0];
+        $prev_report_stamp  = $fields[1];
+    }
+    close(CHNGNO);
+}
+
+sub set_prev_changeno
+{
+    open(CHNGNO, ">$prev_changeno_name") || return;
+    print CHNGNO $_[0], " ", $_[1];
+    close(CHNGNO);
+}
 
 sub get_reldir
 {
@@ -244,6 +268,8 @@ sub make_installer_batch
 
 sub process_log
 {
+    my($ehmix)         = "BLD\\PLUSTEST\\REGRESS\\EHMIX";
+    my($os2_result)    = "success";
     my($result)        = "success";
     my($project_name)  = "none";
     my($first_message) = "yes";
@@ -253,17 +279,28 @@ sub process_log
     open(LOGFILE, $_[0]) || die "Can't open $_[0]";
     while (<LOGFILE>) {
         s/\r?\n/\n/;
-        if (/^[=]+ .* [=]+$/) {
-            if ($project_name ne "none") {
+        if (/^[=]+ .* [=]+$/) {        # new project directory
+            if ($project_name ne "none") {     # previous not PASSed
                 if ($first_message eq "yes") {
-                    print REPORT "Failed!\n";
+                    if (($project_name ne $ehmix) or ($OStype ne "OS2")) {
+                        print REPORT "Failed!\n";
+##                      print REPORT "Failed1! $project_name  $ehmix $OStype\n";
+                        $result = "fail";
+                    }
+                    if ( ($OStype eq "OS2") and ($project_name eq $ehmix) ) {
+                        print REPORT "Failed, but EHMIX errors ignored on OS/2!\n";
+                        $os2_result = "fail";
+                    }
                     $first_message = "no";
                 }
                 if ($arch_test ne "") {
                     print REPORT "\t\t$project_name\t$arch_test\n";
+                    if (($project_name ne $ehmix) or ($OStype ne "OS2")) {
+##                      print REPORT "Failed2! $project_name  $ehmix $OStype\n";
+                        $result = "fail";      # in case others failed on os2
+                    }
                 }
-                $result = "fail";
-            }
+            }			
             @fields = split;
             $project_name = Common::remove_OWloc($fields[2]);
             $arch_test = "";
@@ -278,14 +315,15 @@ sub process_log
 
     # Handle the case where the failed test is the last one.
     if ($project_name ne "none") {
+      if ($arch_test ne "") {          # no TEST seen ignore project
         if ($first_message eq "yes") {
             print REPORT "Failed!\n";
             $first_message = "no";
         }
-        if ($arch_test ne "") {
-            print REPORT "\t\t$project_name\t$arch_test\n";
-        }
+        print REPORT "\t\t$project_name\t$arch_test\n";
         $result = "fail";
+##      print REPORT "$project_name last one failed\n";# test ++++++++++++
+      } 
     }
 
     # This is what we want to see.
@@ -323,7 +361,8 @@ sub display_p4_messages
 
     foreach $message (@p4_messages) {
         print REPORT "$message\n";
-    }
+    }   
+    print REPORT "p4 Messages end\n";
 }
 
 sub run_tests
@@ -400,8 +439,9 @@ sub p4_sync
 {
     #force all files update to head
     #open(SYNC, "p4 sync -f $OW\/...#head |");
-
-    open(SYNC, "p4 sync $OW\/... |");
+    
+    #open(SYNC, "p4 sync $OW\/... |"); does'nt work on OS/2 old client?
+    open(SYNC, "p4 sync |");           # this does...
     while (<SYNC>) {
         my @fields = split;
         my $loc = Common::remove_OWloc($fields[-1]);
@@ -417,14 +457,7 @@ sub p4_sync
         exit 1;
     }
     print REPORT "'p4 sync' Successful (messages below).\n";
-    open(LEVEL, "p4 counters|");
-    while (<LEVEL>) {
-        if (/^change = (.*)/) {
-            print REPORT "\tBuilding through change: $1\n";
-        }
-    }
-    close(LEVEL);
-    print REPORT "\n";
+
 }
 
 #######################
@@ -444,7 +477,10 @@ if (!stat($report_directory)) {
     mkdir($report_directory);
 }
 my $report_name = "$report_directory\/$date_stamp-report-$build_platform.txt";
-
+my $bak_name    = "$report_directory\/$date_stamp-report-$build_platform.txt.bak";
+if (stat($report_name)) {
+    rename $report_name, $bak_name;
+}
 open(REPORT, ">$report_name") || die "Unable to open $report_name file.";
 print REPORT "Open Watcom Build Report (", $build_platform, ")\n";
 print REPORT "=====================================\n\n";
@@ -453,6 +489,33 @@ print REPORT "=====================================\n\n";
 #########################################
 
 p4_sync();
+
+get_prev_changeno;
+    
+if ($prev_changeno > 0) {
+   print REPORT "\tBuilt through change   : $prev_changeno on $prev_report_stamp\n";
+} else {
+   $prev_changeno = -1; # no previous changeno / build
+}
+    
+open(LEVEL, "p4 counters|");
+while (<LEVEL>) {
+  if (/^change = (.*)/) {
+     if ($prev_changeno eq $1) {
+        $build_needed = 0;
+        print REPORT "\tNo source code changes, build not needed\n";
+     } else {
+        $prev_changeno = $1;
+        print REPORT "\tBuilding through change: $1\n";
+     }
+  }
+}
+close(LEVEL);
+print REPORT "\n";
+if (!$build_needed) { # nothing changed, don't waste computer time
+    close(REPORT);
+    exit 0;
+}
 
 ############################################################
 #
@@ -514,7 +577,7 @@ my $docs_result = run_docs_build();
 
 display_p4_messages();
 
-close(REPORT);
+set_prev_changeno( $prev_changeno, $date_stamp );  #remember changeno and date
 
 # Rotate the freshly built system into position on the web site.
 ################################################################
@@ -523,8 +586,12 @@ if (($pass1_result eq "success") &&
     ($docs_result eq "success")) {
 
     $relsubdir = "pass1";
+    print REPORT "\nINSTALLER BUILD STARTED  : ", get_datetime(), "\n";
     make_installer_batch();
-    if (system("$build_installer_name") == 0) {
+    if (system($build_installer_name) != 0) {
+        print REPORT "INSTALLER BUILD FAILED!\n";
+    } else {
         system("$rotate_batch_name");
+        print REPORT "INSTALLER BUILD COMPLETED: ", get_datetime(), "\n\n";
     }
 }

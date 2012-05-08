@@ -5,12 +5,24 @@ BUILD SERVER INSTALLATION
 NOTE: At the time of this writing the build server scripts assume you are using
 a Windows system. Obviously this limitation should be removed at some point.
 
-1. First install the necessary tools.
+NEW: The script is changed and tested for a eCS (OS/2) System.
+     Links given for OS/2 tools were valid in May 2012.
+     - P4 client: ftp://ftp.perforce.com/perforce/r02.2/bin.os2/p4.exe
+     - PERL:      http://download.smedley.info/perl-5.10.0-os2-20071227.zip
+     - 7z:
+     http://hobbes.nmsu.edu/download/pub/os2/util/archiver/p7zip-9.20.1-os2.zip
+
+0. First install the necessary tools.
    - The latest version of Open Watcom to use as the compiler for building.
-     Be sure to select all possible targets during the installation.
+     Be sure to select ALL possible targets during the installation.
    - Whatever external help compilers are necessary.
    - The latest version of the Perforce command line client.
+     For OS/2 (output from p4 -V):
+         Perforce - The Fast Software Configuration Management System.
+         Copyright 1995, 2002 Perforce Software.  All rights reserved.
+         Rev. P4/OS2/2002.2/41879 (2003/02/24).
    - A reasonably recent version of Perl. The build scripts are written in Perl
+   - For optionally creating a snapshot 7z
 
 1. Create a folder OUTSIDE the Open Watcom source tree and copy the contents of
 this folder to that folder. Do not attempt to use the system from a folder
@@ -21,35 +33,59 @@ same drive as the OW source tree.
 
 2. Review the file config.txt and make any changes as necessary. See the
 comments in the file for more information.
+Create necessary directories: www\installers
+                              www\reports
+                              www\snapshots
+Create empty files:           owbuild\bldbase1.txt
+                              owbuild\bldbase2.txt
+                              owbuild\bldbased.txt
+3. Run the build system via 'perl dobuild.pl'. It will not run to completion as the
+message base is not correct. The baseline is created next.
 
-3. Checkout the OW source in the usual way (using Perforce). Do a full build the
-first time "manually" (meaning without the help of this build system). The
-build.log file created will serve as your baseline. Run the program summary.pl
-over this initial build.log and save the results to a file such as bldbase.txt
-(use the same name as you specified in config.txt).
+4. The created log files pass1.log, pass2.log and docs\build.log will serve as
+your baseline. Run the program summary.pl over these
 
-        summary c:\OW\bld\build.log bldbase.txt
-        
-You should verify that all messages in bldbase.txt are normal. This build system
+        summary c:\OW\bld\pass1.log bldbase1.txt
+        summary c:\OW\bld\pass2.log bldbase2.txt
+        summary c:\OW\docs\pass1.log bldbased.txt
+
+and save the results to files such as bldbase1.txt, ...
+(use the same names as you specified in config.txt).
+
+You should verify that all messages in bldbasex.txt are normal. This build system
 will compare the result of each build with this baseline and report on any
-deviations. If bldbase.txt contains serious errors, this build system will not
+deviations. If bldbasex.txt contain serious errors, this build system will not
 notice those errors in the future.
 
-4. The scripts provided are as follows
+5. The scripts provided are as follows
 
    - summary.pl : Computes a summary of build.log that contains all the strange
      entries in the log file. Use this script to compute a baseline.
-     
+
    - compare.pl : Computes the difference between a baseline summary and a new
      summary. Reports on messages that have been removed or that have been
      added in the new summary.
-     
+
    - dobuild.pl : This is the main script. It prepares a batch file that does
-     the build based on the current setvars.bat. It cleans the source tree,
+     the build based on the current setvars.*. It cleans the source tree,
      builds the system, and then invokes summary.pl and compare.pl to check
-     the results. Finally it emails a report to the address designated in the
-     configuration file. NOTE: This script assumes that the system has been
-     built manually first.
+     the results. Finally it stores a report in the reports subdirectory.
+
+     NOTE: The build is run only if the perforce highest change number has changed.
+           The highest changeno is stored in owbuild\changeno.txt. This file can
+           be deleted to force a build.
+
+     NOTE: On OS/2 the failing regression tests BLD\PLUSTEST\REGRESS\EHMIX are
+           ignored and don't trigger failure.
+
+   - common.pm : common perl routines for the other scripts
+
+   - psummary.cmd (OS/2 only) for running summary.pl
+   - pdobuild.cmd (OS/2 only) for running dobuild.pl
+
+   - rotate.* commandfile to create snapshots *.7z and *.zip
+              and to move the generated installers to www\installers
+              Does NOT have access to config.txt, so adjust pathes.
 
 Schedule dobuild.pl to run periodically using your operating system's facilities
 for that purpose.
