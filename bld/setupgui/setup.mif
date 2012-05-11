@@ -295,7 +295,7 @@ setup.lnk : makefile ../setup.mif
 nonibm.obj : $(new_clib)/startup/c/nonibm.c
 
 setupui.res : setupui.rc $(dep_res1)
-    $(rc_aui) -I"$(gui_dir)/h" $(inc_dirs_sys_win) $[@ -fo=setupui.res
+    $(rc_aui) -I"$(gui_dir)/h" $[@ -fo=setupui.res
 
 csetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
     $(rc) $(rc_flags) -DCSETUP $(res_inc_dirs) $[@ -fo=$^@
