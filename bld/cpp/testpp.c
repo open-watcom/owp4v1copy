@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
     if( argv[2] != NULL ) {
         PreProcChar = argv[2][0];
     }
-    if( PP_Init( argv[1], 0, NULL ) != 0 ) {
+    if( PP_Init( argv[1], PPFLAG_EMIT_LINE, NULL ) != 0 ) {
         printf( "Unable to open '%s'\n", argv[1] );
         exit( 1 );
     }

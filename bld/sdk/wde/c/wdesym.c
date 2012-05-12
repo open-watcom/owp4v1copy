@@ -457,10 +457,9 @@ char *WdeLoadSymbols( WdeHashTable **table, char *file_name, Bool prompt )
     WdeSetWaitCursor( TRUE );
 
     if( ok ) {
+        flags = PPFLAG_EMIT_LINE;
         if( WdeGetOption( WdeOptIgnoreInc ) ) {
-            flags = PPFLAG_IGNORE_INCLUDE;
-        } else {
-            flags = 0;
+            flags |= PPFLAG_IGNORE_INCLUDE;
         }
         inc_path = WdeGetIncPathOption();
 

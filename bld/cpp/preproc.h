@@ -128,14 +128,14 @@ extern  char            PPSavedChar;    // saved char at end of token
 extern  char            PreProcChar;
 extern  MACRO_ENTRY     *PPHashTable[HASH_SIZE];
 
-#define PPFLAG_PREPROCESSING    0x01
-#define PPFLAG_EMIT_LINE        0x02
-#define PPFLAG_SKIP_COMMENT     0x04
-#define PPFLAG_KEEP_COMMENTS    0x08
-#define PPFLAG_IGNORE_INCLUDE   0x10
-#define PPFLAG_DEPENDENCIES     0x20
-#define PPFLAG_ASM_COMMENT      0x40
-#define PPFLAG_IGNORE_CWD       0x80
+#define PPFLAG_PREPROCESSING    0x0001
+#define PPFLAG_EMIT_LINE        0x0002
+#define PPFLAG_SKIP_COMMENT     0x0004
+#define PPFLAG_KEEP_COMMENTS    0x0008
+#define PPFLAG_IGNORE_INCLUDE   0x0010
+#define PPFLAG_DEPENDENCIES     0x0020
+#define PPFLAG_ASM_COMMENT      0x0040
+#define PPFLAG_IGNORE_CWD       0x0080
 #define PPFLAG_DB_KANJI         0x0100
 #define PPFLAG_DB_CHINESE       0x0200
 #define PPFLAG_DB_KOREAN        0x0400

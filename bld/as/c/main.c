@@ -79,7 +79,7 @@ int main( int argc, char **argv )
         }
         while( *argv ) {
             fname = MakeAsmFilename( *argv );
-            if( PP_Init( fname, PPFLAG_ASM_COMMENT, AsIncPath ) != 0 ) {
+            if( PP_Init( fname, PPFLAG_ASM_COMMENT | PPFLAG_EMIT_LINE, AsIncPath ) != 0 ) {
                 AsOutMessage( stderr, UNABLE_TO_OPEN, fname );
                 fputc( '\n', stderr );
             } else {

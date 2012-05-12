@@ -224,8 +224,7 @@ static char *WRELoadSymbols( WRHashTable **table, char *file_name, Bool prompt )
     WRESetWaitCursor( TRUE );
 
     if( ok ) {
-        flags = 0;
-        flags |= PPFLAG_IGNORE_INCLUDE;
+        flags = PPFLAG_IGNORE_INCLUDE | PPFLAG_EMIT_LINE;
         inc_path = NULL;
         ret = setjmp( SymEnv );
         if( ret ) {

@@ -246,7 +246,7 @@ static int PreprocessInputFile( void )
     int         rc;
 
     // We have already merged INCLUDE path with /i paths
-    flags = PPFLAG_IGNORE_INCLUDE;
+    flags = PPFLAG_IGNORE_INCLUDE | PPFLAG_EMIT_LINE;
     if( CmdLineParms.IgnoreCWD ) {
         flags |= PPFLAG_IGNORE_CWD;
     }

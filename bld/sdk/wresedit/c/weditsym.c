@@ -140,8 +140,7 @@ char *WLoadSymbols( WRHashTable **table, char *file_name, HWND parent, Bool prom
     WSetWaitCursor( parent, TRUE );
 
     if( ok ) {
-        flags = 0;
-        flags |= PPFLAG_IGNORE_INCLUDE;
+        flags = PPFLAG_IGNORE_INCLUDE | PPFLAG_EMIT_LINE;
         inc_path = NULL;
         ret = setjmp( SymEnv );
         if( ret ) {

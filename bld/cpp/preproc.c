@@ -246,23 +246,24 @@ static void PP_GenLine( void )
     char        *p;
     char        *fname;
 
-    PPCharPtr = &PPLineBuf[1];
-    sprintf( PPCharPtr, "%cline %u \"", PreProcChar, PP_File->linenum );
-    p = PPCharPtr;
-    while( *p != '\0' ) ++p;
-    fname = PP_File->filename;
-    while( *fname != '\0' ) {
+    p = PPCharPtr = &PPLineBuf[1];
+    if( PPFlags & PPFLAG_EMIT_LINE ) {
+        sprintf( PPCharPtr, "%cline %u \"", PreProcChar, PP_File->linenum );
+        while( *p != '\0' ) ++p;
+        fname = PP_File->filename;
+        while( *fname != '\0' ) {
 #ifndef __UNIX__
-        if( *fname == SLASH_CHAR )  *p++ = SLASH_CHAR;          // 14-sep-94
+            if( *fname == SLASH_CHAR )  *p++ = SLASH_CHAR;          // 14-sep-94
 #endif
-        if( DBChar[(unsigned char)*fname] )  {
-            *p = *fname;
-            p++;
-            fname++;
+            if( DBChar[(unsigned char)*fname] )  {
+                *p = *fname;
+                p++;
+                fname++;
+            }
+            *p++ = *fname++;
         }
-        *p++ = *fname++;
+        *p++ = '\"';
     }
-    *p++ = '\"';
     *p++ = '\n';
     *p = '\0';
 }

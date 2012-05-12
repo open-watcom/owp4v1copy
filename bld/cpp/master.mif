@@ -1,24 +1,32 @@
-proj_name = cpp
+proj_name = wcpp
+
+!ifndef wcpp_autodepends
+wcpp_autodepends = .AUTODEPEND
+!endif
 
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-.c : ..
+.c : ..;$(posix_dir)/misc
 
-inc_dir         = -I"../h"
+inc_dirs        = -I"../h" -I"$(posix_dir)/h"
 
 common_objs     = preproc.obj ppexpr.obj ppmacro.obj ppmem.obj
 
 mkmk_objs       = mkmk.obj $(common_objs)
 testpp_objs     = testpp.obj $(common_objs)
 dumpmac_objs    = dumpmac.obj $(common_objs)
+wcpp_objs       = wcpp.obj getopt.obj $(common_objs)
 
-targets         = mkmk.exe testpp.exe dumpmac.exe
+!ifndef bootstrap
+!ifndef prebuild
+all: mkmk.exe testpp.exe dumpmac.exe wcpp.exe .SYMBOLIC
+!endif
+!endif
 
-extra_c_flags = -fh
-
-all: $(targets) .SYMBOLIC
+wcpp.exe : $(wcpp_objs)
+        $(cl) $(clflags) $(wcpp_objs)
 
 mkmk.exe : $(mkmk_objs)
         $(cl) $(clflags) $(mkmk_objs)
