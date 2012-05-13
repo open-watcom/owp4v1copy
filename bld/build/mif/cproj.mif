@@ -424,11 +424,8 @@ rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)/h -zk0 -r
 rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)\h -zk0 -r
 !endif
 
-# options used for setup source code Japanese DBCS character set
-c_japan_charset = -zk0
-
-# options for preprocessing source code
-preproc_opts    = -p
+# simple C preprocessing
+c_pp            = wcpp
 
 !include bhost.mif
 !include local.mif

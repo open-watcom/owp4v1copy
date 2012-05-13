@@ -22,6 +22,12 @@ librarian = $(blib)
 rc = $(brc)
 rcaui = $(brc)
 
+# options used for setup source code Japanese DBCS character set
+c_japan_charset = -zk0
+
+# options for preprocessing source code
+preproc_opts    = -p
+
 # enable to switch to causeway extender
 !ifdef $(proj_name)_causeway
 clflags_dos_386 = -l=causeway
@@ -112,7 +118,7 @@ cppflags_mips = -D__MIPS__ -Umips
 c_japan_charset = -finput-charset=CP932
 
 # options for preprocessing source code
-preproc_opts  = -E
+preproc_opts  = -x c -E
 
 # $(inc_dirs_lang_$(host_os)) must be defined to override default OW headers
 inc_dirs_lang_linux =
@@ -161,7 +167,7 @@ cppflags_mips = -D__MIPS__ -Umips
 c_japan_charset = -finput-charset=CP932
 
 # options for preprocessing source code
-preproc_opts  = -E
+preproc_opts  = -x c -E
 
 # $(inc_dirs_lang_$(host_os)) must be defined to override default OW headers
 inc_dirs_lang_nto =
