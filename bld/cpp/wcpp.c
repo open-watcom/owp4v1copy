@@ -39,7 +39,7 @@
 #include "misc.h"
 
 
-char *OptEnvVar = NULL;
+char *OptEnvVar = "";
 
 static const char *usageMsg[] = {
     "Usage: wcpp [?] [-c] [-d<macro>] [-i<path>] [-l] [-zk0] [-zk1] [-zk2] [input file]\n",
@@ -88,6 +88,9 @@ int main( int argc, char *argv[] )
     int         numdefs = 0;
     int         ch;
 
+#ifdef __UNIX__
+    AltOptChar = '-';
+#endif
     /*
      * get options
      */
@@ -131,13 +134,13 @@ int main( int argc, char *argv[] )
             break;
         case 'z':
             if( tolower( OptArg[0] ) == 'k' ) {
-                if( OptArg[1] == '0' ) {
+                if( OptArg[1] == '0' && OptArg[2] == '\0' ) {
                     flags |= PPFLAG_DB_KANJI;
                     break;
-                } else if( OptArg[1] == '1' ) {
+                } else if( OptArg[1] == '1' && OptArg[2] == '\0' ) {
                     flags |= PPFLAG_DB_CHINESE;
                     break;
-                } else if( OptArg[1] == '2' ) {
+                } else if( OptArg[1] == '2' && OptArg[2] == '\0' ) {
                     flags |= PPFLAG_DB_KOREAN;
                     break;
                 }

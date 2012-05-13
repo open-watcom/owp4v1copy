@@ -64,6 +64,7 @@ lflags_dll_win_i86     = sys windows op rwr
 
 !ifdef %BUILDMODE
 lflags_dll_linux_386   += libpath $(clib_dir)/library/linux.386/mf_r
+lflags_dll_linux_386   += libpath $(mathlib_dir)/library/linux.386/ms_r
 !endif
 
 extra_l_flags_dll = op map

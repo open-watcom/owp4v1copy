@@ -67,6 +67,7 @@ set WLINK_LNK=
 [ BLOCK <1> clean ]
     rm -rf <DEVDIR>/builder/<OBJDIR>
     rm -rf <DEVDIR>/pmake/<OBJDIR>
+    rm -rf <DEVDIR>/cpp/<OBJDIR>
     rm -rf <DEVDIR>/yacc/<OBJDIR>
     rm -rf <DEVDIR>/sdk/rc/wres/<OBJDIR>
     rm -rf <DEVDIR>/sdk/rc/rc/<OBJDIR>

@@ -10,9 +10,9 @@ cdsay .
 
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
-[ BLOCK <OWLINUXBUILD> bootstrap ]
+#[ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
-    set BUILD_PLATFORM=<BUILD_PLATFORM>boot
+#    set BUILD_PLATFORM=<BUILD_PLATFORM>boot
 
 [ BLOCK <1> clean ]
 #==================

@@ -18,6 +18,9 @@ mkmk_objs       = mkmk.obj $(common_objs)
 testpp_objs     = testpp.obj $(common_objs)
 dumpmac_objs    = dumpmac.obj $(common_objs)
 wcpp_objs       = wcpp.obj getopt.obj $(common_objs)
+!ifdef bootstrap
+wcpp_objs       += clibext.obj
+!endif
 
 !ifndef bootstrap
 !ifndef prebuild
