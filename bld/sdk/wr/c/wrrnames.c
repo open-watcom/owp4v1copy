@@ -39,7 +39,6 @@
 #include "wrmem.h"
 #include "wrstrdup.h"
 #include "wrmsg.h"
-#include "wrcmsg.gh"
 #include "wrrnames.h"
 
 /****************************************************************************/

@@ -47,7 +47,6 @@
 #include "wrsvres.h"
 #include "wrtmpfil.h"
 #include "wrmsg.h"
-#include "wrcmsg.gh"
 #include "wrsvexe.h"
 
 /****************************************************************************/

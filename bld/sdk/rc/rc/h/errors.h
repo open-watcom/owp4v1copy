@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#ifdef WR_COMPILED
-#include "wrcmsg.gh"
-#elif defined( INCL_MSGTEXT )
+#if defined( INCL_MSGTEXT )
 enum msg_num {
 #define pick( id, en, jp )  id,
     #include "rc.msg"

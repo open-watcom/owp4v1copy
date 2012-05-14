@@ -72,8 +72,6 @@ extern int RcPass1IoInit( void );
 extern void RcPass1IoShutdown( void );
 extern int RcPass2IoInit( void );
 extern void RcPass2IoShutdown( int noerror );
-extern void RcIoPrintBanner( void );
-extern void RcIoPrintHelp( const char * );
 extern void RcIoTextInputInit( void );
 extern int RcIoTextInputShutdown( void );
 extern int RcIoPushInputFile( char * filename );

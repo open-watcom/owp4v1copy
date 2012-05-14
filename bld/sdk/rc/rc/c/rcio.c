@@ -60,12 +60,6 @@
 #include "util.h"
 #include "rcldstr.h"
 #include "iortns.h"
-#include <banner.h>
-
-#ifdef _BANEXTRA
-#undef  _BANEXTRA
-#define _BANEXTRA _BANEXSHORT
-#endif
 
 #ifdef __UNIX__
 #define PATH_SEP '/'
@@ -73,10 +67,6 @@
 #else
 #define PATH_SEP '\\'
 #define PATH_SPLIT ';'
-#endif
-
-#ifdef __OSI__
- extern char    *_Copyright;
 #endif
 
 static void MakeTmpInSameDir( const char * dirfile, char * outfile, char * ext )
@@ -733,51 +723,6 @@ extern void RcPass2IoShutdown( int noerror )
         remove( Pass2Info.TmpFileName );
     }
 } /* RcPass2IoShutdown */
-
-static const char * BannerText =
-    banner1w( "Windows and OS/2 Resource Compiler", _WRC_VERSION_ )"\n"
-    banner2("1993") "\n"
-    banner3         "\n"
-    banner3a        "\n"
-;
-
-extern void RcIoPrintBanner( void )
-/*********************************/
-{
-    OutPutInfo          errinfo;
-
-    InitOutPutInfo( &errinfo );
-    errinfo.severity = SEV_BANNER;
-    RcMsgFprintf( stderr, &errinfo, BannerText );
-}
-
-extern void RcIoPrintHelp( const char * progpath )
-/************************************************/
-{
-    char        progfname[ _MAX_FNAME ];
-    int         index;
-    char        buf[256];
-    OutPutInfo  errinfo;
-
-    InitOutPutInfo( &errinfo );
-    errinfo.severity = SEV_BANNER;
-#ifdef __OSI__
-    if( _Copyright != NULL ) {                      /* 04-may-94 */
-        RcMsgFprintf( stdout, &errinfo, "%s\n", _Copyright );
-    }
-#endif
-    _splitpath( progpath, NULL, NULL, progfname, NULL );
-    strlwr( progfname );
-
-    index = USAGE_MSG_FIRST;
-    GetRcMsg( index, buf, sizeof( buf ) );
-    RcMsgFprintf( stdout, &errinfo, buf, progfname );
-    RcMsgFprintf( stdout, &errinfo, "\n" );
-    for( ++index; index <= USAGE_MSG_LAST; index++ ) {
-        GetRcMsg( index, buf, sizeof( buf ) );
-        RcMsgFprintf( stdout, &errinfo, "%s\n", buf );
-    }
-}
 
 /****** Text file input routines ******/
 /* These routines maintain a stack of input files. Pushing a file onto the */

@@ -50,7 +50,6 @@
 #include "bitmap.h"
 #include "wrbitmap.h"
 #include "wricon.h"
-#include "wrcmsg.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */

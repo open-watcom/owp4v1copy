@@ -39,7 +39,6 @@
 #include "wrfindt.h"
 #include "wrmem.h"
 #include "wrmsg.h"
-#include "wrcmsg.gh"
 
 /* forward declarations */
 int WRReadResourceEntry( WResFileID file, uint_32 offset, resource_entry *res_entry );

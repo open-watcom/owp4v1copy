@@ -47,12 +47,23 @@
 #include "clibint.h"
 #include "rcspawn.h"
 #include "rcldstr.h"
+#include "errors.h"
+#include <banner.h>
+
+#ifdef _BANEXTRA
+#undef  _BANEXTRA
+#define _BANEXTRA _BANEXSHORT
+#endif
 
 #define PRINTF_BUF_SIZE         2048
 
 extern void InitGlobs( void );
 extern void FiniGlobs( void );
 extern void RCmain( void );
+
+#ifdef __OSI__
+extern char *_Copyright;
+#endif
 
 jmp_buf     jmpbuf_RCFatalError;
 
@@ -153,6 +164,51 @@ char *RcGetEnv( const char *name )
         }
     }
     return( NULL );
+}
+
+static const char * BannerText =
+    banner1w( "Windows and OS/2 Resource Compiler", _WRC_VERSION_ )"\n"
+    banner2("1993") "\n"
+    banner3         "\n"
+    banner3a        "\n"
+;
+
+static void RcIoPrintBanner( void )
+/*********************************/
+{
+    OutPutInfo          errinfo;
+
+    InitOutPutInfo( &errinfo );
+    errinfo.severity = SEV_BANNER;
+    RcMsgFprintf( stderr, &errinfo, BannerText );
+}
+
+static void RcIoPrintHelp( const char * progpath )
+/************************************************/
+{
+    char        progfname[ _MAX_FNAME ];
+    int         index;
+    char        buf[256];
+    OutPutInfo  errinfo;
+
+    InitOutPutInfo( &errinfo );
+    errinfo.severity = SEV_BANNER;
+#ifdef __OSI__
+    if( _Copyright != NULL ) {
+        RcMsgFprintf( stdout, &errinfo, "%s\n", _Copyright );
+    }
+#endif
+    _splitpath( progpath, NULL, NULL, progfname, NULL );
+    strlwr( progfname );
+
+    index = USAGE_MSG_FIRST;
+    GetRcMsg( index, buf, sizeof( buf ) );
+    RcMsgFprintf( stdout, &errinfo, buf, progfname );
+    RcMsgFprintf( stdout, &errinfo, "\n" );
+    for( ++index; index <= USAGE_MSG_LAST; index++ ) {
+        GetRcMsg( index, buf, sizeof( buf ) );
+        RcMsgFprintf( stdout, &errinfo, "%s\n", buf );
+    }
 }
 
 static int RCMainLine( const char *opts, int argc, char **argv )

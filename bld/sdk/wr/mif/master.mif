@@ -76,7 +76,7 @@ extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 # systems where version resources must be added to .DLL
 version_res_nt_386 = version.res
 
-$(name).dll: $(__MAKEFILES__) ytab.gh wrcmsg.gh $(object) $(xlibs) $(name).res $(version_res_$(host_os)_$(host_cpu))
+$(name).dll: ytab.gh rcmsg.gh $(object) $(xlibs) $(name).res $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
         $(linker) $(lflags) name $^@ file {$(object)} lib {$(xlibs)}
 !ifdef version_res_$(host_os)_$(host_cpu)
         $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
@@ -96,7 +96,7 @@ test_lflags += option quiet, map, elim, v, static
 test.exe: $(name).lib $(TESTLNK) test.obj
         $(linker) $(test_lflags) library $(name) file test
 
-wrcmsg.gh: wrtemp.gh
+rcmsg.gh: wrtemp.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 wrtemp.gh: ../h/master.msg $(msgfiles)

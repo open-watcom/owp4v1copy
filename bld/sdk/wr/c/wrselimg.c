@@ -37,7 +37,6 @@
 #include "wrglbl.h"
 #include "wrinfo.h"
 #include "wrmsg.h"
-#include "wrcmsg.gh"
 #include "wrctl3d.h"
 #include "wrmaini.h"
 #include "wrdmsgi.h"

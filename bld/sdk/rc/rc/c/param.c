@@ -821,7 +821,7 @@ static void getCodePage( void ) {
             break;
         }
     } else {
-#ifdef NT_HOSTED
+#ifdef __NT__
         if(DB_NONE == CmdLineParms.DBCharSupport){
             SetNativeLeadBytes();
             ConvToUnicode = NativeDBStringToUnicode;
