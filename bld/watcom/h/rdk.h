@@ -17,7 +17,6 @@
 #define osgate_register_bimodal_usergate 3
 #define osgate_register_usergate16 4
 #define osgate_register_usergate32 5
-#define osgate_register_usergate_v86 6
 #define osgate_create_alias_sel16 7
 #define osgate_create_core_gdt 8
 #define osgate_emulate_opcode 9
@@ -502,6 +501,20 @@
 #define osgate_request_irq_handler 422
 #define osgate_request_pci_irq_handler 423
 
+#define osgate_register_syscall 424
+#define osgate_register_bimodal_syscall 425
+
+#define osgate_syscall_patch 426
+#define osgate_start_syscall 427
+#define osgate_setup_sysleave 428
+
+#define osgate_start_dev32 429
+
+#define osgate_get_ioapic_state 430
+
+#define osgate_lock_file 431
+#define osgate_unlock_file 432
+
 
 
 
@@ -511,7 +524,6 @@
 #define OsGate_register_bimodal_usergate 0x3E 0x67 0x9a 3 0 0 0 2 0
 #define OsGate_register_usergate16 0x3E 0x67 0x9a 4 0 0 0 2 0
 #define OsGate_register_usergate32 0x3E 0x67 0x9a 5 0 0 0 2 0
-#define OsGate_register_usergate_v86 0x3E 0x67 0x9a 6 0 0 0 2 0
 #define OsGate_create_alias_sel16 0x3E 0x67 0x9a 7 0 0 0 2 0
 #define OsGate_create_core_gdt 0x3E 0x67 0x9a 8 0 0 0 2 0
 #define OsGate_emulate_opcode 0x3E 0x67 0x9a 9 0 0 0 2 0
@@ -995,4 +1007,18 @@
 #define OsGate_request_msi_handler 0x3E 0x67 0x9a 165 1 0 0 2 0
 #define OsGate_request_irq_handler 0x3E 0x67 0x9a 166 1 0 0 2 0
 #define OsGate_request_pci_irq_handler 0x3E 0x67 0x9a 167 1 0 0 2 0
+
+#define OsGate_register_syscall 0x3E 0x67 0x9a 168 1 0 0 2 0
+#define OsGate_register_bimodal_syscall 0x3E 0x67 0x9a 169 1 0 0 2 0
+
+#define OsGate_syscall_patch 0x3E 0x67 0x9a 170 1 0 0 2 0
+#define OsGate_start_syscall 0x3E 0x67 0x9a 171 1 0 0 2 0
+#define OsGate_setup_sysleave 0x3E 0x67 0x9a 172 1 0 0 2 0
+
+#define OsGate_start_dev32 0x3E 0x67 0x9a 173 1 0 0 2 0
+
+#define OsGate_get_ioapic_state 0x3E 0x67 0x9a 174 1 0 0 2 0
+
+#define OsGate_lock_file 0x3E 0x67 0x9a 175 1 0 0 2 0
+#define OsGate_unlock_file 0x3E 0x67 0x9a 176 1 0 0 2 0
 

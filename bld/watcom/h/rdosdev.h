@@ -10,6 +10,50 @@ extern "C" {
 
 #include "rdk.h"
 
+#define GATE_DS_IN      1
+#define GATE_ES_IN      2
+#define GATE_FS_IN      4
+#define GATE_GS_IN      8
+
+#define GATE_DS_OUT     0x10
+#define GATE_ES_OUT     0x20
+#define GATE_FS_OUT     0x40
+#define GATE_GS_OUT     0x80
+
+// handle signatures
+
+#define ADC_HANDLE         0x15FC 
+#define FM_INSTR_HANDLE    0x17DE
+#define DLL_HANDLE16       0x26CF
+#define DLL_HANDLE32       0x26DF
+#define SPRITE_HANDLE      0x2CF5
+#define CRC_HANDLE         0x367A
+#define FILE_HANDLE 	   0x3AB6
+#define PROCESS_HANDLE     0x43AF
+#define SERIAL_HANDLE      0x5A45
+#define ENV_HANDLE         0x5FAE
+#define RW_SECTION_HANDLE  0x67AF
+#define WAIT_HANDLE        0x6AFE
+#define USB_REQ_HANDLE     0x6B8E
+#define SYSLOG_HANDLE      0x703A
+#define SECTION_HANDLE     0x7A87
+#define IPC_HANDLE  	   0x7B5A
+#define TCP_LISTEN_HANDLE  0x7FAE
+#define TCP_SOCKET_HANDLE  0x847F
+#define FONT_HANDLE 	   0x9AF4
+#define DIR_HANDLE  	   0xA765
+#define XMS_HANDLE  	   0xA560
+#define SIGNAL_HANDLE      0xADEF
+#define PRINTER_HANDLE     0xB63A
+#define MEMMAP_HANDLE 	   0xBA54
+#define FM_HANDLE          0xBCAF
+#define MODULE_HANDLE      0xC3AF
+#define AUDIO_OUT_HANDLE   0xCEDA
+#define HID_HANDLE         0xD736
+#define BITMAP_HANDLE 	   0xDB57
+#define INI_HANDLE 	       0xEAF3
+#define USB_PIPE_HANDLE    0xFA3E
+
 // special user-mode gates
 
 #define UserGate_free_mem 0x3e 0x67 0x9a 2 0 0 0 3 0
@@ -462,11 +506,14 @@ void RdosCrashGate();
 int RdosIsValidOsGate(int gate);
 void RdosRegisterOsGate(int gate, __rdos_gate_callback *callb_proc, const char *name);
 void RdosRegisterBimodalUserGate(int gate, __rdos_gate_callback *callb_proc, const char *name);
+void RdosRegisterSegBimodalUserGate(int gate, int transfer, __rdos_gate_callback *callb_proc, const char *name);
 void RdosRegisterUserGate(int gate, __rdos_gate_callback *callb_proc16, __rdos_gate_callback *callb_proc32, const char *name);
+void RdosRegisterSegUserGate(int gate, int transfer, __rdos_gate_callback *callb_proc16, __rdos_gate_callback *callb_proc32, const char *name);
 
 void RdosReturnOk();
 void RdosReturnFail();
 
+void RdosReloadSelector(int sel);
 void *RdosSelectorToPointer(int sel);
 void *RdosSelectorOffsetToPointer(int sel, long offset);
 void *RdosLinearToPointer(int linear);
@@ -709,6 +756,9 @@ void RdosInsertFileEntry(int dir_sel, int file_entry);
 int RdosGetFileInfo(int handle, char *access, char *drive, int *file_sel);
 int RdosDuplFileInfo(char access, char drive, int file_sel);
 
+void RdosLockFile(int file_sel);
+void RdosUnlockFile(int file_sel);
+
 char RdosReadPciByte(char bus, char dev, char func, char reg);
 short int RdosReadPciWord(char bus, char dev, char func, char reg);
 long RdosReadPciDword(char bus, char dev, char func, char reg);
@@ -854,6 +904,14 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     "pop ds" \
     parm [eax] [esi] [es edi];
 
+#pragma aux RdosRegisterSegBimodalUserGate = \
+    "push ds" \
+    "push cs" \
+    "pop ds" \
+    OsGate_register_bimodal_usergate  \
+    "pop ds" \
+    parm [eax] [edx] [esi] [es edi];
+
 #pragma aux RdosRegisterUserGate = \
     "push ds" \
     "push cs" \
@@ -863,11 +921,43 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     "pop ds" \
     parm [eax] [ebx] [esi] [es edi];
 
+#pragma aux RdosRegisterSegUserGate = \
+    "push ds" \
+    "push cs" \
+    "pop ds" \
+    OsGate_register_usergate  \
+    "pop ds" \
+    parm [eax] [edx] [ebx] [esi] [es edi];
+
 #pragma aux RdosReturnOk = \
     "clc" ;
 
 #pragma aux RdosReturnFail = \
     "stc" ;
+
+#pragma aux RdosReloadSelector = \
+    "mov eax,ds" \
+    "cmp eax,ebx" \
+    "jne NoReloadDs" \
+    "mov ds,eax" \
+    "NoReloadDs: "\
+    "mov eax,es" \
+    "cmp eax,ebx" \
+    "jne NoReloadEs" \
+    "mov es,eax" \
+    "NoReloadEs: "\
+    "mov eax,fs" \
+    "cmp eax,ebx" \
+    "jne NoReloadFs" \
+    "mov fs,eax" \
+    "NoReloadFs: "\
+    "mov eax,gs" \
+    "cmp eax,ebx" \
+    "jne NoReloadGs" \
+    "mov gs,eax" \
+    "NoReloadGs: "\     
+    parm [ebx] \
+    modify [eax];
 
 #pragma aux RdosSelectorToPointer = \
     "mov dx,bx" \
@@ -1471,7 +1561,7 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosDerefHandle = \
     "push ds" \
-    OsGate_allocate_handle \
+    OsGate_deref_handle \
     "mov dx,ds" \
     "pop ds" \
     parm [ax] [ebx] \
@@ -1846,12 +1936,14 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
 
 #pragma aux RdosGetFileInfo = \
     OsGate_get_file_info \
+    "push eax" \
     CarryToBool \
     "mov es:[edi],cl" \
     "mov fs:[esi],ch" \
-    "movzx eax,ax" \
-    "mov gs:[ebx],eax" \
-    parm [ebx] [es edi] [fs esi] [gs ebx] \
+    "pop ecx" \
+    "movzx ecx,cx" \
+    "mov gs:[edx],ecx" \
+    parm [ebx] [es edi] [fs esi] [gs edx] \
     value [eax] \
     modify [ecx];
 
@@ -1859,6 +1951,18 @@ void RdosSendAudioOut(int left_sel, int right_sel, int samples);
     OsGate_dupl_file_info \
     parm [cl] [ch] [eax] \
     value [ebx];
+
+#pragma aux RdosLockFile = \
+    OsGate_lock_file \
+    CarryToBool \
+    parm [eax] \
+    value [eax];
+
+#pragma aux RdosUnlockFile = \
+    OsGate_unlock_file \
+    CarryToBool \
+    parm [eax] \
+    value [eax];
 
 #pragma aux RdosReadPciByte = \
     OsGate_read_pci_byte \
