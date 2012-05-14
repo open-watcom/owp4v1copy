@@ -44,7 +44,7 @@ object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
 
 msgfiles = $(wrc_dir)/h/rc.msg ../h/wr.msg
 
-extra_c_flags     = -DWIN_GUI -DWR_COMPILED -s
+extra_c_flags     = -DWIN_GUI -s
 
 extra_c_flags_win = -zu-zw-zc
 
@@ -96,11 +96,11 @@ test_lflags += option quiet, map, elim, v, static
 test.exe: $(name).lib $(TESTLNK) test.obj
         $(linker) $(test_lflags) library $(name) file test
 
-rcmsg.gh: wrtemp.gh
+rcmsg.gh: wrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-wrtemp.gh: ../h/master.msg $(msgfiles)
-        $(cc) $(preproc_opts) $(c_japan_charset) $(cflags) $(inc_path) $[@ -fo=$^@
+wrmsg.gh: ../h/master.msg $(msgfiles)
+        $(c_pp) -zk0 -I"../h" -I"$(wrc_dir)/h" $[@ >$^@
 
 ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         $(byacc) -d -b $[@ $(wrc_dir)/y/yydriver.c >$(nulldevice)
@@ -109,6 +109,6 @@ ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         @rm -f ytab.c # ytab.c isn't used
 
 $(name).res: ../h/wr.rc .AUTODEPEND
-        $(rc) $(rc_flags) -ad $(inc_path) -DWR_COMPILED $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad $(inc_path) $[@ -fo=$^@
 
 !include verrc.mif
