@@ -44,9 +44,7 @@
 #if defined( INCL_MSGTEXT )
 
 static char *StringTable[] = {
-#define pick( id, en, jp )  en,
-    #include "rc.msg"
-#undef pick
+#include "incltext.gh"
 };
 
 int InitRcMsgs( char *fname )

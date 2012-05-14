@@ -2,7 +2,7 @@ proj_name = strip
 
 name = wstripx
 
-!ifdef bootstrap
+!if defined(bootstrap) || defined(prebuild)
 incl_msgtext = 1
 !endif
 
@@ -22,25 +22,29 @@ inc_dirs = -I. -I"$(dip_dir)/watcom/h"
 
 rc_defines_linux = -DRC_UNIX
 rc_defines_qnx   = -DRC_UNIX
+rc_defines_bsd   = -DRC_UNIX
+rc_defines_osx   = -DRC_UNIX
 
 objs = strip.obj output.obj
 !ifdef bootstrap
 objs += clibext.obj
 !endif
 
-!ifndef incl_msgtext
-dependants = msg.gh wstrip.res $(wres_lib)
-extra_l_flags = lib $(wres_lib)
-!endif
-
-extra_c_flags = $(rc_defines_$(host_os))
 !ifdef incl_msgtext
-extra_c_flags += -DINCL_MSGTEXT $(c_japan_charset)
+extra_c_flags = -DINCL_MSGTEXT
+!else
+extra_l_flags = lib $(wres_lib)
 !endif
 
 # systems where version resources must be added to .EXE
 !ifndef bootstrap
 version_res_nt_386 = exever.res
+!endif
+
+!ifdef incl_msgtext
+dependants = msg.gh incltext.gh
+!else
+dependants = msg.gh wstrip.res $(wres_lib)
 !endif
 
 $(name).exe : $(dependants) $(objs) $(version_res_$(host_os)_$(host_cpu))
@@ -59,8 +63,16 @@ $(name).exe : $(dependants) $(objs) $(version_res_$(host_os)_$(host_cpu))
 msg.gh : wstrip.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
+incltext.gh : ../wstrip.msg
+        $(c_pp) -zk0 $(rc_defines_$(host_os)) >$^@ <<
+$#define pick(c,e,j) e,
+"",
+$#include "$[@"
+$#undef pick
+<<
+
 wstrip.gh : ../wstrip.msg
-        $(cc) $(preproc_opts) $(c_japan_charset) $(rc_defines_$(host_os)) $[@ -fo=$@
+        $(c_pp) -zk0 $(rc_defines_$(host_os)) $[@ >$@
 
 wstrip.res : ../wstrip.rc msg.gh
         $(rc_aui) -ad $(rc_defines_$(host_os)) $(inc_dirs) $[@ -fo=$^@

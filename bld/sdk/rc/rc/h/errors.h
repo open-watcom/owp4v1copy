@@ -30,16 +30,9 @@
 ****************************************************************************/
 
 
-#if defined( INCL_MSGTEXT )
-enum msg_num {
-#define pick( id, en, jp )  id,
-    #include "rc.msg"
-#undef pick
-};
-#else
-#define MSG_LANG_SPACING        1000
 #include "rcmsg.gh"
-#endif
+
+#define MSG_LANG_SPACING        1000
 
 enum {
     INTERR_UNKNOWN_RCSTATUS,

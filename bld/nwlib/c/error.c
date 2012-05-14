@@ -33,11 +33,8 @@
 
 #if defined( INCL_MSGTEXT )
 
-#undef pick
-#define pick( code, e_msg, j_msg ) e_msg,
-
 static char *msg_text_array[] = {
-    #include "wlib.msg"
+    #include "incltext.gh"
 };
 
 void InitMsg( void ) {}

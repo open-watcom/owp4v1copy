@@ -17,7 +17,7 @@ BEGIN
 
 #include "lnkerror.msg"
 #include "wlink.msg"
-#include "rc.msg"
+#include "wrcmsg.gh"
 
 #undef pick
 #define pick( code, string1, string2 )  \
@@ -25,6 +25,6 @@ BEGIN
 
 #include "lnkerror.msg"
 #include "wlink.msg"
-#include "rc.msg"
+#include "wrcmsg.gh"
 
 END

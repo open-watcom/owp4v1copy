@@ -45,9 +45,7 @@
 #if defined( INCL_MSGTEXT )
 
 static char *StringTable[] = {
-#define pick( id, en, jp )  en,
-#include "wstrip.msg"
-#undef pick
+#include "incltext.gh"
 };
 
 int Msg_Init( void )

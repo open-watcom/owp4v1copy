@@ -83,7 +83,7 @@ uistr.gh : uistrmsg.gh
     $(awk) -f $(misc_dir)/msgtoh.awk -v rcbase=10000 -v basename=MSG_UI_BASE $[@ > $^@
 
 uistrmsg.gh : $(commonui_dir)/commonui.msg
-    $(cc) $(preproc_opts) $(c_japan_charset) $(inc_path) $[@ -fo=$^@
+    $(c_pp) -zk0 -I"$(commonui_dir)/h" $[@ >$^@
 
 $(name).lib : $(objs)
     $(librarian) $(libflags) $<

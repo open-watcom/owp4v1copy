@@ -48,7 +48,7 @@ dbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
     $[@ $(dbit_size) _DBit dom_bit_set $@
 
 cgprotos.gh : $(cg_dir)/h/cgapicvr.h $(cg_dir)/h/cgfuntab.h
-    $(cc) $(preproc_opts) -I"$(cg_dir)/h" $[@ >$@
+    $(c_pp) -I"$(cg_dir)/h" $[@ >$@
 
 feprotos.gh : $(cg_dir)/h/cgfecvr.h $(cg_dir)/h/cgfertns.h
-    $(cc) $(preproc_opts) -I"$(cg_dir)/h" $[@ >$@
+    $(c_pp) -I"$(cg_dir)/h" $[@ >$@

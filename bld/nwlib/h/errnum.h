@@ -28,17 +28,7 @@
 *
 ****************************************************************************/
 
-#if defined( INCL_MSGTEXT )
-
-#undef pick
-#define pick( code, e_msg, j_msg ) code,
-
-enum msg_text {
-    #include "wlib.msg"
-};
-
-#else
 
 #include "msg.gh"
 
-#endif
+#define MSG_LANG_SPACING    1000

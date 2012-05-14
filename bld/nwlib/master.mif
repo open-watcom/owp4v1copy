@@ -5,15 +5,20 @@ proj_name       = wlib
 wlib_autodepends = .AUTODEPEND
 !endif
 
-!if defined(bootstrap) || defined(prebuild)
-no_libs    = 1
-!else ifeq release 0
+!ifeq release 0
 wlib_trmem = 1
 !endif
 
 suppress_bd = 1
 
 wlib_nosymfile = 1
+
+!if defined(bootstrap) || defined(prebuild)
+no_libs = 1
+!endif
+!ifdef no_libs
+incl_msgtext = 1
+!endif
 
 !ifdef no_libs
 !ifdef wlib_dll
@@ -33,7 +38,9 @@ wlib_nosymfile = 1
 !ifdef no_libs
 !include $(orl_dir)/orlobjs.mif
 !else
+!ifndef incl_msgtext
 !include wres.mif
+!endif
 !include $(orl_dir)/client.mif
 !endif
 
@@ -83,7 +90,7 @@ dll_objs = $(common_objs) $(dll_objs_$(host_os))
 # cflags
 
 extra_c_flags =
-!ifdef no_libs
+!ifdef incl_msgtext
 extra_c_flags += -DINCL_MSGTEXT
 !endif
 !ifndef wlib_dll
@@ -114,9 +121,10 @@ extra_l_flags_dll_os2 = INITINSTANCE TERMINSTANCE
 ###################
 # rc flags
 
-extra_rc_flags_qnx = -D__UNIX__
-extra_rc_flags_linux = -D__UNIX__
-extra_rc_flags = $(extra_rc_flags_$(host_os))
+rc_defines_qnx   = -DRC_UNIX
+rc_defines_linux = -DRC_UNIX
+rc_defines_bsd   = -DRC_UNIX
+rc_defines_osx   = -DRC_UNIX
 
 # systems where version resources must be added to .DLL
 !ifndef prebuild
@@ -139,21 +147,25 @@ inc_dirs += -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h"
 !endif
 
 !ifndef no_libs
+!ifdef incl_msgtext
+xlibs = $(orl_lib)
+!else
 xlibs = $(wres_lib) $(orl_lib)
+!endif
 !endif
 
 !ifeq host_os osi
 external_dependencies = $(os2ldr)
 !endif
 
-depends_drv = $(drv_objs) wlibd.lib drv.lnk
-!ifdef no_libs
-depends_exe = $(exe_objs) $(external_dependencies)
-depends_dll = $(dll_objs) $(external_dependencies) dll.lnk
+!ifdef incl_msgtext
+depends_msg = msg.gh incltext.gh
 !else
-depends_exe = msg.gh wlib.res $(exe_objs) $(xlibs) $(external_dependencies)
-depends_dll = msg.gh wlib.res $(dll_objs) $(xlibs) $(external_dependencies) dll.lnk
+depends_msg = msg.gh wlib.res
 !endif
+depends_drv = $(drv_objs) wlibd.lib drv.lnk
+depends_exe = $(depends_msg) $(exe_objs) $(xlibs) $(external_dependencies)
+depends_dll = $(depends_msg) $(dll_objs) $(xlibs) $(external_dependencies) dll.lnk
 !ifndef bootstrap
 depends_exe += exe.lnk
 !endif
@@ -168,7 +180,7 @@ wlib.exe: $(depends_drv) $(exe_version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES
 
 !else
 
-wlib.exe: $(depends_exe) $(__MAKEFILES__)
+wlib.exe: $(depends_exe) $(exe_version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
 !ifdef bootstrap
     $(cc) -g -o $@ $(exe_objs) $(xlibs)
 !else ifeq host_os osi
@@ -181,7 +193,7 @@ wlib.exe: $(depends_exe) $(__MAKEFILES__)
 !ifdef exe_version_res_$(host_os)_$(host_cpu)
     $(rc) -k $(exe_version_res_$(host_os)_$(host_cpu)) $^@
 !endif
-!ifndef no_libs
+!ifndef incl_msgtext
     wstrip -q -a -r $@ . wlib.res
 !endif
 
@@ -192,7 +204,7 @@ wlibd.dll: $(depends_dll) $(version_res_$(host_os)_$(host_cpu)) $(__MAKEFILES__)
 !ifdef version_res_$(host_os)_$(host_cpu)
     $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
-!ifndef no_libs
+!ifndef incl_msgtext
     wstrip -q -a -r $@ . wlib.res
 !endif
 
@@ -223,14 +235,22 @@ dll.lnk : $(__MAKEFILES__)
     @for %i in ($(dll_objs)) do @%append $@ file %i
     @for %i in ($(xlibs)) do @%append $@ lib %i
 
-./mkstr.exe : ../mkstr.c ../wlib.msg
-    $(bld_cl) $(wcl_util_opts) -I.. $[@
+msg.gh : wlibmsg.gh
+    $(awk) -f $(misc_dir)/msgtoh.awk $[@ >$^@
 
-msg.gh : ./mkstr.exe
-    *$< $@
+incltext.gh : ../wlib.msg
+    $(c_pp) -zk0 $(rc_defines_$(host_os)) >$^@ <<
+$#define pick(c,e,j) e,
+"",
+$#include "$[@"
+$#undef pick
+<<
+
+wlibmsg.gh : ../wlib.msg
+    $(c_pp) -zk0 $(rc_defines_$(host_os)) $[@ >$^@
 
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
-    $(rc_aui) $(extra_rc_flags) $[@ -fo=$@
+    $(rc_aui) $(rc_defines_$(host_os)) $[@ -fo=$@
 
 verrc_dll = wlibd
 !include verrc.mif

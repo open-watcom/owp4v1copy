@@ -30,17 +30,6 @@
 ****************************************************************************/
 
 
-#if defined( INCL_MSGTEXT )
-
-enum msg_num {
-#define pick( id, en, jp )  id,
-#include "wstrip.msg"
-#undef pick
-};
-
-#else
-
-#define MSG_LANG_SPACING    1000
 #include "msg.gh"
 
-#endif
+#define MSG_LANG_SPACING    1000

@@ -4,16 +4,14 @@
 STRINGTABLE
 BEGIN
 
-#undef pick
 #define pick( code, e_string, j_string )  \
         (code+RLE_ENGLISH*MSG_LANG_SPACING), e_string
-
-#include "rc.msg"
-
+#include "msg.gh"
 #undef pick
+
 #define pick( code, e_string, j_string )  \
         (code+RLE_JAPANESE*MSG_LANG_SPACING), j_string
-
-#include "rc.msg"
+#include "msg.gh"
+#undef pick
 
 END
