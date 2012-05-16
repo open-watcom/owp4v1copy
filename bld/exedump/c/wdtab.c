@@ -60,7 +60,7 @@ static unsigned_8 read_res_nonres_nam( char *name, unsigned_16 *ordinal )
 /*
  * Dump a resident/nonresident name
  */
-static unsigned_8 dmp_res_nonres_nam( void )
+static unsigned_16 dmp_res_nonres_nam( void )
 /******************************************/
 {
     char                    resident[256];
@@ -110,7 +110,7 @@ static void dmp_imp_tab( unsigned_32 proc_off, unsigned_32 size_proc )
 /********************************************************************/
 {
     unsigned_8              string_len;
-    unsigned_16             size;
+    unsigned_32             size;
     char                    *imp_nam;
 
     Wlseek( proc_off );
