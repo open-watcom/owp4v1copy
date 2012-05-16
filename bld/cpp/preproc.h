@@ -138,6 +138,7 @@ extern  MACRO_ENTRY     *PPHashTable[HASH_SIZE];
 #define PPFLAG_DB_KANJI         0x0100
 #define PPFLAG_DB_CHINESE       0x0200
 #define PPFLAG_DB_KOREAN        0x0400
+#define PPFLAG_UTF8             0x0800
 #define PPFLAG_DONT_READ        0x4000
 #define PPFLAG_UNDEFINED_VAR    0x8000
 

@@ -89,7 +89,7 @@ static char *Months[] = {
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 };
 
-static char DBChar[256];        // double byte character indicator table
+static char MBCharLen[256];         // multi-byte character len table
 
 static char *doStrDup( const char *str )
 {
@@ -245,6 +245,7 @@ static void PP_GenLine( void )
 {
     char        *p;
     char        *fname;
+    int         i;
 
     p = PPCharPtr = &PPLineBuf[1];
     if( PPFlags & PPFLAG_EMIT_LINE ) {
@@ -255,12 +256,9 @@ static void PP_GenLine( void )
 #ifndef __UNIX__
             if( *fname == SLASH_CHAR )  *p++ = SLASH_CHAR;          // 14-sep-94
 #endif
-            if( DBChar[(unsigned char)*fname] )  {
-                *p = *fname;
-                p++;
-                fname++;
+            for( i = MBCharLen[(unsigned char)*fname] + 1; i > 0; --i ) {
+                *p++ = *fname++;
             }
-            *p++ = *fname++;
         }
         *p++ = '\"';
     }
@@ -287,12 +285,12 @@ static void PP_TimeInit( void )
                             tod->tm_mday, tod->tm_year + 1900 );
 }
 
-static void SetRange( int low, int high )
+static void SetRange( int low, int high, char data )
 {
     int     i;
 
     for( i = low; i <= high; ++i ) {
-        DBChar[i] = 1;
+        MBCharLen[i] = data;
     }
 }
 
@@ -301,11 +299,7 @@ void PP_SetLeadBytes( const char *bytes )
     unsigned    i;
 
     for( i = 0; i < 256; i++ ) {
-        if( bytes[i] == 0 ) {
-            DBChar[i] = 0;
-        } else {
-            DBChar[i] = 1;
-        }
+        MBCharLen[i] = bytes[i];
     }
 }
 
@@ -333,16 +327,22 @@ int PP_Init2( char *filename, unsigned flags, char *include_path,
     PP_AddMacro( "__TIME__" );
     PP_AddMacro( "__STDC__" );
     PP_TimeInit();
-    memset( DBChar, 0, 256 );                   /* 07-jul-93 */
+    memset( MBCharLen, 0, 256 );                   /* 07-jul-93 */
     if( leadbytes != NULL ) {
         PP_SetLeadBytes( leadbytes );
     } else if( flags & PPFLAG_DB_KANJI ) {
-        SetRange( 0x81, 0x9f );
-        SetRange( 0xe0, 0xfc );
+        SetRange( 0x81, 0x9f, 1 );
+        SetRange( 0xe0, 0xfc, 1 );
     } else if( flags & PPFLAG_DB_CHINESE ) {
-        SetRange( 0x81, 0xfc );
+        SetRange( 0x81, 0xfc, 1 );
     } else if( flags & PPFLAG_DB_KOREAN ) {
-        SetRange( 0x81, 0xfd );
+        SetRange( 0x81, 0xfd, 1 );
+    } else if( flags & PPFLAG_UTF8 ) {
+        SetRange( 0xc0, 0xdf, 1 );
+        SetRange( 0xe0, 0xef, 2 );
+        SetRange( 0xf0, 0xf7, 3 );
+        SetRange( 0xf8, 0xfb, 4 );
+        SetRange( 0xfc, 0xfd, 5 );
     }
     handle = PP_Open( filename );
     if( handle == -1 )  return( -1 );
@@ -988,12 +988,14 @@ int PP_Read( void )
 char *PPScanLiteral( char *p )
 {
     char        quote_char;
+    int         i;
 
     quote_char = *p++;
     for( ;; ) {
-        if( DBChar[(unsigned char)*p] )  {
-            p += 2;             /* 07-jul-93 */
-            continue;           /* 09-jul-93 */
+        i = MBCharLen[(unsigned char)*p];
+        if( i )  {
+            p += i + 1;
+            continue;
         }
         if( *p == '\0' ) break;
         if( *p == quote_char ) {

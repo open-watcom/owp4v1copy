@@ -41,9 +41,9 @@
 #define _MAX_PATH PATH_MAX+1
 #endif
 
-#define DB_CHAR         1
+#define DB_CHAR                 1
 
-#define DB_NONE                 0
+#define MB_NONE                 0
 #define DB_KANJI                1
 #define DB_TRADITIONAL_CHINESE  2
 #define DB_WANSUNG_KOREAN       3
@@ -89,7 +89,7 @@ struct RCParams {
     unsigned    GenAutoDep      : 1;    /* generate autodependency info for wmake */
     unsigned    FindAndReplace;         /* a check to see whether for this option */
     unsigned    Prepend;
-    unsigned    DBCharSupport   : 3;    /* which of the zk switches is set */
+    unsigned    MBCharSupport   : 3;    /* which of the zk switches is set */
     unsigned    SegmentSorting;         /* which segment sorting method to use */
     int         TargetOS;
     char        InFileName[ _MAX_PATH ];
@@ -124,5 +124,6 @@ extern void RcAddCPPArg( char * newarg );
 extern void ScanParamShutdown( void );
 extern unsigned ParseEnvVar( const char *env, char **argv, char *buf );
 extern void AddNewIncludeDirs( const char * arg );
+extern void SetMBRange( unsigned from, unsigned to, char data );
 
 #endif

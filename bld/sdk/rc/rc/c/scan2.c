@@ -189,6 +189,7 @@ static int scanDFA( ScanValue *value )
     char                debugstring[10];
 #endif
     char                *stringFromFile;
+    int                 i;
 
     value->intinfo.type  = SCAN_INT_TYPE_DEFAULT;
     value->string.string = NULL;
@@ -428,10 +429,13 @@ static int scanDFA( ScanValue *value )
 
     state(S_STRING):
         /* handle double-byte characters */
-        if( CharSet[ LookAhead ] == DB_CHAR ) {
+        i = CharSetLen[LookAhead];
+        if( i ) {
             VarStringAddChar( newstring, LookAhead );
-            GetNextChar();
-            VarStringAddChar( newstring, LookAhead );
+            for( ; i > 0; --i ) {
+                GetNextChar();
+                VarStringAddChar( newstring, LookAhead );
+            }
             do_transition( S_STRING );
         }
 

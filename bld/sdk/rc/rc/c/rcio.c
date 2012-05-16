@@ -240,7 +240,7 @@ static int PreprocessInputFile( void )
     if( CmdLineParms.IgnoreCWD ) {
         flags |= PPFLAG_IGNORE_CWD;
     }
-    rc = PP_Init2( CmdLineParms.InFileName, flags, NewIncludeDirs, CharSet );
+    rc = PP_Init2( CmdLineParms.InFileName, flags, NewIncludeDirs, CharSetLen );
     if( rc != 0 ) {
         RcError( ERR_CANT_OPEN_FILE, CmdLineParms.InFileName, strerror(errno) );
         return( TRUE );

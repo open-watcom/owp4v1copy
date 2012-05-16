@@ -47,7 +47,7 @@
 
 typedef struct {
     DBTableHeader       header;
-    uint_8              begchars[256];
+    char                begchars[256];
     DBIndexEntry        *index;
     uint_16             *entries;
 }DBCharInfo;
@@ -162,7 +162,7 @@ static uint_16 lookUpDBChar( uint_16 ch ) {
     return( -1 );
 }
 
-const uint_8 *GetLeadBytes( void ) {
+const char *GetLeadBytes( void ) {
     return( charInfo.begchars );
 }
 

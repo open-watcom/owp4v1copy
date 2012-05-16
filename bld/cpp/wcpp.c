@@ -42,16 +42,17 @@
 char *OptEnvVar = "";
 
 static const char *usageMsg[] = {
-    "Usage: wcpp [?] [-c] [-d<macro>] [-i<path>] [-l] [-zk0] [-zk1] [-zk2] [input file]\n",
+    "Usage: wcpp [-c] [-d<macro>] [-i<path>] [-l] [-zk0] [-zk1] [-zk2] [-zku8] [input file]\n",
     "input file\t\tname of input source file\n",
     "-c\t\tpreserve comments\n",
     "-d<macro>\t\tdefine macro\n",
     "-i<path>\t\tinclude path\n",
     "-l\t\tgenerate #line directives\n",
-    "-zk{0,1,2}\t\tsource file character encoding\n",
+    "-zk{0,1,2,u8}\t\tsource file character encoding\n",
     "-zk0\t\tJapanese (Kanji, CP 932) double-byte encoding\n",
     "-zk1\t\tChinese (Traditional, CP 950) double-byte encoding\n",
     "-zk2\t\tKorean (Wansung, CP 949) double-byte encoding\n",
+    "-zku8\t\tUnicode UTF-8 encoding\n",
     "-h\t\tdisplay usage\n",
     NULL
 };
@@ -143,6 +144,11 @@ int main( int argc, char *argv[] )
                 } else if( OptArg[1] == '2' && OptArg[2] == '\0' ) {
                     flags |= PPFLAG_DB_KOREAN;
                     break;
+                } else if( tolower( OptArg[1] ) == 'u' ) {
+                    if( OptArg[2] == '8' && OptArg[3] == '\0' ) {
+                        flags |= PPFLAG_UTF8;
+                        break;
+                    }
                 }
             }
             Quit( usageMsg, "Incorrect option\n" );

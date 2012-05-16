@@ -89,28 +89,24 @@ extern void RcAddCPPArg( char * newarg )
 
 
 /*
- * SetDBRange - set the CharSet array up to recognize double byte character
+ * SetMBRange - set the CharSetLen array up to recognize multi-byte character
  *              sequences
  */
-void SetDBRange( unsigned from, unsigned to ) {
-/***********************************************/
+void SetMBRange( unsigned from, unsigned to, char data ) {
+/********************************************************/
     unsigned    i;
 
-    for( i=from; i <= to; i++ ) {
-        CharSet[i] = DB_CHAR;
+    for( i = from; i <= to; i++ ) {
+        CharSetLen[i] = data;
     }
 }
 
-static void SetDBChars( const uint_8 *bytes ) {
-/**********************************************/
+static void SetMBChars( const char *bytes ) {
+/*******************************************/
     unsigned    i;
 
-    for( i=0; i < 256; i++ ) {
-        if( bytes[i] == 0 ) {
-            CharSet[i] = 0;
-        } else {
-            CharSet[i] = DB_CHAR;
-        }
+    for( i = 0; i < 256; i++ ) {
+        CharSetLen[i] = bytes[i];
     }
 }
 
@@ -446,34 +442,36 @@ static bool ScanOptionsArg( const char * arg )
             arg++;
             switch( tolower( *arg ) ) {
             case '1':
-                SetDBRange( 0x81, 0xfe );
-                CmdLineParms.DBCharSupport = DB_TRADITIONAL_CHINESE;
+                SetMBRange( 0x81, 0xfe, 1 );
+                CmdLineParms.MBCharSupport = DB_TRADITIONAL_CHINESE;
                 break;
             case '2':
-                SetDBRange( 0x81, 0xfe );
-                CmdLineParms.DBCharSupport = DB_WANSUNG_KOREAN;
+                SetMBRange( 0x81, 0xfe, 1 );
+                CmdLineParms.MBCharSupport = DB_WANSUNG_KOREAN;
                 break;
             case '3':
-                SetDBRange( 0xA1, 0xfe );
-                CmdLineParms.DBCharSupport = DB_SIMPLIFIED_CHINESE;
+                SetMBRange( 0xA1, 0xfe, 1 );
+                CmdLineParms.MBCharSupport = DB_SIMPLIFIED_CHINESE;
                 break;
             case '0':
             case ' ':
             case '\0':
-                SetDBRange( 0x81, 0x9f );
-                SetDBRange( 0xe0, 0xfc );
-                CmdLineParms.DBCharSupport = DB_KANJI;
+                SetMBRange( 0x81, 0x9f, 1 );
+                SetMBRange( 0xe0, 0xfc, 1 );
+                CmdLineParms.MBCharSupport = DB_KANJI;
                 break;
             case 'u':
                 if( arg[1] == '8' ) {
                     arg++;
-                    CmdLineParms.DBCharSupport = MB_UTF8;
+                    SetMBRange( 0xc0, 0xdf, 1 );
+                    SetMBRange( 0xe0, 0xef, 2 );
+                    SetMBRange( 0xf0, 0xf7, 3 );
+                    SetMBRange( 0xf8, 0xfb, 4 );
+                    SetMBRange( 0xfc, 0xfd, 5 );
+                    CmdLineParms.MBCharSupport = MB_UTF8;
                     break;
                 }
-                //
-                // NYI - set up a new code page
-                //
-//              break;
+                // fall down
             default:
                 RcError( ERR_UNKNOWN_MULT_OPTION, arg - 2 );
                 contok = FALSE;
@@ -620,7 +618,7 @@ static void CheckParms( void )
         RcFatalError( ERR_OPT_NOT_VALID_TOGETHER, "-ad", "-zm" );
     }
     if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN32 ) {
-        switch( CmdLineParms.DBCharSupport ) {
+        switch( CmdLineParms.MBCharSupport ) {
         case DB_SIMPLIFIED_CHINESE:
             strcpy( CmdLineParms.CodePageFile, "936.uni" );
             break;
@@ -652,7 +650,7 @@ static void defaultParms( void )
     #ifdef YYDEBUG
         CmdLineParms.DebugParser = FALSE;
     #endif
-    CmdLineParms.DBCharSupport = DB_NONE;
+    CmdLineParms.MBCharSupport = MB_NONE;
     CmdLineParms.PrintHelp = FALSE;
     CmdLineParms.Quiet = FALSE;
     CmdLineParms.Pass1Only = FALSE;
@@ -700,33 +698,6 @@ static void defaultParms( void )
 } /* defaultParms */
 
 
-#if( 0 )
-
-// copied from windows.h
-#define CP_ACP      0
-__declspec(dllimport) int __stdcall MultiByteToWideChar(
-    uint_32 CodePage, uint_32 dwFlags, const char *lpMultiByteStr, int cchMultiByte,
-    char *lpWideCharStr, int cchWideChar);
-
-int NativeDBStringToUnicode( int len, const char *str, char *buf ) {
-/*******************************************************************/
-    int         ret;
-    unsigned    outlen;
-
-    if( len > 0 ) {
-        if( buf == NULL ) {
-            outlen = 0;
-        } else {
-            outlen = len * 2;
-        }
-        ret = MultiByteToWideChar( CP_ACP, 0, str, len, buf, outlen );
-    } else {
-        ret = 0;
-    }
-    return( ret * 2 );
-}
-#endif
-
 static int getcharUTF8( const char **p, uint_32 *c )
 {
     int     len;
@@ -734,20 +705,16 @@ static int getcharUTF8( const char **p, uint_32 *c )
     uint_32 value;
 
     value = *c;
-    if( (value & 0xE0) == 0xC0 ) {
-        len = 1;
+    len = CharSetLen[value];
+    if( len == 1 ) {
         value &= 0x1F;
-    } else if( (value & 0xF0) == 0xE0 ) {
-        len = 2;
+    } else if( len == 2 ) {
         value &= 0x0F;
-    } else if( (value & 0xF8) == 0xF0 ) {
-        len = 3;
+    } else if( len == 3 ) {
         value &= 0x07;
-    } else if( (value & 0xFC) == 0xF8 ) {
-        len = 4;
+    } else if( len == 4 ) {
         value &= 0x03;
-    } else if( (value & 0xFE) == 0xFC ) {
-        len = 5;
+    } else if( len == 5 ) {
         value &= 0x01;
     } else {
         return( 0 );
@@ -795,7 +762,7 @@ static void getCodePage( void ) {
     RcStatus            ret;
     char                path[ _MAX_PATH ];
 
-    if( CmdLineParms.DBCharSupport == MB_UTF8 ) {
+    if( CmdLineParms.MBCharSupport == MB_UTF8 ) {
         ConvToUnicode = UTF8StringToUnicode;
     } else if( CmdLineParms.CodePageFile[0] != '\0' ) {
         ret = OpenTable( CmdLineParms.CodePageFile, path );
@@ -817,12 +784,12 @@ static void getCodePage( void ) {
             RcFatalError( ERR_CANT_OPEN_CHAR_FILE, path, strerror( errno ) );
             break;
         default:
-            SetDBChars( GetLeadBytes() );
+            SetMBChars( GetLeadBytes() );
             break;
         }
-    } else {
 #ifdef __NT__
-        if(DB_NONE == CmdLineParms.DBCharSupport){
+    } else {
+        if(MB_NONE == CmdLineParms.MBCharSupport){
             SetNativeLeadBytes();
             ConvToUnicode = NativeDBStringToUnicode;
         }
