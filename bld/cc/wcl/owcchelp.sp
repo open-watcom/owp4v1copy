@@ -78,7 +78,7 @@ Usage:  owcc [options] file ...
                 [Debugging options]
 -g0                             no debugging information
 -g1{+}                          line number debugging info.
--g2 full                        symbolic debugging info.
+-g2                             full symbolic debugging info.
 -g2i                            (C++) + inlines as COMDATs
 -g2s                            (C++) + inlines as statics
 -g2t                            (C++) without type names
