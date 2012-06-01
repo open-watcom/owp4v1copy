@@ -432,7 +432,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         if( *p == '.' ) {
             p++;
         }
-        strcpy( token_buf, p + 1 );
+        strcpy( token_buf, p );
         rc = add_symvar( &loc_dict, "_", token_buf, no_subscript, local_var );
         p += strlen( token_buf );
 

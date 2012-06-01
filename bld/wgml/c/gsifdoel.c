@@ -637,7 +637,9 @@ void    scr_th( void )
     cb->if_flags[cb->if_level].iflast = false;
     cb->if_flags[cb->if_level].ifthen = true;
     ProcFlags.keep_ifstate = true;
-    show_ifcb( "then", cb );
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+        show_ifcb( "then", cb );
+    }
 
     garginit();                         // find end of control word
 
