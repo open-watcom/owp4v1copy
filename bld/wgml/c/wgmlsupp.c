@@ -37,26 +37,26 @@
 *                   reopen_inc_fp()
 *                   show_include_stack()
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__ 1
-
+ 
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
 #include "banner.h"
-
-
+ 
+ 
 #define mystr(x)            # x
 #define xmystr(s)           mystr(s)
-
+ 
 #define CRLF            "\n"
-
-
+ 
+ 
 /***************************************************************************/
 /*  Output Banner if wanted and not yet done                               */
 /***************************************************************************/
-
+ 
 void g_banner( void )
 {
     if( !(GlobalFlags.bannerprinted | GlobalFlags.quiet) ) {
@@ -72,12 +72,12 @@ void g_banner( void )
         GlobalFlags.bannerprinted = 1;
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  increment include level                                                */
 /***************************************************************************/
-
+ 
 void    inc_inc_level( void )
 {
     inc_level++;                        // start new level
@@ -85,28 +85,28 @@ void    inc_inc_level( void )
         max_inc_level = inc_level;      // record highest level
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  Program end                                                            */
 /***************************************************************************/
-
+ 
 void my_exit( int rc )
 {
     exit( rc );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
-
+ 
 static  bool    free_inc_fp( void )
 {
     inputcb *   ip;
     filecb  *   cb;
     int         rc;
-
+ 
     ip = input_cbs;
     while( ip != NULL ) {              // as long as input stack is not empty
         if( ip->fmflags & II_file ) {   // if file (not macro)
@@ -135,19 +135,19 @@ static  bool    free_inc_fp( void )
     }
     return( false );                    // nothing to close
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* reopen a file which was closed due to resource shortage and perhaps     */
 /* close another one                                                       */
 /***************************************************************************/
-
+ 
 static void reopen_inc_fp( filecb *cb )
 {
     int         rc;
     errno_t     erc;
     errno_t     erc2;
-
+ 
     if( ! cb->flags & FF_open ) {
         for( ;; ) {
             erc = fopen_s( &cb->fp, cb->filename, "rb" );
@@ -174,11 +174,11 @@ static void reopen_inc_fp( filecb *cb )
     }
     return;
 }
-
+ 
 /***************************************************************************/
 /*  Report resource exhaustion: may eventually try to correct the problem  */
 /***************************************************************************/
-
+ 
 bool    free_resources( errno_t in_errno )
 {
     if( in_errno == ENOMEM) g_err( err_no_memory );
@@ -186,7 +186,7 @@ bool    free_resources( errno_t in_errno )
     err_count++;
     return( false );
 }
-
+ 
 /***************************************************************************/
 /* free_layout_banner  free banner and banregion, the only parts of the    */
 /* layout dynamically allocated                                            */
@@ -196,7 +196,7 @@ void    free_layout_banner( void )
     banner_lay_tag  * ban;
     banner_lay_tag  * ban1;
     region_lay_tag  * reg;
-
+ 
     ban = layout_work.banner;
     while( ban != NULL ) {
         reg = ban->region;
@@ -210,14 +210,14 @@ void    free_layout_banner( void )
         ban = ban1;
     }
 }
-
+ 
 /***************************************************************************/
 /*  free some buffers                                                      */
 /***************************************************************************/
-
+ 
 void    free_some_mem( void )
 {
-
+ 
     if( token_buf != NULL ) {
         mem_free( token_buf );
     }
@@ -238,7 +238,7 @@ void    free_some_mem( void )
     }
     if( lay_files != NULL ) {
         laystack * lwk;
-
+ 
         while( lay_files != NULL ) {
             lwk = lay_files->next;
             mem_free( lay_files );
@@ -334,21 +334,21 @@ void    free_some_mem( void )
         clear_doc_element( n_page.col_fn );
         add_doc_el_to_pool( n_page.col_fn );
     }
-
+ 
     free_layout_banner();
-
+ 
     free_pool_storage();
-
+ 
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  get line from current macro                                            */
 /***************************************************************************/
 static  void    get_macro_line( void )
 {
     macrocb *   cb;
-
+ 
     if( input_cbs->fmflags & II_file ) {// current input is file not macro
         g_err( err_logic_mac );
         show_include_stack();
@@ -356,7 +356,7 @@ static  void    get_macro_line( void )
         g_suicide();
     }
     cb = input_cbs->s.m;
-
+ 
     if( cb->macline == NULL ) {         // no more macrolines
         input_cbs->fmflags |= II_eof;
         input_cbs->fmflags &= ~(II_sol | II_eol);
@@ -371,8 +371,8 @@ static  void    get_macro_line( void )
         cb->macline         = cb->macline->next;
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  get line from current input ( file )                                   */
 /*  skipping lines before the first one to process if neccessary           */
@@ -384,7 +384,7 @@ bool    get_line( bool display_line )
     filecb      *   cb;
     char        *   p;
     inp_line    *   pline;
-
+ 
     if( ProcFlags.reprocess_line ) {    // there was an unget
         ProcFlags.reprocess_line = false;
         return( !(input_cbs->fmflags & II_eof) );
@@ -398,7 +398,7 @@ bool    get_line( bool display_line )
             input_cbs->hidden_tail = NULL;
         }
         input_cbs->fmflags &= ~II_sol;  // not at start of input line
-
+ 
         if( input_cbs->hidden_head == NULL ) {  // last part of split line
             input_cbs->fmflags |= II_eol;
         }
@@ -432,7 +432,7 @@ bool    get_line( bool display_line )
                         }
                         cb->lineno++;
                         input_cbs->fmflags |= (II_sol | II_eol);
-
+ 
                         if( cb->flags & FF_crlf ) {// try to delete CRLF at end
                             p += strlen( p ) - 1;
                             while( (*p == '\r') || (*p == '\n')  ) {
@@ -449,7 +449,7 @@ bool    get_line( bool display_line )
                         } else {
                             strerror_s( buff2, buf_size, errno );
                             g_err( err_file_io, buff2, cb->filename );
-
+ 
                             err_count++;
                             g_suicide();
                         }
@@ -458,7 +458,7 @@ bool    get_line( bool display_line )
             }
         }
     }
-
+ 
     buff2_lg = strnlen_s( buff2, buf_size );
 #if 0
     if( !(input_cbs->fmflags & II_eof) ) {  // for empty physical line
@@ -478,13 +478,13 @@ bool    get_line( bool display_line )
         if( !(input_cbs->fmflags & II_eof) ) {
             if( (input_cbs->fmflags & II_sol) &&
                 (input_cbs->fmflags & II_eol) ) {
-
+ 
+#if 0
                 if( buff2_lg == 0 ) {   // empty line
                     blank_lines += 1;
-#if 0
                     ProcFlags.sk_cond = true;   // prepare simulated .sk 1 C
-#endif
                 }
+#endif
             }
         }
     }
@@ -512,7 +512,7 @@ bool    get_line( bool display_line )
             }
         }
     }
-
+ 
     if( !(input_cbs->fmflags & II_eof) ) {
         if( display_line && GlobalFlags.firstpass
             && input_cbs->fmflags & II_research ) {
@@ -521,19 +521,19 @@ bool    get_line( bool display_line )
     }
     return( !(input_cbs->fmflags & II_eof) );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  output the filenames + lines which were included                       */
 /***************************************************************************/
-
+ 
 void    show_include_stack( void )
 {
     inputcb *   ip;
     char        linestr[MAX_L_AS_STR];
     char        linemac[MAX_L_AS_STR];
-
-
+ 
+ 
     if( input_cbs != NULL ) {
         if( input_cbs->fmflags & II_macro ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
@@ -572,4 +572,4 @@ void    show_include_stack( void )
     }
     return;
 }
-
+ 

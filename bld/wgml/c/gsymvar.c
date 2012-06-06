@@ -78,6 +78,71 @@ void    free_dict( symvar * * dict )
 
 
 /***************************************************************************/
+/*  print_sym_entry  print symbol with walue                               */
+/***************************************************************************/
+
+static void print_sym_entry( symvar * wk, int * symcnt, int * symsubcnt )
+{
+    symsub          *   ws;
+    int                 len;
+    bool                saveflag;
+    static const char   fill[11] = "          ";
+
+    saveflag    = ProcFlags.no_var_impl_err;
+    ProcFlags.no_var_impl_err = true;   // suppress err msg
+
+    len = strlen( wk->name );
+    if( wk->subscript_used > 0 ) {
+        out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s%s "
+                 "subscript_used=%d", wk->name, &fill[len],
+                 wk->flags & deleted ? "deleted " : "",
+                 wk->flags & local_var ? "local " : "",
+                 wk->flags & auto_inc ? "auto_inc " : "",
+                 wk->flags & predefined ? "predefined " : "",
+                 wk->flags & late_subst ? "late_subst " : "",
+                 wk->flags & ro ? "RO " : "",
+                 wk->flags & no_free ? "no_free " : "",
+                 wk->flags & access_fun ? "access_fun " : "",
+                 wk->subscript_used );
+    } else {
+        out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s%s ",
+                 wk->name, &fill[len],
+                 wk->flags & deleted ? "deleted " : "",
+                 wk->flags & local_var ? "local " : "",
+                 wk->flags & auto_inc ? "auto_inc " : "",
+                 wk->flags & predefined ? "predefined " : "",
+                 wk->flags & late_subst ? "late_subst " : "",
+                 wk->flags & ro ? "RO " : "",
+                 wk->flags & no_free ? "no_free " : "",
+                 wk->flags & access_fun ? "access_fun " : "");
+    }
+    ws = wk->subscripts;
+    if( wk->flags & subscripted ) {
+        (*symsubcnt)++;
+        out_msg( "\n" );
+    } else {
+        if( (wk->flags & access_fun) && (wk->varfunc != NULL) ) {
+            (wk->varfunc)( wk );    // get current value
+        }
+        if( wk->sub_0->value == NULL) { // oops not initialized
+            out_msg( "\n" );
+        } else {
+            out_msg("value='%s'\n", wk->sub_0->value );
+        }
+        (*symcnt)++;
+    }
+    if( wk->flags & subscripted ) {
+        while( ws != NULL ) {
+            out_msg( "   subscript= %8ld value='%s'\n",
+                    ws->subscript, ws->value );
+            ws = ws->next;
+        }
+    }
+    ProcFlags.no_var_impl_err = saveflag;
+}
+
+
+/***************************************************************************/
 /*  search symbol and subscript entry in specified  dictionary             */
 /*  fills symsub structure pointer if found                                */
 /*                                                                         */
@@ -384,8 +449,9 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
 {
     symvar  *   new = NULL;
     symsub  *   newsub = NULL;
-    int     rc;
-    bool    ok;
+    int         dummyi = 0;
+    int         rc;
+    bool        ok;
 
     if( !check_subscript( subscript ) ) {
         rc = 3;
@@ -397,6 +463,12 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             ok = add_symvar_sub( new, val, subscript, sub );
             if( !ok ) {
                 rc = 3;
+            } else {
+                if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                    if( rc < 3 ) {
+                        print_sym_entry( new, &dummyi, &dummyi );
+                    }
+                }
             }
             break;
         case 0 :                        // nothing found
@@ -404,6 +476,12 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             ok = add_symvar_sub( new, val, subscript, sub );
             if( !ok ) {
                 rc = 3;
+            } else {
+                if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                    if( rc < 3 ) {
+                        print_sym_entry( new, &dummyi, &dummyi );
+                    }
+                }
             }
             break;
         case 1 :                        // symbol found, but not subscript
@@ -411,6 +489,12 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             ok = add_symvar_sub( newsub->base, val, subscript, sub );
             if( !ok ) {
                 rc = 3;
+            } else {
+                if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                    if( rc < 3 ) {
+                        print_sym_entry( newsub->base, &dummyi, &dummyi );
+                    }
+                }
             }
             break;
         case 2 :              // symbol + subscript found, or not subscripted
@@ -424,6 +508,11 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
                 strcpy_s( newsub->value, strlen( val ) + 1, val );
             }
             *sub = newsub;
+            if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                if( rc < 3 ) {
+                    print_sym_entry( newsub->base, &dummyi, &dummyi );
+                }
+            }
             break;
         default:
             g_err( err_logic_err, __FILE__ );
@@ -482,26 +571,21 @@ void    reset_auto_inc_dict( symvar * dict )
     return;
 }
 
+
 /***************************************************************************/
 /*  print_sym_dict  output all of the symbol dictionary                    */
 /***************************************************************************/
 
 void    print_sym_dict( symvar * dict )
 {
-    symvar          *   wk;
-    symsub          *   ws;
-    int                 symcnt;
-    int                 symsubcnt;
-    int                 len;
-    bool                saveflag;
-    char            *   lgs;
-    static const char   fill[11] = "          ";
+    symvar      *   wk;
+    char        *   lgs;
+    int             symcnt;
+    int             symsubcnt;
 
+    wk          = dict;
     symcnt      = 0;
     symsubcnt   = 0;
-    wk          = dict;
-    saveflag    = ProcFlags.no_var_impl_err;
-    ProcFlags.no_var_impl_err = true;   // suppress err msg
 
     if( dict == sys_dict ) {
         lgs = "System";
@@ -512,58 +596,11 @@ void    print_sym_dict( symvar * dict )
     }
     out_msg( "\n%s list of symbolic variables:\n", lgs );
     while( wk != NULL ) {
-        len = strlen( wk->name );
-        if( wk->subscript_used > 0 ) {
-            out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s%s "
-                     "subscript_used=%d", wk->name, &fill[len],
-                     wk->flags & deleted ? "deleted " : "",
-                     wk->flags & local_var ? "local " : "",
-                     wk->flags & auto_inc ? "auto_inc " : "",
-                     wk->flags & predefined ? "predefined " : "",
-                     wk->flags & late_subst ? "late_subst " : "",
-                     wk->flags & ro ? "RO " : "",
-                     wk->flags & no_free ? "no_free " : "",
-                     wk->flags & access_fun ? "access_fun " : "",
-                     wk->subscript_used );
-        } else {
-            out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s%s ",
-                     wk->name, &fill[len],
-                     wk->flags & deleted ? "deleted " : "",
-                     wk->flags & local_var ? "local " : "",
-                     wk->flags & auto_inc ? "auto_inc " : "",
-                     wk->flags & predefined ? "predefined " : "",
-                     wk->flags & late_subst ? "late_subst " : "",
-                     wk->flags & ro ? "RO " : "",
-                     wk->flags & no_free ? "no_free " : "",
-                     wk->flags & access_fun ? "access_fun " : "");
-        }
-        ws = wk->subscripts;
-        if( wk->flags & subscripted ) {
-            symsubcnt++;
-            out_msg( "\n" );
-        } else {
-            if( (wk->flags & access_fun) && (wk->varfunc != NULL) ) {
-                (wk->varfunc)( wk );    // get current value
-            }
-            if( wk->sub_0->value == NULL) { // oops not initialized
-                out_msg( "\n" );
-            } else {
-                out_msg("value='%s'\n", wk->sub_0->value );
-            }
-            symcnt++;
-        }
-       if( wk->flags & subscripted ) {
-            while( ws != NULL ) {
-                out_msg( "   subscript= %8ld value='%s'\n",
-                        ws->subscript, ws->value );
-                ws = ws->next;
-            }
-        }
+        print_sym_entry( wk, &symcnt, &symsubcnt );
         wk = wk->next;
     }
     out_msg( "\nUnsubscripted symbols defined: %d\n", symcnt );
     out_msg( "Subscripted   symbols defined: %d\n", symsubcnt );
-    ProcFlags.no_var_impl_err = saveflag;
     return;
 }
 

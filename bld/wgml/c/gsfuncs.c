@@ -102,7 +102,6 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                 }
                 test_for_quote = false;
             } else {
-                test_for_quote = false;
                 switch( c ) {
                 case    '(' :
                     paren_level++;
@@ -115,7 +114,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                     }
                     break;
                 case    ')' :
-                    if( paren_level == 0 ) {
+                    if( paren_level <= 1 ) {
                         finished = true;
                     }
                     paren_level--;
@@ -127,6 +126,10 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                     test_for_quote = true;
                     break;
                 default:
+                    if( test_for_quote ) {
+
+                    }
+                    test_for_quote = false;
                     break;
                 }
             }
@@ -137,6 +140,23 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
     }
     return( pchar );
 #undef max_paren
+}
+
+
+/***************************************************************************/
+/*  find start of parm                                                     */
+/*     leading blanks are skipped                                          */
+/***************************************************************************/
+
+static  char    * find_start_of_parm( char * pchar )
+{
+    ++pchar;                            // over ( or ,
+    if( *pchar == ' ' ) {
+        while( *pchar == ' ' ) {        // over unquoted blanks
+            ++pchar;
+        }
+    }
+    return( pchar );
 }
 
 
@@ -230,9 +250,9 @@ char    *scr_multi_funcs( char * in, char * end, char * * result, int32_t valsiz
 
     for( k = 0; k < scr_functions[funcind].parm_cnt; k++ ) {
 
-        parms[k].a = ++pchar;           // first over ( then over ,
+        parms[k].a = find_start_of_parm( pchar );
 
-        pchar = find_end_of_parm( pchar, end );
+        pchar = find_end_of_parm( parms[k].a, end );
 
         parms[k].e = pchar - 1;
         parms[k + 1].a = pchar + 1;
@@ -256,9 +276,9 @@ char    *scr_multi_funcs( char * in, char * end, char * * result, int32_t valsiz
         k = 0;
     } else {
         for( k = 0; k < scr_functions[funcind].opt_parm_cnt; k++ ) {
-            parms[m + k].a = ++pchar;
+            parms[m + k].a = find_start_of_parm( pchar );
 
-            pchar = find_end_of_parm( pchar, end );
+            pchar = find_end_of_parm( parms[m + k].a, end );
 
             parms[m + k].e     = pchar - 1;
             parms[m + k + 1].a = pchar + 1;

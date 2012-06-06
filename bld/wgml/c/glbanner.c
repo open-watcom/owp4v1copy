@@ -27,24 +27,24 @@
 * Description: WGML implement :BANNER :eBANNER  tags for LAYOUT processing
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-
+ 
+ 
     banner_lay_tag  *   curr_ban;       // also needed for glbanreg.c
     banner_lay_tag  *   del_ban;        // ... banner to be deleted
-
-
+ 
+ 
 /***************************************************************************/
 /*   :BANNER    attributes                                                 */
 /***************************************************************************/
 const   lay_att     banner_att[8] =
     { e_left_adjust, e_right_adjust, e_depth, e_place, e_refplace,
       e_docsect, e_refdoc, e_dummy_zero };
-
+ 
 static  int             att_count = sizeof( banner_att );
 static  int             count[sizeof( banner_att )];
 static  int             sum_count;
@@ -53,10 +53,10 @@ static  bf_place        refplace;
 static  ban_docsect     refdoc;
 static  bool            banner_end_prepared = false;
 static  bool            banner_delete_req   = false;
-
+ 
 static  banner_lay_tag  *   prev_ban;
 static  banner_lay_tag  *   ref_ban;    // referenced banner for copy values
-
+ 
 /**********************************************************************************/
 /* Defines a page banner.  A page banner appears at the top and/or bottom         */
 /* of a page.  Information such as page numbers, running titles and the           */
@@ -151,32 +151,32 @@ static  banner_lay_tag  *   ref_ban;    // referenced banner for copy values
 /* place and docsect attributes, and delete the individual banner regions.        */
 /*                                                                                */
 /**********************************************************************************/
-
+ 
 /***************************************************************************/
 /*Mark the end of a banner definition.                                     */
 /*                                                                         */
 /*:eBANNER                                                                 */
 /*                                                                         */
 /***************************************************************************/
-
-
+ 
+ 
 /***************************************************************************/
 /*  init banner with no values                                             */
 /***************************************************************************/
-
+ 
 static  void    init_banner_wk( banner_lay_tag * ban )
 {
     char    *   p;
     char        z0[2] = "0";
     int         k;
-
+ 
     ban->next = NULL;
     ban->region = NULL;
     ban->top_line = NULL;
     ban->ban_left_adjust = 0;
     ban->ban_right_adjust = 0;
     ban->ban_depth = 0;
-
+ 
     p = &z0;
     to_internal_SU( &p, &(ban->left_adjust) );
     p = &z0;
@@ -185,14 +185,14 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     to_internal_SU( &p, &(ban->depth) );
     ban->place = no_place;
     ban->docsect = no_ban;
-
+ 
     refplace = no_place;
     refdoc = no_ban;
     curr_ban = NULL;
     prev_ban = NULL;
     ref_ban = NULL;
     del_ban = NULL;
-
+ 
     for( k = 0; k < att_count; k++ ) {
         count[k] = 0;
     }
@@ -200,12 +200,12 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     banner_end_prepared = false;
     banner_delete_req   = false;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  lay_banner                                                             */
 /***************************************************************************/
-
+ 
 void    lay_banner( const gmltag * entry )
 {
     char        *   p;
@@ -214,10 +214,10 @@ void    lay_banner( const gmltag * entry )
     lay_att         curr;
     att_args        l_args;
     bool            cvterr;
-
+ 
     p = scan_start;
     cvterr = false;
-
+ 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -230,9 +230,9 @@ void    lay_banner( const gmltag * entry )
     } else {
         if( !strnicmp( ":banner", buff2, sizeof( ":banner" ) ) ) {
             err_count++;                // nested :banner
-            g_err( err_nested_lay, entry->tagname );
+            g_err( err_nested_tag, entry->tagname );
             file_mac_info();
-
+ 
             while( !ProcFlags.reprocess_line  ) {
                 eat_lay_sub_tag();
                 if( strnicmp( ":ebanner", buff2, sizeof( ":ebanner" ) ) ) {
@@ -247,10 +247,10 @@ void    lay_banner( const gmltag * entry )
         cvterr = true;
         for( k = 0; k < att_count; k++ ) {
             curr = banner_att[k];
-
+ 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
-
+ 
                 if( count[k] ) {
                     cvterr = 1;         // attribute specified twice
                 } else {
@@ -297,7 +297,7 @@ void    lay_banner( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
-
+ 
 /***************************************************************************/
 /*  banner end processing (different from :eBANNER processing)             */
 /*  triggered by next tag following :BANNER tag                            */
@@ -309,13 +309,13 @@ void    lay_banner_end_prepare( void )
     region_lay_tag  *   regwknew2;
     region_lay_tag  *   regwkold;
     int                 k;
-
-
+ 
+ 
     if( banner_end_prepared ) {
         return;                         // once is enough
     }
     banner_end_prepared = true;
-
+ 
     curr_ban = &wk;
     banwk = layout_work.banner;
     ref_ban = NULL;
@@ -351,7 +351,7 @@ void    lay_banner_end_prepare( void )
             }
             // copy banregions too
             regwkold = ref_ban->region;
-
+ 
             while( regwkold != NULL ) { // allocate + copy banregions
                 regwknew = mem_alloc( sizeof( region_lay_tag ) );
                 memcpy( regwknew, regwkold, sizeof( region_lay_tag ) );
@@ -361,7 +361,7 @@ void    lay_banner_end_prepare( void )
                     regwknew2->next = regwknew;
                 }
                 regwknew2 = regwknew;
-
+ 
                 regwkold = regwkold->next;
             }
         }
@@ -388,19 +388,19 @@ void    lay_banner_end_prepare( void )
         }
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  lay_ebanner                                                            */
 /***************************************************************************/
-
+ 
 void    lay_ebanner( const gmltag * entry )
 {
     banner_lay_tag  *   banwk;
     region_lay_tag  *   reg;
-
+ 
     ProcFlags.lay_xxx = el_zero;        // banner no longer active
-
+ 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -408,7 +408,7 @@ void    lay_ebanner( const gmltag * entry )
     }
     if( ProcFlags.banner ) {            // are we inside banner
         ProcFlags.banner = false;
-
+ 
         lay_banner_end_prepare();       // if not yet done
         if( banner_delete_req ) {       // delete request
             /* While the documentation requires the banner regions to be
@@ -416,14 +416,14 @@ void    lay_ebanner( const gmltag * entry )
              * though the banner regions still exist.
              */
             if( del_ban != NULL ) {
-
+ 
                 while( del_ban->region != NULL) {
                     reg = del_ban->region;
                     del_ban->region = del_ban->region->next;
                     mem_free( reg );
                     reg = NULL;
                 }
-
+ 
                 if( prev_ban != NULL ) {
                     prev_ban->next = del_ban->next;
                 } else {
@@ -435,7 +435,7 @@ void    lay_ebanner( const gmltag * entry )
         } else {
             banwk = mem_alloc( sizeof( banner_lay_tag ) );
             memcpy( banwk, curr_ban, sizeof( banner_lay_tag ) );
-
+ 
 /***************************************************************************/
 /*  Adding banner to the existing banners either as first or last in chain */
 /*  Both give different order than wgml 4.0                                */

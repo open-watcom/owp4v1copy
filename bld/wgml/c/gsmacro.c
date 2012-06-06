@@ -117,12 +117,10 @@ void    add_macro_parms( char * p )
     if( len > 0 ) {
         char    starbuf[12];
         int     star0;
-
                                         // the macro parameter line
                                         // the name _ has to change (perhaps)
         add_symvar( &input_cbs->local_dict, MAC_STAR_NAME, p, no_subscript,
                     local_var );
-
         star0 = 0;
         garginit();
         cc = getarg();
@@ -149,7 +147,7 @@ void    add_macro_parms( char * p )
                     cc = omit;
                     star0++;
                     sprintf( starbuf, "%d", star0 );
-                    p = tok_start + arg_flen ;
+                    p = tok_start + arg_flen;
                     c = *p;                 // prepare value end
                     *p = '\0';              // terminate string
                     add_symvar( &input_cbs->local_dict, starbuf, tok_start,
@@ -161,7 +159,7 @@ void    add_macro_parms( char * p )
             if( cc == quotes ) {        // add argument as local symbolic var
                 star0++;
                 sprintf( starbuf, "%d", star0 );
-                p = tok_start + arg_flen ;
+                p = tok_start + arg_flen;
                 c = *p;                 // prepare value end
                 *p = '\0';              // terminate string
                 add_symvar( &input_cbs->local_dict, starbuf, tok_start,
@@ -287,10 +285,9 @@ void    scr_dm( void )
         return;
     }
 
-    p = tok_start;
-
-    pn      = macname;
-    len     = 0;
+    p   = tok_start;
+    pn  = macname;
+    len = 0;
 
     /*  truncate name if too long WITHOUT error msg
      *  this is wgml 4.0 behaviour
@@ -317,7 +314,7 @@ void    scr_dm( void )
         return;
     }
 
-    p = scan_start;
+    p    = scan_start;
     head = NULL;
     last = NULL;
     save = *p;             // save char so we can make null terminated string
@@ -343,7 +340,6 @@ void    scr_dm( void )
 
         *p   = save;
         lineno_start = cb->s.f->lineno;
-
 
         p = tok_start;
         sepchar = *p++;
@@ -385,7 +381,7 @@ void    scr_dm( void )
         utoa( cb->s.f->lineno, linestr, 10 );
         g_info( inf_file_line, linestr, cb->s.f->filename );
     }
-    *p   = save;
+    *p  = save;
     if( compbegin ) {                   // start new macro define
 
         ProcFlags.in_macro_define = 1;
@@ -669,10 +665,9 @@ void    scr_em( void )
     }
 
     if( *tok_start == SCR_char ) {      // possible macro name
-        p = tok_start + 1;              // over .
-
-        pn      = macname;
-        len     = 0;
+        p   = tok_start + 1;            // over .
+        pn  = macname;
+        len = 0;
 
         /*  truncate name if too long WITHOUT error msg
          *  this is wgml 4.0 behaviour

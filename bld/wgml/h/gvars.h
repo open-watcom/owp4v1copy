@@ -167,13 +167,17 @@ global struct ProcFlags {
     unsigned        line_started    : 1;// we have something for current line
     unsigned        just_override   : 1;// current line is to be justified
 
+    unsigned        address_active  : 1;// within :ADDRESS tag ) only one of
+    unsigned        fig_active      : 1;// within :FIG tag     ) these may be
+    unsigned        fn_active       : 1;// within :FN tag      ) set at a
+    unsigned        xmp_active      : 1;// within :XMP tag     ) time
+
     unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
-    unsigned        address_active  : 1;// within :ADDRESS tag
     unsigned        date_tag_seen   : 1;// :DATE is allowed only once
     unsigned        docnum_tag_seen : 1;// :DOCNUM is allowed only once
     unsigned        stitle_seen     : 1;// remember first stitle value
     unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
-    unsigned        title_text_seen : 1;// remember first :TITLE tag text 
+    unsigned        title_text_seen : 1;// remember first :TITLE tag text
     unsigned        empty_doc_el    : 1;// empty doc element allowed
     unsigned        group_elements  : 1;// currently grouping doc_elements
     unsigned        goto_active     : 1;// processing .go label

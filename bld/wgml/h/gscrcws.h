@@ -28,14 +28,14 @@
 *               only control words with a routine name other than scr_dummy
 *               are processed so far
 ****************************************************************************/
- 
+
 #ifndef picks
     #error macro picks not defined
 #endif
 //  control  routine    flags
 //     word  name
 // lower case
- 
+
   picks( ad, scr_dummy, cw_break           )// adjust
   picks( ap, scr_ap,    0                  )// append
   picks( bc, scr_dummy, cw_o_t             )// balance columns
@@ -58,7 +58,7 @@
   picks( co, scr_co,    cw_break+cw_o_t    )// concatenate
   picks( cp, scr_cp,    cw_break+cw_o_t    )// conditional page
   picks( cs, scr_dummy, cw_o_t             )// conditional section
-  picks( ct, scr_dummy, cw_o_t             )// continued text
+  picks( ct, scr_ct,    cw_o_t             )// continued text
   picks( cw, scr_cw,    0                  )// control word separator
   picks( dc, scr_dc,    0                  )// define character
   picks( df, scr_dummy, 0                  )// define font
@@ -168,6 +168,6 @@
   picks( us, scr_us,    cw_o_t             )// underscore
   picks( wd, scr_dummy, 0                  )// widow
   picklab( .., scr_label, 0                )
- 
+
 #undef picks
 #undef picklab
