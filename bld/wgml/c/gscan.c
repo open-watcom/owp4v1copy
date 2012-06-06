@@ -788,7 +788,11 @@ void    scan_line( void )
                     start_doc_sect();   // if not already done
                     g_err_tag_rsloc( rs_loc, scan_start );
                 } else {
-                    process_text( scan_start, g_curr_font_num );
+                    if( ProcFlags.xmp_active ) {
+                        xmp_xline( NULL );
+                    } else {
+                        process_text( scan_start, g_curr_font_num );
+                    }
                 }
             }
         }
