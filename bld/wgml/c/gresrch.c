@@ -127,7 +127,6 @@ void    print_GML_tags_research( void )
 
         }
     }
-    print_total( cnt, cnt1 );
     cnt = 0;
     cnt1 = 0;
     wk = tags;
