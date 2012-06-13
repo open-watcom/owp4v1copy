@@ -518,12 +518,13 @@ void    scr_gt( void )
 
         tag_flags = 0;
 
-        if( function == f_add ) {          // collect tag options
+        if( function == f_add ) {       // collect tag options
             cc = scan_tag_options( &tag_flags );
             if( cc != omit ) {          // not all processed error
                xx_err( err_tag_opt_inv );
             }
             tag_entry = add_tag( &tag_dict, tagname, macname, tag_flags );  // add to dictionary
+            // if tag_entry is now NULL, error (+ msg) was output in add_tag
         } else {                        // is function change
             tag_entry = change_tag( &tag_dict, tagname, macname );
         }

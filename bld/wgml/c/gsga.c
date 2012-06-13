@@ -491,6 +491,12 @@ void    scr_ga( void )
         // no operands or tagname * and no previous definition
         tag_name_missing_err();
     }
+    if( tag_entry == NULL ) {           // error during previous .gt
+
+        scan_restart = scan_stop + 1;   // ignore .ga
+        return;
+    }
+
 
     /***********************************************************************/
     /*  isolate tagname  use previous if tagname *                         */
@@ -676,6 +682,6 @@ void    scr_ga( void )
     } else if( val_flags & val_valptr ) {
         gaval->a.valptr = valptr;
     }
-    scan_restart = scan_stop +1;
+    scan_restart = scan_stop + 1;
     return;
 }
