@@ -224,7 +224,7 @@ condcode    getarg( void )
 
 
 /***************************************************************************/
-/*  scan       quoted string argument                                      */
+/*  scan       quoted string argument       special for if terms           */
 /***************************************************************************/
 
 condcode    getqst( void )
@@ -252,23 +252,31 @@ condcode    getqst( void )
         tok_start = p;
         c = *p;
         if( is_quote_char( c ) ) {
-            quote = c;     // single and double quotes, vertical bar and cent
+            quote = c;      // single or double quotes, vertical bar and cent
             p++;
             quoted = true;
         } else {
             quote = '\0';
             quoted = false;
         }
-        for( ; p <= scan_stop; p++ ) {
+        for( ; p <= scan_stop; p++ ) {  // look for end of string
 
-            if( *p == ' ' && quote == '\0' ) {
+            if( *p == '\0' ) {          // null char is end
                 break;
             }
-            if( *p == quote && *(p+1) != quote ) {// 2 quote chars not end of string
-                break;
-            }
-            if( *p == '\0' ) {
-                break;
+            if( quoted ) {
+                if( *p == quote ) {
+                    if( *(p+1) == '\0' || *(p+1) == ' ' ) {
+                        break;      // quote followed by blank or null is end
+                    }
+                    if( *(p+1) == quote ) {
+                        continue;       // 2 quote chars not end of string
+                    }
+                }
+            } else {                    // unquoted
+                if( *p == ' ' ) {
+                    break;              // blank is end
+                }
             }
         }
         if( quoted ) {
