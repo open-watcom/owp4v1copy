@@ -134,7 +134,6 @@ void    scr_tb( void )
     getnum_block    t_pos;
     int             i;
     int             len;
-    tab_list        old_tabs;
 
     p = scan_start;
     while( *p && (*p != ' ') ) {            // over tb
@@ -184,15 +183,9 @@ void    scr_tb( void )
 
         while( *p ) {                       // tab stop start
             if( user_tabs.current == user_tabs.length) {
-                old_tabs.tabs = user_tabs.tabs;
                 user_tabs.length += TAB_COUNT;  // add space for new tab stops
-                user_tabs.tabs = mem_alloc( user_tabs.length *
+                user_tabs.tabs = mem_realloc( user_tabs.tabs, user_tabs.length *
                                             sizeof( tab_stop ) );
-                for( i = 0; i < user_tabs.current; i++ ) {
-                    user_tabs.tabs[i].column = old_tabs.tabs[i].column;
-                    user_tabs.tabs[i].fill_char = old_tabs.tabs[i].fill_char;
-                    user_tabs.tabs[i].alignment = old_tabs.tabs[i].alignment;
-                }
             }
             i = user_tabs.current;          // initialize (not done elsewhere)
             user_tabs.tabs[i].column = 0;

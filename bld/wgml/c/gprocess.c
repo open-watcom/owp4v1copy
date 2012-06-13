@@ -390,6 +390,10 @@ void        process_line( void )
 
         pchar = strchr( workbuf, ampchar ); // look for & in buffer
         while( pchar != NULL ) {        // & found
+            if( *(pchar + 1) == ' ' ) { // not a symbol substition or function
+                pchar = strchr( pchar + 1, ampchar );  // look for next & in buffer
+                continue;
+            }
             while( pw < pchar ) {       // copy all data preceding &
                 *p2++ = *pw++;
             }
