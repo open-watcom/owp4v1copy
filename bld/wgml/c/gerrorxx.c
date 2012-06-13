@@ -343,7 +343,7 @@ void    g_err_tag_rsloc( locflags inloc, char *pa )
 {
     char    *   tag_name    = NULL;
     int         i;
-    
+
     for( i = 0; i < L2N_ENTRIES; i++ ) {
         if( l2n_names[i].location == inloc ) {
             tag_name = l2n_names[i].tagname;
@@ -380,4 +380,19 @@ void    g_err_tag_prec( char * tag )
     err_count++;
     return;
 }
+
+void    g_err_tag_x_in_y( char * tag1, char * tag2 )
+{
+    char    tagn1[TAG_NAME_LENGTH + 1];
+    char    tagn2[TAG_NAME_LENGTH + 1];
+
+    sprintf_s( tagn1, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag1 );
+    sprintf_s( tagn2, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag2 );
+    g_err( err_tag_x_in_y, tagn1, tagn2 );
+    file_mac_info();
+    err_count++;
+    return;
+}
+
+
 

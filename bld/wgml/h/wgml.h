@@ -166,6 +166,7 @@ extern  void    g_err_tag_nest( char *tagname );
 extern  void    g_err_tag_rsloc( locflags inloc, char *pa );
 extern  void    g_err_tag_no( char *tagname );
 extern  void    g_err_tag_prec( char *tagname );
+extern  void    g_err_tag_x_in_y( char *tagname1, char *tagname2 );
 
 
 /* getnum.c                             */

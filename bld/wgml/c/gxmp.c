@@ -90,6 +90,27 @@ extern  void    gml_xmp( const gmltag * entry )
         return;
     }
 
+    /******************************************************************/
+    /*  test for XMP within  :ADDRESS, :FIG , :FN                     */
+    /******************************************************************/
+    if( ProcFlags.address_active ) {
+        g_err_tag_x_in_y( "XMP", "ADDRESS" );
+        scan_start = scan_stop + 1;
+        return;
+    } else {
+        if( ProcFlags.fig_active ) {
+            g_err_tag_x_in_y( "XMP", "FIG" );
+            scan_start = scan_stop + 1;
+            return;
+        } else {
+            if( ProcFlags.fn_active ) {
+                g_err_tag_x_in_y( "XMP", "FN" );
+                scan_start = scan_stop + 1;
+                return;
+            }
+        }
+    }
+
     ProcFlags.xmp_active = true;
     first_xline = true;
     font_save = g_curr_font_num;

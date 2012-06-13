@@ -426,6 +426,9 @@ pick( WNG_UNSUPP_LAY_ATT,       "Unsupported GML layout tag attribute: ':%s %s'"
 pick( ERR_NESTED_TAG,           "Nested %s not supported",
                                 "Nested %s not supported" )
 
+pick( ERR_TAG_X_IN_Y,           "%s tag not allowed within %s tag",
+                                "%s tag not allowed within %s tag" )
+
 pick( ERR_NO_LAY,               "No %s active for '%s'",
                                 "No %s active for '%s'" )
 
