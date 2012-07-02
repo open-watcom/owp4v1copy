@@ -817,7 +817,8 @@ static void sysquietfun( symvar * e )
 
 static void sysrbfun( symvar * e )      // required blank
 {                                       // can't get any functionality TBD
-    var_wng( e->name, e );
+    *sysrbstr = sysrb0.value[0];
+//    var_wng( e->name, e );
     return;
 };
 

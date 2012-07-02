@@ -103,8 +103,6 @@ void    garginit( void )
     }
     scan_start = p;                     // store control word end address
 
-    open_paren = NULL;                  // clear open parenthesis pointer
-    clos_paren = NULL;                  // clear close parenthesis pointer
     tok_start = NULL;                   // clear token start address
 }
 
@@ -122,8 +120,6 @@ void    garginitdot( void )
     }
     scan_start = p;                     // store tag end or space address
 
-    open_paren = NULL;                  // clear open parenthesis pointer
-    clos_paren = NULL;                  // clear close parenthesis pointer
     tok_start = NULL;                   // clear token start address
 }
 

@@ -195,7 +195,6 @@ typedef struct symvar {
 /***************************************************************************/
 /*  Flags for filecb and macrocb                                           */
 /***************************************************************************/
-
 typedef enum {
     FF_clear        = 0x0000,           // clear all flags
     FF_eof          = 0x0002,           // eof
@@ -206,8 +205,10 @@ typedef enum {
     FF_open         = 0x8000            // file is open
 } fflags;
 
+
 /***************************************************************************/
 /*  List of (defined macro / input) lines                                  */
+/*    also used for in_buf_pool in this case fixed length buf_size         */
 /***************************************************************************/
 typedef struct inp_line {
     struct inp_line *   next;           // next line
@@ -520,7 +521,7 @@ typedef enum condcode {            // return code for some scanning functions
     quotes          = 8,                // argument within quotes
     quotes0         = 16,               // only quotes
     no              = 32,               // argument undefined
-    notnum          = 32                 // value not numeric / overflow
+    notnum          = 32                // value not numeric / overflow
 }  condcode;
 
 
@@ -531,6 +532,7 @@ typedef enum condcode {            // return code for some scanning functions
 typedef struct parm {
     char    *       a;                  // start of parm ptr
     char    *       e;                  // end of parm ptr
+    bool            incomplete;         // parm contains symvar or function
 } parm;
 
 

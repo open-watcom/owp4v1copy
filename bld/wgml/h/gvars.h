@@ -226,12 +226,6 @@ global  char        *   token_buf;
 global char         *   workbuf;        // work for input buffer
 global char         *   buff2;          // input buffer
 global size_t           buff2_lg;       // input buffer used length
-global char         *   open_paren;     // ( in input
-global char         *   clos_paren;     // ) in input
-global char         *   var_unresolved; // first unresolved var in input
-
-global char             srnm[SYM_NAME_LENGTH + 1];// symbol name for getsym()
-global sub_index        srnmsub;        // subscript
 
 // the following to manage .gt * and .ga * * syntax
 global char         tagname[TAG_NAME_LENGTH + 1];// last defined GML tag name

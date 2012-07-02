@@ -146,7 +146,7 @@ void init_global_vars( void )
     doc_el_pool             = NULL;
 
     lay_files           = NULL;         // filename(s) from ( LAYout option
- 
+
     index_dict          = NULL;
 
     init_dict( &global_dict );

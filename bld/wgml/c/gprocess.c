@@ -34,8 +34,6 @@
 #include "wgml.h"
 #include "gvars.h"
 
-static  char    *   var_unresolved2;    // ptr for resume search
-
 
 /*  split_input
  *  The (physical) line is split
@@ -97,6 +95,7 @@ void        split_input_LIFO( char * buf, char * split_pos )
     return;
 }
 
+
 /*  split_input_var
  *  The second part is constructed from 2 parts
  *  used if a substituted variable starts with CW_sep_char
@@ -110,18 +109,14 @@ static  void    split_input_var( char * buf, char * split_pos, char * part2 )
     len = strlen( split_pos ) + strlen( part2 );// length of second part
     if( len > 0 ) {
         wk = mem_alloc( len + sizeof( inp_line ) );
-        wk->next = NULL;
+        wk->next = input_cbs->hidden_head;
 
         strcpy(wk->value, part2 );      // second part
         strcat(wk->value, split_pos );  // second part
 
-        if( input_cbs->hidden_tail != NULL ) {
-            input_cbs->hidden_tail->next = wk;
-        }
-        input_cbs->hidden_tail = wk;
-
-        if( input_cbs->hidden_head == NULL ) {
-            input_cbs->hidden_head = wk;
+        input_cbs->hidden_head = wk;
+        if( input_cbs->hidden_tail == NULL ) {
+            input_cbs->hidden_tail = wk;
         }
         input_cbs->fmflags &= ~II_eol;  // not last part of line
     }
@@ -204,7 +199,7 @@ static void split_at_GML_tag( void )
                         }
                     }
                 }
-                split_input( buff2, pchar );// split line
+                split_input_LIFO( buff2, pchar );// split line
                 if( ProcFlags.literal ) {   // if literal active
                     if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
                         li_cnt++;
@@ -238,54 +233,40 @@ static void split_at_CW_sep_char( char * splitpos ) {
             splitpos = strchr( buff2 + 2, CW_sep_char );
         }
         if( (splitpos != NULL) && (*(splitpos + 1) != '\0') ) {
+
             if( (*(splitpos - 1) == '\'') && (*(splitpos + 1) == '\'') ) {
-            ;// hack for testing macro repchars docs\doc\hlp\fmtmacro.gml(174)
+                ;
+            // hack for testing macro repchars docs\doc\hlp\fmtmacro.gml(174)
                                         // don't split &'index("&x.",';') TBD
-            } else
+            } else {
 
-            if( *(splitpos + 1) != CW_sep_char ) {
-                split_input( buff2, splitpos + 1 );// split after CW_sep_char
+                if( *(splitpos + 1) != CW_sep_char ) {
+                    split_input_LIFO( buff2, splitpos + 1 );// split after CW_sep_char
 
-                buff2_lg = strnlen_s( buff2, buf_size ) - 1;
-                *(buff2 + buff2_lg) = '\0'; // terminate 1. part
+                    buff2_lg = strnlen_s( buff2, buf_size ) - 1;
+                    *(buff2 + buff2_lg) = '\0'; // terminate 1. part
 #if 0
-            } else {                    // ignore 1 CW_sep_char TBD
-                memmove_s( splitpos, splitpos - buff2 + buff2_lg + 1,
-                           splitpos + 1, splitpos - buff2 + buff2_lg );
-                buff2_lg = strnlen_s( buff2, buf_size );
+                } else {                // ignore 1 CW_sep_char TBD
+                    memmove_s( splitpos, splitpos - buff2 + buff2_lg + 1,
+                               splitpos + 1, splitpos - buff2 + buff2_lg );
+                    buff2_lg = strnlen_s( buff2, buf_size );
 #endif
+                }
             }
         }
     }
 }
 
+
 /***************************************************************************/
-/*  take the contents of the input line in buff2 and try to make the best  */
-/*  of it                                                                  */
-/*  Processing as specified in wgmlref.pdf chapter 8.1 processing rules    */
-/*  and results from testing with wgml 4                                   */
-/*                                        imcomplete               TBD     */
+/*   Split input line at GML tag or script Control word separator          */
 /*                                                                         */
 /***************************************************************************/
 
-void        process_line( void )
-{
-    static const char   ampchar = '&';
-    char            *   pw;
-    char            *   pwend;
+void    split_input_buffer( void ) {
     char            *   p2;
     char            *   pchar;
-    char            *   varstart;
-    sub_index           var_ind;
-    symvar              symvar_entry;
-    symsub          *   symsubval;
-    int                 rc;
     int                 k;
-    bool                resolve_functions;
-    bool                functions_found;
-    bool                anything_substituted;
-
-    ProcFlags.late_subst = false;
 
     /***********************************************************************/
     /*  look for GML tag start character and split line at GML tag         */
@@ -360,27 +341,63 @@ void        process_line( void )
             }
         }
     }
+    return;
+}
 
 
-/*
- * look for symbolic variables and single letter functions,
- *  ignore multi letter function for now, but remember there was one
- */
-    ProcFlags.substituted = false;
-    anything_substituted = false;
+/***************************************************************************/
+/*    symbolic variables, single letter functions and                      */
+/*    multi letter functions are resolved here                             */
+/*  this function is called recursively via scr_multi_funcs()              */
+/***************************************************************************/
+
+bool    resolve_symvar_functions( char * buf )
+{
+    static const char   ampchar = '&';
+    inp_line        *   in_wk;
+    char            *   workb;
+    char            *   pw;
+    char            *   pwend;
+    char            *   p2;
+    char            *   pchar;
+    char            *   varstart;
+    sub_index           var_ind;
+    symvar              symvar_entry;
+    symsub          *   symsubval;
+    size_t              buf_lg;
+    int                 rc;
+    bool                functions_found;
+    bool                anything_substituted;
+
+    char            *   var_unresolved; // ptr for resume search
+    char            *   var_unresolved2;// ptr for resume search
+
     ProcFlags.late_subst = false;
+    ProcFlags.substituted = false;
     ProcFlags.unresolved  = false;
+
+    if( NULL == strchr( buf, ampchar ) ) {  // look for & in buffer
+        return( false );              // no ampchar found, nothing to resolve
+    }
+
+    anything_substituted = false;
     var_unresolved = NULL;
+    var_unresolved2 = NULL;
     functions_found = false;
+
+    in_wk = mem_alloc( sizeof( inp_line ) + buf_size );// allocate workbuffer
+    in_wk->next = NULL;
+    workb = in_wk->value;               // allocate workbuffer
+
     do {                                // until no more substitutions
-        strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
-        buff2_lg = strnlen_s( buff2, buf_size );
-        pwend = workbuf + buff2_lg;
+        strcpy_s( workb, buf_size, buf );   // copy input buffer
+        buf_lg = strnlen_s( buf, buf_size );
+        pwend = workb + buf_lg;
         if( var_unresolved == NULL ) {
-            pw = workbuf;
-            p2 = buff2;
+            pw = workb;
+            p2 = buf;
         } else {
-            pw = workbuf + (var_unresolved2 - buff2);
+            pw = workb + (var_unresolved2 - buf);
             p2 = var_unresolved2;
         }
         varstart = NULL;
@@ -388,7 +405,7 @@ void        process_line( void )
         anything_substituted |= ProcFlags.substituted;
         ProcFlags.substituted = false;
 
-        pchar = strchr( workbuf, ampchar ); // look for & in buffer
+        pchar = strchr( workb, ampchar ); // look for & in buffer
         while( pchar != NULL ) {        // & found
             if( *(pchar + 1) == ' ' ) { // not a symbol substition or function
                 pchar = strchr( pchar + 1, ampchar );  // look for next & in buffer
@@ -397,51 +414,84 @@ void        process_line( void )
             while( pw < pchar ) {       // copy all data preceding &
                 *p2++ = *pw++;
             }
-            buff2_lg = strnlen_s( buff2, buf_size );
+            buf_lg = strnlen_s( buf, buf_size );
 
-            /***********************************************************/
-            /*  Some single letter functions are resolved here:        */
-            /*                                                         */
-            /*  functions used within the OW doc build system:         */
-            /*   &e'  existance of variable 0 or 1                     */
-            /*   &l'  length of variable content                       */
-            /*        or if undefined variable length of name          */
-            /*   &u'  upper                                            */
-            /*                                                         */
-            /*   &s'  subscript                                        */
-            /*   &S'  superscript                                      */
-            /*                                                         */
-            /*   other single letter functions are not used AFAIK      */
-            /*                                                         */
-            /***********************************************************/
             if( isalpha( *(pchar + 1) ) && *(pchar + 2) == '\''
                 && *(pchar + 3) > ' ' ) {
                                         // not for .if '&*' eq '' .th ...
                                         // only    .if '&x'foo' eq '' .th
                 char * * ppval = &p2;
 
+                /***********************************************************/
+                /*  Some single letter functions are resolved here:        */
+                /*                                                         */
+                /*  functions used within the OW doc build system:         */
+                /*   &e'  existance of variable 0 or 1                     */
+                /*   &l'  length of variable content                       */
+                /*        or if undefined variable length of name          */
+                /*   &u'  upper                                            */
+                /*                                                         */
+                /*   &s'  subscript                                        */
+                /*   &S'  superscript                                      */
+                /*                                                         */
+                /*   other single letter functions are not used AFAIK      */
+                /*                                                         */
+                /***********************************************************/
+
                 if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
                     add_single_func_research( pchar + 1 );
                 }
+
                 pw = scr_single_funcs( pchar, pwend, ppval );
+
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
 
                 continue;
             }
 
             if( *(pchar + 1) == '\'' ) {// perhaps a multi letter function
-                pchar += 2;
-                while( is_function_char( *pchar ) ) {
-                    pchar++;
+
+                char   * pf;
+                char * * ppval = &p2;
+                int32_t  valsize = buf_size - (p2 - buf);
+
+                pf = pchar + 2;
+                while( is_function_char( *pf ) ) {
+                    pf++;
                 }
-                if( *pchar == '(' ) {// &'xyz( is start of multi char function
-                    functions_found = true; // really a multi letter function
+                if( *pf == '(' ) {// &'xyz( is start of multi char function
+
+                /***********************************************************/
+                /*  Some multi  letter functions are resolved here:        */
+                /*                                                         */
+                /*  functions used within the OW doc build system:         */
+                /*                                                         */
+                /*   &'delstr(          &'d2c(              &'index(       */
+                /*   &'insert(          &'left(             &'length(      */
+                /*   &'lower(           &'min(              &'pos(         */
+                /*   &'right(           &'strip(            &'substr(      */
+                /*   &'subword(         &'translate(        &'upper(       */
+                /*   &'veclastpos(      &'vecpos(           &'word(        */
+                /*   &'wordpos(         &'words(                           */
+                /*                                                         */
+                /*   Others are recognized but not processed               */
+                /*   &'c2x(    is used for test output                     */
+                /***********************************************************/
+
+                    pw = scr_multi_funcs( pchar, pwend, ppval, valsize );
+
+                    pchar = strchr( pw, ampchar );// look for next & in buffer
+                    continue;
                 }
+
                 *p2++ = *pw++;          // copy &
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
-
                 continue;               // and ignore function or & for now
             }
+
+            /***************************************************************/
+            /* &  is start of a variable                                   */
+            /***************************************************************/
 
             varstart = pw;              // remember start of var
             pw++;                       // over &
@@ -488,6 +538,17 @@ void        process_line( void )
                     symsubval->value[0] == CW_sep_char &&
                     symsubval->value[1] != CW_sep_char ) {
 
+                    if( buf != buff2 ) {
+
+                    // splitting input if not outermost buffer TBD
+
+                        g_suicide();
+                    }
+                }
+                if( !ProcFlags.CW_sep_ignore &&
+                    symsubval->value[0] == CW_sep_char &&
+                    symsubval->value[1] != CW_sep_char ) {
+
                                 // split record at control word separator
                                 // if variable starts with SINGLE cw separator
 
@@ -495,7 +556,7 @@ void        process_line( void )
                         pchar++;        // skip optional terminating dot
                     }
                     *p2 = '\0';
-                    split_input_var( buff2, pchar, &symsubval->value[1] );
+                    split_input_var( buf, pchar, &symsubval->value[1] );
                     pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
 
@@ -517,15 +578,6 @@ void        process_line( void )
             } else {                    // variable not found
                 if( (symvar_entry.flags & local_var )  // local var not found
                     ) {
-
- // TBD
-
-//                  && (input_cbs->fmflags & II_macro) ) {// .. and inside macro
-
-
-
-
-
                     if( (symvar_entry.name[0] == '\0') &&
                         (*pchar == ampchar) ) { // only &* as var name
                                                 // followed by another var
@@ -605,84 +657,29 @@ void        process_line( void )
 
     anything_substituted |= ProcFlags.substituted;
 
-/* handle multi letter functions, ignore any unresolved variable
- */
+    mem_free( in_wk );                  // free workbuffer
+    return( anything_substituted );
+}
 
-    if( functions_found ) {
-        resolve_functions = false;
-        functions_found   = false;
-        var_unresolved = NULL;
-        ProcFlags.unresolved  = false;
-        do {
-            strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
-            buff2_lg = strnlen_s( buff2, buf_size );
-            pwend = workbuf + buff2_lg;
-            if( var_unresolved == NULL ) {
-                pw = workbuf;
-                p2 = buff2;
-            } else {
-                pw = workbuf + (var_unresolved2 - buff2);
-                p2 = var_unresolved2;
-            }
-            varstart = NULL;
 
-            ProcFlags.substituted = false;
+/***************************************************************************/
+/*  take the contents of the input line in buff2 and try to make the best  */
+/*  of it                                                                  */
+/*  Processing as specified in wgmlref.pdf chapter 8.1 processing rules    */
+/*  and results from testing with wgml 4                                   */
+/*                                        imcomplete               TBD     */
+/*                                                                         */
+/***************************************************************************/
 
-            pchar = strchr( workbuf, ampchar ); // look for & in buffer
-            while( pchar != NULL ) {    // & found
-                while( pw < pchar ) {   // copy all data preceding &
-                    *p2++ = *pw++;
-                }
-                buff2_lg = strnlen_s( buff2, buf_size );
+void        process_line( void )
+{
+    bool                anything_substituted;
 
-                /***********************************************************/
-                /*  Some multi  letter functions are resolved here:        */
-                /*                                                         */
-                /*  functions used within the OW doc build system:         */
-                /*                                                         */
-                /*   &'delstr(          &'d2c(              &'index(       */
-                /*   &'insert(          &'left(             &'length(      */
-                /*   &'lower(           &'min(              &'pos(         */
-                /*   &'right(           &'strip(            &'substr(      */
-                /*   &'subword(         &'translate(        &'upper(       */
-                /*   &'veclastpos(      &'vecpos(           &'word(        */
-                /*   &'wordpos(         &'words(                           */
-                /*                                                         */
-                /*   Others are recognized but not processed               */
-                /*   &'c2x(    is used for test output                     */
-                /***********************************************************/
-                if( *(pchar + 1) == '\'' ) {
-                    char   * pf;
-                    char * * ppval = &p2;
-                    int32_t  valsize = buf_size - (p2 - buff2);
+    split_input_buffer();
 
-                    pf = pchar + 2;
-                    while( is_function_char( *pf ) ) {
-                        pf++;
-                    }
-                    if( *pf == '(' ) {// &'xyz( is start of multi char function
-                        pw = scr_multi_funcs( pchar, pwend, ppval, valsize );
-                        pchar = strchr( pw, ampchar );// look for next & in buffer
-                        continue;
-                    } else {
-                        *p2++ = *pw++;  // over &
-                        pchar = strchr( pw, ampchar );// look for next & in buffer
-                    }
-                } else {
-                    *p2++ = *pw++;      // over &
-                    pchar = strchr( pw, ampchar );// look for next & in buffer
-                }
-            }                           // while & found
+    ProcFlags.late_subst = false;
 
-            while( pw <= pwend) {       // copy remaining input
-                 *p2++ = *pw++;
-            }
-
-            anything_substituted |= ProcFlags.substituted;
-        } while( ProcFlags.unresolved && ProcFlags.substituted );
-
-    }                                   // if functions_found
-    anything_substituted |= ProcFlags.substituted;
+    anything_substituted = resolve_symvar_functions( buff2 );
 
     buff2_lg = strnlen_s( buff2, buf_size );
 
@@ -699,6 +696,7 @@ void        process_line( void )
 /***************************************************************************/
 /*  process late substitute symbols &gml, &amp, ...                        */
 /*  this is done after gml tag and script control word recognition         */
+/*                                                                         */
 /***************************************************************************/
 
 void        process_late_subst( void )
@@ -709,6 +707,8 @@ void        process_late_subst( void )
     char            *   p2;
     char            *   pchar;
     char            *   varstart;
+    char            *   var_unresolved; // ptr for resume search
+    char            *   var_2;
     sub_index           var_ind;
     symvar              symvar_entry;
     symsub          *   symsubval;
@@ -718,8 +718,9 @@ void        process_late_subst( void )
 
     ProcFlags.late_subst = false;
 
-    buff2_lg = strnlen_s( buff2, buf_size );
-
+    if( NULL == strchr( buff2, ampchar ) ) {// look for & in buffer
+        return;                       // no ampchar found, nothing to resolve
+    }
 
     /***********************************************************************/
     /* for :cmt. minimal processing                                        */
@@ -766,6 +767,7 @@ void        process_late_subst( void )
     ProcFlags.substituted = false;
     anything_substituted = false;
     var_unresolved = NULL;
+    var_2 = NULL;
     ProcFlags.unresolved  = false;
     do {                                // until no more substitutions
         strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
@@ -775,8 +777,8 @@ void        process_late_subst( void )
             pw = workbuf;
             p2 = buff2;
         } else {
-            pw = workbuf + (var_unresolved2 - buff2);
-            p2 = var_unresolved2;
+            pw = workbuf + (var_2 - buff2);
+            p2 = var_2;
         }
         varstart = NULL;
 
@@ -800,7 +802,7 @@ void        process_late_subst( void )
                 if( var_unresolved == NULL ) {
                     ProcFlags.unresolved  = true;
                     var_unresolved = varstart;
-                    var_unresolved2 = p2;
+                    var_2 = p2;
                 } else {
                     if( var_unresolved != varstart ) {
                         ProcFlags.unresolved  = true;
@@ -863,7 +865,7 @@ void        process_late_subst( void )
                         if( var_unresolved == NULL ) {
                             ProcFlags.unresolved  = true;
                             var_unresolved = varstart;
-                            var_unresolved2 = p2;
+                            var_2 = p2;
                         } else {
                             if( var_unresolved != varstart ) {
                                 ProcFlags.unresolved  = true;
@@ -908,7 +910,7 @@ void        process_late_subst( void )
                     if( var_unresolved == NULL ) {
                         ProcFlags.unresolved  = true;
                         var_unresolved = varstart;
-                        var_unresolved2 = p2;
+                        var_2 = p2;
                     } else {
                         if( var_unresolved != varstart ) {
                             ProcFlags.unresolved  = true;
