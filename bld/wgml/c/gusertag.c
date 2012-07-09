@@ -385,6 +385,10 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         add_macro_cb_entry( me, ge );   // prepare GML macro as input
         input_cbs->local_dict = loc_dict;
         inc_inc_level();                // start new include level
+        if( ge->tagflags & tag_cont ) { // +++++++++++++++++++ TBD trial
+            post_space = 0;
+            ProcFlags.ct = true;
+        }
 
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
             print_sym_dict( input_cbs->local_dict );
@@ -450,6 +454,10 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         add_macro_cb_entry( me, ge );   // prepare GML macro as input
         input_cbs->local_dict = loc_dict;
         inc_inc_level();                // start new include level
+        if( ge->tagflags & tag_cont ) { // +++++++++++++++++++ TBD trial
+            post_space = 0;
+            ProcFlags.ct = true;
+        }
 
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
             print_sym_dict( input_cbs->local_dict );

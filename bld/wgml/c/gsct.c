@@ -71,10 +71,7 @@ void    scr_ct( void )
 {
     char        *   p;
 
-    p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+    p = scan_start;                     // next char after .ct
     if( *p ) {                          // line operand specified
         p++;                            // over space
         if( *p ) {

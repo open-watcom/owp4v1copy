@@ -246,7 +246,7 @@ static void split_at_CW_sep_char( char * splitpos ) {
                     buff2_lg = strnlen_s( buff2, buf_size ) - 1;
                     *(buff2 + buff2_lg) = '\0'; // terminate 1. part
 #if 0
-                } else {                // ignore 1 CW_sep_char TBD
+                } else {                // ignore 1 CW_sep_char
                     memmove_s( splitpos, splitpos - buff2 + buff2_lg + 1,
                                splitpos + 1, splitpos - buff2 + buff2_lg );
                     buff2_lg = strnlen_s( buff2, buf_size );
@@ -392,7 +392,7 @@ bool    resolve_symvar_functions( char * buf )
     do {                                // until no more substitutions
         strcpy_s( workb, buf_size, buf );   // copy input buffer
         buf_lg = strnlen_s( buf, buf_size );
-        pwend = workb + buf_lg;
+        pwend = workb + buf_lg - 1;
         if( var_unresolved == NULL ) {
             pw = workb;
             p2 = buf;
@@ -486,11 +486,14 @@ bool    resolve_symvar_functions( char * buf )
 
                 *p2++ = *pw++;          // copy &
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
-                continue;               // and ignore function or & for now
+                continue;               // and ignore this &... for now
             }
 
             /***************************************************************/
-            /* &  is start of a variable                                   */
+            /* & is neither start of single char function                  */
+            /*   nor start of multi char function                          */
+            /*                                                             */
+            /* &  is probably start of a variable                          */
             /***************************************************************/
 
             varstart = pw;              // remember start of var
@@ -538,19 +541,16 @@ bool    resolve_symvar_functions( char * buf )
                     symsubval->value[0] == CW_sep_char &&
                     symsubval->value[1] != CW_sep_char ) {
 
+                                // split record at control word separator
+                                // if variable starts with SINGLE cw separator
+                                // and ignore cw separator
+
                     if( buf != buff2 ) {
 
-                    // splitting input if not outermost buffer TBD
+                    // splitting input if not outermost buffer ++++ TBD
 
                         g_suicide();
                     }
-                }
-                if( !ProcFlags.CW_sep_ignore &&
-                    symsubval->value[0] == CW_sep_char &&
-                    symsubval->value[1] != CW_sep_char ) {
-
-                                // split record at control word separator
-                                // if variable starts with SINGLE cw separator
 
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
@@ -652,6 +652,7 @@ bool    resolve_symvar_functions( char * buf )
         while( pw <= pwend) {           // copy remaining input
              *p2++ = *pw++;
         }
+        *p2 = 0;                        // terminate string
 
     } while( ProcFlags.unresolved && ProcFlags.substituted );
 
@@ -930,7 +931,7 @@ void        process_late_subst( void )
         }                               // while & found
 
         while( pw <= pwend) {           // copy remaining input
-             *p2++ = *pw++;
+             *p2++ = *pw++;             // and terminating '\0'
         }
 
     } while( ProcFlags.unresolved && ProcFlags.substituted );

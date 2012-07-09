@@ -1251,7 +1251,7 @@ void    process_text( char * text, uint8_t font_num )
     count = p - text;
     p = text;                               // restore p to start of text
 
-    if( !ProcFlags.ct ) {                   // not if text follows CT      
+    if( !ProcFlags.ct ) {                   // not if text follows CT
         if( count != strlen( p ) ) {        // tab character found in input text
             if( user_tabs.current > 0 ) {   // user tabs exist
                 if( input_cbs->fmflags & II_sol ) {   // at start of input line
@@ -1292,7 +1292,7 @@ void    process_text( char * text, uint8_t font_num )
         if( ProcFlags.concat ) {    // ".co on"
             if( post_space == 0 ) {
                 // compute initial spacing if needed; .ct affects this
-                if( (*p == ' ') || ((input_cbs->fmflags & II_sol) && !ProcFlags.ct 
+                if( (*p == ' ') || ((input_cbs->fmflags & II_sol) && !ProcFlags.ct
                                 && (ju_x_start <= t_line->last->x_address)) ) {
                     post_space = wgml_fonts[font_num].spc_width;
                     if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
@@ -1636,5 +1636,6 @@ void    process_text( char * text, uint8_t font_num )
             }
         }
     }
+    ProcFlags.ct = false;               // experimental TBD
 }
 
