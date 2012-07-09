@@ -126,7 +126,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
         if( cm1 == ampchar ) {
             if( c == '\'' ) {
                 multiletter_function = true;// parm contains a function
-                delta_paren = 1;         // TBD
+                delta_paren = 1;        // TBD
                 instring[paren_level + 1] = false;
             } else {
                 var_in_parm = true;     // parm contains variable
@@ -310,7 +310,6 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
         if( parms[k].incomplete ) {
 
             resbuf = alloc_resbuf( &in_wk );
-
             strcpy_s( resbuf, buf_size, parms[k].a);// copy parm
 
             ps = resbuf + (pchar - parms[k].a);
@@ -362,7 +361,6 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
             if( parms[m + k].incomplete ) {
 
                 resbuf = alloc_resbuf( &in_wk );
-
                 strcpy_s( resbuf, buf_size, parms[m + k].a);// copy parm
 
                 ps = resbuf + (pchar - parms[m + k].a);
