@@ -75,21 +75,6 @@ static  char    * alloc_resbuf( inp_line ** in_wk )
 }
 
 
-/****************************************************/
-/*free the buffers  for resolving symvars+functions */
-/****************************************************/
-static void   free_in_wk( inp_line * in_wk )
-{
-    inp_line    * wk;
-    wk = in_wk;
-    while( wk != NULL ) {
-        in_wk = wk->next;
-        mem_free( wk );
-        wk = in_wk;
-    }
-}
-
-
 /*  find end of parm for multi letter functions
  *     end of parm is either , or )
  *     but only if outside of string and not in deeper paren level
@@ -126,7 +111,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
         if( cm1 == ampchar ) {
             if( c == '\'' ) {
                 multiletter_function = true;// parm contains a function
-                delta_paren = 1;        // TBD
+                delta_paren = 1;         // TBD
                 instring[paren_level + 1] = false;
             } else {
                 var_in_parm = true;     // parm contains variable
@@ -405,7 +390,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
 
     ProcFlags.suppress_msg = false;
 
-    free_in_wk( in_wk );
+    free_lines( in_wk );
 
     if( cc != pos ) {                   // error in function
         **result = '&';                 // result is & to preserve the input

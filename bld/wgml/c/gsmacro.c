@@ -90,17 +90,19 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 /*
  * add macro parms from input line as local symbolic variables
  * for non quoted parms try to assign symbolic variables
- * i.e.  a b c *var="1.8" d "1 + 2"
- *    will give &* =a b c *var="1.8" d "1 + 2"
+ * i.e. .mac     a b c *xyz="1.8" d "1 + 2"
+ *          01234
+ *        only 1 space after mac is ignored
+ *    will give  &*=    a b c *xyz="1.8" d "1 + 2"
  *              &*0=5
  *              &*1=a
  *              &*2=b
  *              &*3=c
  *              &*4=d
  *              &*5=1 + 2
- *       and &*var = 1.8
+ *        and &*xyz=1.8
  *
- *  the variable for &* is named _  This can change if this leads to
+ *  the variable for &* is named _  This can be changed if this leads to
  *  conflicts  -> change define MAC_STAR_NAME in gtype.h
  *
  */
@@ -110,10 +112,13 @@ void    add_macro_parms( char * p )
     int             len;
     condcode        cc;
 
-    while( *p && *p == ' ' ) {
-        ++p;
-    }
-    len   = strlen( p );
+    /************************************************/
+    /*.macro   parameters                           */
+    /*      012                                     */
+    /*      p points here 2 spaces are kept         */
+    /************************************************/
+    p++;
+    len = strlen( p );
     if( len > 0 ) {
         char    starbuf[12];
         int     star0;

@@ -528,12 +528,15 @@ bool    resolve_symvar_functions( char * buf )
             } else {
                 rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                                   &symsubval );
+
+#if 0
                 if( rc == 2 && (symsubval->base->flags & late_subst) ) {
                     if( !functions_found ) {// TBD functions and late subst
                         ProcFlags.late_subst = true;// remember special for : &
                         rc = 0;
                     }
                 }
+#endif
             }
             if( rc == 2 ) {             // variable found + resolved
                 ProcFlags.substituted = true;

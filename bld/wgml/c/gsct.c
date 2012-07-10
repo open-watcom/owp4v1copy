@@ -65,6 +65,10 @@
 /*     .ct tinued text.                                                   */
 /*     produces:  This is an example of continued text.                   */
 /*                                                                        */
+/*                                                                         */
+/*  Extension: if text starts with . or : process as control line          */
+/*                                                                         */
+/*                                                                         */
 /**************************************************************************/
 
 void    scr_ct( void )
@@ -77,7 +81,12 @@ void    scr_ct( void )
         if( *p ) {
             post_space = 0;
             ProcFlags.ct = true;
-            process_text( p, g_curr_font_num ); // line operand
+            if( (*p == SCR_char) ||     // script control word follows
+                (*p == GML_char) ) {    // GML tag follows
+                split_input_LIFO( scan_start, p );
+            } else {
+                process_text( p, g_curr_font_num ); // text follows
+            }
             ProcFlags.ct = false;
         }
     }
