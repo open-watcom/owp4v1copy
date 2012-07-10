@@ -260,10 +260,10 @@ static void split_at_CW_sep_char( char * splitpos ) {
 
 /***************************************************************************/
 /*   Split input line at GML tag or script Control word separator          */
-/*                                                                         */
+/*   returns false if cmt and others found                                             */
 /***************************************************************************/
 
-void    split_input_buffer( void ) {
+static  bool    split_input_buffer( void ) {
     char            *   p2;
     char            *   pchar;
     int                 k;
@@ -299,7 +299,7 @@ void    split_input_buffer( void ) {
         /*******************************************************************/
 
         if( (*buff2 == GML_char) && !strnicmp( buff2 + 1, "cmt.", 4 ) ) {
-            return;
+            return( false );
         }
 
         /*******************************************************************/
@@ -309,7 +309,7 @@ void    split_input_buffer( void ) {
         if( (*buff2 == SCR_char) ) {
 
             if( (*(buff2 + 1) == '*') || !strnicmp( buff2 + 1, "cm ", 3 ) ) {
-                return;           // for .* or .cm comment minimal processing
+                return( false );  // for .* or .cm comment minimal processing
             }
 
             /***************************************************************/
@@ -325,7 +325,7 @@ void    split_input_buffer( void ) {
                 k = 1;
             }
             if( !strnicmp( buff2 + k, "dm ", 3 ) ) {
-                return;
+                return( false );
             }
 
             /***************************************************************/
@@ -341,14 +341,15 @@ void    split_input_buffer( void ) {
             }
         }
     }
-    return;
+    return( true );                     // further processing needed
 }
 
 
 /***************************************************************************/
 /*    symbolic variables, single letter functions and                      */
 /*    multi letter functions are resolved here                             */
-/*  this function is called recursively via scr_multi_funcs()              */
+/*  this function may be called recursively via scr_multi_funcs()          */
+/*  and scr_multi_funcs() may be called recursively from here              */
 /***************************************************************************/
 
 bool    resolve_symvar_functions( char * buf )
@@ -677,11 +678,13 @@ bool    resolve_symvar_functions( char * buf )
 
 void        process_line( void )
 {
-    bool                anything_substituted;
-
-    split_input_buffer();
+    bool    anything_substituted;
 
     ProcFlags.late_subst = false;
+
+    if( !split_input_buffer() ) {
+        return;                         // .* .cm .dm :cmt found
+    }
 
     anything_substituted = resolve_symvar_functions( buff2 );
 

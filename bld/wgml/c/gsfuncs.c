@@ -27,6 +27,14 @@
 * Description:  WGML controls multi letter functions  &'substr(), ...
 *               and calls corresponding function see gsfuncs.h
 *
+*               scr_multi_funcs()
+*
+*      static helper functions
+*               alloc_resbuf()        result work buffer
+*               err_info()            output err info and set error result
+*               find_end_of_parm()    find parm separator char
+*               find_start_of_parm()  find beginning of parm
+*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -111,7 +119,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
         if( cm1 == ampchar ) {
             if( c == '\'' ) {
                 multiletter_function = true;// parm contains a function
-                delta_paren = 1;         // TBD
+                delta_paren = 1;
                 instring[paren_level + 1] = false;
             } else {
                 var_in_parm = true;     // parm contains variable
@@ -235,10 +243,10 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
     char            *   resbuf;
     inp_line        *   in_wk;
 
-    in_wk = NULL;
+    in_wk = NULL;                       // no result buffer yet
     rc = 0;
     fnlen = 0;
-    pchar = in + 2;                     // over &'
+    pchar = in + 2;                     // over &' to function name
 
     // collect function name
     while( *pchar && pchar <= end && is_function_char( *pchar ) ) {
@@ -394,10 +402,11 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
 
     if( cc != pos ) {                   // error in function
         **result = '&';                 // result is & to preserve the input
-
-        ProcFlags.unresolved = true;
         *result += 1;
         **result = '\0';
+
+        ProcFlags.unresolved = true;
+
         return( in + 1 );
     }
 
