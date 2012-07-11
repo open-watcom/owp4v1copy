@@ -393,14 +393,17 @@ bool    get_line( bool display_line )
         strcpy( buff2, input_cbs->hidden_head->value ); // take next part
         pline = input_cbs->hidden_head;
         input_cbs->hidden_head = input_cbs->hidden_head->next;
-        mem_free( pline );
-        if( input_cbs->hidden_head == NULL ) {
-            input_cbs->hidden_tail = NULL;
+
+        if( pline->sol ) {
+            input_cbs->fmflags |=  II_sol;  // start of logical record
+        } else {
+            input_cbs->fmflags &= ~II_sol;  // not at start of input line
         }
-//      input_cbs->fmflags &= ~II_sol;  // not at start of input line
-        input_cbs->fmflags |=  II_sol;  // start of logical record TBD
+
+        mem_free( pline );
 
         if( input_cbs->hidden_head == NULL ) {  // last part of split line
+            input_cbs->hidden_tail = NULL;
             input_cbs->fmflags |= II_eol;
         }
     } else {

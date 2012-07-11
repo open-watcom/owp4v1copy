@@ -353,16 +353,18 @@ static bool test_macro_xxxx( char const * beginend )
 
 
 /***************************************************************************/
-/*  test for comment  .* .cm :cmt                                          */
+/*  test for comment     .cm :cmt                                          */
 /*  returns true if  comment found                                         */
+/*   .* comment returns false                                              */
 /***************************************************************************/
 
 static  bool    test_comment( void )
 {
 
     if( *buff2 == SCR_char ) {          // test for .*  .cm
-        if( ( *(buff2 + 1) == '*')
-             || ( (tolower( *(buff2 + 1) ) == 'c') &&
+//      if( ( *(buff2 + 1) == '*') ||    TBD
+        if(
+                ( (tolower( *(buff2 + 1) ) == 'c') &&
                   (tolower( *(buff2 + 2) ) == 'm') &&
                   (*(buff2+3) == ' ')
                 )

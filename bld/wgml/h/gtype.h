@@ -212,6 +212,7 @@ typedef enum {
 /***************************************************************************/
 typedef struct inp_line {
     struct inp_line *   next;           // next line
+    bool                sol;            // Start Of Line if split line
     char                value[1];       // line content variable length
 } inp_line;
 

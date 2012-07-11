@@ -84,7 +84,7 @@ void    scr_br( void )
     if( *p ) {
         p++;                            // over space
         if( *p ) {
-            split_input( scan_start, p );   // line operand
+            split_input( scan_start, p, false );// line operand
         }
     }
     scr_process_break();                // break processing

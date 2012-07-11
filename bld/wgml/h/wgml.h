@@ -231,8 +231,8 @@ extern  void    proc_p_pc( p_lay_tag * p_pc );
 extern  void    process_late_subst( void );
 extern  void    process_line( void );
 extern  bool    resolve_symvar_functions( char * buf );
-extern  void    split_input( char * buf, char * split_pos );
-extern  void    split_input_LIFO( char * buf, char * split_pos );
+extern  void    split_input( char * buf, char * split_pos, bool startofline );
+extern  void    split_input_LIFO( char * buf, char * split_pos, bool startofline );
 
 
 /* gproctxt.c                        */

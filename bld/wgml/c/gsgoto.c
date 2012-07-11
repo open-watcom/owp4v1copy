@@ -318,7 +318,7 @@ void    scr_label( void )
             scan_start++;               // skip one blank
 
             if( *scan_start ) {         // rest of line is not empty
-                split_input( buff2, scan_start );   // split and process next
+                split_input( buff2, scan_start, false );// split and process next
             }
         }
         scan_restart = scan_stop + 1;

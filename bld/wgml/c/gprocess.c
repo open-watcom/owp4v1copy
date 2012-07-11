@@ -41,7 +41,7 @@
  *
  */
 
-void        split_input( char * buf, char * split_pos )
+void        split_input( char * buf, char * split_pos, bool sol )
 {
     inp_line    *   wk;
     size_t          len;
@@ -50,6 +50,7 @@ void        split_input( char * buf, char * split_pos )
     if( len > 0 ) {
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = NULL;
+        wk->sol  = sol;
         strcpy(wk->value, split_pos );  // save second part
 
         if( input_cbs->hidden_tail != NULL ) {
@@ -73,7 +74,7 @@ void        split_input( char * buf, char * split_pos )
  *   pushing any already split part down
  */
 
-void        split_input_LIFO( char * buf, char * split_pos )
+void        split_input_LIFO( char * buf, char * split_pos, bool sol )
 {
     inp_line    *   wk;
     size_t          len;
@@ -82,6 +83,7 @@ void        split_input_LIFO( char * buf, char * split_pos )
     if( len > 0 ) {
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
+        wk->sol  = sol;
         strcpy(wk->value, split_pos );  // save second part
 
         input_cbs->hidden_head = wk;
@@ -101,7 +103,7 @@ void        split_input_LIFO( char * buf, char * split_pos )
  *  used if a substituted variable starts with CW_sep_char
  */
 
-static  void    split_input_var( char * buf, char * split_pos, char * part2 )
+static  void    split_input_var( char * buf, char * split_pos, char * part2, bool sol )
 {
     inp_line    *   wk;
     size_t          len;
@@ -110,6 +112,7 @@ static  void    split_input_var( char * buf, char * split_pos, char * part2 )
     if( len > 0 ) {
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
+        wk->sol  = sol;
 
         strcpy(wk->value, part2 );      // second part
         strcat(wk->value, split_pos );  // second part
@@ -199,7 +202,7 @@ static void split_at_GML_tag( void )
                         }
                     }
                 }
-                split_input_LIFO( buff2, pchar );// split line
+                split_input_LIFO( buff2, pchar, false );// split line
                 if( ProcFlags.literal ) {   // if literal active
                     if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
                         li_cnt++;
@@ -241,7 +244,7 @@ static void split_at_CW_sep_char( char * splitpos ) {
             } else {
 
                 if( *(splitpos + 1) != CW_sep_char ) {
-                    split_input_LIFO( buff2, splitpos + 1 );// split after CW_sep_char
+                    split_input_LIFO( buff2, splitpos + 1, false );// split after CW_sep_char
 
                     buff2_lg = strnlen_s( buff2, buf_size ) - 1;
                     *(buff2 + buff2_lg) = '\0'; // terminate 1. part
@@ -263,7 +266,8 @@ static void split_at_CW_sep_char( char * splitpos ) {
 /*   returns false if cmt and others found                                             */
 /***************************************************************************/
 
-static  bool    split_input_buffer( void ) {
+static  bool    split_input_buffer( void )
+{
     char            *   p2;
     char            *   pchar;
     int                 k;
@@ -560,7 +564,7 @@ bool    resolve_symvar_functions( char * buf )
                         pchar++;        // skip optional terminating dot
                     }
                     *p2 = '\0';
-                    split_input_var( buf, pchar, &symsubval->value[1] );
+                    split_input_var( buf, pchar, &symsubval->value[1], true );
                     pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
 
@@ -844,7 +848,7 @@ void        process_late_subst( void )
                         pchar++;        // skip optional terminating dot
                     }
                     *p2 = '\0';
-                    split_input_var( buff2, pchar, &symsubval->value[1] );
+                    split_input_var( buff2, pchar, &symsubval->value[1], true );
                     pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
 

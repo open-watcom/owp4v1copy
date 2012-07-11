@@ -83,7 +83,7 @@ void    scr_ct( void )
             ProcFlags.ct = true;
             if( (*p == SCR_char) ||     // script control word follows
                 (*p == GML_char) ) {    // GML tag follows
-                split_input_LIFO( scan_start, p );
+                split_input_LIFO( scan_start, p, (*p == SCR_char) );
             } else {
                 process_text( p, g_curr_font_num ); // text follows
             }
