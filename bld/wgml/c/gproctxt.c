@@ -331,6 +331,7 @@ static void do_fc_comp( void )
 
 static void wgml_tabs( void )
 {
+    bool                    center_end  = false;    // spaces at end of al_center scope
     bool                    skip_tab    = false;    // skip current tab
     int                     i;
     int32_t                 offset      = 0;        // offset for position adjustment
@@ -361,6 +362,7 @@ static void wgml_tabs( void )
     }
     if( !tabbing && (t_count == in_count) ) {
         g_cur_h_start = t_line->last->x_address + t_line->last->width;
+        post_space = 0;
         return; // no current tab stop, no new tab stop: nothing to do
     }
     if( t_line->first == t_line->last ) {
@@ -407,22 +409,28 @@ static void wgml_tabs( void )
                     g_cur_h_start = t_line->last->x_address;
                     tab_space = 0;
                 } else {    // spaces precede tab in mid-line
-                    c_chars = do_c_chars( c_chars, in_chars, &in_text[0],
-                        0, g_cur_h_start, 0, in_chars->font_number,
-                        in_chars->type );
+                    if( c_stop->alignment == al_center ) {
+                        center_end = true;
+                    } else {
+                        c_chars = do_c_chars( c_chars, in_chars, &in_text[0],
+                            0, g_cur_h_start, 0, in_chars->font_number,
+                            in_chars->type );
+                    }
                 }
             }
         }
-        next_tab();
-        c_font = in_chars->font_number;
-        c_type = in_chars->type;
-        gap_start = g_cur_h_start;
-        s_multi = NULL;
-        s_width = 0;
-        tabbing = true;
-        tab_space = 0;
-        text_found = false;
-        i = 1;                      // skip initial tab character
+        if( !center_end ) {
+            next_tab();
+            c_font = in_chars->font_number;
+            c_type = in_chars->type;
+            gap_start = g_cur_h_start;
+            s_multi = NULL;
+            s_width = 0;
+            tabbing = true;
+            tab_space = 0;
+            text_found = false;
+            i = 1;                      // skip initial tab character
+        }
     } else if( tabbing ) {          // text belongs to current tab stop
         if( tab_chars.last != NULL ) {
             if( !(input_cbs->fmflags & II_sol) ) {   // not if at start of input line
@@ -464,6 +472,7 @@ static void wgml_tabs( void )
                         in_chars->next = text_pool;
                         text_pool = in_chars;
                         tabbing = false;    // allow for at most one word
+                        post_space = 0;
                         return;
                     }
                     i = t_count + 1;
@@ -798,6 +807,8 @@ static void wgml_tabs( void )
     }
     in_chars->next = text_pool;
     text_pool = in_chars;
+
+    post_space = 0;
 
     return;
 }
@@ -1398,7 +1409,7 @@ void    process_text( char * text, uint8_t font_num )
             typ = typn;
         }
         g_cur_h_start += post_space;
-        post_space = 0;
+//        post_space = 0;
         n_char->x_address = g_cur_h_start;
         o_count = n_char->count;        // catches special case below
 
