@@ -3406,13 +3406,14 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
     x_address = current_state.x_address;
 
     if( in_lineproc != NULL ) {
-        if( in_lineproc->endword != NULL ) \
+        if( in_lineproc->endword != NULL ) {
             if( text_out_open && ps_device ) {
                 ob_insert_ps_text_end( htab_done, active_font );
                 htab_done = false;
                 text_out_open = false;
             }
             df_interpret_driver_functions( in_lineproc->endword->text );
+        }
     }
 
     if( undo_shift ) {
