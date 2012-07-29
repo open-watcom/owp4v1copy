@@ -1081,12 +1081,12 @@ static  void    init_predefined_symbols( void )
     char    wkstring[MAX_L_AS_STR];
 
     add_symvar( &global_dict, "amp", "&", no_subscript,
-                predefined + late_subst );
+                predefined );
 
     wkstring[1] = '\0';
     wkstring[0] = GML_CHAR_DEFAULT;
     add_symvar( &global_dict, "gml", wkstring, no_subscript,
-                predefined + late_subst );
+                predefined );
 
 }
 
