@@ -93,25 +93,23 @@ static void print_sym_entry( symvar * wk, int * symcnt, int * symsubcnt )
 
     len = strlen( wk->name );
     if( wk->subscript_used > 0 ) {
-        out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s%s "
+        out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s "
                  "subscript_used=%d", wk->name, &fill[len],
                  wk->flags & deleted ? "deleted " : "",
                  wk->flags & local_var ? "local " : "",
                  wk->flags & auto_inc ? "auto_inc " : "",
                  wk->flags & predefined ? "predefined " : "",
-                 wk->flags & late_subst ? "late_subst " : "",
                  wk->flags & ro ? "RO " : "",
                  wk->flags & no_free ? "no_free " : "",
                  wk->flags & access_fun ? "access_fun " : "",
                  wk->subscript_used );
     } else {
-        out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s%s ",
+        out_msg( "Variable='%s'%s flags=%s%s%s%s%s%s%s ",
                  wk->name, &fill[len],
                  wk->flags & deleted ? "deleted " : "",
                  wk->flags & local_var ? "local " : "",
                  wk->flags & auto_inc ? "auto_inc " : "",
                  wk->flags & predefined ? "predefined " : "",
-                 wk->flags & late_subst ? "late_subst " : "",
                  wk->flags & ro ? "RO " : "",
                  wk->flags & no_free ? "no_free " : "",
                  wk->flags & access_fun ? "access_fun " : "");
@@ -383,7 +381,6 @@ static bool add_symvar_sub( symvar * var, char * val, sub_index sub, symsub * * 
             newsub->next = ws;
             wsv->next    = newsub;
         }
-
     } else {                            // unsubscripted variable
         newsub = var->sub_0;
         if( strlen( newsub->value ) < strlen( val ) ) { // need more room

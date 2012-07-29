@@ -182,6 +182,8 @@ global struct ProcFlags {
     unsigned        group_elements  : 1;// currently grouping doc_elements
     unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
+    unsigned        gml_tag         : 1;// input buf starts with GML_char
+    unsigned        scr_cw          : 1;// input buf starts with SCR_char
     unsigned        macro_ignore    : 1;// .. in col 1-2
     unsigned        CW_sep_ignore   : 1;// .' in col 1-2
     unsigned        in_macro_define : 1;// macro definition active
@@ -190,7 +192,6 @@ global struct ProcFlags {
     unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
     unsigned        substituted     : 1;// variable substituted in current line
     unsigned        unresolved      : 1;// variable found, but not yet resolved
-    unsigned        late_subst      : 1;// special variable found &gml, &amp,
     unsigned        literal         : 1;// .li is active
     unsigned        concat          : 1;// .co ON if set
     unsigned        ct              : 1;// .ct continue text is active

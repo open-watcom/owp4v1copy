@@ -24,8 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WGML tags :XMP and :eXMP
+* Description:  WGML tags :XMP and :eXMP and helper functions
 *               depth attribute is not supported   TBD
+*
 *
 ****************************************************************************/
 #include    "wgml.h"
@@ -163,7 +164,8 @@ void    gml_exmp( const gmltag * entry )
     }
     g_curr_font_num = font_save;
     ProcFlags.xmp_active = false;
-//    rs_loc = titlep_tag;
+    ProcFlags.concat = concat_save;
+    ProcFlags.justify = justify_save;
     wk = nest_cb;
     nest_cb = nest_cb->prev;
     add_tag_cb_to_pool( wk );

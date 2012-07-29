@@ -105,7 +105,6 @@ void  scr_process_break( void )
         if( t_line->first != NULL ) {
             process_line_full( t_line, false );
             t_line = NULL;
-            set_h_start();
         }
     }
     if( t_element != NULL ) {

@@ -872,7 +872,7 @@ char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
     size_t      pos1;
     char    *   p;
     char    *   rp;
-    char        temp[MAX_L_AS_STR];
+    char        temp[MAX_L_AS_STR + 3]; // +3 for () and decimal point
     char        a1;
     char        a2;
     char        charbase;
@@ -947,7 +947,7 @@ char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
         p += pos1;
         break;
     default:
-        out_msg( "Logic error in gutil.c (int_to_roman()\n" );
+        out_msg( "Logic error in gutil.c int_to_roman()\n" );
         err_count++;
         g_suicide();
         break;
@@ -1088,7 +1088,6 @@ void    start_line_with_string( char * text, uint8_t font_num )
     if( n_char->x_address + n_char->width > g_page_right ) {
         process_line_full( t_line, ProcFlags.concat );
         t_line = alloc_text_line();
-        set_h_start();
         n_char->x_address = g_cur_h_start;
     }
 

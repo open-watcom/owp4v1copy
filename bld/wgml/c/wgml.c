@@ -123,21 +123,24 @@ static  void    free_filenames( void )
 {
     fnstack * wk;
     fnstack * wk1;
+    int32_t cnt;
 
     wk = fn_stack;
     if( GlobalFlags.statistics ) {
+        cnt = 0;
         out_msg( "\nInput filenames:\n" );
     }
     while( wk != NULL ) {
         if( GlobalFlags.statistics ) {
             out_msg( "    %s\n", wk->fn );
+            cnt++;
         }
         wk1 = wk->prev;
         mem_free( wk );
         wk = wk1;
     }
     if( GlobalFlags.statistics ) {
-        out_msg( "\n" );
+        out_msg( "Total files: %ld\n\n", cnt );
     }
     fn_stack = NULL;
     return;

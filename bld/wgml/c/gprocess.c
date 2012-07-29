@@ -38,43 +38,11 @@
 /*  split_input
  *  The (physical) line is split
  *  The second part will be processed by the next getline()
+ *   pushing any already split part down
  *
  */
 
 void        split_input( char * buf, char * split_pos, bool sol )
-{
-    inp_line    *   wk;
-    size_t          len;
-
-    len = strlen( split_pos );          // length of second part
-    if( len > 0 ) {
-        wk = mem_alloc( len + sizeof( inp_line ) );
-        wk->next = NULL;
-        wk->sol  = sol;
-        strcpy(wk->value, split_pos );  // save second part
-
-        if( input_cbs->hidden_tail != NULL ) {
-            input_cbs->hidden_tail->next = wk;
-        }
-        input_cbs->hidden_tail = wk;
-
-        if( input_cbs->hidden_head == NULL ) {
-            input_cbs->hidden_head = wk;
-        }
-        *split_pos = '\0';              // terminate first part
-        input_cbs->fmflags &= ~II_eol;  // not last part of line
-    }
-    return;
-}
-
-
-/*  split_input LIFO
- *  The (physical) line is split
- *  The second part will be processed by the next getline()
- *   pushing any already split part down
- */
-
-void        split_input_LIFO( char * buf, char * split_pos, bool sol )
 {
     inp_line    *   wk;
     size_t          len;
@@ -202,7 +170,7 @@ static void split_at_GML_tag( void )
                         }
                     }
                 }
-                split_input_LIFO( buff2, pchar, false );// split line
+                split_input( buff2, pchar, false );// split line
                 if( ProcFlags.literal ) {   // if literal active
                     if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
                         li_cnt++;
@@ -244,7 +212,7 @@ static void split_at_CW_sep_char( char * splitpos ) {
             } else {
 
                 if( *(splitpos + 1) != CW_sep_char ) {
-                    split_input_LIFO( buff2, splitpos + 1, false );// split after CW_sep_char
+                    split_input( buff2, splitpos + 1, false );// split after CW_sep_char
 
                     buff2_lg = strnlen_s( buff2, buf_size ) - 1;
                     *(buff2 + buff2_lg) = '\0'; // terminate 1. part
@@ -263,7 +231,7 @@ static void split_at_CW_sep_char( char * splitpos ) {
 
 /***************************************************************************/
 /*   Split input line at GML tag or script Control word separator          */
-/*   returns false if cmt and others found                                             */
+/*   returns false if :cmt .cm  .dm found                                  */
 /***************************************************************************/
 
 static  bool    split_input_buffer( void )
@@ -350,10 +318,11 @@ static  bool    split_input_buffer( void )
 
 
 /***************************************************************************/
-/*    symbolic variables, single letter functions and                      */
-/*    multi letter functions are resolved here                             */
+/*  symbolic variables, single and multi letter functions are resolved     */
+/*  here                                                                   */
 /*  this function may be called recursively via scr_multi_funcs()          */
 /*  and scr_multi_funcs() may be called recursively from here              */
+/*  until the buffer is processed                                          */
 /***************************************************************************/
 
 bool    resolve_symvar_functions( char * buf )
@@ -377,7 +346,6 @@ bool    resolve_symvar_functions( char * buf )
     char            *   var_unresolved; // ptr for resume search
     char            *   var_unresolved2;// ptr for resume search
 
-    ProcFlags.late_subst = false;
     ProcFlags.substituted = false;
     ProcFlags.unresolved  = false;
 
@@ -455,7 +423,6 @@ bool    resolve_symvar_functions( char * buf )
             }
 
             if( *(pchar + 1) == '\'' ) {// perhaps a multi letter function
-
                 char   * pf;
                 char * * ppval = &p2;
                 int32_t  valsize = buf_size - (p2 - buf);
@@ -533,15 +500,6 @@ bool    resolve_symvar_functions( char * buf )
             } else {
                 rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                                   &symsubval );
-
-#if 0
-                if( rc == 2 && (symsubval->base->flags & late_subst) ) {
-                    if( !functions_found ) {// TBD functions and late subst
-                        ProcFlags.late_subst = true;// remember special for : &
-                        rc = 0;
-                    }
-                }
-#endif
             }
             if( rc == 2 ) {             // variable found + resolved
                 ProcFlags.substituted = true;
@@ -555,8 +513,8 @@ bool    resolve_symvar_functions( char * buf )
 
                     if( buf != buff2 ) {
 
-                    // splitting input if not outermost buffer ++++ TBD
-
+                        // splitting input if not outermost buffer ++++ TBD
+                        // needed ???
                         g_suicide();
                     }
 
@@ -606,9 +564,8 @@ bool    resolve_symvar_functions( char * buf )
 
                         continue;       // pchar points already to next &
 
-                    } else {
+                    } else {     // replace not found local var by nullstring
                         ProcFlags.substituted = true;
-                                        // replace by nullstring
                         if( *pchar == '.' ) {
                             pchar++;    // skip optional terminating dot
                         }
@@ -672,6 +629,58 @@ bool    resolve_symvar_functions( char * buf )
 
 
 /***************************************************************************/
+/*  set  some switches if char is script controlword start or              */
+/*  gml tag start                                                          */
+/***************************************************************************/
+
+void    classify_record( char c )
+{
+    if( c == GML_char ) {               // classify input
+        ProcFlags.gml_tag = true;
+        ProcFlags.scr_cw = false;
+    } else {
+        ProcFlags.gml_tag = false;
+        if( c == SCR_char ) {
+           ProcFlags.scr_cw = true;
+        } else {
+           ProcFlags.scr_cw = false;
+        }
+    }
+}
+
+
+/***************************************************************************/
+/*  remove leading space                                                   */
+/*  to catch lines such as: "    :TAG xyz."  -> ":TAG xyz."                */
+/*  returns true if spaces removed                                         */
+/***************************************************************************/
+
+static  bool    remove_leading_space( void )
+{
+    char    * p;
+    char    * p2;
+    bool    removed = false;
+
+    if( ProcFlags.literal ) {           // .li active
+        return( false );                // don't change input
+    }
+    p = buff2;
+    while( *p == ' ' ) {
+        p++;
+    }
+    if( (p != buff2) && (*p == GML_char) ) {
+        p2 = buff2;
+        do {
+            *p2++ = *p++;
+        } while( *p );
+        *p2 = '\0';
+        removed = true;
+    }
+    return( removed );
+}
+
+
+/***************************************************************************/
 /*  take the contents of the input line in buff2 and try to make the best  */
 /*  of it                                                                  */
 /*  Processing as specified in wgmlref.pdf chapter 8.1 processing rules    */
@@ -684,13 +693,15 @@ void        process_line( void )
 {
     bool    anything_substituted;
 
-    ProcFlags.late_subst = false;
+    anything_substituted = remove_leading_space();// for "   :TAG   " constructs
+
+    classify_record( *buff2 );      // classify script CW, GML tag or nothing
 
     if( !split_input_buffer() ) {
         return;                         // .* .cm .dm :cmt found
     }
 
-    anything_substituted = resolve_symvar_functions( buff2 );
+    anything_substituted |= resolve_symvar_functions( buff2 );
 
     buff2_lg = strnlen_s( buff2, buf_size );
 
@@ -704,258 +715,3 @@ void        process_line( void )
     return;
 }
 
-/***************************************************************************/
-/*  process late substitute symbols &gml, &amp, ...                        */
-/*  this is done after gml tag and script control word recognition         */
-/*                                                                         */
-/***************************************************************************/
-
-void        process_late_subst( void )
-{
-    static const char   ampchar = '&';
-    char            *   pw;
-    char            *   pwend;
-    char            *   p2;
-    char            *   pchar;
-    char            *   varstart;
-    char            *   var_unresolved; // ptr for resume search
-    char            *   var_2;
-    sub_index           var_ind;
-    symvar              symvar_entry;
-    symsub          *   symsubval;
-    int                 rc;
-    int                 k;
-    bool                anything_substituted;
-
-    ProcFlags.late_subst = false;
-
-    if( NULL == strchr( buff2, ampchar ) ) {// look for & in buffer
-        return;                       // no ampchar found, nothing to resolve
-    }
-
-    /***********************************************************************/
-    /* for :cmt. minimal processing                                        */
-    /***********************************************************************/
-
-    if( (*buff2 == GML_char) && !strnicmp( buff2 + 1, "cmt.", 4 ) ) {
-        return;
-    }
-
-    /***********************************************************************/
-    /*  .xx SCRIPT control line                                            */
-    /***********************************************************************/
-
-    if( (*buff2 == SCR_char) ) {
-
-        if( *(buff2 + 1) == '*' ) {
-            return;                     // for .* comment minimal processing
-        }
-
-        /*******************************************************************/
-        /* if macro define ( .dm xxx ... ) supress variable substitution   */
-        /* for the sake of single line macro definition                    */
-        /* .dm xxx / &*1 / &*2 / &*0 / &* /                                */
-        /*  and                                                            */
-        /* ..dm xxx / &*1 / &*2 / &*0 / &* /                               */
-        /*******************************************************************/
-        if( *(buff2 + 1) == SCR_char ) {
-            k = 2;
-        } else {
-            k = 1;
-        }
-        if( !strnicmp( buff2 + k, "dm ", 3 ) ) {
-            return;
-        }
-    }
-
-
-    /***********************************************************************/
-    /*  Look for late-subst variables, ignore all others                   */
-    /*                                                                     */
-    /***********************************************************************/
-
-
-    ProcFlags.substituted = false;
-    anything_substituted = false;
-    var_unresolved = NULL;
-    var_2 = NULL;
-    ProcFlags.unresolved  = false;
-    do {                                // until no more substitutions
-        strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
-        buff2_lg = strnlen_s( buff2, buf_size );
-        pwend = workbuf + buff2_lg;
-        if( var_unresolved == NULL ) {
-            pw = workbuf;
-            p2 = buff2;
-        } else {
-            pw = workbuf + (var_2 - buff2);
-            p2 = var_2;
-        }
-        varstart = NULL;
-
-        anything_substituted |= ProcFlags.substituted;
-        ProcFlags.substituted = false;
-
-        pchar = strchr( workbuf, ampchar ); // look for & in buffer
-        while( pchar != NULL ) {        // & found
-            while( pw < pchar ) {       // copy all data preceding &
-                *p2++ = *pw++;
-            }
-            buff2_lg = strnlen_s( buff2, buf_size );
-            varstart = pw;              // remember start of var
-            pw++;                       // over &
-            ProcFlags.suppress_msg = true;
-            scan_err = false;
-
-            pchar = scan_sym( pw, &symvar_entry, &var_ind );
-            if( scan_err && *pchar == '(' ) {   // problem with subscript
-
-                if( var_unresolved == NULL ) {
-                    ProcFlags.unresolved  = true;
-                    var_unresolved = varstart;
-                    var_2 = p2;
-                } else {
-                    if( var_unresolved != varstart ) {
-                        ProcFlags.unresolved  = true;
-                    }
-                }
-                p2 += pchar - varstart;
-                pw = pchar;
-                pchar = strchr( pw, ampchar );  // look for next & in buffer
-
-                continue;
-            }
-
-            ProcFlags.suppress_msg = false;
-
-            if( symvar_entry.flags & local_var ) {  // lookup var in dict
-                rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
-                                    var_ind, &symsubval );
-            } else {
-                rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
-                                  &symsubval );
-            }
-            if( rc == 2 && (symsubval->base->flags & late_subst) ) {
-                ProcFlags.substituted = true;
-                if( !ProcFlags.CW_sep_ignore &&
-                    symsubval->value[0] == CW_sep_char &&
-                    symsubval->value[1] != CW_sep_char ) {
-
-                                    // split record at control word separator if
-                                    // variable starts with SINGLE cw separator
-
-                    if( *pchar == '.' ) {
-                        pchar++;        // skip optional terminating dot
-                    }
-                    *p2 = '\0';
-                    split_input_var( buff2, pchar, &symsubval->value[1], true );
-                    pw = pwend + 1;     // stop substitution for this record
-                    varstart = NULL;
-
-                    break;
-
-                } else {
-                    pw = symsubval->value;
-                    if( symsubval->value[0] == CW_sep_char &&
-                        symsubval->value[1] == CW_sep_char ) {
-                        pw++;           // skip 1 CW_sep_char
-                    }
-                    strcpy( p2, pw );   // copy value
-                    p2 += strlen(pw);
-                    if( *pchar == '.' ) {
-                        pchar++;        // skip optional terminating dot
-                    }
-                    pw = pchar;
-                }
-            } else {
-                if( symvar_entry.flags & local_var ) { // local var not found
-                    if( (symvar_entry.name[0] == '\0') &&
-                        (*pchar == ampchar) ) { // only &* as var name
-                                                // followed by another var
-
-                        if( var_unresolved == NULL ) {
-                            ProcFlags.unresolved  = true;
-                            var_unresolved = varstart;
-                            var_2 = p2;
-                        } else {
-                            if( var_unresolved != varstart ) {
-                                ProcFlags.unresolved  = true;
-                            }
-                        }
-                        pw = varstart;
-                        while( pw < pchar ) {   // treat var name as text
-                            *p2++ = *pw++;  // and copy
-                        }
-
-                        continue;       // pchar points already to next &
-
-                    } else {
-                        ProcFlags.substituted = true;
-                                        // replace by nullstring
-                        if( *pchar == '.' ) {
-                            pchar++;    // skip optional terminating dot
-                        }
-                        pw = pchar;
-                    }
-                } else {                // global var not found
-                                        // .. or local var outside of macro
-                    /*******************************************************/
-                    /*  keep trying for constructs such as                 */
-                    /*                                                     */
-                    /* .se prodgml = "Open Watcom GML"                     */
-                    /* .se name = "GML"                                    */
-                    /*                                                     */
-                    /* My name is &prod&name..!                            */
-                    /*                                                     */
-                    /*  to become                                          */
-                    /*                                                     */
-                    /* My name is Open Watcom GML!                         */
-                    /*                                                     */
-                    /* This does not work for local variables, as these are*/
-                    /* replaced by nullstring if not found                 */
-                    /* My name is &*prod&*name..!                          */
-                    /*  will become                                        */
-                    /* My name is !                                        */
-                    /*******************************************************/
-
-                    if( var_unresolved == NULL ) {
-                        ProcFlags.unresolved  = true;
-                        var_unresolved = varstart;
-                        var_2 = p2;
-                    } else {
-                        if( var_unresolved != varstart ) {
-                            ProcFlags.unresolved  = true;
-                        }
-                    }
-
-                    pw = varstart;
-                    if( *pchar == '.' ) {
-                        pchar++;        // copy terminating dot, too
-                    }
-                    while( pw < pchar ) {   // treat var name as text
-                        *p2++ = *pw++;  // and copy
-                    }
-                }
-            }
-            pchar = strchr( pw, ampchar );  // look for next & in buffer
-        }                               // while & found
-
-        while( pw <= pwend) {           // copy remaining input
-             *p2++ = *pw++;             // and terminating '\0'
-        }
-
-    } while( ProcFlags.unresolved && ProcFlags.substituted );
-
-    anything_substituted |= ProcFlags.substituted;
-
-    buff2_lg = strnlen_s( buff2, buf_size );
-
-    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass &&
-        anything_substituted ) {
-        g_info_lm( inf_subst_line, buff2 );// show line with substitution(s)
-    }
-
-    scan_start = buff2;
-    scan_stop  = buff2 + buff2_lg;
-    return;
-}

@@ -132,9 +132,6 @@
 /*    that,  when  used as the first  or only character in  an "alternate  */
 /*    reference entry" with the .IX control word, causes that index entry  */
 /*    to appear at the beginning of the list of reference entries.   This  */
-/* Define Character                                       Waterloo SCRIPT  */
-/*                                                                         */
-/*                                                                         */
 /*    character does not get added to  the reference entry.   The default  */
 /*    and initial primary index character is an asterisk (*).   The "OFF"  */
 /*    value is  a blank.    The &SYSPIX  Set Symbol  returns the  current  */
@@ -331,7 +328,7 @@ void    scr_dc( void )
     int             opt;
     static const char   options[5] [5] = { "cw", "gml", "tb", "stop" };
                                         // please add new options at end
-    int             max_opt = sizeof( options) / sizeof( options[0] );
+    int const   max_opt = sizeof( options) / sizeof( options[0] );
 
     p = scan_start;
     while( *p && *p != ' ' ) {          // over dc
@@ -413,7 +410,7 @@ void    scr_dc( void )
         GML_char = c;
         string[0] = c;
         add_symvar( &global_dict, "gml", string, no_subscript,
-                    predefined + late_subst);
+                    predefined );
         add_to_sysdir( "$gml", GML_char );
         break;
     case 3 :                            // TB option

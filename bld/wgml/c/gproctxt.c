@@ -1528,13 +1528,15 @@ void    process_text( char * text, uint8_t font_num )
                     process_line_full( t_line, ProcFlags.concat
                                       && (ProcFlags.justify > ju_off) );
                     t_line = NULL;
-                    set_h_start();
                     n_char->x_address = g_cur_h_start;
                 }
                 // s_char processing
                 if( s_char == NULL ) {
                     n_char->x_address = g_cur_h_start;
                 } else {
+                    if( t_line == NULL ) {
+                        t_line = alloc_text_line();
+                    }
                     t_line->first = s_char;
                     t_line->last = s_char;
                     // s_char must be repositioned to the start of the line
@@ -1595,7 +1597,6 @@ void    process_text( char * text, uint8_t font_num )
                     process_line_full( t_line, false );
                     t_line = NULL;
                     // reset n_char and count
-                    set_h_start();
                     n_char->x_address = g_cur_h_start;
                     n_char->width = text_chars_width( n_char->text, \
                                         n_char->count, n_char->font_number );
@@ -1668,7 +1669,6 @@ void    process_text( char * text, uint8_t font_num )
             if( input_cbs->fmflags & II_eol ) {
                 process_line_full( t_line, false );
                 t_line = NULL;
-                set_h_start();
             }
         }
     }

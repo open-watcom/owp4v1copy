@@ -123,7 +123,7 @@ void    scr_li( void )
                     if( !ProcFlags.literal ) {
                         li_cnt = 1;
                         ProcFlags.literal = true;
-                        split_input_LIFO( scan_start, pa, false );
+                        split_input( scan_start, pa, false );
                         scan_restart = pa;
                     }
                 }
@@ -136,7 +136,7 @@ void    scr_li( void )
                     if( !ProcFlags.literal ) {
                         li_cnt = 1;
                         ProcFlags.literal = true;
-                        split_input_LIFO( scan_start, pa, false );
+                        split_input( scan_start, pa, false );
                         scan_restart = pa;
                     }
                 }
@@ -145,7 +145,7 @@ void    scr_li( void )
                 if( !ProcFlags.literal ) {
                     li_cnt = 1;
                     ProcFlags.literal = true;
-                    split_input_LIFO( scan_start, pa, false );
+                    split_input( scan_start, pa, false );
                     scan_restart = pa;
                 }
                 break;

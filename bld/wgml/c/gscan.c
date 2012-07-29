@@ -329,8 +329,9 @@ static void scan_gml( void )
 /*
  * search for (control word) separator in string outside of quotes
  *       returns ptr to sep char or NULL if not found
- *      quotes are single or double quotes
+ *      quotes are single or double quotes only
  */
+
 static char *   search_separator( char * str, char sep )
 {
     bool        instring = false;
@@ -358,7 +359,6 @@ static char *   search_separator( char * str, char sep )
     } else {
         return( NULL );
     }
-
 }
 
 
@@ -395,7 +395,6 @@ static void     scan_script( void )
             scan_start = p + 2;
             toklen = 2;
     } else {
-
         if( *p == '\'' ) {                  // .'
             p++;
             ProcFlags.CW_sep_ignore = 1;
@@ -424,7 +423,7 @@ static void     scan_script( void )
 
             if( pchar != NULL ) {
                 if( *(pchar + 1) != '\0' ) {    // only split if more follows
-                    split_input_LIFO( buff2, pchar + 1, false );// ignore CW_sep_char
+                    split_input( buff2, pchar + 1, false );// ignore CW_sep_char
                 }
                 *pchar= '\0';               // delete CW_sep_char
                 buff2_lg = strlen( buff2 ); // new length of first part
@@ -750,24 +749,13 @@ void    scan_line( void )
         }
         cc = pos;
     }
-    if( cc == pos ) {
-        // detection of SCR_char/GML_char must precede late substitution
-        if( *scan_start == SCR_char ) {
-            if( ProcFlags.late_subst ) {
-                process_late_subst();   // substitute &gml, &amp, ...
-            }
-
+    if( cc == pos ) {                   // process record
+        if( ProcFlags.scr_cw ) {
             scan_script();              // script control line
 
-        } else if( *scan_start == GML_char ) {
-            if( ProcFlags.late_subst ) {
-                process_late_subst();   // substitute &gml, &amp, ...
-            }
-
+        } else if( ProcFlags.gml_tag ) {
             scan_gml();                 // GML tags
 
-        } else if( ProcFlags.late_subst ) {
-                process_late_subst();   // substitute &gml, &amp, ...
         }
 
         /*******************************************************************/
@@ -822,7 +810,6 @@ void    scan_line( void )
 }
 
 
-
 /***************************************************************************/
 /*  search gml tag entry for given token                                   */
 /*  This is for system (predefined) tags only                              */
@@ -843,6 +830,7 @@ gmltag  const   *   find_sys_tag( char * token, size_t toklen )
     }
     return( NULL );                     // not found
 }
+
 
 /***************************************************************************/
 /*  search gml layout tag entry for given token                            */

@@ -592,9 +592,7 @@ static  void    gml_li_sl( const gmltag * entry )
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font_num );
     }
 
-    spacing = ((sl_lay_tag *)(nest_cb->lay_tag))->spacing;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
-    post_space = 0;
 
     g_cur_left = nest_cb->lm + nest_cb->left_indent;
     g_cur_h_start = g_cur_left;
