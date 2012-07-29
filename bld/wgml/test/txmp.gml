@@ -145,7 +145,7 @@ still list part still list part still list part still list part still list part
         :li.ordered 3 no compact
     :ul
         :li.ul with eul in txl2 include file
-.im txl2.gml
+.im txl2.inc
     :eol.
 :LP.
 &gml.OL end.
