@@ -1,5 +1,4 @@
 :LAYOUT
-:include file=incllay
    :PAGE
       top_margin = 0 left_margin = '1i' right_margin = '7i' depth = '9.66i'
    :DEFAULT
