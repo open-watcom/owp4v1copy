@@ -60,7 +60,7 @@ static  uint32_t        tab_space       = 0;        // space count between text 
 /*  further testing showed that .:!? are used as full stop characters      */
 /*  the others ;,) have no special effect                                  */
 /***************************************************************************/
-
+#if 0
 static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
                          int32_t cnt, uint32_t lm )
 {
@@ -173,7 +173,7 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
     }
     *delta0 = delta;
 }
-
+#endif
 
 /***************************************************************************/
 /*  return the width of text up to the first tab stop                      */
@@ -1011,7 +1011,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 //          break;                      // left of left margin no justify
 //      }
 
-        puncadj( line, &delta0, rem, cnt - 1, lm );
+//        puncadj( line, &delta0, rem, cnt - 1, lm );
 
         hor_end = tl->x_address + tl->width;// hor end position
         delta0 = rm - hor_end;          // TBD
@@ -1311,7 +1311,7 @@ void    process_text( char * text, uint8_t font_num )
     if( t_line->first == NULL ) {    // first phrase in paragraph
         post_space = 0;
         tab_space = 0;
-        if( ProcFlags.concat ) {    // ".co on": skip initial spaces
+        if( ProcFlags.concat && !ProcFlags.xmp_active ) {    // ".co on": skip initial spaces
             while( *p == ' ' ) {
                 p++;
                 tab_space++;
@@ -1325,7 +1325,7 @@ void    process_text( char * text, uint8_t font_num )
         }
         ju_x_start = g_cur_h_start; // g_cur_h_start appears correct on entry
     } else {                        // subsequent phrase in paragraph
-        if( ProcFlags.concat ) {    // ".co on"
+        if( ProcFlags.concat && !ProcFlags.xmp_active ) {    // ".co on"
             if( post_space == 0 ) {
                 // compute initial spacing if needed; .ct affects this
                 if( (*p == ' ') || ((input_cbs->fmflags & II_sol) && !ProcFlags.ct
@@ -1418,7 +1418,7 @@ void    process_text( char * text, uint8_t font_num )
                         continue;           // guarded space no word end
                     }
                 }
-                if( !ProcFlags.concat ) { // .co off: include internal spaces
+                if( !ProcFlags.concat && !ProcFlags.xmp_active ) { // .co off: include internal spaces
                     continue;
                 }
             }
@@ -1437,7 +1437,7 @@ void    process_text( char * text, uint8_t font_num )
         n_char->x_address = g_cur_h_start;
         o_count = n_char->count;        // catches special case below
 
-        if( ProcFlags.concat ) {
+        if( ProcFlags.concat || ProcFlags.xmp_active ) {
 
             /***********************************************************/
             /* test if word exceeds right margin                       */
