@@ -742,8 +742,8 @@ void    scan_line( void )
         set_if_then_do( cb );
         cc = test_process( cb );
     } else {
-        if( t_line != NULL ) {
-            if( t_line->first != NULL ) {
+        if( !ProcFlags.ct ) {           // special for .ct .li construct
+            if( (t_line != NULL) && (t_line->first != NULL) ) {
                 scr_process_break();
             }
         }
