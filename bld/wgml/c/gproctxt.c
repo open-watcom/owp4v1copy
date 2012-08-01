@@ -60,10 +60,31 @@ static  uint32_t        tab_space       = 0;        // space count between text 
 /*  further testing showed that .:!? are used as full stop characters      */
 /*  the others ;,) have no special effect                                  */
 /***************************************************************************/
-#if 0
+
 static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
                          int32_t cnt, uint32_t lm )
 {
+
+/***************************************************************************/
+/*  puncadj has been disabled because, while the idea is correct, the      */
+/*  details are wrong                                                      */
+/*  sadly, further testing showed that at least "," is treated specially   */
+/*  and that "." does not use a half-space-width                           */
+/*  "," has either 1 or 2 hbu added to it, but only in PS                  */
+/*  "." has approximately 1/4 of a space-width added to it (in PS)         */
+/*  and so it depends on the font, but it is sometimes rounded up and      */
+/*  sometimes not, in a pattern that remains to be explored                */
+/*  FWIW, using SCRIPT shows much the same pattern, and suggests that, as  */
+/*  the amount of extra space becomes smaller, eventually even "." is      */
+/*  treated as "," is treated. The test devices, particularly PSSPEC, are  */
+/*  very useful at generating data, and a spreadsheet in analyzing it, but */
+/*  the widths need to be obtained using ".ty &'width(<text>,U)" as wgml   */
+/*  4.0 appears to be doing something strange with the end positions       */
+/*  reported following "," and especially following ".", making the width  */
+/*  uncomputable using the before & after positions in the output file.    */
+/***************************************************************************/
+
+#if 0
     text_chars  *   tleft;              // first text_char to justify
     text_chars  *   tn;
     text_chars  *   tw;
@@ -172,8 +193,8 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
         loop_cnt--;
     }
     *delta0 = delta;
-}
 #endif
+}
 
 /***************************************************************************/
 /*  return the width of text up to the first tab stop                      */
@@ -894,6 +915,8 @@ static uint32_t split_text( text_chars * in_chars, uint32_t limit )
 
 /***************************************************************************/
 /*  justification  experimental    treat half as left               TBD    */
+/*  this does justification, IMHO, sensibly, but not quite as wgml 4.0     */
+/*  does it                                                                */  
 /***************************************************************************/
 
 void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
@@ -1011,7 +1034,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 //          break;                      // left of left margin no justify
 //      }
 
-//        puncadj( line, &delta0, rem, cnt - 1, lm );
+        puncadj( line, &delta0, rem, cnt - 1, lm );
 
         hor_end = tl->x_address + tl->width;// hor end position
         delta0 = rm - hor_end;          // TBD
@@ -1331,7 +1354,8 @@ void    process_text( char * text, uint8_t font_num )
                 if( (*p == ' ') || ((input_cbs->fmflags & II_sol) && !ProcFlags.ct
                                 && (ju_x_start <= t_line->last->x_address)) ) {
                     post_space = wgml_fonts[font_num].spc_width;
-                    if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
+                    if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
+                        && !ProcFlags.xmp_active ) {
                         post_space += wgml_fonts[font_num].spc_width;
                     }
                     if( (c_stop != NULL) && (t_line->last->width == 0) ) {
@@ -1631,7 +1655,8 @@ void    process_text( char * text, uint8_t font_num )
         if( ((input_cbs->fmflags & II_eol) && !*p) || (*p == ' ' ) ) {
             pword = p;
             post_space = wgml_fonts[font_num].spc_width;
-            if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
+            if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
+                    && !ProcFlags.xmp_active ) {
                 post_space += wgml_fonts[font_num].spc_width;
             }
             if( ProcFlags.concat ) {// ignore multiple blanks in concat mode

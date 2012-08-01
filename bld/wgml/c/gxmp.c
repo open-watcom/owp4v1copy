@@ -32,7 +32,6 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
-static  bool    concat_save;            // for ProcFlags.concat
 static  ju_enum justify_save;           // for ProcFlags.justify
 static  bool    first_xline;            // special for first xmp LINE
 static  int8_t  a_spacing;              // spacing between adr lines
@@ -65,6 +64,7 @@ extern  void    gml_xmp( const gmltag * entry )
 {
     char    *   p;
 
+    scr_process_break();
     scan_err = false;
     p = scan_start;
     p++;
@@ -129,9 +129,7 @@ extern  void    gml_xmp( const gmltag * entry )
 
     ProcFlags.group_elements = true;
 
-    concat_save = ProcFlags.concat;
     justify_save = ProcFlags.justify;
-    ProcFlags.concat = false;           // TBD
     ProcFlags.justify = ju_off;         // TBD
 
     if( *p == '.' ) p++;                // over '.'
@@ -157,6 +155,7 @@ void    gml_exmp( const gmltag * entry )
 {
     tag_cb  *   wk;
 
+    scr_process_break();
     if( !ProcFlags.xmp_active ) {       // no preceding :XMP tag
         g_err_tag_prec( "XMP" );
         scan_start = scan_stop + 1;
@@ -164,7 +163,6 @@ void    gml_exmp( const gmltag * entry )
     }
     g_curr_font_num = font_save;
     ProcFlags.xmp_active = false;
-    ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
     wk = nest_cb;
     nest_cb = nest_cb->prev;
@@ -253,6 +251,7 @@ void    xmp_xline( const gmltag * entry )
     doc_element *   cur_el;
     text_line   *   ad_line;
 
+    scr_process_break();
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
 
