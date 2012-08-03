@@ -225,7 +225,7 @@ static void compute_metrics( wgml_font * in_font )
      * fields are already correct for a non-PS device.
      */
 
-    if( ps_device ) {
+    if( ProcFlags.ps_device ) {
 
         /* The formula is: (font height * 3) / 10, rounded down.
          * The font height is in vertical base units, computed as above.
@@ -712,8 +712,8 @@ void cop_setup( void )
 
     bin_device = NULL;
     bin_driver = NULL;
-    has_aa_block = false;
-    ps_device = false;
+    ProcFlags.has_aa_block = false;
+    ProcFlags.ps_device = false;
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
 
@@ -803,15 +803,19 @@ void cop_setup( void )
         }
     }
 
-    /* Set has_aa_block to "true" if the driver defines the
+    /* Set ProcFlags.has_aa_block to "true" if the driver defines the
      * :ABSOLUTEADDRESS block.
      */
 
-    if( bin_driver->absoluteaddress.text != NULL ) has_aa_block = true;
+    if( bin_driver->absoluteaddress.text != NULL ) {
+        ProcFlags.has_aa_block = true;
+    }
 
-    /* Set ps_device to "true" if the driver name begins with "ps" or "PS". */
+    /* Set ProcFlags.ps_device to "true" if the driver name begins with "ps" or "PS". */
 
-    if( !_strnicmp( bin_device->driver_name, "ps", 2 ) ) ps_device = true;
+    if( !_strnicmp( bin_device->driver_name, "ps", 2 ) ) {
+        ProcFlags.ps_device = true;
+    }
 
     /* Get the highest font_number and reduce it by one so it contains the
      * highest valid array index.
@@ -844,7 +848,7 @@ void cop_setup( void )
      * But not if the device is PS: for PS, such fonts are never created.
      */
 
-    if( !ps_device ) {
+    if( !ProcFlags.ps_device ) {
         if( bin_device->box.font_name == NULL ) {
             if( bin_device->underscore.specified_font && \
                                 (bin_device->underscore.font_name != NULL) ) {
@@ -1166,7 +1170,7 @@ void cop_setup( void )
         g_suicide;
     }
 
-    if( !has_aa_block ) {
+    if( !ProcFlags.has_aa_block ) {
         uint32_t    test_height;
 
         /* Verify that all line_height fields have the same value. */

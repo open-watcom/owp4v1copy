@@ -105,7 +105,7 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
         return;                         // only 1 text_chars no justify
     }
 
-    if( ps_device ) {
+    if( ProcFlags.has_aa_block ) {
         space /= 2;                     // TBD
 //      space -= 3;                     // TBD
     }
@@ -114,7 +114,7 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
     delta = *delta0;
     loop_cnt = 3;                       // 3 passes
     while( loop_cnt > 2 && delta >= space ) {   // only 1 pass TBD
-        if( ps_device ) {
+        if( ProcFlags.has_aa_block ) {
             space = wgml_fonts[0].spc_width / 2;// TBD
 //          space += loop_cnt - 1;      // TBD
         }
@@ -947,7 +947,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
     /***********************************************************************/
     /*  for PS device remainder decrement is treated differently      TBD  */
     /***********************************************************************/
-    if( ps_device ) {
+    if( ProcFlags.has_aa_block ) {
         deltarem = 1;                   // TBD was 2
     } else {
         deltarem = 1;
@@ -1064,7 +1064,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
             if( rem > 0 ) {             // distribute remainder, too
                 tw->x_address += delta + deltarem;
                 delta += delta1 + deltarem;
-//              if( !ps_device ) {      // TBD
+//              if( !ProcFlags.has_aa_block ) {      // TBD
                     rem -= deltarem;
 //              }
             } else {

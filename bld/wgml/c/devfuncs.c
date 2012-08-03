@@ -440,7 +440,7 @@ static void output_spaces( uint32_t count )
         for( i = 0; i < space_chars.length; i++ ) space_chars.text[i] = ' ';
     }
 
-    if( !text_out_open && ps_device ) {
+    if( !text_out_open && ProcFlags.ps_device ) {
         ob_insert_ps_text_start();
         text_out_open = true;
     }
@@ -514,7 +514,7 @@ static void post_text_output( void )
     char    shift_scale[]   = " 1 .7 div dup scale ";
     size_t  ps_size;
 
-    if( ps_device ) {
+    if( ProcFlags.ps_device ) {
         if( shift_done ) {
 
             /* Emit the appropriate post-subscript/superscript sequence. */
@@ -570,7 +570,7 @@ static void pre_text_output( void )
     char    shift_scale[]   = " .7 .7 scale ";
     size_t  ps_size;
 
-    if( ps_device ) {
+    if( ProcFlags.ps_device ) {
 
         if( current_state.type != desired_state.type ) {
 
@@ -738,7 +738,7 @@ static void * df_dotab( void )
 
     x_address = desired_state.x_address;
     if( desired_state.x_address > current_state.x_address ) {
-        if( has_aa_block ) {
+        if( ProcFlags.has_aa_block ) {
             fb_absoluteaddress();
         } else {
 
@@ -763,14 +763,14 @@ static void * df_dotab( void )
 
             if( !text_out_open ) {
                 pre_text_output();
-                if( ps_device ) {
+                if( ProcFlags.ps_device ) {
                     ob_insert_ps_text_start();
                     text_out_open = true;
                 }
             }
             output_spaces( spaces );
             if( text_out_open ) {
-                if( ps_device ) {
+                if( ProcFlags.ps_device ) {
                     ob_insert_ps_text_end( htab_done, active_font );
                 }
                 post_text_output();
@@ -860,7 +860,7 @@ static void * df_flushpage( void )
 
     /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
 
-    if( !has_aa_block ) fb_newline();
+    if( !ProcFlags.has_aa_block ) fb_newline();
 
     /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
      * :ENDVALUE block for line pass 1 of available font 0, unless it has
@@ -2431,7 +2431,7 @@ static void fb_firstword( line_proc * in_block )
     if( in_block->firstword == NULL ) {
         if( in_block->startword != NULL ) {
             if( text_out_open ) {
-                if( ps_device ) {
+                if( ProcFlags.ps_device ) {
                     ob_insert_ps_text_end( htab_done, active_font );
                 }
                 post_text_output();
@@ -2440,7 +2440,7 @@ static void fb_firstword( line_proc * in_block )
         }
     } else {
         if( text_out_open ) {
-            if( ps_device ) {
+            if( ProcFlags.ps_device ) {
                 ob_insert_ps_text_end( htab_done, active_font );
             }
             post_text_output();
@@ -2657,7 +2657,7 @@ static void fb_font_switch( void )
 static void fb_htab( void )
 {
     if( text_out_open ) {
-        if( ps_device ) {
+        if( ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
         }
         text_out_open = false;
@@ -2677,7 +2677,7 @@ static void fb_initial_horizontal_positioning( void )
     uint32_t    spaces;
 
     x_address = desired_state.x_address;
-    if( has_aa_block ) {
+    if( ProcFlags.has_aa_block ) {
         fb_absoluteaddress();
     } else {
 
@@ -2789,7 +2789,7 @@ static void fb_first_text_chars( text_chars * in_chars, \
 
     if( font_switch_needed ) {
         if( text_out_open ) {
-            if( ps_device ) {
+            if( ProcFlags.ps_device ) {
                 ob_insert_ps_text_end( htab_done, active_font );
             }
             post_text_output();
@@ -2799,7 +2799,7 @@ static void fb_first_text_chars( text_chars * in_chars, \
         if( wgml_fonts[font_number].font_style != NULL ) {
             if( wgml_fonts[font_number].font_style->startvalue != NULL ) {
                 if( text_out_open ) {
-                    if( ps_device ) {
+                    if( ProcFlags.ps_device ) {
                         ob_insert_ps_text_end( htab_done, active_font );
                     }
                     post_text_output();
@@ -2823,7 +2823,7 @@ static void fb_first_text_chars( text_chars * in_chars, \
     } else {
         if( in_lineproc->startvalue != NULL ) {
             if( text_out_open ) {
-                if( ps_device ) {
+                if( ProcFlags.ps_device ) {
                     ob_insert_ps_text_end( htab_done, active_font );
                 }
                 post_text_output();
@@ -2840,7 +2840,7 @@ static void fb_first_text_chars( text_chars * in_chars, \
         if( !font_switch_needed ) {
             if( in_lineproc->startword != NULL ) {
                 if( text_out_open ) {
-                    if( ps_device ) {
+                    if( ProcFlags.ps_device ) {
                         ob_insert_ps_text_end( htab_done, active_font );
                     }
                     post_text_output();
@@ -2874,14 +2874,14 @@ static void fb_first_text_chars( text_chars * in_chars, \
 
     if( textpass ) {
         fb_initial_horizontal_positioning();
-        if( !text_out_open && ps_device ) {
+        if( !text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_start();
             text_out_open = true;
         }
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
 
-        if( undo_shift && text_out_open && ps_device ) {
+        if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
             text_out_open = false;
@@ -2893,12 +2893,12 @@ static void fb_first_text_chars( text_chars * in_chars, \
      */
 
     if( uline ) {
-        if( !text_out_open && ps_device ) {
+        if( !text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_start();
             text_out_open = true;
         }
         output_uscores( in_chars );
-        if( undo_shift && text_out_open && ps_device ) {
+        if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
             text_out_open = false;
@@ -2912,7 +2912,7 @@ static void fb_first_text_chars( text_chars * in_chars, \
 
     if( in_lineproc != NULL ) {
         if( in_lineproc->endword != NULL ) {
-            if( text_out_open && ps_device ) {
+            if( text_out_open && ProcFlags.ps_device ) {
                 ob_insert_ps_text_end( htab_done, active_font );
                 htab_done = false;
                 text_out_open = false;
@@ -2957,7 +2957,7 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
     /* Do the font switch, which is needed by definition. */
 
     if( text_out_open ) {
-        if( ps_device ) {
+        if( ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
         }
         post_text_output();
@@ -2977,7 +2977,7 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
     } else {
         if( in_lineproc->startvalue != NULL ) {
             if( text_out_open ) {
-                if( ps_device ) {
+                if( ProcFlags.ps_device ) {
                     ob_insert_ps_text_end( htab_done, active_font );
                 }
                 post_text_output();
@@ -3016,14 +3016,14 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
 
     if( textpass ) {
         fb_internal_horizontal_positioning();
-        if( !text_out_open && ps_device ) {
+        if( !text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_start();
             text_out_open = true;
         }
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
 
-        if( undo_shift && text_out_open && ps_device ) {
+        if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
             text_out_open = false;
@@ -3035,12 +3035,12 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
      */
 
     if( uline ) {
-        if( !text_out_open && ps_device ) {
+        if( !text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_start();
             text_out_open = true;
         }
         output_uscores( in_chars );
-        if( undo_shift && text_out_open && ps_device ) {
+        if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
             text_out_open = false;
@@ -3054,7 +3054,7 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
 
     if( in_lineproc != NULL ) {
         if( in_lineproc->endword != NULL ) {
-            if( text_out_open && ps_device ) {
+            if( text_out_open && ProcFlags.ps_device ) {
                 ob_insert_ps_text_end( htab_done, active_font );
                 htab_done = false;
                 text_out_open = false;
@@ -3081,7 +3081,7 @@ static void fb_overprint_vertical_positioning( void )
 
     /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
 
-    if( !has_aa_block ) {
+    if( !ProcFlags.has_aa_block ) {
 
         /* Use the :NEWLINE block with an advance of "0", if one exists. */
 
@@ -3231,7 +3231,7 @@ static void fb_normal_vertical_positioning( void )
                  * occurred.
                  */
 
-                if( has_aa_block ) {
+                if( ProcFlags.has_aa_block ) {
                     if( at_start ) {
                         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
 
@@ -3304,7 +3304,7 @@ static void fb_normal_vertical_positioning( void )
 
         /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
 
-        if( !has_aa_block ) fb_newline();
+        if( !ProcFlags.has_aa_block ) fb_newline();
     }
 }
 
@@ -3369,13 +3369,13 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
 
     if( textpass ) {
         fb_internal_horizontal_positioning();
-        if( !text_out_open && ps_device ) {
+        if( !text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_start();
             text_out_open = true;
         }
         ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
-        if( undo_shift && text_out_open && ps_device ) {
+        if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
             text_out_open = false;
@@ -3388,12 +3388,12 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
      */
 
     if( uline ) {
-        if( !text_out_open && ps_device ) {
+        if( !text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_start();
             text_out_open = true;
         }
         output_uscores( in_chars );
-        if( undo_shift && text_out_open && ps_device ) {
+        if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
             text_out_open = false;
@@ -3407,7 +3407,7 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
 
     if( in_lineproc != NULL ) {
         if( in_lineproc->endword != NULL ) {
-            if( text_out_open && ps_device ) {
+            if( text_out_open && ProcFlags.ps_device ) {
                 ob_insert_ps_text_end( htab_done, active_font );
                 htab_done = false;
                 text_out_open = false;
@@ -3641,7 +3641,7 @@ void fb_binclude_support( binclude_element * in_el )
             desired_state.y_address = in_el->y_address;
         }
     }
-    if( ps_device ) {   // always do ABSOLUTEADDRESS block
+    if( ProcFlags.ps_device ) {   // always do ABSOLUTEADDRESS block
         y_address = desired_state.y_address;
         fb_initial_horizontal_positioning();
     } else {            
@@ -3819,7 +3819,7 @@ void fb_first_text_line_pass( text_line * out_line )
     /* Close text output if still open at end of line. */
 
     if( text_out_open ) {
-        if( ps_device ) {
+        if( ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
         }
         post_text_output();
@@ -3974,7 +3974,7 @@ void fb_lineproc_endvalue( void )
 
     if( textpass || uline ) {
         if( text_out_open ) {
-            if( ps_device ) {
+            if( ProcFlags.ps_device ) {
                 ob_insert_ps_text_end( htab_done, active_font );
             }
             post_text_output();
@@ -4250,7 +4250,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
     /* Close text output if still open at end of line. */
 
     if( text_out_open ) {
-        if( ps_device ) {
+        if( ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
         }
         post_text_output();

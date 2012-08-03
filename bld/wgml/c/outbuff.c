@@ -1214,7 +1214,7 @@ void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
 {
     /* Select and invoke the proper static function. */
 
-    if( ps_device )  {
+    if( ProcFlags.ps_device )  {
         if( out_text ) {
             ob_insert_ps_text( in_block, count, font );
         } else {

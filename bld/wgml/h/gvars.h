@@ -208,6 +208,9 @@ global struct ProcFlags {
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
 
+    unsigned        has_aa_block    : 1;// true if device defined :ABSOLUTEADDRESS
+    unsigned        ps_device       : 1;// true if device is PostScript
+
     unsigned        layout          : 1;// within :layout tag and sub tags
     unsigned        lay_specified   : 1;// LAYOUT option or :LAYOUT tag seen
     unsigned        banner          : 1;// within layout banner definition

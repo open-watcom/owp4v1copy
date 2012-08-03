@@ -83,7 +83,7 @@ static void do_el_list_out( doc_element * array, uint8_t count )
                     ob_binclude( &cur_el->element.binc );
                     break;
                 case el_graph :
-                    if( ps_device ) {   // no action for character devices
+                    if( ProcFlags.ps_device ) {   // no action for character devices
                         ob_graphic( &cur_el->element.graph );
                     }
                     break;

@@ -220,7 +220,7 @@ void    gml_graphic( const gmltag * entry )
 
     cur_el = alloc_doc_el(  el_graph );
     cur_el->depth = depth;              // always used with GRAPHIC
-    if( !ps_device ) {                  // character devices ignore SK & post_skip
+    if( !ProcFlags.ps_device ) {        // character devices ignore SK & post_skip
         g_skip = 0;
         g_post_skip = 0;
     }

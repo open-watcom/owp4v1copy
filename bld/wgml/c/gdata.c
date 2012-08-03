@@ -189,7 +189,9 @@ void init_global_vars( void )
 
 void init_pass_data( void )
 {
-    bool    flag_save = ProcFlags.fb_document_done;
+    bool    flag_save   = ProcFlags.fb_document_done;
+    bool    aa_save     = ProcFlags.has_aa_block;
+    bool    ps_save     = ProcFlags.ps_device;
 
     memset( &ProcFlags, 0, sizeof( ProcFlags ) );
     ProcFlags.fb_document_done = flag_save; // keep value
@@ -202,6 +204,8 @@ void init_pass_data( void )
     ProcFlags.doc_sect_nxt  = doc_sect_none;// no document section yet
     ProcFlags.frontm_seen  = false;     // FRONTM not yet seen
     ProcFlags.in_trans  = (in_esc != ' ');// translation wanted
+    ProcFlags.has_aa_block = aa_save;
+    ProcFlags.ps_device = ps_save;
     layout_work.hx[0].headn = 0;        // reset used header headn numbers
     layout_work.hx[1].headn = 0;
     layout_work.hx[2].headn = 0;
