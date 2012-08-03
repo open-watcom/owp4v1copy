@@ -191,6 +191,7 @@ condcode    getarg( void )
                         break;
                     }
                 }
+                break;
             }
         }
         if( quoted ) {

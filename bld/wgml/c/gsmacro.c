@@ -148,7 +148,7 @@ void    add_macro_parms( char * p )
                 ProcFlags.blanks_allowed = 1;   // blanks again
                 *scan_save = c;        // restore original char at string end
                 scan_start = scan_save; // restore scan address
-                if( scan_err ) {        // not valid
+                if( scan_err ) {        // not variable=value format
                     cc = omit;
                     star0++;
                     sprintf( starbuf, "%d", star0 );
