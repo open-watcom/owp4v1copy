@@ -68,20 +68,21 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
 /***************************************************************************/
 /*  puncadj has been disabled because, while the idea is correct, the      */
 /*  details are wrong                                                      */
-/*  sadly, further testing showed that at least "," is treated specially   */
-/*  and that "." does not use a half-space-width                           */
+/*  note that, since our wgml only does WSCRIPT, it is only the space      */
+/*  between the end of the line and the right margin that needs to be      */
+/*  distributed; this alone may require some changes if it is reactivated. */
+/*  further testing showed that at least "," is treated specially and      */
+/*  that "." does not use a half-space-width                               */
 /*  "," has either 1 or 2 hbu added to it, but only in PS                  */
 /*  "." has approximately 1/4 of a space-width added to it (in PS)         */
 /*  and so it depends on the font, but it is sometimes rounded up and      */
 /*  sometimes not, in a pattern that remains to be explored                */
-/*  FWIW, using SCRIPT shows much the same pattern, and suggests that, as  */
-/*  the amount of extra space becomes smaller, eventually even "." is      */
-/*  treated as "," is treated. The test devices, particularly PSSPEC, are  */
-/*  very useful at generating data, and a spreadsheet in analyzing it, but */
-/*  the widths need to be obtained using ".ty &'width(<text>,U)" as wgml   */
-/*  4.0 appears to be doing something strange with the end positions       */
-/*  reported following "," and especially following ".", making the width  */
-/*  uncomputable using the before & after positions in the output file.    */
+/*  Note: wgml 4.0 appears to be doing something strange with the end      */
+/*  positions reported following "," and especially following ".", making  */
+/*  the width uncomputable using the before & after positions in the       */
+/*  output file produced by the test device PSSPEC; the widths need to be  */
+/*  obtained using ".ty &'width(<text>,U)"                                 */
+/*  A spreadsheet is heartily recommended for crunching the data!          */
 /***************************************************************************/
 
 #if 0
@@ -914,9 +915,11 @@ static uint32_t split_text( text_chars * in_chars, uint32_t limit )
 
 
 /***************************************************************************/
-/*  justification  experimental    treat half as left               TBD    */
-/*  this does justification, IMHO, sensibly, but not quite as wgml 4.0     */
-/*  does it                                                                */  
+/*  justification and alignment                                            */
+/*  there are several differences between how justification and alignment  */
+/*  are done here and how they are done by wgml 4.0                        */  
+/*  Note: the description of the function in the TSO is different from     */
+/*  both how wgml 4.0 actually implements JU and this implementation       */
 /***************************************************************************/
 
 void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
@@ -924,7 +927,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
     text_chars  *   tc;
     text_chars  *   tw;
     text_chars  *   tl;                 // last text_chars in line
-    int32_t         sum_w;              // sum of words widths
+//    int32_t         sum_w;              // sum of words widths
     int32_t         hor_end;
     int32_t         cnt;                // # of text_chars
     int32_t         line_width;         // usable line length
@@ -944,6 +947,7 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
         return;
     }
 
+#if 0
     /***********************************************************************/
     /*  for PS device remainder decrement is treated differently      TBD  */
     /***********************************************************************/
@@ -952,8 +956,10 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
     } else {
         deltarem = 1;
     }
+#endif
+    deltarem = 1;
 
-    sum_w = 0;
+//    sum_w = 0;
     hor_end = 0;
     cnt = 0;
     tw = line->first;
@@ -967,17 +973,25 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
                 tc = tw;              // remember first text_char for justify
             }
             cnt++;                      // number of 'words'
-            sum_w += tw->width;         // sum of 'words' widths
+//            sum_w += tw->width;         // sum of 'words' widths
         }
         tw = tw->next;
     } while( tw != NULL );
 
     line_width = rm - lm;
 
-    if( (sum_w <= 0) || (hor_end >= rm) || (line_width < 1) ) {
+//    if( (sum_w <= 0) || (hor_end >= rm) || (line_width < 1) ) {
+    if( (hor_end >= rm) || (line_width < 1) ) {
         return;                         // no justify needed / possible
     }
     delta0 = rm - hor_end;
+
+    /* both here and below, it is not clear if this should be rounded up */
+    /* when delta0 is odd                                                */
+    if( ProcFlags.justify == ju_half ) {
+        delta0 /= 2;
+    }
+
     if( ProcFlags.justify == ju_on ) {
         if( cnt < 2 ) {      // one text_chars only, no full justify possible
             return;
@@ -993,9 +1007,14 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
     if( input_cbs->fmflags & II_research && GlobalFlags.lastpass ) {
         find_symvar( &sys_dict, "$ju", no_subscript, &symjusub);// .ju as string
+#if 0
         out_msg( "\n ju_%s lm:%d %d rm:%d sum_w:%d hor_end:%d"
                  " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
                  lm, line_width, rm, sum_w, hor_end, delta, rem, delta0, cnt );
+#endif
+        out_msg( "\n ju_%s lm:%d %d rm:%d hor_end:%d"
+                 " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
+                 lm, line_width, rm, hor_end, delta, rem, delta0, cnt );
     }
     if( delta < 1 && rem < 1 ) {        // nothing to distribute
         return;
@@ -1003,16 +1022,16 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
     switch( ProcFlags.justify ) { // convert inside / outside to left / right
     case ju_inside :                    // depending on odd / even page
         if( page & 1 ) {
-            just = ju_left;
-        } else {
             just = ju_right;
+        } else {
+            just = ju_left;
         }
         break;
     case ju_outside :
         if( page & 1 ) {
-            just = ju_right;
-        } else {
             just = ju_left;
+        } else {
+            just = ju_right;
         }
         break;
     default :
@@ -1029,15 +1048,23 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
         }
         // falltrough
 ************************************** */
+    case  ju_half :
     case  ju_on :
 //      if( tc->x_address < lm ) {
 //          break;                      // left of left margin no justify
 //      }
 
+        /* presumably, puncadj required the recomputation of hor_end & delta0 */
         puncadj( line, &delta0, rem, cnt - 1, lm );
 
         hor_end = tl->x_address + tl->width;// hor end position
         delta0 = rm - hor_end;          // TBD
+
+        /* if delta0 is recomputed, then it must also be re-halved */
+        if( ProcFlags.justify == ju_half ) {
+            delta0 /= 2;
+        }
+
         if( cnt < 2 ) {
             delta = delta0;             // one text_chars gets all space
             rem   = 0;
@@ -1048,9 +1075,15 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
         if( input_cbs->fmflags & II_research && GlobalFlags.lastpass ) {
             test_out_t_line( line );
+#if 0
             out_msg( "\n ju_%s lm:%d %d rm:%d sum_w:%d hor_end:%d"
                      " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
                      lm, line_width, rm, sum_w, hor_end, delta, rem, delta0,
+                     cnt );
+#endif
+            out_msg( "\n ju_%s lm:%d %d rm:%d hor_end:%d"
+                     " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
+                     lm, line_width, rm, hor_end, delta, rem, delta0,
                      cnt );
         }
         if( delta < 1 && rem < 1 ) {    // nothing to distribute
@@ -1074,7 +1107,6 @@ void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
             tw = tw->next;
         }
         break;
-    case  ju_half :                     // treat as left
     case  ju_left :
         delta = tc->x_address - lm;     // shift to the left
         if( delta < 1 ) {
