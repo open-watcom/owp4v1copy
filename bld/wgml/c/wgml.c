@@ -382,6 +382,14 @@ static  bool    test_comment( void )
         ) {
             if( (*(buff2 + 4) == ' ') ||
                 (*(buff2 + 4) == '.')  ) {
+
+                if( ProcFlags.literal ) {   // special
+                    if( li_cnt < LONG_MAX ) {// we decrement, do not wait for .li OFF
+                        if( li_cnt-- <= 0 ) {
+                            ProcFlags.literal = false;
+                        }
+                    }
+                }
                 return( true );
             }
         }

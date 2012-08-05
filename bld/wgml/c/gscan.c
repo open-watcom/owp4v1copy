@@ -793,7 +793,7 @@ void    scan_line( void )
         if( t_line != NULL ) {
             if( !ProcFlags.concat && t_line->first != NULL ) {
                 if( input_cbs->fmflags & II_eol ) {
-                    scr_process_break();    // TBD
+                    scr_process_break();
                 }
             }
         }
@@ -805,6 +805,9 @@ void    scan_line( void )
             if( li_cnt-- <= 0 ) {
                 ProcFlags.literal = false;
             }
+        }
+        if( input_cbs->fmflags & II_eol ) {
+            scr_process_break();        // ensure the line is output
         }
     }
 }
