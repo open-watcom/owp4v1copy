@@ -443,6 +443,12 @@ bool    get_line( bool display_line )
                                 *p-- = '\0';
                             }
                         }
+#if 0
+                        if( !ProcFlags.concat &&  (*buff2 == '\0') ) {
+                            *buff2 = ' ';   // empty line gets 1 blank
+                            *(buff2 + 1) = '\0';// requires more testing
+                        }
+#endif
                     } else {
                         if( feof( cb->fp ) ) {
                             input_cbs->fmflags |= II_eof;

@@ -1,7 +1,9 @@
 .* test for .li controlword and bug chase for ".ct .li ." line
 :body.
 .ty         default settings: concat &$co, justify &$ju
-In the following line is ..ct ..li .
+.ju off
+.ty                 settings: concat &$co, justify &$ju
+In the following line is "..ct ..li ."
 ..ct ..li .
 .* co off for one line in = one line out
 .co off

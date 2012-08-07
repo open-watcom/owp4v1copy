@@ -12,7 +12,7 @@
         post_skip = 0
 :LP
         left_indent = 4
-        right_indent = 3
+        right_indent = 4
         line_indent = 2
         pre_skip = 1
         post_skip = 0
@@ -108,11 +108,12 @@
 :eLAYOUT.
 :GDOC.
 :BODY.
+.ju off
 .ty body  in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
 :p.
 First paragraph. Example follows:
 :cmt. :xmp depth='2cm'.
-:xmp.
+:xmp. Line zero.
   Line1 xxxx
   Line2 yyyy
   :p. P. Line3 xyz xyz xyz xyz xyz

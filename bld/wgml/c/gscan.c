@@ -776,29 +776,24 @@ void    scan_line( void )
                     start_doc_sect();   // if not already done
                     g_err_tag_rsloc( rs_loc, scan_start );
                 } else {
-                    if( ProcFlags.xmp_active ) {
-                        xmp_xline( NULL );
-                    } else {
-                        process_text( scan_start, g_curr_font_num );
-                    }
+
+                    process_text( scan_start, g_curr_font_num );
+
                 }
             }
         }
 
         /*******************************************************************/
-        /*  For tags which produce text ( :note, ..) but have no following */
-        /* text on the same inputline and .co off is in effect, ensure the */
-        /* line is output                                                  */
+        /* For .co off or :xmp and the last part of the line just processed*/
+        /* ensure the line is output                                       */
         /*******************************************************************/
-        if( t_line != NULL ) {
-            if( !ProcFlags.concat && t_line->first != NULL ) {
-                if( input_cbs->fmflags & II_eol ) {
-                    scr_process_break();
-                }
+        if( !ProcFlags.layout && (input_cbs->fmflags & II_eol) ) {
+            if( !ProcFlags.concat || ProcFlags.xmp_active ) {
+                scr_process_break();
             }
         }
     } else if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
-        g_info_lm( inf_skip_line );
+        g_info_lm( inf_skip_line );     // show skipped line
     }
     if( ProcFlags.literal ) {
         if( li_cnt < LONG_MAX ) {   // we decrement, do not wait for .li OFF

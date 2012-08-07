@@ -1057,7 +1057,7 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
 /* influencing the left margin for the paragraph                           */
 /***************************************************************************/
 
-void    start_line_with_string( char * text, uint8_t font_num )
+void    start_line_with_string( char * text, uint8_t font_num, bool leave_1space )
 {
     text_chars          *   n_char;     // new text char
     size_t                  count;
@@ -1072,6 +1072,10 @@ void    start_line_with_string( char * text, uint8_t font_num )
         if( --count == 0 ) {
             break;
         }
+    }
+    if( leave_1space && post_space > 0 ) {// for ordered :LI keep 1 trailing space
+        post_space--;
+        count++;
     }
 
     n_char = alloc_text_chars( text, count, font_num );

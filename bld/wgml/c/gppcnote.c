@@ -52,7 +52,7 @@ void    proc_p_pc( p_lay_tag * p_pc )
     } else {
         g_cur_left = g_cur_left;
     }
-                                            // possibly indent first line
+                                        // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(p_pc->line_indent) );
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
@@ -94,7 +94,6 @@ extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
     int8_t          font_save;
-//    int32_t         skip_save;
 
     scan_err = false;
     p = scan_start;
@@ -117,7 +116,7 @@ extern  void    gml_note( const gmltag * entry )
     g_cur_h_start = g_cur_left;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
 
-    start_line_with_string( layout_work.note.string, layout_work.note.font );
+    start_line_with_string( layout_work.note.string, layout_work.note.font, false );
 
     if( (t_line != NULL)  && (t_line->last != NULL) ) {
         g_cur_left += t_line->last->width + post_space;

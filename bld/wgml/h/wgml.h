@@ -399,11 +399,7 @@ extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  int32_t     len_to_trail_space( char p[] , int32_t len );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 extern  bool        att_val_to_SU( su * spaceunit, bool pos );
-extern  void        start_line_with_string( char * text, uint8_t font_num );
-
-
-/* gxmp.c                               */
-extern  void    xmp_xline( const gmltag * entry );
+extern  void        start_line_with_string( char * text, uint8_t font_num, bool leave1space );
 
 
 /* outbuff.c                            */
