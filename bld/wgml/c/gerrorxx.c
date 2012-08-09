@@ -143,6 +143,14 @@ void    file_mac_info_nest( void )
     return;
 }
 
+
+void internal_err( char * file, int line )
+{
+    err_count++;
+    g_err( err_intern, file, line );
+    return;
+}
+
 void    att_val_err( char * attname )
 {
 //****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined
@@ -292,6 +300,12 @@ void    xx_line_err( const msg_ids errid, char *pa )
     return;
 }
 
+void    xx_simple_err( const msg_ids errid, char *arg )
+{
+    err_count++;
+    g_err( errid, arg );
+    return;
+}
 
 void    xx_err( const msg_ids errid )
 {

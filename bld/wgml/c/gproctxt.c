@@ -68,9 +68,6 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
 /***************************************************************************/
 /*  puncadj has been disabled because, while the idea is correct, the      */
 /*  details are wrong                                                      */
-/*  note that, since our wgml only does WSCRIPT, it is only the space      */
-/*  between the end of the line and the right margin that needs to be      */
-/*  distributed; this alone may require some changes if it is reactivated. */
 /*  further testing showed that at least "," is treated specially and      */
 /*  that "." does not use a half-space-width                               */
 /*  "," has either 1 or 2 hbu added to it, but only in PS                  */
@@ -618,7 +615,7 @@ static void wgml_tabs( void )
             }
             break;
         default:
-            g_err( err_intern, __FILE__, __LINE__ );
+            internal_err( __FILE__, __LINE__ );
         }
 
         if( skip_tab ) {    // never true for al_left

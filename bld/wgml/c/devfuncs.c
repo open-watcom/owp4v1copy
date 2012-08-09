@@ -153,7 +153,6 @@
 *                   fb_normal_vertical_positioning()
 *                   fb_overprint_vertical_positioning()
 *                   fb_subsequent_text_chars()
-*                   format_error()
 *                   get_parameters()
 *                   interpret_functions()
 *                   numeric_literal()
@@ -312,9 +311,7 @@ static void fb_newline( void )
      */
 
     if( desired_units < 0 ) {
-        out_msg( "wgml internal error: negative carriage movement\n" );
-        err_count++;
-        g_suicide();
+        internal_err( __FILE__, __LINE__ );
     }
 
     /* desired_lines contains the number of lines, rounded up. Note: the
@@ -334,9 +331,7 @@ static void fb_newline( void )
      */
 
     if( (desired_units > 0 ) && (desired_lines == 0) ) {
-        out_msg( "wgml internal error: vertical movement to small for device\n" );
-        err_count++;
-        g_suicide();
+        internal_err( __FILE__, __LINE__ );
     }
 
     /* lines might equal 0, in which case no action is needed. */
@@ -345,8 +340,8 @@ static void fb_newline( void )
         max_advance = 0;
         for( i = 0; i < bin_driver->newlines.count; i++ ) {
             if( bin_driver->newlines.newlineblocks[i].advance <= desired_lines ) {
-                if( max_advance < \
-                            bin_driver->newlines.newlineblocks[i].advance ) {
+                if( max_advance < 
+                        bin_driver->newlines.newlineblocks[i].advance ) {
                     max_advance = bin_driver->newlines.newlineblocks[i].advance;
                     current_block = &bin_driver->newlines.newlineblocks[i];
                 }
@@ -365,7 +360,7 @@ static void fb_newline( void )
     if( at_start ) {
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
-                df_interpret_driver_functions( \
+                df_interpret_driver_functions(
                     wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
             }
         }
@@ -403,18 +398,6 @@ static char * char_convert( char * in_val )
     }
 
     return( ret_val );
-}
-
-/* Function format_error().
- * This function handles all format errors found when interpreting a function
- * block. It never returns to the caller. It should never actually run. 
- */
-
-void format_error( void )
-{
-    out_msg( "Device library error: bad format\n" );
-    err_count++;
-    g_suicide();
 }
 
 /* Function output_spaces().
@@ -466,9 +449,7 @@ static void output_uscores( text_chars * in_chars )
     /* Undersore characters cannot be emitted "backwards". */
 
     if( current_state.x_address > desired_state.x_address) {
-        out_msg( "Cannot move backwards within a text line!\n" );
-        err_count++;
-        g_suicide();
+        internal_err( __FILE__, __LINE__ );
     }
 
     /* This is simplified: since no known device specifies a font for use
@@ -489,8 +470,9 @@ static void output_uscores( text_chars * in_chars )
     if( uscore_chars.length < count ) {
         uscore_chars.text = (uint8_t *) mem_realloc( uscore_chars.text, count );
         uscore_chars.length = count;
-        for( i = 0; i < uscore_chars.length; i++ ) \
-                                            uscore_chars.text[i] = uscore_char;
+        for( i = 0; i < uscore_chars.length; i++ ) {
+            uscore_chars.text[i] = uscore_char;
+        }
     }
 
     ob_insert_block( uscore_chars.text, count, true, true, active_font );
@@ -509,9 +491,9 @@ static void output_uscores( text_chars * in_chars )
 
 static void post_text_output( void )
 {
-    char    shift_neg[]     = "neg ";
+    char    shift_neg[]     = " neg ";
     char    shift_rmoveto[] = "0 exch rmoveto ";
-    char    shift_scale[]   = " 1 .7 div dup scale ";
+    char    shift_scale[]   = " 1 .7 div dup scale";
     size_t  ps_size;
 
     if( ProcFlags.ps_device ) {
@@ -540,9 +522,7 @@ static void post_text_output( void )
             case norm:
                 /* Since shift_done was true, norm is not allowed. */
             default:
-                out_msg("wgml internal error: incorrect processing type.\n");
-                err_count++;
-                g_suicide();
+                internal_err( __FILE__, __LINE__ );
             }
             current_state.type = norm;
         }
@@ -584,28 +564,23 @@ static void pre_text_output( void )
                 ob_insert_block( " ", 1, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height, \
-                                        ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height,
+                                 ps_size, false, false, active_font );
 
-                ob_insert_block( " ", 1, false, false, active_font );
-
-                ob_insert_block( "0 ", 2, false, false, active_font );
+                ob_insert_block( " 0 ", 3, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height, \
-                                        ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height,
+                                 ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_neg );
-                ob_insert_block( shift_neg, ps_size, false, false, \
-                                                                active_font );
+                ob_insert_block( shift_neg, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_rmoveto );
-                ob_insert_block( shift_rmoveto, ps_size, false, false, \
-                                                                active_font );
+                ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_scale );
-                ob_insert_block( shift_scale, ps_size, false, false, \
-                                                                active_font );
+                ob_insert_block( shift_scale, ps_size, false, false, active_font );
 
                 shift_done = true;
                 break;                
@@ -613,31 +588,25 @@ static void pre_text_output( void )
                 ob_insert_block( " ", 1, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height, \
-                                        ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height,
+                                 ps_size, false, false, active_font );
 
-                ob_insert_block( " ", 1, false, false, active_font );
-
-                ob_insert_block( "0 ", 2, false, false, active_font );
+                ob_insert_block( " 0 ", 3, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height, \
-                                        ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height,
+                                 ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_rmoveto );
-                ob_insert_block( shift_rmoveto, ps_size, false, false, \
-                                                                active_font );
+                ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_scale );
-                ob_insert_block( shift_scale, ps_size, false, false, \
-                                                                active_font );
+                ob_insert_block( shift_scale, ps_size, false, false, active_font );
 
                 shift_done = true;
                 break;                
             default:
-                out_msg("wgml internal error: incorrect processing type.\n");
-                err_count++;
-                g_suicide();
+                internal_err( __FILE__, __LINE__ );
             }
         }
     }
@@ -676,10 +645,7 @@ static void * df_do_nothing_num( void )
 
 static void * df_bad_code( void )
 {
-    out_msg( "\nUnknown byte code: 0x%02x -- parameter type: 0x%02x\n", \
-                    current_df_data.df_code, current_df_data.parameter_type);
-    err_count++;
-    g_suicide();
+    internal_err( __FILE__, __LINE__ );
     return( NULL );
 }
 
@@ -698,7 +664,9 @@ static void * df_bad_code( void )
 
 static void * df_clearpc( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
 #ifdef __UNIX__
     out_msg( "\033[2J" );
@@ -723,12 +691,12 @@ static void * df_dotab( void )
 
     instance++;
     if( instance > 1 ) {
-        out_msg( "Recursive use of %%dotab(), check device library." );
-        err_count++;
-        g_suicide();
+        xx_simple_err( err_rec_dev_func, "%dotab()" );
     }
 
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* desired_state.x_address must be greater than current_state.x_address
      * or no horizontal positioning occurs. Note that a 0 or negative value
@@ -754,9 +722,7 @@ static void * df_dotab( void )
              */
 
             if( (tab_width % wgml_fonts[active_font].spc_width) > 0 ) {
-                out_msg( "Warning: character device spacing must be an " \
-                            "integral number of space character widths.\n" );
-                wng_count++;
+                internal_err( __FILE__, __LINE__ );
             }
 
             /* Perform the %dotab() horizontal positioning. */
@@ -790,7 +756,9 @@ static void * df_dotab( void )
  
 static void * df_endif( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     return( NULL );
 }
@@ -809,12 +777,12 @@ static void * df_flushpage( void )
 
     instance++;
     if( instance > 1 ) {
-        out_msg( "Recursive use of %%flushpage(), check device library." );
-        err_count++;
-        g_suicide();
+        xx_simple_err( err_rec_dev_func, "%flushpage()" );
     }
 
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Save the value of desired_state.y_address. */
 
@@ -871,7 +839,7 @@ static void * df_flushpage( void )
     if( at_start ) {
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
-                df_interpret_driver_functions( \
+                df_interpret_driver_functions(
                     wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
             }
         }
@@ -898,7 +866,9 @@ static void * df_flushpage( void )
  
 static void * df_recordbreak_device( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     out_msg( "\n" );
     return( NULL );
@@ -910,7 +880,9 @@ static void * df_recordbreak_device( void )
  
 static void * df_recordbreak_driver( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     ob_flush();
     return( NULL );
@@ -922,7 +894,9 @@ static void * df_recordbreak_driver( void )
  
 static void * df_textpass( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     textpass = true;
     return( NULL );
@@ -934,7 +908,9 @@ static void * df_textpass( void )
  
 static void * df_ulineoff( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     uline = false;
     return( NULL );
@@ -946,7 +922,9 @@ static void * df_ulineoff( void )
  
 static void * df_ulineon( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     uline = true;
     return( NULL );
@@ -958,7 +936,9 @@ static void * df_ulineon( void )
  
 static void * df_wait( void )
 {
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    if( current_df_data.parameter_type != 0x00 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     getch();
     return( df_recordbreak_device() );
@@ -1194,26 +1174,24 @@ static void * get_parameters ( parameters * in_parameters )
 
     /* Skip the offset1 value. */
 
-    memcpy_s( &offset, sizeof( offset ), current_df_data.current, \
-                                                            sizeof( offset ) );
+    memcpy_s( &offset, sizeof( offset ), current_df_data.current, sizeof( offset ) );
     current_df_data.current += sizeof( offset );
 
     /* Get the first parameter offset (offset2). */
 
-    memcpy_s( &in_parameters->first, sizeof( in_parameters->first ), \
-                        current_df_data.current, sizeof( in_parameters->first ) );
+    memcpy_s( &in_parameters->first, sizeof( in_parameters->first ),
+              current_df_data.current, sizeof( in_parameters->first ) );
     current_df_data.current += sizeof( in_parameters->first );
 
     /* Get the second parameter offset (offset3). */
 
-    memcpy_s( &in_parameters->second, sizeof( in_parameters->second ), \
-                    current_df_data.current, sizeof( in_parameters->second ) );
+    memcpy_s( &in_parameters->second, sizeof( in_parameters->second ),
+              current_df_data.current, sizeof( in_parameters->second ) );
     current_df_data.current += sizeof( in_parameters->second );
 
     /* Skip the offset4 value. */
 
-    memcpy_s( &offset, sizeof( offset ), current_df_data.current, \
-                                                            sizeof( offset ) );
+    memcpy_s( &offset, sizeof( offset ), current_df_data.current, sizeof( offset ) );
     current_df_data.current += sizeof( offset );
 
     return( NULL );    
@@ -1240,13 +1218,15 @@ static void * process_parameter( void )
 {
     /* Reset current_df_data for the parameter. */
 
-    memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ), \
-                    current_df_data.current, sizeof( current_df_data.df_code ) );
+    memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ),
+              current_df_data.current, sizeof( current_df_data.df_code ) );
     current_df_data.current += sizeof( current_df_data.df_code );
 
     /* Invoke parameter function. */
 
-    if( current_df_data.df_code > MAX_FUNC_INDEX ) format_error();
+    if( current_df_data.df_code > MAX_FUNC_INDEX ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     return( current_function_table[current_df_data.df_code]() );
 }
@@ -1286,8 +1266,7 @@ static void * df_out_text_device( void )
 
         /* Character literal parameter. */
         
-        memcpy_s( &count, sizeof( count ), current_df_data.current, \
-                                                            sizeof( count ) );
+        memcpy_s( &count, sizeof( count ), current_df_data.current, sizeof( count ) );
         current_df_data.current += sizeof( count );
 
         /* Emit parameter byte-by-byte since may contain nulls. */
@@ -1304,8 +1283,9 @@ static void * df_out_text_device( void )
         /* Ensure that this is either a ShortHeader or a LongHeader. */
 
         get_parameters( &my_parameters );
-        if( (my_parameters.first != 0x0009) && \
-                            (my_parameters.first != 0x000d) ) format_error();
+        if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+            internal_err( __FILE__, __LINE__ );
+        }
 
         /* Now get and emit the parameter. */
 
@@ -1320,7 +1300,7 @@ static void * df_out_text_device( void )
         break;
 
     default:
-        format_error();
+        internal_err( __FILE__, __LINE__ );
     }
     return( NULL );
 }
@@ -1340,11 +1320,10 @@ static void out_text_driver( bool out_trans, bool out_text )
 
         /* Character literal parameter. */
         
-        memcpy_s( &count, sizeof( count ), current_df_data.current, \
-                                                                sizeof( count ) );
+        memcpy_s( &count, sizeof( count ), current_df_data.current, sizeof( count ) );
         current_df_data.current += sizeof( count );
-        ob_insert_block( current_df_data.current, count, out_trans, out_text, \
-                                                                active_font );
+        ob_insert_block( current_df_data.current, count, out_trans, out_text, 
+                         active_font );
         break;
 
     case 0x10:
@@ -1354,8 +1333,9 @@ static void out_text_driver( bool out_trans, bool out_text )
         /* Ensure that this is either a ShortHeader or a LongHeader. */
 
         get_parameters( &my_parameters );
-        if( (my_parameters.first != 0x0009) && \
-                            (my_parameters.first != 0x000d) ) format_error();
+        if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+            internal_err( __FILE__, __LINE__ );
+        }
 
         /* Now get and insert the parameter. */
 
@@ -1371,7 +1351,7 @@ static void out_text_driver( bool out_trans, bool out_text )
         break;
 
     default:
-        format_error();
+        internal_err( __FILE__, __LINE__ );
     }
     return;
 }
@@ -1414,8 +1394,7 @@ static void * char_literal( void )
 
     /* Get the count. */
 
-    memcpy_s( &count, sizeof( count ), current_df_data.current, \
-                                                                sizeof( count ) );
+    memcpy_s( &count, sizeof( count ), current_df_data.current, sizeof( count ) );
     current_df_data.current += sizeof( count );
 
     /* Convert the character literal into a char *. */
@@ -1440,8 +1419,7 @@ static void * numeric_literal( void )
 
     /* Get and return the value. */
 
-    memcpy_s( &value, sizeof( value ), current_df_data.current, \
-                                                            sizeof( value ) );
+    memcpy_s( &value, sizeof( value ), current_df_data.current, sizeof( value ) );
     return( (void *) value );
 }
 
@@ -1465,20 +1443,21 @@ static void * df_cancel( void )
 
     instance++;
     if( instance > 1 ) {
-        out_msg( "Recursive use of %%cancel(), check device library." );
-        err_count++;
-        g_suicide();
+        xx_simple_err( err_rec_dev_func, "%cancel()" );
     }
 
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Now invoke the parameter's handler. */
 
@@ -1488,7 +1467,7 @@ static void * df_cancel( void )
     if( wgml_fonts[font_number].font_style != NULL ) {
         if( !stricmp( first, wgml_fonts[font_number].font_style->type ) ) {
             if( wgml_fonts[font_number].font_style->startvalue != NULL ) {
-                df_interpret_driver_functions( \
+                df_interpret_driver_functions(
                     wgml_fonts[font_number].font_style->startvalue->text );
             }
         }
@@ -1497,7 +1476,7 @@ static void * df_cancel( void )
     if( wgml_fonts[font_number].font_switch != NULL ) {
         if( !stricmp( first, wgml_fonts[font_number].font_switch->type ) ) {
             if( wgml_fonts[font_number].font_switch->startvalue != NULL ) {
-                df_interpret_driver_functions( \
+                df_interpret_driver_functions(
                     wgml_fonts[font_number].font_switch->startvalue->text );
             }
         }
@@ -1523,9 +1502,7 @@ static void * df_enterfont( void )
 
     instance++;
     if( instance > 1 ) {
-        out_msg( "Recursive use of %%enterfont(), check device library." );
-        err_count++;
-        g_suicide();
+        xx_simple_err( err_rec_dev_func, "%enterfont()" );
     }
 
     /* Device function %enterfont() ignores its parameter. */
@@ -1553,12 +1530,15 @@ static void * df_sleep( void )
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Get the parameter. */
 
@@ -1590,12 +1570,15 @@ static void * df_setsymbol( void )
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Now get the first parameter. */
 
@@ -1634,12 +1617,15 @@ static void * df_binary( void )
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Now invoke the parameter's handler. */
 
@@ -1682,8 +1668,8 @@ static void skip_functions( void )
 
     current_function = current_df_data.base;
     current_function -= 3;
-    memcpy_s( &current_offset, sizeof( current_offset ), current_function, \
-                                                sizeof( current_offset ) );
+    memcpy_s( &current_offset, sizeof( current_offset ), current_function,
+              sizeof( current_offset ) );
     current_function = current_df_data.base + current_offset;
 
     for( ;; )
@@ -1698,15 +1684,15 @@ static void skip_functions( void )
 
         /* Get the offset to the next element in the linked list. */
 
-        memcpy_s( &current_offset, sizeof( current_offset ), \
-                        current_df_data.current, sizeof( current_offset ) );
+        memcpy_s( &current_offset, sizeof( current_offset ),
+                  current_df_data.current, sizeof( current_offset ) );
         current_df_data.current += sizeof( current_offset );
 
         /* Get the parameter type for the current device function */
 
-        memcpy_s( &current_df_data.parameter_type, \
-                  sizeof( current_df_data.parameter_type ), \
-                  current_df_data.current, \
+        memcpy_s( &current_df_data.parameter_type,
+                  sizeof( current_df_data.parameter_type ),
+                  current_df_data.current,
                   sizeof( current_df_data.parameter_type ) );
         current_df_data.current += sizeof( current_df_data.parameter_type );
 
@@ -1729,7 +1715,7 @@ static void skip_functions( void )
 
         /* Get the function code. */
 
-        memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ), \
+        memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ),
                   current_df_data.current, sizeof( current_df_data.df_code ) );
         current_df_data.current += sizeof( current_df_data.df_code );
 
@@ -1754,12 +1740,15 @@ static void * df_ifeqn( void )
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
     
     /* Now get the first parameter. */
 
@@ -1791,12 +1780,15 @@ static void * df_ifnen( void )
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
     
     /* Now get the first parameter. */
 
@@ -1828,12 +1820,15 @@ static void * df_ifeqs( void )
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
     
     /* Now get the first parameter. */
 
@@ -1870,12 +1865,15 @@ static void * df_ifnes( void )
     /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
-                                                                format_error();
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        internal_err( __FILE__, __LINE__ );
+    }
 
     /* Ensure the parameter_type is correct */
 
-    if( current_df_data.parameter_type != 0x10 ) format_error();
+    if( current_df_data.parameter_type != 0x10 ) {
+        internal_err( __FILE__, __LINE__ );
+    }
     
     /* Now get the first parameter. */
 
@@ -1980,9 +1978,7 @@ static void * df_divide( void )
     second = (uintptr_t) process_parameter();
 
     if( second == 0 ) {
-        out_msg( "Zero divisor found in device function %%divide()!\n" );
-        err_count++;
-        g_suicide();
+        xx_simple_err( err_zero_divisor, "%divide()" );
     }
 
     return( (void *) (first / second) );
@@ -2126,9 +2122,7 @@ static void * df_remainder( void )
     second = (uintptr_t) process_parameter();
 
     if( second == 0 ) {
-        out_msg( "Zero divisor found in device function %%remainder()!\n" );
-        err_count++;
-        g_suicide();
+        xx_simple_err( err_zero_divisor, "%remainder()" );
     }
 
     return( (void *) (first % second) );
@@ -2343,8 +2337,7 @@ static void interpret_functions( uint8_t * in_function )
      */
 
     if( in_function == NULL ) {
-        out_msg( "Warning: empty device function code block submitted\n" );
-        wng_count++;
+        internal_err( __FILE__, __LINE__ );
         return;
     }
 
@@ -2378,9 +2371,9 @@ static void interpret_functions( uint8_t * in_function )
 
         /* Get the parameter type for the current device function */
 
-        memcpy_s( &current_df_data.parameter_type, \
-                  sizeof( current_df_data.parameter_type ), \
-                  current_df_data.current, \
+        memcpy_s( &current_df_data.parameter_type,
+                  sizeof( current_df_data.parameter_type ),
+                  current_df_data.current,
                   sizeof( current_df_data.parameter_type ) );
         current_df_data.current += sizeof( current_df_data.parameter_type );
 
@@ -2396,13 +2389,15 @@ static void interpret_functions( uint8_t * in_function )
 
         /* Get the function code. */
 
-        memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ), \
+        memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ),
                   current_df_data.current, sizeof( current_df_data.df_code ) );
         current_df_data.current += sizeof( current_df_data.df_code );
 
         /* This is where the df_code processing occurs. */
 
-        if( current_df_data.df_code > MAX_FUNC_INDEX ) format_error();
+        if( current_df_data.df_code > MAX_FUNC_INDEX ) {
+            internal_err( __FILE__, __LINE__ );
+        }
 
         current_function_table[current_df_data.df_code]();
 
@@ -2602,36 +2597,33 @@ static void fb_font_switch( void )
 
     if( from_font->font_style != NULL ) {
         if( from_font->font_style->endvalue != NULL ) {
-            df_interpret_driver_functions( \
-                                    from_font->font_style->endvalue->text );
+            df_interpret_driver_functions( from_font->font_style->endvalue->text );
         }
     }
 
     if( do_now ) {
         if( from_font->font_switch != NULL ) {
             if( from_font->font_switch->endvalue != NULL ) {
-                df_interpret_driver_functions( \
-                                    from_font->font_switch->endvalue->text );
+                df_interpret_driver_functions( from_font->font_switch->endvalue->text );
             }
         }
     }
 
-    if( to_font->font_pause != NULL ) \
+    if( to_font->font_pause != NULL ) {
         df_interpret_device_functions( to_font->font_pause->text );
+    }
 
     if( do_now ) {
         if( to_font->font_switch != NULL ) {
             if( to_font->font_switch->startvalue != NULL ) {
-                df_interpret_driver_functions( \
-                                    to_font->font_switch->startvalue->text );
+                df_interpret_driver_functions( to_font->font_switch->startvalue->text );
             }
         }
     }
 
     if( to_font->font_style != NULL ) {
         if( to_font->font_style->startvalue != NULL ) {
-            df_interpret_driver_functions( \
-                                    to_font->font_style->startvalue->text );
+            df_interpret_driver_functions( to_font->font_style->startvalue->text );
         }
     }
 
@@ -2684,9 +2676,7 @@ static void fb_initial_horizontal_positioning( void )
         /* Spaces cannot be emitted and tabs cannot be done "backwards". */
 
         if( current_state.x_address > desired_state.x_address) {
-            out_msg( "Cannot move backwards within a text line!\n" );
-            err_count++;
-            g_suicide();
+            internal_err( __FILE__, __LINE__ );
         }
 
         /* Perform the initial horizontal positioning. */
@@ -2724,9 +2714,7 @@ static void fb_internal_horizontal_positioning( void )
     /* Spaces cannot be emitted and tabs cannot be done "backwards". */
 
     if( current_state.x_address > desired_state.x_address) {
-        out_msg( "Cannot move backwards within a text line!\n" );
-        err_count++;
-        g_suicide();
+        internal_err( __FILE__, __LINE__ );
     }
 
     /* Perform the internal horizontal positioning. */
@@ -2769,8 +2757,7 @@ static void fb_internal_horizontal_positioning( void )
  *          subsequent passes as well.
  */
 
-static void fb_first_text_chars( text_chars * in_chars, \
-                                 line_proc * in_lineproc )
+static void fb_first_text_chars( text_chars * in_chars, line_proc * in_lineproc )
 {
     bool    font_switch_needed  = true;
     bool    undo_shift          = false;        
@@ -2780,8 +2767,9 @@ static void fb_first_text_chars( text_chars * in_chars, \
     font_number = desired_state.font_number;
     active_font = desired_state.font_number;
 
-    if( current_state.font_number == desired_state.font_number ) \
-                                                    font_switch_needed = false;
+    if( current_state.font_number == desired_state.font_number ) {
+        font_switch_needed = false;
+    }
 
     /* Do the font switch, if needed. If a font switch is not needed,
      * interpret the :FONTSTYLE block :STARTVALUE block.
@@ -2804,8 +2792,8 @@ static void fb_first_text_chars( text_chars * in_chars, \
                     }
                     post_text_output();
                 }
-                df_interpret_driver_functions( \
-                        wgml_fonts[font_number].font_style->startvalue->text );
+                df_interpret_driver_functions(
+                    wgml_fonts[font_number].font_style->startvalue->text );
             }
         }
     }
@@ -2878,8 +2866,8 @@ static void fb_first_text_chars( text_chars * in_chars, \
             ob_insert_ps_text_start();
             text_out_open = true;
         }
-        ob_insert_block( in_chars->text, in_chars->count, true, true, \
-                                                        in_chars->font_number);
+        ob_insert_block( in_chars->text, in_chars->count, true, true, 
+                         in_chars->font_number);
 
         if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
@@ -2940,8 +2928,7 @@ static void fb_first_text_chars( text_chars * in_chars, \
  *          output will occur.
  */
 
-static void fb_new_font_text_chars( text_chars * in_chars, \
-                                    line_proc * in_lineproc )
+static void fb_new_font_text_chars( text_chars * in_chars, line_proc * in_lineproc )
 {
     bool    undo_shift  = false;
 
@@ -3020,8 +3007,8 @@ static void fb_new_font_text_chars( text_chars * in_chars, \
             ob_insert_ps_text_start();
             text_out_open = true;
         }
-        ob_insert_block( in_chars->text, in_chars->count, true, true, \
-                                                        in_chars->font_number);
+        ob_insert_block( in_chars->text, in_chars->count, true, true, 
+                         in_chars->font_number);
 
         if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
@@ -3149,18 +3136,14 @@ static void fb_normal_vertical_positioning( void )
         /* y_address is formed by subtraction. */
 
         if( current_state.y_address < desired_state.y_address ) {
-            out_msg( "wgml internal error: cannot move to prior device page\n" );
-            err_count++;
-            g_suicide();
+            internal_err( __FILE__, __LINE__ );
         }
     } else {
 
         /* y_address is formed by addition. */
 
         if( current_state.y_address > desired_state.y_address ) {
-            out_msg( "wgml internal error: cannot move to prior device page\n" );
-            err_count++;
-            g_suicide();
+            internal_err( __FILE__, __LINE__ );
         }
     }
 
@@ -3219,8 +3202,10 @@ static void fb_normal_vertical_positioning( void )
 
                 /* Interpret the DEVICE_PAGE :PAUSE block. */
 
-                if( bin_device->pauses.devpage_pause != NULL ) \
-        df_interpret_device_functions( bin_device->pauses.devpage_pause->text );
+                if( bin_device->pauses.devpage_pause != NULL ) {
+                    df_interpret_device_functions(
+                        bin_device->pauses.devpage_pause->text );
+                }
 
                 /* If the :ABSOLUTEADDRESS block is defined and this is the
                  * Initial Vertical Positioning, interpret the :LINEPROC
@@ -3240,14 +3225,14 @@ static void fb_normal_vertical_positioning( void )
                              * of the previous device page.
                              */
 
-                            current_state.y_address = \
+                            current_state.y_address =
                                 (current_pages + i) * bin_device->page_depth;
                             y_address = current_state.y_address;
 
-                            if( wgml_fonts[0].font_style->lineprocs[0].endvalue \
-                                                                    != NULL ) {
-                                df_interpret_driver_functions( \
-                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+                            if( wgml_fonts[0].font_style->lineprocs[0].endvalue 
+                                    != NULL ) {
+                                df_interpret_driver_functions(
+                                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
                             }
                         }
                         at_start = false;
@@ -3281,16 +3266,16 @@ static void fb_normal_vertical_positioning( void )
                 /* y_address is formed by subtraction. */
                 /* This should not be possible, but leave it for now. */
 
-                current_state.y_address = (y_address + 1) - (desired_pages * \
-                                                    bin_device->page_depth);
+                current_state.y_address = (y_address + 1) - (desired_pages *
+                                           bin_device->page_depth);
             } else {
 
                 /* y_address is formed by addition. This has been confirmed
                  * in side-by-side comparison with wgml 4.0.
                  */
 
-                current_state.y_address = (desired_pages * \
-                                                    bin_device->page_depth) + 1;
+                current_state.y_address = (desired_pages *
+                                           bin_device->page_depth) + 1;
             }
 
             y_address = desired_state.y_address % bin_device->page_depth;
@@ -3320,8 +3305,8 @@ static void fb_normal_vertical_positioning( void )
  *          output will occur.
  */
 
-static void fb_subsequent_text_chars( text_chars * in_chars, \
-                                      line_proc * in_lineproc )
+static void fb_subsequent_text_chars( text_chars * in_chars,
+                                       line_proc * in_lineproc )
 {
     bool    undo_shift  = false;
 
@@ -3373,8 +3358,8 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
             ob_insert_ps_text_start();
             text_out_open = true;
         }
-        ob_insert_block( in_chars->text, in_chars->count, true, true, \
-                                                        in_chars->font_number);
+        ob_insert_block( in_chars->text, in_chars->count, true, true,
+                         in_chars->font_number);
         if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
@@ -3562,8 +3547,9 @@ void df_setup( void )
     uscore_chars.text = (uint8_t *) mem_alloc( 80 );
     uscore_chars.length = 80;
     uscore_chars.current = 0;
-    for( i = 0; i < uscore_chars.length; i++ ) \
-                                            uscore_chars.text[i] = uscore_char;
+    for( i = 0; i < uscore_chars.length; i++ ) {
+        uscore_chars.text[i] = uscore_char;
+    }
 
     return;
 }
@@ -3713,23 +3699,27 @@ void fb_enterfont( void )
     active_font = 0;
     font_number = 0;
 
-    if( wgml_fonts[0].font_pause != NULL ) \
+    if( wgml_fonts[0].font_pause != NULL ) {
         df_interpret_device_functions( wgml_fonts[0].font_pause->text );
+    }
 
     if( wgml_fonts[0].font_switch != NULL ) {
-        if( wgml_fonts[0].font_switch->startvalue != NULL ) \
-            df_interpret_driver_functions( \
-                                wgml_fonts[0].font_switch->startvalue->text );
+        if( wgml_fonts[0].font_switch->startvalue != NULL ) {
+            df_interpret_driver_functions(
+                wgml_fonts[0].font_switch->startvalue->text );
+        }
     }
 
     if( wgml_fonts[0].font_style != NULL ) {       
-        if( wgml_fonts[0].font_style->startvalue != NULL ) \
-            df_interpret_driver_functions( \
+        if( wgml_fonts[0].font_style->startvalue != NULL ) {
+            df_interpret_driver_functions(
                                 wgml_fonts[0].font_style->startvalue->text );
+        }
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[0].font_style->lineprocs[0].startvalue != NULL ) \
-                df_interpret_driver_functions( \
+            if( wgml_fonts[0].font_style->lineprocs[0].startvalue != NULL ) {
+                df_interpret_driver_functions(
                     wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+            }
             fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
         }
     }
@@ -3786,8 +3776,9 @@ void fb_first_text_line_pass( text_line * out_line )
     /* The "first text_chars instance" sequence. */
 
     if( wgml_fonts[font_number].font_style != NULL ) {
-        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
+        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
             cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
+        }
     }
     x_address = desired_state.x_address;
     fb_first_text_chars( current, cur_lineproc );
@@ -3800,11 +3791,10 @@ void fb_first_text_line_pass( text_line * out_line )
         desired_state.type = current->type;
         if( current_state.font_number != current->font_number ) {
             if( wgml_fonts[current->font_number].font_style != NULL ) {
-                if( wgml_fonts[current->font_number].font_style->lineprocs \
-                                                                == NULL ) {       
+                if( wgml_fonts[current->font_number].font_style->lineprocs == NULL ) {       
                     cur_lineproc = NULL;
                 } else {
-                    cur_lineproc = \
+                    cur_lineproc = 
                     &wgml_fonts[current->font_number].font_style->lineprocs[0];
                 }
             }
@@ -3879,9 +3869,9 @@ void fb_init( init_block * in_block )
      */
 
     for( i = 0; i < in_block->count; i++ ) {
-        if( in_block->codeblock[i].is_fontvalue == false ) \
+        if( in_block->codeblock[i].is_fontvalue == false ) {
             df_interpret_driver_functions( in_block->codeblock[i].text );
-        else for( j = 0; j < wgml_font_cnt; j++ ) {
+        } else for( j = 0; j < wgml_font_cnt; j++ ) {
             font_number = j;
             df_interpret_driver_functions( in_block->codeblock[i].text );
         }
@@ -3924,9 +3914,8 @@ void fb_init( init_block * in_block )
  *          drawing code is needed.
  */
 
-void fb_line_block( line_block * in_line_block, uint32_t h_start, \
-                    uint32_t v_start, uint32_t h_len, uint32_t v_len, \
-                    char * name )
+void fb_line_block( line_block * in_line_block, uint32_t h_start, uint32_t v_start,
+                     uint32_t h_len, uint32_t v_len, char * name )
 {
 
     /* Set up for fb_absoluteaddress(). */
@@ -3980,10 +3969,10 @@ void fb_lineproc_endvalue( void )
             post_text_output();
         }
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[font_number].font_style->\
+            if( wgml_fonts[font_number].font_style->
                                 lineprocs[line_pass_number].endvalue != NULL ) {
-                df_interpret_driver_functions( \
-                    wgml_fonts[font_number].font_style->lineprocs[line_pass_number].\
+                df_interpret_driver_functions(
+                    wgml_fonts[font_number].font_style->lineprocs[line_pass_number].
                                                             endvalue->text );
             }
         }
@@ -4027,8 +4016,9 @@ void fb_new_section( uint32_t v_start )
 
     /* Interpret the DOCUMENT_PAGE :PAUSE block. */
 
-    if( bin_device->pauses.docpage_pause != NULL ) \
+    if( bin_device->pauses.docpage_pause != NULL ) {
         df_interpret_device_functions( bin_device->pauses.docpage_pause->text );
+    }
 
     /* Set up for a new document page. */
 
@@ -4094,11 +4084,11 @@ void fb_position( uint32_t h_start, uint32_t v_start )
 
     if( wgml_fonts[0].font_style != NULL ) {
         if( wgml_fonts[0].font_style->lineprocs !=NULL ) {
-            df_interpret_driver_functions( \
-                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+            df_interpret_driver_functions(
+                wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
             x_address = h_start;    // to match wgml 4.0
-            df_interpret_driver_functions( \
-                    wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+            df_interpret_driver_functions(
+                wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
             fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
         }
     }
@@ -4154,7 +4144,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
     /* If current is NULL, this line does not have this pass. */
 
     if( current == NULL ) {
-        out_msg( "why am I here?\n" );
+        internal_err( __FILE__, __LINE__ );
         return;
     }
 
@@ -4216,25 +4206,25 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
                          */
 
                         if( cur_lineproc->endvalue != NULL ) {
-                            df_interpret_driver_functions( \
-                                                cur_lineproc->endvalue->text );
+                            df_interpret_driver_functions(
+                                cur_lineproc->endvalue->text );
                         }
 
                         if( cur_fontstyle->endvalue != NULL ) {
-                            df_interpret_driver_functions( \
-                                                cur_fontstyle->endvalue->text );
+                            df_interpret_driver_functions(
+                                cur_fontstyle->endvalue->text );
                         }
 
                         fb_internal_horizontal_positioning();
 
                         if( cur_fontstyle->startvalue != NULL ) {
-                            df_interpret_driver_functions( \
-                                        cur_fontstyle->startvalue->text );
+                            df_interpret_driver_functions(
+                                cur_fontstyle->startvalue->text );
                         }
 
                         if( cur_lineproc->startvalue != NULL ) {
-                            df_interpret_driver_functions( \
-                                            cur_lineproc->startvalue->text );
+                            df_interpret_driver_functions(
+                                cur_lineproc->startvalue->text );
                         }
 
                         fb_firstword( cur_lineproc );

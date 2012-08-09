@@ -330,7 +330,7 @@ doc_element * alloc_doc_el(  element_type type )
         curr->element.text.first = NULL;
         break;
     default :
-        g_err( err_intern, __FILE__, __LINE__ );
+        internal_err( __FILE__, __LINE__ );
     }
 
     return( curr );

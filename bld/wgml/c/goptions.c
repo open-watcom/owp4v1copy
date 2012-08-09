@@ -841,7 +841,7 @@ static void set_font( option * opt )
         }
         break;
     default:
-        g_err( err_intern, __FILE__, __LINE__ );
+        internal_err( __FILE__, __LINE__ );
         g_suicide();
     }
 

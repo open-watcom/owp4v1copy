@@ -585,3 +585,29 @@ pick( ERR_NO_LI_LP,             "LI or LP tag must follow the start of a list",
 pick( ERR_LI_LP_NO_LIST,        "LI or LP tag only allowed in a list",
                                 "LI or LP tag only allowed in a list" )
 
+/* cop & output file-specific errors */
+
+pick( ERR_OPEN_OUT_FILE,        "Unable to open output file %s\n",
+                                "Unable to open output file %s\n")
+
+pick( ERR_OUT_REC_SIZE,         "Output file's record size is too small for the device '%s'\n",
+                                "Output file's record size is too small for the device '%s'\n")
+
+pick( ERR_OUT_REC_SIZE2,        "Output record length is too large, max is %s\n",
+                                "Output record length is too large, max is %s\n")
+
+pick( ERR_REC_ATT_NOT_SUP,      "Record attribute %s is not currently supported\n",
+                                "Record attribute %s is not currently supported\n")
+
+pick( ERR_REC_ATT_BAD_FMT,      "Record attribute %s is not formatted correctly\n",
+                                "Record attribute %s is not formatted correctly\n")
+
+pick( ERR_REC_DEV_FUNC,         "Recursive use of %s, check device library.",
+                                "Recursive use of %s, check device library.")
+
+pick( ERR_ZERO_DIVISOR,         "Zero divisor found in device function %s.",
+                                "Zero divisor found in device function %s.")
+
+
+
+                                
