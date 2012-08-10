@@ -443,10 +443,11 @@ bool    get_line( bool display_line )
                                 *p-- = '\0';
                             }
                         }
-#if 0
-                        if( !ProcFlags.concat &&  (*buff2 == '\0') ) {
+#if 1
+                        if( ProcFlags.start_section && !ProcFlags.concat &&
+                            (*buff2 == '\0') ) {
                             *buff2 = ' ';   // empty line gets 1 blank
-                            *(buff2 + 1) = '\0';// requires more testing
+                            *(buff2 + 1) = '\0';// requires more testing TBD
                         }
 #endif
                     } else {
@@ -470,35 +471,6 @@ bool    get_line( bool display_line )
     }
 
     buff2_lg = strnlen_s( buff2, buf_size );
-#if 0
-    if( !(input_cbs->fmflags & II_eof) ) {  // for empty physical line
-        if( (input_cbs->fmflags & II_sol) &&
-            (input_cbs->fmflags & II_eol) ) {
-            if( buff2_lg == 0 ) {
-                *buff2   = SCR_char;    // simulate .br input
-                *(buff2 + 1) = 'b';
-                *(buff2 + 2) = 'r';
-                buff2_lg = 3;
-            }
-        }
-    }
-#endif
-#if 1
-    if( !ProcFlags.concat ) {
-        if( !(input_cbs->fmflags & II_eof) ) {
-            if( (input_cbs->fmflags & II_sol) &&
-                (input_cbs->fmflags & II_eol) ) {
-
-#if 0
-                if( buff2_lg == 0 ) {   // empty line
-                    blank_lines += 1;
-                    ProcFlags.sk_cond = true;   // prepare simulated .sk 1 C
-                }
-#endif
-            }
-        }
-    }
-#endif
     *(buff2 + buff2_lg) = '\0';
     *(buff2 + buff2_lg + 1) = '\0';
     if( input_cbs->fmflags & II_file ) {

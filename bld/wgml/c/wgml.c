@@ -513,7 +513,13 @@ static  void    proc_input( char * filename )
                 }
                 break;                  // EOF
             }
-
+#if 0
+            if( (buff2_lg < 1) && !ProcFlags.concat) {
+                ProcFlags.empty_doc_el = true;
+                scr_process_break();
+                continue;               // minimal processing for empty line
+            }
+#endif
             remove_indentation();       // ".  .  .  .cw"  becomes ".cw"
 
             if( ProcFlags.goto_active ) {
@@ -807,6 +813,18 @@ int main( int argc, char * argv[] )
         init_def_lay();                 // set default layout values
 
         fb_start();                     // START :PAUSE & :INIT processing.
+
+        if( (GlobalFlags.inclist || GlobalFlags.statistics ||
+             GlobalFlags.research ) && (lay_files != NULL) ) {
+
+            laystack *lwk = lay_files;
+
+            out_msg( "\nLAYOUT file(s) specified on cmdline:\n" );
+            while( lwk != NULL ) {
+                out_msg( "\t%s\n", lwk->layfn );
+                lwk = lwk->next;
+            }
+        }
 
         for( pass = 1; pass <= passes; pass++ ) {
 

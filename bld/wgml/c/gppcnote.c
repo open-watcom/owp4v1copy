@@ -131,7 +131,7 @@ extern  void    gml_note( const gmltag * entry )
     set_skip_vars( NULL, NULL, NULL,
                     spacing, g_curr_font_num );
     if( *p == '.' ) p++;                // over '.'
-    while( *p == ' ' ) p++;             // skip initial spaces
+    while( *p == ' ' ) p++;             // skip initial space
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
     }
