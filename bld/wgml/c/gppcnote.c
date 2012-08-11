@@ -94,6 +94,8 @@ extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
     int8_t          font_save;
+    text_chars  *   marker;
+    uint32_t        spc_cnt;
 
     scan_err = false;
     p = scan_start;
@@ -118,6 +120,15 @@ extern  void    gml_note( const gmltag * entry )
 
     start_line_with_string( layout_work.note.string, layout_work.note.font, false );
 
+    /* the value of post_space after start_line_with_string() is wrong for  */
+    /* two reasons: 1) it uses the wrong font; 2) it is at most "1" even if */
+    /* more than one space appears at the end of the note_string. The       */
+    /* second problem stems from LAYOUT processing, which allows at most    */
+    /* one space in layout_work.note.string, regardless of how many there   */
+    /* may be in the actual LAYOUT section.                                 */
+
+    spc_cnt = post_space / wgml_fonts[g_curr_font_num].spc_width;
+    post_space = spc_cnt * wgml_fonts[font_save].spc_width;
     if( (t_line != NULL)  && (t_line->last != NULL) ) {
         g_cur_left += t_line->last->width + post_space;
     }
@@ -134,7 +145,20 @@ extern  void    gml_note( const gmltag * entry )
     while( *p == ' ' ) p++;             // skip initial space
     if( *p ) {
         process_text( p, g_curr_font_num ); // if text follows
+    } else if( !ProcFlags.concat && ProcFlags.has_aa_block ) {
+        marker = alloc_text_chars( NULL, 0, font_save );
+        marker->x_address = g_cur_h_start;
+        if( t_line->first == NULL ) {
+            t_line->first = marker;
+            t_line->last = t_line->first;
+        } else {
+            marker->prev = t_line->last;
+            t_line->last->next = marker;
+            t_line->last = t_line->last->next;
+        }
+        post_space = 0;
     }
+
     g_curr_font_num = font_save;
     scan_start = scan_stop + 1;
     return;
