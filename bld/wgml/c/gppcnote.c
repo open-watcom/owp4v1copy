@@ -34,7 +34,7 @@
 #include    "gvars.h"
 
 /***************************************************************************/
-/*  :P.perhaps paragraph elements                                          */
+/*  :P. :PC common routine                                                 */
 /***************************************************************************/
 void    proc_p_pc( p_lay_tag * p_pc )
 {
@@ -122,10 +122,7 @@ extern  void    gml_note( const gmltag * entry )
 
     /* the value of post_space after start_line_with_string() is wrong for  */
     /* two reasons: 1) it uses the wrong font; 2) it is at most "1" even if */
-    /* more than one space appears at the end of the note_string. The       */
-    /* second problem stems from LAYOUT processing, which allows at most    */
-    /* one space in layout_work.note.string, regardless of how many there   */
-    /* may be in the actual LAYOUT section.                                 */
+    /* more than one space appears at the end of the note_string.           */
 
     spc_cnt = post_space / wgml_fonts[g_curr_font_num].spc_width;
     post_space = spc_cnt * wgml_fonts[font_save].spc_width;
@@ -143,9 +140,14 @@ extern  void    gml_note( const gmltag * entry )
                     spacing, g_curr_font_num );
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial space
-    if( *p ) {
-        process_text( p, g_curr_font_num ); // if text follows
-    } else if( !ProcFlags.concat && ProcFlags.has_aa_block ) {
+    if( *p ) {                          // if text follows
+        process_text( p, g_curr_font_num );
+    } else if( !ProcFlags.concat && ProcFlags.has_aa_block &&
+               (t_line != NULL) ) {
+
+        /* only create marker if line not empty,                            */
+        /* ie. :NOTE note_string is not nullstring                          */
+
         marker = alloc_text_chars( NULL, 0, font_save );
         marker->x_address = g_cur_h_start;
         if( t_line->first == NULL ) {

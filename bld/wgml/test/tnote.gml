@@ -1,12 +1,16 @@
 .* test for &gml.note and &gml.fn tags footnote not yet supported
 .se fil=&'left(&sysfnam,&'lastpos('.',&sysfnam)-1)
+.if &'left('&sysversion',1) = 'O' .se lext=lay
+.el .se lext=la4
 :layout
 :note
-        note_string = "This is the note_string: "
-:convert file="&fil..lay".
+   note_string = ''
+:convert file="&fil..&lext.".
 :elayout
 :gdoc sec='top secret'
-:body
+:FRONTM
+:PREFACE
+:cmt BODY
 .ju off
 :p.
 Some text with .co off.

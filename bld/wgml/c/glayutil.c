@@ -925,10 +925,16 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
     cvterr = false;
     len = strlen( p );
     if( is_quote_char( *p ) ) {
+    /******************************************************************/
+    /*The following is to allow constructs which happen in the OW docu*/
+    /* '    att = "value   ".     '                                   */
+    /*the single quotes show the actual line content                  */
+    /******************************************************************/
         while( len > 1 && *(p + len - 1) == ' ' ) {
-            len--;                      // ignore trailing spaces if quoted
+            len--;                      // ignore trailing spaces following
+                                        // the terminating quote
         }
-        if( *(p + len - 1) == '.' ) {       // allow terminator
+        if( *(p + len - 1) == '.' ) {   // allow terminator
             len--;
         }
     }
