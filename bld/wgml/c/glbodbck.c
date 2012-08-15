@@ -166,11 +166,13 @@ void    lay_backbod( const gmltag * entry )
                     break;
                 case   e_body_string:
                     if( x_tag == el_body ) {
+                        p = l_args.start[0] + l_args.len[0];
                         cvterr = i_xx_string( p, curr, &(ap->string) );
                     }
                     break;
                 case   e_backm_string:
                     if( x_tag == el_backm ) {
+                        p = l_args.start[0] + l_args.len[0];
                         cvterr = i_xx_string( p, curr, &(ap->string) );
                     }
                     break;

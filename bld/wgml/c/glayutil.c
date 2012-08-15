@@ -224,6 +224,7 @@ condcode    get_lay_sub_and_value( att_args * args )
     if( *p == '.' ) {                   // TBD
         p++;                            // try to get over trailing .
     }                                   // for doc\gml\nb7x9lay.gml line 331
+
     scan_start = p;
     return( rc );
 }
@@ -916,43 +917,25 @@ void    o_space_unit( FILE * f, lay_att curr, su * tm )
 
 /***************************************************************************/
 /*  xx_string  for :NOTE and others                                        */
+/*                                                                         */
+/*                                                                         */
 /***************************************************************************/
 bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
 {
     bool        cvterr;
-    int         len;
 
     cvterr = false;
-    len = strlen( p );
-    if( is_quote_char( *p ) ) {
-    /******************************************************************/
-    /*The following is to allow constructs which happen in the OW docu*/
-    /* '    att = "value   ".     '                                   */
-    /*the single quotes show the actual line content                  */
-    /******************************************************************/
-        while( len > 1 && *(p + len - 1) == ' ' ) {
-            len--;                      // ignore trailing spaces following
-                                        // the terminating quote
-        }
-        if( *(p + len - 1) == '.' ) {   // allow terminator
-            len--;
-        }
-    }
-    if( *p != *(p + len - 1) ) {
-        cvterr = true;                  // string not terminated
+    p = get_att_value( p );
+    if( (val_start != NULL) && (val_len < str_size) ) {
+        memcpy_s( tm, str_size, val_start, val_len );
+        *(tm + val_len) = '\0';
     } else {
-        if( str_size > len - 2 ) {
-            *(p + len - 1) = '\0';
-            strcpy_s( tm, str_size, p + 1 );
-        } else {
-            cvterr = true;              // string too long;
-        }
+        cvterr = true;
     }
-    if( cvterr ) {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
+    if( ProcFlags.tag_end_found ) {     // . found
+        p++;
     }
+    scan_start = p;
     return( cvterr );
 }
 

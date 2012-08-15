@@ -96,16 +96,16 @@ static uint8_t          tr_table[0x100]; // .TR-controlled translation table
  *      font contains the number of the font to be used.
  *
  * Notes:
- *      If this is the start of the text element, then the last item was "(" 
+ *      If this is the start of the text element, then the last item was "("
  *          and, if difference = 1, the resulting "(\" is correct for the end
  *          of the output record.
- *      If the text element ends on the last legal position, then inserting "\" 
+ *      If the text element ends on the last legal position, then inserting "\"
  *          and moving the last character in the text element to the next buffer
  *          is correct.
- *      If the text element ends one position before the last legal position, 
+ *      If the text element ends one position before the last legal position,
  *          then the output record will correctly end with the ")" of ") sd"
  *          or ") shwd", as appropriate.
- *      Adjusting text_count as shown avoids a problem where a word was added 
+ *      Adjusting text_count as shown avoids a problem where a word was added
  *          without a final '\', which is not how wgml 4.0 does it and which
  *          produces an extra space when the PS interpreter processes the text.
  *      If a multibyte translation is too large to fit into the buffer, then an
@@ -129,7 +129,7 @@ static void ob_insert_ps_text( uint8_t * in_block, size_t count, uint8_t font )
     /* Adjust font if appropriate and initialize cur_trans. */
 
     if( font >= wgml_font_cnt ) font = 0;
-    if( wgml_fonts[font].outtrans != NULL ) cur_table = 
+    if( wgml_fonts[font].outtrans != NULL ) cur_table =
                                             wgml_fonts[font].outtrans->table;
     for( i = 0; i < count; i++ ) {
 
@@ -351,7 +351,7 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
     /* Adjust font if necessary and initialize cur_table and text_count. */
 
     if( font >= wgml_font_cnt ) font = 0;
-    if( wgml_fonts[font].outtrans != NULL ) cur_table = 
+    if( wgml_fonts[font].outtrans != NULL ) cur_table =
                                             wgml_fonts[font].outtrans->table;
     text_count = count;
     for( i = 0; i < count; i++ ) {
@@ -432,14 +432,14 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
             /* Process next character, might be another space. */
 
             continue;
-        } 
+        }
 
         /* Get the next token and translate it. */
 
         k = 0;
         for( j = i; j < count; j++ ) {
 
-            /* in_block[i] points to a non-space character. */ 
+            /* in_block[i] points to a non-space character. */
 
             if( in_block[j] == ' ' ) break;
 
@@ -447,7 +447,7 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
 
             if( k >= translated.length ) {
                 translated.length *= 2;
-                translated.text = (uint8_t *) mem_realloc( translated.text, 
+                translated.text = (uint8_t *) mem_realloc( translated.text,
                                                            translated.length );
             }
 
@@ -547,8 +547,8 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
 /* Function ob_insert_def().
  * This function inserts a block of bytes into the output buffer. This is done
  * byte-by-byte because the block may include nulls. If the entire block won't
- * fit, as much of it as possible is copied into the buffer, which is then 
- * flushed and the rest of the block processed. No output translation occurs. 
+ * fit, as much of it as possible is copied into the buffer, which is then
+ * flushed and the rest of the block processed. No output translation occurs.
  *
  * Parameter:
  *      in_block contains the bytes to be inserted.
@@ -577,7 +577,7 @@ static void ob_insert_def( uint8_t * in_block, size_t count )
 
         if( text_count <= difference ) break;
 
-        memcpy_s( &buffout.text[buffout.current], difference, 
+        memcpy_s( &buffout.text[buffout.current], difference,
                   &in_block[current], difference );
         buffout.current += difference;
         current+= difference;
@@ -588,7 +588,7 @@ static void ob_insert_def( uint8_t * in_block, size_t count )
     /* Insert any remaining text. */
 
     if( text_count > 0 ) {
-        memcpy_s( &buffout.text[buffout.current], text_count, 
+        memcpy_s( &buffout.text[buffout.current], text_count,
                   &in_block[current], text_count );
         buffout.current += text_count;
     }
@@ -604,7 +604,7 @@ static void ob_insert_def( uint8_t * in_block, size_t count )
  * This function inserts a block of bytes into the output buffer with output
  * translation. This is done byte-by-byte because the block may include nulls.
  * If the entire block won't fit, as much of it as possible is copied into the
- * buffer, which is then flushed and the rest of the block processed. 
+ * buffer, which is then flushed and the rest of the block processed.
  *
  * Parameter:
  *      in_block contains the bytes to be inserted.
@@ -746,7 +746,7 @@ static void set_out_file( void )
         doc_spec[3] = '\0';
         doc_ext = &doc_spec[3];
     } else {
-        _splitpath2( master_fname, doc_spec, &doc_drive, &doc_dir, &doc_fname,        
+        _splitpath2( master_fname, doc_spec, &doc_drive, &doc_dir, &doc_fname,
                      &doc_ext );
     }
 
@@ -998,7 +998,7 @@ void ob_binclude( binclude_element * in_el )
         fb_binclude_support( in_el );
         fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
         buffout.current = 0;
-        
+
         if( in_el->has_rec_type ) {
             count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
             while( count == buffout.length ) {
@@ -1031,6 +1031,22 @@ void ob_binclude( binclude_element * in_el )
     return;
 }
 
+
+/* Function ob_direct_out().
+ * This function bypasses the output buffer for direct output.
+ */
+
+void ob_direct_out( char * text )       // used from .oc
+{
+    fwrite( text, sizeof( uint8_t ), strlen( text ), out_file_fb );
+#ifdef __UNIX__
+    fprintf_s( out_file_fb, "\n" );
+#else
+    fprintf_s( out_file_fb, "\r\n" );
+#endif
+}
+
+
 /* Function ob_flush().
  * This function actually flushes the output buffer to the output device/file.
  *
@@ -1043,7 +1059,7 @@ void ob_binclude( binclude_element * in_el )
 
 void ob_flush( void )
 {
-    
+
     fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
     buffout.current = 0;
 #ifdef __UNIX__
@@ -1317,7 +1333,7 @@ void ob_teardown( void )
         buffout.text = NULL;
     }
 
-    if(translated.text != NULL ) { 
+    if(translated.text != NULL ) {
         mem_free( translated.text );
         translated.text = NULL;
     }

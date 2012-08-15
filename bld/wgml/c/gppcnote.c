@@ -129,24 +129,23 @@ extern  void    gml_note( const gmltag * entry )
     if( (t_line != NULL)  && (t_line->last != NULL) ) {
         g_cur_left += t_line->last->width + post_space;
     }
-    post_space = 0;
     g_cur_h_start = g_cur_left;
     ju_x_start = g_cur_h_start;
 
     spacing = layout_work.note.spacing;
     g_curr_font_num = layout_work.defaults.font;
 
-    set_skip_vars( NULL, NULL, NULL,
-                    spacing, g_curr_font_num );
+    set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font_num );
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial space
     if( *p ) {                          // if text follows
+        post_space = 0;
         process_text( p, g_curr_font_num );
     } else if( !ProcFlags.concat && ProcFlags.has_aa_block &&
-               (t_line != NULL) ) {
+               (t_line != NULL) && (post_space > 0) ) {
 
         /* only create marker if line not empty,                            */
-        /* ie. :NOTE note_string is not nullstring                          */
+        /* :NOTE note_string is not nullstring and ends in at least 1 space */
 
         marker = alloc_text_chars( NULL, 0, font_save );
         marker->x_address = g_cur_h_start;

@@ -2,9 +2,12 @@
 .se fil=&'left(&sysfnam,&'lastpos('.',&sysfnam)-1)
 .if &'left('&sysversion',1) = 'O' .se lext=lay
 .el .se lext=la4
+.*
 :layout
-:note
-   note_string = ''
+:cmt.   note_string = "note:"
+:NOTE
+        font = 2 left_indent = 0 note_string = '' pre_skip = 1 post_skip = 1
+        right_indent = 0 spacing = 1
 :convert file="&fil..&lext.".
 :elayout
 :gdoc sec='top secret'

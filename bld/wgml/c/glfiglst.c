@@ -133,6 +133,7 @@ void    lay_figlist( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.figlist.columns );
                     break;
                 case   e_fill_string:
+                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                           &layout_work.figlist.fill_string );
                     break;

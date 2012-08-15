@@ -112,7 +112,7 @@
   picks( mc, scr_dummy, cw_break+cw_o_t    )// multiple column
   picks( me, scr_me,    0                  )// macro exit
   picks( ms, scr_dummy, 0                  )// macro substitution
-  picks( oc, scr_dummy, cw_o_t             )// output comment
+  picks( oc, scr_oc,    0                  )// output comment
   picks( of, scr_dummy, cw_break+cw_o_t    )// offset
   picks( oj, scr_dummy, cw_break+cw_o_t    )// out justify
   picks( oo, scr_dummy, cw_o_t             )// output overlay

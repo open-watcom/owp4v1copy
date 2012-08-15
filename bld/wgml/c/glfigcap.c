@@ -131,6 +131,7 @@ void    lay_figcap( const gmltag * entry )
                     }
                     break;
                 case   e_figcap_string:
+                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                             &layout_work.figcap.string );
                     break;

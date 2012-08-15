@@ -135,6 +135,7 @@ void    lay_toc( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.toc.toc_levels );
                     break;
                 case   e_fill_string:
+                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                           &layout_work.toc.fill_string );
                     break;

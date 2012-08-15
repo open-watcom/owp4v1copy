@@ -308,6 +308,7 @@ void    lay_appendix( const gmltag * entry )
                                        &layout_work.appendix.header );
                     break;
                 case   e_appendix_string:
+                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                           &layout_work.appendix.string );
                     break;

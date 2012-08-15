@@ -186,11 +186,13 @@ void    lay_abspref( const gmltag * entry )
                     break;
                 case   e_abstract_string:
                     if( x_tag == el_abstract ) {
+                        p = l_args.start[0] + l_args.len[0];
                         cvterr = i_xx_string( p, curr, &(ap->string) );
                     }
                     break;
                 case   e_preface_string:
                     if( x_tag == el_preface ) {
+                        p = l_args.start[0] + l_args.len[0];
                         cvterr = i_xx_string( p, curr, &(ap->string) );
                     }
                     break;
