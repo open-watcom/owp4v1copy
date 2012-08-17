@@ -380,6 +380,16 @@ bool    is_stop_char( char c )
 
 
 /*
+ * Test character for a space or tab character
+ */
+bool    is_space_tab_char( char c )
+{
+
+    return( ( c == ' ' ) || ( c == '\t' ) );
+}
+
+
+/*
  * If first and last character are the same and one of the quote chars
  * the start and end pointers are adjusted
  */

@@ -34,7 +34,7 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/* set the attribute value and report tag-end ('.') if found               */
+/* get the attribute value and report tag-end ('.') if found               */
 /*     [<white space>]=[<white space>]<value>                              */
 /***************************************************************************/
 
@@ -43,6 +43,7 @@ char * get_att_value( char * p )
     char        quote;
 
     ProcFlags.tag_end_found = false;
+    quote_char = '\0';
     val_start = NULL;
     while( *p == ' ' ) {                // over WS to '='
         p++;
@@ -70,6 +71,7 @@ char * get_att_value( char * p )
     }
     if( *p == '"' || *p == '\'' ) {
         quote = *p;
+        quote_char = *p;
         ++p;
         val_start = p;
         while( *p ) {

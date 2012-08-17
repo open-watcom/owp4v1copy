@@ -54,8 +54,11 @@ global  char        *   scan_restart;   // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
 global  char        *   tok_start;      // start of scanned token
 global  size_t          arg_flen;       // arg length
+global  char        *   var_start;      // variable start
+global  size_t          var_len;        // variable length
 global  size_t          val_len;        // value length
 global  char        *   val_start;      // value start
+global  char            quote_char;     // value is quoted by this char or \0
 global  locflags        rs_loc;         // restricted location
 
 global  int             switch_char;    // DOS switch character

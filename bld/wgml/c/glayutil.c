@@ -156,9 +156,10 @@ condcode    get_lay_sub_and_value( att_args * args )
     p = scan_start;
     rc = no;
 
-    while( *p == ' ' ) {                // over WS to start of name
+    while( is_space_tab_char( *p ) ) {  // over WS to start of name
         p++;
     }
+
     args->start[0] = p;
     args->len[0] = -1;                  // switch for scanning error
     args->len[1] = -1;                  // switch for scanning error
@@ -167,7 +168,7 @@ condcode    get_lay_sub_and_value( att_args * args )
         p++;
     }
     if( *p == '\0' ) {
-        if( p == scan_start ) {
+        if( p == args->start[0] ) {
             rc = omit;                  // nothing found
         }
         return( rc );                   // or parsing error
@@ -180,13 +181,13 @@ condcode    get_lay_sub_and_value( att_args * args )
         return( rc );
     }
 
-    while( *p && *p == ' ' ) {          // over WS to =
+    while( is_space_tab_char( *p ) ) {  // over WS to =
         p++;
     }
 
     if(*p && *p == '=' ) {
         p++;
-        while( *p == ' ' ) {            // over WS to attribute value
+        while( is_space_tab_char( *p ) ) {  // over WS to attribute value
             p++;
         }
     } else {
@@ -221,9 +222,10 @@ condcode    get_lay_sub_and_value( att_args * args )
     } else {
         rc = pos;
     }
-    if( *p == '.' ) {                   // TBD
-        p++;                            // try to get over trailing .
-    }                                   // for doc\gml\nb7x9lay.gml line 331
+    if( *p == '.' ) {
+        ProcFlags.tag_end_found = true;
+        p++;
+    }
 
     scan_start = p;
     return( rc );

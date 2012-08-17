@@ -90,6 +90,7 @@ extern  bool        is_function_char( char c );
 extern  bool        is_lay_att_char( char c );
 extern  bool        is_id_char( char c );
 extern  bool        is_macro_char( char c );
+extern  bool        is_space_tab_char( char c );
 extern  bool        is_stop_char( char c );
 extern  bool        is_symbol_char( char c );
 extern  char        parse_char( char * pa, int len );
