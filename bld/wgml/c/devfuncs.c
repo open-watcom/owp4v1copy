@@ -691,7 +691,7 @@ static void * df_dotab( void )
 
     instance++;
     if( instance > 1 ) {
-        xx_simple_err( err_rec_dev_func, "%dotab()" );
+        xx_simple_err_c( err_rec_dev_func, "%dotab()" );
     }
 
     if( current_df_data.parameter_type != 0x00 ) {
@@ -777,7 +777,7 @@ static void * df_flushpage( void )
 
     instance++;
     if( instance > 1 ) {
-        xx_simple_err( err_rec_dev_func, "%flushpage()" );
+        xx_simple_err_c( err_rec_dev_func, "%flushpage()" );
     }
 
     if( current_df_data.parameter_type != 0x00 ) {
@@ -1443,7 +1443,7 @@ static void * df_cancel( void )
 
     instance++;
     if( instance > 1 ) {
-        xx_simple_err( err_rec_dev_func, "%cancel()" );
+        xx_simple_err_c( err_rec_dev_func, "%cancel()" );
     }
 
     /* Ensure that this is either a ShortHeader or a LongHeader. */
@@ -1502,7 +1502,7 @@ static void * df_enterfont( void )
 
     instance++;
     if( instance > 1 ) {
-        xx_simple_err( err_rec_dev_func, "%enterfont()" );
+        xx_simple_err_c( err_rec_dev_func, "%enterfont()" );
     }
 
     /* Device function %enterfont() ignores its parameter. */
@@ -1978,7 +1978,7 @@ static void * df_divide( void )
     second = (uintptr_t) process_parameter();
 
     if( second == 0 ) {
-        xx_simple_err( err_zero_divisor, "%divide()" );
+        xx_simple_err_c( err_zero_divisor, "%divide()" );
     }
 
     return( (void *) (first / second) );
@@ -2122,7 +2122,7 @@ static void * df_remainder( void )
     second = (uintptr_t) process_parameter();
 
     if( second == 0 ) {
-        xx_simple_err( err_zero_divisor, "%remainder()" );
+        xx_simple_err_c( err_zero_divisor, "%remainder()" );
     }
 
     return( (void *) (first % second) );

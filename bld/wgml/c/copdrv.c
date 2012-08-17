@@ -129,8 +129,8 @@ static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
  *          the allocation fails.
  */
 
-static cop_driver * parse_finish_block( cop_driver * in_driver, \
-                                         uint8_t * * current, uint8_t * base )
+static cop_driver * parse_finish_block( cop_driver * in_driver,
+                                        uint8_t * * current, uint8_t * base )
 {
 
     code_block *    cop_codeblocks  = NULL;
@@ -154,12 +154,12 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
         /* Add the code_text struct itself */
 
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
+        if( in_driver->allocated_size < (in_driver->next_offset +
+                                         sizeof( code_text )) ) {
             in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
         }
-        code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+        code_text_ptr = (code_text *) ((uint8_t *) in_driver + 
+                                       in_driver->next_offset);
 
         in_driver->finishes.end = (code_text *) in_driver->next_offset;
         in_driver->next_offset += sizeof( code_text );
@@ -179,17 +179,17 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
         code_text_ptr->count = cop_codeblocks[0].count;
 
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
+        if( in_driver->allocated_size < (in_driver->next_offset +
+                                         code_text_ptr->count) ) {
             in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                                            (size_t) in_driver->finishes.end);
         }
 
         text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
-                                                        code_text_ptr->count );
+        memcpy_s( text_ptr, code_text_ptr->count,
+                  cop_codeblocks[0].text, code_text_ptr->count );
         code_text_ptr->text = (uint8_t *) in_driver->next_offset;
         in_driver->next_offset += code_text_ptr->count;
 
@@ -204,12 +204,12 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
         /* Add the code_text struct itself. */
 
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
+        if( in_driver->allocated_size < (in_driver->next_offset +
+                                         sizeof( code_text )) ) {
             in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
         }
-        code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+        code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                       in_driver->next_offset);
                                                         
         in_driver->finishes.document = (code_text *) in_driver->next_offset;
         in_driver->next_offset += sizeof( code_text );
@@ -229,16 +229,16 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
         code_text_ptr->count = cop_codeblocks[0].count;
 
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
+        if( in_driver->allocated_size < (in_driver->next_offset +
+                                         code_text_ptr->count) ) {
             in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                        (size_t) in_driver->finishes.document);
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                           (size_t) in_driver->finishes.document);
         }
         text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
-                                                        code_text_ptr->count );
+        memcpy_s( text_ptr, code_text_ptr->count,
+                  cop_codeblocks[0].text, code_text_ptr->count );
         code_text_ptr->text = (uint8_t *) in_driver->next_offset;
         in_driver->next_offset += code_text_ptr->count;
 
@@ -292,10 +292,10 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
  *          the format must be entirely present for there to be no error.
 */
 
-static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
-                                       fontstyle_block * fontstyle_block_ptr, \
-                                       p_buffer * * p_buffer_set, \
-                                       uint8_t * * current, uint8_t count )
+static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, 
+                                      fontstyle_block * fontstyle_block_ptr,
+                                      p_buffer * * p_buffer_set,
+                                      uint8_t * * current, uint8_t count )
 {
 
     char *          string_ptr              = NULL;
@@ -309,7 +309,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
     /* Get the number of line passes, which can be 0. */
 
-    fread( &fontstyle_block_ptr->line_passes, \
+    fread( &fontstyle_block_ptr->line_passes,
            sizeof( fontstyle_block_ptr->line_passes ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( in_driver );
@@ -363,11 +363,11 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
         /* Add the space for the type. */
 
         if( in_driver->allocated_size < (in_driver->next_offset + count) ) {
-            fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                      (uint8_t *) in_driver);
             in_driver = resize_cop_driver( in_driver, count );
-            fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
-                                                        fontstyle_block_offset);
+            fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver +
+                                                       fontstyle_block_offset);
         }
 
         string_ptr = (char *) in_driver + in_driver->next_offset;
@@ -396,21 +396,21 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
         /* Add the space for the line_proc struct instances. */
 
-        if( in_driver->allocated_size < (in_driver->next_offset + \
+        if( in_driver->allocated_size < (in_driver->next_offset +
                 (fontstyle_block_ptr->line_passes * sizeof( line_proc )) ) ) {
-            fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-            in_driver = resize_cop_driver( in_driver, \
-                    fontstyle_block_ptr->line_passes * sizeof( line_proc ) );
-            fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
-                                                        fontstyle_block_offset);
+            fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                      (uint8_t *) in_driver);
+            in_driver = resize_cop_driver( in_driver,
+                        fontstyle_block_ptr->line_passes * sizeof( line_proc ) );
+            fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver +
+                                                       fontstyle_block_offset);
         }
-        line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+        line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
+                                       in_driver->next_offset);
 
         fontstyle_block_ptr->lineprocs = (line_proc *) in_driver->next_offset;
-        in_driver->next_offset += fontstyle_block_ptr->line_passes * \
-                                                            sizeof( line_proc );
+        in_driver->next_offset += fontstyle_block_ptr->line_passes *
+                                  sizeof( line_proc );
 
         /* Set the line_proc struct instance pointers to null. */
 
@@ -466,18 +466,18 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             /* Add the code_text struct. */
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver +
                                                         fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
             }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                           in_driver->next_offset);
 
             fontstyle_block_ptr->endvalue = (code_text *) in_driver->next_offset;
             in_driver->next_offset += sizeof( code_text );
@@ -486,22 +486,22 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             code_text_ptr->count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver +
                                                         fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->endvalue);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                        code_text_ptr->count );
+            memcpy_s( text_ptr, code_text_ptr->count,
+                      cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -512,18 +512,18 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             /* Add the code_text struct. */
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset + 
+                                             sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver +
                                                         fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
             }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                           in_driver->next_offset);
 
             fontstyle_block_ptr->startvalue = (code_text *) in_driver->next_offset;
             in_driver->next_offset += sizeof( code_text );
@@ -532,22 +532,22 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             code_text_ptr->count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->startvalue);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].text, code_text_ptr->count );
+            memcpy_s( text_ptr, code_text_ptr->count,
+                      cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -568,20 +568,20 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             /* Add the code_text struct. */
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
             }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                           in_driver->next_offset);
 
-            line_proc_ptr[cop_codeblocks[i].line_pass - 1].endvalue = \
+            line_proc_ptr[cop_codeblocks[i].line_pass - 1].endvalue =
                                             (code_text *) in_driver->next_offset;
             in_driver->next_offset += sizeof( code_text );
 
@@ -589,22 +589,22 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             code_text_ptr->count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                     (size_t) line_proc_ptr[cop_codeblocks[i].line_pass - 1].endvalue);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].text, code_text_ptr->count );
+            memcpy_s( text_ptr, code_text_ptr->count,
+                      cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -625,20 +625,20 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             /* Add the code_text struct. */
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
             }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                           in_driver->next_offset);
 
-            line_proc_ptr[cop_codeblocks[i].line_pass - 1].startvalue = \
+            line_proc_ptr[cop_codeblocks[i].line_pass - 1].startvalue =
                                             (code_text *) in_driver->next_offset;
             in_driver->next_offset += sizeof( code_text );
 
@@ -646,22 +646,22 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             code_text_ptr->count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                     (size_t) line_proc_ptr[cop_codeblocks[i].line_pass - 1].startvalue);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].text, code_text_ptr->count );
+            memcpy_s( text_ptr, code_text_ptr->count,
+                      cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -682,20 +682,20 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             /* Add the code_text struct. */
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset + 
+                                             sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
             }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                           in_driver->next_offset);
 
-            line_proc_ptr[cop_codeblocks[i].line_pass - 1].endword = (code_text *) \
+            line_proc_ptr[cop_codeblocks[i].line_pass - 1].endword = (code_text *)
                                                         in_driver->next_offset;
             in_driver->next_offset += sizeof( code_text );
 
@@ -703,22 +703,22 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             code_text_ptr->count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                     (size_t) line_proc_ptr[cop_codeblocks[i].line_pass - 1].endword);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].text, code_text_ptr->count );
+            memcpy_s( text_ptr, code_text_ptr->count,
+                      cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -739,20 +739,20 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             /* Add the code_text struct. */
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
             }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                                                         in_driver->next_offset);
 
-            line_proc_ptr[cop_codeblocks[i].line_pass - 1].startword = \
+            line_proc_ptr[cop_codeblocks[i].line_pass - 1].startword =
                                             (code_text *) in_driver->next_offset;
             in_driver->next_offset += sizeof( code_text );
 
@@ -760,22 +760,22 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             code_text_ptr->count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                         (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                     (size_t) line_proc_ptr[cop_codeblocks[i].line_pass - 1].startword);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].text, code_text_ptr->count );
+            memcpy_s( text_ptr, code_text_ptr->count,
+                      cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -796,20 +796,20 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             /* Add the code_text struct. */
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
             }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver +
+                                           in_driver->next_offset);
 
-            line_proc_ptr[cop_codeblocks[i].line_pass - 1].firstword = \
+            line_proc_ptr[cop_codeblocks[i].line_pass - 1].firstword = 
                                             (code_text *) in_driver->next_offset;
             in_driver->next_offset += sizeof( code_text );
 
@@ -817,22 +817,22 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
             code_text_ptr->count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr -
+                                          (uint8_t *) in_driver);
                 in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver
                                                         + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver +
                                         (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver +
                     (size_t) line_proc_ptr[cop_codeblocks[i].line_pass - 1].firstword);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                            code_text_ptr->count );
+            memcpy_s( text_ptr, code_text_ptr->count,
+                      cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -876,7 +876,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
  *      get_code_blocks() calls mem_alloc(), which will call exit() if
  *          the allocation fails.
  */
-static cop_driver * parse_init_block( cop_driver * in_driver, \
+static cop_driver * parse_init_block( cop_driver * in_driver,
                                        uint8_t * * current, uint8_t * base )
 {
 
@@ -907,12 +907,12 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
 
         /* Add the init_block struct itself. */
 
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    sizeof( init_block )) ) {
+        if( in_driver->allocated_size < (in_driver->next_offset +
+                                         sizeof( init_block )) ) {
             in_driver = resize_cop_driver( in_driver, sizeof( init_block ) );
         }
-        init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+        init_block_ptr = (init_block *) ((uint8_t *) in_driver +
+                                         in_driver->next_offset);
 
         in_driver->inits.start = (init_block *) in_driver->next_offset;
         in_driver->next_offset += sizeof( init_block );
@@ -923,15 +923,15 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
         
         /* Add the init_text struct instances. */
         
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                count * sizeof( init_text )) ) {
-            in_driver = resize_cop_driver( in_driver, \
-                                                count * sizeof( init_text ) );
-            init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                (size_t) in_driver->inits.start);
+        if( in_driver->allocated_size < (in_driver->next_offset +
+                                         count * sizeof( init_text )) ) {
+            in_driver = resize_cop_driver( in_driver,
+                                           count * sizeof( init_text ) );
+            init_block_ptr = (init_block *) ((uint8_t *) in_driver +
+                                             (size_t) in_driver->inits.start);
         }
-        init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+        init_text_ptr = (init_text *) ((uint8_t *) in_driver +
+                                       in_driver->next_offset);
 
         init_block_ptr->count = count;
         init_block_ptr->codeblock = (init_text *) in_driver->next_offset;
@@ -958,19 +958,18 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
 
             init_text_ptr[i].count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    init_text_ptr[i].count) ) {
-                in_driver = resize_cop_driver( in_driver, \
-                                                    init_text_ptr[i].count );
-                init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                (size_t) in_driver->inits.start);
-                init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                            (size_t) init_block_ptr->codeblock);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             init_text_ptr[i].count) ) {
+                in_driver = resize_cop_driver( in_driver, init_text_ptr[i].count );
+                init_block_ptr = (init_block *) ((uint8_t *) in_driver +
+                                                 (size_t) in_driver->inits.start);
+                init_text_ptr = (init_text *) ((uint8_t *) in_driver +
+                                               (size_t) init_block_ptr->codeblock);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, init_text_ptr[i].count, \
-                            cop_codeblocks[i].text, init_text_ptr[i].count );
+            memcpy_s( text_ptr, init_text_ptr[i].count,
+                      cop_codeblocks[i].text, init_text_ptr[i].count );
             init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += init_text_ptr[i].count;
         }
@@ -990,12 +989,12 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
 
         /* Add the init_block struct itself. */
 
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( init_block )) ) {
+        if( in_driver->allocated_size < (in_driver->next_offset + 
+                                         sizeof( init_block )) ) {
             in_driver = resize_cop_driver( in_driver, sizeof( init_block ) );
         }
-        init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+        init_block_ptr = (init_block *) ((uint8_t *) in_driver + 
+                                         in_driver->next_offset);
 
         in_driver->inits.document = (init_block *) in_driver->next_offset;
         in_driver->next_offset += sizeof( init_block );
@@ -1006,15 +1005,15 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
         
         /* Add the init_text struct instances. */
         
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                            count * sizeof( init_text )) ) {
+        if( in_driver->allocated_size < (in_driver->next_offset + 
+                                         count * sizeof( init_text )) ) {
             in_driver = resize_cop_driver( in_driver, count * sizeof( init_text ) );
-            init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                            (size_t) in_driver->inits.document);
+            init_block_ptr = (init_block *) ((uint8_t *) in_driver +
+                                             (size_t) in_driver->inits.document);
         }
 
-        init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
+        init_text_ptr = (init_text *) ((uint8_t *) in_driver +
+                                       in_driver->next_offset);
 
         init_block_ptr->count = count;
         init_block_ptr->codeblock = (init_text *) in_driver->next_offset;
@@ -1041,19 +1040,19 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
 
             init_text_ptr[i].count = cop_codeblocks[i].count;
 
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    init_text_ptr[i].count) ) {
-                in_driver = resize_cop_driver( in_driver, \
-                                                    init_text_ptr[i].count );
-                init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                            (size_t) in_driver->inits.document);
-                init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                            (size_t) init_block_ptr->codeblock);
+            if( in_driver->allocated_size < (in_driver->next_offset +
+                                             init_text_ptr[i].count) ) {
+                in_driver = resize_cop_driver( in_driver,
+                                               init_text_ptr[i].count );
+                init_block_ptr = (init_block *) ((uint8_t *) in_driver +
+                                                 (size_t) in_driver->inits.document);
+                init_text_ptr = (init_text *) ((uint8_t *) in_driver +
+                                               (size_t) init_block_ptr->codeblock);
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, init_text_ptr[i].count, \
-                            cop_codeblocks[i].text, init_text_ptr[i].count );
+            memcpy_s( text_ptr, init_text_ptr[i].count,
+                      cop_codeblocks[i].text, init_text_ptr[i].count );
             init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += init_text_ptr[i].count;
         }
@@ -1227,8 +1226,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Get the fill_char. */
 
-    fread( &out_driver->fill_char, sizeof( out_driver->fill_char ), 1, \
-        in_file );
+    fread( &out_driver->fill_char, sizeof( out_driver->fill_char ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_driver );
         out_driver = NULL;
@@ -1237,8 +1235,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Get the x_positive flag. */
 
-    fread( &out_driver->x_positive, sizeof( out_driver->x_positive ), 1, \
-        in_file );
+    fread( &out_driver->x_positive, sizeof( out_driver->x_positive ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_driver );
         out_driver = NULL;
@@ -1247,8 +1244,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Get the y_positive flag. */
 
-    fread( &out_driver->y_positive, sizeof( out_driver->y_positive ), 1, \
-        in_file );
+    fread( &out_driver->y_positive, sizeof( out_driver->y_positive ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_driver );
         out_driver = NULL;
@@ -1295,8 +1291,7 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0000 :
         break;
     case 0x0001 :
-        out_driver = parse_init_block( out_driver, &current, \
-                                                        p_buffer_set->buffer );
+        out_driver = parse_init_block( out_driver, &current, p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1304,8 +1299,7 @@ cop_driver * parse_driver( FILE * in_file )
         }
         break;
     case 0x0002 :
-        out_driver = parse_init_block( out_driver, &current, \
-                                                        p_buffer_set->buffer );
+        out_driver = parse_init_block( out_driver, &current, p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1320,8 +1314,7 @@ cop_driver * parse_driver( FILE * in_file )
             current = p_buffer_set->buffer + factor * 80;
         }
 
-        out_driver = parse_init_block( out_driver, &current, \
-                                                        p_buffer_set->buffer );
+        out_driver = parse_init_block( out_driver, &current, p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1358,8 +1351,7 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0000 :
         break;
     case 0x0001 :
-        out_driver = parse_finish_block( out_driver, &current, \
-                                                        p_buffer_set->buffer );
+        out_driver = parse_finish_block( out_driver, &current, p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1367,8 +1359,7 @@ cop_driver * parse_driver( FILE * in_file )
         }
         break;
     case 0x0002 :
-        out_driver = parse_finish_block( out_driver, &current, \
-                                                        p_buffer_set->buffer );
+        out_driver = parse_finish_block( out_driver, &current, p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1383,8 +1374,7 @@ cop_driver * parse_driver( FILE * in_file )
             current = p_buffer_set->buffer + factor * 80;
         }
 
-        out_driver = parse_finish_block( out_driver, &current, \
-                                                        p_buffer_set->buffer );
+        out_driver = parse_finish_block( out_driver, &current, p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1411,24 +1401,22 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Get the number of NewlineBlocks */
 
-    memcpy_s( &out_driver->newlines.count, sizeof( out_driver->newlines.count ), \
-                                current, sizeof( out_driver->newlines.count ) );
+    memcpy_s( &out_driver->newlines.count, sizeof( out_driver->newlines.count ),
+              current, sizeof( out_driver->newlines.count ) );
     current += sizeof( out_driver->newlines.count );
 
     /* Add the newline_block structs. */
 
-    if( out_driver->allocated_size < (out_driver->next_offset + \
+    if( out_driver->allocated_size < (out_driver->next_offset + 
                         out_driver->newlines.count * sizeof( newline_block )) ) {
-        out_driver = resize_cop_driver( out_driver, \
+        out_driver = resize_cop_driver( out_driver, 
                         out_driver->newlines.count * sizeof( newline_block ) );
     }
-    newline_block_ptr = (newline_block *) ((uint8_t *) out_driver + \
-                                                        out_driver->next_offset);
+    newline_block_ptr = (newline_block *) ((uint8_t *) out_driver +
+                                           out_driver->next_offset);
 
-    out_driver->newlines.newlineblocks = (newline_block *) \
-                                                        out_driver->next_offset;
-    out_driver->next_offset += out_driver->newlines.count * \
-                                                        sizeof( newline_block );
+    out_driver->newlines.newlineblocks = (newline_block *) out_driver->next_offset;
+    out_driver->next_offset += out_driver->newlines.count * sizeof( newline_block );
 
     /* Initialize the newline_block structs. */
 
@@ -1436,9 +1424,9 @@ cop_driver * parse_driver( FILE * in_file )
 
         /* Get the advance for the current NewlineBlock. */
 
-        memcpy_s( &newline_block_ptr[i].advance, \
-                                sizeof( newline_block_ptr[i].advance ), current, \
-                                sizeof( newline_block_ptr[i].advance ) );
+        memcpy_s( &newline_block_ptr[i].advance,
+                  sizeof( newline_block_ptr[i].advance ), current,
+                  sizeof( newline_block_ptr[i].advance ) );
         current += sizeof( newline_block_ptr[i].advance );
 
         /* Get the number of CodeBlocks, and verify that it is 0x01. */
@@ -1456,8 +1444,7 @@ cop_driver * parse_driver( FILE * in_file )
 
         /* Get the CodeBlock. */
         
-        cop_codeblocks = get_code_blocks( &current, count16, \
-                                                        p_buffer_set->buffer );
+        cop_codeblocks = get_code_blocks( &current, count16, p_buffer_set->buffer );
         if( cop_codeblocks == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1478,17 +1465,16 @@ cop_driver * parse_driver( FILE * in_file )
 
         newline_block_ptr[i].count = cop_codeblocks->count;
 
-        if( out_driver->allocated_size < (out_driver->next_offset + \
-                                                newline_block_ptr[i].count) ) {
-            out_driver= resize_cop_driver( out_driver, \
-                                                newline_block_ptr[i].count );
-            newline_block_ptr = (newline_block *) ((uint8_t *) out_driver + \
+        if( out_driver->allocated_size < (out_driver->next_offset +
+                                          newline_block_ptr[i].count) ) {
+            out_driver= resize_cop_driver( out_driver, newline_block_ptr[i].count );
+            newline_block_ptr = (newline_block *) ((uint8_t *) out_driver +
                                     (size_t) out_driver->newlines.newlineblocks);
         }
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-        memcpy_s( text_ptr, newline_block_ptr[i].count, \
-                        cop_codeblocks->text, newline_block_ptr[i].count );
+        memcpy_s( text_ptr, newline_block_ptr[i].count,
+                  cop_codeblocks->text, newline_block_ptr[i].count );
         newline_block_ptr[i].text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += newline_block_ptr[i].count;
 
@@ -1557,14 +1543,14 @@ cop_driver * parse_driver( FILE * in_file )
 
     out_driver->newpage.count = cop_functions->code_blocks->count;
 
-    if( out_driver->allocated_size < (out_driver->next_offset + \
-                                                out_driver->newpage.count) ) {
+    if( out_driver->allocated_size < (out_driver->next_offset + 
+                                      out_driver->newpage.count) ) {
         out_driver= resize_cop_driver( out_driver, out_driver->newpage.count );
     }
     text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-    memcpy_s( text_ptr, out_driver->newpage.count, \
-                cop_functions->code_blocks->text, out_driver->newpage.count );
+    memcpy_s( text_ptr, out_driver->newpage.count,
+              cop_functions->code_blocks->text, out_driver->newpage.count );
     out_driver->newpage.text = (uint8_t *) out_driver->next_offset;
     out_driver->next_offset += out_driver->newpage.count;
 
@@ -1595,15 +1581,14 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0001 :
         out_driver->htab.count = cop_functions->code_blocks->count;
 
-        if( out_driver->allocated_size < (out_driver->next_offset + \
-            out_driver->htab.count) ) {
-
+        if( out_driver->allocated_size < (out_driver->next_offset +
+                                          out_driver->htab.count) ) {
             out_driver= resize_cop_driver( out_driver, out_driver->htab.count );
         }
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-        memcpy_s( text_ptr, out_driver->htab.count, \
-            cop_functions->code_blocks->text, out_driver->htab.count );
+        memcpy_s( text_ptr, out_driver->htab.count,
+                  cop_functions->code_blocks->text, out_driver->htab.count );
         out_driver->htab.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->htab.count;
         break;
@@ -1638,9 +1623,9 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* This block is optional: a count of 0 is allowed. */
 
-    memcpy_s( &out_driver->fontswitches.count, \
-                            sizeof( out_driver->fontswitches.count ), current, \
-                            sizeof( out_driver->fontswitches.count ) );
+    memcpy_s( &out_driver->fontswitches.count,
+              sizeof( out_driver->fontswitches.count ), current,
+              sizeof( out_driver->fontswitches.count ) );
     current += sizeof( out_driver->fontswitches.count );
 
     if( out_driver->fontswitches.count == 0x0000 ) {
@@ -1658,18 +1643,18 @@ cop_driver * parse_driver( FILE * in_file )
         
         /* Add the fontswitch_block structs. */
 
-        if( out_driver->allocated_size < (out_driver->next_offset + \
+        if( out_driver->allocated_size < (out_driver->next_offset +
                 out_driver->fontswitches.count * sizeof( fontswitch_block )) ) {
-            out_driver = resize_cop_driver( out_driver, \
+            out_driver = resize_cop_driver( out_driver,
                     out_driver->fontswitches.count * sizeof( fontswitch_block ) );
         }
-        fontswitch_block_ptr = (fontswitch_block *) ((uint8_t *) out_driver + \
-                                                        out_driver->next_offset);
+        fontswitch_block_ptr = (fontswitch_block *) ((uint8_t *) out_driver +
+                                                     out_driver->next_offset);
 
-        out_driver->fontswitches.fontswitchblocks = (fontswitch_block *) \
-                                                        out_driver->next_offset;
-        out_driver->next_offset += out_driver->fontswitches.count * \
-                                                    sizeof( fontswitch_block );
+        out_driver->fontswitches.fontswitchblocks = (fontswitch_block *)
+                                                    out_driver->next_offset;
+        out_driver->next_offset += out_driver->fontswitches.count *
+                                   sizeof( fontswitch_block );
 
         /* Now get the FontswitchBlock instances. */
 
@@ -1680,11 +1665,10 @@ cop_driver * parse_driver( FILE * in_file )
             length = strlen( current );
             if( length > 0 ) {
                 length++;
-                if( out_driver->allocated_size < (out_driver->next_offset + \
-                                                                    length) ) {
-                    out_driver = resize_cop_driver( out_driver, \
+                if( out_driver->allocated_size < (out_driver->next_offset + length)) {
+                    out_driver = resize_cop_driver( out_driver,
                                             out_driver->next_offset + length );
-                    fontswitch_block_ptr = (fontswitch_block *) ((uint8_t *) \
+                    fontswitch_block_ptr = (fontswitch_block *) ((uint8_t *)
                 out_driver + (size_t) out_driver->fontswitches.fontswitchblocks);
                 }
 
@@ -1701,8 +1685,8 @@ cop_driver * parse_driver( FILE * in_file )
 
             /* Process some of the 21 flags. */
 
-            memcpy_s( &the_flags, sizeof( the_flags ), current, \
-                                                        sizeof( the_flags ) );
+            memcpy_s( &the_flags, sizeof( the_flags ),
+                      current, sizeof( the_flags ) );
             current += sizeof( the_flags );
 
             /* Set do_always to true or false per the Wiki. The device
@@ -1743,8 +1727,8 @@ cop_driver * parse_driver( FILE * in_file )
             
                 /* Get the CodeBlock(s). */
         
-                cop_codeblocks = get_code_blocks( &current, count16, \
-                                                        p_buffer_set->buffer );
+                cop_codeblocks = get_code_blocks( &current, count16, 
+                                                  p_buffer_set->buffer );
                 if( cop_codeblocks == NULL ) {
                     mem_free( p_buffer_set );
                     p_buffer_set = NULL;
@@ -1764,17 +1748,17 @@ cop_driver * parse_driver( FILE * in_file )
 
                         /* Add the code_text struct for endvalue. */
 
-                        if( out_driver->allocated_size < (out_driver->next_offset \
+                        if( out_driver->allocated_size < (out_driver->next_offset
                                                         + sizeof( code_text )) ) {
-                            out_driver= resize_cop_driver( out_driver, \
-                                                            sizeof( code_text ) );
-                            fontswitch_block_ptr = (fontswitch_block *) \
+                            out_driver= resize_cop_driver( out_driver,
+                                                           sizeof( code_text ) );
+                            fontswitch_block_ptr = (fontswitch_block *)
     ((uint8_t *) out_driver + (size_t) out_driver->fontswitches.fontswitchblocks);
                         }
-                        code_text_ptr = (code_text *) ((uint8_t *) out_driver \
+                        code_text_ptr = (code_text *) ((uint8_t *) out_driver
                                                     + out_driver->next_offset);
 
-                        fontswitch_block_ptr[i].endvalue = (code_text *) \
+                        fontswitch_block_ptr[i].endvalue = (code_text *)
                                             ((uint8_t *) out_driver->next_offset);
                         out_driver->next_offset += sizeof( code_text );
 
@@ -1782,22 +1766,20 @@ cop_driver * parse_driver( FILE * in_file )
 
                         code_text_ptr->count = cop_codeblocks[j].count;
                 
-                        if( out_driver->allocated_size < (out_driver->next_offset \
+                        if( out_driver->allocated_size < (out_driver->next_offset
                                                         + code_text_ptr->count) ) {
-                            out_driver = resize_cop_driver( out_driver, \
-                                                        code_text_ptr->count );
-                            fontswitch_block_ptr = (fontswitch_block *) \
+                            out_driver = resize_cop_driver( out_driver,
+                                                            code_text_ptr->count );
+                            fontswitch_block_ptr = (fontswitch_block *)
     ((uint8_t *) out_driver + (size_t) out_driver->fontswitches.fontswitchblocks);
-                            code_text_ptr = (code_text *) ((uint8_t *) out_driver \
+                            code_text_ptr = (code_text *) ((uint8_t *) out_driver
                                     + (size_t) fontswitch_block_ptr[i].endvalue);
                         }
-                        text_ptr = (uint8_t *) out_driver + \
-                                                        out_driver->next_offset;
+                        text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-                        memcpy_s( text_ptr, code_text_ptr->count, \
-                                    cop_codeblocks[j].text, code_text_ptr->count );
-                        code_text_ptr->text = (uint8_t *) \
-                                                        out_driver->next_offset;
+                        memcpy_s( text_ptr, code_text_ptr->count,
+                                  cop_codeblocks[j].text, code_text_ptr->count );
+                        code_text_ptr->text = (uint8_t *) out_driver->next_offset;
                         out_driver->next_offset += code_text_ptr->count;
 
                         break;
@@ -1805,17 +1787,17 @@ cop_driver * parse_driver( FILE * in_file )
 
                         /* Add the code_text struct for startvalue. */
 
-                        if( out_driver->allocated_size < \
+                        if( out_driver->allocated_size < 
                                (out_driver->next_offset + sizeof( code_text )) ) {
-                            out_driver= resize_cop_driver( out_driver, \
-                                                        sizeof( code_text ) );
-                            fontswitch_block_ptr = (fontswitch_block *) \
+                            out_driver= resize_cop_driver( out_driver,
+                                                           sizeof( code_text ) );
+                            fontswitch_block_ptr = (fontswitch_block *)
     ((uint8_t *) out_driver + (size_t) out_driver->fontswitches.fontswitchblocks);
                         }
-                        code_text_ptr = (code_text *) ((uint8_t *) \
+                        code_text_ptr = (code_text *) ((uint8_t *)
                                             out_driver + out_driver->next_offset);
 
-                        fontswitch_block_ptr[i].startvalue = (code_text *) \
+                        fontswitch_block_ptr[i].startvalue = (code_text *)
                                             ((uint8_t *) out_driver->next_offset);
                         out_driver->next_offset += sizeof( code_text );
 
@@ -1823,22 +1805,20 @@ cop_driver * parse_driver( FILE * in_file )
 
                         code_text_ptr->count = cop_codeblocks[j].count;
                 
-                        if( out_driver->allocated_size < \
+                        if( out_driver->allocated_size <
                                (out_driver->next_offset + code_text_ptr->count) ) {
-                            out_driver = resize_cop_driver( out_driver, \
-                                                        code_text_ptr->count );
-                            fontswitch_block_ptr = (fontswitch_block *) \
+                            out_driver = resize_cop_driver( out_driver,
+                                                            code_text_ptr->count );
+                            fontswitch_block_ptr = (fontswitch_block *)
     ((uint8_t *) out_driver + (size_t) out_driver->fontswitches.fontswitchblocks);
-                            code_text_ptr = (code_text *) ((uint8_t *) out_driver \
+                            code_text_ptr = (code_text *) ((uint8_t *) out_driver
                                 + (size_t) fontswitch_block_ptr[i].startvalue);
                         }
-                        text_ptr = (uint8_t *) out_driver + \
-                                                        out_driver->next_offset;
+                        text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-                        memcpy_s( text_ptr, code_text_ptr->count, \
-                                    cop_codeblocks[j].text, code_text_ptr->count );
-                        code_text_ptr->text = (uint8_t *) \
-                                                        out_driver->next_offset;
+                        memcpy_s( text_ptr, code_text_ptr->count,
+                                  cop_codeblocks[j].text, code_text_ptr->count );
+                        code_text_ptr->text = (uint8_t *) out_driver->next_offset;
                         out_driver->next_offset += code_text_ptr->count;
 
                         break;
@@ -1908,7 +1888,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Get the fontstyle_count and ensure it is not 0. */
 
-    fread( &out_driver->fontstyles.count, sizeof( out_driver->fontstyles.count ), \
+    fread( &out_driver->fontstyles.count, sizeof( out_driver->fontstyles.count ),
                                                                     1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_driver );
@@ -1925,18 +1905,18 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Add the fontstyle_block struct instances. */
     
-    if( out_driver->allocated_size < (out_driver->next_offset + \
+    if( out_driver->allocated_size < (out_driver->next_offset +
                     out_driver->fontstyles.count * sizeof( fontstyle_block )) ) {
-        out_driver = resize_cop_driver( out_driver, \
+        out_driver = resize_cop_driver( out_driver,
                     out_driver->fontstyles.count * sizeof( fontstyle_block ) );
     }
-    fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) out_driver + \
-                                                        out_driver->next_offset);
+    fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) out_driver +
+                                               out_driver->next_offset);
 
-    out_driver->fontstyles.fontstyleblocks = (fontstyle_block *) \
-                                                        out_driver->next_offset;
-    out_driver->next_offset += out_driver->fontstyles.count * \
-                                                        sizeof( fontstyle_block );
+    out_driver->fontstyles.fontstyleblocks = (fontstyle_block *)
+                                                            out_driver->next_offset;
+    out_driver->next_offset += out_driver->fontstyles.count *
+                               sizeof( fontstyle_block );
 
     /* Initialize the fontstyle_block struct instances. */
 
@@ -1952,10 +1932,10 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* The initial ShortFontstyleBlock must be processed separately. */
     
-    out_driver = parse_font_style( in_file, out_driver, fontstyle_block_ptr, \
-                                            &p_buffer_set, &current, count8 );
+    out_driver = parse_font_style( in_file, out_driver, fontstyle_block_ptr,
+                                   &p_buffer_set, &current, count8 );
     if( out_driver == NULL ) return( out_driver );
-    fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) out_driver + \
+    fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) out_driver +
                                 (size_t) out_driver->fontstyles.fontstyleblocks);
 
 
@@ -2002,10 +1982,10 @@ cop_driver * parse_driver( FILE * in_file )
             return( out_driver );
         }
 
-        out_driver = parse_font_style( in_file, out_driver, \
+        out_driver = parse_font_style( in_file, out_driver,
                         &fontstyle_block_ptr[i], &p_buffer_set, &current, count8 );
         if( out_driver == NULL ) return( out_driver );
-        fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) out_driver + \
+        fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) out_driver +
                                 (size_t) out_driver->fontstyles.fontstyleblocks);
     }
     
@@ -2031,14 +2011,14 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0001 :
         out_driver->absoluteaddress.count = cop_functions->code_blocks->count;
 
-        if( out_driver->allocated_size < (out_driver->next_offset + \
-                                            out_driver->absoluteaddress.count) ) {
-            out_driver = resize_cop_driver( out_driver, \
+        if( out_driver->allocated_size < (out_driver->next_offset +
+                                          out_driver->absoluteaddress.count) ) {
+            out_driver = resize_cop_driver( out_driver,
                                             out_driver->absoluteaddress.count );
         }
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-        memcpy_s( text_ptr, out_driver->absoluteaddress.count, \
+        memcpy_s( text_ptr, out_driver->absoluteaddress.count,
             cop_functions->code_blocks->text, out_driver->absoluteaddress.count );
         out_driver->absoluteaddress.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->absoluteaddress.count;
@@ -2086,15 +2066,14 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0001 :
         out_driver->hline.count = cop_functions->code_blocks->count;
 
-        if( out_driver->allocated_size < (out_driver->next_offset + \
-                                                    out_driver->hline.count) ) {
-            out_driver= resize_cop_driver( out_driver, \
-                                                    out_driver->hline.count );
+        if( out_driver->allocated_size < (out_driver->next_offset +
+                                          out_driver->hline.count) ) {
+            out_driver= resize_cop_driver( out_driver, out_driver->hline.count );
         }
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-        memcpy_s( text_ptr, out_driver->hline.count, \
-                cop_functions->code_blocks->text, out_driver->hline.count );
+        memcpy_s( text_ptr, out_driver->hline.count,
+                  cop_functions->code_blocks->text, out_driver->hline.count );
         out_driver->hline.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->hline.count;
         break;
@@ -2152,8 +2131,8 @@ cop_driver * parse_driver( FILE * in_file )
     
         /* Get the thickness. */
 
-        fread( &out_driver->hline.thickness, \
-                            sizeof( out_driver->hline.thickness ), 1, in_file );
+        fread( &out_driver->hline.thickness,
+               sizeof( out_driver->hline.thickness ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             mem_free( out_driver );
             out_driver = NULL;
@@ -2198,16 +2177,15 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0001 :
         out_driver->vline.count = cop_functions->code_blocks->count;
 
-        if( out_driver->allocated_size < (out_driver->next_offset + \
-            out_driver->vline.count) ) {
+        if( out_driver->allocated_size < (out_driver->next_offset +
+                                          out_driver->vline.count) ) {
 
-            out_driver= resize_cop_driver( out_driver, \
-                out_driver->vline.count );
+            out_driver= resize_cop_driver( out_driver, out_driver->vline.count );
         }
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-        memcpy_s( text_ptr, out_driver->vline.count, \
-                    cop_functions->code_blocks->text, out_driver->vline.count );
+        memcpy_s( text_ptr, out_driver->vline.count,
+                  cop_functions->code_blocks->text, out_driver->vline.count );
         out_driver->vline.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->vline.count;
         break;
@@ -2265,8 +2243,8 @@ cop_driver * parse_driver( FILE * in_file )
     
         /* Get the thickness. */
 
-        fread( &out_driver->vline.thickness, \
-                            sizeof( out_driver->vline.thickness ), 1, in_file );
+        fread( &out_driver->vline.thickness, 
+               sizeof( out_driver->vline.thickness ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             mem_free( out_driver );
             out_driver = NULL;
@@ -2314,15 +2292,15 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0001 :
         out_driver->dbox.count = cop_functions->code_blocks->count;
 
-        if( out_driver->allocated_size < (out_driver->next_offset + \
-            out_driver->dbox.count) ) {
+        if( out_driver->allocated_size < (out_driver->next_offset + 
+                                          out_driver->dbox.count) ) {
 
             out_driver= resize_cop_driver( out_driver, out_driver->dbox.count );
         }
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
-        memcpy_s( text_ptr, out_driver->dbox.count, \
-                    cop_functions->code_blocks->text, out_driver->dbox.count );
+        memcpy_s( text_ptr, out_driver->dbox.count,
+                  cop_functions->code_blocks->text, out_driver->dbox.count );
         out_driver->dbox.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->dbox.count;
         break;
@@ -2370,8 +2348,8 @@ cop_driver * parse_driver( FILE * in_file )
     
         /* Get the thickness. */
 
-        fread( &out_driver->dbox.thickness, \
-                            sizeof( out_driver->dbox.thickness ), 1, in_file );
+        fread( &out_driver->dbox.thickness,
+               sizeof( out_driver->dbox.thickness ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             mem_free( out_driver );
             out_driver = NULL;
@@ -2390,12 +2368,12 @@ cop_driver * parse_driver( FILE * in_file )
         byte_ptr = (uint8_t *) out_driver + (size_t) out_driver->inits.start;
         out_driver->inits.start = (init_block *) byte_ptr;
         if(out_driver->inits.start->codeblock != NULL ) {
-            byte_ptr = (uint8_t *) out_driver + (size_t) \
+            byte_ptr = (uint8_t *) out_driver + (size_t)
                                             out_driver->inits.start->codeblock;
             out_driver->inits.start->codeblock = (init_text *) byte_ptr;
             for( i = 0; i < out_driver->inits.start->count; i++ ) {
                 if( out_driver->inits.start->codeblock[i].text != NULL ) {
-                    byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    byte_ptr = (uint8_t *) out_driver + (size_t)
                                     out_driver->inits.start->codeblock[i].text;
                     out_driver->inits.start->codeblock[i].text = byte_ptr;
                 }
@@ -2407,12 +2385,12 @@ cop_driver * parse_driver( FILE * in_file )
         byte_ptr = (uint8_t *) out_driver + (size_t) out_driver->inits.document;
         out_driver->inits.document = (init_block *) byte_ptr;
         if(out_driver->inits.document->codeblock != NULL ) {
-            byte_ptr = (uint8_t *) out_driver + (size_t) \
+            byte_ptr = (uint8_t *) out_driver + (size_t)
                                             out_driver->inits.document->codeblock;
             out_driver->inits.document->codeblock = (init_text *) byte_ptr;
             for( i = 0; i < out_driver->inits.document->count; i++ ) {
                 if( out_driver->inits.document->codeblock[i].text != NULL ) {
-                    byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    byte_ptr = (uint8_t *) out_driver + (size_t)
                                     out_driver->inits.document->codeblock[i].text;
                     out_driver->inits.document->codeblock[i].text = byte_ptr;
                 }
@@ -2424,30 +2402,29 @@ cop_driver * parse_driver( FILE * in_file )
         byte_ptr = (uint8_t *) out_driver + (size_t) out_driver->finishes.end;
         out_driver->finishes.end = (code_text *) byte_ptr;
         if(out_driver->finishes.end->text != NULL ) {
-            byte_ptr = (uint8_t *) out_driver + (size_t) \
-                                                out_driver->finishes.end->text;
+            byte_ptr = (uint8_t *) out_driver + (size_t)
+                                                    out_driver->finishes.end->text;
             out_driver->finishes.end->text = byte_ptr;
         }
     }
     
     if( out_driver->finishes.document != NULL ) {
-        byte_ptr = (uint8_t *) out_driver + (size_t) \
-                                                out_driver->finishes.document;
+        byte_ptr = (uint8_t *) out_driver + (size_t) out_driver->finishes.document;
         out_driver->finishes.document = (code_text *) byte_ptr;
         if(out_driver->finishes.document->text != NULL ) {
-            byte_ptr = (uint8_t *) out_driver + (size_t) \
+            byte_ptr = (uint8_t *) out_driver + (size_t)
                                             out_driver->finishes.document->text;
             out_driver->finishes.document->text = byte_ptr;
         }
     }
     
     if( out_driver->newlines.newlineblocks != NULL ) {
-        byte_ptr = (uint8_t *) out_driver + (size_t) \
+        byte_ptr = (uint8_t *) out_driver + (size_t)
                                             out_driver->newlines.newlineblocks;
         out_driver->newlines.newlineblocks = (newline_block *) byte_ptr;
         for( i = 0; i < out_driver->newlines.count; i++ ) {
             if(out_driver->newlines.newlineblocks[i].text != NULL ) {
-                byte_ptr = (uint8_t *) out_driver + (size_t) \
+                byte_ptr = (uint8_t *) out_driver + (size_t)
                                     out_driver->newlines.newlineblocks[i].text;
                 out_driver->newlines.newlineblocks[i].text = byte_ptr;
             }
@@ -2465,159 +2442,155 @@ cop_driver * parse_driver( FILE * in_file )
     }
 
     if( out_driver->fontswitches.fontswitchblocks != NULL ) {
-        byte_ptr = (uint8_t *) out_driver + (size_t) \
+        byte_ptr = (uint8_t *) out_driver + (size_t)
                                         out_driver->fontswitches.fontswitchblocks;
-        out_driver->fontswitches.fontswitchblocks = (fontswitch_block *) \
-                                                                        byte_ptr;
+        out_driver->fontswitches.fontswitchblocks = (fontswitch_block *) byte_ptr;
         for( i = 0; i < out_driver->fontswitches.count; i++ ) {
             if( out_driver->fontswitches.fontswitchblocks[i].type != NULL ) {
-                string_ptr = (char *) out_driver + (size_t) \
+                string_ptr = (char *) out_driver + (size_t)
                                 out_driver->fontswitches.fontswitchblocks[i].type;
                 out_driver->fontswitches.fontswitchblocks[i].type = string_ptr;
             }
-            if( out_driver->fontswitches.fontswitchblocks[i].startvalue != \
-                                                                        NULL ) {
-                byte_ptr = (uint8_t *) out_driver + (size_t) \
+            if( out_driver->fontswitches.fontswitchblocks[i].startvalue != NULL ) {
+                byte_ptr = (uint8_t *) out_driver + (size_t)
                         out_driver->fontswitches.fontswitchblocks[i].startvalue;
-                out_driver->fontswitches.fontswitchblocks[i].startvalue = \
+                out_driver->fontswitches.fontswitchblocks[i].startvalue =
                                                         (code_text *) byte_ptr;
-                if( out_driver->fontswitches.fontswitchblocks[i].\
-                                                    startvalue->text != NULL ) {
-                    byte_ptr = (uint8_t *) out_driver + (size_t) \
+                if( out_driver->fontswitches.fontswitchblocks[i].startvalue->text
+                            != NULL ) {
+                    byte_ptr = (uint8_t *) out_driver + (size_t)
                 out_driver->fontswitches.fontswitchblocks[i].startvalue->text;
-                    out_driver->fontswitches.fontswitchblocks[i].\
-                                                    startvalue->text = byte_ptr;
+                    out_driver->fontswitches.fontswitchblocks[i].startvalue->text
+                        = byte_ptr;
                 }
             }
-            if( out_driver->fontswitches.fontswitchblocks[i].endvalue != \
-                                                                        NULL ) {
-                byte_ptr = (uint8_t *) out_driver + (size_t) \
+            if( out_driver->fontswitches.fontswitchblocks[i].endvalue != NULL ) {
+                byte_ptr = (uint8_t *) out_driver + (size_t)
                         out_driver->fontswitches.fontswitchblocks[i].endvalue;
-                out_driver->fontswitches.fontswitchblocks[i].endvalue = \
+                out_driver->fontswitches.fontswitchblocks[i].endvalue =
                                                         (code_text *) byte_ptr;
-                if( out_driver->fontswitches.fontswitchblocks[i].\
-                                                        endvalue->text != NULL ) {
-                    byte_ptr = (uint8_t *) out_driver + (size_t) \
-                out_driver->fontswitches.fontswitchblocks[i].endvalue->text;
-                    out_driver->fontswitches.fontswitchblocks[i].\
-                                                        endvalue->text = byte_ptr;
+                if( out_driver->fontswitches.fontswitchblocks[i].endvalue->text
+                        != NULL ) {
+                    byte_ptr = (uint8_t *) out_driver + (size_t)
+                        out_driver->fontswitches.fontswitchblocks[i].endvalue->text;
+                out_driver->fontswitches.fontswitchblocks[i].endvalue->text
+                    = byte_ptr;
                 }
             }
         }
     }
 
     if( out_driver->fontstyles.fontstyleblocks != NULL ) {
-        byte_ptr = (uint8_t *) out_driver + (size_t) \
-                                            out_driver->fontstyles.fontstyleblocks;
+        byte_ptr = (uint8_t *) out_driver +
+                   (size_t) out_driver->fontstyles.fontstyleblocks;
         out_driver->fontstyles.fontstyleblocks = (fontstyle_block *) byte_ptr;
         for( i = 0; i < out_driver->fontstyles.count; i++ ) {
             if( out_driver->fontstyles.fontstyleblocks[i].type != NULL ) {
-                string_ptr = (char *) out_driver + (size_t) \
+                string_ptr = (char *) out_driver + (size_t)
                                     out_driver->fontstyles.fontstyleblocks[i].type;
                 out_driver->fontstyles.fontstyleblocks[i].type = string_ptr;
             }
             if( out_driver->fontstyles.fontstyleblocks[i].startvalue != NULL ) {
-                byte_ptr = (uint8_t *) out_driver + (size_t) \
+                byte_ptr = (uint8_t *) out_driver + (size_t)
                             out_driver->fontstyles.fontstyleblocks[i].startvalue;
-                out_driver->fontstyles.fontstyleblocks[i].startvalue = \
+                out_driver->fontstyles.fontstyleblocks[i].startvalue =
                                                         (code_text *) byte_ptr;
-                if( out_driver->fontstyles.fontstyleblocks[i].startvalue->text \
+                if( out_driver->fontstyles.fontstyleblocks[i].startvalue->text
                                                                     != NULL ) {
-                    byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    byte_ptr = (uint8_t *) out_driver + (size_t)
                         out_driver->fontstyles.fontstyleblocks[i].startvalue->text;
-                    out_driver->fontstyles.fontstyleblocks[i].startvalue->text \
+                    out_driver->fontstyles.fontstyleblocks[i].startvalue->text
                                                                     = byte_ptr;
                 }
             }
             if( out_driver->fontstyles.fontstyleblocks[i].endvalue != NULL ) {
-                byte_ptr = (uint8_t *) out_driver + (size_t) \
+                byte_ptr = (uint8_t *) out_driver + (size_t)
                             out_driver->fontstyles.fontstyleblocks[i].endvalue;
-                out_driver->fontstyles.fontstyleblocks[i].endvalue = \
+                out_driver->fontstyles.fontstyleblocks[i].endvalue =
                                                         (code_text *) byte_ptr;
-                if( out_driver->fontstyles.fontstyleblocks[i].endvalue->text \
+                if( out_driver->fontstyles.fontstyleblocks[i].endvalue->text
                                                                     != NULL ) {
-                    byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    byte_ptr = (uint8_t *) out_driver + (size_t)
                         out_driver->fontstyles.fontstyleblocks[i].endvalue->text;
-                    out_driver->fontstyles.fontstyleblocks[i].endvalue->text = \
+                    out_driver->fontstyles.fontstyleblocks[i].endvalue->text =
                                                                         byte_ptr;
                 }
             }
             if( out_driver->fontstyles.fontstyleblocks[i].lineprocs != NULL ) {
-                byte_ptr = (uint8_t *) out_driver + (size_t) \
+                byte_ptr = (uint8_t *) out_driver + (size_t)
                             out_driver->fontstyles.fontstyleblocks[i].lineprocs;
-                out_driver->fontstyles.fontstyleblocks[i].lineprocs = \
+                out_driver->fontstyles.fontstyleblocks[i].lineprocs =
                                                         (line_proc *) byte_ptr;
-                for( j = 0; j < out_driver->fontstyles.fontstyleblocks[i].\
-                                                            line_passes; j++ ) {
-                    if( out_driver->fontstyles.fontstyleblocks[i].\
-                                            lineprocs[j].startvalue != NULL ) {
-                        byte_ptr = (uint8_t *) out_driver + (size_t) \
+                for( j = 0; j < out_driver->fontstyles.fontstyleblocks[i].line_passes;
+                     j++ ) {
+                    if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startvalue
+                            != NULL ) {
+                        byte_ptr = (uint8_t *) out_driver + (size_t)
                 out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startvalue;
-                        out_driver->fontstyles.fontstyleblocks[i].\
-                                lineprocs[j].startvalue = (code_text *) byte_ptr;
-                        if( out_driver->fontstyles.fontstyleblocks[i].\
-                                        lineprocs[j].startvalue->text != NULL ) {
-                            byte_ptr = (uint8_t *) out_driver + (size_t) \
+                        out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startvalue
+                            = (code_text *) byte_ptr;
+                        if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startvalue->text
+                                != NULL ) {
+                            byte_ptr = (uint8_t *) out_driver + (size_t)
         out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startvalue->text;
-                            out_driver->fontstyles.fontstyleblocks[i].\
-                                        lineprocs[j].startvalue->text = byte_ptr;
+                            out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startvalue->text
+                                = byte_ptr;
                         }
                     }
-                    if( out_driver->fontstyles.fontstyleblocks[i].\
-                                                lineprocs[j].firstword != NULL ) {
-                        byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].firstword
+                            != NULL ) {
+                        byte_ptr = (uint8_t *) out_driver + (size_t)
                 out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].firstword;
-                        out_driver->fontstyles.fontstyleblocks[i].\
-                                lineprocs[j].firstword = (code_text *) byte_ptr;
-                        if( out_driver->fontstyles.fontstyleblocks[i].\
-                                        lineprocs[j].firstword->text != NULL ) {
+                        out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].firstword
+                                = (code_text *) byte_ptr;
+                        if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].firstword->text
+                                != NULL ) {
                             byte_ptr = (uint8_t *) out_driver + (size_t)
             out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].firstword->text;
-                            out_driver->fontstyles.fontstyleblocks[i].\
-                                        lineprocs[j].firstword->text = byte_ptr;
+                            out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].firstword->text
+                                    = byte_ptr;
                         }
                     }
-                    if( out_driver->fontstyles.fontstyleblocks[i].\
-                                                lineprocs[j].startword != NULL ) {
-                        byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startword
+                            != NULL ) {
+                        byte_ptr = (uint8_t *) out_driver + (size_t)
                 out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startword;
-                        out_driver->fontstyles.fontstyleblocks[i].\
-                                lineprocs[j].startword = (code_text *) byte_ptr;
-                        if( out_driver->fontstyles.fontstyleblocks[i].\
-                                        lineprocs[j].startword->text != NULL ) {
-                            byte_ptr = (uint8_t *) out_driver + (size_t) \
+                        out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startword
+                            = (code_text *) byte_ptr;
+                        if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startword->text
+                                != NULL ) {
+                            byte_ptr = (uint8_t *) out_driver + (size_t)
             out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startword->text;
-                            out_driver->fontstyles.fontstyleblocks[i].\
-                                        lineprocs[j].startword->text = byte_ptr;
+                            out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].startword->text
+                                = byte_ptr;
                         }
                     }
-                    if( out_driver->fontstyles.fontstyleblocks[i].\
-                                                lineprocs[j].endword != NULL ) {
-                        byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endword
+                            != NULL ) {
+                        byte_ptr = (uint8_t *) out_driver + (size_t)
                     out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endword;
-                        out_driver->fontstyles.fontstyleblocks[i].\
-                                    lineprocs[j].endword = (code_text *) byte_ptr;
-                        if( out_driver->fontstyles.fontstyleblocks[i].\
-                                            lineprocs[j].endword->text != NULL ) {
-                            byte_ptr = (uint8_t *) out_driver + (size_t) \
+                        out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endword
+                            = (code_text *) byte_ptr;
+                        if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endword->text
+                                != NULL ) {
+                            byte_ptr = (uint8_t *) out_driver + (size_t)
             out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endword->text;
-                            out_driver->fontstyles.fontstyleblocks[i].\
-                                            lineprocs[j].endword->text = byte_ptr;
+                            out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endword->text
+                                = byte_ptr;
                         }
                     }
-                    if( out_driver->fontstyles.fontstyleblocks[i].\
-                                                lineprocs[j].endvalue != NULL ) {
-
-                        byte_ptr = (uint8_t *) out_driver + (size_t) \
+                    if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endvalue
+                            != NULL ) {
+                        byte_ptr = (uint8_t *) out_driver + (size_t)
                 out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endvalue;
-                        out_driver->fontstyles.fontstyleblocks[i].\
-                                lineprocs[j].endvalue = (code_text *) byte_ptr;
-                        if( out_driver->fontstyles.fontstyleblocks[i].\
-                                        lineprocs[j].endvalue->text != NULL ) {
-                            byte_ptr = (uint8_t *) out_driver + (size_t) \
+                        out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endvalue
+                            = (code_text *) byte_ptr;
+                        if( out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endvalue->text
+                                != NULL ) {
+                            byte_ptr = (uint8_t *) out_driver + (size_t)
             out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endvalue->text;
-                            out_driver->fontstyles.fontstyleblocks[i].\
-                                            lineprocs[j].endvalue->text = byte_ptr;
+                            out_driver->fontstyles.fontstyleblocks[i].lineprocs[j].endvalue->text
+                                = byte_ptr;
                         }
                     }
                 }
@@ -2626,8 +2599,8 @@ cop_driver * parse_driver( FILE * in_file )
     }
 
     if( out_driver->absoluteaddress.text != NULL ) {
-        byte_ptr = (uint8_t *) out_driver + (size_t) \
-                                                out_driver->absoluteaddress.text;
+        byte_ptr = (uint8_t *) out_driver +
+                   (size_t) out_driver->absoluteaddress.text;
         out_driver->absoluteaddress.text = byte_ptr;
     }
 

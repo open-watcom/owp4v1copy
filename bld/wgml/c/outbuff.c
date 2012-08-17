@@ -174,7 +174,7 @@ static void ob_insert_ps_text( uint8_t * in_block, size_t count, uint8_t font )
                             /* If it is too large to fit at all, report overflow. */
 
                             if( cur_trans->count > buffout.length ) {
-                                xx_simple_err( err_out_rec_size, dev_name );
+                                xx_simple_err_c( err_out_rec_size, dev_name );
                             }
 
                             /* If it won't fit in the current buffer, finalize
@@ -402,7 +402,7 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
                             /* If it is too large to fit at all, report overflow. */
 
                             if( cur_trans->count > buffout.length ) {
-                                xx_simple_err( err_out_rec_size, dev_name );
+                                xx_simple_err_c( err_out_rec_size, dev_name );
                             }
 
                             /* If it won't fit, flush the buffer. */
@@ -489,7 +489,7 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
                             /* If it is too large to fit at all, report overflow. */
 
                             if( cur_trans->count > buffout.length ) {
-                                xx_simple_err( err_out_rec_size, dev_name );
+                                xx_simple_err_c( err_out_rec_size, dev_name );
                             }
 
                             if( (k + cur_trans->count) >= translated.length ) {
@@ -675,7 +675,7 @@ static void ob_insert_def_ot( uint8_t * in_block, size_t count, uint8_t font )
                         /* If it is too large to fit at all, report overflow. */
 
                         if( cur_trans->count > buffout.length ) {
-                                xx_simple_err( err_out_rec_size, dev_name );
+                                xx_simple_err_c( err_out_rec_size, dev_name );
                         }
 
                         /* If it won't fit in the current buffer, flush the buffer. */
@@ -1267,7 +1267,7 @@ void ob_setup( void )
     /* followed by ":".                                                    */
 
     if( tolower( (out_file_attr[0] ) != 't') || (out_file_attr[1] != ':') ) {
-        xx_simple_err( err_rec_att_not_sup, out_file_attr );
+        xx_simple_err_c( err_rec_att_not_sup, out_file_attr );
     }
 
     /* The rest of the record type must be numeric. */
@@ -1276,7 +1276,7 @@ void ob_setup( void )
 
     for( i = 2; i < strlen( out_file_attr ); i++ ) {
         if( !isdigit( out_file_attr[i] ) ) {
-            xx_simple_err( err_rec_att_bad_fmt, out_file_attr );
+            xx_simple_err_c( err_rec_att_bad_fmt, out_file_attr );
         }
         count++;
     }
@@ -1290,7 +1290,7 @@ void ob_setup( void )
     buffout.current = 0;
     buffout.length = strtoul( &out_file_attr[2], NULL, 0 );
     if( errno == ERANGE ) {
-        xx_simple_err( err_out_rec_size2, "ULONG_MAX" );
+        xx_simple_err_i( err_out_rec_size2, ULONG_MAX );
     }
     buffout.text = (uint8_t *) mem_alloc( buffout.length );
 
@@ -1303,7 +1303,7 @@ void ob_setup( void )
     fopen_s( &out_file_fb, out_file, "uwb" );
 
     if( out_file_fb == NULL ) {
-        xx_simple_err( err_open_out_file, out_file );
+        xx_simple_err_c( err_open_out_file, out_file );
     }
 
     /* Initialize tr_table. */

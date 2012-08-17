@@ -261,8 +261,8 @@ functions_block * parse_functions_block( uint8_t * * current, uint8_t * base )
     if( out_block->count == 0 ) {
         out_block->code_blocks = NULL;
     } else {
-        out_block->code_blocks = get_code_blocks( current, out_block->count, \
-            base );
+        out_block->code_blocks = get_code_blocks( current, out_block->count,
+                                                  base );
     }
 
     return( out_block );

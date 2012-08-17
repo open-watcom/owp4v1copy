@@ -190,9 +190,7 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
     length = strnlen_s( in_name, TYPE_MAX );
     if( (in_name == NULL) || (length == 0) ) {
-        out_msg( "Defined name missing for desired font\n" );
-        err_count++;
-        g_suicide();
+        return( out_font );
     }
 
     /* Initialize the out_font. */
@@ -301,8 +299,8 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
     /* Get the line_height. */
 
-    fread( &out_font->line_height, sizeof( out_font->line_height), 1, \
-        in_file );
+    fread( &out_font->line_height, sizeof( out_font->line_height), 1,
+           in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_font );
         out_font = NULL;
@@ -320,8 +318,8 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
     /* Get the scale_basis. */
 
-    fread( &out_font->scale_basis, sizeof( out_font->scale_basis ), 1, \
-        in_file );
+    fread( &out_font->scale_basis, sizeof( out_font->scale_basis ), 1,
+           in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_font );
         out_font = NULL;
@@ -434,9 +432,9 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
         /* Get the data into the array. */
 
-        if( out_font->allocated_size < (out_font->next_offset + \
+        if( out_font->allocated_size < (out_font->next_offset +
                                         sizeof( out_font->intrans->table )) ) {
-            out_font = resize_cop_font( out_font, \
+            out_font = resize_cop_font( out_font,
                                         sizeof( out_font->intrans->table ) );
         }
 
@@ -506,17 +504,17 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
             /* Reserve space for the outtrans_block. */
 
-            if( out_font->allocated_size < (out_font->next_offset + \
-                                        sizeof( out_font->outtrans->table )) ) {
-                out_font = resize_cop_font( out_font, \
-                                        sizeof( out_font->outtrans->table ) );
+            if( out_font->allocated_size < (out_font->next_offset +
+                                            sizeof( out_font->outtrans->table )) ) {
+                out_font = resize_cop_font( out_font,
+                                            sizeof( out_font->outtrans->table ) );
             }
 
             out_font->outtrans = (outtrans_block *) out_font->next_offset;
             out_font->next_offset += sizeof( out_font->outtrans->table );
 
-            outtrans_ptr = (outtrans_block *) ((char *) out_font + \
-                (size_t) out_font->outtrans);
+            outtrans_ptr = (outtrans_block *) ((char *) out_font +
+                                               (size_t) out_font->outtrans);
 
             /* Build the actual table, which requires actual pointers in
              * place of the offsets recorded in *out_font:
@@ -538,42 +536,40 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
                     /* Reserve space for the translation. */
 
-                    if( out_font->allocated_size < (out_font->next_offset + \
-                                                        sizeof( translation )) ) {
-                        out_font = resize_cop_font( out_font, \
-                                                        sizeof( translation ) );
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font \
-                                                + (size_t) out_font->outtrans);
+                    if( out_font->allocated_size < (out_font->next_offset +
+                                                    sizeof( translation )) ) {
+                        out_font = resize_cop_font( out_font,
+                                                    sizeof( translation ) );
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font
+                                                    + (size_t) out_font->outtrans);
                     }
 
-                    outtrans_ptr->table[i] = (translation *) \
-                                                            out_font->next_offset;
+                    outtrans_ptr->table[i] = (translation *) out_font->next_offset;
                     out_font->next_offset += sizeof( translation );
 
                     /* Get the translation for the current character. */
 
-                    translation_ptr = (translation *) ((char *) out_font + \
-                                                (size_t) outtrans_ptr->table[i] );
+                    translation_ptr = (translation *) ((char *) out_font +
+                                                (size_t) outtrans_ptr->table[i]);
 
                     /* The translation always contains exactly one character. */
 
                     translation_ptr->count = 1;
 
-                    if( out_font->allocated_size < (out_font->next_offset + \
-                                                    translation_ptr->count ) ) {
-                        out_font = resize_cop_font( out_font, \
-                                                        translation_ptr->count  );
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) \
+                    if( out_font->allocated_size < (out_font->next_offset +
+                                                    translation_ptr->count) ) {
+                        out_font = resize_cop_font( out_font,
+                                                    translation_ptr->count );
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *)
                                         out_font + (size_t) out_font->outtrans);
-                        translation_ptr = (translation *) ((uint8_t *) out_font \
-                                            + (size_t) outtrans_ptr->table[i] );
+                        translation_ptr = (translation *) ((uint8_t *) out_font
+                                            + (size_t) outtrans_ptr->table[i]);
                     }
 
                     translation_ptr->data = (uint8_t *) out_font->next_offset;
                     out_font->next_offset += translation_ptr->count;
 
-                    byte_ptr = (uint8_t *) out_font + (size_t) \
-                                                            translation_ptr->data;
+                    byte_ptr = (uint8_t *) out_font + (size_t) translation_ptr->data;
 
                     /* The translation character is the value in the input array. */
 
@@ -605,8 +601,8 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
             outtrans_data = (uint8_t *) mem_alloc( data_count );
 
-            fread( outtrans_data, sizeof( *outtrans_data ), data_count, \
-                in_file );
+            fread( outtrans_data, sizeof( *outtrans_data ), data_count,
+                   in_file );
             if( ferror( in_file ) || feof( in_file ) ) {
                 mem_free( outtrans_data );
                 outtrans_data = NULL;
@@ -617,17 +613,17 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
             /* Initialize outtrans_ptr and the outtrans pointer in out_font. */
 
-            if( out_font->allocated_size < (out_font->next_offset + \
-                                        sizeof( out_font->outtrans->table )) ) {
-                out_font = resize_cop_font( out_font, \
+            if( out_font->allocated_size < (out_font->next_offset +
+                                            sizeof( out_font->outtrans->table )) ) {
+                out_font = resize_cop_font( out_font,
                                             sizeof( out_font->outtrans->table ) );
             }
 
             out_font->outtrans = (outtrans_block *) out_font->next_offset;
             out_font->next_offset += sizeof( out_font->outtrans->table );
 
-            outtrans_ptr = (outtrans_block *) ((char *) out_font + \
-                                                    (size_t) out_font->outtrans);
+            outtrans_ptr = (outtrans_block *) ((char *) out_font +
+                                               (size_t) out_font->outtrans);
 
             /* Convert the data in uint16_array to our format, which requires
              * actual pointers in place of the offsets recorded in *out_font:
@@ -649,21 +645,20 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
                     /* Reserve space for the translation. */
 
-                    if( out_font->allocated_size < (out_font->next_offset + \
+                    if( out_font->allocated_size < (out_font->next_offset +
                                                     sizeof( translation )) ) {
-                        out_font = resize_cop_font( out_font, \
+                        out_font = resize_cop_font( out_font,
                                                     sizeof( translation ) );
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font \
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font
                                                 + (size_t) out_font->outtrans);
                     }
 
-                    outtrans_ptr->table[i] = (translation *) \
-                                                            out_font->next_offset;
+                    outtrans_ptr->table[i] = (translation *) out_font->next_offset;
                     out_font->next_offset += sizeof( translation );
 
                     /* Get the translation for the current character. */
 
-                    translation_ptr = (translation *) ((char *) out_font + \
+                    translation_ptr = (translation *) ((char *) out_font +
                                                 (size_t) outtrans_ptr->table[i] );
 
                     /* If the first byte at uint16_array[i] is 00, then the
@@ -677,28 +672,27 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
                     if( (uint16_array[i] & 0xff00) == 0x00 ) {
                         translation_ptr->count = 1;
                     } else {
-                        translation_start = outtrans_data + \
-                                                    (uint16_array[i] & 0x00ff);
+                        translation_start = outtrans_data +
+                                            (uint16_array[i] & 0x00ff);
                         translation_ptr->count = *translation_start;
                     }
 
                     /* Allocate space and perform other common operations. */
 
-                    if( out_font->allocated_size < (out_font->next_offset + \
-                                                    translation_ptr->count ) ) {
-                        out_font = resize_cop_font( out_font, \
-                                                        translation_ptr->count );
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font \
+                    if( out_font->allocated_size < (out_font->next_offset +
+                                                    translation_ptr->count) ) {
+                        out_font = resize_cop_font( out_font,
+                                                    translation_ptr->count );
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font
                                                 + (size_t) out_font->outtrans);
-                        translation_ptr = (translation *) ((uint8_t *) out_font \
-                                            + (size_t) outtrans_ptr->table[i] );
+                        translation_ptr = (translation *) ((uint8_t *) out_font
+                                            + (size_t) outtrans_ptr->table[i]);
                     }
 
                     translation_ptr->data = (uint8_t *) out_font->next_offset;
                     out_font->next_offset += translation_ptr->count;
 
-                    byte_ptr = (uint8_t *) out_font + (size_t) \
-                                                        translation_ptr->data;
+                    byte_ptr = (uint8_t *) out_font + (size_t) translation_ptr->data;
 
                     /* Put the data into the buffer. */
 
@@ -706,8 +700,8 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
                         *byte_ptr = (uint16_array[i] & 0x00ff);
                     } else {
                         ++translation_start;
-                        memcpy_s( byte_ptr, translation_ptr->count, \
-                                    translation_start, translation_ptr->count );
+                        memcpy_s( byte_ptr, translation_ptr->count,
+                                  translation_start, translation_ptr->count );
                     }
                 }
             }
@@ -730,9 +724,9 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
         /* Reserve the space for width. */
 
-        if( out_font->allocated_size < (out_font->next_offset + \
+        if( out_font->allocated_size < (out_font->next_offset +
                                         sizeof( out_font->width->table )) ) {
-            out_font = resize_cop_font( out_font, \
+            out_font = resize_cop_font( out_font,
                                         sizeof( out_font->width->table ) );
         }
 
@@ -850,15 +844,14 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
         byte_ptr = (uint8_t *) out_font + (size_t) out_font->outtrans;
         out_font->outtrans = (outtrans_block *) byte_ptr;
 
-        for( i = 0; i < sizeof( outtrans_block ) / sizeof( translation * ); \
-                                                                        i++ ) {
+        for( i = 0; i < sizeof( outtrans_block ) / sizeof( translation * ); i++ ) {
             if( out_font->outtrans->table[i] != NULL ) {
-                byte_ptr = (uint8_t *) out_font + \
-                                            (size_t) out_font->outtrans->table[i];
+                byte_ptr = (uint8_t *) out_font + 
+                           (size_t) out_font->outtrans->table[i];
                 out_font->outtrans->table[i] = (translation *) byte_ptr;
                 if( out_font->outtrans->table[i]->data != NULL ) {
-                    byte_ptr = (uint8_t *) out_font + (size_t) \
-                                            out_font->outtrans->table[i]->data;
+                    byte_ptr = (uint8_t *) out_font + (size_t)
+                                           out_font->outtrans->table[i]->data;
                     out_font->outtrans->table[i]->data = byte_ptr;
                 }
             }

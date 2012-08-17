@@ -213,27 +213,31 @@ char * get_member_name( char const * in_name )
     size_t          member_length;
     uint16_t        entry_type;
 
-    /* See if in_name is found in in_dir. */
+    /* See if in_name is found in try_file_name. */
 
     file_type = parse_header( try_fp );
-
     switch( file_type ) {
     case file_error:
 
         /* File error, including premature eof. */
 
-        out_msg( "ERR_FILE_IO %d %s\n", errno, try_file_name );
-        err_count++;
-        g_suicide();
+        xx_simple_err_c( err_dev_lib_file, try_file_name );
+        break;
+
+    case not_se_v4_1:
+
+        /* File was created by a different version of gendev. */
+
+        xx_simple_err( err_wrong_gendev );
+        break;
 
     case not_bin_dev:
-    case not_se_v4_1:
     case se_v4_1_not_dir:
 
         /* Wrong type of file: something is wrong with the device library. */
 
-        out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
-        return( member_name );
+        xx_simple_err_c( err_dev_lib_data, try_file_name );
+        break;
 
     case dir_v4_1_se:
 
@@ -305,19 +309,18 @@ char * get_member_name( char const * in_name )
 
                         /* For any type, check the defined name. */
 
-                        entry_status = get_extended_entry( try_fp, \
-                                                                &current_entry );
+                        entry_status = get_extended_entry( try_fp, &current_entry );
                         switch( entry_status ) {
                         case valid_entry:
 
                             /* Return the member name, if found. */
 
                             if( !stricmp( in_name, current_entry.defined_name ) ) {
-                                member_length = \
-                        strnlen_s( current_entry.member_name, FILENAME_MAX ) + 1;
+                                member_length = strnlen_s(
+                                    current_entry.member_name, FILENAME_MAX ) + 1;
                                 member_name = (char *) mem_alloc( member_length );
-                                strcpy_s( member_name, member_length, \
-                                                    current_entry.member_name );
+                                strcpy_s( member_name, member_length,
+                                          current_entry.member_name );
                                 return( member_name );
                             }
 
@@ -331,9 +334,8 @@ char * get_member_name( char const * in_name )
 
                             /* The entry_status is an unknown value. */
 
-                            out_msg("wgml internal error\n");
-                            err_count++;
-                            g_suicide();
+                            internal_err( __FILE__, __LINE__ );
+                            break;
                         }
                         break;
 
@@ -341,9 +343,8 @@ char * get_member_name( char const * in_name )
 
                         /* The entry_type is an unknown value. */
 
-                        out_msg("wgml internal error\n");
-                        err_count++;
-                        g_suicide();
+                        internal_err( __FILE__, __LINE__ );
+                        break;
                     }
                     break;
                 }
@@ -363,11 +364,11 @@ char * get_member_name( char const * in_name )
                     /* Return the member name, if found. */
 
                     if( !stricmp( in_name, current_entry.defined_name) ) {
-                        member_length = \
-                    strnlen_s( current_entry.member_name, FILENAME_MAX ) + 1;
+                        member_length = strnlen_s(
+                                    current_entry.member_name, FILENAME_MAX ) + 1;
                         member_name = (char *) mem_alloc( member_length );
-                        strcpy_s( member_name, member_length, \
-                                                    current_entry.member_name );
+                        strcpy_s( member_name, member_length, 
+                                  current_entry.member_name );
                         return( member_name );
                     }
 
@@ -381,9 +382,8 @@ char * get_member_name( char const * in_name )
 
                     /* The entry_status is an unknown value. */
 
-                    out_msg("wgml internal error\n");
-                    err_count++;
-                    g_suicide();
+                    internal_err( __FILE__, __LINE__ );
+                    break;
                 }
                 break;
 
@@ -391,10 +391,9 @@ char * get_member_name( char const * in_name )
 
                 /* The entry_type is an unknown value. */
 
-                out_msg("wgml internal error\n");
-                err_count++;
-                g_suicide();
-          }
+                internal_err( __FILE__, __LINE__ );
+                break;
+            }
         }
 
         break;
@@ -403,9 +402,8 @@ char * get_member_name( char const * in_name )
 
         /* The file_type is an unknown value. */
 
-        out_msg("wgml internal error\n");
-        err_count++;
-        g_suicide();
+        internal_err( __FILE__, __LINE__ );
+        break;
     }
 
     return( member_name );

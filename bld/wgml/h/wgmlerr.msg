@@ -6,6 +6,7 @@
  *
  *      japanese is provided as the templates use it
  */
+
 pick( ERR_INTERN,               "Internal Error: File %s, Line %i",
                                 "Internal Error: File %s, Line %i" )
 
@@ -587,6 +588,27 @@ pick( ERR_LI_LP_NO_LIST,        "LI or LP tag only allowed in a list",
 
 /* cop & output file-specific errors */
 
+pick( ERR_BLOCK_NOT_FOUND,      "For %s block %s: name not defined\n",
+                                "For %s block %s: name not defined\n")
+
+pick( ERR_DEV_DATA_FILE,        "Error reading device/driver/font file %s\n",
+                                "Error reading device/driver/font file %s\n")
+
+pick( ERR_DEV_LIB_DATA,         "Device library corrupt or wrong version: %s\n",
+                                "Device library corrupt or wrong version: %s\n")
+
+pick( ERR_DEV_LIB_FILE,         "Error reading device/font library in %s\n",
+                                "Error reading device/font library in %s\n")
+
+pick( ERR_DEV_NOT_FOUND,        "File for device/driver/font %s not found\n",
+                                "File for device/driver/font %s not found\n")
+
+pick( ERR_FONT_OPT_SCALED,      "For the FONT option with font %d, the font_height attribute must be specified when the font is scaled.",
+                                "For the FONT option with font %d, the font_height attribute must be specified when the font is scaled.")
+
+pick( ERR_FONT_SCALED,          "For default font %d, the font_height attribute must be specified when the font is scaled.",
+                                "For default font %d, the font_height attribute must be specified when the font is scaled.")
+
 pick( ERR_OPEN_OUT_FILE,        "Unable to open output file %s\n",
                                 "Unable to open output file %s\n")
 
@@ -604,6 +626,9 @@ pick( ERR_REC_ATT_BAD_FMT,      "Record attribute %s is not formatted correctly\
 
 pick( ERR_REC_DEV_FUNC,         "Recursive use of %s, check device library.",
                                 "Recursive use of %s, check device library.")
+
+pick( ERR_WRONG_GENDEV,         "Device/font library was created with a different version of GENDEV",
+                                "Device/font library was created with a different version of GENDEV")
 
 pick( ERR_ZERO_DIVISOR,         "Zero divisor found in device function %s.",
                                 "Zero divisor found in device function %s.")

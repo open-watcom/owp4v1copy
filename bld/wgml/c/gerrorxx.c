@@ -300,10 +300,31 @@ void    xx_line_err( const msg_ids errid, char *pa )
     return;
 }
 
-void    xx_simple_err( const msg_ids errid, char *arg )
+void    xx_simple_err( const msg_ids errid )
+{
+    err_count++;
+    g_err( errid );
+    return;
+}
+
+void    xx_simple_err_c( const msg_ids errid, const char * arg )
 {
     err_count++;
     g_err( errid, arg );
+    return;
+}
+
+void    xx_simple_err_i( const msg_ids errid, int arg )
+{
+    err_count++;
+    g_err( errid, arg );
+    return;
+}
+
+void    xx_simple_err_cc( const msg_ids errid, const char * arg1, const char * arg2 )
+{
+    err_count++;
+    g_err( errid, arg1, arg2 );
     return;
 }
 
