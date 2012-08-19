@@ -66,6 +66,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386.386/makefile prebuild=1
     <CPCMD> wcl386.exe <OWBINDIR>/bwcl386
+    <CPCMD> wcl386.exe <OWBINDIR>/wcl386
 
 [ BLOCK . . ]
 #==================
