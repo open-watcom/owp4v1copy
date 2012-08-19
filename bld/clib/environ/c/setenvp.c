@@ -97,14 +97,12 @@ void __setenvp( void )
     char    **argep;
     int     count;
 
-    if( _RWD_environ != NULL )
-        return;
-    argep = (char **)_Envptr;
+    argep = _RWD_environ;
     while ( *argep != NULL )
         argep++;
-    count = argep - (char **)_Envptr;
+    count = argep - (char **)_RWD_environ;
     argep = lib_malloc( ( count + 1 ) * sizeof( char * ) + count * sizeof( char ) );
-    memcpy( argep, _Envptr, ( count + 1 ) * sizeof( char * ) );
+    memcpy( argep, _RWD_environ, ( count + 1 ) * sizeof( char * ) );
     _RWD_env_mask = (char *)&argep[count + 1];
     memset( _RWD_env_mask, 0, count * sizeof( char ) );
     _RWD_environ = argep;
