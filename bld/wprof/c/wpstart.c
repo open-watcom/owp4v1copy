@@ -164,7 +164,8 @@ extern void WPInit( void )
     }
     getcmd( buff );
     do_report = procCmd( buff );
-    WndInit( "Open Watcom Profiler" );
+    if( !WndInit( "Open Watcom Profiler" ) )
+        fatal( LIT( UI_Init_Failed ) );
     WPWndInitDone = P_TRUE;
     InitMADInfo();
     WPDipInit();
