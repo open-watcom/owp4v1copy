@@ -114,14 +114,14 @@ void ScreenInit( void )
 
     vioMode.cb = sizeof( vioMode );
     if( VioGetMode( &vioMode, 0 ) != 0 ) {
-        FatalError( ERR_WIND_INVALID );
+        StartupError( ERR_WIND_INVALID );
     }
     WindMaxWidth = vioMode.col;
     WindMaxHeight = vioMode.row;
 
     config.cb = sizeof( config );
     if( VioGetConfig( 0, &config, 0 ) != 0 ) {
-        FatalError( ERR_WIND_INVALID );
+        StartupError( ERR_WIND_INVALID );
     }
     if( config.display == 3 ) {
         EditFlags.BlackAndWhite = TRUE;

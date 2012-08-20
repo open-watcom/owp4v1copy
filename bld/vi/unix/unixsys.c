@@ -86,7 +86,9 @@ void MyBeep( void )
  */
 void ScreenInit( void )
 {
-    uistart();
+    if( !uistart() )
+        StartupError( ERR_WIND_NO_MORE_WINDOWS );
+
     BIOSKeyboardInit();
 
     WindMaxHeight = LINES;
