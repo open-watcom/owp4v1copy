@@ -80,11 +80,15 @@ static void do_el_list_out( doc_element * array, uint8_t count )
             if( i == 0 ) {      // restrict output to first column, for now
                 switch( cur_el->type ) {
                 case el_binc :
-                    ob_binclude( &cur_el->element.binc );
-                    break;
+                    if( GlobalFlags.lastpass ) {
+                        ob_binclude( &cur_el->element.binc );
+                        break;
+                    }
                 case el_graph :
-                    if( ProcFlags.ps_device ) {   // no action for character devices
-                        ob_graphic( &cur_el->element.graph );
+                    if( GlobalFlags.lastpass ) {
+                        if( ProcFlags.ps_device ) {   // only available to PS device
+                            ob_graphic( &cur_el->element.graph );
+                        }
                     }
                     break;
                 case el_text :
