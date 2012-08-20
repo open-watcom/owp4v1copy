@@ -82,8 +82,8 @@ static void do_el_list_out( doc_element * array, uint8_t count )
                 case el_binc :
                     if( GlobalFlags.lastpass ) {
                         ob_binclude( &cur_el->element.binc );
-                        break;
                     }
+                    break;
                 case el_graph :
                     if( GlobalFlags.lastpass ) {
                         if( ProcFlags.ps_device ) {   // only available to PS device
