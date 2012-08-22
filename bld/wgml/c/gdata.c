@@ -199,7 +199,7 @@ void init_pass_data( void )
                                         // i.e. .se var  =    7
                                         // .se var=7  without
     ProcFlags.concat    = true;         // .co on default
-    ProcFlags.justify   = ju_on;        // .ju on default
+    ProcFlags.justify   = ju_off;       // .ju off default (changed from on)
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
     ProcFlags.doc_sect_nxt  = doc_sect_none;// no document section yet
     ProcFlags.frontm_seen  = false;     // FRONTM not yet seen

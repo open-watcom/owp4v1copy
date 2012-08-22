@@ -46,7 +46,7 @@ int32_t calc_skip_value( void )
 {
     int32_t     skip_value;
 
-    skip_value = (g_skip * bin_device->vertical_base_units ) / LPI;
+    skip_value = (g_skip * (int32_t)bin_device->vertical_base_units ) / LPI;
     g_skip = 0;
     return( skip_value );
 }

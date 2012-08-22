@@ -834,7 +834,7 @@ int main( int argc, char * argv[] )
             g_info_lm( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 //          if( GlobalFlags.research ) {
-//              g_trmem_prt_list();     // TBD
+//              g_trmem_prt_list();
 //          }
 
             proc_input( master_fname );
@@ -852,7 +852,7 @@ int main( int argc, char * argv[] )
             g_info_lm( INF_PASS_2, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 
-//          if( GlobalFlags.research && (pass < passes) ) { // TBD
+//          if( GlobalFlags.research && (pass < passes) ) {
 //              g_trmem_prt_list();     // show allocated memory at pass end
 //          }
             passcount = pass;
