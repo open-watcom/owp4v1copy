@@ -114,7 +114,9 @@ bool is_fon_file( FILE * in_file)
     /* Get the descriminator. */
 
     fread( &descriminator, 3, 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) return( false );
+    if( ferror( in_file ) || feof( in_file ) ) {
+        return( false );
+    }
 
     /* Verify that the descriminator is for a .COP font file. */
 

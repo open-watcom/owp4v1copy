@@ -246,7 +246,9 @@ char * get_member_name( char const * in_name )
         /* Skip the number of entries. */
 
         fseek( try_fp, sizeof( uint32_t ), SEEK_CUR );
-        if( ferror( try_fp ) || feof( try_fp ) ) break;
+        if( ferror( try_fp ) || feof( try_fp ) ) {
+            break;
+        }
 
         for( ;; ) {
 
@@ -259,7 +261,9 @@ char * get_member_name( char const * in_name )
 
             /* Exit the loop when the final entry has been processed. */
 
-            if( feof( try_fp ) || ferror( try_fp ) ) break;
+            if( feof( try_fp ) || ferror( try_fp ) ) {
+                break;
+            }
 
             switch( entry_type) {
             case 0x0000:
@@ -284,7 +288,9 @@ char * get_member_name( char const * in_name )
 
                     /* Exit the loop when the final entry has been processed. */
 
-                    if( feof( try_fp ) || ferror( try_fp ) ) break;
+                    if( feof( try_fp ) || ferror( try_fp ) ) {
+                        break;
+                    }
 
                     switch( entry_type ) {
                     case 0x0000:

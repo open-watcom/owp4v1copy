@@ -112,7 +112,7 @@ static  directory_list  path_dirs;
  *          single block of memory and can be freed with one mem_free().
  */
 
-static void initialize_directory_list( char const * in_path_list, \
+static void initialize_directory_list( char const * in_path_list,
                                         directory_list * in_list )
 {
     char *          current;
@@ -146,13 +146,19 @@ static void initialize_directory_list( char const * in_path_list, \
     for( i = 0; i < strlen( in_path_list ); i++ ) {
         if( in_path_list[i] == '"' ) {
             for( j = i + 1; j < strlen( in_path_list ); j++ ) {
-                if( in_path_list[j] == '"' ) break;
+                if( in_path_list[j] == '"' ) {
+                    break;
+                }
                 byte_count++;
             }
             i = j;
             if( in_path_list[i] == '\0' ) {
-                if( in_path_list[i - 1] == INCLUDE_SEP ) path_count++;
-                if( in_path_list[i - 1] != PATH_SEP ) byte_count++;
+                if( in_path_list[i - 1] == INCLUDE_SEP ) {
+                    path_count++;
+                }
+                if( in_path_list[i - 1] != PATH_SEP ) {
+                    byte_count++;
+                }
                 break;
             }
             continue;
@@ -161,9 +167,13 @@ static void initialize_directory_list( char const * in_path_list, \
             if( in_path_list[i - 1] != INCLUDE_SEP ) {
                 path_count++;
                 if( in_path_list[i - 1] == '"' ) {
-                    if( in_path_list[i - 2] != PATH_SEP ) byte_count++;
+                    if( in_path_list[i - 2] != PATH_SEP ) {
+                        byte_count++;
+                    }
                 }
-                if( in_path_list[i - 1] != PATH_SEP ) byte_count++;
+                if( in_path_list[i - 1] != PATH_SEP ) {
+                    byte_count++;
+                }
                 continue;
             }
         }
@@ -172,15 +182,19 @@ static void initialize_directory_list( char const * in_path_list, \
     if( in_path_list[i - 1] != INCLUDE_SEP ) {
         path_count++;
         if( in_path_list[i - 1] == '"' ) {
-            if( in_path_list[i - 2] != PATH_SEP ) byte_count++;
+            if( in_path_list[i - 2] != PATH_SEP ) {
+                byte_count++;
+            }
         }
-        if( in_path_list[i - 1] != PATH_SEP ) byte_count++;
+        if( in_path_list[i - 1] != PATH_SEP ) {
+            byte_count++;
+        }
     }
 
     /* Initialize local_list. */
 
     local_list.count = path_count;
-    local_list.directories = (char * *) mem_alloc( \
+    local_list.directories = (char * *) mem_alloc(
                     (path_count * sizeof( char * )) + byte_count + path_count );
 
     array_base = local_list.directories;
@@ -191,15 +205,21 @@ static void initialize_directory_list( char const * in_path_list, \
     for( i = 0; i < strlen( in_path_list ); i++ ) {
         if( in_path_list[i] == '"' ) {
             for( j = i + 1; j < strlen( in_path_list ); j++ ) {
-                if( in_path_list[j] == '"' ) break;
+                if( in_path_list[j] == '"' ) {
+                    break;
+                }
                 *current++ = in_path_list[j];
             }
             i = j;
             if( in_path_list[i] == '\0' ) {
                 if( in_path_list[i - 1] == INCLUDE_SEP ) {
-                    if( ++k < path_count ) array_base[k] = current;
+                    if( ++k < path_count ) {
+                        array_base[k] = current;
+                    }
                 }
-                if( in_path_list[i - 1] != PATH_SEP ) *current++ = PATH_SEP;
+                if( in_path_list[i - 1] != PATH_SEP ) {
+                    *current++ = PATH_SEP;
+                }
                 *current++ = '\0';
                 break;
             }
@@ -209,12 +229,17 @@ static void initialize_directory_list( char const * in_path_list, \
             if( in_path_list[i - 1] != INCLUDE_SEP ) {
                 if( in_path_list[i - 1] != PATH_SEP ) {
                     if( in_path_list[i - 1] == '"' ) {
-                        if( in_path_list[i - 2] != PATH_SEP ) \
-                                                        *current++ = PATH_SEP;
-                    } else *current++ = PATH_SEP;
+                        if( in_path_list[i - 2] != PATH_SEP ) {
+                            *current++ = PATH_SEP;
+                        }
+                    } else {
+                        *current++ = PATH_SEP;
+                    }
                 }
                 *current++ = '\0';
-                if( ++k < path_count ) array_base[k] = current;
+                if( ++k < path_count ) {
+                    array_base[k] = current;
+                }
             }
             continue;
         }
@@ -222,9 +247,13 @@ static void initialize_directory_list( char const * in_path_list, \
     }
     if( in_path_list[i - 1] != INCLUDE_SEP ) {
         if( in_path_list[i - 1] == '"' ) {
-            if( in_path_list[i - 2] != PATH_SEP ) *current++ = PATH_SEP;
+            if( in_path_list[i - 2] != PATH_SEP ) {
+                *current++ = PATH_SEP;
+            }
         }
-        if( in_path_list[i - 1] != PATH_SEP ) *current++ = PATH_SEP;
+        if( in_path_list[i - 1] != PATH_SEP ) {
+            *current++ = PATH_SEP;
+        }
         *current++ = '\0';
     }
 
@@ -236,8 +265,7 @@ static void initialize_directory_list( char const * in_path_list, \
     for( i = 0; i < local_list.count; i++ ){
         if( strlen( local_list.directories[i] ) > FILENAME_MAX ) {
             path_count--;
-            out_msg( "Directory path is too long and will not be used:\n  %s\n", \
-                                                    local_list.directories[i] );
+            xx_simple_err_c( err_path_max, local_list.directories[i] );
             local_list.directories[i] = NULL;
         } else {
             byte_count += strnlen_s( local_list.directories[i], FILENAME_MAX );
@@ -265,7 +293,7 @@ static void initialize_directory_list( char const * in_path_list, \
     if( path_count < local_list.count) {
 
         in_list->count = path_count;
-        in_list->directories = (char * *) mem_alloc( \
+        in_list->directories = (char * *) mem_alloc(
                     (path_count * sizeof( char * )) + byte_count + path_count );
 
         array_base = in_list->directories;
@@ -317,11 +345,10 @@ static int try_open( char * prefix, char * filename )
 
     /* Prevent buffer overflow. */
 
-    filename_length = strnlen_s( prefix, FILENAME_MAX ) + \
-                                        strnlen_s( filename, FILENAME_MAX ) + 1;
+    filename_length = strnlen_s( prefix, FILENAME_MAX ) +
+                      strnlen_s( filename, FILENAME_MAX ) + 1;
     if( filename_length > FILENAME_MAX ) {
-        out_msg( "File name is too long and will not be searched for:\n%s%s\n", \
-                                                                prefix, filename );
+        xx_simple_err_cc( err_file_max, prefix, filename );
         return(0);
     }
 
@@ -347,11 +374,19 @@ static int try_open( char * prefix, char * filename )
     for( ;; ) {
         strlwr( buff );                 // for the sake of linux use lower only
         erc = fopen_s( &fp, buff, "rb" );
-        if( erc == 0 ) break;
-        if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) break;
-        if( !free_resources( errno ) ) break;
+        if( erc == 0 ) {
+            break;
+        }
+        if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) {
+            break;
+        }
+        if( !free_resources( errno ) ) {
+            break;
+        }
     }
-    if( fp == NULL ) return( 0 );
+    if( fp == NULL ) {
+        return( 0 );
+    }
 
     /* Set the globals on success. */
 
@@ -404,8 +439,12 @@ void ff_setup( void )
     /* Set max_length to the largest of the three. */
 
     max_length = path_length;
-    if( gmlinc_length > max_length ) max_length = gmlinc_length;
-    if( gmllib_length > max_length ) max_length = gmllib_length;
+    if( gmlinc_length > max_length ) {
+        max_length = gmlinc_length;
+    }
+    if( gmllib_length > max_length ) {
+        max_length = gmllib_length;
+    }
 
     /* Allocate the buffer, allowing for a terminating '\0'. */
 
@@ -416,30 +455,43 @@ void ff_setup( void )
 
     rc = getenv_s( &env_var_length, env_var_buffer, max_length, "GMLINC" );
 
-    if( rc == 0 ) env_var_buffer[env_var_length] = '\0';
-    else env_var_length = 0;
+    if( rc == 0 ) {
+        env_var_buffer[env_var_length] = '\0';
+    } else {
+        env_var_length = 0;
+    }
 
-    if( env_var_length > 0 ) initialize_directory_list( env_var_buffer, \
-                                                        &gml_inc_dirs );
+    if( env_var_length > 0 ) {
+        initialize_directory_list( env_var_buffer, &gml_inc_dirs );
+    }
 
     /* Initialize the directory list for GMLLIB. */
 
     rc = getenv_s( &env_var_length, env_var_buffer, max_length, "GMLLIB" );
 
-    if( rc == 0 ) env_var_buffer[env_var_length] = '\0';
-    else env_var_length = 0;
+    if( rc == 0 ) {
+        env_var_buffer[env_var_length] = '\0';
+    } else {
+        env_var_length = 0;
+    }
 
-    if( env_var_length > 0 ) initialize_directory_list( env_var_buffer, \
-                                                        &gml_lib_dirs );
+    if( env_var_length > 0 ) {
+        initialize_directory_list( env_var_buffer, &gml_lib_dirs );
+    }
+
     /* Initialize the directory list for PATH. */
 
     rc = getenv_s( &env_var_length, env_var_buffer, max_length, "PATH" );
 
-    if( rc == 0 ) env_var_buffer[env_var_length] = '\0';
-    else env_var_length = 0;
+    if( rc == 0 ) {
+        env_var_buffer[env_var_length] = '\0';
+    } else {
+        env_var_length = 0;
+    }
 
-    if( env_var_length > 0 ) initialize_directory_list( env_var_buffer, \
-                                                        &path_dirs );
+    if( env_var_length > 0 ) {
+        initialize_directory_list( env_var_buffer, &path_dirs );
+    }
 
     /* Free the environment variable buffer. */
 
@@ -533,10 +585,8 @@ int search_file_in_dirs( char * filename, char * defext, char * altext,
     /* Ensure filename will fit into buff. */
 
     if( strnlen_s( filename, FILENAME_MAX ) == FILENAME_MAX ) {
-        out_msg( "File name is too long and will not be searched for:\n%s\n", \
-                                                                        filename );
-        err_count++;
-        g_suicide();
+        xx_simple_err_c( err_file_max, filename );
+        return( 0 );
     }
 
     /* Initialize the filename buffers. */
@@ -554,10 +604,8 @@ int search_file_in_dirs( char * filename, char * defext, char * altext,
         _splitpath2( filename, buff, &fn_drive, &fn_dir, &fn_name, &fn_ext );
 
         if( fn_drive[0] != '\0' || fn_dir[0] != '\0' ) {
-            out_msg( "File names cannot contain path information! Filename:" \
-                     "\n%s\n", filename );
-            err_count++;
-            g_suicide();
+            xx_simple_err_c( err_file_name, filename );
+            return( 0 );
         }
 
         /* Ensure the file name will fit in the buffers if the literal extensions
@@ -566,13 +614,25 @@ int search_file_in_dirs( char * filename, char * defext, char * altext,
 
         if( *fn_ext == '\0' ) {
             if( strnlen_s( filename, FILENAME_MAX ) + 4 == FILENAME_MAX ) {
-            out_msg( "File name is too long and will not be searched for:\n%s\n" \
-                     "Note: length used includes a default extension.", filename );
-                err_count++;
-                g_suicide();
+                switch( sequence ) {
+                case ds_opt_file:
+                    xx_simple_err_cc( err_file_max, filename, ".opt" );
+                    break;
+                case ds_doc_spec:
+                    xx_simple_err_cc( err_file_max, filename, ".gml" );
+                    break;
+                case ds_bin_lib:
+                    xx_simple_err_cc( err_file_max, filename, ".cop" );
+                    break;
+                case ds_lib_src:
+                    xx_simple_err_cc( err_file_max, filename, ".pcd" );
+                    break;
+                default:
+                    xx_simple_err_cc( err_file_max, filename, ".xxx" );
+                }
+                return( 0 );
             }
         }
-
     }
 
     /* Set up the file names and the dirs for the specified sequence. */
@@ -635,16 +695,17 @@ int search_file_in_dirs( char * filename, char * defext, char * altext,
         searchdirs[3] = NULL;
         break;
     default:
-        out_msg( "findfile internal error\n" );
-        err_count++;
-        g_suicide();
+        internal_err( __FILE__, __LINE__ );
+        return( 0 );
     }
 
     /* Search each directory for each filename. */
 
     for( i = 0; i < 4; i++ ) {
         list_ptr = searchdirs[i];
-        if( list_ptr == NULL ) break;
+        if( list_ptr == NULL ) {
+            break;
+        }
 
         for( j = 0; j < list_ptr->count; j++ ) {
 
@@ -656,12 +717,16 @@ int search_file_in_dirs( char * filename, char * defext, char * altext,
 
             /* See if dir_ptr contains a wgmlst.cop file. */
 
-                if( try_open( dir_ptr, "wgmlst.cop" ) == 0 ) continue;
+                if( try_open( dir_ptr, "wgmlst.cop" ) == 0 ) {
+                    continue;
+                }
 
                 /* try_fp now contains a FILE * to the directory file. */
 
                 member_name = get_member_name( filename );
-                if( member_name == NULL ) continue;
+                if( member_name == NULL ) {
+                    continue;
+                }
 
                 /* Construct primary_file and open it normally. */
 
@@ -680,41 +745,41 @@ int search_file_in_dirs( char * filename, char * defext, char * altext,
                             mem_free( member_name );
                             member_name = NULL;
                         } else {
-                            out_msg( "Member name is too long and will not be" \
-                                        " searched for:\n%s.cop\n", member_name );
+                            xx_simple_err_cc( err_file_max, member_name, ".cop" );
                             mem_free( member_name );
                             member_name = NULL;
-                            err_count++;
-                            g_suicide();
+                            return( 0 );
                         }
                     } else {
-                        out_msg( "Member name is too long and will not be" \
-                                            " searched for:\n%s\n", member_name );
+                        xx_simple_err_cc( err_file_max, member_name, "" );
                         mem_free( member_name );
                         member_name = NULL;
-                        err_count++;
-                        g_suicide();
+                        return( 0 );
                     }
                 }
             }
 
-            if( try_open( dir_ptr, primary_file ) != 0 ) return( 1 );
+            if( try_open( dir_ptr, primary_file ) != 0 ) {
+                return( 1 );
+            }
 
             /* Not finding the file is only a problem for ds_bin_lib. */
 
             if( sequence == ds_bin_lib ) {
-                out_msg( "Member file not found in same directory as directory" \
-                                        " file:\n%s%s\n", dir_ptr, primary_file );
-                err_count++;
-                g_suicide();
+                xx_simple_err_cc( err_mem_dir, dir_ptr, primary_file );
+                return( 0 );
             }
 
             if( alternate_file != NULL ) {
-                if( try_open( dir_ptr, alternate_file ) != 0 ) return( 1 );
+                if( try_open( dir_ptr, alternate_file ) != 0 ) {
+                    return( 1 );
+                }
             }
 
             if( default_file != NULL ) {
-                if( try_open( dir_ptr, default_file ) != 0 ) return( 1 );
+                if( try_open( dir_ptr, default_file ) != 0 ) {
+                    return( 1 );
+                }
             }
         }
     }

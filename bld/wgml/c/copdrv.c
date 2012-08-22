@@ -1090,7 +1090,9 @@ bool is_drv_file( FILE * in_file)
     /* Get the descriminator. */
 
     fread( &descriminator, 3, 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) return( false );
+    if( ferror( in_file ) || feof( in_file ) ) {
+        return( false );
+    }
 
     /* Verify that the descriminator is for a .COP driver file. */
 
@@ -1889,7 +1891,7 @@ cop_driver * parse_driver( FILE * in_file )
     /* Get the fontstyle_count and ensure it is not 0. */
 
     fread( &out_driver->fontstyles.count, sizeof( out_driver->fontstyles.count ),
-                                                                    1, in_file );
+           1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_driver );
         out_driver = NULL;
