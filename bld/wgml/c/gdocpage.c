@@ -178,9 +178,9 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                                                 cur_line = cur_line->next ) {
                 cur_spacing += cur_line->line_height;
                 if( ProcFlags.page_started ) {          // not first element
-                    if( ProcFlags.overprint ) {
+                    if( cur_el->element.text.overprint ) {
                         cur_spacing -= cur_line->line_height;   // overprint
-                        ProcFlags.overprint = false;
+                        cur_el->element.text.overprint = false;
                     }
                 } else {                                
                     if( t_page.top_ban == NULL ) {      // minimun height
