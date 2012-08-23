@@ -170,7 +170,7 @@ void init_global_vars( void )
     buff2               = mem_alloc( buf_size );
     workbuf             = mem_alloc( buf_size );
 
-    post_space          = 0;            // experimental
+    post_space          = 0;
 
     g_blank_lines       = 0;
     g_post_skip         = 0;
@@ -225,4 +225,5 @@ void init_pass_data( void )
     bm = tm;                                            // bottom margin &sysbm
     hm = bin_device->vertical_base_units / LPI;         // heading margin &syshm
     fm = hm;                                            // footing margin &sysfm
+    g_indent            = 0;
 }
