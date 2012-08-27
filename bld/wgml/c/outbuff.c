@@ -1394,7 +1394,7 @@ void ob_teardown( void )
     }
 
     if( out_file_fp != NULL ) {
-        if( !fclose( out_file_fp ) ) {
+        if( fclose( out_file_fp ) ) {
             xx_simple_err_c( err_close_out_file, out_file );
         }
         out_file_fp = NULL;
