@@ -898,12 +898,12 @@ int main( int argc, char * argv[] )
 
     close_all_pu_files();
 
+    ff_teardown();                      // free memory allocated in findfunc
+    cop_teardown();                     // free memory allocated in copfiles
+
     mem_free( cmdline );
     free_some_mem();
     free_filenames();
-
-    ff_teardown();                      // free memory allocated in findfunc
-    cop_teardown();                     // free memory allocated in copfiles
 
     end_time = clock();                 // get end time
     pass = passcount;

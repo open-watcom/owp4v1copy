@@ -39,10 +39,12 @@ static  text_chars  *   reg_text[3];    // 3 possible ban region parts
 static  banner_lay_tag  *   ban_top[max_ban][2];
 static  banner_lay_tag  *   ban_bot[max_ban][2];
 
+
 /***************************************************************************/
 /*  Split banregion into left middle right part if region is script format */
 /***************************************************************************/
-static  void    preprocess_script_region( banner_lay_tag * ban ) {
+static  void    preprocess_script_region( banner_lay_tag * ban )
+{
     char    *   pl;
     char        sep;
     int         k;
@@ -83,6 +85,28 @@ static  void    preprocess_script_region( banner_lay_tag * ban ) {
                 *pl = '\0';             // null terminate
             }
         }
+    }
+}
+
+
+/***************************************************************************/
+/*  set banner pointers for head x heading                                 */
+/*  perhaps the section banner needs to be set if no Hx banner exists TBD  */
+/***************************************************************************/
+void set_headx_banners( int hx_lvl )
+{
+
+    if( ban_top[hx_lvl + head0_ban][0] != NULL ) {
+        sect_ban_top[0] = ban_top[hx_lvl + head0_ban][0];
+    }
+    if( ban_top[hx_lvl + head0_ban][1] != NULL ) {
+        sect_ban_top[1] = ban_top[hx_lvl + head0_ban][1];
+    }
+    if( ban_bot[hx_lvl + head0_ban][0] != NULL ) {
+        sect_ban_bot[0] = ban_bot[hx_lvl + head0_ban][0];
+    }
+    if( ban_bot[hx_lvl + head0_ban][1] != NULL ) {
+        sect_ban_bot[1] = ban_bot[hx_lvl + head0_ban][1];
     }
 }
 
@@ -641,29 +665,36 @@ static void content_reg( banner_lay_tag * ban )
             curr_t = alloc_text_chars( "tophead", 7, ban->region->font );
         }
         break;
+    case no_content :                   // empty region
+        curr_t = NULL;
+//        curr_t = alloc_text_chars( "no content", 10, ban->region->font );
+        break;
     default:
         // the other possible banner region values are TBD
 
         curr_t = alloc_text_chars( "Dummy region", 12, ban->region->font );
         break;
     }
+    if( curr_t == NULL ) {
+            /* do nothing                                              */
+    } else {
+        if( ban->region->contents.content_type != string_content ) {
+            curr_t->width = cop_text_width( curr_t->text, curr_t->count,
 
-    if( ban->region->contents.content_type != string_content ) {
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count,
+            /***********************************************************/
+            /*  is font 0 used for width calc?                    TBD  */
+            /***********************************************************/
 
-        /***********************************************************/
-        /*  is font 0 used for width calc?                    TBD  */
-        /***********************************************************/
-
-                                        ban->region->font );
-        if( ban->region->region_position == pos_left ) {
-            reg_text[0] = curr_t;
-        } else if( ban->region->region_position == pos_center ) {
-            reg_text[1] = curr_t;
-        } else if( ban->region->region_position == pos_right ) {
-            reg_text[2] = curr_t;
-        } else {
-            reg_text[0] = curr_t;  // position left if invalid
+                                            ban->region->font );
+            if( ban->region->region_position == pos_left ) {
+                reg_text[0] = curr_t;
+            } else if( ban->region->region_position == pos_center ) {
+                reg_text[1] = curr_t;
+            } else if( ban->region->region_position == pos_right ) {
+                reg_text[2] = curr_t;
+            } else {
+                reg_text[0] = curr_t;  // position left if invalid
+            }
         }
     }
     return;

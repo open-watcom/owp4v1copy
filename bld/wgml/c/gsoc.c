@@ -65,23 +65,23 @@
 /*     be displayed because of FROM page options.                         */
 /**************************************************************************/
 
-extern void ob_direct_out( char * text );
-
 void    scr_oc( void )
 {
     char        *   p;
 
-//  if( GlobalFlags.lastpass ) {
+    if( GlobalFlags.lastpass ) {
         p = scan_start;                 // next char after .oc
         if( *p ) {                      // line operand specified
             p++;                        // over space
             if( *p ) {
                 ob_direct_out( p );
-                out_msg( p );           // TBD
-                out_msg( ".oc.oc.oc\n" );   // TBD
+                if( input_cbs->fmflags & II_research ) {
+                    out_msg( p );       // TBD
+                    out_msg( "<-.oc.oc.oc\n" ); // TBD
+                }
             }
         }
-//  }
+    }
     scan_restart = scan_stop + 1;
     return;
 }

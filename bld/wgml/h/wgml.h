@@ -101,6 +101,7 @@ extern  void        unquote_if_quoted( char * * a, char * * z );
 extern  void        out_ban_bot( void );
 extern  void        out_ban_top( void );
 extern  void        set_banners( void );
+extern  void        set_headx_banners( int hx_lvl );
 
 
 /* gdata.c                              */
@@ -177,6 +178,12 @@ extern  void    g_err_tag_x_in_y( char *tagname1, char *tagname2 );
 
 /* getnum.c                             */
 extern condcode     getnum( getnum_block * gn );
+
+
+/* gindexut.c                           */
+extern  void    fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
+extern  void    free_index_dict( ix_h_blk ** dict );
+extern  void    ixdump( ix_h_blk * dict );
 
 
 /* glayutil.c                           */
@@ -258,6 +265,7 @@ extern  void        print_ref_dict( ref_entry * dict, const char * type );
 extern  ref_entry * find_refid( ref_entry * dict, char const * id );
 extern  void        init_ref_entry( ref_entry * re, char * id, size_t len );
 extern  void        fill_id( ref_entry * re, char * id, size_t len );
+extern  char      * get_refid_value( char * p );
 
 
 /* gresrch.c                            */
@@ -312,10 +320,6 @@ extern  void    init_tag_att( void );
 
 /* gsifdoel.c                           */
 extern  void    show_ifcb( char * txt, ifcb * cb );
-
-
-/* gsix.c                               */
-extern  void    free_index_dict( ix_h_blk ** dict );
 
 
 /* gsetvar.c                            */
@@ -411,6 +415,7 @@ extern  void        start_line_with_string( char * text, uint8_t font_num, bool 
 /* outbuff.c                            */
 extern void     cop_tr_table( char * p );
 extern void     ob_binclude( binclude_element * in_el );
+extern void     ob_direct_out( char * p );
 extern void     ob_graphic( graphic_element * in_el );
 
 

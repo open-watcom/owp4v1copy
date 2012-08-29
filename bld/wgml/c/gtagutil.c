@@ -45,6 +45,7 @@ char * get_att_value( char * p )
     ProcFlags.tag_end_found = false;
     quote_char = '\0';
     val_start = NULL;
+    val_len = 0;
     while( *p == ' ' ) {                // over WS to '='
         p++;
     }

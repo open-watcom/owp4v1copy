@@ -612,19 +612,30 @@ typedef enum {
 
 /***************************************************************************/
 /*  Structures for storing index information from .ix control word         */
+/*  and :Ix :IHx :IREF tags                                                */
 /***************************************************************************/
 
-#define reflen  56                      // max length for pagenos in index
+typedef enum ereftyp {
+    pgstart = 1,                        // these are
+    pgend,                              // .. from
+    pgmajor,                            // .. :I1 - :I3
+    pgstring,                           // .. pg= attribute
+    pageno                              // this is the only value for .ix
+} ereftyp;
 
-typedef struct ix_e_blk {               // entry for pagenos
-    struct ix_e_blk * next;             // next entries (if any)
-    uint32_t        freelen;            // remaining length for refs ..
-    char            refs[reflen];       // .. refs pagenos   3, 5, 8, 9, ...
+typedef struct ix_e_blk {               // entry for pagenos / text
+    struct ix_e_blk * next;             // next entry
+    struct ix_h_blk * corr;             // corresponding index header entry
+    union {
+        char      * page_text;          // pageno is text
+        uint32_t    page_no;            // pageno is number
+    };
+    ereftyp     entry_typ;
 } ix_e_blk;
 
 typedef struct ix_h_blk {               // header with index text
     struct ix_h_blk * next;             // next ix header blk same level
-    struct ix_h_blk * lower;            // next ix header blk next level
+    struct ix_h_blk * lower;            // next ix header blk next lower level
            ix_e_blk * entry;            // first ix entry blk
     uint32_t        len;                // header text length
     char            text[1];            // variable length textfield
@@ -1014,12 +1025,12 @@ typedef struct {
 /***************************************************************************/
 typedef struct ref_entry {
     struct ref_entry    *   next;
-    uint32_t                lineno;     // input lineno of :Hx :FIG :FN
-                                        // used for checking duplicate ID
-    uint32_t                pageno;     // output page of :Hx or :FIG
-    uint32_t                number;     // figure or footnote number
     char                    id[ID_LEN+1];   // reference id
                                         // filled with '\0' up to ID_LEN
+    uint32_t                pageno;     // output page
+
+    uint32_t                lineno; // input lineno for checking duplicate ID
+    uint32_t                number;     // figure or footnote number
     char                *   text_cap;   // text line or figcap text
 } ref_entry;
 

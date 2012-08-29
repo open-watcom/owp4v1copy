@@ -13,6 +13,7 @@ common_objs =  &
         gerror.obj   &
         gerrorxx.obj &
         getnum.obj   &
+        gindexut.obj &
         gmacdict.obj &
         gmemory.obj  &
         goptions.obj &
@@ -58,6 +59,7 @@ gml_objs =  &
         ghx.obj      &
         ghpxsf.obj   &
         ginclude.obj &
+###     gixx.obj     &
         gnestut.obj  &
         gpb.obj      &
         gppcnote.obj &

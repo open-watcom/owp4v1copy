@@ -89,6 +89,9 @@ typedef enum ban_docsect {
     backm_ban,
     body_ban,
     figlist_ban,
+    index_ban,
+    preface_ban,
+    toc_ban,
     head0_ban,
     head1_ban,
     head2_ban,
@@ -99,9 +102,6 @@ typedef enum ban_docsect {
     letfirst_ban,
     letlast_ban,
     letter_ban,
-    index_ban,
-    preface_ban,
-    toc_ban,
     max_ban                             // has to be last defined value
 } ban_docsect;
  

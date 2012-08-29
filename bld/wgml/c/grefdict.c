@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implements reference dictionary functions
+* Description:  Implements reference dictionary and helper functions
 *                   for :Hx, :HDREF, :FIG, :FN, :FIGREF, :FNREF tags
 *
 *                   :FIG, :FN, :FIGREF, :FNREF tags not yet implemented TBD
@@ -34,6 +34,53 @@
 
 #include "wgml.h"
 #include "gvars.h"
+
+
+/***************************************************************************/
+/*  get_refid_value parse reference id                                     */
+/***************************************************************************/
+
+char * get_refid_value( char * p )
+{
+    char  * pa;
+    char  * pe;
+    int     len;
+    char    c;
+
+    p = get_att_value( p );
+
+    if( val_start == NULL || val_len == 0 ) {   // no valid id
+        return( p );
+    }
+    pa = val_start;
+    while( is_id_char( *pa ) ) {
+        pa++;
+    }
+
+    len = pa - val_start;
+    pe = val_start + len;
+    if( GlobalFlags.firstpass && (len > 7) ) {// wgml 4 warning level
+        c = *pe;
+        *pe = '\0';
+        g_warn( wng_id_xxx, val_start );
+        g_info( inf_id_len );
+        file_mac_info();
+        wng_count++;
+        *pe = c;
+    }
+
+    /***************************************************************/
+    /*  restrict the length to ID_LEN (15) in the hope that no     */
+    /*  truncation occurs                                          */
+    /*  wgml4 warns about ids of more than 7 chars, but processes  */
+    /*  much longer ids                                  TBD       */
+    /***************************************************************/
+
+    len = min( ID_LEN, len );   // restrict length
+    val_len = len;
+
+    return( p );
+}
 
 
 /***************************************************************************/
@@ -120,7 +167,7 @@ void    free_ref_dict( ref_entry * * dict )
 
 /***************************************************************************/
 /*  copy lowercase id to ref entry                                         */
-/*  if id length shorter than max fill with '\0'                           */
+/*  if id length shorter than max pad with '\0'                            */
 /***************************************************************************/
 void fill_id( ref_entry * re, char * id, size_t len )
 {
@@ -151,7 +198,11 @@ void init_ref_entry( ref_entry * re, char * id, size_t len )
         re->lineno = input_cbs->s.f->lineno;
     }
     re->number = 0;
-    re->pageno = page;
+    if( ProcFlags.page_started ) {
+        re->pageno = page;
+    } else {
+        re->pageno = page + 1;
+    }
 }
 
 
