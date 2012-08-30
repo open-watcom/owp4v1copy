@@ -122,6 +122,7 @@ lay_objs =  &
 #
 scr_objs =  &
         gsbr.obj     &
+        gsbx.obj     &
         gscofoju.obj &
         gsct.obj     &
         gsdccw.obj   &

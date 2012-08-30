@@ -401,15 +401,16 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
 
 /* gutil.c                              */
+extern  bool        att_val_to_SU( su * spaceunit, bool pos );
 extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
+extern  bool        cw_val_to_SU( char * * scaninput, su * spaceunit );
 extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  su      *   greater_su( su * su_a, su * su_b, uint8_t spacing );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  int32_t     len_to_trail_space( char p[] , int32_t len );
-extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
-extern  bool        att_val_to_SU( su * spaceunit, bool pos );
 extern  void        start_line_with_string( char * text, uint8_t font_num, bool leave1space );
+extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 
 
 /* outbuff.c                            */

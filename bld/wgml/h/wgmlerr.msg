@@ -658,9 +658,10 @@ pick( ERR_MEM_DIR,              "Member file not found in same directory as dire
 pick( ERR_PATH_MAX,             "Directory path is too long and will not be used: %s\n",
                                 "Directory path is too long and will not be used: %s\n")
 
+/* BX/FIG/IXHEAD error messages */
 
-
-
+pick( ERR_SPC_NOT_VALID,        "Space value is not valid",
+                                "Space value is not valid")
 
 
                                 

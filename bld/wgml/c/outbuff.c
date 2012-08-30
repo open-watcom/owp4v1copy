@@ -1400,6 +1400,10 @@ void ob_teardown( void )
         out_file_fp = NULL;
     }
 
+    if( out_file != NULL ) {
+        mem_free( out_file );
+    }
+
     return;
 }
 

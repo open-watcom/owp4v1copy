@@ -47,7 +47,7 @@
   picks( br, scr_br,    cw_break+cw_o_t    )// break
   picks( bs, scr_dummy, cw_o_t             )// backspace
   picks( bt, scr_dummy, 0                  )// bottom title
-  picks( bx, scr_dummy, cw_break+cw_o_t    )// box
+  picks( bx, scr_bx,    cw_break+cw_o_t    )// box
   picks( cb, scr_dummy, cw_break+cw_o_t    )// column begin
   picks( cc, scr_dummy, cw_break+cw_o_t    )// conditional column
   picks( cd, scr_dummy, cw_break+cw_o_t    )// column definition

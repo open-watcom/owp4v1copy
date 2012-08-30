@@ -944,6 +944,11 @@ void cop_setup( void )
         wgml_fonts[i].font_pause = cur_dev_font->font_pause;
         if( cur_dev_font->resident == 0x00 ) wgml_fonts[i].font_resident = 'n';
         else wgml_fonts[i].font_resident = 'y';
+        if( wgml_fonts[i].bin_font->outtrans == NULL ) {
+            wgml_fonts[i].outtrans = bin_device->outtrans;
+        } else {
+            wgml_fonts[i].outtrans = wgml_fonts[i].bin_font->outtrans;
+        }
 
         /* If scale_basis is not "0", then font_height must not be "0". */
 

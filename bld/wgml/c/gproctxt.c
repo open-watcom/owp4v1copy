@@ -232,11 +232,13 @@ static void next_tab( void )
     uint32_t            r_length;
     uint32_t            r_width;
 
+    /* Note: use of g_cur_left & g_page_left appears to be correct, even in */
+    /* the presence of .in, but this may not be entirely true               */
 
     if( g_cur_left > g_cur_h_start ) {
         g_cur_h_start = g_cur_left;
     }
-    cur_h = g_cur_h_start - g_cur_left;
+    cur_h = g_cur_h_start - g_page_left;
     if( user_tabs.current > 0 ) {   // try user tabs first
         if( (c_tab == NULL) || (c_stop->column < cur_h) ) {
             for( i = 0; i < user_tabs.current; i++ ) {
@@ -347,6 +349,9 @@ static void do_fc_comp( void )
 /***************************************************************************/
 /*  expand any wgml tabs infesting t_line->last                            */
 /*  g_cur_h_start is correct when the function returns                     */
+/*  Note: g_cur_left reflects the left indent of .in                       */
+/*        g_page_left does not                                             */
+/*        both appear to be needed, in different places                    */
 /***************************************************************************/
 
 static void wgml_tabs( void )
@@ -407,9 +412,6 @@ static void wgml_tabs( void )
         tab_chars.last = NULL;
 
         if( t_line->last == NULL ) {
-#if 0
-            if( in_chars->x_address > g_cur_left ) {    // spaces preceed tab char
-#endif
             if( tab_space > 0 ) {                       // spaces preceed tab char
                 c_chars = do_c_chars( c_chars, in_chars, &in_text[0], t_count,
                             g_cur_h_start, in_chars->width,
@@ -591,14 +593,14 @@ static void wgml_tabs( void )
         switch( c_stop->alignment ) {
         case al_left:
             if( !tabbing || (s_multi == NULL) ) {
-                g_cur_h_start = g_cur_left + c_stop->column;
+                g_cur_h_start = g_page_left + c_stop->column;
                 tabbing = false;
             }
             break;
         case al_center:
-            if( gap_start < (g_cur_left + c_stop->column - ((m_width + s_width) / 2)) ) {
+            if( gap_start < (g_page_left + c_stop->column - ((m_width + s_width) / 2)) ) {
                 // split the width as evenly as possible
-                g_cur_h_start = g_cur_left + c_stop->column + (s_width / 2 ) - (m_width / 2);
+                g_cur_h_start = g_page_left + c_stop->column + (s_width / 2 ) - (m_width / 2);
                 if( (s_width % 2) > 0 ) {
                     g_cur_h_start++;
                 }
@@ -607,9 +609,9 @@ static void wgml_tabs( void )
             }
             break;
         case al_right:
-            if( gap_start < (g_cur_left + c_stop->column + tab_col -
+            if( gap_start < (g_page_left + c_stop->column + tab_col -
                                                             (m_width + s_width)) ) {
-                g_cur_h_start = g_cur_left + c_stop->column + tab_col - m_width;
+                g_cur_h_start = g_page_left + c_stop->column + tab_col - m_width;
             } else {    // find the next tab stop; this one won't do
                 skip_tab = true;
             }
@@ -1239,6 +1241,7 @@ void    process_line_full( text_line * a_line, bool justify )
     tabbing = false;                    // tabbing ends when line committed
 
     set_h_start();
+    return;
 }
 
 

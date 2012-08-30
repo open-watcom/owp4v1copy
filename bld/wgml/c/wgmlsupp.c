@@ -245,9 +245,6 @@ void    free_some_mem( void )
             lay_files = lwk;
         }
     }
-    if( out_file != NULL ) {
-        mem_free( out_file );
-    }
     if( out_file_attr != NULL ) {
         mem_free( out_file_attr );
     }
