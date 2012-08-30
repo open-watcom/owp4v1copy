@@ -909,7 +909,7 @@ bool    cw_val_to_SU( char * * scanp, su * converted )
         for( i = 0; i < 4; i++ ) {              // max four digits in whole part
             if( (*ps >= '0') && (*ps <= '9') ) {
                 wh = (10 * wh) + (*ps - '0');
-                p++;
+                ps++;
             } else {
                 break;
             }
@@ -929,11 +929,11 @@ bool    cw_val_to_SU( char * * scanp, su * converted )
             for( i = 0; i < 2; i++ ) {          // max two digits in decimals
                 if( (*ps >= '0') && (*ps <= '9') ) {
                     wd = 10 * wd + *ps - '0';
-                    p++;
+                    ps++;
                 } else {
                     break;
                 }
-                if( !*p ) {                     // value end reached
+                if( !*ps ) {                     // value end reached
                     break;
                 }
             }
@@ -954,7 +954,7 @@ bool    cw_val_to_SU( char * * scanp, su * converted )
         for( i = 0; i < 2; i++ ) {                  // max two characters in unit
             if( *ps && isalpha( *ps ) ) {
                 unit[k++] = tolower( *ps );          // save Unit
-                p++;
+                ps++;
             } else {
                 break;
             }
@@ -992,6 +992,9 @@ bool    cw_val_to_SU( char * * scanp, su * converted )
                 s->su_u = SU_pica;
                 is_cp = true;
                 break;
+            case '\0' :                     // no unit is characters or lines
+                s->su_u = SU_chars_lines;
+                break;
             default:
                 xx_line_err( err_inv_att_val, pu );
                 scan_start = scan_stop + 1;
@@ -1028,9 +1031,9 @@ bool    cw_val_to_SU( char * * scanp, su * converted )
             for( i = 0; i < 4; i++ ) {
                 if( (*ps >= '0') && (*ps <= '9') ) {
                     wd = (10 * wd) + (*ps - '0');
-                    p++;
+                    ps++;
                 }
-                if( (ps - val_start) > val_len ) {   // value end reached
+                if( *ps ) {    // value end reached
                     break;
                 }
             }
@@ -1041,7 +1044,7 @@ bool    cw_val_to_SU( char * * scanp, su * converted )
             return( converterror );
         }
 
-        if( (ps - val_start) < val_len ) {     // value continues on: it shouldn't
+        if( *ps ) {                             // value continues on: it shouldn't
             xx_line_err( err_inv_att_val, ps );
             scan_start = scan_stop + 1;
             return( converterror );
@@ -1070,6 +1073,7 @@ bool    cw_val_to_SU( char * * scanp, su * converted )
         }
         switch( s->su_u ) {
         // the relative units are only stored, not converted
+        case SU_chars_lines :
         case SU_ems :
         case SU_dv :
             break;
