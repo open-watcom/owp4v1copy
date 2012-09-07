@@ -197,7 +197,7 @@ condcode    get_lay_sub_and_value( att_args * args )
         return( no );                   // parsing err '=' missing
     }
 
-    args->start[1] = p;
+    args->start[1] = p;                 // delimiters must be included for error checking
 
     if( is_quote_char( *p ) ) {
         quote = *p;
@@ -207,12 +207,15 @@ condcode    get_lay_sub_and_value( att_args * args )
         quote = ' ';
         args->quoted = false;
     }
+
     while( *p && *p != quote ) {
         ++p;
     }
+
     if( args->quoted && is_quote_char( *p ) ) {
         p++;                            // over terminating quote
     }
+
     args->len[1] = p - args->start[1];
 
     if( args->len[1] < 1 ) {            // attribute value length
@@ -222,11 +225,18 @@ condcode    get_lay_sub_and_value( att_args * args )
     } else {
         rc = pos;
     }
+
     if( *p == '.' ) {
         ProcFlags.tag_end_found = true;
         p++;
     }
 
+    val_start = args->start[1];
+    val_len = args->len[1];
+    if( args->quoted) {         // delimiters must be omitted for these externs
+        val_start++;
+        val_len -= 2;
+    }
     scan_start = p;
     return( rc );
 }
@@ -900,8 +910,7 @@ void    o_pouring( FILE * f, lay_att curr, reg_pour * tm )
 /***************************************************************************/
 bool    i_space_unit( char * p, lay_att curr, su * tm )
 {
-
-    return( to_internal_SU( &p, tm ) );
+    return( att_val_to_su( tm, true ) );    // no negative values allowed TBD
 }
 
 void    o_space_unit( FILE * f, lay_att curr, su * tm )
@@ -927,17 +936,12 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
     bool        cvterr;
 
     cvterr = false;
-    p = get_att_value( p );
     if( (val_start != NULL) && (val_len < str_size) ) {
         memcpy_s( tm, str_size, val_start, val_len );
         *(tm + val_len) = '\0';
     } else {
         cvterr = true;
     }
-    if( ProcFlags.tag_end_found ) {     // . found
-        p++;
-    }
-    scan_start = p;
     return( cvterr );
 }
 

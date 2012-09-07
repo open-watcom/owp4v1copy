@@ -159,7 +159,6 @@ void    lay_note( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.note.spacing );
                     break;
                 case   e_note_string:
-                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr, &layout_work.note.string );
                     break;
                 default:

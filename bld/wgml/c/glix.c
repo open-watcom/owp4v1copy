@@ -191,7 +191,6 @@ void    lay_ix( const gmltag * entry )
                                            &layout_work.ix[ix_l].wrap_indent );
                     break;
                 case   e_index_delim:
-                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                           &layout_work.ix[ix_l].index_delim );
                     break;

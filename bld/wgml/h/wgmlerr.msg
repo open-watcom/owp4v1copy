@@ -495,11 +495,14 @@ pick( ERR_INV_DEPTH_GRAPHIC,    "The GRAPHIC depth must be greater than zero",
 pick( ERR_INV_WIDTH_GRAPHIC,    "The GRAPHIC width must be greater than zero",
                                 "The GRAPHIC width must be greater than zero" )
 
-/* Attribute/value parsing error messages */
+/* Attribute value/control word operand parsing error messages */
 
 pick( ERR_INV_ATT_VAL,          "Invalid attribute value",
                                 "Invalid attribute value" )
 
+pick( ERR_INV_CW_OP_VAL,        "Invalid control word operand value",
+                                "Invalid control word operand value" )
+                                
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
 

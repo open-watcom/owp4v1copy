@@ -181,7 +181,7 @@ void    cw_err( void )
 }
 
 
-void    dc_opt_warn( char *pa )
+void    dc_opt_warn( char * pa )
 {
     wng_count++;
     g_warn( err_dc_opt, pa );
@@ -191,7 +191,7 @@ void    dc_opt_warn( char *pa )
 }
 
 
-void    parm_miss_err( char *pa )
+void    parm_miss_err( char * pa )
 {
     err_count++;
     g_err( err_parm_missing, pa );
@@ -264,7 +264,20 @@ void    tag_text_req_err( char * tagname )
 }
 
 
-void    xx_tag_err( const msg_ids errid, char const *cw )
+void    val_parse_err( char * pa, bool tag )
+{
+    err_count++;
+    if( tag ) {
+        g_err( err_inv_att_val );
+    } else {
+        g_err( err_inv_cw_op_val );
+    }
+    file_mac_info();
+    show_line_error( pa );
+    return;
+}
+
+void    xx_tag_err( const msg_ids errid, char const * cw )
 {
     err_count++;
     g_err( errid, cw );
@@ -281,7 +294,7 @@ void    xx_nest_err( const msg_ids errid )
 }
 
 
-void    xx_opt_err( char *cw, char *pa )
+void    xx_opt_err( char * cw, char * pa )
 {
     err_count++;
     g_err( err_xx_opt, cw, pa );
@@ -291,7 +304,7 @@ void    xx_opt_err( char *cw, char *pa )
 }
 
 
-void    xx_line_err( const msg_ids errid, char *pa )
+void    xx_line_err( const msg_ids errid, char * pa )
 {
     err_count++;
     g_err( errid );
@@ -374,7 +387,7 @@ void    g_err_tag_nest( char * tag )
     return;
 }
 
-void    g_err_tag_rsloc( locflags inloc, char *pa )
+void    g_err_tag_rsloc( locflags inloc, char * pa )
 {
     char    *   tag_name    = NULL;
     int         i;

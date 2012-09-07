@@ -153,27 +153,28 @@ extern  void    file_mac_info_nest( void );
 extern  void    internal_err( char * file, int line );
 extern  void    nottag_err( void );
 extern  void    numb_err( void );
-extern  void    parm_extra_err( char *cw, char *pa );
-extern  void    parm_miss_err( char *cw );
+extern  void    parm_extra_err( char * cw, char * pa );
+extern  void    parm_miss_err( char * cw );
+extern  void    val_parse_err( char * pa, bool tag );
 extern  void    tag_name_missing_err( void );
 extern  void    tag_text_err( char * tagname );
 extern  void    tag_text_req_err( char * tagname );
 extern  void    xx_err( const msg_ids errid );
 extern  void    xx_line_err( const msg_ids errid, char * pa );
 extern  void    xx_nest_err( const msg_ids errid );
-extern  void    xx_opt_err( char *cw, char *pa );
+extern  void    xx_opt_err( char * cw, char * pa );
 extern  void    xx_simple_err( const msg_ids errid );
 extern  void    xx_simple_err_c( const msg_ids errid, const char * arg );
 extern  void    xx_simple_err_i( const msg_ids errid, int arg );
 extern  void    xx_simple_err_cc( const msg_ids errid, const char * arg1, const char * arg2 );
 extern  void    xx_tag_err( const msg_ids errid, char const * cw );
 extern  void    xx_warn( const msg_ids errid );
-extern  void    g_err_tag( char *tagname );
-extern  void    g_err_tag_nest( char *tagname );
-extern  void    g_err_tag_rsloc( locflags inloc, char *pa );
-extern  void    g_err_tag_no( char *tagname );
-extern  void    g_err_tag_prec( char *tagname );
-extern  void    g_err_tag_x_in_y( char *tagname1, char *tagname2 );
+extern  void    g_err_tag( char * tagname );
+extern  void    g_err_tag_nest( char * tagname );
+extern  void    g_err_tag_rsloc( locflags inloc, char * pa );
+extern  void    g_err_tag_no( char * tagname );
+extern  void    g_err_tag_prec( char * tagname );
+extern  void    g_err_tag_x_in_y( char * tagname1, char * tagname2 );
 
 
 /* getnum.c                             */
@@ -373,9 +374,6 @@ extern  void        print_tag_dict( gtentry * dict );
 extern  void        print_tag_entry( gtentry * entry );
 extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 
-/* gtagutil.c                           */
-extern  char    *   get_att_value( char * p );
-
 /* gtxtpool.c                           */
 extern  void                add_text_chars_to_pool( text_line * a_line );
 extern  text_chars      *   alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
@@ -401,16 +399,17 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
 
 /* gutil.c                              */
-extern  bool        att_val_to_SU( su * spaceunit, bool pos );
+extern  bool        att_val_to_su( su * spaceunit, bool pos );
 extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, uint8_t spacing );
-extern  bool        cw_val_to_SU( char * * scaninput, su * spaceunit );
+extern  bool        cw_val_to_su( char * * scaninput, su * spaceunit );
 extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
+extern  char    *   get_att_value( char * p );
 extern  su      *   greater_su( su * su_a, su * su_b, uint8_t spacing );
 extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
+extern  bool        lay_init_su( char * p, su * in_su );
 extern  int32_t     len_to_trail_space( char p[] , int32_t len );
 extern  void        start_line_with_string( char * text, uint8_t font_num, bool leave1space );
-extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 
 
 /* outbuff.c                            */

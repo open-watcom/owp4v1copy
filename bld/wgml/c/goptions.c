@@ -340,7 +340,6 @@ static void set_altext( option * opt )
 static void set_bind( option * opt )
 {
     bool        scanerr;
-    char    *   p;
     su          bindwork;
 
     if( tokennext == NULL || tokennext->bol || tokennext->token[0] == '(' \
@@ -350,8 +349,9 @@ static void set_bind( option * opt )
         err_count++;
 
     } else {
-        p = tokennext->token;
-        scanerr = to_internal_SU( &p, &bindwork );
+        val_start = tokennext->token;
+        val_len = tokennext->toklen;
+        scanerr = att_val_to_su( &bindwork, true ); // must be positive TBD
         if( scanerr ) {
             g_err( err_miss_inv_opt_value, opt->option,
                    tokennext->token );
@@ -371,8 +371,9 @@ static void set_bind( option * opt )
                 memcpy_s( &bind_even, sizeof( bind_even), &bind_odd,
                           sizeof( bind_odd ) );  // use bind_odd
             } else {
-                p = tokennext->token;
-                scanerr = to_internal_SU( &p, &bindwork );
+                val_start = tokennext->token;
+                val_len = tokennext->toklen;
+                scanerr = att_val_to_su( &bindwork, true ); // must be positive TBD
                 if( scanerr ) {
                     g_err( err_miss_inv_opt_value, opt->option,
                           tokennext->token );

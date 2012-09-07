@@ -65,7 +65,6 @@ gml_objs =  &
         gppcnote.obj &
         gset.obj     &
         gtagdict.obj &
-        gtagutil.obj &
         gtitle.obj   &
         gusertag.obj &
         gxl.obj      &

@@ -231,7 +231,6 @@ static  int         sum_count;
 static  void    init_banregion_wk( region_lay_tag * reg )
 {
     int         k;
-    char    *   p;
     char        z0[2] = "0";
 
     reg->next = NULL;
@@ -240,14 +239,10 @@ static  void    init_banregion_wk( region_lay_tag * reg )
     reg->reg_width = 0;
     reg->reg_voffset = 0;
     reg->reg_depth = 0;
-    p = &z0;
-    to_internal_SU( &p, &(reg->indent) );
-    p = &z0;
-    to_internal_SU( &p, &(reg->hoffset) );
-    p = &z0;
-    to_internal_SU( &p, &(reg->width) );
-    p = &z0;
-    to_internal_SU( &p, &(reg->depth) );
+    lay_init_su( &z0, &(reg->indent) );
+    lay_init_su( &z0, &(reg->hoffset) );
+    lay_init_su( &z0, &(reg->width) );
+    lay_init_su( &z0, &(reg->depth) );
     reg->font = 0;
     reg->refnum = -1;
     reg->pouring = no_pour;
@@ -354,7 +349,6 @@ void    lay_banregion( const gmltag * entry )
                     case   e_contents:
                         if( l_args.quoted ) {
                             wk.contents.content_type = string_content;
-                            p = l_args.start[0] + l_args.len[0];
                             cvterr = i_xx_string( p, curr, &wk.contents.string );
                         } else {
                             cvterr = i_content( p, curr, &wk.contents );

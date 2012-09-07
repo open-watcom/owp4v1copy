@@ -194,12 +194,10 @@ void    lay_index( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.index.columns );
                     break;
                 case   e_see_string:
-                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                           &layout_work.index.see_string );
                     break;
                 case   e_see_also_string:
-                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                           &layout_work.index.see_also_string );
                     break;
@@ -207,7 +205,6 @@ void    lay_index( const gmltag * entry )
                     cvterr = i_yes_no( p, curr, &layout_work.index.header );
                     break;
                 case   e_index_string:
-                    p = l_args.start[0] + l_args.len[0];
                     cvterr = i_xx_string( p, curr,
                                           &layout_work.index.index_string );
                     break;

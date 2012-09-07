@@ -267,9 +267,7 @@ void    scr_bx( void )
     cur_cols.cols = (uint32_t *) mem_alloc( BOXCOL_COUNT * sizeof( uint32_t ) );
     while( *p ) {
         pa = p;
-        if( cw_val_to_SU( &p, &boxcolwork ) ) {
-            xx_line_err( err_spc_not_valid, pa );
-        } else {
+        if( !cw_val_to_su( &p, &boxcolwork ) ) {
             cur_cols.cols[cur_cols.current] = conv_hor_unit( &boxcolwork );
             out_msg( "column found: %i text was: %s\n",
                 cur_cols.cols[cur_cols.current], boxcolwork.su_txt );
@@ -282,6 +280,8 @@ void    scr_bx( void )
                 newindent = 0;      // minimum value
             }
 #endif
+        } else {
+            xx_line_err( err_spc_not_valid, pa );
         }
         while( *p && (*p == ' ') ) {
             p++;
