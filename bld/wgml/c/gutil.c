@@ -116,22 +116,19 @@ const bool internal_to_su( su * in_su, bool tag, char * base )
 
     ps = s->su_txt;
 
-    /* Extract sign, if present, whether relative or not */
+    /********************************************************************/
+    /* extract and skip the sign, if present                            */
+    /* att_val_to_su() and scr_val_to_su() deal with rejecting values   */
+    /* formed incorrectly with regard to initial signs and to setting   */
+    /* su_relative appropriately before invoking internal_to_su()       */
+    /* lay_init_su() presupposes that the value has no initial sign     */
+    /********************************************************************/
 
-    if( tag ) {
-        if( *ps == '-' ) {  // tag values starting with '+' have already been rejected
-            sign = '-';
-            ps++;
-        } else {
-            sign = '+';
-        }
+    if( (*ps == '+') || (*ps == '-') ) {
+        sign = *ps;
+        ps++;
     } else {
-        if( s->su_relative == true ) {  // control word values can be relative
-            sign = *ps;
-            ps++;
-        } else {
-            sign = '+';
-        }
+        sign = '+';
     }
 
     for( i = 0; i < 4; i++ ) {              // max four digits in whole part
@@ -380,9 +377,6 @@ static bool su_expression( su * in_su )
         in_su->su_dec = 0;
         in_su->su_inch = 0;
         in_su->su_mm = 0;
-        if( value.result <= 0 ) {
-            in_su->su_whole *= -1;
-        }
     }
 
     return( retval );
