@@ -869,6 +869,29 @@ typedef struct laystack {
 
 
 /***************************************************************************/
+/*  box column definition for use with control word BX                     */
+/***************************************************************************/
+
+#define BOXCOL_COUNT 16
+
+typedef enum {
+    bx_h_rule,
+    bx_h_start,
+    bx_h_stop,
+} bx_h_ind;
+
+typedef struct box_col {
+            uint32_t        col;
+            bx_h_ind        ind;      
+} box_col;
+
+typedef struct box_col_set {
+            uint32_t        current;
+            uint32_t        length;
+            box_col     *   cols;
+} box_col_set;
+
+/***************************************************************************/
 /*  a single tab stop and an array of tab stops                            */
 /***************************************************************************/
 
@@ -923,8 +946,11 @@ typedef struct text_line {
 
 typedef enum {
     el_binc,        // BINCLUDE element
+    el_dbox,        // DBOX element
     el_graph,       // GRAPHIC element
+    el_hline,       // HLINE element
     el_text,        // text element
+    el_vline,       // VLINE element
 } element_type;
 
 // struct oc_element; // Forward declaration (uncomment when needed)
@@ -939,6 +965,13 @@ typedef struct {
 } binclude_element;
 
 typedef struct {
+    uint32_t    h_start;
+    uint32_t    v_start;
+    uint32_t    h_len;
+    uint32_t    v_len;
+} dbox_element;
+
+typedef struct {
     uint32_t    cur_left;
     uint32_t    depth;
     uint32_t    scale;
@@ -951,10 +984,22 @@ typedef struct {
 } graphic_element;
 
 typedef struct {
+    uint32_t    h_start;
+    uint32_t    v_start;
+    uint32_t    h_len;
+} hline_element;
+
+typedef struct {
     uint32_t        spacing;
     text_line   *   first;
     bool            overprint;          // placement avoids padding warning
 } text_element;
+
+typedef struct {
+    uint32_t    h_start;
+    uint32_t    v_start;
+    uint32_t    v_len;
+} vline_element;
 
 typedef struct doc_element {
     struct  doc_element *   next;
@@ -963,9 +1008,12 @@ typedef struct doc_element {
             uint32_t            subs_skip;
             uint32_t            top_skip;
     union {
-            text_element        text;
             binclude_element    binc;
+            dbox_element        dbox;
             graphic_element     graph;
+            hline_element       hline;
+            text_element        text;
+            vline_element       vline;
     } element;
             element_type        type;   // placement avoids padding warning
 } doc_element;

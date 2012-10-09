@@ -1150,6 +1150,10 @@ void cop_setup( void )
         wgml_fonts[i].spc_width = wgml_fonts[i].width_table[' '];
     }
 
+    /* Initialize the column width used with BX. */
+
+    box_col_width = bin_device->horizontal_base_units / CPI;
+
     /* Initialize the default tabs and related extern variables. */
 
     tab_col = bin_device->horizontal_base_units / 10;
@@ -1409,10 +1413,7 @@ void cop_ti_table( char * p )
  * Interprets the DBOX block.
  *
  * Parameters:
- *      h_start contains the horizontal position.
- *      v_start contains the vertical position.
- *      h_len contains the horizontal extent.
- *      v_len contains the vertical extent.
+ *      in_dbox points to a dbox_element
  *
  * Prerequisites:
  *      The DBOX block must exist.
@@ -1426,9 +1427,10 @@ void cop_ti_table( char * p )
  *          or the BOX block characters instead.
  */
 
-void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len )
+void fb_dbox( dbox_element * in_dbox )
 {
-    fb_line_block( &(bin_driver->dbox), h_start, v_start, h_len, v_len, "DBOX" );
+    fb_line_block( &(bin_driver->dbox), in_dbox->h_start, in_dbox->v_start,
+                   in_dbox->h_len, in_dbox->v_len, "DBOX" );
     return;
 }
 
@@ -1521,9 +1523,7 @@ void fb_finish( void )
  * Interprets the HLINE block.
  *
  * Parameters:
- *      h_start contains the horizontal position.
- *      v_start contains the vertical position.
- *      h_len contains the horizontal extent.
+ *      in_hline contains a pointer to an hline_element
  *
  * Prerequisites:
  *      The HLINE block must exist.
@@ -1537,9 +1537,10 @@ void fb_finish( void )
  *          block characters instead.
  */
 
-void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
+void fb_hline( hline_element * in_hline )
 {
-    fb_line_block( &(bin_driver->hline), h_start, v_start, h_len, 0, "HLINE" );
+    fb_line_block( &(bin_driver->hline), in_hline->h_start, in_hline->v_start,
+                   in_hline->h_len, 0, "HLINE" );
 }
 
 /* Function fb_output_textline.
@@ -1619,9 +1620,7 @@ void fb_start( void )
  * Interprets the VLINE block.
  *
  * Parameters:
- *      h_start contains the horizontal position.
- *      v_start contains the vertical position.
- *      v_len contains the vertical extent.
+ *      in_vline is a pointer to a vline_element
  *
  * Prerequisites:
  *      The VLINE block must exist.
@@ -1635,9 +1634,10 @@ void fb_start( void )
  *          block characters instead.
  */
 
-void fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len )
+void fb_vline( vline_element * in_vline )
 {
-    fb_line_block( &(bin_driver->vline), h_start, v_start, 0, v_len, "VLINE" );
+    fb_line_block( &(bin_driver->vline), in_vline->h_start, in_vline->v_start, 0,
+                   in_vline->v_len, "VLINE" );
     return;
 }
 

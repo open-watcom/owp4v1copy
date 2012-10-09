@@ -244,6 +244,11 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input escape char from .ti
 
+global  box_col_set     box_line;       // the current line to be drawn
+global  box_col_set     cur_line;       // the line from the current BX line
+global  box_col_set     prev_line;      // the previously drawn line
+global  uint32_t        box_col_width;  // width of one column, as used with BX
+
 global  tab_stop    *   c_stop;         // current tab_stop
 global  uint32_t        first_tab;      // first default top position
 global  uint32_t        inter_tab;      // distance between default tabs

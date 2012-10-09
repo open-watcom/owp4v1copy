@@ -84,6 +84,11 @@ static void do_el_list_out( doc_element * array, uint8_t count )
                         ob_binclude( &cur_el->element.binc );
                     }
                     break;
+                case el_dbox :  // should only be found if DBOX block exists
+                    if( GlobalFlags.lastpass ) {
+                        fb_dbox( &cur_el->element.dbox );
+                    }
+                    break;
                 case el_graph :
                     if( GlobalFlags.lastpass ) {
                         if( ProcFlags.ps_device ) {   // only available to PS device
@@ -91,11 +96,21 @@ static void do_el_list_out( doc_element * array, uint8_t count )
                         }
                     }
                     break;
+                case el_hline :  // should only be found if HLINE block exists
+                    if( GlobalFlags.lastpass ) {
+                        fb_hline( &cur_el->element.hline );
+                    }
+                    break;
                 case el_text :
                     if( GlobalFlags.lastpass ) {
                         for( cur_line = cur_el->element.text.first; cur_line != NULL; cur_line = cur_line ->next ) {
                             fb_output_textline( cur_line );
                         }
+                    }
+                    break;
+                case el_vline :  // should only be found if VLINE block exists
+                    if( GlobalFlags.lastpass ) {
+                        fb_vline( &cur_el->element.vline );
                     }
                     break;
                 default :
@@ -157,6 +172,22 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                 g_cur_v_start += cur_el->depth;
             }
             break;
+        case el_dbox :
+            cur_el->element.binc.at_top = !ProcFlags.page_started &&
+                                          (t_page.top_banner == NULL);
+            ProcFlags.page_started = true;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_spacing;
+            } else {
+                g_cur_v_start += cur_spacing;
+            }
+            cur_el->element.dbox.v_start = g_cur_v_start;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_el->depth;
+            } else {
+                g_cur_v_start += cur_el->depth;
+            }
+            break;
         case el_graph :
             cur_el->element.graph.at_top = !ProcFlags.page_started &&
                                           (t_page.top_banner == NULL);
@@ -167,6 +198,22 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                 g_cur_v_start += cur_spacing;
             }
             cur_el->element.graph.y_address = g_cur_v_start;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_el->depth;
+            } else {
+                g_cur_v_start += cur_el->depth;
+            }
+            break;
+        case el_hline :
+            cur_el->element.binc.at_top = !ProcFlags.page_started &&
+                                          (t_page.top_banner == NULL);
+            ProcFlags.page_started = true;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_spacing;
+            } else {
+                g_cur_v_start += cur_spacing;
+            }
+            cur_el->element.hline.v_start = g_cur_v_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_el->depth;
             } else {
@@ -195,6 +242,22 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                 }
                 cur_line->y_address = g_cur_v_start;
                 cur_spacing = cur_el->element.text.spacing;
+            }
+            break;
+        case el_vline :
+            cur_el->element.binc.at_top = !ProcFlags.page_started &&
+                                          (t_page.top_banner == NULL);
+            ProcFlags.page_started = true;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_spacing;
+            } else {
+                g_cur_v_start += cur_spacing;
+            }
+            cur_el->element.vline.v_start = g_cur_v_start;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_el->depth;
+            } else {
+                g_cur_v_start += cur_el->depth;
             }
             break;
         default :
@@ -330,7 +393,10 @@ static bool split_element( doc_element * a_element, uint32_t req_depth )
     // add code for other element types; FIGs are documented to split only
     // when they will not fit by themselves on a page
     case el_binc :  // given how BINCLUDE/GRAPHIC work, this seems reasonable 
+    case el_dbox :  // splitting boxes/lines is probably best done elsewhere
     case el_graph :
+    case el_hline :
+    case el_vline :
         splittable = false;     
         break;
     case el_text :
@@ -603,7 +669,10 @@ void clear_doc_element( doc_element * element )
     for( cur_el = element; cur_el != NULL; cur_el = cur_el->next ) {
         switch( cur_el->type ) {
         case el_binc :
+        case el_dbox :
         case el_graph :
+        case el_hline :
+        case el_vline :
             break;      // should be nothing to do
         case el_text :
             cur_line = cur_el->element.text.first;
