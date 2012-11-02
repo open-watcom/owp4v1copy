@@ -504,6 +504,16 @@ static void     scan_script( void )
                         do_layout_end_processing();
                     }
 #endif
+                    if( !ProcFlags.layout && (scr_tags[k].cwflags & cw_o_t) ) {
+
+                        /********************************************************/
+                        /* this is the first control word which produces output */
+                        /* start the document, the layout is done               */
+                        /* start_doc_sect() calls do_layout_end_processing()    */
+                        /********************************************************/
+
+                        start_doc_sect();
+                    }
                     if( ProcFlags.literal  ) {  // .li active
                         if( !strcmp( token_buf, "li" ) ) {  // .li
                             scan_start = p; // found, process

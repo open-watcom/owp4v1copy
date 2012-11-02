@@ -151,6 +151,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             } else {
                 cur_spacing = cur_el->top_skip;
             }
+            ProcFlags.page_started = true;
         } else {
             cur_spacing += cur_el->subs_skip;
         }
@@ -159,7 +160,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         case el_binc :
             cur_el->element.binc.at_top = !ProcFlags.page_started &&
                                           (t_page.top_banner == NULL);
-            ProcFlags.page_started = true;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -173,9 +173,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_dbox :
-            cur_el->element.binc.at_top = !ProcFlags.page_started &&
-                                          (t_page.top_banner == NULL);
-            ProcFlags.page_started = true;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -191,7 +188,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         case el_graph :
             cur_el->element.graph.at_top = !ProcFlags.page_started &&
                                           (t_page.top_banner == NULL);
-            ProcFlags.page_started = true;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -205,9 +201,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_hline :
-            cur_el->element.binc.at_top = !ProcFlags.page_started &&
-                                          (t_page.top_banner == NULL);
-            ProcFlags.page_started = true;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -231,8 +224,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                     }
                 } else {                                
                     if( t_page.top_ban == NULL ) {      // minimun height
-                        cur_spacing = max( wgml_fonts[0].line_height, cur_spacing );
-                        ProcFlags.page_started = true;
+                        cur_spacing = max( wgml_fonts[g_curr_font_num].line_height, cur_spacing );
                     }
                 }
                 if( bin_driver->y_positive == 0x00 ) {
@@ -245,9 +237,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_vline :
-            cur_el->element.binc.at_top = !ProcFlags.page_started &&
-                                          (t_page.top_banner == NULL);
-            ProcFlags.page_started = true;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {

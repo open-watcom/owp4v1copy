@@ -344,6 +344,7 @@ doc_element * alloc_doc_el(  element_type type )
         curr->element.vline.h_start = 0;
         curr->element.vline.v_start = 0;
         curr->element.vline.v_len = 0;
+        curr->element.vline.twice = true;
         break;
     default :
         internal_err( __FILE__, __LINE__ );

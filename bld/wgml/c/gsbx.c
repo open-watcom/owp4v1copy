@@ -235,223 +235,29 @@ static void box_blank_lines( uint32_t lines )
 }
 
 /***************************************************************************/
-/*  merge prev_line and cur_line into box_line                             */
+/*  create the box for character devices                                   */
 /***************************************************************************/
 
-static void merge_lines( void )
+static void do_char_device( void )
 {
-    int             cur_col;
-    int             line_col;
-    int             prev_col;
-
-/// temp
-    out_msg( "Existing\n" );
-    for( prev_col = 0; prev_col < prev_line.current; prev_col++ ) {
-        out_msg( "column: %i ind: %i\n", prev_line.cols[prev_col].col, prev_line.cols[prev_col].ind );
-    }
-
-    out_msg( "Current\n" );
-    for( cur_col = 0; cur_col < cur_line.current; cur_col++ ) {
-        out_msg( "column: %i ind: %i\n", cur_line.cols[cur_col].col, cur_line.cols[cur_col].ind );
-    }
-/// end temp section
-
-    cur_col = 0;
-    line_col = 0;
-    prev_col = 0;
-    while( (cur_col < cur_line.current) || (prev_col < prev_line.current) ) {
-        if( cur_col == cur_line.current ) {  // only prev_line now has entries
-            box_line.cols[line_col].col = prev_line.cols[prev_col].col;
-            box_line.cols[line_col].ind = prev_line.cols[prev_col].ind;
-            box_line.current++;
-            line_col++;
-            prev_col++;
-        } else if( prev_col == prev_line.current ) { // only cur_line now has entries
-            box_line.cols[line_col].col = cur_line.cols[cur_col].col;
-            box_line.cols[line_col].ind = cur_line.cols[cur_col].ind;
-            box_line.current++;
-            cur_col++;
-            line_col++;
-        } else if( cur_line.cols[cur_col].col < box_line.cols[prev_col].col ) {
-            box_line.cols[line_col].col = cur_line.cols[cur_col].col;
-            box_line.cols[line_col].ind = cur_line.cols[cur_col].ind;
-            box_line.current++;
-            cur_col++;
-            line_col++;
-        } else if( cur_line.cols[cur_col].col > box_line.cols[prev_col].col ) {
-            box_line.cols[line_col].col = prev_line.cols[prev_col].col;
-            box_line.cols[line_col].ind = prev_line.cols[prev_col].ind;
-            box_line.current++;
-            line_col++;
-            prev_col++;
-        } else {                            // equal column values
-            box_line.cols[line_col].col = cur_line.cols[cur_col].col;
-/// this may need more thought: suppose the ind fields differ?
-            box_line.cols[line_col].ind = cur_line.cols[cur_col].ind;
-            box_line.current++;
-            line_col++;
-            cur_col++;
-            prev_col++;
-        }
-    }
-
-/// temp
-    out_msg( "Merged\n" );
-    for( line_col  = 0; line_col  < box_line.current; line_col ++ ) {
-        out_msg( "column: %i ind: %i\n", box_line.cols[line_col ].col, box_line.cols[line_col ].ind );
-    }
-/// end temp section
-
-    return;
-}
-
-/***************************************************************************/
-/*  implement control word BX                                              */
-/*  some notes on how wgml 4.0 appears to differ from the TSO:             */
-/*    ON <h1 </> ... hn> differs from <h1 </> ... hn> in that columns      */
-/*      added outside the existing list of columns are treated as if "/"   */
-/*      separated them from the first (if before) or last (if after)       */
-/*      column, but only if there is one value after ON                    */
-/*    SET, in character devices, produces a blank output line; in PS, it   */
-/*      appears that no output at all occurs                               */
-/*    CHAR is accepted but has no effect on the output; indeed, any token, */
-/*      including HEX, or no token at all, can follow CHAR with no effect  */
-/*      on the output and no error message                                 */
-/*  despite what the TSO says at the start, operands BEGIN, END, YES, NO,  */
-/*      and PURGE are not recognized by wgml 4.0 when used with BX         */
-/*  control word AD is not used in the Open Watcom documents and so has    */
-/*      not been implemented. Were it to be implemented, it's effects      */
-/*      would be part of the left start position for text from which the   */
-/*      BX columns are measured                                            */
-/***************************************************************************/
-
-void scr_bx( void )
-{
-    bool            go_down;
-    bool            go_up;
-    bx_h_ind        cur_ind;
-    bx_op           cur_op;
+    bx_h_ind        cur_h_ind;
+    bx_v_ind        cur_v_ind;
     char        *   p;
-    char        *   pa;
     doc_element *   box_el;         // holds the box line itself, for char devices
     doc_element *   cur_el;
     doc_element *   sav_el;         // used to isolate a GRAPHIC element
     int             i;              // overall index
     int             i_b;            // box_line index
-    int             i_c;            // cur_line index
-    int             i_p;            // prev_line index
     size_t          len;
-    su              boxcolwork;
     text_chars  *   cur_chars;      // current text_chars in cur_text
     text_chars  *   new_chars;      // text_chars to be inserted into cur_text
     text_line   *   cur_text;       // current text_line
     uint32_t        c_current;      // cur_line.current
     uint32_t        cur_col;        // current column (not hbus)
-    uint32_t        p_current;      // prev_line.current
-    uint32_t        skippage;       // lines to skip (not hbus)
     uint32_t        cur_pos;        // current box column position (hbus)
     uint32_t        last_pos;       // last text_char text end position (hbus)
-    
-    scr_process_break();                // break processing
-
-    p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
-
-    while( *p && (*p == ' ') ) {
-        p++;
-    }
-    pa = p;
-    while( *p && (*p != ' ') ) {
-        p++;
-    }
-    len = p - pa;
-
-    /* Identify any non-numeric operand */
-
-    cur_op = bx_none;
-    if( (len == 2) && !memicmp( pa , "on", len ) ) {
-        cur_op = bx_on;
-    } else if( len == 3 ) {
-        if( !memicmp( pa , "can", len ) || !memicmp( pa , "del", len ) ) {
-            cur_op = bx_can;
-        } else if( !memicmp( pa , "new", len ) ) {
-            cur_op = bx_new;
-        } else if( !memicmp( pa , "off", len ) ) {
-            cur_op = bx_off;
-        } else if( !memicmp( pa , "set", len ) ) {
-            cur_op = bx_set;
-        }
-    } else if( (len == 4) && !memicmp( pa , "char", len ) ) {
-        scan_restart = scan_stop + 1;
-        return;
-    }
-
-    if( cur_op == bx_none ) {               // reuse token if not recognized
-        p = pa;
-    }
-
-    /* Now for the numerics, if any */
-
-    cur_line.current = 0;                                   // clear cur_line
-    if( *p ) {
-        while( *p ) {
-            if( cur_line.current == 0 ) {
-                cur_line.cols[cur_line.current].ind = bx_h_rule;
-                if( *p == '/' ) {
-                    xx_line_err( err_spc_not_valid, p );
-                    p++;
-                }
-            } else if( *p == '/' ) {
-                cur_line.cols[cur_line.current - 1].ind = bx_h_stop;
-                cur_line.cols[cur_line.current].ind = bx_h_start;
-                p++;
-            } else {
-                cur_line.cols[cur_line.current].ind = bx_h_rule;
-            }
-            pa = p;
-            if( !cw_val_to_su( &p, &boxcolwork ) ) {
-                cur_line.cols[cur_line.current].col = conv_hor_unit( &boxcolwork );
-#if 0
-                if( boxcolwork.su_relative ) {
-                    boxcolwork += g_indent;
-                }
-#endif
-            } else {
-                xx_line_err( err_spc_not_valid, pa );
-            }
-            while( *p && (*p == ' ') ) {
-                p++;
-            }
-            cur_line.current++;
-        }
-    }
-
-    /* Generate the list of box columns for the current horizontal line */
-    box_line.current = 0;                           // clear box_line
-    switch( cur_op ) {
-    case bx_none :
-        merge_lines();
-        break;    
-    case bx_on :
-        merge_lines();
-        break;    
-    case bx_off :
-        merge_lines();
-        break;    
-    case bx_new :
-        merge_lines();
-        break;    
-    case bx_can :
-        merge_lines();
-        break;    
-    default :
-        internal_err( __FILE__, __LINE__ );
-        break;    
-    }
-
-    ProcFlags.group_elements = false;   // stop accumulating doc_elements
+    uint32_t        p_current;      // prev_line.current
+    uint32_t        skippage;       // lines to skip (not hbus)
 
     /* Create the doc_element to hold the box line */
 
@@ -465,17 +271,14 @@ void scr_bx( void )
     ProcFlags.overprint = false;
     box_el->element.text.spacing = g_spacing;
 
-/// this is for char devices only; expansion will be needed to encompass PS
-/// using hline and vline!
-
     /* construct the box line */
     box_el->element.text.first = alloc_text_line();
     box_el->element.text.first->line_height =
                                 wgml_fonts[bin_device->box.font_number].line_height;
     box_el->depth = box_el->element.text.first->line_height + g_spacing;
 
-    len = ((box_line.cols[box_line.current - 1].col - box_line.cols[0].col)
-          / box_col_width);
+    len = (box_line.cols[box_line.current - 1].col - box_line.cols[0].col)
+          / box_col_width;
     box_el->element.text.first->first = alloc_text_chars( NULL, len,
                                                    bin_device->box.font_number );
     box_el->element.text.first->first->x_address = box_line.cols[0].col +
@@ -483,52 +286,37 @@ void scr_bx( void )
 
     p = box_el->element.text.first->first->text;
     i_b = 0;
-    i_c = 0;
-    i_p = 0;
     c_current = cur_line.current;
     p_current = prev_line.current;
     cur_col = box_line.cols[0].col;
-    for( i = 0; i <= len; i++ ) {                    // iterate over all output columns
+    for( i = 0; i <= len; i++ ) {                   // iterate over all output columns
         if( cur_col < box_line.cols[i_b].col ) {    // not a box column
             *p = bin_device->box.horizontal_line;
         } else {                                    // box column found
-            go_down = false;
-            go_up = false;
-            cur_ind = box_line.cols[i_b].ind;       // for eventual use, TBD
-            if( (i_p < p_current) && (cur_col == prev_line.cols[i_p].col) ) {
-                go_up = true;
-                i_p++;
-            }
-            if( cur_op == bx_off ) {
-                if( (i_c < c_current) && (cur_col == cur_line.cols[i_c].col) ) {
-                    go_down = true;
-                    i_c++;
-                }
-            } else {                                // mid-box line
-                go_down = true;
-            }
-            if( i_b == 0 ) {                        // first box column
-                if( go_down && go_up ) {            // both up and down
+            cur_h_ind = box_line.cols[i_b].h_ind;   // for eventual use, TBD
+            cur_v_ind = box_line.cols[i_b].v_ind;
+            if( i_b == 0 ) {                            // first box column
+                if( cur_v_ind == bx_v_both ) {          // both up and down
                     *p = bin_device->box.left_join;
-                } else if( go_down ) {              // down only
+                } else if( cur_v_ind == bx_v_down ) {   // down only
                     *p = bin_device->box.top_left;
-                } else {                            // up only
+                } else {                                // up only
                     *p = bin_device->box.bottom_left;
                 }
-            } else if( i_b == box_line.current - 1 ) { // last box column
-                if( go_down && go_up ) {            // both up and down
+            } else if( i_b == box_line.current - 1 ) {  // last box column
+                if( cur_v_ind == bx_v_both ) {          // both up and down
                     *p = bin_device->box.right_join;
-                } else if( go_down ) {              // down only
+                } else if( cur_v_ind == bx_v_down ) {   // down only
                     *p = bin_device->box.top_right;
-                } else {                            // up only
+                } else {                                // up only
                     *p = bin_device->box.bottom_right;
                 }
-            } else {                                // all other box columns
-                if( go_down && go_up ) {            // both up and down
+            } else {                                    // all other box columns
+                if( cur_v_ind == bx_v_both ) {          // both up and down
                     *p = bin_device->box.inside_join;
-                } else if( go_down ) {              // down only
+                } else if( cur_v_ind == bx_v_down ) {   // down only
                     *p = bin_device->box.top_join;
-                } else {                            // up only
+                } else {                                // up only
                     *p = bin_device->box.bottom_join;
                 }
             }
@@ -544,23 +332,6 @@ void scr_bx( void )
                         cop_text_width( box_el->element.text.first->first->text,
                                         box_el->element.text.first->first->count,
                                         bin_device->box.font_number );
-
-#if 0 // this will be needed eventually
-    if( t_doc_el_group.first != NULL ) {
-        t_doc_el_group.depth += (t_doc_el_group.first->blank_lines +
-                                t_doc_el_group.first->subs_skip);
-    }
-    if( (t_doc_el_group.depth + t_page.cur_depth) > t_page.max_depth ) {
-        /*  the block won't fit on this page */
-
-        if( t_doc_el_group.depth  <= t_page.max_depth ) {
-            /*  the block will on the next page */
-
-            do_page_out();
-            reset_t_page();
-        }
-    }
-#endif
 
     /* line-drawing devices using BOX characters do not use vertical ascenders */
 
@@ -688,6 +459,415 @@ void scr_bx( void )
         }
     }
     insert_col_main( box_el );  // insert the box line
+    return;
+}
+
+/***************************************************************************/
+/*  create the box for line_drawing devices                                */
+/***************************************************************************/
+
+static void do_line_device( bx_op cur_op )
+{
+    bool            top_line;
+//    bx_h_ind        cur_h_ind;    // for use producing multiple HLINEs TBD
+    bx_v_ind        cur_v_ind;
+    doc_element *   cur_el;
+    doc_element *   line_el;
+    int             i_b;            // box_line index
+    uint32_t        depth;
+    uint32_t        h_offset;
+    uint32_t        v_offset;
+
+    static  uint32_t    box_depth   = 0;    // depth of box (for use with VLINE)
+
+    /* Create the doc_element to hold the HLINE */
+
+    set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font_num );
+
+    /* when '/' is implemented, this will have to become a loop */
+    /* similar to the VLINE loop below, hence cur_h_ind's use of i_b */
+
+//    cur_h_ind = box_line.cols[i_b].h_ind;   // for eventual use, TBD
+
+    line_el = alloc_doc_el( el_hline );
+    line_el->blank_lines = g_blank_lines;
+    g_blank_lines = 0;
+    line_el->depth = wgml_fonts[g_curr_font_num].line_height;
+    top_line = !ProcFlags.page_started && (t_page.top_banner == NULL)
+               && (t_doc_el_group.first == NULL);
+    if( top_line ) {   // HLINE will be at top of page
+        depth = wgml_fonts[0].line_height;
+        v_offset = depth / 4;
+        if( (depth % 4) > 0 ) {
+            v_offset++;
+        }
+        line_el->top_skip = g_top_skip + v_offset;
+    } else {
+        depth = line_el->depth;
+        v_offset = depth / 2;
+        if( (depth % 2) > 0 ) {
+            v_offset++;
+        }
+        line_el->subs_skip = g_subs_skip + v_offset;
+    }
+    line_el->depth -= v_offset;
+
+    h_offset = box_line.cols[0].col + g_page_left - h_vl_offset;
+    if( (int32_t) h_offset < 0 ) {
+        h_offset = h_vl_offset;
+    }
+    if( (g_page_left + h_vl_offset) < h_offset ) {
+        line_el->element.hline.h_start = h_offset;
+    } else {
+        line_el->element.hline.h_start = g_page_left + h_vl_offset;
+    }        
+    line_el->element.hline.h_len = box_line.cols[box_line.current - 1].col -
+                                     box_line.cols[0].col + 1;
+                                   
+    /* insert the elements which go inside the box */
+
+    cur_el = t_doc_el_group.first;
+    t_doc_el_group.depth    = 0;
+    t_doc_el_group.first    = NULL;
+    t_doc_el_group.last     = NULL;
+    if( box_depth == 0 ) {
+        box_depth = line_el->depth;
+    } else if( cur_op == bx_off ) { // VLINES will be drawn from this HLINE
+        if( top_line ) {            // HLINE will be at top of page
+            box_depth += line_el->top_skip;
+        } else {
+            box_depth += line_el->subs_skip;
+        }        
+    } else if( top_line ) {         // HLINE will be at top of page
+        box_depth += line_el->depth + line_el->top_skip;
+    } else {
+        box_depth += line_el->depth + line_el->subs_skip;
+    }
+    top_line = !ProcFlags.page_started && (t_page.top_banner == NULL);
+    while( cur_el != NULL ) {
+        if( top_line ) {        // catch text line at top of page
+            box_depth += cur_el->depth + cur_el->top_skip;
+            top_line = false;
+        } else {
+            box_depth += cur_el->depth + cur_el->subs_skip;
+        }
+        insert_col_main( cur_el );
+        cur_el = cur_el->next;
+    }
+
+    /********************************************************/
+    /* if there is no VLINE block, there are no ascenders   */
+    /* if box_line has no entries, there are no ascenders   */
+    /* for a simple box, there are no ascenders until the   */
+    /* bottom is reached, ie, BX OFF is encountered         */
+    /* this criterion may be expanded in the future         */
+    /********************************************************/
+
+    if( (bin_driver->vline.text != NULL) && (box_line.current > 0)
+                                         && (cur_op == bx_off) ) {
+        depth = line_el->depth;             // save for last VLINE
+        line_el->depth = 0;
+        insert_col_main( line_el );         // insert the HLINE
+
+        i_b = 0;
+        box_depth += 10;                    // apparent constant, possibly PS-specific
+        for( i_b = 0; i_b <= box_line.current; i_b++ ) {    // iterate over all output columns
+            cur_v_ind = box_line.cols[i_b].v_ind;
+            if( (cur_v_ind == bx_v_both) || (cur_v_ind == bx_v_up) ) {  // VLINE needed
+
+                /* Create the doc_element to hold the VLINE */
+
+                line_el = alloc_doc_el( el_vline );
+                line_el->blank_lines = 0;   // no positional adjustments
+                if( i_b == box_line.current - 1 ) {
+                    line_el->depth = depth;
+                } else {
+                    line_el->depth = 0; // only the last VLINE has a depth > 0
+                }
+                line_el->subs_skip = 0;
+                line_el->top_skip = 0;
+                line_el->element.vline.h_start = box_line.cols[i_b].col
+                                               + g_page_left - h_vl_offset;
+#if 0
+                if( (h_vl_offset < box_line.cols[0].col) ) {
+                    line_el->element.vline.h_start = box_line.cols[i_b].col
+                                                     + g_page_left - h_vl_offset;
+                } else {
+                    line_el->element.vline.h_start = box_line.cols[i_b].col
+                                                     + g_page_left;
+                }        
+#endif
+                line_el->element.vline.v_len = box_depth;
+                if( i_b == 0 ) {             // first VLINE
+                    line_el->element.vline.twice = false;
+                }
+                                   
+                insert_col_main( line_el );  // insert the VLINE
+            }
+        }
+        box_depth = 0;
+    } else {
+        insert_col_main( line_el );  // insert the HLINE
+    }
+
+    return;
+}
+
+/***************************************************************************/
+/*  merge prev_line and cur_line into box_line                             */
+/***************************************************************************/
+
+static void merge_lines( bx_op cur_op )
+{
+    int cur_col;
+    int line_col;
+    int prev_col;
+
+/// temp
+    out_msg( "Existing\n" );
+    out_msg( "prev_line length: %i\n", prev_line.length );
+    for( prev_col = 0; prev_col < prev_line.current; prev_col++ ) {
+        out_msg( "column: %i h_ind: %i v_ind: %i\n", prev_line.cols[prev_col].col,
+                 prev_line.cols[prev_col].h_ind, prev_line.cols[prev_col].v_ind );
+    }
+
+    out_msg( "Current\n" );
+    out_msg( "cur_line length: %i\n", cur_line.length );
+    for( cur_col = 0; cur_col < cur_line.current; cur_col++ ) {
+        out_msg( "column: %i h_ind: %i v_ind: %i\n", cur_line.cols[cur_col].col,
+                 cur_line.cols[cur_col].h_ind, cur_line.cols[cur_col].v_ind );
+    }
+/// end temp section
+
+    /* adjust the vertical indicators for various conditions */
+
+    if( cur_op == bx_off ) {
+        for( cur_col = 0; cur_col < cur_line.current; cur_col++ ) {
+            cur_line.cols[cur_col].v_ind = bx_v_up;
+        }
+        for( prev_col = 0; prev_col < prev_line.current; prev_col++ ) {
+            prev_line.cols[prev_col].v_ind = bx_v_up;
+        }
+    }
+    cur_col = 0;
+    line_col = 0;
+    prev_col = 0;
+    while( (cur_col < cur_line.current) || (prev_col < prev_line.current) ) {
+        if( box_line.current == box_line.length) {
+            box_line.length += BOXCOL_COUNT;  // add space for new box columns
+            box_line.cols = mem_realloc( box_line.cols, box_line.length *
+                                          sizeof( box_col ) );
+        }
+        if( cur_col == cur_line.current ) {  // only prev_line now has entries
+            box_line.cols[line_col].col = prev_line.cols[prev_col].col;
+            box_line.cols[line_col].h_ind = prev_line.cols[prev_col].h_ind;
+            box_line.cols[line_col].v_ind = prev_line.cols[prev_col].v_ind;
+            box_line.current++;
+            line_col++;
+            prev_col++;
+        } else if( prev_col == prev_line.current ) { // only cur_line now has entries
+            box_line.cols[line_col].col = cur_line.cols[cur_col].col;
+            box_line.cols[line_col].h_ind = cur_line.cols[cur_col].h_ind;
+            box_line.cols[line_col].v_ind = cur_line.cols[cur_col].v_ind;
+            box_line.current++;
+            cur_col++;
+            line_col++;
+        } else if( cur_line.cols[cur_col].col < box_line.cols[prev_col].col ) {
+            box_line.cols[line_col].col = cur_line.cols[cur_col].col;
+            box_line.cols[line_col].h_ind = cur_line.cols[cur_col].h_ind;
+            box_line.cols[line_col].v_ind = cur_line.cols[cur_col].v_ind;
+            box_line.current++;
+            cur_col++;
+            line_col++;
+        } else if( cur_line.cols[cur_col].col > box_line.cols[prev_col].col ) {
+            box_line.cols[line_col].col = prev_line.cols[prev_col].col;
+            box_line.cols[line_col].h_ind = prev_line.cols[prev_col].h_ind;
+            box_line.cols[line_col].v_ind = prev_line.cols[prev_col].v_ind;
+            box_line.current++;
+            line_col++;
+            prev_col++;
+        } else {                            // equal column values
+            box_line.cols[line_col].col = cur_line.cols[cur_col].col;
+/// this may need more thought: suppose the h_ind fields differ?
+            box_line.cols[line_col].h_ind = cur_line.cols[cur_col].h_ind;
+            box_line.cols[line_col].v_ind = cur_line.cols[cur_col].v_ind;
+            box_line.current++;
+            line_col++;
+            cur_col++;
+            prev_col++;
+        }
+    }
+
+/// temp
+    out_msg( "Merged\n" );
+    out_msg( "box_line length: %i\n", box_line.length );
+    for( line_col  = 0; line_col < box_line.current; line_col ++ ) {
+        out_msg( "column: %i h_ind: %i v_ind: %i\n", box_line.cols[line_col].col,
+                 box_line.cols[line_col].h_ind, box_line.cols[line_col].v_ind );
+    }
+/// end temp section
+
+    return;
+}
+
+/***************************************************************************/
+/*  implement control word BX                                              */
+/*  some notes on how wgml 4.0 appears to differ from the TSO:             */
+/*    ON <h1 </> ... hn> differs from <h1 </> ... hn> in that columns      */
+/*      added outside the existing list of columns are treated as if "/"   */
+/*      separated them from the first (if before) or last (if after)       */
+/*      column, but only if there is one value after ON                    */
+/*    SET, in character devices, produces a blank output line; in PS, it   */
+/*      appears that no output at all occurs                               */
+/*    CHAR is accepted but has no effect on the output; indeed, any token, */
+/*      including HEX, or no token at all, can follow CHAR with no effect  */
+/*      on the output and no error message                                 */
+/*  despite what the TSO says at the start, operands BEGIN, END, YES, NO,  */
+/*      and PURGE are not recognized by wgml 4.0 when used with BX         */
+/*  control word AD is not used in the Open Watcom documents and so has    */
+/*      not been implemented. Were it to be implemented, it's effects      */
+/*      would be part of the left start position for text from which the   */
+/*      BX columns are measured                                            */
+/***************************************************************************/
+
+void scr_bx( void )
+{
+    bx_op           cur_op;
+    char        *   p;
+    char        *   pa;
+    int             i;              // overall index
+    size_t          len;
+    su              boxcolwork;
+    
+    scr_process_break();                // break processing
+
+    p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
+
+    while( *p && (*p == ' ') ) {
+        p++;
+    }
+    pa = p;
+    while( *p && (*p != ' ') ) {
+        p++;
+    }
+    len = p - pa;
+
+    /* Identify any non-numeric operand */
+
+    cur_op = bx_none;
+    if( (len == 2) && !memicmp( pa , "on", len ) ) {
+        cur_op = bx_on;
+    } else if( len == 3 ) {
+        if( !memicmp( pa , "can", len ) || !memicmp( pa , "del", len ) ) {
+            cur_op = bx_can;
+        } else if( !memicmp( pa , "new", len ) ) {
+            cur_op = bx_new;
+        } else if( !memicmp( pa , "off", len ) ) {
+            cur_op = bx_off;
+        } else if( !memicmp( pa , "set", len ) ) {
+            cur_op = bx_set;
+        }
+    } else if( (len == 4) && !memicmp( pa , "char", len ) ) {
+        scan_restart = scan_stop + 1;
+        return;
+    }
+
+    if( cur_op == bx_none ) {               // reuse token if not recognized
+        p = pa;
+    }
+
+    /* Now for the numerics, if any */
+
+    cur_line.current = 0;                                   // clear cur_line
+    if( *p ) {
+        while( *p ) {
+            if( cur_line.current == cur_line.length) {
+                cur_line.length += BOXCOL_COUNT;  // add space for new box columns
+                cur_line.cols = mem_realloc( cur_line.cols, cur_line.length *
+                                             sizeof( box_col ) );
+            }
+            cur_line.cols[cur_line.current].v_ind = bx_v_down;
+            if( cur_line.current == 0 ) {
+                cur_line.cols[cur_line.current].h_ind = bx_h_rule;
+                if( *p == '/' ) {
+                    xx_line_err( err_spc_not_valid, p );
+                    p++;
+                }
+            } else if( *p == '/' ) {
+                cur_line.cols[cur_line.current - 1].h_ind = bx_h_stop;
+                cur_line.cols[cur_line.current].h_ind = bx_h_start;
+                p++;
+            } else {
+                cur_line.cols[cur_line.current].h_ind = bx_h_rule;
+            }
+            pa = p;
+            if( !cw_val_to_su( &p, &boxcolwork ) ) {
+                cur_line.cols[cur_line.current].col = conv_hor_unit( &boxcolwork );
+#if 0
+                if( boxcolwork.su_relative ) {
+                    boxcolwork += g_indent;
+                }
+#endif
+            } else {
+                xx_line_err( err_spc_not_valid, pa );
+            }
+            while( *p && (*p == ' ') ) {
+                p++;
+            }
+            cur_line.current++;
+        }
+    }
+
+    /* Generate the list of box columns for the current horizontal line */
+    box_line.current = 0;                           // clear box_line
+    switch( cur_op ) {
+    case bx_none :
+        merge_lines( cur_op );
+        break;    
+    case bx_on :
+        merge_lines( cur_op );
+        break;    
+    case bx_off :
+        merge_lines( cur_op );
+        break;    
+    case bx_new :
+        merge_lines( cur_op );
+        break;    
+    case bx_can :
+        merge_lines( cur_op );
+        break;    
+    default :
+        internal_err( __FILE__, __LINE__ );
+        break;    
+    }
+
+    ProcFlags.group_elements = false;   // stop accumulating doc_elements
+
+#if 0 // this will be needed eventually: split before processing the box TBD
+    if( t_doc_el_group.first != NULL ) {
+        t_doc_el_group.depth += (t_doc_el_group.first->blank_lines +
+                                t_doc_el_group.first->subs_skip);
+    }
+    if( (t_doc_el_group.depth + t_page.cur_depth) > t_page.max_depth ) {
+        /*  the block won't fit on this page */
+
+        if( t_doc_el_group.depth  <= t_page.max_depth ) {
+            /*  the block will on the next page */
+
+            do_page_out();
+            reset_t_page();
+        }
+    }
+#endif
+
+    if( bin_driver->hline.text == NULL ) {
+        do_char_device();
+    } else {
+        do_line_device( cur_op );
+    }
 
     if( ( cur_op == bx_off ) || ( cur_op == bx_can ) ) {
         box_line.current = 0;               // clear box_line
@@ -696,11 +876,16 @@ void scr_bx( void )
         ProcFlags.group_elements = true;    // start accumulating doc_elements
     }
 
-    prev_line.current = box_line.current;   // box_line becomes prev_line
-    prev_line.length = box_line.length;
+    prev_line.current = box_line.current;       // box_line becomes prev_line
+    if( prev_line.length < box_line.length) {   // change length only to increase it
+        prev_line.length += BOXCOL_COUNT;
+        prev_line.cols = mem_realloc( prev_line.cols, prev_line.length *
+                                      sizeof( box_col ) );
+    }
     for( i = 0; i < box_line.current; i++ ) {
         prev_line.cols[i].col = box_line.cols[i].col;
-        prev_line.cols[i].ind = box_line.cols[i].ind;
+        prev_line.cols[i].h_ind = box_line.cols[i].h_ind;
+        prev_line.cols[i].v_ind = bx_v_both;
     }
 
     scan_restart = scan_stop + 1;

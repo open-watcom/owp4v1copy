@@ -2161,7 +2161,7 @@ static void * df_subtract( void )
  * replaced when the function populate_device_table() is invoked.
  */
 
-static df_function device_function_table[0x3D] = {
+static df_function device_function_table[MAX_FUNC_INDEX + 1] = {
     &char_literal,          // 0x00 (character parameter in parameter block)
     &df_recordbreak_device, // 0x01 %recordbreak()
     &df_bad_code,           // 0x02 (none)
@@ -2230,7 +2230,7 @@ static df_function device_function_table[0x3D] = {
  * to have no effect in this context.
  */
 
-static df_function driver_function_table[0x3D] = {
+static df_function driver_function_table[MAX_FUNC_INDEX + 1] = {
     &char_literal,          // 0x00 (character parameter in parameter block)
     &df_recordbreak_driver, // 0x01 %recordbreak()
     &df_bad_code,           // 0x02 (none)
@@ -3896,7 +3896,7 @@ void fb_init( init_block * in_block )
  *      v_start contains the vertical start position.
  *      h_len contains the horizontal extent for a :HLINE or :DBOX block.
  *      v_len contains the vertical extent for a :VLINE or :DBOX block.
- *      name contains the name (:HLINE, :VLINE, or :DBOX) of the block.
+ *      twice indicates whether the initial AA block is to be done once or twice.
  *
  * Prerequisites:
  *      The block to be interpreted must exist.
@@ -3915,7 +3915,7 @@ void fb_init( init_block * in_block )
  */
 
 void fb_line_block( line_block * in_line_block, uint32_t h_start, uint32_t v_start,
-                     uint32_t h_len, uint32_t v_len, char * name )
+                     uint32_t h_len, uint32_t v_len, bool twice )
 {
 
     /* Set up for fb_absoluteaddress(). */
@@ -3926,7 +3926,9 @@ void fb_line_block( line_block * in_line_block, uint32_t h_start, uint32_t v_sta
     y_address = v_start % bin_device->page_depth;
 
     fb_absoluteaddress();
-
+    if( twice ) {
+        fb_absoluteaddress();
+    }
     /* Set up for in_function; current_state has been updated by
      * fb_absoluteaddress().
      */

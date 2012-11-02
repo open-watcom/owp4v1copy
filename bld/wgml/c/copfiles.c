@@ -1154,6 +1154,10 @@ void cop_setup( void )
 
     box_col_width = bin_device->horizontal_base_units / CPI;
 
+    /* Initialize the horizontal offset used to position the HLINE output. */
+
+    h_vl_offset = bin_device->horizontal_base_units / 20;
+
     /* Initialize the default tabs and related extern variables. */
 
     tab_col = bin_device->horizontal_base_units / 10;
@@ -1430,7 +1434,7 @@ void cop_ti_table( char * p )
 void fb_dbox( dbox_element * in_dbox )
 {
     fb_line_block( &(bin_driver->dbox), in_dbox->h_start, in_dbox->v_start,
-                   in_dbox->h_len, in_dbox->v_len, "DBOX" );
+                   in_dbox->h_len, in_dbox->v_len, false );
     return;
 }
 
@@ -1540,7 +1544,7 @@ void fb_finish( void )
 void fb_hline( hline_element * in_hline )
 {
     fb_line_block( &(bin_driver->hline), in_hline->h_start, in_hline->v_start,
-                   in_hline->h_len, 0, "HLINE" );
+                   in_hline->h_len, 0, false );
 }
 
 /* Function fb_output_textline.
@@ -1637,7 +1641,7 @@ void fb_start( void )
 void fb_vline( vline_element * in_vline )
 {
     fb_line_block( &(bin_driver->vline), in_vline->h_start, in_vline->v_start, 0,
-                   in_vline->v_len, "VLINE" );
+                   in_vline->v_len, in_vline->twice );
     return;
 }
 

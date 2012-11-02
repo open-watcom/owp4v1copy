@@ -880,12 +880,19 @@ typedef enum {
     bx_h_stop,
 } bx_h_ind;
 
-typedef struct box_col {
+typedef enum {
+    bx_v_down,
+    bx_v_up,
+    bx_v_both,
+} bx_v_ind;
+
+typedef struct {
             uint32_t        col;
-            bx_h_ind        ind;      
+            bx_h_ind        h_ind;      
+            bx_v_ind        v_ind;
 } box_col;
 
-typedef struct box_col_set {
+typedef struct {
             uint32_t        current;
             uint32_t        length;
             box_col     *   cols;
@@ -999,6 +1006,7 @@ typedef struct {
     uint32_t    h_start;
     uint32_t    v_start;
     uint32_t    v_len;
+    bool        twice;
 } vline_element;
 
 typedef struct doc_element {
