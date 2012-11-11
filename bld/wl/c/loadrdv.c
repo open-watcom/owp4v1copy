@@ -279,8 +279,8 @@ static void WriteMbootHeader( void )
 
     SeekLoad( 0 );
     _HostU32toTarg(0x1BADB002, mb_head.mb_magic );
-    _HostU32toTarg(0x00010001, mb_head.mb_flags );
-    _HostU32toTarg(0xE4514FFD, mb_head.mb_checksum );
+    _HostU32toTarg(0x00010003, mb_head.mb_flags );
+    _HostU32toTarg(0xE4514FFB, mb_head.mb_checksum );
     _HostU32toTarg(linear, mb_head.mb_header_addr );
     _HostU32toTarg(linear, mb_head.mb_load_addr );
     linear += CodeSize + sizeof( struct mb_header );
