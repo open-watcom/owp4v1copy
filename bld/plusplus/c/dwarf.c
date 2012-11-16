@@ -89,7 +89,6 @@ static dw_handle dwarfFunctionDefine( SYMBOL, CGFILE * );
 static dw_handle dwarfFunction( SYMBOL, DC_CONTROL );
 static dw_handle dwarfSymbol( SYMBOL, DC_CONTROL );
 static void      dwarfEmitSymbolScope( SCOPE );
-static void      dwarfEmitNameSpace( SYMBOL );
 
 static TYPE             vf_FieldType;
 static unsigned         vf_FieldTypeSize;
@@ -1777,11 +1776,9 @@ static void dwarfEmitSymbolScope( SCOPE scope )
     stop = ScopeOrderedStart( scope );
     curr = ScopeOrderedNext( stop, NULL );
     while( curr != NULL ) {
-        if ( SymIsNameSpace( curr ) )
-            dwarfEmitNameSpace( curr );
         // skip over enum's because they are handled by
         // the typedef that precedes the enum symbols
-        else if( !SymIsEnumeration( curr ) ) {
+        if( !SymIsEnumeration( curr ) ) {
             (void)dwarfSymbol( curr, DC_DEFINE );
         }
         curr = ScopeOrderedNext( stop, curr );
@@ -1935,19 +1932,6 @@ static void dwarfNameSpace( SYMBOL curr )
     } else {
         dwarfBegNameSpace( curr );
         dwarfDebugSymbol( scope );
-        DWEndNameSpace( Client );
-    }
-}
-
-static void dwarfEmitNameSpace( SYMBOL curr )
-/***************************************/
-{
-    SCOPE scope = curr->u.ns->scope;
-    if( curr->u.ns->s.unnamed ) {
-        dwarfEmitSymbolScope( scope );
-    } else {
-        dwarfBegNameSpace( curr );
-        dwarfEmitSymbolScope( scope );
         DWEndNameSpace( Client );
     }
 }
