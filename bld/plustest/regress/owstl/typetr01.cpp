@@ -32,11 +32,10 @@
 #include <type_traits>
 #include "sanity.cpp"
 
-using namespace std::tr1;
+using namespace std;
 
 /* ------------------------------------------------------------------
- * this function doesn't really do anything 
- * it is just one big compile time test 
+ * This function doesn't really do anything  it is just one big compile time test.
  */
 bool the_test( )
 {
