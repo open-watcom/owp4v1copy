@@ -12,7 +12,6 @@ set RM=%OWROOT%\bld\build\binp\rm
 
 rem Initialization
 rem ==============
-
 if exist %OWROOT%\pass1 goto prerequisite_ok
 echo Missing %OWROOT%\pass1. Can't continue with rotation.
 goto done
@@ -41,6 +40,7 @@ move %WWWPATH%\snapshots\ss.7z %WWWPATH%\snapshots\ow-snapshot.7z
 
 rem Move installers
 rem =============
+if exist %WWWPATH%\installers\open-watcom-*.* %RM% -f %WWWPATH%\installers\open-watcom-*.*
 move %OWROOT%\distrib\ow\open-watcom-*.* %WWWPATH%\installers
 
 rem Final Cleanup

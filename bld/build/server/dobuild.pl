@@ -133,7 +133,7 @@ sub make_build_batch
     print BATCH "$setenv RELROOT=", get_reldir(), "\n";
     print BATCH "$setenv DOC_BUILD=0\n";
     print BATCH "$setenv DOC_QUIET=1\n";
-    # Create fresh builder tools, to prevent lockup build server 
+    # Create fresh builder tools, to prevent lockup build server
     # if builder tools from previous build are somehow broken
     print BATCH "cd $OW\ncd bld\n";
     if ($^O eq "MSWin32") {
@@ -300,7 +300,7 @@ sub process_log
                         $result = "fail";      # in case others failed on os2
                     }
                 }
-            }			
+            }
             @fields = split;
             $project_name = Common::remove_OWloc($fields[2]);
             $arch_test = "";
@@ -323,11 +323,11 @@ sub process_log
         print REPORT "\t\t$project_name\t$arch_test\n";
         $result = "fail";
 ##      print REPORT "$project_name last one failed\n";# test ++++++++++++
-      } 
+      }
     }
 
     # This is what we want to see.
-    if ($result eq "success") {
+    if ($result eq "success" and $os2_result eq "success") {
         print REPORT "Succeeded.\n";
     }
     return $result;
@@ -361,7 +361,7 @@ sub display_p4_messages
 
     foreach $message (@p4_messages) {
         print REPORT "$message\n";
-    }   
+    }
     print REPORT "p4 Messages end\n";
 }
 
@@ -439,7 +439,7 @@ sub p4_sync
 {
     #force all files update to head
     #open(SYNC, "p4 sync -f $OW\/...#head |");
-    
+
     #open(SYNC, "p4 sync $OW\/... |"); does'nt work on OS/2 old client?
     open(SYNC, "p4 sync |");           # this does...
     while (<SYNC>) {
@@ -491,13 +491,13 @@ print REPORT "=====================================\n\n";
 p4_sync();
 
 get_prev_changeno;
-    
+
 if ($prev_changeno > 0) {
    print REPORT "\tBuilt through change   : $prev_changeno on $prev_report_stamp\n";
 } else {
    $prev_changeno = -1; # no previous changeno / build
 }
-    
+
 open(LEVEL, "p4 counters|");
 while (<LEVEL>) {
   if (/^change = (.*)/) {
