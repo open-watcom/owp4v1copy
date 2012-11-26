@@ -181,7 +181,7 @@ static void reopen_inc_fp( filecb *cb )
 
 bool    free_resources( errno_t in_errno )
 {
-    if( in_errno == ENOMEM) g_err( err_no_memory );
+    if( in_errno == ENOMEM ) g_err( err_no_memory );
     else g_err( err_no_handles );
     err_count++;
     return( false );
@@ -245,11 +245,9 @@ void    free_some_mem( void )
             lay_files = lwk;
         }
     }
-
     if( out_file != NULL ) {
         mem_free( out_file );
     }
-
     if( out_file_attr != NULL ) {
         mem_free( out_file_attr );
     }
@@ -261,6 +259,9 @@ void    free_some_mem( void )
     }
     if( ref_dict != NULL ) {
         free_ref_dict( &ref_dict );
+    }
+    if( iref_dict != NULL ) {
+        free_ref_dict( &iref_dict );
     }
     if( fig_dict != NULL ) {
         free_ref_dict( &fig_dict );

@@ -182,9 +182,11 @@ extern condcode     getnum( getnum_block * gn );
 
 
 /* gindexut.c                           */
-extern  void    fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
-extern  void    free_index_dict( ix_h_blk ** dict );
-extern  void    ixdump( ix_h_blk * dict );
+extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
+extern  void        free_index_dict( ix_h_blk ** dict );
+extern  void        free_ix_e_index_dict( ix_h_blk ** dict );
+extern  void        gen_index( void );
+extern  void        ixdump( ix_h_blk * dict );
 
 
 /* glayutil.c                           */

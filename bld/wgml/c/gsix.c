@@ -29,6 +29,9 @@
 *                        i.e.   index structure 1 only
 *                               s1 s2 s3
 *                               . dump   (experimental)
+*         extension found during testing:
+*                               s1 s2 s3 xxx
+*           xxx is treated like gml :I3 pg="XXX"  attribute
 *
 *         not implemented are   s1 s2 . ref
 *                               . purge
@@ -145,14 +148,14 @@
 void    scr_ix( void )
 {
     condcode        cc;                 // resultcode from getarg()
-    char            cwcurr[4];          // control word string for errmsg
+    static char     cwcurr[4] = {" ix"};// control word string for errmsg
     int             lvl;              // max index level in control word data
     int             k;
     int             comp_len;// compare length for searching existing entries
     int             comp_res;           // compare result
     char        *   ix[3];              // index string(s) to add
     uint32_t        ixlen[3];           // corresponding lengths
-    ix_h_blk    * * ixhprev;            // anchor point for insert
+    ix_h_blk    * * ixhwork;            // anchor point for insert
     ix_h_blk    *   ixhwk;              // index block
     ix_h_blk    *   ixhcurr[3];         // active index heading block per lvl
     ix_e_blk    *   ixewk;              // index entry block
@@ -162,20 +165,17 @@ void    scr_ix( void )
 
     scan_restart = scan_stop + 1;
 
-    if( !(GlobalFlags.index & GlobalFlags.lastpass) ) {
+    if( !(GlobalFlags.index && GlobalFlags.lastpass) ) {
         return;                         // no need to process .ix
     }                                   // no index wanted or not lastpass
     cwcurr[0] = SCR_char;
-    cwcurr[1] = 'i';
-    cwcurr[2] = 'x';
-    cwcurr[3] = '\0';
     lvl = 0;                            // index level
-    if( ProcFlags.page_started ) {
-        wkpage = page;
-    } else {
-        wkpage = page + 1;
-    }
 
+//  if( ProcFlags.page_started ) {
+//      wkpage = page;
+//  } else {
+        wkpage = page + 1;              // not quite clear TBD
+//  }
 
     garginit();                         // over control word
 
@@ -201,7 +201,7 @@ void    scr_ix( void )
                     if( arg_flen == 4 ) {
                         if( !strnicmp( tok_start, "DUMP", 4 ) ) {
 
-                            ixdump( index_dict );   // print index
+                            ixdump( index_dict );
 
                             break;
                         }
@@ -220,30 +220,34 @@ void    scr_ix( void )
         }
     }
     cc = getarg();
-    if( cc != omit ) {
-        parm_extra_err( cwcurr, tok_start - (cc == quotes) );
-//      return;                         // no return ignore excess data TBD
-    }
+/***************************************************************************/
+/*  The docu says .ix "I1" "I2" "I3" "extra" is invalid, but WGML4 accepts */
+/*  it without error and processes it like the :I3 pg="extra" attribute    */
+/***************************************************************************/
+//  if( cc != omit ) {
+//      parm_extra_err( cwcurr, tok_start - (cc == quotes) );
+//      return;
+//  }
 
     if( lvl > 0 ) {                     // we have at least one index string
 
-        ixhprev = &index_dict;
+        ixhwork = &index_dict;
         for( k = 0; k < lvl; ++k ) {
             do_nothing = false;
-            while( *ixhprev != NULL ) { // find alfabetic point to insert
-                comp_len = min( ixlen[k], (*ixhprev)->len ) + 1;
-                comp_res = strnicmp( ix[k], (*ixhprev)->text, comp_len );
+            while( *ixhwork != NULL ) { // find alfabetic point to insert
+                comp_len = min( ixlen[k], (*ixhwork)->ix_term_len ) + 1;
+                comp_res = strnicmp( ix[k], (*ixhwork)->ix_term, comp_len );
                 if( comp_res > 0 ) {    // new is later in alfabet
-                    ixhprev = &((*ixhprev)->next);
+                    ixhwork = &((*ixhwork)->next);
                     continue;
                 }
                 if( comp_res == 0 ) {   // equal
-                    if( ixlen[k] == (*ixhprev)->len ) {
+                    if( ixlen[k] == (*ixhwork)->ix_term_len ) {
                         do_nothing = true;
                         break;          // entry already there
                     }
-                    if( ixlen[k] > (*ixhprev)->len ) {
-                        ixhprev = &((*ixhprev)->next);
+                    if( ixlen[k] > (*ixhwork)->ix_term_len ) {
+                        ixhwork = &((*ixhwork)->next);
                         continue;       // new is longer
                     }
                 }
@@ -251,32 +255,53 @@ void    scr_ix( void )
             }
             if( !do_nothing ) {
                 // insert point reached
-                ixhwk = mem_alloc( sizeof( ix_h_blk ) + ixlen[k]  );
-                ixhwk->next  = *ixhprev;
+                ixhwk = mem_alloc( sizeof( ix_h_blk ) );
+                ixhwk->next  = *ixhwork;
+                ixhwk->ix_lvl= k + 1;
                 ixhwk->lower = NULL;
                 ixhwk->entry = NULL;
-                ixhwk->len   = ixlen[k];
-                strcpy_s( ixhwk->text, ixlen[k] + 1, ix[k] );
-                *ixhprev = ixhwk;
+                ixhwk->prt_term = NULL;
+                ixhwk->prt_term_len = 0;
+                ixhwk->ix_term_len   = ixlen[k];
+                ixhwk->ix_term = mem_alloc( ixlen[k] + 1 );
+                strcpy_s( ixhwk->ix_term, ixlen[k] + 1, ix[k] );
+                *ixhwork = ixhwk;
             } else {            // string already in dictionary at this level
-                ixhwk = *ixhprev;
+                ixhwk = *ixhwork;
             }
             ixhcurr[lvl] = ixhwk;
             if( k < lvl ) {
-                ixhprev = &(ixhwk->lower); // next lower level
+                ixhwork = &(ixhwk->lower); // next lower level
             }
         }
 
         // now add the pageno to index entry
         if( ixhwk->entry == NULL ) {    // first pageno for entry
-            fill_ix_e_blk( &(ixhwk->entry), ixhwk, pageno, NULL, 0 );
+
+/***************************************************************************/
+/*  The docu says .ix "I1" "I2" "I3" "extra" is invalid, but WGML4 accepts */
+/*  it without error and processes it like the :I3 pg="extra" attribute    */
+/*  try to process the extra parm                                          */
+/***************************************************************************/
+            if( cc != omit ) {
+                *(tok_start + arg_flen) = 0;
+                fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgstring, tok_start, arg_flen );
+            } else {
+                fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgpageno, NULL, 0 );
+            }
         } else {
             ixewk = ixhwk->entry;
-            while( ixewk->next != NULL ) {  // find last used block
+            while( ixewk->next != NULL ) {  // find last entry
                 ixewk = ixewk->next;
             }
-            if( (ixewk->entry_typ == pgstring) || (ixewk->page_no != wkpage) ) {
-                fill_ix_e_blk( &(ixewk->next), ixhwk, pageno, NULL, 0 );
+            if( (ixewk->entry_typ >= pgstring) || (ixewk->page_no != wkpage) ) {
+                // if last entry doesn't point to current page create entry
+                if( cc != omit ) {
+                    *(tok_start + arg_flen) = 0;
+                    fill_ix_e_blk( &(ixewk->next), ixhwk, pgstring, tok_start, arg_flen );
+                } else {
+                    fill_ix_e_blk( &(ixewk->next), ixhwk, pgpageno, NULL, 0 );
+                }
             }
         }
     }

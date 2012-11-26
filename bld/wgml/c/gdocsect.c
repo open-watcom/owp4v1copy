@@ -26,6 +26,7 @@
 *
 * Description:  WGML tags and routines for document section changes
 *                    :GDOC, :FRONTM, :BODY, ...
+*               and special for :INDEX tag
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -194,7 +195,7 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
 
     if( (h_string == NULL) || (*h_string == '\0') ||
         (*h_string == ' ') || (*h_string == '\t')  ) {
-    
+
         /********************************************************/
         /*  header contained "yes" but the string was empty:    */
         /*  the OW docs do this with APPENDIX for PS/PDF output */
@@ -410,7 +411,7 @@ void    start_doc_sect( void )
 
     if( first_section ) {               // nothing precedes the first section
         if( page_e == ej_even ) {
-            do_page_out();             // apage of first page is odd
+            do_page_out();              // apage of first page is odd
             page = 0;                   // restart page for first text page
         }
         new_section( ds );
@@ -428,7 +429,7 @@ void    start_doc_sect( void )
             break;
         case ej_odd :
             if( !(apage & 1) ) {        // first page would be even
-                do_page_out();         // emit last page in old section
+                do_page_out();          // emit last page in old section
                 reset_t_page();
             }
             finish_page_section( ds, true );// emit last page in old section
@@ -439,7 +440,7 @@ void    start_doc_sect( void )
             break;
         case ej_even :
             if( (apage & 1) ) {         // first page will be odd
-                do_page_out();         // emit last page in old section
+                do_page_out();          // emit last page in old section
                 reset_t_page();
             }
             finish_page_section( ds, true );// emit last page in old section
@@ -596,19 +597,38 @@ extern  void    gml_frontm( const gmltag * entry )
     ProcFlags.frontm_seen = true;
 }
 
+
+/***************************************************************************/
+/*  :INDEX tag is special, not really a section                            */
+/***************************************************************************/
+
 extern  void    gml_index( const gmltag * entry )
 {
     if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
         xx_line_err( err_eof_expected, tok_start );
         return;
     }
+
+    if( ProcFlags.doc_sect_nxt == doc_sect_index ) {// duplicate :INDEX tag
+
+        scan_start = scan_stop + 1;     // ignore this call
+        return;                         // wgml4 OS/2 crashes with page fault
+    }
+
     if( !((ProcFlags.doc_sect == doc_sect_backm) ||
           (ProcFlags.doc_sect_nxt == doc_sect_backm)) ) {
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
     }
+    if( !GlobalFlags.index ) {          // index option not active
+        g_err( wng_index_opt );         // give hint to activate index
+        scan_start = scan_stop + 1;
+        return;
+    }
     gml_doc_xxx( doc_sect_index );
-    spacing = layout_work.index.spacing;
+
+    gen_index();                        // output the formatted index
+
 }
 
 extern  void    gml_preface( const gmltag * entry )

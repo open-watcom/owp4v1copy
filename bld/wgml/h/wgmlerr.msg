@@ -361,11 +361,14 @@ pick( WNG_ID_XXX,               "For id '%s'",
 pick( INF_ID_LEN,               "Identifier name should have no more than seven characters",
                                 "Identifier name should have no more than seven characters" )
 
-pick( INF_ID_DUPLICATE,         "Duplicate heading id",
-                                "Duplicate heading id" )
+pick( INF_ID_DUPLICATE,         "ID already defined",
+                                "ID already defined" )
 
-pick( INF_ID_UNKNOWN,           "Heading id not defined",
-                                "Heading id not defined" )
+pick( INF_ID_UNKNOWN,           "ID not defined",
+                                "ID not defined" )
+
+pick( ERR_REFID_NOT_ALLOWED,    "REFID not allowed",
+                                "REFID not allowed" )
 
 pick( ERR_ATT_VAL,              "Value '%s' for the '%s' attribute is not defined",
                                 "Value '%s' for the '%s' attribute is not defined" )
@@ -378,6 +381,9 @@ pick( ERR_ATT_TEXT_REQ,         "Tag text must be specified with the '%s' tag",
 
 pick( WNG_ATT_NAME,             "'%s' is not a valid attribute name",
                                 "'%s' is not a valid attribute name" )
+
+pick( WNG_INDEX_OPT,            "Index option must be specified to process index tags",
+                                "Index option must be specified to process index tags")
 
 pick( ERR_ATT_REQ,              "For the tag '%s', the required attribute(s) %s have not been specified",
                                 "For the tag '%s', the required attribute(s) %s have not been specified" )
@@ -469,6 +475,12 @@ pick( ERR_TAG_BEFORE_GDOC,      "%s tag must appear after the GDOC tag",
 pick( ERR_TAG_STARTING,         "\tStarting %s tag on",
                                 "\tStarting %s tag on" )
 
+pick( ERR_PARENT_UNDEF,         "Parent index entry not defined",
+                                "Parent index entry not defined" )
+
+pick( ERR_REF_NOT_ALLOWED,      "Referencing not allowed for %s tag",
+                                "Referencing not allowed for %s tag" )
+
 pick( ERR_CHAR_ONLY,            "Only a single character is allowed",
                                 "Only a single character is allowed")
 
@@ -502,7 +514,7 @@ pick( ERR_INV_ATT_VAL,          "Invalid attribute value",
 
 pick( ERR_INV_CW_OP_VAL,        "Invalid control word operand value",
                                 "Invalid control word operand value" )
-                                
+
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
 
@@ -667,4 +679,4 @@ pick( ERR_SPC_NOT_VALID,        "Space value is not valid",
                                 "Space value is not valid")
 
 
-                                
+

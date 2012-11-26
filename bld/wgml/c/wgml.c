@@ -29,6 +29,10 @@
 *   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
 *   as found on http://www.cbttape.org/c249down.htm   files 280 - 288
 *
+*   Several comments in the source files are taken from the existing
+*   documentation files for older versions:
+*       scripttso.txt for SCRIPT control words and system variables
+*       wgmlref.pdf   for WGML tags
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
@@ -42,7 +46,7 @@
 
 
 /***************************************************************************/
-/*  Usage info                                                             */
+/*  Usage info and end program                                             */
 /***************************************************************************/
 
 static void usage( void )
@@ -563,7 +567,7 @@ static  void    proc_input( char * filename )
             /*  suppress some processing for line to be skipped            */
             /*  and not .if .th .el .do control line                       */
             /*  special handling for define macro inside false branch      */
-            /*  (ignore all up to .dm end)                                */
+            /*  (ignore all up to .dm end)                                 */
             /***************************************************************/
 
             if( !ProcFlags.literal ) {
@@ -858,6 +862,9 @@ int main( int argc, char * argv[] )
             passcount = pass;
             if( !GlobalFlags.lastpass && (err_count > 0) ) {
                 g_info_lm( inf_error_stop, passes - pass > 1 ? "es" : "" );
+
+                ixdump( index_dict );   // test show unformatted index TBD
+
                 break;                  // errors found stop now
             }
         }
@@ -880,6 +887,7 @@ int main( int argc, char * argv[] )
         print_ref_dict( ref_dict, "HDREF" );
         print_ref_dict( fig_dict, "FIGREF" );
         print_ref_dict( fn_dict, "FNREF" );
+        print_ref_dict( iref_dict, "INDEX" );
 
         if( tag_dict != NULL ) {
             print_tag_dict( tag_dict );

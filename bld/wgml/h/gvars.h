@@ -120,15 +120,17 @@ global  int32_t         fm;             // footing margin          &$fm
 global  int32_t         lm;             // left margin             &$pagelm
 global  int32_t         rm;             // right margin            &$pagerm
 
+global  ix_h_blk    *   ixhtag[4];// last higher level :IH1 :IH2 tags in index
 global  ix_h_blk    *   index_dict;     // index structure dictionary
+global  ref_entry   *   iref_dict;  // reference id dictionary :Ix :IHx :IREF
+global  ref_entry   *   ref_dict;       // reference dictionary :Hx tags
+global  ref_entry   *   fig_dict;       // reference dictionary :FIG tags
+global  ref_entry   *   fn_dict;        // reference dictionary :FN tags
 
 global  symvar      *   global_dict;    // global symbol dictionary
 global  symvar      *   sys_dict;       // global system symbol dictionary
 global  mac_entry   *   macro_dict;     // macro dictionary
 global  gtentry     *   tag_dict;       // user tag dictionary
-global  ref_entry   *   ref_dict;       // reference id dictionary :Hx tags
-global  ref_entry   *   fig_dict;       // reference id dictionary :FIG tags
-global  ref_entry   *   fn_dict;        // reference id dictionary :FN tags
 
 global  char            research_file_name[48]; // filename for research
 global  ulong           research_from;  // line no start for research output

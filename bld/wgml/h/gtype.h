@@ -615,15 +615,19 @@ typedef enum {
 /*  and :Ix :IHx :IREF tags                                                */
 /***************************************************************************/
 
-typedef enum ereftyp {
-    pgstart = 1,                        // these are
-    pgend,                              // .. from
-    pgmajor,                            // .. :I1 - :I3
+typedef enum ereftyp {                  // definition order is important
+    pgnone,                             // nothing
+    pgpageno,                           // this is the only value for .ix
+
+    pgmajor,                            // these are
+    pgstart,                            // .. from
+    pgend,                              // .. :I1 - :I3
+                                        // the following values use page_text
     pgstring,                           // .. pg= attribute
-    pageno                              // this is the only value for .ix
+    pgsee                               // .. see/seeid
 } ereftyp;
 
-typedef struct ix_e_blk {               // entry for pagenos / text
+typedef struct ix_e_blk {               // index entry for pagenos / text
     struct ix_e_blk * next;             // next entry
     struct ix_h_blk * corr;             // corresponding index header entry
     union {
@@ -633,12 +637,15 @@ typedef struct ix_e_blk {               // entry for pagenos / text
     ereftyp     entry_typ;
 } ix_e_blk;
 
-typedef struct ix_h_blk {               // header with index text
-    struct ix_h_blk * next;             // next ix header blk same level
-    struct ix_h_blk * lower;            // next ix header blk next lower level
-           ix_e_blk * entry;            // first ix entry blk
-    uint32_t        len;                // header text length
-    char            text[1];            // variable length textfield
+typedef struct ix_h_blk {               // index header with index term text
+    struct ix_h_blk * next;             // next ix header block same level
+    struct ix_h_blk * lower;           // first ix hdr block next lower level
+           ix_e_blk * entry;            // first ix entry block
+    uint32_t        ix_lvl;             // index level 1 - 3
+    size_t            ix_term_len;      // index term length
+    char            * ix_term;          // index term
+    size_t            prt_term_len;     // display text length
+    char            * prt_term;      // display text (NULL -> use index term)
 } ix_h_blk;
 
 
@@ -680,7 +687,7 @@ typedef enum ju_enum {                  // for .ju(stify)
 
 /***************************************************************************/
 /*  enums for layout tags with attributes  (and ebanregion)                */
-/*  the order is as shown by :convert output                               */
+/*  the order is as shown by WGML 4.0 :convert output                      */
 /***************************************************************************/
 
 typedef enum lay_sub {
@@ -888,7 +895,7 @@ typedef enum {
 
 typedef struct {
             uint32_t        col;
-            bx_h_ind        h_ind;      
+            bx_h_ind        h_ind;
             bx_v_ind        v_ind;
 } box_col;
 
@@ -1077,17 +1084,35 @@ typedef struct {
 
 /***************************************************************************/
 /*  reference entry for reference dictionaries                             */
-/*   used for :Hx, :FIG, :FN                                               */
+/*   used for :Hx, :FIG, :FN :Ix :IHx :IREF                                */
 /***************************************************************************/
+
+typedef enum {
+    rf_hx           =    1,             // :Hx entry
+    rf_fx           =    2,             // :FN :FIG entry
+    rf_textcap      =    4,             // with text or figcap
+
+    rf_ix           =   16,             // :Ix :IHx created entry
+    rf_dummy        = 0x11111111,       // to get a int32 enum
+} refflags;
+
 typedef struct ref_entry {
     struct ref_entry    *   next;
     char                    id[ID_LEN+1];   // reference id
-                                        // filled with '\0' up to ID_LEN
-    uint32_t                pageno;     // output page
 
     uint32_t                lineno; // input lineno for checking duplicate ID
+    refflags                flags;
+    union {
+        struct {
+            uint32_t        pageno;     // output page
     uint32_t                number;     // figure or footnote number
     char                *   text_cap;   // text line or figcap text
+        };
+        struct {
+            ix_h_blk    *   hblk;
+            ix_e_blk    *   eblk;
+        };
+    };
 } ref_entry;
 
 #endif                                  // GTYPE_H_INCLUDED
