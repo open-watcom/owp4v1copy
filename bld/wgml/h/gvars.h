@@ -170,6 +170,7 @@ global struct ProcFlags {
     unsigned        fb_position_done : 1;// 1. pos on new page done
     unsigned        page_started    : 1;// we have something for the curr page
     unsigned        line_started    : 1;// we have something for current line
+    unsigned        box_started     : 1;// BX box started on current page
     unsigned        just_override   : 1;// current line is to be justified
 
     unsigned        address_active  : 1;// within :ADDRESS tag ) only one of

@@ -1070,7 +1070,7 @@ void insert_col_main( doc_element * a_element )
 
 
 /***************************************************************************/
-/*  insert a doc_element into t_page._page_width                           */
+/*  insert a doc_element into t_page.page_width                            */
 /***************************************************************************/
 
 void insert_page_width( doc_element * a_element )
@@ -1176,6 +1176,8 @@ void reset_t_page( void )
     t_page.last_col_main = NULL;
     t_page.last_col_bot = NULL;
     t_page.last_col_fn = NULL;
+    ProcFlags.page_started = false;
+    ProcFlags.box_started = false;
 }
 
 
