@@ -267,6 +267,7 @@
 "   c     -> preserve comments",
 "   l     -> insert #line directives",
 "   w=<n> -> wrap output at column n",
+"-zis turn off #include history scan",
 "[Linker options]",
 "-bd  build Dynamic link library",
 "-bm  build Multi-thread application",

@@ -325,6 +325,11 @@ wrap output lines at <num> columns. Zero means no wrap.
 undefine macro name
 :optref refid='SWu'.
 .do end
+.* 2013-01-06 SHL
+.note zis
+turn off #include history scan feature
+:optref refid='SWzis'.
+.do end
 .endnote
 .*
 .section Diagnostics
@@ -2393,6 +2398,16 @@ are undefined.
 .exam begin 1
 &prompt.:SF font=1.compiler_name:eSF. report &sw.uM_I386
 .exam end
+.do end
+.*
+.* 2013-01-06 SHL
+.if &e'&$SWzis eq 1 .do begin
+:OPT refid='SWzis' name='zis'
+.ix 'options' 'zis'
+The "zis" option turns off the #include history scan feature.
+.np
+Include file processing is described in the
+section entitled :HDREF refid='wccinc'..
 .do end
 .*
 :eOPTLIST.

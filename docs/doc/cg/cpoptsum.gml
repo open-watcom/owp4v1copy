@@ -879,6 +879,12 @@ output function declarations to .def (without typedef names)
 allow GS register to be used or not used
 :optref refid='SWzgfp'.
 .*
+.* 2013-01-06 SHL
+.note zis&optdag.
+:CMT. .ix 'options' 'zis'
+turn off #include history scan feature
+:optref refid='SWzis'.
+.*
 .note zk0
 :CMT. .ix 'options' 'zk0'
 double-byte char support for Kanji

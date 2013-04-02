@@ -758,17 +758,21 @@ bool OpenSrcFile( const char *filename, bool is_lib )
                 return( TRUE );
             }
         }
-        if( drive[ 0 ] == '\0' && !IS_PATH_SEP( dir[ 0 ] ) ) {
-            for( curr = SrcFile; curr!= NULL; curr = curr->prev_file ) {
-                // physical file name must be used, not logical
-                _splitpath2( curr->src_flist->name, buff, &drive, &dir, NULL, NULL );
-                _makepath( try, drive, dir, filename, NULL );
-                if( TryOpen( "", "", try, "" ) ) {
-                    return( TRUE );
+        // 2013-01-06 SHL
+        if( !CompFlags.ignore_inc_hist ) {
+            if( drive[ 0 ] == '\0' && !IS_PATH_SEP( dir[ 0 ] ) ) {
+                for( curr = SrcFile; curr!= NULL; curr = curr->prev_file ) {
+                    // physical file name must be used, not logical
+                    _splitpath2( curr->src_flist->name, buff, &drive, &dir, NULL, NULL );
+                    _makepath( try, drive, dir, filename, NULL );
+                    if( TryOpen( "", "", try, "" ) ) {
+                        return( TRUE );
+                    }
                 }
             }
         }
     }
+
     if( IncPathList != NULL ) {
         p = IncPathList;
         do {
@@ -802,7 +806,8 @@ bool OpenSrcFile( const char *filename, bool is_lib )
             }
         } while( *p != '\0' );
     }
-    if( !is_lib ) {
+    // 2013-01-17 SHL
+    if( !is_lib && !CompFlags.ignore_inc_hist) {
         if( TryOpen( H_PATH, PATH_SEP, filename, "" ) ) {
             return( TRUE );
         }

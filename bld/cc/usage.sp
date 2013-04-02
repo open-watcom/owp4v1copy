@@ -265,6 +265,7 @@ Options:
 -zkl          double-byte character support: local installed language
 :endsegment
 -zku=<num>    load UNICODE translate table for specified code page
+-zis          turn off #include history scan feature
 -zl           remove default library information
 -zld          remove file dependency information
 -zlf          add default library information to object files

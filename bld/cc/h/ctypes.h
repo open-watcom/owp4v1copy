@@ -686,6 +686,7 @@ struct comp_flags {
     unsigned ignore_fnf             : 1;    /* ignore file not found errors */
     unsigned disable_ialias         : 1;    /* supress inclusion of _ialias.h */
     unsigned cpp_ignore_env         : 1;    /* ignore *INCLUDE env var(s) */
+    unsigned ignore_inc_hist        : 1;    /* suppress #include history search */
 };
 
 struct global_comp_flags {  // things that live across compiles

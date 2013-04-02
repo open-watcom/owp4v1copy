@@ -653,13 +653,14 @@ assumed.
 If the file specification is enclosed in quotation marks, the current
 directory is searched.
 .note
-Next, if the file specification is enclosed in quotation marks, the
-directory of the file containing the
+Next, if the file specification is enclosed in quotation marks
+and the "zis" option was not specified,
+the directory of the file containing the
 .id #include
 directive is searched.
 If the current file is also an
 .id #include
-file, the directory of the parent file is searched next.
+file, the directory of the parent #include file is searched next.
 This search continues recursively through all the nested
 .id #include
 files until the original source file's directory is searched.
@@ -710,8 +711,9 @@ environment variable is searched (in the order that they were
 specified).
 .note
 .ix '&hdrdirup directory'
-Finally, if the file specification is enclosed in quotation marks, an
-adjacent "H" directory (i.e.,
+Finally, if the file specification is enclosed in quotation marks
+and the "zis" option was not specified,
+an adjacent "H" directory (i.e.,
 .fi ~..&pc.h
 .ct ) is searched if it exists.
 .endnote

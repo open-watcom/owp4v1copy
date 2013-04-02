@@ -788,6 +788,9 @@ static void MacroDefs( void )
     if( !(Toggles & TOGGLE_CHECK_STACK) ) {
         Define_Macro( "__SW_S" );
     }
+    if( CompFlags.ignore_inc_hist) {            /* 2013-01-08 SHL */
+        Define_Macro( "__SW_ZIS" );
+    }
 }
 
 static void AddIncList( char *str )
@@ -1283,6 +1286,8 @@ static void Set_ZG( void )
 }
 
 static void Set_ZI( void )          { CompFlags.extra_stats_wanted = 1; }
+// 2013-01-06 SHL
+static void Set_ZIS( void )         { CompFlags.ignore_inc_hist = 1; }
 
 static void Set_ZK( void )          { character_encoding = ENC_ZK; }
 static void Set_ZK0( void )         { character_encoding = ENC_ZK0; }
@@ -1729,6 +1734,7 @@ static struct option const CFE_Options[] = {
 #endif
     { "zg",     0,              Set_ZG },
     { "zi",     0,              Set_ZI },
+    { "zis",    0,              Set_ZIS },
     { "zk0u",   0,              Set_ZK0U },
     { "zk0",    0,              Set_ZK0 },
     { "zk1",    0,              Set_ZK1 },
