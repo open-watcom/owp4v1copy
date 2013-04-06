@@ -325,7 +325,7 @@ wrap output lines at <num> columns. Zero means no wrap.
 undefine macro name
 :optref refid='SWu'.
 .do end
-.* 2013-01-06 SHL
+.if &e'&$SWzis eq 1 .do begin
 .note zis
 turn off #include history scan feature
 :optref refid='SWzis'.
@@ -2400,7 +2400,6 @@ are undefined.
 .exam end
 .do end
 .*
-.* 2013-01-06 SHL
 .if &e'&$SWzis eq 1 .do begin
 :OPT refid='SWzis' name='zis'
 .ix 'options' 'zis'
