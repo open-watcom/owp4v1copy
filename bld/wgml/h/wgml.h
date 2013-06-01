@@ -125,6 +125,7 @@ extern  void            insert_page_width( doc_element * a_element );
 extern  void            last_page_out( void );
 extern  void            reset_t_page( void );
 extern  void            set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, uint8_t font );
+extern  bool            split_element( doc_element * a_element, uint32_t req_depth );
 extern  void            text_page_out( void );
 
 

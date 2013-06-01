@@ -3917,7 +3917,6 @@ void fb_init( init_block * in_block )
 void fb_line_block( line_block * in_line_block, uint32_t h_start, uint32_t v_start,
                      uint32_t h_len, uint32_t v_len, bool twice )
 {
-
     /* Set up for fb_absoluteaddress(). */
 
     desired_state.x_address = h_start;
@@ -3929,20 +3928,23 @@ void fb_line_block( line_block * in_line_block, uint32_t h_start, uint32_t v_sta
     if( twice ) {
         fb_absoluteaddress();
     }
+
     /* Set up for in_function; current_state has been updated by
      * fb_absoluteaddress().
      */
 
-    x_size = h_len;
-    y_size = v_len;
-    thickness = in_line_block->thickness;
-    df_interpret_driver_functions( in_line_block->text );
+    if( (h_len != 0) || (v_len != 0) ) { // do not draw if it has no length at all
+        x_size = h_len;
+        y_size = v_len;
+        thickness = in_line_block->thickness;
+        df_interpret_driver_functions( in_line_block->text );
 
-    /* Clear the values not needed outside this block. */
+        /* Clear the values not needed outside this block. */
 
-    x_size = 0;
-    y_size = 0;
-    thickness = 0;
+        x_size = 0;
+        y_size = 0;
+        thickness = 0;
+    }
 
     return;
 }

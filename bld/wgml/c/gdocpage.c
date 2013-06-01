@@ -359,84 +359,6 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
 
 
 /***************************************************************************/
-/*  split one doc_element into two                                         */
-/*  the first doc_element returned will fit in the depth specified         */
-/*  the return value will be false if the doc_element could not be split   */
-/***************************************************************************/
-
-static bool split_element( doc_element * a_element, uint32_t req_depth )
-{
-    bool            splittable;
-    doc_element *   split_el;
-    text_line   *   cur_line;
-    text_line   *   last;
-    uint32_t        count;
-    uint32_t        cur_depth;
-
-    count = 0;
-    cur_depth = 0;
-    last = NULL;
-    splittable = true;
-
-    switch( a_element->type ) {
-    // add code for other element types; FIGs are documented to split only
-    // when they will not fit by themselves on a page
-    case el_binc :  // given how BINCLUDE/GRAPHIC work, this seems reasonable 
-    case el_dbox :  // splitting boxes/lines is probably best done elsewhere
-    case el_graph :
-    case el_hline :
-    case el_vline :
-        splittable = false;     
-        break;
-    case el_text :
-        for( cur_line = a_element->element.text.first; cur_line != NULL;
-                                cur_line = cur_line->next ) {
-            if( (cur_depth + cur_line->line_height) > req_depth ) {
-                break;
-            }
-            count++;
-            cur_depth += cur_line->line_height;
-            last = cur_line;
-        }
-
-        if( cur_line != NULL ) {    // at least one more line
-            if( count < g_cur_threshold ) {
-                splittable = false;     // widow criteria failed
-                a_element->blank_lines = 0;
-                break;
-            }
-        }
-
-        if( last == NULL ) {        // all lines fit; unlikely, but seen
-            break;
-        }
-
-        /*  if we get here, a_element is splittable, cur_line is    */
-        /*  the first line of the new element, and last is the last */
-        /*  line that can be left in the original element           */
-
-        split_el = alloc_doc_el( el_text ); // most defaults are correct
-
-        split_el->depth = a_element->depth - cur_depth;
-        split_el->element.text.first = cur_line;
-        last->next = NULL;
-        a_element->depth = cur_depth;
-        if( a_element->next == NULL ) {
-            a_element->next = split_el;
-        } else {
-            split_el->next = a_element->next;
-            a_element->next = split_el;
-        }
-        
-        break;
-    default :
-        internal_err( __FILE__, __LINE__ );
-    }
-    return( splittable );
-}
-
-
-/***************************************************************************/
 /*  update t_page from the elements in n_page                              */
 /*  n_page.col_main may or may not be empty on return                      */
 /***************************************************************************/
@@ -989,7 +911,7 @@ void insert_col_main( doc_element * a_element )
             cur_skip = a_element->blank_lines + a_element->subs_skip;
         }
 
-        if( (cur_skip + t_page.cur_depth) >= t_page.max_depth ) {
+        if( (cur_skip + t_page.cur_depth) > t_page.max_depth ) {
             page_full = true;
         }
     }
@@ -1177,7 +1099,6 @@ void reset_t_page( void )
     t_page.last_col_bot = NULL;
     t_page.last_col_fn = NULL;
     ProcFlags.page_started = false;
-    ProcFlags.box_started = false;
 }
 
 
@@ -1239,6 +1160,84 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     ProcFlags.skips_valid = true;
 
     return;
+}
+
+
+/***************************************************************************/
+/*  split one doc_element into two                                         */
+/*  the first doc_element returned will fit in the depth specified         */
+/*  the return value will be false if the doc_element could not be split   */
+/***************************************************************************/
+
+bool split_element( doc_element * a_element, uint32_t req_depth )
+{
+    bool            splittable;
+    doc_element *   split_el;
+    text_line   *   cur_line;
+    text_line   *   last;
+    uint32_t        count;
+    uint32_t        cur_depth;
+
+    count = 0;
+    cur_depth = 0;
+    last = NULL;
+    splittable = true;
+
+    switch( a_element->type ) {
+    // add code for other element types; FIGs are documented to split only
+    // when they will not fit by themselves on a page
+    case el_binc :  // given how BINCLUDE/GRAPHIC work, this seems reasonable 
+    case el_dbox :  // splitting boxes/lines is probably best done elsewhere
+    case el_graph :
+    case el_hline :
+    case el_vline :
+        splittable = false;     
+        break;
+    case el_text :
+        for( cur_line = a_element->element.text.first; cur_line != NULL;
+                                cur_line = cur_line->next ) {
+            if( (cur_depth + cur_line->line_height) > req_depth ) {
+                break;
+            }
+            count++;
+            cur_depth += cur_line->line_height;
+            last = cur_line;
+        }
+
+        if( cur_line != NULL ) {    // at least one more line
+            if( count < g_cur_threshold ) {
+                splittable = false;     // widow criteria failed
+                a_element->blank_lines = 0;
+                break;
+            }
+        }
+
+        if( last == NULL ) {        // all lines fit; unlikely, but seen
+            break;
+        }
+
+        /*  if we get here, a_element is splittable, cur_line is    */
+        /*  the first line of the new element, and last is the last */
+        /*  line that can be left in the original element           */
+
+        split_el = alloc_doc_el( el_text ); // most defaults are correct
+
+        split_el->depth = a_element->depth - cur_depth;
+        split_el->element.text.first = cur_line;
+        last->next = NULL;
+        a_element->depth = cur_depth;
+        if( a_element->next == NULL ) {
+            a_element->next = split_el;
+        } else {
+            split_el->next = a_element->next;
+            a_element->next = split_el;
+        }
+        
+        break;
+    default :
+        internal_err( __FILE__, __LINE__ );
+    }
+    return( splittable );
 }
 
 
