@@ -54,8 +54,17 @@ Lexer::Token Word::parse( Lexer* lexer )
                     wchar_t entity( document->entity( lexer->text() ) );
                     if ( std::iswpunct( entity ) )
                         break;
-                    else
+                    else {
+                        // 2013-05-05 SHL avoid code gen error - deletes txt not temp wstring
+#                       if 0
+                        // 2013-05-05 SHL deletes txt not wstring temporary
                         txt += entity;
+#                       else
+                        std::wstring s;
+                        s = entity;
+                        txt += s;
+#                       endif
+                    }
                 }
                 catch( Class2Error& e ) {
                     document->printError( e.code );
