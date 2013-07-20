@@ -537,7 +537,7 @@ static void update_t_page( void )
                 t_page.last_col_main->next = NULL;
                 t_page.cur_depth += cur_el->depth;
             } else {
-                if( t_page.main->main == NULL ) { // adapt when FIG/FN done
+                if( (t_page.main == NULL) || (t_page.main->main == NULL) ) { // adapt when FIG/FN done
                     xx_err( err_text_line_too_deep );
                     g_suicide();    // no line will fit on any page
                 }

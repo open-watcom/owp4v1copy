@@ -180,7 +180,14 @@ typedef enum {
     bx_can,
 } bx_op;
 
+typedef enum {
+    st_none,        // the normal case
+    st_ext,         // stub height is given in box_height, stubs only
+    st_int,         // stub height not given in box_height, stubs intermingled
+} stub_type;
+
 static  uint32_t    def_height      = 0;        // default font line height
+static  uint32_t    hl_depth        = 0;        // height from VLINE drawn to lower boundary of def_height
 static  uint32_t    max_depth       = 0;        // space left on page
 
 /***************************************************************************/
@@ -191,7 +198,7 @@ static void box_blank_lines( uint32_t lines )
 {
     doc_element *   blank_el;
     int             i;
-    int             i_b;
+    int             i_b;        // box_line index
     text_chars  *   cur_chars;
     text_line   *   cur_blank;
 
@@ -217,7 +224,7 @@ static void box_blank_lines( uint32_t lines )
                     || (box_line.cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
                 if( cur_blank->first == NULL ) {
                     cur_chars = alloc_text_chars( &bin_device->box.vertical_line, 1,
-                                              g_curr_font_num );
+                                                  g_curr_font_num );
                     cur_blank->first = cur_chars;
                 } else {
                     cur_chars->next = alloc_text_chars(
@@ -228,7 +235,7 @@ static void box_blank_lines( uint32_t lines )
                 cur_chars->x_address = box_line.cols[i_b].col + g_page_left -
                                                                        box_col_width;
                 cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count,
-                                                                g_curr_font_num );
+                                                   g_curr_font_num );
             }
             cur_blank->last = cur_chars;
         }
@@ -242,23 +249,22 @@ static void box_blank_lines( uint32_t lines )
 /*  output vline elements for a given depth and pre-skip                   */
 /***************************************************************************/
 
-static void box_draw_vlines( uint32_t box_depth, uint32_t el_depth,
-                              uint32_t subs_skip, uint32_t top_skip,
-                              bx_op cur_op, bool eop )
+static void box_draw_vlines( uint32_t box_depth, uint32_t subs_skip,
+                              uint32_t top_skip, bool once, stub_type stub )
 {
     bool            first_done;
-    bx_v_ind        cur_v_ind;
     doc_element *   v_line_el;
     int             i_b;                    // box_line index
 
     first_done = false;
-    if( box_depth > 0 ) {                   // preserve 0 value: only the AA blocks will be output in devfuncs.c
+    if( (stub != st_ext) && (box_depth > 0) ) { // preserve for 0 value & for st_ext stubs
         box_depth += 10;                    // apparent constant used by wgml 4.0
     }
     for( i_b = 0; i_b < box_line.current; i_b++ ) { // iterate over all output columns
-        cur_v_ind = box_line.cols[i_b].v_ind;
-        if( (cur_v_ind == bx_v_both) || (cur_v_ind == bx_v_up) ||
-            (((cur_op == bx_off) || eop) && (cur_v_ind == bx_v_down)) ) {  // VLINE needed
+        if( ((stub != st_ext) && (box_line.cols[i_b].v_ind == bx_v_both))
+             || (box_line.cols[i_b].v_ind == bx_v_up)
+             || ((stub == st_int) && (box_line.cols[i_b].v_ind == bx_v_down))
+                ) {  // ascender needed
 
             /* Create the doc_element to hold the VLINE */
 
@@ -267,16 +273,21 @@ static void box_draw_vlines( uint32_t box_depth, uint32_t el_depth,
             v_line_el->depth = 0;   // only the last VLINE can (sometimes) have a depth > 0
             v_line_el->element.vline.h_start = box_line.cols[i_b].col
                                                + g_page_left - h_vl_offset;
-            v_line_el->element.vline.v_len = box_depth;
+            if( (stub == st_int) && (box_line.cols[i_b].v_ind == bx_v_down) ) {
+                v_line_el->element.vline.v_len = hl_depth;
+            } else {
+                v_line_el->element.vline.v_len = box_depth;
+            }
             if( !first_done ) {                                 // first VLINE
                 v_line_el->subs_skip = subs_skip;
                 v_line_el->top_skip = top_skip;
-                if( (cur_op == bx_off) && !eop ) {              // HLINE was done first or box is split
+                if( once ) {                // HLINE was done first or box is split
                     v_line_el->element.vline.twice = false;     // most first VLINEs do AA once
                 }
-                if( box_depth > 0 ) {   // only reset for a line that will be drawn
-                    first_done = true;
-                }
+                first_done = true;
+            } else if( (box_depth == 0) && !((stub == st_int) &&
+                    (box_line.cols[i_b].v_ind == bx_v_down) ) ) {
+                v_line_el->element.vline.twice = false;         // stub VLINEs do AA once
             }
             insert_col_main( v_line_el );   // insert the VLINE
         }
@@ -584,16 +595,10 @@ static void do_line_device( bx_op cur_op )
 //    bx_h_ind        cur_h_ind;                // for use producing multiple HLINEs TBD
     doc_element *   cur_el;
     doc_element *   h_line_el;
-//    doc_element *   sav_el;                 // used to submit elements safely
-//    int             i_b;                    // box_line index (save for use with cur_h_ind!!!)
+//    int             i_b;                    // box_line index
     uint32_t        cur_skip       = 0;     // current element skip
-//    uint32_t        cur_depth;              // current depth of elements
     uint32_t        h_offset;
-    uint32_t        hl_depth;               // space reserved for the box line which is below the line drawn
-//    uint32_t        sav_depth;              // used to split across pages
-//    uint32_t        skippage;
-    uint32_t        v_adjust1       = 0;    // first twiddle factor for box_depth
-    uint32_t        v_adjust2       = 0;    // second twiddle factor for box_depth
+    uint32_t        v_adjust       = 0;     // adjust box_depth for top-of-page
     uint32_t        v_offset;               // space reserved for the box line which is above the line drawn
 
     static  uint32_t    box_depth   = 0;        // depth of box (used with VLINES)
@@ -625,7 +630,6 @@ static void do_line_device( bx_op cur_op )
 
     v_offset = def_height / 2;
     if( (def_height % 2) > 0 ) {
-        v_adjust1 = 1;
         v_offset++;
     }
     hl_depth = def_height - v_offset;
@@ -644,32 +648,7 @@ static void do_line_device( bx_op cur_op )
     h_line_el->element.hline.h_len = box_line.cols[box_line.current - 1].col -
                                      box_line.cols[0].col + 1;
                                    
-    /********************************************************/
-    /* determine if VLINEs will be drawn                    */
-    /* the criteria used here are:                          */
-    /*   the VLINE block must be defined for this device    */
-    /*   box_line must have at least one column             */
-    /*   at least one of these conditions must be true:     */
-    /*     the end of the box has been reached (BX OFF)     */
-    /*     or                                               */
-    /*       the BX had a column list (cur_line has at      */
-    /*       least one column) and there was a prior BX     */
-    /*       prev_line has at least one column)             */
-    /*     or                                               */
-    /*       the total element depth will not fit on        */
-    /*       this page                                      */
-    /* these criteria may be expanded in the future         */
-    /* VLINES are also drawn under these conditions:        */
-    /*       h_line_el will be the last element that can    */
-    /*       fit on this page                               */
-    /*  but that is treated as a separate issue             */
-    /********************************************************/
-
-    draw_v_line = (bin_driver->vline.text != NULL) && (box_line.current > 0)
-                   && ((cur_op == bx_off) ||
-                   ((cur_line.current > 0) && (prev_line.current > 0)) );
-
-    /* process each element in turn */
+    /* process each element in t_doc_el_group in turn */
 
     ProcFlags.group_elements = false;   // stop accumulating doc_elements
     cur_el = t_doc_el_group.first;
@@ -678,19 +657,19 @@ static void do_line_device( bx_op cur_op )
             box_depth = 0;              // top of page
             cur_skip = cur_el->top_skip;
             t_page_empty = false;
-            v_adjust2 = v_offset;       // will be subtracted from box_depth
+            v_adjust = v_offset;        // will be subtracted from box_depth
         } else {
             cur_skip = cur_el->subs_skip;
-            v_adjust2 = 0;              // box_depth needs to be adjusted at most once
+            v_adjust = 0;               // box_depth needs to be adjusted at most once
         }
-        if( cur_skip >= max_depth ) {       // cur_skip will fill the page
-/// this works with the SK 3 between text lines between the 2nd & 3rd BX line
+        if( cur_skip >= max_depth ) {   // cur_skip will fill the page: draw VLINES
             box_depth += max_depth - hl_depth;
-            box_draw_vlines( box_depth, 0, max_depth - hl_depth, 0, cur_op, eop );
+            box_draw_vlines( box_depth, max_depth - hl_depth, 0, box_depth == 0,
+                             st_none );
             do_page_out();
             reset_t_page();
-            t_page_empty = true;            // reset for new page
-            max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
+            t_page_empty = true;        // reset several values for new page
+            max_depth = t_page.max_depth - t_page.cur_depth;
             cur_el->top_skip = 0;
             cur_el->subs_skip = 0;
         } else {
@@ -707,38 +686,22 @@ static void do_line_device( bx_op cur_op )
                         max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
                     }
                 } else {    // this element will start the next page
-/// this works for the SK 1 after the first two BX lines
-                    box_depth += max_depth - hl_depth;                   
+                    box_depth += max_depth - hl_depth;  // finalize current page box_depth
                 }
             } else {        // this element will fit on the current page
                 t_doc_el_group.first = cur_el->next;
                 cur_el->next = NULL;
                 insert_col_main( cur_el );   
+                max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
                 box_depth += cur_skip + cur_el->depth;
-/// to fix SK 51/52 without disturbing SK 53/54 ///
-/// the effect is that the VLINE on the second page always extends to the point it
-/// would if there were an HLINE at the top, even when there isn't one
-                box_depth -= v_adjust2;     // adjust VLINE height
-            }
-            max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
-            if( max_depth < def_height ) {  // no room left on page
-/// this works for the "test line", that is, a text line which is followed
-/// immediately by the third BX line
-                box_depth += v_offset - (def_height / 4);
-/// this works for other values of max_depth than 126, at least, it does if max_depth is larger
-/// but where does the 126 come from?
-                box_depth += max_depth - 126;
-                eop = true;
+                box_depth -= v_adjust;      // adjust VLINE height as if an HLINE were at the top of the page
             }
 
-            if( eop ) {                     // VLINEs will be drawn
-/// this works for blank lines after the first two BX lines
-/// and for the text and blank lines after that 
-                box_draw_vlines( box_depth, 0, max_depth - hl_depth, 0, cur_op, eop );
+            if( eop ) {                     // draw the VLINEs at the bottom of the page
+                box_draw_vlines( box_depth, max_depth - hl_depth, 0, false, st_none );
                 do_page_out();
                 reset_t_page();
-/// fixed second page VLINE height for this case (by resetting box_depth) 
-                box_depth = 0;
+                box_depth = 0;              // reset several values for new page
                 t_page_empty = true;        // reset for new page
                 max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
             }
@@ -746,7 +709,9 @@ static void do_line_device( bx_op cur_op )
         }
     }
 
-    /* Get relevant skip for the HLINE */
+    /* Now output the HLINE itself */
+
+    /* Get the skip for the HLINE */
 
     top_line = t_page_empty && (t_doc_el_group.first == NULL);
     if( top_line ) {                    // HLINE will be at top of page
@@ -755,117 +720,135 @@ static void do_line_device( bx_op cur_op )
         cur_skip = h_line_el->subs_skip;
     }
 
-    eop = false;                            // reset for use with HLINE
-    if( in_bx_box ) {                       // not the first BX line
-        if( max_depth < (def_height + cur_skip + hl_depth) ) {
-            eop = true;                     // h_line_el will fill the page
-        }
-    } else {                                // first BX line: ignore cur_skip
-        if( max_depth < (def_height + hl_depth) ) {
-            eop = true;                     // h_line_el will fill the page
-        }
-    }
+    /********************************************************/
+    /* determine if VLINEs will be drawn in conjunction     */
+    /* with the current HLINE                               */
+    /* the criteria used here are:                          */
+    /*   the VLINE block must be defined for this device    */
+    /*   box_line must have at least one column             */
+    /*   at least one of these conditions must be true:     */
+    /*     the end of the box has been reached (BX OFF)     */
+    /*     or                                               */
+    /*       the BX had a column list (cur_line has at      */
+    /*       least one column) and there was a prior BX     */
+    /*       prev_line has at least one column)             */
+    /* these criteria may be expanded in the future         */
+    /********************************************************/
 
-    ProcFlags.group_elements = true;        // start accumulating doc_elements
+    draw_v_line = (bin_driver->vline.text != NULL) && (box_line.current > 0)
+                   && ((cur_op == bx_off) ||
+                   ((cur_line.current > 0) && (prev_line.current > 0)) );
 
-    if( draw_v_line || eop ) {              // VLINEs will be drawn
-        if( cur_skip >= max_depth ) {       // cur_skip will fill the page
-/// this may not work when all of cur_skip is not used
-            box_depth += cur_skip;
-            box_draw_vlines( box_depth, 0, max_depth - hl_depth, 0, cur_op, eop );
-            box_depth = 0;              // reset box_depth 
+    /****************************************************************/
+    /* Process first and last HLINEs separately from other HLINEs   */
+    /* ProcFlags.group_elements is still FALSE: unless altered, all */
+    /* insertions shown are done to t_page                          */
+    /****************************************************************/
+
+    if( !in_bx_box ) {              // first BX line: start of box
+        in_bx_box = true;           // box has started
+        if( (max_depth >= def_height) && (max_depth < (2 * def_height)) ) {   // at bottom of current page
+            insert_col_main( h_line_el );   // insert the HLINE
+        } else {                                    // anywhere else
+            h_line_el->depth = hl_depth;
+            insert_col_main( h_line_el );           // insert the HLINE
+            box_depth = hl_depth;                   // start box_depth with space from HLINE to bottom of def_height
+        }
+    } else if( cur_op == bx_off ) { // last BX line: end of box
+        in_bx_box = false;                          // box has ended
+        if( top_line ) {                            // final HLINE at top of page
+            ProcFlags.group_elements = true;            // start accumulating doc_elements
+            box_depth = 0;                          // VLINEs are not to be drawn, just the AA blocks
+            insert_col_main( h_line_el );               // insert the HLINE
+            box_draw_vlines( box_depth, 0, 0, true, st_none );
+            t_doc_el_group.last->depth = hl_depth;
+        } else if( max_depth < (hl_depth + cur_skip) ) {    // final HLINE to top of next page
+            box_depth += max_depth - hl_depth;
+            box_draw_vlines( box_depth, max_depth - hl_depth, 0, false, st_none );
             do_page_out();
             reset_t_page();
-            cur_el->top_skip = 0;
-            cur_el->subs_skip = 0;
-        }
-        if( cur_op == bx_off ) {            // BX OFF VLINEs start from HLINE
+            ProcFlags.group_elements = true;        // start accumulating doc_elements
+            insert_col_main( h_line_el );           // insert the HLINE
+            box_depth = 0;                          // VLINEs are not to be drawn, just the AA blocks
+            box_draw_vlines( box_depth, 0, 0, true, st_int );
+            t_doc_el_group.last->depth = hl_depth;
+        } else {                                    // final HLINE in middle of page
+            ProcFlags.group_elements = true;            // start accumulating doc_elements
             box_depth += cur_skip;
-            insert_col_main( h_line_el );   // insert the HLINE
-            if( top_line ) {                       // not at at top of page
-                box_draw_vlines( 0, 0, 0, 0, cur_op, eop );
-            } else {
-                box_draw_vlines( box_depth, 0, 0, 0, cur_op, eop );
-            }
-        } else if( eop ) {              // eop VLINEs start from bottom of page
-            if( (cur_skip + hl_depth) > max_depth ) {  // h_line_el will fill the page
-                if( in_bx_box ) {       // no VLINES if first HLINE goes to next page
-                    box_depth += max_depth - hl_depth;
-                    box_draw_vlines( box_depth, 0, max_depth - hl_depth,
-                                     max_depth - hl_depth, cur_op, eop );
-                }
-                insert_col_main( h_line_el );   // insert the HLINE
-                eop = false;                    // cause HLINE to go onto next page                
-                box_depth = 0;                  // reset for new page
-            } else {                    // h_line_el starts next page
-                ProcFlags.group_elements = false;   // stop accumulating doc_elements
-                insert_col_main( h_line_el );   // insert the HLINE
-                max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
-                if( in_bx_box ) {
-/// this works for all relevant items from SK 54 to SK 42 inclusive
-                    box_depth += max_depth + v_adjust1;  // apply twiddle factor
-                    if( cur_skip > v_offset ) { // more than just v_offset, eg, SK lines
-                        box_depth += cur_skip - v_offset;
-                    }
-                    box_draw_vlines( box_depth, 0, max_depth - hl_depth,
-                                     max_depth - hl_depth, cur_op, eop );
-                } else {                    // first BX line at eop
-                    box_depth = max_depth - hl_depth;
-                    box_draw_vlines( box_depth, 0, box_depth, box_depth, cur_op, eop );
-                }
-                ProcFlags.group_elements = true;    // start accumulating doc_elements
-            }
-        } else {                        // do the HLINE after the VLINEs
-            box_draw_vlines( box_depth, 0, h_line_el->subs_skip,
-                             h_line_el->top_skip, cur_op, eop ); // skips apply to first VLINE
-            h_line_el->subs_skip = 0;
-            h_line_el->top_skip = 0;
-            insert_col_main( h_line_el );   // insert the HLINE
+            insert_col_main( h_line_el );           // insert the HLINE
+            box_draw_vlines( box_depth, 0, 0, true, st_int );
+            box_depth = 0;                          // end of box
+            t_doc_el_group.last->depth = hl_depth;
         }
-        if( eop ) {
-            box_depth = 0;                  // VLINEs were drawn to cover pre_depth
-            do_page_out();
-            reset_t_page();
-        }
-    } else {
-        if( in_bx_box ) {
-/// this is needed when the 2nd page starts with 2nd BX line
-/// the point is that cur_skip is not added to box_depth in that case
-            if( box_depth != 0 ) {          // box_depth == 0 at top of page
+    } else {                        // internal BX line
+        if( top_line ) {                        // HLINE at top of page
+            h_line_el->depth = hl_depth;
+            insert_col_main( h_line_el );       // insert the HLINE
+            box_depth = hl_depth;
+        } else if( (max_depth > (def_height + cur_skip)) &&
+                    (max_depth < (2 * def_height)) ) {   // at bottom of current page
+            if( draw_v_line ) {
                 box_depth += cur_skip;
-            }
-        }
-        insert_col_main( h_line_el );  // insert the HLINE
-    }
-
-    if( !eop ) {                        // the last HLINE or VLINE gets the depth, but when a new page is forced
-        t_doc_el_group.last->depth = hl_depth;
-    }
-
-    /* Adjust box_depth after HLINE is output */
-
-    if( in_bx_box ) {                   // inside a box
-        if( cur_op == bx_off ) {        // final BX line seen
-            in_bx_box = false;          // box has ended
-            box_depth = 0;              // reset box_depth for next box
-        } else {
-            if( eop ) {
-                box_depth = 0;          // reset box_depth for next box
+                box_draw_vlines( box_depth, h_line_el->subs_skip, 0, false, st_none );
+                h_line_el->subs_skip = 0;
+                insert_col_main( h_line_el );   // insert the HLINE
+                box_draw_vlines( hl_depth, 0, 0, true, st_ext );
             } else {
-                box_depth += hl_depth;  // add space from HLINE to bottom of def_height
+                insert_col_main( h_line_el );   // insert the HLINE
+                box_depth += max_depth - hl_depth;
+                box_draw_vlines( box_depth, max_depth - def_height, 0, false, st_none );
+                do_page_out();
+                reset_t_page();
             }
-        }
-    } else {
-        in_bx_box = true;               // first BX line seen
-        if( eop ) {                     // first BX line at bottom of page
-            box_depth = 0;              // reset box_depth for next box
-        } else {            
-            box_depth += hl_depth;      // add space from HLINE to bottom of def_height
+            box_depth = 0;                      // VLINEs were drawn to cover pre_depth
+        } else {                                // HLINE in middle of page
+            if( max_depth < (cur_skip + hl_depth) ) {  // HLINE to top of next page; eop VLINEs start from bottom of page
+                box_depth += max_depth - hl_depth;
+                box_draw_vlines( box_depth, max_depth - hl_depth, 0, 
+                                 box_depth == 0, st_none );
+                do_page_out();
+                reset_t_page();
+                ProcFlags.group_elements = true;        // start accumulating doc_elements
+                box_depth = 0;                          // VLINEs are not to be drawn, just the AA blocks
+                box_draw_vlines( box_depth, 0, h_line_el->top_skip, true, st_none );
+                h_line_el->subs_skip = 0;
+                insert_col_main( h_line_el );           // insert the HLINE
+                box_depth = hl_depth;                   // reset for new page
+                box_draw_vlines( box_depth, 0, 0, true, st_ext );
+                t_doc_el_group.last->depth = hl_depth;
+            } else if( (max_depth >= (hl_depth + cur_skip))
+                    && (max_depth < (2 * def_height)) ) {   // HLINE at bottom of current page
+                max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
+                box_depth += v_offset;
+                if( cur_skip > v_offset ) { // more than just v_offset, eg, SK lines
+                    box_depth += cur_skip - v_offset;
+                }
+                box_draw_vlines( box_depth, h_line_el->subs_skip, 0, false, st_none );
+                h_line_el->subs_skip = 0;
+                insert_col_main( h_line_el );   // insert the HLINE
+                box_draw_vlines( hl_depth, 0, 0, true, st_ext ); 
+                max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
+                box_depth = 0;                  // VLINEs were drawn to cover pre_depth
+            } else if( draw_v_line ) {          // VLINEs will be drawn between HLINEs
+                ProcFlags.group_elements = true;            // start accumulating doc_elements
+                box_depth += cur_skip;
+                box_draw_vlines( box_depth, h_line_el->subs_skip, 0, false, st_none );
+                h_line_el->subs_skip = 0;
+                insert_col_main( h_line_el );   // insert the HLINE
+                box_draw_vlines( hl_depth, 0, 0, true, st_ext );
+                t_doc_el_group.last->depth = hl_depth;
+                box_depth = hl_depth;           // reset to depth from HLINE
+            } else {                            // do the HLINE only
+                h_line_el->depth = hl_depth;
+                insert_col_main( h_line_el );   // insert the HLINE
+                box_depth += cur_skip + hl_depth;
+            }
         }
     }
 
-    ProcFlags.group_elements = false;   // stop accumulating doc_elements
+    /* Move any accumulated elements to the current page */
 
+    ProcFlags.group_elements = false;   // ensure elements will be inserted into t_page
     cur_el = t_doc_el_group.first;
     while( cur_el != NULL ) {
         t_doc_el_group.first = cur_el->next;
