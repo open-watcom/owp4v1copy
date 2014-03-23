@@ -899,6 +899,12 @@ typedef struct box_col_set {
             box_col     *   cols;
 } box_col_set;
 
+typedef struct box_col_stack {
+    struct  box_col_stack   *   next;
+            box_col_set     *   first;
+            bool                had_cols;
+} box_col_stack;
+
 /***************************************************************************/
 /*  a single tab stop and an array of tab stops                            */
 /***************************************************************************/
@@ -1001,6 +1007,7 @@ typedef struct {
     uint32_t        spacing;
     text_line   *   first;
     bool            overprint;          // placement avoids padding warning
+    bool            force_op;           // forces overprint at top of page
 } text_element;
 
 typedef struct {

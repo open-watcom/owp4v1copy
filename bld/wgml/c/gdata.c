@@ -114,9 +114,11 @@ void init_global_vars( void )
     tab_char            = 0x09;
 
     box_col_set_pool    = NULL;
+    box_col_stack_pool  = NULL;
     box_line            = NULL;
     cur_line            = NULL;
     prev_line           = NULL;
+    max_depth           = 0;
 
     c_stop              = NULL;
 

@@ -103,9 +103,11 @@ static void do_el_list_out( doc_element * array, uint8_t count )
                     break;
                 case el_text :
                     if( GlobalFlags.lastpass ) {
+                        ProcFlags.force_op = cur_el->element.text.force_op;
                         for( cur_line = cur_el->element.text.first; cur_line != NULL; cur_line = cur_line ->next ) {
                             fb_output_textline( cur_line );
                         }
+                        ProcFlags.force_op = false;
                     }
                     break;
                 case el_vline :  // should only be found if VLINE block exists
@@ -137,9 +139,10 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
     doc_element *   cur_el;
     text_line   *   cur_line;
     uint32_t        cur_spacing;
+    uint32_t        old_v_start;
 
     g_cur_v_start = v_start;
-    
+
     for( cur_el = list; cur_el != NULL; cur_el = cur_el->next ) {
         cur_spacing = cur_el->blank_lines;
         if( cur_el->type == el_text ) {
@@ -151,7 +154,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             } else {
                 cur_spacing = cur_el->top_skip;
             }
-            ProcFlags.page_started = true;
         } else {
             cur_spacing += cur_el->subs_skip;
         }
@@ -222,18 +224,43 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                         cur_spacing -= cur_line->line_height;   // overprint
                         cur_el->element.text.overprint = false;
                     }
-                } else {                                
-                    if( t_page.top_ban == NULL ) {      // minimun height
+                    ProcFlags.page_started = true;
+                } else {
+
+                    /* It is not clear how forced overprint & minum height interact */
+
+                    if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
+                        cur_spacing -= cur_line->line_height;   // forced overprint
+                    } else if( t_page.top_ban == NULL ) {      // minimum height
                         cur_spacing = max( wgml_fonts[g_curr_font_num].line_height, cur_spacing );
                     }
                 }
+
+                /****************************************************/
+                /* This "fixes" an overprint line at the top of the */
+                /* page, at least for character devices like TASA.  */
+                /* g_cur_v_start cannot be above the y_start which  */
+                /* the device specified for the overprint line, but */
+                /* must be restored for the remaining lines.        */
+                /****************************************************/
+
                 if( bin_driver->y_positive == 0x00 ) {
                     g_cur_v_start -= cur_spacing;
+                    old_v_start = g_cur_v_start;
+                    if( g_cur_v_start > bin_device->y_start ) {
+                        g_cur_v_start = bin_device->y_start;
+                    }
                 } else {
                     g_cur_v_start += cur_spacing;
+                    old_v_start = g_cur_v_start;
+                    if( g_cur_v_start < bin_device->y_start ) {
+                        g_cur_v_start = bin_device->y_start;
+                    }
                 }
+
                 cur_line->y_address = g_cur_v_start;
                 cur_spacing = cur_el->element.text.spacing;
+                g_cur_v_start = old_v_start;
             }
             break;
         case el_vline :
@@ -252,6 +279,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         default :
             internal_err( __FILE__, __LINE__ );
         }
+        ProcFlags.page_started = true;
     }
 
     return;
@@ -559,7 +587,12 @@ static void update_t_page( void )
                 t_page.last_col_main = t_page.last_col_main->next;
             }
             t_page.last_col_main->next = NULL;
-            t_page.cur_depth += cur_el->depth;
+            if( (cur_el->type == el_text) && cur_el->element.text.overprint
+                                          && cur_el->element.text.force_op ) {
+                /* do nothing, adjusts for top-of-page overprint */
+            } else {
+                t_page.cur_depth += cur_el->depth;
+            }
         }
     }
     return;
@@ -645,6 +678,16 @@ void do_page_out( void )
         out_ban_bot();
     }
 
+    /****************************************************************/
+    /* Finish drawing any open box.                                 */
+    /* Note: this may need to be done for other control words and   */
+    /* tags that accumulate doc_elements                            */
+    /****************************************************************/
+
+    if( ProcFlags.in_bx_box ) {
+        eop_bx_box();
+    }
+
     /* Output the page section by section */
 
     ProcFlags.page_started = false;
@@ -679,6 +722,8 @@ void do_page_out( void )
 /***************************************************************************/
 /*  output all full pages                                                  */
 /*  t_page will not be empty but n_page will be empty on return            */
+/*  Note: may need to be expanded to consider doc_elements accumulated by  */
+/*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
 
 void full_page_out( void )
@@ -846,11 +891,14 @@ void insert_col_main( doc_element * a_element )
         if( t_doc_el_group.first == NULL ) {
             t_doc_el_group.first = a_element;
             t_doc_el_group.last = t_doc_el_group.first;
+            t_doc_el_group.depth = (a_element->blank_lines + a_element->subs_skip +
+                                    a_element->depth);
         } else {
             t_doc_el_group.last->next = a_element;
             t_doc_el_group.last = t_doc_el_group.last->next;
+            t_doc_el_group.depth += (a_element->blank_lines + a_element->subs_skip +
+                                     a_element->depth);
         }
-        t_doc_el_group.depth += a_element->depth;
         return;
     }
 
@@ -906,7 +954,6 @@ void insert_col_main( doc_element * a_element )
             } else {
                 cur_skip = a_element->top_skip;
             }
-            ProcFlags.page_started = true;
         } else {
             cur_skip = a_element->blank_lines + a_element->subs_skip;
         }
@@ -919,14 +966,24 @@ void insert_col_main( doc_element * a_element )
     if( !page_full ) {
 
         /****************************************************************/
-        /*  at least part of the element should fit on the page         */
+        /*  At least part of the element should fit on the page.        */
         /*  Does the first line minimum apply here? If so, it needs to  */
         /*  be implemented. Note that cur_el->depth does not reflect it */
         /*  because there is no way to tell if it will apply when the   */
         /*  is computed.                                                */
+        /*  Overprint lines pose a problem:                             */
+        /*    anywhere but at the top of the page, they do not count as */
+        /*      part of the page depth                                  */
+        /*    if the page is full (t_page.cur_depth == t_page.max_depth)*/
+        /*      they do count ... and start a new page                  */
         /****************************************************************/
 
-        depth = cur_skip + a_element->depth;
+        if( (a_element->type == el_text) && a_element->element.text.overprint && 
+                                        (t_page.cur_depth != t_page.max_depth) ) {
+            depth = cur_skip;
+        } else {
+            depth = cur_skip + a_element->depth;
+        }
         if( (depth + t_page.cur_depth) > t_page.max_depth ) {   // a_element fills the page
             splittable = split_element( a_element, t_page.max_depth -
                                         t_page.cur_depth - cur_skip );
@@ -970,6 +1027,7 @@ void insert_col_main( doc_element * a_element )
             t_page.cur_depth += depth;
         }
     }
+    ProcFlags.page_started = true;
 
     if( page_full ) {
 
@@ -987,6 +1045,7 @@ void insert_col_main( doc_element * a_element )
         }
         text_page_out();
     } 
+
     return;
 }
 
@@ -1047,6 +1106,8 @@ void insert_page_width( doc_element * a_element )
 /***************************************************************************/
 /*  force output of the current page, even if not full                     */
 /*  t_page and n_page will both be empty on return                         */
+/*  Note: may need to be expanded to consider doc_elements accumulated by  */
+/*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
  
 void last_page_out( void )
@@ -1098,7 +1159,10 @@ void reset_t_page( void )
     t_page.last_col_main = NULL;
     t_page.last_col_bot = NULL;
     t_page.last_col_fn = NULL;
+    max_depth = t_page.max_depth - t_page.cur_depth;
+
     ProcFlags.page_started = false;
+    ProcFlags.box_line_done = false;
 }
 
 
@@ -1244,6 +1308,8 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 /***************************************************************************/
 /*  output all pages in which t_page.main->main is full                    */
 /*  t_page will not be empty but n_page.col_main will be empty on return   */
+/*  Note: may need to be expanded to consider doc_elements accumulated by  */
+/*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
 
 void text_page_out( void )

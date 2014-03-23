@@ -797,8 +797,20 @@ void    scan_line( void )
         /* For .co off or :xmp and the last part of the line just processed*/
         /* ensure the line is output                                       */
         /*******************************************************************/
+
         if( !ProcFlags.layout && (input_cbs->fmflags & II_eol) ) {
             if( !ProcFlags.concat || ProcFlags.xmp_active ) {
+
+                /*******************************************************************/
+                /* This fixes a problem found when BX was implemented: when PA is  */
+                /* used inside a box before a text line with CO OFF. But whether   */
+                /* this is the best place or whether the restriction is needed     */
+                /* remains to be determined                                        */
+                /*******************************************************************/
+
+                if( ProcFlags.in_bx_box ) {
+                    g_cur_h_start = g_page_left_org + g_indent;
+                }
                 scr_process_break();
             }
         }

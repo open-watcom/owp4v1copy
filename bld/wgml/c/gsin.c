@@ -144,7 +144,9 @@ void    scr_in( void )
         while( *p == ' ' ) {
             p++;
         }
-        if( *p == '*' ) {               // keep old indentr value
+        if( !*p ) {                     // zero right indent
+            newindentr = 0;
+        } else if( *p == '*' ) {        // keep old indentr value
             p++;
         } else {
             pa = p;
