@@ -52,7 +52,7 @@ extern RcStatus CopyExeDataTilEOF( int inhandle, int outhandle );
 extern RcStatus PadExeData( int handle, uint_32 length );
 extern void CheckDebugOffset( ExeFileInfo * info );
 extern RcStatus SeekRead( int handle, unsigned_32 newpos, void *buff,
-                   unsigned_16 size );
+                   size_t size );
 extern ExeType FindNEPELXHeader( int handle, unsigned_32 *nh_offset );
 extern unsigned_32 OffsetFromRVA( ExeFileInfo *info, pe_va rva );
 

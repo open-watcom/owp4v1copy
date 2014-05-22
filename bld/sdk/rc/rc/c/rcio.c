@@ -74,14 +74,14 @@ static void MakeTmpInSameDir( const char * dirfile, char * outfile, char * ext )
 {
     char    drive[ _MAX_DRIVE ];
     char    dir[ _MAX_DIR ];
-#ifdef __UNIX__
+#if defined(__UNIX__) || defined(__OS2__)
     char    fname[ 32 ];
 #else
     char    *fname = "__TMP__";
 #endif
 
     _splitpath( dirfile, drive, dir, NULL, NULL );
-#ifdef __UNIX__
+#if defined(__UNIX__) || defined(__OS2__)
     // Must be able to run several "rc" executables simultaneously
     // in the same directory
     sprintf( fname, "__RCTMP%lu__", (unsigned long)getpid() );

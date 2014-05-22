@@ -236,7 +236,7 @@ extern unsigned_32 OffsetFromRVA( ExeFileInfo *info, pe_va rva ) {
  * NB When an error occurs the function MUST return without altering errno
  */
 RcStatus SeekRead( int handle, unsigned_32 newpos, void *buff,
-                   unsigned_16 size )
+                   size_t size )
 /**************************************************************************/
 /* seek to a specified spot in the file, and read some data */
 {
