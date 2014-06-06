@@ -210,7 +210,7 @@ global struct ProcFlags {
     unsigned        skips_valid     : 1;// controls set_skip_vars() useage
 
     unsigned        box_cols_cur    : 1;// current BX line had column list
-    unsigned        box_line_done   : 1;// BX line done on by prior BX line
+    unsigned        box_line_done   : 1;// BX line done by prior BX line
     unsigned        bx_set_done     : 1;// BX SET was done last before current BX line
     unsigned        force_op        : 1;// force overprint (used with BX CAN/BX DEL)
     unsigned        in_bx_box       : 1;// identifies first BX line
