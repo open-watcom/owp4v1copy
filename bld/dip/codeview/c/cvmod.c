@@ -145,7 +145,7 @@ dip_status      DIPENTRY DIPImpModInfo( imp_image_handle *ii,
 {
     static const unsigned DmndType[] = {
         0,
-        0, //sstGlobalTypes,
+        sstGlobalTypes,
         sstSrcModule,
         sstAlignSym };
     unsigned            type;

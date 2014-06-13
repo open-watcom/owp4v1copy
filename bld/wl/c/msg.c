@@ -31,6 +31,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <ctype.h>
 #include "linkstd.h"
 #include "command.h"
@@ -98,6 +99,7 @@ unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
 /*                  %h  : 8 digit hex number (%8x)                  */
 /*                  %d  : decimal                                   */
 /*                  %l  : long decimal                              */
+/*                  %p  : host pointer                              */
 /*                  %a  : address   ( %x:%x or 32 bit, depends on format) */
 /*                  %A  : address   ( %x:%h or 32 bit, depends on format) */
 /*                  %S  : symbol name                               */
@@ -114,6 +116,7 @@ unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
     unsigned int    i;
     static char     hexchar[] = "0123456789abcdef";
     int             temp;
+    uintptr_t       ptr;
 
     dest = buff;
     for(;;) {
@@ -264,6 +267,17 @@ unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
                 dest += size;
                 len -= size;
                 MsgArgInfo.index = temp;
+                break;
+            case 'p' :
+                ptr = va_arg( *args, uintptr_t );
+                if( len < sizeof( ptr ) * 2 ) return( dest - buff );     //NOTE: premature return
+                dest += sizeof( ptr ) * 2;
+                len -= sizeof( ptr ) * 2;
+                str = dest;
+                for( i = sizeof( ptr ) * 2; i > 0; i-- ) {
+                    *--str = hexchar[ptr & 0x0f];
+                    ptr >>= 4;
+                }
                 break;
             case 'f':
                 num = MakeExeName( dest, len );

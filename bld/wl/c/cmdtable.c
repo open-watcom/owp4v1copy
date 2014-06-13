@@ -61,6 +61,7 @@ parse_entry     PosDbgMods[] = {
     "Watcom",       &ProcWatcomDBI,     MK_ALL, 0,
     "Dwarf",        &ProcDwarfDBI,      MK_ALL, 0,
     "Codeview",     &ProcCodeviewDBI,   MK_ALL, 0,
+    "Hll",          &ProcHllDBI,        MK_ALL, 0,
 #ifdef _NOVELL
     "Novell",       &ProcNovDBI,        MK_NOVELL, 0,
 #endif
@@ -185,6 +186,7 @@ parse_entry     MainOptions[] = {
     "REDefsok",     &ProcRedefsOK,      MK_ALL, 0,
     "NOREDefsok",   &ProcNoRedefs,      MK_ALL, 0,
     "CVPack",       &ProcCVPack,        MK_ALL, 0,
+    "HLLPack",      &ProcHLLPack,       MK_ALL, 0,
     "INCremental",  &ProcIncremental,   MK_ALL, 0,
     "SMall",        &ProcSmall,         MK_OVERLAYS, 0,
     "DIStribute",   &ProcDistribute,    MK_OVERLAYS, 0,

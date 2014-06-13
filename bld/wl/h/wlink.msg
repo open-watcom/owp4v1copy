@@ -234,8 +234,8 @@ pick(    MSG_GENERAL_HELP_27,   "            | \"MODFile\"      obj_file{\",\"ob
                 "            | \"MODFile\"      オブジェクトファイル{\",\"オブジェクトファイル}" )
 pick(    MSG_GENERAL_HELP_28,   "obj_spec  ::= obj_file[\"(\"obj_member\")\"] | library_file[\"(\"lib_member\")\"]" ,
                                 "obj_spec  ::= オブジェクトファイル[\"(\"オブジェクトメンバー\")\"] | ライブラリファイル[\"(\"ライブラリメンバー\")\"]")
-pick(    MSG_GENERAL_HELP_29,   "dbtype    ::= \"Watcom\" | \"Dwarf\" | \"Codeview\"",
-                                "dbtype    ::= \"Watcom\" | \"Dwarf\" | \"Codeview\"")
+pick(	 MSG_GENERAL_HELP_29,	"dbtype    ::= \"Watcom\" | \"Dwarf\" | \"Codeview\" | \"Hll\"",
+                                "dbtype    ::= \"Watcom\" | \"Dwarf\" | \"Codeview\" | \"Hll\"")
 pick(    MSG_GENERAL_HELP_30,   "dblist    ::= dboption{\",\"dboption}" ,
                                 "dblist    ::= dboption{\",\"dboption}")
 pick(    MSG_GENERAL_HELP_31,   "dboption  ::= \"LInes\" | \"Types\" | \"LOcals\" | \"All\"" ,
@@ -254,8 +254,8 @@ pick(    MSG_GENERAL_HELP_37,   "            | \"[NO]REDefsok\" | \"STack\"=n | 
                 "            | \"[NO]REDefsok\" | \"STack\"=n | \"START=\"シンボル名 | \"STATics\"" )
 pick(    MSG_GENERAL_HELP_38,   "            | \"SYMFile\"[\"=\"symbol_file], | \"[NO]Undefsok\" | \"Verbose\"",
                 "            | \"SYMFile\"[\"=\"シンボルファイル], | \"[NO]Undefsok\" | \"Verbose\"" )
-pick(    MSG_GENERAL_HELP_39,   "            | \"VFRemoval\"" ,
-                "            | \"VFRemoval\"" )
+pick(    MSG_GENERAL_HELP_39,   "            | \"VFRemoval\" | \"HLLPack\"" ,
+                "            | \"VFRemoval\" | \"HLLPack\"" )
                 
 /*
  *  Dos help screen: max 16 lines (from 0 to 15).

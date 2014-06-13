@@ -162,6 +162,17 @@ bool ProcCodeviewDBI( void )
     return( TRUE );
 }
 
+extern bool ProcHllDBI( void )
+/*********************************/
+{
+    if( LinkFlags & (ANY_DBI_FLAG & ~HLL_DBI_FLAG) ) {
+        LnkMsg( LOC+LINE+WRN+MSG_MULT_DBI_FORMATS, NULL );
+        return TRUE;
+    }
+    LinkFlags |= HLL_DBI_FLAG;
+    return TRUE;
+}
+
 bool ProcLine( void )
 /**************************/
 {
@@ -750,6 +761,13 @@ bool ProcCVPack( void )
 {
     LinkFlags |= CVPACK_FLAG;
     return( TRUE );
+}
+
+extern bool ProcHLLPack( void )
+/****************************/
+{
+    LinkFlags |= HLLPACK_FLAG;
+    return TRUE;
 }
 
 #define DEFAULT_INC_NAME "__wlink.ilk"

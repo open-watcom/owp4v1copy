@@ -154,6 +154,11 @@ static dip_status SymGetName( imp_image_handle *ii, imp_sym_handle *is,
     case S_GTHREAD32:
         skip = sizeof( s_lthread32 );
         break;
+    case S_ALIGN:
+        /* FIXME: figure out why we're here. */
+        *lenp = 0;
+        *namep = "";
+        return( DS_OK );
     default:
         Confused();
     }

@@ -235,13 +235,18 @@ typedef struct name_list {
 typedef struct odbimodinfo      ODBIMODINFO;    // defd in dbg information hdrs
 typedef struct dwarfmodinfo     DWARFMODINFO;
 typedef struct cvmodinfo        CVMODINFO;
+typedef struct hllmodinfo       HLLMODINFO;
 
 // OMF debug information formats
 typedef enum {
     OMF_DBG_UNKNOWN,
     OMF_DBG_CODEVIEW,
-    OMF_DBG_HLL
+    OMF_DBG_HLL_03,
+    OMF_DBG_HLL_04,
+    OMF_DBG_HLL_06
 } omf_dbg_type;
+
+#define IS_OMF_DBG_HLL(omfdbg) ( (omfdbg) >= OMF_DBG_HLL_03 && (omfdbg) <= OMF_DBG_HLL_06 )
 
 typedef struct mod_entry {
     union {
@@ -270,6 +275,7 @@ typedef struct mod_entry {
         ODBIMODINFO     *o;
         DWARFMODINFO    *d;
         CVMODINFO       *cv;
+        HLLMODINFO *    hll;
     } d;                        // union used for debugging information
 } mod_entry;
 
@@ -279,7 +285,6 @@ typedef enum {
     CLASS_MS_TYPE       = 0x00000004,
     CLASS_MS_LOCAL      = 0x00000008,
     CLASS_DWARF         = 0x0000000C,
-    CLASS_DEBUG_INFO    = (CLASS_MS_TYPE | CLASS_MS_LOCAL | CLASS_DWARF),
     CLASS_CODE          = 0x00000010,
     CLASS_LXDATA_SEEN   = 0x00000020,
     CLASS_READ_ONLY     = 0x00000040,
@@ -288,6 +293,8 @@ typedef enum {
     CLASS_FIXED         = 0x00001000,   // Class should load at specified address
     CLASS_COPY          = 0x00002000,   // Class should use data from DupClass
     CLASS_NOEMIT        = 0x00004000,   // Class should not generate output
+    CLASS_HLL_LINE      = 0x00008000,   // HLL Line Number (debug info)
+    CLASS_DEBUG_INFO    = (CLASS_MS_TYPE | CLASS_MS_LOCAL | CLASS_DWARF | CLASS_HLL_LINE),
     CLASS_IS_FREE       = 0x80000000,   // not used, but guarantees 4 byte enum
 } class_status;
 
@@ -351,7 +358,7 @@ typedef struct seg_leader {
     SEG_LEADER      *DupSeg;            // Segment to get data from for output
     unsigned_16     info;
     unsigned_16     align   : 5;        // alignment of seg (power of 2)
-    unsigned_16     dbgtype : 3;        // debugging type of seg
+    unsigned_16     dbgtype : 4;        // debugging type of seg
     unsigned_16     combine : 2;        // combine val. of seg
     unsigned_32     num;                // # of addrinfos to output (video)
     targ_addr       seg_addr;           // address of segment.
@@ -411,7 +418,8 @@ enum {
     DWARF_DEBUG_ABBREV  = 0x0004,
     DWARF_DEBUG_LINE    = 0x0005,
     DWARF_DEBUG_ARANGE  = 0x0006,
-    DWARF_DEBUG_OTHER   = 0x0007
+    DWARF_DEBUG_OTHER   = 0x0007,
+    HLL_LINE            = 0x0008    /* IBM HLL line numbers. */
 };
 
 enum {

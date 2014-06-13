@@ -56,6 +56,7 @@ SPECIAL( ConstClassName,        "CONST" );
 SPECIAL( TLSClassName,          "TLS" );
 SPECIAL( _MSTypeClass,          "DEBTYP" );
 SPECIAL( _MSLocalClass,         "DEBSYM" );
+SPECIAL( _HllLineClass,         "DEBHLLLINE" );
 SPECIAL( _DwarfClass,           "DWARF" );
 
 SPECIAL( BSSStartSym,           "_edata" );

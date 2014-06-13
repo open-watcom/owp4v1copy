@@ -78,6 +78,8 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/valarray       <RELROOT>/h/
     <CPCMD> <PROJDIR>/dos/vector         <RELROOT>/h/
 
+# 13 Feb 09 SHL these files generated only for os2_linux target
+[ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/linux/*.h*         <RELROOT>/lh/
     <CPCMD> <PROJDIR>/linux/arpa/*.h     <RELROOT>/lh/arpa/
     <CPCMD> <PROJDIR>/linux/sys/*.h      <RELROOT>/lh/sys/

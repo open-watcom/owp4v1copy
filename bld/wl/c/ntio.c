@@ -38,6 +38,12 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+
+// 2014-05-23 SHL survive os2hmalloc
+#if defined( __OS2__ ) && defined(__386__)
+#include <malloc.h>
+#endif
+
 #include "linkstd.h"
 #include "msg.h"
 #include "alloc.h"
@@ -113,7 +119,23 @@ static int DoOpen( char *name, unsigned mode, bool isexe )
     for( ;; ) {
         if( OpenFiles >= MAX_OPEN_FILES )
             CleanCachedHandles();
+#       if defined( __OS2__ ) && defined(__386__)
+        {
+            // 2014-05-23 SHL survive os2hmalloc
+            char *pszSafe = NULL;
+            if( (unsigned long)name > 0x2000000 ) {
+                pszSafe = _os2lmalloc( strlen( name ) + 1 );
+                strcpy(pszSafe, name);
+                name = pszSafe;
+            }
+            h = open( name, mode, S_IRUSR | S_IWUSR );
+            if( name && name == pszSafe )
+              free( pszSafe );
+        }
+#       else
         h = open( name, mode, S_IRUSR | S_IWUSR );
+#       endif
+
         if( h != -1 ) {
             OpenFiles++;
             break;
@@ -123,7 +145,7 @@ static int DoOpen( char *name, unsigned mode, bool isexe )
         if( !CleanCachedHandles() ) {
             break;
         }
-    }
+    } // for
     return( h );
 }
 

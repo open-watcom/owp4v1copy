@@ -64,7 +64,8 @@ enum msg_num {
 #elif _DEVELOPMENT == _ON
     #define IDV   " **INTERNAL DEVELOPMENT** "
 #else
-    #define IDV
+    #define IDV     "** EXPERIMENTAL (HLL) ** "
+    //#define IDV
 #endif
 
 pick( PRODUCT,                  banner1( IDV "Open Watcom Linker", _WLINK_VERSION_ ) ),

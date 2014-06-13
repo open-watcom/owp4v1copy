@@ -57,8 +57,8 @@ typedef unsigned long linkflag;
 #define NOCACHE_FLAG    0x00200000UL
 #define CACHE_FLAG      0x00400000UL
 #define FAR_CALLS_FLAG  0x00800000UL    // optimize far calls
-#define __UNUSED_FLAG_8 0x01000000UL
-#define __UNUSED_FLAG_7 0x02000000UL
+#define HLL_DBI_FLAG    0x01000000UL    // write HLL debug Info.
+#define HLLPACK_FLAG    0x02000000UL    // pack HLL debug info.
 #define __UNUSED_FLAG_6 0x04000000UL
 #define __UNUSED_FLAG_5 0x08000000UL
 #define __UNUSED_FLAG_4 0x10000000UL
@@ -69,7 +69,7 @@ typedef unsigned long linkflag;
 // Novell treated differently, as it can be generated at the same time as the
 // others.
 
-#define ANY_DBI_FLAG    (DWARF_DBI_FLAG | CV_DBI_FLAG | OLD_DBI_FLAG)
+#define ANY_DBI_FLAG    (DWARF_DBI_FLAG | CV_DBI_FLAG | OLD_DBI_FLAG | HLL_DBI_FLAG)
 
 typedef enum mapflag {
     MAP_FLAG            = 0x0001,

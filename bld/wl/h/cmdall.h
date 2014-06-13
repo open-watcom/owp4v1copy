@@ -41,6 +41,7 @@ extern bool     ProcDefaultDBI( void );
 extern bool     ProcWatcomDBI( void );
 extern bool     ProcDwarfDBI( void );
 extern bool     ProcCodeviewDBI( void );
+extern bool     ProcHllDBI( void );
 
 extern bool     ProcSysBegin( void );
 extern bool     ProcSysDelete( void );
@@ -100,6 +101,7 @@ extern bool     ProcVFRemoval( void );
 extern bool     ProcRedefsOK( void );
 extern bool     ProcNoRedefs( void );
 extern bool     ProcCVPack( void );
+extern bool     ProcHLLPack( void );
 extern bool     ProcIncremental( void );
 extern bool     ProcPackcode( void );
 extern bool     ProcPackdata( void );
