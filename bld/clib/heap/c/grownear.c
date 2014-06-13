@@ -291,6 +291,11 @@ static void *RationalAlloc( size_t size )
 #endif
 #endif
 
+/**
+ * Adjust block to to match platform minimums and maximums
+ * @return 1 if adjust OK, 0 if adjustment fails
+ */
+
 static int __AdjustAmount( unsigned *amount )
 {
     unsigned old_amount = *amount;
@@ -344,7 +349,7 @@ static int __AdjustAmount( unsigned *amount )
     */
     *amount = amt;
     amt += ( (TAG_SIZE) + sizeof(frl) + sizeof(struct miniheapblkp) );
-    if( amt < *amount ) return( 0 );
+    if( amt < *amount ) return( 0 );    // Report request too large
     if( amt < _amblksiz ) {
         /*
           _amblksiz may not be even so round down to an even number
@@ -354,7 +359,6 @@ static int __AdjustAmount( unsigned *amount )
         amt = _amblksiz & ~1u;
     }
     #if defined(__WINDOWS_386__) || \
-        defined(__WARP__)        || \
         defined(__NT__)          || \
         defined(__CALL21__)      || \
         defined(__DOS_EXT__)     || \
@@ -365,9 +369,22 @@ static int __AdjustAmount( unsigned *amount )
         if( amt < *amount ) return( 0 );
         amt &= ~0x0fff;
     #endif
+    /* 2014-05-27 SHL */
+    #if defined(__WARP__)
+        /* make sure amount is a multiple of 64k - was 4K before 2014-05-27  */
+        *amount = amt;
+        amt += 0xffff;
+        if( amt < *amount ) return( 0 );
+        amt &= ~0xffff;
+    #endif
     *amount = amt;
     return( *amount != 0 );
 }
+
+#if defined(__WARP__)
+unsigned int _os2_obj_any_supported = 1;
+#endif
+
 
 #if defined(__WINDOWS_286__) || \
     defined(__WINDOWS_386__) || \
@@ -381,6 +398,10 @@ static int __CreateNewNHeap( unsigned amount )
     mheapptr        p1;
     frlptr          flp;
     unsigned        brk_value;
+
+#   if defined(__WARP__)
+    ULONG           os2_alloc_flags;
+#   endif
 
     if( !__heap_enabled ) return( 0 );
     if( _curbrk == ~1u ) return( 0 );
@@ -398,10 +419,21 @@ static int __CreateNewNHeap( unsigned amount )
 #elif defined(__WARP__)
     {
         PBYTE           p;
+        /* 2014-05-20 SHL support OBJ_ANY */
+        APIRET          apiret;
 
-        if( DosAllocMem( (PPVOID)&p, amount, PAG_COMMIT|PAG_READ|PAG_WRITE ) ) {
-            return( 0 );
+        os2_alloc_flags = PAG_COMMIT | PAG_READ | PAG_WRITE |
+                          ( ( _os2_obj_any_supported && _os2_use_obj_any ) ? OBJ_ANY : 0 );
+
+        apiret = DosAllocMem( (PPVOID)&p, amount, os2_alloc_flags );
+        if( apiret == ERROR_INVALID_PARAMETER && ( os2_alloc_flags & OBJ_ANY ) ) {
+          _os2_obj_any_supported = FALSE;
+          os2_alloc_flags &= ~ OBJ_ANY;
+          apiret = DosAllocMem( (PPVOID)&p, amount, os2_alloc_flags );
         }
+        if( apiret )
+            return( 0 );
+
         brk_value = (unsigned)p;
     }
 #elif defined(__NT__)
@@ -461,6 +493,11 @@ static int __CreateNewNHeap( unsigned amount )
     /* we've got a new heap block */
     p1 = (mheapptr) brk_value;
     p1->len = amount;
+#   if defined(__WARP__)
+    // 2014-05-21 SHL
+    // Remeber if block was allocated with OBJ_ANY - may be in high memory
+    p1->used_obj_any = (os2_alloc_flags & OBJ_ANY) != 0;
+#   endif
     // Now link it up
     flp = __LinkUpNewMHeap( p1 );
     amount = flp->len;

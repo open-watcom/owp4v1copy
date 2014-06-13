@@ -121,6 +121,14 @@ _WCRTLINK extern void *calloc( size_t __n, size_t __size );
 _WCRTLINK extern void free( void *__ptr );
 _WCRTLINK extern void *malloc( size_t __size );
 _WCRTLINK extern void *realloc( void *__ptr, size_t __size );
+
+/* 2014-05-20 SHL FIXME to be :segment */
+#if defined(__OS2__) && defined(__386__)
+_WCRTLINK int _use_os2_high_mem( int fUseHighMem );	/* Returns prior setting */
+_WCRTLINK void *_os2lmalloc( size_t amount );
+_WCRTLINK void *_os2hmalloc( size_t amount );
+#endif
+
 #ifdef __cplusplus
 }
 using std::calloc;

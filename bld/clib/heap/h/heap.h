@@ -75,6 +75,9 @@ struct heapblk {
     unsigned int        numalloc;       /* number of allocated blocks in heap */
     unsigned int        numfree;        /* number of free blocks in the heap */
     struct freelist     freehead;       /* listhead of free blocks in heap */
+#   if defined(__WARP__) /* 2014-05-20 SHL */
+    unsigned int        spare;	  /* match miniheapblkp size */
+#   endif
 };
 
 struct freelistp {
@@ -92,6 +95,9 @@ struct heapblkp {
     unsigned int        numalloc;
     unsigned int        numfree;
     frl                 freehead;
+#   if defined(__WARP__) /* 2014-05-20 SHL */
+    unsigned int        spare;	  /* match miniheapblkp size */
+#   endif
 };
 
 struct miniheapblkp {
@@ -104,6 +110,9 @@ struct miniheapblkp {
     unsigned int        numalloc;
     unsigned int        numfree;
     frl                 freehead;
+#   if defined(__WARP__) /* 2014-05-20 SHL */
+    unsigned int        used_obj_any:1;  /* allocated with OBJ_ANY - block may be in high memory */
+#   endif
 };
 
 struct heapstart {
@@ -207,3 +216,8 @@ extern  void     __MemFree( unsigned __ptr, unsigned __seg, unsigned __off );
 #define __HM_SUCCESS    0
 #define __HM_FAIL       1
 #define __HM_TRYGROW    2
+
+#if defined(__WARP__) /* 2014-05-20 SHL */
+extern unsigned int _os2_use_obj_any;		// Prefer high memory heap block
+extern unsigned int _os2_obj_any_supported;	// DosAllocMem supports OBJ_ANY
+#endif

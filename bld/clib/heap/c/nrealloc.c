@@ -39,6 +39,10 @@
  #include "extender.h"
 #endif
 
+#if defined(__WARP__)
+#include "heapacc.h"
+#endif
+
 #if defined(__SMALL_DATA__)
 
 _WCRTLINK void *realloc( void *stg, size_t amount )
@@ -76,7 +80,23 @@ _WCRTLINK void _WCNEAR *_nrealloc( void _WCI86NEAR *stg, size_t req_size )
                 }
             }
             #endif
+#           if defined(__WARP__)        // 2014-05-21 SHL
+            // If block in upper memory (i.e. above 512MB), try to keep it there
+            if ( (unsigned int)stg >= 0x20000000 ) {
+              int prior;
+              _AccessNHeap();
+              prior = _os2_use_obj_any;
+              _os2_use_obj_any = 1;
+              p = _nmalloc( req_size );   /* - allocate a new block */
+              _os2_use_obj_any = prior;
+              _ReleaseNHeap();
+            }
+            else {
+              p = _nmalloc( req_size );   /* - allocate a new block */
+            }
+#           else // !__WARP__
             p = _nmalloc( req_size );   /* - allocate a new block */
+#           endif
             if( p != NULL ) {           /* - if we got one */
                 memcpy( p, stg, old_size );  /* copy it */
                 _nfree( stg );                  /* and free old one */
