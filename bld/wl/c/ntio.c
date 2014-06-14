@@ -39,7 +39,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-// 2014-05-23 SHL survive os2hmalloc
+// 2014-05-23 SHL Survive os2hmalloc
 #if defined( __OS2__ ) && defined(__386__)
 #include <malloc.h>
 #endif
@@ -119,9 +119,18 @@ static int DoOpen( char *name, unsigned mode, bool isexe )
     for( ;; ) {
         if( OpenFiles >= MAX_OPEN_FILES )
             CleanCachedHandles();
-#       if defined( __OS2__ ) && defined(__386__)
+        /* 2014-06-14 SHL
+         * Force OS/2 prebuild wlink to only use 1.9 clib functions.
+         * Remove PREBUILD check after 2.0 is released.
+         * _os2lmalloc will be in 2.0 clib.
+         */
+#       if defined( __OS2__ ) && defined(__386__) && !defined(PREBUILD)
         {
-            // 2014-05-23 SHL survive os2hmalloc
+            /* 2014-05-23 SHL Survive os2hmalloc
+             * DosOpen() is not high memory safe when writing to a device.
+             * Ensure that filename buffer is in low memory.
+             * Remove this code when open() is modified to avoid this issue.
+             */
             char *pszSafe = NULL;
             if( (unsigned long)name > 0x2000000 ) {
                 pszSafe = _os2lmalloc( strlen( name ) + 1 );

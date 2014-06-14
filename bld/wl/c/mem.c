@@ -62,16 +62,27 @@
 
 #if defined(__386__)
 
-// 2014-05-21 SHL
-// Define USE_OS2HMALLOC to enable _os2hmalloc logic
+// 2014-05-21 SHL Define USE_OS2HMALLOC to enable _os2hmalloc logic.
+/* 2014-06-14 SHL
+ * Force prebuild wlink to only use 1.9 clib functions.
+ * Remove PREBUILD check after 2.0 is released.
+ * _os2hmalloc and friends will be in 2.0 clib.
+ */
+
+#if !defined(PREBUILD)
 #define USE_OS2HMALLOC 1
+#endif
 
 #if defined( USE_OS2HMALLOC )
 size_t os2_private_mem_left;
 #endif
 
-// Define OS2_MEM_HDR_MAGIC to enable inline OBJ_ANY logic
-// 2014-05-21 SHL FIXME to be gone
+/* 2014-05-21 SHL
+ * Define OS2_MEM_HDR_MAGIC to enable inline OBJ_ANY code.
+ * This code is leftover from Knut's original wlink high memory support.
+ * SHL FIXME for this code to be gone after USE_OS2HMALLOC code is
+ * proven to be stable.
+ */
 /* The magic value for magic, magic1 and magic2. (Terry Pratchett) */
 // #define OS2_MEM_HDR_MAGIC 0x19480428
 
