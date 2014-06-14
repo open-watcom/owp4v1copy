@@ -190,7 +190,6 @@ typedef enum {
     bx_new,         // BX NEW
     bx_set,         // BX SET
     bx_can,         // BX CAN or BX DEL
-    bx_on_off,      // BX ON converted to OFF
 } bx_op;            // the BX operators
 
 typedef enum {
@@ -241,8 +240,7 @@ static void box_blank_lines( uint32_t lines )
         while( cur_hline != NULL ) {
             for( i_b = 0; i_b < cur_hline->current; i_b++ ) {
                 if( (cur_hline->cols[i_b].v_ind == bx_v_both)
-                        || (cur_hline->cols[i_b].v_ind == bx_v_up)
-                        || (cur_op == bx_on_off) ) {  // ascender needed
+                        || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
                     if( cur_blank->first == NULL ) {
                         cur_chars = alloc_text_chars( &bin_device->box.vertical_line, 1,
                                                   g_curr_font_num );
@@ -297,8 +295,7 @@ static void box_char_element( doc_element * cur_el ) {
                 while( cur_hline != NULL ) {  // iterate over all horizontal lines
                     for( i_b = 0; i_b < cur_hline->current; i_b++ ) {
                         if( (cur_hline->cols[i_b].v_ind == bx_v_both)
-                                || (cur_hline->cols[i_b].v_ind == bx_v_up)
-                                || (cur_op == bx_on_off) ) {  // ascender needed
+                                || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
 
                             cur_pos = cur_hline->cols[i_b].col + g_page_left
                                                                    - box_col_width;
@@ -436,10 +433,12 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
         cur_depth += 10;                    // apparent constant used by wgml 4.0
     }
     for( i_h = 0; i_h < hline->current; i_h++ ) { // iterate over all output columns
-        if( ((stub != st_ext) && (hline->cols[i_h].v_ind == bx_v_both))
-             || (hline->cols[i_h].v_ind == bx_v_up) || (cur_op == bx_on_off)
-             || ((stub == st_int) && (hline->cols[i_h].v_ind == bx_v_down))
-                ) {  // ascender needed
+        if( (hline->cols[i_h].v_ind == bx_v_up)
+             || ((stub == st_none) && (hline->cols[i_h].v_ind == bx_v_both))
+             || ((stub == st_int) && (cur_op != bx_on) &&
+                    (hline->cols[i_h].v_ind == bx_v_both))
+             || ((stub == st_int) && (cur_op == bx_off) && 
+                    (hline->cols[i_h].v_ind == bx_v_down)) ) {  // ascender needed
 
             /* Create the doc_element to hold the VLINE */
 
@@ -448,7 +447,8 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
             v_line_el->depth = 0;   // only the last VLINE can (sometimes) have a depth > 0
             v_line_el->element.vline.h_start = hline->cols[i_h].col
                                                + g_page_left - h_vl_offset;
-            if( (stub == st_int) && ((hline->cols[i_h].v_ind == bx_v_down)) ) {
+            if( (stub == st_int) && ((hline->cols[i_h].v_ind == bx_v_down)
+                                                        || (cur_op == bx_on)) ) {
                 v_line_el->element.vline.v_len = hl_depth;
             } else {
                 v_line_el->element.vline.v_len = cur_depth;
@@ -457,13 +457,13 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
             if( !first_done ) {                                 // first VLINE
                 v_line_el->subs_skip = subs_skip;
                 v_line_el->top_skip = top_skip;
-                if( (box_depth == 0) || ((cur_op == bx_off) &&
+                if( (cur_depth == 0) || ((cur_op == bx_off) &&
                                                         (hline->current > 1)) ) {
                     v_line_el->element.vline.twice = false;     // most first VLINEs do AA once
                 }
                 first_done = true;
-            } else if( (cur_depth == 0) && !((stub == st_int) &&
-                        ((hline->cols[i_h].v_ind == bx_v_down))) ) {
+            } else if( (cur_depth == 0) && (cur_op != bx_on) &&
+                    !((stub == st_int) && ((hline->cols[i_h].v_ind == bx_v_down))) ) {
                 v_line_el->element.vline.twice = false;         // stub VLINEs do AA once
             }
             insert_col_main( v_line_el );   // insert the VLINE
@@ -553,10 +553,10 @@ static void draw_box_lines( bool top_line, doc_element * h_line_el,
             }
         } else {                        // box has started: VLINEs are possible
             switch( cur_op ) {
-            case bx_on_off:             // ON with no column list treated as OFF
+            case bx_on:                 // ON ends prior box as such
             case bx_off:                // last BX line: end of box, special processing
                 if( ProcFlags.box_cols_cur && (box_depth > 0) ) {  // draw VLINEs first
-                    if( cur_op == bx_on_off ) {
+                    if( cur_op == bx_on ) {
                         cur_hline = box_line->first;
                         while( cur_hline != NULL ) {
                             box_draw_vlines( cur_hline, sav_subs_skip + sav_blank_lines,
@@ -977,7 +977,8 @@ static void do_line_device( void )
     /* these criteria may be expanded in the future         */
     /********************************************************/
 
-    box_ends = (cur_op == bx_can ) || (cur_op == bx_off) || (cur_op == bx_on_off);
+    box_ends = (cur_op == bx_can ) || (cur_op == bx_off) ||
+                    ((cur_op == bx_on) && !ProcFlags.box_cols_cur);
     draw_v_line = (box_line->first->current > 0) && 
                   ((ProcFlags.box_cols_cur && ProcFlags.in_bx_box) ||
                   (box_ends && (stack_depth == 1)));
@@ -1074,13 +1075,13 @@ static void do_line_device( void )
     /************************************************************/
     /* This matches the behavior of wgml 4.0:                   */
     /*   a new page is emitted if BX OFF or BX ON with no       */
-    /*      column list is at the bottom of the page            */
+    /*      column list is at the exact bottom of the page      */
     /*   BX CAN never positions its VLINEs at the exact bottom  */
     /*     of the page, so it does not do this -- so far        */
     /************************************************************/
 
-    if( ((cur_op == bx_off) || (cur_op == bx_on_off)) &&
-            (t_page.max_depth == t_page.cur_depth) ) {          // BX OFF at exact bottom of page
+    if( ((cur_op == bx_off) || ((cur_op == bx_on) && !ProcFlags.box_cols_cur)) &&
+            (t_page.max_depth == t_page.cur_depth) ) {
         do_page_out();
         reset_t_page();
     }
@@ -1285,6 +1286,7 @@ static void merge_lines( void )
 /// end temp section
 
     if( (prev_line == NULL) && (cur_line == NULL) ) {
+/// is this still true? didn't the flag eliminate this possibility?
         /* This can happen; so far, there is nothing to do when it does */
     } else if( prev_line == NULL ) {    // cur_line becomes box_line->first
         box_line->first = cur_line;
@@ -1314,6 +1316,34 @@ static void merge_lines( void )
                     if( cur_col == cur_temp->current ) {            // end of hline
                         cur_temp = cur_temp->next;
                         cur_col = 0;
+                        continue;
+                    }
+                }
+            } else if( cur_op == bx_on ) {  // possible gap between prev_line & cur_line
+                if( cur_temp != NULL ) {                            // cur_line still has entries
+                    if( cur_col == cur_temp->current ) {            // end of hline
+                        cur_temp = cur_temp->next;
+                        cur_col = 0;
+                        if( cur_temp != NULL ) {
+                            box_temp->next = alloc_box_col_set();
+                            box_temp = box_temp->next;
+                            box_col = 0;
+                        }
+                        continue;
+                    }
+                }
+                if( prev_temp != NULL ) {                           // prev_line still has entries
+                    if( prev_col == prev_temp->current ) {          // end of hline
+                        if( prev_temp->next == NULL ) {                     // check for pre=cur_line gap
+                            if( (cur_temp == cur_line) && (cur_col == 0) &&
+                    (prev_temp->cols[prev_col - 1].col < cur_temp->cols[cur_col].col) ) {          // gap exists
+                                box_temp->next = alloc_box_col_set();
+                                box_temp = box_temp->next;
+                                box_col = 0;
+                            }                        
+                        }
+                        prev_temp = prev_temp->next;
+                        prev_col = 0;
                         continue;
                     }
                 }
@@ -1491,11 +1521,11 @@ void scr_bx( void )
     box_col_set     *   box_temp;
     box_col_set     *   cur_temp;
     box_col_set     *   prev_temp;
+    box_col_set     *   sav_temp;
     box_col_stack   *   stack_temp;
     char            *   p;
     char            *   pa;
     int                 i;
-    int32_t             box_col;    // current box line column
     int32_t             cur_col;    // signed to catch negative relative values
     size_t              len;
     su                  boxcolwork;
@@ -1682,18 +1712,6 @@ void scr_bx( void )
         break;    
     }
 
-    if( !ProcFlags.box_cols_cur && (cur_op == bx_on) ) { // ON, inside box, no column list
-        cur_op = bx_on_off;                 // is treated as if it were OFF
-        box_temp = box_line->first;         // and all columns become "down"
-        while( box_temp != NULL ) {
-            for( box_col = 0; box_col < box_temp->current; box_col++ ) {
-                box_temp->cols[box_col].v_ind = bx_v_down;
-            }
-            box_temp = box_temp->next;
-        }
-        ProcFlags.box_cols_cur = true;
-    }
-
     /* set some static globals used in drawing boxes */
 
     def_height = wgml_fonts[g_curr_font_num].line_height;   // box line height
@@ -1744,7 +1762,8 @@ void scr_bx( void )
         ProcFlags.box_line_done = true;
     }
 
-    if( (cur_op == bx_off) || (cur_op == bx_on_off) || (cur_op == bx_can) ) {
+    if( (cur_op == bx_off) || ((cur_op == bx_on) && !ProcFlags.box_cols_cur)
+                                || (cur_op == bx_can) ) {
 
         /* Remove the first element from the stack */
 
@@ -1777,15 +1796,48 @@ void scr_bx( void )
                 box_line->first = NULL;
             }
         }
-    } else if( (box_line !=NULL) && (cur_op != bx_off) && (cur_op != bx_on_off) ) {
+    } else if( (box_line !=NULL) && (cur_op != bx_off) &&
+                        ((cur_op != bx_on) || ProcFlags.box_cols_cur) ) {
         prev_line = box_line->first;            // box_line->first becomes prev_line
         box_line->first = NULL;                 // clear box_line->first
     }
 
-    prev_temp = prev_line;                      // all columns become "up"
+    /************************************************************/
+    /* Adjust prev_line for the next BX line                    */
+    /* Generally, all columns become "up" columns.              */
+    /* However, for BX ON, the columns found before the BX ON   */
+    /*   was processed are dropped, thus ending the prior box   */
+    /************************************************************/
+
+    prev_temp = prev_line;
     while( prev_temp != NULL ) {
         for( prev_col = 0; prev_col < prev_temp->current; prev_col++ ) {
+            if( (cur_op == bx_on) && (prev_temp->cols[prev_col].v_ind == bx_v_up) ) {
+                if( prev_col + 1 < prev_temp->current ) {
+                    memmove_s( &prev_temp->cols[prev_col], sizeof( box_col ) * prev_temp->current - prev_col,
+                                &prev_temp->cols[prev_col+1], sizeof( box_col )  * prev_temp->current - prev_col);
+                }
+                prev_temp->current--;
+                prev_col--;
+                continue;
+            }
             prev_temp->cols[prev_col].v_ind = bx_v_up;
+        }
+        prev_temp = prev_temp->next;
+    }
+
+    prev_temp = prev_line;
+    while( prev_temp != NULL ) {
+        if( prev_temp->current == 0 ) {     // remove element from prev_line
+            sav_temp = prev_temp;
+            if( prev_temp == prev_line ) {
+                prev_line = prev_temp->next;
+            }
+            sav_temp->next = NULL;
+            prev_temp = prev_temp->next;
+            add_box_col_set_to_pool( sav_temp );        
+            sav_temp = NULL;
+            continue;
         }
         prev_temp = prev_temp->next;
     }
