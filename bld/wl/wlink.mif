@@ -122,7 +122,7 @@ xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
 
 # 2014-05-22 SHL Allow OS/2 wlink to used new OS/2 upper memory heap clib functions.
 # Can delete this after 2.0 released
-!ifdef __OS2__
+!if "$(host_os).$(host_cpu)" == "os2.386"
 !ifndef prebuild
 !ifeq release 1
 xlibs += $(dev_dir)\clib\library\os2.386\mf_r\clib3r.lib
@@ -130,7 +130,7 @@ xlibs += $(dev_dir)\clib\library\os2.386\mf_r\clib3r.lib
 xlibs += $(dev_dir)\clib\library\os2.386\mf_rd\clib3r.lib
 !endif
 !endif
-!endif # __OS2__
+!endif # host_os host_cpu
 
 ###########
 # rc stuff
