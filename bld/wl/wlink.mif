@@ -93,9 +93,10 @@ extra_c_flags_mem        = $(trmem_cover_cflags)
 
 # 2014-05-22 SHL Allow wlink to build with new os/2 malloc clib functions.
 # Delete this code after 2.0 released.
-!ifdef __OS2__
+!if "$(host_os).$(host_cpu)" == "os2.386"
 !ifdef prebuild
 # 2014-06-14 SHL Ensure prebuild wlink uses only 1.9 compatible clib functions.
+# Delete this code after 2.0 released.
 extra_c_flags_mem += -DPREBUILD=1
 extra_c_flags_ntio = -DPREBUILD=1
 !else
@@ -103,7 +104,7 @@ extra_c_flags_ntio = -DPREBUILD=1
 extra_c_flags_mem += -I$(dev_dir)\hdr\dos
 extra_c_flags_ntio = -I$(dev_dir)\hdr\dos
 !endif
-!endif # __OS2__
+!endif # os2.386
 
 #####################
 # linker .EXE options
@@ -130,7 +131,7 @@ xlibs += $(dev_dir)\clib\library\os2.386\mf_r\clib3r.lib
 xlibs += $(dev_dir)\clib\library\os2.386\mf_rd\clib3r.lib
 !endif
 !endif
-!endif # host_os host_cpu
+!endif # os2.386
 
 ###########
 # rc stuff
