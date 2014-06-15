@@ -406,7 +406,7 @@ extern void HllAddLocal( seg_leader *seg, offset length )
 #ifdef HLL_INC_LINE
     case HLL_LINE:
 #endif
-        DEBUG(( DBG_HLL, "HllAddLocal: info=%h length=%d", info, length));
+        DEBUG(( DBG_HLL, "HllAddLocal: seg=%h length=%d", seg, length));
         hllAddSubSection();
         break;
     }
@@ -518,8 +518,8 @@ extern void HllGenLines( lineinfo *info )
     size = info->size;
     is32bit = seg->is32bit;
     // 2014-04-22 SHL
-    DEBUG(( DBG_HLL, "HllGenLines: info=%p seg=%p lines=%p size=%d is32bit",
-            info, seg, lines, size, is32bit ));
+    DEBUG(( DBG_HLL, "HllGenLines: info=%p seg=%p size=%d is32bit %d",
+            info, seg, size, is32bit ));
 }
 
 static void hllAddAddrInit( segdata *sdata, void *cookie )
