@@ -40,6 +40,7 @@ cdsay .
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <DEVDIR>/wv/rfx/os2386/rfx.exe      <RELROOT>/binp/rfx.exe
+    <CPCMD> <DEVDIR>/wv/rfx/os2386/rfx.sym      <RELROOT>/binp/rfx.sym
     <CPCMD> <DEVDIR>/wv/os2/os2386/wv.exe       <RELROOT>/binp/wd.exe
     <CPCMD> <DEVDIR>/wv/os2/os2386/wv.sym       <RELROOT>/binp/wd.sym
     <CPCMD> <DEVDIR>/wv/os2/os2386.gui/wv.exe   <RELROOT>/binp/wdw.exe
@@ -48,6 +49,8 @@ cdsay .
 #   <CPCMD> <DEVDIR>/wv/os2/os2i86.gui/wv.exe   <RELROOT>/binp/wdw16.exe
 
   [ IFDEF (os_nt "") <2*> ]
+    <CPCMD> <DEVDIR>/wv/rfx/nt386/rfx.exe       <RELROOT>/binnt/rfx.exe
+    <CPCMD> <DEVDIR>/wv/rfx/nt386/rfx.sym       <RELROOT>/binnt/rfx.sym
     <CPCMD> <DEVDIR>/wv/win/nt386/wv.exe        <RELROOT>/binnt/wd.exe
     <CPCMD> <DEVDIR>/wv/win/nt386/wv.sym        <RELROOT>/binnt/wd.sym
     <CPCMD> <DEVDIR>/wv/win/nt386.gui/wv.exe    <RELROOT>/binnt/wdw.exe
