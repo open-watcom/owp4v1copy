@@ -29,14 +29,15 @@ inc_dirs = -I$(rsilib)
 
 extra_libs = $(rsilib)/d16libc.lib
 
-!ifndef rsi_wlink
+# Use GLU if directed
+!ifdef rsi_no_wlink
 !define substitute_linker
 !endif
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
 !include $(trap_dir)/master.mif
 
-!ifndef rsi_wlink
+!ifdef rsi_no_wlink
 
 objs += $(lang_root)/lib286/dos/dos16m.obj
 
