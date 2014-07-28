@@ -1,8 +1,8 @@
 extra_l_flags = option map, symfile
 
-extra_l_flags_os2_386 = op newfiles,stack=20k
-extra_l_flags_os2_i86 = op newfiles,stack=1k
-extra_l_flags_os2 = $(extra_l_flags_$(host_cpu))
+extra_l_flags_os2_386 = op newfiles,stack=64k
+extra_l_flags_os2_i86 = op newfiles,stack=2k
+extra_l_flags_os2 = $(extra_l_flags_os2_$(host_cpu))
 
 lflags_win_i86 += font mem
 extra_l_flags_win_i86 = op nocache,symfile,rwr lib windows,commdlg,toolhelp,ddeml,shell op stack=16000,heaps=1k

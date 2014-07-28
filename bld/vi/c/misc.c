@@ -258,7 +258,7 @@ int doExec( char *std_in, char *std_out, char *cmd )
         SetConsoleActiveScreenBuffer( GetStdHandle( STD_OUTPUT_HANDLE ) );
         st = system( cmd );
     }
-#elif defined( __UNIX__ )
+#elif defined( __UNIX__ ) || defined( __OS2__ )
     st = MySpawn( cmd );
 #else
     st = system( cmd );
