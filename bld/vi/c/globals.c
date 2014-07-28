@@ -46,7 +46,7 @@ char _NEAR      SingleSlash[] = "/";
 char            * _NEAR BoolStr[] = { "FALSE", "TRUE" };
 
 /* edit options */
-char * _NEAR EditOpts[] =  {
+char _NEAR * _NEAR EditOpts[] =  {
     "<F1> Go To",
     "<F2> Edit",
     "<F3> Get All"

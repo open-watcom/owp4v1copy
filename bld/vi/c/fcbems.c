@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  EMS management routines for DOS.
 *
 ****************************************************************************/
 
@@ -37,6 +36,7 @@
 #include "dosx.h"
 #include "xmem.h"
 #include "fcbmem.h"
+#include "pragmas.h"
 
 
 ems_struct              EMSCtrl;
@@ -72,7 +72,7 @@ void EMSBlockWrite( long addr, void *buff, unsigned len )
 int EMSGetBlock( long *addr )
 {
     int         i;
-    long        found = NULL;
+    long        found = 0;
 
     i = EMSBlockTest( 1 );
     if( i ) {
@@ -80,9 +80,9 @@ int EMSGetBlock( long *addr )
     }
     EMSBlocksInUse++;
     for( i = 0; i < TotalEMSBlocks; i++ ) {
-        if( emsPtrs[i] != NULL ) {
+        if( emsPtrs[i] != 0 ) {
             found = emsPtrs[i];
-            emsPtrs[i] = NULL;
+            emsPtrs[i] = 0;
             break;
         }
     }
@@ -139,7 +139,7 @@ static long eMSAlloc( U_INT size )
 
     size = ( size + 1 ) & ~1;
     if( size > EMS_MAX_PAGE_SIZE || EMSCtrl.exhausted ) {
-        return( NULL );
+        return( 0 );
     }
     if( EMSCtrl.offset + size > EMS_MAX_PAGE_SIZE ) {
         ++EMSCtrl.logical;
@@ -152,7 +152,7 @@ static long eMSAlloc( U_INT size )
                 --EMSCtrl.max_logical;
                 if( EMSCtrl.max_logical == 0 ) {
                     EMSCtrl.exhausted = TRUE;
-                    return( NULL );
+                    return( 0 );
                 }
             }
             EMSCtrl.logical = 0;
@@ -221,7 +221,7 @@ void EMSInit( void )
 
     for( i = 0; i < MaxEMSBlocks; i++ ) {
         emsPtrs[i] = eMSAlloc( MAX_IO_BUFFER );
-        if( emsPtrs[i] == NULL ) {
+        if( emsPtrs[i] == 0 ) {
             break;
         }
         h.external = emsPtrs[i];
@@ -375,7 +375,7 @@ void GiveBackEMSBlock( long addr )
     int i;
 
     for( i = 0; i < TotalEMSBlocks; i++ ) {
-        if( emsPtrs[i] == NULL ) {
+        if( emsPtrs[i] == 0 ) {
             emsPtrs[i] = addr;
             break;
         }
