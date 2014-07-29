@@ -33,6 +33,7 @@
 #include "win.h"
 #include "dosx.h"
 #include "vibios.h"
+#include <stddef.h>
 
 #ifdef __OS2V2__
     #define SEG16   _Seg16
@@ -112,14 +113,17 @@ void ScreenInit( void )
     struct _VIOMODEINFO         vioMode;
     void * SEG16                ptr;
 
-    vioMode.cb = sizeof( vioMode );
+    /* Set the cb member of VIOMODEINFO/VIOCONFIGINFO to smaller values
+     * in order to be backward compatible with old OS/2 versions.
+     */
+    vioMode.cb = offsetof( VIOMODEINFO, buf_addr );
     if( VioGetMode( &vioMode, 0 ) != 0 ) {
         StartupError( ERR_WIND_INVALID );
     }
     WindMaxWidth = vioMode.col;
     WindMaxHeight = vioMode.row;
 
-    config.cb = sizeof( config );
+    config.cb = offsetof( VIOCONFIGINFO, Configuration );
     if( VioGetConfig( 0, &config, 0 ) != 0 ) {
         StartupError( ERR_WIND_INVALID );
     }
