@@ -84,7 +84,7 @@ void FiniInstance( void )
     // OLE2Fini();
 }
 
-#ifdef DBG
+#ifndef NDEBUG
 void *HeapWalker( void )
 {
     struct _heapinfo    info;

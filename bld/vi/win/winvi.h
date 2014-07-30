@@ -101,7 +101,7 @@ typedef enum window_extra {
 
 #define MAGIC_SIZE      4       // we will always be using SetWindowLong
 
-#ifdef DBG
+#ifndef NDEBUG
     #define BAD_ID( id )    ((id) == NULL || (id) == (window_id)-1 || !IsWindow( id ))
 #else
     #define BAD_ID( id )    ((id) == (window_id)-1)
