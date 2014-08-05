@@ -1162,7 +1162,6 @@ void reset_t_page( void )
     max_depth = t_page.max_depth - t_page.cur_depth;
 
     ProcFlags.page_started = false;
-    ProcFlags.box_line_done = false;
 }
 
 

@@ -210,11 +210,12 @@ global struct ProcFlags {
     unsigned        skips_valid     : 1;// controls set_skip_vars() useage
 
     unsigned        box_cols_cur    : 1;// current BX line had column list
-    unsigned        box_line_done   : 1;// BX line done by prior BX line
     unsigned        bx_set_done     : 1;// BX SET was done last before current BX line
+    unsigned        draw_v_line     : 1;// vertical lines are to be drawn for this BX line
     unsigned        force_op        : 1;// force overprint (used with BX CAN/BX DEL)
     unsigned        in_bx_box       : 1;// identifies first BX line
     unsigned        no_bx_hline     : 1;// determines if a horizontal line is to be emitted or not
+    unsigned        vline_done      : 1;// determines if a vertical line was done
 
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph

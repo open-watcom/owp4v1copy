@@ -258,6 +258,7 @@ box_col_set * alloc_box_col_set( void )
     box_col_set_pool = curr->next;
     curr->next = NULL;
     curr->current = 0;                  // clear before returning
+    memset( curr->cols, 0, curr->length * sizeof( box_col ));
 
     return( curr );
 }
@@ -306,6 +307,7 @@ box_col_stack * alloc_box_col_stack( void )
     curr->next = NULL;
     curr->first = NULL;                 // clear before returning
     curr->had_cols = false;
+    curr->inner_box = false;
 
     return( curr );
 }
