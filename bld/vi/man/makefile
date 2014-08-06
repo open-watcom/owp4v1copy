@@ -5,6 +5,9 @@ host_cpu = 386
 #
 # There should be settings for supported building platforms
 #
+!ifdef wgml_override
+wgml = $(wgml_override)
+!else
 !ifeq %build_platform dos386
 wgml = $(%OWROOT)\docs\gml\dos\wgml
 !else ifeq %build_platform os2386
@@ -13,6 +16,7 @@ wgml = $(%OWROOT)\docs\gml\os2\wgml
 wgml = $(%OWROOT)\docs\gml\dos\wgml
 !else
 !error Unsupported building platform !!!!!!
+!endif
 !endif
 
 optsfile=wgmlopts.tmp
@@ -36,7 +40,7 @@ vi.ps : vi.gml settings.gml intro.gml basic.gml &
         a_errcod.gml a_cmdmod.gml a_symkey.gml
     -$(wgml) vi ( file nb7x9ps index passes 2 cpinch 20 # verbose statistics
     # Bodge supplying missing functions
-    bvi -s << vi.ps
+    vi -q -s << vi.ps
 /^\/
 insert
 /setSize { pop gsave } def
