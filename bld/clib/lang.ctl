@@ -36,7 +36,7 @@ cdsay .
     <CPCMD> doslfn/library/msdos.086/ms/doslfns.lib         <RELROOT>/lib286/dos/doslfns.lib
     <CPCMD> startup/library/msdos.086/ml/d16msels.obj       <RELROOT>/lib286/dos/d16msels.obj
     <CPCMD> startup/library/msdos.086/ml/dos16m.obj         <RELROOT>/lib286/dos/dos16m.obj
-    <CPCMD> startup/library/msdos.086/ms/binmode.obj        <RELROOT>/lib286/dos/binmode.obj
+    <CPCMD> handleio/library/msdos.086/ms/binmode.obj       <RELROOT>/lib286/dos/binmode.obj
     <CPCMD> startup/library/msdos.086/ms/commode.obj        <RELROOT>/lib286/dos/commode.obj
     <CPCMD> startup/library/msdos.086/ms/cstrtiny.obj       <RELROOT>/lib286/dos/cstart_t.obj
 
@@ -44,7 +44,7 @@ cdsay .
     <CPCMD> library/msdos.386/ms_s/clib3s.lib               <RELROOT>/lib386/dos/clib3s.lib
     <CPCMD> doslfn/library/msdos.386/ms_r/doslfn3r.lib      <RELROOT>/lib386/dos/doslfn3r.lib
     <CPCMD> doslfn/library/msdos.386/ms_s/doslfn3s.lib      <RELROOT>/lib386/dos/doslfn3s.lib
-    <CPCMD> startup/library/msdos.386/ms_r/binmode.obj      <RELROOT>/lib386/dos/binmode.obj
+    <CPCMD> handleio/library/msdos.386/ms_r/binmode.obj     <RELROOT>/lib386/dos/binmode.obj
     <CPCMD> startup/library/msdos.386/ms_r/commode.obj      <RELROOT>/lib386/dos/commode.obj
     <CPCMD> startup/library/msdos.386/ms_r/cstrtx32.obj     <RELROOT>/lib386/dos/cstrtx3r.obj
     <CPCMD> startup/library/msdos.386/ms_r/dllstart.obj     <RELROOT>/lib386/dos/dllstrtr.obj
@@ -69,13 +69,13 @@ cdsay .
     <CPCMD> library/os2.286/ml_mt/clibl.lib                 <RELROOT>/lib286/os2/clibmtl.lib
     <CPCMD> library/os2.286/mm/clibm.lib                    <RELROOT>/lib286/os2/clibm.lib
     <CPCMD> library/os2.286/ms/clibs.lib                    <RELROOT>/lib286/os2/clibs.lib
-    <CPCMD> startup/library/os2.286/ms/binmode.obj          <RELROOT>/lib286/os2/binmode.obj
+    <CPCMD> handleio/library/os2.286/ms/binmode.obj         <RELROOT>/lib286/os2/binmode.obj
     <CPCMD> startup/library/os2.286/ms/commode.obj          <RELROOT>/lib286/os2/commode.obj
 
     <CPCMD> library/os2.386/mf_r/clib3r.lib                 <RELROOT>/lib386/os2/clib3r.lib
     <CPCMD> library/os2.386/mf_s/clib3s.lib                 <RELROOT>/lib386/os2/clib3s.lib
     <CPCMD> library/os2.386/mf_rd/clib3r.lib                <RELROOT>/lib386/os2/clib3rd.lib
-    <CPCMD> startup/library/os2.386/mf_r/binmode.obj        <RELROOT>/lib386/os2/binmode.obj
+    <CPCMD> handleio/library/os2.386/mf_r/binmode.obj       <RELROOT>/lib386/os2/binmode.obj
     <CPCMD> startup/library/os2.386/mf_r/commode.obj        <RELROOT>/lib386/os2/commode.obj
 
     # run-time DLL version
@@ -94,12 +94,12 @@ cdsay .
     <CPCMD> library/windows.086/mm/clibm.lib                <RELROOT>/lib286/win/clibm.lib
     <CPCMD> library/windows.086/ms/clibs.lib                <RELROOT>/lib286/win/clibs.lib
     <CPCMD> startup/library/windows.086/ml/libentry.obj     <RELROOT>/lib286/win/libentry.obj
-    <CPCMD> startup/library/windows.086/ms/binmode.obj      <RELROOT>/lib286/win/binmode.obj
+    <CPCMD> handleio/library/windows.086/ms/binmode.obj     <RELROOT>/lib286/win/binmode.obj
     <CPCMD> startup/library/windows.086/ms/commode.obj      <RELROOT>/lib286/win/commode.obj
 
     <CPCMD> library/windows.386/mf_r/clib3r.lib             <RELROOT>/lib386/win/clib3r.lib
     <CPCMD> library/windows.386/mf_s/clib3s.lib             <RELROOT>/lib386/win/clib3s.lib
-    <CPCMD> startup/library/windows.386/mf_r/binmode.obj    <RELROOT>/lib386/win/binmode.obj
+    <CPCMD> handleio/library/windows.386/mf_r/binmode.obj   <RELROOT>/lib386/win/binmode.obj
     <CPCMD> startup/library/windows.386/mf_r/commode.obj    <RELROOT>/lib386/win/commode.obj
 
   [ IFDEF (os_nt "") <2*> ]
@@ -107,7 +107,7 @@ cdsay .
     <CPCMD> library/winnt.386/mf_s/clib3s.lib               <RELROOT>/lib386/nt/clib3s.lib
     <CPCMD> library/winnt.386/mf_rd/clib3r.lib              <RELROOT>/lib386/nt/clib3rd.lib
 
-    <CPCMD> startup/library/winnt.386/mf_r/binmode.obj      <RELROOT>/lib386/nt/binmode.obj
+    <CPCMD> handleio/library/winnt.386/mf_r/binmode.obj     <RELROOT>/lib386/nt/binmode.obj
     <CPCMD> startup/library/winnt.386/mf_r/commode.obj      <RELROOT>/lib386/nt/commode.obj
 
     # run-time DLL version
@@ -142,8 +142,8 @@ cdsay .
 # Note binmode applies to both LIBC and CLIB libraries but only needs to be built once from the
 # fat CLIB source code.
 #
-    <CPCMD> startup/library/nw_clib.386/ms_s/binmode.obj    <RELROOT>/lib386/netware/binmode.obj
-    <CPCMD> startup/library/nw_clib.386/ms_sd/binmode.obj   <RELROOT>/lib386/netware/binmoded.obj
+    <CPCMD> handleio/library/nw_clib.386/ms_s/binmode.obj   <RELROOT>/lib386/netware/binmode.obj
+    <CPCMD> handleio/library/nw_clib.386/ms_sd/binmode.obj  <RELROOT>/lib386/netware/binmoded.obj
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> library/qnx.286/mc/clibc.lib                    <RELROOT>/lib286/qnx/clibc.lib
@@ -163,7 +163,7 @@ cdsay .
     <CPCMD> library/rdos.386/mf_s/clib3s.lib                <RELROOT>/lib386/rdos/clib3s.lib
     <CPCMD> library/rdosdev.386/mc_r/clib3r.lib             <RELROOT>/lib386/rdosdev/clib3r.lib
 
-    <CPCMD> startup/library/rdos.386/mf_r/binmode.obj       <RELROOT>/lib386/rdos/binmode.obj
+    <CPCMD> handleio/library/rdos.386/mf_r/binmode.obj      <RELROOT>/lib386/rdos/binmode.obj
     <CPCMD> startup/library/rdos.386/mf_r/commode.obj       <RELROOT>/lib386/rdos/commode.obj
     <CPCMD> startup/library/rdos.386/mf_r/resstub.obj       <RELROOT>/lib386/rdos/resstub.obj
   [ ENDIF]
@@ -172,7 +172,7 @@ cdsay .
 # Libraries not built by default
 
     <CCCMD> library/winnt.axp/_s/clib.lib                   <RELROOT>/libaxp/nt/clib.lib
-    <CCCMD> startup/library/winnt.axp/_s/binmode.obj        <RELROOT>/libaxp/nt/binmode.obj
+    <CCCMD> handleio/library/winnt.axp/_s/binmode.obj       <RELROOT>/libaxp/nt/binmode.obj
     <CCCMD> startup/library/winnt.axp/_s/commode.obj        <RELROOT>/libaxp/nt/commode.obj
 
     <CCCMD> library/osi.386/ms_r/clib3r.lib                 <RELROOT>/lib386/osi/clib3r.lib
