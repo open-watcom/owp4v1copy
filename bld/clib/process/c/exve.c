@@ -85,14 +85,24 @@ typedef struct a_memblk {
 
 #define DOS2SIZE        0x281   /* paragraphs to reserve for DOS 2.X */
 
+/* Get the memory chain anchor. The segment address is stored just below the
+ * start of the "list of lists" returned by undocumented INT 21h/52h.
+ */
+extern unsigned get_anchor( void );
+#pragma aux get_anchor =\
+    "mov ah, 52h"       \
+    "int 21h"           \
+    "dec bx"            \
+    "dec bx"            \
+    "mov ax, es:[bx]"   \
+    modify [bx es] nomemory;
+
+
+/* Locate the first memory block. */
 static unsigned doslowblock( void )
 {
-    union REGS          regs;
-    struct SREGS        sregs;
-
-    regs.h.ah = 0x52;
-    int86x( DOS, &regs, &regs, &sregs );
-    return( * (unsigned _WCFAR *) (sregs.es*0x10000 + (regs.x.bx - 2)) + 1 );
+    /* Add one paragraph to point to the actual block instead of header. */
+    return( get_anchor() + 1 );
 }
 
 static void dosexpand( unsigned block )
