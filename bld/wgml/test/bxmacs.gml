@@ -1,288 +1,3 @@
-.dm millust begin
-.if '&*' eq 'begin' .do begin
-.co off
-~b
-.do end
-.el .if '&*' eq 'end' .do begin
-.co on
-.do end
-.el .if '&*' eq 'break' .do begin
-.co on
-.co off
-.do end
-.el .do begin
-.co off
-~b
-&*
-.co on
-:P.
-.do end
-.dm millust end
-.*
-.dm monoon begin
-:SF font=4.
-.dm monoon end
-.*
-.dm monooff begin
-:eSF.
-.dm monooff end
-.*
-.dm kw begin
-.  .ix 'keyword' '&*'
-.  .mono &*
-.dm kw end
-.*
-.dm kwon begin
-.  .monoon
-.dm kwon end
-.*
-.dm kwoff begin
-.  .monooff
-.dm kwoff end
-.*
-.dm beglevel begin
-.if '&SCTlvl' eq '5' .ty too many section levels
-.el .if '&SCTlvl' eq '4' :set symbol="SCTlvl" value = "5".
-.el .if '&SCTlvl' eq '3' :set symbol="SCTlvl" value = "4".
-.el .if '&SCTlvl' eq '2' :set symbol="SCTlvl" value = "3".
-.el .if '&SCTlvl' eq '1' :set symbol="SCTlvl" value = "2".
-.el .if '&SCTlvl' eq '0' :set symbol="SCTlvl" value = "1".
-.pu 1 .beglevel
-.dm beglevel end
-.*
-.dm keep begin
-.if '&*' eq 'begin' .do begin
-.   .if &keeplvl ne 0 .me
-.   .sr keeplvl=1
-.   .cp &WDWlvl
-.do end
-.el .if '&*' eq 'break' .do begin
-.   .br;.cp &WDWlvl
-.do end
-.el .if '&*' eq 'end' .do begin
-.   .sr keeplvl=0
-.do end
-.el .if '&*' eq '' .do begin
-.   .cp &WDWlvl
-.do end
-.el .do begin
-.   .cp &*
-.do end
-.dm keep end
-.*
-.dm section begin
-.se *secttl$=&*
-.se *reftx=""
-.if '&*refid.' ne '' .do begin
-.   .se *secttl$=&'substr(&*,&'pos(&*refid.,&*)+&'length(&*refid.)+1)
-.   .se *reftx="id='&*refid.'"
-.do end
-.in 0
-.if '&SCTlvl' eq '1' .do begin
-.   .cp &WDWlvl
-.   .if &e'&dohelp eq 0 .do begin
-.   :H2 &*reftx..&*secttl$.
-.   .do end
-.   .el .do begin
-.   :ZH2 &*reftx..&*secttl$.
-.   .do end
-.   .se headtext$=&*secttl$.
-.do end
-.el .if '&SCTlvl' eq '2' .do begin
-.   .sr TMPlvl=&WDWlvl.-2
-.   .cp &TMPlvl
-.   .if &e'&dohelp eq 0 .do begin
-.   :H3 &*reftx..&*secttl$.
-.   .do end
-.   .el .do begin
-.   :ZH3 &*reftx..&*secttl$.
-.   .do end
-.do end
-.el .if '&SCTlvl' eq '3' .do begin
-.   .sr TMPlvl=&WDWlvl.-4
-.   .cp &TMPlvl
-.   .if &e'&dohelp eq 0 .do begin
-.   :H4 &*reftx..&*secttl$.
-.   .do end
-.   .el .do begin
-.   :ZH4 &*reftx..&*secttl$.
-.   .do end
-.do end
-.el .if '&SCTlvl' eq '4' .do begin
-.   .sr TMPlvl=&WDWlvl.-6
-.   .cp &TMPlvl
-.   :H5 &*reftx..&*secttl$.
-.do end
-.el .if '&SCTlvl' eq '5' .do begin
-.   .sect &*secttl$.
-.do end
-.in &INDlvl
-.cntents &*secttl$.
-.pu 1 .ixsect &*secttl$.
-.dm section end
-.*
-.dm cntents begin
-.if &e'&dohelp eq 0 .me
-.if ›&*› eq ›end_of_book› .do begin
-:set symbol="SCTlvl" value = "0".
-.do end
-.sr *sct=0
-.if ›&cnt_ttl› ne › › .do begin
-.   .ctxstr &cnt_pfx.&cnt_ctx.
-.   .reptilde
-.   .repchars
-.   .if &cnt_lvl lt &SCTlvl .do begin
-.   .   .sr *sct=&cnt_lvl+2
-.   .   .pu 3 &*sct &cnt_ttl.
-.   .   .sr cnt_ttl='Introduction'
-.   .do end
-.   .el .do begin
-.   .   .if &cnt_lvl eq 0 .do begin
-.   .   .   .sr *sct=&cnt_lvl+2
-.   .   .   .pu 3 &*sct &cnt_ttl.
-.   .   .   .sr cnt_ttl='Introduction'
-.   .   .do end
-.   .   .el .do begin
-.   .   .   .sr *sct=&cnt_lvl+1
-.   .   .do end
-.   .do end
-.   .if &*sct. ge 5 .do begin
-.   .   .if ›&cnt_ttl.› ne ›Introduction› .do begin
-.   .   .   .ty ***WARNING*** nesting too deep for Contents file (.CNT)
-.   .   .   .ty ***WARNING*** &*sct &cnt_ttl.
-.   .   .do end
-.   .do end
-.   .if &'length(&ctx_str.) gt 65 .do begin
-.   .   .pu 3 &*sct &cnt_ttl.=
-.   .   .pu 3 &ctx_str.
-.   .do end
-.   .el .do begin
-.   .   .pu 3 &*sct &cnt_ttl.=&ctx_str.
-.   .do end
-.do end
-.sr cnt_lvl=&SCTlvl
-.if '&*ctx.' ne '' .do begin
-.   .sr cnt_pfx=''
-.   .sr cnt_ctx=&*ctx.
-.   .sr cnt_ttl=&'substr(&*,&'pos(&*ctx.,&*)+&'length(&*ctx.)+1)
-.do end
-.el .do begin
-.   .sr cnt_pfx='&pfx$.'
-.   .sr cnt_ctx=&*
-.   .sr cnt_ttl=&*
-.do end
-.dm cntents end
-.*
-.dm mono begin
-:SF font=4.&*:eSF.
-.dm mono end
-.*
-.dm @monobeg begin
-.  :SF font=4.&*.
-.dm @monobeg end
-.*
-.dm @monoend begin
-.  :eSF.&*.
-.dm @monoend end
-.*
-:cmt..gt MONO  add @monobeg continue
-:cmt..gt eMONO add @monoend continue
-.*
-.dm @italbeg begin
-.  :SF font=1.&*.
-.dm @italbeg end
-.*
-.dm @italend begin
-.  :eSF.&*.
-.dm @italend end
-.*
-:CMT..gt ITAL  add @italbeg continue
-:CMT..gt eITAL add @italend continue
-.*
-:CMT. Fix these!
-.*
-.dm super begin
-.  :SF font=5.(&*.):eSF.
-.dm super end
-.*
-:cmt.:SET symbol='SUPER0'   value=';.ct .super 0;.ct '.
-:SET symbol='SUPER0'   value='0'.
-:cmt.:SET symbol='SUPER1'   value=';.ct .super 1;.ct '.
-:SET symbol='SUPER1'   value='1'.
-.dm langle begin
-.  :SF font=7.~<:eSF.
-.dm langle end
-.*
-:cmt.:SET symbol='LANGLE'   value=';.ct;.langle;.ct '.
-:SET symbol='LANGLE'   value=''.
-.*
-.dm rangle begin
-.  :SF font=7.~>:eSF.
-.dm rangle end
-.*
-:cmt.:SET symbol='RANGLE'   value=';.ct;.rangle;.ct '.
-:SET symbol='RANGLE'   value=''.
-.*
-.dm @msemi begin
-.  :SF font=4.;:eSF.&*.
-.dm @msemi end
-.*
-.gt MSEMI add @msemi continue
-.*
-
-.dm endlevel begin
-.if '&SCTlvl' eq '1' :set symbol="SCTlvl" value = "0".
-.el .if '&SCTlvl' eq '2' :set symbol="SCTlvl" value = "1".
-.el .if '&SCTlvl' eq '3' :set symbol="SCTlvl" value = "2".
-.el .if '&SCTlvl' eq '4' :set symbol="SCTlvl" value = "3".
-.el .if '&SCTlvl' eq '5' :set symbol="SCTlvl" value = "4".
-.pu 1 .endlevel
-.dm endlevel end
-
-.dm begbull begin
-.sr tmplvl=&WDWlvl-5
-.cp &tmplvl
-.if &e'&dohelp eq 0 .do begin
-.   .if '&*1' eq '$compact' .do begin
-:CMT..   :UL compact
-.   .do end
-.   .el .do begin
-:CMT..   :UL
-.   .do end
-.do end
-.el .do begin
-.   .if '&*1' eq '$compact' .do begin
-:CMT..   :ZUL compact
-.   .do end
-.   .el .do begin
-:CMT..   :ZUL
-.   .do end
-.do end
-.dm begbull end
-
-.dm bull begin
-.if &e'&dohelp eq 0 .do begin
-:CMT.:LI
-.do end
-.el .do begin
-:CMT.:ZLI
-.do end
-.dm bull end
-
-.dm endbull begin
-.if &e'&dohelp eq 0 .do begin
-:CMT.:eUL.
-.do end
-.el .do begin
-:CMT.:ZeUL.
-.do end
-.dm endbull end
-
-.gt italics add i
-.dm i begin
-:HP1.&*.:eHP1.
-.dm i end
-
 .dm bxt begin
 .se *tmplvl=&WDWlvl-3
 .if '&*1' eq 'on' .do begin
@@ -589,5 +304,192 @@ ISO             no value specified
 .  .millust end
 .  .do end
 .dm numboxend end
+.*
+.dm mbox begin
+.se *tmplvl=&WDWlvl-3
+.if '&*1' eq 'on' .do begin
+.   .cp &*tmplvl
+.   .xtnada
+.   .bx on &*2 &*3 &*4 &*5 &*6 &*7 &*8 &*9 &*10
+.   :XMP.:SF font=4.
+.do end
+.el .if '&*' eq 'off' .do begin
+.   :eSF.:eXMP.
+.   .bx off
+.do end
+.el .if '&*' eq 'begin' .do begin
+.   .cp &*tmplvl
+.   .se lmargin=&sysin+1
+.   .xtnada
+.   .bx on &lmargin &rmargin
+.   .sk 1
+.   :XMP.:SF font=6.
+.do end
+.el .if '&*' eq 'end' .do begin
+.   :eSF.:eXMP.
+.   .sk 1
+.   .bx off
+.do end
+.el .do begin
+.   .bx
+.do end
+.dm mbox end
+.*
+.dm mext begin
+.se *tmplvl=&WDWlvl-3
+.if '&*1' eq 'on' .do begin
+.   .cp &*tmplvl
+.   .se $$mextrb=&*2
+.   .se $$mextre=&*3
+.   .xtxmp begin &*2 &*3
+.   .bx on &*2 &*4 &*5 &*6 &*7 &*8 &*9 &*10 &*3
+.   :XMP.:SF font=4.
+.do end
+.el .if '&*' eq 'off' .do begin
+.   :eSF.:eXMP.
+.   .bx off
+.   .xtxmp end &$$mextrb &$$mextre
+.do end
+.el .if '&*' eq 'begin' .do begin
+.   .cp &*tmplvl
+.   .se lmargin=&sysin+1
+.   .se $$mextrb=&lmargin
+.   .se $$mextre=&rmargin
+.   .xtxmp begin &$$mextrb &$$mextre
+.   .bx on &lmargin &rmargin
+.   .sk 1
+.   :XMP.:SF font=6.
+.do end
+.el .if '&*' eq 'end' .do begin
+.   :eSF.:eXMP.
+.   .sk 1
+.   .bx off
+.   .xtxmp end &$$mextrb &$$mextre
+.do end
+.el .do begin
+.   .bx
+.do end
+.dm mext end
+.*
+.dm hint begin
+.   .if '&*' eq 'begin' .do begin
+.   .   :P.
+.   .   .cp &WDWlvl
+.   .   .se lmargin=&sysin+1
+.   .   .bx on &lmargin &rmargin
+.   .   .se lmargin=&sysin+2
+.   .   .in +2
+.   .   :SF font=3.Hint::eSF.
+.  .do end
+.  .el .if '&*' eq 'end' .do begin
+.   .   .in -2
+.   .   .bx off
+.  .do end
+.  .el .ty *** hint macro error ***
+.dm hint end
+.*
+.dm remark begin
+.  .if '&*' eq 'begin' .do begin
+.   .   :P.
+.   .   .cp &WDWlvl
+.   .   .se lmargin=&sysin+1
+.   .   .bx on &lmargin &rmargin
+.   .   .se lmargin=&sysin+2
+.   .   .in +2
+.   .   :SF font=3.Note::eSF.
+.  .do end
+.  .el .if '&*' eq 'end' .do begin
+.   .   .in -2
+.   .   .bx off
+.  .do end
+.  .el .ty *** remark macro error ***
+.dm remark end
+.*
+.dm warn begin
+.  .if '&*' eq 'begin' .do begin
+.   .   :P.
+.   .   .cp &WDWlvl
+.   .   .se lmargin=&sysin+1
+.   .   .bx on &lmargin &rmargin
+.   .   .se lmargin=&sysin+2
+.   .   .in +2
+.   .   :SF font=3.WARNING!:eSF.
+.  .do end
+.  .el .if '&*' eq 'end' .do begin
+.   .   .in -2
+.   .   .bx off
+.  .do end
+.  .el .ty *** warn macro error ***
+.dm warn end
+.*
+.dm mkbx begin
+.if &e'&dohelp eq 0 .do begin
+.   .bx &*
+.do end
+.el .do begin
+.   .abox &*
+.do end
+.dm mkbx end
+.*
+.dm mbigbox begin
+.if '&*1' eq 'end' .do begin
+.   .if '&format' eq '8.5x11a' .do begin
+.   :eFIG.
+.   .do end
+.   .el .if '&format' eq 'help' .do begin
+.   :eFIG.
+.   .do end
+.   .el .do begin
+.   :eSF.:eXMP.
+.   .bx off
+.   .do end
+.do end
+.el .do begin
+.   :P.
+.   .se *tmplvl=&WDWlvl-3
+.   .cp &*tmplvl.
+.   .if '&format' eq '8.5x11a' .do begin
+.   :FIG frame=box place=inline.
+.   .sk 1
+.   .do end
+.   .el .if '&format' eq 'help' .do begin
+.   :FIG frame=box place=inline.
+.   .sk 1
+.   .do end
+.   .el .do begin
+.   .se *lmargin=&sysin.+1
+.   .bx on &*lmargin. &rmargin.
+.   :XMP.:SF font=3.
+.   .do end
+.do end
+.dm mbigbox end
+.*
+.dm embigbox begin
+.if '&format' eq '8.5x11a' .do begin
+:eFIG.
+.do end
+.el .if '&format' eq 'help' .do begin
+:eFIG.
+.do end
+.el .do begin
+:eSF.:eXMP.
+.bx off
+.do end
+.dm embigbox end
+.*
+.dm ehint begin
+.in -2
+.bx off
+.dm ehint end
+.*
+.dm eremark begin
+.in -2
+.bx off
+.dm eremark end
+.*
+.dm ewarn begin
+.in -2
+.bx off
+.dm ewarn end
 .*
 

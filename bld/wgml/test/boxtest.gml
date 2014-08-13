@@ -20,6 +20,9 @@
 .im ttmacs.gml
 .im tttext.gml
 
+.im bxmacs.gml
+.im bxtext.gml
+
 :eGDOC.
 
 

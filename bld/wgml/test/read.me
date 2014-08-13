@@ -1,7 +1,8 @@
 The gml files in this directory are a testbed used to try out some functionality.
 They are not ment to produce good looking output.
 
-In the future they may serve for producing comparison files between wgml 4.0 and the new WGML.
+In the future they may serve for producing comparison files between wgml 4.0 and 
+the new WGML.
 
 tsys06.gml      lists all system variables of form SYSx, x = 1 to 6 letters
                 runtime is very long
@@ -42,9 +43,19 @@ This file is intended to show what the new WGML can do which wgml 4.0 can not:
 
 ocdoc2.gml      based on outcheck output, including the full sub/sup tests
 
-These files were developed for testing TB and contain a lot of text, macros, and symbols from the OW Documents. They may be useful in tracking down some residual problems, and should provide a good test for BX when BX is implemented:
+These files were developed for testing TB and contain a lot of text, macros, 
+and symbols from the OW Documents. 
 
-tabtest.gml     the test file
+tabtest.gml     the test file (includes tttext, ttmacs, ttsyms)
+tttext.gml      the test text
 ttmacs.gml      the macros used in tabtest.gml
 ttsyms.gml      the symbols used in tabtest.gml
+
+These files were developed for testing BX and contain a lot of text, macros, 
+and symbols from the OW Documents. They build on tabtest.
+
+boxtest.gml     the test file (includes tttext, ttmacs, ttsyms, bxtext, bxmacs)
+bxtext.gml      the test text
+bxmacs.gml      the macros used in tabtest.gml
+
 
