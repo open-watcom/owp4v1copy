@@ -67,7 +67,7 @@
 
 :cmt. fix problem with using the Script control word separator ";"
 .ti 3b fb
-.tr fb 3b
+.*.tr fb 3b
 
 :set symbol="prompt"    value="C>".
 :set symbol="drive"     value="drive".
@@ -618,4 +618,12 @@
 .*
 ..sr tabchar=$
 .*
+:set symbol='bxindent'    value='12'.
+.*
+:CMT. These symbols are used by bxtext, not tbtext, but is incldued here to 
+:CMT. avoid creating a very small "bxsyms.gml" file.
+.*
+:set symbol='rmargin' value='60'.
+.*
+:set symbol="alias_name" value="HIGH_C".
 

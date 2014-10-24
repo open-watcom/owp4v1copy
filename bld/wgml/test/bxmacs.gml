@@ -158,153 +158,6 @@
 :PC.
 .dm pc end
 .*
-..dm boxdef begin
-.  .keep begin
-.  ..sr rdist  = &SYSIN.+1
-.  ..sr boxcmd = &rdist.
-.  ..sr tabcmd = ''
-..dm boxdef end
-.*
-..dm boxcol begin
-.  ..sr *tab   = ''
-.  ..sr *width = &*1
-.  ..if &*0 = 1 ..th ..do begin
-.  .  ..if &rdist. ne 0 ..th ..do begin
-.  .  .  ..sr *tab = &rdist.+1
-.  .  ..do end
-.  .  ..sr rdist = &*width.-1
-.  ..do end
-.  ..el ..if &*0 = 2 ..th ..do begin
-.  .  ..if '&*2' = 'c' ..th ..do begin
-.  .  .  ..sr *centre = (&*width.+1)/2
-.  .  .  ..sr *tab    = &rdist.+&*centre.
-.  .  .  ..sr *tab    = '&*tab.c'
-.  .  .  ..sr rdist   = &*width.-&*centre.
-.  .  ..do end
-.  .  ..el ..do begin
-.  .  .  ..ty Boxcol 2nd parameter error in "&*"
-.  .  ..do end
-.  ..do end
-.  ..el ..do begin
-.  .  ..ty Boxcol parameter error in "&*"
-.  ..do end
-.  ..sr boxcmd = '&boxcmd. +&*width.'
-.  ..if '&*tab.' ne '' ..th ..do begin
-.  .  ..if '&tabcmd.' eq '' ..th ..do begin
-.  .  .  ..sr tabcmd = '&*tab.'
-.  .  ..do end
-.  .  ..el ..do begin
-.  .  .  ..sr tabcmd = '&tabcmd. +&*tab.'
-.  .  ..do end
-.  ..do end
-..dm boxcol end
-.*
-..dm boxbeg begin
-:CMT. .  ..br
-:CMT. .  ..li Final settings
-:CMT. .  ..br
-:CMT. .  ..li ..tb &tabcmd
-:CMT. .  ..br
-:CMT. .  ..li ..bx &boxcmd
-:CMT. .  ..br
-.  ..tb     &tabcmd
-.  ..tb set &tabchar
-:cmt..  ..bx on  &boxcmd
-..dm boxbeg end
-.*
-..dm boxline begin
-:cmt..  ..bx
-..dm boxline end
-.*
-..dm boxend begin
-:cmt..  ..bx off
-.  ..tb
-.  ..tb set
-.  ..sr boxcmd off
-.  ..sr tabcmd off
-.  ..sr rdist  off
-.  .keep end
-.dm boxend end
-.*
-.dm smonoon begin
-:SF font=5.
-.dm smonoon end
-.*
-.dm smonooff begin
-:eSF.
-.dm smonooff end
-.*
-.dm numboxbeg begin
-.  ..br
-.  .if &e'&nobox eq 0 .do begin
-.  .boxdef
-.  .boxcol &numboxcol1.
-.  .boxcol &numboxcol2.
-.  .boxbeg
-$Macro: :SF font=4.&*:eSF.$Value
-.  .do end
-.  .el .do begin
-.  .millust begin
-Macro: &*       Value
-.  .do end
-.  .boxline
-.dm numboxbeg end
-.*
-.dm numterm begin
-.  .if &e'&nobox eq 0 .do begin
-$&*1.$:SF font=4.&*2:eSF.
-.  .do end
-.  .el .do begin
-&*1             &*2
-.  .do end
-.dm numterm end
-.*
-.dm ansi begin
-.  .numterm 'ISO' '&*'
-.dm ansi end
-.*
-.dm noansi begin
-.  .if &e'&nobox eq 0 .do begin
-$ISO$no value specified
-.  .do end
-.  .el .do begin
-ISO             no value specified
-.  .do end
-.dm noansi end
-.*
-.dm watcomc begin
-.  ..if '&target' eq 'PC'  or  '&target' eq 'PC 370' ..th ..do begin
-.  .  .numterm '&wc286.' &*1
-.  ..do end
-.dm watcomc end
-.*
-.dm c386 begin
-.  ..if '&target' eq 'PC'  or  '&target' eq 'PC 370' ..th ..do begin
-.  .  .numterm '&wc386.' &*1
-.  ..do end
-.dm c386 end
-.*
-.dm bothc begin
-.  ..if '&target' eq 'PC'  or  '&target' eq 'PC 370' ..th ..do begin
-.  .  .numterm '&wcboth.' &*1
-.  ..do end
-.dm bothc end
-.*
-.dm wlooc begin
-.  ..if '&target' eq 'PC 370'  or  '&target' eq '370' ..th ..do begin
-.  .  .numterm '&wlooc.' &*1
-.  ..do end
-.dm wlooc end
-.*
-.dm numboxend begin
-.  .if &e'&nobox eq 0 .do begin
-.  .boxend
-.  .do end
-.  .el .do begin
-.  .millust end
-.  .do end
-.dm numboxend end
-.*
 .dm mbox begin
 .se *tmplvl=&WDWlvl-3
 .if '&*1' eq 'on' .do begin
@@ -385,8 +238,20 @@ ISO             no value specified
 .   .   .in -2
 .   .   .bx off
 .  .do end
-.  .el .ty *** hint macro error ***
+.  .el .do begin
+.  .  :P.
+.  .  .cp &WDWlvl
+.  .  .se *lmargin=&sysin.+1
+.  .  .bx on &*lmargin. &rmargin.
+.  .  .in +2
+.  .  :SF font=3.Hint::eSF.
+.  .do end
 .dm hint end
+.*
+.dm ehint begin
+.in -2
+.bx off
+.dm ehint end
 .*
 .dm remark begin
 .  .if '&*' eq 'begin' .do begin
@@ -402,8 +267,21 @@ ISO             no value specified
 .   .   .in -2
 .   .   .bx off
 .  .do end
-.  .el .ty *** remark macro error ***
+.  .el  .do begin
+.  .  :P.
+.  .  .sr tmplvl=&WDWlvl-3
+.  .  .cp &tmplvl
+.  .  .se *lmargin=&sysin.+1
+.  .  .bx on &*lmargin. &rmargin.
+.  .  .in +2
+.  .  :SF font=3.Note::eSF.
+.  .do end
 .dm remark end
+.*
+.dm eremark begin
+.in -2
+.bx off
+.dm eremark end
 .*
 .dm warn begin
 .  .if '&*' eq 'begin' .do begin
@@ -419,8 +297,20 @@ ISO             no value specified
 .   .   .in -2
 .   .   .bx off
 .  .do end
-.  .el .ty *** warn macro error ***
+.  .el .do begin
+.  .  :P.
+.  .  .cp &WDWlvl
+.  .  .se *lmargin=&sysin.+1
+.  .  .bx on &*lmargin. &rmargin.
+.  .  .in +2
+.  .  :SF font=3.WARNING!:eSF.
+.  .do end
 .dm warn end
+.*
+.dm ewarn begin
+.in -2
+.bx off
+.dm ewarn end
 .*
 .dm mkbx begin
 .if &e'&dohelp eq 0 .do begin
@@ -430,6 +320,21 @@ ISO             no value specified
 .   .abox &*
 .do end
 .dm mkbx end
+.*
+.dm ehint begin
+.in -2
+.bx off
+.dm ehint end
+.*
+.dm eremark begin
+.in -2
+.bx off
+.dm eremark end
+.*
+.dm ewarn begin
+.in -2
+.bx off
+.dm ewarn end
 .*
 .dm mbigbox begin
 .if '&*1' eq 'end' .do begin
@@ -477,19 +382,42 @@ ISO             no value specified
 .do end
 .dm embigbox end
 .*
-.dm ehint begin
-.in -2
-.bx off
-.dm ehint end
+.dm @api begin
+:HP2.&*.
+.dm @api end
+.gt api add @api cont
 .*
-.dm eremark begin
-.in -2
-.bx off
-.dm eremark end
+.dm @eapi begin
+:eHP2.&*
+.dm @eapi end
+.gt eapi add @eapi cont
 .*
-.dm ewarn begin
-.in -2
-.bx off
-.dm ewarn end
+.*
+.dm @dsc begin
+:HP0.&*.
+.dm @dsc end
+.gt dsc add @dsc cont
+.*
+.dm @edsc begin
+:eHP0.&*
+.dm @edsc end
+.gt edsc add @edsc cont
+.*
+.dm cbox begin
+.mbox &*
+.dm cbox end
+.*
+.dm id begin
+:SF font=4.&*:eSF.
+.dm id end
+.*
+.dm fie begin
+:SF font=4.&*.
+.dm fie end
+.*
+.dm fi begin
+.fie &*.
+:eSF.
+.dm fi end
 .*
 

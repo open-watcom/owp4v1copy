@@ -41,7 +41,7 @@
 .dm kwoff end
 .*
 .dm beglevel begin
-.if '&SCTlvl' eq '5' .ty too many section levels
+.if '&SCTlvl' eq '5' .ty too many section levels (beglevel &SCTlvl.)
 .el .if '&SCTlvl' eq '4' :set symbol="SCTlvl" value = "5".
 .el .if '&SCTlvl' eq '3' :set symbol="SCTlvl" value = "4".
 .el .if '&SCTlvl' eq '2' :set symbol="SCTlvl" value = "3".
@@ -148,7 +148,7 @@
 .   .do end
 .   .if &*sct. ge 5 .do begin
 .   .   .if ›&cnt_ttl.› ne ›Introduction› .do begin
-.   .   .   .ty ***WARNING*** nesting too deep for Contents file (.CNT)
+.   .   .   .ty ***WARNING*** nesting too deep for Contents file (.cntents)
 .   .   .   .ty ***WARNING*** &*sct &cnt_ttl.
 .   .   .do end
 .   .do end
@@ -185,8 +185,8 @@
 .  :eSF.&*.
 .dm @monoend end
 .*
-:cmt..gt MONO  add @monobeg continue
-:cmt..gt eMONO add @monoend continue
+.gt MONO  add @monobeg continue
+.gt eMONO add @monoend continue
 .*
 .dm @italbeg begin
 .  :SF font=1.&*.
@@ -196,32 +196,32 @@
 .  :eSF.&*.
 .dm @italend end
 .*
-:CMT..gt ITAL  add @italbeg continue
-:CMT..gt eITAL add @italend continue
+.gt ITAL  add @italbeg continue
+.gt eITAL add @italend continue
 .*
-:CMT. Fix these!
+:CMT. Fix these! Note: the ":cmt." tags have been switched to activate the original lines
 .*
 .dm super begin
 .  :SF font=5.(&*.):eSF.
 .dm super end
 .*
-:cmt.:SET symbol='SUPER0'   value=';.ct .super 0;.ct '.
-:SET symbol='SUPER0'   value='0'.
-:cmt.:SET symbol='SUPER1'   value=';.ct .super 1;.ct '.
-:SET symbol='SUPER1'   value='1'.
+:SET symbol='SUPER0'   value=';.ct .super 0;.ct '.
+:cmt.:SET symbol='SUPER0'   value='0'.
+:SET symbol='SUPER1'   value=';.ct .super 1;.ct '.
+:cmt.:SET symbol='SUPER1'   value='1'.
 .dm langle begin
 .  :SF font=7.~<:eSF.
 .dm langle end
 .*
-:cmt.:SET symbol='LANGLE'   value=';.ct;.langle;.ct '.
-:SET symbol='LANGLE'   value=''.
+:SET symbol='LANGLE'   value=';.ct;.langle;.ct '.
+:cmt.:SET symbol='LANGLE'   value=''.
 .*
 .dm rangle begin
 .  :SF font=7.~>:eSF.
 .dm rangle end
 .*
-:cmt.:SET symbol='RANGLE'   value=';.ct;.rangle;.ct '.
-:SET symbol='RANGLE'   value=''.
+:SET symbol='RANGLE'   value=';.ct;.rangle;.ct '.
+:cmt.:SET symbol='RANGLE'   value=''.
 .*
 .dm @msemi begin
 .  :SF font=4.;:eSF.&*.
@@ -244,37 +244,37 @@
 .cp &tmplvl
 .if &e'&dohelp eq 0 .do begin
 .   .if '&*1' eq '$compact' .do begin
-:CMT..   :UL compact
+.   :UL compact
 .   .do end
 .   .el .do begin
-:CMT..   :UL
+.   :UL
 .   .do end
 .do end
 .el .do begin
 .   .if '&*1' eq '$compact' .do begin
-:CMT..   :ZUL compact
+.   :ZUL compact
 .   .do end
 .   .el .do begin
-:CMT..   :ZUL
+.   :ZUL
 .   .do end
 .do end
 .dm begbull end
 
 .dm bull begin
 .if &e'&dohelp eq 0 .do begin
-:CMT.:LI
+:LI
 .do end
 .el .do begin
-:CMT.:ZLI
+:ZLI
 .do end
 .dm bull end
 
 .dm endbull begin
 .if &e'&dohelp eq 0 .do begin
-:CMT.:eUL.
+:eUL.
 .do end
 .el .do begin
-:CMT.:ZeUL.
+:ZeUL.
 .do end
 .dm endbull end
 
@@ -298,11 +298,11 @@
 .   .cp &*tmplvl
 .   .se $$bextrb=&*2
 .   .se $$bextre=&*3
-.   .xtxmp begin &*2 &*3
+.*.   .xtxmp begin &*2 &*3
 .   .in 0
 .   .tb set \
 .   .tb &*t0 &*t2 &*t3 &*t4 &*t5 &*t6 &*t7 &*t8 &*t1
-:cmt..   .bx on &*2 &*4 &*5 &*6 &*7 &*8 &*9 &*10 &*3
+.   .bx on &*2 &*4 &*5 &*6 &*7 &*8 &*9 &*10 &*3
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeon
 .   .do end
@@ -313,15 +313,15 @@
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeoff
 .   .do end
-:cmt..   .bx off
+.   .bx off
 .   .in &INDlvl
-.   .xtxmp end &$$bextrb &$$bextre
+.*.   .xtxmp end &$$bextrb &$$bextre
 .do end
 .el .do begin
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeoff
 .   .do end
-:cmt..   .bx
+.   .bx
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeon
 .   .do end
@@ -344,7 +344,7 @@
 .   .in 0
 .   .tb set \
 .   .tb &*t0 &*t1 &*t2 &*t3 &*t4 &*t5 &*t6 &*t7 &*t8
-:cmt..   .bx on &*2 &*3 &*4 &*5 &*6 &*7 &*8 &*9 &*10
+.   .bx on &*2 &*3 &*4 &*5 &*6 &*7 &*8 &*9 &*10
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeon
 .   .do end
@@ -355,14 +355,14 @@
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeoff
 .   .do end
-:cmt..   .bx off
+.   .bx off
 .   .in &INDlvl
 .do end
 .el .do begin
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeoff
 .   .do end
-:cmt..   .bx
+.   .bx
 .   .if &e'&dohelp eq 1 .do begin
 .   .   .codeon
 .   .do end
@@ -410,7 +410,7 @@
 .  .se shadels=(yes)
 .do end
 .se shadefont=(@fs0)
-:cmt..oc &shadebot. &shadetop. &shadeleft. &shaderight. &shadestart. &shadefont. &shadetype. &shadels. set_shadevars
+.oc &shadebot. &shadetop. &shadeleft. &shaderight. &shadestart. &shadefont. &shadetype. &shadels. set_shadevars
 :SF font=13.~n:eSF.
 .dm xtxmp end
 .*
@@ -494,15 +494,15 @@
 :CMT. .  ..br
 .  ..tb     &tabcmd
 .  ..tb set &tabchar
-:cmt..  ..bx on  &boxcmd
+.  ..bx on  &boxcmd
 ..dm boxbeg end
 .*
 ..dm boxline begin
-:cmt..  ..bx
+.  ..bx
 ..dm boxline end
 .*
 ..dm boxend begin
-:cmt..  ..bx off
+.  ..bx off
 .  ..tb
 .  ..tb set
 .  ..sr boxcmd off

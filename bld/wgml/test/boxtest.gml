@@ -16,9 +16,9 @@
 .co on
 .ju off
 
-.im ttsyms.gml
-.im ttmacs.gml
-.im tttext.gml
+.im tbsyms.gml
+.im tbmacs.gml
+.im tbtext.gml
 
 .im bxmacs.gml
 .im bxtext.gml

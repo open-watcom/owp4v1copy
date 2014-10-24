@@ -1,5 +1,6 @@
-:CMT.This is from cg\ccall.gml and is in the User's Guide 
-:CMT.Topics: "16-bit: Sizes of Predefined Types" and "32-bit: Sizes of Predefined Types"
+:CMT.This is from cg\ccall.gml and is in the C/C++ User's Guide 
+:CMT.Topics: "16-bit: Sizes of Predefined Types"
+:CMT.      & "32-bit: Sizes of Predefined Types"
 .tb set ^
 .tb &sysin.+5 &sysin.+15c &sysin.+23c &sysin.+31
 .ul ^Basic Type^"sizeof"^Argument^Registers
@@ -16,9 +17,10 @@
 ^huge pointer^&fptrsz.^&fargsz.^[&dxup &axup]
 .tb set
 .tb
-
-:CMT.This is from cg\ccall.gml and is in the User's Guide 
-:CMT.Topics: "16-bit: Interfacing to Assembly Language Functions" and "32-bit: Interfacing to Assembly Language Functions"
+.*
+:CMT.This is from cg\ccall.gml and is in the C/C++ User's Guide 
+:CMT.Topics: "16-bit: Interfacing to Assembly Language Functions"
+:CMT.      & "32-bit: Interfacing to Assembly Language Functions"
 .tb set $
 .tb 20 28 38
 .millust begin
@@ -66,6 +68,7 @@ MYRTN_TEXT ends
 .tb
 
 .sk 1
+.*
 :CMT.This is from cl\basedptr.gml and is in C Language Reference
 :CMT.Topic: "Based Pointers for Open Watcom C/16 and C/32"
 To support based pointers, the following keywords are provided:
@@ -80,7 +83,7 @@ $&kwself.
 .kwoff
 ..tb set
 ..tb
-
+.*
 :CMT.This is from cl\grammar.gml and is in C Language Reference
 :CMT.Topic: "Definition of a Token" (and following sections)
 .*
@@ -370,7 +373,7 @@ $$conditional-expression
 :ITAL.expression:eITAL.
 $$assignment-expression{
 .monoon
-:CMT...ct ,
+..ct ,
 .monooff
 assignment-expression}&SUPER0.
 :CMT..keep break
@@ -914,7 +917,7 @@ $or$each non-white-space character that cannot be one of the above
 :ITAL.header-name:eITAL.
 $$:MONO.<:eMONO.
 ..ct {h-char}&SUPER0.
-:cmt...ct .mono >
+..ct .mono >
 :CMT..keep break
 ..sk 1 c
 :ITAL.h-char:eITAL.
@@ -928,10 +931,9 @@ $$the new-line character
 ..tb set
 ..tb
 :CMT..keep end
-
+.*
 :CMT.This is from cl\orderop.gml and is in the C Language Reference
 :CMT.Topic: "Operator Precedence"
-
 :cmt...fk begin
 ..sr *start=&SYSIN.+1
 ..bx on  &*start. +16 +24
@@ -1025,10 +1027,9 @@ $&dagger. associates from right to left
 ..tb
 :eSF.
 :cmt...fk end
-
+.*
 :CMT.This is from cpplib\sb_rgp.gml and is in the C++ CLass Library Reference
 :CMT.Topic: "eback() [streambuf]"
-
 .np
 The &rsvarea., &getarea., and &putarea. pointer functions return the following
 values:
@@ -1051,10 +1052,9 @@ values:
 .ju &cpp_ju.
 .tb set
 .co on
-
+.*
 :CMT.This is from cpplib\seekdir.gml and is in the C++ CLass Library Reference
 :CMT.Topic: "seekg() [istream]"
-
 .sk
 .fo off
 .tb set ^
@@ -1067,10 +1067,9 @@ values:
 .tb set
 .sk
 .co on
-
+.*
 :CMT.This is from cpplib\seekmode.gml and is in the C++ CLass Library Reference
 :CMT.Topic: "seekoff() [streambuf]"
-
 .sk
 .fo off
 .tb set ^
@@ -1082,12 +1081,14 @@ values:
 .tb set
 .sk
 .co on
-
+.*
 :CMT.This is from fg\fcall.gml and is in the FORTRAN 77 User's Guide
-:CMT.Topics: "16-bit: Calling Conventions" and "32-bit: Calling Conventions"
-
+:CMT.Topics: "16-bit: Calling Conventions" & "32-bit: Calling Conventions"
+.sr c0=&sysin+1
+.sr c1=&c0+20
+.sr c2=&c1+20
 .tb set $
-.tb 5 25
+.tb &c0+1 &c1+1
 :CMT..keep 20
 .bx on &c0 &c1 &c2
 $Type of Argument$Method Used to Pass Argument
@@ -1110,10 +1111,9 @@ $user-defined structure$address of structure
 :CMT..keep end
 .tb set
 .tb
-
+.*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "Data Representation On x86-based Platforms"
-
 .sk
 Data Representation On x86-based Platforms
 .sr c1=&sysin+1
@@ -1150,10 +1150,8 @@ $CHARACTER*n$n
 .tb set
 .tb
 .*
-
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "REAL and REAL*4 Data Types"
-
 .sk
 REAL and REAL*4 Data Types
 .sr c0=10+1
@@ -1169,10 +1167,9 @@ $$Exponent
 $31$30-23$22-0
 .tb set
 .tb
-
+.*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "DOUBLE PRECISION and REAL*8 Data Types"
-
 .sk
 DOUBLE PRECISION and REAL*8 Data Types
 .sr c0=10+1
@@ -1188,10 +1185,9 @@ $$Exponent
 $63$62-52$51-0
 .tb set
 .tb
-
+.*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "CHARACTER Data Type"
-
 .sk
 CHARACTER Data Type
 :CMT..keep begin
@@ -1208,10 +1204,9 @@ $4$length of data
 .bx off
 .tb set
 .tb
-
+.*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "Storage Organization of Data Types"
-
 .pa
 Storage Organization of Data Types
 .sr c0=10+11
@@ -1262,10 +1257,9 @@ COMPLEX*16$real part$imaginary part
 :CMT..keep end
 .tb set
 .tb
-
+.*
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Character Set"
-
 .np
 The special characters are:
 .tb set \
@@ -1300,10 +1294,9 @@ The special characters are:
 .bx off
 .tb
 .tb set
-
+.*
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Extended Character Set"
-
 .np
 Extended Character Set
 .se c0=&INDlvl+1
@@ -1323,10 +1316,9 @@ Extended Character Set
 .bxt off
 .tb set
 .tb
-
+.*
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Order of FORTRAN Statements and Lines"
-
 .np
 Order of FORTRAN Statements and Lines
 .sr c0=&INDlvl+1
@@ -1370,10 +1362,9 @@ Order of FORTRAN Statements and Lines
 .bx off &c0 &c1 &c4
 .tb
 .tb set
-
+.*
 :CMT.This is from fl\farrays.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Array Elements"
-
 .np
 The following table describes how to compute the subscript value.
 .cp 23
@@ -1405,10 +1396,9 @@ The following table describes how to compute the subscript value.
 \  \                   \           \ +
 \  \                   \           \ +(Sn-Jn)*Dn-1*Dn-2*...*D1
 .box off
-
+.*
 :CMT.This is from fl\fexpr.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Data Type of Arithmetic Expressions"
-
 .np
 This table is valid for all of the arithmetic operators.
 
@@ -1433,10 +1423,9 @@ This table is valid for all of the arithmetic operators.
 \  C  \  C  \  C  \  C  \  C  \  Z  \  C  \  Z \
 \  Z  \  Z  \  Z  \  Z  \  Z  \  Z  \  Z  \  Z \
 .box off
-
+.*
 :CMT.This is from fl\fformats.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "G Editing"
-
 determines the editing as shown in the following table.
 .cp 15
 .sr c0=&INDlvl+1
@@ -1453,13 +1442,12 @@ determines the editing as shown in the following table.
 \10**(d-2)<=M<10**(d-1)\F<w-n>.1 followed by n blanks\
 \10**(d-1)<=M<10**d    \F<w-n>.0 followed by n blanks\
 .box off
-
+.*
 :CMT.This is from fl\fitab.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Intrinsic Functions"
-
+.*
 :CMT.Note: this is pretty much the entire file with a few text lines removed.
 :CMT.Note: it is only part of the topic indicated above, but a very large part!
-
 .np
 Type Conversion
 .*
@@ -2138,10 +2126,9 @@ Volatile Reference
 \A is a volatile          \VOLATILE  \A&arrow.VOLATILE(A)
 \reference                \
 .bxt off
-
+.*
 :CMT.This is from gui\wguispy.gml and is in Spy Help
 :CMT.Topic: "Predefined Spy Message Classes" (multiple subsections)
-
 .np
 The sections that follow list the messages contained in each message class
 that &spy defines for you.
@@ -2155,7 +2142,7 @@ that &spy defines for you.
 Clipboard Messages
 :cmt..section Clipboard Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_ASKCBFORMATNAME $WM_CHANGECBCHAIN
 $WM_CLEAR           $WM_CLIPBOARDUPDATE (**)
@@ -2171,7 +2158,7 @@ $WM_UNDO            $WM_VSCROLLCLIPBOARD
 DDE Messages
 :cmt..section DDE Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_DDE_ACK         $WM_DDE_ADVISE
 $WM_DDE_DATA        $WM_DDE_EXECUTE
@@ -2184,7 +2171,7 @@ $WM_DDE_UNADVISE
 Init Messages
 :cmt..section Init Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_INITDIALOG      $WM_INITMENU
 $WM_INITMENUPOPUP   $WM_UNINITMENUPOPUP (**)
@@ -2195,7 +2182,7 @@ $WM_INITMENUPOPUP   $WM_UNINITMENUPOPUP (**)
 Input Messages
 :cmt..section Input Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_APPCOMMAND (**)    $WM_BEGINDRAG (*)
 $WM_CHAR               $WM_CHARTOITEM
@@ -2220,7 +2207,7 @@ $WM_UNICHAR (**)       $WM_VSCROLL
 MDI Messages
 :cmt..section MDI Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_ISACTIVEICON (*)$WM_MDIACTIVATE
 $WM_MDICASCADE      $WM_MDICREATE
@@ -2234,7 +2221,7 @@ $WM_MDISETMENU      $WM_MDITILE
 Mouse Messages
 :cmt..section Mouse Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_CAPTURECHANGED (**)$WM_LBUTTONDBLCLK
 $WM_LBUTTONDOWN     $WM_LBUTTONUP
@@ -2252,7 +2239,7 @@ $WM_XBUTTONDOWN (**)$WM_XBUTTONUP (**)
 NC Misc Messages
 :cmt..section NC Misc Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_NCACTIVATE      $WM_NCCALCSIZE
 $WM_NCCREATE        $WM_NCDESTROY
@@ -2263,7 +2250,7 @@ $WM_NCPAINT
 NC Mouse Messages
 :cmt..section NC Mouse Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_NCHITTEST       $WM_NCLBUTTONDBLCLK
 $WM_NCLBUTTONDOWN   $WM_NCLBUTTONUP
@@ -2279,7 +2266,7 @@ $WM_NCXBUTTONDOWN (**)$WM_NCXBUTTONUP (**)
 Other Messages
 :cmt..section Other Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_CHANGEUISTATE (**)$WM_COALESCE_FIRST
 $WM_COALESCE_LAST     $WM_COMMNOTIFY
@@ -2297,7 +2284,7 @@ $WM_UPDATEUISTATE (**)$WM_YOMICHAR (*)
 System Messages
 :cmt..section System Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_CANCELJOURNAL (**)$WM_COMPACTING
 $WM_DEVMODECHANGE     $WM_DEVICECHANGE (**)
@@ -2319,7 +2306,7 @@ $WM_WININICHANGE      $WM_WTSSESSION_CHANGE (**)
 User Messages
 :cmt..section User Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_USER
 .monooff
@@ -2328,7 +2315,7 @@ $WM_USER
 Unknown Messages
 :cmt..section Unknown Messages
 .*
-:cmt..np
+.np
 .monoon
 $None
 .monooff
@@ -2337,7 +2324,7 @@ $None
 Window Messages
 :cmt..section Window Messages
 .*
-:cmt..np
+.np
 .monoon
 $WM_ACTIVATE           $WM_ACTIVATEAPP
 $WM_ACTIVATESHELLWINDOW (*)$WM_ALTTABACTIVE (*)
@@ -2382,10 +2369,8 @@ $WM_WINDOWPOSCHANGED   $WM_WINDOWPOSCHANGING
 .tb set
 .tb
 .*
-
 :CMT.This is from lg\spdos.gml and is in the Linker Help Guide
 :CMT.Topic: "How Overlay Files are Opened"
-
 .np
 .np
 Legal values for the sharing mode are as follows.
@@ -2404,10 +2389,9 @@ deny none mode`0x04
 .tb
 :cmt..illust end
 .co on
-
+.*
 :CMT.This is from rsi\config.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Changing the Switch Mode Setting"
-
 .se c0=&INDlvl+2
 .se c1=&c0.+5
 .se c2=&c1.+12
@@ -2441,10 +2425,9 @@ $option$IBM PS/55      $16     $None      $May be needed for some PS/55s
 .bx off
 .tb set
 .tb
-
+.*
 :CMT.This is from rsi\config.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Changing the Switch Mode Setting"
-
 .np
 Specific Machine Switch Mode Setting
 .se c0=&INDlvl+2+8
@@ -2465,10 +2448,9 @@ $OKI if800           $15
 .bx off
 .tb set
 .tb
-
+.*
 :CMT.This is from rsi\int31.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Translation Services"
-
 .np
 Register Translation
 .se *p0=&INDlvl-1+11
@@ -2516,10 +2498,9 @@ $30H$SS
 .bx off
 .tb set
 .tb
-
+.*
 :CMT.This is from rsi\int31.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Memory Management Services"
-
 .np
 Return Buffer Contents
 .se *p0=&INDlvl-1+11+3
@@ -2557,10 +2538,9 @@ $2FH$
 .bx off
 .tb set
 .tb
-
+.*
 :CMT.This is from rsi\nt2cls.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Interrupt 21H Functions"
-
 .np
 Int 21h Functions
 .se c0=&INDlvl+2
@@ -2691,10 +2671,9 @@ $66H$$Get or Set Code Page                     $None
 $67H$$Set Handle Count                         $None
 .tb set
 .tb
-
+.*
 :CMT.This is from wgmlref\rfabst.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Abstract"
-
 .np
 From the Abstract
 .tb set $
@@ -2707,10 +2686,9 @@ $CANADA   N2L 3X2  $
 .tb set
 .tb
 .bx off
-
+.*
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Integer Constants"
-
 .np
 Constants and Types
 .boxdef
@@ -2751,10 +2729,9 @@ $:HP0.suffix:eHP0. LL :HP0.only:eHP0.        $long long:HP0.,:eHP0. unsigned lon
 $:HP0.suffixes:eHP0. U :HP0.and:eHP0. LL$unsigned long long
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Integer Constants"
-
 .np
 The following table illustrates a number of constants and their
 interpretation and type:
@@ -2786,10 +2763,9 @@ $2147483648$2147483648$80000000$unsigned long$unsigned int
 $4294967295$4294967295$FFFFFFFF$unsigned long$unsigned int
 .smonooff
 .boxend
-
+.*
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Floating-Point Constants"
-
 .np
 The following table illustrates a number of floating-point constants
 and their type:
@@ -2808,10 +2784,9 @@ $7.234E-22F$7.234E-22   $float
 $0.        $0E0         $double
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Character Constants"
-
 These characters can be entered using the following escape
 sequences:
 .boxdef
@@ -2830,10 +2805,9 @@ $ $:HP0.octal value:eHP0.      $\:ITAL.octal digits:eITAL.:HP0. (max 3):eHP0.
 $ $:HP0.hexadecimal value:eHP0.$\x:ITAL.hexadecimal digits:eITAL.
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\convert.gml and is in the C Language Reference
 :CMT.Topic: "Signed and Unsigned Integer Conversion"
-
 .np
 Examples of 32-bit quantities being converted to 16-bit quantities.
 .boxdef
@@ -2853,10 +2827,9 @@ $65538 $0x00010002$0x0002$2     $2
 $100000$0x000186A0$0x86A0$-31072$34464
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\convert.gml and is in the C Language Reference
 :CMT.Topic: "Signed and Unsigned Integer Conversion"
-
 .np
 Examples of 16-bit signed quantities being
 converted to 32-bit quantities.
@@ -2877,10 +2850,9 @@ $-2    $0xFFFE $0xFFFFFFFE$-2   $4294967294
 $32766 $0x7FFE $0x00007FFE$32766$32766
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\convert.gml and is in the C Language Reference
 :CMT.Topic: "Arithmetic Conversion"
-
 .np
 The following table illustrates the result type of performing
 an addition on combinations of various types:
@@ -2904,10 +2876,9 @@ $float + double             $double
 $float + long double        $long double
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\enumtab.gml and is in the C Language Reference
 :CMT.Topic: "Structures, Unions, Enumerations and Bit-Fields"
-
 .np
 Enumeration sizes.
 .boxdef
@@ -2928,10 +2899,9 @@ $signed long long  $-9223372036854775808$9223372036854775807
 $unsigned long long$0                   $18446744073709551615
 .smonooff
 .boxend
-
+.*
 :CMT.This is from cl\escape.gml and is in the C Language Reference
 :CMT.Topic: "Character Constants"
-
 .np
 In addition to the above escape sequences, the following escape sequences may be used to represent
 non-graphic characters:
@@ -2952,10 +2922,9 @@ $\t$:HP0.Move to the next horizontal tab:eHP0.
 $\v$:HP0.Move to the next vertical tab:eHP0.
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\express.gml and is in the C Language Reference
 :CMT.Topic: "Bitwise AND Operator"
-
 .pa
 .np
 The following table illustrates some bitwise AND operations:
@@ -2973,10 +2942,9 @@ $0x1001 & 0x0001$0x0001
 $0x29F4 & 0xE372$0x2170
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\express.gml and is in the C Language Reference
 :CMT.Topic: "Bitwise Exclusive OR Operator"
-
 .np
 The following table illustrates some exclusive OR operations:
 
@@ -2994,10 +2962,9 @@ $0x1001 ^ 0x0001$0x1000
 $0x29F4 ^ 0xE372$0xCA86
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\express.gml and is in the C Language Reference
 :CMT.Topic: "Bitwise Inclusive OR Operator"
-
 .np
 The following table illustrates some inclusive OR operations:
 
@@ -3014,10 +2981,9 @@ $0x1100 | 0x0022$0x1122
 $0x29F4 | 0xE372$0xEBF6
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\float87.gml and is in the C Language Reference
 :CMT.Topic: "Floating-Point Types"
-
 .np
 The floating-point format is the IEEE Standard for Binary Floating-Point
 Arithmetic (ANSI/IEEE Std 754-1985).
@@ -3028,7 +2994,7 @@ Arithmetic (ANSI/IEEE Std 754-1985).
 .boxcol 9
 .boxcol 8
 .boxcol 8
-.keep break
+:cmt..keep break
 .boxbeg
 $           $Smallest$Largest $Digits  $80x87
 $           $Absolute$Absolute$Of      $Type
@@ -3046,10 +3012,9 @@ $double     $2.2E-308$1.7E+308$15$:HP0.long real:eHP0.
 $long double$2.2E-308$1.7E+308$15$:HP0.long real:eHP0.
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\fltround.gml and is in the C Language Reference
 :CMT.Topic: "Integer to Floating-Point Conversion"
-
 .np
 The following table describes the meaning of the various values:
 
@@ -3069,16 +3034,15 @@ $ 2$:HP0.toward positive infinity:eHP0.
 $ 3$:HP0.toward negative infinity:eHP0.
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\impldef1.gml and is in the C Language Reference
 :CMT.Topic: "Characters"
-
+.*
 :CMT.This prevents a pagination discrepancy from appearing.
 :CMT.Remove the PA to see the problem.
 :CMT.If that doesn't work, set WDWlvl to 1 or disable the invocations of macro
 :CMT.KEEP in the BOXDEF and BOXEND macros, which will have the same effect, since
 :CMT.KEEP basically does ".cp &WDWlvl." plus some bookkeeping.
-
 .pa
 
 .np
@@ -3146,10 +3110,9 @@ $\x:HP1.ddd:eHP1.$
 .monooff
 ..ct $Hexadecimal value
 .boxend
-
+.*
 :CMT.This is from cl\impldef1.gml and is in the C Language Reference
 :CMT.Topic: "Arrays and Pointers"
-
 .np
 The result of casting an integer to a pointer or vice versa (6.3.4).
 
@@ -3169,10 +3132,9 @@ $far $segment is discarded, result$result is segment in high-
 $huge$is pointer offset (low-order$order 2 bytes, offset in
 $    $2 bytes of pointer)         $low-order 2 bytes
 .boxend
-
+.*
 :CMT.This is from cl\impldef1.gml and is in the C Language Reference
 :CMT.Topic: "Arrays and Pointers"
-
 .np
 &wc286. conversion of integer to pointer:
 
@@ -3196,10 +3158,9 @@ $         $:HP0.of integer value            $order 2 bytes, offset is:eHP0.
 $         $:HP0.                            $low-order 2 bytes:eHP0.
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\impldef1.gml and is in the C Language Reference
 :CMT.Topic: "Arrays and Pointers"
-
 .np
 &wc386. conversion of pointer to integer:
 
@@ -3218,10 +3179,9 @@ $far $segment is discarded, result$segment is discarded, result
 $huge$is low-order 2 bytes of     $is pointer offset
 $    $pointer value               $
 .boxend
-
+.*
 :CMT.This is from cl\impldef1.gml and is in the C Language Reference
 :CMT.Topic: "Arrays and Pointers"
-
 .np
 &wc386. conversion of integer to pointer:
 
@@ -3246,10 +3206,9 @@ $long int $:HP0.                          $register, offset is:eHP0.
 $         $:HP0.                          $integer value:eHP0.
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\integer.gml and is in the C Language Reference
 :CMT.Topic: "Integer Types"
-
 .np
 The following table describes all of the various integer types and
 their ranges as implemented by the &wcboth. compilers.
@@ -3312,10 +3271,9 @@ $long long int     $-92233720368547758078$9223372036854775807
 $unsigned long long$0     $18446744073709551615
 .smonooff
 .boxend
-
+.*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Converting An Argument to a String"
-
 .np
 The following table gives a number of examples of the result of the
 application of the macro,
@@ -3335,10 +3293,9 @@ $string( \'/ )        $"\\'/"
 $string( f(x) )       $"f(x)"
 .monooff
 .boxend
-
+.*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Concatenating Tokens"
-
 .np
 The following table gives a number of examples of the result of the
 application of the macro,
@@ -3361,10 +3318,9 @@ $Argument           $After Substitution
 .mono $glue( first, last )$firstlast
 .mono $                   $"Peace on Earth"
 .boxend
-
+.*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Simple Argument Substitution"
-
 .np
 Consider the following examples, with these macro definitions in place:
 .millust begin
@@ -3395,10 +3351,9 @@ $Invocation           $After Substitution
 .mono $f(xyz)("Hello\n")    $f(printf)("Hello\n")
 .mono $                     $printf("Hello\n")
 .boxend
-
+.*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Variable Argument Macros"
-
 .np
 Several example usages of the above macros follow:
 
@@ -3420,10 +3375,9 @@ $Invocation           $After Substitution
 .boxline
 .mono $args("none")             $
 .boxend
-
+.*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Rescanning for Further Replacement"
-
 .np
 Consider these examples, using the above macro definitions:
 
@@ -3449,11 +3403,10 @@ $Invocation $After Rescanning
 .boxline
 .mono $rcrs       $rcrs+2
 .boxend
-
+.*
 :CMT.This is from cl\numlimit.gml and is in the C Language Reference
 :CMT.Topic: "Macros for Numerical Limits"
 :CMT.Plus all subsections, of which there are quite a few.
-
 .sr numboxcol1=19
 .sr numboxcol2=27
 .np
@@ -3461,7 +3414,7 @@ Numerical Limits for Integer Types
 :cmt..section Numerical Limits for Integer Types
 .*
 .begbull
-.keep begin
+:cmt..keep begin
 .bull
 the number of bits in the smallest object that is not a bit-field
 (byte)
@@ -3470,7 +3423,7 @@ the number of bits in the smallest object that is not a bit-field
 .bothc 8
 .wlooc 8
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum value for an object of type
 .kw signed char
@@ -3479,7 +3432,7 @@ the minimum value for an object of type
 .bothc -128
 .wlooc -128
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw signed char
@@ -3488,7 +3441,7 @@ the maximum value for an object of type
 .bothc 127
 .wlooc 127
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw unsigned char
@@ -3497,7 +3450,7 @@ the maximum value for an object of type
 .bothc 255
 .wlooc 255
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum value for an object of type
 .kw char
@@ -3512,7 +3465,7 @@ is
 .bothc 0
 .wlooc 0
 .numboxend
-.keep break
+:cmt..keep break
 .pc
 If
 .kw char
@@ -3528,7 +3481,7 @@ is equivalent to
 .bothc -128
 .wlooc -128
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw char
@@ -3547,7 +3500,7 @@ is equivalent to
 .bothc 255
 .wlooc 255
 .numboxend
-.keep break
+:cmt..keep break
 .pc
 If
 .kw char
@@ -3563,7 +3516,7 @@ is equivalent to
 .bothc 127
 .wlooc 127
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum number of bytes in a multibyte character, for any supported locale
 .numboxbeg MB_LEN_MAX
@@ -3571,7 +3524,7 @@ the maximum number of bytes in a multibyte character, for any supported locale
 .bothc 2
 .wlooc 1
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum value for an object of type
 .kw short int
@@ -3580,7 +3533,7 @@ the minimum value for an object of type
 .bothc -32768
 .wlooc -32768
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw short int
@@ -3589,7 +3542,7 @@ the maximum value for an object of type
 .bothc 32767
 .wlooc 32767
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw unsigned short int
@@ -3598,7 +3551,7 @@ the maximum value for an object of type
 .bothc 65535
 .wlooc 65535
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum value for an object of type
 .kw int
@@ -3608,7 +3561,7 @@ the minimum value for an object of type
 .c386    -2147483648
 .wlooc   -2147483648
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw int
@@ -3618,7 +3571,7 @@ the maximum value for an object of type
 .c386    2147483647
 .wlooc   2147483647
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw unsigned int
@@ -3628,7 +3581,7 @@ the maximum value for an object of type
 .c386    4294967295
 .wlooc   4294967295
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum value for an object of type
 .kw long int
@@ -3637,7 +3590,7 @@ the minimum value for an object of type
 .bothc -2147483648
 .wlooc -2147483648
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw long int
@@ -3646,7 +3599,7 @@ the maximum value for an object of type
 .bothc 2147483647
 .wlooc 2147483647
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw unsigned long int
@@ -3656,7 +3609,7 @@ the maximum value for an object of type
 .bothc 4294967295
 .wlooc 4294967295
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum value for an object of type
 .kw long long int
@@ -3665,7 +3618,7 @@ the minimum value for an object of type
 .bothc -9223372036854775808
 .wlooc -9223372036854775808
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw long long int
@@ -3674,7 +3627,7 @@ the maximum value for an object of type
 .bothc 9223372036854775807
 .wlooc 9223372036854775807
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum value for an object of type
 .kw unsigned long long int
@@ -3683,7 +3636,7 @@ the maximum value for an object of type
 .bothc 18446744073709551615
 .wlooc 18446744073709551615
 .numboxend
-.keep end
+:cmt..keep end
 .endbull
 .*
 .np
@@ -3708,7 +3661,7 @@ refer to type
 .kw long double
 ..ct ..li .
 .begbull
-.keep begin
+:cmt..keep begin
 .bull
 the radix (base) of representation for the exponent
 .numboxbeg FLT_RADIX
@@ -3716,7 +3669,7 @@ the radix (base) of representation for the exponent
 .bothc 2
 .wlooc 16
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the precision, or number of digits in the floating-point mantissa, expressed
 in terms of the
@@ -3726,19 +3679,19 @@ in terms of the
 .bothc 23
 .wlooc 6
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_MANT_DIG
 .noansi
 .bothc 52
 .wlooc 14
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_MANT_DIG
 .noansi
 .bothc 52
 .wlooc 14
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the number of decimal digits of precision
 .numboxbeg FLT_DIG
@@ -3746,19 +3699,19 @@ the number of decimal digits of precision
 .bothc 6
 .wlooc 8
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_DIG
 .ansi  >= 10
 .bothc 15
 .wlooc 17
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_DIG
 .ansi  >= 10
 .bothc 15
 .wlooc 17
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum negative integer
 .us n
@@ -3785,19 +3738,19 @@ not equal, to zero
 .bothc -127
 .wlooc -65
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_MIN_EXP
 .noansi
 .bothc -1023
 .wlooc -65
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_MIN_EXP
 .noansi
 .bothc -1023
 .wlooc -65
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum negative integer
 .us n
@@ -3816,19 +3769,19 @@ closest, but not equal, to zero
 .bothc -38
 .wlooc -78
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_MIN_10_EXP
 .ansi  <= -37
 .bothc -307
 .wlooc -78
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_MIN_10_EXP
 .ansi  <= -37
 .bothc -307
 .wlooc -78
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum integer
 .us n
@@ -3854,20 +3807,20 @@ exponent for the largest valid floating-point value
 .bothc 127
 .wlooc 62                      62
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_MAX_EXP
 .noansi
  --
 .bothc 1023
 .wlooc 62
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_MAX_EXP
 .noansi
 .bothc 1023
 .wlooc 62
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum integer
 .us n
@@ -3885,19 +3838,19 @@ the base 10 exponent for the largest valid floating-point value
 .bothc 38
 .wlooc 75
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_MAX_10_EXP
 .ansi  >= 37
 .bothc 308
 .wlooc 75
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_MAX_10_EXP
 .ansi  >= 37
 .bothc 308
 .wlooc 75
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the maximum representable finite floating-point number
 .numboxbeg FLT_MAX
@@ -3905,19 +3858,19 @@ the maximum representable finite floating-point number
 .bothc 3.402823466E+38
 .wlooc 7.2370051E+75
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_MAX
 .ansi  >= 1E+37
 .bothc 1.79769313486231560E+308
 .wlooc 7.2370055773322608E+75
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_MAX
 .ansi  >= 1E+37
 .bothc  1.79769313486231560E+308
 .wlooc 7.2370055773322608E+75
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the difference between
 .mono 1.0
@@ -3936,19 +3889,19 @@ such that
 .bothc 1.192092896E-15
 .wlooc 9.5367432E-7
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_EPSILON
 .ansi  <= 1E-9
 .bothc 2.2204460492503131E-16
 .wlooc 2.2204460492503129E-16
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_EPSILON
 .ansi  <= 1E-9
 .bothc 2.2204460492503131E-16
 .wlooc 2.2204460492503129E-16
 .numboxend
-.keep break
+:cmt..keep break
 .bull
 the minimum positive normalized floating-point number
 .numboxbeg FLT_MIN
@@ -3956,24 +3909,23 @@ the minimum positive normalized floating-point number
 .bothc 1.175494351E-38
 .wlooc 5.3976053E-79
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg DBL_MIN
 .ansi  <= 1E-37
 .bothc 2.22507385850720160E-308
 .wlooc 5.3976053469340275E-79
 .numboxend
-.keep break
+:cmt..keep break
 .numboxbeg LDBL_MIN
 .ansi  <= 1E-37
 .bothc 2.22507385850720160E-308
 .wlooc 5.3976053469340275E-79
 .numboxend
-.keep end
+:cmt..keep end
 .endbull
-
+.*
 :CMT.This is from cl\trigraph.gml and is in the C Language Reference
 :CMT.Topic: "Character Constants"
-
 .np
 The following trigraph sequences may be used to represent characters not available on all terminals or
 systems:
@@ -3996,10 +3948,9 @@ $^  $??'
 $~~ $??-
 .monooff
 .boxend
-
+.*
 :CMT.This is from fl\ftypes.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Data Types"
-
 :p.The following table summarizes all data types supported by &product..
 
 .sr c0=&INDlvl+1
@@ -4028,10 +3979,9 @@ $~~ $??-
 \ CHARACTER          \ 1  \ yes
 \ CHARACTER*n        \ n  \ yes
 .box off
-
+.*
 :CMT.This is from fl\stmtclas.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Classifying Statements"
-
 .np
 The following table is a summary of &product statement classification.
 
@@ -4058,7 +4008,7 @@ The following table is a summary of &product statement classification.
 \CLOSE                \      \      \      \      \      \      \
 \COMMON               \  *   \  *   \  *   \  *   \  *   \  *   \
 .box off
-:cmt..pa
+.pa
 .box on &c0 &c1 &c2 &c3 &c4 &c5 &c6 &c7
 \Statement            \  1   \  2   \  3   \  4   \  5   \  6
 .box
@@ -4102,7 +4052,7 @@ The following table is a summary of &product statement classification.
 \logical IF           \      \      \      \  *   \      \      \
 \block IF             \      \  *   \      \  *   \      \      \
 .box off
-:cmt..pa
+.pa
 .box on &c0 &c1 &c2 &c3 &c4 &c5 &c6 &c7
 \Statement            \  1   \  2   \  3   \  4   \  5   \  6
 .box
@@ -4139,5 +4089,4 @@ The following table is a summary of &product statement classification.
 \WHILE                \      \  *   \      \  *   \      \      \
 \WRITE                \      \      \      \      \      \      \
 .box off
-
 
