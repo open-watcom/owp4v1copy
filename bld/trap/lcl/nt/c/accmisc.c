@@ -413,6 +413,13 @@ unsigned ReqGet_err_text( void )
     return( strlen( err_txt ) + 1 );
 }
 
+/* Helper function for FindFilePath():
+** check if a file named "name" exists, optionally with one of the
+** file name extensions from "ext_list".  
+** "end" points to the original end of "name"
+** Result:  0 if found with output value of "name"
+**         -1 if nothing found.
+*/
 static int tryPath( char *name, char *end, char *ext_list )
 {
     char    *p;
@@ -422,7 +429,7 @@ static int tryPath( char *name, char *end, char *ext_list )
     done = FALSE;
     do {
         if( *ext_list == 0 ) {
-            done = 1;
+            done = TRUE;
         }
         for( p = end; (*p = *ext_list) != 0; ++p,++ext_list ) {
         }
@@ -438,6 +445,15 @@ static int tryPath( char *name, char *end, char *ext_list )
     return( -1 );
 }
 
+/* Find a file with path name "pgm".
+** If the file name has no extension, try if it can be found with one of the 
+** file name extensions from "ext_list" (a sequence of NUL-terminated strings,
+** ending in a empty string).
+** If the path name contains no directory names, search along the PATH list
+** Return: 0 if file was found (name to be found in "buffer")
+**         1 if not found (no PATH search done).
+**        -1 if not PATH search performed, but nothing found
+*/
 int FindFilePath( char *pgm, char *buffer, char *ext_list )
 {
     char    *p;
@@ -445,7 +461,7 @@ int FindFilePath( char *pgm, char *buffer, char *ext_list )
     char    *p3;
     BOOL    have_ext;
     BOOL    have_path;
-    char    envbuf[512];
+    char    envbuf[2048];
 
     have_ext = FALSE;
     have_path = FALSE;
@@ -469,7 +485,7 @@ int FindFilePath( char *pgm, char *buffer, char *ext_list )
         return( 0 );
     }
     if( have_path ) {
-        return( TRUE );
+        return( 1 );
     }
     GetEnvironmentVariable( "PATH", envbuf, sizeof( envbuf ) );
     p = envbuf;
