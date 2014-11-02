@@ -106,14 +106,15 @@ static void FreeMemory( void )
     }
 }
 
-extern void main( void )
-/**********************/
+extern int main( void )
+/*********************/
 {
     MemInit();
     UtilsInit();
     Spawn( DoConvert );
     FreeMemory();
     MemFini();
+    return( 0 );
 }
 
 static void PrefixWrite( cmdentry *cmdlist, char *prefix, int len )
