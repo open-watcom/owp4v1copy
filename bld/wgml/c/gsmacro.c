@@ -80,6 +80,8 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
         nip->fmflags    = II_tag;
     }
     nip->fmflags |= input_cbs->fmflags & II_research;   // copy research mode
+    nip->fmflags |= input_cbs->fmflags & II_sol;        // copy start-of-line
+    nip->fmflags |= input_cbs->fmflags & II_eol;        // copy end-of-line
 
     nip->prev = input_cbs;
     input_cbs = nip;

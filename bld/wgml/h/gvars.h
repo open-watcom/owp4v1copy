@@ -200,6 +200,7 @@ global struct ProcFlags {
     unsigned        literal         : 1;// .li is active
     unsigned        concat          : 1;// .co ON if set
     unsigned        ct              : 1;// .ct continue text is active
+    unsigned        utc             : 1;// user tag with "continue" is active
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
 #if 0
@@ -215,6 +216,7 @@ global struct ProcFlags {
     unsigned        force_op        : 1;// force overprint (used with BX CAN/BX DEL)
     unsigned        in_bx_box       : 1;// identifies first BX line
     unsigned        no_bx_hline     : 1;// determines if a horizontal line is to be emitted or not
+    unsigned        top_line        : 1;// determines if current line is at top of page
     unsigned        vline_done      : 1;// determines if a vertical line was done
 
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg

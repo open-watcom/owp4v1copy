@@ -1382,9 +1382,12 @@ void    process_text( char * text, uint8_t font_num )
     } else {                        // subsequent phrase in paragraph
         if( ProcFlags.concat && !ProcFlags.xmp_active ) {    // ".co on"
             if( post_space == 0 ) {
-                // compute initial spacing if needed; .ct affects this
-                if( (*p == ' ') || ((input_cbs->fmflags & II_sol) && !ProcFlags.ct
-                                && (ju_x_start <= t_line->last->x_address)) ) {
+                // compute initial spacing if needed; .ct and some user tags affect this
+                if( (*p == ' ')
+                    || ((input_cbs->fmflags & II_tag) && !ProcFlags.utc)
+                    || ((input_cbs->fmflags & II_sol)
+                        && !ProcFlags.ct 
+                        && (ju_x_start <= t_line->last->x_address)) ) {
                     post_space = wgml_fonts[font_num].spc_width;
                     if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
                         && !ProcFlags.xmp_active ) {
@@ -1730,5 +1733,6 @@ void    process_text( char * text, uint8_t font_num )
         }
     }
     ProcFlags.ct = false;               // experimental TBD
+    ProcFlags.utc = false;              // experimental TBD
 }
 

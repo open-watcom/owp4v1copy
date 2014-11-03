@@ -386,8 +386,10 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         input_cbs->local_dict = loc_dict;
         inc_inc_level();                // start new include level
         if( ge->tagflags & tag_cont ) {   // +++++++++++++++++++ TBD trial
-            post_space = 0;
-            ProcFlags.ct = true;
+//            post_space = 0;
+            if( !(input_cbs->fmflags & II_sol) ) {
+                ProcFlags.utc = true;
+            }
         }
 
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
@@ -455,8 +457,10 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         input_cbs->local_dict = loc_dict;
         inc_inc_level();                // start new include level
         if( ge->tagflags & tag_cont ) { // +++++++++++++++++++ TBD trial
-            post_space = 0;
-            ProcFlags.ct = true;
+//            post_space = 0;
+            if( !(input_cbs->fmflags & II_sol) ) {
+                ProcFlags.utc = true;
+            }
         }
 
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
