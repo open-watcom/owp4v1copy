@@ -324,7 +324,8 @@ typedef struct pecb {                   // for .pe control
 typedef enum {
     II_file     = 0x01,                 // inputcb is file
     II_macro    = 0x02,                 // inputcb is macro
-    II_tag      = 0x06,                 // inputcb is macro via tag
+    II_tag      = 0x04,                 // inputcb is macro via tag
+    II_tag_mac  = II_tag | II_macro,    // input is tag or macro
     II_input    = II_file | II_macro | II_tag, // all input types
     II_research = 0x08,                 // research mode (for file only)
     II_eof      = 0x10,                 // end of file (input)

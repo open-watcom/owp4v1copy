@@ -273,7 +273,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                     wng_count++;
                     //***WARNING*** SC--040: 'abd' is not a valid attribute name
                     g_warn( wng_att_name, token_buf );
-                    if( input_cbs->fmflags & II_macro ) {
+                    if( input_cbs->fmflags & II_tag_mac ) {
                         utoa( input_cbs->s.m->lineno, linestr, 10 );
                         g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                     } else {
@@ -344,7 +344,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             processed = false;
             err_count++;
             g_err( err_att_req, ge->name, token_buf );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {

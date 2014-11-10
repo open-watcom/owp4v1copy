@@ -147,7 +147,7 @@ extern  void    gml_set( const gmltag * entry )
                 err_count++;
  
                 g_err( err_att_name_inv );
-                if( input_cbs->fmflags & II_macro ) {
+                if( input_cbs->fmflags & II_tag_mac ) {
                     utoa( input_cbs->s.m->lineno, linestr, 10 );
                     g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                 } else {
@@ -199,7 +199,7 @@ extern  void    gml_set( const gmltag * entry )
             // AT-001 Required attribute not found
  
             g_err( err_att_missing );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {

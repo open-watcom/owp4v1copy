@@ -319,7 +319,7 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
 
     default:
         result = false;
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             out_msg( "ERR_ifcompare internal logic error\n"
                      "\t\t\tLine %d of macro '%s'\n",
                      input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
@@ -422,7 +422,7 @@ void    scr_if( void )
             scan_err = true;
             err_count++;
             g_err( err_if_term );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
@@ -436,7 +436,7 @@ void    scr_if( void )
             scan_err = true;
             err_count++;
             g_err( err_if_relop );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
@@ -464,7 +464,7 @@ void    scr_if( void )
             } else {
                 scan_err = true;
                 g_err( err_if_nesting );
-                if( input_cbs->fmflags & II_macro ) {
+                if( input_cbs->fmflags & II_tag_mac ) {
                     utoa( input_cbs->s.m->lineno, linestr, 10 );
                     g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                 } else {
@@ -622,7 +622,7 @@ void    scr_th( void )
 
         scan_err = true;
         g_err( err_if_then );
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
@@ -698,7 +698,7 @@ void    scr_el( void )
 
         scan_err = true;
         g_err( err_if_else );
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
@@ -768,7 +768,7 @@ void    scr_do( void )
 
             scan_err = true;
             g_err( err_if_do );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
@@ -810,7 +810,7 @@ void    scr_do( void )
 
                     scan_err = true;
                     g_err( err_if_do_end );
-                    if( input_cbs->fmflags & II_macro ) {
+                    if( input_cbs->fmflags & II_tag_mac ) {
                         utoa( input_cbs->s.m->lineno, linestr, 10 );
                         g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                     } else {
@@ -836,7 +836,7 @@ void    scr_do( void )
         } else {
             scan_err = true;
             g_err( err_if_do_fun );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {

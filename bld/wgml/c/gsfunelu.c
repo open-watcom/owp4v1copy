@@ -323,7 +323,7 @@ static  char    *scr_single_func_unsupport( char * in, char * * result )
     charstr[0] = *(in + 1);
     charstr[1] = '\0';
     g_warn( wng_func_unsupport, charstr );
-    if( input_cbs->fmflags & II_macro ) {
+    if( input_cbs->fmflags & II_tag_mac ) {
         utoa( input_cbs->s.m->lineno, linestr, 10 );
         g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {

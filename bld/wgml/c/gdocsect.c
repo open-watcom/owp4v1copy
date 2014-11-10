@@ -668,7 +668,7 @@ extern  void    gml_titlep( const gmltag * entry )
     rs_loc = titlep_tag;
     if( input_cbs->fmflags & II_file ) {    // save line number
         titlep_lineno = input_cbs->s.f->lineno;
-    } else if( input_cbs->fmflags & II_macro ) {
+    } else if( input_cbs->fmflags & II_tag_mac ) {
         titlep_lineno = input_cbs->s.m->lineno;
     } else {
         titlep_lineno = 0;                  // not clear what to do here

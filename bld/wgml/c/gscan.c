@@ -124,7 +124,7 @@ static void scan_gml( void )
     if( toklen >= TAG_NAME_LENGTH ) {
         err_count++;
         // SC--009 The tagname is too long
-        if( cb->fmflags & II_macro ) {
+        if( cb->fmflags & II_tag_mac ) {
             utoa( cb->s.m->lineno, linestr, 10 );
             g_err( err_tag_name, tok_start + 1, linestr, "macro",
                    cb->s.m->mac->name );
@@ -145,7 +145,7 @@ static void scan_gml( void )
 
         if(  stricmp( tok_start + 1, "cmt" ) ) {   // quiet for :cmt.
 
-            if( cb->fmflags & II_macro ) {
+            if( cb->fmflags & II_tag_mac ) {
                 printf_research( "L%d    %c%s tag found in macro %s(%d)\n\n",
                                  inc_level, GML_char, tok_start + 1,
                                  cb->s.m->mac->name, cb->s.m->lineno );
@@ -176,7 +176,7 @@ static void scan_gml( void )
             err_count++;
             // SC--037: The macro 'xxxxxx' for the gml tag 'yyyyy'
             //          is not defined
-            if( cb->fmflags & II_macro ) {
+            if( cb->fmflags & II_tag_mac ) {
                 utoa( cb->s.m->lineno, linestr, 10 );
                 g_err( err_tag_macro,
                          ge->macname, ge->name,
@@ -460,7 +460,7 @@ static void     scan_script( void )
 
     if( me != NULL ) {                  // macro found
         if( GlobalFlags.firstpass && cb->fmflags & II_research ) {
-            if( cb->fmflags & II_macro ) {
+            if( cb->fmflags & II_tag_mac ) {
                 printf_research( "L%d    %c%s macro found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
                                  cb->s.m->mac->name, cb->s.m->lineno );
@@ -478,7 +478,7 @@ static void     scan_script( void )
     } else {                            // try script controlword
         cwfound = false;
         if( cb->fmflags & II_research && GlobalFlags.firstpass ) {
-            if( cb->fmflags & II_macro ) {
+            if( cb->fmflags & II_tag_mac ) {
                 printf_research( "L%d    %c%s CW found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
                                  cb->s.m->mac->name, cb->s.m->lineno );
@@ -669,7 +669,7 @@ condcode    test_process( ifcb * cb )
         }
     }
     if( cc == no ) {                    // cc not set program logic error
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             g_err( err_if_intern, linestr, "macro", input_cbs->s.m->mac->name );
         } else {

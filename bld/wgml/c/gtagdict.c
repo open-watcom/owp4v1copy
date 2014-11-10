@@ -62,7 +62,7 @@ gtentry *   add_tag( gtentry * * dict, const char * name, const char * mac,
     if( wk != NULL ) {
         err_count++;
         g_err( err_tag_exist, name );
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {

@@ -428,7 +428,7 @@ bool    get_line( bool display_line )
                 reset_pe_cb();
             }
         } else {
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 get_macro_line();       // input from macro line
             } else {
                 cb = input_cbs->s.f;    // input from file
@@ -531,7 +531,7 @@ void    show_include_stack( void )
 
 
     if( input_cbs != NULL ) {
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             utoa( input_cbs->s.m->mac->lineno, linemac, 10 );
             g_info( err_inf_mac_def, linestr, input_cbs->s.m->mac->name,

@@ -46,7 +46,7 @@ static  labelcb *   find_label( char    *   name )
 {
     labelcb *   lb;
 
-    if( input_cbs->fmflags & II_macro ) {
+    if( input_cbs->fmflags & II_tag_mac ) {
         lb = input_cbs->s.m->mac->label_cb;
     } else {
         lb = input_cbs->s.f->label_cb;
@@ -72,7 +72,7 @@ bool        gotarget_reached( void )
 
     reached = false;
     if( gotargetno > 0 ) {              // lineno search
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             reached = input_cbs->s.m->lineno == gotargetno;
         } else {
             reached = input_cbs->s.f->lineno == gotargetno;
@@ -169,7 +169,7 @@ void    scr_label( void )
         scan_err = true;
         err_count++;
         g_err( err_missing_name, "" );
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
@@ -191,7 +191,7 @@ void    scr_label( void )
 
             // check if lineno from label matches actual lineno
 
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 if( gn.result != input_cbs->s.m->lineno ) {
                     scan_err = true;
                     err_count++;
@@ -213,7 +213,7 @@ void    scr_label( void )
                 }
             }
 
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                   // numeric macro label no need to store
             } else {
                 wng_count++;
@@ -247,7 +247,7 @@ void    scr_label( void )
                     token_buf[MAC_NAME_LENGTH] = '\0';
                 }
 
-                if( input_cbs->fmflags & II_macro ) {
+                if( input_cbs->fmflags & II_tag_mac ) {
 
                     cc = test_duplicate( token_buf, input_cbs->s.m->lineno );
                     if( cc == pos ) {   // ok name and lineno match
@@ -302,7 +302,7 @@ void    scr_label( void )
                 scan_err = true;
                 err_count++;
                 g_err( err_missing_name, "" );
-                if( input_cbs->fmflags & II_macro ) {
+                if( input_cbs->fmflags & II_tag_mac ) {
                     utoa( input_cbs->s.m->lineno, linestr, 10 );
                     g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                 } else {
@@ -390,7 +390,7 @@ void    scr_go( void )
         scan_err = true;
         err_count++;
         g_err( err_missing_name, "" );
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
@@ -411,10 +411,10 @@ void    scr_go( void )
         if( gn.num_sign == ' '  ) {     // absolute number
             gotargetno = gn.result;
         } else {
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 gotargetno = input_cbs->s.m->lineno;
             } else {
-                gotargetno = input_cbs->s.m->lineno;
+                gotargetno = input_cbs->s.f->lineno;
             }
             gotargetno += gn.result;    // relative target line number
         }
@@ -423,7 +423,7 @@ void    scr_go( void )
             scan_err = true;
             err_count++;
             g_err( err_label_zero );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
@@ -433,7 +433,7 @@ void    scr_go( void )
             show_include_stack();
             return;
         }
-        if( input_cbs->fmflags & II_macro ) {
+        if( input_cbs->fmflags & II_tag_mac ) {
             if( gotargetno <= input_cbs->s.m->lineno ) {
                 input_cbs->s.m->lineno = 0; // restart from beginning
                 input_cbs->s.m->macline = input_cbs->s.m->mac->macline;
@@ -445,7 +445,7 @@ void    scr_go( void )
         if( arg_flen >  MAC_NAME_LENGTH ) {
             err_count++;
             g_err( err_sym_long, tok_start );
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
@@ -465,7 +465,7 @@ void    scr_go( void )
         if( golb != NULL ) {            // label already known
             gotargetno = golb->lineno;
 
-            if( input_cbs->fmflags & II_macro ) {
+            if( input_cbs->fmflags & II_tag_mac ) {
                 if( golb->lineno <= input_cbs->s.m->lineno ) {
                     input_cbs->s.m->lineno = 0; // restart from beginning
                     input_cbs->s.m->macline = input_cbs->s.m->mac->macline;

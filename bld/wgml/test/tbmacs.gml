@@ -199,29 +199,24 @@
 .gt ITAL  add @italbeg continue
 .gt eITAL add @italend continue
 .*
-:CMT. Fix these! Note: the ":cmt." tags have been switched to activate the original lines
-.*
 .dm super begin
 .  :SF font=5.(&*.):eSF.
 .dm super end
 .*
 :SET symbol='SUPER0'   value=';.ct .super 0;.ct '.
-:cmt.:SET symbol='SUPER0'   value='0'.
 :SET symbol='SUPER1'   value=';.ct .super 1;.ct '.
-:cmt.:SET symbol='SUPER1'   value='1'.
+.*
 .dm langle begin
 .  :SF font=7.~<:eSF.
 .dm langle end
 .*
 :SET symbol='LANGLE'   value=';.ct;.langle;.ct '.
-:cmt.:SET symbol='LANGLE'   value=''.
 .*
 .dm rangle begin
 .  :SF font=7.~>:eSF.
 .dm rangle end
 .*
 :SET symbol='RANGLE'   value=';.ct;.rangle;.ct '.
-:cmt.:SET symbol='RANGLE'   value=''.
 .*
 .dm @msemi begin
 .  :SF font=4.;:eSF.&*.

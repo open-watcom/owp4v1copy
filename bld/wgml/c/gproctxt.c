@@ -468,7 +468,7 @@ static void wgml_tabs( void )
         if( tab_chars.last != NULL ) {
             if( !(input_cbs->fmflags & II_sol) ) {   // not if at start of input line
                 if( (tab_chars.first != NULL) && ((c_stop->alignment != al_left) ||
-                    !(input_cbs->fmflags & II_macro)) ) {
+                    !(input_cbs->fmflags & II_tag_mac)) ) {
                     // remove all markers/fill chars
                     if( tab_chars.first->prev !=NULL) {
                         tab_chars.first->prev->next = tab_chars.last->next;
@@ -496,7 +496,7 @@ static void wgml_tabs( void )
             if( tab_space > 0 ) {   // tab followed by spaces then text
                 if( c_stop->alignment == al_left ) {   // alignment left
                     s_width = 0;
-                    if( input_cbs->fmflags & II_macro ) {   // inside macro
+                    if( input_cbs->fmflags & II_tag_mac ) {   // inside macro
                         g_cur_h_start = g_cur_left + c_stop->column + post_space;
                     } else {                                // not inside macro
                         g_cur_h_start = g_cur_left + c_stop->column + tab_space *
@@ -1385,6 +1385,7 @@ void    process_text( char * text, uint8_t font_num )
                 // compute initial spacing if needed; .ct and some user tags affect this
                 if( (*p == ' ')
                     || ((input_cbs->fmflags & II_tag) && !ProcFlags.utc)
+                    || ((input_cbs->fmflags & II_macro) && !ProcFlags.ct)
                     || ((input_cbs->fmflags & II_sol)
                         && !ProcFlags.ct 
                         && (ju_x_start <= t_line->last->x_address)) ) {
