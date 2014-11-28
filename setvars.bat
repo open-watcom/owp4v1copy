@@ -34,6 +34,18 @@ REM set appropriate variables to point to Windows help compilers which you have 
 rem set WIN95HC=hcrtf
 rem set HHC=hhc
 
+if not '%OS%' == 'Windows_NT' goto common_setup
+REM build process requires WGML utility which is available only as DOS executable
+REM on Windows platforms which don't have NTVDM or if WGML doesn't work under NTVDM
+REM DOSBOX emulator must be installed and OWDOSBOX variable must be set
+REM It is necessary for all 64-bit Windows and Windows 7 32-bit
+REM Uncoment and set OWDOSBOX variable bellow to point to DOSBOX emulator executable
+REM path must not include any spaces
+
+REM set OWDOSBOX=dosbox
+
+:common_setup
+
 REM Subdirectory to be used for bootstrapping
 set OBJDIR=bootstrp
 

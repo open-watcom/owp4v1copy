@@ -7,6 +7,22 @@
 # the DOS version or the OS/2 version
 #
 
+!ifdef __UNIX__
+RENCMD=mv
+!else
+RENCMD=ren
+!endif
+
+docs_dir = $(%OWROOT)/docs
+src_dir = $(%OWROOT)/bld
+
+gendev_cmdl_params = $[@
+
+!include bhost.mif
+!include wgmlcmd.mif
+
+!include wgmlcmd.mif
+
 #-------------------------------------------------------
 # Set the extensions, paths, and groups
 #-------------------------------------------------------
@@ -40,60 +56,10 @@ drv_page =	&
 	drv04.inc
 
 #-------------------------------------------------------
-# Set build_platform and define gendev
-#-------------------------------------------------------
-
-!ifeq %build_platform dos386
-gendev = $(%OWROOT)\docs\gml\dos\gendev
-
-!else ifeq %build_platform os2386
-gendev = $(%OWROOT)\docs\gml\os2\gendev
-
-!else ifeq %build_platform nt386
-gendev = $(%OWROOT)\docs\gml\dos\gendev
-
-!else ifeq %build_platform linux386
-
-#-------------------------------------------------------
-# set up to use dosemu to run gendev under Linux
-# copied/modified from how wgml is handled under Linux
-#-------------------------------------------------------
-
-dosemu_gendev_batch=gendev.bat
-$(dosemu_gendev_batch): $(__MAKEFILES__)
-    @%create $@
-    @%append $@ unix -s GMLLIB
-    @%append $@ unix -s GMLINC
-    @%append $@ $(%OWROOT)\docs\gml\dos\gendev.exe "%1 %2 %3 %4 %5 %6 %7 %8"
-    @%append $@ exitemu
-%make $(dosemu_gendev_batch)
-
-gendev = dosemu -dumb $(dosemu_wgml_batch)
-
-!else
-!error Unsupported building platform !!!!!!
-
-!endif
-
-#-------------------------------------------------------
-# Set the environment variables
-#-------------------------------------------------------
-
-.before:
-        set GMLLIB=$(%OWROOT)\bld\wgml\test\testlib
-	set GMLINC=..\testsrc
-
-#-------------------------------------------------------
 # Where the action is
 #-------------------------------------------------------
 
-.fon.cop:
-	$(gendev) $^&
-
-wgmlst.cop : .EXPLICIT
-        $(gendev) genall
-
-default : wgmlst.cop test01.cop test02.cop pstest.cop psspec.cop tdrv01.cop &
+default : test01.cop test02.cop pstest.cop psspec.cop tdrv01.cop &
           tdrv02.cop pstdrv.cop pssdrv.cop pssfon00.cop pssfon01.cop &
 	  pssfon02.cop pssfon03.cop pssfon04.cop pssfon05.cop pssfon06.cop &
 	  pssfon07.cop pssfon08.cop pssfon09.cop tfon00.cop tfon01.cop &
@@ -101,31 +67,199 @@ default : wgmlst.cop test01.cop test02.cop pstest.cop psspec.cop tdrv01.cop &
 	  tfon08.cop tfon09.cop .SYMBOLIC
 
 test01.cop : test01.pcd $(dev_common) $(dev_core)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TEST01.COP $@
+!endif
 
 test02.cop : test02.pcd $(dev_common) $(dev_core)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TEST02.COP $@
+!endif
 
 pstest.cop : pstest.pcd $(dev_common) $(dev_core)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSTEST.COP $@
+!endif
 
 psspec.cop : psspec.pcd $(dev_common)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSPEC.COP $@
+!endif
 
 tdrv01.cop : tdrv01.pcd $(drv_common) $(drv_core)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TDRV01.COP $@
+!endif
 
 tdrv02.cop : tdrv02.pcd $(drv_common) $(drv_core) $(drv_page)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TDRV02.COP $@
+!endif
 
 pstdrv.cop : pstdrv.pcd $(drv_common) $(drv_core) $(drv_page)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSTDRV.COP $@
+!endif
 
 pssdrv.cop : pssdrv.pcd $(drv_common) $(drv_page)
-	$(gendev) $^&
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSDRV.COP $@
+!endif
 
-genall  : .SYMBOLIC
-	  $(gendev) genall
+pssfon00.cop : pssfon00.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON00.COP $@
+!endif
+
+pssfon01.cop : pssfon01.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON01.COP $@
+!endif
+
+pssfon02.cop : pssfon02.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON02.COP $@
+!endif
+
+pssfon03.cop : pssfon03.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON03.COP $@
+!endif
+
+pssfon04.cop : pssfon04.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON04.COP $@
+!endif
+
+pssfon05.cop : pssfon05.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON05.COP $@
+!endif
+
+pssfon06.cop : pssfon06.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON06.COP $@
+!endif
+
+pssfon07.cop : pssfon07.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON07.COP $@
+!endif
+
+pssfon08.cop : pssfon08.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON08.COP $@
+!endif
+
+pssfon09.cop : pssfon09.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) PSSFON09.COP $@
+!endif
+
+tfon00.cop : tfon00.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON00.COP $@
+!endif
+
+tfon01.cop : tfon01.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON01.COP $@
+!endif
+
+tfon02.cop : tfon02.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON02.COP $@
+!endif
+
+tfon03.cop : tfon03.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON03.COP $@
+!endif
+
+tfon04.cop : tfon04.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON04.COP $@
+!endif
+
+tfon05.cop : tfon05.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON05.COP $@
+!endif
+
+tfon06.cop : tfon06.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON06.COP $@
+!endif
+
+tfon07.cop : tfon07.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON07.COP $@
+!endif
+
+tfon08.cop : tfon08.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON08.COP $@
+!endif
+
+tfon09.cop : tfon09.fon
+        @%make gencop
+!ifdef wgml_ucase
+        @$(RENCMD) TFON09.COP $@
+!endif
+
+genall : genall.pcd .symbolic
+        @%make gencop
+
+gencop : .procedure
+!ifeq use_dosemu dosemu
+        %create $(dosemu_gendev_batch)
+        @%append $(dosemu_gendev_batch) lredir w: linux\fs$(docs_dir)
+        @%append $(dosemu_gendev_batch) set GMLLIB=..\testlib
+        @%append $(dosemu_gendev_batch) set GMLINC=..\testsrc
+        @%append $(dosemu_gendev_batch) w:\gml\dos\gendev.exe $(gendev_cmdl_params)
+        @%append $(dosemu_gendev_batch) exitemu
+        $(GENDEVCMD)
+!else ifeq use_dosemu dosbox
+        %create $(dosemu_gendev_batch)
+        @%append $(dosemu_gendev_batch) d:
+        @%append $(dosemu_gendev_batch) set GMLLIB=e:\testlib
+        @%append $(dosemu_gendev_batch) set GMLINC=e:\testsrc
+        @%append $(dosemu_gendev_batch) c:\gml\dos\gendev.exe $(gendev_cmdl_params)
+        @%append $(dosemu_gendev_batch) exit
+        $(GENDEVCMD)
+!else
+        set GMLLIB=..\testlib
+        set GMLINC=..\testsrc
+        $(GENDEVCMD)
+!endif
 
 clean   : .SYMBOLIC
-          del *.cop
+        rm -f *.bat *.cop *.COP
+        rm -f stdout.txt stderr.txt

@@ -29,10 +29,21 @@ export DEFAULT_WINDOWING=0
 # Set this variable to 0 to suppress documentation build
 export DOC_BUILD=0      # Documentation building uses DOS programs.
 
-# Documentation related variables - none likely to work in Linux
-# set appropriate variables to point to Windows help compilers which you have installed
+# Documentation related variables
+# To run Microsoft help compilers Wine must be installed on box
+# set appropriate variables to point to Windows help compilers which you have installed in Wine
 # export WIN95HC=hcrtf
 # export HHC=hhc
+
+# build process requires WGML utility which is available only as DOS executable
+# it is necessary to have some DOS emulator installed
+# DOSBOX emulator is available on most platforms
+# DOSEMU emulator is available on Linux (Intel platform)
+# if DOSBOX emulator is used then OWDOSBOX variable must be set
+# Uncoment and set OWDOSBOX variable bellow to point to DOSBOX emulator executable
+# Otherwise DOSEMU emulator is used on Linux by default (Intel platform)
+
+# export OWDOSBOX=dosbox
 
 # Subdirectory to be used for bootstrapping
 export OBJDIR=bootstrp
