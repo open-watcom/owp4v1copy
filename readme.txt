@@ -88,9 +88,14 @@ are first built using gcc, then the rest of the tree is built using the
 freshly created Open Watcom tools. See the build.sh script in the root of
 the source tree - it should take care of everything.
 
-WGML OW tool is still only available as DOS version. Under Linux,
-DOSEMU and FREEDOS need to be installed to be able to do a complete build.
+----
+WGML OW tool is still only available as DOS version that on some host platform
+DOS emulator need to be installed to be able to do a complete build.
+Under Linux, DOSEMU and FREEDOS or DOSBOX need to be installed.
+Under 64-bit Windows or 32-bit Windows without DOSX emulator, DOSBOX need
+to be installed.
 
+----
 We use the Open Watcom C/C++ compilers and Open Watcom wmake to build our
 tools, but at the top level we have a tool which oversees traversing the
 build tree, deciding which projects to build for what platforms, logging
