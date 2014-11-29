@@ -32,19 +32,22 @@ clean : .procedure
 
  @if exist *.ch? rm -f *.ch?
 
-!ifeq dotarget ps
- @if exist tmp rm -f tmp/*.ps tmp/*.tmp tmp/*.bmp
- @if exist tmp rmdir tmp
-!endif
- 
 # useful to delete all windows .gid
  @if exist *.gid @attrib -h *.gid
  @if exist *.gid rm -f *.gid
  
-# delete generated DOSEMU batch file
+# delete generated DOSEMU/DOSBOX/WINE batch file
  @if exist *.bat rm -f *.bat
 
+# delete generated DOSBOX stdout and stderr files
+ @if exist stdout.txt rm -f stdout.txt
+ @if exist stderr.txt rm -f stderr.txt
+
+# delete temporary subdirectory if it is used
+ @if exist tmp rm -f tmp/*.ps tmp/*.tmp tmp/*.bmp
+ @if exist tmp rmdir tmp
+ 
 !ifeq dotarget htmlhelp
- @for %f in ($(books)) do @if exist %f rm -f %f/*.bmp %f/*.htm %f/*.hh? %f/*.ch?
+ @for %f in ($(books)) do @if exist %f rm -f %f/*.bmp %f/*.htm %f/*.h %f/*.hh? %f/*.ch?
  @for %f in ($(books)) do @if exist %f rmdir %f
 !endif
