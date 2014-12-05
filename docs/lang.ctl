@@ -24,7 +24,6 @@ cdsay .
     <CPCMD> os2/*.hlp       <RELROOT>/binp/help/
     <CCCMD> nt/*.hlp        <RELROOT>/binnt/
     <CCCMD> nt/*.cnt        <RELROOT>/binnt/
-    <CCCMD> htmlhelp/*.chi  <RELROOT>/binnt/help/
     <CCCMD> htmlhelp/*.chm  <RELROOT>/binnt/help/
     <CCCMD> pdf/*.pdf       <RELROOT>/docs/
     <CPCMD> readme.txt      <RELROOT>/readme.txt
