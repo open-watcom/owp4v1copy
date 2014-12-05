@@ -289,7 +289,7 @@ $(hbook).pdf : $(hbook).ps
 !ifdef __UNIX__
     @set PATH=$(%GHOSTSCRIPTPATH):$(%PATH)
 !else
-    @PATH $(%GHOSTSCRIPTPATH);$(%PATH)
+    @set PATH=$(%GHOSTSCRIPTPATH);$(%PATH)
 !endif
     !$(hc_pdf) -r600 $[@ $(hbook).pdf
     @set PATH=$(%OWDOCS_OLD_PATH)
