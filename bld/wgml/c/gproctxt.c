@@ -594,6 +594,10 @@ static void wgml_tabs( void )
         case al_left:
             if( !tabbing || (s_multi == NULL) ) {
                 g_cur_h_start = g_page_left + c_stop->column;
+                // II_macro immediately after a tab character
+                if( input_cbs->fmflags & II_macro ) { // note: test macro started with ";"
+                    g_cur_h_start += post_space;
+                }
                 tabbing = false;
             }
             break;
@@ -703,7 +707,10 @@ static void wgml_tabs( void )
                 tab_chars.last = c_chars;
             }
 
-            if( c_font != s_chars->font_number ) {
+//          original condition: all font changes
+//            if( c_font != s_chars->font_number ) {
+            // Not for text from macros, even if font number changes
+            if( (c_font != s_chars->font_number) && !(input_cbs->fmflags & II_macro) ) {
                 c_chars = do_c_chars( c_chars, in_chars, NULL, 0,
                                 g_cur_h_start, 0, c_font, c_type );
                 if( tab_chars.first == NULL) {
@@ -1385,9 +1392,9 @@ void    process_text( char * text, uint8_t font_num )
                 // compute initial spacing if needed; .ct and some user tags affect this
                 if( (*p == ' ')
                     || ((input_cbs->fmflags & II_tag) && !ProcFlags.utc)
-                    || ((input_cbs->fmflags & II_macro) && !ProcFlags.ct)
-                    || ((input_cbs->fmflags & II_sol)
-                        && !ProcFlags.ct 
+                    || (((input_cbs->fmflags & II_sol)
+                            || (input_cbs->fmflags & II_macro))
+                        && !ProcFlags.ct
                         && (ju_x_start <= t_line->last->x_address)) ) {
                     post_space = wgml_fonts[font_num].spc_width;
                     if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
@@ -1734,6 +1741,7 @@ void    process_text( char * text, uint8_t font_num )
         }
     }
     ProcFlags.ct = false;               // experimental TBD
+    ProcFlags.fsp = false;              // experimental TBD
     ProcFlags.utc = false;              // experimental TBD
 }
 

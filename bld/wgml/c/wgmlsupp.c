@@ -371,16 +371,13 @@ static  void    get_macro_line( void )
 
     if( cb->macline == NULL ) {         // no more macrolines
         input_cbs->fmflags |= II_eof;
-// helped with :ITAL/:eITAL user tags in boxtest.c
-//        input_cbs->fmflags &= ~(II_sol | II_eol);
+        input_cbs->fmflags &= ~(II_sol | II_eol);
         cb->flags          |= FF_eof;
         *buff2              = '\0';
     } else {
         cb->lineno++;
         cb->flags          &= ~FF_eof;
         input_cbs->fmflags &= ~II_eof;
-// helped with :ITAL/:eITAL user tags in boxtest.c
-//        input_cbs->fmflags |= (II_sol | II_eol);
         strcpy_s( buff2, buf_size, cb->macline->value );
         cb->macline         = cb->macline->next;
     }

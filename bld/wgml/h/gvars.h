@@ -200,6 +200,7 @@ global struct ProcFlags {
     unsigned        literal         : 1;// .li is active
     unsigned        concat          : 1;// .co ON if set
     unsigned        ct              : 1;// .ct continue text is active
+    unsigned        fsp             : 1;// force space in spite of .ct
     unsigned        utc             : 1;// user tag with "continue" is active
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line

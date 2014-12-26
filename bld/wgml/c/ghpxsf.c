@@ -40,6 +40,15 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
 {
     char    *   p;
 
+    // keep any existing post_space, even if CT follows -- TBD
+    if( (input_cbs->fmflags & II_sol) ) {
+        ProcFlags.fsp = true;
+        if( post_space == 0 ) {
+            post_space = wgml_fonts[g_curr_font_num].spc_width; // TBD
+        }
+            
+    }
+
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
 
@@ -122,6 +131,12 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );
         g_curr_font_num = nest_cb->font;
+
+        // recompute space at SOL if inline end tag - TBD
+        if( (post_space !=0) && (input_cbs->fmflags & II_sol) ) {
+            post_space = wgml_fonts[g_curr_font_num].spc_width;
+        }
+
         scan_err = false;
         p = scan_start;
         if( *p == '.' ) p++;            // over '.'
