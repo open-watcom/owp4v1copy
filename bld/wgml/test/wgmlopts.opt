@@ -1,0 +1,13 @@
+( set date 'April 28, 2009'
+( set time '21:11:02' 
+( file nb7x9ps
+( lay to85x11
+( passes 2
+( cpinch 10
+( index
+( setsymbol dotarget ps
+( setsymbol book_ver 1.9
+( verbose
+( warn
+( incl
+( statistics
