@@ -28,7 +28,11 @@
 *               adapted from wlink file (bld\wl\c\wlnkmsg.c)
 *
 ****************************************************************************/
+
+#if defined( __WATCOMC__ )
 #pragma disable_message( 128 );
+#endif
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include <unistd.h>
@@ -42,7 +46,10 @@
 
 #include "wreslang.h"
 #include "rcmem.h"
+
+#if defined( __WATCOMC__ )
 #pragma enable_message( 128 );
+#endif
 
 HANDLE_INFO Instance;
 static int WGMLItself;

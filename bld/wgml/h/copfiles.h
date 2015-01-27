@@ -99,7 +99,9 @@ typedef struct {
     uint8_t         table[0x100];
 } intrans_block;
 
+#if defined( __WATCOMC__ )
 #pragma disable_message( 128 ); // suppress: Warning! W128: 3 padding byte(s) added
+#endif
 
 /* To hold the data extracted from an OuttransData struct. */
 
@@ -484,7 +486,9 @@ typedef struct {
 #define IN_DRV_EXPAND_CHK(x)    (in_driver->allocated_size < (in_driver->next_offset + x))
 #define IN_DRV_GET_OFF(x)       ((char *)x - (char *)in_driver)
 
+#if defined( __WATCOMC__ )
 #pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
+#endif
 
 /* This struct embodies the binary form of the :FONT block.
  * Only the fonts need to be treated as a linked list.

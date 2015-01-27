@@ -47,7 +47,9 @@
 
 /* Struct declarations. */
 
+#if defined( __WATCOMC__ )
 #pragma disable_message( 128 ); // suppress: Warning! W128: 3 padding byte(s) added
+#endif
 
 /* This holds the raw contents of one or more contiguous P-buffers. The
  * buffer is to be interpreted as an array of count uint8_t value. The
@@ -79,7 +81,9 @@ typedef struct {
     code_block *    code_blocks;
 } functions_block;
 
+#if defined( __WATCOMC__ )
 #pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
+#endif
 
 /* Function declarations. */
 

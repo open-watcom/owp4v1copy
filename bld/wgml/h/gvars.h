@@ -42,7 +42,10 @@
 #include "gtype.h"
 #include "gtypelay.h"
 
+#if defined( __WATCOMC__ )
 #pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
+#endif
+
 global struct tm        doc_tm;         // document time/date
 
 global  jmp_buf     *   environment;    // var for GSuicide()
@@ -237,8 +240,10 @@ global struct ProcFlags {
     ju_enum         justify         : 8;// .ju on half off ...
 
 } ProcFlags;                            // processing flags
-#pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
 
+#if defined( __WATCOMC__ )
+#pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
+#endif
 
 global  size_t          buf_size;       // default buffer size
 global  char        *   token_buf;
