@@ -13,14 +13,12 @@ RENCMD=mv
 RENCMD=ren
 !endif
 
-docs_dir = $(%OWROOT)/docs
-src_dir = $(%OWROOT)/bld
+docs_dir = $(%OWROOT)\docs
+src_dir = $(%OWROOT)\bld
 
 gendev_cmdl_params = $[@
 
 !include bhost.mif
-!include wgmlcmd.mif
-
 !include wgmlcmd.mif
 
 #-------------------------------------------------------
@@ -240,7 +238,7 @@ genall : genall.pcd .symbolic
 gencop : .procedure
 !ifeq use_dosemu dosemu
         %create $(dosemu_gendev_batch)
-        @%append $(dosemu_gendev_batch) lredir w: linux\fs$(docs_dir)
+        @%append $(dosemu_gendev_batch) lredir w: linux\fs$(docs_dir:\=/)
         @%append $(dosemu_gendev_batch) set GMLLIB=..\testlib
         @%append $(dosemu_gendev_batch) set GMLINC=..\testsrc
         @%append $(dosemu_gendev_batch) w:\gml\dos\gendev.exe $(gendev_cmdl_params)
