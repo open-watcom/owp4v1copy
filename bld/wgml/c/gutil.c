@@ -699,7 +699,7 @@ int32_t conv_hor_unit( su * s )
         ds = s->su_whole;
         break;
     case SU_ems :
-        ds = s->su_whole * wgml_fonts[g_curr_font_num].em_base;
+        ds = s->su_whole * wgml_fonts[g_curr_font].em_base;
         break;
     case SU_inch :
     case SU_cm :
@@ -730,7 +730,7 @@ int32_t conv_vert_unit( su * s, uint8_t spc )
     case SU_chars_lines :
     case SU_ems :
         // no decimals, use spacing, round negative values down
-        ds = space * s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        ds = space * s->su_whole * wgml_fonts[g_curr_font].line_height;
         if( ds < 0 ) {
             ds++;
         }
@@ -1048,7 +1048,7 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
 /* influencing the left margin for the paragraph                           */
 /***************************************************************************/
 
-void    start_line_with_string( char * text, uint8_t font_num, bool leave_1space )
+void    start_line_with_string( char * text, font_number font, bool leave_1space )
 {
     text_chars          *   n_char;     // new text char
     size_t                  count;
@@ -1069,13 +1069,13 @@ void    start_line_with_string( char * text, uint8_t font_num, bool leave_1space
         count++;
     }
 
-    n_char = alloc_text_chars( text, count, font_num );
+    n_char = alloc_text_chars( text, count, font );
 
     n_char->x_address = g_cur_h_start;
     ju_x_start = g_cur_h_start;
     input_cbs->fmflags &= ~II_sol;      // no longer start of line
 
-    n_char->width = cop_text_width( n_char->text, n_char->count, font_num );
+    n_char->width = cop_text_width( n_char->text, n_char->count, font );
     /***********************************************************/
     /*  Test if word hits right margin                         */
     /***********************************************************/
@@ -1092,7 +1092,7 @@ void    start_line_with_string( char * text, uint8_t font_num, bool leave_1space
 
     if( t_line->first == NULL ) {        // first element in output line
         t_line->first = n_char;
-        t_line->line_height = wgml_fonts[font_num].line_height;
+        t_line->line_height = wgml_fonts[font].line_height;
         ju_x_start = n_char->x_address;
         ProcFlags.line_started = true;
     } else {

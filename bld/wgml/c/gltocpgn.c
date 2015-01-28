@@ -78,7 +78,7 @@ void    lay_tocpgnum( const gmltag * entry )
                                            &layout_work.tocpgnum.size );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.tocpgnum.font );
+                    cvterr = i_font_number( p, curr, &layout_work.tocpgnum.font );
                     if( layout_work.tocpgnum.font >= wgml_font_cnt ) {
                         layout_work.tocpgnum.font = 0;
                     }

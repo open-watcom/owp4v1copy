@@ -78,7 +78,7 @@ void    lay_flpgnum( const gmltag * entry )
                                            &layout_work.flpgnum.size );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.flpgnum.font );
+                    cvterr = i_font_number( p, curr, &layout_work.flpgnum.font );
                     if( layout_work.flpgnum.font >= wgml_font_cnt ) {
                         layout_work.flpgnum.font = 0;
                     }

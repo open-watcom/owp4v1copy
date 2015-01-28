@@ -256,13 +256,13 @@ void    lay_appendix( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.appendix.spacing );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.appendix.font );
+                    cvterr = i_font_number( p, curr, &layout_work.appendix.font );
                     if( layout_work.appendix.font >= wgml_font_cnt ) {
                         layout_work.appendix.font = 0;
                     }
                     break;
                 case   e_number_font:
-                    cvterr = i_int8( p, curr, &layout_work.appendix.number_font );
+                    cvterr = i_font_number( p, curr, &layout_work.appendix.number_font );
                     if( layout_work.appendix.number_font >= wgml_font_cnt ) {
                         layout_work.appendix.number_font = 0;
                     }

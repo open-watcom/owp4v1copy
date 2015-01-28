@@ -217,7 +217,7 @@ void    lay_index( const gmltag * entry )
                                        &layout_work.index.page_reset );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.index.font );
+                    cvterr = i_font_number( p, curr, &layout_work.index.font );
                     if( layout_work.index.font >= wgml_font_cnt ) {
                         layout_work.index.font = 0;
                     }

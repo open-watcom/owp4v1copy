@@ -87,7 +87,7 @@ void    scr_ct( void )
                 (*p == GML_char) ) {    // GML tag follows
                 split_input( scan_start, p, false ); // TBD, fixes problem with macro
             } else {
-                process_text( p, g_curr_font_num ); // text follows
+                process_text( p, g_curr_font ); // text follows
             }
         }
     }

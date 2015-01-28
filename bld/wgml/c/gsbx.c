@@ -249,18 +249,18 @@ static void box_blank_lines( uint32_t lines )
                         || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
                     if( cur_blank->first == NULL ) {
                         cur_chars = alloc_text_chars( &bin_device->box.vertical_line, 1,
-                                                  g_curr_font_num );
+                                                  g_curr_font );
                         cur_blank->first = cur_chars;
                     } else {
                         cur_chars->next = alloc_text_chars(
-                                &bin_device->box.vertical_line, 1, g_curr_font_num );
+                                &bin_device->box.vertical_line, 1, g_curr_font );
                         cur_chars->next->prev = cur_chars;
                         cur_chars = cur_chars->next;
                     }
                     cur_chars->x_address = cur_hline->cols[i_b].col + g_page_left -
                                                                        box_col_width;
                     cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count,
-                                                               g_curr_font_num );
+                                                               g_curr_font );
                 }
                 cur_blank->last = cur_chars;
             }
@@ -344,11 +344,11 @@ static void box_char_element( doc_element * cur_el ) {
 
                                         new_chars = alloc_text_chars(
                                                     &bin_device->box.vertical_line,
-                                                    1, g_curr_font_num );
+                                                    1, g_curr_font );
                                         new_chars->x_address = cur_pos;
                                         new_chars->width = cop_text_width(
                                                            new_chars->text,
-                                                new_chars->count, g_curr_font_num );
+                                                new_chars->count, g_curr_font );
                                         if( cur_chars->prev == NULL ) { // first text_chars in cur_text
                                             cur_text->first = new_chars;
                                         } else {
@@ -372,24 +372,24 @@ static void box_char_element( doc_element * cur_el ) {
                                 if( cur_text->first == NULL ) { // empty line
                                     new_chars = alloc_text_chars(
                                                 &bin_device->box.vertical_line,
-                                                      1, g_curr_font_num );
+                                                      1, g_curr_font );
                                     new_chars->prev = new_chars;
                                     new_chars->x_address = cur_pos;
                                     new_chars->width = cop_text_width(
                                                        new_chars->text,
-                                                new_chars->count, g_curr_font_num );
+                                                new_chars->count, g_curr_font );
                                     cur_text->first = new_chars;
                                     cur_text->last = new_chars;
                                 } else {
                                     new_chars = cur_text->last;
                                     new_chars->next = alloc_text_chars(
                                                     &bin_device->box.vertical_line,
-                                                    1, g_curr_font_num );
+                                                    1, g_curr_font );
                                     new_chars->next->prev = new_chars;
                                     new_chars->next->x_address = cur_pos;
                                     new_chars->width = cop_text_width(
                                                        new_chars->text,
-                                                new_chars->count, g_curr_font_num );
+                                                new_chars->count, g_curr_font );
                                     cur_text->last = new_chars->next;
                                 }
                             }
@@ -879,12 +879,10 @@ static void  do_char_device( void )
                 /* Create the text_element for the current box line */
 
                 if( cur_chars == NULL ) {
-                    cur_chars = alloc_text_chars( NULL, len,
-                                                    bin_device->box.font_number );
+                    cur_chars = alloc_text_chars( NULL, len, bin_device->box.font );
                     box_el->element.text.first->first = cur_chars;
                 } else {
-                    cur_chars->next = alloc_text_chars( NULL, len,
-                                                    bin_device->box.font_number );
+                    cur_chars->next = alloc_text_chars( NULL, len, bin_device->box.font );
                     cur_chars->next->prev = cur_chars;
                     cur_chars = cur_chars->next;
                 } 
@@ -969,7 +967,7 @@ static void  do_char_device( void )
                 /* text is known to contain no tabs */
 
                 cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count,
-                                                    bin_device->box.font_number );
+                                                    bin_device->box.font );
                 cur_hline = cur_hline->next;
             }
         }
@@ -2045,7 +2043,7 @@ void scr_bx( void )
 
     /* set some static globals used in drawing boxes */
 
-    def_height = wgml_fonts[g_curr_font_num].line_height;   // box line height
+    def_height = wgml_fonts[g_curr_font].line_height;   // box line height
     max_depth = t_page.max_depth - t_page.cur_depth;        // maximum depth available
     ProcFlags.page_started = (t_page.last_col_main != NULL) ||
                              (t_page.last_col_bot != NULL) ||
@@ -2057,7 +2055,7 @@ void scr_bx( void )
 
     if( !ProcFlags.no_bx_hline || (cur_op == bx_set) ) {
 
-        set_skip_vars( NULL, NULL, NULL, spacing, bin_device->box.font_number );
+        set_skip_vars( NULL, NULL, NULL, spacing, bin_device->box.font );
 
         /************************************************************/
         /* This will cause the box to be drawn with BOX characters  */

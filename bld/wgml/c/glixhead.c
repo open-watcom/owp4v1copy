@@ -137,7 +137,7 @@ void    lay_ixhead( const gmltag * entry )
                                            &layout_work.ixhead.post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.ixhead.font );
+                    cvterr = i_font_number( p, curr, &layout_work.ixhead.font );
                     if( layout_work.ixhead.font >= wgml_font_cnt ) {
                         layout_work.ixhead.font = 0;
                     }

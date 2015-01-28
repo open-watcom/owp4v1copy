@@ -150,7 +150,7 @@ void    lay_note( const gmltag * entry )
                                            &layout_work.note.post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.note.font );
+                    cvterr = i_font_number( p, curr, &layout_work.note.font );
                     if( layout_work.note.font >= wgml_font_cnt ) {
                         layout_work.note.font = 0;
                     }

@@ -535,6 +535,49 @@ void    o_int8( FILE * f, lay_att curr, int8_t * tm )
     return;
 }
 
+bool    i_uint8( char *p, lay_att curr, uint8_t *tm )
+{
+    int wk;
+
+    curr = curr;
+    wk = strtol( p, NULL, 10 );
+    if( wk < 0 || wk > 255 ) {
+        return( true );
+    }
+    *tm = wk;
+    return( false );
+}
+
+void    o_uint8( FILE * f, lay_att curr, uint8_t *tm )
+{
+    unsigned wk = *tm;
+
+    fprintf_s( f, "        %s = %u\n", att_names[curr], wk );
+    return;
+}
+
+
+/***************************************************************************/
+/*  font number                                                            */
+/***************************************************************************/
+bool    i_font_number( char *p, lay_att curr, font_number *tm )
+{
+    int wk;
+
+    curr = curr;
+    wk = strtol( p, NULL, 10 );
+    if( wk < 0 || wk > 255 ) {
+        return( true );
+    }
+    *tm = wk;
+    return( false );
+}
+
+void    o_font_number( FILE * f, lay_att curr, font_number *tm )
+{
+    fprintf_s( f, "        %s = %u\n", att_names[curr], (unsigned)*tm );
+}
+
 
 /***************************************************************************/
 /*  number form                                                            */

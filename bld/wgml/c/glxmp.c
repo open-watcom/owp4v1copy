@@ -145,7 +145,7 @@ void    lay_xmp( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.xmp.spacing );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.xmp.font );
+                    cvterr = i_font_number( p, curr, &layout_work.xmp.font );
                     if( layout_work.xmp.font >= wgml_font_cnt ) {
                         layout_work.xmp.font = 0;
                     }

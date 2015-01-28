@@ -588,7 +588,7 @@ typedef struct opt_font {
     char *              style;
     uint32_t            space;
     uint32_t            height;
-    uint8_t             font;
+    font_number         font;
 } opt_font;
 
 /***************************************************************************/
@@ -849,7 +849,7 @@ typedef struct tag_cb {
     uint32_t            tsize;          // :dl
     uint8_t             headhi;         // :dl
     uint8_t             termhi;         // :dl :gl
-    uint8_t             font;           // :HPx, :SF
+    font_number         font;           // :HPx, :SF
     bool                dl_break : 1;   // :dl
     bool                compact  : 1;   // :dl :gl :ol :sl :ul
     e_tags              c_tag;          // enum of tag
@@ -952,7 +952,7 @@ typedef struct text_chars {
             uint16_t        count;
             uint16_t        length;
             text_type       type;
-            uint8_t         font_number;
+            font_number     font;
             uint8_t         text[1];
 } text_chars;
 

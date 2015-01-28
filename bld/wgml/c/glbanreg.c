@@ -331,7 +331,7 @@ void    lay_banregion( const gmltag * entry )
                         cvterr = i_space_unit( p, curr, &wk.depth );
                         break;
                     case   e_font:
-                        cvterr = i_int8( p, curr, &wk.font );
+                        cvterr = i_font_number( p, curr, &wk.font );
                         if( wk.font >= wgml_font_cnt ) wk.font = 0;
                         break;
                     case   e_refnum:

@@ -269,7 +269,7 @@ char    *scr_single_func_w( char * in, char * end, char * * result )
         if( rc == 2 ) {
             width = cop_text_width( symsubval->value,
                                     strlen( symsubval->value ),
-                                    g_curr_font_num);
+                                    g_curr_font);
         } else {
 
         /*******************************************************************/
@@ -277,11 +277,11 @@ char    *scr_single_func_w( char * in, char * end, char * * result )
         /*******************************************************************/
             width = cop_text_width( symvar_entry.name,
                                     strlen( symvar_entry.name ),
-                                    g_curr_font_num )
-                    + wgml_fonts[g_curr_font_num].width_table['&'];
+                                    g_curr_font )
+                    + wgml_fonts[g_curr_font].width_table['&'];
 
             if( symvar_entry.flags & local_var ) {  // add width of *
-                width += wgml_fonts[g_curr_font_num].width_table['*'];
+                width += wgml_fonts[g_curr_font].width_table['*'];
             }
         }
     } else {                            // string
@@ -291,7 +291,7 @@ char    *scr_single_func_w( char * in, char * end, char * * result )
             len++;
             pchar++;
         }
-        width = cop_text_width( in + 3, len, g_curr_font_num );
+        width = cop_text_width( in + 3, len, g_curr_font );
     }
     len = width;
     width = (width * CPI + g_resh / 2) / g_resh;

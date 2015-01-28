@@ -20,7 +20,7 @@ debug_build      = 1
 verbose          = 1
 !endif
 
-extra_c_flags      += -zpw
+#extra_c_flags      += -zpw
 #  extra_c_flags      += -fti
 #  extra_c_flags      += -pcl
 

@@ -145,7 +145,7 @@ void    lay_lq( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.lq.spacing );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.lq.font );
+                    cvterr = i_font_number( p, curr, &layout_work.lq.font );
                     if( layout_work.lq.font >= wgml_font_cnt ) {
                         layout_work.lq.font = 0;
                     }

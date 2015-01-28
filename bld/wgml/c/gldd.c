@@ -99,7 +99,7 @@ void    lay_dd( const gmltag * entry )
                                            &layout_work.dd.line_left );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.dd.font );
+                    cvterr = i_font_number( p, curr, &layout_work.dd.font );
                     if( layout_work.dd.font >= wgml_font_cnt ) {
                         layout_work.dd.font = 0;
                     }

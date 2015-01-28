@@ -44,7 +44,7 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
     if( (input_cbs->fmflags & II_sol) ) {
         ProcFlags.fsp = true;
         if( post_space == 0 ) {
-            post_space = wgml_fonts[g_curr_font_num].spc_width; // TBD
+            post_space = wgml_fonts[g_curr_font].spc_width; // TBD
         }
             
     }
@@ -56,7 +56,7 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
         level = 0;
     }
     nest_cb->font = level;
-    g_curr_font_num = level;
+    g_curr_font = level;
 
     nest_cb->c_tag = t;
 
@@ -64,7 +64,7 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
     if( *p ) {
-        process_text( p, g_curr_font_num );
+        process_text( p, g_curr_font );
     }
     if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
         scr_process_break();            // ensure line is output
@@ -130,18 +130,18 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
         wk = nest_cb;
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );
-        g_curr_font_num = nest_cb->font;
+        g_curr_font = nest_cb->font;
 
         // recompute space at SOL if inline end tag - TBD
         if( (post_space !=0) && (input_cbs->fmflags & II_sol) ) {
-            post_space = wgml_fonts[g_curr_font_num].spc_width;
+            post_space = wgml_fonts[g_curr_font].spc_width;
         }
 
         scan_err = false;
         p = scan_start;
         if( *p == '.' ) p++;            // over '.'
         if( *p ) {
-            process_text( p, g_curr_font_num );
+            process_text( p, g_curr_font );
         }
         if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
             scr_process_break();        // ensure line is output

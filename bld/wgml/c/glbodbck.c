@@ -181,7 +181,7 @@ void    lay_backbod( const gmltag * entry )
                     cvterr = i_yes_no( p, curr, &(ap->page_reset) );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &(ap->font) );
+                    cvterr = i_font_number( p, curr, &(ap->font) );
                     if( ap->font >= wgml_font_cnt ) {
                         ap->font = 0;
                     }

@@ -735,16 +735,16 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         if( reg_text[k] == NULL ) {
             continue;                   // skip empty part
         }
-        g_curr_font_num = reg_text[k]->font_number;
+        g_curr_font = reg_text[k]->font;
         if( ban_line.first == NULL ) {
             ban_line.first = reg_text[k];
-            ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
+            ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
         } else {
             ban_line.last->next = reg_text[k];
             reg_text[k]->prev = ban_line.last;
         }
-        if( ban_line.line_height < wgml_fonts[reg_text[k]->font_number].line_height ) {
-            ban_line.line_height = wgml_fonts[reg_text[k]->font_number].line_height;
+        if( ban_line.line_height < wgml_fonts[reg_text[k]->font].line_height ) {
+            ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
         }
         curr_t = reg_text[k];
         ban_line.last  = reg_text[k];
@@ -796,7 +796,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                    break;
                 }
                 curr_p->count -= 1;     // truncate text, adjust width
-                curr_p->width -= wgml_fonts[curr_p->font_number].width_table
+                curr_p->width -= wgml_fonts[curr_p->font].width_table
                                                  [curr_p->text[curr_p->count]];
             }
             curr_p = curr_t;
@@ -840,7 +840,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         ban_line.first = NULL;
     }
 
-    g_curr_font_num = layout_work.defaults.font;
+    g_curr_font = layout_work.defaults.font;
 }
 
 /***************************************************************************/

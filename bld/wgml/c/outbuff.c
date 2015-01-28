@@ -1202,7 +1202,7 @@ void ob_graphic( graphic_element * in_el )
  */
 
 void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans,
-                      bool out_text, uint8_t font )
+                      bool out_text, font_number font )
 {
     /* Select and invoke the proper static function. */
 
@@ -1259,7 +1259,7 @@ void ob_insert_byte( uint8_t in_char )
  *      appropriate macro after text.
  */
 
-void ob_insert_ps_text_end( bool htab_done, uint32_t font )
+void ob_insert_ps_text_end( bool htab_done, font_number font )
 {
     char    shwd_suffix[]   = " shwd ";
     char    sd_suffix[]     = " sd ";

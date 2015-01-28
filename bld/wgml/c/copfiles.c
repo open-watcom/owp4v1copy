@@ -667,7 +667,7 @@ static void free_opt_fonts( void )
  *      The appropriate character, which may be the same as in_char.
  */
 
-uint8_t cop_in_trans( uint8_t in_char, uint8_t font )
+uint8_t cop_in_trans( uint8_t in_char, font_number font )
 {
     intrans_block   *   block   = NULL;
     uint8_t             retval;
@@ -796,7 +796,7 @@ void cop_setup( void )
         ProcFlags.ps_device = true;
     }
 
-    /* Get the highest font_number and reduce it by one so it contains the
+    /* Get the highest font number and reduce it by one so it contains the
      * highest valid array index.
      */
 
@@ -963,7 +963,7 @@ void cop_setup( void )
     free_opt_fonts();
 
     /* Generate any entries required by the BOX and/or UNDERSCORE blocks.
-     * Note that the font_number will become non-zero and will be used in
+     * Note that the font number will become non-zero and will be used in
      * document processing instead of the font name. If the device is PS,
      * then gen_cnt will be "0" and no fonts will be generated.
      */
@@ -974,7 +974,7 @@ void cop_setup( void )
     case 1:
         if( bin_device->underscore.font_name != NULL ) {
             i = font_base;
-            bin_device->underscore.font_number = font_base;
+            bin_device->underscore.font = font_base;
             wgml_fonts[i].bin_font = find_cop_font( bin_device->underscore.font_name );
             wgml_fonts[i].font_style = find_style( "plain" );
             wgml_fonts[i].font_height = 0;
@@ -1002,7 +1002,7 @@ void cop_setup( void )
         }
         if( bin_device->box.font_name != NULL ) {
             i = font_base;
-            bin_device->box.font_number = font_base;
+            bin_device->box.font = font_base;
             wgml_fonts[i].bin_font = find_cop_font( bin_device->box.font_name );
             wgml_fonts[i].font_style = find_style( "plain" );
             wgml_fonts[i].font_height = 0;
@@ -1024,7 +1024,7 @@ void cop_setup( void )
     case 2:
         if( bin_device->underscore.font_name != NULL ) {
             i = font_base;
-            bin_device->underscore.font_number = font_base;
+            bin_device->underscore.font = font_base;
             wgml_fonts[i].bin_font = find_cop_font( bin_device->underscore.font_name );
             wgml_fonts[i].font_style = find_style( "plain" );
             wgml_fonts[i].font_height = 0;
@@ -1051,7 +1051,7 @@ void cop_setup( void )
         if( bin_device->box.font_name != NULL ) {
             font_base++;
             i = font_base;
-            bin_device->box.font_number = font_base;
+            bin_device->box.font = font_base;
             wgml_fonts[i].bin_font = find_cop_font( bin_device->box.font_name );
             wgml_fonts[i].font_style = find_style( "plain" );
             wgml_fonts[i].font_height = 0;
@@ -1274,7 +1274,7 @@ void cop_teardown( void )
  *          bin_font contains a width table must be considered.
  */
 
-uint32_t cop_text_width( uint8_t * text, uint32_t count, uint8_t font )
+uint32_t cop_text_width( uint8_t * text, uint32_t count, font_number font )
 {
     int             i;
     uint32_t        width;
@@ -1578,9 +1578,9 @@ void fb_output_textline( text_line * out_line )
 
     line_passes = 0;
     while( current != NULL ) {
-        if( current->font_number >= wgml_font_cnt ) current->font_number = 0;
-        if( wgml_fonts[current->font_number].font_style->line_passes > line_passes ) {
-            line_passes = wgml_fonts[current->font_number].font_style->line_passes;
+        if( current->font >= wgml_font_cnt ) current->font = 0;
+        if( wgml_fonts[current->font].font_style->line_passes > line_passes ) {
+            line_passes = wgml_fonts[current->font].font_style->line_passes;
         }
         current = current->next;
     }

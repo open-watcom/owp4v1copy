@@ -232,7 +232,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                     if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
                         cur_spacing -= cur_line->line_height;   // forced overprint
                     } else if( t_page.top_ban == NULL ) {      // minimum height
-                        cur_spacing = max( wgml_fonts[g_curr_font_num].line_height, cur_spacing );
+                        cur_spacing = max( wgml_fonts[g_curr_font].line_height, cur_spacing );
                     }
                 }
 
@@ -1170,7 +1170,7 @@ void reset_t_page( void )
 /***************************************************************************/
 
 void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
-                    uint32_t spacing, uint8_t font )
+                    uint32_t spacing, font_number font )
 {
     int32_t skiptop;
     int32_t skippost;

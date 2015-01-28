@@ -787,7 +787,7 @@ void    scan_line( void )
                     g_err_tag_rsloc( rs_loc, scan_start );
                 } else {
 
-                    process_text( scan_start, g_curr_font_num );
+                    process_text( scan_start, g_curr_font );
 
                 }
             }

@@ -118,8 +118,8 @@ extern  void    gml_xmp( const gmltag * entry )
 
     ProcFlags.xmp_active = true;
     first_xline = true;
-    font_save = g_curr_font_num;
-    g_curr_font_num = layout_work.xmp.font;
+    font_save = g_curr_font;
+    g_curr_font = layout_work.xmp.font;
 
     if( nest_cb->c_tag == t_NONE ) {
         g_cur_left = g_page_left + conv_hor_unit( &layout_work.xmp.left_indent );
@@ -137,7 +137,7 @@ extern  void    gml_xmp( const gmltag * entry )
     spacing = layout_work.xmp.spacing;
 
     set_skip_vars( NULL, &layout_work.xmp.pre_skip, NULL, spacing,
-                       g_curr_font_num );
+                       g_curr_font );
 
     ProcFlags.group_elements = true;
 
@@ -146,7 +146,7 @@ extern  void    gml_xmp( const gmltag * entry )
 
     if( *p == '.' ) p++;                // possible tag end
     if( *p ) {
-        process_text( p, g_curr_font_num ); // if text follows
+        process_text( p, g_curr_font); // if text follows
     }
     scan_start = scan_stop + 1;
     return;
@@ -171,7 +171,7 @@ void    gml_exmp( const gmltag * entry )
         scan_start = scan_stop + 1;
         return;
     }
-    g_curr_font_num = font_save;
+    g_curr_font = font_save;
     ProcFlags.xmp_active = false;
     ProcFlags.justify = justify_save;
     wk = nest_cb;

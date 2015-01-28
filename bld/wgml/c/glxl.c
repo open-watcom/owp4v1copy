@@ -767,7 +767,7 @@ void    lay_ol( const gmltag * entry )
                                            &layout_work.ol.post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.ol.font );
+                    cvterr = i_font_number( p, curr, &layout_work.ol.font );
                     if( layout_work.ol.font >= wgml_font_cnt ) {
                         layout_work.ol.font = 0;
                     }
@@ -780,7 +780,7 @@ void    lay_ol( const gmltag * entry )
                                              &layout_work.ol.number_style );
                     break;
                 case   e_number_font:
-                    cvterr = i_int8( p, curr, &layout_work.ol.number_font );
+                    cvterr = i_font_number( p, curr, &layout_work.ol.number_font );
                     if( layout_work.ol.number_font >= wgml_font_cnt ) {
                         layout_work.ol.number_font = 0;
                     }
@@ -870,7 +870,7 @@ void    lay_sl( const gmltag * entry )
                                            &layout_work.sl.post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.sl.font );
+                    cvterr = i_font_number( p, curr, &layout_work.sl.font );
                     if( layout_work.sl.font >= wgml_font_cnt ) {
                         layout_work.sl.font = 0;
                     }
@@ -960,7 +960,7 @@ void    lay_ul( const gmltag * entry )
                                            &layout_work.ul.post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.ul.font );
+                    cvterr = i_font_number( p, curr, &layout_work.ul.font );
                     if( layout_work.ul.font >= wgml_font_cnt ) {
                         layout_work.ul.font = 0;
                     }
@@ -977,7 +977,7 @@ void    lay_ul( const gmltag * entry )
                                        &layout_work.ul.bullet_translate );
                     break;
                 case   e_bullet_font:
-                    cvterr = i_int8( p, curr, &layout_work.ul.bullet_font );
+                    cvterr = i_font_number( p, curr, &layout_work.ul.bullet_font );
                     if( layout_work.ul.bullet_font >= wgml_font_cnt ) {
                         layout_work.ul.bullet_font = 0;
                     }

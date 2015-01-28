@@ -109,7 +109,7 @@ static  void    hx_header( int hx_lvl, char * hnumstr, char * txt )
     text_line       *   hd_line;
 
     hd_line = NULL;
-    s_font = g_curr_font_num;
+    s_font = g_curr_font;
     spacing = layout_work.hx[hx_lvl].spacing;
 
     if( layout_work.hx[hx_lvl].line_break ) {

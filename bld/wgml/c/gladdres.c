@@ -148,7 +148,7 @@ void    lay_address( const gmltag * entry )
                                           &layout_work.address.page_position );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.address.font );
+                    cvterr = i_font_number( p, curr, &layout_work.address.font );
                     if( layout_work.address.font >= wgml_font_cnt ) {
                         layout_work.address.font = 0;
                     }

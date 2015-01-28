@@ -96,11 +96,11 @@ condcode    scr_width( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
             type = tolower( *pa );
             switch( type ) {
             case   'c':                 // CPI
-                width = cop_text_width( pval, len, g_curr_font_num );
+                width = cop_text_width( pval, len, g_curr_font );
                 width = (width * CPI + g_resh / 2) / g_resh;
                 break;
             case   'u':                 // Device Units
-                width = cop_text_width( pval, len, g_curr_font_num );
+                width = cop_text_width( pval, len, g_curr_font );
                 break;
             case   'n':                 // character count
                 width = len;
@@ -121,7 +121,7 @@ condcode    scr_width( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
             }
         }
     } else {                            // default type c processing
-        width = cop_text_width( pval, len, g_curr_font_num );
+        width = cop_text_width( pval, len, g_curr_font );
         width = (width * CPI + g_resh / 2) / g_resh;
     }
 

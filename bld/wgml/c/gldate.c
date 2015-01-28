@@ -152,7 +152,7 @@ void    lay_date( const gmltag * entry )
                                           &layout_work.date.page_position );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.date.font );
+                    cvterr = i_font_number( p, curr, &layout_work.date.font );
                     if( layout_work.date.font >= wgml_font_cnt ) {
                         layout_work.date.font = 0;
                     }

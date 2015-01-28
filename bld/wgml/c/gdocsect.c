@@ -157,7 +157,7 @@ static  void    new_section( doc_section ds )
     set_section_banners( ds );
 
     spacing = layout_work.defaults.spacing;
-    g_curr_font_num = layout_work.defaults.font;
+    g_curr_font = layout_work.defaults.font;
 }
 
 
@@ -188,10 +188,10 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
     text_chars      *   curr_t;
     text_line       *   hd_line;
 
-    s_font = g_curr_font_num;
-    g_curr_font_num = font;
-    g_curr_font_num = s_font;
-    set_skip_vars( NULL, top_sk, p_sk, spc, g_curr_font_num );
+    s_font = g_curr_font;
+    g_curr_font = font;
+    g_curr_font = s_font;
+    set_skip_vars( NULL, top_sk, p_sk, spc, g_curr_font );
 
     if( (h_string == NULL) || (*h_string == '\0') ||
         (*h_string == ' ') || (*h_string == '\t')  ) {

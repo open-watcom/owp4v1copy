@@ -177,7 +177,7 @@ void    lay_ix( const gmltag * entry )
                                            &layout_work.ix[ix_l].skip );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.ix[ix_l].font );
+                    cvterr = i_font_number( p, curr, &layout_work.ix[ix_l].font );
                     if( layout_work.ix[ix_l].font >= wgml_font_cnt ) {
                         layout_work.ix[ix_l].font = 0;
                     }
@@ -196,7 +196,7 @@ void    lay_ix( const gmltag * entry )
                     break;
                 case   e_string_font:
                     if( ix_l < 2 ) {
-                        cvterr = i_int8( p, curr,
+                        cvterr = i_font_number( p, curr,
                                          &layout_work.ix[ix_l].string_font );
                     if( layout_work.ix[ix_l].string_font >= wgml_font_cnt ) {
                         layout_work.ix[ix_l].string_font = 0;
