@@ -33,7 +33,7 @@
 
 static  bool            first_aline;    // special for first :ALINE
 static  int8_t          a_spacing;      // spacing between adr lines
-static  int8_t          font_save;      // save for font
+static  font_number     font_save;      // save for font
 
 
 /***************************************************************************/

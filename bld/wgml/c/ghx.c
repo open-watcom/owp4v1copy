@@ -100,8 +100,8 @@ static  void    update_headnumx( int lvl, char * hnumstr, size_t hnsize )
 static  void    hx_header( int hx_lvl, char * hnumstr, char * txt )
 {
     doc_element     *   cur_el;
-    int8_t              s_font;
-    int8_t              font;
+    font_number         font_save;
+    font_number         font;
     int32_t             width;
     int32_t             widthn;
     text_chars      *   curr_t;
@@ -109,7 +109,7 @@ static  void    hx_header( int hx_lvl, char * hnumstr, char * txt )
     text_line       *   hd_line;
 
     hd_line = NULL;
-    s_font = g_curr_font;
+    font_save = g_curr_font;
     spacing = layout_work.hx[hx_lvl].spacing;
 
     if( layout_work.hx[hx_lvl].line_break ) {

@@ -32,9 +32,9 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
-static  ju_enum justify_save;           // for ProcFlags.justify
-static  bool    first_xline;            // special for first xmp LINE
-static  int8_t  font_save;              // save for font
+static  ju_enum     justify_save;           // for ProcFlags.justify
+static  bool        first_xline;            // special for first xmp LINE
+static  font_number font_save;              // save for font
 
 
 /***************************************************************************/

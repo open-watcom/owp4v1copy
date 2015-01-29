@@ -95,7 +95,7 @@ void    gml_docnum( const gmltag * entry )
     doc_element *   cur_el;
     text_line   *   p_line;
     int8_t          d_spacing;
-    int8_t          font_save;
+    font_number     font_save;
     int32_t         rc;
     symsub      *   docnumval;
  

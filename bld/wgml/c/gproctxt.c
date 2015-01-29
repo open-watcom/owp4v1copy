@@ -198,7 +198,7 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
 /*  return the width of text up to the first tab stop                      */
 /***************************************************************************/
 
-static uint32_t text_chars_width( uint8_t * text, uint32_t count, uint8_t font )
+static uint32_t text_chars_width( uint8_t * text, uint32_t count, font_number font )
 {
     int         i;
     uint32_t    cur_count   = 0;
@@ -297,7 +297,7 @@ static void next_tab( void )
 static text_chars * do_c_chars( text_chars * c_chars, text_chars * in_chars,
                                  uint8_t * in_text, uint32_t count,
                                  uint32_t in_x_address, uint32_t width,
-                                 uint8_t font, text_type type )
+                                 font_number font, text_type type )
 {
     if( c_chars == NULL ) {
         c_chars = alloc_text_chars( in_text, count, font );
@@ -376,7 +376,7 @@ static void wgml_tabs( void )
     static  text_chars  *   s_multi     = NULL;     // first part of multipart word
     static  text_line       tab_chars   = { NULL, 0, 0, NULL, NULL };   // current tab markers/fill chars
     static  text_type       c_type      = norm;     // type for current tab character
-    static  uint8_t         c_font      = 0;        // font for current tab character
+    static  font_number     c_font      = 0;        // font for current tab character
     static  uint32_t        s_width     = 0;        // space width (from tab_space)
 
     for( i = 0; i < in_count; i++) {    // locate the first wgml tab, if any

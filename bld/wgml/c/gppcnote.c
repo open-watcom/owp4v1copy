@@ -93,7 +93,7 @@ extern  void    gml_pc( const gmltag * entry )
 extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
-    int8_t          font_save;
+    font_number     font_save;
     text_chars  *   marker;
     uint32_t        spc_cnt;
 

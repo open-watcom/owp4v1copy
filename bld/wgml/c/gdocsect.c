@@ -180,17 +180,17 @@ static  void    finish_page_section( doc_section ds, bool eject )
 /***************************************************************************/
 
 static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
-                            int8_t font, int8_t spc, bool no_eject )
+                            font_number font, int8_t spc, bool no_eject )
 {
     doc_element     *   cur_el;
-    int8_t              s_font;
+    font_number         font_save;
     int32_t             h_left;
     text_chars      *   curr_t;
     text_line       *   hd_line;
 
-    s_font = g_curr_font;
+    font_save = g_curr_font;
     g_curr_font = font;
-    g_curr_font = s_font;
+    g_curr_font = font_save;
     set_skip_vars( NULL, top_sk, p_sk, spc, g_curr_font );
 
     if( (h_string == NULL) || (*h_string == '\0') ||
@@ -292,7 +292,7 @@ void    start_doc_sect( void )
     bool                header;
     bool                page_r;
     doc_section         ds;
-    int8_t              font;
+    font_number         font;
     int8_t              h_spc;
     page_ej             page_e;
     su              *   p_sk;

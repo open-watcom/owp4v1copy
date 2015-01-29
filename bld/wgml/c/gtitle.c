@@ -89,7 +89,7 @@ void    gml_title( const gmltag * entry )
     doc_element *   cur_el;
     text_line   *   p_line      = NULL;
     int8_t          t_spacing;
-    int8_t          font_save;
+    font_number     font_save;
 
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
