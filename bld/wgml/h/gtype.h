@@ -103,6 +103,7 @@
 #define vbar2   0xdd
 #define l_q     0x60
 
+typedef uint32_t    line_number;
 
 /***************************************************************************/
 /*  Space units Horiz + Vert              to be redesigned      TBD        */
@@ -223,7 +224,7 @@ typedef struct inp_line {
 typedef struct labelcb {
     struct labelcb  *   prev;
     fpos_t              pos;            // file position for label if file
-    ulong               lineno;         // lineno of label
+    line_number         lineno;         // lineno of label
     char                label_name[MAC_NAME_LENGTH + 1];
 } labelcb;
 
@@ -234,7 +235,7 @@ typedef struct labelcb {
 typedef struct mac_entry {
     struct mac_entry    *   next;
     inp_line            *   macline;    // macro definition lines
-    ulong                   lineno;     // lineno start of macro definition
+    line_number             lineno;     // lineno start of macro definition
     labelcb             *   label_cb;   // controlling label definitions
     char                *   mac_file_name;  // file name macro definition
     char                    name[MAC_NAME_LENGTH + 1];  // macro name
@@ -247,9 +248,9 @@ typedef struct mac_entry {
 
 typedef struct filecb {
     FILE        *   fp;                 // FILE ptr
-    ulong           lineno;             // current line number
-    ulong           linemin;            // first line number to process
-    ulong           linemax;            // last line number to process
+    line_number     lineno;             // current line number
+    line_number     linemin;            // first line number to process
+    line_number     linemax;            // last line number to process
     size_t          usedlen;            // used data of filebuf
     fpos_t          pos;                // position for reopen
     labelcb     *   label_cb;           // controlling label definitions
@@ -273,7 +274,7 @@ typedef struct mac_parms {
 /***************************************************************************/
 
 typedef struct  macrocb {
-    ulong               lineno;         // current macro line number
+    line_number         lineno;         // current macro line number
     inp_line        *   macline;        // list of macro lines
     mac_entry       *   mac;            // macro definition entry
     struct gtentry  *   tag;            // tag entry if macro called via tag
@@ -821,7 +822,7 @@ typedef enum e_tags {
 typedef struct nest_stack {
     struct  nest_stack  * prev;
 
-    uint32_t            lineno;         // lineno of :xl, :HPx :SF call
+    line_number         lineno;         // lineno of :xl, :HPx :SF call
     union {
         char        *   filename;       // file name of :xl, :HPx :SF call
         struct mt {
@@ -1107,7 +1108,7 @@ typedef struct ref_entry {
     struct ref_entry    *   next;
     char                    id[ID_LEN+1];   // reference id
 
-    uint32_t                lineno; // input lineno for checking duplicate ID
+    line_number             lineno; // input lineno for checking duplicate ID
     refflags                flags;
     union {
         struct {

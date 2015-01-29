@@ -81,8 +81,8 @@ global  char        *   out_file;       // output file name
 global  char        *   out_file_attr;  // output file attributes (T:2222)
 global  unsigned        inc_level;   // include nesting level 1 = MasterFname
 global  unsigned        max_inc_level;  // maximum include level depth
-global  ulong           line_from;      // starting lineno to process
-global  ulong           line_to;        // ending lineno to process
+global  line_number     line_from;      // starting lineno to process
+global  line_number     line_to;        // ending lineno to process
 #define LINEFROM_DEFAULT    1
 #define LINETO_DEFAULT      (0x1000000) // 16 MiB lines should be enough
 
@@ -110,7 +110,7 @@ global  int             pass;           // current document pass no
 
 global  uint32_t        apage;          // current absolute pageno &$apage
 global  uint32_t        page;           // current document pageno &$page
-global  int32_t         line;           // current output lineno   &$line
+global  line_number     line;           // current output lineno   &$line
 global  int32_t         lcmax;          // remaining lines on page initial
 global  int32_t         lc;             // remaining lines on page &$lc
 
@@ -136,8 +136,8 @@ global  mac_entry   *   macro_dict;     // macro dictionary
 global  gtentry     *   tag_dict;       // user tag dictionary
 
 global  char            research_file_name[48]; // filename for research
-global  ulong           research_from;  // line no start for research output
-global  ulong           research_to;    // line no end   for research output
+global  line_number     research_from;  // line no start for research output
+global  line_number     research_to;    // line no end   for research output
 
 global  struct GlobalFlags {
     unsigned        quiet         : 1;  // suppress product info

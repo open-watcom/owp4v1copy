@@ -32,7 +32,7 @@
 #include    "gvars.h"
 
 
-uint32_t        titlep_lineno;      // TITLEP tag line number
+line_number     titlep_lineno;      // TITLEP tag line number
 
 /***************************************************************************/
 /*  error routine for wrong sequence of doc section tags                   */

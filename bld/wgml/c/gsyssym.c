@@ -449,8 +449,8 @@ static void sysfncfun( symvar * e )
 
 static void sysfnumfun( symvar * e )// lineno of current input file not macro
 {
-    inputcb * wk;
-    ulong   l = 0;
+    inputcb     *wk;
+    line_number l = 0;
 
     if( input_cbs != NULL ) {
         wk = input_cbs;
@@ -609,7 +609,7 @@ static void sysllfun( symvar * e )
 
 static void syslnumfun( symvar * e )  // lineno of current input file / macro
 {
-    ulong   l;
+    line_number l;
 
     if( input_cbs == NULL ) {
         l = 0;
@@ -866,7 +866,7 @@ static void sysscreenfun( symvar * e )
 
 static void sysseqnofun( symvar * e )   // seqno current input record
 {                                       // take &syslnum
-    ulong   l;                          // TBD
+    line_number l;                      // TBD
 
     if( input_cbs == NULL ) {
         l = 0;

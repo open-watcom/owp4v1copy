@@ -272,7 +272,7 @@ void    scr_dm( void )
     inp_line    *   head;
     inp_line    *   last;
     inp_line    *   work;
-    ulong           lineno_start;
+    line_number     lineno_start;
     condcode        cc;
     inputcb     *   cb;
     char            linestr[MAX_L_AS_STR];
