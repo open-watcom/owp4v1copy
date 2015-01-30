@@ -36,9 +36,9 @@
 
     #include "trmem.h"
 
+    #define CRLF            "\n"
+
     static  _trmem_hdl  handle;             // memory tracker anchor block
-
-
 
     /***********************************************************************/
     /*  Memory tracker output function                                     */
@@ -63,7 +63,7 @@
 /*  init memorytracker                                                     */
 /***************************************************************************/
 
-void g_trmem_init( void )
+void mem_init( void )
 {
 #ifdef TRMEM
     handle = _trmem_open( &malloc, &free, &realloc, NULL, NULL, &prt,
@@ -74,25 +74,38 @@ void g_trmem_init( void )
 }
 
 /***************************************************************************/
-/*  get peak storage as recorded by trmem                                  */
+/*  display current memory usage                                      */
 /***************************************************************************/
 
-unsigned long g_trmem_peak_usage( void )
+void mem_prt_curr_usage( void )
 {
-#ifdef TRMEM
-    return( _trmem_get_peak_usage( handle ) );
+#ifdef  TRMEM
+    _trmem_prt_usage( handle );
 #endif
-    return( 0 );
 }
 
 /***************************************************************************/
-/*  memorytracker list allocated storage                                   */
+/*  display peak memory usage                                      */
 /***************************************************************************/
 
-void g_trmem_prt_list( void )
+unsigned long mem_get_peak_usage( void )
 {
-#ifdef TRMEM
-    _trmem_prt_list( handle );
+#ifdef  TRMEM
+    return( _trmem_get_peak_usage( handle ) );
+#else
+    return( 0 );
+#endif
+}
+
+
+/***************************************************************************/
+/*  get banner text if trmem is compiled in wgml tool                      */
+/***************************************************************************/
+
+void mem_banner( void )
+{
+#ifdef  TRMEM
+    out_msg( "Compiled with TRMEM memory tracker (trmem)" CRLF );
 #endif
 }
 
@@ -101,9 +114,10 @@ void g_trmem_prt_list( void )
 /*   memorytracker end processing                                          */
 /***************************************************************************/
 
-void g_trmem_close( void )
+void mem_fini( void )
 {
 #ifdef TRMEM
+    _trmem_prt_list( handle );
     _trmem_close( handle );
 #endif
 }
@@ -116,11 +130,11 @@ void *mem_alloc( size_t size )
 {
     void    *p;
 
-    #ifdef TRMEM
-        p = _trmem_alloc( size, _trmem_guess_who(), handle );
-    #else
-        p = malloc( size );
-    #endif
+#ifdef TRMEM
+    p = _trmem_alloc( size, _trmem_guess_who(), handle );
+#else
+    p = malloc( size );
+#endif
     if( p == NULL ) {
         g_err( err_nomem_avail );
         err_count++;
@@ -137,11 +151,11 @@ void *mem_realloc( void * oldp, size_t size )
 {
     void    *   p;
 
-    #ifdef TRMEM
-        p = _trmem_realloc( oldp, size, _trmem_guess_who(), handle );
-    #else
-        p = realloc( oldp, size );
-    #endif
+#ifdef TRMEM
+    p = _trmem_realloc( oldp, size, _trmem_guess_who(), handle );
+#else
+    p = realloc( oldp, size );
+#endif
     if( p == NULL ) {
         g_err( err_nomem_avail );
         err_count++;
@@ -157,11 +171,10 @@ void *mem_realloc( void * oldp, size_t size )
 
 void mem_free( void * p )
 {
-    #ifdef TRMEM
-        _trmem_free( p, _trmem_guess_who(), handle );
-    #else
-        free( p );
-    #endif
+#ifdef TRMEM
+    _trmem_free( p, _trmem_guess_who(), handle );
+#else
+    free( p );
+#endif
     p = NULL;
 }
-
