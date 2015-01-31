@@ -61,8 +61,7 @@ static void prep_date_line( text_line * p_line, char * p )
             break;
         }
         curr_t->count -= 1;             // truncate text
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count,
-                                        g_curr_font );
+        curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
     }
     p_line->first = curr_t;
     p_line->last  = curr_t;

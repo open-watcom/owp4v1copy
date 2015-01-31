@@ -198,13 +198,13 @@ static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
 /*  return the width of text up to the first tab stop                      */
 /***************************************************************************/
 
-static uint32_t text_chars_width( uint8_t * text, uint32_t count, font_number font )
+static uint32_t text_chars_width( const char *text, size_t count, font_number font )
 {
-    int         i;
-    uint32_t    cur_count   = 0;
+    size_t      i;
+    size_t      cur_count   = 0;
     uint32_t    retval      = 0;
 
-    for( i = 0; i < count; i++) {
+    for( i = 0; i < count; i++ ) {
         if( (text[i] == '\t') || (text[i] == tab_char) ) {
             break;
         }
@@ -885,14 +885,12 @@ static uint32_t split_text( text_chars * in_chars, uint32_t limit )
                 if( t_width < t_limit ) {
                     while( t_width < t_limit ) {
                         t_count++;
-                        t_width = cop_text_width( in_chars->text, t_count, \
-                                                    in_chars->font );
+                        t_width = cop_text_width( in_chars->text, t_count, in_chars->font );
                     }
                 } else {
                     while( t_width > t_limit ) {
                         t_count--;
-                        t_width = cop_text_width( in_chars->text, t_count, \
-                                                    in_chars->font );
+                        t_width = cop_text_width( in_chars->text, t_count, in_chars->font );
                     }
                 }
                 if( t_count == 0 ) { // no characters will fit
@@ -1626,8 +1624,7 @@ void    process_text( char * text, font_number font )
                     g_cur_h_start = n_char->x_address;
                 }
                 //reset n_char for the next pass of the loop
-                n_char->width = text_chars_width( n_char->text, \
-                                    n_char->count, n_char->font );
+                n_char->width = text_chars_width( n_char->text, n_char->count, n_char->font );
             }
         } else { // concatenation is off
             count = split_text( n_char, g_page_right );
@@ -1663,8 +1660,7 @@ void    process_text( char * text, font_number font )
                     t_line = NULL;
                     // reset n_char and count
                     n_char->x_address = g_cur_h_start;
-                    n_char->width = text_chars_width( n_char->text, \
-                                        n_char->count, n_char->font );
+                    n_char->width = text_chars_width( n_char->text, n_char->count, n_char->font );
                     count = split_text( n_char, g_page_right );
                 }
             }

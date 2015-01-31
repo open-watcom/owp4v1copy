@@ -272,8 +272,7 @@ static void box_blank_lines( uint32_t lines )
                     }
                     cur_chars->x_address = cur_hline->cols[i_b].col + g_page_left -
                                                                        box_col_width;
-                    cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count,
-                                                               g_curr_font );
+                    cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count, g_curr_font );
                 }
                 cur_blank->last = cur_chars;
             }
@@ -359,9 +358,7 @@ static void box_char_element( doc_element * cur_el ) {
                                                     &bin_device->box.vertical_line,
                                                     1, g_curr_font );
                                         new_chars->x_address = cur_pos;
-                                        new_chars->width = cop_text_width(
-                                                           new_chars->text,
-                                                new_chars->count, g_curr_font );
+                                        new_chars->width = cop_text_width( new_chars->text, new_chars->count, g_curr_font );
                                         if( cur_chars->prev == NULL ) { // first text_chars in cur_text
                                             cur_text->first = new_chars;
                                         } else {
@@ -388,9 +385,7 @@ static void box_char_element( doc_element * cur_el ) {
                                                       1, g_curr_font );
                                     new_chars->prev = new_chars;
                                     new_chars->x_address = cur_pos;
-                                    new_chars->width = cop_text_width(
-                                                       new_chars->text,
-                                                new_chars->count, g_curr_font );
+                                    new_chars->width = cop_text_width( new_chars->text, new_chars->count, g_curr_font );
                                     cur_text->first = new_chars;
                                     cur_text->last = new_chars;
                                 } else {
@@ -400,9 +395,7 @@ static void box_char_element( doc_element * cur_el ) {
                                                     1, g_curr_font );
                                     new_chars->next->prev = new_chars;
                                     new_chars->next->x_address = cur_pos;
-                                    new_chars->width = cop_text_width(
-                                                       new_chars->text,
-                                                new_chars->count, g_curr_font );
+                                    new_chars->width = cop_text_width( new_chars->text, new_chars->count, g_curr_font );
                                     cur_text->last = new_chars->next;
                                 }
                             }
@@ -979,8 +972,7 @@ static void  do_char_device( void )
 
                 /* text is known to contain no tabs */
 
-                cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count,
-                                                    bin_device->box.font );
+                cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count, bin_device->box.font );
                 cur_hline = cur_hline->next;
             }
         }

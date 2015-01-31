@@ -267,17 +267,13 @@ char    *scr_single_func_w( char * in, char * end, char * * result )
                               &symsubval );
         }
         if( rc == 2 ) {
-            width = cop_text_width( symsubval->value,
-                                    strlen( symsubval->value ),
-                                    g_curr_font);
+            width = cop_text_width( symsubval->value, strlen( symsubval->value ), g_curr_font );
         } else {
 
         /*******************************************************************/
         /* for undefined variable calc length of name, & and perhaps *     */
         /*******************************************************************/
-            width = cop_text_width( symvar_entry.name,
-                                    strlen( symvar_entry.name ),
-                                    g_curr_font )
+            width = cop_text_width( symvar_entry.name, strlen( symvar_entry.name ), g_curr_font )
                     + wgml_fonts[g_curr_font].width_table['&'];
 
             if( symvar_entry.flags & local_var ) {  // add width of *

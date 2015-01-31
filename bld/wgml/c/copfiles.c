@@ -1274,18 +1274,19 @@ void cop_teardown( void )
  *          bin_font contains a width table must be considered.
  */
 
-uint32_t cop_text_width( uint8_t * text, uint32_t count, font_number font )
+uint32_t cop_text_width( const char *text, size_t count, font_number font )
 {
-    int             i;
+    size_t          i;
     uint32_t        width;
 
-    if( font >= wgml_font_cnt ) font = 0;
+    if( font >= wgml_font_cnt ) 
+        font = 0;
 
     /* Compute the width. */
 
     width = 0;
     for( i = 0; i < count; i++ ) {
-        width += wgml_fonts[font].width_table[text[i]];
+        width += wgml_fonts[font].width_table[(unsigned char)text[i]];
     }
 
     return( width );
