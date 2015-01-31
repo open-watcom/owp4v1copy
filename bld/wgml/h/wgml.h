@@ -254,12 +254,12 @@ extern  void    split_input( char * buf, char * split_pos, bool startofline );
 
 
 /* gproctxt.c                           */
-extern  void            do_justify( uint32_t left_m, uint32_t right_m, text_line * line );
-extern  void            intrans( char * data, uint16_t * len, font_number font );
-extern  void            process_line_full( text_line * a_line, bool justify );
-extern  void            process_text( char * text, font_number font );
-extern  text_chars  *   process_word( char * text, size_t count, font_number font );
-extern  void            set_h_start( void );
+extern  void        do_justify( uint32_t left_m, uint32_t right_m, text_line *line );
+extern  size_t      intrans( char *data, size_t len, font_number font );
+extern  void        process_line_full( text_line *a_line, bool justify );
+extern  void        process_text( char *text, font_number font );
+extern  text_chars  *process_word( char *text, size_t count, font_number font );
+extern  void        set_h_start( void );
 
 
 /* grefdict.c                           */
@@ -267,10 +267,10 @@ extern  void        add_ref_entry( ref_entry * * dict, ref_entry * me );
 extern  void        init_ref_dict( ref_entry * * dict );
 extern  void        free_ref_dict( ref_entry * * dict );
 extern  void        print_ref_dict( ref_entry * dict, const char * type );
-extern  ref_entry * find_refid( ref_entry * dict, char const * id );
+extern  ref_entry   *find_refid( ref_entry * dict, char const * id );
 extern  void        init_ref_entry( ref_entry * re, char * id, size_t len );
 extern  void        fill_id( ref_entry * re, char * id, size_t len );
-extern  char      * get_refid_value( char * p );
+extern  char        *get_refid_value( char * p );
 
 
 /* gresrch.c                            */
