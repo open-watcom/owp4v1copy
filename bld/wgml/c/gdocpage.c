@@ -141,6 +141,12 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
     uint32_t        cur_spacing;
     uint32_t        old_v_start;
 
+    /* Other sections may need similar treatment */
+
+    if( v_start == t_page.main_top ) {  // start of main body
+        ProcFlags.page_started = false;
+    }
+
     g_cur_v_start = v_start;
 
     for( cur_el = list; cur_el != NULL; cur_el = cur_el->next ) {
@@ -227,12 +233,14 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                     ProcFlags.page_started = true;
                 } else {
 
-                    /* It is not clear how forced overprint & minum height interact */
+                    /* It is not clear how forced overprint & minimum height interact */
 
                     if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
                         cur_spacing -= cur_line->line_height;   // forced overprint
                     } else if( t_page.top_ban == NULL ) {      // minimum height
-                        cur_spacing = max( wgml_fonts[g_curr_font].line_height, cur_spacing );
+/// This turned out to be wrong in boxtest.ps, at least at the top of page 7
+/// whether it is /always/ wrong remains to be seen
+//                        cur_spacing = max( wgml_fonts[g_curr_font].line_height, cur_spacing );
                     }
                 }
 
@@ -715,6 +723,7 @@ void do_page_out( void )
         t_page.bot_ban = NULL;
     }
 
+    ProcFlags.page_started = false; // reset after output done
     return;
 }
 

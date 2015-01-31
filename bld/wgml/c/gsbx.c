@@ -37,6 +37,7 @@
 *       eop_char_device()       end-of-page for character devices
 *       eop_line_device()       end-of-page for line devices
 *       merge_lines()           merge cur_line and/or prev_line into box_line
+*       resize_box_cols()       resize a box_col_set.cols member
 *       scr_bx()                parse BX line and use other functions to perform
 *                                   the required actions
 *   initial descriptive comments are from script-tso.txt
@@ -208,6 +209,18 @@ static  uint32_t    el_skip         = 0;        // skip for current element
 static  uint32_t    hl_depth        = 0;        // height from VLINE drawn to lower boundary of def_height
 static  uint32_t    v_offset        = 0;        // space reserved for the box line which is above the line drawn
 
+
+/***************************************************************************/
+/*  resize the cols member of a box_col_set                               */
+/***************************************************************************/
+
+static box_col_set * resize_box_cols( box_col_set * in_cols ) {
+
+    in_cols->length += BOXCOL_COUNT;               // add space for new box columns
+    in_cols->cols = mem_realloc( in_cols->cols, in_cols->length * sizeof( box_col ) );
+    memset( &in_cols->cols[in_cols->current], 0, BOXCOL_COUNT * sizeof( box_col ));
+    return( in_cols );
+}
 /***************************************************************************/
 /*  output blank lines with vertical box characters                        */
 /***************************************************************************/
@@ -1007,6 +1020,7 @@ static void do_line_device( void )
     doc_element *   cur_el          = NULL;
     doc_element *   h_line_el;
     uint32_t        h_offset;
+    uint32_t        prev_height;
 
     /********************************************************/
     /* this code does not do what wgml 4.0 does             */
@@ -1021,6 +1035,22 @@ static void do_line_device( void )
         v_offset++;
     }
     hl_depth = def_height - v_offset;
+
+    /********************************************************/
+    /* this code does what wgml 4.0 does in a limited       */
+    /* context                                              */
+    /* when the text inside a box uses a font other than    */
+    /* font "0", even if the current font is now font "0",  */
+    /* the v_offset and def_height are adjusted as shown,   */
+    /* at least when the text font's line height is less    */
+    /* than the font "0" line height                        */
+    /********************************************************/
+
+    prev_height = wgml_fonts[g_prev_font].line_height;
+    if( prev_height < def_height ) {
+        v_offset += (def_height - prev_height) / 2;
+        hl_depth -= (def_height - prev_height) / 2;
+    }
 
     /* process any accumulated doc_elements */
 
@@ -1529,7 +1559,6 @@ static void merge_lines( void )
         internal_err( __FILE__, __LINE__ );
     } else if( prev_line == NULL ) {    // cur_line becomes box_line->first
         box_line->first = cur_line;
-        cur_line = NULL;
     } else if( cur_line == NULL ) {     // prev_line becomes box_line->first
         if( cur_op == bx_none ) {
             prev_temp = prev_line;
@@ -1643,6 +1672,7 @@ static void merge_lines( void )
                     }
                 }
                 break;
+
             case bx_off:                    // BX OFF is not entirely clear
                 if( cur_temp != NULL ) {                            // cur_line still has entries
                     if( cur_col == cur_temp->current ) {            // end of hline
@@ -1665,14 +1695,13 @@ static void merge_lines( void )
                     }
                 }
                 break;
+
             default:
                 internal_err( __FILE__, __LINE__ );
                 break;
             }
             if( box_temp->current == box_temp->length) {
-                box_temp->length += BOXCOL_COUNT;               // add space for new box columns
-                box_temp->cols = mem_realloc( box_temp->cols,
-                                            box_temp->length * sizeof( box_col ) );
+                resize_box_cols( box_temp );
             }
 
             if( (cur_temp != NULL) && (prev_temp == NULL) ) {   // cur_line alone still has entries
@@ -1752,7 +1781,7 @@ static void merge_lines( void )
                     cur_break = false;
                     prev_break = false;
                 }
-                box_temp->cols[box_col].col = cur_temp->cols[cur_col].col;
+                box_temp->cols[box_col].col = prev_temp->cols[prev_col].col;
                 box_temp->cols[box_col].depth += prev_temp->cols[prev_col].depth;
                 if( (cur_op == bx_can) || (cur_op == bx_off) ) {    // box ends: up only
                     box_temp->cols[box_col].v_ind = bx_v_up;
@@ -1766,6 +1795,12 @@ static void merge_lines( void )
             }
         }
     }
+
+    /************************************************************/
+    /* Note: at this point, prev_line should still contain the  */
+    /* same column list it had on entry, as this will be needed */
+    /* should the end of a page be encountered.                 */
+    /************************************************************/
 
 /// temp
     out_msg( "Merged\n" );
@@ -1805,10 +1840,7 @@ void eop_bx_box( void ) {
     cur_op = bx_eop;                    // do eop processing
     sav_group_elements = ProcFlags.group_elements;
     ProcFlags.group_elements = false;   // processed doc_elements go direct to page
-    ProcFlags.page_started = (t_page.last_col_main != NULL) ||
-                             (t_page.last_col_bot != NULL) ||
-                             (t_page.last_col_fn != NULL) ||
-                             (t_page.top_banner != NULL);
+    ProcFlags.page_started = (t_page.last_col_main != NULL);
 
     max_depth = t_page.max_depth - t_page.cur_depth;
 
@@ -1931,9 +1963,7 @@ void scr_bx( void )
         prev_col = 0;
         while( *p ) {
             if( cur_temp->current == cur_temp->length ) {
-                cur_temp->length += BOXCOL_COUNT;  // add space for new box columns
-                cur_temp->cols = mem_realloc( cur_temp->cols,
-                                            cur_temp->length * sizeof( box_col ) );
+                resize_box_cols( cur_temp );
             }
             cur_temp->cols[cur_temp->current].v_ind = bx_v_down;
             if( cur_temp->current == 0 ) {
@@ -2000,9 +2030,7 @@ void scr_bx( void )
             box_line->first = box_temp;
             prev_temp = prev_line;
             if( box_temp->length >= prev_temp->length) {
-                box_temp->length = prev_temp->length;   // add space for new box columns
-                box_temp->cols = mem_realloc( box_temp->cols,
-                                          box_temp->length * sizeof( box_col ) );
+                resize_box_cols( box_temp );
             }
             while( prev_temp != NULL) {
                 for( i = 0; i < prev_temp->current; i++ ) {
@@ -2018,9 +2046,7 @@ void scr_bx( void )
                     box_temp->next = alloc_box_col_set();
                     box_temp = box_temp->next;
                     if( box_temp->length >= prev_temp->length) {
-                        box_temp->length = prev_temp->length;   // add space for new box columns
-                        box_temp->cols = mem_realloc( box_temp->cols,
-                                            box_temp->length * sizeof( box_col ) );
+                        resize_box_cols( box_temp );
                     }
                 }
             }
@@ -2033,7 +2059,6 @@ void scr_bx( void )
     case bx_can :
     case bx_off :
     case bx_on :
-
         merge_lines();
         break;    
     default :
@@ -2041,20 +2066,18 @@ void scr_bx( void )
         break;    
     }
 
-    /* set some static globals used in drawing boxes */
+    /* set the ProcFlags specific to BX */
 
-    def_height = wgml_fonts[g_curr_font].line_height;   // box line height
-    max_depth = t_page.max_depth - t_page.cur_depth;        // maximum depth available
-    ProcFlags.page_started = (t_page.last_col_main != NULL) ||
-                             (t_page.last_col_bot != NULL) ||
-                             (t_page.last_col_fn != NULL) ||
-                             (t_page.top_banner != NULL);
-
+    ProcFlags.page_started = (t_page.last_col_main != NULL);
     ProcFlags.no_bx_hline = (cur_op == bx_set) ||
                             ((cur_op == bx_new) && !ProcFlags.box_cols_cur);
 
-    if( !ProcFlags.no_bx_hline || (cur_op == bx_set) ) {
+    /* set the basic layout values for BX */
 
+    def_height = wgml_fonts[g_curr_font].line_height;       // normal box line height
+    max_depth = t_page.max_depth - t_page.cur_depth;        // maximum depth available
+
+    if( !ProcFlags.no_bx_hline || (cur_op == bx_set) ) {
         set_skip_vars( NULL, NULL, NULL, spacing, bin_device->box.font );
 
         /************************************************************/
@@ -2073,8 +2096,10 @@ void scr_bx( void )
         }    
     }
 
-    if( prev_line != box_line->first ) {               // clear prev_line 
-        add_box_col_set_to_pool( prev_line );
+    if( prev_line != NULL ) {
+        if( prev_line != box_line->first ) {               // clear prev_line 
+            add_box_col_set_to_pool( prev_line );
+        }
         prev_line = NULL;
     }
 
@@ -2123,8 +2148,10 @@ void scr_bx( void )
         box_line = box_line->next;
         stack_temp->next = NULL;
         if( stack_temp->first != NULL ) {
-            add_box_col_set_to_pool( stack_temp->first );        
-            stack_temp->first = NULL;
+            if( stack_temp->first != cur_line ) {   // protect cur_line TBD
+                add_box_col_set_to_pool( stack_temp->first );        
+                stack_temp->first = NULL;
+            }
         }
         add_box_col_stack_to_pool( stack_temp );
 
@@ -2145,7 +2172,7 @@ void scr_bx( void )
     if( box_line != NULL ) {
 
         /********************************************************************/
-        /* box_line->first is often the boundary betweem two boxes, one of  */
+        /* box_line->first is often the boundary between two boxes, one of  */
         /*   which is being closed or stacked and the other of which is     */
         /*   being opened; in general, next_line should include the box     */
         /*   being closed only when there was no column list no operator    */
@@ -2157,6 +2184,7 @@ void scr_bx( void )
         /*      -- the BX line had no operator                              */
         /*   -- the BX line had a column list and                           */
         /*      -- the BX line had operator NEW                             */
+//        /*      -- the BX line had operator ON                              */
         /*      -- the BX line had operator SET                             */
         /*   -- BX OFF or BX CAN/BX DEL which closed an inner box           */
         /* prev_line becomes empty under these conditions:                  */
@@ -2175,10 +2203,10 @@ void scr_bx( void )
         /********************************************************************/
 
         if( ((cur_op == bx_none) && !ProcFlags.box_cols_cur)
+//                || (((cur_op == bx_new) || (cur_op == bx_on) || (cur_op == bx_set))
                 || (((cur_op == bx_new) || (cur_op == bx_set))
                     && ProcFlags.box_cols_cur)
-                || ((cur_op == bx_off) || (cur_op == bx_can))
-                    && box_line != NULL ) {
+                || ((cur_op == bx_off) || (cur_op == bx_can)) ) {
             prev_line = box_line->first;            
             box_line->first = NULL;
         } else if( (cur_op == bx_off) || (cur_op == bx_can)
@@ -2188,17 +2216,20 @@ void scr_bx( void )
             prev_line = NULL;
         } else {
             prev_line = cur_line;
-            cur_line = NULL;
         }
 
-        if( box_line->first != NULL ) {         // clear box_line->first
-            add_box_col_set_to_pool( box_line->first );
+        if( box_line->first != NULL ) {
+            if( box_line->first != prev_line ) {       // clear box_line->first
+                add_box_col_set_to_pool( box_line->first );
+            }
             box_line->first = NULL;
         }
     }
 
-    if( cur_line != NULL ) {               // clear cur_line 
-        add_box_col_set_to_pool( cur_line );
+    if( cur_line != NULL ) {
+        if( cur_line != prev_line ) {           // clear cur_line 
+            add_box_col_set_to_pool( cur_line );
+        }
         cur_line = NULL;
     }
 
@@ -2216,6 +2247,14 @@ void scr_bx( void )
             prev_temp = prev_temp->next;
         }
     }
+
+out_msg( "apage = %i\n", apage);
+out_msg( "after updating prev_line for next pass\n" );
+if( mem_validate() ) {
+    out_msg( ">>> heap valid\n" );
+} else {
+    out_msg( ">>> heap NOT valid\n" );
+}
 
     ProcFlags.skips_valid = false;          // ensures following text will use correct skips
     set_h_start();                          // pick up any indents

@@ -710,6 +710,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     ban_column      *   last;
     text_chars      *   curr_t;
     text_chars      *   curr_p;
+    uint8_t             sav_font;
     uint32_t            ban_left;
     uint32_t            h_left;
     uint32_t            ban_right;
@@ -730,6 +731,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
     content_reg( ban );
     curr_x = 0;
+    sav_font = g_curr_font;
 
     for( k = 0; k < 3; ++k ) {          // for all region parts
         if( reg_text[k] == NULL ) {

@@ -384,24 +384,20 @@ void add_doc_col_to_pool( doc_column * a_column )
 doc_element * alloc_doc_el(  element_type type )
 {
     doc_element *   curr;
-    doc_element *   prev;
     int             k;
 
-    curr = doc_el_pool;
-    if( curr != NULL ) {                // there is one to use
-        doc_el_pool = curr->next;
-    } else {                            // pool is empty
-        curr = mem_alloc( sizeof( doc_element ) );
-
-        doc_el_pool = mem_alloc( sizeof( *prev ) );
-        prev = doc_el_pool;
-        for( k = 0; k < 10; k++ ) {     // alloc 10 doc_els if pool empty
-            prev->next = mem_alloc( sizeof( *prev ) );
-            prev = prev->next;
+    if( doc_el_pool == NULL ) {         // pool is empty
+        doc_el_pool = mem_alloc( sizeof( *curr ) );
+        curr = doc_el_pool;
+        for( k = 0; k < 1; k++ ) {     // alloc 10 doc_els if pool empty
+            curr->next = mem_alloc( sizeof( *curr ) );
+            curr = curr->next;
         }
-        prev->next = NULL;
+        curr->next = NULL;
     }
 
+    curr = doc_el_pool;
+    doc_el_pool = curr->next;
     curr->next = NULL;
     curr->blank_lines = 0;
     curr->depth = 0;

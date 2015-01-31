@@ -111,6 +111,19 @@ void mem_banner( void )
 
 
 /***************************************************************************/
+/*  memorytracker validate allocated storage                               */
+/***************************************************************************/
+
+int mem_validate( void )
+{
+#ifdef TRMEM
+    return(_trmem_validate_all( handle ));
+#endif
+    return 1;   // always succeed if trmem not in use
+}
+
+
+/***************************************************************************/
 /*   memorytracker end processing                                          */
 /***************************************************************************/
 

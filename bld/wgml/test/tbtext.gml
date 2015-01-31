@@ -93,7 +93,7 @@ $&kwself.
 ..tb set $
 ..tb &firsttab. +5 +5 +5 +5 +5 +5 +5 +5 +5 +5
 .*
-.beglevel
+:cmt..beglevel
 :CMT..keep begin
 :CMT..section Definition of a Token
 .pp
@@ -195,7 +195,8 @@ $$:MONO.0 | 1 | ... | 9:eMONO.
 .************************************************************************
 .*
 :CMT..section Definition of a Constant
-.pp
+.*.pp
+:P.
 :ITAL.constant:eITAL.
 $$floating-constant
 $or$integer-constant
@@ -343,7 +344,7 @@ $:MONO.:> :HP0.(&wcboth.):eHP0.:eMONO.
 $$:MONO.[  ]  (  )  {  }  *  ,  :  = ; ... #:eMONO.
 ..co on
 :CMT..keep break
-.endlevel
+:cmt..endlevel
 .*
 .************************************************************************
 .*
@@ -363,7 +364,7 @@ External Definitions
 .*
 .************************************************************************
 .*
-.beglevel
+:cmt..beglevel
 :CMT..section Definition of Expressions
 .pp
 :ITAL.constant-expression:eITAL.
@@ -826,12 +827,12 @@ $or$declaration
 $$&LANGLE.declaration-specifiers&RANGLE. declarator &LANGLE.declaration-list&RANGLE.
 $$$compound-statement
 :CMT..keep break
-.endlevel
+:cmt..endlevel
 .*
 .************************************************************************
 .*
 :CMT..section Preprocessing Directives Grammar
-.beglevel
+:cmt..beglevel
 .pp
 :ITAL.preprocessing-file:eITAL.
 $$group
@@ -927,7 +928,7 @@ $$any character in the source character set except :ITAL.new-line:eITAL. and
 ..sk 1 c
 :ITAL.new-line:eITAL.
 $$the new-line character
-.endlevel
+:cmt..endlevel
 ..tb set
 ..tb
 :CMT..keep end
@@ -935,6 +936,7 @@ $$the new-line character
 :CMT.This is from cl\orderop.gml and is in the C Language Reference
 :CMT.Topic: "Operator Precedence"
 :cmt...fk begin
+.pa
 ..sr *start=&SYSIN.+1
 ..bx on  &*start. +16 +24
 ..sr *start=&*start.+1
@@ -1114,6 +1116,7 @@ $user-defined structure$address of structure
 .*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "Data Representation On x86-based Platforms"
+.pa
 .sk
 Data Representation On x86-based Platforms
 .sr c1=&sysin+1
@@ -1399,6 +1402,7 @@ The following table describes how to compute the subscript value.
 .*
 :CMT.This is from fl\fexpr.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Data Type of Arithmetic Expressions"
+.pa
 .np
 This table is valid for all of the arithmetic operators.
 
@@ -1457,10 +1461,10 @@ Type Conversion
 .sr c3=&INDlvl+54
 .box on &c0 &c1 &c2 &c3
 
-.np
+
 Conversion to integer
 
-\Definition\Name\Usage
+
 .box
 \Conversion to integer:\INT generic\I&arrow.INT(I)
 \int(a)                \           \I&arrow.INT(R)
@@ -1473,6 +1477,7 @@ Conversion to integer
 \                      \IDINT      \I&arrow.IDINT(D)
 .box off
 
+.pa
 .np
 Conversion to real
 .box on &c0 &c1 &c2 &c3
@@ -1526,6 +1531,7 @@ Conversion to double
 \                     \                \Z&arrow.DCMPLX(Z)
 .box off
 
+.pa
 .np
 Conversion to integer
 .box on &c0 &c1 &c2 &c3
@@ -1577,6 +1583,7 @@ Nearest Integer
 \                  \IDNINT       \I&arrow.IDNINT(D)
 .box off
 
+.pa
 .np
 Absolute Value
 :cmt..section Absolute Value
@@ -1749,6 +1756,7 @@ Square Root
 \       \CDSQRT &dagger     \Z&arrow.CDSQRT(Z)
 .box off
 
+.pa
 .np
 Exponential
 :cmt..section Exponential
@@ -1861,6 +1869,7 @@ Arcsine
 \           \DASIN           \D&arrow.DASIN(D)
 .box off
 
+.pa
 .np
 Arccosine
 :cmt..section Arccosine
@@ -1913,6 +1922,7 @@ Hyperbolic Cosine
 \           \DCOSH           \D&arrow.DCOSH(D)
 .box off
 
+.pa
 .np
 Hyperbolic Tangent
 :cmt..section Hyperbolic Tangent
@@ -1973,6 +1983,7 @@ Complement of Error Function
 \           \DERFC           \D&arrow.DERFC(D)
 .bxt off
 
+.pa
 .np
 Lexically Greater Than or Equal
 :cmt..section Lexically Greater Than or Equal
@@ -2136,7 +2147,7 @@ that &spy defines for you.
 .tb set $
 .tb &INDlvl.+2 &syscl./2+1
 .*
-.beglevel
+:cmt..beglevel
 .*
 .np
 Clipboard Messages
@@ -2406,6 +2417,7 @@ deny none mode`0x04
 .se c3=&c3.-1
 .se c4=&c4.-1
 .se c5=&c5.-1
+.pa
 .bx on &c0 &c1 &c2 &c3 &c4 &c5
 .np
 Switch Mode Settings
@@ -3213,6 +3225,7 @@ $         $:HP0.                          $integer value:eHP0.
 The following table describes all of the various integer types and
 their ranges as implemented by the &wcboth. compilers.
 
+.pa
 .boxdef
 .boxcol 18
 .boxcol 21
@@ -3354,6 +3367,7 @@ $Invocation           $After Substitution
 .*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Variable Argument Macros"
+.pa
 .np
 Several example usages of the above macros follow:
 
@@ -3951,6 +3965,7 @@ $~~ $??-
 .*
 :CMT.This is from fl\ftypes.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Data Types"
+.pa
 :p.The following table summarizes all data types supported by &product..
 
 .sr c0=&INDlvl+1

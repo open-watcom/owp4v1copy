@@ -315,7 +315,8 @@ global  uint32_t    g_net_page_width;
 global  int32_t     g_resh;             // horiz base units
 global  int32_t     g_resv;             // vert base units
 
-global  font_number g_curr_font;        // the font to use for current line
+global  uint8_t     g_curr_font;        // the font to use for current line
+global  uint8_t     g_prev_font;        // the font used for the last text output
 global  uint32_t    g_cl;               // column length
 global  uint32_t    g_ll;               // line length
 global  uint32_t    g_cd;               // no of columns

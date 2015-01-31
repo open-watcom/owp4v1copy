@@ -1,5 +1,6 @@
 :CMT.This is from fl\frecord.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Unions"
+.pa
 .np
 The organization of the record in memory is as follows:
 .millust begin
@@ -443,6 +444,7 @@ in the pragma for
 :CMT.This is from cmn\pragma.gml and is in the C/C++ User's Guide
 :CMT.Topics: "16-bit:  Alternate Names for Symbols"
 :CMT.      & "32-bit:  Alternate Names for Symbols"
+.pa
 .np
 The following form of the auxiliary pragma can be used to describe the
 mapping of a symbol from its source form to its object form.
@@ -685,6 +687,7 @@ For example, C functions require scalar arguments to be passed by
 value instead of by reference.
 For information on the methods &cmpname uses to pass arguments, see
 the chapter entitled "Assembly Language Considerations".
+.pa
 .np
 The following form of the auxiliary pragma can be used to alter the
 default calling mechanism used for passing arguments.
@@ -1580,6 +1583,7 @@ x       y       x .AND. y
 0       1           0
 0       0           0
 .mext off
+.pa
 .mext on &c0 &c3 &c1 &c2
 x       y       x .OR. y
 .mext
@@ -2361,6 +2365,7 @@ These declarations are called "implicit rules" as opposed to "explicit
 rules" which were discussed previously.
 Implicit rules may be applied only in instances where you are able to
 describe a dependency in terms of file extensions.
+.pa
 .hint
 Recall that a file extension is the portion of the file name which
 follows the period.
@@ -2490,6 +2495,7 @@ The formal &product command line syntax is shown below.
 .*
 :CMT.This is from fg\fpwfc.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "WFC/WFC386 Environment Variables"
+.pa
 .hint
 .ix 'user initialization file'
 If you use the same compiler options all the time, you may find it
@@ -4488,6 +4494,7 @@ formats.
 .*
 :CMT.This is from fl\fstruct.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "ELSE IF"
+.pa
 .np
 A further enhancement of the IF-THEN-ELSE construct is the
 .kw ELSE IF
@@ -4528,6 +4535,7 @@ statement which may be used in the following two formats:
 .*
 :CMT.This is from fl\fstruct.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "LOOP - END LOOP"
+.pa
 .mext begin
   LOOP    [: block-label]
       statement(s)
@@ -4902,6 +4910,7 @@ the Sources menu appears.
 .*
 :CMT.This is from pg\pgqa.gml and is in the Programmer's Guide
 :CMT.Topic: "Conversion from IBM-compatible PC compilers"
+.pa
 .hint
 (16-bit applications only)
 Most 16-bit C compilers (including &cmpname) have a "large" memory
@@ -5172,6 +5181,7 @@ API function.
 :CMT.This is from rsi\utilts.gml and is in the the C/C++ Programmer's Guide
 :CMT.Topic: "DOS/4GW:  PMINFO"
 :cmt.IN 1 is used to give .cbox a reasonble starting position
+.pa
 .in 1
 .cbox begin
 .in -2
@@ -5197,6 +5207,7 @@ DOS/16M switch mode 11 (VCPI).
 .*
 :CMT.This is from rsi\utilts.gml and is in the the C/C++ Programmer's Guide
 :CMT.Topic: "DOS/4GW:  RMINFO"
+.pa
 .cbox begin
 .in -2
 C>rminfo

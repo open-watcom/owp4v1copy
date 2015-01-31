@@ -1326,6 +1326,8 @@ void    process_text( char * text, font_number font )
         }
     }
 
+    g_prev_font = font; // save font number for potential use with BX - TBD
+
     /********************************************************************/
     /*  force a break in when certain conditions involving new input    */
     /*  lines, user tabs, and a tab character in the input              */
