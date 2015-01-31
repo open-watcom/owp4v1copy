@@ -240,7 +240,9 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                     } else if( t_page.top_ban == NULL ) {      // minimum height
 /// This turned out to be wrong in boxtest.ps, at least at the top of page 7
 /// whether it is /always/ wrong remains to be seen
-//                        cur_spacing = max( wgml_fonts[g_curr_font].line_height, cur_spacing );
+//                        if( cur_spacing < wgml_fonts[g_curr_font].line_height ) {
+//                            cur_spacing = wgml_fonts[g_curr_font].line_height;
+//                        }
                     }
                 }
 

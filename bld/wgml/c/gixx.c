@@ -43,19 +43,21 @@
 /*   returns created block                                                 */
 /*                                                                         */
 /***************************************************************************/
-static ix_h_blk * find_create_ix_h_entry( ix_h_blk * * ixhwork,
-                                          char * * printtxt, size_t printtxtlen,
-                                          char * txt, size_t txtlen,
+static ix_h_blk *find_create_ix_h_entry( ix_h_blk **ixhwork,
+                                          char **printtxt, size_t printtxtlen,
+                                          char *txt, size_t txtlen,
                                           uint32_t lvl )
 {
-    ix_h_blk * ixhwk;
-    int     comp_len;        // compare length for searching existing entries
-    int     comp_res;                   // compare result
-    bool    do_nothing;
+    ix_h_blk    *ixhwk;
+    size_t      comp_len;               // compare length for searching existing entries
+    int         comp_res;               // compare result
+    bool        do_nothing;
 
     do_nothing = false;
     while( (*ixhwork != NULL) ) {       // find alfabetic point to insert
-        comp_len = min( txtlen, (*ixhwork)->ix_term_len );
+        comp_len = (*ixhwork)->ix_term_len;
+        if( comp_len > txtlen )
+            comp_len = txtlen;
         comp_res = strnicmp( txt, (*ixhwork)->ix_term, comp_len + 1 );
         if( comp_res > 0 ) {            // new is later in alfabet
             ixhwork = &((*ixhwork)->next);

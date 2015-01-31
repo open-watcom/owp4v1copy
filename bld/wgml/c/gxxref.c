@@ -132,7 +132,9 @@ void    gml_hdref( const gmltag * entry )
             while( *p && is_id_char( *p ) ) {
                 p++;
             }
-            len = min( ID_LEN, p - pa );// restrict length as in ghx.c
+            len = p - pa;       // restrict length as in ghx.c
+            if( len > ID_LEN )
+                len = ID_LEN;
 
             if( len > 0 ) {
                 idseen = true;          // valid id attribute found
