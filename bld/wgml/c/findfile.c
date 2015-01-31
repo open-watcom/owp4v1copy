@@ -194,7 +194,7 @@ static void initialize_directory_list( char const * in_path_list,
     /* Initialize local_list. */
 
     local_list.count = path_count;
-    local_list.directories = (char * *) mem_alloc(
+    local_list.directories = (char **)mem_alloc(
                     (path_count * sizeof( char * )) + byte_count + path_count );
 
     array_base = local_list.directories;
@@ -293,7 +293,7 @@ static void initialize_directory_list( char const * in_path_list,
     if( path_count < local_list.count) {
 
         in_list->count = path_count;
-        in_list->directories = (char * *) mem_alloc(
+        in_list->directories = (char **)mem_alloc(
                     (path_count * sizeof( char * )) + byte_count + path_count );
 
         array_base = in_list->directories;

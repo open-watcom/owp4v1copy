@@ -93,7 +93,7 @@ static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
 
     /* Reallocate the cop_driver. */
 
-    local_driver = (cop_driver *) mem_realloc( in_driver, new_size );
+    local_driver = mem_realloc( in_driver, new_size );
     local_driver->allocated_size = new_size;
 
     return( local_driver );
@@ -1067,7 +1067,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Initialize the out_driver. */
         
-    out_driver = (cop_driver *) mem_alloc( START_SIZE );
+    out_driver = mem_alloc( START_SIZE );
 
     out_driver->allocated_size = START_SIZE;
     out_driver->next_offset = sizeof( cop_driver );

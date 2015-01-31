@@ -716,10 +716,10 @@ void cop_setup( void )
 
     bin_fonts = NULL;
 
-    cur_token = (record_buffer *) mem_alloc( sizeof( record_buffer ) );
+    cur_token = mem_alloc( sizeof( record_buffer ) );
     cur_token->current = 0;
     cur_token->length = 10;
-    cur_token->text = (uint8_t *) mem_alloc( cur_token->length );
+    cur_token->text = mem_alloc( cur_token->length );
 
     for( i = 0; i < 0x100; i++) {
         ti_table[i] = i;
@@ -850,7 +850,7 @@ void cop_setup( void )
 
     /* Initialize wgml_fonts, which is an array */
 
-    wgml_fonts = (wgml_font * ) mem_alloc( wgml_font_cnt * sizeof( wgml_font ) );
+    wgml_fonts = mem_alloc( wgml_font_cnt * sizeof( wgml_font ) );
     for( i = 0; i < wgml_font_cnt; i++ ) {
         wgml_fonts[i].bin_font = NULL;
         wgml_fonts[i].font_switch = NULL;

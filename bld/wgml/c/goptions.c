@@ -594,7 +594,7 @@ static void set_font( option * opt )
     cmd_tok     *   opts[3];
 
     old_errs = err_count;
-    new_font = (opt_font *) mem_alloc( sizeof( opt_font ) );
+    new_font = mem_alloc( sizeof( opt_font ) );
     new_font->nxt = NULL;
     new_font->font = 0;
     new_font->name = NULL;
@@ -1691,7 +1691,7 @@ static cmd_tok  *process_master_filename( cmd_tok * tok )
     int         len;
 
     len = tok->toklen;
-    p = (char *) mem_alloc( len + 1 );
+    p = mem_alloc( len + 1 );
     memcpy_s( p, len + 1, tok->token, len );
     p[len] = '\0';
     g_info_lm( inf_recognized_xxx, "document source file", p );

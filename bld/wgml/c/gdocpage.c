@@ -311,7 +311,7 @@ static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
     for( cur_col = a_column; cur_col != NULL; cur_col = cur_col->next ) {
         col_count++;
     }
-    cur_el = (doc_element **) mem_alloc( col_count * sizeof( doc_element * ) );
+    cur_el = (doc_element **)mem_alloc( col_count * sizeof( doc_element * ) );
 
     cur_col = a_column;
     for( i = 0; i < col_count; i++ ) {
@@ -347,7 +347,7 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
     for( cur_col = a_column; cur_col != NULL; cur_col = cur_col->next ) {
         col_count++;
     }
-    cur_el = (doc_element **) mem_alloc( col_count * sizeof( doc_element * ) );
+    cur_el = (doc_element **)mem_alloc( col_count * sizeof( doc_element * ) );
 
     cur_col = a_column;
     for( i = 0; i < col_count; i++ ) {

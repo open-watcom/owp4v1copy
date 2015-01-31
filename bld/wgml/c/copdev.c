@@ -127,7 +127,7 @@ static cop_device * resize_cop_device( cop_device * in_device, size_t in_size )
 
     /* Reallocate the cop_device. */
 
-    local_device = (cop_device *) mem_realloc( in_device, new_size );
+    local_device = mem_realloc( in_device, new_size );
     local_device->allocated_size = new_size;
 
     return( local_device );
@@ -266,7 +266,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Initialize the out_device. */
         
-    out_device = (cop_device *) mem_alloc( START_SIZE );
+    out_device = mem_alloc( START_SIZE );
 
     out_device->allocated_size = START_SIZE;
     out_device->next_offset = sizeof( cop_device );
@@ -919,7 +919,7 @@ cop_device * parse_device( FILE * in_file )
 
             /* Allocate a buffer and read the translation characters into it. */
 
-            outtrans_data = (uint8_t *) mem_alloc( data_count );
+            outtrans_data = mem_alloc( data_count );
 
             fread( outtrans_data, sizeof( *outtrans_data ), data_count, in_file );
             if( ferror( in_file ) || feof( in_file ) ) {

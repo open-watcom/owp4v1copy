@@ -72,7 +72,7 @@ code_block * get_code_blocks( uint8_t * * current, uint16_t count, uint8_t * bas
 
     /* Allocate out_block. */ 
              
-    out_block = (code_block * ) mem_alloc( sizeof( code_block ) * count ); 
+    out_block = mem_alloc( sizeof( code_block ) * count ); 
 
     /* Initialize each code_block. */
 
@@ -190,7 +190,7 @@ p_buffer * get_p_buffer( FILE * in_file )
 
     /* Allocate the out_buffer. */ 
 
-    out_buffer = (p_buffer *) mem_alloc( sizeof( p_buffer ) + 80 * p_count);
+    out_buffer = mem_alloc( sizeof( p_buffer ) + 80 * p_count);
 
     out_buffer->count = 80 * p_count;
     out_buffer->buffer = (uint8_t *) out_buffer + sizeof( p_buffer );
@@ -263,7 +263,7 @@ functions_block * parse_functions_block( uint8_t * * current, uint8_t * base )
 
     /* Allocate the out_block. */
 
-    out_block = (functions_block *) mem_alloc( sizeof( functions_block ) );
+    out_block = mem_alloc( sizeof( functions_block ) );
     out_block->count = code_count;
 
     /* Now extract the CodeBlocks, if any. */

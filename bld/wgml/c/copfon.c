@@ -86,7 +86,7 @@ static cop_font * resize_cop_font( cop_font * in_font, size_t in_size )
 
     /* Reallocate the cop_font. */
 
-    local_font = (cop_font *) mem_realloc( in_font, new_size );
+    local_font = mem_realloc( in_font, new_size );
     local_font->allocated_size = new_size;
 
     return( local_font );
@@ -199,7 +199,7 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
     /* Initialize the out_font. */
 
-    out_font = (cop_font *) mem_alloc( START_SIZE );
+    out_font = mem_alloc( START_SIZE );
 
     out_font->next_font = NULL;
     out_font->allocated_size = START_SIZE;
@@ -576,7 +576,7 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
 
             /* Allocate a buffer and read the translation characters into it. */
 
-            outtrans_data = (uint8_t *) mem_alloc( data_count );
+            outtrans_data = mem_alloc( data_count );
 
             fread( outtrans_data, sizeof( *outtrans_data ), data_count,
                    in_file );

@@ -390,10 +390,10 @@ static char * char_convert( char * in_val )
     char *  ret_val = NULL;
 
     if( in_val == NULL ) {
-        ret_val = (char *) mem_alloc( 1 );
+        ret_val = mem_alloc( 1 );
         ret_val[0] = '\0';
     } else {
-        ret_val = (char *) mem_alloc( strlen( in_val ) + 1 );
+        ret_val = mem_alloc( strlen( in_val ) + 1 );
         strcpy_s( ret_val, strlen( in_val ) + 1, in_val );
     }
 
@@ -418,7 +418,7 @@ static void output_spaces( uint32_t count )
     int     i;
 
     if( space_chars.length < count ) {
-        space_chars.text = (uint8_t *) mem_realloc( space_chars.text, count );
+        space_chars.text = mem_realloc( space_chars.text, count );
         space_chars.length = count;
         for( i = 0; i < space_chars.length; i++ ) space_chars.text[i] = ' ';
     }
@@ -468,7 +468,7 @@ static void output_uscores( text_chars * in_chars )
     count /= uscore_width;
 
     if( uscore_chars.length < count ) {
-        uscore_chars.text = (uint8_t *) mem_realloc( uscore_chars.text, count );
+        uscore_chars.text = mem_realloc( uscore_chars.text, count );
         uscore_chars.length = count;
         for( i = 0; i < uscore_chars.length; i++ ) {
             uscore_chars.text[i] = uscore_char;
@@ -1016,8 +1016,8 @@ static void * df_font_resident( void )
 {
     char    *   ret_val;
 
-    ret_val = (char *) mem_alloc( sizeof(char) + 1 );
-    ret_val[0] = (char) wgml_fonts[df_font].font_resident;
+    ret_val = mem_alloc( 2 );
+    ret_val[0] = wgml_fonts[df_font].font_resident;
     ret_val[1] = '\0';
     
     return( (void *) ret_val );
@@ -1949,8 +1949,8 @@ static void * df_decimal( void )
 
     /* Convert and return the value. */
 
-    value = (char *) mem_alloc( 12 );
-    return( (void *) _ltoa( first, value, 10 ) );
+    value = mem_alloc( 12 );
+    return( (void *)_ltoa( first, value, 10 ) );
 }
 
 /* Function df_divide().
@@ -2070,8 +2070,8 @@ static void * df_hex( void )
 
     /* Convert and return a pointer to the parameter */
 
-    value = (char *) mem_alloc( 9 );
-    return( (void *) _ltoa( first, value, 16 ) );
+    value = mem_alloc( 9 );
+    return( (void *)_ltoa( first, value, 16 ) );
 }
 
 /* Function df_lower().
@@ -3538,7 +3538,7 @@ void df_setup( void )
 
     /* Initialize space_chars to hold 80 space characters. */     
 
-    space_chars.text = (uint8_t *) mem_alloc( 80 );
+    space_chars.text = mem_alloc( 80 );
     space_chars.length = 80;
     space_chars.current = 0;
     for( i = 0; i < space_chars.length; i++ ) space_chars.text[i] = ' ';
@@ -3546,7 +3546,7 @@ void df_setup( void )
     /* Initialize uscore_chars to hold 80 :UNDERSCORE characters. */     
 
     uscore_char = bin_device->underscore.underscore_char;
-    uscore_chars.text = (uint8_t *) mem_alloc( 80 );
+    uscore_chars.text = mem_alloc( 80 );
     uscore_chars.length = 80;
     uscore_chars.current = 0;
     for( i = 0; i < uscore_chars.length; i++ ) {

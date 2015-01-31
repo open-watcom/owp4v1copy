@@ -447,8 +447,7 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
 
             if( k >= translated.length ) {
                 translated.length *= 2;
-                translated.text = (uint8_t *) mem_realloc( translated.text,
-                                                           translated.length );
+                translated.text = mem_realloc( translated.text, translated.length );
             }
 
             /* Add the non-space character to translated. */
@@ -494,8 +493,7 @@ static void ob_insert_ps_cmd_ot( uint8_t * in_block, size_t count, uint8_t font 
 
                             if( (k + cur_trans->count) >= translated.length ) {
                                 translated.length *= 2;
-                                translated.text = (uint8_t *) mem_realloc(
-                                    translated.text, translated.length );
+                                translated.text = mem_realloc( translated.text, translated.length );
                             }
 
                             memcpy_s( &translated.text[k], cur_trans->count,
@@ -864,7 +862,7 @@ static void set_out_file( void )
 
     if( temp_outfile[0] != '\0' ) {
         if( out_file != NULL ) mem_free( out_file );
-        out_file = (char *) mem_alloc( strnlen_s( temp_outfile, _MAX_PATH ) + 1 );
+        out_file = mem_alloc( strnlen_s( temp_outfile, _MAX_PATH ) + 1 );
         strcpy_s( out_file, _MAX_PATH, temp_outfile );
     }
 
@@ -1340,18 +1338,18 @@ void ob_setup( void )
 
     binc_buff.current = 0;
     binc_buff.length = 80;
-    binc_buff.text = (uint8_t *) mem_alloc( binc_buff.length );
+    binc_buff.text = mem_alloc( binc_buff.length );
 
     buffout.current = 0;
     buffout.length = strtoul( &out_file_attr[2], NULL, 0 );
     if( errno == ERANGE ) {
         xx_simple_err_i( err_out_rec_size2, ULONG_MAX );
     }
-    buffout.text = (uint8_t *) mem_alloc( buffout.length );
+    buffout.text = mem_alloc( buffout.length );
 
     translated.current = 0;
     translated.length = 80;
-    translated.text = (uint8_t *) mem_alloc( translated.length );
+    translated.text = mem_alloc( translated.length );
 
     /* Create (truncate) the output file. */
 

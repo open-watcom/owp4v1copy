@@ -54,7 +54,7 @@ static void show_line_error( char * pa )
     msg_indent = 0;
     cnt = pa - buff2;   // number of characters before the offending input
     cnt ++;             // allow space for "*" at start of offending input
-    buf = (char *) mem_alloc( cnt + 1 );
+    buf = mem_alloc( cnt + 1 );
     memset( buf, ' ', cnt - 1 );
     buf[cnt - 1] = '*'; // puts "*" after last memset position; no, really
     buf[cnt] = '\0';
