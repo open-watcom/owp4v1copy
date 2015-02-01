@@ -294,8 +294,8 @@ static void next_tab( void )
 /*  create c_chars instance and link it in correctly                       */
 /***************************************************************************/
 
-static text_chars * do_c_chars( text_chars * c_chars, text_chars * in_chars,
-                                 uint8_t * in_text, uint32_t count,
+static text_chars * do_c_chars( text_chars *c_chars, text_chars *in_chars,
+                                 const char *in_text, size_t count,
                                  uint32_t in_x_address, uint32_t width,
                                  font_number font, text_type type )
 {
@@ -413,7 +413,7 @@ static void wgml_tabs( void )
 
         if( t_line->last == NULL ) {
             if( tab_space > 0 ) {                       // spaces preceed tab char
-                c_chars = do_c_chars( c_chars, in_chars, &in_text[0], t_count,
+                c_chars = do_c_chars( c_chars, in_chars, in_text, t_count,
                             g_cur_h_start, in_chars->width,
                             in_chars->font, in_chars->type );
                 if( s_multi == NULL ) {
@@ -425,7 +425,7 @@ static void wgml_tabs( void )
                 if( t_line->last->count == 0 ) {
                     if( phrase_start ) {    // add new marker
                         g_cur_h_start = t_line->last->x_address;
-                        c_chars = do_c_chars( c_chars, in_chars, &in_text[0],
+                        c_chars = do_c_chars( c_chars, in_chars, in_text,
                             0, g_cur_h_start, 0, in_chars->font,
                             in_chars->type );
                     } else {                // adjust prior marker
@@ -445,7 +445,7 @@ static void wgml_tabs( void )
                     if( c_stop->alignment == al_center ) {
                         center_end = true;
                     } else {
-                        c_chars = do_c_chars( c_chars, in_chars, &in_text[0],
+                        c_chars = do_c_chars( c_chars, in_chars, in_text,
                             0, g_cur_h_start, 0, in_chars->font,
                             in_chars->type );
                     }
@@ -502,7 +502,7 @@ static void wgml_tabs( void )
                         g_cur_h_start = g_cur_left + c_stop->column + tab_space *
                                         wgml_fonts[in_chars->font].spc_width;
                     }
-                    c_chars = do_c_chars( c_chars, in_chars, &in_text[0], t_count,
+                    c_chars = do_c_chars( c_chars, in_chars, in_text, t_count,
                             g_cur_h_start, in_chars->width,
                             in_chars->font, in_chars->type );
                     if( t_count == in_count ) { // no tab character in text
@@ -542,7 +542,7 @@ static void wgml_tabs( void )
     } else {                        // text found before first tab character
         tab_chars.first = NULL;
         tab_chars.last = NULL;
-        c_chars = do_c_chars( c_chars, in_chars, &in_text[0], t_count,
+        c_chars = do_c_chars( c_chars, in_chars, in_text, t_count,
                         g_cur_h_start, in_chars->width,
                         in_chars->font, in_chars->type );
         i++;
@@ -577,7 +577,7 @@ static void wgml_tabs( void )
             }
         }
         t_count = i - t_start;
-        t_width = cop_text_width( &in_text[t_start], t_count, in_chars->font );
+        t_width = cop_text_width( in_text + t_start, t_count, in_chars->font );
         if( t_count > 0 ) {             // text found after tab char
             text_found = true;
         }
@@ -754,7 +754,7 @@ static void wgml_tabs( void )
             }
 
             // the text positioned by the tab stop
-            c_chars = do_c_chars( c_chars, in_chars, &in_text[t_start],
+            c_chars = do_c_chars( c_chars, in_chars, in_text + t_start,
                                     t_count, g_cur_h_start, t_width,
                                     in_chars->font, in_chars->type );
             if( t_width == 0 ) {    // no text: position marker
@@ -1251,7 +1251,7 @@ void    process_line_full( text_line * a_line, bool justify )
 /*  create a text_chars instance and fill it with a 'word'                 */
 /***************************************************************************/
 
-text_chars * process_word( char * pword, size_t count, font_number font )
+text_chars * process_word( const char *pword, size_t count, font_number font )
 {
     text_chars  *   n_char;
 
@@ -1287,14 +1287,14 @@ text_chars * process_word( char * pword, size_t count, font_number font )
 /*      handle line and page overflow conditions                           */
 /***************************************************************************/
 
-void    process_text( char * text, font_number font )
+void    process_text( const char *text, font_number font )
 {
     text_chars          *   h_char;     // hyphen text char
     text_chars          *   n_char;     // new text char
     text_chars          *   s_char;     // save text char
     size_t                  count;
-    char                *   pword;
-    char                *   p;
+    const char          *   pword;
+    const char          *   p;
     uint32_t                o_count = 0;
     uint32_t                offset = 0;
     // when hyph can be set, it will need to be used here & below
@@ -1510,8 +1510,7 @@ void    process_text( char * text, font_number font )
             while( (n_char->x_address + n_char->width) > g_page_right ) {
                 s_char = t_line->last; // find multipart words
                 if( s_char != NULL ) {
-                    while( g_cur_h_start == (s_char->x_address + \
-                                                        s_char->width) ) {
+                    while( g_cur_h_start == (s_char->x_address + s_char->width) ) {
                         g_cur_h_start = s_char->x_address;
                         s_char = s_char->prev;
                         if( s_char == NULL ) break;
@@ -1522,8 +1521,8 @@ void    process_text( char * text, font_number font )
 
                 if( s_char != NULL ) {
                     // t_line ends in a multi-part word or an empty text_chars
-                    if( ((s_char != t_line->last) && \
-                        (!(g_cur_left + n_char->width) > g_page_right)) || \
+                    if( ((s_char != t_line->last) &&
+                        (!(g_cur_left + n_char->width) > g_page_right)) ||
                                                 (s_char->count == 0) ) {
                         // s_char itself belongs to t_line
                         t_line->last = s_char;
@@ -1539,9 +1538,9 @@ void    process_text( char * text, font_number font )
 
                 if( s_char == NULL ) { // append n_char to t_line & split it
                     // these conditions determine if n_char is to be split
-                    if( (t_line->first == NULL) || \
-                        ((t_line->last->x_address + t_line->last->width) \
-                                                == n_char->x_address) || \
+                    if( (t_line->first == NULL) ||
+                        ((t_line->last->x_address + t_line->last->width)
+                                                == n_char->x_address) ||
                             ((g_cur_left + n_char->width) > g_page_right) ) {
                         // find the split position with a hyphen's width
                         count = split_text( n_char, g_page_right - hy_width );
@@ -1559,8 +1558,8 @@ void    process_text( char * text, font_number font )
                             }
                             t_line->last = n_char;
                             // now do the split
-                            n_char = alloc_text_chars( \
-                                    &t_line->last->text[t_line->last->count], \
+                            n_char = alloc_text_chars(
+                                    &t_line->last->text[t_line->last->count],
                                             count, t_line->last->font );
                             n_char->type = t_line->last->type;
 
@@ -1573,7 +1572,7 @@ void    process_text( char * text, font_number font )
                             h_char->type = norm;
                             h_char->width = hy_width;
 
-                            h_char->x_address = t_line->last->x_address \
+                            h_char->x_address = t_line->last->x_address
                                                     + t_line->last->width;
                             h_char->prev = t_line->last;
                             t_line->last->next = h_char;
@@ -1651,8 +1650,8 @@ void    process_text( char * text, font_number font )
                     }
                     t_line->last = n_char;
                     // reset n_chars to contain the rest of the split text
-                    n_char = alloc_text_chars( \
-                        &t_line->last->text[t_line->last->count], count, \
+                    n_char = alloc_text_chars(
+                        &t_line->last->text[t_line->last->count], count,
                                                     t_line->last->font );
                     wgml_tabs();
                     // process the full text_line

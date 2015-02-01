@@ -35,7 +35,7 @@
 /*  prepare date line                                                      */
 /***************************************************************************/
  
-static void prep_date_line( text_line * p_line, char * p )
+static void prep_date_line( text_line *p_line, const char *p )
 {
     text_chars  *   curr_t;
     uint32_t        h_left;
@@ -50,8 +50,7 @@ static void prep_date_line( text_line * p_line, char * p )
         curr_t = alloc_text_chars( p, strlen( p ), g_curr_font );
     } else {
         rc = find_symvar( &global_dict, "date", no_subscript, &subdate );
-        curr_t = alloc_text_chars( subdate->value, strlen( subdate->value ),
-                                   g_curr_font );
+        curr_t = alloc_text_chars( subdate->value, strlen( subdate->value ), g_curr_font );
     }
     curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
     curr_t->count = intrans( curr_t->text, curr_t->count, g_curr_font );

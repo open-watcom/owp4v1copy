@@ -954,7 +954,7 @@ typedef struct text_chars {
             uint16_t        length;
             text_type       type;
             font_number     font;
-            uint8_t         text[1];
+            char            text[1];
 } text_chars;
 
 typedef struct text_line {
