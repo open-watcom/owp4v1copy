@@ -193,8 +193,8 @@
 /* This keeps track of where we are in the compiled function block. */
 
 typedef struct {
-    unsigned char   *base;
-    unsigned char   *current;
+    char            *base;
+    char            *current;
     bool            last_function_done;
     unsigned char   parameter_type;
     unsigned char   df_code;
@@ -260,7 +260,7 @@ static df_data          current_df_data;
 static df_function      device_function_table[MAX_FUNC_INDEX + 1];
 static df_function      driver_function_table[MAX_FUNC_INDEX + 1];
 static df_function      *current_function_table = NULL;
-static unsigned char    *current_function       = NULL;
+static char             *current_function       = NULL;
 
 /* These are used in outputting spaces and underscore characters. */
 
@@ -1169,7 +1169,7 @@ static void *df_y_size( void )
  *
 */
 
-static void *get_parameters ( parameters *in_parameters )
+static void *get_parameters( parameters *in_parameters )
 {
     uint16_t    offset;
 
@@ -1291,7 +1291,7 @@ static void *df_out_text_device( void )
         /* Now get and emit the parameter. */
 
         current_df_data.current = current_df_data.base + my_parameters.first;
-        first = (char *)process_parameter();
+        first = process_parameter();
         out_msg( first );
 
         /* Free the memory allocated to the parameter. */
@@ -1323,8 +1323,7 @@ static void out_text_driver( bool out_trans, bool out_text )
         
         memcpy_s( &count, sizeof( count ), current_df_data.current, sizeof( count ) );
         current_df_data.current += sizeof( count );
-        ob_insert_block( current_df_data.current, count, out_trans, out_text, 
-                         active_font );
+        ob_insert_block( current_df_data.current, count, out_trans, out_text, active_font );
         break;
 
     case 0x10:
@@ -1341,7 +1340,7 @@ static void out_text_driver( bool out_trans, bool out_text )
         /* Now get and insert the parameter. */
 
         current_df_data.current = current_df_data.base + my_parameters.first;
-        first = (char *)process_parameter();
+        first = process_parameter();
         count = strlen( first );
         ob_insert_block( first, count, out_trans, out_text, active_font );
 
@@ -1463,7 +1462,7 @@ static void *df_cancel( void )
     /* Now invoke the parameter's handler. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (char *)process_parameter();
+    first = process_parameter();
 
     if( wgml_fonts[df_font].font_style != NULL ) {
         if( !stricmp( first, wgml_fonts[df_font].font_style->type ) ) {
@@ -1551,9 +1550,9 @@ static void *df_sleep( void )
      */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
-    sleep( (unsigned) first);
+    sleep( (unsigned)first );
 
     return( NULL );
 }
@@ -1584,12 +1583,12 @@ static void *df_setsymbol( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (char *)process_parameter();
+    first = process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (char *)process_parameter();
+    second = process_parameter();
 
     /* Insert the symbol into the global symbol table. */
 
@@ -1631,7 +1630,7 @@ static void *df_binary( void )
     /* Now invoke the parameter's handler. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    ob_insert_byte( (unsigned char)process_parameter() );
+    ob_insert_byte( (uintptr_t)process_parameter() );
     
     return( NULL );
 }
@@ -1753,12 +1752,12 @@ static void *df_ifeqn( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (uintptr_t) process_parameter();
+    second = (uintptr_t)process_parameter();
 
     /* if_eqn: skip the controlled functions if the values are not equal. */
 
@@ -1794,12 +1793,12 @@ static void *df_ifnen( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (uintptr_t) process_parameter();
+    second = (uintptr_t)process_parameter();
 
     /* if_nen: skip the controlled functions if the values are equal. */
 
@@ -1835,12 +1834,12 @@ static void *df_ifeqs( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (char *)process_parameter();
+    first = process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (char *)process_parameter();
+    second = process_parameter();
 
     /* if_eqs: skip the controlled functions if the values are not equal. */
 
@@ -1881,12 +1880,12 @@ static void *df_ifnes( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (char *)process_parameter();
+    first = process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (char *)process_parameter();
+    second = process_parameter();
 
     /* if_nes: skip the controlled functions if the values are equal. */
 
@@ -1921,12 +1920,12 @@ static void *df_add( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (uintptr_t) process_parameter();
+    second = (uintptr_t)process_parameter();
 
     return( (void *)(first + second) );
 }
@@ -1948,7 +1947,7 @@ static void *df_decimal( void )
     /* Now get the parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Convert and return the value. */
 
@@ -1973,12 +1972,12 @@ static void *df_divide( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (uintptr_t) process_parameter();
+    second = (uintptr_t)process_parameter();
 
     if( second == 0 ) {
         xx_simple_err_c( err_zero_divisor, "%divide()" );
@@ -2073,7 +2072,7 @@ static void *df_hex( void )
     /* Now get the parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Convert and return a pointer to the parameter */
 
@@ -2097,7 +2096,7 @@ static void *df_lower( void )
     /* Now get the parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (char *)process_parameter();
+    first = process_parameter();
 
     /* Convert and return the parameter. */
 
@@ -2121,12 +2120,12 @@ static void *df_remainder( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (uintptr_t) process_parameter();
+    second = (uintptr_t)process_parameter();
 
     if( second == 0 ) {
         xx_simple_err_c( err_zero_divisor, "%remainder()" );
@@ -2152,12 +2151,12 @@ static void *df_subtract( void )
     /* Now get the first parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t) process_parameter();
+    first = (uintptr_t)process_parameter();
 
     /* Now get the second parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.second;
-    second = (uintptr_t) process_parameter();
+    second = (uintptr_t)process_parameter();
 
     return( (void *)(first - second) );
 }
@@ -2332,11 +2331,11 @@ static df_function driver_function_table[MAX_FUNC_INDEX + 1] = {
  *          restored to their value on entry on exit.
 */
 
-static void interpret_functions( unsigned char *in_function )
+static void interpret_functions( char *in_function )
 {
     bool            old_last_done = false;
     df_function     *old_function_table = NULL;
-    unsigned char   *old_function = NULL;
+    char            *old_function = NULL;
     uint16_t        current_offset;
 
     /* An empty or missing block is not an error, but a warning is issued
@@ -2812,8 +2811,7 @@ static void fb_first_text_chars( text_chars *in_chars, line_proc *in_lineproc )
                     }
                     post_text_output();
                 }
-                df_interpret_driver_functions(
-                    wgml_fonts[df_font].font_style->startvalue->text );
+                df_interpret_driver_functions( wgml_fonts[df_font].font_style->startvalue->text );
             }
         }
     }
@@ -2886,8 +2884,7 @@ static void fb_first_text_chars( text_chars *in_chars, line_proc *in_lineproc )
             ob_insert_ps_text_start();
             text_out_open = true;
         }
-        ob_insert_block( in_chars->text, in_chars->count, true, true, 
-                         in_chars->font);
+        ob_insert_block( in_chars->text, in_chars->count, true, true, in_chars->font);
 
         if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
@@ -3027,8 +3024,7 @@ static void fb_new_font_text_chars( text_chars *in_chars, line_proc *in_lineproc
             ob_insert_ps_text_start();
             text_out_open = true;
         }
-        ob_insert_block( in_chars->text, in_chars->count, true, true, 
-                         in_chars->font);
+        ob_insert_block( in_chars->text, in_chars->count, true, true, in_chars->font);
 
         if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
@@ -3377,8 +3373,7 @@ static void fb_subsequent_text_chars( text_chars *in_chars, line_proc *in_linepr
             ob_insert_ps_text_start();
             text_out_open = true;
         }
-        ob_insert_block( in_chars->text, in_chars->count, true, true,
-                         in_chars->font);
+        ob_insert_block( in_chars->text, in_chars->count, true, true, in_chars->font);
         if( undo_shift && text_out_open && ProcFlags.ps_device ) {
             ob_insert_ps_text_end( htab_done, active_font );
             htab_done = false;
@@ -3455,7 +3450,7 @@ void df_start_page( void )
  *      current_function_table is set to device_function_table.
 */
 
-void df_interpret_device_functions( unsigned char *in_function )
+void df_interpret_device_functions( char *in_function )
 {
     /* Select the table and invoke the interpreter. */
 
@@ -3475,7 +3470,7 @@ void df_interpret_device_functions( unsigned char *in_function )
  *      current_function_table is set to driver_function_table.
 */
 
-void df_interpret_driver_functions( unsigned char *in_function )
+void df_interpret_driver_functions( char *in_function )
 {
     /* Select the table and invoke the interpreter. */
 
