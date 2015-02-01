@@ -284,7 +284,7 @@ static cop_driver * parse_finish_block( cop_driver * in_driver,
  *          the format must be entirely present for there to be no error.
 */
 
-#define CHECK_LINE_PASS(x) (x == 0 || x > fontstyle_block_ptr->line_passes)
+#define CHECK_LINE_PASS(x) (x > 0 && x <= fontstyle_block_ptr->line_passes)
 
 static cop_driver * parse_font_style( FILE *in_file, cop_driver *in_driver, 
                                       fontstyle_block *fontstyle_block_ptr,
