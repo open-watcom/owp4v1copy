@@ -360,8 +360,7 @@ static void fb_newline( void )
     if( at_start ) {
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
-                df_interpret_driver_functions(
-                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
             }
         }
         at_start = false;
@@ -839,8 +838,7 @@ static void * df_flushpage( void )
     if( at_start ) {
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
-                df_interpret_driver_functions(
-                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
             }
         }
         at_start = false;
@@ -3227,14 +3225,11 @@ static void fb_normal_vertical_positioning( void )
                              * of the previous device page.
                              */
 
-                            current_state.y_address =
-                                (current_pages + i) * bin_device->page_depth;
+                            current_state.y_address = (current_pages + i) * bin_device->page_depth;
                             y_address = current_state.y_address;
 
-                            if( wgml_fonts[0].font_style->lineprocs[0].endvalue 
-                                    != NULL ) {
-                                df_interpret_driver_functions(
-                                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+                            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
+                                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
                             }
                         }
                         at_start = false;
@@ -3707,20 +3702,17 @@ void fb_enterfont( void )
 
     if( wgml_fonts[0].font_switch != NULL ) {
         if( wgml_fonts[0].font_switch->startvalue != NULL ) {
-            df_interpret_driver_functions(
-                wgml_fonts[0].font_switch->startvalue->text );
+            df_interpret_driver_functions( wgml_fonts[0].font_switch->startvalue->text );
         }
     }
 
     if( wgml_fonts[0].font_style != NULL ) {       
         if( wgml_fonts[0].font_style->startvalue != NULL ) {
-            df_interpret_driver_functions(
-                                wgml_fonts[0].font_style->startvalue->text );
+            df_interpret_driver_functions( wgml_fonts[0].font_style->startvalue->text );
         }
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[0].font_style->lineprocs[0].startvalue != NULL ) {
-                df_interpret_driver_functions(
-                    wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
             }
             fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
         }
@@ -3796,8 +3788,7 @@ void fb_first_text_line_pass( text_line * out_line )
                 if( wgml_fonts[current->font].font_style->lineprocs == NULL ) {       
                     cur_lineproc = NULL;
                 } else {
-                    cur_lineproc = 
-                    &wgml_fonts[current->font].font_style->lineprocs[0];
+                    cur_lineproc = &wgml_fonts[current->font].font_style->lineprocs[0];
                 }
             }
             desired_state.font = current->font;
@@ -3975,11 +3966,8 @@ void fb_lineproc_endvalue( void )
             post_text_output();
         }
         if( wgml_fonts[df_font].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[df_font].font_style->
-                                lineprocs[line_pass_number].endvalue != NULL ) {
-                df_interpret_driver_functions(
-                    wgml_fonts[df_font].font_style->lineprocs[line_pass_number].
-                                                            endvalue->text );
+            if( wgml_fonts[df_font].font_style->lineprocs[line_pass_number].endvalue != NULL ) {
+                df_interpret_driver_functions( wgml_fonts[df_font].font_style->lineprocs[line_pass_number].endvalue->text );
             }
         }
     }
@@ -4089,12 +4077,10 @@ void fb_position( uint32_t h_start, uint32_t v_start )
     /* If the :FONTSTYLE block exists, interpret the appropriate blocks. */
 
     if( wgml_fonts[0].font_style != NULL ) {
-        if( wgml_fonts[0].font_style->lineprocs !=NULL ) {
-            df_interpret_driver_functions(
-                wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+        if( wgml_fonts[0].font_style->lineprocs != NULL ) {
+            df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
             x_address = h_start;    // to match wgml 4.0
-            df_interpret_driver_functions(
-                wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+            df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
             fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
         }
     }
@@ -4119,10 +4105,10 @@ void fb_position( uint32_t h_start, uint32_t v_start )
 
 void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
 {
-    bool                tc_skipped;
-    fontstyle_block *   cur_fontstyle   = NULL;
-    line_proc       *   cur_lineproc    = NULL;
-    text_chars      *   current         = NULL;
+    bool            tc_skipped;
+    fontstyle_block *cur_fontstyle   = NULL;
+    line_proc       *cur_lineproc;
+    text_chars      *current         = NULL;
 
     /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
 
@@ -4133,18 +4119,15 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
      * :FONTSTYLE block which has a :LINEPROC block for this pass.
      */
 
-    current = out_line->first;
-    while( current != NULL ) {
+    cur_lineproc = NULL;
+    for( current = out_line->first; current != NULL; current = current->next ) {
         cur_fontstyle = wgml_fonts[current->font].font_style;
         if( cur_fontstyle != NULL ) {
             if( line_pass < cur_fontstyle->line_passes ) {
-                if( &cur_fontstyle->lineprocs[line_pass] != NULL) {
-                    cur_lineproc = &cur_fontstyle->lineprocs[line_pass];
-                    break;
-                }
+                cur_lineproc = &cur_fontstyle->lineprocs[line_pass];
+                break;
             }
         }
-        current = current->next;
     }
 
     /* If current is NULL, this line does not have this pass. */
@@ -4175,72 +4158,52 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
 
     /* Now do the remaining text_chars instances. */
 
-    current = current->next;
-    if( current != NULL ) {
-        while( current != NULL ) {
-            tc_skipped = false;
-            while( current != NULL ) {
-                cur_fontstyle = wgml_fonts[current->font].font_style;
-                if( cur_fontstyle != NULL ) {
-                    if( line_pass < cur_fontstyle->line_passes ) {
-                        if( &cur_fontstyle->lineprocs[line_pass] != NULL) {
-                            cur_lineproc = &cur_fontstyle->lineprocs[line_pass];
-                            break;
-                        }
-                    }
-                    tc_skipped = true;
-                }
-                current = current->next;
-            }
-
-            /* If current is NULL, the last text_chars has been done. */
-
-            if( current == NULL ) break;
-
-            desired_state.x_address = current->x_address;
-            desired_state.type = current->type;
-            if( cur_lineproc != NULL) {
-                if( current_state.font != current->font ) {
-                    desired_state.font = current->font;
-                    fb_new_font_text_chars( current, cur_lineproc );
-                } else {
-                    if( tc_skipped == true ) {
-
-                        /* Close and reopen the font style. This prevents
-                         * font style underline from underlining the
-                         * intervening text between two separated text_chars.
-                         */
-
-                        if( cur_lineproc->endvalue != NULL ) {
-                            df_interpret_driver_functions(
-                                cur_lineproc->endvalue->text );
-                        }
-
-                        if( cur_fontstyle->endvalue != NULL ) {
-                            df_interpret_driver_functions(
-                                cur_fontstyle->endvalue->text );
-                        }
-
-                        fb_internal_horizontal_positioning();
-
-                        if( cur_fontstyle->startvalue != NULL ) {
-                            df_interpret_driver_functions(
-                                cur_fontstyle->startvalue->text );
-                        }
-
-                        if( cur_lineproc->startvalue != NULL ) {
-                            df_interpret_driver_functions(
-                                cur_lineproc->startvalue->text );
-                        }
-
-                        fb_firstword( cur_lineproc );
-                    }
-
-                    fb_subsequent_text_chars( current, cur_lineproc );
-                }
-            }
-            current = current->next;
+    tc_skipped = false;
+    for( current = current->next; current != NULL; current = current->next ) {
+        if( (cur_fontstyle = wgml_fonts[current->font].font_style) == NULL )
+            continue;
+        if( line_pass >= cur_fontstyle->line_passes ) {
+            tc_skipped = true;
+            continue;
         }
+        cur_lineproc = &cur_fontstyle->lineprocs[line_pass];
+        desired_state.x_address = current->x_address;
+        desired_state.type = current->type;
+        if( current_state.font != current->font ) {
+            desired_state.font = current->font;
+            fb_new_font_text_chars( current, cur_lineproc );
+        } else {
+            if( tc_skipped ) {
+
+                /* Close and reopen the font style. This prevents
+                 * font style underline from underlining the
+                 * intervening text between two separated text_chars.
+                 */
+
+                if( cur_lineproc->endvalue != NULL ) {
+                    df_interpret_driver_functions( cur_lineproc->endvalue->text );
+                }
+
+                if( cur_fontstyle->endvalue != NULL ) {
+                    df_interpret_driver_functions( cur_fontstyle->endvalue->text );
+                }
+
+                fb_internal_horizontal_positioning();
+
+                if( cur_fontstyle->startvalue != NULL ) {
+                    df_interpret_driver_functions( cur_fontstyle->startvalue->text );
+                }
+
+                if( cur_lineproc->startvalue != NULL ) {
+                    df_interpret_driver_functions( cur_lineproc->startvalue->text );
+                }
+
+                fb_firstword( cur_lineproc );
+            }
+
+            fb_subsequent_text_chars( current, cur_lineproc );
+        }
+        tc_skipped = false;
     }
 
     /* Close text output if still open at end of line. */
@@ -4251,7 +4214,4 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
         }
         post_text_output();
     }
-
-    return;
 }
-

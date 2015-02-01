@@ -1584,7 +1584,7 @@ void fb_output_textline( text_line * out_line )
         return;
     }
 
-    /* Determine the number of passes. */
+    /* Determine the maximum number of passes. */
 
     line_passes = 0;
     while( current != NULL ) {
