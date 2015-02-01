@@ -342,7 +342,7 @@ static void set_bind( option * opt )
     bool        scanerr;
     su          bindwork;
 
-    if( tokennext == NULL || tokennext->bol || tokennext->token[0] == '(' \
+    if( tokennext == NULL || tokennext->bol || tokennext->token[0] == '('
                                             || is_option() == true ) {
 
         g_err( err_miss_inv_opt_value, opt->option, "" );
@@ -464,7 +464,7 @@ static void set_lpinch( option * opt )
 
 static void set_delim( option * opt )
 {
-    if( tokennext == NULL || is_option() == true \
+    if( tokennext == NULL || is_option() == true
                           || tokennext->toklen != 1 ) {       // not length 1
         g_err( err_miss_inv_opt_value, opt->option,
                 tokennext == NULL ? " " : tokennext->token );
@@ -634,7 +634,7 @@ static void set_font( option * opt )
                 tokennext = tokennext->nxt;
             } else {
                 g_info_lm( inf_recognized_xxx, "font number", p );
-                new_font->font = (uint8_t) fn;
+                new_font->font = (font_number)fn;
                 tokennext = tokennext->nxt;
             }
         }

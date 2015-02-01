@@ -1288,7 +1288,7 @@ uint32_t cop_text_width( const char *text, size_t count, font_number font )
     size_t          i;
     uint32_t        width;
 
-    if( font >= wgml_font_cnt ) 
+    if( font >= wgml_font_cnt )
         font = 0;
 
     /* Compute the width. */
@@ -1417,7 +1417,9 @@ void cop_ti_table( char *p )
     }
 
     if( no_data ) {         // reset the table if no_data is still true
-        for( i = 0; i < 0x100; i++ ) ti_table[i] = i;
+        for( i = 0; i < 0x100; i++ ) {
+            ti_table[i] = i;
+        }
     }
 
     return;
@@ -1588,7 +1590,8 @@ void fb_output_textline( text_line * out_line )
 
     line_passes = 0;
     while( current != NULL ) {
-        if( current->font >= wgml_font_cnt ) current->font = 0;
+        if( current->font >= wgml_font_cnt )
+            current->font = 0;
         if( wgml_fonts[current->font].font_style->line_passes > line_passes ) {
             line_passes = wgml_fonts[current->font].font_style->line_passes;
         }
@@ -1625,7 +1628,8 @@ void fb_start( void )
 
     /* Interpret the START INIT block. */
 
-    if( bin_driver->inits.start != NULL ) fb_init( bin_driver->inits.start );
+    if( bin_driver->inits.start != NULL )
+        fb_init( bin_driver->inits.start );
 
     return;
 }

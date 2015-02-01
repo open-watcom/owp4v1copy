@@ -66,10 +66,9 @@
 
 #define pica( var, next, flag )
 #define pics( var, next, flag )
-#define picc( var, next, flag )   picl( var, next, flag )
-#define pick( var, next, flag )   picl( var, next, flag )
-#define picl( var, next, flag )   \
-static void sysf( var )( symvar * entry );
+#define picc( var, next, flag ) picl( var, next, flag )
+#define pick( var, next, flag ) picl( var, next, flag )
+#define picl( var, next, flag ) static void sysf( var )( symvar * entry );
 #include "gsyssym.h"
 #undef pick
 #undef pica
@@ -83,17 +82,10 @@ static void sysf( var )( symvar * entry );
 
 #define pica( var, next, flag )
 #define pick( var, next, flag )
-#define picc( var, next, flag )         \
-static char syss( var )[2];             // for single char values as string
-
-#define picl( var, next, flag )         \
-static char syss( var )[MAX_L_AS_STR];  // for long as string and sysbxchar
-
-#define pics( var, next, flag )         \
-static char syss( var )[60];            // for special string $docnum
-                                        // arbitrary length
+#define picc( var, next, flag ) static char syss( var )[2];             // for single char values as string
+#define picl( var, next, flag ) static char syss( var )[MAX_L_AS_STR];  // for long as string and sysbxchar
+#define pics( var, next, flag ) static char syss( var )[60];            // for special string $docnum arbitrary length
 #include "gsyssym.h"
-
 #undef pick
 #undef pica
 #undef picc

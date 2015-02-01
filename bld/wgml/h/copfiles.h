@@ -533,7 +533,7 @@ typedef struct cop_font {
 typedef struct {
     size_t              current;
     size_t              length;
-    uint8_t         *   text;
+    char                *text;
 } record_buffer;
 
 /* This struct implements the wgml_font struct in the Wiki. */
@@ -553,7 +553,7 @@ typedef struct {
     uint32_t                spc_width;
     uint32_t                width_table[0x100];
     char                    font_resident;
-    uint8_t                 shift_count;
+    unsigned char           shift_count;
     char                    shift_height[4];
 } wgml_font;
 
