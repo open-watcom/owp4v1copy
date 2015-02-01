@@ -99,8 +99,7 @@ static unsigned char       ti_table[0x100]; // .TI-controlled translation table
  *      the same length in horizontal_base_units.
  */
 
-static uint32_t scale_basis_to_horizontal_base_units( uint32_t in_units,
-                                                       wgml_font * in_font )
+static uint32_t scale_basis_to_horizontal_base_units( uint32_t in_units, wgml_font *in_font )
 {
     uint32_t    divisor;
     uint64_t    units;
@@ -169,8 +168,7 @@ static void compute_metrics( wgml_font * in_font )
         /* Use the line_height and line_space values from the FONT block. */
 
         in_font->line_space = in_font->bin_font->line_space;
-            in_font->line_height = in_font->bin_font->line_height +
-                                   in_font->line_space;
+        in_font->line_height = in_font->bin_font->line_height + in_font->line_space;
     } else {
 
         /* Use the font_height, font_space, and vertical_base_units values.
@@ -271,7 +269,7 @@ static cop_device * get_cop_device( char const * in_name )
 
     /* Acquire the file, if it exists. */
 
-    if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
+    if( !search_file_in_dirs( in_name, "", "", ds_bin_lib ) ) {
         return( out_device );
     }
 
@@ -347,7 +345,7 @@ static cop_driver * get_cop_driver( char const * in_name )
 
     /* Acquire the file, if it exists. */
 
-    if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
+    if( !search_file_in_dirs( in_name, "", "", ds_bin_lib ) ) {
         return( out_driver );
     }
 
@@ -423,7 +421,7 @@ static cop_font * get_cop_font( char const * in_name )
 
     /* Acquire the file, if it exists. */
 
-    if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
+    if( !search_file_in_dirs( in_name, "", "", ds_bin_lib ) ) {
         return( out_font );
     }
 
@@ -500,13 +498,11 @@ static cop_font * find_cop_font( char const * in_name )
     cop_font    *   current = NULL;
     cop_font    *   retval  = NULL;
 
-    current = bin_fonts;
-    while( current != NULL ) {
+    for( current = bin_fonts; current != NULL; current = current->next_font ) {
         if( !stricmp( in_name, current->defined_name ) ) {
             retval = current;
             break;
         }
-        current = current->next_font;
     }
 
     if( retval == NULL ) {
@@ -838,16 +834,13 @@ void cop_setup( void )
 
     if( !ProcFlags.ps_device ) {
         if( bin_device->box.font_name == NULL ) {
-            if( bin_device->underscore.specified_font && 
-                    (bin_device->underscore.font_name != NULL) ) {
+            if( bin_device->underscore.specified_font && (bin_device->underscore.font_name != NULL) ) {
                 gen_cnt++;
             }
         } else {
             gen_cnt++;
-            if( bin_device->underscore.specified_font &&
-                    (bin_device->underscore.font_name != NULL) ) {
-                if( stricmp( bin_device->box.font_name, 
-                             bin_device->underscore.font_name ) ) {
+            if( bin_device->underscore.specified_font && (bin_device->underscore.font_name != NULL) ) {
+                if( stricmp( bin_device->box.font_name, bin_device->underscore.font_name ) ) {
                     gen_cnt++;
                 }
             }
@@ -1316,6 +1309,7 @@ void cop_ti_table( char *p )
     uint32_t        len;
     char            cwcurr[4];
 
+    first_char = '\0';
     cwcurr[0] = SCR_char;
     cwcurr[1] = 't';
     cwcurr[2] = 'i';
@@ -1463,7 +1457,8 @@ void fb_document( void )
 
     /* Interpret the DOCUMENT INIT block. */
 
-    if( bin_driver->inits.document != NULL ) fb_init( bin_driver->inits.document );
+    if( bin_driver->inits.document != NULL )
+        fb_init( bin_driver->inits.document );
 
     /* Perform the virtual %enterfont(0). */
 
@@ -1580,8 +1575,7 @@ void fb_output_textline( text_line * out_line )
 
     /* Ensure out_line has at least one text_chars instance. */
 
-    current = out_line->first;
-    if( current == NULL ) {
+    if( out_line->first == NULL ) {
         fb_empty_text_line( out_line );
         return;
     }
@@ -1589,13 +1583,12 @@ void fb_output_textline( text_line * out_line )
     /* Determine the maximum number of passes. */
 
     line_passes = 0;
-    while( current != NULL ) {
+    for( current = out_line->first; current != NULL; current = current->next ) {
         if( current->font >= wgml_font_cnt )
             current->font = 0;
         if( wgml_fonts[current->font].font_style->line_passes > line_passes ) {
             line_passes = wgml_fonts[current->font].font_style->line_passes;
         }
-        current = current->next;
     }
 
     /* Do the first pass. */

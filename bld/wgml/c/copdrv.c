@@ -129,8 +129,7 @@ static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
  *          the allocation fails.
  */
 
-static cop_driver * parse_finish_block( cop_driver * in_driver,
-                                        uint8_t * * current, uint8_t * base )
+static cop_driver *parse_finish_block( cop_driver *in_driver, char **current, char *base )
 {
 
     code_block *    cop_codeblocks  = NULL;
@@ -211,7 +210,8 @@ static cop_driver * parse_finish_block( cop_driver * in_driver,
         /* Get the CodeBlocks. */
         
         cop_codeblocks = get_code_blocks( current, count, base );
-        if( cop_codeblocks == NULL ) break;
+        if( cop_codeblocks == NULL )
+            break;
         
         /* Initialize the code_text struct. */
 
@@ -286,10 +286,9 @@ static cop_driver * parse_finish_block( cop_driver * in_driver,
 
 #define CHECK_LINE_PASS(x) (x > 0 && x <= fontstyle_block_ptr->line_passes)
 
-static cop_driver * parse_font_style( FILE *in_file, cop_driver *in_driver, 
-                                      fontstyle_block *fontstyle_block_ptr,
-                                      p_buffer **p_buffer_set,
-                                      uint8_t **current, uint8_t count )
+static cop_driver *parse_font_style( FILE *in_file, cop_driver *in_driver,
+        fontstyle_block *fontstyle_block_ptr, p_buffer **p_buffer_set,
+        char **current, uint8_t count )
 {
     char *          string_ptr              = NULL;
     code_block *    cop_codeblocks          = NULL;
@@ -792,8 +791,7 @@ static cop_driver * parse_font_style( FILE *in_file, cop_driver *in_driver,
  *      get_code_blocks() calls mem_alloc(), which will call exit() if
  *          the allocation fails.
  */
-static cop_driver * parse_init_block( cop_driver * in_driver,
-                                       uint8_t * * current, uint8_t * base )
+static cop_driver *parse_init_block( cop_driver *in_driver, char **current, char *base )
 {
 
     code_block *    cop_codeblocks  = NULL;
@@ -1054,7 +1052,7 @@ cop_driver * parse_driver( FILE * in_file )
     newline_block *     newline_block_ptr       = NULL;
     p_buffer *          p_buffer_set            = NULL;
     size_t              span;
-    uint8_t *           current                 = NULL;
+    char                *current                = NULL;
     uint8_t *           text_ptr                = NULL;
     uint8_t             the_flags[21];
 
@@ -1323,9 +1321,8 @@ cop_driver * parse_driver( FILE * in_file )
 
         /* Get the advance for the current NewlineBlock. */
 
-        memcpy_s( &newline_block_ptr[i].advance,
-                  sizeof( newline_block_ptr[i].advance ), current,
-                  sizeof( newline_block_ptr[i].advance ) );
+        memcpy_s( &newline_block_ptr[i].advance, sizeof( newline_block_ptr[i].advance ),
+                    current, sizeof( newline_block_ptr[i].advance ) );
         current += sizeof( newline_block_ptr[i].advance );
 
         /* Get the number of CodeBlocks, and verify that it is 0x01. */
@@ -1518,9 +1515,8 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* This block is optional: a count of 0 is allowed. */
 
-    memcpy_s( &out_driver->fontswitches.count,
-              sizeof( out_driver->fontswitches.count ), current,
-              sizeof( out_driver->fontswitches.count ) );
+    memcpy_s( &out_driver->fontswitches.count, sizeof( out_driver->fontswitches.count ),
+                current, sizeof( out_driver->fontswitches.count ) );
     current += sizeof( out_driver->fontswitches.count );
 
     if( out_driver->fontswitches.count == 0x0000 ) {
@@ -1847,7 +1843,8 @@ cop_driver * parse_driver( FILE * in_file )
 
         out_driver = parse_font_style( in_file, out_driver,
                         &fontstyle_block_ptr[i], &p_buffer_set, &current, count8 );
-        if( out_driver == NULL ) return( out_driver );
+        if( out_driver == NULL )
+            return( out_driver );
         fontstyle_block_ptr = OUT_DRV_MAP_OFF( out_driver->fontstyles.fontstyleblocks );
     }
     

@@ -74,8 +74,7 @@ typedef enum {
  *      not_valid otherwise.
  */
 
-static index_status find_cumulative_index( functions_block * in_block,
-                                            uint16_t in_max, uint8_t * out_index )
+static index_status find_cumulative_index( functions_block * in_block, uint16_t in_max, uint8_t * out_index )
 {
     uint8_t i;
 
@@ -149,8 +148,7 @@ static void set_cumulative_index( functions_block * in_block )
     if( in_block->count > 1 ) {
         for( i = 1; i < in_block->count; i++ ) {
             in_block->code_blocks[i].cumulative_index = 
-                                in_block->code_blocks[i-1].cumulative_index + 
-                                in_block->code_blocks[i-1].count;
+                in_block->code_blocks[i-1].cumulative_index + in_block->code_blocks[i-1].count;
         }
     }
 
@@ -244,8 +242,8 @@ cop_device * parse_device( FILE * in_file )
 
     /* Used to acquire the DefaultFonts and DeviceFonts. */
 
-    default_font *      defaultfont_ptr     = NULL;
-    device_font  *      devicefont_ptr      = NULL;
+    default_font        *defaultfont_ptr    = NULL;
+    device_font         *devicefont_ptr     = NULL;
 
     /* Used to acquire the PauseBlock and DevicefontBlock CodeBlocks. */
 
@@ -253,7 +251,7 @@ cop_device * parse_device( FILE * in_file )
     functions_block *   cop_functions       = NULL;
     index_status        return_value;
     p_buffer *          raw_functions       = NULL;
-    uint8_t *           current;
+    char                *current;
     uint8_t             j;
     uint16_t            cumulative_index;
     uint16_t            nulls;
@@ -381,8 +379,7 @@ cop_device * parse_device( FILE * in_file )
     
     /* Get the page_width. */
 
-    fread( &out_device->page_width, sizeof( out_device->page_width ), 1, 
-           in_file );
+    fread( &out_device->page_width, sizeof( out_device->page_width ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -391,8 +388,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the page_depth. */
 
-    fread( &out_device->page_depth, sizeof( out_device->page_depth ), 1, 
-           in_file );
+    fread( &out_device->page_depth, sizeof( out_device->page_depth ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -401,8 +397,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the horizontal_base_units. */
 
-    fread( &out_device->horizontal_base_units, 
-           sizeof( out_device->horizontal_base_units ), 1, in_file );
+    fread( &out_device->horizontal_base_units, sizeof( out_device->horizontal_base_units ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -411,8 +406,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the vertical_base_units. */
 
-    fread( &out_device->vertical_base_units,
-           sizeof( out_device->vertical_base_units ), 1, in_file );
+    fread( &out_device->vertical_base_units, sizeof( out_device->vertical_base_units ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -487,8 +481,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        fread( &out_device->box.font,
-               sizeof( out_device->box.font ), 1, in_file );
+        fread( &out_device->box.font, sizeof( out_device->box.font ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             mem_free( out_device );
             out_device = NULL;
@@ -558,8 +551,7 @@ cop_device * parse_device( FILE * in_file )
     
     /* There are 0x0F bytes in the file but only 11 values. */
 
-    fread( &out_device->box.horizontal_line,
-           sizeof( out_device->box.horizontal_line ), 11, in_file );
+    fread( &out_device->box.horizontal_line, sizeof( out_device->box.horizontal_line ), 11, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -598,8 +590,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        fread( &out_device->underscore.font,
-               sizeof( out_device->underscore.font ), 1, in_file );
+        fread( &out_device->underscore.font, sizeof( out_device->underscore.font ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             mem_free( out_device );
             out_device = NULL;
@@ -676,8 +667,7 @@ cop_device * parse_device( FILE * in_file )
     
     /* There are 0x05 bytes in the file but only one value. */
 
-    fread( &out_device->underscore.underscore_char,
-           sizeof( out_device->underscore.underscore_char ), 1, in_file );
+    fread( &out_device->underscore.underscore_char, sizeof( out_device->underscore.underscore_char ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -1042,8 +1032,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the number of DefaultFonts. */
     
-    fread( &out_device->defaultfonts.font_count,
-           sizeof( out_device->defaultfonts.font_count ), 1, in_file );
+    fread( &out_device->defaultfonts.font_count, sizeof( out_device->defaultfonts.font_count ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -1122,8 +1111,7 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the font_space. */
 
-        fread( &defaultfont_ptr[i].font_space,
-               sizeof( defaultfont_ptr[i].font_space ), 1, in_file );
+        fread( &defaultfont_ptr[i].font_space, sizeof( defaultfont_ptr[i].font_space ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             mem_free( out_device );
             out_device = NULL;
@@ -1613,8 +1601,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the number of Devicefonts. */
 
-    fread( &out_device->devicefonts.font_count,
-           sizeof( out_device->devicefonts.font_count ), 1, in_file );
+    fread( &out_device->devicefonts.font_count, sizeof( out_device->devicefonts.font_count ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( raw_functions );
         raw_functions = NULL;
@@ -1804,8 +1791,7 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the resident font indicator. */
 
-        fread( &devicefont_ptr[i].resident,
-               sizeof( devicefont_ptr[i].resident ), 1, in_file );
+        fread( &devicefont_ptr[i].resident, sizeof( devicefont_ptr[i].resident ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             mem_free( raw_functions );
             raw_functions = NULL;
@@ -1847,8 +1833,7 @@ cop_device * parse_device( FILE * in_file )
 
             /* Ensure that the CodeBlock can be found. */
 
-            return_value = find_cumulative_index( cop_functions,
-                                                  cumulative_index, &j );
+            return_value = find_cumulative_index( cop_functions, cumulative_index, &j );
             if( return_value == not_valid ) {
                 mem_free( raw_functions );
                 raw_functions = NULL;

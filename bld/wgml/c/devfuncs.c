@@ -565,14 +565,12 @@ static void pre_text_output( void )
                 ob_insert_block( " ", 1, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height,
-                                 ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height, ps_size, false, false, active_font );
 
                 ob_insert_block( " 0 ", 3, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height,
-                                 ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_neg );
                 ob_insert_block( shift_neg, ps_size, false, false, active_font );
@@ -589,14 +587,12 @@ static void pre_text_output( void )
                 ob_insert_block( " ", 1, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height,
-                                 ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height, ps_size, false, false, active_font );
 
                 ob_insert_block( " 0 ", 3, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
-                ob_insert_block( wgml_fonts[active_font].shift_height,
-                                 ps_size, false, false, active_font );
+                ob_insert_block( wgml_fonts[active_font].shift_height, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_rmoveto );
                 ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
@@ -1180,14 +1176,12 @@ static void *get_parameters( parameters *in_parameters )
 
     /* Get the first parameter offset (offset2). */
 
-    memcpy_s( &in_parameters->first, sizeof( in_parameters->first ),
-              current_df_data.current, sizeof( in_parameters->first ) );
+    memcpy_s( &in_parameters->first, sizeof( in_parameters->first ), current_df_data.current, sizeof( in_parameters->first ) );
     current_df_data.current += sizeof( in_parameters->first );
 
     /* Get the second parameter offset (offset3). */
 
-    memcpy_s( &in_parameters->second, sizeof( in_parameters->second ),
-              current_df_data.current, sizeof( in_parameters->second ) );
+    memcpy_s( &in_parameters->second, sizeof( in_parameters->second ), current_df_data.current, sizeof( in_parameters->second ) );
     current_df_data.current += sizeof( in_parameters->second );
 
     /* Skip the offset4 value. */
@@ -1219,8 +1213,7 @@ static void *process_parameter( void )
 {
     /* Reset current_df_data for the parameter. */
 
-    memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ),
-              current_df_data.current, sizeof( current_df_data.df_code ) );
+    memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ), current_df_data.current, sizeof( current_df_data.df_code ) );
     current_df_data.current += sizeof( current_df_data.df_code );
 
     /* Invoke parameter function. */
@@ -1467,8 +1460,7 @@ static void *df_cancel( void )
     if( wgml_fonts[df_font].font_style != NULL ) {
         if( !stricmp( first, wgml_fonts[df_font].font_style->type ) ) {
             if( wgml_fonts[df_font].font_style->startvalue != NULL ) {
-                df_interpret_driver_functions(
-                    wgml_fonts[df_font].font_style->startvalue->text );
+                df_interpret_driver_functions( wgml_fonts[df_font].font_style->startvalue->text );
             }
         }
     }
@@ -1476,8 +1468,7 @@ static void *df_cancel( void )
     if( wgml_fonts[df_font].font_switch != NULL ) {
         if( !stricmp( first, wgml_fonts[df_font].font_switch->type ) ) {
             if( wgml_fonts[df_font].font_switch->startvalue != NULL ) {
-                df_interpret_driver_functions(
-                    wgml_fonts[df_font].font_switch->startvalue->text );
+                df_interpret_driver_functions( wgml_fonts[df_font].font_switch->startvalue->text );
             }
         }
     }
@@ -2503,9 +2494,9 @@ static void fb_font_switch( void )
             /* The default width is a numeric. */
 
             df_font = current_state.font;
-            from_numeric = (uintptr_t) df_default_width();
+            from_numeric = (uintptr_t)df_default_width();
             df_font = desired_state.font;
-            to_numeric = (uintptr_t) df_default_width();
+            to_numeric = (uintptr_t)df_default_width();
             if( !do_now ) {
                 do_now = ( from_numeric != to_numeric );
             }
@@ -2516,9 +2507,9 @@ static void fb_font_switch( void )
             /* The font height is a numeric. */
 
             df_font = current_state.font;
-            from_numeric = (uintptr_t) df_font_height();
+            from_numeric = (uintptr_t)df_font_height();
             df_font = desired_state.font;
-            to_numeric = (uintptr_t) df_font_height();
+            to_numeric = (uintptr_t)df_font_height();
             if( !do_now ) {
                 do_now = ( from_numeric != to_numeric );
             }
@@ -2529,9 +2520,9 @@ static void fb_font_switch( void )
             /* The font out name 1 is a string. */
 
             df_font = current_state.font;
-            from_string = (char *)df_font_outname1();
+            from_string = df_font_outname1();
             df_font = desired_state.font;
-            to_string = (char *)df_font_outname1();
+            to_string = df_font_outname1();
             if( !do_now )
                 do_now = ( strcmp( from_string, to_string ) );
             mem_free( from_string );
@@ -2543,9 +2534,9 @@ static void fb_font_switch( void )
             /* The font out name 2 is a string. */
 
             df_font = current_state.font;
-            from_string = (char *)df_font_outname2();
+            from_string = df_font_outname2();
             df_font = desired_state.font;
-            to_string = (char *)df_font_outname2();
+            to_string = df_font_outname2();
             if( !do_now )
                 do_now = ( strcmp( from_string, to_string ) );
             mem_free( from_string );
@@ -2557,9 +2548,9 @@ static void fb_font_switch( void )
             /* The font resident flag is a string. */
 
             df_font = current_state.font;
-            from_string = (char *)df_font_resident();
+            from_string = df_font_resident();
             df_font = desired_state.font;
-            to_string = (char *)df_font_resident();
+            to_string = df_font_resident();
             if( !do_now )
                 do_now = ( strcmp( from_string, to_string ) );
             mem_free( from_string );
@@ -2571,9 +2562,9 @@ static void fb_font_switch( void )
             /* The font space is a numeric. */
 
             df_font = current_state.font;
-            from_numeric = (uintptr_t) df_font_space();
+            from_numeric = (uintptr_t)df_font_space();
             df_font = desired_state.font;
-            to_numeric = (uintptr_t) df_font_space();
+            to_numeric = (uintptr_t)df_font_space();
             if( !do_now ) {
                 do_now = ( from_numeric != to_numeric );
             }
@@ -2584,9 +2575,9 @@ static void fb_font_switch( void )
             /* The line height is a numeric. */
 
             df_font = current_state.font;
-            from_numeric = (uintptr_t) df_line_height();
+            from_numeric = (uintptr_t)df_line_height();
             df_font = desired_state.font;
-            to_numeric = (uintptr_t) df_line_height();
+            to_numeric = (uintptr_t)df_line_height();
             if( !do_now ) {
                 do_now = ( from_numeric != to_numeric );
             }
@@ -2597,9 +2588,9 @@ static void fb_font_switch( void )
             /* The line space is a numeric. */
 
             df_font = current_state.font;
-            from_numeric = (uintptr_t) df_line_space();
+            from_numeric = (uintptr_t)df_line_space();
             df_font = desired_state.font;
-            to_numeric = (uintptr_t) df_line_space();
+            to_numeric = (uintptr_t)df_line_space();
             if( !do_now ) {
                 do_now = ( from_numeric != to_numeric );
             }
@@ -3221,8 +3212,7 @@ static void fb_normal_vertical_positioning( void )
                 /* Interpret the DEVICE_PAGE :PAUSE block. */
 
                 if( bin_device->pauses.devpage_pause != NULL ) {
-                    df_interpret_device_functions(
-                        bin_device->pauses.devpage_pause->text );
+                    df_interpret_device_functions( bin_device->pauses.devpage_pause->text );
                 }
 
                 /* If the :ABSOLUTEADDRESS block is defined and this is the
@@ -3795,7 +3785,7 @@ void fb_first_text_line_pass( text_line *out_line )
     /* The "first text_chars instance" sequence. */
 
     if( wgml_fonts[df_font].font_style != NULL ) {
-        if( wgml_fonts[df_font].font_style->lineprocs != NULL ) {       
+        if( wgml_fonts[df_font].font_style->lineprocs != NULL ) {
             cur_lineproc = &wgml_fonts[df_font].font_style->lineprocs[0];
         }
     }
