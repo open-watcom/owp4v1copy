@@ -59,7 +59,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 //================= Function Prototypes ========================
 
 /* copfiles.c                           */
-extern unsigned char cop_in_trans( unsigned char in_char, font_number font );
+extern char         cop_in_trans( char in_char, font_number font );
 extern void         cop_setup( void );
 extern void         cop_teardown( void );
 extern uint32_t     cop_text_width( const char *text, size_t count, font_number font );
@@ -114,19 +114,19 @@ extern  void    init_def_lay( void );
 
 
 /* gdocpage.c                           */
-extern  void            clear_doc_element( doc_element * element );
-extern  void            do_page_out( void );
-extern  void            full_page_out( void );
-extern  void            insert_col_bot( doc_element * a_element );
-extern  void            insert_col_fn( doc_element * a_element );
-extern  void            insert_col_main( doc_element * a_element );
-extern  void            insert_col_top( doc_element * a_element );
-extern  void            insert_page_width( doc_element * a_element );
-extern  void            last_page_out( void );
-extern  void            reset_t_page( void );
-extern  void            set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, font_number font );
-extern  bool            split_element( doc_element * a_element, uint32_t req_depth );
-extern  void            text_page_out( void );
+extern  void        clear_doc_element( doc_element * element );
+extern  void        do_page_out( void );
+extern  void        full_page_out( void );
+extern  void        insert_col_bot( doc_element * a_element );
+extern  void        insert_col_fn( doc_element * a_element );
+extern  void        insert_col_main( doc_element * a_element );
+extern  void        insert_col_top( doc_element * a_element );
+extern  void        insert_page_width( doc_element * a_element );
+extern  void        last_page_out( void );
+extern  void        reset_t_page( void );
+extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, font_number font );
+extern  bool        split_element( doc_element * a_element, uint32_t req_depth );
+extern  void        text_page_out( void );
 
 
 /* gdocsect.c                           */
@@ -384,23 +384,23 @@ extern  void        print_tag_entry( gtentry * entry );
 extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 
 /* gtxtpool.c                           */
-extern  void                add_text_chars_to_pool( text_line * a_line );
+extern  void            add_text_chars_to_pool( text_line * a_line );
 extern  text_chars      *alloc_text_chars( const char *text, size_t cnt, font_number font );
-extern  void                add_text_line_to_pool( text_line * a_line );
-extern  text_line       *   alloc_text_line( void );
-extern  void                add_ban_col_to_pool( ban_column * a_column );
-extern  ban_column      *   alloc_ban_col( void );
-extern  void                add_box_col_set_to_pool( box_col_set * a_set );
-extern  box_col_set     *   alloc_box_col_set( void );
-extern  void                add_box_col_stack_to_pool( box_col_stack * a_stack );
-extern  box_col_stack   *   alloc_box_col_stack( void );
-extern  void                add_doc_col_to_pool( doc_column * a_column );
-extern  doc_column      *   alloc_doc_col( void );
-extern  void                add_doc_el_to_pool( doc_element * a_element );
-extern  doc_element     *   alloc_doc_el( element_type type );
-extern  void                add_tag_cb_to_pool( tag_cb * cb );
-extern  tag_cb          *   alloc_tag_cb( void );
-extern  void                free_pool_storage( void );
+extern  void            add_text_line_to_pool( text_line * a_line );
+extern  text_line       *alloc_text_line( void );
+extern  void            add_ban_col_to_pool( ban_column * a_column );
+extern  ban_column      *alloc_ban_col( void );
+extern  void            add_box_col_set_to_pool( box_col_set * a_set );
+extern  box_col_set     *alloc_box_col_set( void );
+extern  void            add_box_col_stack_to_pool( box_col_stack * a_stack );
+extern  box_col_stack   *alloc_box_col_stack( void );
+extern  void            add_doc_col_to_pool( doc_column * a_column );
+extern  doc_column      *alloc_doc_col( void );
+extern  void            add_doc_el_to_pool( doc_element * a_element );
+extern  doc_element     *alloc_doc_el( element_type type );
+extern  void            add_tag_cb_to_pool( tag_cb * cb );
+extern  tag_cb          *alloc_tag_cb( void );
+extern  void            free_pool_storage( void );
 
 
 /* gtitlepo.c                           */

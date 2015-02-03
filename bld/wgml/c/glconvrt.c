@@ -36,7 +36,7 @@
 
 
 /***************************************************************************/
-/* Layout attributes as character strings                                                                         */
+/* Layout attributes as character strings                                  */
 /***************************************************************************/
 
 #define pick( name, funci, funco, result ) { #name },
