@@ -3128,7 +3128,7 @@ static void fb_overprint_vertical_positioning( void )
 
 static void fb_normal_vertical_positioning( void )
 {
-    int         i;
+    uint32_t    i;
     uint32_t    current_pages;
     uint32_t    desired_pages;
     uint32_t    device_pages;
