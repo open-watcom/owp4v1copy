@@ -41,7 +41,7 @@ static char hnumx[7] = "$hnumX";
 /*  and update $headn global variable                                      */
 /***************************************************************************/
 
-static  void    update_headnumx( int lvl, char * hnumstr, size_t hnsize )
+static  void    update_headnumx( int lvl, char *hnumstr, size_t hnsize )
 {
     size_t          pos;
     char          * pn;
@@ -81,14 +81,11 @@ static  void    update_headnumx( int lvl, char * hnumstr, size_t hnsize )
         rc = add_symvar_addr( &global_dict, hnumx, hnumstr, no_subscript, 0,
                               &layout_work.hx[lvl].headnsub );
     } else {
-        if( strlen( layout_work.hx[lvl].headnsub->value )
-            < strlen( hnumstr ) ) {     // need more room
+        if( strlen( layout_work.hx[lvl].headnsub->value ) < strlen( hnumstr ) ) {     // need more room
             layout_work.hx[lvl].headnsub->value =
-                mem_realloc( layout_work.hx[lvl].headnsub->value,
-                             strlen( hnumstr ) + 1 );
+                mem_realloc( layout_work.hx[lvl].headnsub->value, strlen( hnumstr ) + 1 );
         }
-        strcpy_s( layout_work.hx[lvl].headnsub->value, strlen( hnumstr ) + 1,
-                  hnumstr );
+        strcpy_s( layout_work.hx[lvl].headnsub->value, strlen( hnumstr ) + 1, hnumstr );
     }
 }
 
@@ -97,7 +94,7 @@ static  void    update_headnumx( int lvl, char * hnumstr, size_t hnsize )
 /*  output hx Header  only  called if display_heading = yes                */
 /***************************************************************************/
 
-static  void    hx_header( int hx_lvl, char * hnumstr, char * txt )
+static  void    hx_header( int hx_lvl, const char *hnumstr, const char *txt )
 {
     doc_element     *   cur_el;
     font_number         font_save;
