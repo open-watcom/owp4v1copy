@@ -714,7 +714,7 @@ void        process_line( void )
     }
 
     scan_start = buff2;
-    scan_stop  = buff2 + buff2_lg;
+    scan_stop  = buff2 + buff2_lg - 1;
     return;
 }
 
