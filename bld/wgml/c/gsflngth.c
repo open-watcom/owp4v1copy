@@ -61,8 +61,8 @@ condcode    scr_length( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * re
         return( neg );
     }
 
-    pval = parms[0].a;
-    pend = parms[0].e;
+    pval = parms[0].start;
+    pend = parms[0].stop - 1;
 
     unquote_if_quoted( &pval, &pend );
 
