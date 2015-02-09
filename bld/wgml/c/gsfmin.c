@@ -58,6 +58,7 @@ condcode    scr_min( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
     char            *   pend;
     condcode            cc;
     int                 k;
+    int                 len;
     getnum_block        gn;
     long                minimum;
     char                linestr[MAX_L_AS_STR];
@@ -72,12 +73,16 @@ condcode    scr_min( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
     gn.ignore_blanks = false;
 
     for( k = 0; k < parmcount; k++ ) {
-        pval = parms[k].start;
-        pend = parms[k].stop;
+
+
+        pval = parms[k].a;
+        pend = parms[k].e;
 
         unquote_if_quoted( &pval, &pend );
 
-        if( pend == pval ) {            // null string nothing to do
+        len = pend - pval + 1;          // length
+
+        if( len <= 0 ) {                // null string nothing to do
             continue;                   // skip empty value
         }
         gn.argstart = pval;

@@ -86,10 +86,14 @@ void    scr_li( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
     pa = p;
+
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }
@@ -102,10 +106,10 @@ void    scr_li( void )
         }
     } else {
         gn.argstart = pa;
-        gn.argstop = scan_stop + 1;
+        gn.argstop  = scan_stop;
         gn.ignore_blanks = 0;
 
-        cc = getnum( &gn );            // try to get numeric value
+        cc = getnum ( &gn );            // try to get numeric value
         if( cc == notnum ) {
             switch( len ) {
             case 2 :

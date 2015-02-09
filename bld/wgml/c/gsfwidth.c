@@ -63,7 +63,7 @@ condcode    scr_width( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
     char            *   pend;
     char            *   pa;
     char            *   pe;
-    size_t              len;
+    int                 len;
     char                type;
     char                linestr[MAX_L_AS_STR];
     uint32_t            width;
@@ -72,24 +72,24 @@ condcode    scr_width( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
         return( neg );
     }
 
-    pval = parms[0].start;
-    pend = parms[0].stop;
+    pval = parms[0].a;
+    pend = parms[0].e;
 
     unquote_if_quoted( &pval, &pend );
 
-    if( pend == pval ) {                // null string width 0
+    len = pend - pval + 1;
+
+    if( len <= 0 ) {                    // null string width 0
         **result = '0';
         *result += 1;
         **result = '\0';
         return( pos );
     }
 
-    len = pend - pval;
-
     if( parmcount > 1 ) {               // evalute type
-        if( parms[1].stop > parms[1].start ) {// type
-            pa = parms[1].start;
-            pe = parms[1].stop;
+        if( parms[1].e >= parms[1].a ) {// type
+            pa  = parms[1].a;
+            pe  = parms[1].e;
 
             unquote_if_quoted( &pa, &pe );
 

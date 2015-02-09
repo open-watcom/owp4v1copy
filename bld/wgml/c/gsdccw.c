@@ -286,10 +286,14 @@ void    scr_cw( void )
     int             len;
 
     p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
     pa = p;
+
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }

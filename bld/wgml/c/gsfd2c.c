@@ -60,6 +60,7 @@ condcode    scr_d2c( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
     char            *   pend;
     condcode            cc;
     int                 n;
+    int                 len;
     getnum_block        gn;
     char                linestr[MAX_L_AS_STR];
 
@@ -68,12 +69,14 @@ condcode    scr_d2c( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
         return( cc );
     }
 
-    pval = parms[0].start;
-    pend = parms[0].stop;
+    pval = parms[0].a;
+    pend = parms[0].e;
 
     unquote_if_quoted( &pval, &pend );
 
-    if( pend == pval ) {                // null string nothing to do
+    len = pend - pval + 1;              // default length
+
+    if( len <= 0 ) {                    // null string nothing to do
         **result = '\0';
         return( pos );
     }
@@ -81,7 +84,7 @@ condcode    scr_d2c( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
     n   = 0;
     gn.ignore_blanks = false;
 
-    if( parms[1].stop > parms[1].start ) {
+    if( parms[1].e >= parms[1].a ) {
         gn.argstart = pval;
         gn.argstop  = pend;
         cc = getnum( &gn );

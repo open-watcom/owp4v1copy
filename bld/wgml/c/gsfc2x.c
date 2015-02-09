@@ -68,12 +68,12 @@ condcode    scr_c2x( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
         return( neg );
     }
 
-    pval = parms[0].start;
-    pend = parms[0].stop;
+    pval = parms[0].a;
+    pend = parms[0].e;
 
     unquote_if_quoted( &pval, &pend );
 
-    while( (pval < pend) && (ressize > 1) ) {
+    while( (pval <= pend) && (ressize > 1) ) {
         **result = hex( (unsigned)*pval >> 4 );
         *result += 1;
         **result = hex( (unsigned)*pval & 0x0f );

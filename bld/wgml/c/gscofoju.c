@@ -140,10 +140,14 @@ static void process_co_ju( bool both , char *cwcurr )
     int             len;
 
     p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
     pa = p;
+
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }
@@ -266,10 +270,14 @@ void    scr_co( void )
     cwcurr[2] = 'o';
     cwcurr[3] = '\0';
     p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
     pa = p;
+
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }

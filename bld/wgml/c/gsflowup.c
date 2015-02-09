@@ -91,24 +91,25 @@ static condcode scr_lowup( parm parms[MAX_FUN_PARMS], size_t parmcount,
         return( cc );
     }
 
-    pval = parms[0].start;
-    pend = parms[0].stop;
+    pval = parms[0].a;
+    pend = parms[0].e;
 
     unquote_if_quoted( &pval, &pend );
 
-    if( pend == pval ) {                // null string nothing to do
+    len = pend - pval + 1;              // default length
+
+    if( len <= 0 ) {                    // null string nothing to do
         **result = '\0';
         return( pos );
     }
 
+    n   = 0;                            // default start pos
     gn.ignore_blanks = false;
 
-    n = 0;                              // default start pos
-
     if( parmcount > 1 ) {               // evalute start pos
-        if( parms[1].stop > parms[1].start ) {// start pos specified
-            gn.argstart = parms[1].start;
-            gn.argstop  = parms[1].stop;
+        if( parms[1].e >= parms[1].a ) {// start pos specified
+            gn.argstart = parms[1].a;
+            gn.argstop  = parms[1].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result > len) ) {
                 if( !ProcFlags.suppress_msg ) {
@@ -129,12 +130,10 @@ static condcode scr_lowup( parm parms[MAX_FUN_PARMS], size_t parmcount,
         }
     }
 
-    len = pend - pval;                  // default length
-
     if( parmcount > 2 ) {               // evalute length for upper
-        if( parms[2].stop > parms[2].start ) {// length specified
-            gn.argstart = parms[2].start;
-            gn.argstop  = parms[2].stop;
+        if( parms[2].e >= parms[2].a ) {// length specified
+            gn.argstart = parms[2].a;
+            gn.argstop  = parms[2].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result == 0) ) {
                 if( !ProcFlags.suppress_msg ) {
@@ -156,7 +155,7 @@ static condcode scr_lowup( parm parms[MAX_FUN_PARMS], size_t parmcount,
     }
 
     for( k = 0; k < n; k++ ) {          // copy unchanged before startpos
-        if( (pval >= pend) || (ressize <= 0) ) {
+        if( (pval > pend) || (ressize <= 0) ) {
             break;
         }
         **result = *pval++;
@@ -165,7 +164,7 @@ static condcode scr_lowup( parm parms[MAX_FUN_PARMS], size_t parmcount,
     }
 
     for( k = 0; k < len; k++ ) {        // translate
-        if( (pval >= pend) || (ressize <= 0) ) {
+        if( (pval > pend) || (ressize <= 0) ) {
             break;
         }
         if( upper ) {
@@ -177,7 +176,7 @@ static condcode scr_lowup( parm parms[MAX_FUN_PARMS], size_t parmcount,
         ressize--;
     }
 
-    for( ; pval < pend; pval++ ) {     // copy unchanged
+    for( ; pval <= pend; pval++ ) {     // copy unchanged
         if( ressize <= 0 ) {
             break;
         }
@@ -201,3 +200,4 @@ condcode    scr_upper( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
 {
     return( scr_lowup( parms, parmcount, result, ressize, 1 ) );
 }
+

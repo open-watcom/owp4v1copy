@@ -104,6 +104,9 @@ void    scr_pa( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
@@ -253,20 +256,24 @@ void    scr_cp( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
     pa = p;
+
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }
     len = p - pa;
     if( len > 0 ) {                     // no action if no parm
         gn.argstart = pa;
-        gn.argstop = scan_stop + 1;
+        gn.argstop  = scan_stop;
         gn.ignore_blanks = 0;
 
-        cc = getnum( &gn );            // try to get numeric value
+        cc = getnum ( &gn );            // try to get numeric value
         if( cc == notnum ) {
             xx_opt_err( cwcurr, pa );
             scan_restart = scan_stop +1;

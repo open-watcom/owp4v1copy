@@ -180,7 +180,7 @@ extern  void    gml_set( const gmltag * entry )
  
                     process_line();
                     scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg - 1;
+                    scan_stop  = buff2 + buff2_lg;
                     if( (*scan_start == SCR_char) ||
                         (*scan_start == GML_char) ) {
                                         //  missing attribute not supplied error

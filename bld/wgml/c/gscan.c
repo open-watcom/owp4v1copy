@@ -746,7 +746,7 @@ void    scan_line( void )
 
     cb         = input_cbs->if_cb;
     scan_start = buff2;
-    scan_stop  = buff2 + buff2_lg - 1;
+    scan_stop  = buff2 + buff2_lg;
 
     if( !ProcFlags.literal ) {
         set_if_then_do( cb );

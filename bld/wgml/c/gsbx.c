@@ -1890,8 +1890,13 @@ void scr_bx( void )
     ProcFlags.box_cols_cur = false;     // new BX line: no box column list yet
     ProcFlags.group_elements = false;   // stop accumulating doc_elements
     ProcFlags.no_bx_hline = false;      // emit horizontal line by default
+    scr_process_break();                // break processing
 
     p = scan_start;
+    while( *p && *p != ' ' ) {          // over cw
+        p++;
+    }
+
     while( *p && (*p == ' ') ) {
         p++;
     }
@@ -1903,7 +1908,7 @@ void scr_bx( void )
 
     /* Identify any non-numeric operand */
 
-    cur_op = bx_none;
+   cur_op = bx_none;
     if( (len == 2) && !memicmp( pa , "on", len ) ) {
         cur_op = bx_on;
     } else if( len == 3 ) {

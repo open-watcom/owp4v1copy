@@ -181,7 +181,7 @@ void    scr_label( void )
     } else {
 
         gn.argstart      = scan_start;
-        gn.argstop       = scan_stop + 1;
+        gn.argstop       = scan_stop;
         gn.ignore_blanks = 0;
 
         cc = getnum( &gn );             // try numeric expression evaluation
@@ -402,7 +402,7 @@ void    scr_go( void )
     }
 
     gn.argstart      = tok_start;
-    gn.argstop       = scan_stop + 1;
+    gn.argstop       = scan_stop;
     gn.ignore_blanks = 0;
 
     cc = getnum( &gn );             // try numeric expression evaluation
