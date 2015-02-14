@@ -742,6 +742,7 @@ void cop_setup( void )
 
     if( bin_device == NULL ) {
         xx_simple_err_cc( err_block_not_found, "DEVICE", dev_name );
+        g_suicide();    /* Not safe to continue further. */
     }
 
     /* The value of horizontal_base_units cannot be "0". */
@@ -765,6 +766,7 @@ void cop_setup( void )
 
     if( bin_driver == NULL ) {
         xx_simple_err_cc( err_block_not_found, "DRIVER", bin_device->driver_name );
+        g_suicide();    /* Not safe to continue further. */
     }
 
     /* Attribute x_positive in PAGEADDRESS cannot be "no", since horizontal
@@ -917,7 +919,7 @@ void cop_setup( void )
 
         /* If scale_basis is not "0", then font_height must not be "0". */
 
-        if( (wgml_fonts[i].bin_font->scale_basis != 0) && 
+        if( (wgml_fonts[i].bin_font->scale_basis != 0) &&
                 (wgml_fonts[i].font_height == 0)) {
             xx_simple_err_i( err_font_scaled, i );
         }
@@ -957,7 +959,7 @@ void cop_setup( void )
 
         /* If scale_basis is not "0", then font_height must not be "0". */
 
-        if( (wgml_fonts[i].bin_font->scale_basis != 0) && 
+        if( (wgml_fonts[i].bin_font->scale_basis != 0) &&
                 (wgml_fonts[i].font_height == 0)) {
             xx_simple_err_i( err_font_opt_scaled, i );
         }
@@ -997,7 +999,7 @@ void cop_setup( void )
 
             /* If scale_basis is not "0", then font_height must not be "0". */
 
-            if( (wgml_fonts[i].bin_font->scale_basis != 0) && 
+            if( (wgml_fonts[i].bin_font->scale_basis != 0) &&
                     (wgml_fonts[i].font_height == 0)) {
                 xx_simple_err_i( err_font_scaled, i );
             }
@@ -1047,7 +1049,7 @@ void cop_setup( void )
 
             /* If scale_basis is not "0", then font_height must not be "0". */
 
-            if( (wgml_fonts[i].bin_font->scale_basis != 0) && 
+            if( (wgml_fonts[i].bin_font->scale_basis != 0) &&
                     (wgml_fonts[i].font_height == 0)) {
                 xx_simple_err_i( err_font_scaled, i );
             }
