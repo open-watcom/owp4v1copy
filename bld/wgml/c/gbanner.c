@@ -793,7 +793,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         ban_line.first = NULL;
     }
 
-    g_curr_font = layout_work.defaults.font;
+    g_curr_font = sav_font;
 }
 
 /***************************************************************************/

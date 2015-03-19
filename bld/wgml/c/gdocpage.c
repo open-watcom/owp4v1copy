@@ -230,20 +230,27 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                         cur_spacing -= cur_line->line_height;   // overprint
                         cur_el->element.text.overprint = false;
                     }
-                    ProcFlags.page_started = true;
                 } else {
 
-                    /* It is not clear how forced overprint & minimum height interact */
+                    /********************************************************/
+                    /*  Possible future complexities:                       */
+                    /*    it is not clear how forced overprint & minimum    */
+                    /*      height interact                                 */
+                    /*    it applies to the very first line on the top,     */
+                    /*      even if that is a banner, and so does not       */
+                    /*      automatically apply if Proc_flags.page_started  */
+                    /*      is true, as that happens at the start of each   */
+                    /*      section of the page to suppress any subs_skip   */
+                    /********************************************************/
 
                     if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
                         cur_spacing -= cur_line->line_height;   // forced overprint
-                    } else if( t_page.top_ban == NULL ) {      // minimum height
-/// This turned out to be wrong in boxtest.ps, at least at the top of page 7
-/// whether it is /always/ wrong remains to be seen
-//                        if( cur_spacing < wgml_fonts[g_curr_font].line_height ) {
-//                            cur_spacing = wgml_fonts[g_curr_font].line_height;
-//                        }
+                    } else if( t_page.top_banner == NULL ) {    // minimum height
+                        if( cur_spacing < wgml_fonts[g_curr_font].line_height ) {
+                            cur_spacing = wgml_fonts[g_curr_font].line_height;
+                        }
                     }
+                    ProcFlags.page_started = true;
                 }
 
                 /****************************************************/

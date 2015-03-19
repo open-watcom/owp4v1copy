@@ -1030,8 +1030,9 @@ $&dagger. associates from right to left
 :eSF.
 :cmt...fk end
 .*
-:CMT.This is from cpplib\sb_rgp.gml and is in the C++ CLass Library Reference
+:CMT.This is from cpplib\sb_rgp.gml and is in the C++ Class Library Reference
 :CMT.Topic: "eback() [streambuf]"
+.pa
 .np
 The &rsvarea., &getarea., and &putarea. pointer functions return the following
 values:
@@ -1055,8 +1056,9 @@ values:
 .tb set
 .co on
 .*
-:CMT.This is from cpplib\seekdir.gml and is in the C++ CLass Library Reference
+:CMT.This is from cpplib\seekdir.gml and is in the C++ Class Library Reference
 :CMT.Topic: "seekg() [istream]"
+.pa
 .sk
 .fo off
 .tb set ^
@@ -1070,8 +1072,9 @@ values:
 .sk
 .co on
 .*
-:CMT.This is from cpplib\seekmode.gml and is in the C++ CLass Library Reference
+:CMT.This is from cpplib\seekmode.gml and is in the C++ Class Library Reference
 :CMT.Topic: "seekoff() [streambuf]"
+.pa
 .sk
 .fo off
 .tb set ^

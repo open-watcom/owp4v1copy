@@ -244,13 +244,13 @@ box_col_set * alloc_box_col_set( void )
         curr = box_col_set_pool;
         curr->current = 0;
         curr->length = BOXCOL_COUNT;
-        curr->cols = mem_alloc( BOXCOL_COUNT * sizeof( box_col ));
+        curr->cols = mem_alloc( BOXCOL_COUNT * sizeof( box_col_spec ));
         for( k = 0; k < 10; k++ ) {     // alloc 10 box_col_sets if pool empty
             curr->next = mem_alloc( sizeof( *curr ) );
             curr = curr->next;
             curr->current = 0;
             curr->length = BOXCOL_COUNT;
-            curr->cols = mem_alloc( BOXCOL_COUNT * sizeof( box_col ));
+            curr->cols = mem_alloc( BOXCOL_COUNT * sizeof( box_col_spec ));
         }
         curr->next = NULL;
     }
@@ -258,7 +258,7 @@ box_col_set * alloc_box_col_set( void )
     box_col_set_pool = curr->next;
     curr->next = NULL;
     curr->current = 0;                  // clear before returning
-    memset( curr->cols, 0, curr->length * sizeof( box_col ));
+    memset( curr->cols, 0, curr->length * sizeof( box_col_spec ));
 
     return( curr );
 }
@@ -553,7 +553,7 @@ void    free_pool_storage( void )
 
     for( v = box_col_set_pool; v != NULL; ) {
         if( ((box_col_set *) v)->cols != NULL ) {
-            mem_free( ((box_col_set *) v)->cols );
+            mem_free( (box_col_spec *) ((box_col_set *) v)->cols );
         }
         wv = ( (box_col_set *) v)->next;
         mem_free( v );

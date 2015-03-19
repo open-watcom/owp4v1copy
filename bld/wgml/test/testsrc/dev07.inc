@@ -1,7 +1,7 @@
 :INCLUDE file='intran.tbl'.
 
 :INTRANS
-   > 09
+   * 09
 :eINTRANS
 
 :OUTTRANS

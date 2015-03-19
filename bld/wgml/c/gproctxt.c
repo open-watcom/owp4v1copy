@@ -360,10 +360,10 @@ static void wgml_tabs( void )
     bool                    skip_tab    = false;    // skip current tab
     int                     i;
     int32_t                 offset      = 0;        // offset for position adjustment
-    text_chars          	*c_chars    = NULL;     // current text_chars
-    text_chars          	*c_multi;               // used to traverse parts of multipart word
-    text_chars          	*in_chars   = t_line->last; // text_chars being processed
-    text_chars          	*s_chars    = NULL;     // source text_chars
+    text_chars                  *c_chars    = NULL;     // current text_chars
+    text_chars                  *c_multi;               // used to traverse parts of multipart word
+    text_chars                  *in_chars   = t_line->last; // text_chars being processed
+    text_chars                  *s_chars    = NULL;     // source text_chars
     char                    *in_text    = in_chars->text;
     uint32_t                in_count    = in_chars->count;
     uint32_t                m_width;                // multi-part word width
@@ -441,8 +441,8 @@ static void wgml_tabs( void )
                         g_cur_h_start = t_line->last->x_address;
                         tab_space = 0;
                     }
-                } else {    // spaces precede tab in mid-line
-                    if( c_stop->alignment == al_center ) {
+                } else {    // spaces precede tab in mid-line; c_stop may be NULL if the tab is from input translation
+                    if( (c_stop != NULL) && (c_stop->alignment == al_center) ) {
                         center_end = true;
                     } else {
                         c_chars = do_c_chars( c_chars, in_chars, in_text,

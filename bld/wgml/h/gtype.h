@@ -883,12 +883,13 @@ typedef struct laystack {
 
 #define BOXCOL_COUNT 16
 
-typedef enum {
+typedef enum {  // see Wiki for column type definitions
     bx_v_both,  // current box "both" column
     bx_v_down,  // current box "down" column
-    bx_v_hid,   // column hidden by prior box & current box
-    bx_v_new,   // column hidden by current box
-    bx_v_out,   // column outside of (but not hidden by) current box
+    bx_v_hid,   // current box "hid" column
+    bx_v_new,   // current box "new" column
+    bx_v_out,   // current box "out" column
+    bx_v_split, // current box "split" column
     bx_v_up,    // current box "up" column
 } bx_v_ind;
 
@@ -896,13 +897,14 @@ typedef struct {
             uint32_t        col;
             uint32_t        depth;
             bx_v_ind        v_ind;
-} box_col;
+            bool            rebreak;
+} box_col_spec;
 
 typedef struct box_col_set {
-    struct  box_col_set *   next;
-            uint32_t        current;
-            uint32_t        length;
-            box_col     *   cols;
+    struct  box_col_set     *   next;
+            uint32_t            current;
+            uint32_t            length;
+            box_col_spec    *   cols;
 } box_col_set;
 
 typedef struct box_col_stack {
