@@ -1058,7 +1058,6 @@ values:
 .*
 :CMT.This is from cpplib\seekdir.gml and is in the C++ Class Library Reference
 :CMT.Topic: "seekg() [istream]"
-.pa
 .sk
 .fo off
 .tb set ^
@@ -1074,7 +1073,6 @@ values:
 .*
 :CMT.This is from cpplib\seekmode.gml and is in the C++ Class Library Reference
 :CMT.Topic: "seekoff() [streambuf]"
-.pa
 .sk
 .fo off
 .tb set ^

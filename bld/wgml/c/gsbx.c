@@ -202,6 +202,7 @@ typedef enum {
 } stub_type;
 
 static  bx_op       cur_op          = bx_none;  // current BX operator
+static  bx_op       prev_op         = bx_none;  // previous BX operator
 static  uint32_t    box_depth       = 0;        // depth of box (used with VLINES)
 static  uint32_t    def_height      = 0;        // default font line height
 static  uint32_t    box_skip        = 0;        // skip for outer (entire) box
@@ -448,6 +449,10 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
     cur_depth = box_depth;
     first_done = false;
     if( (stub != st_ext) && (cur_depth > 0) ) { // preserve for 0 value & for st_ext stubs
+        if( ((prev_op == bx_can) && (cur_op == bx_can))
+            || ((prev_op == bx_set) && (cur_op == bx_set)) ) {
+            cur_depth += hl_depth;
+        }
         cur_depth += 10;                    // apparent constant used by wgml 4.0
     }
     for( i_h = 0; i_h < hline->current; i_h++ ) { // iterate over all output columns
@@ -475,7 +480,8 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
                                                + g_page_left - h_vl_offset;
             if( (((stub == st_down) || (stub == st_ext))
                     && (hline->cols[i_h].v_ind == bx_v_down))
-                    || ((stub == st_up) && (cur_col_type == bx_v_up)) ) {    // stubs use hl_depth
+                    || ((stub == st_up) && ((cur_col_type == bx_v_up)
+                        || (cur_col_type == bx_v_new))) ) {    // stubs use hl_depth
                 v_line_el->element.vline.v_len = hl_depth;
             } else {
                 v_line_el->element.vline.v_len = cur_depth;
@@ -483,16 +489,21 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
 
             /* Add the column-specific depth */
 
+            if( (box_depth == 0) && (((prev_op == bx_can) && (cur_op == bx_can))
+                    || ((prev_op == bx_set) && (cur_op == bx_set))) ) {
+            }
+
             v_line_el->element.vline.v_len += hline->cols[i_h].depth;
-            hline->cols[i_h].depth = 0;
+
+            /* Set number of AA blocks to use for this column */
 
             if( !first_done ) {                                 // first VLINE
                 v_line_el->subs_skip = subs_skip;
                 v_line_el->top_skip = top_skip;
                 if( (stub == st_ext) || ((cur_depth == 0)
-                     || (stub == st_down)) && (hline->current > 1)
-                     || (cur_col_type == bx_v_new) && (cur_op != bx_set)
-                     ) {                            // these first VLINEs do AA once
+                    || (stub == st_down)) && (hline->current > 1)
+                    || (cur_col_type == bx_v_new) && (cur_op != bx_set)
+                        ) {                            // these first VLINEs do AA once
                     v_line_el->element.vline.twice = false;
                 }
                 first_done = true;
@@ -503,9 +514,24 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
                         && (v_line_el->element.vline.v_len == cur_depth)) ) {
                 v_line_el->element.vline.twice = false;
             }
+
+            if( (hline->cols[i_h].depth > 0) && (box_depth == 0)
+                    && (((prev_op == bx_can) && (cur_op == bx_can))
+                    || ((prev_op == bx_set) && (cur_op == bx_set))) ) {
+                v_line_el->element.vline.v_len += hl_depth + 10;
+                v_line_el->element.vline.twice = true;
+            }
+            hline->cols[i_h].depth = 0;
+
             insert_col_main( v_line_el );   // insert the VLINE
-        } else if ( cur_col_type != bx_v_down) {    
+        } else if ( (cur_col_type != bx_v_down) ) {
             hline->cols[i_h].depth += box_depth;    // if not output, store box_depth
+            if( (cur_col_type == bx_v_out) ) {
+                if( ((prev_op != bx_can) && (cur_op == bx_can))
+                       || ((prev_op != bx_set) && (cur_op == bx_set)) ) {
+                    hline->cols[i_h].depth -= hl_depth;
+                }
+            }
         }
     }
 
@@ -521,7 +547,6 @@ static void draw_box_lines( doc_element * h_line_el )
 {
     box_col_set *   cur_hline;
     doc_element *   cur_el          = NULL;
-//    int             i_h;
     stub_type       off_stub        = st_down;
     uint32_t        sav_blank_lines;
     uint32_t        sav_subs_skip;
@@ -536,6 +561,7 @@ static void draw_box_lines( doc_element * h_line_el )
             }
             cur_hline = cur_hline->next;
         }
+        box_depth = 0;                  // depth used
     } else if( cur_op == bx_set ) {     // no HLINES exist
         if( box_depth > hl_depth ) {    // guess: box_depth should not go negative
             box_depth -= hl_depth;
@@ -555,17 +581,6 @@ static void draw_box_lines( doc_element * h_line_el )
             }
             cur_hline = cur_hline->next;
         }
-#if 0
-        cur_hline = box_line->first;        // record additional VLINE height
-        while( cur_hline != NULL ) {        
-            for( i_h = 0; i_h < cur_hline->current; i_h++ ) {
-                if( cur_hline->cols[i_h].v_ind == bx_v_out ) {           // use added height
-                    cur_hline->cols[i_h].depth += box_depth;
-                }
-            }
-            cur_hline = cur_hline->next;
-        }
-#endif
         box_depth = 0;                      // reset for new box
     } else {
         sav_blank_lines = h_line_el->blank_lines;
@@ -643,7 +658,7 @@ static void draw_box_lines( doc_element * h_line_el )
                         }
                         cur_hline = cur_hline->next;
                     }
-                    box_depth = 0;
+                    box_depth = 0;                      // box_depth used
                 }
                 cur_el = h_line_el;
                 cur_hline = box_line->first;
@@ -697,17 +712,6 @@ static void draw_box_lines( doc_element * h_line_el )
                     cur_el = h_line_el;
                     cur_hline = cur_hline->next;
                 }
-#if 0
-                cur_hline = box_line->first;        // record additional VLINE height
-                while( cur_hline != NULL ) {        
-                    for( i_h = 0; i_h < cur_hline->current; i_h++ ) {
-                        if( cur_hline->cols[i_h].v_ind == bx_v_out ) {           // use added height
-                            cur_hline->cols[i_h].depth += box_depth;
-                        }
-                    }
-                    cur_hline = cur_hline->next;
-                }
-#endif
                 box_depth = 0;                      // reset for new box
                 break;
             case bx_new:
@@ -744,17 +748,6 @@ static void draw_box_lines( doc_element * h_line_el )
                         cur_hline = cur_hline->next;
                     }
                 }
-#if 0
-                cur_hline = box_line->first;        // record additional VLINE height
-                while( cur_hline != NULL ) {        
-                    for( i_h = 0; i_h < cur_hline->current; i_h++ ) {
-                        if( cur_hline->cols[i_h].v_ind == bx_v_out ) {           // use added height
-                            cur_hline->cols[i_h].depth += box_depth;
-                        }
-                    }
-                    cur_hline = cur_hline->next;
-                }
-#endif
                 box_depth = 0;                      // reset for new box
                 break;
             default:
@@ -909,8 +902,7 @@ static void  do_char_device( void )
                                                                     box_col_width;
 
                 /* Create the horizontal box line from the BOX characters. */
-/// need to retest with BX OFF NN
-/// was changed to accomodate BX OFF after BX NEW
+
                 p = cur_chars->text;
                 cur_col = cur_hline->cols[0].col;
                 i_b = 0;
@@ -1193,17 +1185,12 @@ static void do_line_device( void )
     /* Perform the appropriate action:                              */
     /*   1. if there is not enough room on the page, move to the    */
     /*      next page (draws VLINEs and resets el_skip/box_depth    */
-    /*   2. if there is an HLINE to draw, invoke draw_box_lines()   */
-    /*      (ProcFlags.draw_v_line determines if VLINEs are to be   */
-    /*      drawn, or just HLINEs)                                  */
-    /*   3. if BX CAN (or BX DEL) is closing the outermost box,     */
-    /*      invoke draw_box_lines() (VLINEs will be drawn)          */
+    /*   2. invoke draw_box_lines()                                */
+
+/// this may or may not still be correct
     /*   4. if BX OFF or BX CAN (or BX DEL) is closing the last     */
     /*      inner box and there is no HLINE to be drawn, adjust     */
     /*      box_depth and el_skip appropriately                     */
-    /* Note: the details vary a bit depending on whether or not     */
-    /*   this BX line opens the outermost box: such a line must     */
-    /*   have a column list and cannot be CAN (or DEL)              */
     /****************************************************************/
 
     max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
@@ -1243,14 +1230,8 @@ static void do_line_device( void )
                 box_depth += h_line_el->subs_skip + h_line_el->blank_lines;
             }
         }
-        if( (h_line_el != NULL)
-                || ((box_line->next == NULL) && (cur_op == bx_can))
-                || (cur_op == bx_set)
-                ) {
-            draw_box_lines( h_line_el );
-        } else if( (box_line->next != NULL) && (cur_op == bx_off) ) {
-            el_skip += hl_depth;                        // invisible hline depth
-        }
+
+        draw_box_lines( h_line_el );
 
         if( (box_line->next == NULL) && ((cur_op == bx_can ) || (cur_op == bx_off)) ) {          // outer box ends
             box_depth = 0;
@@ -1465,14 +1446,16 @@ static void merge_lines( void )
     int             cur_col;
     int             prev_col;
 
-    if( prev_line != NULL ) {
+    if( prev_line == NULL ) {
+        eop_save = NULL;
+    } else {
 
         /* Save original prev_line for use if the box is split between pages */
 
         cur_temp = alloc_box_col_set();
         eop_save = cur_temp;
         prev_temp = prev_line;
-        while( cur_temp->length < prev_temp->length) {
+        while( cur_temp->length < prev_temp->current) {
             resize_box_cols( cur_temp );
         }
         while( prev_temp != NULL) {
@@ -1489,13 +1472,15 @@ static void merge_lines( void )
 
                 cur_temp->next = alloc_box_col_set();
                 cur_temp= cur_temp->next;
-                while( cur_temp->length < prev_temp->length) {
+                while( cur_temp->length < prev_temp->current) {
                     resize_box_cols( cur_temp );
                 }
             }
         }
 
         /* Now set up prev_temp for merging */
+
+        /* Convert "down" and "new" columns */
 
         prev_temp = prev_line;
         while( prev_temp != NULL ) {
@@ -1509,46 +1494,84 @@ static void merge_lines( void )
             prev_temp = prev_temp->next;
         }
 
-        if( (cur_line != NULL) && (((cur_op == bx_new) || (cur_op == bx_set))
-                               || (box_line->next != NULL)) ) {
+        if( ProcFlags.box_cols_cur ) {  // if current BX line had columns
 
-            /* Mark prior boxes' columns */
+            /* Convert "both" and "split" columns to "up" if they do not continue */
 
-            cur_temp = cur_line;
-            prev_temp = prev_line;
-            while( prev_temp != NULL ) {
-                for( prev_col = 0; prev_col < prev_temp->current; prev_col++ ) {
-                    if( prev_temp->cols[prev_col].v_ind != bx_v_hid ) {
-                        if( cur_temp != NULL ) {
-                            if( cur_temp->cols[0].col <
-                                        prev_temp->cols[prev_col].col ) {
-                                if( cur_temp->cols[cur_temp->current - 1].col <
-                                            prev_temp->cols[prev_col].col ) {
-                                    cur_temp = cur_temp->next;
-                                    prev_col --; // check same prev_col with new cur_temp
-                                } else if( cur_temp->cols[cur_temp->current - 1].col ==
-                                            prev_temp->cols[prev_col].col ) {
-                                        prev_temp->cols[prev_col].v_ind = bx_v_out;
-                                        inner_box = true;
-                            } else {
-                                    prev_temp->cols[prev_col].v_ind = bx_v_new;
+            if( (cur_op == bx_none) || (cur_op == bx_on) ) {
+                cur_temp = cur_line;
+                prev_temp = prev_line;
+                while( prev_temp != NULL ) {
+                    for( prev_col = 0; prev_col < prev_temp->current; prev_col++ ) {
+                        if( (prev_temp->cols[prev_col].v_ind == bx_v_both)
+                            || (prev_temp->cols[prev_col].v_ind == bx_v_split) ) {
+                            prev_temp->cols[prev_col].v_ind = bx_v_up;
+                            while( cur_temp != NULL ) {
+                                for( cur_col = 0; cur_col < cur_temp->current; cur_col++ ) {
+                                    if( prev_temp->cols[prev_col].col ==
+                                            cur_temp->cols[0].col ) {
+                                        prev_temp->cols[prev_col].v_ind = bx_v_split;
+                                    }
                                 }
-                            } else {    // columns to left of cur_box segment
-                                prev_temp->cols[prev_col].v_ind = bx_v_out;
-                                inner_box = true;
+                                cur_temp = cur_temp->next;
+                                cur_col = 0;
                             }
-                        } else {        // columns to right of final cur_box segment
-                            prev_temp->cols[prev_col].v_ind = bx_v_out;
-                            inner_box = true;
                         }
                     }
+                    prev_temp = prev_temp->next;
+                    prev_col = 0;
                 }
-                prev_temp = prev_temp->next;
             }
-            box_line->inner_box = inner_box;
+
+            /* Identify and mark "new" and "out" columns if appropriate */
+
+            if( ((cur_op == bx_new) || (cur_op == bx_set) || (box_line->next != NULL)) ) {
+                cur_temp = cur_line;
+                prev_temp = prev_line;
+                cur_col = 0;
+                prev_col = 0;
+                while( prev_temp != NULL ) {
+                    while( cur_temp != NULL ) {
+                        if( prev_temp->cols[prev_col].col
+                                < cur_temp->cols[0].col ) {
+                            prev_temp->cols[prev_col].v_ind = bx_v_out;
+                            inner_box = true;
+                            break;
+                        } else if( prev_temp->cols[prev_col].col
+                                < cur_temp->cols[cur_col].col ) {
+                            prev_temp->cols[prev_col].v_ind = bx_v_new;
+                            break;
+                        } else if( prev_temp->cols[prev_col].col
+                                == cur_temp->cols[cur_col].col ) {
+                            prev_temp->cols[prev_col].v_ind = bx_v_both;
+                            break;
+                        } else if( (cur_temp->next == NULL)
+                            && (prev_temp->cols[prev_col].col
+                                > cur_temp->cols[cur_temp->current-1].col) ) {
+                            prev_temp->cols[prev_col].v_ind = bx_v_out;
+                            inner_box = true;
+                            break;
+                        } else {
+                            cur_col++;
+                            if( cur_col == cur_temp->current ) {
+                                cur_temp = cur_temp->next;
+                                if( cur_temp == NULL ) {
+                                    prev_temp->cols[prev_col].v_ind = bx_v_out;
+                                    inner_box = true;
+                                }
+                                cur_col = 0;
+                            }
+                        }
+                    }
+                    prev_col++;
+                    if( prev_col == prev_temp->current ) {
+                        prev_temp = prev_temp->next;
+                        prev_col = 0;
+                    }
+                }
+                box_line->inner_box = inner_box;
+            }
         }
-    } else {        // prev_line == NULL
-        eop_save = NULL;
     }
 
 /// temp
@@ -1606,7 +1629,7 @@ static void merge_lines( void )
                 }
                 prev_temp = prev_temp->next;
             }
-        } else if( cur_op == bx_off ) {
+        } else if( (cur_op == bx_can) || (cur_op == bx_off) ) {
             prev_temp = prev_line;
             while( prev_temp != NULL ) {
                 for( prev_col = 0; prev_col < prev_temp->current; prev_col++ ) {
@@ -1657,12 +1680,14 @@ static void merge_lines( void )
                         }
                     }
                     if( prev_col == prev_temp->current ) {          // end of segment or "out" column
-                        if( (cur_op == bx_new) || (cur_op == bx_set)
-                            || (cur_op == bx_off) || (cur_op == bx_on) ) {  // new/off: break
-                            box_temp->next = alloc_box_col_set();
-                            box_temp = box_temp->next;
-                            box_col = 0;
-                            on_gap = true;
+                        if( box_col > 0 ) {                 // segment must have a column
+                            if( (cur_op == bx_new) || (cur_op == bx_set)
+                                || (cur_op == bx_off) || (cur_op == bx_on) ) {  // new/off: break
+                                box_temp->next = alloc_box_col_set();
+                                box_temp = box_temp->next;
+                                box_col = 0;
+                                on_gap = true;
+                            }
                         }
                         if( prev_temp->next == NULL ) {
                             break;          // need joint gap check
@@ -1689,9 +1714,9 @@ static void merge_lines( void )
                     if( cur_col == cur_temp->current ) {    // end of segment
                         if( box_col > 0 ) {                 // segment must have a column
                             if( ((cur_op == bx_off) && !off_multi)
+                                || ((cur_op == bx_new) || (cur_op == bx_set))
                                 || ((cur_op == bx_on) && ((cur_temp->next == NULL)
-                                || ((cur_temp->current == 1)
-                        && (cur_temp->cols[0].col < prev_temp->cols[0].col))
+                        || (cur_temp->cols[0].col < prev_temp->cols[0].col)
                     || (cur_temp->next->cols[0].col < prev_temp->cols[0].col))) ) {
                                 box_temp->next = alloc_box_col_set();
                                 box_temp = box_temp->next;
@@ -1846,9 +1871,7 @@ static void merge_lines( void )
                     box_temp->cols[box_col].col = prev_temp->cols[prev_col].col;
                     box_temp->cols[box_col].depth = prev_temp->cols[prev_col].depth;
                     if( cur_op == bx_off ) {
-                        box_temp->cols[box_col].v_ind = prev_temp->cols[prev_col].v_ind;
-                    } else if( (cur_op == bx_new) || (cur_op == bx_set) ) {
-                        box_temp->cols[box_col].v_ind = bx_v_both;
+                        box_temp->cols[box_col].v_ind = bx_v_up;
                     } else {
                         box_temp->cols[box_col].v_ind = bx_v_split;
                     }
@@ -1882,11 +1905,13 @@ static void merge_lines( void )
                         if( box_temp->current == box_temp->length) {
                             resize_box_cols( box_temp );
                         }
-                        if( box_temp->cols[box_col - 1].v_ind == bx_v_out ) {   // break after "out" column
-                            box_temp->next = alloc_box_col_set();
-                            box_temp = box_temp->next;
-                            box_col = 0;
-                        }                            
+                        if( box_col > 0 ) {                 // segment must have a column
+                            if( box_temp->cols[box_col - 1].v_ind == bx_v_out ) {   // break after "out" column
+                                box_temp->next = alloc_box_col_set();
+                                box_temp = box_temp->next;
+                                box_col = 0;
+                            }
+                        }
                     }
                     if( prev_col == prev_temp->current ) {  // end of segment
                         if( (box_col > 0) ) {               // segment must have a column
@@ -1944,11 +1969,13 @@ static void merge_lines( void )
                         if( box_temp->current == box_temp->length) {
                             resize_box_cols( box_temp );
                         }
-                        if( box_temp->cols[box_col - 1].v_ind == bx_v_out ) {   // break after "out" column
-                            box_temp->next = alloc_box_col_set();
-                            box_temp = box_temp->next;
-                            box_col = 0;
-                        }                            
+                        if( box_col > 0 ) {                 // segment must have a column
+                            if( box_temp->cols[box_col - 1].v_ind == bx_v_out ) {   // break after "out" column
+                                box_temp->next = alloc_box_col_set();
+                                box_temp = box_temp->next;
+                                box_col = 0;
+                            }
+                        }
                     }
                     if( prev_col == prev_temp->current ) {  // end of segment
                         if( (box_col > 0) ) {               // segment must have a column
@@ -1990,6 +2017,7 @@ static void merge_lines( void )
                         if( (box_col > 0) ) {               // segment must have a column
                             if( ((cur_op == bx_off) && (cur_temp->next == NULL)
                                     && (cur_temp != cur_line))
+                                || ((cur_op == bx_new) || (cur_op == bx_set))
                                 || (on_gap && (cur_op == bx_on)
                 && ((prev_temp->current == 1) || (prev_col < prev_temp->current - 1))) ) {
                                 box_temp->next = alloc_box_col_set();
@@ -2011,7 +2039,7 @@ static void merge_lines( void )
                         box_temp->cols[box_col].col = prev_temp->cols[prev_col].col;
                         box_temp->cols[box_col].depth = prev_temp->cols[prev_col].depth;
                         if( cur_op == bx_off ) {
-                            box_temp->cols[box_col].v_ind = prev_temp->cols[prev_col].v_ind;
+                            box_temp->cols[box_col].v_ind = bx_v_up;
                         } else if( (cur_op == bx_new) || (cur_op == bx_set) ) {
                             box_temp->cols[box_col].v_ind = bx_v_both;
                         } else {
@@ -2028,7 +2056,8 @@ static void merge_lines( void )
                     if( cur_col == cur_temp->current ) {  // end of segment
                         if( box_col > 0 ) {                 // segment must have a column
                             if( ((cur_op == bx_off) && (cur_temp->next == NULL)
-                                && (cur_temp != cur_line))
+                                    && (cur_temp != cur_line))
+                                || ((cur_op == bx_new) || (cur_op == bx_set))
                                     || (on_gap && (cur_op == bx_on)) ) {
                                 box_temp->next = alloc_box_col_set();
                                 box_temp = box_temp->next;
@@ -2482,6 +2511,9 @@ void scr_bx( void )
         prev_temp = prev_line;
         prev_col = 0;
         while( box_temp != NULL ) {
+            while( prev_temp->length < box_temp->current) {
+                resize_box_cols( prev_temp );
+            }
             for( box_col = 0; box_col < box_temp->current; box_col++ ) {
                 if( box_temp->cols[box_col].v_ind != bx_v_up ) {    // skip "up" columns
                     prev_temp->cols[prev_col].col = box_temp->cols[box_col].col;
@@ -2493,6 +2525,9 @@ void scr_bx( void )
                         prev_temp->next = alloc_box_col_set();
                         prev_temp = prev_temp->next;
                         prev_col = 0;
+                        while( prev_temp->length < box_temp->current) {
+                            resize_box_cols( prev_temp );
+                        }
                     } else {
                         prev_col++;
                     }
@@ -2500,9 +2535,14 @@ void scr_bx( void )
             }
             box_temp = box_temp->next;
             if( box_temp != NULL ) {
-                prev_temp->next = alloc_box_col_set();
-                prev_temp = prev_temp->next;
-                prev_col = 0;
+                if( prev_col > 0 ) {        // segment must have a column
+                    prev_temp->next = alloc_box_col_set();
+                    prev_temp = prev_temp->next;
+                    prev_col = 0;
+                    while( prev_temp->length < box_temp->current) {
+                        resize_box_cols( prev_temp );
+                    }
+                }
             }
         }
 
@@ -2524,6 +2564,8 @@ void scr_bx( void )
         box_line->first = NULL;
 
     }
+
+    prev_op = cur_op;
 
     ProcFlags.skips_valid = false;          // ensures following text will use correct skips
     set_h_start();                          // pick up any indents

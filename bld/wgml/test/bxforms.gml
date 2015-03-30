@@ -19,83 +19,11 @@
 .co on
 .ju off
 
-.bx 1 10 15 20 30
-.bx new 10 20
-.bx 8 16 / 18 22
-.bx off
-.bx off
-
-BX operand NEW tests
-
-.bx 1 26 
-.bx new 32 62
-.bx off
-.bx off
-
-.bx 32 62
-.bx new 1 26 
-.bx off
-.bx off
-
-.bx 1 26
-.bx new 20 40
-.bx off
-.bx off
-
-.bx new 20 40
+.bx 20 40
 .bx new 1 26
 .bx off
 .bx off
 
-.bx 1 26
-.bx new 26 40
-.bx off
-.bx off
-
-.bx 26 40
-.bx new 1 26
-.bx off
-.bx off
-
-.bx 1 40
-.bx new 20 30
-.bx off
-.bx off
-
-.bx 20 30
-.bx new 1 40
-.bx off
-.bx off
-
-.bx 1 10 15 20 30
-.bx new 10 20
-.bx off
-.bx off
-
-.bx 1 10 15 20 30
-.bx new 8 12 / 18 22
-.bx off
-.bx off
-
-.pa
-.bx 1 10 15 20 30
-.bx new 10 20
-.bx 12 18
-.bx off
-.bx off
-
-.bx 1 10 15 20 30
-.bx new 10 20
-.bx 8 16 / 18 22
-.bx off
-.bx off
-
-.bx 1 10 15 20 30
-.bx new 4 8 / 14 18
-.bx off
-.bx off
-
-.pa
 BX default operand tests
 
 .bx 1 26 
@@ -320,5 +248,165 @@ BX OFF tests
 .bx 25 30 / 35 40
 .bx off 1 / 5 / 10 15 / 18 / 23 / 30 33 / 40 / 43
 
+.pa
+BX NEW tests
+
+.bx 1 26 
+.bx new 32 62
+.bx off
+.bx off
+
+.bx 32 62
+.bx new 1 26 
+.bx off
+.bx off
+
+.bx 1 26
+.bx new 20 40
+.bx off
+.bx off
+
+.bx 20 40
+.bx new 1 26
+.bx off
+.bx off
+
+.bx 1 26
+.bx new 26 40
+.bx off
+.bx off
+
+.bx 26 40
+.bx new 1 26
+.bx off
+.bx off
+
+.bx 1 40
+.bx new 20 30
+.bx off
+.bx off
+
+.bx 20 30
+.bx new 1 40
+.bx off
+.bx off
+
+.bx 1 10 15 20 30
+.bx new 10 20
+.bx off
+.bx off
+
+.bx 1 10 15 20 30
+.bx new 8 12 / 18 22
+.bx off
+.bx off
+
+.bx 1 10 15 20 30
+.bx new 10 20
+.bx 12 18
+.bx off
+.bx off
+
+.bx 1 10 15 20 30
+.bx new 10 20
+.bx 8 16 / 18 22
+.bx off
+.bx off
+
+.bx 1 10 15 20 30
+.bx new 4 8 / 14 18
+.bx off
+.bx off
+
+.pa
+BX CAN tests in a complex box
+.tb set \
+.tb 4 15 27 39 51
+.*
+\\text bx 2 13 49
+.bx 2 13 49
+\\text bx new 13 25 37 49
+.bx new 13 25 37 49
+\\text bx new 25 / 37 49 (1)
+.bx new 25 / 37 49
+\\text bx off 25 37 49
+.bx off 25 37 49
+\\text bx new 25 / 37 49 (2)
+.bx new 25 / 37 49
+\\text bx 13 49
+.bx 13 49
+\\text bx can (1)
+.bx can
+\\text bx can (2)
+.bx can
+\\text bx can (3)
+.bx can
+\\text off 2 13 49
+.bx off 2 13 49
+.sk
+.*
+OFF/CAN reversed
+\\text bx 2 13 49
+.bx 2 13 49
+\\text bx new 13 25 37 49
+.bx new 13 25 37 49
+\\text bx new 25 / 37 49 (1)
+.bx new 25 / 37 49
+\\text bx off 25 37 49
+.bx off 25 37 49
+\\text bx new 25 / 37 49 (2)
+.bx new 25 / 37 49
+\\text bx 13 49
+.bx 13 49
+\\text bx off (1)
+.bx off
+\\text bx off (2)
+.bx off
+\\text bx off (3)
+.bx off
+\\text can
+.bx can
+.pa
+BX CAN tests in a shorter complex box
+.tb set \
+.tb 4 15 27 39 51
+.*
+\\text bx 2 13 49
+.bx 2 13 49
+\\text bx new 13 25 37 49
+.bx new 13 25 37 49
+\\text bx new 25 / 37 49 (1)
+.bx new 25 / 37 49
+\\text bx off 25 37 49
+.bx off 25 37 49
+\\text bx new 25 / 37 49 (2)
+.bx new 25 / 37 49
+\\text bx 13 49
+.bx 13 49
+\\text bx can (1)
+.bx can
+.bx can
+.bx can
+.bx off 2 13 49
+.sk
+.*
+OFF/CAN reversed
+\\text bx 2 13 49
+.bx 2 13 49
+\\text bx new 13 25 37 49
+.bx new 13 25 37 49
+\\text bx new 25 / 37 49 (1)
+.bx new 25 / 37 49
+\\text bx off 25 37 49
+.bx off 25 37 49
+\\text bx new 25 / 37 49 (2)
+.bx new 25 / 37 49
+\\text bx 13 49
+.bx 13 49
+\\text bx off (1)
+.bx off
+.bx off
+.bx off
+.bx can
 :eGDOC.
 
