@@ -19,11 +19,6 @@
 .co on
 .ju off
 
-.bx 20 40
-.bx new 1 26
-.bx off
-.bx off
-
 BX default operand tests
 
 .bx 1 26 

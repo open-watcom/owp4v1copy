@@ -437,8 +437,7 @@
 .'se putarea=';.i put area;.ct '
 .'se rsvarea=';.i reserve area;.ct '
 
-:cmt.:set symbol="arrow"   value=";.sf7;.ct ~L;.esf;.ct ".
-:set symbol="arrow"   value=";.sf7 ~L;.esf;".
+:set symbol="arrow"   value=";.sf7;.ct ~L;.esf;.ct ".
 
 :set symbol="ver"       value="2".
 :set symbol="rev"       value="0".

@@ -260,6 +260,7 @@ static void box_blank_lines( uint32_t lines )
         while( cur_hline != NULL ) {
             for( i_b = 0; i_b < cur_hline->current; i_b++ ) {
                 if( (cur_hline->cols[i_b].v_ind == bx_v_both)
+                        || (cur_hline->cols[i_b].v_ind == bx_v_out)
                         || (cur_hline->cols[i_b].v_ind == bx_v_split)
                         || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
                     if( cur_blank->first == NULL ) {
@@ -319,6 +320,7 @@ static void box_char_element( doc_element * cur_el ) {
                 while( cur_hline != NULL ) {  // iterate over all horizontal lines
                     for( i_b = 0; i_b < cur_hline->current; i_b++ ) {
                         if( (cur_hline->cols[i_b].v_ind == bx_v_both)
+                                || (cur_hline->cols[i_b].v_ind == bx_v_out)
                                 || (cur_hline->cols[i_b].v_ind == bx_v_split)
                                 || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
 
@@ -464,9 +466,11 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
              || ((cur_col_type == bx_v_new) && (cur_op == bx_on))
              || ((cur_col_type == bx_v_new) && (cur_op == bx_new))
              || ((cur_col_type == bx_v_new) && (cur_op == bx_set))
-             || ((cur_col_type == bx_v_new) && (cur_op == bx_eop))
+             || ((cur_col_type == bx_v_both) && (cur_op == bx_eop))
              || ((cur_col_type == bx_v_down) && (cur_op == bx_eop))
+             || ((cur_col_type == bx_v_new) && (cur_op == bx_eop))
              || ((cur_col_type == bx_v_out) && (cur_op == bx_eop))
+             || ((cur_col_type == bx_v_split) && (cur_op == bx_eop))
              ) {  // ascender needed
 
             ProcFlags.vline_done = true;
@@ -1201,6 +1205,12 @@ static void do_line_device( void )
                 reset_t_page();
                 ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
             }
+        } else if( cur_op == bx_off ) {
+            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next page
+                do_page_out();
+                reset_t_page();
+                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
+            }
         } else {
             if( max_depth < (h_line_el->subs_skip + (v_offset - 1) + def_height) ) {        // to top of next page
                 do_page_out();
@@ -1218,7 +1228,13 @@ static void do_line_device( void )
             ProcFlags.in_bx_box = true;             // box has started
         }
     } else {                                        // inside outermost box
-        if( max_depth < (el_skip + hl_depth + def_height) ) {    // HLINE to top of page
+        if( cur_op == bx_off ) {
+            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next page
+                do_page_out();
+                reset_t_page();
+                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
+            }
+        } else if( max_depth < (el_skip + hl_depth + def_height) ) {    // HLINE to top of page
             do_page_out();
             reset_t_page();
             ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
