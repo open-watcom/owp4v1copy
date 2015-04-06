@@ -38,17 +38,29 @@
 /*  :PB.                                                                   */
 /*                                                                         */
 /*    try to process as .br                                                */
+/*    PB outputs any following text                                        */
 /*                                                                         */
 /***************************************************************************/
 extern  void    gml_pb( const gmltag * entry )
 {
- 
+    char        *   p;
+
     scan_err = false;
+    p = scan_start;
  
     start_doc_sect();                   // if not already done
  
     scr_process_break();
- 
+
+    if( *p == '.' ) p++;                // over '.'
+
+    set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+
+    post_space = 0;
+
+    process_text( p, g_curr_font );
+     
     scan_start = scan_stop + 1;
+
     return;
 }

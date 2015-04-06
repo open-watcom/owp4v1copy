@@ -1289,14 +1289,15 @@ text_chars *process_word( const char *pword, size_t count, font_number font )
 
 void    process_text( const char *text, font_number font )
 {
+    const char              *pword;
+    const char              *p;
+    font_number             temp_font   = 0;
+    size_t                  count;
     text_chars          *   h_char;     // hyphen text char
     text_chars          *   n_char;     // new text char
     text_chars          *   s_char;     // save text char
-    size_t                  count;
-    const char              *pword;
-    const char              *p;
-    uint32_t                o_count = 0;
-    uint32_t                offset = 0;
+    uint32_t                o_count     = 0;
+    uint32_t                offset      = 0;
     // when hyph can be set, it will need to be used here & below
     uint32_t                hy_width = wgml_fonts[0].width_table['-'];
     static      text_type   typ = norm;
@@ -1347,22 +1348,43 @@ void    process_text( const char *text, font_number font )
             if( user_tabs.current > 0 ) {   // user tabs exist
                 if( input_cbs->fmflags & II_sol ) {   // at start of input line
 
-    /********************************************************************/
-    /*  the last line need not have contained a tab character but, if   */
-    /*  it did, all user tabs must have been used; if it did or didn't, */
-    /*  an initial tab character also produces a break                 */
-    /********************************************************************/
+                    /****************************************************/
+                    /* the last line need not have contained a tab      */
+                    /* character but, if it did, all user tabs must     */
+                    /* have been used; if it did or didn't, an initial  */
+                    /* tab character also produces a break              */
+                    /****************************************************/
 
                     if( ((c_stop != NULL) && (c_stop->column >=
                         user_tabs.tabs[user_tabs.current - 1].column)) ||
                         (*p == '\t') || (*p == tab_char) ) {    // the final test
+
+                        /********************************************************/
+                        /* scr_process_break() can produce a doc_element with a */
+                        /* blank line; ensure that line has the line height of  */
+                        /* font 0                                               */
+                        /* Note: this is necessary after P and PC, but appears  */
+                        /* to work more generally                               */
+                        /********************************************************/
+
+                        temp_font = g_curr_font;
+                        g_curr_font = 0;
                         scr_process_break();        // treat new line as break
                         tab_space = 0;
+
+                        /* Restore font for current text fragment */
+
+                        g_curr_font = temp_font;
+
+                        /* Remove any indent */
+
+                        g_cur_h_start = g_cur_left;
                     }
                 }
             }
         }
     }
+
     if( t_line == NULL ) {
         t_line = alloc_text_line();
     }

@@ -1118,7 +1118,7 @@ $user-defined structure$address of structure
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "Data Representation On x86-based Platforms"
 .pa
-.sk
+.np
 Data Representation On x86-based Platforms
 .sr c1=&sysin+1
 .sr c2=&c1+17
