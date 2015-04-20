@@ -1300,6 +1300,7 @@ void    process_text( const char *text, font_number font )
     uint32_t                offset      = 0;
     // when hyph can be set, it will need to be used here & below
     uint32_t                hy_width = wgml_fonts[0].width_table['-'];
+
     static      text_type   typ = norm;
     static      text_type   typn = norm;
 
@@ -1342,44 +1343,50 @@ void    process_text( const char *text, font_number font )
     count = p - text;
     p = text;                               // restore p to start of text
 
+    if( (tt_stack != NULL) 
+            && (input_cbs->fmflags & II_sol)
+            && ((*p == '\t') || (*p == tab_char)) ) {    // adjust parent font, see Wiki
+        tt_stack->font = 0; // hard-wired: LAYOUT DEFAULT FONT does not affect this
+        font = 0;
+        g_curr_font = 0;
+    }
+
     phrase_start = true;
     if( !ProcFlags.ct ) {                   // not if text follows CT
         if( count != strlen( p ) ) {        // tab character found in input text
-            if( user_tabs.current > 0 ) {   // user tabs exist
-                if( input_cbs->fmflags & II_sol ) {   // at start of input line
+            if( input_cbs->fmflags & II_sol ) {   // at start of input line
 
-                    /****************************************************/
-                    /* the last line need not have contained a tab      */
-                    /* character but, if it did, all user tabs must     */
-                    /* have been used; if it did or didn't, an initial  */
-                    /* tab character also produces a break              */
-                    /****************************************************/
+                /****************************************************/
+                /* the last line need not have contained a tab      */
+                /* character but, if it did, all user tabs must     */
+                /* have been used; if it did or didn't, an initial  */
+                /* tab character also produces a break              */
+                /****************************************************/
 
-                    if( ((c_stop != NULL) && (c_stop->column >=
-                        user_tabs.tabs[user_tabs.current - 1].column)) ||
-                        (*p == '\t') || (*p == tab_char) ) {    // the final test
+                if( ((c_stop != NULL) && (c_stop->column >=
+                    user_tabs.tabs[user_tabs.current - 1].column)) ||
+                    (*p == '\t') || (*p == tab_char) ) {    // the final test
 
-                        /********************************************************/
-                        /* scr_process_break() can produce a doc_element with a */
-                        /* blank line; ensure that line has the line height of  */
-                        /* font 0                                               */
-                        /* Note: this is necessary after P and PC, but appears  */
-                        /* to work more generally                               */
-                        /********************************************************/
+                    /********************************************************/
+                    /* scr_process_break() can produce a doc_element with a */
+                    /* blank line; ensure that line has the line height of  */
+                    /* font 0                                               */
+                    /* Note: this is necessary after P and PC, but appears  */
+                    /* to work more generally                               */
+                    /********************************************************/
 
-                        temp_font = g_curr_font;
-                        g_curr_font = 0;
-                        scr_process_break();        // treat new line as break
-                        tab_space = 0;
+                    temp_font = g_curr_font;
+                    g_curr_font = 0;
+                    scr_process_break();        // treat new line as break
+                    tab_space = 0;
 
-                        /* Restore font for current text fragment */
+                    /* Restore font for current text fragment */
 
-                        g_curr_font = temp_font;
+                    g_curr_font = temp_font;
 
-                        /* Remove any indent */
+                    /* Remove any indent; needed for P and PC */
 
-                        g_cur_h_start = g_cur_left;
-                    }
+                    g_cur_h_start = g_cur_left;
                 }
             }
         }

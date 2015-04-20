@@ -31,6 +31,7 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
+static font_number  tt_font     = 0;    // font number to be replaced with "0"
 
 /***************************************************************************/
 /*  :HPx :SF common processing                                             */
@@ -40,11 +41,12 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
 {
     char    *   p;
 
-    // keep any existing post_space, even if CT follows -- TBD
+    // keep any existing post_space, even if CT follows
+
     if( (input_cbs->fmflags & II_sol) ) {
         ProcFlags.fsp = true;
         if( post_space == 0 ) {
-            post_space = wgml_fonts[g_curr_font].spc_width; // TBD
+            post_space = wgml_fonts[g_curr_font].spc_width;
         }
             
     }
@@ -59,6 +61,14 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
     g_curr_font = level;
 
     nest_cb->c_tag = t;
+
+    if( nest_cb->prev != NULL ) {               // at least one prior entry
+        if( nest_cb->prev->prev == NULL ) {     // but only one
+            if( nest_cb->font != nest_cb->prev->font ) {           // font actually changed
+                tt_font = level;                // save current value
+            }
+        }
+    }
 
     scan_err = false;
     p = scan_start;
@@ -127,6 +137,12 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
             g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
         }
     } else {
+        if( nest_cb->prev->font == tt_font ) {    // returning to second stack entry
+            tt_stack = nest_cb->prev;             // set tt_stack 
+        }
+        if( nest_cb == tt_stack ) {         // closing second stack entry
+            tt_stack = NULL;                // clear tt_stack 
+        }
         wk = nest_cb;
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );

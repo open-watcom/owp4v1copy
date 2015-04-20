@@ -121,6 +121,7 @@ void init_global_vars( void )
     max_depth           = 0;
 
     c_stop              = NULL;
+    tt_stack            = NULL;
 
     t_element               = NULL;
     t_el_last               = NULL;

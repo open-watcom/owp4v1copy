@@ -262,6 +262,7 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input escape char from .ti
 
+// bx support
 global  box_col_set     *   box_col_set_pool;   // pool of box_col_set instances
 global  box_col_set     *   cur_line;           // the line from the current BX line
 global  box_col_set     *   prev_line;          // the previously drawn line
@@ -271,11 +272,13 @@ global  uint32_t            box_col_width;      // width of one column, as used 
 global  uint32_t            h_vl_offset;        // horizontal offset used to position VLINE output
 global  uint32_t            max_depth;          // space left on page (used by BX)
 
+// tb support
 global  tab_stop    *   c_stop;         // current tab_stop
 global  uint32_t        first_tab;      // first default top position
 global  uint32_t        inter_tab;      // distance between default tabs
 global  char            tab_char;       // tab character from .tb
 global  uint32_t        tab_col;        // width of one column, as used with tabs
+global  tag_cb      *   tt_stack;       // font stack entry to modify for tab tables
 
 // the document page and related items
 global doc_el_group     t_doc_el_group; // for accumulating a group of doc_elements
