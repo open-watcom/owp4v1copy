@@ -588,13 +588,22 @@ static void wgml_tabs( void )
             pre_space = in_chars->x_address - (in_chars->prev->x_address +
                                                in_chars->prev->width);
         }
-        // set text start position and accept/reject current tab stop
+
+        /* Set text start position and accept/reject current tab stop */
+
         switch( c_stop->alignment ) {
         case al_left:
             if( !tabbing || (s_multi == NULL) ) {
                 g_cur_h_start = g_page_left + c_stop->column;
-                // II_macro immediately after a tab character
-                if( input_cbs->fmflags & II_macro ) { // note: test macro started with ";"
+
+                /* II_macro immediately after a tab character */
+
+/// note: test macro was wrapped in a symbol whose text started with ";"
+/// this is not correct with .mono: no symbol, no ";"
+ 
+//                if( input_cbs->fmflags & II_macro ) {
+                if( (input_cbs->fmflags & II_macro)
+                        && (c_font != g_curr_font) ) {
                     g_cur_h_start += post_space;
                 }
                 tabbing = false;
