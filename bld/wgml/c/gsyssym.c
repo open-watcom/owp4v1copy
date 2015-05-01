@@ -525,13 +525,13 @@ static void syshyphfun( symvar * e )
 
 static void sysinfun( symvar * e )      // .in indent value
 {
-    ultoa( g_indent * CPI / g_resh, sysinstr, 10 ); // in chars
+    ultoa( ((int32_t)(g_indent + nest_cb->left_indent + nest_cb->align) * CPI) / g_resh, sysinstr, 10 ); // in chars
     return;
 };
 
 static void sysinrfun( symvar * e )     // .in indentr indent right value
 {
-    ltoa( g_ll + g_indentr * CPI / g_resh, sysinrstr, 10 );
+    ultoa( g_ll + ((int32_t)((g_indentr + nest_cb->right_indent) * CPI) / g_resh), sysinrstr, 10 );
     return;
 };
 
