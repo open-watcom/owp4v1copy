@@ -653,7 +653,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
     }
 
     p++;
-    if( !cvterr && *p ) {               // second letter
+    if( !cvterr && *p && (*p != ' ') ) {// second letter
         c = tolower( *p );
         switch( c ) {
         case   'd':
@@ -661,7 +661,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
             break;
         case   'p':
             p++;
-            if( *p ) {                  // third letter
+            if( *p && (*p != ' ') ) {   // third letter
                 c = tolower( *p );
                 switch( c ) {
                 case   'a':
