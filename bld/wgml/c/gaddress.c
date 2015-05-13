@@ -59,6 +59,8 @@ extern  void    gml_address( const gmltag * entry )
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
     nest_cb->c_tag = t_ADDRESS;
+    nest_cb->left_indent = nest_cb->prev->left_indent;
+    nest_cb->right_indent = nest_cb->prev->right_indent;
 
     spacing = layout_work.titlep.spacing;
 
@@ -92,6 +94,8 @@ extern  void    gml_eaddress( const gmltag * entry )
     }
     g_curr_font = font_save;
     ProcFlags.address_active = false;
+    nest_cb->prev->left_indent = nest_cb->left_indent;
+    nest_cb->prev->right_indent = nest_cb->right_indent;
     rs_loc = titlep_tag;
     wk = nest_cb;
     nest_cb = nest_cb->prev;
@@ -138,8 +142,8 @@ static void prep_aline( text_line *p_line, const char *p )
     uint32_t        h_left;
     uint32_t        h_right;
 
-    h_left = g_page_left + conv_hor_unit( &layout_work.address.left_adjust );
-    h_right = g_page_right - conv_hor_unit( &layout_work.address.right_adjust );
+    h_left = g_page_left + nest_cb->left_indent + conv_hor_unit( &layout_work.address.left_adjust );
+    h_right = g_page_right + nest_cb->right_indent - conv_hor_unit( &layout_work.address.right_adjust );
 
     curr_t = alloc_text_chars( p, strlen( p ), g_curr_font );
     curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );

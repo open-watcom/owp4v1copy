@@ -186,7 +186,8 @@ void init_global_vars( void )
     g_subs_skip         = 0;
     g_top_skip          = 0;
     g_spacing           = 0;
-    nest_cb             = NULL;         // no nested tags
+
+    init_nest_cb();                     // base of stack must exist at start
 
     msg_indent          = 0;            // should be correct initial value
 }
@@ -234,7 +235,9 @@ void init_pass_data( void )
     bm = tm;                                            // bottom margin &sysbm
     hm = bin_device->vertical_base_units / LPI;         // heading margin &syshm
     fm = hm;                                            // footing margin &sysfm
+
     g_indent            = 0;
+    g_indentr           = 0;
 
     ixhtag[0] = NULL;                   // last higher level :IH1 :IH2 tags
     ixhtag[1] = NULL;                   // last higher level :IH1 :IH2 tags

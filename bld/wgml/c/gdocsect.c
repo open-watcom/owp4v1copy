@@ -32,7 +32,9 @@
 #include    "gvars.h"
 
 
-line_number     titlep_lineno;      // TITLEP tag line number
+static  int32_t     save_indent     =0;     // used with TITLEP/eTITLEP
+static  int32_t     save_indentr    =0;     // used with TITLEP/eTITLEP
+static  line_number titlep_lineno   =0;     // TITLEP tag line number
 
 /***************************************************************************/
 /*  error routine for wrong sequence of doc section tags                   */
@@ -205,7 +207,7 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
     } else {
         curr_t = alloc_text_chars( h_string, strlen( h_string ), font );
         curr_t->width = cop_text_width( curr_t->text, curr_t->count, font );
-        h_left = g_page_left +(g_page_right - g_page_left - curr_t->width) / 2;
+        h_left = g_page_left +(g_page_right_org - g_page_left - curr_t->width) / 2;
         curr_t->x_address = h_left;
 
         hd_line = alloc_text_line();
@@ -297,7 +299,6 @@ void    start_doc_sect( void )
     page_ej             page_e;
     su              *   p_sk;
     su              *   top_sk;
-    uint32_t            ind;
     xx_str          *   h_string;
 
     if( ProcFlags.start_section ) {
@@ -338,7 +339,9 @@ void    start_doc_sect( void )
         }
         break;
     case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
-        page_e = ej_yes;
+        if( t_page.last_col_main != NULL ) {
+            page_e = ej_yes;
+        }
         init_nest_cb();
         nest_cb->p_stack = copy_to_nest_stack();
         nest_cb->c_tag = t_TITLEP;
@@ -453,16 +456,14 @@ void    start_doc_sect( void )
             new_section( ds );
 
             /****************************************************/
-            /*  set page bottom banner/limit for new section    */
+            /*  set page bottom limit for new section           */
             /****************************************************/
 
-            ind = !(page & 1);
-            t_page.bottom_banner = sect_ban_bot[ind];
-            if( sect_ban_bot[ind] != NULL ) {
+            if( t_page.bottom_banner != NULL ) {
                 if( bin_driver->y_positive == 0 ) {
-                    g_page_bottom = g_page_bottom_org + sect_ban_bot[ind]->ban_depth;
+                    g_page_bottom = g_page_bottom_org + t_page.bottom_banner->ban_depth;
                 } else {
-                    g_page_bottom = g_page_bottom_org - sect_ban_bot[ind]->ban_depth;
+                    g_page_bottom = g_page_bottom_org - t_page.bottom_banner->ban_depth;
                 }
             } else {
                 g_page_bottom = g_page_bottom_org;
@@ -472,7 +473,7 @@ void    start_doc_sect( void )
     }
     g_cur_left = g_page_left_org;
     g_cur_h_start = g_page_left_org + g_indent;
-    if( header ) {
+    if( header && (ds != doc_sect_appendix) ) { // The APPENDIX header is used differently
         doc_header( p_sk, top_sk, h_string, font, h_spc, page_e == ej_no );
     }
     ProcFlags.doc_sect = ds;
@@ -533,6 +534,12 @@ extern  void    gml_abstract( const gmltag * entry )
     g_cur_left = g_page_left;
     g_cur_h_start = g_page_left;
 
+    if( layout_work.abstract.header ) {
+        start_doc_sect();                           // a header is enough
+    }
+    g_indent = 0;
+    g_indentr = 0;
+    set_h_start();
 }
 
 extern  void    gml_appendix( const gmltag * entry )
@@ -547,6 +554,9 @@ extern  void    gml_appendix( const gmltag * entry )
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
     }
+    g_indent = 0;
+    g_indentr = 0;
+    set_h_start();
 }
 
 extern  void    gml_backm( const gmltag * entry )
@@ -560,6 +570,11 @@ extern  void    gml_backm( const gmltag * entry )
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
     }
+    if( layout_work.backm.header ) {
+        start_doc_sect();                           // a header is enough
+    }
+    g_indent = 0;
+    g_indentr = 0;
 }
 
 extern  void    gml_body( const gmltag * entry )
@@ -579,6 +594,12 @@ extern  void    gml_body( const gmltag * entry )
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
     }
+    if( layout_work.body.header ) {
+        start_doc_sect();                           // a header is enough
+    }
+    g_indent = 0;
+    g_indentr = 0;
+    set_h_start();
 }
 
 extern  void    gml_figlist( const gmltag * entry )
@@ -625,10 +646,16 @@ extern  void    gml_index( const gmltag * entry )
         scan_start = scan_stop + 1;
         return;
     }
+
     gml_doc_xxx( doc_sect_index );
 
-    gen_index();                        // output the formatted index
+    /* When gen_index() is finalized, the resets may need to be moved */
 
+    g_indent = 0;
+    g_indentr = 0;
+    set_h_start();
+
+    gen_index();                        // output the formatted index
 }
 
 extern  void    gml_preface( const gmltag * entry )
@@ -647,6 +674,12 @@ extern  void    gml_preface( const gmltag * entry )
     scr_process_break();
     gml_doc_xxx( doc_sect_preface );
     spacing = layout_work.preface.spacing;
+    if( layout_work.preface.header ) {
+        start_doc_sect();                           // a header is enough
+    }
+    g_indent = 0;
+    g_indentr = 0;
+    set_h_start();
 }
 
 extern  void    gml_titlep( const gmltag * entry )
@@ -673,6 +706,11 @@ extern  void    gml_titlep( const gmltag * entry )
     } else {
         titlep_lineno = 0;                  // not clear what to do here
     }
+    save_indent = g_indent;
+    save_indentr = g_indentr;
+    g_indent = 0;
+    g_indentr = 0;
+    set_h_start();
 }
 
 extern  void    gml_etitlep( const gmltag * entry )
@@ -684,6 +722,9 @@ extern  void    gml_etitlep( const gmltag * entry )
     titlep_lineno = 0;
 
     if( nest_cb != NULL ) { // guard against no FRONTM, empty TITLEP section
+        g_indent = save_indent;
+        g_indentr = save_indentr;
+        set_h_start();
         wk = nest_cb;
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );

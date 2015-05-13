@@ -844,8 +844,9 @@ typedef struct tag_cb {
     uint32_t            li_number;      // list item no for :OL
     uint32_t            lm;             // left margin at tag start
     uint32_t            rm;             // right margin at tag start
-    uint32_t            left_indent;
-    uint32_t            right_indent;
+    int32_t             align;          // attribute value
+    int32_t             left_indent;    // attribute value
+    int32_t             right_indent;   // attribute value
     uint32_t            post_skip;      // skip at tag end
     uint32_t            tsize;          // :dl
     uint8_t             headhi;         // :dl

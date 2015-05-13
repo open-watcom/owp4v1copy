@@ -1199,7 +1199,7 @@ size_t intrans( char *data, size_t len, font_number font )
 void set_h_start( void )
 {
     if( !ProcFlags.keep_left_margin ) {
-        g_cur_left = g_page_left + g_indent;
+        g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;
     }
     g_cur_h_start = g_cur_left;
 
@@ -1419,7 +1419,7 @@ void    process_text( const char *text, font_number font )
                 tab_space++;
             }
         }
-        ju_x_start = g_cur_h_start; // g_cur_h_start appears correct on entry
+        ju_x_start = g_cur_h_start; // g_cur_h_start appears to be correct
     } else {                        // subsequent phrase in paragraph
         if( ProcFlags.concat && !ProcFlags.xmp_active ) {    // ".co on"
             if( post_space == 0 ) {

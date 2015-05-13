@@ -47,11 +47,11 @@ void    proc_p_pc( p_lay_tag * p_pc )
     start_doc_sect();                   // if not already done
 
     scr_process_break();
-    if( nest_cb->c_tag == t_NONE ) {
-        g_cur_left = g_page_left + g_indent;// left start    TBD
-    } else {
-        g_cur_left = g_cur_left;
-    }
+//    if( nest_cb->c_tag == t_NONE ) {
+        g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
+//    } else {
+//        g_cur_left = g_cur_left;
+//    }
                                         // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(p_pc->line_indent) );
 

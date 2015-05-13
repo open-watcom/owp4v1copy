@@ -49,6 +49,7 @@ static  void    preprocess_script_region( banner_lay_tag * ban )
     char        sep;
     int         k;
 
+    if( ban->region != NULL ) {
     if( (ban->region->contents.content_type == string_content)
         && ban->region->script_format ) {
 
@@ -85,6 +86,7 @@ static  void    preprocess_script_region( banner_lay_tag * ban )
                 *pl = '\0';             // null terminate
             }
         }
+    }
     }
 }
 
@@ -715,7 +717,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                 h_left += reg_indent;
             }
         } else {                            // in horiz space units
-            h_left = reg_indent + ban->region->reg_hoffset;
+            h_left += reg_indent + ban->region->reg_hoffset;
         }
 
         if( ban->region->region_position == pos_center || k == 1) {

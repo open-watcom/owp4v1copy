@@ -119,8 +119,13 @@ void    scr_in( void )
         newindent = 0;
         newindentr = 0;
     } else {
-        newindent  = g_indent;          // prepare keeping old values
-        newindentr = g_indentr;
+        if( nest_cb->c_tag == t_NONE ) {
+            newindent  = g_indent;          // prepare keeping old values
+            newindentr = g_indentr;
+        } else {
+            newindent  = nest_cb->left_indent;  // prepare keeping old values
+            newindentr = nest_cb->right_indent;
+        }
         if( *pa == '*' ) {              // keep old indent value
             p = pa + 1;
         } else {
@@ -132,12 +137,10 @@ void    scr_in( void )
                 err_count++;
                 show_include_stack();
             } else {
-                newindent = round_indent( &indentwork );
                 if( indentwork.su_relative ) {
-                    newindent += g_indent;
-                }
-                if( newindent < 0 ) {
-                    newindent = 0;      // minimum value
+                    newindent += round_indent( &indentwork );
+                } else {
+                    newindent = round_indent( &indentwork );
                 }
             }
         }
@@ -162,17 +165,22 @@ void    scr_in( void )
             /***************************************************************/
  
                 if( indentwork.su_whole + indentwork.su_dec != 0) {
-                    newindentr = g_indentr + round_indent( &indentwork );
+                    newindentr += round_indent( &indentwork );
                 } else {
                     newindentr = 0;
                 }
             }
         }
     }
-    g_indent = newindent;
-    g_indentr = newindentr;
+    if( nest_cb->c_tag == t_NONE ) {
+        g_indent = newindent;
+        g_indentr = newindentr;
+    } else {
+        nest_cb->left_indent = newindent;
+        nest_cb->right_indent = newindentr;
+    }
  
-    g_page_right = g_page_right_org + g_indentr;
+    g_page_right = g_page_right_org + g_indentr + nest_cb->right_indent;
     ProcFlags.keep_left_margin = false;
     set_h_start();                      // apply new values
     scan_restart = p;

@@ -121,18 +121,19 @@ extern  void    gml_xmp( const gmltag * entry )
     font_save = g_curr_font;
     g_curr_font = layout_work.xmp.font;
 
-    if( nest_cb->c_tag == t_NONE ) {
-        g_cur_left = g_page_left + conv_hor_unit( &layout_work.xmp.left_indent );
-    } else {
-        g_cur_left += conv_hor_unit( &layout_work.xmp.left_indent );
-    }
-    g_cur_h_start = g_cur_left;
-    ProcFlags.keep_left_margin = true;  // keep special indent
-
-
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
+    nest_cb->left_indent = conv_hor_unit( &layout_work.xmp.left_indent );
+    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.xmp.right_indent );
+    nest_cb->lm = g_cur_left;
+    nest_cb->rm = g_page_right;
     nest_cb->c_tag = t_XMP;
+
+    g_cur_left += nest_cb->left_indent;
+    g_page_right += nest_cb->right_indent;
+
+    g_cur_h_start = g_cur_left;
+    ProcFlags.keep_left_margin = true;  // keep special indent
 
     spacing = layout_work.xmp.spacing;
 
@@ -163,6 +164,7 @@ extern  void    gml_xmp( const gmltag * entry )
 
 void    gml_exmp( const gmltag * entry )
 {
+    char    *   p;
     tag_cb  *   wk;
 
     scr_process_break();
@@ -174,6 +176,9 @@ void    gml_exmp( const gmltag * entry )
     g_curr_font = font_save;
     ProcFlags.xmp_active = false;
     ProcFlags.justify = justify_save;
+    g_cur_left = nest_cb->lm;
+    g_page_right = nest_cb->rm;
+
     wk = nest_cb;
     nest_cb = nest_cb->prev;
     add_tag_cb_to_pool( wk );
@@ -204,6 +209,15 @@ void    gml_exmp( const gmltag * entry )
 
     t_doc_el_group.depth    = 0;
     t_doc_el_group.last     = NULL;
+
+    g_cur_h_start = g_cur_left;
+    scan_err = false;
+    p = scan_start;
+    if( *p == '.' ) p++;            // over '.'
+    if( *p ) {
+        gml_pc( NULL );
+    }
+
     scan_start = scan_stop + 1;
     return;
 }

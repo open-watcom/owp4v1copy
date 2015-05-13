@@ -338,7 +338,7 @@ global  uint32_t    spacing;            // spacing between lines (line count)
 global  uint32_t    post_space;         // spacing within a line
 global  uint32_t    ju_x_start;         // .. formatting
 
-global  uint32_t    g_indent;           // .in 1. value (left) default 0
+global  int32_t     g_indent;           // .in 1. value (left) default 0
 global  int32_t     g_indentr;          // .in 2. value (right) default 0
 
 global  int32_t     g_cur_threshold;    // current widow threshold value

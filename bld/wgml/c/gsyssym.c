@@ -525,13 +525,19 @@ static void syshyphfun( symvar * e )
 
 static void sysinfun( symvar * e )      // .in indent value
 {
-    ultoa( ((int32_t)(g_indent + nest_cb->left_indent + nest_cb->align) * CPI) / g_resh, sysinstr, 10 ); // in chars
+    int32_t t_indent;
+
+    t_indent = ((g_indent + nest_cb->left_indent + nest_cb->align) * CPI) / g_resh;
+    if( t_indent < 0 ) {
+        t_indent++;                     // to match wmgl 4.0
+    }
+    ltoa( t_indent, sysinstr, 10 );     // in chars
     return;
 };
 
 static void sysinrfun( symvar * e )     // .in indentr indent right value
 {
-    ultoa( g_ll + ((int32_t)((g_indentr + nest_cb->right_indent) * CPI) / g_resh), sysinrstr, 10 );
+    ltoa( g_ll + (((g_indentr + nest_cb->right_indent) * CPI) / g_resh), sysinrstr, 10 );
     return;
 };
 

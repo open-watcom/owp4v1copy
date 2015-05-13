@@ -50,6 +50,7 @@ void init_nest_cb( void )
     wk->lay_tag = NULL;
 
     if( nest_cb == NULL ) {             // if first one set defaults
+        wk->align        = 0;
         wk->left_indent  = 0;
         wk->right_indent = 0;
         wk->post_skip    = 0;

@@ -681,7 +681,7 @@ void do_page_out( void )
     g_cur_h_start = g_page_left_org;
     g_cur_left    = g_page_left_org;
 
-    if( t_page.top_banner != NULL ) {
+    if( (t_page.top_banner != NULL) && (t_page.top_banner->region != NULL) ) {
         out_ban_top();
     }
 
@@ -691,7 +691,7 @@ void do_page_out( void )
     }
 // end of former document_top_banner()
 
-    if( t_page.bottom_banner != NULL ) {
+    if( (t_page.bottom_banner != NULL) && (t_page.bottom_banner->region != NULL) ) {
         out_ban_bot();
     }
 
@@ -1131,7 +1131,13 @@ void insert_page_width( doc_element * a_element )
 void last_page_out( void )
 {
     full_page_out();
-    do_page_out();  // last page
+
+    /* Emit last page only if it has content, not just banners */
+
+    if( (t_page.page_width != NULL) || (t_page.main != NULL) ) {
+        do_page_out();
+    }
+
     return;
 }
 
