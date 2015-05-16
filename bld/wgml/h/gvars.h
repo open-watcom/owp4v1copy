@@ -274,7 +274,7 @@ global  uint32_t            max_depth;          // space left on page (used by B
 
 // tb support
 global  tab_stop    *   c_stop;         // current tab_stop
-global  uint32_t        first_tab;      // first default top position
+global  uint32_t        first_tab;      // first default tab position
 global  uint32_t        inter_tab;      // distance between default tabs
 global  char            tab_char;       // tab character from .tb
 global  uint32_t        tab_col;        // width of one column, as used with tabs
