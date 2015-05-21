@@ -403,10 +403,12 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
         if( *p == '.' ) p++;            // over '.'
         if( *p ) {
             gml_pc( NULL );
+        } else {
+            ProcFlags.skips_valid = false;  // force use of post_skip with following text element
         }
     }
 
-    ProcFlags.need_li_lp = false;        // :LI or :LP no longer needed
+    ProcFlags.need_li_lp = false;       // :LI or :LP no longer needed
     scan_start = scan_stop + 1;
 }
 

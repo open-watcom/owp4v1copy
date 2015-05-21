@@ -356,29 +356,46 @@ static void do_fc_comp( void )
 
 static void wgml_tabs( void )
 {
-    bool                    center_end  = false;    // spaces at end of al_center scope
-    bool                    skip_tab    = false;    // skip current tab
-    int                     i;
-    int32_t                 offset      = 0;        // offset for position adjustment
-    text_chars                  *c_chars    = NULL;     // current text_chars
-    text_chars                  *c_multi;               // used to traverse parts of multipart word
-    text_chars                  *in_chars   = t_line->last; // text_chars being processed
-    text_chars                  *s_chars    = NULL;     // source text_chars
-    char                    *in_text    = in_chars->text;
-    uint32_t                in_count    = in_chars->count;
-    uint32_t                m_width;                // multi-part word width
-    uint32_t                pre_space   = 0;        // space before current word
-    uint32_t                pre_width;              // tab_space in hbus & adjusted for alignment
-    size_t                  t_count     = 0;        // text count
-    uint32_t                t_start;                // text start
-    uint32_t                t_width;                // text width
-    static  bool            text_found  = false;    // text found after tab character
-    static  text_chars      *s_multi     = NULL;     // first part of multipart word
-    static  text_line       tab_chars   = { NULL, 0, 0, NULL, NULL };   // current tab markers/fill chars
-    static  text_type       c_type      = norm;     // type for current tab character
-    static  font_number     c_font      = 0;        // font for current tab character
-    static  uint32_t        s_width     = 0;        // space width (from tab_space)
+    bool                        center_end  = false;    // spaces at end of al_center scope
+    bool                        skip_tab    = false;    // skip current tab
+    char                    *   in_text;                // in_chars->text
+    int                         i;
+    int32_t                     t_align     = 0;        // current align value, or 0 if none found
+    int32_t                     offset      = 0;        // offset for position adjustment
+    size_t                      t_count     = 0;        // text count
+    tag_cb                  *   t_cb        = NULL;
+    text_chars              *   c_chars     = NULL;     // current text_chars
+    text_chars              *   c_multi;                // used to traverse parts of multipart word
+    text_chars              *   in_chars;               // text_chars being processed
+    text_chars              *   s_chars     = NULL;     // source text_chars
+    uint32_t                    in_count;               // in_chars->count
+    uint32_t                    m_width;                // multi-part word width
+    uint32_t                    pre_space   = 0;        // space before current word
+    uint32_t                    pre_width;              // tab_space in hbus & adjusted for alignment
+    uint32_t                    t_start;                // text start
+    uint32_t                    t_width;                // text width
 
+    static  bool                text_found  = false;    // text found after tab character
+    static  text_chars      *   s_multi     = NULL;     // first part of multipart word
+    static  text_line           tab_chars   = { NULL, 0, 0, NULL, NULL };   // current tab markers/fill chars
+    static  text_type           c_type      = norm;     // type for current tab character
+    static  font_number         c_font      = 0;        // font for current tab character
+    static  uint32_t            s_width     = 0;        // space width (from tab_space)
+
+    in_chars = t_line->last;
+    in_text  = in_chars->text;
+    in_count = in_chars->count;
+
+    /* Set t_align to closest enclosing nonzero value */
+
+    t_cb = nest_cb;
+    while( t_cb != NULL ) {
+        if( t_cb->align != 0 ) {
+            t_align = t_cb->align;
+            break;
+        }
+        t_cb = t_cb->prev;
+    }
     for( i = 0; i < in_count; i++) {    // locate the first wgml tab, if any
         if( (in_text[i] == '\t') || (in_text[i] == tab_char) ) {
             break;
@@ -497,7 +514,7 @@ static void wgml_tabs( void )
                 if( c_stop->alignment == al_left ) {   // alignment left
                     s_width = 0;
                     if( input_cbs->fmflags & II_tag_mac ) {   // inside macro
-                        g_cur_h_start = g_cur_left + c_stop->column + post_space;
+                        g_cur_h_start = g_cur_left + c_stop->column + post_space - t_align;
                     } else {                                // not inside macro
                         g_cur_h_start = g_cur_left + c_stop->column + tab_space *
                                         wgml_fonts[in_chars->font].spc_width;
@@ -598,12 +615,9 @@ static void wgml_tabs( void )
 
                 /* II_macro immediately after a tab character */
 
-/// note: test macro was wrapped in a symbol whose text started with ";"
-/// this is not correct with .mono: no symbol, no ";"
- 
-//                if( input_cbs->fmflags & II_macro ) {
                 if( (input_cbs->fmflags & II_macro)
-                        && (c_font != g_curr_font) ) {
+                        && (c_font != g_curr_font)
+                        ) {
                     g_cur_h_start += post_space;
                 }
                 tabbing = false;
@@ -715,9 +729,8 @@ static void wgml_tabs( void )
                 tab_chars.last = c_chars;
             }
 
-//          original condition: all font changes
-//            if( c_font != s_chars->font ) {
             // Not for text from macros, even if font number changes
+
             if( (c_font != s_chars->font) && !(input_cbs->fmflags & II_macro) ) {
                 c_chars = do_c_chars( c_chars, in_chars, NULL, 0,
                                 g_cur_h_start, 0, c_font, c_type );
@@ -806,7 +819,7 @@ static void wgml_tabs( void )
     i = in_count - 1;                       // reset to check last character
     if( (in_text[i] == '\t') || (in_text[i] == tab_char) ) {
         gap_start = g_cur_h_start;
-        g_cur_h_start = g_cur_left + c_stop->column;
+        g_cur_h_start = g_cur_left + c_stop->column - t_align;
         if( c_stop->alignment == al_right ) {
             g_cur_h_start += tab_col;
         }
@@ -1298,20 +1311,22 @@ text_chars *process_word( const char *pword, size_t count, font_number font )
 
 void    process_text( const char *text, font_number font )
 {
-    const char              *pword;
-    const char              *p;
-    font_number             temp_font   = 0;
-    size_t                  count;
-    text_chars          *   h_char;     // hyphen text char
-    text_chars          *   n_char;     // new text char
-    text_chars          *   s_char;     // save text char
-    uint32_t                o_count     = 0;
-    uint32_t                offset      = 0;
-    // when hyph can be set, it will need to be used here & below
-    uint32_t                hy_width = wgml_fonts[0].width_table['-'];
+    const char          *   pword;
+    const char          *   p;
 
-    static      text_type   typ = norm;
-    static      text_type   typn = norm;
+    font_number             temp_font       = 0;
+    size_t                  count;
+    text_chars          *   h_char;                     // hyphen text char
+    text_chars          *   n_char;                     // new text char
+    text_chars          *   s_char;                     // save text char
+    uint32_t                o_count         = 0;
+    uint32_t                offset          = 0;
+    // when hyph can be set, it will need to be used here & below
+    uint32_t                hy_width        = wgml_fonts[0].width_table['-'];
+
+    static      text_type       typ             = norm;
+    static      text_type       typn            = norm;
+    static      macrocb     *   prev_mac        = NULL;
 
     /********************************************************************/
     /*  we need a started section for text output                       */
@@ -1333,8 +1348,6 @@ void    process_text( const char *text, font_number font )
             return;
         }
     }
-
-    g_prev_font = font; // save font number for potential use with BX - TBD
 
     /********************************************************************/
     /*  force a break in when certain conditions involving new input    */
@@ -1424,13 +1437,23 @@ void    process_text( const char *text, font_number font )
         if( ProcFlags.concat && !ProcFlags.xmp_active ) {    // ".co on"
             if( post_space == 0 ) {
                 // compute initial spacing if needed; .ct and some user tags affect this
-                if( (*p == ' ')
-                    || ((input_cbs->fmflags & II_tag) && !ProcFlags.utc)
-                    || (((input_cbs->fmflags & II_sol)
-                            || (input_cbs->fmflags & II_macro))
-                        && !ProcFlags.ct
-                        && (ju_x_start <= t_line->last->x_address)) ) {
+                if( *p == ' ' ) {
                     post_space = wgml_fonts[font].spc_width;
+                } else if( !ProcFlags.ct && (ju_x_start <= t_line->last->x_address) ) {
+                    if( input_cbs->fmflags & II_sol ) {
+                        post_space = wgml_fonts[font].spc_width;
+                    } else if( (input_cbs->fmflags & II_tag) && !ProcFlags.utc ) {
+                        post_space = wgml_fonts[font].spc_width;
+                    } else if( input_cbs->fmflags & II_macro ) {
+                        if( ((font != 0) || (g_prev_font == 0))
+                                && (input_cbs->s.m != prev_mac) ) {
+                            post_space = wgml_fonts[0].spc_width;
+                        } else if( (font != 0) && (g_prev_font != 0) ) {
+                            post_space = wgml_fonts[font].spc_width;
+                        }
+                    }
+                }
+                if( post_space > 0 ) {
                     if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
                         && !ProcFlags.xmp_active ) {
                         post_space += wgml_fonts[font].spc_width;
@@ -1771,6 +1794,14 @@ void    process_text( const char *text, font_number font )
             }
         }
     }
+
+    if( input_cbs->fmflags & II_file ) {
+        prev_mac = NULL;
+    } else {
+        prev_mac = input_cbs->s.m;
+    }
+    g_prev_font = font; // save font number for potential use with BX - TBD
+
     ProcFlags.ct = false;               // experimental TBD
     ProcFlags.fsp = false;              // experimental TBD
     ProcFlags.utc = false;              // experimental TBD
