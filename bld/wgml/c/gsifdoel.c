@@ -564,7 +564,7 @@ void    scr_if( void )
     }
 
     if( *scan_start ) {                 // rest of line is not empty
-        split_input(  buff2, scan_start, false );   // split and process next
+        split_input(  buff2, scan_start, true );   // split and process next
     }
     scan_restart = scan_stop + 1;
     return;
@@ -650,7 +650,7 @@ void    scr_th( void )
     }
 
     if( *scan_start ) {                 // rest of line is not empty split
-        split_input( buff2, scan_start, false );// and process next
+        split_input( buff2, scan_start, true );// and process next
     }
     scan_restart = scan_stop + 1;
     return;
@@ -724,7 +724,7 @@ void    scr_el( void )
     }
 
     if( *scan_start ) {                 // rest of line is not empty split
-        split_input( buff2, scan_start, false );// and process next
+        split_input( buff2, scan_start, true );// and process next
     }
     scan_restart = scan_stop + 1;
     return;

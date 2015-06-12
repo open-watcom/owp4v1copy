@@ -902,19 +902,19 @@ void insert_col_main( doc_element * a_element )
     /****************************************************************/
     /*  alternate procesing: accumulate elements for later          */
     /*  submission                                                  */
-    /*  used currenlty by ADDRESS/eADDRESS                          */
+    /*  this is the basis for all block processing                  */
     /****************************************************************/
 
-    if( ProcFlags.group_elements ) {
-        if( t_doc_el_group.first == NULL ) {
-            t_doc_el_group.first = a_element;
-            t_doc_el_group.last = t_doc_el_group.first;
-            t_doc_el_group.depth = (a_element->blank_lines + a_element->subs_skip +
+    if( t_doc_el_group != NULL ) {
+        if( t_doc_el_group->first == NULL ) {
+            t_doc_el_group->first = a_element;
+            t_doc_el_group->last = t_doc_el_group->first;
+            t_doc_el_group->depth = (a_element->blank_lines + a_element->subs_skip +
                                     a_element->depth);
         } else {
-            t_doc_el_group.last->next = a_element;
-            t_doc_el_group.last = t_doc_el_group.last->next;
-            t_doc_el_group.depth += (a_element->blank_lines + a_element->subs_skip +
+            t_doc_el_group->last->next = a_element;
+            t_doc_el_group->last = t_doc_el_group->last->next;
+            t_doc_el_group->depth += (a_element->blank_lines + a_element->subs_skip +
                                      a_element->depth);
         }
         return;

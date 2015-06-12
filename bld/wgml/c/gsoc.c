@@ -74,7 +74,7 @@ void    scr_oc( void )
         if( *p ) {                      // line operand specified
             p++;                        // over space
             if( *p ) {
-                ob_direct_out( p );
+                ob_oc( p );
                 if( input_cbs->fmflags & II_research ) {
                     out_msg( p );       // TBD
                     out_msg( "<-.oc.oc.oc\n" ); // TBD

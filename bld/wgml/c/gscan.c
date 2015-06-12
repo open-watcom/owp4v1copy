@@ -799,7 +799,7 @@ void    scan_line( void )
         /*******************************************************************/
 
         if( !ProcFlags.layout && (input_cbs->fmflags & II_eol) ) {
-            if( !ProcFlags.concat || ProcFlags.xmp_active ) {
+            if( !ProcFlags.concat ) {
 
                 /*******************************************************************/
                 /* This fixes a problem found when BX was implemented: when PA is  */
@@ -808,7 +808,7 @@ void    scan_line( void )
                 /* remains to be determined                                        */
                 /*******************************************************************/
 
-                if( ProcFlags.in_bx_box ) {
+                if( ProcFlags.in_bx_box && !ProcFlags.keep_left_margin) {
                     g_cur_h_start = g_page_left_org + g_indent;
                 }
                 scr_process_break();

@@ -293,7 +293,7 @@
 .   .cp &*tmplvl
 .   .se $$bextrb=&*2
 .   .se $$bextre=&*3
-.*.   .xtxmp begin &*2 &*3
+.   .xtxmp begin &*2 &*3
 .   .in 0
 .   .tb set \
 .   .tb &*t0 &*t2 &*t3 &*t4 &*t5 &*t6 &*t7 &*t8 &*t1
@@ -310,7 +310,7 @@
 .   .do end
 .   .bx off
 .   .in &INDlvl
-.*.   .xtxmp end &$$bextrb &$$bextre
+.   .xtxmp end &$$bextrb &$$bextre
 .do end
 .el .do begin
 .   .if &e'&dohelp eq 1 .do begin

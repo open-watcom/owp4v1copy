@@ -492,8 +492,8 @@ static void output_uscores( text_chars *in_chars )
 
 static void post_text_output( void )
 {
-    char    shift_neg[]     = " neg ";
-    char    shift_rmoveto[] = "0 exch rmoveto ";
+    char    shift_neg[]     = " neg";
+    char    shift_rmoveto[] = " 0 exch rmoveto ";
     char    shift_scale[]   = " 1 .7 div dup scale";
     size_t  ps_size;
 
@@ -594,7 +594,7 @@ static void pre_text_output( void )
                 ps_size = wgml_fonts[active_font].shift_count;
                 ob_insert_block( wgml_fonts[active_font].shift_height, ps_size, false, false, active_font );
 
-                ps_size = strlen( shift_rmoveto );
+                ps_size = strlen( shift_rmoveto ) + 1;
                 ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_scale );

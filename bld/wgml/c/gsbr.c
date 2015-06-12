@@ -134,7 +134,7 @@ void  scr_process_break( void )
         t_element = NULL;
         t_el_last = NULL;
 
-    } else if( g_blank_lines > 0 ) {              // blank lines at end of section?
+    } else if( g_blank_lines > 0 ) {            // blank lines at end of section?
         t_element = alloc_doc_el( el_text );
         t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
         t_element->blank_lines = g_blank_lines;
@@ -155,6 +155,7 @@ void  scr_process_break( void )
         t_el_last = NULL;
 
     }
+    set_h_start();      // to stop paragraph indent from being used after a break
     ProcFlags.empty_doc_el = false;
     c_stop = NULL;
 

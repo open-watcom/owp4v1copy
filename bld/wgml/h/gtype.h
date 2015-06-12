@@ -1044,15 +1044,43 @@ typedef struct doc_element {
             element_type        type;   // placement avoids padding warning
 } doc_element;
 
+/********************************************************************/
+/* Tags and control words that use blocks of doc_elements           */
+/* None of these can occur inside of itself (except BX, in the      */
+/*   sense that BX lines can be inside a box formed by BX)          */
+/* Except for ADDRESS and BX, none of these can occur inside any of */
+/*   the others; ADDRESS allows none of the tags and the control    */
+/*   words FB and FK have no apparent effect                        */
+/* In addition, CC and CP cannot occur inside any of these except   */
+/*   address                                                        */
+/* Control word BX can be used to draw a box around any block or    */
+/*   inside any block, or both with the same block                  */
+/* Thus, the stack intermingles BX groups and other groups, but can */
+/*   only contain one of the other types of groups at any time      */
+/********************************************************************/
+
+typedef enum {
+    gt_none     =   0,  // no doc_el_group in use
+    gt_address  =   1,  // tag ADDRESS
+    gt_bx       =   2,  // control word BX
+    gt_fn       =   4,  // tag or control word FN
+    gt_fig      =   8,  // tag FIG
+    gt_xmp      =   16, // tag XMP
+    gt_fb       =   32, // control word FB
+    gt_fk       =   64, // control work FK
+} group_type;
+
 typedef struct doc_el_group {
-    uint32_t        depth;
-    doc_element *   first;
-    doc_element *   last;
+    struct  doc_el_group    *   prev;
+            uint32_t            depth;
+            doc_element     *   first;
+            doc_element     *   last;
+            group_type          owner;  // tag or control word using this instance
 } doc_el_group;
 
 typedef struct ban_column {
     struct  ban_column  *   next;
-    doc_element         *   first;
+            doc_element *   first;
 } ban_column;
 
 typedef struct doc_column {

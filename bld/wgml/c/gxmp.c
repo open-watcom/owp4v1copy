@@ -32,10 +32,11 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
-static  ju_enum     justify_save;           // for ProcFlags.justify
+static  bool        concat_save;            // for ProcFlags.concat
 static  bool        first_xline;            // special for first xmp LINE
 static  font_number font_save;              // save for font
-
+static  group_type  sav_group_type;         // save prior group type
+static  ju_enum     justify_save;           // for ProcFlags.justify
 
 /***************************************************************************/
 /*      :XMP [depth='vert-space-unit'].                                    */
@@ -59,7 +60,7 @@ static  font_number font_save;              // save for font
 /*                                                                         */
 /***************************************************************************/
 
-extern  void    gml_xmp( const gmltag * entry )
+void gml_xmp( const gmltag * entry )
 {
     char    *   p;
 
@@ -89,7 +90,7 @@ extern  void    gml_xmp( const gmltag * entry )
            }
         }
     }
-    if( ProcFlags.xmp_active ) {        // nested :XMP tag not supported
+    if( cur_group_type == gt_xmp ) {        // nested :XMP tag not supported
         g_err_tag_nest( "eXMP" );
         scan_start = scan_stop + 1;
         return;
@@ -98,25 +99,29 @@ extern  void    gml_xmp( const gmltag * entry )
     /******************************************************************/
     /*  test for XMP within  :ADDRESS, :FIG , :FN                     */
     /******************************************************************/
-    if( ProcFlags.address_active ) {
+
+    if( cur_group_type == gt_address ) {
         g_err_tag_x_in_y( "XMP", "ADDRESS" );
         scan_start = scan_stop + 1;
         return;
-    } else {
-        if( ProcFlags.fig_active ) {
-            g_err_tag_x_in_y( "XMP", "FIG" );
-            scan_start = scan_stop + 1;
-            return;
-        } else {
-            if( ProcFlags.fn_active ) {
-                g_err_tag_x_in_y( "XMP", "FN" );
-                scan_start = scan_stop + 1;
-                return;
-            }
-        }
+    } else if( cur_group_type == gt_fig ) {
+        g_err_tag_x_in_y( "XMP", "FIG" );
+        scan_start = scan_stop + 1;
+        return;
+    } else if( cur_group_type == gt_fn ) {
+        g_err_tag_x_in_y( "XMP", "FN" );
+        scan_start = scan_stop + 1;
+        return;
+    } else if( cur_group_type == gt_fb ) {
+        g_err_tag_x_in_y( "XMP", "FB" );
+        scan_start = scan_stop + 1;
+        return;
+    } else if( cur_group_type == gt_fk ) {
+        g_err_tag_x_in_y( "XMP", "FK" );
+        scan_start = scan_stop + 1;
+        return;
     }
 
-    ProcFlags.xmp_active = true;
     first_xline = true;
     font_save = g_curr_font;
     g_curr_font = layout_work.xmp.font;
@@ -140,8 +145,15 @@ extern  void    gml_xmp( const gmltag * entry )
     set_skip_vars( NULL, &layout_work.xmp.pre_skip, NULL, spacing,
                        g_curr_font );
 
-    ProcFlags.group_elements = true;
+    sav_group_type = cur_group_type;
+    cur_group_type = gt_xmp;
+    cur_doc_el_group = alloc_doc_el_group( gt_xmp );
+    cur_doc_el_group->prev = t_doc_el_group;
+    t_doc_el_group = cur_doc_el_group;
+    cur_doc_el_group = NULL;
 
+    concat_save = ProcFlags.concat;
+    ProcFlags.concat = false;
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;         // TBD
 
@@ -162,19 +174,19 @@ extern  void    gml_xmp( const gmltag * entry )
 /*                                                                         */
 /***************************************************************************/
 
-void    gml_exmp( const gmltag * entry )
+void gml_exmp( const gmltag * entry )
 {
     char    *   p;
     tag_cb  *   wk;
 
     scr_process_break();
-    if( !ProcFlags.xmp_active ) {       // no preceding :XMP tag
+    if( cur_group_type != gt_xmp ) {       // no preceding :XMP tag
         g_err_tag_prec( "XMP" );
         scan_start = scan_stop + 1;
         return;
     }
     g_curr_font = font_save;
-    ProcFlags.xmp_active = false;
+    ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
     g_cur_left = nest_cb->lm;
     g_page_right = nest_cb->rm;
@@ -183,32 +195,40 @@ void    gml_exmp( const gmltag * entry )
     nest_cb = nest_cb->prev;
     add_tag_cb_to_pool( wk );
 
-    /*  place the accumulated xlines on the proper page */
+    /* Place the accumulated xlines on the proper page */
 
-    ProcFlags.group_elements = false;
-    if( t_doc_el_group.first != NULL ) {
-        t_doc_el_group.depth += (t_doc_el_group.first->blank_lines +
-                                t_doc_el_group.first->subs_skip);
-    }
+    cur_group_type = sav_group_type;
+    if( t_doc_el_group != NULL) {
+        cur_doc_el_group = t_doc_el_group;      // detach current element group
+        t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
+        cur_doc_el_group->prev = NULL;
 
-    if( (t_doc_el_group.depth + t_page.cur_depth) > t_page.max_depth ) {
-        /*  the block won't fit on this page */
-
-        if( t_doc_el_group.depth  <= t_page.max_depth ) {
-            /*  the block will be on the next page */
-
-            do_page_out();
-            reset_t_page();
+        if( cur_doc_el_group->first != NULL ) {
+            cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
+                                cur_doc_el_group->first->subs_skip);
         }
-    }
 
-    while( t_doc_el_group.first != NULL ) {
-        insert_col_main( t_doc_el_group.first );
-        t_doc_el_group.first = t_doc_el_group.first->next;
-    }
+        if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
 
-    t_doc_el_group.depth    = 0;
-    t_doc_el_group.last     = NULL;
+            /*  the block won't fit on this page */
+
+            if( cur_doc_el_group->depth  <= t_page.max_depth ) {
+
+                /*  the block will be on the next page */
+
+                do_page_out();
+                reset_t_page();
+            }
+        }
+
+        while( cur_doc_el_group->first != NULL ) {
+            insert_col_main( cur_doc_el_group->first );
+            cur_doc_el_group->first = cur_doc_el_group->first->next;
+        }
+
+        add_doc_el_group_to_pool( cur_doc_el_group );
+        cur_doc_el_group = NULL;
+    }
 
     g_cur_h_start = g_cur_left;
     scan_err = false;

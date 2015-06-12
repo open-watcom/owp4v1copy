@@ -175,11 +175,6 @@ global struct ProcFlags {
     unsigned        line_started    : 1;// we have something for current line
     unsigned        just_override   : 1;// current line is to be justified
 
-    unsigned        address_active  : 1;// within :ADDRESS tag ) only one of
-    unsigned        fig_active      : 1;// within :FIG tag     ) these may be
-    unsigned        fn_active       : 1;// within :FN tag      ) set at a
-    unsigned        xmp_active      : 1;// within :XMP tag     ) time
-
     unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
     unsigned        date_tag_seen   : 1;// :DATE is allowed only once
     unsigned        docnum_tag_seen : 1;// :DOCNUM is allowed only once
@@ -187,7 +182,6 @@ global struct ProcFlags {
     unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
     unsigned        title_text_seen : 1;// remember first :TITLE tag text
     unsigned        empty_doc_el    : 1;// empty doc element allowed
-    unsigned        group_elements  : 1;// currently grouping doc_elements
     unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        gml_tag         : 1;// input buf starts with GML_char
@@ -281,17 +275,20 @@ global  uint32_t        tab_col;        // width of one column, as used with tab
 global  tag_cb      *   tt_stack;       // font stack entry to modify for tab tables
 
 // the document page and related items
-global doc_el_group     t_doc_el_group; // for accumulating a group of doc_elements
-global doc_element  *   t_element;      // the current element for main
-global text_line    *   t_el_last;      // attachment point to t_element
-global doc_page         t_page;         // for constructing output page
-global doc_next_page    n_page;         // for deferred elements
-global text_line    *   t_line;         // for constructing output line
-global text_chars   *   text_pool;      // for reuse of text_chars structs
-global text_line    *   line_pool;      // for reuse of text_line structs
-global ban_column   *   ban_col_pool;   // for reuse of ban_column structs
-global doc_column   *   doc_col_pool;   // for reuse of doc_column structs
-global doc_element  *   doc_el_pool;    // for reuse of doc_element structs
+global group_type           cur_group_type;     // current tag/cw in effect (gt_bx is not allowed)
+global doc_el_group     *   cur_doc_el_group;   // current doc_el_group, if any
+global doc_el_group     *   t_doc_el_group;     // stack of groups of doc_elements
+global doc_el_group     *   doc_el_group_pool;  // for reuse of doc_el_group structs
+global doc_element      *   t_element;          // the current element for main
+global text_line        *   t_el_last;          // attachment point to t_element
+global doc_page             t_page;             // for constructing output page
+global doc_next_page        n_page;             // for deferred elements
+global text_line        *   t_line;             // for constructing output line
+global text_chars       *   text_pool;          // for reuse of text_chars structs
+global text_line        *   line_pool;          // for reuse of text_line structs
+global ban_column       *   ban_col_pool;       // for reuse of ban_column structs
+global doc_column       *   doc_col_pool;       // for reuse of doc_column structs
+global doc_element      *   doc_el_pool;        // for reuse of doc_element structs
 
 /***************************************************************************/
 /*  some globals which are to be redesigned when the :LAYOUT tag is coded. */

@@ -32,7 +32,8 @@
 *       add_box_col_stack_to_pool   prepare reuse of box_col_stack instance(s)
 *       add_doc_col_to_pool         prepare reuse of doc_column instance(s)
 *       add_doc_el_to_pool          prepare reuse of doc_element instance(s)
-*       add_tag_cb_to_pool          add nested tag cb
+*       add_doc_el_group_to_pool    prepare reuse of doc_el_group intance(s)
+*       add_tag_cb_to_pool          prepare reuse of tag_cb instance(s)
 *       add_text_chars_to_pool      prepare reuse of text_chars instance(s)
 *       add_text_line_to_pool       prepare reuse of a text_line instance(s)
 *       alloc_ban_col               create a ban_column instance
@@ -40,7 +41,8 @@
 *       alloc_box_col_stack         create a box_col_stack instance
 *       alloc_doc_col               create a doc_column instance
 *       alloc_doc_el                create a doc_element instance
-*       alloc_tag_cb                nested tag cb
+*       alloc_doc_el_group          create a doc_el_group instance
+*       alloc_tag_cb                create a tag_cb instance
 *       alloc_text_chars            create a text_chars instance
 *       alloc_text_line             create a text_line instance
 *       free_pool_storage           do free for all pools
@@ -56,7 +58,7 @@
 /*  allocate / reuse and init a text_chars instance                        */
 /*      optionally fill in text                                            */
 /***************************************************************************/
-text_chars  *alloc_text_chars( const char *text, size_t cnt, font_number font )
+text_chars * alloc_text_chars( const char * text, size_t cnt, font_number font )
 {
     text_chars   *   curr;
     text_chars   *   prev;
@@ -115,13 +117,14 @@ text_chars  *alloc_text_chars( const char *text, size_t cnt, font_number font )
 /*  add text_chars instance(s) to free pool for reuse                      */
 /***************************************************************************/
 
-void    add_text_chars_to_pool( text_line * a_line )
+void add_text_chars_to_pool( text_line * a_line )
 {
     text_chars      *   tw;
 
     if( (a_line == NULL) || (a_line->first == NULL) ) {
         return;
     }
+
     // free text_chars in pool only have a valid next ptr
 
     for( tw = a_line->first; tw->next != NULL; tw = tw->next ); //empty
@@ -135,7 +138,7 @@ void    add_text_chars_to_pool( text_line * a_line )
 /*  allocate / reuse a text_line  instance                                 */
 /***************************************************************************/
 
-text_line   * alloc_text_line( void )
+text_line * alloc_text_line( void )
 {
     text_line   *   curr;
     text_line   *   prev;
@@ -170,9 +173,8 @@ text_line   * alloc_text_line( void )
 /*  add a text_line instance to free pool for reuse                        */
 /***************************************************************************/
 
-void    add_text_line_to_pool( text_line * a_line )
+void add_text_line_to_pool( text_line * a_line )
 {
-
     if( a_line == NULL ) {
         return;
     }
@@ -220,7 +222,6 @@ ban_column * alloc_ban_col( void )
 
 void add_ban_col_to_pool( ban_column * a_column )
 {
-
     if( a_column == NULL ) {
         return;
     }
@@ -268,7 +269,7 @@ box_col_set * alloc_box_col_set( void )
 /*  add a linked list of box_col_set instances to free pool for reuse      */
 /***************************************************************************/
 
-void    add_box_col_set_to_pool( box_col_set * a_set )
+void add_box_col_set_to_pool( box_col_set * a_set )
 {
     box_col_set * tw;
 
@@ -317,7 +318,7 @@ box_col_stack * alloc_box_col_stack( void )
 /*  add a linked list of box_col_stack instances to free pool for reuse    */
 /***************************************************************************/
 
-void    add_box_col_stack_to_pool( box_col_stack * a_stack )
+void add_box_col_stack_to_pool( box_col_stack * a_stack )
 {
     box_col_stack * tw;
 
@@ -338,15 +339,22 @@ void    add_box_col_stack_to_pool( box_col_stack * a_stack )
 doc_column * alloc_doc_col( void )
 {
     doc_column  *   curr;
+    int             k;
 
     curr = doc_col_pool;
     if( curr != NULL ) {                // there is one to use
         doc_col_pool = curr->next;
     } else {                            // pool is empty
         curr = mem_alloc( sizeof( doc_column ) );
+        doc_col_pool = curr;
 
-        doc_col_pool = mem_alloc( sizeof( doc_column ) );
-        doc_col_pool->next = NULL;
+        for( k = 0; k < 10; k++ ) {     // alloc 10 box_col_sets if pool empty
+            curr->next = mem_alloc( sizeof( *curr ) );
+            curr = curr->next;
+        }
+        curr->next = NULL;
+        curr = doc_col_pool;
+        doc_col_pool = curr->next;
     }
 
     curr->next = NULL;
@@ -367,7 +375,6 @@ doc_column * alloc_doc_col( void )
 
 void add_doc_col_to_pool( doc_column * a_column )
 {
-
     if( a_column == NULL ) {
         return;
     }
@@ -389,7 +396,7 @@ doc_element * alloc_doc_el(  element_type type )
     if( doc_el_pool == NULL ) {         // pool is empty
         doc_el_pool = mem_alloc( sizeof( *curr ) );
         curr = doc_el_pool;
-        for( k = 0; k < 1; k++ ) {     // alloc 10 doc_els if pool empty
+        for( k = 0; k < 10; k++ ) {     // alloc 10 doc_els if pool empty
             curr->next = mem_alloc( sizeof( *curr ) );
             curr = curr->next;
         }
@@ -460,9 +467,8 @@ doc_element * alloc_doc_el(  element_type type )
 /*  add a doc_element instance to free pool for reuse                      */
 /***************************************************************************/
 
-void    add_doc_el_to_pool( doc_element * a_element )
+void add_doc_el_to_pool( doc_element * a_element )
 {
-
     if( a_element == NULL ) {
         return;
     }
@@ -473,7 +479,53 @@ void    add_doc_el_to_pool( doc_element * a_element )
 
 
 /***************************************************************************/
-/*  allocate / reuse a tag_cb     instance                                 */
+/*  allocate / reuse a doc_el_group instance                                     */
+/***************************************************************************/
+doc_el_group * alloc_doc_el_group( group_type type )
+{
+    doc_el_group    *   curr;
+    int             k;
+
+    if( doc_el_group_pool != NULL ) {   // there is one to use
+        curr = doc_el_group_pool;
+        doc_el_group_pool = curr->prev;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( doc_el_group ) );
+        doc_el_group_pool = curr;
+        for( k = 0; k < 10; k++ ) {     // alloc 10 box_col_sets if pool empty
+            curr->prev = mem_alloc( sizeof( *curr ) );
+            curr = curr->prev;
+        }
+        curr->prev = NULL;
+        curr = doc_el_group_pool;
+        doc_el_group_pool = curr->prev;
+    }
+    curr->prev = NULL;
+    curr->depth = 0;
+    curr->first = NULL;
+    curr->last = NULL;
+    curr->owner = type;
+
+    return( curr );
+}
+
+
+/***************************************************************************/
+/*  add a doc_el_group instance to free pool for reuse                           */
+/***************************************************************************/
+void add_doc_el_group_to_pool( doc_el_group * a_group )
+{
+    if( a_group == NULL ) {
+        return;
+    }
+
+    a_group->prev = doc_el_group_pool;
+    doc_el_group_pool = a_group;
+}
+
+
+/***************************************************************************/
+/*  allocate / reuse a tag_cb instance                                     */
 /***************************************************************************/
 
 tag_cb  * alloc_tag_cb( void )
@@ -504,7 +556,7 @@ tag_cb  * alloc_tag_cb( void )
 
 
 /***************************************************************************/
-/*  add a tag_cb    instance to free pool for reuse                        */
+/*  add a tag_cb instance to free pool for reuse                           */
 /***************************************************************************/
 
 void    add_tag_cb_to_pool( tag_cb * a_cb )
@@ -578,6 +630,11 @@ void    free_pool_storage( void )
         v = wv;
     }
 
+    for( v = doc_el_group_pool; v != NULL; ) {
+        wv = ( (doc_el_group *) v)->prev;
+        mem_free( v );
+        v = wv;
+    }
     for( v = tag_pool; v != NULL; ) {
         wv = ( (tag_cb *) v)->prev;
         mem_free( v );

@@ -82,79 +82,16 @@
 /*     underscored.  How does it look?                                    */
 /*          Note that leading blanks on a line are not underscored.   The */
 /*     end.                                                               */
-/*                                                                        */
-/* ---------------------------------------------------------------------- */
-/*                                                                        */
-/* BOLD boldfaces the specified number of input text lines.               */
-/*                                                                        */
-/*      旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커      */
-/*      |       |                                                  |      */
-/*      |  .BD  |    <1|n|ON|OFF|line>                             |      */
-/*      |       |                                                  |      */
-/*      읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸      */
-/*                                                                        */
-/*                                                                        */
-/* n:  The next "n" input text lines  are to be made Bold by overstriking */
-/*    each character with itself.    If "n" is omitted,  a value  of 1 is */
-/*    assumed.                                                            */
-/* ON:  All following input text lines are to be made Bold.               */
-/* OFF:  Terminates  the boldface  effect,  whether  initiated by  "n" or */
-/*    "ON".                                                               */
-/* line:  The  boldface effect will be  applied to the  resulting "line". */
-/*    If "line"  starts with a control  word indicator,  the  Bold action */
-/*    will start one blank after the control word at the start of "line", */
-/*    and the result of overstriking must  fit within the maximum allowed */
-/*    input line  length.   This restriction does  not apply to  a "line" */
-/*    operand of text or text following a numeric or "ON" operand.        */
-/*                                                                        */
-/* This control word does not cause a break.  BOLD operates independently */
-/* of other control words that modify text.    When more than one of .BD, */
-/* .BI,  .UC,  .UL,  .UP,  or .US are  in effect,  the result is the best */
-/* equivalent of the  sum of the effects.    They may be disabled  in any */
-/* order;  the result  will be the best  equivalent of the ones  still in */
-/* effect.   The .UD "INCLUDE/IGNORE/SET" characters  may be used to turn */
-/* the function on and  off within a "line" or in  subsequent input text. */
-/* See .UD for defaults and details.                                      */
-/*                                                                        */
-/* NOTES                                                                  */
-/* (1) For output devices  that support multiple fonts,   the output from */
-/*     this  control word  is  not necessarily  bold  but  may merely  be */
-/*     selected from a different font.                                    */
-/* (2) Text may also be emphasized with the &'bold( function.             */
-/* (3) Do not  attempt to use a  numeric expression as a  "line" operand, */
-/*     because  it  will be  taken  as  an  "n" operand.    For  example, */
-/*     ".BD (1988)" will boldface  the next 1988 input lines  of text and */
-/*     not the string  "(1988)".   Use ".BD 1;(1988)" or  ".BD;(1988)" or */
-/*     &'bold(1988) instead.                                              */
-/*                                                                        */
-/* EXAMPLES                                                               */
-/* (1) This is                                                            */
-/*     .BD Bold text                                                      */
-/*     and this                                                           */
-/*     .BD ON;is more Bold                                                */
-/*     output text.                                                       */
-/*     .BD OFF                                                            */
-/*     .BD .CE BOLD END                                                   */
-/*     produces:  This is Bold text and this is more Bold output text.    */
-/*                                  BOLD END                              */
-/* (2) Text comes                                                         */
-/*     .BD ON;in Boldface                                                 */
-/*     .US ON;and Underscored                                             */
-/*     .UP ON;and Uppercase/Underscored                                   */
-/*     .US OFF;and Uppercase                                              */
-/*     .UP OFF;and so                                                     */
-/*     .BD OFF;on.                                                        */
-/*     produces:     Text  comes   in   Boldface   and  Underscored   AND */
-/*     UPPERCASE/UNDERSCORED AND UPPERCASE and so on.                     */
 /**************************************************************************/
 
-void    scr_us( void )
+void scr_us( void )
 {
     char    *   p = scan_start + 1;
 
-    if( *p != '\0' ) {
+    if( *p ) {
         process_text( p, 1 );           // hilite the remaining text
     }
     scan_restart = scan_stop + 1;
     return;
 }
+

@@ -34,13 +34,13 @@
 static  bool            first_aline;    // special for first :ALINE
 static  int8_t          a_spacing;      // spacing between adr lines
 static  font_number     font_save;      // save for font
-
+static  group_type      sav_group_type; // save prior group type
 
 /***************************************************************************/
 /*  :ADDRESS                                                               */
 /***************************************************************************/
 
-extern  void    gml_address( const gmltag * entry )
+void gml_address( const gmltag * entry )
 {
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
@@ -50,7 +50,6 @@ extern  void    gml_address( const gmltag * entry )
         scan_start = scan_stop + 1;
         return;
     }
-    ProcFlags.address_active = true;
     first_aline = true;
     font_save = g_curr_font;
     g_curr_font = layout_work.address.font;
@@ -72,7 +71,12 @@ extern  void    gml_address( const gmltag * entry )
 
     set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, spacing, g_curr_font );
 
-    ProcFlags.group_elements = true;
+    sav_group_type = cur_group_type;
+    cur_group_type = gt_address;
+    cur_doc_el_group = alloc_doc_el_group( gt_address );
+    cur_doc_el_group->prev = t_doc_el_group;
+    t_doc_el_group = cur_doc_el_group;
+    cur_doc_el_group = NULL;
 
     scan_start = scan_stop + 1;
     return;
@@ -83,17 +87,16 @@ extern  void    gml_address( const gmltag * entry )
 /*  :eADDRESS                                                              */
 /***************************************************************************/
 
-extern  void    gml_eaddress( const gmltag * entry )
+void gml_eaddress( const gmltag * entry )
 {
     tag_cb  *   wk;
 
-    if( !ProcFlags.address_active ) {   // no preceding :ADDRESS tag
+    if( cur_group_type != gt_address ) {   // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
         scan_start = scan_stop + 1;
         return;
     }
     g_curr_font = font_save;
-    ProcFlags.address_active = false;
     nest_cb->prev->left_indent = nest_cb->left_indent;
     nest_cb->prev->right_indent = nest_cb->right_indent;
     rs_loc = titlep_tag;
@@ -101,32 +104,40 @@ extern  void    gml_eaddress( const gmltag * entry )
     nest_cb = nest_cb->prev;
     add_tag_cb_to_pool( wk );
 
-    /*  place the accumulated ALINES on the proper page */
+    /* Place the accumulated ALINES on the proper page */
 
-    ProcFlags.group_elements = false;
-    if( t_doc_el_group.first != NULL ) {
-        t_doc_el_group.depth += (t_doc_el_group.first->blank_lines +
-                                t_doc_el_group.first->subs_skip);
-    }
+    cur_group_type = sav_group_type;
+    if( t_doc_el_group != NULL ) {
+        cur_doc_el_group = t_doc_el_group;      // detach current element group
+        t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
+        cur_doc_el_group->prev = NULL;
 
-    if( (t_doc_el_group.depth + t_page.cur_depth) > t_page.max_depth ) {
-        /*  the block won't fit on this page */
-
-        if( t_doc_el_group.depth  <= t_page.max_depth ) {
-            /*  the block will on the next page */
-
-            do_page_out();
-            reset_t_page();
+        if( cur_doc_el_group->first != NULL ) {
+            cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
+                                cur_doc_el_group->first->subs_skip);
         }
-    }
 
-    while( t_doc_el_group.first != NULL ) {
-        insert_col_main( t_doc_el_group.first );
-        t_doc_el_group.first = t_doc_el_group.first->next;
-    }
+        if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
 
-    t_doc_el_group.depth    = 0;
-    t_doc_el_group.last     = NULL;
+            /*  the block won't fit on this page */
+
+            if( cur_doc_el_group->depth <= t_page.max_depth ) {
+
+                /*  the block will on the next page */
+
+                do_page_out();
+                reset_t_page();
+            }
+        }
+
+        while( cur_doc_el_group->first != NULL ) {
+            insert_col_main( cur_doc_el_group->first );
+            cur_doc_el_group->first = cur_doc_el_group->first->next;
+        }
+
+        add_doc_el_group_to_pool( cur_doc_el_group );
+        cur_doc_el_group = NULL;
+    }
     scan_start = scan_stop + 1;
     return;
 }
@@ -174,7 +185,7 @@ static void prep_aline( text_line *p_line, const char *p )
 /*  :ALINE tag                                                             */
 /***************************************************************************/
 
-void    gml_aline( const gmltag * entry )
+void gml_aline( const gmltag * entry )
 {
     char        *   p;
     doc_element *   cur_el;
@@ -186,7 +197,7 @@ void    gml_aline( const gmltag * entry )
         err_count++;
         show_include_stack();
     }
-    if( !ProcFlags.address_active ) {   // no preceding :ADDRESS tag
+    if( cur_group_type != gt_address ) {   // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
     }
     p = scan_start;

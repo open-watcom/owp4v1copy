@@ -47,11 +47,7 @@ void    proc_p_pc( p_lay_tag * p_pc )
     start_doc_sect();                   // if not already done
 
     scr_process_break();
-//    if( nest_cb->c_tag == t_NONE ) {
-        g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
-//    } else {
-//        g_cur_left = g_cur_left;
-//    }
+    g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
                                         // possibly indent first line
     g_cur_h_start = g_cur_left + conv_hor_unit( &(p_pc->line_indent) );
 
@@ -64,7 +60,9 @@ void    proc_p_pc( p_lay_tag * p_pc )
 
     post_space = 0;
 
-    process_text( p, g_curr_font );
+    if( *p ) {
+        process_text( p, g_curr_font );
+    }
 
     scan_start = scan_stop + 1;
     return;

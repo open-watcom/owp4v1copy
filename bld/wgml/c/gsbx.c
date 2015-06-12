@@ -201,14 +201,14 @@ typedef enum {
     st_up,          // do stubs for bx_v_up columns
 } stub_type;
 
-static  bx_op       cur_op          = bx_none;  // current BX operator
-static  bx_op       prev_op         = bx_none;  // previous BX operator
-static  uint32_t    box_depth       = 0;        // depth of box (used with VLINES)
-static  uint32_t    def_height      = 0;        // default font line height
-static  uint32_t    box_skip        = 0;        // skip for outer (entire) box
-static  uint32_t    el_skip         = 0;        // skip for current element
-static  uint32_t    hl_depth        = 0;        // height from VLINE drawn to lower boundary of def_height
-static  uint32_t    v_offset        = 0;        // space reserved for the box line which is above the line drawn
+static  bx_op               cur_op              = bx_none;  // current BX operator
+static  bx_op               prev_op             = bx_none;  // previous BX operator
+static  uint32_t            box_depth           = 0;        // depth of box (used with VLINES)
+static  uint32_t            def_height          = 0;        // default font line height
+static  uint32_t            box_skip            = 0;        // skip for outer (entire) box
+static  uint32_t            el_skip             = 0;        // skip for current element
+static  uint32_t            hl_depth            = 0;        // height from VLINE drawn to lower boundary of def_height
+static  uint32_t            v_offset            = 0;        // space reserved for the box line which is above the line drawn
 
 /***************************************************************************/
 /*  resize the cols member of a box_col_set                                */
@@ -766,14 +766,14 @@ static void draw_box_lines( doc_element * h_line_el )
 
 /***************************************************************************/
 /*  process a single doc_element for line devices                          */
-/*  the doc_element t_doc_el_group.first is the doc_element processed      */
+/*  the doc_element cur_doc_el_group.first is the doc_element processed    */
 /***************************************************************************/
 
 static void  box_line_element( void )
 {
     doc_element *   cur_el          = NULL;
 
-    cur_el = t_doc_el_group.first;
+    cur_el = cur_doc_el_group->first;
 
     if( ProcFlags.page_started ) {      // text line not at top of page
         box_depth += cur_el->blank_lines + cur_el->subs_skip + cur_el->depth;
@@ -793,16 +793,16 @@ static void  box_line_element( void )
 
     switch( cur_el->type ) {
     case el_text:
-        t_doc_el_group.first = cur_el->next;
+        cur_doc_el_group->first = cur_el->next;
         cur_el->next = NULL;
         insert_col_main( cur_el );   
-        cur_el = t_doc_el_group.first;  // resume processing
+        cur_el = cur_doc_el_group->first;  // resume processing
         break;
     default:
-        t_doc_el_group.first = cur_el->next;
+        cur_doc_el_group->first = cur_el->next;
         cur_el->next = NULL;
         insert_col_main( cur_el );   
-        cur_el = t_doc_el_group.first;  // resume processing
+        cur_el = cur_doc_el_group->first;  // resume processing
         break;
     }
 
@@ -830,34 +830,38 @@ static void  do_char_device( void )
 
     /* process any accumulated doc_elements */
 
-    while( t_doc_el_group.first != NULL ) {
-        if( t_doc_el_group.depth <= max_depth ) {   // doc_elements will all fit
-            cur_el = t_doc_el_group.first;
-            while( cur_el != NULL ) {
-                if( ProcFlags.page_started ) {
-                    skippage = cur_el->blank_lines + cur_el->subs_skip;
-                    cur_el->subs_skip = 0;
-                } else {
-                    skippage = cur_el->blank_lines + cur_el->top_skip;
-                    cur_el->top_skip = 0;
-                    ProcFlags.page_started = true;
+    if( cur_doc_el_group != NULL ) {
+        while( cur_doc_el_group->first != NULL ) {
+            if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit
+                cur_el = cur_doc_el_group->first;
+                while( cur_el != NULL ) {
+                    if( ProcFlags.page_started ) {
+                        skippage = cur_el->blank_lines + cur_el->subs_skip;
+                        cur_el->subs_skip = 0;
+                    } else {
+                        skippage = cur_el->blank_lines + cur_el->top_skip;
+                        cur_el->top_skip = 0;
+                        ProcFlags.page_started = true;
+                    }
+                    cur_el->blank_lines = 0;
+                    if( skippage > 0 ) {
+                        box_blank_lines( skippage );
+                    }
+                    max_depth -= skippage + cur_el->depth;
+                    cur_doc_el_group->first = cur_el->next;
+                    cur_el->next = NULL;
+                    box_char_element( cur_el );
+                    cur_el = cur_doc_el_group->first;
                 }
-                cur_el->blank_lines = 0;
-                if( skippage > 0 ) {
-                    box_blank_lines( skippage );
-                }
-                max_depth -= skippage + cur_el->depth;
-                t_doc_el_group.first = cur_el->next;
-                cur_el->next = NULL;
-                box_char_element( cur_el );
-                cur_el = t_doc_el_group.first;
+            } else {                                    // finish off current page
+                do_page_out();
+                reset_t_page();
             }
-        } else {                                    // finish off current page
-            do_page_out();
-            reset_t_page();
         }
+        add_doc_el_group_to_pool( cur_doc_el_group );
+        cur_doc_el_group = NULL;
     }
-
+   
     if( (box_line->next != NULL) && (cur_op == bx_off) && !box_line->had_cols ) {    
         box_blank_lines( 1 );
     } else {
@@ -1041,36 +1045,46 @@ static void do_line_device( void )
 
     /********************************************************/
     /* this code does what wgml 4.0 does in a limited       */
-    /* context                                              */
-    /* when the text inside a box uses a font other than    */
+    /* context:                                             */
+    /* when the text last output used a font other than     */
     /* font "0", even if the current font is now font "0",  */
     /* the v_offset and def_height are adjusted as shown,   */
     /* at least when the text font's line height is less    */
     /* than the font "0" line height                        */
+    /* This is known to apply to text within the box, and   */
+    /* to text preceding the box except at the top of a     */
+    /* page                                                 */
     /********************************************************/
 
-    prev_height = wgml_fonts[g_prev_font].line_height;
-    if( prev_height < def_height ) {
-        v_offset += (def_height - prev_height) / 2;
-        hl_depth -= (def_height - prev_height) / 2;
+    if( ProcFlags.in_bx_box || ProcFlags.page_started ) {
+        prev_height = wgml_fonts[g_prev_font].line_height;
+        if( prev_height < def_height ) {
+            v_offset += (def_height - prev_height) / 2;
+            hl_depth -= (def_height - prev_height) / 2;
+        }
     }
 
     /* process any accumulated doc_elements */
 
-    while( t_doc_el_group.first != NULL ) {
-        if( t_doc_el_group.depth <= max_depth ) {   // doc_elements will all fit    
-            while( t_doc_el_group.first != NULL ) {
-                box_line_element();
-           }
-        } else {                        // finish off current page
-            do_page_out();
-            reset_t_page();
+    if( cur_doc_el_group != NULL ) {
+        while( cur_doc_el_group->first != NULL ) {
+            if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit    
+                while( cur_doc_el_group->first != NULL ) {
+                    box_line_element();
+               }
+            } else {                        // finish off current page
+                do_page_out();
+                reset_t_page();
+            }
         }
+        add_doc_el_group_to_pool( cur_doc_el_group );
+        cur_doc_el_group = NULL;       
     }
 
     /* Now deal with the HLINEs and associated VLINEs */
 
-    ProcFlags.top_line = !ProcFlags.page_started && (t_doc_el_group.first == NULL);
+    ProcFlags.top_line = !ProcFlags.page_started && ((cur_doc_el_group == NULL)
+                                    || (cur_doc_el_group->first == NULL));
 
     if( (box_line->first == NULL) || (cur_op == bx_can) || (cur_op == bx_set) ||
             (!box_line->had_cols && (box_line->next != NULL) && (cur_op == bx_off)) ) {
@@ -1227,9 +1241,12 @@ static void do_line_device( void )
             box_depth = hl_depth;
             ProcFlags.in_bx_box = true;             // box has started
         }
-    } else {                                        // inside outermost box
+    } else {                                        // inside a box
         if( cur_op == bx_off ) {
-            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next page
+/// this may be correct inside an inner box
+//            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next page
+/// this appears to be correct for the bx off that closes the outermost box
+            if( max_depth < (box_skip + def_height) ) {        // to top of next page
                 do_page_out();
                 reset_t_page();
                 ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
@@ -1307,56 +1324,58 @@ static void eop_char_device( void ) {
 
     /* process any accumulated doc_elements */
 
-    cur_el = t_doc_el_group.first;
-    while( cur_el != NULL ) {
-        if( ProcFlags.page_started ) {
-            cur_skip = cur_el->subs_skip;
-            cur_el->subs_skip = 0;
-        } else {
-            cur_skip = cur_el->top_skip;
-            cur_el->top_skip = 0;
-            ProcFlags.page_started = true;
-        }
-        skippage = cur_el->blank_lines + cur_skip;
-        if( (t_page.cur_depth + skippage + cur_el->depth) <= t_page.max_depth ) {
+    if( cur_doc_el_group != NULL ) {
+        cur_el = cur_doc_el_group->first;
+        while( cur_el != NULL ) {
+            if( ProcFlags.page_started ) {
+                cur_skip = cur_el->subs_skip;
+                cur_el->subs_skip = 0;
+            } else {
+                cur_skip = cur_el->top_skip;
+                cur_el->top_skip = 0;
+                ProcFlags.page_started = true;
+            }
+            skippage = cur_el->blank_lines + cur_skip;
+            if( (t_page.cur_depth + skippage + cur_el->depth) <= t_page.max_depth ) {
 
             /* the entire element will fit */
 
-            cur_el->blank_lines = 0;
-            if( skippage > 0 ) {            // convert skipped lines to output lines
-                box_blank_lines( skippage );
-            }
-            max_depth -= skippage + cur_el->depth;
-            t_doc_el_group.depth -= skippage + cur_el->depth;
-            t_doc_el_group.first = cur_el->next;
-            cur_el->next = NULL;
-            box_char_element( cur_el );
-            cur_el = t_doc_el_group.first;
-        } else {                // the entire element will not fit
-            if( (t_page.cur_depth + skippage) > t_page.max_depth ) {    // skippage too large
-                if( cur_el->blank_lines > max_depth ) { // split blank_lines
-                    cur_el->blank_lines -= max_depth;
-                    skippage = max_depth;
-                } else {
-                    cur_el->blank_lines = 0;
+                cur_el->blank_lines = 0;
+                if( skippage > 0 ) {            // convert skipped lines to output lines
+                    box_blank_lines( skippage );
                 }
-                if( cur_skip > max_depth ) {    // cap top_skip or subs_skip
-                    skippage = max_depth;
-                }
-                box_blank_lines( skippage );
-            } else if( (t_page.cur_depth + skippage + cur_el->depth) > t_page.max_depth ) {    // element too large
-                splittable = split_element( cur_el, t_page.max_depth -
+                max_depth -= skippage + cur_el->depth;
+                cur_doc_el_group->depth -= skippage + cur_el->depth;
+                cur_doc_el_group->first = cur_el->next;
+                cur_el->next = NULL;
+                box_char_element( cur_el );
+                cur_el = cur_doc_el_group->first;
+            } else {                // the entire element will not fit
+                if( (t_page.cur_depth + skippage) > t_page.max_depth ) {    // skippage too large
+                    if( cur_el->blank_lines > max_depth ) { // split blank_lines
+                        cur_el->blank_lines -= max_depth;
+                        skippage = max_depth;
+                    } else {
+                        cur_el->blank_lines = 0;
+                    }
+                    if( cur_skip > max_depth ) {    // cap top_skip or subs_skip
+                        skippage = max_depth;
+                    }
+                    box_blank_lines( skippage );
+                } else if( (t_page.cur_depth + skippage + cur_el->depth) > t_page.max_depth ) {    // element too large
+                    splittable = split_element( cur_el, t_page.max_depth -
                                                     t_page.cur_depth - skippage );
-                if( splittable ) {
-                    if( cur_el->next != NULL ) {    // cur_el was split
-                        t_doc_el_group.depth -= cur_el->depth;
-                        t_doc_el_group.first = cur_el->next;
-                        cur_el->next = NULL;
-                        box_char_element( cur_el );
+                    if( splittable ) {
+                        if( cur_el->next != NULL ) {    // cur_el was split
+                            cur_doc_el_group->depth -= cur_el->depth;
+                            cur_doc_el_group->first = cur_el->next;
+                            cur_el->next = NULL;
+                            box_char_element( cur_el );
+                        }
                     }
                 }
+                cur_el = NULL;                      // nothing more goes on current page
             }
-            cur_el = NULL;                      // nothing more goes on current page
         }
     }
 
@@ -1382,40 +1401,42 @@ static void eop_line_device( void ) {
 
     /* process any accumulated doc_elements */
 
-    while( t_doc_el_group.first != NULL ) {
-        if( ProcFlags.page_started ) {      // text line not at top of page
-            cur_skip = t_doc_el_group.first->subs_skip;
-        } else {
-            cur_skip = t_doc_el_group.first->top_skip;
-            ProcFlags.page_started = true;
-        }
-        max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
-        skippage = t_doc_el_group.first->blank_lines + cur_skip;
-        if( (t_doc_el_group.first->depth + skippage) <= max_depth ) {  // t_doc_el_group.first will fit on the page
-            box_line_element();
-        } else {        // the entire element will not fit
-            if( skippage > max_depth ) {    // skippage too large
-                if( t_doc_el_group.first->blank_lines > max_depth ) { // split blank_lines
-                    t_doc_el_group.first->blank_lines -= max_depth;
-                    skippage = max_depth;
-                } else {
-                    t_doc_el_group.first->blank_lines = 0;
-                }
-                if( cur_skip > max_depth ) {    // cap top_skip or subs_skip
-                    skippage = max_depth;
-                }
-            } else if( (t_doc_el_group.first->depth + skippage) > max_depth ) {  // t_doc_el_group.first will fill the page
-                splittable = split_element( t_doc_el_group.first, t_page.max_depth -
+    if( cur_doc_el_group != NULL ) {
+        while( cur_doc_el_group->first != NULL ) {
+            if( ProcFlags.page_started ) {      // text line not at top of page
+                cur_skip = cur_doc_el_group->first->subs_skip;
+            } else {
+                cur_skip = cur_doc_el_group->first->top_skip;
+                ProcFlags.page_started = true;
+            }
+            max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
+            skippage = cur_doc_el_group->first->blank_lines + cur_skip;
+            if( (cur_doc_el_group->first->depth + skippage) <= max_depth ) {  // cur_doc_el_group.first will fit on the page
+                box_line_element();
+            } else {        // the entire element will not fit
+                if( skippage > max_depth ) {    // skippage too large
+                    if( cur_doc_el_group->first->blank_lines > max_depth ) { // split blank_lines
+                        cur_doc_el_group->first->blank_lines -= max_depth;
+                        skippage = max_depth;
+                    } else {
+                        cur_doc_el_group->first->blank_lines = 0;
+                    }
+                    if( cur_skip > max_depth ) {    // cap top_skip or subs_skip
+                        skippage = max_depth;
+                    }
+                } else if( (cur_doc_el_group->first->depth + skippage) > max_depth ) {  // cur_doc_el_group.first will fill the page
+                    splittable = split_element( cur_doc_el_group->first, t_page.max_depth -
                                                 t_page.cur_depth - skippage );
-                if( splittable ) {
-                    box_depth += skippage + t_doc_el_group.first->depth;
-                    if( t_doc_el_group.first->next != NULL ) {    // t_doc_el_group.first was split
-                        t_doc_el_group.depth -= skippage + t_doc_el_group.first->depth;
-                        box_line_element();
+                    if( splittable ) {
+                        box_depth += skippage + cur_doc_el_group->first->depth;
+                        if( cur_doc_el_group->first->next != NULL ) {    // cur_doc_el_group.first was split
+                            cur_doc_el_group->depth -= skippage + cur_doc_el_group->first->depth;
+                            box_line_element();
+                        }
                     }
                 }
+                break;  // end processing & finish page
             }
-            break;  // end processing & finish page
         }
     }
 
@@ -1589,42 +1610,6 @@ static void merge_lines( void )
             }
         }
     }
-
-/// temp
-    out_msg( "Existing\n" );
-    if( prev_line == NULL ) {
-        out_msg( "No prev_line\n" );
-    } else {
-        out_msg( "prev_line length: %i\n", prev_line->length );
-        prev_temp = prev_line;
-        while( prev_temp != NULL ) {
-            out_msg( "prev_line hline:\n" );
-            for( prev_col = 0; prev_col < prev_temp->current; prev_col++ ) {
-                out_msg( "column: %i depth: %i v_ind: %i\n",
-                        prev_temp->cols[prev_col].col, prev_temp->cols[prev_col].depth,
-                                        prev_temp->cols[prev_col].v_ind );
-            }
-            prev_temp = prev_temp->next;
-        }
-    }
-
-    out_msg( "Current\n" );
-    if( cur_line == NULL ) {
-        out_msg( "No cur_line\n" );
-    } else {
-        out_msg( "cur_line length: %i\n", cur_line->length );
-        cur_temp = cur_line;
-        while( cur_temp != NULL ) {
-            out_msg( "cur_line hline:\n" );
-            for( cur_col = 0; cur_col < cur_temp->current; cur_col++ ) {
-                out_msg( "column: %i depth: %i v_ind: %i\n",
-                        cur_temp->cols[cur_col].col, cur_temp->cols[cur_col].depth,
-                                           cur_temp->cols[cur_col].v_ind );
-            }
-            cur_temp = cur_temp->next;
-        }
-    }
-/// end temp section
 
     if( (prev_line == NULL) && (cur_line == NULL) ) {
         /* This might be an error if only possible for degenerate cases */
@@ -2140,26 +2125,6 @@ static void merge_lines( void )
         cur_line = NULL;
     }
 
-/// temp
-    out_msg( "Merged\n" );
-    if( box_line->first == NULL ) {
-        out_msg( "No box_line (this should never happen)\n" );
-    } else {
-        out_msg( "box_line inner_box: %i\n", box_line->inner_box );
-        out_msg( "box_line length: %i\n", box_line->first->length );
-        box_temp = box_line->first;
-        while( box_temp != NULL ) {
-            out_msg( "box_line hline:\n" );
-            for( box_col = 0; box_col < box_temp->current; box_col++ ) {
-                out_msg( "column: %i depth: %i v_ind: %i\n",
-                        box_temp->cols[box_col].col, box_temp->cols[box_col].depth,
-                                           box_temp->cols[box_col].v_ind );
-            }
-            box_temp = box_temp->next;
-        }
-    }
-/// end temp section
-
     return;
 }
 
@@ -2171,13 +2136,10 @@ static void merge_lines( void )
 
 void eop_bx_box( void ) {
 
-    bool    sav_group_elements;
-    bx_op   sav_cur_op;
+    bx_op               sav_cur_op;
 
     sav_cur_op = cur_op;
-    cur_op = bx_eop;                    // do eop processing
-    sav_group_elements = ProcFlags.group_elements;
-    ProcFlags.group_elements = false;   // processed doc_elements go direct to page
+    cur_op = bx_eop;                        // do eop processing
     ProcFlags.page_started = (t_page.last_col_main != NULL);
 
     max_depth = t_page.max_depth - t_page.cur_depth;
@@ -2193,7 +2155,6 @@ void eop_bx_box( void ) {
     }
 
     cur_op = sav_cur_op;                            // restore value on entry
-    ProcFlags.group_elements = sav_group_elements;  // restore value on entry
 
     return;
 }
@@ -2235,8 +2196,13 @@ void scr_bx( void )
     su                  boxcolwork;
     
     ProcFlags.box_cols_cur = false;     // new BX line: no box column list yet
-    ProcFlags.group_elements = false;   // stop accumulating doc_elements
     ProcFlags.no_bx_hline = false;      // emit horizontal line by default
+
+    if( t_doc_el_group != NULL) {
+        cur_doc_el_group = t_doc_el_group;      // detach current element group
+        t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
+        cur_doc_el_group->prev = NULL;
+    }
     scr_process_break();                // break processing
 
     p = scan_start;
@@ -2503,10 +2469,16 @@ void scr_bx( void )
             el_skip = 0;
             cur_op = bx_none;
         } else {
-            ProcFlags.group_elements = true;    // start accumulating doc_elements
+            cur_doc_el_group = alloc_doc_el_group( gt_bx );
+            cur_doc_el_group->prev = t_doc_el_group;
+            t_doc_el_group = cur_doc_el_group;
+            cur_doc_el_group = NULL;
         }
     } else {
-        ProcFlags.group_elements = true;    // start accumulating doc_elements
+        cur_doc_el_group = alloc_doc_el_group( gt_bx );
+        cur_doc_el_group->prev = t_doc_el_group;
+        t_doc_el_group = cur_doc_el_group;
+        cur_doc_el_group = NULL;
     }
 
     if( box_line != NULL ) {

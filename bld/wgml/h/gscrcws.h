@@ -39,7 +39,7 @@
   picks( ad, scr_dummy, cw_break           )// adjust
   picks( ap, scr_ap,    0                  )// append
   picks( bc, scr_dummy, cw_o_t             )// balance columns
-  picks( bd, scr_us,    cw_o_t             )// bold dummy treat as underscore TBD
+  picks( bd, scr_bd,    cw_o_t             )// bold
   picks( bf, scr_dummy, cw_o_t             )// begin font
   picks( bi, scr_dummy, cw_o_t             )// bold italic
   picks( bl, scr_dummy, cw_break+cw_o_t    )// blank line

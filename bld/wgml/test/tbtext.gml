@@ -1971,7 +1971,7 @@ Error Function
 \           \ERF             \R&arrow.ERF(R)
 \           \DERF            \D&arrow.DERF(D)
 .bxt off
-
+.pa
 .np
 Complement of Error Function
 :cmt..section Complement of Error Function
@@ -1984,7 +1984,6 @@ Complement of Error Function
 \           \DERFC           \D&arrow.DERFC(D)
 .bxt off
 
-.pa
 .np
 Lexically Greater Than or Equal
 :cmt..section Lexically Greater Than or Equal
@@ -2938,7 +2937,6 @@ $\v$:HP0.Move to the next vertical tab:eHP0.
 .*
 :CMT.This is from cl\express.gml and is in the C Language Reference
 :CMT.Topic: "Bitwise AND Operator"
-.pa
 .np
 The following table illustrates some bitwise AND operations:
 

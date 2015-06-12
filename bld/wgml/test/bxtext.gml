@@ -15,6 +15,30 @@ offset  +0          +4          +8
 .* .bx 17 27 37
 .bx &c1 &c2 &c3
                       integer     (slack)
+.bx off
+.millust end
+.*
+:CMT.This is from cmn\pragma.gml and sets symbols for sections in the C/C++ User's Guide
+:set symbol="pragma" value="#pragma".
+:set symbol="epragma" value="~;".
+:set symbol="function" value="function".
+:set symbol="functions" value="functions".
+:set symbol="ufunction" value="Function".
+:set symbol="ufunctions" value="Functions".
+:set symbol="short_int" value="short int".
+:set symbol="long_int" value="long int".
+:set symbol="int" value="int".
+:set symbol="char" value="char".
+:set symbol="ushort_int" value="unsigned short int".
+:set symbol="ulong_int" value="unsigned long int".
+:set symbol="uint" value="unsigned int".
+:set symbol="uchar" value="unsigned char".
+:set symbol="double" value="double".
+:set symbol="single" value="float".
+:set symbol="alias_name" value="HIGH_C".
+:set symbol="other_cmp" value="MetaWare High C".
+:set symbol="winopt" value="zW".
+:set symbol="pragcont" value="".
 .*
 :CMT.This is from cmn\pragma.gml and is in the C/C++ User's Guide
 :CMT.Topics: "16-bit:  The ALIAS Pragma (C Only)"
@@ -496,47 +520,6 @@ way a &function is to be called.
                     | :eid.":id.asm:eid." :id.}:eid.
 .mbox end
 .*
-:CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
-:CMT.Topics: "16-bit:  Describing Calling Information"
-:CMT.      & "32-bit:  Describing Calling Information"
-.np
-.ix 'calling &functions' 'near'
-.ix 'calling &functions' 'far'
-The following form of the auxiliary pragma can be used to describe the
-way a &function is to be called.
-.ix 'pragmas' 'calling information'
-.ix 'pragmas' 'far'
-.ix 'pragmas' 'far16'
-.ix 'pragmas' 'near'
-.ix 'pragmas' '= const'
-.ix 'pragmas' 'in-line assembly'
-.ix 'calling information (pragma)'
-.ix 'far (pragma)'
-.ix 'far16 (pragma)'
-.ix 'near (pragma)'
-.ix 'in-line assembly' 'in pragmas'
-.* ---------------------------------------
-.mbox begin
-:prgbeg. aux :id.sym:eid. far
-    or
-:prgbeg. aux :id.sym:eid. near
-    or
-:prgbeg. aux :id.sym:eid. = :id.in_line:eid.
-
-:id.in_line ::= { const | :eid.":id.asm:eid.":id. | (:eid.float:id. fpinst) }:eid.
-.mbox end
-.mbox begin
-:prgbeg. aux :id.sym:eid. far
-    or
-:prgbeg. aux :id.sym:eid. far16
-    or
-:prgbeg. aux :id.sym:eid. near
-    or
-:prgbeg. aux :id.sym:eid. = :id.in_line:eid.
-
-:id.in_line ::= { const | :eid.":id.asm:eid.":id. }:eid.
-.mbox end
-.*
 :CMT.This is from cmn\pragma.gml and is in the C/C++ User's Guide
 :CMT.Topics: "16-bit:  Loading Data Segment Register"
 :CMT.      & "32-bit:  Loading Data Segment Register"
@@ -643,79 +626,6 @@ passing is the following.
 :id.pop_info ::=:eid. caller :or. routine
 .mbox end
 .*
-:CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
-:CMT.Topics: "16-bit:  Describing Argument Information"
-:CMT.      & "32-bit:  Describing Argument Information"
-.np
-.ix 'argument list (pragma)'
-.ix 'pragmas' 'describing argument lists'
-Using auxiliary pragmas, you can describe the calling convention that
-&cmpname is to use for calling &functions..
-This is particularly useful when interfacing to &functions that have
-been compiled by other compilers or &functions written in other
-programming languages.
-.np
-The general form of an auxiliary pragma that describes argument
-passing is the following.
-.cp 19
-.mbox begin
-:prgbeg. aux :id.sym:eid. parm :id.:rp. arg_info :or. pop_info :or. :eid.reverse:id. :rp.reg_set:erp. :erp.:eid.
-
-:id.arg_info ::=:eid. ( :id.arg_attr:eid. :rp., :id.arg_attr:eid.:erp. )
-
-:id.arg_attr ::=:eid. value :op.:id.v_attr:eid.:eop.
-                :or. reference :op.:id.r_attr:eid.:eop.
-                :or. data_reference :op.:id.d_attr:eid.:eop.
-
-:id.v_attr ::=:eid. far :or. near :or. *1 :or. *2 :or. *4 :or. *8
-
-:id.r_attr ::=:eid. :op.far :or. near:eop. :op.descriptor :or. nodescriptor:eop.
-
-:id.d_attr ::=:eid. :op.far :or. near:eop.
-
-:id.pop_info ::=:eid. caller :or. routine
-.mbox end
-.*
-:CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
-:CMT.Topics: "16-bit:  Passing Arguments to non-FORTRAN Subprograms"
-:CMT.      & "32-bit:  Passing Arguments to non-FORTRAN Subprograms"
-.np
-When calling a subprogram written in a different language, it may be
-necessary to provide the arguments in a form different than the
-default methods used by &cmpname..
-For example, C functions require scalar arguments to be passed by
-value instead of by reference.
-For information on the methods &cmpname uses to pass arguments, see
-the chapter entitled "Assembly Language Considerations".
-.pa
-.np
-The following form of the auxiliary pragma can be used to alter the
-default calling mechanism used for passing arguments.
-.cp 15
-.mbox begin
-:prgbeg. aux :id.sym:eid. parm ( :id.arg_attr:eid. :rp., :id.arg_attr:eid.:erp. )
-
-:id.arg_attr ::=:eid. value :op.:id.v_attr:eid.:eop.
-                :or. reference :op.:id.r_attr:eid.:eop.
-                :or. data_reference :op.:id.d_attr:eid.:eop.
-
-:id.v_attr ::=:eid. far :or. near :or. *1 :or. *2 :or. *4 :or. *8
-
-:id.r_attr ::=:eid. :op.far :or. near:eop. :op.descriptor :or. nodescriptor:eop.
-
-:id.d_attr ::=:eid. :op.far :or. near:eop.
-.mbox end
-.cp 11
-.mbox begin
-:prgbeg. aux :id.sym:eid. parm ( :id.arg_attr:eid. :rp., :id.arg_attr:eid.:erp. )
-
-:id.arg_attr ::=:eid. value:id. :op.:id.v_attr:eid.:eop. :or. reference :op.:id.r_attr:eid.:eop.
-
-:id.v_attr ::=:eid. far :or. near :or. *1 :or. *2 :or. *4 :or. *8
-
-:id.r_attr ::=:eid. :op.far :or. near:eop.
-.mbox end
-.*
 :CMT.This is from cmn\pragma.gml and is in the C/C++ User's Guide
 :CMT.Topics: "16-bit:  Passing Arguments in Registers"
 :CMT.      & "32-bit:  Passing Arguments in Registers"
@@ -781,7 +691,7 @@ function returns its value is the following.
 .ix 'struct caller (pragma)'
 .mbox begin
 :prgbeg. aux :id.sym:eid. value :rp.no8087 :or. :id.reg_set:eid. :or. :id.struct_info:eid.:erp. :prgend.
-.millust break
+:cmt..millust break
 
 :id.struct_info ::=:eid. struct :rp.float :or. struct :or. :id.(:eid.routine :or. caller:id.):eid. :or. :id.reg_set:eid.:erp.
 .mbox end
@@ -960,6 +870,145 @@ exactly those registers that will be modified by the called
 .ix 'modify exact (pragma)'
 .mbox begin
 :prgbeg. aux :id.sym:eid. modify exact :id.reg_set:eid. :prgend.
+.mbox end
+.*
+:CMT.This is from cmn\pragma.gml and sets the symbols for pragmas in the FORTRAN 77 User's Guide
+:set symbol="pragma" value="*$pragma".
+:set symbol="epragma" value="".
+:set symbol="function" value="subprogram".
+:set symbol="functions" value="subprograms".
+:set symbol="ufunction" value="Subprogram".
+:set symbol="ufunctions" value="Subprograms".
+:set symbol="short_int" value="INTEGER*2".
+:set symbol="long_int" value="INTEGER*4".
+:set symbol="int" value="INTEGER".
+:set symbol="char" value="INTEGER*1".
+:set symbol="ushort_int" value="INTEGER*2".
+:set symbol="ulong_int" value="INTEGER*4".
+:set symbol="uint" value="INTEGER".
+:set symbol="uchar" value="INTEGER*1".
+:set symbol="double" value="DOUBLE PRECISION".
+:set symbol="single" value="REAL".
+:set symbol="alias_name" value="WC".
+:set symbol="other_cmp" value="&company C".
+.if '&machine' eq '8086' .do begin
+:set symbol="winopt" value="windows".
+.do end
+:set symbol="pragcont" value="c".
+.*
+:CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
+:CMT.Topics: "16-bit:  Describing Calling Information"
+:CMT.      & "32-bit:  Describing Calling Information"
+.pa
+.np
+.ix 'calling &functions' 'near'
+.ix 'calling &functions' 'far'
+The following form of the auxiliary pragma can be used to describe the
+way a &function is to be called.
+.ix 'pragmas' 'calling information'
+.ix 'pragmas' 'far'
+.ix 'pragmas' 'far16'
+.ix 'pragmas' 'near'
+.ix 'pragmas' '= const'
+.ix 'pragmas' 'in-line assembly'
+.ix 'calling information (pragma)'
+.ix 'far (pragma)'
+.ix 'far16 (pragma)'
+.ix 'near (pragma)'
+.ix 'in-line assembly' 'in pragmas'
+.* ---------------------------------------
+.mbox begin
+:prgbeg. aux :id.sym:eid. far
+    or
+:prgbeg. aux :id.sym:eid. near
+    or
+:prgbeg. aux :id.sym:eid. = :id.in_line:eid.
+
+:id.in_line ::= { const | :eid.":id.asm:eid.":id. | (:eid.float:id. fpinst) }:eid.
+.mbox end
+.mbox begin
+:prgbeg. aux :id.sym:eid. far
+    or
+:prgbeg. aux :id.sym:eid. far16
+    or
+:prgbeg. aux :id.sym:eid. near
+    or
+:prgbeg. aux :id.sym:eid. = :id.in_line:eid.
+
+:id.in_line ::= { const | :eid.":id.asm:eid.":id. }:eid.
+.mbox end
+.*
+:CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
+:CMT.Topics: "16-bit:  Describing Argument Information"
+:CMT.      & "32-bit:  Describing Argument Information"
+.np
+.ix 'argument list (pragma)'
+.ix 'pragmas' 'describing argument lists'
+Using auxiliary pragmas, you can describe the calling convention that
+&cmpname is to use for calling &functions..
+This is particularly useful when interfacing to &functions that have
+been compiled by other compilers or &functions written in other
+programming languages.
+.np
+The general form of an auxiliary pragma that describes argument
+passing is the following.
+.cp 19
+.mbox begin
+:prgbeg. aux :id.sym:eid. parm :id.:rp. arg_info :or. pop_info :or. :eid.reverse:id. :rp.reg_set:erp. :erp.:eid.
+
+:id.arg_info ::=:eid. ( :id.arg_attr:eid. :rp., :id.arg_attr:eid.:erp. )
+
+:id.arg_attr ::=:eid. value :op.:id.v_attr:eid.:eop.
+                :or. reference :op.:id.r_attr:eid.:eop.
+                :or. data_reference :op.:id.d_attr:eid.:eop.
+
+:id.v_attr ::=:eid. far :or. near :or. *1 :or. *2 :or. *4 :or. *8
+
+:id.r_attr ::=:eid. :op.far :or. near:eop. :op.descriptor :or. nodescriptor:eop.
+
+:id.d_attr ::=:eid. :op.far :or. near:eop.
+
+:id.pop_info ::=:eid. caller :or. routine
+.mbox end
+.*
+:CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
+:CMT.Topics: "16-bit:  Passing Arguments to non-FORTRAN Subprograms"
+:CMT.      & "32-bit:  Passing Arguments to non-FORTRAN Subprograms"
+.np
+When calling a subprogram written in a different language, it may be
+necessary to provide the arguments in a form different than the
+default methods used by &cmpname..
+For example, C functions require scalar arguments to be passed by
+value instead of by reference.
+For information on the methods &cmpname uses to pass arguments, see
+the chapter entitled "Assembly Language Considerations".
+.pa
+.np
+The following form of the auxiliary pragma can be used to alter the
+default calling mechanism used for passing arguments.
+.cp 15
+.mbox begin
+:prgbeg. aux :id.sym:eid. parm ( :id.arg_attr:eid. :rp., :id.arg_attr:eid.:erp. )
+
+:id.arg_attr ::=:eid. value :op.:id.v_attr:eid.:eop.
+                :or. reference :op.:id.r_attr:eid.:eop.
+                :or. data_reference :op.:id.d_attr:eid.:eop.
+
+:id.v_attr ::=:eid. far :or. near :or. *1 :or. *2 :or. *4 :or. *8
+
+:id.r_attr ::=:eid. :op.far :or. near:eop. :op.descriptor :or. nodescriptor:eop.
+
+:id.d_attr ::=:eid. :op.far :or. near:eop.
+.mbox end
+.cp 11
+.mbox begin
+:prgbeg. aux :id.sym:eid. parm ( :id.arg_attr:eid. :rp., :id.arg_attr:eid.:erp. )
+
+:id.arg_attr ::=:eid. value:id. :op.:id.v_attr:eid.:eop. :or. reference :op.:id.r_attr:eid.:eop.
+
+:id.v_attr ::=:eid. far :or. near :or. *1 :or. *2 :or. *4 :or. *8
+
+:id.r_attr ::=:eid. :op.far :or. near:eop.
 .mbox end
 .*
 :CMT.This is from cmn\wdis.gml and is in the Tool User's Guide

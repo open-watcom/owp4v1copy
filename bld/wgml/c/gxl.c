@@ -539,8 +539,13 @@ static  void    gml_li_ol( const gmltag * entry )
 
     /* Use original indents, not values possibly modified by IN */
 
-    t_left_indent = conv_hor_unit( &layout_work.ol.left_indent )
+    if( g_indent > 0 ) {
+        t_left_indent = conv_hor_unit( &layout_work.ol.left_indent )
                             + nest_cb->prev->left_indent + nest_cb->prev->align;
+    } else {
+        t_left_indent = conv_hor_unit( &layout_work.ol.left_indent )
+                            + nest_cb->prev->left_indent;
+    }
     t_right_indent = -1 * conv_hor_unit( &layout_work.ol.right_indent )
                             + nest_cb->prev->right_indent;
     g_cur_left = nest_cb->lm + t_left_indent;
@@ -577,7 +582,11 @@ static  void    gml_li_ol( const gmltag * entry )
 
     /* Set indents to their original values for the next LI */
 
-    nest_cb->left_indent = t_left_indent;
+    if( g_indent > 0 ) {
+        nest_cb->left_indent = t_left_indent;
+    } else {
+        nest_cb->left_indent = t_left_indent + nest_cb->prev->align;
+    }
     nest_cb->right_indent = t_right_indent;
     scan_start = scan_stop + 1;
     return;
@@ -697,8 +706,13 @@ static  void    gml_li_ul( const gmltag * entry )
 
     /* Use original indents, not values possibly modified by IN */
 
-    t_left_indent  = conv_hor_unit( &layout_work.ul.left_indent )
+    if( g_indent > 0 ) {
+        t_left_indent  = conv_hor_unit( &layout_work.ul.left_indent )
                             + nest_cb->prev->left_indent + nest_cb->prev->align;
+    } else {
+        t_left_indent  = conv_hor_unit( &layout_work.ul.left_indent )
+                            + nest_cb->prev->left_indent;
+    }
     t_right_indent = -1 * conv_hor_unit( &layout_work.ul.right_indent )
                             + nest_cb->prev->right_indent;
     g_cur_left = nest_cb->lm + t_left_indent;
@@ -735,7 +749,11 @@ static  void    gml_li_ul( const gmltag * entry )
 
     /* Set indents to their original values for the next LI */
 
-    nest_cb->left_indent = t_left_indent;
+    if( g_indent > 0 ) {
+        nest_cb->left_indent = t_left_indent;
+    } else {
+        nest_cb->left_indent = t_left_indent + nest_cb->prev->align;
+    }
     nest_cb->right_indent = t_right_indent;
 
     scan_start = scan_stop + 1;

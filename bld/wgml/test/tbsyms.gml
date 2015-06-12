@@ -625,4 +625,10 @@
 :set symbol='rmargin' value='60'.
 .*
 :set symbol="alias_name" value="HIGH_C".
+.*
+:set symbol="argsize" value="8".
+.*
+:set symbol="minus" value="-".
+.*
+:set symbol='sysper'     value='~.'
 

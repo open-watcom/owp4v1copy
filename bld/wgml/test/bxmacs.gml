@@ -420,4 +420,8 @@
 :eSF.
 .dm fi end
 .*
+.dm sy begin
+:SF font=1.&*:eSF.
+.dm sy end
+.*
 

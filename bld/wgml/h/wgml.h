@@ -386,23 +386,25 @@ extern  void        print_tag_entry( gtentry * entry );
 extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 
 /* gtxtpool.c                           */
-extern  void            add_text_chars_to_pool( text_line * a_line );
-extern  text_chars      *alloc_text_chars( const char *text, size_t cnt, font_number font );
-extern  void            add_text_line_to_pool( text_line * a_line );
-extern  text_line       *alloc_text_line( void );
-extern  void            add_ban_col_to_pool( ban_column * a_column );
-extern  ban_column      *alloc_ban_col( void );
-extern  void            add_box_col_set_to_pool( box_col_set * a_set );
-extern  box_col_set     *alloc_box_col_set( void );
-extern  void            add_box_col_stack_to_pool( box_col_stack * a_stack );
-extern  box_col_stack   *alloc_box_col_stack( void );
-extern  void            add_doc_col_to_pool( doc_column * a_column );
-extern  doc_column      *alloc_doc_col( void );
-extern  void            add_doc_el_to_pool( doc_element * a_element );
-extern  doc_element     *alloc_doc_el( element_type type );
-extern  void            add_tag_cb_to_pool( tag_cb * cb );
-extern  tag_cb          *alloc_tag_cb( void );
-extern  void            free_pool_storage( void );
+extern  void                add_text_chars_to_pool( text_line * a_line );
+extern  text_chars      *   alloc_text_chars( const char *text, size_t cnt, font_number font );
+extern  void                add_text_line_to_pool( text_line * a_line );
+extern  text_line       *   alloc_text_line( void );
+extern  void                add_ban_col_to_pool( ban_column * a_column );
+extern  ban_column      *   alloc_ban_col( void );
+extern  void                add_box_col_set_to_pool( box_col_set * a_set );
+extern  box_col_set     *   alloc_box_col_set( void );
+extern  void                add_box_col_stack_to_pool( box_col_stack * a_stack );
+extern  box_col_stack   *   alloc_box_col_stack( void );
+extern  void                add_doc_col_to_pool( doc_column * a_column );
+extern  doc_column      *   alloc_doc_col( void );
+extern  void                add_doc_el_to_pool( doc_element * a_element );
+extern  doc_element     *   alloc_doc_el( element_type type );
+extern  void                add_doc_el_group_to_pool( doc_el_group * a_group );
+extern  doc_el_group    *   alloc_doc_el_group( group_type type );
+extern  void                add_tag_cb_to_pool( tag_cb * cb );
+extern  tag_cb          *   alloc_tag_cb( void );
+extern  void                free_pool_storage( void );
 
 
 /* gtitlepo.c                           */
@@ -430,8 +432,8 @@ extern  void        start_line_with_string( const char *text, font_number font, 
 /* outbuff.c                            */
 extern void     cop_tr_table( const char *p );
 extern void     ob_binclude( binclude_element * in_el );
-extern void     ob_direct_out( const char *p );
 extern void     ob_graphic( graphic_element * in_el );
+extern void     ob_oc( const char *p );
 
 
 /* wgmlmsg.c                            */

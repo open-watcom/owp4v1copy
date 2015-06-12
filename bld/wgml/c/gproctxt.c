@@ -61,8 +61,8 @@ static  uint32_t        tab_space       = 0;        // space count between text 
 /*  the others ;,) have no special effect                                  */
 /***************************************************************************/
 
-static  void    puncadj( text_line * line, int32_t * delta0, int32_t rem,
-                         int32_t cnt, uint32_t lm )
+static void puncadj( text_line * line, int32_t * delta0, int32_t rem,
+                     int32_t cnt, uint32_t lm )
 {
 
 /***************************************************************************/
@@ -946,7 +946,7 @@ static uint32_t split_text( text_chars *in_chars, uint32_t limit )
 /*  both how wgml 4.0 actually implements JU and this implementation       */
 /***************************************************************************/
 
-void    do_justify( uint32_t lm, uint32_t rm, text_line * line )
+void do_justify( uint32_t lm, uint32_t rm, text_line * line )
 {
     text_chars  *   tc;
     text_chars  *   tw;
@@ -1223,7 +1223,7 @@ void set_h_start( void )
 /* finalize line and place into t_element                                  */
 /***************************************************************************/
 
-void    process_line_full( text_line * a_line, bool justify )
+void process_line_full( text_line * a_line, bool justify )
 {
     if( (a_line == NULL) || (a_line->first == NULL) ) { // why are we called?
         return;
@@ -1309,7 +1309,7 @@ text_chars *process_word( const char *pword, size_t count, font_number font )
 /*      handle line and page overflow conditions                           */
 /***************************************************************************/
 
-void    process_text( const char *text, font_number font )
+void process_text( const char *text, font_number font )
 {
     const char          *   pword;
     const char          *   p;
@@ -1420,7 +1420,7 @@ void    process_text( const char *text, font_number font )
     if( t_line->first == NULL ) {    // first phrase in paragraph
         post_space = 0;
         tab_space = 0;
-        if( ProcFlags.concat && !ProcFlags.xmp_active ) {    // ".co on": skip initial spaces
+        if( ProcFlags.concat ) {    // ".co on": skip initial spaces
             while( *p == ' ' ) {
                 p++;
                 tab_space++;
@@ -1434,7 +1434,7 @@ void    process_text( const char *text, font_number font )
         }
         ju_x_start = g_cur_h_start; // g_cur_h_start appears to be correct
     } else {                        // subsequent phrase in paragraph
-        if( ProcFlags.concat && !ProcFlags.xmp_active ) {    // ".co on"
+        if( ProcFlags.concat ) {    // ".co on"
             if( post_space == 0 ) {
                 // compute initial spacing if needed; .ct and some user tags affect this
                 if( *p == ' ' ) {
@@ -1454,8 +1454,7 @@ void    process_text( const char *text, font_number font )
                     }
                 }
                 if( post_space > 0 ) {
-                    if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
-                        && !ProcFlags.xmp_active ) {
+                    if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                         post_space += wgml_fonts[font].spc_width;
                     }
                     if( (c_stop != NULL) && (t_line->last->width == 0) ) {
@@ -1492,6 +1491,21 @@ void    process_text( const char *text, font_number font )
             while( *p == ' ' ) {
                 post_space += wgml_fonts[font].spc_width;
                 p++;
+            }
+            if( !*p ) { // text is entirely spaces
+                n_char = process_word( NULL, 0, font );
+                n_char->type = norm;
+                g_cur_h_start += post_space;
+                post_space = 0;
+                n_char->x_address = g_cur_h_start;
+                t_line->last->next = n_char;
+                n_char->prev = t_line->last;
+                if( t_line->line_height < wgml_fonts[font].line_height ) {
+                    t_line->line_height = wgml_fonts[font].line_height;
+                }
+                t_line->last = n_char;
+                n_char = NULL;
+                return;
             }
         }
     }
@@ -1542,7 +1556,7 @@ void    process_text( const char *text, font_number font )
                         continue;           // guarded space no word end
                     }
                 }
-                if( !ProcFlags.concat && !ProcFlags.xmp_active ) { // .co off: include internal spaces
+                if( !ProcFlags.concat && (cur_group_type != gt_xmp) ) { // .co off but not XMP: include internal spaces
                     continue;
                 }
             }
@@ -1561,7 +1575,7 @@ void    process_text( const char *text, font_number font )
         n_char->x_address = g_cur_h_start;
         o_count = n_char->count;        // catches special case below
 
-        if( ProcFlags.concat || ProcFlags.xmp_active ) {
+        if( ProcFlags.concat || (cur_group_type == gt_xmp) ) { // .co on or XMP
 
             /***********************************************************/
             /* test if word exceeds right margin                       */
@@ -1751,24 +1765,28 @@ void    process_text( const char *text, font_number font )
         // recognize spaces at actual end-of-line or if current char is space
         if( ((input_cbs->fmflags & II_eol) && !*p) || (*p == ' ' ) ) {
             pword = p;
-            post_space = wgml_fonts[font].spc_width;
-            if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
-                    && !ProcFlags.xmp_active ) {
-                post_space += wgml_fonts[font].spc_width;
-            }
-            if( ProcFlags.concat ) {// ignore multiple blanks in concat mode
+            if( *p ) {                                      // more text on line
+                post_space = wgml_fonts[font].spc_width;
+                if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
+                        && (cur_group_type != gt_xmp) ) {   // exclude XMP 
+                    post_space += wgml_fonts[font].spc_width;
+                }
+                p++;
                 if( *p == ' ' ) {
                     while( *p == ' ' ) {
+                        if( (cur_group_type == gt_xmp) ) {   // multiple blanks
+                            post_space += wgml_fonts[font].spc_width;
+                        }                
                         p++;
                     }
                 }
-                p--;
+                p--;                    // back off non-space character, whatever it was
+                tab_space = p - pword + 1;
+                if( (input_cbs->fmflags & II_eol) && (tab_space == 0) ) {
+                    tab_space = 1;
+                }
+                pword = p + 1;          // new word start or end of input record
             }
-            tab_space = p - pword + 1;
-            if( (input_cbs->fmflags & II_eol) && (tab_space == 0) ) {
-                tab_space = 1;
-            }
-            pword = p + 1;          // new word start or end of input record
         }
         n_char = NULL;
     }
@@ -1794,7 +1812,6 @@ void    process_text( const char *text, font_number font )
             }
         }
     }
-
     if( input_cbs->fmflags & II_file ) {
         prev_mac = NULL;
     } else {

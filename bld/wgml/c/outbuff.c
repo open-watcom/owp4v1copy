@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implements the functions used with to the output buffer (and
-*               so with the output file or device).
+* Description:  Implements the functions declared in outbuff.h:
 *                   ob_flush()
 *                   ob_insert_block()
 *                   ob_insert_byte()
@@ -33,10 +32,11 @@
 *                   ob_insert_ps_text_start()
 *                   ob_setup()
 *                   ob_teardown()
-*               and these functions declared in wgml.h:
+*               and the functions declared in wgml.h:
 *                   cop_tr_table()
 *                   ob_binclude()
 *                   ob_graphic()
+*                   ob_oc()
 *               as well as these local variables:
 *                   binc_buff
 *                   buffout
@@ -304,6 +304,10 @@ static void ob_insert_ps_cmd( const char *in_block, size_t count )
             text_count -= tkn_start - spc_start;
         }
     }
+
+    /* Special for " rmoveto" from pre_text_output() for "sup" */
+
+    text_count = strlen( &in_block[current] );
 
     /* Insert any remaining text. */
 
@@ -1074,27 +1078,22 @@ void ob_binclude( binclude_element * in_el )
 }
 
 
-/* Function ob_direct_out().
- * This function bypasses the output buffer for direct output.
+/* Function ob_oc().
+ * This function implements the action of control word OC.
  */
 
-void ob_direct_out( const char *text )       // used from .oc
+void ob_oc( const char *text )
 {
-    if( fwrite( text, sizeof( uint8_t ), strlen( text ), out_file_fp ) < strlen( text ) ) {
-        xx_simple_err_c( err_write_out_file, out_file );
-        return;
+    if( ProcFlags.has_aa_block ) {
+        fb_absoluteaddress();
     }
-#ifdef __UNIX__
-    if( fprintf_s( out_file_fp, "\n" ) < strlen( "\n" ) ) {
-        xx_simple_err_c( err_write_out_file, out_file );
-        return;
+    ob_flush();
+    ob_insert_block( text, strlen( text ), false, false, g_curr_font );
+    if( ProcFlags.has_aa_block ) {
+        ob_insert_byte( ' ' );
+        fb_absoluteaddress();
     }
-#else
-    if( fprintf_s( out_file_fp, "\r\n" ) < strlen( "\r\n" ) ) {
-        xx_simple_err_c( err_write_out_file, out_file );
-        return;
-    }
-#endif
+    ob_flush();
     return;
 }
 

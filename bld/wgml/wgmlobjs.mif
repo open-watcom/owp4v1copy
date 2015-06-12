@@ -120,6 +120,7 @@ lay_objs =  &
 # script control word or function related
 #
 scr_objs =  &
+        gsbd.obj     &
         gsbr.obj     &
         gsbx.obj     &
         gscofoju.obj &

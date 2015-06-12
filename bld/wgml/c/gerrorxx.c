@@ -58,7 +58,11 @@ static void show_line_error_len( const char *pa, size_t len )
     buf[cnt] = '\0';
     out_msg( "%s\n", buf );
     // number of characters before the offending input + "*" at start of offending input
-    cnt = pa - buff2 - 1;
+    if( pa > buff2 ) {
+        cnt = pa - buff2 - 1;
+    } else {
+        cnt = 0;
+    }
     memset( buf, ' ', cnt );
     buf[cnt] = '*';         // puts "*" after last memset position; no, really
     buf[cnt + 1] = '\0';

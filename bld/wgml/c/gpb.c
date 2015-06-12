@@ -58,7 +58,9 @@ extern  void    gml_pb( const gmltag * entry )
 
     post_space = 0;
 
-    process_text( p, g_curr_font );
+    if( *p ) {
+        process_text( p, g_curr_font );
+    }
      
     scan_start = scan_stop + 1;
 
