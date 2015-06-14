@@ -42,7 +42,7 @@
  *
  */
 
-void        split_input( char * buf, char * split_pos, bool sol )
+void split_input( char * buf, char * split_pos, bool sol )
 {
     inp_line    *   wk;
     size_t          len;
@@ -71,7 +71,7 @@ void        split_input( char * buf, char * split_pos, bool sol )
  *  used if a substituted variable starts with CW_sep_char
  */
 
-static  void    split_input_var( char * buf, char * split_pos, char * part2, bool sol )
+static void split_input_var( char * buf, char * split_pos, char * part2, bool sol )
 {
     inp_line    *   wk;
     size_t          len;
@@ -236,7 +236,7 @@ static void split_at_CW_sep_char( char * splitpos ) {
 /*   returns false if :cmt .cm  .dm found                                  */
 /***************************************************************************/
 
-static  bool    split_input_buffer( void )
+static bool split_input_buffer( void )
 {
     char            *   p2;
     char            *   pchar;
@@ -327,7 +327,7 @@ static  bool    split_input_buffer( void )
 /*  until the buffer is processed                                          */
 /***************************************************************************/
 
-bool    resolve_symvar_functions( char * buf )
+bool resolve_symvar_functions( char * buf )
 {
     static const char   ampchar = '&';
     inp_line        *   in_wk;
@@ -635,7 +635,7 @@ bool    resolve_symvar_functions( char * buf )
 /*  gml tag start                                                          */
 /***************************************************************************/
 
-void    classify_record( char c )
+void classify_record( char c )
 {
     if( c == GML_char ) {               // classify input
         ProcFlags.gml_tag = true;
@@ -657,7 +657,7 @@ void    classify_record( char c )
 /*  returns true if spaces removed                                         */
 /***************************************************************************/
 
-static  bool    remove_leading_space( void )
+static bool remove_leading_space( void )
 {
     char    * p;
     char    * p2;
@@ -670,7 +670,7 @@ static  bool    remove_leading_space( void )
     while( is_space_tab_char( *p ) ) {
         p++;
     }
-    if( (p != buff2) && (*p == GML_char) ) {
+    if( (p != buff2) && (*p == GML_char) && (cur_group_type != gt_xmp) ) {
         p2 = buff2;
         do {
             *p2++ = *p++;
@@ -692,7 +692,7 @@ static  bool    remove_leading_space( void )
 /*                                                                         */
 /***************************************************************************/
 
-void        process_line( void )
+void process_line( void )
 {
     bool    anything_substituted;
 

@@ -91,7 +91,7 @@
 /*     would place the output at the top of page "4".                     */
 /**************************************************************************/
 
-void    scr_pa( void )
+void scr_pa( void )
 {
     char        *   pa;
     char        *   p;
@@ -158,7 +158,6 @@ void    scr_pa( void )
     scan_restart = scan_stop +1;
     return;
 }
-
 
 
 /***************************************************************************/
@@ -240,8 +239,7 @@ void    scr_pa( void )
 /*   text area (if no footnotes are currently waiting to print).           */
 /***************************************************************************/
 
-
-void    scr_cp( void )
+void scr_cp( void )
 {
     char        *   pa;
     char        *   p;
@@ -288,7 +286,7 @@ void    scr_cp( void )
             scan_restart = gn.argstart;
         }
     } else {
-       scan_restart = scan_stop +1;
+        scan_restart = scan_stop +1;
     }
     return;
 }
