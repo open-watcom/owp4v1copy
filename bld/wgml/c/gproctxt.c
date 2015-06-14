@@ -1762,23 +1762,20 @@ void process_text( const char *text, font_number font )
         if( !(input_cbs->fmflags & II_eol) && !*p ) {
             break;
         }
-        // recognize spaces at actual end-of-line or if current char is space
-        if( ((input_cbs->fmflags & II_eol) && !*p) || (*p == ' ' ) ) {
+
+        if( *p == ' ' ) {                                       // spaces to process
             pword = p;
-            if( *p ) {                                      // more text on line
                 post_space = wgml_fonts[font].spc_width;
                 if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
                         && (cur_group_type != gt_xmp) ) {   // exclude XMP 
                     post_space += wgml_fonts[font].spc_width;
                 }
                 p++;
-                if( *p == ' ' ) {
-                    while( *p == ' ' ) {
-                        if( (cur_group_type == gt_xmp) ) {   // multiple blanks
-                            post_space += wgml_fonts[font].spc_width;
-                        }                
-                        p++;
-                    }
+                while( *p == ' ' ) {
+                    if( (cur_group_type == gt_xmp) ) {   // multiple blanks
+                        post_space += wgml_fonts[font].spc_width;
+                    }                
+                    p++;
                 }
                 p--;                    // back off non-space character, whatever it was
                 tab_space = p - pword + 1;
@@ -1786,6 +1783,12 @@ void process_text( const char *text, font_number font )
                     tab_space = 1;
                 }
                 pword = p + 1;          // new word start or end of input record
+        } else if( (input_cbs->fmflags & II_eol) && !*p ) { // insert spaces at actual end-of-line
+            pword = p;
+            post_space = wgml_fonts[font].spc_width;
+            if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
+                    && (cur_group_type != gt_xmp) ) {   // exclude XMP 
+                post_space += wgml_fonts[font].spc_width;
             }
         }
         n_char = NULL;
