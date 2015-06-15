@@ -1023,6 +1023,7 @@ static void  do_char_device( void )
 
 static void do_line_device( void )
 {
+    bool            do_v_adjust;
     box_col_set *   cur_hline;
     doc_element *   cur_el          = NULL;
     doc_element *   h_line_el;
@@ -1054,9 +1055,30 @@ static void do_line_device( void )
     /* This is known to apply to text within the box, and   */
     /* to text preceding the box except at the top of a     */
     /* page                                                 */
+    /* Note: do_v_adjust is needed because, when P is       */
+    /* followed by a break with no intervening text, a      */
+    /* line is simulated by inserted an empty doc_element   */
+    /* into t_page.main->main. This causes the page to be   */
+    /* started, and that triggers the v_offset adjustment   */
+    /* inappropriately. do_v_adjust is false even when      */
+    /* ProcFlags.page_started is true, provided that there  */
+    /* is only one doc_element on the page and it matches   */
+    /* the characteristics of the empty doc_element: it is  */
+    /* the only doc_element in t_page.main->main, is is     */
+    /* a text element, it has a text_line, and that         */
+    /* text_line has no text_chars, ie, is empty            */ 
     /********************************************************/
 
-    if( ProcFlags.in_bx_box || ProcFlags.page_started ) {
+    do_v_adjust = ProcFlags.page_started;
+    if( do_v_adjust ) {     // check for initial empty doc_element on page
+        if( (t_page.main->main->next == NULL)
+                && (t_page.main->main->type == el_text)
+                && (t_page.main->main->element.text.first != NULL)
+                && (t_page.main->main->element.text.first->first == NULL) ) {
+            do_v_adjust = false;
+        }
+    }
+    if( ProcFlags.in_bx_box || do_v_adjust ) {
         prev_height = wgml_fonts[g_prev_font].line_height;
         if( prev_height < def_height ) {
             v_offset += (def_height - prev_height) / 2;

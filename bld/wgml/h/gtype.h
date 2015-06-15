@@ -1028,7 +1028,7 @@ typedef struct {
 } vline_element;
 
 typedef struct doc_element {
-    struct  doc_element *   next;
+    struct  doc_element     *   next;
             uint32_t            blank_lines;
             uint32_t            depth;
             uint32_t            subs_skip;
