@@ -769,26 +769,30 @@ static void draw_box_lines( doc_element * h_line_el )
 /*  the doc_element cur_doc_el_group.first is the doc_element processed    */
 /***************************************************************************/
 
-static void  box_line_element( void )
+static void  box_line_element( bool add_depth )
 {
     doc_element *   cur_el          = NULL;
 
     cur_el = cur_doc_el_group->first;
 
-    if( ProcFlags.page_started ) {      // text line not at top of page
-        box_depth += cur_el->blank_lines + cur_el->subs_skip + cur_el->depth;
-        if( box_skip == 0 ) {
-            cur_el->subs_skip += el_skip;   // add el_skip to both cur_el & box_depth
-            box_depth += el_skip;
-            el_skip = 0;                    // el_skip used for current element
-        } else {
-            cur_el->subs_skip += box_skip;  // add box_skip to cur_el only
-            box_skip = 0;                   // box_skip used for current element
+    /* add_depth must be true only the first time the doc_element is processed */
+
+    if( add_depth ) {
+        if( ProcFlags.page_started ) {      // text line not at top of page
+            box_depth += cur_el->blank_lines + cur_el->subs_skip + cur_el->depth;
+            if( box_skip == 0 ) {
+                cur_el->subs_skip += el_skip;   // add el_skip to both cur_el & box_depth
+                box_depth += el_skip;
+                el_skip = 0;                    // el_skip used for current element
+            } else {
+                cur_el->subs_skip += box_skip;  // add box_skip to cur_el only
+                box_skip = 0;                   // box_skip used for current element
+            }
+        } else {                            // top of page
+            box_skip = 0;                   // box_skip no longer relevant
+            box_depth += cur_el->top_skip + cur_el->depth - v_offset;
+            ProcFlags.page_started = true;
         }
-    } else {                            // top of page
-        box_skip = 0;                   // box_skip no longer relevant
-        box_depth += cur_el->top_skip + cur_el->depth - v_offset;
-        ProcFlags.page_started = true;
     }
 
     switch( cur_el->type ) {
@@ -1025,7 +1029,8 @@ static void do_line_device( void )
 {
     bool            do_v_adjust;
     box_col_set *   cur_hline;
-    doc_element *   cur_el          = NULL;
+    doc_element *   check_el;
+    doc_element *   cur_el;
     doc_element *   h_line_el;
     uint32_t        h_offset;
     uint32_t        prev_height;
@@ -1089,18 +1094,33 @@ static void do_line_device( void )
     /* process any accumulated doc_elements */
 
     if( cur_doc_el_group != NULL ) {
-        while( cur_doc_el_group->first != NULL ) {
-            if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit    
-                while( cur_doc_el_group->first != NULL ) {
-                    box_line_element();
-               }
-            } else {                        // finish off current page
-                do_page_out();
-                reset_t_page();
+        if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit    
+            while( cur_doc_el_group->first != NULL ) {
+                cur_el = cur_doc_el_group->first;
+                if( cur_el != NULL ) {
+                    while( (cur_el != NULL)
+                            && (cur_el->type != el_hline) && (cur_el->type != el_vline) ) {
+                        cur_el = cur_el->next;
+                    }
+                    check_el = cur_el;
+                } else {
+                    check_el = NULL;
+                }
+                while( cur_doc_el_group->first != check_el ) {
+                    box_line_element( check_el == NULL );
+                }
+                if( check_el != NULL ) {
+                    while( cur_doc_el_group->first == check_el ) {
+                        box_line_element( check_el == NULL );
+                    }
+                }
             }
+        } else {                            // finish off current page
+            do_page_out();
+            reset_t_page();
         }
         add_doc_el_group_to_pool( cur_doc_el_group );
-        cur_doc_el_group = NULL;       
+        cur_doc_el_group = NULL;
     }
 
     /* Now deal with the HLINEs and associated VLINEs */
@@ -1147,6 +1167,7 @@ static void do_line_device( void )
 
         /* Create the doc_elements to hold the HLINEs */
 
+        cur_el = NULL;
         cur_hline = box_line->first;
         while( cur_hline != NULL ) {  // iterate over all horizontal lines
             if( cur_el == NULL ) {
@@ -1303,17 +1324,22 @@ static void do_line_device( void )
 
     /************************************************************/
     /* Initialize the depth of the last HLINE/VLINE and adjust  */
-    /* t_page.cur_depth, with these exceptions:                 */
+    /* the cur_depth field in either t_page or t_doc_el_group,  */
+    /* with these exceptions:                                   */
     /*      1. BX CAN was processed                             */
     /*      2. No HLINEs or VLINEs were done                    */
     /* Note: because of how doc_element.depth is handled,       */
     /*   hl_depth does not have to be added to el_skip          */
     /************************************************************/
 
-    if( (t_page.last_col_main != NULL) && (cur_op != bx_can)
-            && !ProcFlags.no_bx_hline ) {      // HLINEs, VLINEs, or both drawn, presumably
-        t_page.last_col_main->depth = hl_depth;
-        t_page.cur_depth +=hl_depth;
+    if( (cur_op != bx_can) && !ProcFlags.no_bx_hline ) {    // HLINEs, VLINEs, or both drawn, presumably
+        if( (t_doc_el_group != NULL) && (t_doc_el_group->last != NULL) ) {  // first try t_doc_el_group
+            t_doc_el_group->last->depth = hl_depth;
+            t_doc_el_group->depth +=hl_depth;
+        } else if( t_page.last_col_main != NULL ) {         // and then t_page
+            t_page.last_col_main->depth = hl_depth;
+            t_page.cur_depth +=hl_depth;
+        }
     }
 
     /************************************************************/
@@ -1413,6 +1439,12 @@ static void eop_char_device( void ) {
 
 /***************************************************************************/
 /*  end-of-page processing for line-drawing devices                        */
+/*  NOTE: work was suspended when work on boxtest.gml began, as it is not  */
+/*  clear this is needed for the OW docs; it is even less clear how to     */
+/*  handle the problem that the parameter to box_line_element() was meant  */
+/*  to solve: would ADDRESS and/or XMP (and perhaps FIG and FN) need to be */
+/*  modified also and perhaps called first to decide if the text is to be  */
+/*  broken or moved to the next page? This is all very murky.              */
 /***************************************************************************/
 
 static void eop_line_device( void ) {
@@ -1434,7 +1466,7 @@ static void eop_line_device( void ) {
             max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
             skippage = cur_doc_el_group->first->blank_lines + cur_skip;
             if( (cur_doc_el_group->first->depth + skippage) <= max_depth ) {  // cur_doc_el_group.first will fit on the page
-                box_line_element();
+                box_line_element( true );
             } else {        // the entire element will not fit
                 if( skippage > max_depth ) {    // skippage too large
                     if( cur_doc_el_group->first->blank_lines > max_depth ) { // split blank_lines
@@ -1453,7 +1485,7 @@ static void eop_line_device( void ) {
                         box_depth += skippage + cur_doc_el_group->first->depth;
                         if( cur_doc_el_group->first->next != NULL ) {    // cur_doc_el_group.first was split
                             cur_doc_el_group->depth -= skippage + cur_doc_el_group->first->depth;
-                            box_line_element();
+                            box_line_element( true );
                         }
                     }
                 }
