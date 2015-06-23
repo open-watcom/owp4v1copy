@@ -103,6 +103,12 @@ void  scr_process_break( void )
 {
     if( t_line != NULL ) {
         if( t_line->first != NULL ) {
+            /* first line of paragraph: minimum line height */
+            if( ProcFlags.p_starting ) {
+                if( t_line->line_height < wgml_fonts[g_curr_font].line_height ) {
+                    t_line->line_height = wgml_fonts[g_curr_font].line_height;
+                }
+            }
             /* the last line is not justified, but is right-aligned or centered */
             process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
                 (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );
@@ -113,7 +119,7 @@ void  scr_process_break( void )
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-    } else if( ProcFlags.empty_doc_el ) {   // empty element needed?
+    } else if( ProcFlags.p_starting ) {   // first line of paragraph: no text: blank line
 
         t_element = alloc_doc_el( el_text );
         t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
@@ -156,7 +162,7 @@ void  scr_process_break( void )
 
     }
     set_h_start();      // to stop paragraph indent from being used after a break
-    ProcFlags.empty_doc_el = false;
+    ProcFlags.p_starting = false;
     c_stop = NULL;
 
     return;

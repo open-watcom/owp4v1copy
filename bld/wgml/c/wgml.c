@@ -517,13 +517,6 @@ static  void    proc_input( char * filename )
                 }
                 break;                  // EOF
             }
-#if 0
-            if( (buff2_lg < 1) && !ProcFlags.concat) {
-                ProcFlags.empty_doc_el = true;
-                scr_process_break();
-                continue;               // minimal processing for empty line
-            }
-#endif
             remove_indentation();       // ".  .  .  .cw"  becomes ".cw"
 
             if( ProcFlags.goto_active ) {

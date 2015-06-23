@@ -74,7 +74,7 @@ void    proc_p_pc( p_lay_tag * p_pc )
 extern  void    gml_p( const gmltag * entry )
 {
     proc_p_pc( &layout_work.p );
-    ProcFlags.empty_doc_el = true;  // for next break, not this tag's break
+    ProcFlags.p_starting = true;    // for next break, not this tag's break
 }
 
 /***************************************************************************/

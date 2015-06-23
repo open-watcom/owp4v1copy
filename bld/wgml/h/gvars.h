@@ -181,7 +181,7 @@ global struct ProcFlags {
     unsigned        stitle_seen     : 1;// remember first stitle value
     unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
     unsigned        title_text_seen : 1;// remember first :TITLE tag text
-    unsigned        empty_doc_el    : 1;// empty doc element allowed
+    unsigned        p_starting      : 1;// :P first line/blank line
     unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        gml_tag         : 1;// input buf starts with GML_char
