@@ -131,7 +131,7 @@ static void ob_insert_ps_text( const char *in_block, size_t count, font_number f
     /* Adjust font if appropriate and initialize cur_trans. */
 
     if( font >= wgml_font_cnt )
-        font = 0;
+        font = FONT0;
     if( wgml_fonts[font].outtrans != NULL )
         cur_table = wgml_fonts[font].outtrans->table;
     for( i = 0; i < count; i++ ) {
@@ -359,7 +359,7 @@ static void ob_insert_ps_cmd_ot( const char *in_block, size_t count, font_number
     /* Adjust font if necessary and initialize cur_table and text_count. */
 
     if( font >= wgml_font_cnt )
-        font = 0;
+        font = FONT0;
     if( wgml_fonts[font].outtrans != NULL )
         cur_table = wgml_fonts[font].outtrans->table;
     text_count = count;
@@ -642,7 +642,7 @@ static void ob_insert_def_ot( const char *in_block, size_t count, font_number fo
     /* Adjust font if necessary and initialize cur_table and text_count. */
 
     if( font >= wgml_font_cnt )
-        font = 0;
+        font = FONT0;
     if( wgml_fonts[font].outtrans != NULL )
         cur_table = wgml_fonts[font].outtrans->table;
     text_count = count;

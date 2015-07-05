@@ -2854,6 +2854,7 @@ follows.
 The "FORMAT" directive is used to specify the format of the executable
 file that the &lnkname is to generate.
 The format of the "FORMAT" directive (short form "FORM") is as follows.
+.pa
 .mbigbox
     FORMAT form
 

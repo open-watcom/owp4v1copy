@@ -88,7 +88,7 @@ static void puncadj( text_line * line, int32_t * delta0, int32_t rem,
     text_chars  *   tw;
     int32_t         delta;
     int32_t         loop_cnt;
-    int32_t         space = wgml_fonts[0].spc_width;// TBD
+    int32_t         space = wgml_fonts[FONT0].spc_width;// TBD
     int32_t         spacew;
     int32_t         remw = rem - rem;   // TBD
     char            ch;
@@ -113,7 +113,7 @@ static void puncadj( text_line * line, int32_t * delta0, int32_t rem,
     loop_cnt = 3;                       // 3 passes
     while( loop_cnt > 2 && delta >= space ) {   // only 1 pass TBD
         if( ProcFlags.has_aa_block ) {
-            space = wgml_fonts[0].spc_width / 2;// TBD
+            space = wgml_fonts[FONT0].spc_width / 2;// TBD
 //          space += loop_cnt - 1;      // TBD
         }
 
@@ -1322,7 +1322,7 @@ void process_text( const char *text, font_number font )
     uint32_t                o_count         = 0;
     uint32_t                offset          = 0;
     // when hyph can be set, it will need to be used here & below
-    uint32_t                hy_width        = wgml_fonts[0].width_table['-'];
+    uint32_t                hy_width        = wgml_fonts[FONT0].width_table['-'];
 
     static      text_type       typ             = norm;
     static      text_type       typn            = norm;
@@ -1368,9 +1368,15 @@ void process_text( const char *text, font_number font )
     if( (tt_stack != NULL) 
             && (input_cbs->fmflags & II_sol)
             && ((*p == '\t') || (*p == tab_char)) ) {    // adjust parent font, see Wiki
-        tt_stack->font = 0; // hard-wired: LAYOUT DEFAULT FONT does not affect this
-        font = 0;
-        g_curr_font = 0;
+        tt_stack->font = FONT0; // hard-wired: LAYOUT DEFAULT FONT does not affect this
+        font = FONT0;
+        g_curr_font = FONT0;
+    }
+
+    /* Check for script style font */
+
+    if( script_style.style != SCT_none ) {
+        font = scr_style_font( font );
     }
 
     phrase_start = true;
@@ -1398,7 +1404,7 @@ void process_text( const char *text, font_number font )
                     /********************************************************/
 
                     temp_font = g_curr_font;
-                    g_curr_font = 0;
+                    g_curr_font = FONT0;
                     scr_process_break();        // treat new line as break
                     tab_space = 0;
 
@@ -1445,9 +1451,9 @@ void process_text( const char *text, font_number font )
                     } else if( (input_cbs->fmflags & II_tag) && !ProcFlags.utc ) {
                         post_space = wgml_fonts[font].spc_width;
                     } else if( input_cbs->fmflags & II_macro ) {
-                        if( ((font != 0) || (g_prev_font == 0))
+                        if( ((font != FONT0) || (g_prev_font == FONT0))
                                 && (input_cbs->s.m != prev_mac) ) {
-                            post_space = wgml_fonts[0].spc_width;
+                            post_space = wgml_fonts[FONT0].spc_width;
                         } else if( (font != 0) && (g_prev_font != 0) ) {
                             post_space = wgml_fonts[font].spc_width;
                         }

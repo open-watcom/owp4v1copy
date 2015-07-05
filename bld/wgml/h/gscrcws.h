@@ -41,7 +41,7 @@
   picks( bc, scr_dummy, cw_o_t             )// balance columns
   picks( bd, scr_bd,    cw_o_t             )// bold
   picks( bf, scr_dummy, cw_o_t             )// begin font
-  picks( bi, scr_dummy, cw_o_t             )// bold italic
+  picks( bi, scr_bi,    cw_o_t             )// bold italic
   picks( bl, scr_dummy, cw_break+cw_o_t    )// blank line
   picks( bm, scr_dummy, cw_break+cw_o_t    )// bottom margin
   picks( br, scr_br,    cw_break+cw_o_t    )// break

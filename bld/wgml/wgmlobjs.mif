@@ -120,7 +120,7 @@ lay_objs =  &
 # script control word or function related
 #
 scr_objs =  &
-        gsbd.obj     &
+        gsbdbius.obj &
         gsbr.obj     &
         gsbx.obj     &
         gscofoju.obj &
@@ -163,7 +163,6 @@ scr_objs =  &
         gstb.obj     &
         gstitr.obj   &
         gsty.obj     &
-        gsus.obj
  
 objs = wgml.obj $(common_objs) $(scr_objs) $(gml_objs) $(lay_objs) $(dev_objs) $(trmem_objs)
  

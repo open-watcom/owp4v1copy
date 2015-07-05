@@ -79,7 +79,7 @@ global  inputcb     *   input_cbs;      // GML input stack (files + macros)
 global  fnstack     *   fn_stack;       // input filename stack
 global  char        *   out_file;       // output file name
 global  char        *   out_file_attr;  // output file attributes (T:2222)
-global  unsigned        inc_level;   // include nesting level 1 = MasterFname
+global  unsigned        inc_level;      // include nesting level 1 = MasterFname
 global  unsigned        max_inc_level;  // maximum include level depth
 global  line_number     line_from;      // starting lineno to process
 global  line_number     line_to;        // ending lineno to process
@@ -123,9 +123,9 @@ global  int32_t         fm;             // footing margin          &$fm
 global  int32_t         lm;             // left margin             &$pagelm
 global  int32_t         rm;             // right margin            &$pagerm
 
-global  ix_h_blk    *   ixhtag[4];// last higher level :IH1 :IH2 tags in index
+global  ix_h_blk    *   ixhtag[4];      // last higher level :IH1 :IH2 tags in index
 global  ix_h_blk    *   index_dict;     // index structure dictionary
-global  ref_entry   *   iref_dict;  // reference id dictionary :Ix :IHx :IREF
+global  ref_entry   *   iref_dict;      // reference id dictionary :Ix :IHx :IREF
 global  ref_entry   *   ref_dict;       // reference dictionary :Hx tags
 global  ref_entry   *   fig_dict;       // reference dictionary :FIG tags
 global  ref_entry   *   fn_dict;        // reference dictionary :FN tags
@@ -349,6 +349,7 @@ global  banner_lay_tag  * sect_ban_bot[2];// bot even / odd banner for curr sect
 
 global  uint32_t    msg_indent;         // indent for message output (to screen, not to device)
 
+global script_style_info    script_style;   // BD/US etc scope control
 
 /***************************************************************************/
 /*  tagnames as strings for msg display                                    */

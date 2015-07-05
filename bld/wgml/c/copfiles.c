@@ -669,7 +669,7 @@ char cop_in_trans( char in_char, font_number font )
     char            retval;
 
     if( font >= wgml_font_cnt )
-        font = 0;
+        font = FONT0;
 
     retval = ti_table[(unsigned char)in_char];
     if( retval == in_char ) {
@@ -1081,22 +1081,22 @@ void cop_setup( void )
 
     /* Ensure that font 0 was initialized */
 
-    if( wgml_fonts[0].bin_font == NULL ) {
+    if( wgml_fonts[FONT0].bin_font == NULL ) {
         internal_err( __FILE__, __LINE__ );
     }
 
     /* Fill in any skipped entries with the values used for wgml_font 0 */
 
-    def_font.bin_font = wgml_fonts[0].bin_font;
-    def_font.font_switch = wgml_fonts[0].font_switch;
-    def_font.font_pause = wgml_fonts[0].font_pause;
-    def_font.font_style = wgml_fonts[0].font_style;
-    def_font.font_height = wgml_fonts[0].font_height;
-    def_font.font_space = wgml_fonts[0].font_space;
-    def_font.default_width = wgml_fonts[0].default_width;
-    def_font.line_height = wgml_fonts[0].line_height;
-    def_font.line_space = wgml_fonts[0].line_space;
-    def_font.font_resident = wgml_fonts[0].font_resident;
+    def_font.bin_font = wgml_fonts[FONT0].bin_font;
+    def_font.font_switch = wgml_fonts[FONT0].font_switch;
+    def_font.font_pause = wgml_fonts[FONT0].font_pause;
+    def_font.font_style = wgml_fonts[FONT0].font_style;
+    def_font.font_height = wgml_fonts[FONT0].font_height;
+    def_font.font_space = wgml_fonts[FONT0].font_space;
+    def_font.default_width = wgml_fonts[FONT0].default_width;
+    def_font.line_height = wgml_fonts[FONT0].line_height;
+    def_font.line_space = wgml_fonts[FONT0].line_space;
+    def_font.font_resident = wgml_fonts[FONT0].font_resident;
 
     for( i = 0; i < wgml_font_cnt; i++ ) {
         if( wgml_fonts[i].bin_font == NULL ) {
@@ -1282,7 +1282,7 @@ uint32_t cop_text_width( const char *text, size_t count, font_number font )
     uint32_t        width;
 
     if( font >= wgml_font_cnt )
-        font = 0;
+        font = FONT0;
 
     /* Compute the width. */
 
@@ -1582,7 +1582,7 @@ void fb_output_textline( text_line * out_line )
     line_passes = 0;
     for( current = out_line->first; current != NULL; current = current->next ) {
         if( current->font >= wgml_font_cnt )
-            current->font = 0;
+            current->font = FONT0;
         if( wgml_fonts[current->font].font_style->line_passes > line_passes ) {
             line_passes = wgml_fonts[current->font].font_style->line_passes;
         }

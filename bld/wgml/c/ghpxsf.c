@@ -246,8 +246,8 @@ void    gml_sf( const gmltag * entry )
         p += 5;
         font = strtol( p, &pe, 10 );
         scan_start = pe;
-        if( (font < 0) || (font >= wgml_font_cnt) ) {// invalid font use default
-            font = 0;
+        if( (font < FONT0) || (font >= wgml_font_cnt) ) {// invalid font use default
+            font = FONT0;
         }
         gml_hp_sf_common( entry, font, t_SF );
     } else {

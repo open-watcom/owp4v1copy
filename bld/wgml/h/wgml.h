@@ -293,6 +293,11 @@ extern  void    printf_research( char * msg, ... );
 extern  void    test_out_t_line( text_line  * a_line );
 
 
+/* gsbdbius.c                           */
+extern  void        scr_style_end( void );
+extern  font_number scr_style_font( font_number in_font );
+
+
 /* gsbr.c                               */
 extern  void    scr_process_break( void );
 

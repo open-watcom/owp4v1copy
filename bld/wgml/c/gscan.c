@@ -272,6 +272,10 @@ static void scan_gml( void )
                         }
                         *p = csave;
 
+                        if( script_style.style != SCT_none ) {
+                            scr_style_end();        // cancel BD, BI, US
+                        }
+
                         if( (rs_loc == 0) && !ProcFlags.need_li_lp ) {
                             // no restrictions: do them all
                             gml_tags[k].gmlproc( &gml_tags[k] );

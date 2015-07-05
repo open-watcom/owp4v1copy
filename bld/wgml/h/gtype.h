@@ -91,6 +91,7 @@
 #define SCR_CHAR_DEFAULT    '.'         // start of Script keyword
 #define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
 
+#define FONT0           0               // 0 as a font number
 
 /* string start / end characters Possible incomplete list*/
 #define d_q     '\"'                    // change also is_quote_char()
@@ -1153,5 +1154,37 @@ typedef struct ref_entry {
         };
     };
 } ref_entry;
+
+/********************************************************************************/
+/*  enum and struct for use with script styles                                  */
+/*   used for .BD, .BI, .UL, .US and others as they are implemented             */
+/*   related functions &'bold() etc may also need to use them, if implemented   */                
+/********************************************************************************/
+
+typedef enum {
+    SCT_none    = 0,    // none in effect
+    SCT_bd      = 1,    // .BD in effect
+    SCT_us      = 2,    // .US in effect (also .UL, which has the same effect)
+    SCT_bi      = 4,    // .BI in effect
+} style_cw_type;
+
+typedef enum {
+    SCS_none,   // not in use
+    SCS_line,   // text on same line as control word
+    SCS_on,     // used with ON
+    SCS_count,  // used with line count
+} style_cw_scope;
+
+typedef struct {
+    uint32_t        count;  // number of lines, if scope is SCS_count
+    style_cw_scope  scope;  // scope enum
+} style_cw_info;
+
+typedef struct {
+    style_cw_info   cw_bd;  // info for .BD
+    style_cw_info   cw_us;  // info for .US (or .UL, which behaves the same way)
+    font_number     font;   // font to restore when all scope fields are SCS_none
+    style_cw_type   style;  // the current script style to use
+} script_style_info;
 
 #endif                                  // GTYPE_H_INCLUDED

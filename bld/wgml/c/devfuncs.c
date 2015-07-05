@@ -358,9 +358,9 @@ static void fb_newline( void )
      */
 
     if( at_start ) {
-        if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
-                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+        if( wgml_fonts[FONT0].font_style->lineprocs != NULL ) {       
+            if( wgml_fonts[FONT0].font_style->lineprocs[0].endvalue != NULL ) {
+                df_interpret_driver_functions( wgml_fonts[FONT0].font_style->lineprocs[0].endvalue->text );
             }
         }
         at_start = false;
@@ -835,9 +835,9 @@ static void *df_flushpage( void )
      */
 
     if( at_start ) {
-        if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
-                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+        if( wgml_fonts[FONT0].font_style->lineprocs != NULL ) {       
+            if( wgml_fonts[FONT0].font_style->lineprocs[0].endvalue != NULL ) {
+                df_interpret_driver_functions( wgml_fonts[FONT0].font_style->lineprocs[0].endvalue->text );
             }
         }
         at_start = false;
@@ -3226,7 +3226,7 @@ static void fb_normal_vertical_positioning( void )
 
                 if( ProcFlags.has_aa_block ) {
                     if( at_start ) {
-                        if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
+                        if( wgml_fonts[FONT0].font_style->lineprocs != NULL ) {       
 
                             /* Set the value of current_state.y_address and the
                              * value returned by %y_address() to the last line
@@ -3236,8 +3236,8 @@ static void fb_normal_vertical_positioning( void )
                             current_state.y_address = (current_pages + i) * bin_device->page_depth;
                             y_address = current_state.y_address;
 
-                            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) {
-                                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+                            if( wgml_fonts[FONT0].font_style->lineprocs[0].endvalue != NULL ) {
+                                df_interpret_driver_functions( wgml_fonts[FONT0].font_style->lineprocs[0].endvalue->text );
                             }
                         }
                         at_start = false;
@@ -3708,28 +3708,28 @@ void fb_enterfont( void )
 
     old_active_font = active_font;
     old_df_font = df_font;
-    active_font = 0;
-    df_font = 0;
+    active_font = FONT0;
+    df_font = FONT0;
 
-    if( wgml_fonts[0].font_pause != NULL ) {
-        df_interpret_device_functions( wgml_fonts[0].font_pause->text );
+    if( wgml_fonts[FONT0].font_pause != NULL ) {
+        df_interpret_device_functions( wgml_fonts[FONT0].font_pause->text );
     }
 
-    if( wgml_fonts[0].font_switch != NULL ) {
-        if( wgml_fonts[0].font_switch->startvalue != NULL ) {
-            df_interpret_driver_functions( wgml_fonts[0].font_switch->startvalue->text );
+    if( wgml_fonts[FONT0].font_switch != NULL ) {
+        if( wgml_fonts[FONT0].font_switch->startvalue != NULL ) {
+            df_interpret_driver_functions( wgml_fonts[FONT0].font_switch->startvalue->text );
         }
     }
 
-    if( wgml_fonts[0].font_style != NULL ) {       
-        if( wgml_fonts[0].font_style->startvalue != NULL ) {
-            df_interpret_driver_functions( wgml_fonts[0].font_style->startvalue->text );
+    if( wgml_fonts[FONT0].font_style != NULL ) {       
+        if( wgml_fonts[FONT0].font_style->startvalue != NULL ) {
+            df_interpret_driver_functions( wgml_fonts[FONT0].font_style->startvalue->text );
         }
-        if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[0].font_style->lineprocs[0].startvalue != NULL ) {
-                df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+        if( wgml_fonts[FONT0].font_style->lineprocs != NULL ) {       
+            if( wgml_fonts[FONT0].font_style->lineprocs[0].startvalue != NULL ) {
+                df_interpret_driver_functions( wgml_fonts[FONT0].font_style->lineprocs[0].startvalue->text );
             }
-            fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
+            fb_firstword( &wgml_fonts[FONT0].font_style->lineprocs[0] );
         }
     }
     active_font = old_active_font;
@@ -4019,7 +4019,7 @@ void fb_new_section( uint32_t v_start )
     /* Save active_font and set it to 0 for the :NEWPAGE and :NEWLINE blocks. */
 
     font_save = active_font;
-    active_font = 0;
+    active_font = FONT0;
 
     /* Interpret the :NEWPAGE block. */
 
@@ -4093,12 +4093,12 @@ void fb_position( uint32_t h_start, uint32_t v_start )
 
     /* If the :FONTSTYLE block exists, interpret the appropriate blocks. */
 
-    if( wgml_fonts[0].font_style != NULL ) {
-        if( wgml_fonts[0].font_style->lineprocs != NULL ) {
-            df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+    if( wgml_fonts[FONT0].font_style != NULL ) {
+        if( wgml_fonts[FONT0].font_style->lineprocs != NULL ) {
+            df_interpret_driver_functions( wgml_fonts[FONT0].font_style->lineprocs[0].endvalue->text );
             x_address = h_start;    // to match wgml 4.0
-            df_interpret_driver_functions( wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
-            fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
+            df_interpret_driver_functions( wgml_fonts[FONT0].font_style->lineprocs[0].startvalue->text );
+            fb_firstword( &wgml_fonts[FONT0].font_style->lineprocs[0] );
         }
     }
     return;

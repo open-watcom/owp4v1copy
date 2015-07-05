@@ -264,9 +264,9 @@ static void document_new_position( void )
     } else {
         top_pos = g_page_top;
         if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start = g_page_top - wgml_fonts[0].line_height;
+            g_cur_v_start = g_page_top - wgml_fonts[FONT0].line_height;
         } else {
-            g_cur_v_start = g_page_top + wgml_fonts[0].line_height;
+            g_cur_v_start = g_page_top + wgml_fonts[FONT0].line_height;
         }
     }
     g_cur_h_start = g_page_left_org;

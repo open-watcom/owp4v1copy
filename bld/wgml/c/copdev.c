@@ -526,7 +526,7 @@ cop_device * parse_device( FILE * in_file )
 
         /* Ensure that the font number is 0. */
     
-        out_device->box.font = 0;
+        out_device->box.font = FONT0;
         break;
     default:
         mem_free( out_device );
@@ -642,7 +642,7 @@ cop_device * parse_device( FILE * in_file )
 
         /* Ensure that the font number is 0. */
 
-        out_device->underscore.font = 0;
+        out_device->underscore.font = FONT0;
         break;
     default:
         mem_free( out_device );

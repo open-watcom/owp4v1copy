@@ -104,7 +104,8 @@ void init_global_vars( void )
     page                = 0;            // current pageno (in body 1 - n)
     line                = 0;            // current output lineno on page
     lc                  = 0;            // remaining lines on page
-    g_curr_font         = 0;
+    g_curr_font         = FONT0;
+    g_prev_font         = FONT0;
     tm                  = 0;            // top margin              &$tm
     bm                  = 0;            // bottom margin           &$bm
     fm                  = 0;            // footing margin          &$fm
@@ -192,6 +193,13 @@ void init_global_vars( void )
     init_nest_cb();                     // base of stack must exist at start
 
     msg_indent          = 0;            // should be correct initial value
+
+    script_style.font = FONT0;          // initialize BD/BI/US scope control
+    script_style.style = SCT_none;
+    script_style.cw_bd.count = 0;
+    script_style.cw_bd.scope = SCS_none;
+    script_style.cw_us.count = 0;
+    script_style.cw_us.scope = SCS_none;
 }
 
 /***************************************************************************/
