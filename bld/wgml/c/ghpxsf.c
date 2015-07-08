@@ -48,7 +48,11 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
         if( post_space == 0 ) {
             post_space = wgml_fonts[g_curr_font].spc_width;
         }
-            
+        if( t_line != NULL && ProcFlags.utc ) {  // add second space after stop TBD
+            if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
+                post_space += wgml_fonts[g_curr_font].spc_width;
+            }
+        }
     }
 
     init_nest_cb();
