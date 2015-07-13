@@ -66,6 +66,11 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
 
     nest_cb->c_tag = t;
 
+    nest_cb->align = nest_cb->prev->align;
+    nest_cb->left_indent = nest_cb->prev->left_indent;
+    nest_cb->right_indent = nest_cb->prev->right_indent;
+
+
     if( nest_cb->prev != NULL ) {               // at least one prior entry
         if( nest_cb->prev->prev == NULL ) {     // but only one
             if( nest_cb->font != nest_cb->prev->font ) {           // font actually changed
@@ -147,6 +152,8 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
         if( nest_cb == tt_stack ) {         // closing second stack entry
             tt_stack = NULL;                // clear tt_stack 
         }
+        nest_cb->prev->left_indent = nest_cb->left_indent;
+        nest_cb->prev->right_indent = nest_cb->right_indent;
         wk = nest_cb;
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );

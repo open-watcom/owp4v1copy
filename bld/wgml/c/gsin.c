@@ -179,10 +179,13 @@ void    scr_in( void )
         nest_cb->left_indent = newindent;
         nest_cb->right_indent = newindentr;
     }
+
+    /* Reset margin(s) regardless of ProcFlags.keep_left_margin */
  
     g_page_right = g_page_right_org + g_indentr + nest_cb->right_indent;
-    ProcFlags.keep_left_margin = false;
-    set_h_start();                      // apply new values
+    g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;
+    g_cur_h_start = g_cur_left;
+
     scan_restart = p;
     return;
 }
