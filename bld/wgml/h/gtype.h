@@ -1017,8 +1017,9 @@ typedef struct {
 typedef struct {
     uint32_t        spacing;
     text_line   *   first;
-    bool            overprint;          // placement avoids padding warning
+    bool            bx_h_done;          // bx has added ascenders to the line
     bool            force_op;           // forces overprint at top of page
+    bool            overprint;          // placement avoids padding warning
 } text_element;
 
 typedef struct {

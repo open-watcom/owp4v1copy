@@ -241,6 +241,7 @@ static void box_blank_lines( uint32_t lines )
 
     blank_el = alloc_doc_el( el_text );
     blank_el->depth = lines + g_spacing;
+    blank_el->element.text.bx_h_done = true;    // prevent being processed again as text element
     lines /= def_height;
 
     for( i = 0; i < lines; i++ ) {
@@ -305,9 +306,14 @@ static void box_char_element( doc_element * cur_el ) {
 
     switch( cur_el->type ) {
     case el_text:
+        if( cur_el->element.text.bx_h_done ) {
+            insert_col_main( cur_el );
+            break;                      // do element only once
+        }
 
         /* insert vertical ascenders into the text lines */
 
+        cur_el->element.text.bx_h_done = true;  // avoid doing again
         cur_text = cur_el->element.text.first;
         if( cur_text != NULL ) {
             while( cur_text != NULL ) {
@@ -877,6 +883,7 @@ static void  do_char_device( void )
         g_blank_lines = 0;
         box_el->subs_skip = g_subs_skip;
         box_el->top_skip = g_top_skip;
+        box_el->element.text.bx_h_done = true;      // prevent being processed again as text element
 
         if( (cur_op == bx_can) ) {
             box_el->element.text.overprint = true;  // force overprint

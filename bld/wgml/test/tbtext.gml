@@ -2742,6 +2742,7 @@ $:HP0.suffixes:eHP0. U :HP0.and:eHP0. LL$unsigned long long
 .monooff
 .boxend
 .*
+.if &'lower(&syspdev) = ps .do begin
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Integer Constants"
 .np
@@ -3056,7 +3057,7 @@ $ 3$:HP0.toward negative infinity:eHP0.
 :CMT.KEEP basically does ".cp &WDWlvl." plus some bookkeeping.
 .pa
 
-.np
+
 The following table shows escape sequences available in the source
 character set, and what they translate to in the execution character set.
 
@@ -3961,6 +3962,7 @@ $^  $??'
 $~~ $??-
 .monooff
 .boxend
+.do end
 .*
 :CMT.This is from fl\ftypes.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Data Types"
