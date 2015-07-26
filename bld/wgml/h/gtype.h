@@ -949,13 +949,22 @@ typedef enum {
     sub             // subscript text
 } text_type;
 
+typedef enum {
+    tt_none,
+    tt_def,
+    tt_user
+} tab_type;
+
 typedef struct text_chars {
     struct  text_chars  *   next;
     struct  text_chars  *   prev;
             uint32_t        x_address;
             uint32_t        width;
+            uint32_t        ts_width;
             uint16_t        count;
             uint16_t        length;
+            i_flags         fmflags;
+            tab_type        tab_pos;
             text_type       type;
             font_number     font;
             char            text[1];

@@ -97,6 +97,9 @@ text_chars * alloc_text_chars( const char * text, size_t cnt, font_number font )
 
     curr->prev = NULL;
     curr->next = NULL;
+    curr->fmflags = 0;
+    curr->tab_pos = tt_none;
+    curr->ts_width = 0;
     curr->type = norm;
     curr->font = font;
     curr->width = 0;
