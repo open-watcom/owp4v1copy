@@ -1,3 +1,4 @@
+
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -945,14 +946,14 @@ static void redo_tabs( text_line * a_line )
 
     while( cur_chars != NULL ) {
         tab_chars.first = cur_chars;
-        scope_size += cur_chars->count;
-        cur_left = cur_chars->prev->x_address + cur_chars->prev->count;
+        scope_size += cur_chars->width;
+        cur_left = cur_chars->prev->x_address + cur_chars->prev->width;
         g_cur_h_start = cur_left;
         cur_chars = cur_chars->next;
         while( (cur_chars != NULL) && (cur_chars->tab_pos == tt_none) ) {
             scope_size += cur_chars->x_address - cur_left;
-            scope_size += cur_chars->count;
-            cur_left = cur_chars->x_address + cur_chars->count;
+            scope_size += cur_chars->width;
+            cur_left = cur_chars->x_address + cur_chars->width;
             cur_chars = cur_chars->next;
         }
         if( cur_chars == NULL ) {
@@ -1403,86 +1404,120 @@ void process_line_full( text_line * a_line, bool justify )
     /*   the first tab not at the start of the line was preceded by a       */
     /*   token or by more than one token.                                   */
     /* Note that this is what wgml 4.0 does, and how it does it             */
-    /* NOTE: wgml 4.0 does something completely different if all the above  */
-    /*       conditions hold except the last; that is, if only one token    */
-    /*       preceeds the first tab stop not at the start of the line; this */
-    /*       situation appears to require redoing the rest of the line,     */
-    /*       which would require refactoring process_text(), wgml_tabs(),   */
-    /*       and process_line_full() to accumulate a paragraph of           */
-    /*       text_chars and then divide them into lines, giving tabs a far  */
-    /*       more prominent role than they currently have                   */
     /************************************************************************/
 
     if( user_tab_skip && def_tab && (user_tabs.current > 0) && ProcFlags.concat
-                && (a_line->first->next != NULL)
-                && (a_line->first->next->tab_pos == tt_none) ) {
+                && (a_line->first->next != NULL) ) {
         split_chars = a_line->first->next;      // get second text_chars
-        while( (split_chars != NULL)
-                && (split_chars->tab_pos == tt_none) ) {    // find next text_chars positioned by a tab stop
+        while( (split_chars != NULL) && (split_chars->width == 0) ) {
             split_chars = split_chars->next;
         }
-
-/// it is not clear how much of this will still be needed
-
-        test_chars = split_chars;               // start from first text_chars set by a tab stop
-
-        /* find first tt_def text_chars */
-
-        if( test_chars != NULL && (test_chars->tab_pos == tt_def) ) {
-            test_chars = test_chars->next;
-        } else {
-            while( (test_chars != NULL) && (test_chars->tab_pos != tt_def) ) {
-                test_chars = test_chars->next;
-            }
-        }
-
-        /* find second tt_def text_chars, if any */
-
-        while( (test_chars != NULL) && (test_chars->tab_pos != tt_def) ) {
-            test_chars = test_chars->next;
-        }
-        do_retab = test_chars == NULL;         // true if only one default tab used
-
-        if( split_chars != NULL && (split_chars->prev != NULL) ) {  // separate the line unless nothing would be left on a_line
-            split_chars = split_chars->prev;    // the text_chars before the next tab
-            b_line = alloc_text_line();
-            b_line->line_height = 0;            // will be set below
-            a_line->next = b_line;
-            b_line->first = split_chars;
-            b_line->last = a_line->last;
-            a_line->last = split_chars->prev;
-            b_line->first->prev = NULL;
-            a_line->last->next = NULL;
-            split_chars = b_line->first;
-            while( split_chars != NULL ) {      // set b_line height
-                if( b_line->line_height < wgml_fonts[split_chars->font].line_height ) {
-                    b_line->line_height = wgml_fonts[split_chars->font].line_height;
-                }
-                split_chars = split_chars->next;
-            }
-            split_chars = b_line->first;
-            offset = split_chars->x_address - g_cur_left;
-            split_chars->x_address = g_cur_left;    // shift x_address to margin
-            split_chars->tab_pos = tt_none;         // not tabbed any longer if ever was
-            c_stop = NULL;                          // reset tabbing state
-            if( (split_chars->count == 0)
-                    && (split_chars->x_address == split_chars->next->x_address) ) { // check for line starting with marker
-                g_cur_h_start = a_line->first->x_address + a_line->first->count;    // prior line first text_chars position
-            } else {
-                g_cur_h_start = split_chars->x_address + split_chars->count;  // current line pre-tab positioning posititon
-            }
-            if( !do_retab ) {
-                split_chars = split_chars->next;        // shift text_chars to first default tab
-                while( split_chars != NULL ) {
-                    split_chars->x_address -= offset;
-                    if( split_chars->tab_pos == tt_user ) {
-                        split_chars->tab_pos = tt_none;     // not tabbed any longer 
-                        g_cur_h_start = split_chars->x_address + split_chars->count;  // current line pre-tab positioning position
-                    }
+        if( split_chars != NULL ) {                         // second token found
+            if( split_chars->tab_pos == tt_none ) {         // multiple tokens before first internal tab
+                while( (split_chars != NULL)
+                        && (split_chars->tab_pos == tt_none) ) {    // find next text_chars positioned by a tab stop
                     split_chars = split_chars->next;
                 }
+
+                if( split_chars != NULL ) {         // there is a second tab stop
+
+                    /* find first tt_def text_chars */
+
+                    test_chars = split_chars;               // start from first text_chars set by a tab stop
+                    if( test_chars->tab_pos == tt_def ) {
+                        test_chars = test_chars->next;
+                    } else {
+                        while( (test_chars != NULL) && (test_chars->tab_pos != tt_def) ) {
+                            test_chars = test_chars->next;
+                        }
+                    }
+
+                    /* find second tt_def text_chars, if any */
+
+                    while( (test_chars != NULL) && (test_chars->tab_pos != tt_def) ) {
+                        test_chars = test_chars->next;
+                    }
+                    do_retab = (test_chars == NULL);        // true if only one default tab used
+
+                    if( split_chars->prev != NULL ) {       // separate the line unless nothing would be left on a_line
+                        split_chars = split_chars->prev;    // the text_chars before the next tab
+                        b_line = alloc_text_line();
+                        b_line->line_height = 0;            // will be set below
+                        a_line->next = b_line;
+                        b_line->first = split_chars;
+                        b_line->last = a_line->last;
+                        a_line->last = split_chars->prev;
+                        b_line->first->prev = NULL;
+                        a_line->last->next = NULL;
+                        split_chars = b_line->first;
+                        while( split_chars != NULL ) {      // set b_line height
+                            if( b_line->line_height < wgml_fonts[split_chars->font].line_height ) {
+                                b_line->line_height = wgml_fonts[split_chars->font].line_height;
+                            }
+                            split_chars = split_chars->next;
+                        }
+                        split_chars = b_line->first;
+                        offset = split_chars->x_address - g_cur_left;
+                        split_chars->x_address = g_cur_left;    // shift x_address to margin
+                        split_chars->tab_pos = tt_none;         // not tabbed any longer if ever was
+                        c_stop = NULL;                          // reset tabbing state
+                        if( (split_chars->count == 0)
+                                && (split_chars->x_address == split_chars->next->x_address) ) { // check for line starting with marker
+                            g_cur_h_start = a_line->first->x_address + a_line->first->count;    // prior line first text_chars position
+                        } else {
+                            g_cur_h_start = split_chars->x_address + split_chars->count;  // current line pre-tab positioning posititon
+                        }
+                        if( !do_retab ) {
+                            split_chars = split_chars->next;        // shift text_chars to first default tab
+                            while( split_chars != NULL ) {
+                                split_chars->x_address -= offset;
+                                if( split_chars->tab_pos == tt_user ) {
+                                    split_chars->tab_pos = tt_none;     // not tabbed any longer 
+                                    g_cur_h_start = split_chars->x_address + split_chars->count;  // current line pre-tab positioning position
+                                }
+                                split_chars = split_chars->next;
+                            }
+                        }
+                        redo_tabs( b_line );
+                    }
+                }
+            } else {    // only one token before first internal tab
+                while( (split_chars != NULL) && (split_chars->tab_pos != tt_def) ) {   // get first default tab stop
+                    split_chars = split_chars->next;
+                }
+                if( split_chars != NULL ) { // will be NULL if line ends in a tab character which is also the only default tab
+                    if( split_chars->prev->tab_pos == tt_none ) {
+                        split_chars = split_chars->prev;            // multiple tokens: split at last
+                    }
+                    b_line = alloc_text_line();
+                    b_line->line_height = 0;            // will be set below
+                    a_line->next = b_line;
+                    b_line->first = split_chars;
+                    b_line->last = a_line->last;
+                    a_line->last = split_chars->prev;
+                    b_line->first->prev = NULL;
+                    a_line->last->next = NULL;
+                    split_chars = b_line->first;
+                    while( split_chars != NULL ) {      // set b_line height
+                        if( b_line->line_height < wgml_fonts[split_chars->font].line_height ) {
+                            b_line->line_height = wgml_fonts[split_chars->font].line_height;
+                        }
+                        split_chars = split_chars->next;
+                    }
+                    split_chars = b_line->first;
+                    offset = split_chars->x_address - g_cur_left;
+                    split_chars->x_address = g_cur_left;    // shift x_address to margin
+                    split_chars->tab_pos = tt_none;         // not tabbed any longer if ever was
+                    c_stop = NULL;                          // reset tabbing state
+                    if( (split_chars->count == 0)
+                            && (split_chars->x_address == split_chars->next->x_address) ) { // check for line starting with marker
+                        g_cur_h_start = a_line->first->x_address + a_line->first->count;    // prior line first text_chars position
+                    } else {
+                        g_cur_h_start = split_chars->x_address + split_chars->count;  // current line pre-tab positioning posititon
+                    }
+                    redo_tabs( b_line );
+                }
             }
-            redo_tabs( b_line );
         }
     }
     def_tab = false;                        // reset for next a_line
