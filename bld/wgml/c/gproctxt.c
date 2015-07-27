@@ -1,4 +1,3 @@
-
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -924,7 +923,7 @@ static void redo_tabs( text_line * a_line )
     text_line       tab_chars   = { NULL, 0, 0, NULL, NULL };   // current tab markers/fill chars
     uint32_t        cur_left;
     uint32_t        offset;                 // to adjust subsequen text_chars in tab scope
-    uint32_t        scope_size  = 0;        // size of scope of current tab
+    uint32_t        scope_width = 0;        // total width of scope of current tab
 
     if( a_line == NULL ) {          // why are we here?
         return;
@@ -946,13 +945,13 @@ static void redo_tabs( text_line * a_line )
 
     while( cur_chars != NULL ) {
         tab_chars.first = cur_chars;
-        scope_size += cur_chars->width;
+        scope_width += cur_chars->width;
         cur_left = cur_chars->prev->x_address + cur_chars->prev->width;
         g_cur_h_start = cur_left;
         cur_chars = cur_chars->next;
         while( (cur_chars != NULL) && (cur_chars->tab_pos == tt_none) ) {
-            scope_size += cur_chars->x_address - cur_left;
-            scope_size += cur_chars->width;
+            scope_width += cur_chars->x_address - cur_left;
+            scope_width += cur_chars->width;
             cur_left = cur_chars->x_address + cur_chars->width;
             cur_chars = cur_chars->next;
         }
@@ -981,9 +980,9 @@ static void redo_tabs( text_line * a_line )
             }
             break;
         case al_center:
-            if( gap_start < (g_page_left + c_stop->column - ((scope_size + tab_chars.first->ts_width) / 2)) ) {
+            if( gap_start < (g_page_left + c_stop->column - ((scope_width + tab_chars.first->ts_width) / 2)) ) {
                 // split the width as evenly as possible
-                g_cur_h_start = g_page_left + c_stop->column + (tab_chars.first->ts_width / 2 ) - (scope_size / 2);
+                g_cur_h_start = g_page_left + c_stop->column + (tab_chars.first->ts_width / 2 ) - (scope_width / 2);
                 if( (tab_chars.first->ts_width % 2) > 0 ) {
                     g_cur_h_start++;
                 }
@@ -993,8 +992,8 @@ static void redo_tabs( text_line * a_line )
             break;
         case al_right:
             if( gap_start < (g_page_left + c_stop->column + tab_col -
-                                                            (scope_size + tab_chars.first->ts_width)) ) {
-                g_cur_h_start = g_page_left + c_stop->column + tab_col - scope_size;
+                                                            (scope_width + tab_chars.first->ts_width)) ) {
+                g_cur_h_start = g_page_left + c_stop->column + tab_col - scope_width;
             } else {    // find the next tab stop; this one won't do
                 skip_tab = true;
             }
@@ -1026,7 +1025,7 @@ static void redo_tabs( text_line * a_line )
             }
             if( cur_chars != NULL ) {
                 if( cur_chars->tab_pos != tt_none ) {
-                    scope_size = 0;
+                    scope_width = 0;
                 }
             }
         }
@@ -1898,7 +1897,7 @@ void process_text( const char *text, font_number font )
                 if( s_char != NULL ) {
                     // t_line ends in a multi-part word or an empty text_chars
                     if( ((s_char != t_line->last) &&
-                        (!(g_cur_left + n_char->width) > g_page_right)) ||
+                        ((g_cur_left + n_char->width) <= g_page_right)) ||
                                                 (s_char->count == 0) ) {
                         // s_char itself belongs to t_line
                         t_line->last = s_char;
@@ -1989,11 +1988,10 @@ void process_text( const char *text, font_number font )
                     process_line_full( t_line, ProcFlags.concat
                                       && (ProcFlags.justify > ju_off) );
                     t_line = NULL;
-                    n_char->x_address = g_cur_h_start;
                 }
                 // s_char processing
                 if( s_char == NULL ) {
-                    n_char->x_address = g_cur_h_start;
+                    n_char->x_address = g_cur_left;
                 } else {
                     if( t_line == NULL ) {
                         t_line = alloc_text_line();
@@ -2001,8 +1999,8 @@ void process_text( const char *text, font_number font )
                     t_line->first = s_char;
                     t_line->last = s_char;
                     // s_char must be repositioned to the start of the line
-                    offset = s_char->x_address - g_cur_h_start;
-                    s_char->x_address = g_cur_h_start;
+                    offset = s_char->x_address - g_cur_left;
+                    s_char->x_address = g_cur_left;
                     if( t_line->line_height < wgml_fonts[font].line_height ) {
                         t_line->line_height = wgml_fonts[font].line_height;
                     }
