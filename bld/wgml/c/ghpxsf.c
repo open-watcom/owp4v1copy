@@ -58,8 +58,9 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
 
-    if( level >= wgml_font_cnt ) {      // invalid font use default
-        level = 0;
+    g_phrase_font = level;
+    if( level >= wgml_font_cnt ) {
+        level = FONT0;
     }
     nest_cb->font = level;
     g_curr_font = level;
@@ -246,6 +247,11 @@ void    gml_esf( const gmltag * entry )
 /*  It is used with text to create the content of a basic document element,*/
 /*  such as a paragraph. A corresponding :ESF tag must be specified for    */
 /*  each :SF tag.                                                          */
+/*                                                                         */
+/*  NOTE:                                                                  */
+/*    A font number greater than the maximum font number will indeed be    */
+/*    replaced by "0", but it cannot be done here because subsequent       */
+/*    processing needs to know what the actual font was                    */
 /***************************************************************************/
 
 void    gml_sf( const gmltag * entry )
@@ -261,12 +267,17 @@ void    gml_sf( const gmltag * entry )
     }
     if( !strnicmp( "font=", p, 5 ) ) {
         p += 5;
-        font = strtol( p, &pe, 10 );
-        scan_start = pe;
-        if( (font < FONT0) || (font >= wgml_font_cnt) ) {// invalid font use default
-            font = FONT0;
+        pe = p;
+        while( (*pe >= '0') && (*pe <= '9') ) {
+            pe++;
         }
-        gml_hp_sf_common( entry, font, t_SF );
+        if( *pe && ( (*pe != '.') && (*pe != ' ')) ) { // not properly formed
+            xx_err( ERR_NUM_TOO_LARGE );
+        } else {
+            font = strtol( p, &pe, 10 );
+            scan_start = pe;
+            gml_hp_sf_common( entry, font, t_SF );
+        }
     } else {
         err_count++;
         // AT-001 Required attribute not found

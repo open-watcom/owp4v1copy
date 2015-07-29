@@ -967,6 +967,7 @@ typedef struct text_chars {
             tab_type        tab_pos;
             text_type       type;
             font_number     font;
+            font_number     phrase_font;    // actual SF font, even if too large
             char            text[1];
 } text_chars;
 
