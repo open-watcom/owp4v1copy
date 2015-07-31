@@ -1011,6 +1011,7 @@ $:SF font=0.logical OR:eSF.$a || b
 :SF font=5.
 $:SF font=0.conditional &dagger.:eSF.$a ? b : c
 :eSF.
+.if &'lower(&syspdev) = ps .do begin
 ..bx
 :SF font=5.
 $:SF font=0.assignment &dagger.:eSF.$a = b $a += b $a -= b $a *= b
@@ -1018,6 +1019,7 @@ $:SF font=0.assignment &dagger.:eSF.$a = b $a += b $a -= b $a *= b
 $$a /= b  $a %= b  $a &= b  $a ^= b
 $$a |= b  $a <<= b $a >>= b
 :eSF.
+.do end
 ..bx
 :SF font=5.
 $:SF font=0.comma:eSF.$a,b

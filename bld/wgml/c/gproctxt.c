@@ -1614,6 +1614,7 @@ void process_text( const char *text, font_number font )
     text_chars          *   n_chars;                    // new text_chars
     text_chars          *   s_chars;                    // save text_chars
     uint32_t                o_count         = 0;
+    uint32_t                o_length        = 0;
     uint32_t                offset          = 0;
     // when hyph can be set, it will need to be used here & below
     uint32_t                hy_width        = wgml_fonts[FONT0].width_table['-'];
@@ -1876,6 +1877,7 @@ void process_text( const char *text, font_number font )
         g_cur_h_start += post_space;
         n_chars->x_address = g_cur_h_start;
         o_count = n_chars->count;       // catches special case below
+        o_length = n_chars->length;
 
         if( ProcFlags.concat || (cur_group_type == gt_xmp) ) { // .co on or XMP
 
@@ -2029,65 +2031,61 @@ void process_text( const char *text, font_number font )
             count = split_text( n_chars, g_page_right );
             // split the text is split over as many lines as necessary
             while( count > 0 ) {
-                if( count == o_count ) {
-                    break;                  // nothing will fit: break out of loop
-                } else {                    // attach n_chars to t_line
-                    if( t_line == NULL ) {
-                        t_line = alloc_text_line();
-                    }
-                    if( t_line->first == NULL ) {
-                        t_line->first = n_chars;
-                        t_line->y_address = g_cur_v_start;
+                if( t_line == NULL ) {
+                    t_line = alloc_text_line();
+                }
+                if( t_line->first == NULL ) {
+                    t_line->first = n_chars;
+                    t_line->y_address = g_cur_v_start;
+                    t_line->line_height = wgml_fonts[font].line_height;
+                    ju_x_start = n_chars->x_address;
+                    ProcFlags.line_started = true;
+                } else {
+                    t_line->last->next = n_chars;
+                    n_chars->prev = t_line->last;
+                    if( t_line->line_height < wgml_fonts[font].line_height ) {
                         t_line->line_height = wgml_fonts[font].line_height;
-                        ju_x_start = n_chars->x_address;
-                        ProcFlags.line_started = true;
-                    } else {
-                        t_line->last->next = n_chars;
-                        n_chars->prev = t_line->last;
-                        if( t_line->line_height < wgml_fonts[font].line_height ) {
-                            t_line->line_height = wgml_fonts[font].line_height;
-                        }
                     }
                     t_line->last = n_chars;
                     // reset n_chars to contain the rest of the split text
                     n_chars = alloc_text_chars(
                         &t_line->last->text[t_line->last->count], count,
                                                     t_line->last->font );
-
-                    if( t_line->first == t_line->last ) {
-                        fm_chars = NULL;
-                    } else {
-                        fm_chars = t_line->last->prev;
-                    }
-                    wgml_tabs();
-                    if( fm_chars == NULL ) {
-                        fm_chars = t_line->first;
-                    } else {
-                        if( fm_chars->next != NULL ) {
-                            fm_chars = fm_chars->next;
-                        }
-                    }
-
-                    /* Now set fmflags inside the text_chars */
-
-                    flags_x_eol = input_cbs->fmflags & ~II_eol;
-                    fm_chars->fmflags = flags_x_eol;    
-                    input_cbs->fmflags &= ~II_sol;   // clear flag
-                    fm_chars = fm_chars->next;
-                    while( fm_chars != NULL ) {
-                        fm_chars->fmflags = flags_x_eol;
+                }
+                if( t_line->first == t_line->last ) {
+                    fm_chars = NULL;
+                } else {
+                    fm_chars = t_line->last->prev;
+                }
+                wgml_tabs();
+                if( fm_chars == NULL ) {
+                    fm_chars = t_line->first;
+                } else {
+                    if( fm_chars->next != NULL ) {
                         fm_chars = fm_chars->next;
                     }
-
-                    // process the full text_line
-                    process_line_full( t_line, false );
-                    t_line = NULL;
-                    // reset n_chars and count
-                    n_chars->x_address = g_cur_h_start;
-                    n_chars->width = text_chars_width( n_chars->text, n_chars->count,
-                                                       n_chars->font );
-                    count = split_text( n_chars, g_page_right );
                 }
+
+                /* Now set fmflags inside the text_chars */
+
+                flags_x_eol = input_cbs->fmflags & ~II_eol;
+                fm_chars->fmflags = flags_x_eol;    
+                input_cbs->fmflags &= ~II_sol;   // clear flag
+                fm_chars = fm_chars->next;
+                while( fm_chars != NULL ) {
+                    fm_chars->fmflags = flags_x_eol;
+                    fm_chars = fm_chars->next;
+                }
+
+                // process the full text_line
+                process_line_full( t_line, false );
+                t_line = NULL;
+
+                // reset n_chars and count
+                n_chars->x_address = g_cur_h_start;
+                n_chars->width = text_chars_width( n_chars->text, n_chars->count,
+                                                   n_chars->font );
+                count = split_text( n_chars, g_page_right );
             }
         }
         // adding n_chars to t_line is always correct at this point
