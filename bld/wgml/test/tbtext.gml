@@ -979,10 +979,12 @@ $:SF font=0.additive:eSF.$a + b   $a - b
 :SF font=5.
 $:SF font=0.shift:eSF.$a << b  $a >> b
 :eSF.
+.if &'lower(&syspdev) = ps .do begin
 ..bx
 :SF font=5.
 $:SF font=0.relational:eSF.$a < b   $a > b   $a <= b   $a >= b
 :eSF.
+.do end
 ..bx
 :SF font=5.
 $:SF font=0.equality:eSF.$a == b  $a != b
@@ -1119,7 +1121,7 @@ $user-defined structure$address of structure
 .*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "Data Representation On x86-based Platforms"
-.pa
+.if &'lower(&syspdev) = ps .pa
 .np
 Data Representation On x86-based Platforms
 .sr c1=&sysin+1

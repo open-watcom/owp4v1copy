@@ -405,7 +405,7 @@
 .  .se shadels=(yes)
 .do end
 .se shadefont=(@fs0)
-.oc &shadebot. &shadetop. &shadeleft. &shaderight. &shadestart. &shadefont. &shadetype. &shadels. set_shadevars
+.if &'lower(&syspdev) = ps .oc &shadebot. &shadetop. &shadeleft. &shaderight. &shadestart. &shadefont. &shadetype. &shadels. set_shadevars
 :SF font=13.~n:eSF.
 .dm xtxmp end
 .*
