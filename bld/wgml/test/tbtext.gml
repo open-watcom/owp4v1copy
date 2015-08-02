@@ -1457,6 +1457,7 @@ determines the editing as shown in the following table.
 .*
 :CMT.Note: this is pretty much the entire file with a few text lines removed.
 :CMT.Note: it is only part of the topic indicated above, but a very large part!
+.if &'lower(&syspdev) NE ps .pa
 .np
 Type Conversion
 .*
@@ -1498,6 +1499,7 @@ Conversion to real
 \                  \SNGL        \R&arrow.SNGL(D)
 .box off
 
+.if &'lower(&syspdev) NE ps .pa
 .np
 Conversion to double
 .box on &c0 &c1 &c2 &c3
@@ -1577,6 +1579,7 @@ Nearest Whole Number
 \                  \DNINT         \D&arrow.DNINT(D)
 .box off
 
+.if &'lower(&syspdev) NE ps .pa
 .np
 Nearest Integer
 .box on &c0 &c1 &c2 &c3
@@ -1621,6 +1624,7 @@ Remainder
 \                 \DMOD        \D&arrow.DMOD(D,D)
 .box off
 
+.if &'lower(&syspdev) NE ps .pa
 .np
 Transfer of Sign
 :cmt..section Transfer of Sign
@@ -1674,6 +1678,7 @@ Choosing Largest Value
 \               \MAX1        \I&arrow.MAX1(R,...)
 .box off
 
+.if &'lower(&syspdev) NE ps .pa
 .np
 Choosing Smallest Value
 :cmt..section Choosing Smallest Value
@@ -1721,6 +1726,7 @@ Index of a Substring
 \a2 in string a1
 .box off
 
+.if &'lower(&syspdev) NE ps .pa
 .np
 Imaginary Part of Complex Number
 :cmt..section Imaginary Part of Complex Number
@@ -1975,7 +1981,7 @@ Error Function
 \           \ERF             \R&arrow.ERF(R)
 \           \DERF            \D&arrow.DERF(D)
 .bxt off
-.pa
+.if &'lower(&syspdev) = ps .pa
 .np
 Complement of Error Function
 :cmt..section Complement of Error Function
@@ -2024,6 +2030,7 @@ Lexically Less Than
 \a1<a2      \LLT     \L&arrow.LLT(CH,CH)
 .box off
 
+.if &'lower(&syspdev) NE ps .pa
 .np
 Binary Pattern Processing Functions: Boolean Operations
 :cmt..section Binary Pattern Processing Functions: Boolean Operations

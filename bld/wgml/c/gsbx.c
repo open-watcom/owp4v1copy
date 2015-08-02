@@ -261,6 +261,7 @@ static void box_blank_lines( uint32_t lines )
         while( cur_hline != NULL ) {
             for( i_b = 0; i_b < cur_hline->current; i_b++ ) {
                 if( (cur_hline->cols[i_b].v_ind == bx_v_both)
+                        || (cur_hline->cols[i_b].v_ind == bx_v_new)
                         || (cur_hline->cols[i_b].v_ind == bx_v_out)
                         || (cur_hline->cols[i_b].v_ind == bx_v_split)
                         || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
@@ -326,6 +327,7 @@ static void box_char_element( doc_element * cur_el ) {
                 while( cur_hline != NULL ) {  // iterate over all horizontal lines
                     for( i_b = 0; i_b < cur_hline->current; i_b++ ) {
                         if( (cur_hline->cols[i_b].v_ind == bx_v_both)
+                                || (cur_hline->cols[i_b].v_ind == bx_v_new)
                                 || (cur_hline->cols[i_b].v_ind == bx_v_out)
                                 || (cur_hline->cols[i_b].v_ind == bx_v_split)
                                 || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
@@ -977,7 +979,7 @@ static void  do_char_device( void )
                                 } else if( cur_op == bx_off ) { // BX OFF: down
                                     *p = bin_device->box.top_join;
                                 } else {                        // anything else
-                                    *p = bin_device->box.horizontal_line;
+                                    *p = bin_device->box.inside_join;
                                 }
                             } else if( cur_v_ind == bx_v_both
                                     || (cur_v_ind == bx_v_split) ) {      // both up and down
