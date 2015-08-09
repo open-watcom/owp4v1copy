@@ -955,19 +955,21 @@ typedef enum {
     tt_user
 } tab_type;
 
-typedef struct text_chars {
+typedef struct text_chars {                 // tabbing-related fields have comments
     struct  text_chars  *   next;
     struct  text_chars  *   prev;
             uint32_t        x_address;
             uint32_t        width;
-            uint32_t        ts_width;
+            uint32_t        ts_width;       // tab space width (expected to be needed with al_center and al_right)
             uint16_t        count;
             uint16_t        length;
-            i_flags         fmflags;
-            tab_type        tab_pos;
-            text_type       type;
+            alignment       tab_align;      // tab alignment
+            bool            pre_gap;        // true if original text had preceding space
             font_number     font;
             font_number     phrase_font;    // actual SF font, even if too large
+            i_flags         fmflags;        // flags such as II_sol
+            tab_type        tab_pos;        // if not tt_none, text_chars was positioned by a tab character
+            text_type       type;
             char            text[1];
 } text_chars;
 

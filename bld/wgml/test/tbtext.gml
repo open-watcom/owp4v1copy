@@ -1375,6 +1375,7 @@ Order of FORTRAN Statements and Lines
 :CMT.Topic: "Array Elements"
 .np
 The following table describes how to compute the subscript value.
+.if &'lower(&syspdev) = ps .do begin
 .cp 23
 .sr c0=&INDlvl+1
 .sr c1=&INDlvl+5
@@ -1404,6 +1405,7 @@ The following table describes how to compute the subscript value.
 \  \                   \           \ +
 \  \                   \           \ +(Sn-Jn)*Dn-1*Dn-2*...*D1
 .box off
+.do end
 .*
 :CMT.This is from fl\fexpr.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Data Type of Arithmetic Expressions"
@@ -2358,7 +2360,9 @@ $WM_CTLCOLOREDIT (**)  $WM_CTLCOLORLISTBOX (**)
 $WM_CTLCOLORMSGBOX (**)$WM_CTLCOLORSCROLLBAR (**)
 $WM_CTLCOLORSTATIC (**)$WM_DELETEITEM
 $WM_DESTROY            $WM_DRAWITEM
+.if &'lower(&syspdev) NE tasa .do begin
 $WM_DWMCOLORIZATIONCHANGED (**)$WM_DWMCOMPOSITIONCHANGED (**)
+.do end
 $WM_DWMNCRENDERINGCHANGED (**)$WM_DWMWINDOWMAXIMIZEDCHANGE (**)
 $WM_ENABLE             $WM_ENTERSIZEMOVE (*)
 $WM_ERASEBKGND         $WM_FONTCHANGE
@@ -2414,6 +2418,7 @@ deny none mode`0x04
 .*
 :CMT.This is from rsi\config.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Changing the Switch Mode Setting"
+.if &'lower(&syspdev) NE tasa .do begin
 .se c0=&INDlvl+2
 .se c1=&c0.+5
 .se c2=&c1.+12
@@ -2448,9 +2453,11 @@ $option$IBM PS/55      $16     $None      $May be needed for some PS/55s
 .bx off
 .tb set
 .tb
+.do end
 .*
 :CMT.This is from rsi\config.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Changing the Switch Mode Setting"
+.if &'lower(&syspdev) NE ps .pa
 .np
 Specific Machine Switch Mode Setting
 .se c0=&INDlvl+2+8
