@@ -789,18 +789,21 @@ static void wgml_tabs( void )
                     c_chars = NULL;
                 }
 
-                if( c_stop->alignment != al_left ) {  // no adjustment for left alignment
-                    offset = g_cur_h_start - s_multi->x_address;
-                    s_multi->x_address = g_cur_h_start;
-                    g_cur_h_start = s_multi->x_address + s_multi->width;
-                    c_multi = s_multi->next;
-                    while( c_multi != NULL ) {  // adjust starting positions
-                        c_multi->x_address += offset;
-                        g_cur_h_start = c_multi->x_address + c_multi->width;
-                        c_multi = c_multi->next;
-                    }
-                    g_cur_h_start += pre_space;
+                offset = g_cur_h_start - s_multi->x_address;
+                s_multi->x_address = g_cur_h_start;
+                if( def_tab_count > 0 ) {
+                    s_multi->tab_pos = tt_def;
+                } else {
+                    s_multi->tab_pos = tt_user;
                 }
+                g_cur_h_start = s_multi->x_address + s_multi->width;
+                c_multi = s_multi->next;
+                while( c_multi != NULL ) {  // adjust starting positions
+                    c_multi->x_address += offset;
+                    g_cur_h_start = c_multi->x_address + c_multi->width;
+                    c_multi = c_multi->next;
+                }
+                g_cur_h_start += pre_space;
             }
 
             // the text positioned by the tab stop
@@ -815,7 +818,7 @@ static void wgml_tabs( void )
                 }
                 c_chars->tab_align = c_stop->alignment;
                 c_chars->pre_gap = pre_tab_gap;
-
+                pre_tab_gap = false;
             }
             if( t_width == 0 ) {    // no text: position marker
                 if( tab_chars.first == NULL) {
@@ -1399,6 +1402,7 @@ void process_line_full( text_line * a_line, bool justify )
 {
     bool            no_shift;       // shift no tab stops on new line
     text_chars  *   split_chars;    // first text_chars of second line, if any
+    text_chars  *   test_chars;     // used to find alignment of prior tab
     text_line   *   b_line  = NULL; // for second line, if any
     uint32_t        offset;         // to adjust second line x_address fields, if any
 
@@ -1419,10 +1423,15 @@ void process_line_full( text_line * a_line, bool justify )
     /*   b_line will start with a text_chars whose position was not based   */
     /*     on a tab stop                                                    */
     /* The exact point at which the split occurs is determined by:          */
-    /*   the last space followed by text in the original text line          */
+    /*   the last space before the first default tab in the original text   */
+    /*     line                                                             */
+    /*     -- but not if it immediately preceded the first default tab with */
+    /*     no intervening text and is preceded by a user tab with alignment */
+    /*     "right"                                                          */
     /*   a marker followed by a default tab                                 */
     /*     -- but not if preceded by a user tab with alignment "right"      */
     /*   a marker at the end of the line (marks a final tab stop)           */
+    /*     -- but not if preceded by a user tab with alignment "right"      */
     /* Markers turn out to play an unexpected role in determining whether   */
     /*   and where to break the line                                        */
     /* Note:                                                                */
@@ -1433,26 +1442,71 @@ void process_line_full( text_line * a_line, bool justify )
     if( user_tab_skip && (def_tab_count > 0) && (user_tabs.current > 0)
                 && ProcFlags.concat && (a_line->first->next != NULL) ) {
 
-        split_chars = a_line->last;             // get last text_chars
-
         /* Find the point of splitting */
         
-        if( !((split_chars->count == 0) && (split_chars->next == NULL)) ) {   // line did not end with tab character
-
-            while( (split_chars != NULL) ) {    // find last tab in line
-                if( split_chars->tab_pos != tt_none ) {
+        if( a_line->last->count == 0 ) {
+            test_chars = a_line->last->prev;
+            while( test_chars != NULL ) {
+                if( test_chars->tab_pos != tt_none ) {
                     break;
                 }
-                split_chars = split_chars->prev;
+                test_chars = test_chars->prev;
+            }
+            if( test_chars != NULL ) {
+                if( test_chars->tab_align == al_right ) {
+                    split_chars = NULL; // no split if prior tab was right-aligned
+                } else {
+                    split_chars = a_line->last->prev;   // split at prior text_chars
+                }
+            } else {
+                split_chars = a_line->last;             // split at final marker
             }
 
+        } else {            // line did not end with tab character
+
+            /* Move forward to find the first default tab */
+
+            split_chars = a_line->first;
             while( (split_chars != NULL) ) {
-                if( (split_chars->count == 0)
-                        && (split_chars->next->tab_pos == tt_def) ) { // marker before default tab
+                if( split_chars->tab_pos == tt_def ) {
                     break;
                 }
-                if( split_chars->pre_gap ) {            // original text had space before tab
-                    break;
+                split_chars = split_chars->next;
+            }
+
+            /* Move backwards to find the first space/qualifying marker */
+
+            while( (split_chars != NULL) ) {
+                if( ((split_chars->count == 0)
+                        && (split_chars->next->tab_pos == tt_def))
+                         ) {              // marker before default tab
+                    test_chars = split_chars->prev;
+                    while( test_chars != NULL ) {
+                        if( test_chars->tab_pos != tt_none ) {
+                            break;
+                        }
+                        test_chars = test_chars->prev;
+                    }
+                    if( test_chars != NULL ) {
+                        if( test_chars->tab_align != al_right ) {   // split_chars found (rejects when prior tab had right alignment)
+                            break;
+                        }
+                    }
+                }
+                if( split_chars->pre_gap ) {        // original text had space before tab
+                    test_chars = split_chars->prev;
+                    while( test_chars != NULL ) {
+                        if( test_chars->tab_pos != tt_none ) {
+                            break;
+                        }
+                        test_chars = test_chars->prev;
+                    }
+                    if( test_chars != NULL ) {
+                        if( test_chars->tab_align == al_right ) {
+                            split_chars = NULL;     // no split if prior tab was right-aligned
+                        }
+                    }
+                    break;                          // if no break here, no break at all
                 }
                 if( split_chars->tab_pos == tt_none ) { // ordinary token found
                     break;
@@ -1460,15 +1514,14 @@ void process_line_full( text_line * a_line, bool justify )
                 split_chars = split_chars->prev;
             }
         }
+
+        /* Now split the line, if appropriate */
+
         if( (split_chars != NULL) && (split_chars->prev != NULL) ) {    // don't split if a_line would be left empty
             if( (split_chars->count == 0) && (split_chars->next == NULL) ) {
-                split_chars = split_chars->prev;    // move back one token
                 no_shift = false;                   // final marker must be shifted
             } else {
-                if( split_chars->prev->tab_pos == tt_none ) {
-                    split_chars = split_chars->prev;            // multiple tokens: split at last
-                }
-                no_shift = (def_tab_count > 1);                 // true more than one default tab used
+                no_shift = (def_tab_count > 1);     // true more than one default tab used
             }
             b_line = alloc_text_line();
             b_line->line_height = 0;            // will be set below
@@ -1485,30 +1538,30 @@ void process_line_full( text_line * a_line, bool justify )
                 }
                 split_chars = split_chars->next;
             }
-            split_chars = b_line->first;
-            offset = split_chars->x_address - g_cur_left;
-            split_chars->x_address = g_cur_left;    // shift x_address to margin
-            if( !split_chars->pre_gap ) {
-                split_chars->tab_pos = tt_none;     // not tabbed any longer if ever was
-            }
-            c_stop = NULL;                          // reset tabbing state
-            if( (split_chars->count == 0)
-                    && (split_chars->x_address == split_chars->next->x_address) ) { // check for line starting with marker
-                g_cur_h_start = a_line->first->x_address + a_line->first->count;    // prior line first text_chars position
-            } else {
-                g_cur_h_start = split_chars->x_address + split_chars->count;  // current line pre-tab positioning posititon
-            }
-            if( !no_shift ) {
-                split_chars = split_chars->next;        // shift text_chars to first default tab
-                while( split_chars != NULL ) {
-                    split_chars->x_address -= offset;
-                    if( split_chars->tab_pos == tt_user ) {
-                        split_chars->tab_pos = tt_none;     // not tabbed any longer 
-                        g_cur_h_start = split_chars->x_address + split_chars->count;  // current line pre-tab positioning position
-                    }
-                    split_chars = split_chars->next;
+            if( (b_line->first->count > 0) || (b_line->first->next != NULL) ) {
+                split_chars = b_line->first;
+                offset = split_chars->x_address - g_cur_left;
+                split_chars->x_address = g_cur_left;    // shift x_address to margin
+                if( !split_chars->pre_gap ) {
+                    split_chars->tab_pos = tt_none;     // not tabbed any longer if ever was
                 }
+                c_stop = NULL;                          // reset tabbing state
+                if( !no_shift ) {
+                    split_chars = split_chars->next;        // shift text_chars to first default tab
+                    while( split_chars != NULL ) {
+                        split_chars->x_address -= offset;
+                        if( split_chars->tab_pos == tt_user ) {
+                            split_chars->tab_pos = tt_none;     // not tabbed any longer 
+                        }
+                        split_chars = split_chars->next;
+                    }
+                }
+            } else {
+
+                b_line->first->tab_pos = tt_def;
+                b_line->first->x_address = g_cur_left;
             }
+            tabbing = false;
             redo_tabs( b_line );
         }
     }
