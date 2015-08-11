@@ -252,6 +252,7 @@ requires the execution of the constructor.
 Note that if the sequence in which initialization of static data in your
 program takes place has no dependencies, the "initialize" pragma need not
 be used.
+.if &'lower(&syspdev) NE ps .pa
 .np
 The general form of the "initialize" pragma is as follows.
 .mbox begin
@@ -829,6 +830,7 @@ indirectly by the caller.
 .mbox begin
 :prgbeg. aux :id.sym:eid. modify nomemory :prgend.
 .mbox end
+.if &'lower(&syspdev) NE ps .pa
 .np
 The following form of the auxiliary pragma can be used to describe a
 &function that does not reference any
@@ -1013,6 +1015,7 @@ default calling mechanism used for passing arguments.
 .*
 :CMT.This is from cmn\wdis.gml and is in the Tool User's Guide
 :CMT.Topic: "An Example"
+.if &'lower(&syspdev) NE ps .pa
 .np
 .ix '&discmdup example'
 .ix 'disassembly example'
@@ -1285,6 +1288,7 @@ The &disname command line syntax is the following.
 :CMT.This is from fg\fcall.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topics: "16-bit: Writing Assembly Language Subprograms"
 :CMT.      & "32-bit: Writing Assembly Language Subprograms"
+.if &'lower(&syspdev) NE ps .pa
 .np
 Consider the following example.
 .mbox begin
@@ -2414,7 +2418,7 @@ These declarations are called "implicit rules" as opposed to "explicit
 rules" which were discussed previously.
 Implicit rules may be applied only in instances where you are able to
 describe a dependency in terms of file extensions.
-.pa
+.if &'lower(&syspdev) = ps .pa
 .hint
 Recall that a file extension is the portion of the file name which
 follows the period.
@@ -2776,6 +2780,7 @@ follows.
 .*
 :CMT.This is from lg\ldexport.gml and is in the Linker Guide
 :CMT.Topic: "EXPORT - OS/2, Win16, Win32 only"
+.if &'lower(&syspdev) NE ps .pa
 .np
 The format of the "EXPORT" directive (short form "EXP") is as follows.
 .mbigbox

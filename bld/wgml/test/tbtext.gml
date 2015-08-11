@@ -2702,12 +2702,13 @@ $67H$$Set Handle Count                         $None
 .tb set
 .tb
 .*
-:CMT.This is from wgmlref\rfabst.gml and is in both of the Programmer's Guides
+:CMT.This is from wgmlref\rfabst.gml and is in the WGML Reference (PDF only)
 :CMT.Topic: "Abstract"
+.if &'lower(&syspdev) = ps .do begin
 .np
 From the Abstract
 .tb set $
-.tb 2 +18 +7
+.tb &bxindent+2 +18 +7
 .bx on &bxindent +37
 $WATCOM            $Telephone:$(519) 886-3700
 $415 Phillip Street$FAX:      $(519) 747-4971
@@ -2716,6 +2717,7 @@ $CANADA   N2L 3X2  $
 .tb set
 .tb
 .bx off
+,do end
 .*
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Integer Constants"
