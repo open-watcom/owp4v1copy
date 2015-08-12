@@ -557,9 +557,6 @@ void    lay_dl( const gmltag * entry )
                 switch( curr ) {
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.dl.level );
-                    if( layout_work.dl.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported  TBD
-                    }
                     break;
                 case   e_left_indent:
                     cvterr = i_space_unit( p, curr,
@@ -651,9 +648,6 @@ void    lay_gl( const gmltag * entry )
                 switch( curr ) {
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.gl.level );
-                    if( layout_work.gl.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported  TBD
-                    }
                     break;
                 case   e_left_indent:
                     cvterr = i_space_unit( p, curr,
@@ -741,9 +735,6 @@ void    lay_ol( const gmltag * entry )
                 switch( curr ) {
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.ol.level );
-                    if( layout_work.ol.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported  TBD
-                    }
                     break;
                 case   e_left_indent:
                     cvterr = i_space_unit( p, curr,
@@ -844,9 +835,6 @@ void    lay_sl( const gmltag * entry )
                 switch( curr ) {
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.sl.level );
-                    if( layout_work.sl.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported  TBD
-                    }
                     break;
                 case   e_left_indent:
                     cvterr = i_space_unit( p, curr,
@@ -934,9 +922,6 @@ void    lay_ul( const gmltag * entry )
                 switch( curr ) {
                 case   e_level:
                     cvterr = i_int8( p, curr, &layout_work.ul.level );
-                    if( layout_work.ul.level != 1) {
-                       cvterr = 1;      // only level 1 allowed /supported  TBD
-                    }
                     break;
                 case   e_left_indent:
                     cvterr = i_space_unit( p, curr,
