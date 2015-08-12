@@ -429,17 +429,20 @@ void    scr_dc( void )
         add_to_sysdir( "$tb", tab_char );
         add_to_sysdir( "$tab", tab_char );
         break;
-    case 4 :                            // STOP option   DUMMY processing
+    case 4 :                            // STOP option
 
 /***************************************************************************/
-/*  this is done to allow OW help processing to continue instead of exit   */
-/*  due to premature output of text '.dc stop off' from              TBD   */
-/*        docs\doc\whelp\whelp.gml line 765                                */
+/*  when the documentation refers to "script", this may be quite literal:  */
+/*  setting STOP to OFF has no effect when WSCRIPT is specificed           */
+/*  whether ".dc stop" with a list of characters has any effect is unknown */
+/*  so doing nothing is the appropriate implementation, at least for now   */
 /*                                                                         */
+/*  the only use is ".dc stop off" found in                                */
+/*        docs\doc\whelp\whelp.gml line 765                                */
 /***************************************************************************/
 
         scan_restart = pa + len;
-        /* fall thru */
+        break;
 
     default:                            // unknown / unimplemented option
         dc_opt_warn_len( pa, len );
