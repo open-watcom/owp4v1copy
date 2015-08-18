@@ -585,4 +585,12 @@ ISO             no value specified
 .  .do end
 .dm numboxend end
 .*
+.dm codeon begin
+:SF font=5.
+.dm codeon end
+.*
+.dm codeoff begin
+:eSF.
+.dm codeoff end
+.*
 

@@ -66,8 +66,8 @@ const   char    att_names[e_dummy_max + 1][18] = {
 static  void    put_lay_abspref( FILE * layfile, abspref_lay_tag * ap,
                                  char * name )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":%s\n", name );
 
@@ -109,7 +109,7 @@ static  void    put_lay_abspref( FILE * layfile, abspref_lay_tag * ap,
             o_int8( layfile, curr, &ap->columns );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -131,8 +131,8 @@ static  void    put_lay_preface( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_address( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":ADDRESS\n" );
 
@@ -155,7 +155,7 @@ static  void    put_lay_address( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->address.pre_skip );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -167,8 +167,8 @@ static  void    put_lay_address( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_aline( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":ALINE\n" );
 
@@ -179,7 +179,7 @@ static  void    put_lay_aline( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->aline.skip );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -191,8 +191,8 @@ static  void    put_lay_aline( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":APPENDIX\n" );
 
@@ -263,7 +263,7 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_int8( layfile, curr, &lay->appendix.columns );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -275,8 +275,8 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_author( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":AUTHOR\n" );
 
@@ -302,7 +302,7 @@ static  void    put_lay_author( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->author.skip );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -315,8 +315,8 @@ static  void    put_lay_author( FILE * layfile, layout_data * lay )
 static  void    put_lay_backbod( FILE * layfile, backbod_lay_tag * ap,
                                  char * name )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":%s\n", name );
 
@@ -357,7 +357,7 @@ static  void    put_lay_backbod( FILE * layfile, backbod_lay_tag * ap,
             o_font_number( layfile, curr, &ap->font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -379,8 +379,8 @@ static  void    put_lay_body( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_region( FILE * layfile, region_lay_tag * reg )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":BANREGION\n" );
 
@@ -422,7 +422,7 @@ static  void    put_lay_region( FILE * layfile, region_lay_tag * reg )
             o_content( layfile, curr, &reg->contents );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -435,8 +435,8 @@ static  void    put_lay_region( FILE * layfile, region_lay_tag * reg )
 /***************************************************************************/
 static  void    put_lay_single_ban( FILE * layfile, banner_lay_tag * ban )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
     region_lay_tag  *   reg;
 
     fprintf_s( layfile, ":BANNER\n" );
@@ -464,7 +464,7 @@ static  void    put_lay_single_ban( FILE * layfile, banner_lay_tag * ban )
             /* no action these are only used for input */
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -498,8 +498,8 @@ static  void    put_lay_banner( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_date( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":DATE\n" );
 
@@ -525,7 +525,7 @@ static  void    put_lay_date( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->date.pre_skip );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -537,8 +537,8 @@ static  void    put_lay_date( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_dd( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":DD\n" );
 
@@ -552,7 +552,7 @@ static  void    put_lay_dd( FILE * layfile, layout_data * lay )
             o_font_number( layfile, curr, &lay->dd.font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -564,8 +564,8 @@ static  void    put_lay_dd( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_default( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":DEFAULT\n" );
 
@@ -594,7 +594,7 @@ static  void    put_lay_default( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->defaults.binding );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -606,45 +606,51 @@ static  void    put_lay_default( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_dl( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
+    dl_lay_level    *   dl_layout;
     int                 k;
+    lay_att             curr;
 
-    fprintf_s( layfile, ":DL\n" );
+    dl_layout = lay->dl.first;
+    
+    while( dl_layout != NULL ) {
+        fprintf_s( layfile, ":DL\n" );
 
-    for( k = 0, curr = dl_att[k]; curr > 0; k++, curr = dl_att[k] ) {
+        for( k = 0, curr = dl_att[k]; curr > 0; k++, curr = dl_att[k] ) {
 
-        switch( curr ) {
-        case   e_level:
-            o_int8( layfile, curr, &lay->dl.level );
-            break;
-        case   e_left_indent:
-            o_space_unit( layfile, curr, &lay->dl.left_indent );
-            break;
-        case   e_right_indent:
-            o_space_unit( layfile, curr, &lay->dl.right_indent );
-            break;
-        case   e_pre_skip:
-            o_space_unit( layfile, curr, &lay->dl.pre_skip );
-            break;
-        case   e_skip:
-            o_space_unit( layfile, curr, &lay->dl.skip );
-            break;
-        case   e_spacing:
-            o_int8( layfile, curr, &lay->dl.spacing );
-            break;
-        case   e_post_skip:
-            o_space_unit( layfile, curr, &lay->dl.post_skip );
-            break;
-        case   e_align:
-            o_space_unit( layfile, curr, &lay->dl.align );
-            break;
-        case   e_line_break:
-            o_yes_no( layfile, curr, &lay->dl.line_break );
-            break;
-        default:
-            out_msg( "WGML logic error.\n");
-            break;
+            switch( curr ) {
+            case   e_level:
+                o_int8( layfile, curr, &dl_layout->level );
+                break;
+            case   e_left_indent:
+                o_space_unit( layfile, curr, &dl_layout->left_indent );
+                break;
+            case   e_right_indent:
+                o_space_unit( layfile, curr, &dl_layout->right_indent );
+                break;
+            case   e_pre_skip:
+                o_space_unit( layfile, curr, &dl_layout->pre_skip );
+                break;
+            case   e_skip:
+                o_space_unit( layfile, curr, &dl_layout->skip );
+                break;
+            case   e_spacing:
+                o_int8( layfile, curr, &dl_layout->spacing );
+                break;
+            case   e_post_skip:
+                o_space_unit( layfile, curr, &dl_layout->post_skip );
+                break;
+            case   e_align:
+                o_space_unit( layfile, curr, &dl_layout->align );
+                break;
+            case   e_line_break:
+                o_yes_no( layfile, curr, &dl_layout->line_break );
+                break;
+            default:
+                internal_err( __FILE__, __LINE__ );
+                break;
+            }
         }
+        dl_layout = dl_layout->next;
     }
 }
 
@@ -654,8 +660,8 @@ static  void    put_lay_dl( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_docnum( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":DOCNUM\n" );
 
@@ -681,7 +687,7 @@ static  void    put_lay_docnum( FILE * layfile, layout_data * lay )
             o_xx_string( layfile, curr, &lay->docnum.string );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -693,8 +699,8 @@ static  void    put_lay_docnum( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_fig( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":FIG\n" );
 
@@ -726,7 +732,7 @@ static  void    put_lay_fig( FILE * layfile, layout_data * lay )
             o_default_frame( layfile, curr, &lay->fig.default_frame );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -738,8 +744,8 @@ static  void    put_lay_fig( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_figcap( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":FIGCAP\n" );
 
@@ -762,7 +768,7 @@ static  void    put_lay_figcap( FILE * layfile, layout_data * lay )
             o_char( layfile, curr, &lay->figcap.delim );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -774,8 +780,8 @@ static  void    put_lay_figcap( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_figdesc( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":FIGDESC\n" );
 
@@ -789,7 +795,7 @@ static  void    put_lay_figdesc( FILE * layfile, layout_data * lay )
             o_font_number( layfile, curr, &lay->figdesc.font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -801,8 +807,8 @@ static  void    put_lay_figdesc( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_figlist( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":FIGLIST\n" );
 
@@ -828,7 +834,7 @@ static  void    put_lay_figlist( FILE * layfile, layout_data * lay )
             o_xx_string( layfile, curr, &lay->figlist.fill_string );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -840,8 +846,8 @@ static  void    put_lay_figlist( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_flpgnum( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":FLPGNUM\n" );
 
@@ -855,7 +861,7 @@ static  void    put_lay_flpgnum( FILE * layfile, layout_data * lay )
             o_font_number( layfile, curr, &lay->flpgnum.font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -867,8 +873,8 @@ static  void    put_lay_flpgnum( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_fn( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":FN\n" );
 
@@ -903,7 +909,7 @@ static  void    put_lay_fn( FILE * layfile, layout_data * lay )
             o_frame( layfile, curr, &lay->fn.frame );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -915,8 +921,8 @@ static  void    put_lay_fn( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_fnref( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":FNREF\n" );
 
@@ -930,7 +936,7 @@ static  void    put_lay_fnref( FILE * layfile, layout_data * lay )
             o_number_style( layfile, curr, &lay->fnref.number_style );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -942,45 +948,51 @@ static  void    put_lay_fnref( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_gl( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
+    gl_lay_level    *   gl_layout;
     int                 k;
+    lay_att             curr;
 
-    fprintf_s( layfile, ":GL\n" );
+    gl_layout = lay->gl.first;
 
-    for( k = 0, curr = gl_att[k]; curr > 0; k++, curr = gl_att[k] ) {
+    while( gl_layout != NULL ) {
+        fprintf_s( layfile, ":GL\n" );
 
-        switch( curr ) {
-        case   e_level:
-            o_int8( layfile, curr, &lay->gl.level );
-            break;
-        case   e_left_indent:
-            o_space_unit( layfile, curr, &lay->gl.left_indent );
-            break;
-        case   e_right_indent:
-            o_space_unit( layfile, curr, &lay->gl.right_indent );
-            break;
-        case   e_pre_skip:
-            o_space_unit( layfile, curr, &lay->gl.pre_skip );
-            break;
-        case   e_skip:
-            o_space_unit( layfile, curr, &lay->gl.skip );
-            break;
-        case   e_spacing:
-            o_int8( layfile, curr, &lay->gl.spacing );
-            break;
-        case   e_post_skip:
-            o_space_unit( layfile, curr, &lay->gl.post_skip );
-            break;
-        case   e_align:
-            o_space_unit( layfile, curr, &lay->gl.align );
-            break;
-        case   e_delim:
-            o_char( layfile, curr, &lay->gl.delim );
-            break;
-        default:
-            out_msg( "WGML logic error.\n");
-            break;
+        for( k = 0, curr = gl_att[k]; curr > 0; k++, curr = gl_att[k] ) {
+
+            switch( curr ) {
+            case   e_level:
+                o_int8( layfile, curr, &gl_layout->level );
+                break;
+            case   e_left_indent:
+                o_space_unit( layfile, curr, &gl_layout->left_indent );
+                break;
+            case   e_right_indent:
+                o_space_unit( layfile, curr, &gl_layout->right_indent );
+                break;
+            case   e_pre_skip:
+                o_space_unit( layfile, curr, &gl_layout->pre_skip );
+                break;
+            case   e_skip:
+                o_space_unit( layfile, curr, &gl_layout->skip );
+                break;
+            case   e_spacing:
+                o_int8( layfile, curr, &gl_layout->spacing );
+                break;
+            case   e_post_skip:
+                o_space_unit( layfile, curr, &gl_layout->post_skip );
+                break;
+            case   e_align:
+                o_space_unit( layfile, curr, &gl_layout->align );
+                break;
+            case   e_delim:
+                o_char( layfile, curr, &gl_layout->delim );
+                break;
+            default:
+                internal_err( __FILE__, __LINE__ );
+                break;
+            }
         }
+        gl_layout = gl_layout->next;
     }
 }
 
@@ -990,9 +1002,9 @@ static  void    put_lay_gl( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_hx( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
     int                 lvl;
+    lay_att             curr;
 
     for( lvl = 0; lvl < 7; ++lvl ) {
 
@@ -1053,7 +1065,7 @@ static  void    put_lay_hx( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &lay->hx[lvl].align );
                 break;
             default:
-                out_msg( "WGML logic error.\n");
+                internal_err( __FILE__, __LINE__ );
                 break;
             }
         }
@@ -1066,8 +1078,8 @@ static  void    put_lay_hx( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_heading( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":HEADING\n" );
 
@@ -1089,7 +1101,7 @@ static  void    put_lay_heading( FILE * layfile, layout_data * lay )
             o_int8( layfile, curr, &lay->heading.max_group );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1101,9 +1113,9 @@ static  void    put_lay_heading( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_ix( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
     int                 lvl;
+    lay_att             curr;
 
     for( lvl = 0; lvl < 3; ++lvl ) {
 
@@ -1138,7 +1150,7 @@ static  void    put_lay_ix( FILE * layfile, layout_data * lay )
                 }
                 break;
             default:
-                out_msg( "WGML logic error.\n");
+                internal_err( __FILE__, __LINE__ );
                 break;
             }
         }
@@ -1151,8 +1163,8 @@ static  void    put_lay_ix( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_index( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":INDEX\n" );
 
@@ -1199,7 +1211,7 @@ static  void    put_lay_index( FILE * layfile, layout_data * lay )
             o_font_number( layfile, curr, &lay->index.font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1211,8 +1223,8 @@ static  void    put_lay_index( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_ixhead( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":IXHEAD\n" );
 
@@ -1239,7 +1251,7 @@ static  void    put_lay_ixhead( FILE * layfile, layout_data * lay )
             o_yes_no( layfile, curr, &lay->ixhead.header );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1251,8 +1263,8 @@ static  void    put_lay_ixhead( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_lp( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":LP\n" );
 
@@ -1278,7 +1290,7 @@ static  void    put_lay_lp( FILE * layfile, layout_data * lay )
             o_int8( layfile, curr, &lay->lp.spacing );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1290,8 +1302,8 @@ static  void    put_lay_lp( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_lq( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":LQ\n" );
 
@@ -1317,7 +1329,7 @@ static  void    put_lay_lq( FILE * layfile, layout_data * lay )
             o_font_number( layfile, curr, &lay->lq.font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1329,8 +1341,8 @@ static  void    put_lay_lq( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_note( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":NOTE\n" );
 
@@ -1359,7 +1371,7 @@ static  void    put_lay_note( FILE * layfile, layout_data * lay )
             o_xx_string( layfile, curr, &lay->note.string );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1371,51 +1383,57 @@ static  void    put_lay_note( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_ol( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
+    ol_lay_level    *   ol_layout;
 
-    fprintf_s( layfile, ":OL\n" );
+    ol_layout = lay->ol.first;
+    
+    while( ol_layout != NULL ) {
+        fprintf_s( layfile, ":OL\n" );
 
-    for( k = 0, curr = ol_att[k]; curr > 0; k++, curr = ol_att[k] ) {
+        for( k = 0, curr = ol_att[k]; curr > 0; k++, curr = ol_att[k] ) {
 
-        switch( curr ) {
-        case   e_level:
-            o_int8( layfile, curr, &lay->ol.level );
-            break;
-        case   e_left_indent:
-            o_space_unit( layfile, curr, &lay->ol.left_indent );
-            break;
-        case   e_right_indent:
-            o_space_unit( layfile, curr, &lay->ol.right_indent );
-            break;
-        case   e_pre_skip:
-            o_space_unit( layfile, curr, &lay->ol.pre_skip );
-            break;
-        case   e_skip:
-            o_space_unit( layfile, curr, &lay->ol.skip );
-            break;
-        case   e_spacing:
-            o_int8( layfile, curr, &lay->ol.spacing );
-            break;
-        case   e_post_skip:
-            o_space_unit( layfile, curr, &lay->ol.post_skip );
-            break;
-        case   e_font:
-            o_font_number(layfile, curr, &lay->ol.font );
-            break;
-        case   e_align:
-            o_space_unit( layfile, curr, &lay->ol.align );
-            break;
-        case   e_number_style:
-            o_number_style( layfile, curr, &lay->ol.number_style );
-            break;
-        case   e_number_font:
-            o_font_number( layfile, curr, &lay->ol.number_font );
-            break;
-        default:
-            out_msg( "WGML logic error.\n");
-            break;
+            switch( curr ) {
+            case   e_level:
+                o_int8( layfile, curr, &ol_layout->level );
+                break;
+            case   e_left_indent:
+                o_space_unit( layfile, curr, &ol_layout->left_indent );
+                break;
+            case   e_right_indent:
+                o_space_unit( layfile, curr, &ol_layout->right_indent );
+                break;
+            case   e_pre_skip:
+                o_space_unit( layfile, curr, &ol_layout->pre_skip );
+                break;
+            case   e_skip:
+                o_space_unit( layfile, curr, &ol_layout->skip );
+                break;
+            case   e_spacing:
+                o_int8( layfile, curr, &ol_layout->spacing );
+                break;
+            case   e_post_skip:
+                o_space_unit( layfile, curr, &ol_layout->post_skip );
+                break;
+            case   e_font:
+                o_font_number(layfile, curr, &ol_layout->font );
+                break;
+            case   e_align:
+                o_space_unit( layfile, curr, &ol_layout->align );
+                break;
+            case   e_number_style:
+                o_number_style( layfile, curr, &ol_layout->number_style );
+                break;
+            case   e_number_font:
+                o_font_number( layfile, curr, &ol_layout->number_font );
+                break;
+            default:
+                internal_err( __FILE__, __LINE__ );
+                break;
+            }
         }
+        ol_layout = ol_layout->next;
     }
 }
 
@@ -1425,8 +1443,8 @@ static  void    put_lay_ol( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_page( FILE * layfile, layout_data * lay )
 {
-    lay_att         curr;
     int             k;
+    lay_att         curr;
     su          *   units;
 
     fprintf_s( layfile, ":PAGE\n" );
@@ -1447,7 +1465,7 @@ static  void    put_lay_page( FILE * layfile, layout_data * lay )
             units = &(lay->page.depth);
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
         o_space_unit( layfile, curr, units );
@@ -1461,8 +1479,8 @@ static  void    put_lay_page( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_p_pc( FILE * layfile, p_lay_tag * ap, char * name )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":%s\n", name );
 
@@ -1479,7 +1497,7 @@ static  void    put_lay_p_pc( FILE * layfile, p_lay_tag * ap, char * name )
             o_space_unit( layfile, curr, &ap->post_skip );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1500,42 +1518,48 @@ static  void    put_lay_pc( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_sl( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
+    sl_lay_level    *   sl_layout;
 
-    fprintf_s( layfile, ":SL\n" );
+    sl_layout = lay->sl.first;
+    
+    while( sl_layout != NULL ) {
+        fprintf_s( layfile, ":SL\n" );
 
-    for( k = 0, curr = sl_att[k]; curr > 0; k++, curr = sl_att[k] ) {
+        for( k = 0, curr = sl_att[k]; curr > 0; k++, curr = sl_att[k] ) {
 
-        switch( curr ) {
-        case   e_level:
-            o_int8( layfile, curr, &lay->sl.level );
-            break;
-        case   e_left_indent:
-            o_space_unit( layfile, curr, &lay->sl.left_indent );
-            break;
-        case   e_right_indent:
-            o_space_unit( layfile, curr, &lay->sl.right_indent );
-            break;
-        case   e_pre_skip:
-            o_space_unit( layfile, curr, &lay->sl.pre_skip );
-            break;
-        case   e_skip:
-            o_space_unit( layfile, curr, &lay->sl.skip );
-            break;
-        case   e_spacing:
-            o_int8( layfile, curr, &lay->sl.spacing );
-            break;
-        case   e_post_skip:
-            o_space_unit( layfile, curr, &lay->sl.post_skip );
-            break;
-        case   e_font:
-            o_font_number(layfile, curr, &lay->sl.font );
-            break;
-        default:
-            out_msg( "WGML logic error.\n");
-            break;
+            switch( curr ) {
+            case   e_level:
+                o_int8( layfile, curr, &sl_layout->level );
+                break;
+            case   e_left_indent:
+                o_space_unit( layfile, curr, &sl_layout->left_indent );
+                break;
+            case   e_right_indent:
+                o_space_unit( layfile, curr, &sl_layout->right_indent );
+                break;
+            case   e_pre_skip:
+                o_space_unit( layfile, curr, &sl_layout->pre_skip );
+                break;
+            case   e_skip:
+                o_space_unit( layfile, curr, &sl_layout->skip );
+                break;
+            case   e_spacing:
+                o_int8( layfile, curr, &sl_layout->spacing );
+                break;
+            case   e_post_skip:
+                o_space_unit( layfile, curr, &sl_layout->post_skip );
+                break;
+            case   e_font:
+                o_font_number(layfile, curr, &sl_layout->font );
+                break;
+            default:
+                internal_err( __FILE__, __LINE__ );
+                break;
+            }
         }
+        sl_layout = sl_layout->next;
     }
 }
 
@@ -1545,8 +1569,8 @@ static  void    put_lay_sl( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_title( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":TITLE\n" );
 
@@ -1572,7 +1596,7 @@ static  void    put_lay_title( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->title.skip );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1584,8 +1608,8 @@ static  void    put_lay_title( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_titlep( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":TITLEP\n" );
 
@@ -1599,7 +1623,7 @@ static  void    put_lay_titlep( FILE * layfile, layout_data * lay )
             o_int8( layfile, curr, &lay->titlep.columns );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1611,8 +1635,8 @@ static  void    put_lay_titlep( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_toc( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":TOC\n" );
 
@@ -1638,7 +1662,7 @@ static  void    put_lay_toc( FILE * layfile, layout_data * lay )
             o_xx_string( layfile, curr, &lay->toc.fill_string );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1650,8 +1674,8 @@ static  void    put_lay_toc( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_tocpgnum( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":TOCPGNUM\n" );
 
@@ -1665,7 +1689,7 @@ static  void    put_lay_tocpgnum( FILE * layfile, layout_data * lay )
             o_font_number( layfile, curr, &lay->tocpgnum.font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1677,9 +1701,9 @@ static  void    put_lay_tocpgnum( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_tochx( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
     int                 lvl;
+    lay_att             curr;
 
     for( lvl = 0; lvl < 7; ++lvl ) {
 
@@ -1715,7 +1739,7 @@ static  void    put_lay_tochx( FILE * layfile, layout_data * lay )
                 break;
                 break;
             default:
-                out_msg( "WGML logic error.\n");
+                internal_err( __FILE__, __LINE__ );internal_err( __FILE__, __LINE__ );
                 break;
             }
         }
@@ -1728,54 +1752,60 @@ static  void    put_lay_tochx( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_ul( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
+    ul_lay_level    *   ul_layout;
 
-    fprintf_s( layfile, ":UL\n" );
+    ul_layout = lay->ul.first;
+    
+    while( ul_layout != NULL ) {
+        fprintf_s( layfile, ":UL\n" );
 
-    for( k = 0, curr = ul_att[k]; curr > 0; k++, curr = ul_att[k] ) {
+        for( k = 0, curr = ul_att[k]; curr > 0; k++, curr = ul_att[k] ) {
 
-        switch( curr ) {
-        case   e_level:
-            o_int8( layfile, curr, &lay->ul.level );
-            break;
-        case   e_left_indent:
-            o_space_unit( layfile, curr, &lay->ul.left_indent );
-            break;
-        case   e_right_indent:
-            o_space_unit( layfile, curr, &lay->ul.right_indent );
-            break;
-        case   e_pre_skip:
-            o_space_unit( layfile, curr, &lay->ul.pre_skip );
-            break;
-        case   e_skip:
-            o_space_unit( layfile, curr, &lay->ul.skip );
-            break;
-        case   e_spacing:
-            o_int8( layfile, curr, &lay->ul.spacing );
-            break;
-        case   e_post_skip:
-            o_space_unit( layfile, curr, &lay->ul.post_skip );
-            break;
-        case   e_font:
-            o_font_number(layfile, curr, &lay->ul.font );
-            break;
-        case   e_align:
-            o_space_unit( layfile, curr, &lay->ul.align );
-            break;
-        case   e_bullet:
-            o_char( layfile, curr, &lay->ul.bullet );
-            break;
-        case   e_bullet_translate:
-            o_yes_no( layfile, curr, &lay->ul.bullet_translate );
-            break;
-        case   e_bullet_font:
-            o_font_number( layfile, curr, &lay->ul.bullet_font );
-            break;
-        default:
-            out_msg( "WGML logic error.\n");
-            break;
+            switch( curr ) {
+            case   e_level:
+                o_int8( layfile, curr, &ul_layout->level );
+                break;
+            case   e_left_indent:
+                o_space_unit( layfile, curr, &ul_layout->left_indent );
+                break;
+            case   e_right_indent:
+                o_space_unit( layfile, curr, &ul_layout->right_indent );
+                break;
+            case   e_pre_skip:
+                o_space_unit( layfile, curr, &ul_layout->pre_skip );
+                break;
+            case   e_skip:
+                o_space_unit( layfile, curr, &ul_layout->skip );
+                break;
+            case   e_spacing:
+                o_int8( layfile, curr, &ul_layout->spacing );
+                break;
+            case   e_post_skip:
+                o_space_unit( layfile, curr, &ul_layout->post_skip );
+                break;
+            case   e_font:
+                o_font_number(layfile, curr, &ul_layout->font );
+                break;
+            case   e_align:
+                o_space_unit( layfile, curr, &ul_layout->align );
+                break;
+            case   e_bullet:
+                o_char( layfile, curr, &ul_layout->bullet );
+                break;
+            case   e_bullet_translate:
+                o_yes_no( layfile, curr, &ul_layout->bullet_translate );
+                break;
+            case   e_bullet_font:
+                o_font_number( layfile, curr, &ul_layout->bullet_font );
+                break;
+            default:
+                internal_err( __FILE__, __LINE__ );
+                break;
+            }
         }
+        ul_layout = ul_layout->next;
     }
 }
 
@@ -1785,8 +1815,8 @@ static  void    put_lay_ul( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_widow( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":WIDOW\n" );
 
@@ -1797,7 +1827,7 @@ static  void    put_lay_widow( FILE * layfile, layout_data * lay )
             o_int8( layfile, curr, &lay->widow.threshold );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1809,8 +1839,8 @@ static  void    put_lay_widow( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_xmp( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":XMP\n" );
 
@@ -1836,7 +1866,7 @@ static  void    put_lay_xmp( FILE * layfile, layout_data * lay )
             o_font_number( layfile, curr, &lay->xmp.font );
             break;
         default:
-            out_msg( "WGML logic error.\n");
+            internal_err( __FILE__, __LINE__ );
             break;
         }
     }
@@ -1848,8 +1878,8 @@ static  void    put_lay_xmp( FILE * layfile, layout_data * lay )
 /***************************************************************************/
 static  void    put_lay_xx( FILE * layfile, font_number *font, char * name )
 {
-    lay_att             curr;
     int                 k;
+    lay_att             curr;
 
     fprintf_s( layfile, ":%s\n", name );
 

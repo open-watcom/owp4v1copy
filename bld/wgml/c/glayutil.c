@@ -27,7 +27,7 @@
 * Description: WGML implement utility functions for :LAYOUT processing
 *                   eat_lay_sub_tag()
 *                   get_lay_sub_and_value()
-*                   free_layout_banner()
+*                   free_layout()
 *                   i_xxxx               input routines
 *                   o_xxxx               output routines
 *
@@ -239,6 +239,65 @@ condcode    get_lay_sub_and_value( att_args * args )
     }
     scan_start = p;
     return( rc );
+}
+
+
+/***************************************************************************/
+/* free_layout  free list levels, banners and banregions                   */
+/***************************************************************************/
+void    free_layout( void )
+{
+    banner_lay_tag  * ban;
+    banner_lay_tag  * ban1;
+    dl_lay_level    * dl_layout;
+    gl_lay_level    * gl_layout;
+    ol_lay_level    * ol_layout;
+    region_lay_tag  * reg;
+    sl_lay_level    * sl_layout;
+    ul_lay_level    * ul_layout;
+
+    while( layout_work.dl.first != NULL ) {
+        dl_layout = layout_work.dl.first;
+        layout_work.dl.first = layout_work.dl.first->next;
+        mem_free( dl_layout );
+    }
+
+    while( layout_work.gl.first != NULL ) {
+        gl_layout = layout_work.gl.first;
+        layout_work.gl.first = layout_work.gl.first->next;
+        mem_free( gl_layout );
+    }
+
+    while( layout_work.ol.first != NULL ) {
+        ol_layout = layout_work.ol.first;
+        layout_work.ol.first = layout_work.ol.first->next;
+        mem_free( ol_layout );
+    }
+
+    while( layout_work.sl.first != NULL ) {
+        sl_layout = layout_work.sl.first;
+        layout_work.sl.first = layout_work.sl.first->next;
+        mem_free( sl_layout );
+    }
+
+    while( layout_work.ul.first != NULL ) {
+        ul_layout = layout_work.ul.first;
+        layout_work.ul.first = layout_work.ul.first->next;
+        mem_free( ul_layout );
+    }
+
+    ban = layout_work.banner;
+    while( ban != NULL ) {
+        reg = ban->region;
+        while( reg != NULL ) {
+            ban->region = reg->next;
+            mem_free( reg );
+            reg = ban->region;
+        }
+        ban1 = ban->next;
+        mem_free( ban );
+        ban = ban1;
+    }
 }
 
 

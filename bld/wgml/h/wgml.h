@@ -153,6 +153,7 @@ extern  void    dc_opt_warn_len( const char *pa, size_t len );
 extern  void    file_mac_info( void );
 extern  void    file_mac_info_nest( void );
 extern  void    internal_err( const char * file, int line );
+extern  void    list_level_err( const char * xl_tag, uint8_t xl_level );
 extern  void    nottag_err( void );
 extern  void    numb_err( void );
 extern  void    parm_extra_err( const char *cw, const char *pa );
@@ -194,8 +195,9 @@ extern  void        ixdump( ix_h_blk * dict );
 
 
 /* glayutil.c                           */
-extern void         eat_lay_sub_tag( void );
-extern condcode     get_lay_sub_and_value( struct att_args * l_args );
+extern  void        eat_lay_sub_tag( void );
+extern  void        free_layout( void );
+extern  condcode    get_lay_sub_and_value( struct att_args * l_args );
 
 
 /* glbanner.c                           */
@@ -452,7 +454,6 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
 /* wgmlsupp.c                           */
 extern  bool    free_resources( errno_t in_errno );
 extern  void    free_some_mem( void );
-extern  void    free_layout_banner( void );
 extern  void    g_banner( void );
 // extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
 extern  bool    get_line( bool researchoutput );

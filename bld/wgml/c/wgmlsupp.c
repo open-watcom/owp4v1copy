@@ -185,29 +185,6 @@ bool    free_resources( errno_t in_errno )
     return( false );
 }
 
-/***************************************************************************/
-/* free_layout_banner  free banner and banregion, the only parts of the    */
-/* layout dynamically allocated                                            */
-/***************************************************************************/
-void    free_layout_banner( void )
-{
-    banner_lay_tag  * ban;
-    banner_lay_tag  * ban1;
-    region_lay_tag  * reg;
-
-    ban = layout_work.banner;
-    while( ban != NULL ) {
-        reg = ban->region;
-        while( reg != NULL ) {
-            ban->region = reg->next;
-            mem_free( reg );
-            reg = ban->region;
-        }
-        ban1 = ban->next;
-        mem_free( ban );
-        ban = ban1;
-    }
-}
 
 /***************************************************************************/
 /*  free some buffers                                                      */
@@ -345,7 +322,7 @@ void    free_some_mem( void )
         add_doc_el_to_pool( n_page.col_fn );
     }
 
-    free_layout_banner();
+    free_layout();
 
     free_pool_storage();
 

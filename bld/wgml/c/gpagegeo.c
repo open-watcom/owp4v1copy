@@ -239,6 +239,97 @@ void    init_page_geometry( void )
 }
 
 /***************************************************************************/
+/*  Check the list tag layouts for skipped level numbers                   */
+/***************************************************************************/
+
+static void finish_lists( void )
+{
+    dl_lay_level    *   dl_layout;
+    gl_lay_level    *   gl_layout;
+    ol_lay_level    *   ol_layout;
+    sl_lay_level    *   sl_layout;
+    uint8_t             curr_level;
+    ul_lay_level    *   ul_layout;
+
+    dl_layout = layout_work.dl.first;
+    curr_level = 0;
+    while( dl_layout != NULL ) {
+        curr_level++;
+        if( curr_level != dl_layout->level ) {
+            list_level_err( "DL", curr_level );
+            dl_layout->level = curr_level;
+        }
+        dl_layout = dl_layout->next;
+    }
+
+    if( layout_work.dl.max_level != curr_level ) {
+        layout_work.dl.max_level = curr_level;
+    }
+
+    gl_layout = layout_work.gl.first;
+    curr_level = 0;
+    while( gl_layout != NULL ) {
+        curr_level++;
+        if( curr_level != gl_layout->level ) {
+            list_level_err( "GL", curr_level );
+            gl_layout->level = curr_level;
+        }
+        gl_layout = gl_layout->next;
+    }
+
+    if( layout_work.gl.max_level != curr_level ) {
+        layout_work.gl.max_level = curr_level;
+    }
+
+    ol_layout = layout_work.ol.first;
+    curr_level = 0;
+    while( ol_layout != NULL ) {
+        curr_level++;
+        if( curr_level != ol_layout->level ) {
+            list_level_err( "OL", curr_level );
+            ol_layout->level = curr_level;
+        }
+        ol_layout = ol_layout->next;
+    }
+
+    if( layout_work.ol.max_level != curr_level ) {
+        layout_work.ol.max_level = curr_level;
+    }
+
+    sl_layout = layout_work.sl.first;
+    curr_level = 0;
+    while( sl_layout != NULL ) {
+        curr_level++;
+        if( curr_level != sl_layout->level ) {
+            list_level_err( "SL", curr_level );
+            sl_layout->level = curr_level;
+        }
+        sl_layout = sl_layout->next;
+    }
+
+    if( layout_work.sl.max_level != curr_level ) {
+        layout_work.sl.max_level = curr_level;
+    }
+
+    ul_layout = layout_work.ul.first;
+    curr_level = 0;
+    while( ul_layout != NULL ) {
+        curr_level++;
+        if( curr_level != ul_layout->level ) {
+            list_level_err( "UL", curr_level );
+            ul_layout->level = curr_level;
+        }
+        ul_layout = ul_layout->next;
+    }
+
+    if( layout_work.ul.max_level != curr_level ) {
+        layout_work.ul.max_level = curr_level;
+    }
+
+    return;
+}
+
+/***************************************************************************/
 /*  Computes non-attribute fields, checks for one logic error              */
 /*  Not finished: unchecked errors exist                                   */
 /***************************************************************************/
@@ -328,6 +419,7 @@ void    do_layout_end_processing( void )
         /*  This should be where all processing and error-checking         */
         /*  required after all LAYOUT blocks have been processed is done.  */
         /*******************************************************************/
+        finish_lists();
         finish_banners();
 
         /*******************************************************************/

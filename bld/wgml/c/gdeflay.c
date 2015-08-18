@@ -582,71 +582,86 @@ void    init_def_lay( void )
     /***********************************************************************/
     /*  :SL         values                                                 */
     /***********************************************************************/
-    layout_work.sl.level = 1;
-    lay_init_su( &z0, &layout_work.sl.left_indent );
-    lay_init_su( &z0, &layout_work.sl.right_indent );
-    lay_init_su( &n1, &layout_work.sl.pre_skip );
-    lay_init_su( &n1, &layout_work.sl.skip );
-    lay_init_su( &n1, &layout_work.sl.post_skip );
-    layout_work.sl.spacing = 1;
-    layout_work.sl.font = 0;
+    layout_work.sl.max_level = 1;
+    layout_work.sl.first = mem_alloc( sizeof( sl_lay_level ) );
+    layout_work.sl.first->next = NULL;
+    layout_work.sl.first->level = 1;
+    lay_init_su( &z0, &layout_work.sl.first->left_indent );
+    lay_init_su( &z0, &layout_work.sl.first->right_indent );
+    lay_init_su( &n1, &layout_work.sl.first->pre_skip );
+    lay_init_su( &n1, &layout_work.sl.first->skip );
+    lay_init_su( &n1, &layout_work.sl.first->post_skip );
+    layout_work.sl.first->spacing = 1;
+    layout_work.sl.first->font = 0;
 
     /***********************************************************************/
     /*  :OL         values                                                 */
     /***********************************************************************/
-    layout_work.ol.level = 1;
-    lay_init_su( &z0, &layout_work.ol.left_indent );
-    lay_init_su( &z0, &layout_work.ol.right_indent );
-    lay_init_su( &z0, &layout_work.ol.pre_skip );
-    lay_init_su( &n1, &layout_work.ol.skip );
-    lay_init_su( &n1, &layout_work.ol.post_skip );
-    lay_init_su( &i04, &layout_work.ol.align );
-    layout_work.ol.spacing = 1;
-    layout_work.ol.font = 0;
-    layout_work.ol.number_style = h_style | xd_style;;
-    layout_work.ol.number_font = 0;
+    layout_work.ol.max_level = 1;
+    layout_work.ol.first = mem_alloc( sizeof( ol_lay_level ) );
+    layout_work.ol.first->next = NULL;
+    layout_work.ol.first->level = 1;
+    lay_init_su( &z0, &layout_work.ol.first->left_indent );
+    lay_init_su( &z0, &layout_work.ol.first->right_indent );
+    lay_init_su( &z0, &layout_work.ol.first->pre_skip );
+    lay_init_su( &n1, &layout_work.ol.first->skip );
+    lay_init_su( &n1, &layout_work.ol.first->post_skip );
+    lay_init_su( &i04, &layout_work.ol.first->align );
+    layout_work.ol.first->spacing = 1;
+    layout_work.ol.first->font = 0;
+    layout_work.ol.first->number_style = h_style | xd_style;;
+    layout_work.ol.first->number_font = 0;
 
     /***********************************************************************/
     /*  :UL         values                                                 */
     /***********************************************************************/
-    layout_work.ul.level = 1;
-    lay_init_su( &z0, &layout_work.ul.left_indent );
-    lay_init_su( &z0, &layout_work.ul.right_indent );
-    lay_init_su( &n1, &layout_work.ul.pre_skip );
-    lay_init_su( &n1, &layout_work.ul.skip );
-    lay_init_su( &n1, &layout_work.ul.post_skip );
-    lay_init_su( &i04, &layout_work.ul.align );
-    layout_work.ul.spacing = 1;
-    layout_work.ul.font = 0;
-    layout_work.ul.bullet = '*';
-    layout_work.ul.bullet_translate = true;
-    layout_work.ul.bullet_font = 0;
+    layout_work.ul.max_level = 1;
+    layout_work.ul.first = mem_alloc( sizeof( ul_lay_level ) );
+    layout_work.ul.first->next = NULL;
+    layout_work.ul.first->level = 1;
+    lay_init_su( &z0, &layout_work.ul.first->left_indent );
+    lay_init_su( &z0, &layout_work.ul.first->right_indent );
+    lay_init_su( &n1, &layout_work.ul.first->pre_skip );
+    lay_init_su( &n1, &layout_work.ul.first->skip );
+    lay_init_su( &n1, &layout_work.ul.first->post_skip );
+    lay_init_su( &i04, &layout_work.ul.first->align );
+    layout_work.ul.first->spacing = 1;
+    layout_work.ul.first->font = 0;
+    layout_work.ul.first->bullet = '*';
+    layout_work.ul.first->bullet_translate = true;
+    layout_work.ul.first->bullet_font = 0;
 
     /***********************************************************************/
     /*  :DL         values                                                 */
     /***********************************************************************/
-    layout_work.dl.level = 1;
-    lay_init_su( &z0, &layout_work.dl.left_indent );
-    lay_init_su( &z0, &layout_work.dl.right_indent );
-    lay_init_su( &n1, &layout_work.dl.pre_skip );
-    lay_init_su( &n1, &layout_work.dl.skip );
-    lay_init_su( &n1, &layout_work.dl.post_skip );
-    lay_init_su( &i1, &layout_work.dl.align );
-    layout_work.dl.spacing = 1;
-    layout_work.dl.line_break = false;
+    layout_work.dl.max_level = 1;
+    layout_work.dl.first = mem_alloc( sizeof( dl_lay_level ) );
+    layout_work.dl.first->next = NULL;
+    layout_work.dl.first->level = 1;
+    lay_init_su( &z0, &layout_work.dl.first->left_indent );
+    lay_init_su( &z0, &layout_work.dl.first->right_indent );
+    lay_init_su( &n1, &layout_work.dl.first->pre_skip );
+    lay_init_su( &n1, &layout_work.dl.first->skip );
+    lay_init_su( &n1, &layout_work.dl.first->post_skip );
+    lay_init_su( &i1, &layout_work.dl.first->align );
+    layout_work.dl.first->spacing = 1;
+    layout_work.dl.first->line_break = false;
 
     /***********************************************************************/
     /*  :GL         values                                                 */
     /***********************************************************************/
-    layout_work.gl.level = 1;
-    lay_init_su( &z0, &layout_work.gl.left_indent );
-    lay_init_su( &z0, &layout_work.gl.right_indent );
-    lay_init_su( &n1, &layout_work.gl.pre_skip );
-    lay_init_su( &n1, &layout_work.gl.skip );
-    lay_init_su( &n1, &layout_work.gl.post_skip );
-    lay_init_su( &z0, &layout_work.gl.align );
-    layout_work.gl.spacing = 1;
-    layout_work.gl.delim = ':';
+    layout_work.gl.max_level = 1;
+    layout_work.gl.first = mem_alloc( sizeof( gl_lay_level ) );
+    layout_work.gl.first->next = NULL;
+    layout_work.gl.first->level = 1;
+    lay_init_su( &z0, &layout_work.gl.first->left_indent );
+    lay_init_su( &z0, &layout_work.gl.first->right_indent );
+    lay_init_su( &n1, &layout_work.gl.first->pre_skip );
+    lay_init_su( &n1, &layout_work.gl.first->skip );
+    lay_init_su( &n1, &layout_work.gl.first->post_skip );
+    lay_init_su( &z0, &layout_work.gl.first->align );
+    layout_work.gl.first->spacing = 1;
+    layout_work.gl.first->delim = ':';
 
     /***********************************************************************/
     /*  :BANNER     values                                                 */

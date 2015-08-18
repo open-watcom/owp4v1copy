@@ -162,6 +162,15 @@ void internal_err( const char * file, int line )
     return;
 }
 
+void list_level_err( const char * xl_tag, uint8_t xl_level )
+{
+    err_count++;
+    g_err( err_level_skipped, xl_tag );
+    g_info( info_level_skipped, xl_level );
+    file_mac_info();
+    return;
+}
+
 void    att_val_err( const char * attname )
 {
 //****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined

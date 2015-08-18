@@ -601,6 +601,12 @@ pick( ERR_NO_LI_LP,             "LI or LP tag must follow the start of a list",
 pick( ERR_LI_LP_NO_LIST,        "LI or LP tag only allowed in a list",
                                 "LI or LP tag only allowed in a list" )
 
+pick( ERR_LEVEL_SKIPPED,        "For the level attribute (layout tag %s)",
+                                "For the level attribute (layout tag %s)" )
+                                
+pick( INFO_LEVEL_SKIPPED,       "Level number %d must be specified",
+                                "Level number %d must be specified" )
+                                
 /* cop file errors */
 
 pick( ERR_BLOCK_NOT_FOUND,      "For %s block %s: name not defined\n",

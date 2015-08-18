@@ -632,7 +632,8 @@ typedef struct tochx_lay_tag {
 /*  :SL             Layout tag data                                        */
 /***************************************************************************/
  
-typedef struct sl_lay_tag {
+typedef struct sl_lay_level {
+    struct sl_lay_level *   next;       // next-level sl tag
     su              left_indent;        // horizontal space unit
     su              right_indent;       // horizontal space unit
     su              pre_skip;           // vertical space unit
@@ -640,14 +641,20 @@ typedef struct sl_lay_tag {
     su              post_skip;          // vertical space unit
     int8_t          spacing;            // positive integer
     font_number     font;               // non-negative integer
-    int8_t          level;              // only level 1 supported
+    int8_t          level;              // level of this tag
+} sl_lay_level;
+ 
+typedef struct sl_lay_tag {
+    struct sl_lay_level *   first;      // first-level sl tag
+    uint8_t                 max_level;  // maximum level
 } sl_lay_tag;
  
 /***************************************************************************/
 /*  :OL             Layout tag data                                        */
 /***************************************************************************/
  
-typedef struct ol_lay_tag {
+typedef struct ol_lay_level {
+    struct ol_lay_level *   next;       // next-level ol tag
     su              left_indent;        // horizontal space unit
     su              right_indent;       // horizontal space unit
     su              pre_skip;           // vertical space unit
@@ -658,14 +665,20 @@ typedef struct ol_lay_tag {
     font_number     font;               // non-negative integer
     num_style       number_style;       // enum special
     font_number     number_font;        // non-negative integer
-    int8_t          level;              // only level 1 supported
+    int8_t          level;              // level of this tag
+} ol_lay_level;
+ 
+typedef struct ol_lay_tag {
+    struct ol_lay_level *   first;      // first-level ol tag
+    uint8_t                 max_level;  // maximum level
 } ol_lay_tag;
  
 /***************************************************************************/
 /*  :UL             Layout tag data                                        */
 /***************************************************************************/
  
-typedef struct ul_lay_tag {
+typedef struct ul_lay_level {
+    struct ul_lay_level *   next;       // next-level ul tag
     su              left_indent;        // horizontal space unit
     su              right_indent;       // horizontal space unit
     su              pre_skip;           // vertical space unit
@@ -677,14 +690,20 @@ typedef struct ul_lay_tag {
     char            bullet;             // char
     bool            bullet_translate;   // yes, no -> bool
     font_number     bullet_font;        // non-negative integer
-    int8_t          level;              // only level 1 supported
+    int8_t          level;              // level of this tag
+} ul_lay_level;
+ 
+typedef struct ul_lay_tag {
+    struct ul_lay_level *   first;      // first-level ul tag
+    uint8_t                 max_level;  // maximum level
 } ul_lay_tag;
  
 /***************************************************************************/
 /*  :DL             Layout tag data                                        */
 /***************************************************************************/
  
-typedef struct dl_lay_tag {
+typedef struct dl_lay_level {
+    struct dl_lay_level *   next;       // next-level dl tag
     su              left_indent;        // horizontal space unit
     su              right_indent;       // horizontal space unit
     su              pre_skip;           // vertical space unit
@@ -693,14 +712,20 @@ typedef struct dl_lay_tag {
     su              align;              // horizontal space unit
     int8_t          spacing;            // positive integer
     bool            line_break;         // yes, no -> bool
-    int8_t          level;              // only level 1 supported
+    int8_t          level;              // level of this tag
+} dl_lay_level;
+ 
+typedef struct dl_lay_tag {
+    struct dl_lay_level *   first;      // first-level dl tag
+    uint8_t                 max_level;  // maximum level
 } dl_lay_tag;
  
 /***************************************************************************/
 /*  :GL             Layout tag data                                        */
 /***************************************************************************/
  
-typedef struct gl_lay_tag {
+typedef struct gl_lay_level {
+    struct gl_lay_level *   next;       // next-level gl tag
     su              left_indent;        // horizontal space unit
     su              right_indent;       // horizontal space unit
     su              pre_skip;           // vertical space unit
@@ -709,7 +734,12 @@ typedef struct gl_lay_tag {
     su              align;              // horizontal space unit
     int8_t          spacing;            // positive integer
     char            delim;              // yes, no -> bool
-    int8_t          level;              // only level 1 supported
+    int8_t          level;              // level of this tag
+} gl_lay_level;
+ 
+typedef struct gl_lay_tag {
+    struct gl_lay_level *   first;      // first-level sl tag
+    uint8_t                 max_level;  // maximum level
 } gl_lay_tag;
  
 /***************************************************************************/
