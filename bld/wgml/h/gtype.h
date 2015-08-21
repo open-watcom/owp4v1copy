@@ -509,6 +509,7 @@ typedef struct gtentry {
     char                name[TAG_NAME_LENGTH + 1];
     char                macname[MAC_NAME_LENGTH + 2];   // macro to call
     gtflags             tagflags;
+    bool                overload;       // user tag has same name as predefined tag
 } gtentry;
 
 

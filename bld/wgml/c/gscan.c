@@ -91,7 +91,23 @@ static  const   scrtag  scr_tags[] = {
 #undef picklab
 #undef picks
 
-
+void set_overload( gtentry * in_gt )
+{
+    int     k;
+    uint8_t len;        // user tag name max length is 15
+    
+    in_gt->overload = false;
+    len = strlen( in_gt->name );
+    for( k = 0; k < GML_TAGMAX; ++k ) {
+        if( len == gml_tags[k].taglen ) {
+            if( !strcmpi( gml_tags[k].tagname, in_gt->name ) ) {
+                in_gt->overload = true;
+                break;
+            }
+        }
+    }
+    return;
+}
 
 /***************************************************************************/
 /*  scan for gml tags                                                      */
@@ -195,23 +211,22 @@ static void scan_gml( void )
             return;
         } else {
 
-        /*******************************************************************/
-        /*  The following is to prevent an endless loop                    */
-        /*  Example from ow documentation:                                 */
-        /*  .gt ZH1 add zh1                                                */
-        /*  .gt H1 add zh1                                                 */
-        /*  .dm zh1 begin                                                  */
-        /*  ...                                                            */
-        /*  :H1      <---- overridden gml tag                              */
-        /*  ...                                                            */
-        /*  .dm zh1 end                                                    */
-        /*                                                                 */
-        /*  we call the predefined :H1  instead                            */
-        /*******************************************************************/
+            /*******************************************************************/
+            /*  When a user-defined tag which overloads a predefined tag (ie,  */
+            /*  the names are the same) is used inside a macro, whether that   */
+            /*  macro is used with a user-defined tag or not, the predefined   */
+            /*  tag is used instead by wgml 4.0.                               */
+            /*                                                                 */
+            /*  Note that this allows a macro used with a user-defined tag to  */
+            /*  use that tag name without any danger of recursion, but is far  */
+            /*  more general than simply preventing recursive user-defined tag */
+            /*  definitions.                                                   */
+            /*******************************************************************/
 
-            if( (cb->fmflags & II_tag) && (cb->s.m->mac == me) ) {
+            if( (cb->fmflags & II_tag_mac) && ge->overload ) {
                 me = NULL;
             }
+    
         }
     }
     if( me != NULL ) {                  // usertag and coresponding macro ok

@@ -525,6 +525,10 @@ void    scr_gt( void )
             }
             tag_entry = add_tag( &tag_dict, tagname, macname, tag_flags );  // add to dictionary
             // if tag_entry is now NULL, error (+ msg) was output in add_tag
+
+            if( tag_entry != NULL ) {
+                set_overload( tag_entry );
+            }
         } else {                        // is function change
             tag_entry = change_tag( &tag_dict, tagname, macname );
         }
