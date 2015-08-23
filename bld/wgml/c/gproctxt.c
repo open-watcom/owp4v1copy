@@ -484,7 +484,6 @@ static void wgml_tabs( void )
                                 || (c_stop->alignment == al_right) ) {
                             scope_end = true;
                         }
-                    } else {
                         c_chars = do_c_chars( c_chars, in_chars, in_text,
                             0, g_cur_h_start, 0, in_chars->font,
                             in_chars->type );
@@ -806,19 +805,22 @@ static void wgml_tabs( void )
                 g_cur_h_start += pre_space;
             }
 
-            // the text positioned by the tab stop
-            c_chars = do_c_chars( c_chars, in_chars, in_text + t_start,
-                                    t_count, g_cur_h_start, t_width,
-                                    in_chars->font, in_chars->type );
-            if( s_multi == NULL ) { // only first token in tab scope
-                if( def_tab_count > 0 ) {
-                    c_chars->tab_pos = tt_def;
-                } else {
-                    c_chars->tab_pos = tt_user;
+            // the text positioned by the tab stop, if any
+
+            if( (t_width > 0) || (c_stop->alignment != al_center) || !pre_tab_gap ) {
+                c_chars = do_c_chars( c_chars, in_chars, in_text + t_start,
+                                        t_count, g_cur_h_start, t_width,
+                                        in_chars->font, in_chars->type );
+                if( s_multi == NULL ) { // only first token in tab scope
+                    if( def_tab_count > 0 ) {
+                        c_chars->tab_pos = tt_def;
+                    } else {
+                        c_chars->tab_pos = tt_user;
+                    }
+                    c_chars->tab_align = c_stop->alignment;
+                    c_chars->pre_gap = pre_tab_gap;
+                    pre_tab_gap = false;
                 }
-                c_chars->tab_align = c_stop->alignment;
-                c_chars->pre_gap = pre_tab_gap;
-                pre_tab_gap = false;
             }
             if( t_width == 0 ) {    // no text: position marker
                 if( tab_chars.first == NULL) {
@@ -1442,6 +1444,8 @@ void process_line_full( text_line * a_line, bool justify )
     if( user_tab_skip && (def_tab_count > 0) && (user_tabs.current > 0)
                 && ProcFlags.concat && (a_line->first->next != NULL) ) {
 
+        no_shift = (def_tab_count > 1);     // usually true if more than one default tab used
+
         /* Find the point of splitting */
         
         if( a_line->last->count == 0 ) {
@@ -1457,9 +1461,16 @@ void process_line_full( text_line * a_line, bool justify )
                     split_chars = NULL; // no split if prior tab was right-aligned
                 } else {
                     split_chars = a_line->last->prev;   // split at prior text_chars
+                    no_shift = false;                   // final marker must be shifted
                 }
             } else {
                 split_chars = a_line->last;             // split at final marker
+                if( a_line->last->prev->count == 0 ) {  // ... unless preceded by
+                    while( split_chars->prev->count == 0 ) {    // additional markers
+                        split_chars = split_chars->prev;
+                    }
+                no_shift = false;                       // final marker(s) must be shifted
+                }
             }
 
         } else {            // line did not end with tab character
@@ -1504,7 +1515,9 @@ void process_line_full( text_line * a_line, bool justify )
                     if( test_chars != NULL ) {
                         if( test_chars->tab_align == al_right ) {
                             split_chars = NULL;     // no split if prior tab was right-aligned
-                        }
+                        } else if( split_chars->prev->count == 0 ) {
+                            split_chars = split_chars->prev;    // use preceding marker
+                        } 
                     }
                     break;                          // if no break here, no break at all
                 }
@@ -1518,11 +1531,13 @@ void process_line_full( text_line * a_line, bool justify )
         /* Now split the line, if appropriate */
 
         if( (split_chars != NULL) && (split_chars->prev != NULL) ) {    // don't split if a_line would be left empty
+#if 0
             if( (split_chars->count == 0) && (split_chars->next == NULL) ) {
                 no_shift = false;                   // final marker must be shifted
             } else {
                 no_shift = (def_tab_count > 1);     // true more than one default tab used
             }
+#endif
             b_line = alloc_text_line();
             b_line->line_height = 0;            // will be set below
             a_line->next = b_line;
@@ -1557,7 +1572,6 @@ void process_line_full( text_line * a_line, bool justify )
                     }
                 }
             } else {
-
                 b_line->first->tab_pos = tt_def;
                 b_line->first->x_address = g_cur_left;
             }
