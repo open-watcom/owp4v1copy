@@ -936,6 +936,7 @@ $$the new-line character
 :CMT.This is from cl\orderop.gml and is in the C Language Reference
 :CMT.Topic: "Operator Precedence"
 :cmt...fk begin
+.if &'lower(&syspdev) = ps .do begin
 .pa
 ..sr *start=&SYSIN.+1
 ..bx on  &*start. +16 +24
@@ -979,12 +980,10 @@ $:SF font=0.additive:eSF.$a + b   $a - b
 :SF font=5.
 $:SF font=0.shift:eSF.$a << b  $a >> b
 :eSF.
-.if &'lower(&syspdev) = ps .do begin
 ..bx
 :SF font=5.
 $:SF font=0.relational:eSF.$a < b   $a > b   $a <= b   $a >= b
 :eSF.
-.do end
 ..bx
 :SF font=5.
 $:SF font=0.equality:eSF.$a == b  $a != b
@@ -1013,7 +1012,6 @@ $:SF font=0.logical OR:eSF.$a || b
 :SF font=5.
 $:SF font=0.conditional &dagger.:eSF.$a ? b : c
 :eSF.
-.if &'lower(&syspdev) = ps .do begin
 ..bx
 :SF font=5.
 $:SF font=0.assignment &dagger.:eSF.$a = b $a += b $a -= b $a *= b
@@ -1021,7 +1019,6 @@ $:SF font=0.assignment &dagger.:eSF.$a = b $a += b $a -= b $a *= b
 $$a /= b  $a %= b  $a &= b  $a ^= b
 $$a |= b  $a <<= b $a >>= b
 :eSF.
-.do end
 ..bx
 :SF font=5.
 $:SF font=0.comma:eSF.$a,b
@@ -1033,6 +1030,7 @@ $&dagger. associates from right to left
 ..tb
 :eSF.
 :cmt...fk end
+.do end
 .*
 :CMT.This is from cpplib\sb_rgp.gml and is in the C++ Class Library Reference
 :CMT.Topic: "eback() [streambuf]"
@@ -1306,6 +1304,7 @@ The special characters are:
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Extended Character Set"
 .np
+.if &'lower(&syspdev) = ps .do begin
 Extended Character Set
 .se c0=&INDlvl+1
 .se c1=&INDlvl+10
@@ -1324,9 +1323,11 @@ Extended Character Set
 .bxt off
 .tb set
 .tb
+.do end
 .*
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Order of FORTRAN Statements and Lines"
+.if &'lower(&syspdev) NE ps .pa
 .np
 Order of FORTRAN Statements and Lines
 .sr c0=&INDlvl+1
@@ -1373,9 +1374,9 @@ Order of FORTRAN Statements and Lines
 .*
 :CMT.This is from fl\farrays.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Array Elements"
+.if &'lower(&syspdev) = ps .do begin
 .np
 The following table describes how to compute the subscript value.
-.if &'lower(&syspdev) = ps .do begin
 .cp 23
 .sr c0=&INDlvl+1
 .sr c1=&INDlvl+5
@@ -1409,6 +1410,7 @@ The following table describes how to compute the subscript value.
 .*
 :CMT.This is from fl\fexpr.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Data Type of Arithmetic Expressions"
+.if &'lower(&syspdev) = ps .do begin
 .pa
 .np
 This table is valid for all of the arithmetic operators.
@@ -1434,9 +1436,11 @@ This table is valid for all of the arithmetic operators.
 \  C  \  C  \  C  \  C  \  C  \  Z  \  C  \  Z \
 \  Z  \  Z  \  Z  \  Z  \  Z  \  Z  \  Z  \  Z \
 .box off
+.do end
 .*
 :CMT.This is from fl\fformats.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "G Editing"
+.if &'lower(&syspdev) = ps .do begin
 determines the editing as shown in the following table.
 .cp 15
 .sr c0=&INDlvl+1
@@ -1453,13 +1457,14 @@ determines the editing as shown in the following table.
 \10**(d-2)<=M<10**(d-1)\F<w-n>.1 followed by n blanks\
 \10**(d-1)<=M<10**d    \F<w-n>.0 followed by n blanks\
 .box off
+.do end
 .*
-:CMT.This is from fl\fitab.gml and is in the FORTRAN 77 Language Reference
+:CMT.This is fl\fitab.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Intrinsic Functions"
 .*
 :CMT.Note: this is pretty much the entire file with a few text lines removed.
 :CMT.Note: it is only part of the topic indicated above, but a very large part!
-.if &'lower(&syspdev) NE ps .pa
+.if &'lower(&syspdev) = ps .do begin
 .np
 Type Conversion
 .*
@@ -1501,7 +1506,6 @@ Conversion to real
 \                  \SNGL        \R&arrow.SNGL(D)
 .box off
 
-.if &'lower(&syspdev) NE ps .pa
 .np
 Conversion to double
 .box on &c0 &c1 &c2 &c3
@@ -1581,7 +1585,6 @@ Nearest Whole Number
 \                  \DNINT         \D&arrow.DNINT(D)
 .box off
 
-.if &'lower(&syspdev) NE ps .pa
 .np
 Nearest Integer
 .box on &c0 &c1 &c2 &c3
@@ -1626,7 +1629,6 @@ Remainder
 \                 \DMOD        \D&arrow.DMOD(D,D)
 .box off
 
-.if &'lower(&syspdev) NE ps .pa
 .np
 Transfer of Sign
 :cmt..section Transfer of Sign
@@ -1680,7 +1682,6 @@ Choosing Largest Value
 \               \MAX1        \I&arrow.MAX1(R,...)
 .box off
 
-.if &'lower(&syspdev) NE ps .pa
 .np
 Choosing Smallest Value
 :cmt..section Choosing Smallest Value
@@ -1728,7 +1729,6 @@ Index of a Substring
 \a2 in string a1
 .box off
 
-.if &'lower(&syspdev) NE ps .pa
 .np
 Imaginary Part of Complex Number
 :cmt..section Imaginary Part of Complex Number
@@ -2032,7 +2032,6 @@ Lexically Less Than
 \a1<a2      \LLT     \L&arrow.LLT(CH,CH)
 .box off
 
-.if &'lower(&syspdev) NE ps .pa
 .np
 Binary Pattern Processing Functions: Boolean Operations
 :cmt..section Binary Pattern Processing Functions: Boolean Operations
@@ -2150,6 +2149,7 @@ Volatile Reference
 \A is a volatile          \VOLATILE  \A&arrow.VOLATILE(A)
 \reference                \
 .bxt off
+.do end
 .*
 :CMT.This is from gui\wguispy.gml and is in Spy Help
 :CMT.Topic: "Predefined Spy Message Classes" (multiple subsections)
@@ -2360,7 +2360,7 @@ $WM_CTLCOLOREDIT (**)  $WM_CTLCOLORLISTBOX (**)
 $WM_CTLCOLORMSGBOX (**)$WM_CTLCOLORSCROLLBAR (**)
 $WM_CTLCOLORSTATIC (**)$WM_DELETEITEM
 $WM_DESTROY            $WM_DRAWITEM
-.if &'lower(&syspdev) NE tasa .do begin
+.if &'lower(&syspdev) = ps .do begin
 $WM_DWMCOLORIZATIONCHANGED (**)$WM_DWMCOMPOSITIONCHANGED (**)
 .do end
 $WM_DWMNCRENDERINGCHANGED (**)$WM_DWMWINDOWMAXIMIZEDCHANGE (**)
@@ -2418,7 +2418,7 @@ deny none mode`0x04
 .*
 :CMT.This is from rsi\config.gml and is in both of the Programmer's Guides
 :CMT.Topic: "Changing the Switch Mode Setting"
-.if &'lower(&syspdev) NE tasa .do begin
+.if &'lower(&syspdev) = ps .do begin
 .se c0=&INDlvl+2
 .se c1=&c0.+5
 .se c2=&c1.+12

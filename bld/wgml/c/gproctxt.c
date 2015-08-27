@@ -1848,6 +1848,20 @@ void process_text( const char *text, font_number font )
                 p++;
             }
         } else {                    // ".co off": increment initial spacing
+            if( (post_space > 0) && (font != g_prev_font) ) { // font changed
+                n_chars = process_word( NULL, 0, g_prev_font );
+                n_chars->type = norm;
+                g_cur_h_start += post_space;
+                post_space = 0;
+                n_chars->x_address = g_cur_h_start;
+                t_line->last->next = n_chars;
+                n_chars->prev = t_line->last;
+                if( t_line->line_height < wgml_fonts[g_prev_font].line_height ) {
+                    t_line->line_height = wgml_fonts[g_prev_font].line_height;
+                }
+                t_line->last = n_chars;
+                n_chars = NULL;
+            }
             while( *p == ' ' ) {
                 post_space += wgml_fonts[font].spc_width;
                 p++;

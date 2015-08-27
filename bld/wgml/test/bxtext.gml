@@ -18,7 +18,55 @@ offset  +0          +4          +8
 .bx off
 .millust end
 .*
-:CMT.This is from cmn\pragma.gml and sets symbols for sections in the C/C++ User's Guide
+:CMT.This is from cmn\pragma.gml and sets macros for sections in both the 
+:CMT.C/C++ User's Guide and FORTRAN User's Guide
+.dm @id begin
+:HP2.&*.
+.dm @id end
+.gt id add @id cont
+.*
+.dm @eid begin
+:eHP2.&*
+.dm @eid end
+.gt eid add @eid cont
+.*
+.dm @op begin
+:HP2.[:eHP2.&*
+.dm @op end
+.gt op add @op cont
+.*
+.dm @eop begin
+:HP2.]:eHP2.&*
+.dm @eop end
+.gt eop add @eop cont
+.*
+.dm @rp begin
+:HP2.{:eHP2.&*
+.dm @rp end
+.gt rp add @rp cont
+.*
+.dm @erp begin
+:HP2.}:eHP2.&*
+.dm @erp end
+.gt erp add @erp cont
+.*
+.dm @or begin
+:HP2.|:eHP2.&*
+.dm @or end
+.gt or add @or cont
+.*
+:CMT.This is from cmn\pragma.gml and sets macros and symbols for sections in the 
+:CMT.C/C++ User's Guide
+.dm @prgbeg begin
+#pragma&*.
+.dm @prgbeg end
+.gt prgbeg add @prgbeg cont
+.*
+.dm @prgend begin
+:HP2.[:eHP2.;:HP2.]:eHP2.
+.dm @prgend end
+.gt prgend add @prgend cont texterror tagnext
+.*
 :set symbol="pragma" value="#pragma".
 :set symbol="epragma" value="~;".
 :set symbol="function" value="function".
@@ -874,7 +922,18 @@ exactly those registers that will be modified by the called
 :prgbeg. aux :id.sym:eid. modify exact :id.reg_set:eid. :prgend.
 .mbox end
 .*
-:CMT.This is from cmn\pragma.gml and sets the symbols for pragmas in the FORTRAN 77 User's Guide
+:CMT.This is from cmn\pragma.gml and sets macros and symbols for pragmas in the 
+:CMT.FORTRAN 77 User's Guide
+.gt prgbeg delete
+.gt prgend delete
+.dm @prgbeg begin
+*$pragma&*
+.dm @prgbeg end
+.gt prgbeg add @prgbeg cont
+.*
+.dm @prgend begin
+.dm @prgend end
+.gt prgend add @prgend cont texterror tagnext
 :set symbol="pragma" value="*$pragma".
 :set symbol="epragma" value="".
 :set symbol="function" value="subprogram".
@@ -893,9 +952,7 @@ exactly those registers that will be modified by the called
 :set symbol="single" value="REAL".
 :set symbol="alias_name" value="WC".
 :set symbol="other_cmp" value="&company C".
-.if '&machine' eq '8086' .do begin
 :set symbol="winopt" value="windows".
-.do end
 :set symbol="pragcont" value="c".
 .*
 :CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
@@ -903,21 +960,21 @@ exactly those registers that will be modified by the called
 :CMT.      & "32-bit:  Describing Calling Information"
 .pa
 .np
-.ix 'calling &functions' 'near'
-.ix 'calling &functions' 'far'
+:cmt..ix 'calling &functions' 'near'
+:cmt..ix 'calling &functions' 'far'
 The following form of the auxiliary pragma can be used to describe the
 way a &function is to be called.
-.ix 'pragmas' 'calling information'
-.ix 'pragmas' 'far'
-.ix 'pragmas' 'far16'
-.ix 'pragmas' 'near'
-.ix 'pragmas' '= const'
-.ix 'pragmas' 'in-line assembly'
-.ix 'calling information (pragma)'
-.ix 'far (pragma)'
-.ix 'far16 (pragma)'
-.ix 'near (pragma)'
-.ix 'in-line assembly' 'in pragmas'
+:cmt..ix 'pragmas' 'calling information'
+:cmt..ix 'pragmas' 'far'
+:cmt..ix 'pragmas' 'far16'
+:cmt..ix 'pragmas' 'near'
+:cmt..ix 'pragmas' '= const'
+:cmt..ix 'pragmas' 'in-line assembly'
+:cmt..ix 'calling information (pragma)'
+:cmt..ix 'far (pragma)'
+:cmt..ix 'far16 (pragma)'
+:cmt..ix 'near (pragma)'
+:cmt..ix 'in-line assembly' 'in pragmas'
 .* ---------------------------------------
 .mbox begin
 :prgbeg. aux :id.sym:eid. far
@@ -1001,16 +1058,6 @@ default calling mechanism used for passing arguments.
 :id.r_attr ::=:eid. :op.far :or. near:eop. :op.descriptor :or. nodescriptor:eop.
 
 :id.d_attr ::=:eid. :op.far :or. near:eop.
-.mbox end
-.cp 11
-.mbox begin
-:prgbeg. aux :id.sym:eid. parm ( :id.arg_attr:eid. :rp., :id.arg_attr:eid.:erp. )
-
-:id.arg_attr ::=:eid. value:id. :op.:id.v_attr:eid.:eop. :or. reference :op.:id.r_attr:eid.:eop.
-
-:id.v_attr ::=:eid. far :or. near :or. *1 :or. *2 :or. *4 :or. *8
-
-:id.r_attr ::=:eid. :op.far :or. near:eop.
 .mbox end
 .*
 :CMT.This is from cmn\wdis.gml and is in the Tool User's Guide

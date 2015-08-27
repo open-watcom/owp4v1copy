@@ -101,15 +101,38 @@ void    scr_br( void )
 
 void  scr_process_break( void )
 {
+    text_chars  *   marker  = NULL;
+
     if( t_line != NULL ) {
         if( t_line->first != NULL ) {
-            /* first line of paragraph: minimum line height */
+
+            /* Insert a marker if CO OFF and post_space > 0 */
+
+            if( !ProcFlags.concat && (post_space > 0) ) {
+                marker = process_word( NULL, 0, g_curr_font );
+                marker->type = norm;
+                g_cur_h_start += post_space;
+                post_space = 0;
+                marker->x_address = g_cur_h_start;
+                t_line->last->next = marker;
+                marker->prev = t_line->last;
+                if( t_line->line_height < wgml_fonts[g_curr_font].line_height ) {
+                    t_line->line_height = wgml_fonts[g_curr_font].line_height;
+                }
+                t_line->last = marker;
+                marker = NULL;
+            }
+
+            /* First line of paragraph: minimum line height */
+
             if( ProcFlags.p_starting ) {
                 if( t_line->line_height < wgml_fonts[g_curr_font].line_height ) {
                     t_line->line_height = wgml_fonts[g_curr_font].line_height;
                 }
             }
-            /* the last line is not justified, but is right-aligned or centered */
+
+            /* The last line is not justified, but is right-aligned or centered */
+
             process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
                 (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );
             t_line = NULL;
