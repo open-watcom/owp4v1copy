@@ -2261,11 +2261,10 @@ void process_text( const char *text, font_number font )
             xx_err( err_tag_not_text );
         }
 
-        if( !ProcFlags.concat ) {
-            if( input_cbs->fmflags & II_eol ) {
-                process_line_full( t_line, false );
-                t_line = NULL;
-            }
+        if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)
+                && (input_cbs->fmflags & II_file) ) {
+            process_line_full( t_line, false );
+            t_line = NULL;
         }
     }
     if( input_cbs->fmflags & II_file ) {

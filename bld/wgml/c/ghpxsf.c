@@ -86,7 +86,8 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
     if( *p ) {
         process_text( p, g_curr_font );
     }
-    if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
+    if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)
+            && (input_cbs->fmflags & II_file) ) {
         scr_process_break();            // ensure line is output
     }
     scan_start = scan_stop + 1;
@@ -177,7 +178,8 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
         if( *p ) {
             process_text( p, g_curr_font );
         }
-        if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
+        if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)
+                && (input_cbs->fmflags & II_file) ) {
             scr_process_break();        // ensure line is output
         }
     }
