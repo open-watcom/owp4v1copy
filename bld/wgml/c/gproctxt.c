@@ -2236,7 +2236,8 @@ void process_text( const char *text, font_number font )
                     tab_space = 1;
                 }
                 pword = p + 1;          // new word start or end of input record
-        } else if( (input_cbs->fmflags & II_eol) && !*p ) { // insert spaces at actual end-of-line
+        } else if( !*p && (input_cbs->fmflags & II_eol)
+                && (input_cbs->fmflags & II_file)) { // insert spaces at actual end-of-line
             pword = p;
             post_space = wgml_fonts[font].spc_width;
             if( is_stop_char( t_line->last->text[t_line->last->count - 1] )
