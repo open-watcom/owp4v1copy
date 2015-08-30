@@ -346,8 +346,7 @@ static  void    get_macro_line( void )
 
     if( cb->macline == NULL ) {         // no more macrolines
         if( !ProcFlags.concat && (input_cbs->prev->fmflags & II_eol)
-                && (input_cbs->prev->fmflags & II_file)
-                && (input_cbs->hidden_head == NULL) ) {
+                && (input_cbs->prev->fmflags & II_file) ) {
             scr_process_break();
         }
         input_cbs->fmflags |= II_eof;

@@ -1678,9 +1678,10 @@ void process_text( const char *text, font_number font )
     // when hyph can be set, it will need to be used here & below
     uint32_t                hy_width        = wgml_fonts[FONT0].width_table['-'];
 
+    static      line_number     prev_lineno     = -1;
+    static      macrocb     *   prev_mac        = NULL;
     static      text_type       typ             = norm;
     static      text_type       typn            = norm;
-    static      macrocb     *   prev_mac        = NULL;
 
     /********************************************************************/
     /*  we need a started section for text output                       */
@@ -2262,15 +2263,42 @@ void process_text( const char *text, font_number font )
             xx_err( err_tag_not_text );
         }
 
-        if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)
-                && (input_cbs->fmflags & II_file) ) {
-            process_line_full( t_line, false );
-            t_line = NULL;
+        if( !ProcFlags.concat ) {
+
+            /* End of input line: end of output line with CO OFF */
+
+            if( (input_cbs->fmflags & II_eol) && (input_cbs->fmflags & II_file) ) {
+                process_line_full( t_line, false );
+                t_line = NULL;
+            }
+
+            /* End of macro line: end of output line with CO OFF */
+
+            if( (prev_mac == input_cbs->s.m)
+                    && (prev_lineno < input_cbs->s.m->lineno) ) {
+                n_chars = t_line->last;
+                t_line->last = t_line->last->prev;
+                if( t_line->last != NULL) {
+                    t_line->last->next = NULL;
+                    n_chars->prev = NULL;
+                    scr_process_break();            // process_line_full() causes loop
+                } 
+                if( t_line == NULL ) {
+                    t_line = alloc_text_line();
+                }
+                set_h_start();
+                n_chars->x_address = g_cur_h_start;
+                t_line->first = n_chars;
+                t_line->last = n_chars;
+                t_line->line_height = wgml_fonts[n_chars->font].line_height;
+            }
         }
     }
     if( input_cbs->fmflags & II_file ) {
+        prev_lineno = -1;
         prev_mac = NULL;
     } else {
+        prev_lineno = input_cbs->s.m->lineno;
         prev_mac = input_cbs->s.m;
     }
     g_prev_font = font; // save font number for potential use with BX - TBD
