@@ -1531,13 +1531,6 @@ void process_line_full( text_line * a_line, bool justify )
         /* Now split the line, if appropriate */
 
         if( (split_chars != NULL) && (split_chars->prev != NULL) ) {    // don't split if a_line would be left empty
-#if 0
-            if( (split_chars->count == 0) && (split_chars->next == NULL) ) {
-                no_shift = false;                   // final marker must be shifted
-            } else {
-                no_shift = (def_tab_count > 1);     // true more than one default tab used
-            }
-#endif
             b_line = alloc_text_line();
             b_line->line_height = 0;            // will be set below
             a_line->next = b_line;
