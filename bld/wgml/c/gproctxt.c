@@ -1785,6 +1785,21 @@ void process_text( const char *text, font_number font )
                 p++;
                 tab_space++;
             }
+            if( !*p && !(input_cbs->fmflags & II_eol) ) {
+
+                /* if no text follows, insert text_chars for post_space */
+                
+                n_chars = process_word( NULL, 0, font );
+                n_chars->type = norm;
+                g_cur_h_start += post_space;
+                post_space = 0;
+                n_chars->x_address = g_cur_h_start;
+                t_line->first = n_chars;
+                t_line->last = n_chars;
+                t_line->line_height = wgml_fonts[font].line_height;
+                n_chars = NULL;
+                return;
+            }
         }
         ju_x_start = g_cur_h_start; // g_cur_h_start appears to be correct
     } else {                        // subsequent phrase in paragraph

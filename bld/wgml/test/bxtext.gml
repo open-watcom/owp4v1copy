@@ -1642,6 +1642,7 @@ true    false       true
 false   true        true
 false   false       false
 .mbox off
+.pa
 .mbox on &c0 &c1 &c2 &c3
   x       y       x .EQV. y
 .mbox
