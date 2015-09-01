@@ -670,7 +670,7 @@ programming languages.
 The general form of an auxiliary pragma that describes argument
 passing is the following.
 .mbox begin
-:prgbeg.  aux :id.sym:eid. parm :id.:rp. pop_info :or. :eid.reverse:id. :or. :rp.reg_set:erp. :erp.:eid. :prgend.
+:prgbeg. aux :id.sym:eid. parm :id.:rp. pop_info :or. :eid.reverse:id. :or. :rp.reg_set:erp. :erp.:eid. :prgend.
 
 :id.pop_info ::=:eid. caller :or. routine
 .mbox end
@@ -1000,6 +1000,7 @@ way a &function is to be called.
 :CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topics: "16-bit:  Describing Argument Information"
 :CMT.      & "32-bit:  Describing Argument Information"
+.if &'lower(&syspdev) NE tasa .do begin
 .np
 .ix 'argument list (pragma)'
 .ix 'pragmas' 'describing argument lists'
@@ -1029,6 +1030,7 @@ passing is the following.
 
 :id.pop_info ::=:eid. caller :or. routine
 .mbox end
+.do end
 .*
 :CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topics: "16-bit:  Passing Arguments to non-FORTRAN Subprograms"
