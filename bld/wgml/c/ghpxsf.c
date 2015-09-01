@@ -165,7 +165,7 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
         if( (post_space !=0) && (input_cbs->fmflags & II_sol) ) {
             post_space = wgml_fonts[g_curr_font].spc_width;
 
-            if( t_line != NULL ) {  // add second space after stop
+            if( (t_line != NULL) && (t_line->last != NULL) ) {  // add second space after stop
                 if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                     post_space += wgml_fonts[g_curr_font].spc_width;
                 }

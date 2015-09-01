@@ -670,7 +670,7 @@ programming languages.
 The general form of an auxiliary pragma that describes argument
 passing is the following.
 .mbox begin
-:prgbeg. aux :id.sym:eid. parm :id.:rp. pop_info :or. :eid.reverse:id. :or. :rp.reg_set:erp. :erp.:eid. :prgend.
+:prgbeg.  aux :id.sym:eid. parm :id.:rp. pop_info :or. :eid.reverse:id. :or. :rp.reg_set:erp. :erp.:eid. :prgend.
 
 :id.pop_info ::=:eid. caller :or. routine
 .mbox end
