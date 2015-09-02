@@ -1,0 +1,49 @@
+For TASA:
+
++ indicates newline 0
+  indicates newline 1
+0 indicates newline 2
+- indicates newline 3
+1 indicates newpage
+
+for WHELP:
+rsxon   √   rsxoff  ¥   rsctx   ˜   rstpc   Ó   rslnk      rsdfn   Í  
+rslsti  ”   rslsts  “   rslste  ‘  rsslsts ’   rsslste ÷   rsolsts »   
+rsolste …   rssdl      rsedl   À  rsdt    Ã   rskw    Ï   rshln   ß
+rshnln  ¯   rspar   û   rsxoffb ü   rsup †      rsbmp   ∞  rsbxon  €  
+rsbxof  ˛   rsddesc π   rsspace ˇ rstbxmp ™   rsflnk  Ë   
+Note: rsup doesn't print for some reason
+
+Font/Fontstyle when "file whelp" is used:
+font 0  plain   font 1  bold    font 2  bold    font 3  ibold   font 4  xmp   font 5  xmp
+font 6  xmp     font 7  plain   font 8  bold    font 14 size12  font 15 head5   font 16 head6
+font 20 symbol  font 40 uline
+Note: plain is not actually defined; rather, the generated default is used
+The missing fonts, if used, will all become font 0
+The BOX block declares "mono01" as its font, so it, too, will effectively be font 0 (fonstyle plain)
+The RULE (if still used) and UNDERSCORE blocks are not defined, so are font 0 also
+
+The basic font styles follow this pattern
+1) the prefix:  Ô<letter>Ô
+2) the text
+3) the suffix:  
+where <letter> is one of:
+bold    b   italic  i   ulbold  ub  usbold  sb  uline   u   uscore  s
+ibold   ib  index   b   head5   b   head6   b   mono    b
+
+The extended font styles follow this pattern:
+1) special prefix:  <fontname>'<fontwidth>
+2) normal prefix (if used)
+3) the text
+4) normal suffix (if used)
+5) special suffix:  ùhelv'ù10
+Note that they all return to "helv'10"; "helv'10", then, would appear to be font 0.
+ùThese font styles can be distinguished by the special prefix:
+head5   helv'ù12ù       head6   helv'ù10ù       xmp ùcourier'ù12ù   symbol  ùsymbol'ù10ù
+mono    ùcourier'ù10ù   size12  ùhelv'ù12ù      size14  ùhelv'ù14ù      size16  ùhelv'ù16ù
+size18  helv'ù18ù       size20  ùhelv'ù20ù
+Note that not all font styles which are defined are actually in use.
+It is possible that WHELP once used a wider range of font styles.
+
+
+

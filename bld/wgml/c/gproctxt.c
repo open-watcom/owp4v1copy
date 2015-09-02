@@ -2111,13 +2111,14 @@ void process_text( const char *text, font_number font )
             }
         } else { // concatenation is off
             count = split_text( n_chars, g_page_right );
-            // split the text is split over as many lines as necessary
+            // the text is split over as many lines as necessary
             while( count > 0 ) {
                 if( t_line == NULL ) {
                     t_line = alloc_text_line();
                 }
                 if( t_line->first == NULL ) {
                     t_line->first = n_chars;
+                    t_line->last = n_chars;
                     t_line->y_address = g_cur_v_start;
                     t_line->line_height = wgml_fonts[font].line_height;
                     ju_x_start = n_chars->x_address;
@@ -2129,11 +2130,11 @@ void process_text( const char *text, font_number font )
                         t_line->line_height = wgml_fonts[font].line_height;
                     }
                     t_line->last = n_chars;
-                    // reset n_chars to contain the rest of the split text
-                    n_chars = alloc_text_chars(
+                }
+                // reset n_chars to contain the rest of the split text
+                n_chars = alloc_text_chars(
                         &t_line->last->text[t_line->last->count], count,
                                                     t_line->last->font );
-                }
                 if( t_line->first == t_line->last ) {
                     fm_chars = NULL;
                 } else {
