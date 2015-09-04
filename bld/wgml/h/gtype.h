@@ -785,7 +785,7 @@ typedef enum lay_sub {
 /***************************************************************************/
 
 typedef enum functs {
-    function_escape         = 0xfe,
+    function_escape         = 0xfd,
     function_end            = 0x01,
 
     function_subscript      = 0x02,

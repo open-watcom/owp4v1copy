@@ -1910,11 +1910,7 @@ void process_text( const char *text, font_number font )
                 typn = norm;
                 break;
             default:
-                out_msg( "gproctxt.c unknown function escape %#.02x\n",
-                         *(p + 1) );
-                wng_count++;
-                show_include_stack();
-                typn = norm;            // set normal mode TBD
+                internal_err( __FILE__, __LINE__ );
             }
             if( p > pword ) {
                 count = p - pword;      // no of bytes

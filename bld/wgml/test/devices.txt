@@ -1,5 +1,19 @@
 For TASA:
 
+This device, as I understand, was written for an ANSI-compliant printer. 
+So there may have been many TASA printers, or there may have been none.
+
+The key to TASA is to remember that the first column is not part of the document,
+but is instead used for carriage control. Thus, in counting columns, the first column 
+should be ignored. This can be difficult at first, because the most common first
+column character is the space character, indicating a newline 1 -- that is, indicating\
+that this line's text is to be place one line further down on the paper. If used with 
+text, "newline 2" would produce double-spacing (with one blank line between each
+text line), and "newline 3" triple-spacing (with two blank lines between each
+text line). They are also used to represent 2 or 3 blank lines compactly.
+
+The carriage control characters are:
+
 + indicates newline 0
   indicates newline 1
 0 indicates newline 2
@@ -7,43 +21,62 @@ For TASA:
 1 indicates newpage
 
 for WHELP:
+
+This is not actually about WHELP as such. This is about WHELP as used by our docs --
+that is, with "file whelp" on the command line, which processes "whelp.opt" and so 
+includes "whelplay.gml" which in turn includes "whelp.gml". The net result is a list
+of fonts that does not match the default fonts declared by the device, definitions of
+a host of symbols and redefinitions of a lot of tags -- and some very visible effects 
+on the output text that can be hard to analyse should a diff between our wgml and 
+wgml 4.0 appear.
+
+The fontstyles, of course, are defined in the driver, but those that produce font 
+names are only used with the font list in "whelp.opt".
+
+These are the symbols defined in "whelp.gml". They are emitted for the guidance of
+whelplay.exe:
+
 rsxon   √   rsxoff  ¥   rsctx   ˜   rstpc   Ó   rslnk      rsdfn   Í  
 rslsti  ”   rslsts  “   rslste  ‘  rsslsts ’   rsslste ÷   rsolsts »   
 rsolste …   rssdl      rsedl   À  rsdt    Ã   rskw    Ï   rshln   ß
 rshnln  ¯   rspar   û   rsxoffb ü   rsup †      rsbmp   ∞  rsbxon  €  
 rsbxof  ˛   rsddesc π   rsspace ˇ rstbxmp ™   rsflnk  Ë   
-Note: rsup doesn't print for some reason
+Note: rsup doesn't print for some reason; it corresponds to a numeric value of 160.
 
-Font/Fontstyle when "file whelp" is used:
+The next tables are intended to help identify which font is being used by examining
+the specialized output associated with the various font styles.
+
+This shows, for each font defined in "whelp.opt", the fontstyle:
 font 0  plain   font 1  bold    font 2  bold    font 3  ibold   font 4  xmp   font 5  xmp
 font 6  xmp     font 7  plain   font 8  bold    font 14 size12  font 15 head5   font 16 head6
 font 20 symbol  font 40 uline
-Note: plain is not actually defined; rather, the generated default is used
+Note: "plain" is not actually defined; rather, the generated default is used
 The missing fonts, if used, will all become font 0
-The BOX block declares "mono01" as its font, so it, too, will effectively be font 0 (fonstyle plain)
-The RULE (if still used) and UNDERSCORE blocks are not defined, so are font 0 also
+The BOX block declares "mono01" as its font, so the fonstyle will be "plain"
+The UNDERSCORE block is not defined, so the default is used, and the font is font 0
+
+Recognizing a font style involves two different sets of output: basic and extended.
 
 The basic font styles follow this pattern
-1) the prefix:  Ô<letter>Ô
+1) the prefix:  Ô<style>Ô
 2) the text
 3) the suffix:  
-where <letter> is one of:
+where <style> is one of:
 bold    b   italic  i   ulbold  ub  usbold  sb  uline   u   uscore  s
 ibold   ib  index   b   head5   b   head6   b   mono    b
+depending, as shown, on the fontstyle.
 
 The extended font styles follow this pattern:
-1) special prefix:  <fontname>'<fontwidth>
+1) special prefix:  <fontname><fontwidth>
 2) normal prefix (if used)
 3) the text
 4) normal suffix (if used)
-5) special suffix:  ùhelv'ù10
-Note that they all return to "helv'10"; "helv'10", then, would appear to be font 0.
+5) special suffix:  ùhelv10
+Note that they all return to "helv10"; "helv10", then, would appear to be font 0.
 ùThese font styles can be distinguished by the special prefix:
-head5   helv'ù12ù       head6   helv'ù10ù       xmp ùcourier'ù12ù   symbol  ùsymbol'ù10ù
-mono    ùcourier'ù10ù   size12  ùhelv'ù12ù      size14  ùhelv'ù14ù      size16  ùhelv'ù16ù
-size18  helv'ù18ù       size20  ùhelv'ù20ù
+head5   helv12ù       head6   helv10ù      xmp     courier12ù      symbol  symbol10ù
+mono    courier10ù    size12  helv12ù      size14  helv14ù         size16  helv16ù
+size18  helv18ù       size20  helv20
 Note that not all font styles which are defined are actually in use.
 It is possible that WHELP once used a wider range of font styles.
-
-
 
