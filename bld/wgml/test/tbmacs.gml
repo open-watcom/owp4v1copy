@@ -323,6 +323,11 @@
 .do end
 .dm bxt end
 .*
+.dm xtnada begin
+:SF font=14.~n:eSF.
+.dm xtnada end
+.*
+.if &'lower(&syspdev) NE whelp .do begin
 .dm box begin
 .se *tmplvl=&WDWlvl-3
 .if '&*1' eq 'on' .do begin
@@ -363,10 +368,7 @@
 .   .do end
 .do end
 .dm box end
-.*
-.dm xtnada begin
-:SF font=14.~n:eSF.
-.dm xtnada end
+.do end
 .*
 .dm sf1 begin
 :SF font=1.&*.

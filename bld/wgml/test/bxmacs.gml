@@ -1,3 +1,26 @@
+.dm abox begin
+.if '&*1' eq 'begin' or '&*1' eq 'on' .do begin
+.   .box
+.do end
+.el .if '&*1' eq 'end' or '&*1' eq 'off' .do begin
+.   .ebox
+.do end
+.el .do begin
+.   .ebox
+.   .box
+.do end
+.dm abox end
+.*
+.dm mkbx begin
+.if &e'&dohelp eq 0 .do begin
+.   .bx &*
+.do end
+.el .do begin
+.   .abox &*
+.do end
+.dm mkbx end
+.*
+.if &'lower(&syspdev) NE whelp .do begin
 .dm mbox begin
 .se *tmplvl=&WDWlvl-3
 .if '&*1' eq 'on' .do begin
@@ -27,6 +50,35 @@
 .   .bx
 .do end
 .dm mbox end
+.do end
+.el .do begin
+.dm mbox begin
+.se *tmplvl=&WDWlvl-3
+.if '&*1' eq 'on' .do begin
+.   .cp &*tmplvl.
+.   .mkbx on &*2 &*3 &*4 &*5 &*6 &*7 &*8 &*9 &*10
+.   :XMP.
+.do end
+.el .if '&*' eq 'off' .do begin
+.   :eXMP.
+.   .mkbx off
+.do end
+.el .if '&*' eq 'begin' .do begin
+.   :P.
+.   .cp &*tmplvl.
+.   .se *lmargin=&sysin.+1
+.   .mkbx on &*lmargin. &rmargin.
+.   :XMP.
+.do end
+.el .if '&*' eq 'end' .do begin
+.   :eXMP.
+.   .mkbx end
+.do end
+.el .do begin
+.   .mkbx
+.do end
+.dm mbox end
+.do end
 .*
 .dm mext begin
 .se *tmplvl=&WDWlvl-3

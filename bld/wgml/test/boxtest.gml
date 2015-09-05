@@ -1,3 +1,4 @@
+.if &'lower(&syspdev) NE whelp .do begin
 :LAYOUT
    :PAGE
       top_margin = 0 left_margin = '1i' right_margin = '7i' depth = '9.66i'
@@ -6,7 +7,7 @@
       gutter = '0.5i' binding = 0
    :WIDOW
       threshold = 1
-   :P	
+   :P   
       line_indent = '0.5i' pre_skip = 1 post_skip = 0
    :BANNER
       depth = 2 docsect = body left_adjust = 1 place = top
@@ -27,6 +28,7 @@
    :eBANREGION
    :eBANNER
 :eLAYOUT.
+.do end
 :GDOC.
 :FRONTM.
 :cmt.:PREFACE.

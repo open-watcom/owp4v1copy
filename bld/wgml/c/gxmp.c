@@ -123,8 +123,6 @@ void gml_xmp( const gmltag * entry )
     }
 
     first_xline = true;
-    font_save = g_curr_font;
-    g_curr_font = layout_work.xmp.font;
 
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
@@ -132,7 +130,11 @@ void gml_xmp( const gmltag * entry )
     nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.xmp.right_indent );
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
+    nest_cb->font = layout_work.xmp.font;
     nest_cb->c_tag = t_XMP;
+
+    font_save = g_curr_font;
+    g_curr_font = nest_cb->font;
 
     g_cur_left += nest_cb->left_indent;
     g_page_right += nest_cb->right_indent;
