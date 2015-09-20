@@ -39,6 +39,7 @@
 void    proc_p_pc( p_lay_tag * p_pc )
 {
     char        *   p;
+    int32_t         line_indent;
 
     scan_err = false;
     p = scan_start;
@@ -47,9 +48,10 @@ void    proc_p_pc( p_lay_tag * p_pc )
     start_doc_sect();                   // if not already done
 
     scr_process_break();
+    line_indent = conv_hor_unit( &(p_pc->line_indent) );
     g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
                                         // possibly indent first line
-    g_cur_h_start = g_cur_left + conv_hor_unit( &(p_pc->line_indent) );
+    g_cur_h_start = g_cur_left + line_indent;
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
 
@@ -57,6 +59,10 @@ void    proc_p_pc( p_lay_tag * p_pc )
 
     set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), spacing,
                     g_curr_font );
+
+    if( line_indent > 0 ) {
+        ProcFlags.p_pc_starting = true; // for next break, not this tag's break
+    }
 
     post_space = 0;
 
@@ -74,7 +80,6 @@ void    proc_p_pc( p_lay_tag * p_pc )
 extern  void    gml_p( const gmltag * entry )
 {
     proc_p_pc( &layout_work.p );
-    ProcFlags.p_starting = true;    // for next break, not this tag's break
 }
 
 /***************************************************************************/

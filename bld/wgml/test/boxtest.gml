@@ -7,8 +7,10 @@
       gutter = '0.5i' binding = 0
    :WIDOW
       threshold = 1
-   :P   
-      line_indent = '0.5i' pre_skip = 1 post_skip = 0
+   :P
+      line_indent = 0 pre_skip = 1 post_skip = 0
+   :PC
+      line_indent = 0 pre_skip = 1 post_skip = 0
    :BANNER
       depth = 2 docsect = body left_adjust = 1 place = top
       right_adjust = 0

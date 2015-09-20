@@ -54,9 +54,9 @@ extern  void    gml_pb( const gmltag * entry )
 
     if( *p == '.' ) p++;                // over '.'
 
-    set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
-
+    g_subs_skip = 0;                    // presumed used but not reset 
     post_space = 0;
+    ProcFlags.skips_valid = true;       // keep existing skips
 
     if( *p ) {
         process_text( p, g_curr_font );

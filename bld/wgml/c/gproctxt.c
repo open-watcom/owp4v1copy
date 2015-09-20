@@ -1585,7 +1585,7 @@ void process_line_full( text_line * a_line, bool justify )
             t_element = alloc_doc_el( el_text );
 
             if( !ProcFlags.skips_valid) {
-                set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
+                set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
             }
             t_element->blank_lines = g_blank_lines;
             g_blank_lines = 0;

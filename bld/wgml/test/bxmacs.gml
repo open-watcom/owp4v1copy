@@ -72,7 +72,7 @@
 .do end
 .el .if '&*' eq 'end' .do begin
 .   :eXMP.
-.   .mkbx end
+.   .mkbx off
 .do end
 .el .do begin
 .   .mkbx
