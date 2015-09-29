@@ -1,9 +1,10 @@
 :CMT.This is from fl\frecord.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Unions"
-.pa
+.if &'lower(&syspdev) = ps .pa
 .np
 The organization of the record in memory is as follows:
 .millust begin
+.in 12
 offset  +0          +4          +8
 .* .bx on 7 17 27 37
 .sr c0=&INDlvl+11
@@ -300,7 +301,6 @@ requires the execution of the constructor.
 Note that if the sequence in which initialization of static data in your
 program takes place has no dependencies, the "initialize" pragma need not
 be used.
-.if &'lower(&syspdev) NE ps .pa
 .np
 The general form of the "initialize" pragma is as follows.
 .mbox begin
@@ -517,7 +517,6 @@ in the pragma for
 :CMT.This is from cmn\pragma.gml and is in the C/C++ User's Guide
 :CMT.Topics: "16-bit:  Alternate Names for Symbols"
 :CMT.      & "32-bit:  Alternate Names for Symbols"
-.pa
 .np
 The following form of the auxiliary pragma can be used to describe the
 mapping of a symbol from its source form to its object form.
@@ -878,7 +877,6 @@ indirectly by the caller.
 .mbox begin
 :prgbeg. aux :id.sym:eid. modify nomemory :prgend.
 .mbox end
-.if &'lower(&syspdev) NE ps .pa
 .np
 The following form of the auxiliary pragma can be used to describe a
 &function that does not reference any
@@ -958,7 +956,6 @@ exactly those registers that will be modified by the called
 :CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topics: "16-bit:  Describing Calling Information"
 :CMT.      & "32-bit:  Describing Calling Information"
-.pa
 .np
 :cmt..ix 'calling &functions' 'near'
 :cmt..ix 'calling &functions' 'far'
@@ -985,6 +982,7 @@ way a &function is to be called.
 
 :id.in_line ::= { const | :eid.":id.asm:eid.":id. | (:eid.float:id. fpinst) }:eid.
 .mbox end
+.if &'lower(&syspdev) = ps .pa
 .mbox begin
 :prgbeg. aux :id.sym:eid. far
     or
@@ -1043,7 +1041,6 @@ For example, C functions require scalar arguments to be passed by
 value instead of by reference.
 For information on the methods &cmpname uses to pass arguments, see
 the chapter entitled "Assembly Language Considerations".
-.pa
 .np
 The following form of the auxiliary pragma can be used to alter the
 default calling mechanism used for passing arguments.
@@ -1064,7 +1061,6 @@ default calling mechanism used for passing arguments.
 .*
 :CMT.This is from cmn\wdis.gml and is in the Tool User's Guide
 :CMT.Topic: "An Example"
-.if &'lower(&syspdev) NE ps .pa
 .np
 .ix '&discmdup example'
 .ix 'disassembly example'
@@ -1337,7 +1333,6 @@ The &disname command line syntax is the following.
 :CMT.This is from fg\fcall.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topics: "16-bit: Writing Assembly Language Subprograms"
 :CMT.      & "32-bit: Writing Assembly Language Subprograms"
-.if &'lower(&syspdev) NE ps .pa
 .np
 Consider the following example.
 .mbox begin
@@ -1644,7 +1639,6 @@ true    false       true
 false   true        true
 false   false       false
 .mbox off
-.pa
 .mbox on &c0 &c1 &c2 &c3
   x       y       x .EQV. y
 .mbox
@@ -1686,7 +1680,6 @@ x       y       x .AND. y
 0       1           0
 0       0           0
 .mext off
-.pa
 .mext on &c0 &c3 &c1 &c2
 x       y       x .OR. y
 .mext
@@ -2468,7 +2461,6 @@ These declarations are called "implicit rules" as opposed to "explicit
 rules" which were discussed previously.
 Implicit rules may be applied only in instances where you are able to
 describe a dependency in terms of file extensions.
-.if &'lower(&syspdev) = ps .pa
 .hint
 Recall that a file extension is the portion of the file name which
 follows the period.
@@ -2518,7 +2510,6 @@ The use of the
 .id !include
 preprocessing directive is a simple way to reduce maintenance of
 related makefiles.
-.keep 20
 .hint
 Macros are expanded on
 .id !include
@@ -2598,7 +2589,6 @@ The formal &product command line syntax is shown below.
 .*
 :CMT.This is from fg\fpwfc.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "WFC/WFC386 Environment Variables"
-.pa
 .hint
 .ix 'user initialization file'
 If you use the same compiler options all the time, you may find it
@@ -2830,7 +2820,6 @@ follows.
 .*
 :CMT.This is from lg\ldexport.gml and is in the Linker Guide
 :CMT.Topic: "EXPORT - OS/2, Win16, Win32 only"
-.if &'lower(&syspdev) NE ps .pa
 .np
 The format of the "EXPORT" directive (short form "EXP") is as follows.
 .mbigbox
@@ -2909,7 +2898,6 @@ follows.
 The "FORMAT" directive is used to specify the format of the executable
 file that the &lnkname is to generate.
 The format of the "FORMAT" directive (short form "FORM") is as follows.
-.pa
 .mbigbox
     FORMAT form
 
@@ -3218,8 +3206,20 @@ The format of the "RESOURCE" directive (short form "RES") is as follows.
     RESOURCE resource_file{,resource_file}
 .embigbox
 .*
+:CMT.This is from lg\ldsectio.gml and is in the Linker Guide
+:CMT.Topic: "The SECTION Directive"
+.np
+The "SECTION" directive is used to define the start of an overlay.
+All object files in subsequent "FILE" directives, up to the next
+"SECTION" or "END" directive, belong to that overlay.
+The format of the "SECTION" directive (short form "S") is as follows.
+.mbigbox
+    SECTION [INTO ovl_file]
+.embigbox
+.*
 :CMT.This is from lg\ldruntim.gml and is in the Linker Guide
 :CMT.Topic: "RUNTIME - Win32 only"
+.if &'lower(&syspdev) = ps .pa
 .np
 The "RUNTIME" directive specifies the environment under which the
 application will run.
@@ -3261,19 +3261,9 @@ The format of the "RUNTIME" directive (short form "RU") is as follows.
      abiname ::= SVR4 | LINUX | FREEBSD | NETBSD | SOLARIS
 .embigbox
 .*
-:CMT.This is from lg\ldsectio.gml and is in the Linker Guide
-:CMT.Topic: "The SECTION Directive"
-.np
-The "SECTION" directive is used to define the start of an overlay.
-All object files in subsequent "FILE" directives, up to the next
-"SECTION" or "END" directive, belong to that overlay.
-The format of the "SECTION" directive (short form "S") is as follows.
-.mbigbox
-    SECTION [INTO ovl_file]
-.embigbox
-.*
 :CMT.This is from lg\ldsegmen.gml and is in the Linker Guide
 :CMT.Topic: "The SEGMENT Directive"
+.if &'lower(&syspdev) = ps .pa
 .np
 The "SEGMENT" directive is used to describe the attributes of code and
 data segments.
@@ -3282,7 +3272,6 @@ follows.
 .np
 :CMT. Force a page break; the table is too big and won't get properly
 :CMT. moved to the next page automatically.
-.pa
 .mbigbox
     SEGMENT seg_desc{,seg_desc}
 
@@ -4599,7 +4588,7 @@ formats.
 .*
 :CMT.This is from fl\fstruct.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "ELSE IF"
-.pa
+.if &'lower(&syspdev) = ps .pa
 .np
 A further enhancement of the IF-THEN-ELSE construct is the
 .kw ELSE IF
@@ -4640,7 +4629,6 @@ statement which may be used in the following two formats:
 .*
 :CMT.This is from fl\fstruct.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "LOOP - END LOOP"
-.pa
 .mext begin
   LOOP    [: block-label]
       statement(s)
@@ -5015,7 +5003,6 @@ the Sources menu appears.
 .*
 :CMT.This is from pg\pgqa.gml and is in the Programmer's Guide
 :CMT.Topic: "Conversion from IBM-compatible PC compilers"
-.pa
 .hint
 (16-bit applications only)
 Most 16-bit C compilers (including &cmpname) have a "large" memory
@@ -5286,7 +5273,7 @@ API function.
 :CMT.This is from rsi\utilts.gml and is in the the C/C++ Programmer's Guide
 :CMT.Topic: "DOS/4GW:  PMINFO"
 :cmt.IN 1 is used to give .cbox a reasonble starting position
-.pa
+.if &'lower(&syspdev) = ps .pa
 .in 1
 .cbox begin
 .in -2
@@ -5311,8 +5298,8 @@ DOS/16M switch mode 11 (VCPI).
 .cbox end
 .*
 :CMT.This is from rsi\utilts.gml and is in the the C/C++ Programmer's Guide
+.if &'lower(&syspdev) = ps .pa
 :CMT.Topic: "DOS/4GW:  RMINFO"
-.pa
 .cbox begin
 .in -2
 C>rminfo

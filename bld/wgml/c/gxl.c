@@ -986,7 +986,8 @@ void    gml_lp( const gmltag * entry )
 
     g_cur_left = nest_cb->lm + nest_cb->left_indent;// left start
                                         // possibly indent first line
-    g_cur_h_start = g_cur_left + conv_hor_unit( &(layout_work.lp.line_indent) );
+    g_line_indent = conv_hor_unit( &(layout_work.lp.line_indent) );
+    g_cur_h_start = g_cur_left + g_line_indent;
 
     g_page_right = nest_cb->rm + nest_cb->right_indent;
 
@@ -997,7 +998,9 @@ void    gml_lp( const gmltag * entry )
 
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
+
     ProcFlags.need_li_lp = false;       // :LI or :LP seen
+    ProcFlags.para_starting = true;     // for next break, not this tag's break
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
     }

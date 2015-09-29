@@ -123,13 +123,15 @@ void  scr_process_break( void )
                 marker = NULL;
             }
 
+#if 0
             /* First line of paragraph: minimum line height */
 
-            if( ProcFlags.p_pc_starting ) {
+            if( ProcFlags.para_starting ) {
                 if( t_line->line_height < wgml_fonts[g_curr_font].line_height ) {
                     t_line->line_height = wgml_fonts[g_curr_font].line_height;
                 }
             }
+#endif
 
             /* The last line is not justified, but is right-aligned or centered */
 
@@ -142,9 +144,13 @@ void  scr_process_break( void )
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-    } else if( ProcFlags.p_pc_starting ) {   // P or PC w/indent: no text before break
+    } else if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break
         t_element = alloc_doc_el( el_text );
-        t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
+        if( g_line_indent > 0 ) {
+            t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
+        } else {
+            t_element->depth = 0;
+        }
         t_element->blank_lines = g_blank_lines;
         g_blank_lines = 0;
         t_element->subs_skip = g_subs_skip;
@@ -152,8 +158,12 @@ void  scr_process_break( void )
         t_element->element.text.overprint = ProcFlags.overprint;
         ProcFlags.overprint = false;
         t_element->element.text.first = alloc_text_line();
-        t_element->element.text.first->line_height =
+        if( g_line_indent > 0 ) {
+            t_element->element.text.first->line_height =
                                                 wgml_fonts[g_curr_font].line_height;
+        } else {
+            t_element->element.text.first->line_height = 0;
+        }
         t_element->element.text.first->first = NULL;
         t_element->element.text.spacing = g_spacing;
         ProcFlags.skips_valid = false;
@@ -200,7 +210,7 @@ void  scr_process_break( void )
 
     }
     set_h_start();      // to stop paragraph indent from being used after a break
-    ProcFlags.p_pc_starting = false;
+    ProcFlags.para_starting = false;
     c_stop = NULL;
 
     return;

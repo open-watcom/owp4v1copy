@@ -181,7 +181,7 @@ global struct ProcFlags {
     unsigned        stitle_seen     : 1;// remember first stitle value
     unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
     unsigned        title_text_seen : 1;// remember first :TITLE tag text
-    unsigned        p_pc_starting   : 1;// :P or :PC first line/blank line
+    unsigned        para_starting   : 1;// :LP, :P or :PC first line/blank line
     unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        gml_tag         : 1;// input buf starts with GML_char
@@ -338,6 +338,7 @@ global  uint32_t    ju_x_start;         // .. formatting
 
 global  int32_t     g_indent;           // .in 1st value (left) default 0
 global  int32_t     g_indentr;          // .in 2nd value (right) default 0
+global  int32_t     g_line_indent;      // :LP, :P, :PC line indent
 
 global  int32_t     g_cur_threshold;    // current widow threshold value
                                         // from layout (widow or heading)
