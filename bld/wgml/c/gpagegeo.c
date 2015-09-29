@@ -141,7 +141,7 @@ void    init_page_geometry( void )
             xx_err( err_page_depth_too_big );   // candidate Severe Error
             g_suicide();                        // no recovery possible
         } else {
-            g_page_bottom = bin_device->y_start - g_page_depth;// end of text area
+            g_page_bottom = g_page_top - g_page_depth;// end of text area
         }
         g_net_page_depth = g_page_top - g_page_bottom;
 
