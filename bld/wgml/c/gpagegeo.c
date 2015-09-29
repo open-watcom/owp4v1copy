@@ -124,6 +124,8 @@ void    init_page_geometry( void )
     if( bin_device->y_offset > page_depth_org ) {
         xx_err( err_page_depth_too_small ); // candidate Severe Error
         g_suicide();                        // no recovery possible
+    } else if( top_margin > 0 ) {           // strange but true
+        g_page_depth = page_depth_org;      // &syspaged
     } else {
         g_page_depth = page_depth_org - bin_device->y_offset;  // &syspaged
     }
