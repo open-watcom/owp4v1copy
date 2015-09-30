@@ -267,8 +267,11 @@ void    gml_sf( const gmltag * entry )
     while( *p == ' ' ) {
         p++;
     }
-    if( !strnicmp( "font=", p, 5 ) ) {
-        p += 5;
+    if( !strnicmp( "font", p, 4 ) ) {
+        p += 4;
+        while( (*p == ' ') || (*p == '=') ) {
+            p++;
+        }
         pe = p;
         while( (*pe >= '0') && (*pe <= '9') ) {
             pe++;
