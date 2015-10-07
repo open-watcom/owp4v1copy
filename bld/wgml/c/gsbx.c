@@ -1068,9 +1068,9 @@ static void do_line_device( void )
     /* context:                                             */
     /* when the text last output used a font other than     */
     /* font "0", even if the current font is now font "0",  */
-    /* the v_offset and def_height are adjusted as shown,   */
-    /* at least when the text font's line height is less    */
-    /* than the font "0" line height                        */
+    /* the v_offset and def_height are adjusted as shown    */
+    /* when the text font's line height is different from   */
+    /* the font "0" line height                             */
     /* This is known to apply to text within the box, and   */
     /* to text preceding the box except at the top of a     */
     /* page                                                 */
@@ -1102,6 +1102,9 @@ static void do_line_device( void )
         if( prev_height < def_height ) {
             v_offset += (def_height - prev_height) / 2;
             hl_depth -= (def_height - prev_height) / 2;
+        } else if( prev_height > def_height ) {
+            v_offset -= (prev_height - def_height) / 2;
+            hl_depth += (prev_height - def_height) / 2;
         }
     }
 
@@ -1194,6 +1197,7 @@ static void do_line_device( void )
                 }
                 cur_el->top_skip = g_top_skip;
                 cur_el->blank_lines = g_blank_lines;
+                cur_el->element.hline.ban_adjust = !do_v_adjust;
                 g_blank_lines = 0;
                 h_line_el = cur_el;
             } else {

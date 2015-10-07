@@ -664,7 +664,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     ban_column      *   last;
     text_chars      *   curr_t;
     text_chars      *   curr_p;
-    uint8_t             sav_font;
     uint32_t            ban_left;
     uint32_t            h_left;
     uint32_t            ban_right;
@@ -685,13 +684,14 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
     content_reg( ban );
     curr_x = 0;
-    sav_font = g_curr_font;
 
     for( k = 0; k < 3; ++k ) {          // for all region parts
         if( reg_text[k] == NULL ) {
             continue;                   // skip empty part
         }
-        g_curr_font = reg_text[k]->font;
+        if( top ) {
+            g_prev_font = reg_text[k]->font;
+        }
         if( ban_line.first == NULL ) {
             ban_line.first = reg_text[k];
             ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
@@ -763,6 +763,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         /*  a banregion has depth > 1 and enough text to fill the       */
         /*  first line                                                  */
         /*  this will need adjustment as banner output is enhanced      */
+
         if( top ) {
             if( t_page.top_ban == NULL ) {
                 t_page.top_ban = alloc_ban_col();
@@ -794,8 +795,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         last->first->element.text.first->last = ban_line.last;
         ban_line.first = NULL;
     }
-
-    g_curr_font = sav_font;
 }
 
 /***************************************************************************/

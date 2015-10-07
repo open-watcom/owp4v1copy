@@ -659,6 +659,14 @@ void clear_doc_element( doc_element * element )
 
 void do_page_out( void )
 {
+    doc_element   *     work_el;
+    font_number         save_prev;
+    uint32_t            curr_height;
+    uint32_t            prev_height;
+
+/// items in document_top_banner() were moved here when that function was
+/// merged with this one; it is not known if they are actually needed in this
+/// context
 // these were in document_top_banner()
     uint32_t    hs;
     uint32_t    hl;
@@ -682,7 +690,51 @@ void do_page_out( void )
     g_cur_left    = g_page_left_org;
 
     if( (t_page.top_banner != NULL) && (t_page.top_banner->region != NULL) ) {
+        save_prev = g_prev_font;            // will be reset for top banner
         out_ban_top();
+
+        /********************************************************************/
+        /* Adjust height of first element, if hline with ban_adjust == true */
+        /* Note: since this applies only to hline, page_width must be empty */
+        /*       and the hline must be the first or second element in main, */
+        /*       specifically in main.main                                  */
+        /********************************************************************/
+
+        if( (t_page.page_width == NULL) && (t_page.main != NULL)
+                && (t_page.main->main != NULL) ) {
+            work_el = NULL;
+            if( (t_page.main->main->type == el_hline) &&
+                    (t_page.main->main->element.hline.ban_adjust) ) {
+                work_el = t_page.main->main;
+            } else if( (t_page.main->main->type == el_text) &&
+                    (t_page.main->main->next != NULL) &&
+                    (t_page.main->main->next->type == el_hline) &&
+                    (t_page.main->main->next->element.hline.ban_adjust) ) {
+                work_el = t_page.main->main->next;
+            }
+            if( work_el != NULL) {
+                curr_height = wgml_fonts[g_curr_font].line_height;
+                prev_height = wgml_fonts[g_prev_font].line_height;
+                if( prev_height < curr_height ) {
+                    work_el->subs_skip += (curr_height - prev_height) / 2;
+                    work_el->top_skip += (curr_height - prev_height) / 2;
+                } else if( prev_height > curr_height ) {
+                    work_el->subs_skip -= (prev_height - curr_height) / 2;
+                    work_el->top_skip -= (prev_height - curr_height) / 2;
+                }
+                while( work_el->type != el_text ) {
+                    work_el = work_el->next;
+                }
+                if( work_el->type == el_text ) {
+                    if( prev_height < curr_height ) {
+                        work_el->subs_skip -= (curr_height - prev_height) / 2;
+                    } else if( prev_height > curr_height ) {
+                        work_el->subs_skip += (prev_height - curr_height) / 2;
+                    }
+                }
+            }
+        }
+        g_prev_font = save_prev;            // restore old g_prev_font value
     }
 
     if( ProcFlags.keep_left_margin ) {

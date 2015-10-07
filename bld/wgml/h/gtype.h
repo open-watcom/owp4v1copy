@@ -1025,6 +1025,7 @@ typedef struct {
     uint32_t    h_start;
     uint32_t    v_start;
     uint32_t    h_len;
+    bool        ban_adjust;             // hline is first line in an outer box at effective top of page
 } hline_element;
 
 typedef struct {

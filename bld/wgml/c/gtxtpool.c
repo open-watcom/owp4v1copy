@@ -447,6 +447,7 @@ doc_element * alloc_doc_el(  element_type type )
         curr->element.hline.h_start = 0;
         curr->element.hline.v_start = 0;
         curr->element.hline.h_len = 0;
+        curr->element.hline.ban_adjust = false;
         break;
     case el_text :
         curr->element.text.spacing = 0;
