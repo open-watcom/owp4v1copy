@@ -77,6 +77,9 @@ static void gml_xl_lp_common( const gmltag * entry, e_tags t )
             ProcFlags.need_li_lp = true;    // :LI or :LP  next
         }
         start_doc_sect();                   // if not already done
+        if( g_line_indent == 0 ) {
+            ProcFlags.para_starting = false;    // clear for this tag's first break
+        }
         scr_process_break();
         if( *p ) {
             process_text( p, g_curr_font );
@@ -530,6 +533,9 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
 
 void    gml_edl( const gmltag * entry ) // not tested TBD
 {
+    if( g_line_indent == 0 ) {
+        ProcFlags.para_starting = false;    // clear for this tag's break
+    }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((dl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
     gml_exl_common( entry, t_DL );
@@ -542,6 +548,9 @@ void    gml_edl( const gmltag * entry ) // not tested TBD
 
 void    gml_egl( const gmltag * entry ) // not tested TBD
 {
+    if( g_line_indent == 0 ) {
+        ProcFlags.para_starting = false;    // clear for this tag's break
+    }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((gl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
     gml_exl_common( entry, t_GL );
@@ -554,6 +563,9 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
 
 void    gml_eol( const gmltag * entry )
 {
+    if( g_line_indent == 0 ) {
+        ProcFlags.para_starting = false;    // clear for this tag's break
+    }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((ol_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
     gml_exl_common( entry, t_OL );
@@ -566,6 +578,9 @@ void    gml_eol( const gmltag * entry )
 
 void    gml_esl( const gmltag * entry )
 {
+    if( g_line_indent == 0 ) {
+        ProcFlags.para_starting = false;    // clear for this tag's break
+    }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((sl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
     gml_exl_common( entry, t_SL );
@@ -578,6 +593,9 @@ void    gml_esl( const gmltag * entry )
 
 void    gml_eul( const gmltag * entry )
 {
+    if( g_line_indent == 0 ) {
+        ProcFlags.para_starting = false;    // clear for this tag's break
+    }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((ul_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
     gml_exl_common( entry, t_UL );
@@ -968,7 +986,7 @@ void    gml_lp( const gmltag * entry )
     nest_cb->lm = nest_cb->prev->lm + nest_cb->prev->left_indent;
     nest_cb->rm = nest_cb->prev->rm + nest_cb->prev->right_indent;
 
-    scr_process_break();
+//    scr_process_break();
 
     spacing = ((lp_lay_tag *)(nest_cb->lay_tag))->spacing;
 

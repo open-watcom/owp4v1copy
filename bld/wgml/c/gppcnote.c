@@ -43,9 +43,12 @@ void    proc_p_pc( p_lay_tag * p_pc )
     scan_err = false;
     p = scan_start;
 
-    ProcFlags.keep_left_margin = true;  //    special Note indent
+    ProcFlags.keep_left_margin = true;  // special Note indent
     start_doc_sect();                   // if not already done
 
+    if( g_line_indent == 0 ) {
+        ProcFlags.para_starting = false;    // clear for this tag's break
+    }
     scr_process_break();
     g_line_indent = conv_hor_unit( &(p_pc->line_indent) );
     g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
