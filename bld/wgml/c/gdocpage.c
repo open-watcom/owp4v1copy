@@ -732,6 +732,20 @@ void do_page_out( void )
                         work_el->subs_skip += (prev_height - curr_height) / 2;
                     }
                 }
+                work_el = t_page.main->main;
+                while( work_el->type != el_vline ) {
+                    work_el = work_el->next;
+                }
+                while( work_el->type == el_vline ) {
+                    if( prev_height < curr_height ) {
+                        work_el->element.vline.v_len -= (curr_height - prev_height) / 2;
+                    } else if( prev_height > curr_height ) {
+                        work_el->element.vline.v_len += (prev_height - curr_height) / 2;
+                    }
+                    work_el = work_el->next;
+                }
+
+
             }
         }
         g_prev_font = save_prev;            // restore old g_prev_font value
