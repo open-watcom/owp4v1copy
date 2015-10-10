@@ -144,7 +144,8 @@ void  scr_process_break( void )
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-    } else if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break
+    }
+    if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break
         t_element = alloc_doc_el( el_text );
         if( g_line_indent > 0 ) {
             t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
@@ -188,7 +189,6 @@ void  scr_process_break( void )
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-
     } else if( g_blank_lines > 0 ) {            // blank lines at end of section?
         t_element = alloc_doc_el( el_text );
         t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
@@ -207,7 +207,6 @@ void  scr_process_break( void )
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-
     }
     set_h_start();      // to stop paragraph indent from being used after a break
     ProcFlags.para_starting = false;

@@ -2275,7 +2275,6 @@ void scr_bx( void )
         t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
         cur_doc_el_group->prev = NULL;
     }
-    scr_process_break();                // break processing
 
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw

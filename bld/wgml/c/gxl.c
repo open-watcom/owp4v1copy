@@ -90,7 +90,6 @@ static void gml_xl_lp_common( const gmltag * entry, e_tags t )
 }
 
 
-
 /***************************************************************************/
 /* Format:  :DL [compact]                                                  */
 /*              [break]                                                    */
@@ -986,8 +985,6 @@ void    gml_lp( const gmltag * entry )
     nest_cb->lm = nest_cb->prev->lm + nest_cb->prev->left_indent;
     nest_cb->rm = nest_cb->prev->rm + nest_cb->prev->right_indent;
 
-//    scr_process_break();
-
     spacing = ((lp_lay_tag *)(nest_cb->lay_tag))->spacing;
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
@@ -998,7 +995,7 @@ void    gml_lp( const gmltag * entry )
     } else {
         pre_skip_su = &((lp_lay_tag *)(nest_cb->lay_tag))->pre_skip;
     }
-    set_skip_vars( NULL, pre_skip_su,
+    set_skip_vars( pre_skip_su, NULL, 
                    &((lp_lay_tag *)(nest_cb->lay_tag))->post_skip,
                    1, g_curr_font );
 

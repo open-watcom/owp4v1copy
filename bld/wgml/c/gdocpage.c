@@ -722,7 +722,7 @@ void do_page_out( void )
                     work_el->subs_skip -= (prev_height - curr_height) / 2;
                     work_el->top_skip -= (prev_height - curr_height) / 2;
                 }
-                while( work_el->type != el_text ) {
+                while( (work_el != NULL) && (work_el->type != el_text) ) {
                     work_el = work_el->next;
                 }
                 if( work_el->type == el_text ) {
@@ -733,10 +733,10 @@ void do_page_out( void )
                     }
                 }
                 work_el = t_page.main->main;
-                while( work_el->type != el_vline ) {
+                while( (work_el != NULL) && (work_el->type != el_vline) ) {
                     work_el = work_el->next;
                 }
-                while( work_el->type == el_vline ) {
+                while( (work_el != NULL) && (work_el->type == el_vline) ) {
                     if( prev_height < curr_height ) {
                         work_el->element.vline.v_len -= (curr_height - prev_height) / 2;
                     } else if( prev_height > curr_height ) {
