@@ -144,8 +144,7 @@ void  scr_process_break( void )
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-    }
-    if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break
+    } else if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break
         t_element = alloc_doc_el( el_text );
         if( g_line_indent > 0 ) {
             t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;

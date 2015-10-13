@@ -32,11 +32,12 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
-static  uint8_t dl_cur_level    = 1;    // currrent DL list level
-static  uint8_t gl_cur_level    = 1;    // currrent GL list level
-static  uint8_t ol_cur_level    = 1;    // currrent OL list level
-static  uint8_t sl_cur_level    = 1;    // currrent SL list level
-static  uint8_t ul_cur_level    = 1;    // currrent UL list level
+static  uint8_t     dl_cur_level    = 1;    // current DL list level
+static  uint8_t     gl_cur_level    = 1;    // current GL list level
+static  uint8_t     ol_cur_level    = 1;    // current OL list level
+static  uint8_t     sl_cur_level    = 1;    // current SL list level
+static  uint8_t     ul_cur_level    = 1;    // current UL list level
+static  uint32_t    sav_spacing     = 0;    // value of spacing on entry
 
 
 /***************************************************************************/
@@ -58,7 +59,7 @@ static void end_lp( void )
 /*  :SL, ... common processing                                             */
 /***************************************************************************/
 
-static void gml_xl_lp_common( const gmltag * entry, e_tags t )
+static void gml_xl_lp_common( e_tags t )
 {
     char        *   p;
 
@@ -142,7 +143,7 @@ void gml_dl( const gmltag * entry )  // not tested TBD
     } else {
         compact = false;
     }
-    gml_xl_lp_common( entry, t_DL );
+    gml_xl_lp_common( t_DL );
 
     dl_layout = layout_work.dl.first;
     while( (dl_layout != NULL) && (dl_cur_level < dl_layout->level) ) {
@@ -171,6 +172,8 @@ void gml_dl( const gmltag * entry )  // not tested TBD
 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
+
+    sav_spacing = spacing;              // save value for end-of-list
 
     scan_start = scan_stop + 1;
     return;
@@ -212,7 +215,7 @@ void gml_gl( const gmltag * entry )  // not tested TBD
     } else {
         compact = false;
     }
-    gml_xl_lp_common( entry, t_GL );
+    gml_xl_lp_common( t_GL );
 
     gl_layout = layout_work.gl.first;
     while( (gl_layout != NULL) && (gl_cur_level < gl_layout->level) ) {
@@ -241,6 +244,8 @@ void gml_gl( const gmltag * entry )  // not tested TBD
 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
+
+    sav_spacing = spacing;              // save value for end-of-list
 
     scan_start = scan_stop + 1;
     return;
@@ -281,7 +286,7 @@ void gml_ol( const gmltag * entry )
     if( ProcFlags.need_li_lp ) {
         xx_nest_err( err_no_li_lp );
     }
-    gml_xl_lp_common( entry, t_OL );
+    gml_xl_lp_common( t_OL );
 
     ol_layout = layout_work.ol.first;
     while( (ol_layout != NULL) && (ol_cur_level < ol_layout->level) ) {
@@ -309,6 +314,8 @@ void gml_ol( const gmltag * entry )
 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
+
+    sav_spacing = spacing;              // save value for end-of-list
 
     scan_start = scan_stop + 1;
     return;
@@ -350,7 +357,7 @@ void gml_sl( const gmltag * entry )
     if( ProcFlags.need_li_lp ) {
         xx_nest_err( err_no_li_lp );
     }
-    gml_xl_lp_common( entry, t_SL );
+    gml_xl_lp_common( t_SL );
 
     sl_layout = layout_work.sl.first;
     while( (sl_layout != NULL) && (sl_cur_level < sl_layout->level) ) {
@@ -378,6 +385,8 @@ void gml_sl( const gmltag * entry )
 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
+
+    sav_spacing = spacing;              // save value for end-of-list
 
     scan_start = scan_stop + 1;
     return;
@@ -421,7 +430,7 @@ void gml_ul( const gmltag * entry )
     if( ProcFlags.need_li_lp ) {
         xx_nest_err( err_no_li_lp );
     }
-    gml_xl_lp_common( entry, t_UL );
+    gml_xl_lp_common( t_UL );
 
     ul_layout = layout_work.ul.first;
     while( (ul_layout != NULL) && (ul_cur_level < ul_layout->level) ) {
@@ -449,6 +458,8 @@ void gml_ul( const gmltag * entry )
 
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
+
+    sav_spacing = spacing;              // save value for end-of-list
 
     scan_start = scan_stop + 1;
     return;
@@ -493,6 +504,7 @@ void    gml_exl_common( const gmltag * entry, e_tags t )
         }
     }
 
+    spacing = sav_spacing;              // restore value on entry
     ProcFlags.need_li_lp = false;       // :LI or :LP no longer needed
     scan_start = scan_stop + 1;
 }
@@ -973,7 +985,12 @@ void    gml_lp( const gmltag * entry )
     }
     lp_skip_su = &layout_work.lp.pre_skip;
 
-    gml_xl_lp_common( entry, t_LP );
+    gml_xl_lp_common( t_LP );
+
+    if( g_line_indent == 0 ) {
+        ProcFlags.para_starting = false;    // clear for this tag's first break
+    }
+    scr_process_break();
 
     nest_cb->compact = false;
 
@@ -1011,11 +1028,11 @@ void    gml_lp( const gmltag * entry )
 
     ju_x_start = g_cur_h_start;
 
-    if( *p == '.' ) p++;                // over '.'
-    while( *p == ' ' ) p++;             // skip initial spaces
-
     ProcFlags.need_li_lp = false;       // :LI or :LP seen
     ProcFlags.para_starting = true;     // for next break, not this tag's break
+
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
     }
