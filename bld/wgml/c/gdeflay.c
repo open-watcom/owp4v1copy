@@ -603,7 +603,7 @@ void    init_def_lay( void )
     layout_work.ol.first->level = 1;
     lay_init_su( &z0, &layout_work.ol.first->left_indent );
     lay_init_su( &z0, &layout_work.ol.first->right_indent );
-    lay_init_su( &z0, &layout_work.ol.first->pre_skip );
+    lay_init_su( &n1, &layout_work.ol.first->pre_skip );
     lay_init_su( &n1, &layout_work.ol.first->skip );
     lay_init_su( &n1, &layout_work.ol.first->post_skip );
     lay_init_su( &i04, &layout_work.ol.first->align );
