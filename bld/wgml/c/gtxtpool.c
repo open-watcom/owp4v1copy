@@ -533,6 +533,7 @@ void add_doc_el_group_to_pool( doc_el_group * a_group )
 
 /***************************************************************************/
 /*  allocate / reuse a tag_cb instance                                     */
+/*  Note: init_tag_cb() initializes the new instance                       */
 /***************************************************************************/
 
 tag_cb  * alloc_tag_cb( void )
@@ -555,8 +556,6 @@ tag_cb  * alloc_tag_cb( void )
         }
         prev->prev = NULL;
     }
-    curr->prev = NULL;
-    curr->c_tag = t_NONE;
 
     return( curr );
 }
@@ -574,6 +573,7 @@ void    add_tag_cb_to_pool( tag_cb * a_cb )
     if( a_cb == NULL ) {
         return;
     }
+    spacing = a_cb->spacing;            // reset spacing to prior value
     for( ns = a_cb->p_stack; ns != NULL; ns = nsv ) {
         nsv = ns->prev;
         mem_free( ns );

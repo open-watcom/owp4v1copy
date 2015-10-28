@@ -851,6 +851,8 @@ typedef struct tag_cb {
     int32_t             right_indent;   // attribute value
     uint32_t            post_skip;      // skip at tag end
     uint32_t            tsize;          // :dl
+    su                  xl_pre_skip;    // :dl :gl :ol :sl :ul
+    uint8_t             spacing;        // spacing on entry (not spacing per layout)
     uint8_t             headhi;         // :dl
     uint8_t             termhi;         // :dl :gl
     font_number         font;           // :HPx, :SF

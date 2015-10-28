@@ -712,7 +712,7 @@ void do_page_out( void )
                     (t_page.main->main->next->element.hline.ban_adjust) ) {
                 work_el = t_page.main->main->next;
             }
-            if( work_el != NULL) {
+            if( work_el != NULL ) {                     // top line is hline
                 curr_height = wgml_fonts[g_curr_font].line_height;
                 prev_height = wgml_fonts[g_prev_font].line_height;
                 if( prev_height < curr_height ) {
@@ -725,7 +725,7 @@ void do_page_out( void )
                 while( (work_el != NULL) && (work_el->type != el_text) ) {
                     work_el = work_el->next;
                 }
-                if( work_el->type == el_text ) {
+                if( work_el != NULL ) {             // element is text
                     if( prev_height < curr_height ) {
                         work_el->subs_skip -= (curr_height - prev_height) / 2;
                     } else if( prev_height > curr_height ) {
@@ -736,7 +736,7 @@ void do_page_out( void )
                 while( (work_el != NULL) && (work_el->type != el_vline) ) {
                     work_el = work_el->next;
                 }
-                while( (work_el != NULL) && (work_el->type == el_vline) ) {
+                while( work_el != NULL ) {          // element is vline
                     if( prev_height < curr_height ) {
                         work_el->element.vline.v_len -= (curr_height - prev_height) / 2;
                     } else if( prev_height > curr_height ) {
