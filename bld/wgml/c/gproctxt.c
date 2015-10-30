@@ -862,7 +862,8 @@ static void wgml_tabs( void )
     i = in_count - 1;                       // reset to check last character
     if( (in_text[i] == '\t') || (in_text[i] == tab_char) ) {
         gap_start = g_cur_h_start;
-        g_cur_h_start = g_cur_left + c_stop->column - t_align;
+//        g_cur_h_start = g_cur_left + c_stop->column - t_align;
+        g_cur_h_start = g_page_left + c_stop->column;   // works with $ISO$ in macro
         if( c_stop->alignment == al_right ) {
             g_cur_h_start += tab_col;
         }

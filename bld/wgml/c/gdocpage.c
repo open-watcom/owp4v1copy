@@ -698,6 +698,9 @@ void do_page_out( void )
         /* Note: since this applies only to hline, page_width must be empty */
         /*       and the hline must be the first or second element in main, */
         /*       specifically in main.main                                  */
+        /* The first text element on the page is also adjusted              */
+        /* Note: in the OW docs, this will always be just after the top     */
+        /*       box line                                                   */
         /********************************************************************/
 
         if( (t_page.page_width == NULL) && (t_page.main != NULL)
@@ -736,7 +739,7 @@ void do_page_out( void )
                 while( (work_el != NULL) && (work_el->type != el_vline) ) {
                     work_el = work_el->next;
                 }
-                while( work_el != NULL ) {          // element is vline
+                while( (work_el != NULL) && (work_el->type == el_vline)  ) {
                     if( prev_height < curr_height ) {
                         work_el->element.vline.v_len -= (curr_height - prev_height) / 2;
                     } else if( prev_height > curr_height ) {
@@ -744,8 +747,6 @@ void do_page_out( void )
                     }
                     work_el = work_el->next;
                 }
-
-
             }
         }
         g_prev_font = save_prev;            // restore old g_prev_font value
