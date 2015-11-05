@@ -3303,6 +3303,7 @@ $unsigned long long$0     $18446744073709551615
 .*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Converting An Argument to a String"
+.if &'lower(&syspdev) = ps .pa
 .np
 The following table gives a number of examples of the result of the
 application of the macro,

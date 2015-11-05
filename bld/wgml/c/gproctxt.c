@@ -536,7 +536,8 @@ static void wgml_tabs( void )
                 if( c_stop->alignment == al_left ) {   // alignment left
                     s_width = 0;
                     if( input_cbs->fmflags & II_tag_mac ) {   // inside macro
-                        g_cur_h_start = g_cur_left + c_stop->column + post_space - t_align;
+//                        g_cur_h_start = g_cur_left + c_stop->column + post_space - t_align;
+                        g_cur_h_start = g_page_left + c_stop->column + post_space;  // text after $ISO$
                     } else {                                // not inside macro
                         g_cur_h_start = g_cur_left + c_stop->column + tab_space *
                                         wgml_fonts[in_chars->font].spc_width;
