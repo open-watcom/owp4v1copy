@@ -543,6 +543,7 @@ static void     scan_script( void )
                         if( scr_tags[k].cwflags & cw_break ) {
                             scr_process_break();// output incomplete line, if any
                         }
+                        g_list_skip = 0;            // clear so won't be used
                         scr_tags[k].tagproc();
                     }
                     cwfound = true;
@@ -783,6 +784,10 @@ void    scan_line( void )
             scan_script();              // script control line
 
         } else if( ProcFlags.gml_tag ) {
+            if( g_list_skip > 0 ) {
+                g_post_skip = g_list_skip;  // post-list skip before tag
+                g_list_skip = 0;            // clear so won't be reused
+            }
             scan_gml();                 // GML tags
 
         }

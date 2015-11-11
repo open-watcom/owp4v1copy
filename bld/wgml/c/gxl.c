@@ -552,8 +552,8 @@ void    gml_edl( const gmltag * entry ) // not tested TBD
     }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((dl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    if( g_post_skip == 0 ) {                // minimum post skip
-        g_post_skip = wgml_fonts[g_curr_font].line_height;
+    if( g_post_skip == 0 ) {                // set list skip for possible use
+        g_list_skip = wgml_fonts[g_curr_font].line_height;
     }
     gml_exl_common( entry, t_DL );
     if( dl_cur_level == 1 ) {
@@ -570,8 +570,8 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
     }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((gl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    if( g_post_skip == 0 ) {                // minimum post skip
-        g_post_skip = wgml_fonts[g_curr_font].line_height;
+    if( g_post_skip == 0 ) {                // set list skip for possible use
+        g_list_skip = wgml_fonts[g_curr_font].line_height;
     }
     gml_exl_common( entry, t_GL );
     if( gl_cur_level == 1 ) {
@@ -588,8 +588,8 @@ void    gml_eol( const gmltag * entry )
     }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((ol_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    if( g_post_skip == 0 ) {                // minimum post skip
-        g_post_skip = wgml_fonts[g_curr_font].line_height;
+    if( g_post_skip == 0 ) {                // set list skip for possible use
+        g_list_skip = wgml_fonts[g_curr_font].line_height;
     }
     gml_exl_common( entry, t_OL );
     if( ol_cur_level == 1 ) {
@@ -606,8 +606,8 @@ void    gml_esl( const gmltag * entry )
     }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((sl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    if( g_post_skip == 0 ) {                // minimum post skip
-        g_post_skip = wgml_fonts[g_curr_font].line_height;
+    if( g_post_skip == 0 ) {                // set list skip for possible use
+        g_list_skip = wgml_fonts[g_curr_font].line_height;
     }
     gml_exl_common( entry, t_SL );
     if( sl_cur_level == 1 ) {
@@ -624,8 +624,8 @@ void    gml_eul( const gmltag * entry )
     }
     scr_process_break();
     set_skip_vars( NULL, NULL, &((ul_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    if( g_post_skip == 0 ) {                // minimum post skip
-        g_post_skip = wgml_fonts[g_curr_font].line_height;
+    if( g_post_skip == 0 ) {                // set list skip for possible use
+        g_list_skip = wgml_fonts[g_curr_font].line_height;
     }
     gml_exl_common( entry, t_UL );
     if( ul_cur_level == 1 ) {
