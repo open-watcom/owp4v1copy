@@ -373,6 +373,7 @@ static void do_fc_comp( void )
 
 static void wgml_tabs( void )
 {
+    bool                        mwidth_done = false;    // avoids recomputing m_width if tab stop is rejected
     bool                        pre_tab_gap = false;    // spaces preceded current tab
     bool                        scope_end   = false;    // spaces at end of al_center or al_right scope
     bool                        skip_tab    = false;    // skip current tab
@@ -621,14 +622,16 @@ static void wgml_tabs( void )
         if( t_count > 0 ) {             // text found after tab char
             text_found = true;
         }
-        if( s_multi == NULL ) {
-            m_width = t_width;
-        } else {                        // get sizing for total word
-            m_width = (g_cur_h_start + t_width) - s_multi->x_address;
-            pre_space = in_chars->x_address - (in_chars->prev->x_address +
-                                               in_chars->prev->width);
+        if( !mwidth_done ) {            // do not recompute if tab stop was rejected
+            if( s_multi == NULL ) {
+                m_width = t_width;
+            } else {                        // get sizing for total word
+                m_width = (g_cur_h_start + t_width) - s_multi->x_address;
+                pre_space = in_chars->x_address - (in_chars->prev->x_address +
+                                                   in_chars->prev->width);
+            }
+            mwidth_done = true;
         }
-
         /* Set text start position and accept/reject current tab stop */
 
         switch( c_stop->alignment ) {
@@ -647,22 +650,31 @@ static void wgml_tabs( void )
             }
             break;
         case al_center:
-            if( gap_start < (g_page_left + c_stop->column - ((m_width + s_width) / 2)) ) {
-                // split the width as evenly as possible
-                g_cur_h_start = g_page_left + c_stop->column + (s_width / 2 ) - (m_width / 2);
-                if( (s_width % 2) > 0 ) {
-                    g_cur_h_start++;
+            if( g_page_left + c_stop->column < ((m_width + s_width) / 2) ) {
+                skip_tab = true;                // negative position
+            } else {
+                if( gap_start < (g_page_left + c_stop->column -
+                                                        ((m_width + s_width) / 2)) ) {
+                    // split the width as evenly as possible
+                    g_cur_h_start = g_page_left + c_stop->column + (s_width / 2 ) - (m_width / 2);
+                    if( (s_width % 2) > 0 ) {
+                        g_cur_h_start++;
+                    }
+                } else {    // find the next tab stop; this one won't do
+                    skip_tab = true;
                 }
-            } else {    // find the next tab stop; this one won't do
-                skip_tab = true;
             }
             break;
         case al_right:
-            if( gap_start < (g_page_left + c_stop->column + tab_col -
+            if( g_page_left + c_stop->column < (m_width + s_width) ) {
+                skip_tab = true;                // negative position
+            } else {
+                if( gap_start < (g_page_left + c_stop->column + tab_col -
                                                             (m_width + s_width)) ) {
-                g_cur_h_start = g_page_left + c_stop->column + tab_col - m_width;
-            } else {    // find the next tab stop; this one won't do
-                skip_tab = true;
+                    g_cur_h_start = g_page_left + c_stop->column + tab_col - m_width;
+                } else {    // find the next tab stop; this one won't do
+                    skip_tab = true;
+                }
             }
             break;
         default:
@@ -708,6 +720,7 @@ static void wgml_tabs( void )
             text_found = false;
             skip_tab = false;
         } else {
+            mwidth_done = false;        // allow m_width for next token
             if( s_multi == NULL ) {
                 s_chars = in_chars;
             } else {
@@ -1005,22 +1018,35 @@ static void redo_tabs( text_line * a_line )
             }
             break;
         case al_center:
-            if( gap_start < (g_page_left + c_stop->column - ((scope_width + tab_chars.first->ts_width) / 2)) ) {
-                // split the width as evenly as possible
-                g_cur_h_start = g_page_left + c_stop->column + (tab_chars.first->ts_width / 2 ) - (scope_width / 2);
-                if( (tab_chars.first->ts_width % 2) > 0 ) {
-                    g_cur_h_start++;
+            if( g_page_left + c_stop->column <
+                                ((scope_width + tab_chars.first->ts_width) / 2) ) {
+                skip_tab = true;                // negative position
+            } else {
+                if( gap_start < (g_page_left + c_stop->column -
+                                ((scope_width + tab_chars.first->ts_width) / 2)) ) {
+                    // split the width as evenly as possible
+                    g_cur_h_start = g_page_left + c_stop->column +
+                                (tab_chars.first->ts_width / 2 ) - (scope_width / 2);
+                    if( (tab_chars.first->ts_width % 2) > 0 ) {
+                        g_cur_h_start++;
+                    }
+                } else {    // find the next tab stop; this one won't do
+                    skip_tab = true;
                 }
-            } else {    // find the next tab stop; this one won't do
-                skip_tab = true;
             }
             break;
         case al_right:
-            if( gap_start < (g_page_left + c_stop->column + tab_col -
-                                                            (scope_width + tab_chars.first->ts_width)) ) {
-                g_cur_h_start = g_page_left + c_stop->column + tab_col - scope_width;
-            } else {    // find the next tab stop; this one won't do
-                skip_tab = true;
+            if( g_page_left + c_stop->column <
+                                        (scope_width + tab_chars.first->ts_width) ) {
+                skip_tab = true;                // negative position
+            } else {
+                if( gap_start < (g_page_left + c_stop->column + tab_col -
+                                    (scope_width + tab_chars.first->ts_width)) ) {
+                    g_cur_h_start = g_page_left + c_stop->column + tab_col -
+                                                                    scope_width;
+                } else {    // find the next tab stop; this one won't do
+                    skip_tab = true;
+                }
             }
             break;
         default:

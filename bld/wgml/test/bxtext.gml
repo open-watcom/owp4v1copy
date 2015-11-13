@@ -833,6 +833,7 @@ This is the default method for the "fpc" option.
 .mbox begin
 :prgbeg. aux :id.sym:eid. value no8087 :prgend.
 .mbox end
+.if &'lower(&syspdev) = ps .pa
 .np
 The following form of the auxiliary pragma can be used to specify that
 function return values whose type is
@@ -1033,6 +1034,7 @@ passing is the following.
 :CMT.This is from cmn\pragma.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topics: "16-bit:  Passing Arguments to non-FORTRAN Subprograms"
 :CMT.      & "32-bit:  Passing Arguments to non-FORTRAN Subprograms"
+.if &'lower(&syspdev) = ps .pa
 .np
 When calling a subprogram written in a different language, it may be
 necessary to provide the arguments in a form different than the
@@ -1334,6 +1336,7 @@ The &disname command line syntax is the following.
 :CMT.Topics: "16-bit: Writing Assembly Language Subprograms"
 :CMT.      & "32-bit: Writing Assembly Language Subprograms"
 .np
+.if &'lower(&syspdev) = ps .pa
 Consider the following example.
 .mbox begin
       INTEGER HRS, MINS, SECS, HSECS
@@ -1585,6 +1588,7 @@ is as follows.
 .*
 :CMT.This is from fl\fexpr.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Logical Operators"
+.if &'lower(&syspdev) = ps .pa
 .np
 .ix 'logical operator'
 The following table lists the
@@ -1639,6 +1643,7 @@ true    false       true
 false   true        true
 false   false       false
 .mbox off
+.if &'lower(&syspdev) = ps .pa
 .mbox on &c0 &c1 &c2 &c3
   x       y       x .EQV. y
 .mbox
@@ -2301,6 +2306,7 @@ The format of the &patchcmdup command line is:
 .*
 :CMT.This is from cmn\exe2bin.gml and is in the C/C++ Tools User's Guide
 :CMT.Topic: "The Open Watcom Exe2bin Utility"
+.if &'lower(&syspdev) = ps .pa
 .remark
 Although &e2bname is capable of producing DOS ".COM" executables, this
 functionality is only provided for compatibility with other tools. The
@@ -2362,6 +2368,7 @@ The &asmname command line syntax is the following.
 .mbigbox
 &asmcmdup [options] asm_file [options] [@env_var]
 .embigbox
+.if &'lower(&syspdev) = ps .pa
 .mbigbox
 &asmcmdup [options] [d:][path]filename[.ext] [options] [@env_var]
 .embigbox
@@ -2894,6 +2901,7 @@ follows.
 .*
 :CMT.This is from lg\ldformat.gml and is in the Linker Guide
 :CMT.Topic: "The FORMAT Directive"
+.if &'lower(&syspdev) = ps .pa
 .np
 The "FORMAT" directive is used to specify the format of the executable
 file that the &lnkname is to generate.
@@ -3426,6 +3434,7 @@ The format of the "ARTIFICIAL" option (short form "ART") is as follows.
 .np
 The format of the "AUTOUNLOAD" option (short form "AUTOUN") is as
 follows.
+.if &'lower(&syspdev) = ps .pa
 .mbigbox
     OPTION AUTOUNLOAD
 .embigbox
@@ -4977,6 +4986,7 @@ command in your OS/2 system initialization file,
 .*
 :CMT.This is from cmn\wguiwide.gml and is in the IDE Help
 :CMT.Topic: "A Simple Executable"
+.if &'lower(&syspdev) = ps .pa
 .hint
 You can also invoke the &edname by double-clicking on
 the source file that you want to edit.
