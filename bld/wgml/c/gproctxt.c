@@ -1382,26 +1382,26 @@ void do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
 size_t intrans( char *data, size_t len, font_number font )
 {
-    char    *ps;                        // source ptr
-    char    *pt;                        // target ptr
+    char    *ps;    // source ptr
+    char    *pt;    // target ptr
     size_t  k;
 
     if( ProcFlags.in_trans ) {
         ps = data;
         pt = data;
         for( k = 0; k <= len; k++ ) {
-            if( *ps == in_esc ) {           // translate needed
-                ps++;                       // skip escape char
-                k++;                        // and count
-                *pt = cop_in_trans( *ps, font );   // translate
+            if( (*ps == in_esc) && (k < (len - 1)) ) {  // translate needed
+                ps++;                                   // skip escape char
+                k++;                                    // and count
+                *pt = cop_in_trans( *ps, font );        // translate
                 ps++;
                 pt++;
             } else {
-                *pt++ = *ps++;              // else copy byte
+                *pt++ = *ps++;                          // else copy byte
             }
         }
-        if( pt < ps ) {                     // something translated
-            len -= (ps - pt);               // new length
+        if( pt < ps ) {                                 // something translated
+            len -= (ps - pt);                           // new length
             *pt = ' ';
         }
     }
