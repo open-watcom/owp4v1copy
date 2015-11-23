@@ -128,9 +128,13 @@
 /* Justify.                                                                 */
 /****************************************************************************/
 
+static  uint32_t    save_post_skip;     // save post_skip existing before CO ON
 
 /***************************************************************************/
 /*  process .ju setting, .co too if both set                               */
+/*                                                                         */
+/*  NOTE: the implementation is correct for FO; CO actually behaves a bit  */
+/*        differently                                                      */
 /***************************************************************************/
 
 static void process_co_ju( bool both , char *cwcurr )
@@ -164,6 +168,7 @@ static void process_co_ju( bool both , char *cwcurr )
         if( !strnicmp( "ON", pa, 2 ) ) {
             if( both ) {
                 ProcFlags.concat = true;
+                g_post_skip = 0;
             }
             ProcFlags.justify = ju_on;
             scan_restart = pa + len;
@@ -175,6 +180,7 @@ static void process_co_ju( bool both , char *cwcurr )
         if( !strnicmp( "OFF", pa, 3 ) ) {
             if( both ) {
                 ProcFlags.concat = false;
+                g_post_skip = 0;
             }
             ProcFlags.justify = ju_off;
             scan_restart = pa + len;
@@ -256,6 +262,9 @@ static void process_co_ju( bool both , char *cwcurr )
 
 /***************************************************************************/
 /*  scr_co    implement .co concatenate control word                       */
+/*                                                                         */
+/*  NOTE: the implementation is correct for CO; FO actually behaves a bit  */
+/*        differently                                                      */
 /***************************************************************************/
 
 void    scr_co( void )
@@ -289,6 +298,10 @@ void    scr_co( void )
         break;
     case 2 :                            // only ON valid
         if( !strnicmp( "ON", pa, 2 ) ) {
+            if( save_post_skip > 0 ) {     // only if it exists
+                g_post_skip = save_post_skip;
+                save_post_skip = 0;
+            }
             ProcFlags.concat = true;
             scan_restart = pa + len;
         } else {
@@ -297,6 +310,10 @@ void    scr_co( void )
         break;
     case 3 :                            // only OFF valid
         if( !strnicmp( "OFF", pa, 3 ) ) {
+            if( g_post_skip > 0 ) {     // only if it exists
+                save_post_skip = g_post_skip;
+                g_post_skip = 0;
+            }
             ProcFlags.concat = false;
             scan_restart = pa + len;
         } else {
