@@ -329,7 +329,6 @@ global  uint32_t    g_blank_lines;      // blank lines (in vertical base units)
 global  uint32_t    g_post_skip;        // post_skip
 global  uint32_t    g_subs_skip;        // subs_skip
 global  uint32_t    g_top_skip;         // top_skip
-global  uint32_t    g_list_skip;        // special skip after list (tag, even in macro) only)
 global  uint32_t    g_spacing;          // spacing (in vertical base units)
 global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
 global  uint32_t    spacing;            // spacing between lines (line count)
