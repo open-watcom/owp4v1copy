@@ -344,13 +344,16 @@ void    o_case( FILE * f, lay_att curr, case_t * tm )
 
 /***************************************************************************/
 /*  single character                                                       */
+/*  UL bullet entered as '' is treated as ' ' by wgml 4.0, so all may be   */
 /***************************************************************************/
 bool    i_char( char * p, lay_att curr, char * tm )
 {
     if( is_quote_char( *p ) && (*p == *(p + 2)) ) {
-        *tm = *(p + 1);                 // 2. char if quoted
+        *tm = *(p + 1);                 // 2nd char if quoted
+    } else if( is_quote_char( *p ) && (*p == *(p + 1)) ) {
+        *tm = ' ';                      // space if '' or ""
     } else {
-        *tm = *p;                       // else 1.
+        *tm = *p;                       // else 1st char
     }
     return( false );
 }
