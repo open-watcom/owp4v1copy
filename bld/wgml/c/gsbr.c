@@ -123,17 +123,11 @@ void  scr_process_break( void )
                 marker = NULL;
             }
 
-#if 0
-            /* First line of paragraph: minimum line height */
-
-            if( ProcFlags.para_starting ) {
-                if( t_line->line_height < wgml_fonts[g_curr_font].line_height ) {
-                    t_line->line_height = wgml_fonts[g_curr_font].line_height;
-                }
-            }
-#endif
-
-            /* The last line is not justified, but is right-aligned or centered */
+            /********************************************************************/
+            /* The last line of a paragraph is not left/right-justified or      */
+            /* half-justified, but it is left-justified (ie, left alone),       */
+            /* right-justified (ragged left) or centered                        */
+            /********************************************************************/
 
             process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
                 (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );

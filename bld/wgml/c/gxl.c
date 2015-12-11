@@ -344,8 +344,7 @@ void gml_sl( const gmltag * entry )
     char            *   p;
     sl_lay_level    *   sl_layout   = NULL;
 
-    p = scan_start;
-    p++;
+    p = scan_start + 1;
     while( *p == ' ' ) {
         p++;
     }
@@ -418,8 +417,7 @@ void gml_ul( const gmltag * entry )
     char            *   p;
     ul_lay_level    *   ul_layout   = NULL;
 
-    p = scan_start;
-    p++;
+    p = scan_start + 1;
     while( *p == ' ' ) {
         p++;
     }
