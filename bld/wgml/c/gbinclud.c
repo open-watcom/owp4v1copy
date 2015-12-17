@@ -155,21 +155,19 @@ void    gml_binclude( const gmltag * entry )
     scr_process_break();                // flush existing text
     start_doc_sect();                   // if not already done
 
-    cur_el = alloc_doc_el(  el_binc );
-    if( reposition && depth ) {
-        cur_el->depth = depth;          // otherwise, it will be "0"
-    }
-    if( depth > 0 ) {
+    if( depth == 0 ) {
+        cur_el = alloc_doc_el(  el_binc );
+    } else {
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
-        cur_el->blank_lines = g_blank_lines;
-        g_blank_lines = 0;
-        cur_el->subs_skip = g_subs_skip;
-        cur_el->top_skip = g_top_skip;
+        if( reposition && depth ) {                 // otherwise, element depth will be "0"
+            cur_el = init_doc_el( el_binc, depth ); 
+        } else {
+            cur_el = init_doc_el( el_binc, 0 );
+        }
     }
     cur_el->element.binc.depth = depth;
     cur_el->element.binc.cur_left = g_cur_h_start;
     cur_el->element.binc.has_rec_type = has_rec_type;
-    ProcFlags.skips_valid = false;
     strncpy_s( cur_el->element.binc.file, FILENAME_MAX, file, FILENAME_MAX );
 
     insert_col_main( cur_el );

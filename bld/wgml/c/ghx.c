@@ -188,17 +188,8 @@ static  void    hx_header( int hx_lvl, const char *hnumstr, const char *txt )
     if( input_cbs->fmflags & II_research ) {
         test_out_t_line( hd_line );
     }
-    cur_el = alloc_doc_el( el_text );
-    cur_el->blank_lines = g_blank_lines;
-    g_blank_lines = 0;
-    cur_el->depth = hd_line->line_height;
-    cur_el->subs_skip = g_subs_skip;
-    cur_el->top_skip = g_top_skip;
-    cur_el->element.text.overprint = ProcFlags.overprint;
-    ProcFlags.overprint = false;
-    cur_el->element.text.spacing = g_spacing;
+    cur_el = init_doc_el( el_text, hd_line->line_height );
     cur_el->element.text.first = hd_line;
-    ProcFlags.skips_valid = false;
     hd_line = NULL;
 
     if( layout_work.hx[hx_lvl].page_eject == ej_no ) {

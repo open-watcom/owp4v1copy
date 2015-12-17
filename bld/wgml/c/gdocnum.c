@@ -141,17 +141,8 @@ void    gml_docnum( const gmltag * entry )
     set_skip_vars( NULL, &layout_work.docnum.pre_skip, NULL, d_spacing, 
                        g_curr_font );
  
-    cur_el = alloc_doc_el( el_text );
-    cur_el->blank_lines = g_blank_lines;
-    g_blank_lines = 0;
-    cur_el->depth = p_line->line_height + g_spacing;
-    cur_el->subs_skip = g_subs_skip;
-    cur_el->top_skip = g_top_skip;
-    cur_el->element.text.overprint = ProcFlags.overprint;
-    ProcFlags.overprint = false;
-    cur_el->element.text.spacing = g_spacing;
+    cur_el = init_doc_el( el_text, p_line->line_height );
     cur_el->element.text.first = p_line;
-    ProcFlags.skips_valid = false;
     p_line = NULL;
     insert_col_main( cur_el );
 

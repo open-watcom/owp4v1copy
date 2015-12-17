@@ -225,26 +225,18 @@ void    gml_graphic( const gmltag * entry )
     scr_process_break();                // flush existing text
     start_doc_sect();                   // if not already done
 
-    cur_el = alloc_doc_el(  el_graph );
-    cur_el->depth = depth;              // always used with GRAPHIC
     if( !ProcFlags.ps_device ) {        // character devices ignore SK & post_skip
         g_skip = 0;
         g_post_skip = 0;
     }
     set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
-    cur_el->blank_lines = g_blank_lines;
-    g_blank_lines = 0;
-    cur_el->subs_skip = g_subs_skip;
-    g_subs_skip = 0;
-    cur_el->top_skip = g_top_skip;
-    g_top_skip = 0;
+    cur_el = init_doc_el( el_graph, depth );
     cur_el->element.graph.cur_left = g_cur_h_start;
     cur_el->element.graph.depth = depth;
     cur_el->element.graph.scale = scale;
     cur_el->element.graph.width = width;
     cur_el->element.graph.xoff = xoff;
     cur_el->element.graph.yoff = yoff;
-    ProcFlags.skips_valid = false;
     strncpy_s( cur_el->element.graph.file, FILENAME_MAX, file, FILENAME_MAX );
 
     insert_col_main( cur_el );

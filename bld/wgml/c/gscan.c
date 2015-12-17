@@ -803,11 +803,20 @@ void    scan_line( void )
                 // processs (remaining) text
                 if( rs_loc > 0 ) {
                     start_doc_sect();   // if not already done
-                    g_err_tag_rsloc( rs_loc, scan_start );
+                    // catch blank lines: not an error
+                    while( scan_start < scan_stop ) {
+                        if( (*scan_start != ' ') && (*scan_start != '\0') ) {
+                            break;
+                        }
+                        scan_start++;
+                    }
+                    if( scan_start < scan_stop ) {
+                        g_err_tag_rsloc( rs_loc, scan_start );
+                    } else {
+                        blank_lines++;
+                    }
                 } else {
-
                     process_text( scan_start, g_curr_font );
-
                 }
             }
         }

@@ -413,6 +413,7 @@ extern  doc_el_group    *   alloc_doc_el_group( group_type type );
 extern  void                add_tag_cb_to_pool( tag_cb * cb );
 extern  tag_cb          *   alloc_tag_cb( void );
 extern  void                free_pool_storage( void );
+extern  doc_element     *   init_doc_el( element_type type, uint32_t depth );
 
 
 /* gtitlepo.c                           */

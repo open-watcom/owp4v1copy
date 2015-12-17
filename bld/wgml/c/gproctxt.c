@@ -1610,22 +1610,12 @@ void process_line_full( text_line * a_line, bool justify )
         }
 
         if( t_element == NULL ) {
-            t_element = alloc_doc_el( el_text );
-
             if( !ProcFlags.skips_valid) {
                 set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
             }
-            t_element->blank_lines = g_blank_lines;
-            g_blank_lines = 0;
-            t_element->subs_skip = g_subs_skip;
-            t_element->top_skip = g_top_skip;
-            t_element->depth = a_line->line_height + g_spacing;
-            t_element->element.text.overprint = ProcFlags.overprint;
-            ProcFlags.overprint = false;
-            t_element->element.text.spacing = g_spacing;
+            t_element = init_doc_el( el_text, a_line->line_height );
             t_element->element.text.first = a_line;
             t_el_last = t_element->element.text.first;
-            ProcFlags.skips_valid = false;
         } else {
             t_element->depth += a_line->line_height + t_element->element.text.spacing;
             t_el_last->next = a_line;

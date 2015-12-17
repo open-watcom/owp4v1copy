@@ -46,6 +46,7 @@
 *       alloc_text_chars            create a text_chars instance
 *       alloc_text_line             create a text_line instance
 *       free_pool_storage           do free for all pools
+*       init_doc_el                 advanced doc_element initialization (uses alloc_doc_el)
 *
 ****************************************************************************/
 
@@ -391,9 +392,10 @@ void add_doc_col_to_pool( doc_column * a_column )
 
 /***************************************************************************/
 /*  allocate / reuse a doc_element instance                                */
+/*  Note: called directly in a few cases, but mostly from init_doc_el()    */
 /***************************************************************************/
 
-doc_element * alloc_doc_el(  element_type type )
+doc_element * alloc_doc_el( element_type type )
 {
     doc_element *   curr;
     int             k;
@@ -649,4 +651,34 @@ void    free_pool_storage( void )
     }
 }
 
+/***************************************************************************/
+/*  initalize a doc_element instance (which it obtains from alloc_doc_el())*/
+/***************************************************************************/
+
+doc_element * init_doc_el( element_type type, uint32_t depth )
+{
+    doc_element *   curr;
+
+    curr = alloc_doc_el( type );
+
+    curr->blank_lines = g_blank_lines;
+    g_blank_lines = 0;
+    curr->subs_skip = g_subs_skip;
+    g_subs_skip = 0;
+    curr->top_skip = g_top_skip;
+    g_top_skip = 0;
+
+    if( type == el_text ) {             // spacing only applies to text lines
+        curr->depth = depth + g_spacing;
+        curr->element.text.overprint = ProcFlags.overprint;
+        ProcFlags.overprint = false;
+        curr->element.text.spacing = g_spacing;
+    } else {
+        curr->depth = depth;
+    }
+
+    ProcFlags.skips_valid = false;
+
+    return( curr );
+}
 

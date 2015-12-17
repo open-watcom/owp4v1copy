@@ -485,9 +485,18 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
 
             /* Create the doc_element to hold the VLINE */
 
-            v_line_el = alloc_doc_el( el_vline );
-            v_line_el->blank_lines = 0; // no positional adjustments
-            v_line_el->depth = 0;   // only the last VLINE can (sometimes) have a depth > 0
+            /**************************NOTE********************************/
+            /* Conversion to init_doc_el() was kept as simple as possible */
+            /* it might be asked whether g_blank_lines should be zeroed   */
+            /* even for the first VLINE, but that is how I found the code */
+            /**************************************************************/
+
+            g_blank_lines = 0;                      // no positional adjustments
+            if( !first_done ) {                     // except first VLINE
+                g_subs_skip = subs_skip;
+                g_top_skip = top_skip;
+            }
+            v_line_el = init_doc_el( el_vline, 0 ); // only the last VLINE can (sometimes) have a depth > 0
             v_line_el->element.vline.h_start = hline->cols[i_h].col
                                                + g_page_left - h_vl_offset;
             if( (((stub == st_down) || (stub == st_ext))
@@ -501,6 +510,13 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
 
             /* Add the column-specific depth */
 
+            /**************************NOTE********************************/
+            /* This was noticed during conversion to init_doc_el()        */
+            /* It is not clear what the condition should be, or if it is  */
+            /* needed at all. Applying it to the following line did       */
+            /* produce additional diffs in the test file                  */
+            /**************************************************************/
+
             if( (box_depth == 0) && (((prev_op == bx_can) && (cur_op == bx_can))
                     || ((prev_op == bx_set) && (cur_op == bx_set))) ) {
             }
@@ -510,8 +526,6 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
             /* Set number of AA blocks to use for this column */
 
             if( !first_done ) {                                 // first VLINE
-                v_line_el->subs_skip = subs_skip;
-                v_line_el->top_skip = top_skip;
                 if( (stub == st_ext) || ((cur_depth == 0)
                     || (stub == st_down)) && (hline->current > 1)
                     || (cur_col_type == bx_v_new) && (cur_op != bx_set)
@@ -885,27 +899,18 @@ static void  do_char_device( void )
 
         /* Create the doc_element to hold the box lines */
 
-        box_el = alloc_doc_el( el_text );
-        box_el->blank_lines = g_blank_lines;
-        g_blank_lines = 0;
-        box_el->subs_skip = g_subs_skip;
-        box_el->top_skip = g_top_skip;
+        box_el = init_doc_el( el_text, def_height );
         box_el->element.text.bx_h_done = true;      // prevent being processed again as text element
 
-        if( (cur_op == bx_can) ) {
+        if( (cur_op == bx_can) ) {                  // special processing
             box_el->element.text.overprint = true;  // force overprint
             box_el->element.text.force_op = true;   // even at top of page
-        } else {
-            box_el->element.text.overprint = ProcFlags.overprint;
-            ProcFlags.overprint = false;
         }
-        box_el->element.text.spacing = g_spacing;
 
         /* Create the text_line */
 
         box_el->element.text.first = alloc_text_line();
         box_el->element.text.first->line_height = def_height;
-        box_el->depth = box_el->element.text.first->line_height + g_spacing;
 
         if( (cur_op != bx_can) && (cur_op != bx_set) ) {    // no horizontal line for BX CAN or BX SET
             cur_hline = box_line->first;
@@ -1188,26 +1193,23 @@ static void do_line_device( void )
         cur_hline = box_line->first;
         while( cur_hline != NULL ) {  // iterate over all horizontal lines
             if( cur_el == NULL ) {
-                cur_el = alloc_doc_el( el_hline );
-                if( ProcFlags.in_bx_box ) {
-                    cur_el->subs_skip = g_subs_skip + el_skip + v_offset;
+                cur_el = init_doc_el( el_hline, 0 );
+                if( ProcFlags.in_bx_box ) {         // special processing
+                    cur_el->subs_skip += el_skip + v_offset;
                 } else {
-                    cur_el->subs_skip = g_subs_skip + box_skip + v_offset;
+                    cur_el->subs_skip += box_skip + v_offset;
                     box_skip = 0;
                 }
-                cur_el->top_skip = g_top_skip;
-                cur_el->blank_lines = g_blank_lines;
                 cur_el->element.hline.ban_adjust = !do_v_adjust;
-                g_blank_lines = 0;
                 h_line_el = cur_el;
             } else {
                 cur_el->next = alloc_doc_el( el_hline );
+                cur_el->depth = 0;
                 cur_el = cur_el->next;
                 cur_el->subs_skip = 0;
                 cur_el->top_skip = 0;
                 cur_el->blank_lines = 0;
             }
-            cur_el->depth = 0;
 
             h_offset = cur_hline->cols[0].col + g_page_left - h_vl_offset;
             if( (int32_t) h_offset < 0 ) {
@@ -2626,7 +2628,6 @@ void scr_bx( void )
 
     prev_op = cur_op;
 
-    ProcFlags.skips_valid = false;          // ensures following text will use correct skips
     set_h_start();                          // pick up any indents
 
     scan_restart = scan_stop + 1;
