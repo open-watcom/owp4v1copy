@@ -1280,6 +1280,10 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
         skiptop = 0;
     }
 
+    if( g_subs_skip > skipsk ) {    // provisional: merge with existing value
+        skipsk = g_subs_skip;       // not yet in Wiki per server failure
+    }
+
     if( g_post_skip > skipsk ) {    // merge sk-skip & post-skip per Wiki
         skippost = g_post_skip;
     } else {
@@ -1296,7 +1300,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
         skippre = skiptop;
     }
 
-    if( skippost > skippre ) { // final merger per Wiki
+    if( skippost > skippre ) {  // final merger per Wiki
         skippre = skippost;
     }    
 
