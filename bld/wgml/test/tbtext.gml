@@ -1149,7 +1149,7 @@ $COMPLEX*8$8$(extension)
 $COMPLEX*16$16$(extension)
 $DOUBLE COMPLEX$16$(extension)
 $CHARACTER$1
-$CHARACTER*n$n
+:CMT.$CHARACTER*n$n
 .bx off
 :CMT..keep end
 .tb set

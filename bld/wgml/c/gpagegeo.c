@@ -116,7 +116,8 @@ void    init_page_geometry( void )
     }
 
     g_net_page_width = rm - lm;
-    g_ll = g_net_page_width * CPI / bin_device->horizontal_base_units; // &sysll
+
+    g_ll = 60;                              // default value per TSO
 
     top_margin = conv_vert_unit( &layout_work.page.top_margin, 1 );
 
