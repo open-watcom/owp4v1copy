@@ -1328,6 +1328,7 @@ Extended Character Set
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Order of FORTRAN Statements and Lines"
 .if &'lower(&syspdev) = ps .pa
+.if &e'&dohelp eq 0 .do begin
 .np
 Order of FORTRAN Statements and Lines
 .sr c0=&INDlvl+1
@@ -1371,6 +1372,7 @@ Order of FORTRAN Statements and Lines
 .bx off &c0 &c1 &c4
 .tb
 .tb set
+.do end
 .*
 :CMT.This is from fl\farrays.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Array Elements"
