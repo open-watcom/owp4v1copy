@@ -139,64 +139,45 @@ void  scr_process_break( void )
         t_element = NULL;
         t_el_last = NULL;
     } else if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break
-        t_element = alloc_doc_el( el_text );
-        if( g_line_indent > 0 ) {
-            t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
-        } else {
-            t_element->depth = 0;
-        }
-        t_element->blank_lines = g_blank_lines;
-        g_blank_lines = 0;
-        t_element->subs_skip = g_subs_skip;
-        t_element->top_skip = g_top_skip;
-        t_element->element.text.overprint = ProcFlags.overprint;
-        ProcFlags.overprint = false;
-        t_element->element.text.first = alloc_text_line();
-        if( g_line_indent > 0 ) {
-            t_element->element.text.first->line_height =
+
+        /* Putting set_skip_vars() first can affect the result of the if() */
+
+        if( (g_line_indent > 0) || (g_subs_skip > 0) || (g_blank_lines > 0) ) {
+            set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
+            t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
+            if( g_line_indent == 0 ) {  // special case
+                t_element->depth = 0;
+            }
+            t_element->element.text.first = alloc_text_line();
+            if( g_line_indent > 0 ) {
+                t_element->element.text.first->line_height =
                                                 wgml_fonts[g_curr_font].line_height;
+            } else {
+                t_element->element.text.first->line_height = 0;
+            }
+            t_element->element.text.first->first = NULL;
+            insert_col_main( t_element );
+            t_element = NULL;
+            t_el_last = NULL;
         } else {
-            t_element->element.text.first->line_height = 0;
+            set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
         }
-        t_element->element.text.first->first = NULL;
-        t_element->element.text.spacing = g_spacing;
-        ProcFlags.skips_valid = false;
-        insert_col_main( t_element );
-        t_element = NULL;
-        t_el_last = NULL;
     } else if( blank_lines > 0 ) {              // blank lines into own doc_element
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
-        t_element = alloc_doc_el( el_text );
-        t_element->depth = 0;
-        t_element->blank_lines = g_blank_lines;
-        g_blank_lines = 0;
-        t_element->subs_skip = g_subs_skip;
-        t_element->top_skip = g_top_skip;
-        t_element->element.text.overprint = ProcFlags.overprint;
-        ProcFlags.overprint = false;
-        t_element->element.text.first = alloc_text_line();
-        t_element->element.text.first->line_height = 0;
-        t_element->element.text.first->first = NULL;
-        t_element->element.text.spacing = g_spacing;
-        ProcFlags.skips_valid = false;
-        insert_col_main( t_element );
-        t_element = NULL;
-        t_el_last = NULL;
-    } else if( g_blank_lines > 0 ) {            // blank lines at end of section?
-        t_element = alloc_doc_el( el_text );
-        t_element->depth = wgml_fonts[g_curr_font].line_height + g_spacing;
-        t_element->blank_lines = g_blank_lines;
-        g_blank_lines = 0;
-        t_element->subs_skip = g_subs_skip;
-        t_element->top_skip = g_top_skip;
-        t_element->element.text.overprint = ProcFlags.overprint;
-        ProcFlags.overprint = false;
+        t_element = init_doc_el( el_text, 0 );
         t_element->element.text.first = alloc_text_line();
         t_element->element.text.first->line_height =
                                         wgml_fonts[g_curr_font].line_height;
         t_element->element.text.first->first = NULL;
-        t_element->element.text.spacing = g_spacing;
-        ProcFlags.skips_valid = false;
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
+    } else if( g_blank_lines > 0 ) {            // blank lines at end of section?
+        t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
+        t_element->element.text.first = alloc_text_line();
+        t_element->element.text.first->line_height =
+                                        wgml_fonts[g_curr_font].line_height;
+        t_element->element.text.first->first = NULL;
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
