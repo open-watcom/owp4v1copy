@@ -1,21 +1,17 @@
 .dm millust begin
 .if '&*' eq 'begin' .do begin
-.co off
-~b
+:XMP.~b
 .do end
 .el .if '&*' eq 'end' .do begin
-.co on
+:eXMP.
 .do end
 .el .if '&*' eq 'break' .do begin
-.co on
-.co off
+:eXMP.:XMP.
 .do end
 .el .do begin
-.co off
-~b
+:XMP.~b
 &*
-.co on
-:P.
+:eXMP.:P.
 .do end
 .dm millust end
 .*

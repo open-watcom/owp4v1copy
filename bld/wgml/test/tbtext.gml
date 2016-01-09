@@ -2720,7 +2720,8 @@ $CANADA   N2L 3X2  $
 .*
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Integer Constants"
-.if &'lower(&syspdev) = ps .pa
+.if &'lower(&syspdev) = ps .do begin
+.pa
 .np
 Constants and Types
 .boxdef
@@ -2761,7 +2762,8 @@ $:HP0.suffix:eHP0. LL :HP0.only:eHP0.        $long long:HP0.,:eHP0. unsigned lon
 $:HP0.suffixes:eHP0. U :HP0.and:eHP0. LL$unsigned long long
 .monooff
 .boxend
-.*
+.do end
+*
 .if &'lower(&syspdev) = ps .do begin
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Integer Constants"

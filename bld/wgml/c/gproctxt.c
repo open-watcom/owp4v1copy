@@ -1445,7 +1445,7 @@ void process_line_full( text_line * a_line, bool justify )
 
     /************************************************************************/
     /* Split a_line if all of these conditions are met:                     */
-    /*   concatenation is on                                                */
+    /*   concatenation is on or XMP is in effect                            */
     /*   user tabs were available                                           */
     /*   at least one user tab was skipped                                  */
     /*   at least one default tab was used                                  */
@@ -1470,7 +1470,7 @@ void process_line_full( text_line * a_line, bool justify )
     /************************************************************************/
 
     if( user_tab_skip && (def_tab_count > 0) && (user_tabs.current > 0)
-                && ProcFlags.concat && (a_line->first->next != NULL) ) {
+                && (ProcFlags.concat || (cur_group_type == gt_xmp)) && (a_line->first->next != NULL) ) {
 
         no_shift = (def_tab_count > 1);     // usually true if more than one default tab used
 
