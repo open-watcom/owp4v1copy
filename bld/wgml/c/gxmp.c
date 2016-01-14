@@ -232,6 +232,9 @@ void gml_exmp( const gmltag * entry )
         cur_doc_el_group = NULL;
     }
 
+    set_skip_vars( NULL, NULL, &layout_work.xmp.post_skip, spacing,
+                       g_curr_font );
+    ProcFlags.skips_valid = false;  // not quite correct? - TBD
     g_cur_h_start = g_cur_left;
     scan_err = false;
     p = scan_start;
