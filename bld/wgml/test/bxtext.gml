@@ -16,6 +16,11 @@ offset  +0          +4          +8
 .* .bx 17 27 37
 .bx &c1 &c2 &c3
                       integer     (slack)
+.bx
+                      real        (slack)
+.* .bx 17 37
+.bx &c1 &c3
+                      double precision
 .bx off
 .millust end
 .*

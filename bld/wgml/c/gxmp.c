@@ -144,8 +144,11 @@ void gml_xmp( const gmltag * entry )
 
     spacing = layout_work.xmp.spacing;
 
-    set_skip_vars( NULL, &layout_work.xmp.pre_skip, NULL, spacing,
-                       g_curr_font );
+    set_skip_vars( NULL, &layout_work.xmp.pre_skip, &layout_work.xmp.post_skip,
+                                                            spacing, g_curr_font );
+
+    nest_cb->post_skip = g_post_skip;   // shift post_skip to follow eXMP
+    g_post_skip = 0;
 
     sav_group_type = cur_group_type;
     cur_group_type = gt_xmp;
@@ -232,9 +235,8 @@ void gml_exmp( const gmltag * entry )
         cur_doc_el_group = NULL;
     }
 
-    set_skip_vars( NULL, NULL, &layout_work.xmp.post_skip, spacing,
-                       g_curr_font );
-    ProcFlags.skips_valid = false;  // not quite correct? - TBD
+    g_post_skip = nest_cb->post_skip;   // shift post_skip to follow eXMP
+    ProcFlags.skips_valid = false;      // activate post_skip for next element
     g_cur_h_start = g_cur_left;
     scan_err = false;
     p = scan_start;
