@@ -1,6 +1,6 @@
 #pmake: build miftest
 
-dotest   = whpass1
+dotest   = miftest
 dotarget = htmlhelp
 
 !include ../../mif/master.mif

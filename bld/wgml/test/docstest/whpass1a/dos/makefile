@@ -1,4 +1,4 @@
-#pmake: build miftest
+#pmake: build whpass1a
 
 dotest   = whpass1a
 dotarget = dos

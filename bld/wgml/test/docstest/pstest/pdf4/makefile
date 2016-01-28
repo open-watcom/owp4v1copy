@@ -1,6 +1,6 @@
-#pmake: build miftest
+#pmake: build pstest
 
-dotest   = whpass1
-dotarget = os2
+dotest   = pstest
+dotarget = pdf
 
 !include ../../mif/master.mif

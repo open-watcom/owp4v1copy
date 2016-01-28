@@ -1,6 +1,6 @@
-#pmake: build miftest
+#pmake: build whpass1a
 
-dotest   = whpass1
+dotest   = whpass1a
 dotarget = win
 
 !include ../../mif/master.mif
