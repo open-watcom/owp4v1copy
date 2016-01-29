@@ -1,6 +1,6 @@
-#pmake: build whpass2a
+#pmake: build validate
 
-dotest   = whpass2a
+dotest   = validate
 dotarget = dos
 
 !include ../../mif/master.mif

@@ -3,4 +3,4 @@
 dotest   = pstest
 dotarget = pdf
 
-!include ../../mif/master.mif
+!include ../../../mif/master.mif
