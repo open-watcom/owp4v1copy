@@ -1,4 +1,4 @@
-!include ../../mif/books.mif
+!include $(%OWROOT)/docs/mif/books.mif
 
 !ifdef __UNIX__
 SL=/
