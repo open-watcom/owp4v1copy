@@ -16,8 +16,8 @@ src_dir = $(%OWROOT)/bld
 !include bhost.mif
 !include wgmlcmd.mif
 
-!include ../../mif/depends.mif
-!include ../../mif/books.mif
+!include $(%OWROOT)/docs/mif/depends.mif
+!include $(%OWROOT)/docs/mif/books.mif
 
 wgml_cmdl_params = $(book_src) ( file $(wgml_optfile)
 
@@ -134,9 +134,9 @@ wgml_target=$(dotarget)
 # project configuration files
 #
 proj_objs= &
-    ../../mif/depends.mif
-#    ../../mif/books.mif &
-#    ../../mif/master.mif &
+    $(%OWROOT)/docs/mif/depends.mif
+#    $(%OWROOT)/docs/mif/books.mif &
+#    $(%OWROOT)/docs/mif/master.mif &
 #    $(%OWROOT)/docs/lang.ctl &
 #    makefile
 
@@ -660,4 +660,4 @@ compile_hpj_nt : .PROCEDURE
 
 ####################################################
 
-!include ../../mif/clean.mif
+!include $(%OWROOT)/docs/mif/clean.mif
