@@ -937,7 +937,6 @@ $$the new-line character
 :CMT.Topic: "Operator Precedence"
 :cmt...fk begin
 .if &'lower(&syspdev) = ps .do begin
-.pa
 ..sr *start=&SYSIN.+1
 ..bx on  &*start. +16 +24
 ..sr *start=&*start.+1
@@ -1118,7 +1117,6 @@ $user-defined structure$address of structure
 .*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "Data Representation On x86-based Platforms"
-.if &'lower(&syspdev) = ps .pa
 .np
 Data Representation On x86-based Platforms
 .sr c1=&sysin+1
@@ -1193,7 +1191,6 @@ $63$62-52$51-0
 .*
 :CMT.This is from fg\fdata.gml and is in the FORTRAN 77 User's Guide
 :CMT.Topic: "CHARACTER Data Type"
-.if &'lower(&syspdev) = ps .pa
 .sk
 CHARACTER Data Type
 :CMT..keep begin
@@ -1265,7 +1262,6 @@ COMPLEX*16$real part$imaginary part
 .*
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Character Set"
-.if &'lower(&syspdev) = ps .pa
 .np
 The special characters are:
 .tb set \
@@ -1327,7 +1323,6 @@ Extended Character Set
 .*
 :CMT.This is from fl\fsrcfmt.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Order of FORTRAN Statements and Lines"
-.if &'lower(&syspdev) = ps .pa
 .if &e'&dohelp eq 0 .do begin
 .np
 Order of FORTRAN Statements and Lines
@@ -1506,7 +1501,6 @@ Conversion to real
 \                  \SNGL        \R&arrow.SNGL(D)
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Conversion to double
 .box on &c0 &c1 &c2 &c3
@@ -1553,7 +1547,6 @@ Conversion to integer
 \Conversion to integer \ICHAR \I&arrow.ICHAR(CH)
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Conversion to character
 .box on &c0 &c1 &c2 &c3
@@ -1597,7 +1590,6 @@ Nearest Integer
 \                  \IDNINT       \I&arrow.IDNINT(D)
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Absolute Value
 :cmt..section Absolute Value
@@ -1644,7 +1636,6 @@ Transfer of Sign
 \              \DSIGN        \D&arrow.DSIGN(D,D)
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Positive Difference
 :cmt..section Positive Difference
@@ -1684,7 +1675,6 @@ Choosing Largest Value
 \               \MAX1        \I&arrow.MAX1(R,...)
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Choosing Smallest Value
 :cmt..section Choosing Smallest Value
@@ -1732,7 +1722,6 @@ Index of a Substring
 \a2 in string a1
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Imaginary Part of Complex Number
 :cmt..section Imaginary Part of Complex Number
@@ -1773,7 +1762,6 @@ Square Root
 \       \CDSQRT &dagger     \Z&arrow.CDSQRT(Z)
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Exponential
 :cmt..section Exponential
@@ -1818,7 +1806,6 @@ Common Logarithm
 \         \DLOG10        \D&arrow.DLOG10(D)
 .box off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Sine
 :cmt..section Sine
@@ -1998,7 +1985,6 @@ Complement of Error Function
 \           \DERFC           \D&arrow.DERFC(D)
 .bxt off
 
-.if &'lower(&syspdev) = ps .pa
 .np
 Lexically Greater Than or Equal
 :cmt..section Lexically Greater Than or Equal
@@ -2721,7 +2707,6 @@ $CANADA   N2L 3X2  $
 :CMT.This is from cl\constant.gml and is in the C Language Reference
 :CMT.Topic: "Integer Constants"
 .if &'lower(&syspdev) = ps .do begin
-.pa
 .np
 Constants and Types
 .boxdef
@@ -3307,7 +3292,6 @@ $unsigned long long$0     $18446744073709551615
 .*
 :CMT.This is from cl\macro.gml and is in the C Language Reference
 :CMT.Topic: "Converting An Argument to a String"
-.if &'lower(&syspdev) = ps .pa
 .np
 The following table gives a number of examples of the result of the
 application of the macro,
@@ -4017,7 +4001,6 @@ $~~ $??-
 .*
 :CMT.This is from fl\stmtclas.gml and is in the FORTRAN 77 Language Reference
 :CMT.Topic: "Classifying Statements"
-.if &'lower(&syspdev) = ps .pa
 .np
 The following table is a summary of &product statement classification.
 
@@ -4044,7 +4027,6 @@ The following table is a summary of &product statement classification.
 \CLOSE                \      \      \      \      \      \      \
 \COMMON               \  *   \  *   \  *   \  *   \  *   \  *   \
 .box off
-.if &'lower(&syspdev) = ps .pa
 .box on &c0 &c1 &c2 &c3 &c4 &c5 &c6 &c7
 \Statement            \  1   \  2   \  3   \  4   \  5   \  6
 .box
