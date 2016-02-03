@@ -1,3 +1,42 @@
+!ifeq dotest miftest
+
+use_wgml4=true
+do_pass1b=true
+do_pass2a=true
+do_pass2b=true
+
+!else ifeq dotest pstest
+
+!else ifeq dotest validate
+
+use_wgml4=false
+do_pass1b=true
+do_pass2a=true
+do_pass2b=true
+
+!else ifeq dotest whpass1a
+
+use_wgml4=true
+do_pass1b=false
+do_pass2a=false
+do_pass2b=false
+
+!else ifeq dotest whpass1b
+
+use_wgml4=true
+do_pass1b=true
+do_pass2a=false
+do_pass2b=false
+
+!else ifeq dotest whpass2a
+
+use_wgml4=true
+do_pass1b=true
+do_pass2a=true
+do_pass2b=false
+
+!endif
+
 proj_name = docs
 
 !ifdef __UNIX__
@@ -16,8 +55,8 @@ src_dir = $(%OWROOT)/bld
 !include bhost.mif
 !include wgmlcmd.mif
 
-!include $(%OWROOT)/docs/mif/depends.mif
-!include $(%OWROOT)/docs/mif/books.mif
+!include $(%OWROOT)/bld/wgml/test/docstest/mif/depends.mif
+!include $(%OWROOT)/bld/wgml/test/docstest/mif/books.mif
 
 wgml_cmdl_params = $(book_src) ( file $(wgml_optfile)
 
@@ -69,6 +108,22 @@ hc_hh = $(%HHC:$(to_os_path))
 hc_chmcmd = $(%OWCHMCMD)
 hc_pdf = ps2pdf12
 
+!ifneq do_pass4 true
+
+!ifeq dotarget dos
+dep_dos = $(hbook).ptf
+!else ifeq dotarget htmlhelp
+dep_htmlhelp = $(hbook).ptf
+!else ifeq dotarget nt
+dep_nt = $(hbook).ptf
+!else ifeq dotarget os2
+dep_os2 = $(hbook).ptf
+!else ifeq dotarget win
+dep_win = $(hbook).ptf
+!endif
+
+!else
+
 #
 # define what should be build
 # header file / documentation / nothing
@@ -105,6 +160,7 @@ dep_ps = $(hbook).ps
 !ifdef %GHOSTSCRIPTPATH
 dep_pdf = $(hbook).pdf
 !endif
+!endif
 
 #
 # wgml targets
@@ -134,14 +190,21 @@ wgml_target=$(dotarget)
 # project configuration files
 #
 proj_objs= &
-    $(%OWROOT)/docs/mif/depends.mif
-#    $(%OWROOT)/docs/mif/books.mif &
-#    $(%OWROOT)/docs/mif/master.mif &
-#    $(%OWROOT)/docs/lang.ctl &
+    $(%OWROOT)/bld/wgml/test/docstest/mif/depends.mif
+#    $(%OWROOT)/bld/wgml/test/docstest/mif/books.mif &
+#    $(%OWROOT)/bld/wgml/test/docstest/mif/master.mif &
+#    $(%OWROOT)/bld/wgml/test/docstest/lang.ctl &
 #    makefile
 
 all : $(dep_$(dotarget)) .SYMBOLIC
     @%null
+
+!ifneq do_pass4 true
+.EXTENSIONS: .ptf
+
+$(hbook).ptf : $(proj_objs)
+    @%make compile_gml_to_xxx
+!else
 
 ####################################################
 #
@@ -368,6 +431,7 @@ $(hbook).h $(hbook).htm : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
 
 !endif
+!endif
 
 ####################################################
 #
@@ -579,28 +643,27 @@ compile_gml_to_xxx : .PROCEDURE
     -$(WGMLCMD:$(to_os_path))
     @if exist $*.ptf @%erase $*.ptf
     @$(RENCMD) $(wgml_tmpfile) $*.ptf
-!ifneq dotest whpass1
-    @%make prepare_whpcvt_opts
-    whpcvt -@ $(whpcvt_optfile) $*.ptf
-    @%create $(wgml_sysfile_02)
-    -$(WGMLCMD:$(to_os_path))
-    @if exist $*.ptf @%erase $*.ptf
-    @$(RENCMD) $(wgml_tmpfile) $*.ptf
+    @if $(do_pass1b)==true @%make prepare_whpcvt_opts
+    @if $(do_pass1b)==true whpcvt -@ $(whpcvt_optfile) $*.ptf
+    @if $(do_pass2a)==true @%create $(wgml_sysfile_02)
+    @if $(do_pass2a)==true -$(WGMLCMD:$(to_os_path))
+    @if $(do_pass2a)==true @if exist $*.ptf @%erase $*.ptf
+    @if $(do_pass2a)==true @$(RENCMD) $(wgml_tmpfile) $*.ptf
     @if exist $*.mix @%erase $*.mix
     @$(RENCMD) $(wgml_sysfile_01) $*.mix
     @if exist $*.h @%erase $*.h
-    @$(RENCMD) $(wgml_sysfile_02) $*.h
+    @if exist $(wgml_sysfile_02) $(RENCMD) $(wgml_sysfile_02) $*.h
     @if exist $*.cn1 @%erase $*.cn1
     @$(RENCMD) $(wgml_sysfile_03) $*.cn1
-    whpcvt -h -@ $(whpcvt_optfile) $*.ptf
-!endif
+    @if $(do_pass2b)==true whpcvt -h -@ $(whpcvt_optfile) $*.ptf
 
 ####################################################
 compile_hpj_win : .PROCEDURE
     @%create $^@
     @%append $^@ ; This file is maintained by WMAKE. Do not modify this file directly.
     @%append $^@
-    @%append $^@ [Options]
+    @
+    %append $^@ [Options]
     @%append $^@ COMPRESS=TRUE
     @%append $^@ WARNING=3
     @%append $^@ CONTENTS=table_of_contents
@@ -660,4 +723,4 @@ compile_hpj_nt : .PROCEDURE
 
 ####################################################
 
-!include $(%OWROOT)/docs/mif/clean.mif
+!include $(%OWROOT)/bld/wgml/test/docstest/mif/clean.mif

@@ -1,4 +1,4 @@
-!include $(%OWROOT)/docs/mif/books.mif
+!include $(%OWROOT)/bld/wgml/test/docstest/mif/books.mif
 
 !ifdef __UNIX__
 SL=/
@@ -18,6 +18,6 @@ all: .SYMBOLIC $(books)
     @%null
 
 $(books) : .SYMBOLIC
-    @wmake -h -f $(%OWROOT)/docs/mif/onebook.mif hbook=$@ dotarget=$(dotarget) header=$(header)
+    @wmake -h -f $(%OWROOT)/bld/wgml/test/docstest/mif/onebook.mif hbook=$@ dotarget=$(dotarget) header=$(header) dotest=$(dotest)
 
-!include $(%OWROOT)/docs/mif/clean.mif
+!include $(%OWROOT)/bld/wgml/test/docstest/mif/clean.mif
