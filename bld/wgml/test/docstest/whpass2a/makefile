@@ -1,34 +1,32 @@
-#pmake: build whpass1b
+#pmake: build whpass2a
 
-!ifndef hbook
-target = all
-!else
-target = $(hbook)
+!ifdef hbook
+booktodo = (hbook=$(hbook))
 !endif
 
-$(target).ptf : .SYMBOLIC
-    cd dos
-    wmake hbook=$(hbook)
-    cd ../htmlhelp
-    wmake hbook=$(hbook)
-    cd ../nt
-    wmake hbook=$(hbook)
-    cd ../os2
-    wmake hbook=$(hbook)
-    cd ../win
-    wmake hbook=$(hbook)
-    cd ..
+all : .SYMBOLIC
+    @cd dos
+    @wmake -h $(booktodo)
+    @cd ../htmlhelp
+    @wmake -h $(booktodo)
+    @cd ../nt
+    @wmake -h $(booktodo)
+    @cd ../os2
+    @wmake -h $(booktodo)
+    @cd ../win
+    @wmake -h $(booktodo)
+    @cd ..
 
 clean : .SYMBOLIC
     cd dos
-    wmake clean
+    wmake -h clean
     cd ../htmlhelp
-    wmake clean
+    wmake -h clean
     cd ../nt
-    wmake clean
+    wmake -h clean
     cd ../os2
-    wmake clean
+    wmake -h clean
     cd ../win
-    wmake clean
+    wmake -h clean
     cd ..
 

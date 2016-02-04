@@ -10,9 +10,9 @@ do_pass2b=true
 !else ifeq dotest validate
 
 use_wgml4=false
-do_pass1b=true
-do_pass2a=true
-do_pass2b=true
+do_pass1b=false
+do_pass2a=false
+do_pass2b=false
 
 !else ifeq dotest whpass1a
 
@@ -53,7 +53,21 @@ docs_dir = $(%OWROOT)/docs
 src_dir = $(%OWROOT)/bld
 
 !include bhost.mif
+
+!ifeq use_wgml4 false
+!ifeq %build_platform dos386
+WGMLCMD = $(%OWROOT)\bld\wgml\dos386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform os2386
+WGMLCMD = $(%OWROOT)\bld\wgml\os2386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform nt386
+WGMLCMD = $(%OWROOT)\bld\wgml\nt386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform linux386
+WGMLCMD = $(%OWROOT)\bld\wgml\linux386\wgml $(wgml_cmdl_params)
+!else
+!error Unsupported building platform !!!!!!!endif
+!else
 !include wgmlcmd.mif
+!endif
 
 !include $(%OWROOT)/bld/wgml/test/docstest/mif/depends.mif
 !include $(%OWROOT)/bld/wgml/test/docstest/mif/books.mif
