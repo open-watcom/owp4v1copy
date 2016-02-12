@@ -1,6 +1,6 @@
-#pmake: build miftest
+#pmake: build debug
 
-dotest   = miftest
+dotest   = debug
 dotarget = win
 
 !include ../../mif/master.mif

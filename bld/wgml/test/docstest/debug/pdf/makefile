@@ -1,6 +1,6 @@
-#pmake: build miftest
+#pmake: build debug
 
-dotest   = miftest
-dotarget = dos
+dotest   = debug
+dotarget = pdf
 
 !include ../../mif/master.mif

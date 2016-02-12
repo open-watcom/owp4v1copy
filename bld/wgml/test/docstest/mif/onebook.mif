@@ -1,4 +1,12 @@
-!ifeq dotest miftest
+!ifeq dotest debug
+
+do_pass1b = false
+do_pass2a = false
+do_pass2b = false
+ptf_only  = true
+use_wgml4 = false
+
+!else ifeq dotest miftest
 
 do_pass1b = true
 do_pass2a = true
@@ -70,6 +78,19 @@ src_dir = $(%OWROOT)/bld
 !include bhost.mif
 
 !ifeq use_wgml4 false
+!ifeq dotest debug
+!ifeq %build_platform dos386
+WGMLCMD = wdw $(%OWROOT)\bld\wgml\dos386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform linux386
+WGMLCMD = wdw $(%OWROOT)\bld\wgml\linux386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform nt386
+WGMLCMD = wdw $(%OWROOT)\bld\wgml\nt386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform os2386
+WGMLCMD = wdw $(%OWROOT)\bld\wgml\os2386\wgml $(wgml_cmdl_params)
+!else
+!error Unsupported building platform !!!!!!
+!endif
+!else
 !ifeq %build_platform dos386
 WGMLCMD = $(%OWROOT)\bld\wgml\dos386\wgml $(wgml_cmdl_params)
 !else ifeq %build_platform linux386
@@ -79,7 +100,8 @@ WGMLCMD = $(%OWROOT)\bld\wgml\nt386\wgml $(wgml_cmdl_params)
 !else ifeq %build_platform os2386
 WGMLCMD = $(%OWROOT)\bld\wgml\os2386\wgml $(wgml_cmdl_params)
 !else
-!error Unsupported building platform !!!!!!!endif
+!error Unsupported building platform !!!!!!
+!endif
 !endif
 !else
 !include wgmlcmd.mif

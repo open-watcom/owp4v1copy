@@ -1,20 +1,22 @@
-#pmake: build debug
+#pmake: build docstest
 
 all : .SYMBOLIC
     @echo Only "clean" is allowed at this level
 
 clean : .SYMBOLIC
-    cd dos
+    cd debug
     wmake -h clean
-    cd ../htmlhelp
+    cd miftest
     wmake -h clean
-    cd ../nt
+    cd ../validate
     wmake -h clean
-    cd ../os2
+    cd ../pstest
     wmake -h clean
-    cd ../pdf
+    cd ../whpass1a
     wmake -h clean
-    cd ../win
+    cd ../whpass1b
+    wmake -h clean
+    cd ../whpass2a
     wmake -h clean
     cd ..
 
