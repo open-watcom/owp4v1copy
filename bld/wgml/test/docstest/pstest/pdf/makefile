@@ -2,5 +2,6 @@
 
 dotest   = pstest
 dotarget = pdf
+subtest  = pdf
 
-!include ../../../mif/master.mif
+!include ../../mif/master.mif

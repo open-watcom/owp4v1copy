@@ -10,13 +10,16 @@ MIF FILES MODIFIED
 The mif files have been modified in several ways:
 1. The paths to the mif, doc and bld directories have been changed from relative paths 
 to fixed paths, using OWROOT.
-3. (Planned) The WHELP document build process is broken down into four stages: 
-initial wgml pass (1a), initial whpcvt pass (1b), final wgml pass (2a), 
-and final whpcvt pass (2b).
-4. (Planned) The relevant mif will need to be modified to avoid the help compilers 
-being applied unless all four passes (1a through 2b) are done.
-5. (Planned) The correct version of our wgml will need to be selectable, while the 
-correct version of wgml 4.0 continues to be selectable.
+2. The WHELP document build process is broken down into four stages: 
+initial wgml pass (pass 1a), initial whpcvt pass (pass 1b), final wgml pass (pass 2a), 
+and final whpcvt pass (pass 2b).
+3. The mif file (onebook.mif) has been modified to allow each pass to be tested and
+to avoid the help compilers being applied unless all four passes are done.
+4. The mif file (onebook.mif) has been modified to select the correct version of our 
+wgml (dos386, linux386, nt386, os2386) when appropriate, and to continue to select 
+the correct version of wgml 4.0 when needed.
+5. A debugging directory is provided so that wdw can be applied to our wgml using the
+same context as is used with the tests.
 
 MIFTEST
 
@@ -71,6 +74,14 @@ pstest   -- generate both wgml 4.0 and our wgml versions with a fixed date and t
             so that, when our wgml is ready, there will be exactly zero (0) diffs
 validate -- initially, generate the whelp docs with our wgml; when our wgml goes into
             use, generate them with wgml 4.0.
+For now, they are best used on a single document and, for WHELP, only do pass 1a. Note that three files will need to 
+be checked for device WHELP: the PTF file, the MIX file, and the CN1 file.
+
+There is also a debug directory; this is used to allow wdw to be applied to our wgml
+using the same context as the build system. This directory (only) forces the use of 
+"hbook=" or "clean": it is not possible to debug all the files. Similarly, the 
+makefile in "debug" itself can only do "clean": it is not possible to debug a given 
+file in all target directories at once.
 
 Note that, when our wgml goes into use, miftest will need to be altered to use our 
 wgml (it currently uses wgml 4.0).
@@ -104,5 +115,4 @@ not actually be used by the document specifications. However, as noted above, th
 files for "htmlhelp" and "os2", for those documents produced for both targets, were 
 identical, which would suggest that the os2 document bodies, as such, do not differ 
 from those of other targets.
-
 

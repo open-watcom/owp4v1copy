@@ -1,39 +1,54 @@
 !ifeq dotest miftest
 
-use_wgml4=true
-do_pass1b=true
-do_pass2a=true
-do_pass2b=true
+do_pass1b = true
+do_pass2a = true
+do_pass2b = true
+ptf_only  = false
+use_wgml4 = true
 
 !else ifeq dotest pstest
 
+do_pass1b = false
+do_pass2a = false
+do_pass2b = false
+ptf_only  = false
+!ifeq subtest pdf
+use_wgml4 = false
+!else ifeq subtest pdf4
+use_wgml4 = true
+!endif
+
 !else ifeq dotest validate
 
-use_wgml4=false
-do_pass1b=false
-do_pass2a=false
-do_pass2b=false
+do_pass1b = false
+do_pass2a = false
+do_pass2b = false
+ptf_only  = true
+use_wgml4 = false
 
 !else ifeq dotest whpass1a
 
-use_wgml4=true
-do_pass1b=false
-do_pass2a=false
-do_pass2b=false
+do_pass1b = false
+do_pass2a = false
+do_pass2b = false
+ptf_only  = true
+use_wgml4 = true
 
 !else ifeq dotest whpass1b
 
-use_wgml4=true
-do_pass1b=true
-do_pass2a=false
-do_pass2b=false
+do_pass1b = true
+do_pass2a = false
+do_pass2b = false
+ptf_only  = true
+use_wgml4 = true
 
 !else ifeq dotest whpass2a
 
-use_wgml4=true
-do_pass1b=true
-do_pass2a=true
-do_pass2b=false
+do_pass1b = true
+do_pass2a = true
+do_pass2b = false
+ptf_only  = true
+use_wgml4 = true
 
 !endif
 
@@ -57,14 +72,15 @@ src_dir = $(%OWROOT)/bld
 !ifeq use_wgml4 false
 !ifeq %build_platform dos386
 WGMLCMD = $(%OWROOT)\bld\wgml\dos386\wgml $(wgml_cmdl_params)
-!else ifeq %build_platform os2386
-WGMLCMD = $(%OWROOT)\bld\wgml\os2386\wgml $(wgml_cmdl_params)
-!else ifeq %build_platform nt386
-WGMLCMD = $(%OWROOT)\bld\wgml\nt386\wgml $(wgml_cmdl_params)
 !else ifeq %build_platform linux386
 WGMLCMD = $(%OWROOT)\bld\wgml\linux386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform nt386
+WGMLCMD = $(%OWROOT)\bld\wgml\nt386\wgml $(wgml_cmdl_params)
+!else ifeq %build_platform os2386
+WGMLCMD = $(%OWROOT)\bld\wgml\os2386\wgml $(wgml_cmdl_params)
 !else
 !error Unsupported building platform !!!!!!!endif
+!endif
 !else
 !include wgmlcmd.mif
 !endif
@@ -122,7 +138,7 @@ hc_hh = $(%HHC:$(to_os_path))
 hc_chmcmd = $(%OWCHMCMD)
 hc_pdf = ps2pdf12
 
-!ifneq do_pass4 true
+!ifeq ptf_only true
 
 !ifeq dotarget dos
 dep_dos = $(hbook).ptf
@@ -213,13 +229,19 @@ proj_objs= &
 all : $(dep_$(dotarget)) .SYMBOLIC
     @%null
 
-!ifneq do_pass4 true
+####################################################
+#
+# make PTF files only  
+#
+####################################################
+!ifeq ptf_only true
+
 .EXTENSIONS: .ptf
 
 $(hbook).ptf : $(proj_objs)
     @%make compile_gml_to_xxx
-!else
 
+!else
 ####################################################
 #
 # make WIN32 help files
@@ -296,7 +318,6 @@ $(hbook).ihp : $(hbook).ib
 
 $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
-
 
 ####################################################
 #
@@ -592,6 +613,10 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(wgml_optfile) ( index
     @%append $(wgml_optfile) ( setsymbol dotarget $(wgml_target)
     @%append $(wgml_optfile) ( setsymbol book_ver $(%BLD_VER_STR)
+!ifeq dotest pstest
+    @%append $(wgml_optfile) ( setsymbol date $(psdate)
+    @%append $(wgml_optfile) ( setsymbol time $(pstime)
+!endif
 # add default windowing for NT
 #    @%append $(wgml_optfile) ( setsymbol defwinnt 1
 # add default windowing for OS/2

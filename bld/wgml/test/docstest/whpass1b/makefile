@@ -1,20 +1,16 @@
 #pmake: build whpass1b
 
-!ifdef hbook
-booktodo = hbook=$(hbook)
-!endif
-
 all : .SYMBOLIC
     @cd dos
-    @wmake -h $(booktodo)
+    @wmake -h hbook=$(hbook)
     @cd ../htmlhelp
-    @wmake -h $(booktodo)
+    @wmake -h hbook=$(hbook)
     @cd ../nt
-    @wmake -h $(booktodo)
+    @wmake -h hbook=$(hbook)
     @cd ../os2
-    @wmake -h $(booktodo)
+    @wmake -h hbook=$(hbook)
     @cd ../win
-    @wmake -h $(booktodo)
+    @wmake -h hbook=$(hbook)
     @cd ..
 
 clean : .SYMBOLIC
