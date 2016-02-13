@@ -1,16 +1,20 @@
 #pmake: build validate
 
+!ifdef hbook
+hbpar = hbook=$(hbook)
+!endif
+
 all : .SYMBOLIC
     @cd dos
-    @wmake -h hbook=$(hbook)
+    @wmake -h $(hbpar)
     @cd ../htmlhelp
-    @wmake -h hbook=$(hbook)
+    @wmake -h $(hbpar)
     @cd ../nt
-    @wmake -h hbook=$(hbook)
+    @wmake -h $(hbpar)
     @cd ../os2
-    @wmake -h hbook=$(hbook)
+    @wmake -h $(hbpar)
     @cd ../win
-    @wmake -h hbook=$(hbook)
+    @wmake -h $(hbpar)
     @cd ..
 
 clean : .SYMBOLIC

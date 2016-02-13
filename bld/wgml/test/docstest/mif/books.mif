@@ -622,6 +622,12 @@ book_multi_chapter=1
 
 !endif
 
+!else
+
+!ifeq dotest debug
+!error When using "debug", hbook= must be specified
+!endif
+
 !endif
 
 !ifdef hbook

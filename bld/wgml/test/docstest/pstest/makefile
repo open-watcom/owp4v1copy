@@ -1,13 +1,17 @@
 #pmake: build pstest
 
-psdate = 2/8/2016
-pstime = 11:05_AM_PST
+!ifdef hbook
+hbpar = hbook=$(hbook)
+!endif
+
+psdate = pstestDate
+pstime = pstestTime
 
 all : .SYMBOLIC
     @cd pdf4
-    @wmake -h hbook=$(hbook) psdate=$(psdate) pstime=$(pstime)
+    @wmake -h $(hbpar) psdate=$(psdate) pstime=$(pstime)
     @cd ../pdf
-    @wmake -h hbook=$(hbook) psdate=$(psdate) pstime=$(pstime)
+    @wmake -h $(hbpar) psdate=$(psdate) pstime=$(pstime)
     @cd ..
 
 clean : .SYMBOLIC
