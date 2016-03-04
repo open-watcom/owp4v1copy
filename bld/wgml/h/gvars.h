@@ -217,6 +217,7 @@ global struct ProcFlags {
     unsigned        top_line        : 1;// determines if current line is at top of page
     unsigned        vline_done      : 1;// determines if a vertical line was done
 
+    unsigned        figcap_prefix   : 1;// FIGCAP prefix is CO OFF without the automtic new line
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
@@ -266,13 +267,16 @@ global  uint32_t            box_col_width;      // width of one column, as used 
 global  uint32_t            h_vl_offset;        // horizontal offset used to position VLINE output
 global  uint32_t            max_depth;          // space left on page (used by BX)
 
+// fig support
+global  uint32_t            fig_count;          // figure number
+
 // tb support
-global  tab_stop    *   c_stop;         // current tab_stop
-global  uint32_t        first_tab;      // first default tab position
-global  uint32_t        inter_tab;      // distance between default tabs
-global  char            tab_char;       // tab character from .tb
-global  uint32_t        tab_col;        // width of one column, as used with tabs
-global  tag_cb      *   tt_stack;       // font stack entry to modify for tab tables
+global  tab_stop        *   c_stop;             // current tab_stop
+global  uint32_t            first_tab;          // first default tab position
+global  uint32_t            inter_tab;          // distance between default tabs
+global  char                tab_char;           // tab character from .tb
+global  uint32_t            tab_col;            // width of one column, as used with tabs
+global  tag_cb          *   tt_stack;           // font stack entry to modify for tab tables
 
 // the document page and related items
 global group_type           cur_group_type;     // current tag/cw in effect (gt_bx is not allowed)

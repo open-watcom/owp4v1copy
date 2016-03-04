@@ -121,6 +121,8 @@ void init_global_vars( void )
     prev_line           = NULL;
     max_depth           = 0;
 
+    fig_count           = 0;
+
     c_stop              = NULL;
     tt_stack            = NULL;
 
@@ -248,6 +250,8 @@ void init_pass_data( void )
 
     g_indent            = 0;
     g_indentr           = 0;
+
+    fig_count           = 0;
 
     ixhtag[0] = NULL;                   // last higher level :IH1 :IH2 tags
     ixhtag[1] = NULL;                   // last higher level :IH1 :IH2 tags

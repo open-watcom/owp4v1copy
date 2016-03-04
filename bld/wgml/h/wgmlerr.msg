@@ -106,6 +106,9 @@ pick( INF_PASS_1,               "\n\nStarting pass %s of %s ( %s mode )",
 pick( INF_PASS_2,               "  End of pass %s of %s ( %s mode )",
                                 "  End of pass %s of %s ( %s mode )" )
 
+pick( WNG_PASS_1,               "Two passes needed to get TOC or FIGLIST in front material",
+                                "Two passes needed to get TOC or FIGLIST in front material")
+
 pick( WNG_IGN_OPTION,           "Option ignored: %s",
                                 "Option ignored: %s" )
 

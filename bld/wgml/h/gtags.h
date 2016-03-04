@@ -70,13 +70,13 @@
   pickg( DT,       2,      gml_dummy,      tag_out_txt, 0 )
   pickg( DTHD,     4,      gml_dummy,      tag_out_txt, 0 )
 
-  pickg( FIG,      3,      gml_dummy,      tag_out_txt, 0 )
-  pickg( EFIG,     4,      gml_dummy,      tag_out_txt, 0 )
+  pickg( FIG,      3,      gml_fig,        tag_out_txt, 0 )
+  pickg( EFIG,     4,      gml_efig,       tag_out_txt, figcap_tag )
 
-  pickg( FIGCAP,   6,      gml_dummy,      tag_out_txt, 0 )
-  pickg( FIGDESC,  7,      gml_dummy,      tag_out_txt, 0 )
+  pickg( FIGCAP,   6,      gml_figcap,     tag_out_txt, 0 )
+  pickg( FIGDESC,  7,      gml_figdesc,    tag_out_txt, figcap_tag )
   pickg( FIGLIST,  7,      gml_figlist,    tag_out_txt, 0 )
-  pickg( FIGREF,   6,      gml_dummy,      tag_out_txt, 0 )
+  pickg( FIGREF,   6,      gml_figref,     tag_out_txt, 0 )
 
   pickg( FN,       2,      gml_dummy,      tag_out_txt, 0 )
   pickg( EFN,      3,      gml_dummy,      tag_out_txt, 0 )
@@ -137,7 +137,6 @@
   pickg( EOL,      3,      gml_eol,        tag_out_txt, 0 )
 
   pickg( P,        1,      gml_p,          tag_out_txt, 0 )
-//pickg( PB,       2,      gml_lp,         tag_out_txt, li_lp_tag ) // this is a hack TBD
   pickg( PB,       2,      gml_pb,         tag_out_txt, 0 )
   pickg( PC,       2,      gml_pc,         tag_out_txt, 0 )
   pickg( PREFACE,  7,      gml_preface,    tag_out_txt, 0 )

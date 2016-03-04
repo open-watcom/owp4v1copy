@@ -2236,7 +2236,9 @@ void process_text( const char *text, font_number font )
         }
 
         // exit at end of text unless at end of input line
-        if( !(input_cbs->fmflags & II_eol) && !*p ) {
+        // or if processing the FIGCAP prefix (skips adding any spaces)
+
+        if( (!(input_cbs->fmflags & II_eol) && !*p) || ProcFlags.figcap_prefix ) {
             break;
         }
 
@@ -2288,9 +2290,11 @@ void process_text( const char *text, font_number font )
 
         if( !ProcFlags.concat ) {
 
-            /* End of input line: end of output line with CO OFF */
+            /* End of input line: end of output line with CO OFF  */
+            /* But not for the FIGCAP prefix string ("Figure 1.") */
 
-            if( (input_cbs->fmflags & II_eol) && (input_cbs->fmflags & II_file) ) {
+            if( (input_cbs->fmflags & II_eol) && (input_cbs->fmflags & II_file)
+                    && !ProcFlags.figcap_prefix ) {
                 process_line_full( t_line, false );
                 t_line = NULL;
             }

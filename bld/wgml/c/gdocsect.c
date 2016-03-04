@@ -32,6 +32,7 @@
 #include    "gvars.h"
 
 
+static  bool        toc_or_figlist  = false;    // used with TOC, FIGLIST and eGDOC
 static  int32_t     save_indent     =0;     // used with TITLEP/eTITLEP
 static  int32_t     save_indentr    =0;     // used with TITLEP/eTITLEP
 static  line_number titlep_lineno   =0;     // TITLEP tag line number
@@ -597,6 +598,7 @@ extern  void    gml_figlist( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_figlist );
     spacing = layout_work.figlist.spacing;
+    toc_or_figlist = true;
 }
 
 extern  void    gml_frontm( const gmltag * entry )
@@ -726,6 +728,7 @@ extern  void    gml_toc( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_toc );
     spacing = layout_work.toc.spacing;
+    toc_or_figlist = true;
 }
 
 extern  void    gml_egdoc( const gmltag * entry )
@@ -738,6 +741,13 @@ extern  void    gml_egdoc( const gmltag * entry )
         start_doc_sect();               // if not already done
     }
     gml_doc_xxx( doc_sect_egdoc );
+
+/// this will eventually emit the INDEX (and TOC & FIGLIST if appropriate) at end of doc
+
+    if( passes == 1 && (toc_or_figlist) ) {
+        xx_warn( wng_pass_1 );
+/// emit FIGLIST?
+    } /// if passes > 1, check for changed page numbers???
 }
 
 /***************************************************************************/

@@ -55,6 +55,7 @@ gml_objs =  &
         gdate.obj    &
         gdocnum.obj  &
         gdocsect.obj &
+	gfigtags.obj &
         ggraphic.obj &
         ghx.obj      &
         ghpxsf.obj   &

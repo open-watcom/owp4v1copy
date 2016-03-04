@@ -38,9 +38,10 @@ typedef struct {
     char        tagname[TAG_NAME_LENGTH + 1];
 } loc_to_name;
 
-#define L2N_ENTRIES 2
+#define L2N_ENTRIES 3
 static loc_to_name  l2n_names[L2N_ENTRIES] = { { address_tag, "EADDRESS" },
-                                                { titlep_tag, "ETITLEP" } };
+                                               { figcap_tag, "FIGDESC or EFIG" },
+                                               { titlep_tag, "ETITLEP" } };
 
 /***************************************************************************/
 /*  display offending text line and mark the offending token               */
@@ -447,7 +448,7 @@ void    g_err_tag_rsloc( locflags inloc, const char *pa )
             break;
         }
     }
-    if( tag_name == NULL ) {        // should never happen, make internal error?
+    if( tag_name == NULL ) {
         tag_name = "unknown";
     }
     g_err_tag_common( tag_name, 1 );

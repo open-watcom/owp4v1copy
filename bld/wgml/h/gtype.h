@@ -395,8 +395,9 @@ typedef enum {
     /*  restricted location tags */
     titlep_tag  = 1,                    // tag allowed in TITLEP section
     address_tag = 2,                    // tag allowed in ADDRESS section
+    figcap_tag  = 4,                    // tag allowed after FIGCAP
     /*  special use tags */
-    li_lp_tag   = 4,                    // marks LI and LP tags
+    li_lp_tag   = 8,                    // marks LI and LP tags
 } locflags;
 
 typedef struct gmltag {
@@ -1162,8 +1163,8 @@ typedef struct ref_entry {
     union {
         struct {
             uint32_t        pageno;     // output page
-    uint32_t                number;     // figure or footnote number
-    char                *   text_cap;   // text line or figcap text
+            uint32_t        number;     // figure or footnote number
+            char        *   text_cap;   // text line or figcap text
         };
         struct {
             ix_h_blk    *   hblk;
