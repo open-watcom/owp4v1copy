@@ -217,10 +217,10 @@ global struct ProcFlags {
     unsigned        top_line        : 1;// determines if current line is at top of page
     unsigned        vline_done      : 1;// determines if a vertical line was done
 
-    unsigned        figcap_prefix   : 1;// FIGCAP prefix is CO OFF without the automtic new line
-    unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
+    unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
+    unsigned        prefix_continue : 1;// suppress automtic new line after prefix
 
     unsigned        has_aa_block    : 1;// true if device defined :ABSOLUTEADDRESS
     unsigned        ps_device       : 1;// true if device is PostScript

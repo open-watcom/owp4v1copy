@@ -36,10 +36,12 @@
 #include "gvars.h"
 
 static  bool            concat_save;            // for ProcFlags.concat
+static  bool            figcap_done;            // FIGCAP done for current FIG
 static  font_number     font_save;              // save for font
 static  group_type      sav_group_type;         // save prior group type
 static  ju_enum         justify_save;           // for ProcFlags.justify
 static  ref_entry   *   re              = NULL; // current FIG ref_entry
+static  uint32_t        figdesc_skip    = 0;    // FIGDESC pre_lines if no text
 
 /***************************************************************************/
 /*      :FIG [depth=’vert-space-unit’]                                     */
@@ -233,6 +235,8 @@ extern  void    gml_efig( const gmltag * entry )
     g_cur_left = nest_cb->lm;
     g_page_right = nest_cb->rm;
     g_post_skip = nest_cb->post_skip;   // shift post_skip to follow eXMP
+    g_post_skip += figdesc_skip;        // FIGDESC pre_lines if no FIGDESC text
+    figdesc_skip = 0;                   // cleanup for next FIG
     ProcFlags.skips_valid = false;      // activate post_skip for next element
 
     wk = nest_cb;
@@ -322,7 +326,7 @@ extern  void    gml_figcap( const gmltag * entry )
     scan_start = p;                     // over spaces
 
     g_curr_font = layout_work.figcap.string_font;
-    set_skip_vars( NULL, &layout_work.figcap.pre_lines, NULL, spacing, g_curr_font );
+    set_skip_vars( &layout_work.figcap.pre_lines, NULL, NULL, spacing, g_curr_font );
 
     count = strlen(&layout_work.figcap.string);
     ultoa( re->number, &buffer, 10);
@@ -335,32 +339,25 @@ extern  void    gml_figcap( const gmltag * entry )
     current = strlen( fcstr );
     fcstr[current] = layout_work.figcap.delim;
     fcstr[current + 1] = '\0';
-    ProcFlags.figcap_prefix = true;     // suppress normal CO OFF line finalization 
-    process_text( fcstr, g_curr_font );  // FIGCAP prefix
-    ProcFlags.figcap_prefix = false;    
-
-/// set left margin/tab/whatever for the caption/desc itself
-
-    current = strlen( fcstr );
-    g_cur_left += cop_text_width( fcstr, count, g_curr_font );
-    g_cur_left -= wgml_fonts[g_curr_font].spc_width;    // TBD
-    g_cur_h_start = g_cur_left;
-    ProcFlags.keep_left_margin = true;  // keep special indent -- needed?
-
+    ProcFlags.prefix_continue = true;   // suppress normal CO OFF line finalization 
+    input_cbs->fmflags &= ~II_eol;      // prefix is never EOL
+    process_text( fcstr, g_curr_font ); // FIGCAP prefix
     mem_free( fcstr );
 
-/// this is not clear
-
+    g_cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
+    g_cur_h_start = g_cur_left;
+    g_curr_font = layout_work.figcap.font;
     if( *p == '.' ) p++;                // possible tag end
     if( *p ) {
-        g_curr_font = layout_work.figcap.font;
         ProcFlags.concat = true;        // even if was false on entry
         post_space = 0;                 // g_curr_left should be enough
         re->flags |= rf_textcap;        // mark as have a caption
+        input_cbs->fmflags &= ~II_sol;  // prefix was SOL, so this is not
 /// copy caption to re, in some sense --- chekc HX tags to see what they do!!!
 /// then output the text!!!
         process_text( p, g_curr_font );  // if text follows
     }
+    figcap_done = true;
     scan_start = scan_stop + 1;
     return;
 }
@@ -380,7 +377,6 @@ extern  void    gml_figdesc( const gmltag * entry )
     char    *   p;
 
     start_doc_sect();
-    scr_process_break();
     rs_loc = 0;
 
     scan_err = false;
@@ -390,11 +386,25 @@ extern  void    gml_figdesc( const gmltag * entry )
 
     scan_start = p;                     // over spaces
 
-/// presumably, a lot of processing goes in here
+    if( figcap_done ) {                         // FIGCAP was present
+        ProcFlags.ct = true;                    // emulate CT
+        input_cbs->fmflags &= ~II_eol;          // ":" is never EOL
+        process_text( ":", g_curr_font);        // uses FIGCAP font
+        g_curr_font = layout_work.figdesc.font; // change to FIGDESC font
+    } else {                                    // FIGCAP not present
+        scr_process_break();                    
+        g_curr_font = layout_work.figdesc.font;
+        set_skip_vars( &layout_work.figdesc.pre_lines, NULL, NULL, spacing, g_curr_font );
+    }
 
     if( *p == '.' ) p++;                // possible tag end
     if( *p ) {
-        process_text( p, g_curr_font); // if text follows
+        ProcFlags.concat = true;        // even if was false on entry
+        process_text( p, g_curr_font);  // if text follows
+    } else {
+        if( !figcap_done ) {            // if no FIGCAP was present
+            figdesc_skip = g_subs_skip; // and no text
+        }
     }
     scan_start = scan_stop + 1;
     return;
