@@ -169,6 +169,7 @@ void init_global_vars( void )
     init_sys_dict( &sys_dict );
     init_ref_dict( &ref_dict );
     init_ref_dict( &fig_dict );
+    fig_re              = fig_dict;
     init_ref_dict( &fn_dict );
 
     tagname[0]          = '*';          // last defined GML tag name none
@@ -252,6 +253,7 @@ void init_pass_data( void )
     g_indentr           = 0;
 
     fig_count           = 0;
+    fig_re              = fig_dict;     // start each pass at start of FIG list
 
     ixhtag[0] = NULL;                   // last higher level :IH1 :IH2 tags
     ixhtag[1] = NULL;                   // last higher level :IH1 :IH2 tags

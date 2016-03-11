@@ -672,6 +672,8 @@ typedef enum doc_section {
     doc_sect_appendix,                  // appendix
     doc_sect_backm,                     // back matter
     doc_sect_index,                     // index
+    doc_sect_toce,                      // table of contents (at end of file)
+    doc_sect_figliste,                  // figure list (at end of file)
     doc_sect_egdoc                      // egdoc  has to be last
 } doc_section;
 
@@ -1149,6 +1151,7 @@ typedef enum {
     rf_hx           =    1,             // :Hx entry
     rf_fx           =    2,             // :FN :FIG entry
     rf_textcap      =    4,             // with text or figcap
+    rf_figcap       =    8,             // FIGCAP used -- even if there is no text
 
     rf_ix           =   16,             // :Ix :IHx created entry
     rf_dummy        = 0x11111111,       // to get a int32 enum

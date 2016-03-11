@@ -27,7 +27,7 @@
 * Description:  Implements reference dictionary and helper functions
 *                   for :Hx, :HDREF, :FIG, :FN, :FIGREF, :FNREF tags
 *
-*                   :FIG, :FN, :FIGREF, :FNREF tags not yet implemented TBD
+*                   :FN tag not yet implemented TBD
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */

@@ -31,11 +31,16 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
+typedef enum {
+    gs_none     = 0,    // document specification includes neither FIGLIST nor TOC
+    gs_figlist  = 1,    // document specification includes FIGLIST
+    gs_toc      = 2,    // document specification includes TOC
+} gen_sect;
 
-static  bool        toc_or_figlist  = false;    // used with TOC, FIGLIST and eGDOC
-static  int32_t     save_indent     =0;     // used with TITLEP/eTITLEP
-static  int32_t     save_indentr    =0;     // used with TITLEP/eTITLEP
-static  line_number titlep_lineno   =0;     // TITLEP tag line number
+static  gen_sect    figlist_toc     = false;    // used with FIGLIST, TOC and eGDOC
+static  int32_t     save_indent     =0;         // used with TITLEP/eTITLEP
+static  int32_t     save_indentr    =0;         // used with TITLEP/eTITLEP
+static  line_number titlep_lineno   =0;         // TITLEP tag line number
 
 /***************************************************************************/
 /*  error routine for wrong sequence of doc section tags                   */
@@ -92,6 +97,8 @@ void set_section_banners( doc_section ds )
         appendix_ban,                   // doc_sect_appendix,
         backm_ban,                      // doc_sect_backm,
         index_ban,                      // doc_sect_index,
+        toc_ban,                        // doc_sect_toce (at end of file),
+        figlist_ban,                    // doc_sect_figliste (at end of file),
         no_ban                          // doc_sect_egdoc
     };
 
@@ -232,6 +239,30 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
 
 
 /***************************************************************************/
+/*    output FIGLIST                                                       */
+/***************************************************************************/
+
+static  void    doc_figlist( void )
+{
+    ref_entry   *   cur_re;
+
+    start_doc_sect();                       // TBD
+    cur_re = fig_dict;
+    while( cur_re != NULL ) {
+        if( cur_re->flags & rf_figcap ) {   // no FIGCAP used, no FIGLIST output
+/// the prefix goes here
+            if( cur_re->flags & rf_textcap ) {
+                process_text( cur_re->text_cap, g_curr_font );
+            }
+/// the spacing and page number go here
+        }
+        cur_re = cur_re->next;
+    }
+    scr_process_break();                // outputs last element in figlist
+
+}
+
+/***************************************************************************/
 /*  set new vertical position depending on banner existance                */
 /***************************************************************************/
 
@@ -362,6 +393,10 @@ void    start_doc_sect( void )
             font     = layout_work.preface.font;
             h_spc    = layout_work.preface.spacing;
         }
+        break;
+    case   doc_sect_figlist:
+    case   doc_sect_figliste:
+        page_e   = true;
         break;
     case   doc_sect_appendix:
         page_r   = layout_work.appendix.page_reset;
@@ -598,7 +633,11 @@ extern  void    gml_figlist( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_figlist );
     spacing = layout_work.figlist.spacing;
-    toc_or_figlist = true;
+    if( pass == 1 ) {
+        figlist_toc |= gs_figlist;
+    } else if( GlobalFlags.lastpass ) { 
+        doc_figlist();
+    }
 }
 
 extern  void    gml_frontm( const gmltag * entry )
@@ -728,7 +767,7 @@ extern  void    gml_toc( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_toc );
     spacing = layout_work.toc.spacing;
-    toc_or_figlist = true;
+    figlist_toc |= gs_toc;
 }
 
 extern  void    gml_egdoc( const gmltag * entry )
@@ -737,17 +776,25 @@ extern  void    gml_egdoc( const gmltag * entry )
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
     scr_process_break();                // outputs last element in file
-    if( !ProcFlags.start_section ) {
-        start_doc_sect();               // if not already done
+
+/// this will eventually emit the INDEX (and TOC & FIGLIST if appropriate) at end of
+/// the document
+
+    if( figlist_toc ) {                         // only if FIGLIST or TOC was found
+
+        if( passes == 1 ) {
+            xx_warn( wng_pass_1 );
+        }
+        if( GlobalFlags.lastpass ) {            // output on last pass only
+            if( figlist_toc & gs_figlist ) {    // only if FIGLIST was found
+                gml_doc_xxx( doc_sect_figliste );
+                doc_figlist();
+            }
+        }
     }
+/// if passes > 1, check for changed page numbers!!!
+
     gml_doc_xxx( doc_sect_egdoc );
-
-/// this will eventually emit the INDEX (and TOC & FIGLIST if appropriate) at end of doc
-
-    if( passes == 1 && (toc_or_figlist) ) {
-        xx_warn( wng_pass_1 );
-/// emit FIGLIST?
-    } /// if passes > 1, check for changed page numbers???
 }
 
 /***************************************************************************/

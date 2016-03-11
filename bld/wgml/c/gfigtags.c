@@ -40,7 +40,6 @@ static  bool            figcap_done;            // FIGCAP done for current FIG
 static  font_number     font_save;              // save for font
 static  group_type      sav_group_type;         // save prior group type
 static  ju_enum         justify_save;           // for ProcFlags.justify
-static  ref_entry   *   re              = NULL; // current FIG ref_entry
 static  uint32_t        figdesc_skip    = 0;    // FIGDESC pre_lines if no text
 
 /***************************************************************************/
@@ -156,28 +155,35 @@ extern  void    gml_fig( const gmltag * entry )
 
 /// presumably, a lot of processing goes in here
     fig_count++;                        // get current FIG number
-/// need id before this point!!!
+/// need id before this point
 
-    re = mem_alloc( sizeof( ref_entry ) );
-    init_ref_entry( re, NULL, 0 );      /// last two params are for id!!!
-    re->flags = rf_fx;                  // mark as FIG
-    re->number = fig_count;             // add number of this FIG
+    /* Only create the entry on the first pass */
+
+    if( pass == 1 ) {
+        fig_re = mem_alloc( sizeof( ref_entry ) );
+        init_ref_entry( fig_re, NULL, 0 );      /// last two params are for id!!!
+        fig_re->flags = rf_fx;                  // mark as FIG
+        fig_re->number = fig_count;             // add number of this FIG
+        add_ref_entry( &fig_dict, fig_re );
+    } else if( fig_count != fig_re->number ) {  // FIG added/removed between passes
+        internal_err( __FILE__, __LINE__ );     // which is, of course, impossible
+    }
+
 /// more entries, perhaps
-    add_ref_entry( &fig_dict, re );
 
 #if 0
     /***********************************************************************/
     /*  if id  specified add it to reference dict                          */
     /***********************************************************************/
     if( idseen ) {
-        rwk = find_refid( ref_dict, re->id );
+        rwk = find_refid( ref_dict, fig_re->id );
         if( !rwk ) {                    // new entry
             if( txtlen > 0 ) {          // text line not empty
-                re->text_cap = mem_alloc( txtlen + 1 );
-                strcpy_s( re->text_cap, txtlen + 1, p );
+                fig_re->text_cap = mem_alloc( txtlen + 1 );
+                strcpy_s( fig_re->text_cap, txtlen + 1, p );
             }
-            add_ref_entry( &ref_dict, re );
-            re = NULL;                  // free will be done via dictionary
+            add_ref_entry( &ref_dict, fig_re );
+////            re = NULL;                  // free will be done via dictionary
         } else {
             /***************************************************************/
             /*  test for duplicate id                                      */
@@ -185,16 +191,16 @@ extern  void    gml_fig( const gmltag * entry )
             /*  two identical ids are not specified in different files on  */
             /*  the same line no.                                          */
             /***************************************************************/
-            if( re->lineno != rwk->lineno ) {
-                g_err( wng_id_xxx, re->id );
+            if( fig_re->lineno != rwk->lineno ) {
+                g_err( wng_id_xxx, fig_re->id );
                 g_info( inf_id_duplicate );
                 file_mac_info();
                 err_count++;
             }
-            if( re->text_cap != NULL ) {
-                mem_free( re->text_cap );
+            if( fig_re->text_cap != NULL ) {
+////                mem_free( re->text_cap );
             }
-            mem_free( re );
+////            mem_free( re );
         }
     }
 #endif
@@ -320,16 +326,12 @@ extern  void    gml_figcap( const gmltag * entry )
 
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-
-    scan_start = p;                     // over spaces
 
     g_curr_font = layout_work.figcap.string_font;
     set_skip_vars( &layout_work.figcap.pre_lines, NULL, NULL, spacing, g_curr_font );
 
     count = strlen(&layout_work.figcap.string);
-    ultoa( re->number, &buffer, 10);
+    ultoa( fig_re->number, &buffer, 10);
     count += strlen(&buffer);
     count ++;                           // for the delimiter character
     fcstr = (char *) mem_alloc( count + 1);
@@ -339,7 +341,6 @@ extern  void    gml_figcap( const gmltag * entry )
     current = strlen( fcstr );
     fcstr[current] = layout_work.figcap.delim;
     fcstr[current + 1] = '\0';
-    ProcFlags.prefix_continue = true;   // suppress normal CO OFF line finalization 
     input_cbs->fmflags &= ~II_eol;      // prefix is never EOL
     process_text( fcstr, g_curr_font ); // FIGCAP prefix
     mem_free( fcstr );
@@ -347,16 +348,20 @@ extern  void    gml_figcap( const gmltag * entry )
     g_cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
     g_cur_h_start = g_cur_left;
     g_curr_font = layout_work.figcap.font;
-    if( *p == '.' ) p++;                // possible tag end
+    if( *p == '.' ) p++;                    // possible tag end
     if( *p ) {
-        ProcFlags.concat = true;        // even if was false on entry
-        post_space = 0;                 // g_curr_left should be enough
-        re->flags |= rf_textcap;        // mark as have a caption
-        input_cbs->fmflags &= ~II_sol;  // prefix was SOL, so this is not
-/// copy caption to re, in some sense --- chekc HX tags to see what they do!!!
-/// then output the text!!!
-        process_text( p, g_curr_font );  // if text follows
+        ProcFlags.concat = true;            // even if was false on entry
+        post_space = 0;                     // g_curr_left should be enough
+        input_cbs->fmflags &= ~II_sol;      // prefix was SOL, so this is not
+        if( pass == 1 ) {                   // only on first pass
+            current = strlen( p );
+            fig_re->text_cap = (char *) mem_alloc( current + 1);
+            strcpy_s(fig_re->text_cap, current + 1, p );
+            fig_re->flags |= rf_textcap;    // mark as having caption text
+        }
+        process_text( p, g_curr_font );     // if text follows
     }
+    fig_re->flags |= rf_figcap;             // mark as FIGCAP present, with or without text
     figcap_done = true;
     scan_start = scan_stop + 1;
     return;
@@ -381,10 +386,6 @@ extern  void    gml_figdesc( const gmltag * entry )
 
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-
-    scan_start = p;                     // over spaces
 
     if( figcap_done ) {                         // FIGCAP was present
         ProcFlags.ct = true;                    // emulate CT
@@ -396,6 +397,8 @@ extern  void    gml_figdesc( const gmltag * entry )
         g_curr_font = layout_work.figdesc.font;
         set_skip_vars( &layout_work.figdesc.pre_lines, NULL, NULL, spacing, g_curr_font );
     }
+
+    nest_cb->font = g_curr_font;        // support font changes inside description
 
     if( *p == '.' ) p++;                // possible tag end
     if( *p ) {
@@ -427,7 +430,6 @@ extern  void    gml_figref( const gmltag * entry )
 { 
     char    *   p;
 
-    re = NULL;                          // commit this FIG's ref_entry to the dictionary
     scan_err = false;
     p = scan_start;
     if( *p == '.' ) p++;                // possible tag end

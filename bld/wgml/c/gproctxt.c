@@ -2236,9 +2236,8 @@ void process_text( const char *text, font_number font )
         }
 
         // exit at end of text unless at end of input line
-        // or if processing a prefix (this skips adding any spaces)
 
-        if( (!(input_cbs->fmflags & II_eol) && !*p) || ProcFlags.prefix_continue ) {
+        if( !(input_cbs->fmflags & II_eol) && !*p ) {
             break;
         }
 
@@ -2293,8 +2292,7 @@ void process_text( const char *text, font_number font )
             /* End of input line: end of output line with CO OFF */
             /* But not for a prefix string                       */
 
-            if( (input_cbs->fmflags & II_eol) && (input_cbs->fmflags & II_file)
-                    && !ProcFlags.prefix_continue ) {
+           if( (input_cbs->fmflags & II_eol) && (input_cbs->fmflags & II_file) ) {
                 process_line_full( t_line, false );
                 t_line = NULL;
             }
@@ -2332,7 +2330,6 @@ void process_text( const char *text, font_number font )
 
     ProcFlags.ct = false;               // experimental TBD
     ProcFlags.fsp = false;              // experimental TBD
-    ProcFlags.prefix_continue = false;  // experimental TBD
     ProcFlags.utc = false;              // experimental TBD
 }
 

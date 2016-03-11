@@ -220,7 +220,6 @@ global struct ProcFlags {
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
-    unsigned        prefix_continue : 1;// suppress automtic new line after prefix
 
     unsigned        has_aa_block    : 1;// true if device defined :ABSOLUTEADDRESS
     unsigned        ps_device       : 1;// true if device is PostScript
@@ -268,6 +267,7 @@ global  uint32_t            h_vl_offset;        // horizontal offset used to pos
 global  uint32_t            max_depth;          // space left on page (used by BX)
 
 // fig support
+global  ref_entry       *   fig_re;             // current FIG ref_entry
 global  uint32_t            fig_count;          // figure number
 
 // tb support
