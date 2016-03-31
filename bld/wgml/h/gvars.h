@@ -123,12 +123,18 @@ global  int32_t         fm;             // footing margin          &$fm
 global  int32_t         lm;             // left margin             &$pagelm
 global  int32_t         rm;             // right margin            &$pagerm
 
+global  fwd_ref     *   fwd_ref_pool;   // pool of unused fwd_ref instances
+global  fwd_ref     *   fig_fwd_refs;   // forward reference/undefined id/page change
+global  fwd_ref     *   fn_fwd_refs;    // forward reference/undefined id
+global  fwd_ref     *   hx_fwd_refs;    // forward reference/undefined id/page change
+
 global  ix_h_blk    *   ixhtag[4];      // last higher level :IH1 :IH2 tags in index
 global  ix_h_blk    *   index_dict;     // index structure dictionary
-global  ref_entry   *   iref_dict;      // reference id dictionary :Ix :IHx :IREF
-global  ref_entry   *   ref_dict;       // reference dictionary :Hx tags
-global  ref_entry   *   fig_dict;       // reference dictionary :FIG tags
-global  ref_entry   *   fn_dict;        // reference dictionary :FN tags
+
+global  ref_entry   *   fig_ref_dict;   // reference dictionary :FIG tags
+global  ref_entry   *   fn_ref_dict;    // reference dictionary :FN tags
+global  ref_entry   *   hx_ref_dict;    // reference dictionary :Hx tags
+global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IREF
 
 global  symvar      *   global_dict;    // global symbol dictionary
 global  symvar      *   sys_dict;       // global system symbol dictionary
@@ -269,6 +275,13 @@ global  uint32_t            max_depth;          // space left on page (used by B
 // fig support
 global  ref_entry       *   fig_re;             // current FIG ref_entry
 global  uint32_t            fig_count;          // figure number
+
+// fn support
+global  ref_entry       *   fn_re;              // current FN ref_entry
+global  uint32_t            fn_count;           // footnote number
+
+// hx support
+global  ref_entry       *   hx_re;              // current Hx ref_entry
 
 // tb support
 global  tab_stop        *   c_stop;             // current tab_stop

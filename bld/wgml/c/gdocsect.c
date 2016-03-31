@@ -247,7 +247,7 @@ static  void    doc_figlist( void )
     ref_entry   *   cur_re;
 
     start_doc_sect();                       // TBD
-    cur_re = fig_dict;
+    cur_re = fig_ref_dict;
     while( cur_re != NULL ) {
         if( cur_re->flags & rf_figcap ) {   // no FIGCAP used, no FIGLIST output
 /// the prefix goes here
@@ -259,7 +259,31 @@ static  void    doc_figlist( void )
         cur_re = cur_re->next;
     }
     scr_process_break();                // outputs last element in figlist
+    return;
+}
 
+/***************************************************************************/
+/*    output TOC                                                           */
+/***************************************************************************/
+
+static  void    doc_toc( void )
+{
+    ref_entry   *   cur_re;
+
+    start_doc_sect();                       // TBD
+    cur_re = hx_ref_dict;
+    while( cur_re != NULL ) {
+        if( cur_re->flags & rf_figcap ) {   // no FIGCAP used, no FIGLIST output
+/// the prefix goes here
+            if( cur_re->flags & rf_textcap ) {
+                process_text( cur_re->text_cap, g_curr_font );
+            }
+/// the spacing and page number go here
+        }
+        cur_re = cur_re->next;
+    }
+    scr_process_break();                // outputs last element in figlist
+    return;
 }
 
 /***************************************************************************/
@@ -674,9 +698,7 @@ extern  void    gml_index( const gmltag * entry )
         return;
     }
     if( !GlobalFlags.index ) {          // index option not active
-        g_err( wng_index_opt );         // give hint to activate index
-        scan_start = scan_stop + 1;
-        return;
+/// most of this shouldn't be done. how to stop it? ///
     }
 
     gml_doc_xxx( doc_sect_index );
@@ -775,24 +797,43 @@ extern  void    gml_egdoc( const gmltag * entry )
     if( blank_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
-    scr_process_break();                // outputs last element in file
+    scr_process_break();                        // outputs last element in file
 
-/// this will eventually emit the INDEX (and TOC & FIGLIST if appropriate) at end of
-/// the document
-
-    if( figlist_toc ) {                         // only if FIGLIST or TOC was found
-
-        if( passes == 1 ) {
-            xx_warn( wng_pass_1 );
-        }
-        if( GlobalFlags.lastpass ) {            // output on last pass only
+    if( GlobalFlags.lastpass ) {                // output on last pass only
+        if( passes == 1 ) {                     // first and only pass
+            if( figlist_toc & gs_toc ) {        // only if TOC was found
+                gml_doc_xxx( doc_sect_toce );
+                doc_toc();
+            }
             if( figlist_toc & gs_figlist ) {    // only if FIGLIST was found
                 gml_doc_xxx( doc_sect_figliste );
                 doc_figlist();
             }
+            while( fig_fwd_refs != NULL ) {     // output figure forward/undefined references
+            }
+            while( hx_fwd_refs != NULL ) {      // output header forward/undefined references
+            }
+            while( fn_fwd_refs != NULL ) {      // output footnote forward/undefined references
+            }
+            if( !GlobalFlags.index ) {          // index option not active
+                xx_simple_warn( wng_index_opt );// give hint to activate index
+            }
+            if( figlist_toc ) {
+                xx_simple_warn( wng_pass_1 );   // more than one pass needed 
+            }
+        } else {                                // last pass of at least 2
+            while( fig_fwd_refs != NULL ) {     // output figure undefined/page change references
+            }
+            while( hx_fwd_refs != NULL ) {      // output header undefined/page changereferences
+            }
+            if( !GlobalFlags.index ) {          // index option not active
+                xx_simple_warn( wng_index_opt );// give hint to activate index
+            }
+            if( figlist_toc ) {
+                xx_simple_warn( wng_pass_many );// at least one more pass needed
+            }
         }
     }
-/// if passes > 1, check for changed page numbers!!!
 
     gml_doc_xxx( doc_sect_egdoc );
 }

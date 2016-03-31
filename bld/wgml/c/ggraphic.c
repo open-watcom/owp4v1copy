@@ -30,7 +30,6 @@
 #define __STDC_WANT_LIB_EXT1__  1
 #include <string.h>
 #include    "wgml.h"
-//#include    "findfile.h"
 #include    "gvars.h"
 
 /***************************************************************************/
@@ -147,7 +146,7 @@ void    gml_graphic( const gmltag * entry )
                     scan_start = scan_stop + 1;
                     return;
                 }
-                /* there should be a check somewhere for width > page width */
+///                /* there should be a check somewhere for width > page width */
             }
             if( ProcFlags.tag_end_found ) {
                 break;

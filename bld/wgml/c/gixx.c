@@ -251,7 +251,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 if( hx_lvl > 0 ) {      // :Ix :IHx
                     idseen = true;      // id attribute found
                     init_ref_entry( &reid, val_start, val_len );
-                    rewk = find_refid( iref_dict, reid.id );
+                    rewk = find_refid( ix_ref_dict, reid.id );
                     if( rewk != NULL ) {
                         if( rewk->lineno != reid.lineno ) {
                             g_err( inf_id_duplicate );
@@ -285,7 +285,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 if( (hx_lvl == 0) || ((hx_lvl > 1) && (hxstring[2] == lvlc)) ) {
                     fill_id( &refid, val_start, val_len );
                     refidseen = true;   // refid attribute found
-                    refwk = find_refid( iref_dict, refid.id );
+                    refwk = find_refid( ix_ref_dict, refid.id );
                     if( refwk == NULL ) {   // refid not in dict
                         if( GlobalFlags.lastpass ) {// this is an error
                             g_err( inf_id_unknown );// during lastpass
@@ -405,7 +405,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 if( (hx_lvl <= 3) && (hxstring[3] == lvlc) ) {
                     seeidseen = true;
                     fill_id( &reseeid, val_start, val_len );// copy lower id
-                    rswk = find_refid( iref_dict, reseeid.id );
+                    rswk = find_refid( ix_ref_dict, reseeid.id );
                     if( rswk == NULL ) {// not in dict, this is an error
                         if( GlobalFlags.lastpass ) {  // during lastpass
                             g_err( inf_id_unknown );
@@ -680,7 +680,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
         reid.flags = rf_ix;
         refwork = mem_alloc( sizeof( reid ) );
         memcpy( refwork, &reid, sizeof( reid ) );
-        add_ref_entry( &iref_dict, refwork );
+        add_ref_entry( &ix_ref_dict, refwork );
     }
 
     if( pgtext != NULL ) {

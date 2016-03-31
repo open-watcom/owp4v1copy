@@ -106,11 +106,14 @@ pick( INF_PASS_1,               "\n\nStarting pass %s of %s ( %s mode )",
 pick( INF_PASS_2,               "  End of pass %s of %s ( %s mode )",
                                 "  End of pass %s of %s ( %s mode )" )
 
+pick( WNG_IGN_OPTION,           "Option ignored: %s",
+                                "Option ignored: %s" )
+
 pick( WNG_PASS_1,               "Two passes needed to get TOC or FIGLIST in front material",
                                 "Two passes needed to get TOC or FIGLIST in front material")
 
-pick( WNG_IGN_OPTION,           "Option ignored: %s",
-                                "Option ignored: %s" )
+pick( WNG_PASS_MANY,            "More passes required for TOC or FIGLIST",
+                                "More passes required for TOC or FIGLIST")
 
 pick( WNG_WNG_OPTION,           "Option ignored: %s, formatting may be different than expected",
                                 "Option ignored: %s, formatting may be different than expected" )
@@ -364,11 +367,14 @@ pick( WNG_ID_XXX,               "For id '%s'",
 pick( INF_ID_LEN,               "Identifier name should have no more than seven characters",
                                 "Identifier name should have no more than seven characters" )
 
-pick( INF_ID_DUPLICATE,         "ID already defined",
-                                "ID already defined" )
+pick( INF_ID_DUPLICATE,         "Duplicate %s id",
+                                "Duplicate %s id" )
 
-pick( INF_ID_UNKNOWN,           "ID not defined",
-                                "ID not defined" )
+pick( INF_ID_FORWARD,           "More passes required for %s processing",
+                                "More passes required for %s processing" )
+
+pick( INF_ID_UNKNOWN,           "%s id not defined",
+                                "%s id not defined" )
 
 pick( ERR_REFID_NOT_ALLOWED,    "REFID not allowed",
                                 "REFID not allowed" )
@@ -574,8 +580,8 @@ pick( ERR_PAGE_DEPTH_TOO_BIG,   "The page depth is larger than the printable are
 pick( ERR_RIGHT_MARGIN_TOO_BIG, "The layout right margin is greater than the device page width",
                                 "The layout right margin is greater than the device page width" )
 
-pick( ERR_RIGHT_MARGIN_2_SMALL, "The right margin is too small when adjusted for the uprintable area of the device page",
-                                "The right margin is too small when adjusted for the uprintable area of the device page" )
+pick( ERR_RIGHT_MARGIN_2_SMALL, "The right margin is too small when adjusted for the unprintable area of the device page",
+                                "The right margin is too small when adjusted for the unprintable area of the device page" )
 
 /* banner error messages (simplified) */
 
@@ -687,12 +693,19 @@ pick( ERR_PATH_MAX,             "Directory path is too long and will not be used
 pick( ERR_BOX_BAD_ORDER,        "Box positions not in ascending order",
                                 "Box positions not in ascending order")
 
+pick( ERR_FIG_ID_CAP,           "Figure with an Id must have a caption",
+                                "Figure with an Id must have a caption")
+
 pick( ERR_INV_BOX_POS,          "Invalid box position",
                                 "Invalid box position")
+
+pick( ERR_INV_WIDTH_FIG,        "The FIG width must be greater than zero",
+                                "The FIG width must be greater than zero" )
 
 pick( ERR_SPC_NOT_VALID,        "Space value is not valid",
                                 "Space value is not valid")
 
 pick( ERR_TOO_MANY_OPS,         "Too many operands in .BX command",
                                 "Too many operands in .BX command")
+
 

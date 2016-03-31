@@ -27,8 +27,6 @@
 * Description:  WGML tags :H0 :H1 :H2 :H3 :H4 :H5 :H6 processing
 *
 *                  stitle= not implemented, not used in OW documentation
-*
-*                  incomplete heading output TBD
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -205,20 +203,20 @@ static  void    hx_header( int hx_lvl, const char *hnumstr, const char *txt )
 
 static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
 {
-    char    *   p;
-    char    *   headp;
-    bool        idseen;
-    bool        stitleseen;
-    int         rc;
-    int         k;
-    size_t      headlen;
-    size_t      txtlen;
-    char        hnumstr[64];
-    ref_entry   *   re;
-    ref_entry   *   rwk;
-    static char hxstr[4] = ":HX";
-    static char htextx[8] = "$htextX";
-    static char headx[7]  = "$headX";
+    bool            id_seen     = false;
+    char        *   headp;
+    char            hnumstr[64];
+    char            id[ID_LEN];
+    char        *   p;
+    int             k;
+    int             rc;
+    size_t          headlen;
+    size_t          txtlen;
+    ref_entry   *   cur_ref;
+
+    static char     headx[7]    = "$headX";
+    static char     htextx[8]   = "$htextX";
+    static char     hxstr[4]    = ":HX";
 
     *(hxstr + 2) = '0' + hx_lvl;
     htextx[6] = '0' + hx_lvl;
@@ -258,31 +256,51 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
         layout_work.hx[hx_lvl].headn++;
     }
 
-    idseen = false;
-    stitleseen = false;
     p = scan_start;
-    re = NULL;
-
-    /***********************************************************************/
-    /*  Scan attributes  for :Hx                                           */
-    /*  id=                                                                */
-    /*  stitle=                                                            */
-    /***********************************************************************/
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
 
     for( ;; ) {
-        while( *p == ' ' ) {
+        while( *p == ' ' ) {            // over WS to attribute
             p++;
         }
-        if( *p == '\0' || *p == '.'  ) {
-            break;                      // tag end found
+        if( *p == '\0' ) {              // end of line: get new line
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line( true ) ) {// next line for missing attribute
+ 
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
+                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        ProcFlags.tag_end_found = true; 
+                        break;          
+                    } else {
+                        p = scan_start; // new line is part of current tag
+                        continue;
+                    }
+                }
+            }
         }
-        if( !strnicmp( "stitle=", p, 7 ) ) {
+        if( !strnicmp( "id=", p, 3 ) ) {
+            p += 2;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            id_seen = true;             // valid id attribute found
+            memcpy_s( id, ID_LEN, val_start, val_len );
+            if( val_len < ID_LEN ) {
+                id[val_len] = '\0';
+            } else {
+                id[ID_LEN - 1] = '\0';
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "stitle=", p, 7 ) ) {
             p += 6;
-            stitleseen = true;
 
-            /***************************************************************/
-            /*  Although unsupported scan stitle='xxx'                     */
-            /***************************************************************/
             g_warn( wng_unsupp_att, "stitle" );
             wng_count++;
             file_mac_info();
@@ -294,48 +312,17 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
                 continue;
             }
             break;
-        }
-
-        /*******************************************************************/
-        /*  ID='xxxxxxxx'                                                  */
-        /*******************************************************************/
-
-        if( !strnicmp( "id=", p, 3 ) ) {
-            p += 2;
-
-            p = get_refid_value( p );
-
-            if( val_len > 0 ) {
-                idseen = true;          // valid id attribute found
-                *(val_start + val_len) = '\0';
-
-                if( re == NULL ) {      // prepare reference entry
-                    re = mem_alloc( sizeof( ref_entry ) );
-                    init_ref_entry( re, val_start, val_len );
-                } else {
-                    fill_id( re, val_start, val_len );
-                }
-            }
-            scan_start = p;
-            if( !ProcFlags.tag_end_found ) {
-                continue;
-            }
+        } else {    // no match = end-of-tag in wgml 4.0
+            ProcFlags.tag_end_found = true;
             break;
         }
-
-        /*******************************************************************/
-        /* no more valid attributes, process remaining input as header text*/
-        /*******************************************************************/
-        break;
-    }
-    if( *p == '.' ) {                   // tag end ?
-        p++;
     }
 
     /************************************************************************/
     /*  set the global vars $headx, $headnumx, $htextx                      */
     /*    perhaps text translated to upper or lower case                    */
     /************************************************************************/
+
     while( *p == ' ' ) {                // ignore leading blanks
         p++;
     }
@@ -362,39 +349,28 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     strcat_s( headp, headlen, p );
     rc = add_symvar( &global_dict, headx, headp, no_subscript, 0 );
 
-    out_msg( " %s\n", headp );          // always verbose output ? TBD
-
     mem_free( headp );
 
-    /***********************************************************************/
-    /*  if id  specified add it to reference dict                          */
-    /***********************************************************************/
-    if( idseen ) {
-        rwk = find_refid( ref_dict, re->id );
-        if( !rwk ) {                    // new entry
-            if( txtlen > 0 ) {          // text line not empty
-                re->text_cap = mem_alloc( txtlen + 1 );
-                strcpy_s( re->text_cap, txtlen + 1, p );
-            }
-            add_ref_entry( &ref_dict, re );
-            re = NULL;                  // free will be done via dictionary
-        } else {
-            /***************************************************************/
-            /*  test for duplicate id                                      */
-            /*  it is done with comparing line no only, in the hope that   */
-            /*  two identical ids are not specified in different files on  */
-            /*  the same line no.                                          */
-            /***************************************************************/
-            if( re->lineno != rwk->lineno ) {
-                g_err( wng_id_xxx, re->id );
+    /* Only create the entry on the first pass */
+
+    if( id_seen ) {
+        if( pass == 1 ) {
+            cur_ref = find_refid( hx_ref_dict, id );
+            if( !cur_ref ) {                    // new entry
+                hx_re = mem_alloc( sizeof( ref_entry ) );
+                init_ref_entry( hx_re, id, strlen( id ) );
+                hx_re->flags = rf_fx;                  // mark as Hx
+                add_ref_entry( &hx_ref_dict, hx_re );
+                if( txtlen > 0 ) {          // text line not empty
+                    hx_re->text_cap = mem_alloc( txtlen + 1 );
+                    strcpy_s( hx_re->text_cap, txtlen + 1, p );
+                }
+            } else {                // duplicate id
+                g_err( wng_id_xxx, cur_ref->id );
                 g_info( inf_id_duplicate );
                 file_mac_info();
                 err_count++;
             }
-            if( re->text_cap != NULL ) {
-                mem_free( re->text_cap );
-            }
-            mem_free( re );
         }
     }
 

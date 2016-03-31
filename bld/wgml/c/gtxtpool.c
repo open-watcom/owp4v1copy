@@ -26,27 +26,7 @@
 *
 * Description:  WGML utility functions for alloc / free / reuse of
 *                           different structs
-*
-*       add_ban_col_to_pool         prepare reuse of ban_column instance(s)
-*       add_box_col_set_to_pool     prepare reuse of box_col_set instance(s)
-*       add_box_col_stack_to_pool   prepare reuse of box_col_stack instance(s)
-*       add_doc_col_to_pool         prepare reuse of doc_column instance(s)
-*       add_doc_el_to_pool          prepare reuse of doc_element instance(s)
-*       add_doc_el_group_to_pool    prepare reuse of doc_el_group intance(s)
-*       add_tag_cb_to_pool          prepare reuse of tag_cb instance(s)
-*       add_text_chars_to_pool      prepare reuse of text_chars instance(s)
-*       add_text_line_to_pool       prepare reuse of a text_line instance(s)
-*       alloc_ban_col               create a ban_column instance
-*       alloc_box_col_set           create a box_col_set instance
-*       alloc_box_col_stack         create a box_col_stack instance
-*       alloc_doc_col               create a doc_column instance
-*       alloc_doc_el                create a doc_element instance
-*       alloc_doc_el_group          create a doc_el_group instance
-*       alloc_tag_cb                create a tag_cb instance
-*       alloc_text_chars            create a text_chars instance
-*       alloc_text_line             create a text_line instance
-*       free_pool_storage           do free for all pools
-*       init_doc_el                 advanced doc_element initialization (uses alloc_doc_el)
+* Note: originally used for text_chars and text_line, hence the file name
 *
 ****************************************************************************/
 
@@ -534,6 +514,53 @@ void add_doc_el_group_to_pool( doc_el_group * a_group )
 
 
 /***************************************************************************/
+/*  allocate / reuse a fwd_ref instance                                     */
+/***************************************************************************/
+
+fwd_ref * alloc_fwd_ref( void )
+{
+    fwd_ref *   curr;
+    fwd_ref *   prev;
+    int         k;
+
+    curr = fwd_ref_pool;
+    if( curr != NULL ) {                // there is one to use
+        fwd_ref_pool = curr->next;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( fwd_ref ) );
+
+        prev = mem_alloc( sizeof( *prev ) );
+        fwd_ref_pool = prev;
+        for( k = 0; k < 10; k++ ) { // alloc 10 tag_cb if pool empty
+            prev->next = mem_alloc( sizeof( *prev ) );
+            prev = prev->next;
+        }
+        prev->next = NULL;
+    }
+
+    return( curr );
+}
+
+
+/***************************************************************************/
+/*  add a linked list of fwd_ref instance to free pool for reuse           */
+/***************************************************************************/
+
+void add_fwd_ref_to_pool( fwd_ref * a_ref )
+{
+    fwd_ref * tw;
+
+    if( a_ref == NULL ) {
+        return;
+    }
+
+    for( tw = a_ref; tw->next != NULL; tw = tw->next ); //empty
+    tw->next = fwd_ref_pool;
+    fwd_ref_pool = a_ref;
+}
+
+
+/***************************************************************************/
 /*  allocate / reuse a tag_cb instance                                     */
 /*  Note: init_tag_cb() initializes the new instance                       */
 /***************************************************************************/
@@ -644,6 +671,13 @@ void    free_pool_storage( void )
         mem_free( v );
         v = wv;
     }
+
+    for( v = fwd_ref_pool; v != NULL; ) {
+        wv = ( (fwd_ref *) v)->next;
+        mem_free( v );
+        v = wv;
+    }
+
     for( v = tag_pool; v != NULL; ) {
         wv = ( (tag_cb *) v)->prev;
         mem_free( v );

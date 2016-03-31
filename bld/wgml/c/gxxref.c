@@ -26,10 +26,123 @@
 *
 * Description:  WGML tags :HDREF :FIGREF :FNREF processing
 *
-*                         :FIGREF :FNREF not yet implemented    TBD
+*                         :FNREF not yet implemented
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
+
+static  bool    ref_page        = false;
+static  bool    page_found      = false;
+static  bool    refid_found     = false;
+static  char    refid[ID_LEN];
+
+/***************************************************************************/
+/* Get attribute values for FIGREF, FNREF, and HDREF                       */
+/***************************************************************************/
+
+static void get_ref_attributes( void )
+{ 
+    char        *   p;
+    int             k;
+
+    scan_err = false;
+    p = scan_start;
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
+
+    for( ;; ) {
+        while( *p == ' ' ) {            // over WS to attribute
+            p++;
+        }
+        if( *p == '\0' ) {              // end of line: get new line
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line( true ) ) {// next line for missing attribute
+ 
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
+                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        ProcFlags.tag_end_found = true; 
+                        break;          
+                    } else {
+                        p = scan_start; // new line is part of current tag
+                        continue;
+                    }
+                }
+            }
+        }
+        if( !strnicmp( "page", p, 4 ) ) {
+            page_found = true;
+            p += 4;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            if( !strnicmp( "yes", val_start, 3 ) ) {
+                page = true;
+            } else if( !strnicmp( "no", val_start, 2 ) ) {
+                page = false;
+            } else {
+                xx_line_err( err_inv_att_val, val_start );
+                scan_start = scan_stop + 1;
+                return;
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "refid", p, 5 ) ) {
+            p += 5;
+
+            p = get_refid_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+
+            refid_found = true;
+            for( k = 0; k < val_len; k++ ) {
+                (refid)[k] = tolower( *(val_start + k) );
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else {    // no match = end-of-tag in wgml 4.0
+            ProcFlags.tag_end_found = true;
+            break;
+        }
+    }
+    if( !refid_found ) {            // detect missing required attribute
+        xx_err( err_att_missing );
+        scan_start = scan_stop + 1;
+        return;
+    }
+}
+
+/***************************************************************************/
+/*      :FIGREF refid=’id-name’                                            */
+/*              [page=yes                                                  */
+/*                    no].                                                 */
+/* This tag causes a figure reference to be generated. The text "Figure"   */
+/* followed by the figure number will be generated at the point where the  */
+/* :figref tag is specified. The figure reference tag is a paragraph       */
+/* element, and is used with text to create the content of a basic         */
+/* document element. The figure being referenced must have a figure        */
+/* caption specified.                                                      */
+/***************************************************************************/
+
+void gml_figref( const gmltag * entry )
+{ 
+    ref_entry   *   cur_re;  
+
+    get_ref_attributes();
+
+    cur_re = find_refid( fig_ref_dict, refid );
+/// now format output!
+/// concat is on!
+
+    scan_start = scan_stop + 1;
+    return;
+}
 
 
 /***************************************************************************/
@@ -41,148 +154,30 @@
 /* reference tag is a paragraph element, and is used with text to create   */
 /* the content of a basic document element.  The heading text from the     */
 /* referenced heading is enclosed in double quotation marks and inserted   */
-/* into the formatted document.  The refid attribute will determine the    */
-/* heading for which the reference will be generated.  The specified       */
-/* identifier name must be the value of the id attribute on the heading    */
-/* tag you wish to reference.  The page attribute controls the output of   */
-/* the heading page number.  If the attribute value yes is specified, the  */
-/* text "on page" followed by the page number of the referenced heading is */
-/* placed after the heading text.  If the attribute value no is specified, */
-/* the page number of the referenced heading is not generated.  If the     */
-/* page attribute is not specified, the heading page number is generated   */
-/* when the heading and the reference to it are not on the same output     */
-/* page.                                                                   */
+/* into the formatted document.                                            */
 /***************************************************************************/
 
-void    gml_hdref( const gmltag * entry )
+void gml_hdref( const gmltag * entry )
 {
-    char    *   p;
-    char    *   pa;
-    char    *   pe;
-    char    *   idp;
-    char        quote;
-    char        c;
-    bool        idseen;
-    bool        pageseen;
-    bool        withpage;
-    size_t      len;
+/// idp needs to be created below, may not need to be set to NULL///
+    char    *   idp     = NULL; //***what value should it have?***//
     char        buf64[64];
-    ref_entry   *   re;
-    static char undefid[] = "\"Undefined Heading\" on page XXX";
+    ref_entry   *   cur_re;
+    static char undefid[]   = "\"Undefined Heading\" on page XXX";
 
+    get_ref_attributes();
 
-    idseen = false;
-    pageseen = false;
-    withpage = false;
-    p = scan_start;
-    re = NULL;
-
-    /***********************************************************************/
-    /*  Scan attributes  for :HDREF                                        */
-    /*  id=                                                                */
-    /*  page=                                                              */
-    /***********************************************************************/
-
-    for( ;; ) {
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( *p == '\0' || *p == '.'  ) {
-            break;                      // tag end found
-        }
-
-        if( !strnicmp( "page=", p, 5 ) ) {
-            p += 5;
-            while( *p == ' ' ) {
-                p++;
-            }
-            pa = p;
-            if( !strnicmp( "yes", p, 3 ) ) {
-                pageseen = true;
-                withpage = true;
-                p += 3;
-            } else {
-                if( !strnicmp( "no", p, 2 ) ) {
-                    pageseen = true;
-                    withpage = false;
-                    p += 2;
-                } else {
-                   g_err( err_inv_att_val );
-                   file_mac_info();
-                   err_count++;
-                   while( *p && (*p != '.') && (*p != ' ') ) p++;
-                }
-            }
-            scan_start = p;
-            continue;
-        }
-
-        if( !strnicmp( "refid=", p, 6 ) ) {
-            p += 6;
-            while( *p == ' ' ) {
-                p++;
-            }
-            if( is_quote_char( *p ) ) {
-                quote = *p;
-                p++;
-            } else {
-                quote = '\0';
-            }
-            pa = p;
-            while( *p && is_id_char( *p ) ) {
-                p++;
-            }
-            len = p - pa;       // restrict length as in ghx.c
-            if( len > ID_LEN )
-                len = ID_LEN;
-
-            if( len > 0 ) {
-                idseen = true;          // valid id attribute found
-                pe = pa + len;
-                c = *pe;
-                *pe = '\0';
-                re = find_refid( ref_dict, strlwr( pa ) );
-                if( re != NULL ) {      // id found in ref dict
-                    idp = mem_alloc( 4 + strlen( re->text_cap ) );
-                    *idp = '"';         // decorate with quotes
-                    strcpy( idp + 1, re->text_cap );
-                    strcat( idp, "\"" );
-                } else {
-                    if( GlobalFlags.lastpass ) {
-                        g_warn( wng_id_xxx, pa );
-                        g_info( inf_id_unknown );
-                        file_mac_info();
-                        wng_count++;
-                    }
-                }
-                *pe = c;
-            }
-            if( *p && (quote == *p) ) {
-                p++;
-            }
-
-            scan_start = p;
-            continue;
-        }
-
-        /*******************************************************************/
-        /* no more valid attributes                                        */
-        /*******************************************************************/
-        break;
-    }
-    if( *p == '.' ) {                   // tag end ?
-        p++;
-    }
-    if( idseen ) {                      // id attribute was specified
+    if( refid ) {                      // id attribute was specified
         bool concatsave = ProcFlags.concat;
 
         ProcFlags.concat = true;        // make process_text add to line
-        if( re == NULL ) {              // undefined refid
+        cur_re = find_refid( hx_ref_dict, refid );
+        if( cur_re == NULL ) {              // undefined refid
             process_text( undefid, g_curr_font );
         } else {
             process_text( idp, g_curr_font );
-            if( withpage || (!pageseen && (page != re->pageno)) ) {
-                sprintf_s( buf64, sizeof( buf64 ), "on page %d", re->pageno );
+            if( ref_page || (!page_found && (page != cur_re->pageno)) ) {
+                sprintf_s( buf64, sizeof( buf64 ), "on page %d", cur_re->pageno );
                 process_text( buf64, g_curr_font );
             }
             mem_free( idp );
@@ -194,8 +189,32 @@ void    gml_hdref( const gmltag * entry )
         err_count++;
     }
 
-    scan_start = p;
+    scan_start = scan_stop + 1;
     return;
 }
+
+
+/***************************************************************************/
+/*      :FIGREF refid=’id-name’                                            */
+/* This tag causes a footnote reference to be generated. The number of the */
+/* referenced footnote will be generated at the point where the :fnref tag */
+/* is specified. The footnote reference tag is a paragraph element, and is */
+/* used with text to create the content of a basic document element.       */
+/***************************************************************************/
+
+void gml_fnref( const gmltag * entry )
+{ 
+    ref_entry   *   cur_re;  
+
+    get_ref_attributes();
+
+    cur_re = find_refid( fn_ref_dict, refid );
+/// now format output!
+/// concat is on!
+
+    scan_start = scan_stop + 1;
+    return;
+}
+
 
 

@@ -78,10 +78,10 @@
   pickg( FIGLIST,  7,      gml_figlist,    tag_out_txt, 0 )
   pickg( FIGREF,   6,      gml_figref,     tag_out_txt, 0 )
 
-  pickg( FN,       2,      gml_dummy,      tag_out_txt, 0 )
-  pickg( EFN,      3,      gml_dummy,      tag_out_txt, 0 )
+  pickg( FN,       2,      gml_fn,         tag_out_txt, 0 )
+  pickg( EFN,      3,      gml_efn,        tag_out_txt, 0 )
 
-  pickg( FNREF,    5,      gml_dummy,      tag_out_txt, 0 )
+  pickg( FNREF,    5,      gml_fnref,      tag_out_txt, 0 )
   pickg( FRONTM,   6,      gml_frontm,     0,   0 )
   pickg( GDOC,     4,      gml_gdoc,       0,   0 )
   pickg( EGDOC,    5,      gml_egdoc,      tag_out_txt, 0 )

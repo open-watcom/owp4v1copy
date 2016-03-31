@@ -232,17 +232,17 @@ void    free_some_mem( void )
     if( macro_dict != NULL ) {
         free_macro_dict( &macro_dict );
     }
-    if( ref_dict != NULL ) {
-        free_ref_dict( &ref_dict );
+    if( fig_ref_dict != NULL ) {
+        free_ref_dict( &fig_ref_dict );
     }
-    if( iref_dict != NULL ) {
-        free_ref_dict( &iref_dict );
+    if( fn_ref_dict != NULL ) {
+        free_ref_dict( &fn_ref_dict );
     }
-    if( fig_dict != NULL ) {
-        free_ref_dict( &fig_dict );
+    if( hx_ref_dict != NULL ) {
+        free_ref_dict( &hx_ref_dict );
     }
-    if( fn_dict != NULL ) {
-        free_ref_dict( &fn_dict );
+    if( ix_ref_dict != NULL ) {
+        free_ref_dict( &ix_ref_dict );
     }
     if( tag_dict != NULL ) {
         free_tag_dict( &tag_dict );

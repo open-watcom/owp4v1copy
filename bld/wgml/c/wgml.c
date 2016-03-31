@@ -877,10 +877,10 @@ int main( int argc, char * argv[] )
         free_SCR_tags_research();
 
         print_macro_dict( macro_dict, true );
-        print_ref_dict( ref_dict, "HDREF" );
-        print_ref_dict( fig_dict, "FIGREF" );
-        print_ref_dict( fn_dict, "FNREF" );
-        print_ref_dict( iref_dict, "INDEX" );
+        print_ref_dict( fig_ref_dict, "FIGREF" );
+        print_ref_dict( hx_ref_dict, "HDREF" );
+        print_ref_dict( fn_ref_dict, "FNREF" );
+        print_ref_dict( ix_ref_dict, "INDEX" );
 
         if( tag_dict != NULL ) {
             print_tag_dict( tag_dict );

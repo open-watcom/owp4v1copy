@@ -27,6 +27,7 @@
 * Description:  tags FIG, eFIG, FIGCAP, FIGDESC, and FIGREF
 *
 * Note: FIGLIST is defined in gdocsect.c
+*       FIGREF is defined in gxxref.c
 *
 ****************************************************************************/
 
@@ -35,12 +36,17 @@
 #include "wgml.h"
 #include "gvars.h"
 
+static  bf_place        place;                  // FIG attribute used by eFIG
 static  bool            concat_save;            // for ProcFlags.concat
 static  bool            figcap_done;            // FIGCAP done for current FIG
-static  font_number     font_save;              // save for font
+static  char            id[ID_LEN];             // FIG attribute used by eFIG
+static  def_frame       frame;                  // FIG attribute used by eFIG
 static  group_type      sav_group_type;         // save prior group type
 static  ju_enum         justify_save;           // for ProcFlags.justify
+static  uint32_t        depth           = 0;    // FIG attribute used by eFIG
+static  uint32_t        width           = 0;    // FIG attribute used by eFIG
 static  uint32_t        figdesc_skip    = 0;    // FIGDESC pre_lines if no text
+
 
 /***************************************************************************/
 /*      :FIG [depth=’vert-space-unit’]                                     */
@@ -69,9 +75,13 @@ static  uint32_t        figdesc_skip    = 0;    // FIGDESC pre_lines if no text
 /* will be split into two parts.                                           */
 /***************************************************************************/
 
-extern  void    gml_fig( const gmltag * entry )
+void gml_fig( const gmltag * entry )
 {
+    bool            id_seen = false;
     char        *   p;
+    char        *   pa;
+    ref_entry   *   cur_ref;
+    su              cur_su;
 
     start_doc_sect();
     scr_process_break();
@@ -118,7 +128,6 @@ extern  void    gml_fig( const gmltag * entry )
     nest_cb->font = layout_work.fig.font;
     nest_cb->c_tag = t_FIG;
 
-    font_save = g_curr_font;
     g_curr_font = nest_cb->font;
 
     g_cur_left += nest_cb->left_indent;
@@ -153,59 +162,172 @@ extern  void    gml_fig( const gmltag * entry )
     while( *p == ' ' ) p++;             // skip initial spaces
     scan_start = p;                     // over spaces
 
-/// presumably, a lot of processing goes in here
     fig_count++;                        // get current FIG number
-/// need id before this point
+    depth = 0;                          // default value: depth will be depth of box contents
+    frame.type = layout_work.fig.default_frame.type;
+    if( frame.type == char_frame ) {
+        strcpy_s( frame.string, str_size, layout_work.fig.default_frame.string );
+    }
+    width = g_net_page_width;           // this is rm - lm, so may not be entirely correct with more than one column
+
+    for( ;; ) {
+        while( *p == ' ' ) {            // over WS to attribute
+            p++;
+        }
+        if( *p == '\0' ) {              // end of line: get new line
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line( true ) ) {// next line for missing attribute
+ 
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
+                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        ProcFlags.tag_end_found = true; 
+                        break;          
+                    } else {
+                        p = scan_start; // new line is part of current tag
+                        continue;
+                    }
+                }
+            }
+        }
+        if( !strnicmp( "depth", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            pa = val_start;
+            if( att_val_to_su( &cur_su, true ) ) {
+                return;
+            }
+            depth = conv_vert_unit( &cur_su, spacing );
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "frame", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            if( !strnicmp( "none", val_start, 4 ) ) {
+                frame.type = none;
+            } else if( !strnicmp( "box", val_start, 3 ) ) {
+                frame.type = box_frame;
+            } else if( !strnicmp( "rule", val_start, 4 ) ) {
+                frame.type = rule_frame;
+            } else {
+                frame.type = char_frame;
+            }
+            if( frame.type == char_frame ) {
+                pa = val_start;
+                memcpy_s( frame.string, str_size, val_start, val_len );
+                if( val_len < str_size ) {
+                    frame.string[val_len] = '\0';
+                } else {
+                    frame.string[str_size - 1] = '\0';
+                }
+                if( strnlen_s( frame.string, str_size ) == 0 ) {
+                    frame.type = none;      // treat null string as "none"
+                }
+            } else {                        // blank any existing frame.string value
+                frame.string[0] = '\0';
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "id", p, 2 ) ) {
+            p += 2;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            id_seen = true;             // valid id attribute found
+            memcpy_s( id, ID_LEN, val_start, val_len );
+            if( val_len < ID_LEN ) {
+                id[val_len] = '\0';
+            } else {
+                id[ID_LEN - 1] = '\0';
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "place", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            if( !strnicmp( "bottom", val_start, 5 ) ) {
+                place = bottom_place;
+            } else if( !strnicmp( "inline", val_start, 6 ) ) {
+                place = inline_place;
+            } else if( !strnicmp( "top", val_start, 3 ) ) {
+                place = top_place;
+            } else {
+                xx_line_err( err_inv_att_val, val_start );
+                scan_start = scan_stop + 1;
+                return;
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else if( !strnicmp( "width", p, 5 ) ) {
+            p += 5;
+            p = get_att_value( p );
+            if( val_start == NULL ) {
+                break;
+            }
+            if( !strnicmp( "page", val_start, 4 ) ) {
+                // default value is the correct value to use
+            } else if( !strnicmp( "column", val_start, 6 ) ) {
+                // default value is the correct value to use
+            } else {    // value actually specifies the width
+                pa = val_start;
+                if( att_val_to_su( &cur_su, true ) ) {
+                    return;
+                }
+                width = conv_hor_unit( &cur_su );
+                if( width == 0 ) {
+                    xx_line_err( err_inv_width_fig, pa );
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+            }
+            if( ProcFlags.tag_end_found ) {
+                break;
+            }
+        } else {    // no match = end-of-tag in wgml 4.0
+            ProcFlags.tag_end_found = true;
+            break;
+        }
+    }
+// Cannot fit the figure in the adjusted left and right margins
+// Cannot fit the figure with a frame in the adjusted left and right margins
+                /* there should be a check somewhere for width > page width */
+
 
     /* Only create the entry on the first pass */
 
-    if( pass == 1 ) {
-        fig_re = mem_alloc( sizeof( ref_entry ) );
-        init_ref_entry( fig_re, NULL, 0 );      /// last two params are for id!!!
-        fig_re->flags = rf_fx;                  // mark as FIG
-        fig_re->number = fig_count;             // add number of this FIG
-        add_ref_entry( &fig_dict, fig_re );
-    } else if( fig_count != fig_re->number ) {  // FIG added/removed between passes
-        internal_err( __FILE__, __LINE__ );     // which is, of course, impossible
-    }
-
-/// more entries, perhaps
-
-#if 0
-    /***********************************************************************/
-    /*  if id  specified add it to reference dict                          */
-    /***********************************************************************/
-    if( idseen ) {
-        rwk = find_refid( ref_dict, fig_re->id );
-        if( !rwk ) {                    // new entry
-            if( txtlen > 0 ) {          // text line not empty
-                fig_re->text_cap = mem_alloc( txtlen + 1 );
-                strcpy_s( fig_re->text_cap, txtlen + 1, p );
-            }
-            add_ref_entry( &ref_dict, fig_re );
-////            re = NULL;                  // free will be done via dictionary
-        } else {
-            /***************************************************************/
-            /*  test for duplicate id                                      */
-            /*  it is done with comparing line no only, in the hope that   */
-            /*  two identical ids are not specified in different files on  */
-            /*  the same line no.                                          */
-            /***************************************************************/
-            if( fig_re->lineno != rwk->lineno ) {
-                g_err( wng_id_xxx, fig_re->id );
+    if( id_seen ) {
+        if( pass == 1 ) {
+            cur_ref = find_refid( hx_ref_dict, id );
+            if( !cur_ref ) {                    // new entry
+                fig_re = mem_alloc( sizeof( ref_entry ) );
+                init_ref_entry( fig_re, id, strlen( id ) );
+                fig_re->flags = rf_fx;                  // mark as FIG
+                fig_re->number = fig_count;             // add number of this FIG
+                add_ref_entry( &fig_ref_dict, fig_re );
+            } else {                // duplicate id
+                g_err( wng_id_xxx, cur_ref->id );
                 g_info( inf_id_duplicate );
                 file_mac_info();
                 err_count++;
             }
-            if( fig_re->text_cap != NULL ) {
-////                mem_free( re->text_cap );
-            }
-////            mem_free( re );
         }
     }
-#endif
-
-/// presumably, a lot of processing goes in here
 
     if( *p == '.' ) p++;                // possible tag end
     if( *p ) {
@@ -222,7 +344,7 @@ extern  void    gml_fig( const gmltag * entry )
 /* previously specified for each :efig tag.                                */
 /***************************************************************************/
 
-extern  void    gml_efig( const gmltag * entry )
+void gml_efig( const gmltag * entry )
 {
     char    *   p;
     tag_cb  *   wk;
@@ -235,11 +357,12 @@ extern  void    gml_efig( const gmltag * entry )
         scan_start = scan_stop + 1;
         return;
     }
-    g_curr_font = font_save;
+
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
     g_cur_left = nest_cb->lm;
     g_page_right = nest_cb->rm;
+
     g_post_skip = nest_cb->post_skip;   // shift post_skip to follow eXMP
     g_post_skip += figdesc_skip;        // FIGDESC pre_lines if no FIGDESC text
     figdesc_skip = 0;                   // cleanup for next FIG
@@ -248,6 +371,12 @@ extern  void    gml_efig( const gmltag * entry )
     wk = nest_cb;
     nest_cb = nest_cb->prev;
     add_tag_cb_to_pool( wk );
+
+    g_curr_font = nest_cb->font;
+
+    if( (strlen( id ) > 0) && !figcap_done ) {  // FIG id requires FIGCAP
+        xx_err( err_fig_id_cap );
+    }
 
     /* Place the accumulated lines on the proper page */
 
@@ -289,13 +418,11 @@ extern  void    gml_efig( const gmltag * entry )
     scan_err = false;
     p = scan_start;
     if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-
-/// presumably, a lot of processing goes in here
-
-    if( *p == '.' ) p++;                // possible tag end
     if( *p ) {
-        process_text( p, g_curr_font); // if text follows
+        process_text( p, g_curr_font);  // if text follows
+    }
+    if( pass > 1 ) {                    // not on first pass
+        fig_re = fig_re->next;          // get to next FIG
     }
     scan_start = scan_stop + 1;
     return;
@@ -312,7 +439,7 @@ extern  void    gml_efig( const gmltag * entry )
 /* figure caption follows the main text of the figure.                     */
 /***************************************************************************/
 
-extern  void    gml_figcap( const gmltag * entry )
+void gml_figcap( const gmltag * entry )
 {
     char            buffer[11];
     char        *   fcstr;
@@ -377,7 +504,7 @@ extern  void    gml_figcap( const gmltag * entry )
 /* figure description is present.                                          */
 /***************************************************************************/
 
-extern  void    gml_figdesc( const gmltag * entry )
+void gml_figdesc( const gmltag * entry )
 {
     char    *   p;
 
@@ -412,33 +539,4 @@ extern  void    gml_figdesc( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
-
-
-/***************************************************************************/
-/*      :FIGREF refid=’id-name’                                            */
-/*              [page=yes                                                  */
-/*                    no].                                                 */
-/* This tag causes a figure reference to be generated. The text "Figure"   */
-/* followed by the figure number will be generated at the point where the  */
-/* :figref tag is specified. The figure reference tag is a paragraph       */
-/* element, and is used with text to create the content of a basic         */
-/* document element. The figure being referenced must have a figure        */
-/* caption specified.                                                      */
-/***************************************************************************/
-
-extern  void    gml_figref( const gmltag * entry )
-{ 
-    char    *   p;
-
-    scan_err = false;
-    p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-
-    scan_start = p;                     // over spaces
-
-    scan_start = scan_stop + 1;
-    return;
-}
-
 

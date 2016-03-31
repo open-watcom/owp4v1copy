@@ -47,7 +47,7 @@ static loc_to_name  l2n_names[L2N_ENTRIES] = { { address_tag, "EADDRESS" },
 /*  display offending text line and mark the offending token               */
 /***************************************************************************/
 
-static void show_line_error_len( const char *pa, size_t len )
+static void show_line_error_len( const char * pa, size_t len )
 {
     char    *buf = NULL;
     size_t  cnt;
@@ -73,7 +73,7 @@ static void show_line_error_len( const char *pa, size_t len )
 }
 
 
-static void show_line_error( const char *pa )
+static void show_line_error( const char * pa )
 {
     show_line_error_len( pa, strlen( pa ) );
 }
@@ -202,7 +202,7 @@ void    cw_err( void )
 }
 
 
-void    dc_opt_warn( const char *pa )
+void    dc_opt_warn( const char * pa )
 {
     wng_count++;
     g_warn( err_dc_opt, pa );
@@ -212,7 +212,7 @@ void    dc_opt_warn( const char *pa )
 }
 
 
-void    dc_opt_warn_len( const char *pa, size_t len )
+void    dc_opt_warn_len( const char * pa, size_t len )
 {
     wng_count++;
     g_warn( err_dc_opt, pa );
@@ -222,7 +222,7 @@ void    dc_opt_warn_len( const char *pa, size_t len )
 }
 
 
-void    parm_miss_err( const char *pa )
+void    parm_miss_err( const char * pa )
 {
     err_count++;
     g_err( err_parm_missing, pa );
@@ -231,7 +231,7 @@ void    parm_miss_err( const char *pa )
 }
 
 
-void    parm_extra_err( const char *cw, const char *pa )
+void    parm_extra_err( const char * cw, const char * pa )
 {
     err_count++;
     g_err( err_extra_ignored, cw, pa );
@@ -275,7 +275,7 @@ void    tag_name_missing_err( void )
 }
 
 
-void    tag_text_err( const char *tagname )
+void    tag_text_err( const char * tagname )
 {
 //****ERROR**** SC--038: Tag text may not be specified for the 'xxx' tag
     err_count++;
@@ -285,7 +285,7 @@ void    tag_text_err( const char *tagname )
 }
 
 
-void    tag_text_req_err( const char *tagname )
+void    tag_text_req_err( const char * tagname )
 {
 //****ERROR**** SC--039: Tag text must be specified with the 'xxx' tag
     err_count++;
@@ -295,7 +295,7 @@ void    tag_text_req_err( const char *tagname )
 }
 
 
-void    val_parse_err( const char *pa, bool tag )
+void    val_parse_err( const char * pa, bool tag )
 {
     err_count++;
     if( tag ) {
@@ -325,7 +325,7 @@ void    xx_nest_err( const msg_ids errid )
 }
 
 
-void    xx_opt_err( const char *cw, const char *pa )
+void    xx_opt_err( const char * cw, const char * pa )
 {
     err_count++;
     g_err( err_xx_opt, cw, pa );
@@ -335,7 +335,7 @@ void    xx_opt_err( const char *cw, const char *pa )
 }
 
 
-void    xx_opt_err_len( const char *cw, const char *pa, size_t len )
+void    xx_opt_err_len( const char * cw, const char * pa, size_t len )
 {
     err_count++;
     g_err( err_xx_opt, cw, pa );
@@ -345,7 +345,7 @@ void    xx_opt_err_len( const char *cw, const char *pa, size_t len )
 }
 
 
-void    xx_line_err( const msg_ids errid, const char *pa )
+void    xx_line_err( const msg_ids errid, const char * pa )
 {
     err_count++;
     g_err( errid );
@@ -354,7 +354,7 @@ void    xx_line_err( const msg_ids errid, const char *pa )
     return;
 }
 
-void    xx_line_err_len( const msg_ids errid, const char *pa, size_t len )
+void    xx_line_err_len( const msg_ids errid, const char * pa, size_t len )
 {
     err_count++;
     g_err( errid );
@@ -391,6 +391,13 @@ void    xx_simple_err_cc( const msg_ids errid, const char * arg1, const char * a
     return;
 }
 
+void    xx_simple_warn( const msg_ids errid )
+{
+    wng_count++;
+    g_warn( errid );
+    return;
+}
+
 void    xx_err( const msg_ids errid )
 {
     err_count++;
@@ -408,9 +415,48 @@ void    xx_warn( const msg_ids errid )
 }
 
 /***************************************************************************/
+/*  messages for duplicate, forward, or undefined figure, footnote, or     */
+/*  heading ids                                                            */
+/***************************************************************************/
+
+void    g_err_dup_id( const char * id, const char * context )
+{
+    g_err( wng_id_xxx, id );
+    g_info( inf_id_duplicate, context );
+    file_mac_info();
+    err_count++;
+}
+
+void    g_warn_fwd_id( const char * id, const char * context )
+{
+    g_warn( wng_id_xxx, id );
+    g_info( inf_id_forward, context );
+    wng_count++;
+}
+
+
+void    g_warn_fwd_id_info( const char * id, const char * context )
+{
+    g_warn( wng_id_xxx, id );
+    g_info( inf_id_forward, context );
+    file_mac_info();
+    wng_count++;
+}
+
+
+void    g_warn_undef_id( const char * id, const char * context )
+{
+    g_warn( wng_id_xxx, id );
+    g_info( inf_id_unknown, context );
+    file_mac_info();
+    wng_count++;
+}
+
+/***************************************************************************/
 /*  error msgs for missing or duplicate :XXX :eXXX tags                    */
 /***************************************************************************/
-static  void    g_err_tag_common( const char *tag, bool nest )
+
+static  void    g_err_tag_common( const char * tag, bool nest )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
@@ -425,22 +471,22 @@ static  void    g_err_tag_common( const char *tag, bool nest )
     return;
 }
 
-void    g_err_tag( const char *tag )
+void    g_err_tag( const char * tag )
 {
     g_err_tag_common( tag, 0 );         // 'normal' stack display
     return;
 }
 
-void    g_err_tag_nest( const char *tag )
+void    g_err_tag_nest( const char * tag )
 {
     g_err_tag_common( tag, 1 );         // nested tag stack display
     return;
 }
 
-void    g_err_tag_rsloc( locflags inloc, const char *pa )
+void    g_err_tag_rsloc( locflags inloc, const char * pa )
 {
-    const char  *tag_name    = NULL;
-    int         i;
+    const char  *   tag_name    = NULL;
+    int             i;
 
     for( i = 0; i < L2N_ENTRIES; i++ ) {
         if( l2n_names[i].location == inloc ) {
@@ -457,7 +503,7 @@ void    g_err_tag_rsloc( locflags inloc, const char *pa )
     return;
 }
 
-void    g_err_tag_no( const char *tag )
+void    g_err_tag_no( const char * tag )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
@@ -468,7 +514,7 @@ void    g_err_tag_no( const char *tag )
     return;
 }
 
-void    g_err_tag_prec( const char *tag )
+void    g_err_tag_prec( const char * tag )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
@@ -479,7 +525,7 @@ void    g_err_tag_prec( const char *tag )
     return;
 }
 
-void    g_err_tag_x_in_y( const char *tag1, const char *tag2 )
+void    g_err_tag_x_in_y( const char * tag1, const char * tag2 )
 {
     char    tagn1[TAG_NAME_LENGTH + 1];
     char    tagn2[TAG_NAME_LENGTH + 1];
@@ -491,3 +537,4 @@ void    g_err_tag_x_in_y( const char *tag1, const char *tag2 )
     err_count++;
     return;
 }
+

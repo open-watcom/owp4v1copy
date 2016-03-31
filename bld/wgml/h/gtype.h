@@ -644,13 +644,13 @@ typedef struct ix_e_blk {               // index entry for pagenos / text
 
 typedef struct ix_h_blk {               // index header with index term text
     struct ix_h_blk * next;             // next ix header block same level
-    struct ix_h_blk * lower;           // first ix hdr block next lower level
+    struct ix_h_blk * lower;            // first ix hdr block next lower level
            ix_e_blk * entry;            // first ix entry block
     uint32_t        ix_lvl;             // index level 1 - 3
     size_t            ix_term_len;      // index term length
     char            * ix_term;          // index term
     size_t            prt_term_len;     // display text length
-    char            * prt_term;      // display text (NULL -> use index term)
+    char            * prt_term;         // display text (NULL -> use index term)
 } ix_h_blk;
 
 
@@ -1153,7 +1153,7 @@ typedef enum {
     rf_textcap      =    4,             // with text or figcap
     rf_figcap       =    8,             // FIGCAP used -- even if there is no text
 
-    rf_ix           =   16,             // :Ix :IHx created entry
+    rf_ix           =   16,             // :Ix :IHx entry
     rf_dummy        = 0x11111111,       // to get a int32 enum
 } refflags;
 
@@ -1167,6 +1167,7 @@ typedef struct ref_entry {
         struct {
             uint32_t        pageno;     // output page
             uint32_t        number;     // figure or footnote number
+            char        *   prefix;     // figcap/footnote/heading generated text
             char        *   text_cap;   // text line or figcap text
         };
         struct {
@@ -1175,6 +1176,16 @@ typedef struct ref_entry {
         };
     };
 } ref_entry;
+
+/***************************************************************************/
+/*  forward reference / undefined id / page change                         */
+/*   used for :FIG, :FN, :Hx, :FIGREF, :FNREF, :HDREF                      */
+/***************************************************************************/
+
+typedef struct fwd_ref {
+    struct fwd_ref  *   next;
+    char                id[ID_LEN+1];   // reference id
+} fwd_ref;
 
 /********************************************************************************/
 /*  enum and struct for use with script styles                                  */

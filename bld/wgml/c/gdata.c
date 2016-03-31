@@ -121,8 +121,6 @@ void init_global_vars( void )
     prev_line           = NULL;
     max_depth           = 0;
 
-    fig_count           = 0;
-
     c_stop              = NULL;
     tt_stack            = NULL;
 
@@ -161,16 +159,18 @@ void init_global_vars( void )
     lay_files           = NULL;         // filename(s) from ( LAYout option
 
     index_dict          = NULL;
-    init_ref_dict( &iref_dict );
 
     init_dict( &global_dict );
     init_macro_dict( &macro_dict );
-    init_tag_dict( &tag_dict );
     init_sys_dict( &sys_dict );
-    init_ref_dict( &ref_dict );
-    init_ref_dict( &fig_dict );
-    fig_re              = fig_dict;
-    init_ref_dict( &fn_dict );
+    init_tag_dict( &tag_dict );
+
+    init_ref_dict( &fig_ref_dict );
+    init_ref_dict( &fn_ref_dict );
+    init_ref_dict( &hx_ref_dict );
+    init_ref_dict( &ix_ref_dict );
+
+    fwd_ref_pool        = NULL;
 
     tagname[0]          = '*';          // last defined GML tag name none
     tag_entry           = NULL;         // ... entry in tag_dict
@@ -253,7 +253,15 @@ void init_pass_data( void )
     g_indentr           = 0;
 
     fig_count           = 0;
-    fig_re              = fig_dict;     // start each pass at start of FIG list
+    fig_fwd_refs        = NULL;
+    fig_re              = fig_ref_dict; // start each pass at start of FIG id list
+
+    fn_count            =0;
+    fn_fwd_refs         = NULL;
+    fn_re               = fn_ref_dict;  // start each pass at start of FN id list
+
+    hx_fwd_refs         = NULL;
+    hx_re               = hx_ref_dict;  // start each pass at start of Hx id list
 
     ixhtag[0] = NULL;                   // last higher level :IH1 :IH2 tags
     ixhtag[1] = NULL;                   // last higher level :IH1 :IH2 tags
