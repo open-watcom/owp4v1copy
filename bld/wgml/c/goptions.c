@@ -254,6 +254,9 @@ static  long    get_num_value( char * p )
 
 /***************************************************************************/
 /*  ignore option consuming option parms if neccessary                     */
+/*  Note: if any other options that don't need implementations are found   */
+/*        beyond "wscript", using a different handler might be more        */
+/*        efficient than checking for each in turn                         */
 /***************************************************************************/
 
 static void ign_option( option * opt )
@@ -261,8 +264,8 @@ static void ign_option( option * opt )
 
     if( strcmp( opt->option, "wscript" ) ) {// ignore wscript without msg
         g_warn( wng_ign_option, opt->option );
+        wng_count++;
     }
-    wng_count++;
     if( opt->parmcount > 0 ) {
         int     k;
 
