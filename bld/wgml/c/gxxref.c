@@ -40,10 +40,10 @@ static  char    refid[ID_LEN];
 /* Get attribute values for FIGREF, FNREF, and HDREF                       */
 /***************************************************************************/
 
-static void get_ref_attributes( void )
+static char * get_ref_attributes( void )
 { 
     char        *   p;
-    int             k;
+    char        *   pa;
 
     scan_err = false;
     p = scan_start;
@@ -54,6 +54,7 @@ static void get_ref_attributes( void )
         while( *p == ' ' ) {            // over WS to attribute
             p++;
         }
+        pa = p;
         if( *p == '\0' ) {              // end of line: get new line
             if( !(input_cbs->fmflags & II_eof) ) {
                 if( get_line( true ) ) {// next line for missing attribute
@@ -64,6 +65,7 @@ static void get_ref_attributes( void )
                     if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
                         (*scan_start == GML_char) ) {   // tag found: end-of-tag
                         ProcFlags.tag_end_found = true; 
+                        ProcFlags.tag_new_line = true; 
                         break;          
                     } else {
                         p = scan_start; // new line is part of current tag
@@ -80,42 +82,38 @@ static void get_ref_attributes( void )
                 break;
             }
             if( !strnicmp( "yes", val_start, 3 ) ) {
-                page = true;
+                ref_page = true;
             } else if( !strnicmp( "no", val_start, 2 ) ) {
-                page = false;
+                ref_page = false;
             } else {
                 xx_line_err( err_inv_att_val, val_start );
                 scan_start = scan_stop + 1;
-                return;
+                return( p );
             }
             if( ProcFlags.tag_end_found ) {
                 break;
             }
         } else if( !strnicmp( "refid", p, 5 ) ) {
             p += 5;
-
-            p = get_refid_value( p );
+            p = get_refid_value( p, refid );
             if( val_start == NULL ) {
                 break;
             }
-
             refid_found = true;
-            for( k = 0; k < val_len; k++ ) {
-                (refid)[k] = tolower( *(val_start + k) );
-            }
             if( ProcFlags.tag_end_found ) {
                 break;
             }
         } else {    // no match = end-of-tag in wgml 4.0
             ProcFlags.tag_end_found = true;
+            p = pa; // restore any spaces before non-attribute value
             break;
         }
     }
     if( !refid_found ) {            // detect missing required attribute
         xx_err( err_att_missing );
         scan_start = scan_stop + 1;
-        return;
     }
+    return( p );
 }
 
 /***************************************************************************/
@@ -132,15 +130,90 @@ static void get_ref_attributes( void )
 
 void gml_figref( const gmltag * entry )
 { 
+    bool            do_page     =   false;  // default for fwd refs w/no "page" attribute
+    char            buffer[11];
+    char        *   p;
+    char        *   ref_text;
     ref_entry   *   cur_re;  
+    size_t          bu_len;
+    size_t          len;
 
-    get_ref_attributes();
+    static  char    def_page[]  = " on page XXX";
+    static  char    def_ref[]   = "Figure XX";
+    static  char    on_page[]  = " on page ";
+    static  size_t  dp_len;
+    static  size_t  dr_len;
+    static  size_t  op_len;
+
+    p = get_ref_attributes();
 
     cur_re = find_refid( fig_ref_dict, refid );
-/// now format output!
-/// concat is on!
 
+    if( page_found ) {
+        do_page = ref_page;
+        page_found = false;
+        ref_page = false;
+    } else if( cur_re != NULL ) {
+        do_page = ((page + 1) != cur_re->pageno);
+    }
+
+    dp_len = strlen( def_page );
+    dr_len = strlen( def_ref );
+    op_len = strlen( on_page );
+    if( cur_re == NULL ) {              // undefined refid
+        if( do_page ) {
+            ref_text = (char *) mem_alloc( dr_len + dp_len + 1 );
+            strcpy( ref_text, def_ref );
+            strcat( ref_text, def_page );
+        } else {
+            ref_text = (char *) mem_alloc( dr_len + 1 );
+            strcpy( ref_text, def_ref );
+        }
+    } else {
+        len = strlen( cur_re->prefix );        
+        if( do_page ) {
+            ultoa( cur_re->pageno, &buffer, 10);
+            bu_len = strlen( buffer );
+            ref_text = (char *) mem_alloc( len + op_len + bu_len  + 1 );
+            strcpy_s( ref_text, len + 1, cur_re->prefix );
+            ref_text[len - 1] = '\0';       // remove delim
+            len += (dr_len + op_len + bu_len );
+            strcat( ref_text, on_page );
+            strcat_s( ref_text, len + 1, buffer );
+        } else {
+            ref_text = (char *) mem_alloc( len + 1 );
+            strcpy_s( ref_text, len + 1, cur_re->prefix );
+            ref_text[len - 1] = '\0';       // remove delim
+        }
+    }
+    process_text( ref_text, g_curr_font );
+    mem_free( ref_text );
+    ref_text = NULL;
+
+    if( !ProcFlags.tag_new_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {                          // only if text follows
+            post_space = 0;                 // cancel space after ref_text
+            process_text( p, g_curr_font );
+        }
+    }
+
+    if( GlobalFlags.lastpass ) {
+        if( cur_re == NULL ) {
+            if( passes == 1 ) {
+                fig_fwd_refs = init_fwd_ref( fig_fwd_refs, refid );
+            } else {
+                undef_id_warn_info( refid, "figure" );
+            }
+        }
+    }
+
+    if( ProcFlags.tag_new_line ) {
+        ProcFlags.reprocess_line = true;
+        ProcFlags.tag_new_line = false;
+    }
     scan_start = scan_stop + 1;
+
     return;
 }
 
@@ -159,43 +232,98 @@ void gml_figref( const gmltag * entry )
 
 void gml_hdref( const gmltag * entry )
 {
-/// idp needs to be created below, may not need to be set to NULL///
-    char    *   idp     = NULL; //***what value should it have?***//
-    char        buf64[64];
+    bool            do_page     =   false;  // default for fwd refs w/no "page" attribute
+    char            buffer[11];
+    char        *   p;
+    char        *   ref_text;
     ref_entry   *   cur_re;
-    static char undefid[]   = "\"Undefined Heading\" on page XXX";
+    size_t          bu_len;
+    size_t          len;
 
-    get_ref_attributes();
+    static  char    def_page[]  = " on page XXX";
+    static  char    def_ref[]   = "\"Undefined Heading\"";
+    static  char    on_page[]  = " on page ";
+    static  size_t  dp_len;
+    static  size_t  dr_len;
+    static  size_t  op_len;
 
-    if( refid ) {                      // id attribute was specified
-        bool concatsave = ProcFlags.concat;
+    p = get_ref_attributes();
 
-        ProcFlags.concat = true;        // make process_text add to line
-        cur_re = find_refid( hx_ref_dict, refid );
-        if( cur_re == NULL ) {              // undefined refid
-            process_text( undefid, g_curr_font );
-        } else {
-            process_text( idp, g_curr_font );
-            if( ref_page || (!page_found && (page != cur_re->pageno)) ) {
-                sprintf_s( buf64, sizeof( buf64 ), "on page %d", cur_re->pageno );
-                process_text( buf64, g_curr_font );
-            }
-            mem_free( idp );
-        }
-        ProcFlags.concat = concatsave;
-    } else {
-        g_err( err_att_missing );       // id attribute missing
-        file_mac_info();
-        err_count++;
+    cur_re = find_refid( hx_ref_dict, refid );
+
+    if( page_found ) {
+        do_page = ref_page;
+        page_found = false;
+        ref_page = false;
+    } else if( cur_re != NULL ) {
+        do_page = ((page + 1) != cur_re->pageno);
     }
 
+    dp_len = strlen( def_page );
+    dr_len = strlen( def_ref );
+    op_len = strlen( on_page );
+    if( cur_re == NULL ) {              // undefined refid
+        if( do_page ) {
+            ref_text = (char *) mem_alloc( dr_len + dp_len + 1 );
+            strcpy( ref_text, def_ref );
+            strcat( ref_text, def_page );
+        } else {
+            ref_text = (char *) mem_alloc( dr_len + 1 );
+            strcpy( ref_text, def_ref );
+        }
+    } else {
+        len = strlen( cur_re->text_cap ) + 2;   // allow for quote chars
+        if( do_page ) {
+            ultoa( cur_re->pageno, &buffer, 10);
+            bu_len = strlen( buffer );
+            len += (op_len + bu_len );
+            ref_text = (char *) mem_alloc( len + 1 );
+            strcpy( ref_text, "\"" );
+            strcat_s( ref_text, len + 1, cur_re->text_cap );
+            strcat( ref_text, "\"" );
+            strcat( ref_text, on_page );
+            strcat_s( ref_text, len + 1, buffer );
+        } else {
+            ref_text = (char *) mem_alloc( len + 1 );
+            strcpy( ref_text, "\"" );
+            strcat_s( ref_text, len + 1, cur_re->text_cap );
+            strcat( ref_text, "\"" );
+        }
+    }
+    process_text( ref_text, g_curr_font );
+    mem_free( ref_text );
+    ref_text = NULL;
+
+    if( !ProcFlags.tag_new_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {                          // only if text follows
+            post_space = 0;                 // cancel space after ref_text
+            process_text( p, g_curr_font );
+        }
+    }
+
+    if( GlobalFlags.lastpass ) {
+        if( cur_re == NULL ) {
+            if( passes == 1 ) {
+                hx_fwd_refs = init_fwd_ref( hx_fwd_refs, refid );
+            } else {
+                undef_id_warn_info( refid, "heading" );
+            }
+        }
+    }
+
+    if( ProcFlags.tag_new_line ) {
+        ProcFlags.reprocess_line = true;
+        ProcFlags.tag_new_line = false;
+    }
     scan_start = scan_stop + 1;
+
     return;
 }
 
 
 /***************************************************************************/
-/*      :FIGREF refid=’id-name’                                            */
+/*      :FNREF refid=’id-name’                                             */
 /* This tag causes a footnote reference to be generated. The number of the */
 /* referenced footnote will be generated at the point where the :fnref tag */
 /* is specified. The footnote reference tag is a paragraph element, and is */
@@ -209,12 +337,24 @@ void gml_fnref( const gmltag * entry )
     get_ref_attributes();
 
     cur_re = find_refid( fn_ref_dict, refid );
-/// now format output!
+    if( cur_re == NULL ) {              // undefined refid
+/// now format forward reference/error message
+    } else {
+/// now format reference
 /// concat is on!
+    }
+    if( GlobalFlags.lastpass ) {
+        if( cur_re == NULL ) {
+            if( passes == 1 ) {
+                fn_fwd_refs = init_fwd_ref( fn_fwd_refs, refid );
+            } else {
+                undef_id_warn_info( refid, "footnote" );
+            }
+        }
+    }
 
     scan_start = scan_stop + 1;
     return;
 }
-
 
 

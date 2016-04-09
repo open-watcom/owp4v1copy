@@ -157,17 +157,11 @@ void gml_fn( const gmltag * entry )
         }
         if( !strnicmp( "id", p, 2 ) ) {
             p += 2;
-            p = get_att_value( p );
+            p = get_refid_value( p, id );
             if( val_start == NULL ) {
                 break;
             }
             id_seen = true;             // valid id attribute found
-            memcpy_s( id, ID_LEN, val_start, val_len );
-            if( val_len < ID_LEN ) {
-                id[val_len] = '\0';
-            } else {
-                id[ID_LEN - 1] = '\0';
-            }
             if( ProcFlags.tag_end_found ) {
                 break;
             }
@@ -180,16 +174,21 @@ void gml_fn( const gmltag * entry )
     /* Only create the entry on the first pass */
 
     if( id_seen ) {
+        cur_ref = find_refid( fn_ref_dict, id );
         if( pass == 1 ) {
-            cur_ref = find_refid( hx_ref_dict, id );
             if( !cur_ref ) {                    // new entry
                 fn_re = mem_alloc( sizeof( ref_entry ) );
-                init_ref_entry( fn_re, id, strlen( id ) );
+                init_ref_entry( fn_re, id );
                 fn_re->flags = rf_fx;                   // mark as FN
                 fn_re->number = fn_count;               // add number of this FN
                 add_ref_entry( &fn_ref_dict, fn_re );
             } else {
-                g_err_dup_id( cur_ref->id, "footnote" );
+                dup_id_err( cur_ref->id, "footnote" );
+            }
+        } else {
+            if( (page + 1) != cur_ref->pageno ) {       // page number changed
+                cur_ref->pageno = page;
+                init_fwd_ref( fig_fwd_refs, id );
             }
         }
     }
@@ -277,7 +276,7 @@ void gml_efn( const gmltag * entry )
         process_text( p, g_curr_font);  // if text follows
     }
     if( pass > 1 ) {                    // not on first pass
-        fig_re = fig_re->next;          // get to next FIG
+        fn_re = fn_re->next;            // get to next FN
     }
     scan_start = scan_stop + 1;
     return;

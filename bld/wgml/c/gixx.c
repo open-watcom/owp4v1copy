@@ -130,41 +130,38 @@ static ix_h_blk *find_create_ix_h_entry( ix_h_blk **ixhwork,
 /***************************************************************************/
 static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
 {
-    bool          idseen;
-    bool          refidseen;
-    bool          seeseen;
-    bool          seeidseen;
-    bool          pgseen;
-    bool          printseen;
-    char      *   p;
-    ereftyp       pgvalue;
-    char      *   pgtext;
-    size_t        pgtextlen;
-    size_t        printtxtlen;
-    size_t        seetextlen;
-    char      *   printtxt;
-    char      *   seetext;
-    ref_entry *   refwork;
-
-    ref_entry     reid;
-    ref_entry *   rewk;
-
-    ref_entry     refid;
-    ref_entry *   refwk;
-
-    ref_entry     reseeid;
-    ref_entry *   rswk;
-
-    ix_h_blk  *   ihm1;
-    ix_e_blk  *   ixewk;
-    ix_e_blk  *   ixewksav;
-    ix_h_blk  *   ixhwk;
-    ix_h_blk  * * ixhwork;
-    int32_t       wkpage;
-    size_t        txtlen;
-    char      *   txt;
-    char          hxstring[TAG_NAME_LENGTH +1];
-    char          lvlc;
+    bool            idseen;
+    bool            pgseen;
+    bool            printseen;
+    bool            refidseen;
+    bool            seeidseen;
+    bool            seeseen;
+    char            hxstring[TAG_NAME_LENGTH +1];
+    char            id[ID_LEN];
+    char            lvlc;
+    char        *   p;
+    char        *   pgtext;
+    char        *   printtxt;
+    char        *   seetext;
+    char        *   txt;
+    ereftyp         pgvalue;
+    int32_t         wkpage;
+    ix_h_blk    *   ihm1;
+    ix_e_blk    *   ixewk;
+    ix_e_blk    *   ixewksav;
+    ix_h_blk    *   ixhwk;
+    ix_h_blk    * * ixhwork;
+    ref_entry   *   refwork;
+    ref_entry       reid;
+    ref_entry   *   rewk;
+    ref_entry       refid;
+    ref_entry   *   refwk;
+    ref_entry       reseeid;
+    ref_entry   *   rswk;
+    size_t          pgtextlen;
+    size_t          printtxtlen;
+    size_t          seetextlen;
+    size_t          txtlen;
 
     if( !GlobalFlags.index ) {          // index option not active
         scan_start = scan_stop + 1;     // ignore tag
@@ -246,11 +243,11 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
 
         if( !strnicmp( "id", p, 2 ) ) {
             p += 2;
-            p = get_refid_value( p );
+            p = get_refid_value( p, id );
             if( (val_start != NULL) && (val_len > 0) ) {
                 if( hx_lvl > 0 ) {      // :Ix :IHx
                     idseen = true;      // id attribute found
-                    init_ref_entry( &reid, val_start, val_len );
+                    init_ref_entry( &reid, id );
                     rewk = find_refid( ix_ref_dict, reid.id );
                     if( rewk != NULL ) {
                         if( rewk->lineno != reid.lineno ) {
@@ -280,10 +277,10 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
 
         if( !strnicmp( "refid", p, 5 ) ) {
             p += 5;
-            p = get_refid_value( p );
+            p = get_refid_value( p, id );
             if( val_start != NULL && val_len > 0 ) {
                 if( (hx_lvl == 0) || ((hx_lvl > 1) && (hxstring[2] == lvlc)) ) {
-                    fill_id( &refid, val_start, val_len );
+                    init_ref_entry( &refid, id );
                     refidseen = true;   // refid attribute found
                     refwk = find_refid( ix_ref_dict, refid.id );
                     if( refwk == NULL ) {   // refid not in dict
@@ -400,11 +397,11 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
 
         if( !strnicmp( "seeid", p, 3 ) ) {
             p += 5;
-            p = get_refid_value( p );
+            p = get_refid_value( p, id );
             if( (val_start != NULL) && (val_len > 0) ) {
                 if( (hx_lvl <= 3) && (hxstring[3] == lvlc) ) {
                     seeidseen = true;
-                    fill_id( &reseeid, val_start, val_len );// copy lower id
+                    strcpy_s( reseeid.id, ID_LEN, id );   // copy lower id
                     rswk = find_refid( ix_ref_dict, reseeid.id );
                     if( rswk == NULL ) {// not in dict, this is an error
                         if( GlobalFlags.lastpass ) {  // during lastpass

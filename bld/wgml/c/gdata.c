@@ -170,7 +170,9 @@ void init_global_vars( void )
     init_ref_dict( &hx_ref_dict );
     init_ref_dict( &ix_ref_dict );
 
-    fwd_ref_pool        = NULL;
+    fig_fwd_refs        = NULL;
+    fn_fwd_refs         = NULL;
+    hx_fwd_refs         = NULL;
 
     tagname[0]          = '*';          // last defined GML tag name none
     tag_entry           = NULL;         // ... entry in tag_dict
@@ -253,14 +255,11 @@ void init_pass_data( void )
     g_indentr           = 0;
 
     fig_count           = 0;
-    fig_fwd_refs        = NULL;
     fig_re              = fig_ref_dict; // start each pass at start of FIG id list
 
     fn_count            =0;
-    fn_fwd_refs         = NULL;
     fn_re               = fn_ref_dict;  // start each pass at start of FN id list
 
-    hx_fwd_refs         = NULL;
     hx_re               = hx_ref_dict;  // start each pass at start of Hx id list
 
     ixhtag[0] = NULL;                   // last higher level :IH1 :IH2 tags

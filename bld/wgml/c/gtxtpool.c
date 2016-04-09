@@ -514,53 +514,6 @@ void add_doc_el_group_to_pool( doc_el_group * a_group )
 
 
 /***************************************************************************/
-/*  allocate / reuse a fwd_ref instance                                     */
-/***************************************************************************/
-
-fwd_ref * alloc_fwd_ref( void )
-{
-    fwd_ref *   curr;
-    fwd_ref *   prev;
-    int         k;
-
-    curr = fwd_ref_pool;
-    if( curr != NULL ) {                // there is one to use
-        fwd_ref_pool = curr->next;
-    } else {                            // pool is empty
-        curr = mem_alloc( sizeof( fwd_ref ) );
-
-        prev = mem_alloc( sizeof( *prev ) );
-        fwd_ref_pool = prev;
-        for( k = 0; k < 10; k++ ) { // alloc 10 tag_cb if pool empty
-            prev->next = mem_alloc( sizeof( *prev ) );
-            prev = prev->next;
-        }
-        prev->next = NULL;
-    }
-
-    return( curr );
-}
-
-
-/***************************************************************************/
-/*  add a linked list of fwd_ref instance to free pool for reuse           */
-/***************************************************************************/
-
-void add_fwd_ref_to_pool( fwd_ref * a_ref )
-{
-    fwd_ref * tw;
-
-    if( a_ref == NULL ) {
-        return;
-    }
-
-    for( tw = a_ref; tw->next != NULL; tw = tw->next ); //empty
-    tw->next = fwd_ref_pool;
-    fwd_ref_pool = a_ref;
-}
-
-
-/***************************************************************************/
 /*  allocate / reuse a tag_cb instance                                     */
 /*  Note: init_tag_cb() initializes the new instance                       */
 /***************************************************************************/
@@ -715,4 +668,5 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
 
     return( curr );
 }
+
 

@@ -26,7 +26,7 @@
 *
 * Description:  WGML tags :H0 :H1 :H2 :H3 :H4 :H5 :H6 processing
 *
-*                  stitle= not implemented, not used in OW documentation
+*                  stitle is not implemented: not used in OW documentation
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -39,7 +39,7 @@ static char hnumx[7] = "$hnumX";
 /*  and update $headn global variable                                      */
 /***************************************************************************/
 
-static  void    update_headnumx( int lvl, char *hnumstr, size_t hnsize )
+static void update_headnumx( int lvl, char *hnumstr, size_t hnsize )
 {
     size_t          pos;
     char          * pn;
@@ -92,9 +92,9 @@ static  void    update_headnumx( int lvl, char *hnumstr, size_t hnsize )
 /*  output hx Header  only  called if display_heading = yes                */
 /***************************************************************************/
 
-static  void    hx_header( int hx_lvl, const char *hnumstr, const char *txt )
+static void hx_header( int hx_lvl, const char *hnumstr, const char *txt )
 {
-    doc_element     *   cur_el;
+//    doc_element     *   cur_el;
     font_number         font_save;
     font_number         font;
     int32_t             width;
@@ -127,73 +127,15 @@ static  void    hx_header( int hx_lvl, const char *hnumstr, const char *txt )
     curr_tn = NULL;
     width   = 0;
     widthn  = 0;
-    hd_line = alloc_text_line();
 
     if( layout_work.hx[hx_lvl].number_form != none ) {
         font = layout_work.hx[hx_lvl].number_font;
-        curr_tn = alloc_text_chars( hnumstr, strlen( hnumstr ), font );
-        curr_tn->width = cop_text_width( curr_tn->text, curr_tn->count, font );
-        widthn = curr_tn->width + wgml_fonts[font].spc_width;;
-
-        hd_line->first = curr_tn;
-        hd_line->line_height = wgml_fonts[font].line_height;
-        hd_line->last = curr_tn;
+        process_text( hnumstr, font );        
     }
 
     if( (txt != NULL) && (*txt != '\0') ) {
         font = layout_work.hx[hx_lvl].font;
-
-        curr_t = alloc_text_chars( txt, strlen( txt ), font );
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count, font );
-        width = curr_t->width;
-
-        if( hd_line->first == NULL ) {
-            hd_line->first = curr_t;
-        } else {
-            curr_tn->next = curr_t;
-            curr_t->prev  = curr_tn;
-        }
-        hd_line->last = curr_t;
-        if( hd_line->line_height < wgml_fonts[font].line_height ) {
-            hd_line->line_height = wgml_fonts[font].line_height;
-        }
-    }
-    if( curr_t == NULL ) {
-        curr_t = curr_tn;
-        curr_tn = NULL;
-        width = widthn;
-        widthn = 0;
-    }
-    g_cur_left = g_page_left + conv_hor_unit( &layout_work.hx[hx_lvl].indent )
-                             + conv_hor_unit( &layout_work.hx[hx_lvl].align );
-
-    if( layout_work.hx[hx_lvl].page_position == pos_left ) {
-        if( curr_tn != NULL ) {
-            curr_tn->x_address = g_cur_left;
-        }
-        curr_t->x_address = g_cur_left + widthn;
-    } else {
-        if( layout_work.hx[hx_lvl].page_position == pos_center ) {
-            curr_t->x_address = g_cur_left + widthn
-                             + (g_page_right - g_cur_left - widthn - width) / 2;
-        } else {
-            curr_t->x_address = g_page_right - width;
-        }
-        if( curr_tn != NULL ) {
-            curr_tn->x_address = curr_t->x_address - widthn;
-        }
-    }
-    if( input_cbs->fmflags & II_research ) {
-        test_out_t_line( hd_line );
-    }
-    cur_el = init_doc_el( el_text, hd_line->line_height );
-    cur_el->element.text.first = hd_line;
-    hd_line = NULL;
-
-    if( layout_work.hx[hx_lvl].page_eject == ej_no ) {
-        insert_col_main( cur_el );
-    } else {
-        insert_page_width( cur_el );
+        process_text( txt, font );        
     }
 }
 
@@ -201,7 +143,7 @@ static  void    hx_header( int hx_lvl, const char *hnumstr, const char *txt )
 /*  :H0 - :H6  common processing                                           */
 /***************************************************************************/
 
-static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
+static void gml_hx_common( const gmltag * entry, int hx_lvl )
 {
     bool            id_seen     = false;
     char        *   headp;
@@ -210,6 +152,7 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     char        *   p;
     int             k;
     int             rc;
+    size_t          current;
     size_t          headlen;
     size_t          txtlen;
     ref_entry   *   cur_ref;
@@ -282,23 +225,17 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
                 }
             }
         }
-        if( !strnicmp( "id=", p, 3 ) ) {
+        if( !strnicmp( "id", p, 2 ) ) {
             p += 2;
-            p = get_att_value( p );
+            p = get_refid_value( p, id );
             if( val_start == NULL ) {
                 break;
             }
             id_seen = true;             // valid id attribute found
-            memcpy_s( id, ID_LEN, val_start, val_len );
-            if( val_len < ID_LEN ) {
-                id[val_len] = '\0';
-            } else {
-                id[ID_LEN - 1] = '\0';
-            }
             if( ProcFlags.tag_end_found ) {
                 break;
             }
-        } else if( !strnicmp( "stitle=", p, 7 ) ) {
+        } else if( !strnicmp( "stitle", p, 6 ) ) {
             p += 6;
 
             g_warn( wng_unsupp_att, "stitle" );
@@ -323,9 +260,8 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     /*    perhaps text translated to upper or lower case                    */
     /************************************************************************/
 
-    while( *p == ' ' ) {                // ignore leading blanks
-        p++;
-    }
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {                          // text exists
         if( layout_work.hx[hx_lvl].cases == case_lower ) {
             strlwr( p );
@@ -349,30 +285,40 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     strcat_s( headp, headlen, p );
     rc = add_symvar( &global_dict, headx, headp, no_subscript, 0 );
 
-    mem_free( headp );
+    if( !id_seen ) {
+        id[0] = '\0';                   // zero out if no id given
+    }
 
     /* Only create the entry on the first pass */
 
-    if( id_seen ) {
-        if( pass == 1 ) {
-            cur_ref = find_refid( hx_ref_dict, id );
-            if( !cur_ref ) {                    // new entry
-                hx_re = mem_alloc( sizeof( ref_entry ) );
-                init_ref_entry( hx_re, id, strlen( id ) );
-                hx_re->flags = rf_fx;                  // mark as Hx
-                add_ref_entry( &hx_ref_dict, hx_re );
-                if( txtlen > 0 ) {          // text line not empty
-                    hx_re->text_cap = mem_alloc( txtlen + 1 );
-                    strcpy_s( hx_re->text_cap, txtlen + 1, p );
-                }
-            } else {                // duplicate id
-                g_err( wng_id_xxx, cur_ref->id );
-                g_info( inf_id_duplicate );
-                file_mac_info();
-                err_count++;
+    cur_ref = find_refid( hx_ref_dict, id );
+    if( pass == 1 ) {
+        if( !cur_ref ) {                    // new entry
+            hx_re = mem_alloc( sizeof( ref_entry ) );
+            init_ref_entry( hx_re, id );
+            hx_re->flags = rf_fx;                  // mark as Hx
+            add_ref_entry( &hx_ref_dict, hx_re );
+            current = strlen( hnumstr );
+            if( current > 0 ) {             // prefix will be NULL for level 0 heading
+                hx_re->prefix = (char *) mem_alloc( current + 1 );
+                strcpy_s(hx_re->prefix, current + 1, hnumstr );
             }
+            if( txtlen > 0 ) {              // text line not empty
+                hx_re->text_cap = mem_alloc( txtlen + 1 );
+                strcpy_s( hx_re->text_cap, txtlen + 1, p );
+                hx_re->flags |= rf_textcap; // mark as having caption text
+            }
+        } else {                // duplicate id
+            dup_id_err( cur_ref->id, "heading" );
+        }
+    } else {
+        if( (page + 1) != cur_ref->pageno ) {       // page number changed
+            cur_ref->pageno = page;
+            init_fwd_ref( hx_fwd_refs, id );
         }
     }
+
+    mem_free( headp );
 
     if( layout_work.hx[hx_lvl].number_reset ) {
         for( k = hx_lvl + 1; k < 7; k++ ) {
@@ -390,6 +336,8 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     /***********************************************************************/
     /*  eject page(s) if specified                                         */
     /***********************************************************************/
+
+    scr_process_break();                    // commit any prior text 
     if( layout_work.hx[hx_lvl].page_eject != ej_no ) {
 
         if( ProcFlags.page_started ) {
@@ -414,9 +362,19 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
     }
 
     if( layout_work.hx[hx_lvl].display_heading ) {
-
         hx_header( hx_lvl, hnumstr, p );
+        scr_process_break();                    // commit the header
     }
+
+/// something like this will eventually be needed, but where and how is not yet
+/// clear
+#if 0
+    if( layout_work.hx[hx_lvl].page_eject == ej_no ) {
+        insert_col_main( cur_el );
+    } else {
+        insert_page_width( cur_el );
+    }
+#endif
 
     scan_start = scan_stop + 1;
     return;
@@ -463,37 +421,37 @@ static  void    gml_hx_common( const gmltag * entry, int hx_lvl )
 /******************************************************************************/
 
 
-void    gml_h0( const gmltag * entry )
+void gml_h0( const gmltag * entry )
 {
     gml_hx_common( entry, 0 );
 }
 
-void    gml_h1( const gmltag * entry )
+void gml_h1( const gmltag * entry )
 {
     gml_hx_common( entry, 1 );
 }
 
-void    gml_h2( const gmltag * entry )
+void gml_h2( const gmltag * entry )
 {
     gml_hx_common( entry, 2 );
 }
 
-void    gml_h3( const gmltag * entry )
+void gml_h3( const gmltag * entry )
 {
     gml_hx_common( entry, 3 );
 }
 
-void    gml_h4( const gmltag * entry )
+void gml_h4( const gmltag * entry )
 {
     gml_hx_common( entry, 4 );
 }
 
-void    gml_h5( const gmltag * entry )
+void gml_h5( const gmltag * entry )
 {
     gml_hx_common( entry, 5 );
 }
 
-void    gml_h6( const gmltag * entry )
+void gml_h6( const gmltag * entry )
 {
     gml_hx_common( entry, 6 );
 }

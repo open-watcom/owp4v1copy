@@ -419,7 +419,7 @@ void    xx_warn( const msg_ids errid )
 /*  heading ids                                                            */
 /***************************************************************************/
 
-void    g_err_dup_id( const char * id, const char * context )
+void    dup_id_err( const char * id, const char * context )
 {
     g_err( wng_id_xxx, id );
     g_info( inf_id_duplicate, context );
@@ -427,24 +427,21 @@ void    g_err_dup_id( const char * id, const char * context )
     err_count++;
 }
 
-void    g_warn_fwd_id( const char * id, const char * context )
+void    fwd_id_warn( const char * id, const char * context )
 {
     g_warn( wng_id_xxx, id );
     g_info( inf_id_forward, context );
     wng_count++;
 }
 
-
-void    g_warn_fwd_id_info( const char * id, const char * context )
+void    undef_id_warn( const char * id, const char * context )
 {
     g_warn( wng_id_xxx, id );
-    g_info( inf_id_forward, context );
-    file_mac_info();
+    g_info( inf_id_unknown, context );
     wng_count++;
 }
 
-
-void    g_warn_undef_id( const char * id, const char * context )
+void    undef_id_warn_info( const char * id, const char * context )
 {
     g_warn( wng_id_xxx, id );
     g_info( inf_id_unknown, context );

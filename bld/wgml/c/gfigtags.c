@@ -119,44 +119,6 @@ void gml_fig( const gmltag * entry )
         return;
     }
 
-    init_nest_cb();
-    nest_cb->p_stack = copy_to_nest_stack();
-    nest_cb->left_indent = conv_hor_unit( &layout_work.fig.left_adjust );
-    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.fig.right_adjust );
-    nest_cb->lm = g_cur_left;
-    nest_cb->rm = g_page_right;
-    nest_cb->font = layout_work.fig.font;
-    nest_cb->c_tag = t_FIG;
-
-    g_curr_font = nest_cb->font;
-
-    g_cur_left += nest_cb->left_indent;
-    g_cur_left += wgml_fonts[g_curr_font].spc_width;    // TBD, space for VLINE?
-    g_page_right += nest_cb->right_indent;
-
-    g_cur_h_start = g_cur_left;
-    ProcFlags.keep_left_margin = true;  // keep special indent
-
-    spacing = layout_work.fig.spacing;
-
-    set_skip_vars( NULL, &layout_work.fig.pre_skip, &layout_work.fig.post_skip,
-                                                            spacing, g_curr_font );
-
-    nest_cb->post_skip = g_post_skip;   // shift post_skip to follow eXMP
-    g_post_skip = 0;
-
-    sav_group_type = cur_group_type;
-    cur_group_type = gt_fig;
-    cur_doc_el_group = alloc_doc_el_group( gt_fig );
-    cur_doc_el_group->prev = t_doc_el_group;
-    t_doc_el_group = cur_doc_el_group;
-    cur_doc_el_group = NULL;
-
-    concat_save = ProcFlags.concat;
-    ProcFlags.concat = false;
-    justify_save = ProcFlags.justify;
-    ProcFlags.justify = ju_off;         // TBD
-
     p = scan_start;
     if( *p == '.' ) p++;                // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
@@ -240,17 +202,11 @@ void gml_fig( const gmltag * entry )
             }
         } else if( !strnicmp( "id", p, 2 ) ) {
             p += 2;
-            p = get_att_value( p );
+            p = get_refid_value( p, id );
             if( val_start == NULL ) {
                 break;
             }
             id_seen = true;             // valid id attribute found
-            memcpy_s( id, ID_LEN, val_start, val_len );
-            if( val_len < ID_LEN ) {
-                id[val_len] = '\0';
-            } else {
-                id[ID_LEN - 1] = '\0';
-            }
             if( ProcFlags.tag_end_found ) {
                 break;
             }
@@ -304,27 +260,71 @@ void gml_fig( const gmltag * entry )
             break;
         }
     }
+
 // Cannot fit the figure in the adjusted left and right margins
 // Cannot fit the figure with a frame in the adjusted left and right margins
                 /* there should be a check somewhere for width > page width */
 
+    init_nest_cb();
+    nest_cb->p_stack = copy_to_nest_stack();
+    nest_cb->left_indent = conv_hor_unit( &layout_work.fig.left_adjust );
+    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.fig.right_adjust );
+    nest_cb->lm = g_cur_left;
+    nest_cb->rm = g_page_right;
+    nest_cb->font = layout_work.fig.font;
+    nest_cb->c_tag = t_FIG;
+
+    g_curr_font = nest_cb->font;
+
+    g_cur_left += nest_cb->left_indent;
+    g_page_right += nest_cb->right_indent;
+/// space for VLINE may depend on whether there /is/ a VLINE!
+    if( frame.type == box_frame ) {
+        g_cur_left += wgml_fonts[g_curr_font].spc_width;    // TBD, space for VLINE?
+        g_page_right += wgml_fonts[g_curr_font].spc_width;  // TBD, space for VLINE?
+    }
+
+    g_cur_h_start = g_cur_left;
+    ProcFlags.keep_left_margin = true;  // keep special indent
+
+    spacing = layout_work.fig.spacing;
+
+    set_skip_vars( NULL, &layout_work.fig.pre_skip, &layout_work.fig.post_skip,
+                                                            spacing, g_curr_font );
+
+    nest_cb->post_skip = g_post_skip;   // shift post_skip to follow eXMP
+    g_post_skip = 0;
+
+    sav_group_type = cur_group_type;
+    cur_group_type = gt_fig;
+    cur_doc_el_group = alloc_doc_el_group( gt_fig );
+    cur_doc_el_group->prev = t_doc_el_group;
+    t_doc_el_group = cur_doc_el_group;
+    cur_doc_el_group = NULL;
+
+    concat_save = ProcFlags.concat;
+    ProcFlags.concat = false;
+    justify_save = ProcFlags.justify;
+    ProcFlags.justify = ju_off;         // TBD
 
     /* Only create the entry on the first pass */
 
     if( id_seen ) {
+        cur_ref = find_refid( fig_ref_dict, id );
         if( pass == 1 ) {
-            cur_ref = find_refid( hx_ref_dict, id );
             if( !cur_ref ) {                    // new entry
                 fig_re = mem_alloc( sizeof( ref_entry ) );
-                init_ref_entry( fig_re, id, strlen( id ) );
+                init_ref_entry( fig_re, id );
                 fig_re->flags = rf_fx;                  // mark as FIG
                 fig_re->number = fig_count;             // add number of this FIG
                 add_ref_entry( &fig_ref_dict, fig_re );
             } else {                // duplicate id
-                g_err( wng_id_xxx, cur_ref->id );
-                g_info( inf_id_duplicate );
-                file_mac_info();
-                err_count++;
+                dup_id_err( cur_ref->id, "figure" );
+            }
+        } else {
+            if( (page + 1) != cur_ref->pageno ) {       // page number changed
+                cur_ref->pageno = page;
+                init_fwd_ref( fig_fwd_refs, id );
             }
         }
     }
@@ -385,11 +385,6 @@ void gml_efig( const gmltag * entry )
         cur_doc_el_group = t_doc_el_group;      // detach current element group
         t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
         cur_doc_el_group->prev = NULL;
-
-        if( cur_doc_el_group->first != NULL ) {
-            cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
-                                cur_doc_el_group->first->subs_skip);
-        }
 
         if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
 
@@ -468,6 +463,11 @@ void gml_figcap( const gmltag * entry )
     current = strlen( fcstr );
     fcstr[current] = layout_work.figcap.delim;
     fcstr[current + 1] = '\0';
+    if( pass == 1 ) {                   // only on first pass
+        current = strlen( fcstr );
+        fig_re->prefix = (char *) mem_alloc( current + 1 );
+        strcpy_s(fig_re->prefix, current + 1, fcstr );
+    }
     input_cbs->fmflags &= ~II_eol;      // prefix is never EOL
     process_text( fcstr, g_curr_font ); // FIGCAP prefix
     mem_free( fcstr );
@@ -490,6 +490,7 @@ void gml_figcap( const gmltag * entry )
     }
     fig_re->flags |= rf_figcap;             // mark as FIGCAP present, with or without text
     figcap_done = true;
+
     scan_start = scan_stop + 1;
     return;
 }

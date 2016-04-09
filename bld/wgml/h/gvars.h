@@ -212,6 +212,7 @@ global struct ProcFlags {
 #endif
     unsigned        overprint       : 1;// .sk -1 active or not
     unsigned        tag_end_found   : 1;// '.' ending tag found
+    unsigned        tag_new_line    : 1;// scan_start points to a new input line
     unsigned        skips_valid     : 1;// controls set_skip_vars() useage
 
     unsigned        box_cols_cur    : 1;// current BX line had column list

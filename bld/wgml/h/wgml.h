@@ -150,8 +150,10 @@ extern  void    cw_err( void );
 extern  void    dc_opt_err( const msg_ids num, const char * pa );
 extern  void    dc_opt_warn( const char * pa );
 extern  void    dc_opt_warn_len( const char * pa, size_t len );
+extern  void    dup_id_err( const char * id, const char * context );
 extern  void    file_mac_info( void );
 extern  void    file_mac_info_nest( void );
+extern  void    fwd_id_warn( const char * id, const char * context );
 extern  void    internal_err( const char * file, int line );
 extern  void    list_level_err( const char * xl_tag, uint8_t xl_level );
 extern  void    nottag_err( void );
@@ -162,6 +164,8 @@ extern  void    val_parse_err( const char * pa, bool tag );
 extern  void    tag_name_missing_err( void );
 extern  void    tag_text_err( const char * tagname );
 extern  void    tag_text_req_err( const char * tagname );
+extern  void    undef_id_warn( const char * id, const char * context );
+extern  void    undef_id_warn_info( const char * id, const char * context );
 extern  void    xx_err( const msg_ids errid );
 extern  void    xx_line_err( const msg_ids errid, const char * pa );
 extern  void    xx_line_err_len( const msg_ids errid, const char * pa, size_t len );
@@ -175,9 +179,6 @@ extern  void    xx_simple_err_cc( const msg_ids errid, const char * arg1, const 
 extern  void    xx_simple_warn( const msg_ids errid );
 extern  void    xx_tag_err( const msg_ids errid, char const * cw );
 extern  void    xx_warn( const msg_ids errid );
-extern  void    g_err_dup_id( const char * id, const char * context );
-extern  void    g_warn_fwd_id( const char * id, const char * context );
-extern  void    g_warn_undef_id( const char * id, const char * context );
 extern  void    g_err_tag( const char * tagname );
 extern  void    g_err_tag_nest( const char * tagname );
 extern  void    g_err_tag_rsloc( locflags inloc, const char * pa );
@@ -194,7 +195,6 @@ extern condcode     getnum( getnum_block * gn );
 extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
 extern  void        free_index_dict( ix_h_blk ** dict );
 extern  void        free_ix_e_index_dict( ix_h_blk ** dict );
-extern  void        gen_index( void );
 extern  void        ixdump( ix_h_blk * dict );
 
 
@@ -272,15 +272,14 @@ extern  void        set_h_start( void );
 
 
 /* grefdict.c                           */
-extern  void        add_ref_entry( ref_entry * * dict, ref_entry * me );
-extern  void        init_ref_dict( ref_entry * * dict );
-extern  void        free_ref_dict( ref_entry * * dict );
-extern  void        print_ref_dict( ref_entry * dict, const char * type );
-extern  ref_entry   *find_refid( ref_entry * dict, char const * id );
-extern  void        init_ref_entry( ref_entry * re, char * id, size_t len );
-extern  void        fill_id( ref_entry * re, char * id, size_t len );
-extern  char        *get_refid_value( char * p );
-
+extern  void            add_ref_entry( ref_entry * * dict, ref_entry * me );
+extern  void            init_ref_dict( ref_entry * * dict );
+extern  void            free_ref_dict( ref_entry * * dict );
+extern  void            print_ref_dict( ref_entry * dict, const char * type );
+extern  ref_entry   *   find_refid( ref_entry * dict, char const * id );
+extern  void            init_ref_entry( ref_entry * re, char * id );
+extern  char        *   get_refid_value( char * p, char * refid );
+extern  fwd_ref     *   init_fwd_ref( fwd_ref * fr_dict, const char * fr_id );
 
 /* gresrch.c                            */
 extern  void    add_GML_tag_research( char * tag );
@@ -414,8 +413,6 @@ extern  void                add_doc_el_to_pool( doc_element * a_element );
 extern  doc_element     *   alloc_doc_el( element_type type );
 extern  void                add_doc_el_group_to_pool( doc_el_group * a_group );
 extern  doc_el_group    *   alloc_doc_el_group( group_type type );
-extern  void                add_fwd_ref_to_pool( fwd_ref * cb );
-extern  fwd_ref         *   alloc_fwd_ref( void );
 extern  void                add_tag_cb_to_pool( tag_cb * cb );
 extern  tag_cb          *   alloc_tag_cb( void );
 extern  void                free_pool_storage( void );
