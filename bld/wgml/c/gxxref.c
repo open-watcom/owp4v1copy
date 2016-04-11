@@ -47,66 +47,49 @@ static char * get_ref_attributes( void )
 
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
 
-    for( ;; ) {
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
-        pa = p;
-        if( *p == '\0' ) {              // end of line: get new line
-            if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {// next line for missing attribute
- 
-                    process_line();
-                    scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg;
-                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
-                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        ProcFlags.tag_end_found = true; 
-                        ProcFlags.tag_new_line = true; 
-                        break;          
-                    } else {
-                        p = scan_start; // new line is part of current tag
-                        continue;
-                    }
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+            if( !strnicmp( "page", p, 4 ) ) {
+                page_found = true;
+                p += 4;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
                 }
-            }
-        }
-        if( !strnicmp( "page", p, 4 ) ) {
-            page_found = true;
-            p += 4;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
+                if( !strnicmp( "yes", val_start, 3 ) ) {
+                    ref_page = true;
+                } else if( !strnicmp( "no", val_start, 2 ) ) {
+                    ref_page = false;
+                } else {
+                    xx_line_err( err_inv_att_val, val_start );
+                    scan_start = scan_stop + 1;
+                    return( p );
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "refid", p, 5 ) ) {
+                p += 5;
+                p = get_refid_value( p, refid );
+                if( val_start == NULL ) {
+                    break;
+                }
+                refid_found = true;
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {    // no match = end-of-tag in wgml 4.0
+                p = pa; // restore any spaces before non-attribute value
                 break;
             }
-            if( !strnicmp( "yes", val_start, 3 ) ) {
-                ref_page = true;
-            } else if( !strnicmp( "no", val_start, 2 ) ) {
-                ref_page = false;
-            } else {
-                xx_line_err( err_inv_att_val, val_start );
-                scan_start = scan_stop + 1;
-                return( p );
-            }
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "refid", p, 5 ) ) {
-            p += 5;
-            p = get_refid_value( p, refid );
-            if( val_start == NULL ) {
-                break;
-            }
-            refid_found = true;
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else {    // no match = end-of-tag in wgml 4.0
-            ProcFlags.tag_end_found = true;
-            p = pa; // restore any spaces before non-attribute value
-            break;
         }
     }
     if( !refid_found ) {            // detect missing required attribute
@@ -190,7 +173,7 @@ void gml_figref( const gmltag * entry )
     mem_free( ref_text );
     ref_text = NULL;
 
-    if( !ProcFlags.tag_new_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p ) {
         if( *p == '.' ) p++;                // possible tag end
         if( *p ) {                          // only if text follows
             post_space = 0;                 // cancel space after ref_text
@@ -208,10 +191,6 @@ void gml_figref( const gmltag * entry )
         }
     }
 
-    if( ProcFlags.tag_new_line ) {
-        ProcFlags.reprocess_line = true;
-        ProcFlags.tag_new_line = false;
-    }
     scan_start = scan_stop + 1;
 
     return;
@@ -294,7 +273,7 @@ void gml_hdref( const gmltag * entry )
     mem_free( ref_text );
     ref_text = NULL;
 
-    if( !ProcFlags.tag_new_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p ) {
         if( *p == '.' ) p++;                // possible tag end
         if( *p ) {                          // only if text follows
             post_space = 0;                 // cancel space after ref_text
@@ -312,10 +291,6 @@ void gml_hdref( const gmltag * entry )
         }
     }
 
-    if( ProcFlags.tag_new_line ) {
-        ProcFlags.reprocess_line = true;
-        ProcFlags.tag_new_line = false;
-    }
     scan_start = scan_stop + 1;
 
     return;
@@ -332,17 +307,32 @@ void gml_hdref( const gmltag * entry )
 
 void gml_fnref( const gmltag * entry )
 { 
+    char            buffer[11];
+    char        *   p;
     ref_entry   *   cur_re;  
 
-    get_ref_attributes();
+    p = get_ref_attributes();
 
+    /* wgml 4.0: FNREF changes the font to "0" and does not change it back */
+
+    g_curr_font = FONT0;                // layout attribute "font" is ignored
     cur_re = find_refid( fn_ref_dict, refid );
     if( cur_re == NULL ) {              // undefined refid
-/// now format forward reference/error message
+        process_text( "(XX)", g_curr_font ); 
     } else {
-/// now format reference
-/// concat is on!
+        format_num( cur_re->number, &buffer, sizeof( buffer ), layout_work.fnref.number_style );
+        input_cbs->fmflags &= ~II_eol;
+        process_text( &buffer, g_curr_font ); 
     }
+
+    if( !ProcFlags.reprocess_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {                          // only if text follows
+            post_space = 0;                 // cancel space after ref_text
+            process_text( p, g_curr_font );
+        }
+    }
+
     if( GlobalFlags.lastpass ) {
         if( cur_re == NULL ) {
             if( passes == 1 ) {

@@ -63,63 +63,41 @@ static  ju_enum     justify_save;           // for ProcFlags.justify
 void gml_xmp( const gmltag * entry )
 {
     char    *   p;
+    char    *   pa;
 
     start_doc_sect();
     scr_process_break();
     scan_err = false;
+
+    g_keep_nest( "Example" );               // catch nesting errors
+
     p = scan_start;
     if( *p == '.' ) {
         /* already at tag end */
     } else {
-        p++;
-        while( *p == ' ' ) {
-            p++;
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+
+            if( !strnicmp( "depth", p, 5 ) ) {
+                p += 5;
+
+               /***************************************************************/
+               /*  Although unsupported, scan depth='xxx'                     */
+               /***************************************************************/
+
+                p = get_att_value( p );
+                g_warn( wng_unsupp_att, "depth" );
+                wng_count++;
+                file_mac_info();
+            } else {
+                p = pa; // restore any spaces before non-attribute value
+                break;
+            }
         }
-
-        if( !strnicmp( "depth=", p, 6 ) ) {
-            p += 6;
-           /***************************************************************/
-           /*  Although unsupported, scan depth='xxx'                     */
-           /***************************************************************/
-           g_warn( wng_unsupp_att, "depth" );
-           wng_count++;
-           file_mac_info();
-
-           while( *p && *p != '.' ) {   // ignore all up to tag end
-               p++;
-           }
-        }
-    }
-    if( cur_group_type == gt_xmp ) {        // nested :XMP tag not supported
-        g_err_tag_nest( "eXMP" );
-        scan_start = scan_stop + 1;
-        return;
-    }
-
-    /******************************************************************/
-    /*  test for XMP within  :ADDRESS, :FIG , :FN                     */
-    /******************************************************************/
-
-    if( cur_group_type == gt_address ) {
-        g_err_tag_x_in_y( "XMP", "ADDRESS" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fig ) {
-        g_err_tag_x_in_y( "XMP", "FIG" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fn ) {
-        g_err_tag_x_in_y( "XMP", "FN" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fb ) {
-        g_err_tag_x_in_y( "XMP", "FB" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fk ) {
-        g_err_tag_x_in_y( "XMP", "FK" );
-        scan_start = scan_stop + 1;
-        return;
     }
 
     first_xline = true;
@@ -162,9 +140,11 @@ void gml_xmp( const gmltag * entry )
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;         // TBD
 
-    if( *p == '.' ) p++;                // possible tag end
-    if( *p ) {
-        process_text( p, g_curr_font); // if text follows
+    if( !ProcFlags.reprocess_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {
+            process_text( p, g_curr_font);  // if text follows
+        }
     }
     scan_start = scan_stop + 1;
     return;

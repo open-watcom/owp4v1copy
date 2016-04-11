@@ -54,43 +54,46 @@ static  ju_enum         justify_save;           // for ProcFlags.justify
 void gml_fn( const gmltag * entry )
 {
     bool            id_seen = false;
+    char            buffer[11];
     char        *   p;
+    char        *   pa;
     ref_entry   *   cur_ref;
 
     start_doc_sect();
     scr_process_break();
     scan_err = false;
 
-    if( cur_group_type == gt_fn ) {        // nested :FIG tag not supported
-        g_err_tag_x_in_y( "FN", "FN" );
-        scan_start = scan_stop + 1;
-        return;
-    }
+    g_keep_nest( "Footnote" );          // catch nesting errors
 
-    /******************************************************************/
-    /*  test for FIG within :ADDRESS, :FN, .fb, .fk, :XMP             */
-    /******************************************************************/
+    p = scan_start;
+    if( *p == '.' ) p++;                // possible tag end
 
-    if( cur_group_type == gt_address ) {
-        g_err_tag_x_in_y( "FN", "ADDRESS" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fig ) {
-        g_err_tag_x_in_y( "FN", "FIG" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fb ) {
-        g_err_tag_x_in_y( "FN", "FB" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fk ) {
-        g_err_tag_x_in_y( "FN", "FK" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_xmp ) {
-        g_err_tag_x_in_y( "FN", "XMP" );
-        scan_start = scan_stop + 1;
-        return;
+    fn_count++;                         // get current FN number
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+            if( !strnicmp( "id", p, 2 ) ) {
+                p += 2;
+                p = get_refid_value( p, id );
+                if( val_start == NULL ) {
+                    break;
+                }
+                id_seen = true;             // valid id attribute found
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {    // no match = end-of-tag in wgml 4.0
+                ProcFlags.tag_end_found = true;
+                p = pa; // restore spaces before text
+                break;
+            }
+        }
     }
 
     init_nest_cb();
@@ -114,7 +117,6 @@ void gml_fn( const gmltag * entry )
     spacing = layout_work.fn.spacing;
 
 /// pre_lines on first fn only, after that 0 -- perhaps ///
-
     set_skip_vars( NULL, &layout_work.fn.pre_lines, NULL, spacing, g_curr_font );
 
     sav_group_type = cur_group_type;
@@ -128,48 +130,6 @@ void gml_fn( const gmltag * entry )
     ProcFlags.concat = false;
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;         // TBD
-
-    fn_count++;                         // get current FN number
-
-    p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    for( ;; ) {
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
-        if( *p == '\0' ) {              // end of line: get new line
-            if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {// next line for missing attribute
- 
-                    process_line();
-                    scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg;
-                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
-                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        ProcFlags.tag_end_found = true; 
-                        break;          
-                    } else {
-                        p = scan_start; // new line is part of current tag
-                        continue;
-                    }
-                }
-            }
-        }
-        if( !strnicmp( "id", p, 2 ) ) {
-            p += 2;
-            p = get_refid_value( p, id );
-            if( val_start == NULL ) {
-                break;
-            }
-            id_seen = true;             // valid id attribute found
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else {    // no match = end-of-tag in wgml 4.0
-            ProcFlags.tag_end_found = true;
-            break;
-        }
-    }
 
     /* Only create the entry on the first pass */
 
@@ -193,8 +153,20 @@ void gml_fn( const gmltag * entry )
         }
     }
 
-    if( *p ) {
-        process_text( p, g_curr_font); // if text follows
+/// these will need to be used ... eventually
+//align
+//skip
+//number_font
+//frame
+
+    format_num( fn_re->number, &buffer, sizeof( buffer ), layout_work.fn.number_style );
+    input_cbs->fmflags &= ~II_eol;          // prefix is never EOL
+    process_text( &buffer, layout_work.fn.number_font ); // FN prefix
+    if( !ProcFlags.reprocess_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {
+            process_text( p, g_curr_font);  // if text follows
+        }
     }
     scan_start = scan_stop + 1;
     return;

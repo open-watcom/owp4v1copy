@@ -57,10 +57,11 @@ global  char        *   scan_restart;   // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
 global  char        *   tok_start;      // start of scanned token
 global  size_t          arg_flen;       // arg length
-global  char        *   var_start;      // variable start
-global  size_t          var_len;        // variable length
-global  size_t          val_len;        // value length
-global  char        *   val_start;      // value start
+//global  char        *   var_start;      // variable start
+//global  size_t          var_len;        // variable length
+global  char        *   att_start;      // (potential) attribute start
+global  size_t          val_len;        // attribute value length
+global  char        *   val_start;      // attribute value start
 global  char            quote_char;     // value is quoted by this char or \0
 global  locflags        rs_loc;         // restricted location
 
@@ -212,7 +213,6 @@ global struct ProcFlags {
 #endif
     unsigned        overprint       : 1;// .sk -1 active or not
     unsigned        tag_end_found   : 1;// '.' ending tag found
-    unsigned        tag_new_line    : 1;// scan_start points to a new input line
     unsigned        skips_valid     : 1;// controls set_skip_vars() useage
 
     unsigned        box_cols_cur    : 1;// current BX line had column list

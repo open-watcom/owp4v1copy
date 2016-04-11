@@ -44,6 +44,7 @@ void    gml_graphic( const gmltag * entry )
     char            rt_buff[MAX_FILE_ATTR];
     char        *   p;
     char        *   pa;
+    char        *   pb;
     doc_element *   cur_el;
     su              cur_su;
     uint32_t        depth;
@@ -63,163 +64,154 @@ void    gml_graphic( const gmltag * entry )
     file[0] = '\0';
     rt_buff[0] = '\0';
     p = scan_start;
-    for( ;; ) {
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
-        if( *p == '\0' ) {              // end of line: get new line
-            if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {      // next line for missing attribute
- 
-                    process_line();
-                    scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg;
-                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
-                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        ProcFlags.tag_end_found = true; 
-                        break;          
-                    } else {
-                        p = scan_start; // new line is part of current tag
-                        continue;
-                    }
+
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+            if( !strnicmp( "file", p, 4 ) ) {
+                p += 4;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
                 }
-            }
-        }
-        if( !strnicmp( "file", p, 4 ) ) {
-            p += 4;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            file_found = true;
-            memcpy_s( file, FILENAME_MAX, val_start, val_len );
-            if( val_len < FILENAME_MAX ) {
-                file[val_len] = '\0';
-            } else {
-                file[FILENAME_MAX - 1] = '\0';
-            }
-            split_attr_file( file, rt_buff, sizeof( rt_buff ) );
-            if( (rt_buff[0] != '\0') ) {
-                xx_warn( wng_rec_type_graphic );
-            }
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "depth", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            depth_found = true;
-            pa = val_start;
-            if( att_val_to_su( &cur_su, true ) ) {
-                return;
-            }
-            depth = conv_vert_unit( &cur_su, spacing );
-            if( depth == 0 ) {
-                xx_line_err( err_inv_depth_graphic, pa );
-                scan_start = scan_stop + 1;
-                return;
-            }
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "width", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            if( !strnicmp( "page", val_start, 4 ) ) {
-                // default value is the correct value to use
-            } else if( !strnicmp( "column", val_start, 6 ) ) {
-                // default value is the correct value to use
-            } else {    // value actually specifies the width
+                file_found = true;
+                memcpy_s( file, FILENAME_MAX, val_start, val_len );
+                if( val_len < FILENAME_MAX ) {
+                    file[val_len] = '\0';
+                } else {
+                    file[FILENAME_MAX - 1] = '\0';
+                }
+                split_attr_file( file, rt_buff, sizeof( rt_buff ) );
+                if( (rt_buff[0] != '\0') ) {
+                    xx_warn( wng_rec_type_graphic );
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "depth", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                depth_found = true;
                 pa = val_start;
                 if( att_val_to_su( &cur_su, true ) ) {
                     return;
                 }
-                width = conv_hor_unit( &cur_su );
-                if( width == 0 ) {
-                    xx_line_err( err_inv_width_graphic, pa );
+                depth = conv_vert_unit( &cur_su, spacing );
+                if( depth == 0 ) {
+                    xx_line_err( err_inv_depth_graphic, pa );
                     scan_start = scan_stop + 1;
                     return;
                 }
-///                /* there should be a check somewhere for width > page width */
-            }
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "scale", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            pa = val_start;
-            if( (*pa == '+') || (*pa == '-') ) {  // signs not allowed
-                xx_line_err( err_num_too_large, pa );
-                scan_start = scan_stop + 1;
-                return;
-            }
-            scale = 0;
-            while( (*pa >= '0') && (*pa <= '9') ) { // convert to number
-                scale = (10 * scale) + (*pa - '0');
-                pa++;
-                if( (pa - val_start) > val_len ) {  // value end reached
+                if( ProcFlags.tag_end_found ) {
                     break;
                 }
-            }
-            if( scale > 0x7fffffff ) {              // wgml 4.0 limit
-                xx_line_err( err_num_too_large, val_start );
-                scan_start = scan_stop + 1;
-                return;
-            }
-            if( (pa - val_start) < val_len ) {      // value continues on
-                xx_line_err( err_num_too_large, val_start );
-                scan_start = scan_stop + 1;
-                return;
-            }
-            if( ProcFlags.tag_end_found ) {
+            } else if( !strnicmp( "width", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( !strnicmp( "page", val_start, 4 ) ) {
+                    // default value is the correct value to use
+                } else if( !strnicmp( "column", val_start, 6 ) ) {
+                    // default value is the correct value to use
+                } else {    // value actually specifies the width
+                    pa = val_start;
+                    if( att_val_to_su( &cur_su, true ) ) {
+                        return;
+                    }
+                    width = conv_hor_unit( &cur_su );
+                    if( width == 0 ) {
+                        xx_line_err( err_inv_width_graphic, pa );
+                        scan_start = scan_stop + 1;
+                        return;
+                    }
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "scale", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                pb = val_start;
+                if( (*pb == '+') || (*pb == '-') ) {  // signs not allowed
+                    xx_line_err( err_num_too_large, pa );
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                scale = 0;
+                while( (*pb >= '0') && (*pb <= '9') ) { // convert to number
+                    scale = (10 * scale) + (*pb - '0');
+                    pa++;
+                    if( (pb - val_start) > val_len ) {  // value end reached
+                        break;
+                    }
+                }
+                if( scale > 0x7fffffff ) {              // wgml 4.0 limit
+                    xx_line_err( err_num_too_large, val_start );
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                if( (pb - val_start) < val_len ) {      // value continues on
+                    xx_line_err( err_num_too_large, val_start );
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "xoff", p, 4 ) ) {
+                p += 4;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( att_val_to_su( &cur_su, false ) ) {
+                    return;
+                }
+                xoff = conv_hor_unit( &cur_su );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "yoff", p, 4 ) ) {
+                p += 4;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( att_val_to_su( &cur_su, false ) ) {
+                    return;
+                }
+                yoff = conv_vert_unit( &cur_su, spacing );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {    // no match = end-of-tag in wgml 4.0
+                ProcFlags.tag_end_found = true;
+                p = pa; // restore spaces before text
                 break;
             }
-        } else if( !strnicmp( "xoff", p, 4 ) ) {
-            p += 4;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            if( att_val_to_su( &cur_su, false ) ) {
-                return;
-            }
-            xoff = conv_hor_unit( &cur_su );
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "yoff", p, 4 ) ) {
-            p += 4;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            if( att_val_to_su( &cur_su, false ) ) {
-                return;
-            }
-            yoff = conv_vert_unit( &cur_su, spacing );
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else {    // no match = end-of-tag in wgml 4.0
-            ProcFlags.tag_end_found = true;
-            break;
         }
     }
+
     if( !depth_found || !file_found ) { // detect missing required attributes
         xx_err( err_att_missing );
         scan_start = scan_stop + 1;
         return;
     }
+///                /* there should be a check somewhere for width > page width */
 
     scr_process_break();                // flush existing text
     start_doc_sect();                   // if not already done
@@ -240,9 +232,13 @@ void    gml_graphic( const gmltag * entry )
 
     insert_col_main( cur_el );
 
-    if( *p == '.' ) {
-        p++;
+    if( !ProcFlags.reprocess_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {                          // only if text follows
+            process_text( p, g_curr_font );
+        }
     }
-    scan_start = p;                 // process following text    
+
+    scan_start = scan_stop + 1;
 }
 

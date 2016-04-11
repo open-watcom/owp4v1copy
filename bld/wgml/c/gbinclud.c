@@ -48,6 +48,7 @@ void    gml_binclude( const gmltag * entry )
     char            file[FILENAME_MAX];
     char            rt_buff[MAX_FILE_ATTR];
     char        *   p;
+    char        *   pa;
     doc_element *   cur_el;
     su              depth_su;
     uint32_t        depth;
@@ -62,89 +63,79 @@ void    gml_binclude( const gmltag * entry )
     file[0] = '\0';
     rt_buff[0] = '\0';
     p = scan_start;
-    for( ;; ) {
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
-        if( *p == '\0' ) {              // end of line: get new line
-            if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {      // next line for missing attribute
- 
-                    process_line();
-                    scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg;
-                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
-                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        ProcFlags.tag_end_found = true; 
-                        break;          
-                    } else {
-                        p = scan_start; // new line is part of current tag
-                        continue;
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+            if( !strnicmp( "file", p, 4 ) ) {
+                p += 4;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                file_found = true;
+                memcpy_s( file, FILENAME_MAX, val_start, val_len );
+                if( val_len < FILENAME_MAX ) {
+                    file[val_len] = '\0';
+                } else {
+                    file[FILENAME_MAX - 1] = '\0';
+                }
+                split_attr_file( file, rt_buff, MAX_FILE_ATTR );
+                if( (rt_buff[0] != '\0') ) {
+                    has_rec_type = true;
+                    if( rt_buff[0] != 't' ) {
+                        xx_warn( wng_rec_type_binclude );
                     }
                 }
-            }
-        }
-        if( !strnicmp( "file", p, 4 ) ) {
-            p += 4;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            file_found = true;
-            memcpy_s( file, FILENAME_MAX, val_start, val_len );
-            if( val_len < FILENAME_MAX ) {
-                file[val_len] = '\0';
-            } else {
-                file[FILENAME_MAX - 1] = '\0';
-            }
-            split_attr_file( file, rt_buff, MAX_FILE_ATTR );
-            if( (rt_buff[0] != '\0') ) {
-                has_rec_type = true;
-                if( rt_buff[0] != 't' ) {
-                    xx_warn( wng_rec_type_binclude );
+                if( ProcFlags.tag_end_found ) {
+                    break;
                 }
-            }
-            if( ProcFlags.tag_end_found ) {
+            } else if( !strnicmp( "depth", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                depth_found = true;
+                if( att_val_to_su( &depth_su, true ) ) {
+                    return;
+                }
+                depth = conv_vert_unit( &depth_su, spacing );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }   
+            } else if( !strnicmp( "reposition", p, 10 ) ) {
+                p += 10;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                reposition_found = true;
+                if( !strnicmp( "start", val_start, 5 ) ) {
+                    reposition = true;  // moving following text down by depth
+                } else if( !strnicmp( "end", val_start, 3 ) ) {
+                    reposition = false; // device at proper position after insertion
+                } else {
+                    xx_line_err( err_inv_att_val, val_start );
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {    // no match = end-of-tag in wgml 4.0
+                ProcFlags.tag_end_found = true;
+                p = pa; // restore spaces before text
                 break;
             }
-        } else if( !strnicmp( "depth", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            depth_found = true;
-            if( att_val_to_su( &depth_su, true ) ) {
-                return;
-            }
-            depth = conv_vert_unit( &depth_su, spacing );
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "reposition", p, 10 ) ) {
-            p += 10;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            reposition_found = true;
-            if( !strnicmp( "start", val_start, 5 ) ) {
-                reposition = true;  // moving following text down by depth
-            } else if( !strnicmp( "end", val_start, 3 ) ) {
-                reposition = false; // device at proper position after insertion
-            } else {
-                xx_line_err( err_inv_att_val, val_start );
-                scan_start = scan_stop + 1;
-                return;
-            }
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else {    // no match = end-of-tag in wgml 4.0
-            ProcFlags.tag_end_found = true;
-            break;
         }
     }
+
     // detect missing required attributes
     if( !depth_found || !file_found || !reposition_found ) {
         xx_err( err_att_missing );

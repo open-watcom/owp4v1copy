@@ -31,6 +31,7 @@
 *               conv_vert_unit
 *               cw_val_to_su
 *               format_num
+*               get_att_start
 *               get_att_value
 *               greater_su
 *               int_to_roman
@@ -881,6 +882,47 @@ char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
     return( r );
 }
 
+/***************************************************************************/
+/* get the start of the next potential attribute                           */
+/* returns the start of the part of the line on which that potential       */
+/*   attribute was found, thus preserving any preceding spaces in case it  */
+/*   turns out that it is not an attribute at all but rather text          */
+/***************************************************************************/
+
+char * get_att_start( char * p )
+
+{
+    char    * pa;
+
+    for(;;) {                           // loop until potential attribute/rescan line found
+        pa = p;                         // save initial location
+        while( *p == ' ' ) {            // over WS to attribute
+            p++;
+        }
+        if( *p == '\0' ) {              // end of line: get new line
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line( true ) ) {// next line for missing attribute
+ 
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
+                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        ProcFlags.reprocess_line = true; 
+                        break;          
+                    } else {
+                        p = scan_start; // new line is part of current tag
+                        continue;
+                    }
+                }
+            }
+        } else {
+            break;      // potential next attribute found
+        }
+    }
+    att_start = p;      // only valid if !ProcFlags.reprocess_line
+    return( pa );       // return initial location for current att_start
+}
 
 /***************************************************************************/
 /* get the attribute value and report tag-end ('.') if found               */

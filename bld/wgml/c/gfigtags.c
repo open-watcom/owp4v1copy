@@ -87,43 +87,9 @@ void gml_fig( const gmltag * entry )
     scr_process_break();
     scan_err = false;
 
-    if( cur_group_type == gt_fig ) {        // nested :FIG tag not supported
-        g_err_tag_x_in_y( "FIG", "FIG" );
-        scan_start = scan_stop + 1;
-        return;
-    }
-
-    /******************************************************************/
-    /*  test for FIG within :ADDRESS, :FN, .fb, .fk, :XMP             */
-    /******************************************************************/
-
-    if( cur_group_type == gt_address ) {
-        g_err_tag_x_in_y( "FIG", "ADDRESS" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fn ) {
-        g_err_tag_x_in_y( "FIG", "FN" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fb ) {
-        g_err_tag_x_in_y( "FIG", "FB" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_fk ) {
-        g_err_tag_x_in_y( "FIG", "FK" );
-        scan_start = scan_stop + 1;
-        return;
-    } else if( cur_group_type == gt_xmp ) {
-        g_err_tag_x_in_y( "FIG", "XMP" );
-        scan_start = scan_stop + 1;
-        return;
-    }
+    g_keep_nest( "Figure" );            // catch nesting errors
 
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-    scan_start = p;                     // over spaces
-
     fig_count++;                        // get current FIG number
     depth = 0;                          // default value: depth will be depth of box contents
     frame.type = layout_work.fig.default_frame.type;
@@ -132,132 +98,118 @@ void gml_fig( const gmltag * entry )
     }
     width = g_net_page_width;           // this is rm - lm, so may not be entirely correct with more than one column
 
-    for( ;; ) {
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
-        if( *p == '\0' ) {              // end of line: get new line
-            if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {// next line for missing attribute
- 
-                    process_line();
-                    scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg;
-                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
-                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        ProcFlags.tag_end_found = true; 
-                        break;          
-                    } else {
-                        p = scan_start; // new line is part of current tag
-                        continue;
-                    }
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+            if( !strnicmp( "depth", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
                 }
-            }
-        }
-        if( !strnicmp( "depth", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            pa = val_start;
-            if( att_val_to_su( &cur_su, true ) ) {
-                return;
-            }
-            depth = conv_vert_unit( &cur_su, spacing );
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "frame", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            if( !strnicmp( "none", val_start, 4 ) ) {
-                frame.type = none;
-            } else if( !strnicmp( "box", val_start, 3 ) ) {
-                frame.type = box_frame;
-            } else if( !strnicmp( "rule", val_start, 4 ) ) {
-                frame.type = rule_frame;
-            } else {
-                frame.type = char_frame;
-            }
-            if( frame.type == char_frame ) {
-                pa = val_start;
-                memcpy_s( frame.string, str_size, val_start, val_len );
-                if( val_len < str_size ) {
-                    frame.string[val_len] = '\0';
-                } else {
-                    frame.string[str_size - 1] = '\0';
-                }
-                if( strnlen_s( frame.string, str_size ) == 0 ) {
-                    frame.type = none;      // treat null string as "none"
-                }
-            } else {                        // blank any existing frame.string value
-                frame.string[0] = '\0';
-            }
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "id", p, 2 ) ) {
-            p += 2;
-            p = get_refid_value( p, id );
-            if( val_start == NULL ) {
-                break;
-            }
-            id_seen = true;             // valid id attribute found
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "place", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            if( !strnicmp( "bottom", val_start, 5 ) ) {
-                place = bottom_place;
-            } else if( !strnicmp( "inline", val_start, 6 ) ) {
-                place = inline_place;
-            } else if( !strnicmp( "top", val_start, 3 ) ) {
-                place = top_place;
-            } else {
-                xx_line_err( err_inv_att_val, val_start );
-                scan_start = scan_stop + 1;
-                return;
-            }
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "width", p, 5 ) ) {
-            p += 5;
-            p = get_att_value( p );
-            if( val_start == NULL ) {
-                break;
-            }
-            if( !strnicmp( "page", val_start, 4 ) ) {
-                // default value is the correct value to use
-            } else if( !strnicmp( "column", val_start, 6 ) ) {
-                // default value is the correct value to use
-            } else {    // value actually specifies the width
-                pa = val_start;
                 if( att_val_to_su( &cur_su, true ) ) {
                     return;
                 }
-                width = conv_hor_unit( &cur_su );
-                if( width == 0 ) {
-                    xx_line_err( err_inv_width_fig, pa );
+                depth = conv_vert_unit( &cur_su, spacing );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "frame", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( !strnicmp( "none", val_start, 4 ) ) {
+                    frame.type = none;
+                } else if( !strnicmp( "box", val_start, 3 ) ) {
+                    frame.type = box_frame;
+                } else if( !strnicmp( "rule", val_start, 4 ) ) {
+                    frame.type = rule_frame;
+                } else {
+                    frame.type = char_frame;
+                }
+                if( frame.type == char_frame ) {
+                    memcpy_s( frame.string, str_size, val_start, val_len );
+                    if( val_len < str_size ) {
+                        frame.string[val_len] = '\0';
+                    } else {
+                        frame.string[str_size - 1] = '\0';
+                    }
+                    if( strnlen_s( frame.string, str_size ) == 0 ) {
+                        frame.type = none;      // treat null string as "none"
+                    }
+                } else {                        // blank any existing frame.string value
+                    frame.string[0] = '\0';
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "id", p, 2 ) ) {
+                p += 2;
+                p = get_refid_value( p, id );
+                if( val_start == NULL ) {
+                    break;
+                }
+                id_seen = true;             // valid id attribute found
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "place", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( !strnicmp( "bottom", val_start, 5 ) ) {
+                    place = bottom_place;
+                } else if( !strnicmp( "inline", val_start, 6 ) ) {
+                    place = inline_place;
+                } else if( !strnicmp( "top", val_start, 3 ) ) {
+                    place = top_place;
+                } else {
+                    xx_line_err( err_inv_att_val, val_start );
                     scan_start = scan_stop + 1;
                     return;
                 }
-            }
-            if( ProcFlags.tag_end_found ) {
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "width", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( !strnicmp( "page", val_start, 4 ) ) {
+                    // default value is the correct value to use
+                } else if( !strnicmp( "column", val_start, 6 ) ) {
+                    // default value is the correct value to use
+                } else {    // value actually specifies the width
+                    pa = val_start;
+                    if( att_val_to_su( &cur_su, true ) ) {
+                        return;
+                    }
+                    width = conv_hor_unit( &cur_su );
+                    if( width == 0 ) {
+                        xx_line_err( err_inv_width_fig, pa );
+                        scan_start = scan_stop + 1;
+                        return;
+                    }
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {    // no match = end-of-tag in wgml 4.0
+                p = pa; // restore spaces before text
                 break;
             }
-        } else {    // no match = end-of-tag in wgml 4.0
-            ProcFlags.tag_end_found = true;
-            break;
         }
     }
 
@@ -329,9 +281,11 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-    if( *p == '.' ) p++;                // possible tag end
-    if( *p ) {
-        process_text( p, g_curr_font); // if text follows
+    if( !ProcFlags.reprocess_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {
+            process_text( p, g_curr_font); // if text follows
+        }
     }
     scan_start = scan_stop + 1;
     return;
@@ -437,7 +391,7 @@ void gml_efig( const gmltag * entry )
 void gml_figcap( const gmltag * entry )
 {
     char            buffer[11];
-    char        *   fcstr;
+    char        *   prefix;
     char        *   p;
     size_t          count;
     size_t          current;
@@ -453,24 +407,22 @@ void gml_figcap( const gmltag * entry )
     set_skip_vars( &layout_work.figcap.pre_lines, NULL, NULL, spacing, g_curr_font );
 
     count = strlen(&layout_work.figcap.string);
-    ultoa( fig_re->number, &buffer, 10);
+    ultoa( fig_re->number, &buffer, 10 );
     count += strlen(&buffer);
     count ++;                           // for the delimiter character
-    fcstr = (char *) mem_alloc( count + 1);
-    strcpy_s( fcstr, count, &layout_work.figcap.string);
-    current = strlen( fcstr );
-    strcat_s( &fcstr[current], count - current, &buffer);
-    current = strlen( fcstr );
-    fcstr[current] = layout_work.figcap.delim;
-    fcstr[current + 1] = '\0';
+    prefix = (char *) mem_alloc( count + 1);
+    strcpy_s( prefix, count, &layout_work.figcap.string);
+    current = strlen( prefix );
+    strcat_s( &prefix[current], count - current, &buffer);
+    current = strlen( prefix );
+    prefix[current] = layout_work.figcap.delim;
+    prefix[current + 1] = '\0';
     if( pass == 1 ) {                   // only on first pass
-        current = strlen( fcstr );
-        fig_re->prefix = (char *) mem_alloc( current + 1 );
-        strcpy_s(fig_re->prefix, current + 1, fcstr );
+        fig_re->prefix = prefix;
     }
     input_cbs->fmflags &= ~II_eol;      // prefix is never EOL
-    process_text( fcstr, g_curr_font ); // FIGCAP prefix
-    mem_free( fcstr );
+    process_text( prefix, g_curr_font ); // FIGCAP prefix
+    prefix = NULL;
 
     g_cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
     g_cur_h_start = g_cur_left;

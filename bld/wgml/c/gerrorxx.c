@@ -522,16 +522,41 @@ void    g_err_tag_prec( const char * tag )
     return;
 }
 
-void    g_err_tag_x_in_y( const char * tag1, const char * tag2 )
-{
-    char    tagn1[TAG_NAME_LENGTH + 1];
-    char    tagn2[TAG_NAME_LENGTH + 1];
-
-    sprintf_s( tagn1, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag1 );
-    sprintf_s( tagn2, TAG_NAME_LENGTH + 1, "%c%s", GML_char, tag2 );
-    g_err( err_tag_x_in_y, tagn1, tagn2 );
-    file_mac_info();
-    err_count++;
-    return;
+void    g_keep_nest( const char * cw_tag ) {
+    switch( cur_group_type ) {
+    case gt_fb :
+        g_err( err_cw_tag_x_in_y, cw_tag, "a floating block" );
+        g_info( inf_nested_blocks1 );
+        g_info( inf_nested_blocks2 );
+        file_mac_info();
+        err_count++;
+        break;
+    case gt_fig :
+        g_err( err_cw_tag_x_in_y, cw_tag, "a figure" );
+        g_info( inf_nested_blocks1 );
+        g_info( inf_nested_blocks2 );
+        file_mac_info();
+        err_count++;
+        break;
+    case gt_fk :
+        g_err( err_cw_tag_x_in_y, cw_tag, "a floating keep" );
+        file_mac_info();
+        g_info( inf_nested_blocks1 );
+        g_info( inf_nested_blocks2 );
+        err_count++;
+        break;
+    case gt_fn :
+        g_err( err_cw_tag_x_in_y, cw_tag, "a footnote" );
+        file_mac_info();
+        g_info( inf_nested_blocks1 );
+        g_info( inf_nested_blocks2 );
+        err_count++;
+        break;
+    case gt_xmp :
+        g_err( err_cw_tag_x_in_y, cw_tag, "an example" );
+        file_mac_info();
+        g_info( inf_nested_blocks1 );
+        g_info( inf_nested_blocks2 );
+        err_count++;
+    }
 }
-

@@ -184,8 +184,7 @@ extern  void    g_err_tag_nest( const char * tagname );
 extern  void    g_err_tag_rsloc( locflags inloc, const char * pa );
 extern  void    g_err_tag_no( const char * tagname );
 extern  void    g_err_tag_prec( const char * tagname );
-extern  void    g_err_tag_x_in_y( const char * tagname1, const char * tagname2 );
-
+extern  void    g_keep_nest( const char * cw_tag );
 
 /* getnum.c                             */
 extern condcode     getnum( getnum_block * gn );
@@ -432,10 +431,11 @@ extern  bool        att_val_to_su( su * spaceunit, bool pos );
 extern  int32_t     conv_hor_unit( su * spaceunit );
 extern  int32_t     conv_vert_unit( su * spaceunit, unsigned char spacing );
 extern  bool        cw_val_to_su( char * * scaninput, su * spaceunit );
-extern  char        *format_num( uint32_t n, char * r, size_t rsize, num_style ns );
-extern  char        *get_att_value( char * p );
-extern  su          *greater_su( su * su_a, su * su_b, unsigned char spacing );
-extern  char        *int_to_roman( uint32_t n, char * r, size_t rsize );
+extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
+extern  char    *   get_att_start( char * p );
+extern  char    *   get_att_value( char * p );
+extern  su      *   greater_su( su * su_a, su * su_b, unsigned char spacing );
+extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  bool        lay_init_su( char * p, su * in_su );
 extern  size_t      len_to_trail_space( const char *p , size_t len );
 extern  void        start_line_with_string( const char *text, font_number font, bool leave1space );

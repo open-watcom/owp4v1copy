@@ -442,8 +442,14 @@ pick( WNG_UNSUPP_LAY_ATT,       "Unsupported GML layout tag attribute: ':%s %s'"
 pick( ERR_NESTED_TAG,           "Nested %s not supported",
                                 "Nested %s not supported" )
 
-pick( ERR_TAG_X_IN_Y,           "%s tag not allowed within %s tag",
-                                "%s tag not allowed within %s tag" )
+pick( ERR_CW_TAG_X_IN_Y,        "%s cannot be in %s",
+                                "%s cannot be in %s" )
+
+pick( INF_NESTED_BLOCKS1,       "Footnotes, figures, examples, floating blocks and floating keeps",
+                                "Footnotes, figures, examples, floating blocks and floating keeps" )
+
+pick( INF_NESTED_BLOCKS2,       "cannot nest in one another",
+                                "cannot nest in one another" )
 
 pick( ERR_NO_LAY,               "No %s active for '%s'",
                                 "No %s active for '%s'" )
