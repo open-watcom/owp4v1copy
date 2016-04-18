@@ -540,23 +540,23 @@ void    g_keep_nest( const char * cw_tag ) {
         break;
     case gt_fk :
         g_err( err_cw_tag_x_in_y, cw_tag, "a floating keep" );
-        file_mac_info();
         g_info( inf_nested_blocks1 );
         g_info( inf_nested_blocks2 );
+        file_mac_info();
         err_count++;
         break;
     case gt_fn :
         g_err( err_cw_tag_x_in_y, cw_tag, "a footnote" );
-        file_mac_info();
         g_info( inf_nested_blocks1 );
         g_info( inf_nested_blocks2 );
+        file_mac_info();
         err_count++;
         break;
     case gt_xmp :
         g_err( err_cw_tag_x_in_y, cw_tag, "an example" );
-        file_mac_info();
         g_info( inf_nested_blocks1 );
         g_info( inf_nested_blocks2 );
+        file_mac_info();
         err_count++;
     }
 }

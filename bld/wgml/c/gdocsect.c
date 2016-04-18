@@ -244,66 +244,88 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
 
 static  void    gen_index( void )
 {
+    char            buffer[11];
     char            letter[2];
     ix_h_blk    *   ixh1;
     ix_h_blk    *   ixh2;
     ix_h_blk    *   ixh3;
     symsub      *   ixrefval;       // &sysixref value
 
-    if( ix_ref_dict == NULL ) {                // empty dict nothing to do
+    if( index_dict == NULL ) {      // empty dict nothing to do
         return;
     }
 
+    scr_process_break();            // flush any pending text
+    start_doc_sect();               // TBD
+
     letter[0]  = 0;
     letter[1]  = 0;
-    ixh1 = ix_ref_dict->hblk;
+    ixh1 = index_dict;
     find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
 
-    while( ixh1 != NULL ) {              // level 1
+    while( ixh1 != NULL ) {             // level 1
         if( letter[0] != toupper( *(ixh1->ix_term) ) ) {
             letter[0] = toupper( *(ixh1->ix_term) );
-//            ix_out_cr();
-//            ix_out( letter, 1 );
-//            ix_out_cr();
-//            ix_out_cr();
+            process_text( letter, g_curr_font );
+            scr_process_break();        // flush letter heading
         }
         if( ixh1->prt_term == NULL ) {
-//            ix_out( ixh1->ix_term, 1 );
+            process_text( ixh1->ix_term, g_curr_font );
         } else {
-//            ix_out( ixh1->prt_term, 1 );
+            process_text( ixh1->prt_term, g_curr_font );
         }
 
-//        ix_out_pagenos( ixh1->entry, 1 );
+        if( ixh1->entry->entry_typ >= pgstring ) {  // 'pageno' is text
+            process_text( ixh1->entry->page_text, g_curr_font );
+        } else {                                    // 'pageno' is numeric
+            ultoa( ixh1->entry->page_no, &buffer, 10 );
+            process_text( buffer, g_curr_font );
+        }
         ixh2 = ixh1->lower;
         while( ixh2 != NULL ) {     // level 2
             if( ixh2->prt_term == NULL ) {
-//                ix_out( ixh2->ix_term, 2 );
+                process_text( ixh2->ix_term, g_curr_font );
             } else {
-//                ix_out( ixh2->prt_term, 2 );
+                process_text( ixh2->prt_term, g_curr_font );
             }
-//            ix_out_pagenos( ixh2->entry, 2 );
+            if( ixh2->entry->entry_typ >= pgstring ) {  // 'pageno' is text
+                process_text( ixh2->entry->page_text, g_curr_font );
+            } else {                                    // 'pageno' is numeric
+                ultoa( ixh2->entry->page_no, &buffer, 10 );
+                process_text( buffer, g_curr_font );
+            }
 
             ixh3 = ixh2->lower;
             while( ixh3 != NULL ) {     // level 3
-                 if( ixh3->prt_term == NULL ) {
-//                     ix_out( ixh3->ix_term, 3 );
-                 } else {
-//                     ix_out( ixh3->prt_term, 3 );
-                 }
-//                 ix_out_pagenos( ixh3->entry, 3 );
+                if( ixh3->prt_term == NULL ) {
+                    process_text( ixh3->ix_term, g_curr_font );
+                } else {
+                    process_text( ixh3->prt_term, g_curr_font );
+                }
+                if( ixh3->entry->entry_typ >= pgstring ) {  // 'pageno' is text
+                    process_text( ixh3->entry->page_text, g_curr_font );
+                } else {                                    // 'pageno' is numeric
+                    ultoa( ixh3->entry->page_no, &buffer, 10 );
+                    process_text( buffer, g_curr_font );
+                }
 
                  if( ixh3->lower != NULL ) {// this is error TBD
                     ix_h_blk * ixhp = ixh3->lower;
 
-//                    ix_out( "lower 3 nn\n", 0);
+                    process_text( "lower 3 nn\n", g_curr_font );
                     while( ixhp != NULL ) { // level 4
-                         if( ixhp->prt_term == NULL ) {
-//                             ix_out( ixhp->ix_term, 4 );
-                         } else {
-//                             ix_out( ixhp->prt_term, 4 );
-                         }
-//                         ix_out_pagenos( ixhp->entry, 4 );
-                         ixhp = ixhp->next;
+                        if( ixhp->prt_term == NULL ) {
+                            process_text( ixhp->ix_term, g_curr_font );
+                        } else {
+                            process_text( ixhp->prt_term, g_curr_font );
+                        }
+                        if( ixhp->entry->entry_typ >= pgstring ) {  // 'pageno' is text
+                            process_text( ixhp->entry->page_text, g_curr_font );
+                        } else {                                    // 'pageno' is numeric
+                            ultoa( ixhp->entry->page_no, &buffer, 10 );
+                            process_text( buffer, g_curr_font );
+                        }
+                        ixhp = ixhp->next;
                     }
                 }
                 ixh3 = ixh3->next;
@@ -312,7 +334,6 @@ static  void    gen_index( void )
         }
         ixh1 = ixh1->next;
     }
-//    ix_out_cr();
 }
 
 /***************************************************************************/
@@ -321,20 +342,20 @@ static  void    gen_index( void )
 
 static  void    gen_figlist( void )
 {
-    ref_entry   *   cur_re;
+    ffh_entry   *   curr;
 
-    start_doc_sect();                       // TBD
-    cur_re = fig_ref_dict;
-    while( cur_re != NULL ) {
-        if( cur_re->flags & rf_figcap ) {   // no FIGCAP used, no FIGLIST output
+    start_doc_sect();
+    curr = fig_list;
+    while( curr != NULL ) {
+        if( curr->flags & ffh_figcap ) {     // no FIGCAP used, no FIGLIST output
 /// the prefix goes here
-            if( cur_re->flags & rf_textcap ) {
-                process_text( cur_re->text_cap, g_curr_font );
+            if( curr->text != NULL ) {
+                process_text( curr->text, g_curr_font );
             }
 /// the spacing and page number go here
         }
         scr_process_break();                // ensure line break
-        cur_re = cur_re->next;
+        curr = curr->next;
     }
     return;
 }
@@ -345,18 +366,30 @@ static  void    gen_figlist( void )
 
 static  void    gen_toc( void )
 {
-    ref_entry   *   cur_re;
+    ffh_entry   *   curr;
 
-    start_doc_sect();                       // TBD
-    cur_re = hx_ref_dict;
-    while( cur_re != NULL ) {
+    start_doc_sect();
+
+    /* Set TOC margins */
+    
+    g_page_left = g_page_left_org + conv_hor_unit( &layout_work.toc.left_adjust );
+    g_page_right = g_page_right_org - conv_hor_unit( &layout_work.toc.right_adjust);
+
+    /* Output TOC */
+
+    curr = hd_list;
+    while( curr != NULL ) {
+/// tochx[n], n = 1 .. 6 (ie, level)
+
+
+
 /// the prefix goes here
-        if( cur_re->flags & rf_textcap ) {
-            process_text( cur_re->text_cap, g_curr_font );
+        if( curr->text != NULL ) {
+            process_text( curr->text, g_curr_font );
         }
 /// the spacing and page number go here
         scr_process_break();                // ensure line break
-        cur_re = cur_re->next;
+        curr = curr->next;
     }
     return;
 }
@@ -536,6 +569,7 @@ void    start_doc_sect( void )
     case   doc_sect_toc:
     case   doc_sect_toce:
         page_e   = true;
+        h_spc    = layout_work.toc.spacing;
         break;
     default:
         new_section( ds );
@@ -766,7 +800,6 @@ extern  void    gml_index( const gmltag * entry )
     }
 
     if( ProcFlags.doc_sect_nxt == doc_sect_index ) {// duplicate :INDEX tag
-
         scan_start = scan_stop + 1;     // ignore this call
         return;                         // wgml4 OS/2 crashes with page fault
     }
@@ -777,7 +810,7 @@ extern  void    gml_index( const gmltag * entry )
         return;
     }
     if( !GlobalFlags.index ) {          // index option not active
-/// most of this shouldn't be done. how to stop it? ///
+        return;
     }
 
     gml_doc_xxx( doc_sect_index );
@@ -894,61 +927,54 @@ extern  void    gml_egdoc( const gmltag * entry )
                 gml_doc_xxx( doc_sect_figliste );
                 gen_figlist();
             }
-            while( fig_fwd_refs != NULL ) {     // output figure forward/undefined references
-                if( find_refid( fig_ref_dict, fig_fwd_refs->id ) != NULL ) {
-                    fwd_id_warn( fig_fwd_refs->id, "figure" );
+            curr = fig_fwd_refs;
+            while( curr != NULL ) {     // output figure forward/undefined references
+                if( find_refid( fig_ref_dict, curr->id ) != NULL ) {
+                    fwd_id_warn( curr->id, "figure" );
                 } else {
-                    undef_id_warn( fig_fwd_refs->id, "Figure" );
+                    undef_id_warn( curr->id, "Figure" );
                 }
-                curr = fig_fwd_refs;
-                fig_fwd_refs = fig_fwd_refs->next;
-                mem_free( curr );
+                curr = curr->next;
             }
-            while( hx_fwd_refs != NULL ) {      // output header forward/undefined references
-                if( find_refid( hx_ref_dict, hx_fwd_refs->id ) != NULL ) {
-                    fwd_id_warn( hx_fwd_refs->id, "heading" );
+            curr = hd_fwd_refs;
+            while( curr != NULL ) { // output header forward/undefined references
+                if( find_refid( hd_ref_dict, curr->id ) != NULL ) {
+                    fwd_id_warn( curr->id, "heading" );
                 } else {
-                    undef_id_warn( hx_fwd_refs->id, "Heading" );
+                    undef_id_warn( curr->id, "Heading" );
                 }
-                curr = hx_fwd_refs;
-                hx_fwd_refs = hx_fwd_refs->next;
-                mem_free( curr );
+                curr = curr->next;
             }
-            while( fn_fwd_refs != NULL ) {      // output footnote forward/undefined references
-                if( find_refid( fn_ref_dict, fn_fwd_refs->id ) != NULL ) {
-                    fwd_id_warn( fn_fwd_refs->id, "footnote" );
+            curr = fn_fwd_refs;
+            while( curr != NULL ) { // output footnote forward/undefined references
+                if( find_refid( fn_ref_dict, curr->id ) != NULL ) {
+                    fwd_id_warn( curr->id, "footnote" );
                 } else {
-                    undef_id_warn( fn_fwd_refs->id, "Footnote" );
+                    undef_id_warn( curr->id, "Footnote" );
                 }
-                curr = fn_fwd_refs;
-                fn_fwd_refs = fn_fwd_refs->next;
-                mem_free( curr );
+                curr = curr->next;
             }
-            if( !GlobalFlags.index ) {          // index option not active
-                xx_simple_warn( wng_index_opt );// give hint to activate index
-            }
-            if( figlist_toc ) {
+            if( figlist_toc && ((fig_fwd_refs != NULL ) || (fn_fwd_refs != NULL)
+                    || (hd_fwd_refs != NULL)) ) {
                 xx_simple_warn( wng_pass_1 );   // more than one pass needed 
             }
         } else {                                // last pass of at least 2
-            while( fig_fwd_refs != NULL ) {     // output figure undefined/page change references
-                fwd_id_warn( fig_fwd_refs->id, "figure" );
-                curr = fig_fwd_refs;
-                fig_fwd_refs = fig_fwd_refs->next;
-                mem_free( curr );
+            curr = fig_fwd_refs;
+            while( curr != NULL ) { // output figure undefined/page change references
+                fwd_id_warn( curr->id, "figure" );
+                curr = curr->next;
             }
-            while( hx_fwd_refs != NULL ) {      // output header undefined/page changereferences
-                fwd_id_warn( hx_fwd_refs->id, "heading" );
-                curr = hx_fwd_refs;
-                hx_fwd_refs = hx_fwd_refs->next;
-                mem_free( curr );
+            curr = hd_fwd_refs;
+            while( curr != NULL ) { // output header undefined/page changereferences
+                fwd_id_warn( curr->id, "heading" );
+                curr = curr->next;
             }
-            if( !GlobalFlags.index ) {          // index option not active
-                xx_simple_warn( wng_index_opt );// give hint to activate index
-            }
-            if( figlist_toc ) {
+            if( figlist_toc && ((fig_fwd_refs != NULL ) || (hd_fwd_refs != NULL)) ) {
                 xx_simple_warn( wng_pass_many );// at least one more pass needed
             }
+        }
+        if( !GlobalFlags.index ) {          // index option not active
+            xx_simple_warn( wng_index_opt );// give hint to activate index
         }
     }
 

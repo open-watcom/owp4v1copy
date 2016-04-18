@@ -94,7 +94,6 @@ static void update_headnumx( int lvl, char *hnumstr, size_t hnsize )
 
 static void hx_header( int hx_lvl, const char *hnumstr, const char *txt )
 {
-//    doc_element     *   cur_el;
     font_number         font_save;
     font_number         font;
     int32_t             width;
@@ -150,12 +149,15 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
     char            hnumstr[64];
     char            id[ID_LEN];
     char        *   p;
+    char        *   pa;
+    group_type      sav_group_type;         // save prior group type
     int             k;
     int             rc;
     size_t          current;
     size_t          headlen;
     size_t          txtlen;
     ref_entry   *   cur_ref;
+    uint32_t        hx_depth;
 
     static char     headx[7]    = "$headX";
     static char     htextx[8]   = "$htextX";
@@ -200,58 +202,41 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
     }
 
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-
-    for( ;; ) {
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
-        if( *p == '\0' ) {              // end of line: get new line
-            if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {// next line for missing attribute
- 
-                    process_line();
-                    scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg;
-                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
-                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        ProcFlags.tag_end_found = true; 
-                        break;          
-                    } else {
-                        p = scan_start; // new line is part of current tag
-                        continue;
-                    }
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+            if( !strnicmp( "id", p, 2 ) ) {
+                p += 2;
+                p = get_refid_value( p, id );
+                if( val_start == NULL ) {
+                    break;
                 }
-            }
-        }
-        if( !strnicmp( "id", p, 2 ) ) {
-            p += 2;
-            p = get_refid_value( p, id );
-            if( val_start == NULL ) {
+                id_seen = true;             // valid id attribute found
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "stitle", p, 6 ) ) {
+                p += 6;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                g_warn( wng_unsupp_att, "stitle" );
+                wng_count++;
+                file_mac_info();
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {    // no match = end-of-tag in wgml 4.0
+                p = pa; // restore spaces before text
                 break;
             }
-            id_seen = true;             // valid id attribute found
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-        } else if( !strnicmp( "stitle", p, 6 ) ) {
-            p += 6;
-
-            g_warn( wng_unsupp_att, "stitle" );
-            wng_count++;
-            file_mac_info();
-
-            p = get_att_value( p );
-
-            scan_start = p;
-            if( !ProcFlags.tag_end_found ) {
-                continue;
-            }
-            break;
-        } else {    // no match = end-of-tag in wgml 4.0
-            ProcFlags.tag_end_found = true;
-            break;
         }
     }
 
@@ -285,36 +270,40 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
     strcat_s( headp, headlen, p );
     rc = add_symvar( &global_dict, headx, headp, no_subscript, 0 );
 
-    if( !id_seen ) {
-        id[0] = '\0';                   // zero out if no id given
-    }
-
     /* Only create the entry on the first pass */
 
-    cur_ref = find_refid( hx_ref_dict, id );
-    if( pass == 1 ) {
-        if( !cur_ref ) {                    // new entry
-            hx_re = mem_alloc( sizeof( ref_entry ) );
-            init_ref_entry( hx_re, id );
-            hx_re->flags = rf_fx;                  // mark as Hx
-            add_ref_entry( &hx_ref_dict, hx_re );
-            current = strlen( hnumstr );
-            if( current > 0 ) {             // prefix will be NULL for level 0 heading
-                hx_re->prefix = (char *) mem_alloc( current + 1 );
-                strcpy_s(hx_re->prefix, current + 1, hnumstr );
-            }
-            if( txtlen > 0 ) {              // text line not empty
-                hx_re->text_cap = mem_alloc( txtlen + 1 );
-                strcpy_s( hx_re->text_cap, txtlen + 1, p );
-                hx_re->flags |= rf_textcap; // mark as having caption text
-            }
-        } else {                // duplicate id
-            dup_id_err( cur_ref->id, "heading" );
+    if( pass == 1 ) {                   // add this Hn to hd_list
+        hd_entry = init_ffh_entry( hd_list );
+        hd_entry->flags = ffh_hn;       // mark as Hn
+        hd_entry->number = hx_lvl;      // add heading level -- TBD
+        if( hd_list == NULL ) {         // first entry
+            hd_list = hd_entry;
         }
-    } else {
-        if( (page + 1) != cur_ref->pageno ) {       // page number changed
-            cur_ref->pageno = page;
-            init_fwd_ref( hx_fwd_refs, id );
+        current = strlen( hnumstr );
+        if( current > 0 ) {             // prefix will be NULL for level 0 heading
+            hd_entry->prefix = (char *) mem_alloc( current + 1 );
+            strcpy_s(hd_entry->prefix, current + 1, hnumstr );
+        }
+        if( txtlen > 0 ) {              // text line not empty
+            hd_entry->text = mem_alloc( txtlen + 1 );
+            strcpy_s( hd_entry->text, txtlen + 1, p );
+        }
+        if( id_seen ) {                 // add this entry to fig_ref_dict
+            cur_ref = find_refid( hd_ref_dict, id );
+            if( cur_ref == NULL ) {             // new entry
+                cur_ref = mem_alloc( sizeof( ref_entry ) );
+                init_ref_entry( cur_ref, id );
+                cur_ref->flags = rf_ffh;
+                cur_ref->entry = hd_entry;
+                add_ref_entry( &hd_ref_dict, cur_ref );
+            } else {                // duplicate id
+                dup_id_err( cur_ref->id, "heading" );
+            }
+        } else {
+            if( (page + 1) != hd_entry->pageno ) {      // page number changed
+                hd_entry->pageno = page + 1;
+                hd_fwd_refs = init_fwd_ref( hd_fwd_refs, id );
+            }
         }
     }
 
@@ -361,20 +350,66 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
         }
     }
 
+    /***********************************************************************/
+    /* If a page is ejected above, then wgml 4.0 forms a block of the      */
+    /* entire heading and (apparently) puts it into the full_page section  */
+    /* of the output page                                                  */
+    /* If a page is not ejected above, then wgml 4.0 forms a block of the  */
+    /* entire heading plus any post_skip and space for one text line       */
+    /* This requires our wgml to put the heading into a block and enhance  */
+    /* its depth when deciding whether or not to move to the next page     */
+    /* Note: heading text is wraps normally both when displayed in the     */
+    /* document and in the TOC; even in the first case above, the block    */
+    /* may contain more than one line                                      */
+    /***********************************************************************/
+
+    sav_group_type = cur_group_type;
+    cur_group_type = gt_hx;
+    cur_doc_el_group = alloc_doc_el_group( gt_hx );
+    cur_doc_el_group->prev = t_doc_el_group;
+    t_doc_el_group = cur_doc_el_group;
+    cur_doc_el_group = NULL;
+
     if( layout_work.hx[hx_lvl].display_heading ) {
         hx_header( hx_lvl, hnumstr, p );
         scr_process_break();                    // commit the header
     }
 
-/// something like this will eventually be needed, but where and how is not yet
-/// clear
-#if 0
-    if( layout_work.hx[hx_lvl].page_eject == ej_no ) {
-        insert_col_main( cur_el );
-    } else {
-        insert_page_width( cur_el );
+    cur_group_type = sav_group_type;
+    if( t_doc_el_group != NULL) {
+        cur_doc_el_group = t_doc_el_group;      // detach current element group
+        t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
+        cur_doc_el_group->prev = NULL;
+
+        if( layout_work.hx[hx_lvl].page_eject == ej_no ) {
+            hx_depth = cur_doc_el_group->depth + wgml_fonts[layout_work.hx[hx_lvl].font].line_height + g_post_skip;
+            if( (hx_depth + t_page.cur_depth) > t_page.max_depth ) {
+
+                /* the block won't fit on this page */
+
+                if( hx_depth <= t_page.max_depth ) {
+
+                    /* the block will be on the next page */
+
+                    do_page_out();
+                    reset_t_page();
+                }
+            }
+
+            while( cur_doc_el_group->first != NULL ) {
+                insert_col_main( cur_doc_el_group->first );
+                cur_doc_el_group->first = cur_doc_el_group->first->next;
+            }
+        } else {
+            while( cur_doc_el_group->first != NULL ) {
+                insert_page_width( cur_doc_el_group->first );
+                cur_doc_el_group->first = cur_doc_el_group->first->next;
+            }
+        }
+
+        add_doc_el_group_to_pool( cur_doc_el_group );
+        cur_doc_el_group = NULL;
     }
-#endif
 
     scan_start = scan_stop + 1;
     return;

@@ -232,102 +232,88 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
             if( ProcFlags.reprocess_line ) {
                 break;
             }
-        
-            if( ProcFlags.tag_end_found ) {
-                break;
-            }
-            while( is_space_tab_char( *p ) ) {
-                p++;
-            }
-            if( *p == '.'  ) {
-                ProcFlags.tag_end_found = true;
-                break;
-            }
-            if( *p == '\0' ) {
-                break;
-            }
-
-            /*******************************************************************/
-            /*  ID='xxxxxxxx'   for :Ix :IHx                                   */
-            /*******************************************************************/
 
             if( !strnicmp( "id", p, 2 ) ) {
+
+                /*******************************************************************/
+                /*  ID='xxxxxxxx'   for :Ix :IHx                                   */
+                /*******************************************************************/
+
                 p += 2;
                 p = get_refid_value( p, id );
-                if( (val_start != NULL) && (val_len > 0) ) {
-                    if( hx_lvl > 0 ) {      // :Ix :IHx
-                        idseen = true;      // id attribute found
-                        init_ref_entry( &reid, id );
-                        rewk = find_refid( ix_ref_dict, reid.id );
-                        if( rewk != NULL ) {
-                            if( rewk->lineno != reid.lineno ) {
-                                g_err( inf_id_duplicate );
-                                err_count++;
-                                file_mac_info();
-                                scan_start = scan_stop + 1;
-                                return;
-                            }
-                        }
-                    } else {                // not allowed for :IREF
-                        g_err( err_refid_not_allowed, hxstring );
-                        err_count++;
-                        file_mac_info();
-                        scan_start = scan_stop + 1;
-                        return;
-                    }
+                if( val_start == NULL ) {
+                    break;
                 }
-                scan_start = p;
-                continue;
-            }
+                if( hx_lvl > 0 ) {      // :Ix :IHx
+                    idseen = true;      // id attribute found
+                    init_ref_entry( &reid, id );
+                    rewk = find_refid( ix_ref_dict, reid.id );
+                    if( rewk != NULL ) {
+                        if( rewk->lineno != reid.lineno ) {
+                            g_err( inf_id_duplicate );
+                            err_count++;
+                            file_mac_info();
+                            scan_start = scan_stop + 1;
+                            return;
+                        }
+                    }
+                } else {                // not allowed for :IREF
+                    g_err( err_refid_not_allowed, hxstring );
+                    err_count++;
+                    file_mac_info();
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "refid", p, 5 ) ) {
 
+                /*******************************************************************/
+                /*  REFID='xxxxxxxx'  for :IREF :I2 :I3                            */
+                /*******************************************************************/
 
-            /*******************************************************************/
-            /*  REFID='xxxxxxxx'  for :IREF :I2 :I3                            */
-            /*******************************************************************/
-
-            if( !strnicmp( "refid", p, 5 ) ) {
                 p += 5;
                 p = get_refid_value( p, id );
-                if( val_start != NULL && val_len > 0 ) {
-                    if( (hx_lvl == 0) || ((hx_lvl > 1) && (hxstring[2] == lvlc)) ) {
-                        init_ref_entry( &refid, id );
-                        refidseen = true;   // refid attribute found
-                        refwk = find_refid( ix_ref_dict, refid.id );
-                        if( refwk == NULL ) {   // refid not in dict
-                            if( GlobalFlags.lastpass ) {// this is an error
-                                g_err( inf_id_unknown );// during lastpass
-                                err_count++;
-                                file_mac_info();
-                                scan_start = scan_stop + 1;
-                                return;
-                            }
-                        }
-                    } else {                // not allowed for :I1 and :IHx
-                        g_err( err_refid_not_allowed, hxstring );
-                        err_count++;
-                        file_mac_info();
-                        scan_start = scan_stop + 1;
-                        return;
-                    }
+                if( val_start == NULL ) {
+                    break;
                 }
-                scan_start = p;
-                continue;
-            }
+                if( (hx_lvl == 0) || ((hx_lvl > 1) && (hxstring[2] == lvlc)) ) {
+                    init_ref_entry( &refid, id );
+                    refidseen = true;   // refid attribute found
+                    refwk = find_refid( ix_ref_dict, refid.id );
+                    if( refwk == NULL ) {   // refid not in dict
+                        if( GlobalFlags.lastpass ) {// this is an error
+                            g_err( inf_id_unknown );// during lastpass
+                            err_count++;
+                            file_mac_info();
+                            scan_start = scan_stop + 1;
+                            return;
+                        }
+                    }
+                } else {                // not allowed for :I1 and :IHx
+                    g_err( err_refid_not_allowed, hxstring );
+                    err_count++;
+                    file_mac_info();
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "pg", p, 2 ) ) {
 
+                /*******************************************************************/
+                /*  PG=          for :IREF :Ix                                     */
+                /*******************************************************************/
 
-            /*******************************************************************/
-            /*  PG=          for :IREF :Ix                                     */
-            /*******************************************************************/
-
-            if( !strnicmp( "pg", p, 2 ) ) {
                 p += 2;
                 p = get_att_value( p );
 
                 scan_start = p;
-                if( val_start == NULL || val_len == 0 ) {   // no valid pg
-                    continue;               // ignore
+                if( val_start == NULL ) {
+                    break;
                 }
-
                 if( quote_char == '\0' ) {  // value not quoted
                     if( !strnicmp( "start", val_start, 5 ) ) {
                         pgvalue = pgstart;
@@ -346,99 +332,102 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                     pgtextlen = val_len;
                 }
                 pgseen = true;
-                continue;
-            }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "print", p, 5 ) ) {
 
+                /*******************************************************************/
+                /*  PRINT=    for :IHx                                             */
+                /*******************************************************************/
 
-            /*******************************************************************/
-            /*  PRINT=    for :IHx                                             */
-            /*******************************************************************/
-
-            if( !strnicmp( "print", p, 5 ) ) {
                 p += 5;
                 p = get_att_value( p );
 
                 scan_start = p;
-                if( val_start == NULL || val_len == 0 ) {
-                    continue;               // ignore
+                if( val_start == NULL ) {
+                    break;
                 }
                 printtxt = mem_alloc( val_len + 1 );
                 printtxtlen = val_len;
                 strncpy( printtxt, val_start, val_len );
                 *(printtxt + val_len) = '\0';
                 printseen = true;
-                continue;
-            }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "see", p, 3 ) ) {
 
+                /*******************************************************************/
+                /*  SEE='xxxxxxxx'  for :IREF :IH1 :IH2                            */
+                /*******************************************************************/
 
-            /*******************************************************************/
-            /*  SEE='xxxxxxxx'  for :IREF :IH1 :IH2                            */
-            /*******************************************************************/
-
-            if( !strnicmp( "see", p, 3 ) ) {
                 p += 3;
                 p = get_att_value( p );
 
                 scan_start = p;
-                if( (val_start != NULL) || val_len > 0 ) {
-                    if( hx_lvl == 0  ||
-                        ((hx_lvl < 3) && (hxstring[3] == lvlc)) ) {// :IREF :IH1 :IH2
-                        seetext = mem_alloc( val_len +1 );
-                        strncpy( seetext, val_start, val_len );
-                        *(seetext + val_len) = '\0';
-                        seetextlen = val_len;
-                        seeseen = true;
-                    } else {                // not allowed for :IH3, :Ix
-                        g_err( err_refid_not_allowed, hxstring );
-                        err_count++;
-                        file_mac_info();
-                        scan_start = scan_stop + 1;
-                        return;
-                    }
+                if( val_start == NULL ) {
+                    break;
                 }
-                continue;
-            }
+                if( hx_lvl == 0  ||
+                    ((hx_lvl < 3) && (hxstring[3] == lvlc)) ) {// :IREF :IH1 :IH2
+                    seetext = mem_alloc( val_len +1 );
+                    strncpy( seetext, val_start, val_len );
+                    *(seetext + val_len) = '\0';
+                    seetextlen = val_len;
+                    seeseen = true;
+                } else {                // not allowed for :IH3, :Ix
+                    g_err( err_refid_not_allowed, hxstring );
+                    err_count++;
+                    file_mac_info();
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "seeid", p, 3 ) ) {
 
+                /*******************************************************************/
+                /*  SEEID='xxxxxxxx'  for :IREF :IH1 :IH2                          */
+                /*******************************************************************/
 
-            /*******************************************************************/
-            /*  SEEID='xxxxxxxx'  for :IREF :IH1 :IH2                          */
-            /*******************************************************************/
-
-            if( !strnicmp( "seeid", p, 3 ) ) {
                 p += 5;
                 p = get_refid_value( p, id );
-                if( (val_start != NULL) && (val_len > 0) ) {
-                    if( (hx_lvl <= 3) && (hxstring[3] == lvlc) ) {
-                        seeidseen = true;
-                        strcpy_s( reseeid.id, ID_LEN, id );   // copy lower id
-                        rswk = find_refid( ix_ref_dict, reseeid.id );
-                        if( rswk == NULL ) {// not in dict, this is an error
-                            if( GlobalFlags.lastpass ) {  // during lastpass
-                                g_err( inf_id_unknown );
-                                err_count++;
-                                file_mac_info();
-                                scan_start = scan_stop + 1;
-                                return;
-                            }
-                        }
-                    } else {                // not allowed for :IH3, :Ix :IREF
-                        g_err( err_refid_not_allowed, hxstring );
-                        err_count++;
-                        file_mac_info();
-                        scan_start = scan_stop + 1;
-                        return;
-                    }
+                if( val_start == NULL ) {
+                    break;
                 }
-                scan_start = p;
-                continue;
+                if( (hx_lvl <= 3) && (hxstring[3] == lvlc) ) {
+                    seeidseen = true;
+                    strcpy_s( reseeid.id, ID_LEN, id );   // copy lower id
+                    rswk = find_refid( ix_ref_dict, reseeid.id );
+                    if( rswk == NULL ) {// not in dict, this is an error
+                        if( GlobalFlags.lastpass ) {  // during lastpass
+                            g_err( inf_id_unknown );
+                            err_count++;
+                            file_mac_info();
+                            scan_start = scan_stop + 1;
+                            return;
+                        }
+                    }
+                } else {                // not allowed for :IH3, :Ix :IREF
+                    g_err( err_refid_not_allowed, hxstring );
+                    err_count++;
+                    file_mac_info();
+                    scan_start = scan_stop + 1;
+                    return;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {
+
+                /*******************************************************************/
+                /* no more valid attributes                                        */
+                /*******************************************************************/
+                p = pa; // restore spaces before text
+                break;
             }
-
-
-            /*******************************************************************/
-            /* no more valid attributes                                        */
-            /*******************************************************************/
-            p = pa;         // recover any spaces before text
-            break;
         }
     }
 

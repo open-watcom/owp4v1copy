@@ -133,22 +133,28 @@ void gml_fn( const gmltag * entry )
 
     /* Only create the entry on the first pass */
 
-    if( id_seen ) {
-        cur_ref = find_refid( fn_ref_dict, id );
-        if( pass == 1 ) {
-            if( !cur_ref ) {                    // new entry
-                fn_re = mem_alloc( sizeof( ref_entry ) );
-                init_ref_entry( fn_re, id );
-                fn_re->flags = rf_fx;                   // mark as FN
-                fn_re->number = fn_count;               // add number of this FN
-                add_ref_entry( &fn_ref_dict, fn_re );
+    if( pass == 1 ) {                   // add this FN to the fn_list
+        fn_entry = init_ffh_entry( fn_list );
+        fn_entry->flags = ffh_fn;       // mark as FN
+        fn_entry->number = fn_count;    // add number of this FN
+        if( fn_list == NULL ) {         // first entry
+            fn_list = fn_entry;
+        }
+        if( id_seen ) {                 // add this entry to fn_ref_dict
+            cur_ref = find_refid( fn_ref_dict, id );
+            if( cur_ref == NULL ) {     // new entry
+                cur_ref = mem_alloc( sizeof( ref_entry ) );
+                init_ref_entry( cur_ref, id );
+                cur_ref->flags = rf_ffh;
+                cur_ref->entry = fn_entry;
+                add_ref_entry( &fn_ref_dict, cur_ref );
             } else {
                 dup_id_err( cur_ref->id, "footnote" );
             }
         } else {
-            if( (page + 1) != cur_ref->pageno ) {       // page number changed
-                cur_ref->pageno = page;
-                init_fwd_ref( fig_fwd_refs, id );
+            if( (page + 1) != fn_entry->pageno ) {  // page number changed
+                fn_entry->pageno = page + 1;
+                fn_fwd_refs = init_fwd_ref( fn_fwd_refs, id );
             }
         }
     }
@@ -158,8 +164,11 @@ void gml_fn( const gmltag * entry )
 //skip
 //number_font
 //frame
+if( fn_entry == NULL ) {
+    out_msg( "Yes!\n" );
+}
 
-    format_num( fn_re->number, &buffer, sizeof( buffer ), layout_work.fn.number_style );
+    format_num( fn_entry->number, &buffer, sizeof( buffer ), layout_work.fn.number_style );
     input_cbs->fmflags &= ~II_eol;          // prefix is never EOL
     process_text( &buffer, layout_work.fn.number_font ); // FN prefix
     if( !ProcFlags.reprocess_line && *p ) {
@@ -248,7 +257,7 @@ void gml_efn( const gmltag * entry )
         process_text( p, g_curr_font);  // if text follows
     }
     if( pass > 1 ) {                    // not on first pass
-        fn_re = fn_re->next;            // get to next FN
+        fn_entry = fn_entry->next;      // get to next FN
     }
     scan_start = scan_stop + 1;
     return;

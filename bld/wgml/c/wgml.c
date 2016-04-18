@@ -878,7 +878,7 @@ int main( int argc, char * argv[] )
 
         print_macro_dict( macro_dict, true );
         print_ref_dict( fig_ref_dict, "FIGREF" );
-        print_ref_dict( hx_ref_dict, "HDREF" );
+        print_ref_dict( hd_ref_dict, "HDREF" );
         print_ref_dict( fn_ref_dict, "FNREF" );
         print_ref_dict( ix_ref_dict, "INDEX" );
 

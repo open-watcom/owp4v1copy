@@ -232,14 +232,32 @@ void    free_some_mem( void )
     if( macro_dict != NULL ) {
         free_macro_dict( &macro_dict );
     }
+    if( fig_list != NULL ) {
+        free_ffh_list( fig_list );
+    }
+    if( fn_list != NULL ) {
+        free_ffh_list( fn_list );
+    }
+    if( hd_list != NULL ) {
+        free_ffh_list( hd_list );
+    }
+    if( fig_fwd_refs != NULL ) {
+        free_fwd_refs( fig_fwd_refs );
+    }
+    if( fn_fwd_refs != NULL ) {
+        free_fwd_refs( fn_fwd_refs );
+    }
+    if( hd_fwd_refs != NULL ) {
+        free_fwd_refs( hd_fwd_refs );
+    }
     if( fig_ref_dict != NULL ) {
         free_ref_dict( &fig_ref_dict );
     }
     if( fn_ref_dict != NULL ) {
         free_ref_dict( &fn_ref_dict );
     }
-    if( hx_ref_dict != NULL ) {
-        free_ref_dict( &hx_ref_dict );
+    if( hd_ref_dict != NULL ) {
+        free_ref_dict( &hd_ref_dict );
     }
     if( ix_ref_dict != NULL ) {
         free_ref_dict( &ix_ref_dict );

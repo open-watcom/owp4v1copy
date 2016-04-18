@@ -278,7 +278,6 @@ extern  void            print_ref_dict( ref_entry * dict, const char * type );
 extern  ref_entry   *   find_refid( ref_entry * dict, char const * id );
 extern  void            init_ref_entry( ref_entry * re, char * id );
 extern  char        *   get_refid_value( char * p, char * refid );
-extern  fwd_ref     *   init_fwd_ref( fwd_ref * fr_dict, const char * fr_id );
 
 /* gresrch.c                            */
 extern  void    add_GML_tag_research( char * tag );
@@ -427,18 +426,22 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
 
 /* gutil.c                              */
-extern  bool        att_val_to_su( su * spaceunit, bool pos );
-extern  int32_t     conv_hor_unit( su * spaceunit );
-extern  int32_t     conv_vert_unit( su * spaceunit, unsigned char spacing );
-extern  bool        cw_val_to_su( char * * scaninput, su * spaceunit );
-extern  char    *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
-extern  char    *   get_att_start( char * p );
-extern  char    *   get_att_value( char * p );
-extern  su      *   greater_su( su * su_a, su * su_b, unsigned char spacing );
-extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
-extern  bool        lay_init_su( char * p, su * in_su );
-extern  size_t      len_to_trail_space( const char *p , size_t len );
-extern  void        start_line_with_string( const char *text, font_number font, bool leave1space );
+extern  bool            att_val_to_su( su * spaceunit, bool pos );
+extern  int32_t         conv_hor_unit( su * spaceunit );
+extern  int32_t         conv_vert_unit( su * spaceunit, unsigned char spacing );
+extern  bool            cw_val_to_su( char * * scaninput, su * spaceunit );
+extern  char        *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
+extern  void            free_ffh_list( ffh_entry * ffh_list );
+extern  void            free_fwd_refs( fwd_ref * fwd_refs );
+extern  char        *   get_att_start( char * p );
+extern  char        *   get_att_value( char * p );
+extern  su          *   greater_su( su * su_a, su * su_b, unsigned char spacing );
+extern  ffh_entry   *   init_ffh_entry( ffh_entry * ffh_list );
+extern  fwd_ref     *   init_fwd_ref( fwd_ref * fr_dict, const char * fr_id );
+extern  char        *   int_to_roman( uint32_t n, char * r, size_t rsize );
+extern  bool            lay_init_su( char * p, su * in_su );
+extern  size_t          len_to_trail_space( const char *p , size_t len );
+extern  void            start_line_with_string( const char *text, font_number font, bool leave1space );
 
 
 /* outbuff.c                            */

@@ -31,9 +31,13 @@
 *               conv_vert_unit
 *               cw_val_to_su
 *               format_num
+*               free_ffh_list
+*               free_fwd_ref
 *               get_att_start
 *               get_att_value
 *               greater_su
+*               init_ffh_entry
+*               init_fwd_refs
 *               int_to_roman
 *               internal_to_su
 *               lay_init_su
@@ -198,6 +202,7 @@ const bool internal_to_su( su *in_su, bool tag, const char *base )
     /***********************************************************************/
     /*  check for valid unit                                               */
     /***********************************************************************/
+
     if( unit[1] == '\0' ) {           // single letter unit
         switch( unit[0] ) {
         case 'i' :
@@ -383,13 +388,12 @@ static bool su_expression( su * in_su )
     return( retval );
 }
 
-
 /***************************************************************************/
 /* return length of string without trailing spaces                         */
 /* return 1 for all blank string                                           */
 /***************************************************************************/
 
-size_t  len_to_trail_space( const char *p , size_t len )
+size_t len_to_trail_space( const char *p , size_t len )
 {
     while( (len > 0) && (p[--len] == ' ') )
         /* empty */;
@@ -400,7 +404,7 @@ size_t  len_to_trail_space( const char *p , size_t len )
 }
 
 
-char    *skip_to_quote( char * p, char quote )
+char * skip_to_quote( char * p, char quote )
 {
     while( *p && quote != *p ) {
         p++;
@@ -408,15 +412,13 @@ char    *skip_to_quote( char * p, char quote )
     return( p + 1 );
 }
 
-
-
 /***************************************************************************/
 /*  extension for layout :BANREGION indent, hoffset and width attributes:  */
 /*      symbolic units without a numeric value                             */
 /*  returns true if an extended attribute value was found                  */
 /*          false otherwise (not necessarily an error)                     */
 /***************************************************************************/
-static  bool    su_layout_special( su * in_su )
+static bool su_layout_special( su * in_su )
 {
     bool        retval = true;
     char    *   ps;
@@ -466,7 +468,6 @@ static  bool    su_layout_special( su * in_su )
 
     return( retval );
 }
-
 
 /***************************************************************************/
 /*  initializes in_su->su_txt using val_start/val_len                      */
@@ -602,7 +603,6 @@ bool cw_val_to_su( char * * scanp, su * in_su )
     return( cvterr );
 }
 
-
 /***************************************************************************/
 /*  initializes in_su->su_txt using p                                      */
 /*  converts in_su->su_txt using su_layout_special() or internal_to_su()   */
@@ -681,7 +681,6 @@ bool lay_init_su( char * p, su * in_su )
 
     return( cvterr );
 }
-
 
 /***************************************************************************/
 /*  convert internal space units to device space units                     */
@@ -772,13 +771,13 @@ int32_t conv_vert_unit( su *s, unsigned char spc )
     return( ds );
 }
 
-
 /***************************************************************************/
 /*  format a number according to the num_style                             */
 /*                                                                         */
 /*  returns ptr to string or NULL if error                                 */
 /***************************************************************************/
-char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
+
+char * format_num( uint32_t n, char * r, size_t rsize, num_style ns )
 {
     size_t      pos;
     size_t      pos1;
@@ -890,7 +889,6 @@ char *  format_num( uint32_t n, char * r, size_t rsize, num_style ns )
 /***************************************************************************/
 
 char * get_att_start( char * p )
-
 {
     char    * pa;
 
@@ -1026,7 +1024,6 @@ su * greater_su( su *su_a, su *su_b, unsigned char spacing )
     }
 }
 
-
 /***************************************************************************/
 /*  convert integer to roman digits                                        */
 /***************************************************************************/
@@ -1091,7 +1088,7 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
 /* influencing the left margin for the paragraph                           */
 /***************************************************************************/
 
-void    start_line_with_string( const char *text, font_number font, bool leave_1space )
+void start_line_with_string( const char *text, font_number font, bool leave_1space )
 {
     text_chars          *   n_char;     // new text char
     size_t                  count;
@@ -1119,6 +1116,7 @@ void    start_line_with_string( const char *text, font_number font, bool leave_1
     input_cbs->fmflags &= ~II_sol;      // no longer start of line
 
     n_char->width = cop_text_width( n_char->text, n_char->count, font );
+
     /***********************************************************/
     /*  Test if word hits right margin                         */
     /***********************************************************/
@@ -1148,35 +1146,115 @@ void    start_line_with_string( const char *text, font_number font, bool leave_1
     post_space = post_space * wgml_fonts[layout_work.defaults.font].spc_width;
 }
 
+/***************************************************************************/
+/*  initalize an ffh_entry instance and append insert to the ffh_list      */
+/*  Note: calling function must initialize ffh_list if it is NULL when the */
+/*        function returns by setting it to point to the return value      */
+/***************************************************************************/
 
-#if 0
-int main( int argc, char *argv[] )      // standalone test routine
+ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
 {
-    bool    error;
-    su      aus;
-    char    ein1[] = "1.5I";
-//  char    ein1[] = "3.81cm";
-//  char    ein1[] = "38.1mm";
-//  char    *ein1 = "'6p11'";
-//  char    *ein1 = "'1C'";
-//  char    *ein2 = "'1C12'";
-    char    *ein2 = "'5C12'";
-    char    *ein3 = "'0P73'";
-    char    *ein4 = "'5P6'";
+    ffh_entry   *   curr;
 
-    char   *p = ein1;
-    error = to_internal_SU( &p, &aus );
-
-    p = ein2;
-    error = to_internal_SU( &p, &aus );
-
-    p = ein3;
-    error = to_internal_SU( &p, &aus );
-
-    p = ein4;
-    error = to_internal_SU( &p, &aus );
-
-    return(0);
+    curr = ffh_list;
+    if( curr == NULL ) {            // first entry
+        curr = (ffh_entry *) mem_alloc( sizeof( ffh_entry ) );
+    } else {
+        while( curr->next != NULL ) {
+            curr = curr->next;
+        }
+        curr->next = (ffh_entry *) mem_alloc( sizeof( ffh_entry ) );
+        curr = curr->next;
+    }
+    curr->next = NULL;
+    curr->flags = 0;
+    curr->pageno = page + 1;
+    curr->number = 0;
+    curr->prefix = NULL;
+    curr->text = NULL;
+    return( curr );
 }
-#endif
+
+/***************************************************************************/
+/*  initalize a fwd_ref instance and insert it (if new) in alpha order     */
+/***************************************************************************/
+
+fwd_ref * init_fwd_ref( fwd_ref * fr_dict, const char * fr_id )
+{
+    fwd_ref *   curr;
+    fwd_ref *   local;
+    fwd_ref *   prev;
+
+    if( fr_dict == NULL ) {
+        curr = (fwd_ref *) mem_alloc( sizeof( fwd_ref ) );
+        curr->next = NULL;
+        strcpy_s( curr->id, ID_LEN, fr_id );
+        fr_dict = curr;         // first entry
+    } else {
+        local = fr_dict;
+        prev = NULL;
+        while( (local != NULL) && (strcmp( local->id, fr_id ) < 0) ) {
+            prev = local;
+            local = local->next;
+        }
+        if( local == NULL ) {       // curr goes at end of list
+            curr = (fwd_ref *) mem_alloc( sizeof( fwd_ref ) );
+            curr->next = NULL;
+            strcpy_s( curr->id, ID_LEN, fr_id );
+            prev->next = curr;
+        } else if( strcmp( local->id, fr_id ) > 0 ) {   // note: duplicate id ignored
+            curr = (fwd_ref *) mem_alloc( sizeof( fwd_ref ) );
+            curr->next = NULL;
+            strcpy_s( curr->id, ID_LEN, fr_id );
+            if( prev == NULL ) {    // curr goes at start of list
+                fr_dict = curr;
+            } else {
+                prev->next = curr;  // curr goes between two existing entries
+            }
+            curr->next = local;
+        }
+    }
+
+    return( fr_dict );
+}
+
+/***************************************************************************/
+/*  free the memory controlled by fig_list, fn_list, or hd_list            */
+/***************************************************************************/
+
+void free_ffh_list( ffh_entry * ffh_list )
+{
+    ffh_entry   *   curr;
+
+    while( ffh_list != NULL ) {
+        if( ffh_list->prefix != NULL ) {
+            mem_free( ffh_list->prefix );
+        }
+        if ( ffh_list->text != NULL ) {
+            mem_free( ffh_list->text );
+        }
+        curr = ffh_list;
+        ffh_list = ffh_list->next;
+        mem_free( curr );
+    }
+    return;
+}
+
+/***************************************************************************/
+/*  free the memory controlled by fig_fwd_refs, fn_fwd_refs or hd_fwd_refs */
+/***************************************************************************/
+
+void free_fwd_refs( fwd_ref * fwd_refs )
+{
+    fwd_ref *   curr;
+
+    while( fwd_refs != NULL ) {
+        curr = fwd_refs;
+        fwd_refs = fwd_refs->next;
+        mem_free( curr );
+    }
+    return;
+}
+
+
 

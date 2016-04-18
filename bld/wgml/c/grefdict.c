@@ -111,14 +111,6 @@ static void    free_ref_entry( ref_entry * * dict, ref_entry * me )
     ref_entry   *   wkn;
 
     if( me != NULL ) {
-        if( me->flags < rf_ix ) {
-            if( me->prefix != NULL ) {
-                mem_free( me->prefix );
-            }
-            if ( me->text_cap != NULL ) {
-                mem_free( me->text_cap );
-            }
-        }
         if( *dict == me ) {             // delete first entry
             *dict = me->next;
         } else {
@@ -165,8 +157,6 @@ void init_ref_entry( ref_entry * re, char * id )
 {
 
     re->next = NULL;
-    re->prefix = NULL;
-    re->text_cap = NULL;
 
     strcpy_s( re->id, ID_LEN, id );
 
@@ -175,8 +165,6 @@ void init_ref_entry( ref_entry * re, char * id )
     } else {
         re->lineno = input_cbs->s.f->lineno;
     }
-    re->number = 0;
-    re->pageno = page + 1;
 }
 
 
@@ -226,11 +214,11 @@ void    print_ref_dict( ref_entry * dict, const char * type )
             for( wk = dict; wk != NULL; wk = wk->next ) {
                 len = strlen( wk->id );
                 if( withnumber ) {
-                    out_msg( "%4ld ID='%s'%spage %-3ld text='%s'\n", wk->number,
-                             wk->id, &fill[len], wk->pageno, wk->text_cap );
+                    out_msg( "%4ld ID='%s'%spage %-3ld text='%s'\n", wk->entry->number,
+                             wk->id, &fill[len], wk->entry->pageno, wk->entry->text );
                 } else {
                     out_msg( "ID='%s'%spage %-3ld text='%s'\n", wk->id,
-                            &fill[len], wk->pageno, wk->text_cap );
+                            &fill[len], wk->entry->pageno, wk->entry->text );
                 }
                 cnt++;
             }
@@ -251,48 +239,4 @@ void    print_ref_dict( ref_entry * dict, const char * type )
     out_msg( "\nTotal %s entries: %d\n", type, cnt );
     return;
 }
-
-/***************************************************************************/
-/*  initalize a fwd_ref instance and insert it (if new) in alpha order     */
-/***************************************************************************/
-
-fwd_ref * init_fwd_ref( fwd_ref * fr_dict, const char * fr_id )
-{
-    fwd_ref *   curr;
-    fwd_ref *   local;
-    fwd_ref *   prev;
-
-    if( fr_dict == NULL ) {
-        curr = (fwd_ref *) mem_alloc( sizeof( fwd_ref ) );
-        curr->next = NULL;
-        strcpy_s( curr->id, ID_LEN, fr_id );
-        fr_dict = curr;         // first entry
-    } else {
-        local = fr_dict;
-        prev = NULL;
-        while( (local != NULL) && (strcmp( local->id, fr_id ) < 0) ) {
-            prev = local;
-            local = local->next;
-        }
-        if( local == NULL ) {       // curr goes at end of list
-            curr = (fwd_ref *) mem_alloc( sizeof( fwd_ref ) );
-            curr->next = NULL;
-            strcpy_s( curr->id, ID_LEN, fr_id );
-            prev->next = curr;
-        } else if( strcmp( local->id, fr_id ) > 0 ) {   // note: duplicate id ignored
-            curr = (fwd_ref *) mem_alloc( sizeof( fwd_ref ) );
-            curr->next = NULL;
-            strcpy_s( curr->id, ID_LEN, fr_id );
-            if( prev == NULL ) {    // curr goes at start of list
-                fr_dict = curr;
-            } else {
-                prev->next = curr;  // curr goes between two existing entries
-            }
-            curr->next = local;
-        }
-    }
-
-    return( fr_dict );
-}
-
 

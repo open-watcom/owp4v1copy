@@ -80,7 +80,7 @@ void gml_fig( const gmltag * entry )
     bool            id_seen = false;
     char        *   p;
     char        *   pa;
-    ref_entry   *   cur_ref;
+    ref_entry   *   cur_ref = NULL;
     su              cur_su;
 
     start_doc_sect();
@@ -90,7 +90,6 @@ void gml_fig( const gmltag * entry )
     g_keep_nest( "Figure" );            // catch nesting errors
 
     p = scan_start;
-    fig_count++;                        // get current FIG number
     depth = 0;                          // default value: depth will be depth of box contents
     frame.type = layout_work.fig.default_frame.type;
     if( frame.type == char_frame ) {
@@ -261,22 +260,22 @@ void gml_fig( const gmltag * entry )
 
     /* Only create the entry on the first pass */
 
-    if( id_seen ) {
-        cur_ref = find_refid( fig_ref_dict, id );
-        if( pass == 1 ) {
-            if( !cur_ref ) {                    // new entry
-                fig_re = mem_alloc( sizeof( ref_entry ) );
-                init_ref_entry( fig_re, id );
-                fig_re->flags = rf_fx;                  // mark as FIG
-                fig_re->number = fig_count;             // add number of this FIG
-                add_ref_entry( &fig_ref_dict, fig_re );
+    if( pass == 1 ) {                   // add this FIG to fig_list
+        fig_entry = init_ffh_entry( fig_list );
+        fig_entry->flags = ffh_fig;     // mark as FIG
+        if( fig_list == NULL ) {        // first entry
+            fig_list = fig_entry;
+        }
+        if( id_seen ) {                 // add this entry to fig_ref_dict
+            cur_ref = find_refid( fig_ref_dict, id );
+            if( cur_ref == NULL ) {             // new entry
+                cur_ref = (ref_entry *) mem_alloc( sizeof( ref_entry ) ) ;
+                init_ref_entry( cur_ref, id );
+                cur_ref->flags = rf_ffh;
+                cur_ref->entry = fig_entry;
+                add_ref_entry( &fig_ref_dict, cur_ref );
             } else {                // duplicate id
                 dup_id_err( cur_ref->id, "figure" );
-            }
-        } else {
-            if( (page + 1) != cur_ref->pageno ) {       // page number changed
-                cur_ref->pageno = page;
-                init_fwd_ref( fig_fwd_refs, id );
             }
         }
     }
@@ -342,11 +341,11 @@ void gml_efig( const gmltag * entry )
 
         if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
 
-            /*  the block won't fit on this page */
+            /* the block won't fit on this page */
 
-            if( cur_doc_el_group->depth  <= t_page.max_depth ) {
+            if( cur_doc_el_group->depth <= t_page.max_depth ) {
 
-                /*  the block will be on the next page */
+                /* the block will be on the next page */
 
                 do_page_out();
                 reset_t_page();
@@ -362,6 +361,13 @@ void gml_efig( const gmltag * entry )
         cur_doc_el_group = NULL;
     }
 
+    if( pass > 1 ) {                                // not on pass 1
+        if( (page + 1) != fig_entry->pageno ) {        // page number changed
+            fig_entry->pageno = page + 1;
+            fig_fwd_refs = init_fwd_ref( fig_fwd_refs, id );
+        }
+    }
+
     g_cur_h_start = g_cur_left;
 
     scan_err = false;
@@ -371,7 +377,7 @@ void gml_efig( const gmltag * entry )
         process_text( p, g_curr_font);  // if text follows
     }
     if( pass > 1 ) {                    // not on first pass
-        fig_re = fig_re->next;          // get to next FIG
+        fig_entry = fig_entry->next;    // get to next FIG
     }
     scan_start = scan_stop + 1;
     return;
@@ -406,23 +412,35 @@ void gml_figcap( const gmltag * entry )
     g_curr_font = layout_work.figcap.string_font;
     set_skip_vars( &layout_work.figcap.pre_lines, NULL, NULL, spacing, g_curr_font );
 
-    count = strlen(&layout_work.figcap.string);
-    ultoa( fig_re->number, &buffer, 10 );
-    count += strlen(&buffer);
-    count ++;                           // for the delimiter character
-    prefix = (char *) mem_alloc( count + 1);
-    strcpy_s( prefix, count, &layout_work.figcap.string);
-    current = strlen( prefix );
-    strcat_s( &prefix[current], count - current, &buffer);
-    current = strlen( prefix );
-    prefix[current] = layout_work.figcap.delim;
-    prefix[current + 1] = '\0';
-    if( pass == 1 ) {                   // only on first pass
-        fig_re->prefix = prefix;
-    }
     input_cbs->fmflags &= ~II_eol;      // prefix is never EOL
-    process_text( prefix, g_curr_font ); // FIGCAP prefix
-    prefix = NULL;
+    if( pass == 1 ) {                   // only on the first pass
+
+        /* Only FIGs with captions are numbered */
+
+        fig_count++;
+        fig_entry->number = fig_count;
+
+        /* Now build, save, and output the prefix */
+
+        count = strlen(&layout_work.figcap.string);
+        ultoa( fig_entry->number, &buffer, 10 );
+        count += strlen(&buffer);
+        count ++;                       // for the delimiter character
+        prefix = (char *) mem_alloc( count + 1);
+        strcpy_s( prefix, count, &layout_work.figcap.string);
+        current = strlen( prefix );
+        strcat_s( &prefix[current], count - current, &buffer);
+        current = strlen( prefix );
+        prefix[current] = layout_work.figcap.delim;
+        prefix[current + 1] = '\0';
+        fig_entry->prefix = prefix;
+        process_text( prefix, g_curr_font );
+        prefix = NULL;
+    } else {                            // use existing prefix
+        process_text( fig_entry->prefix, g_curr_font );
+    }
+
+    /* Output the caption text, if any */
 
     g_cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
     g_cur_h_start = g_cur_left;
@@ -434,13 +452,12 @@ void gml_figcap( const gmltag * entry )
         input_cbs->fmflags &= ~II_sol;      // prefix was SOL, so this is not
         if( pass == 1 ) {                   // only on first pass
             current = strlen( p );
-            fig_re->text_cap = (char *) mem_alloc( current + 1);
-            strcpy_s(fig_re->text_cap, current + 1, p );
-            fig_re->flags |= rf_textcap;    // mark as having caption text
+            fig_entry->text = (char *) mem_alloc( current + 1);
+            strcpy_s(fig_entry->text, current + 1, p );
         }
         process_text( p, g_curr_font );     // if text follows
     }
-    fig_re->flags |= rf_figcap;             // mark as FIGCAP present, with or without text
+    fig_entry->flags |= ffh_figcap;         // mark as FIGCAP present, with or without text
     figcap_done = true;
 
     scan_start = scan_stop + 1;

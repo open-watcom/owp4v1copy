@@ -613,47 +613,6 @@ typedef enum {
     SEV_FATAL_ERR
 } severity;
 
-
-
-/***************************************************************************/
-/*  Structures for storing index information from .ix control word         */
-/*  and :Ix :IHx :IREF tags                                                */
-/***************************************************************************/
-
-typedef enum ereftyp {                  // definition order is important
-    pgnone,                             // nothing
-    pgpageno,                           // this is the only value for .ix
-
-    pgmajor,                            // these are
-    pgstart,                            // .. from
-    pgend,                              // .. :I1 - :I3
-                                        // the following values use page_text
-    pgstring,                           // .. pg= attribute
-    pgsee                               // .. see/seeid
-} ereftyp;
-
-typedef struct ix_e_blk {               // index entry for pagenos / text
-    struct ix_e_blk * next;             // next entry
-    struct ix_h_blk * corr;             // corresponding index header entry
-    union {
-        char      * page_text;          // pageno is text
-        uint32_t    page_no;            // pageno is number
-    };
-    ereftyp     entry_typ;
-} ix_e_blk;
-
-typedef struct ix_h_blk {               // index header with index term text
-    struct ix_h_blk * next;             // next ix header block same level
-    struct ix_h_blk * lower;            // first ix hdr block next lower level
-           ix_e_blk * entry;            // first ix entry block
-    uint32_t        ix_lvl;             // index level 1 - 3
-    size_t            ix_term_len;      // index term length
-    char            * ix_term;          // index term
-    size_t            prt_term_len;     // display text length
-    char            * prt_term;         // display text (NULL -> use index term)
-} ix_h_blk;
-
-
 /***************************************************************************/
 /* enum for document sections  sequence is important, don't change         */
 /***************************************************************************/
@@ -1089,6 +1048,7 @@ typedef enum {
     gt_xmp      =   16, // tag XMP
     gt_fb       =   32, // control word FB
     gt_fk       =   64, // control work FK
+    gt_hx       =  128, // tags H0--H6
 } group_type;
 
 typedef struct doc_el_group {
@@ -1143,32 +1103,90 @@ typedef struct {
 } doc_next_page;
 
 /***************************************************************************/
-/*  reference entry for reference dictionaries                             */
-/*   used for :Hx, :FIG, :FN :Ix :IHx :IREF                                */
+/*  Structures for storing index information from .ix control word         */
+/*  and :Ix :IHx :IREF tags                                                */
+/***************************************************************************/
+
+typedef enum ereftyp {                  // definition order is important
+    pgnone,                             // nothing
+    pgpageno,                           // this is the only value for .ix
+
+    pgmajor,                            // these are
+    pgstart,                            // .. from
+    pgend,                              // .. :I1 - :I3
+                                        // the following values use page_text
+    pgstring,                           // .. pg= attribute
+    pgsee                               // .. see/seeid
+} ereftyp;
+
+typedef struct ix_e_blk {               // index entry for pagenos / text
+    struct ix_e_blk * next;             // next entry
+    struct ix_h_blk * corr;             // corresponding index header entry
+    union {
+        char      * page_text;          // pageno is text
+        uint32_t    page_no;            // pageno is number
+    };
+    ereftyp     entry_typ;
+} ix_e_blk;
+
+typedef struct ix_h_blk {               // index header with index term text
+    struct ix_h_blk * next;             // next ix header block same level
+    struct ix_h_blk * lower;            // first ix hdr block next lower level
+           ix_e_blk * entry;            // first ix entry block
+    uint32_t        ix_lvl;             // index level 1 - 3
+    size_t            ix_term_len;      // index term length
+    char            * ix_term;          // index term
+    size_t            prt_term_len;     // display text length
+    char            * prt_term;         // display text (NULL -> use index term)
+} ix_h_blk;
+
+/***************************************************************************/
+/*  Structure for storing figure/heading information from :FIG, :FIGCAP,   */
+/*  :Fn, :Hn tags                                                          */
+/*  Note: footnote and heading-related control words are not implemented   */
 /***************************************************************************/
 
 typedef enum {
-    rf_hx           =    1,             // :Hx entry
-    rf_fx           =    2,             // :FN :FIG entry
-    rf_textcap      =    4,             // with text or figcap
-    rf_figcap       =    8,             // FIGCAP used -- even if there is no text
+    ffh_fig         =    1, // FIG entry
+    ffh_fn          =    2, // FN entry
+    ffh_hn          =    4, // Hn entry
+    ffh_figcap      =    8, // FIGCAP used -- even if there is no text
+} ffhflags;
 
-    rf_ix           =   16,             // :Ix :IHx entry
-    rf_dummy        = 0x11111111,       // to get a int32 enum
+typedef struct ffh_entry {
+    struct ffh_entry     *  next;
+    ffhflags                flags;
+    uint32_t                pageno; // output page
+    uint32_t                number; // figure or footnote number (or heading level - TBD)
+    char                *   prefix; // figcap/heading generated text
+    char                *   text;   // text line or figcap text
+} ffh_entry;
+
+/***************************************************************************/
+/*  Structure for building reference dictionaries for tags :FIG, :FN, :Hn, */
+/*  :In, and :IHn and for using refids to find the associated entry by     */
+/*  tags :FIGREF, FNREF, HDREF, and :IREF                                  */
+/*  Note: Although attribute refid is always required, attribute id is     */
+/*  never required: not even a footnote is required to have an id. Thus,   */
+/*  the complete list of entries for FIGLIST, INDEX, and TOC are found in  */
+/*  fig_dict, hd_dict, and index_dict, and is provided in fn_dict;         */
+/*  fig_dict, fn_dict, and hd_dict are also used in multipass processing   */
+/***************************************************************************/
+
+typedef enum {
+    rf_ffh          =   1,  // :FIG, FN, or :Hx entry
+    rf_ix           =   2,  // :Ix :IHx entry
 } refflags;
 
 typedef struct ref_entry {
     struct ref_entry    *   next;
     char                    id[ID_LEN+1];   // reference id
 
-    line_number             lineno; // input lineno for checking duplicate ID
+    line_number             lineno;         // input lineno for checking duplicate ID
     refflags                flags;
     union {
         struct {
-            uint32_t        pageno;     // output page
-            uint32_t        number;     // figure or footnote number
-            char        *   prefix;     // figcap/footnote/heading generated text
-            char        *   text_cap;   // text line or figcap text
+            ffh_entry   *   entry;          // detail for FIG, FN, or Hx entry
         };
         struct {
             ix_h_blk    *   hblk;

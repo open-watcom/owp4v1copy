@@ -124,19 +124,6 @@ global  int32_t         fm;             // footing margin          &$fm
 global  int32_t         lm;             // left margin             &$pagelm
 global  int32_t         rm;             // right margin            &$pagerm
 
-global  fwd_ref     *   fwd_ref_pool;   // pool of unused fwd_ref instances
-global  fwd_ref     *   fig_fwd_refs;   // forward reference/undefined id/page change
-global  fwd_ref     *   fn_fwd_refs;    // forward reference/undefined id
-global  fwd_ref     *   hx_fwd_refs;    // forward reference/undefined id/page change
-
-global  ix_h_blk    *   ixhtag[4];      // last higher level :IH1 :IH2 tags in index
-global  ix_h_blk    *   index_dict;     // index structure dictionary
-
-global  ref_entry   *   fig_ref_dict;   // reference dictionary :FIG tags
-global  ref_entry   *   fn_ref_dict;    // reference dictionary :FN tags
-global  ref_entry   *   hx_ref_dict;    // reference dictionary :Hx tags
-global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IREF
-
 global  symvar      *   global_dict;    // global symbol dictionary
 global  symvar      *   sys_dict;       // global system symbol dictionary
 global  mac_entry   *   macro_dict;     // macro dictionary
@@ -263,7 +250,7 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input escape char from .ti
 
-// bx support
+// box support
 global  box_col_set     *   box_col_set_pool;   // pool of box_col_set instances
 global  box_col_set     *   cur_line;           // the line from the current BX line
 global  box_col_set     *   prev_line;          // the previously drawn line
@@ -273,24 +260,38 @@ global  uint32_t            box_col_width;      // width of one column, as used 
 global  uint32_t            h_vl_offset;        // horizontal offset used to position VLINE output
 global  uint32_t            max_depth;          // space left on page (used by BX)
 
-// fig support
-global  ref_entry       *   fig_re;             // current FIG ref_entry
-global  uint32_t            fig_count;          // figure number
+// figure support
+global  uint32_t        fig_count;      // figure number
+global  ffh_entry   *   fig_entry;      // current fig_list entry
+global  fwd_ref     *   fig_fwd_refs;   // forward reference/undefined id/page change
+global  ffh_entry   *   fig_list;       // list of figures in order encountered
+global  ref_entry   *   fig_ref_dict;   // reference dictionary :FIG tags
 
-// fn support
-global  ref_entry       *   fn_re;              // current FN ref_entry
-global  uint32_t            fn_count;           // footnote number
+// footnote support
+global  uint32_t        fn_count;       // footnote number
+global  ffh_entry   *   fn_entry;       // current fn_list entry
+global  fwd_ref     *   fn_fwd_refs;    // forward reference/undefined id
+global  ref_entry   *   fn_ref_dict;    // reference dictionary :FN tags
+global  ffh_entry   *   fn_list;        // list of footnotes in order encountered
 
-// hx support
-global  ref_entry       *   hx_re;              // current Hx ref_entry
+// heading support
+global  ffh_entry   *   hd_entry;       // current hd_list entry
+global  fwd_ref     *   hd_fwd_refs;    // forward reference/undefined id/page change
+global  ref_entry   *   hd_ref_dict;    // reference dictionary :Hx tags
+global  ffh_entry   *   hd_list;        // list of headings in order encountered
 
-// tb support
-global  tab_stop        *   c_stop;             // current tab_stop
-global  uint32_t            first_tab;          // first default tab position
-global  uint32_t            inter_tab;          // distance between default tabs
-global  char                tab_char;           // tab character from .tb
-global  uint32_t            tab_col;            // width of one column, as used with tabs
-global  tag_cb          *   tt_stack;           // font stack entry to modify for tab tables
+// index support
+global  ix_h_blk    *   index_dict;     // index structure dictionary
+global  ix_h_blk    *   ixhtag[4];      // last higher level :IH1 :IH2 tags in index
+global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IREF
+
+// tab support
+global  tab_stop    *   c_stop;         // current tab_stop
+global  uint32_t        first_tab;      // first default tab position
+global  uint32_t        inter_tab;      // distance between default tabs
+global  char            tab_char;       // tab character from .tb
+global  uint32_t        tab_col;        // width of one column, as used with tabs
+global  tag_cb      *   tt_stack;       // font stack entry to modify for tab tables
 
 // the document page and related items
 global group_type           cur_group_type;     // current tag/cw in effect (gt_bx is not allowed)
@@ -361,6 +362,8 @@ global  int32_t     g_line_indent;      // :LP, :P, :PC line indent
 global  int32_t     g_cur_threshold;    // current widow threshold value
                                         // from layout (widow or heading)
 
+global  fwd_ref *   fwd_ref_pool;       // pool of unused fwd_ref instances
+
 global  tag_cb  *   nest_cb;            // infos about nested tags
 global  tag_cb  *   tag_pool;           // list of reusable tag_cbs
 
@@ -397,7 +400,7 @@ global char str_tags[t_MAX + 1][10]
 /*  :LAYOUT  data                                                          */
 /***************************************************************************/
 
-global  int32_t         lay_ind;// index into lay_tab for attribute processing
+global  int32_t         lay_ind;        // index into lay_tab for attribute processing
 global  layout_data     layout_work;    // layout used for formatting
 global  laystack    *   lay_files;      // layout file(s) specified on cmdline
 
