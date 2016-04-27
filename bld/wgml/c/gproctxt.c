@@ -352,9 +352,7 @@ static void do_fc_comp( void )
     }
 
     fill_count -= fill_start;
-
-    fill_start *= fill_width;
-    fill_start += g_cur_left;
+    fill_start = g_cur_h_start - (fill_count * fill_width);
 
     if( (fill_count == 0) && (g_cur_h_start < fill_start) ) {
         g_cur_h_start = fill_start;
@@ -1609,6 +1607,8 @@ void process_line_full( text_line * a_line, bool justify )
             do_justify( ju_x_start, g_page_right, a_line );
         }
 
+        /* TOC (maybe FIGLIST/INDEX - TBD) can change spacing in mid-paragraph */
+
         if( t_element == NULL ) {
             if( !ProcFlags.skips_valid) {
                 set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
@@ -1616,6 +1616,11 @@ void process_line_full( text_line * a_line, bool justify )
             t_element = init_doc_el( el_text, a_line->line_height );
             t_element->element.text.first = a_line;
             t_el_last = t_element->element.text.first;
+        } else if( t_element->element.text.spacing != spacing ) {
+            t_element->next = init_doc_el( el_text, a_line->line_height );
+            t_element->next->depth += a_line->line_height + t_element->next->element.text.spacing;
+            t_element->next->element.text.first = a_line;
+            t_el_last = t_element->next->element.text.first;
         } else {
             t_element->depth += a_line->line_height + t_element->element.text.spacing;
             t_el_last->next = a_line;

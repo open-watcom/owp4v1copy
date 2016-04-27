@@ -69,7 +69,7 @@
                                         // arbitrary value, not found in docu!!!
 #define MAC_STAR_NAME   "_"             // local variable name for &*
 
-#define MAX_FUN_PARMS   7             // max parmcount found in documentation
+#define MAX_FUN_PARMS   7               // max parmcount found in documentation
 
 #define MAX_IF_LEVEL    10              // maximum nested .if s
 #define MAX_L_AS_STR    16              // long as string
@@ -1157,7 +1157,7 @@ typedef struct ffh_entry {
     struct ffh_entry     *  next;
     ffhflags                flags;
     uint32_t                pageno; // output page
-    uint32_t                number; // figure or footnote number (or heading level - TBD)
+    uint32_t                number; // figure or footnote number or heading level
     char                *   prefix; // figcap/heading generated text
     char                *   text;   // text line or figcap text
 } ffh_entry;

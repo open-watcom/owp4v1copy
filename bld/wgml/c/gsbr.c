@@ -135,7 +135,10 @@ void  scr_process_break( void )
         }
     }
     if( t_element != NULL ) {
-        insert_col_main( t_element );
+        while( t_element != NULL ) {
+            insert_col_main( t_element );
+            t_element = t_element->next;
+        }
         t_element = NULL;
         t_el_last = NULL;
     } else if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break

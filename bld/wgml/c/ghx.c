@@ -275,7 +275,7 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
     if( pass == 1 ) {                   // add this Hn to hd_list
         hd_entry = init_ffh_entry( hd_list );
         hd_entry->flags = ffh_hn;       // mark as Hn
-        hd_entry->number = hx_lvl;      // add heading level -- TBD
+        hd_entry->number = hx_lvl;      // add heading level
         if( hd_list == NULL ) {         // first entry
             hd_list = hd_entry;
         }
@@ -298,11 +298,6 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
                 add_ref_entry( &hd_ref_dict, cur_ref );
             } else {                // duplicate id
                 dup_id_err( cur_ref->id, "heading" );
-            }
-        } else {
-            if( (page + 1) != hd_entry->pageno ) {      // page number changed
-                hd_entry->pageno = page + 1;
-                hd_fwd_refs = init_fwd_ref( hd_fwd_refs, id );
             }
         }
     }
@@ -407,10 +402,22 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
             }
         }
 
+        if( pass == 1 ) {                        // only on first pass
+            hd_entry->pageno = page + 1;
+        }
         add_doc_el_group_to_pool( cur_doc_el_group );
         cur_doc_el_group = NULL;
+    } else if( pass == 1 ) {                        // only on first pass
+        hd_entry->pageno = page + 1;
+    } else if( GlobalFlags.lastpass ) {             // last pass only
+        if( (page + 1) != hd_entry->pageno ) {  // page number changed
+            hd_entry->pageno = page + 1;
+            hd_fwd_refs = init_fwd_ref( hd_fwd_refs, id );
+        }
     }
-
+    if( pass > 1 ) {                    // not on first pass
+        hd_entry = hd_entry->next;      // get to next Hn
+    }
     scan_start = scan_stop + 1;
     return;
 }
@@ -454,7 +461,6 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
 /*name is used when processing a heading reference, and must be unique within */
 /*the document.                                                               */
 /******************************************************************************/
-
 
 void gml_h0( const gmltag * entry )
 {

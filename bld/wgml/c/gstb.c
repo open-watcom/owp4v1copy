@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WGML implement .tp script control word
+* Description:  implements control word .tb
+*               control word .tp is not implemented
 *               fill strings are not implemented; fill chars are
 *
 ****************************************************************************/
@@ -116,11 +117,8 @@
 /*     obtained which allows the desired result. Thus each phrase under    */
 /*     an alignment constraint is bounded by the previous and next tab-    */
 /*     stop positions specified.                                           */
-/***************************************************************************/
-
-/***************************************************************************/
-/*  implement control word TB                                              */
-/*  fill strings and alignment characters are not supported -- yet         */
+/*  NOTE:                                                                  */
+/*  fill strings are not supported                                         */
 /***************************************************************************/
 
 void    scr_tb( void )

@@ -855,9 +855,6 @@ int main( int argc, char * argv[] )
             passcount = pass;
             if( !GlobalFlags.lastpass && (err_count > 0) ) {
                 g_info_lm( inf_error_stop, passes - pass > 1 ? "es" : "" );
-
-                ixdump( index_dict );   // test show unformatted index TBD
-
                 break;                  // errors found stop now
             }
         }

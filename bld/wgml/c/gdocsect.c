@@ -239,6 +239,62 @@ static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
 
 
 /***************************************************************************/
+/* this function sets up tabbing for the fill-string and page number in    */
+/* the PAGELIST or TOC.                                                    */
+/* Since TB only supports fill chars, only the first character of fill     */
+/* will actually be used                                                   */
+/***************************************************************************/
+
+static void figlist_toc_tabs( char * fill, uint32_t size )
+{
+
+    /* Set tab char to "$" */
+
+    tab_char = '$';
+    add_to_sysdir( "$tb", tab_char );
+    add_to_sysdir( "$tab", tab_char );
+
+    /* Set the tab stops */
+    /* the one-column shift is normal */
+    /* g_page_left is added back in when tabbing is done */
+
+    user_tabs.current = 2;
+    user_tabs.tabs[0].column = g_page_right - tab_col - g_page_left - size;
+    user_tabs.tabs[0].fill_char = fill[0];
+    user_tabs.tabs[0].alignment = al_right;
+
+    user_tabs.tabs[1].column = g_page_right - tab_col - g_page_left;
+    user_tabs.tabs[1].fill_char = ' ';
+    user_tabs.tabs[1].alignment = al_right;
+
+    return;    
+}
+
+/***************************************************************************/
+/*    output FIGLIST                                                       */
+/***************************************************************************/
+
+static  void    gen_figlist( void )
+{
+    ffh_entry   *   curr;
+
+    start_doc_sect();
+    curr = fig_list;
+    while( curr != NULL ) {
+        if( curr->flags & ffh_figcap ) {     // no FIGCAP used, no FIGLIST output
+/// the prefix goes here
+            if( curr->text != NULL ) {
+                process_text( curr->text, g_curr_font );
+            }
+/// the spacing and page number go here
+        }
+        scr_process_break();                // ensure line break
+        curr = curr->next;
+    }
+    return;
+}
+
+/***************************************************************************/
 /*  output INDEX                                                           */
 /***************************************************************************/
 
@@ -337,58 +393,113 @@ static  void    gen_index( void )
 }
 
 /***************************************************************************/
-/*    output FIGLIST                                                       */
+/* output TOC                                                              */
 /***************************************************************************/
 
-static  void    gen_figlist( void )
+static void gen_toc( void )
 {
+    bool            levels[7];              // track levels
+    char            buffer[11];
+    char            postfix[12];
     ffh_entry   *   curr;
-
-    start_doc_sect();
-    curr = fig_list;
-    while( curr != NULL ) {
-        if( curr->flags & ffh_figcap ) {     // no FIGCAP used, no FIGLIST output
-/// the prefix goes here
-            if( curr->text != NULL ) {
-                process_text( curr->text, g_curr_font );
-            }
-/// the spacing and page number go here
-        }
-        scr_process_break();                // ensure line break
-        curr = curr->next;
-    }
-    return;
-}
-
-/***************************************************************************/
-/*    output TOC                                                           */
-/***************************************************************************/
-
-static  void    gen_toc( void )
-{
-    ffh_entry   *   curr;
+    int             i;
+    int             j;
+    uint32_t        cur_level;
+    uint32_t        indent[7];
+    uint32_t        size;
 
     start_doc_sect();
 
-    /* Set TOC margins */
+    /* Set TOC margins and other values */
     
-    g_page_left = g_page_left_org + conv_hor_unit( &layout_work.toc.left_adjust );
+    g_page_left = g_page_left_org + 2 *
+                  conv_hor_unit( &layout_work.toc.left_adjust );    // matches wgml 4.0
     g_page_right = g_page_right_org - conv_hor_unit( &layout_work.toc.right_adjust);
+    size = conv_hor_unit( &layout_work.tocpgnum.size );     // space from fill to right edge
+    figlist_toc_tabs( layout_work.toc.fill_string, size );
+
+    /* Initialize levels and indent values */
+
+    for( i = 0; i < 7; i++ ) {
+        levels[i] = false;
+        indent[i] = 0;
+    }
+
+    /* Get converted indent values, which are cumulative */
+
+    for( i = 0; i < 7; i++ ) {
+        for( j = i; j < 7; j++ ) {
+            indent[j] += conv_hor_unit( &layout_work.tochx[i].indent );
+        }
+    }
 
     /* Output TOC */
 
+    ProcFlags.concat = true;            // concatenation on
+    ProcFlags.justify = ju_off;         // justification off
+    ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
     curr = hd_list;
     while( curr != NULL ) {
-/// tochx[n], n = 1 .. 6 (ie, level)
-
-
-
-/// the prefix goes here
-        if( curr->text != NULL ) {
-            process_text( curr->text, g_curr_font );
+        cur_level = curr->number;
+        for( i = 0; i < 7; i++ ) {
+            if( i > cur_level ) {       // all lower levels are inactive
+                levels[i] = false;
+            }                
         }
-/// the spacing and page number go here
-        scr_process_break();                // ensure line break
+        if( (cur_level < layout_work.toc.toc_levels) &&
+                layout_work.tochx[cur_level].display_in_toc ) {
+            g_curr_font = layout_work.tochx[cur_level].font;
+            if( levels[cur_level] ) {
+                spacing = layout_work.toc.spacing;
+                set_skip_vars( &layout_work.tochx[cur_level].skip, NULL, NULL,
+                               spacing, g_curr_font );
+            } else {
+                spacing = 1;
+                set_skip_vars( &layout_work.tochx[cur_level].pre_skip, NULL,
+                               &layout_work.tochx[cur_level].post_skip,
+                               spacing, g_curr_font );
+            }
+            g_cur_left = g_page_left + indent[cur_level];
+            g_cur_h_start = g_cur_left;
+
+            if( curr->prefix != NULL ) {
+                process_text( curr->prefix, g_curr_font );
+                g_cur_left += t_line->last->width + wgml_fonts[g_curr_font].spc_width;
+                g_cur_h_start = g_cur_left;
+                ProcFlags.ct = true;                // emulate CT
+                post_space = 0;
+            }
+            if( !levels[cur_level] ) {
+                spacing = layout_work.toc.spacing;
+                set_skip_vars( &layout_work.tochx[cur_level].skip, NULL, NULL,
+                               spacing, g_curr_font );
+            }
+            if( curr->text != NULL ) {
+                g_page_right -= size;
+                if( ProcFlags.ps_device ) {         // matches wgml 4.0
+                    g_page_right -= tab_col;
+                } else {
+                    g_page_right -= 3 * tab_col;
+                }
+                process_text( curr->text, g_curr_font );
+                if( ProcFlags.ps_device ) {         // matches wgml 4.0
+                    g_page_right += tab_col;
+                } else {
+                    g_page_right += 3 * tab_col;
+                }
+                g_page_right += size;
+            }
+            ProcFlags.ct = true;                    // emulate CT
+            g_curr_font = FONT0;
+            process_text( "$", g_curr_font );
+            ultoa( curr->pageno, &buffer, 10);
+            strcpy_s( postfix, 12, "$" );           // insert tab characters
+            strcat_s( postfix, 12, buffer );        // append page number
+            g_curr_font = layout_work.tocpgnum.font;
+            process_text( postfix, g_curr_font );
+        }
+        scr_process_break();                        // ensure line break
+        levels[cur_level] = true;                   // first entry of level done
         curr = curr->next;
     }
     return;
