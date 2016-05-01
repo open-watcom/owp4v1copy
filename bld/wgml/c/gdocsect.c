@@ -394,6 +394,11 @@ static  void    gen_index( void )
 
 /***************************************************************************/
 /* output TOC                                                              */
+/* Note: these attributes appear to have no effect:                        */
+/*       TOCHn attribute align                                             */
+/*       TOCHn attribute display_in_toc                                    */
+/* Note: this attribute is ignored:                                        */
+/*       TOCHn attribute group                                             */
 /***************************************************************************/
 
 static void gen_toc( void )
@@ -446,8 +451,7 @@ static void gen_toc( void )
                 levels[i] = false;
             }                
         }
-        if( (cur_level < layout_work.toc.toc_levels) &&
-                layout_work.tochx[cur_level].display_in_toc ) {
+        if( cur_level < layout_work.toc.toc_levels ) {
             g_curr_font = layout_work.tochx[cur_level].font;
             if( levels[cur_level] ) {
                 spacing = layout_work.toc.spacing;
@@ -468,11 +472,12 @@ static void gen_toc( void )
                 g_cur_h_start = g_cur_left;
                 ProcFlags.ct = true;                // emulate CT
                 post_space = 0;
+            } else {
+                t_line = alloc_text_line();         // capture spacing if no prefix
             }
             if( !levels[cur_level] ) {
                 spacing = layout_work.toc.spacing;
-                set_skip_vars( &layout_work.tochx[cur_level].skip, NULL, NULL,
-                               spacing, g_curr_font );
+                set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
             }
             if( curr->text != NULL ) {
                 g_page_right -= size;

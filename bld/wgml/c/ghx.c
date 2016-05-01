@@ -409,13 +409,12 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
         cur_doc_el_group = NULL;
     } else if( pass == 1 ) {                        // only on first pass
         hd_entry->pageno = page + 1;
-    } else if( GlobalFlags.lastpass ) {             // last pass only
+    }
+    if( pass > 1 ) {                    // not on first pass
         if( (page + 1) != hd_entry->pageno ) {  // page number changed
             hd_entry->pageno = page + 1;
             hd_fwd_refs = init_fwd_ref( hd_fwd_refs, id );
         }
-    }
-    if( pass > 1 ) {                    // not on first pass
         hd_entry = hd_entry->next;      // get to next Hn
     }
     scan_start = scan_stop + 1;

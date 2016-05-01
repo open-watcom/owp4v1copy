@@ -147,6 +147,7 @@ text_line * alloc_text_line( void )
 
     curr->first = NULL;
     curr->last = NULL;
+    curr->spacing = g_spacing;
     curr->line_height = 0;
     curr->next = NULL;
     curr->y_address = 0;
@@ -432,7 +433,6 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.hline.ban_adjust = false;
         break;
     case el_text :
-        curr->element.text.spacing = 0;
         curr->element.text.first = NULL;
         curr->element.text.bx_h_done = false;
         curr->element.text.force_op = false;
@@ -656,10 +656,9 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
     g_top_skip = 0;
 
     if( type == el_text ) {             // spacing only applies to text lines
-        curr->depth = depth + g_spacing;
+        curr->depth = depth;
         curr->element.text.overprint = ProcFlags.overprint;
         ProcFlags.overprint = false;
-        curr->element.text.spacing = g_spacing;
     } else {
         curr->depth = depth;
     }

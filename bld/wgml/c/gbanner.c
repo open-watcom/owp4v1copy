@@ -790,6 +790,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
         last->first->element.text.first->next = ban_line.next;
         last->first->element.text.first->line_height = ban_line.line_height;
+        last->first->element.text.first->spacing = 0;   // hbus; banners are always single-spaced
         last->first->element.text.first->y_address = ban_line.y_address;
         last->first->element.text.first->first = ban_line.first;
         last->first->element.text.first->last = ban_line.last;

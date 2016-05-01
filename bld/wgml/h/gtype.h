@@ -941,6 +941,7 @@ typedef struct text_chars {                 // tabbing-related fields have comme
 typedef struct text_line {
     struct  text_line   *   next;
             uint32_t        line_height;
+            uint32_t        spacing;
             uint32_t        y_address;
             text_chars  *   first;
             text_chars  *   last;
@@ -993,7 +994,6 @@ typedef struct {
 } hline_element;
 
 typedef struct {
-    uint32_t        spacing;
     text_line   *   first;
     bool            bx_h_done;          // bx has added ascenders to the line
     bool            force_op;           // forces overprint at top of page

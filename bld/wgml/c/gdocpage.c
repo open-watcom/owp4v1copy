@@ -136,6 +136,7 @@ static void do_el_list_out( doc_element * array, unsigned char count )
 
 static void set_v_positions( doc_element * list, uint32_t v_start )
 {
+    bool            use_spacing;
     doc_element *   cur_el;
     text_line   *   cur_line;
     uint32_t        cur_spacing;
@@ -150,10 +151,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
     g_cur_v_start = v_start;
 
     for( cur_el = list; cur_el != NULL; cur_el = cur_el->next ) {
-        cur_spacing = cur_el->blank_lines;
-        if( cur_el->type == el_text ) {
-            cur_spacing += cur_el->element.text.spacing;
-        }
         if( !ProcFlags.page_started ) {
             if( cur_el->blank_lines > 0 ) {
                 cur_spacing = cur_el->blank_lines + cur_el->subs_skip;
@@ -163,6 +160,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         } else {
             cur_spacing += cur_el->subs_skip;
         }
+        use_spacing = (cur_spacing == 0);       // see el_text below
 
         switch( cur_el->type ) {
         case el_binc :
@@ -224,10 +222,18 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         case el_text :
             for( cur_line = cur_el->element.text.first; cur_line != NULL;
                                                 cur_line = cur_line->next ) {
-                cur_spacing += cur_line->line_height;
-                if( ProcFlags.page_started ) {          // not first element
-                    if( cur_el->element.text.overprint ) {
-                        cur_spacing -= cur_line->line_height;   // overprint
+                if( use_spacing ) {
+                    cur_spacing += cur_line->spacing + cur_line->line_height;
+                } else {
+                    cur_spacing += cur_line->line_height;
+                }
+                if( ProcFlags.page_started ) {              // not first element
+                    if( cur_el->element.text.overprint ) {  // overprint
+                        if( use_spacing ) {
+                            cur_spacing -= cur_line->spacing + cur_line->line_height;
+                        } else {
+                            cur_spacing -= cur_line->line_height;
+                        }
                         cur_el->element.text.overprint = false;
                     }
                 } else {
@@ -244,7 +250,11 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                     /********************************************************/
 
                     if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
-                        cur_spacing -= cur_line->line_height;   // forced overprint
+                        if( use_spacing ) {
+                            cur_spacing -= cur_line->spacing + cur_line->line_height;
+                        } else {
+                            cur_spacing -= cur_line->line_height;
+                        }
                     } else if( t_page.top_banner == NULL ) {    // minimum height
                         if( cur_spacing < wgml_fonts[g_curr_font].line_height ) {
                             cur_spacing = wgml_fonts[g_curr_font].line_height;
@@ -254,7 +264,8 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                 }
 
                 /****************************************************/
-                /* This "fixes" an overprint line at the top of the */
+                /* Apply cur_spacing to the vertical position       */
+                /* Then fix an overprint line at the top of the     */
                 /* page, at least for character devices like TASA.  */
                 /* g_cur_v_start cannot be above the y_start which  */
                 /* the device specified for the overprint line, but */
@@ -276,7 +287,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                 }
 
                 cur_line->y_address = g_cur_v_start;
-                cur_spacing = cur_el->element.text.spacing;
+                cur_spacing = 0;
                 g_cur_v_start = old_v_start;
             }
             break;

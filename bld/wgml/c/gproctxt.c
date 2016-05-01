@@ -344,15 +344,16 @@ static text_chars * do_c_chars( text_chars *c_chars, text_chars *in_chars,
 static void do_fc_comp( void )
 {
     fill_width = wgml_fonts[g_curr_font].width_table[c_stop->fill_char];
-    fill_count = (g_cur_h_start - g_cur_left) / fill_width;
+    fill_count = (g_cur_h_start - g_page_left) / fill_width;
 
-    fill_start = (gap_start - g_cur_left) / fill_width;
-    if( ((gap_start - g_cur_left) % fill_width) != 0 ) {
+    fill_start = (gap_start - g_page_left) / fill_width;
+    if( ((gap_start - g_page_left) % fill_width) != 0 ) {
         fill_start++;
     }
 
     fill_count -= fill_start;
-    fill_start = g_cur_h_start - (fill_count * fill_width);
+    fill_start *= fill_width;
+    fill_start += g_page_left;
 
     if( (fill_count == 0) && (g_cur_h_start < fill_start) ) {
         g_cur_h_start = fill_start;
@@ -394,7 +395,7 @@ static void wgml_tabs( void )
 
     static  bool                text_found  = false;    // text found after tab character
     static  text_chars      *   s_multi     = NULL;     // first part of multipart word
-    static  text_line           tab_chars   = { NULL, 0, 0, NULL, NULL };   // current tab markers/fill chars
+    static  text_line           tab_chars   = { NULL, 0, 0, 0, NULL, NULL };   // current tab markers/fill chars
     static  text_type           c_type      = norm;     // type for current tab character
     static  font_number         c_font      = 0;        // font for current tab character
     static  uint32_t            s_width     = 0;        // space width (from tab_space)
@@ -952,7 +953,7 @@ static void redo_tabs( text_line * a_line )
 {
     bool            skip_tab    = false;    // skip current tab
     text_chars  *   cur_chars;
-    text_line       tab_chars   = { NULL, 0, 0, NULL, NULL };   // current tab markers/fill chars
+    text_line       tab_chars   = { NULL, 0, 0, 0, NULL, NULL };   // current tab markers/fill chars
     uint32_t        cur_left;
     uint32_t        offset;                 // to adjust subsequen text_chars in tab scope
     uint32_t        scope_width = 0;        // total width of scope of current tab
@@ -1616,13 +1617,13 @@ void process_line_full( text_line * a_line, bool justify )
             t_element = init_doc_el( el_text, a_line->line_height );
             t_element->element.text.first = a_line;
             t_el_last = t_element->element.text.first;
-        } else if( t_element->element.text.spacing != spacing ) {
-            t_element->next = init_doc_el( el_text, a_line->line_height );
-            t_element->next->depth += a_line->line_height + t_element->next->element.text.spacing;
-            t_element->next->element.text.first = a_line;
-            t_el_last = t_element->next->element.text.first;
+//        } else if( t_element->element.text.spacing != spacing ) {
+//            t_element->next = init_doc_el( el_text, a_line->line_height );
+//            t_element->next->depth += a_line->line_height + t_element->next->element.text.spacing;
+//            t_element->next->element.text.first = a_line;
+//            t_el_last = t_element->next->element.text.first;
         } else {
-            t_element->depth += a_line->line_height + t_element->element.text.spacing;
+            t_element->depth += a_line->line_height + a_line->spacing;
             t_el_last->next = a_line;
             t_el_last = t_el_last->next;
         }
