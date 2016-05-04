@@ -192,6 +192,7 @@ global struct ProcFlags {
     unsigned        concat          : 1;// .co ON if set
     unsigned        ct              : 1;// .ct continue text is active
     unsigned        fsp             : 1;// force space in spite of .ct
+    unsigned        stop_xspc       : 1;// suppress 2nd space after stop char (FIG, Hn, FIGLIST, TOC)
     unsigned        utc             : 1;// user tag with "continue" is active
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line

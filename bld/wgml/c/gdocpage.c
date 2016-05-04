@@ -158,7 +158,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                 cur_spacing = cur_el->top_skip;
             }
         } else {
-            cur_spacing += cur_el->subs_skip;
+            cur_spacing = cur_el->subs_skip;
         }
         use_spacing = (cur_spacing == 0);       // see el_text below
 

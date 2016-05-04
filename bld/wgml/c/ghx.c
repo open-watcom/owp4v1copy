@@ -126,6 +126,7 @@ static void hx_header( int hx_lvl, const char *hnumstr, const char *txt )
     curr_tn = NULL;
     width   = 0;
     widthn  = 0;
+    ProcFlags.stop_xspc = true;     // suppress 2nd space after stop
 
     if( layout_work.hx[hx_lvl].number_form != none ) {
         font = layout_work.hx[hx_lvl].number_font;

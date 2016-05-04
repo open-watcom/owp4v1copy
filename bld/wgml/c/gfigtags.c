@@ -446,8 +446,10 @@ void gml_figcap( const gmltag * entry )
     g_cur_h_start = g_cur_left;
     g_curr_font = layout_work.figcap.font;
     if( *p == '.' ) p++;                    // possible tag end
+    if( *p == ' ' ) p++;                    // skip preceding spaces
     if( *p ) {
         ProcFlags.concat = true;            // even if was false on entry
+        ProcFlags.stop_xspc = true;         // suppress 2nd space after stops
         post_space = 0;                     // g_curr_left should be enough
         input_cbs->fmflags &= ~II_sol;      // prefix was SOL, so this is not
         if( pass == 1 ) {                   // only on first pass

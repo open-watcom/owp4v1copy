@@ -276,17 +276,72 @@ static void figlist_toc_tabs( char * fill, uint32_t size )
 
 static  void    gen_figlist( void )
 {
+    char            buffer[11];
+    char            postfix[12];
     ffh_entry   *   curr;
+    uint32_t        size;
 
     start_doc_sect();
+
+    /* Set FIGLIST margins and other values */
+
+    g_page_left = g_page_left_org + 2 *
+                  conv_hor_unit( &layout_work.figlist.left_adjust );    // matches wgml 4.0
+    g_page_right = g_page_right_org - conv_hor_unit( &layout_work.figlist.right_adjust);
+    size = conv_hor_unit( &layout_work.flpgnum.size );  // space from fill to right edge
+    figlist_toc_tabs( layout_work.figlist.fill_string, size );
+
+    /* Output FIGLIST */
+
+    ProcFlags.concat = true;            // concatenation on
+    ProcFlags.justify = ju_off;         // justification off
+    ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
     curr = fig_list;
     while( curr != NULL ) {
-        if( curr->flags & ffh_figcap ) {     // no FIGCAP used, no FIGLIST output
-/// the prefix goes here
-            if( curr->text != NULL ) {
-                process_text( curr->text, g_curr_font );
+        if( curr->flags & ffh_figcap ) {    // no FIGCAP used, no FIGLIST output
+            g_curr_font = FONT0;            // wgml 4.0 uses font 0
+            if( ProcFlags.page_started ) {  // not on first entry
+                spacing = layout_work.figlist.spacing;
+                set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
             }
-/// the spacing and page number go here
+            g_cur_left = g_page_left;
+            g_cur_h_start = g_cur_left;
+            process_text( curr->prefix, g_curr_font );  // caption prefix
+
+            if( curr->text != NULL ) {
+                g_cur_left = t_line->last->x_address + t_line->last->width +
+                             wgml_fonts[g_curr_font].spc_width;
+                g_cur_h_start = g_cur_left;
+                ProcFlags.ct = true;                // emulate CT
+                ProcFlags.stop_xspc = true;         // suppress 2nd space after stops
+                post_space = 0;
+                g_page_right -= size;
+                if( ProcFlags.ps_device ) {         // matches wgml 4.0
+                    g_page_right -= tab_col;
+                } else {
+                    g_page_right -= 3 * tab_col;
+                }
+                if( !ProcFlags.page_started ) {     // first entry wrapping
+                    spacing = layout_work.figlist.spacing;
+                }
+                set_skip_vars( &layout_work.figlist.skip, NULL, NULL,
+                               spacing, g_curr_font );
+                process_text( curr->text, g_curr_font );// caption text
+                if( ProcFlags.ps_device ) {         // matches wgml 4.0
+                    g_page_right += tab_col;
+                } else {
+                    g_page_right += 3 * tab_col;
+                }
+                g_page_right += size;
+            }
+            ProcFlags.ct = true;                    // emulate CT
+            g_curr_font = FONT0;
+            process_text( "$", g_curr_font );
+            ultoa( curr->pageno, &buffer, 10);
+            strcpy_s( postfix, 12, "$" );           // insert tab characters
+            strcat_s( postfix, 12, buffer );        // append page number
+            g_curr_font = layout_work.flpgnum.font;
+            process_text( postfix, g_curr_font );
         }
         scr_process_break();                // ensure line break
         curr = curr->next;
@@ -468,7 +523,8 @@ static void gen_toc( void )
 
             if( curr->prefix != NULL ) {
                 process_text( curr->prefix, g_curr_font );
-                g_cur_left += t_line->last->width + wgml_fonts[g_curr_font].spc_width;
+                g_cur_left = t_line->last->x_address + t_line->last->width +
+                             wgml_fonts[g_curr_font].spc_width;
                 g_cur_h_start = g_cur_left;
                 ProcFlags.ct = true;                // emulate CT
                 post_space = 0;
@@ -486,6 +542,7 @@ static void gen_toc( void )
                 } else {
                     g_page_right -= 3 * tab_col;
                 }
+                ProcFlags.stop_xspc = true;         // suppress 2nd space after stop
                 process_text( curr->text, g_curr_font );
                 if( ProcFlags.ps_device ) {         // matches wgml 4.0
                     g_page_right += tab_col;
