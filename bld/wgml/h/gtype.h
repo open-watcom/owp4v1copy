@@ -76,6 +76,7 @@
 
 #define MAX_CPI         100             // not documented, assumed
 #define MAX_LPI         100             // not documented, assumed
+#define MAX_COL         9               // .CD limits number of columns to 9 (1..9)
 
 #define TAB_COUNT       16              // used with tab_list
 
@@ -1139,6 +1140,26 @@ typedef struct ix_h_blk {               // index header with index term text
     size_t            prt_term_len;     // display text length
     char            * prt_term;         // display text (NULL -> use index term)
 } ix_h_blk;
+
+/***************************************************************************/
+/*  Enum for distinguishing the source of a heading.                       */
+/*  For use with gen_heading() in ghx.c                                    */
+/*  Note: "heading" here refers to something that appears in the TOC       */
+/*  Note: allows control of differences, such as which layout to use       */
+/*        APPENDIX has the correct attribute, but it is not clear if the   */
+/*        heading, as such, is ever used                                   */
+/***************************************************************************/
+
+typedef enum {
+    hs_none     =   0,  // none: TITLEP, 
+    hs_hn       =   1,  // Hn tag
+    hs_abstract =   2,  // ABSTRACT
+    hs_appendix =   3,  // APPENDIX -- TBD, docs show "Appendices" as TOC entry
+    hs_backm    =   4,  // BACKM
+    hs_body     =   5,  // BODY
+    hs_index    =   6,  // INDEX    -- TBD, not found in docs but may not be wanted
+    hs_preface  =   7,  // PREFACE
+} hdsrc;
 
 /***************************************************************************/
 /*  Structure for storing figure/heading information from :FIG, :FIGCAP,   */

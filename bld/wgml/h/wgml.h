@@ -187,8 +187,11 @@ extern  void    g_err_tag_prec( const char * tagname );
 extern  void    g_keep_nest( const char * cw_tag );
 
 /* getnum.c                             */
-extern condcode     getnum( getnum_block * gn );
+extern  condcode    getnum( getnum_block * gn );
 
+/* ghx.c                                */
+
+extern  void    gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font, int8_t spc, page_ej page_e, char * hnumstr, char * p, int hx_lvl, char * id, hdsrc src );
 
 /* gindexut.c                           */
 extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );

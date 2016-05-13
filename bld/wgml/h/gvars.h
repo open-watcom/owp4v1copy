@@ -342,7 +342,9 @@ global  uint32_t    g_cl;               // column length
 global  uint32_t    g_ll;               // line length
 global  uint32_t    g_cd;               // no of columns
 global  uint32_t    g_gutter;           // space between columns
+#if 0       // probably not needed if new column structure is used -- TBD
 global  uint32_t    g_offset[9];        // column start offset
+#endif
 
 global  uint32_t    blank_lines;        // blank lines (line count)
 global  uint32_t    g_blank_lines;      // blank lines (in vertical base units)

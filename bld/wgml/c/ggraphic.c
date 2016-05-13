@@ -49,6 +49,7 @@ void    gml_graphic( const gmltag * entry )
     su              cur_su;
     uint32_t        depth;
     uint32_t        scale                   = 100;
+/// *** this should actually be the column width
     // the initial value of width is only correct for one-column pages.
     uint32_t    width                   = g_net_page_width;
     int32_t     xoff                    = 0;
@@ -154,7 +155,7 @@ void    gml_graphic( const gmltag * entry )
                 scale = 0;
                 while( (*pb >= '0') && (*pb <= '9') ) { // convert to number
                     scale = (10 * scale) + (*pb - '0');
-                    pa++;
+                    pb++;
                     if( (pb - val_start) > val_len ) {  // value end reached
                         break;
                     }

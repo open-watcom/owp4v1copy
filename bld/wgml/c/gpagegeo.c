@@ -53,7 +53,7 @@ void    init_page_geometry( void )
     uint32_t    rm_test;
     uint32_t    top_margin;
     uint32_t    y_start_correction;
-#if 0                                   // activate for multi column TBD
+#if 0       // probably not needed if new column structure is used -- TBD
     uint32_t    offset;
 #endif
 
@@ -117,7 +117,16 @@ void    init_page_geometry( void )
 
     g_net_page_width = rm - lm;
 
+    /****************************************************************/
+    /* wgml 4.0 does this without regard to the valus specified in  */
+    /* the layout; only the corresponding control words CD, CL, and */
+    /* LL affect these values. These are all sytem variables.       */
+    /****************************************************************/
+
+    g_cd = 1;
+    g_cl = 60;
     g_ll = 60;                              // default value per TSO
+    g_gutter = 0;
 
     top_margin = conv_vert_unit( &layout_work.page.top_margin, 1 );
 
@@ -170,36 +179,7 @@ void    init_page_geometry( void )
     g_page_bottom_org = g_page_bottom;// save for possible bot banner calculation
     g_page_top_org = g_page_top;// save top for possible bot banner calculation
 
-    g_cd = layout_work.defaults.columns;// no of columns   &syscd
-    g_gutter = conv_hor_unit( &layout_work.defaults.gutter );   // &sysgutter
-
-#if 0                                   // activate for multi column TBD
-    if( g_cd > 1 ) {                    // multi column layout
-        if( g_cd > 9 ) {
-                                        // no more than 9 columns
-            g_cd = 9;                   // this limit is found in script_tso.txt
-                                        // for .cd control word
-        }
-        g_cl = (g_net_page_width - (g_cd - 1) * g_gutter )
-                / (g_cd - 1);           // column length
-        offset = g_page_left;
-        for( k = 0; k < g_cd; ++k ) {
-            g_offset[k] = offset;       // start of each column
-            offset += g_cl + g_gutter;
-        }
-        for( ; k < 9; ++k ) {
-            g_offset[k] = 0;            // dummy start of undefined columns
-        }
-    } else {
-        g_cl = g_ll;
-    }
-#else
-    g_cl = g_ll;                        // column length &syscl
-                // This is what wgml 4 does, even if in multi column mode TBD
-#endif
-
-//  if( GlobalFlags.firstpass && GlobalFlags.research ) {  // show values TBD
-    if( GlobalFlags.firstpass                         ) {
+    if( GlobalFlags.firstpass && GlobalFlags.research ) {  // show values TBD
         out_msg( "\ntm:%d lm:%d rm:%d top margin:%d depth:%d\n\n", tm, lm, rm,
                  top_margin, g_page_depth );
 

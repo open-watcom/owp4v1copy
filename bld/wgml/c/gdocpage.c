@@ -1169,6 +1169,8 @@ void insert_page_width( doc_element * a_element )
     /*  be implemented. Note that cur_el->depth does not reflect it */
     /*  because there is no way to tell if it will apply when the   */
     /*  is computed.                                                */
+    /*  Note: if a "last element" pointer turns out to be needed,   */
+    /*        create one for that purpose: do not use last_col_main */
     /****************************************************************/
 
     switch( a_element->type ) {
@@ -1177,7 +1179,7 @@ void insert_page_width( doc_element * a_element )
         if( (depth + t_page.cur_depth) <= t_page.max_depth ) {
             if( t_page.page_width == NULL ) {   // must be empty
                 t_page.page_width = a_element;
-                t_page.last_col_main = t_page.page_width;
+//                t_page.last_col_main = t_page.page_width;
                 t_page.cur_depth += depth;
                 if( bin_driver->y_positive == 0 ) {
                     t_page.main_top -= depth;

@@ -45,7 +45,8 @@ static  line_number titlep_lineno   =0;         // TITLEP tag line number
 /***************************************************************************/
 /*  error routine for wrong sequence of doc section tags                   */
 /***************************************************************************/
-static  void    g_err_doc_sect( doc_section  ds )
+
+static void g_err_doc_sect( doc_section  ds )
 {
     static  char const  sect[14][9] =
         {                               // same sequence as doc_section enum
@@ -71,10 +72,10 @@ static  void    g_err_doc_sect( doc_section  ds )
     file_mac_info();
 }
 
-
 /***************************************************************************/
 /*  set banner pointers for specified doc section                          */
 /***************************************************************************/
+
 void set_section_banners( doc_section ds )
 {
     banner_lay_tag  * ban;
@@ -82,6 +83,7 @@ void set_section_banners( doc_section ds )
     /***********************************************************************/
     /*  transform doc_section enum into ban_doc_sect enum                  */
     /***********************************************************************/
+
     static const ban_docsect sect_2_bansect[doc_sect_egdoc + 1] = {
 
         no_ban,                         // doc_sect_none,
@@ -156,12 +158,11 @@ void set_section_banners( doc_section ds )
     }
 }
 
-
 /***************************************************************************/
 /*  set some values for new section                                        */
 /***************************************************************************/
 
-static  void    new_section( doc_section ds )
+static void new_section( doc_section ds )
 {
     ProcFlags.doc_sect = ds;
     set_section_banners( ds );
@@ -170,12 +171,11 @@ static  void    new_section( doc_section ds )
     g_curr_font = layout_work.defaults.font;
 }
 
-
 /***************************************************************************/
-/*    finish page processing  and section change                           */
+/*  finish page processing  and section change                             */
 /***************************************************************************/
 
-static  void    finish_page_section( doc_section ds, bool eject )
+static void finish_page_section( doc_section ds, bool eject )
 {
     if( eject ) {
         g_skip = 0;                     // ignore remaining skip value
@@ -184,65 +184,11 @@ static  void    finish_page_section( doc_section ds, bool eject )
     do_page_out();
 }
 
-
 /***************************************************************************/
-/*    output section header ABSTRACT, PREFACE, ...                         */
-/***************************************************************************/
-
-static  void    doc_header( su *p_sk, su *top_sk, xx_str *h_string,
-                            font_number font, int8_t spc, bool no_eject )
-{
-    doc_element     *   cur_el;
-    font_number         font_save;
-    int32_t             h_left;
-    text_chars      *   curr_t;
-    text_line       *   hd_line;
-
-    font_save = g_curr_font;
-    g_curr_font = font;
-    g_curr_font = font_save;
-    set_skip_vars( NULL, top_sk, p_sk, spc, g_curr_font );
-
-    if( (h_string == NULL) || (*h_string == '\0') ||
-        (*h_string == ' ') || (*h_string == '\t')  ) {
-
-        /********************************************************/
-        /*  header contained "yes" but the string was empty:    */
-        /*  the OW docs do this with APPENDIX for PS/PDF output */
-        /********************************************************/
-
-        hd_line = alloc_text_line();    // defaults work
-    } else {
-        curr_t = alloc_text_chars( h_string, strlen( h_string ), font );
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count, font );
-        h_left = g_page_left +(g_page_right_org - g_page_left - curr_t->width) / 2;
-        curr_t->x_address = h_left;
-
-        hd_line = alloc_text_line();
-        hd_line->first = curr_t;
-        hd_line->line_height = wgml_fonts[font].line_height;
-    }
-
-    if( input_cbs->fmflags & II_research ) {
-        test_out_t_line( hd_line );
-    }
-    cur_el = init_doc_el( el_text, hd_line->line_height );
-    cur_el->element.text.first = hd_line;
-    hd_line = NULL;
-
-    if( no_eject ) {
-        insert_col_main( cur_el );
-    } else {
-        insert_page_width( cur_el );
-    }
-}
-
-
-/***************************************************************************/
-/* this function sets up tabbing for the fill-string and page number in    */
-/* the PAGELIST or TOC.                                                    */
-/* Since TB only supports fill chars, only the first character of fill     */
-/* will actually be used                                                   */
+/*  this function sets up tabbing for the fill-string and page number in   */
+/*  the PAGELIST or TOC.                                                   */
+/*  Since TB only supports fill chars, only the first character of fill    */
+/*  will actually be used                                                  */
 /***************************************************************************/
 
 static void figlist_toc_tabs( char * fill, uint32_t size )
@@ -254,9 +200,11 @@ static void figlist_toc_tabs( char * fill, uint32_t size )
     add_to_sysdir( "$tb", tab_char );
     add_to_sysdir( "$tab", tab_char );
 
-    /* Set the tab stops */
-    /* the one-column shift is normal */
-    /* g_page_left is added back in when tabbing is done */
+    /********************************************************/
+    /* Set the tab stops                                    */
+    /* the one-column shift is normal                       */
+    /* g_page_left is added back in when tabbing is done    */
+    /********************************************************/
 
     user_tabs.current = 2;
     user_tabs.tabs[0].column = g_page_right - tab_col - g_page_left - size;
@@ -271,16 +219,19 @@ static void figlist_toc_tabs( char * fill, uint32_t size )
 }
 
 /***************************************************************************/
-/*    output FIGLIST                                                       */
+/*  output FIGLIST                                                         */
 /***************************************************************************/
 
-static  void    gen_figlist( void )
+static void gen_figlist( void )
 {
     char            buffer[11];
     char            postfix[12];
     ffh_entry   *   curr;
     uint32_t        size;
 
+    if( fig_list == NULL ) return;  // no fig_list, no FIGLIST
+
+    scr_process_break();                // flush any pending text
     start_doc_sect();
 
     /* Set FIGLIST margins and other values */
@@ -353,7 +304,7 @@ static  void    gen_figlist( void )
 /*  output INDEX                                                           */
 /***************************************************************************/
 
-static  void    gen_index( void )
+static void gen_index( void )
 {
     char            buffer[11];
     char            letter[2];
@@ -362,12 +313,10 @@ static  void    gen_index( void )
     ix_h_blk    *   ixh3;
     symsub      *   ixrefval;       // &sysixref value
 
-    if( index_dict == NULL ) {      // empty dict nothing to do
-        return;
-    }
+    if( index_dict == NULL ) return;    // no index_dict, no INDEX
 
-    scr_process_break();            // flush any pending text
-    start_doc_sect();               // TBD
+    scr_process_break();                // flush any pending text
+    start_doc_sect();
 
     letter[0]  = 0;
     letter[1]  = 0;
@@ -448,12 +397,12 @@ static  void    gen_index( void )
 }
 
 /***************************************************************************/
-/* output TOC                                                              */
-/* Note: these attributes appear to have no effect:                        */
-/*       TOCHn attribute align                                             */
-/*       TOCHn attribute display_in_toc                                    */
-/* Note: this attribute is ignored:                                        */
-/*       TOCHn attribute group                                             */
+/*  output TOC                                                             */
+/*  Note: these attributes appear to have no effect:                       */
+/*        TOCHn attribute align                                            */
+/*        TOCHn attribute display_in_toc                                   */
+/*  Note: this attribute is ignored (but may have an effect - TBD):        */
+/*        TOCHn attribute group                                            */
 /***************************************************************************/
 
 static void gen_toc( void )
@@ -468,6 +417,9 @@ static void gen_toc( void )
     uint32_t        indent[7];
     uint32_t        size;
 
+    if( hd_list == NULL ) return;       // no hd_list, no TOC
+
+    scr_process_break();                // flush any pending text
     start_doc_sect();
 
     /* Set TOC margins and other values */
@@ -611,18 +563,18 @@ static void document_new_position( void )
     return;
 }
 
-
 /***************************************************************************/
-/*    start_doc_sect true section start                                    */
+/*  start_doc_sect true section start                                      */
 /***************************************************************************/
 
-void    start_doc_sect( void )
+void start_doc_sect( void )
 {
     bool                first_section;
     bool                header;
     bool                page_r;
     doc_section         ds;
     font_number         font;
+    hdsrc               hs_val;
     int8_t              h_spc;
     page_ej             page_e;
     su              *   p_sk;
@@ -639,6 +591,7 @@ void    start_doc_sect( void )
     first_section = (ProcFlags.doc_sect == doc_sect_none);
 
     header = false;                 // no header string (ABSTRACT, ... )  output
+    hs_val = hs_none;               // not needed for most sections
     page_r = false;                 // no page number reset
     page_e = ej_no;                 // no page eject
     ProcFlags.start_section = true;
@@ -655,15 +608,16 @@ void    start_doc_sect( void )
 
     switch( ds ) {
     case   doc_sect_body:
-        page_r   = layout_work.body.page_reset;
-        page_e   = layout_work.body.page_eject;
+        page_r = layout_work.body.page_reset;
+        page_e = layout_work.body.page_eject;
         if( layout_work.body.header ) {
-            header   = true;
+            header = true;
             h_string = &layout_work.body.string;
-            top_sk   = &layout_work.body.pre_top_skip;
-            p_sk     = &layout_work.body.post_skip;
-            font     = layout_work.body.font;
-            h_spc    = spacing;         // standard spacing
+            hs_val = hs_body;
+            top_sk = &layout_work.body.pre_top_skip;
+            p_sk = &layout_work.body.post_skip;
+            font = layout_work.body.font;
+            h_spc = spacing;            // standard spacing
         }
         break;
     case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
@@ -676,73 +630,78 @@ void    start_doc_sect( void )
         nest_cb->p_stack->lineno = titlep_lineno; // correct line number
         break;
     case   doc_sect_abstract:
-        page_r   = layout_work.abstract.page_reset;
-        page_e   = layout_work.abstract.page_eject;
+        page_r = layout_work.abstract.page_reset;
+        page_e = layout_work.abstract.page_eject;
         if( layout_work.abstract.header ) {
             header = true;
             h_string = &layout_work.abstract.string;
-            top_sk   = &layout_work.abstract.pre_top_skip;
-            p_sk     = &layout_work.abstract.post_skip;
-            font     = layout_work.abstract.font;
-            h_spc    = layout_work.abstract.spacing;
+            hs_val = hs_abstract;
+            top_sk = &layout_work.abstract.pre_top_skip;
+            p_sk = &layout_work.abstract.post_skip;
+            font = layout_work.abstract.font;
+            h_spc = layout_work.abstract.spacing;
         }
         break;
     case   doc_sect_preface:
-        page_r   = layout_work.preface.page_reset;
-        page_e   = layout_work.preface.page_eject;
+        page_r = layout_work.preface.page_reset;
+        page_e = layout_work.preface.page_eject;
         if( layout_work.preface.header ) {
             header = true;
             h_string = &layout_work.preface.string;
-            top_sk   = &layout_work.preface.pre_top_skip;
-            p_sk     = &layout_work.preface.post_skip;
-            font     = layout_work.preface.font;
-            h_spc    = layout_work.preface.spacing;
+            hs_val = hs_preface;
+            top_sk = &layout_work.preface.pre_top_skip;
+            p_sk = &layout_work.preface.post_skip;
+            font = layout_work.preface.font;
+            h_spc = layout_work.preface.spacing;
         }
         break;
     case   doc_sect_figlist:
     case   doc_sect_figliste:
-        page_e   = true;
+        page_e = ej_yes;
         break;
     case   doc_sect_appendix:
-        page_r   = layout_work.appendix.page_reset;
-        page_e   = layout_work.appendix.page_eject;
+        page_r = layout_work.appendix.page_reset;
+        page_e = layout_work.appendix.page_eject;
         if( layout_work.appendix.header ) {
             header = true;
             h_string = &layout_work.appendix.string;
-            top_sk   = &layout_work.appendix.pre_top_skip;
-            p_sk     = &layout_work.appendix.post_skip;
-            font     = layout_work.appendix.font;
-            h_spc    = layout_work.appendix.spacing;
+            hs_val = hs_appendix;
+            top_sk = &layout_work.appendix.pre_top_skip;
+            p_sk = &layout_work.appendix.post_skip;
+            font = layout_work.appendix.font;
+            h_spc = layout_work.appendix.spacing;
         }
         break;
     case   doc_sect_backm:
-        page_r   = layout_work.backm.page_reset;
-        page_e   = layout_work.backm.page_eject;
+        page_r = layout_work.backm.page_reset;
+        page_e = layout_work.backm.page_eject;
         if( layout_work.backm.header ) {
             header = true;
             h_string = &layout_work.backm.string;
-            top_sk   = &layout_work.backm.pre_top_skip;
-            p_sk     = &layout_work.backm.post_skip;
-            font     = layout_work.backm.font;
-            h_spc    = spacing;         // standard spacing
+            hs_val = hs_backm;
+            top_sk = &layout_work.backm.pre_top_skip;
+            p_sk = &layout_work.backm.post_skip;
+            font = layout_work.backm.font;
+            h_spc = spacing;         // standard spacing
         }
         break;
     case   doc_sect_index:
-        page_r   = layout_work.index.page_reset;
-        page_e   = layout_work.index.page_eject;
+        page_r = layout_work.index.page_reset;
+        page_e = layout_work.index.page_eject;
         if( layout_work.index.header ) {
             header = true;
             h_string = &layout_work.index.index_string;
-            top_sk   = &layout_work.index.pre_top_skip;
-            p_sk     = &layout_work.index.post_skip;
-            font     = layout_work.index.font;
-            h_spc    = layout_work.index.spacing;
+            hs_val = hs_index;
+            top_sk = &layout_work.index.pre_top_skip;
+            p_sk = &layout_work.index.post_skip;
+            font = layout_work.index.font;
+            h_spc = layout_work.index.spacing;
         }
         break;
     case   doc_sect_toc:
     case   doc_sect_toce:
-        page_e   = true;
-        h_spc    = layout_work.toc.spacing;
+        page_e = ej_yes;
+        h_spc = layout_work.toc.spacing;
         break;
     default:
         new_section( ds );
@@ -811,16 +770,17 @@ void    start_doc_sect( void )
     g_cur_left = g_page_left_org;
     g_cur_h_start = g_page_left_org + g_indent;
     if( header && (ds != doc_sect_appendix) ) { // The APPENDIX header is used differently
-        doc_header( p_sk, top_sk, h_string, font, h_spc, page_e == ej_no );
+        gen_heading( p_sk, top_sk, FONT0, font, h_spc, ej_no, NULL, h_string, 0, NULL,
+                     hs_val );
     }
     ProcFlags.doc_sect = ds;
 }
 
+/***************************************************************************/
+/*  routine to init document section change                                */
+/***************************************************************************/
 
-/***************************************************************************/
-/*          routine to init    document section change                     */
-/***************************************************************************/
-static  void    gml_doc_xxx( doc_section ds )
+static void gml_doc_xxx( doc_section ds )
 {
 
     if( ProcFlags.doc_sect >= ds ) {    // wrong sequence of sections
@@ -832,7 +792,6 @@ static  void    gml_doc_xxx( doc_section ds )
     scan_start = scan_stop + 1;
     return;
 }
-
 
 /***************************************************************************/
 /*  Document section tags                                                  */
@@ -852,7 +811,7 @@ static  void    gml_doc_xxx( doc_section ds )
 /*  :EGDOC     optional                                                    */
 /***************************************************************************/
 
-extern  void    gml_abstract( const gmltag * entry )
+extern void gml_abstract( const gmltag * entry )
 {
     if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
         xx_line_err( err_eof_expected, tok_start );
@@ -879,7 +838,7 @@ extern  void    gml_abstract( const gmltag * entry )
     set_h_start();
 }
 
-extern  void    gml_appendix( const gmltag * entry )
+extern void gml_appendix( const gmltag * entry )
 {
     if( blank_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
@@ -896,7 +855,7 @@ extern  void    gml_appendix( const gmltag * entry )
     set_h_start();
 }
 
-extern  void    gml_backm( const gmltag * entry )
+extern void gml_backm( const gmltag * entry )
 {
     if( blank_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
@@ -914,7 +873,7 @@ extern  void    gml_backm( const gmltag * entry )
     g_indentr = 0;
 }
 
-extern  void    gml_body( const gmltag * entry )
+extern void gml_body( const gmltag * entry )
 {
     if( blank_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
@@ -939,8 +898,9 @@ extern  void    gml_body( const gmltag * entry )
     set_h_start();
 }
 
-extern  void    gml_figlist( const gmltag * entry )
+extern void gml_figlist( const gmltag * entry )
 {
+    scr_process_break();
     gml_doc_xxx( doc_sect_figlist );
     spacing = layout_work.figlist.spacing;
     if( pass == 1 ) {
@@ -950,8 +910,9 @@ extern  void    gml_figlist( const gmltag * entry )
     }
 }
 
-extern  void    gml_frontm( const gmltag * entry )
+extern void gml_frontm( const gmltag * entry )
 {
+    scr_process_break();
     gml_doc_xxx( doc_sect_frontm );
     spacing = layout_work.defaults.spacing;
     if( !ProcFlags.fb_document_done ) { // the very first section/page
@@ -960,12 +921,11 @@ extern  void    gml_frontm( const gmltag * entry )
     ProcFlags.frontm_seen = true;
 }
 
-
 /***************************************************************************/
 /*  :INDEX tag is special, not really a section                            */
 /***************************************************************************/
 
-extern  void    gml_index( const gmltag * entry )
+extern void gml_index( const gmltag * entry )
 {
     if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
         xx_line_err( err_eof_expected, tok_start );
@@ -986,6 +946,7 @@ extern  void    gml_index( const gmltag * entry )
         return;
     }
 
+    scr_process_break();
     gml_doc_xxx( doc_sect_index );
 
     /* When gen_index() is finalized, the resets may need to be moved */
@@ -997,7 +958,7 @@ extern  void    gml_index( const gmltag * entry )
     gen_index();                        // output the formatted index
 }
 
-extern  void    gml_preface( const gmltag * entry )
+extern void gml_preface( const gmltag * entry )
 {
     if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
         xx_line_err( err_eof_expected, tok_start );
@@ -1021,7 +982,7 @@ extern  void    gml_preface( const gmltag * entry )
     set_h_start();
 }
 
-extern  void    gml_titlep( const gmltag * entry )
+extern void gml_titlep( const gmltag * entry )
 {
     if( ProcFlags.doc_sect_nxt == doc_sect_egdoc ) {
         xx_line_err( err_eof_expected, tok_start );
@@ -1031,6 +992,7 @@ extern  void    gml_titlep( const gmltag * entry )
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
     }
+    scr_process_break();
     gml_doc_xxx( doc_sect_titlep );
     spacing = layout_work.titlep.spacing;
 
@@ -1052,10 +1014,11 @@ extern  void    gml_titlep( const gmltag * entry )
     set_h_start();
 }
 
-extern  void    gml_etitlep( const gmltag * entry )
+extern void gml_etitlep( const gmltag * entry )
 {
     tag_cb  *   wk;
 
+    scr_process_break();
     gml_doc_xxx( doc_sect_etitlep );
     rs_loc = 0;
     titlep_lineno = 0;
@@ -1070,8 +1033,9 @@ extern  void    gml_etitlep( const gmltag * entry )
     }
 }
 
-extern  void    gml_toc( const gmltag * entry )
+extern void gml_toc( const gmltag * entry )
 {
+    scr_process_break();
     gml_doc_xxx( doc_sect_toc );
     spacing = layout_work.toc.spacing;
     if( pass == 1 ) {
@@ -1081,7 +1045,7 @@ extern  void    gml_toc( const gmltag * entry )
     }
 }
 
-extern  void    gml_egdoc( const gmltag * entry )
+extern void gml_egdoc( const gmltag * entry )
 {
     fwd_ref *   curr;
     
@@ -1158,7 +1122,7 @@ extern  void    gml_egdoc( const gmltag * entry )
 /*  :gdoc sec='TOP secret, destroy before reading'                         */
 /***************************************************************************/
 
-extern  void    gml_gdoc( const gmltag * entry )
+extern void gml_gdoc( const gmltag * entry )
 {
     char        *   p;
 
